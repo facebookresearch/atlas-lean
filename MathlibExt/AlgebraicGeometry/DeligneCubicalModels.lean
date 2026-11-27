@@ -110,7 +110,7 @@ def groupedBases {X Y : Scheme.{0}} {f : X ⟶ Y} {d k : ℕ}
   fun t ↦ B (unionBlocks b t)
 
 /-- The four actual faces of the symmetric tensor cocycle (AB,C), (A,B), (A,BC), (B,C). -/
-def cocycleBlocks (n : ℕ) (face : Fin 4) (i : Fin (n+2)) : Finset (Fin (n+3)) := by
+def cocycleBlocks (n : ℕ) (face : Fin 4) (i : Fin (n + 2)) : Finset (Fin (n+3)) := by
   classical
   let a : Fin (n+3) := ⟨0, by omega⟩
   let b : Fin (n+3) := ⟨1, by omega⟩
@@ -188,15 +188,15 @@ structure CubicalSources where
         (groupedBases P G B) (subsets (n+2))) =
       (cube L hL R a P).hom (pairingVector R (fun t ↦ (P t).complex) B (subsets (n+2)))
 
-def splitCubeLines (N : Fin (n+1) → X.Modules) (B : X.Modules) : Fin (n+2) → X.Modules :=
+def splitCubeLines (N : Fin (n + 1) → X.Modules) (B : X.Modules) : Fin (n+2) → X.Modules :=
   Fin.snoc N B
 
 /-- Face0 is the original tuple, face1 its negative replacement, face2 its positive replacement. -/
-def splitFaceLines (N : Fin (n+1) → X.Modules) (j : Fin (n+1)) (B A : X.Modules)
+def splitFaceLines (N : Fin (n + 1) → X.Modules) (j : Fin (n + 1)) (B A : X.Modules)
     (face : Fin 3) : Fin (n+1) → X.Modules :=
   if face.val = 0 then N else Function.update N j (if face.val = 1 then B else A)
 
-def splitFaceSubset (j : Fin (n+1)) (face : Fin 3) (t : Finset (Fin (n+1))) :
+def splitFaceSubset (j : Fin (n + 1)) (face : Fin 3) (t : Finset (Fin (n + 1))) :
     Finset (Fin (n+2)) := by
   classical
   let extra : Finset (Fin (n+2)) := if j ∈ t then {Fin.last (n+1)} else ∅
@@ -204,7 +204,7 @@ def splitFaceSubset (j : Fin (n+1)) (face : Fin 3) (t : Finset (Fin (n+1))) :
     else if face.val = 1 then (t.erase j).map Fin.castSuccEmb ∪ extra
     else t.map Fin.castSuccEmb ∪ extra
 
-def splitFaceSection (N : Fin (n+1) → X.Modules) (j : Fin (n+1)) (B A : X.Modules)
+def splitFaceSection (N : Fin (n + 1) → X.Modules) (j : Fin (n + 1)) (B A : X.Modules)
     (e : CurvePositivity.moduleTensor X (N j) B ≅ A) (face : Fin 3) (U : X.Opens)
     (s : ∀ i : Fin (n+2), Γ(splitCubeLines n N B i,U)) :
     ∀ i : Fin (n+1), Γ(splitFaceLines n N j B A face i,U) := by
@@ -224,7 +224,7 @@ def splitFaceSection (N : Fin (n+1) → X.Modules) (j : Fin (n+1)) (B A : X.Modu
 
 /-- Every endpoint subset comparison is fixed by the actual tensor fraction
 isomorphism and the original local sections, including the scalar units. -/
-structure TensorOriginSources (N : Fin (n+1) → X.Modules) (j : Fin (n+1)) (B A : X.Modules)
+structure TensorOriginSources (N : Fin (n + 1) → X.Modules) (j : Fin (n + 1)) (B A : X.Modules)
     (e : CurvePositivity.moduleTensor X (N j) B ≅ A) where
   subsetIso : ∀ (face : Fin 3) (t : Finset (Fin (n+1))),
     subsetTensor (splitCubeLines n N B) (splitFaceSubset n j face t) ≅
@@ -235,7 +235,7 @@ structure TensorOriginSources (N : Fin (n+1) → X.Modules) (j : Fin (n+1)) (B A
       (subsetSection (splitCubeLines n N B) U s (splitFaceSubset n j face t)) =
         subsetSection (splitFaceLines n N j B A face) U (splitFaceSection n N j B A e face U s) t
 
-def tensorSharedPresentations {N : Fin (n+1) → X.Modules} {j : Fin (n+1)} {B A : X.Modules}
+def tensorSharedPresentations {N : Fin (n + 1) → X.Modules} {j : Fin (n + 1)} {B A : X.Modules}
     {e : CurvePositivity.moduleTensor X (N j) B ≅ A} {R : CommRingCat.{0}} {a : Spec R ⟶ Y}
     (P : Presentations f (splitCubeLines n N B) R a) (S : TensorOriginSources n N j B A e)
     (face : Fin 3) : Presentations f (splitFaceLines n N j B A face) R a := fun t ↦
@@ -244,14 +244,14 @@ def tensorSharedPresentations {N : Fin (n+1) → X.Modules} {j : Fin (n+1)} {B A
       ((FourierMukai.derivedPushforward f).mapIso
         ((DerivedCategory.singleFunctor X.Modules 0).mapIso (S.subsetIso face t)))⟩
 
-def tensorSharedBases {N : Fin (n+1) → X.Modules} {j : Fin (n+1)} {B A : X.Modules}
+def tensorSharedBases {N : Fin (n + 1) → X.Modules} {j : Fin (n + 1)} {B A : X.Modules}
     {e : CurvePositivity.moduleTensor X (N j) B ≅ A} {R : CommRingCat.{0}} {a : Spec R ⟶ Y}
     (P : Presentations f (splitCubeLines n N B) R a) (S : TensorOriginSources n N j B A e)
     (V : FreeSubsetBases R (fun t ↦ (P t).complex)) (face : Fin 3) :
     FreeSubsetBases R (fun t ↦ (tensorSharedPresentations f n P S face t).complex) :=
   fun t ↦ V (splitFaceSubset n j face t)
 
-structure TensorFreeCover (N : Fin (n+1) → X.Modules) (j : Fin (n+1)) (B A : X.Modules)
+structure TensorFreeCover (N : Fin (n + 1) → X.Modules) (j : Fin (n + 1)) (B A : X.Modules)
     (e : CurvePositivity.moduleTensor X (N j) B ≅ A) (R : CommRingCat.{0}) (a : Spec R ⟶ Y) where
   index : Type
   ring : index → CommRingCat.{0}
@@ -272,7 +272,7 @@ structure TensorFreeCover (N : Fin (n+1) → X.Modules) (j : Fin (n+1)) (B A : X
 actual fraction tensor map, shared subset cochains and all exterior bases.
 Principal covers make this formula nonvacuous even for negative/nonfree lines. -/
 structure TensorComparisonSources (C : CubicalSources I f n)
-    (N : Fin (n+1) → X.Modules) (j : Fin (n+1)) (B A : X.Modules)
+    (N : Fin (n + 1) → X.Modules) (j : Fin (n + 1)) (B A : X.Modules)
     (e : CurvePositivity.moduleTensor X (N j) B ≅ A) where
   cubeLine : ∀ i : Fin (n+2), IsLineBundle (splitCubeLines n N B i)
   freeCover : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y), TensorFreeCover f n N j B A e R a
@@ -307,14 +307,14 @@ structure TensorComparisonSources (C : CubicalSources I f n)
       (ModuleCat.extendScalars g.hom).map (comparison R a P).hom ≫
         (pairingTransition I f (splitFaceLines n N j B A 2) g a a' h (P 2) (Q 2) H D F T).hom
 
-def fractionBranchLines {N : Fin (n+1) → X.Modules}
+def fractionBranchLines {N : Fin (n + 1) → X.Modules}
     {q : ∀ i : Fin (n+1), RationalSection (N i)}
     (F : ∀ i : Fin (n+1), CartierFraction (N i) (q i))
     (b : Fin (n+1) → Bool) : Fin (n+1) → X.Modules :=
   fun i ↦ if b i then (F i).negativeLine else (F i).positiveLine
 
 /-- Actual fraction sources whose EVERY signed regular branch is retained. -/
-structure FractionRegularTuple (N : Fin (n+1) → X.Modules)
+structure FractionRegularTuple (N : Fin (n + 1) → X.Modules)
     (q : ∀ i : Fin (n+1), RationalSection (N i)) where
   fraction : ∀ i : Fin (n+1), CartierFraction (N i) (q i)
   branch : ∀ b : Fin (n+1) → Bool, RegularTuple f n (fractionBranchLines n fraction b)
@@ -327,7 +327,7 @@ structure FractionRegularTuple (N : Fin (n+1) → X.Modules)
 canonical tensor quotient maps. Every recursive factor retains its actual
 rational section/fraction; no new determinant word or rescaling is admitted. -/
 inductive RationalExpression (C : CubicalSources I f n) :
-    (N : Fin (n+1) → X.Modules) → (∀ i : Fin (n+1), RationalSection (N i)) →
+    (N : Fin (n + 1) → X.Modules) → (∀ i : Fin (n + 1), RationalSection (N i)) →
     (P : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y), Presentations f N R a) →
     (∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y), Module.Basis Unit R (localPairing (P R a))) → Type 1
   | regular {N : Fin (n+1) → X.Modules} {q : ∀ i : Fin (n+1), RationalSection (N i)}
@@ -364,7 +364,7 @@ inductive RationalExpression (C : CubicalSources I f n) :
 variable {I f n} in
 /-- The local generator carries the canonical torsion/quotient derivation above. -/
 def RationalExpression.value {C : CubicalSources I f n}
-    {N : Fin (n+1) → X.Modules} {q : ∀ i : Fin (n+1), RationalSection (N i)}
+    {N : Fin (n + 1) → X.Modules} {q : ∀ i : Fin (n+1), RationalSection (N i)}
     {P : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y), Presentations f N R a}
     {B : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y), Module.Basis Unit R (localPairing (P R a))}
     (_E : RationalExpression I f n C N q P B) (R : CommRingCat.{0}) (a : Spec R ⟶ Y) :

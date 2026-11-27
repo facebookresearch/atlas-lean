@@ -23,6 +23,10 @@ Algorithms for quantum computers and their analysis: Fourier sampling with the D
 - [Counting good outcomes of Shor period finding](counting-good-outcomes-of-shor-period-finding.md)
 - [Outcome distribution of Shor period finding when the order divides q](outcome-distribution-of-shor-period-finding-when-the-order-divides-q.md)
 
+## Planned results
+
+- [Probability-one complete factoring with a fixed finite quantum gate set](exact-factoring-over-a-fixed-gate-set.md)
+
 ## Related topics
 
 - [Quantum Information](../../QuantumInformation/README.md): states, channels, the quantum Fourier transform and error correction.

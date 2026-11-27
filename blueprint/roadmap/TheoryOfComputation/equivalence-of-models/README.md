@@ -12,6 +12,7 @@ Register (URM), counter and RAM machines, and theorems that Turing machines and 
 - [Counter and combinator models](counter-and-combinator-models/README.md)
 - [Counter machines compute exactly the computable predicates](counter-decidable-iff-computable-pred.md)
 - [Untyped lambda calculus](untyped-lambda-calculus/README.md)
+- [Tag systems](tag-systems/README.md)
 - [Cellular automata](cellular-automata/README.md)
 - [Computable predicates are decidable by multi-tape machines](tm2-decidable-implies-multi-tape-decidab.md)
 - [Multi-tape polynomial time equals the canonical class P](multi-tape-p-eq-canonical-p.md)

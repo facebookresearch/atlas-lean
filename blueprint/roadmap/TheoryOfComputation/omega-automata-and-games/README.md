@@ -12,6 +12,7 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 - [Parity games](parity-games/README.md)
 - [Parity game algorithms](parity-game-algorithms/README.md)
 - [Muller, Rabin and Streett games](muller-rabin-and-streett-games/README.md)
+- [Quantitative games](quantitative-games/README.md)
 - [Rabin and Streett automata](rabin-and-streett-automata/README.md)
 - [Logic and tree automata](logic-and-tree-automata/README.md)
 - [Monadic logic on infinite words](monadic-logic-on-infinite-words/README.md)
@@ -25,3 +26,4 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 - [Rank-based Büchi complementation with an explicit state bound](buchi-complement-bounded-wanted.md)
 - [McNaughton's theorem](mc-naughton-wanted.md)
 - [Safra/Piterman determinization of Büchi automata](safra-piterman-determinization-of-b-chi-automata/README.md)
+- [Randomized quasipolynomial computation of the mean-payoff winning set](randomized-quasipolynomial-mean-payoff-winning-set.md)
