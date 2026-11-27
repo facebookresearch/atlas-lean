@@ -80,8 +80,9 @@ noncomputable def walkProb {V : Type*} [DecidableEq V] (G : SimpleGraph V) [G.Lo
   | k + 1 => fun y => ∑ x ∈ G.neighborFinset y, walkProb G o k x / G.degree x
 
 /-- `lim sup_n walkProb G o (2n) o ^ (1/(2n))`. When `o` has positive degree it is the spectral
-radius `ρ(G) = lim sup_n p_{2n}(o, o)^{1/(2n)}` of simple random walk on `G`, seen from the root
-`o` (for transitive graphs it does not depend on the root); at an isolated root it is `0`. -/
+radius `lim sup_n p_{2n}(o, o)^{1/(2n)}` of simple random walk on `G` from the root `o`, which sees
+only the component of `o`; it is `ρ(G)` and does not depend on the root when `G` is connected or
+transitive. At an isolated root it is `0`. -/
 noncomputable def spectralRadius {V : Type*} [DecidableEq V] (G : SimpleGraph V) [G.LocallyFinite]
     (o : V) : ℝ :=
   limsup (fun n : ℕ => walkProb G o (2 * n) o ^ ((1 : ℝ) / (2 * n))) atTop

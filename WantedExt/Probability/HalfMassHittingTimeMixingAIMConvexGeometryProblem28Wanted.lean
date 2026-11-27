@@ -72,8 +72,10 @@ noncomputable def expectedHittingTime {n : ℕ} (P : Matrix (Fin n) (Fin n) ℝ)
 
 /-- The supremum of `expectedHittingTime P A x` over states `x` and sets `A` with
 `∑_{y ∈ A} π y ≥ 1/2` (`0` when no pair qualifies), for an arbitrary real matrix `P` and weights
-`π`. For a transition matrix `P` and a probability vector `π` it is
-`T(1/2) = max {E_x[τ_A] : x a state, A a set of states with π(A) ≥ 1/2}`. -/
+`π`. For a transition matrix `P` and its stationary probability vector `π` it is the source's
+`T(1/2) = max {E_x[τ_A] : x a state, A a set of states with π(A) ≥ 1/2}`. Another probability
+vector gives another maximum: for `P(0, 1) = 1/4` and `P(1, 0) = 1/2` the stationary
+`π = (2/3, 1/3)` gives `2`, and the point mass at `1` gives `4`. -/
 noncomputable def halfMassHittingTime {n : ℕ} (P : Matrix (Fin n) (Fin n) ℝ)
     (π : Fin n → ℝ) : ℝ≥0∞ :=
   ⨆ (x : Fin n) (A : Finset (Fin n)) (_ : (1 : ℝ) / 2 ≤ ∑ y ∈ A, π y),

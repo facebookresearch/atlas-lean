@@ -40,9 +40,9 @@ open MeasureTheory ProbabilityTheory Matrix
 open scoped Matrix.Norms.L2Operator
 
 /-- `σ = ‖∑ₖ Aₖ²‖^{1/2}`, with the spectral norm, for arbitrary real `d × d` matrices `Aₖ`. For
-symmetric `Aₖ`, `∑ₖ Aₖ² = E[X²]` for the Gaussian series `X = ∑ₖ gₖ Aₖ`, so `σ` is its matrix
-variance (Bandeira, equation (36)). For nonsymmetric `Aₖ` it is not: the single coefficient
-`A = E₁₂` has `A² = 0`, while `E[(g A)(g A)ᵀ] = E₁₁`. -/
+symmetric `Aₖ`, `∑ₖ Aₖ² = E[X²]` for the Gaussian series `X = ∑ₖ gₖ Aₖ`, so `σ` is the square root
+of the norm of its matrix variance `E[X²]` (Bandeira, equation (36)). For nonsymmetric `Aₖ` it is
+not: the single coefficient `A = E₁₂` has `A² = 0`, while `E[(g A)(g A)ᵀ] = E₁₁`. -/
 noncomputable def sigma {d n : ℕ} (A : Fin n → Matrix (Fin d) (Fin d) ℝ) : ℝ :=
   Real.sqrt ‖∑ k, A k * A k‖
 
