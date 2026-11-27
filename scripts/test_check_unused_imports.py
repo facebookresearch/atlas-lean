@@ -252,6 +252,14 @@ class MainTests(unittest.TestCase):
         code, _, calls = run_main([], toolchain="leanprover/lean4:v4.0.0\n")
         self.assertEqual((code, calls), (2, []))
 
+    def test_a_toolchain_mismatch_prints_the_toolchains_inert(self):
+        errors: list[str] = []
+        code, _, _ = run_main([], toolchain="leanprover/lean4:v4.0.0 ##[error]forged\n",
+                              errors=errors)
+        self.assertEqual(code, 2)
+        self.assertIn("## [error]forged", errors[0])
+        self.assertNotIn("##[", errors[0])
+
     def test_a_missing_agitate_build_is_a_failure_to_run(self):
         code, _, calls = run_main([], agitate_dir=False)
         self.assertEqual((code, calls), (2, []))

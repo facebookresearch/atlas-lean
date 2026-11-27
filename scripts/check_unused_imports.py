@@ -227,7 +227,7 @@ def main() -> int:
     agitate_dir = Path(args.agitate_dir)
     problem = agitate_problem(agitate_dir)
     if problem:
-        print(problem, file=sys.stderr)
+        print(inert(problem), file=sys.stderr)
         return 2
 
     print(f"Checking the imports that {len(targets)} changed Lean file(s) add.")

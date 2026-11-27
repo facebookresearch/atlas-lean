@@ -208,9 +208,13 @@ jobs:
           git -C "$dir" -c advice.detachedHead=false checkout --quiet FETCH_HEAD
           test "$(git -C "$dir" rev-parse HEAD)" = "$AGITATE_COMMIT"
           if ! cmp -s lean-toolchain "$dir/lean-toolchain"; then
-            echo "::warning title=agitate::agitate $AGITATE_COMMIT is for $(cat "$dir/lean-toolchain"), not" \
-              "$(cat lean-toolchain), so unused imports are not checked; pin an agitate commit for" \
-              "this toolchain in .github/workflows/linters.yml."
+            # The pull request writes lean-toolchain: keep only the characters of a toolchain
+            # name, so that its text cannot break out of this warning.
+            theirs="$(tr -cd 'A-Za-z0-9.:/_+-' < "$dir/lean-toolchain")"
+            ours="$(tr -cd 'A-Za-z0-9.:/_+-' < lean-toolchain)"
+            echo "::warning title=agitate::agitate $AGITATE_COMMIT is for $theirs, not $ours, so" \
+              "unused imports are not checked; pin an agitate commit for this toolchain in" \
+              ".github/workflows/linters.yml."
             exit 0
           fi
           (cd "$dir" && lake build agitate agitate-nonmodule)
