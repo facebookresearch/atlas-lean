@@ -908,28 +908,12 @@ GRAPH_PULLS = [
 
 
 class Graph(unittest.TestCase):
-    def test_nodes_to_expand_are_the_not_ready_nodes(self) -> None:
-        with tempfile.TemporaryDirectory() as folder:
-            path = Path(folder) / "index.json"
-            path.write_text(json.dumps(INDEX))
-            graph = next_task.load_graph(str(path))
-        self.assertEqual([item["node_id"] for item in graph],
-                         ["Algebra/groups/sylow", "Algebra/groups/sylow-applications", "Algebra/t1", "Algebra/t10",
-                          "Combinatorics/ramsey"])
-        self.assertEqual(graph[0], {
-            "node_id": "Algebra/groups/sylow", "phase": "expand", "title": "Node Algebra/groups/sylow",
-            "article_path": "blueprint/roadmap/Algebra/groups/sylow.md",
-            "page": "https://facebookresearch.github.io/atlas-lean/roadmap/Algebra/groups/index.html#sylow"})
-
     def test_an_unreadable_index_stops_the_script(self) -> None:
-        with tempfile.TemporaryDirectory() as folder:
-            for number, (data, message) in enumerate([("{", "is not JSON"), ("[]", "is not the graph's index"),
-                                                      ('{"nodes": [{"kind": "node"}]}', "is not the graph's index")]):
-                path = Path(folder) / f"case{number}.json"
-                path.write_text(data)
-                with self.assertRaises(next_task.Failure) as raised:
-                    next_task.load_graph(str(path))
-                self.assertIn(message, str(raised.exception))
+        site = Site()
+        site.pages[next_task.DEPENDENCIES] = b"{}"
+        code, out, err = run(site, "--graph", env=TOKEN)
+        self.assertEqual((code, out), (1, ""))
+        self.assertIn("is not the graph's index of nodes", err)
 
     def test_a_pull_request_takes_the_node_it_names_and_no_other(self) -> None:
         site = Site(open_pages=(OPEN_PULLS + GRAPH_PULLS,))
@@ -942,7 +926,12 @@ class Graph(unittest.TestCase):
         self.assertEqual([item["node_id"] for item in graph["next"]],
                          ["Algebra/groups/sylow-applications", "Algebra/t10", "Combinatorics/ramsey"])
         self.assertEqual((graph["to_expand"], graph["taken"], graph["free"]), (5, 2, 3))
-        self.assertEqual(graph["next"][0]["priority"], 1)
+        # Folders and nodes of other statuses are not nodes to expand.
+        self.assertEqual(graph["next"][0], {
+            "node_id": "Algebra/groups/sylow-applications", "title": "Node Algebra/groups/sylow-applications",
+            "article_path": "blueprint/roadmap/Algebra/groups/sylow-applications.md",
+            "page": "https://facebookresearch.github.io/atlas-lean/roadmap/Algebra/groups/index.html"
+                    "#sylow-applications", "priority": 1})
         # The formalization tasks are listed as before.
         self.assertEqual(json.loads(out)["free"], 4)
 

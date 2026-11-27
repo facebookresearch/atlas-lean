@@ -2,8 +2,8 @@
 """Print the next ready formalization tasks of ATLAS that no pull request has taken, and with --graph the next
 nodes of the graph still to expand.
 
-    python3 scripts/next_task.py [-n N] [--json] [--graph] [--tasks FILE_OR_URL] [--dependencies FILE_OR_URL]
-                                 [--priorities FILE_OR_URL] [--repo OWNER/NAME]
+    python3 scripts/next_task.py [-n N] [--json] [--graph] [--tasks FILE_OR_URL] [--priorities FILE_OR_URL]
+                                 [--repo OWNER/NAME]
 
 The site publishes tasks.json: the articles Autoform finds ready to state or to prove (docs/BLUEPRINT.md,
 What the tools own), as `autoform work list --json` lists them on the last main build, with the commit they come
@@ -586,31 +586,19 @@ def taken(items: list[dict], pulls: list[dict]) -> dict[str, list[int]]:
     return found
 
 
-def load_graph(source: str) -> list[dict]:
-    """The nodes still to expand, from the site's dependencies/index.json at a URL or in a file: each node (not a
-    folder) it marks not_ready, as a graph task with its node id, title, page and article path, in the index's order."""
+def load_graph() -> list[dict]:
+    """The nodes still to expand: each node (not a folder) that the site's dependencies/index.json marks not_ready,
+    with its node id, title, page and article path, in the index's order."""
     try:
-        data = request(source) if re.match(r"https?://", source) else Path(source).read_bytes()
-        index = json.loads(data)
-    except OSError as error:
-        raise Failure(f"{source}: {error.strerror or error}") from None
-    except ValueError:
-        raise Failure(f"{source} is not JSON") from None
-    nodes = index.get("nodes") if isinstance(index, dict) else None
+        nodes = json.loads(request(DEPENDENCIES)).get("nodes")
+    except (ValueError, AttributeError):
+        nodes = None
     if not isinstance(nodes, list) or not all(isinstance(node, dict) and isinstance(node.get("id"), str)
-                                              and node["id"].strip() != "" for node in nodes):
-        raise Failure(f"{source} is not the graph's index of nodes, each with its id")
-    base = source if re.match(r"https?://", source) else DEPENDENCIES
-    found = []
-    for node in nodes:
-        if node.get("kind") == "node" and node.get("status") == "not_ready":
-            route = node.get("route")
-            found.append({"node_id": node["id"], "phase": "expand", "title": node.get("title"),
-                          "article_path": f"blueprint/roadmap/{node['id']}.md",
-                          "page": urllib.parse.urljoin(base, route) if isinstance(route, str) else None})
-    if len({item["node_id"] for item in found}) != len(found):
-        raise Failure(f"{source} marks one node to expand twice")
-    return found
+                                              for node in nodes):
+        raise Failure(f"{DEPENDENCIES} is not the graph's index of nodes")
+    return [{"node_id": node["id"], "title": node.get("title"), "article_path": f"blueprint/roadmap/{node['id']}.md",
+             "page": urllib.parse.urljoin(DEPENDENCIES, node.get("route") or "")}
+            for node in nodes if node.get("kind") == "node" and node.get("status") == "not_ready"]
 
 
 def graph_taken(items: list[dict], pulls: list[dict]) -> dict[str, list[int]]:
@@ -630,16 +618,7 @@ def graph_taken(items: list[dict], pulls: list[dict]) -> dict[str, list[int]]:
                 end = "/".join(parts[k:])
                 if end in ids:
                     by_id.setdefault(end, set()).add(number)
-    found: dict[str, list[int]] = {}
-    for item in items:
-        numbers = by_id.get(item["node_id"], set())
-        if not NODE_RUN.fullmatch(item["node_id"]):
-            # An id written with other characters too is looked for as such.
-            pattern = re.compile(r"(?<![\w-])" + re.escape(item["node_id"]) + r"(?![\w/-])")
-            numbers = {number for number, text in texts.items() if pattern.search(text)}
-        if numbers:
-            found[item["node_id"]] = sorted(numbers)
-    return found
+    return {item["node_id"]: sorted(by_id[item["node_id"]]) for item in items if item["node_id"] in by_id}
 
 
 def shown(value: object) -> str:
@@ -672,14 +651,12 @@ def main(argv: list[str] | None = None) -> int:
                         help=f"the repository whose pull requests take tasks (default {REPOSITORY})")
     parser.add_argument("--graph", action="store_true",
                         help="also print the next nodes of the graph still to expand, the graph-building tasks")
-    parser.add_argument("--dependencies", default=DEPENDENCIES, metavar="FILE_OR_URL",
-                        help=f"the graph's index of nodes, read with --graph (default {DEPENDENCIES})")
     args = parser.parse_args(argv)
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or None
     source = args.priorities if args.priorities is not None else str(PRIORITIES) if PRIORITIES.is_file() else None
     try:
         tasks = load_tasks(args.tasks)
-        graph = load_graph(args.dependencies) if args.graph else []
+        graph = load_graph() if args.graph else []
         priorities = None if source is None else load_priorities(source)
         pulls = pull_requests(args.repo, tasks.get("commit_date"), token)
     except Failure as failure:
@@ -702,8 +679,7 @@ def main(argv: list[str] | None = None) -> int:
         }
         if args.graph:
             report["graph"] = {
-                "dependencies": args.dependencies, "to_expand": len(graph), "taken": len(graph_held),
-                "free": len(graph_free),
+                "to_expand": len(graph), "taken": len(graph_held), "free": len(graph_free),
                 "next": [dict(item, priority=priority(item, priorities)) for item in graph_chosen],
                 "taken_by": [{"node_id": node_id, "pull_requests": numbers}
                              for node_id, numbers in graph_held.items()],
