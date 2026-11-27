@@ -1,0 +1,24 @@
+# Network calculus
+
+Deterministic bounds on backlog and delay for flows constrained by arrival curves and served by systems that guarantee service curves, in the min-plus algebra of wide-sense increasing functions.
+
+- [Min-plus algebra](min-plus-algebra/README.md)
+- [Cumulative flows, backlog and virtual delay](cumulative-flows-backlog-and-virtual-delay.md)
+- [Arrival curves](arrival-curves.md)
+- [Arrival curves as min-plus inequalities](arrival-curves-as-min-plus-inequalities.md)
+- [Reduction of an arrival curve to its sub-additive closure](reduction-of-an-arrival-curve-to-its-sub-additive-closure.md)
+- [A leaky bucket controller enforces an affine arrival curve](a-leaky-bucket-controller-enforces-an-affine-arrival-curve.md)
+- [Service curves](service-curves.md)
+- [Guaranteed-delay nodes offer burst-delay service curves](guaranteed-delay-nodes-offer-burst-delay-service-curves.md)
+- [Generalized processor sharing offers a constant-rate service curve](generalized-processor-sharing-offers-a-constant-rate-service-curve.md)
+- [The backlog bound](the-backlog-bound.md)
+- [The delay bound](the-delay-bound.md)
+- [The output arrival curve](the-output-arrival-curve.md)
+- [Bounds for a token-bucket flow at a rate-latency node](bounds-for-a-token-bucket-flow-at-a-rate-latency-node.md)
+- [Concatenation of service curves](concatenation-of-service-curves.md)
+- [Concatenation of rate-latency service curves](concatenation-of-rate-latency-service-curves.md)
+- [Pay bursts only once](pay-bursts-only-once.md)
+- [Greedy shapers](greedy-shapers.md)
+- [Input-output characterization of greedy shapers](input-output-characterization-of-greedy-shapers.md)
+- [Re-shaping does not increase backlog or delay bounds](re-shaping-does-not-increase-backlog-or-delay-bounds.md)
+- [Shaping conserves arrival constraints](shaping-conserves-arrival-constraints.md)

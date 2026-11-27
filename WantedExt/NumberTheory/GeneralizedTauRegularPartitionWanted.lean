@@ -17,6 +17,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.NumberTheory.ChooseAddModEqPrime
+public import MathlibExt.NumberTheory.FourRegularPartitionParity
 public import MathlibExt.NumberTheory.GeneralizedTau
 public import MathlibExt.NumberTheory.GeneralizedTauPrimeSquare
 public import MathlibExt.NumberTheory.NineRegularPartitionIteration
@@ -81,16 +82,6 @@ public theorem_wanted generalizedTau_succ_modEq_card_frequency_two (k : ℕ) (hk
         ∀ i ∈ p.parts,
           p.parts.count i ∈ (Finset.Icc 1 k).filter (fun a => Odd (k.choose a))).card : ℤ)
       [ZMOD 2]
-
-/-- **Parity of the $4$-regular partition function.** For a positive integer $n$, let $R_4(n)$ be
-the number of partitions of $n$ with no part divisible by $4$. Then $R_4(n)$ is odd if and only if
-$n$ is a triangular number, that is, $n = m(m + 1)/2$ for some integer $m \ge 0$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 3 (`integers-2024-A39-thm-3`). -/
-public theorem_wanted odd_card_four_regular_iff_triangular (n : ℕ) (hn : 0 < n) :
-    Odd (Nat.Partition.restricted n (¬ 4 ∣ ·)).card ↔ ∃ m : ℕ, n = m * (m + 1) / 2
 
 /-- **Parity of $\tau_{14}$ and $\tau_6$ at odd arguments.** Let $\tau_k(m)$ be the generalized
 tau function, the coefficient of $q^m$ in $q \prod_{j \ge 1} (1 - q^j)^k$, and let $R_8(n)$ be
