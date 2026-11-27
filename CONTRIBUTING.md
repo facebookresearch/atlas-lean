@@ -505,10 +505,10 @@ configured to run on every PR and merge group, without filters, and reports
 whether the PR's wiki is in step with its Lean
 ([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)).
 `mathlib linters` runs on PRs that change a Lean file of the five production
-libraries or its own scripts. It reports Mathlib's linters on the code the PR
-adds: the standard linter set on added lines, the environment linters of `#lint`
-and checks for duplicate statements and root-namespace declarations on added
-declarations, and `lint-style` on added lines
+libraries, the toolchain pins or its own scripts. It reports Mathlib's linters
+on the code the PR adds: the standard linter set on added lines, the environment
+linters of `#lint` and checks for duplicate statements and root-namespace
+declarations on added declarations, and `lint-style` on added lines
 ([scripts/README.md](scripts/README.md#linter-checks)). A finding annotates its
 line and the job summary but never fails the job; only a check that cannot run
 does.

@@ -75,13 +75,15 @@ five production libraries once (`scripts/lean_changes.py build --base <ref>`), t
   dependencies already proves, up to binder and universe names) and `rootNamespace` (a public
   declaration outside any namespace, which a later Mathlib name could collide with).
   `@[nolint <linter>]` turns one off for a declaration. A declaration counts as added when the
-  change adds the line
-  that declares it, below its docstring and attributes, and no declaration of that name is in
-  the changed files at the base (for a private declaration, in its own file), so documenting,
-  tagging, editing or moving an existing declaration does not report it;
+  change adds the line that declares it, below its docstring and attributes, and no declaration of
+  that name is in the changed files at the base (for a private declaration, in its own file), so
+  documenting, tagging, editing or moving an existing declaration does not report it. A
+  `theorem_wanted` or `def_wanted` statement is not the declaration that proves it, so a proof's
+  findings are reported;
 - `scripts/check_text_linters.py`: Mathlib's `lint-style` errors on added lines, and the module
   names of added or renamed files.
 
 Each takes `--base <ref>` and exits 1 on a finding, 0 with `--report-only` (as CI runs them),
 and 2 when it cannot run. `scripts/linters_self_test.py` runs all three on a probe module;
-CI runs it when a pull request changes them.
+CI runs it when a pull request changes them, `lean-toolchain` or `lake-manifest.json`, so that a
+bump that changes what the tools print shows up on the bump itself.

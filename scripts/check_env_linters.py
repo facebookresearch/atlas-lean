@@ -22,13 +22,16 @@ helper, its own line), and no declaration of that name is in the files the
 change modifies, renames or deletes, as they are at the base. A private
 declaration is the same only as one of its own file: another file's private
 declaration of that name is another declaration. An anonymous instance, whose
-name Lean generates, is known by its namespace and header. So a change that
-only documents, tags or edits an existing declaration does not report it, nor
-does one that moves a public declaration between those files. A finding that
-the linters print without a position (a declaration without a source range,
-such as a structure's `mk.injEq`) is placed on the nearest enclosing
-declaration of the changed files that has one, under the same rule. Like
-`runLinter`, the linters see the private declarations of the modules too.
+name Lean generates, is known by its namespace and header. A wanted statement
+(`theorem_wanted`, `def_wanted`, `proof_wanted`, `instance_wanted`) elaborates
+to a private placeholder, so it is not the declaration that proves it later. So
+a change that only documents, tags or edits an existing declaration does not
+report it, nor does one that moves a public declaration between those files,
+but one that proves a wanted statement reports the proof. A finding that the
+linters print without a position (a declaration without a source range, such as
+a structure's `mk.injEq`) is placed on the nearest enclosing declaration of the
+changed files that has one, under the same rule. Like `runLinter`, the linters
+see the private declarations of the modules too.
 
     python3 scripts/check_env_linters.py --base origin/main [--report-only]
 
@@ -146,8 +149,12 @@ def parse_run_linter(text: str, cwd: Path = ROOT) -> list[Finding]:
 COMPONENT = r"(?:«[^«»\n]+»|[^\W\d][\w'!?]*)"
 NAME = rf"{COMPONENT}(?:\.{COMPONENT})*"
 MODIFIERS = r"(?:private|protected|public|noncomputable|nonrec|partial|unsafe|scoped|local|meta)"
+# Batteries' wanted statements, each a private placeholder `def` of its name.
+WANTED_KINDS = ("theorem_wanted", "def_wanted", "proof_wanted", "instance_wanted")
+# How the index keys a wanted statement, apart from the declaration that proves it later.
+WANTED = "wanted:"
 DECLARATION_KINDS = ("theorem", "lemma", "def", "abbrev", "instance", "structure", "class",
-                     "inductive", "opaque", "axiom", "example", "theorem_wanted", "def_wanted",
+                     "inductive", "opaque", "axiom", "example", *WANTED_KINDS,
                      "irreducible_def", "alias")
 COMMAND = re.compile(
     r"^[ \t]*(?:set_option[ \t]+\S+[ \t]+\S+[ \t]+in\s+)*(?:@\[[^\]]*\]\s*)*"
@@ -349,6 +356,11 @@ def index_source(text: str) -> SourceIndex:
         if kind == "example" or name is None:
             continue
         declared = full(name)
+        if kind in WANTED_KINDS:
+            # A wanted statement matches only a wanted statement: the theorem that proves it,
+            # under the same name, is new code.
+            index.add(f"{WANTED}{declared}", line, private)
+            continue
         index.add(declared, line, private)
         body = code[name_match.end():stop] if name_match else ""
         if kind in ("structure", "class"):

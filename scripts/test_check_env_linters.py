@@ -257,6 +257,14 @@ class IndexTests(unittest.TestCase):
         })
         self.assertEqual(index.private_names, {"ScopeProbe.hidden", "ScopeProbe.hidden.go"})
 
+    def test_keys_wanted_statements_apart_from_their_proofs(self):
+        index = check.index_source(
+            "module\n\nnamespace N\n\npublic theorem_wanted w (n : Nat) : n = n\n"
+            "proof_wanted v : True\npublic def_wanted d : Nat\ninstance_wanted i : Inhabited Nat\n"
+            "theorem t : True := trivial\n\nend N\n")
+        self.assertEqual(index.names, {"wanted:N.w", "wanted:N.v", "wanted:N.d", "wanted:N.i",
+                                       "N.t"})
+
     def test_unlexable_sources_fall_back_to_the_reported_line(self):
         index = check.index_source('def s := "unterminated\n')
         self.assertIsNone(index.code)
@@ -355,6 +363,40 @@ class PlaceTests(unittest.TestCase):
                        "MathlibExt/A.lean", 3, 1, private=True)
         head["MathlibExt/A.lean"] = (head["MathlibExt/A.lean"][0], {3})
         self.assertFalse(self.place_in(same, head, base).added)
+
+    def test_a_proof_of_a_wanted_statement_is_a_new_declaration(self):
+        wanted = ("module\n\nnamespace ScopeProbe\n\n/-- Wanted. -/\n"
+                  "public theorem_wanted proved (n m : Nat) : n = n\n\n"
+                  "/-- Still wanted. -/\npublic theorem_wanted later (n : Nat) : n = n\n\n"
+                  "end ScopeProbe\n")
+        proof = ("module\n\nnamespace ScopeProbe\n\n/-- Proved. -/\n"
+                 "public theorem proved (n m : Nat) : n = n := rfl\n\nend ScopeProbe\n")
+        base = base_names(WantedExt__Probe=wanted)
+        # The pull request removes the wanted statement and proves it in another file.
+        head = {"WantedExt/Probe.lean": (wanted.replace(
+                    "/-- Wanted. -/\npublic theorem_wanted proved (n m : Nat) : n = n\n\n", ""),
+                    set()),
+                "MathlibExt/Proved.lean": (proof, set(range(1, 9)))}
+        finding = Finding("ScopeProbe.proved", "unusedArguments", "1 unused argument:",
+                          "MathlibExt.Proved", "MathlibExt/Proved.lean", 5, 1)
+        self.assertTrue(self.place_in(finding, head, base).added)
+        # Proving it in place reports the proof too.
+        in_place = wanted.replace("public theorem_wanted proved (n m : Nat) : n = n",
+                                  "public theorem proved (n m : Nat) : n = n := rfl")
+        finding = Finding("ScopeProbe.proved", "unusedArguments", "1 unused argument:",
+                          "WantedExt.Probe", "WantedExt/Probe.lean", 5, 1)
+        self.assertTrue(self.place_in(finding, {"WantedExt/Probe.lean": (in_place, {6})},
+                                      base).added)
+        # A wanted statement that moves to another file is still the same one.
+        moved = ("module\n\nnamespace ScopeProbe\n\n/-- Still wanted. -/\n"
+                 "public theorem_wanted later (n : Nat) : n = n\n\nend ScopeProbe\n")
+        head = {"WantedExt/Probe.lean": (wanted.replace(
+                    "/-- Still wanted. -/\npublic theorem_wanted later (n : Nat) : n = n\n\n", ""),
+                    set()),
+                "WantedExt/Other.lean": (moved, set(range(1, 9)))}
+        finding = Finding("ScopeProbe.later", "unusedArguments", "", "WantedExt.Other",
+                          "WantedExt/Other.lean", 5, 1, private=True)
+        self.assertFalse(self.place_in(finding, head, base).added)
 
     def test_an_anonymous_instance_is_known_by_its_header(self):
         base = "namespace ScopeProbe\n\ninstance : Inhabited (Fin 3) := ⟨0⟩\n\nend ScopeProbe\n"
