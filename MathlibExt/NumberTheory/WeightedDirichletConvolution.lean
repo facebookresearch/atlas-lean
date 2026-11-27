@@ -307,7 +307,7 @@ convolution, let $\mu$ be the Möbius function, and for real $y$ put
 $D(y) = \sum_{1 \le j \le y} (u * v)(j)$. Then for every natural number $r$ and every real $x$,
 $$
 \sum_{1 \le j \le x/r} (u * v)(rj) =
-\sum_{d \mid r} u(d)\, v(r/d) \sum_{m \mid d} \mu(m)\, v(m)\, D\left(\frac{x}{mr}\right),
+\sum_{d \mid r} u(d)\, v(r/d) \sum_{m \mid d} \mu(m)\, v(m)\, D\left(\frac{x}{mr}\right).
 $$
 For $r>0$, the divisor sums run over positive divisors. For $r=0$, the outer divisor sum is
 empty by convention, and the left sum is empty because $x/0=0$.
