@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Distributions.BinomialEventCount
+import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
@@ -18,7 +19,8 @@ import Mathlib.Tactic.Ring
 For independent events of probability `p`: none of `n` occur with probability `(1 - p) ^ n`,
 exactly one of two occurs with probability `2 p (1 - p)`, all `n` occur with probability `p ^ n`,
 at least zero of them occur with probability `1`, at least one of two occurs with probability
-`1 - (1 - p) ^ 2`, and more than `n` of them never occur.
+`1 - (1 - p) ^ 2`, and more than `n` of them never occur. Through the binomial law, Mathlib's
+`integral_of_hasLaw_binomial` gives the expected number `n p` of events that occur.
 -/
 
 @[expose] public section
@@ -72,5 +74,13 @@ example {n : ℕ} {E : Fin n → Set Ω} (hE : ∀ i, MeasurableSet (E i)) (h : 
     (hp : ∀ i, μ.real (E i) = p) :
     μ.real {ω | n + 1 ≤ {i | ω ∈ E i}.ncard} = 0 := by
   rw [h.measureReal_le_ncard hE hp (n + 1), binomTail_of_lt (Nat.lt_succ_self n)]
+
+/-- Through its binomial law, the expected number of events that occur is `n p`. -/
+example {n : ℕ} {E : Fin n → Set Ω} {q : unitInterval} (hE : ∀ i, MeasurableSet (E i))
+    (h : iIndepSet E μ) (hq : ∀ i, μ.real (E i) = q) :
+    ∫ ω, ({i | ω ∈ E i}.ncard : ℝ) ∂μ = q * n := by
+  have hcast : HasLaw (Nat.cast : ℕ → ℝ) ((binomial n q).map Nat.cast) (binomial n q) :=
+    hasLaw_map (by fun_prop)
+  exact integral_of_hasLaw_binomial (hcast.comp (h.hasLaw_ncard_binomial hE hq))
 
 end MathlibExtTest.Probability.Distributions.BinomialEventCount

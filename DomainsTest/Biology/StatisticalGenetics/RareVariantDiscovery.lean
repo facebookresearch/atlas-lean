@@ -19,10 +19,11 @@ import Mathlib.Tactic.NormNum
 
 The hypotheses of `binomial_discovery_probability` are satisfiable for every number of samples
 and all probabilities `φ, c ∈ [0, 1]`: the coordinate events of a product of Bernoulli measures on
-`J → Bool` are mutually independent with prescribed probabilities. On that model, two samples with
-`φ = c = 1/2` detect a rare allele in a sample with probability `7/16`, discover it (`N = 1`) with
-probability `1 - (9/16) ^ 2 = 175/256`, and detect a rare genotype in a sample with probability
-`1/8`.
+`J → Bool` are mutually independent with prescribed probabilities. On that model with
+`φ = c = 1/2`, in two samples a rare allele is detected in a sample with probability `7/16`, in
+exactly one of the two samples with probability `63/128`, and is discovered (`N = 1`) with
+probability `1 - (9/16) ^ 2 = 175/256`; in three samples a rare genotype is detected in a sample
+with probability `1/8`.
 -/
 
 @[expose] public section
