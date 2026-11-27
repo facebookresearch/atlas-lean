@@ -1,6 +1,6 @@
 # Heyting arithmetic
 
-Intuitionistic first-order arithmetic: its definition, its disjunction and existence properties and Markov's principle for decidable formulas, Kreisel's theorem relating provable totality in Peano and Heyting arithmetic, and Kleene's realizability interpretation.
+Intuitionistic first-order arithmetic: its definition, its disjunction and existence properties and Markov's rule for decidable formulas, Kreisel's theorem relating provable totality in Peano and Heyting arithmetic, and Kleene's realizability interpretation.
 
 - [Heyting arithmetic](heyting-arithmetic.md)
 - [Basic properties of Heyting arithmetic](basic-properties-of-heyting-arithmetic.md)

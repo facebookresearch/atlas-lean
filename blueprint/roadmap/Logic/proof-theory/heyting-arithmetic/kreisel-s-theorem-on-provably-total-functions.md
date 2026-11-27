@@ -4,8 +4,9 @@ A recursive function is provably total in Peano arithmetic if and only if it is 
 $t_f$, $\mathrm{PA} \vdash \forall x\, \exists y\, t_f(x, y) = 0$ exactly when $\mathrm{HA} \vdash \forall x\, \exists y\, t_f(x, y) = 0$. The same holds for every sentence $\forall x\, \exists y\, R(x, y)$
 with $R$ primitive recursive, and in particular, taking $R$ to be $\bot$, HA is consistent if and only if PA is.
 
-The nontrivial direction applies the negative translation, which works for arithmetic, to obtain $\mathrm{HA} \vdash \neg\neg \exists y\, t_f(x, y) = 0$, and then Markov's principle for the
-decidable formula $t_f(x, y) = 0$.
+The nontrivial direction applies the negative translation, which works for arithmetic, to obtain $\mathrm{HA} \vdash \neg\neg \exists y\, t_f(x, y) = 0$ with $x$ free, and then
+removes the double negation uniformly in $x$, by Markov's rule with parameters for the decidable formula $t_f(x, y) = 0$. The closed Markov rule gives only
+$\mathrm{HA} \vdash \exists y\, t_f(\underline{n}, y) = 0$ for each numeral $n$ separately; the rule with parameters has a syntactic proof by Friedman's translation.
 
 ## Depends on
 
@@ -16,6 +17,12 @@ decidable formula $t_f(x, y) = 0$.
 
 - [Basic properties of Heyting arithmetic](basic-properties-of-heyting-arithmetic.md)
 - [Gödel–Gentzen negative translation](../goedel-gentzen-negative-translation.md)
+
+## Expansion
+
+This page becomes ready once:
+
+- Markov's rule with parameters for HA: if $\mathrm{HA} \vdash \forall x\, \neg\neg \exists y\, R(x, y)$ with $R$ primitive recursive, then $\mathrm{HA} \vdash \forall x\, \exists y\, R(x, y)$, proved by Friedman's translation (proof prerequisite; not yet stated)
 
 ## Sources
 

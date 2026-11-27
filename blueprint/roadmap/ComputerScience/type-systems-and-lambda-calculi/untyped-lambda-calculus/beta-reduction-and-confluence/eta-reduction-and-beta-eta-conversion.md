@@ -2,7 +2,7 @@
 
 A term $\lambda x.\, t\, x$ in which $x$ is not free in $t$ is an *η-redex*, with contractum $t$. *One-step η-reduction* $\to_\eta$ contracts one η-redex anywhere in a
 term (it is the least relation compatible with abstraction and application containing $\lambda x.\, t\, x \to_\eta t$ for $x$ not free in $t$), and one-step
-βη-reduction is the union of $\to_\beta$ and $\to_\eta$. *βη-reduction* $\twoheadrightarrow_{\beta\eta}$ is its reflexive–transitive closure, the least transitive relation compatible with
+βη-reduction is the union of $\to_\beta$ and $\to_\eta$. *βη-reduction* $\twoheadrightarrow_{\beta\eta}$ is its reflexive–transitive closure, the least reflexive and transitive relation compatible with
 the term formers that contains $(\lambda x.\, t)\, u \twoheadrightarrow_{\beta\eta} t[x := u]$ and $\lambda y.\, v\, y \twoheadrightarrow_{\beta\eta} v$ for $y$ not free in $v$, and *βη-conversion* $=_{\beta\eta}$ is the
 least equivalence relation containing it. A term is *βη-normal* if it contains no β- or η-redex.
 
