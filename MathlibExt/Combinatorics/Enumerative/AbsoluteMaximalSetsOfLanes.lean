@@ -15,8 +15,17 @@ import Mathlib.Data.Finset.Max
 /-!
 # Absolute maximal sets of lanes
 
-The number of absolute maximal sets of lanes equals the number of lonely singles partitions.
+The number of absolute maximal sets of lanes equals the number of lonely singles partitions,
+and the number of nonabsolute maximal sets equals the number of marriageable singles partitions.
 The correspondence joins each entry to the preceding index of its block in cyclic order.
+
+## References
+
+* Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and Catalan
+  Numbers*, Journal of Integer Sequences **28** (2025), Article 25.1.1, pp. 1–13, Section 2,
+  Lemma 16 and Corollaries 17 and 18. The nonabsolute count is Corollary 17.
+* Richard P. Stanley, *Catalan Numbers*, Cambridge University Press (2015), p. 28,
+  entries 59 and 61, cited by Rouyer and Ninet for the correspondence with noncrossing chords.
 -/
 
 namespace MetaMathlibExt
@@ -310,6 +319,23 @@ private theorem absolute_iff {P : SetPartition n} (hnc : IsNoncrossing P) :
   change IsMaximalSetOfLanes univ (exchange (lanes P) i j) ↔ _
   rw [← lanes_merge hij hi hj, maximal_iff, nc_merge]
 
+-- Restrict the partition–lane bijection to corresponding predicates on the two sides.
+private theorem card_lanes_filter {Q : SetPartition n → Prop} {R : Finset (Lane n) → Prop}
+    [DecidablePred Q] [DecidablePred R] (hmax : ∀ S, R S → IsMaximalSetOfLanes univ S)
+    (hfilter : ∀ P, IsNoncrossing P → (R (lanes P) ↔ Q P)) :
+    (univ.filter R).card = (univ.filter fun P : _root_.NoncrossingPartition n => Q P.val).card := by
+  symm
+  apply Finset.card_bij (fun P _ => lanes P.val)
+  · intro P hP
+    exact mem_filter.mpr ⟨mem_univ _, (hfilter P.val P.2).mpr (mem_filter.mp hP).2⟩
+  · intro P _ P' _ h
+    exact Subtype.ext (lanes_injective h)
+  · intro S hS
+    have h := (mem_filter.mp hS).2
+    have he := lanes_regions (hmax S h)
+    refine ⟨⟨regions S, nc_regions S⟩, mem_filter.mpr ⟨mem_univ _, ?_⟩, he⟩
+    exact (hfilter _ (nc_regions S)).mp (by rwa [he])
+
 end card_absolute_maximalSetsOfLanes
 
 open card_absolute_maximalSetsOfLanes in
@@ -324,19 +350,28 @@ Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Coroll
 public theorem card_absolute_maximalSetsOfLanes (n : ℕ) :
     (Finset.univ.filter fun S : Finset (Fin n × Fin n) => IsAbsoluteMaximalSetOfLanes S).card =
       lonelySinglesCount n := by
-  classical
   unfold lonelySinglesCount
-  symm
-  apply Finset.card_bij (fun P _ => lanes P.val)
-  · intro P hP
-    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, (absolute_iff P.2).mpr
-      (Finset.mem_filter.mp hP).2⟩
-  · intro P _ Q _ h
-    exact Subtype.ext (lanes_injective h)
-  · intro S hS
-    have h := (Finset.mem_filter.mp hS).2
-    have he := lanes_regions h.1
-    refine ⟨⟨regions S, nc_regions S⟩, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩, he⟩
-    exact (absolute_iff (nc_regions S)).mp (by rwa [he])
+  apply card_lanes_filter (Q := fun P => ¬ IsMarriageableSingles P)
+  · exact fun _ h => h.1
+  · exact fun _ hnc => absolute_iff hnc
+
+open card_absolute_maximalSetsOfLanes in
+/-- **Nonabsolute maximal sets of lanes are counted by marriageable singles partitions.** For
+every $n \ge 0$, the number of maximal sets of lanes of the standard road intersection of size $n$
+that are not absolute equals $M_n$, the number of noncrossing partitions of $\{0, \dots, n-1\}$
+that are marriageable singles partitions.
+
+Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
+Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Corollary 17
+(`jis-2025-25.1.1-cor-17`). -/
+public theorem card_nonabsolute_maximalSetsOfLanes (n : ℕ) :
+    (Finset.univ.filter fun S : Finset (Fin n × Fin n) =>
+      IsMaximalSetOfLanes Finset.univ S ∧ ¬ IsAbsoluteMaximalSetOfLanes S).card =
+      marriageableSinglesCount n := by
+  unfold marriageableSinglesCount
+  apply card_lanes_filter
+  · exact fun _ h => h.1
+  · intro P hnc
+    rw [and_iff_right (maximal hnc), absolute_iff hnc, not_not]
 
 end MetaMathlibExt
