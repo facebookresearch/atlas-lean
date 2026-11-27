@@ -32,8 +32,9 @@ integral is `parallelogramBoundaryIntegral`, the sum of four interval integrals 
 Main declarations:
 * `parallelogramPath z₀ ω₁ ω₂`: the boundary as a closed piecewise $C^1$ path
   (`isPiecewiseC1_parallelogramPath`), with its range (`mem_range_parallelogramPath_iff`), the
-  curve integral along it (`curveIntegral_parallelogramPath`,
-  `curveIntegral_parallelogramPath_of_continuousOn`), its inside
+  curve integral along it, which is `parallelogramBoundaryIntegral` when the four side integrands
+  are interval-integrable (`curveIntegral_parallelogramPath`), for instance for an integrand
+  continuous on the boundary (`curveIntegral_parallelogramPath_of_continuousOn`), its inside
   (`inside_range_parallelogramPath`) and its winding number (`windingNumber_parallelogramPath`);
 * `parallelogramBoundaryIntegral_inv_sub`: $\oint_{\partial D} dz/(z - w) = 2\pi i\,\sigma$ for
   $w \in D$;
@@ -253,9 +254,15 @@ private theorem pSub_ne_zero {ω₁ ω₂ : ℂ} (h : pdet ω₁ ω₂ ≠ 0) : 
 $z_0, \omega_1, \omega_2 \in \mathbb{C}$, the closed path
 $z_0 \to z_0 + \omega_1 \to z_0 + \omega_1 + \omega_2 \to z_0 + \omega_2 \to z_0$ made of four
 segments, each traversed in a quarter of the parameter interval. It is
-piecewise $C^1$ (`isPiecewiseC1_parallelogramPath`), its range is the boundary of the parallelogram
-(`mem_range_parallelogramPath_iff`), and the curve integral of $g(z)\,dz$ along it is
-`parallelogramBoundaryIntegral g z₀ ω₁ ω₂` (`curveIntegral_parallelogramPath`). -/
+piecewise $C^1$ (`isPiecewiseC1_parallelogramPath`) and its range is the boundary of the
+parallelogram (`mem_range_parallelogramPath_iff`). When the four side integrands
+$t \mapsto g(z_0 + t\omega_1)\,\omega_1$, $t \mapsto g(z_0 + \omega_1 + t\omega_2)\,\omega_2$,
+$t \mapsto g(z_0 + \omega_2 + t\omega_1)\,\omega_1$ and $t \mapsto g(z_0 + t\omega_2)\,\omega_2$ are
+interval-integrable on $[0, 1]$, the curve integral of $g(z)\,dz$ along it is
+`parallelogramBoundaryIntegral g z₀ ω₁ ω₂` (`curveIntegral_parallelogramPath`); this holds in
+particular when $g$ is continuous on the boundary
+(`curveIntegral_parallelogramPath_of_continuousOn`). Without integrability the two can differ, as
+each is a Bochner integral that is $0$ when its integrand is not integrable. -/
 noncomputable def parallelogramPath (z₀ ω₁ ω₂ : ℂ) : Path z₀ z₀ :=
   ((Path.segment z₀ (z₀ + ω₁)).trans (Path.segment (z₀ + ω₁) (z₀ + ω₁ + ω₂))).trans
     ((Path.segment (z₀ + ω₂) (z₀ + ω₁ + ω₂)).symm.trans (Path.segment z₀ (z₀ + ω₂)).symm)
