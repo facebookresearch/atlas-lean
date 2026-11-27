@@ -27,8 +27,8 @@ public import MathlibExt.RingTheory.Perfectoid.MaximalPeriodRing
 /-!
 # The transcendence of `log [p̃]`
 
-Let `u = log [p̃] = log([p̃]/p) ∈ B_dR^+` (`PadicComplexInt.logPTilde`), where `p̃ = p♭` is the
-element of the tilt of `𝓞_ℂ_[p]` with `p̃♯ = p`. We prove:
+Let `u = log [p̃] = log([p̃]/p) ∈ B_dR^+` (`PadicComplexInt.logPTilde`), where `p̃ = p♭` is a
+chosen element of the tilt of `𝓞_ℂ_[p]` with `p̃♯ = p`. We prove:
 
 * **Fontaine's Lemme 4.3.1**: `u` is not in the fraction field of `B_max` inside the field `B_dR`
   (`PadicComplexInt.mul_algebraMap_logPTilde_ne`): there are no `a ≠ 0` and `b` in `B_max` with
@@ -40,7 +40,7 @@ element of the tilt of `𝓞_ℂ_[p]` with `p̃♯ = p`. We prove:
   `B_max[X] → B_dR`, `X ↦ log [p̃]`, is injective (`PadicComplexInt.aeval_logPTilde_injective`).
   This is the argument of Fontaine's §4.3.3 (`PadicComplexInt.transcendental_of_forall_mul_ne`):
   `σ(u) = u + log [u_σ]` with `log [u_σ] ∈ B_max`, so if `P` is the minimal polynomial of `u` over
-  `B_max`, of degree `d ≥ 1` with coefficients `c_i`, then `c_{d-1} + d c_d u` is fixed by
+  `B_max`, of degree `d ≥ 1` with coefficients `c_i`, then `c_{d-1}/c_d + d u` is fixed by
   `Gal(ℚ̄_p/ℚ_p)`, hence lies in `(B_dR)^{Gal(ℚ̄_p/ℚ_p)} = ℚ_p`
   (`PadicComplexInt.exists_eq_algebraMap_of_forall_galoisBDeRham_eq_self`); then `u` would lie in
   the fraction field of `B_max`.
@@ -364,7 +364,8 @@ theorem mul_algebraMap_logPTilde_ne {a b : 𝔹} (ha : a ∈ bMax p) (hb : b ∈
 /-! ### The transcendence of `log [p̃]` -/
 
 /-- **The transcendence of `log [p̃]`** (Fontaine, *Le corps des périodes p-adiques*, Exposé II,
-§4.3.3): `log [p̃] = log([p̃]/p)` is transcendental over `B_max`, inside the field `B_dR`. -/
+§4.3.3, there over `B_cris`): `log [p̃] = log([p̃]/p)` is transcendental over `B_max`, inside the
+field `B_dR`. -/
 theorem transcendental_logPTilde : Transcendental (bMax p) (algebraMap 𝔹⁺ 𝔹 (logPTilde p)) :=
   transcendental_of_forall_mul_ne p (bMax p)
     (fun σ x hx => bMax_le_comap p σ hx)

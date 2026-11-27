@@ -23,8 +23,8 @@ public import MathlibExt.RingTheory.AdicCompletionMaps
 # Functoriality of tilts, `A_inf`, Fontaine's `θ`, `B_dR^+` and `B_dR`
 
 Let `p` be a prime and `f : R →+* S` a ring map. This file constructs the maps that `f` induces
-on the rings of Mathlib's `Mathlib.RingTheory.Perfectoid` files, and shows that Fontaine's `θ`
-commutes with them.
+on the rings of Mathlib's `Mathlib.RingTheory.Perfectoid` files (on `B_dR`, for `f` a ring
+isomorphism), and shows that Fontaine's `θ` commutes with them.
 
 * `ModP.map p f : R ⧸ p → S ⧸ p` is `Ideal.quotientMap`, and the map of tilts
   `PreTilt.map p f : R♭ → S♭` is `Perfection.map p (ModP.map p f)`. For `p`-adically complete

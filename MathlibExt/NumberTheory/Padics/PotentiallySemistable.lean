@@ -30,8 +30,8 @@ public import MathlibExt.RingTheory.Perfectoid.SemistablePeriodRingAbstract
 Let `V` be a `ℚ_[p]`-linear representation of `G = Gal(ℚ̄_p/ℚ_p)` and let `K ⊆ ℚ̄_p` be an
 extension of `ℚ_p`, with `G_K = Gal(ℚ̄_p/K)` (`IntermediateField.fixingSubgroup`). Following
 J.-M. Fontaine, *Représentations p-adiques semi-stables*, Astérisque 223 (1994), Exposé III,
-§5.1.2 p. 155 and §5.6.1 p. 166, with admissibility in the dimension form of Exposé III, §1.5.1
-p. 124 (`Representation.IsAdmissible`), `V` is
+§3.7 pp. 141–142, §5.1.4 p. 156 and §5.6.1 p. 166, with admissibility in the dimension form of
+Exposé III, §1.5.1 p. 124 (`Representation.IsAdmissible`), `V` is
 
 * **de Rham over `K`** if it is `B_dR`-admissible as a representation of `G_K`
   (`Representation.IsDeRham`);
@@ -48,8 +48,9 @@ Here `B_cris` and `B_st` are the Galois stable subrings `PadicComplexInt.bCris` 
 same conditions over the abstract rings are equivalent (`Representation.isCrystalline_iff`,
 `Representation.isSemistable_iff`, `Representation.isPotentiallySemistable_iff`), and since
 `PadicComplexInt.bSt` does not depend on the choices of generators
-(`PadicComplexInt.bSt_eq_adjoin_of_generators`), neither does potential semistability. The basis
-form of admissibility over `B_st` implies potential semistability
+(`PadicComplexInt.bSt_eq_adjoin_of_generators`), neither does potential semistability. For a
+finite-dimensional `V`, the basis form of admissibility over `B_st` for some finite extension `K`
+of `ℚ_p` inside `ℚ̄_p` implies potential semistability
 (`Representation.isPotentiallySemistable_of_hasFixedBasis`).
 
 The actions of `Gal(ℚ̄_p/ℚ_p)` on `B_dR`, `B_cris` and `B_st` are monoid homomorphisms
@@ -183,23 +184,24 @@ open PadicComplexInt
 
 variable {p : ℕ} [Fact p.Prime] {V : Type*} [AddCommGroup V] [Module ℚ_[p] V]
 
-/-- **`V` is de Rham over `K`** (Fontaine, Exposé III, §5.1.2 p. 155): `V` is `B_dR`-admissible as
-a representation of `G_K = Gal(ℚ̄_p/K)`, that is,
+/-- **`V` is de Rham over `K`** (Fontaine, Exposé III, §3.7 pp. 141–142): `V` is `B_dR`-admissible
+as a representation of `G_K = Gal(ℚ̄_p/K)`, that is, `V` is finite-dimensional and
 `dim_{B_dR^{G_K}} (B_dR ⊗_{ℚ_p} V)^{G_K} = dim_{ℚ_p} V`. -/
 def IsDeRham (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
     (K : IntermediateField ℚ_[p] (PadicAlgCl p)) : Prop :=
   ρ.IsAdmissible (galoisBDeRham p) K.fixingSubgroup
 
-/-- **`V` is crystalline over `K`** (Fontaine, Exposé III, §5.1.2 p. 155): `V` is
-`B_cris`-admissible as a representation of `G_K = Gal(ℚ̄_p/K)`, that is,
-`dim_{B_cris^{G_K}} (B_cris ⊗_{ℚ_p} V)^{G_K} = dim_{ℚ_p} V`, for `B_cris ⊆ B_dR`. -/
+/-- **`V` is crystalline over `K`** (Fontaine, Exposé III, §5.1.4 p. 156): `V` is
+`B_cris`-admissible as a representation of `G_K = Gal(ℚ̄_p/K)`, that is, `V` is finite-dimensional
+and `dim_{B_cris^{G_K}} (B_cris ⊗_{ℚ_p} V)^{G_K} = dim_{ℚ_p} V`, for `B_cris ⊆ B_dR`. -/
 def IsCrystalline (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
     (K : IntermediateField ℚ_[p] (PadicAlgCl p)) : Prop :=
   ρ.IsAdmissible (galoisBCris p) K.fixingSubgroup
 
-/-- **`V` is semistable over `K`** (Fontaine, Exposé III, §5.1.2 p. 155): `V` is
-`B_st`-admissible as a representation of `G_K = Gal(ℚ̄_p/K)`, that is,
-`dim_{B_st^{G_K}} (B_st ⊗_{ℚ_p} V)^{G_K} = dim_{ℚ_p} V`, for `B_st = B_cris[log [p̃]] ⊆ B_dR`. -/
+/-- **`V` is semistable over `K`** (Fontaine, Exposé III, §5.1.4 p. 156): `V` is
+`B_st`-admissible as a representation of `G_K = Gal(ℚ̄_p/K)`, that is, `V` is finite-dimensional
+and `dim_{B_st^{G_K}} (B_st ⊗_{ℚ_p} V)^{G_K} = dim_{ℚ_p} V`, for
+`B_st = B_cris[log [p̃]] ⊆ B_dR`. -/
 def IsSemistable (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
     (K : IntermediateField ℚ_[p] (PadicAlgCl p)) : Prop :=
   ρ.IsAdmissible (galoisBSt p) K.fixingSubgroup
@@ -226,7 +228,7 @@ theorem isSemistable_iff (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) 
     (fun σ x => Subtype.ext (BSt.coe_equivBSt_galois p σ x)) K.fixingSubgroup).symm
 
 /-- **Potential semistability over the abstract `B_st`**: `V` is potentially semistable if and
-only if, for some finite extension `K` of `ℚ_p` inside `ℚ̄_p`,
+only if `V` is finite-dimensional and, for some finite extension `K` of `ℚ_p` inside `ℚ̄_p`,
 `dim_{B_st^{G_K}} (B_st ⊗_{ℚ_p} V)^{G_K} = dim_{ℚ_p} V` for the abstract ring `B_st = B_cris[X]`
 with `σ(X) = X + log [u_σ]`. -/
 theorem isPotentiallySemistable_iff (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V) :
@@ -234,9 +236,9 @@ theorem isPotentiallySemistable_iff (ρ : Representation ℚ_[p] Gal(PadicAlgCl 
       FiniteDimensional ℚ_[p] K ∧ ρ.IsAdmissible (BSt.galois p) K.fixingSubgroup :=
   exists_congr fun K => and_congr_right fun _ => ρ.isSemistable_iff K
 
-/-- **The basis form of potential semistability implies the dimension form**: if, for some finite
-extension `K` of `ℚ_p` inside `ℚ̄_p`, `B_st ⊗_{ℚ_p} V` has a `B_st`-basis of `G_K`-invariant
-vectors, then `V` is potentially semistable. -/
+/-- **The basis form of potential semistability implies the dimension form**: for a
+finite-dimensional `V`, if, for some finite extension `K` of `ℚ_p` inside `ℚ̄_p`, `B_st ⊗_{ℚ_p} V`
+has a `B_st`-basis of `G_K`-invariant vectors, then `V` is potentially semistable. -/
 theorem isPotentiallySemistable_of_hasFixedBasis [FiniteDimensional ℚ_[p] V]
     (ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V)
     (h : ∃ K : IntermediateField ℚ_[p] (PadicAlgCl p),

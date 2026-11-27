@@ -45,8 +45,8 @@ This file sets up the objects:
 
 We show that a generator of `ker θ` is a unit multiple of `ξ`, that it is a non-zero-divisor
 modulo every `p ^ k`, and that every element of `A_inf[w^n/n!]` is a finite sum
-`Σ_{n<N} aₙ w^n/n!` with `aₙ ∈ A_inf` (`PadicComplexInt.exists_dividedPowerSum_of_mem`), as in
-Fontaine, *op. cit.*, §4.1.2 p. 83.
+`Σ_{n<N} aₙ w^n/n!` with `aₙ ∈ A_inf` (`PadicComplexInt.exists_dividedPowerSum_of_mem`), the
+finite analogue of the description of `A_cris` in Fontaine, *op. cit.*, §4.1.2 p. 83.
 -/
 
 @[expose] public noncomputable section
