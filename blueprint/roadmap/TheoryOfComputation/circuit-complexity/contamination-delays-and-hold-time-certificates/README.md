@@ -18,7 +18,7 @@
 
 ## Line earliest: no-transition constants and min over fan-in
 
-- [No-transition constants](earliest-of-arity-eq-zero.md)
+- [Computed earliest change of a gate with no inputs](earliest-of-arity-eq-zero.md)
 - [A gate's earliest change is at most its delay plus any input's](earliest-le-add-wire-earliest.md)
 - [A common lower bound on the inputs bounds a gate's earliest change](add-le-earliest-of-forall-le.md)
 

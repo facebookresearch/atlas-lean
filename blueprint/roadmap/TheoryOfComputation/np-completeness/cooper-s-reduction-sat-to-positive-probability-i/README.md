@@ -58,7 +58,7 @@
 - [The value of a node](eval.md)
 - [The built network evaluates the formula](eval-coop-st-acc.md)
 - [Shape of reachable construction states](well-shaped.md)
-- [Looking up a registered variable](coop-lookup-of-mem-fst-nodup.md)
+- [Lookup in a list of pairs with distinct keys](../graph-covering-and-domination/clique-independent-set-and-vertex-cover/part-03/lookup-of-mem.md)
 - [Finding the entry for a registered node](coop-find-of-mem-snd-nodup.md)
 - [A clause with a true literal is true](clause-val-true-of-mem.md)
 - [A true clause has a true literal](exists-mem-of-clause-val-true.md)
