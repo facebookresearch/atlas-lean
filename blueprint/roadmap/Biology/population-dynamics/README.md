@@ -28,4 +28,3 @@ Differential-equation and matrix models of population growth, structure, species
 - [Phase-field models of tumor growth](phase-field-models-of-tumor-growth/README.md)
 - [Phenotype-structured population models](phenotype-structured-population-models/README.md)
 - [Evolution of cooperation](evolution-of-cooperation/README.md)
-- [Redox threshold model of the Great Oxidation Event](redox-threshold-model-of-the-great-oxidation-event.md)
