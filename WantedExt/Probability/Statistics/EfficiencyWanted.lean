@@ -15,23 +15,19 @@ public import Mathlib.Topology.ContinuousMap.Bounded.Basic
 public import MathlibExt.Probability.Statistics.HajekConvolution
 
 /-!
-# Asymptotic efficiency: Hájek's convolution theorem and adaptive estimation
+# Asymptotic efficiency: adaptive estimation
 
-Two results of the asymptotic theory of efficient estimation, as P. J. Bickel reviews it in "On
+A result of the asymptotic theory of efficient estimation, as P. J. Bickel reviews it in "On
 adaptive estimation" (1980 Wald Memorial Lectures), *Ann. Statist.* 10 (1982) 647–671,
 Section 2.
 
-* `hajek_convolution`: in a locally asymptotically normal (LAN) sequence of experiments with a
-  one-dimensional local parameter `h` and information `I > 0`, the limit law `L` of every
-  regular estimator sequence is a convolution `N(0, I⁻¹) ∗ M`; so `N(0, I⁻¹)` is the best
-  possible limit (J. Hájek, "A characterization of limiting distributions of regular
-  estimates", *Z. Wahrscheinlichkeitstheorie verw. Geb.* 14 (1970) 323–330).
 * `exists_adaptive_location_estimator`: in the semiparametric model of a centre of symmetry
   with unknown symmetric shape `G`, the information bound `I(G)⁻¹` of the model with `G` known
   is attained without knowing `G` (Bickel 1982, Example 1 and Theorem 2.2, due to Beran (1974)
   and Stone (1975)).
 
-LAN is stated through log-likelihood ratios `log dP_{n,h}/dP_{n,0}` (Mathlib's `llr`).
+Hájek's convolution theorem `hajek_convolution` is re-exported here, under its original name,
+from `MathlibExt.Probability.Statistics.HajekConvolution`.
 -/
 
 @[expose] public section

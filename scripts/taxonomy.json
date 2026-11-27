@@ -14435,7 +14435,6 @@
   "MathlibExt/Probability/Statistics/GaussianGraphicalModel": {"to": "Probability/linear-models-multivariate", "title": "Gaussian graphical models"},
   "MathlibExt/Probability/Statistics/GeneralizedLeastSquares": {"to": "Probability/linear-models-multivariate", "title": "Generalized least squares"},
   "MathlibExt/Probability/Statistics/GlivenkoCantelli": {"to": "Probability/nonparametric-survival", "title": "Glivenko–Cantelli theorem"},
-  "MathlibExt/Probability/Statistics/HajekConvolution": {"to": "Probability/statistical-estimation", "title": "Asymptotic efficiency and adaptive estimation"},
   "MathlibExt/Probability/Statistics/JamesSteinPlus": {"to": "Probability/statistical-estimation", "title": "Stein's lemma and James–Stein estimation"},
   "MathlibExt/Probability/Statistics/KernelPCA": {"to": "Probability/linear-models-multivariate", "title": "Kernel principal component analysis"},
   "MathlibExt/Probability/Statistics/LassoRestrictedEigenvalue": {"to": "Probability/linear-models-multivariate", "title": "Lasso error bounds under restricted eigenvalues"},

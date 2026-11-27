@@ -23,8 +23,13 @@ import MathlibExt.Probability.Statistics.Contiguity
 /-!
 # Hájek's convolution theorem
 
-The limit law of a regular estimator in a one-dimensional locally asymptotically normal
-experiment is a convolution with the Gaussian law of variance equal to the inverse information.
+`hajek_convolution`: in a locally asymptotically normal (LAN) sequence of experiments with a
+one-dimensional local parameter `h` and information `I > 0`, the limit law `L` of every regular
+estimator sequence is a convolution `N(0, I⁻¹) ∗ M`; so `N(0, I⁻¹)` is the best possible limit
+(J. Hájek, "A characterization of limiting distributions of regular estimates",
+*Z. Wahrscheinlichkeitstheorie verw. Geb.* 14 (1970) 323–330).
+
+LAN is stated through log-likelihood ratios `log dP_{n,h}/dP_{n,0}` (Mathlib's `llr`).
 -/
 
 public section
