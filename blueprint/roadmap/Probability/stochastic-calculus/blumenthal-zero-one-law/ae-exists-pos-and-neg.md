@@ -10,7 +10,7 @@ Blumenthal's zero–one law.
 - [Blumenthal zero-one law](zero-one-natural-germ.md): the event "positive at times $1/(m+1)$
   for infinitely many $m$" lies in the germ $\sigma$-algebra at time $0$, so it has probability $0$
   or $1$.
-- [Half-line mass of a centered Gaussian](gaussian-real-ioi-zero.md): $P(B_t > 0) = 1/2$ for
+- [Half-line mass of a centered Gaussian](../../distributions/continuous/gaussian-real-ioi-zero.md): $P(B_t > 0) = 1/2$ for
   every $t > 0$, so that event has probability at least $1/2$, hence $1$.
 - [Increments are independent of the past](../quadratic-variation-of-brownian-motion/indep-natural.md):
   a Brownian motion satisfies the independent-increments hypothesis of the zero-one law for its

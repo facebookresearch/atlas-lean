@@ -28,10 +28,11 @@ lemma K1_strong : (⊤ : SimpleGraph (Fin 1)).IsStronglyColorable 1 := by
 
 -- Combinatorics 499: Strong Chromatic Number
 
-lemma sChi_le_card {V} [Fintype V] [DecidableEq V]
+lemma sChi_le_card {V} [Fintype V] [DecidableEq V] [Nonempty V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
    G.sChi ≤ Fintype.card V :=
-  Nat.sInf_le fun _ _ => ⟨⟨Fintype.equivFin V, fun h => (Fintype.equivFin V).injective.ne h.ne⟩, by simp⟩
+  Nat.sInf_le ⟨Fintype.card_pos, fun _ _ =>
+    ⟨⟨Fintype.equivFin V, fun h => (Fintype.equivFin V).injective.ne h.ne⟩, by simp⟩⟩
 
 end MathlibExtTest.Combinatorics.SimpleGraph.StrongChromaticNumber
 
