@@ -46,7 +46,10 @@ Bertrand's postulate gives a prime $p$ with $6d < p \le 12d$.
   a product of nonzero integers (products of values at the roots of $P$ are resultants), so it is
   at least $p^{2d}$.
 * Hadamard's inequality for the Vandermonde matrix of the roots of $F$ bounds the same product
-  by $(2d)^{2d} M(F)^{2(2d-1)}$, where $M(F) = M(\alpha)^{p+1}$.
+  by $(2d)^{2d} M(F)^{2(2d-1)}$, where $M(F) = M(\alpha)^{p+1}$. This is Mahler's discriminant
+  inequality $|D(F)| \le m^m M(F)^{2m-2}$ with $m = \deg F$ (K. Mahler, "An inequality for the
+  discriminant of a polynomial", Michigan Math. J. 11 (1964), 257–262, Theorem 1, p. 261), which
+  Mahler also derives from Hadamard's inequality (his Lemma 1).
 
 Comparing the two bounds gives $9^d < M(\alpha)^{(p+1) \cdot 2(2d-1)}$, which is incompatible
 with $M(\alpha) \le 1 + \frac{1}{10000\, d \log d}$.
@@ -160,32 +163,15 @@ private theorem prod_norm_derivative_le (Z : Multiset ℂ) (hZ : Z.Nodup) :
 
 /-! ### Products over roots are integers -/
 
-/-- The resultant of `∏ a ∈ S, (X - C a)` and `g` is the product of the values of `g` on `S`. -/
-private theorem resultant_multiset_prod_X_sub_C (S : Multiset ℂ) (g : ℂ[X]) (n : ℕ)
-    (hn : g.natDegree ≤ n) :
-    resultant (S.map fun a => X - C a).prod g S.card n = (S.map fun a => g.eval a).prod := by
-  induction S using Multiset.induction_on with
-  | empty => simp
-  | cons a S ih =>
-    have h1 : (X - C a).natDegree = 1 := natDegree_X_sub_C a
-    have h2 : ((S.map fun a => X - C a).prod).natDegree = S.card :=
-      natDegree_multiset_prod_X_sub_C_eq_card S
-    have hres := resultant_mul_left (X - C a) (S.map fun a => X - C a).prod g n hn
-    rw [h1, h2, resultant_X_sub_C_left _ _ _ hn, ih] at hres
-    rw [Multiset.map_cons, Multiset.prod_cons, Multiset.card_cons, Multiset.map_cons,
-      Multiset.prod_cons, Nat.add_comm, hres]
-
 /-- For a monic integer polynomial `P` and an integer polynomial `g`, the product of the values of
 `g` at the complex roots of `P` is the integer `resultant P g`. -/
 private theorem prod_roots_eval_eq_resultant (P g : ℤ[X]) (hP : P.Monic) :
     ((P.map (Int.castRingHom ℂ)).roots.map fun x => (g.map (Int.castRingHom ℂ)).eval x).prod =
       ((resultant P g P.natDegree g.natDegree : ℤ) : ℂ) := by
-  have hsplit := IsAlgClosed.splits (P.map (Int.castRingHom ℂ))
-  have hcard : (P.map (Int.castRingHom ℂ)).roots.card = P.natDegree := by
-    rw [← hsplit.natDegree_eq_card_roots, hP.natDegree_map]
-  rw [← resultant_multiset_prod_X_sub_C _ _ g.natDegree natDegree_map_le,
-    ← hsplit.eq_prod_roots_of_monic (hP.map _), hcard, resultant_map_map]
-  rfl
+  have h := resultant_eq_prod_eval (P.map (Int.castRingHom ℂ)) (g.map (Int.castRingHom ℂ))
+    g.natDegree natDegree_map_le (IsAlgClosed.splits _)
+  rw [(hP.map _).leadingCoeff, one_pow, one_mul, hP.natDegree_map, resultant_map_map] at h
+  exact h.symm
 
 /-- A nonzero product of values of an integer polynomial at the complex roots of a monic integer
 polynomial has absolute value at least `1`. -/
