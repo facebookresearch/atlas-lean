@@ -24,7 +24,7 @@ The prefactor differs from Haldane's $2s$ because a mutation arising during expo
 
 ## Proof depends on
 
-- [Haldane's approximation $\pi(s) \approx 2s$](../../haldane-s-survival-probability-of-a-beneficial-m/tendsto-survival-prob-div.md)
+- [Haldane's approximation $\pi(s) \approx 2s$](../../../haldane-s-survival-probability-of-a-beneficial-m/tendsto-survival-prob-div.md)
 
 ## Sources
 

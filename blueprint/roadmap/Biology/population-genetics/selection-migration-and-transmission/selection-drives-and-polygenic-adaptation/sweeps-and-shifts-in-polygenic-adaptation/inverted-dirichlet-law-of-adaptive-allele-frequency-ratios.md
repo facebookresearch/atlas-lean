@@ -18,15 +18,15 @@ with $B[\Theta] = \prod_{j=1}^{L}\Gamma(\Theta_j)\big/\Gamma\big(\sum_{j=1}^{L}\
 
 ## Proof sketch
 
-The transition rule is a multi-colour Pólya urn with immigration: colour $i$ is drawn with probability proportional to its count plus $\Theta_i$, as in [Hoppe's urn](../../ewens-sampling-formula-and-the-chinese-restauran/hoppe-law.md). By de Finetti, the vector of proportions $k_i/\sum_j k_j$ converges almost surely to a Dirichlet$(\Theta_1, \dots, \Theta_L)$ random vector $(D_1, \dots, D_L)$. The ratios $x_i = D_i/D_1$ are then ratios of independent gamma variables $G_i/G_1$ with $G_i \sim \Gamma(\Theta_i, 1)$; changing variables from $(G_1, \dots, G_L)$ to $(G_1, x_2, \dots, x_L)$ and integrating out $G_1$ gives $\int_0^\infty G_1^{\sum\Theta - 1}e^{-G_1(1 + \sum x_i)}\,dG_1 = \Gamma(\sum\Theta)(1 + \sum x_i)^{-\sum\Theta}$, which yields the density above. The establishment probability $2s_b$ of each new mutant is Haldane's branching-process approximation; it cancels from the urn probabilities.
+The transition rule is a multi-colour Pólya urn with immigration: colour $i$ is drawn with probability proportional to its count plus $\Theta_i$, as in [Hoppe's urn](../../../ewens-sampling-formula-and-the-chinese-restauran/hoppe-law.md). By de Finetti, the vector of proportions $k_i/\sum_j k_j$ converges almost surely to a Dirichlet$(\Theta_1, \dots, \Theta_L)$ random vector $(D_1, \dots, D_L)$. The ratios $x_i = D_i/D_1$ are then ratios of independent gamma variables $G_i/G_1$ with $G_i \sim \Gamma(\Theta_i, 1)$; changing variables from $(G_1, \dots, G_L)$ to $(G_1, x_2, \dots, x_L)$ and integrating out $G_1$ gives $\int_0^\infty G_1^{\sum\Theta - 1}e^{-G_1(1 + \sum x_i)}\,dG_1 = \Gamma(\sum\Theta)(1 + \sum x_i)^{-\sum\Theta}$, which yields the density above. The establishment probability $2s_b$ of each new mutant is Haldane's branching-process approximation; it cancels from the urn probabilities.
 
 ## Depends on
 
-- [Haldane's approximation $\pi(s) \approx 2s$](../../haldane-s-survival-probability-of-a-beneficial-m/tendsto-survival-prob-div.md)
+- [Haldane's approximation $\pi(s) \approx 2s$](../../../haldane-s-survival-probability-of-a-beneficial-m/tendsto-survival-prob-div.md)
 
 ## Proof depends on
 
-- [Law of the allelic partition from Hoppe's urn](../../ewens-sampling-formula-and-the-chinese-restauran/hoppe-law.md)
+- [Law of the allelic partition from Hoppe's urn](../../../ewens-sampling-formula-and-the-chinese-restauran/hoppe-law.md)
 
 ## Sources
 

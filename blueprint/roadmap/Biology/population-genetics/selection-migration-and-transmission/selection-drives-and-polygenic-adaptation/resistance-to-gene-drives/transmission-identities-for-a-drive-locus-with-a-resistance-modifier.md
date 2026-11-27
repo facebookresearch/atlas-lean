@@ -24,7 +24,7 @@ Write the gamete output of each genotype class. Only drive heterozygotes are dis
 
 ## Depends on
 
-- [Linkage disequilibrium of a two-locus gamete law](../../linkage-disequilibrium-and-haldane-s-map-functio/linkage-diseq.md)
+- [Linkage disequilibrium of a two-locus gamete law](../../../linkage-disequilibrium-and-haldane-s-map-functio/linkage-diseq.md)
 
 ## Sources
 
