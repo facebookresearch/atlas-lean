@@ -35,9 +35,33 @@
 
 - [RSA inversion versus factoring](rsa-inversion-versus-factoring.md)
 
-## Trapdoor functions
+## Key-indexed trapdoor functions
 
+The variable-time definitions use [exact fair-bit sampling with a running-time tail](../../security-games/fair-bit-sampling-with-a-running-time-tail/README.md).
+
+- [Index](index-2.md)
+- [Data of a key-indexed trapdoor family](family.md)
+- [Generated](generated.md)
+- [Trapdoor correctness at matching keys](correct-at.md)
+- [Finite-domain inverse laws](bij-on-and-right-inv-on.md)
+- [Deterministic operations of a trapdoor family](deterministic-core.md)
+- [Variable-time trapdoor function scheme](variable-time-trapdoor-function-scheme.md)
 - [Trapdoor permutations](trapdoor-permutations.md)
+- [One-way experiment on a public transcript](transcript-game.md)
+- [One-wayness against variable-time public-transcript algorithms](is-transcript-one-way.md)
+- [One-wayness against efficient interactive adversaries](interactive-one-wayness.md)
+
+## Bounded-coin schemes
+
+- [Bounded-coin trapdoor function scheme](is-bounded-coin-function-scheme.md)
+- [Nonempty bounded-coin domains](bounded-coin-domain-nonempty.md)
+- [A restriction of exact bounded-coin sampling](bounded-coin-domain-cardinality.md)
+- [Bounded-coin trapdoor permutation scheme](is-bounded-coin-permutation-scheme.md)
+- [The bounded-coin one-way experiment](bounded-coin-one-way-game.md)
+- [Bounded-coin one-wayness](is-bounded-coin-one-way.md)
+
+## Further hardness assumptions and constructions
+
 - [Learning with errors](learning-with-errors.md)
 - [Black-box constructions and oracle separations](black-box-constructions-and-oracle-separations.md)
 - [Regev's public-key encryption from learning with errors](regev-s-public-key-encryption-from-learning.md)

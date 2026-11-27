@@ -72,8 +72,8 @@ def WellFormed (i : KRelevancyInstance) : Prop :=
     (i.2.1.map fun xb => (xb.1.map toInt, toInt xb.2)).Nodup ∧
     0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
 
-/-- A set `X'` of at most `K` constraints whose solutions over `ℚ^m` all satisfy every
-constraint of `X`. -/
+/-- A subset `X'` of at most `K` of the listed constraints (chosen by position) whose solutions
+over `ℚ^m` all satisfy every constraint of `X`. -/
 def KRelevancyFeasible (i : KRelevancyInstance) : Prop :=
   ∃ S : Finset (Fin i.2.1.length), S.card ≤ i.2.2 ∧
     ∀ y : Fin i.1 → ℚ, (∀ k ∈ S, Satisfies (i.2.1.get k) y) → ∀ k, Satisfies (i.2.1.get k) y
