@@ -4,6 +4,7 @@ Graphs drawn in the plane and on the square lattice, crossing numbers, Euler's f
 
 - [Discrete Gauss–Bonnet formula for polyominoes](discrete-gauss-bonnet-formula-for-polyominoes/README.md)
 - [Euler's formula and cycle rank](euler-s-formula-and-cycle-rank/README.md)
+- [Euler's formula for connected plane graphs](euler-s-formula-for-connected-plane-graphs.md)
 - [Graph minors](graph-minors/README.md)
 - [Tree-width](tree-width/README.md)
 - [Rank-width and vertex-minors](rank-width-and-vertex-minors/README.md)

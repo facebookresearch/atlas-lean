@@ -118,7 +118,7 @@ noncomputable def intervene (k : Fin n) (a : Ω k) : KernelCBN n Ω where
   pa j := if j = k then ∅ else c.pa j
   kernel j := if h : j = k then Kernel.const _ (Measure.dirac (h.symm ▸ a))
     else (c.kernel j).comap
-      (fun z (i : c.pa j) => z ⟨i.1, by rw [if_neg h]; exact i.2⟩) (by measurability)
+      (fun z (i : c.pa j) => z ⟨i.1, by rw [ite_eq_right h]; exact i.2⟩) (by measurability)
   isMarkovKernel j := by
     split
     · infer_instance

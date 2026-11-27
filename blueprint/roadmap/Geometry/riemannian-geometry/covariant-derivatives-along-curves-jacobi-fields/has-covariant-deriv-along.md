@@ -1,0 +1,3 @@
+# Has Covariant Deriv Along
+
+Let $M$ be a finite-dimensional $C^2$ manifold with a $C^1$ Riemannian metric $g$, let $u(s) = (\gamma(s), v(s))$ be a curve in the tangent bundle, and let $V$, $V'$ be vector fields along $\gamma$. Then $V'$ is the covariant derivative $D_t V$ of $V$ at the single time $t$ when two conditions hold at $t$: the base curve has derivative $\gamma'(t) = v(t)$ at $t$, and for every vector field $W$ differentiable at $\gamma(t)$ the metric-compatibility identity $\frac{d}{dt} g(V, W \circ \gamma) = g(V', W) + g(V, \nabla_{\gamma'} W)$ holds at $t$, where $\nabla$ is the Levi-Civita connection. Nothing is assumed at other times. These conditions determine $V'(t)$ uniquely.
