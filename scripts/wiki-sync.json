@@ -17319,6 +17319,8 @@
 "Cslib.Algorithms.Lean.takeSerial?_size": "468618c93653054a",
 "Cslib.Algorithms.Lean.zero_le_listMax": "a07e9abe860005b6",
 "Cslib.Algorithms.Lean.zero_le_suffixMax": "fb64e4992dd684c2",
+"Cslib.Algorithms.Networking.DistanceVector.count_to_infinity": "98b5a20bef185446",
+"Cslib.Algorithms.Networking.DistanceVector.step": "aaba8b9ea3afb278",
 "Cslib.Algorithms.NumericalLinearAlgebra.CommunicationLowerBound.card_div_sub_le_words": "d68e7c159a267809",
 "Cslib.Algorithms.NumericalLinearAlgebra.CommunicationLowerBound.card_le_of_card_image_le": "cd5d47303f143ac5",
 "Cslib.Algorithms.NumericalLinearAlgebra.CommunicationLowerBound.exists_card_div_sub_le_words_of_parallel": "00709d15c2bbd6db",

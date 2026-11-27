@@ -1254,6 +1254,7 @@
   "CSLibExt/Algorithms/Lean/StringMatching/Naive": {"to": "ComputerScience/string-algorithms", "title": "Naive string matching"},
   "CSLibExt/Algorithms/Lean/StringMatching/RabinKarp": {"to": "ComputerScience/string-algorithms", "title": "Rabin–Karp algorithm"},
   "CSLibExt/Algorithms/Lean/StringMatching/ZAlgorithm": {"to": "ComputerScience/string-algorithms", "title": "Z algorithm"},
+  "CSLibExt/Algorithms/Networking/DistanceVector": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Routing protocols"},
   "CSLibExt/Algorithms/NumericalLinearAlgebra/CommunicationLowerBound": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Communication lower bounds"},
   "CSLibExt/Algorithms/NumericalLinearAlgebra/GMRES": {"to": "LinearAlgebra/matrix-decompositions", "title": "GMRES"},
   "CSLibExt/Algorithms/NumericalLinearAlgebra/LeastSquaresQR": {"to": "LinearAlgebra/matrix-decompositions", "title": "Linear least squares"},
