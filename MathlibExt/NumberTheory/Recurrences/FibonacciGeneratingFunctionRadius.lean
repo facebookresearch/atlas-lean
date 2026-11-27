@@ -30,7 +30,7 @@ next. This decreasing map alternates the ratios across the fixed point.
   Theorems 1.1 and 1.4 and Corollary 1.6.
 * Andrew Bulawa and Whan Ki Lee, *Integer Values of Generating Functions for the Fibonacci and
   Related Sequences*, The Fibonacci Quarterly 55(1) (2017), 74–81, Theorem 1.1.
-* Daniel S. Hong, *When Is the Generating Function of the Fibonacci Numbers an Integer?*,
+* Dae S. Hong, *When Is the Generating Function of the Fibonacci Numbers an Integer?*,
   The College Mathematics Journal 46(2) (2015), 110–112, for the original Fibonacci question.
 * Prapanpong Pongsriiam, *Integral Values of the Generating Functions of Fibonacci and Lucas
   Numbers*, The College Mathematics Journal 48(2) (2017), 97–101, for the independent result
