@@ -14,6 +14,10 @@ and $[a,b] \times [c,d] = [\min P, \max P]$ for the set $P = \{ac, ad, bc, bd\}$
 
 - [Interval](interval.md)
 
+## Proof depends on
+
+- [The continuous image of a compact space is compact](../../../Topology/compactness/compact-image.md)
+
 ## Sources
 
 - T. Hickey, Q. Ju and M. H. van Emden, "Interval arithmetic: from principles to implementation", *Journal of the ACM* 48(5):1038–1068, 2001, Section 2.1, Definition 3 (sum, difference and product of real intervals as sets) and Definition 4 (quotient, which for $0 \notin Y$ is the set above); Section 2, Theorem 2 (for nonempty bounded intervals the sum, difference, product, and quotient by an interval not containing $0$, are nonempty bounded intervals); Section 4, Theorem 5 (the product as $[\min P, \max P]$) and the formulas for interval addition and subtraction of bounded intervals in Section 4.5. <https://doi.org/10.1145/502102.502106>

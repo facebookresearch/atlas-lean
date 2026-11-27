@@ -22,4 +22,4 @@ So for a [nonsingular M-matrix](../../../../LinearAlgebra/special-matrices/m-mat
 
 ## Sources
 
-- Y. Saad, *Iterative Methods for Sparse Linear Systems*, 2nd edition, SIAM, 2003, Section 4.2.2, Theorem 4.4 (Varga) and its proof through (4.35). <https://www-users.cse.umn.edu/~saad/IterMethBook_2ndEd.pdf>
+- Y. Saad, *Iterative Methods for Sparse Linear Systems*, 2nd edition, SIAM, 2003, Section 4.2.2, Theorem 4.4 (Varga) and its proof through (4.35) and (4.36), the latter giving $A^{-1}N = (I - G)^{-1} G$ in the converse. <https://www-users.cse.umn.edu/~saad/IterMethBook_2ndEd.pdf>

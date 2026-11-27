@@ -14,6 +14,7 @@ whose components are in order of increasing magnitude (except that any $h_i$ may
 ## Proof depends on
 
 - [The roundoff error of a floating-point sum is small and representable](roundoff-error-of-a-sum-is-small-and-representable.md)
+- [Error-free transformation of a sum](../error-free-transformation-of-a-sum.md)
 
 ## Sources
 

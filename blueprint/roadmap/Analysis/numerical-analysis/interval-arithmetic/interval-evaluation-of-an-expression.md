@@ -6,6 +6,7 @@ Let $e$ be an arithmetic expression built from variables $x_1, \dots, x_n$, each
 
 - [Interval arithmetic operations](interval-arithmetic-operations.md)
 - [Interval](interval.md)
+- [Arithmetic expressions](../../not-yet-classified/interval-expressions/expr.md)
 
 ## Sources
 

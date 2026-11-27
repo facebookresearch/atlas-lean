@@ -18,4 +18,4 @@ The first characteristic polynomial $\rho(z) = z^2 - z = z(z - 1)$ of the two-st
 
 ## Sources
 
-- E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 3.2, Theorem 6 (zero-stability and the root condition) and Example 4(b) (Adams methods are zero-stable because their first characteristic polynomial has roots $1$ and $0$). <https://people.maths.ox.ac.uk/suli/nsodes.pdf>
+- E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 3.2, Theorem 6 (zero-stability and the root condition), and Section 3.7.2, the two-step Adams–Bashforth row, whose first characteristic polynomial is $z(z - 1)$. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>

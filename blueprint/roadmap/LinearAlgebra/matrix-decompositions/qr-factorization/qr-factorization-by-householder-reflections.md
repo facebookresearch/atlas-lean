@@ -10,6 +10,10 @@ is upper triangular. So $A = QR$ with the orthogonal $m \times m$ matrix $Q = H_
 
 - [A Householder reflection maps a vector to a multiple of the first unit vector](householder-reflection-maps-a-vector-to-a-multiple-of-e1.md)
 
+## Proof depends on
+
+- [A Householder reflection maps a vector to a multiple of the first unit vector](householder-reflection-maps-a-vector-to-a-multiple-of-e1.md)
+
 ## Related topics
 
 - [Existence of the reduced QR factorization](exists-qr.md): the Gram–Schmidt construction for matrices with independent columns.

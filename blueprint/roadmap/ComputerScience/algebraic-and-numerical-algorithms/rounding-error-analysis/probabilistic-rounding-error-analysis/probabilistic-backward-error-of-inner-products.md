@@ -9,13 +9,16 @@ $$\hat y = (a + \Delta a)^T b = a^T (b + \Delta b), \qquad |\Delta a| \le \tilde
 ## Depends on
 
 - [Probabilistic model of rounding errors](probabilistic-model-of-rounding-errors.md)
-- [Floating-point dot product](../dot-fl.md)
 - [Probabilistic product bound under mean independence](probabilistic-product-bound-under-mean-independence.md)
 - [The constant γₙ of rounding error analysis](../gamma.md)
 
 ## Proof depends on
 
 - [Probabilistic product bound under mean independence](probabilistic-product-bound-under-mean-independence.md)
+
+## Related topics
+
+- [Floating-point dot product](../dot-fl.md): the left-to-right recursion with ties to even, one instance of the summation orders allowed here.
 
 ## Sources
 

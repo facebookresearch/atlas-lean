@@ -9,6 +9,7 @@ so the iteration converges from every starting vector, with factor $(\kappa - 1)
 ## Depends on
 
 - [Steepest descent iteration](steepest-descent-iteration.md)
+- [Spectral condition number of a positive definite matrix](../../../../LinearAlgebra/matrix-decompositions/conjugate-gradient-method/cond-num.md)
 
 ## Proof depends on
 

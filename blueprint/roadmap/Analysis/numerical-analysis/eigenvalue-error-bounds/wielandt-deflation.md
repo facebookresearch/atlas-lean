@@ -15,6 +15,7 @@ With $\sigma = \lambda_1$ (Hotelling's choice with $v = u_1/\|u_1\|_2^2$ for a H
 ## Proof depends on
 
 - [Matrix determinant lemma](../../../LinearAlgebra/determinants-and-matrix-identities/matrix-determinant-lemma/det-add-vec-mul-vec-of-is-unit-det.md)
+- [Convergence of the power method](convergence-of-the-power-method.md)
 
 ## Sources
 
