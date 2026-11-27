@@ -21,7 +21,7 @@ $$\operatorname{Var}_{\mathrm{Lin},g}(\breve k_1)=\frac{1}{L^2}\sum_{i=1}^Kl_i^2
 ## Depends on
 
 - [Single-locus variance of actual relationship](single-locus-variance-of-actual-relationship.md)
-- [Haldane's map function](../../../population-genetics/linkage-disequilibrium-and-haldane-s-map-functio/haldane.md)
+- [Haldane's map function](../../../../population-genetics/linkage-disequilibrium-and-haldane-s-map-functio/haldane.md)
 
 ## Expansion
 
