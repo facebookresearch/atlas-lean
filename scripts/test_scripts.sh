@@ -824,6 +824,7 @@ if [[ "$tool_tests" == run ]]; then
     python3 -m unittest discover \
       -s "$REPO_ROOT/scripts/import_optimizer" -p 'test_*.py' -v
   python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
+  python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_pass.py -v
   python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_audit_parallel.py -v
   python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
   python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v

@@ -1,0 +1,65 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["statement_summary", "rubrics", "indicators", "confidence"],
+  "properties": {
+    "statement_summary": {"type": "string", "description": "One or two sentences: what the declaration says, in ordinary mathematical language."},
+    "rubrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["faithfulness", "tactics", "mathlib_conventions", "code_quality", "reuse"],
+      "properties": {
+        "faithfulness": {"$ref": "#/$defs/rubric"},
+        "tactics": {"$ref": "#/$defs/rubric"},
+        "mathlib_conventions": {"$ref": "#/$defs/rubric"},
+        "code_quality": {"$ref": "#/$defs/rubric"},
+        "reuse": {"$ref": "#/$defs/rubric"}
+      }
+    },
+    "indicators": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["removable_hypothesis", "mathlib_duplicate", "repeated_proof_machinery"],
+      "properties": {
+        "removable_hypothesis": {"$ref": "#/$defs/flag"},
+        "mathlib_duplicate": {"$ref": "#/$defs/flag"},
+        "repeated_proof_machinery": {"$ref": "#/$defs/flag"}
+      }
+    },
+    "confidence": {"type": "string", "enum": ["low", "medium", "high"]}
+  },
+  "$defs": {
+    "rubric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "rationale", "findings"],
+      "properties": {
+        "score": {"type": "integer", "minimum": 1, "maximum": 5},
+        "rationale": {"type": "string"},
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["severity", "summary", "quote", "suggestion"],
+            "properties": {
+              "severity": {"type": "string", "enum": ["blocker", "major", "minor"]},
+              "summary": {"type": "string"},
+              "quote": {"type": "string", "description": "Verbatim source text, at most a few lines, from the declaration's file."},
+              "suggestion": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "flag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["flag", "evidence"],
+      "properties": {
+        "flag": {"type": "boolean"},
+        "evidence": {"type": "string", "description": "For a positive flag: the hypothesis, the existing declaration (full name and module), or the repeated block. Empty otherwise."}
+      }
+    }
+  }
+}
