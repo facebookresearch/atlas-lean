@@ -1,0 +1,18 @@
+# Coherent Hom Simplex
+
+- [Last Map](last-map.md)
+- [Last Map apply](last-map-apply.md)
+- [Last Map compose](last-map-compose.md)
+- [Family](family.md)
+- [Object](object.md)
+- [Object front](object-front.md)
+- [Object last](object-last.md)
+- [Hom Map](hom-map.md)
+- [Hom Map last](hom-map-last.md)
+- [Hom Map front](hom-map-front.md)
+- [Hom Map last last](hom-map-last-last.md)
+- [Hom Map id](hom-map-id.md)
+- [Hom Map comp](hom-map-comp.md)
+- [Simplex](simplex.md)
+- [Simplex front](simplex-front.md)
+- [Simplex last](simplex-last.md)

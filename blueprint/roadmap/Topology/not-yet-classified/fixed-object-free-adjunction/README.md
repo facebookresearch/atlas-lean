@@ -1,0 +1,17 @@
+# Fixed Object Free Adjunction
+
+- [Families](families.md)
+- [Quiver](quiver.md)
+- [Free Functor](free-functor.md)
+- [Underlying Functor](underlying-functor.md)
+- [Unit](unit.md)
+- [Evaluate](evaluate.md)
+- [Generator evaluate](generator-evaluate.md)
+- [Evaluate naturality](evaluate-naturality.md)
+- [Counit](counit.md)
+- [Generator counit](generator-counit.md)
+- [Free triangle](free-triangle.md)
+- [Underlying triangle](underlying-triangle.md)
+- [Adjunction](adjunction.md)
+- [Adjunction unit](adjunction-unit.md)
+- [Adjunction counit](adjunction-counit.md)

@@ -1,0 +1,16 @@
+# Scalar Groupoid Completion Functor
+
+- [Scalar Map](scalar-map.md)
+- [Scalar Map vertex](scalar-map-vertex.md)
+- [Scalar Map operator](scalar-map-operator.md)
+- [Map Hom Map](map-hom-map.md)
+- [Map](map.md)
+- [Map obj](map-obj.md)
+- [Map apply](map-apply.md)
+- [Scalar Map id](scalar-map-id.md)
+- [Scalar Map comp](scalar-map-comp.md)
+- [Map id](map-id.md)
+- [Map comp](map-comp.md)
+- [Functor](functor.md)
+- [Unit naturality](unit-naturality.md)
+- [Natural Unit](natural-unit.md)
