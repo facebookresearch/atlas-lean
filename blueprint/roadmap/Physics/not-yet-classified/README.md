@@ -51,7 +51,6 @@ Topics added since this subject's fields were last revised.
 
 - [Exit Time](part-04/exit-time/README.md)
 - [Finite Gain Feedback](part-04/finite-gain-feedback/README.md)
-- [Finite State](part-04/finite-state/README.md)
 - [Flowsheets](part-04/flowsheets/README.md)
 - [Fundamental Diagram](part-04/fundamental-diagram/README.md)
 - [Gaussian Matched Decision](part-04/gaussian-matched-decision/README.md)
@@ -92,7 +91,6 @@ Topics added since this subject's fields were last revised.
 - [Phasor Element Laws](part-06/phasor-element-laws/README.md)
 - [Physical Error Budgets](part-06/physical-error-budgets/README.md)
 - [Physical Failure Events](part-06/physical-failure-events/README.md)
-- [Physical Galerkin Error](part-06/physical-galerkin-error/README.md)
 
 ## [Part 7 of 10](part-07/README.md)
 
