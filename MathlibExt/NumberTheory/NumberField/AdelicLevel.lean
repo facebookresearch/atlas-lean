@@ -42,6 +42,8 @@ Let `R` be a Dedekind domain with fraction field `K`. This file defines
 
 * `glArch` and `glFin`, the projections of `GL₂` over the adeles onto `GL₂` over the infinite
   and the finite adeles;
+* `archComponent K w` and `finComponent R K v`, the components of `GL₂` over the infinite and
+  the finite adeles at an infinite place `w` and at a finite place `v`;
 * `finiteLevelOne R K N`, the level subgroup of `GL₂` over the finite adeles at an ideal `N`:
   the matrices `g` such that `g` and `g⁻¹` have integral entries, lower-left entry in `N` and
   lower-right entry congruent to `1` modulo `N` at every finite place;
@@ -79,6 +81,28 @@ theorem glArch_apply (g : GL (Fin 2) (AdeleRing R K)) (i j : Fin 2) :
 theorem glFin_apply (g : GL (Fin 2) (AdeleRing R K)) (i j : Fin 2) :
     (glFin R K g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) i j =
       ((g : Matrix (Fin 2) (Fin 2) (AdeleRing R K)) i j).2 :=
+  rfl
+
+/-- The component of an archimedean `GL(2)` element at one infinite place. -/
+def archComponent (w : InfinitePlace K) :
+    GL (Fin 2) (InfiniteAdeleRing K) →* GL (Fin 2) w.Completion :=
+  Matrix.GeneralLinearGroup.map (archEval K w)
+
+/-- The component at a finite place `v` of `GL₂` over the finite adeles. -/
+def finComponent (v : HeightOneSpectrum R) :
+    GL (Fin 2) (FiniteAdeleRing R K) →* GL (Fin 2) (v.adicCompletion K) :=
+  Matrix.GeneralLinearGroup.map (finAdeleEval R K v)
+
+theorem archComponent_apply (w : InfinitePlace K) (g : GL (Fin 2) (InfiniteAdeleRing K))
+    (i j : Fin 2) :
+    (archComponent K w g : Matrix (Fin 2) (Fin 2) w.Completion) i j =
+      (g : Matrix (Fin 2) (Fin 2) (InfiniteAdeleRing K)) i j w :=
+  rfl
+
+theorem finComponent_apply (v : HeightOneSpectrum R) (g : GL (Fin 2) (FiniteAdeleRing R K))
+    (i j : Fin 2) :
+    (finComponent R K v g : Matrix (Fin 2) (Fin 2) (v.adicCompletion K)) i j =
+      (g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) i j v :=
   rfl
 
 end Projections
