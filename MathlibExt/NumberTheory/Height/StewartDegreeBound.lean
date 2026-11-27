@@ -40,7 +40,10 @@ Bertrand's postulate gives a prime $p$ with $6d < p \le 12d$.
   criterion for $X^p - a$), so they are the roots of a monic integer polynomial $Q$ of degree $d$.
 * Since $\alpha$ is not a root of unity, no $\alpha_i^p$ is a conjugate of $\alpha$, and the
   congruence $P(X^p) \equiv P(X)^p \pmod p$ shows that $\prod_i P(\alpha_i^p)$ is a nonzero
-  integer divisible by $p^d$.
+  integer divisible by $p^d$. This is Dobrowolski's lemma, which states the resulting bound
+  $|\prod_i P(\alpha_i^p)| \ge p^d$ (E. Dobrowolski, "On a question of Lehmer and the number of
+  irreducible factors of a polynomial", Acta Arith. 34 (1979), 391–401, Lemma 2 and its proof,
+  p. 395).
 * For $F = PQ$, whose $2d$ roots are distinct, the product of $|F'(z)|$ over the roots $z$ of $F$
   equals $|\prod_i P'(\alpha_i)| \cdot |\prod_i P(\alpha_i^p)|^2 \cdot |\prod_i Q'(\alpha_i^p)|$,
   a product of nonzero integers (products of values at the roots of $P$ are resultants), so it is
