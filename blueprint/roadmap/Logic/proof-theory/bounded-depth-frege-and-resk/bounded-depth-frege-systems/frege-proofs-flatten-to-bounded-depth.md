@@ -1,6 +1,6 @@
 # Frege proofs flatten to subexponential bounded-depth Frege proofs
 
-Every Frege proof of size $s$ of a formula of logical depth $O(\log s)$ can be converted, for each $k\ge1$, into a depth-$(k+2)$ Frege proof of size $2^{O(k s^{O(1/k)})}$. So purely exponential lower bounds for bounded-depth Frege would give superpolynomial Frege lower bounds.
+Every Frege proof of size $s$ of a formula of logical depth $O(\log s)$ can be converted, for each $k\ge1$, into a proof of cut-depth $k+2$ (an AC$^0_{k+2}$-Frege proof, in which every cut formula has depth at most $k+2$) of size $2^{O(k s^{O(1/k)})}$. So purely exponential lower bounds for bounded-depth Frege would give superpolynomial Frege lower bounds.
 
 **Theorem.** Let $\varphi$ be a formula provable in Frege (the sequent calculus PK) in size $s$, with logical depth $\mathrm{ldp}(\varphi)\le C\log s$. For every $k\ge1$ there is an $\mathrm{AC}^0_{k+2}$-Frege proof of $\varphi$ of size
 

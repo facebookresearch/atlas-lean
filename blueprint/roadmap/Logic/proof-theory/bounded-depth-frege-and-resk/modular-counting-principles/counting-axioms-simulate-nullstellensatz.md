@@ -2,13 +2,7 @@
 
 If a formula $\Gamma$ reduces in depth $d$ and size $T$ to a polynomial system over $\mathbb Z_m$ with a size-$S$ Nullstellensatz refutation, then $\Gamma$ has a depth-$O(d)$ refutation of size $O(S^{2m}T)$ in Frege with counting axioms modulo $m$.
 
-A *Nullstellensatz refutation* of polynomials $f_1,\dots,f_k$ in $x_1,\dots,x_n$ is a list $p_1,\dots,p_k,r_1,\dots,r_n$ with
-
-$$
-\sum_{i=1}^k p_if_i+\sum_{j=1}^n r_j\,(x_j^2-x_j)=1 .
-$$
-
-Its size is the number of monomials appearing in $p_1,\dots,p_k$ and $f_1,\dots,f_k$; over a ring such as $\mathbb Z_m$ the system need not be complete, and no assumption on $m$ is made.
+[Nullstellensatz refutations](nullstellensatz-refutations.md) are taken over $\mathbb Z_m$, with size the number of monomials appearing in $p_1,\dots,p_k$ and $f_1,\dots,f_k$; no assumption on $m$ is made.
 
 **Theorem.** Let $m>1$ be an integer, $\Gamma(\vec x)$ a propositional formula and $F$ a system of polynomials over $\mathbb Z_m$ such that $\Gamma$ [reduces](reductions-to-polynomial-systems.md) to $F$ in depth $d$ and size $T$. If $F$ has a Nullstellensatz refutation of size $S$, then $\Gamma(\vec x)$ has a depth-$O(d)$ refutation in Frege with [counting axioms modulo $m$](counting-axioms-modulo-m.md) of size $O(S^{2m}T)$.
 
@@ -19,6 +13,7 @@ Expand $\sum_i\bar p_i\bar f_i$ without collecting terms: its monomial copies ar
 ## Depends on
 
 - [Counting axioms modulo m](counting-axioms-modulo-m.md)
+- [Nullstellensatz refutations](nullstellensatz-refutations.md)
 - [Reductions from formulas to polynomial systems](reductions-to-polynomial-systems.md)
 
 ## Proof depends on
@@ -27,4 +22,4 @@ None.
 
 ## Sources
 
-- Russell Impagliazzo and Nathan Segerlind, "Constant-Depth Frege Systems with Counting Axioms Polynomially Simulate Nullstellensatz Refutations", *ACM Transactions on Computational Logic* 7(2), 2006, https://doi.org/10.1145/1131313.1131314; numbering as in arXiv:cs/0308012v1 (abstract and Section 1; Section 2.1.3, Nullstellensatz refutations; Section 3, contradictory partitions; Section 4.2, the simulation theorem).
+- Russell Impagliazzo and Nathan Segerlind, "Constant-Depth Frege Systems with Counting Axioms Polynomially Simulate Nullstellensatz Refutations", *ACM Transactions on Computational Logic* 7(2), 2006, https://doi.org/10.1145/1131313.1131314; numbering as in arXiv:cs/0308012v1 (abstract and Section 1; Section 2.1, *Nullstellensatz Refutations*, Definition 6; Section 3, contradictory partitions; Section 4.2, Theorem 1, the simulation theorem).

@@ -2,7 +2,7 @@
 
 For a prime $q$, the CNF encoding of an inconsistent system $A\vec x=\vec b$ over $\mathbb Z_q$ with $m$ equations, $n$ variables and at most $w$ variables per equation has constant-depth Frege refutations with counting axioms modulo $q$ of size polynomial in $m$, $n$ and $2^w$.
 
-Fix a prime $q$. Let $A$ be an $m\times n$ matrix over $\mathbb Z_q$ and $\vec b\in\mathbb Z_q^m$ such that $A\vec x=\vec b$ has no solution, and let $w$ be the maximum number of nonzero entries in a row of $A$. For each row $i$ let $C_i$ be the CNF, of size at most $2^w$, satisfied exactly when $A_i\vec x-b_i=0$; the *explicit encoding* of $A\vec x=\vec b$ is $\bigwedge_{i=1}^mC_i$.
+Fix a prime $q$. Let $A$ be an $m\times n$ matrix over $\mathbb Z_q$ and $\vec b\in\mathbb Z_q^m$ such that $A\vec x=\vec b$ has no solution, and let $w$ be the maximum number of nonzero entries in a row of $A$. For each row $i$ let $C_i$ be a [CNF](../../../propositional-logic/conjunctive-normal-form/cnf.md) in the at most $w$ variables of row $i$, of size at most $2^w$, satisfied by a $0/1$ assignment exactly when $A_i\vec x-b_i=0$ in $\mathbb Z_q$; the *explicit encoding* of $A\vec x=\vec b$ is $\bigwedge_{i=1}^mC_i$.
 
 **Theorem.** There is a constant-depth Frege refutation with [counting axioms modulo $q$](counting-axioms-modulo-m.md) of the explicit encoding of $A\vec x=\vec b$ of size polynomial in $m$, $n$ and $2^w$.
 
@@ -15,6 +15,7 @@ Each $C_i$ reduces to the polynomial $p_i=A_i\vec x-b_i$ by a constant-depth red
 ## Depends on
 
 - [Counting axioms modulo m](counting-axioms-modulo-m.md)
+- [CNF formula](../../../propositional-logic/conjunctive-normal-form/cnf.md)
 
 ## Proof depends on
 

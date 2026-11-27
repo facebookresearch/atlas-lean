@@ -15,7 +15,7 @@ $$
 
 ## Expansion
 
-Res($k$) was introduced by Krajíček. It sits between [resolution](../../../propositional-logic/resolution/resolution-derivable.md) and bounded-depth Frege: its lines are depth-2 formulas, so it is a subsystem of depth-2 Frege, and for $k=2$ it is [simulated by resolution over linear equations](../resolution-over-linear-equations/r-lin-stronger-than-r0-lin.md). Lower bounds for random CNFs in Res($k$) mark a current frontier for subsystems of Frege; see the [expansion-based lower bound](res-k-lower-bound-from-boundary-expansion.md). Res($k$) is also [not automatable unless P = NP](../../automatability-of-proof-systems/garlik-resk.md).
+Res($k$) was introduced by Krajíček. It sits between [resolution](../../../propositional-logic/resolution/resolution-derivable.md) and bounded-depth Frege: its lines are depth-2 formulas, so it is a subsystem of depth-2 Frege, and for $k=2$ it is [simulated by resolution over linear equations](../resolution-over-linear-equations/r-lin-stronger-than-r0-lin.md); that simulation uses Raz and Tzameret's formulation of Res($2$), whose proof size is the total number of literals in its lines rather than the number of lines. Lower bounds for random CNFs in Res($k$) mark a current frontier for subsystems of Frege; see the [expansion-based lower bound](res-k-lower-bound-from-boundary-expansion.md). Res($k$) is also [not automatable unless P = NP](../../automatability-of-proof-systems/garlik-resk.md).
 
 ## Depends on
 

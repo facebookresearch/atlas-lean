@@ -14,10 +14,11 @@ Over the two-element field, reading $+$ and $\cdot$ modulo $2$ as Boolean connec
 ## Depends on
 
 - [Arithmetic proof systems for polynomial identities](arithmetic-proof-systems.md)
+- [Short arithmetic proofs of the determinant identities](determinant-identities-pc-proofs.md)
 
 ## Proof depends on
 
-- [Short arithmetic proofs of the determinant identities](determinant-identities-pc-proofs.md)
+None.
 
 ## Sources
 

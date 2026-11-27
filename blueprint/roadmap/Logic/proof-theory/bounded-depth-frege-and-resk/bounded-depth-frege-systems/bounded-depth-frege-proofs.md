@@ -25,4 +25,4 @@ None.
 ## Sources
 
 - Yuval Filmus, Toniann Pitassi and Rahul Santhanam, "Exponential Lower Bounds for AC0-Frege Imply Superpolynomial Frege Lower Bounds", *Automata, Languages and Programming (ICALP 2011), Part I*, Lecture Notes in Computer Science 6755, pp. 618-629, 2011, https://doi.org/10.1007/978-3-642-22006-7_52 (Section 2, definitions of logical depth, depth and AC0_k-Frege proofs).
-- Russell Impagliazzo and Nathan Segerlind, "Constant-Depth Frege Systems with Counting Axioms Polynomially Simulate Nullstellensatz Refutations", *ACM Transactions on Computational Logic* 7(2), 2006, https://doi.org/10.1145/1131313.1131314; numbering as in arXiv:cs/0308012v1 (Section 2.1.1, constant-depth Frege systems).
+- Russell Impagliazzo and Nathan Segerlind, "Constant-Depth Frege Systems with Counting Axioms Polynomially Simulate Nullstellensatz Refutations", *ACM Transactions on Computational Logic* 7(2), 2006, https://doi.org/10.1145/1131313.1131314; numbering as in arXiv:cs/0308012v1 (Section 2.1, *Constant-Depth Frege Systems*).

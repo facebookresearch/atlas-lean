@@ -1,8 +1,9 @@
 # Modular counting principles
 
-Counting axioms for bounded-depth Frege, their simulation of Nullstellensatz refutations, and a reduction of AC$^0[p]$-Frege lower bounds to search-tree hardness.
+Counting axioms for bounded-depth Frege, Nullstellensatz refutations and their simulation by counting axioms, and a reduction of AC$^0[p]$-Frege lower bounds to search-tree hardness.
 
 - [Counting axioms modulo $m$](counting-axioms-modulo-m.md)
+- [Nullstellensatz refutations](nullstellensatz-refutations.md)
 - [Reductions from formulas to polynomial systems](reductions-to-polynomial-systems.md)
 - [Counting axioms polynomially simulate Nullstellensatz](counting-axioms-simulate-nullstellensatz.md)
 - [Counting axioms refute sparse inconsistent linear systems](counting-axioms-refute-sparse-linear-systems.md)

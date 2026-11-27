@@ -14,7 +14,7 @@ every [Res($k$)](k-dnf-resolution.md) proof of $\varphi$ has size at least $2^{n
 
 ## Expansion
 
-The theorem is proved for linear systems $A$ whose graph $G_A$ is an $(r,\Delta,(1-\varepsilon)\Delta)$-boundary expander with $\varepsilon=0.05$, under the condition $n^{\delta}(n/(8\varepsilon r))^{k^2/\varepsilon}=o(r/k)$; with $\varepsilon=0.05$ this is the condition above. The key tool is a closure in expanders and a new measure, the *closure covering number* of a collection of terms. Assuming a short proof, its $k$-DNF lines are turned into "DNF trees" (mixtures of decision trees and DNFs); a random restriction, controlled by a restriction lemma that translates closure-independence of terms into probabilities, makes them perfect DNF trees of small height, and a direct argument bounds the height of such trees from below. Unlike earlier Res($k$) lower bounds, the argument does not go through the small restriction switching lemma and does not reduce to resolution. Unique-neighbour counting ($|N(S)|\le|\partial(S)|+(\Delta|S|-|\partial(S)|)/2$) shows that ordinary expansion $(1-\varepsilon)\Delta$ gives boundary expansion $(1-2\varepsilon)\Delta$. Applied to random CNFs it gives the [random CNF bounds](res-k-lower-bounds-for-random-cnf.md).
+The theorem is proved for linear systems $A$ whose graph $G_A$ is an $(r,\Delta,(1-\varepsilon)\Delta)$-boundary expander with $\varepsilon=0.05$, under the condition $n^{\delta}(n/(8\varepsilon r))^{k^2/\varepsilon}=o(r/k)$; with $\varepsilon=0.05$ this is the condition above. The key tool is a closure in expanders and a new measure, the *closure covering number* of a collection of terms. Assuming a short proof, its $k$-DNF lines are turned into "DNF trees" (mixtures of decision trees and DNFs); a random restriction, controlled by a restriction lemma that translates closure-independence of terms into probabilities, makes them perfect DNF trees of small height, and a direct argument bounds the height of such trees from below. Unlike earlier Res($k$) lower bounds, the argument does not go through the small restriction switching lemma and does not reduce to resolution. Boundary expansion is a hypothesis here; for random CNFs it comes from ordinary expansion by unique-neighbour counting, and the theorem then gives the [random CNF bounds](res-k-lower-bounds-for-random-cnf.md).
 
 ## Depends on
 
@@ -22,7 +22,7 @@ The theorem is proved for linear systems $A$ whose graph $G_A$ is an $(r,\Delta,
 
 ## Proof depends on
 
-- [Unique-neighbour lemma for bipartite vertex expanders](../../../../GraphTheory/algebraic-graph-theory/spectral-expansion-and-connectivity/unique-neighbour-lemma.md)
+None.
 
 ## Sources
 

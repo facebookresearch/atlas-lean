@@ -15,7 +15,7 @@ Matrices have circuits as entries, and a matrix equation stands for the equation
 1. There is a circuit $\det$ such that both identities have polynomial-size [$\mathbb P_c(\mathbb F)$](arithmetic-proof-systems.md) proofs, in which every circuit has depth $O(\log^2 n)$ (with $z_{11}\cdots z_{nn}$ written as a formula of depth $O(\log n)$).
 2. There is a formula $\det$ such that both identities have $\mathbb P_f(\mathbb F)$ proofs of size $n^{O(\log n)}$.
 
-Consequences proved in the same framework include, with polynomial-size $O(\log^2n)$-depth $\mathbb P_c(\mathbb F)$ proofs: every formula $F$ of size $s$ satisfies $F=\det(M)$ for a $2s\times2s$ matrix $M$ of variables and field elements, and the equations $YX=I_n$ follow from $XY=I_n$; other properties such as the cofactor expansion and the Cayley-Hamilton theorem also have polynomial-size $\mathbb P_c$ proofs.
+Consequences proved in the same framework, with $\det$ the circuit (respectively formula) of the theorem, include: every formula $F$ of size $s$ satisfies $F=\det(M)$ for a $2s\times2s$ matrix $M$ of variables and field elements, with a polynomial-size $O(\log^2 s)$-depth $\mathbb P_c(\mathbb F)$ proof; and the equations $YX=I_n$ have polynomial-size $O(\log^2 n)$-depth $\mathbb P_c(\mathbb F)$ proofs from the assumptions $XY=I_n$; other properties such as the cofactor expansion and the Cayley-Hamilton theorem also have polynomial-size $\mathbb P_c$ proofs.
 
 ## Expansion
 

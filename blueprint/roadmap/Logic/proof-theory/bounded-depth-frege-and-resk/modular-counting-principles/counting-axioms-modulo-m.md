@@ -24,4 +24,4 @@ None.
 
 ## Sources
 
-- Russell Impagliazzo and Nathan Segerlind, "Constant-Depth Frege Systems with Counting Axioms Polynomially Simulate Nullstellensatz Refutations", *ACM Transactions on Computational Logic* 7(2), 2006, https://doi.org/10.1145/1131313.1131314; numbering as in arXiv:cs/0308012v1 (Section 2, definitions of [S]^m and conflicting sets; Section 2.1.2, definition of Count^V_m).
+- Russell Impagliazzo and Nathan Segerlind, "Constant-Depth Frege Systems with Counting Axioms Polynomially Simulate Nullstellensatz Refutations", *ACM Transactions on Computational Logic* 7(2), 2006, https://doi.org/10.1145/1131313.1131314; numbering as in arXiv:cs/0308012v1 (Section 2, definitions of [S]^m and conflicting sets; Section 2.1, *Counting Axioms Modulo m*, Definition 5).

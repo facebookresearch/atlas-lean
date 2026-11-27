@@ -1,6 +1,6 @@
 # Balancing of $\mathbb P_c$ proofs and quasipolynomial simulation by $\mathbb P_f$
 
-A size-$s$ $\mathbb P_c$ proof of $F=G$ between circuits of syntactic degree at most $d$ can be rebuilt with every circuit of depth $O(\log s\log d+\log^2 d)$, and for formulas it yields a $\mathbb P_f$ proof of size $(s(d+1))^{O(\log d)}\le s^{O(\log s)}$, unlike any known Frege versus extended Frege simulation.
+A size-$s$ $\mathbb P_c$ proof of $F=G$, for circuits of syntactic degree at most $d$, yields a proof of the balanced $[F]=[G]$ in depth $O(\log s\log d+\log^2d)$, of $F=G$ in depth $O(k+\log s\log d+\log^2d)$ for depth-$k$ endpoints, and for formulas a $\mathbb P_f$ proof of size $(s(d+1))^{O(\log d)}\le s^{O(\log s)}$.
 
 For a circuit $F$ of syntactic degree $d$, let $[F]$ denote the balanced circuit obtained by the Valiant-Skyum-Berkowitz-Rackoff construction, of size $\mathrm{poly}(s,d)$ and depth $O(\log^2d+\log s\log d)$, computing $\widehat F$.
 
@@ -20,10 +20,11 @@ The proof mirrors [Valiant-Skyum-Berkowitz-Rackoff depth reduction](../../../../
 ## Depends on
 
 - [Arithmetic proof systems for polynomial identities](arithmetic-proof-systems.md)
+- [Valiant–Skyum–Berkowitz–Rackoff depth reduction](../../../../TheoryOfComputation/algebraic-complexity/depth-reduction-and-chasms/vsbr-depth-reduction.md)
 
 ## Proof depends on
 
-- [Valiant–Skyum–Berkowitz–Rackoff depth reduction](../../../../TheoryOfComputation/algebraic-complexity/depth-reduction-and-chasms/vsbr-depth-reduction.md)
+None.
 
 ## Sources
 
