@@ -2463,8 +2463,8 @@
       "path": "MathlibExt/Algebra/Homology/Hochschild/AdjacentBarCoefficientComparison.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "46f8dabc673af878869856ca0372e1c37bce7fb3f9bf987b75502a13ff02307e",
-      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "published_sha256": "08fdc302a1dc41dd790b6e1955f1979206420f42a1023144a5fd52b974c55439",
+      "rationale": "Preserves the general Hochschild to derived enveloping-algebra comparison, removes an obsolete process comment, and adds a genuine nonzero polynomial degree-one derived-image client while retaining every original assertion.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "5d191e126c698053d245427f022a5cd8d7ee2c14cea2fb1018ea715aba671877"
     },
