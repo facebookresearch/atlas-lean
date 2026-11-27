@@ -37,8 +37,6 @@ summed and monotone bounds directly in terms of `reveal`.
 open scoped BigOperators
 open Finset
 
-set_option linter.style.longLine false
-
 namespace StatMech
 namespace OSSS
 namespace Revealment
