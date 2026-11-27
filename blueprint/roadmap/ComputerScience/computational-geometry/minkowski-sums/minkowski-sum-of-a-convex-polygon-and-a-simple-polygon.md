@@ -1,10 +1,11 @@
 # Minkowski sum of a convex polygon and a simple polygon
 
-Let $R$ be a convex polygon with $m$ vertices and $P$ a simple polygon with $n$ vertices. Then $P \oplus R$ has total complexity $O(nm)$: triangulating $P$ into $n - 2$ triangles $T_i$, the sums $T_i \oplus R$ are convex polygons with $O(m)$ edges that form a collection of pseudodisks, whose union has linear complexity in the number of its arcs. The bound is attained up to a constant: a comb-shaped $P$ with teeth farther apart than the diameter of a regular $m$-gon $R$ gives $\Omega(nm)$.
+Let $R$ be a convex polygon with $m$ vertices and $P$ a simple polygon with $n$ vertices, both taken as closed regions (the boundary together with its interior). Then $P \oplus R$ has total complexity $O(nm)$: triangulating $P$ into $n - 2$ triangles $T_i$, the sums $T_i \oplus R$ are convex polygons with $O(m)$ edges that form a collection of pseudodisks, whose union has linear complexity in the number of its arcs. The bound is attained up to a constant: a comb-shaped $P$ with teeth farther apart than the diameter of a regular $m$-gon $R$ gives $\Omega(nm)$.
 
 ## Depends on
 
 - [Minkowski sum of two convex polygons](minkowski-sum-of-two-convex-polygons.md)
+- [Simple polygons](../polygons-and-triangulations/simple-polygons.md)
 
 ## Proof depends on
 

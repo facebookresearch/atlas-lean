@@ -9,3 +9,4 @@ Let $P \subset \mathbb{R}^2$ be a finite set of at least three points, not all o
 ## Sources
 
 - *Computational Geometry*, lecture notes, ETH Zürich, autumn 2013, Chapter 6 (Delaunay triangulations), <https://ti.inf.ethz.ch/ew/courses/CG13/lecture/Chapter%206.pdf>: Section 6.7, the definition of a constrained Delaunay triangulation (respecting $G$, visibility blocked by the segments of $E$) and Theorem 6.21
+- J. R. Shewchuk, "A condition guaranteeing the existence of higher-dimensional constrained Delaunay triangulations", *Proceedings of the 14th Annual Symposium on Computational Geometry*, 1998, pp. 76–85, <https://doi.org/10.1145/276884.276893>, read in the author copy <https://people.eecs.berkeley.edu/~jrs/papers/cdt.pdf>: p. 2, the definition of occluded visibility, under which a constraining simplex whose supporting hyperplane contains either endpoint of a sightline does not occlude it (the endpoint-exempt convention used here).

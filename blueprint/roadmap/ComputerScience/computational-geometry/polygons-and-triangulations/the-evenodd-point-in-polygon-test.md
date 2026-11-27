@@ -1,10 +1,11 @@
 # The even–odd point-in-polygon test
 
-Let $P$ be a simple polygon and $q$ a point of the plane not on its boundary. Choose a ray from $q$ that passes through no vertex of $P$ (or count crossings with the half-open convention for edges). Then $q$ lies in the bounded component of the complement of the boundary of $P$ if and only if the ray crosses the boundary an odd number of times. The test uses $O(n)$ orientation predicates for a polygon with $n$ edges and relies on the Jordan curve theorem for polygons.
+Let $P$ be a simple polygon and $q$ a point of the plane not on its boundary. Choose a ray from $q$ that passes through no vertex of $P$ (or count crossings with the half-open convention for edges). Then $q$ lies in the bounded component of the complement of the boundary of $P$ if and only if the ray crosses the boundary an odd number of times. The test uses $O(n)$ orientation predicates (signs of the direction of three points, as defined on the linked page) for a polygon with $n$ edges and relies on the Jordan curve theorem for polygons.
 
 ## Depends on
 
 - [Simple polygons](simple-polygons.md)
+- [Direction of three points](../orientation-and-segment-intersection-tests/direction.md)
 
 ## Proof depends on
 
