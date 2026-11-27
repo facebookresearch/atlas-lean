@@ -14,73 +14,175 @@
 """Tests for scripts/quality_review.py; no model calls."""
 from __future__ import annotations
 
+import argparse
 import json
+import os
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import quality_review as qr  # noqa: E402
 
-LEAN = """module
+MODULE = """module
+
+public import Mathlib.Data.Nat.Basic
+
+theorem hidden_by_module : True := trivial
+
+@[expose] public section
+
+namespace A
 
 /-- **Doubling.** -/
 @[simp]
-theorem two_mul' (n : ℕ) : 2 * n = n + n := by
+theorem same (n : ℕ) : 2 * n = n + n := by
   omega
 
 private lemma helper : True := trivial
 
-/- comment
-theorem hidden : True := trivial
+end A
+
+namespace B
+
+theorem same : True := trivial
+
+/- a comment
+theorem in_comment : True := trivial
 -/
 
-public lemma succ_pos' (n : ℕ) : 0 < n + 1 := Nat.succ_pos n
+theorem _root_.rooted : True := trivial
 
-def bar : ℕ := 3
+end B
+
+end
+"""
+
+PLAIN = """namespace C
+
+lemma moved : 1 = 1 := rfl
+
+end C
 """
 
 
-class QualityReviewTest(unittest.TestCase):
-    def test_statements(self):
-        rows = qr.statements(LEAN, "MathlibExt/A.lean")
-        self.assertEqual([r["name"] for r in rows], ["two_mul'", "succ_pos'"])
+def good(score: int = 5) -> str:
+    return json.dumps(dict(is_error=False, total_cost_usd=0.1,
+                           structured_output={r: dict(score=score, reason="because") for r in qr.RUBRICS}))
+
+
+def git(repo: Path, *args: str, date: str = "") -> None:
+    env = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t", GIT_COMMITTER_NAME="t",
+               GIT_COMMITTER_EMAIL="t@t")
+    if date:
+        env.update(GIT_AUTHOR_DATE=date, GIT_COMMITTER_DATE=date)
+    subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True, env=env)
+
+
+class StatementsTest(unittest.TestCase):
+    def test_qualified_names_and_module_visibility(self):
+        rows = qr.statements(MODULE, "MathlibExt/X.lean")
+        self.assertEqual([r["id"] for r in rows], ["A.same", "B.same", "rooted"])
         self.assertTrue(rows[0]["text"].startswith("/-- **Doubling.**"))
         self.assertIn("omega", rows[0]["text"])
         self.assertNotIn("helper", rows[0]["text"])
 
-    def test_sample_and_summary(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            repo = Path(tmp) / "repo"
-            (repo / "MathlibExt").mkdir(parents=True)
-            git = lambda *a: subprocess.run(["git", "-C", str(repo), *a], check=True, capture_output=True)
-            git("init", "-q"); git("config", "user.email", "t@t"); git("config", "user.name", "t")
-            (repo / "MathlibExt" / "A.lean").write_text(LEAN)
-            git("add", "-A"); git("commit", "-qm", "a", "--date=2020-01-01T00:00:00")
-            subprocess.run(["git", "-C", str(repo), "commit", "--amend", "-qm", "a"], check=True,
-                           env={"GIT_COMMITTER_DATE": "2020-01-01T00:00:00", "PATH": "/usr/bin:/bin",
-                                "HOME": tmp}, capture_output=True)
-            (repo / "MathlibExt" / "B.lean").write_text("theorem fresh : 1 = 1 := rfl\n")
-            git("add", "-A"); git("commit", "-qm", "b")
-            fresh = qr.sample(repo, Path(tmp) / "fresh", qr.argparse.Namespace(random=0, new=5, since="2021-01-01"))
-            self.assertEqual([(r["stratum"], r["name"]) for r in fresh], [("new", "fresh")])
-            out = Path(tmp) / "out"
-            args = qr.argparse.Namespace(random=2, new=0, since="2021-01-01")
-            rows = qr.sample(repo, out, args)
-            self.assertEqual(qr.sample(repo, out, args), rows)  # frozen on rerun
-            with (out / "results.jsonl").open("w") as fh:
-                for k, r in enumerate(rows):
-                    scores = {name: dict(score=5 if k else 2, reason="r") for name in qr.RUBRICS}
-                    fh.write(json.dumps(dict(r, model="m", cost_usd=0.1, **scores)) + "\n")
-            summary = qr.summarize(out)
-            self.assertEqual(summary["judged"], len(rows))
-            random_all = summary["strata"]["random"]["all"]
-            self.assertEqual(random_all["n"], 2)
-            self.assertEqual(random_all["mean"]["faithfulness"], 3.5)
-            self.assertEqual(random_all["serious"], 0.5)
-            self.assertEqual(set(summary["strata"]["random"]["by_library"]), set(qr.LIBRARIES))
+    def test_non_module_files_are_public_by_default(self):
+        self.assertEqual([r["id"] for r in qr.statements(PLAIN, "MathlibExt/C.lean")], ["C.moved"])
+
+
+class VerdictTest(unittest.TestCase):
+    def test_only_complete_valid_verdicts_count(self):
+        verdict, error = qr.parse_verdict(0, good(4))
+        self.assertIsNone(error)
+        self.assertEqual(verdict["scores"]["tactics"]["score"], 4)
+        bad = json.loads(good())
+        cases = {
+            "exit": (1, good()),
+            "json": (0, "not json"),
+            "is_error": (0, json.dumps(dict(json.loads(good()), is_error=True))),
+            "missing": (0, json.dumps(dict(bad, structured_output={"faithfulness": {"score": 5, "reason": "r"}}))),
+            "range": (0, good(6)),
+            "bool": (0, good().replace('"score": 5', '"score": true')),
+            "reason": (0, good().replace('"because"', '"  "')),
+        }
+        for name, (code, stdout) in cases.items():
+            with self.subTest(name):
+                self.assertIsNone(qr.parse_verdict(code, stdout)[0])
+
+
+class RunTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        root = Path(self.tmp.name)
+        self.mathlib = root / "mathlib"
+        self.mathlib.mkdir()
+        git(self.mathlib, "init", "-q")
+        (self.mathlib / "Mathlib.lean").write_text("")
+        git(self.mathlib, "add", "-A"); git(self.mathlib, "commit", "-qm", "m")
+        pin = subprocess.run(["git", "-C", str(self.mathlib), "rev-parse", "HEAD"],
+                             capture_output=True, text=True).stdout.strip()
+        self.repo = root / "repo"
+        (self.repo / "MathlibExt").mkdir(parents=True)
+        git(self.repo, "init", "-q")
+        (self.repo / "lake-manifest.json").write_text(json.dumps({"packages": [{"name": "mathlib", "rev": pin}]}))
+        (self.repo / "MathlibExt" / "X.lean").write_text(MODULE)
+        (self.repo / "MathlibExt" / "C.lean").write_text(PLAIN)
+        git(self.repo, "add", "-A"); git(self.repo, "commit", "-qm", "base", date="2020-01-01T00:00:00")
+        # Move C.moved to another file and add a new statement in an existing namespace.
+        (self.repo / "MathlibExt" / "C.lean").unlink()
+        (self.repo / "MathlibExt" / "D.lean").write_text(PLAIN + "\nnamespace C\n\ntheorem fresh : True := trivial\n\nend C\n")
+        git(self.repo, "add", "-A"); git(self.repo, "commit", "-qm", "more")
+        self.out = root / "out"
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def args(self, **kw):
+        base = dict(out=str(self.out), mathlib=str(self.mathlib), random=0, new=10, since="2021-01-01",
+                    model="m", jobs=2)
+        base.update(kw)
+        return argparse.Namespace(**base)
+
+    def test_create_freezes_sources_and_finds_new_by_qualified_name(self):
+        self.out.mkdir()
+        manifest = qr.create(self.repo, self.out, self.args())
+        samples = [json.loads(line) for line in (self.out / "samples.jsonl").read_text().splitlines()]
+        self.assertEqual([(s["stratum"], s["id"]) for s in samples], [("new", "C.fresh")])
+        self.assertTrue((self.out / "source" / "MathlibExt" / "D.lean").is_file())
+        self.assertFalse((self.out / "source" / ".git").exists())
+        self.assertFalse((self.out / "source" / "lake-manifest.json").exists())
+        self.assertEqual(manifest["population"], 5)
+        self.assertEqual(manifest["model"], "m")
+
+    def test_create_rejects_unpinned_mathlib(self):
+        (self.mathlib / "x").write_text("x")
+        git(self.mathlib, "add", "-A"); git(self.mathlib, "commit", "-qm", "drift")
+        self.out.mkdir()
+        with self.assertRaises(SystemExit):
+            qr.create(self.repo, self.out, self.args())
+
+    def test_incompatible_resume_and_incomplete_runs_are_visible(self):
+        with mock.patch.object(qr, "REPO", self.repo):
+            calls = iter([(qr.parse_verdict(0, good(4))), (qr.parse_verdict(0, "garbage"))])
+            with mock.patch.object(qr, "judge", lambda *a: next(calls)), self.assertRaises(SystemExit):
+                qr.run(self.args(random=2, new=0))
+            summary = json.loads((self.out / "summary.json").read_text())
+            self.assertEqual(summary["status"], "incomplete")
+            self.assertEqual((summary["sampled"], summary["judged"], summary["missing"]), (2, 1, 1))
+            block = summary["strata"]["random"]["all"]
+            self.assertEqual((block["sampled"], block["judged"], block["missing"]), (2, 1, 1))
+            self.assertEqual(block["mean"]["faithfulness"], 4.0)
+            self.assertEqual(len((self.out / "failures.jsonl").read_text().splitlines()), 1)
+            with self.assertRaises(SystemExit):
+                qr.run(self.args(random=2, new=0, model="other"))
+            with mock.patch.object(qr, "judge", lambda *a: qr.parse_verdict(0, good())):
+                qr.run(self.args(random=2, new=0))
+            summary = json.loads((self.out / "summary.json").read_text())
+            self.assertEqual((summary["status"], summary["missing"]), ("complete", 0))
 
 
 if __name__ == "__main__":
