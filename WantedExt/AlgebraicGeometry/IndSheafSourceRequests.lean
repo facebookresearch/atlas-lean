@@ -10,6 +10,8 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.IndSheafPushforwardModels
 public import MathlibExt.AlgebraicGeometry.IndSheafSourceRequestsActualCompactPushforwardSource
+public import MathlibExt.AlgebraicGeometry.IndSheafSourceRequestsActualIndProperImageAdditive
+public import MathlibExt.AlgebraicGeometry.IndSheafSourceRequestsActualIndProperImageSource
 
 /-!
 # Source requests for the prescribed compact-support ind-sheaf construction
@@ -19,6 +21,10 @@ categories, compact support, continuous pushforward and compact-Yoneda
 Kan extension are already fixed in the public source. The compact
 pushforward source `actual_compact_pushforward_source` is proved in
 `MathlibExt.AlgebraicGeometry.IndSheafSourceRequestsActualCompactPushforwardSource`.
+The additivity statement `actual_ind_proper_image_additive` is proved in
+`MathlibExt.AlgebraicGeometry.IndSheafSourceRequestsActualIndProperImageAdditive`.
+The ind-proper image source `actual_ind_proper_image_source` is proved in
+`MathlibExt.AlgebraicGeometry.IndSheafSourceRequestsActualIndProperImageSource`.
 These requests do not assume enhanced reconstruction or mixed-Hodge
 admissibility.
 
@@ -41,16 +47,5 @@ compactly supported. Their ind-objects (with small filtered index categories) fo
 abelian category, Kashiwara--Schapira, Categories and Sheaves, Theorem 8.6.5(i). -/
 def_wanted actual_compact_sheaf_source (k : Type) [Field k] (X : TopCat.{0}) :
   CompactSheafSource k X
-
-/-- Extend the same actual compact generator functor by the native left Kan construction. -/
-theorem_wanted actual_ind_proper_image_source (k : Type) [Field k]
-    (X Y : TopCat.{0}) [CompactSheafSource k X] [CompactSheafSource k Y]
-    (f : X ⟶ Y) (P : CompactPushforwardSource k f) : IndPushforwardSource k f P
-
-/-- The native compact-generator extension has its ordinary additive structure. -/
-theorem_wanted actual_ind_proper_image_additive (k : Type) [Field k]
-    (X Y : TopCat.{0}) [CompactSheafSource k X] [CompactSheafSource k Y]
-    (f : X ⟶ Y) (P : CompactPushforwardSource k f) (D : IndPushforwardSource k f P) :
-    (indProperImage k f P D).Additive
 
 end WantedExt.AlgebraicGeometry.IndSheafSourceRequests
