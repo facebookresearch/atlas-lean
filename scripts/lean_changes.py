@@ -66,6 +66,11 @@ class ChangedFile:
         return self.path.removesuffix(".lean").replace("/", ".")
 
     @property
+    def lean_module(self) -> str | None:
+        """The module's name as Lean reads it, or `None` if Lean cannot name it."""
+        return lean_name(self.module)
+
+    @property
     def base_path(self) -> str | None:
         """The file's path at the base, or `None` when the change adds it."""
         if self.status == "A":
@@ -211,16 +216,55 @@ def base_text(base: str, path: str, cwd: Path = ROOT) -> str | None:
     return result.stdout.decode("utf-8", errors="replace")
 
 
+# A name component that Lean reads as it is; any other is written in «».
+IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z0-9_'!?]*")
+
+
+def lean_name(module: str) -> str | None:
+    """`module` as Lean reads it, with each component that is not an identifier, such as
+    `New-Name`, in «», or `None` if a component cannot be written so."""
+    parts = []
+    for part in module.split("."):
+        if IDENTIFIER.fullmatch(part):
+            parts.append(part)
+        elif not part or "«" in part or "»" in part or "\n" in part:
+            return None
+        else:
+            parts.append(f"«{part}»")
+    return ".".join(parts)
+
+
+def lean_unescaped(name: str) -> str:
+    """A name as Lean prints it, without its «», as `ChangedFile.module` spells it."""
+    return name.replace("«", "").replace("»", "")
+
+
+def unnameable(files: Sequence[ChangedFile], annotate: bool = False) -> list[ChangedFile]:
+    """The files whose module Lean cannot name, which the checks leave out, saying so (and in
+    GitHub Actions, with `annotate`, annotating each)."""
+    skipped = [file for file in files if file.lean_module is None]
+    for file in skipped:
+        message = "Lean cannot name the module of this file, so the checks skip it; rename it."
+        if annotate and in_actions():
+            print(annotation("warning", file.path, 1, "module name", message))
+        print(f"{file.path}: {message}", file=sys.stderr)
+    return skipped
+
+
 @contextlib.contextmanager
-def aggregators(files: Sequence[ChangedFile], cwd: Path = ROOT) -> Iterator[list[str]]:
+def aggregators(files: Sequence[ChangedFile], cwd: Path = ROOT,
+                annotate: bool = False) -> Iterator[list[str]]:
     """Write one aggregator module per library that imports its changed modules.
 
     Yields the aggregator module names. The files are plain (not `module`), so
-    that they can import files of either kind, and are deleted on exit. Raises
+    that they can import files of either kind, and are deleted on exit. A file
+    whose module Lean cannot name is left out, as `unnameable` says. Raises
     `AggregatorError` if a file of an aggregator's name exists.
     """
     written: list[Path] = []
     names: list[str] = []
+    skipped = unnameable(files, annotate)
+    files = [file for file in files if file not in skipped]
     try:
         for library in sorted({file.library for file in files}):
             path = cwd / library / f"{AGGREGATOR}.lean"
@@ -228,7 +272,7 @@ def aggregators(files: Sequence[ChangedFile], cwd: Path = ROOT) -> Iterator[list
                 raise AggregatorError(
                     f"{path.relative_to(cwd)} exists, so the checks cannot write their "
                     f"aggregator module there; rename that file")
-            imports = sorted({file.module for file in files if file.library == library})
+            imports = sorted({file.lean_module for file in files if file.library == library})
             path.write_text("".join(f"import {module}\n" for module in imports))
             written.append(path)
             names.append(f"{library}.{AGGREGATOR}")
@@ -258,6 +302,17 @@ def annotation(level: str, path: str, line: int, title: str, message: str,
         fields.append(f"col={col}")
     fields.append(f"title={escape(title, True)}")
     return f"::{level} {','.join(fields)}::{escape(message)}"
+
+
+# A line that GitHub Actions reads as a workflow command: `::` after any leading space.
+COMMAND_LINE = re.compile(r"^(\s*)::", re.MULTILINE)
+
+
+def inert(text: str) -> str:
+    """`text`, which a tool printed, with every line that GitHub Actions would read as a workflow
+    command broken up (`: :`), so that printing it to the job log cannot annotate a file or
+    otherwise command the runner; outside GitHub Actions, `text` as it is."""
+    return COMMAND_LINE.sub(r"\1: :", text) if in_actions() else text
 
 
 def in_actions() -> bool:
@@ -304,8 +359,13 @@ def build(base: str, cwd: Path = ROOT) -> int:
         return 0
     print(f"Building {len(files)} changed Lean file(s) of the production libraries.")
     try:
-        with aggregators(files, cwd) as targets:
-            return 0 if subprocess.run(["lake", "build", *targets], cwd=cwd).returncode == 0 else 1
+        with aggregators(files, cwd, annotate=True) as targets:
+            if not targets:
+                return 0
+            result = subprocess.run(["lake", "build", *targets], cwd=cwd, stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT, text=True)
+            print(inert(result.stdout or ""), end="")
+            return 0 if result.returncode == 0 else 1
     except AggregatorError as error:
         print(error, file=sys.stderr)
         return 2

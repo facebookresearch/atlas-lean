@@ -61,12 +61,15 @@ def job_summary():
 
 
 def run_main(output: str, returncode: int, files=FILES, extra=(), aggregator_error=False,
-             summary: list[str] | None = None) -> tuple[int, str]:
-    """Run main() on fixture output; append the job summary it wrote to `summary`."""
+             summary: list[str] | None = None, linted: list | None = None) -> tuple[int, str]:
+    """Run main() on fixture output; append the job summary it wrote to `summary`, and the
+    files that lint-style was given to `linted`."""
     @contextlib.contextmanager
     def fake_aggregators(changed):
         if aggregator_error:
             raise AggregatorError("MathlibExt/LintChanged.lean exists")
+        if linted is not None:
+            linted.extend(file.path for file in changed)
         yield ["MathlibExt.LintChanged"]
 
     result = subprocess.CompletedProcess([], returncode, stdout="", stderr=output)
@@ -140,6 +143,18 @@ class MainTests(unittest.TestCase):
                       "Module name contains non-ASCII-alphanumeric character", out)
         self.assertIn("MathlibExt/Prime'.lean:1", summary[0])
         self.assertEqual(run_main(APOSTROPHE_OUTPUT, 1, files)[0], 1)
+
+    def test_a_name_lean_writes_with_guillemets_is_reported_and_the_rest_is_linted(self):
+        # lint-style cannot read `New-Name.lean`, whose module Lean writes `«New-Name»`.
+        files = [ChangedFile("MathlibExt/New-Name.lean", "A", frozenset({1, 2})), *FILES]
+        linted: list[str] = []
+        code, out = run_main(OUTPUT, 1, files=files, linted=linted)
+        self.assertEqual(code, 1)
+        self.assertNotIn("MathlibExt/New-Name.lean", linted)
+        self.assertIn("MathlibExt/A.lean", linted)
+        self.assertIn("::error file=MathlibExt/New-Name.lean,line=1,title=lint-style::Module name "
+                      "`MathlibExt.«New-Name»` needs «»", out)
+        self.assertIn("MathlibExt/A.lean:72:", out)
 
     def test_an_unreadable_base_is_a_failure_to_run(self):
         out = io.StringIO()

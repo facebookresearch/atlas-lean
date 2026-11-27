@@ -55,12 +55,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from bump.pinned_bump import _strip_lean_comments_and_strings
 from lean_changes import (ROOT, AggregatorError, ChangedFile, add_common_arguments, aggregators,
                           annotation, base_text, changed_files, deleted_files, guarded, in_actions,
-                          relative, write_summary)
+                          inert, relative, write_summary)
 
 ENTRY = re.compile(r"^(?P<file>\S.*?\.lean):(?P<line>\d+):(?P<col>\d+): error: (?P<text>.*)$")
 UNPLACED = re.compile(r"^#check (?P<text>.*)$")
 HEADER = re.compile(r"^/- The `(?P<linter>[^`]+)` linter reports:")
-MODULE = re.compile(r"^-- (?P<module>[^\s]+)$")
+MODULE = re.compile(r"^-- (?P<module>[^\s]+)$")  # as Lean prints it, with «» where needed
 # `runLinter` prints one of these when it has linted its module.
 FINISHED = re.compile(r"^-- (?:Found \d+ errors? in|Linting passed for) ")
 
@@ -133,7 +133,7 @@ def parse_run_linter(text: str, cwd: Path = ROOT) -> list[Finding]:
         elif module_line := MODULE.match(line):
             finish()
             current = None
-            module = module_line.group("module")
+            module = unquote_name(module_line.group("module"))
         elif not line.strip() or line.startswith(("-- ", "/-")):
             finish()
             current = None
@@ -484,7 +484,12 @@ def place(finding: Finding, files: dict[str, ChangedFile], indexes: dict[str, So
             return None
         index = indexes[file.path]
         line = index.declaration_line(finding.line)
-        names = {finding.declaration, *index.names_at.get(line, ())}
+        # The declaration's own name when the file declares it. Otherwise, as for an anonymous
+        # instance, whose name Lean generates, the names that the file declares on its line.
+        if finding.declaration in index.line_of:
+            names = {finding.declaration}
+        else:
+            names = {finding.declaration, *index.names_at.get(line, ())}
         new = line in file.added_lines and not existed(file.path, names)
         return Placement(file.path, finding.line, finding.col, new)
     # No position: the nearest enclosing declaration that a changed file declares.
@@ -521,10 +526,12 @@ def main() -> int:
     outputs = []
     try:
         with aggregators(changed) as targets, tempfile.TemporaryDirectory() as tmp:
+            if not targets:
+                return 0
             build = subprocess.run(["lake", "build", *targets], cwd=ROOT, capture_output=True,
                                    text=True)
             if build.returncode != 0:
-                print(build.stdout + build.stderr, file=sys.stderr)
+                print(inert(build.stdout + build.stderr), file=sys.stderr)
                 print("The changed files do not build.", file=sys.stderr)
                 return 2
             for target in targets:
@@ -533,15 +540,15 @@ def main() -> int:
                 # docBlame and simpNF among them, lint every module of the package that the
                 # aggregator imports; their findings elsewhere are dropped below.
                 only = Path(tmp, f"{library}.txt")
-                only.write_text("".join(f"{file.module}\n" for file in changed
-                                        if file.library == library))
+                only.write_text("".join(f"{file.lean_module}\n" for file in changed
+                                        if file.library == library and file.lean_module))
                 result = subprocess.run(
                     ["lake", "exe", "runLinter", "--no-build", f"--only-modules={only}", target],
                     cwd=ROOT, capture_output=True, text=True)
                 output = result.stdout + result.stderr
                 if result.returncode not in (0, 1) or not any(
                         FINISHED.match(line) for line in output.splitlines()):
-                    print(output, file=sys.stderr)
+                    print(inert(output), file=sys.stderr)
                     print(f"runLinter did not run on {target}.", file=sys.stderr)
                     return 2
                 outputs.append(output)
@@ -579,7 +586,7 @@ def main() -> int:
           f"not change, {len(unplaced)} without a position in a changed module that could not "
           "be placed.")
     for finding in unplaced:
-        print(f"  not placed: {finding.linter}: {finding.declaration} {finding.message}")
+        print(inert(f"  not placed: {finding.linter}: {finding.declaration} {finding.message}"))
     level = "warning" if args.report_only else "error"
     for finding, placement in kept:
         message = finding.message if finding.path is not None else (
@@ -587,8 +594,8 @@ def main() -> int:
         if in_actions():
             print(annotation(level, placement.path, placement.line, finding.linter, message,
                              placement.col))
-        print(f"{placement.path}:{placement.line}:{placement.col or 1}: {finding.linter}: "
-              f"{finding.declaration} {finding.message}")
+        print(inert(f"{placement.path}:{placement.line}:{placement.col or 1}: "
+                    f"{finding.linter}: {finding.declaration} {finding.message}"))
     if kept or unplaced:
         counts = Counter(finding.linter for finding, _ in kept)
         rows = "".join(f"| `{linter}` | {count} |\n" for linter, count in counts.most_common())
