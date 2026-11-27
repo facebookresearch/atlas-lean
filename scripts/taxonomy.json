@@ -13717,6 +13717,7 @@
   "MathlibExt/NumberTheory/PadovanPerrinFundamentalProduct": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Padovan–Perrin recurrences"},
   "MathlibExt/NumberTheory/PadovanPerrinShiftWindow": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Padovan–Perrin recurrences"},
   "MathlibExt/NumberTheory/PadovanSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Padovan and Perrin sequences"},
+  "MathlibExt/NumberTheory/PalindromeAPCountBasePow": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromes in arithmetic progressions"},
   "MathlibExt/NumberTheory/PalindromeAPCountOfDvdBase": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromes in arithmetic progressions"},
   "MathlibExt/NumberTheory/PalindromeCountClosedForm": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromes in arithmetic progressions"},
   "MathlibExt/NumberTheory/PalindromesArithmeticProgressions": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromes in arithmetic progressions"},

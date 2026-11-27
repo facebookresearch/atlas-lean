@@ -95329,6 +95329,7 @@
 "MetaMathlibExt.pairwise_non_coprime_density_eq_tsum_moebius_conv": "c8bab35d3ec8aeed",
 "MetaMathlibExt.palindromeAPCount": "e3b28a9dcb6dd5e9",
 "MetaMathlibExt.palindromeAPCount_base_pow": "29aeeae9617e395e",
+"MetaMathlibExt.palindromeAPCount_base_pow_add_skipped_eq": "0ee0ce53703b6dd3",
 "MetaMathlibExt.palindromeAPCount_of_dvd_base": "1b3bd085fc061883",
 "MetaMathlibExt.palindromeAPCount_of_modEq_one": "06a0aff0857ceaa4",
 "MetaMathlibExt.palindromeAPCount_small": "e2c8fe12feeece6f",
