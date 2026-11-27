@@ -17,6 +17,7 @@ public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.LinearAlgebra.Span.Defs
 public import Mathlib.Order.Interval.Finset.Fin
+public import MathlibExt.Combinatorics.Additive.PerfectCoverCoordinateOrders
 public import MathlibExt.Combinatorics.Additive.PerfectCoverPrescribedOddCoordinates
 public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverErase
 public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverInit
@@ -196,20 +197,6 @@ of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Corollary 13
 public theorem_wanted exists_perfectCover_subfamily_zmod {n m : ℕ} {ι : Type*} [Fintype ι]
     {s : ι → ZMod (2 ^ n)} (hs : IsPerfectMCover m s) :
     ∃ T : Finset ι, IsPerfectMCover 1 (fun i : T => s i)
-
-/-- **Orders of second coordinates in perfect $m$-covers.** Let $H$ be a finite abelian group of
-order $2^r$ and let $s = (s_i)_{i \in \iota}$ be a family in $H \oplus \mathbb{Z}_{2^n}$ indexed by
-a finite type $\iota$. If $s$ is a perfect $m$-cover of $H \oplus \mathbb{Z}_{2^n}$, then for
-every $j$ with $1 \le j \le n$ the second coordinate of some $s_i$ has additive order $2^j$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Corollary 14
-(`jis-2025-25.7.8-cor-14`). The family has any finite index type (the record reuses `n`
-for its length). -/
-public theorem_wanted exists_snd_addOrderOf_of_isPerfectMCover {H : Type*} [AddCommGroup H]
-    [DecidableEq H] [Fintype H] {r n m : ℕ} (hH : Fintype.card H = 2 ^ r) {ι : Type*}
-    [Fintype ι] {s : ι → H × ZMod (2 ^ n)} (hs : IsPerfectMCover m s) :
-    ∀ j : ℕ, 1 ≤ j → j ≤ n → ∃ i, addOrderOf (s i).2 = 2 ^ j
 
 /-- **Odd combinations of disjoint parts of a perfect cover.** Let $G$ be an abelian group of
 order $2^n$ and $S$ a perfect cover of $G$. For a finite $A \subseteq G$, let $\mathcal{T}(A)$ be
