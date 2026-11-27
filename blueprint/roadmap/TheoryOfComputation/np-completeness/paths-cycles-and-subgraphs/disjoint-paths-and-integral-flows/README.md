@@ -57,3 +57,8 @@
 - [Feasible instances of INTEGRAL K-MULTICOMMODITY FLOW ON TREES](integral-multi-commodity-flow-trees-feas.md)
 - [INTEGRAL K-MULTICOMMODITY FLOW ON TREES as a decision problem](integral-multi-commodity-flow-trees-dec.md)
 - [INTEGRAL K-MULTICOMMODITY FLOW ON TREES is NP-complete](integral-multi-commodity-flow-trees-np-c.md)
+- [Instances of DIRECTED MAXIMUM LENGTH-BOUNDED DISJOINT PATHS](directed-maximum-length-bounded-disjoint.md)
+- [Well-formed DIRECTED MAXIMUM LENGTH-BOUNDED DISJOINT PATHS instances](well-formed-11.md)
+- [Feasible DIRECTED MAXIMUM LENGTH-BOUNDED DISJOINT PATHS instances](directed-maximum-length-bounded-disjoint-2.md)
+- [DIRECTED MAXIMUM LENGTH-BOUNDED DISJOINT PATHS as a decision problem](directed-maximum-length-bounded-disjoint-3.md)
+- [DIRECTED MAXIMUM LENGTH-BOUNDED DISJOINT PATHS is NP-complete](directed-maximum-length-bounded-disjoint-4.md)
