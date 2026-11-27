@@ -24,6 +24,7 @@ public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.GroupTheory.Perm.ConjClassesPartition
 public import MathlibExt.NumberTheory.MultipleZeta.CyclicSumFormula
 public import MathlibExt.NumberTheory.MultipleZeta.OOZDuality
 
@@ -92,18 +93,6 @@ public theorem_wanted coeff_szQMZV_szBlockIndex_eq_sum_choose (r : ℕ) (k d : F
         ∏ j : Fin r, ((((mn.2 j - 1).choose (k j - 1)) *
           ((mn.1 j - (if h : j.val + 1 < r then mn.1 ⟨j.val + 1, h⟩ else 0) - 1).choose
             (d j - 1)) : ℕ) : ℚ)
-
-/-- **Cycle type classifies conjugacy classes of permutations.** For every natural number $n$,
-there is a bijection from the set of conjugacy classes of the symmetric group $S_n$ to the set
-of partitions of $n$ that sends the class of each permutation $\sigma$ to the cycle type of
-$\sigma$: the partition of $n$ formed by the lengths of the cycles of $\sigma$, fixed points
-counting as cycles of length $1$.
-
-Source: Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024),
-Article A6, Lemma 4 (`integers-2024-A6-lem-4`). -/
-public theorem_wanted exists_conjClasses_perm_equiv_partition (n : ℕ) :
-    ∃ e : ConjClasses (Equiv.Perm (Fin n)) ≃ (Fintype.card (Fin n)).Partition,
-      ∀ σ : Equiv.Perm (Fin n), e (ConjClasses.mk σ) = σ.partition
 
 /-- **Number of conjugacy classes of the symmetric group.** For every natural number $n$, the
 number of conjugacy classes of the symmetric group $S_n$ equals the number $p(n)$ of partitions
