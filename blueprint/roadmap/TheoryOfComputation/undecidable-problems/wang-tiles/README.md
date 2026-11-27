@@ -12,3 +12,4 @@ space–time diagrams of one-dimensional cellular automata, and the reductions f
 - [The tiling problem for NW-deterministic tile sets is undecidable](the-tiling-problem-for-nw-deterministic-tile-sets.md)
 - [The finite tiling problem is undecidable](the-finite-tiling-problem-is-undecidable.md)
 - [The tile set SNAKES and its plane-filling property](the-tile-set-snakes.md)
+- [The aperiodic domino problem](aperiodic-domino-problem/README.md)
