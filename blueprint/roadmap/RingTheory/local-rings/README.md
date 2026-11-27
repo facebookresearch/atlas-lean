@@ -37,3 +37,5 @@ Local rings and their residue fields, Krull dimension, adic completion, regular 
 - [Adic completion at a maximal ideal and localization](exists-adic-completion-localization-ring.md)
 - [Depth under a finite local homomorphism](depth-eq-depth-of-finite-of-is-local-hom.md)
 - [Krull dimension equals transcendence degree](ring-krull-dim-eq-to-enat-trdeg-of-finit.md)
+- [Dutta multiplicity bounds Hilbert–Samuel multiplicity for complete domains](dutta-multiplicity-complete-domain.md)
+- [Ring-theoretic properties of the completed surface-cone candidate](complete-normal-threefold-local-domain.md)

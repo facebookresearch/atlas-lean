@@ -62,6 +62,7 @@ Topics added since this subject's fields were last revised.
 - [Semiperfect Crystalline Residues](semiperfect-crystalline-residues/README.md)
 - [Semiperfect Witt PDEnvelopes](semiperfect-witt-pdenvelopes/README.md)
 - [Subst Basis](subst-basis/README.md)
+- [Tame Character](tame-character/README.md)
 - [Trace Algebra](trace-algebra/README.md)
 - [Unramified Lifts](unramified-lifts/README.md)
 - [Is Base Change Span](span-range-eq-top.md)

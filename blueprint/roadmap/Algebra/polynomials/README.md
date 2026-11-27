@@ -28,3 +28,4 @@ Univariate and multivariate polynomials and formal power series as algebraic obj
 - [Multiplicative functions on monic polynomials as resultants](exists-monic-eq-resultant-of-mul-of-fora.md)
 - [Polynomial values and the Gauss norm over a nonarchimedean field](log-abv-eval-eq-log-gauss-norm-add-sum.md)
 - [Modules over ℚ\[X\] killed by Xⁿ − 1](nonempty-linear-equiv-of-finrank-torsion.md)
+- [Independent commuting derivations with a coordinate-free joint kernel](commuting-locally-nilpotent-derivations.md)

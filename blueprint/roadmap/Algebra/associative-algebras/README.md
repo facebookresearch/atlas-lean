@@ -14,3 +14,7 @@ Noncommutative rings and finite-dimensional associative algebras, including divi
 - [Weyl algebra of polynomial differential operators](weyl-algebra.md)
 - [Tate–Oort normal form of a Hopf algebra of rank two](exists-basis-tate-oort-two.md)
 - [Integral balanced tensors with identity reduction](exists-balanced-tensor-map-mul-eq-one.md)
+- [A finite-dimensional complex algebra of infinite little finitistic dimension](infinite-little-finitistic-dimension.md)
+- [Extreme left and right finitistic-dimension asymmetry](left-right-finitistic-dimension-asymmetry.md)
+- [A base-change-stable Auslander–Reiten counterexample](auslander-reiten-base-change-counterexample.md)
+- [A Tachikawa counterexample over a rational function field of characteristic two](symmetric-algebra-tachikawa-counterexample.md)

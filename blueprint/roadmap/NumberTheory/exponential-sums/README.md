@@ -12,3 +12,4 @@ Gauss sums, Weyl and Vinogradov sums, incomplete exponential sums, Burgess bound
 - [Landsberg–Schaar relation](landsberg-schaar.md)
 - [Mittou's evaluation of a quadratic sum over congruent pairs](congruent-pair-quadratic-sum-eq-sub-dede.md)
 - [Roots-of-unity filter](roots-filter.md)
+- [Patterson’s first moment for cubic Gauss sums](patterson-cubic-gauss-sums/README.md)
