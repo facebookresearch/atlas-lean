@@ -12,6 +12,12 @@ cache misses. Funnelsort splits the input into $n^{1/3}$ contiguous arrays of si
 
 - [The ideal-cache model](the-ideal-cache-model.md)
 
+## Proof depends on
+
+- [k-mergers](k-mergers.md)
+- [A k-merger fits in quadratic space](a-k-merger-fits-in-quadratic-space.md)
+- [Cache complexity of a k-merger](cache-complexity-of-a-k-merger.md)
+
 ## Sources
 
 - M. Frigo, C. E. Leiserson, H. Prokop and S. Ramachandran, "Cache-oblivious algorithms", *Proceedings of the 40th Annual Symposium on Foundations of Computer Science*, 1999, Section 4, Lemmas 4–6 and Theorem 7.
