@@ -17,6 +17,5 @@ $f(x)$; here $f$ may be discontinuous and the limit is the average of the one-si
 
 ## Sources
 
-- Y. Katznelson, *An Introduction to Harmonic Analysis*, 3rd ed., Ch. II, §2,
-  “Convergence and divergence at a point,” corollary for functions of bounded variation.
+- Y. Katznelson, *An Introduction to Harmonic Analysis*, 3rd ed., Ch. I, §5 (functions of bounded variation; Dirichlet–Jordan test).
 - https://en.wikipedia.org/wiki/Dirichlet%27s_theorem_on_Fourier_series

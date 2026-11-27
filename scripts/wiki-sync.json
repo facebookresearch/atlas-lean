@@ -45876,7 +45876,7 @@
 "MathlibExt.Analysis.Fourier.BochnerWanted.bochner": "b43b23de210ad94e",
 "MathlibExt.Analysis.Fourier.ConvolutionTranslateClosureCircleWanted.T": "fd3bc7536494e591",
 "MathlibExt.Analysis.Fourier.ConvolutionTranslateClosureCircleWanted.closure_convolution_set_eq_closure_translate_span": "9914b68fc1397eb1",
-"MathlibExt.Analysis.Fourier.DirichletTheoremWanted.dirichlet_pointwise_convergence": "256b26c6c9a162e2",
+"MathlibExt.Analysis.Fourier.DirichletTheoremWanted.dirichlet_pointwise_convergence": "c7cfd5c55b32e4c4",
 "MathlibExt.Analysis.Fourier.FastFourierTransformWanted.cooley_tukey": "450b6557c4af869b",
 "MathlibExt.Analysis.Fourier.FastFourierTransformWanted.dftSum": "d946d94418bc3860",
 "MathlibExt.Analysis.Fourier.FastFourierTransformWanted.dftSum_mod": "ef50eb2517512c45",

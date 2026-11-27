@@ -380,7 +380,7 @@ Sources:
 - Mathlib `docs/undergrad.yaml`, section "Measures and integral calculus /
   Fourier analysis", entry "Dirichlet theorem" (currently missing: empty entry,
   no Mathlib declaration).
-- Y. Katznelson, *An Introduction to Harmonic Analysis*, 3rd ed., Ch. I, §5
+- Y. Katznelson, *An Introduction to Harmonic Analysis*, 3rd ed., Ch. II, §2
   (functions of bounded variation; Dirichlet–Jordan test).
 - https://en.wikipedia.org/wiki/Dirichlet%27s_theorem_on_Fourier_series
 -/
