@@ -62,7 +62,7 @@ def coefficientAction (n : ℤ) (p : CoefficientH G n) : GradedH G Z →ₗ[ℂ]
 
 variable {G Z} {W : TopCat.{0}} [MulAction G W] [ContinuousSMul G W]
 
-def gradedRestriction (f : Z ⟶ W) (hf : ∀ (g : G) (x : Z), f (g • x)=g • f x) :
+def gradedRestriction (f : Z ⟶ W) (hf : ∀ (g : G) (x : Z), f (g • x) = g • f x) :
     GradedH G W →ₗ[ℂ] GradedH G Z :=
   DirectSum.toModule ℂ ℤ (GradedH G Z) (fun n =>
     (DirectSum.lof ℂ ℤ (H G Z) n).comp (cohomologyPullback ℂ (borelMap f hf) n))

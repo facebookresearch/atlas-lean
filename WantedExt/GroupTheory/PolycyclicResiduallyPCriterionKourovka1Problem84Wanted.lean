@@ -19,7 +19,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Finiteness
 public import Mathlib.GroupTheory.Nilpotent
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 public import WantedExt.GroupTheory.KourovkaNotebookShared
 
 @[expose] public section

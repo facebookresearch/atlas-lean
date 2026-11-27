@@ -13,3 +13,7 @@
 ## Language
 
 - [Bounded generalized star height](has-gen-height-le.md)
+
+## Planned results
+
+- [Generalized star height at most three over a finite alphabet](generalized-star-height-at-most-three.md)

@@ -11,3 +11,4 @@ Graph representations as adjacency lists and adjacency matrices, breadth-first a
 - [Topological sorting](topological-sorting/README.md)
 - [Transitive closure](transitive-closure/README.md)
 - [Traversal of implicit binary trees](traversal-of-implicit-binary-trees/README.md)
+- [Depth-First Search Applications on the Word RAM](depth-first-search-applications-on-the-word-ram/README.md)
