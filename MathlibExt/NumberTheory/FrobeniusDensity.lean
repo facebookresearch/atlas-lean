@@ -1,13 +1,15 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits Mathlib as a whole:
+https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 -/
 
 /-
-Portions of this file are adapted from:
+Adapted from:
 
 `Definitions/Def_TaylorWiles_Primes.lean`,
 `Definitions/Def_FrobeniusDensity_DegOneAsymptotic.lean`,
@@ -18,17 +20,25 @@ Portions of this file are adapted from:
 and the corresponding `P2M/Sol/S_FrobeniusDensity_*.lean` proof files
 in https://github.com/anthropics/fermats-last-theorem
 at commit 6e837e75355538c7f80bab5b956861e86c4eacc2:
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The source is machine-generated proof code built around a proof-extraction
 framework; the statement and proof are reused here with that machinery
 removed and the name restated in Mathlib style.
+The adaptations: the helpers that several proof files each repeat are kept once; the
+source's preparatory declarations that nothing here uses are left out; local copies of
+Mathlib results are replaced by `Equiv.tsum_eq`, `Ideal.finite_factors` and the instance
+`Int.ideal_span_isMaximal_of_prime`; deprecated lemmas are replaced by their Lean 4.36 and
+Mathlib successors; the proof helpers are private; and the public declarations have
+docstrings.
 
-The upstream NOTICE also credits Mathlib as a whole:
-https://github.com/leanprover-community/mathlib4
-Copyright (c) the respective Mathlib authors, as recorded in the headers of the
-Mathlib source files.
-Released under the Apache License, Version 2.0.
+The proof of `tendsto_sum_idealCount_div` is adapted from the proof of
+`tendsto_sub_one_mul_dedekindZeta_nhdsGT` in
+`Mathlib/NumberTheory/NumberField/DedekindZeta.lean` (Mathlib):
+Copyright (c) 2025 Xavier Roblot. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Xavier Roblot
+
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
