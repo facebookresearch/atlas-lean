@@ -28,12 +28,12 @@ EM is a minorize–maximize (MM) algorithm. For any distribution $q$ on the late
 
 ## Positive-weight EM step for mixture weights
 
-- [Strictly positive probability weights](pos-weights.md)
+- [Strictly positive probability weights](../../../../Biology/statistical-genetics/gene-constraint-scores-pli-and-loeuf/pos-weights.md)
 - [Posterior-average weight update](weight-update.md)
 - [The posterior-average update is a strictly positive weight vector](weight-update-valid.md)
 - [Weight-times-likelihood joint model](weight-joint.md)
 - [The weight-times-likelihood joint is positive](weight-joint-pos.md)
-- [Expected latent masses under the mixture posteriors](weight-mass.md)
+- [Latent masses as sums of posterior ratios](weight-mass.md)
 - [Expected latent masses are positive](weight-mass-pos.md)
 - [Expected latent masses add up to the number of data](sum-weight-mass.md)
 - [Posterior-average step for mixture weights](weight-step.md)
