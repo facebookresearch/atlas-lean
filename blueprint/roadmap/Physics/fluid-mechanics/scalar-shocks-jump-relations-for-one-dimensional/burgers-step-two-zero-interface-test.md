@@ -1,0 +1,3 @@
+# A test function along the front detects the wrong shock speed
+
+Let $\beta$ be a smooth bump function centered at $t_0$, $\theta$ one centered at $0$, both (normalized as on the [interface test function](interface-test.md) page: equal to $1$ on its closed inner ball, positive on its open outer ball, zero outside), so $\theta(0) = 1$, and $\varphi(t, x) = \beta(t)\,\theta(x)$. For the Burgers flux $u^2/2$, the weak residual $\iint (u\,\varphi_t + f(u)\,\varphi_x)\,dt\,dx$ of the step from $2$ to $0$ is $0$ when the step moves at speed $1$, and equals $2\int \beta(t)\,dt > 0$ when it is stationary.

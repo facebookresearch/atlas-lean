@@ -1,0 +1,3 @@
+# Disjoint union is a categorical product of relations
+
+In the category of sets and relations, the disjoint union $X \sqcup Y$ with the projection relations $\pi_1 : X \sqcup Y \to X$, relating $\mathrm{inl}(x)$ to $x$, and $\pi_2 : X \sqcup Y \to Y$, relating $\mathrm{inr}(y)$ to $y$, is a product of $X$ and $Y$. For relations $f : Z \to X$ and $g : Z \to Y$, the unique relation $\langle f, g\rangle : Z \to X \sqcup Y$ with $\pi_1 \circ \langle f, g\rangle = f$ and $\pi_2 \circ \langle f, g\rangle = g$ relates $z$ to $\mathrm{inl}(x)$ when $f$ relates $z$ to $x$, and $z$ to $\mathrm{inr}(y)$ when $g$ relates $z$ to $y$.

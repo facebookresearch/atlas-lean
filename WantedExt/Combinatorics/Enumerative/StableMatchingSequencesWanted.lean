@@ -14,6 +14,8 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.Combinatorics.Enumerative.GaleShapleyOneRound
+public import MathlibExt.Combinatorics.Enumerative.StableMatchingDisjointProfiles
+public import MathlibExt.Combinatorics.Enumerative.GaleShapleySameTaste
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingHellCouples
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingSequences
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingSoulmates
@@ -29,33 +31,6 @@ namespace StableMatchingSequences
 open Finset Nat
 
 variable {n : ℕ}
-
-/-- **Gale–Shapley rounds when all men have the same preferences.** Let $P$ be a preference
-profile for $n$ men and $n$ women in which all men rank the women in the same order. Then the
-men-proposing Gale–Shapley algorithm on $P$ ends in exactly $n$ rounds.
-
-Source: Borodin, Duncan, Litchev, Liu, Moroz, Qian, Raghavan, Rastogi, Voigt,
-and Khovanova, *Sequences of the Stable Matching Problem*, Journal of Integer
-Sequences 27 (2024), Article 24.2.2, Proposition 1
-(`jis-2024-24.2.2-prop-1`). -/
-public theorem_wanted galeShapleyRounds_of_same_taste (P : PreferenceProfile n)
-    (h : ∀ i i' : Fin n, P.1 i = P.1 i') :
-    galeShapleyRounds P = n
-
-/-- **Counting disjoint preference profiles.** Call a preference profile for $n$ men and $n$ women
-disjoint if for every pair of positions $(r, s)$ there is exactly one man–woman pair in which the
-man ranks the woman at position $r$ and the woman ranks the man at position $s$. For every natural
-number $n$, the number of disjoint profiles is at most $(n^2)!$ and is divisible by $(n!)^2$.
-
-Source: Borodin et al., *Sequences of the Stable Matching Problem*, Journal of
-Integer Sequences 27 (2024), Article 24.2.2, Proposition 3
-(`jis-2024-24.2.2-prop-3`). -/
-public theorem_wanted disjoint_profiles_card_le_and_dvd (n : ℕ) :
-    Nat.card {P : PreferenceProfile n //
-        Function.Bijective fun ij : Fin n × Fin n => ((P.1 ij.1).symm ij.2, (P.2 ij.2).symm ij.1)} ≤
-        (n ^ 2)! ∧
-      (n ! ) ^ 2 ∣ Nat.card {P : PreferenceProfile n //
-        Function.Bijective fun ij : Fin n × Fin n => ((P.1 ij.1).symm ij.2, (P.2 ij.2).symm ij.1)}
 
 /-- **Outsiders without soulmate pairs.** Let $n$ and $k$ be natural numbers, where $n - k$ is
 read as $0$ when $k > n$. Consider the $n - k$ men $k, \dots, n - 1$ and the $n - k$ women

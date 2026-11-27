@@ -2393,13 +2393,15 @@ def records(text: str) -> tuple[list[str], list[str]]:
     return parts[0::2], parts[1::2] + [""]
 
 
-def insert_rows(path: Path, rows: list[dict]) -> None:
-    """Add *rows* to the links file *path*, each as declarations writes a row, right after the row whose page's path
-    comes last before its own (see row_order), or ahead of every row if none does; every other byte of the file stays
-    as it is. A file that is not there yet is made of the rows alone. A row's place depends on its page and the rows
-    already there, not on when it is added, so two pull requests that add pages in different places add lines in
-    different places, and neither adds them at the end, where every pull request would."""
-    lines, ends = records(path.read_bytes().decode("utf-8") if path.exists() else "")
+def inserted(text: str, rows: list[dict]) -> str:
+    """The links file *text* with *rows* added, each as declarations writes a row, right after the row whose page's path
+    comes last before its own (see row_order), wherever that row stands, as a links file need not be in path order, or
+    ahead of every row if none does; every other character of *text* stays as it is, and an empty *text* gives the rows
+    alone. It does not read or write the links file *text* comes from, nor change *text* or *rows*, so that a tool that
+    stages its writes, as import_mathgraph does, places rows as insert_rows does. Like insert_rows, it reads each row's
+    page with the links folder's current defaults (`_defaults.json`, see effective), from which a row may take its
+    subject: the same *text* and *rows* are placed otherwise under other defaults."""
+    lines, ends = records(text)
     placed = [(row_order(json.loads(line)), number) for number, line in enumerate(lines) if line.strip()]
     after: dict[int, list[str]] = defaultdict(list)
     for order, row in sorted(((row_order(row), json.dumps(row, ensure_ascii=False)) for row in rows),
@@ -2411,10 +2413,18 @@ def insert_rows(path: Path, rows: list[dict]) -> None:
     def separator(number: int) -> str:
         return ends[number] or next((end for end in reversed(ends[:number]) if end), "\n")
 
-    text = "".join(row + separator(0) for row in after[-1])
+    result = "".join(row + separator(0) for row in after[-1])
     for number, (line, end) in enumerate(zip(lines, ends)):
-        text += line + (end + "".join(row + end for row in after[number]) if end else
-                        "".join(separator(number) + row for row in after[number]))
+        result += line + (end + "".join(row + end for row in after[number]) if end else
+                          "".join(separator(number) + row for row in after[number]))
+    return result
+
+
+def insert_rows(path: Path, rows: list[dict]) -> None:
+    """Add *rows* to the links file *path* where inserted puts them; every other byte of the file stays as it is. A file
+    that is not there yet is made of the rows alone. Rows go where their page's path puts them, so pull requests that
+    add pages in different places add lines in different places."""
+    text = inserted(path.read_bytes().decode("utf-8") if path.exists() else "", rows)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(text.encode("utf-8"))
 
