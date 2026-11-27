@@ -71,6 +71,15 @@ one, and people and agents follow the same steps:
    that others see the task is taken. Mark it ready for review when it is done,
    or close it if you stop.
 
+Graph-building tasks are on the same list: `next_task.py --graph` also prints
+the next [nodes still to expand](docs/BLUEPRINT.md#nodes-still-to-expand),
+which the site's
+[`dependencies/index.json`](https://facebookresearch.github.io/atlas-lean/dependencies/index.json)
+marks `not_ready`, and skips those that an open pull request names by their
+node id or page path. Take one the same way, with a draft pull request that
+names its node id, and expand it as
+[Expanding a node](docs/BLUEPRINT.md#expanding-a-node) says.
+
 Proving a task needs a built checkout. `lake exe cache get` fetches only
 Mathlib's build, and ATLAS's own modules take hours to build from source, so
 start from CI's build of `main` instead. It needs a `gh` login, `zstd` and

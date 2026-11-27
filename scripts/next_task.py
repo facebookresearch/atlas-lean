@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Print the next ready formalization tasks of ATLAS that no pull request has taken.
+"""Print the next ready formalization tasks of ATLAS that no pull request has taken, and with --graph the next
+nodes of the graph still to expand.
 
-    python3 scripts/next_task.py [-n N] [--json] [--tasks FILE_OR_URL] [--priorities FILE_OR_URL] [--repo OWNER/NAME]
+    python3 scripts/next_task.py [-n N] [--json] [--graph] [--tasks FILE_OR_URL] [--dependencies FILE_OR_URL]
+                                 [--priorities FILE_OR_URL] [--repo OWNER/NAME]
 
 The site publishes tasks.json: the articles Autoform finds ready to state or to prove (docs/BLUEPRINT.md,
 What the tools own), as `autoform work list --json` lists them on the last main build, with the commit they come
@@ -37,6 +39,11 @@ a default for the others. --priorities reads another such file, or a URL; withou
 outside the repository, all tasks have the same priority. --json prints the tasks for agents, with Autoform's
 fields, and their priorities.
 
+--graph also lists the graph-building tasks: the nodes still to expand (docs/BLUEPRINT.md, Nodes still to expand),
+which the site's dependencies/index.json marks not_ready. A pull request takes one when its title, body or branch
+name holds the node id (`Logic/modal-logic/epistemic-logic/common-knowledge`), or the path of its page, as a whole
+word. Of the free ones it prints the next N too, by priority, highest first, then in the index's order.
+
 Reading the open pull requests needs no token, within the GitHub API's limit of 60 requests an hour from one
 address, but reading those merged since tasks.json's commit does, as they come from GitHub's GraphQL API: set
 GH_TOKEN (or GITHUB_TOKEN). Every request to the API sends that token, and a redirect away from it drops the
@@ -62,6 +69,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 TASKS = "https://facebookresearch.github.io/atlas-lean/tasks.json"
+# Every node of the graph with its status, as the site publishes it; a node to expand is marked not_ready.
+DEPENDENCIES = "https://facebookresearch.github.io/atlas-lean/dependencies/index.json"
 REPOSITORY = "facebookresearch/atlas-lean"
 API = "https://api.github.com"
 # The branch tasks.json is built from, whose merged pull requests are read.
@@ -89,6 +98,8 @@ RARE = 5
 # An article id, and a run of the characters a Lean name is written with, dots, primes, "!" and "?" included.
 ARTICLE_ID = re.compile(r"(?<![0-9A-Za-z])af_[0-9a-f]{24}(?![0-9A-Za-z])", re.IGNORECASE)
 WORD = re.compile(r"[\w.'!?]+")
+# A run of the characters a node id of the graph is written with.
+NODE_RUN = re.compile(r"[\w/-]+")
 # The API's media type for pull requests with their bodies as GitHub renders them (body_html), besides their Markdown.
 RENDERED = "application/vnd.github.full+json"
 # In a body as GitHub renders it, the elements that hold code, and those that run inside a line of text, whose text
@@ -575,6 +586,62 @@ def taken(items: list[dict], pulls: list[dict]) -> dict[str, list[int]]:
     return found
 
 
+def load_graph(source: str) -> list[dict]:
+    """The nodes still to expand, from the site's dependencies/index.json at a URL or in a file: each node (not a
+    folder) it marks not_ready, as a graph task with its node id, title, page and article path, in the index's order."""
+    try:
+        data = request(source) if re.match(r"https?://", source) else Path(source).read_bytes()
+        index = json.loads(data)
+    except OSError as error:
+        raise Failure(f"{source}: {error.strerror or error}") from None
+    except ValueError:
+        raise Failure(f"{source} is not JSON") from None
+    nodes = index.get("nodes") if isinstance(index, dict) else None
+    if not isinstance(nodes, list) or not all(isinstance(node, dict) and isinstance(node.get("id"), str)
+                                              and node["id"].strip() != "" for node in nodes):
+        raise Failure(f"{source} is not the graph's index of nodes, each with its id")
+    base = source if re.match(r"https?://", source) else DEPENDENCIES
+    found = []
+    for node in nodes:
+        if node.get("kind") == "node" and node.get("status") == "not_ready":
+            route = node.get("route")
+            found.append({"node_id": node["id"], "phase": "expand", "title": node.get("title"),
+                          "article_path": f"blueprint/roadmap/{node['id']}.md",
+                          "page": urllib.parse.urljoin(base, route) if isinstance(route, str) else None})
+    if len({item["node_id"] for item in found}) != len(found):
+        raise Failure(f"{source} marks one node to expand twice")
+    return found
+
+
+def graph_taken(items: list[dict], pulls: list[dict]) -> dict[str, list[int]]:
+    """The pull requests that take each node to expand, by node id: those whose title, body or branch name holds its
+    node id as a whole word, as in its page's path (`blueprint/roadmap/<node id>.md`)."""
+    texts = {pull["number"]: "\n".join(part for part in (pull.get("title"), pull.get("body"),
+                                                         (pull.get("head") or {}).get("ref"))
+                                       if isinstance(part, str))
+             for pull in pulls}
+    ids = {item["node_id"] for item in items}
+    by_id: dict[str, set[int]] = {}
+    for number, text in texts.items():
+        # Each run of the characters node ids are written with, and each of its ends that starts after a slash.
+        for run in NODE_RUN.findall(text):
+            parts = run.split("/")
+            for k in range(len(parts)):
+                end = "/".join(parts[k:])
+                if end in ids:
+                    by_id.setdefault(end, set()).add(number)
+    found: dict[str, list[int]] = {}
+    for item in items:
+        numbers = by_id.get(item["node_id"], set())
+        if not NODE_RUN.fullmatch(item["node_id"]):
+            # An id written with other characters too is looked for as such.
+            pattern = re.compile(r"(?<![\w-])" + re.escape(item["node_id"]) + r"(?![\w/-])")
+            numbers = {number for number, text in texts.items() if pattern.search(text)}
+        if numbers:
+            found[item["node_id"]] = sorted(numbers)
+    return found
+
+
 def shown(value: object) -> str:
     """*value* as text that cannot steer a terminal: each character that is not printable, such as ESC, BEL or a line
     end, is written as its escape (`\\x1b`, `\\x07`, `\\n`)."""
@@ -603,11 +670,16 @@ def main(argv: list[str] | None = None) -> int:
                              "this script is in, if there is one; without it all tasks have the same priority)")
     parser.add_argument("--repo", default=REPOSITORY, metavar="OWNER/NAME",
                         help=f"the repository whose pull requests take tasks (default {REPOSITORY})")
+    parser.add_argument("--graph", action="store_true",
+                        help="also print the next nodes of the graph still to expand, the graph-building tasks")
+    parser.add_argument("--dependencies", default=DEPENDENCIES, metavar="FILE_OR_URL",
+                        help=f"the graph's index of nodes, read with --graph (default {DEPENDENCIES})")
     args = parser.parse_args(argv)
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or None
     source = args.priorities if args.priorities is not None else str(PRIORITIES) if PRIORITIES.is_file() else None
     try:
         tasks = load_tasks(args.tasks)
+        graph = load_graph(args.dependencies) if args.graph else []
         priorities = None if source is None else load_priorities(source)
         pulls = pull_requests(args.repo, tasks.get("commit_date"), token)
     except Failure as failure:
@@ -616,14 +688,27 @@ def main(argv: list[str] | None = None) -> int:
     held = taken(tasks["items"], pulls)
     free = [item for item in ordered(tasks["items"], priorities) if item["node_id"] not in held]
     chosen = free[:args.count]
+    graph_held = graph_taken(graph, pulls)
+    graph_free = sorted((item for item in graph if item["node_id"] not in graph_held),
+                        key=lambda item: -priority(item, priorities))
+    graph_chosen = graph_free[:args.count]
     if args.json:
-        print(json.dumps({
+        report = {
             "tasks": args.tasks, "commit": tasks.get("commit"), "commit_date": tasks.get("commit_date"),
             "autoform_ref": tasks.get("autoform_ref"), "priorities": source, "ready": len(tasks["items"]),
             "taken": len(held), "free": len(free), "next": chosen,
             "priority": {item["node_id"]: priority(item, priorities) for item in chosen},
             "taken_by": [{"node_id": node_id, "pull_requests": numbers} for node_id, numbers in held.items()],
-        }, indent=2))  # ASCII only, so no character of the list reaches the terminal unescaped.
+        }
+        if args.graph:
+            report["graph"] = {
+                "dependencies": args.dependencies, "to_expand": len(graph), "taken": len(graph_held),
+                "free": len(graph_free),
+                "next": [dict(item, priority=priority(item, priorities)) for item in graph_chosen],
+                "taken_by": [{"node_id": node_id, "pull_requests": numbers}
+                             for node_id, numbers in graph_held.items()],
+            }
+        print(json.dumps(report, indent=2))  # ASCII only, so no character of the list reaches the terminal unescaped.
         return 0
     # The list comes from a download or a file: its fields are shown escaped.
     commit = shown((tasks.get("commit") or "")[:12]) or "an unrecorded commit"
@@ -639,6 +724,16 @@ def main(argv: list[str] | None = None) -> int:
               f"  article      {shown(item.get('article_path'))}\n  priority     {shown(priority(item, priorities))}")
     if chosen:
         print("\nTo take one, open a draft pull request that names its article id (CONTRIBUTING.md, Picking a task).")
+    if args.graph:
+        print(f"\n{len(graph)} nodes to expand; pull requests take {len(graph_held)} of them, so {len(graph_free)} "
+              "are free.")
+        for item in graph_chosen:
+            print(f"\nexpand: {shown(item.get('title'))}\n  node         {shown(item['node_id'])}\n"
+                  f"  page         {shown(item.get('page'))}\n  article      {shown(item['article_path'])}\n"
+                  f"  priority     {shown(priority(item, priorities))}")
+        if graph_chosen:
+            print("\nTo take one, open a draft pull request that names its node id (CONTRIBUTING.md, Picking a "
+                  "task), and expand it as docs/BLUEPRINT.md, Expanding a node, says.")
     return 0
 
 

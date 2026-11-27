@@ -884,5 +884,97 @@ class Requests(unittest.TestCase):
         self.assertEqual(err.getvalue(), f"error: {next_task.TASKS}: no route to host\n")
 
 
+def node(node_id: str, status: str = "not_ready", kind: str = "node") -> dict:
+    """A node of the site's dependencies/index.json."""
+    scope = node_id.rpartition("/")[0]
+    return {"id": node_id, "kind": kind, "status": status, "title": f"Node {node_id}", "scope": scope,
+            "route": f"../roadmap/{scope}/index.html#{node_id.rpartition('/')[2]}", "result": True, "parent": 0}
+
+
+INDEX = {"schema": "autoform-dag-search/v1", "relations": [], "nodes": [
+    node("Algebra", kind="scope"),
+    node("Algebra/groups", kind="scope"),          # a folder still to expand is not a node to expand
+    node("Algebra/groups/sylow"),                  # its page's path is in an open pull request's body
+    node("Algebra/groups/sylow-applications"),     # a longer id than the one a pull request gives
+    node("Algebra/groups/cayley", status="can_state"),
+    node("Algebra/t1"),                            # its id is an open pull request's branch
+    node("Algebra/t10"),
+    node("Combinatorics/ramsey"),
+]}
+GRAPH_PULLS = [
+    pull(20, "Expand the Sylow theorems", "Expands `blueprint/roadmap/Algebra/groups/sylow.md` into its parts."),
+    pull(21, "Graph work", "", branch="expand/Algebra/t1"),
+]
+
+
+class Graph(unittest.TestCase):
+    def test_nodes_to_expand_are_the_not_ready_nodes(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "index.json"
+            path.write_text(json.dumps(INDEX))
+            graph = next_task.load_graph(str(path))
+        self.assertEqual([item["node_id"] for item in graph],
+                         ["Algebra/groups/sylow", "Algebra/groups/sylow-applications", "Algebra/t1", "Algebra/t10",
+                          "Combinatorics/ramsey"])
+        self.assertEqual(graph[0], {
+            "node_id": "Algebra/groups/sylow", "phase": "expand", "title": "Node Algebra/groups/sylow",
+            "article_path": "blueprint/roadmap/Algebra/groups/sylow.md",
+            "page": "https://facebookresearch.github.io/atlas-lean/roadmap/Algebra/groups/index.html#sylow"})
+
+    def test_an_unreadable_index_stops_the_script(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            for number, (data, message) in enumerate([("{", "is not JSON"), ("[]", "is not the graph's index"),
+                                                      ('{"nodes": [{"kind": "node"}]}', "is not the graph's index")]):
+                path = Path(folder) / f"case{number}.json"
+                path.write_text(data)
+                with self.assertRaises(next_task.Failure) as raised:
+                    next_task.load_graph(str(path))
+                self.assertIn(message, str(raised.exception))
+
+    def test_a_pull_request_takes_the_node_it_names_and_no_other(self) -> None:
+        site = Site(open_pages=(OPEN_PULLS + GRAPH_PULLS,))
+        site.pages[next_task.DEPENDENCIES] = json.dumps(INDEX).encode()
+        code, out, err = run(site, "--json", "--graph", "-n", "10", env=TOKEN)
+        self.assertEqual((code, err), (0, ""))
+        graph = json.loads(out)["graph"]
+        self.assertEqual(graph["taken_by"], [{"node_id": "Algebra/groups/sylow", "pull_requests": [20]},
+                                             {"node_id": "Algebra/t1", "pull_requests": [21]}])
+        self.assertEqual([item["node_id"] for item in graph["next"]],
+                         ["Algebra/groups/sylow-applications", "Algebra/t10", "Combinatorics/ramsey"])
+        self.assertEqual((graph["to_expand"], graph["taken"], graph["free"]), (5, 2, 3))
+        self.assertEqual(graph["next"][0]["priority"], 1)
+        # The formalization tasks are listed as before.
+        self.assertEqual(json.loads(out)["free"], 4)
+
+    def test_the_graph_comes_by_priority(self) -> None:
+        site = Site()
+        site.pages[next_task.DEPENDENCIES] = json.dumps(INDEX).encode()
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "priorities.json"
+            path.write_text(json.dumps({"schema": next_task.PRIORITIES_SCHEMA, "default": 1,
+                                        "weights": {"Combinatorics": 2, "Algebra/groups": 0.5}}))
+            code, out, err = run(site, "--json", "--graph", "-n", "10", "--priorities", str(path), env=TOKEN)
+        self.assertEqual((code, err), (0, ""))
+        self.assertEqual([item["node_id"] for item in json.loads(out)["graph"]["next"]],
+                         ["Combinatorics/ramsey", "Algebra/t1", "Algebra/t10", "Algebra/groups/sylow",
+                          "Algebra/groups/sylow-applications"])
+
+    def test_without_graph_the_index_is_not_read(self) -> None:
+        site = Site()
+        code, out, _ = run(site, "--json", env=TOKEN)
+        self.assertEqual(code, 0)
+        self.assertNotIn("graph", json.loads(out))
+        self.assertNotIn(next_task.DEPENDENCIES, [url for url, _ in site.read])
+
+    def test_the_text_lists_the_nodes_to_expand(self) -> None:
+        site = Site(open_pages=(OPEN_PULLS + GRAPH_PULLS,))
+        site.pages[next_task.DEPENDENCIES] = json.dumps(INDEX).encode()
+        code, out, err = run(site, "--graph", "-n", "1", env=TOKEN)
+        self.assertEqual((code, err), (0, ""))
+        self.assertIn("5 nodes to expand; pull requests take 2 of them, so 3 are free.", out)
+        self.assertIn("expand: Node Algebra/groups/sylow-applications", out)
+        self.assertIn("names its node id", out)
+
+
 if __name__ == "__main__":
     unittest.main()
