@@ -9,14 +9,15 @@ $$\dot x_1 = f_0\,\mu\,x_0(t - r_0) + f_1(1 - \xi)\,x_1(t - r_1) - x_1(t)\,\Phi(
 For continuous positive initial histories with $x_0 + x_1 = 1$ at the initial time, the simplex $\Sigma = \{x_0 + x_1 = 1,\ x_0, x_1 > 0\}$ is invariant, as it is for the general $(n+1)$-class model $\dot x_i = \sum_j f_j Q_{ji} x_j(t - r_j) - x_i(t)\sum_j f_j x_j(t - r_j)$; and any positive $T$-periodic solution in $(0,1)^{n+1}$ automatically lies in the simplex.
 
 **Theorem.**
+
 1. *Existence.* If $\xi \ne 1 - \mu$, the delayed system has at least one non-trivial positive $T$-periodic solution in $\Sigma$, and it satisfies
 
-$$\min\{1-\mu, \xi\} \le x_0(t) \le \max\{1-\mu, \xi\}, \qquad \min\{1-\xi, \mu\} \le x_1(t) \le \max\{1-\xi, \mu\}.$$
+    $$\min\{1-\mu, \xi\} \le x_0(t) \le \max\{1-\mu, \xi\}, \qquad \min\{1-\xi, \mu\} \le x_1(t) \le \max\{1-\xi, \mu\}.$$
 
 2. *A priori bounds.* Every positive $T$-periodic solution in $(0,1)^2$ lies in $\Sigma$ and:
-   - if $1 - \mu > \xi$, then $\xi < x_0(t) < 1 - \mu$ and $\mu < x_1(t) < 1 - \xi$ for all $t$;
-   - if $1 - \mu < \xi$, then $1 - \mu < x_0(t) < \xi$ and $1 - \xi < x_1(t) < \mu$ for all $t$;
-   - if $1 - \mu = \xi$, the solution is constant, $x_0 \equiv \xi$, $x_1 \equiv 1 - \xi$.
+    - if $1 - \mu > \xi$, then $\xi < x_0(t) < 1 - \mu$ and $\mu < x_1(t) < 1 - \xi$ for all $t$;
+    - if $1 - \mu < \xi$, then $1 - \mu < x_0(t) < \xi$ and $1 - \xi < x_1(t) < \mu$ for all $t$;
+    - if $1 - \mu = \xi$, the solution is constant, $x_0 \equiv \xi$, $x_1 \equiv 1 - \xi$.
 
 ## Expansion
 

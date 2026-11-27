@@ -10,21 +10,25 @@ for explicit functions $f_k$ and finite integers $\eta(f,k)$; this needs $f$ con
 
 1. If $f$ is also Lipschitz, then $Y^{(N)}\Rightarrow Y$ in the Skorokhod topology, where
 
-$$dY_t=\sigma\big(f(Y_t)-Y_t\big)\,dt+\sqrt{Y_t(1-Y_t)}\,dW_t .$$
+    $$dY_t=\sigma\big(f(Y_t)-Y_t\big)\,dt+\sqrt{Y_t(1-Y_t)}\,dW_t .$$
 
 2. The number $A_t$ of ancestral lineages of a sample is a branching–coalescing Markov chain with generator
 
-$$Gh(n)=\binom n2\big[h(n-1)-h(n)\big]+\sigma n\sum_{k\ge1}\Big(\tfrac34\Big)^{k-1}\tfrac14\big[h(n+\eta(f,k)-1)-h(n)\big].$$
+    $$Gh(n)=\binom n2\big[h(n-1)-h(n)\big]+\sigma n\sum_{k\ge1}\Big(\tfrac34\Big)^{k-1}\tfrac14\big[h(n+\eta(f,k)-1)-h(n)\big].$$
 
 3. *(Duality.)* Let $\mathbf B_n(y)$ be the vector of Bernstein polynomials of degree $n$. There is a vector-valued process $V_t$, carried along this ancestral process, such that
 
-$$\mathbb E\big[\langle\mathbf B_n(Y_t),\mathbf v\rangle\,\big|\,Y_0=y\big]=\mathbb E\big[\langle\mathbf B_{\dim(\mathbf V_t)-1}(y),\mathbf V_t\rangle\,\big|\,\mathbf V_0=\mathbf v\big].$$
+    $$\mathbb E\big[\langle\mathbf B_n(Y_t),\mathbf v\rangle\,\big|\,Y_0=y\big]=\mathbb E\big[\langle\mathbf B_{\dim(\mathbf V_t)-1}(y),\mathbf V_t\rangle\,\big|\,\mathbf V_0=\mathbf v\big].$$
 
 4. *(Allen–Cahn.)* On a Lipschitz domain $\Omega\subseteq\mathbb R^d$, run a branching Brownian motion (speed $2$, so its generator is $\Delta$) reflected at $\partial\Omega$, started from one particle at $x$ and branching at rate $\lambda>0$ into $\eta(f,L)$ offspring with $L\sim\mathrm{Geo}(1/4)$. At time $t$ each leaf at $z$ independently carries allele $A$ with probability $u_0(z)$, and alleles propagate rootwards: a branch with $\eta(f,k)$ offspring, $j$ of them $A$, carries $A$ if $f_k(j/\eta(f,k))\ge\tfrac12$, so each branching event uses the Bernoulli factory as a voting rule and turns $u$-coins into an $f(u)$-coin. The probability $u(x,t)=\mathbb P(F(x,t)=A)$ that the root ends up with allele $A$ solves
 
-$$\partial_tu-\Delta u=\lambda\big(f(u)-u\big),\qquad \partial_nu=0\ \text{on }\partial\Omega,\qquad u(\cdot,0)=u_0.$$
+    $$\partial_tu-\Delta u=\lambda\big(f(u)-u\big),\qquad \partial_nu=0\ \text{on }\partial\Omega,\qquad u(\cdot,0)=u_0.$$
 
 The reaction is $\lambda(f(u)-u)$, not $\lambda f(u)$: at rate $\lambda$ a branching event replaces the current value $u$ by the factory output $f(u)$, so with the identity factory $f(u)=u$ and a constant initial frequency the solution stays constant. (The source displays the equation as $\partial_tu-\Delta u=\lambda f(u)$, but its proof derives $\lambda[f(u)-u]$.) This extends the voting construction for the Allen–Cahn nonlinearity $\varepsilon^{-2}u(1-u)(2u-1+\nu\varepsilon)$, which has this form $\lambda(f(u)-u)$ with $\lambda=(1+\nu\varepsilon)/\varepsilon^2$ and a cubic voting polynomial $f$, used in spatial models of hybrid zones, where an internal branch takes the majority vote of its three children with a small correction, to any continuous, polynomially bounded $f$.
+
+## Proof depends on
+
+- [Moment duality with Kingman's coalescent](../../wright-fisher-diffusion/generator-pow.md)
 
 ## Expansion
 

@@ -21,6 +21,7 @@ with $(\omega_i)$, $W$, $N^I_u$ independent. Write $\langle f,\mu\rangle=\int r\
 $$\phi(j,\mu)=\mathbb E\left[\frac{\sum_{i=1}^{j}\omega_i^2+\langle f^2,\mu\rangle}{\big(\sum_{i=1}^{j}\omega_i+\langle f,\mu\rangle\big)^2}\right].$$
 
 Then:
+
 1. for $0<u<1$, $\displaystyle\lim_{n\to\infty,\ k/n\to u}\mathbb P\big(k\le X^I_n<n\,\big|\,Z_n>1\big)=\mathbb E\,\phi(N^I_u,W)$;
 2. $\displaystyle\lim_{n\to\infty}\mathbb P\big(X^I_n<\infty\,\big|\,Z_n>1\big)=\mathbb E\left[\frac{\langle f^2,W\rangle}{\langle f,W\rangle^2}\right]$;
 3. $\displaystyle\lim_{n\to\infty}\mathbb P\big(A^I_n<\infty\,\big|\,Z_n>0\big)=0$;

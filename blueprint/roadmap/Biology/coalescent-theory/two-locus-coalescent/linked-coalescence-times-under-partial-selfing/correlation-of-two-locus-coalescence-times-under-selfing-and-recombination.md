@@ -12,17 +12,18 @@ and for fixed $s_N = s\in[0,1)$, $\Pr_{\rm diff}(T_i > Nt)\to e^{-t/(2-s)}$ whil
 
 1. $s_N = \tilde\sigma/N$, $r_N = \tilde\rho/N$:
 
-$$\operatorname{Corr}_{q_{11}} = \operatorname{Corr}_{q_{12}} \to \frac{2\tilde\rho + 9}{8\tilde\rho^2 + 26\tilde\rho + 9}, \qquad \operatorname{Corr}_{q_5}\to\frac{2}{8\tilde\rho^2+26\tilde\rho+9}.$$
+    $$\operatorname{Corr}_{q_{11}} = \operatorname{Corr}_{q_{12}} \to \frac{2\tilde\rho + 9}{8\tilde\rho^2 + 26\tilde\rho + 9}, \qquad \operatorname{Corr}_{q_5}\to\frac{2}{8\tilde\rho^2+26\tilde\rho+9}.$$
 
-With $\rho = 4N r_N$ this is the classical $(\rho+18)/(\rho^2+13\rho+18)$.
+    With $\rho = 4N r_N$ this is the classical $(\rho+18)/(\rho^2+13\rho+18)$.
+
 2. $s_N = s$, $r_N = \tilde\rho/N$: the same formulas with $\tilde\rho$ replaced by $\tilde\rho(1-s)$ for $q_5, q_{11}$, while
 
-$$\operatorname{Corr}_{q_{12}} \to \frac{4\tilde\rho^2 s(1-s)^2 + 12\tilde\rho s(1-s) + 2\tilde\rho(1-s) + 9}{8\tilde\rho^2(1-s)^2 + 26\tilde\rho(1-s) + 9}.$$
+    $$\operatorname{Corr}_{q_{12}} \to \frac{4\tilde\rho^2 s(1-s)^2 + 12\tilde\rho s(1-s) + 2\tilde\rho(1-s) + 9}{8\tilde\rho^2(1-s)^2 + 26\tilde\rho(1-s) + 9}.$$
 
 3. $s_N = \tilde\sigma/N$, $r_N = r$: correlations vanish, $\operatorname{Corr}_{q_{11}}\sim \frac{R}{2r(2-r)}\frac1N$, $\operatorname{Corr}_{q_{12}}\sim\frac{R(2r\tilde\sigma - 2r - r^2\tilde\sigma + r^2 + 1)}{2r(2-r)}\frac1N$, $\operatorname{Corr}_{q_5} = O(N^{-2})$.
 4. $s_N = s$, $r_N = r$: $\operatorname{Corr}_{q_5}$ and $\operatorname{Corr}_{q_{11}}$ are $O(1/N)$ (explicit rational functions of $r,s$), but
 
-$$\operatorname{Corr}_{q_{12}} \to \frac{(2-s)^2}{2(2-sR)} + s - 1 .$$
+    $$\operatorname{Corr}_{q_{12}} \to \frac{(2-s)^2}{2(2-sR)} + s - 1 .$$
 
 At the extremes, for every $N\ge2$: with no recombination ($r_N=0$), $\operatorname{Corr}_{q_{11}} = \operatorname{Corr}_{q_{12}} = 1$; with total selfing ($s_N=1$), $\operatorname{Corr}_{q_{12}} = \frac{3}{1+2r_N-2r_N^2} - 2$.
 

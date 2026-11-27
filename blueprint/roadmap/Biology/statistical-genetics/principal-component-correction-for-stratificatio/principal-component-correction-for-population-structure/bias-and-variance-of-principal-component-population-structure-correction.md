@@ -19,6 +19,10 @@ $$\mathrm{bias}(\hat{\bar\alpha}) = \frac{X_{\cdot 1}^{\top}\big(\bar U_{(k+1):\
 
 The sign in the PSC numerator matters: expanding $-\beta_1\bar D$ gives $+\beta_1\|X_{\cdot 1}^{\top}\bar U_{1:k}\|^2$, and the $\beta_1$ terms cancel against $X_{\cdot 1}^{\top}(I-\bar P)X_{\cdot 1}\beta_1$, leaving the background form on the right. In particular, both estimators are unbiased when only the tested variant contributes to the mean ($\beta_{(-1)} = 0$), and both biases come only from the part of the background signal outside the chosen components. The estimators differ through the components used: those of the full $X$ partly contain the tested variant, which changes the projection $\bar P$ in the bias and lowers the residual norm $\bar D$ that sets the variance. CPC's bias vanishes when $k = r$ or the tested variant is orthogonal to the omitted components.
 
+## Proof depends on
+
+- [Frisch–Waugh–Lovell theorem, existence](../exists-frisch-waugh-lovell.md)
+
 ## Expansion
 
 Both estimators are coefficients in an ordinary least-squares fit with orthonormal nuisance regressors, so by the Frisch–Waugh–Lovell theorem $\hat\alpha = \frac{X_{\cdot 1}^{\top}(I - P_k)Y}{X_{\cdot 1}^{\top}(I - P_k)X_{\cdot 1}}$ with $P_k$ the projection onto the chosen components, which gives the variance $\sigma^2/(\|X_{\cdot 1}\|^2 - \|X_{\cdot 1}^{\top}U_{1:k}\|^2)$ and the bias by substituting $\mathbb{E}Y = X_{\cdot 1}\beta_1 + U\gamma$ (for CPC) or $\mathbb E Y = \bar U\bar\gamma$ (for PSC), so that the bias is $[X_{\cdot 1}^{\top}(I-P_k)\mathbb E Y - \beta_1 X_{\cdot 1}^{\top}(I-P_k)X_{\cdot 1}]/X_{\cdot 1}^{\top}(I-P_k)X_{\cdot 1}$. For the variance comparison, the components of $X_{(-1)}$ explain less of $X_{\cdot 1}$ than those of $X$, which contain $X_{\cdot 1}$, so the residual norm in the denominator is larger.

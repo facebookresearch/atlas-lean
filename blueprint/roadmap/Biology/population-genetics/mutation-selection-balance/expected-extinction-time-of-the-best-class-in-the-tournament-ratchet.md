@@ -1,6 +1,7 @@
 # Expected extinction time of the best class in the tournament ratchet
 
 **Model.** In the Moran tournament ratchet with population size $N$, individuals carry mutation counts $\kappa \in \mathbb{N}_0$; with $N_\kappa$ the number of individuals of type $\kappa$:
+
 - resampling: $(N_\kappa, N_{\kappa'}) \to (N_\kappa + 1, N_{\kappa'} - 1)$ at rate $\frac{1}{2N}N_\kappa N_{\kappa'}$ for $\kappa \ne \kappa'$;
 - mutation: $(N_\kappa, N_{\kappa+1}) \to (N_\kappa - 1, N_{\kappa+1} + 1)$ at rate $m N_\kappa$;
 - binary tournament selection: $(N_\kappa, N_{\kappa'}) \to (N_\kappa + 1, N_{\kappa'} - 1)$ at rate $\frac{s}{N}N_\kappa N_{\kappa'}$ for $\kappa < \kappa'$ (fitness proportional selection would use rate $\frac{s}{N}N_\kappa N_{\kappa'}(\kappa' - \kappa)$ instead).
@@ -12,16 +13,18 @@ $$n \to n-1:\ n\Big(\tfrac12\big(1 - \tfrac nN\big) + m\Big), \qquad n \to n+1:\
 let $T_0$ be its extinction time (the time to the next click of the ratchet).
 
 **Theorem.** Let $1/N \ll m \ll 1$ and $\rho \in [\rho_0, 1)$ for a fixed $\rho_0 \in (0,1)$.
+
 1. *Polynomial regime*, $Nm(1-\rho)^2 \to 0$: if $j_N \ll \sqrt{(N/m)/\log(N/m)}$ then
 
-$$\mathbb{E}_{j_N}[T_0] \sim 2j_N\Big(\log\sqrt{N/m} - \log j_N\Big),$$
+    $$\mathbb{E}_{j_N}[T_0] \sim 2j_N\Big(\log\sqrt{N/m} - \log j_N\Big),$$
 
-and if $j_N \gg \sqrt{N/m}$ then $\mathbb{E}_{j_N}[T_0] \sim \frac{\pi^{3/2}}{2}\sqrt{N/m}$.
+    and if $j_N \gg \sqrt{N/m}$ then $\mathbb{E}_{j_N}[T_0] \sim \frac{\pi^{3/2}}{2}\sqrt{N/m}$.
+
 2. *Exponential regime*, $Nm(1-\rho)^2 \to \infty$ and $1 \ll j_N \le N$:
 
-$$\mathbb{E}_{j_N}[T_0] \sim \Big(1 - e^{-2m(1/\rho - 1)j_N}\Big)\frac{1}{1-\rho}\sqrt{\frac{\pi}{mN}}\,v_N, \qquad v_N = \frac{\exp\big(2Nm(1-\rho)^2\,\eta(m,\rho)\big)}{m(1/\rho - 1)},$$
+    $$\mathbb{E}_{j_N}[T_0] \sim \Big(1 - e^{-2m(1/\rho - 1)j_N}\Big)\frac{1}{1-\rho}\sqrt{\frac{\pi}{mN}}\,v_N, \qquad v_N = \frac{\exp\big(2Nm(1-\rho)^2\,\eta(m,\rho)\big)}{m(1/\rho - 1)},$$
 
-$$\eta(m,\rho) = -\frac{1}{2m}\left[\frac{1}{1-\rho}\log\frac{1+2m}{1+2m/\rho} + \sum_{\ell \ge 1}\Big(1 - (1+2m)^{-\ell}\Big)\frac{(1-\rho)^{\ell-1}}{\ell(\ell+1)}\right].$$
+    $$\eta(m,\rho) = -\frac{1}{2m}\left[\frac{1}{1-\rho}\log\frac{1+2m}{1+2m/\rho} + \sum_{\ell \ge 1}\Big(1 - (1+2m)^{-\ell}\Big)\frac{(1-\rho)^{\ell-1}}{\ell(\ell+1)}\right].$$
 
 In both regimes the expected number of returns of $Y$ to $(1-\rho)N$ is asymptotically $\frac{1}{m(1-\rho)}$ (polynomial) and $v_N$ (exponential).
 

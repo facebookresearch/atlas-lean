@@ -4,14 +4,15 @@
 
 - **Stage 1 (multivariate screening).** Fit the joint main-effects model
 
-$$E(Y_i \mid \boldsymbol X_i) = \boldsymbol X_i^\top \boldsymbol\delta, \qquad \boldsymbol\delta = (\delta_T, \delta_{X_1},\dots,\delta_{X_m})^\top,$$
+    $$E(Y_i \mid \boldsymbol X_i) = \boldsymbol X_i^\top \boldsymbol\delta, \qquad \boldsymbol\delta = (\delta_T, \delta_{X_1},\dots,\delta_{X_m})^\top,$$
 
-by ridge regression, minimizing $L_n(\boldsymbol\delta) + \lambda_n \|\boldsymbol\delta\|_2^2$ (the treatment main effect is included in the model and in the penalty). Rank biomarkers by $|\widehat\delta^{\lambda}_{X_j}|$.
+    by ridge regression, minimizing $L_n(\boldsymbol\delta) + \lambda_n \|\boldsymbol\delta\|_2^2$ (the treatment main effect is included in the model and in the penalty). Rank biomarkers by $|\widehat\delta^{\lambda}_{X_j}|$.
+
 - **Stage 2 (one-at-a-time interaction tests).** For each $j$ fit
 
-$$E(Y_i \mid \boldsymbol V_{ij}) = \boldsymbol V_{ij}^\top \boldsymbol\beta_j, \qquad \boldsymbol V_{ij} = (X_{ij}, T_i, X_{ij}T_i)^\top,\quad \boldsymbol\beta_j = (\beta_{X_j}, \beta_{T_j}, \beta_{X_j\times T})^\top,$$
+    $$E(Y_i \mid \boldsymbol V_{ij}) = \boldsymbol V_{ij}^\top \boldsymbol\beta_j, \qquad \boldsymbol V_{ij} = (X_{ij}, T_i, X_{ij}T_i)^\top,\quad \boldsymbol\beta_j = (\beta_{X_j}, \beta_{T_j}, \beta_{X_j\times T})^\top,$$
 
-and test $H_0^j: \beta_{X_j\times T} = 0$, with significance levels allotted by the stage 1 ranking (e.g. the $B$ top-ranked markers at level $(\bar\alpha/2)/B$, the next $2B$ at $(\bar\alpha/4)/(2B)$, and so on, which sum to at most $\bar\alpha$).
+    and test $H_0^j: \beta_{X_j\times T} = 0$, with significance levels allotted by the stage 1 ranking (e.g. the $B$ top-ranked markers at level $(\bar\alpha/2)/B$, the next $2B$ at $(\bar\alpha/4)/(2B)$, and so on, which sum to at most $\bar\alpha$).
 
 Homoscedasticity is assumed: $\operatorname{var}(Y_i\mid\boldsymbol X_i)$ and $\operatorname{var}(Y_i\mid\boldsymbol V_{ij})$ are constant.
 

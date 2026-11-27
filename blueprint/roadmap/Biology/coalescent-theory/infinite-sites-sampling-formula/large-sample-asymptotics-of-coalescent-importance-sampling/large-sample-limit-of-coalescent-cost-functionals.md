@@ -14,9 +14,9 @@ $$n\big(c^{(n)}(\mathbf e_j \mid \mathbf y) - 1\big) \to a_j(\mathbf y), \qquad 
 - the $M_{ij}$ are independent time-inhomogeneous Poisson processes with intensities $\lambda_{ij}(s) = \theta P_{ij}\, y_{0,i} / (1 - s)$;
 - the cost is
 
-$$C(s) = \exp\Big\{ \sum_{i=1}^d y_{0,i}\int_0^s a_i\big(\mathbf y_0 (1-u)\big)\, du \Big\} \prod_{i,j=1}^d \prod_{k=1}^{M_{ij}(s)} b_{ij}\big(\mathbf y_0 (1 - \tau_{ij}^{k})\big),$$
+    $$C(s) = \exp\Big\{ \sum_{i=1}^d y_{0,i}\int_0^s a_i\big(\mathbf y_0 (1-u)\big)\, du \Big\} \prod_{i,j=1}^d \prod_{k=1}^{M_{ij}(s)} b_{ij}\big(\mathbf y_0 (1 - \tau_{ij}^{k})\big),$$
 
-with $\tau_{ij}^k$ the $k$-th jump time of $M_{ij}$.
+    with $\tau_{ij}^k$ the $k$-th jump time of $M_{ij}$.
 
 So for large samples the coalescent forgets its randomness in the lineage counts (a law of large numbers along the ray $\mathbf y_0(1-s)$), keeps finitely many mutation events as Poisson noise, and the cost becomes an exponential functional of these two limits.
 

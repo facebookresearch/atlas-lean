@@ -13,15 +13,17 @@ b^1(\mathbf{r}) = (B^X_{11} - B^Y_{11}) r_1 (1 - r_1) + \frac{z_2}{z_1}\bigl(B^X
 $$
 
 **Results.**
+
 1. *(Well-posedness.)* The SDE has a unique strong solution staying in $[0,1]^2$, Lipschitz in its initial condition in $L^1$; it is a Feller process with the corresponding second-order generator.
 2. *(Culling limit.)* The frequency process of the two-type Feller diffusions with immigration, renormalized to island sizes $\mathbf{z}$ at $n$ equally spaced times per unit time, converges weakly in $\mathbb{D}([0,T], [0,1]^2)$ to $\mathbf{R}$ as $n \to \infty$.
 3. *(Moment duality.)* If the transition rates $q^{\mathbf{z}}$ of the associated block-counting chain on $\mathbb{N}_0^2 \cup \{\Delta\}$ are nonnegative, then for all $\mathbf{r} \in [0,1]^2$, $\mathbf{n} \in \mathbb{N}_0^2 \cup \{\Delta\}$ and $t > 0$,
 
-$$
-\mathbb{E}\bigl[(R^1_t)^{n_1} (R^2_t)^{n_2}\bigr] = \mathbb{E}\bigl[r_1^{N^1_t}\, r_2^{N^2_t}\bigr],
-$$
+    $$
+    \mathbb{E}\bigl[(R^1_t)^{n_1} (R^2_t)^{n_2}\bigr] = \mathbb{E}\bigl[r_1^{N^1_t}\, r_2^{N^2_t}\bigr],
+    $$
 
-where $(N^1, N^2)$ counts lineages on each island in a [structured coalescent](../../../coalescent-theory/structured-coalescent/structured-coalescent-for-n-lineages-with-a-gene.md) with migration and coalescence, extended by killing (absorption in the cemetery $\Delta$, read as value $0$) or branching driven by immigration and selection.
+    where $(N^1, N^2)$ counts lineages on each island in a [structured coalescent](../../../coalescent-theory/structured-coalescent/structured-coalescent-for-n-lineages-with-a-gene.md) with migration and coalescence, extended by killing (absorption in the cemetery $\Delta$, read as value $0$) or branching driven by immigration and selection.
+
 4. *(Large islands.)* As $z_1 = z_2 = z \to \infty$, $\mathbb{E}\sup_{t \le T} \|\mathbf{R}^{(z)}_t - \mathbf{R}^{(\infty)}_t\|^p \to 0$ for every $p > 1$, where $\mathbf{R}^{(\infty)}$ solves the deterministic ODE with the $1/z$ terms removed, and $\sqrt{z}(\mathbf{R}^{(z)} - \mathbf{R}^{(\infty)})$ converges weakly in $\mathbb{C}([0,T], \mathbb{R}^2)$ to the unique strong solution of a linear Gaussian SDE (a time-inhomogeneous Ornstein–Uhlenbeck process).
 
 ## Depends on

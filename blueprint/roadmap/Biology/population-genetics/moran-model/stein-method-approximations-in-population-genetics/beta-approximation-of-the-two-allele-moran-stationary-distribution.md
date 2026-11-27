@@ -11,12 +11,14 @@ $$d_2(X,Y) = \sup_{h \in H_2}|\mathbb{E}h(X) - \mathbb{E}h(Y)|,$$
 with $H_2$ the differentiable $h$ whose derivative is Lipschitz and $\|h'\|_\infty, \|h''\|_\infty \le 1$.
 
 **Theorem.**
+
 1. $\mathbb{E}W = \frac{a}{a+b}$ and $\mathrm{Var}(W) = \frac{2abn}{(a+b)^2\big(2n + a(2n-1) + b(2n-1)\big)}$.
 2. (*Upper bound.*) $d_2\big(W, \mathrm{Beta}(a,b)\big) \le K(a,b)/n$ with the explicit constant
 
-$$K(a,b) = \frac{(9a + 6b)\,C(a,b) + C(a+1,b+1) + (a+b)\,C(a+1,b+1)\,C(a,b)}{12},$$
+    $$K(a,b) = \frac{(9a + 6b)\,C(a,b) + C(a+1,b+1) + (a+b)\,C(a+1,b+1)\,C(a,b)}{12},$$
 
-where $C(\cdot,\cdot)$ are Döbler's Beta–Stein constants (e.g. $C(a,a) = 4$ for $0 < a < 1$ and $C(a,a) = 2a\sqrt\pi\,\Gamma(a)/\Gamma(a + 1/2)$ for $a \ge 1$).
+    where $C(\cdot,\cdot)$ are Döbler's Beta–Stein constants (e.g. $C(a,a) = 4$ for $0 < a < 1$ and $C(a,a) = 2a\sqrt\pi\,\Gamma(a)/\Gamma(a + 1/2)$ for $a \ge 1$).
+
 3. (*Lower bound.*) $d_2\big(W, \mathrm{Beta}(a,b)\big) \ge \frac{ab}{4n(a+b)(1+a+b)^2}$.
 
 Hence the rate $1/n$ is sharp.

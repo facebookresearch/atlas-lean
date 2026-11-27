@@ -5,6 +5,7 @@
 **Proposition.** $(C(S), \preceq)$ is a bounded lattice. Its minimal element is the configuration of all $n$ leaf lineages, and its maximal element is the configuration consisting of the two lineages immediately descended from the root.
 
 **Theorem.** For every labeled topology $S$ the following sets are in bijection:
+
 1. maximal chains of the lattice $C(S)$;
 2. directed paths from the minimal to the maximal element in the Hasse diagram $D(S)$ of $C(S)$;
 3. labeled histories of $S$.

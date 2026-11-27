@@ -7,17 +7,17 @@
 1. *Almost-sure limit.* $K_n/n^\alpha \to S_{\alpha,\theta}$ almost surely, where the $\alpha$-diversity $S_{\alpha,\theta}$ is positive and finite, with the generalized Mittag-Leffler law.
 2. *Gaussian fluctuations.* In distribution,
 
-$$\frac{K_n - n^\alpha S_{\alpha,\theta}}{\sqrt{K_n}} \xrightarrow{\ \mathcal L\ } \mathcal N(0,1).$$
+    $$\frac{K_n - n^\alpha S_{\alpha,\theta}}{\sqrt{K_n}} \xrightarrow{\ \mathcal L\ } \mathcal N(0,1).$$
 
 3. *Law of the iterated logarithm.* Almost surely
 
-$$\limsup_{n\to\infty}\frac{K_n - n^\alpha S_{\alpha,\theta}}{\sqrt{2K_n\log\log n}} = -\liminf_{n\to\infty}\frac{K_n - n^\alpha S_{\alpha,\theta}}{\sqrt{2K_n\log\log n}} = 1.$$
+    $$\limsup_{n\to\infty}\frac{K_n - n^\alpha S_{\alpha,\theta}}{\sqrt{2K_n\log\log n}} = -\liminf_{n\to\infty}\frac{K_n - n^\alpha S_{\alpha,\theta}}{\sqrt{2K_n\log\log n}} = 1.$$
 
 4. *Blocks of a given size.* For every $r \ge 1$, $K_{r,n}/n^\alpha \to p_\alpha(r)S_{\alpha,\theta}$ almost surely, with
 
-$$p_\alpha(r) = \frac{\alpha(1-\alpha)^{\overline{r-1}}}{r!},$$
+    $$p_\alpha(r) = \frac{\alpha(1-\alpha)^{\overline{r-1}}}{r!},$$
 
-where $x^{\overline m}$ is the rising factorial; $K_{r,n}$ likewise has Gaussian fluctuations of order $\sqrt{K_{r,n}}$ around a martingale-based centering, and an iterated-logarithm law at scale $\sqrt{n^\alpha\log\log n}$.
+    where $x^{\overline m}$ is the rising factorial; $K_{r,n}$ likewise has Gaussian fluctuations of order $\sqrt{K_{r,n}}$ around a martingale-based centering, and an iterated-logarithm law at scale $\sqrt{n^\alpha\log\log n}$.
 
 The fluctuations are random-centered: centering by $n^\alpha S_{\alpha,\theta}$ (rather than a deterministic sequence) removes the non-Gaussian randomness of $S_{\alpha,\theta}$, leaving a mixed-Gaussian error of variance about $K_n$.
 

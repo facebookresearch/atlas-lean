@@ -8,11 +8,11 @@ where $C^{(n)}$ multiplies the one-step costs $c_q^{(n)}$ along the path and $p(
 
 - **Griffiths–Tavaré (GT):** $q_{GT}(\mathbf n - \mathbf v \mid \mathbf n) \propto p(\mathbf n \mid \mathbf n - \mathbf v)$; its one-step cost is the same for every step type and satisfies
 
-$$c_{GT}^{(n)}(\mathbf v \mid \mathbf y) = 1 - \frac1n\,\frac{d-1}{\|\mathbf y\|_1} + o(1/n).$$
+    $$c_{GT}^{(n)}(\mathbf v \mid \mathbf y) = 1 - \frac1n\,\frac{d-1}{\|\mathbf y\|_1} + o(1/n).$$
 
 - **Stephens–Donnelly (SD):** the true backward probabilities with the unknown conditional sampling probabilities replaced by $\hat\pi[j \mid \mathbf n] = \sum_i \frac{n_i}{\|\mathbf n\|+\theta}\sum_{m \ge 0}\big(\frac{\theta}{\|\mathbf n\|+\theta}\big)^m (P^m)_{ij}$; then
 
-$$c_{SD}^{(n)}(\mathbf e_j \mid \mathbf y) = 1 + \frac1n\Big[\frac{1-\theta}{\|\mathbf y\|_1} - \frac{1}{y_j}\Big(1 - \sum_i \frac{y_i}{\|\mathbf y\|_1}\theta P_{ij}\Big)\Big] + o(1/n), \qquad c_{SD}^{(n)}(\mathbf e_i - \mathbf e_j \mid \mathbf y) = 1 + o(1).$$
+    $$c_{SD}^{(n)}(\mathbf e_j \mid \mathbf y) = 1 + \frac1n\Big[\frac{1-\theta}{\|\mathbf y\|_1} - \frac{1}{y_j}\Big(1 - \sum_i \frac{y_i}{\|\mathbf y\|_1}\theta P_{ij}\Big)\Big] + o(1/n), \qquad c_{SD}^{(n)}(\mathbf e_i - \mathbf e_j \mid \mathbf y) = 1 + o(1).$$
 
 **Theorem.** Assume $\mathbf y_0^{(n)} \to \mathbf y_0 \in \mathbb R^d_+$ with $\|\mathbf y_0\|_1 = 1$ and fix $t \in [0,1)$. Under the true backward distribution, as $n \to \infty$,
 

@@ -5,13 +5,14 @@
 **Culling.** Fix a total mass $z > 0$. Run $(R, Z)$ on short time intervals of length $1/n$ and after each interval rescale the population back to total mass $z$ while keeping the frequency $R$ (culling). The resulting frequency processes $\bar R^{(z,n)}$ live on $[0,1]$.
 
 **Theorem.**
+
 1. *Culled frequency process.* For fixed $z > 0$ there is a unique strong $[0,1]$-valued solution $R^{(z,r)}$ of the frequency SDE obtained from the generator of $(R,Z)$ by freezing $Z = z$ (drift from immigration, interaction and selection terms, diffusion coefficient $\sigma(r)^2 = \frac{2r(1-r)}{z}\big[(1-r)c_1 + r c_2\big]$, and jumps $r \mapsto r + (1-r)u_1 - ru_2$ from reproduction events). It is Feller and $L^1$-Lipschitz in its initial condition, and $\bar R^{(z,n)} \Rightarrow R^{(z,r)}$ in $D([0,T],[0,1])$ as $n \to \infty$ whenever $\bar R^{(z,n)}_0 \Rightarrow r$.
 2. *Moment duality.* Under a polynomial assumption on the coefficients and nonnegativity of the off-diagonal rates, $\mathbb{E}_r\big[(R^{(z,r)}_t)^n\big] = \mathbb{E}_n\big[r^{N_t}\big]$ for a branching–coalescing block-counting chain $N$ on $\mathbb{N}_0 \cup \{\dagger\}$.
 3. *Large-population limit.* Suppose $\beta_{ij}(r) = \lim_{z\to\infty} b^{(z)}_{ij}(rz)/z$ exists uniformly on $[0,1]$ and is Lipschitz. Then for every $T > 0$, $\lim_{z\to\infty}\mathbb{E}\big[\sup_{t\le T}|R^{(z,r)}_t - R^{(\infty,r)}_t|^2\big] = 0$, where $R^{(\infty,r)}$ solves
 
-$$\dot R = \beta_{11}(R)(1-R) - \beta_{22}(1-R)R + \beta_{12}(1-R)(1-R) - \beta_{21}(R)R + (1-R)^2\!\int_{U_2} w_1\,\mu_2(dw) - R^2\!\int_{U_2} w_2\,\mu_1(dw),$$
+    $$\dot R = \beta_{11}(R)(1-R) - \beta_{22}(1-R)R + \beta_{12}(1-R)(1-R) - \beta_{21}(R)R + (1-R)^2\!\int_{U_2} w_1\,\mu_2(dw) - R^2\!\int_{U_2} w_2\,\mu_1(dw),$$
 
-with $R_0 = r$.
+    with $R_0 = r$.
 
 ## Expansion
 

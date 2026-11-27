@@ -20,14 +20,15 @@ $$\sum_{\ell=2}^{\kappa}\beta_\ell(\ell - 1) + \mu(-1,1) < \int_{[0,1]}|\log(1 -
 
 1. *No mutation* ($\theta = 0$, $\nu = 0$): for $X_0 = x \in (0,1)$, $X_t$ converges almost surely to $X_\infty \in \{0,1\}$ and
 
-$$\mathbb{P}_x(X_\infty = 1) = \mathbb{E}\big[H(x, V_\infty^{0,1})\big] \in (0,1),$$
+    $$\mathbb{P}_x(X_\infty = 1) = \mathbb{E}\big[H(x, V_\infty^{0,1})\big] \in (0,1),$$
 
-where $V_\infty^{0,1}$ has the unique invariant law of $V$ on coefficient vectors with first entry $0$ and last entry $1$.
+    where $V_\infty^{0,1}$ has the unique invariant law of $V$ on coefficient vectors with first entry $0$ and last entry $1$.
+
 2. *Bidirectional mutation* ($\theta_a + \nu(0,1) > 0$ and $\theta_A + \nu(-1,0) > 0$): $V$ is absorbed in finite time at a scalar $U_\infty$; $X$ never fixes, has a unique stationary distribution $\mathcal{L}$, the law of $X_t$ converges weakly to $\mathcal{L}$ from any start, and
 
-$$\int_{[0,1]} x^n\,\mathcal{L}(dx) = \mathbb{E}_{e_n}[U_\infty], \qquad n \ge 0,$$
+    $$\int_{[0,1]} x^n\,\mathcal{L}(dx) = \mathbb{E}_{e_n}[U_\infty], \qquad n \ge 0,$$
 
-with $e_n$ the $(n+1)$-th unit vector of $\mathbb{R}^{n+1}$; these moments satisfy explicit linear recursions.
+    with $e_n$ the $(n+1)$-th unit vector of $\mathbb{R}^{n+1}$; these moments satisfy explicit linear recursions.
 
 ## Expansion
 

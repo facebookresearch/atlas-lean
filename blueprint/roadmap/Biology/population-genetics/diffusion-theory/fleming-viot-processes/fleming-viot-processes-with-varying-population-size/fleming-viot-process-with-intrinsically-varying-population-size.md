@@ -11,6 +11,7 @@ $$\mathcal{L}F(N,\rho) = (\gamma_b - \gamma_d N)\,\partial_N F + \int_{\mathbb{K
 where $\bar z = z_b/((1-z_d)N + z_b)$ is the effective impact of the event at size $N$. The size process alone is Markov with generator $(\gamma_b - \gamma_d N)f'(N) + \int [f((1-z_d)N + z_b) - f(N)]\,d\Pi$.
 
 **Theorem.**
+
 1. *Well-posedness.* For every characteristic the martingale problem is well posed; the solution is a Hunt process and $N$ never hits $0$ or $\infty$ in finite time. $N$ is the strong solution of $dN_t = -N_{t-}\,dL^d_t + dL^b_t$ for a two-dimensional subordinator $(L^d, L^b)$ with drift $\bm\gamma$ and Lévy measure $\Pi$.
 2. *Ergodicity of the size.* If $\gamma_d > 0$ and $\Pi \ne 0$, $N$ has a unique invariant law on $(0,\infty)$ with finite mean and converges to it exponentially fast in total variation from any integrable start.
 3. *Closedness.* If $(\bm\gamma^{(n)}, \Pi^{(n)}) \to (\bm\gamma, \Pi)$ in the sense that $\bm\gamma^{(n)}\cdot\nabla g(\bm 0) + \int g\, d\Pi^{(n)} \to \bm\gamma\cdot\nabla g(\bm 0) + \int g\, d\Pi$ for all bounded continuous $g$ differentiable at $\bm 0$ with $g(\bm 0)=0$, then the processes converge weakly in Skorokhod space; no additional "zero-impact" (Wright–Fisher type) component arises in the limit.

@@ -1,6 +1,7 @@
 # Path-space large deviations for daily growth–mutation–selection chains
 
 **Model.** A bacterial population of fixed size $N$ carries $g$ genotypes, with histogram $H_t \in \mathcal H = \{H \in [0,1]^g : \sum_j H(j) = 1\}$ at the start of day $t$. Each day:
+
 1. **growth:** genotype $j$ multiplies by a fixed factor $F_j > 1$ ($F_1 < \dots < F_g$), so the histogram becomes $\Phi(H)$, $\Phi_j(H) = F_jH(j)/\langle F, H\rangle$;
 2. **mutation:** the number of $j$-cells mutating is Poisson with mean $mNF_jH(j)$ (mutation rate $m \ll 1$), and a mutating $j$-cell becomes a $k$-cell with probability $q_{jk}$ ($q_{jj} = 0$);
 3. **selection:** $N$ cells are sampled to form the next day's population.

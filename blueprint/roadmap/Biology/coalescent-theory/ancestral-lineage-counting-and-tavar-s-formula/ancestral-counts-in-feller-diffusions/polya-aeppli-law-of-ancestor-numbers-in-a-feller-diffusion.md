@@ -16,16 +16,17 @@ A random variable $Q = \sum_{i=0}^{N} M_i$ ($M_0 := 0$) with $N \sim \mathrm{Poi
 
 1. $A_\infty(s;t)$ is Pólya–Aeppli with parameters
 
-$$\nu = x_0\,\mu(t;\alpha) = \frac{2\alpha x_0 e^{\alpha t}}{e^{\alpha t}-1}, \qquad p = p(s,t;\alpha) = \frac{e^{\alpha s} - e^{\alpha t}}{1 - e^{\alpha t}} \qquad (\alpha \ne 0),$$
+    $$\nu = x_0\,\mu(t;\alpha) = \frac{2\alpha x_0 e^{\alpha t}}{e^{\alpha t}-1}, \qquad p = p(s,t;\alpha) = \frac{e^{\alpha s} - e^{\alpha t}}{1 - e^{\alpha t}} \qquad (\alpha \ne 0),$$
 
-and, as the continuous limits at $\alpha = 0$, $\nu = 2x_0/t$ and $p = 1 - s/t$.
+    and, as the continuous limits at $\alpha = 0$, $\nu = 2x_0/t$ and $p = 1 - s/t$.
 
-In particular ($s = t$, $p = 0$) the number of founders at time $0$ of the time-$t$ population is $\mathrm{Poisson}(x_0\mu(t;\alpha))$.
+    In particular ($s = t$, $p = 0$) the number of founders at time $0$ of the time-$t$ population is $\mathrm{Poisson}(x_0\mu(t;\alpha))$.
+
 2. Consequently, for $j = 1,\dots,n$, the number of ancestors at time $t-s$ of a sample of $n$ is
 
-$$\mathbb{P}(A_n(s;t) = j) = n!\binom{n-1}{j-1}\sum_{k \ge j}\binom{k}{j}\frac{1}{k_{(n)}}\,\mathbb{P}\big(A_\infty(s;t) = k \,\big|\, A_\infty(s;t) > 0\big),$$
+    $$\mathbb{P}(A_n(s;t) = j) = n!\binom{n-1}{j-1}\sum_{k \ge j}\binom{k}{j}\frac{1}{k_{(n)}}\,\mathbb{P}\big(A_\infty(s;t) = k \,\big|\, A_\infty(s;t) > 0\big),$$
 
-with rising factorial $k_{(n)} = k(k+1)\cdots(k+n-1)$.
+    with rising factorial $k_{(n)} = k(k+1)\cdots(k+n-1)$.
 
 ## Expansion
 

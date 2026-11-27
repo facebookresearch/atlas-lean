@@ -10,14 +10,15 @@ for $t$ with root subtrees $t_L,t_R$. The *total number* is $T(t)=\sum_{k}R(t^k)
 
 1. *(Uniform model.)* For a uniformly random labeled topology,
 
-$$\mathbb E[T_n]\sim\sqrt6\,(4/3)^n\sim2\,\mathbb E[R_n],\qquad \mathbb V[T_n]\sim\frac{2}{17}(15+11\sqrt2)\sqrt{\frac{7(11-\sqrt2)}{34}}\Big[\frac{4}{7(8\sqrt2-11)}\Big]^n,$$
+    $$\mathbb E[T_n]\sim\sqrt6\,(4/3)^n\sim2\,\mathbb E[R_n],\qquad \mathbb V[T_n]\sim\frac{2}{17}(15+11\sqrt2)\sqrt{\frac{7(11-\sqrt2)}{34}}\Big[\frac{4}{7(8\sqrt2-11)}\Big]^n,$$
 
-and $\mathbb V[T_n]\sim\mathbb E[T_n^2]$.
+    and $\mathbb V[T_n]\sim\mathbb E[T_n^2]$.
+
 2. *(Yule model.)* For a Yule–Harding random labeled topology,
 
-$$\mathbb E[T_n]\sim\mathbb E[R_n]\sim\Big(\frac1{1-e^{-2\pi\sqrt3/9}}\Big)^n,\qquad \mathbb V[T_n]\sim\mathbb V[R_n]\sim(2.0449954971\ldots)^n,$$
+    $$\mathbb E[T_n]\sim\mathbb E[R_n]\sim\Big(\frac1{1-e^{-2\pi\sqrt3/9}}\Big)^n,\qquad \mathbb V[T_n]\sim\mathbb V[R_n]\sim(2.0449954971\ldots)^n,$$
 
-the correlation of $T_n$ and $R_n$ tends to $1$, and $\log T_n$ satisfies a central limit theorem with $\mathbb E[\log T_n]\sim\mu n$ and $\mathbb V[\log T_n]\sim\sigma^2n$, where $(\mu,\sigma^2)\approx(0.351,0.008)$.
+    the correlation of $T_n$ and $R_n$ tends to $1$, and $\log T_n$ satisfies a central limit theorem with $\mathbb E[\log T_n]\sim\mu n$ and $\mathbb V[\log T_n]\sim\sigma^2n$, where $(\mu,\sigma^2)\approx(0.351,0.008)$.
 
 ## Depends on
 

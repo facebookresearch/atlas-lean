@@ -19,9 +19,10 @@ Let $S=\inf\{t\ge0:I_t=\infty\}$ and define the corrected estimator
 $$\hat\rho_{\mathrm{MLE}}=\mathbf 1_{\{T<S\}}\max\{0,\hat\rho_T\}+\mathbf 1_{\{T\ge S\}}\lim_{t\uparrow S}\hat\rho_t .$$
 
 **Results.**
+
 1. (Error representation) Writing the path as the solution of $dX=[c(X)+a(X;\rho)]dt+\sigma(X)\,dW$ with $\sigma\sigma^\top=V$,
 
-$$\hat\rho_T-\rho=-\frac{1}{I_T}\int_0^T\sum_{i,j}\frac{D_{ij}(t)}{X_{ij}(t)}\sum_{k}\sigma_{(ij),k}(X(t))\,dW_k(t).$$
+    $$\hat\rho_T-\rho=-\frac{1}{I_T}\int_0^T\sum_{i,j}\frac{D_{ij}(t)}{X_{ij}(t)}\sum_{k}\sigma_{(ij),k}(X(t))\,dW_k(t).$$
 
 2. If $S\le T$, then $\hat\rho_{\mathrm{MLE}}=\rho$ almost surely: infinite information identifies $\rho$ without error.
 3. $\hat\rho_{\mathrm{MLE}}$ is the maximum likelihood estimator of $\rho$ on $[0,\infty)$.

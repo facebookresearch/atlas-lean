@@ -14,17 +14,17 @@ Assume (A1) whenever $x_{im} > 0$ some $p_{kim} > 0$, and (A2, identifiability) 
 2. *(Fixed-point characterization.)* With the scaled likelihood, the EM-type map $L(q) = \operatorname{diag}(q)\,\nabla_q\ell(p, q \mid x)$ maps $\mathbb S$ to itself, since its entries sum to $\frac1{2M}\sum_{i,m} x_{im} = 1$. Under (A1) and (A2), for $q^* \in \mathbb S^\circ$ the following are equivalent: $q^*$ is the global maximizer of $\ell(p, \cdot \mid x)$; $q^*$ is a local maximizer; $q^*$ is a locally stable fixed point of $L$; $q^*$ is the unique locally stable fixed point of $L$.
 3. *(CLT in the reference size.)* Assume (A1) and (A2), and that the limiting maximizer $\hat q$ lies in the interior $\mathbb S^\circ$. Let the estimated frequencies satisfy $P^N \to p$ in probability and $\sqrt{2N}(P^N_{k\cdot m} - p_{k\cdot m}) \Rightarrow Z_{km} \sim N\bigl(0, r_k^{-1}(\operatorname{diag}(p_{k\cdot m}) - p_{k\cdot m}p_{k\cdot m}^\top)\bigr)$, independent over $(k, m)$, and let $\hat Q^N$ maximize $\ell(P^N, \cdot \mid x)$. Then, with $x$ fixed,
 
-$$
-\sqrt{4NM}\,(\hat Q^N - \hat q) \Rightarrow N\bigl(0,\ \Sigma_x\,\Gamma_x\,\Sigma_x\bigr), \qquad N \to \infty,
-$$
+    $$
+    \sqrt{4NM}\,(\hat Q^N - \hat q) \Rightarrow N\bigl(0,\ \Sigma_x\,\Gamma_x\,\Sigma_x\bigr), \qquad N \to \infty,
+    $$
 
-where $\Sigma_x^{-1} = -\nabla_q^2\ell(p, \hat q \mid x)$ is the negative Hessian of the scaled log-likelihood at $\hat q$, and
+    where $\Sigma_x^{-1} = -\nabla_q^2\ell(p, \hat q \mid x)$ is the negative Hessian of the scaled log-likelihood at $\hat q$, and
 
-$$
-\Gamma_x = \frac{1}{2M}\sum_{m=1}^M\sum_{i,j=1}^I \Delta(x_{im}, p_{\cdot im})\,\operatorname{diag}(r^{-1})\,\operatorname{diag}\bigl(p_{\cdot im}(\delta_{ij} - p_{\cdot jm})\bigr)\,\Delta(x_{jm}, p_{\cdot jm})^\top, \qquad \Delta(x, p) = x\Bigl(\frac{E_K}{\langle \hat q, p\rangle} - \frac{p\,\hat q^\top}{\langle \hat q, p\rangle^2}\Bigr),
-$$
+    $$
+    \Gamma_x = \frac{1}{2M}\sum_{m=1}^M\sum_{i,j=1}^I \Delta(x_{im}, p_{\cdot im})\,\operatorname{diag}(r^{-1})\,\operatorname{diag}\bigl(p_{\cdot im}(\delta_{ij} - p_{\cdot jm})\bigr)\,\Delta(x_{jm}, p_{\cdot jm})^\top, \qquad \Delta(x, p) = x\Bigl(\frac{E_K}{\langle \hat q, p\rangle} - \frac{p\,\hat q^\top}{\langle \hat q, p\rangle^2}\Bigr),
+    $$
 
-with $E_K$ the $K \times K$ identity, is the covariance of the score obtained by propagating the multinomial sampling covariance of each $P^N_{k\cdot m}$ through the derivative of $\nabla_q\ell$ with respect to $p$. The limit is degenerate along $\mathbf 1$, since $\hat Q^N$ and $\hat q$ both sum to one.
+    with $E_K$ the $K \times K$ identity, is the covariance of the score obtained by propagating the multinomial sampling covariance of each $P^N_{k\cdot m}$ through the derivative of $\nabla_q\ell$ with respect to $p$. The limit is degenerate along $\mathbf 1$, since $\hat Q^N$ and $\hat q$ both sum to one.
 
 ## Expansion
 
