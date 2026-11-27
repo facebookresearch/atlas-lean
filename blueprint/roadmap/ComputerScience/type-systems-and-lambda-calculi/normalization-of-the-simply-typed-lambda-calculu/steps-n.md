@@ -1,0 +1,3 @@
+# Call-by-value reduction in exactly n steps
+
+Consider call-by-value reduction $t \to u$ on intrinsically typed terms of the simply typed lambda calculus (left-to-right and weak: an application first reduces its function position, then its argument once the function is a value, and $(\lambda b)\,a$ contracts to the instantiation $b[a]$ only when $a$ is a value, a value being a lambda abstraction; no step goes under a binder). For a natural number $n$ and terms $t, v$ of type $A$ in context $\Gamma$, the relation $t \to^n v$ (reduction in exactly $n$ steps) is defined inductively by two rules: $t \to^0 t$ for every $t$; and if $t \to u$ in one step and $u \to^n v$, then $t \to^{n+1} v$.
