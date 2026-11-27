@@ -12,11 +12,21 @@ public import MathlibExt.Combinatorics.ReducedComplexities
 import Mathlib.Data.List.Iterate
 
 /-!
-# Reduced complexity of the paperfolding word at even lengths
+# Reduced complexities of the paperfolding word at even lengths
 
 `rhoRed_paperfolding_two_mul` shows that every positive even length has four distinct reductions
 of paperfolding factors. Letters at consecutive even positions differ, so each such pair
 contributes one change of letter regardless of the intervening letter.
+`rhoAbRed_paperfolding_even` shows that at every positive even length exactly three reductions
+remain when counted up to rearrangement.
+
+## References
+
+* John M. Campbell, James D. Currie, and Narad Rampersad,
+  [Reduced Complexities for Sequences Over Finite Alphabets](https://math.colgate.edu/~integers/aa34/aa34.pdf),
+  INTEGERS 26 (2026), Article A34, pp. 1–15, Lemmas 4 and 5 and Theorem 3 (even case).
+* The proof of `rhoAbRed_paperfolding_even` reuses `rhoRed_paperfolding_two_mul.reduced_range`
+  from this module, `MathlibExt.Combinatorics.PaperfoldingReducedComplexity`.
 -/
 
 namespace MathlibExt.Combinatorics.ReducedComplexitiesWanted
@@ -196,5 +206,67 @@ public theorem rhoRed_paperfolding_two_mul (n : ℕ) (hn : 1 ≤ n) :
   rw [rhoRed_paperfolding_two_mul.reduced_range,
     Set.ncard_range_of_injective (rhoRed_paperfolding_two_mul.reducedWord_injective k)]
   simp [Nat.card_eq_fintype_card]
+
+private theorem count_false_iterate_not_even (m : ℕ) (a : Bool) :
+    (List.iterate Bool.not a (2 * m)).count false = m := by
+  induction m with
+  | zero => rfl
+  | succ m ih =>
+    rw [Nat.mul_succ]
+    cases a <;> simp [ih]
+
+/-- **Reduced abelian complexity of the paperfolding word at even lengths.** Let $f$ be the
+regular paperfolding sequence and let $\rho^{\mathrm{ab,red}}_f(n)$ be the number of reductions
+of length-$n$ factors of $f$, counted up to rearrangement of their letters. For every even
+$n > 0$, $\rho^{\mathrm{ab,red}}_f(n) = 3$.
+
+Source: John M. Campbell, James D. Currie, and Narad
+Rampersad, "Reduced Complexities for Sequences Over Finite
+Alphabets", Theorem 3. -/
+public theorem rhoAbRed_paperfolding_even (n : ℕ) (hn : 0 < n)
+    (he : Even n) :
+    rhoAbRed paperfoldingSeq n = 3 := by
+  obtain ⟨m, rfl⟩ := even_iff_exists_two_mul.mp he
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : m ≠ 0)
+  let signature (w : List Bool) := (w.length, w.count false)
+  rw [rhoAbRed, factorSet, ← Set.range_comp]
+  change (Set.range (signature ∘ fun i =>
+    redWord (factorList paperfoldingSeq (2 * (k + 1)) i))).ncard = 3
+  rw [Set.range_comp, rhoRed_paperfolding_two_mul.reduced_range, ← Set.range_comp]
+  have signature_even (r : ℕ) (a : Bool) :
+      signature (List.iterate Bool.not a (2 * r)) = (2 * r, r) := by
+    simp [signature, count_false_iterate_not_even]
+  have signature_odd (r : ℕ) (a : Bool) :
+      signature (List.iterate Bool.not a (2 * r + 1)) = (2 * r + 1, r + (!a).toNat) := by
+    cases a <;> simp [signature, count_false_iterate_not_even]
+  have mem_signatures (p : ℕ × ℕ) :
+      p ∈ Set.range (signature ∘ rhoRed_paperfolding_two_mul.reducedWord k) ↔
+        p = signature (List.iterate Bool.not false (k + 1)) ∨
+        p = signature (List.iterate Bool.not true (k + 1)) ∨
+        p = signature (List.iterate Bool.not false (k + 1 + 1)) ∨
+        p = signature (List.iterate Bool.not true (k + 1 + 1)) := by
+    simp only [Set.mem_range, Prod.exists, Bool.exists_bool, Function.comp_apply,
+      rhoRed_paperfolding_two_mul.reducedWord, Bool.toNat_false, Bool.toNat_true, Nat.add_zero]
+    tauto
+  -- Consecutive run lengths contribute one and two signatures, in either order.
+  rw [Set.ncard_eq_three]
+  obtain ⟨r, hr | hr⟩ := Nat.even_or_odd' (k + 1)
+  · refine ⟨(2 * r, r), (2 * r + 1, r + 1), (2 * r + 1, r), ?_, ?_, ?_, ?_⟩
+    · simp
+    · simp
+    · simp
+    · ext p
+      rw [mem_signatures, hr]
+      simp only [signature_even, signature_odd, Bool.not_false, Bool.not_true, Bool.toNat_true,
+        Bool.toNat_false, Nat.add_zero, Set.mem_insert_iff, Set.mem_singleton_iff]
+      tauto
+  · refine ⟨(2 * r + 1, r + 1), (2 * r + 1, r), (2 * (r + 1), r + 1), ?_, ?_, ?_, ?_⟩
+    · simp
+    · simp; omega
+    · simp
+    · ext p
+      rw [mem_signatures, hr, show 2 * r + 1 + 1 = 2 * (r + 1) by omega]
+      simp only [signature_even, signature_odd, Bool.not_false, Bool.not_true, Bool.toNat_true,
+        Bool.toNat_false, Nat.add_zero, Set.mem_insert_iff, Set.mem_singleton_iff, or_self]
 
 end MathlibExt.Combinatorics.ReducedComplexitiesWanted

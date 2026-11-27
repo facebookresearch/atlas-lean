@@ -4,13 +4,9 @@ Let $\rho$ be a density operator on a finite-dimensional space with von Neumann 
 $R < S(\rho)$. If $P_n$ is a projector on the $n$-fold tensor power with $\mathrm{rank}(P_n) \le 2^{nR}$ for every $n \ge 1$, then
 $\mathrm{Tr}(P_n \rho^{\otimes n}) \to 0$ as $n \to \infty$. The proof uses the typical-subspace theorem.
 
-## Expansion
+## Depends on
 
-This node states a precise result.
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Von Neumann entropy.
+- [Von Neumann entropy and Holevo information](classical-quantum-information/von-neumann-entropy-and-holevo-information.md)
 
 ## Proof depends on
 
