@@ -29,4 +29,4 @@ The complex balance equations are invariant under the reweighting $\pi \mapsto N
 
 ## Sources
 
-- L. Hoessly, C. Wiuf and P. Xia, "Asymptotic analysis for stationary distributions of scaled reaction networks", arXiv preprint (2024), Proposition 4.1 and Theorems 4.2 and 4.3. <https://doi.org/10.48550/arXiv.2402.02276>
+- L. Hoessly, C. Wiuf and P. Xia, "Asymptotic analysis for stationary distributions of multiscaled reaction networks", *Advances in Applied Probability* 58(3) (2025), 887–917, Proposition 4.1 and Theorems 4.2 and 4.3, <https://doi.org/10.1017/apr.2025.10040> (preprint arXiv:2402.02276).

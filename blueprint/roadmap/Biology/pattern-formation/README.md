@@ -12,8 +12,4 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
 - [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
-- [Bistable Keller-Segel models of microvascular patterns](bistable-keller-segel-models-of-microvascular-patterns/README.md)
-- [Identifiability from spatial structure factors](identifiability-from-spatial-structure-factors/README.md)
-- [Nonlocal facilitation and competition](nonlocal-facilitation-and-competition/README.md)
 - [Turing instabilities for three interacting species](turing-instabilities-for-three-interacting-species/README.md)
-- [Turing instability in reaction networks with conservation laws](turing-instability-in-reaction-networks-with-conservation-laws/README.md)

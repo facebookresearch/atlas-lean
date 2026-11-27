@@ -27,4 +27,4 @@ If $x$ is the equilibrium of $(G,\kappa)$ in the class of $x_0$, then $\beta_{y\
 
 ## Sources
 
-- Balázs Boros, Gheorghe Craciun, Oskar Henriksson, Jiaxin Jin, "A flux-based approach for analyzing the disguised toric locus of reaction networks", arXiv:2510.03621 (2025), Definitions 2.8, 2.13 and 4.3, Theorem 2.14, Theorem 5.3 and Corollary 5.4 (Theorem A), <https://doi.org/10.48550/arXiv.2510.03621>
+- Balázs Boros, Gheorghe Craciun, Oskar Henriksson, Jiaxin Jin, "A flux-based approach for analyzing the disguised toric locus of reaction networks", *Advances in Applied Mathematics* 182 (2027), 103160, Definitions 2.8, 2.13 and 4.3, Theorem 2.14, Theorem 5.3 and Corollary 5.4 (Theorem A), <https://doi.org/10.1016/j.aam.2026.103160> (preprint arXiv:2510.03621).

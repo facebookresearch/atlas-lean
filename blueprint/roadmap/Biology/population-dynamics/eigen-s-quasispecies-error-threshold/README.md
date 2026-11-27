@@ -13,4 +13,3 @@
 - [Eigen's error threshold](master-equilibrium-exp-pos-iff.md)
 - [Convergence above the threshold](tendsto-master-of-one-lt.md)
 - [Loss of the master at or below the threshold](tendsto-master-zero-of-le-one.md)
-- [Perron-Frobenius equilibrium of the quasispecies and Crow-Kimura models](perron-frobenius-equilibrium-of-quasispecies-and-crow-kimura-models.md)

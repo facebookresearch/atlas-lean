@@ -20,4 +20,4 @@ Thinning (uniformization) works because the total burst intensity is bounded by 
 
 ## Sources
 
-- M. Gaillard, U. Herbach, "Efficient stochastic simulation of gene regulatory networks using hybrid models of transcriptional bursting", arXiv:2507.01922 (2025), Section 2 (reaction model and generator), Section 3 (flow, waiting-time law and thinning algorithm) and Section 5 (Theorem 1), <https://doi.org/10.48550/arXiv.2507.01922>.
+- M. Gaillard, U. Herbach, "Efficient stochastic simulation of gene regulatory networks using hybrid models of transcriptional bursting", *Lecture Notes in Computer Science* (2025), 109–125, Section 2 (reaction model and generator), Section 3 (flow, waiting-time law and thinning algorithm) and Section 5 (Theorem 1), <https://doi.org/10.1007/978-3-032-01436-8_7> (preprint arXiv:2507.01922).

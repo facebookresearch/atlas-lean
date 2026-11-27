@@ -24,4 +24,4 @@ For (1): if the transform were not injective there would be distinct $x, x'$ wit
 
 ## Sources
 
-- Dylan Antonio Talabis, Eduardo Mendoza, "Network transformation-based analysis of biochemical systems", arXiv:2308.12586 (2023), Definition 15, Proposition 15, Proposition 16 and Proposition 12, <https://doi.org/10.48550/arXiv.2308.12586>
+- Dylan Antonio Talabis, Eduardo Mendoza, "Network transformation-based analysis of biochemical systems", *Journal of Mathematical Biology* 89(6) (2024), 62, Definition 15, Proposition 15, Proposition 16 and Proposition 12, <https://doi.org/10.1007/s00285-024-02152-2> (preprint arXiv:2308.12586).

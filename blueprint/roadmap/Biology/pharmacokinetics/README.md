@@ -11,5 +11,3 @@ models of concentration measurements. Enzyme kinetics as such is under Systems b
 - [Pharmacokinetic observation models](pharmacokinetic-observation-models/README.md)
 - [Saturable Michaelis–Menten elimination](saturable-michaelis-menten-elimination/README.md)
 - [Two-compartment pharmacokinetics](two-compartment-pharmacokinetics/README.md)
-- [Competitive receptor occupancy dynamics](competitive-receptor-occupancy-dynamics/README.md)
-- [Periodic antibiotic treatment and plasmid resistance](periodic-antibiotic-treatment-and-plasmid-resistance/README.md)

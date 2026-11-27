@@ -16,4 +16,4 @@ While species $d$ is absent, the dynamics can only leave the boundary through ra
 
 ## Sources
 
-- W.-T. L. Fan, J. Kim, C. Yuan, "Boundary-induced slow mixing for Markov chains and its application to stochastic reaction networks", arXiv:2407.12166, Theorem 1, Corollaries 1–2 and Theorem 3. <https://doi.org/10.48550/arXiv.2407.12166>
+- W.-T. L. Fan, J. Kim, C. Yuan, "Boundary-induced slow mixing for Markov chains and its application to stochastic reaction networks", *SIAM Journal on Applied Dynamical Systems* 25(4) (2026), 2538–2584, Theorem 1, Corollaries 1–2 and Theorem 3, <https://doi.org/10.1137/24m1679896> (preprint arXiv:2407.12166).

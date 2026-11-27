@@ -28,4 +28,4 @@ For an invertible irreducible Metzler matrix $A$, Hurwitz instability is equival
 
 ## Sources
 
-- N. Vassena and P. F. Stadler, "Unstable Cores are the source of instability in chemical reaction networks", arXiv preprint (2023), <https://doi.org/10.48550/arXiv.2308.11486>. Definitions 22-23 (autocatalytic matrix and core), Theorem 24, Corollaries 26-28, and Section 11 (non-explicitly-catalytic extensions, Lemma 35, Lemma 38, Lemma 40, Lemma 41, Lemma 42).
+- N. Vassena and P. F. Stadler, "Unstable Cores are the source of instability in chemical reaction networks", *Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences* 480(2285) (2024), 20230694, Definitions 22-23 (autocatalytic matrix and core), Theorem 24, Corollaries 26-28, and Section 11 (non-explicitly-catalytic extensions, Lemma 35, Lemma 38, Lemma 40, Lemma 41, Lemma 42), <https://doi.org/10.1098/rspa.2023.0694> (preprint arXiv:2308.11486).

@@ -22,4 +22,4 @@ Closure under unions: if $(G,\kappa_1)$ is realized on $H_1$ and $(G,\kappa_2)$ 
 
 ## Sources
 
-- Balázs Boros, Gheorghe Craciun, Oskar Henriksson, Jiaxin Jin, "A flux-based approach for analyzing the disguised toric locus of reaction networks", arXiv:2510.03621 (2025), Lemma 3.2, Definition 3.3, Theorem 3.4, Lemmas 4.7 and 4.8, Theorems 4.9 and 4.11, Corollary 5.4 (Theorem B), <https://doi.org/10.48550/arXiv.2510.03621>
+- Balázs Boros, Gheorghe Craciun, Oskar Henriksson, Jiaxin Jin, "A flux-based approach for analyzing the disguised toric locus of reaction networks", *Advances in Applied Mathematics* 182 (2027), 103160, Lemma 3.2, Definition 3.3, Theorem 3.4, Lemmas 4.7 and 4.8, Theorems 4.9 and 4.11, Corollary 5.4 (Theorem B), <https://doi.org/10.1016/j.aam.2026.103160> (preprint arXiv:2510.03621).

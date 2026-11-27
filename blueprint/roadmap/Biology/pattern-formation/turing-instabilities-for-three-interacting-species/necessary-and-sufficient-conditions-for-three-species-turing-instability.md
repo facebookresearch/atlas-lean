@@ -44,4 +44,4 @@ The characteristic polynomial of $J(k^2)$ is $\lambda^3-c_2\lambda^2+c_1\lambda-
 
 ## Sources
 
-- V. Piskovsky, "Turing instabilities for three interacting species", arXiv:2405.14682 (2024), Theorem 1, Lemmas 1–5, conditions (polynom_cond1) and (polynom_cond2), <https://doi.org/10.48550/arXiv.2405.14682>.
+- V. Piskovsky, "Turing instabilities for three interacting species", *Applied Mathematics Letters* 159 (2025), 109269, Theorem 1, Lemmas 1–5, conditions (polynom_cond1) and (polynom_cond2), <https://doi.org/10.1016/j.aml.2024.109269> (preprint arXiv:2405.14682).

@@ -26,4 +26,4 @@ Conditioning on $\rho = 0$ observes the chain only when no short-lived species i
 
 ## Sources
 
-- L. Hoessly, C. Wiuf and P. Xia, "Asymptotic analysis for stationary distributions of scaled reaction networks", arXiv preprint (2024), Section 2, Lemma 2.7, Lemma 3.1, Theorem 3.2, Corollary 3.3 and Propositions 3.5 and 3.6. <https://doi.org/10.48550/arXiv.2402.02276>
+- L. Hoessly, C. Wiuf and P. Xia, "Asymptotic analysis for stationary distributions of multiscaled reaction networks", *Advances in Applied Probability* 58(3) (2025), 887–917, Section 2, Lemma 2.7, Lemma 3.1, Theorem 3.2, Corollary 3.3 and Propositions 3.5 and 3.6, <https://doi.org/10.1017/apr.2025.10040> (preprint arXiv:2402.02276).

@@ -12,7 +12,7 @@ $$p(t) = \frac{1}{\Phi(t,0)\,p(0)^{-1} + \int_0^t\Phi(t,s)\,c(s)\,ds},$$
 
 and:
 
-1. If $\beta^+(\mathcal{D})<0$ (colonization uniformly dominates extinction), then $p(t) = \big(\int_0^t\Phi(t,s)c(s)\,ds + o(1)\big)^{-1}$ with an exponentially decaying error, so all solutions converge to a unique bounded positive solution that is independent of the initial condition.
+1. If $\beta^+(\mathcal{D})<0$ (colonization uniformly dominates extinction), then $p(t) = \big(\int_0^t\Phi(t,s)c(s)\,ds + o(1)\big)^{-1}$ with an exponentially decaying error, so every solution with $p(0)>0$ is asymptotically equal to $\big(\int_0^t\Phi(t,s)c(s)\,ds\big)^{-1}$, which does not depend on the initial condition.
 2. If $\beta^-(\mathcal{D})>0$ (extinction uniformly dominates), then $p(t)\le Le^{-\eta t}$ for some $L\ge1$, $\eta>0$: the metapopulation goes extinct exponentially fast.
 3. If $0\in[\beta^-(\mathcal{D}),\beta^+(\mathcal{D})]$, then $\liminf_{t\to\infty}p(t) = 0$.
 
@@ -22,4 +22,4 @@ The substitution $u=1/p$ linearises the Bernoulli equation to $u' = \mathcal{D}(
 
 ## Sources
 
-- G. Robledo, R. Bustamante, "Generalizing the Levins metapopulation model to time varying colonization and extinction rates", arXiv:2504.20396, Propositions 1–2 and Theorems 1–2. <https://doi.org/10.48550/arXiv.2504.20396>
+- G. Robledo, R. Bustamante, "Generalizing the Levins metapopulation model to time varying colonization and extinction rates", *Journal of Mathematical Biology* 93(6) (2026), 67, Propositions 1–2 and Theorems 1–2, <https://doi.org/10.1007/s00285-026-02485-0> (preprint arXiv:2504.20396).

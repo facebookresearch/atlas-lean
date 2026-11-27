@@ -15,12 +15,6 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
-- [Branching-time signatures of tumor growth](branching-time-signatures-of-tumor-growth/README.md)
-- [Combination oncolytic virotherapy](combination-oncolytic-virotherapy/README.md)
 - [Controllability of adaptive cancer therapy](controllability-of-adaptive-cancer-therapy/README.md)
-- [Driver site frequency spectrum](driver-site-frequency-spectrum/README.md)
-- [Driver site frequency spectrum in two-type branching](driver-site-frequency-spectrum-in-two-type-branching/README.md)
 - [Immune extinction threshold models](immune-extinction-threshold-models/README.md)
 - [Minimum uncovering branching](minimum-uncovering-branching/README.md)
-- [Mutation order and clonal diversity of malignant cells](mutation-order-and-clonal-diversity-of-malignant-cells/README.md)
-- [Recurrence time of resistant tumors with carrying capacity](recurrence-time-of-resistant-tumors-with-carrying-capacity/README.md)

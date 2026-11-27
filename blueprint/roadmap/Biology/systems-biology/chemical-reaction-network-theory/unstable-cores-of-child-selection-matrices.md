@@ -20,4 +20,4 @@ The coefficients of the characteristic polynomial of $G=SR$ expand by Cauchy-Bin
 
 ## Sources
 
-- N. Vassena and P. F. Stadler, "Unstable Cores are the source of instability in chemical reaction networks", arXiv preprint (2023), <https://doi.org/10.48550/arXiv.2308.11486>. Definition 7 ($k$-Child-Selection triple), Section 4 (Child-Selection matrices), Lemmas 5-6, Lemma 11, Corollary 12, Corollary 14, Definition 15 (unstable core), Observation 16, Definition 17 (D-unstable core), Conjecture 18, Definition 19, Observation 20 and Lemma 21.
+- N. Vassena and P. F. Stadler, "Unstable Cores are the source of instability in chemical reaction networks", *Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences* 480(2285) (2024), 20230694, Definition 7 ($k$-Child-Selection triple), Section 4 (Child-Selection matrices), Lemmas 5-6, Lemma 11, Corollary 12, Corollary 14, Definition 15 (unstable core), Observation 16, Definition 17 (D-unstable core), Conjecture 18, Definition 19, Observation 20 and Lemma 21, <https://doi.org/10.1098/rspa.2023.0694> (preprint arXiv:2308.11486).

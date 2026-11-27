@@ -21,4 +21,4 @@ The system is planar and affine in the dose. The sign of $\langle f(x,a_1)^\perp
 
 ## Sources
 
-- F. J. Thomsen, J. L. A. Dubbeldam, "Controllability in a class of cancer therapy models with co-evolving resistance", arXiv:2503.07533 (2025), Section 2 (model and hypotheses), Section 3 (Definitions 1-2, Lemmas 1-3), Section 4 (Definitions 3-4, Theorems 1.1-1.3, Theorem 2) and Appendix A (Theorem A, restated Theorem 2), <https://doi.org/10.48550/arXiv.2503.07533>.
+- F. J. Thomsen, J. L. A. Dubbeldam, "Controllability in a class of cancer therapy models with co-evolving resistance", *Discrete and Continuous Dynamical Systems - B* 32 (2026), 40–64, Section 2 (model and hypotheses), Section 3 (Definitions 1-2, Lemmas 1-3), Section 4 (Definitions 3-4, Theorems 1.1-1.3, Theorem 2) and Appendix A (Theorem A, restated Theorem 2), <https://doi.org/10.3934/dcdsb.2025121> (preprint arXiv:2503.07533).

@@ -26,5 +26,5 @@ Every row $r$ must be uncovered at least once on each chain of any chain cover o
 
 ## Sources
 
-- N. Baghirova, E. Galby and M. Milanič, "Perfect phylogenies via the Minimum Uncovering Branching problem: efficiently solvable cases", arXiv:2506.18578 (2025), Theorems 2.1, 3.1, 4.2, 4.8 and Corollaries 3.3, 3.5, <https://doi.org/10.48550/arXiv.2506.18578>.
+- N. Baghirova, E. Galby and M. Milanič, "Perfect phylogenies via the Minimum Uncovering Branching problem: efficiently solvable cases", *IEEE Transactions on Computational Biology and Bioinformatics* 22(5) (2025), 2043–2056, Theorems 2.1, 3.1, 4.2, 4.8 and Corollaries 3.3, 3.5, <https://doi.org/10.1109/tcbbio.2025.3580476> (preprint arXiv:2506.18578).
 - I. Hajirasouliha and B. J. Raphael, "Reconstructing mutational history in multiply sampled tumors using perfect phylogeny mixtures", WABI 2014, LNCS 8701, <https://doi.org/10.1007/978-3-662-44753-6_27>.

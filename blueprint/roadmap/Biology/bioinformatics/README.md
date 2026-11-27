@@ -24,8 +24,3 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [q-gram (seed) filtering lemma for approximate matching](q-gram-filtering-lemma-for-approximate-matching.md)
 - [Signed reversal distance: the Hannenhalli–Pevzner formula and polynomial-time sorting](remaining-clauses-of-complexity-of-reversal-distance-signed.md)
 - [Shortest common superstring via maximum-overlap Hamiltonian paths](remaining-clauses-of-shortest-common-superstring-via-maximum.md)
-- [Diffusion estimation from population snapshots](diffusion-estimation-from-population-snapshots/README.md)
-- [Dirichlet–multinomial deviance residuals](dirichlet-multinomial-deviance-residuals/README.md)
-- [Error-controlled Gene Ontology annotation release](error-controlled-gene-ontology-annotation-release/README.md)
-- [Kernel tests for spatially variable features](kernel-tests-for-spatially-variable-features/README.md)
-- [Stochastic DNA quantification](stochastic-dna-quantification/README.md)

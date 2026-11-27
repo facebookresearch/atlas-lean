@@ -22,4 +22,4 @@ The formulas follow by differentiating the right-hand side at $x = A$ and $x = K
 
 ## Sources
 
-- F. Bastian, H. Alkhayuon, K. Mulchrone, M. O'Riordain, "Cancer model with moving extinction threshold reproduces real cancer data", arXiv:2506.05992 (2025), Richards' model and the generalized Allee model (Model 1) with their linear stability analysis, <https://doi.org/10.48550/arXiv.2506.05992>.
+- F. Bastian, H. Alkhayuon, K. Mulchrone, M. O'Riordain, "Cancer model with moving extinction threshold reproduces real cancer data", *Journal of The Royal Society Interface* 22(231) (2025), 20240844, Richards' model and the generalized Allee model (Model 1) with their linear stability analysis, <https://doi.org/10.1098/rsif.2024.0844> (preprint arXiv:2506.05992).

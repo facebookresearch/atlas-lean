@@ -10,6 +10,3 @@ Models of excitable membranes and neurons: the Nernst potential and passive cabl
 - [Leaky integrate-and-fire neuron](leaky-integrate-and-fire-neuron/README.md)
 - [Wilson–Cowan neural population model](wilson-cowan-neural-population-model/README.md)
 - [Coupled biological oscillators](coupled-oscillators/README.md)
-- [Amyloid-beta and prion protein binding model](amyloid-beta-prion-protein-binding-model/README.md)
-- [Cusped singularities and mixed-mode oscillations](cusped-singularities-and-mixed-mode-oscillations/README.md)
-- [Modulation index of phase–amplitude coupling](modulation-index-of-phase-amplitude-coupling/README.md)

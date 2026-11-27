@@ -30,4 +30,4 @@ In particular every weakly reversible network is positively dependent, and for a
 
 ## Sources
 
-- Dylan Antonio Talabis, Eduardo Mendoza, "Network transformation-based analysis of biochemical systems", arXiv:2308.12586 (2023), Definitions 1 and 3, Propositions 1-3, Corollaries 1-3 and Theorem 1, <https://doi.org/10.48550/arXiv.2308.12586>
+- Dylan Antonio Talabis, Eduardo Mendoza, "Network transformation-based analysis of biochemical systems", *Journal of Mathematical Biology* 89(6) (2024), 62, Definitions 1 and 3, Propositions 1-3, Corollaries 1-3 and Theorem 1, <https://doi.org/10.1007/s00285-024-02152-2> (preprint arXiv:2308.12586).

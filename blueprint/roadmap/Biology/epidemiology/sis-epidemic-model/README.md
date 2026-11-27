@@ -72,4 +72,3 @@
 - [For $R_0 > 1$, global asymptotic stability of the endemic equilibrium on the open segment](endemic-globally-asymptotically-stable.md)
 
 - [Extinction time of the stochastic logistic SIS epidemic](extinction-time-of-the-stochastic-logistic-epidemic.md)
-- [Bang-bang threshold control of the stochastic SIS model](bang-bang-threshold-control-of-the-stochastic-sis-model.md)

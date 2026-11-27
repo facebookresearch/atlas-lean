@@ -16,10 +16,17 @@ So the sQSSA rate is accurate wherever $K_Me_0\ll(K_M+s)^2$, in particular whene
 
 $$e_0\ll K=k_2/k_1 .$$
 
+## Depends on
+
+- [Solution of the Michaelis–Menten mass-action system](is-solution.md)
+- [Michaelis constant](michaelis-constant.md)
+- [Quasi-steady-state manifold](complex-rate-eq-zero-iff.md)
+- [Substrate consumption at the Michaelis–Menten rate under QSSA](substrate-rate-qss.md)
+
 ## Expansion
 
 An anti-funnel is a region between a lower fence $\alpha$ and an upper fence $\beta$ for $y'=f(x,y)$ that narrows, with the vector field pushing solutions out across both fences; the anti-funnel theorem (Hubbard-West) gives a solution trapped inside for all $x$, unique when $\partial f/\partial y$ is positive, and for the Michaelis-Menten flow this solution is the slow manifold. Fences built from the $c$-nullcline and from linearization at the stable node $(0,0)$ (eigenvalues $\lambda_\pm=\frac{k_1}2(K_M+e_0)(-1\pm\sqrt{1-4Ke_0/(K_M+e_0)^2})$) give explicit two-sided bounds on $c$ on the slow manifold, hence on $\dot s$. Comparing these bounds with the competing reduced equations in each other's validity regions shows which reduction tracks the true slow flow most closely. At small $s$, where the slow manifold leaves along the slow eigenvector, the slow-product reduction wins unless $e_0\ll K$.
 
 ## Sources
 
-- K. Srivastava, J. Eilertsen, V. Booth, S. Schnell, "Accuracy versus predominance: reassessing the validity of the quasi-steady-state approximation", arXiv:2501.06406 (2025), Section 3 (Definition 1, Theorem 1, Proposition 1), Section 4 (Theorem 2, Proposition 2, Section 4.2), Section 5 (Theorems 3-4, Section 5.1) and Section 6, <https://doi.org/10.48550/arXiv.2501.06406>.
+- K. Srivastava, J. Eilertsen, V. Booth, S. Schnell, "Accuracy versus predominance: reassessing the validity of the quasi-steady-state approximation", *Bulletin of Mathematical Biology* 87(6) (2025), 73, Section 3 (Definition 1, Theorem 1, Proposition 1), Section 4 (Theorem 2, Proposition 2, Section 4.2), Section 5 (Theorems 3-4, Section 5.1) and Section 6, <https://doi.org/10.1007/s11538-025-01451-z> (preprint arXiv:2501.06406).

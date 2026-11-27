@@ -22,4 +22,4 @@ At $\mathbf x^*$ the Jacobian is block triangular because siphon species cannot 
 
 ## Sources
 
-- M. D. Johnston, F. Avram, "The Boundary Reproduction Number for Determining Boundary Steady State Stability in Chemical Reaction Systems", arXiv preprint (2025), Theorems 1–3, <https://doi.org/10.48550/arXiv.2506.01606>.
+- M. D. Johnston, F. Avram, "The Boundary Reproduction Number for Determining Boundary Steady State Stability in Chemical Reaction Systems", *Journal of Mathematical Biology* 92(2) (2026), 29, Theorems 1–3, <https://doi.org/10.1007/s00285-026-02351-z> (preprint arXiv:2506.01606).
