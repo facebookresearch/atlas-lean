@@ -12,6 +12,7 @@ Random graph models such as Erdős–Rényi, random regular and random k-out gra
 - [Random walks on infinite graphs](random-walks-on-infinite-graphs/README.md)
 - [Spanning structures in random graphs](spanning-structures-in-random-graphs/README.md)
 - [Threshold for triangles](threshold-for-triangles/README.md)
+- [Planted Clique](planted-clique/README.md)
 
 ## Related topics
 

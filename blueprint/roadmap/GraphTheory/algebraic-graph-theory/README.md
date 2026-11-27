@@ -4,6 +4,8 @@ Graphs studied through groups and matrices: Cayley and vertex-transitive graphs,
 
 - [High-Dimensional Expanders and Local Spectral Expansion](local-spectral-expansion-of-simplicial-complexes/README.md)
 - [Interlacing Families, Ramanujan Lifts and Bipartite Ramanujan Graphs](interlacing-families-and-ramanujan-lifts/README.md)
+- [Random walks on regular graphs](random-walks-on-regular-graphs/README.md)
+- [Spectral expansion and connectivity](spectral-expansion-and-connectivity/README.md)
 
 ## [Part 1 of 2](part-01/README.md)
 
