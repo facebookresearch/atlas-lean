@@ -1,0 +1,11 @@
+# Jobs sharing binary semaphores
+
+This is the model of Sha, Rajkumar and Lehoczky for priority inversion on one processor. Jobs $J_1, \dots, J_n$ are listed in descending order of priority, $J_1$ having the highest. Each job is an instance of a task with a fixed priority, and every job of a task starts with that task's priority; jobs of equal priority that are eligible to run execute first come, first served. A job is a sequence of instructions that runs continuously until its completion when it executes alone on the processor: jobs do not suspend themselves.
+
+Shared data are guarded by binary semaphores $S$, with indivisible operations $P(S)$ (lock) and $V(S)$ (unlock). The $j$-th critical section $z_{i,j}$ of job $J_i$ is the code between its $j$-th $P$ operation and the matching $V$ operation, which use the semaphore $S_{i,j}$; $z_{i,j} \subset z_{i,k}$ means that $z_{i,j}$ lies entirely inside $z_{i,k}$, and the duration of $z_{i,j}$ is the time it takes when $J_i$ executes alone. Critical sections are properly nested: any two critical sections of a job are disjoint or one contains the other. A semaphore is locked at most once in a single nested critical section, and a job releases all its locks before or at the end of its execution.
+
+A job $J$ is *blocked* by the critical section $z_{i,j}$ of $J_i$ if $J_i$ has lower priority than $J$ and $J$ has to wait for $J_i$ to exit $z_{i,j}$ in order to continue; it is blocked by $J_i$ through semaphore $S$ if, in addition, $S_{i,j} = S$. Waiting for jobs of higher or equal priority that arrived earlier is not blocking. For $j > i$ let $\beta_{i,j}$ be the set of critical sections of $J_j$ that can block $J_i$, $\beta^*_{i,j}$ the set of its maximal elements, those not contained in another element of $\beta_{i,j}$ (the longest critical sections of $J_j$ that can block $J_i$), and $\beta^*_i = \bigcup_{j > i} \beta^*_{i,j}$.
+
+## Sources
+
+- L. Sha, R. Rajkumar and J. P. Lehoczky, "Priority inheritance protocols: an approach to real-time synchronization", *IEEE Transactions on Computers* 39(9):1175–1185, 1990, Section II (the definitions of jobs, critical sections, blocking and the notation $\beta_{i,j}$, $\beta^*_{i,j}$, $\beta^*_i$).
