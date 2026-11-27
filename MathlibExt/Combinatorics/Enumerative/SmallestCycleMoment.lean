@@ -26,10 +26,14 @@ import Mathlib.NumberTheory.Harmonic.Bounds
 /-!
 # Moments of the smallest cycle of a random permutation
 
+For a real function `ω` with `ω(x) = 1 / x` on `[1, 2]` and
+`x * ω(x) = 1 + ∫ t in 1..(x - 1), ω(t)` for `x ≥ 2`,
 `MetaMathlibExt.smallest_cycle_moment_asymp` gives a power-saving error bound for the
-Buchstab integral approximation to each moment of order at least two, and
+Buchstab integral approximation to each moment of order at least two, for every `n ≥ 1`.
+With the same hypotheses, `MetaMathlibExt.smallest_cycle_variance_asymp` gives a
+power-saving error bound for the linear Buchstab approximation to the variance.
 `MetaMathlibExt.smallest_cycle_mean_asymp` shows that the mean is asymptotic to
-`e^{-γ} log n`.
+`e^{-γ} log n`, without hypotheses on `ω`.
 
 Marking the cycle through a point gives a recurrence for the probability that all cycles
 have length at least `k`. Comparing this recurrence with the integrated Buchstab equation
@@ -43,6 +47,18 @@ the tail probabilities with `e^{-H_{k-1}}`. The recurrence also bounds the `m`-t
 `e^3 e^{-m/k}`, so the convergence is fast as long as `k ≤ n / (3 log n)`; the remaining tail
 probabilities are at most `1 / k`. Hence the mean differs from `∑_{k ≤ n} e^{-H_{k-1}}`, which is
 asymptotic to `e^{-γ} log n`, by `O(log log n)`.
+
+## References
+
+- Claude Gravel and Daniel Panario, *Evaluating the Generalized Buchstab Function and Revisiting
+  the Variance of the Distribution of the Smallest Components of Combinatorial Objects*,
+  INTEGERS 24 (2024), Article A7, pp. 1–18, Theorems 1 and 2.
+- D. Panario and B. Richmond, *Smallest Components in Decomposable Structures: Exp-Log Class*,
+  Algorithmica 29 (2001), pp. 205–226, Section 1 (earlier moment estimates cited by Gravel and
+  Panario in their Section 2.1).
+
+The variance proof uses this module's `smallest_cycle_moment_asymp` at order two and
+`smallest_cycle_mean_asymp` to bound the squared mean.
 -/
 
 open Function Equiv Equiv.Perm Finset
@@ -1354,5 +1370,78 @@ public theorem smallest_cycle_mean_asymp :
           (n.factorial : ℝ)) / (Real.exp (-eulerMascheroniConstant) * Real.log n))
       Filter.atTop (nhds 1) :=
   mean_tendsto
+
+open Asymptotics Filter in
+/-- **Variance of the smallest cycle length.** Let $\omega$ be a real function with
+$\omega(x) = 1/x$ for $1 \le x \le 2$ and $x\,\omega(x) = 1 + \int_1^{x-1} \omega(t)\,dt$ for
+$x \ge 2$, and for $n \ge 1$ let $X_n$ be the length of the smallest cycle of a uniformly random
+permutation of $\{1, \dots, n\}$. There are real constants $\varepsilon > 0$ and $C$ such that for
+every $n \ge 1$
+
+$$\left| \operatorname{Var}(X_n) - 2n \int_1^\infty \frac{\omega(x)}{x^2}\,dx \right|
+\le C\, n \cdot n^{-\varepsilon}.$$
+
+Source: Claude Gravel and Daniel Panario, *Evaluating the Generalized Buchstab
+Function and Revisiting the Variance of the Distribution of the Smallest
+Components of Combinatorial Objects*, INTEGERS 24 (2024), Article A7, Theorem 2
+(`integers-2024-A7-thm-2`). -/
+public theorem smallest_cycle_variance_asymp (ω : ℝ → ℝ)
+    (hω₁ : ∀ x ∈ Set.Icc (1 : ℝ) 2, ω x = 1 / x)
+    (hω₂ : ∀ x : ℝ, 2 ≤ x → x * ω x = 1 + ∫ t in (1 : ℝ)..(x - 1), ω t) :
+    ∃ ε C : ℝ, 0 < ε ∧ ∀ n : ℕ, 1 ≤ n →
+      |((∑ σ : Equiv.Perm (Fin n), ((⨅ x, Function.minimalPeriod σ x : ℕ) : ℝ) ^ 2) /
+            (n.factorial : ℝ) -
+          ((∑ σ : Equiv.Perm (Fin n), ((⨅ x, Function.minimalPeriod σ x : ℕ) : ℝ)) /
+            (n.factorial : ℝ)) ^ 2) -
+          n * (2 * ∫ x in Set.Ioi (1 : ℝ), ω x / x ^ 2)|
+        ≤ C * (n : ℝ) * (n : ℝ) ^ (-ε) := by
+  let mean (n : ℕ) : ℝ :=
+    (∑ σ : Equiv.Perm (Fin n), ((⨅ x, Function.minimalPeriod σ x : ℕ) : ℝ)) / n.factorial
+  have hnormalized : mean =O[atTop] (fun n ↦ exp (-eulerMascheroniConstant) * log n) := by
+    refine isBigO_of_div_tendsto_nhds ?_ 1 smallest_cycle_mean_asymp
+    filter_upwards [eventually_ge_atTop 2] with n hn
+    have hlog : 0 < log (n : ℝ) := log_pos (by exact_mod_cast hn)
+    exact fun h ↦ ((mul_pos (exp_pos _) hlog).ne' h).elim
+  have hmean : mean =O[atTop] (fun n ↦ log (n : ℝ)) :=
+    hnormalized.trans ((isBigO_refl _ _).const_mul_left _)
+  have hlog : (fun n : ℕ ↦ log (n : ℝ) ^ 2) =o[atTop]
+      (fun n ↦ (n : ℝ) ^ (1 / 2 : ℝ)) := by
+    exact ((isLittleO_log_rpow_rpow_atTop 2 (by norm_num : 0 < (1 / 2 : ℝ))).comp_tendsto
+      tendsto_natCast_atTop_atTop).congr (fun n ↦ rpow_two (log n)) (fun _ ↦ rfl)
+  -- The comparison function is nonzero for every positive `n`, including the finite prefix.
+  obtain ⟨K, hK, hsquare⟩ := bound_of_isBigO_nat_atTop ((hmean.pow 2).trans hlog.isBigO)
+  obtain ⟨ε, C, hε, hmoment⟩ := smallest_cycle_moment_asymp ω hω₁ hω₂ 2 le_rfl
+  have hC : 0 ≤ C := by
+    simpa only [Nat.cast_one, one_pow, one_rpow, mul_one] using
+      (abs_nonneg _).trans (hmoment 1 le_rfl)
+  let δ := min ε (1 / 2 : ℝ)
+  refine ⟨δ, C + K, lt_min hε (by norm_num), fun n hn ↦ ?_⟩
+  have hn' : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  have hnpos : (0 : ℝ) < n := zero_lt_one.trans_le hn'
+  have hdecay : (n : ℝ) ^ (-ε) ≤ (n : ℝ) ^ (-δ) :=
+    rpow_le_rpow_of_exponent_le hn' (neg_le_neg (min_le_left _ _))
+  have hpower : (n : ℝ) ^ (1 / 2 : ℝ) ≤ (n : ℝ) * (n : ℝ) ^ (-δ) := calc
+    _ ≤ (n : ℝ) ^ (1 + -δ) :=
+      rpow_le_rpow_of_exponent_le hn' (by linarith [min_le_right ε (1 / 2 : ℝ)])
+    _ = _ := by rw [rpow_add hnpos, rpow_one]
+  have hs := hsquare (x := n) (rpow_pos_of_pos hnpos _).ne'
+  rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _),
+    Real.norm_eq_abs, abs_of_pos (rpow_pos_of_pos hnpos _)] at hs
+  have hm := hmoment n hn
+  simp only [show (2 : ℕ) - 1 = 1 by decide, pow_one, Nat.cast_ofNat] at hm
+  rw [mul_comm (2 : ℝ) (n : ℝ), mul_assoc (n : ℝ) 2] at hm
+  have htriangle (a : ℝ) : |a - mean n ^ 2| ≤ |a| + mean n ^ 2 := by
+    rw [sub_eq_add_neg]
+    exact (abs_add_le _ _).trans_eq
+      (congrArg (|a| + ·) ((abs_neg _).trans (abs_of_nonneg (sq_nonneg (mean n)))))
+  change |(_ - mean n ^ 2) - _| ≤ _
+  rw [sub_right_comm]
+  calc
+    _ ≤ _ := htriangle _
+    _ ≤ C * (n : ℝ) * (n : ℝ) ^ (-ε) + K * (n : ℝ) ^ (1 / 2 : ℝ) := add_le_add hm hs
+    _ ≤ C * (n : ℝ) * (n : ℝ) ^ (-δ) + K * ((n : ℝ) * (n : ℝ) ^ (-δ)) :=
+      add_le_add (mul_le_mul_of_nonneg_left hdecay (mul_nonneg hC hnpos.le))
+        (mul_le_mul_of_nonneg_left hpower hK.le)
+    _ = _ := by ring
 
 end MetaMathlibExt
