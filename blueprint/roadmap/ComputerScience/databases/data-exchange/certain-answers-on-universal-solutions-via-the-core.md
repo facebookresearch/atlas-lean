@@ -3,8 +3,8 @@
 In a data exchange setting $(\mathbf S, \mathbf T, \Sigma_{st}, \Sigma_t)$, a solution for a source instance $I$ is
 a target instance $J$ such that $I$ and $J$ together satisfy the source-to-target dependencies $\Sigma_{st}$ and $J$
 satisfies the target dependencies $\Sigma_t$; a universal solution is a solution with a homomorphism (fixing
-constants) to every solution. A core of an instance $J$ is a subinstance $C$ of $J$ such that some homomorphism maps
-$J$ to $C$ and none maps $J$ to a proper subinstance of $C$; all cores of $J$ are isomorphic. An existential query over $\mathbf T$ is a formula $\exists \bar y\,\varphi(\bar x, \bar y)$
+constants) to every solution. A core of an instance $J$ is a subinstance $C$ of $J$ such that some homomorphism (the
+identity on constants) maps $J$ to $C$ and none maps $J$ to a proper subinstance of $C$; all cores of $J$ are isomorphic. An existential query over $\mathbf T$ is a formula $\exists \bar y\,\varphi(\bar x, \bar y)$
 with $\varphi$ a disjunction of conjunctions of atoms, negated atoms, equalities and negated equalities, subject to the
 safety condition that every variable occurring in a conjunction occurs in a relational atom of that conjunction; for a target instance $J$, $q(J){\downarrow}$ is the set of null-free tuples of $q(J)$.
 The certain answers of $q$ on universal solutions, $\text{u-certain}(q, I)$, are the tuples in $q(J)$ for every

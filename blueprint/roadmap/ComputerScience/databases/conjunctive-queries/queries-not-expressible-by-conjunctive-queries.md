@@ -4,12 +4,14 @@ None of the following first-order queries is equivalent to a conjunctive query (
 schema), where $a$ is a constant and $R, S, P, Q$ are relation names:
 
 1. $\exists x \exists y\, (R(x, y) \wedge x \ne y)$ and $\exists x\, (S(x) \wedge x \ne a)$, since they are not preserved
-   under homomorphisms: $\{R(a, b)\} \to_\emptyset \{R(c, c)\}$ and $\{S(b)\} \to_{\{a\}} \{S(a)\}$ while the first
-   database satisfies the query and the second does not;
+   under homomorphisms that fix the constants $C$ of a candidate conjunctive query: for distinct elements $d, e$ outside
+   $C \cup \{a\}$ and any $c$, $\{R(d, e)\} \to_C \{R(c, c)\}$ and $\{S(d)\} \to_{C} \{S(a)\}$, while the first database satisfies the query
+   and the second does not;
 2. $\neg P(a)$ and $\exists x\, (P(x) \wedge \neg Q(x))$, since they are not monotone;
 3. $\exists x\, (R(x) \vee S(x))$ for unary $R$ and $S$, and $\exists x \exists y\, (x = y)$ over the schema $\{R, S\}$
    with $R$ and $S$ unary, since they are not preserved under direct products: $\{R(a)\}$ and $\{S(a)\}$ satisfy
-   them while their direct product is empty.
+   them while their direct product is empty; for a candidate with constants, a conjunctive query true on both
+   $\{R(a)\}$ and $\{S(a)\}$ can contain neither an $R$ atom nor an $S$ atom, so its body would be empty.
 
 ## Depends on
 

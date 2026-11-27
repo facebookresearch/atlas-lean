@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.Cyclotomic.PrimeDivisorCongruence
 public import MathlibExt.NumberTheory.Cyclotomic.PrimePowerDivisibility
 public import MathlibExt.NumberTheory.Cyclotomic.TwoPowRamifiedBound
 public import MathlibExt.NumberTheory.HybridPrimeDivisorBoundsHybridBoundPrimeDivisors
+public import MathlibExt.NumberTheory.HybridPrimeDivisorBoundsPrimeHybridBound
 public import MathlibExt.NumberTheory.HybridPrimeDivisorBoundsLtSixteenIffProdFirstPrimesLt
 
 namespace MetaMathlibExt
@@ -27,25 +28,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- The `p`-hybrid bound (Theorem 1 for prime `n = p`). For a prime `p`, `x > 1` and
-`ω_p = ω(x^p - 1)`, let `r_{i,0}` and `r_{j,1}` enumerate the primes `≢ 1` and `≡ 1 (mod p)`
-(`Nat.nth`, `0`-indexed here). The source's
-`x ≥ min_{0 ≤ k < ω_p} max(1 + ∏_{i ≤ k} r_{i,0}, (1 + ∏_{i ≤ k} r_{i,0} ∏_{j ≤ ω_p - k} r_{j,1})^{1/p})`
-is stated equivalently as the existence of `k < ω_p` meeting both bounds, the second after
-raising to the `p`-th power. The source's factors are all primes, and since `Nat.nth`
-returns `0` past the end of a finite set, the statement requires every factor to be a genuine
-(positive) element of its prime class.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Proposition 2 (`integers-2026-A95-prop-2`). -/
-public theorem_wanted prime_hybrid_bound {p : ℕ} (hp : p.Prime) {x : ℕ} (hx : 1 < x) :
-    ∃ k < (x ^ p - 1).primeFactors.card,
-      (∀ i < k, 0 < Nat.nth (fun ρ => ρ.Prime ∧ ¬ Nat.ModEq p ρ 1) i) ∧
-      1 + ∏ i ∈ Finset.range k, Nat.nth (fun ρ => ρ.Prime ∧ ¬ Nat.ModEq p ρ 1) i ≤ x ∧
-        1 + (∏ i ∈ Finset.range k, Nat.nth (fun ρ => ρ.Prime ∧ ¬ Nat.ModEq p ρ 1) i) *
-            ∏ j ∈ Finset.range ((x ^ p - 1).primeFactors.card - k),
-              Nat.nth (fun ρ => ρ.Prime ∧ Nat.ModEq p ρ 1) j ≤ x ^ p
 
 /-- The ramified bound. Let `n = ∏_{i=1}^m p_i^{a_i}` with primes `p_1 < ⋯ < p_m` (the ordering
 the source fixes at the start of its Section 5), `x > 1`, `ω_n = ω(x^n - 1)`, and, with

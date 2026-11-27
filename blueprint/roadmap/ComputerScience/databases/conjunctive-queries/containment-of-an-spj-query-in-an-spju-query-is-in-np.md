@@ -6,8 +6,9 @@ the set $\mathrm{SPJ}(e)$ of SPJ queries obtained by resolving each union node o
 Deciding, for an SPJ query $e$ and an SPJU query $e'$, whether $e \subseteq e'$ (that is, $e(D) \subseteq e'(D)$ on
 every database $D$) is in NP. An SPJ query whose selections force two
 distinct constants to be equal is empty on every database: if $e$ is such a query, $e \subseteq e'$ holds, and such
-members of $\mathrm{SPJ}(e')$ can be discarded. Otherwise an SPJ query corresponds to a conjunctive query whose output tuple may contain constants, because a
-selection $\sigma_{A = c}$ fixes its output column to $c$ (a tableau query whose summary row contains $c$), and
+members of $\mathrm{SPJ}(e')$ can be discarded. Otherwise an SPJ query corresponds to a tableau query, a set of atoms with an output tuple (summary row) that may
+contain constants, because a selection $\sigma_{A = c}$ fixes its output column to $c$; this is wider than the
+conjunctive-query syntax, whose head holds only variables. Then
 $e \subseteq e'$ if and only if some remaining member $e''$ of $\mathrm{SPJ}(e')$ has a homomorphism from its tableau to
 that of $e$ that is the identity on constants and maps output tuple to output tuple; guess $e''$ and the homomorphism.
 

@@ -2,12 +2,6 @@
 
 Model checking a [PCTL](pctl.md) formula $\phi$ on a finite [Markov decision process](markov-decision-processes-and-adversaries.md) $M$ takes time polynomial in the size $|M|$ of the model, the total number of its nondeterministic choices, and linear in the size $|\phi|$ of the formula, the number of its connectives and temporal operators plus the sizes of its temporal operators. Each operator of $\phi$ is handled once by the [reduction to reachability](pctl-model-checking-reduces-to-reachability.md), and the most expensive case, extremal reachability probabilities, is a linear program of size $|M|$, solvable in polynomial time by the ellipsoid method. The analysis disregards the representation of numbers; if the step bounds $k$ of bounded until operators are counted in binary, the algorithm is exponential in the size of the formula.
 
-## Expansion
-
-This page becomes ready once these prerequisites are stated:
-
-- Rational linear programs can be solved in polynomial time (proof prerequisite)
-
 ## Depends on
 
 - [PCTL](pctl.md)
@@ -18,6 +12,7 @@ This page becomes ready once these prerequisites are stated:
 
 - [PCTL model checking reduces to reachability](pctl-model-checking-reduces-to-reachability.md)
 - [Linear programs for extremal reachability probabilities](linear-programs-for-extremal-reachability-probabilities.md)
+- [Linear programs are solvable in polynomial time](../../../Geometry/convex-geometry/polynomial-time-linear-programming/linear-programs-are-solvable-in-polynomial-time.md)
 
 ## Sources
 

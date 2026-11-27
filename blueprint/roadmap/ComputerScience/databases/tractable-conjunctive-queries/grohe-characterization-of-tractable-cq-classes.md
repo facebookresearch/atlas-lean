@@ -1,8 +1,10 @@
 # Grohe's characterization of tractable classes of conjunctive queries
 
 A core of a conjunctive query $q(\bar x)$ is a query $q'(\bar x)$ whose atoms form a subset of those of $q$, such
-that some homomorphism maps $q$ to $q'$ fixing $\bar x$ and no query on a proper subset of the atoms of $q'$ receives
-such a homomorphism from $q'$; a core of $q$ is equivalent to $q$ and unique up to renaming of variables.
+that some homomorphism that is the identity on constants maps $q$ to $q'$ fixing $\bar x$ and no query on a proper
+subset of the atoms of $q'$ receives such a homomorphism from $q'$; a core of $q$ is equivalent to $q$ and unique up
+to renaming of variables. Constants must stay fixed: otherwise $R(a), R(b)$ with constants $a \ne b$ would have the
+inequivalent core $R(a)$.
 
 Assume $\mathrm{FPT} \ne \mathrm{W}[1]$. Let $\mathcal C$ be a recursively enumerable class of Boolean conjunctive
 queries over relation names of bounded arity, and let $\mathcal C_{\mathrm{core}}$ be the class of cores of the
