@@ -22,7 +22,7 @@ The least-squares slope of $Y$ on $G_{\mathrm{own}}$ is $\operatorname{Cov}(Y, G
 
 ## Depends on
 
-- [Hardy–Weinberg proportions](../../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+- [Hardy–Weinberg proportions](../../../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
 
 ## Sources
 

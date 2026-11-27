@@ -20,7 +20,7 @@ By the Frisch–Waugh–Lovell theorem the coefficient of $X_j$ in the multiple 
 
 ## Depends on
 
-- [Hardy–Weinberg proportions](../../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+- [Hardy–Weinberg proportions](../../../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
 
 ## Sources
 

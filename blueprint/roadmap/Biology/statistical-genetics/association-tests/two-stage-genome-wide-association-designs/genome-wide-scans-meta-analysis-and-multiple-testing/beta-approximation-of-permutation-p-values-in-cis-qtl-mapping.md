@@ -18,7 +18,7 @@ For $U_1, \dots, U_L$ independent uniforms, $\Pr(\min_i U_i > p) = (1-p)^L$, so 
 
 ## Depends on
 
-- [Monte Carlo permutation p-value](../../../../Probability/hypothesis-testing/permutation-tests/monte-carlo-permutation-pvalue.md)
+- [Monte Carlo permutation p-value](../../../../../Probability/hypothesis-testing/permutation-tests/monte-carlo-permutation-pvalue.md)
 
 ## Sources
 

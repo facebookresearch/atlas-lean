@@ -6,7 +6,7 @@
 
 $$\hat\beta_{\mathrm{FE}} = \frac{\mathbf{1}^\top \Omega^{-1}\hat\beta}{\mathbf{1}^\top \Omega^{-1}\mathbf{1}}, \qquad \operatorname{Var}(\hat\beta_{\mathrm{FE}}) = \frac{1}{\mathbf{1}^\top \Omega^{-1}\mathbf{1}},$$
 
-and $\hat\beta_{\mathrm{FE}}/\sqrt{\operatorname{Var}(\hat\beta_{\mathrm{FE}})}$ is standard normal under $\beta = 0$. It is the best linear unbiased estimator of $\beta$ and the maximum-likelihood estimator under the Gaussian model. When $\Omega$ is diagonal it reduces to the average with the [inverse-variance weights](../../../../../Probability/hypothesis-testing/meta-analysis/inverse-variance-weights.md) and its variance $(\sum_t \Omega_{tt}^{-1})^{-1}$.
+and $\hat\beta_{\mathrm{FE}}/\sqrt{\operatorname{Var}(\hat\beta_{\mathrm{FE}})}$ is standard normal under $\beta = 0$. It is the best linear unbiased estimator of $\beta$ and the maximum-likelihood estimator under the Gaussian model. When $\Omega$ is diagonal it reduces to the average with the [inverse-variance weights](../../../../../../Probability/hypothesis-testing/meta-analysis/inverse-variance-weights.md) and its variance $(\sum_t \Omega_{tt}^{-1})^{-1}$.
 
 ## Remarks
 
@@ -14,7 +14,7 @@ This is generalized least squares for the one-parameter mean model $\mathbb{E}\h
 
 ## Depends on
 
-- [Inverse-variance weights](../../../../../Probability/hypothesis-testing/meta-analysis/inverse-variance-weights.md)
+- [Inverse-variance weights](../../../../../../Probability/hypothesis-testing/meta-analysis/inverse-variance-weights.md)
 
 ## Sources
 
