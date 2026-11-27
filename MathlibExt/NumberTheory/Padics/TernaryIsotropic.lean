@@ -19,9 +19,8 @@ Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
-The source is machine-generated proof code built around a proof-extraction
-framework; the statements and proofs are reused here with that machinery
-removed and the names restated in Mathlib style.
+Only the theorem statement is adapted from this source. The proof specializes
+`HilbertSymbol.diagonal_unit_isotropic` to three variables.
 -/
 
 module
