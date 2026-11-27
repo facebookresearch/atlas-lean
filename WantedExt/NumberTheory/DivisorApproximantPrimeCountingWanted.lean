@@ -33,22 +33,6 @@ open Asymptotics Filter Finset
 
 @[expose] public section
 
-/-- **Trigonometric approximation of the divisor-counting function.** For a natural number $k$
-let $\tau(k)$ be the number of positive divisors of $k$ and
-$$\tilde\tau(k) = \sum_{j=1}^{k} \exp\left(-\frac{\pi^2}{2} k j^3 \sin^2\frac{k\pi}{j}\right).$$
-Then $\tilde\tau(k) - \tau(k) = O\left(\frac{1}{e^k - 1}\right)$ as $k \to \infty$.
-
-This is the exponential approximation of the divisor-counting function with
-$A(j, k) = \pi^2 j^2 / 2$.
-
-Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
-Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Theorem 1
-(`integers-2026-A46-thm-1`). -/
-public theorem_wanted divisorCountApprox_one_sub_isBigO :
-    (fun k : ℕ => ∑ j ∈ Icc 1 k,
-        Real.exp (-(Real.pi ^ 2 / 2 * k * j ^ 3 * Real.sin (k * Real.pi / j) ^ 2)) -
-        (k.divisors.card : ℝ)) =O[atTop] fun k : ℕ => 1 / (Real.exp k - 1)
-
 /-- **Prime-counting function from the smooth divisor count.** For a natural number $k$ let
 $$\tilde\tau(k) = \sum_{j=1}^{k} \exp\left(-\frac{\pi^2}{2} k j^3 \sin^2\frac{k\pi}{j}\right),$$
 and for $n \ge 2$ let $\tilde\pi(n) = \sum_{k=2}^{n} e^{-k(\tilde\tau(k) - 2)}$. Then for every
