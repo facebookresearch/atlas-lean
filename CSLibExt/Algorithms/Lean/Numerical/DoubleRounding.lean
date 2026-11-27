@@ -32,9 +32,9 @@ each operation either is exact at `p'` bits or stays far enough from the midpoin
 * `fl_fl_add`, `fl_fl_mul`, `fl_fl_div`, `fl_fl_sqrt`: with unbounded exponents, double rounding is
   innocuous for `+` (and `-`) if `p' ≥ 2p + 1`, for `×` and `/` if `p' ≥ 2p`, and for `√` if
   `p' ≥ 2p + 2`.
-* `flIn`, `flIn_flIn_add`, `flIn_flIn_mul`, `flIn_flIn_div`, `flIn_flIn_sqrt`: rounding in a format
-  with gradual underflow, and innocuous double rounding when the least exponents `q` and `q'` of
-  the two formats also satisfy `q' ≤ q` for `+`, `q' ≤ 2q` for `×` and `q' ≤ q - p - 2` for `/`
+* `flIn_flIn_add`, `flIn_flIn_mul`, `flIn_flIn_div`, `flIn_flIn_sqrt`: with rounding in formats
+  with gradual underflow (`flIn`), innocuous double rounding when the least exponents `q` and `q'`
+  of the two formats also satisfy `q' ≤ q` for `+`, `q' ≤ 2q` for `×` and `q' ≤ q - p - 2` for `/`
   and `√`; `binary32_via_binary64` for IEEE binary32 operations evaluated in binary64. For `√`,
   Roux's Table II also allows the alternative condition `2q' ≤ q - 4p - 2`, which is not covered
   here.
@@ -688,19 +688,6 @@ theorem fl_fl_sqrt (hp : 1 ≤ p) {p' : ℕ} (hp' : 2 * p + 2 ≤ p') {x : ℝ} 
 
 /-! ## Gradual underflow -/
 
-variable (p) in
-/-- **Round to nearest, ties to even, with gradual underflow.** For a natural number $p$, an
-integer $q$ and an element $x$ of a linearly ordered field with a floor function, let
-$e = \max(\lfloor \log_2 |x| \rfloor - (p - 1), q)$: the exponent of the last place of $x$ at
-precision $p$, but at least $q$. The rounding of $x$ to nearest, ties to even, in the binary format
-with $p$-bit significands and least exponent $q$ is
-$\mathrm{fl}_{p,q}(x) = \operatorname{rne}(x / 2^e) \cdot 2^e$, where $\operatorname{rne}$ rounds
-to the nearest integer with ties to the even one.
-
-The format has gradual underflow: below $2^{q + p - 1}$ its numbers are the subnormal multiples
-of $2^q$. Its exponent is unbounded above, so nothing overflows. -/
-def flIn (q : ℤ) (x : K) : K := rne (x / 2 ^ max (ulpExp p x) q) * 2 ^ max (ulpExp p x) q
-
 private theorem flIn_zero (q : ℤ) : flIn p q (0 : K) = 0 := by
   have : rne (0 : K) = 0 := by exact_mod_cast rne_intCast (K := K) 0
   simp [flIn, this]
@@ -1156,7 +1143,7 @@ private theorem exists_fl_fl_add_ne (hp : 2 ≤ p) :
       rw [abs_of_pos (by field_simp; nlinarith), h1, h2]
       field_simp
       nlinarith
-    -- direct rounding: up to `1 + 1/(2B)`
+    -- direct rounding: down to `1 + 1/(2B)`
     have hdirect : fl (q + 2) (1 + 1 / (2 * B) + (1 / (4 * B) - 1 / (16 * B ^ 2))) =
         (2 * B + 1) / (2 * B) := by
       rw [fl_eq_of_le_of_le_mul (by omega) _ hz₁ hz₂, h1,
@@ -1188,7 +1175,7 @@ private theorem exists_fl_fl_add_ne (hp : 2 ≤ p) :
       · rw [h3, h4, abs_of_pos (by field_simp; nlinarith)]
         field_simp
         nlinarith
-    -- and then the tie at `p` bits goes to even, down to `1 + 2/(2B)`
+    -- and then the tie at `p` bits goes to even, up to `1 + 2/(2B)`
     have hdouble : fl (q + 2) (1 + 3 / (4 * B) : K) = (2 * B + 2) / (2 * B) := by
       rw [fl_eq_of_le_of_le_mul (by omega) (q + 2 - 1) ?_ ?_, h1]
       · rw [show (1 + 3 / (4 * B)) * (2 * B) = ((2 ^ (q + 1) + 1 : ℤ) : K) + 1 / 2 by

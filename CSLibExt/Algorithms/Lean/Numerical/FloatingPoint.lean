@@ -26,7 +26,8 @@ significand is `m 2^e` with `|m| < 2^p` (`IsFloat p`); a bounded format also lim
 of the last place to `[qmin, qmax]` (`IsFloatIn p qmin qmax`: zero, the subnormal and the normal
 numbers). `fl p x` rounds a number of a linearly ordered field with a floor (`ℝ`, or `ℚ` for
 execution) to nearest, ties to even: scale `x` so that its last place is the units digit (`ulpExp`),
-round to the nearest integer with ties to the even one (`rne`), and scale back.
+round to the nearest integer with ties to the even one (`rne`), and scale back. `flIn p q x` rounds
+in the same way in a format with gradual underflow, whose last place has exponent at least `q`.
 
 ## Main results
 
@@ -205,6 +206,18 @@ rounding of $x$ to nearest, ties to even, is
 $\mathrm{fl}_p(x) = \operatorname{rne}(x / 2^e) \cdot 2^e$: scale $x$ so that its last place is the
 units digit, round to the nearest integer with ties to even, and scale back. -/
 def fl (x : K) : K := rne (x / 2 ^ ulpExp p x) * 2 ^ ulpExp p x
+
+/-- **Round to nearest, ties to even, with gradual underflow.** For a natural number $p$, an
+integer $q$ and an element $x$ of a linearly ordered field with a floor function, let
+$e = \max(\lfloor \log_2 |x| \rfloor - (p - 1), q)$: the exponent of the last place of $x$ at
+precision $p$, but at least $q$. The rounding of $x$ to nearest, ties to even, in the binary format
+with $p$-bit significands and least exponent $q$ is
+$\mathrm{fl}_{p,q}(x) = \operatorname{rne}(x / 2^e) \cdot 2^e$, where $\operatorname{rne}$ rounds
+to the nearest integer with ties to the even one.
+
+The format has gradual underflow: below $2^{q + p - 1}$ its numbers are the subnormal multiples
+of $2^q$. Its exponent is unbounded above, so nothing overflows. -/
+def flIn (q : ℤ) (x : K) : K := rne (x / 2 ^ max (ulpExp p x) q) * 2 ^ max (ulpExp p x) q
 
 variable {p}
 

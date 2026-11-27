@@ -22,7 +22,8 @@ Executed fixtures over `ℚ`:
 * The x87 example: `1 + 2^(-53) + 2^(-78)` rounds directly to `1 + 2^(-52)` at 53 bits, but at
   64 bits to the tie `1 + 2^(-53)`, which 53 bits round to `1`.
 * The counterexamples at the boundary precisions for `p = 4` (Figueroa's, in Roux's Remarks 11,
-  21 and 30) and those of the general families for `p = 2, 3, 5, 8`.
+  21 and 30), and those of the general families: the sum and quotient families for
+  `p = 2, 3, 5, 8` and the product family for `p = 5, 6, 9`.
 * Exhaustively for `p = 3`, all pairs of floats with significands below `8` in absolute value and
   exponents in `[-3, 3]`: double rounding through `p' = 7` bits is innocuous for `+` and `-`, and
   through `p' = 6` bits for `×` and `/`.
