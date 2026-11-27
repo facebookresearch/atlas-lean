@@ -4,8 +4,6 @@
 
 - [Basic](part-02/basic/README.md)
 
-## [Part 4 of 20](part-04/README.md)
-
 ## [Part 10 of 20](part-10/README.md)
 
 - [Conjunctive Query Containment](part-10/conjunctive-query-containment/README.md)
