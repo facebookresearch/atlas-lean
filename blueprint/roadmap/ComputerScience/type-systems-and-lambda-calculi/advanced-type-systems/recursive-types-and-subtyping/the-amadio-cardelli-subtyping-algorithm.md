@@ -2,7 +2,8 @@
 
 Represent a recursive type $\alpha$ by a root variable $\alpha^*$ and a *system in canonical form* $\varepsilon_\alpha$: a finite map from type variables to right-hand sides
 that are $\bot$, $\top$, a variable outside the domain of the system, or an arrow $t_2 \to t_3$ between variables in the domain, whose solution is the tree expansion of
-$\alpha$; the systems for $\alpha$ and $\beta$ use disjoint, freshly named domains. The algorithm derives judgments $\Sigma, \varepsilon \supset \alpha \le \beta$, where the *trail* $\Sigma$ is a finite set of assumptions $t \le s$ between
+$\alpha$; the systems for $\alpha$ and $\beta$ use disjoint, freshly named domains. The algorithm derives judgments $\Sigma, \varepsilon \supset \alpha \le \beta$ between μ-free types $\alpha$, $\beta$, whose variables may lie in the domain of $\varepsilon$
+(below, $a$ and $b$ denote variables outside that domain), where the *trail* $\Sigma$ is a finite set of assumptions $t \le s$ between
 variables, by the rules
 
 - $\Sigma, \varepsilon \supset t \le s$ if $t \le s \in \Sigma$; $\Sigma, \varepsilon \supset \bot \le \beta$; $\Sigma, \varepsilon \supset \alpha \le \top$; $\Sigma, \varepsilon \supset a \le a$ for a variable $a$ outside the domain of $\varepsilon$;

@@ -9,7 +9,7 @@ $r \otimes r'$ relates the unions of related states; $r'' \rhd r$ ($r''$ *extend
 1. (simulation) $e_1 \le_r e_2 : ty$ holds if whenever $(s_1, s_2) \in r$ (so $s_i \in \mathrm{St}(w_i)$ covers the locations of $e_i$) and $s_1, e_1 \Rightarrow v_1, s_1'$, there are $r' \rhd r$ and $v_2, s_2'$ with $s_2, e_2 \Rightarrow v_2, s_2'$,
    $v_1 \le_{r'} v_2 : ty$ and $(s_1', s_2') \in r'$;
 2. (extensionality on canonical forms) at $\mathrm{bool}$, $\mathrm{int}$ and $\mathrm{unit}$, $v_1 \le_r v_2$ iff $v_1 = v_2$; at $\mathrm{int\ ref}$, iff $!v_1 \le_r !v_2 : \mathrm{int}$ and
-   $(v_1 := n) \le_r (v_2 := n) : \mathrm{unit}$ for all $n$; at products, componentwise; and at $ty_1 \to ty_2$, iff for all $r' \rhd r$ and $v_1' \le_{r'} v_2' : ty_1$,
+   $(v_1 := n) \le_r (v_2 := n) : \mathrm{unit}$ for all $n$; at $ty_1 * ty_2$, iff $\mathrm{fst}\, v_1 \le_r \mathrm{fst}\, v_2 : ty_1$ and $\mathrm{snd}\, v_1 \le_r \mathrm{snd}\, v_2 : ty_2$; and at $ty_1 \to ty_2$, iff for all $r' \rhd r$ and $v_1' \le_{r'} v_2' : ty_1$,
    $v_1\, v_1' \le_{r'} v_2\, v_2' : ty_2$;
 3. (contextual preorder) for $e_1, e_2 \in \mathrm{Prog}_{ty}(w)$, $e_1 \le_{ctx} e_2 : ty$ iff $e_1 \le_{\mathrm{id}_w} e_2 : ty$, where $\mathrm{id}_w$ is the identity relation on $\mathrm{St}(w)$.
 
