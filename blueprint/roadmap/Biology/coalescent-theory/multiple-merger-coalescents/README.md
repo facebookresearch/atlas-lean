@@ -12,3 +12,7 @@ frequency spectrum under multiple mergers.
 - [Site frequency spectrum under Λ-coalescents](site-frequency-spectrum-under-coalescents/README.md)
 - [Speed of coming down from infinity](speed-of-coming-down-from-infinity/README.md)
 - [Λ-coalescent limits of Cannings models](coalescent-limits-of-cannings-models/README.md)
+- [Multiple-merger coalescent inference of effective population size](multiple-merger-coalescent-inference-of-effective-population-size/README.md)
+- [Λ-coalescents from seasonal dormancy](lambda-coalescents-from-seasonal-dormancy/README.md)
+- [Pareto-sampling coalescents](pareto-sampling-coalescents/README.md)
+- [Site frequency spectrum of the Bolthausen–Sznitman coalescent](site-frequency-spectrum-of-the-bolthausen-sznitman-coalescent/README.md)
