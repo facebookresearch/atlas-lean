@@ -38,6 +38,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Set.Finite.Basic
+public import MathlibExt.NumberTheory.Digits.BasicReverseDivisors
 public import MathlibExt.NumberTheory.Digits.ReverseDivisibility
 public import MathlibExt.NumberTheory.Digits.ReverseDivisor
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorCoprime
@@ -65,21 +66,8 @@ theorem_wanted reverseDigits_eq_four_or_nine_mul (n : ℕ)
     (h : IsReverseDivisor n) :
     Nat.reverseDigits 10 n = 4 * n ∨ Nat.reverseDigits 10 n = 9 * n
 
-/-- **Basic reverse divisors.** For every natural number $k \ge 2$, the numbers
-$11(10^k - 1)$ and $22(10^k - 1)$ both have exactly $k + 2$ decimal digits, the decimal
-reversal of $11(10^k - 1)$ equals $9 \cdot 11(10^k - 1)$, and the decimal reversal of
-$22(10^k - 1)$ equals $4 \cdot 22(10^k - 1)$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Theorem 1 (quoted from the literature). -/
-theorem_wanted basic_reverseDivisors (k : ℕ) (hk : 2 ≤ k) :
-    (Nat.digits 10 (11 * (10 ^ k - 1))).length = k + 2 ∧
-      Nat.reverseDigits 10 (11 * (10 ^ k - 1)) =
-        9 * (11 * (10 ^ k - 1)) ∧
-      (Nat.digits 10 (22 * (10 ^ k - 1))).length = k + 2 ∧
-      Nat.reverseDigits 10 (22 * (10 ^ k - 1)) =
-        4 * (22 * (10 ^ k - 1))
+-- The two basic reverse-divisor formulas are proved in
+-- `MathlibExt.NumberTheory.Digits.BasicReverseDivisors`, which this module publicly imports.
 
 /-- **For $k \ge 2$, the number $11 \cdot (10^k - 1)$ lacks property $P^*$.** For every natural
 number $k \ge 2$, the number $11 \cdot (10^k - 1)$ does not have the property $P^*$.
