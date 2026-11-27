@@ -14,11 +14,11 @@ where $B$ is any matrix with nullspace exactly $\Theta$.
 
 ## Depends on
 
-- [Marginal law of the targets in Gaussian-process regression](../../../../ComputerScience/machine-learning/supervised-learning/gaussian-process-regression/map-targets-eq.md)
+- [Marginal law of the targets in Gaussian-process regression](../../../../../ComputerScience/machine-learning/supervised-learning/gaussian-process-regression/map-targets-eq.md)
 
 ## Proof depends on
 
-- [Gaussian-process posterior mean is the kernel ridge fit](../../../../Analysis/hilbert-spaces/gaussian-process-posterior-mean-is-the-kernel-ridge-fit.md)
+- [Gaussian-process posterior mean is the kernel ridge fit](../../../../../Analysis/hilbert-spaces/gaussian-process-posterior-mean-is-the-kernel-ridge-fit.md)
 
 ## Expansion
 

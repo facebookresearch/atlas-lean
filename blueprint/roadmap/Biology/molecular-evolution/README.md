@@ -27,5 +27,3 @@
 - [Minimum epistasis interpolation](minimum-epistasis-interpolation/README.md)
 - [Rho statistic dating of lineages](rho-statistic-dating-of-lineages/README.md)
 - [Sparse Walsh approximation of fitness landscapes](sparse-walsh-approximation-of-fitness-landscapes/README.md)
-- [Fitness–distance monotonicity and mutation-rate control](fitness-distance-monotonicity-and-mutation-rate-control/README.md)
-- [Genome size evolution under rearrangements](genome-size-evolution-under-rearrangements/README.md)
