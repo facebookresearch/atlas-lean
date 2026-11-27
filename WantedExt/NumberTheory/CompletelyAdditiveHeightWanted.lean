@@ -25,6 +25,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import MathlibExt.NumberTheory.CompletelyAdditiveHeight
+public import MathlibExt.NumberTheory.CompletelyAdditiveHeightExistsHeightFunctionWithProfile
 
 namespace MetaMathlibExt
 
@@ -50,17 +51,6 @@ public theorem_wanted heightLevel_card_eq_multipartitions {H : ℕ → ℕ} (hH 
     Nat.card {m : ℕ // 0 < m ∧ H m = n} =
       Nat.card {α : (Σ ℓ : Fin n, Fin {p : ℕ | p.Prime ∧ H p = ℓ.1 + 1}.ncard) → ℕ //
         ∑ x, (x.1.1 + 1) * α x = n}
-
-/-- **Realizing a prescribed profile.** Let $(\pi_k)_{k \ge 1}$ be nonnegative integers with
-$\pi_k \ne 0$ for infinitely many $k$ (equivalently, $\sum_k \pi_k = \infty$). Then there is a
-height function $H$ such that for every $k \ge 1$ exactly $\pi_k$ primes $p$ satisfy $H(p) = k$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 2
-(`integers-2026-A116-prop-2`). -/
-public theorem_wanted exists_heightFunction_with_profile (π : ℕ → ℕ)
-    (hπ : {k : ℕ | 1 ≤ k ∧ π k ≠ 0}.Infinite) :
-    ∃ H : ℕ → ℕ, IsHeightFunction H ∧ ∀ k, 1 ≤ k → {p : ℕ | p.Prime ∧ H p = k}.ncard = π k
 
 /-- **The largest integer at each height for the prime-index height.** Let $H$ be the completely
 additive function on the positive integers with $H(p) = i$ when $p$ is the $i$-th prime, so that
