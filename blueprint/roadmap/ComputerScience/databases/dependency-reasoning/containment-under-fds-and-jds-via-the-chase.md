@@ -16,7 +16,7 @@ no ordinary tableau is its chase.
 ## Proof depends on
 
 - [Chasing tableau queries with functional and join dependencies](../dependencies-and-the-chase/chasing-tableau-queries-with-functional-and-join-dependencie.md)
-- [Chandra-Merlin containment criterion](../../not-yet-classified/conjunctive-queries/contained-iff-hom.md)
+- [Chandra-Merlin containment criterion](../conjunctive-queries-and-the-chandra-merlin-theor/contained-iff-hom.md)
 
 ## Sources
 

@@ -15,7 +15,7 @@ $R(x)$ is contained in $S(x)$, which fails under set semantics.
 ## Proof depends on
 
 - [Universality of provenance polynomials](universality-of-provenance-polynomials.md)
-- [Chandra-Merlin containment criterion](../../not-yet-classified/conjunctive-queries/contained-iff-hom.md)
+- [Chandra-Merlin containment criterion](../conjunctive-queries-and-the-chandra-merlin-theor/contained-iff-hom.md)
 
 ## Sources
 
