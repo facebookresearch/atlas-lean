@@ -14,6 +14,12 @@ This node collects the guarantees of Chen et al. for score-based diffusion sampl
 
 - [Sampling guarantee for score-based diffusion (DDPM)](tv-dist-ddpm-output-le.md)
 - [Data-processing inequality for total variation](../../../../InformationTheory/information-inequalities/strong-data-processing-and-dobrushin-s-coefficie/total-variation-dist-comp-le-self.md)
+- [Triangle inequality for the Wasserstein distance](../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein-triangle.md)
+- [Monotonicity of the Wasserstein distances in the exponent](../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein-mono.md)
+- [Kantorovich–Rubinstein bound for real Lipschitz functions](../../../../MeasureTheory/optimal-transport/wasserstein-distances/kantorovich-rubinstein-formula/enorm-integral-sub-le-mul-wasserstein-on.md)
+- [Wasserstein distance as an infimum over couplings](../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein-eq-i-inf.md)
+- [Every coupling bounds the Wasserstein distance](../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein-le-of-is-coupling.md)
+- [Wasserstein distance controlled by total variation](../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance-and-total-variation/wasserstein-one-le-mul-total-variation-d.md)
 
 ## Expansion
 
@@ -24,6 +30,10 @@ A sound expansion has separate pages for:
    - **Total variation** (Corollary 4): $p_{T-t}$ is $\varepsilon_{\mathrm{TV}}$-close to $q_t$ in total variation when $N = \widetilde\Theta(d^3 R^4 (R \vee \sqrt d)^4/(\varepsilon_{\mathrm{TV}}^2 \varepsilon_{W_2}^8))$ and $\varepsilon_{\mathrm{score}} \le \widetilde O(\varepsilon_{\mathrm{TV}})$.
    - **Bounded Lipschitz metric** (Corollary 5), $d_{\mathrm{BL}}(\mu, \nu) = \sup\{\int f\,d\mu - \int f\,d\nu : f\colon \mathbb{R}^d \to [-1, 1] \text{ is 1-Lipschitz}\}$: with $\varepsilon_{W_2}$ and $\varepsilon_{\mathrm{TV}}$ of order $\varepsilon$, $d_{\mathrm{BL}}(p_{T-t}, q) \le \varepsilon$ when $N = \widetilde\Theta(d^3 R^4 (R \vee \sqrt d)^4/\varepsilon^{10})$ and $\varepsilon_{\mathrm{score}} \le \widetilde O(\varepsilon)$.
    - **$W_2$ after projection** (Corollary 6, proved in Appendix B.5): with $\varepsilon_{W_2} = \varepsilon/3$ and $\varepsilon_{\mathrm{TV}} = \widetilde\Theta(\varepsilon^2/R^2)$, the output projected onto the ball of radius $R_0 = \widetilde\Theta(R)$ is $\varepsilon$-close to $q$ in $W_2$ when $N = \widetilde\Theta(d^3 R^8 (R \vee \sqrt d)^4/\varepsilon^{12})$ and $\varepsilon_{\mathrm{score}} \le \widetilde O(\varepsilon^2/R^2)$.
+3. **Comparisons of distances** that the corollaries use beyond the linked pages:
+   - $|\int f\,d\mu - \int f\,d\nu| \le 2\, \mathrm{TV}(\mu, \nu)$ for measurable $f\colon \mathbb{R}^d \to [-1, 1]$, so $d_{\mathrm{BL}} \le 2\, \mathrm{TV}$, while $d_{\mathrm{BL}} \le W_1 \le W_2$ (Corollary 5);
+   - $W_2(\phi_\# \mu, \phi_\# \nu) \le W_2(\mu, \nu)$ for a 1-Lipschitz map $\phi$, such as the projection onto a ball, by pushing couplings forward;
+   - $W_2(\mu, \nu)^2 \le 2R_0\, W_1(\mu, \nu) \le 4R_0^2\, \mathrm{TV}(\mu, \nu)$ for laws supported on the ball of radius $R_0$. This is a derived bound of the form the source takes from Rolland (2022, Lemma 9) in Appendix B.5, without that lemma's extra term $R_0 e^{-R_0}$.
 
 ## Sources
 
