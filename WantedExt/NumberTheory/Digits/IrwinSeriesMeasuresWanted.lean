@@ -223,34 +223,6 @@ public theorem_wanted irwinMeasure_halfOpen_deeper_local_mass
         (irwinMeasure b d (k - (if 0 < d then j else j + l' - l)) hd
           (affineScaleSet b l' x U)).toReal
 
-/-- **Local structure of the Irwin measures on cylinders.** Let $b > 1$ and $d < b$ be natural
-numbers, and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and digit
-$d$ with index $k$. Let $x \in [0, 1)$ have base-$b$ depth $l$, that is, $l$ is the least natural
-number such that $b^l x$ is an integer; let $X$ be a string of $l$ base-$b$ digits, read most
-significant digit first, whose value $n(X)$ satisfies $n(X)/b^l = x$; and let $j$ be the number
-of occurrences of $d$ in $X$. Then for every $k < j$ the restriction of $\mu_k$ to
-$[x, x + b^{-l})$ is the zero measure, and for every $k \ge j$ and every subset
-$U \subseteq [x, x + b^{-l})$, as real numbers $\mu_k(U) = b^{-l} \mu_{k-j}(b^l U - b^l x)$,
-where $b^l U - b^l x$ is the image of $U$ under $y \mapsto b^l y - b^l x$.
-
-Source: Jean-François Burnol, *Measures for the
-Summation of Irwin Series*, INTEGERS 26 (2026), Article A11, Proposition 8. -/
-public theorem_wanted irwinMeasure_halfOpen_local_mass
-    (b d : ℕ) (hb : 1 < b) (hd : d < b) (x : ℝ) (l : ℕ)
-    (hx : x ∈ Set.Ico (0 : ℝ) 1) (hdepth : HasBaseDepth b x l)
-    (X : List (Fin b)) (hXlen : X.length = l)
-    (hXval : normalizedStringValue b X = x) (j : ℕ)
-    (hj : j = X.count ⟨d, hd⟩) :
-    (∀ k, k < j →
-      (irwinMeasure b d k hd).restrict
-        (Set.Ico x (x + (b : ℝ) ^ (-(l : ℤ)))) = 0) ∧
-    (∀ k, j ≤ k → ∀ U : Set ℝ,
-      U ⊆ Set.Ico x (x + (b : ℝ) ^ (-(l : ℤ))) →
-      (irwinMeasure b d k hd U).toReal =
-        (b : ℝ) ^ (-(l : ℤ)) *
-          (irwinMeasure b d (k - j) hd
-            (affineScaleSet b l x U)).toReal)
-
 /-- **Masses of intervals under the Irwin measures.** Let $b > 1$ and $d < b$ be natural numbers,
 and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and digit $d$ with
 index $k$; masses below are taken as real numbers. First, for all reals $0 \le t < u \le 1$ and
