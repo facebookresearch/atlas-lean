@@ -1,0 +1,29 @@
+# A relativized world where Kt is approximable in polynomial time and EXP = ZPP
+
+Ren and Santhanam give an oracle relative to which a variant $\widetilde{Kt}$ of Levin's Kt complexity is computable exactly in deterministic polynomial time and $\mathsf{EXP} = \mathsf{ZPP}$. Hence Kt is $(2+\epsilon)$-approximable in polynomial time there, so proving $\mathrm{MKtP} \notin \mathsf{P}$ requires non-relativizing ideas beyond instance checkers.
+
+For a string $x$, $\widetilde{Kt}(x)$ is the minimum of $|M| + \lfloor \log t \rfloor$ over machines $M$ such that, after $M$ runs on the empty input for $t$ steps, the content of some tape of $M$ is exactly $x$; unlike $Kt$, the machine need not halt after producing $x$, so $x$ may be an intermediate tape content. For every $x$,
+
+$$
+\widetilde{Kt}(x) \le Kt(x) \le (2 + o(1))\,\widetilde{Kt}(x).
+$$
+
+There is a relativized world in which $\widetilde{Kt}$ is computable in deterministic polynomial time and $\mathsf{EXP} = \mathsf{ZPP}$. Consequently, there is a relativized world in which $Kt$ can be approximated within a factor $2 + \epsilon$ in polynomial time, for every $\epsilon > 0$.
+
+## Expansion
+
+The oracle is a fixed point: stage $n$ enumerates all pairs $(M, t)$ with $|M| + \lfloor \log t\rfloor = n$, runs $M$ for $t$ steps and sets $O[x] = n$ for every intermediate tape content $x$ not yet fixed; a query $O[y]$ made by such an $M$ can be answered $n$ when not already fixed lower, because $\widetilde{Kt}(y) \le n$ by definition. Then $O[x] = \widetilde{Kt}^{O}(x)$ for all $x$. A second oracle embedding the truth tables of the EXP-complete language of pairs $(M, t)$ such that $M$ outputs $1$ within $t$ steps yields $\mathsf{EXP} = \mathsf{ZPP}$, so the non-relativizing instance checkers for EXP and $\mathsf{IP} = \mathsf{PSPACE}$ also hold in this world.
+
+## Depends on
+
+- [Time-bounded Kolmogorov complexity K^t and Levin's Kt](../../../kolmogorov-complexity/time-bounded-kolmogorov-complexity/time-bounded-kolmogorov-complexity-and-levin-kt.md)
+- [The class EXP](../../../complexity-classes/time-and-space-complexity-classes/exp.md)
+- [ZPP](../../../complexity-classes/time-and-space-complexity-classes/zpp.md)
+
+## Proof depends on
+
+None.
+
+## Sources
+
+- Hanlin Ren and Rahul Santhanam, "A Relativization Perspective on Meta-Complexity", *STACS* 2022, LIPIcs 219, Article 54, DOI 10.4230/LIPIcs.STACS.2022.54 (Theorems 14 and 15, Section 2.2; definition of the variant and proof overview in Section 3.2).
