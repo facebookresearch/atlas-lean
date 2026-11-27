@@ -42,6 +42,7 @@ fingerprinting", Proceedings of the 2003 ACM SIGMOD International Conference on 
 module
 
 public import Batteries.Util.ProofWanted
+public import CSLibExt.Bioinformatics.Assembly.DeBruijn
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.SetTheory.Cardinal.Finite
@@ -54,6 +55,7 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 namespace WantedExt.Biology.ComputationalBiology.WinnowingFingerprintWanted
 
 open Filter Topology
+open Cslib.Bioinformatics.Assembly.DeBruijn (kmers)
 
 variable {H : Type*} [LinearOrder H]
 
@@ -91,11 +93,13 @@ and only positions of the input (`F n h ⊆ {0, …, n - 1}`). -/
 def IsLocal {w : ℕ} (S : (Fin w → H) → Fin w) (F : ∀ n, (Fin n → H) → Finset ℕ) : Prop :=
   ∀ n (h : Fin n → H), localSel S h ⊆ F n h ∧ F n h ⊆ Finset.range n
 
-/-- The hashes of the `k`-grams of a document `u`: `g` applied to the `k`-gram starting at each
-position `i ≤ |u| - k`. -/
+/-- The hashes of the `k`-grams of a document `u`: at `i`, `g` applied to entry `i` of
+`Cslib.Bioinformatics.Assembly.DeBruijn.kmers k u`, the `k`-gram `(u.drop i).take k` starting at
+position `i ≤ |u| - k` (the `range` and `map` in `kmers` give it length `|u| + 1 - k`). -/
 def kgramHashes {α : Type*} (k : ℕ) (g : List α → H) (u : List α) :
     Fin (u.length + 1 - k) → H :=
-  fun i => g ((u.drop i).take k)
+  fun i => g ((kmers k u)[i.1]'(by
+    simpa only [kmers, List.length_map, List.length_range] using i.2))
 
 /-- **Local algorithms find every long match** (Schleimer, Wilkerson and Aiken 2003, Lemma 1): for
 `k ≥ 1`, `w ≥ 1`, guarantee `t = w + k - 1`, any hash `g` of `k`-grams, any selection function
@@ -122,24 +126,28 @@ public theorem_wanted card_charged_perm (n w i : ℕ) (hw : 1 ≤ w) (hi₁ : 1 
     Nat.card {σ : Equiv.Perm (Fin n) // Charged w (fun x => σ x) i} * (w + 1) =
       2 * n.factorial
 
-/-- **Expected number of winnowing fingerprints, uniform permutations** (Schleimer, Wilkerson and
-Aiken 2003, Section 3.1): for `n ≥ w ≥ 1`, the average over all permutations `σ` of the `n`
-positions of `#winnow σ` is `1 + 2 (n - w) / (w + 1)`:
+/-- **Expected number of winnowing fingerprints, uniform permutations**, a finite-length
+consequence of Schleimer, Wilkerson and Aiken (2003), Section 3.1, which gives the charging
+probability and the density but not this boundary-corrected count: for `n ≥ w ≥ 1`, the average
+over all permutations `σ` of the `n` positions of `#winnow σ` is `1 + 2 (n - w) / (w + 1)`, exactly
+one at `n = w`:
 `(∑_σ #winnow σ) · (w + 1) = n! · ((w + 1) + 2 (n - w))`.
 
-Source: Schleimer, Wilkerson and Aiken (2003), Section 3.1. -/
+Source: a finite-length consequence of Schleimer, Wilkerson and Aiken (2003), Section 3.1. -/
 public theorem_wanted sum_card_winnow_perm (n w : ℕ) (hw : 1 ≤ w) (hn : w ≤ n) :
     (∑ σ : Equiv.Perm (Fin n), (winnow w fun x => σ x).card) * (w + 1) =
       n.factorial * ((w + 1) + 2 * (n - w))
 
-/-- **Expected number of winnowing fingerprints, i.i.d. uniform hashes without ties** (Schleimer,
-Wilkerson and Aiken 2003, Section 3.1, with the source's no-ties assumption made exact): for a
-finite linear order `H`, `n ≥ w ≥ 1` and `n ≤ |H|` (so that injective hash sequences exist),
-the average of `#winnow h` over the injective `h : Fin n → H` (i.i.d. uniform hashes conditioned
-on being distinct) is `1 + 2 (n - w) / (w + 1)`:
+/-- **Expected number of winnowing fingerprints, i.i.d. uniform hashes without ties**, a
+finite-length consequence of Schleimer, Wilkerson and Aiken (2003), Section 3.1, with the source's
+no-ties assumption made exact; the source gives the charging probability and the density but not
+this boundary-corrected count: for a finite linear order `H`, `n ≥ w ≥ 1` and `n ≤ |H|` (so that
+injective hash sequences exist), the average of `#winnow h` over the injective `h : Fin n → H`
+(i.i.d. uniform hashes conditioned on being distinct) is `1 + 2 (n - w) / (w + 1)`, exactly one at
+`n = w`:
 `(∑_{h injective} #winnow h) · (w + 1) = #{h injective} · ((w + 1) + 2 (n - w))`.
 
-Source: Schleimer, Wilkerson and Aiken (2003), Section 3.1. -/
+Source: a finite-length consequence of Schleimer, Wilkerson and Aiken (2003), Section 3.1. -/
 public theorem_wanted sum_card_winnow_injective [Fintype H] [DecidableEq H] (n w : ℕ)
     (hw : 1 ≤ w) (hn : w ≤ n) (hH : n ≤ Fintype.card H) :
     (∑ h ∈ Finset.univ.filter (fun h : Fin n → H => Function.Injective h), (winnow w h).card) *
