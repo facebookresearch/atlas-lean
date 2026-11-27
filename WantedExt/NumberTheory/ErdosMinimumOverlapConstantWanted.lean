@@ -15,6 +15,7 @@ public import MathlibExt.NumberTheory.ErdosMinimumOverlapMoser
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapQuarter
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundMRS1956FiveTwelfthsHolds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundMRS1956PointFourHolds
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundErdosUnpublishedFourNinthsHolds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantLowerBoundScherkUnpublished1955Holds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundYKLBMWKCZGS2026TTTDiscoverHolds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantLowerBoundS1958Holds
@@ -116,13 +117,6 @@ universal asymptotic lower bound $c$ satisfies $c \le C_{1b}$.
 Source: Haugland 2016 and the uniform partition clause of Optimization Problems 1b. -/
 public theorem_wanted continuousDiscreteAsymptoticCharacterization_holds :
   continuousDiscreteAsymptoticCharacterization
-
-/-- **Erdős's unpublished upper bound $4/9$ for the minimum-overlap constant.** The continuous
-Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 4/9$.
-
-Source: Erdős, unpublished, recorded by Optimization Problems 1b. -/
-public theorem_wanted upperBound_Erdos_unpublished_fourNinths_holds :
-  upperBound_Erdos_unpublished_fourNinths
 
 /-- **Haugland's unpublished 1993 upper bound for the minimum-overlap constant.** The continuous
 Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.385694$.

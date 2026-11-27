@@ -7,4 +7,4 @@
 - [Locally minimal complete rewritings have at most as many atoms as the query](complete-rewritings-have-at-most-as-many-atoms-as-the-query.md)
 - [Finding small and complete rewritings of conjunctive queries is NP-complete](finding-small-and-complete-rewritings-is-np-complete.md)
 - [Complete rewriting is NP-complete even without repeated relation names](complete-rewriting-is-np-complete-without-repeated-relations.md)
-- [Complete rewriting over views defined by unions of conjunctive queries is Π2p-complete](complete-rewriting-over-ucq-views-is-pi2p-complete.md)
+- [Complete rewriting over unary and binary views defined by unions of conjunctive queries is Π2p-complete](complete-rewriting-over-ucq-views-is-pi2p-complete.md)

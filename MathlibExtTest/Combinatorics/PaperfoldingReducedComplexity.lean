@@ -30,3 +30,11 @@ example :
     [1, 3, 5, 11].map (fun i => redWord (factorList paperfoldingSeq 4 i)) =
       [[false, true, false], [false, true], [true, false], [true, false, true]] := by
   decide +kernel
+
+-- The smallest positive even length has one- and two-letter reductions.
+example : rhoAbRed paperfoldingSeq 2 = 3 :=
+  rhoAbRed_paperfolding_even 2 (by decide) ⟨1, rfl⟩
+
+-- At length four the shorter, rather than the longer, reductions have even length.
+example : rhoAbRed paperfoldingSeq 4 = 3 :=
+  rhoAbRed_paperfolding_even 4 (by decide) ⟨2, rfl⟩

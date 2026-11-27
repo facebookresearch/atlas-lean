@@ -31,9 +31,11 @@ public import Mathlib.Order.Lattice.Nat
 namespace MetaMathlibExt
 
 -- Combinatorics 480: Contains a (c,d)-Biclique
-/-- Let G = (V,E) be a finite simple graph and let c,d be positive integers. G contains a
-(c,d)-biclique if there exist nonempty and disjoint subsets X,Y ⊂ V such that |X| = c, |Y| =d, and ∀
-x ∈ X, y ∈ Y, we have (x,y) ∈ E.
+/-- Let G = (V,E) be a finite simple graph and let c,d be natural numbers. G contains a
+(c,d)-biclique if there exist disjoint subsets X,Y ⊆ V such that |X| = c, |Y| = d, and ∀ x ∈ X,
+y ∈ Y, we have (x,y) ∈ E. A part may have size 0: `G.ContainsBiclique 0 d` holds exactly when
+`d ≤ |V|`. The usual biclique `K_{c,d}` has `c` and `d` positive, as in
+`SimpleGraph.bicliqueNumber`.
 -/
 
 def _root_.SimpleGraph.ContainsBiclique {V : Type*} [Fintype V] (G : SimpleGraph V)
@@ -42,8 +44,10 @@ def _root_.SimpleGraph.ContainsBiclique {V : Type*} [Fintype V] (G : SimpleGraph
     ∀ a ∈ S, ∀ b ∈ T, G.Adj a b
 
 -- Combinatorics 493: Biclique Number
-/-- Let G be a finite simple graph. The biclique number ω_b(G) is the maximum positive integer t
-such that G contains a K_{c,d} as a (not necessarily induced) subgraph, with 0<c,d and c +d = t.
+/-- Let G be a finite simple graph. The biclique number ω_b(G) is the largest t such that G
+contains a K_{c,d} as a (not necessarily induced) subgraph, with 0<c,d and c +d = t. It is at
+least 2 when G has an edge, and 0 on an edgeless graph, where no such t exists and the supremum
+of the empty set of natural numbers is 0.
 -/
 
 noncomputable def _root_.SimpleGraph.bicliqueNumber {V : Type*} [Fintype V] (G : SimpleGraph V) : ℕ :=
