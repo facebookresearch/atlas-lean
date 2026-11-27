@@ -16,7 +16,7 @@ It is the derivative at $x$ of the quadratic interpolant $Q$ of $f$ at $x$, $x +
 
 ## Related topics
 
-- [Differentiation of the interpolating polynomial](differentiation-of-the-interpolating-polynomial.md): the general node formula, under the stronger hypothesis that $f$ has $n + 2$ continuous derivatives.
+- [Differentiation of the interpolating polynomial](differentiation-of-the-interpolating-polynomial.md): the general node formula for $n + 1$ nodes, under $n + 1$ continuous derivatives, of which this page is the case $n = 2$ at the left endpoint.
 
 ## Sources
 
