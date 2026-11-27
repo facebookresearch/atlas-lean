@@ -8,6 +8,7 @@ The garbler's view contains only its own coins and the output. The evaluator's v
 
 ## Depends on
 
+- [Correctness and privacy of Free-XOR garbling under circular correlation robustness](../boolean-garbling-constructions/free-xor-security.md)
 - [Side-information functions and privacy notions for garbling schemes](../garbling-scheme-security/garbling-privacy-notions.md)
 - [Ideal 1-out-of-2, batched and 1-out-of-4 oblivious transfer](../oblivious-transfer-protocols/oblivious-transfer-functionalities.md)
 - [Security of Yao's garbled-circuit protocol against semi-honest adversaries](../security-of-yao-s-garbled-circuit-protocol.md)
