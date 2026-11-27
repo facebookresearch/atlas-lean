@@ -83,16 +83,6 @@ theorem_wanted isKLDeficientPerfect_prime_pow_imp
     (p a k l : ℕ) (hp : p.Prime) (hk : 2 ≤ k) :
     IsKLDeficientPerfect k l (p ^ a) → p = 2 ∧ a = 1
 
-/-- **Twice an odd prime is not $[k,\ell]$-near-perfect.** Let $k$ and $\ell$ be natural numbers
-with $\ell \ge 1$ and let $p$ be an odd prime. Then $2p$ is not $[k,\ell]$-near-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 6. -/
-theorem_wanted not_isKLNearPerfect_two_mul_prime (k l p : ℕ)
-    (hl : 1 ≤ l) (hp : p.Prime) (hpo : Odd p) :
-    ¬ IsKLNearPerfect k l (2 * p)
-
 /-- **For $a \ge 2$, $2^a p$ is not $[k,\ell]$-near-perfect with divisor $1$ or $p$.** Let $k$,
 $\ell$, $a$ be natural numbers with $\ell \ge 1$ and $a \ge 2$, and let $p$ be an odd prime. Call
 $n$ $[k,\ell]$-near-perfect with divisor $d$ when $d$ divides $n$, $d < n$ and
