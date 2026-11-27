@@ -64,7 +64,7 @@ FAILED = re.compile(r"^(?:uncaught exception|error|PANIC|INTERNAL PANIC)\b", re.
 # and "parse errors in file", "error: failed to find source file for M", or an I/O error. It then
 # skips that file, and can exit 0.
 SKIPPED = re.compile(r"^(?:error: .*|\S.*?:\d+:\d+: error: .*|parse errors in file)$"
-                     r"|^.*\(error code: \d+\).*$", re.MULTILINE)
+                     r"|^.*\(error code: \d+[,)].*$", re.MULTILINE)
 
 # Keep every public import that other public imports do not already export, so
 # that no importer can break; keep imports that other imports imply, and a parent

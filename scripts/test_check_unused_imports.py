@@ -289,6 +289,13 @@ class MainTests(unittest.TestCase):
         self.assertIn("::warning file=MathlibExt/A.lean,line=9,col=1,", out)  # still reported
         self.assertIn("failed to find source file for MathlibExt.B", errors[0])
 
+    def test_an_io_error_with_details_is_a_skip(self):
+        # Lean prints most I/O errors as "(error code: N, details)".
+        unreadable = ("no such file or directory (error code: 2, MathlibExt/B.lean)\n"
+                      "  file: MathlibExt/B.lean\n")
+        code, _, _ = run_main([done("", 0), done(unreadable, 0)], extra=["--report-only"])
+        self.assertEqual(code, 2)
+
     def test_nothing_to_check(self):
         code, out, calls = run_main([], files=[])
         self.assertEqual((code, calls), (0, []))
