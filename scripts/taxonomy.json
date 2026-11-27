@@ -1814,6 +1814,7 @@
   "CSLibExt/Languages/LambdaCalculus/References/Typing": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Lambda calculus with references"},
   "CSLibExt/Languages/LambdaCalculus/SystemF": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "System F"},
   "CSLibExt/Languages/LambdaCalculus/SystemT": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "System T"},
+  "CSLibExt/Languages/LogicProgramming/LeastHerbrandModel": {"to": "ComputerScience/programming-language-semantics", "title": "Effects modules and logic programming"},
   "CSLibExt/Languages/MiniImp/Exec": {"to": "ComputerScience/programming-language-semantics", "title": "An imperative language with arrays"},
   "CSLibExt/Languages/MiniImp/IMPBridge": {"to": "ComputerScience/programming-language-semantics", "title": "Embedding IMP in the imperative language with arrays"},
   "CSLibExt/Languages/MiniImp/ReadCost": {"to": "ComputerScience/programming-language-semantics", "title": "Read-cost semantics of the imperative language with arrays"},
