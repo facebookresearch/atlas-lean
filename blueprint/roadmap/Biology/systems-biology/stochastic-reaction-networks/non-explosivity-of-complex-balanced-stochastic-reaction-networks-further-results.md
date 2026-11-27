@@ -6,7 +6,7 @@ Anderson, Cappelletti, Koyama and Kurtz (2018) prove a general non-explosivity c
 
 1. Condition 1 on the rates, explosion, and the minimal process.
 2. Theorem 2: construction of a stationary process with marginal $\pi$ and the finiteness of the expected number of jumps per unit time.
-3. Remark 1: the equivalence with positive recurrence of the embedded chain on a single nonabsorbing irreducible class, via the stationary law proportional to $\pi(x)q(x)$; summability as a separate hypothesis for mixtures.
+3. Remark 1: the equivalence with positive recurrence of the embedded chain on a single nonabsorbing irreducible class. Summability makes the normalized $\pi(x)q(x)$ a stationary law of the embedded chain, since $\sum_y\pi(y)q(y)\,q(y, x)/q(y) = \pi(x)q(x)$, so the irreducible chain is positive recurrent. Conversely, if the embedded chain is positive recurrent, then $\pi(x)q(x)$ is an invariant measure of an irreducible recurrent chain, and the uniqueness of such invariant measures up to a constant factor makes it a multiple of the stationary law, hence summable. Summability as a separate hypothesis for mixtures.
 4. Corollary 1 for reaction networks.
 5. Application, as a separate statement: the product-form Poisson distribution of a complex-balanced system (Theorem 1 of Anderson, Craciun and Kurtz) satisfies the summability condition, which gives the [non-explosivity of complex-balanced stochastic reaction networks](non-explosivity-of-complex-balanced-stochastic-reaction-networks.md) for every initial distribution (Theorem 3 of the source).
 

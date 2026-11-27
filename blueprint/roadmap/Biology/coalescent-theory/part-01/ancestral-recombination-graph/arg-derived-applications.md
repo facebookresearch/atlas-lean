@@ -15,5 +15,5 @@ Quantities computed from an estimated genealogy are conditional expectations or 
 
 ## Sources
 
-- V. Link et al., Tree-based QTL mapping with expected local genetic relatedness matrices, Am. J. Hum. Genet. 110 (2023), 2077–2091, Introduction and Fig. 1. <https://doi.org/10.1016/j.ajhg.2023.10.017>
+- V. Link et al., Tree-based QTL mapping with expected local genetic relatedness matrices, Am. J. Hum. Genet. 110 (2023), 2077–2091, Subjects and methods (the eGRM definition), Introduction and Fig. 1. <https://doi.org/10.1016/j.ajhg.2023.10.017>
 - M. D. Edge and G. Coop, Reconstructing the history of polygenic scores using coalescent trees, Genetics 211 (2019), 235–262, equations (2), (3) and Fig. 2. <https://doi.org/10.1534/genetics.118.301687>

@@ -24,3 +24,5 @@ Consider a mass action system whose reaction network has $\ell$ linkage classes,
 ## Sources
 
 - M. Feinberg, Chemical reaction network structure and the stability of complex isothermal reactors I. The deficiency zero and deficiency one theorems, Chem. Eng. Sci. 42 (1987), 2229–2268, Theorem 6.2.1 and Corollary 6.2.2. <https://doi.org/10.1016/0009-2509(87)80099-4>
+- B. Joshi and A. Shiu, A survey of methods for deciding whether a reaction network is multistationary, Math. Model. Nat. Phenom. 10 (2015), no. 5, 47–67, Theorem 3.2.
+- A. Deshpande and S. Müller, Decomposable and essentially univariate mass-action systems: extensions of the deficiency one theorem, J. Nonlinear Sci. 36 (2026), article 66; Theorem 15 in the numbering of arXiv:2502.21167v1.

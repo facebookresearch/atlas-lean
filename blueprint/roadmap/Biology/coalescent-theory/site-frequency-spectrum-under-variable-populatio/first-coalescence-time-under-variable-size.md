@@ -14,6 +14,7 @@ $$E[T_{m,m}] = \int_0^\infty \exp\Bigl(-\binom m2 R(t)\Bigr)\, dt$$
 ## Proof depends on
 
 - [Survival-integral form of the first-coalescence quantity $c_m$](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/first-coal-mean-eq-integral.md)
+- [Clock and epoch lengths of the variable-size coalescent](deterministic-coalescent-time-change.md)
 
 ## Expansion
 

@@ -1,10 +1,14 @@
 # Identifiability from the folded site-frequency spectrum
 
-When the ancestral state of each site is unknown, only the folded spectrum is observed: for a sample of size $n$, $\chi_{n,i} = (\xi_{n,i} + \xi_{n,n-i})/(1 + \delta_{i,n-i})$ for $1 \le i \le \lfloor n/2 \rfloor$. Bhaskar and Song (2014, Theorem 12) prove that if $S(F) < \infty$ and $n \ge 2(2K - 1)(1 + S(F))$, then each expected folded spectrum is consistent with a unique equivalence class of $K$-piece models from $F$ (models equal up to the time rescaling that leaves the spectrum unchanged); the proof rests on a symmetry of the matrix relating branch lengths to first-coalescence means (their Lemma 13). The target is this statement, with the folded bound kept separate from the unfolded one.
+When the ancestral state of each site is unknown, only the folded spectrum is observed: for a sample of size $n$, $\chi_{n,i} = (\xi_{n,i} + \xi_{n,n-i})/(1 + \delta_{i,n-i})$ for $1 \le i \le \lfloor n/2 \rfloor$. Let $F$ be a family of positive continuous population size functions on $\mathbb R_{\ge 0}$, and let $M_K(F)$ be the piecewise models over $F$ with at most $K$ pieces: population size functions $\eta$ with change points $0 = t_0 < t_1 < \cdots < t_p < t_{p+1} = \infty$, $p \le K - 1$, and $\eta(t) = f_i(t - t_{i-1})$ on $[t_{i-1}, t_i)$ with $f_i \in F$ (Bhaskar and Song 2014, Definitions 1 and 2). The sign change complexity $S(F)$ is the supremum, over $f_1, f_2 \in F$ and $a \ge 0$, of the number of sign changes of $\tau \mapsto \tilde f_1(\tau) - \tilde f_2(\tau - a)$ on its domain, with $\tilde f$ the time-rescaled version of $f$, a function of the cumulative coalescence rate (their (2), Definitions 3 and 4, (5)); for constant sizes $S(F) = 0$. Two models are equivalent if they are related by the rescaling $\zeta(t) = \kappa\eta(t/\kappa)$, $\kappa > 0$, of Lemma 10. Bhaskar and Song (2014, Theorem 12) prove that if $S(F) < \infty$ and $n \ge 2(2K - 1)(1 + S(F))$, then each expected folded spectrum is consistent with a unique equivalence class of models in $M_K(F)$; the proof rests on a symmetry of the matrix relating branch lengths to first-coalescence means (their Lemma 13). The target is this statement, with the folded bound kept separate from the unfolded one.
 
 ## Depends on
 
 - [Folded site frequency spectrum](../../expected-site-frequency-spectrum/folded-count.md)
+
+## Proof depends on
+
+- [Expected epoch lengths and first-coalescence means](epoch-lengths-first-coalescence-means.md)
 
 ## Expansion
 
@@ -15,4 +19,4 @@ When the ancestral state of each site is unknown, only the folded spectrum is ob
 
 ## Sources
 
-- A. Bhaskar and Y. S. Song, Descartes' rule of signs and the identifiability of population demographic models from genomic variation data, Ann. Statist. 42 (2014), 2469–2493. <https://arxiv.org/abs/1309.5056>
+- A. Bhaskar and Y. S. Song, Descartes' rule of signs and the identifiability of population demographic models from genomic variation data, Ann. Statist. 42 (2014), 2469–2493, Definitions 1–4, equation (5), Lemma 10, Theorem 12 and Lemma 13. <https://arxiv.org/abs/1309.5056>

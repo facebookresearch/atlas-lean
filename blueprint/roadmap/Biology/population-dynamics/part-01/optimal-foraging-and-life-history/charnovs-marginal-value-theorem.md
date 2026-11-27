@@ -17,3 +17,4 @@ Since $\partial_{t_i} E = p_i\,(g_i'(t_i) - E)/(\tau + \sum_j p_j t_j)$, every m
 
 - Original result: E. L. Charnov, Optimal foraging, the marginal value theorem, Theor. Popul. Biol. 9 (1976), 129–136. <https://doi.org/10.1016/0040-5809(76)90040-X>
 - D. W. Stephens and J. R. Krebs, *Foraging Theory*, Princeton University Press, 1986, Chapter 3.
+- V. Calcagno, L. Mailleret, É. Wajnberg and F. Grognard, How optimal foragers should respond to habitat changes: a reanalysis of the Marginal Value Theorem, J. Math. Biol. 69 (2014). <https://doi.org/10.1007/s00285-013-0734-y>

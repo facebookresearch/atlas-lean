@@ -17,8 +17,8 @@ For two loci with alleles $a/A$ and $b/B$ and scaled recombination rate $\rho$ (
 
 ## Sources
 
-- S. Mano, Duality between the two-locus Wright–Fisher diffusion model and the ancestral process with recombination, J. Appl. Probab. 50 (2013), 256–271, generator (2.1), rates (3.1) and Lemma 3.1.
-- R. C. Griffiths, P. A. Jenkins and S. Lessard, A coalescent dual process for a Wright–Fisher diffusion with recombination and its application to haplotype partitioning, Theor. Popul. Biol. 112 (2016), 126–138, Sections 3 and 6.
+- S. Mano, Duality between the two-locus Wright–Fisher diffusion model and the ancestral process with recombination, J. Appl. Probab. 50 (2013), 256–271, generator (2.1), rates (3.1) and Lemma 3.1, numbered as in arXiv:1201.5557v2 (journal numbering not confirmed). <https://arxiv.org/abs/1201.5557>
+- R. C. Griffiths, P. A. Jenkins and S. Lessard, A coalescent dual process for a Wright–Fisher diffusion with recombination and its application to haplotype partitioning, Theor. Popul. Biol. 112 (2016), 126–138, Sections 3 and 6, numbered as in arXiv:1604.04145v2. <https://arxiv.org/abs/1604.04145>
 - T. Ohta and M. Kimura, Linkage disequilibrium due to random genetic drift, Genet. Res. 13 (1969), 47–55.
 - R. C. Griffiths, Neutral two-locus multiple allele models with recombination, Theor. Popul. Biol. 19 (1981), 169–186.
 - R. R. Hudson, Properties of a neutral allele model with intragenic recombination, Theor. Popul. Biol. 23 (1983), 183–201. <https://doi.org/10.1016/0040-5809(83)90013-8>

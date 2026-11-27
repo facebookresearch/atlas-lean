@@ -22,3 +22,4 @@ so the interior mass changes only through the currents at the ends of the interv
 ## Sources
 
 - S. N. Evans, Y. Shvets and M. Slatkin, Non-equilibrium theory of the allele frequency spectrum, Theor. Popul. Biol. 71 (2007), 109–119, abstract and Section 3. <https://doi.org/10.1016/j.tpb.2006.06.005>
+- S. Zhao, M. Lascoux, A. D. J. Overall and D. Waxman, The characteristic trajectory of a fixing allele: a consequence of fictitious selection that arises from conditioning, Genetics 195 (2013), 993–1006, Appendix C (the probability current). <https://doi.org/10.1534/genetics.113.156059>

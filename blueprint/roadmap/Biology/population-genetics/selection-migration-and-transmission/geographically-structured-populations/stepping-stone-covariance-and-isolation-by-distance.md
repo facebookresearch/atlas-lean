@@ -22,3 +22,4 @@ with a separate equation for $f_0$ that carries the drift term in $1/N$. The dec
 
 - Original result: M. Kimura and G. H. Weiss, The stepping stone model of population structure and the decrease of genetic correlation with distance, Genetics 49 (1964), 561–576. <https://doi.org/10.1093/genetics/49.4.561>
 - G. H. Weiss and M. Kimura, A mathematical analysis of the stepping stone model of genetic correlation, J. Appl. Probab. 2 (1965), 129–149. <https://doi.org/10.2307/3211879>
+- R. Durrett, *Probability Models for DNA Sequence Evolution*, 2nd ed., Springer, New York (2008). <https://doi.org/10.1007/978-0-387-78168-6>

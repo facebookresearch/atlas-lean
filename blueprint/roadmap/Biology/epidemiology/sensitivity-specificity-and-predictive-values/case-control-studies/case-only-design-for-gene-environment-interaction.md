@@ -4,7 +4,7 @@ Let $G$ and $E$ be binary exposures and $D$ a binary disease, and arrange a coho
 
 $$\frac{a g}{c e} = S_{RR} \cdot \frac{(g+h)(a+b)}{(c+d)(e+f)}, \qquad S_{OR} = S_{RR}\,\frac{(1 - r_{10})(1 - r_{01})}{(1 - r_{11})(1 - r_{00})}.$$
 
-The first identity says that the case-only odds ratio equals the risk-ratio interaction times the population odds ratio of $G$ and $E$, so a $G$–$E$ association in the population can make the case-only design wrongly indicate a multiplicative interaction (VanderWeele, Hernández-Díaz and Hernán 2010). Under population independence it reduces to the [case-only odds ratio under population independence](../../../not-yet-classified/case-only-interaction/risk-ratio-interaction-eq-case-only.md), and the rare-disease agreement of $S_{OR}$ with $S_{RR}$ is the [rare-disease limit](../../../not-yet-classified/case-only-interaction/tendsto-odds-ratio-interaction-rare.md); neither is restated here.
+The first identity says that the case-only odds ratio equals the risk-ratio interaction times the population odds ratio of $G$ and $E$, so a $G$–$E$ association in the population can make the case-only design wrongly indicate a multiplicative interaction (VanderWeele, Hernández-Díaz and Hernán 2010). The second identity, relating $S_{OR}$ to $S_{RR}$, is this page's own derivation, not stated in the cited sources. Under population independence it reduces to the [case-only odds ratio under population independence](../../../not-yet-classified/case-only-interaction/risk-ratio-interaction-eq-case-only.md), and the rare-disease agreement of $S_{OR}$ with $S_{RR}$ is the [rare-disease limit](../../../not-yet-classified/case-only-interaction/tendsto-odds-ratio-interaction-rare.md); neither is restated here.
 
 ## Depends on
 

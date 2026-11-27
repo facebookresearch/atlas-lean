@@ -6,6 +6,7 @@ Under the time-changed neutral Wright–Fisher diffusion $X_t = Y_{A(t)}$ with $
 
 - [Effective population size under fluctuating population size](../../../Biology/population-genetics/effective-population-size/effective-size-under-fluctuating-population-size.md)
 - [Time-changed neutral diffusion under deterministic population-size change: construction and fixation](../diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/time-changed-neutral-diffusion-under-determinist.md)
+- [Mass at infinity, density and mean of the pairwise coalescence time under a variable population size](../../coalescent-theory/site-frequency-spectrum-under-variable-populatio/pair-coalescence-time-under-variable-size.md)
 
 ## Proof depends on
 

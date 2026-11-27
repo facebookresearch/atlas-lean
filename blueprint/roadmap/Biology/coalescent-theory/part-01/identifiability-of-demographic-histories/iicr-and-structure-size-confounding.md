@@ -5,6 +5,7 @@ Let $T_2$ be the coalescence time of two lineages, with the [inverse instantaneo
 ## Depends on
 
 - [Inverse instantaneous coalescence rate of a pairwise coalescence time](../../inverse-instantaneous-coalescence-rate/iicr-of-a-pairwise-coalescence-time.md)
+- [Transition rates of the two-lineage structured coalescent](../../structured-coalescent/rate.md)
 
 ## Proof depends on
 

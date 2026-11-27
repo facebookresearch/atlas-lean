@@ -4,7 +4,7 @@ Standard Euler–Maruyama schemes fail for the Wright–Fisher diffusion: simula
 
 $$dy(t) = (a - by(t))\,dt + \gamma\sqrt{|y(t)(1 - y(t))|}\,dw(t), \qquad y_0 \in (0, 1),$$
 
-with $a, b, \gamma > 0$, $2a/\gamma^2 \ge 1$ and $2(b - a)/\gamma^2 \ge 1$, under which it has a unique strong solution that stays in $(0, 1)$. The Lamperti transformation $x = 2\arcsin\sqrt y$ gives $dx(t) = f(x(t))\,dt + \gamma\,dw(t)$ on $(0, \pi)$ with $f(x) = (a - \gamma^2/4)\cot(x/2) - (b - a - \gamma^2/4)\tan(x/2)$; this equation is discretized by the drift-implicit (backward) Euler–Maruyama scheme $X_k$ with step $\Delta t$, and $y$ is approximated by $\sin^2(X_k/2)$, which lies in $[0, 1]$. For $2 \le p < \frac{4}{3\gamma^2}\min\{a, b - a\}$ the scheme is $p$-strongly convergent with order one,
+with $a, b, \gamma > 0$, $2a/\gamma^2 \ge 1$ and $2(b - a)/\gamma^2 \ge 1$, under which it has a unique strong solution that stays in $(0, 1)$; after the time change $s = \gamma^2t$ the equation is the [Wright–Fisher equation](../wright-fisher-diffusion-with-mutation/unique-strong-solution-of-the-wf-sde.md) with $\alpha = 0$, $\theta_1 = 2a/\gamma^2$ and $\theta_2 = 2(b - a)/\gamma^2$, which has a unique strong solution, and the non-attainment of the boundary under the two conditions is from Neuenkirch and Szpruch. The Lamperti transformation $x = 2\arcsin\sqrt y$ gives $dx(t) = f(x(t))\,dt + \gamma\,dw(t)$ on $(0, \pi)$ with $f(x) = (a - \gamma^2/4)\cot(x/2) - (b - a - \gamma^2/4)\tan(x/2)$; this equation is discretized by the drift-implicit (backward) Euler–Maruyama scheme $X_k$ with step $\Delta t$, and $y$ is approximated by $\sin^2(X_k/2)$, which lies in $[0, 1]$. For $2 \le p < \frac{4}{3\gamma^2}\min\{a, b - a\}$ the scheme is $p$-strongly convergent with order one,
 
 $$E\Bigl[\sup_{k=0,\dots,\lceil T/\Delta t\rceil}\Bigl|y(t_k) - \sin^2\Bigl(\frac{X_k}{2}\Bigr)\Bigr|^p\Bigr] \le C_p\,\Delta t^p$$
 
@@ -14,6 +14,7 @@ $$E\Bigl[\sup_{k=0,\dots,\lceil T/\Delta t\rceil}\Bigl|y(t_k) - \sin^2\Bigl(\fra
 
 - [The coefficient √(x(1 − x)) is 1/2-Hölder on the unit interval](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-selection-and-mutat/abs-sqrt-mul-one-sub-sub-le.md)
 - [Exact simulation of the Wright–Fisher diffusion](../../../../Biology/population-genetics/diffusion-theory/transition-densities-of-wright-fisher-diffusions/exact-simulation-of-the-wright-fisher-diffusion.md)
+- [Unique strong solution of the Wright–Fisher stochastic differential equation](../wright-fisher-diffusion-with-mutation/unique-strong-solution-of-the-wf-sde.md)
 
 ## Expansion
 

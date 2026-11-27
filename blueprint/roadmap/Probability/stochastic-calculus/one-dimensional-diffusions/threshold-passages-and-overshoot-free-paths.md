@@ -25,3 +25,4 @@ and division by $h(p)$ gives the moments of the arrival time conditioned on reac
 
 - S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press, New York (1981), Chapter 15 (exit probabilities from the scale function and the Green's function of the diffusion stopped on leaving an interval).
 - S. Zhao, M. Lascoux, A. D. J. Overall and D. Waxman, The characteristic trajectory of a fixing allele: a consequence of fictitious selection that arises from conditioning, Genetics 195 (2013), 993–1006, Appendix A. <https://doi.org/10.1534/genetics.113.156059>
+- R. Durrett, *Probability Models for DNA Sequence Evolution*, 2nd ed., Springer, New York (2008), Chapter 7, Sections 7.3–7.7 (the diffusion facts cited above from Karlin and Taylor, Chapter 15). <https://doi.org/10.1007/978-0-387-78168-6>

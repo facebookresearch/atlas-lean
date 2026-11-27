@@ -13,6 +13,11 @@ The expected age follows by applying the Green's-function formula for occupation
 - [Dirichlet Green's function of a one-dimensional diffusion](../../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function.md)
 - [Scale function of a one-dimensional diffusion](../selection-duality-and-general-one-dimensional-di/scale-function.md)
 
+## Proof depends on
+
+- [Green function, occupation times and mean exit times of a one-dimensional diffusion](../selection-duality-and-general-one-dimensional-di/green-function-occupation-times-and-mean-exit-ti.md)
+- [Scale function and exit probabilities for one-dimensional diffusions (process level)](../selection-duality-and-general-one-dimensional-di/scale-function-and-exit-probabilities-for-one-di.md)
+
 ## Expansion
 
 1. A birth–death chain with a stationary distribution and its reversibility by detailed balance.
@@ -25,4 +30,5 @@ The expected age follows by applying the Green's-function formula for occupation
 - G. A. Watterson, Reversibility and the age of an allele II. Two-allele models, with selection and mutation, Theor. Popul. Biol. 12 (1977), 179–196. <https://doi.org/10.1016/0040-5809(77)90041-7>
 - W. J. Ewens, Conditional diffusion processes in population genetics, Theor. Popul. Biol. 4 (1973), 21–30.
 - F. P. Kelly, *Reversibility and Stochastic Networks*, Wiley, 1979, Chapter 1.
+- R. C. Griffiths, The frequency spectrum of a mutation, and its age, in a general diffusion model, Theor. Popul. Biol. 64 (2003), 241–251, equations (15)–(19) and (22)–(23); Griffiths credits the age formula to Maruyama and Kimura (1974), with Watterson (1977) for a rederivation. <https://doi.org/10.1016/S0040-5809(03)00075-3>
 - T. Maruyama and M. Kimura, Moments for sum of an arbitrary function of gene frequency along a stochastic path of gene frequency change, Proc. Natl. Acad. Sci. USA 72 (1975), 1602–1604, abstract. <https://doi.org/10.1073/pnas.72.4.1602>

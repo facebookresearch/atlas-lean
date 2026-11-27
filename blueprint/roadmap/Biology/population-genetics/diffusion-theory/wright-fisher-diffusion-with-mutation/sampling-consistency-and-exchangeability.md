@@ -4,7 +4,7 @@ If allele frequencies $p = (p_1, \dots, p_K)$ have the Dirichlet law with parame
 
 $$P(x) = \frac{\Gamma(\alpha_0)\Gamma(n + 1)}{\Gamma(n + \alpha_0)}\prod_{k=1}^K\frac{\Gamma(x_k + \alpha_k)}{\Gamma(\alpha_k)\Gamma(x_k + 1)}, \qquad \alpha_0 = \sum_k\alpha_k$$
 
-(Mosimann 1962, the compound multinomial distribution). The sequence of sampled types is, given $p$, independent and identically distributed, so its law is exchangeable, and the first $n - 1$ genes of a sample of $n$ form a sample of $n - 1$; both properties hold conditionally on $p$ and are preserved by mixing (derivation). In particular, a sample of $n$ genes from a population whose frequencies follow a stationary Dirichlet law of the diffusion is Dirichlet-multinomial with the parameters of that law.
+(Mosimann 1962, the compound multinomial distribution; restated with this attribution by Zhang, Zhou, Zhou and Sun 2017, Section 3, eq. (2), which becomes the display above when the multinomial coefficient is written as $\Gamma(n + 1)/\prod_k\Gamma(x_k + 1)$). The sequence of sampled types is, given $p$, independent and identically distributed, so its law is exchangeable, and the first $n - 1$ genes of a sample of $n$ form a sample of $n - 1$; both properties hold conditionally on $p$ and are preserved by mixing (derivation). In particular, a sample of $n$ genes from a population whose frequencies follow a stationary Dirichlet law of the diffusion is Dirichlet-multinomial with the parameters of that law.
 
 ## Depends on
 
@@ -22,3 +22,4 @@ $$P(x) = \frac{\Gamma(\alpha_0)\Gamma(n + 1)}{\Gamma(n + \alpha_0)}\prod_{k=1}^K
 ## Sources
 
 - J. E. Mosimann, On the compound multinomial distribution, the multivariate $\beta$-distribution, and correlations among proportions, Biometrika 49 (1962), 65–82.
+- Y. Zhang, H. Zhou, J. Zhou and W. Sun, Regression models for multivariate count data, J. Comput. Graph. Statist. 26 (2017), 1–13, Section 3, eq. (2) (the Dirichlet-multinomial probability mass function, credited to Mosimann 1962). Open copy at PMC: <https://pmc.ncbi.nlm.nih.gov/articles/PMC5365157/>. <https://doi.org/10.1080/10618600.2016.1154063>

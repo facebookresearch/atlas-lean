@@ -10,6 +10,8 @@ that is, the probability of a minor outbreak tends to $q^m$. The proof couples t
 
 - [Certain extinction in the critical and subcritical cases](../../../../Probability/branching-processes/linear-birth-death-process/tendsto-extinction-prob-of-le.md)
 - [Limiting extinction probability in the supercritical case](../../../../Probability/branching-processes/linear-birth-death-process/tendsto-extinction-prob-of-lt.md)
+- [Extinction probability is the least fixed point](../../../../Probability/branching-processes/galton-watson-process/is-least-extinction-prob.md)
+- [Galton–Watson extinction criterion](../../../../Probability/branching-processes/galton-watson-process/extinction-prob-eq-one-iff.md)
 
 ## Expansion
 

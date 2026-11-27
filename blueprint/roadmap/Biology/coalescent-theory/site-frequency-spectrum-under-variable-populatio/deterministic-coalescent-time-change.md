@@ -4,7 +4,7 @@ Let $\lambda(u) = 1/f(u)$ be the coalescence intensity of a population whose rel
 
 $$T^v_n = \Lambda^{-1}(S_n), \qquad T^v_j = \Lambda^{-1}(S_j) - \Lambda^{-1}(S_{j+1}), \quad j = n - 1, \dots, 2$$
 
-(equation (2.4.9)), with joint density $\prod_{j=2}^n \binom j2 \lambda(s_j)\exp\bigl(-\binom j2(\Lambda(s_j) - \Lambda(s_{j+1}))\bigr)$ in the partial sums $s_j$ (equation (2.4.6)). Unlike the independent exponentials of the constant-size case, the $T^v_j$ are in general dependent, since each is a function of several partial sums $S_j$; $(S_{n+1} = 0, S_n, \dots, S_2)$ is a Markov chain. Section 2.4 assumes $\Lambda(t) \to \infty$, so that a common ancestor is reached with probability one; when $\Lambda(\infty) < \infty$ two lineages never coalesce with probability $e^{-\Lambda(\infty)} > 0$, by $P(T_2 > t) = e^{-\Lambda(t)}$ (equation (2.4.4)).
+(equation (2.4.9)), with joint density $\prod_{j=2}^n \binom j2 \lambda(s_j)\exp\bigl(-\binom j2(\Lambda(s_j) - \Lambda(s_{j+1}))\bigr)$ in the partial sums $s_j = t^v_j + \dots + t^v_n$ of the variable-size holding times, with $s_{n+1} = 0$ (equation (2.4.6)). Unlike the independent exponentials of the constant-size case, the $T^v_j$ are in general dependent, since each is a function of several partial sums $S_j$; $(S_{n+1} = 0, S_n, \dots, S_2)$ is a Markov chain. Section 2.4 assumes $\Lambda(t) \to \infty$, so that a common ancestor is reached with probability one; when $\Lambda(\infty) < \infty$ two lineages never coalesce with probability $e^{-\Lambda(\infty)} > 0$, by $P(T_2 > t) = e^{-\Lambda(t)}$ (equation (2.4.4)).
 
 ## Depends on
 

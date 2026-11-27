@@ -15,3 +15,4 @@ For the Beverton–Holt equation $x_{n+1} = \mu K x_n/(K + (\mu - 1) x_n)$ with 
 - R. Kon, A note on attenuant cycles of population models with periodic carrying capacity, J. Difference Equ. Appl. 10 (2004), 791–793. <https://doi.org/10.1080/10236190410001703949>
 - Original result: J. M. Cushing and S. M. Henson, A periodically forced Beverton–Holt equation, J. Difference Equ. Appl. 8 (2002), 1119–1120. <https://doi.org/10.1080/1023619021000053980> The two conjectures follow their statement in Stević (2006).
 - Original result: S. Elaydi and R. J. Sacker, Nonautonomous Beverton–Holt equations and the Cushing–Henson conjectures, J. Difference Equ. Appl. 11 (2005), 337–346. <https://doi.org/10.1080/10236190412331335418> The first confirmation of both conjectures follows Stević (2006) and Kon (2004).
+- M. Bohner and H. Warth, The Beverton–Holt dynamic equation, Applicable Analysis 86 (2007), 1007–1015, Sections 1–2.

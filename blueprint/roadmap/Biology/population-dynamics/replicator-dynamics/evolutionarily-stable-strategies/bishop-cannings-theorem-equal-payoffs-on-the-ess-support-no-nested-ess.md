@@ -23,3 +23,5 @@ Let $A = (a_{ij})$ be the payoff matrix of a finite symmetric game, with mixed s
 - J. Maynard Smith, The theory of games and the evolution of animal conflicts, J. Theor. Biol. 47 (1974), 209–221, Appendix by J. Haigh, (A1)–(A2), Theorems 1–3 and the identity before Theorem 3. <https://doi.org/10.1016/0022-5193(74)90110-6>
 - J. Maynard Smith, *Evolution and the Theory of Games*, Cambridge University Press, 1982, appendix on the Bishop–Cannings theorem. <https://doi.org/10.1017/CBO9780511806292>
 - Original result: D. T. Bishop and C. Cannings, A generalized war of attrition, J. Theor. Biol. 70 (1978), 85–124. <https://doi.org/10.1016/0022-5193(78)90304-1>
+- M. Broom, C. Cannings and G. T. Vickers, Multi-player matrix games, Bull. Math. Biol. 59 (1997), 931–952, Section 2.1 and Theorem 2.2.3. <https://doi.org/10.1007/BF02460000>
+- J. Hofbauer and K. Sigmund, Evolutionary game dynamics, Bull. Amer. Math. Soc. 40 (2003), 479–519, eqs. (16)–(17) and Section 2.3.

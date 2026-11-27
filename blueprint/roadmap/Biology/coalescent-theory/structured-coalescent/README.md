@@ -53,7 +53,6 @@
 ## Further structured ancestral models
 
 - [Genealogies of samples from a large torus](large-space-genealogical-limits.md)
-- [The coalescent with partial self-fertilization](partial-selfing-coalescent.md)
 - [Genealogies within a fixed pedigree](fixed-pedigree-versus-averaged-genealogy.md)
 - [The coalescent with separate sexes](coalescent-limit-with-separate-sexes.md)
 - [Genealogies at unlinked loci are conditionally independent given the pedigree](unlinked-does-not-mean-universally-independent.md)
@@ -62,4 +61,3 @@
 - [Scattering and collecting phases of the many-demes coalescent](many-demes-scattering-collecting-phases.md)
 - [Isolation with migration: piecewise structured histories and gene-tree likelihoods](isolation-with-migration-and-population-splits.md)
 - [Exact structured-coalescent likelihood and its approximations](exact-versus-approximate-structured-likelihood.md)
-- [Duality between structured diffusions and the structured coalescent](structured-coalescent-duality.md)

@@ -6,4 +6,3 @@
 - [Spectral theory of Wright's $F_{ST}$](spectral-theory-of-wright-s-fst/README.md)
 - [Tree-structured F_ST and coancestry](tree-structured-fst-and-coancestry/README.md)
 - [$F_{ST}$ constraints from the most frequent allele](fst-constraints-from-the-most-frequent-allele/README.md)
-- [Weir–Cockerham estimator of $F_{ST}$ from allele samples as a ratio of unbiased estimators](weir-cockerham-theta-estimator-as-a-ratio-of-unbiased-estimators.md)

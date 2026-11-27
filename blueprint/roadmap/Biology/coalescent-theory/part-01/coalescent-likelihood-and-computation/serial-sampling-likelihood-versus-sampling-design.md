@@ -4,7 +4,7 @@ Coalescent likelihoods for serially sampled sequences usually condition on the s
 
 $$\log \Pr(s \mid \gamma, \beta_0, \beta_1) = C + n\beta_0 + \sum_{i=1}^n \beta_1 \log N_\gamma(s_i) - \int_0^{s_0} e^{\beta_0} N_\gamma(r)^{\beta_1}\, dr;$$
 
-$\beta_1 = 0$ gives sampling times independent of $N_\gamma$ and $\beta_1 = 1$ an intensity proportional to it. The arXiv text of Karcher et al. writes the intensity as $\beta_0N_\gamma(t)^{\beta_1}$; the form $e^{\beta_0}N_\gamma(t)^{\beta_1}$ used here, with the term $n\beta_0$ above, is the reparametrization that replaces their positive $\beta_0$ by $e^{\beta_0}$. Their simulations show that when sampling times depend on the effective population size, methods that condition on them without this term can be systematically biased, and that including it reduces bias and improves precision. The coalescent factor itself is unchanged: the genealogy depends on the sampling times, so it is conditioned on $s$, and $s$ contributes its own Poisson likelihood.
+$\beta_1 = 0$ gives sampling times independent of $N_\gamma$ and $\beta_1 = 1$ an intensity proportional to it. The form $e^{\beta_0}N_\gamma(t)^{\beta_1}$, with the term $n\beta_0$ above, is the parametrization of the published article; the arXiv text of Karcher et al. writes the intensity as $\beta_0N_\gamma(t)^{\beta_1}$ with $\beta_0 > 0$. Their simulations show that when sampling times depend on the effective population size, methods that condition on them without this term can be systematically biased, and that including it reduces bias and improves precision. The coalescent factor itself is unchanged: the genealogy depends on the sampling times, so it is conditioned on $s$, and $s$ contributes its own Poisson likelihood.
 
 ## Depends on
 

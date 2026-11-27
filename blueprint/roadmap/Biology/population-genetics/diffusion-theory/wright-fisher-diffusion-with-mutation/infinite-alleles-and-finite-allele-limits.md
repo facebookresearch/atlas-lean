@@ -29,3 +29,4 @@ With $\varepsilon = \theta/(K - 1)$ and $\theta = 2Nu$ fixed, $K\varepsilon \to 
 - S. Wright, Adaptation and selection, in *Genetics, Paleontology and Evolution* (G. L. Jepsen, E. Mayr and G. G. Simpson, eds.), Princeton University Press (1949), 365–389.
 - S. Kotz, N. Balakrishnan and N. L. Johnson, *Continuous Multivariate Distributions, Vol. 1: Models and Applications*, 2nd ed., Wiley (2000), Chapter 49.
 - M. Kimura and J. F. Crow, The number of alleles that can be maintained in a finite population, Genetics 49 (1964), 725–738. <https://doi.org/10.1093/genetics/49.4.725>
+- D. A. Dawson and S. Feng, Asymptotic behavior of the Poisson–Dirichlet distribution for large mutation rate, Ann. Appl. Probab. 16 (2006), 562–582, Section 1.

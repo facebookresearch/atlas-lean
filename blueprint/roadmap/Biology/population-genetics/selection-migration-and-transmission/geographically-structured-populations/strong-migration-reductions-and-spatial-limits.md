@@ -4,7 +4,12 @@ When migration is strong compared with drift, a structured population drifts lik
 
 In the structured diffusion with migration rates multiplied by a large factor $\lambda$, the deme frequencies are pulled towards their weighted average, and the candidate one-dimensional limit for $\bar x = \sum_iw_ix_i$, with $w$ the stationary law of the backward migration chain, has drift $\sum_iw_i\beta_i(\bar x)$ and diffusion coefficient $\sum_iw_i^2\bar x(1 - \bar x)/\kappa_i$, obtained by evaluating the drift and the quadratic-variation rate of $\bar x$ at the equal-frequency configuration.
 
-For populations in a spatial continuum the limits are stochastic partial differential equations, not the deterministic Fisher–KPP equation. Biswas, Etheridge and Klimek (2021, Section 1, equations (1.1), (1.2)) obtain, for selection fluctuating between two environments, the one-dimensional equation $dw = \frac12\Delta w\,dt + s^2w(1 - w)(1 - 2w)\,dt + \sqrt{w(1 - w)}\,W(dt, dx) + \sqrt2\,sw(1 - w)\,\tilde W(dt, dx)$ with space-time white noise $W$ for genetic drift and an independent noise $\tilde W$, white in time but possibly coloured in space, for the environmental fluctuations. In the scaling limit of the spatial Lambda–Fleming–Viot process in dimension at least two (their Theorem 4.6, equations (4.4)–(4.5)), only the genetic-drift term $\sqrt{w(1 - w)}\,W(dt, dx)$ disappears: the limit keeps the Laplacian, the deterministic cubic term $s^2w(1 - w)(1 - 2w)$ and the environmental noise term, now driven by spatially coloured noise.
+For populations in a spatial continuum the limits are stochastic partial differential equations, not the deterministic Fisher–KPP equation. Biswas, Etheridge and Klimek (2021, Section 1, equations (1.1), (1.2)) obtain, for selection fluctuating between two environments, a one-dimensional limit that coincides, up to constants, with the equation $dw = \frac12\Delta w\,dt + s^2w(1 - w)(1 - 2w)\,dt + \sqrt{w(1 - w)}\,W(dt, dx) + \sqrt2\,sw(1 - w)\,\tilde W(dt, dx)$ with space-time white noise $W$ for genetic drift and an independent noise $\tilde W$, white in time but possibly coloured in space, for the environmental fluctuations. In the scaling limit of the spatial Lambda–Fleming–Viot process in dimension at least two (their Theorem 4.6, equations (4.4)–(4.5)), only the genetic-drift term $\sqrt{w(1 - w)}\,W(dt, dx)$ disappears: the limit keeps the Laplacian, the deterministic cubic term $s^2w(1 - w)(1 - 2w)$ and the environmental noise term, now driven by spatially coloured noise.
+
+## Depends on
+
+- [Diffusion approximation for a population of finitely many demes](finite-deme-diffusion.md)
+- [Which weighted frequency migration conserves](conservation-under-migration.md)
 
 ## Expansion
 

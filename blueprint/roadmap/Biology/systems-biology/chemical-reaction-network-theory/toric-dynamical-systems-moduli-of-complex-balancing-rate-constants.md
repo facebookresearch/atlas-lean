@@ -9,6 +9,10 @@ A mass-action system with reaction graph $G$ on $n$ complexes and complex matrix
 - [Mass-action vector field](../../../Dynamics/smooth-dynamics/mass-action-field.md)
 - [Complex-balanced concentrations](../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
 
+## Proof depends on
+
+- [Markov chain tree theorem](../stochastic-mass-action-metabolic-control-and-flu/tree-weight-vec-mul-eq-zero.md)
+
 ## Expansion
 
 1. Definitions: the reaction graph, its Laplacian, the complex matrix $Y$, and toric (complex-balanced) systems; compare [complex-balanced concentrations](../../../Biology/systems-biology/complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md).

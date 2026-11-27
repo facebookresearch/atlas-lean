@@ -9,6 +9,7 @@ Neutrality statistics built from the site-frequency spectrum, such as Tajima's $
 - [Tajima's $\theta_\pi$ in site frequency spectrum form](../../../Biology/coalescent-theory/site-frequency-spectrum-under-variable-populatio/theta-pi.md)
 - [Tajima's D can have positive mean while its numerator has mean zero](../../../Biology/detecting-selection/mean-and-asymptotic-normality-of-tajima-s-d/exists-integral-tajima-d-ne.md)
 - [Distribution of the pairwise coalescence time in the island model](../../../Biology/coalescent-theory/structured-coalescent/island-coalescence-time-distribution.md)
+- [Inverse instantaneous coalescence rate of a pairwise coalescence time](../../coalescent-theory/inverse-instantaneous-coalescence-rate/iicr-of-a-pairwise-coalescence-time.md)
 
 ## Expansion
 

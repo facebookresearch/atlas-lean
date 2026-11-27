@@ -21,6 +21,5 @@
 - [Hitchhiking effective size under cyclically fluctuating balancing selection](hitchhiking-effective-size-under-cyclic-balancing-selection.md)
 - [Decay of heterozygosity under a changing population size](decay-of-heterozygosity-in-the-time-changed-diffusion.md)
 - [Coalescent effective size and failure of binary universality](effective-size-universality-and-counterexamples.md)
-- [Effective versus census population size in the fixation probability](effective-versus-census-population-size.md)
 - [The harmonic-mean effective size](harmonic-mean-effective-size.md)
 - [Effective sizes from diversity and selection need not match census size or determine fixation](effective-size-definitions-need-not-coincide.md)

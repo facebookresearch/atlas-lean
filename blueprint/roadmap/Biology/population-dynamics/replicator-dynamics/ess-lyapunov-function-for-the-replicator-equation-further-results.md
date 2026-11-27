@@ -1,6 +1,6 @@
 # Regular evolutionarily stable strategies are asymptotically stable for payoff-monotonic dynamics
 
-A [regular evolutionarily stable strategy](../stability-of-boundary-evolutionarily-stable-stra/is-regular-ess.md) is [linearly stable for the replicator dynamics](../stability-of-boundary-evolutionarily-stable-stra/re-lt-zero.md) (Taylor and Jonker 1978). Cressman (1997), as restated by Hofbauer and Sigmund (2003, Sec. 3.2), extends this: regular evolutionarily stable strategies are asymptotically stable for any smooth payoff-monotonic dynamics satisfying a mild regularity condition, because the linearization of such a dynamics at a rest point is proportional to that of the replicator dynamics.
+A [regular evolutionarily stable strategy](../stability-of-boundary-evolutionarily-stable-stra/is-regular-ess.md) is [linearly stable for the replicator dynamics](../stability-of-boundary-evolutionarily-stable-stra/re-lt-zero.md) (Taylor and Jonker 1978). Cressman (1997), as restated by Hofbauer and Sigmund (2003, Sec. 3.2), extends this: regular evolutionarily stable strategies are asymptotically stable for any smooth payoff-monotonic dynamics satisfying the additional regularity hypothesis of Cressman (1997), which this page does not restate (Expansion item 1), because the linearization of such a dynamics at a rest point is proportional to that of the replicator dynamics.
 
 ## Depends on
 

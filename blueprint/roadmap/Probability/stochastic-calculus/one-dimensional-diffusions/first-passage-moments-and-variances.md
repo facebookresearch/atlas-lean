@@ -28,3 +28,4 @@ which for $n = 1$ is the equation $L\,E[\tau] = -1$ with zero boundary values (K
 - S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press, New York, 1981, Chapter 15.
 - M. Kimura and T. Ohta, The average number of generations until fixation of a mutant gene in a finite population, Genetics 61 (1969), 763–771. <https://doi.org/10.1093/genetics/61.3.763>
 - W. J. Ewens, *Mathematical Population Genetics I. Theoretical Introduction*, 2nd ed., Springer, New York, 2004, Chapter 4.
+- R. Durrett, *Probability Models for DNA Sequence Evolution*, 2nd ed., Springer, New York (2008), Chapter 7, Sections 7.3–7.7 (the diffusion facts cited above from Karlin and Taylor, Chapter 15). <https://doi.org/10.1007/978-0-387-78168-6>

@@ -20,3 +20,4 @@ The paper also identifies $n/(4 \ln n)$ and $n/(2 \ln n)$ as the asymptotic capa
 
 - Original result: R. J. McEliece, E. C. Posner, E. R. Rodemich and S. S. Venkatesh, The capacity of the Hopfield associative memory, IEEE Trans. Inform. Theory 33 (1987), 461–482. <https://doi.org/10.1109/TIT.1987.1057328> The thresholds are those of its abstract; Komlós and Paturi (1988) restate them.
 - J. Komlós and R. Paturi, Convergence results in an associative memory model, Neural Networks 1 (1988), 239–250. <https://doi.org/10.1016/0893-6080(88)90029-9>
+- S. S. Venkatesh, *Linear Maps with Point Rules: Applications to Pattern Classification and Associative Memory*, Ph.D. thesis, California Institute of Technology (1987). <https://doi.org/10.7907/1YSB-Q028>

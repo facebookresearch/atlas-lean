@@ -6,6 +6,7 @@ Inference that fixes one estimated genealogy and treats it as observed discards 
 
 - [Jensen's inequality](../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
 - [Tower property of conditional expectation](../../../../Probability/foundations/conditional-expectation/tower-property/tower-property.md)
+- [Total variance splits into true-score and error variance](../../../../Probability/not-yet-classified/part-15/true-score/variance-eq-variance-cond-exp-add-varian.md)
 
 ## Expansion
 

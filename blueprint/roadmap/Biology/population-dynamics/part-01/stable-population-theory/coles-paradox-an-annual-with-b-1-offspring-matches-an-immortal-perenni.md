@@ -1,6 +1,6 @@
 # Cole's paradox: annual and perennial growth rates
 
-Consider breeding once a year, with no mortality at any age, maturity at age $1$ and unlimited lifespan, as in Cole's (1954) analysis. A semelparous annual producing $B$ offspring and then dying has annual growth factor $\lambda = B$. An iteroparous perennial producing $b > 0$ offspring every year from age $1$ on has growth factor given by the discrete Euler–Lotka equation $\sum_{x \ge 1} b\lambda^{-x} = 1$; for $\lambda > 1$ the sum is $b/(\lambda - 1)$, so the root is $\lambda = b + 1$. Hence an annual with $B = b + 1$ offspring grows exactly as fast as an immortal perennial with $b$: in Cole's words, changing to the perennial habit is "exactly equivalent to adding one individual to the average litter size" (for example, $b = 3$ offspring a year for ever against one litter of $B = 4$). This is Cole's paradox (Cole 1954).
+Consider breeding once a year, with no mortality at any age, maturity at age $1$ and unlimited lifespan, as in Cole's (1954) analysis. A semelparous annual producing $B$ offspring and then dying has annual growth factor $\lambda = B$. An iteroparous perennial producing $b > 0$ offspring every year from age $1$ on has growth factor given by the discrete Euler–Lotka equation with infinitely many age classes, $\sum_{x \ge 1} b\lambda^{-x} = 1$ (the Leslie-matrix form of the equation has finitely many age classes, and an unlimited lifespan needs the infinite sum); for $\lambda > 1$ the sum is $b/(\lambda - 1)$, so the root is $\lambda = b + 1$. Hence an annual with $B = b + 1$ offspring grows exactly as fast as an immortal perennial with $b$: in Cole's words, changing to the perennial habit is "exactly equivalent to adding one individual to the average litter size" (for example, $b = 3$ offspring a year for ever against one litter of $B = 4$). This is Cole's paradox (Cole 1954).
 
 ## Depends on
 
@@ -17,3 +17,4 @@ Consider breeding once a year, with no mortality at any age, maturity at age $1$
 
 - Original result: L. C. Cole, The population consequences of life history phenomena, Q. Rev. Biol. 29 (1954), 103–137. <https://doi.org/10.1086/400074>
 - Original result: E. L. Charnov and W. M. Schaffer, Life-history consequences of natural selection: Cole's result revisited, Am. Nat. 107 (1973), 791–793. <https://doi.org/10.1086/282877>
+- G. Bell, On breeding more than once, Am. Nat. 110 (1976), 57–77, pp. 57–59 (quoting Cole (1954, p. 119) and stating the amendment of Charnov and Schaffer).

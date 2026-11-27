@@ -87,7 +87,3 @@
 - [Green function, occupation times and mean exit times of a one-dimensional diffusion](green-function-occupation-times-and-mean-exit-ti.md)
 - [Hitting probabilities equal scale ratios when both endpoints are accessible](hitting-probabilities-equal-scale-ratios-under-a.md)
 - [Scale function and exit probabilities for one-dimensional diffusions (process level)](scale-function-and-exit-probabilities-for-one-di.md)
-
-## Further results
-
-- [Fixation probabilities under frequency-dependent selection](frequency-dependent-selection.md)

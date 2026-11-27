@@ -4,8 +4,13 @@ Under the multispecies coalescent with one lineage sampled per taxon, Allman, De
 
 ## Depends on
 
+- [The multispecies coalescent](../../multispecies-coalescent/gene-tree-prob.md)
 - [The species quartet maximizes quartet support](../../multispecies-coalescent/split-01-most-probable.md)
 - [An unrooted binary tree is determined by its quartets](../../../phylogenetics/splits-compatibility-ultrametrics-and-upgma/iso-of-displays-quartet-iff.md)
+
+## Proof depends on
+
+- [Gene trees restricted to a taxon subset follow the induced species tree](quartet-concordance-inside-larger-trees.md)
 
 ## Expansion
 

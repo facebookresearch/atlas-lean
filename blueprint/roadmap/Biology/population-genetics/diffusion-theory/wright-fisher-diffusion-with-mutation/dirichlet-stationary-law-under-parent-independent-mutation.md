@@ -24,3 +24,4 @@ Reversibility of the diffusion started from $\pi$ is the one-locus case without 
 - S. Wright, Evolution in Mendelian populations, Genetics 16 (1931), 97–159. <https://doi.org/10.1093/genetics/16.2.97>
 - S. N. Ethier and T. G. Kurtz, Fleming–Viot processes in population genetics, SIAM J. Control Optim. 31 (1993), 345–386. <https://doi.org/10.1137/0331019>
 - Z. Li, T. Shiga and L. Yao, A reversibility problem for Fleming–Viot processes, Electron. Commun. Probab. 4 (1999), 65–76.
+- O. Papaspiliopoulos, M. Ruggiero and D. Spanò, Conjugacy properties of time-evolving Dirichlet and gamma random measures, Electron. J. Stat. 10 (2016), 3452–3489, Section 2.1.2, eqs. (7), (10), (11) (the uniqueness clause). <https://doi.org/10.1214/16-EJS1194>

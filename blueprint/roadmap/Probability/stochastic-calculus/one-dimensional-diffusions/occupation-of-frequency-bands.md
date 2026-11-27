@@ -32,3 +32,4 @@ with $G(p, \xi) = 2\frac{(S(p) - S(a))(S(b) - S(\xi))}{S(b) - S(a)}m(\xi)$ for $
 
 - S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press, New York, 1981, Chapter 15 (functionals of the diffusion stopped on leaving an interval, and the Green's function in terms of the scale function and speed density).
 - W. J. Ewens, *Mathematical Population Genetics I. Theoretical Introduction*, 2nd ed., Springer, New York, 2004, Chapter 4 (sojourn-time densities and mean times spent at a frequency).
+- R. Durrett, *Probability Models for DNA Sequence Evolution*, 2nd ed., Springer, New York (2008), Chapter 7, Sections 7.3–7.7 (the diffusion facts cited above from Karlin and Taylor, Chapter 15). <https://doi.org/10.1007/978-0-387-78168-6>
