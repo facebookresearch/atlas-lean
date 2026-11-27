@@ -19,7 +19,7 @@ and $\to_{\beta\Delta}$ is the union of β- and Δ-reduction.
 ## Depends on
 
 - [β-reduction](../../untyped-lambda-calculus/beta-reduction-and-confluence/beta-reduction.md)
-- [Simple type assignment à la Curry](../../decision-problems-for-simple-types/simple-type-assignment-a-la-curry.md)
+- [Simple type assignment à la Curry](../../simply-typed-lambda-calculus/decision-problems-for-simple-types/simple-type-assignment-a-la-curry.md)
 
 ## Sources
 

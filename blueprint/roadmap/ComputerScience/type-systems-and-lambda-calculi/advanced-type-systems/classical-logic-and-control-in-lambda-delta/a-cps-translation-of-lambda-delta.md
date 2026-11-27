@@ -13,7 +13,7 @@ type $\bot$: a closed $M : \bot$ would give the closed simply typed term $t(M)\,
 ## Depends on
 
 - [The λΔ-calculus](the-lambda-delta-calculus.md)
-- [Simple type assignment à la Curry](../../decision-problems-for-simple-types/simple-type-assignment-a-la-curry.md)
+- [Simple type assignment à la Curry](../../simply-typed-lambda-calculus/decision-problems-for-simple-types/simple-type-assignment-a-la-curry.md)
 
 ## Sources
 

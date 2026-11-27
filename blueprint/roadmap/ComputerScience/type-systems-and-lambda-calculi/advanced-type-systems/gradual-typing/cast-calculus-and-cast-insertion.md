@@ -16,7 +16,7 @@ A cast $f : T_1 \Rightarrow^\ell T_2$ has type $T_2$ when $f : T_1$ and $T_1 \si
   $T \ne ?$, $T \ne G$ and $T \sim G$ for a ground type $G$, factors through $G$ (rules Ground and Expand); reduction proceeds under evaluation frames, and blame propagates to the top.
 - **Evaluation of the GTLC.** $e \Downarrow r$ if $\emptyset \vdash e \rightsquigarrow f : T$ and $f \longmapsto^* r$; $e \Uparrow$ if the reduction of $f$ does not terminate.
 
-The rule for function constants is not in the source's Figure 4, which lists constants such as $\mathrm{inc}$ but no rule for applying them; without it a well-typed application such as $\mathrm{inc}\; 0$ would be stuck.
+The rule for function constants is not in the source's Figure 4, which has constants $k$ but no rule for applying a function constant (Section 4.1 gives $\mathrm{inc}$ as an example of one); without it a well-typed application such as $\mathrm{inc}\; 0$ would be stuck.
 
 ## Depends on
 
