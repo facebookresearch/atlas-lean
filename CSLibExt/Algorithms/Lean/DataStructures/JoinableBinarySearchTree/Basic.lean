@@ -42,8 +42,10 @@ Adapted from the Isabelle formalization of Chapter 10: `Set2_Join` in
 Isabelle/HOL's bundled `HOL-Data_Structures` library (the `Set2_Join`
 locale: the book's specification, proved for red–black trees in
 `Set2_Join_RBT.thy`), as re-exported through the AFP entry
-`Joinable_BST_Work_Bounds` (`StronglyJoinable.thy`, which interprets
-`Set2_Join` for its stored-height red–black and AVL trees). The book's
+`Joinable_BST_Work_Bounds` (`StronglyJoinable.thy`, which extends the
+`Set2_Join` locale with `BalancedTree`; the interpretations for the
+stored-height red–black and AVL trees are in `StronglyJoinableRBT.thy`
+and `StronglyJoinableAVL.thy`). The book's
 Chapter 10 statements are the ground truth for *what* is proved; the
 Isabelle sources are the formal reference for the definitions.
 -/

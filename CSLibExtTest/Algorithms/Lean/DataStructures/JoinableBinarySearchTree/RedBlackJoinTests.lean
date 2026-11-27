@@ -16,7 +16,8 @@ public import CSLibExt.Algorithms.Lean.DataStructures.JoinableBinarySearchTree.R
 Concrete checks of the Figure 10.4 `join` ingredients. `baliL` / `baliR`
 / `paint` are structural, so their computations close by `decide`; the
 well-founded `joinL` / `joinR` / `rbtJoin` are exercised through the
-proved `set` / `bst` / `inv` theorems on concrete trees.
+proved `set` / `bst` / `inv` theorems on concrete trees, and a `simp`
+example below pins the `rbtUnion` tree, exercising the `joinL` descent.
 -/
 
 @[expose] public section
@@ -75,6 +76,15 @@ example : invc (rbtJoin t1 4 t2) ∧ invh (rbtJoin t1 4 t2) :=
   inv_rbtJoin t1 4 t2 inv_t1 inv_t2
 example : set_tree (rbtUnion t1 t2) = set_tree t1 ∪ set_tree t2 :=
   rbtUnion_set t1 t2 bst_t2
+-- `rbtUnion` descends through `joinL` here, unlike the equal-black-height
+-- `rbtJoin` examples above: the union's inner join joins a black-height-0
+-- tree against `t2` (black height 1), so this pins the `joinL` / `baliL`
+-- computation and the `paint Black` recoloring on the tree itself.
+example : rbtUnion t1 t2 =
+    BNode (BNode Tree.Leaf 1 Tree.Leaf) 3
+      (BNode Tree.Leaf 5 (RNode Tree.Leaf 7 Tree.Leaf)) := by
+  simp [rbtUnion, rbtJoinData, union, split, rbtJoin, joinL, baliL, paint, bheight, t1, t2,
+    BNode, RNode]
 example : set_tree (rbtInter t1 t2) = set_tree t1 ∩ set_tree t2 :=
   rbtInter_set t1 t2 bst_t1 bst_t2
 example : set_tree (rbtDiff t1 t2) = set_tree t1 \ set_tree t2 :=
