@@ -12,7 +12,7 @@ module
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.CategoryTheory.Preadditive.Injective.Basic
 public import Mathlib.CategoryTheory.Preadditive.Projective.Basic
-public import MathlibExt.Algebra.Homology.Contractible
+public import Mathlib.Algebra.Homology.Homotopy
 
 /-!
 # Lifting null-homotopic maps
@@ -148,14 +148,14 @@ theorem injective_of_id_homotopic_zero {I : HomologicalComplex C c}
 with projective terms is projective in the category of complexes of that
 shape. Contractibility means that its identity is homotopic to zero. -/
 theorem Contractible.projective {P : HomologicalComplex C c}
-    [∀ i, Projective (P.X i)] (h : P.Contractible) : Projective P :=
+    [∀ i, Projective (P.X i)] (h : Nonempty (Homotopy (𝟙 P) 0)) : Projective P :=
   projective_of_id_homotopic_zero h.some
 
 /-- In an abelian category, a contractible complex of any given shape
 with injective terms is injective in the category of complexes of that
 shape. Contractibility means that its identity is homotopic to zero. -/
 theorem Contractible.injective {I : HomologicalComplex C c}
-    [∀ i, Injective (I.X i)] (h : I.Contractible) : Injective I :=
+    [∀ i, Injective (I.X i)] (h : Nonempty (Homotopy (𝟙 I) 0)) : Injective I :=
   injective_of_id_homotopic_zero h.some
 
 end HomologicalComplex
