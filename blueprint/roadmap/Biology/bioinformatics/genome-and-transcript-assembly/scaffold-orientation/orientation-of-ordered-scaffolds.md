@@ -18,7 +18,7 @@
 
 $$O\big(2^{\alpha}\,|S(\mathcal A)|^2\,|\mathrm{CC}(\mathcal O)|\big),\qquad \alpha=\max_{c\in\mathrm{CC}(\mathcal O)}|\mathrm{BV}(\mathcal O)\cap V(c)|,$$
 
-where $\mathrm{CC}(\mathcal O)$ is the set of connected components of the constraint graph and $\mathrm{BV}(\mathcal O)$ its branching vertices.
+where the sets are those of §3.5: $\mathrm{BV}(\mathcal O)$ is the set of unoriented branching vertices (unoriented vertices of degree greater than $2$) of $\mathrm{COG}(\mathcal O)$; $\mathrm{AV}(\mathcal O)\subseteq\mathrm{BV}(\mathcal O)$ is the set of unoriented articulation vertices of degree at least $3$; breaking $\mathrm{COG}(\mathcal O)$ at the vertices of $\mathrm{AV}(\mathcal O)$, with a copy of each such vertex in every resulting component, gives a set of components, and $\mathrm{CC}(\mathcal O)$ is the set of those components that contain at least one cycle; $V(c)$ is the vertex set of a component $c$.
 
 ## Expansion
 

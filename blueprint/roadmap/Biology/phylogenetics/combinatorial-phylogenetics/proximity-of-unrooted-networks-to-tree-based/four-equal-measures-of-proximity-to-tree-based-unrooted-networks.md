@@ -1,18 +1,18 @@
 # Four equal measures of proximity to tree-based unrooted networks
 
-**Setting.** An unrooted phylogenetic network $N$ on leaf set $X$, $|X|\ge2$, is a connected graph whose leaves are labelled by $X$ and whose interior vertices have degree at least three. $N$ is *tree-based* if it has a spanning tree whose leaves are exactly $X$ (a support tree). For a network of level $k$ define:
+**Setting.** An unrooted phylogenetic network $N$ on leaf set $X$, $|X|\ge2$, is a connected graph whose leaves are labelled by $X$ and whose interior vertices have degree at least three. $N$ is *proper* if every connected component left after removing a cut edge or a cut vertex of $N$ contains a leaf. $N$ is *tree-based* if it has a spanning tree whose leaves are exactly $X$ (a support tree). For a network of level $k$ define:
 1. $\ell(N)=\min\{|V^1(T)\setminus X|: T\text{ a spanning tree of }N\}$, the minimum number of non-taxon leaves of a spanning tree;
 2. $t(N)$, the minimum number of new leaves that must be attached to edges of $N$ to make it tree-based;
 3. $p(N)=k'-|X|+1$, where $k'$ is the minimum length of a sequence of paths $(\pi_1,\dots,\pi_{k'})$ partitioning $V(N)$ such that for $i\ge2$ an endpoint of $\pi_i$ is adjacent to some earlier path;
 4. $\tau(N)$, the minimum tier of a support network contained in $N$ (a tier-$0$ support network is a support tree).
 
-**Theorem.** For every unrooted phylogenetic network $N$ with $|X|\ge2$,
+**Theorem.** For every proper unrooted phylogenetic network $N$ with $|X|\ge2$,
 
 $$\ell(N)=p(N)=t(N)=\tau(N).$$
 
 In particular $N$ is tree-based iff this common value is $0$.
 
-**Related bounds.** The edge-addition measure satisfies $\tfrac12\ell(N)\le e(N)\le\ell(N)$; the NNI-based measure $m(N)$ satisfies $\ell(N)\le m(N)$; and the level-based measure $\lambda(N)$ satisfies $\lambda(N)\le\tau(N)$, with equality for simple networks.
+**Related bounds.** For proper $N$ with $|X|\ge2$, the edge-addition measure satisfies $\tfrac12\ell(N)\le e(N)\le\ell(N)$; the NNI-based measure $m(N)$ satisfies $\ell(N)\le m(N)$; and the level-based measure $\lambda(N)$ satisfies $\lambda(N)\le\tau(N)$, with equality for simple networks.
 
 **Rooted connection.** An unrooted network is tree-based iff it can be rooted at the midpoint of an edge and oriented to give a (possibly degenerate) rooted network that is phylogenetically tree-based; for binary networks the rooted network can be taken binary, and the analogous statement holds for strictly tree-based networks.
 

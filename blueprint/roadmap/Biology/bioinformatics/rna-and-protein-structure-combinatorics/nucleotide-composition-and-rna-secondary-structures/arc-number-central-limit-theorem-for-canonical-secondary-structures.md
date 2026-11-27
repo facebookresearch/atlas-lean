@@ -10,7 +10,7 @@ $$(x^2y)^r\,\mathbf S^{[r]}_\lambda(x,y)^2-\mathbf B^{[r]}_\lambda(x,y)\,\mathbf
 
 so that $\mathbf S^{[r]}_\lambda=\dfrac{\mathbf A^{[r]}}{\mathbf B^{[r]}_\lambda}\,\mathbf C\!\Big(\dfrac{(x^2y)^r\mathbf A^{[r]}}{(\mathbf B^{[r]}_\lambda)^2}\Big)$ with $\mathbf C(z)=\frac{1-\sqrt{1-4z}}{2z}$ the Catalan generating function.
 
-*(2)* *(Central limit theorem.)* Let $Y^{[r]}_{\lambda,n}$ be the number of arcs of a uniformly random $r$-canonical structure of length $n$ with minimum arc-length $\lambda$. There are constants $\mu^{[r]}_\lambda,\sigma^{[r]}_\lambda>0$, given by $\mu=-\theta'(0)/\theta(0)$ and $\sigma^2=(\theta'(0)/\theta(0))^2-\theta''(0)/\theta(0)$ where $\theta(s)=\rho^{[r]}_\lambda(e^s)$ and $\rho^{[r]}_\lambda(y)$ is the dominant singularity of $x\mapsto\mathbf S^{[r]}_\lambda(x,y)$, such that
+*(2)* *(Central limit theorem.)* For $1\le\lambda\le4$ and $1\le r\le3$, let $Y^{[r]}_{\lambda,n}$ be the number of arcs of a uniformly random $r$-canonical structure of length $n$ with minimum arc-length $\lambda$. There are constants $\mu^{[r]}_\lambda,\sigma^{[r]}_\lambda>0$, given by $\mu=-\theta'(0)/\theta(0)$ and $\sigma^2=(\theta'(0)/\theta(0))^2-\theta''(0)/\theta(0)$ where $\theta(s)=\rho^{[r]}_\lambda(e^s)$ and $\rho^{[r]}_\lambda(y)$ is the dominant singularity of $x\mapsto\mathbf S^{[r]}_\lambda(x,y)$, such that
 
 $$\frac{Y^{[r]}_{\lambda,n}-\mu^{[r]}_\lambda n}{\sqrt{n}\,\sigma^{[r]}_\lambda}\xrightarrow{d}\mathcal N(0,1)$$
 
@@ -29,4 +29,4 @@ The functional equation comes from the usual decomposition of a secondary struct
 
 ## Sources
 
-- C. L. Barrett, T. J. X. Li, C. M. Reidys, "RNA secondary structures having a compatible sequence of certain nucleotide ratios", arXiv:1603.03653 (2016), Section "RNA secondary structures": Theorem 6, Theorem 8 and its table of $\mu^{[r]}_\lambda$ and $(\sigma^{[r]}_\lambda)^2$; Section "Singularity analysis", Theorem 5, <https://doi.org/10.48550/arXiv.1603.03653>.
+- C. L. Barrett, T. J. X. Li, C. M. Reidys, "RNA secondary structures having a compatible sequence of certain nucleotide ratios", arXiv:1603.03653 (2016), Section "RNA secondary structures": Theorem 6, Theorem 7 (coefficient asymptotics for $1\le\lambda\le4$, $1\le r\le3$), Theorem 8 and its table of $\mu^{[r]}_\lambda$ and $(\sigma^{[r]}_\lambda)^2$; Section "Singularity analysis", Theorem 5, <https://doi.org/10.48550/arXiv.1603.03653>.

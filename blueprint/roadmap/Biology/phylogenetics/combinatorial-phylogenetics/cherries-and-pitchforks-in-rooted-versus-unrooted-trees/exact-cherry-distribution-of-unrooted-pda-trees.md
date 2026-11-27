@@ -22,7 +22,7 @@ $$\mathbb{P}(B_{n+1}=k)=\frac{2k}{n}\,\mathbb{P}(B_n=k)+\frac{n-2k+2}{n}\,\mathb
 
 with $\mathbb{E}_{\mathrm{YHK}}(B_n)=\frac{n}{3}+\frac{4}{(n-1)(n-2)}$ ($n\ge4$), $\operatorname{Var}_{\mathrm{YHK}}(B_n)=\frac{2n}{45}-\frac{4(n^2-3n+14)}{3(n-1)^2(n-2)^2}$ ($n\ge5$), and $\mathbb{E}_{\mathrm{YHK}}(A_n)=\frac{n}{6}+\frac{4(2n-3)}{(n-1)(n-2)(n-3)}$ ($n\ge6$).
 
-**Theorem (log-concavity).** For $n\ge4$ and $2\le k\le n/2$ the unrooted cherry probability mass functions $\sigma_n(k)=\mathbb{P}_{\mathrm{PDA}}(B_n=k)$ and $\tau_n(k)=\mathbb{P}_{\mathrm{YHK}}(B_n=k)$ are strictly log-concave: $\sigma_n(k)^2>\sigma_n(k-1)\sigma_n(k+1)$ and likewise for $\tau_n$. For $n>8$, $\sigma_n$ increases strictly up to $\lceil n/4\rceil$ and decreases afterwards. Moreover $\tau_n(k)/\sigma_n(k)$ is strictly increasing in $k$ for $n\ge6$.
+**Theorem (log-concavity).** For $n\ge4$ and $2\le k\le n/2$ the unrooted cherry probability mass functions $\sigma_n(k)=\mathbb{P}_{\mathrm{PDA}}(B_n=k)$ and $\tau_n(k)=\mathbb{P}_{\mathrm{YHK}}(B_n=k)$ are strictly log-concave: $\sigma_n(k)^2>\sigma_n(k-1)\sigma_n(k+1)$ and likewise for $\tau_n$. For $n>8$, with $\nabla(n)=\lceil n/4\rceil$, $\sigma_n(k-1)<\sigma_n(k)$ for $2\le k<\nabla(n)$ and $\sigma_n(k)>\sigma_n(k+1)$ for $\nabla(n)\le k\le n/2$ (Theorem 7). Moreover $\tau_n(k)/\sigma_n(k)$ is strictly increasing in $k$ for $n\ge6$ (Theorem 8).
 
 ## Expansion
 
@@ -30,4 +30,4 @@ An unrooted tree on $n+1$ leaves arises from one on $n$ leaves by subdividing on
 
 ## Sources
 
-- K. P. Choi, A. Thompson, T. Wu, "On cherry and pitchfork distributions of random rooted and unrooted phylogenetic trees", arXiv:2002.12643 (2020), Theorems 1, 3, 4, 6 and 7, Corollaries 1–2, Propositions 2 and 4, <https://doi.org/10.48550/arXiv.2002.12643>.
+- K. P. Choi, A. Thompson, T. Wu, "On cherry and pitchfork distributions of random rooted and unrooted phylogenetic trees", arXiv:2002.12643 (2020), Theorems 1, 3, 4, 6, 7 and 8, Corollaries 1–2, Propositions 2 and 4, <https://doi.org/10.48550/arXiv.2002.12643>.

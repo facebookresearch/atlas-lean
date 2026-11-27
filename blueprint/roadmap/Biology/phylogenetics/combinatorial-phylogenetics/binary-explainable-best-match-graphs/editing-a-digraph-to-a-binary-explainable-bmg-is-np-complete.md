@@ -6,7 +6,7 @@ $$\mathscr{R}=\{ab|b':\sigma(a)\ne\sigma(b)=\sigma(b'),\ (a,b)\in E,\ (a,b')\not
 
 **Problem ($\ell$-BMG EBEG).** Given a properly $\ell$-colored digraph $(\vec G=(V,E),\sigma)$ and an integer $k$, decide whether there is a set $F$ of non-loop arcs with $|F|\le k$ such that $(V,E\,\triangle\,F)$ with coloring $\sigma$ is a binary-explainable $\ell$-BMG. The deletion-only variant (DBEG) requires $F\subseteq E$, the completion-only variant (CBEG) requires $F\cap E=\emptyset$.
 
-**Theorem.** $2$-BMG EBEG and $2$-BMG DBEG are NP-complete, and $\ell$-BMG EBEG and $\ell$-BMG DBEG are NP-complete for every $\ell\ge 2$. (Completion, CBEG, was known to be NP-complete for $\ell\ge 2$.) All three problems admit exact integer linear programming formulations that add the consistency constraints of the extended triple set $\mathscr{R}_{\mathrm{bin}}$ to the BMG-modification ILP.
+**Theorem.** $2$-BMG EBEG and $2$-BMG DBEG are NP-complete, and $\ell$-BMG EBEG and $\ell$-BMG DBEG are NP-complete for every $\ell\ge 2$. (Completion, CBEG, was known to be NP-complete for $\ell\ge 2$.) This corrects Theorem 5 of the source, which prints "$\ell$-BMG EBEG and 2-BMG DBEG are NP-complete for all $\ell\ge2$"; the clause for $\ell$-BMG DBEG is what, in the source's words, its Theorem 4 and Corollary 4 together with Remark 6.3 of its reference [19] immediately imply. All three problems admit exact integer linear programming formulations that add the consistency constraints of the extended triple set $\mathscr{R}_{\mathrm{bin}}$ to the BMG-modification ILP.
 
 ## Depends on
 

@@ -4,3 +4,5 @@ Diffuse-interface (phase-field) models describe a tumor by a volume fraction tha
 
 - [Cahn–Hilliard model of tumor growth](cahn-hilliard-model-of-tumor-growth.md)
 - [Nonlocal Cahn–Hilliard model of tumor cell adhesion](nonlocal-cahn-hilliard-model-of-tumor-cell-adhesion.md)
+
+- [Tumour growth models](tumour-growth-models/README.md)

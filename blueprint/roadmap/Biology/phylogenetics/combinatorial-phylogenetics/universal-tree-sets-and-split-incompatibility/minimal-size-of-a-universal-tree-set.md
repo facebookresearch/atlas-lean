@@ -6,7 +6,7 @@
 
 $$U(n)=\left\lceil\frac12\binom nm\right\rceil.$$
 
-For $n=3$ every split is trivial and the star tree displays all of them, so $U(3)=1$ (the formula would give $2$).
+For $n=3$ every split is trivial and the star tree displays all of them, so $U(3)=1$ (the formula would give $2$). This corrects Theorem 4.1 of the source, which prints $U(n)=\lceil\frac12\binom nm\rceil$ for every $n\ge2$; the case $n=3$ follows from the source's own remark after Lemma 3.2 that the star tree alone suffices for $n=3$.
 
 **Normalized incompatibility.** For a split system $S$ on $X$, the minimal number of trees needed to display $S$ divided by $U(|X|)$ lies in $(0,1]$ and allows comparing the incompatibility of split networks built on different numbers of taxa.
 

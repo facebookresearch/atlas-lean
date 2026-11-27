@@ -8,7 +8,7 @@
 
 In the MILPs each walk is encoded by integer variables $x_{uv,i}=W_i(uv)$.
 
-**Theorem (antichains in graphs with cycles).** Computing a maximum-weight antichain of edges (pairwise mutually unreachable edges maximizing $\sum_{e\in A}w(e)$) in a graph $G$ reduces in $O(|V|+|E|)$ time to the same problem on a DAG $G'=(V',E')$ of linear size, $|V'|\le2|V|+|E|$ and $|E'|\le|V|+2|E|$, hence is polynomial. (The construction subdivides every inter-component edge, so sharper bounds such as $|V'|\le2|V|$, $|E'|\le|E|$ do not hold for it: on a transitively oriented complete graph on four vertices all six edges join different components and $G'$ has ten vertices and twelve edges.)
+**Theorem (antichains in graphs with cycles).** Computing a maximum-weight antichain of edges (pairwise mutually unreachable edges maximizing $\sum_{e\in A}w(e)$) in a graph $G$ reduces in $O(|V|+|E|)$ time to the same problem on a DAG $G'=(V',E')$ of linear size, $|V'|\le2|V|+|E|$ and $|E'|\le|V|+2|E|$, hence is polynomial. (This corrects Theorem 7 of the source, which prints the bounds $|V'|\le2|V|$ and $|E'|\le|E|$. The construction subdivides every inter-component edge, so those bounds do not hold for it: on a transitively oriented complete graph on four vertices all six edges join different components and $G'$ has ten vertices and twelve edges.)
 
 **Variable fixing.** Let $A=\{e_1,\dots,e_t\}$ be an antichain and $S(e_i)$ a safe edge sequence through $e_i$ (for edge-covering solutions). No $s$-$t$ walk contains two of these sequences, so in every solution they lie in distinct walks, $k\ge t$, and after relabelling $S(e_i)\subseteq W_i$. Hence one may set, for $i\le t$ and $uv\in S(e_i)$,
 

@@ -12,7 +12,7 @@ where the sum runs over compositions $\lambda$ of $n$ and $C_r$ is the $r$-th Ca
 
 *(2)* (Vanishing proportion) For fixed $m$, $\displaystyle\lim_{n\to\infty}\frac{|\mathcal P(n,m)|}{|S(n,m)|}=0$.
 
-*(3)* (Gap in the number of valid trees) If a word of length $2n$ has $k$ valid plane trees with $k\neq C_n$, then $k\le C_{n-1}$. The number of words in $\mathcal P(n,m)$ with exactly $C_{n-1}$ valid plane trees is $4m(2m-1)n$, and for $m=1$ exactly $2n$ words have a unique valid plane tree.
+*(3)* (Gap in the number of valid trees) If a word of length $2n$ has $k$ valid plane trees with $k\neq C_n$, then $k\le C_{n-1}$. For $n\ge3$, the number of words in $\mathcal P(n,m)$ with exactly $C_{n-1}$ valid plane trees is $4m(2m-1)n$; at $n=2$ it is $4m(2m-1)$. This corrects Corollary 4.5 of the source, which prints the count $2m(2m-1)(2n)$ with no range on $n$; its argument counts each word twice when $n-1=1$. Also, for $m=1$ exactly $2n$ words have a unique valid plane tree.
 
 ## Depends on
 

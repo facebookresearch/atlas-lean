@@ -14,7 +14,7 @@ for infinitely many $n$. Steady states solve $u'' = \alpha\,(u\,\mathcal K[u])'$
 
 $$\alpha_n = \frac{n\pi}{\bar u\, h'(\bar u)\, L\, M_n(\omega)}, \qquad e_n(x) = \cos\!\Big(\frac{2\pi n x}{L}\Big),$$
 
-and near $(\alpha_n,\bar u)$ all nontrivial steady states lie on a curve $u_n(x,s) = \bar u + s\,\alpha_n e_n(x) + o(s)$ (Crandall–Rabinowitz).
+and near $(\alpha_n,\bar u)$ all nontrivial reflection-symmetric steady states ($u(x)=u(L-x)$) lie on a curve $u_n(x,s) = \bar u + s\,\alpha_n e_n(x) + o(s)$ (Crandall–Rabinowitz).
 
 **Theorem (global bifurcation, linear adhesion $h(u)=u$, uniform kernel $\omega\equiv\tfrac12$).** Restrict to the space $H^2_{\Sigma_n}$ of $L/n$-periodic, even functions (dihedral symmetry $\Sigma_n$). The steady-state set contains a closed connected continuum $\mathcal C \subset \mathbb R \times H^2_{\Sigma_n}$ such that
 
@@ -31,4 +31,4 @@ The proof combines the Rabinowitz–López-Gómez unilateral global bifurcation 
 
 ## Sources
 
-- Andreas Buttenschön and Thomas Hillen, "Non-Local Cell Adhesion Models: Steady States and Bifurcations", arXiv:2001.00286 (2020); chapter "Local Bifurcation" (local bifurcation theorem and the eigenvalue formula for $\alpha_n$) and chapter "Global Bifurcation" (global bifurcation theorem, spiky function spaces, and the theorem on at least two $n$-spiked solutions), <https://doi.org/10.48550/arXiv.2001.00286>.
+- Andreas Buttenschön and Thomas Hillen, "Non-Local Cell Adhesion Models: Steady States and Bifurcations", arXiv:2001.00286 (2020); chapter "Local Bifurcation" (Theorem 4.13, the local bifurcation theorem on the reflection-symmetric space $H^2_P=\{u\in H^2_B: u(x)=u(L-x)\}$ of (4.7), and the eigenvalue formula for $\alpha_n$) and chapter "Global Bifurcation" (global bifurcation theorem, spiky function spaces, and the theorem on at least two $n$-spiked solutions), <https://doi.org/10.48550/arXiv.2001.00286>.

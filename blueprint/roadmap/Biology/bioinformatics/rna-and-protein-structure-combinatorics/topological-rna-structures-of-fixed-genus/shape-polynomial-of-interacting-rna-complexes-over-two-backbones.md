@@ -6,7 +6,7 @@
 
 $$ S_g(z) = \sum_{t=1}^{g}\kappa_t^{(g)}z^{2g+t}(1+z)^{2g+t-1}, $$
 
-(for example $S_1(z) = z^3 + 2z^4 + z^5$), where the positive integers $\kappa_t^{(g)}$ satisfy $\kappa_1^{(1)} = 1$, $\kappa_t^{(g)} = 0$ for $t < 1$ or $t > g$, and
+(for example $S_1(z) = z^3 + 2z^4 + z^5$; this corrects Theorem 3.2 of the source, which prints $S_g(z)=\sum_t\kappa_t^{(g)}z^{2g+t-1}(1+z)^{2g+t-1}$, whereas the exponent $2g+t$ agrees with the bound $n\ge2g+1$ of its Lemma 3.1 and reproduces its $S_1$ and $S_2$), where the positive integers $\kappa_t^{(g)}$ satisfy $\kappa_1^{(1)} = 1$, $\kappa_t^{(g)} = 0$ for $t < 1$ or $t > g$, and
 
 $$ (2g+t)\,\kappa_t^{(g)} = \big(2(2g+t)-3\big)\big(2(2g+t)-5\big)\Big((2g+t-2)\,\kappa_t^{(g-1)} + 2\big(2(2g+t)-7\big)\kappa_{t-1}^{(g-1)}\Big). $$
 

@@ -14,7 +14,11 @@ with $\Gamma$ the heat kernel, so the system is a delay (memory) integro-differe
 
 **Theorem (well-posedness).** The particle system with the signal eliminated has a unique local solution (by a contraction argument for the integral formulation) which extends to a unique global solution for all $t\ge0$.
 
-**Theorem (linearized asymptotics).** For the linearization around coinciding positions, in which the alignment weight is replaced by $1$ and the chemotactic force by $-\int_0^t\bar C(t-\tau)\sum_j\bigl(\mathbf X_i(t)-\mathbf X_j(\tau)\bigr)d\tau$ with a positive memory kernel $\bar C$, all particles converge as $t\to\infty$ to a common velocity and a common position (their centre of mass), and the centre-of-mass velocity tends to zero.
+**Theorem (linearized asymptotics).** Replace the source by the ball indicator $g_{\mathbf X}=\xi\sum_j\chi_{B(\mathbf X_j,R)}$, $\xi>0$, with $B(\mathbf X_j,R)=\{\mathbf x:\|\mathbf x-\mathbf X_j\|\le R\}$, and linearize around coinciding positions: the alignment weight is replaced by $1$ and the chemotactic force by $-\int_0^t\bar C(t-\tau)\sum_j\bigl(\mathbf X_i(t)-\mathbf X_j(\tau)\bigr)d\tau$ with the memory kernel
+
+$$\bar C(s)=\frac{\pi R^2\,C(s)\,e^{-R^2/(4sD)}}{2sD},\qquad C(s)=\frac{\gamma\xi\,e^{-\eta s}}{4\pi sD}.$$
+
+For this linear system, all particles converge as $t\to\infty$ to a common velocity and a common position (their centre of mass), and the centre-of-mass velocity tends to zero.
 
 ## Expansion
 
@@ -22,4 +26,4 @@ Alignment alone (Cucker–Smale) yields velocity consensus but not spatial aggre
 
 ## Sources
 
-- Ezio Di Costanzo, Marta Menci, Eleonora Messina, Roberto Natalini and Antonia Vecchio, "A hybrid mathematical model of collective motion under alignment and chemotaxis", arXiv:1507.02980 (2015), Section 2 (model and explicit signal), Theorems 1–2 and Proposition 1 (existence and uniqueness), Section 5 (linearized system and Theorem 3), <https://doi.org/10.48550/arXiv.1507.02980>.
+- Ezio Di Costanzo, Marta Menci, Eleonora Messina, Roberto Natalini and Antonia Vecchio, "A hybrid mathematical model of collective motion under alignment and chemotaxis", arXiv:1507.02980 (2015), Section 2 (model and explicit signal), Theorems 1–2 and Proposition 1 (existence and uniqueness), Section 5 (ball-indicator source (5.1), kernels (5.6) and (5.14), linear system (5.15) and Theorem 3), <https://doi.org/10.48550/arXiv.1507.02980>.
