@@ -17912,6 +17912,7 @@
   "WantedExt/NumberTheory/HyperLeonardoWanted": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Hyper-Leonardo numbers"},
   "WantedExt/NumberTheory/HyperharmonicEulerSumsWanted": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Hyperharmonic Euler sums"},
   "WantedExt/NumberTheory/HyperharmonicPrimeSumsWanted": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Hyperharmonic numbers and sums over primes"},
+  "WantedExt/NumberTheory/ImaginaryQuadraticPartialZetaWanted": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Partial zeta functions of an imaginary quadratic field as Epstein zeta functions"},
   "WantedExt/NumberTheory/IncompleteExponentialSumWanted": {"to": "NumberTheory/exponential-sums", "title": "Incomplete exponential sums"},
   "WantedExt/NumberTheory/IntegerComplexityWanted": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "WantedExt/NumberTheory/JacobiZeroSumConstantsWanted": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
