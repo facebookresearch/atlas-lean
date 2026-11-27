@@ -41,9 +41,9 @@ noncomputable def quadraticModulatedHilbert (f : ℤ →₀ ℂ) (n : ℤ) (t : 
   ∑ k ∈ f.support.filter (· ≠ n),
     f k * Complex.exp (Complex.I * t * ((n - k : ℤ) : ℂ) ^ 2) / ((n - k : ℤ) : ℂ)
 
-/-- The AIM question (Carleson theorems and multilinear operators, Problem 8, L. Pierce): the
-discrete quadratic Carleson operator `f ↦ sup_t |∑_{m ≠ 0} f(n - m) e^{i t m²} / m|` is bounded
-on `ℓ²(ℤ)`, stated on finitely supported `f` with the supremum linearized (an arbitrary
+/-- The AIM question (Carleson theorems and multilinear operators, Question 8, T. Anderson and L.
+Pierce): the discrete quadratic Carleson operator `f ↦ sup_t |∑_{m ≠ 0} f(n - m) e^{i t m²} / m|` is
+bounded on `ℓ²(ℤ)`, stated on finitely supported `f` with the supremum linearized (an arbitrary
 `t = t(n)` for each `n`) and over the finite windows `|n| ≤ N`. -/
 def discreteQuadraticCarleson : Prop :=
   ∃ C : ℝ, ∀ (f : ℤ →₀ ℂ) (t : ℤ → ℝ) (N : ℕ),

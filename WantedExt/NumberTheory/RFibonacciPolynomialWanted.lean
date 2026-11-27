@@ -12,13 +12,14 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
-public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
 public import MathlibExt.NumberTheory.NegRFibonacciGeneratingFunction
 public import MathlibExt.NumberTheory.NegRFibonacciPolynomialSum
+public import MathlibExt.NumberTheory.PQRFibonacciPolynomial
 public import MathlibExt.NumberTheory.RFibonacciPolynomial
 public import MathlibExt.NumberTheory.RFibonacciPolynomialSum
 public import MathlibExt.NumberTheory.RLucasPolynomial
 public import MathlibExt.NumberTheory.RLucasPolynomialAlternatingSum
+public import MathlibExt.NumberTheory.RFibonacciPolynomialNegRFibonacciEqSumRoots
 
 namespace MetaMathlibExt
 
@@ -169,133 +170,6 @@ public theorem_wanted rLucasPolynomial_eq_of_double_root {K : Type*} [Field K]
             (Polynomial.derivative (∏ k, (Polynomial.X - Polynomial.C (β k)))).eval α /
               (∏ k, (Polynomial.X - Polynomial.C (β k))).eval α)
         + ∑ k, β k ^ n * ((s + 1) * β k - s * x) / ((r + 1) * β k - r * x)
-
-/-- **$(p,q)$-binomial coefficient.** Let $R$ be a commutative semiring and $p, q \in R$. For
-natural numbers $n$ and $k$, the $(p,q)$-binomial coefficient $\binom{n}{k}_{p,q} \in R$ is
-defined recursively by $\binom{n}{0}_{p,q} = 1$, $\binom{0}{k+1}_{p,q} = 0$ and
-$\binom{n+1}{k+1}_{p,q} = p^{n-k} \binom{n}{k}_{p,q} + q^{k+1} \binom{n}{k+1}_{p,q}$, where $n - k$
-is truncated subtraction ($0$ when $k > n$).
-
-For $k \le n$, where the $(p,q)$-factorials are invertible, $\binom{n}{k}_{p,q}$ equals
-$[n]_{p,q}! / ([k]_{p,q}! \, [n-k]_{p,q}!)$, where $[j]_{p,q} = p^{j-1} + p^{j-2} q + \dots +
-q^{j-1}$; this is the definition used in the source. At $p = 1$ it is the Gaussian binomial
-coefficient $\binom{n}{k}_q$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 3, Equation (3). -/
-public def pqBinomial {R : Type*} [CommSemiring R] (p q : R) : ℕ → ℕ → R
-  | _, 0 => 1
-  | 0, _ + 1 => 0
-  | n + 1, k + 1 => p ^ (n - k) * pqBinomial p q n k + q ^ (k + 1) * pqBinomial p q n (k + 1)
-
-/-- **$(p,q)$-binomial coefficients with lower index zero.** For all elements $p, q$ of a
-commutative semiring and every natural number $n$, the $(p,q)$-binomial coefficient
-$\binom{n}{0}_{p,q}$ equals $1$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 3. -/
-public theorem pqBinomial_zero_right {R : Type*} [CommSemiring R] (p q : R) (n : ℕ) :
-    pqBinomial p q n 0 = 1 := by
-  cases n <;> rfl
-
-/-- **$(p,q)$-binomial coefficients with upper index zero and positive lower index.** For all
-elements $p, q$ of a commutative semiring and every natural number $k$, the $(p,q)$-binomial
-coefficient $\binom{0}{k+1}_{p,q}$ equals $0$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 3. -/
-public theorem pqBinomial_zero_succ {R : Type*} [CommSemiring R] (p q : R) (k : ℕ) :
-    pqBinomial p q 0 (k + 1) = 0 := rfl
-
-/-- **Pascal recursion for $(p,q)$-binomial coefficients.** For all elements $p, q$ of a
-commutative semiring and all natural numbers $n$ and $k$, the $(p,q)$-binomial coefficients satisfy
-$\binom{n+1}{k+1}_{p,q} = p^{n-k} \binom{n}{k}_{p,q} + q^{k+1} \binom{n}{k+1}_{p,q}$, where $n - k$
-is truncated subtraction ($0$ when $k > n$).
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 3, Equation (3). -/
-public theorem pqBinomial_succ_succ {R : Type*} [CommSemiring R] (p q : R) (n k : ℕ) :
-    pqBinomial p q (n + 1) (k + 1)
-      = p ^ (n - k) * pqBinomial p q n k + q ^ (k + 1) * pqBinomial p q n (k + 1) := rfl
-
-/-- **The $(p, q)$-binomial coefficients at $p = 1$.** Let $R$ be a commutative semiring and
-$q \in R$. For all natural numbers $n$ and $k$, the $(p, q)$-binomial coefficient
-$[n, k]_{p,q}$ at $p = 1$ equals the Gaussian binomial coefficient $\binom{n}{k}_q$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Section 3 (Remark 1: `p = 1` gives the `q`-analogue). -/
-public theorem pqBinomial_one_left {R : Type*} [CommSemiring R] (q : R) (n k : ℕ) :
-    pqBinomial 1 q n k = MathlibExt.gaussBinom q n k := by
-  induction n generalizing k with
-  | zero => cases k <;> simp [pqBinomial_zero_right, pqBinomial_zero_succ]
-  | succ n ih =>
-    cases k with
-    | zero => simp [pqBinomial_zero_right]
-    | succ k => rw [pqBinomial_succ_succ, MathlibExt.gaussBinom_succ_succ, ih, ih]; simp
-
-/-- **$(p,q)$-analogue of the $r$-Fibonacci polynomial.** Let $R$ be a commutative semiring, let
-$r$ and $m$ be natural numbers and let $x, y, p, q \in R$. The $(p,q)$-analogue
-$U^{(r)}_n(x, y, p, q, m) \in R$ of the $r$-Fibonacci polynomial is defined by
-$U^{(r)}_0(x, y, p, q, m) = 0$ and, for every natural number $n$,
-$$
-U^{(r)}_{n+1}(x, y, p, q, m) = \sum_{k=0}^{\lfloor n/(r+1) \rfloor} p^{\binom{n+1-(r+1)k}{2}}
-q^{\binom{k+1}{2} + m \binom{k}{2}} \binom{n-rk}{k}_{p,q} x^{n-(r+1)k} y^k,
-$$
-where $\binom{a}{b}_{p,q}$ is the $(p,q)$-binomial coefficient.
-
-The source also states $U^{(r)}_j = p^{\binom{j+1}{2}} x^{j-1}$ for $1 \le j \le r$, which
-contradicts this sum: the sum gives $p^{\binom{j}{2}} x^{j-1}$ (for example $U^{(2)}_2 = p x$,
-not $p^3 x$). The sum, which Theorem 2 of the source requires, is used.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 1. -/
-public def pqRFibonacci {R : Type*} [CommSemiring R] (r : ℕ) (x y p q : R) (m : ℕ) : ℕ → R
-  | 0 => 0
-  | n + 1 => ∑ k ∈ Finset.range (n / (r + 1) + 1),
-      p ^ (n + 1 - (r + 1) * k).choose 2 * q ^ ((k + 1).choose 2 + m * k.choose 2) *
-        pqBinomial p q (n - r * k) k * x ^ (n - (r + 1) * k) * y ^ k
-
-/-- **Zeroth value of the $(p,q)$-analogue of the $r$-Fibonacci polynomial.** For all natural
-numbers $r$ and $m$ and all elements $x, y, p, q$ of a commutative semiring, the
-$(p,q)$-analogue of the $r$-Fibonacci polynomial satisfies $U^{(r)}_0(x, y, p, q, m) = 0$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 1. -/
-public theorem pqRFibonacci_zero {R : Type*} [CommSemiring R] (r : ℕ) (x y p q : R)
-    (m : ℕ) : pqRFibonacci r x y p q m 0 = 0 := rfl
-
-/-- **First value of the $(p,q)$-analogue of the $r$-Fibonacci polynomial.** For all natural
-numbers $r$ and $m$ and all elements $x, y, p, q$ of a commutative semiring, the
-$(p,q)$-analogue of the $r$-Fibonacci polynomial satisfies $U^{(r)}_1(x, y, p, q, m) = 1$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Definition 1. -/
-public theorem pqRFibonacci_one {R : Type*} [CommSemiring R] (r : ℕ) (x y p q : R)
-    (m : ℕ) : pqRFibonacci r x y p q m 1 = 1 := by
-  simp [pqRFibonacci, pqBinomial_zero_right]
-
-/-- **First recurrence for the $(p,q)$-analogue of the $r$-Fibonacci polynomial.** Let $R$ be a
-commutative semiring, let $r \ge 1$, $n \ge r$ and $m$ be natural numbers and let
-$x, y, p, q \in R$. Write $U_j(x, y)$ for $U^{(r)}_j(x, y, p, q, m)$, the $(p,q)$-analogue of the
-$r$-Fibonacci polynomial with $r$, $p$, $q$ and $m$ fixed. Then
-$$U_{n+1}(x, y) = p x \, U_n(p x, q y) + q y \, U_{n-r}(p x, q^{m+1} y).$$
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Theorem 2, Equation (4) (`integers-2025-A38-thm-2`). -/
-public theorem_wanted pqRFibonacci_succ_eq_left {R : Type*} [CommSemiring R] {r n : ℕ}
-    (hr : 1 ≤ r) (hn : r ≤ n) (x y p q : R) (m : ℕ) :
-    pqRFibonacci r x y p q m (n + 1)
-      = p * x * pqRFibonacci r (p * x) (q * y) p q m n
-        + q * y * pqRFibonacci r (p * x) (q ^ (m + 1) * y) p q m (n - r)
 
 /-- **Second recurrence for the $(p,q)$-analogue of the $r$-Fibonacci polynomial.** Let $R$ be a
 commutative semiring, let $r \ge 1$, $n \ge r$ and $m$ be natural numbers and let
@@ -681,27 +555,6 @@ public theorem_wanted negRLucas_generatingFunction {A : Type*} [CommRing A] {r :
         + PowerSeries.C (x * ↑y⁻¹) * PowerSeries.X ^ (r + 1)) *
       PowerSeries.mk (fun n => negRLucas r x y n)
       = PowerSeries.C ((r : A) + 1) - PowerSeries.C (↑y⁻¹ : A) * PowerSeries.X ^ r
-
-/-- **Binet formula for the (-r)-Fibonacci polynomials.** Let $K$ be a field, $r \ge 2$,
-$x \in K$ and $y \in K$ nonzero, and write $U_n = U^{(-r)}_n(x, y)$. Suppose that
-$\beta_0, \dots, \beta_r \in K$ are pairwise distinct and that
-$t^{r+1} - y^{-1} t + x y^{-1} = \prod_{k=0}^{r} (t - \beta_k)$ as polynomials over $K$. Then for
-every $n \ge 0$,
-$$U_{n+1} = \sum_{k=0}^{r} \frac{\beta_k^{n+r+1}}{r \beta_k^{r+1} - x y^{-1}},$$
-where a term whose denominator vanishes is read as $0$.
-
-The paper's hypothesis $x \ne \frac{r}{r+1} ((r+1) y)^{-1/r}$ is replaced by the distinctness of
-the zeros (compare Lemma 1).
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Theorem 9 (`integers-2025-A38-thm-9`). -/
-public theorem_wanted negRFibonacci_eq_sum_roots {K : Type*} [Field K] {r : ℕ} (hr : 2 ≤ r)
-    (x : K) (y : Kˣ) (β : Fin (r + 1) → K) (hβ : Function.Injective β)
-    (hP : (Polynomial.X ^ (r + 1) - Polynomial.C (↑y⁻¹ : K) * Polynomial.X
-      + Polynomial.C (x * ↑y⁻¹) : Polynomial K) = ∏ k, (Polynomial.X - Polynomial.C (β k)))
-    (n : ℕ) :
-    negRFibonacci r x y (n + 1) = ∑ k, β k ^ (n + r + 1) / (r * β k ^ (r + 1) - x * ↑y⁻¹)
 
 /-- **Binet formula for the companion sequence $V^{(-r)}$.** Let $K$ be a field, $r \ge 2$ a
 natural number, $x \in K$ and $y$ a unit of $K$, and let $V^{(-r)}_n(x, y)$ be the companion

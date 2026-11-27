@@ -15,4 +15,4 @@ where $\operatorname{li}$ is the logarithmic integral.
 
 ## Sources
 
-- Christian Axler, *Effective Estimates for Some Functions Defined over Primes*, INTEGERS 24 (2024), Article A34, Proposition 8; `S(x)` as in the paper's equation (6.5).
+- Christian Axler, *Effective Estimates for Some Functions Defined over Primes*, INTEGERS 24 (2024), Article A34, Proposition 8; `S(x)` as in the paper's equation (56).

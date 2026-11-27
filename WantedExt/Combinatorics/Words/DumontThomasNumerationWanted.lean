@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Words.DumontThomasAcceptedWords
 public import MathlibExt.Combinatorics.Words.DumontThomasNumeration
+public import MathlibExt.Combinatorics.Words.DumontThomasProperPrefix
 
 namespace MetaMathlibExt
 
@@ -44,22 +45,6 @@ public theorem_wanted dumontThomas_numeration {A : Type*} (η : A → List A)
           ((List.range (k' + 1)).reverse.map fun j => morphIterate η j (s' j).1).flatten) →
         k' = k ∧ ∀ i ≤ k, s' i = s i
 
-/-- **Decomposition of a proper prefix of an iterated image.** Let $\eta$ be a substitution on
-an alphabet $A$, let $\ell \ge 1$ and $a \in A$, and let $m$ be a proper prefix of
-$\eta^\ell(a)$, that is, a prefix of strictly smaller length. Then there are words $m'$ and
-$m''$ over $A$ and a letter $a' \in A$ such that $m'a'$ is a prefix of $\eta(a)$, $m''$ is a
-proper prefix of $\eta^{\ell-1}(a')$, and $m = \eta^{\ell-1}(m')\,m''$.
-
-Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
-ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.5 (Dumont and Thomas, Lemma 1.4). -/
-public theorem_wanted properPrefix_morphIterate_decomposition {A : Type*} (η : A → List A)
-    (hη : IsSubstitution η) (ℓ : ℕ) (hℓ : 1 ≤ ℓ) (a : A) (m : List A)
-    (hm : m <+: morphIterate η ℓ [a]) (hlt : m.length < (morphIterate η ℓ [a]).length) :
-    ∃ (m' : List A) (a' : A) (m'' : List A), m' ++ [a'] <+: η a ∧
-      m'' <+: morphIterate η (ℓ - 1) [a'] ∧
-      m''.length < (morphIterate η (ℓ - 1) [a']).length ∧
-      m = morphIterate η (ℓ - 1) m' ++ m''
-
 /-- **Proper prefixes of iterated images have unique admissible expansions.** Let $\eta$ be a
 substitution on an alphabet $A$, let $x \in A$, let $p \ge 1$, and let $m$ be a proper prefix
 of $\eta^p(x)$. Then there is an $x$-admissible sequence $(m_i, a_i)_{0 \le i \le p-1}$ with
@@ -78,29 +63,6 @@ public theorem_wanted existsUnique_letterAdmissibleSequence_of_properPrefix {A :
         m.length = ∑ j ∈ Finset.range p, (morphIterate η j (s' j).1).length →
         ∀ i < p, s' i = s i) ∧
       m = ((List.range p).reverse.map fun j => morphIterate η j (s j).1).flatten
-
-/-- **Tails are injective and order-preserving.** Let $\eta$ be a substitution, let $x$ be a
-letter, let $p \ge 1$, and let $(m_j, a_j)_{j = 0, \dots, p-1}$ and
-$(m'_j, a'_j)_{j = 0, \dots, p-1}$ be $x$-admissible sequences. Put
-$n = \sum_{j<p} |\eta^j(m_j)|$ and $n' = \sum_{j<p} |\eta^j(m'_j)|$, and let $t$ and $t'$ be the
-digit words $|m_{p-1}| \cdots |m_0|$ and $|m'_{p-1}| \cdots |m'_0|$. Then $n = n'$ if and only if
-$t = t'$, and $n < n'$ if and only if $t$ is lexicographically smaller than $t'$, with digits
-compared as natural numbers.
-
-Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
-ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.12. -/
-public theorem_wanted tail_injective_and_strictMono {A : Type*} (η : A → List A)
-    (hη : IsSubstitution η) (p : ℕ) (hp : 1 ≤ p) (x : A) (s s' : ℕ → List A × A)
-    (hs : IsLetterAdmissibleSequence η x s (p - 1))
-    (hs' : IsLetterAdmissibleSequence η x s' (p - 1)) :
-    ((∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length =
-        ∑ j ∈ Finset.range p, (morphIterate η j (s' j).1).length) ↔
-      (List.range p).reverse.map (fun j => (s j).1.length) =
-        (List.range p).reverse.map (fun j => (s' j).1.length)) ∧
-    ((∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length <
-        ∑ j ∈ Finset.range p, (morphIterate η j (s' j).1).length) ↔
-      (List.range p).reverse.map (fun j => (s j).1.length) <
-        (List.range p).reverse.map (fun j => (s' j).1.length))
 
 /-- **Dumont–Thomas numeration for right-infinite periodic points.** Let $\eta$ be a
 substitution on an alphabet $A$, let $a \in A$ be a growing letter, i.e.
