@@ -195,14 +195,6 @@ private theorem untiltRoot_npow (x : PreTilt 𝓞_ℂ_[p] p) (n c : ℕ) :
     (x ^ c).untiltRoot n = x.untiltRoot n ^ c := by
   rw [PreTilt.untiltRoot, PreTilt.untiltRoot, iterate_map_pow, map_pow]
 
-/-- `(F^{-k} x) ^ (p ^ k) = x` in the tilt. -/
-private theorem iterate_frobeniusEquiv_symm_pow (k : ℕ) (x : PreTilt 𝓞_ℂ_[p] p) :
-    ((frobeniusEquiv (PreTilt 𝓞_ℂ_[p] p) p).symm^[k] x) ^ p ^ k = x := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    rw [Function.iterate_succ_apply', pow_succ', pow_mul, frobeniusEquiv_symm_pow_p, ih]
-
 /-! ### Fontaine's `ε` generates `ℤ_p(1)` -/
 
 /-- Fontaine's `ε = (1, ζ_p, ζ_{p²}, …)` generates `ℤ_p(1)`: `(ε^{1/p})♯ = ζ_p` is a primitive
@@ -254,7 +246,7 @@ private theorem exists_logTeichmuller_eq_add {ε₀ : PreTilt 𝓞_ℂ_[p] p} (h
     change (ε * ε₀ ^ (p ^ k - b)).untiltRoot k = 1
     rw [untiltRoot_mul, untiltRoot_npow, ← hb, ← pow_add, Nat.add_sub_cancel' hbk,
       PreTilt.untiltRoot_pow, h₀]
-  have hηp := iterate_frobeniusEquiv_symm_pow p k (ε * ε₀ ^ (p ^ k - b))
+  have hηp := iterate_frobeniusEquiv_symm_pow_p_pow (PreTilt 𝓞_ℂ_[p] p) p (ε * ε₀ ^ (p ^ k - b)) k
   have hηp1 : (((frobeniusEquiv (PreTilt 𝓞_ℂ_[p] p) p).symm^[k]
       (ε * ε₀ ^ (p ^ k - b))) ^ p ^ k).untilt = 1 := by rw [hηp]; exact hx1
   have e1 := logTeichmuller_mul p h hc0 hx1
