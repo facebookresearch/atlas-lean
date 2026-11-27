@@ -109,10 +109,7 @@ def rawCoefficientComplexHeightIso :
       have hDegree (n : ℕ) (q : (coefficientComplex R L M₁).X n) :
           rawCoefficientComplexHeightDegreeEquiv.{u, v, v', w, w', z, t} R L M n q =
             ULift.up (h.toLinearMap.lTensor (⋀[R]^n L) q) := by
-        induction q using TensorProduct.induction_on with
-        | zero =>
-            exact (rawCoefficientComplexHeightDegreeEquiv.{u, v, v', w, w', z, t} R L M n).map_zero.trans
-              (congrArg ULift.up (h.toLinearMap.lTensor (⋀[R]^n L)).map_zero).symm
+        induction q using TensorProduct.inductionOn with
         | add q r hq hr =>
             exact ((rawCoefficientComplexHeightDegreeEquiv.{u, v, v', w, w', z, t} R L M n).map_add q r).trans
               ((congrArg₂ (fun x y => x + y) hq hr).trans
@@ -200,10 +197,7 @@ theorem rawCoefficientULiftComplexIso_height :
   change A p = B p
   cases p with
   | up p =>
-      induction p using TensorProduct.induction_on with
-      | zero =>
-          change A 0 = B 0
-          exact A.map_zero.trans B.map_zero.symm
+      induction p using TensorProduct.inductionOn with
       | add p q hp hq =>
           change A (ULift.up p + ULift.up q) = B (ULift.up p + ULift.up q)
           exact (A.map_add _ _).trans ((congrArg₂ (fun x y => x + y) hp hq).trans
