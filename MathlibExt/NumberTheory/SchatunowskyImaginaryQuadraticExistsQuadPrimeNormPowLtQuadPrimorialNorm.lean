@@ -28,13 +28,12 @@ import Mathlib.Data.Finset.Card
 /-!
 # Prime norm powers eventually fall below the quadratic primorial
 
-The `n`-th prime norm is at most `4 ^ (n + 1)`, the primorial norm is at least
-`(n + 1)!`, and every fixed power of the prime norm eventually falls below the
-primorial norm.
-
-Statement-only targets from Hirofumi Nakai, Ken Sasaki and Konoka Yoshida,
-*Schatunowsky-type Theorems for Imaginary Quadratic Integer Rings of Class Number One*,
-INTEGERS 26 (2026), Article A110.
+The `(n + 1)`-st prime norm satisfies `quadPrimeNorm K (n + 1) ≤ 4 ^ (n + 1)`, the primorial norm
+is at least `(n + 1)!`, and every fixed power of the prime norm eventually falls below the primorial
+norm. This is an ideal-norm generalization of Proposition 4 of Hirofumi Nakai, Ken Sasaki and Konoka
+Yoshida, *Schatunowsky-type Theorems for Imaginary Quadratic Integer Rings of Class Number One*,
+INTEGERS 26 (2026), Article A110, whose source assumes class number one; the proof here needs no
+class number assumption.
 -/
 
 open NumberField
@@ -200,8 +199,9 @@ private theorem primeNorm_eq_nth {K : Type*} [Field K] [NumberField K] (n : ℕ)
       Nat.nth (fun x => ∃ P : Ideal (𝓞 K), P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P = x) n := by
   simp only [quadPrimeNorm, Nat.succ_ne_zero, ite_false, Nat.add_sub_cancel]
 
-/-- The `n`-th prime norm is at most `4 ^ (n + 1)`: the first `n + 1` rational
-primes give distinct prime ideal norms below the square of the `n`-th prime. -/
+/-- The `(n + 1)`-st prime norm is at most `4 ^ (n + 1)`: the first `n + 1` rational primes give
+distinct ideal norms at most the square of the last prime, so
+`quadPrimeNorm K (n + 1) ≤ 4 ^ (n + 1)`. -/
 private theorem primeNorm_le_four_pow {K : Type*} [Field K] [NumberField K]
     (hK : Module.finrank ℚ K = 2) (n : ℕ) :
     quadPrimeNorm K (n + 1) ≤ 4 ^ (n + 1) := by
