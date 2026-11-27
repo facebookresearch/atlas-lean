@@ -85,6 +85,32 @@ example (n : ℕ) (hn : 1 ≤ n) :
     field_simp
     linarith
 
+-- Check the original type and named arguments through the production import.
+example (k : ℕ) (hk : 1 ≤ k) (n : ℕ) (hn : 4 ≤ n) :
+    (1 / (genLeonardo k n : ℝ)) ^ 2 ≤
+        (1 / (genLeonardo k (n - 1) : ℝ)) * (1 / (genLeonardo k (n + 1) : ℝ)) ∧
+      (1 / (genLeonardo k (n - 1) : ℝ) / (n - 1).factorial) *
+          (1 / (genLeonardo k (n + 1) : ℝ) / (n + 1).factorial) ≤
+        (1 / (genLeonardo k n : ℝ) / n.factorial) ^ 2 :=
+  inv_genLeonardo_logBalanced (k := k) (n := n) hk hn
+
+-- At the first covered index for k = 1, the neighboring terms are 5 and 15.
+example : (1 / 9 : ℝ) ^ 2 ≤ (1 / 5) * (1 / 15) ∧
+    (1 / 5 / Nat.factorial 3 : ℝ) * (1 / 15 / Nat.factorial 5) ≤
+      (1 / 9 / Nat.factorial 4) ^ 2 :=
+  inv_genLeonardo_logBalanced 1 le_rfl 4 le_rfl
+
+-- The first propagated case for k = 2 uses the triple 22, 37, 61.
+example : (1 / 37 : ℝ) ^ 2 ≤ (1 / 22) * (1 / 61) ∧
+    (1 / 22 / Nat.factorial 5 : ℝ) * (1 / 61 / Nat.factorial 7) ≤
+      (1 / 37 / Nat.factorial 6) ^ 2 :=
+  inv_genLeonardo_logBalanced 2 (by decide) 6 (by decide)
+
+-- At index three the log-convexity inequality for the reciprocals fails for k = 1.
+example : (1 / (genLeonardo 1 2 : ℝ)) * (1 / (genLeonardo 1 4 : ℝ)) <
+    (1 / (genLeonardo 1 3 : ℝ)) ^ 2 := by
+  norm_num [genLeonardo]
+
 -- At the first covered index the three partial sums are 2, k + 4 and 3k + 7.
 example (k : ℕ) (hk : 1 ≤ k) : 2 * (3 * (k : ℤ) + 7) ≤ (k + 4 : ℤ) ^ 2 := by
   convert! genLeonardo_partialSum_logConcave k hk 2 (by decide) using 1 <;>
