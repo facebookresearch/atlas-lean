@@ -13632,7 +13632,6 @@
   "MathlibExt/NumberTheory/QuadraticPackingPolynomials": {"to": "NumberTheory/quadratic-forms-sums-of-squares", "title": "Quadratic packing polynomials"},
   "MathlibExt/NumberTheory/QuadraticPackingPolynomialsShearedCriterion": {"to": "NumberTheory/quadratic-forms-sums-of-squares", "title": "Quadratic packing polynomials"},
   "MathlibExt/NumberTheory/RFibonacciPolynomial": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "r-Fibonacci and r-Lucas polynomials"},
-  "MathlibExt/NumberTheory/RFibonacciPolynomialNegRFibonacciEqSumRoots": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "r-Fibonacci and r-Lucas polynomials"},
   "MathlibExt/NumberTheory/RFibonacciPolynomialSum": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "r-Fibonacci and r-Lucas polynomials"},
   "MathlibExt/NumberTheory/RLucasPolynomial": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "r-Fibonacci and r-Lucas polynomials"},
   "MathlibExt/NumberTheory/RLucasPolynomialAlternatingSum": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "r-Fibonacci and r-Lucas polynomials"},
