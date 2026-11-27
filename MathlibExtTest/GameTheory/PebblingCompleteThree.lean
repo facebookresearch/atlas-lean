@@ -20,6 +20,16 @@ example : ¬ IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) 1) ![4, 0, 1] :=
 example : ¬ IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) 2) ![4, 3, 4] :=
   pebbling_completeThree_isN_of_le_fourK 2 (by decide) _ (by decide) (by decide)
 
+-- At `ℓ = 1`, the largest pile reaches its upper bound and one pile is empty.
+example : ¬ IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) 2) ![3, 0, 8] :=
+  pebbling_completeThree_isN_of_le 2 1 (by decide) (by decide) (by decide) _
+    (by decide) (by decide) (by decide)
+
+-- At `ℓ = 2 * k - 1`, the smallest pile reaches its bound and both donors have just `k + 1`.
+example : ¬ IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) 3) ![4, 1, 4] :=
+  pebbling_completeThree_isN_of_le 3 5 (by decide) (by decide) (by decide) _
+    (by decide) (by decide) (by decide)
+
 -- At the smallest positive k, the reply leaves exactly one pebble on each vertex.
 example : IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) 1) ![5, 0, 0] :=
   pebbling_completeThree_isP_twoKAddThree 1 (by decide) (Equiv.refl _)
