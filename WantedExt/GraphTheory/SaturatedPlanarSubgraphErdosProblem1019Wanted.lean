@@ -45,15 +45,23 @@ def containsSaturatedPlanarGraph : Prop :=
       H.edgeSet.ncard = 3 * m - 6 ∧ ∀ i j, H.Adj i j → G.Adj (f i) (f j)
 
 /--
-No published proof is known. The claimed resolution, that such a graph contains `K_4` or a double
-pyramid `C_l + 2K_1` (`l ≥ 3`), both saturated planar graphs, rests on Simonovits's PhD thesis,
-which has no bibliographic entry and is the sole source of its proof, and on S. Cambie's
-unrefereed proof in the erdosproblems.com/1019 comments; Simonovits's published 1975 paper does
-not settle the problem. erdosproblems.com/1019 lists the problem as proved (Lean). Source: T. F.
-Bloom, Erdős Problems, Problem #1019, https://www.erdosproblems.com/1019 (status PROVED (LEAN));
-claimed resolution: M. Simonovits, PhD thesis (no bibliographic entry); unrefereed proof by S.
-Cambie in the erdosproblems.com/1019 comments, G contains K_4 or C_l + 2K_1 for some l ≥ 3,
-https://www.erdosproblems.com/1019.
+No refereed proof is published. The resolution, that such a graph contains `K_4` or a double
+pyramid `C_l + 2K_1` (`l ≥ 3`), both saturated planar graphs, is credited to Simonovits's PhD
+thesis, cited on erdosproblems.com without a bibliographic entry; S. Cambie gave an unrefereed
+proof in the erdosproblems.com/1019 comments, and the result is formalized in Lean
+(plby/lean-proofs, `Erdos1019.lean`, whose `erdos_1019_sharp` states the `K_4`-or-`C_l + 2K_1`
+result). erdosproblems.com/1019 lists the problem as proved (Lean) for C. Y. Ren's formalization
+with topological planarity, which reuses that combinatorial core. By the erdosproblems.com/1019
+discussion, Simonovits's 1975 paper (below) does not settle the problem. Source: T. F. Bloom,
+Erdős Problems, Problem #1019, https://www.erdosproblems.com/1019 (status PROVED (LEAN));
+resolution: M. Simonovits, PhD thesis (cited on erdosproblems.com without a bibliographic entry);
+unrefereed proof by S. Cambie in the erdosproblems.com/1019 comments, G contains K_4 or C_l + 2K_1
+for some l ≥ 3, https://www.erdosproblems.com/1019; formal proofs: plby/lean-proofs,
+src/latest/ErdosProblems/Erdos1019.lean (`erdos_1019_sharp`), and C. Y. Ren, Lean formalization
+with topological planarity (`erdos_1019_saturated_planar`), CollinYuanjieRen/awards,
+submissions/jsp-000849-cyr; not settled by: M. Simonovits, On graphs not containing large
+saturated planar graphs, in Infinite and Finite Sets (Keszthely, 1973), Colloq. Math. Soc. János
+Bolyai 10 (1975), 1365-1386.
 -/
 public theorem_wanted containsSaturatedPlanarGraph_holds : containsSaturatedPlanarGraph
 

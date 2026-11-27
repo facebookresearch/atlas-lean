@@ -53,15 +53,17 @@ def triangleIndependentPlusTransversal : Prop :=
     4 * (triangleIndependenceNumber G + triangleTransversalNumber G) ≤ n ^ 2
 
 /--
-Reported true, but the only proof is an unpublished preprint, not a refereed source: Norin and Sun
-show `α₁(G) + τ_B(G) ≤ |V(G)|²/4`, where `τ_B(G)` is the least number of edges whose removal makes
-`G` bipartite; removing those edges destroys every triangle, so `τ₁(G) ≤ τ_B(G)`. Puleo's paper
-restates the result as its Theorem 1.1, with credit to the preprint. erdosproblems.com/621 lists
-the problem as proved. Source: T. F. Bloom, Erdős Problems, Problem #621,
-https://www.erdosproblems.com/621 (status PROVED (LEAN)); proof: S. Norin and Y. R. Sun,
-Triangle-independent sets vs. cuts, unpublished preprint, arXiv:1602.04370 (2016),
-https://arxiv.org/abs/1602.04370; restated in G. J. Puleo, Graphs with α₁ and τ₁ both large,
-Graphs Combin. 34 (2018), 639-645, Theorem 1.1, https://doi.org/10.1007/s00373-018-1902-z.
+No refereed proof is published: the proof is Norin and Sun's preprint, which has been formalized
+in Lean (plby/lean-proofs, `Erdos621.lean`). Norin and Sun show `α₁(G) + τ_B(G) ≤ |V(G)|²/4`,
+where `τ_B(G)` is the least number of edges whose removal makes `G` bipartite; removing those
+edges destroys every triangle, so `τ₁(G) ≤ τ_B(G)`. Puleo's paper restates the result as its
+Theorem 1.1, with credit to the preprint. erdosproblems.com/621 lists the problem as proved
+(Lean). Source: T. F. Bloom, Erdős Problems, Problem #621, https://www.erdosproblems.com/621
+(status PROVED (LEAN)); proof: S. Norin and Y. R. Sun, Triangle-independent sets vs. cuts,
+unpublished preprint, arXiv:1602.04370 (2016), https://arxiv.org/abs/1602.04370; restated in
+G. J. Puleo, Graphs with α₁ and τ₁ both large, Graphs Combin. 34 (2018), 639-645, Theorem 1.1,
+https://doi.org/10.1007/s00373-018-1902-z; formal proof plby/lean-proofs,
+src/latest/ErdosProblems/Erdos621.lean (`erdos_conjecture`).
 -/
 public theorem_wanted triangleIndependentPlusTransversal_holds : triangleIndependentPlusTransversal
 
