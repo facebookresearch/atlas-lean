@@ -8,6 +8,7 @@ There is an algorithm that decides, given an ordinary Petri net $(N, M_0)$ and a
 - [Reachability set and reachability graph](../reachability-set-and-reachability-graph.md)
 - [The coverability graph algorithm](coverability-graph-algorithm.md)
 - [Connected and strongly connected nets](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md)
+- [Petri nets are well-structured transition systems](petri-nets-are-well-structured-transition-systems.md)
 
 ## Proof depends on
 
