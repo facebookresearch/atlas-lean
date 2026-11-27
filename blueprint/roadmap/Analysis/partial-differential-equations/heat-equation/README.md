@@ -11,6 +11,7 @@ The pages below give the properties of $\Phi$ in every finite dimension, the wea
 subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy problem.
 
 - [Heat-kernel solution](heat-solution.md)
+- [The one-dimensional heat solution as a heat-kernel convolution](heat-solution-eq-kernel.md)
 - [The Gaussian heat kernel solves the heat equation](heat-kernel-solves-heat-equation.md)
 - [Fundamental solution of the heat equation](heat-kernel.md)
 - [The heat kernel is positive](heat-kernel-pos.md)
@@ -30,4 +31,10 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
   with zero potential the Fokker–Planck equation is the heat equation, the Wasserstein gradient flow
   of the Boltzmann entropy (Jordan, Kinderlehrer and Otto).
 - [Fokker–Planck equation](../../../Probability/stochastic-calculus/fokker-planck-equation/README.md):
+- [Heat evolution for exponentially growing data](heat-evolution-for-exponentially-growing-data/README.md)
+- [Spatial derivatives of the heat solution](spatial-derivatives-of-the-heat-solution/README.md)
+- [Heat-kernel initial-value construction in one dimension](heat-kernel-initial-value-construction-in-one-di/README.md)
+- [Joint continuity of the heat evolution at initial time](joint-continuity-of-the-heat-evolution-at-initia/README.md)
+- [Joint positive-time smoothness of heat evolution](joint-positive-time-smoothness-of-heat-evolution/README.md)
+- [One-dimensional heat-kernel derivatives and domination](one-dimensional-heat-kernel-derivatives-and-domi/README.md)
   the drift–diffusion equation that reduces to the heat equation without drift.

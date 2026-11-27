@@ -8,3 +8,5 @@
 - [Linear bound on differences of powers for the Trotter formula](norm-pow-sub-pow-le-2.md)
 - [Trotter product formula](tendsto-trotter-product.md)
 - [Trotter product formula for commuting elements](trotter-product-of-commute.md)
+- [Lie–Trotter error bounds](lie-trotter-error-bounds/README.md)
+- [Time-ordered products and the time-ordered exponential](time-ordered-products-and-the-time-ordered-expon/README.md)

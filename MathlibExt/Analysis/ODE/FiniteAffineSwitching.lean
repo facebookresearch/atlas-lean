@@ -815,7 +815,7 @@ private lemma branch1_hasDerivAt (t : ℝ) :
   have hval : (0:ℝ) - Real.exp (-t) * -1 = Real.exp (-t) := by ring
   exact hsub.congr_deriv hval
 
-private lemma twoLevel_ode0 (t : ℝ) (ht : t ∈ Ioo (0:ℝ) 1) :
+private lemma twoLevel_ode0 (t : ℝ) (ht : t ∈ Ioo (0 : ℝ) 1) :
     HasDerivAt twoLevelTrajectory
       (twoLevelA (twoLevelTrajectory t) + twoLevelForcing t) t := by
   have h1 := branch1_hasDerivAt t
@@ -834,7 +834,7 @@ private lemma twoLevel_ode0 (t : ℝ) (ht : t ∈ Ioo (0:ℝ) 1) :
     ring
   exact (h1.congr_of_eventuallyEq hev).congr_deriv hval
 
-private lemma twoLevel_ode1 (t : ℝ) (ht : t ∈ Ioo (1:ℝ) 2) :
+private lemma twoLevel_ode1 (t : ℝ) (ht : t ∈ Ioo (1 : ℝ) 2) :
     HasDerivAt twoLevelTrajectory
       (twoLevelA (twoLevelTrajectory t) + twoLevelForcing t) t := by
   have hinner : HasDerivAt (fun s : ℝ => -(s - 1)) (-1) t := by

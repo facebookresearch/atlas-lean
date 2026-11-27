@@ -24,5 +24,5 @@ A full proof page must still establish:
 
 ## Sources
 
-- S. P. Otto and M. C. Whitlock, "The probability of fixation in populations of changing size", *Genetics*, 1997, <https://docslib.org/download/3490747/the-probability-of-fixation-in-populations-of-changing-size> (background)
+- S. P. Otto and M. C. Whitlock, "The probability of fixation in populations of changing size", *Genetics* 146(2) (1997), 723–733, <https://doi.org/10.1093/genetics/146.2.723>, also at <https://pmc.ncbi.nlm.nih.gov/articles/PMC1208011/> (background)
 - R. N. Gutenkunst, R. D. Hernandez, S. H. Williamson and C. D. Bustamante, "Inferring the joint demographic history of multiple populations from multidimensional SNP frequency data", *PLoS Genetics* 5(10):e1000695, 2009, <https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000695> (background)

@@ -8,3 +8,5 @@
 ## Related topics
 
 - [Pole placement](../../control-theory/pole-placement/README.md): a linear feedback that puts the eigenvalues of the closed loop in the open left half-plane stabilises a controllable linear system, and through the linearisation a nonlinear one (Coron, *Control and Nonlinearity*, Theorem 10.14).
+- [Scalar linearized stability (conditional decay)](scalar-linearized-stability-conditional-decay/README.md)
+- [The unstable branch of the logistic traveling-wave ODE](the-unstable-branch-of-the-logistic-traveling-wa/README.md)

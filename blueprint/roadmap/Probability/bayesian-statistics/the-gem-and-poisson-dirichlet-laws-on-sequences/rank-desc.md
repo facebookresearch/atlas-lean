@@ -1,0 +1,3 @@
+# The k-th largest value of a sequence
+
+For a real sequence $p$ and $k \in \mathbb{N}$, the $k$-th largest value of $p$, counted with multiplicity from $k = 0$, is the supremum over $(k+1)$-element index sets $s$ of $\min_{i \in s} p_i$, as a real number: when these minima are unbounded above (for example for $p_i = i$) the real supremum is read as $0$. In general this is a supremum, not an entry of $p$: for $p_n = 1 - 1/(n+1)$ the value at $k = 0$ is $1$, attained by no entry. For a nonnegative sequence tending to $0$ the supremum is attained and the value is the $k$-th entry of the decreasing rearrangement, padded with zeros when fewer than $k + 1$ entries are positive.

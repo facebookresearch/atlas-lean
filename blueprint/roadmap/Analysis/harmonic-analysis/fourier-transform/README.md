@@ -25,3 +25,5 @@ The Fourier transform on R^n and Schwartz functions: convolution, Bochner, Hausd
 - [Convolution of an integrable kernel with a bounded signal](convolution-of-an-integrable-kernel-with-a-bounded-signal.md)
 - [The L² Fourier transform agrees with the Fourier integral on L¹ ∩ L²](the-l2-fourier-transform-agrees-with-the-fourier-integral-on-l1-cap-l2.md)
 - [Convolution with an integrable kernel acts on L² as a Fourier multiplier](convolution-with-an-integrable-kernel-acts-on-l2-as-a-fourier-multiplier.md)
+
+- [Fourier restriction and smoothing estimates](restriction-and-smoothing/README.md)

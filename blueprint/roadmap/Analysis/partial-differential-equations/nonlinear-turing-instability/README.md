@@ -52,3 +52,5 @@ mode is non-homogeneous and the instability is driven by diffusion.
 
 - [Nonlinear instability from an unstable Neumann mode, mild formulation](exists-escape-of-is-unstable-mode-of-mil.md)
 - [Nonlinear Turing instability, mild formulation](turing-instability-exists-escape-of-mild.md)
+- [Linearized instability for semilinear flows](linearized-instability-for-semilinear-flows/README.md)
+- [Linearized instability without an eigenvector](linearized-instability-without-an-eigenvector/README.md)

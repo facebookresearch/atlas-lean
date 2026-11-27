@@ -196,9 +196,10 @@ theorem sat_announce_know {i : Agent} :
   · intro h hφw v hφv hrel
     exact h hφw v hrel hφv
 
-/-- After an announcement, common knowledge ranges over exactly the group
-paths whose steps land in announced worlds, with the announced body
-required, via the announcement, at every reached world. -/
+/-- Common knowledge after an announcement: `announce φ (common G ψ)` holds at `w` iff,
+when `φ` holds at `w`, `announce φ ψ` holds at every world reached from `w` by a group
+path whose steps (by agents in `G`) each land in a world where `φ` holds. The guard is
+`φ` at the starting world, and the path of length zero counts, so `w` is reached. -/
 theorem sat_announce_common {G : Set Agent} :
     Sat M (.announce φ (.common G ψ)) w ↔
       (Sat M φ w → ∀ v, Relation.ReflTransGen

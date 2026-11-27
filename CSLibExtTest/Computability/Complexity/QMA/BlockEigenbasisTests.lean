@@ -40,8 +40,6 @@ theorem blockProd_one_apply {m : ℕ}
     blockProd ψ s = ψ 0 (Fin.cast (by rw [one_mul]) s) := by
   first
     | simp only [blockProd, Fin.prod_univ_one, blockDigit_one_apply]
-    | simp only [blockProd, Fin.univ_one, Finset.prod_singleton,
-      blockDigit_one_apply]
 
 /-- For two one-qubit blocks, the block product agrees with Atlas
 `tensorProd` on every index. -/

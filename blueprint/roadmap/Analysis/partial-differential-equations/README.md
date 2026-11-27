@@ -24,23 +24,9 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Conservation laws with concave flux](conservation-laws-with-concave-flux/README.md)
 - [Analytic elliptic regularity](analytic-elliptic-regularity.md)
 
-- [Global regularity of the three-dimensional Navier–Stokes equations](global-regularity-of-the-navier-stokes-equations.md)
 
 - [Optimality system for linear-quadratic elliptic optimal control](optimality-system-for-linear-quadratic-elliptic-optimal-control.md)
-- [Classical Cole–Hopf residual identity](classical-cole-hopf-residual-identity/README.md)
-- [Classical exponential-sum Cole–Hopf solutions](classical-exponential-sum-cole-hopf-solutions/README.md)
-- [Cole–Hopf on open time-space domains](cole-hopf-on-open-time-space-domains/README.md)
-- [Diffusive energy](diffusive-energy/README.md)
-- [Forced inverse Cole–Hopf and normalization uniqueness](forced-inverse-cole-hopf-and-normalization-uniqu/README.md)
-- [Heat evolution for exponentially growing data](heat-evolution-for-exponentially-growing-data/README.md)
-- [Spatial derivatives of the heat solution](spatial-derivatives-of-the-heat-solution/README.md)
-- [Heat-kernel initial-value construction in one dimension](heat-kernel-initial-value-construction-in-one-di/README.md)
-- [Strongly continuous semigroups and mild solutions](strongly-continuous-semigroups-and-mild-solution/README.md)
-- [Inverse Cole–Hopf on open intervals](inverse-cole-hopf-on-open-intervals/README.md)
-- [Joint continuity of the heat evolution at initial time](joint-continuity-of-the-heat-evolution-at-initia/README.md)
-- [Joint positive-time smoothness of heat evolution](joint-positive-time-smoothness-of-heat-evolution/README.md)
-- [Linearized instability for semilinear flows](linearized-instability-for-semilinear-flows/README.md)
-- [Linearized instability without an eigenvector](linearized-instability-without-an-eigenvector/README.md)
-- [Normalized inverse classical Cole–Hopf transformation](normalized-inverse-classical-cole-hopf-transform/README.md)
-- [One-dimensional heat-kernel derivatives and domination](one-dimensional-heat-kernel-derivatives-and-domi/README.md)
-- [Recovering Burgers initial data by heat evolution](recovering-burgers-initial-data-by-heat-evolutio/README.md)
+
+
+- [Elliptic rigidity, extrema and inverse problems](elliptic-rigidity-extrema-and-inverse-problems/README.md)
+- [Viscous, dispersive and kinetic evolution](viscous-dispersive-and-kinetic-evolution/README.md)
