@@ -1,9 +1,8 @@
-# Fraction of a sample in complete pairs tends to one half to Fine–Gray risk-set covariate mean in the paired design
+# Number of complete pairs per subject tends to one half to Fine–Gray risk-set covariate mean in the paired design
 
-- [Fraction of a sample in complete pairs tends to one half](tendsto-div-two-div.md)
+- [Number of complete pairs per subject tends to one half](tendsto-div-two-div.md)
 - [Infinite product model for the pairs](pair-model.md)
-- [Cause-of-interest event mass of the first status map](pair-prob-a.md)
-- [Cause-of-interest event mass of the second status map](pair-prob-b.md)
+- [Cause-of-interest event mass of a status map](pair-prob-a.md)
 - [Limit variance of the paired Fine–Gray score](pair-2.md)
 - [Information limit of the paired design](pair-info-limit.md)
 - [Information limit of the paired model at a given coefficient](pair-v.md)

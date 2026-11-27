@@ -1,4 +1,4 @@
-# Identity row of a time-ordered product whose active factors vanish in that row
+# Identity row of a time-ordered product whose active increments vanish in that row
 
 Let $\iota$ be a finite set of states and write $I$ for the identity matrix in $\mathbb{R}^{\iota \times \iota}$. For matrices $A_0, \dots, A_{k-1} \in \mathbb{R}^{\iota \times \iota}$ and a set of active indices given by a predicate on $\{0, \dots, k-1\}$, the time-ordered product is
 

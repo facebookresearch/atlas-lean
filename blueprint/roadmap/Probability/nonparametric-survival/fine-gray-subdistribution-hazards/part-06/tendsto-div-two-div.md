@@ -1,4 +1,4 @@
-# Fraction of a sample in complete pairs tends to one half
+# Number of complete pairs per subject tends to one half
 
 As $n \to \infty$ through the natural numbers,
 

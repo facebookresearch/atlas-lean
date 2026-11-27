@@ -4,7 +4,7 @@
 - [Cause-specific coordinate of the Aalen–Johansen map as a cumulative incidence](aj-map-some-eq-cum-incidence.md)
 - [Survival coordinate of the Aalen–Johansen map as a product of Kaplan–Meier factors](aj-map-none-eq.md)
 - [Time-ordered products depend only on the active factors](ordered-prod-congr-left.md)
-- [Identity row of a time-ordered product whose active factors vanish in that row](ordered-prod-apply-of-row-eq-zero.md)
+- [Identity row of a time-ordered product whose active increments vanish in that row](ordered-prod-apply-of-row-eq-zero.md)
 - [Left-truncated multi-state data](delayed-entry-multi-state-data.md)
 - [Measurability of the Aalen–Johansen map](measurable-aj-map.md)
 - [Differentiability of the joint Aalen–Johansen map](differentiable-at-aj-map.md)

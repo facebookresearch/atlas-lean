@@ -6,7 +6,7 @@ $$
 \lim_{h \to 0^+} \frac{1}{h} P\left(t \le T < t+h,\ J = c \mid T \ge t \text{ or } (T < t,\ J \ne c)\right) = l,
 $$
 
-with the conditional measure and quotient as defined there. Then the [subdistribution hazard](../part-07/subdist-hazard.md) $\lambda^*_c(t)$, defined as this right limit (and as an arbitrary fixed value when the limit does not exist), equals $l$.
+with the conditional measure as defined there and the [quotient](../part-07/subdist-hazard-quotient.md) as defined on its page. Then the [subdistribution hazard](../part-07/subdist-hazard.md) $\lambda^*_c(t)$, defined as this right limit (and as an arbitrary fixed value when the limit does not exist), equals $l$.
 
 ## Sources
 

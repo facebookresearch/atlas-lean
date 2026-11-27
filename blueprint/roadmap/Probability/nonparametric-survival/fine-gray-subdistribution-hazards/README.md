@@ -5,6 +5,6 @@
 - [Fine–Gray weight of a subject at its own observed time to Fine–Gray weights without censoring](part-03/README.md)
 - [Fine–Gray censoring weight to Existence of the subdistribution hazard](part-04/README.md)
 - [Centering of the paired score to Positivity of the paired score variance](part-05/README.md)
-- [Fraction of a sample in complete pairs tends to one half to Fine–Gray risk-set covariate mean in the paired design](part-06/README.md)
+- [Number of complete pairs per subject tends to one half to Fine–Gray risk-set covariate mean in the paired design](part-06/README.md)
 - [Fine–Gray per-event covariate variance in the paired design to Asymptotic coverage of the Fine–Gray cumulative-incidence band](part-07/README.md)
 - [Delta method for the Fine–Gray cumulative incidence to Existence of the Fine–Gray estimator with probability tending to one](part-08/README.md)

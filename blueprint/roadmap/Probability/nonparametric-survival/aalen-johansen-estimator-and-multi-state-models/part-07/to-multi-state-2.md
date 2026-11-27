@@ -1,6 +1,6 @@
 # Delayed-entry multi-state counts as grouped multi-state data
 
-Let $\iota$ be a finite set of states and $k$, $n$ natural numbers. Delayed-entry multi-state data on $k$ grid times and $n$ subjects consist of
+Let $\iota$ be a set of states and $k$, $n$ natural numbers. Delayed-entry multi-state data on $k$ grid times and $n$ subjects consist of
 
 - strictly increasing grid times $t_0 < t_1 < \dots < t_{k-1}$;
 - for each subject $i$, an entry index $\epsilon_i$, either a grid index or $\bot$ (below every grid index);
