@@ -22,6 +22,7 @@
 - [Benjamini–Hochberg rejection as leave-one-out index invariance](mem-bh-rejections-iff-bh-index-eq-update.md)
 - [Measurability of the Benjamini–Hochberg index](measurable-bh-index.md)
 - [Measurability of the false discovery proportion of Benjamini–Hochberg](measurable-false-discovery-proportion-bh.md)
+- [The Benjamini–Hochberg step-up index as a finite supremum](bh-index-eq-sup.md)
 - [Benjamini–Hochberg FDR control for super-uniform nulls](integral-false-discovery-proportion-bh-r-2.md)
 - [Leave-one-out criterion for Benjamini–Hochberg rejection](mem-bh-rejections-iff-le-bh-index-update.md)
 

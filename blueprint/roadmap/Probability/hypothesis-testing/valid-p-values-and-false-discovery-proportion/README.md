@@ -27,6 +27,8 @@
 - [Measurability of the count below a random threshold](measurable-num-below-comp.md)
 - [Measurability of the count below a fixed threshold](measurable-num-below.md)
 - [Measurability of the step-up index](measurable-step-up-index-comp.md)
+- [The step-up index is a qualifying index](step-up-index-mem.md)
+- [The step-up index as a finite supremum](step-up-index-eq-sup.md)
 - [Upper tail of a measure on the natural numbers](upper-tail.md)
 - [Exact upper-tail p-value](upper-tail-pvalue.md)
 - [Upper tails decrease with the cutoff](upper-tail-antitone.md)

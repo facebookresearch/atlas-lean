@@ -2,12 +2,15 @@
 
 Multivariate normal theory and linear models: Gaussian maximum likelihood, Cochran's theorem on quadratic forms, t and F sampling laws, Gauss–Markov and generalized least squares, principal component analysis, regularized covariance estimation by banding, Gaussian graphical models, and sparse high-dimensional regression: exact recovery by basis pursuit under the restricted nullspace property, and $\ell_2$- and prediction-error bounds for the Lasso under restricted eigenvalue conditions. Ridge regression and the lasso as penalized least squares are under [least squares, ridge and lasso regression](../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md), and probabilistic principal component analysis, with the factor-analysis marginal, under [probabilistic principal component analysis](../../ComputerScience/machine-learning/unsupervised-learning/probabilistic-principal-component-analysis/README.md), both in Machine learning.
 
+- [Asymptotic normality of OLS with i.i.d. rows](asymptotic-normality-of-ols-with-i-i-d-rows/README.md)
 - [Cochran's theorem](cochran-s-theorem/README.md)
 - [Chi-square law of Gaussian projection residuals](chi-square-law-of-gaussian-projection-residuals/README.md)
+- [Fixed-design Lasso basic inequality](fixed-design-lasso-basic-inequality/README.md)
 - [Frisch–Waugh–Lovell theorem](frisch-waugh-lovell-theorem/README.md)
 - [Gaussian graphical models](gaussian-graphical-models/README.md)
 - [Generalized least squares](generalized-least-squares/README.md)
 - [Generalized linear models](generalized-linear-models/README.md)
+- [Logistic negative log-likelihood: convexity, gradient, and descent rate](logistic-negative-log-likelihood-convexity-gradi/README.md)
 - [Random-intercept models and the design effect](random-intercept-models-and-the-design-effect/README.md)
 - [Lasso error bounds under restricted eigenvalues](lasso-error-bounds-under-restricted-eigenvalues/README.md)
 - [Negative binomial regression](negative-binomial-regression/README.md)
@@ -25,3 +28,4 @@ Multivariate normal theory and linear models: Gaussian maximum likelihood, Cochr
 - [Factor analysis and structural equation models](factor-analysis-and-structural-equation-models/README.md)
 - [Panel data models](panel-data-models/README.md)
 - [Gauss–Markov covariance minimality](gauss-markov-covariance-minimality.md)
+- [Row relative entropy under deterministic message refinement](gaussian-row-kl-message-refinement.md)

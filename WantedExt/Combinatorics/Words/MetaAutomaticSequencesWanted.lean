@@ -20,6 +20,7 @@ public import MathlibExt.Combinatorics.Words.BalancedNestedXor
 public import MathlibExt.Combinatorics.Words.CobhamUniformMorphism
 public import MathlibExt.Combinatorics.Words.MetaAutomaticOne
 public import MathlibExt.Combinatorics.Words.MetaAutomaticTwo
+public import MathlibExt.Combinatorics.Words.MetaAutomaticTwoDigitMask
 public import MathlibExt.Combinatorics.Words.RegularSequence
 public import MathlibExt.Combinatorics.Words.RightSpecialFactors
 public import MathlibExt.Combinatorics.Words.ThueMorseQuarto
@@ -140,23 +141,6 @@ public theorem_wanted metaAutomaticTwo_dfao (n : ℕ) :
       (fun q d => ([[0, 1, 3, 2], [2, 3, 1, 0], [3, 2, 0, 1], [1, 0, 2, 3]].getD q []).getD d 0)
       0) % 2 = 1)
 
-/-- **$\mathcal{M}_2$ as a coding of a uniform morphic word.** Let $\sigma$ be the $4$-uniform
-morphism on $\{0, 1, 2, 3\}$ with $\sigma(0) = 0132$, $\sigma(1) = 2310$, $\sigma(2) = 3201$ and
-$\sigma(3) = 1023$. There is a sequence $w$ with values in $\{0, 1, 2, 3\}$ such that $w(0) = 0$,
-$w(4n + r)$ is the letter of $\sigma(w(n))$ in position $r$ (counting from $0$) for all $n \ge 0$
-and $0 \le r < 4$, and, for every $n$, the meta-automatic sequence $\mathcal{M}_2$ satisfies
-$\mathcal{M}_2(n) = 1$ if $w(n)$ is odd and $\mathcal{M}_2(n) = 0$ if $w(n)$ is even. Thus
-$w$ is the fixed point of $\sigma$ starting with $0$, and $\mathcal{M}_2$ is its image under the
-coding $0, 2 \mapsto 0$ and $1, 3 \mapsto 1$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Corollary 23 (`jis-2026-26.4.1-cor-23`). -/
-public theorem_wanted metaAutomaticTwo_morphism_coding :
-    ∃ w : ℕ → ℕ, w 0 = 0 ∧
-      (∀ n r, r < 4 → w (4 * n + r) =
-        ([[0, 1, 3, 2], [2, 3, 1, 0], [3, 2, 0, 1], [1, 0, 2, 3]].getD (w n) []).getD r 0) ∧
-      ∀ n, metaAutomaticTwo n = decide (w n % 2 = 1)
-
 /-- **Digit formula for $\mathcal{M}_2$.** For a natural number $n$ and $k \ge 0$, let
 $d_k = \lfloor n / 4^k \rfloor \bmod 4$ be the $k$-th base-$4$ digit of $n$, and write
 $d_k = 2 j_k + i_k$ with $i_k, j_k \in \{0, 1\}$. Let $c_k = i_k + j_k$ if $k \equiv 0 \pmod 3$,
@@ -172,26 +156,6 @@ public theorem_wanted metaAutomaticTwo_digit_formula (n : ℕ) :
     metaAutomaticTwo n = decide ((∑ k ∈ Finset.range (n + 1),
       (if k % 3 = 0 then n / 4 ^ k % 4 % 2 + n / 4 ^ k % 4 / 2
         else if k % 3 = 1 then n / 4 ^ k % 4 / 2 else n / 4 ^ k % 4 % 2)) % 2 = 1)
-
-/-- **$\mathcal{M}_2$ is the Thue–Morse sequence along a binary digit mask.** For a natural
-number $m$ with binary digits $b_i = \lfloor m / 2^i \rfloor \bmod 2$, let $q(m)$ be the sum of
-$b_i 2^i$ over the $i \le m$ with $i \not\equiv 2 \pmod 3$, that is, the number obtained from $m$
-by setting its binary digits in the positions $i \equiv 2 \pmod 3$ to zero. Then for every natural
-number $n$, the meta-automatic sequence $\mathcal{M}_2$ and the Thue–Morse sequence $t$ satisfy
-$\mathcal{M}_2(n) = t(q(n))$. Moreover, writing the base-$4$ digits of $n$ as
-$d_k = \lfloor n / 4^k \rfloor \bmod 4 = 2 j_k + i_k$ with $i_k, j_k \in \{0, 1\}$, we have
-$q(n) = \sum_{k=0}^{n} d'_k 4^k$, where $d'_k = d_k$ if $k \equiv 0 \pmod 3$, $d'_k = 2 j_k$ if
-$k \equiv 1 \pmod 3$, and $d'_k = i_k$ if $k \equiv 2 \pmod 3$.
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Theorem 26 (`jis-2026-26.4.1-thm-26`). -/
-public theorem_wanted metaAutomaticTwo_eq_thueMorse_mask (q : ℕ → ℕ)
-    (hq : ∀ m, q m = ∑ i ∈ (Finset.range (m + 1)).filter (fun i => i % 3 ≠ 2),
-      m / 2 ^ i % 2 * 2 ^ i) (n : ℕ) :
-    metaAutomaticTwo n = thueMorse (q n) ∧
-      q n = ∑ k ∈ Finset.range (n + 1),
-        (if k % 3 = 0 then n / 4 ^ k % 4
-          else if k % 3 = 1 then 2 * (n / 4 ^ k % 4 / 2) else n / 4 ^ k % 4 % 2) * 4 ^ k
 
 /-- **Right-special factor counts of automatic sequences are regular.** Let $k$ be a natural
 number and $a$ an infinite binary word that is $k$-automatic, and for each $n$ let
