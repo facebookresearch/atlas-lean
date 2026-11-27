@@ -25,6 +25,10 @@ import Mathlib.Tactic.Ring
 
 The theorem `tuDengConjecture_holds` bounds the number of modular pairs with small combined
 binary digit sum. The proof follows Cusick's cyclic transfer matrix and coefficient inequalities.
+
+Z. Tu and Y. Deng stated the conjecture in "A conjecture about binary strings and its applications
+on constructing Boolean functions with optimal algebraic immunity", Des. Codes Cryptogr. 60
+(2011), 1–14.
 -/
 
 @[expose] public section

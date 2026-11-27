@@ -346,7 +346,8 @@ private theorem index_dvd_of_isHallPiSubgroup (hG : Nat.card G = 29484) {H : Sub
   exact hcop.dvd_of_dvd_mul_right hdvd
 
 omit [Finite G] in
-/-- Three Hall `{3, 13}`-subgroups of a group of order `29484 > 28 ^ 3` meet nontrivially. -/
+/-- Any three Hall `{3, 13}`-subgroups, not necessarily distinct, of a group of order
+`29484 > 28 ^ 3` meet nontrivially. -/
 private theorem inf_inf_ne_bot_of_card_eq (hG : Nat.card G = 29484)
     {H₁ H₂ H₃ : Subgroup G} (h₁ : IsHallPiSubgroup {3, 13} H₁)
     (h₂ : IsHallPiSubgroup {3, 13} H₂) (h₃ : IsHallPiSubgroup {3, 13} H₃) :
@@ -697,8 +698,12 @@ theorem piCore_eq_bot : piCore {3, 13} group = ⊥ :=
   piCore_eq_bot_of_isPretransitive (Ω := Fin 28) (by simp) card_group _ orderOf_mulG
     ncard_fixedBy_mulG
 
-/-- **Three Hall `{3, 13}`-subgroups of Zenkov's group meet nontrivially.** A Hall
-`{3, 13}`-subgroup of `L₂(27) ⋊ ⟨φ⟩` has index dividing `28`, and `28 ^ 3 < 29484`.
+/-- **Any three Hall $\{3, 13\}$-subgroups of Zenkov's group meet nontrivially.** For any Hall
+$\{3, 13\}$-subgroups $H_1$, $H_2$, $H_3$ of $L_2(27) \rtimes \langle \varphi \rangle$, not
+necessarily distinct, $H_1 \cap H_2 \cap H_3 \ne 1$.
+
+Each of them has order $1053 = 3^4 \cdot 13$ and index $28$ in this group of order
+$29484 = 28 \cdot 1053$, so their intersection has index at most $28^3 = 21952 < 29484$.
 
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 18.31, which attributes
