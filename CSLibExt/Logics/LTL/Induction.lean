@@ -58,8 +58,8 @@ theorem satisfiesAt_shift {k j : ℕ} :
   rw [Semantics.shiftSeq_add]
   exact Iff.rfl
 
-/-- `always` at position `k` means the formula holds at every later
-position. -/
+/-- `always` at position `k` means the formula holds at every position at or after `k`:
+at `k + j` for every `j`, including `j = 0`. -/
 theorem satisfiesAt_always {k : ℕ} :
     SatisfiesAt valuation run k (Formula.always φ) ↔
       ∀ j, SatisfiesAt valuation run (k + j) φ := by
@@ -71,8 +71,8 @@ theorem satisfiesAt_always {k : ℕ} :
   · intro h j
     exact satisfiesAt_shift.mpr (h j)
 
-/-- `eventually` at position `k` means the formula holds at some later
-position. -/
+/-- `eventually` at position `k` means the formula holds at some position at or after `k`:
+at `k + j` for some `j`, possibly `j = 0`. -/
 theorem satisfiesAt_eventually {k : ℕ} :
     SatisfiesAt valuation run k (Formula.eventually φ) ↔
       ∃ j, SatisfiesAt valuation run (k + j) φ := by

@@ -3,5 +3,4 @@
 - [Generalizability](generalizability/README.md)
 - [Generalizability Coefficients](generalizability-coefficients/README.md)
 - [Godambe Inequality](godambe-inequality/README.md)
-- [Graph Sampling](graph-sampling/README.md)
 - [Identifiability](identifiability/README.md)

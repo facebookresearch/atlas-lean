@@ -35,7 +35,7 @@ statements are unchanged. Source: S. Brendle & R. Schoen, *Manifolds with 1/4-pi
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Geometry.MetricCompatibilityShared
+public import MathlibExt.Geometry.MetricCompatibilityShared
 public import Mathlib
 
 @[expose] public section
@@ -52,11 +52,14 @@ namespace Geometry.SphereTheorem
 manifold is homeomorphic to the standard sphere (Berger–Klingenberg–Rauch 1960).
 `differentiable_sphere_theorem`: under the same hypotheses it is diffeomorphic to
 the sphere (Brendle–Schoen 2007, via Ricci flow). The trusted helpers
-(`IsMetricCompatible`, `curv`, `QuarterPinched`) are non-holes; following §38,
-the Levi-Civita connection is hypothesized as a smooth torsion-free
-metric-compatible covariant derivative (Mathlib has the covariant-derivative
-interface but does not yet construct Levi-Civita). Mathlib has no Riemann
-curvature tensor, sectional curvature, pinching, or Ricci flow.
+(`IsMetricCompatible`, imported from `MathlibExt.Geometry.MetricCompatibilityShared`, `curv` and
+`QuarterPinched`) are non-holes; following §38, the Levi-Civita connection is hypothesized as a
+smooth torsion-free metric-compatible covariant derivative. The pinned Mathlib constructs the
+Levi-Civita connection (`CovariantDerivative.leviCivitaConnection`);
+`MathlibExt.Geometry.Manifold.Riemannian.LeviCivita` proves that it is smooth and that, on a
+Hausdorff manifold, a smooth torsion-free metric-compatible connection exists and is unique on
+smooth vector fields (`levi_civita_exists_unique`). Mathlib has no Riemann curvature tensor,
+sectional curvature, pinching, or Ricci flow.
 
 Category-(b) candidates from §121 of the Knill survey.
 -/

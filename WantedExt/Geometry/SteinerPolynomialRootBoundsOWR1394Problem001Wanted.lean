@@ -9,9 +9,11 @@ LICENSE file in the root directory of this source tree.
 /-
 # Roots of Steiner polynomials and in- and circumradius (Oberwolfach Reports 56/2006)
 
-Oberwolfach workshop Konvexgeometrie (2006), Conjecture 1 (M. A. Hernández Cifre, with M. Henk): for
-a convex body `K ⊆ ℝⁿ` with inradius `r` and circumradius `R`, the real parts `a₁ ≤ ⋯ ≤ aₙ` of the
-roots of the Steiner polynomial of `K` satisfy `a₁ ≤ -R ≤ -r ≤ aₙ ≤ 0`.
+Oberwolfach workshop Konvexgeometrie (2006), Conjecture 1 of the report by M. A. Hernández Cifre
+(with M. Henk), a conjecture posed earlier, after a problem of Teissier (Henk and Hernández Cifre,
+arXiv:math/0703373, §1): for a convex body `K ⊆ ℝⁿ` with inradius `r` and circumradius `R`, the
+real parts `a₁ ≤ ⋯ ≤ aₙ` of the roots of the Steiner polynomial of `K` satisfy
+`a₁ ≤ -R ≤ -r ≤ aₙ ≤ 0`.
 -/
 
 module
@@ -29,8 +31,11 @@ namespace MathlibExt.Geometry.SteinerPolynomialRootBoundsOWR1394Problem001Wanted
 
 /-!
 Source: M. A. Hernández Cifre (with M. Henk), in Konvexgeometrie, Oberwolfach Reports 3 (2006), no.
-56, p. 3328, Conjecture 1, DOI 10.4171/OWR/2006/56. UnsolvedMath record UM-30000626
-(`OWR-1394-001`), dataset ulamai/UnsolvedMath v1.8.0.
+56, p. 3328, Conjecture 1, DOI 10.4171/OWR/2006/56. The conjecture is older than the report: Henk
+and Hernández Cifre, Notes on the roots of Steiner polynomials (arXiv:math/0703373, §1), say that it
+was posed earlier, after a problem of Teissier, in their references [10] and [11], and the report
+attributes it to its references [4] and [5]. UnsolvedMath record UM-30000626 (`OWR-1394-001`),
+dataset ulamai/UnsolvedMath v1.8.0.
 
 A convex body is a compact convex set with nonempty interior (MathlibExt's
 `ConvexCovering.IsConvexBody`). The Steiner polynomial is any real polynomial `f` with `f(λ) = vol(K
@@ -74,12 +79,13 @@ Resolved false: Henk and Hernández Cifre (Theorem 1.3) constructed a three-dime
 with nonempty interior (a planar lens plus a small ball) whose Steiner polynomial has all roots with
 real part greater than `-R`, violating `a₁ ≤ -R`; their Theorem 1.2 also gives a body in `ℝ^15` with
 a root of positive real part. Source: M. A. Hernández Cifre (with M. Henk), in Konvexgeometrie,
-Oberwolfach Reports 3 (2006), no. 56, p. 3328, Conjecture 1, DOI 10.4171/OWR/2006/56; resolution: M.
-Henk and M. A. Hernández Cifre, Notes on the roots of Steiner polynomials, Rev. Mat. Iberoam. 24
-(2008), 631-644, arXiv:math/0703373, Theorem 1.3: there is K ∈ K³ (the body L + νB³, L a planar
-lens, ν > 0) such that all real parts of the roots of f(K, B³, s) are greater than -R(K; B³);
-Theorem 1.2: a 2-tangential body in ℝ^15 whose Steiner polynomial has a root with positive real
-part, https://arxiv.org/abs/math/0703373.
+Oberwolfach Reports 3 (2006), no. 56, p. 3328, Conjecture 1 (a conjecture posed earlier, after a
+problem of Teissier; see the module note), DOI 10.4171/OWR/2006/56; resolution: M. Henk and M. A.
+Hernández Cifre, Notes on the roots of Steiner polynomials, Rev. Mat. Iberoam. 24 (2008), 631-644,
+arXiv:math/0703373, Theorem 1.3: there is K ∈ K³ (the body L + νB³, L a planar lens, ν > 0) such
+that all real parts of the roots of f(K, B³, s) are greater than -R(K; B³); Theorem 1.2: a
+2-tangential body in ℝ^15 whose Steiner polynomial has a root with positive real part,
+https://arxiv.org/abs/math/0703373.
 -/
 public theorem_wanted steinerRootBounds_refuted : ¬ steinerRootBounds
 

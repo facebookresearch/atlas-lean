@@ -11,3 +11,4 @@
 - [The continuous existential is not definable in PCF with the parallel conditional](the-continuous-existential-is-not-definable.md)
 - [Plotkin's definability theorem](plotkin-s-definability-theorem.md)
 - [Full abstraction of PCF with the parallel conditional and the existential](full-abstraction-of-pcf-with-parallel-and.md)
+- [Weak initiality of the fully abstract model of PCF](weak-initiality-of-the-fully-abstract-model-of-pcf.md)

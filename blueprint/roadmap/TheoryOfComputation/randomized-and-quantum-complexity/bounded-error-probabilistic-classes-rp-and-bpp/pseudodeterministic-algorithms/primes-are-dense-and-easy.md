@@ -1,6 +1,6 @@
 # The n-bit primes form a dense polynomial-time decidable property
 
-Let $Q_n$ be the set of $n$-bit binary strings (leading bit $1$) encoding a prime. There is a constant $\rho$ such that $|Q_n|\ge n^{-\rho}2^n$ for all $n\ge 2$, and $Q=\bigcup_n Q_n$ is decidable in deterministic polynomial time. Hence $Q$ is dense and easy, and any pseudodeterministic construction for dense easy properties yields one for primes.
+Let $Q_n$ be the set of $n$-bit binary strings (leading bit $1$) encoding a prime, and $Q=\bigcup_n Q_n$. There is a constant $\rho\ge 1$ such that $|Q_n|\ge n^{-\rho}2^n$ for all $n\ge 2$, and $Q$ is decidable in deterministic polynomial time. Since there is no $1$-bit prime, $Q_1=\emptyset$, so $Q$ itself misses the density bound at $n=1$; the language $Q'=Q\cup\{0,1\}^1$, which adds both strings of length $1$, satisfies $|Q'_n|\ge n^{-\rho}2^n$ for every $n\ge 1$, is decidable in deterministic polynomial time, and agrees with $Q$ on every length $n\ge 2$. Hence $Q'$ is dense and easy, and any pseudodeterministic construction for dense easy properties, applied to $Q'$, outputs $n$-bit primes at every length $n\ge 2$ on which it succeeds.
 
 ## Proof sketch
 

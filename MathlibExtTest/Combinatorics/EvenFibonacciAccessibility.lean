@@ -43,3 +43,20 @@ example (D : Set ℕ) (hD : D ⊆ evenFibonacciSet) : ¬ IsRAccessible 2 D := by
     exact Nat.fib_pos.mpr (by omega)
   · obtain ⟨x, hx, hdiff⟩ := h c k hk
     exact ⟨x, hx, fun i hi => (hdiff i hi).imp fun d hd => ⟨hD hd.1, hd.2⟩⟩
+
+-- The obstruction applies at the four-color boundary and to larger palettes.
+example : ¬ IsRAccessible 4 positiveFibonacciSet :=
+  fibonacciSet_degreeOfAccessibility_le_three.1 4 le_rfl
+
+example : ¬ IsRAccessible 7 positiveFibonacciSet :=
+  fibonacciSet_degreeOfAccessibility_le_three.1 7 (by decide)
+
+-- A single coloring works for all four-term progressions of step two, of either parity.
+example : ∃ c : ℕ+ → Fin 4, ∀ a : ℕ+, ¬ IsMonochromatic c
+    (fun i : Fin 4 => ⟨(a : ℕ) + 2 * (i : ℕ), Nat.add_pos_left a.pos _⟩) := by
+  obtain ⟨c, hc⟩ := fibonacciSet_degreeOfAccessibility_le_three.2
+  refine ⟨c, fun a hmono => hc ⟨_, hmono, ?_⟩⟩
+  intro i hi
+  refine ⟨2, ⟨3, by decide, by decide⟩, ?_⟩
+  simp only [PNat.mk_coe, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat]
+  omega
