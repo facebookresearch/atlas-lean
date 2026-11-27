@@ -13,6 +13,7 @@ public import MathlibExt.Combinatorics.Additive.ConsecutiveOrthogonal
 public import MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum
 public import MathlibExt.Combinatorics.Additive.DavenportElementaryTwo
 public import MathlibExt.Combinatorics.Additive.DavenportModuleProd
+public import MathlibExt.NumberTheory.EvenIntersectionSubset
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfDivPrime
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfEvenUnits
 public import MathlibExt.NumberTheory.WeightedZeroSumCosets
@@ -151,16 +152,6 @@ public theorem_wanted exists_weight_orthogonal {a m : ℕ} (hme : Even m) (hm : 
     (v : Fin a → Fin (m + a) → ZMod 2) :
     ∃ w : Fin (m + a) → ZMod 2, (Finset.univ.filter fun j => w j = 1).card = m ∧
       ∀ i, ∑ j, w j * v i j = 0
-
-/-- **An $m$-subset of $\{1, \dots, m + a\}$ meeting $a$ given sets evenly.** Let $m$ be even with
-$2^a \le m$, and let $X_1, \dots, X_a$ be finite sets of natural numbers. Then there is a set
-$Y \subseteq \{1, \dots, m + a\}$ with $|Y| = m$ such that $|Y \cap X_i|$ is even for every $i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 5.4 (`integers-2024-A38-lem-5-4`). -/
-public theorem_wanted exists_card_even_inter {a m : ℕ} (hme : Even m) (hm : 2 ^ a ≤ m)
-    (X : Fin a → Finset ℕ) :
-    ∃ Y : Finset ℕ, Y ⊆ Finset.Icc 1 (m + a) ∧ Y.card = m ∧ ∀ i, Even (Y ∩ X i).card
 
 /-- **Unit-weighted zero sums of even length in $\mathbb{Z}_n$.** Let $n \ge 1$, let $\Omega(n)$ be
 the number of prime factors of $n$ counted with multiplicity, and let $m$ be even with
