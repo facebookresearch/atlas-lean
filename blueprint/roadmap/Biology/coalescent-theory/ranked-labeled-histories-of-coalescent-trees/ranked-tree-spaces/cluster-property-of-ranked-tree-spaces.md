@@ -25,7 +25,7 @@ be the set of transpositions, and let $M(T,R)$ be the set of leaves $a_i$ such t
 
 Then $d_{\mathrm{RNNI}}(T, R) = |P(T,R)| - |M(T,R)|$.
 
-**Corollary 2.** The RNNI distance between two caterpillar trees can be computed in $O(n \log n)$ time.
+**Corollary 2.** The RNNI distance between two caterpillar trees can be computed in $O(n \sqrt{\log n})$ time.
 
 ## Depends on
 

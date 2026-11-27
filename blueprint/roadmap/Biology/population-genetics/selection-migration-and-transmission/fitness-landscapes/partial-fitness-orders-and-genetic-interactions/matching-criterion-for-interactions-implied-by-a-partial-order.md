@@ -10,7 +10,7 @@ the landscape has positive $f$-interaction if $f(W) > 0$. This covers Fourier–
 
 **Corollaries.**
 - (Linear orders; due to Crona et al. 2017.) For a total order, the criterion says that the word obtained by reading genotypes from fittest to least fit, writing $c_i$ letters $P$ for $p_i$ and $d_j$ letters $N$ for $n_j$, is a Dyck word starting with $P$.
-- (Algorithm.) Whether a partial order on $m$ elements implies positive $f$-interaction can be decided in $O(m^3)$ time: build the comparability bipartite graph by breadth-first search on the Hasse diagram and run Hopcroft–Karp in $O(m^{5/2})$. This is exponentially faster than enumerating linear extensions.
+- (Algorithm.) With $m = \sum_i c_i$ (the positive coefficients of $f$ counted with multiplicity), whether a partial order implies positive $f$-interaction can be decided in $O(m^3)$ time: build the comparability bipartite graph by breadth-first search on the Hasse diagram and run Hopcroft–Karp in $O(m^{5/2})$. This is exponentially faster than enumerating linear extensions.
 - (Sparsity.) For forms with coefficients $\pm 1$, the fraction of labelled partial orders on $k$ elements that imply $f$-interaction is at most $4/k$, hence tends to $0$ as $k \to \infty$.
 
 ## Depends on
