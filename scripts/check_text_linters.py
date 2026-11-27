@@ -100,7 +100,10 @@ def main() -> int:
     unreadable = [file for file in files
                   if file.lean_module is not None and file.lean_module != file.module]
     errors = [StyleError(file.path, 1, f"Module name `{file.lean_module}` needs «», which "
-                         f"Mathlib's lint-style cannot read; name the file in UpperCamelCase",
+                         f"Mathlib's lint-style cannot read; " + (
+                             "drop the `.` from the file's name"
+                             if any("." in part for part in file.components)
+                             else "name the file in UpperCamelCase"),
                          module_name=True)
               for file in unreadable]
     for file in unreadable:
