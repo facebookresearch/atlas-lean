@@ -27,21 +27,19 @@ example : log (2 * 3 + 0) = log (6 + 0) / log 3 * log 3 := by
 
 -- Pazuki's Lemma 5.7 in general.
 example {a b c : ℝ} (hb : 1 ≤ b) (hc : 2 ≤ c) (h : |a - b| ≤ c * log (2 + a)) :
-    |a - b| ≤ c * log (6 + 2 * c * log (2 * c) - 2 * c) / log 3 * log (2 + min a b) :=
+    |a - b| ≤ Pazuki.lemma57Constant c * log (2 + min a b) :=
   Pazuki.abs_sub_le_mul_log_two_add_min hb hc h
 
 -- `a = 0 < 1`, outside Pazuki's range `a ≥ 1`: with `b = 1` and `c = 2`, the hypothesis
 -- `1 ≤ 2 log 2` holds, and the lemma bounds `|0 - 1|` by `c̃ log 2`.
-example : |(0 : ℝ) - 1| ≤
-    2 * log (6 + 2 * 2 * log (2 * 2) - 2 * 2) / log 3 * log (2 + min 0 1) := by
+example : |(0 : ℝ) - 1| ≤ Pazuki.lemma57Constant 2 * log (2 + min 0 1) := by
   refine Pazuki.abs_sub_le_mul_log_two_add_min le_rfl le_rfl ?_
   rw [show (0 : ℝ) - 1 = -1 by norm_num, abs_neg, abs_one, add_zero]
   linarith [log_two_gt_d9]
 
 -- `a = 10`, `b = 4`, `c = 3`: the hypothesis `6 ≤ 3 log 12` holds (`log 12 > 2`), and the lemma
 -- gives `6 ≤ c̃ log 6` with `min 10 4 = 4`.
-example : |(10 : ℝ) - 4| ≤
-    3 * log (6 + 2 * 3 * log (2 * 3) - 2 * 3) / log 3 * log (2 + min 10 4) := by
+example : |(10 : ℝ) - 4| ≤ Pazuki.lemma57Constant 3 * log (2 + min 10 4) := by
   refine Pazuki.abs_sub_le_mul_log_two_add_min (by norm_num) (by norm_num) ?_
   rw [show (10 : ℝ) - 4 = 6 by norm_num, abs_of_pos (by norm_num : (0 : ℝ) < 6)]
   have h12 : 2 < log (2 + 10) := by

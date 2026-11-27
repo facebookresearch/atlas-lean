@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.Analysis.SpecialFunctions.Log.PazukiConstants
 import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
@@ -17,7 +18,8 @@ import Mathlib.Analysis.Complex.ExponentialBounds
 F. Pazuki, *Theta height and Faltings height*, Bull. Soc. Math. France 140 (2012), 19–49,
 Lemma 5.7 (p. 20 of arXiv:0907.1458v2): for real numbers `a`, `b`, `c` with `b ≥ 1` and
 `c ≥ 2`, an error term `c log (2 + a)` in a comparison `|a - b| ≤ c log (2 + a)` can be replaced
-by `c̃ log (2 + min a b)`, with `c̃ = c log (6 + 2c log (2c) - 2c) / log 3`.
+by `c̃ log (2 + min a b)`, with `c̃ = c log (6 + 2c log (2c) - 2c) / log 3`, the constant
+`Pazuki.lemma57Constant c`.
 
 The proof follows Pazuki's. The printed lemma assumes `a ≥ 1`; the proof here does not use it
 (when `a ≤ b`, the hypothesis itself forces `log (2 + a) ≥ 0`), so the statement drops it. For
@@ -75,7 +77,8 @@ theorem log_two_mul_add_le {y d : ℝ} (hy : 3 ≤ y) (hd : 0 ≤ d) :
 /-- **Pazuki's lemma on logarithmic errors** (Lemma 5.7). Let $b \ge 1$ and $a$ be real numbers,
 and let $c \ge 2$ be a real number with $|a - b| \le c \log(2 + a)$. Then
 $$|a - b| \le \tilde c \log(2 + \min\{a, b\}), \qquad
-\tilde c = \frac{c \log(6 + 2c \log(2c) - 2c)}{\log 3}.$$
+\tilde c = \frac{c \log(6 + 2c \log(2c) - 2c)}{\log 3},$$
+where $\tilde c$ is `Pazuki.lemma57Constant c`.
 
 Pazuki also assumes $a \ge 1$; the statement does not need it. It holds for every real $a$,
 with Mathlib's `Real.log`, for which $\log x = \log |x|$ (and $\log 0 = 0$): for $a \le -2$ the
@@ -86,7 +89,8 @@ Source: F. Pazuki, *Theta height and Faltings height*, Bull. Soc. Math. France 1
 19–49, Lemma 5.7 and its proof, read in arXiv:0907.1458v2, p. 20. -/
 theorem abs_sub_le_mul_log_two_add_min {a b c : ℝ} (hb : 1 ≤ b) (hc : 2 ≤ c)
     (h : |a - b| ≤ c * log (2 + a)) :
-    |a - b| ≤ c * log (6 + 2 * c * log (2 * c) - 2 * c) / log 3 * log (2 + min a b) := by
+    |a - b| ≤ lemma57Constant c * log (2 + min a b) := by
+  rw [lemma57Constant]
   have hc0 : 0 < c := by linarith
   have hlog3 : 0 < log 3 := log_pos (by norm_num)
   -- `log (2c) ≥ 1`, since `2c ≥ 4 > e`.
