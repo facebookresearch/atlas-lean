@@ -21,7 +21,6 @@ Abelian varieties over fields and abelian schemes over general bases: duals and 
 - [Semistable reduction theorem for abelian varieties](semistable-reduction-theorem.md)
 - [Homomorphisms and Lie algebras of semi-abelian schemes](homomorphisms-and-lie-algebras-of-semi-abelian-schemes.md)
 - [Potential good reduction of abelian varieties with complex multiplication](good-reduction-of-cm-abelian-varieties.md)
-- [Étale cohomology of abelian varieties](etale-cohomology-of-abelian-varieties/README.md)
 - [Deformations and p-divisible groups](deformations-and-p-divisible-groups/README.md)
 - [Moduli of abelian varieties and their compactifications](moduli-and-compactifications/README.md)
 - [Stable Faltings height](stable-faltings-height/README.md)

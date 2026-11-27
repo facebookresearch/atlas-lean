@@ -1,6 +1,6 @@
 # Multiplication by n as a Galois covering
 
-Let $A$ be an [abelian variety](../abelian-scheme.md) of dimension $g$ over a separably closed field
+Let $A$ be an [abelian variety](../../abelian-varieties/abelian-scheme.md) of dimension $g$ over a separably closed field
 $k$, with zero $0$, and let $n \ge 1$ be an integer not divisible by the characteristic of $k$.
 Write $A_n(k)$ for the group of points of $A(k)$ killed by $n$.
 
@@ -8,7 +8,7 @@ Write $A_n(k)$ for the group of points of $A(k)$ killed by $n$.
    acting on $A$ by translations, makes it a Galois covering with group $A_n(k)$: the morphism
    $A \times A_n(k) \to A \times_{n_A, A, n_A} A$, $(a, x) \mapsto (a, a + x)$, is an isomorphism.
 2. Let $\pi_1(A, 0)$ be the
-   [étale fundamental group](../../grothendieck-topologies/etale-fundamental-group-and-first-cohomology.md)
+   [étale fundamental group](../etale-fundamental-group-and-first-cohomology.md)
    at a geometric point over $0$. The fibre of $n_A$ over $0$ is $A_n(k)$, and
    $\rho_n(\gamma) = \gamma \cdot 0$ defines a continuous homomorphism
    $\rho_n \colon \pi_1(A, 0) \to A_n(k)$, which is surjective. For $m \mid n$,
@@ -33,18 +33,18 @@ forces $f = 0$ as $\rho_n$ is surjective.
 
 ## Depends on
 
-- [Abelian scheme](../abelian-scheme.md), for abelian varieties over a field
-- [The étale fundamental group and first étale cohomology with finite coefficients](../../grothendieck-topologies/etale-fundamental-group-and-first-cohomology.md),
+- [Abelian scheme](../../abelian-varieties/abelian-scheme.md), for abelian varieties over a field
+- [The étale fundamental group and first étale cohomology with finite coefficients](../etale-fundamental-group-and-first-cohomology.md),
   for $\pi_1(A, 0)$ and $H^1(A_{\mathrm{et}}, \mathbb{Z}/n\mathbb{Z})$
 
 ## Proof depends on
 
-- [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), for $n_A$ finite, étale and
+- [Isogenies of abelian schemes](../../abelian-varieties/isogenies-of-abelian-schemes.md), for $n_A$ finite, étale and
   surjective, with kernel the constant group scheme on the $n^{2g}$ points of $A_n(k)$ (its items 2
   and 3)
-- [Homomorphisms of abelian schemes and commutativity](../homomorphisms-of-abelian-schemes.md), for the
+- [Homomorphisms of abelian schemes and commutativity](../../abelian-varieties/homomorphisms-of-abelian-schemes.md), for the
   commutativity of $A$
-- [The étale fundamental group and first étale cohomology with finite coefficients](../../grothendieck-topologies/etale-fundamental-group-and-first-cohomology.md),
+- [The étale fundamental group and first étale cohomology with finite coefficients](../etale-fundamental-group-and-first-cohomology.md),
   for the classification of finite étale coverings, the transitivity of the action on the fibre of a
   connected covering (its item 1), and the identification of $H^1$ (its item 2)
 

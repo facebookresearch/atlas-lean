@@ -1,6 +1,6 @@
 # First étale cohomology of an abelian variety with finite coefficients
 
-Let $A$ be an [abelian variety](../abelian-scheme.md) of dimension $g$ over a separably closed field
+Let $A$ be an [abelian variety](../../abelian-varieties/abelian-scheme.md) of dimension $g$ over a separably closed field
 $k$, and let $n \ge 1$ be an integer not divisible by the characteristic of $k$.
 
 1. The injective map
@@ -34,8 +34,8 @@ above degree $2g$; the count through the Picard group follows his Lemma III.9.2.
 
 ## Depends on
 
-- [Abelian scheme](../abelian-scheme.md), for abelian varieties over a field
-- [The étale fundamental group and first étale cohomology with finite coefficients](../../grothendieck-topologies/etale-fundamental-group-and-first-cohomology.md),
+- [Abelian scheme](../../abelian-varieties/abelian-scheme.md), for abelian varieties over a field
+- [The étale fundamental group and first étale cohomology with finite coefficients](../etale-fundamental-group-and-first-cohomology.md),
   for $H^1(A_{\mathrm{et}}, \mathbb{Z}/n\mathbb{Z})$
 - [Multiplication by n as a Galois covering](multiplication-by-n-as-a-galois-covering.md), for the
   map of 1 and the homomorphisms $\rho_n$
@@ -44,15 +44,15 @@ above degree $2g$; the count through the Picard group follows his Lemma III.9.2.
 
 - [Multiplication by n as a Galois covering](multiplication-by-n-as-a-galois-covering.md), for the
   injectivity of the map (its item 4) and $\rho_{\ell^m} = \ell \rho_{\ell^{m+1}}$ (its item 2)
-- [The étale fundamental group and first étale cohomology with finite coefficients](../../grothendieck-topologies/etale-fundamental-group-and-first-cohomology.md),
+- [The étale fundamental group and first étale cohomology with finite coefficients](../etale-fundamental-group-and-first-cohomology.md),
   for $H^1 = \operatorname{Hom}_{\mathrm{cont}}(\pi_1(A, 0), -)$, natural in the coefficients (its item
   2)
-- [Cyclic étale coverings and torsion line bundles](../../grothendieck-topologies/cyclic-etale-coverings-and-torsion-line-bundles.md),
+- [Cyclic étale coverings and torsion line bundles](../cyclic-etale-coverings-and-torsion-line-bundles.md),
   for the bijection between $\operatorname{Hom}_{\mathrm{cont}}(\pi_1(A, 0), \mathbb{Z}/n\mathbb{Z})$ and
   $\operatorname{Pic}(A)_n$ (its item 1)
 - [Torsion in the Picard group of an abelian variety](torsion-in-the-picard-group.md), for the
   $n^{2g}$ elements of $\operatorname{Pic}(A)_n$
-- [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), for the $n^{2g}$ points of
+- [Isogenies of abelian schemes](../../abelian-varieties/isogenies-of-abelian-schemes.md), for the $n^{2g}$ points of
   $A_n(k)$ (its item 3)
 
 ## Sources

@@ -1,7 +1,7 @@
 # Torsion in the Picard group of an abelian variety
 
-Let $A$ be an [abelian variety](../abelian-scheme.md) of dimension $g$ over a separably closed field
-$k$, with [dual abelian variety](../dual-abelian-variety.md) $A^\vee$, and let $n \ge 1$ be an integer
+Let $A$ be an [abelian variety](../../abelian-varieties/abelian-scheme.md) of dimension $g$ over a separably closed field
+$k$, with [dual abelian variety](../../abelian-varieties/dual-abelian-variety.md) $A^\vee$, and let $n \ge 1$ be an integer
 not divisible by the characteristic of $k$. Write $\operatorname{Pic}(A)_n$ for the subgroup of
 elements of $\operatorname{Pic}(A)$ killed by $n$. Then $\operatorname{Pic}(A)_n$ is contained in
 $\operatorname{Pic}^0(A)$, and
@@ -19,16 +19,16 @@ $n$-torsion over the separably closed field $k$ has $n^{2g}$ points.
 
 ## Depends on
 
-- [Abelian scheme](../abelian-scheme.md), for abelian varieties over a field
-- [Dual abelian variety](../dual-abelian-variety.md), for $\operatorname{Pic}^0(A)$ and $A^\vee$
+- [Abelian scheme](../../abelian-varieties/abelian-scheme.md), for abelian varieties over a field
+- [Dual abelian variety](../../abelian-varieties/dual-abelian-variety.md), for $\operatorname{Pic}^0(A)$ and $A^\vee$
 
 ## Proof depends on
 
-- [Dual abelian variety](../dual-abelian-variety.md), for $A^\vee(k) = \operatorname{Pic}^0(A)$ and
+- [Dual abelian variety](../../abelian-varieties/dual-abelian-variety.md), for $A^\vee(k) = \operatorname{Pic}^0(A)$ and
   $\dim A^\vee = \dim A$ (its item 1), and for $\varphi_L$ (its item 2)
 - [Homomorphisms of abelian varieties are determined by their action on Tate modules](homomorphisms-of-abelian-varieties-and-tate-modules.md),
   for the torsion-freeness of $\operatorname{Hom}(A, A^\vee)$ (its item 2)
-- [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), for the $n^{2g}$ points of
+- [Isogenies of abelian schemes](../../abelian-varieties/isogenies-of-abelian-schemes.md), for the $n^{2g}$ points of
   $A^\vee$ killed by $n$ (its item 3)
 
 ## Sources

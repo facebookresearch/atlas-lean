@@ -8,3 +8,4 @@ topologies and sheaves on general sites are under category theory.
 - [The étale fundamental group and first étale cohomology with finite coefficients](etale-fundamental-group-and-first-cohomology.md)
 - [Cyclic étale coverings and torsion line bundles](cyclic-etale-coverings-and-torsion-line-bundles.md)
 - [First pro-étale cohomology with ℓ-adic coefficients as a limit](first-pro-etale-cohomology-as-a-limit.md)
+- [Étale cohomology of abelian varieties](etale-cohomology-of-abelian-varieties/README.md)

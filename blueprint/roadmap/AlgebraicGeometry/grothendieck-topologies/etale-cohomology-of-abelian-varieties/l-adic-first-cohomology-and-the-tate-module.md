@@ -1,6 +1,6 @@
 # The ℓ-adic first cohomology of an abelian variety is the dual of its Tate module
 
-Let $A$ be an [abelian variety](../abelian-scheme.md) over a separably closed field $k$ and $\ell$ a
+Let $A$ be an [abelian variety](../../abelian-varieties/abelian-scheme.md) over a separably closed field $k$ and $\ell$ a
 prime different from the characteristic of $k$. Write
 $H^1(A_{\mathrm{et}}, \mathbb{Z}_\ell) = \varprojlim_m H^1(A_{\mathrm{et}}, \mathbb{Z}/\ell^m\mathbb{Z})$,
 with the maps induced by the reductions $\mathbb{Z}/\ell^{m+1}\mathbb{Z} \to \mathbb{Z}/\ell^m\mathbb{Z}$,
@@ -26,15 +26,15 @@ maps of the finite-level page.
 
 ## Depends on
 
-- [Abelian scheme](../abelian-scheme.md), for abelian varieties over a field
-- [The étale fundamental group and first étale cohomology with finite coefficients](../../grothendieck-topologies/etale-fundamental-group-and-first-cohomology.md),
+- [Abelian scheme](../../abelian-varieties/abelian-scheme.md), for abelian varieties over a field
+- [The étale fundamental group and first étale cohomology with finite coefficients](../etale-fundamental-group-and-first-cohomology.md),
   for the étale cohomology groups $H^1(A_{\mathrm{et}}, \mathbb{Z}/\ell^m\mathbb{Z})$
 
 ## Proof depends on
 
 - [First étale cohomology of an abelian variety with finite coefficients](first-etale-cohomology-with-finite-coefficients.md),
   for the bijections at each level and their compatibility with the transition maps
-- [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), for $\ell_A$ finite, étale and
+- [Isogenies of abelian schemes](../../abelian-varieties/isogenies-of-abelian-schemes.md), for $\ell_A$ finite, étale and
   surjective (its item 2)
 
 ## Sources

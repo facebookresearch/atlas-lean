@@ -2,7 +2,7 @@
 
 This node is still to be broken down: the statement is precise, but its proof is not.
 
-Let $A$ be an [abelian variety](../abelian-scheme.md) over a field $k$, $K$ a separable closure of
+Let $A$ be an [abelian variety](../../abelian-varieties/abelian-scheme.md) over a field $k$, $K$ a separable closure of
 $k$, $\ell$ a prime different from the characteristic of $k$, $A_K = A \times_k \operatorname{Spec} K$,
 and let
 
