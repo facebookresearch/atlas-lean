@@ -1,0 +1,3 @@
+# Path weight of a list of states from a start state
+
+For real functions $q$ on a set of states $S$ and $Q$ on $S \times S$, and a start state $i$, the path weight of a list of states is $0$ for the empty list and for a list that does not start at $i$; for a list starting at $i$ it is its completed-path weight, read as an extended nonnegative real, so that a negative weight is read as $0$. No sign or row condition is imposed: for one state with $Q(i,i) = -2$ and $q(i) = 1$, the list $[i, i]$ has completed weight $-2$ and path weight $0$. When $q$ and $Q$ are stop probabilities and a survival kernel (nonnegative, with $q(x) + \sum_y Q(x, y) = 1$ for every $x$), the completed weight is nonnegative and the path weight is the probability of the stopped path.

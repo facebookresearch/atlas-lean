@@ -32,6 +32,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.Curve.AdelicIndex
 public import MathlibExt.AlgebraicGeometry.Curve.IsCurveOver
+import MathlibExt.AlgebraicGeometry.Curve.IsCurveOverOfTranscendental
 import MathlibExt.AlgebraicGeometry.Curve.RatFuncGenusExists
 import MathlibExt.AlgebraicGeometry.Curve.SeparatingTranscendental
 
@@ -54,8 +55,6 @@ extensions of `RatFunc K`.
 
 namespace AlgebraicCurve
 
-open IntermediateField
-
 /-- The function field of a curve over a perfect field, with field of constants `K`, has a
 genus: `deg D - ℓ(D)` is bounded above and attains its maximum. -/
 public theorem stichtenothGenusExists_of_isCurveOver {K : Type*} {F : Type*} [Field K] [Field F]
@@ -63,21 +62,7 @@ public theorem stichtenothGenusExists_of_isCurveOver {K : Type*} {F : Type*} [Fi
     (hC : ConstantsAreBase K F) : StichtenothGenusExists K F := by
   classical
   obtain ⟨x, htr, hfd, hsep⟩ := IsCurveOver.exists_separating_transcendental (K := K) (F := F)
-  set e : RatFunc K ≃ₐ[K] K⟮x⟯ := RatFunc.algEquivOfTranscendental x htr with he
-  let : Algebra (RatFunc K) F := ((algebraMap K⟮x⟯ F).comp e.toAlgHom.toRingHom).toAlgebra
-  have hsq : RingHom.comp (algebraMap (RatFunc K) F) (e.symm.toRingEquiv : K⟮x⟯ →+* RatFunc K)
-      = RingHom.comp (RingEquiv.refl F : F →+* F) (algebraMap K⟮x⟯ F) := by
-    refine RingHom.ext fun a => ?_
-    change algebraMap K⟮x⟯ F (e (e.symm a)) = algebraMap K⟮x⟯ F a
-    rw [e.apply_symm_apply]
-  have : IsScalarTower K (RatFunc K) F :=
-    IsScalarTower.of_algebraMap_eq fun a => by
-      change algebraMap K F a = algebraMap K⟮x⟯ F (e (algebraMap K (RatFunc K) a))
-      rw [e.commutes, ← IsScalarTower.algebraMap_apply]
-  have : FiniteDimensional (RatFunc K) F :=
-    Module.Finite.of_equiv_equiv e.symm.toRingEquiv (RingEquiv.refl F) hsq
-  have : Algebra.IsSeparable (RatFunc K) F :=
-    Algebra.IsSeparable.of_equiv_equiv e.symm.toRingEquiv (RingEquiv.refl F) hsq
+  obtain ⟨_, _, _, _, -, -⟩ := exists_ratFunc_algebra_of_transcendental htr hfd hsep
   exact RationalFunctionField.stichtenothGenusExists K F hC
 
 end AlgebraicCurve
