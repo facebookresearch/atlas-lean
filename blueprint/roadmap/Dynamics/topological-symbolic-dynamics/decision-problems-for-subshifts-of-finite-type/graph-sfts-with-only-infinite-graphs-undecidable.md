@@ -16,6 +16,7 @@ Let graph subshifts of finite type, $\mathbb{Z}^2$-NN constraints, strongly peri
 
 - [Graph subshifts of finite type](graph-subshifts-of-finite-type.md)
 - [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

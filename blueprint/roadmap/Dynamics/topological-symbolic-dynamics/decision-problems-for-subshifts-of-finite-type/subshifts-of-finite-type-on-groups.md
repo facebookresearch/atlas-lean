@@ -1,16 +1,13 @@
-# Subshifts of finite type on a finitely generated group and the domino problem
+# Subshifts of finite type on a finitely generated group
 
-A subshift of finite type on a finitely generated group $G$ is the set of colorings of $G$ by a finite alphabet that avoid finitely many forbidden patterns; it is given by a finite presentation, and the domino problem of $G$ asks whether a presented subshift of finite type is empty.
+A subshift of finite type on a finitely generated group $G$ is the set of colorings of $G$ by a finite alphabet that avoid finitely many forbidden patterns; it is given to an algorithm by a finite presentation, the alphabet and the list of forbidden patterns.
 
 Let $G$ be a finitely generated group with a finite symmetric generating set $S$, and for a word $w \in S^*$ write $\underline{w}$ for the element of $G$ it represents. For a finite alphabet $A$, the set $A^G$ of all maps $x\colon G \to A$ carries the product of the discrete topologies and the left shift action $(gx)(h) = x(g^{-1}h)$. A *subshift* is a closed shift-invariant subset of $A^G$; a *morphism* of subshifts is a continuous map commuting with the shift actions, a *conjugacy* is a bijective morphism, and a *factor map* is a surjective morphism.
 
 - A *pattern presentation* is a map $p\colon W \to A$ with $W \subset S^*$ finite; it *appears* in $x \in A^G$ at $g \in G$ when $x(g\underline{w}) = p(w)$ for every $w \in W$.
 - An *SFT presentation* is a pair $(A, \mathcal{F})$ of a finite alphabet $A \subset \mathbb{N}$ and a finite set $\mathcal{F}$ of pattern presentations. It determines the subshift $X_{(A,\mathcal{F})} \subseteq A^G$ of all configurations in which no pattern of $\mathcal{F}$ appears; a subshift of this form is a *subshift of finite type* (SFT). The empty set is an SFT under this convention.
-- A *sofic subshift* is the image of an SFT under a factor map given by a local rule; a *sofic presentation* is an SFT presentation together with a local rule $\mu\colon A^W \to B$ ($W \subset S^*$ finite, $B \subset \mathbb{N}$ finite), and it presents the image of $X_{(A,\mathcal{F})}$ under the map $x \mapsto (g \mapsto \mu(w \mapsto x(g\underline{w})))$.
-- The *domino problem* of $G$ is the set of SFT presentations $(A, \mathcal{F})$ with $X_{(A,\mathcal{F})} = \emptyset$.
-- A *dynamical property* of $G$-SFTs (or of sofic $G$-subshifts) is a property invariant under conjugacy; it is *decidable* when the set of presentations of subshifts having it is decidable.
 
-For $G = \mathbb{Z}^d$ with the standard generators, $X_{(A,\mathcal{F})}$ is the usual $d$-dimensional SFT defined by finitely many forbidden finite patterns.
+For $G = \mathbb{Z}^d$ with the standard generators, $X_{(A,\mathcal{F})}$ is the usual $d$-dimensional SFT defined by finitely many forbidden finite patterns, and a subshift of $A^{\mathbb{Z}^d}$ is a closed set of configurations invariant under the $d$ coordinate shifts.
 
 ## Depends on
 
@@ -23,9 +20,8 @@ None.
 
 ## Expansion
 
-For $G = \mathbb{Z}$ the domino problem is decidable: a nonempty one-dimensional SFT is equivalent to a bi-infinite path, hence a cycle, in a finite graph. For $G = \mathbb{Z}^d$ with $d \ge 2$ it is undecidable (Berger), which is the tiling problem for Wang tiles: the valid tilings of a Wang tile set form a two-dimensional SFT, and every two-dimensional SFT is conjugate to a recoding of one. Presentations make decision problems about subshifts precise: an algorithm receives a presentation, not the subshift itself, and must give the same answer for all presentations of conjugate subshifts when it decides a dynamical property.
+Presentations make decision problems about subshifts precise: an algorithm receives a presentation, not the subshift itself, and must give the same answer for all presentations of conjugate subshifts when it decides a property invariant under conjugacy. [Sofic subshifts](sofic-subshifts-on-groups.md) and the [domino problem](domino-problem-of-a-group.md) are defined from SFT presentations.
 
 ## Sources
 
-- N. Carrasco-Vargas, "On a Rice theorem for dynamical properties of SFTs on groups", Archiv der Mathematik 124 (2025), no. 6, 591–603, https://doi.org/10.1007/s00013-025-02125-x; read in arXiv:2401.10347v3 (Section 2 of arXiv:2401.10347v3: subshifts, SFT presentations, the domino problem and the convention that the empty set is an SFT; Section 5 for sofic presentations).
-- S. J. Esnay and M. Sablik, "Parametrization by horizontal constraints in the study of algorithmic properties of $\mathbb{Z}^2$-subshifts of finite type", Discrete and Continuous Dynamical Systems 43 (2023), no. 5, 2002–2046, https://doi.org/10.3934/dcds.2023001; read in arXiv:2203.00434v2 (Section 2 of arXiv:2203.00434v2, for the decidability of the domino problem on $\mathbb{Z}$ and its undecidability on $\mathbb{Z}^d$, $d \ge 2$).
+- N. Carrasco-Vargas, "On a Rice theorem for dynamical properties of SFTs on groups", Archiv der Mathematik 124 (2025), no. 6, 591–603, https://doi.org/10.1007/s00013-025-02125-x; read in arXiv:2401.10347v3 (Section 2 of arXiv:2401.10347v3: subshifts, SFT presentations and the convention that the empty set is an SFT).

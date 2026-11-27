@@ -14,6 +14,7 @@ By contrast, given a finite set $F \subset \mathrm{Aut}(S^{\mathbb{Z}})$, it is 
 - [Full shift space](full-shift-space.md)
 - [One-dimensional cellular automaton](is-one-dimensional-ca.md)
 - [Abelian group](../../../GroupTheory/group-basics/abelian-group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

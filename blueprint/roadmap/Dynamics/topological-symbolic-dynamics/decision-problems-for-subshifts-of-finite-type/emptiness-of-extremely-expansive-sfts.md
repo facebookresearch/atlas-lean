@@ -14,7 +14,8 @@ so that every configuration is determined by its restriction to a strip of bound
 
 ## Depends on
 
-- [Subshifts of finite type on a finitely generated group and the domino problem](subshifts-of-finite-type-on-groups.md)
+- [Subshifts of finite type on a finitely generated group](subshifts-of-finite-type-on-groups.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

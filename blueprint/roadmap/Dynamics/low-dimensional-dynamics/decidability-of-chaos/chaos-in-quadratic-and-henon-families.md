@@ -13,7 +13,8 @@ Let $Q_a(x) = 1 - a x^2$ ($a, x \in \mathbb{R}$) be the quadratic family and $H_
 
 ## Depends on
 
-None.
+- [Lebesgue measure on the real line](../../../MeasureTheory/lebesgue-measure/lebesgue-measure-on-euclidean-spaces/lebesgue-measure-on-the-real-line/lebesgue-measure.md)
+- [Topological entropy of a self-map of a compact space](../../topological-symbolic-dynamics/topological-entropy/topological-entropy.md)
 
 ## Proof depends on
 

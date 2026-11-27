@@ -17,6 +17,7 @@ The same method gives a computable map $f\colon [0,1] \to [0,1]$ with a $\Pi_2$-
 ## Depends on
 
 - [Lebesgue measure on the real line](../../../MeasureTheory/lebesgue-measure/lebesgue-measure-on-euclidean-spaces/lebesgue-measure-on-the-real-line/lebesgue-measure.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

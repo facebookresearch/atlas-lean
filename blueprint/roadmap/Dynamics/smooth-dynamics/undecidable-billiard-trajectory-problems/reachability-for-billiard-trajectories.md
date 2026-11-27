@@ -2,13 +2,14 @@
 
 There is an explicitly constructible bounded planar billiard table to which the halting problem of every Turing machine reduces: from a machine and an input one computes a boundary point and an open set that the orthogonal trajectory from the point meets exactly when the machine halts with a prescribed output pattern.
 
-Let billiard tables, billiard flows and computable points be as in [Periodicity of trajectories of a fixed planar billiard is undecidable](periodicity-of-billiard-trajectories-undecidable.md).
+Let billiard tables, billiard flows and computable points be as in [billiard tables and billiard flows](billiard-tables-and-billiard-flows.md).
 
 **Theorem.** There exists an explicitly constructible planar, bounded and finitely piecewise smooth billiard table $B$ with the following property. Given any Turing machine $M$, any integer $N \ge 0$, any input tape $t$, any integer $k \in \mathbb{Z}$ and any finite string $(t^*_{k-N}, \ldots, t^*_{k+N})$ of tape symbols, one can algorithmically construct a point $p \in \partial B$ and an open set $U \subset \mathbb{R}^2$ such that the billiard trajectory starting perpendicularly to $\partial B$ from $p$ intersects $U$ if and only if $M$ halts on $t$ with its head at position $k$ and outputs a tape whose entries $k-N, \ldots, k+N$ are $t^*_{k-N}, \ldots, t^*_{k+N}$ (Corollary 3 of the source). Consequently, deciding for this table whether a given orthogonal trajectory from a computable boundary point reaches a given computable open set is undecidable.
 
 ## Depends on
 
-- [Periodicity of trajectories of a fixed planar billiard is undecidable](periodicity-of-billiard-trajectories-undecidable.md)
+- [Billiard tables and billiard flows](billiard-tables-and-billiard-flows.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ Take the table that simulates a fixed universal reversible Turing machine, as in
 
 ## Sources
 
-- E. Miranda and I. Ramos, "Two-dimensional billiards are Turing complete", Proceedings of the National Academy of Sciences of the United States of America 123 (2026), no. 37, e2614500123, https://doi.org/10.1073/pnas.2614500123; read in arXiv:2512.19156v5 (Theorem 2 and Corollary 3 in the section "Turing completeness of two-dimensional billiards" of arXiv:2512.19156v5).
+- E. Miranda and I. Ramos, "Two-dimensional billiards are Turing complete", Proceedings of the National Academy of Sciences of the United States of America 123 (2026), no. 37, e2614500123, https://doi.org/10.1073/pnas.2614500123; read in arXiv:2512.19156v5 (Theorem 2 and Corollary 3 in Section 3, "Turing completeness of two-dimensional billiards", of arXiv:2512.19156v5).

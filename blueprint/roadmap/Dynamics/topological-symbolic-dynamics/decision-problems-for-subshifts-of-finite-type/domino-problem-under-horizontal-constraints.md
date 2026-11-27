@@ -20,7 +20,8 @@ where $\langle \mathcal{F} \rangle$ is an encoding of the finite set $\mathcal{F
 
 ## Depends on
 
-- [Subshifts of finite type on a finitely generated group and the domino problem](subshifts-of-finite-type-on-groups.md)
+- [Subshifts of finite type on a finitely generated group](subshifts-of-finite-type-on-groups.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -14,7 +14,7 @@ The parameters are Siegel parameters: $c = \lambda/2 - \lambda^2/4$ with $\lambd
 
 ## Proof depends on
 
-None.
+- [The halting problem for single-tape machines is undecidable](../../../TheoryOfComputation/computability/halting-problem-for-single-tape-turing-machines/exists-not-tm2-decidable-tm0-halts-on.md)
 
 ## Expansion
 

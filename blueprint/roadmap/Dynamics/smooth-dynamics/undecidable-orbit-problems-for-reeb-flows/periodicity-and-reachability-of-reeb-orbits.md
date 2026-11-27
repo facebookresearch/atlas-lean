@@ -17,6 +17,7 @@ Turing complete Reeb flows exist on every contact three-manifold (Theorem 3.3 of
 - [Vector fields with a closed orbit](../../../Geometry/complex-and-symplectic-geometry/weinstein-conjecture/has-closed-reeb-orbit.md)
 - [Contact condition for a one-form](../../../Geometry/complex-and-symplectic-geometry/weinstein-conjecture/is-contact-form3.md)
 - [Integral curves](../../../Geometry/complex-and-symplectic-geometry/weinstein-conjecture/is-integral-curve.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

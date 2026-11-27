@@ -18,7 +18,7 @@ and it is a *graph subshift of finite type* (graph SFT) if $\mathcal{F}$ can be 
 
 ## Depends on
 
-- [Subshifts of finite type on a finitely generated group and the domino problem](subshifts-of-finite-type-on-groups.md)
+- [Subshifts of finite type on a finitely generated group](subshifts-of-finite-type-on-groups.md)
 
 ## Proof depends on
 
