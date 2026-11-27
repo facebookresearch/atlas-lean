@@ -47,9 +47,9 @@ theorem integral_adjusted (hf : Integrable f μ) (hh : Integrable h μ) (hθ : �
     integral_sub hh (integrable_const θ), integral_const]
   simp [hθ]
 
-/-- For a random coefficient `b`, the bias is the negative of its covariance with the control.
-In particular, the mean-preservation argument for a fixed coefficient does not carry over
-without a condition on `b`. -/
+/-- On a probability space with law `μ`, let `f` be an integrable real target and let the random
+coefficient `b` and control `h` be square-integrable and real-valued. If `θ = μ[h]`, then the
+adjusted variable `ω ↦ f ω - b ω * (h ω - θ)` has expectation `μ[f] - cov[b, h; μ]`. -/
 theorem integral_adjusted_randomCoeff (hf : Integrable f μ) (hh : MemLp h 2 μ)
     {b : Ω → ℝ} (hb : MemLp b 2 μ) (hθ : μ[h] = θ) :
     μ[fun ω ↦ adjusted f h θ (b ω) ω] = μ[f] - cov[b, h; μ] := by
