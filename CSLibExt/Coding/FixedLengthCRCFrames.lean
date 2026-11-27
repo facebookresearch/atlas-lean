@@ -24,15 +24,21 @@ one `start`, then exactly `l + r` body bits, then one `endTok`. The body
 is an `l`-bit MSB-first payload followed by the `r`-bit check register
 of the zero-init unreflected serial CRC of the payload, sent MSB first.
 The parser is a sequential transducer: bits before any `start` or after
-a failure are rejected, a `start` inside a body aborts the current frame
-and restarts a fresh one, and on `endTok` the parser accepts exactly
-when the body length is `l + r` and the serial CRC register run over
-the whole body is the zero register. While reading, the parser emits
-the first `l` body bits, so an accepted frame returns its payload,
-leading zeros included, at its declared length `l`. Bits are emitted
-before the frame is validated: a rejected frame has no accepted
-`Translates` result, but `runOut` still contains the body bits it
-emitted before rejection.
+a failure are rejected, a `start` in any phase aborts the current frame
+and restarts from the fresh state `freshState` (`frame_step_start`,
+`run_start_cons`), and on `endTok` the parser accepts exactly when the
+body length is `l + r` and the serial CRC register run over the whole
+body is the zero register (`runState_freshState_frame`). While reading,
+the parser emits the first `l` body bits, so an accepted single frame
+returns its payload, leading zeros included, at its declared length `l`.
+
+Bits are emitted before a frame is validated. A token list is accepted
+exactly when its final frame is (`translates_iff_zero_remainder_body`):
+an earlier frame that is rejected, or cut short by the next `start`, is
+discarded at that `start`, does not make the stream rejected, and the
+bits it emitted stay in the accepted output. So the output of an
+accepted stream is the sequence of its payloads only when every frame
+in it is clean (`twoConsecutiveFrames_translate`).
 
 The parser state is a phase, the CRC register, and a count of body bits
 read that saturates at `l + r + 1`, so the state space is finite and a
@@ -96,9 +102,14 @@ instance instFiniteParserState (l r : ℕ) : Finite (ParserState l r) :=
       obtain ⟨rfl, hg, rfl⟩ := h
       rw [BitVec.eq_of_toFin_eq hg])
 
+/-- The fresh candidate-frame state entered on every `start`: inside a body, zero
+register, zero body bits counted. -/
+def freshState (l r : ℕ) : ParserState l r :=
+  { phase := ParserPhase.inBody, register := 0#r, count := satCount l r 0 }
+
 /-- The fixed-length framed parser as a sequential transducer. A
-`start` token in any phase aborts the current frame and restarts a
-fresh one. Inside a body, each bit updates the serial CRC register and
+`start` token in any phase aborts the current frame and restarts from
+`freshState`. Inside a body, each bit updates the serial CRC register and
 the saturating count, and is emitted while fewer than `l` bits have
 been received. On `endTok` the parser accepts exactly when the count
 is `l + r` and the register is zero. Any other token fails the
@@ -107,8 +118,7 @@ def frameParser (l r : ℕ) (taps : BitVec r) :
     Cslib.Automata.SequentialTransducer (ParserState l r) FrameToken Bool where
   step := fun q tok =>
     match q.phase, tok with
-    | _, FrameToken.start =>
-        ({ phase := ParserPhase.inBody, register := 0#r, count := satCount l r 0 }, [])
+    | _, FrameToken.start => (freshState l r, [])
     | ParserPhase.inBody, FrameToken.bit b =>
         ({ phase := ParserPhase.inBody,
            register := stepRegister r taps q.register b,
@@ -170,13 +180,27 @@ theorem satCount_val_eq_iff (l r n : ℕ) :
   rw [satCount_val]
   constructor <;> intro h <;> omega
 
-/-- From every state, `start` enters a fresh body with the zero register and emits nothing. -/
+/-- **Reset rule, one step.** From every state, `start` moves to the fresh candidate state
+`freshState` and emits nothing. -/
 theorem frame_step_start (l r : ℕ) (taps : BitVec r) (q : ParserState l r) :
-    (frameParser l r taps).step q FrameToken.start =
-      ({ phase := ParserPhase.inBody, register := 0#r, count := satCount l r 0 }, []) := by
+    (frameParser l r taps).step q FrameToken.start = (freshState l r, []) := by
   cases q with
   | mk phase reg cnt =>
-      cases phase <;> simp [frameParser]
+      cases phase <;> rfl
+
+/-- **Reset rule, runs.** After `start`, the run from any state coincides, in final state and
+in output, with the run from the fresh candidate state: the unfinished frame's register,
+count and phase are discarded. -/
+theorem run_start_cons (l r : ℕ) (taps : BitVec r) (q : ParserState l r)
+    (ts : List FrameToken) :
+    (frameParser l r taps).runState q (FrameToken.start :: ts) =
+        (frameParser l r taps).runState (freshState l r) ts ∧
+      (frameParser l r taps).runOut q (FrameToken.start :: ts) =
+        (frameParser l r taps).runOut (freshState l r) ts := by
+  constructor
+  · rw [SequentialTransducer.runState_cons, frame_step_start]
+  · simp only [SequentialTransducer.runOut_cons, frame_step_start,
+      List.nil_append]
 
 /-- Inside a body, a bit steps the serial register, advances the saturating count, and is
 emitted while fewer than `l` bits have been read. -/
@@ -267,39 +291,39 @@ theorem run_bits_inBody_out (l r : ℕ) (taps : BitVec r)
       simp only [frame_step_bit_inBody]
       rw [ih, satCount_val]
       by_cases h : c.val < l
-      · simp only [if_pos h]
+      · simp only [ite_eq_left h]
         have hSub : l - c.val = (l - min (c.val + 1) (l + r + 1)) + 1 := by omega
         rw [hSub]
         simp
-      · simp only [if_neg h]
+      · simp only [ite_eq_right h]
         have hSub0 : l - c.val = 0 := by omega
         have hSub1 : l - min (c.val + 1) (l + r + 1) = 0 := by omega
         rw [hSub0, hSub1]
         simp
 
-private theorem fresh_rest_runState (l r : ℕ) (taps : BitVec r)
+/-- **End-of-frame decision.** A candidate frame read from the fresh state and closed by
+`endTok` is accepted exactly when its body has `l + r` bits and zero CRC register, and fails
+otherwise; the register and the saturating count are those of the body. -/
+theorem runState_freshState_frame (l r : ℕ) (taps : BitVec r)
     (body : List Bool) :
-    (frameParser l r taps).runState
-        ({ phase := ParserPhase.inBody, register := 0#r, count := satCount l r 0 } :
-          ParserState l r)
+    (frameParser l r taps).runState (freshState l r)
         (body.map FrameToken.bit ++ [FrameToken.endTok]) =
       { phase :=
           if body.length = l + r ∧ runRegister r taps body = (0#r : BitVec r) then
             ParserPhase.done else ParserPhase.failed,
         register := runRegister r taps body,
         count := satCount l r body.length } := by
-  rw [SequentialTransducer.runState_append, run_bits_inBody_state, satCount_add, Nat.zero_add,
-    ← runRegister_eq_runState_zero, SequentialTransducer.runState_cons]
+  rw [freshState, SequentialTransducer.runState_append, run_bits_inBody_state, satCount_add,
+    Nat.zero_add, ← runRegister_eq_runState_zero, SequentialTransducer.runState_cons]
   simp [frame_step_end_inBody, SequentialTransducer.runState_nil, satCount_val_eq_iff]
 
 private theorem fresh_rest_runOut (l r : ℕ) (taps : BitVec r)
     (body : List Bool) :
-    (frameParser l r taps).runOut
-        ({ phase := ParserPhase.inBody, register := 0#r, count := satCount l r 0 } :
-          ParserState l r)
+    (frameParser l r taps).runOut (freshState l r)
         (body.map FrameToken.bit ++ [FrameToken.endTok]) =
       body.take l := by
-  rw [SequentialTransducer.runOut_append, run_bits_inBody_out, run_bits_inBody_state, SequentialTransducer.runOut_cons]
+  rw [freshState, SequentialTransducer.runOut_append, run_bits_inBody_out, run_bits_inBody_state,
+    SequentialTransducer.runOut_cons]
   simp [frame_step_end_inBody, SequentialTransducer.runOut_nil, satCount_zero_val]
 
 private theorem single_frame_runState (l r : ℕ) (taps : BitVec r)
@@ -312,7 +336,7 @@ private theorem single_frame_runState (l r : ℕ) (taps : BitVec r)
         register := runRegister r taps body,
         count := satCount l r body.length } := by
   rw [List.cons_append, SequentialTransducer.runState_cons, frame_step_start]
-  exact fresh_rest_runState l r taps body
+  exact runState_freshState_frame l r taps body
 
 private theorem single_frame_runOut (l r : ℕ) (taps : BitVec r)
     (body : List Bool) :
@@ -350,30 +374,12 @@ private theorem frame_translates_single (l r : ℕ) (taps : BitVec r)
     obtain ⟨hPhase, hOut⟩ := h
     have hCond : body.length = l + r ∧ runRegister r taps body = (0#r : BitVec r) := by
       by_contra hCon
-      simp only [if_neg hCon] at hPhase
+      simp only [ite_eq_right hCon] at hPhase
       exact ParserPhase.noConfusion hPhase
     exact ⟨hCond, hOut.symm⟩
   · intro h
     obtain ⟨hCond, hOut⟩ := h
-    simp only [if_pos hCond, hOut, eq_self_iff_true, and_true]
-
-private theorem runState_from_done_start (l r : ℕ) (taps : BitVec r)
-    (q : ParserState l r) (ts : List FrameToken) :
-    (frameParser l r taps).runState q (FrameToken.start :: ts) =
-      (frameParser l r taps).runState
-        ({ phase := ParserPhase.inBody, register := 0#r, count := satCount l r 0 } :
-          ParserState l r) ts := by
-  rw [SequentialTransducer.runState_cons]
-  simp [frame_step_start]
-
-private theorem runOut_from_any_start (l r : ℕ) (taps : BitVec r)
-    (q : ParserState l r) (ts : List FrameToken) :
-    (frameParser l r taps).runOut q (FrameToken.start :: ts) =
-      (frameParser l r taps).runOut
-        ({ phase := ParserPhase.inBody, register := 0#r, count := satCount l r 0 } :
-          ParserState l r) ts := by
-  rw [SequentialTransducer.runOut_cons]
-  simp [frame_step_start]
+    simp only [ite_eq_left hCond, hOut, and_true]
 
 private theorem two_frame_translates_aux (l r : ℕ) (taps : BitVec r)
     (b₁ b₂ : List Bool)
@@ -390,20 +396,20 @@ private theorem two_frame_translates_aux (l r : ℕ) (taps : BitVec r)
   constructor
   · rw [SequentialTransducer.runState_append]
     have hS1 := single_frame_runState l r taps b₁
-    rw [if_pos ⟨h₁len, h₁reg⟩] at hS1
+    rw [ite_eq_left ⟨h₁len, h₁reg⟩] at hS1
     rw [hS1]
     rw [List.cons_append]
-    rw [runState_from_done_start]
-    rw [fresh_rest_runState]
+    rw [(run_start_cons l r taps _ _).1]
+    rw [runState_freshState_frame]
     simp only [frameParser_accept_iff]
-    rw [if_pos ⟨h₂len, h₂reg⟩]
+    rw [ite_eq_left ⟨h₂len, h₂reg⟩]
   · rw [SequentialTransducer.runOut_append]
     have hO1 := single_frame_runOut l r taps b₁
     rw [hO1]
     have hS1 := single_frame_runState l r taps b₁
     rw [hS1]
     rw [List.cons_append]
-    rw [runOut_from_any_start]
+    rw [(run_start_cons l r taps _ _).2]
     rw [fresh_rest_runOut]
 
 private theorem mulXMod_xor (r : ℕ) (taps a b : BitVec r) :
@@ -414,8 +420,7 @@ private theorem mulXMod_xor (r : ℕ) (taps a b : BitVec r) :
     ext i
     by_cases h : i = 0 <;> simp [h]
   by_cases ha : a.getMsbD 0 <;> by_cases hb : b.getMsbD 0 <;>
-    simp only [ha, hb, BitVec.getMsbD_xor, hshift, Bool.true_xor, Bool.false_xor,
-      Bool.xor_true, Bool.xor_false, ite_true, ite_false] <;> grind
+    simp only [ha, hb, BitVec.getMsbD_xor, Bool.xor_true, Bool.xor_false, ite_true] <;> grind
 
 private theorem mulXMod_zero (r : ℕ) (taps : BitVec r) :
     taps.mulXMod (0#r : BitVec r) = 0#r := by
@@ -438,12 +443,6 @@ private theorem mulXModPow_xor (r : ℕ) (taps : BitVec r) (n : ℕ) (a b : BitV
   | zero => simp [mulXModPow_zero]
   | succ n ih =>
       rw [mulXModPow_succ, mulXModPow_succ, mulXModPow_succ, mulXMod_xor, ih]
-
-private theorem mulXModPow_zero_state (r : ℕ) (taps : BitVec r) (n : ℕ) :
-    mulXModPow r taps n (0#r : BitVec r) = 0#r := by
-  induction n with
-  | zero => rfl
-  | succ n ih => rw [mulXModPow_succ, mulXMod_zero, ih]
 
 private theorem stepRegister_zero (r : ℕ) (taps : BitVec r) (b : Bool) :
     stepRegister r taps (0#r : BitVec r) b = inputBit r b := by
@@ -566,7 +565,7 @@ private theorem runState_zero_toBitsBE (r : ℕ) (taps : BitVec r) (v : BitVec r
   rw [runState_ofNat r taps _ 0 0 (by norm_num) (by simp), Nat.ofBitsBE_toBitsBE,
     Nat.mod_eq_of_lt v.isLt]
   apply BitVec.eq_of_toNat_eq
-  simp [Nat.mod_eq_of_lt v.isLt]
+  simp
 
 private theorem finalRegister_eq_pow (r : ℕ) (taps : BitVec r) (bits : List Bool) :
     finalRegister r taps bits =
@@ -584,7 +583,8 @@ private theorem runOut_inBody_bits_end (l r : ℕ) (taps : BitVec r)
         { phase := ParserPhase.inBody, register := reg, count := c }
         (suffix.map FrameToken.bit ++ [FrameToken.endTok]) =
       suffix.take (l - c.val) := by
-  rw [SequentialTransducer.runOut_append, run_bits_inBody_out, run_bits_inBody_state, SequentialTransducer.runOut_cons]
+  rw [SequentialTransducer.runOut_append, run_bits_inBody_out, run_bits_inBody_state,
+    SequentialTransducer.runOut_cons]
   simp [frame_step_end_inBody, SequentialTransducer.runOut_nil]
 
 private theorem prefix_frame_translates (l r : ℕ) (taps : BitVec r)
@@ -597,11 +597,11 @@ private theorem prefix_frame_translates (l r : ℕ) (taps : BitVec r)
   simp only [Cslib.Automata.SequentialTransducer.Translates, frameParser_initOut,
     frameParser_finalOut_apply, List.nil_append, List.append_nil]
   constructor
-  · rw [SequentialTransducer.runState_append, List.cons_append, runState_from_done_start,
-      fresh_rest_runState]
+  · rw [SequentialTransducer.runState_append, List.cons_append, (run_start_cons l r taps _ _).1,
+      runState_freshState_frame]
     simp only [frameParser_accept_iff]
-    rw [if_pos ⟨hLen, hReg⟩]
-  · rw [SequentialTransducer.runOut_append, List.cons_append, runOut_from_any_start,
+    rw [ite_eq_left ⟨hLen, hReg⟩]
+  · rw [SequentialTransducer.runOut_append, List.cons_append, (run_start_cons l r taps _ _).2,
       fresh_rest_runOut]
 
 private theorem start_prefix_runOut (l r : ℕ) (taps : BitVec r)
@@ -611,7 +611,7 @@ private theorem start_prefix_runOut (l r : ℕ) (taps : BitVec r)
       prefixBits.take l := by
   rw [SequentialTransducer.runOut_cons, frame_step_start]
   simp only [List.nil_append]
-  rw [run_bits_inBody_out, satCount_zero_val, Nat.sub_zero]
+  rw [freshState, run_bits_inBody_out, satCount_zero_val, Nat.sub_zero]
 
 private theorem step_phase_done (l r : ℕ) (taps : BitVec r) (q : ParserState l r)
     (a : FrameToken)
@@ -619,10 +619,20 @@ private theorem step_phase_done (l r : ℕ) (taps : BitVec r) (q : ParserState l
     q.phase = ParserPhase.inBody ∧ a = FrameToken.endTok ∧
       q.count.val = l + r ∧ q.register = 0#r := by
   obtain ⟨qph, qreg, qcnt⟩ := q
-  cases qph <;> cases a <;> simp [frameParser] at h <;>
-    first
-      | exact ⟨rfl, rfl, h.1, h.2⟩
-      | simp at h
+  cases a with
+  | start =>
+      rw [frame_step_start] at h
+      exact ParserPhase.noConfusion h
+  | bit b => cases qph <;> exact ParserPhase.noConfusion h
+  | endTok =>
+      cases qph
+      · exact ParserPhase.noConfusion h
+      · by_cases hc : qcnt.val = l + r ∧ qreg = 0#r
+        · exact ⟨rfl, rfl, hc.1, hc.2⟩
+        · rw [frame_step_end_inBody, ite_eq_right hc] at h
+          exact ParserPhase.noConfusion h
+      · exact ParserPhase.noConfusion h
+      · exact ParserPhase.noConfusion h
 
 private theorem step_phase_inBody (l r : ℕ) (taps : BitVec r) (q : ParserState l r)
     (a : FrameToken)
@@ -630,11 +640,25 @@ private theorem step_phase_inBody (l r : ℕ) (taps : BitVec r) (q : ParserState
     a = FrameToken.start ∨
       (q.phase = ParserPhase.inBody ∧ ∃ b : Bool, a = FrameToken.bit b) := by
   obtain ⟨qph, qreg, qcnt⟩ := q
-  cases qph <;> cases a <;> simp [frameParser] at h <;>
-    first
-      | exact Or.inl rfl
-      | exact Or.inr ⟨rfl, _, rfl⟩
-      | (by_cases hc : qcnt.val = l + r ∧ qreg = 0#r <;> simp [hc] at h)
+  cases a with
+  | start => exact Or.inl rfl
+  | bit b =>
+      cases qph
+      · exact ParserPhase.noConfusion h
+      · exact Or.inr ⟨rfl, b, rfl⟩
+      · exact ParserPhase.noConfusion h
+      · exact ParserPhase.noConfusion h
+  | endTok =>
+      cases qph
+      · exact ParserPhase.noConfusion h
+      · rw [frame_step_end_inBody] at h
+        by_cases hc : qcnt.val = l + r ∧ qreg = 0#r
+        · rw [ite_eq_left hc] at h
+          exact ParserPhase.noConfusion h
+        · rw [ite_eq_right hc] at h
+          exact ParserPhase.noConfusion h
+      · exact ParserPhase.noConfusion h
+      · exact ParserPhase.noConfusion h
 
 private theorem accepted_cases (l r : ℕ) (taps : BitVec r) (q : ParserState l r)
     (ts : List FrameToken)
@@ -686,17 +710,15 @@ private theorem accepted_cases (l r : ℕ) (taps : BitVec r) (q : ParserState l 
       · obtain ⟨hq'ph, suffix, hts, hlen, hreg, hout⟩ := hC
         rcases step_phase_inBody l r taps q a hq'ph with (rfl | ⟨hqph, b, rfl⟩)
         · have hlen' : suffix.length = l + r := by
-            simpa [frame_step_start, satCount_zero_val] using hlen
+            simpa [frame_step_start, freshState, satCount_zero_val] using hlen
           have hreg' : runRegister r taps suffix = 0#r := by
             rw [runRegister_eq_runState_zero]
-            simpa [frame_step_start] using hreg
+            simpa [frame_step_start, freshState] using hreg
           have hout' : (frameParser l r taps).runOut
               ((frameParser l r taps).step q FrameToken.start).1 ts =
               suffix.take l := by
-            simpa [frame_step_start, satCount_zero_val] using hout
-          have hstate : ((frameParser l r taps).step q FrameToken.start).1 =
-              ({ phase := ParserPhase.inBody, register := 0#r, count := satCount l r 0 } :
-                ParserState l r) := by
+            simpa [frame_step_start, freshState, satCount_zero_val] using hout
+          have hstate : ((frameParser l r taps).step q FrameToken.start).1 = freshState l r := by
             rw [frame_step_start]
           rw [hstate] at hout'
           refine Or.inr (Or.inl ⟨[], suffix, hlen', hreg', ?_, ?_⟩)
@@ -759,13 +781,18 @@ theorem encodedFrame_translates_to_payload (l r : ℕ) (taps : BitVec r)
 /-- **Acceptance characterization, restart-aware.** The parser
 translates a token list to an output exactly when the token list ends
 in one complete frame whose body has length `l + r` and zero CRC
-remainder, after an arbitrary prefix. The final frame's `start`
-restarts the parser from whatever state the prefix left, so acceptance
-of the final frame does not depend on the prefix, while the output is
-the output emitted while reading the prefix followed by the first `l`
-bits of the final body. A single complete frame is the empty-prefix
-case, and a concatenation of complete zero-remainder frames is the
-case where the prefix is the concatenation of all but the last frame. -/
+remainder, after an arbitrary prefix. Acceptance and output are
+decided separately:
+- acceptance depends on the final frame alone: its `start` restarts
+  the parser from whatever state the prefix left, so the prefix may
+  hold frames that were rejected or cut short;
+- the output is everything emitted while reading the prefix, bits of
+  such frames included, followed by the first `l` bits of the final
+  body.
+
+A single complete frame is the empty-prefix case. The output is the
+sequence of payloads when the prefix is a concatenation of clean
+frames, as in `twoConsecutiveFrames_translate`. -/
 theorem translates_iff_zero_remainder_body (l r : ℕ) (taps : BitVec r)
     (ts : List FrameToken) (out : List Bool) :
     (frameParser l r taps).Translates ts out ↔
@@ -844,27 +871,29 @@ theorem startInBody_aborts_and_restarts (l r : ℕ) (taps : BitVec r)
       by rw [encodedBody_length, hlen], runRegister_encodedBody_eq_zero r taps bits,
       rfl, by rw [start_prefix_runOut, encodedBody_take l r taps bits hlen]⟩
 
-/-- A body of the wrong length is rejected: the frame has no accepted
-`Translates` result for any output. Rejection happens only at `endTok`,
-so `runOut` still contains the body bits emitted before validation, up
-to the first `l`. -/
-theorem wrongLengthBody_rejected (l r : ℕ) (taps : BitVec r)
+/-- **Wrong length.** After any prefix, a final frame closed by `endTok` whose body does not
+have `l + r` bits, fewer or more (past the saturation point of the count included), is
+rejected: the token list has no accepted `Translates` result for any output. Rejection happens
+only at `endTok`, so `runOut` still contains the bits emitted before validation. -/
+theorem wrongLengthBody_rejected (l r : ℕ) (taps : BitVec r) (pfx : List FrameToken)
     (body : List Bool) (hlen : body.length ≠ l + r) (out : List Bool) :
     ¬ (frameParser l r taps).Translates
-        (FrameToken.start :: body.map FrameToken.bit ++ [FrameToken.endTok])
+        (pfx ++ (FrameToken.start :: body.map FrameToken.bit ++ [FrameToken.endTok]))
         out := by
   intro hTrans
-  rw [frame_translates_single] at hTrans
-  obtain ⟨⟨hLen, _⟩, _⟩ := hTrans
-  exact hlen hLen
+  have happ : ((frameParser l r taps).runState (frameParser l r taps).start
+      (pfx ++ (FrameToken.start :: body.map FrameToken.bit ++ [FrameToken.endTok]))).phase =
+      ParserPhase.done := hTrans.1
+  rw [SequentialTransducer.runState_append, List.cons_append, (run_start_cons l r taps _ _).1,
+    runState_freshState_frame, ite_eq_right fun h => hlen h.1] at happ
+  exact ParserPhase.noConfusion happ
 
-/-- A body with nonzero CRC remainder is rejected: the frame has no
-accepted `Translates` result for any output. Rejection happens only at
-`endTok`, so `runOut` still contains the first `l` body bits emitted
-before validation. -/
+/-- A body with nonzero CRC remainder is rejected, whatever its length:
+the frame has no accepted `Translates` result for any output. Rejection
+happens only at `endTok`, so `runOut` still contains the first `l` body
+bits emitted before validation. -/
 theorem nonzeroRemainderBody_rejected (l r : ℕ) (taps : BitVec r)
-    (body : List Bool) (hlen : body.length = l + r)
-    (hrem : runRegister r taps body ≠ 0#r) (out : List Bool) :
+    (body : List Bool) (hrem : runRegister r taps body ≠ 0#r) (out : List Bool) :
     ¬ (frameParser l r taps).Translates
         (FrameToken.start :: body.map FrameToken.bit ++ [FrameToken.endTok])
         out := by

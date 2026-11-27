@@ -80,7 +80,7 @@ example (out : List Bool) :
     ¬ (frameParser 3 3 crc3Taps).Translates
       (FrameToken.start :: [true, false, true, true, false].map FrameToken.bit ++
         [FrameToken.endTok]) out :=
-  wrongLengthBody_rejected 3 3 crc3Taps [true, false, true, true, false] (by decide) out
+  wrongLengthBody_rejected 3 3 crc3Taps [] [true, false, true, true, false] (by decide) out
 
 /-- Nonzero remainder: payload `101` with check bits `000` has remainder
 `0b100`, ends failed, and still emits its first three bits. -/
@@ -100,7 +100,51 @@ example (out : List Bool) :
       (FrameToken.start :: [true, false, true, false, false, false].map
         FrameToken.bit ++ [FrameToken.endTok]) out :=
   nonzeroRemainderBody_rejected 3 3 crc3Taps [true, false, true, false, false, false]
-    rfl (by decide) out
+    (by decide) out
+
+/-- The nonzero-remainder rejection needs no length hypothesis: a four-bit body with nonzero
+remainder is rejected too. -/
+example (out : List Bool) :
+    ¬ (frameParser 3 3 crc3Taps).Translates
+      (FrameToken.start :: [true, false, false, false].map FrameToken.bit ++
+        [FrameToken.endTok]) out :=
+  nonzeroRemainderBody_rejected 3 3 crc3Taps [true, false, false, false] (by decide) out
+
+/-- A completed but rejected frame, the body `101000` above, followed by the clean frame of
+`011`: the stream is accepted, because acceptance depends on the final frame alone, and the
+output keeps the three bits the rejected frame emitted before the clean payload. This
+instantiates `translates_iff_zero_remainder_body` with the rejected frame as the prefix. -/
+example :
+    (frameParser 3 3 crc3Taps).Translates
+      ((FrameToken.start :: [true, false, true, false, false, false].map FrameToken.bit ++
+          [FrameToken.endTok]) ++ encodeFrame 3 crc3Taps [false, true, true])
+      [true, false, true, false, true, true] :=
+  (translates_iff_zero_remainder_body 3 3 crc3Taps _ _).mpr
+    ⟨FrameToken.start :: [true, false, true, false, false, false].map FrameToken.bit ++
+        [FrameToken.endTok],
+      encodedBody 3 crc3Taps [false, true, true], by decide,
+      runRegister_encodedBody_eq_zero 3 crc3Taps [false, true, true], rfl, by decide⟩
+
+/-- The same stream, run directly: the parser ends accepted, and its output is the rejected
+frame's three emitted bits followed by the clean payload `011`. -/
+example :
+    ((frameParser 3 3 crc3Taps).runState (frameParser 3 3 crc3Taps).start
+      ((FrameToken.start :: [true, false, true, false, false, false].map FrameToken.bit ++
+          [FrameToken.endTok]) ++ encodeFrame 3 crc3Taps [false, true, true])).phase =
+        ParserPhase.done ∧
+      (frameParser 3 3 crc3Taps).runOut (frameParser 3 3 crc3Taps).start
+        ((FrameToken.start :: [true, false, true, false, false, false].map FrameToken.bit ++
+            [FrameToken.endTok]) ++ encodeFrame 3 crc3Taps [false, true, true]) =
+        [true, false, true, false, true, true] := by
+  decide
+
+/-- A wrong-length final frame after a clean frame is rejected: the earlier accepted frame does
+not save the stream. -/
+example (out : List Bool) :
+    ¬ (frameParser 3 3 crc3Taps).Translates
+      (encodeFrame 3 crc3Taps [true, false, true] ++
+        (FrameToken.start :: [true, false].map FrameToken.bit ++ [FrameToken.endTok])) out :=
+  wrongLengthBody_rejected 3 3 crc3Taps _ [true, false] (by decide) out
 
 /-- A `start` after two body bits restarts: the clean frame for `101` is
 accepted, and the output is the two emitted bits followed by `101`. -/
