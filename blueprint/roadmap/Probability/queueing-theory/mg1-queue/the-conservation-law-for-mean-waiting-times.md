@@ -12,12 +12,15 @@ does not depend on $P$, where $E[W_i(P)]$ is the stationary mean waiting time of
 
 - [Little's law](../littles-law/littles-law.md)
 
+## Proof depends on
+
+- [The workload does not depend on the service order](the-workload-does-not-depend-on-the-service-order.md)
+
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:
 
 - existence of the stationary regime under each discipline and of the stationary mean work in the system;
-- the work in a work-conserving single-server queue does not depend on the service order;
 - the time-average work at the server, $\sum_i \rho_i E[R_i]$, from the long-run fraction $\rho_i$ of time the server spends on type-$i$ customers and the residual-life argument for the service in progress.
 
 ## Sources

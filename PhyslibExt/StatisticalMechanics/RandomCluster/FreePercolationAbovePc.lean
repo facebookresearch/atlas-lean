@@ -108,8 +108,12 @@ lemma frp_free_percolation_above_pc (d : ℕ) {p p' q : ℝ}
       (frp_isIncreasing_percolationEvent d)
   exact lt_of_lt_of_le hfree' hmono'
 
-/-- For `p > p_c(q, d)`, the free measure percolates, `θ⁰(p, q) > 0`, assuming monotonicity of the
-free measures in `p` on `(p_c, p)` (`hmono`) and `θ⁰ = θ¹` off a countable set (`hagree`). -/
+/-- **Free percolation above `p_c` from monotonicity and countable agreement.** Let `p ∈ (0, 1)`
+and `q > 0` with `p_c(q, d) < p`, and let `bad ⊆ ℝ` be countable. Suppose that for every
+`p' ∈ (0, 1)` with `p_c(q, d) < p' < p` the free infinite-volume measure at `p'` is
+stochastically dominated by the one at `p` (`hmono`), and that `θ⁰(p', q) = θ¹(p', q)` for every
+`p' ∈ (0, 1)` with `p_c(q, d) < p'` and `p' ∉ bad` (`hagree`). Then the free measure percolates:
+`θ⁰(p, q) > 0` (Grimmett, *The Random-Cluster Model*, Springer (2006), Chapters 4 and 5). -/
 lemma frp_free_percolation_above_pc_of_countable_agreement
     (d : ℕ) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (hpc : fkPc d q < p) (bad : Set ℝ) (hbad : bad.Countable)

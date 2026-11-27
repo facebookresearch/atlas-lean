@@ -75,8 +75,9 @@ def Tm.toDerivation {T : Theory Base} :
   | Γ, _, .lam (A := A) body =>
       .implI (ctxHyps Γ) (ctxHyps_cons A Γ ▸ body.toDerivation)
 
-/-- Curry-Howard, soundness direction: the type of every term is derivable
-in natural deduction from the hypotheses of its context, in every theory. -/
+/-- Curry-Howard, soundness direction. Assume equality of base types is
+decidable. Then the type of every term is derivable in natural deduction from
+the hypotheses of its context, in every theory. -/
 theorem curry_howard {T : Theory Base} {Γ : List (Ty Base)} {A : Ty Base}
     (t : Tm Γ A) : DerivableIn T (ctxHyps Γ ⊢ A.toProp) :=
   ⟨t.toDerivation⟩

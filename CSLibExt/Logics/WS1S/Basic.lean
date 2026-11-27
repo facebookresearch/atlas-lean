@@ -24,8 +24,9 @@ naturals and set variables over finite sets of naturals.
   `falsum`, `imp`, `all`, `allSet`), with the derived `WS1SFormula.neg`, `ex` and `exSet`.
 * `WS1STerm.eval`, `WS1SFormula.Holds`: semantics under a first-order assignment `Nat → Nat` and a
   set assignment `Nat → Finset Nat`; a quantifier binds variable `0` and shifts the others.
-* `codeWS1STerm`, `codeWS1S`: Gödel numberings by Cantor pairing with one tag per constructor,
-  injective (`codeWS1STerm_injective`, `codeWS1S_injective`).
+* `codeWS1STerm`, `codeWS1S`: Gödel numberings by Mathlib's square-shell pairing `Nat.pair`
+  (not Cantor's diagonal pairing) with one tag per constructor, injective
+  (`codeWS1STerm_injective`, `codeWS1S_injective`).
 
 Decidability of WS1S over these codes is deferred: `Cslib.Logic.WS1SWanted.ws1s_decidable` in
 `WantedExt.TheoryOfComputation.WS1SDecidabilityWanted`.
@@ -97,7 +98,8 @@ def WS1SFormula.Holds (v : Nat → Nat) (V : Nat → Finset Nat) : WS1SFormula �
   | .allSet φ => ∀ X : Finset Nat,
       φ.Holds v (fun i => match i with | 0 => X | j + 1 => V j)
 
-/-- Gödel numbering of WS1S terms, via Cantor pairing with a disjoint tag per
+/-- Gödel numbering of WS1S terms, via Mathlib's `Nat.pair`, the square-shell pairing
+(`Nat.pair 1 1 = 3`; Cantor's diagonal pairing sends `(1, 1)` to `4`), with a disjoint tag per
 constructor: every code is `Nat.pair tag payload` with tag `0` for variables, `1`
 for `0`, `2` for successor. Bare constants are never used as codes, since e.g. the
 old `.zero ↦ 1` collided with `.var 1 ↦ Nat.pair 0 1 = 1` (see the regression
@@ -131,7 +133,8 @@ theorem codeWS1STerm_injective : Function.Injective codeWS1STerm := by
     | zero => simp only [codeWS1STerm, Nat.pair_eq_pair] at h; exact absurd h.1 (by decide)
     | succ t' => simp only [codeWS1STerm, Nat.pair_eq_pair] at h; rw [ih h.2]
 
-/-- Gödel numbering of WS1S formulas, via Cantor pairing with a disjoint tag per
+/-- Gödel numbering of WS1S formulas, via Mathlib's `Nat.pair`, the square-shell pairing
+(not Cantor's diagonal pairing), with a disjoint tag per
 constructor: every code is `Nat.pair tag payload` with tags `0` (`eq`), `1` (`lt`),
 `2` (`mem`), `3` (`falsum`), `4` (`imp`), `5` (`all`), `6` (`allSet`). In
 particular `falsum` is `Nat.pair 3 0`, not the bare constant `3`: the old bare `3`
