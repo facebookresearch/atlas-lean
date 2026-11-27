@@ -1,6 +1,6 @@
 # Nonstandard finite differences for a reaction–diffusion SEIQR model
 
-**Model.** On a bounded domain $\Omega \subset \mathbb{R}^2$ with homogeneous Neumann boundary conditions, susceptible, exposed, infected, quarantined and recovered densities evolve by
+**Model.** On a bounded domain $\Omega \subset \mathbb{R}^2$ with smooth boundary $\partial\Omega$ and homogeneous Neumann boundary conditions, susceptible, exposed, infected, quarantined and recovered densities evolve by
 
 $$\begin{aligned}
 \partial_tS &= \lambda_S\Delta S + \Lambda + \rho Q - \beta_1SE - \beta_2SI - \mu S,\\

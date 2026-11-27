@@ -25,6 +25,10 @@ Every F-sequence extends by one entry to an F-sequence (set $f_{N,M+1} = f_{N-1,
 
 The diagonal records the lineage-through-time count, which rises at each coalescence and falls at each sampling, starting from the two lineages below the root and ending with the last sampled leaf. Off-diagonal entries count lineages persisting across longer intervals: moving the interval endpoint by one event either keeps every lineage or removes the single one touched by that event, which gives the row, column and two-sided "parallelogram" constraints. Conversely, the differences $F_{i,j} - F_{i,j-1}$ and $F_{i-1,j} - F_{i,j}$ identify which earlier node each event attaches to, so the tree can be rebuilt one event at a time, proving the bijection. In the isochronous case either bound can be chosen for each entry in lexicographic order; in the heterochronous case the forced-value condition of the proposition must also be respected. With that rule, valid trees can be enumerated or sampled by sequential choices, which defines flexible probability models on tree shapes and distances between them.
 
+## Depends on
+
+- [F-matrix encoding and metrics on ranked tree shapes](../../../coalescent-theory/ranked-labeled-histories-of-coalescent-trees/f-matrix-distances-between-ranked-tree-shapes/f-matrix-encoding-and-metrics-on-ranked-tree-shapes.md)
+
 ## Sources
 
 - C. Jennings-Shaffer, Z. Chen, J. A. Palacios and F. A. Matsen IV, "Generalizing matrix representations to fully heterochronous ranked tree shapes", *Bulletin of Mathematical Biology* 88(5) (2026), 85, Theorems 1, 2, Corollary 1 and Proposition 1, <https://doi.org/10.1007/s11538-026-01632-4> (preprint arXiv:2510.27030).

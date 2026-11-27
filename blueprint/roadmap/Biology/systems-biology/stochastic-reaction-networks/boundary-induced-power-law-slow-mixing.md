@@ -8,7 +8,7 @@ $$\inf_{t\in[0,\,C_\delta n^{\theta}]} \mathbb{P}_x\big(\|X(t)\|_{d-1,\infty} > 
 
 If moreover each communication class has a unique stationary distribution $\pi_x$ with $\sup_{x\in\mathbb{I}_n}\pi_x(\{\|y\|_{d-1,\infty}>n/2\})\to0$, then the $\delta$-mixing time satisfies $\inf_{x\in\mathbb{I}_n} t^{\delta}_{\mathrm{mix}}(x) \ge C'_\delta\,n^{\theta}$ for all large $n$.
 
-**Example (cyclic networks).** For the two-species network $\emptyset \to \alpha_1A+\beta_1B \to \alpha_2A+\beta_2B \to \cdots \to \alpha_{L-1}A+\beta_{L-1}B \to \emptyset$ ($L\ge2$) with nonnegative increasing integers $\alpha_i,\beta_i$ ($\alpha_0=\beta_0=0$) and arbitrary positive mass-action rate constants, the hypotheses hold and the lower bound applies with $\theta=\theta_1=\min_{2\le i\le L}(\alpha_{i-1}-\alpha_{i-2})$; started from $(n,0)$ the mixing time grows at least like $n^{\theta_1}$ even though the chain is positive recurrent.
+**Example (cyclic networks).** For the two-species network $\emptyset \to \alpha_1A+\beta_1B \to \alpha_2A+\beta_2B \to \cdots \to \alpha_{L-1}A+\beta_{L-1}B \to \emptyset$ ($L\ge2$) with nonnegative increasing integers $\alpha_i,\beta_i$ ($\alpha_0=\beta_0=0$) and arbitrary positive mass-action rate constants, the hypotheses of the Theorem hold with $\theta=\theta_1=\min_{2\le i\le L}(\alpha_{i-1}-\alpha_{i-2})$ (Theorem 3). If moreover the chain has a unique stationary distribution (for instance when all rate constants $\kappa_i$ are equal, which makes the network complex balanced, Remark 8), the $\delta$-mixing time from $(n,0)$ is at least $Cn^{\theta_1}$ for all large $n$ (Corollary 2), even though the chain is then positive recurrent.
 
 ## Expansion
 
@@ -16,4 +16,4 @@ While species $d$ is absent, the dynamics can only leave the boundary through ra
 
 ## Sources
 
-- W.-T. L. Fan, J. Kim, C. Yuan, "Boundary-induced slow mixing for Markov chains and its application to stochastic reaction networks", *SIAM Journal on Applied Dynamical Systems* 25(4) (2026), 2538–2584, Theorem 1, Corollaries 1–2 and Theorem 3, <https://doi.org/10.1137/24m1679896> (preprint arXiv:2407.12166).
+- W.-T. L. Fan, J. Kim, C. Yuan, "Boundary-induced slow mixing for Markov chains and its application to stochastic reaction networks", *SIAM Journal on Applied Dynamical Systems* 25(4) (2026), 2538–2584, Theorem 1, Corollaries 1–2, Theorem 3 and Remark 8, <https://doi.org/10.1137/24m1679896> (preprint arXiv:2407.12166).

@@ -1,6 +1,6 @@
 # Height metaconcept for tree balance and the maximal B1 index
 
-**Setting.** Let $T$ be a rooted tree with $n$ leaves, root $\rho$ and inner vertices $\mathring V(T)$; for a vertex $v$, $T_v$ is the pending subtree rooted at $v$ and $h(T_v)$ its height (the number of edges on a longest path from $v$ to a leaf below it). The **height sequence** $\mathcal H(T)$ lists the heights $h(T_v)$, $v\in\mathring V(T)$, in increasing order (it has $n-1$ entries when $T$ is binary). For a function $f:\mathbb N_{\ge1}\to\mathbb R$, the **height metaconcept** is
+**Setting.** All trees are rooted tree shapes with no vertex of out-degree one (the source's convention, Section 2.1); with such vertices allowed, subdividing an edge raises heights and the maximizer statements below fail. Let $T$ be such a tree with $n$ leaves, root $\rho$ and inner vertices $\mathring V(T)$; for a vertex $v$, $T_v$ is the pending subtree rooted at $v$ and $h(T_v)$ its height (the number of edges on a longest path from $v$ to a leaf below it). The **height sequence** $\mathcal H(T)$ lists the heights $h(T_v)$, $v\in\mathring V(T)$, in increasing order (it has $n-1$ entries when $T$ is binary). For a function $f:\mathbb N_{\ge1}\to\mathbb R$, the **height metaconcept** is
 
 $$\Phi^{\mathcal H}_f(T)=\sum_{v\in\mathring V(T)} f\bigl(h(T_v)\bigr),$$
 
@@ -20,6 +20,10 @@ $T^{gfb}_n$ is the unique minimizer for strictly increasing $f$ if and only if $
 ## Expansion
 
 Because $\Phi^{\mathcal H}_f$ is a sum of $f$ over the height sequence, a tree whose sorted height sequence is entrywise smallest minimizes it for every increasing $f$ at once. Greedy clustering of the smallest trees keeps every pending-subtree height as low as possible, which gives the entrywise minimality of $\mathcal H(T^{gfb}_n)$. The $B_1$ index is $-\Phi^{\mathcal H}_g$ for the increasing function $g(x)=-1/x$, up to the root term $1/h(T)$, which is constant ($=1/\lceil\log_2 n\rceil$) on the minimizers; this links $B_1$ maximization to height-metaconcept minimization. Uniqueness for $n=2^h-2^i$ comes from the fact that only then is the height sequence realized by a single tree shape.
+
+## Depends on
+
+- [GFB trees minimize concave subtree-size indices](../greedy-from-the-bottom-trees/gfb-trees-minimize-concave-subtree-size-indices.md)
 
 ## Sources
 

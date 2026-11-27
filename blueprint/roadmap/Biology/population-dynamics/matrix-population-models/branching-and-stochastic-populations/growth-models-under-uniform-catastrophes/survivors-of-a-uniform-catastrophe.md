@@ -18,6 +18,10 @@ $$\mathbb{E}\big(s^N\big) = \frac{\ln\big(1 + \lambda(1-s)\big)}{\lambda(1-s)}, 
 
 At the first catastrophe the colony size is $1 + G$, where $G$, the number of Poisson births before an independent rate-1 exponential time, is geometric: $\mathbb{P}(G = k) = \frac{1}{\lambda+1}\big(\frac{\lambda}{\lambda+1}\big)^k$. Given size $i$, the survivor count is uniform on $\{0, \dots, i-1\}$, so $\mathbb{P}(N = n) = \sum_{k \ge n} \mathbb{P}(G = k)/(k+1)$, which is the Lerch series; summing the generating function gives the logarithm. Without dispersal, a catastrophe halves the size on average, so the drift of $\ln X$ is eventually negative, and a Foster–Lyapunov criterion shows that the embedded chain is positive recurrent; recurrence of state 0 means extinction.
 
+## Proof depends on
+
+- [Foster's criterion for positive recurrence](../../../../../Probability/markov-chains/foster-lyapunov-criteria/foster-s-criterion-for-positive-recurrence.md)
+
 ## Sources
 
 - J. Amaya, V. V. Junior, F. P. Machado and A. Roldán-Correa, "Growth models under uniform catastrophes", *Journal of Statistical Physics* 193(11) (2026), 162, Proposition 2.1, Theorem 2.2; Foster's theorem as Theorem 4.1, <https://doi.org/10.1007/s10955-026-03718-8> (preprint arXiv:2602.06649).

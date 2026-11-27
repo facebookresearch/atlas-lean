@@ -4,7 +4,7 @@
 
 $$N_{t+1}=\frac{N_t}{1+\alpha+\beta N_t}+m(\tau)\,N_{t-\tau},\qquad m(\tau)=\big(a-be^{-K(\tau+1)}\big)\,\overline p^{\,\tau+1},$$
 
-with $\alpha,\beta,a,b,K>0$, $a>b$, and constant immature survival per cycle $\overline p\in(0,1)$. The first term is Beverton–Holt survival of adults; the fecundity $a-be^{-K(\tau+1)}$ increases with $\tau$ while survival to maturity $\overline p^{\tau+1}$ decreases. Initial values $N_{-\tau},\dots,N_0\ge0$ are not all zero, and $m(\tau)\in(0,1)$.
+with $\alpha,\beta,a,b,K>0$, $a>be^{-K}$ (the source's standing hypothesis, Eq. (7)), and constant immature survival per cycle $\overline p\in(0,1)$. The first term is Beverton–Holt survival of adults; the fecundity $a-be^{-K(\tau+1)}$ increases with $\tau$ while survival to maturity $\overline p^{\tau+1}$ decreases. Initial values $N_{-\tau},\dots,N_0\ge0$ are not all zero, and $m(\tau)\in(0,1)$.
 
 **Equilibria and global dynamics.**
 

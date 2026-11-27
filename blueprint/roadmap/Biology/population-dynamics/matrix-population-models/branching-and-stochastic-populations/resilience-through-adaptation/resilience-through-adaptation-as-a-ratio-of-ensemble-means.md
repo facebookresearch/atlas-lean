@@ -19,6 +19,10 @@ a resolvent of the perturbed generator.
 
 Treating the reaction time as random with a known law turns the "worst state" of the classical definition into an expectation at the adaptation time, which can be computed from stationary means and one resolvent solve, or estimated from population experiments without tracking every individual's trajectory. The construction borrows linear-response and resolvent tools from non-equilibrium statistical mechanics, which also allow perturbative approximations of $R_\tau$ for small disturbances.
 
+## Depends on
+
+- [Strongly continuous contraction semigroups, generators and cores](../../../../../Analysis/operator-theory/strongly-continuous-contraction-semigroups.md)
+
 ## Sources
 
 - J. M. Ramirez, J. M. Restrepo, V. Lucarini, D. Weston, "Probabilistic Measures for Biological Adaptation and Resilience", *Physical Review E* 109(2) (2024), 024413, definition of resilience through adaptation $R_\tau$ and its resolvent representation, <https://doi.org/10.1103/physreve.109.024413> (preprint arXiv:2307.06974).

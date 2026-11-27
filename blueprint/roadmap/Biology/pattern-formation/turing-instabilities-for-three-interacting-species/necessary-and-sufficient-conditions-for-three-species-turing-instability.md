@@ -38,6 +38,10 @@ satisfy (P1).
 
 The characteristic polynomial of $J(k^2)$ is $\lambda^3-c_2\lambda^2+c_1\lambda-c_0$ with $c_2=\mathrm{tr}J(k^2)<0$. By Routh–Hurwitz, with $c_2<0$ a real positive root exists iff $c_0=\det J(k^2)>0$, and a complex pair with positive real part iff $c_1>0$ and $c_2c_1>c_0$. As functions of $y=k^2$, $\det J(y)=\tilde a_3y^3+\dots+\tilde a_0$ and $c_2c_1-c_0=g(y)$ are cubics and $c_1=h(y)$ is a quadratic, with signs at $0$ and $\infty$ fixed by stability of the kinetics and positivity of the $d_i$. The theorem is then the elementary question of when a cubic, or a cubic and a quadratic simultaneously, are positive somewhere on $(0,\infty)$, answered by the location of the cubic's local maximum.
 
+## Proof depends on
+
+- [Routh–Hurwitz criterion for cubic polynomials](../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+
 ## Sources
 
 - V. Piskovsky, "Turing instabilities for three interacting species", *Applied Mathematics Letters* 159 (2025), 109269, Theorem 1, Lemmas 1–5, conditions (polynom_cond1) and (polynom_cond2), <https://doi.org/10.1016/j.aml.2024.109269> (preprint arXiv:2405.14682).

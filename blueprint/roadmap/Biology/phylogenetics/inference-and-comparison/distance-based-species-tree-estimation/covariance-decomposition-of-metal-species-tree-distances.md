@@ -12,7 +12,7 @@ the expectation being over a gene tree under the MSC; all three matrices are pos
 
 **Proposition 3 (positive correlation).** Under the MSC, $\mathrm{Cor}(g^{(1)}_{ab},g^{(1)}_{cd})\ge\mathrm{Cor}(e^{tg^{(1)}_{ab}},e^{tg^{(1)}_{cd}})\ge0$ for all $t\le0$.
 
-**Proposition 6 (STEAC breakdown).** The delta-method variance of the STEAC per-gene estimate $\hat g_{ab}$ is finite if and only if $\mu<1/4$; for $\mu\ge1/4$ each gene has positive probability $p=\mathbb P(\hat p^{(i)}_{ab}\ge3/4)$ of an infinite estimate, so the STEAC distance is finite with probability $(1-p)^m\to0$ as the number of genes grows.
+**STEAC breakdown.** For every $\mu>0$, each gene has positive probability $p=\mathbb P(\hat p^{(i)}_{ab}\ge3/4)$ of an infinite STEAC per-gene estimate $\hat g_{ab}$, so the variance of the STEAC estimator is infinite, and the STEAC distance is finite only with probability $(1-p)^m\to0$ as the number $m$ of genes grows.
 
 ## Expansion
 

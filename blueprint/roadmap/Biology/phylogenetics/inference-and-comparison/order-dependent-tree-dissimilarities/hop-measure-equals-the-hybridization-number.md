@@ -20,6 +20,10 @@ Moreover $d^*_{\mathrm{OLA}}(T, T') \le h(T, T')$ and $d^*_{\mathrm{P2V}}(T, T')
 
 Upper bound: take a maximum acyclic agreement forest and order $X$ so that the components appear in an order compatible with its acyclic inheritance graph, with the leaves of each component consecutive. A common pendant subtree receives identical HOP labels in both trees (and identical OLA vector entries), so each block $\mathbf u_i, \mathbf v_i$ loses common-subsequence length only where a component is cut off, giving at most $m_a(T, T')$ mismatches. Lower bound: from an ordering attaining $d^*_{\mathrm{HOP}}$, the paths whose blocks fail to share a full common subsequence define cuts of $T$ and $T'$ whose pieces form an acyclic agreement forest with at most $d^*_{\mathrm{HOP}}$ cut edges, so $d^*_{\mathrm{HOP}} \ge m_a = h$.
 
+## Depends on
+
+- [OLA measure is bounded by the rSPR distance](ola-measure-is-bounded-by-the-rspr-distance.md)
+
 ## Sources
 
 - S. Linz, K. St. John, C. Semple and K. Wicke, "Order-dependent dissimilarity measures on phylogenetic trees", *Journal of Mathematical Biology* 92(4) (2026), 53, Theorem 2, Theorem 4, Theorem 5, Lemma 7, Corollary 1, <https://doi.org/10.1007/s00285-026-02373-7> (preprint arXiv:2507.11254).

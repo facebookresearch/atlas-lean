@@ -8,7 +8,7 @@ With $f(x)=x$ this is the Sackin index, since $\sum_{v\ \text{inner}} n_v$ equal
 
 1. If $f$ is (strictly) increasing, $T^{cat}_n$ (uniquely) maximizes $\Phi^{\mathcal{N}}_f$ on $\mathcal{BT}^\ast_n$; if $f$ is also 2-positive it does so on $\mathcal{T}^\ast_n$. The maximum value is $\sum_{i=2}^n f(i)$.
 2. $\Phi^{\mathcal{N}}_f$ is an imbalance index on $\mathcal{BT}^\ast_n$ when $f$ is strictly increasing and either strictly concave, strictly convex, or affine $f(x)=mx+a$ with $m>0$. On $\mathcal{T}^\ast_n$ the same holds if $f$ is additionally 2-positive (concave and convex cases) or $a\ge 0$ (affine case).
-3. If $f$ is strictly increasing and strictly convex, $T^{mb}_n$ is the unique minimizer on $\mathcal{BT}^\ast_n$. If $f$ is strictly increasing and strictly concave, the greedy-from-the-bottom tree is the unique minimizer instead. If $f$ is affine with $m>0$, the minimizers on $\mathcal{BT}^\ast_n$ are exactly the Sackin minimizers: $T^{fb}_{h_n}$ or trees whose leaves have only the depths $h_n-1$ and $h_n$, $h_n=\lceil\log_2 n\rceil$.
+3. If $f$ is strictly increasing and strictly convex, $T^{mb}_n$ is the unique minimizer on $\mathcal{BT}^\ast_n$. If $f$ is affine with $m>0$, the minimizers on $\mathcal{BT}^\ast_n$ are exactly the Sackin minimizers: $T^{fb}_{h_n}$ or trees whose leaves have only the depths $h_n-1$ and $h_n$, $h_n=\lceil\log_2 n\rceil$.
 4. For every 2-positive $f$ (not necessarily increasing), $T^{star}_n$ is the unique minimizer on $\mathcal{T}^\ast_n$.
 
 ## Expansion

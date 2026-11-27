@@ -4,7 +4,7 @@
 
 **Theorem 5.1.**
 1. A bidirected-tree model (each edge of a tree present in both directions) with one input and one output is generically locally identifiable if and only if it has at most one leak and the distance from the input compartment to the output compartment is at most $1$.
-2. A directed-cycle model $1\to2\to\dots\to n\to1$, with any numbers of inputs, outputs and leaks, is generically locally identifiable if and only if it is leak-interlacing: between any two leak compartments along the cycle there is an input or an output compartment.
+2. A directed-cycle model $1\to2\to\dots\to n\to1$ with $n\ge3$, with any numbers of inputs, outputs and leaks (at least one input and one output), is generically locally identifiable if and only if it is *leak-interlacing* (Ahmed et al., Definition 3.3 and Theorem 3.6): the model is not *exceptional*, meaning that there is no $i$ with $\mathrm{In}=\{i\}$, $\mathrm{Out}=\{i-1\}$, $|\mathrm{Leak}|=2$ and $i-1\in\mathrm{Leak}$ (Definition 3.1), and either $|\mathrm{Leak}|\le1$, or $\mathrm{Leak}=\{\ell_1<\ell_2<\dots<\ell_z\}$ with $z\ge2$ and, for every $\alpha=1,\dots,z$, the arc $\{\ell_\alpha+1,\ell_\alpha+2,\dots,\ell_{\alpha+1}\}$ meets $\mathrm{In}\cup\mathrm{Out}$ (with $\ell_{z+1}:=\ell_1$ and all indices taken mod $n$). Each arc contains its second leak but not its first. The survey glosses this as "between any two leaks there is an output or an input", which is not the definition: for example, the $3$-cycle with $\mathrm{In}=\{1\}$, $\mathrm{Out}=\{3\}$ and $\mathrm{Leak}=\{1,3\}$ is exceptional and unidentifiable.
 
 Other identifiable families include the directed path $1\to\dots\to n$ with $\mathrm{In}=\{1\}$, $\mathrm{Out}=\{n\}$ and $\mathrm{Leak}=\{1,n\}$.
 
@@ -15,3 +15,4 @@ For one input and one output in compartment $i$ and $j$, the input–output equa
 ## Sources
 
 - N. Meshkat, A. Shiu, "Structural Identifiability of Compartmental Models: Recent Progress and Future Directions", *Current Opinion in Systems Biology* 42 (2025), 100559, Theorem 5.1 and Table 1 of Section 5, <https://doi.org/10.1016/j.coisb.2025.100559> (preprint arXiv:2507.04496).
+- S. Ahmed, N. Crepeau, P. R. Dessauer Jr., A. Edozie, O. Garcia-Lopez, T. Grimsley, J. Lopez Garcia, V. Neri, A. Shiu, "Identifiability of directed-cycle and catenary linear compartmental models", *SIAM Journal on Applied Dynamical Systems* 25(1) (2026), 304–350, <https://doi.org/10.1137/25m1728636>; numbering as in arXiv:2412.05283v3 (Definitions 3.1 and 3.3, Theorem 3.6, Proposition 2.22).

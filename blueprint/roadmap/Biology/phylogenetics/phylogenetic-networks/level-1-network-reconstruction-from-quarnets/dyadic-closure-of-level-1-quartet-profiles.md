@@ -22,6 +22,10 @@ The first statement uses that $\mathcal Q(N)$ determines $\overline N$ and that 
 
 R1 and R2 hold because any rule valid for every tree remains valid when all premises are trivial profiles, since then every displayed tree satisfies them. R3 and R4 are proved by splitting the displayed trees according to which quartet of $(abcd)$ they induce and applying R2 within each class. Completeness of the closure is proved first for a single cycle (sunlet) and then by induction on the number of non-trivial splits: splitting $N$ at a cut-edge into two smaller networks, the induction hypothesis gives their profiles, and three short case analyses produce every profile that straddles the edge using only R1 and R2. Linear size of $\mathcal R(N)$ follows by counting one profile per split and $2k - 7$ per $k$-cycle; sunlets maximize this. The $O(n)$ encoding does not contradict the $\Omega(n \log n)$ query lower bound for adaptive reconstruction from a quarnet oracle, since it presupposes knowing which quarnets to use.
 
+## Depends on
+
+- [Blobs and the reduced unrooted tree of blobs of a phylogenetic network](../../../coalescent-theory/multispecies-coalescent/tree-of-blobs-identifiability/blob-and-tree-of-blobs-of-a-phylogenetic-network.md)
+
 ## Sources
 
 - M. Frohn, N. Holtgrefe, L. van Iersel, M. Jones, "Bounds on the sequence length sufficient to reconstruct binary level-1 phylogenetic networks under the CFN model", *Annals of Combinatorics* (2026), Section 2 (quartet profiles and the reconstruction proposition), Section 3 (inference rules R1 to R4, representative quartet profiles and their size bound, dyadic closure theorem and linear-encoding corollary), <https://doi.org/10.1007/s00026-026-00830-0> (preprint arXiv:2511.22736).

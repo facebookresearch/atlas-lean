@@ -2,7 +2,7 @@
 
 **Setting.** Write the stochastic [patch model](lyapunov-exponent-classification-of-stochastic-patch-models.md) as $\mathbf N(t+1) = F(\mathbf N(t), e(t))$ with environmental parameters $e(t) = \bar e + \rho\,\xi(t)$, where $(e(t))$ is i.i.d. with values in a compact convex set and $0 \le \rho \ll 1$ measures the noise. Suppose the deterministic system $\bar{\mathbf N}(t+1) = F(\bar{\mathbf N}(t), \bar e)$ satisfies the hypotheses of the deterministic classification with $\lambda(D(\bar e)\Lambda(0,\bar e)) > 1$, so it has a unique globally attracting equilibrium $\bar{\mathbf N}_0$, assumed hyperbolic.
 
-**Theorem 4.1 and Theorem A.2.** Under these assumptions the stochastic system has an invariant probability measure $\mu$ with $\bar{\mathbf N}_0 \in \mathrm{supp}\,\mu$, supported in a small ball around $\bar{\mathbf N}_0$ for small $\rho$, and the population converges to it in distribution from initial states near $\bar{\mathbf N}_0$. Let $D_N F$ and $D_\xi F$ be the Jacobians of $F$ in the populations and the noise at $(\bar{\mathbf N}_0, \bar e)$, and $B = (I - D_N F)^{-1}$. If $\mathbf N \sim \mu$, then
+**Theorem 4.1 and Theorem A.2.** Under these assumptions the stochastic system has an invariant probability measure $\mu$, supported in a small ball $B_\delta(\bar{\mathbf N}_0)$ around $\bar{\mathbf N}_0$ for small $\rho$ (the support need not contain $\bar{\mathbf N}_0$ itself), and the population converges to it in distribution from initial states near $\bar{\mathbf N}_0$. Let $D_N F$ and $D_\xi F$ be the Jacobians of $F$ in the populations and the noise at $(\bar{\mathbf N}_0, \bar e)$, and $B = (I - D_N F)^{-1}$. If $\mathbf N \sim \mu$, then
 
 $$\mathbb E\mathbf N = \bar{\mathbf N}_0 + \rho\, B D_\xi F\, \mathbb E\xi + \frac12 B\sum_{i,j}\frac{\partial^2 F}{\partial N_i\partial N_j}[\mathrm{Cov}\,\mathbf N]_{ij} + \frac{\rho^2}{2} B\sum_{i,j}\frac{\partial^2 F}{\partial\xi_i\partial\xi_j}\big([\mathrm{Cov}\,\xi]_{ij} + \mathbb E\xi_i\,\mathbb E\xi_j\big) + R_2 + O(\rho^3),$$
 
@@ -27,6 +27,10 @@ The expansion is a stochastic analogue of the delta method: write $\mathbf N = \
 ## Depends on
 
 - [Lyapunov exponent classification of stochastic patch models](lyapunov-exponent-classification-of-stochastic-patch-models.md)
+
+## Proof depends on
+
+- [Discrete Lyapunov equation for convergent matrices](../../../../../Analysis/ordinary-differential-equations/stability-of-linear-systems/discrete-lyapunov-equation.md)
 
 ## Sources
 

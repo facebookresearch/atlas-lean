@@ -7,7 +7,7 @@
 **Theorem.**
 1. $\mathrm{norm}(N) = \mathrm{cov}(N) \ominus \mathrm{dvis}(N) = (N \ominus \overline{\mathrm{vis}}(N))^- \ominus \mathrm{dvis}(N) = \bigl(N \ominus (\overline{\mathrm{vis}}(N) \cup \mathrm{dvis}(N))\bigr)^-$, and $\mathrm{norm}(N)$ is a normal network on $X$ with vertex set $\mathrm{vis}(N) \setminus \mathrm{dvis}(N)$ whose ancestor order is the restriction of that of $N$.
 2. For a normal network $N$, $\mathrm{reg}(N)$ is normal, and $\mathrm{reg}(N) = N$ iff $N$ is regular iff $N$ is strongly normal iff $\mathrm{reg}_i(N) = N$ for all $2 \le i \le |X|$. Moreover a network is strongly normal iff it is normal and $2$-lca-relevant iff it is normal and lca-relevant.
-3. For every network $N$ and $i \ge 2$, $\mathrm{norm}(N) = \mathrm{reg}_i(N)$ iff $\mathrm{vis}(N) \setminus \mathrm{dvis}(N)$ equals the set of $k$-lca vertices ($k \le i$) of $N$; this can be tested in polynomial time.
+3. For every network $N$ and $i \ge 2$, $\mathrm{norm}(N) = \mathrm{reg}_i(N)$ iff $\mathrm{vis}(N) \setminus \mathrm{dvis}(N)$ equals the set of $k$-lca vertices ($k \le i$) of $N$. For each fixed $i$, and for $i = |X|$, this can be tested in polynomial time (Proposition 3.9, Corollary 4.8); with $k$ part of the input, testing $k$-lca-relevance is NP-complete.
 
 ## Depends on
 

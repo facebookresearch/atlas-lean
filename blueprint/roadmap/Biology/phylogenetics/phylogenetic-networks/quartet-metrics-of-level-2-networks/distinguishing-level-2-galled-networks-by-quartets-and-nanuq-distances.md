@@ -21,6 +21,7 @@ Each operation acts on one blob, so $N^c$ is unique.
 ## Depends on
 
 - [Circular decomposability of quartet-based network metrics](circular-decomposability-of-quartet-based-network-metrics.md)
+- [Blobs and the reduced unrooted tree of blobs of a phylogenetic network](../../../coalescent-theory/multispecies-coalescent/tree-of-blobs-identifiability/blob-and-tree-of-blobs-of-a-phylogenetic-network.md)
 
 ## Expansion
 

@@ -8,11 +8,11 @@ $$\mathbb{E}[T_0]=\sum_{k=0}^{N_0-1}\frac{k!}{\lambda(\lambda/\mu)^k}\sum_{j\ge 
 
 and $\lambda te^{-\mu t}+N_0e^{-\mu t}\le\mathbb{E}[N_t]\le f(t)+N_0e^{-\mu t}$ with $f(t)=O(1/t)$.
 
-**Proposition (total resource).** $\mathbb{E}[R_t]=R_0e^{(a-\mu)t}$, and the normalized variance $\mathrm{Var}[R_t]/(R_0^2e^{2(a-\mu)t})+1$ is bounded above by $\frac{1}{R_0}e^{(\mu+\sigma^2)t}+\frac{R_0-1}{R_0}e^{\sigma^2\delta^2t/(1+\delta^2)}$ and bounded below by
+**Proposition (total resource).** $\mathbb{E}[R_t]=R_0e^{(a-\mu)t}$. If moreover every initial colony has resource $1$ (so $R_0=N_0$), the normalized variance $\mathrm{Var}[R_t]/(R_0^2e^{2(a-\mu)t})+1$ is bounded above by $\frac{1}{R_0}e^{(\mu+\sigma^2)t}+\frac{R_0-1}{R_0}e^{\sigma^2\delta^2t/(1+\delta^2)}$ and bounded below by
 
 $$\frac{\mu+\frac{\sigma^2}{1+\delta^2}}{R_0\,c}\Big(e^{(\mu+\sigma^2-2\lambda\mathbb{E}[\Theta(1-\Theta)])t}-e^{\frac{\sigma^2\delta^2}{1+\delta^2}t}\Big)+e^{\frac{\sigma^2\delta^2}{1+\delta^2}t},\qquad c=\mu+\frac{\sigma^2}{1+\delta^2}-2\lambda\mathbb{E}[\Theta(1-\Theta)],$$
 
-read by continuity when $c=0$ (the two exponents differ by exactly $ct$).
+read by continuity when $c=0$ (the two exponents differ by exactly $ct$). The unit initial resources are needed: the source's proof (Section 4.2.4) sets $\mathbb{E}[\widehat Y_0]=1$, which is $\sum_u(X^u_0)^2/R_0$, and a single initial colony with $X_0=2$ violates the upper bound for small $t>0$.
 
 **Proposition (sharing of resources).** As $t\to\infty$,
 

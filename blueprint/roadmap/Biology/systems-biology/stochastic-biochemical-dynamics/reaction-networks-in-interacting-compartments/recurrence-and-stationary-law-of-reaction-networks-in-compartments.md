@@ -5,7 +5,7 @@
 **Theorem.**
 1. *(Explosivity.)* $\mathcal{T}$ is explosive iff the single-compartment network $\mathcal{S}_\kappa$ is explosive.
 2. *(Recurrence.)* If $\mathcal{T}$ is non-explosive and $\kappa_E > 0$, a coarse-grained state $n$ is recurrent (respectively positive recurrent) iff $n$ is reachable from the empty state and the compartment number $\|n\|_{\ell^1}$ is recurrent (respectively positive recurrent) for $\mathcal{C}_\kappa$. The same holds for the full (ordered) representation of the contents.
-3. *(Stationary law with inflow and exit only.)* Suppose $\kappa_F = \kappa_C = 0$ and $\kappa_E > 0$. Let $P_\mu(x,t)$ be the probability that $\mathcal{S}_\kappa$ started from $\mu$ is in state $x$ at time $t$, and
+3. *(Stationary law with inflow and exit only.)* Suppose $\mathcal{S}_\kappa$ is non-explosive (equivalently, by item 1, $\mathcal{T}$ is), $\kappa_F = \kappa_C = 0$ and $\kappa_E > 0$. Let $P_\mu(x,t)$ be the probability that $\mathcal{S}_\kappa$ started from $\mu$ is in state $x$ at time $t$, and
 
 $$\alpha(x) = \int_0^\infty P_\mu(x,t)\,\kappa_E e^{-\kappa_E t}\,dt .$$
 

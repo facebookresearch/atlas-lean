@@ -26,6 +26,10 @@ the unweighted average of $\rho_{xy}$ over the distinct quartet trees $M$ displa
 
 A metric $d$ is circular decomposable for a circular order $x_0,\dots,x_{n-1}$ iff the split weights $\alpha_{ij}=d(x_i,x_j)+d(x_{i+1},x_{j+1})-d(x_i,x_{j+1})-d(x_{i+1},x_j)$ are nonnegative, and then $d=\sum\alpha_{ij}\delta_{S_{ij}}/2$ over the circular splits. Each $d_T$ is a tree metric with positive weights, hence decomposes on $\mathrm{Split}(T)$. The displayed quartet metric is a convex combination of the $d_T$, and outer-labeled planarity gives a single circular order compatible with every displayed tree, so the combination stays circular decomposable. For NANUQ, $d_N$ differs from the displayed quartet metric by an error term coming from quarnets that are not tree-like; for level-2 bloblets this term is shown blob by blob to keep every $\alpha_{ij}$ nonnegative and to vanish exactly off the displayed splits.
 
+## Depends on
+
+- [Network quartet distance and the grove of displayed trees](../../../coalescent-theory/level-1-network-identifiability/network-quartet-distance-grove-identity.md)
+
 ## Sources
 
 - N. Holtgrefe, E. S. Allman, H. Baños, L. van Iersel, "Distinguishing Phylogenetic Level-2 Networks with Quartets and Inter-Taxon Quartet Distances", *Bulletin of Mathematical Biology* 87(12) (2025), 168, Proposition 2.8, Proposition 2.9, Proposition 2.11, Theorem 2.12, Corollary 2.13, Eq. (8), Theorem 3.3, Corollary 3.4, Eq. (10), Definition 4.1, Theorem 4.7, <https://doi.org/10.1007/s11538-025-01549-4> (preprint arXiv:2507.17308).

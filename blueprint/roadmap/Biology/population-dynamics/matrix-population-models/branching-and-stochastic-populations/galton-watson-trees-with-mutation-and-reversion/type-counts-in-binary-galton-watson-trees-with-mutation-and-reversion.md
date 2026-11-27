@@ -9,7 +9,7 @@
 
 $$\mathbb{E}_j\big[X^{(l)} \mid S = m\big] = \frac{1}{C_m}\left(\mathbf{1}\{0 < l - j \le m\}\,\frac{l - j + 1}{m+1}\binom{2m - l + j}{m} + \mathbf{1}\{m \ge l\}\binom{2m - l}{m+1}\right).$$
 
-4. *(Long-run proportions.)* With the incomplete beta function $B(z; a, b) = \int_0^z u^{a-1}(1-u)^{b-1}du$,
+4. *(Long-run proportions.)* For $0<p<1/2$, with the incomplete beta function $B(z; a, b) = \int_0^z u^{a-1}(1-u)^{b-1}du$,
 
 $$\mathbb{E}_j\left[\frac{X^{(k)}}{S}\,\Big|\, S \ge 1\right] = \frac{q}{p}B(p; k+1, -1) + \frac{q}{p}\,\mathbf{1}\{k > j\}\Big((k+1-j)\,B(p; k - j, 0) - \frac{p^{k-j}}{q}\Big).$$
 

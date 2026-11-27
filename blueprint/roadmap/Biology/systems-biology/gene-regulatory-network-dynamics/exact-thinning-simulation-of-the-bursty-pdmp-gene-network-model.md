@@ -18,6 +18,10 @@ The deterministic flow is explicit: $y_i(t)=e^{-d_{0,i}t}y_i$, $z_i(t)=e^{-d_{1,
 
 Thinning (uniformization) works because the total burst intensity is bounded by $\lambda$: a homogeneous Poisson clock of rate $\lambda$ proposes candidate times, and accepting each with probability proportional to the current intensity reproduces the time-inhomogeneous jump hazard, exactly as in Lewis-Shedler thinning of Poisson processes. To prove exactness one computes, for the embedded Markov chain sampled at candidate times, $\frac{d}{dt}\big|_{t=0}\mathbb E_{(y,z)}f(Y_t,Z_t)$: the flow part comes from following the ODE, the accepted candidates contribute the burst integral weighted by $k_{\mathrm{on},i}(z)$, and the rejected candidates cancel. Strong continuity on $C_0$ follows from boundedness of the rates and continuity of the flow, together with uniform continuity of functions vanishing at infinity. Boundedness of $k_{\mathrm{on},i}$ is biologically natural (burst frequencies saturate), and the explicit flow makes each step cost $O(n)$, which enables simulation of large networks fitted to single-cell transcriptomic data.
 
+## Depends on
+
+- [Strongly continuous contraction semigroups, generators and cores](../../../Analysis/operator-theory/strongly-continuous-contraction-semigroups.md)
+
 ## Sources
 
 - M. Gaillard, U. Herbach, "Efficient stochastic simulation of gene regulatory networks using hybrid models of transcriptional bursting", *Lecture Notes in Computer Science* (2025), 109–125, Section 2 (reaction model and generator), Section 3 (flow, waiting-time law and thinning algorithm) and Section 5 (Theorem 1), <https://doi.org/10.1007/978-3-032-01436-8_7> (preprint arXiv:2507.01922).

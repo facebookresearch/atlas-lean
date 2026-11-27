@@ -1,6 +1,6 @@
 # Input-independent speed of mass-action arithmetic
 
-**Speed.** If $g:\mathbb R_{\ge0}\to\mathbb R$ converges to $g^*$, its *rate of convergence* is $\rho=-\limsup_{t\to\infty}t^{-1}\ln|g(t)-g^*|\in(0,\infty]$, and $g$ *computes $g^*$ at speed $\rho$* (Definition in Section 3). If $|g(t)-g^*|\le ct^me^{-\rho t}$ for all $t$, the rate is at least $\rho$. If $T_n$ is the first time after which $g$ is correct to $n$ decimal places, then $n\ln 10/T_n\to\rho$.
+**Speed.** If $g:\mathbb R_{\ge0}\to\mathbb R$ converges to $g^*$, its *rate of convergence* is $\rho=-\limsup_{t\to\infty}t^{-1}\ln|g(t)-g^*|\in(0,\infty]$, and $g$ *computes $g^*$ at speed $\rho$* (Definition in Section 3). If $|g(t)-g^*|\le ct^me^{-\rho t}$ for all $t$, the rate is at least $\rho$. If $T_n$ is the first time after which $g$ is correct to $n$ decimal places, then $\liminf_{n\to\infty}n\ln 10/T_n=\rho$; the limit need not exist in general (the error may have rare bumps), but for $\dot x=1-ax$ it exists and equals $a$, and for $\dot x=x(1-ax)$ it equals $1$ (the source's (14) and (17)).
 
 **Input dependence and its removal (Section 2.3).** With all rate constants equal to 1, the network $0\to X$, $A+X\to A$ gives $\dot x=1-ax$ and computes $1/a$ at speed $a$, which degrades for small inputs. The autocatalytic network $X\to2X$, $A+2X\to A+X$ gives $\dot x=x(1-ax)$ and computes $1/a$ at speed $1$ for every $a>0$ and $x(0)>0$.
 

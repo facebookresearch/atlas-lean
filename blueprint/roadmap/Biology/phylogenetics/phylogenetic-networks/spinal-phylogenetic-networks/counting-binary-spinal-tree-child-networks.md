@@ -4,7 +4,9 @@
 
 **Proposition.** The number of spinal networks with $n$ leaves and cover size $|\mathcal{C}|$ is
 
-$$S_{n,|\mathcal{C}|} = 2^{\binom{|\mathcal{C}|-2}{2}}\bigl(|\mathcal{C}|^n - (|\mathcal{C}|-1)^n\bigr).$$
+$$S_{n,|\mathcal{C}|} = 2^{\binom{|\mathcal{C}|-1}{2}}\bigl(|\mathcal{C}|^n - (|\mathcal{C}|-1)^n\bigr).$$
+
+This corrects the source's Proposition 3.2, which prints the exponent $\binom{|\mathcal{C}|-2}{2}$; its proof (Eq. (3)) multiplies the factors $2^{|\mathcal{C}|-i}$ for $i = 2,\dots,|\mathcal{C}|$, whose product is $2^{\binom{|\mathcal{C}|-1}{2}}$. For example, $|\mathcal{C}| = 3$ and $n = 2$ give $10$ spinal covers, not $5$.
 
 **Theorem.** For $n > 1$ the number of binary spinal tree-child networks on $n$ labelled leaves with $k$ reticulations is
 
