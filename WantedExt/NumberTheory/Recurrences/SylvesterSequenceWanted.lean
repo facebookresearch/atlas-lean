@@ -36,6 +36,7 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.Recurrences.SylvesterSequence
 public import MathlibExt.NumberTheory.Recurrences.SylvesterSequenceMersenneSylvesterValuesEq
+public import MathlibExt.NumberTheory.Recurrences.SylvesterSequenceModTen
 
 set_option autoImplicit false
 
@@ -62,16 +63,6 @@ theorem_wanted sylvester_sq_add_one_dvd_sub
     (sylvesterNumber k : ℤ) ^ 2 + 1 ∣
       (sylvesterNumber n : ℤ) -
         (-1 : ℤ) ^ (n - k) * (sylvesterNumber k : ℤ)
-
-/-- **Sylvester numbers of even index modulo 10.** Let $(S_n)_{n \ge 0}$ be the Sylvester
-sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $i \ge 1$,
-$S_{2i} \equiv 7 \pmod{10}$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9),
-even indices. -/
-theorem_wanted sylvester_even_index_mod_ten
-    (i : ℕ) (hi : 1 ≤ i) :
-    sylvesterNumber (2 * i) % 10 = 7
 
 /-- **Sylvester numbers of odd index modulo 10.** Let $(S_n)_{n \ge 0}$ be the Sylvester
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $i \ge 1$,
