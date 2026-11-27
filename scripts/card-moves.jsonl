@@ -1175,4 +1175,3 @@
 {"page": "Analysis/partial-differential-equations/global-regularity-of-the-navier-stokes-equations", "to": "Analysis/partial-differential-equations/viscous-dispersive-and-kinetic-evolution/global-regularity-of-the-navier-stokes-equations", "article_id": "af_5fff502b9aa4df4ebda4c265"}
 {"page": "Geometry/convex-geometry/isoperimetric-inequality", "to": "Geometry/convex-geometry/extremal-volume-and-area-bounds/isoperimetric-inequality", "article_id": "af_b0c76c4c3aa9ba72110094b9"}
 {"page": "Geometry/riemannian-geometry/admits-positive-scalar-curvature-metric", "to": "Geometry/riemannian-geometry/curvature-of-riemannian-manifolds/admits-positive-scalar-curvature-metric", "article_id": "af_200b12ef2af1c938a007d607"}
-{"page": "ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist", "to": "Probability/not-yet-classified/is-dist", "article_id": "af_c50ee44befceb43dfe940f9b"}
