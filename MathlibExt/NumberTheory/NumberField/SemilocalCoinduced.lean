@@ -171,9 +171,9 @@ namespace NumberField.PlaceDecomp
 section general
 variable {K : Type*} [Field K] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
-/-- **Valuation-preserving automorphisms are uniformly continuous.** A ring automorphism `f` of `K`
-that preserves a valuation `v`, `v (f x) = v x` for all `x`, is uniformly continuous as a map
-`WithVal v → WithVal v`. -/
+/-- **Valuation-preserving automorphisms are uniformly continuous.** Let `K` be a field. A ring
+automorphism `f` of `K` that preserves a valuation `v`, `v (f x) = v x` for all `x`, is uniformly
+continuous as a map `WithVal v → WithVal v`. -/
 theorem uniformContinuous_congr_of_forall_eq (v : Valuation K Γ₀) (f : K ≃+* K) (h : ∀ x,
   v (f x) = v x) :
     UniformContinuous (WithVal.congr v v f) := by
@@ -468,9 +468,9 @@ namespace NumberField.PlaceTransport
 section general
 variable {R S : Type*} [Field R] [Field S] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
-/-- **Valuation-matching ring isomorphisms are uniformly continuous.** A ring isomorphism
-`f : R ≃+* S` that carries a surjective valuation `v` on `R` to the valuation `v'` on `S`,
-`v' (f x) = v x`, is uniformly continuous as a map `WithVal v → WithVal v'`. -/
+/-- **Valuation-matching ring isomorphisms are uniformly continuous.** Let `R` and `S` be fields.
+A ring isomorphism `f : R ≃+* S` that carries a surjective valuation `v` on `R` to the valuation
+`v'` on `S`, `v' (f x) = v x`, is uniformly continuous as a map `WithVal v → WithVal v'`. -/
 theorem uniformContinuous_congr_of_forall_eq (v : Valuation R Γ₀) (v' : Valuation S Γ₀) (hv
   : Function.Surjective v)
     (f : R ≃+* S) (h : ∀ x, v' (f x) = v x) : UniformContinuous (WithVal.congr v v' f) := by
@@ -642,7 +642,8 @@ theorem continuous_transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (�
     (UniformSpace.Completion.continuous_map.comp
       (HeightOneSpectrum.adicCompletion.continuous_toCompletion K w))
 
-/-- For `c ≠ 0`, the set of `y` in `w.adicCompletion K` with `Valued.v y ≤ c` is clopen. -/
+/-- Let `K` be a number field and `w` a finite place of `K`. For `c ≠ 0`, the set of `y` in
+`w.adicCompletion K` with `Valued.v y ≤ c` is clopen. -/
 theorem isClopen_setOf_valued_le (w : HeightOneSpectrum (𝓞 K)) {c : WithZero (Multiplicative ℤ)} (hc
   : c ≠ 0) :
     IsClopen {y : w.adicCompletion K | Valued.v y ≤ c} := by
@@ -954,9 +955,9 @@ namespace NumberField.InfinitePlaceTransport
 section general
 variable {R S : Type*} [Field R] [Field S]
 
-/-- **Absolute-value-matching ring isomorphisms are uniformly continuous.** A ring isomorphism
-`f : R ≃+* S` with `v' (f x) = v x` for real absolute values `v` and `v'` is an isometry
-`WithAbs v → WithAbs v'`, hence uniformly continuous. -/
+/-- **Absolute-value-matching ring isomorphisms are uniformly continuous.** Let `R` and `S` be
+fields. A ring isomorphism `f : R ≃+* S` with `v' (f x) = v x` for real absolute values `v` and
+`v'` is an isometry `WithAbs v → WithAbs v'`, hence uniformly continuous. -/
 theorem uniformContinuous_congr_of_forall_eq (v : AbsoluteValue R ℝ) (v' : AbsoluteValue S ℝ) (f : R
   ≃+* S)
     (h : ∀ x, v' (f x) = v x) : UniformContinuous (WithAbs.congr v v' f) :=
