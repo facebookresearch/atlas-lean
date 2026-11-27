@@ -1,11 +1,13 @@
 # Differential topology
 
-Smooth manifolds and smooth maps between them: immersions, submersions, transversality, Morse theory, neighbourhood theorems and smooth structures.
+Smooth manifolds and smooth maps between them: immersions, submersions, transversality, Morse theory, neighbourhood theorems and smooth structures, the de Rham theorem, and Chern–Weil forms.
 
 - [Classification of one-manifolds](classification-of-one-manifolds/README.md)
+- [Groups of diffeomorphisms](diffeomorph/README.md)
 - [Immersions](immersions/README.md)
 - [Regular level sets](regular-level-sets/README.md)
 - [Sard's theorem](sard-s-theorem/README.md)
+- [Sets with smooth boundary in boundaryless manifolds](sets-with-smooth-boundary-in-boundaryless-manifo/README.md)
 - [Morse theory](morse-theory/README.md)
 - [Submersions](submersions/README.md)
 - [Thom transversality theorem](thom-transversality-theorem/README.md)
