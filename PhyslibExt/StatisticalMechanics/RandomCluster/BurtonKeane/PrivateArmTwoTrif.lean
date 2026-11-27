@@ -30,10 +30,11 @@ removed, single cuts separate branches and the Burton–Keane count holds.
 
 ## i. Overview
 
-`daepf_PrivateArm ω n` chooses an arm site `b x` for each trifurcation, infinite after all
-trifurcations are removed, such that for connected `x ≠ y` the arm of `x` does not contain `y` after
-`x` is removed. Each site lies in at most one arm of `x`, so this gives single-cut branch separation
-and `Tcount ≤ |∂B_n|`. It holds for at most two trifurcations.
+`daepf_PrivateArm ω n` chooses, for each trifurcation `x` in `B_n`, an arm site `b x ∈ B_n`
+connected to `x` whose cluster is infinite after all trifurcations in `B_n` are removed, such that
+for connected trifurcations `x ≠ y` in `B_n`, once `x` is removed, `b x` is not connected to `y`
+while `b y` still is. Each site lies in at most one arm of `x`, so this gives single-cut branch
+separation and `Tcount ≤ |∂B_n|`. It holds for at most two trifurcations.
 
 No certificate of this kind can hold for every configuration: each one yields the
 trifurcation-to-boundary injection `tfc_DistinctArmEnds`, and `tfc_not_forall_distinctArmEnds` shows
@@ -96,9 +97,11 @@ lemma daepf_in_some_or_no_arm (ω : ConfigSpace (Sym2 (Site d))) {x a₁ a₂ a�
       · exact Or.inr (Or.inr (Or.inl ⟨h3, h1, h2⟩))
       · exact Or.inr (Or.inr (Or.inr ⟨h1, h2, h3⟩))
 
-/-- Private arms for `B_n`: each trifurcation has an arm site whose cluster stays infinite after all
-trifurcations are removed and which, for connected trifurcations `x ≠ y`, does not reach `y`
-once `x` is removed. -/
+/-- Private arms for `B_n`: a choice of arm site `b x` for each trifurcation `x` of `ω` in `B_n`
+such that `b x ∈ B_n`, `b x` is connected to `x` in `ω`, and the cluster of `b x` is infinite after
+all trifurcations in `B_n` are removed; and, for trifurcations `x ≠ y` in `B_n` that are connected
+in `ω`, once `x` is removed the arm site `b x` is not connected to `y`, while `b y` is still
+connected to `y`. -/
 def daepf_PrivateArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

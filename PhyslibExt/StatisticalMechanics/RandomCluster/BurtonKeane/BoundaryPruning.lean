@@ -90,7 +90,8 @@ lemma bpr_treeForestData_slh_refutable (ω : ConfigSpace (Sym2 (Site d))) (n : �
 open Classical in
 /-- Repaired tree datum for the box of radius `n`: a finite tree on at least two vertices embedded
 injectively in the open subgraph through every trifurcation, with three branches per trifurcation in
-distinct arms and leaves on the boundary. -/
+distinct arms, and an injective assignment of boundary sites to its leaves (so the tree has at most
+`|∂B_n|` leaves). -/
 def bpr_TreeForestData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (W : Type) (_ : Fintype W) (_ : DecidableEq W) (G : SimpleGraph W) (_ : DecidableRel G.Adj)
     (π : W → Site d) (ιT : Site d → W) (br : Site d → Fin 3 → W) (lamL : W → Site d),

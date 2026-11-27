@@ -21,20 +21,22 @@ boundary; canonical trifurcations always give such a forest.
 The conditions `dfc_BoxOpenForestSucc`, `dfc_ArmForestReachingSucc` and `dfc_SpanForestArmsSucc` are
 the box open forest, arm forest reaching and spanning-forest arms with leaves on the boundary of the
 box of radius `n + 1`. Each gives the next, and the box open forest bounds `Tcount d ω n` by
-`boxSV_boundaryCard d (n + 1)`. When every trifurcation of the box is canonical, arm forest reaching
-holds. The canonical versions hold for every configuration, so
-`ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d (n + 1)` with no hypothesis
-(`dfc_canonTcount_le_boundary_succ`).
+`boxSV_boundaryCard d (n + 1)`. When every trifurcation of the box is an encounter point
+(`IsEncounterPoint`), arm forest reaching holds. The versions restricted to encounter points hold
+for every configuration, so `ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d (n + 1)` with no
+hypothesis (`dfc_canonTcount_le_boundary_succ`).
 
 ## ii. Key results
 
-- `dfc_Tcount_le_boundary_succ_of_canonical` : the count when all trifurcations are canonical.
-- `dfc_canonTcount_le_boundary_succ` : the canonical count against the next boundary, unconditional.
+- `dfc_Tcount_le_boundary_succ_of_canonical` : the count when all trifurcations are
+  encounter points.
+- `dfc_canonTcount_le_boundary_succ` : the count of encounter points against the next
+  boundary, unconditional.
 
 ## iii. Table of contents
 
 - A. Forests for the next box
-- B. Canonical forests
+- B. Forests for encounter points
 
 ## iv. References
 
@@ -48,15 +50,16 @@ namespace StatMech.Percolation
 
 open Set SimpleGraph Finset
 open StatMech.Lattice StatMech.ConfigSpace
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted (IsEncounterPoint)
 
 variable {d : ℕ}
 
 /-! ## A. Forests for the next box -/
 
-/-- Box open forest with leaves on the boundary of the box of radius `n + 1`: a finite forest on
-sites,
-mapped injectively into the open subgraph, in which each trifurcation of the box of radius `n` has
-three neighbours in distinct arms. -/
+/-- Box open forest with leaves on the boundary of the box of radius `n + 1`: a forest on a finite
+nonempty set of sites whose edges are open and with no isolated vertex, containing each trifurcation
+`x` of the box of radius `n` together with three other vertices in the tree of `x` that are pairwise
+disconnected in `ω` once `x` is removed. -/
 def dfc_BoxOpenForestSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vset : Finset (Site d)) (_ : Nonempty (↑Vset : Type)) (F : SimpleGraph (↑Vset : Type))
     (_ : DecidableRel F.Adj) (vx : Site d → (↑Vset : Type)) (b : Site d → Fin 3 → (↑Vset : Type)),
@@ -114,7 +117,8 @@ lemma dfc_Tcount_le_boundary_succ_of_boxOpenForestSucc (ω : ConfigSpace (Sym2 (
     _ ≤ (univ.filter (fun v => F.degree v = 1)).card := h2
     _ ≤ boxSV_boundaryCard d (n + 1) := h3
 
-/-- Arm forest reaching with leaves on the boundary of the box of radius `n + 1`. -/
+/-- Arm forest reaching (`sfa_ArmForestReaching`) for the trifurcations of the box of radius `n`,
+with the boundary set `B` on the boundary of the box of radius `n + 1`. -/
 def dfc_ArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (c : Site d → Fin 3 → Site d) (zr : Site d → Fin 3 → Site d),
@@ -130,7 +134,8 @@ def dfc_ArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Pro
        ¬ Connected d (removeSite x ω) (c x 1) (c x 2)) ∧
       (∀ i, zr x i ∈ B ∧ ∃ w : T.Walk (c x i) (zr x i), x ∉ w.support))
 
-/-- Spanning-forest arms with leaves on the boundary of the box of radius `n + 1`. -/
+/-- Spanning-forest arms (`spc_SpanForestArms`) for the trifurcations of the box of radius `n`, with
+the boundary set `B` on the boundary of the box of radius `n + 1`. -/
 def dfc_SpanForestArmsSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (m : Site d → Fin 3 → Site d),
@@ -240,7 +245,7 @@ lemma dfc_boxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Site d)))
       omega
 
 lemma dfc_armForestReachingSucc_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x)
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (hexists : ∃ x, x ∈ box d n ∧ IsTrifurcation d ω x) :
     dfc_ArmForestReachingSucc ω n := by
   classical
@@ -281,7 +286,7 @@ lemma dfc_armForestReachingSucc_of_canonical (ω : ConfigSpace (Sym2 (Site d))) 
 
 lemma dfc_Tcount_le_boundary_succ_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x) :
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x) :
     Tcount d ω n ≤ boxSV_boundaryCard d (n + 1) := by
   classical
   by_cases hexists : ∃ x, x ∈ box d n ∧ IsTrifurcation d ω x
@@ -299,21 +304,21 @@ lemma dfc_Tcount_le_boundary_succ_of_canonical (ω : ConfigSpace (Sym2 (Site d))
 
 lemma dfc_canonTcount_le_boundary_succ_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x) :
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x) :
     ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d (n + 1) :=
   le_trans (ctc2_canonTcount_le_Tcount ω n)
     (dfc_Tcount_le_boundary_succ_of_canonical ω n hn hcanon)
 
-/-! ## B. Canonical forests -/
+/-! ## B. Forests for encounter points -/
 
-/-- The box open forest for the next box, restricted to canonical trifurcations. -/
+/-- The box open forest for the next box, restricted to encounter points. -/
 def dfc_CanonBoxOpenForestSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vset : Finset (Site d)) (_ : Nonempty (↑Vset : Type)) (F : SimpleGraph (↑Vset : Type))
     (_ : DecidableRel F.Adj) (vx : Site d → (↑Vset : Type)) (b : Site d → Fin 3 → (↑Vset : Type)),
     (∀ u v, F.Adj u v → (openSubgraph d ω).Adj (u : Site d) (v : Site d)) ∧
     F.IsAcyclic ∧
     (∀ v : (↑Vset : Type), 1 ≤ F.degree v) ∧
-    (∀ x, x ∈ box d n → IsCanonicalTrifurcation d ω x →
+    (∀ x, x ∈ box d n → IsEncounterPoint d ω x →
       ((vx x : Site d) = x ∧
        (∀ i, F.Reachable (vx x) (b x i) ∧ b x i ≠ vx x) ∧
        (¬ Connected d (removeSite x ω) (b x 0 : Site d) (b x 1 : Site d) ∧
@@ -327,12 +332,12 @@ lemma dfc_canonTcount_le_boundary_succ_of_canonBoxOpenForestSucc
     ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d (n + 1) := by
   classical
   obtain ⟨Vset, hVne, F, _, vx, b, hπ, hacyc, hmin, htriData, hleaf⟩ := h
-  set Cf : Finset (Site d) := (boxFinsetBK d n).filter (fun x => IsCanonicalTrifurcation d ω x)
+  set Cf : Finset (Site d) := (boxFinsetBK d n).filter (fun x => IsEncounterPoint d ω x)
     with hCf
-  have hmemCf : ∀ x, x ∈ Cf ↔ x ∈ box d n ∧ IsCanonicalTrifurcation d ω x := by
+  have hmemCf : ∀ x, x ∈ Cf ↔ x ∈ box d n ∧ IsEncounterPoint d ω x := by
     intro x; rw [hCf, Finset.mem_filter, boxFinsetBK, Set.Finite.mem_toFinset]
   have hCfcard : Cf.card = ctc2_canonTcount d ω n := rfl
-  have hdeg3 : ∀ x, x ∈ box d n → IsCanonicalTrifurcation d ω x → 3 ≤ F.degree (vx x) := by
+  have hdeg3 : ∀ x, x ∈ box d n → IsEncounterPoint d ω x → 3 ≤ F.degree (vx x) := by
     intro x hxbox htri
     obtain ⟨hvx, hreach, hcut⟩ := htriData x hxbox htri
     exact bst_deg_ge_three_of_boxOpenForest hπ hxbox (ctc2_isTrifurcation_of_canonical htri) hvx
@@ -369,7 +374,7 @@ lemma dfc_canonTcount_le_boundary_succ_of_canonBoxOpenForestSucc
     _ ≤ (univ.filter (fun v => F.degree v = 1)).card := h2
     _ ≤ boxSV_boundaryCard d (n + 1) := h3
 
-/-- Arm forest reaching for the next box, restricted to canonical trifurcations. -/
+/-- Arm forest reaching for the next box, restricted to encounter points. -/
 def dfc_CanonArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (c : Site d → Fin 3 → Site d) (zr : Site d → Fin 3 → Site d),
@@ -378,14 +383,14 @@ def dfc_CanonArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) 
     (∀ u v, T.Adj u v → u ∈ Vall) ∧
     (B ⊆ vertexBoundary d (n + 1)) ∧
     (∃ v, spc_OnBPath T B v) ∧
-    (∀ x, x ∈ box d n → IsCanonicalTrifurcation d ω x →
+    (∀ x, x ∈ box d n → IsEncounterPoint d ω x →
       (∀ i, T.Adj x (c x i)) ∧
       (¬ Connected d (removeSite x ω) (c x 0) (c x 1) ∧
        ¬ Connected d (removeSite x ω) (c x 0) (c x 2) ∧
        ¬ Connected d (removeSite x ω) (c x 1) (c x 2)) ∧
       (∀ i, zr x i ∈ B ∧ ∃ w : T.Walk (c x i) (zr x i), x ∉ w.support))
 
-/-- Spanning-forest arms for the next box, restricted to canonical trifurcations. -/
+/-- Spanning-forest arms for the next box, restricted to encounter points. -/
 def dfc_CanonSpanForestArmsSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (m : Site d → Fin 3 → Site d),
@@ -394,7 +399,7 @@ def dfc_CanonSpanForestArmsSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : P
     (∀ u v, T.Adj u v → u ∈ Vall) ∧
     (B ⊆ vertexBoundary d (n + 1)) ∧
     (∃ v, spc_OnBPath T B v) ∧
-    (∀ x, x ∈ box d n → IsCanonicalTrifurcation d ω x →
+    (∀ x, x ∈ box d n → IsEncounterPoint d ω x →
       spc_OnBPath T B x ∧
       ((m x 0 ≠ m x 1 ∧ m x 0 ≠ m x 2 ∧ m x 1 ≠ m x 2) ∧
        (∀ i, T.Adj x (m x i) ∧ spc_OnBPath T B (m x i)) ∧
@@ -495,10 +500,10 @@ lemma dfc_canonBoxOpenForestSucc_of_spanForestArms (ω : ConfigSpace (Sym2 (Site
       omega
 
 lemma dfc_canonArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
-    (hexists : ∃ x, x ∈ box d n ∧ IsCanonicalTrifurcation d ω x) :
+    (hexists : ∃ x, x ∈ box d n ∧ IsEncounterPoint d ω x) :
     dfc_CanonArmForestReachingSucc ω n := by
   classical
-  have hdata : ∀ x, x ∈ box d n → IsCanonicalTrifurcation d ω x →
+  have hdata : ∀ x, x ∈ box d n → IsEncounterPoint d ω x →
       ∃ (c : Fin 3 → Site d) (zr : Fin 3 → Site d),
         (∀ i, (cfc_T ω (n + 1)).Adj x (c i)) ∧
         (¬ Connected d (removeSite x ω) (c 0) (c 1) ∧
@@ -549,7 +554,7 @@ lemma dfc_canonArmForestReachingSucc (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ
 lemma dfc_canonTcount_le_boundary_succ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n) :
     ctc2_canonTcount d ω n ≤ boxSV_boundaryCard d (n + 1) := by
   classical
-  by_cases hexists : ∃ x, x ∈ box d n ∧ IsCanonicalTrifurcation d ω x
+  by_cases hexists : ∃ x, x ∈ box d n ∧ IsEncounterPoint d ω x
   · exact dfc_canonTcount_le_boundary_succ_of_canonBoxOpenForestSucc ω n
       (dfc_canonBoxOpenForestSucc_of_spanForestArms ω n
         (dfc_canonSpanForestArmsSucc_of_armForestReaching ω n

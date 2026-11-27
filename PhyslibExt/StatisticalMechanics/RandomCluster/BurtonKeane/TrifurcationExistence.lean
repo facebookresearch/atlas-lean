@@ -109,9 +109,10 @@ lemma tre_branch_distinct_of_regions (ω : ConfigSpace (Sym2 (Site d)))
   have hsubS : cluster d ϱ b ⊆ S := DisjointPaths.cluster_subset_of_adjClosed ϱ S b hbS hScl
   exact DisjointPaths.cluster_ne_of_disjoint ϱ a b R S hsubR hsubS hdisj
 
-/-- Merge-free insertion at the origin: neighbours `a_i`, a finite rewiring `W` away from the
-origin, targets `x_i` and disjoint regions `R_i` such that after opening `W` each `a_i` reaches
-`x_i` inside `R_i` without the origin and the `x_i` lie in infinite clusters. -/
+/-- Merge-free insertion at the origin: distinct neighbours `a_i`, a finite rewiring `W` away from
+the origin, targets `x_i` and pairwise disjoint regions `R_i ∋ a_i` closed under open edges and
+edges of `W`, such that after opening `W` each `a_i` reaches `x_i` without the origin, and the
+clusters of the `x_i` without the origin are infinite. -/
 def tre_MergeFreeInsertion (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
   ∃ (a₁ a₂ a₃ : Site d) (W : Finset (Sym2 (Site d))) (x₁ x₂ x₃ : Site d)
     (R₁ R₂ R₃ : Set (Site d)),
@@ -165,8 +166,8 @@ lemma tre_mergeFree_of_insertion (ω : ConfigSpace (Sym2 (Site d)))
   obtain ⟨W, hreach⟩ := tre_threeClustersReachOrigin_of_insertion ω h
   exact ⟨W, mco_mergeFree (forceOpenFinset W ω) hreach⟩
 
-/-- Every configuration with three distinct infinite clusters meeting `B_n` admits merge-free
-insertion. -/
+/-- Every configuration of `threeMeetBox d n` (infinitely many infinite clusters, three of them
+distinct and meeting `B_n`) admits merge-free insertion. -/
 def tre_BoxMergeFreeInsertion (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∃ (a₁ a₂ a₃ : Site d) (W : Finset (Sym2 (Site d))) (x₁ x₂ x₃ : Site d)

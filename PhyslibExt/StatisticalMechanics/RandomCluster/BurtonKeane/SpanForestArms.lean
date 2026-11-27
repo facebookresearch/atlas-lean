@@ -225,8 +225,10 @@ lemma spc_map_acyclic {V V' : Type*} {G : SimpleGraph V} (hac : G.IsAcyclic) (f 
 
 
 open Classical in
-/-- Spanning forest arms for `B_n`: an acyclic open subgraph on finitely many sites with boundary
-set `B` and three neighbours of each trifurcation lying on paths between boundary sites. -/
+/-- Spanning forest arms for `B_n`: an acyclic open subgraph `T` on finitely many sites, a set `B`
+of boundary sites with some vertex on a `T`-path between two sites of `B`, and, for each
+trifurcation `x` of `B_n`, `x` and three distinct `T`-neighbours of `x` lying on `T`-paths between
+two sites of `B`, the neighbours pairwise disconnected in `ω` once `x` is removed. -/
 def spc_SpanForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (m : Site d → Fin 3 → Site d),

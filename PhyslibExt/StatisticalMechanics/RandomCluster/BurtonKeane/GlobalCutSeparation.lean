@@ -281,9 +281,9 @@ lemma daep_globalCutArmEnds_nonempty (T : Finset (Site d)) (ω : ConfigSpace (Sy
   obtain ⟨z, hzb, hzc⟩ := daep_infinite_reaches_boundary (removeSites T ω) n hn a habox hinf
   exact ⟨z, daep_mem_globalCutArmEnds.mpr ⟨hzb, hzc⟩⟩
 
-/-- Global cut separation for `B_n`: each trifurcation has an arm site whose cluster stays infinite
-after all trifurcations are removed, and the arm sites of distinct trifurcations are then
-disconnected. -/
+/-- Global cut separation for `B_n`: each trifurcation `x` of `B_n` has an arm site `b x ∈ B_n`
+connected to `x` whose cluster stays infinite after all trifurcations of `B_n` are removed, and the
+arm sites of distinct trifurcations are then disconnected. -/
 def daep_GlobalCutSeparation (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

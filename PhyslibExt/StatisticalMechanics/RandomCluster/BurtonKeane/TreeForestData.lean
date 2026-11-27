@@ -28,15 +28,17 @@ spanning-tree leaf count and the trifurcation count.
 ## i. Overview
 
 `slh_TreeForestData ω n` is a finite tree with an injective map `π` into the open subgraph, a vertex
-`ιT x` over each trifurcation, and sections `sec x a` of its branches such that the tree reflects
-connectivity after removing `x`. Separated branches then give degree three at `ιT x`, which yields
-`flc2_SpanningTreeLeafCount` and `Tcount ≤ |∂B_n|`.
+`ιT x` over each trifurcation `x`, and a vertex `sec x a ≠ ιT x` over every site `a` connected to
+`x`. Separated branches then give degree three at `ιT x`, which yields
+`flc2_SpanningTreeLeafCount` and `Tcount ≤ |∂B_n|`. Since the cluster of a trifurcation is
+infinite, the datum holds only when `B_n` contains no trifurcation
+(`bpr_treeForestData_slh_refutable`).
 
 No certificate of this kind can hold for every configuration: each one yields the
 trifurcation-to-boundary injection `tfc_DistinctArmEnds`, and `tfc_not_forall_distinctArmEnds` shows
 that this injection fails for some configuration in every dimension `d ≥ 1` (in `tfc_lineConfig`
-every site is a trifurcation in the sense of `IsTrifurcation`). The certificate is useful
-configuration by configuration; the deterministic counting bound is the reusable content.
+every site is a trifurcation in the sense of `IsTrifurcation`). The deterministic counting bound
+is the reusable content.
 
 ## ii. Key results
 
@@ -178,9 +180,11 @@ lemma slh_connected_removeSite_of_G_induce {W : Type*} {ω : ConfigSpace (Sym2 (
   exact slh_walk_avoid_transfer w' hsupp
 
 open Classical in
-/-- Tree forest data for `B_n`: a finite tree mapped injectively into the open subgraph, with a
-vertex over each trifurcation, branch sections that reflect connectivity after removing the
-trifurcation, and leaves mapped injectively to the boundary. -/
+/-- Tree forest data for `B_n`: a finite tree on at least two vertices mapped injectively into the
+open subgraph, with a vertex over each trifurcation `x` of `B_n` and, for every site `a` connected
+to `x`, a different vertex over `a`, and an injective assignment of boundary sites to the leaves.
+The cluster of a trifurcation is infinite, so this datum holds only when `B_n` contains no
+trifurcation (`bpr_treeForestData_slh_refutable`). -/
 def slh_TreeForestData (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (W : Type) (_ : Fintype W) (_ : DecidableEq W) (G : SimpleGraph W) (_ : DecidableRel G.Adj)
     (π : W → Site d) (ιT : Site d → W) (sec : Site d → Site d → W) (lamL : W → Site d),

@@ -27,6 +27,7 @@ namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.Decouple
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.ConfigSpace
 open _root_.StatMech.Percolation
+open _root_.MathlibExt.Probability.Percolation.BurtonKeaneWanted (IsEncounterPoint)
 
 /-- The all-closed configuration of the planar lattice. -/
 def closed2 : ConfigSpace (Sym2 (Site 2)) := fun _ => false
@@ -61,7 +62,7 @@ example (n : ℕ) (hn : 1 ≤ n) : Tcount 2 closed2 n ≤ boxSV_boundaryCard 2 (
 
 -- A canonical trifurcation in the box gives a reaching arm forest.
 example (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ) (hn : 1 ≤ n)
-    (hex : ∃ x, x ∈ box 2 n ∧ IsCanonicalTrifurcation 2 ω x) :
+    (hex : ∃ x, x ∈ box 2 n ∧ IsEncounterPoint 2 ω x) :
     dfc_CanonArmForestReachingSucc ω n :=
   dfc_canonArmForestReachingSucc ω n hn hex
 

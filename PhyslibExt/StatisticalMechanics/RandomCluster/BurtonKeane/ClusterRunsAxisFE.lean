@@ -64,9 +64,8 @@ lemma craf_mem_corridorEdges (j : Fin d) (L : ℕ) {t : ℕ} (ht : t < L) :
   have e2 : ((t : ℤ) + 1 + 1) = (t : ℤ) + 2 := by ring
   rwa [e2] at hmem
 
-/-- After forcing the corridor along `j`, `x` is connected to `e_j` and `(L + 1) e_j` has an
-infinite
-cluster without the origin. -/
+/-- After the corridor along `j` of length `L + 1` is opened, `x` is connected to `e_j` even after
+the origin is removed, and the cluster of `x` without the origin is infinite. -/
 def craf_AxisRoutingPremise (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) (j : Fin d)
     (L : ℕ) : Prop :=
   Connected d (forceOpenFinset (hrHD_corridorEdges j (L + 1)) ω) x (hrHD_rayPt j 1) ∧

@@ -118,8 +118,10 @@ lemma daep2_globalCut_disconnected_of_singleCut (T : Finset (Site d))
     ¬ Connected d (removeSites T ω) u v :=
   fun hc => hdis (connected_mono (daep2_removeSites_le_removeSite T ω hxT) hc)
 
-/-- Same-cluster cut separation for `B_n`: infinite arm sites such that for connected trifurcations
-`x ≠ y` one single cut separates their arms. -/
+/-- Same-cluster cut separation for `B_n`: arm sites `b x ∈ B_n` connected to each trifurcation `x`
+of `B_n`, with clusters infinite after all trifurcations of `B_n` are removed, such that for
+connected trifurcations `x ≠ y`, `b x` and `b y` are disconnected once all trifurcations of `B_n`
+are removed. -/
 def daep2_SameClusterCutSeparation (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -170,8 +172,9 @@ lemma daep2_two_branches_avoid (ω : ConfigSpace (Sym2 (Site d)))
     · exact Or.inr (Or.inl ⟨h1, fun h3 => hd23 (h2.trans h3.symm)⟩)
     · exact Or.inl ⟨h1, h2⟩
 
-/-- Single-cut branch separation for `B_n`: infinite arm sites such that for connected trifurcations
-`x ≠ y`, removing `x` disconnects the arm of `x` from the arm of `y`. -/
+/-- Single-cut branch separation for `B_n`: arm sites `b x ∈ B_n` connected to each trifurcation `x`
+of `B_n`, with clusters infinite after all trifurcations of `B_n` are removed, such that for
+connected trifurcations `x ≠ y`, removing `x` disconnects `b x` from `b y`. -/
 def daep2_SingleCutBranchSeparation (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

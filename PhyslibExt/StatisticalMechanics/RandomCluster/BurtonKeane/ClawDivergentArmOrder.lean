@@ -204,9 +204,11 @@ lemma stac_colorOf_faithful (ω : ConfigSpace (Sym2 (Site d))) (x₀ : Site d)
     by_contra hijne
     exact hsep i j hijne (hispec.trans (hsame.trans hjspec.symm))
 
-/-- A claw in the box of radius `n`: a trifurcation `x₀` connected to three trifurcations `y i` in
-its
-three different arms, with arm labellings `lx` and `ly`. -/
+/-- A claw in the box of radius `n`: a trifurcation `x₀` of the box connected to three distinct
+trifurcations `y i` of the box, with `y i` in arm `i` of `x₀`, where `lx` labels the arms of `x₀`
+and `ly i` the arms of `y i` (equal labels exactly for sites in the same arm), and a site other than
+`x₀` and `y i` connected to both has label `0` at `y i` exactly when it is not in arm `i` of
+`x₀`. -/
 def stac_ClawConfig (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (x₀ : Site d) (y : Fin 3 → Site d) (lx : Site d → Fin 3) (ly : Fin 3 → Site d → Fin 3),
     (x₀ ∈ box d n ∧ IsTrifurcation d ω x₀) ∧

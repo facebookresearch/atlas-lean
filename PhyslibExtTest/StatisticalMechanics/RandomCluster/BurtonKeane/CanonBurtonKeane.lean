@@ -14,9 +14,8 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonBur
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonBurtonKeane`
 
-* `cbk_boundary_succ_vol_tendsto` for `d = 2`;
-* `cbk_canonical_trif_prob_eq_zero` for Bernoulli(1/2) bond percolation on `ℤ²` (translation
-  invariance from `bkc_bernoulli_isErgodic`);
+* `measure_encounter_eq_zero`, which this module uses, for Bernoulli(1/2) bond percolation on
+  `ℤ²` (translation invariance from `bernoulli_lattice_ergodic`);
 * `cbk_canonical_uniqueness` for Bernoulli(1/2) in conditional form (only the trifurcation
   hypothesis assumed).
 -/
@@ -28,28 +27,25 @@ namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CanonBur
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.ConfigSpace
 open _root_.StatMech.Percolation
 open scoped NNReal
+open _root_.MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint measure_encounter_eq_zero bernoulli_lattice_ergodic
+    bernoulli_finiteEnergyMerge)
 
--- The shifted boundary-to-volume ratio tends to zero.
-example : Filter.Tendsto
-    (fun n => (boxSV_boundaryCard 2 (n + 1) : ℝ) / ((boxFinsetBK 2 n).card : ℝ))
-    Filter.atTop (nhds 0) :=
-  cbk_boundary_succ_vol_tendsto 2 (by norm_num)
-
--- Canonical trifurcations have probability zero under Bernoulli(1/2) on `ℤ²`.
+-- Encounter points have probability zero under Bernoulli(1/2) on `ℤ²`.
 example : bernoulliProductMeasure (E := Sym2 (Site 2)) (1 / 2 : ℝ≥0) (by norm_num)
-    {ω | IsCanonicalTrifurcation 2 ω 0} = 0 :=
-  cbk_canonical_trif_prob_eq_zero _ (by norm_num)
-    (bkc_bernoulli_isErgodic (by norm_num) (1 / 2 : ℝ≥0) (by norm_num)).1
+    {ω | IsEncounterPoint 2 ω 0} = 0 :=
+  measure_encounter_eq_zero _ (by norm_num)
+    (bernoulli_lattice_ergodic (by norm_num) (1 / 2 : ℝ≥0) (by norm_num)).1
 
--- Uniqueness for Bernoulli(1/2) from the trifurcation hypothesis.
+-- Uniqueness for Bernoulli(1/2) from the encounter-point hypothesis.
 example (htrif : 0 < bernoulliProductMeasure (E := Sym2 (Site 2)) (1 / 2 : ℝ≥0) (by norm_num)
       {ω | numInfiniteClusters 2 ω = ⊤} →
     0 < bernoulliProductMeasure (E := Sym2 (Site 2)) (1 / 2 : ℝ≥0) (by norm_num)
-      {ω | IsCanonicalTrifurcation 2 ω 0}) :
+      {ω | IsEncounterPoint 2 ω 0}) :
     bernoulliProductMeasure (E := Sym2 (Site 2)) (1 / 2 : ℝ≥0) (by norm_num)
       (atLeastTwoInfinite 2) = 0 :=
   (cbk_canonical_uniqueness _ (by norm_num)
-    (bkc_bernoulli_isErgodic (by norm_num) (1 / 2 : ℝ≥0) (by norm_num))
-    (bkc_bernoulli_hasFiniteEnergyMerge _ (by norm_num) (by norm_num)) htrif).2.1
+    (bernoulli_lattice_ergodic (by norm_num) (1 / 2 : ℝ≥0) (by norm_num))
+    (bernoulli_finiteEnergyMerge _ (by norm_num) (by norm_num)) htrif).2.1
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CanonBurtonKeane

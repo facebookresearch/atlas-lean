@@ -74,8 +74,9 @@ lemma mng_corridor_mem_destCluster (ω : ConfigSpace (Sym2 (Site d)))
   rw [mem_cluster]
   exact (connected_removeSite_forceOpen_of_corridor ω G hc).symm
 
-/-- A Menger core at the origin: three neighbours `a_i` and an edge set `G` whose corridor steps
-lead from `a_i` to sites in three pairwise distinct infinite clusters. -/
+/-- A Menger core at the origin: three distinct neighbours `a_i` of the origin and an edge set `G`
+whose corridor steps (edges of `G` avoiding the origin) lead from `a_i` to sites lying in three
+pairwise distinct infinite clusters once `G` is opened and the origin is removed. -/
 def MengerCore (ω : ConfigSpace (Sym2 (Site d))) : Prop :=
   ∃ (a₁ a₂ a₃ : Site d) (G : Finset (Sym2 (Site d))) (w₁ w₂ w₃ : Site d),
     (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
@@ -134,7 +135,8 @@ lemma mng_mengerCore_of_neighborClusters (ω : ConfigSpace (Sym2 (Site d)))
   · rw [mng_forceOpenFinset_empty]; exact hinf
   · rw [mng_forceOpenFinset_empty]; exact hdist
 
-/-- Every configuration with three distinct infinite clusters meeting `B_n` has a Menger core. -/
+/-- Every configuration of `threeMeetBox d n` (infinitely many infinite clusters, three of them
+distinct and meeting `B_n`) has a Menger core. -/
 def MengerRoutingCover (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n, MengerCore ω
 

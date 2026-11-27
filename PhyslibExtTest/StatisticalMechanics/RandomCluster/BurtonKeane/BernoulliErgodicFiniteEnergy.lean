@@ -10,11 +10,13 @@ module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
 
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy`
 
-* `bkc_bernoulli_hasFiniteEnergyMerge` and `bkc_bernoulli_isErgodic` at `p = 1/2`;
+* `bernoulli_finiteEnergyMerge` and `bernoulli_lattice_ergodic`, which replaced this
+  module's copies, at `p = 1/2`;
 * `bkc_boxFinsetBK_card_pos` and `bkc_boundary_vol_ratio_le` at explicit sizes;
 * `bkc_boundary_vol_tendsto` for `d = 2`.
 -/
@@ -25,13 +27,15 @@ namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.Bernoull
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.ConfigSpace
 open _root_.StatMech.Percolation
+open _root_.MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (bernoulli_finiteEnergyMerge bernoulli_lattice_ergodic)
 open scoped NNReal
 
 -- Bernoulli(1/2) bond percolation on `ℤ²` has the finite-energy merge property.
-example := bkc_bernoulli_hasFiniteEnergyMerge (d := 2) (1 / 2 : ℝ≥0) (by norm_num) (by norm_num)
+example := bernoulli_finiteEnergyMerge (d := 2) (1 / 2 : ℝ≥0) (by norm_num) (by norm_num)
 
 -- Bernoulli(1/2) bond percolation on `ℤ²` is ergodic.
-example := bkc_bernoulli_isErgodic (d := 2) (by norm_num) (1 / 2 : ℝ≥0) (by norm_num)
+example := bernoulli_lattice_ergodic (d := 2) (by norm_num) (1 / 2 : ℝ≥0) (by norm_num)
 
 -- Boxes are nonempty, and the boundary-to-volume ratio of the box of radius 4 is at most 1.
 example : 0 < (boxFinsetBK 2 3).card := bkc_boxFinsetBK_card_pos 2 3

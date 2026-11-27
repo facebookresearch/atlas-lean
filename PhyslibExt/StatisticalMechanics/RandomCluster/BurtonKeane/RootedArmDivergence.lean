@@ -100,9 +100,10 @@ lemma bc29_multiAncestorSplit_consistent :
   ⟨rfp_ωpath, rfp_p1, rfp_p0, rfp_p0, rfp_p2,
     rfp_consistency_crossed, rfp_consistency_crossed⟩
 
-/-- A rooted down-arm forest for `B_n` and `rank`: an infinite arm (after removing all
-trifurcations) for each trifurcation, with the arm of a later trifurcation avoiding the side
-containing an earlier connected one. -/
+/-- A rooted down-arm forest for `B_n` and `rank`: arm sites `b x ∈ B_n` connected to each
+trifurcation `x` of `B_n`, with clusters infinite after all trifurcations of `B_n` are removed, such
+that for connected `x ≠ y` with `rank x < rank y`, `b y` is disconnected from `b x` once `y` is
+removed. -/
 def bc29_RootedDownArmForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) : Prop :=
   ∃ b : Site d → Site d,

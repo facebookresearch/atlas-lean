@@ -22,8 +22,8 @@ The proof is the classical induction on the number of edges. If some minimum sep
 neither contained in `A` nor in `B`, the graph splits at `S` into an `A`-side and a `B`-side; each
 side has fewer edges and yields a fan of `k` disjoint paths to `S` (`bc19_AFan`), and the two fans
 glue along `S` (`bc19_glueFans`). Otherwise an edge can be contracted or deleted (`bc19_directSum`).
-`bc19_menger_minmax` is the resulting min–max theorem for sets. `MathlibExt.menger_vertex` proves
-the two-vertex version.
+`bc19_menger_minmax` is the resulting min–max theorem for sets. `MetaMathlibExt.menger_vertex`
+proves the two-vertex version.
 
 ## ii. Key results
 
@@ -531,7 +531,7 @@ set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
 /-- **Menger's theorem** (set version) for finite graphs: if every `A`–`B` separator has at least
 `k` vertices, there are `k` pairwise disjoint `A`–`B` paths (K. Menger, *Zur allgemeinen
-Kurventheorie*, 1927). See also `MathlibExt.menger_vertex` for the two-vertex form. -/
+Kurventheorie*, 1927). See also `MetaMathlibExt.menger_vertex` for the two-vertex form. -/
 lemma bc19_menger_minmax [Fintype V] (G : SimpleGraph V) (A B : Set V) {k : ℕ}
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard) :
     ∃ _F : bc16_DisjointPathFamily G A B (Fin k),

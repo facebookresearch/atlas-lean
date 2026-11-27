@@ -140,8 +140,8 @@ lemma crr_corridor_internal (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) (j :
 /-! ## C. Running along an axis -/
 
 /-- The cluster of `x` runs along axis `j`: for some `L` the axis edges from `e_j` to `(L + 1) e_j`
-are
-open, `x` is connected to `e_j`, and `(L + 1) e_j` has an infinite cluster without the origin. -/
+are open, `x` is connected to `e_j` even after the origin is removed, and the cluster of `x` without
+the origin is infinite. -/
 def crr_ClusterRunsAlongAxis (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) (j : Fin d) :
     Prop :=
   ∃ L : ℕ,

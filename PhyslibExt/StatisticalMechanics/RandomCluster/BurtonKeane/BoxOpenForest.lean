@@ -92,9 +92,10 @@ lemma bst_treeForestData_refutable_of_twoClusters (ω : ConfigSpace (Sym2 (Site 
 /-! ## B. Box open forests -/
 
 open Classical in
-/-- Box open forest for the box of radius `n`: a finite forest on a set of sites, mapped injectively
-into the open subgraph, in which each trifurcation has three neighbours in distinct arms and all
-leaves lie on the boundary. -/
+/-- Box open forest for the box of radius `n`: a forest on a finite nonempty set of sites whose
+edges are open and with no isolated vertex, containing each trifurcation `x` of the box together
+with three other vertices in the tree of `x` that are pairwise disconnected in `ω` once `x` is
+removed, and whose leaves lie on the boundary of the box. -/
 def bst_BoxOpenForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vset : Finset (Site d)) (_ : Nonempty (↑Vset : Type)) (F : SimpleGraph (↑Vset : Type))
     (_ : DecidableRel F.Adj) (vx : Site d → (↑Vset : Type)) (b : Site d → Fin 3 → (↑Vset : Type)),
