@@ -64,10 +64,10 @@ class QualityReviewTest(unittest.TestCase):
                                 "HOME": tmp}, capture_output=True)
             (repo / "MathlibExt" / "B.lean").write_text("theorem fresh : 1 = 1 := rfl\n")
             git("add", "-A"); git("commit", "-qm", "b")
-            fresh = qr.sample(repo, Path(tmp) / "fresh", qr.argparse.Namespace(random=0, new=5, since="2021-01-01", seed=0))
+            fresh = qr.sample(repo, Path(tmp) / "fresh", qr.argparse.Namespace(random=0, new=5, since="2021-01-01"))
             self.assertEqual([(r["stratum"], r["name"]) for r in fresh], [("new", "fresh")])
             out = Path(tmp) / "out"
-            args = qr.argparse.Namespace(random=2, new=0, since="2021-01-01", seed=0)
+            args = qr.argparse.Namespace(random=2, new=0, since="2021-01-01")
             rows = qr.sample(repo, out, args)
             self.assertEqual(qr.sample(repo, out, args), rows)  # frozen on rerun
             with (out / "results.jsonl").open("w") as fh:

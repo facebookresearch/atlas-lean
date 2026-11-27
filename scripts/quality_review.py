@@ -13,7 +13,7 @@
 # limitations under the License.
 """Score a random sample of ATLAS statements against the quality rubrics.
 
-    python3 scripts/quality_review.py run --out ../quality/2026-11-27 --mathlib ../mathlib4
+    python3 scripts/quality_review.py --out ../quality/2026-11-27 --mathlib ../mathlib4
 
 samples `--random` public theorems/lemmas plus `--new` ones added since `--since`
 (default: 14 days ago), asks a read-only Claude Code judge to score each on the
@@ -23,7 +23,7 @@ rubrics in scripts/quality_review/RUBRICS.md, and writes, in `--out`:
     results.jsonl   one verdict per statement
     summary.json    mean score per rubric, overall and per library and stratum
 
-Rerunning the same command resumes. `summarize` rebuilds summary.json only.
+Rerunning the same command resumes.
 Repository CI never calls the judge.
 """
 from __future__ import annotations
@@ -41,7 +41,8 @@ from typing import Dict, List, Optional
 
 RUBRICS = ("faithfulness", "tactics", "mathlib_conventions", "code_quality")
 LIBRARIES = ("MathlibExt", "CSLibExt", "PhyslibExt", "Domains")
-RUBRIC_FILE = Path(__file__).resolve().parent / "quality_review" / "RUBRICS.md"
+REPO = Path(__file__).resolve().parents[1]
+RUBRIC_FILE = REPO / "scripts" / "quality_review" / "RUBRICS.md"
 MAX_CHARS = 12000
 
 DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)?(?P<mods>(?:(?:public|protected|noncomputable|private|nonrec)\s+)*)"
@@ -109,45 +110,28 @@ def statements(text: str, path: str) -> List[Dict]:
     return out
 
 
-def population(repo: Path, ref: str = "HEAD", paths: Optional[List[str]] = None) -> List[Dict]:
-    if paths is None:
-        paths = git(repo, "ls-tree", "-r", "--name-only", ref, "--", *LIBRARIES).splitlines()
+def population(repo: Path) -> List[Dict]:
     rows = []
-    for path in paths:
-        if not path.endswith(".lean") or path.split("/")[0] not in LIBRARIES:
-            continue
-        if ref == "HEAD":
+    for path in git(repo, "ls-files", "--", *LIBRARIES).splitlines():
+        if path.endswith(".lean"):
             rows.extend(statements((repo / path).read_text(encoding="utf-8", errors="replace"), path))
-    if ref != "HEAD":
-        for path, text in read_blobs(repo, ref, [p for p in paths if p.endswith(".lean")
-                                                 and p.split("/")[0] in LIBRARIES]):
-            rows.extend(statements(text, path))
     return rows
 
 
-def read_blobs(repo: Path, ref: str, paths: List[str]):
-    """Yield (path, text) for each path that exists at `ref`, using one `git cat-file --batch`."""
-    proc = subprocess.Popen(["git", "-C", str(repo), "cat-file", "--batch"], stdin=subprocess.PIPE,
-                            stdout=subprocess.PIPE)
-    data, _ = proc.communicate("".join(f"{ref}:{p}\n" for p in paths).encode())
-    pos = 0
-    for path in paths:
-        end = data.index(b"\n", pos)
-        header = data[pos:end].split()
-        pos = end + 1
-        if header[-1] == b"missing":
-            continue
-        size = int(header[2])
-        yield path, data[pos:pos + size].decode("utf-8", errors="replace")
-        pos += size + 1
-
-
 def added_since(repo: Path, base: str, current: List[Dict]) -> List[Dict]:
-    """Statements in files changed since `base` whose names those files did not have at `base`."""
-    changed = git(repo, "diff", "--name-only", "--no-renames", base, "HEAD", "--", *LIBRARIES).splitlines()
-    old = {r["name"] for r in population(repo, base, changed)}
-    changed_set = set(changed)
-    return [r for r in current if r["path"] in changed_set and r["name"] not in old]
+    """Statements whose declaration line the diff since `base` adds, and does not just edit."""
+    added, removed, path = set(), set(), None
+    for line in git(repo, "diff", "-U0", "--no-renames", base, "HEAD", "--", *LIBRARIES).splitlines():
+        if line.startswith("+++ "):
+            path = line[6:] if line.startswith("+++ b/") else None
+        elif line.startswith("--- "):
+            continue
+        elif line[:1] in "+-" and path:
+            m = DECL.match(line[1:])
+            if m:
+                (added if line[0] == "+" else removed).add((path, m.group("name")))
+    new = added - removed
+    return [r for r in current if (r["path"], r["name"]) in new]
 
 
 def sample(repo: Path, out: Path, args: argparse.Namespace) -> List[Dict]:
@@ -156,14 +140,15 @@ def sample(repo: Path, out: Path, args: argparse.Namespace) -> List[Dict]:
         return [json.loads(line) for line in path.read_text().splitlines()]
     base = git(repo, "rev-list", "-1", f"--before={args.since}", "HEAD").strip()
     pop = population(repo)
-    rng = random.Random(args.seed)
+    commit = git(repo, "rev-parse", "HEAD").strip()
+    rng = random.Random(commit)
     rows = [dict(r, stratum="random") for r in rng.sample(pop, min(args.random, len(pop)))]
     taken = {(r["path"], r["name"]) for r in rows}
     fresh = [r for r in added_since(repo, base, pop) if (r["path"], r["name"]) not in taken] if base else []
     rows += [dict(r, stratum="new") for r in rng.sample(fresh, min(args.new, len(fresh)))]
     out.mkdir(parents=True, exist_ok=True)
-    meta = dict(commit=git(repo, "rev-parse", "HEAD").strip(), base=base, created=dt.date.today().isoformat(),
-                population=len(pop), new_population=len(fresh), seed=args.seed)
+    meta = dict(commit=commit, base=base, created=dt.date.today().isoformat(),
+                population=len(pop), new_population=len(fresh))
     (out / "sample_meta.json").write_text(json.dumps(meta, indent=1) + "\n")
     path.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
     print(f"sampled {len(rows)} of {len(pop)} statements ({len(fresh)} new since {base[:10]})")
@@ -172,7 +157,7 @@ def sample(repo: Path, out: Path, args: argparse.Namespace) -> List[Dict]:
 
 def judge(row: Dict, repo: Path, args: argparse.Namespace, rubrics: str) -> Optional[Dict]:
     prompt = PROMPT.format(rubrics=rubrics, mathlib=args.mathlib, **row)
-    cmd = [args.claude, "-p", prompt, "--output-format", "json", "--model", args.model,
+    cmd = ["claude", "-p", prompt, "--output-format", "json", "--model", args.model,
            "--json-schema", json.dumps(SCHEMA), "--allowedTools", "Read", "Grep", "Glob",
            "--disallowedTools", "Bash", "Edit", "Write", "WebFetch", "WebSearch", "Task",
            "--max-budget-usd", "2", "--safe-mode", "--add-dir", str(args.mathlib)]
@@ -212,7 +197,7 @@ def summarize(out: Path) -> Dict:
 
 
 def run(args: argparse.Namespace) -> None:
-    repo, out = Path(args.repo).resolve(), Path(args.out).resolve()
+    repo, out = REPO, Path(args.out).resolve()
     rows = sample(repo, out, args)
     results_path = out / "results.jsonl"
     done = set()
@@ -239,25 +224,14 @@ def run(args: argparse.Namespace) -> None:
 
 def main(argv: Optional[List[str]] = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    sub = parser.add_subparsers(dest="command", required=True)
-    r = sub.add_parser("run", help="sample (once), judge (resumable) and summarize")
-    r.add_argument("--out", required=True)
-    r.add_argument("--repo", default=".")
-    r.add_argument("--mathlib", required=True, help="Mathlib source checkout at the pinned version")
-    r.add_argument("--random", type=int, default=400)
-    r.add_argument("--new", type=int, default=200)
-    r.add_argument("--since", default="14 days ago")
-    r.add_argument("--seed", type=int, default=0)
-    r.add_argument("--model", default="claude-sonnet-5-5")
-    r.add_argument("--jobs", type=int, default=16)
-    r.add_argument("--claude", default="claude")
-    s = sub.add_parser("summarize", help="rebuild summary.json from results.jsonl")
-    s.add_argument("--out", required=True)
-    args = parser.parse_args(argv)
-    if args.command == "run":
-        run(args)
-    else:
-        print(json.dumps(summarize(Path(args.out)), indent=1))
+    parser.add_argument("--out", required=True, help="run directory; rerun with the same one to resume")
+    parser.add_argument("--mathlib", required=True, help="Mathlib source checkout at the pinned version")
+    parser.add_argument("--random", type=int, default=400)
+    parser.add_argument("--new", type=int, default=200)
+    parser.add_argument("--since", default="14 days ago", help="window for new statements")
+    parser.add_argument("--model", default="claude-sonnet-5-5")
+    parser.add_argument("--jobs", type=int, default=16)
+    run(parser.parse_args(argv))
 
 
 if __name__ == "__main__":
