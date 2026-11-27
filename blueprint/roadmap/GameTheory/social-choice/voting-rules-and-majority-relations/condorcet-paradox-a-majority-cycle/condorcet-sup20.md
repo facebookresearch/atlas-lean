@@ -1,3 +1,3 @@
 # Condorcet sup20
 
-In the Condorcet profile, voters `1` and `2` prefer `2` to `0`.
+In the Condorcet profile, the voters who prefer `2` to `0` are exactly `1` and `2`.

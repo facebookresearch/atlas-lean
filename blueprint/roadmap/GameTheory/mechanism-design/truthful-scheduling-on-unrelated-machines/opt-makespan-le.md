@@ -1,3 +1,4 @@
 # Opt Makespan le
 
-The optimal makespan is at most the makespan of any allocation.
+For finitely many tasks and finitely many machines, at least one, the optimal makespan is at
+most the makespan of any allocation.

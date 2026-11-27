@@ -1,4 +1,4 @@
 # Card agree le
 
-Root bound: a polynomial `q` different from `p`, both of degree at most `d`, agrees with
-`p` at no more than `d` points.
+Root bound: let `p ≠ q` be polynomials over a finite field `F`, both of degree at most `d`;
+they agree at no more than `d` points of `F`.

@@ -1,4 +1,4 @@
 # Exists is Condorcet Winner
 
-Every alternative is a Condorcet winner of some profile: with a
-nonempty electorate, the unanimous profile ranking `a` first works.
+For finitely many alternatives and a nonempty finite electorate, every alternative is a
+Condorcet winner of some profile: the unanimous profile ranking `a` first works.
