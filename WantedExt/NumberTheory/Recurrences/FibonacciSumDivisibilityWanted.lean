@@ -30,29 +30,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Topology.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibility
+public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityPrimeIndices
 public import MathlibExt.NumberTheory.Recurrences.OddFibonacciSumDivisibility
 public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilitySumFibModPrimeEqAndNotDvd
 public import MathlibExt.NumberTheory.Recurrences.PisanoPeriodMinRatio
-
-set_option autoImplicit false
-
-@[expose] public section
-
-namespace MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted
-
-/-- **Odd Fibonacci numbers $F_n$ with $F_{F_n + 2} \equiv 1 \pmod{F_n}$.** Let $F_m$ denote the
-$m$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. If $p$ is an odd prime with
-$p \equiv 2 \pmod 3$ and $p \equiv 2$ or $3 \pmod 5$, and $n = 2p$ or $n = 4p$, then $F_n$ is odd
-and $F_{F_n + 2}$ leaves remainder $1$ on division by $F_n$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Theorem 2. -/
-theorem_wanted fib_two_mul_prime_odd_and_fib_fib_add_two_mod
-    (p n : ℕ) (hp : p.Prime) (hpodd : p % 2 = 1)
-    (hp3 : p % 3 = 2) (hp5 : p % 5 = 2 ∨ p % 5 = 3)
-    (hn : n = 2 * p ∨ n = 4 * p) :
-    Nat.fib n % 2 = 1 ∧
-      Nat.fib (Nat.fib n + 2) % Nat.fib n = 1
-
-end MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted

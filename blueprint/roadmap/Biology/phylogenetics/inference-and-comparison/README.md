@@ -1,6 +1,5 @@
 # Phylogenetic inference and comparison
 
-These articles concern inference of evolutionary trees, networks and recorded cell lineages, molecular dating with clocks and tree priors, gene-tree–species-tree reconciliation and species delimitation, and comparison of trees by agreement subtrees. Their observation and sampling models are separate; reading order does not assert a mathematical dependency.
 
 ## Tree inference
 
@@ -21,9 +20,7 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Maximum agreement subtree of two random binary trees](maximum-agreement-subtree-of-random-trees.md)
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
-
-## Dating, clocks and tree priors
-
+- [Phylogenetic network identifiability, recombination tests, and tree-space geometry](phylogenetic-network-identifiability-and-geometry/README.md)
 - [Birth–death diversification with rate shifts](birth-death-diversification-with-rate-shifts/README.md)
 - [Calibrated tree priors](calibrated-tree-priors/README.md)
 - [Fossilized birth–death process](fossilized-birth-death-process/README.md)
@@ -34,7 +31,4 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Species-tree relaxed clock](species-tree-relaxed-clock/README.md)
 - [Tempo of lineage diversification](tempo-of-lineage-diversification/README.md)
 - [Total-evidence tip dating](total-evidence-tip-dating/README.md)
-
-## Gene trees, species trees and reconciliation
-
 - [Gene trees, species trees and reconciliation](gene-trees-species-trees-and-reconciliation/README.md)

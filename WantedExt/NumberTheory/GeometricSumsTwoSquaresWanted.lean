@@ -49,6 +49,7 @@ public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import MathlibExt.NumberTheory.AlternatingGeometricSumDifferenceOfSquares
+public import MathlibExt.NumberTheory.AlternatingPrimeGeometricSum
 public import MathlibExt.NumberTheory.GeometricSumsTwoSquares
 public import MathlibExt.NumberTheory.GeometricSumsTwoSquaresAltBigeomPythagorean
 
@@ -143,23 +144,6 @@ theorem_wanted geomSumPow_eq_sq_add_sq (p n k : ℕ) (hp : p.Prime)
     (hp4 : p % 4 = 3) (hn : Odd n) (hn0 : 0 < n) (hk : 1 ≤ k) :
     ∃ a b : ℤ, (∑ j ∈ Finset.range (p ^ k), (p : ℤ) ^ (n * j)) =
       a ^ 2 + b ^ 2
-
-/-- **Alternating geometric sums for odd primes $p$ and even $n$ are sums of two coprime squares.**
-Let $p$ be an odd prime, let $n$ be a positive even integer, and let
-$S = \sum_{j=0}^{p-1} (-1)^j p^{nj} = 1 - p^n + p^{2n} - \cdots + p^{(p-1)n}$. Then every prime
-divisor of $S$ is $2$ or congruent to $1$ modulo $4$, and there are coprime natural numbers
-$a, b$ with $S = a^2 + b^2$.
-
-Source: Lorenz Halbeisen, Norbert Hungerbühler, and
-Franz Lemmermeyer, "Geometric Sums as Sums of Two
-Squares", Theorem 5. -/
-theorem_wanted altGeomSum_pythagorean (p n : ℕ) (hp : p.Prime)
-    (hp2 : p ≠ 2) (hn : Even n) (hn0 : 0 < n) :
-    (∀ q : ℕ, q.Prime →
-      (q : ℤ) ∣ ∑ j ∈ Finset.range p, (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j) →
-        q = 2 ∨ q % 4 = 1) ∧
-      ∃ a b : ℕ, (∑ j ∈ Finset.range p, (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j)) =
-        (a : ℤ) ^ 2 + (b : ℤ) ^ 2 ∧ Nat.Coprime a b
 
 /-- **Alternating geometric sums for primes $p \equiv 1 \pmod 4$ are sums of two squares.**
 Let $p$ be a prime with $p \equiv 1 \pmod 4$, let $n \ge 0$ be an integer, and let

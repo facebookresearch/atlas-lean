@@ -1,6 +1,8 @@
 # Chemical reaction network theory
 
 - [Persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md)
+
+- [Global bounds for positive weakly reversible mass-action trajectories](global-bounded-persistent-weakly-reversible-trajectories.md)
 - [Extended Permanence Conjecture](extended-permanence-conjecture.md)
 - [Nondegeneracy Conjecture for reaction networks](nondegeneracy-conjecture-for-reaction-networks.md)
 - [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)

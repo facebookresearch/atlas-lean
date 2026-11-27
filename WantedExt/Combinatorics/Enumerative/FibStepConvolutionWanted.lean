@@ -23,7 +23,10 @@ by list recursion; `F⁽²⁾, F⁽³⁾, F⁽⁴⁾, F⁽⁵⁾` are the paper'
 numbers are MathlibExt's `pellNumber`, sums over
 `K(r, n)` (compositions of `n` into `r` nonnegative parts)
 are `compProdSum`, and ordinary generating functions are
-`fibStepGF m = ∑ₙ F⁽ᵐ⁾ₙ Xⁿ`. Two printed statements are
+`fibStepGF m = ∑ₙ F⁽ᵐ⁾ₙ Xⁿ`. `compProdSum` is defined, and
+`compProdSum_even` is proved, in
+`MathlibExt.Combinatorics.Enumerative.FibStepConvolutionCompProdSumEven`.
+Two printed statements are
 corrected, each found numerically and checked against the
 paper's own derivations: Theorem 8's inner coefficients
 are `m-1-k`, not `k` (its proof's penultimate display has
@@ -44,6 +47,7 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.FibStepConvolution
 public import MathlibExt.Combinatorics.Enumerative.FibStepConvolutionTribonacciTetranacci
 public import MathlibExt.NumberTheory.PellNumberSequence
+public import MathlibExt.Combinatorics.Enumerative.FibStepConvolutionCompProdSumEven
 
 set_option autoImplicit false
 
@@ -57,14 +61,6 @@ def jacobsthalSeq : ℕ → ℤ
   | 0 => 0
   | 1 => 1
   | n + 2 => jacobsthalSeq (n + 1) + 2 * jacobsthalSeq n
-
-/-- **Sums over compositions.** Given integer sequences $a_0, \dots, a_{r-1}$ and a natural
-number $n$, the sum over the compositions $K(r, n)$ of $n$ into $r$ nonnegative parts is the
-sum, over all $(k_0, \dots, k_{r-1}) \in \mathbb{N}^r$ with $k_0 + \dots + k_{r-1} = n$, of
-$\prod_{i=0}^{r-1} a_i(k_i)$. -/
-def compProdSum {r : ℕ} (seqs : Fin r → ℕ → ℤ) (n : ℕ) : ℤ :=
-  ∑ k ∈ (Finset.univ : Finset (Fin r → Fin (n + 1))).filter
-      (fun k => ∑ i, (k i).val = n), ∏ i, seqs i (k i).val
 
 /-- **Truncated convolution of the $m$-step and $(m+1)$-step Fibonacci numbers.** Write
 $F^{(m)}_n$ for the Fibonacci $m$-step numbers ($F^{(m)}_0 = 0$, $F^{(m)}_1 = 1$, and each later
@@ -615,25 +611,6 @@ theorem_wanted compProdSum_four_consecutive (m n : ℕ)
       ∑ j ∈ Finset.range (n + 1),
         (fibStep (m + 3) j - fibStep (m + 2) j) *
           (fibStep (m + 1) (n - j) - fibStep m (n - j))
-
-/-- **Convolution of an even number of consecutive Fibonacci step sequences.** Write $F^{(s)}_k$
-for the Fibonacci $s$-step numbers, and write $\sum_{K(r,N)}$ for a sum over all
-$(k_1, \dots, k_r) \in \mathbb{N}^r$ with $k_1 + \dots + k_r = N$. For all natural numbers
-$\ell \ge 1$, $m \ge 1$ and $n \ge \ell(m + \ell - 1)$,
-$$
-\sum_{K(2\ell, n - \ell(m + \ell - 1))} \prod_{j=0}^{2\ell-1} F^{(m+j)}_{k_{j+1}} =
-\sum_{K(\ell, n)} \prod_{j=0}^{\ell-1} \left(F^{(m+2j+1)}_{k_{j+1}} - F^{(m+2j)}_{k_{j+1}}\right).
-$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Theorem 35. -/
-theorem_wanted compProdSum_even (l m n : ℕ) (hl : 1 ≤ l)
-    (hm : 1 ≤ m) (hn : l * (m + l - 1) ≤ n) :
-    @compProdSum (2 * l) (fun (j : Fin (2 * l)) k =>
-        fibStep (m + j.val) k) (n - l * (m + l - 1)) =
-      @compProdSum l (fun (j : Fin l) k =>
-        fibStep (m + 2 * j.val + 1) k - fibStep (m + 2 * j.val) k) n
 
 /-- **Convolution of an odd number of consecutive Fibonacci step sequences.** Write $F^{(s)}_k$
 for the Fibonacci $s$-step numbers, and write $\sum_{K(r,N)}$ for a sum over all

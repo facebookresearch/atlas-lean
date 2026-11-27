@@ -15,6 +15,13 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
+- [Post-selection inference for changepoints](post-selection-inference-for-changepoints/README.md)
+- [Age-structured microlesion model of tumour growth](age-structured-microlesion-model-of-tumour-growth/README.md)
+- [Consecutive seeding of metastases](consecutive-seeding-of-metastases/README.md)
+- [Driver mutations in a two-type branching process](driver-mutations-in-a-two-type-branching-process/README.md)
+- [Excess-mutation tests for regulatory elements](excess-mutation-tests-for-regulatory-elements/README.md)
+- [Recurrent mutation in regulatory elements](recurrent-mutation-in-regulatory-elements/README.md)
+- [Regional somatic mutation burden](regional-somatic-mutation-burden/README.md)
 - [Allelic copy-number states in aneuploid genomes](allelic-copy-number-states-in-aneuploid-genomes/README.md)
 - [Beta-binomial timing of precursor lesions](beta-binomial-timing-of-precursor-lesions/README.md)
 - [Binomial-mixture calling of single nucleotide variants](binomial-mixture-snv-calling/README.md)

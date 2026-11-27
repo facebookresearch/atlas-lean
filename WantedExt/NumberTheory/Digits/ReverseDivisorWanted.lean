@@ -48,6 +48,7 @@ public import MathlibExt.NumberTheory.Digits.ReverseDivisorHasPropertyPStarOfDvd
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorExistsDvdReverseDigitsMul
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorPalindromeHasPropertyPStar
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorInfiniteDvdReverseDigitsMul
+public import MathlibExt.NumberTheory.Digits.ReverseDivisorNoPStar
 
 set_option autoImplicit false
 
@@ -92,16 +93,6 @@ Integer Divides the Reverse of Any of Its Multiples?",
 Lemma 2. -/
 theorem_wanted not_hasPropertyPStar_basic_nine (k : ℕ) (hk : 2 ≤ k) :
     ¬ HasPropertyPStar (11 * (10 ^ k - 1))
-
-/-- **No reverse divisor has property $P^*$.** If $n$ is a reverse divisor, then $n$ does not have
-the property $P^*$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Proposition 4. -/
-theorem_wanted not_hasPropertyPStar_of_isReverseDivisor (n : ℕ)
-    (h : IsReverseDivisor n) :
-    ¬ HasPropertyPStar n
 
 /-- **Lemma 3**: a non-basic reverse divisor `n` with
 quotient `9` begins and ends with the same block
