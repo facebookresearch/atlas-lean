@@ -14,12 +14,13 @@ import Mathlib.RingTheory.PowerSeries.Expand
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 import all MathlibExt.Combinatorics.Enumerative.Partition.MercaSignedTriangularSum
 import all MathlibExt.Combinatorics.Enumerative.Partition.MercaTwiceSquareSum
+import all MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionCongruence
 
 /-!
 # Merca's signed square identity
 
-We use Ballantine's reduction to the ordinary partition generating function. We obtain the
-single-square Jacobi product by comparing coefficients after substituting `X²` for `X`. The product
+We use Ballantine's reduction to the ordinary partition generating function. We reuse the
+formalization of Gauss's signed-square product in `OverpartitionCongruence`. The product
 left after cancellation is the generating function for partitions weighted by the parity of their
 number of parts.
 
@@ -56,35 +57,43 @@ private lemma le_square (k : ℕ) : k ≤ k ^ 2 := Nat.le_self_pow two_ne_zero k
 
 private noncomputable def signedSquare : ℤ⟦X⟧ := indexedSeries (fun k => k ^ 2) weight
 
-private lemma expand_signedSquare : expand 2 two_ne_zero signedSquare = signedTwiceSquare := by
+private lemma card_squareFiber (k : ℕ) :
+    Nat.card {x : ℤ // x.natAbs ^ 2 = k ^ 2} = if k = 0 then 1 else 2 := by
+  let s : Finset ℤ := {(k : ℤ), -(k : ℤ)}
+  have h (x : ℤ) : x.natAbs ^ 2 = k ^ 2 ↔ x ∈ s := by
+    simp only [s, mem_insert, mem_singleton]
+    constructor
+    · intro hx
+      have hk := square_injective hx
+      simpa only [hk] using Int.natAbs_eq x
+    · rintro (rfl | rfl) <;> simp
+  rw [Nat.card_congr (Equiv.subtypeEquivRight h), Nat.card_eq_fintype_card, Fintype.card_coe]
+  by_cases hk : k = 0
+  · simp [s, hk]
+  · rw [ite_eq_right hk, card_pair_eq_two_iff]
+    omega
+
+private lemma rescale_opcTheta : rescale (-1) opcTheta = signedSquare := by
   ext n
-  by_cases hn : n ∈ Set.range twiceSquare
+  rw [coeff_rescale, opc_theta_coeff_eq_card, signedSquare]
+  by_cases hn : n ∈ Set.range (fun k : ℕ => k ^ 2)
   · obtain ⟨k, rfl⟩ := hn
-    rw [signedTwiceSquare, coeff_indexedSeries_at twiceSquare_injective le_twiceSquare]
-    change coeff (2 * k ^ 2) (expand 2 two_ne_zero signedSquare) = _
-    rw [coeff_expand_mul, signedSquare, coeff_indexedSeries_at square_injective le_square]
-  · rw [signedTwiceSquare, coeff_indexedSeries_off _ hn, coeff_expand]
-    split_ifs with hd
-    · apply coeff_indexedSeries_off
-      rintro ⟨k, hk⟩
-      change k ^ 2 = n / 2 at hk
-      exact hn ⟨k, by rw [twiceSquare, hk, Nat.mul_div_cancel' hd]⟩
-    · rfl
+    rw [coeff_indexedSeries_at square_injective le_square, card_squareFiber]
+    have hs : (-1 : ℤ) ^ (k ^ 2) = (-1) ^ k :=
+      neg_one_pow_congr (by simp [pow_two, Nat.even_mul])
+    by_cases hk : k = 0
+    · subst k
+      simp [weight]
+    · simp [hs, weight, hk, mul_comm]
+  · have hempty : IsEmpty {x : ℤ // x.natAbs ^ 2 = n} :=
+      ⟨fun x => hn ⟨x.val.natAbs, x.property⟩⟩
+    rw [coeff_indexedSeries_off _ hn, Nat.card_eq_zero.mpr (Or.inl hempty),
+      Nat.cast_zero, mul_zero]
 
 private lemma signedSquare_mul_euler_two :
     signedSquare * qEulerProduct 2 = qEulerProduct 1 ^ 2 := by
-  have he (k : ℕ) (hk : k ≠ 0) :
-      expand 2 two_ne_zero (qEulerProduct k) = qEulerProduct (2 * k) := by
-    rw [eulerSeries_eq_expand k hk, eulerSeries_eq_expand (2 * k) (mul_ne_zero two_ne_zero hk),
-      expand_mul]
-  -- Substituting `X²` gives the twice-square identity; coefficients in degrees `2n` recover
-  -- the original series, with ordinary squares and Euler products at `X` and `X²`.
-  have h : expand 2 two_ne_zero (signedSquare * qEulerProduct 2) =
-      expand 2 two_ne_zero (qEulerProduct 1 ^ 2) := by
-    rw [map_mul, map_pow, expand_signedSquare, he 2 two_ne_zero, he 1 one_ne_zero]
-    exact signedTwiceSquare_mul_euler_four
-  ext n
-  simpa only [coeff_expand_mul] using congrArg (coeff (2 * n)) h
+  rw [← rescale_opcTheta, eulerSeries_eq_expand 2 two_ne_zero, qEulerProduct_one]
+  exact phiFiveCoreAnalog_five_pow_mul.theta_euler_product opcTheta opc_theta_coeff_eq_card
 
 private noncomputable def signedPartitions : ℤ⟦X⟧ :=
   Nat.Partition.genFun (fun _ c => (-1 : ℤ) ^ c)
