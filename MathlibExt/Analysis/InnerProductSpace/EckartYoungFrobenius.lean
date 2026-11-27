@@ -39,6 +39,9 @@ whitening form `isLeast_frobSq_whitened` used by weighted rank tests).
   `frobenius_sub_truncSVD_sq`: the truncated SVD and its exact error.
 * `Matrix.EckartYoungFrobenius.sum_sq_singularValues_le_frobenius_sub_sq`:
   the lower bound for every rank-`≤ k` approximant.
+* `Matrix.EckartYoungFrobenius.eq_truncSVD_of_frobenius_sub_sq_le`: the truncated SVD is the
+  unique best rank-`k` approximant when `σₖ` is strictly smaller than the earlier singular
+  values.
 * `Matrix.EckartYoungFrobenius.isLeast_frobSq_sub`: the singular tail is the
   minimum squared Frobenius error.
 * `Matrix.EckartYoungFrobenius.isLeast_frobSq_whitened`: the whitened form.
@@ -221,34 +224,107 @@ private theorem spectral_energy {a b : ℕ} (A : Matrix (Fin a) (Fin b) ℝ)
     T.singularValues i ^ 2 * (inner ℝ (v i) x) ^ 2
   ring
 
-/-- For decreasing nonnegative `d` and weights `cᵢ ∈ [0, 1]` of total at least `b - k`,
-`∑_{i ≥ k} dᵢ ≤ ∑ dᵢ cᵢ`. -/
-private theorem weighted_tail_le {b : ℕ} (k : ℕ) (hk : k < b)
-    (d c : Fin b → ℝ) (hd : Antitone d) (hd0 : ∀ i, 0 ≤ d i)
-    (hc0 : ∀ i, 0 ≤ c i) (hc1 : ∀ i, c i ≤ 1)
+/-- For decreasing nonnegative `d` and weights `cᵢ ≤ 1` of total at least `b - k`,
+`∑_{i ≥ k} dᵢ + ∑_{i < k} (dᵢ - dₖ) cᵢ ≤ ∑ dᵢ cᵢ`. -/
+private theorem weighted_tail_gap_le {b : ℕ} (k : ℕ) (hk : k < b)
+    (d c : Fin b → ℝ) (hd : Antitone d) (hd0 : ∀ i, 0 ≤ d i) (hc1 : ∀ i, c i ≤ 1)
     (hc : (b - k : ℕ) ≤ ∑ i, c i) :
-    (∑ i : Fin b with k ≤ i.val, d i) ≤ ∑ i, d i * c i := by
+    (∑ i : Fin b with k ≤ i.val, d i) + ∑ i : Fin b with i.val < k, (d i - d ⟨k, hk⟩) * c i ≤
+      ∑ i, d i * c i := by
   classical
   let t : ℝ := d ⟨k, hk⟩
   have hcount : (∑ i : Fin b, if k ≤ i.val then (1 : ℝ) else 0) = (b - k : ℕ) := by
     rw [← Finset.sum_filter]
     exact (fin_tail_sum b k (fun _ => 1)).trans (by simp)
   have hi (i : Fin b) :
-      t * (c i - if k ≤ i.val then 1 else 0) ≤
+      t * (c i - if k ≤ i.val then 1 else 0) + (if i.val < k then (d i - t) * c i else 0) ≤
         d i * c i - if k ≤ i.val then d i else 0 := by
     by_cases h : k ≤ i.val
     · have horder : d i ≤ t := hd h
       have := mul_le_mul_of_nonpos_right horder (sub_nonpos.mpr (hc1 i))
-      simp only [ite_eq_left h]
+      simp only [ite_eq_left h, ite_eq_right (Nat.not_lt.mpr h)]
       nlinarith
-    · have horder : t ≤ d i := hd (show i ≤ ⟨k, hk⟩ from Nat.le_of_lt (Nat.lt_of_not_ge h))
-      simpa [h] using mul_le_mul_of_nonneg_right horder (hc0 i)
+    · simp only [ite_eq_right h, ite_eq_left (Nat.lt_of_not_ge h)]
+      linarith
   have hs := Finset.sum_le_sum (fun i (_ : i ∈ Finset.univ) => hi i)
-  simp only [Finset.sum_sub_distrib, ← Finset.mul_sum] at hs
-  rw [hcount, ← Finset.sum_filter] at hs
+  simp only [Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum] at hs
+  rw [hcount, ← Finset.sum_filter, ← Finset.sum_filter] at hs
   have ht : 0 ≤ t := hd0 ⟨k, hk⟩
   have := mul_nonneg ht (sub_nonneg.mpr hc)
   linarith
+
+/-- The squared singular values `σᵢ²`, `i < n`, are nonincreasing. -/
+private theorem antitone_sq_singularValues (A : Matrix (Fin m) (Fin n) ℝ) :
+    Antitone (fun i : Fin n => (Matrix.toEuclideanLin A).singularValues i ^ 2) := by
+  intro i j hij
+  change (Matrix.toEuclideanLin A).singularValues j ^ 2 ≤
+    (Matrix.toEuclideanLin A).singularValues i ^ 2
+  rw [(Matrix.toEuclideanLin A).sq_singularValues_fin finrank_euclideanSpace_fin,
+    (Matrix.toEuclideanLin A).sq_singularValues_fin finrank_euclideanSpace_fin]
+  exact (Matrix.toEuclideanLin A).isSymmetric_adjoint_comp_self.eigenvalues_antitone
+    finrank_euclideanSpace_fin hij
+
+/-- The weights behind both halves of Eckart–Young. Let `B` have rank at most `k` and let `z`
+run over an orthonormal basis of the kernel of `B`, which has dimension at least `n - k`. The
+weights `cᵢ = ∑ⱼ ⟪vᵢ, zⱼ⟫²` of the right singular vectors `vᵢ` of `A` lie in `[0, 1]`, total at
+least `n - k`, and satisfy `∑ᵢ σᵢ² cᵢ ≤ ‖A - B‖²`; a weight vanishes only if its singular
+vector is orthogonal to the kernel of `B`. -/
+private theorem exists_kernel_weights (A : Matrix (Fin m) (Fin n) ℝ) {k : ℕ}
+    (B : Matrix (Fin m) (Fin n) ℝ) (hB : B.rank ≤ k) :
+    ∃ c : Fin n → ℝ, (∀ i, 0 ≤ c i) ∧ (∀ i, c i ≤ 1) ∧ ((n - k : ℕ) : ℝ) ≤ ∑ i, c i ∧
+      ∑ i : Fin n, (Matrix.toEuclideanLin A).singularValues i ^ 2 * c i ≤ ‖A - B‖ ^ 2 ∧
+      n - k ≤ Module.finrank ℝ (Matrix.toEuclideanLin B).ker ∧
+      ∀ i, c i = 0 → ∀ x ∈ (Matrix.toEuclideanLin B).ker,
+        inner ℝ (rightSingularBasis A i) x = 0 := by
+  classical
+  let W := (Matrix.toEuclideanLin B).ker
+  let w := stdOrthonormalBasis ℝ W
+  let z : Fin (Module.finrank ℝ W) → EuclideanSpace ℝ (Fin n) := fun j => w j
+  have hz : Orthonormal ℝ z := w.orthonormal.comp_linearIsometry W.subtypeₗᵢ
+  have hBz (j : Fin (Module.finrank ℝ W)) : Matrix.toEuclideanLin B (z j) = 0 :=
+    (w j).property
+  have hbound : (∑ j, ‖Matrix.toEuclideanLin A (z j)‖ ^ 2) ≤ ‖A - B‖ ^ 2 := by
+    convert orthonormal_energy_le (A - B) z hz using 1
+    apply Finset.sum_congr rfl
+    intro j _
+    simp [map_sub, LinearMap.sub_apply, hBz]
+  let c : Fin n → ℝ := fun i => ∑ j, (inner ℝ (rightSingularBasis A i) (z j)) ^ 2
+  have hc0 (i : Fin n) : 0 ≤ c i :=
+    Finset.sum_nonneg fun _ _ => sq_nonneg _
+  have hc1 (i : Fin n) : c i ≤ 1 := by
+    simpa [c, real_inner_comm] using hz.sum_inner_products_le (rightSingularBasis A i)
+  have hcsum : (∑ i, c i) = (Module.finrank ℝ W : ℝ) := by
+    dsimp [c]
+    rw [Finset.sum_comm]
+    simp only [OrthonormalBasis.sum_sq_inner_right]
+    have hn (j : Fin (Module.finrank ℝ W)) : ‖z j‖ = 1 := w.norm_eq_one j
+    simp [hn]
+  have hrank : Module.finrank ℝ (Matrix.toEuclideanLin B).range = B.rank := by
+    exact (B.rank_eq_finrank_range_toLin (EuclideanSpace.basisFun (Fin m) ℝ).toBasis
+      (EuclideanSpace.basisFun (Fin n) ℝ).toBasis).symm
+  have hdim : n - k ≤ Module.finrank ℝ W := by
+    have hn := (Matrix.toEuclideanLin B).finrank_range_add_finrank_ker
+    rw [hrank, finrank_euclideanSpace_fin] at hn
+    dsimp [W]
+    omega
+  have hs : (∑ j, ‖Matrix.toEuclideanLin A (z j)‖ ^ 2) =
+      ∑ i : Fin n, (Matrix.toEuclideanLin A).singularValues i ^ 2 * c i := by
+    simp_rw [spectral_energy]
+    rw [Finset.sum_comm]
+    simp only [c, Finset.mul_sum]
+  refine ⟨c, hc0, hc1, ?_, hs ▸ hbound, hdim, ?_⟩
+  · rw [hcsum]
+    exact_mod_cast hdim
+  · intro i hi x hx
+    have hzi (j : Fin (Module.finrank ℝ W)) : inner ℝ (rightSingularBasis A i) (z j) = 0 := by
+      have h := (Finset.sum_eq_zero_iff_of_nonneg (fun j _ => sq_nonneg
+        (inner ℝ (rightSingularBasis A i) (z j)))).mp hi j (Finset.mem_univ j)
+      exact (pow_eq_zero_iff two_ne_zero).mp h
+    have hx' : x = ∑ j, inner ℝ (z j) x • z j := by
+      have h := congrArg Subtype.val (w.sum_repr' ⟨x, hx⟩)
+      simpa [z] using h.symm
+    rw [hx', inner_sum]
+    simp [inner_smul_right, hzi]
 
 /-- The truncated SVD has rank at most `k`. -/
 theorem rank_truncSVD_le (A : Matrix (Fin m) (Fin n) ℝ) (k : ℕ) : (truncSVD A k).rank ≤ k := by
@@ -292,55 +368,17 @@ theorem sum_sq_singularValues_le_frobenius_sub_sq (A : Matrix (Fin m) (Fin n) �
   · rw [Finset.Ico_eq_empty_of_le hk, Finset.sum_empty]
     positivity
   have hkn : k < n := Nat.lt_of_not_ge hk
-  let W := (Matrix.toEuclideanLin B).ker
-  let w := stdOrthonormalBasis ℝ W
-  let z : Fin (Module.finrank ℝ W) → EuclideanSpace ℝ (Fin n) := fun j => w j
-  have hz : Orthonormal ℝ z := w.orthonormal.comp_linearIsometry W.subtypeₗᵢ
-  have hBz (j : Fin (Module.finrank ℝ W)) : Matrix.toEuclideanLin B (z j) = 0 :=
-    (w j).property
-  have hbound : (∑ j, ‖Matrix.toEuclideanLin A (z j)‖ ^ 2) ≤ ‖A - B‖ ^ 2 := by
-    convert orthonormal_energy_le (A - B) z hz using 1
-    apply Finset.sum_congr rfl
-    intro j _
-    simp [map_sub, LinearMap.sub_apply, hBz]
-  let c : Fin n → ℝ := fun i => ∑ j, (inner ℝ (rightSingularBasis A i) (z j)) ^ 2
-  have hc0 (i : Fin n) : 0 ≤ c i :=
-    Finset.sum_nonneg fun _ _ => sq_nonneg _
-  have hc1 (i : Fin n) : c i ≤ 1 := by
-    simpa [c, real_inner_comm] using hz.sum_inner_products_le (rightSingularBasis A i)
-  have hcsum : (∑ i, c i) = (Module.finrank ℝ W : ℝ) := by
-    dsimp [c]
-    rw [Finset.sum_comm]
-    simp only [OrthonormalBasis.sum_sq_inner_right]
-    have hn (j : Fin (Module.finrank ℝ W)) : ‖z j‖ = 1 := w.norm_eq_one j
-    simp [hn]
-  have hrank : Module.finrank ℝ (Matrix.toEuclideanLin B).range = B.rank := by
-    exact (B.rank_eq_finrank_range_toLin (EuclideanSpace.basisFun (Fin m) ℝ).toBasis
-      (EuclideanSpace.basisFun (Fin n) ℝ).toBasis).symm
-  have hdim : n - k ≤ Module.finrank ℝ W := by
-    have hn := (Matrix.toEuclideanLin B).finrank_range_add_finrank_ker
-    rw [hrank, finrank_euclideanSpace_fin] at hn
-    dsimp [W]
-    omega
-  have hc : (n - k : ℕ) ≤ ∑ i, c i := by
-    rw [hcsum]
-    exact_mod_cast hdim
-  have hs : (∑ j, ‖Matrix.toEuclideanLin A (z j)‖ ^ 2) =
-      ∑ i : Fin n, (Matrix.toEuclideanLin A).singularValues i ^ 2 * c i := by
-    simp_rw [spectral_energy]
-    rw [Finset.sum_comm]
-    simp only [c, Finset.mul_sum]
-  have hord : Antitone (fun i : Fin n => (Matrix.toEuclideanLin A).singularValues i ^ 2) := by
-    intro i j hij
-    change (Matrix.toEuclideanLin A).singularValues j ^ 2 ≤
-      (Matrix.toEuclideanLin A).singularValues i ^ 2
-    rw [(Matrix.toEuclideanLin A).sq_singularValues_fin finrank_euclideanSpace_fin,
-      (Matrix.toEuclideanLin A).sq_singularValues_fin finrank_euclideanSpace_fin]
-    exact (Matrix.toEuclideanLin A).isSymmetric_adjoint_comp_self.eigenvalues_antitone
-      finrank_euclideanSpace_fin hij
+  obtain ⟨c, hc0, hc1, hc, hbound, -, -⟩ := exists_kernel_weights A B hB
+  have hgap := weighted_tail_gap_le k hkn _ c (antitone_sq_singularValues A)
+    (fun _ => sq_nonneg _) hc1 hc
+  have hgap0 : 0 ≤ ∑ i : Fin n with i.val < k,
+      ((Matrix.toEuclideanLin A).singularValues i ^ 2 -
+        (Matrix.toEuclideanLin A).singularValues k ^ 2) * c i := by
+    refine Finset.sum_nonneg fun i hi => mul_nonneg (sub_nonneg.mpr ?_) (hc0 i)
+    exact antitone_sq_singularValues A
+      (show i ≤ ⟨k, hkn⟩ from Nat.le_of_lt (Finset.mem_filter.mp hi).2)
   rw [← fin_tail_sum n k (fun i => (Matrix.toEuclideanLin A).singularValues i ^ 2)]
-  exact (weighted_tail_le k hkn _ c hord (fun _ => sq_nonneg _) hc0 hc1 hc).trans
-    (hs ▸ hbound)
+  linarith
 
 /-- **Eckart–Young, best-approximation form.** The truncated SVD is a best rank-`k` approximation
 of `A` in the Frobenius norm: the least squared distance from `A` to a matrix of rank at most `k`
@@ -351,6 +389,110 @@ theorem isLeast_frobenius_sub_sq (A : Matrix (Fin m) (Fin n) ℝ) (k : ℕ) :
   refine ⟨⟨truncSVD A k, rank_truncSVD_le A k, (frobenius_sub_truncSVD_sq A k).symm⟩, ?_⟩
   rintro r ⟨B, hB, rfl⟩
   exact sum_sq_singularValues_le_frobenius_sub_sq A B hB
+
+/-- **Eckart–Young, uniqueness.** Let the `k`-th singular value of `A` be strictly smaller than
+each earlier one, `σₖ < σᵢ` for `i < k` (for `k ≥ 1`, the gap `σₖ < σₖ₋₁`, counting from `σ₀`).
+Then the truncated SVD `truncSVD A k` is the only matrix of rank at most `k` whose squared
+Frobenius distance from `A` is at most `∑_{k ≤ i < n} σᵢ²`: it is the unique best rank-`k`
+approximation of `A` in the Frobenius norm.
+
+Proof: the kernel weights of a best approximation `B` leave no mass on the first `k` right
+singular vectors, so the kernel of `B` is spanned by the others, and `B` agrees with `A` on the
+first `k`. -/
+theorem eq_truncSVD_of_frobenius_sub_sq_le (A : Matrix (Fin m) (Fin n) ℝ) {k : ℕ}
+    (hgap : ∀ i < k, (Matrix.toEuclideanLin A).singularValues k <
+      (Matrix.toEuclideanLin A).singularValues i)
+    {B : Matrix (Fin m) (Fin n) ℝ} (hB : B.rank ≤ k)
+    (hle : ‖A - B‖ ^ 2 ≤
+      ∑ i ∈ Finset.Ico k n, (Matrix.toEuclideanLin A).singularValues i ^ 2) :
+    B = truncSVD A k := by
+  classical
+  by_cases hk : n ≤ k
+  · rw [Finset.Ico_eq_empty_of_le hk, Finset.sum_empty] at hle
+    have hT := frobenius_sub_truncSVD_sq A k
+    rw [Finset.Ico_eq_empty_of_le hk, Finset.sum_empty] at hT
+    have hB' : A - B = 0 :=
+      norm_eq_zero.mp ((pow_eq_zero_iff two_ne_zero).mp (le_antisymm hle (sq_nonneg _)))
+    have hT' : A - truncSVD A k = 0 := norm_eq_zero.mp ((pow_eq_zero_iff two_ne_zero).mp hT)
+    rw [sub_eq_zero] at hB' hT'
+    rw [← hB', ← hT']
+  have hkn : k < n := Nat.lt_of_not_ge hk
+  obtain ⟨c, hc0, hc1, hc, hbound, hdim, horth⟩ := exists_kernel_weights A B hB
+  have hgapsum := weighted_tail_gap_le k hkn _ c (antitone_sq_singularValues A)
+    (fun _ => sq_nonneg _) hc1 hc
+  rw [fin_tail_sum n k (fun i => (Matrix.toEuclideanLin A).singularValues i ^ 2)] at hgapsum
+  -- The weights of the first `k` right singular vectors vanish.
+  have hterm : ∀ i ∈ Finset.univ.filter (fun i : Fin n => i.val < k),
+      0 ≤ ((Matrix.toEuclideanLin A).singularValues i ^ 2 -
+        (Matrix.toEuclideanLin A).singularValues k ^ 2) * c i := by
+    intro i hi
+    refine mul_nonneg (sub_nonneg.mpr ?_) (hc0 i)
+    exact antitone_sq_singularValues A
+      (show i ≤ ⟨k, hkn⟩ from Nat.le_of_lt (Finset.mem_filter.mp hi).2)
+  have hsum0 : ∑ i : Fin n with i.val < k,
+      ((Matrix.toEuclideanLin A).singularValues i ^ 2 -
+        (Matrix.toEuclideanLin A).singularValues k ^ 2) * c i = 0 :=
+    le_antisymm (by change _ + _ ≤ _ at hgapsum; linarith) (Finset.sum_nonneg hterm)
+  have hhead0 (i : Fin n) (hi : i.val < k) : c i = 0 := by
+    have h := (Finset.sum_eq_zero_iff_of_nonneg hterm).mp hsum0 i (by simp [hi])
+    have hpos : 0 < (Matrix.toEuclideanLin A).singularValues i ^ 2 -
+        (Matrix.toEuclideanLin A).singularValues k ^ 2 := by
+      have h1 := hgap i hi
+      have h0 := (Matrix.toEuclideanLin A).singularValues_nonneg k
+      nlinarith
+    exact (mul_eq_zero.mp h).resolve_left hpos.ne'
+  -- So the kernel of `B` is the span of the other right singular vectors.
+  let V : Submodule ℝ (EuclideanSpace ℝ (Fin n)) :=
+    Submodule.span ℝ (Set.range fun i : {i : Fin n // k ≤ i.val} => rightSingularBasis A i)
+  have hWV : (Matrix.toEuclideanLin B).ker ≤ V := by
+    intro x hx
+    rw [← (rightSingularBasis A).sum_repr' x]
+    refine Submodule.sum_mem _ fun i _ => ?_
+    by_cases hi : i.val < k
+    · rw [horth i (hhead0 i hi) x hx, zero_smul]
+      exact V.zero_mem
+    · exact V.smul_mem _ (Submodule.subset_span ⟨⟨i, Nat.le_of_not_gt hi⟩, rfl⟩)
+  have hVdim : Module.finrank ℝ V ≤ n - k := by
+    refine (finrank_range_le_card _).trans (le_of_eq ?_)
+    have h := fin_tail_sum n k (fun _ => (1 : ℝ))
+    simp only [Finset.sum_const, nsmul_eq_mul, mul_one, Nat.card_Ico] at h
+    rw [Fintype.card_subtype]
+    exact_mod_cast h
+  have hWeq := Submodule.eq_of_le_of_finrank_le hWV (hVdim.trans hdim)
+  have htail (j : Fin n) (hj : k ≤ j.val) :
+      Matrix.toEuclideanLin B (rightSingularBasis A j) = 0 := by
+    have h : rightSingularBasis A j ∈ (Matrix.toEuclideanLin B).ker :=
+      hWeq ▸ Submodule.subset_span ⟨⟨j, hj⟩, rfl⟩
+    exact h
+  -- And `B` agrees with `A` on the first `k` right singular vectors.
+  let e : Fin n → ℝ := fun j =>
+    ‖Matrix.toEuclideanLin (A - B) (rightSingularBasis A j)‖ ^ 2 -
+      if k ≤ j.val then (Matrix.toEuclideanLin A).singularValues j ^ 2 else 0
+  have he0 (j : Fin n) : 0 ≤ e j := by
+    by_cases hj : k ≤ j.val
+    · simp [e, hj, map_sub, LinearMap.sub_apply, htail j hj, singular_energy]
+    · simp only [e, ite_eq_right hj, sub_zero]
+      positivity
+  have hesum : ∑ j, e j ≤ 0 := by
+    simp only [e, Finset.sum_sub_distrib]
+    rw [← frobenius_sq_basis (A - B) (rightSingularBasis A), ← Finset.sum_filter,
+      fin_tail_sum n k (fun i => (Matrix.toEuclideanLin A).singularValues i ^ 2)]
+    linarith
+  have hhead (j : Fin n) (hj : j.val < k) :
+      Matrix.toEuclideanLin B (rightSingularBasis A j) =
+        Matrix.toEuclideanLin A (rightSingularBasis A j) := by
+    have h := (Finset.sum_eq_zero_iff_of_nonneg (fun j _ => he0 j)).mp
+      (le_antisymm hesum (Finset.sum_nonneg fun j _ => he0 j)) j (Finset.mem_univ j)
+    simp only [e, ite_eq_right (Nat.not_le.mpr hj), sub_zero] at h
+    have h' := norm_eq_zero.mp ((pow_eq_zero_iff two_ne_zero).mp h)
+    rw [map_sub, LinearMap.sub_apply, sub_eq_zero] at h'
+    exact h'.symm
+  apply Matrix.toEuclideanLin.injective
+  refine (rightSingularBasis A).toBasis.ext fun j => ?_
+  rw [OrthonormalBasis.coe_toBasis, trunc_action]
+  split_ifs with hj
+  · exact hhead j hj
+  · exact htail j (Nat.le_of_not_gt hj)
 
 /-- The squared Frobenius norm of a finite real matrix. -/
 def frobSq (A : Matrix (Fin m) (Fin n) ℝ) : ℝ :=
