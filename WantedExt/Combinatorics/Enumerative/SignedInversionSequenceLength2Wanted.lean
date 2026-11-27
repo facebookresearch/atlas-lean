@@ -11,8 +11,16 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2BarredPrefix
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2BarredSuffix
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2ClassC3
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2ClassC38
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2ClassC45
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2FirstBarCount
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2FirstBars
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2Harmonic
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2LastBars
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2SuffixBars
 
 /-!
 # Signed inversion sequences avoiding sets of length-2 signed patterns
@@ -74,44 +82,6 @@ public theorem_wanted signedInvSeq_wilf_and_count_b0b0_b00_0b1 :
       signedInvAvoidCount {⟨.eq, true, false⟩, ⟨.lt, true, false⟩, ⟨.lt, false, true⟩} ∧
     ∀ n, signedInvAvoidCount {⟨.eq, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩} n =
         1 + ∑ j ∈ Finset.range n, (2 * j + 1) * j !
-
-/-- **Mansour–Safadi Lemma 3 (signed patterns 0̄1̄, 0̄0̄, 01̄).** A signed inversion sequence of
-length $n$ is a word $e_1 \cdots e_n$ with $e_k \in \{0, \bar 0, 1, \bar 1, \dots, k - 1,
-\overline{k - 1}\}$. It avoids a length-2 signed pattern $\tau_1\tau_2$ (one of $00$, $01$, $10$,
-each letter possibly barred) when no $i < j$ have $|e_i|$, $|e_j|$ in the same order as $|\tau_1|$,
-$|\tau_2|$ with $e_i$, $e_j$ barred exactly when $\tau_1$, $\tau_2$ are. Write $\bar I_n(B)$ for the
-set of signed inversion sequences of length $n$ that avoid every pattern in $B$. Let
-$B_1 = \{\bar 0\bar 1, \bar 0\bar 0, 0\bar 1\}$, $B_2 = \{\bar 0\bar 1, \bar 0 0, 0\bar 1\}$ and
-$B_3 = \{\bar 0\bar 1, 0\bar 1, 0\bar 0\}$. For every $n \ge 0$,
-$|\bar I_n(B_1)| = |\bar I_n(B_2)| = |\bar I_n(B_3)| = n!\,(1 + H_n)$, where
-$H_n = \sum_{k=1}^{n} 1/k$ is the $n$th harmonic number.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Lemma 3 (`integers-2026-A74-lem-3`). -/
-public theorem_wanted signedInvSeq_wilf_and_count_b0b1_b0b0_0b1 :
-    signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, false, true⟩} =
-      signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩} ∧
-    signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩} =
-      signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.lt, false, true⟩, ⟨.eq, false, true⟩} ∧
-    ∀ n, (signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, false, true⟩} n : ℚ) =
-        n ! * (1 + harmonic n)
-
-/-- **Mansour–Safadi Lemma 4 (signed patterns 0̄1̄, 0̄0̄, 0̄1).** A signed inversion sequence of
-length $n$ is a word $e_1 \cdots e_n$ with $e_k \in \{0, \bar 0, 1, \bar 1, \dots, k - 1,
-\overline{k - 1}\}$. It avoids a length-2 signed pattern $\tau_1\tau_2$ (one of $00$, $01$, $10$,
-each letter possibly barred) when no $i < j$ have $|e_i|$, $|e_j|$ in the same order as $|\tau_1|$,
-$|\tau_2|$ with $e_i$, $e_j$ barred exactly when $\tau_1$, $\tau_2$ are. Write $\bar I_n(B)$ for the
-set of signed inversion sequences of length $n$ that avoid every pattern in $B$. For every
-$n \ge 0$, $|\bar I_n(\{\bar 0\bar 1, \bar 0\bar 0, \bar 0 1\})| =
-|\bar I_n(\{\bar 0\bar 1, \bar 0 0, \bar 0 1\})| = \sum_{j=0}^{n} j!\,(j + 1)^{n - j}$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Lemma 4 (`integers-2026-A74-lem-4`). -/
-public theorem_wanted signedInvSeq_wilf_and_count_b0b1_b0b0_b01 :
-    signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, true, false⟩} =
-      signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, true, false⟩} ∧
-    ∀ n, signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, true, false⟩} n =
-        ∑ j ∈ Finset.range (n + 1), j ! * (j + 1) ^ (n - j)
 
 /-- **Signed inversion sequences avoiding $\{\bar1\bar0, \bar0\bar1, 01\}$.** For a set $B$ of
 length-2 signed patterns (a bar marks a barred letter), let $|\bar I_n(B)|$ be the number of signed
@@ -188,18 +158,6 @@ public theorem_wanted signedInvAvoidCount_eq_factorial_succ :
     signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, false, true⟩} n = (n + 1)! ∧
     signedInvAvoidCount {⟨.gt, true, false⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩} n = (n + 1)! ∧
     signedInvAvoidCount {⟨.gt, true, false⟩, ⟨.eq, false, true⟩, ⟨.lt, false, true⟩} n = (n + 1)!
-
-/-- **Mansour–Safadi Lemma 9: a Wilf-equivalence of three-pattern sets.** Length-2 signed
-patterns are written as in the paper, a bar marking a barred letter, and $B \sim C$ means that
-for every $n \ge 0$ the number $|\bar I_n(B)|$ of signed inversion sequences of length $n$
-avoiding every pattern of $B$ equals $|\bar I_n(C)|$. Then
-$\{\bar1\bar0, \bar10, \bar0\bar0\} \sim \{\bar1\bar0, \bar10, \bar00\}$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Lemma 9 (`integers-2026-A74-lem-9`). -/
-public theorem_wanted signedInvSeq_wilf_b1b0_b10_b0b0 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.eq, true, true⟩} =
-      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.eq, true, false⟩}
 
 /-- **Mansour–Safadi Lemma 10.** Write $\bar{I}_n(B)$ for the set of signed inversion
 sequences of length $n$ that avoid every length-2 signed pattern in $B$, where a pattern is
@@ -302,32 +260,6 @@ public theorem_wanted signedInvSeq_wilf_and_gf_b0b0_b00_b01_01 :
     ∀ n, coeff n (signedInvAvoidGF {⟨.eq, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, true, false⟩,
         ⟨.lt, false, false⟩}) =
       coeff n (1 + 2 * ∑ k ∈ Finset.Icc 1 n, X ^ k * ∏ i ∈ Finset.Icc 1 k, (1 - (i : ℚ⟦X⟧) * X)⁻¹)
-
-/-- **Mansour–Safadi Theorem 3, class C3 (signed patterns 0̄1̄, 0̄0̄, 0̄1, 01̄).** A signed
-inversion sequence of length $n$ is a word $e_1 \cdots e_n$ with $e_k \in \{0, \bar 0, 1, \bar 1,
-\dots, k - 1, \overline{k - 1}\}$. It avoids a length-2 signed pattern $\tau_1\tau_2$ (one of $00$,
-$01$, $10$, each letter possibly barred) when no $i < j$ have $|e_i|$, $|e_j|$ in the same order as
-$|\tau_1|$, $|\tau_2|$ with $e_i$, $e_j$ barred exactly when $\tau_1$, $\tau_2$ are. Write
-$\bar I_n(B)$ for the set of signed inversion sequences of length $n$ that avoid every pattern in
-$B$. Let $B_1 = \{\bar 0\bar 1, \bar 0\bar 0, \bar 0 1, 0\bar 1\}$,
-$B_2 = \{\bar 0\bar 1, \bar 0 0, \bar 0 1, 0\bar 1\}$ and
-$B_3 = \{\bar 0\bar 0, \bar 0 0, 0\bar 1, 0\bar 0\}$. For every $n \ge 0$,
-$|\bar I_n(B_1)| = |\bar I_n(B_2)| = |\bar I_n(B_3)| = \sum_{i=0}^{n} i!$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 3 (C3) (`integers-2026-A74-thm-3`). -/
-public theorem_wanted signedInvSeq_wilf_and_gf_b0b1_b0b0_b01_0b1 :
-    signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, true, false⟩,
-        ⟨.lt, false, true⟩} =
-      signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, true, false⟩,
-          ⟨.lt, false, true⟩} ∧
-    signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, true, false⟩,
-        ⟨.lt, false, true⟩} =
-      signedInvAvoidCount {⟨.eq, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩,
-          ⟨.eq, false, true⟩} ∧
-    ∀ n, signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, true, false⟩,
-        ⟨.lt, false, true⟩} n =
-      ∑ i ∈ Finset.range (n + 1), i !
 
 /-- **Mansour–Safadi Theorem 3, class C4 (signed patterns 0̄1̄, 0̄0̄, 0̄0, 01̄).** A signed
 inversion sequence of length $n$ is a word $e_1 \cdots e_n$ with $e_k \in \{0, \bar 0, 1, \bar 1,
@@ -459,23 +391,6 @@ public theorem_wanted signedInvSeq_wilf_and_gf_b0b1_b00_0b1_01 :
         ⟨.lt, false, true⟩, ⟨.lt, false, false⟩} =
       1 - 3 * X + 2 * X ^ 2 - X ^ 3
 
-/-- **Mansour–Safadi Theorem 3, class C21.** Write $\bar{I}_n(B)$ for the set of signed inversion
-sequences of length $n$ that avoid every length-2 signed pattern in $B$, where a pattern is
-one of $00$, $01$, $10$ with a bar over each barred letter. Then for every $n \ge 0$,
-$|\bar{I}_n(\{\bar{0}\bar{1}, \bar{0}1, 0\bar{1}, 0\bar{0}\})| =
-|\bar{I}_n(\{\bar{0}\bar{0}, \bar{0}1, 0\bar{1}, 0\bar{0}\})|$.
-
-The generating function printed in the paper, $1/(1 - x)^2 + \sum_{j \ge 0} j!\, x^j$, is false
-(its constant term is $2$, while $|\bar{I}_0(B)| = 1$) and is omitted.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 3 (C21) (`integers-2026-A74-thm-3`). -/
-public theorem_wanted signedInvSeq_wilf_b0b1_b01_0b1_0b0 :
-    signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.lt, true, false⟩, ⟨.lt, false, true⟩,
-        ⟨.eq, false, true⟩} =
-      signedInvAvoidCount {⟨.eq, true, true⟩, ⟨.lt, true, false⟩, ⟨.lt, false, true⟩,
-          ⟨.eq, false, true⟩}
-
 /-- **Signed inversion sequences avoiding $\{\bar1\bar0, \bar0\bar1, \bar01, 00\}$.** For a set $B$
 of length-2 signed patterns (a bar marks a barred letter), let $|\bar I_n(B)|$ be the number of
 signed inversion sequences of length $n$ avoiding every pattern of $B$, and let
@@ -567,25 +482,6 @@ public theorem_wanted signedInvSeq_wilf_and_gf_b1b0_b0b1_b00_01 :
     ((1 - X) * (1 - 2 * X) * (1 - 3 * X + X ^ 2)) * signedInvAvoidGF {⟨.gt, true, true⟩,
         ⟨.lt, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, false, false⟩} =
       1 - 4 * X + 5 * X ^ 2 - 3 * X ^ 3
-
-/-- **Signed inversion sequences avoiding $\{\bar1\bar0, \bar0\bar1, 0\bar1, 01\}$.** For a set $B$
-of length-2 signed patterns (a bar marks a barred letter), let $|\bar I_n(B)|$ be the number of
-signed inversion sequences of length $n$ avoiding every pattern of $B$, and let
-$F_B(x) = \sum_{n \ge 0} |\bar I_n(B)| x^n \in \mathbb{Q}[[x]]$. Let
-$B = \{\bar1\bar0, \bar0\bar1, 0\bar1, 01\}$ and $C = \{\bar10, \bar0\bar1, 0\bar1, 01\}$. Then
-$|\bar I_n(B)| = |\bar I_n(C)|$ for every $n \ge 0$, and $(1 - 3x + x^2) F_B(x) = 1 - x$, that is,
-$F_B(x) = (1 - x)/(1 - 3x + x^2)$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 3 (C38) (`integers-2026-A74-thm-3`). -/
-public theorem_wanted signedInvSeq_wilf_and_gf_b1b0_b0b1_0b1_01 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.lt, false, true⟩,
-        ⟨.lt, false, false⟩} =
-      signedInvAvoidCount {⟨.gt, true, false⟩, ⟨.lt, true, true⟩, ⟨.lt, false, true⟩,
-          ⟨.lt, false, false⟩} ∧
-    (1 - 3 * X + X ^ 2) * signedInvAvoidGF {⟨.gt, true, true⟩, ⟨.lt, true, true⟩,
-        ⟨.lt, false, true⟩, ⟨.lt, false, false⟩} =
-      1 - X
 
 /-- **Signed inversion sequences avoiding $\{\bar1\bar0, \bar0\bar0, \bar00, 01\}$.** For a set $B$
 of length-2 signed patterns (a bar marks a barred letter), let $|\bar I_n(B)|$ be the number of
@@ -794,25 +690,6 @@ public theorem_wanted signedInvSeq_wilf_b1b0_b0b1_b0b0_b00 :
       signedInvAvoidCount {⟨.gt, true, false⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩,
           ⟨.eq, false, true⟩}
 
-/-- **Mansour–Safadi Theorem 8: two Wilf-equivalences of four-pattern sets.** Length-2 signed
-patterns are written as in the paper, a bar marking a barred letter, and $B \sim C$ means that
-for every $n \ge 0$ the number $|\bar I_n(B)|$ of signed inversion sequences of length $n$
-avoiding every pattern of $B$ equals $|\bar I_n(C)|$. Then
-$\{\bar1\bar0, \bar0\bar1, \bar0\bar0, 1\bar0\} \sim \{\bar1\bar0, \bar0\bar1, 0\bar0, 1\bar0\}$
-and $\{\bar1\bar0, \bar0\bar0, \bar00, 1\bar0\} \sim \{\bar1\bar0, \bar00, 0\bar0, 1\bar0\}$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 8 (`integers-2026-A74-thm-8`). -/
-public theorem_wanted signedInvSeq_wilf_b1b0_b0b1_b0b0_1b0 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, true, true⟩,
-        ⟨.gt, false, true⟩} =
-      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, false, true⟩,
-          ⟨.gt, false, true⟩} ∧
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, true⟩, ⟨.eq, true, false⟩,
-        ⟨.gt, false, true⟩} =
-      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, false⟩, ⟨.eq, false, true⟩,
-          ⟨.gt, false, true⟩}
-
 /-- **Mansour–Safadi Theorem 12: four Wilf-equivalences of five-pattern sets.** Length-2 signed
 patterns are written as in the paper, a bar marking a barred letter, and $B \sim C$ means that
 for every $n \ge 0$ the number $|\bar I_n(B)|$ of signed inversion sequences of length $n$
@@ -926,21 +803,6 @@ public theorem_wanted signedInvAvoidCount_eq_two_mul_factorial :
         ⟨.eq, true, true⟩, ⟨.eq, true, false⟩, ⟨.eq, false, true⟩} n = 2 * n ! ∧
     signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, true, true⟩,
         ⟨.eq, true, false⟩, ⟨.lt, true, false⟩, ⟨.gt, false, true⟩} n = 2 * n !
-
-/-- **Mansour–Safadi Theorem 18: a Wilf-equivalence of seven-pattern sets.** Length-2 signed
-patterns are written as in the paper, a bar marking a barred letter, and $B \sim C$ means that
-for every $n \ge 0$ the number $|\bar I_n(B)|$ of signed inversion sequences of length $n$
-avoiding every pattern of $B$ equals $|\bar I_n(C)|$. Then
-$\{\bar1\bar0, \bar10, \bar0\bar1, \bar0\bar0, \bar00, \bar01, 1\bar0\} \sim
-\{\bar1\bar0, \bar10, \bar0\bar0, \bar00, \bar01, 0\bar0, 1\bar0\}$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 18 (`integers-2026-A74-thm-18`). -/
-public theorem_wanted signedInvSeq_wilf_b1b0_b10_b0b1_b0b0_b00_b01_1b0 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.lt, true, true⟩,
-        ⟨.eq, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, true, false⟩, ⟨.gt, false, true⟩} =
-      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.eq, true, true⟩,
-          ⟨.eq, true, false⟩, ⟨.lt, true, false⟩, ⟨.eq, false, true⟩, ⟨.gt, false, true⟩}
 
 end
 

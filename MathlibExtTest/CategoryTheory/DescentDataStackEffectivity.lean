@@ -16,7 +16,7 @@ universe t v' u' v u
 open CategoryTheory CategoryTheory.Limits Opposite
 
 open CategoryTheory.Pseudofunctor.DescentData in
-theorem exactSource_descentData
+private theorem exactSource_descentData
     {C : Type u} [Category.{v} C] [HasPullbacks C]
     (F : Pseudofunctor (LocallyDiscrete Cᵒᵖ) Cat.{v', u'})
     (P : ∀ ⦃Z : C⦄, F.obj (.mk (op Z)) → Prop)

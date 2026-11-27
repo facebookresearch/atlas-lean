@@ -17,6 +17,13 @@ import Mathlib.Data.Fin.Tuple.Basic
 
 `rectangularGrid_f_even` counts fixed tilings by choosing one tile per reflected pair of cells.
 For odd width, `rectangularGrid_f_odd` also counts the reflection-invariant tiles on the axis.
+
+## References
+
+Peter Kagey and William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+Journal of Integer Sequences 27 (2024), Article 24.6.1, pp. 13–15, Theorems 22 and 24.
+The rectangular reflection counts are equation (4) of Theorem 22. The proof of `squareGrid_f_odd`
+follows the paper's derivation of equation (9) in Theorem 24 by setting `m = n` in Theorem 22.
 -/
 
 namespace MetaMathlibExt
@@ -179,5 +186,22 @@ public theorem rectangularGrid_f_odd {T : Type*} [Fintype T] [DecidableEq T]
         Fintype.card_fin, ZMod.card, Nat.add_sub_cancel, Nat.mul_left_comm m 2 k,
         Nat.mul_div_cancel_left _ (by decide : 0 < 2), Nat.mul_comm m k]
       simp [tileFixedCount]
+
+/-- **Square-grid tilings fixed by the reflection $f$ for odd $n$.** Let $n$ be an odd positive
+integer, let $T$ be a finite set, let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$, and
+write $t_\sigma$ for the number of elements $t \in T$ with $\sigma(t) = t$. Let $f$ be the
+reflection of the grid $(\mathbb{Z}/n\mathbb{Z})^2$ given by $f(x, y) = (-1 - x, y)$. Then the
+number of maps $F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$ with $F(f(c)) = \sigma(F(c))$ for every
+cell $c$ is $|T|^{(n^2 - n)/2} \cdot t_\sigma^{\,n}$.
+
+Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 24. -/
+public theorem squareGrid_f_odd {T : Type*} [Fintype T] [DecidableEq T]
+    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1) (hodd : Odd n) :
+    fixedTilingCount (cellF n n) σ =
+      Fintype.card T ^ ((n ^ 2 - n) / 2) * tileFixedCount σ 1 ^ n := by
+  have hnum : n * (n - 1) = n ^ 2 - n := by
+    rw [Nat.mul_sub_left_distrib, Nat.mul_one, pow_two]
+  rw [rectangularGrid_f_odd n n σ hσ hodd, hnum]
 
 end MetaMathlibExt
