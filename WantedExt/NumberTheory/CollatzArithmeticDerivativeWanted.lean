@@ -47,6 +47,7 @@ public import MathlibExt.NumberTheory.ArithmeticDerivative
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivative
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeModFive
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeBounds
+public import MathlibExt.NumberTheory.CompatibleSemiprimeReciprocals
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeArithmeticDerivativeBounds
 
 namespace MetaMathlibExt
@@ -128,17 +129,8 @@ public theorem_wanted IsCompatibleSemiprimePair.mod_ten {p q r s : ℕ}
     ((p % 10 = 1 ∧ q % 10 = 9) ∨ (p % 10 = 9 ∧ q % 10 = 1)) ∧
       ((r % 10 = 1 ∧ s % 10 = 9) ∨ (r % 10 = 9 ∧ s % 10 = 1))
 
-/-- **Reciprocals of compatible semiprimes have a finite sum.** Call a natural number $n$ a
-compatible semiprime if $n = pq$ for primes $p, q$ for which there are primes $r, s$ with
-$2(r + s) = p + q$ and $2rs = 3pq + 1$. The sum of $1/n$ over all compatible semiprimes $n$
-converges.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Theorem 14 (`jis-2025-25.1.8-thm-14`). -/
-public theorem_wanted summable_inv_compatibleSemiprimes :
-    Summable (Set.indicator {n : ℕ | ∃ p q r s, IsCompatibleSemiprimePair p q r s ∧ n = p * q}
-      fun n => (1 : ℝ) / n)
+-- The reciprocal series is proved in
+-- `MathlibExt.NumberTheory.CompatibleSemiprimeReciprocals`, which this module publicly imports.
 
 end
 
