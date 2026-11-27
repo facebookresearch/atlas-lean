@@ -16,14 +16,17 @@ import MathlibExt.AlgebraicGeometry.DerivedPrestackEvaluation
 /-!
 # Native cocartesian section quasicategory
 
-Cocartesian sections of a cocartesian fibration over a base map form the
-actual categorical limit quasicategory. Inner horns in the section complex
+For quasicategories `A`, `B` and `E`, a cocartesian fibration `p : E ⟶ B` and
+a map `q : A ⟶ B`, the simplicial set of cocartesian sections of `p` over `q`
+is a quasicategory. Inner horns in the section complex
 are filled by lifting against postcomposition with the fibration, which is
 an inner fibration, then checking the filler lies over the base map and has
 cocartesian horizontal edges at every parameter vertex.
 
-References: Toën--Vezzosi HAG II Part2; Lurie HTT §3.3.3;
-Bhatt--Mathew arXiv:1807.04725v4 §§5--6.
+References: Lurie HTT Cor. 2.3.2.5, applied to `∅ → A`, for the step that
+`Fun(A,E) → Fun(A,B)` is an inner fibration when `p` is one. Comparing the
+sections with a limit (Lurie HTT §3.3.3) is separate background and is not
+proved here.
 -/
 
 open CategoryTheory Opposite
@@ -100,7 +103,8 @@ private theorem filler_cocartesian (A B E : SSet.{u}) (p : E ⟶ B) (q : A ⟶ B
   rw [app_vertexParameter, hvertex]
   exact (σ₀.app (op ⦋0⦌) lam).property.2 ⟨0, by decide⟩ e
 
-/-- Cocartesian sections form the actual categorical limit quasicategory. -/
+/-- For quasicategories `A`, `B` and `E`, a cocartesian fibration `p : E ⟶ B` and a map
+`q : A ⟶ B`, the simplicial set of cocartesian sections of `p` over `q` is a quasicategory. -/
 public theorem native_cocartesian_section_quasicategory (A B E : SSet.{u})
     [SSet.Quasicategory A] [SSet.Quasicategory B] [SSet.Quasicategory E]
     (p : E ⟶ B) (q : A ⟶ B) (P : CocartesianFibration p) :

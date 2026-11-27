@@ -19,7 +19,7 @@ import MathlibExt.AlgebraicGeometry.DerivedPrestackEvaluation
 The identity fibration is cocartesian, with every edge cocartesian.
 Sections of the identity over the nerve of `Fin 2` form a quasicategory
 by the main theorem, with an explicit section vertex and an explicit
-inner-horn filler.
+inner horn that has a filler.
 -/
 
 namespace MathlibExtTest.AlgebraicGeometry.DerivedQCohModuleFamiliesNativeCocartesianSectionQuasicategory
