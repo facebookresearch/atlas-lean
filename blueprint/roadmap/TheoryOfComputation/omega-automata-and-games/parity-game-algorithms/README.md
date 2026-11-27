@@ -28,3 +28,12 @@ positional determinacy are in [parity games](../parity-games/README.md).
 - [A quasipolynomial attractor decomposition algorithm](a-quasipolynomial-attractor-decomposition-algorithm.md)
 - [Strategy improvement for parity games](strategy-improvement-for-parity-games.md)
 - [Polynomial-time solvability of parity games](polynomial-time-solvability-of-parity-games.md)
+
+## Zielonka's recursive solver
+
+- [Zielonka's recursive parity game solver](zielonka-solve.md)
+- [Correctness of Zielonka's recursive solver](zielonka-solver-wanted.md)
+
+## Complexity of solving parity games
+
+- [Parity games are in NP ∩ coNP, via progress-measure certificates](parity-games-np-inter-co-np-wanted.md)

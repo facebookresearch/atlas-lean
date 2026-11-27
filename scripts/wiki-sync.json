@@ -29396,6 +29396,7 @@
 "Cslib.MachineLearning.Sampling.SimulatedAnnealing.depth_pos_of_localMin": "1255918cd03489fb",
 "Cslib.MachineLearning.Sampling.SimulatedAnnealing.gibbs": "cfd5ab196db44742",
 "Cslib.MachineLearning.Sampling.SimulatedAnnealing.gibbs_detailedBalance": "8fce81471bb9feba",
+"Cslib.MachineLearning.Sampling.SimulatedAnnealing.hajek_iff": "05e09de4a516e727",
 "Cslib.MachineLearning.Sampling.SimulatedAnnealing.tendsto_gibbs_globalMinSet": "bba5ff5ff6662a76",
 "Cslib.MachineLearning.Sampling.acceptProb": "f94567da643ecbf0",
 "Cslib.MachineLearning.Sampling.betaBinomial_posteriorMC_mean_variance": "f24daa339ceb89c2",

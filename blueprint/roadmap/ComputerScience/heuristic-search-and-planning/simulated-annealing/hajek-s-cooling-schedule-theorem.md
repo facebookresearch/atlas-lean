@@ -2,7 +2,7 @@
 
 Let $V$ be a real function on a finite nonempty set $S$, let each state $s$ have a set $N(s) \subseteq S$ of neighbours, and let
 $R$ be a transition matrix on $S$ with $R(s, s') > 0$ exactly when $s' \in N(s)$. A state $s'$ is reachable from $s$ at height $E$ if there is a
-path $s = s_0, s_1, \dots, s_p = s'$ with $R(s_i, s_{i+1}) > 0$ and $V(s_i) \le E$ for $0 \le i \le p$. Assume strong
+path $s = s_0, s_1, \dots, s_p = s'$ with $R(s_i, s_{i+1}) > 0$ for $0 \le i < p$ and $V(s_i) \le E$ for $0 \le i \le p$. Assume strong
 irreducibility (every state is reachable from every other at some height) and weak reversibility (for every real $E$,
 $s'$ is reachable from $s$ at height $E$ if and only if $s$ is reachable from $s'$ at height $E$). A state $s$ is a local
 minimum if no state $s'$ with $V(s') < V(s)$ is reachable from $s$ at height $V(s)$; the depth of a local minimum that is
@@ -25,6 +25,7 @@ page for the pending prerequisite below and links it under the dependency sectio
 ## Related topics
 
 - [Fixed-temperature Gibbs law and zero-temperature concentration](fixed-temperature-gibbs-law-and-zero-temperature.md)
+- [Hajek's theorem for the logarithmic cooling schedule](hajek-iff.md): the logarithmic case, $T_{k+1} = c/\log(k+2)$, as a separate statement.
 
 ## Sources
 

@@ -1,7 +1,7 @@
 # Post's theorem: simple sets exist
 
 Let $W_e$ be the $e$-th recursively enumerable set and $W_{e,s}$ its finite approximation at stage $s$. A set $A \subseteq \mathbb{N}$ is *simple* if $A$ is recursively
-enumerable, its complement is infinite, and its complement contains no infinite recursively enumerable set.
+enumerable, its complement is infinite, and its complement contains no infinite recursively enumerable set. Equivalently, $A$ is recursively enumerable and its complement is *immune*: infinite, with every recursively enumerable subset finite.
 
 **Theorem (Post).** There is a simple set.
 

@@ -1,0 +1,3 @@
+# Instances of WEIGHTED DIAMETER
+
+An instance of WEIGHTED DIAMETER is a quadruple $(n, E, C, K)$ consisting of a natural number $n$ (the vertices are $0, \dots, n-1$), a list $E$ of pairs of natural numbers (the edges), a list $C$ of natural numbers (the available edge lengths, repetitions allowed) and a natural number $K$ (the threshold). The quadruple is unrestricted: the same quadruples are the instances of WEIGHTED DIAMETER with diameter $K$ or greater and of WEIGHTED RADIUS with radius $K$ or greater for trees. The raw data are the same; the tree test belongs to well-formedness in the tree variant, and the threshold direction belongs to feasibility.

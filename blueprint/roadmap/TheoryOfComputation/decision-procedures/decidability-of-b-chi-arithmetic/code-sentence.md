@@ -1,0 +1,3 @@
+# Gödel numbers of Büchi sentences
+
+The Gödel number of a sentence of Büchi arithmetic, a formula with no free variables and no bound variables in scope, is its Gödel number as a formula with $n = 0$ bound variables: $\ulcorner \bot \urcorner = 0$, $\ulcorner t_1 = t_2 \urcorner = \pi(1, \pi(\ulcorner t_1 \urcorner, \ulcorner t_2 \urcorner))$, $\ulcorner R(\vec t) \urcorner = \pi(2, \pi(\ulcorner R \urcorner, \langle \ulcorner \vec t \urcorner \rangle))$, $\ulcorner \varphi \to \psi \urcorner = \pi(3, \pi(\ulcorner \varphi \urcorner, \ulcorner \psi \urcorner))$ and $\ulcorner \forall \varphi \urcorner = \pi(4, \ulcorner \varphi \urcorner)$, with $\pi$ the pairing function $\pi(a, b) = b^2 + a$ for $a < b$ and $a^2 + a + b$ otherwise.
