@@ -10,7 +10,7 @@ module
 
 public import MathlibExt.Algebra.Quaternion.RamifiedPrimes
 public import MathlibExt.Algebra.Quaternion.BaseChange
-public import MathlibExt.NumberTheory.Padics.HilbertSymbol.TwoFormula
+public import MathlibExtTest.NumberTheory.Padics.HilbertSymbol.Bilinear
 
 /-!
 # Tests for the ramified primes $\Delta_{a,b}$ of $H_{a,b}$
@@ -24,10 +24,14 @@ open scoped Quaternion TensorProduct
 
 namespace QuaternionRamifiedPrimesTest
 
-/-- $(ij)^2 = -ab$; for Hamilton's quaternions $a = b = -1$ this is $k^2 = -1$. -/
-example : ((⟨0, 1, 0, 0⟩ : ℍ[ℚ,-1,-1]) * ⟨0, 0, 1, 0⟩) ^ 2 = algebraMap ℚ _ (-1) := by
-  rw [QuaternionAlgebra.i_mul_j_sq]
-  norm_num
+/-- $(ij)^2 = -ab$ in `ℍ[R,a,b]`, from Mathlib's quaternion basis
+(`QuaternionAlgebra.Basis.i_mul_j`, `QuaternionAlgebra.Basis.k_mul_k`); this is the coefficient $ab$
+of $x_4^2$ in the reduced norm. -/
+example {R : Type*} [CommRing R] (a b : R) :
+    ((⟨0, 1, 0, 0⟩ : ℍ[R,a,b]) * ⟨0, 0, 1, 0⟩) ^ 2 = algebraMap R ℍ[R,a,b] (-(a * b)) := by
+  let q := QuaternionAlgebra.Basis.self R (c₁ := a) (c₂ := 0) (c₃ := b)
+  change (q.i * q.j) ^ 2 = _
+  rw [q.i_mul_j, pow_two, q.k_mul_k, map_neg, Algebra.algebraMap_eq_smul_one]
 
 /-- $H_{a,b} \otimes \mathbb{Q}_p$ is `ℍ[ℚ_[p], a, b]` (`QuaternionAlgebra.baseChange`), the algebra
 in the definition of $\Delta_{a,b}$. -/
@@ -35,22 +39,17 @@ noncomputable example (p : ℕ) [Fact p.Prime] (a b : ℚ) :
     ℚ_[p] ⊗[ℚ] ℍ[ℚ,a,b] ≃ₐ[ℚ_[p]] ℍ[ℚ_[p],(a : ℚ_[p]),0,(b : ℚ_[p])] :=
   QuaternionAlgebra.baseChange (by simp) (by simp) (by simp)
 
-/-- $(-1, -1)_2 = -1$. -/
-theorem padicHilbertSymbol_two_neg_one_neg_one :
-    padicHilbertSymbol 2 (Units.map (Rat.castHom ℚ_[2]).toMonoidHom (-1))
-      (Units.map (Rat.castHom ℚ_[2]).toMonoidHom (-1)) = -1 := by
-  rw [padicHilbertSymbol.eq_formula_two _ _ 0 0 (-1) (-1) (by simp) (by simp)]
-  simp only [Units.val_neg, Units.val_one, map_neg, map_one]
-  decide
-
-/-- Hamilton's quaternions ramify at $2$: $2 \in \Delta_{-1,-1}$. -/
+/-- Hamilton's quaternions ramify at $2$: $2 \in \Delta_{-1,-1}$, as $(-1, -1)_2 = -1$
+(`HilbertSymbolBilinearTest.neg_one_neg_one_two`). -/
 example : (⟨2, Nat.prime_two⟩ : Nat.Primes) ∈ Rat.quaternionRamifiedPrimes (-1) (-1) := by
+  have hu : Units.map (Rat.castHom ℚ_[2]).toMonoidHom (-1 : ℚˣ) = -1 := Units.ext (by simp)
   have h := (Rat.mem_quaternionRamifiedPrimes_iff (-1) (-1) ⟨2, Nat.prime_two⟩).2
-    padicHilbertSymbol_two_neg_one_neg_one
+    (by rw [hu]; exact HilbertSymbolBilinearTest.neg_one_neg_one_two)
   simp only [Units.val_neg, Units.val_one] at h
   exact h
 
-/-- $H_{1,b}$ is split everywhere: no prime is in $\Delta_{1,b}$, as $1^2 - 1 \cdot 1^2 = 0$. -/
+/-- For $b \ne 0$, $H_{1,b}$ is split everywhere: no prime is in $\Delta_{1,b}$, as
+$1^2 - 1 \cdot 1^2 = 0$. -/
 theorem not_mem_quaternionRamifiedPrimes_one {b : ℚ} (hb : b ≠ 0) (p : Nat.Primes) :
     p ∉ Rat.quaternionRamifiedPrimes 1 b := by
   have : Fact (p : ℕ).Prime := ⟨p.prop⟩
@@ -59,7 +58,6 @@ theorem not_mem_quaternionRamifiedPrimes_one {b : ℚ} (hb : b ≠ 0) (p : Nat.P
     ((1 : ℚ) : ℚ_[p]) (b : ℚ_[p]) (by simp) (by exact_mod_cast hb) 1 1 0 0 (by simp) (by simp)
   exact hp.false φ
 
-#check @QuaternionAlgebra.i_mul_j_sq
 #check @QuaternionAlgebra.nonempty_algEquiv_matrix_iff_hilbertSymbol_eq_one
 #check @Rat.quaternionRamifiedPrimes
 #check @Rat.mem_quaternionRamifiedPrimes_iff

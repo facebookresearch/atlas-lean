@@ -89,13 +89,15 @@ $\operatorname{nrd}(\alpha) = x_1^2 - a x_2^2 - b x_3^2 + ab x_4^2$.
 
 The source states this for $H_{a,b} \otimes \mathbb{Q}_p$; it holds over every commutative ring.
 
-Source: J. Voight, *Quaternion Algebras*, Graduate Texts in Mathematics 288, Springer, 2021,
-<https://doi.org/10.1007/978-3-030-56694-4>, 3.3.9, p. 39 (an element of a quaternion algebra is a
-root of its reduced characteristic polynomial), as cited for the first sentence of the proof of
-Lemma 2.1 of B. Poonen, "Characterizing integers among rational numbers with a
-universal-existential formula", Amer. J. Math. 131 (2009), 675–682: "We have
-$s \in S_{a,b}(\mathbb{Q}_p)$ if and only if $x^2 - sx + 1$ is the reduced characteristic polynomial
-of an element of $H_{a,b} \otimes \mathbb{Q}_p$." -/
+Sources: J. Voight, *Quaternion Algebras*, Graduate Texts in Mathematics 288, Springer, 2021,
+<https://doi.org/10.1007/978-3-030-56694-4>, 3.3.9, p. 39: for an algebra $B$ with a standard
+involution over a field $F$, "$\alpha \in B$ is a root of the polynomial
+$x^2 - \operatorname{trd}(\alpha)x + \operatorname{nrd}(\alpha) \in F[x]$ which we call the reduced
+characteristic polynomial of $\alpha$". B. Poonen, "Characterizing integers among rational numbers
+with a universal-existential formula", Amer. J. Math. 131 (2009), 675–682, proof of Lemma 2.1,
+first sentence, p. 2 of the author's version with the corrections of April 15, 2019
+(<https://math.mit.edu/~poonen/papers/ae.pdf>), uses reduced characteristic polynomials of the
+elements of the local algebra $H_{a,b} \otimes \mathbb{Q}_p$. -/
 theorem sq_sub_two_mul_re_mul_add_normForm {R : Type*} [CommRing R] {a b : R}
     (α : ℍ[R,a,b]) :
     α ^ 2 - algebraMap R ℍ[R,a,b] (2 * α.re) * α +
@@ -115,9 +117,14 @@ The proof: $g$ minus the reduced characteristic polynomial has degree at most $1
 $\alpha$, so it is $0$ as $\alpha \notin K$. The source states this for
 $H_{a,b} \otimes \mathbb{Q}_p$; it holds over every field.
 
-Source: J. Voight, *Quaternion Algebras*, Graduate Texts in Mathematics 288, Springer, 2021,
-<https://doi.org/10.1007/978-3-030-56694-4>, 3.3.9, p. 39 (for $\alpha$ outside the base field the
-reduced characteristic polynomial is the minimal polynomial of $\alpha$). -/
+Sources: J. Voight, *Quaternion Algebras*, Graduate Texts in Mathematics 288, Springer, 2021,
+<https://doi.org/10.1007/978-3-030-56694-4>, 3.3.9, p. 39: for an algebra with a standard
+involution over a field $F$, "When $\alpha \notin F$, the reduced characteristic polynomial of
+$\alpha$ is its minimal polynomial, since if $\alpha$ satisfies a polynomial of degree 1 then
+$\alpha \in F$." B. Poonen, "Characterizing integers among rational numbers with a
+universal-existential formula", Amer. J. Math. 131 (2009), 675–682, proof of Lemma 2.1, p. 2 of the
+author's version with the corrections of April 15, 2019, applies reduced characteristic polynomials
+in the local algebra $H_{a,b} \otimes \mathbb{Q}_p$. -/
 theorem eq_reducedCharpoly_of_aeval_eq_zero {a b : K} {α : ℍ[K,a,b]}
     (hα : α ∉ Set.range (algebraMap K ℍ[K,a,b])) {g : K[X]} (hg : g.Monic)
     (hdeg : g.natDegree = 2) (h : aeval α g = 0) :

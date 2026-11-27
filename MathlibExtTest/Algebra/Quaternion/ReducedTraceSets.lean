@@ -57,7 +57,8 @@ example {g : ℚ[X]} (hg : g.Monic) (hdeg : g.natDegree = 2)
 example : (0 : ℚ) ∈ reducedTraceSet ℚ (-1) (-1) :=
   mem_reducedTraceSet_iff_exists_reducedCharpoly.2 ⟨⟨0, 1, 0, 0⟩, by norm_num⟩
 
-/-- $H_{1,b} \otimes \mathbb{Q}_p$ is split, so $S_{1,b}(\mathbb{Q}_p) = \mathbb{Q}_p$. -/
+/-- For $b \ne 0$, $H_{1,b} \otimes \mathbb{Q}_p$ is split, so
+$S_{1,b}(\mathbb{Q}_p) = \mathbb{Q}_p$. -/
 example (p : ℕ) [Fact p.Prime] (b : ℚ) (hb : b ≠ 0) :
     reducedTraceSet ℚ_[p] ((1 : ℚ) : ℚ_[p]) (b : ℚ_[p]) = Set.univ := by
   apply Rat.reducedTraceSet_padic_eq_univ_of_not_mem_quaternionRamifiedPrimes

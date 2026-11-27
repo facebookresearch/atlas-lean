@@ -21,7 +21,7 @@ $x = x_1 + x_2 i + x_3 j + x_4 ij$, the reduced trace and the reduced norm are
 $\operatorname{trd}(x) = x + \bar x = 2x_1$ and
 $\operatorname{nrd}(x) = x \bar x = x_1^2 - a x_2^2 - b x_3^2 + ab x_4^2$.
 
-For $a, b \in \mathbb{Q}$, B. Poonen's $H_{a,b}$ is `ℍ[ℚ,a,b]`, and
+For nonzero rationals $a, b$, B. Poonen's $H_{a,b}$ is `ℍ[ℚ,a,b]`, and
 $H_{a,b} \otimes \mathbb{Q}_p$ is `ℍ[ℚ_[p],a,b]`. A prime $p$ ramifies in $H_{a,b}$ if
 $H_{a,b} \otimes \mathbb{Q}_p$ is not isomorphic to $M_2(\mathbb{Q}_p)$;
 `Rat.quaternionRamifiedPrimes a b` is the set $\Delta_{a,b}$ of these primes. For
@@ -45,13 +45,6 @@ private theorem self_mul_star_eq_normForm (x : ℍ[R,a,b]) :
     x * star x = algebraMap R ℍ[R,a,b]
       (x.re ^ 2 - a * x.imI ^ 2 - b * x.imJ ^ 2 + a * b * x.imK ^ 2) := by
   ext <;> simp [QuaternionAlgebra.algebraMap_eq] <;> ring
-
-/-- **$(ij)^2 = -ab$ in $H_{a,b}$.** In the quaternion algebra `ℍ[R,a,b]`, with $i^2 = a$,
-$j^2 = b$ and $ij = -ji$, the basis element $ij$ satisfies $(ij)^2 = -ab$; this is where the
-coefficient $ab$ of $x_4^2$ in the reduced norm comes from. -/
-theorem i_mul_j_sq :
-    ((⟨0, 1, 0, 0⟩ : ℍ[R,a,b]) * ⟨0, 0, 1, 0⟩) ^ 2 = algebraMap R ℍ[R,a,b] (-(a * b)) := by
-  simp [QuaternionAlgebra.algebraMap_eq, pow_two]
 
 /-- **Splitting of $H_{a,b}$ by the Hilbert symbol.** Let $F$ be a field with $2 \ne 0$ and let
 $a, b \in F^\times$. The quaternion algebra `ℍ[F,a,b]` is isomorphic to the matrix algebra
