@@ -42,7 +42,10 @@ noncomputable def symmetrize {n : ℕ} (p : MvPolynomial (Fin n) ℝ) : MvPolyno
 
 
 
-/-- symmetrization averages p over permuted inputs (0/1 evaluation convention of merged eval_multilinearExtension) -/
+/-- For a real polynomial `p` in `n` variables and a point `x` of the Boolean cube, read with
+`true` as `1` and `false` as `0`, the symmetrization `symmetrize p`, the average of
+`p (X_{σ 1}, …, X_{σ n})` over the permutations `σ`, evaluates at `x` to
+`(n!)⁻¹ * ∑ σ, p (x_{σ 1}, …, x_{σ n})`. -/
 theorem eval_symmetrize {n : ℕ} (p : MvPolynomial (Fin n) ℝ) (x : BoolCube n) : MvPolynomial.eval (fun i => if x i then (1 : ℝ) else 0) (symmetrize p) = (n.factorial : ℝ)⁻¹ * ∑ σ : Equiv.Perm (Fin n), MvPolynomial.eval (fun i => if x (σ i) then (1 : ℝ) else 0) p := by
   have hterm : ∀ σ : Equiv.Perm (Fin n),
       MvPolynomial.eval (fun i => if x i then (1 : ℝ) else 0) (MvPolynomial.rename σ p)
@@ -181,28 +184,28 @@ private theorem glueFun_pos {n : ℕ} {T U : Finset (Fin n)} (e₁ : T ≃ U)
     (e₂ : ↥(Tᶜ) ≃ ↥(Uᶜ)) (i : Fin n) (hi : i ∈ T) :
     glueFun e₁ e₂ i = (e₁ ⟨i, hi⟩).1 := by
   unfold glueFun
-  rw [dif_pos hi]
+  rw [dite_eq_left hi]
 
 /-- The glued map off `T`. -/
 private theorem glueFun_neg {n : ℕ} {T U : Finset (Fin n)} (e₁ : T ≃ U)
     (e₂ : ↥(Tᶜ) ≃ ↥(Uᶜ)) (i : Fin n) (hi : i ∉ T) :
     glueFun e₁ e₂ i = (e₂ ⟨i, Finset.mem_compl.mpr hi⟩).1 := by
   unfold glueFun
-  rw [dif_neg hi]
+  rw [dite_eq_right hi]
 
 /-- The glued inverse map on `U`. -/
 private theorem glueFunInv_pos {n : ℕ} {T U : Finset (Fin n)} (e₁ : T ≃ U)
     (e₂ : ↥(Tᶜ) ≃ ↥(Uᶜ)) (j : Fin n) (hj : j ∈ U) :
     glueFunInv e₁ e₂ j = (e₁.symm ⟨j, hj⟩).1 := by
   unfold glueFunInv
-  rw [dif_pos hj]
+  rw [dite_eq_left hj]
 
 /-- The glued inverse map off `U`. -/
 private theorem glueFunInv_neg {n : ℕ} {T U : Finset (Fin n)} (e₁ : T ≃ U)
     (e₂ : ↥(Tᶜ) ≃ ↥(Uᶜ)) (j : Fin n) (hj : j ∉ U) :
     glueFunInv e₁ e₂ j = (e₂.symm ⟨j, Finset.mem_compl.mpr hj⟩).1 := by
   unfold glueFunInv
-  rw [dif_neg hj]
+  rw [dite_eq_right hj]
 
 /-- The glued maps are mutually inverse, one direction. -/
 private theorem glue_left_inv {n : ℕ} {T U : Finset (Fin n)} (e₁ : T ≃ U)
@@ -468,8 +471,8 @@ private theorem pow_bit {n : ℕ} (x : BoolCube n) (σ : Equiv.Perm (Fin n))
     (if x (σ i) then (1 : ℝ) else 0) ^ k
       = (if x (σ i) then (1 : ℝ) else 0) := by
   by_cases h : x (σ i) = true
-  · simp only [if_pos h, one_pow]
-  · simp only [if_neg h]
+  · simp only [ite_eq_left h, one_pow]
+  · simp only [ite_eq_right h]
     first
       | exact zero_pow hk
       | exact zero_pow _ hk
@@ -746,18 +749,18 @@ private theorem weight_repPoint {n : ℕ} (k : ℕ) (hkn : k ≤ n) :
       = (if i.val < k then (1:ℕ) else 0) := by
     intro i
     by_cases h : i.val < k
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       have hd : decide (i.val < k) = true := by
         first
           | exact decide_eq_true h
           | exact decide_eq_true.mpr h
           | exact of_eq_true h
           | simp [h]
-      rw [if_pos hd]
-    · rw [if_neg h]
+      rw [ite_eq_left hd]
+    · rw [ite_eq_right h]
       have hd : ¬ decide (i.val < k) = true :=
         fun hc => h (of_decide_eq_true hc)
-      rw [if_neg hd]
+      rw [ite_eq_right hd]
   have hcard : (Finset.univ.filter (fun i : Fin n => decide (i.val < k) = true)).card
       = ∑ i : Fin n, (if decide (i.val < k) = true then (1:ℕ) else 0) := by
     have h1 : (Finset.univ.filter (fun i : Fin n => decide (i.val < k) = true)).card
@@ -831,7 +834,7 @@ theorem le_totalDegree_of_approx_parityFunction {n : ℕ} (p : MvPolynomial (Fin
           | exact of_eq_true hk
           | simp [hk]
       first
-        | rw [if_pos hdec] at happrox
+        | rw [ite_eq_left hdec] at happrox
         | simp [hdec] at happrox
       rw [hseval]
       obtain ⟨hlo, -⟩ := abs_le.mp happrox
@@ -839,7 +842,7 @@ theorem le_totalDegree_of_approx_parityFunction {n : ℕ} (p : MvPolynomial (Fin
     · intro hk
       have hdec : ¬ decide (Odd k) = true := fun hc => hk (of_decide_eq_true hc)
       first
-        | rw [if_neg hdec] at happrox
+        | rw [ite_eq_right hdec] at happrox
         | simp [hdec] at happrox
       rw [hseval]
       obtain ⟨-, hhi⟩ := abs_le.mp happrox
@@ -1046,9 +1049,9 @@ private theorem totalDegree_cubeBasis_le {n : ℕ} (x : BoolCube n) :
         MvPolynomial (Fin n) ℝ)).totalDegree ≤ 1 := by
     intro i
     by_cases h : x i = true
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       exact le_of_eq (MvPolynomial.totalDegree_X _)
-    · simp only [if_neg h]
+    · simp only [ite_eq_right h]
       exact totalDegree_one_sub_X_le_one i
   simp only [cubeBasis]
   refine le_trans (totalDegree_prod_le_card Finset.univ _ ?_) ?_

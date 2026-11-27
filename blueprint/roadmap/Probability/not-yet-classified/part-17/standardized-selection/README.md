@@ -1,0 +1,15 @@
+# Standardized Selection
+
+- [Population SD](population-sd.md)
+- [Pearson Ratio](pearson-ratio.md)
+- [Standardized Value](standardized-value.md)
+- [Standardized Upper Event](standardized-upper-event.md)
+- [Conditional Mean Shift](conditional-mean-shift.md)
+- [The conditional mean shift as an indicator quotient](conditional-mean-shift-eq-indicator-quot.md)
+- [Positive rescaling preserves the upper event](standardized-upper-event-const-mul.md)
+- [Negation reflects the upper event](standardized-upper-event-neg.md)
+- [Linear combinations are square integrable](mem-lp-dot-product.md)
+- [Covariance of a linear combination with a function](covariance-dot-product-left.md)
+- [Covariance of two linear combinations](covariance-dot-product-dot-product.md)
+- [Zero covariance gives zero Pearson quotient](pearson-ratio-eq-zero-of-covariance-eq-z.md)
+- [Zero cross-covariance gives zero Pearson quotient for every linear score](pearson-ratio-linear-eq-zero-of-cross-co.md)

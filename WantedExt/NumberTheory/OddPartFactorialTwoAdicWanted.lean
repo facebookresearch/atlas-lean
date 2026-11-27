@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import MathlibExt.NumberTheory.OddPartFactorialTwoAdic
+public import MathlibExt.NumberTheory.OddPartFactorialTwoAdicExistsTwoAdicOddDoubleFactorialLimit
 
 /-!
 # Statements on the odd part of dyadic factorials
@@ -77,18 +78,6 @@ public theorem_wanted oddProductBlock_congr_initial_segment
         (2 ^ (m - 1 - d))
 
 /--
-**Odd parts of consecutive dyadic factorials agree modulo a power of two.** For every natural
-number $e \ge 3$, $\mathrm{od}((2^{e-1})!) \equiv \mathrm{od}((2^e)!) \pmod{2^e}$, where
-$\mathrm{od}(n)$ denotes the odd part of $n$.
-
-Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
-Sequences 29 (2026), Article 26.3.1, Corollary 7.
--/
-public theorem_wanted oddPart_factorial_congr_previous (e : ℕ) (he : 3 ≤ e) :
-    (2 : ℤ) ^ e ∣ (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ) -
-      (oddPart (Nat.factorial (2 ^ e)) : ℤ)
-
-/--
 **A 2-adic limit of the odd parts of $(2^e)!$.** There is a 2-adic integer $z \in \mathbb{Z}_2$
 such that $z \equiv \operatorname{od}((2^{e-1})!) \pmod{2^e}$ in $\mathbb{Z}_2$ for every natural
 number $e \ge 3$, where $\operatorname{od}(n)$ is the odd part of $n$.
@@ -102,38 +91,6 @@ Sequences 29 (2026), Article 26.3.1, Corollary 8.
 public theorem_wanted exists_twoAdic_oddPart_factorial_limit :
     ∃ z : ℤ_[2], ∀ e : ℕ, 3 ≤ e →
       (2 : ℤ_[2]) ^ e ∣ z - (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ_[2])
-
-/--
-**Shifting the odd numbers below $2^e$ by $2^e$.** For every natural number $e \ge 2$, let $S_e$ be
-the set of odd integers $i$ with $1 \le i < 2^e$. Then
-$$
-\prod_{i \in S_e} i \equiv \prod_{i \in S_e} (2^e + i) \pmod{2^{2e}}.
-$$
-
-Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
-Sequences 29 (2026), Article 26.3.1, Proposition 9.
--/
-public theorem_wanted oddSet_product_congr_shift (e : ℕ) (he : 2 ≤ e) :
-    (2 : ℤ) ^ (2 * e) ∣
-      ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) -
-        (∏ i ∈ oddBelowTwoPow e, ((2 ^ e + i : ℕ) : ℤ))
-
-/--
-**A 2-adic limit of normalized odd double factorials.** Write $(2^e - 1)!!$ for the product of
-the odd natural numbers from $1$ to $2^e - 1$. There is a 2-adic integer $w$ such that for every
-natural number $e \ge 3$, $2^{e-1}$ divides $w - \lfloor ((2^e - 1)!! - 1) / 2^e \rfloor$ in
-$\mathbb{Z}_2$.
-
-For $e \ge 3$ the division is exact. The paper writes $e \ge 2$, but at $e = 2$ the quotient
-$(3 - 1)/4$ is not an integer.
-
-Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
-Sequences 29 (2026), Article 26.3.1, Definition after Corollary 10.
--/
-public theorem_wanted exists_twoAdic_oddDoubleFactorial_limit :
-    ∃ w : ℤ_[2], ∀ e : ℕ, 3 ≤ e →
-      (2 : ℤ_[2]) ^ (e - 1) ∣ w -
-        (↑(((oddDoubleFactorial e : ℤ) - 1) / (2 : ℤ) ^ e) : ℤ_[2])
 
 /--
 **Normalized difference of odd parts of dyadic factorials.** Write $\mathrm{od}(n)$ for the odd

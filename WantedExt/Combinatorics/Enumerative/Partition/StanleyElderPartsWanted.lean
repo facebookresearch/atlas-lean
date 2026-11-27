@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
+public import MathlibExt.Combinatorics.Enumerative.Partition.NColorEvenPartsDivisorSum
 public import MathlibExt.Combinatorics.Enumerative.Partition.StanleyElderParts
 
 /-!
@@ -77,19 +78,6 @@ public theorem_wanted sigmaOdd_eq_sum_nColor_partsDiff_mul_distinct (m : ℕ) (h
             ((∑ s ∈ (nColorPartitions k).filter (fun s => Even s.card), s.card : ℕ) : ℤ)) *
           ((nColorPartitions (m - k)).filter fun s => s.Nodup).card
 
-/-- **Even divisor sums count the even parts of $n$-color partitions.** For $m \ge 1$, let
-$A_e(m)$ be the total number of parts of even size, counted with multiplicity, over the
-$n$-color partitions of $m$, and for $r \ge 0$ let $C(r)$ be the number of $n$-color partitions
-of $r$. Then
-$$A_e(m) = \sum_{k=1}^{m} \sigma_{\mathrm{even}}(k) \, C(m - k),$$
-where $\sigma_{\mathrm{even}}(k)$ is the sum of the even divisors of $k$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Corollary 3 (`integers-2025-A94-cor-3`). -/
-public theorem_wanted nColor_evenParts_eq_sum_sigmaEven (m : ℕ) (hm : 1 ≤ m) :
-    ∑ s ∈ nColorPartitions m, (s.filter fun p => Even p.1).card =
-      ∑ k ∈ Finset.Icc 1 m, sigmaEven k * (nColorPartitions (m - k)).card
-
 /-- **Number of odd parts in n-color partitions as a divisor sum.** For $i \ge 0$ let $A_o(i)$ be
 the total number of odd parts (parts of odd size, counted with multiplicity) over the $n$-color
 partitions of $i$, and let $C(i)$ be the number of $n$-color partitions of $i$. Then for every
@@ -104,20 +92,6 @@ INTEGERS 25 (2025), Article A94, Corollary 4 (`integers-2025-A94-cor-4`). -/
 public theorem_wanted nColor_oddParts_eq_sum_sigmaOdd (m : ℕ) (hm : 1 ≤ m) :
     ∑ s ∈ nColorPartitions m, (s.filter fun p => Odd p.1).card =
       ∑ k ∈ Finset.Icc 1 m, sigmaOdd k * (nColorPartitions (m - k)).card
-
-/-- **Parts of multiplicity at least t in n-color partitions.** Let $t \ge 1$. For $i \ge 0$ let
-$N^t(i)$ be the number of distinct colored parts occurring at least $t$ times in an $n$-color
-partition of $i$, summed over all $n$-color partitions of $i$, and let $C(i)$ be the number of
-$n$-color partitions of $i$. Then for every $m \ge t$,
-$$
-N^t(m) = \sum_{k=1}^{\lfloor m/t \rfloor} k\, C(m - tk).
-$$
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Corollary 5 (`integers-2025-A94-cor-5`). -/
-public theorem_wanted nColor_partsMultiplicityGe_eq_sum (m t : ℕ) (ht : 1 ≤ t) (htm : t ≤ m) :
-    ∑ s ∈ nColorPartitions m, (s.toFinset.filter fun p => t ≤ s.count p).card =
-      ∑ k ∈ Finset.Icc 1 (m / t), k * (nColorPartitions (m - t * k)).card
 
 /-- **Parts in a residue class over n-color partitions as a divisor sum.** Let $r$ and $k$ be
 natural numbers with $0 < k < r$. For $i \ge 0$ let $C(k \bmod r, i)$ be the total number of

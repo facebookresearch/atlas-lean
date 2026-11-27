@@ -10,6 +10,7 @@ module
 
 import MathlibExt.Combinatorics.Enumerative.Partition.OvercubicPartitionTriples
 import Mathlib.RingTheory.PowerSeries.Expand
+import Mathlib.Tactic.NormNum.IsSquare
 
 open PowerSeries MetaMathlibExt
 open scoped PowerSeries.WithPiTopology
@@ -49,3 +50,26 @@ example : overcubicTripleCount 32 ≡ overcubicTripleCount 16 [ZMOD 4] := by
 -- Doubling the spacing of the last progression keeps its offset fixed.
 example : (4 : ℤ) ∣ overcubicTripleCount 704 := by
   exact Int.modEq_zero_iff_dvd.mp (overcubicTripleCount_congruences_sixteen_mul_args 1 1).2.2.2.2.2
+
+-- The pentagonal exponent 2 comes from the negative index -1.
+example : overcubicTripleCount 49 ≡ 2 [ZMOD 4] := by
+  have h := overcubicTripleCount_twentyFour_mul_add_one 2
+  have hc : coeff 2 (qEulerProduct 1) = -1 := by
+    have hp : 2 = pentagonal (-1) := by norm_num [pentagonal_def]
+    rw [qEulerProduct_one, hp, coeff_pentagonalSeries_pentagonal, Int.negOnePow_neg,
+      Int.negOnePow_one]
+    rfl
+  rw [hc] at h
+  exact h.trans (show (2 : ℤ) * -1 ≡ 2 [ZMOD 4] by decide)
+
+-- The exponent 3 is a gap in Euler's series, so the count at 73 is divisible by four.
+example : (4 : ℤ) ∣ overcubicTripleCount 73 := by
+  have h := overcubicTripleCount_twentyFour_mul_add_one 3
+  have hgap : 3 ∉ Set.range pentagonal := by
+    rintro ⟨k, hk⟩
+    have he := two_mul_natCast_pentagonal k
+    rw [hk] at he
+    norm_num at he
+    exact (show ¬ IsSquare (73 : ℤ) by norm_num) ⟨6 * k - 1, by linarith⟩
+  rw [qEulerProduct_one, coeff_pentagonalSeries_eq_zero _ hgap, mul_zero] at h
+  exact Int.modEq_zero_iff_dvd.mp h

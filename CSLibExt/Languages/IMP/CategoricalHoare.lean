@@ -37,11 +37,13 @@ open scoped MonoidalCategory
 /-- IMP states as an object of the disjoint-union relation category. -/
 abbrev states : SumRelCat := SumRelCat.of State
 
-/-- The existing terminating execution relation, viewed as a categorical morphism. -/
+/-- The terminating execution relation of `c` (pairs related by `BigStep c`), viewed as a
+morphism `states ⟶ states`. -/
 def commandRel (c : Cmd) : states ⟶ states :=
   .ofRel {p | BigStep c p.1 p.2}
 
-/-- Categorical powerset verification agrees with existing IMP validity. -/
+/-- The powerset verification triple of `commandRel c` from `P` to `Q` holds iff the IMP
+Hoare triple `{P} c {Q}` is valid (`Valid P c Q`). -/
 theorem triple_iff_valid (c : Cmd) (P Q : Assertion) :
     VerificationFunctor.Triple PowersetVerification.verification
       (commandRel c) {s | P s} {s | Q s} ↔
@@ -53,7 +55,8 @@ theorem triple_iff_valid (c : Cmd) (P Q : Assertion) :
   · rintro h t ⟨s, hP, hc⟩
     exact h hP hc
 
-/-- The existing syntactic IMP calculus proves exactly the categorical triples. -/
+/-- The IMP Hoare calculus derives `{P} c {Q}` (`IMP.Derivable P c Q`) iff the powerset
+verification triple of `commandRel c` from `P` to `Q` holds. -/
 theorem derivable_iff_triple (c : Cmd) (P Q : Assertion) :
     IMP.Derivable P c Q ↔
       VerificationFunctor.Triple PowersetVerification.verification

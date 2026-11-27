@@ -61,7 +61,7 @@ noncomputable def ons_KWsymbolMat (x ω z₁ z₂ : ℂ) : Matrix (Fin 4) (Fin 4
 
 /-! ## B. Its determinant -/
 
-lemma ons_symbol_det_z (x ω z₁ z₂ : ℂ) (hω : ω^2 = Complex.I) (hz₁ : z₁ ≠ 0) (hz₂ : z₂ ≠ 0) :
+lemma ons_symbol_det_z (x ω z₁ z₂ : ℂ) (hω : ω ^ 2 = Complex.I) (hz₁ : z₁ ≠ 0) (hz₂ : z₂ ≠ 0) :
     (ons_KWsymbolMat x ω z₁ z₂).det
       = (1 + x^2)^2 - x*(1 - x^2)*(z₁ + z₁⁻¹ + z₂ + z₂⁻¹) := by
   have hI : Complex.I ^ 2 = -1 := Complex.I_sq
