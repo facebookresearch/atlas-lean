@@ -20,8 +20,8 @@ This node has no prerequisites.
 
 ## Proof depends on
 
-- [Limiting extinction probability in the supercritical case](../../../Probability/branching-processes/linear-birth-death-process/tendsto-extinction-prob-of-lt.md)
-- [Certain extinction in the critical and subcritical cases](../../../Probability/branching-processes/linear-birth-death-process/tendsto-extinction-prob-of-le.md)
+- [Limiting extinction probability in the supercritical case](../../../../Probability/branching-processes/linear-birth-death-process/tendsto-extinction-prob-of-lt.md)
+- [Certain extinction in the critical and subcritical cases](../../../../Probability/branching-processes/linear-birth-death-process/tendsto-extinction-prob-of-le.md)
 
 ## Expansion
 

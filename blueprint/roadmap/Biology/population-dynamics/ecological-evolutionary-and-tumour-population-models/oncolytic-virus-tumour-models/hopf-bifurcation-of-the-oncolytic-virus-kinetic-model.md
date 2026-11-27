@@ -28,7 +28,7 @@ This node has no prerequisites.
 
 ## Proof depends on
 
-- [Routh–Hurwitz criterion for cubic polynomials](../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
 
 ## Expansion
 

@@ -28,7 +28,7 @@ None beyond the statement prerequisites; this page is a definition.
 
 ## Expansion
 
-For the logistic reduction use $\binom5n \frac{6}{6-n} = \binom6n$ and the binomial theorem: $\sum_{n=0}^5 \binom5n C^n(1-C)^{5-n} = 1$ and $\sum_{n=0}^5 \binom6n C^n(1-C)^{5-n} = (1 - C^6)/(1 - C)$. Hence the per-capita rate is $r(1 - C) - r\alpha(1 - C^6) - r\alpha C^6 = r(1 - \alpha) - rC$, which gives $dC/dt = rC(1 - \alpha - C)$ without dividing by $1 - \alpha$. The factor $(1 - C)$ in (1) is the probability that a chosen neighbouring site is empty, and $\binom5n C^n(1-C)^{5-n}$ the probability that the proliferating individual has $n$ occupied neighbours among the other five. Where $r > 0$ and $\alpha < 1$, the reduced equation is the logistic equation, whose [explicit solution](../logistic-growth-equation/logistic.md) then applies.
+For the logistic reduction use $\binom5n \frac{6}{6-n} = \binom6n$ and the binomial theorem: $\sum_{n=0}^5 \binom5n C^n(1-C)^{5-n} = 1$ and $\sum_{n=0}^5 \binom6n C^n(1-C)^{5-n} = (1 - C^6)/(1 - C)$. Hence the per-capita rate is $r(1 - C) - r\alpha(1 - C^6) - r\alpha C^6 = r(1 - \alpha) - rC$, which gives $dC/dt = rC(1 - \alpha - C)$ without dividing by $1 - \alpha$. The factor $(1 - C)$ in (1) is the probability that a chosen neighbouring site is empty, and $\binom5n C^n(1-C)^{5-n}$ the probability that the proliferating individual has $n$ occupied neighbours among the other five. Where $r > 0$ and $\alpha < 1$, the reduced equation is the logistic equation, whose [explicit solution](../../logistic-growth-equation/logistic.md) then applies.
 
 ## Sources
 

@@ -24,7 +24,7 @@ This node has no prerequisites.
 
 ## Proof depends on
 
-- [Long-run fraction of up time of an alternating renewal process](../../../Probability/nonparametric-survival/reliability-and-monitoring/long-run-fraction-of-up-time-of-an-alternating-renewal-process.md)
+- [Long-run fraction of up time of an alternating renewal process](../../../../Probability/nonparametric-survival/reliability-and-monitoring/long-run-fraction-of-up-time-of-an-alternating-renewal-process.md)
 
 ## Expansion
 
