@@ -2432,7 +2432,9 @@ theorem Split.dual {S L : Type} (Γ Δ Θ : BranchingContext S L)
       | none => exact Option.Rel.none
       | some v => exact Option.Rel.some (BranchingType.PermEquiv.refl _)
   exact ⟨(PermEquiv.dual hpe).trans hunion, disjoint_dual Δ Θ hdisj⟩
-/-- Advancement leaves other channels unchanged. -/
+/-- Advancement preserves every other channel up to permutation equivalence:
+for `b ≠ a` the lookups are both absent or both present with `PermEquiv`
+types. -/
 theorem Advances.lookup_of_ne {S L : Type} (Γ Δ : BranchingContext S L)
     (a b : Nat) (act : BranchingType.Action L)
     (h : Advances Γ a act Δ) (hne : b ≠ a) :
@@ -2478,7 +2480,8 @@ theorem Advances.disjoint_left {S L : Type} (Γ Γ' Θ : BranchingContext S L)
         exact hdisj a hmemA (heq ▸ hx2)
       | inr hmemG =>
         exact hdisj x hmemG hx2
-/-- Advancing the left side of a split advances the whole. -/
+/-- If `Γ` splits into `Δ` and `Θ` and `Δ` advances at channel `a` by `act` to `Δ'`, then `Γ`
+advances at `a` by `act` to `Δ' ∪ Θ`, and `Δ' ∪ Θ` splits into `Δ'` and `Θ`. -/
 theorem Split.advance_left {S L : Type} (Γ Δ Δ' Θ : BranchingContext S L)
     (a : Nat) (act : BranchingType.Action L) (h : Split Γ Δ Θ)
     (hadv : Advances Δ a act Δ') :

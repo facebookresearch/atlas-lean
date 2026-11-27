@@ -35,19 +35,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Partial structure of the P-positions of Slow $A$-Nim.** Let $A \subseteq \{1, \dots, n\}$
-and let $p$ be a position of Slow $A$-Nim on $n$ stacks. If every stack height of $p$ is even,
-then $p$ is a P-position. If the number of stacks of $p$ with odd height lies in $A$, then $p$
-is not a P-position.
-
-Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
-Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Proposition 1. -/
-public theorem_wanted slowANim_partialStructure (n : ℕ) (A : Finset ℕ)
-    (hA : A ⊆ Finset.Icc 1 n) (p : Fin n → ℕ) :
-    ((∀ i, Even (p i)) → SpragueGrundy.IsP (slowANimGame n A) p) ∧
-      ((Finset.univ.filter fun i => Odd (p i)).card ∈ A →
-        ¬ SpragueGrundy.IsP (slowANimGame n A) p)
-
 /-- **P-positions of Slow A-Nim with A = {1, n}, n even.** Let $n \ge 1$ be even and let
 $A = \{1, n\}$. A position $p = (p_1, \dots, p_n)$ of Slow$A$-Nim on $n$ stacks is a P-position
 if and only if its total number of tokens $p_1 + \dots + p_n$ and its smallest stack

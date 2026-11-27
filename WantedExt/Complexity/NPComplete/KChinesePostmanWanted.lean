@@ -69,8 +69,9 @@ abbrev KChinesePostmanInstance := ℕ × List (ℕ × ℕ × ℕ) × ℕ × ℕ 
 def mixed (i : KChinesePostmanInstance) : ChinesePostmanMixedGraphsInstance :=
   (i.1, [], i.2.1, i.2.2.2.2)
 
-/-- A cycle through `s`: a walk of undirected steps along edges of the multigraph in which
-consecutive steps meet, the first step starts at `s`, and the last step ends at `s`. -/
+/-- A closed walk from `s`, possibly empty: a list of undirected steps along edges of the
+multigraph in which consecutive steps meet and, if the list is nonempty, the first step starts
+at `s` and the last step ends at `s`. -/
 def IsCycleFrom (i : KChinesePostmanInstance) (w : List Step) : Prop :=
   (∀ st ∈ w, st.1 = false ∧ st.2.1 < i.2.1.length) ∧
     w.IsChain (fun a b => (stepEnds (mixed i) a).2 = (stepEnds (mixed i) b).1) ∧
@@ -82,7 +83,8 @@ and `K` are positive. -/
 def WellFormed (i : KChinesePostmanInstance) : Prop :=
   (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1) ∧ i.2.2.1 < i.1 ∧ 0 < i.2.2.2.1 ∧ 0 < i.2.2.2.2
 
-/-- Some `k` cycles through `s`, each of length at most `K`, together traverse every edge. -/
+/-- Some `k` closed walks from `s`, possibly empty, each of length at most `K`, together traverse
+every edge. -/
 def KChinesePostmanFeasible (i : KChinesePostmanInstance) : Prop :=
   ∃ cycles : List (List Step), cycles.length = i.2.2.2.1 ∧
     (∀ w ∈ cycles, IsCycleFrom i w ∧ (w.map (stepLength (mixed i))).sum ≤ i.2.2.2.2) ∧
