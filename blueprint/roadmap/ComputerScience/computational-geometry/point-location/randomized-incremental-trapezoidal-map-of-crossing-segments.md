@@ -1,6 +1,6 @@
 # Randomized incremental trapezoidal map of crossing segments
 
-Let $S$ be a set of $n$ segments in general position with $K$ pairwise crossings. The randomized incremental construction, which inserts the segments in uniformly random order and locates the left endpoint of each new segment with the history graph of destroyed trapezoids, computes the trapezoidal map of $S$ in expected time $O(n \log n + K)$.
+Let $S$ be a set of $n$ segments in general position, no two of which share an endpoint, with $K$ pairwise crossings. The randomized incremental construction, which inserts the segments in uniformly random order and locates the left endpoint of each new segment with the history graph of destroyed trapezoids, computes the trapezoidal map of $S$ in expected time $O(n \log n + K)$.
 
 ## Depends on
 
