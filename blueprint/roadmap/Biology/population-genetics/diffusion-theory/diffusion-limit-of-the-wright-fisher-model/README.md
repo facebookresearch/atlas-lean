@@ -4,3 +4,5 @@
 - [Wright–Fisher diffusion limit, generator form](tendsto-wf-generator.md)
 
 - [Error of the diffusion approximation to the Wright–Fisher model](error-of-the-diffusion-approximation.md)
+
+- [Diffusion approximation of Wright–Fisher models](diffusion-approximation-of-wright-fisher-models/README.md)

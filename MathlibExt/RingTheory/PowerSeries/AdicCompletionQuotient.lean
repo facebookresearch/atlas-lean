@@ -86,13 +86,13 @@ private theorem mk_pow_zero_eq (x y : O) :
 private theorem psum_C (ϖ : O) {n : ℕ} (hn : 1 ≤ n) (o : O) : psum ϖ n (C o) = o := by
   induction n, hn using Nat.le_induction with
   | base => simp [psum, coeff_C]
-  | succ m hm ih => rw [psum_succ, ih, coeff_C, if_neg (by omega), zero_mul, add_zero]
+  | succ m hm ih => rw [psum_succ, ih, coeff_C, ite_eq_right (by omega), zero_mul, add_zero]
 
 private theorem psum_X (ϖ : O) {n : ℕ} (hn : 2 ≤ n) :
     psum ϖ n (X : PowerSeries O) = ϖ := by
   induction n, hn using Nat.le_induction with
   | base => simp [psum, Finset.sum_range_succ, coeff_X]
-  | succ m hm ih => rw [psum_succ, ih, coeff_X, if_neg (by omega), zero_mul, add_zero]
+  | succ m hm ih => rw [psum_succ, ih, coeff_X, ite_eq_right (by omega), zero_mul, add_zero]
 
 private theorem psum_mul_sub_mem (ϖ : O) (n : ℕ) (F G : PowerSeries O) :
     psum ϖ n (F * G) - psum ϖ n F * psum ϖ n G ∈ Ideal.span {ϖ ^ n} := by
@@ -226,17 +226,17 @@ private theorem Phi_surjective (ϖ : O) (hϖ : Irreducible ϖ) :
       | zero => simp [psum]
       | succ n ih =>
           rw [psum_succ, ih, map_add, coeff_mk, coeff_C]
-          simp only [Nat.succ_ne_zero, if_false]
+          simp only [Nat.succ_ne_zero, ite_false]
           rcases Nat.eq_zero_or_pos n with rfl | hn
-          · simp only [if_true, zero_add]
+          · simp only [ite_true, zero_add]
             linear_combination -(hd 0)
-          · simp only [hn.ne', if_false, zero_add]
+          · simp only [hn.ne', ite_false, zero_add]
             linear_combination -(hd n)
     refine AdicCompletion.ext_evalₐ fun n => ?_
     rw [evalₐ_Phi, AdicCompletion.evalₐ_mk, htel]
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · exact mk_pow_zero_eq _ _
-    · rw [if_neg hn.ne']
+    · rw [ite_eq_right hn.ne']
 
 private theorem Phibar_surjective (ϖ : O) (hϖ : Irreducible ϖ) :
     Function.Surjective (Phibar ϖ hϖ) := by

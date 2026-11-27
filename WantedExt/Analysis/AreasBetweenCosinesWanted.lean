@@ -101,20 +101,6 @@ public theorem_wanted tendsto_cosPowArea_doubleFactorial (n : ℕ) :
           ((2 * j).doubleFactorial : ℝ) /
             ((2 * j + 1).doubleFactorial * (2 * j + 2)))))
 
-/-- **Integral sums of $\cos qkx - \cos qx$ for odd $q$ and odd $k$.** Let $q$ be an odd natural
-number, and for each natural number $m$ put $k = 2m + 1$. Then, as $m \to \infty$,
-$$\sum_{\ell=1}^{m} \int_{2\pi\ell/(k+1)}^{2\pi\ell/(k-1)} \bigl(\cos(qkx) - \cos(qx)\bigr)\,dx
-\to \frac{4}{q^2\pi}.$$
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 9
-(`jis-2025-25.2.3-lem-9`). -/
-public theorem_wanted tendsto_sum_integral_cos_sub_cos_odd_odd {q : ℕ} (hq : Odd q) :
-    Tendsto (fun m : ℕ => ∑ l ∈ Finset.Icc 1 m,
-      ∫ x in (2 * π * l / ((2 * m + 1 : ℝ) + 1))..(2 * π * l / ((2 * m + 1 : ℝ) - 1)),
-        (cos (q * (2 * m + 1 : ℝ) * x) - cos (q * x))) atTop
-      (𝓝 (4 / ((q : ℝ) ^ 2 * π)))
-
 /-- **Alternating integral sums of $\cos qx - \cos qkx$ for even $q$ and odd $k$.** Let $q$ be an
 even natural number, for each natural number $m$ put $k = 2m + 1$, and let
 $f(x) = \cos(qx) - \cos(qkx)$. Then, as $m \to \infty$,

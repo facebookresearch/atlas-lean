@@ -883,7 +883,8 @@ theorem integrable_olsSlope {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure 
   exact (integrable_finsetSum _ fun i _ => (hY i).const_mul _).div_const _
 
 open MeasureTheory in
-/-- Expectation commutes with the least-squares slope: for integrable responses `Y i`,
+/-- Integration commutes with the least-squares slope: for any measure `μ` and `μ`-integrable
+responses `Y i`, `∫ b̂(x, Y) ∂μ = b̂(x, ∫ Y ∂μ)`; for a probability measure this reads
 `𝔼[b̂(x, Y)] = b̂(x, 𝔼 Y)`. -/
 theorem integral_olsSlope {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {ι : Type*}
     [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ} (hY : ∀ i, Integrable (Y i) μ) :
@@ -1024,8 +1025,8 @@ lemma mem_pivotInterval_iff {t s lo hi θ : ℝ} (hs : 0 < s) :
 
 open MeasureTheory ProbabilityTheory in
 /-- **Coverage under a sampling model.** If, under `μ`, the pivot `(T - θ) / s` of the statistic
-`T` has law `ν`, then the interval obtained by inverting it contains `θ` with probability
-`ν [lo, hi]`. -/
+`T` has law `ν`, then the event that the interval obtained by inverting it contains `θ` has
+`μ`-measure `ν [lo, hi]`; for a probability measure `μ` this is the coverage probability. -/
 lemma measure_mem_pivotInterval {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     {ν : Measure ℝ} {T : Ω → ℝ} {s lo hi θ : ℝ} (hs : 0 < s)
     (hpivot : HasLaw (fun ω => (T ω - θ) / s) ν μ) :
