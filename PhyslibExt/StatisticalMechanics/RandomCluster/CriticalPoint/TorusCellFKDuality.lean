@@ -131,7 +131,12 @@ lemma torusCell_weight_duality_signed (L : ℕ) [Fact (2 < L)]
       rw [pow_add]
       ring
 
-/-- The same for random-cluster weights of configurations. -/
+/-- Duality of random-cluster weights on the `L × L` torus (`L > 2`): for `0 < p < 1`, `q > 0` and a
+  configuration `ω`, `w_{p,q}(ω) q ^ (|E| + 1) = (p / (1 - p*)) ^ |E| q ^ |V| w_{p*,q}(ω*) q ^ δ`,
+  where `w` is the random-cluster weight on the torus graph `onsTorusGraph L`, `|E|` and `|V|` are
+  its numbers of edges and vertices, `p* = dualParam p q`, `ω*` is the dual configuration
+  `torusCellDualConfig L ω` and `δ` is the Euler defect `torusCellDefect` of the open subgraph of
+  `ω`. -/
 lemma torusCell_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L)))
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :

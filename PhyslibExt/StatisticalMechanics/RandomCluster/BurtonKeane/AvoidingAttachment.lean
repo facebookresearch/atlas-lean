@@ -11,6 +11,7 @@ module
 public import Mathlib.Basic.ENNReal.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterAttachment
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorWitnessRemoveSite
 
 /-!
 # Attachment avoiding the origin
@@ -80,29 +81,11 @@ lemma ava_removeSite_openSubgraph_le (ω : ConfigSpace (Sym2 (Site d))) :
   · rw [removeSite_apply_of_mem h0] at hval; exact absurd hval (by simp)
   · rwa [removeSite_apply_of_notMem h0] at hval
 
-/-- Same statement as `bkm_origin_no_neighbour`; kept because `CorridorWitnessRemoveSite` is not
-imported by all its users. -/
-lemma ava_origin_no_adj_removeSite (ω : ConfigSpace (Sym2 (Site d))) (y : Site d) :
-    ¬ (openSubgraph d (removeSite 0 ω)).Adj (0 : Site d) y := by
-  rintro ⟨hadj, hval⟩
-  have h0 : (0 : Site d) ∈ s((0 : Site d), y) := Sym2.mem_mk_left _ _
-  rw [removeSite_apply_of_mem h0] at hval
-  exact absurd hval (by simp)
-
-/-- Same statement as `bkm_reachable_origin_eq`; kept because `CorridorWitnessRemoveSite` is not
-imported by all its users. -/
-lemma ava_connected_origin_eq (ω : ConfigSpace (Sym2 (Site d))) {x : Site d}
-    (h : Connected d (removeSite 0 ω) (0 : Site d) x) : x = 0 := by
-  obtain ⟨w⟩ := h
-  cases w with
-  | nil => rfl
-  | cons hadj p => exact absurd hadj (ava_origin_no_adj_removeSite ω _)
-
 lemma ava_origin_notMem_cluster_removeSite (ω : ConfigSpace (Sym2 (Site d))) {x : Site d}
     (hx : x ≠ 0) : (0 : Site d) ∉ cluster d (removeSite 0 ω) x := by
   rw [mem_cluster]
   intro h
-  exact hx (ava_connected_origin_eq ω h.symm)
+  exact hx (StatMech.Walls.bkm_reachable_origin_eq ω h.symm)
 
 lemma ava_avoiding_walk_of_removeSite (ω : ConfigSpace (Sym2 (Site d))) {a x : Site d}
     (hx : x ≠ 0) (hc : Connected d (removeSite 0 ω) a x) :

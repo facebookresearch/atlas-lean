@@ -133,7 +133,7 @@ lemma bc76_fiberQuotEdge_lifts {ω : ConfigSpace (Sym2 (Site d))} {L R : ℕ}
 /-! ## B. Two collapsed boxes -/
 
 /-- The site `(4L + 1, 0)`. -/
-def bc76_yBuf (L : ℕ) : Site 2 := bc57_pt (4 * (L : ℤ) + 1) 0
+def bc76_yBuf (L : ℕ) : Site 2 := faceCorner00 (4 * (L : ℤ) + 1) 0
 
 /-- Collapse the `L`-boxes around `0` and `bc76_yBuf L` to their centres. -/
 noncomputable def bc76_twoBoxCollapse (L : ℕ) : Site 2 → Site 2 :=
@@ -171,7 +171,7 @@ lemma bc76_collapse_id {L : ℕ} {x : Site 2} (hx0 : x ∉ bc61_boxAround 2 L (0
   unfold bc76_twoBoxCollapse; rw [ite_eq_right hx0, ite_eq_right hxb]
 
 lemma bc76_pt_notMem_boxBuf_of_col {L : ℕ} {k h : ℤ} (hk : k < 3 * (L : ℤ) + 1) :
-    bc57_pt k h ∉ bc61_boxAround 2 L (bc76_yBuf L) := by
+    faceCorner00 k h ∉ bc61_boxAround 2 L (bc76_yBuf L) := by
   rw [bc61_mem_boxAround, mem_box]
   simp only [not_forall, not_le]
   refine ⟨0, ?_⟩
@@ -181,92 +181,95 @@ lemma bc76_pt_notMem_boxBuf_of_col {L : ℕ} {k h : ℤ} (hk : k < 3 * (L : ℤ)
   omega
 
 lemma bc76_boxBuf_boundary_mem {L : ℕ} {h : ℤ} (hh : h.natAbs ≤ L) :
-    bc57_pt (3 * (L : ℤ) + 1) h ∈ bc61_boxAround 2 L (bc76_yBuf L) := by
+    faceCorner00 (3 * (L : ℤ) + 1) h ∈ bc61_boxAround 2 L (bc76_yBuf L) := by
   rw [bc61_mem_boxAround, mem_box]
   intro i; fin_cases i
   · simp only [Pi.sub_apply, bc76_yBuf]
-    change ((bc57_pt (3 * (L : ℤ) + 1) h) 0 - (bc57_pt (4 * (L : ℤ) + 1) 0) 0).natAbs ≤ L
+    change ((faceCorner00 (3 * (L : ℤ) + 1) h) 0 - (faceCorner00 (4 * (L : ℤ) + 1) 0) 0).natAbs ≤ L
     rw [bc57_pt_fst, bc57_pt_fst]
     have : (3 * (L : ℤ) + 1 - (4 * (L : ℤ) + 1)) = -(L : ℤ) := by ring
     rw [this, Int.natAbs_neg, Int.natAbs_natCast]
   · simp only [Pi.sub_apply, bc76_yBuf]
-    change ((bc57_pt (3 * (L : ℤ) + 1) h) 1 - (bc57_pt (4 * (L : ℤ) + 1) 0) 1).natAbs ≤ L
+    change ((faceCorner00 (3 * (L : ℤ) + 1) h) 1 - (faceCorner00 (4 * (L : ℤ) + 1) 0) 1).natAbs ≤ L
     rw [bc57_pt_snd, bc57_pt_snd]; simpa using hh
 
-lemma bc76_pt_ne_zero_of_height {k h : ℤ} (hh : 1 ≤ h) : bc57_pt k h ≠ (0 : Site 2) := by
+lemma bc76_pt_ne_zero_of_height {k h : ℤ} (hh : 1 ≤ h) : faceCorner00 k h ≠ (0 : Site 2) := by
   intro heq; rw [bc60_pt_eq_origin_iff] at heq; omega
 
 /-! ## C. The upper-lines configuration -/
 
 lemma bc76_line_adj_gn {L : ℕ} {h k : ℤ} (hh : 1 ≤ h)
     (hlo : (L : ℤ) < k) (hhi : k + 1 < 3 * (L : ℤ) + 1) :
-    (bc76_twoBoxGn L).Adj (bc57_pt k h) (bc57_pt (k + 1) h) := by
-  have hkid : bc76_twoBoxCollapse L (bc57_pt k h) = bc57_pt k h :=
+    (bc76_twoBoxGn L).Adj (faceCorner00 k h) (faceCorner00 (k + 1) h) := by
+  have hkid : bc76_twoBoxCollapse L (faceCorner00 k h) = faceCorner00 k h :=
     bc76_collapse_id (StatMech.Walls.bc61_pt_outside_boxAround hlo) (bc76_pt_notMem_boxBuf_of_col
         (by omega))
-  have hk1id : bc76_twoBoxCollapse L (bc57_pt (k + 1) h) = bc57_pt (k + 1) h :=
+  have hk1id : bc76_twoBoxCollapse L (faceCorner00 (k + 1) h) = faceCorner00 (k + 1) h :=
     bc76_collapse_id (StatMech.Walls.bc61_pt_outside_boxAround (by omega))
         (bc76_pt_notMem_boxBuf_of_col hhi)
-  have hne : bc57_pt k h ≠ bc57_pt (k + 1) h := by
+  have hne : faceCorner00 k h ≠ faceCorner00 (k + 1) h := by
     intro heq; have := congrArg (fun f => f 0) heq; simp only [bc57_pt_fst] at this; omega
-  exact ⟨hne, bc57_pt k h, bc57_pt (k + 1) h, hkid, hk1id, ⟨bc57_pt_adj k h, bc60_open k hh⟩⟩
+  exact ⟨hne, faceCorner00 k h, faceCorner00 (k + 1) h, hkid, hk1id,
+      ⟨bc57_pt_adj k h, bc60_open k hh⟩⟩
 
 lemma bc76_line_reach_right {L : ℕ} {h : ℤ} (hh : 1 ≤ h) (j : ℕ)
     (hj : (L : ℤ) + 1 + (j : ℤ) < 3 * (L : ℤ) + 1) :
     ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
-      ⟨bc57_pt ((L : ℤ) + 1) h, by simpa using bc76_pt_ne_zero_of_height hh⟩
-      ⟨bc57_pt ((L : ℤ) + 1 + (j : ℤ)) h, by simpa using bc76_pt_ne_zero_of_height hh⟩ := by
+      ⟨faceCorner00 ((L : ℤ) + 1) h, by simpa using bc76_pt_ne_zero_of_height hh⟩
+      ⟨faceCorner00 ((L : ℤ) + 1 + (j : ℤ)) h, by simpa using bc76_pt_ne_zero_of_height hh⟩ := by
   induction j with
   | zero =>
-    have : (⟨bc57_pt ((L : ℤ) + 1 + ((0 : ℕ) : ℤ)) h, by simpa using bc76_pt_ne_zero_of_height hh⟩
+    have : (⟨faceCorner00 ((L : ℤ) + 1 + ((0 : ℕ) : ℤ)) h,
+        by simpa using bc76_pt_ne_zero_of_height hh⟩
         : ({(0 : Site 2)}ᶜ : Set (Site 2)))
-        = ⟨bc57_pt ((L : ℤ) + 1) h, by simpa using bc76_pt_ne_zero_of_height hh⟩ := by
+        = ⟨faceCorner00 ((L : ℤ) + 1) h, by simpa using bc76_pt_ne_zero_of_height hh⟩ := by
       apply Subtype.ext; simp
     rw [this]
   | succ i ih =>
     have hjcast : ((L : ℤ) + 1 + ((i + 1 : ℕ) : ℤ)) = (L : ℤ) + 1 + (i : ℤ) + 1 := by push_cast;
                                                                                         ring
     have hilt : (L : ℤ) + 1 + (i : ℤ) < 3 * (L : ℤ) + 1 := by push_cast at hj; omega
-    have hstep : (bc76_twoBoxGn L).Adj (bc57_pt ((L : ℤ) + 1 + (i : ℤ)) h)
-        (bc57_pt ((L : ℤ) + 1 + (i : ℤ) + 1) h) :=
+    have hstep : (bc76_twoBoxGn L).Adj (faceCorner00 ((L : ℤ) + 1 + (i : ℤ)) h)
+        (faceCorner00 ((L : ℤ) + 1 + (i : ℤ) + 1) h) :=
       bc76_line_adj_gn hh (by omega) (by push_cast at hj ⊢; omega)
     have hstep' : ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Adj
-        ⟨bc57_pt ((L : ℤ) + 1 + (i : ℤ)) h, by simpa using bc76_pt_ne_zero_of_height hh⟩
-        ⟨bc57_pt ((L : ℤ) + 1 + (i : ℤ) + 1) h, by
+        ⟨faceCorner00 ((L : ℤ) + 1 + (i : ℤ)) h, by simpa using bc76_pt_ne_zero_of_height hh⟩
+        ⟨faceCorner00 ((L : ℤ) + 1 + (i : ℤ) + 1) h, by
           simpa using bc76_pt_ne_zero_of_height (k := (L : ℤ) + 1 + (i : ℤ) + 1) hh⟩ := hstep
     have hres := (ih hilt).trans hstep'.reachable
-    have hcongr : (⟨bc57_pt ((L : ℤ) + 1 + (i : ℤ) + 1) h, by
+    have hcongr : (⟨faceCorner00 ((L : ℤ) + 1 + (i : ℤ) + 1) h, by
           simpa using bc76_pt_ne_zero_of_height (k := (L : ℤ) + 1 + (i : ℤ) + 1) hh⟩
           : ({(0 : Site 2)}ᶜ : Set (Site 2)))
-        = ⟨bc57_pt ((L : ℤ) + 1 + ((i + 1 : ℕ) : ℤ)) h, by
+        = ⟨faceCorner00 ((L : ℤ) + 1 + ((i + 1 : ℕ) : ℤ)) h, by
             simpa using bc76_pt_ne_zero_of_height hh⟩ := by
       apply Subtype.ext; simp only; rw [hjcast]
     rw [hcongr] at hres
     exact hres
 
 lemma bc76_glue_adj {L : ℕ} {h : ℤ} (hh : 1 ≤ h) (hhL : h.natAbs ≤ L) :
-    (bc76_twoBoxGn L).Adj (bc57_pt (3 * (L : ℤ)) h) (bc76_yBuf L) := by
-  have h1id : bc76_twoBoxCollapse L (bc57_pt (3 * (L : ℤ)) h) = bc57_pt (3 * (L : ℤ)) h :=
+    (bc76_twoBoxGn L).Adj (faceCorner00 (3 * (L : ℤ)) h) (bc76_yBuf L) := by
+  have h1id : bc76_twoBoxCollapse L (faceCorner00 (3 * (L : ℤ)) h) = faceCorner00 (3 * (L : ℤ)) h :=
     bc76_collapse_id (StatMech.Walls.bc61_pt_outside_boxAround (by omega))
         (bc76_pt_notMem_boxBuf_of_col (by omega))
-  have h2buf : bc76_twoBoxCollapse L (bc57_pt (3 * (L : ℤ) + 1) h) = bc76_yBuf L :=
+  have h2buf : bc76_twoBoxCollapse L (faceCorner00 (3 * (L : ℤ) + 1) h) = bc76_yBuf L :=
     bc76_collapse_buf (bc76_boxBuf_boundary_mem hhL)
-  have hadj : (openSubgraph 2 bc60_upperLines).Adj (bc57_pt (3 * (L : ℤ)) h)
-      (bc57_pt (3 * (L : ℤ) + 1) h) := ⟨bc57_pt_adj (3 * (L : ℤ)) h, bc60_open (3 * (L : ℤ)) hh⟩
-  have hne : bc57_pt (3 * (L : ℤ)) h ≠ bc76_yBuf L := by
+  have hadj : (openSubgraph 2 bc60_upperLines).Adj (faceCorner00 (3 * (L : ℤ)) h)
+      (faceCorner00 (3 * (L : ℤ) + 1) h) :=
+        ⟨bc57_pt_adj (3 * (L : ℤ)) h, bc60_open (3 * (L : ℤ)) hh⟩
+  have hne : faceCorner00 (3 * (L : ℤ)) h ≠ bc76_yBuf L := by
     intro heq
     have := congrArg (fun f => f 1) heq
     simp only [bc57_pt_snd, bc76_yBuf, bc57_pt_snd] at this
     omega
-  exact ⟨hne, bc57_pt (3 * (L : ℤ)) h, bc57_pt (3 * (L : ℤ) + 1) h, h1id, h2buf, hadj⟩
+  exact ⟨hne, faceCorner00 (3 * (L : ℤ)) h, faceCorner00 (3 * (L : ℤ) + 1) h, h1id, h2buf, hadj⟩
 
 lemma bc76_yBuf_ne_zero (L : ℕ) : bc76_yBuf L ≠ (0 : Site 2) := by
   intro heq; rw [bc76_yBuf, bc60_pt_eq_origin_iff] at heq; omega
 
 lemma bc76_gnCut_reconnect_upperLines {L : ℕ} (hL : 3 ≤ L) :
     ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
-      ⟨bc57_pt ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
-      ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ := by
+      ⟨faceCorner00 ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
+      ⟨faceCorner00 ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ := by
   set jn : ℕ := 2 * L - 1 with hjn
   have hjnval : (jn : ℤ) = 2 * (L : ℤ) - 1 := by
     rw [hjn]; have : 1 ≤ 2 * L := by omega
@@ -274,24 +277,24 @@ lemma bc76_gnCut_reconnect_upperLines {L : ℕ} (hL : 3 ≤ L) :
   have hjcol : (L : ℤ) + 1 + (jn : ℤ) = 3 * (L : ℤ) := by rw [hjnval]; ring
   have hjlt : (L : ℤ) + 1 + (jn : ℤ) < 3 * (L : ℤ) + 1 := by rw [hjcol]; omega
   have hreach1 : ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
-      ⟨bc57_pt ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
-      ⟨bc57_pt (3 * (L : ℤ)) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ := by
+      ⟨faceCorner00 ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
+      ⟨faceCorner00 (3 * (L : ℤ)) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ := by
     have := bc76_line_reach_right (h := 1) (by norm_num) jn hjlt
     simpa only [hjcol] using this
   have hreach3 : ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
-      ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
-      ⟨bc57_pt (3 * (L : ℤ)) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ := by
+      ⟨faceCorner00 ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
+      ⟨faceCorner00 (3 * (L : ℤ)) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ := by
     have := bc76_line_reach_right (h := 3) (by norm_num) jn hjlt
     simpa only [hjcol] using this
   have hL1 : (1 : ℤ).natAbs ≤ L := by simp only [Int.natAbs_one]; omega
   have hL3 : (3 : ℤ).natAbs ≤ L := by rw [show (3 : ℤ).natAbs = 3 from rfl]; omega
   have hglue1 : ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Adj
-      ⟨bc57_pt (3 * (L : ℤ)) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
+      ⟨faceCorner00 (3 * (L : ℤ)) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
       ⟨bc76_yBuf L, by simpa using bc76_yBuf_ne_zero L⟩ :=
     bc76_glue_adj (by norm_num) hL1
   have hglue3 : ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Adj
       ⟨bc76_yBuf L, by simpa using bc76_yBuf_ne_zero L⟩
-      ⟨bc57_pt (3 * (L : ℤ)) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
+      ⟨faceCorner00 (3 * (L : ℤ)) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
     (bc76_glue_adj (by norm_num) hL3).symm
   exact ((hreach1.trans hglue1.reachable).trans hglue3.reachable).trans hreach3.symm
 
@@ -299,8 +302,8 @@ lemma bc76_buffer_insufficient {L : ℕ} (hL : 3 ≤ L) :
     bc67_IsGnTrifurcation bc60_upperLines L (0 : Site 2) ∧
     Disjoint (bc61_boxAround 2 L (0 : Site 2)) (bc61_boxAround 2 L (bc76_yBuf L)) ∧
     ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
-      ⟨bc57_pt ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
-      ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
+      ⟨faceCorner00 ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
+      ⟨faceCorner00 ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
   ⟨bc67_upperLines_is_G_n_trifurcation hL, bc76_yBuf_box_disjoint L,
    bc76_gnCut_reconnect_upperLines hL⟩
 
@@ -317,8 +320,9 @@ lemma bc76_status :
       bc67_IsGnTrifurcation bc60_upperLines L (0 : Site 2) ∧
       Disjoint (bc61_boxAround 2 L (0 : Site 2)) (bc61_boxAround 2 L (bc76_yBuf L)) ∧
       ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
-        ⟨bc57_pt ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
-        ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩) := by
+        ⟨faceCorner00 ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
+        ⟨faceCorner00 ((L : ℤ) + 1) 3,
+          by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩) := by
   refine ⟨?_, ?_, ?_⟩
   · intro L y y' hres hne
     exact ⟨bc76_far_of_sameBufferResidue hres hne, bc76_bufferGap hres hne⟩

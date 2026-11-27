@@ -151,7 +151,9 @@ lemma maxInfl_half_ge_var_mul_log_card_div_card [Nonempty E]
       have hmain : V * Real.log n ≤ n * δ := hVlog.trans hKKL
       exact (div_le_iff₀ hn).2 (by simpa [mul_comm] using hmain)
 
-/-- KKL lower bound at `p = 1/2` (unconditional). -/
+/-- Kahn–Kalai–Linial at `p = 1/2`: for a nonempty finite set `E` and every event `A ⊆ {0, 1}^E`,
+  some coordinate `e` has influence (pivotal probability) at least `P(A) (1 - P(A)) log |E| / |E|`
+  under the uniform product measure `P`. -/
 lemma maxInfluence_half [Nonempty E]
     (A : Set (ConfigSpace E)) :
     ∃ e : E,

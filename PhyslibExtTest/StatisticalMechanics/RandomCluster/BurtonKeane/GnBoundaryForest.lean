@@ -28,9 +28,10 @@ namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.GnBounda
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation _root_.StatMech.Walls
 
 -- The boxes around `(0, 0)` and `(5, 0)` are disjoint, but the first upper line joins them.
-example : Disjoint (bc61_boxAround 2 2 (0 : Site 2)) (bc61_boxAround 2 2 (bc57_pt (2 * 2 + 1) 0)) ∧
-    Connected 2 bc60_upperLines (bc57_pt ((2 : ℕ) + 1) 1)
-      (bc57_pt (2 * (2 : ℕ) + 1 + ((2 : ℕ) + 1)) 1) := by
+example : Disjoint (bc61_boxAround 2 2 (0 : Site 2))
+      (bc61_boxAround 2 2 (faceCorner00 (2 * 2 + 1) 0)) ∧
+    Connected 2 bc60_upperLines (faceCorner00 ((2 : ℕ) + 1) 1)
+      (faceCorner00 (2 * (2 : ℕ) + 1 + ((2 : ℕ) + 1)) 1) := by
   simpa using (bc68_status (d := 2)).2.2 2
 
 -- Three separated arms reach three distinct boundary sites.

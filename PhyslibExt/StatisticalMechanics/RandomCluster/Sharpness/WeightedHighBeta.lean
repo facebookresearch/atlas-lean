@@ -35,8 +35,8 @@ together with subcritical exponential decay.
 ## ii. Key results
 
 - `fkTheta_le_weightedPhaseInfiniteTheta`: comparison with the homogeneous model.
-- `exists_weightedSelectedPhaseHighBetaWitness_of_two_le`: a high-β witness exists for `d ≥ 2`
-  (unconditional).
+- `exists_weightedSelectedPhaseHighBetaWitness_of_two_le`: a high-β witness exists for `d ≥ 2`,
+  `q ≥ 1` and couplings `J ≥ J_min > 0`, phase covariant for a surjective phase map.
 
 ## iii. Table of contents
 
@@ -382,7 +382,10 @@ lemma exists_weightedSelectedPhaseSum_pos_of_two_le
   unfold weightedSelectedPhaseSum
   exact Finset.sum_pos (fun a ha => hphase a) Finset.univ_nonempty
 
-/-- A high-β witness exists for `d ≥ 2` (unconditional). -/
+/-- For `d ≥ 2`, a nonempty finite set of phases, `q ≥ 1` and couplings `J ≥ Jmin > 0` on `ℤ^d` that
+  are phase covariant (`PhaseCovariant J phase phaseJ`) for a surjective phase map, there are `β₀`
+  and `β*` with `0 < β* < β₀` such that the sum over the phases of the infinite-volume percolation
+  probabilities at `β*` is positive (`weightedSelectedPhaseHighBetaWitness`). -/
 lemma exists_weightedSelectedPhaseHighBetaWitness_of_two_le
     (d : Nat) (hd : 2 <= d) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)

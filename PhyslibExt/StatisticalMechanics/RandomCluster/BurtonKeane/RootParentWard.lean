@@ -83,9 +83,10 @@ variable {d : ℕ}
 
 /-! ## A. Definitions -/
 
-/-- The root-ward parent condition for `rank` and `par`: if the rank is injective on connected
-trifurcations, then for connected trifurcations with `rank x < rank y` and `x ≠ par y`, the
-parent of `y` separates `y` from `x`. -/
+/-- The root-ward parent condition for `rank` and `par`: if `rank` is injective on connected
+trifurcations of the box `Λ_n`, then for any two distinct connected trifurcations `x`, `y` of `Λ_n`
+with `rank x < rank y` and `x ≠ par y`, where `par y` is a trifurcation of `Λ_n` arm-adjacent to
+`y` and of lower rank, there is an open walk from `x` to `par y` that avoids `y`. -/
 def bc43_RootWardRootParent (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d) : Prop :=
   (∀ a, a ∈ box d n → IsTrifurcation d ω a → ∀ b, b ∈ box d n → IsTrifurcation d ω b →

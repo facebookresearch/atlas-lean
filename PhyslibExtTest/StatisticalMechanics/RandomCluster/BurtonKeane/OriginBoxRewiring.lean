@@ -21,6 +21,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginBo
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.OriginBoxRewiring
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation _root_.StatMech.Walls
@@ -33,7 +36,7 @@ example (n : ℕ) (h : bc9_BoxOriginReach 2 n) : bc8_OriginRewiring 2 n :=
 example (n : ℕ) (h : bc9_BoxOriginReach 2 n) (ω : ConfigSpace (Sym2 (Site 2)))
     (hω : ω ∈ threeMeetBox 2 n) :
     ∃ W : Finset (Sym2 (Site 2)), (∀ e ∈ W, (0 : Site 2) ∉ e) ∧
-      IsCanonicalTrifurcation 2 (forceOpenFinset W ω) 0 :=
+      IsEncounterPoint 2 (forceOpenFinset W ω) 0 :=
   bc9_canonicalTrif_of_boxOriginReach n h ω hω
 
 

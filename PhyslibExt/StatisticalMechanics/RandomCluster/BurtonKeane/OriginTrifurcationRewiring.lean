@@ -50,6 +50,9 @@ trifurcation condition with the counting hypotheses. Those hypotheses are unsati
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph
 open StatMech.Lattice StatMech.ConfigSpace
 open StatMech.Percolation
@@ -78,7 +81,7 @@ lemma bc12_openAdj_forceOpen {ω : ConfigSpace (Sym2 (Site d))} (W : Finset (Sym
   exact le_antisymm (by simp) hle
 
 lemma bc12_canonicalTrif_discharges_boxReach (ω : ConfigSpace (Sym2 (Site d)))
-    (htri : IsCanonicalTrifurcation d ω 0) :
+    (htri : IsEncounterPoint d ω 0) :
     ∃ W : Finset (Sym2 (Site d)),
       (∀ e ∈ W, (0 : Site d) ∉ e) ∧
       ∃ y₁ y₂ y₃ : Site d,
@@ -109,7 +112,7 @@ lemma bc12_canonicalTrif_discharges_boxReach (ω : ConfigSpace (Sym2 (Site d)))
 /-- Every configuration with three distinct infinite clusters meeting `B_n` has a canonical
 trifurcation at the origin. -/
 def bc12_BoxOriginTrifurcation (d n : ℕ) : Prop :=
-  ∀ ω ∈ threeMeetBox d n, IsCanonicalTrifurcation d ω 0
+  ∀ ω ∈ threeMeetBox d n, IsEncounterPoint d ω 0
 
 lemma bc12_boxOriginReach_of_trifurcation (n : ℕ) (h : bc12_BoxOriginTrifurcation d n) :
     bc9_BoxOriginReach d n := by
@@ -123,11 +126,11 @@ lemma bc12_originRewiring_of_trifurcation (n : ℕ) (h : bc12_BoxOriginTrifurcat
 lemma bc12_canonicalTrif_of_trifurcation (n : ℕ) (h : bc12_BoxOriginTrifurcation d n)
     (ω : ConfigSpace (Sym2 (Site d))) (hω : ω ∈ threeMeetBox d n) :
     ∃ W : Finset (Sym2 (Site d)), (∀ e ∈ W, (0 : Site d) ∉ e) ∧
-      IsCanonicalTrifurcation d (forceOpenFinset W ω) 0 :=
+      IsEncounterPoint d (forceOpenFinset W ω) 0 :=
   bc9_canonicalTrif_of_boxOriginReach n (bc12_boxOriginReach_of_trifurcation n h) ω hω
 
 lemma bc12_origin_openIncidence_of_trifurcation (ω : ConfigSpace (Sym2 (Site d)))
-    (htri : IsCanonicalTrifurcation d ω 0) (W : Finset (Sym2 (Site d)))
+    (htri : IsEncounterPoint d ω 0) (W : Finset (Sym2 (Site d)))
     (_hW0 : ∀ e ∈ W, (0 : Site d) ∉ e) :
     ∃ a₁ a₂ a₃ : Site d,
       (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
@@ -154,13 +157,13 @@ lemma bc12_origin_openIncidence_of_trifurcation (ω : ConfigSpace (Sym2 (Site d)
 
 lemma bc12_isolated_origin_not_trifurcation (ω : ConfigSpace (Sym2 (Site d)))
     (hiso : ∀ v : Site d, ¬ (openSubgraph d ω).Adj 0 v) :
-    ¬ IsCanonicalTrifurcation d ω 0 := by
+    ¬ IsEncounterPoint d ω 0 := by
   rintro ⟨a₁, _a₂, _a₃, _, hadj, _, _⟩
   exact hiso a₁ hadj.1
 
 lemma bc12_boxOriginTrifurcation_perOmega_of_canonical (ω : ConfigSpace (Sym2 (Site d)))
-    (htri : IsCanonicalTrifurcation d ω 0) :
-    IsCanonicalTrifurcation d ω 0 ∧
+    (htri : IsEncounterPoint d ω 0) :
+    IsEncounterPoint d ω 0 ∧
     ∃ W : Finset (Sym2 (Site d)),
       (∀ e ∈ W, (0 : Site d) ∉ e) ∧
       ∃ y₁ y₂ y₃ : Site d,

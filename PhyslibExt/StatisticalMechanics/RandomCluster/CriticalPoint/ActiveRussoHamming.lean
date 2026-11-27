@@ -32,12 +32,14 @@ Using FKG for the active measure (`q ≥ 1`), the probability of an increasing e
 expected Hamming distance to `A` is bounded by the covariance of the indicator with the number of
 open edges, which in turn is controlled by the derivative in `p`. Integrating (a Grönwall argument)
 gives `active_russoHammingIntegrated`, which compares the probability of `A` at `p₁ < p₂`. Both
-headlines are unconditional.
+headlines need only `q ≥ 1`, an increasing `A` and parameters in `(0, 1)`.
 
 ## ii. Key results
 
-- `active_russoHamming`: `4 P(A) E[d(ω, A)] ≤` derivative bound (unconditional).
-- `active_russoHammingIntegrated`: integrated comparison between `p₁` and `p₂` (unconditional).
+- `active_russoHamming`: `4 P(A) E[d(ω, A)] ≤` derivative bound, for increasing `A`, `0 < p < 1`
+  and `q ≥ 1`.
+- `active_russoHammingIntegrated`: integrated comparison between `0 < p₁ < p₂ < 1`, for increasing
+  `A` and `q ≥ 1`.
 
 ## iii. Table of contents
 
@@ -132,7 +134,10 @@ lemma active_prob_mul_mean_hamming_le_cov {p q : ℝ}
   unfold activeProbOf activeCov
   nlinarith [hfkg]
 
-/-- `4 P(A) E[d(ω, A)] ≤` derivative bound (unconditional). -/
+/-- For a finite graph `G`, `0 < p < 1`, `q ≥ 1` and an increasing event `A` of its edge
+  configurations, `4 P_p(A) E_p[d(ω, A)]` is at most the derivative of `p ↦ P_p(A)` at `p`, where
+  `P_p` and `E_p` are the random-cluster measure on `G` with edge parameter `p` and cluster weight
+  `q` and its expectation, and `d(ω, A)` is the Hamming distance from `ω` to `A`. -/
 lemma active_russoHamming {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 1 ≤ q) (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :
     4 * activeProbOf G (fun _ => p) q A *
@@ -262,7 +267,10 @@ lemma active_gronwall (q : ℝ) (A : Set (ConfigSpace G.edgeSet))
     Real.exp_sub, mul_div_assoc', le_div_iff₀ he1]
   exact hle
 
-/-- Integrated comparison between `p₁` and `p₂` (unconditional). -/
+/-- For a finite graph `G`, `0 < p₁ < p₂ < 1`, `q ≥ 1` and an increasing event `A` of its edge
+  configurations, `P_{p₁}(A) ≤ P_{p₂}(A) exp(-4 (p₂ - p₁) E_{p₂}[d(ω, A)])`, where `P_p` and `E_p`
+  are the random-cluster measure on `G` with edge parameter `p` and cluster weight `q` and its
+  expectation, and `d(ω, A)` is the Hamming distance from `ω` to `A`. -/
 lemma active_russoHammingIntegrated {p₁ p₂ q : ℝ} (hp₁ : 0 < p₁)
     (hp₁₂ : p₁ < p₂) (hp₂ : p₂ < 1) (hq : 1 ≤ q)
     (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :

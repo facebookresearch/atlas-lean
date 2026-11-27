@@ -146,10 +146,9 @@ lemma bc28_rootedTreeArmSelection_of_claw_via_divergence (ω : ConfigSpace (Sym2
 
 /-! ## C. Divergence for a fixed rank -/
 
-/-- Arm divergence along a fixed `rank`: arm ends with infinite clusters outside the trifurcation
-set
-such that, for connected trifurcations with `rank x < rank y`, the ends lie in different arms at
-`y`. -/
+/-- Arm divergence along a fixed `rank`: arm sites `b x ∈ B_n` connected to each trifurcation `x` of
+`B_n`, with clusters infinite after all trifurcations of `B_n` are removed, such that for connected
+trifurcations with `rank x < rank y`, `b x` and `b y` lie in different arms at `y`. -/
 def bc28_ArmDivergenceForRank (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) : Prop :=
   ∃ b : Site d → Site d,

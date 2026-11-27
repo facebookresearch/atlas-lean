@@ -75,7 +75,9 @@ lemma tex_threeDistinctInfinite_of_threeMeetBox {n : ℕ}
   exact ⟨x₁, x₂, x₃, ⟨hi1, hi2, hi3⟩, hd12, hd13, hd23⟩
 
 /-- Attachment data for `x₁, x₂, x₃`: neighbours `a_i` of the origin in the clusters of `x_i` and a
-finite rewiring away from the origin whose edges keep each of the three clusters closed. -/
+finite set `W` of edges avoiding the origin that keeps each of the three clusters closed, such that
+after opening `W` each `a_i` is connected to `x_i` without the origin, and the cluster of each `x_i`
+without the origin is infinite. -/
 def tex_AttachData (ω : ConfigSpace (Sym2 (Site d))) (x₁ x₂ x₃ : Site d) : Prop :=
   ∃ (a₁ a₂ a₃ : Site d) (W : Finset (Sym2 (Site d))),
     ((hypercubicLattice d).Adj 0 a₁ ∧ (hypercubicLattice d).Adj 0 a₂ ∧
@@ -127,8 +129,9 @@ lemma tex_mergeFree (ω : ConfigSpace (Sym2 (Site d))) (x₁ x₂ x₃ : Site d)
   obtain ⟨W, hreach⟩ := tex_threeClustersReachOrigin ω x₁ x₂ x₃ hd h
   exact ⟨W, mco_mergeFree (forceOpenFinset W ω) hreach⟩
 
-/-- Every configuration with three distinct infinite clusters meeting `B_n` has attachment data for
-any three such box sites. -/
+/-- In every configuration of `threeMeetBox d n` (infinitely many infinite clusters, three of them
+distinct and meeting `B_n`), any three box sites in distinct infinite clusters have attachment
+data. -/
 def tex_BoxAttachData (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∀ x₁ x₂ x₃ : Site d, x₁ ∈ box d n → x₂ ∈ box d n → x₃ ∈ box d n →

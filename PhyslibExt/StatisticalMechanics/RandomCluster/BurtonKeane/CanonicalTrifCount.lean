@@ -17,6 +17,7 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.BoxSurfaceVolume
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
+public import MathlibExt.Probability.Percolation.BurtonKeane.EncounterCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmEndsDistinct
@@ -25,32 +26,31 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmFores
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLeafInjectionBound
 
 /-!
-# Canonical trifurcations
+# Encounter points as trifurcations
 
-A canonical trifurcation is a site with three open neighbours lying in distinct infinite clusters
-after the site is removed; canonical trifurcations are trifurcations, and the three-ray
-configuration has one.
+A canonical trifurcation is an encounter point (`IsEncounterPoint`): a site with three open
+neighbours lying in distinct infinite clusters after the site is removed. Encounter points are
+trifurcations, and the three-ray configuration has one.
 
 ## i. Overview
 
-`IsCanonicalTrifurcation d ω x` asks for three distinct open neighbours of `x` whose clusters in
+`IsEncounterPoint d ω x` asks for three distinct open neighbours of `x` whose clusters in
 `removeSite x ω` are infinite and pairwise disconnected. It implies `IsTrifurcation`, its arms start
 in the next box and reach three distinct boundary sites, and it gives the residue
-`arc_TrifArmsRemoveSiteInfinite`. The canonical count `ctc2_canonTcount` is at most `Tcount` and
-satisfies the same bounds. The three-ray configuration `threeRayConfig` on `ℤ²` (the horizontal axis
-and the upper vertical ray) has a canonical trifurcation at the origin: the three cut rays are
-infinite and pairwise disconnected.
+`arc_TrifArmsRemoveSiteInfinite`. The count `ctc2_canonTcount` of encounter points in a box is at
+most `Tcount` and satisfies the same bounds. The three-ray configuration `threeRayConfig` on `ℤ²`
+(the horizontal axis and the upper vertical ray) has an encounter point at the origin: the three cut
+rays are infinite and pairwise disconnected.
 
 ## ii. Key results
 
-- `ctc2_isTrifurcation_of_canonical` : canonical trifurcations are trifurcations.
-- `ctc2_isCanonicalTrifurcation_threeRay` : the three-ray configuration has a canonical
-  trifurcation.
+- `ctc2_isTrifurcation_of_canonical` : encounter points are trifurcations.
+- `ctc2_isCanonicalTrifurcation_threeRay` : the three-ray configuration has an encounter point.
 
 ## iii. Table of contents
 
-- A. Canonical trifurcations
-- B. The canonical count
+- A. Encounter points
+- B. The count of encounter points
 - C. The three-ray configuration
 
 ## iv. References
@@ -63,6 +63,7 @@ infinite and pairwise disconnected.
 
 open Set SimpleGraph Finset
 open StatMech.Lattice StatMech.ConfigSpace
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted (IsEncounterPoint)
 
 namespace StatMech
 
@@ -70,19 +71,7 @@ namespace Percolation
 
 variable {d : ℕ}
 
-/-! ## A. Canonical trifurcations -/
-
-/-- `x` is a canonical trifurcation of `ω`: three distinct open neighbours of `x` have infinite,
-pairwise disconnected clusters after `x` is removed. -/
-def IsCanonicalTrifurcation (d : ℕ) (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) : Prop :=
-  ∃ a₁ a₂ a₃ : Site d,
-    (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
-    ((openSubgraph d ω).Adj x a₁ ∧ (openSubgraph d ω).Adj x a₂ ∧ (openSubgraph d ω).Adj x a₃) ∧
-    ((cluster d (removeSite x ω) a₁).Infinite ∧ (cluster d (removeSite x ω) a₂).Infinite ∧
-      (cluster d (removeSite x ω) a₃).Infinite) ∧
-    (¬ Connected d (removeSite x ω) a₁ a₂ ∧
-      ¬ Connected d (removeSite x ω) a₁ a₃ ∧
-      ¬ Connected d (removeSite x ω) a₂ a₃)
+/-! ## A. Encounter points -/
 
 lemma ctc2_cluster_removeSite_subset (x a : Site d) (ω : ConfigSpace (Sym2 (Site d))) :
     cluster d (removeSite x ω) a ⊆ cluster d ω a := by
@@ -101,7 +90,7 @@ lemma ctc2_cluster_removeSite_subset (x a : Site d) (ω : ConfigSpace (Sym2 (Sit
   exact ⟨w.map f⟩
 
 lemma ctc2_isTrifurcation_of_canonical {ω : ConfigSpace (Sym2 (Site d))} {x : Site d}
-    (h : IsCanonicalTrifurcation d ω x) : IsTrifurcation d ω x := by
+    (h : IsEncounterPoint d ω x) : IsTrifurcation d ω x := by
   obtain ⟨a₁, a₂, a₃, hne, hadj, hinf, hsep⟩ := h
   refine ⟨a₁, a₂, a₃, hne, ⟨hadj.1.reachable, hadj.2.1.reachable, hadj.2.2.reachable⟩, ?_, hsep⟩
   refine ⟨?_, ?_, ?_⟩
@@ -114,7 +103,7 @@ lemma ctc2_arm_in_box_succ {ω : ConfigSpace (Sym2 (Site d))} {x a : Site d} {n 
   arc_neighbour_in_box_succ hx hadj.1
 
 lemma ctc2_canonical_three_disjoint_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    {x : Site d} (hxbox : x ∈ box d n) (htri : IsCanonicalTrifurcation d ω x) :
+    {x : Site d} (hxbox : x ∈ box d n) (htri : IsEncounterPoint d ω x) :
     ∃ a₁ a₂ a₃ z₁ z₂ z₃ : Site d,
       ((openSubgraph d ω).Adj x a₁ ∧ (openSubgraph d ω).Adj x a₂ ∧ (openSubgraph d ω).Adj x a₃) ∧
       (z₁ ∈ vertexBoundary d (n + 1) ∧ z₂ ∈ vertexBoundary d (n + 1) ∧
@@ -133,7 +122,7 @@ lemma ctc2_canonical_three_disjoint_boundary (ω : ConfigSpace (Sym2 (Site d))) 
   exact ⟨a₁, a₂, a₃, z₁, z₂, z₃, hadj, hzb, hzc, hzd, hzne⟩
 
 lemma ctc2_armsRemoveSiteInfinite_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x) :
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x) :
     arc_TrifArmsRemoveSiteInfinite ω n := by
   intro x hxbox htri
   obtain ⟨a₁, a₂, a₃, hne, hadj, hinf, hsep⟩ := hcanon x hxbox htri
@@ -162,12 +151,12 @@ lemma ctc2_count_of_subsingleton (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (h
   StatMech.Percolation.bk2_Tcount_le_boundary_of_disjointArmEnds ω n hn
       (bk2_disjointArmEnds_of_subsingleton ω n hsub)
 
-/-! ## B. The canonical count -/
+/-! ## B. The count of encounter points -/
 
 open Classical in
-/-- The number of canonical trifurcations in the box of radius `n`. -/
+/-- The number of encounter points in the box of radius `n`. -/
 noncomputable def ctc2_canonTcount (d : ℕ) (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : ℕ :=
-  ((boxFinsetBK d n).filter (fun x => IsCanonicalTrifurcation d ω x)).card
+  ((boxFinsetBK d n).filter (fun x => IsEncounterPoint d ω x)).card
 
 lemma ctc2_canonTcount_le_Tcount (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
     ctc2_canonTcount d ω n ≤ Tcount d ω n := by
@@ -194,12 +183,7 @@ namespace CtcWitness
 
 /-! ## C. The three-ray configuration -/
 
-/-- The site `(k, 0)` of `ℤ²`. Same statement as `arc_p`; kept because ABBoundaryLimit,
-AnySegmentsIntersect, Buneman, Clocked, GeometricDual, HalfPlaneCage, HalfPlaneStripUnion,
-KramersWannierEvenToCut, MengerTrifurcation, NeighbourBoxConnect, OffSupportConnected,
-PadicPolynomialDilatation, RFibonacciPolynomialWanted, ReachesExteriorConnected,
-ScottishBook69Wanted, SecondOrderGenFunIntegerValuesWanted, SequenceAlignment, SmithWaterman,
-SylvesterCoinDistinctOddPrimes, TwoPatternAvoidanceCountsWanted, VanSchooten use it. -/
+/-- The site `(k, 0)` of `ℤ²`. -/
 def px (k : ℤ) : Site 2 := ![k, 0]
 
 /-- The site `(0, k)` of `ℤ²`. -/
@@ -479,7 +463,7 @@ end CtcWitness
 
 open CtcWitness in
 lemma ctc2_isCanonicalTrifurcation_threeRay :
-    ∃ (ω : ConfigSpace (Sym2 (Site 2))) (x : Site 2), IsCanonicalTrifurcation 2 ω x := by
+    ∃ (ω : ConfigSpace (Sym2 (Site 2))) (x : Site 2), IsEncounterPoint 2 ω x := by
   classical
   refine ⟨threeRayConfig, px 0, px 1, py 1, px (-1), ?_, ?_, ?_, ?_⟩
   · refine ⟨?_, ?_, ?_⟩

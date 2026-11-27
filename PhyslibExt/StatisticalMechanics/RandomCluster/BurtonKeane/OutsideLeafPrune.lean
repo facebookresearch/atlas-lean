@@ -119,9 +119,9 @@ lemma bc87_witness_upperLines_arms_reach {L : ℕ} (hL : 3 ≤ L) (n : ℕ) :
 lemma bc87_witness_upperLines_N_top_cut_fails (L : ℕ) :
     numInfiniteClusters 2 bc60_upperLines = ⊤ ∧
       (Disjoint (bc61_boxAround 2 L (0 : Site 2))
-          (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
+          (bc61_boxAround 2 L (faceCorner00 (2 * (L : ℤ) + 1) 0)) ∧
         Connected 2 bc60_upperLines
-          (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) :=
+          (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) :=
   ⟨bc60_numInfiniteClusters_top, bc64_arms_can_share_boundary L⟩
 
 /-! ## B. Summary -/

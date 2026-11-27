@@ -76,7 +76,7 @@ example : bc67_IsGnTrifurcation bc60_upperLines 3 (0 : Site 2) ∧
 
 -- Removing the box severs the lines at heights one and two.
 example : ¬ (bc67_contractedLattice bc60_upperLines 3 0).Reachable
-    (bc57_pt ((3 : ℕ) + 1) 1) (bc57_pt ((3 : ℕ) + 1) 2) :=
+    (faceCorner00 ((3 : ℕ) + 1) 1) (faceCorner00 ((3 : ℕ) + 1) 2) :=
   bc67_upperLines_Gn_severs le_rfl
 
 -- The trifurcation has three incident, pairwise unreachable arms.

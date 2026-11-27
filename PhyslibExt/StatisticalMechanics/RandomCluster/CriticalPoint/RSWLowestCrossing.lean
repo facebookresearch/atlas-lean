@@ -35,13 +35,15 @@ rotation by `π` relate right and left diagonal events. The connector events of 
 right and a left diagonal path through the vertical axis; a dual reflection of the face-dual
 configuration shows each has probability at least `1/2`, given the self-duality hypothesis `hdual`
 of the `*_of_dual_reflection` lemmas. `rlc_square_half` and `rlc_half_rightDiagonal_unconditional` /
-`rlc_half_leftDiagonal_unconditional` are unconditional. The `Rlc*Property` / `Rlc*Reachability`
-predicates are hypotheses of intermediate lemmas, not proved here.
+`rlc_half_leftDiagonal_unconditional` need only a positive size (`m > 0`, `n > 0`). The
+`Rlc*Property` / `Rlc*Reachability` predicates are hypotheses of intermediate lemmas, not proved
+here.
 
 ## ii. Key results
 
-- `rlc_square_half`: `1/2 ≤ P(horizontal crossing of [0, m]²)` at `p = 1/2` (unconditional).
-- `rlc_half_rightDiagonal_unconditional`: `1/32 ≤ P(right diagonal event)` (unconditional).
+- `rlc_square_half`: `1/2 ≤ P(horizontal crossing of [0, m]²)` at `p = 1/2`, for every `m > 0`.
+- `rlc_half_rightDiagonal_unconditional`: `1/32 ≤ P(right diagonal event)` at `p = 1/2`, for every
+  `n > 0`.
 - `rlc_mixedWiredConnector_half_of_dual_reflection`: connector probability `≥ 1/2`, conditional on
   the dual-reflection hypothesis `hdual`.
 - `rlc_mixedWiredConnector_glues_horizontal`: open diagonal paths plus a connector give a horizontal
@@ -1975,7 +1977,8 @@ lemma rlc_horizontalCrossing_dependsOn (a b c d : ℤ) :
   rw [← rlc_lrRestricted_univ]
   exact rlc_lrRestrictedEvent_dependsOn a b c d Set.univ Set.univ
 
-/-- `1/2 ≤ P(horizontal crossing of [0, m]²)` at `p = 1/2` (unconditional). -/
+/-- Under Bernoulli bond percolation on `ℤ²` with `p = 1/2`, for every integer `m > 0` the square
+  `[0, m]²` has an open left–right crossing with probability at least `1/2`. -/
 lemma rlc_square_half (m : ℤ) (hm : 0 < m) :
     (1 : ℝ) / 2 ≤ halfMeasure.real
       (horizontalCrossingEvent 0 m 0 m) := by
@@ -2016,14 +2019,18 @@ lemma rlc_centered_square_vertical_half (n : ℤ) (hn : 0 < n) :
       show 2 * n + -n = n by ring] using htrans.symm
   rwa [heq]
 
-/-- `1/32 ≤ P(right diagonal event)` (unconditional). -/
+/-- Under Bernoulli bond percolation on `ℤ²` with `p = 1/2`, for every integer `n > 0` the rectangle
+  `[0, 2n] × [-n, n]` has, with probability at least `1/32`, an open left–right crossing from the
+  lower half of its left side to the upper half of its right side (`rlc_rightDiagonal n`). -/
 lemma rlc_half_rightDiagonal_unconditional (n : ℤ) (hn : 0 < n) :
     (1 : ℝ) / 32 ≤ halfMeasure.real (rlc_rightDiagonal n) :=
   rlc_half_rightDiagonal_lower_bound n hn
     (rlc_centered_square_horizontal_half n hn)
     (rlc_centered_square_vertical_half n hn)
 
-/-- `1/32 ≤ P(left diagonal event)` at `p = 1/2` (unconditional). -/
+/-- Under Bernoulli bond percolation on `ℤ²` with `p = 1/2`, for every integer `n > 0` the rectangle
+  `[-2n, 0] × [-n, n]` has, with probability at least `1/32`, an open left–right crossing from the
+  lower half of its left side to the upper half of its right side (`rlc_leftDiagonal n`). -/
 lemma rlc_half_leftDiagonal_unconditional (n : ℤ) (hn : 0 < n) :
     (1 : ℝ) / 32 ≤ halfMeasure.real (rlc_leftDiagonal n) := by
   rw [rlc_leftDiagonal_prob_eq_right]

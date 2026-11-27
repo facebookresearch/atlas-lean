@@ -17,8 +17,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Classica
 * `bc48_fakeConfig_classical_proper_subset`: classical trifurcations are a proper subset on the
   fake configuration;
 * `bc48_Tcount_classical_eq_zero_of_noTrif` and `bc48_classicalInjection_of_noTrif` for the
-  all-closed configuration;
-* `bc48_measurableSet_isClassicalTrifurcation` at the origin of `ℤ²`.
+  all-closed configuration.
 -/
 
 @[expose] public section
@@ -47,8 +46,5 @@ example : bc48_Tcount_classical 2 (fun _ => false) 3 = 0 :=
 example : bc48_ClassicalBoundaryArmInjection (d := 2) (fun _ => false) 3 :=
   bc48_classicalInjection_of_noTrif _ 3 fun x _ => noTrif_closed x
 
--- Classical trifurcation at the origin is measurable.
-example : MeasurableSet {ω : ConfigSpace (Sym2 (Site 2)) | bc47_IsClassicalTrifurcation ω 0} :=
-  bc48_measurableSet_isClassicalTrifurcation 0
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalTrifCount

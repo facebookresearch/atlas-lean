@@ -47,6 +47,9 @@ the origin) has a canonical trifurcation at the origin, so all these conditions 
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph MeasureTheory
 open StatMech.Lattice StatMech.ConfigSpace
 open StatMech.Percolation StatMech.Percolation.DisjointPaths
@@ -58,7 +61,7 @@ variable {d : ℕ}
 /-! ## A. Results -/
 
 lemma bc21_mengerCore_of_canonicalTrifurcation (ω : ConfigSpace (Sym2 (Site d)))
-    (htri : IsCanonicalTrifurcation d ω 0) : MengerCore ω := by
+    (htri : IsEncounterPoint d ω 0) : MengerCore ω := by
   obtain ⟨a₁, a₂, a₃, hne, hadj, hinf, hsep⟩ := htri
   exact mng_mengerCore_of_neighborClusters ω a₁ a₂ a₃ hne
     ⟨hadj.1.1, hadj.2.1.1, hadj.2.2.1⟩ hinf
@@ -89,13 +92,13 @@ lemma bc21_mengerCore_of_originBranchSurvivalCut (ω : ConfigSpace (Sym2 (Site d
       bc12_cluster_ne_of_not_connected hsep.2.2⟩
 
 lemma bc21_originBranchSurvivalCut_of_canonicalTrifurcation
-    (ω : ConfigSpace (Sym2 (Site d))) (htri : IsCanonicalTrifurcation d ω 0) :
+    (ω : ConfigSpace (Sym2 (Site d))) (htri : IsEncounterPoint d ω 0) :
     bc21_OriginBranchSurvivalCut d ω := by
   obtain ⟨a₁, a₂, a₃, hne, hadj, hinf, hsep⟩ := htri
   exact ⟨a₁, a₂, a₃, hne, ⟨hadj.1.1, hadj.2.1.1, hadj.2.2.1⟩, hinf, hsep⟩
 
 lemma bc21_arm_infinite_removeOrigin (ω : ConfigSpace (Sym2 (Site d)))
-    (htri : IsCanonicalTrifurcation d ω 0) :
+    (htri : IsEncounterPoint d ω 0) :
     ∃ a₁ a₂ a₃ : Site d,
       (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
       ((hypercubicLattice d).Adj 0 a₁ ∧ (hypercubicLattice d).Adj 0 a₂ ∧
@@ -121,7 +124,7 @@ lemma bc21_px0_eq_origin : px 0 = (0 : Site 2) := by
 
 open StatMech.Percolation.CtcWitness in
 lemma bc21_threeRay_trif_at_origin :
-    IsCanonicalTrifurcation 2 threeRayConfig 0 := by
+    IsEncounterPoint 2 threeRayConfig 0 := by
   classical
   rw [← bc21_px0_eq_origin]
   refine ⟨px 1, py 1, px (-1), ?_, ?_, ?_, ?_⟩

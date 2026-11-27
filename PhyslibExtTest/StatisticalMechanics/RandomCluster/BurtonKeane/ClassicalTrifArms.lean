@@ -16,11 +16,13 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Classica
 
 * `bc47_isTrifurcation_fakeConfig` and `bc47_not_classical_fakeConfig`: an explicit
   trifurcation that is not classical;
-* `bc47_arc_residue_fails_on_fakeConfig` at `n = 2`;
-* `bc47_isTrifurcation_of_classical` in conditional form.
+* `bc47_arc_residue_fails_on_fakeConfig` at `n = 2`.
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
 
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalTrifArms
 
@@ -29,15 +31,11 @@ open _root_.StatMech.Percolation _root_.StatMech.Walls
 
 -- The fake configuration has a trifurcation at `bc47_x` that is not classical.
 example : IsTrifurcation 2 bc47_fakeConfig bc47_x := bc47_isTrifurcation_fakeConfig
-example : ¬ bc47_IsClassicalTrifurcation bc47_fakeConfig bc47_x := bc47_not_classical_fakeConfig
+example : ¬ IsEncounterPoint 2 bc47_fakeConfig bc47_x := bc47_not_classical_fakeConfig
 
 -- The remove-site arm residue fails on the fake configuration.
 example : ¬ arc_TrifArmsRemoveSiteInfinite bc47_fakeConfig 2 :=
   bc47_arc_residue_fails_on_fakeConfig 2
 
--- Classical trifurcations are trifurcations.
-example {d : ℕ} (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
-    (h : bc47_IsClassicalTrifurcation ω x) : IsTrifurcation d ω x :=
-  bc47_isTrifurcation_of_classical ω x h
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalTrifArms

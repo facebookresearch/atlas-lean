@@ -77,9 +77,11 @@ variable {d : ℕ}
 
 /-! ## A. Results -/
 
-/-- Self down arms for `B_n`: infinite arm sites, a rank injective on connected trifurcations and a
-down neighbour for each trifurcation such that its arm avoids the side of every lower connected
-trifurcation. -/
+/-- Self down arms for `B_n`: an arm-end map `b`, a rank injective on connected trifurcations of
+`B_n` and a site map `dn` such that every trifurcation `x` of `B_n` has `b x ∈ B_n` joined to `x`
+by an open path, with an infinite cluster after every trifurcation of `B_n` is removed; and for any
+two distinct connected trifurcations `x`, `y` of `B_n` with `rank x < rank y`, after `y` is
+removed, `dn y` is connected to `b y` but not to `b x`. -/
 def bc36_SelfDownArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (b : Site d → Site d) (rank : Site d → ℕ ×ₗ ℕ) (dn : Site d → Site d),
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

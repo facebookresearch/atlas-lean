@@ -125,8 +125,9 @@ lemma bc71_deg3_of_cutArms_subtype (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) 
   exact bc71_deg3_of_three_neighbours G hadj₁ hadj₂ hadj₃ hv12 hv13 hv23
 
 /-- A forest-neighbour certificate on the contracted lattice: a finite forest without isolated
-vertices into which the coarse trifurcations of `B_R` embed injectively, each with three
-distinct neighbours, and whose leaves lie on the boundary of `B_R`. -/
+vertices on a set of sites, into which the contracted-lattice trifurcations `y` of `B_R` embed
+injectively, each with three forest neighbours that are pairwise unreachable in the contracted
+lattice at `y`, and whose leaves lie on the boundary of `B_R`. -/
 def bc71_GnForestNeighbours (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
   ∃ (S : Set (Site d)) (_ : Fintype (↑S : Type)) (_ : Nonempty (↑S : Type))
     (G : SimpleGraph (↑S : Type)) (_ : DecidableRel G.Adj) (ιU : Site d → (↑S : Type)),

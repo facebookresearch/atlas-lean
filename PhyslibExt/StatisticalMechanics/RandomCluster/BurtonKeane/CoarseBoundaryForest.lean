@@ -31,8 +31,8 @@ the coarse step, `μ(N = ⊤) = 0`. Coarse arms reach the boundary unconditional
 
 - `StatMech.Percolation.flc2_leaf_card_le_boundary` (in `SpanningTreeLeafCount`) : branch vertices
   from boundary leaves.
-- `StatMech.Walls.bc65_infiniteClusters_top_null_of_connectedForest_route` (in
-  `CoarseForestConnected`) : `μ(N = ⊤) = 0` from the connected forest.
+- `StatMech.Walls.bc62_infiniteClusters_top_null_of_forest_route` (in
+  `CoarseTrifRemoveSites`) : `μ(N = ⊤) = 0` from the coarse forest leaf count.
 
 ## iii. Table of contents
 
@@ -71,12 +71,12 @@ lemma bc66_status :
         ≤ (univ.filter (fun v => G.degree v = 1)).card) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (z₀ z₁ : Site d),
       z₀ ∈ vertexBoundary d R → z₁ ∈ vertexBoundary d R → z₀ ≠ z₁ →
-      bc64_CoarseBoundaryInjection ω L R → bc65_ConnectedCoarseForest ω L R) ∧
+      bc64_CoarseBoundaryInjection ω L R → bc61_CoarseForestLeafCount ω L R) ∧
     (∀ (L : ℕ),
       Disjoint (bc61_boxAround 2 L (0 : Site 2))
-          (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
+          (bc61_boxAround 2 L (faceCorner00 (2 * (L : ℤ) + 1) 0)) ∧
         Connected 2 bc60_upperLines
-          (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) := by
+          (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro ω L R hR y a habox hinf
     exact StatMech.Walls.bc63_coarseArm_reaches_boundary ω L R hR y a habox hinf
@@ -85,7 +85,7 @@ lemma bc66_status :
   · intro V _ _ G _ hacyc hmin
     exact Percolation.flc2_forest_internal_le_leaves G hacyc hmin
   · intro ω L R z₀ z₁ hz₀ hz₁ hzne hinj
-    exact StatMech.Walls.bc65_connectedForest_of_boundaryInjection ω L R hz₀ hz₁ hzne hinj
+    exact StatMech.Walls.bc64_coarseArmEmbedding_of_boundaryInjection ω L R hz₀ hz₁ hzne hinj
   · intro L
     exact bc64_arms_can_share_boundary L
 

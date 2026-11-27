@@ -50,6 +50,9 @@ canonical interior trifurcations.
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph Finset
 open StatMech StatMech.Lattice StatMech.ConfigSpace
 
@@ -88,7 +91,7 @@ open StatMech.Percolation.CtcWitness
 /-! ## B. A trifurcation at the boundary -/
 
 lemma threeRay_canonical_origin :
-    IsCanonicalTrifurcation 2 threeRayConfig (px 0) := by
+    IsEncounterPoint 2 threeRayConfig (px 0) := by
   classical
   refine ⟨px 1, py 1, px (-1), ?_, ?_, ?_, ?_⟩
   · refine ⟨?_, ?_, ?_⟩
@@ -174,7 +177,7 @@ lemma bc53_harmbox_of_interior (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn 
     (hint x hxbox htri)
 
 lemma bc53_count_of_interior (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x)
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (hint : ∀ x, x ∈ box d n → IsTrifurcation d ω x → x ∈ box d (n - 1)) :
     Tcount d ω n ≤ boxSV_boundaryCard d n :=
   StatMech.Percolation.cfc_Tcount_le_boundary_of_canonical ω n hn hcanon (bc53_harmbox_of_interior
@@ -190,7 +193,7 @@ lemma bc53_status :
         ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite →
           a ∈ box d (n + 1)) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      (∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x) →
+      (∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x) →
       (∀ x, x ∈ box d n → IsTrifurcation d ω x →
         ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n) →
       Tcount d ω n ≤ boxSV_boundaryCard d n) :=

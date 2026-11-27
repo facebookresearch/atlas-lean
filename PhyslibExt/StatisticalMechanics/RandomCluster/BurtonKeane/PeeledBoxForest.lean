@@ -154,9 +154,10 @@ lemma osf_spanForest_degree_of_acyclic {V : Type*} [Fintype V] (F₀ : SimpleGra
   rw [Set.toFinset_congr hns]
 
 open Classical in
-/-- A peeled box forest for `B_n`: an open graph on finitely many sites whose spanning forest has no
-isolated vertices, keeps three separated neighbours at each trifurcation of `B_n`, and has its
-leaves on the boundary. -/
+/-- A peeled box forest for `B_n`: an open graph on a finite nonempty set of sites whose spanning
+forest has no isolated vertices and has its leaves on the boundary, containing each trifurcation `x`
+of `B_n` together with three other vertices reachable from `x` in the graph that are pairwise
+disconnected in `ω` once `x` is removed. -/
 def osf_PeeledBoxForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vset : Finset (Site d)) (_ : Nonempty (↑Vset : Type)) (F₀ : SimpleGraph (↑Vset : Type))
     (vx : Site d → (↑Vset : Type)) (b : Site d → Fin 3 → (↑Vset : Type)),

@@ -23,13 +23,17 @@ differ by a factor `q ^ k` with `k ∈ {-1, 0, 1}`.
 Configurations on the torus edges (`TorusAmbientConfig`) carry the random-cluster weight
 `torusAmbientFKWeight` and probability `torusAmbientProbability`. The duality bijection maps the
 defect `δ` to `2 - δ`, and at `p_sd(q)` the weight ratio is `q ^ (δ - 1)`. Since `δ ∈ {0, 1, 2}`,
-the probability ratio lies in `{q⁻¹, 1, q}` (`torusAmbientProbability_selfDual_ratio_mem`, `q ≥ 1`).
+the probability ratio lies in `{q⁻¹, 1, q}` for every `q > 0`
+(`torusAmbientProbability_selfDual_ratio_values`); for `q ≥ 1` this gives `q⁻¹ ≤ ratio ≤ q`
+(`torusAmbientProbability_selfDual_ratio_mem`).
 All results are unconditional.
 
 ## ii. Key results
 
 - `torusAmbientFKWeight_selfDual_relation`: weight relation at the self-dual point.
-- `torusAmbientProbability_selfDual_ratio_mem`: the probability ratio is `q⁻¹`, `1` or `q`.
+- `torusAmbientProbability_selfDual_ratio_values`: for `q > 0`, the probability ratio is `q⁻¹`, `1`
+  or `q`.
+- `torusAmbientProbability_selfDual_ratio_mem`: for `q ≥ 1`, `q⁻¹ ≤ ratio ≤ q`.
 
 ## iii. Table of contents
 
@@ -334,7 +338,11 @@ lemma torusAmbientProbability_selfDual_ratio_values
       simpa [mul_assoc] using hrel
     rw [hw, mul_div_cancel_left₀ _ hWD]
 
-/-- The probability ratio is `q⁻¹`, `1` or `q`. -/
+/-- For `L > 2`, `q ≥ 1` and a torus configuration `ω`, the ratio of the random-cluster
+  probabilities of `ω` and of its cell dual at the self-dual point,
+  `torusAmbientProbability L (selfDualPoint q) q ω` divided by
+  `torusAmbientProbability L (selfDualPoint q) q (torusCellDualAmbientConfig L ω)`, satisfies
+  `q⁻¹ ≤ ratio ≤ q`. -/
 lemma torusAmbientProbability_selfDual_ratio_mem
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L)
     {q : ℝ} (hq1 : 1 ≤ q) :

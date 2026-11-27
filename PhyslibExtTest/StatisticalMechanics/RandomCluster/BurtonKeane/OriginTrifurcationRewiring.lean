@@ -22,16 +22,19 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginTr
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.OriginTrifurcationRewiring
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation _root_.StatMech.Walls
 
 -- An isolated origin is not a canonical trifurcation.
-example : ¬ IsCanonicalTrifurcation 2 (fun _ => false) 0 :=
+example : ¬ IsEncounterPoint 2 (fun _ => false) 0 :=
   bc12_isolated_origin_not_trifurcation _ fun v h => by simp at h
 
 -- A canonical trifurcation gives three origin connections after forcing edges away from it.
-example (ω : ConfigSpace (Sym2 (Site 2))) (h : IsCanonicalTrifurcation 2 ω 0) :
+example (ω : ConfigSpace (Sym2 (Site 2))) (h : IsEncounterPoint 2 ω 0) :
     ∃ W : Finset (Sym2 (Site 2)), (∀ e ∈ W, (0 : Site 2) ∉ e) ∧
       ∃ y₁ y₂ y₃ : Site 2, y₁ ≠ 0 ∧ y₂ ≠ 0 ∧ y₃ ≠ 0 := by
   obtain ⟨W, hW, y₁, y₂, y₃, h₁, h₂, h₃, -⟩ := bc12_canonicalTrif_discharges_boxReach ω h
@@ -39,7 +42,7 @@ example (ω : ConfigSpace (Sym2 (Site 2))) (h : IsCanonicalTrifurcation 2 ω 0) 
 
 -- The box condition is a canonical trifurcation on each configuration of the event.
 example (n : ℕ) (h : bc12_BoxOriginTrifurcation 2 n) (ω : ConfigSpace (Sym2 (Site 2)))
-    (hω : ω ∈ threeMeetBox 2 n) : IsCanonicalTrifurcation 2 ω 0 :=
+    (hω : ω ∈ threeMeetBox 2 n) : IsEncounterPoint 2 ω 0 :=
   h ω hω
 
 

@@ -29,8 +29,8 @@ wires its boundary. The active boundary-conditioned crossing probability equals 
 ## ii. Key results
 
 - `activeBox_crossProb_eq_wiredFull`: active and full wired crossing probabilities agree.
-- `wired_box_differential_inequality`: the OSSS differential inequality for the wired box
-  (unconditional).
+- `wired_box_differential_inequality`: the OSSS differential inequality for the wired box, for
+  `d, n ≥ 1`, `q ≥ 1` and `0 < β ≤ β₀`, with `c > 0` depending on these.
 
 ## iii. Table of contents
 
@@ -237,7 +237,12 @@ noncomputable def wiredActiveDenom (d n : Nat) (q beta : Real) : Real :=
           then (1 : Real) else 0)) / (n : Real)
 
 open Classical in
-/-- The OSSS differential inequality for the wired box (unconditional). -/
+/-- OSSS differential inequality in the box with unit couplings: for `d ≥ 1`, `n ≥ 1`, `q ≥ 1` and
+  `0 < β ≤ β₀`, there is `c > 0` (depending on all of these) with `c θ / D ≤ ∂θ/∂β`, where `θ` is
+  the probability under the wired random-cluster measure on the box `Λ_n` with edge parameters
+  `1 - exp(-β)` and cluster weight `q` that the origin is connected to `∂Λ_n`, and `D` is four times
+  the maximum over sites `x` of `Λ_n` of the average over `j < n` of the probability that `x` is
+  connected to the sites at distance `j` from `x`. -/
 lemma wired_box_differential_inequality
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n)
     (q beta beta0 : Real) (hq : 1 <= q) (hbeta : 0 < beta)

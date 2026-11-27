@@ -137,7 +137,7 @@ lemma bc67_upperLines_is_G_n_trifurcation {L : ℕ} (hL : 3 ≤ L) :
 
 lemma bc67_upperLines_Gn_severs {L : ℕ} (_hL : 3 ≤ L) :
     ¬ (bc67_contractedLattice bc60_upperLines L 0).Reachable
-        (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt ((L : ℤ) + 1) 2) := by
+        (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 ((L : ℤ) + 1) 2) := by
   rw [bc67_Gn_deletion_eq_removeSites]
   exact bc61_upperLines_arm_disconnected (by norm_num)
 
@@ -167,7 +167,7 @@ lemma bc67_Gn_armForest_of_forestData (ω : ConfigSpace (Sym2 (Site d))) (L R : 
       bc67_IsGnTrifurcation ω L z → ιU y = ιU z → y = z)
     (hlammap : ∀ v, G.degree v = 1 → lamL v ∈ vertexBoundary d R)
     (hlaminj : Set.InjOn lamL (univ.filter (fun v => G.degree v = 1))) :
-    bc65_ConnectedCoarseForest ω L R := by
+    bc61_CoarseForestLeafCount ω L R := by
   refine bc65_connectedForest_of_forestData ω L R W G ιU lamL hacyc hmin ?_ ?_ hlammap hlaminj
   · intro y hybox htri
     exact hdeg3 y hybox ((bc67_coarseTrif_is_G_n_trifurcation ω L y).mp htri)
@@ -185,7 +185,7 @@ lemma bc67_Gn_armForest_coarseTcount (ω : ConfigSpace (Sym2 (Site d))) (L R : �
     (hlammap : ∀ v, G.degree v = 1 → lamL v ∈ vertexBoundary d R)
     (hlaminj : Set.InjOn lamL (univ.filter (fun v => G.degree v = 1))) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  bc65_coarseTcount_le_boundary_of_connectedForest ω L R
+  bc61_coarseTcount_le_boundary_of_forest ω L R
     (bc67_Gn_armForest_of_forestData ω L R W G ιU lamL hacyc hmin hdeg3 hιinj hlammap hlaminj)
 
 /-! ## C. Summary -/

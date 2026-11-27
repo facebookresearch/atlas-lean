@@ -54,6 +54,9 @@ canonical and its arms start in the box, the trifurcations carry a global arm fo
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph Finset
 open StatMech StatMech.Lattice StatMech.ConfigSpace
 
@@ -136,7 +139,7 @@ lemma bc52_boundedRegion_forces_cycle (P : Lattice.PlanarZ2Subgraph)
 
 open Classical in
 lemma bc52_globalArmForest_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x)
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
       ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n)
     (hexists : ∃ x, x ∈ box d n ∧ IsTrifurcation d ω x) :
@@ -173,7 +176,7 @@ lemma bc52_status :
       IsEmpty {c : (Lattice.whb_faceRegion (Lattice.imageGraph P)).ConnectedComponent //
         c.supp.Finite}) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), 1 ≤ n →
-      (∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x) →
+      (∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x) →
       (∀ x, x ∈ box d n → IsTrifurcation d ω x →
         ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n) →
       (∃ x, x ∈ box d n ∧ IsTrifurcation d ω x) →

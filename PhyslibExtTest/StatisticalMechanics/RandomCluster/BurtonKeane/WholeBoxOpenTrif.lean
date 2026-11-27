@@ -24,6 +24,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.WholeBox
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.WholeBoxOpenTrif
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation _root_.StatMech.Walls
@@ -35,8 +38,8 @@ example :
   bc58_reconnect_around_origin le_rfl _
 
 -- So the opened box never has a classical trifurcation at the origin.
-example : ¬ bc47_IsClassicalTrifurcation (bc58_boxOpen 2 1 (fun _ => false)) 0 ∧
-    ¬ bc47_IsClassicalTrifurcation (bc58_boxOpen 2 2 bc57_evenLines) 0 :=
+example : ¬ IsEncounterPoint 2 (bc58_boxOpen 2 1 (fun _ => false)) 0 ∧
+    ¬ IsEncounterPoint 2 (bc58_boxOpen 2 2 bc57_evenLines) 0 :=
   ⟨bc58_boxOpen_not_classicalTrif le_rfl _, bc58_evenLines_boxOpen_reconnect (by norm_num)⟩
 
 -- The edge from `(0, 0)` to `(1, 0)` is open after opening `B_1`.

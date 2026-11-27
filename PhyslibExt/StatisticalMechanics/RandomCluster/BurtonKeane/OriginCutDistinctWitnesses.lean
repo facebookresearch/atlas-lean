@@ -126,8 +126,9 @@ lemma bc3_arm_cutInfinite_of_residue (ω : ConfigSpace (Sym2 (Site d)))
   · exact hres x hinf h0
   · exact ⟨x, self_mem_cluster ω x, bc3_cutClusterInfinite_of_originNotMem ω x hinf h0⟩
 
-/-- In every configuration with three distinct infinite clusters meeting `B_n` there are three such
-clusters with witnesses whose clusters stay infinite after the origin is removed. -/
+/-- In every configuration of `threeMeetBox d n` (infinitely many infinite clusters, three of them
+distinct and meeting `B_n`), there are three box sites in distinct infinite clusters with witnesses
+in those clusters whose clusters stay infinite after the origin is removed. -/
 def bc3_DistinctWitnessClusters (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∃ x₁ x₂ x₃ : Site d, x₁ ∈ box d n ∧ x₂ ∈ box d n ∧ x₃ ∈ box d n ∧

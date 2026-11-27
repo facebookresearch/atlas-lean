@@ -14,8 +14,8 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusD
 /-!
 # The torus dual cut graph, face count and defect
 
-The dual of a spanning subgraph of the torus, its face count, the defect `E + c - V - F`, and the
-dual configuration.
+The dual of a spanning subgraph of the torus, its face count, the defect `E - V + c + 1 - F`, and
+the dual configuration.
 
 ## i. Overview
 
@@ -28,7 +28,7 @@ connectivity of the torus as a hypothesis (proved in `TorusConnected`).
 
 ## ii. Key results
 
-- `torusCell_euler`: `V - E + F = c - defect`.
+- `torusCell_euler`: `V - E + F = c + 1 - defect`.
 - `torusCell_numClusters_dualConfig`: clusters of the dual configuration are faces.
 - `torusCellDefect_full`: the full torus has defect `2`.
 
@@ -288,7 +288,9 @@ noncomputable def torusCellFaceCount (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) : ℕ :=
   Nat.card (torusCellDualCutGraph L G).ConnectedComponent
 
-/-- The Euler defect `E + c - V - F` of a spanning subgraph of the torus. -/
+/-- The Euler defect `E - V + c + 1 - F` of a spanning subgraph `G` of the torus, where `E`, `V` and
+  `c` are the numbers of edges, vertices and connected components of `G` and `F` is its face count
+  `torusCellFaceCount L G`. -/
 noncomputable def torusCellDefect (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L)) : ℤ :=
   (G.edgeSet.ncard : ℤ) - Nat.card (ZMod L × ZMod L) +

@@ -238,7 +238,7 @@ lemma bc70_globalForest_of_singleStar (ω : ConfigSpace (Sym2 (Site d))) (L R : 
     · simp only [hlab]; exact habdry 2
 
 lemma bc70_upperLines_arm_ne_zero {R : ℕ} (hR : 1 ≤ R) (i : Fin 3) :
-    bc57_pt (R : ℤ) ((i : ℤ) + 1) ≠ (0 : Site 2) := by
+    faceCorner00 (R : ℤ) ((i : ℤ) + 1) ≠ (0 : Site 2) := by
   intro h
   have := congrArg (fun p => p 0) h
   simp only [bc57_pt_fst] at this
@@ -249,8 +249,8 @@ lemma bc70_upperLines_globalForest {L R : ℕ} (hL : 3 ≤ L) (hR3 : 4 ≤ R)
     (hsingle : ∀ y, y ∈ box 2 R → bc67_IsGnTrifurcation bc60_upperLines L y → y = 0) :
     bc69_Gn_globalForest bc60_upperLines L R := by
   refine bc70_globalForest_of_singleStar bc60_upperLines L R
-    (fun i => bc57_pt (R : ℤ) ((i : ℤ) + 1))
-    (bc69_box_zero_mem 2 R)
+    (fun i => faceCorner00 (R : ℤ) ((i : ℤ) + 1))
+    (by intro i; simp)
     (bc67_upperLines_is_G_n_trifurcation hL)
     hsingle ?_ ?_ ?_
   · intro i

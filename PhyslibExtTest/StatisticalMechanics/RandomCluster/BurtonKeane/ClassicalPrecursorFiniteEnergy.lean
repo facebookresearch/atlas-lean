@@ -18,11 +18,13 @@ Module under test:
 `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalPrecursorFiniteEnergy`
 
 * `bc49_precursor_subset_force_classicalTrif` at explicit sites of `ℤ²`;
-* `bc49_classicalTrif_pos_of_precursor_pos` in conditional form;
-* `bc49_burton_keane_bernoulli_of_routingCover` checked by type.
+* `bc49_classicalTrif_pos_of_precursor_pos` in conditional form.
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
 
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane
 namespace ClassicalPrecursorFiniteEnergy
@@ -38,11 +40,9 @@ example := bc49_precursor_subset_force_classicalTrif (d := 2) (Pi.single 0 1) (P
 example {d : ℕ} (μ : MeasureTheory.Measure (ConfigSpace (Sym2 (Site d))))
     [MeasureTheory.IsProbabilityMeasure μ] (hfe : HasFiniteEnergyMerge μ) (a₁ a₂ a₃ : Site d)
     (hpos : 0 < μ (NeighborTrifPrecursor d a₁ a₂ a₃)) :
-    0 < μ {ω | bc47_IsClassicalTrifurcation ω 0} :=
+    0 < μ {ω | IsEncounterPoint d ω 0} :=
   bc49_classicalTrif_pos_of_precursor_pos μ hfe a₁ a₂ a₃ hpos
 
--- The routing-cover Burton–Keane route, by type.
-example := @bc49_burton_keane_bernoulli_of_routingCover
 
 end ClassicalPrecursorFiniteEnergy
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane

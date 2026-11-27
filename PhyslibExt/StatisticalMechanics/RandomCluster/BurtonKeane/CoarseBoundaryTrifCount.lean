@@ -17,13 +17,13 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicF
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DecoupledForestCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalTrifCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClassicalPrecursorFiniteEnergy
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
 
 /-!
 # Classical trifurcations against the next boundary
 
 The classical trifurcation count in a box is at most the boundary of the next box for every
-configuration, so classical trifurcations have probability zero; with the route this gives
-Burton–Keane uniqueness.
+configuration, so classical trifurcations have probability zero.
 
 ## i. Overview
 
@@ -31,22 +31,19 @@ Each classical trifurcation of the box of radius `n` has three arms through its 
 the box of radius `n + 1`, which reach its boundary in distinct sites. Hence
 `bc48_Tcount_classical d ω n ≤ boxSV_boundaryCard d (n + 1)` for every configuration, and the
 boundary of the next box is negligible. So classical trifurcations have probability zero for every
-translation-invariant measure in `d ≥ 1`, and with the route hypothesis Bernoulli percolation has a
-unique infinite cluster.
+translation-invariant measure in `d ≥ 1`, as `measure_encounter_eq_zero` states.
 
 **Fidelity.** The classical count bound and probability zero are unconditional.
-`bc54_burton_keane_bernoulli` is conditional on the route hypothesis `hroute`.
 
 ## ii. Key results
 
 - `bc54_classicalTcount_le_boundary_succ_all` : the classical count against the next boundary, for
   every configuration.
-- `bc54_burton_keane_bernoulli` : uniqueness from the route hypothesis.
 
 ## iii. Table of contents
 
 - A. The classical count
-- B. Uniqueness
+- B. Summary
 
 ## iv. References
 
@@ -56,6 +53,9 @@ unique infinite cluster.
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint measure_encounter_eq_zero)
 
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
@@ -145,47 +145,7 @@ lemma bc54_boundary_succ_vol_tendsto (d : ℕ) (hd : 1 ≤ d) :
     field_simp
   rwa [heq2] at hmul
 
-/-! ## B. Uniqueness -/
-
-lemma bc54_classicalTrif_prob_eq_zero (μ : Measure (ConfigSpace (Sym2 (Site d))))
-    [IsProbabilityMeasure μ] (hd : 1 ≤ d)
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ) :
-    μ {ω | bc47_IsClassicalTrifurcation ω 0} = 0 :=
-  bc48_classicalTrif_prob_eq_zero μ hinv (fun n => boxSV_boundaryCard d (n + 1))
-    (fun ω n => bc54_classicalTcount_le_boundary_succ_all ω hd n)
-    (fun n => bkc_boxFinsetBK_card_pos d n)
-    (bc54_boundary_succ_vol_tendsto d hd)
-
-/-- **Burton–Keane uniqueness from the route.** For Bernoulli bond percolation in `d ≥ 1` with
-`p > 0`,
-if every box with three distinct infinite clusters meeting it with positive probability has a
-neighbour trifurcation precursor of positive probability, then a.s. `N ∈ {0, 1}`. The classical
-count is bounded unconditionally. Burton and Keane, *Density and uniqueness in percolation* (1989).
--/
-lemma bc54_burton_keane_bernoulli (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hroute : ∀ n : ℕ,
-      0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (threeMeetBox d n) →
-        ∃ a₁ a₂ a₃ : Site d,
-          0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-            (NeighborTrifPrecursor d a₁ a₂ a₃)) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc48_burton_keane_uniqueness_via_merge_classical
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-    (bkc_bernoulli_isErgodic hd p hp1)
-    (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0)
-    (fun n => boxSV_boundaryCard d (n + 1))
-    (fun ω n => bc54_classicalTcount_le_boundary_succ_all ω hd n)
-    (fun n => bkc_boxFinsetBK_card_pos d n)
-    (bc54_boundary_succ_vol_tendsto d hd)
-    (bc49_classical_htrif_of_route (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-      (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0) hroute)
-    (fun k hk2 hktop hk => hmergeGeom_discharged _ k hk2 hktop hk)
+/-! ## B. Summary -/
 
 lemma bc54_witness_boundary_trif_arm_inbox_succ :
     (![(2 : ℤ), 0] : Site 2) ∈ box 2 (1 + 1) :=
@@ -200,9 +160,9 @@ lemma bc54_status (hd : 1 ≤ d) :
       atTop (𝓝 0)) ∧
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ],
       IsTranslationInvariant (G := Multiplicative (Site d)) μ →
-      μ {ω | bc47_IsClassicalTrifurcation ω 0} = 0) :=
+      μ {ω | IsEncounterPoint d ω 0} = 0) :=
   ⟨fun ω n => bc54_classicalTcount_le_boundary_succ_all ω hd n,
    bc54_boundary_succ_vol_tendsto d hd,
-   fun μ _ hinv => bc54_classicalTrif_prob_eq_zero μ hd hinv⟩
+   fun μ _ hinv => measure_encounter_eq_zero μ hd hinv⟩
 
 end StatMech.Walls

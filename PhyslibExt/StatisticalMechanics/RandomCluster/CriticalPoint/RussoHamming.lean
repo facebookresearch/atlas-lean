@@ -26,13 +26,15 @@ measure on a finite set, and its integrated form.
 
 Harris–FKG for the product measure bounds `P(A) · E[d(ω, A)]` by the covariance of the indicator of
 `A` with the number of open edges, which Russo's formula relates to the derivative of `P(A)` in `p`.
-Integration (Grönwall) gives `russoHammingIntegrated`. Both headlines are unconditional.
+Integration (Grönwall) gives `russoHammingIntegrated`. Both headlines need only an increasing `A`
+and parameters in `(0, 1)`.
 `ActiveRussoHamming` is the random-cluster version.
 
 ## ii. Key results
 
-- `russoHamming`: `4 P(A) E[d(ω, A)] ≤` the Russo derivative bound (unconditional).
-- `russoHammingIntegrated`: integrated comparison between `p₁ < p₂` (unconditional).
+- `russoHamming`: `4 P(A) E[d(ω, A)] ≤` the Russo derivative bound, for increasing `A` and
+  `0 < p < 1`.
+- `russoHammingIntegrated`: integrated comparison between `0 < p₁ < p₂ < 1`, for increasing `A`.
 
 ## iii. Table of contents
 
@@ -279,7 +281,10 @@ lemma prob_mul_expect_hamming_le {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
   rw [hNH, hprod, hzero, add_zero] at hfkg
   nlinarith [hfkg]
 
-/-- `4 P(A) E[d(ω, A)] ≤` the Russo derivative bound (unconditional). -/
+/-- For a finite set `E`, `0 < p < 1` and an increasing event `A ⊆ {0, 1}^E`,
+  `4 P_p(A) E_p[d(ω, A)]` is at most the derivative of `p ↦ P_p(A)` at `p`, where `P_p` and `E_p`
+  are the `p`-biased product measure and its expectation and `d(ω, A)` is the Hamming distance from
+  `ω` to `A`. -/
 lemma russoHamming {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
     4 * prob p A * expect p (fun ω => (hammingToSet A ω : ℝ))
@@ -451,7 +456,10 @@ lemma gronwall_prob (A : Set (ConfigSpace E)) (c : ℝ) {p₁ p₂ : ℝ} (hp : 
   rw [le_div_iff₀ hexp1]
   exact hle
 
-/-- Integrated comparison between `p₁ < p₂` (unconditional). -/
+/-- For a finite set `E`, `0 < p₁ < p₂ < 1` and an increasing event `A ⊆ {0, 1}^E`,
+  `P_{p₁}(A) ≤ P_{p₂}(A) exp(-4 (p₂ - p₁) E_{p₂}[d(ω, A)])`, where `P_p` and `E_p` are the
+  `p`-biased product measure and its expectation and `d(ω, A)` is the Hamming distance from `ω` to
+  `A`. -/
 lemma russoHammingIntegrated {p₁ p₂ : ℝ} (hp1 : 0 < p₁) (hp12 : p₁ < p₂) (hp2 : p₂ < 1)
     (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
     prob p₁ A

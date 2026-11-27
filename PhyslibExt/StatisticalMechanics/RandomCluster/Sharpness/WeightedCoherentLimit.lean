@@ -36,8 +36,8 @@ together with subcritical exponential decay.
 ## ii. Key results
 
 - `weightedPhaseWiredTheta_tendsto_infiniteTheta`: finite-volume crossing probabilities converge.
-- `weightedPhaseDiagonalTailConvergence_of_one_le`: diagonal tail convergence for `q ≥ 1`
-  (unconditional).
+- `weightedPhaseDiagonalTailConvergence_of_one_le`: diagonal tail convergence for `q ≥ 1` and
+  positive phase couplings.
 
 ## iii. Table of contents
 
@@ -477,7 +477,10 @@ lemma weightedPhaseWiredTheta_tendsto_infiniteTheta
     exact le_of_tendsto_of_tendsto hshell htheta <| by
       filter_upwards [eventually_ge_atTop 1] with k hk using hshell_le k hk
 
-/-- Diagonal tail convergence for `q ≥ 1` (unconditional). -/
+/-- For `q ≥ 1` and positive phase couplings `phaseJ` on `ℤ^d`, the diagonal tail convergence
+  `WeightedPhaseDiagonalTailConvergence` holds: for every phase `a` and every `β > 0`, the wired
+  crossing probabilities `weightedPhaseWiredTheta d phaseJ a q β k` converge, as `k → ∞`, to the
+  infinite-volume percolation probability of phase `a`. -/
 lemma weightedPhaseDiagonalTailConvergence_of_one_le
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)

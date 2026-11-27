@@ -115,9 +115,10 @@ lemma aed_hall_of_distinctComponents (T' : Finset (Site d))
 
 /-! ## B. Global forest arms -/
 
-/-- Global forest arms for the box of radius `n`: arm ends `b x` with infinite clusters after
-removing
-`x`, lying in pairwise distinct components after removing all trifurcations of the box. -/
+/-- Global forest arms for the box of radius `n`: for each trifurcation `x` of the box, an arm site
+`b x` in the box connected to `x` whose cluster is infinite after all trifurcations of the box are
+removed, such that the arm sites of distinct trifurcations lie in different components after all
+trifurcations of the box are removed. -/
 def aed_GlobalForestArms (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

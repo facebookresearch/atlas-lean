@@ -90,9 +90,10 @@ lemma fld_separate_of_outward_far (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     connected_mono (daep2_removeSites_le_removeSite (tfc_trifFinset ω n) ω hxT) haa'
   exact haout y hyT (Ne.symm hxy) (haa'_single.trans hfar)
 
-/-- Outward arms for `B_n`: each trifurcation has an arm site whose cluster stays infinite after all
-trifurcations are removed, unreachable from the other trifurcations once it is removed, and
-reachable by each other trifurcation when that one is removed. -/
+/-- Outward arms for `B_n`: each trifurcation `x` of `B_n` has an arm site `a ∈ B_n` connected to
+`x` whose cluster stays infinite after all trifurcations of `B_n` are removed, such that once `x` is
+removed `a` is connected to no other trifurcation of `B_n`, and `a` stays connected to `x` when any
+other trifurcation of `B_n` is removed. -/
 def fld_OutwardArm (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∀ x, x ∈ box d n → IsTrifurcation d ω x →
     ∃ a, (a ∈ box d n ∧ Connected d ω x a ∧

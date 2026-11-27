@@ -81,8 +81,7 @@ variable {d : ℕ}
 
 /-! ## A. Arm placements and the rooted order -/
 
-/-- `b x` and `b y` lie in arms at `x` through neighbours `a`, `c` that are disconnected after `x`
-is
+/-- `b x` and `b y` lie in arms at `x` through sites `a`, `c` that are disconnected after `x` is
 removed. -/
 def fsp_ArmPlacement (ω : ConfigSpace (Sym2 (Site d))) (b : Site d → Site d) (x y : Site d) :
     Prop :=
@@ -95,7 +94,9 @@ lemma fsp_singleCutSep_of_armPlacement (ω : ConfigSpace (Sym2 (Site d)))
   obtain ⟨a, c, hdis, hbx, hby⟩ := h
   exact bkfl_arms_separate ω hdis hbx hby
 
-/-- Rooted arm order: arm ends `b x` with arm placements for all connected trifurcations `x ≠ y`. -/
+/-- Rooted arm order: arm ends `b x ∈ B_n` connected to each trifurcation `x` of `B_n`, with
+clusters infinite after all trifurcations of `B_n` are removed, and arm placements
+(`fsp_ArmPlacement`) for all connected trifurcations `x ≠ y`. -/
 def fsp_RootedArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -173,8 +174,9 @@ lemma fsp_inArm_of_witness (ω : ConfigSpace (Sym2 (Site d))) {x a v : Site d}
 
 /-! ## C. The divergent order -/
 
-/-- Divergent arm order: arm ends `b x ≠ x` such that for connected trifurcations `x ≠ y`, `b x` and
-`b y` are in different arms at `x`. -/
+/-- Divergent arm order: arm ends `b x ≠ x` in `B_n`, connected to each trifurcation `x` of `B_n`
+and with clusters infinite after all trifurcations of `B_n` are removed, such that for connected
+trifurcations `x ≠ y`, `b x` and `b y` are in different arms at `x`. -/
 def fsp_DivergentArmOrder (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

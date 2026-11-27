@@ -40,16 +40,16 @@ example : (Finset.univ.filter (fun v => 3 ≤ bc65_cat2G.degree v)).card
 
 -- Disjoint boxes and an upper-lines connection at `L = 3`.
 example : Disjoint (bc61_boxAround 2 3 (0 : Site 2))
-      (bc61_boxAround 2 3 (bc57_pt (2 * ((3 : ℕ) : ℤ) + 1) 0)) ∧
-    Connected 2 bc60_upperLines (bc57_pt (((3 : ℕ) : ℤ) + 1) 1)
-      (bc57_pt (2 * ((3 : ℕ) : ℤ) + 1 + (((3 : ℕ) : ℤ) + 1)) 1) :=
+      (bc61_boxAround 2 3 (faceCorner00 (2 * ((3 : ℕ) : ℤ) + 1) 0)) ∧
+    Connected 2 bc60_upperLines (faceCorner00 (((3 : ℕ) : ℤ) + 1) 1)
+      (faceCorner00 (2 * ((3 : ℕ) : ℤ) + 1 + (((3 : ℕ) : ℤ) + 1)) 1) :=
   (bc66_status (d := 2)).2.2.2.2 3
 
 -- The upper-lines right arm at height `1` reaches the boundary of the radius-4 box.
 example : ∃ z ∈ vertexBoundary 2 4,
     Connected 2 (removeSites (bc61_boxAround 2 3 0) bc60_upperLines)
-      (bc57_pt (((3 : ℕ) : ℤ) + 1) 1) z :=
+      (faceCorner00 (((3 : ℕ) : ℤ) + 1) 1) z :=
   bc63_coarseArm_reaches_boundary bc60_upperLines 3 4 (by norm_num) 0 _
-    (by simp [box, Fin.forall_fin_two, bc57_pt]) (bc61_upperLines_rightArm_infinite le_rfl)
+    (by simp [box, Fin.forall_fin_two, faceCorner00]) (bc61_upperLines_rightArm_infinite le_rfl)
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseBoundaryForest

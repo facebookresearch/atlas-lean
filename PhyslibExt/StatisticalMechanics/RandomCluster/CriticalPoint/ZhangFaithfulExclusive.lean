@@ -19,7 +19,8 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanExteriorClosure
 # Exclusivity of matched crossings and Kesten's theorem
 
 The horizontal crossing of the matched rectangle and the face-dual vertical crossing cannot both
-occur; with Zhang's argument this proves `θ(1/2) = 0` and `p_c = 1/2` for bond percolation on `ℤ²`.
+occur; with Zhang's argument this proves `θ(1/2) = 0` and `p_c = 1/2` for Bernoulli bond
+percolation on the square lattice `ℤ²`.
 
 ## i. Overview
 
@@ -27,13 +28,16 @@ Primal and face-dual walks are embedded in the doubled lattice (`zfe_primalSubdi
 `zfe_faceSubdiv`); a primal crossing and a dual crossing would meet at a shared edge that is both
 open and closed. This proves `zfe_faithfulMatchedExclusive` for every `N`. Combined with
 `ZhangHarris`, the headlines `zfe_percolationProbability_zero` (`θ(1/2) = 0`) and
-`zfe_criticalProbability_eq_half` (`p_c = 1/2`) are unconditional.
+`zfe_criticalProbability_eq_half` (`p_c = 1/2`) are unconditional: they hold for Bernoulli bond
+percolation on the square lattice `ℤ²` with no further hypotheses.
 
 ## ii. Key results
 
 - `zfe_faithfulMatchedExclusive`: primal horizontal and face-dual vertical crossings are disjoint.
-- `zfe_percolationProbability_zero`: no percolation at `p = 1/2` (unconditional).
-- `zfe_criticalProbability_eq_half`: Kesten's theorem `p_c = 1/2` (unconditional).
+- `zfe_percolationProbability_zero`: no percolation at `p = 1/2` for Bernoulli bond percolation on
+  `ℤ²` (unconditional).
+- `zfe_criticalProbability_eq_half`: Kesten's theorem `p_c = 1/2` for Bernoulli bond percolation
+  on `ℤ²` (unconditional).
 
 ## iii. Table of contents
 
@@ -375,14 +379,17 @@ lemma zfe_faithfulMatchedExclusive (N : ℕ) :
 
 /-! ## C. Kesten's theorem -/
 
-/-- No percolation at `p = 1/2` (unconditional). -/
+/-- No percolation at `p = 1/2` for Bernoulli bond percolation on the square lattice `ℤ²`: under the
+product measure with edge density `1/2`, the open cluster of the origin is infinite with
+probability `0` (unconditional). -/
 theorem zfe_percolationProbability_zero :
     percolationProbability 2 (2⁻¹ : NNReal)
       StatMech.Universality.half_le_one = 0 :=
   zih_percolationProbability_zero_of_faithful_exclusive
     zfe_faithfulMatchedExclusive
 
-/-- Kesten's theorem `p_c = 1/2` (unconditional). -/
+/-- Kesten's theorem: the critical probability `p_c = sup {p ∈ [0, 1] : θ(p) = 0}` of Bernoulli
+bond percolation on the square lattice `ℤ²` is `1/2` (unconditional). -/
 theorem zfe_criticalProbability_eq_half :
     criticalProbability 2 = (1 : ℝ) / 2 := by
   apply zih_criticalProbability_eq_half_of_faithful_exclusive

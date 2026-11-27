@@ -28,7 +28,8 @@ is one step of the OSSS chain for monotonic measures: `AdaptMConditional` (OSSS 
 
 ## ii. Key results
 
-- `cmn_tailCondLaw`: `acp_TailCondLaw μ σ f` for monotonic `μ` and monotone `f` (unconditional).
+- `cmn_tailCondLaw`: `acp_TailCondLaw μ σ f` for positive, normalised, monotonic `μ` and monotone
+  `f` with `|f| ≤ 1`.
 
 ## iii. Table of contents
 
@@ -255,7 +256,10 @@ lemma cmn_Cross41 {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 
     cvf_Cross41 μ σ f t htn A :=
   le_of_eq (cmn_cross_pred_eq μ hpos hμ1 hmono σ hf hfC t htn A).symm
 
-/-- `acp_TailCondLaw μ σ f` for monotonic `μ` and monotone `f` (unconditional). -/
+/-- For a finite set `E`, a positive weight `μ` on `{0, 1}^E` with total mass `1` that is monotonic
+  (`IsMonotonicMeasure`), an enumeration `σ` of `E` and a nondecreasing `f` with `|f| ≤ 1`, the tail
+  conditional law `acp_TailCondLaw μ σ f` holds: at every step, the conditional law of the tail
+  coordinates seen by the truncated function does not depend on the copy. -/
 lemma cmn_tailCondLaw {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) (hfC : ∀ ω, |f ω| ≤ 1) :

@@ -99,9 +99,9 @@ lemma fac_globalSep_of_eitherCut (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
   · exact daep2_globalCut_disconnected_of_singleCut _ ω (fac_trif_mem_finset ω n hxbox htri) hx
   · exact daep2_globalCut_disconnected_of_singleCut _ ω (fac_trif_mem_finset ω n hybox htriy) hy
 
-/-- Pairwise cut separation for `B_n`: each trifurcation has an arm site whose cluster stays
-infinite after all trifurcations are removed, and for connected trifurcations `x ≠ y` removing
-`x` or removing `y` disconnects their arm sites. -/
+/-- Pairwise cut separation for `B_n`: each trifurcation `x` of `B_n` has an arm site `b x ∈ B_n`
+connected to `x` whose cluster stays infinite after all trifurcations of `B_n` are removed, and for
+connected trifurcations `x ≠ y` removing `x` or removing `y` disconnects their arm sites. -/
 def fac_PairwiseCutSeparation (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

@@ -27,7 +27,8 @@ steps gives `adaptive_tree_osss`, unconditional under positivity, normalization 
 ## ii. Key results
 
 - `causalTripleJump_le_cov_sharedStep`: triple jump bounded by covariances.
-- `adaptive_tree_osss`: `Var f ≤ ∑ revealment(e) · Cov(f, ω_e)` for decision trees (unconditional).
+- `adaptive_tree_osss`: `Var f ≤ ∑ revealment(e) · Cov(f, ω_e)` for decision trees with
+  nondecreasing output, under positive, normalised, monotonic measures.
 
 ## iii. Table of contents
 
@@ -311,7 +312,12 @@ lemma causalTripleJump_le_cov_sharedStep
 
 /-! ## B. OSSS for decision trees -/
 
-/-- `Var f ≤ ∑ revealment(e) · Cov(f, ω_e)` for decision trees (unconditional). -/
+/-- OSSS inequality for monotonic measures (Duminil-Copin–Raoufi–Tassion, Ann. of Math. 189 (2019),
+  Thm 1.1): for a finite set `E`, a positive weight `μ` on `{0, 1}^E` with total mass `1` that is
+  monotonic (`IsMonotonicMeasure`: the conditional probability that a coordinate is open, given the
+  states on a set of coordinates, is nondecreasing in those states) and a decision tree `T` whose
+  `0`/`1` output `T.evalR` is nondecreasing, `Var_μ(T.evalR) ≤ ∑ₑ δₑ(T) Cov_μ(T.evalR, ω_e)`, where
+  `δₑ(T)` is the `μ`-probability that `T` queries `e`. -/
 theorem adaptive_tree_osss
     (mu : ConfigSpace E → ℝ) (hpos : ∀ ω, 0 < mu ω)
     (hmu : ∑ ω, mu ω = 1) (hmono : IsMonotonicMeasure mu)

@@ -106,9 +106,11 @@ lemma fps_eitherCut_sep_of_twoSidedPrivateFar (ω : ConfigSpace (Sym2 (Site d)))
   · exact Or.inl (fps_cutX_sep_of_privateFar_x ω hprivx hfarx)
   · exact Or.inr (fps_cutY_sep_of_privateFar_y ω hprivy hfary)
 
-/-- Two-sided private far arms for `B_n`: each trifurcation has an arm site in the box whose cluster
-stays infinite after all trifurcations are removed, and of any two connected trifurcations at
-least one separates its own arm from the other. -/
+/-- Two-sided private far arms for `B_n`: each trifurcation `x` of `B_n` has an arm site `b x ∈ B_n`
+connected to `x` whose cluster stays infinite after all trifurcations of `B_n` are removed, such
+that for connected trifurcations `x ≠ y`, removing `x` disconnects `b x` from `y`, removing `y`
+disconnects `b y` from `x`, and `b y` is still connected to `y` after `x` is removed or `b x` is
+still connected to `x` after `y` is removed. -/
 def fps_TwoSidedPrivateFar (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

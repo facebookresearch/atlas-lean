@@ -34,8 +34,10 @@ together with subcritical exponential decay.
 
 ## ii. Key results
 
-- `weightedPhaseOffCentreStrict_of_covariant`: strict off-centre domination (unconditional).
-- `periodicWeightedNestedDominationStrict_of_covariant`: strict nested domination (unconditional).
+- `weightedPhaseOffCentreStrict_of_covariant`: strict off-centre domination, for positive
+  phase-covariant couplings, `q ≥ 1` and `β > 0`.
+- `periodicWeightedNestedDominationStrict_of_covariant`: strict nested domination, under the same
+  hypotheses.
 
 ## iii. Table of contents
 
@@ -353,7 +355,12 @@ lemma weightedOuterInnerConn_le_phase_strict
             q rho := htransport
     _ = weightedPhaseWiredTheta d phaseJ (phase x) q beta k := hprofile.symm
 
-/-- Strict off-centre domination (unconditional). -/
+/-- Strict off-centre domination for phase-covariant couplings: for couplings `J > 0` on `ℤ^d` that
+  are phase covariant (`PhaseCovariant J phase phaseJ`), `q ≥ 1` and `β > 0`, for every site `x` of
+  the box of radius `n` and every `k ≥ 1` with `2k < n`, the probability
+  `weightedOuterInnerConn d n J q β x k`, in the wired box of radius `2n` with couplings `J`, that
+  `x` is connected to the boundary of the box of radius `k` around it is at most the wired crossing
+  probability `weightedPhaseWiredTheta d phaseJ (phase x) q β k` of the phase of `x`. -/
 lemma weightedPhaseOffCentreStrict_of_covariant
     (d n : Nat) {P : Type*}
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)

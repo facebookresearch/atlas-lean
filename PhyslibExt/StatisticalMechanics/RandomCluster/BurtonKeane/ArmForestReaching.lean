@@ -154,9 +154,10 @@ lemma sfa_armWalks_disjoint (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph 
 /-! ## B. Arm forest reaching -/
 
 open Classical in
-/-- Arm forest reaching for the box of radius `n`: a finite forest `T` of open edges and, for each
-trifurcation `x` of the box, three neighbours of `x` joined by `T`-paths avoiding `x` to boundary
-sites, with the leaves of `T` on the boundary. -/
+/-- Arm forest reaching for the box of radius `n`: a finite forest `T` of open edges, a set `B` of
+boundary sites with some vertex on a `T`-path between two sites of `B`, and, for each trifurcation
+`x` of the box, three `T`-neighbours of `x` that are pairwise disconnected in `ω` once `x` is
+removed, each joined to a site of `B` by a `T`-walk avoiding `x`. -/
 def sfa_ArmForestReaching (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (c : Site d → Fin 3 → Site d) (zr : Site d → Fin 3 → Site d),

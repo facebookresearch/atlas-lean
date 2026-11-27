@@ -26,12 +26,13 @@ exploration family, and Russo's formula for the random-cluster model.
 increasing. `covSum_ge_explore` bounds its covariance sum below via a family of explorations.
 `osss_differential_inequality_disch` is an algebraic step combining the covariance and Russo bounds.
 `fk_russo_discharges` gives Russo's formula `russoPrefactor p · ∑ Cov ≤ θ'` for the random-cluster
-model, unconditionally.
+model, for `0 < p < 1`, `q > 0` and every event.
 
 ## ii. Key results
 
 - `covSum_ge_explore`: covariance lower bound from an exploration family.
-- `fk_russo_discharges`: Russo's inequality for the random-cluster model (unconditional).
+- `fk_russo_discharges`: Russo's inequality for the random-cluster model, for `0 < p < 1`, `q > 0`
+  and every event.
 
 ## iii. Table of contents
 
@@ -161,7 +162,10 @@ lemma osss_differential_inequality_disch (n : ℕ) (c₀ cR D θ θ' S : ℝ)
     (n : ℝ) * c₀ * cR / D * (θ * (1 - θ)) ≤ θ' :=
   differential_inequality n c₀ cR D θ θ' S hD hcov (le_of_eq hRussoEq.symm) hcR.le
 
-/-- Russo's inequality for the random-cluster model (unconditional). -/
+/-- Russo's formula for the random-cluster model, as a lower bound: for a finite graph `G`,
+  `0 < p < 1`, `q > 0` and any event `A`, the prefactor `1 / (p (1 - p))` is positive and
+  `1 / (p (1 - p)) ∑_{e ∈ E(G)} Cov_φ(1_A, ω(e))` is at most the derivative in `p` of
+  `φ_{G,p,q}(A)`. -/
 lemma fk_russo_discharges {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)

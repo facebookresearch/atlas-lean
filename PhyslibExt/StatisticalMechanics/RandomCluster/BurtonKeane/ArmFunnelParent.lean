@@ -100,10 +100,11 @@ lemma bc46_armLink_survives (t : Site d) (ω : ConfigSpace (Sym2 (Site d)))
 
 /-! ## B. Funnel geometry -/
 
-/-- Funnel geometry: arm ends `b x` joined to `x` by an open edge, with infinite clusters after
-removing
-`x`, such that the ends of lower trifurcations reach each arm-adjacent parent after its child is
-removed. -/
+/-- Funnel geometry: there is an arm-end map `b` such that every trifurcation `x` of the box `Λ_n`
+has `b x ∈ Λ_n` joined to `x` by an open path, with an infinite cluster after every trifurcation of
+`Λ_n` is removed; and for every trifurcation `t` of `Λ_n` and every `s` arm-adjacent to `t`, in the
+configuration with `t` removed, `b t` is connected neither to `b s` nor to `s`, and every site
+`x ≠ t` connected to `s` is connected to `b x`. -/
 def bc46_ArmFunnelGeometry (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →
@@ -125,8 +126,12 @@ lemma bc46_armCutGeometryFixed'_of_armFunnelGeometry (ω : ConfigSpace (Sym2 (Si
   intro x hxt hxs
   exact (hlink x hxt hxs).symm.trans hxs
 
-/-- Neighbour funnel: as `bc46_ArmFunnelGeometry`, with `b x = x` off the trifurcations and `b x` an
-open neighbour of `x`. -/
+/-- Neighbour funnel: there is an arm-end map `b`, with `b x = x` unless `x` is a trifurcation in
+the box `Λ_n`, such that every trifurcation `x` of `Λ_n` is joined by an open edge to `b x ∈ Λ_n`,
+whose cluster is infinite after every trifurcation of `Λ_n` is removed; and for every trifurcation
+`t` of `Λ_n` and every `s` arm-adjacent to `t`, in the configuration with `t` removed, `b t` is
+connected neither to `b s` nor to `s`, and every trifurcation `x ≠ t` of `Λ_n` connected to `s` has
+`b x ≠ t`. It implies `bc46_ArmFunnelGeometry` (`bc46_armFunnelGeometry_of_neighborArmFunnel`). -/
 def bc46_NeighborArmFunnel (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, ¬ (x ∈ box d n ∧ IsTrifurcation d ω x) → b x = x) ∧
@@ -168,9 +173,13 @@ lemma bc46_selfDownArm_of_armFunnelGeometry (ω : ConfigSpace (Sym2 (Site d))) (
 
 /-! ## C. Corrected parent geometry -/
 
-/-- Corrected parent geometry with respect to the arm-depth parent: the end of each trifurcation is
-separated from its parent, while the ends of lower trifurcations reach the parent after the child is
-removed. -/
+/-- Corrected parent geometry with respect to the arm-depth rank `bc45_armDepthRank` and parent
+`par = bc45_armForestPar`: there is an arm-end map `b`, with `b x = x` unless `x` is a trifurcation
+in the box `Λ_n`, such that every trifurcation `x` of `Λ_n` is joined by an open edge to
+`b x ∈ Λ_n`, whose cluster is infinite after every trifurcation of `Λ_n` is removed; and for all
+distinct trifurcations `x`, `y` of `Λ_n` joined by an open path, with `x` of lower rank than `y`,
+removing `y` disconnects `b y` from `b (par y)` and from `par y`, and `b x ≠ y` unless
+`x = par y`. -/
 def bc46_CorrectedParentGeometry (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, ¬ (x ∈ box d n ∧ IsTrifurcation d ω x) → b x = x) ∧

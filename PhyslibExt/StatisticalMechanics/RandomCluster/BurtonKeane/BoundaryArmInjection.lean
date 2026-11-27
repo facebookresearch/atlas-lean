@@ -76,9 +76,7 @@ variable {d : ℕ}
 /-! ## A. Boundary traces -/
 
 open Classical in
-/-- The boundary sites of the box of radius `n` connected to `x₀`. Same statement as
-`bk2_armEndFinset`;
-kept because replacing a definition changes the statements that mention it. -/
+/-- The boundary sites of the box of radius `n` connected to `x₀`. -/
 noncomputable def lhc_trace (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (x₀ : Site d) :
     Finset (Site d) :=
   (tfc_boundaryFinset d n).filter (fun z => Connected d ω x₀ z)

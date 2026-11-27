@@ -17,28 +17,25 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonFor
 /-!
 # Connected coarse forests and caterpillars
 
-The connected coarse forest is the coarse arm embedding and bounds the coarse count; caterpillar
-trees show that the leaf count of a forest can be well below three times its branch vertices.
+Forest data and two-hub caterpillars give coarse forest leaf counts; caterpillar trees show that
+the leaf count of a forest can be well below three times its branch vertices.
 
 ## i. Overview
 
-`bc65_ConnectedCoarseForest` is defined as the coarse forest leaf count, so it is the coarse arm
-embedding and bounds the coarse count. In a forest of minimum degree one, branch vertices are at
-most leaves. The caterpillars `bc65_cat2G` (two spine vertices) and `bc65_cat3G` (three) are trees
-with fewer than three leaves per branch vertex. Boundary injections, forest data and two-hub
-caterpillars give connected forests, and with the coarse step the connected forest gives
-`μ(N = ⊤) = 0`.
+In a forest of minimum degree one, branch vertices are at most leaves. The caterpillars
+`bc65_cat2G` (two spine vertices) and `bc65_cat3G` (three) are trees with fewer than three leaves
+per branch vertex. Forest data and two-hub caterpillars give the coarse forest leaf count
+`bc61_CoarseForestLeafCount`, which bounds the coarse count.
 
 ## ii. Key results
 
-- `bc65_coarseTcount_le_boundary_of_connectedForest` : the coarse count from the connected forest.
+- `bc65_connectedForest_caterpillar2` : the coarse forest leaf count from a two-hub caterpillar.
 - `bc65_caterpillar2_savings` : a caterpillar with fewer than three leaves per branch vertex.
 
 ## iii. Table of contents
 
-- A. Connected coarse forests
-- B. Caterpillars
-- C. Constructions
+- A. Caterpillars
+- B. Constructions
 
 ## iv. References
 
@@ -60,29 +57,8 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
-/-! ## A. Connected coarse forests -/
 
-/-- The connected coarse forest condition, defined as the coarse forest leaf count
-`bc61_CoarseForestLeafCount`. Same statement as `bc63_CoarseArmEmbedding`; kept because
-GnBoundaryForest, TrifSuperVertex use it. -/
-def bc65_ConnectedCoarseForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
-  bc61_CoarseForestLeafCount ω L R
-
-lemma bc65_connectedCoarseForest_iff_armEmbedding (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
-    bc65_ConnectedCoarseForest ω L R ↔ bc63_CoarseArmEmbedding ω L R :=
-  Iff.rfl
-
-lemma bc65_coarseArmEmbedding_of_connectedForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (h : bc65_ConnectedCoarseForest ω L R) : bc63_CoarseArmEmbedding ω L R :=
-  (bc65_connectedCoarseForest_iff_armEmbedding ω L R).mp h
-
-lemma bc65_coarseTcount_le_boundary_of_connectedForest (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (h : bc65_ConnectedCoarseForest ω L R) :
-    bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  bc63_coarseTcount_le_boundary_of_armEmbedding ω L R
-    (bc65_coarseArmEmbedding_of_connectedForest ω L R h)
-
-/-! ## B. Caterpillars -/
+/-! ## A. Caterpillars -/
 
 /-- Edges of the caterpillar on `Fin 6` with spine `0 — 1`. -/
 def bc65_cat2E (a b : Fin 6) : Prop :=
@@ -152,13 +128,7 @@ lemma bc65_cat3G_savings :
       < 3 * (univ.filter (fun v => 3 ≤ bc65_cat3G.degree v)).card := by
   rw [bc65_cat3G_leafCount.1, bc65_cat3G_leafCount.2]; norm_num
 
-/-! ## C. Constructions -/
-
-lemma bc65_connectedForest_of_boundaryInjection (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    {z₀ z₁ : Site d} (hz₀ : z₀ ∈ vertexBoundary d R) (hz₁ : z₁ ∈ vertexBoundary d R)
-    (hzne : z₀ ≠ z₁) (hinj : bc64_CoarseBoundaryInjection ω L R) :
-    bc65_ConnectedCoarseForest ω L R :=
-  bc64_coarseArmEmbedding_of_boundaryInjection ω L R hz₀ hz₁ hzne hinj
+/-! ## B. Constructions -/
 
 set_option linter.unusedDecidableInType false in
 lemma bc65_connectedForest_of_forestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
@@ -170,7 +140,7 @@ lemma bc65_connectedForest_of_forestData (ω : ConfigSpace (Sym2 (Site d))) (L R
       bc61_IsCoarseTrifurcation ω L z → ιT y = ιT z → y = z)
     (hlammap : ∀ v, G.degree v = 1 → lamL v ∈ vertexBoundary d R)
     (hlaminj : Set.InjOn lamL (univ.filter (fun v => G.degree v = 1))) :
-    bc65_ConnectedCoarseForest ω L R :=
+    bc61_CoarseForestLeafCount ω L R :=
   ⟨W, inferInstance, inferInstance, inferInstance, G, inferInstance, ιT, lamL,
     hacyc, hmin, hdeg3, hιinj, hlammap, hlaminj⟩
 
@@ -185,7 +155,7 @@ lemma bc65_connectedForest_caterpillar2 (ω : ConfigSpace (Sym2 (Site d))) (L R 
     (lamL : Fin 6 → Site d)
     (hlammap : ∀ v, bc65_cat2G.degree v = 1 → lamL v ∈ vertexBoundary d R)
     (hlaminj : Set.InjOn lamL (univ.filter (fun v => bc65_cat2G.degree v = 1))) :
-    bc65_ConnectedCoarseForest ω L R := by
+    bc61_CoarseForestLeafCount ω L R := by
   classical
   refine bc65_connectedForest_of_forestData ω L R (Fin 6) bc65_cat2G
     (fun y => if y = y₀ then 0 else 1) lamL bc65_cat2G_isTree.isAcyclic bc65_cat2G_min_degree
@@ -204,18 +174,6 @@ lemma bc65_connectedForest_caterpillar2 (ω : ConfigSpace (Sym2 (Site d))) (L R 
       have hz1 : z = y₁ := (hpair z hzbox htriz).resolve_left hzy₀
       rw [hy1, hz1]
 
-lemma bc65_infiniteClusters_top_null_of_connectedForest_route
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] (hd : 1 ≤ d)
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ) (L : ℕ)
-    (hconn : ∀ (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ), bc65_ConnectedCoarseForest ω L R)
-    (hcoarseRoute : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      ∃ a₁ a₂ a₃ b₁ b₂ b₃ : Site d,
-        0 < μ (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃)) :
-    μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc63_infiniteClusters_top_null_of_armEmbedding_route μ hd hinv hfe L
-    (fun ω R => bc65_coarseArmEmbedding_of_connectedForest ω L R (hconn ω R)) hcoarseRoute
-
 lemma bc65_status :
     (∀ {V : Type} [Fintype V] [Nonempty V] (G : SimpleGraph V) [_inst : DecidableRel G.Adj],
       G.IsAcyclic → (∀ v, 1 ≤ G.degree v) →
@@ -224,16 +182,16 @@ lemma bc65_status :
     ((univ.filter (fun v => bc65_cat2G.degree v = 1)).card
         < 3 * (univ.filter (fun v => 3 ≤ bc65_cat2G.degree v)).card) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ),
-      bc65_ConnectedCoarseForest ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) ∧
+      bc61_CoarseForestLeafCount ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (z₀ z₁ : Site d),
       z₀ ∈ vertexBoundary d R → z₁ ∈ vertexBoundary d R → z₀ ≠ z₁ →
-      bc64_CoarseBoundaryInjection ω L R → bc65_ConnectedCoarseForest ω L R) := by
+      bc64_CoarseBoundaryInjection ω L R → bc61_CoarseForestLeafCount ω L R) := by
   refine ⟨?_, bc65_caterpillar2_savings, ?_, ?_⟩
   · intro V _ _ G _ hacyc hmin
     exact Percolation.flc2_forest_internal_le_leaves G hacyc hmin
   · intro ω L R h
-    exact bc65_coarseTcount_le_boundary_of_connectedForest ω L R h
+    exact bc61_coarseTcount_le_boundary_of_forest ω L R h
   · intro ω L R z₀ z₁ hz₀ hz₁ hzne hinj
-    exact bc65_connectedForest_of_boundaryInjection ω L R hz₀ hz₁ hzne hinj
+    exact bc64_coarseArmEmbedding_of_boundaryInjection ω L R hz₀ hz₁ hzne hinj
 
 end StatMech.Walls

@@ -54,6 +54,9 @@ origin reach with the counting hypotheses. Those hypotheses are unsatisfiable fo
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph
 open StatMech.Lattice StatMech.ConfigSpace
 open StatMech.Percolation StatMech.Percolation.DisjointPaths
@@ -118,7 +121,7 @@ lemma bc9_originRewiring_of_boxOriginReach (n : ℕ) (h : bc9_BoxOriginReach d n
 lemma bc9_canonicalTrif_of_boxOriginReach (n : ℕ) (h : bc9_BoxOriginReach d n)
     (ω : ConfigSpace (Sym2 (Site d))) (hω : ω ∈ threeMeetBox d n) :
     ∃ W : Finset (Sym2 (Site d)), (∀ e ∈ W, (0 : Site d) ∉ e) ∧
-      IsCanonicalTrifurcation d (forceOpenFinset W ω) 0 :=
+      IsEncounterPoint d (forceOpenFinset W ω) 0 :=
   bc8_canonicalTrif_of_originRewiring n (bc9_originRewiring_of_boxOriginReach n h) ω hω
 
 lemma bc9_boxOriginReach_of_reach (ω : ConfigSpace (Sym2 (Site d)))

@@ -189,8 +189,8 @@ lemma bc79_directCount_refuted_on_upperLines {L : ℕ} (hL : 3 ≤ L) :
     bc67_IsGnTrifurcation bc60_upperLines L (0 : Site 2) ∧
     Disjoint (bc61_boxAround 2 L (0 : Site 2)) (bc61_boxAround 2 L (bc76_yBuf L)) ∧
     ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
-      ⟨bc57_pt ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
-      ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
+      ⟨faceCorner00 ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
+      ⟨faceCorner00 ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩ :=
   bc76_buffer_insufficient hL
 
 lemma bc79_step1_from_leaf (μ : Measure (ConfigSpace (Sym2 (Site d))))

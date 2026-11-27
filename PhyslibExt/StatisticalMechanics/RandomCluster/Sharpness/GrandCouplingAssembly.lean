@@ -21,15 +21,16 @@ with the coordinates, proved by telescoping the grand coupling.
 
 Swapping label copies (`sw`, `selMap`) computes each step of the telescope. FKG on the product cube
 bounds each step by twice a covariance (`step_le_two_cov`), and telescoping gives
-`tree_osss_unconditional`: `Var f ≤ ∑ Cov(f, ω_e)` for monotone `0 ≤ f ≤ 1`. This is the OSSS
-inequality with all revealments replaced by `1`, i.e. a Poincaré inequality. `fk_q2_osss` is its `q
-= 2` random-cluster case. Both are unconditional.
+`tree_osss_unconditional`: `Var f ≤ ∑ Cov(f, ω_e)` for monotone `0 ≤ f ≤ 1` and a positive,
+normalised, monotonic measure. This is the OSSS inequality with all revealments replaced by `1`,
+i.e. a Poincaré inequality. `fk_q2_osss` is its `q = 2` random-cluster case (`0 < p < 1`). Neither
+needs any further hypothesis.
 
 ## ii. Key results
 
-- `tree_osss_unconditional`: Poincaré inequality `Var f ≤ ∑ Cov(f, ω_e)` for monotonic measures
-  (unconditional).
-- `fk_q2_osss`: the `q = 2` random-cluster case (unconditional).
+- `tree_osss_unconditional`: Poincaré inequality `Var f ≤ ∑ Cov(f, ω_e)` for positive, normalised,
+  monotonic measures and monotone `0 ≤ f ≤ 1`.
+- `fk_q2_osss`: the `q = 2` random-cluster case, for `0 < p < 1`.
 
 ## iii. Table of contents
 
@@ -640,7 +641,9 @@ lemma grandCoupling_telescope {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n
     refine (Finset.abs_sum_le_sum_abs _ _).trans (le_of_eq ?_)
     apply Finset.sum_congr rfl; intro t _; rw [abs_sub_comm]
 
-/-- Poincaré inequality `Var f ≤ ∑ Cov(f, ω_e)` for monotonic measures (unconditional). -/
+/-- Poincaré inequality for monotonic measures: for a finite set `E`, a positive weight `μ` on
+  `{0, 1}^E` with total mass `1` that is monotonic (`IsMonotonicMeasure`) and a nondecreasing `f`
+  with `0 ≤ f ≤ 1`, `Var_μ(f) ≤ ∑ₑ Cov_μ(f, ω_e)`. -/
 lemma tree_osss_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hmono : IsMonotonicMeasure μ) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :

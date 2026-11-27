@@ -77,13 +77,9 @@ lemma bc69_subtypeVal_injOn {p : Site d → Prop} (S : Set (Subtype p)) :
     Set.InjOn (Subtype.val : Subtype p → Site d) S :=
   Subtype.val_injective.injOn
 
-/-- The origin lies in every box. See also `StatMech.FK.ocs_zero_mem_box`, the same statement. -/
-lemma bc69_box_zero_mem (d R : ℕ) : (0 : Site d) ∈ box d R := by
-  rw [mem_box]; intro i; simp
-
 /-- The box `B_R` is nonempty: it contains the origin. -/
 noncomputable instance bc69_boxNonempty (d R : ℕ) : Nonempty (↑(box d R) : Type) :=
-  ⟨⟨0, bc69_box_zero_mem d R⟩⟩
+  ⟨⟨0, by intro i; simp⟩⟩
 
 /-- A global forest for box size `L` and box `B_R`: a finite forest without isolated vertices in
 which the contracted-lattice trifurcations of `B_R` embed injectively with degree at least three
@@ -221,10 +217,10 @@ lemma bc69_infiniteClusters_top_null_of_globalForest
     (fun ω R => bc69_forestData_of_globalForest ω L R (hGlobal ω R)) hcoarseRoute
 
 lemma bc69_upperLines_boundary_mem {R : ℕ} (hR3 : 4 ≤ R) (i : Fin 3) :
-    bc57_pt (R : ℤ) ((i : ℤ) + 1) ∈ box 2 R := by
+    faceCorner00 (R : ℤ) ((i : ℤ) + 1) ∈ box 2 R := by
   rw [mem_box]; intro j; fin_cases j
-  · change ((bc57_pt (R : ℤ) ((i : ℤ) + 1)) 0).natAbs ≤ R; rw [bc57_pt_fst]; simp
-  · change ((bc57_pt (R : ℤ) ((i : ℤ) + 1)) 1).natAbs ≤ R; rw [bc57_pt_snd]
+  · change ((faceCorner00 (R : ℤ) ((i : ℤ) + 1)) 0).natAbs ≤ R; rw [bc57_pt_fst]; simp
+  · change ((faceCorner00 (R : ℤ) ((i : ℤ) + 1)) 1).natAbs ≤ R; rw [bc57_pt_snd]
     fin_cases i <;> · push_cast; omega
 
 lemma bc69_upperLines_globalForest_count {L R : ℕ}

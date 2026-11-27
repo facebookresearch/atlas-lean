@@ -232,7 +232,7 @@ lemma bc74_bk_count_closed_of_globalForest
     (fun ω R => bc74_sublatticeForest_of_globalForest ω L R (hGlobal ω R)) hexist
 
 lemma bc74_upperLines_sameResidue (L : ℕ) :
-    bc73_resVec L (0 : Site 2) = bc73_resVec L (bc57_pt (2 * (L : ℤ) + 1) 0) := by
+    bc73_resVec L (0 : Site 2) = bc73_resVec L (faceCorner00 (2 * (L : ℤ) + 1) 0) := by
   funext i
   apply Fin.ext
   simp only [bc73_resVec]
@@ -240,10 +240,10 @@ lemma bc74_upperLines_sameResidue (L : ℕ) :
   have hzero1 : (0 : Site 2) 1 = 0 := rfl
   fin_cases i
   · change ((0 : Site 2) 0 % (2 * (L : ℤ) + 1)).toNat
-      = ((bc57_pt (2 * (L : ℤ) + 1) 0) 0 % (2 * (L : ℤ) + 1)).toNat
+      = ((faceCorner00 (2 * (L : ℤ) + 1) 0) 0 % (2 * (L : ℤ) + 1)).toNat
     rw [bc57_pt_fst, hzero0, Int.zero_emod, Int.emod_self]
   · change ((0 : Site 2) 1 % (2 * (L : ℤ) + 1)).toNat
-      = ((bc57_pt (2 * (L : ℤ) + 1) 0) 1 % (2 * (L : ℤ) + 1)).toNat
+      = ((faceCorner00 (2 * (L : ℤ) + 1) 0) 1 % (2 * (L : ℤ) + 1)).toNat
     rw [bc57_pt_snd, hzero1]
 
 /-! ## B. Summary -/

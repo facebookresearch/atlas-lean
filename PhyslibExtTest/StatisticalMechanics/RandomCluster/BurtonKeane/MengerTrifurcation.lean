@@ -23,13 +23,16 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerTr
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.MengerTrifurcation
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation _root_.StatMech.Walls
 open _root_.StatMech.Percolation.DisjointPaths _root_.StatMech.Percolation.CtcWitness
 
 -- The three-ray configuration has a canonical trifurcation at the origin.
-example : IsCanonicalTrifurcation 2 threeRayConfig 0 :=
+example : IsEncounterPoint 2 threeRayConfig 0 :=
   bc21_threeRay_trif_at_origin
 
 -- Its branches survive the removal of the origin.

@@ -81,8 +81,7 @@ lemma cnp_removeSite_le (ω : ConfigSpace (Sym2 (Site d))) (z : Site d) :
 /-! ## B. Meeting the corridor -/
 
 /-- The cluster of `x` meets the corridor along `j`: `x` is connected without the origin to some
-cell
-`m e_j` with `1 ≤ m ≤ L + 1`, and its cut cluster after forcing the corridor is infinite. -/
+cell `m e_j` with `1 ≤ m ≤ L + 1`, and the cluster of `x` without the origin is infinite. -/
 def cnp_ClusterMeetsCorridor (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) (j : Fin d)
     (L : ℕ) : Prop :=
   (∃ m : ℕ, 1 ≤ m ∧ m ≤ L + 1 ∧

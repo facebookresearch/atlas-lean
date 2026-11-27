@@ -382,26 +382,28 @@ lemma bc75_bk_count_closed_of_gnTrifData
     (fun ω R => bc75_sublatticeForest_of_gnTrifData ω L R (fun c => hData ω R c)) hexist
 
 lemma bc75_upperLines_openBoundaryEdge {R : ℕ} (hR : 1 ≤ R) :
-    (bc57_pt 0 (R : ℤ) ∈ vertexBoundary 2 R) ∧ (bc57_pt 1 (R : ℤ) ∈ vertexBoundary 2 R) ∧
-      (openSubgraph 2 bc60_upperLines).Adj (bc57_pt 0 (R : ℤ)) (bc57_pt 1 (R : ℤ)) := by
+    (faceCorner00 0 (R : ℤ) ∈ vertexBoundary 2 R) ∧ (faceCorner00 1 (R : ℤ) ∈ vertexBoundary 2 R) ∧
+      (openSubgraph 2 bc60_upperLines).Adj (faceCorner00 0 (R : ℤ)) (faceCorner00 1 (R : ℤ)) := by
   refine ⟨?_, ?_, ?_⟩
   · rw [vertexBoundary, Set.mem_sdiff]
     refine ⟨?_, ?_⟩
     · rw [mem_box]; intro i; fin_cases i
-      · change ((bc57_pt 0 (R : ℤ)) 0).natAbs ≤ R; rw [bc57_pt_fst]; simp
-      · change ((bc57_pt 0 (R : ℤ)) 1).natAbs ≤ R; rw [bc57_pt_snd]; simp
+      · change ((faceCorner00 0 (R : ℤ)) 0).natAbs ≤ R; rw [bc57_pt_fst]; simp
+      · change ((faceCorner00 0 (R : ℤ)) 1).natAbs ≤ R; rw [bc57_pt_snd]; simp
     · rw [mem_box]; simp only [not_forall, not_le]
       refine ⟨1, ?_⟩
-      have : ((bc57_pt 0 (R : ℤ)) 1).natAbs = R := by rw [bc57_pt_snd]; exact Int.natAbs_natCast R
+      have : ((faceCorner00 0 (R : ℤ)) 1).natAbs = R := by
+        rw [bc57_pt_snd]; exact Int.natAbs_natCast R
       rw [this]; omega
   · rw [vertexBoundary, Set.mem_sdiff]
     refine ⟨?_, ?_⟩
     · rw [mem_box]; intro i; fin_cases i
-      · change ((bc57_pt 1 (R : ℤ)) 0).natAbs ≤ R; rw [bc57_pt_fst]; simp; omega
-      · change ((bc57_pt 1 (R : ℤ)) 1).natAbs ≤ R; rw [bc57_pt_snd]; simp
+      · change ((faceCorner00 1 (R : ℤ)) 0).natAbs ≤ R; rw [bc57_pt_fst]; simp; omega
+      · change ((faceCorner00 1 (R : ℤ)) 1).natAbs ≤ R; rw [bc57_pt_snd]; simp
     · rw [mem_box]; simp only [not_forall, not_le]
       refine ⟨1, ?_⟩
-      have : ((bc57_pt 1 (R : ℤ)) 1).natAbs = R := by rw [bc57_pt_snd]; exact Int.natAbs_natCast R
+      have : ((faceCorner00 1 (R : ℤ)) 1).natAbs = R := by
+        rw [bc57_pt_snd]; exact Int.natAbs_natCast R
       rw [this]; omega
   · rw [openSubgraph_adj]
     refine ⟨?_, ?_⟩

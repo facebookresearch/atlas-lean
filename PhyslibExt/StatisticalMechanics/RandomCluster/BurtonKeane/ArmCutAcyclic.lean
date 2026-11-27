@@ -240,9 +240,13 @@ lemma bc38_unique_armParent (ω : ConfigSpace (Sym2 (Site d)))
 
 /-! ## C. Arm realisation -/
 
-/-- Arm realisation: for every rank and parent function separating connected trifurcations, arm ends
-exist that the parent cannot reach after the trifurcation is removed, while lower trifurcations
-still reach them. -/
+/-- Arm realisation: for every rank `rank` and parent map `par` such that, for any two distinct
+connected trifurcations `x`, `y` of the box `Λ_n` with `rank x < rank y`, `par y` is arm-adjacent
+to `y` (`bc37_ArmAdjacent`) and of lower rank than `y`, there is an arm-end map `b` such that every
+trifurcation `x` of `Λ_n` has `b x ∈ Λ_n` joined to `x` by an open path, with an infinite cluster
+after every trifurcation of `Λ_n` is removed; and for any such `x`, `y`, removing `y` disconnects
+`b y` from `b (par y)` and from `par y`, while `b x` stays connected to `par y` unless
+`x = par y`. -/
 def bc38_ArmRealisation (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∀ (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d),
     (∀ x, x ∈ box d n → IsTrifurcation d ω x → ∀ y, y ∈ box d n → IsTrifurcation d ω y →
@@ -306,8 +310,12 @@ lemma bc38_armAdjSpanning_of_threePath (ω : ConfigSpace (Sym2 (Site d))) (n : �
 
 /-! ## D. Cut geometry -/
 
-/-- Arm cut geometry: arm ends `b x` in the box with infinite clusters after removing `x`, which no
-other site reaches after `x` is removed. -/
+/-- Arm cut geometry: there is an arm-end map `b` such that every trifurcation `x` of the box `Λ_n`
+has `b x ∈ Λ_n` joined to `x` by an open path, with an infinite cluster after every trifurcation of
+`Λ_n` is removed; and for every trifurcation `t` of `Λ_n` and every `s` arm-adjacent to `t`, in the
+configuration with `t` removed, `b t` is connected neither to `b s` nor to `s`, while `b x` is
+connected to `s` for every site `x ≠ s`. Taking `x = t` contradicts the second clause, so the
+condition fails whenever such a pair exists (`bc39_armCutGeometry_false_of_armAdjacent`). -/
 def bc38_ArmCutGeometry (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

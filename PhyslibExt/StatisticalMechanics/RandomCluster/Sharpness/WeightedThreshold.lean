@@ -40,8 +40,9 @@ together with subcritical exponential decay.
 
 ## ii. Key results
 
-- `weightedPhasePhysical_subcritical_decay_of_threshold`: exponential decay below the threshold
-  (unconditional).
+- `weightedPhasePhysical_subcritical_decay_of_threshold`: exponential decay below the threshold,
+  for bounded couplings `0 < J_min ≤ J ≤ J_max`, phase covariant for a surjective phase map,
+  `q ≥ 1`, `δ > 0`, `β ≤ β₀` and `β - 2δ > 0`.
 - `weightedSelectedPhaseSum_meanField_lower`: mean-field lower bound above the threshold.
 - `weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness`: threshold = critical point,
   conditional on `hhigh`.
@@ -1112,7 +1113,15 @@ lemma weightedPhaseSum_subcritical_decay_of_threshold
   rw [hrhs] at h
   exact (div_le_div_iff_of_pos_right hc).mp h
 
-/-- Exponential decay below the threshold (unconditional). -/
+/-- Exponential decay below the threshold: for a nonempty finite set of phases, couplings
+  `Jmin ≤ J ≤ Jmax` on `ℤ^d` with `Jmin > 0` that are phase covariant
+  (`PhaseCovariant J phase phaseJ`) for a surjective phase map, `q ≥ 1`, `δ > 0` and `β ≤ β₀` with
+  `β - 2δ > 0` and `β` below the threshold `beta1` of the partial sums
+  `Σ_n(β) = Sig (weightedThresholdPhaseSum d phaseJ Jmin Jmax q β₀) n β`, there is `Q > 0` such
+  that, for every phase `a` and `n ≥ 2`, the probability that the origin is connected to the
+  boundary of the box of radius `n`, under the wired random-cluster measure on that box with the
+  couplings of phase `a` at `β - 2δ`, is at most `|P| exp(-n δ / (3 Q))`, where `|P|` is the number
+  of phases. -/
 lemma weightedPhasePhysical_subcritical_decay_of_threshold
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)

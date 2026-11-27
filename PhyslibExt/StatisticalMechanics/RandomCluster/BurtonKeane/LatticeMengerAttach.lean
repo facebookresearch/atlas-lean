@@ -146,8 +146,9 @@ lemma lma_corridorEdges_endpoints_mem (j : Fin d) (L : ℕ) :
   · exact ⟨t + 1, by omega, by omega, by push_cast; ring_nf⟩
   · exact ⟨t + 2, by omega, by omega, by push_cast; ring_nf⟩
 
-/-- The cluster of `x` contains an axis corridor along `e_j` starting at `e_j`, and stays infinite
-and connected to the corridor's end after the origin is removed. -/
+/-- For some `L`, the cluster of `x` contains the axis sites `e_j, …, (L + 1) e_j`, `x` is connected
+to `(L + 1) e_j` after the origin is removed, and the cluster of `x` without the origin is
+infinite. -/
 def lma_ClusterReachesRay (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) (j : Fin d) : Prop :=
   ∃ L : ℕ,
     hrHD_rayPt j 1 ∈ cluster d ω x ∧
@@ -190,8 +191,9 @@ lemma lma_threeClustersReachOrigin_of_three_reachesRay (ω : ConfigSpace (Sym2 (
   tex_threeClustersReachOrigin ω x₁ x₂ x₃ ⟨hcd12, hcd13, hcd23⟩
     (lma_attachData_of_three_reachesRay ω x₁ x₂ x₃ j₁ j₂ j₃ hcd12 hcd13 hcd23 h1 h2 h3)
 
-/-- In every configuration with three distinct infinite clusters meeting `B_n`, the three clusters
-reach the origin along corridors on three distinct axes. -/
+/-- In every configuration of `threeMeetBox d n` (infinitely many infinite clusters, three of them
+distinct and meeting `B_n`), any three box sites in distinct infinite clusters reach the origin
+along corridors on three axes. -/
 def lma_BoxClusterReachesRay (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∀ x₁ x₂ x₃ : Site d, x₁ ∈ box d n → x₂ ∈ box d n → x₃ ∈ box d n →

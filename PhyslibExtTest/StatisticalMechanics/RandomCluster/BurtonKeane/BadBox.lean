@@ -27,7 +27,7 @@ open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.ConfigSpace
 open _root_.StatMech.Percolation _root_.StatMech.Walls
 
 -- The upper-lines witnesses lie in the buffer box at `L = 3`.
-example : bc57_pt (3 * ((3 : ℕ) : ℤ) + 1) 1 ∈ bc61_boxAround 2 3 (bc76_yBuf 3) :=
+example : faceCorner00 (3 * ((3 : ℕ) : ℤ) + 1) 1 ∈ bc61_boxAround 2 3 (bc76_yBuf 3) :=
   (bc93_upperLines_witnesses_in_box le_rfl).1
 
 -- At most one infinite cluster excludes bad boxes.

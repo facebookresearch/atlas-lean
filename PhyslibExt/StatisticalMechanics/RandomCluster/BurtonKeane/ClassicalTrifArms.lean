@@ -20,6 +20,8 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniquenes
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmReachComponent
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmFunnelParent
+public import MathlibExt.Probability.Percolation.BurtonKeane.EncounterCount
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalTrifCount
 
 /-!
 # Classical trifurcations
@@ -29,8 +31,9 @@ after the site is removed; a trifurcation need not be classical, as a fake confi
 
 ## i. Overview
 
-`bc47_IsClassicalTrifurcation ω x` asks for three distinct open edges from `x` to sites with
-infinite, pairwise disconnected clusters in `removeSite x ω`; it implies `IsTrifurcation`. The
+A classical trifurcation is an encounter point (`IsEncounterPoint d ω x`): three distinct open
+edges from `x` to sites with infinite, pairwise disconnected clusters in `removeSite x ω`; it
+implies `IsTrifurcation` (`ctc2_isTrifurcation_of_canonical`). The
 configuration `bc47_fakeConfig` on `ℤ²` opens three edges at the origin and a ray: the origin is an
 `IsTrifurcation` (its neighbours are in the infinite cluster through the origin) but not classical,
 since the three neighbours are isolated once the origin is removed. Classical trifurcations give the
@@ -41,7 +44,6 @@ clauses.
 
 - `bc47_isTrifurcation_fakeConfig` : the fake configuration has a trifurcation.
 - `bc47_not_classical_fakeConfig` : it is not classical.
-- `bc47_isTrifurcation_of_classical` : classical trifurcations are trifurcations.
 
 ## iii. Table of contents
 
@@ -56,6 +58,9 @@ clauses.
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
 
 open Set SimpleGraph Finset MeasureTheory
 open scoped BigOperators ENNReal NNReal
@@ -84,18 +89,8 @@ def bc47_a2 : Site 2 := ![0, -1]
 /-- The site `(-1, 0)`. -/
 def bc47_a3 : Site 2 := ![-1, 0]
 
-/-- The site `(k, 0)` of `ℤ²`. Same statement as `arc_p`; kept because replacing a definition
-changes
-the statements that mention it. -/
-def bc47_R (k : ℤ) : Site 2 := ![k, 0]
-
-lemma bc47_R_inj : Function.Injective bc47_R := by
-  intro a b h
-  have : (bc47_R a) 0 = (bc47_R b) 0 := by rw [h]
-  simpa [bc47_R] using this
-
-lemma bc47_x_eq_R0 : bc47_x = bc47_R 0 := by
-  funext i; fin_cases i <;> simp [bc47_x, bc47_R]
+lemma bc47_x_eq_R0 : bc47_x = arc_p 0 := by
+  funext i; fin_cases i <;> simp [bc47_x, arc_p]
 
 /-- The three edges from the origin to `bc47_a1`, `bc47_a2`, `bc47_a3`. -/
 def bc47_armEdge (i : Fin 3) : Sym2 (Site 2) :=
@@ -111,11 +106,8 @@ open Classical in
 noncomputable def bc47_fakeConfig : ConfigSpace (Sym2 (Site 2)) :=
   fun e =>
     if (∃ i : Fin 3, e = bc47_armEdge i) then true
-    else if (∃ k : ℤ, 0 ≤ k ∧ e = s(bc47_R k, bc47_R (k + 1))) then true
+    else if (∃ k : ℤ, 0 ≤ k ∧ e = s(arc_p k, arc_p (k + 1))) then true
     else false
-
-lemma bc47_R_adj (k : ℤ) : (hypercubicLattice 2).Adj (bc47_R k) (bc47_R (k + 1)) := by
-  rw [hypercubicLattice_adj, Fin.sum_univ_two]; simp [bc47_R]
 
 lemma bc47_x_adj_a1 : (hypercubicLattice 2).Adj bc47_x bc47_a1 := by
   rw [hypercubicLattice_adj, Fin.sum_univ_two]; simp [bc47_x, bc47_a1]
@@ -137,27 +129,27 @@ lemma bc47_x_a2_open : bc47_fakeConfig s(bc47_x, bc47_a2) = true := bc47_armEdge
 lemma bc47_x_a3_open : bc47_fakeConfig s(bc47_x, bc47_a3) = true := bc47_armEdge_open 2
 
 lemma bc47_R_edge_open (k : ℤ) (hk : 0 ≤ k) :
-    bc47_fakeConfig s(bc47_R k, bc47_R (k + 1)) = true := by
+    bc47_fakeConfig s(arc_p k, arc_p (k + 1)) = true := by
   classical
   rw [bc47_fakeConfig]
-  by_cases h : (∃ i : Fin 3, s(bc47_R k, bc47_R (k + 1)) = bc47_armEdge i)
+  by_cases h : (∃ i : Fin 3, s(arc_p k, arc_p (k + 1)) = bc47_armEdge i)
   · rw [ite_eq_left h]
   · rw [ite_eq_right h, ite_eq_left ⟨k, hk, rfl⟩]
 
 lemma bc47_R_edge_connected (k : ℤ) (hk : 0 ≤ k) :
-    Connected 2 bc47_fakeConfig (bc47_R k) (bc47_R (k + 1)) :=
-  IsOpenEdge.connected ⟨bc47_R_adj k, bc47_R_edge_open k hk⟩
+    Connected 2 bc47_fakeConfig (arc_p k) (arc_p (k + 1)) :=
+  IsOpenEdge.connected ⟨arc_p_adj k, bc47_R_edge_open k hk⟩
 
 lemma bc47_x_connected_R (m : ℤ) (hm : 0 ≤ m) :
-    Connected 2 bc47_fakeConfig bc47_x (bc47_R m) := by
+    Connected 2 bc47_fakeConfig bc47_x (arc_p m) := by
   rw [bc47_x_eq_R0]
   obtain ⟨j, rfl⟩ : ∃ j : ℕ, m = (j : ℤ) := ⟨m.toNat, by omega⟩
   clear hm
   induction j with
-  | zero => simpa using connected_refl bc47_fakeConfig (bc47_R 0)
+  | zero => simpa using connected_refl bc47_fakeConfig (arc_p 0)
   | succ i ih =>
     have hi : (0 : ℤ) ≤ (i : ℤ) := by positivity
-    have step : Connected 2 bc47_fakeConfig (bc47_R (i : ℤ)) (bc47_R ((i : ℤ) + 1)) :=
+    have step : Connected 2 bc47_fakeConfig (arc_p (i : ℤ)) (arc_p ((i : ℤ) + 1)) :=
       bc47_R_edge_connected (i : ℤ) hi
     have hcast : ((i : ℤ) + 1) = ((i + 1 : ℕ) : ℤ) := by push_cast; ring
     rw [hcast] at step
@@ -172,48 +164,41 @@ lemma bc47_x_connected_a2 : Connected 2 bc47_fakeConfig bc47_x bc47_a2 :=
 lemma bc47_x_connected_a3 : Connected 2 bc47_fakeConfig bc47_x bc47_a3 :=
   IsOpenEdge.connected ⟨bc47_x_adj_a3, bc47_x_a3_open⟩
 
-lemma bc47_R_outside_box (n : ℕ) : bc47_R (n + 1) ∉ box 2 n := by
-  rw [mem_box, not_forall]
-  refine ⟨0, ?_⟩
-  rw [not_le]
-  simp only [bc47_R, Matrix.cons_val_zero]
-  omega
-
 lemma bc47_a1_ambient_infinite : (cluster 2 bc47_fakeConfig bc47_a1).Infinite := by
   rw [cluster_infinite_iff]
   intro n
-  refine ⟨bc47_R (n + 1), bc47_R_outside_box n, ?_⟩
+  refine ⟨arc_p (n + 1), arc_p_outside_box n, ?_⟩
   exact (bc47_x_connected_a1.symm).trans (bc47_x_connected_R (n + 1) (by positivity))
 
 lemma bc47_a2_ambient_infinite : (cluster 2 bc47_fakeConfig bc47_a2).Infinite := by
   rw [cluster_infinite_iff]
   intro n
-  refine ⟨bc47_R (n + 1), bc47_R_outside_box n, ?_⟩
+  refine ⟨arc_p (n + 1), arc_p_outside_box n, ?_⟩
   exact (bc47_x_connected_a2.symm).trans (bc47_x_connected_R (n + 1) (by positivity))
 
 lemma bc47_a3_ambient_infinite : (cluster 2 bc47_fakeConfig bc47_a3).Infinite := by
   rw [cluster_infinite_iff]
   intro n
-  refine ⟨bc47_R (n + 1), bc47_R_outside_box n, ?_⟩
+  refine ⟨arc_p (n + 1), arc_p_outside_box n, ?_⟩
   exact (bc47_x_connected_a3.symm).trans (bc47_x_connected_R (n + 1) (by positivity))
 
 lemma bc47_arm_not_R_edge (a : Site 2)
     (ha : a = bc47_a1 ∨ a = bc47_a2 ∨ a = bc47_a3) (k : ℤ) (hk : 0 ≤ k) :
-    a ∉ s(bc47_R k, bc47_R (k + 1)) := by
-  have hne : ∀ j : ℤ, a ≠ bc47_R j ∨ j < 0 := by
+    a ∉ s(arc_p k, arc_p (k + 1)) := by
+  have hne : ∀ j : ℤ, a ≠ arc_p j ∨ j < 0 := by
     intro j
     rcases ha with rfl | rfl | rfl
     · left; intro h
       have h1 := congrArg (fun v : Site 2 => v 1) h
-      simp [bc47_a1, bc47_R] at h1
+      simp [bc47_a1, arc_p] at h1
     · left; intro h
       have h1 := congrArg (fun v : Site 2 => v 1) h
-      simp [bc47_a2, bc47_R] at h1
+      simp [bc47_a2, arc_p] at h1
     · by_cases hj : j < 0
       · exact Or.inr hj
       · left; intro h
         have h0 := congrArg (fun v : Site 2 => v 0) h
-        simp only [bc47_a3, bc47_R, Matrix.cons_val_zero] at h0
+        simp only [bc47_a3, arc_p, Matrix.cons_val_zero] at h0
         omega
   rw [Sym2.mem_iff]
   push Not
@@ -240,7 +225,7 @@ lemma bc47_arm_isolated (a : Site 2)
       have : bc47_x ∈ bc47_armEdge i := by
         fin_cases i <;> · rw [bc47_armEdge]; simp
       rwa [← hi] at this
-    have hnotray : ¬ (∃ k : ℤ, 0 ≤ k ∧ s(a, y) = s(bc47_R k, bc47_R (k + 1))) := by
+    have hnotray : ¬ (∃ k : ℤ, 0 ≤ k ∧ s(a, y) = s(arc_p k, arc_p (k + 1))) := by
       rintro ⟨k, hk, hek⟩
       have hamem : a ∈ s(a, y) := Sym2.mem_mk_left a y
       rw [hek] at hamem
@@ -322,30 +307,9 @@ lemma bc47_isTrifurcation_not_threeRemoveSiteInfiniteArms :
 
 /-! ## B. Classical trifurcations -/
 
-/-- `x` is a classical trifurcation: three distinct open edges from `x` lead to sites whose clusters
-after removing `x` are infinite and pairwise disconnected. -/
-def bc47_IsClassicalTrifurcation (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) : Prop :=
-  ∃ a₁ a₂ a₃ : Site d,
-    (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
-    (IsOpenEdge d ω x a₁ ∧ IsOpenEdge d ω x a₂ ∧ IsOpenEdge d ω x a₃) ∧
-    ((cluster d (removeSite x ω) a₁).Infinite ∧ (cluster d (removeSite x ω) a₂).Infinite ∧
-      (cluster d (removeSite x ω) a₃).Infinite) ∧
-    (¬ Connected d (removeSite x ω) a₁ a₂ ∧
-     ¬ Connected d (removeSite x ω) a₁ a₃ ∧
-     ¬ Connected d (removeSite x ω) a₂ a₃)
-
-lemma bc47_isTrifurcation_of_classical (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
-    (h : bc47_IsClassicalTrifurcation ω x) : IsTrifurcation d ω x := by
-  obtain ⟨a₁, a₂, a₃, hne, ⟨he1, he2, he3⟩, ⟨hi1, hi2, hi3⟩, hsep⟩ := h
-  refine ⟨a₁, a₂, a₃, hne, ⟨he1.connected, he2.connected, he3.connected⟩, ?_, hsep⟩
-  refine ⟨?_, ?_, ?_⟩
-  · exact hi1.mono (cluster_mono (Percolation.removeSite_le x ω) a₁)
-  · exact hi2.mono (cluster_mono (Percolation.removeSite_le x ω) a₂)
-  · exact hi3.mono (cluster_mono (Percolation.removeSite_le x ω) a₃)
-
 lemma bc47_only_infinite_neighbour_is_R1 (a : Site 2)
     (hea : IsOpenEdge 2 bc47_fakeConfig bc47_x a)
-    (hia : (cluster 2 (removeSite bc47_x bc47_fakeConfig) a).Infinite) : a = bc47_R 1 := by
+    (hia : (cluster 2 (removeSite bc47_x bc47_fakeConfig) a).Infinite) : a = arc_p 1 := by
   by_contra hne
   have hxa_ne : a ≠ bc47_x := (hea.1.ne).symm
   have hopen := hea.2
@@ -367,46 +331,26 @@ lemma bc47_only_infinite_neighbour_is_R1 (a : Site 2)
           · exact absurd hax hxa_ne
     exact absurd (bc47_arm_removeSite_finite a harm) hia
   · rw [ite_eq_right hstub] at hopen
-    by_cases hray : (∃ k : ℤ, 0 ≤ k ∧ s(bc47_x, a) = s(bc47_R k, bc47_R (k + 1)))
+    by_cases hray : (∃ k : ℤ, 0 ≤ k ∧ s(bc47_x, a) = s(arc_p k, arc_p (k + 1)))
     · obtain ⟨k, hk, hek⟩ := hray
       rw [bc47_x_eq_R0, Sym2.eq_iff] at hek
       rcases hek with ⟨hx, ha⟩ | ⟨hx, ha⟩
-      · have hk0 : (0 : ℤ) = k := bc47_R_inj hx
+      · have hk0 : (0 : ℤ) = k := arc_p_inj hx
         rw [← hk0] at ha
         exact hne (ha.trans (by norm_num))
-      · have : (0 : ℤ) = k + 1 := bc47_R_inj hx
+      · have : (0 : ℤ) = k + 1 := arc_p_inj hx
         omega
     · rw [ite_eq_right hray] at hopen; exact Bool.false_ne_true hopen
 
 lemma bc47_not_classical_fakeConfig :
-    ¬ bc47_IsClassicalTrifurcation bc47_fakeConfig bc47_x := by
+    ¬ IsEncounterPoint 2 bc47_fakeConfig bc47_x := by
   rintro ⟨a₁, a₂, a₃, ⟨h12, _, _⟩, ⟨he1, he2, _⟩, ⟨hi1, hi2, _⟩, _⟩
   have e1 := bc47_only_infinite_neighbour_is_R1 a₁ he1 hi1
   have e2 := bc47_only_infinite_neighbour_is_R1 a₂ he2 hi2
   exact h12 (e1.trans e2.symm)
 
-lemma arc_trifArmsRemoveSiteInfinite_of_classical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hcl : ∀ x, x ∈ box d n → IsTrifurcation d ω x → bc47_IsClassicalTrifurcation ω x) :
-    arc_TrifArmsRemoveSiteInfinite ω n := by
-  intro x hxbox htri
-  obtain ⟨a₁, a₂, a₃, hne, ⟨he1, he2, he3⟩, hinf, hsep⟩ := hcl x hxbox htri
-  refine ⟨![a₁, a₂, a₃], ?_, ?_, ?_, ?_⟩
-  · intro i; fin_cases i
-    · exact ⟨he1.1, he1.2⟩
-    · exact ⟨he2.1, he2.2⟩
-    · exact ⟨he3.1, he3.2⟩
-  · intro i; fin_cases i
-    · exact (he1.1.ne).symm
-    · exact (he2.1.ne).symm
-    · exact (he3.1.ne).symm
-  · exact hsep
-  · intro i; fin_cases i
-    · exact hinf.1
-    · exact hinf.2.1
-    · exact hinf.2.2
-
 lemma bc47_trif_arm_data_of_classical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (hcl : ∀ x, x ∈ box d n → IsTrifurcation d ω x → bc47_IsClassicalTrifurcation ω x)
+    (hcl : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (x : Site d) (hxbox : x ∈ box d n) (htri : IsTrifurcation d ω x) :
     ∃ (c : Fin 3 → Site d) (zr : Fin 3 → Site d),
       (∀ i, (openSubgraph d ω).Adj x (c i)) ∧
@@ -416,7 +360,7 @@ lemma bc47_trif_arm_data_of_classical (ω : ConfigSpace (Sym2 (Site d))) (n : �
        ¬ Connected d (removeSite x ω) (c 1) (c 2)) ∧
       (∀ i, zr i ∈ vertexBoundary d (n + 1) ∧
         ∃ w : (openSubgraph d (removeSite x ω)).Walk (c i) (zr i), x ∉ w.support) :=
-  arc_trif_arm_data ω n (arc_trifArmsRemoveSiteInfinite_of_classical ω n hcl) x hxbox htri
+  arc_trif_arm_data ω n (ctc2_armsRemoveSiteInfinite_of_canonical ω n hcl) x hxbox htri
 
 /-! ## C. Labelled examples -/
 
@@ -448,7 +392,7 @@ lemma bc47_chainShadow_arms_ok :
 
 lemma bc47_classical_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :
-    ∀ x, x ∈ box d n → IsTrifurcation d ω x → bc47_IsClassicalTrifurcation ω x :=
+    ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x :=
   fun x hxbox htri => absurd htri (hno x hxbox)
 
 lemma bc47_x_mem_box (n : ℕ) : bc47_x ∈ box 2 n := by
@@ -459,8 +403,8 @@ lemma bc47_arc_residue_fails_on_fakeConfig (n : ℕ) :
   intro hres
   obtain ⟨c, hadj, hne, ⟨hsep01, _, _⟩, hinf⟩ :=
     hres bc47_x (bc47_x_mem_box n) bc47_isTrifurcation_fakeConfig
-  have e0 : c 0 = bc47_R 1 := bc47_only_infinite_neighbour_is_R1 (c 0) (hadj 0) (hinf 0)
-  have e1 : c 1 = bc47_R 1 := bc47_only_infinite_neighbour_is_R1 (c 1) (hadj 1) (hinf 1)
-  exact hsep01 (e0.symm ▸ e1.symm ▸ connected_refl _ (bc47_R 1))
+  have e0 : c 0 = arc_p 1 := bc47_only_infinite_neighbour_is_R1 (c 0) (hadj 0) (hinf 0)
+  have e1 : c 1 = arc_p 1 := bc47_only_infinite_neighbour_is_R1 (c 1) (hadj 1) (hinf 1)
+  exact hsep01 (e0.symm ▸ e1.symm ▸ connected_refl _ (arc_p 1))
 
 end StatMech.Walls

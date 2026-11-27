@@ -78,9 +78,9 @@ variable {d : ℕ}
 
 /-! ## A. Consequences -/
 
-/-- Directional divergence: arm ends `b x` in the box with infinite clusters after removing `x`,
-such
-that for connected trifurcations `x ≠ y`, removing `x` separates `b x` from `b y`. -/
+/-- Directional divergence: arm sites `b x ∈ B_n` connected to each trifurcation `x` of `B_n`, with
+clusters infinite after all trifurcations of `B_n` are removed, such that for connected
+trifurcations `x ≠ y`, `b x` and `b y` lie in different arms at `x` or in different arms at `y`. -/
 def fpc_DirectionalChosenArmDivergence (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

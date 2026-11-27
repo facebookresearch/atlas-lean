@@ -181,8 +181,9 @@ lemma hrHD_precursor_of_removeSite_conditions
   · intro hc; exact hdist.2.1 (cluster_eq_of_connected hc)
   · intro hc; exact hdist.2.2 (cluster_eq_of_connected hc)
 
-/-- Disjoint routing in `B_n`: every configuration with three distinct infinite clusters meeting
-`B_n` becomes a neighbour trifurcation precursor after opening finitely many edges. -/
+/-- Disjoint routing in `B_n`: every configuration of `threeMeetBox d n` (infinitely many infinite
+clusters, three of them distinct and meeting `B_n`) becomes a neighbour trifurcation precursor after
+opening finitely many edges. -/
 def hrHD_DisjointRouting (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n, ∃ (G : Finset (Sym2 (Site d))) (a₁ a₂ a₃ : Site d),
     forceOpenFinset G ω ∈ NeighborTrifPrecursor d a₁ a₂ a₃
