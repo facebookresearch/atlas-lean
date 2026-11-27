@@ -508,6 +508,13 @@
       "upstream_sha256": "4771e333eb4e77d4a39b5c88e2ccd8ea270c21ed00b0035f11b1fd8859102581"
     },
     {
+      "path": "MathlibExt/Algebra/CirculantDetFourParityValuations.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "10594bd13f95124acb93fc050236fda1a8f51a86943a59be5890271bc66766a7",
+      "rationale": "Move and prove Lemma 7 from WantedExt/Algebra/IntegerGroupDeterminantsC4SqWanted.lean, preserving the declaration name, statement and docstring."
+    },
+    {
       "path": "MathlibExt/Algebra/CommutativeAlgebra/EakinNagata.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -550,6 +557,13 @@
       "disposition": "diverged",
       "published_sha256": "59f6109f178c9dead3969bcc8b8dfa72e5c51d152591ea53de874cb537fb8704",
       "rationale": "Holds pow_mem_prime_pow_padicValNat_factorial_iff (Proposition 3), padicValNat_sum_le_add_padicValNat_multinomial (Corollary 24) and padicValNat_multinomial_eq_sum_carries (Kummer's theorem for multinomial coefficients), moved from WantedExt/Algebra/DeepPowerSumCongruencesWanted.lean, which keeps its other wanted statements, when they were proved; same names and statements. The moved docstrings keep the Atlas wiki audit restatement recorded for that wanted file, still pending backport."
+    },
+    {
+      "path": "MathlibExt/Algebra/DeepPowerSumCongruences/DVRMaximalIdeal.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9c7590cfe9b888d1dc9e87594b7b339c03405972635344eba698268c60fc317f",
+      "rationale": "Moved isDividedPowerIdeal_maximalIdeal_iff (Corollary 8) from WantedExt/Algebra/DeepPowerSumCongruencesWanted.lean when it was proved, preserving its name, statement and docstring. Also: Correct the module references to cite the published generator test and valuation argument without misstating Lemma 7."
     },
     {
       "path": "MathlibExt/Algebra/DeepPowerSumCongruences/DVRMaximalIdealPow.lean",
@@ -4653,6 +4667,13 @@
       "rationale": "Moved the Laurent polynomial identity for Chebyshev partial sums from WantedExt/Algebra/IntertwinedIntegerSequencesWanted.lean when it was proved, preserving its name, statement and docstring. Also: The moved docstring keeps ATLAS-side text from WantedExt/Algebra/IntertwinedIntegerSequencesWanted.lean that Formal-Math does not have yet (its backport is still owed)."
     },
     {
+      "path": "MathlibExt/Algebra/Polynomial/ChebyshevCPartialSumTopCoeffs.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "12072ca67112f7a24bb47d042f0c09e3f828c30565af15be190687f9f7c4a90f",
+      "rationale": "Prove chebyshevCPartialSum_top_coeffs from the wanted module without changing its statement, and cite the published Corollary 10."
+    },
+    {
       "path": "MathlibExt/Algebra/Polynomial/ChebyshevCPositivity.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -4779,6 +4800,13 @@
       "disposition": "diverged",
       "published_sha256": "86f4c4179fb78a5a91381ebfd7030b31031fbca46a6607e301da1d7346d48ca4",
       "rationale": "Prove polynomialToLIP_injective from the tracked WantedExt statement, preserving its statement and docstring; the moved docstring retains the pending editorial backport from the ATLAS wiki audit."
+    },
+    {
+      "path": "MathlibExt/Algebra/Polynomial/LocallyIntegerPolynomialRestriction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9e763d33993bacc99ce32073776a69c892303bfeddc5970b03b46c8a0225a933",
+      "rationale": "Move lip_restrict_injective from WantedExt/Algebra/LocallyIntegerPolynomialWanted.lean, preserving its name, statement and docstring, and prove it using the infinite-zero theorem."
     },
     {
       "path": "MathlibExt/Algebra/Polynomial/LowDegreeInterpolant.lean",
@@ -5023,6 +5051,13 @@
       "disposition": "diverged",
       "published_sha256": "1eadb7957980ee882e690bf10a6b97d8d18510abbf83c52962f1394c84c6fa99",
       "rationale": "Moved VirtualRackIso, dihedralAffinePerm and dihedral_virtualRackIso_iff from WantedExt/Algebra/VirtualQuandleWanted.lean when the wanted statement was proved, preserving their names, statements and docstrings."
+    },
+    {
+      "path": "MathlibExt/Algebra/VirtualRackConjugacy.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "76fde2d76571078fbcc91c992ef85d0595667b91b9a68b6507463fc42de605fc",
+      "rationale": "Move VirtualRackIso unchanged from VirtualQuandleWanted and prove virtualRackIso_iff_isConj in the production library, preserving the theorem statement and docstring. Also: Reuse the VirtualRackIso definition already moved to MathlibExt/Algebra/VirtualQuandle.lean rather than defining it here."
     },
     {
       "path": "MathlibExt/Algebra/ZModPermutationPolynomial.lean",
