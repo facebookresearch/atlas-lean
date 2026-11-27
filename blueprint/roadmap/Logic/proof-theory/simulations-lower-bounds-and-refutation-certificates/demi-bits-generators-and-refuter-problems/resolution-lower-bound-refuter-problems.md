@@ -29,6 +29,7 @@ Refuter problems for lower bounds against algorithms and circuits were studied b
 
 - [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 - [Width of a derivation](../../../propositional-logic/resolution-size-and-width/derivation-width.md)
+- [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](../../../../TheoryOfComputation/complexity-classes/tfnp-hierarchies-and-avoidance/tfnp-proof-complexity-characterizations/query-tfnp-and-formulations.md)
 
 ## Proof depends on
 

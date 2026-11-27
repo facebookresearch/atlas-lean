@@ -22,12 +22,13 @@ All cases reduce from Circuit MMSA, which Dinur and Safra showed cannot be appro
 
 For a Frege system the inputs of the tautology $\bigwedge_i((x_{j_{i,1}}\,\mathrm{OP}\,x_{j_{i,2}})\to x_i)\to x_n$ are replaced by independent tautologies $\bot\vee(\bot\vee\cdots(\bot\vee(\neg p_i\vee p_i))\cdots)$ of nesting depth $m$, translated into the system's connectives. The lower bound counts *active* subformulas: let $I$ be the set of inputs all of whose $m$ nested layers are active in the proof; replacing an inactive layer of every other input by $\bot$ leaves a valid proof, so the resulting formula is still a tautology, which forces $I$ to satisfy $C$ and hence $|I|\ge\ell$; active formulas bound the symbol length and the step length from below up to constants depending on the system, and these bounds also hold for extended Frege. The polynomial calculus simulates the width-3 resolution upper bound line by line and inherits the resolution lower bound argument. When the shortest proofs may be superpolynomial and the algorithm must run in time polynomial in the formula alone, the paper shows that, unless NP $\subseteq$ P/poly, no polynomial-time algorithm approximates the minimum refutation length within any polynomial factor for proof systems whose maximum refutation length has smooth superpolynomial growth, which includes resolution.
 
-An automatable system could be approximated within a polynomial factor, so these super-linear factors are a weaker conclusion than non-automatability, but under the minimal assumption P $\ne$ NP; compare the [Atserias–Müller theorem](../../../proof-theory/automatability-of-proof-systems/atserias-muller.md), which shows that finding resolution refutations of size polynomial in the optimum is NP-hard.
+An automatable system could be approximated within a polynomial factor, so these super-linear factors are a weaker conclusion than non-automatability, but under the minimal assumption P $\ne$ NP; compare the [Atserias–Müller theorem](../../automatability-of-proof-systems/atserias-muller.md), which shows that finding resolution refutations of size polynomial in the optimum is NP-hard.
 
 ## Depends on
 
 - [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 - [Cook-Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
+- [Horn formula](../../../propositional-logic/horn-satisfiability/is-horn.md)
 
 ## Proof depends on
 

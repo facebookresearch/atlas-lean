@@ -24,4 +24,4 @@ Monotone threshold formulas of polynomial size come from the logarithmic-depth A
 
 ## Sources
 
-- Sam Buss, Valentine Kabanets, Antonina Kolokolova, Michal Koucký, "Expander construction in $VNC^1$", *Annals of Pure and Applied Logic*, 2020, doi:10.1016/j.apal.2020.102796 (Theorem 1.2 = Theorem 7.3; Lemma 7.1 and Theorem 7.2 for the reduction; LK and MLK in Section 2.4; numbering of the authors' full version dated 7 November 2016, the edition read).
+- Sam Buss, Valentine Kabanets, Antonina Kolokolova, Michal Koucký, "Expander construction in $VNC^1$", *Annals of Pure and Applied Logic*, 2020, doi:10.1016/j.apal.2020.102796 (Theorem 2 = Theorem 36; Lemma 34 and Theorem 35 for the reduction; LK and MLK in Section 2.4; numbering of the authors' public copy of the journal article, https://mathweb.ucsd.edu/~sbuss/ResearchWeb/Expanders/Expanders.pdf).

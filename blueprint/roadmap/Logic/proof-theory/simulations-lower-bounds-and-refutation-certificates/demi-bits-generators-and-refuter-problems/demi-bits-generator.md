@@ -8,7 +8,7 @@ $$
 \Pr_{y\sim\{0,1\}^m}[\mathrm{Adv}(y)=1]\ge\varepsilon \quad\text{and}\quad \Pr_{x\sim\{0,1\}^n}[\mathrm{Adv}(G(x))=1]=0.
 $$
 
-When security holds against every $\mathsf{NP}/\mathrm{poly}$ adversary of polynomial size, $G$ is called an **$\varepsilon$-secure demi-bits generator** (or simply a demi-bits generator, with a constant $\varepsilon$), and a family $\{g_n\}$ is said to be secure against $\mathsf{NP}/\mathrm{poly}$. Security against uniform $\mathsf{NP}$ adversaries is defined in the same way, the adversary receiving the circuit of $G$ as an extra input when $G$ is non-uniform. Since an adversary may guess a proof and verify it, an $\varepsilon$-secure $G$ admits no efficient sound proof system proving "$y\notin\mathrm{Range}(G)$" for at least $\varepsilon 2^m$ strings $y$.
+When security holds against every $\mathsf{NP}/\mathrm{poly}$ adversary of polynomial size, $G$ is called an **$\varepsilon$-secure demi-bits generator**, and a family $\{g_n\}$ is said to be secure against $\mathsf{NP}/\mathrm{poly}$. The notion is weaker when $\varepsilon$ is larger, so an $\varepsilon$-secure generator is $\varepsilon'$-secure for every $\varepsilon'\ge\varepsilon$. An unqualified **demi-bits generator** means a $1/2$-secure one: Ren, Wang and Zhong use the term without fixing $\varepsilon$, and their proofs break it with adversaries that accept half of all strings. Security against uniform $\mathsf{NP}$ adversaries is defined in the same way, the adversary receiving the circuit of $G$ as an extra input when $G$ is non-uniform. Since an adversary may guess a proof and verify it, an $\varepsilon$-secure $G$ admits no efficient sound proof system proving "$y\notin\mathrm{Range}(G)$" for at least $\varepsilon 2^m$ strings $y$.
 
 **Weak demi-bits generators.** $G$ is an **$(s,K)$-weak demi-bits generator** if there is no $\mathsf{NP}/\mathrm{poly}$ adversary $\mathrm{Adv}$ of size $s$ with
 
@@ -24,7 +24,7 @@ A $K$-weak demi-bits generator is the same as a $(1-K/2^m)$-secure one, and ever
 
 Rudich introduced demi-bits as cryptography against nondeterministic adversaries; his stronger notion of super-bits is the analogue of a pseudorandom generator, while demi-bits generators are the analogue of a hitting set generator. Demi-bits generators connect to natural proofs with nondeterministic constructivity: if the truth table generator, mapping a small circuit to its truth table, is a secure demi-bits generator, then no $\mathsf{NP}$-constructive large property certifies circuit lower bounds.
 
-The two notions against a proof system differ only in quantifier strength: a demi-bits generator needs hard statements "$b\notin\mathrm{Range}(G)$" for an average $b$, a proof complexity generator for the best-case $b$. Candidate demi-bits generators with polynomial stretch, or with stretch $n^{1+\epsilon}$ and constant $\mathbb F_2$-degree, come from noisy-parity (LPN-style) generators and Goldreich's local generator.
+The two notions against a proof system differ only in quantifier strength: a demi-bits generator needs hard statements "$b\notin\mathrm{Range}(G)$" for an average $b$, a proof complexity generator for the best-case $b$. Demi-bits generators with polynomial stretch for every exponent follow from Rudich's conjecture (with the truth table generator as the candidate) or from super-bits generators; candidates with stretch $n^{1+\epsilon}$ and constant $\mathbb F_2$-degree come from noisy-parity (LPN-style) generators and Goldreich's local generator.
 
 ## Depends on
 
@@ -36,5 +36,5 @@ None.
 
 ## Sources
 
-- Hanlin Ren, Yichuan Wang, Yan Zhong, "Hardness of Range Avoidance and Proof Complexity Generators from Demi-Bits", *ITCS* 2026, arXiv:2511.14061v2, https://arxiv.org/abs/2511.14061 (Definition 2.1, Assumptions 2.2 and 2.3, Section 3.1, Appendix B).
+- Hanlin Ren, Yichuan Wang, Yan Zhong, "Hardness of Range Avoidance and Proof Complexity Generators from Demi-Bits", *Innovations in Theoretical Computer Science Conference (ITCS 2026)*, LIPIcs, 2026, doi:10.4230/LIPIcs.ITCS.2026.111; also arXiv:2511.14061v2, https://arxiv.org/abs/2511.14061 (Definition 2.1, Assumptions 2.2 and 2.3, Theorem 3.1 and its proof, Section 3.1, Appendix B: Proposition B.1 for polynomial stretch, Assumption B.2, Fact B.3, Assumption B.4 and Proposition B.5 for constant degree; numbering of arXiv v2).
 - Xin Li, Hanlin Ren, Yan Zhong, "Many Proof Complexity Generators Inside One Demi-Bits Generator", *FOCS* 2026, arXiv:2609.23228v1, https://arxiv.org/abs/2609.23228 (Definitions 2.1 and 2.2, Section 1.3).

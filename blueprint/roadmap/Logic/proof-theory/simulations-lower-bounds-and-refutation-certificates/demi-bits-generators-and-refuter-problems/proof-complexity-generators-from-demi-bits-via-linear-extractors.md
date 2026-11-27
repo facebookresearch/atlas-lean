@@ -19,7 +19,7 @@ For linear $\mathrm{Ext}$, every $y\in\{0,1\}^N$ and seed $r$ give a simple pari
 
 Suppose every $C_r$ fails, so each $r$ has a $z(r)$ with a short $\mathcal P$-proof of $\tau_{z(r)}(C_r)$. The test "$\tau_z(C_r)$ has a short proof" then accepts a random pair $(r,z)$ with probability at least $2^{-m}$, and the extractor property gives, for at least $3/4$ of all $y$, a seed $r$ for which $\tau_{\mathrm{Ext}(y,r)}(C_r)$ has a short proof. Closure under the reduction yields short proofs of $\tau_y(G)$ for those $y$, contradicting the demi-bits hardness of $G$. The argument is an average-case to best-case reduction that uses only nondeterminism.
 
-In the same paper, demi-bits generators $G:\{0,1\}^n\to\{0,1\}^{100km}$ secure against $\mathsf{NP}/\mathrm{poly}$ give, for every non-uniform proof system, generators $\{0,1\}^n\to\{0,1\}^m$ that are $k$-round pseudo-surjective, the strongest hardness notion considered for proof complexity generators. The closure hypothesis excludes resolution, which is not closed under simple parity reductions; the restriction-based version of this transformation needs only monotonicity under adding axioms.
+In the same paper, $1/2$-secure demi-bits generators $G:\{0,1\}^n\to\{0,1\}^{100km}$ against $\mathsf{NP}/\mathrm{poly}$ (the proof uses an adversary that succeeds on half of all strings) give, for every non-uniform proof system, generators $\{0,1\}^n\to\{0,1\}^m$ that are $k$-round pseudo-surjective, the strongest hardness notion considered for proof complexity generators. The closure hypothesis excludes resolution, which is not closed under simple parity reductions; the restriction-based version of this transformation needs only monotonicity under adding axioms.
 
 ## Depends on
 
@@ -32,5 +32,5 @@ None.
 
 ## Sources
 
-- Hanlin Ren, Yichuan Wang, Yan Zhong, "Hardness of Range Avoidance and Proof Complexity Generators from Demi-Bits", *ITCS* 2026, arXiv:2511.14061v2, https://arxiv.org/abs/2511.14061 (Theorems 1.4 and 3.5, Definition 3.3, Claim 3.4, Section 3.1, Theorem C.1, Theorem 1.7).
+- Hanlin Ren, Yichuan Wang, Yan Zhong, "Hardness of Range Avoidance and Proof Complexity Generators from Demi-Bits", *Innovations in Theoretical Computer Science Conference (ITCS 2026)*, LIPIcs, 2026, doi:10.4230/LIPIcs.ITCS.2026.111; also arXiv:2511.14061v2, https://arxiv.org/abs/2511.14061 (numbering of arXiv v2: Theorems 1.4 and 3.5, Definition 3.3, Claim 3.4, Section 3.1, Theorem C.1, Theorem 1.7).
 - Xin Li, Hanlin Ren, Yan Zhong, "Many Proof Complexity Generators Inside One Demi-Bits Generator", *FOCS* 2026, arXiv:2609.23228v1, https://arxiv.org/abs/2609.23228 (Remark 4.13).

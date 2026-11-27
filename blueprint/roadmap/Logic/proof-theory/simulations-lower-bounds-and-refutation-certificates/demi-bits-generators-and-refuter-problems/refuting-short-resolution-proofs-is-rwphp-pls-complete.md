@@ -32,6 +32,7 @@ Similar upper bounds hold for Tseitin formulas on expanders, XOR-lifted formulas
 ## Depends on
 
 - [Refuter problems for resolution lower bounds](resolution-lower-bound-refuter-problems.md)
+- [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](../../../../TheoryOfComputation/complexity-classes/tfnp-hierarchies-and-avoidance/tfnp-proof-complexity-characterizations/query-tfnp-and-formulations.md)
 
 ## Proof depends on
 

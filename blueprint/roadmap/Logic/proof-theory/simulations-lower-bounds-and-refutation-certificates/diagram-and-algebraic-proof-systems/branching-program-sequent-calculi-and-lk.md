@@ -27,7 +27,7 @@ For part 1, the LK proof is first put in balanced form, so that every formula ha
 
 ## Depends on
 
-- [Cut elimination for the classical sequent calculus LK](../../../proof-theory/cut-elimination-for-the-classical-sequent-calculus.md)
+- [Cut elimination for the classical sequent calculus LK](../../cut-elimination-for-the-classical-sequent-calculus.md)
 - [Cook-Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
 
 ## Proof depends on

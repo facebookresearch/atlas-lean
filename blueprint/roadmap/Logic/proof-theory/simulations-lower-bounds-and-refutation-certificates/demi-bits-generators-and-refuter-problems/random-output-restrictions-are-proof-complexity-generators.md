@@ -14,7 +14,7 @@ $$
 
 over a uniformly random $I\subseteq[N]$ with $|I|=m$, the restriction $G|_I$ is a proof complexity generator secure against $\mathcal P$-proofs of length $\ell$.
 
-In particular, for $G:\{0,1\}^n\to\{0,1\}^{10n}$ a demi-bits generator against a well-behaved $\mathcal P$, with constant probability over a uniformly random $I\subseteq[10n]$ the function $G|_I$ is a proof complexity generator against $\mathcal P$.
+The paper's informal Theorem 1.8 states the idea for an unrestricted index set: for a demi-bits generator $G:\{0,1\}^n\to\{0,1\}^N$ against a well-behaved $\mathcal P$, with constant probability over a uniformly random subset $I\subseteq[N]$ of unrestricted size, $G|_I$ is a proof complexity generator against $\mathcal P$ (and $|I|>n$ with high probability). It is not a special case of the fixed-size theorem above, whose parameters force $|I|=m<N/(10\log(1/\varepsilon))$.
 
 ## Expansion
 

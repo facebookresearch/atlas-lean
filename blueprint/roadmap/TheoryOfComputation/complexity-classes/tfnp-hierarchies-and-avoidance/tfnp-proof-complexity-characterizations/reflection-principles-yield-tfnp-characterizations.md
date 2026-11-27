@@ -1,8 +1,8 @@
-# Proof systems proving their own reflection principle are exactly the TFNP-characterized ones
+# A closed proof system with short proofs of its own reflection principle is characterized by a black-box TFNP problem
 
 A proof system closed under decision-tree reductions that has polylogarithmic-complexity proofs of an efficiently verifiable reflection principle about itself is characterized by the search problem of that principle; conversely every black-box TFNP problem characterizes such a proof system.
 
-**Setting.** $\mathrm{TFNP}^{dt}$, the false-clause search problem $S_F$, decision-tree reductions, the complexity $P(F) = \min(\deg + \log \mathrm{size})$ and characterization are as in [Characterizing a proof system by a black-box TFNP problem](tfnp-characterization-of-proof-systems.md). A proof system $P$ is **closed under decision-tree reductions** if whenever $F$ has a $P$-proof of complexity $c$ and $H$ reduces to $F$ by depth-$d$ decision trees, $H$ has a $P$-proof of complexity $O(cd)$. A **verification procedure** $V$ for $P$ maps $(n, m, c)$ to a CNF $V_{n,m,c}(H, \Pi)$ whose variables encode an $n$-variable CNF $H$ with $m$ clauses of width at most $c$ and a purported complexity-$c$ (or $O(c)$) $P$-proof $\Pi$ of $H$, such that any error in $\Pi$ is witnessed by at most polylogarithmically many variables, and which has $2^{\Theta(c)}$ variables. The **reflection principle** $\mathrm{Ref}_{P,V}$ is the unsatisfiable CNF
+**Setting.** $\mathrm{TFNP}^{dt}$ and decision-tree reductions (formulations) are as on [query total search problems](query-tfnp-and-formulations.md), the false-clause search problem $S_F$ and the complexity $P(F) = \min(\deg + \log \mathrm{size})$ as on [the false-clause search problem](false-clause-search-problem.md), and characterization in the polylogarithmic sense of [Characterizing a proof system by a black-box TFNP problem](tfnp-characterization-of-proof-systems.md). A proof system $P$ is **closed under decision-tree reductions** if whenever $F$ has a $P$-proof of complexity $c$ and $H$ reduces to $F$ by depth-$d$ decision trees, $H$ has a $P$-proof of complexity $O(cd)$. A **verification procedure** $V$ for $P$ maps $(n, m, c)$ to a CNF $V_{n,m,c}(H, \Pi)$ whose variables encode an $n$-variable CNF $H$ with $m$ clauses of width at most $c$ and a purported complexity-$c$ (or $O(c)$) $P$-proof $\Pi$ of $H$, such that any error in $\Pi$ is witnessed by at most polylogarithmically many variables, and which has $2^{\Theta(c)}$ variables. The **reflection principle** $\mathrm{Ref}_{P,V}$ is the unsatisfiable CNF
 
 $$
 \mathrm{Proof}_{n_H, m_H, c}(H, \Pi) \wedge \mathrm{Sat}_{n_H, m_H, c}(H, \alpha),
@@ -29,6 +29,8 @@ For part 2, a $P$-proof $\Pi$ of $H$ gives a reduction from $S_H$ to $S_{\mathrm
 
 ## Depends on
 
+- [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](query-tfnp-and-formulations.md)
+- [The false-clause search problem S(F) of an unsatisfiable CNF and its universality for TFNP^dt](false-clause-search-problem.md)
 - [Characterizing a proof system by a black-box TFNP problem](tfnp-characterization-of-proof-systems.md)
 
 ## Proof depends on

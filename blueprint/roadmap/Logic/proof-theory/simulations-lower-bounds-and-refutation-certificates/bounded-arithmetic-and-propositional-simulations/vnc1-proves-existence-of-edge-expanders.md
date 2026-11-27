@@ -44,4 +44,4 @@ None.
 
 ## Sources
 
-- Sam Buss, Valentine Kabanets, Antonina Kolokolova, Michal Koucký, "Expander construction in $VNC^1$", *Annals of Pure and Applied Logic*, 2020, doi:10.1016/j.apal.2020.102796 (Theorem 6.8, Theorem 6.9, Theorem 6.10; definitions in Sections 2.2, 2.3 and 5; construction and analysis in Sections 3 and 4; conservation result Theorem 6.3; numbering of the authors' full version dated 7 November 2016, the edition read).
+- Sam Buss, Valentine Kabanets, Antonina Kolokolova, Michal Koucký, "Expander construction in $VNC^1$", *Annals of Pure and Applied Logic*, 2020, doi:10.1016/j.apal.2020.102796 (Theorems 31, 32 and 33; definitions in Sections 2.2, 2.3 and 5; construction and analysis in Sections 3 and 4; the telescoping-induction conservation result Theorem 26 in Section 6.3; numbering of the authors' public copy of the journal article, https://mathweb.ucsd.edu/~sbuss/ResearchWeb/Expanders/Expanders.pdf).

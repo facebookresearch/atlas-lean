@@ -32,4 +32,4 @@ None.
 
 ## Sources
 
-- Sam Buss, Ryan Williams, "Limits on alternation-trading proofs for time-space lower bounds", *Computational Complexity*, 2015, doi:10.1007/s00037-015-0102-y (Section 2.1, rules R0 to R2 and the definition of refutation and derivation; Section 2.2, Lemmas 2 and 3 for the homogeneous and reduced systems; numbering of the authors' version dated 8 August 2011, the edition read).
+- Sam Buss, Ryan Williams, "Limits on alternation-trading proofs for time-space lower bounds", *Computational Complexity*, 2015, doi:10.1007/s00037-015-0104-9 (Section 2.1, rules R0 to R2 and Definition 2.1 of refutation and derivation; Section 2.2, Lemmas 2.2 and 2.6 for the homogeneous and reduced systems; numbering of the authors' revised journal manuscript, https://mathweb.ucsd.edu/~sbuss/ResearchWeb/npProofLimits/paper-journal.pdf).
