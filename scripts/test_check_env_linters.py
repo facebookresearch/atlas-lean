@@ -548,6 +548,16 @@ class PlaceTests(unittest.TestCase):
         indexes = {path: check.index_source(text) for path, (text, _) in head.items()}
         return check.place(finding, files, indexes, base)
 
+    def test_a_finding_without_a_position_goes_to_the_module_that_lean_names(self):
+        # `First.Second.lean` and `First/Second.lean` are two modules, which Lean names apart.
+        text = "namespace X\n\nstructure Pt where\n  x : Nat\n\nend X\n"
+        head = {"MathlibExt/First.Second.lean": (text, set(range(1, 7))),
+                "MathlibExt/First/Second.lean": (text, set(range(1, 7)))}
+        for module, path in (("MathlibExt.«First.Second»", "MathlibExt/First.Second.lean"),
+                             ("MathlibExt.First.Second", "MathlibExt/First/Second.lean")):
+            finding = Finding("X.Pt.mk.injEq", "simpNF", "", module)
+            self.assertEqual(self.place_in(finding, head, base_names()).path, path)
+
     def test_a_declaration_that_only_gains_a_docstring_is_not_added(self):
         placement = self.place(Finding("X.old", "unusedArguments", "", "MathlibExt.A",
                                        "MathlibExt/A.lean", 3, 1))

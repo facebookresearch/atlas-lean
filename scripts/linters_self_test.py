@@ -27,6 +27,8 @@ from lean_changes import inert
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = Path(__file__).resolve().parent
 PROBE = Path("MathlibExt/LintersSelfTestProbe.lean")
+# The files that the self-test creates, and deletes again.
+PROBES = (PROBE,)
 
 LONG = "a + b = b + a ∧ a * b = b * a ∧ a + 0 = a ∧ b + 0 = b ∧ a * 1 = a ∧ b * 1 = b"
 PROBE_TEXT = f"""\
@@ -75,6 +77,21 @@ def git(*args: str) -> str:
                           text=True).stdout.strip()
 
 
+def reserve(paths: tuple[Path, ...]) -> bool:
+    """Create each of `paths`, empty and new, so that the probes never write through a file or
+    a link already there; `False`, creating none, if one is there."""
+    created: list[Path] = []
+    for path in paths:
+        try:
+            (ROOT / path).open("x").close()
+        except FileExistsError:
+            for done in created:
+                (ROOT / done).unlink()
+            return False
+        created.append(path)
+    return True
+
+
 def commit(text: str, message: str) -> str:
     (ROOT / PROBE).write_text(text, encoding="utf-8")
     git("add", "--", str(PROBE))
@@ -115,10 +132,14 @@ def main() -> int:
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true" and not args.local:
         parser.error("this commits to the checkout; pass --local to run it outside GitHub Actions")
-    if (ROOT / PROBE).exists() or git("diff", "--cached", "--name-only"):
-        print(f"{PROBE} exists or changes are staged; not running.", file=sys.stderr)
+    if git("diff", "--cached", "--name-only"):
+        print("Changes are staged; not running.", file=sys.stderr)
         return 1
     start = git("rev-parse", "HEAD")
+    if not reserve(PROBES):
+        print(f"A file or link is at {' or '.join(map(str, PROBES))}; not running.",
+              file=sys.stderr)
+        return 1
     try:
         first = commit(PROBE_TEXT, "linters self-test: probe module")
         ok = run_checks(start, 0)
@@ -126,8 +147,9 @@ def main() -> int:
         ok = run_checks(first, 1) and ok
     finally:
         git("reset", "-q", "--soft", start)
-        git("rm", "-q", "--cached", "--ignore-unmatch", "--", str(PROBE))
-        (ROOT / PROBE).unlink(missing_ok=True)
+        git("rm", "-q", "--cached", "--ignore-unmatch", "--", *map(str, PROBES))
+        for probe in PROBES:
+            (ROOT / probe).unlink(missing_ok=True)
     print("The checks report what they should." if ok else "A check reported something else.")
     return 0 if ok else 1
 

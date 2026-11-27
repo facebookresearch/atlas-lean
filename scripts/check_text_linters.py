@@ -27,8 +27,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lean_changes import (ROOT, AggregatorError, add_common_arguments, aggregators, annotation,
-                          changed_files, guarded, in_actions, inert, lean_unescaped, printable,
-                          relative, write_summary)
+                          changed_files, guarded, in_actions, inert, printable, relative,
+                          write_summary)
 
 LINE_ERROR = re.compile(r"^error: (?P<file>\S.*?\.lean):(?P<line>\d+): (?P<message>.*)$")
 # Module-name errors quote the name in one of two ways, and a name can hold an apostrophe:
@@ -69,8 +69,8 @@ def parse_lint_style(text: str, module_paths: dict[str, str],
                                      match.group("message")))
         elif match := MODULE_ERROR.match(line):
             reported = True
-            path = module_paths.get(
-                lean_unescaped(match.group("quoted") or match.group("ticked")))
+            # lint-style prints a module's name as Lean does, which `lean_module` matches.
+            path = module_paths.get(match.group("quoted") or match.group("ticked"))
             if path is not None:
                 errors.append(StyleError(path, 1, f"Module name {match.group('message')}",
                                          module_name=True))
@@ -93,7 +93,8 @@ def main() -> int:
         return 0
     added = {file.path: file.added_lines for file in files}
     # Renaming a file changes its module name, so the name is new code too.
-    new_modules = {file.module: file.path for file in files if file.status in "AR"}
+    new_modules = {file.lean_module: file.path for file in files
+                   if file.status in "AR" and file.lean_module is not None}
     # lint-style finds a module's file from its name as Lean prints it, so it cannot read a file
     # whose name Lean writes with «», such as `New-Name.lean`; that name is reported instead.
     unreadable = [file for file in files

@@ -60,7 +60,8 @@ from lean_changes import (ROOT, AggregatorError, ChangedFile, add_common_argumen
 ENTRY = re.compile(r"^(?P<file>\S.*?\.lean):(?P<line>\d+):(?P<col>\d+): error: (?P<text>.*)$")
 UNPLACED = re.compile(r"^#check (?P<text>.*)$")
 HEADER = re.compile(r"^/- The `(?P<linter>[^`]+)` linter reports:")
-MODULE = re.compile(r"^-- (?P<module>[^\s]+)$")  # as Lean prints it, with «» where needed
+# A module's name, as Lean prints it (with «» where needed), as `ChangedFile.lean_module` spells it.
+MODULE = re.compile(r"^-- (?P<module>[^\s]+)$")
 # `runLinter` prints one of these when it has linted its module.
 FINISHED = re.compile(r"^-- (?:Found \d+ errors? in|Linting passed for) ")
 
@@ -133,7 +134,7 @@ def parse_run_linter(text: str, cwd: Path = ROOT) -> list[Finding]:
         elif module_line := MODULE.match(line):
             finish()
             current = None
-            module = unquote_name(module_line.group("module"))
+            module = module_line.group("module")
         elif not line.strip() or line.startswith(("-- ", "/-")):
             finish()
             current = None
@@ -547,7 +548,7 @@ def place(finding: Finding, files: dict[str, ChangedFile], indexes: dict[str, So
         return Placement(file.path, finding.line, finding.col, new)
     # No position: the nearest enclosing declaration that a changed file declares.
     for path, file in files.items():
-        if finding.module is not None and file.module != finding.module:
+        if finding.module is not None and file.lean_module != finding.module:
             continue
         index = indexes[path]
         for candidate in enclosing(finding.declaration):
@@ -622,7 +623,7 @@ def main() -> int:
     kept: list[tuple[Finding, Placement]] = []
     existing = elsewhere = 0
     unplaced: list[Finding] = []
-    changed_modules = {file.module for file in changed}
+    changed_modules = {file.lean_module for file in changed}
     for finding in findings:
         placement = place(finding, files, indexes, base)
         if placement is None:
