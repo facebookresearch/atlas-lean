@@ -86,7 +86,7 @@ lemma coordLaw_survival (j : Fin 2) :
         by_cases hi : ω i
         · simp [hi]
         · exfalso
-          simp only [Set.mem_setOf_eq, if_neg hi] at h
+          simp only [Set.mem_setOf_eq, ite_eq_right hi] at h
           norm_num at h
       · simp [hij]
     · intro h

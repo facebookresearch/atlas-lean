@@ -110,3 +110,4 @@
 - [Boosted polygenic scores with non-additive effects](boosted-polygenic-scores-with-non-additive-effects/README.md)
 - [Cross-trait penalized polygenic regression](cross-trait-penalized-polygenic-regression/README.md)
 - [Polygenic scores for gene-by-exposure interaction](polygenic-scores-for-gene-by-exposure-interaction/README.md)
+- [Genetic correlation from GWAS summary statistics](genetic-correlation-from-gwas-summary-statistics/README.md)
