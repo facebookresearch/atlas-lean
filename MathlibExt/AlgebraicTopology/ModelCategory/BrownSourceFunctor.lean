@@ -32,8 +32,9 @@ namespace HomotopicalAlgebra
 variable {C : Type uC} [Category.{vC} C] [ModelCategory C]
   {D : Type uD} [Category.{vD} D] [ModelCategory D]
 
-/-- Brown's actual factorization gives contravariant weak invariance from
-genuine trivial-cofibration maps. -/
+/-- A functor `F : Cᵒᵖ ⥤ D` between model categories that sends the opposite of
+every trivial cofibration of `C` to a weak equivalence sends the opposite of
+every weak equivalence between cofibrant objects of `C` to a weak equivalence. -/
 theorem sourceFunctor_weak_of_trivialCofibrations
     (F : Cᵒᵖ ⥤ D)
     (hF : ∀ {X Y : C} (i : X ⟶ Y) [Cofibration i] [WeakEquivalence i],
