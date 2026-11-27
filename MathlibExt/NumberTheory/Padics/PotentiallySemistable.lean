@@ -18,7 +18,10 @@ Licensed under the Apache License, Version 2.0.
 
 module
 
+public import MathlibExt.RepresentationTheory.AdmissibleRepresentation.Dual
+public import MathlibExt.RepresentationTheory.AdmissibleRepresentation.Exact
 public import MathlibExt.RepresentationTheory.AdmissibleRepresentation.Regular
+public import MathlibExt.RepresentationTheory.AdmissibleRepresentation.Tensor
 public import MathlibExt.RingTheory.Perfectoid.SemistablePeriodRingAbstract
 
 /-!
@@ -58,6 +61,22 @@ finite-dimensional `V` is de Rham over `K` if and only if `B_dR ⊗_{ℚ_p} V` h
 `G_K`-invariant vectors, if and only if the comparison map `α_V` is an isomorphism
 (`Representation.isDeRham_iff_hasFixedBasis`, `Representation.isDeRham_iff_comparison_bijective`).
 The regularity of `B_cris` and `B_st` is not proved here.
+
+Over every `K`, the results on admissible representations for a regular ring (J.-M. Fontaine and
+Y. Ouyang, *Theory of p-adic Galois representations*, §3.1, Theorem 3.14 (2); Exposé III, §1.5
+pp. 124–125) give the Tannakian properties of de Rham representations. They are closed under
+subrepresentations and quotients (`Representation.IsDeRham.subrepresentation`,
+`Representation.IsDeRham.quotient`, and more generally `Representation.IsDeRham.of_injective`,
+`Representation.IsDeRham.of_surjective`), direct sums in both directions
+(`Representation.isDeRham_prod_iff`), tensor products (`Representation.IsDeRham.tprod`) and duals
+(`Representation.IsDeRham.dual`). On them the functor `D_dR(V) = (B_dR ⊗_{ℚ_p} V)^{G_K}` is exact
+(`Representation.IsDeRham.exact_periodsMap`, `Representation.IsDeRham.shortExact_periodsMap`) and
+faithful (`Representation.IsDeRham.eq_of_periodsMap_eq`), and Fontaine's natural maps
+`D_dR(V) ⊗ D_dR(W) → D_dR(V ⊗_{ℚ_p} W)` and `D_dR(V*) → D_dR(V)*` are isomorphisms
+(`Representation.IsDeRham.periodsTensorEquiv`, `Representation.IsDeRham.periodsDualEquiv`). These
+statements use the action `galoisBDeRham p` in which `Representation.IsDeRham` is phrased; they
+follow from the results for the bundled action `PadicComplexInt.galoisBDeRhamHom`, whose coercion
+is `galoisBDeRham p` (`PadicComplexInt.coe_galoisBDeRhamHom`).
 
 For a representation `ρ : G →* GL_n(ℚ̄_p)`, potential semistability means that `ρ` is defined over a
 finite extension `E` of `ℚ_p` inside `ℚ̄_p` and the `ℚ_[p]`-representation `Eⁿ` is potentially
@@ -245,6 +264,220 @@ theorem isDeRham_iff_comparison_bijective [FiniteDimensional ℚ_[p] V]
     ρ.IsDeRham K ↔ Function.Bijective (ρ.comparison (galoisBDeRham p) K.fixingSubgroup) :=
   IsRegularPeriodRing.isAdmissible_iff_comparison_bijective
     (isRegularPeriodRing_galoisBDeRhamHom p _) ρ
+
+/-! ### Tannakian properties of de Rham representations -/
+
+section Tannakian
+
+open scoped _root_.TensorProduct
+
+local notation "𝔹" => BDeRham 𝓞_ℂ_[p] p
+
+variable {K : IntermediateField ℚ_[p] (PadicAlgCl p)} {V₁ V₂ V₃ : Type*} [AddCommGroup V₁]
+  [Module ℚ_[p] V₁] [AddCommGroup V₂] [Module ℚ_[p] V₂] [AddCommGroup V₃] [Module ℚ_[p] V₃]
+  {ρ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V}
+  {ρ₁ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V₁}
+  {ρ₂ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V₂}
+  {ρ₃ : Representation ℚ_[p] Gal(PadicAlgCl p/ℚ_[p]) V₃}
+
+/-- `V` is de Rham over `K` if and only if it is admissible for the bundled action
+`galoisBDeRhamHom p`, whose coercion is `galoisBDeRham p`. -/
+private theorem isDeRham_iff_galoisBDeRhamHom :
+    ρ.IsDeRham K ↔ ρ.IsAdmissible (galoisBDeRhamHom p) K.fixingSubgroup := by
+  rw [IsDeRham, coe_galoisBDeRhamHom]
+
+/-- `V₁ → V₂ → V₂ ⧸ f(V₁)` is exact at `V₂`, for an intertwining map `f : V₁ → V₂`. -/
+private theorem exact_mkQ_range (f : ρ₁.IntertwiningMap ρ₂) : Function.Exact f f.range.mkQ :=
+  fun y => by
+    rw [Subrepresentation.mkQ_apply, Submodule.Quotient.mk_eq_zero]
+    exact Iff.rfl
+
+/-- `ker g → V₂ → V₃` is exact at `V₂`, for an intertwining map `g : V₂ → V₃`. -/
+private theorem exact_subtype_ker (g : ρ₂.IntertwiningMap ρ₃) : Function.Exact g.ker.subtype g :=
+  fun y => ⟨fun hy => ⟨⟨y, hy⟩, rfl⟩, fun ⟨x, hx⟩ => hx ▸ x.2⟩
+
+namespace IsDeRham
+
+/-- **Subrepresentations of de Rham representations are de Rham** (Fontaine–Ouyang,
+Theorem 3.14 (2); Fontaine, Exposé III, §1.5 pp. 124–125, for the regular ring `B_dR`): for every
+extension `K` of `ℚ_p` inside `ℚ̄_p`, if `V` is de Rham over `K`, then so is every
+subrepresentation `W` of `V`. -/
+theorem subrepresentation (h : ρ.IsDeRham K) (W : Subrepresentation ρ) :
+    W.toRepresentation.IsDeRham K :=
+  isDeRham_iff_galoisBDeRhamHom.2 <|
+    (isRegularPeriodRing_galoisBDeRhamHom p _).isAdmissible_toRepresentation
+      (isDeRham_iff_galoisBDeRhamHom.1 h) W
+
+/-- **Quotients of de Rham representations are de Rham** (Fontaine–Ouyang, Theorem 3.14 (2);
+Fontaine, Exposé III, §1.5 pp. 124–125, for the regular ring `B_dR`): for every extension `K` of
+`ℚ_p` inside `ℚ̄_p`, if `V` is de Rham over `K`, then so is the quotient `V ⧸ W` of `V` by every
+subrepresentation `W`. -/
+theorem quotient (h : ρ.IsDeRham K) (W : Subrepresentation ρ) : W.quotient.IsDeRham K :=
+  isDeRham_iff_galoisBDeRhamHom.2 <|
+    (isRegularPeriodRing_galoisBDeRhamHom p _).isAdmissible_quotient
+      (isDeRham_iff_galoisBDeRhamHom.1 h) W
+
+/-- **De Rham representations are closed under injective intertwining maps** (Fontaine–Ouyang,
+Theorem 3.14 (2); Fontaine, Exposé III, §1.5 pp. 124–125, for the regular ring `B_dR`): for every
+extension `K` of `ℚ_p` inside `ℚ̄_p`, if `V₂` is de Rham over `K` and `f : V₁ → V₂` is an
+injective intertwining map, then `V₁` is de Rham over `K`. -/
+theorem of_injective (h : ρ₂.IsDeRham K) {f : ρ₁.IntertwiningMap ρ₂}
+    (hf : Function.Injective f) : ρ₁.IsDeRham K :=
+  isDeRham_iff_galoisBDeRhamHom.2
+    ((isRegularPeriodRing_galoisBDeRhamHom p _).isAdmissible_of_exact hf f.range.mkQ_surjective
+      (exact_mkQ_range f) (isDeRham_iff_galoisBDeRhamHom.1 h)).1
+
+/-- **De Rham representations are closed under surjective intertwining maps** (Fontaine–Ouyang,
+Theorem 3.14 (2); Fontaine, Exposé III, §1.5 pp. 124–125, for the regular ring `B_dR`): for every
+extension `K` of `ℚ_p` inside `ℚ̄_p`, if `V₂` is de Rham over `K` and `g : V₂ → V₃` is a
+surjective intertwining map, then `V₃` is de Rham over `K`. -/
+theorem of_surjective (h : ρ₂.IsDeRham K) {g : ρ₂.IntertwiningMap ρ₃}
+    (hg : Function.Surjective g) : ρ₃.IsDeRham K :=
+  isDeRham_iff_galoisBDeRhamHom.2
+    ((isRegularPeriodRing_galoisBDeRhamHom p _).isAdmissible_of_exact g.ker.subtype_injective hg
+      (exact_subtype_ker g) (isDeRham_iff_galoisBDeRhamHom.1 h)).2
+
+/-- **Tensor products of de Rham representations are de Rham** (Fontaine–Ouyang,
+Theorem 3.14 (2); Fontaine, Exposé III, §1.5 pp. 124–125, for the regular ring `B_dR`): for every
+extension `K` of `ℚ_p` inside `ℚ̄_p`, if `V₁` and `V₂` are de Rham over `K`, then so is
+`V₁ ⊗_{ℚ_p} V₂`, for the tensor product representation `ρ₁.tprod ρ₂`. -/
+theorem tprod (h₁ : ρ₁.IsDeRham K) (h₂ : ρ₂.IsDeRham K) : (ρ₁.tprod ρ₂).IsDeRham K :=
+  isDeRham_iff_galoisBDeRhamHom.2 <|
+    (isRegularPeriodRing_galoisBDeRhamHom p _).isAdmissible_tprod
+      (isDeRham_iff_galoisBDeRhamHom.1 h₁) (isDeRham_iff_galoisBDeRhamHom.1 h₂)
+
+/-- **Duals of de Rham representations are de Rham** (Fontaine–Ouyang, Theorem 3.14 (2);
+Fontaine, Exposé III, §1.5 pp. 124–125, for the regular ring `B_dR`): for every extension `K` of
+`ℚ_p` inside `ℚ̄_p`, if `V` is de Rham over `K`, then so is its dual `V*`, for the dual
+representation `ρ.dual`. -/
+theorem dual (h : ρ.IsDeRham K) : ρ.dual.IsDeRham K :=
+  isDeRham_iff_galoisBDeRhamHom.2 <|
+    (isRegularPeriodRing_galoisBDeRhamHom p _).isAdmissible_dual
+      (isDeRham_iff_galoisBDeRhamHom.1 h)
+
+end IsDeRham
+
+/-- **Direct sums of de Rham representations** (Fontaine–Ouyang, Theorem 3.14 (2); Fontaine,
+Exposé III, §1.5 pp. 124–125, for the regular ring `B_dR`): for every extension `K` of `ℚ_p`
+inside `ℚ̄_p`, `V₁ × V₂` is de Rham over `K`, for the direct sum representation `ρ₁.prod ρ₂`, if
+and only if `V₁` and `V₂` are de Rham over `K`. -/
+theorem isDeRham_prod_iff : (ρ₁.prod ρ₂).IsDeRham K ↔ ρ₁.IsDeRham K ∧ ρ₂.IsDeRham K := by
+  simp only [isDeRham_iff_galoisBDeRhamHom]
+  exact (isRegularPeriodRing_galoisBDeRhamHom p _).isAdmissible_prod_iff
+
+/-- **Direct sums of de Rham representations are de Rham**: for every extension `K` of `ℚ_p`
+inside `ℚ̄_p`, if `V₁` and `V₂` are de Rham over `K`, then so is `V₁ × V₂`, for the direct sum
+representation `ρ₁.prod ρ₂`. -/
+theorem IsDeRham.prod (h₁ : ρ₁.IsDeRham K) (h₂ : ρ₂.IsDeRham K) : (ρ₁.prod ρ₂).IsDeRham K :=
+  isDeRham_prod_iff.2 ⟨h₁, h₂⟩
+
+namespace IsDeRham
+
+/-- **`D_dR` is exact on de Rham representations** (Fontaine–Ouyang, Theorem 3.14 (2); Fontaine,
+Exposé III, §1.5 pp. 124–125, for the regular ring `B_dR`): for every extension `K` of `ℚ_p`
+inside `ℚ̄_p`, if `V₁ → V₂ → V₃` is an exact sequence of intertwining maps (the image of `f` is
+the kernel of `g`) and `V₁` is de Rham over `K`, then `D_dR(V₁) → D_dR(V₂) → D_dR(V₃)` is exact,
+where `D_dR(V) = (B_dR ⊗_{ℚ_p} V)^{G_K}`. -/
+theorem exact_periodsMap (h₁ : ρ₁.IsDeRham K) {f : ρ₁.IntertwiningMap ρ₂}
+    {g : ρ₂.IntertwiningMap ρ₃} (hfg : Function.Exact f g) :
+    Function.Exact (periodsMap (galoisBDeRham p) K.fixingSubgroup f)
+      (periodsMap (galoisBDeRham p) K.fixingSubgroup g) := by
+  rw [← coe_galoisBDeRhamHom]
+  exact (isRegularPeriodRing_galoisBDeRhamHom p _).exact_periodsMap hfg
+    (isDeRham_iff_galoisBDeRhamHom.1 h₁)
+
+/-- **`D_dR` maps short exact sequences of de Rham representations to short exact sequences**
+(Fontaine–Ouyang, Theorem 3.14 (2); Fontaine, Exposé III, §1.5 pp. 124–125, for the regular ring
+`B_dR`): for every extension `K` of `ℚ_p` inside `ℚ̄_p` and a short exact sequence
+`0 → V₁ → V₂ → V₃ → 0` of intertwining maps (`f` injective, `g` surjective, the image of `f` the
+kernel of `g`) with `V₂` de Rham over `K`, the sequence `0 → D_dR(V₁) → D_dR(V₂) → D_dR(V₃) → 0`
+is exact, where `D_dR(V) = (B_dR ⊗_{ℚ_p} V)^{G_K}`. -/
+theorem shortExact_periodsMap (h₂ : ρ₂.IsDeRham K) {f : ρ₁.IntertwiningMap ρ₂}
+    {g : ρ₂.IntertwiningMap ρ₃} (hf : Function.Injective f) (hg : Function.Surjective g)
+    (hfg : Function.Exact f g) :
+    Function.Injective (periodsMap (galoisBDeRham p) K.fixingSubgroup f) ∧
+      Function.Exact (periodsMap (galoisBDeRham p) K.fixingSubgroup f)
+        (periodsMap (galoisBDeRham p) K.fixingSubgroup g) ∧
+      Function.Surjective (periodsMap (galoisBDeRham p) K.fixingSubgroup g) := by
+  rw [← coe_galoisBDeRhamHom]
+  exact (isRegularPeriodRing_galoisBDeRhamHom p _).shortExact_periodsMap hf hg hfg
+    (isDeRham_iff_galoisBDeRhamHom.1 h₂)
+
+/-- **`D_dR` is faithful on de Rham representations** (Fontaine–Ouyang, Theorem 3.14 (2);
+Fontaine, Exposé III, §1.5 pp. 124–125, for the regular ring `B_dR`): for every extension `K` of
+`ℚ_p` inside `ℚ̄_p`, two intertwining maps `f, f' : V₁ → V₂` out of a representation `V₁` that is
+de Rham over `K` with `D_dR(f) = D_dR(f')` are equal, where `D_dR(V) = (B_dR ⊗_{ℚ_p} V)^{G_K}`. -/
+theorem eq_of_periodsMap_eq (h₁ : ρ₁.IsDeRham K) {f f' : ρ₁.IntertwiningMap ρ₂}
+    (h : periodsMap (galoisBDeRham p) K.fixingSubgroup f =
+      periodsMap (galoisBDeRham p) K.fixingSubgroup f') : f = f' := by
+  rw [← coe_galoisBDeRhamHom] at h
+  exact (isRegularPeriodRing_galoisBDeRhamHom p _).eq_of_periodsMap_eq
+    (isDeRham_iff_galoisBDeRhamHom.1 h₁) h
+
+/-- **`D_dR(V₁) ⊗ D_dR(V₂) → D_dR(V₁ ⊗_{ℚ_p} V₂)` is bijective for de Rham representations**
+(Fontaine–Ouyang, Theorem 3.14 (2); Fontaine, Exposé III, §1.5 pp. 124–125, for the regular ring
+`B_dR`): for every extension `K` of `ℚ_p` inside `ℚ̄_p` and `V₁`, `V₂` de Rham over `K`,
+Fontaine's natural map `periodsTensor ρ₁ ρ₂ (galoisBDeRham p) K.fixingSubgroup`, from the tensor
+product of `D_dR(V₁)` and `D_dR(V₂)` over `B_dR^{G_K}` to `D_dR(V₁ ⊗_{ℚ_p} V₂)`, is bijective,
+where `D_dR(V) = (B_dR ⊗_{ℚ_p} V)^{G_K}`. -/
+theorem periodsTensor_bijective (h₁ : ρ₁.IsDeRham K) (h₂ : ρ₂.IsDeRham K) :
+    Function.Bijective (periodsTensor ρ₁ ρ₂ (galoisBDeRham p) K.fixingSubgroup) := by
+  rw [← coe_galoisBDeRhamHom]
+  exact (isRegularPeriodRing_galoisBDeRhamHom p _).periodsTensor_bijective
+    (isDeRham_iff_galoisBDeRhamHom.1 h₁) (isDeRham_iff_galoisBDeRhamHom.1 h₂)
+
+/-- **The isomorphism `D_dR(V₁) ⊗ D_dR(V₂) ≃ D_dR(V₁ ⊗_{ℚ_p} V₂)`** for `V₁` and `V₂` de Rham
+over an extension `K` of `ℚ_p` inside `ℚ̄_p`: Fontaine's natural map
+`periodsTensor ρ₁ ρ₂ (galoisBDeRham p) K.fixingSubgroup`, as a linear equivalence over
+`B_dR^{G_K}`, where `D_dR(V) = (B_dR ⊗_{ℚ_p} V)^{G_K}`. -/
+def periodsTensorEquiv (h₁ : ρ₁.IsDeRham K) (h₂ : ρ₂.IsDeRham K) :
+    ρ₁.periods (galoisBDeRham p) K.fixingSubgroup ⊗[fixedSubalgebra 𝔹 (galoisBDeRham p)
+      K.fixingSubgroup] ρ₂.periods (galoisBDeRham p) K.fixingSubgroup
+        ≃ₗ[fixedSubalgebra 𝔹 (galoisBDeRham p) K.fixingSubgroup]
+      (ρ₁.tprod ρ₂).periods (galoisBDeRham p) K.fixingSubgroup :=
+  LinearEquiv.ofBijective _ (h₁.periodsTensor_bijective h₂)
+
+/-- The isomorphism `periodsTensorEquiv h₁ h₂` applied to `z` is Fontaine's natural map
+`periodsTensor ρ₁ ρ₂ (galoisBDeRham p) K.fixingSubgroup` applied to `z`. -/
+@[simp]
+theorem periodsTensorEquiv_apply (h₁ : ρ₁.IsDeRham K) (h₂ : ρ₂.IsDeRham K)
+    (z : ρ₁.periods (galoisBDeRham p) K.fixingSubgroup ⊗[fixedSubalgebra 𝔹 (galoisBDeRham p)
+      K.fixingSubgroup] ρ₂.periods (galoisBDeRham p) K.fixingSubgroup) :
+    h₁.periodsTensorEquiv h₂ z = periodsTensor ρ₁ ρ₂ (galoisBDeRham p) K.fixingSubgroup z :=
+  rfl
+
+/-- **`D_dR(V*) → D_dR(V)*` is bijective for de Rham representations** (Fontaine–Ouyang,
+Theorem 3.14 (2); Fontaine, Exposé III, §1.5 pp. 124–125, for the regular ring `B_dR`): for every
+extension `K` of `ℚ_p` inside `ℚ̄_p` and `V` de Rham over `K`, Fontaine's natural map
+`ρ.periodsDual (galoisBDeRham p) K.fixingSubgroup`, from `D_dR(V*)` to the dual of `D_dR(V)` over
+`B_dR^{G_K}`, is bijective, where `D_dR(V) = (B_dR ⊗_{ℚ_p} V)^{G_K}`. -/
+theorem periodsDual_bijective (h : ρ.IsDeRham K) :
+    Function.Bijective (ρ.periodsDual (galoisBDeRham p) K.fixingSubgroup) := by
+  rw [← coe_galoisBDeRhamHom]
+  exact (isRegularPeriodRing_galoisBDeRhamHom p _).periodsDual_bijective
+    (isDeRham_iff_galoisBDeRhamHom.1 h)
+
+/-- **The isomorphism `D_dR(V*) ≃ D_dR(V)*`** for `V` de Rham over an extension `K` of `ℚ_p`
+inside `ℚ̄_p`: Fontaine's natural map `ρ.periodsDual (galoisBDeRham p) K.fixingSubgroup`, from
+`D_dR(V*)` to the dual of `D_dR(V)` over `B_dR^{G_K}`, as a linear equivalence over `B_dR^{G_K}`,
+where `D_dR(V) = (B_dR ⊗_{ℚ_p} V)^{G_K}`. -/
+def periodsDualEquiv (h : ρ.IsDeRham K) :
+    ρ.dual.periods (galoisBDeRham p) K.fixingSubgroup ≃ₗ[fixedSubalgebra 𝔹 (galoisBDeRham p)
+      K.fixingSubgroup] Module.Dual (fixedSubalgebra 𝔹 (galoisBDeRham p) K.fixingSubgroup)
+        (ρ.periods (galoisBDeRham p) K.fixingSubgroup) :=
+  LinearEquiv.ofBijective _ h.periodsDual_bijective
+
+/-- The isomorphism `periodsDualEquiv h` applied to `x` is Fontaine's natural map
+`ρ.periodsDual (galoisBDeRham p) K.fixingSubgroup` applied to `x`. -/
+@[simp]
+theorem periodsDualEquiv_apply (h : ρ.IsDeRham K)
+    (x : ρ.dual.periods (galoisBDeRham p) K.fixingSubgroup) :
+    h.periodsDualEquiv x = ρ.periodsDual (galoisBDeRham p) K.fixingSubgroup x :=
+  rfl
+
+end IsDeRham
+
+end Tannakian
 
 end Representation
 
