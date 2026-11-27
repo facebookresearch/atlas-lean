@@ -48,10 +48,14 @@ Grigorchuk's group, open-ended), (iii) and (iv) of the same list are not formali
 noncomputable def wordDist {G : Type*} [Group G] (S : Finset G) (g h : G) : ℝ :=
   ((SimpleGraph.mulCayley (S : Set G)).dist g h : ℝ)
 
-/-- The exponent `α` is attained by a uniform embedding of `(G, d_S)` into a separable real Hilbert
-space: some `1`-Lipschitz `f : G → H` and constants `C > 0`, `D` satisfy
-`C d_S(g, h)^α - D ≤ ‖f g - f h‖` for all `g, h`. When `S` generates `G`, the Hilbert space
-compression of `G` is the supremum of the attained exponents. -/
+/-- The exponent `α` is attained for `S`: some map `f : G → H` into a separable real Hilbert
+space, `1`-Lipschitz for `d_S` (`‖f g - f h‖ ≤ d_S(g, h)`), and constants `C > 0`, `D` satisfy
+`C d_S(g, h)^α - D ≤ ‖f g - f h‖` for all `g, h`. When `S` generates `G` and `α > 0`, such an
+`f` is a uniform embedding of `(G, d_S)`; at `α = 0` a constant map with `C = D = 1` qualifies,
+even on `ℤ` with its usual word metric. When `G` is infinite and `S` generates `G`, the Hilbert
+space compression of `G` is the supremum of the attained exponents. A finite group attains every
+exponent, with `f = 0` and `D` large: for the trivial group and `S = ∅`, `C = 1` and `D = 0`
+attain every `α > 0`. -/
 def AttainsCompression (G : Type*) [Group G] (S : Finset G) (α : ℝ) : Prop :=
   ∃ (H : Type) (_ : NormedAddCommGroup H) (_ : InnerProductSpace ℝ H) (_ : CompleteSpace H)
     (_ : TopologicalSpace.SeparableSpace H) (f : G → H) (C D : ℝ),

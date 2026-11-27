@@ -44,10 +44,14 @@ complement, so the question is about closed normal subgroups.
 -/
 
 /-- The pro-`p` index condition for the subgroup `P` of the topological group `G`: for every
-open normal subgroup `N`, `P ∩ N` has `p`-power index in `P`, that is, the image of `P` in `G / N`
-is a finite `p`-group. For a closed subgroup of a profinite group and a prime `p` this says that
-`P` is a pro-`p` subgroup; in a general topological group it is weaker: for `P = G = (ℝ, +)` it
-holds for every prime, since `ℝ` is its only open subgroup. -/
+open normal subgroup `N`, the index of `P ∩ N` in `P` (`Subgroup.index`, which is `0` for an
+infinite index) is a power of `p`. For prime `p` this says that the image of `P` in `G / N` is a
+finite `p`-group for every such `N`. For `p = 0` it does not: in `(ℚ, +)` with the discrete
+topology every proper subgroup has infinite index, so `P = G` meets the condition (indices
+`0 = 0 ^ 1` and `1 = 0 ^ 0`), while its image in `G / {0}` is infinite. For a closed subgroup of a
+profinite group and a prime `p` the condition says that `P` is a pro-`p` subgroup; in a general
+topological group it is weaker: for `P = G = (ℝ, +)` it holds for every prime, since `ℝ` is its
+only open subgroup. -/
 def IsProPSubgroup {G : Type*} [Group G] [TopologicalSpace G] (p : ℕ) (P : Subgroup G) : Prop :=
   ∀ N : Subgroup G, IsOpen (N : Set G) → N.Normal → ∃ k : ℕ, (N.subgroupOf P).index = p ^ k
 
