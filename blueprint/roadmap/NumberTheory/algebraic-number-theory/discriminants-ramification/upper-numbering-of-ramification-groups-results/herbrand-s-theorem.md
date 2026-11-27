@@ -9,15 +9,18 @@ says that for every real $u \ge -1$,
 
 $$G_u H / H = (G/H)_v \qquad \text{with } v = \varphi_{L/K'}(u).$$
 
-The proof first shows that for $\sigma \in G/H$, with $j(\sigma)$ the largest of the integers $i_G(s)$ for $s$
-in the preimage of $\sigma$ in $G$,
+Both groups contain the identity, so only their elements $\sigma \neq 1$ need to be compared; for $\sigma = 1$ the
+preimage of $\sigma$ in $G$ contains $1$, with $i_G(1) = +\infty$. The proof first shows that for $\sigma \in G/H$,
+$\sigma \neq 1$, with $j(\sigma)$ the largest of the integers $i_G(s)$ for $s$ in the preimage of $\sigma$ in $G$, a
+finite number as no such $s$ is $1$,
 
 $$i_{G/H}(\sigma) - 1 = \varphi_{L/K'}\bigl(j(\sigma) - 1\bigr).$$
 
 For $s$ a representative with $i_G(s) = j(\sigma) = m$ and $t \in H$, one has $i_G(st) = \min(i_G(t), m)$; the
 formula for $i_{G/H}$ of [The function i_G of a quotient](function-i-g-of-a-quotient.md), the equalities
 $i_G(t) = i_H(t)$ and $e_{L/K'} = \lvert H_0 \rvert$, and the formula for $\varphi_{L/K'}$ through $i_H$ (item 3 of
-[Herbrand's functions](herbrand-functions.md), for the group $H$) give it. Then $\sigma \in G_u H/H$ if and
+[Herbrand's functions](herbrand-functions.md), for the group $H$) give it. Serre states it for every
+$\sigma \in G/H$, both sides being infinite at $\sigma = 1$. Then, for $\sigma \neq 1$, $\sigma \in G_u H/H$ if and
 only if $j(\sigma) - 1 \ge u$, if and only if $\varphi_{L/K'}(j(\sigma) - 1) \ge \varphi_{L/K'}(u)$, $\varphi_{L/K'}$
 being increasing, if and only if $i_{G/H}(\sigma) - 1 \ge v$, that is, $\sigma \in (G/H)_v$.
 

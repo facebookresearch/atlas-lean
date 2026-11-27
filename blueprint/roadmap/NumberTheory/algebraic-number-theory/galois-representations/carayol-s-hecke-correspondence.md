@@ -60,9 +60,12 @@ This node is still to be broken down. A good expansion states and links:
    $\mathrm{rec}_2$, both being normalized by class field theory with geometric Frobenius elements corresponding to
    uniformizers;
 3. the value of $\mathrm{rec}_2$ on an irreducible principal series, $\mathrm{rec}_2(\mathrm{Ind}(\xi_1, \xi_2)) = \xi_1
-   \oplus \xi_2$ for unitary induction, from the
-   [Langlands classification for GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/langlands-classification-for-gl-n.md),
-   which gives item 1, and the determinant and twist identities 2 and 3, from those of $\mathrm{rec}_2$;
+   \oplus \xi_2$ for unitary induction: in the
+   [Langlands classification for GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/langlands-classification-for-gl-n.md)
+   an irreducible $\mathrm{Ind}(\xi_1, \xi_2)$ is $L(\{\xi_1\}, \{\xi_2\})$, for two segments of length one, and the
+   [construction of the correspondence](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/construction-of-the-local-langlands-correspondence.md)
+   gives $\mathrm{rec}(L(\Delta_1, \dots, \Delta_r)) = \bigoplus_i \mathrm{rec}(\pi_i) \otimes \mathrm{Sp}(m_i)$ for
+   $\Delta_i = [\pi_i, \nu^{m_i - 1}\pi_i]$, here with $m_1 = m_2 = 1$; this gives item 1, and the determinant and twist identities 2 and 3, from those of $\mathrm{rec}_2$;
 4. the rationality of $\sigma(\pi)$ when $\pi$ is defined over a number field, which Carayol takes from Waldspurger
    and Deligne (§0.5–§0.6, p. 410, citing [W] and [D.1]; not read here), and the realization of a Weil–Deligne
    representation over $E_\lambda$ as a continuous $\lambda$-adic representation of $W_F$ (Ulmer, §8, p. 2296: "given a
@@ -81,6 +84,9 @@ This node is still to be broken down. A good expansion states and links:
 ## Proof depends on
 
 - [Local Langlands correspondence for GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/local-langlands-correspondence-for-gl-n.md), for the properties of $\mathrm{rec}_2$: preservation of the factors of pairs, bijectivity, and compatibility with twists, determinants and contragredients
+- [Local converse theorem for GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/local-converse-theorem-for-gl-n.md), for $n = 2$, which with the bijectivity of $\mathrm{rec}_2$ gives the uniqueness of $\sigma(\pi)$ (expansion item 1)
+- [Langlands classification for GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/langlands-classification-for-gl-n.md), for an irreducible $\mathrm{Ind}(\xi_1, \xi_2)$ being $L(\{\xi_1\}, \{\xi_2\})$ (expansion item 3)
+- [Construction of the local Langlands correspondence for GLₙ](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/construction-of-the-local-langlands-correspondence.md), for $\mathrm{rec}(L(\Delta_1, \dots, \Delta_r)) = \bigoplus_i \mathrm{rec}(\pi_i) \otimes \mathrm{Sp}(m_i)$, which gives $\mathrm{rec}_2(\mathrm{Ind}(\xi_1, \xi_2)) = \xi_1 \oplus \xi_2$ (expansion item 3)
 
 ## Sources
 

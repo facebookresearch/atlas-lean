@@ -36,6 +36,7 @@ $u > 0$ it is $\operatorname{codim} V^{r(G_K^u)}$ by item 1, as $G_K^u \subseteq
 - [Weil–Deligne representation of an ℓ-adic representation](weil-deligne-representations/weil-deligne-representation-of-an-l-adic-representation.md), for $\mathrm{WD}(V, \rho)$
 - [Conductor of a Weil–Deligne representation](conductor-of-a-weil-deligne-representation.md), for $a(V, r, N)$
 - [Upper numbering of ramification groups](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md), for the groups $G_K^u$
+- [Inertia and tame inertia of a p-adic field](weil-deligne-representations/inertia-and-tame-inertia-of-a-p-adic-field.md), for the inertia group $I_K$ and the wild inertia group $P_K$ in items 1 and 2
 - [Conductor of an ℓ-adic representation](conductor-of-an-l-adic-representation.md), for $m_p(\rho)$ in the global form
 
 ## Proof depends on

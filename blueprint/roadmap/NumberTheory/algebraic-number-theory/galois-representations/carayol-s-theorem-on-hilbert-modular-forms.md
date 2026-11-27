@@ -74,6 +74,7 @@ This node is still to be broken down. A good expansion states and links:
 ## Proof depends on
 
 - [Chebotarev density theorem](../adeles-class-field-theory/chebotarev-density-theorem.md), for the comparison of the restriction of $\sigma^\lambda$ to $\operatorname{Gal}(\overline{F}/L)$ with the representation attached to the lift of $\pi$ to $L$ (expansion item 4)
+- [Base change and automorphic induction for GLₙ](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/base-change-and-automorphic-induction-for-gl-n.md), for the base change of $\pi$ to the totally real quadratic extension $L/F$ split at $v$ of §12.3.2, a cyclic extension of prime degree (expansion item 4); the cubic extension of §12.3.1 need not be Galois, and its base change is that of Jacquet, Piatetski-Shapiro and Shalika (§12.2.1)
 
 ## Sources
 

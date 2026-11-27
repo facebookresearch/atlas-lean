@@ -48,6 +48,7 @@ This node is still to be broken down. A good expansion states and links:
 - [Carayol's Hecke correspondence for GL₂](carayol-s-hecke-correspondence.md), for $\varepsilon(\chi.\check\sigma(\pi), \psi, s) = \varepsilon(\chi.\omega^{1/2}.\pi, \psi, s)$
 - [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/l-and-epsilon-factors-of-pairs.md), for the $\varepsilon$-factors of Weil–Deligne representations through those of representations of $W_F$
 - [Weil–Deligne representations](weil-deligne-representations/weil-deligne-representations.md), for the contragredient and for $N$ commuting with $r(I_F)$
+- [Upper numbering of ramification groups](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md), for the groups $G_F^u$, $u > 0$, which act on $V$ through finite groups, so that, as for $I_F$, the vectors of the dual of $V$ fixed by $G_F^u$ form the dual of $V^{G_F^u}$ (expansion item 4)
 
 ## Sources
 

@@ -6,22 +6,32 @@ residue field of $q$ elements, and for an ideal $\mathfrak{b}$ of $\mathcal{O}$ 
 $$\Gamma_0(\mathfrak{b}) = \left\{ \begin{pmatrix} a & b \\ c & d \end{pmatrix} \in \mathrm{GL}_2(\mathcal{O}) :
 c \equiv 0 \pmod{\mathfrak{b}} \right\}.$$
 
-Let $\varrho$ be an irreducible admissible infinite-dimensional representation of $\mathrm{GL}_2(F)$ and $\epsilon$
-the quasi-character of $F^\times$ with $\varrho = \epsilon$ on the scalar matrices. **Casselman's theorem**: there is
-a largest ideal $\mathfrak{c}(\varrho)$ of $\mathcal{O}$ for which the space of vectors $v$ with
+Let $\varrho$ be an irreducible admissible infinite-dimensional representation of $\mathrm{GL}_2(F)$ on a space $V$,
+and $\epsilon$ the quasi-character of $F^\times$ with $\varrho = \epsilon$ on the scalar matrices. For an integer
+$n \ge 0$ let $V(\mathfrak{p}^n) \subseteq V$ be, for $n = 0$, the space of vectors fixed by $\mathrm{GL}_2(\mathcal{O})$, and,
+for $n \ge 1$, the space of vectors $v$ with
 
 $$\varrho\begin{pmatrix} a & b \\ c & d \end{pmatrix} v = \epsilon(a)\, v \qquad \text{for all }
-\begin{pmatrix} a & b \\ c & d \end{pmatrix} \in \Gamma_0(\mathfrak{c}(\varrho))$$
+\begin{pmatrix} a & b \\ c & d \end{pmatrix} \in \Gamma_0(\mathfrak{p}^n);$$
 
-is nonzero, and this space has dimension one. More generally, for the ideal $\mathfrak{c}(\varrho)\mathfrak{p}^i$,
-$i \ge 0$, the space of vectors with the same property for $\Gamma_0(\mathfrak{c}(\varrho)\mathfrak{p}^i)$ has
-dimension $i + 1$. The ideal $\mathfrak{c}(\varrho) = \mathfrak{p}^{\delta(\varrho)}$ is the **conductor** of $\varrho$,
-and its exponent is that of the $\varepsilon$-factor of $\varrho$: for a nontrivial additive character $\psi$ of $F$,
+for $n \ge 1$ the entry $a$ of such a matrix is a unit, as $ad - bc$ is a unit and $c \in \mathfrak{p}$.
+**Casselman's theorem**: there is a largest ideal $\mathfrak{c}(\varrho) = \mathfrak{p}^{\delta(\varrho)}$ of $\mathcal{O}$ with
+$V(\mathfrak{c}(\varrho)) \neq 0$, and $V(\mathfrak{c}(\varrho))$ has dimension one. More generally,
+$V(\mathfrak{c}(\varrho)\mathfrak{p}^i)$ has dimension $i + 1$ for every $i \ge 0$. The ideal $\mathfrak{c}(\varrho)$ is the
+**conductor** of $\varrho$, and its exponent is that of the $\varepsilon$-factor of $\varrho$: for a nontrivial additive character $\psi$ of $F$,
 with $c(\psi)$ the largest integer $r$ such that $\psi$ is trivial on $\mathfrak{p}^{-r}$,
 
 $$\varepsilon(\varrho, \psi, s) = \varepsilon(\varrho, \psi, 0)\, q^{-s(\delta(\varrho) + 2c(\psi))},$$
 
 so that $\delta(\varrho)$ is the exponent of the $\varepsilon$-factor of $\varrho$.
+
+At level $\mathcal{O}$ the group $\Gamma_0(\mathcal{O})$ is all of $\mathrm{GL}_2(\mathcal{O})$, whose entry $a$ need not be a unit,
+and Casselman's condition (1.1) is read there as invariance under $\mathrm{GL}_2(\mathcal{O})$, as his proof and his
+application to modular forms read it and as Wedhorn's $K_2(0) = \mathrm{GL}_2(\mathcal{O})$ gives it. With the
+transformation law at level $\mathcal{O}$ the statement would fail: for the spherical vector of
+$\mathrm{Ind}(\lvert \cdot \rvert, \lvert \cdot \rvert)$, whose central character is $\lvert \cdot \rvert^2$, the matrix
+$\left(\begin{smallmatrix} \varpi & 1 \\ 1 & 0 \end{smallmatrix}\right) \in \mathrm{GL}_2(\mathcal{O})$, for a uniformizer $\varpi$, fixes
+the vector instead of multiplying it by $\lvert \varpi \rvert^2$.
 
 ## Expansion
 
@@ -50,6 +60,7 @@ This node is still to be broken down. A good expansion states and links:
 ## Proof depends on
 
 - [Mirabolic restriction and Bernstein–Zelevinsky derivatives](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/bernstein-zelevinsky-derivatives.md), for the Kirillov model of an infinite-dimensional irreducible representation of $\mathrm{GL}_2(F)$ (expansion item 1)
+- [Parabolic induction and Jacquet functors](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md), for the principal series $\varrho(\mu_1, \mu_2)$ on the induced space $\mathcal{B}(\mu_1, \mu_2)$ of functions on $\mathrm{GL}_2(F)$ (Casselman, p. 304), whose vectors of level $\mathfrak{p}^n$ are computed through the restriction to $\mathrm{GL}_2(\mathcal{O})$ and the double cosets of the Borel subgroup (expansion item 2)
 
 ## Sources
 
@@ -61,7 +72,11 @@ This node is still to be broken down. A good expansion states and links:
     dimension one. (As we shall see, the ideal $\mathfrak{c}(\varrho)$ may reasonably be called the conductor of
     $\varrho$.)";
   - the proof, pp. 302–306 (the Lemma on p. 303, the absolutely cuspidal case, pp. 302–304, the principal series and
-    the special representations, pp. 304–306);
+    the special representations, pp. 304–306), which treats the whole of $\mathrm{GL}_2(\mathfrak{o}_k)$ through its fixed
+    vectors: "First of all, there are none which are fixed by all of $\mathrm{GL}_2(\mathfrak{o}_k)$ ([4], p. 117), so we may
+    assume $\mathfrak{c}$ proper" (p. 303), and p. 304 (the space $\mathcal{B}(\mu_1, \mu_2)$ of locally constant $f$ on
+    $\mathrm{GL}_2(k)$ with $f\bigl(\left(\begin{smallmatrix} a & x \\ 0 & b \end{smallmatrix}\right) g\bigr) = \mu_1(a) \cdot \mu_2(b) \cdot \lvert a/b \rvert^{1/2} \cdot f(g)$
+    and its right regular representation $\varrho(\mu_1, \mu_2)$);
   - Corollary to the Proof, p. 306 ("If in condition (1.1) of Theorem 1 we replace $\mathfrak{c}(\varrho)$ by an ideal
     $\mathfrak{c}(\varrho) \cdot \mathfrak{p}^i$ contained in it, then the dimension of the space satisfying the new condition is
     $(i + 1)$");
@@ -69,6 +84,12 @@ This node is still to be broken down. A good expansion states and links:
     form $\varepsilon(\varrho, \psi) \cdot N\mathfrak{p}^{(2c(\psi) - \delta)s}$ where $\varepsilon(\varrho, \psi)$ is independent of $s$ and
     $c(\psi)$ is the exponent of the conductor of $\psi$. The ideal $\mathfrak{p}^\delta$ is the same as our
     $\mathfrak{c}(\varrho)$."
+  - §3, p. 313: for $p \nmid N$, where $K_p = \mathrm{GL}_2(\mathbb{Z}_p)$, the space $W_p$ of the vectors $u$ with
+    $\pi_p(\kappa) u = \varepsilon_p(\kappa) u$ for $\kappa \in K_p$ has dimension one by "the theory of spherical functions and
+    class one representations for $\mathrm{GL}_2$".
+- T. Wedhorn, "The local Langlands correspondence for GL(n) over p-adic fields", lecture notes,
+  arXiv:math/0011210 (version 2), (2.5.4), p. 33: $K_n(t)$, "In particular, we have $K_n(0) = \mathrm{GL}_n(\mathcal{O}_K)$", and
+  the conductor as the smallest $t$ with $V^{K_n(t)} \neq (0)$, for fixed vectors.
 - C. J. Bushnell, G. Henniart and P. C. Kutzko, "Correspondance de Langlands locale pour $\mathrm{GL}_n$ et
   conducteurs de paires", Ann. Sci. École Norm. Sup. (4) 31 (1998), no. 4, 537–560,
   doi:10.1016/S0012-9593(98)80106-7, §1.3, p. 538 (the exponent $f(\pi)$ of $\varepsilon(\pi, \psi_F, s)$, with $c(\psi_F)$ the

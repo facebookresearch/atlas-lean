@@ -21,13 +21,19 @@ where $(G_0 : G_t)$ is read as $(G_{-1} : G_0)^{-1}$ for $t = -1$ and as $1$ for
 $\varphi_{L/K}(u) = u$ for $-1 \le u \le 0$. Write $g_i$ for the order of $G_i$.
 
 1. The function $\varphi_{L/K}$ is continuous, piecewise linear, increasing and concave, and
-   $\varphi_{L/K}(0) = 0$. Its left and right derivatives $\varphi'_g$ and $\varphi'_d$ are
-   $\varphi'_g(u) = \varphi'_d(u) = 1/(G_0 : G_u)$ if $u$ is not an integer, and
-   $\varphi'_g(u) = 1/(G_0 : G_u)$, $\varphi'_d(u) = 1/(G_0 : G_{u+1})$ if $u$ is an integer. These properties
+   $\varphi_{L/K}(0) = 0$. Its right derivative $\varphi'_d$, at every $u \ge -1$, and its left derivative
+   $\varphi'_g$, at every $u > -1$, are $\varphi'_g(u) = \varphi'_d(u) = 1/(G_0 : G_u)$ if $u$ is not an integer, and
+   $\varphi'_g(u) = 1/(G_0 : G_u)$, $\varphi'_d(u) = 1/(G_0 : G_{u+1})$ if $u$ is an integer. At the end point $-1$ there
+   is no left derivative, and $\varphi'_d(-1) = 1$, as $\varphi_{L/K}$ is the identity on $[-1, 0]$. These properties
    characterize $\varphi_{L/K}$, and $\varphi_{L/K}$ is a homeomorphism of $[-1, +\infty)$ onto itself.
 2. Its inverse $\psi_{L/K}$ is continuous, piecewise linear, increasing and convex, with $\psi_{L/K}(0) = 0$; if
-   $v = \varphi_{L/K}(u)$, then $\psi'_g(v) = 1/\varphi'_g(u)$ and $\psi'_d(v) = 1/\varphi'_d(u)$, so these
-   one-sided derivatives take only integer values; and if $v$ is an integer, so is $\psi_{L/K}(v)$.
+   $v = \varphi_{L/K}(u)$, then $\psi'_d(v) = 1/\varphi'_d(u)$ for every $v \ge -1$ and $\psi'_g(v) = 1/\varphi'_g(u)$ for
+   every $v > -1$, so these one-sided derivatives take only integer values; at $-1$ there is no left derivative, and
+   $\psi'_d(-1) = 1$. If $v$ is an integer, so is $\psi_{L/K}(v)$.
+
+Serre states the formulas for the left derivatives for every integer $u$; at $u = -1$, where the half-line
+$[-1, +\infty)$ ends, there is no left derivative, and the convention for $(G_0 : G_{-1})$ would give the value
+$(G_{-1} : G_0)$, which is $2$ for an unramified quadratic extension.
 3. For every $u \ge -1$,
 
     $$\varphi_{L/K}(u) = \frac{1}{g_0} \sum_{s \in G} \min\bigl(i_G(s), u + 1\bigr) - 1.$$

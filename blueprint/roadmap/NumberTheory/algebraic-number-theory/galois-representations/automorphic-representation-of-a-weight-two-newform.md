@@ -38,19 +38,27 @@ This node is still to be broken down. A good expansion states and links:
    above, with $\langle d \rangle f = \psi(d) f$ and $d \equiv a^{-1} \pmod N$, is the type $\epsilon = \psi$; the
    characterization of its image by the conditions $(\Phi 1)$–$(\Phi 7)$ (Theorem 3, p. 312), the decomposition of the
    image into irreducible representations occurring with multiplicity one, and strong multiplicity one (Theorem 2,
-   p. 307);
+   p. 307), which put $\Phi(f)$ in one irreducible representation $\pi^{\mathrm{C}}$ (p. 312). By $(\Phi 4)$ its central
+   character is Casselman's idèle class character $\epsilon_{\mathbb{A}}$, trivial on $\mathbb{Q}^\times$ and on the positive reals
+   and equal on $\prod_q \mathbb{Z}_q^\times$ to the product of the pull-backs $\epsilon_q$ of $\epsilon$ (pp. 309–311); at a uniformizer $p$ of $\mathbb{Q}_p$, $p \nmid N$, its
+   value is therefore $\psi(p)^{-1}$, while item 2 asks for $\xi_1(p)\xi_2(p) = \psi(p)$. The representation $\pi$ is the
+   contragredient of $\pi^{\mathrm{C}}$, cuspidal like it, whose central character takes the value $\psi(p)$ there;
 2. the archimedean component: all forms of weight $k$ have the same component at the real place, by comparison of
    $(\Phi 3)$–$(\Phi 5)$ with the representations of $\mathrm{GL}_2(\mathbb{R})$ of Jacquet–Langlands (Casselman, p. 312),
    which for $k = 2$ and unitary central character is $D_{2,0}$;
-3. the normalization of item 2: the eigenvalues of $T_p$ and of the diamond operators on the vector of
-   $\mathrm{Ind}(\xi_1, \xi_2)$ fixed by $\mathrm{GL}_2(\mathbb{Z}_p)$, which give $\xi_1(p)p^{1/2} + \xi_2(p)p^{1/2} = a_p$ and
-   $\xi_1(p)\xi_2(p) = \psi(p)$; Casselman states only that the eigenvalues determine the local component (p. 312);
+3. the normalization of item 2: the eigenvalues of $T_p$ and of the diamond operators on the vector fixed by
+   $\mathrm{GL}_2(\mathbb{Z}_p)$ of the component of $\pi^{\mathrm{C}}$ at $p \nmid N$, which Casselman says determine that component
+   (p. 312) without computing it, and the passage to the contragredient, which replaces its two characters by their
+   inverses; together they give $\xi_1(p)p^{1/2} + \xi_2(p)p^{1/2} = a_p$ and $\xi_1(p)\xi_2(p) = \psi(p)$ for
+   $\pi_p = \mathrm{Ind}(\xi_1, \xi_2)$;
 4. the conductor: Casselman's Theorem 4, p. 313, by which, with $\mathfrak{c}(\pi)$ the ideal with local components
    $\mathfrak{c}(\pi_p)$, the forms of level $N$ in $\pi$ form a space of dimension $\prod (n_i + 1)$ when
    $N = \mathfrak{c}(\pi) \prod p_i^{n_i}$, and none when $\mathfrak{c}(\pi)$ does not divide $N$, so that a newform of level $N$
    has $\mathfrak{c}(\pi) = N$; with the agreement of the newforms above with those of Atkin and Lehner and of Li, through the
    decomposition of $S_2(\Gamma_1(N))$ along the newforms of levels dividing $N$ (Darmon–Diamond–Taylor, Theorem 1.22,
-   citing Atkin–Lehner and Lang, Chapter VIII; not read here).
+   citing Atkin–Lehner and Lang, Chapter VIII; not read here). Theorem 4 is stated for $\pi^{\mathrm{C}}$; the
+   conductor of the component of $\pi$ at $p$ is that of $\pi^{\mathrm{C}}$, a representation of $\mathrm{GL}_2(\mathbb{Q}_p)$ and its
+   contragredient having the same conductor.
 
 ## Depends on
 
@@ -66,6 +74,8 @@ This node is still to be broken down. A good expansion states and links:
 ## Proof depends on
 
 - [Casselman's theorem on local newforms for GL₂](local-newforms-for-gl-2.md), for the dimensions of the spaces of vectors of level $\mathfrak{c}(\pi_p)p^i$ behind Casselman's Theorem 4 (expansion item 4)
+- [Multiplicity one for GLₙ](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/multiplicity-one-for-gl-n.md), for the decomposition of the space of cusp forms into irreducible representations occurring once each, in which $\Phi(f)$ lies (expansion item 1)
+- [Strong multiplicity one for GLₙ](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n/strong-multiplicity-one-for-gl-n.md), for Casselman's Theorem 2, which puts the forms with the same components at almost all places in one irreducible representation (expansion item 1)
 
 ## Sources
 
@@ -77,6 +87,11 @@ This node is still to be broken down. A good expansion states and links:
     irreducible");
   - §2, Theorem 2, p. 307 (two representations of $\mathcal{H}_\mathbb{A}$ occurring in $\mathcal{A}$ that agree at almost all places
     are equal);
+  - §3, pp. 309–311: "a character $\varepsilon$ of $(\mathbf{Z}/N)^\times$ determines a grössencharacter $\varepsilon_A$" through
+    $\mathbb{A}_{\mathbb{Q}}^\times = \mathbb{Q}^\times \cdot \mathbb{R}^{\mathrm{pos}} \cdot \prod_p \mathbb{Z}_p^\times$ and the pull-backs $\varepsilon_p$ of $\varepsilon$ to $\mathbb{Z}_p^\times$ (p. 309), and
+    "$(\Phi 4)$ $\Phi(z)F = \varepsilon_A(z)F$ for all $z \in Z_A$" (p. 311); p. 312: the image of $\mathfrak{S}(k, N, \varepsilon)$ lies in
+    the space $\mathcal{A}_0$ of Jacquet–Langlands, which "is a discrete direct sum of irreducible $\mathrm{GL}_2(A)$
+    representations, each occurring with multiplicity one ([4], Proposition 11.1)";
   - §3, pp. 309–313: the space $\mathfrak{M}(k, N, \epsilon)$ of forms with "(M 2) $f|[\gamma]_k = \epsilon(a)^{-1} \cdot f$ for all
     $\gamma \in \Gamma_0(N)$", the map $\Phi$ and the conditions $(\Phi 1)$–$(\Phi 7)$, Theorem 3, p. 312, the discussion of the
     components at the real place and at the primes not dividing $N$, p. 312, and Theorem 4, p. 313 ("Let $\mathfrak{c}(\pi)$

@@ -35,6 +35,7 @@ embedding $\Omega \to \Omega'$, since the fixed subspaces and kernels involved c
 - [Weil–Deligne representations](weil-deligne-representations/weil-deligne-representations.md), for Weil–Deligne representations $(V, r, N)$
 - [Weil group of a p-adic field](weil-deligne-representations/weil-group-of-a-p-adic-field.md), for $W_K$ and $I_K \subseteq W_K$
 - [Upper numbering of ramification groups](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md), for the groups $G_K^u$
+- [Ramification groups of local fields](../discriminants-ramification/ramification-groups-of-local-fields.md), for the lower-numbering groups $G_i$ of a finite Galois extension $L/K$ in Artin's sum
 - [Inertia and tame inertia of a p-adic field](weil-deligne-representations/inertia-and-tame-inertia-of-a-p-adic-field.md), for the wild inertia group $P_K$
 
 ## Proof depends on
