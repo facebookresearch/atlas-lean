@@ -13,7 +13,10 @@ For a Datalog query $q = (\Pi, R)$ over a schema $S$ the following are equivalen
 equivalent to a first-order query over $S$; (3) $q$ is equivalent to a union of conjunctive queries over $S$ with a common output tuple, in which a disjunct may also
 contain equality atoms $y = z$ between two variables and $y = a$ between a variable and a constant, variables of the
 output tuple included, each variable of the output tuple being equal, through these atoms, to a constant or to a
-variable of a relational atom of the disjunct. Both kinds of equality are needed even for head-safe programs. The
+variable of a relational atom of the disjunct, or to the empty union of the arity of $R$, which denotes the empty
+relation of that arity. The empty union is needed: over the empty extensional schema the rule $Q() \mathrel{:-} Q()$
+defines a bounded query that is always false, and no conjunctive query over that schema has a relational atom.
+Both kinds of equality are needed even for head-safe programs. The
 rules $Q(x, x) \mathrel{:-} R(x)$ and $Q(x, y) \mathrel{:-} S(x, y)$ return the diagonal of $R$ together with $S$,
 which is $(R(x) \wedge x = y) \vee S(x, y)$ with output $(x, y)$, and no common-output union without variable equalities
 expresses it. And over a unary relation $R$, the rules $T(x, x) \mathrel{:-} R(x)$ and $Q(x) \mathrel{:-} T(x, c)$
@@ -31,7 +34,8 @@ that a first-order query preserved under homomorphisms on finite databases is eq
 queries with such equalities
 (the source's Theorem 28.11, a theorem of finite model theory). A good expansion links that theorem once a page for it
 exists in Logic or Theory of Computation, and adds a page for the unfolding of a Datalog query into an infinitary union
-of conjunctive queries (the source's Proposition 36.2) used for (1) implies (2).
+of conjunctive queries (the source's Proposition 36.2) used for (1) implies (2). The union ranges over the unfoldings that use only input relations (the source's p. 332);
+when there is none, as for $Q() \mathrel{:-} Q()$, it is empty and $q$ returns the empty relation on every database.
 
 ## Depends on
 
