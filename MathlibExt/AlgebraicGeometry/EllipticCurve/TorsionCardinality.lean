@@ -9,9 +9,10 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Theorems/Thm_WeierstrassCurve_card_torsion_of_isAlgClosed.lean`
-and
-`P2M/Sol/S_WeierstrassCurve_card_torsion_of_isAlgClosed.lean`
+`Theorems/Thm_WeierstrassCurve_card_torsion_of_isAlgClosed.lean`,
+`P2M/Sol/S_WeierstrassCurve_card_torsion_of_isAlgClosed.lean`,
+`Theorems/Thm_WeierstrassCurve_Affine_Point_smul_some_eq_zero_iff.lean`, and
+`P2M/Sol/S_WeierstrassCurve_Affine_Point_smul_some_eq_zero_iff.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -1240,3 +1241,11 @@ public theorem WeierstrassCurve.card_torsion_of_isAlgClosed
   change P ∈ Submodule.torsionBy ℤ (W⁄K).Point (n : ℤ) ↔ P ∈ Deep.Gen.nTorsion W (K := K) n
   rw [Submodule.mem_torsionBy_iff, natCast_zsmul]
   rfl
+
+/-- A nonsingular affine point is `n`-torsion exactly when the `n`-th division polynomial `ψ n`
+vanishes at it. -/
+public theorem WeierstrassCurve.Affine.Point.smul_some_eq_zero_iff {F : Type*} [Field F]
+    [DecidableEq F] (W : WeierstrassCurve F) {x y : F} (h : W.toAffine.Nonsingular x y)
+    (n : ℤ) :
+    n • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ (W.ψ n).evalEval x y = 0 :=
+  WeierstrassCurve.smul_eq_zero_iff_evalEval_ψ W h n

@@ -22,6 +22,8 @@ public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessPairwiseCoprime
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessExistsUniqueMemGenCohnTree
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessVieta
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessParent
 
 namespace MetaMathlibExt
 
@@ -242,23 +244,6 @@ public theorem_wanted genMarkovTree_isGenMarkovTriple_and_once (k : ℕ) :
       (genMarkovTree k w).2.2) ∧
     ∀ a b c, IsGenMarkovTriple k a b c → a < b → c < b → ∃! w, genMarkovTree k w = (a, b, c)
 
-/-- **Induced solution of the generalized second Markov equation.** For a natural number $k$,
-a triple $(a, b, c)$ of integers is an induced positive solution of the $k$-generalized second
-Markov equation $\mathrm{GSME}(k)$ when $a, b, c > 0$,
-$$a^2 + b^2 + c^2 + (k^2 + 2k)(a + b + c) + 2k^3 + 3k^2 = abc,$$
-and $3 + 3k$ divides each of $a + k$, $b + k$ and $c + k$.
-
-Equivalently, $(a + k)/(3 + 3k)$, $(b + k)/(3 + 3k)$ and $(c + k)/(3 + 3k)$ are integers; they
-are automatically positive since $a, b, c > 0$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 2. -/
-public def IsInducedGenSecondMarkovSolution (k : ℕ) (a b c : ℤ) : Prop :=
-  0 < a ∧ 0 < b ∧ 0 < c ∧
-    a ^ 2 + b ^ 2 + c ^ 2 + ((k : ℤ) ^ 2 + 2 * k) * (a + b + c) + 2 * (k : ℤ) ^ 3 +
-      3 * (k : ℤ) ^ 2 = a * b * c ∧
-    (3 + 3 * (k : ℤ)) ∣ a + k ∧ (3 + 3 * (k : ℤ)) ∣ b + k ∧ (3 + 3 * (k : ℤ)) ∣ c + k
-
 /-- **The root induced solution of the generalized second Markov equation.** For every natural
 number $k$, the triple $(3 + 2k, 3 + 2k, 3 + 2k)$, the image of $(1, 1, 1)$ under
 $x \mapsto (3 + 3k)x - k$, is an induced positive solution of the $k$-generalized second
@@ -270,17 +255,6 @@ public theorem isInducedGenSecondMarkovSolution_root (k : ℕ) :
     IsInducedGenSecondMarkovSolution k (3 + 2 * k) (3 + 2 * k) (3 + 2 * k) := by
   refine ⟨by positivity, by positivity, by positivity, by ring, ⟨1, by ring⟩, ⟨1, by ring⟩,
     ⟨1, by ring⟩⟩
-
-/-- **Vieta jumping preserves induced solutions of the generalized second Markov equation.** If
-$(a, b, c)$ is an induced solution of the $k$-generalized second Markov equation
-$\mathrm{GSME}(k)$, then so are $(a, ab - c - k^2 - 2k, b)$ and $(b, bc - a - k^2 - 2k, c)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 2.7. -/
-public theorem_wanted IsInducedGenSecondMarkovSolution.vieta {k : ℕ} {a b c : ℤ}
-    (h : IsInducedGenSecondMarkovSolution k a b c) :
-    IsInducedGenSecondMarkovSolution k a (a * b - c - (k : ℤ) ^ 2 - 2 * k) b ∧
-      IsInducedGenSecondMarkovSolution k b (b * c - a - (k : ℤ) ^ 2 - 2 * k) c
 
 /-- **Vertices of the second generalized Markov tree.** For a natural number $k$, let $SMT(k)$
 be the tree obtained from the $k$-generalized Markov tree $MT(k)$ by replacing each vertex
@@ -444,19 +418,6 @@ Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 3.10. -/
 public theorem_wanted IsGenCohnTriple.mem_wideGenCohnTree {k a b c : ℕ}
     {P Q R : Matrix (Fin 2) (Fin 2) ℤ} (h : IsGenCohnTriple k P Q R a b c) (hab : a ≤ b)
     (hcb : c ≤ b) : ∃ ℓ w, wideGenCohnTree k ℓ w = (P, Q, R)
-
-/-- **Parent triples of a generalized Cohn triple.** Let $k$ be a natural number and let $S$ be
-the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$. Let $(P, Q, R)$ be a $k$-generalized
-Cohn triple associated with $(a, b, c)$, and let $b' = \lfloor (a^2 + kac + c^2)/b \rfloor$. Then
-$(P, R, P^{-1}(R + S))$ is a $k$-generalized Cohn triple associated with $(a, c, b')$, and
-$((P + S)R^{-1}, P, R)$ is a $k$-generalized Cohn triple associated with $(b', a, c)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.11. -/
-public theorem_wanted IsGenCohnTriple.parent {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2) ℤ}
-    (h : IsGenCohnTriple k P Q R a b c) :
-    IsGenCohnTriple k P R (P⁻¹ * (R + genCohnS k)) a c ((a ^ 2 + k * a * c + c ^ 2) / b) ∧
-      IsGenCohnTriple k ((P + genCohnS k) * R⁻¹) P R ((a ^ 2 + k * a * c + c ^ 2) / b) a c
 
 /-- **Distinct paths give distinct middle matrices in the wide generalized Cohn tree.** For
 every natural number $k$ and every integer $\ell$, if the vertices $(P, Q, R)$ and $(P', Q', R')$

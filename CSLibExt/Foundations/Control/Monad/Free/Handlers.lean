@@ -52,8 +52,8 @@ abbrev FreeExcept (E : Type u) (α : Type v) := FreeM (ExceptF E) α
 binary choice `choice` (the paper's `pick : 2`), as in Plotkin and
 Pretnar's Section 6.4.
 
-This is syntax only: no quotient by the Section 6.4 monoid equations or
-by the semilattice equations of `or : 2` is introduced in this unit. -/
+This is syntax only: it is not quotiented by the Section 6.4 monoid equations or
+by the semilattice equations of `or : 2`. -/
 inductive NondetF : Type → Type where
   | fail : NondetF Empty
   | choice : NondetF Bool

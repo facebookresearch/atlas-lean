@@ -84,17 +84,6 @@ public theorem_wanted accelZeckGame_sharp_lower_bound_fib (k : ℕ) (hk : 1 ≤ 
     (∀ L g, IsAccelZeckGame (Nat.fib (k + 1)) L g → k - 1 ≤ L) ∧
       ∃ g, IsAccelZeckGame (Nat.fib (k + 1)) (k - 1) g
 
-/-- **Unique winning first move.** For every $n$, if the state consisting of $n$ copies of $F_1$
-is winning, then exactly one state reachable from it in one move is losing: when the first
-player has a winning strategy in the game on $n$, exactly one first move preserves it.
-
-Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
-Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
-Article milleretal04072023, Proposition 1.5. -/
-public theorem_wanted accelZeck_unique_winning_first_move (n : ℕ)
-    (h : AccelZeckWinning (Finsupp.single 1 n)) :
-    ∃! t, AccelZeckMove (Finsupp.single 1 n) t ∧ AccelZeckLosing t
-
 /-- **Accelerated Zeckendorf Game: Conjecture 1.7 in its first five cases.** Index the Fibonacci
 numbers as $F_1 = 1$, $F_2 = 2$, $F_{i+1} = F_i + F_{i-1}$. Let $n$ be such that the state
 consisting of $n$ copies of $F_1$ (the starting position of the Accelerated Zeckendorf Game on
