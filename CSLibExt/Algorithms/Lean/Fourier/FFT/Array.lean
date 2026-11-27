@@ -49,7 +49,7 @@ theorem fftArray_eq_none_iff (omega : R) (xs : Array R) :
   by_cases h : xs.size = 2 ^ xs.size.log2
   · constructor
     · intro hbad
-      simp only [fftArray, dif_pos h] at hbad
+      simp only [fftArray, dite_eq_left h] at hbad
       change (some _ : Option (Array R)) = none at hbad
       cases hbad
     · intro hall
@@ -59,7 +59,7 @@ theorem fftArray_eq_none_iff (omega : R) (xs : Array R) :
       apply h
       rw [hd, Nat.log2_two_pow]
     · intro _
-      simp only [fftArray, dif_neg h]
+      simp only [fftArray, dite_eq_right h]
       rfl
 
 end Cslib.Algorithms.Lean.TimeM
