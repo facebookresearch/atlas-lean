@@ -21,13 +21,16 @@ Hallucinate*, arXiv:2311.14648v3: coarsening and calibration
 (Definition 1), the level-set miscalibration `Mis_∞` (Eq. (2)), the
 adaptive partition and the miscalibration `Mis_b` (Definition 2),
 Lemma 2 and Theorem 1. Lemma 2 and Theorem 1 are proved in the finite
-setting: a finite set of factoids, as in the source, and a finite
-mixture `∑ i, w i • p i` in place of the source's prior `ν`. The module
-provides only the vocabulary used to state Corollary 1: pushforward,
-facts, hallucinations, observed factoids (Eq. (4)), the monofact rate
-(Eq. (5)), sparsity (Assumption 1) and regularity (Definitions 3 and 4),
-for a finite set of documents and a finite mixture of document
-distributions.
+setting: a finite set of factoids, as in the source, and a finitely
+supported prior `ν = ∑ i, w i δ_{p i}` in place of the source's
+`ν ∈ Δ(Δ(Y))`: draw `i` with probability `w i` and use `p i` (a
+distribution over distributions on `Y`, not the mean distribution
+`∑ i, w i • p i`). The module provides only the vocabulary used to state
+Corollary 1: pushforward, facts, hallucinations, observed factoids
+(Eq. (4)), the monofact rate (Eq. (5)), sparsity (Assumption 1) and
+regularity (Definitions 3 and 4), for a finite set of documents and a
+finitely supported prior over document distributions, which draws the
+world `i`, with document distribution `D i`, with probability `w i`.
 
 `Mis_b(g, p) = 0` implies that `g` is calibrated to `p`
 (`isCalibratedTo_of_mis_eq_zero`), but the converse, which the source
@@ -73,9 +76,11 @@ noncomputable def levelPartition (g : Y → ℝ) :
   classical
   exact Finpartition.ofSetoid (Setoid.ker g)
 
-/-- Eq. (2): `Mis_∞(g, p) = ‖p^{B(g)} − g‖_TV`, the total variation distance
-`(1/2) ∑ y, |p^{B(g)}(y) − g(y)|` between the coarsening of `p` along the
-level sets of `g` and `g` itself. -/
+/-- `‖p^{B(g)} − g‖_TV = (1/2) ∑ y, |p^{B(g)}(y) − g(y)|` for the coarsening
+`p^{B(g)}` of `p` along the level sets of `g`, defined for all real functions
+`g` and `p`. When `g` and `p` are probability vectors, this is the total
+variation distance between `p^{B(g)}` and `g`, the source's level-set
+miscalibration `Mis_∞(g, p)` (Eq. (2)). -/
 noncomputable def misInf (g p : Y → ℝ) : ℝ :=
   tvDist (coarsen (levelPartition g) p) g
 
@@ -104,7 +109,8 @@ theorem sum_coarsen (P : Finpartition (Finset.univ : Finset Y)) (D : Y → ℝ) 
   rw [havg, Finset.sum_const, nsmul_eq_mul, mul_comm, div_mul_cancel₀ _ hcard]
 
 /-- For any real functions `g` and `p` on `Y` (no normalization is needed),
-`g` is calibrated to `p` exactly when `Mis_∞(g, p) = 0`. -/
+`g` is calibrated to `p` exactly when `misInf g p = 0`; for probability vectors
+this reads `Mis_∞(g, p) = 0`. -/
 theorem isCalibratedTo_iff_misInf_eq_zero {g p : Y → ℝ} :
     IsCalibratedTo g p ↔ misInf g p = 0 := by
   classical
@@ -353,7 +359,9 @@ theorem binIndex_spec {g : Y → ℝ} (hg : IsProbVec g) {b : ℕ}
 
 /-- Eq. (6): for real functions `q` and `g` on `Y` with equal total masses
 `∑ y, q y = ∑ y, g y`, and every `U ⊆ Y`, `q(U) − g(U) ≤ ‖q − g‖_TV`, where
-`q(U) = ∑ y ∈ U, q y`. Neither mass needs to be `1`. -/
+`q(U) = ∑ y ∈ U, q y` and `‖q − g‖_TV = (1/2) ∑ y, |q y − g y|`. Neither mass
+needs to be `1`; for probability vectors, `‖q − g‖_TV` is the total variation
+distance. -/
 theorem sub_le_tvDist_of_sum_eq {q g : Y → ℝ} (h : ∑ y, q y = ∑ y, g y)
     (U : Finset Y) :
     ∑ y ∈ U, q y - ∑ y ∈ U, g y ≤ tvDist q g := by
@@ -401,10 +409,11 @@ noncomputable def adaptivePartition (g : Y → ℝ) (b : ℕ) :
   classical
   exact Finpartition.ofSetoid (Setoid.ker (binIndex g b))
 
-/-- `‖p^V − g‖_TV` for the partition `V = adaptivePartition g b`, defined for
-every `g`, `p` and `b`. When `g` is a probability vector and `1 ≤ b`, the
-blocks of `V` are the nonempty bins of the source's `V_b(g)`, and this is its
-miscalibration `Mis_b(g, p)` (Definition 2). -/
+/-- `‖p^V − g‖_TV = (1/2) ∑ y, |p^V(y) − g(y)|` for the partition
+`V = adaptivePartition g b`, defined for every `g`, `p` and `b`. When `g` is a
+probability vector and `1 ≤ b`, the blocks of `V` are the nonempty bins of the
+source's `V_b(g)`; when moreover `p` is a probability vector, this is the
+source's miscalibration `Mis_b(g, p)` (Definition 2). -/
 noncomputable def mis (b : ℕ) (g p : Y → ℝ) : ℝ :=
   tvDist (coarsen (adaptivePartition g b) p) g
 
@@ -1011,7 +1020,8 @@ theorem expect_hallucination_gap_le_of_bounds {ι : Type*} [Fintype ι]
 `U = ∅` and `p_i(U) = 0`. For any weights `w`, any functions `p i`, any fact
 sets `F i`, any partition `P` of `Y` and any probability vector `g`,
 `∑ i, w i * max (p_i(U) − ‖p_i^P − g‖_TV − g(Y \ F i)) 0 = 0`, writing
-`q(A) = ∑ y ∈ A, q y` and `p_i^P` for the `P`-coarsening of `p i`. -/
+`q(A) = ∑ y ∈ A, q y`, `‖q − g‖_TV = (1/2) ∑ y, |q y − g y|` and `p_i^P` for
+the `P`-coarsening of `p i`. -/
 theorem expect_hallucination_gap_eq_zero_of_eq_univ {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (p : ι → Y → ℝ) (F : ι → Finset Y)
     (g : Y → ℝ) (hg : IsProbVec g) (P : Finpartition (Finset.univ : Finset Y)) :
@@ -1052,9 +1062,9 @@ section WorldModel
 
 variable {Y : Type*} [Fintype Y] [DecidableEq Y] {X : Type*} [Fintype X]
 
-/-- Pushforward of `D : X → ℝ` along `f : X → Y`: `y ↦ ∑_{x : f x = y} D x`.
-For a document distribution `D` this is the source's induced factoid
-distribution `p = f ∘ D_L`. -/
+/-- Pushforward of `D : X → ℝ` along `f : X → Y`: `y ↦ ∑_{x : f x = y} D x`,
+defined for every `D`. When `D` is a probability vector on `X` (a document
+distribution), this is the source's induced factoid distribution `p = f ∘ D_L`. -/
 noncomputable def pushforward (f : X → Y) (D : X → ℝ) : Y → ℝ :=
   fun y => ∑ x ∈ Finset.univ.filter (fun x => f x = y), D x
 
@@ -1063,14 +1073,16 @@ of drawing the sample `x = (x 1, …, x n)` independently from `D`. -/
 noncomputable def trainProb {n : ℕ} (D : X → ℝ) (x : Fin n → X) : ℝ :=
   ∏ k, D (x k)
 
-/-- The facts of a world with document distribution `D`: `F = supp p ∪ {⊥}`
-for `p = pushforward f D` and `supp p = {y | 0 < p y}`, the source's
-support. -/
+/-- The facts `F = {y | 0 < p y} ∪ {⊥}` for `p = pushforward f D`, defined for
+every `D : X → ℝ`. When `D` is a probability vector (a document distribution),
+`{y | 0 < p y}` is the support of `p`, the image under `f` of the support of
+`D`, and `F` is the source's set of facts `f(supp(D)) ∪ {⊥}` of the world `D`. -/
 noncomputable def facts (f : X → Y) (bot : Y) (D : X → ℝ) : Finset Y :=
   Finset.univ.filter (fun y => 0 < pushforward f D y) ∪ {bot}
 
-/-- The hallucinations of a world with document distribution `D`:
-`H = Y \ F` for `F = facts f bot D`. -/
+/-- The hallucinations `H = Y \ F` for `F = facts f bot D`, defined for every
+`D : X → ℝ`; when `D` is a probability vector, these are the source's
+hallucinations of the world `D`. -/
 noncomputable def hallucinations (f : X → Y) (bot : Y) (D : X → ℝ) : Finset Y :=
   Finset.univ \ facts f bot D
 
@@ -1086,19 +1098,22 @@ noncomputable def monofactRate (f : X → Y) (bot : Y) {n : ℕ} (x : Fin n → 
   ((Finset.univ.filter
     (fun y => y ≠ bot ∧ (Finset.univ.filter (fun k => f (x k) = y)).card = 1)).card : ℝ) / n
 
-/-- `s`-sparse facts (Assumption 1) for a finite mixture of worlds `D i` with
-weights `w i`: every world with `0 < w i` has `|F| ≤ e^{-s} |H|`, for
-`F = facts f bot (D i)` and `H = hallucinations f bot (D i)`. -/
+/-- `s`-sparse facts for weights `w i` on worlds `D i`, defined for any `w` and
+`D`: every world with `0 < w i` has `|F| ≤ e^{-s} |H|`, for
+`F = facts f bot (D i)` and `H = hallucinations f bot (D i)`. When `w` and every
+`D i` are probability vectors, this is Assumption 1 for the prior that draws the
+world `D i` with probability `w i`: with probability one, `|F| ≤ e^{-s} |H|`. -/
 def IsSparse (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (s : ℝ) : Prop :=
   ∀ i, 0 < w i → ((facts f bot (D i)).card : ℝ)
     ≤ Real.exp (-s) * (hallucinations f bot (D i)).card
 
-/-- Regular facts (Definition 3, cross-multiplied): for every sample
-`x : Fin n → X` with `0 < ∑ i, w i * P_i(x)`, where
+/-- Regular facts, cross-multiplied, defined for any weights `w` and functions
+`D i`: for every sample `x : Fin n → X` with `0 < ∑ i, w i * P_i(x)`, where
 `P_i(x) = trainProb (D i) x`, and all `y, y'` outside `observed f bot x`,
 `∑_{i : y ∈ F_i} w i * P_i(x) = ∑_{i : y' ∈ F_i} w i * P_i(x)` for
-`F_i = facts f bot (D i)`. -/
+`F_i = facts f bot (D i)`. When `w` and every `D i` are probability vectors,
+this is Definition 3 (see `hasRegularFacts_iff`). -/
 def HasRegularFacts (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (n : ℕ) : Prop :=
   ∀ x : Fin n → X, 0 < ∑ i, w i * trainProb (D i) x →
@@ -1108,11 +1123,12 @@ def HasRegularFacts (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
         = ∑ i ∈ Finset.univ.filter (fun i => y' ∈ facts f bot (D i)),
           w i * trainProb (D i) x
 
-/-- Regular probabilities (Definition 4, cross-multiplied): for every sample
-`x : Fin n → X` with `0 < ∑ i, w i * P_i(x)`, where
-`P_i(x) = trainProb (D i) x`, and all `y, y'` outside `observed f bot x`,
+/-- Regular probabilities, cross-multiplied, defined for any weights `w` and
+functions `D i`: for every sample `x : Fin n → X` with `0 < ∑ i, w i * P_i(x)`,
+where `P_i(x) = trainProb (D i) x`, and all `y, y'` outside `observed f bot x`,
 `∑ i, w i * P_i(x) * p_i(y) = ∑ i, w i * P_i(x) * p_i(y')` for
-`p_i = pushforward f (D i)`. -/
+`p_i = pushforward f (D i)`. When `w` and every `D i` are probability vectors,
+this is Definition 4 (see `hasRegularProbabilities_iff`). -/
 def HasRegularProbabilities (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (n : ℕ) : Prop :=
   ∀ x : Fin n → X, 0 < ∑ i, w i * trainProb (D i) x →
@@ -1120,17 +1136,21 @@ def HasRegularProbabilities (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
       ∑ i, w i * trainProb (D i) x * pushforward f (D i) y
         = ∑ i, w i * trainProb (D i) x * pushforward f (D i) y'
 
-/-- Regularity: both `HasRegularFacts` (Definition 3) and
-`HasRegularProbabilities` (Definition 4) hold. -/
+/-- Regularity: both `HasRegularFacts` and `HasRegularProbabilities` hold. When
+`w` and every `D i` are probability vectors, these are Definitions 3 and 4, and
+this is the source's regularity. -/
 def IsRegular (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (n : ℕ) : Prop :=
   HasRegularFacts f bot w D n ∧ HasRegularProbabilities f bot w D n
 
-/-- `HasRegularFacts` is equivalent to the conditional form of Definition 3:
-for every sample `x` with `Z = ∑ i, w i * P_i(x) > 0`, where
+/-- `HasRegularFacts` is equivalent to its divided form, for any weights `w` and
+functions `D i`: for every sample `x` with `Z = ∑ i, w i * P_i(x) > 0`, where
 `P_i(x) = trainProb (D i) x`, and all `y, y'` outside `observed f bot x`,
-`(∑_{i : y ∈ F_i} w i * P_i(x)) / Z = (∑_{i : y' ∈ F_i} w i * P_i(x)) / Z`,
-that is `Pr[y ∈ F | x] = Pr[y' ∈ F | x]`, for `F_i = facts f bot (D i)`. -/
+`(∑_{i : y ∈ F_i} w i * P_i(x)) / Z = (∑_{i : y' ∈ F_i} w i * P_i(x)) / Z`, for
+`F_i = facts f bot (D i)`. When `w` and every `D i` are probability vectors,
+`Z` is the probability of drawing the sample `x` and each quotient is a
+conditional probability, so this is the conditional form of Definition 3,
+`Pr[y ∈ F | x] = Pr[y' ∈ F | x]`. -/
 theorem hasRegularFacts_iff (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (n : ℕ) :
     HasRegularFacts f bot w D n ↔
@@ -1167,11 +1187,14 @@ section RegularProbabilitiesBridge
 
 variable {Y : Type*} [DecidableEq Y] {X : Type*} [Fintype X]
 
-/-- `HasRegularProbabilities` is equivalent to the conditional form of
-Definition 4: for every sample `x` with `Z = ∑ i, w i * P_i(x) > 0`, where
-`P_i(x) = trainProb (D i) x`, and all `y, y'` outside `observed f bot x`,
-`(∑ i, w i * P_i(x) * p_i(y)) / Z = (∑ i, w i * P_i(x) * p_i(y')) / Z`,
-that is `E[p(y) | x] = E[p(y') | x]`, for `p_i = pushforward f (D i)`. -/
+/-- `HasRegularProbabilities` is equivalent to its divided form, for any weights
+`w` and functions `D i`: for every sample `x` with `Z = ∑ i, w i * P_i(x) > 0`,
+where `P_i(x) = trainProb (D i) x`, and all `y, y'` outside `observed f bot x`,
+`(∑ i, w i * P_i(x) * p_i(y)) / Z = (∑ i, w i * P_i(x) * p_i(y')) / Z`, for
+`p_i = pushforward f (D i)`. When `w` and every `D i` are probability vectors,
+`Z` is the probability of drawing the sample `x` and each quotient is a
+conditional expectation, so this is the conditional form of Definition 4,
+`E[p(y) | x] = E[p(y') | x]`. -/
 theorem hasRegularProbabilities_iff (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (n : ℕ) :
     HasRegularProbabilities f bot w D n ↔
