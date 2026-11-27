@@ -1,6 +1,7 @@
 # Epidemics on networks
 
 - [Epidemic percolation network for SIR epidemics](kenah-robins-epidemic-percolation-network-exact-isomorphism-of-network.md)
+- [Degree heterogeneity and disease-induced herd immunity in mean-field network SIR models](degree-heterogeneity-and-disease-induced-herd-immunity.md)
 - [Adaptive SIS dynamics on networks](adaptive-sis-dynamics-on-networks/README.md)
 - [Chase-escape predator–prey SIR dynamics](chase-escape-predator-prey-sir-dynamics/README.md)
 - [Contact-tracing likelihood for network epidemics](contact-tracing-likelihood-for-network-epidemics/README.md)

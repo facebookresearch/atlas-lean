@@ -1,7 +1,7 @@
 # Stochastic reaction networks
 
 - [Non-explosivity of complex-balanced stochastic reaction networks](non-explosivity-of-complex-balanced-stochastic-reaction-networks.md)
-
+- [Stochastic first-passage, immune dynamics, and weak-form estimation](stochastic-and-inverse-systems-biology/README.md)
 - [Exactness of the SSA path law](exactness-of-the-ssa-path-law.md)
 - [Gillespie direct method (stochastic simulation algorithm)](gillespie-direct-method.md)
 - [Gillespie propensities and the mass-action Markov chain of a reaction network](remaining-clauses-of-stochastic-chemical-reaction-networks.md)

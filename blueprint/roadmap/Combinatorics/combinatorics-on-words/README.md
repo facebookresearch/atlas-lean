@@ -7,3 +7,4 @@ Finite and infinite words over finite alphabets: repetitions and avoidability, m
 - [Automatic sequences and numeration systems](automatic-sequences/README.md)
 - [Finite words](finite-words/README.md)
 - [Self-describing and self-generating sequences](self-describing-sequences/README.md)
+- [Possible positive even Barker lengths](positive-even-barker-lengths.md)

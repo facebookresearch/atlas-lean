@@ -15,6 +15,7 @@ inner redex $(\lambda x.\, x)\, x$ both give $(\lambda x.\, x)\, x$, but $\{t\}$
 ## Depends on
 
 - [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
+- [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
 
 ## Sources
 
