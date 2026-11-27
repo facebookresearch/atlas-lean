@@ -4,9 +4,9 @@ A stabbing planes refutation of a CNF formula with size $s$ and coefficients bou
 
 **Theorem.** Let $F$ be an unsatisfiable CNF formula on $n$ variables with a stabbing planes refutation of size $s$ whose coefficients have magnitude at most $c$. Then $F$ has a cutting planes refutation of size $s (cn)^{\log s}$.
 
-More generally, if a polytope $P \subseteq \mathbb{R}^n$ of diameter $d(P)$ has a stabbing planes refutation of size $s$ and maximum coefficient size $c$, then it has a facelike stabbing planes refutation of size $s (c \cdot d(P) \sqrt{n})^{\log s}$.
+More generally, if a polytope $P \subseteq \mathbb{R}^n$ of diameter $d(P)$ has a stabbing planes refutation of size $s$ whose coefficients have magnitude at most $c$, then it has a facelike stabbing planes refutation of size $s (c \cdot d(P) \sqrt{n})^{\log s}$.
 
-**Corollary.** Let $\mathrm{SP}^*$ be stabbing planes restricted to coefficients of magnitude $n^{\log^{O(1)} n}$. There is a family of unsatisfiable CNF formulas $F_n$ such that every $\mathrm{SP}^*$ refutation of $F_n$ has size at least $2^{n^\epsilon}$ for a constant $\epsilon > 0$. Moreover $\mathrm{SP}^*$ is not automatable unless $\mathrm{P} = \mathrm{NP}$.
+**Corollary.** Let $\mathrm{SP}^*$ be stabbing planes restricted to coefficients of magnitude $n^{\log^{O(1)} n}$. There is a family of unsatisfiable CNF formulas $F_n$ such that every $\mathrm{SP}^*$ refutation of $F_n$ has size at least $2^{n^\epsilon}$ for a constant $\epsilon > 0$. Moreover $\mathrm{SP}^*$ is not automatable unless $\mathrm{P} = \mathrm{NP}$; that is, $\mathrm{SP}^*$ refutations cannot be found efficiently assuming $\mathrm{P} \ne \mathrm{NP}$.
 
 ## Expansion
 
@@ -15,12 +15,16 @@ Induct on $s$. At the root query $(ax \le b, ax \ge b + 1)$ assume the left subp
 ## Depends on
 
 - [The stabbing planes proof system](../../stabbing-planes-and-semi-algebraic-branching/stabbing-planes-system.md)
+- [Automatable proof systems](../../automatability-of-proof-systems/automatable-proof-system.md)
+- [The complexity class P](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
+- [The complexity class NP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Proof depends on
 
 - [Cutting planes equal facelike stabbing planes](cutting-planes-equal-facelike-stabbing-planes.md)
 - [Random logarithmic-width CNFs are hard for cutting planes](../../stabbing-planes-and-semi-algebraic-branching/random-cnf-cutting-planes.md)
+- [Göös–Koroth–Mertz–Pitassi: automating cutting planes is NP-hard](../../automatability-of-proof-systems/gkmp-cutting-planes.md)
 
 ## Sources
 
-- N. Fleming, M. Göös, R. Impagliazzo, T. Pitassi, R. Robere, L.-Y. Tan, A. Wigderson, "On the power and limitations of branch and cut", *CCC 2021*, LIPIcs 200, doi:10.4230/LIPIcs.CCC.2021.6, arXiv:2102.05019 (arXiv version read: the quasi-polynomial simulation theorem and the $\mathrm{SP}^*$ lower bound in Section 1; the polytope version and the non-automatability corollary in Section 3.2).
+- N. Fleming, M. Göös, R. Impagliazzo, T. Pitassi, R. Robere, L.-Y. Tan, A. Wigderson, "On the power and limitations of branch and cut", *CCC 2021*, LIPIcs 200, doi:10.4230/LIPIcs.CCC.2021.6, arXiv:2102.05019v2 (version read: the quasi-polynomial simulation theorem and the $\mathrm{SP}^*$ lower bound in Section 1; Theorem 3.7, the polytope version, and Corollary 3.8 on non-automatability in Section 3.2; Corollary 3.8 prints "unless P $\ne$ NP", a misprint, and the sentence before it states the form used here, that such refutations cannot be found efficiently assuming P $\ne$ NP).

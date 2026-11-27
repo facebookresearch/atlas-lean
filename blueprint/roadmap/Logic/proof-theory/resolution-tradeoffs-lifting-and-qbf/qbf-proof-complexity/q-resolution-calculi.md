@@ -19,6 +19,7 @@ These calculi model CDCL-based QBF solving: learned clauses and clause learning 
 ## Depends on
 
 - [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
+- [Cook–Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
 
 ## Proof depends on
 

@@ -20,6 +20,7 @@ For strong systems the third case cannot occur: for $\mathcal{C}$-Frege plus uni
 
 - [Q-resolution and its long-distance and universal variants](q-resolution-calculi.md)
 - [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
+- [The Kleine Büning-Karpinski-Flögel formulas are hard for IR-calc](kbkf-formulas-hard-for-ir-calc.md)
 
 ## Proof depends on
 

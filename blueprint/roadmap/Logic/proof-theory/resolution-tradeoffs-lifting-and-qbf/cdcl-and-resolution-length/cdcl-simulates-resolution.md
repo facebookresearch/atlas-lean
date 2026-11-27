@@ -21,5 +21,5 @@ None.
 
 ## Sources
 
-- O. Beyersdorff, B. Böhm, "Understanding the relative strength of QBF CDCL solvers and QBF resolution", *Logical Methods in Computer Science* 19(2:2), 2023 (conference version ITCS 2021), doi:10.46298/lmcs-19(2:2)2023, arXiv:2109.04862v5 (Theorem 7.2 and Definition 7.1, Section 7; the quantified version is the main theorem of Section 6).
-- J. Nordström, "On the interplay between proof complexity and SAT solving", *ACM SIGLOG News* 2(3), 2015, doi:10.1145/2743014.2743018 (Section 3.1).
+- O. Beyersdorff, B. Böhm, "Understanding the relative strength of QBF CDCL solvers and QBF resolution", *Logical Methods in Computer Science* 19(2:2), 2023 (conference version ITCS 2021), doi:10.46298/lmcs-19(2:2)2023, arXiv:2109.04862v5 (Theorem 7.2 and Definition 7.1, Section 7; the quantified version is Theorem 6.9 in Section 6).
+- J. Nordström, "On the interplay between proof complexity and SAT solving", *ACM SIGLOG News* 2(3), 2015, 19-44, doi:10.1145/2815493.2815497 (Section 3.1).

@@ -18,7 +18,7 @@ The formulas are false: the existential player must set $y_0 = 0$, then one of $
 
 ## Depends on
 
-- [Expansion-based QBF calculi: universal expansion resolution and IR-calc](expansion-based-qbf-calculi.md)
+- [Expansion-based QBF calculi: universal expansion resolution, IR-calc and IRM-calc](expansion-based-qbf-calculi.md)
 - [Q-resolution and its long-distance and universal variants](q-resolution-calculi.md)
 
 ## Proof depends on

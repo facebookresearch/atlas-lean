@@ -15,6 +15,7 @@ Besides reflection principles, $\tau$-formulas are essentially the only known ca
 ## Depends on
 
 - [Cook–Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
+- [The complexity class NP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Proof depends on
 

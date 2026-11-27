@@ -6,10 +6,10 @@ For a bipartite graph $G = (U \cup V, E)$ with pigeons $U = [m]$, holes $V = [n]
 
 **Theorem.**
 
-1. Let $k$ and $n$ be positive integers, $\epsilon > 0$ and $m = n^k$. For $G \sim \mathcal{G}(m, n, \Delta)$ with left degree $\Delta = \Theta((k/\epsilon)^2)$, asymptotically almost surely every resolution refutation of $\mathrm{FPHP}(G)$ has length $\exp(\Omega(n^{1-\epsilon}))$.
+1. Let $k$ and $n$ be positive integers, $\epsilon > 0$ and $m = n^k$. For $G \sim \mathcal{G}(m, n, \Delta)$ with left degree $\Delta = \lceil 16 k^2 / \epsilon \rceil$, asymptotically almost surely every resolution refutation of $\mathrm{FPHP}(G)$ has length $\exp(\Omega(n^{1-\epsilon}))$.
 2. Let $m \le n^{o(\log n)}$. For $G \sim \mathcal{G}(m, n, \log m)$, asymptotically almost surely every resolution refutation of $\mathrm{FPHP}(G)$ has length $\exp(\Omega(n^{1-o(1)}))$.
-3. Let $m \le n^{o(\log n)}$. For random $G$ with left degree polylogarithmic in $m$ (as in Corollary 26), asymptotically almost surely every resolution refutation of $\mathrm{PM}(G)$ has length $\exp(\Omega(n^{1-o(1)}))$.
-4. There are explicitly constructible bipartite graphs with $m = \exp(O(n^{1/16}))$ left vertices and left degree polylogarithmic in $m$ whose perfect matching formulas require resolution length $\exp(\Omega(n^{1/8-\epsilon}))$.
+3. Let $m \le n^{o(\log n)}$. For $G \sim \mathcal{G}(m, n, 8 \log^2 m)$, asymptotically almost surely every resolution refutation of $\mathrm{PM}(G)$ has length $\exp(\Omega(n^{1-o(1)}))$.
+4. For every constant $\epsilon > 0$ there are explicitly constructible bipartite graphs with $m = \exp(O(n^{1/16}))$ left vertices and left degree polylogarithmic in $m$ whose perfect matching formulas require resolution length $\exp(\Omega(n^{1/8-\epsilon}))$.
 
 ## Expansion
 

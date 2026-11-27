@@ -19,7 +19,10 @@ For $\exists \vec{x}\, \forall z .\, (z \lor \phi_f) \land (\overline{z} \lor \n
 ## Depends on
 
 - [Q-resolution and its long-distance and universal variants](q-resolution-calculi.md)
-- [Expansion-based QBF calculi: universal expansion resolution and IR-calc](expansion-based-qbf-calculi.md)
+- [Expansion-based QBF calculi: universal expansion resolution, IR-calc and IRM-calc](expansion-based-qbf-calculi.md)
+- [The class $\mathsf{AC}^0$](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/ac0.md)
+- [Polynomial time with polynomial advice](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/ppoly.md)
+- [The polynomial hierarchy](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/ph.md)
 
 ## Proof depends on
 

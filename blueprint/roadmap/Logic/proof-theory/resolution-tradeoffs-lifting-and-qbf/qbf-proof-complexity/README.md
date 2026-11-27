@@ -2,7 +2,7 @@
 
 Resolution-based calculi for quantified Boolean formulas, strategy extraction and feasible interpolation lower bounds, and the relation between QCDCL and Q-resolution.
 
-- [Expansion-based QBF calculi: universal expansion resolution and IR-calc](expansion-based-qbf-calculi.md)
+- [Expansion-based QBF calculi: universal expansion resolution, IR-calc and IRM-calc](expansion-based-qbf-calculi.md)
 - [Feasible interpolation for QBF resolution calculi](feasible-interpolation-for-qbf-resolution.md)
 - [The Kleine Büning-Karpinski-Flögel formulas are hard for IR-calc](kbkf-formulas-hard-for-ir-calc.md)
 - [QBF parity formulas are hard for QU-resolution but easy for expansion](parity-formulas-hard-for-qu-resolution.md)

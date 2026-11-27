@@ -12,13 +12,12 @@ The stabbing planes refutation keeps a set $I \subseteq [m]$ of equations that m
 
 ## Depends on
 
-None.
+- [The stabbing planes proof system](../../stabbing-planes-and-semi-algebraic-branching/stabbing-planes-system.md)
 
 ## Proof depends on
 
 - [Cutting planes equal facelike stabbing planes](cutting-planes-equal-facelike-stabbing-planes.md)
-- [Dadush–Tiwari: cutting planes refute Tseitin formulas in quasi-polynomial size](../../stabbing-planes-and-semi-algebraic-branching/dadush-tiwari-cp-tseitin.md)
 
 ## Sources
 
-- N. Fleming, M. Göös, R. Impagliazzo, T. Pitassi, R. Robere, L.-Y. Tan, A. Wigderson, "On the power and limitations of branch and cut", *CCC 2021*, LIPIcs 200, doi:10.4230/LIPIcs.CCC.2021.6, arXiv:2102.05019 (arXiv version read: the linear-equations theorem in Section 1, proved in Section 4 on refutations of linear equations over a finite field).
+- N. Fleming, M. Göös, R. Impagliazzo, T. Pitassi, R. Robere, L.-Y. Tan, A. Wigderson, "On the power and limitations of branch and cut", *CCC 2021*, LIPIcs 200, doi:10.4230/LIPIcs.CCC.2021.6, arXiv:2102.05019v2 (version read: the linear-equations theorem in Section 1, proved in Section 4 on refutations of linear equations over a finite field as Theorem 4.1, with Lemma 3.6).

@@ -14,7 +14,24 @@ $$
 \end{aligned}
 $$
 
-The first two families say that $p$ maps $[k]$ injectively into $[n]$, the third records its range, and the last two force $q$ to be defined and injective on that range, which is impossible by the pigeonhole principle. The **3-CNF version** $F_{n,k}$ breaks the wide clauses of the first and fourth families with extension variables $y_{u,v}$ and $z_{v,w}$ into chains of 3-clauses and the 4-clauses of the last family into 3-clauses in the standard way; it has $O(n^2)$ variables and $O(k n^2)$ clauses.
+The first two families say that $p$ maps $[k]$ injectively into $[n]$, the third records its range, and the last two force $q$ to be defined and injective on that range, which is impossible by the pigeonhole principle. The **3-CNF version** $F_{n,k}$ breaks the wide clauses of the first and fourth families with extension variables $y_{u,v}$ and $z_{v,w}$, and the 4-clauses of the last family with extension variables $r_{v,v'}$; its clauses are
+
+$$
+\begin{aligned}
+& p_{u,1} \lor p_{u,2} \lor y_{u,2} && u \in [k], \\
+& \overline{y}_{u,v} \lor p_{u,v+1} \lor y_{u,v+1} && u \in [k],\ v \in [2, n-3], \\
+& \overline{y}_{u,n-2} \lor p_{u,n-1} \lor p_{u,n} && u \in [k], \\
+& \overline{r}_v \lor q_{v,1} \lor z_{v,1} && v \in [n], \\
+& \overline{z}_{v,w} \lor q_{v,w+1} \lor z_{v,w+1} && v \in [n],\ w \in [k-4], \\
+& \overline{z}_{v,k-3} \lor q_{v,k-2} \lor q_{v,k-1} && v \in [n], \\
+& \overline{p}_{u,v} \lor \overline{p}_{u',v} && u \ne u' \in [k],\ v \in [n], \\
+& \overline{p}_{u,v} \lor r_v && u \in [k],\ v \in [n], \\
+& \overline{r}_v \lor \overline{r}_{v'} \lor r_{v,v'} && v \ne v' \in [n], \\
+& \overline{r}_{v,v'} \lor \overline{q}_{v,w} \lor \overline{q}_{v',w} && v \ne v' \in [n],\ w \in [k-1].
+\end{aligned}
+$$
+
+It has $O(n^2)$ variables and $O(k n^2)$ clauses.
 
 ## Expansion
 
@@ -22,7 +39,7 @@ The formula is unsatisfiable because any assignment satisfying the first three f
 
 ## Depends on
 
-None.
+- [CNF formula](../../../propositional-logic/conjunctive-normal-form/cnf.md)
 
 ## Proof depends on
 
@@ -30,4 +47,4 @@ None.
 
 ## Sources
 
-- A. Atserias, M. Lauria, J. Nordström, "Narrow proofs may be maximally long", *ACM Transactions on Computational Logic* 17(3), 2016 (conference version CCC 2014), doi:10.1145/2898435, arXiv:1409.2731v1 (Section 3.1, the definition of the formula, clause families of the wide encoding and their 3-CNF splitting).
+- A. Atserias, M. Lauria, J. Nordström, "Narrow proofs may be maximally long", *ACM Transactions on Computational Logic* 17(3), 2016 (conference version CCC 2014), doi:10.1145/2898435, arXiv:1409.2731v1 (Section 3.1, the definition of the formula, clause families (3.1a)-(3.1e) of the wide encoding and the 3-CNF clauses (3.2a)-(3.2j)).

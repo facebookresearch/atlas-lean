@@ -19,6 +19,7 @@ The model is the propositional case (all variables existential, so the reduction
 ## Depends on
 
 - [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
+- [Cook–Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
 
 ## Proof depends on
 
@@ -27,4 +28,4 @@ None.
 ## Sources
 
 - O. Beyersdorff, B. Böhm, "Understanding the relative strength of QBF CDCL solvers and QBF resolution", *Logical Methods in Computer Science* 19(2:2), 2023 (conference version ITCS 2021), doi:10.46298/lmcs-19(2:2)2023, arXiv:2109.04862v5 (Definitions 3.1-3.5, restricted to the propositional case as in Section 7).
-- J. Nordström, "On the interplay between proof complexity and SAT solving", *ACM SIGLOG News* 2(3), 2015, doi:10.1145/2743014.2743018 (Section 3 and Section 3.1).
+- J. Nordström, "On the interplay between proof complexity and SAT solving", *ACM SIGLOG News* 2(3), 2015, 19-44, doi:10.1145/2815493.2815497 (Section 3 and Section 3.1).

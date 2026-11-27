@@ -20,4 +20,4 @@ Simulating CP by facelike SP is the standard simulation: each Chvátal-Gomory cu
 
 ## Sources
 
-- N. Fleming, M. Göös, R. Impagliazzo, T. Pitassi, R. Robere, L.-Y. Tan, A. Wigderson, "On the power and limitations of branch and cut", *CCC 2021*, LIPIcs 200, doi:10.4230/LIPIcs.CCC.2021.6, arXiv:2102.05019 (arXiv version read: main characterization theorem in Section 1 and the definition of facelike queries in Section 3.1).
+- N. Fleming, M. Göös, R. Impagliazzo, T. Pitassi, R. Robere, L.-Y. Tan, A. Wigderson, "On the power and limitations of branch and cut", *CCC 2021*, LIPIcs 200, doi:10.4230/LIPIcs.CCC.2021.6, arXiv:2102.05019v2 (version read: main characterization theorem in Section 1 and the definition of facelike queries in Section 3.1).

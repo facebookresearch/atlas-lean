@@ -23,6 +23,8 @@ Upper bound: a tree-like refutation guesses the images of the $k$ pigeons one at
 - [Relativized pigeonhole principle formulas](relativized-pigeonhole-formulas.md)
 - [Width of a derivation](../../../propositional-logic/resolution-size-and-width/derivation-width.md)
 - [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
+- [Tree-like resolution derivation](../../../propositional-logic/resolution-size-and-width/resolution-tree.md)
+- [Variable space and total space of resolution refutations](../space-and-pebbling-tradeoffs/variable-and-total-space.md)
 
 ## Proof depends on
 
@@ -31,4 +33,4 @@ None.
 ## Sources
 
 - A. Atserias, M. Lauria, J. Nordström, "Narrow proofs may be maximally long", *ACM Transactions on Computational Logic* 17(3), 2016 (conference version CCC 2014), doi:10.1145/2898435, arXiv:1409.2731v1 (main theorem and its CDCL corollary in Section 1.2; resolution version opening Section 3).
-- J. Nordström, "On the interplay between proof complexity and SAT solving", *ACM SIGLOG News* 2(3), 2015, doi:10.1145/2743014.2743018 (Section 2.2, stating the tightness of the counting bound).
+- J. Nordström, "On the interplay between proof complexity and SAT solving", *ACM SIGLOG News* 2(3), 2015, 19-44, doi:10.1145/2815493.2815497 (Section 2.2, stating the tightness of the counting bound).

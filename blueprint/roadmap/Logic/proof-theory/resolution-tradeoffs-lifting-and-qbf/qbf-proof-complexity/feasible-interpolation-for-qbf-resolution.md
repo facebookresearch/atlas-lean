@@ -7,18 +7,19 @@ Consider a false QBF $\mathcal{F} = \exists \vec{p}\, \mathcal{Q} \vec{q}\, \mat
 **Theorem.**
 
 1. $\mathsf{LQU^+\text{-}Res}$ and IRM-calc have feasible interpolation, and both have monotone feasible interpolation.
-2. Let $\Phi_n = \exists \vec{p}\, \exists \vec{q}\, \forall \vec{r}_1\, \exists \vec{r}_2 .\, A_n(\vec{p}, \vec{q}) \land B_n(\vec{p}, \vec{r}_1, \vec{r}_2)$, where $\vec{p}$ encodes an $n$-vertex graph, $A_n$ states with positive occurrences of $\vec{p}$ that $\vec{q}$ is a clique of size $n/2$, and $B_n$ is a CNF encoding of a polynomial-size circuit checking that the vertex set chosen by $\vec{r}_1$ is not a clique. Then $\Phi_n$ requires exponential-size proofs in IRM-calc and in $\mathsf{LQU^+\text{-}Res}$.
+2. Let $\Phi_n = \exists \vec{p}\, \exists \vec{q}\, \forall \vec{r}_1\, \exists \vec{r}_2 .\, A_n(\vec{p}, \vec{q}) \land B_n(\vec{p}, \vec{r}_1, \vec{r}_2)$, where $\vec{p}$ encodes an $n$-vertex graph, $A_n$ states with positive occurrences of $\vec{p}$ that $\vec{q}$ encodes a clique of size $n/2$, $\vec{r}_1$ encodes a set of $n/2$ vertices, and $B_n$ is a CNF encoding (with the gate variables $\vec{r}_2$) of a polynomial-size circuit checking that the $n/2$ vertices chosen by $\vec{r}_1$ do not form a clique, so that $\forall \vec{r}_1 \exists \vec{r}_2 .\, B_n$ states that the graph has no clique of size $n/2$. Then $\Phi_n$ requires exponential-size proofs in IRM-calc and in $\mathsf{LQU^+\text{-}Res}$.
 
 Since IRM-calc and $\mathsf{LQU^+\text{-}Res}$ simulate the other resolution-based QBF calculi considered (Q-resolution, QU-resolution, long-distance Q-resolution, universal expansion resolution, IR-calc), all of them have monotone feasible interpolation.
 
 ## Expansion
 
-From a proof $\pi$ build a circuit $C_\pi$ on the DAG of $\pi$: leaves from $A$ get constant $0$, leaves from $B$ get constant $1$, and internal gates depend on the pivot. For each assignment $\vec{a}$, construct a proof-like structure whose clauses are subclauses of those of $\pi$, restrict it by $\vec{a}$ and prune it into a valid proof; by induction, if a gate evaluates to $0$ the corresponding clause is derivable from $A(\vec{a}, \vec{q})$ alone, and if $1$ from $B(\vec{a}, \vec{r})$ alone, so soundness gives the interpolation property at the root. For purely existential formulas this is Pudlák's interpolant for resolution. The clique formula has $\mathrm{Clique}(n, n/2)$ as unique interpolant, and monotone circuits for it are exponential (Alon-Boppana), giving item 2. Unlike strategy extraction, the method also applies to expansion-based calculi.
+From a proof $\pi$ build a circuit $C_\pi$ on the DAG of $\pi$: leaves from $A$ get constant $0$, leaves from $B$ get constant $1$, and internal gates depend on the pivot. For each assignment $\vec{a}$, construct a proof-like structure whose clauses are subclauses of those of $\pi$, restrict it by $\vec{a}$ and prune it into a valid proof; by induction, if a gate evaluates to $0$ the corresponding clause is derivable from $A(\vec{a}, \vec{q})$ alone, and if $1$ from $B(\vec{a}, \vec{r})$ alone, so soundness gives the interpolation property at the root. For purely existential formulas this is Pudlák's interpolant for resolution. The clique formula has $\mathrm{Clique}(n, n/2)$ as unique interpolant, and monotone circuits for it have exponential size, giving item 2. That bound follows from the Alon-Boppana bound for $\mathrm{Clique}(m, s)$ with $m = n/2$ and $s = \lfloor (m/(8 \log_2 m))^{2/3} \rfloor$ by padding: add $n/2 - s$ vertices adjacent to all vertices and $s$ isolated vertices, a monotone projection under which an $m$-vertex graph has an $s$-clique iff the padded $n$-vertex graph has an $n/2$-clique. Unlike strategy extraction, the method also applies to expansion-based calculi.
 
 ## Depends on
 
 - [Q-resolution and its long-distance and universal variants](q-resolution-calculi.md)
-- [Expansion-based QBF calculi: universal expansion resolution and IR-calc](expansion-based-qbf-calculi.md)
+- [Expansion-based QBF calculi: universal expansion resolution, IR-calc and IRM-calc](expansion-based-qbf-calculi.md)
+- [Monotone circuits](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-monotone-circuit.md)
 
 ## Proof depends on
 
@@ -27,4 +28,4 @@ From a proof $\pi$ build a circuit $C_\pi$ on the DAG of $\pi$: leaves from $A$ 
 
 ## Sources
 
-- O. Beyersdorff, L. Chew, M. Mahajan, A. Shukla, "Feasible interpolation for QBF resolution calculi", *Logical Methods in Computer Science* 13(2:7), 2017 (conference version ICALP 2015), doi:10.23638/LMCS-13(2:7)2017, arXiv:1611.01328v3 (Section 3.1 with the interpolation definitions, Theorems 3.3 and 3.4, the monotone interpolation theorem of Section 3.4, Theorem 4.2 in Section 4).
+- O. Beyersdorff, L. Chew, M. Mahajan, A. Shukla, "Feasible interpolation for QBF resolution calculi", *Logical Methods in Computer Science* 13(2:7), 2017 (conference version ICALP 2015), doi:10.23638/LMCS-13(2:7)2017, arXiv:1611.01328v3 (Section 3.1 with the interpolation definitions, Theorems 3.3 and 3.4, the monotone interpolation theorem of Section 3.4, the construction of $\Phi_n$ and Theorems 4.1 and 4.2 in Section 4).

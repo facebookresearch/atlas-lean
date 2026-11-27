@@ -6,7 +6,9 @@ For a constant $c \ge 1$ the search task $\mathbf{Cert}(c)$ is: given $1^{(k)}$ 
 
 **Theorem.** Assume that an exponentially hard one-way permutation exists. Then there is $c \ge 1$ such that no deterministic time-$2^{O(k)}$ algorithm solves $\mathbf{Cert}(c)$ on all lengths $k \ge 1$.
 
-If moreover a conjecture on the proof complexity of Nisan-Wigderson generators holds (Part 3 of Statement (S) of the author's earlier work), then for every decent Cook-Reckhow proof system $P$ there are constants $c_1 \ge c_0 \ge 1$ such that $\mathbf{Find}(P, c_0, c_1)$ has no solution for infinitely many lengths $k$.
+If moreover a conjecture on the proof complexity of Nisan-Wigderson generators holds (Part 3 of Statement (S) of the author's earlier work), then for every decent Cook-Reckhow proof system $P$ there are constants $c_1 \ge c_0 \ge 1$ such that $\mathbf{Find}(P, c_1, c_0)$, with proof-size exponent $c_1$ and axiom-size exponent $c_0$, has no solution for infinitely many lengths $k$.
+
+Here a proof system $P$ is **decent** if polynomial-time algorithms perform the following tasks, where $\mathrm{Sat}_k(u, x, v)$ are fixed formulas of size $k^{O(1)}$, with $|u| = |x| = k$, such that for all $a, \varphi \in \{0,1\}^k$, $\mathrm{Sat}_k(a, \varphi, v)$ is a tautology iff $a$ is a truth assignment satisfying the formula $\varphi$: (D1) from a $P$-proof of $\psi(x)$ and a truth assignment $a$ to $x$, construct a $P$-proof of $\psi(a)$; (D2) given a true sentence $\psi$ without variables, construct a $P$-proof of it; (D3) from $P$-proofs of $\psi$ and of $\psi \to \eta$, construct a $P$-proof of $\eta$; (D4) given a formula $\varphi(u)$ and a $P$-proof of $\mathrm{Sat}(u, \varphi, v)$ with variables $u, v$, construct a $P$-proof of $\varphi$.
 
 ## Expansion
 
@@ -15,6 +17,7 @@ A polynomial-time algorithm producing tautologies hard for $P$ exists iff $P$ is
 ## Depends on
 
 - [Cook–Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
+- [One-way permutation families](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-one-way-permutation.md)
 
 ## Proof depends on
 
@@ -22,4 +25,4 @@ A polynomial-time algorithm producing tautologies hard for $P$ exists iff $P$ is
 
 ## Sources
 
-- J. Krajíček, "On the computational complexity of finding hard tautologies", *Bulletin of the London Mathematical Society* 46, 2014, doi:10.1112/blms/bdt071, arXiv:1212.1789v2 (Section 1 with the tasks Cert and Find, Theorem 4.1 and the corollary following it in Section 4, and the closing theorem of Section 6).
+- J. Krajíček, "On the computational complexity of finding hard tautologies", *Bulletin of the London Mathematical Society* 46, 2014, doi:10.1112/blms/bdt071, arXiv:1212.1789v2 (Section 1 with the tasks Cert and Find, Theorem 4.1 and the corollary following it in Section 4, the definition of decent proof systems in Section 5, and the closing theorem of Section 6, whose statement writes Find$(P, c_0, c_1)$ although its proof treats the task Find$(P, c_0, d)$ with $|\alpha_k| \le k^{c_0}$ and proof-size exponent $d \ge c_0$, which is Find$(P, c_1, c_0)$ in the order of the definition).
