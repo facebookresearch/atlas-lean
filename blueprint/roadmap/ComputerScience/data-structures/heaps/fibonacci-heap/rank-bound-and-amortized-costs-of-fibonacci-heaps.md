@@ -1,31 +1,19 @@
 # Rank bound and amortized costs of Fibonacci heaps
 
-A [Fibonacci heap](fibonacci-heap.md) is a collection of heap-ordered trees. Some non-root nodes are *marked*. Its operations work as follows:
-- $\mathrm{insert}$ and $\mathrm{meld}$ add trees to the root list;
-- $\mathrm{extract\text{-}min}$ removes the minimum root, adds its children to the root list, and *consolidates* by repeatedly linking two roots of equal rank (number of children), the larger key becoming a child of the smaller, until all root ranks are distinct;
-- $\mathrm{decrease\text{-}key}$ cuts the node from its parent and makes it a root. If the parent was already marked, the cut *cascades* to the parent, and so on up the tree. The first unmarked ancestor reached, if it is not a root, becomes marked.
+The theorem concerns **marked heaps reached from empty by legal operations**. Nodes have stable handles and linearly ordered keys; equal keys need not identify the same node. Roots and siblings form spliceable lists, rank is the number of current children, and a header points to a minimum root. This is not the running time of the [persistent Fibonacci heap](fibonacci-heap.md): its validity condition checks heap order and stored degrees, but its [path-based decrease-key](decrease-key.md) cuts without recording child losses.
 
-**Theorem.**
-1. **Rank bound.** In a Fibonacci heap with $n$ elements, every node has rank at most $\log_\varphi n$, where $\varphi = (1 + \sqrt 5)/2$. A node of rank $k$ has at least $F_{k+2} \ge \varphi^k$ descendants, counting itself.
-2. **Amortized costs.** With potential $\Phi(H) = \mathrm{trees}(H) + 2 \cdot \mathrm{marks}(H)$:
-    - $\mathrm{insert}$, $\mathrm{meld}$, $\mathrm{find\text{-}min}$ and $\mathrm{decrease\text{-}key}$ take $O(1)$ amortized time;
-    - $\mathrm{extract\text{-}min}$ takes $O(\log n)$ amortized time.
+Insertion adds a fresh singleton. Find-min reads the cached minimum. Extract-min removes that root, promotes and unmarks its children, and processes the remaining roots in rank-indexed bins. A collision links roots of equal rank, making the larger-key root an unmarked child of the smaller-key root. Either tie convention gives the same bounds; this model keeps the incoming root when the keys are equal. The link carries to the next bin. Scanning the bins rebuilds the roots and their minimum. An empty query or extraction returns no key.
 
-    Hence any sequence of $m$ operations, $n$ of them insertions, starting from an empty heap takes $O(m + n\log n)$ time.
+Decrease-key takes a live handle and a key no larger than its old one. Lowering a root or preserving order with its parent does not cut. A strict violation cuts the node, clears its mark and splices its subtree into the roots. At each parent that just lost a child, stop if it is a root; if it is unmarked, mark it and stop; otherwise cut and unmark it and continue at its old parent. Meld consumes two heaps with disjoint live addresses, splices their root lists, and compares their cached minima; neither input can be reused without accounting for its history again.
 
-**Proof.**
-1. Let $y_1, \dots, y_k$ be the children of a node $x$ in the order they were linked to $x$. When $y_i$ was linked, $x$ had at least $i - 1$ children, and linked roots have equal rank. Since then $y_i$ has lost at most one child, or it would have been cut. So $\mathrm{rank}(y_i) \ge i - 2$ for $i \ge 2$. If $s_k$ is the minimum size of a subtree of rank $k$, this gives $s_k \ge 2 + \sum_{i=0}^{k-2} s_i$. Induction with $F_{k+2} = 1 + \sum_{i \le k} F_i$ gives $s_k \ge F_{k+2}$, and $F_{k+2} \ge \varphi^k$.
-2. Consolidation costs $O(\mathrm{rank} + \mathrm{trees})$ and leaves at most $\mathrm{rank} + 1$ trees, so the potential pays for the trees beyond that. A decrease-key with $c$ cascading cuts does $O(c)$ work. It adds at most $c$ trees and removes at least $c - 2$ marks, so $\Delta\Phi \le c + 2(2 - c) = 4 - c$, and the amortized cost is $O(1)$.
+**Rank.** Let $x$ be any live node of rank $k$ in a heap of size $s$. Number its current children from zero, in link order. Child $i$ has rank at least $\max(0,i-1)$: when it was linked its parent already had at least $i$ children, and it could have lost at most one child since that link. The subtree at $x$ is a finite tree of distinct live handles. Its size, counting $x$, is at least $F_{k+2}\ge\varphi^k$, where $F_0=0$, $F_1=1$ and $\varphi=(1+\sqrt5)/2$. Hence $k\le\log_\varphi s$. There is no node to bound at $s=0$. The [implication from the ordered-child condition to the subtree size bound](fib-le-card.md) is a structural result; deriving the condition itself needs the legal history.
 
-## Depends on
+**Amortized work.** Write $\Phi(H)=\#\mathrm{roots}(H)+2\,\#\mathrm{marks}(H)$. Count bounded groups of unit-cost handle operations, not the time to evaluate a list representation. A handle, its parent and its maintained degree are available directly. The model charges for each cut and cascade test, each promotion, each input-root visit and final bin placement, each collision probe and link, initialising and scanning bins (including empty bins), and checking the surviving roots for the minimum.
 
-- [Fibonacci heap](fibonacci-heap.md)
+In these units use $4\Phi$ as credit. There is a uniform constant $C$ such that actual work plus the change in credit is at most $C$ for insert, find-min, decrease-key and meld, and at most $C(1+\lfloor\log_2 s\rfloor)$ for extract-min at pre-operation size $s$. For meld the old credit is the sum of the two input credits. The scale matters: with $c$ cuts, decrease-key uses $3+2c$ units and [releases enough potential](decrease-potential.md) that $c+\Phi(H')\le\Phi(H)+4$. In consolidation, each input root needs a visit and a placement, and there are no more links than input roots. The credit for old roots pays for this linear work; promoted children and the final bin width are bounded by the ranks.
 
-## Background
-
-- [The degree of a valid Fibonacci tree is less than its size](degree-lt-card.md)
-- [Consolidation yields distinct root degrees](consolidate-degrees-nodup.md)
+**Sequences.** In Wayne's slide 3 theorem, $m$ counts insert, extract-min and decrease-key operations on one initially empty heap, and $n$ counts **insertions**, not the final size. Total actual work is at most $C(m+n\lfloor\log_2 n\rfloor)$, taking the binary log to be zero at zero. At most $n$ extractions can remove an element. The same bound extends to cached queries and destructive meld when both input histories are included in the counts. It is not a bound for reusing an arbitrary persistent version at no cost.
 
 ## Sources
 
-- K. Wayne, *Fibonacci Heaps*, lecture slides for J. Kleinberg and É. Tardos, *Algorithm Design*, Princeton University, <https://www.cs.princeton.edu/~wayne/kleinberg-tardos/pdf/FibonacciHeaps.pdf>: the Fredman–Tarjan theorem ($m$ operations including $n$ insertions take $O(m + n\log n)$ time), the potential $\Phi(H) = \mathrm{trees}(H) + 2 \cdot \mathrm{marks}(H)$, the amortized analyses of insert, extract-min and decrease-key with cascading cuts, Lemma 1 ($\mathrm{rank}(y_i) \ge i - 2$), Lemma 2 ($s_k \ge F_{k+2}$), the Fibonacci lemma ($\mathrm{rank}(H) \le \log_\varphi n$), and the Fibonacci facts.
+- K. Wayne, [*Fibonacci Heaps*](https://www.cs.princeton.edu/~wayne/kleinberg-tardos/pdf/FibonacciHeaps.pdf), lecture slides for J. Kleinberg and É. Tardos, *Algorithm Design*: slide 3 (Fredman–Tarjan sequence bound); 9–13 (representation, primitives and potential); 17, 19–36 and 39–58 (operations and amortization); 60–67 (ordered children, Fibonacci subtree bound and golden ratio); 70–72 (meld).
