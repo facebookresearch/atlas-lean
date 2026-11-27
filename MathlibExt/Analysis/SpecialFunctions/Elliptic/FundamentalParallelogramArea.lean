@@ -67,8 +67,8 @@ $P = \{\alpha + t_1\omega_1 + t_2\omega_2 : t_1, t_2 \in [0, 1)\}$ has measure
 $|\operatorname{Im}(\bar\omega_1 \omega_2)|$.
 
 Source: J. S. Milne, *Elliptic Curves*, 2nd ed., World Scientific, 2021, Chapter III, §1, p. 86,
-for the period parallelogram of a lattice; the measure is computed here by the change of
-variables formula for linear maps. -/
+for the period parallelogram of a lattice (Milne takes the interior; the measure is the same); the
+measure is computed here by the change of variables formula for linear maps. -/
 theorem volume_fundamentalParallelogram (L : PeriodPair) (α : ℂ) :
     volume (L.fundamentalParallelogram α) =
       ENNReal.ofReal |(starRingEnd ℂ L.ω₁ * L.ω₂).im| := by
@@ -82,7 +82,8 @@ parallelogram $\{\alpha + t_1 + t_2\tau : t_1, t_2 \in [0, 1)\}$ has Lebesgue me
 $\operatorname{Im}\tau$.
 
 Source: J. S. Milne, *Elliptic Curves*, 2nd ed., World Scientific, 2021, Chapter III, §1, p. 86,
-for the period parallelogram; the measure is computed here. -/
+for the period parallelogram (Milne takes the interior; the measure is the same); the measure is
+computed here. -/
 theorem volume_fundamentalParallelogram_of_ω₁_eq_one (L : PeriodPair) (h₁ : L.ω₁ = 1)
     (hτ : 0 < L.ω₂.im) (α : ℂ) :
     volume (L.fundamentalParallelogram α) = ENNReal.ofReal L.ω₂.im := by
@@ -97,8 +98,9 @@ exactly one translate $P + \lambda$, $\lambda \in \Lambda$: there is a unique $\
 with $z - \lambda \in P$. So the translates are pairwise disjoint and cover $\mathbb{C}$.
 
 Source: J. S. Milne, *Elliptic Curves*, 2nd ed., World Scientific, 2021, Chapter III, §1, p. 86,
-for the period parallelogram; the tiling is proved here from the coordinates in the basis
-$\omega_1, \omega_2$. -/
+for the period parallelogram (Milne takes the interior; the half-open parallelogram used here is
+what makes the translates disjoint and cover $\mathbb{C}$); the tiling is proved here from the
+coordinates in the basis $\omega_1, \omega_2$. -/
 theorem existsUnique_sub_mem_fundamentalParallelogram (L : PeriodPair) (α z : ℂ) :
     ∃! l : ℂ, l ∈ L.lattice ∧ z - l ∈ L.fundamentalParallelogram α := by
   have hspan := L.lattice_eq_span_range_basis

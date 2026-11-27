@@ -9,25 +9,28 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.QuadraticForms.RootLattice
+public import MathlibExt.NumberTheory.QuadraticForms.ProperIdealRootLattice
 
 /-!
 # Homothety classes of period pairs
 
 For period pairs `L`, `L'` whose lattices satisfy `Λ' = cΛ` with `c ≠ 0`, the lattice invariants
-scale as `G_n(L') = c⁻ⁿ G_n(L)`, so `g₂(L') = c⁻⁴ g₂(L)`, `g₃(L') = c⁻⁶ g₃(L)`, the discriminant
-`Δ = g₂³ - 27 g₃²` scales by `c⁻¹²`, and `1728 g₂³ / Δ` is unchanged. Every period pair is
-homothetic to `(1, τ)` for some `τ` in the upper half-plane. With
-`PeriodPair.isHomothetic_ofTau_iff`, which describes when `(1, τ)` and `(1, τ')` are homothetic,
-this gives the three statements of Milne's Chapter III, §1–§3 used in the complex uniformization
-of elliptic curves.
+scale as `G_n(L') = c⁻ⁿ G_n(L)` for `n ≥ 3` (for `n ≤ 2` the series diverges and both sides are
+`0` by the `tsum` convention), so `g₂(L') = c⁻⁴ g₂(L)`, `g₃(L') = c⁻⁶ g₃(L)`, the discriminant
+`Δ = g₂³ - 27 g₃²` scales by `c⁻¹²`, and `1728 g₂³ / Δ` is unchanged. With
+`PeriodPair.exists_isHomothetic_ofTau` (every period pair is homothetic to `(1, τ)` for some `τ`
+in the upper half-plane) and `PeriodPair.isHomothetic_ofTau_iff` (when `(1, τ)` and `(1, τ')` are
+homothetic), this gives the three statements of Milne's Chapter III, §1–§3 used in the complex
+uniformization of elliptic curves.
 
 ## Main results
 
 * `PeriodPair.G_eq_of_lattice_eq_smul`, `PeriodPair.g₂_eq_of_lattice_eq_smul`,
   `PeriodPair.g₃_eq_of_lattice_eq_smul`, `PeriodPair.discriminant_eq_of_lattice_eq_smul`,
   `PeriodPair.jInvariant_eq_of_lattice_eq_smul`: scaling of the invariants.
-* `PeriodPair.exists_isHomothetic_ofTau`: every period pair is homothetic to some `(1, τ)`.
-* `PeriodPair.homothety_classes`: the three statements together.
+* `PeriodPair.lattice_scale`: the lattice of `L.scale α` is `α` times the lattice of `L`.
+* `PeriodPair.homothety_classes`: the three statements together, the second from
+  `PeriodPair.exists_isHomothetic_ofTau` and `PeriodPair.IsHomothetic.symm`.
 -/
 
 @[expose] public section
@@ -54,8 +57,10 @@ noncomputable def latticeSmulEquiv {L L' : PeriodPair} {c : ℂ} (hc : c ≠ 0)
 
 /-- **The Eisenstein sums of homothetic lattices.** Let $L$ and $L'$ be period pairs with
 lattices $\Lambda$ and $\Lambda'$, and let $c \ne 0$ be a complex number with
-$\Lambda' = c\Lambda$. Then for every $n$,
-$G_n(L') = c^{-n} G_n(L)$, where $G_n(L) = \sum_{l \in \Lambda} l^{-n}$ (with $0^{-1} = 0$).
+$\Lambda' = c\Lambda$. Then for $n \ge 3$,
+$G_n(L') = c^{-n} G_n(L)$, where $G_n(L) = \sum_{l \in \Lambda} l^{-n}$ (with $0^{-1} = 0$). The
+Lean statement holds for every $n$: for $n \le 2$ the series diverges and both sides are $0$ by
+the `tsum` convention.
 
 Source: J. S. Milne, *Elliptic Curves*, 2nd ed., World Scientific, 2021, Chapter III, §2,
 p. 89 ($G_{2k}(c\Lambda) = c^{-2k} G_{2k}(\Lambda)$). -/
@@ -119,56 +124,18 @@ theorem jInvariant_eq_of_lattice_eq_smul {L L' : PeriodPair} {c : ℂ} (hc : c �
   rw [show 1728 * (c⁻¹ ^ 4 * L.g₂) ^ 3 = c⁻¹ ^ 12 * (1728 * L.g₂ ^ 3) by ring,
     mul_div_mul_left _ _ hc12]
 
-/-- **Every period pair is homothetic to $(1, \tau)$ with $\tau$ in the upper half-plane.** For
-every period pair $L = (\omega_1, \omega_2)$ there is $\tau \in \mathbb{H}$ such that $L$ is
-homothetic to $(1, \tau)$, whose lattice is $\mathbb{Z} + \mathbb{Z}\tau$: one can take
-$\tau = \pm\omega_2/\omega_1$.
-
-Source: J. S. Milne, *Elliptic Curves*, 2nd ed., World Scientific, 2021, Chapter III, §1,
-pp. 85–86. -/
-theorem exists_isHomothetic_ofTau (L : PeriodPair) :
-    ∃ τ : ℍ, L.IsHomothetic (ofTau τ τ.im_pos.ne') := by
-  have hω₁ : L.ω₁ ≠ 0 := L.indep.ne_zero 0
-  set t := L.ω₂ / L.ω₁ with ht
-  -- `t` is not real.
-  have ht_im : t.im ≠ 0 := by
-    intro h0
-    have htre : ((t.re : ℝ) : ℂ) = t := Complex.ext (by simp) (by simp [h0])
-    have : L.ω₂ = (t.re : ℝ) • L.ω₁ := by
-      rw [Complex.real_smul, htre, ht, div_mul_cancel₀ _ hω₁]
-    have := LinearIndependent.pair_iff.mp L.indep (t.re) (-1) (by rw [this]; simp)
-    simp at this
-  -- The lattice of `L` scaled by `ω₁⁻¹` is `ℤ + ℤ t`.
-  have hscale : ∀ z : ℂ, z ∈ L.lattice ↔ ∃ m n : ℤ, z = L.ω₁ * (m + n * t) := by
-    intro z
-    rw [mem_lattice]
-    constructor
-    · rintro ⟨m, n, rfl⟩
-      exact ⟨m, n, by rw [ht]; field_simp⟩
-    · rintro ⟨m, n, rfl⟩
-      exact ⟨m, n, by rw [ht]; field_simp⟩
-  have key : ∀ (τ : ℍ), (∀ w : ℂ, (∃ m n : ℤ, w = m + n * (τ : ℂ)) ↔ ∃ m n : ℤ, w = m + n * t) →
-      L.IsHomothetic (ofTau τ τ.im_pos.ne') := by
-    intro τ hτ
-    refine ⟨L.ω₁⁻¹, inv_ne_zero hω₁, ?_⟩
-    ext w
-    change w ∈ (ofTau τ τ.im_pos.ne').lattice ↔ w ∈ L.ω₁⁻¹ • (L.lattice : Set ℂ)
-    refine mem_lattice_ofTau.trans ?_
-    rw [hτ, Set.mem_smul_set]
-    simp only [SetLike.mem_coe, hscale, smul_eq_mul]
-    constructor
-    · rintro ⟨m, n, rfl⟩
-      exact ⟨_, ⟨m, n, rfl⟩, by field_simp⟩
-    · rintro ⟨_, ⟨m, n, rfl⟩, rfl⟩
-      exact ⟨m, n, by field_simp⟩
-  rcases lt_or_gt_of_ne ht_im with hneg | hpos
-  · refine ⟨⟨-t, by simpa using hneg⟩, key _ fun w ↦ ?_⟩
-    constructor
-    · rintro ⟨m, n, rfl⟩
-      exact ⟨m, -n, by push_cast; ring⟩
-    · rintro ⟨m, n, rfl⟩
-      exact ⟨m, -n, by push_cast; ring⟩
-  · exact ⟨⟨t, hpos⟩, key _ fun w ↦ Iff.rfl⟩
+/-- **The lattice of a scaled period pair.** For a period pair $L$ and
+$\alpha \in \mathbb{C}^\times$, the lattice of `L.scale α` $= (\alpha\omega_1, \alpha\omega_2)$
+is $\alpha$ times the lattice of $L$. -/
+theorem lattice_scale (L : PeriodPair) (α : ℂˣ) :
+    ((L.scale α).lattice : Set ℂ) = (α : ℂ) • (L.lattice : Set ℂ) := by
+  ext z
+  simp only [SetLike.mem_coe, mem_lattice, Set.mem_smul_set, scale_ω₁, scale_ω₂, smul_eq_mul]
+  constructor
+  · rintro ⟨m, n, rfl⟩
+    exact ⟨_, ⟨m, n, rfl⟩, by ring⟩
+  · rintro ⟨_, ⟨m, n, rfl⟩, rfl⟩
+    exact ⟨m, n, by ring⟩
 
 /-- **Homothety classes of period pairs and the modular group.** For period pairs, with
 $\Delta = g_2^3 - 27 g_3^2$:
@@ -196,6 +163,6 @@ theorem homothety_classes :
       ∃ γ : SL(2, ℤ), τ' = γ • τ) :=
   ⟨fun _ _ _ hc h ↦ ⟨g₂_eq_of_lattice_eq_smul hc h, g₃_eq_of_lattice_eq_smul hc h,
       discriminant_eq_of_lattice_eq_smul hc h, jInvariant_eq_of_lattice_eq_smul hc h⟩,
-    exists_isHomothetic_ofTau, isHomothetic_ofTau_iff⟩
+    fun L ↦ (exists_isHomothetic_ofTau L).imp fun _ h ↦ h.symm, isHomothetic_ofTau_iff⟩
 
 end PeriodPair
