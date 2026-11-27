@@ -29160,7 +29160,7 @@
 "Cslib.MachineLearning.OnlineClassification.expectedMistakes": "ec8890cec4f63ada",
 "Cslib.MachineLearning.OnlineClassification.integral_mistakes_eq_expectedMistakes": "191c930d9d06cb80",
 "Cslib.MachineLearning.OnlineClassification.mistakes": "7d99f5cb47db6ae2",
-"Cslib.MachineLearning.OnlineClassification.regret": "4b68cd4485491e68",
+"Cslib.MachineLearning.OnlineClassification.regret": "31e8e5e51a36ff5b",
 "Cslib.MachineLearning.OnlineConvexLowerBound.oco_lower_bound": "79f20c2c114bdd6e",
 "Cslib.MachineLearning.OnlineGradientDescentAnytime.ogd_regret_anytime": "53e29c64d7471c3d",
 "Cslib.MachineLearning.OptimalPredictors.IsPosteriorMean": "08180190f72af799",

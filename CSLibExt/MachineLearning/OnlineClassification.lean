@@ -36,8 +36,9 @@ the instance `S[t].1`. The same map serves every round and every sequence.
   number `∑_t 1[p_t ≠ y_t]` of rounds with `p_t ≠ y_t`, and smaller as soon as some `p_t` lies
   strictly between `0` and `1`. `expectedMistakes_ofBool`: for a deterministic learner it is the
   number of mistakes.
-* `regret A H S`: `∑_t |p_t - y_t| - min_{h ∈ H} ∑_t |h(x_t) - y_t|`, with the minimum taken to be
-  `0` for the empty class. For a nonempty class it is the largest of the differences
+* `regret A H S`: `∑_t |p_t - y_t| - min_{h ∈ H} ∑_t |h(x_t) - y_t|`. The minimum is attained when
+  `H` is nonempty, and is replaced by `0` for the empty class, a separate convention. For a nonempty
+  class it is the largest of the differences
   `∑_t |p_t - y_t| - ∑_t |h(x_t) - y_t|`, `h ∈ H` (`sub_mistakes_le_regret`, `exists_regret_eq`).
   A sequence is realizable by `H` when it is CSLib's `PACLearning.Realizable H (fun t => S[t])`
   (`realizable_iff`); the regret on it is the expected number of mistakes
@@ -113,8 +114,8 @@ $h : X \to \{0, 1\}$ on $S$ is
 $$\sum_{t=1}^T \lvert p_t - y_t \rvert - \min_{h \in H} \sum_{t=1}^T \lvert h(x_t) - y_t \rvert,$$
 
 where $\sum_t \lvert h(x_t) - y_t \rvert = \sum_t \mathbf{1}[h(x_t) \ne y_t]$ is the number of
-mistakes of $h$ on $S$. The minimum exists, as these numbers are natural numbers, and it is taken
-to be $0$ when $H$ is empty.
+mistakes of $h$ on $S$. When $H$ is nonempty the minimum is attained, as these numbers are natural
+numbers; for the empty class it is replaced by $0$, a separate convention.
 
 Labels are Booleans, false standing for $0$ and true for $1$. -/
 noncomputable def regret (A : List (X × Bool) → X → I) (H : Set (X → Bool))

@@ -13,10 +13,10 @@ the fractional prediction $p_t$ under absolute loss, whereas $\sum_t \mathbf{1}[
 $\sum_t \lvert p_t - y_t \rvert$, and larger as soon as some $p_t$ lies strictly between $0$ and $1$. The regret against
 a class $H$ of hypotheses $h : X \to \{0,1\}$ is
 $\sum_t \lvert p_t - y_t \rvert - \min_{h \in H} \sum_t \lvert h(x_t) - y_t \rvert$, where
-$\sum_t \lvert h(x_t) - y_t \rvert$ is the number of mistakes of $h$, seen as the learner that predicts $h(x_t)$. The
-minimum exists, as these numbers are natural numbers, and is taken to be $0$ when $H$ is empty. The realizable setting
-requires some $h \in H$ consistent with every $(x_t, y_t)$; the minimum is then $0$, and the regret is the expected
-number of mistakes.
+$\sum_t \lvert h(x_t) - y_t \rvert$ is the number of mistakes of $h$, seen as the learner that predicts $h(x_t)$. When
+$H$ is nonempty the minimum is attained, as these numbers are natural numbers; for the empty class it is replaced by $0$,
+a separate convention. The realizable setting requires some $h \in H$ consistent with every $(x_t, y_t)$; the minimum
+is then $0$, and the regret is the expected number of mistakes.
 
 The environment is adaptive (choosing $x_t, y_t$ after seeing past predictions) for deterministic learners and
 oblivious (fixing the sequence in advance) for randomized learners, unless stated otherwise. A deterministic learner's
@@ -28,9 +28,9 @@ see the current round's random prediction, each round still costs $\lvert p_t - 
 past. As $p_t$ depends only on the earlier examples,
 $\sum_t \lvert p_t - y_t \rvert - \min_{h \in H} \sum_t \lvert h(x_t) - y_t \rvert$ is then the regret on the sequence
 the environment produced, a fixed sequence of length $T$ once it is produced. So the expected regret against such an
-environment is at most the supremum of the regret over fixed sequences of length $T$, the quantity that equations (21.1)
-and (21.2) of the source define.
+environment is at most the supremum of the regret over fixed sequences of length $T$, which for a nonempty class $H$ is
+the quantity that equations (21.1) and (21.2) of the source define.
 
 ## Sources
 
-- S. Shalev-Shwartz and S. Ben-David, *Understanding Machine Learning: From Theory to Algorithms*, Cambridge University Press, 2014 (author copy), Chapter 21: the online classification protocol, the realizable case and mistake bounds (Section 21.1, Definition 21.1), and the unrealizable case (Section 21.2), with predictions $p_t \in [0,1]$ read as the probability of predicting $1$, so that $\mathbb{P}[\hat y_t \ne y_t] = \lvert p_t - y_t \rvert$, and the regret, equations (21.1) and (21.2), which also take the supremum over sequences of length $T$. Section 21.2 lets the environment see the learner's random predictions of the earlier rounds, though not that of the current round; as explained above, the regret over fixed sequences bounds the expected regret there. <https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/understanding-machine-learning-theory-algorithms.pdf>
+- S. Shalev-Shwartz and S. Ben-David, *Understanding Machine Learning: From Theory to Algorithms*, Cambridge University Press, 2014 (author copy), Chapter 21: the online classification protocol, the realizable case and mistake bounds (Section 21.1, Definition 21.1), and the unrealizable case (Section 21.2), with predictions $p_t \in [0,1]$ read as the probability of predicting $1$, so that $\mathbb{P}[\hat y_t \ne y_t] = \lvert p_t - y_t \rvert$, and the regret, equations (21.1) and (21.2), which also take the supremum over sequences of length $T$: for a nonempty class $H$, (21.2) is the supremum over these sequences of the regret above, while for the empty class it has no value, so the zero convention above extends it. Section 21.2 lets the environment see the learner's random predictions of the earlier rounds, though not that of the current round; as explained above, the regret over fixed sequences bounds the expected regret there. <https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/understanding-machine-learning-theory-algorithms.pdf>
