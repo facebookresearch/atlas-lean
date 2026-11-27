@@ -34,7 +34,7 @@ an entire cycle of length `j + 1`. Removing this first block gives the Fibonacci
 * Michael A. Allen, *On a Two-Parameter Family of Generalizations of Pascal's Triangle*,
   Journal of Integer Sequences 25 (2022), Article 22.9.8, Corollary 11 (the residue-class
   enumeration of restricted combinations used in the published proof).
-* Keith Edwards and Michael A. Allen, *Strongly restricted permutations and tiling with
+* Kenneth Edwards and Michael A. Allen, *Strongly restricted permutations and tiling with
   fences*, Discrete Applied Mathematics 187 (2015), 82–90 (the fence bijection recalled as
   Lemma 12 in Allen's 2025 paper).
 -/
