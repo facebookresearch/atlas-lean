@@ -11,12 +11,16 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import MathlibExt.NumberTheory.ConsecutivePrimePowerSums
+public import MathlibExt.NumberTheory.ConsecutivePrimePowerSumsMaxConsecutivePrimePowerSumLengthIsEquivalent
 
 /-!
 # Sums of powers of consecutive primes (statements)
 
 Statement-only targets from Cathal O'Sullivan, Jonathan P. Sorenson, and Aryn Stahl,
-*Algorithms and Bounds on the Sums of Powers of Consecutive Primes*. With
+*Algorithms and Bounds on the Sums of Powers of Consecutive Primes*. The theorem
+`maxConsecutivePrimePowerSumLength_isEquivalent` is proved in
+`MathlibExt.NumberTheory.ConsecutivePrimePowerSumsMaxConsecutivePrimePowerSumLengthIsEquivalent`.
+With
 `p_{i+1} = Nat.nth Nat.Prime i`:
 - `s_{k,m}(x) = #{n ≤ x : n = p_{ℓ+1}^k + ⋯ + p_{ℓ+m}^k for some ℓ ≥ 0}`;
 - `s_k(x) = ∑_{m ≥ 1} s_{k,m}(x)`; since the `m`-term sum is strictly increasing in `ℓ`,
@@ -33,21 +37,6 @@ namespace MetaMathlibExt
 open Asymptotics Filter Finset
 
 @[expose] public section
-
-/-- **Length of the longest sum of consecutive prime powers.** Let $p_1 < p_2 < \cdots$ be the
-primes, let $k > 1$ be a natural number, and for a natural number $x$ let $M(x, k)$ be the
-largest $m \le x$ with $p_1^k + p_2^k + \cdots + p_m^k \le x$. Then
-$M(x, k) \sim (k + 1)\, x^{1/(k+1)} / (\log x)^{k/(k+1)}$ (asymptotic equivalence) as $x \to \infty$
-through the natural numbers.
-
-Source: Cathal O'Sullivan, Jonathan P. Sorenson, and Aryn Stahl, *Algorithms and Bounds on the
-Sums of Powers of Consecutive Primes*, INTEGERS 24 (2024), Article A4, Lemma 2
-(`integers-2024-A4-lem-2`). -/
-public theorem_wanted maxConsecutivePrimePowerSumLength_isEquivalent (k : ℕ) (hk : 1 < k) :
-    (fun x : ℕ =>
-        (Nat.findGreatest (fun m => ∑ i ∈ range m, Nat.nth Nat.Prime i ^ k ≤ x) x : ℝ)) ~[atTop]
-      fun x : ℕ => (k + 1) * (x : ℝ) ^ ((1 : ℝ) / (k + 1)) /
-        Real.log x ^ ((k : ℝ) / (k + 1))
 
 /-- **Upper bound for the number of sums of consecutive prime powers.** Let $p_1 < p_2 < \cdots$
 be the primes and let $k > 1$ be a natural number. For a natural number $x$ let $s_k(x)$ be the
