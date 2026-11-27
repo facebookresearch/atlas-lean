@@ -1,6 +1,6 @@
 # Bioinformatics
 
-Algorithms and statistical models on biological sequences and data: sequence alignment, genome assembly, motifs, RNA secondary structure, clustering, network reconstruction, and haplotype phasing, haplotype blocks and identity-by-descent detection from SNP data.
+Algorithms and statistical models on biological sequences and data: sequence alignment, genome assembly, motifs, RNA secondary structure, clustering and network reconstruction.
 
 - [Sequence alignment](sequence-alignment/README.md)
 - [ARACNE gene network reconstruction](aracne-gene-network-reconstruction/README.md)
@@ -24,6 +24,14 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [q-gram (seed) filtering lemma for approximate matching](q-gram-filtering-lemma-for-approximate-matching.md)
 - [Signed reversal distance: the Hannenhalli–Pevzner formula and polynomial-time sorting](remaining-clauses-of-complexity-of-reversal-distance-signed.md)
 - [Shortest common superstring via maximum-overlap Hamiltonian paths](remaining-clauses-of-shortest-common-superstring-via-maximum.md)
+- [Activity-by-contact model of enhancer–gene regulation](activity-by-contact-enhancer-gene-model/README.md)
+- [Collinear block detection](collinear-block-detection/README.md)
+- [Count splitting for latent variable inference](count-splitting-for-latent-variable-inference/README.md)
+- [DNA sample contamination](dna-sample-contamination/README.md)
+- [Intron-cluster splicing quantification](intron-cluster-splicing-quantification/README.md)
+- [k-mer-based assembly evaluation](k-mer-based-assembly-evaluation/README.md)
+- [Zero-inflated Poisson factor model for microbiome read counts](zero-inflated-poisson-factor-model-for-microbiome-counts.md)
+Algorithms and statistical models on biological sequences and data: sequence alignment, genome assembly, motifs, RNA secondary structure, clustering, network reconstruction, and haplotype phasing, haplotype blocks and identity-by-descent detection from SNP data.
 - [IBD sharing HMM with linkage disequilibrium](ibd-sharing-hmm-with-linkage-disequilibrium/README.md)
 - [LD-based haplotype blocks](ld-based-haplotype-blocks/README.md)
 - [Read-based single-individual haplotyping](read-based-single-individual-haplotyping/README.md)
