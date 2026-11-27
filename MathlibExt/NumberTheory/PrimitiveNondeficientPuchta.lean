@@ -60,8 +60,8 @@ public theorem exists_pow_factorization_add_one_lt_max
     (n p₁ : ℕ) (hn : IsPrimitiveNondeficient n)
     (hp₁ : p₁ ∈ n.primeFactors)
     (hmin : ∀ q ∈ n.primeFactors, p₁ ≤ q)
-    (_hne : ¬ (p₁ = 3 ∧ n.primeFactors.card = 3))
-    (α : ℚ) (hα0 : 0 < α) (_hα1 : α < 1)
+    (hne : ¬ (p₁ = 3 ∧ n.primeFactors.card = 3))
+    (α : ℚ) (hα0 : 0 < α) (hα1 : α < 1)
     (hH : 2 + α ≤ abundancySup n) :
     ∃ p ∈ n.primeFactors,
       ((p ^ (n.factorization p + 1) : ℕ) : ℚ) <
@@ -69,6 +69,8 @@ public theorem exists_pow_factorization_add_one_lt_max
           (2 * ((n.primeFactors.card : ℚ) + 2 + (p₁ : ℚ)) / α)
           ((n.primeFactors.card : ℚ) *
             ((n.primeFactors.card : ℚ) + 1)) := by
+  have _ := hne
+  have _ := hα1
   let k : ℚ := n.primeFactors.card
   let B := max (2 * (k + 2 + (p₁ : ℚ)) / α) (k * (k + 1))
   change ∃ p ∈ n.primeFactors, ((p ^ (n.factorization p + 1) : ℕ) : ℚ) < B
