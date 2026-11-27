@@ -1,27 +1,27 @@
 # Lipton–Markakis–Mehta small-support approximate equilibria
 
-Let $(A, B)$ be a bimatrix game with nonempty finite strategy sets $M, N$ and all payoffs in $[0, 1]$, and let $\varepsilon > 0$. For every integer
+Let $(A, B)$ be an $n \times n$ bimatrix game with all payoffs in $[0, 1]$, let $(x^*, y^*)$ be a Nash equilibrium of it, and let $\varepsilon > 0$. For every integer
 
 $$
-k > \frac{2 \ln\bigl(2(|M| + |N|)\bigr)}{\varepsilon^2}
+k \ge \frac{12 \ln n}{\varepsilon^2}
 $$
 
-there are multisets $m_1$ of rows and $m_2$ of columns, each of size $k$, such that the uniform distributions on $m_1$ and $m_2$ form an $\varepsilon$-approximate Nash equilibrium. If payoffs lie in $[0, K]$ instead, the same multisets give a $K\varepsilon$-approximate equilibrium.
+there are multisets $m_1$ of rows and $m_2$ of columns, each of size $k$, such that the uniform distributions on $m_1$ and $m_2$ form an $\varepsilon$-approximate Nash equilibrium.
 
 ## Proof sketch
 
-Take an exact Nash equilibrium and sample $k$ pure strategies independently from each mixed strategy. By Hoeffding's inequality each of the $|M| + |N|$ deviation payoffs is estimated to within $\varepsilon/2$ except with probability below $1/(|M| + |N|)$; a union bound leaves positive probability that all are accurate, which yields the approximate equilibrium.
+Sample $k$ pure strategies independently from $x^*$ and from $y^*$. By Hoeffding's inequality each of the $2n$ pure-deviation payoffs against the sampled opponent strategy lies within $\varepsilon/2$ of its value at $(x^*, y^*)$ except with probability at most $2e^{-k\varepsilon^2/2} \le 2n^{-6}$, and a union bound leaves positive probability that all of them are accurate when $n \ge 2$ (the case $n = 1$ is trivial). Every sampled row and column lies in the support of the equilibrium and is a best response there, so the sampled pair is then an $\varepsilon$-approximate equilibrium.
 
 ## Depends on
 
 - [Additive approximate Nash equilibrium](additive-approximate-nash-equilibrium.md)
+- [Nash equilibrium of a bimatrix game](../../bimatrix-games-and-the-lemke-howson-algorithm/is-bimatrix-nash.md)
 
 ## Proof depends on
 
-- [Nash's theorem](../exists-is-mixed-nash.md)
 - [Chernoff bound for the empirical mean of real-valued i.i.d. variables](../../../../Probability/large-deviations/cram-r-s-theorem/measure-empirical-mean-le-of-threshold.md)
 
 ## Sources
 
-- Richard J. Lipton, Evangelos Markakis and Aranyak Mehta, "Playing Large Games Using Simple Strategies", Proceedings of the 4th ACM Conference on Electronic Commerce (EC 2003), 2003.
+- Richard J. Lipton, Evangelos Markakis and Aranyak Mehta, "Playing Large Games Using Simple Strategies", Proceedings of the 4th ACM Conference on Electronic Commerce (EC 2003), 2003, Theorem 1 (for every Nash equilibrium of an $n \times n$ game with payoffs in $[0, 1]$ and every $k \ge 12 \ln n/\varepsilon^2$ there is a pair of $k$-uniform strategies forming an $\varepsilon$-Nash equilibrium).
 - Eva Tardos and Vijay V. Vazirani, "Basic Solution Concepts and Computational Issues", Algorithmic Game Theory, Cambridge University Press, 2007.
