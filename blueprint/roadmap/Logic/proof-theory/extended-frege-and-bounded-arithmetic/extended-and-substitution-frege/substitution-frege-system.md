@@ -22,6 +22,7 @@ In an ordinary Frege system substitution is only applied to axiom schemes; allow
 ## Depends on
 
 - [Frege proof systems](frege-system.md)
+- [Extended Frege proof systems](extended-frege-system.md)
 - [Cook–Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
 
 ## Proof depends on

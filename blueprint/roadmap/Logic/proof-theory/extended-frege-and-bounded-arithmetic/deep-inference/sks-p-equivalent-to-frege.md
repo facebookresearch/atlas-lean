@@ -11,7 +11,7 @@ Here Frege is a fixed Frege system (Buss's axiom schemes extended by four axioms
 
 ## Expansion
 
-From Frege to SKSg: each axiom scheme has a fixed SKSg proof, which can be instantiated by substitution, and modus ponens is simulated by the cut rule $\mathsf i{\uparrow}$. From SKSg to Frege, two difficulties arise: deep inference applies rules inside contexts, handled by Frege derivations from $\alpha\to\beta$ to $\xi\{\alpha\}\to\xi\{\beta\}$ of size quadratic in the context (Lemma 4.8), and the equality rule hides a lot of reasoning, handled by Frege derivations for each equality step (Lemma 4.9); each rule instance of SKSg then has a short Frege derivation (Lemma 4.10). The simulations work because both systems are implicationally complete and closed under substitution, so the specific rules do not matter. SKS is reached from SKSg by the p-equivalence of SKS and SKSg.
+From Frege to SKSg: each axiom scheme has a fixed SKSg proof, which can be instantiated by substitution, and modus ponens is simulated by the cut rule $\mathsf i{\uparrow}$. From SKSg to Frege, two difficulties arise: deep inference applies rules inside contexts, handled by Frege derivations from $\alpha\to\beta$ to $\xi\{\alpha\}\to\xi\{\beta\}$ of length $O(m)$ and size $O(m^2)$, where $m$ is the size of the whole implication $\xi\{\alpha\}\to\xi\{\beta\}$ (Lemma 4.8), and the equality rule hides a lot of reasoning, handled by Frege derivations for each equality step (Lemma 4.9); each rule instance of SKSg then has a short Frege derivation (Lemma 4.10). The simulations work because both systems are implicationally complete and closed under substitution, so the specific rules do not matter. SKS is reached from SKSg by the p-equivalence of SKS and SKSg.
 
 ## Depends on
 

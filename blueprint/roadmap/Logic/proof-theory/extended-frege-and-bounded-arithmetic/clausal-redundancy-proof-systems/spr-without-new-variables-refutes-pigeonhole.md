@@ -19,6 +19,7 @@ The proofs exploit symmetries. If the pairs $(\alpha_i,\tau_i)$ satisfy $\Gamma|
 ## Depends on
 
 - [DRAT, PR and related clausal proof systems](drat-and-pr-proof-systems.md)
+- [Frege proof systems](../extended-and-substitution-frege/frege-system.md)
 
 ## Proof depends on
 

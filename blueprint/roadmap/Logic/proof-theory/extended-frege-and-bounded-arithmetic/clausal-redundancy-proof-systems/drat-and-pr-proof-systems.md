@@ -5,7 +5,7 @@ The proof systems BC, RAT, SPR, PR and SR refute a clause set by repeatedly addi
 Let $X$ be one of BC, RAT, SPR, PR, SR.
 
 - An *$X$ proof* (refutation) of a clause set $\Gamma$ is a sequence $\Gamma_0,\dots,\Gamma_m$ with $\Gamma_0=\Gamma$, $\bot\in\Gamma_m$, and $\Gamma_{i+1}=\Gamma_i\cup\{C\}$ where either $\Gamma_i\vdash_1 C$ or $C$ is $X$ with respect to $\Gamma_i$. A BC or RAT step must specify its literal $p$, and an SPR, PR or SR step its witness $\tau$. The added clauses may contain variables that do not occur in $\Gamma_0,\dots,\Gamma_i$.
-- A $DX$ proof (DBC, DRAT, DSPR, DPR, DSR) may in addition use the *deletion rule* $\Gamma_{i+1}=\Gamma_i\setminus\{C\}$ for any $C\in\Gamma_i$, including clauses of $\Gamma$.
+- A $DX$ proof (DBC, DRAT, DSPR, DPR, DSR) may in addition use the *deletion rule* $\Gamma_{i+1}=\Gamma_i\setminus\{C\}$ for any $C\in\Gamma_i$, including clauses of $\Gamma$. For $X=\mathrm{RAT}$ this is the system of [DRAT proofs](../../../propositional-logic/sat-solving/drat-proofs.md): additions of RUP or RAT clauses, arbitrary deletions, and an accumulated formula containing the empty clause, read with clauses non-tautological as in the RAT convention on [the redundancy page](propagation-and-substitution-redundancy.md).
 - An $X$ or $DX$ refutation *without new variables*, written $X^-$ or $DX^-$ (for example BC$^-$, RAT$^-$, SPR$^-$, PR$^-$, DRAT$^-$, DPR$^-$), is one in which only variables of $\Gamma$ appear.
 
 Facts recorded in the source:
@@ -17,11 +17,13 @@ Facts recorded in the source:
 
 ## Expansion
 
-DRAT is the clausal proof format used to certify unsatisfiability answers of SAT solvers: RUP steps cover resolution and conflict-driven clause learning, RAT steps cover inprocessing techniques such as blocked clause addition and the pure literal rule, and deletions keep checking efficient. Here "$P$ simulates $Q$" means that $Q$-proofs can be converted in polynomial time into $P$-proofs of the same clause set.
+DRAT, the case $DX$ with $X=\mathrm{RAT}$, is the clausal proof format used to certify unsatisfiability answers of SAT solvers: RUP steps cover resolution and conflict-driven clause learning, RAT steps cover inprocessing techniques such as blocked clause addition and the pure literal rule, and deletions keep checking efficient. Here "$P$ simulates $Q$" means that $Q$-proofs can be converted in polynomial time into $P$-proofs of the same clause set. With new variables, [extended resolution polynomially simulates DRAT](../../../propositional-logic/sat-solving/extended-resolution-simulates-drat.md).
 
 ## Depends on
 
 - [Blocked, RAT, propagation-redundant and substitution-redundant clauses](propagation-and-substitution-redundancy.md)
+- [DRAT proofs](../../../propositional-logic/sat-solving/drat-proofs.md)
+- [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 - [Cook–Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
 
 ## Proof depends on

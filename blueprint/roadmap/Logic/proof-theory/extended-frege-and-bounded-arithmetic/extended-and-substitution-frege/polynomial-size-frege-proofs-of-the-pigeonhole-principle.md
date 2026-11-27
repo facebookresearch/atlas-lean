@@ -8,7 +8,7 @@ $$
 \mathrm{PHP}_n \;=\; \bigwedge_{0\le i\le n}\ \bigvee_{0\le j<n} p_{i,j} \;\to\; \bigvee_{0\le i<m\le n}\ \bigvee_{0\le j<n} \left(p_{i,j}\wedge p_{m,j}\right),
 $$
 
-a formula of size proportional to $n^3$ stating that if each of $n+1$ pigeons sits in one of $n$ holes then some hole holds two pigeons.
+a formula of size proportional to $n^3$ when each variable occurrence counts as one symbol (writing out decimal indices adds a logarithmic factor), stating that if each of $n+1$ pigeons sits in one of $n$ holes then some hole holds two pigeons.
 
 **Theorem (Buss).** There is a constant $k$ such that for every $n$ the formula $\mathrm{PHP}_n$ has a Frege proof of size $O(n^k)$.
 
@@ -23,11 +23,11 @@ The Cook–Reckhow extended Frege proof defines, by extension variables $q^k_{i,
 ## Depends on
 
 - [Frege proof systems](frege-system.md)
+- [Extended Frege proof systems](extended-frege-system.md)
 - [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 
 ## Proof depends on
 
-- [Extended Frege proof systems](extended-frege-system.md)
 - [Haken's lower bound for the pigeonhole principle](../../../propositional-logic/propositional-proof-complexity/haken-s-lower-bound-for-the-pigeonhole-principle.md)
 
 ## Sources
