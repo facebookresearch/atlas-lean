@@ -9,6 +9,8 @@ By contrast, the source shows that satisfiability in the class of all non-trivia
 ## Depends on
 
 - [Satisfiability in partial Boolean algebras of projectors](satisfiability-in-projector-partial-algebras.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

@@ -8,7 +8,9 @@ The constant $\alpha$ is the same for the three models. For $t = q$ the source s
 
 ## Depends on
 
-- [Synchronous values of the 3-coloring game and non-commutative Max-3-Cut](synchronous-values-of-the-3-coloring-game.md)
+- [Synchronous values of the 3-coloring game](synchronous-values-of-the-3-coloring-game.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

@@ -9,6 +9,7 @@ For graphs, as opposed to hypergraphs, the source leaves open whether quantum pe
 ## Depends on
 
 - [Perfect matching game of a hypergraph and quantum perfect matchings](perfect-matching-game-of-a-hypergraph.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

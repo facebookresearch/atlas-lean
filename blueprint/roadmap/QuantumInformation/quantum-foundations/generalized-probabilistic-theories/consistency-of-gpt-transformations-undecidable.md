@@ -9,14 +9,17 @@ The source remarks that if unboundedness of matrix products is undecidable for $
 ## Depends on
 
 - [Generalized probabilistic theories and consistency of transformations](generalized-probabilistic-theories.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [The emptiness problem for probabilistic automata is undecidable](../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/emptiness-problem-for-probabilistic-automata.md)
+None.
 
 ## Expansion
 
-Given rational $d \times d$ matrices $M_1, \dots, M_k$, the proof places them in the lower-right blocks of candidate transformations on $\mathbb{R}^{d+1}$, with $u = (1, 0, \dots, 0)^\top$, and adds one more transformation. If all products $M_w$ are bounded, sufficiently small hypersphere state and effect spaces keep every probability $e^\top T_w \omega$ non-negative. If the products are unbounded, every full-dimensional state and effect space contains small balls, and a long enough product drives some probability negative. So consistency of $\mathcal{T}_0$ is equivalent to boundedness of the products, which is undecidable (Blondel and Tsitsiklis, by a reduction from strict emptiness of probabilistic automata, which keeps the dimension and adds one matrix). A complete expansion links the undecidability of boundedness of all products of a finite set of rational matrices (Theorem 2 of the source; Vincent D. Blondel and John N. Tsitsiklis, "The boundedness of all products of a pair of matrices is undecidable", *Systems and Control Letters* 41(2):135–140, 2000, doi:[10.1016/S0167-6911(00)00049-9](https://doi.org/10.1016/S0167-6911(00)00049-9)), which has no page on main.
+The proof uses "Boundedness of all products of two matrices is undecidable", which has no page on main yet; link it once its page lands.
+
+Given rational $d \times d$ matrices $M_1, \dots, M_k$, the proof places them in the lower-right blocks of candidate transformations on $\mathbb{R}^{d+1}$, with $u = (1, 0, \dots, 0)^\top$, and adds one more transformation. If all products $M_w$ are bounded, sufficiently small hypersphere state and effect spaces keep every probability $e^\top T_w \omega$ non-negative. If the products are unbounded, every full-dimensional state and effect space contains small balls, and a long enough product drives some probability negative. So consistency of $\mathcal{T}_0$ is equivalent to boundedness of the products, which is undecidable (Blondel and Tsitsiklis, by a reduction from strict emptiness of probabilistic automata, which keeps the dimension and adds one matrix). The undecidability of boundedness of all products of a finite set of rational matrices (Theorem 2 of the source; Vincent D. Blondel and John N. Tsitsiklis, "The boundedness of all products of a pair of matrices is undecidable", *Systems and Control Letters* 41(2):135–140, 2000, doi:[10.1016/S0167-6911(00)00049-9](https://doi.org/10.1016/S0167-6911(00)00049-9)) is the linked page on boundedness of matrix products.
 
 ## Sources
 

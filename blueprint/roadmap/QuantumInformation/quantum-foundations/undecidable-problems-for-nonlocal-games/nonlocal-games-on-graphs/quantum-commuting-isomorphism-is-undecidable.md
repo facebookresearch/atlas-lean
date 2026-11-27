@@ -9,6 +9,7 @@ The same paper shows that there are graphs that are quantum commuting isomorphic
 ## Depends on
 
 - [Quantum commuting isomorphism of graphs](quantum-commuting-isomorphism-of-graphs.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

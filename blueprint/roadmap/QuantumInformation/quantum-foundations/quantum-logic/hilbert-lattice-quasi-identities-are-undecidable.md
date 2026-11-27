@@ -18,6 +18,7 @@ Equivalently, no algorithm decides whether finitely many such conditions can be 
 
 - [Orthogonal projection](../gleason-s-theorem/is-orth-proj.md)
 - [Complete lattice](../../../Order/lattices-boolean-algebras/complete-lattice.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -4,12 +4,13 @@ No algorithm decides, given a linear system over $\mathbb{Z}_2$, whether the ass
 
 **Theorem (Slofstra).** It is undecidable to determine whether a binary [linear system game](../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/entangled-nonlocal-games/linear-constraint-system-games.md) has a perfect [commuting-operator strategy](../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/entangled-nonlocal-games/commuting-operator-strategies-and-value.md). The input is a linear system $Ax = b$ over $\mathbb{Z}_2$; a strategy is perfect when it wins with probability 1.
 
-The game of $Ax = b$ has a perfect commuting-operator strategy exactly when $J \neq 1$ in the *solution group* $\Gamma$ of the system. $\Gamma$ is the finitely presented group with generators $g_1, \dots, g_n$ and $J$, subject to these relations: $J$ is central, $g_i^2 = J^2 = 1$, $g_i g_j = g_j g_i$ when $x_i$ and $x_j$ occur in a common equation, and $\prod_{i : A_{\ell i} = 1} g_i = J^{b_\ell}$ for each equation $\ell$ (Cleve, Liu and Slofstra; Theorem 2.4 of the source). For comparison, the game has a perfect finite-dimensional strategy exactly when $\Gamma$ has a finite-dimensional representation $\pi$ with $\pi(J) \neq 1$ (Cleve and Mittal).
+The game of $Ax = b$ has a perfect commuting-operator strategy exactly when $J \neq 1$ in the *solution group* $\Gamma$ of the system. $\Gamma$ is the finitely presented group with generators $g_1, \dots, g_n$ and $J$, subject to these relations: $J$ is central, $g_i^2 = J^2 = 1$, $g_i g_j = g_j g_i$ when $x_i$ and $x_j$ occur in a common equation, and $\prod_{i : A_{\ell i} = 1} g_i = J^{b_\ell}$ for each equation $\ell$ (Cleve, Liu and Slofstra; Theorem 2.3 of the source). For comparison, the game has a perfect finite-dimensional strategy exactly when $\Gamma$ has a finite-dimensional representation $\pi$ with $\pi(J) \neq 1$ (Cleve and Mittal).
 
 ## Depends on
 
 - [Linear constraint system games and operator solutions](../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/entangled-nonlocal-games/linear-constraint-system-games.md)
 - [Commuting-operator strategies and value](../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/entangled-nonlocal-games/commuting-operator-strategies-and-value.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,4 +22,4 @@ The proof rests on the source's embedding theorem (Theorem 3.1): every finitely 
 
 ## Sources
 
-- W. Slofstra, "Tsirelson's problem and an embedding theorem for groups arising from non-local games", *Journal of the American Mathematical Society* 33(1):1–56, 2020, doi:[10.1090/jams/929](https://doi.org/10.1090/jams/929). Numbering of the version read, arXiv:1606.03140v3: Corollary 3.3 and its proof, Theorem 3.1 (embedding theorem) and Theorem 2.4 (characterization of perfect strategies, quoted from Cleve and Mittal and from Cleve, Liu and Slofstra).
+- W. Slofstra, "Tsirelson's problem and an embedding theorem for groups arising from non-local games", *Journal of the American Mathematical Society* 33(1):1–56, 2020, doi:[10.1090/jams/929](https://doi.org/10.1090/jams/929). Numbering of the version read, arXiv:1606.03140v3: Corollary 3.3 and its proof, Theorem 3.1 (embedding theorem) and Theorem 2.3 (characterization of perfect strategies, quoted from Cleve and Mittal and from Cleve, Liu and Slofstra).
