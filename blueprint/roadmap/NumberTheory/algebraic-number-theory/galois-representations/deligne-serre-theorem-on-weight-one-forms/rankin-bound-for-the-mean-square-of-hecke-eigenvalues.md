@@ -37,7 +37,7 @@ $g(s) = \log(1/(s-k)) + O(1)$ as $s \to k$. Its terms with $m = 1$ give the boun
 
 ## Proof depends on
 
-- [Rankin–Selberg series of a primitive form](rankin-selberg-series-of-a-primitive-form.md), for the continuation of $\zeta(2s-2k+2)\sum |a_n|^2 n^{-s}$ with its only pole, simple, at $s = k$
+- [Rankin–Selberg series of a primitive form](rankin-selberg-series-of-a-primitive-form.md), for the continuation of $\zeta(2s-2k+2)\sum |a_n|^2 n^{-s}$ to $\operatorname{Re}(s) > k - 1$, holomorphic there except for a simple pole at $s = k$
 - [Landau's theorem on Dirichlet series with non-negative coefficients](../../../zeta-l-functions/dirichlet-l-functions/analytic-continuation-of-dirichlet-series/landau-theorem-dirichlet-series.md), for the convergence of $g(s)$ on $\operatorname{Re}(s) > k$ (Landau's lemma, [21], p. 112, as cited by Deligne–Serre)
 
 ## Expansion

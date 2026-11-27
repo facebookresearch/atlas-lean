@@ -35,7 +35,9 @@ Its proof uses the inputs listed under Expansion.
 
 This node is still to be broken down. A good expansion states and links:
 
-- the representations of the normalized eigenforms of weight $k = 2$ and of weight $k \ge 3$;
+- the representations of the normalized eigenforms of weight $k = 2$ and of weight $k \ge 3$, which are the cases
+  $k \ge 2$ of [Diamond–Shurman's Theorem 9.6.5](../../../not-yet-classified/exists-galois-rep-charpoly-frob.md) (its case
+  $k = 1$ is Théorème 4.1 itself);
 - the reduction of a cuspidal $f$ to a primitive form: by the decomposition of §1.9 a cusp form that is an eigenvector
   of the $T_p$, $p \nmid N$, has the eigenvalues $a_p$, $p \nmid N$, of a primitive form of level dividing $N$, whose
   representations are defined over the completions of its own field of coefficients;

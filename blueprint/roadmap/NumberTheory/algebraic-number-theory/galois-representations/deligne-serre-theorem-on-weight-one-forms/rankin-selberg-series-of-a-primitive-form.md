@@ -7,13 +7,15 @@ $\sum_{n \ge 1} |a_n|^2 n^{-s}$ converges for $\operatorname{Re}(s) > k$, and it
 
 $$\zeta(2s - 2k + 2) \sum_{n \ge 1} |a_n|^2 n^{-s}$$
 
-with the Riemann zeta function extends to a meromorphic function on the whole complex plane whose only pole is the
-point $s = k$, a simple pole.
+with the Riemann zeta function extends to a meromorphic function on the whole complex plane that is holomorphic on the
+half-plane $\operatorname{Re}(s) > k - 1$ except for a simple pole at $s = k$.
 
 Deligne and Serre quote this from Rankin for the proof of
-[Rankin's bound](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md). Their statement names $s = k$ as the only
-pole; that it is simple is how they use it, since they conclude from it that the series $L(s)$ of that page has a simple
-pole at $s = k$.
+[Rankin's bound](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md), which uses it only on
+$\operatorname{Re}(s) \ge k$. The statement here is weaker than their wording, which names $s = k$ as the only pole in the
+whole plane: that holds for $N = 1$, but for $N > 1$ the Euler factors of $\zeta(2s - 2k + 2)$ at the primes dividing $N$
+can give poles on the line $\operatorname{Re}(s) = k - 1$. That the pole at $s = k$ is simple is how they use it, since they
+conclude from it that the series $L(s)$ of that page has a simple pole at $s = k$.
 
 ## Proof depends on
 
