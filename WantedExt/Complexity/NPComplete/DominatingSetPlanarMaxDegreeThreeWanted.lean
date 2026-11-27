@@ -27,7 +27,7 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -44,7 +44,7 @@ QUESTION: is there a dominating set of size `K` or less for `G`, i.e., a subset 
 `|V'| ≤ K` such that for all `u ∈ V - V'` there is a `v ∈ V'` for which `{u, v} ∈ E`?
 
 The instance, its graph, the simple-edge-list well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.DominatingSetWanted` ([GT2]). The restriction adds
+`CSLibExt.Complexity.NPComplete.DominatingSetDefs` ([GT2]). The restriction adds
 `0 < K ≤ |V|` ([GT2]'s instance class) and the class: planarity as the repository's
 `SimpleGraph.IsPlanar` (a crossing-free straight-line drawing, which by Fáry's theorem exists
 exactly for planar graphs) and the degree bound as Mathlib's `SimpleGraph.degree`.
