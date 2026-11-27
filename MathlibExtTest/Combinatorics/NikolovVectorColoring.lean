@@ -25,3 +25,9 @@ example : ∃ u : Fin 1 → EuclideanSpace ℝ (Fin 1), ‖u 0‖ = 1 := by
   obtain ⟨u, hu, _⟩ := nikolov2013VectorColoringBound_holds 0 1 (by decide) 0
     (columnAdmissible_zero 0 1)
   exact ⟨u, hu 0⟩
+
+-- A single unit column attains the bound on vector discrepancy.
+example : vectorDiscrepancy (fun _ _ : Fin 1 => (1 : ℝ)) = 1 := by
+  refine le_antisymm (nikolov2013VectorDiscrepancyUpperBound_holds 1 1 le_rfl _
+    columnAdmissible_unit) (le_vectorDiscrepancy _ _ fun u hu => ?_)
+  simp [hu]

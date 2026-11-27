@@ -138,6 +138,13 @@ satisfying the sum of consecutive squares equation
 $2\,y(y+1)(2y+1) = x(x+1)(2x+1) + z(z+1)(2z+1)$, with no order or sign condition, such that
 $(b - c)x + (c - a)y + (a - b)z = 0$ and $z - x \equiv c - a \pmod 2$.
 
+The coordinates of a triple need not be distinct. For an even span $c - a$ the statement
+therefore already holds with the diagonal triples $(n, n, n)$, $n \in \mathbb{N}$, which satisfy
+the equation, lie in the plane and have $z - x = 0$. The source excludes these trivial
+solutions: its proof assumes that $x$, $y$ and $z$ are distinct. For an odd span the parity
+condition gives $z \ne x$, and in the plane two equal coordinates force all three to be equal,
+so the coordinates of each triple are then distinct.
+
 Source: Anderson, Woodall and Zaharescu, *Arithmetic Polygons and Sums of
 Consecutive Squares*, INTEGERS 26 (2026), Article A1, Proposition 1
 (`integers-2026-A1-prop-1`). -/

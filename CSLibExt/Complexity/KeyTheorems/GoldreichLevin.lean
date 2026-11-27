@@ -32,13 +32,14 @@ every one-way permutation has a hardcore bit, and one-way functions have hardcor
 predicates. Circuits are non-uniform gate lists, as in the CVP file; the one-wayness
 hypothesis is that every polynomial-size inverter family succeeds with negligible
 probability (the canonical `Negligible` of the `Classes` file), and `π` itself is
-computable by polynomial-size circuits (needed to test guesses inside the
-Goldreich-Levin inverter).
+computable by polynomial-size circuits.
 
 The proof of `goldreich_levin` averages shifted predictor queries to recover each bit by
 majority. Fixing the shifts and their guessed parities by averaging gives one non-uniform
 inverter circuit at each length. This permits a polynomial loss in inversion success and
-avoids having to test a list of guesses with the forward circuit.
+avoids having to test a list of guesses with the forward circuit. The proof uses neither the
+bijectivity of `π` nor its computability by polynomial-size circuits; both hypotheses are kept
+as part of the statement.
 
 Source:
 O. Goldreich and L. A. Levin, "A hard-core predicate for all one-way functions",

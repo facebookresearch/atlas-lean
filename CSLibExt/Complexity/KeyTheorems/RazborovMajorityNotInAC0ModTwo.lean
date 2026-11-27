@@ -40,15 +40,10 @@ computes majority, it can select between these two interpolants. The number of t
 is thus at most the number of squarefree monomials of degree at most `n / 2 + D` for
 approximant degree `D`.
 
-## Smolensky: parity is not in AC0[mod 3]
-
-The parity language is not in `AC0[mod 3]`: no polynomial-size, constant-depth circuit family
-with AND/OR/NOT gates and `MOD₃` gates computes parity. `AC0Mod 3` is the shared class with
-only modulus-`3` `mod` gates.
-
 Source:
-R. Smolensky, "Algebraic methods in the theory of lower bounds for Boolean circuit complexity",
-Proceedings of the Nineteenth Annual ACM Symposium on Theory of Computing (STOC 1987), 77-82.
+A. A. Razborov, "Lower bounds on the size of bounded depth networks over a complete basis with
+logical addition", Mat. Zametki 41 (1987), 598-607; English translation Math. Notes 41 (1987),
+333-338.
 -/
 
 namespace MetaMathlibExt.Complexity.KeyTheorems.Smolensky

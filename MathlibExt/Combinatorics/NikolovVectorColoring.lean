@@ -9,12 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.MatrixDiscrepancy
+public import MathlibExt.Combinatorics.VectorDiscrepancy
 
 /-!
 # Nikolov's vector coloring bound
 
 Nikolov's theorem gives unit vector colors for the columns of a column-admissible matrix
-such that every colored row has Euclidean norm at most one.
+such that every colored row has Euclidean norm at most one. Its corollary
+`nikolov2013VectorDiscrepancyUpperBound_holds` bounds the vector discrepancy of such a matrix
+by one.
 -/
 
 @[expose] public section
@@ -36,6 +39,19 @@ def nikolov2013VectorColoringBound : Prop :=
   ∀ (m n : ℕ), 1 ≤ n → ∀ A : Matrix (Fin m) (Fin n) ℝ, ColumnAdmissible A →
     ∃ u : Fin n → EuclideanSpace ℝ (Fin n), (∀ j, ‖u j‖ = 1) ∧
       ∀ i, ‖∑ j, A i j • u j‖ ≤ 1
+
+/-- **Statement of Nikolov's bound on vector discrepancy.** This is the proposition that for all
+natural numbers $m$ and $n$ with $n \ge 1$ and every real $m \times n$ matrix $A$ whose columns
+all lie in the closed Euclidean unit ball, that is, $\sum_{i} A_{ij}^2 \le 1$ for every
+column $j$, the vector discrepancy of $A$ is at most $1$.
+
+This bounds the unit-vector relaxation, not the discrepancy over sign vectors.
+
+Source: Nikolov, arXiv1301.4039, retained KomlosSDP.tex, Theorem `thm:main`,
+and optimization catalogue C24a, line 55. -/
+def nikolov2013VectorDiscrepancyUpperBound : Prop :=
+  ∀ (m n : ℕ), 1 ≤ n → ∀ A : Matrix (Fin m) (Fin n) ℝ, ColumnAdmissible A →
+    vectorDiscrepancy A ≤ 1
 
 variable {m n : ℕ}
 
@@ -141,5 +157,17 @@ theorem nikolov2013VectorColoringBound_holds : nikolov2013VectorColoringBound :=
   refine ⟨u, fun j => hu j (Finset.mem_univ j), fun i => ?_⟩
   simpa [coloringMap, InnerProductSpace.rankOne_apply, EuclideanSpace.inner_single_right, a]
     using hnorm (EuclideanSpace.single i 1)
+
+/-- **Nikolov's bound on vector discrepancy.** For all natural numbers $m$ and $n$ with
+$n \ge 1$ and every real $m \times n$ matrix $A$ whose columns all lie in the closed
+Euclidean unit ball, that is, $\sum_{i} A_{ij}^2 \le 1$ for every column $j$, the vector
+discrepancy of $A$ is at most $1$.
+
+Source: Nikolov, arXiv1301.4039, retained Theorem `thm:main`; catalogue line 55. -/
+theorem nikolov2013VectorDiscrepancyUpperBound_holds :
+    nikolov2013VectorDiscrepancyUpperBound := by
+  intro m n hn A hA
+  obtain ⟨u, hu, hrows⟩ := nikolov2013VectorColoringBound_holds m n hn A hA
+  exact vectorDiscrepancy_le_of_coloring A u hu hrows
 
 end KomlosDiscrepancyWanted
