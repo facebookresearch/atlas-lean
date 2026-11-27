@@ -1,16 +1,16 @@
 # Degree of monotonicity of a signed network via sign consistency
 
-**Graph of a dynamical system.** For $\dot x = f(x)$ on $\mathbb{R}^n$ where each $\partial f_j/\partial x_i$ has a constant sign, form the signed digraph $G = (V,E,w)$ with $V = \{x_1,\dots,x_n\}$ and an edge $x_i\to x_j$ of sign $+1$ (resp. $-1$) when $\partial f_j/\partial x_i\ge0$ (resp. $\le 0$) everywhere and is nonzero somewhere.
+**Graph of a dynamical system.** For $\dot x = f(x)$ on $\mathbb{R}^n$ where each $\partial f_j/\partial x_i$ has a constant sign, form the signed digraph $G = (V,E,w)$ with $V = \{x_1,\dots,x_n\}$ and, for $i\ne j$, an edge $x_i\to x_j$ of sign $+1$ (resp. $-1$) when $\partial f_j/\partial x_i\ge0$ (resp. $\le 0$) everywhere and is nonzero somewhere. Diagonal terms $\partial f_i/\partial x_i$ give no edge (with $i=j$ allowed, every degradation term would be a negative self-loop, a closed chain of parity $-1$, and $\dot x=-x$, which is monotone, would fail the criterion below); the source's testosterone remark shows that this convention is meant, since it calls the model monotone once the term involving $x_3$ is removed from the first equation, although the degradation terms $-b_ix_i$ remain.
 
 **Monotonicity criterion.** The system is monotone with respect to some orthant order if and only if every closed undirected chain of $G$ (a cycle traversed ignoring edge directions) has parity $+1$. Hence a monotone system has no negative feedback loop and no incoherent feed-forward loop, although these two conditions together are not sufficient. For example, the testosterone model $\dot x_1 = A/(K+x_3) - b_1x_1$, $\dot x_2 = c_1x_1 - b_2x_2$, $\dot x_3 = c_2x_2 - b_3x_3$ contains a negative loop and is not monotone for any orthant order.
 
-**Sign consistency and the degree of monotonicity.** The sign consistency problem asks for a vertex labeling $L:V\to\{-1,1\}$ maximizing the number of consistent edges $F = \{(u,v)\in E: w(u,v) = L(u)L(v)\}$. With $F$ optimal, the degree of monotonicity is
+**Sign consistency and the degree of monotonicity.** The sign consistency problem asks for a vertex labeling $L:V\to\{-1,1\}$ maximizing the number of consistent edges $F = \{(u,v)\in E: w(u,v) = L(u)L(v)\}$. For $E\ne\emptyset$ and $F$ optimal, the degree of monotonicity is
 
 $$
 \mathsf{M} = \frac{|F|}{|E|}\in(0,1],
 $$
 
-with $\mathsf{M} = 1$ exactly for orthant-monotone sign structures.
+with $\mathsf{M} = 1$ exactly for orthant-monotone sign structures (for $E=\emptyset$ the ratio is $0/0$ and $\mathsf{M}$ is undefined). This corrects Section 5 of the source, which prints that the normalization "ensures that $0<\mathsf{M}<1$": the value $\mathsf{M}=1$ is attained by every network whose closed undirected chains all have parity $+1$.
 
 ## Proof sketch
 

@@ -3,6 +3,7 @@
 - [Persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md)
 - [Linear programming for complex balanced and detailed balanced realizations of reaction networks](linear-programming-for-complex-and-detailed-balanced-realizations.md)
 - [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
+- [Global bounds for positive weakly reversible mass-action trajectories](global-bounded-persistent-weakly-reversible-trajectories.md)
 - [Complex-linear invariants](complex-linear-invariants/README.md)
 - [Elimination of intermediate species](elimination-of-intermediate-species/README.md)
 - [Kron reduction of reaction networks](kron-reduction-of-reaction-networks/README.md)

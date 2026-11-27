@@ -10,7 +10,7 @@ $$\mathcal A = \big\{(K_0, K_1) \in \big(C^1(\mathbb R^3 \times [0,\infty) \time
 
 for fixed constants $C, \alpha > 0$. For such kernels the local equilibrium is uniform, $F \equiv 1/|V|$.
 
-**Theorem.** Let $(K_0, K_1) \in \mathcal A$ and $f_0 \in C^1_c(\mathbb R^3 \times V)$ nonnegative. Then:
+**Theorem.** Let $(K_0, K_1) \in \mathcal A$ and let the initial data be well prepared, $f_0(x,v) = \rho_0(x)F$ with $\rho_0 \in C^1_c(\mathbb R^3)$ nonnegative. Then:
 
 1. for all sufficiently small $\varepsilon$ the solution $f_\varepsilon$ exists and is bounded in $L^\infty\big([0,T]; L^1_+ \cap L^\infty(\mathbb R^3 \times V)\big)$ for every $T < \infty$;
 2. $f_\varepsilon \to \rho F$ in that space, where $\rho$ solves the Keller–Segel (drift–diffusion) equation
@@ -23,6 +23,8 @@ $$D = \int_V v \otimes \kappa(x,t,v)\, dv, \qquad \Gamma = -\int_V v\, \theta(x,
 
 and $\kappa, \theta$ solve the cell problems $\mathcal K_0(\kappa) = vF$, $\mathcal K_0(\theta) = \mathcal K_1(F)$, where $\mathcal K_i(g) = \int_V (K_i\, g' - K_i'\, g)\, dv'$;
 3. the bounds and the convergence are uniform over $\mathcal A$.
+
+The well-prepared hypothesis corrects Theorem 1 b) of the source, which prints the convergence "in $L^{\infty}\big([0,T]; L^1_+\cap L^{\infty}(\mathbb R^3\times V)\big)$" for every nonnegative $f_0 \in C^1_c(\mathbb R^3\times V)$. For each $\varepsilon$, $f_\varepsilon$ and $\rho F$ are continuous in time into $L^1$ with values $f_0$ and $\rho_0F$ at $t = 0$, where $\rho_0 = \int_V f_0\,dv$, so their distance in that space is at least $\|f_0 - \rho_0F\|_{L^1}$, which is positive whenever $f_0$ depends on $v$.
 
 ## Proof sketch
 

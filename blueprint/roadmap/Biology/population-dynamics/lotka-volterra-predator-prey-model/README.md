@@ -8,3 +8,6 @@
 - [Positive initial populations have a positive solution on all of ℝ](exists-global-solution.md)
 - [Lotka–Volterra solutions with the same positive start agree for t ≥ 0](eq-of-initial.md)
 - [Non-equilibrium positive solutions are periodic with a least period](exists-minimal-period.md)
+
+- [Spatial, Allee, tumour, and eco-evolutionary population dynamics](spatial-and-game-population-dynamics/README.md)
+- [Deterministic population and community models](deterministic-population-and-community-models/README.md)

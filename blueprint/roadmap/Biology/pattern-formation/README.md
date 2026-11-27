@@ -17,3 +17,8 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Look-ahead chemotaxis of active Brownian ants](look-ahead-chemotaxis-of-active-brownian-ants/README.md)
 - [Mean-field survival model of zebrafish stripes](mean-field-survival-model-of-zebrafish-stripes/README.md)
 - [Stochastic Meinhardt cell-polarity model](stochastic-meinhardt-cell-polarity-model/README.md)
+- [Bespoke Turing systems](bespoke-turing-systems/README.md)
+- [Fisher–KPP equation on river-network graphs](fisher-kpp-equation-on-river-network-graphs/README.md)
+- [Nonlocal multi-species advection–diffusion](nonlocal-multi-species-advection-diffusion/README.md)
+- [Reaction–diffusion on concentration-dependent growing domains](reaction-diffusion-on-concentration-dependent-growing-domains/README.md)
+- [Turing and wave instabilities in n-component systems](turing-and-wave-instabilities-in-n-component-systems/README.md)

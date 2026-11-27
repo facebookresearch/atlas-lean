@@ -16,7 +16,7 @@ so $S_\infty = [1 + (1/s_0 - 1)e^{H_\infty}]^{-1}$ is determined by $H_\infty \i
 
 **Theorem (no intervention).** If $\varphi \equiv 1$ and $P$ is an ergodic Markov process with a unique stationary law $\pi$ on $(0,\infty)$ of finite positive mean, then $H_\infty = \infty$ a.s. and $S_\infty = 0$ a.s.
 
-**CIR intensity.** For the Cox–Ingersoll–Ross process $dP_t = \kappa(\eta - P_t)dt + \sigma\sqrt{P_t}\,dW_t$, $\mathbb E[H_t] = \int_0^t [\eta + (p_0 - \eta)e^{-\kappa s}]\,ds$, and for $0 < \lambda < \lambda_c = \kappa^2/(2\sigma^2)$
+**CIR intensity.** With $\varphi \equiv 1$ (no intervention), so that $H_t = \int_0^t P_s\,ds$, and the Cox–Ingersoll–Ross process $dP_t = \kappa(\eta - P_t)dt + \sigma\sqrt{P_t}\,dW_t$, $\mathbb E[H_t] = \int_0^t [\eta + (p_0 - \eta)e^{-\kappa s}]\,ds$, and for $0 < \lambda < \lambda_c = \kappa^2/(2\sigma^2)$
 
 $$\mathbb E[e^{\lambda H_t}\mid P_0 = p_0] = \exp\{A(t,\lambda) + B(t,\lambda)p_0\},$$
 
@@ -28,7 +28,7 @@ the solutions of the Riccati system $\partial_tB = \tfrac12\sigma^2B^2 - \kappa 
 
 $$\mathbb P(\tau \le t) \le \inf_{0<\lambda<\lambda_c}\exp\{-\lambda M + A(t,\lambda) + B(t,\lambda)p_0\}.$$
 
-Write $\Lambda_t(\lambda) = A(t,\lambda) + B(t,\lambda)p_0$ and $\Lambda_t'(\lambda_c-) = \lim_{\lambda\uparrow\lambda_c}\partial_\lambda\Lambda_t(\lambda)$, which is finite for fixed $t$. The exponent $-\lambda M + \Lambda_t(\lambda)$ is strictly convex in $\lambda$, and if $\mathbb E_{p_0}[H_t] < M < \Lambda_t'(\lambda_c-)$ it has a unique minimizer $\lambda^*(M) \in (0,\lambda_c)$, the solution of $\partial_\lambda\Lambda_t(\lambda) = M$, which increases strictly in $M$ on that interval. For $M \ge \Lambda_t'(\lambda_c-)$ the infimum over $(0,\lambda_c)$ is approached as $\lambda \uparrow \lambda_c$ and is not attained.
+Write $\Lambda_t(\lambda) = A(t,\lambda) + B(t,\lambda)p_0$ and $\Lambda_t'(\lambda_c-) = \lim_{\lambda\uparrow\lambda_c}\partial_\lambda\Lambda_t(\lambda)$, which is finite for fixed $t$. The exponent $-\lambda M + \Lambda_t(\lambda)$ is strictly convex in $\lambda$, and if $\mathbb E_{p_0}[H_t] < M < \Lambda_t'(\lambda_c-)$ it has a unique minimizer $\lambda^*(M) \in (0,\lambda_c)$, the solution of $\partial_\lambda\Lambda_t(\lambda) = M$, which increases strictly in $M$ on that interval. For $M \ge \Lambda_t'(\lambda_c-)$ the infimum over $(0,\lambda_c)$ is approached as $\lambda \uparrow \lambda_c$ and is not attained. This corrects Proposition 2.9 of the source, which prints that if $M > \mathbb{E}_{p_0}[H_t^{CIR}]$, then $f(\lambda)=\exp(-\lambda M+\Lambda_t(\lambda))$ "is strictly convex on $(0, \lambda_c)$ and reaches its minimum value in $(0, \lambda_c)$", and that $\lim_{M\uparrow\infty}\lambda^*(M) = \lambda_c$: the minimum is reached in $(0,\lambda_c)$ only for $M < \Lambda_t'(\lambda_c-)$.
 
 ## Proof sketch
 

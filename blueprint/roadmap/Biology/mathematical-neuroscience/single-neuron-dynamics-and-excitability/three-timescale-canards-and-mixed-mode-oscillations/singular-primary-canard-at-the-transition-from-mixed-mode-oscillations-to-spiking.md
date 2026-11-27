@@ -23,7 +23,7 @@ $$\bar x' = -\bar y + \bar x^2, \qquad \bar y' = \bar x - \bar z, \qquad \bar z'
 It has the unique equilibrium $\bar x = \bar z = -\bar\mu/(a+b)$, $\bar y = \bar\mu^2/(a+b)^2$; with $a + b < 0$ its Hopf points are the roots of $C(\bar\mu) = (a+b)a + (2b^2+2)\bar\mu - \frac{4b}{a+b}\bar\mu^2$.
 
 **Results.**
-1. *(Special algebraic solution.)* System $(\ast)$ has a polynomial solution exactly when
+1. *(Special algebraic solution.)* System $(\ast)$ has a non-constant polynomial solution exactly when
 
 $$\bar\mu = \bar\mu_0 = -\frac{a(a+b)}{2b^2},$$
 

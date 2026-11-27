@@ -1,0 +1,19 @@
+# Malthusian asymptotics of a branching model of telomere length with telomerase activity
+
+**Model.** Each cell carries $K$ chromosomes, and chromosome $j$ has two telomere lengths $(m_j,n_j)\in\mathbb N_0^2$. A cell is either active or senescent. An active cell with configuration $c=((m_j,n_j))_{j\le K}$ divides at a bounded, configuration-dependent, time-homogeneous rate $b(c)$ (the source's model allows time-dependent rates $b(t,c)$, but its asymptotic theorem treats only time-homogeneous dynamics). At division each daughter receives one strand of each chromosome. Because of the end-replication problem the new strand loses an overhang of length $\omega$. Independently, telomerase acts on a telomere of length $i$ with probability $q(i)$ and adds a random length drawn from $\mu_f$. A cell becomes senescent (stops dividing) once its shortest telomere drops below a threshold $L_{\min} \ge \omega$. The state space is $E=E_{\mathrm{act}}\cup E_{\mathrm{sen}}$. Let $\psi_t g\,(c,x)=\mathbf E_{(c,x)}\big[\sum_{\text{cells } u \text{ alive at } t}g(c_u,x_u)\big]$ be the mean semigroup.
+
+**Assumptions.** (i) Rates are bounded. (ii) There is $b_{tel} > \omega$ in $\mathbb N$ with $\mu_f\{b_{tel}\} > 0$ and $\mu_f\{b_{tel}-1\} > 0$; $b(c) > 0$ for every active configuration $c$; and $0 < q(i) < 1$ for all $i \ge L_{\min}$. (This is the source's Assumption 4.1; with (i) it makes the active configurations an irreducible class, its Lemma 4.6.) (iii) The Malthusian parameter $\lambda_0$ of the active part is positive (an expanding population of telomerase-positive cells, such as a tumour or germ line). (iv) $\mu_f$ has an exponential moment of order $\alpha_0>\frac1\omega\log\frac{\|b_{\mathrm{act}}\|_\infty}{\lambda_0}$. (v) $q(i)\to0$ as $i\to\infty$, so telomerase acts less on long telomeres.
+
+**Theorem.** Under (i)–(v) there are a function $\eta:E\to\mathbb R$, positive on $E_{\mathrm{act}}$ and zero on $E_{\mathrm{sen}}$, a probability measure $\nu$ on $E$, a Lyapunov function $V:E\to[1,\infty)$ and constants $C,\gamma>0$ such that for all $|g|\le V$
+
+$$\big|e^{-\lambda_0t}\psi_t g\,(c,x)-\eta(c,x)\,\nu[g]\big|\le C e^{-\gamma t}V(c,x),\qquad t\ge0 .$$
+
+One can take $V(c,\mathrm{sen})=1$ and $V(c,\mathrm{act})=\exp\big[\alpha\sum_{j=1}^K\big((m_j-k+\omega)_++(n_j-k+\omega)_+\big)\big]$ for some $k\ge1$, $\alpha>0$.
+
+## Proof sketch
+
+The many-to-one formula writes $\psi_t$ as a Feynman–Kac semigroup of a single typical lineage weighted by $\exp\int b$. The result is a quasi-compactness statement for this reducible semigroup: the active class drives growth, and senescent cells are a sink that is fed but never left. On the active class, the Lyapunov function controls long telomeres. Without telomerase a telomere loses $\omega$ per division. Telomerase, which becomes rare on long telomeres by (v), cannot push lengths to infinity faster than the population grows, which is where condition (iv) linking $\alpha_0$, $\omega$ and $\lambda_0$ comes in. Irreducibility on the active class and a Champagnat–Villemonais criterion for reducible processes give exponential convergence. Consequently the population grows like $e^{\lambda_0t}$, and the telomere-length profile and the active/senescent proportions stabilize at $\nu$, at an exponential rate.
+
+## Sources
+
+- Athanase Benetos, Coralie Fritsch, Emma Horton, Lionel Lenotre, Simon Toupance and Denis Villemonais, "Stochastic branching models for the telomeres dynamics in a model including telomerase activity", *Journal of Mathematical Biology* 91 (2025), 8, <https://doi.org/10.1007/s00285-025-02230-z>. Preprint version: arXiv:2407.11453 (2024), Section 2 (biological and mathematical model), Assumption 3.1, Proposition 3.2 and Lemma 3.3 (mean semigroup and many-to-one formula), Section 4 (Assumptions 4.1–4.4), Theorem 4.5 (Malthusian behaviour), Lemma 4.6 and Proposition 4.7 (irreducibility and active-part asymptotics), <https://doi.org/10.48550/arXiv.2407.11453>.

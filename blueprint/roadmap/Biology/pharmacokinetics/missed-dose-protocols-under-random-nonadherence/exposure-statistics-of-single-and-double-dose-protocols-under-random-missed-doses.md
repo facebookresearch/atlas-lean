@@ -19,7 +19,11 @@ $$\mathrm{dev}^{\mathrm{double}} = \sqrt{\frac{1-p}{1+\alpha}}\sqrt{1 + p + (1 -
 
 $$\lambda^{\mathrm{single}} = 1, \quad \lambda^{\mathrm{double}} = \frac{2}{1+\alpha}, \quad \lambda^{\mathrm{boost}} = \max\Big\{1, \frac{1+b}{1+\alpha}\Big\}, \quad \lambda^{\mathrm{triple}} = \frac{3}{1+\alpha+\alpha^2}, \quad \lambda^{\mathrm{all}} = \infty.$$
 
-The coefficient of variation of the single-dose protocol is $\sqrt{\frac{1-\alpha}{1+\alpha}}\sqrt{p(1-p)}$.
+The coefficient of variation of the single-dose protocol, the standard deviation of $Z$ over its mean, is
+
+$$c_{\mathrm v}^{\mathrm{single}} = \sqrt{\frac{1-\alpha}{1+\alpha}}\sqrt{\frac{1-p}{p}},$$
+
+since $\mathbb{E}Z = p$ and $\operatorname{Var}Z = \frac{(1-\alpha)p(1-p)}{1+\alpha}$. This corrects Corollary 5 of the source, which prints $c_{\mathrm v}^{\mathrm{single}}=\sqrt{\frac{1-\alpha}{1+\alpha}}\sqrt{p(1-p)}$, the standard deviation of $Z$ rather than the ratio its own definition (69) gives; at $\alpha = 0$ and $p = \frac12$ the ratio is $1$, the printed value $\frac12$.
 
 ## Proof sketch
 

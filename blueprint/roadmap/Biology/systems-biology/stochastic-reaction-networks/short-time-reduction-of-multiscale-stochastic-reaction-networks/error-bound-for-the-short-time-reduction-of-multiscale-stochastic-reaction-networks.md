@@ -6,7 +6,7 @@
 
 $$\sup_{t\in[0,T]} \big| p^N(A, t) - p(A_L, t) \big| \le \frac{c\,\max\{1, T^2\}}{N^\nu},$$
 
-where $p^N(\cdot,t)$ is the law of $Z^{N,-\theta_0}(t)$ and $p(\cdot,t)$ the law of the low-copy coordinates of $Z(t)$. The bound is uniform in $A_L$ and extends from mass-action to general kinetics. It does not extend to sets that also constrain the high-copy coordinates: in the example below, for $A^*$ the event that the scaled count of $B$ equals $1$ exactly, $p^N(A^*,t)$ stays below $1$ while $p(q_L(A^*),t) = 1$.
+where $p^N(\cdot,t)$ is the law of $Z^{N,-\theta_0}(t)$ and $p(\cdot,t)$ the law of the low-copy coordinates of $Z(t)$. The bound is uniform in $A_L$ and extends from mass-action to general kinetics. It does not extend to sets that also constrain the high-copy coordinates: in the example below, for $A^*$ the event that the scaled count of $B$ equals $1$ exactly, $p^N(A^*,t)$ stays below $1$ while $p(q_L(A^*),t) = 1$. The restriction to cylinder sets corrects Theorem 3.1 of the source, which prints the bound "for any measurable set $A \subset \mathbb R^{d+r}_{\ge 0}$", with $A_L=\{q_L(z) : z\in A\}$.
 
 **Example.** For $A + B \rightleftharpoons 2A$ (forward rate $\kappa_1$, backward $\kappa_2 N$) and $C \to 2A$ (rate $\kappa_3$) with $A(0) = 1$, $B(0) = N$, $C(0) = 10$, on the time scale $t/N$ the copy number of $A$ is approximated by the reduced birth–death network $A \rightleftharpoons 2A$ with rates $\kappa_1$ and $\kappa_2$, with error $O(N^{-\nu})$.
 

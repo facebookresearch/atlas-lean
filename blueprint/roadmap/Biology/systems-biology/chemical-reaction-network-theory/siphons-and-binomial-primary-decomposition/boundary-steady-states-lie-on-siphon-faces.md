@@ -5,7 +5,9 @@ Let $G$ be a chemical reaction network on species $c_1,\dots,c_s$ with complexes
 1. $Z$ is a siphon if and only if the face $V_{\ge0}(\mathfrak P_Z)=\{c\ge0:c_a=0\ \forall a\in Z\}$ is forward invariant for the mass-action system.
 2. If $\gamma\in\partial\mathbb R^s_{\ge0}$ is a boundary steady state, its zero set $Z=\{i:\gamma_i=0\}$ is a siphon.
 3. If $G$ is strongly connected, then $\gamma\in\mathbb R^s_{\ge0}$ is a boundary steady state if and only if its zero set is a siphon.
-4. For a toric (complex-balanced) dynamical system with positive initial condition $c^{(0)}$, a face $F_Z$ of the invariant polyhedron $\mathcal P_{c^{(0)}}=(c^{(0)}+\text{stoichiometric subspace})\cap\mathbb R^s_{\ge0}$ contains a steady state in its relative interior if and only if $Z$ is a siphon.
+4. For a toric (complex-balanced) dynamical system with positive initial condition $c^{(0)}$, let $\mathcal P_{c^{(0)}}=(c^{(0)}+\text{stoichiometric subspace})\cap\mathbb R^s_{\ge0}$ be the invariant polyhedron and, for $Z\subseteq[s]$, let $F_Z=\{c\in\mathcal P_{c^{(0)}}:c_i=0\ \forall i\in Z\}$ be the corresponding (possibly empty) face. If $Z$ is nonempty, $F_Z\ne\emptyset$ and $Z=\{i:c_i=0\ \text{for all}\ c\in F_Z\}$, then $F_Z$ contains a steady state in its relative interior if and only if $Z$ is a siphon.
+
+Item 4 restricts Lemma 2.4 of the source, which prints "a face $F_{Z}$ of the invariant polyhedron $\mathcal{P}_{c^{(0)}}$ contains a steady state in its interior if and only if $Z$ is a siphon" with no condition on $Z$. For $A\rightleftarrows B$ and $c^{(0)}=(1,1)$ that form fails twice: the face of $Z=\emptyset$ is the whole polyhedron, with the positive steady state in its relative interior, although $\emptyset$ is no siphon, and $Z=\{A,B\}$ is a siphon whose face is empty.
 
 So checking whether given initial concentrations admit boundary steady states comes down to deciding which siphons meet the corresponding stoichiometric compatibility class.
 

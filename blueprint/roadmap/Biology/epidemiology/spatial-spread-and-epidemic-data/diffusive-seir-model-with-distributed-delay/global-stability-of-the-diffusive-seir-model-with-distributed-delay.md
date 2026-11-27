@@ -8,15 +8,15 @@ $$\begin{aligned}
 \partial_t I - k_I\Delta I &= \alpha E - (\mu + c + \gamma)I,
 \end{aligned}$$
 
-and $\partial_t R - k_R\Delta R = \gamma I - \mu R$ (decoupled). Here $b$ is recruitment, $\mu$ natural death, $\alpha$ the rate of becoming infectious, $c$ disease death, $\gamma$ recovery, $k_\bullet > 0$ diffusion coefficients and $g \ge 0$ a delay kernel on $[0,h]$ with $\int_0^h g = 1$. The incidence $f$ satisfies $f(0,I) = f(S,0) = 0$ and
-- $(H_1)$ $f$ is strictly increasing in $S$ for fixed $I > 0$ and increasing in $I$ for fixed $S$;
-- $(H_2)$ $f(S,I)/I$ is bounded and decreasing in $I > 0$ for fixed $S$.
+and $\partial_t R - k_R\Delta R = \gamma I - \mu R$ (decoupled). Here $b$ is recruitment, $\mu$ natural death, $\alpha$ the rate of becoming infectious, $c$ disease death, $\gamma$ recovery, $k_\bullet > 0$ diffusion coefficients and $g \ge 0$ a delay kernel on $[0,h]$ with $\int_0^h g = 1$. The incidence $f : \mathbb R_+^2 \to \mathbb R_+$ is continuously differentiable in the interior of $\mathbb R_+^2$, satisfies $f(0,I) = f(S,0) = 0$ for $S, I \ge 0$, and
+- $(H_1)$ $f$ is strictly increasing in $S \ge 0$ for fixed $I > 0$ and increasing in $I > 0$ for fixed $S \ge 0$;
+- $(H_2)$ $\phi(S,I) = f(S,I)/I$ is bounded and decreasing in $I > 0$ for fixed $S \ge 0$, and $k(S) = \lim_{I\to0^+}\phi(S,I)$ is a continuous increasing function of $S \ge 0$.
 
 This covers bilinear, saturated and Beddington–DeAngelis-type incidences.
 
 **Theorem.** The system is well posed in the space of continuous non-negative initial histories and its solutions are bounded. Let $S_0 = b/\mu$ and
 
-$$R_0 = \frac{\beta\alpha\,\partial_I f(S_0, 0)}{(\mu+\alpha)(\mu+\gamma+c)}.$$
+$$R_0 = \frac{\beta\alpha\,k(S_0)}{(\mu+\alpha)(\mu+\gamma+c)}, \qquad k(S_0) = \partial_I f(S_0, 0).$$
 
 1. The disease-free equilibrium $(S_0, 0, 0)$ is globally asymptotically stable if and only if $R_0 \le 1$.
 2. If $R_0 > 1$, there is a unique spatially homogeneous endemic equilibrium $(S^*, E^*, I^*)$, it is the only equilibrium besides the disease-free one, and it is globally asymptotically stable.

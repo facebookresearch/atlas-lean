@@ -6,7 +6,7 @@ $$
 \dot T=\Lambda-\mu T-\beta(A)VT,\quad \dot I=\beta(A)VT-\delta I,\quad \dot V=\omega I-cV-bAV,\quad \dot A=aVA-\sigma A,\quad \beta(A)=\beta_0+\beta_1A,
 $$
 
-with all constants positive. Here $b$ is the average neutralizing power of antibodies, small for weakly neutralizing ones, and $\beta_1\ge0$ measures antibody-dependent enhancement (ADE) of infection. Let
+with all constants positive and $\delta>\mu$ (infected cells die faster than target cells; the source's Assumption 1, used in its stability analysis). Here $b$ is the average neutralizing power of antibodies, small for weakly neutralizing ones, and $\beta_1\ge0$ measures antibody-dependent enhancement (ADE) of infection. Let
 
 $$
 R_0=\frac{\beta_0\omega\Lambda}{c\delta\mu},\qquad V^{is}=(R_0-1)\frac{\mu}{\beta_0},\qquad V^t=\frac\sigma a,
@@ -29,8 +29,8 @@ So the steady viral load $\sigma/a$ is set by the antibody response alone, whate
 
 ## Proof sketch
 
-The antibody equation gives $A=0$ or $V=\sigma/a$. On $A=0$ the system is the standard target-cell model, with immunosuppression equilibrium at $V^{is}$; $V^{is}>V^t$ makes the antibody direction unstable there. On $V=V^t$, the $T$ and $I$ equations give $T$ and $I$ in terms of $A$, and the $V$ equation becomes the quadratic for $A$. With $\beta_1=0$ it is linear and gives the explicit $A$. The source prints the antibody-free $T$ with $\mu$ in place of $\omega$, and the $\beta_1=0$ antibody level with $\beta_0$ in the denominator. The formulas above follow directly from the equilibrium equations.
+The antibody equation gives $A=0$ or $V=\sigma/a$. On $A=0$ the system is the standard target-cell model, with immunosuppression equilibrium at $V^{is}$; $V^{is}>V^t$ makes the antibody direction unstable there. On $V=V^t$, the $T$ and $I$ equations give $T$ and $I$ in terms of $A$, and the $V$ equation becomes the quadratic for $A$. With $\beta_1=0$ it is linear and gives the explicit $A$. The source prints the antibody-free $T$ with $\mu$ in place of $\omega$ (Proposition 2, item 2) and the $\beta_1=0$ antibody level with an extra $\beta_0$ in the denominator (Proposition 1). The formulas above follow directly from the equilibrium equations.
 
 ## Sources
 
-- Antoine Danchin, Oriane Pagani-Azizi, Gabriel Turinici and Ghozlane Yahiaoui, "COVID-19 Adaptive Humoral Immunity Models: Weakly Neutralizing Versus Antibody-Disease Enhancement Scenarios", *Acta Biotheoretica* 70 (2022), 23, <https://doi.org/10.1007/s10441-022-09447-1>. Preprint version: arXiv:2207.03222 (2022), model (eq:fullmodelT)–(eq:fullmodelbeta), definition (eq:defR0), Propositions 1–2, <https://doi.org/10.48550/arXiv.2207.03222>.
+- Antoine Danchin, Oriane Pagani-Azizi, Gabriel Turinici and Ghozlane Yahiaoui, "COVID-19 Adaptive Humoral Immunity Models: Weakly Neutralizing Versus Antibody-Disease Enhancement Scenarios", *Acta Biotheoretica* 70 (2022), 23, <https://doi.org/10.1007/s10441-022-09447-1>. Preprint version: arXiv:2207.03222 (2022), model (eq:fullmodelT)–(eq:fullmodelbeta), Assumptions 1–2 and definition (eq:defR0) (Section 3), Propositions 1–2, the stability analysis in the appendix (with $\zeta=\delta-\mu>0$), <https://doi.org/10.48550/arXiv.2207.03222>.

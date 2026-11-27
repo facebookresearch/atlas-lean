@@ -6,7 +6,7 @@ $$\dot v = F(v) - w + I(t), \qquad \dot w = a(bv - w), \qquad a, b \ge 0,$$
 
 where $F$ is $C^3$, strictly convex, $\lim_{x\to-\infty}F'(x) \le 0$, and $F(v) \ge \alpha v^{1+\varepsilon}$ for large $v$ (some $\alpha, \varepsilon > 0$). A spike is the finite-time blow-up of $v$ (or crossing of a cutoff $\theta$), after which $(v,w) \mapsto (v_r, w + d)$. If moreover $F(v) \ge \alpha v^{2+\varepsilon}$, $w$ stays bounded at the blow-up time, so the reset value $w + d$ is well defined.
 
-**Definition.** For a threshold $V$ let $Z(V) = \{(v, w) : v \ge V,\ w \le bv\}$. If $I(t) \ge I^*$ on $(\tau_0, \tau_1)$, let $Z^* = Z(I^*, b) = \bigcup_{V \ge v_+(I^*, b)} Z(V)$, where $v_+(I^*, b)$ is the largest fixed point of the system with constant input $I^*$ ($-\infty$ if there is none, i.e. if $I^* > -m(b)$ with $m(b) = \min_v (F(v) - bv)$).
+**Definition.** If $I(t) \ge I^*$ on $(\tau_0, \tau_1)$, let $Z^* = Z(I^*, b) = \{(v, w) : v > v_+(I^*, b),\ w \le bv\}$, where $v_+(I^*, b)$ is the largest fixed point of the system with constant input $I^*$ ($-\infty$ if there is none, i.e. if $I^* > -m(b)$ with $m(b) = \min_v (F(v) - bv)$). The inequality $v > v_+$ is strict: this corrects Definition 1 of the source (used in its Lemma 1 and Theorem 2), which prints $Z^*:=Z(I^*,b)=\cup_{V \geq v_+(I^*,b)} Z(V)$ with $Z(V)=\{(v,w) \in \mathbb R^2 : v \geq V \text{ and } w \leq b\,v\}$. That set contains $(v_+, bv_+)$, an equilibrium when $I \equiv I^*$; for example with $F(v) = v^2$, $a = b = 1$ and $I \equiv I^* = 0$ one has $v_+ = 1$, and the solution from $(1, 1)$ is constant, with no blow-up.
 
 **Theorem.** Assume $I(t) \ge I^*$ on $(\tau_0, \tau_1)$.
 1. $Z^*$ is positively invariant under the flow.

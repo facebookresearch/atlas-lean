@@ -8,6 +8,8 @@ $$
 
 is a spatially homogeneous equilibrium.
 
+This setting corrects Section 3.1 of the source in two places. The source takes "$S(r,x)=\mathrm{erf}(gx)$", with $f(r,x,y)=\mathrm{erf}(gx/\sqrt{1+g^2y})$, but the slope $g/\sqrt{2\pi(1+g^2v_0)}$ it uses at $\mu=0$ is that of the Gaussian distribution function $\Phi$, for which that formula for $f$ holds. It also lets "$\tilde{\sigma}^2$ [denote] the integral $\int_0^1 \sigma^2(r,r')dr'$", following its variance equation with $\int\sigma^2f^2$; with the weight noise driven by one Brownian motion, as in the moment equations this page depends on, the weight-noise term at a homogeneous state is $(\int_0^1\sigma)^2F_0^2$, so here $\tilde\sigma=\int_0^1\sigma$.
+
 **Proposition (Touboul 2011, Section 3.1).** Let $a_k(\nu)=\int_{\Gamma}J(r)e^{-\nu\tau(r)}e^{-2\pi i k r}\,dr$, $k\in\mathbb{Z}$. The linearization at $(\mu_0,v_0)$ is block-triangular; its characteristic roots are $-2/\theta$ together with the solutions $\nu$ of the dispersion relations
 
 $$

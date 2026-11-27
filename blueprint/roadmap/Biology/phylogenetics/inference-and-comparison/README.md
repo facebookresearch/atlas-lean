@@ -34,3 +34,4 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Quartet distance under partial taxon placement](quartet-distance-under-partial-taxon-placement/README.md)
 - [Symbolic ultrametrics and Fitch maps](symbolic-ultrametrics-and-fitch-maps/README.md)
 - [Trees defined by parsimony alignments](trees-defined-by-parsimony-alignments/README.md)
+- [Phylogenetic network identifiability, recombination tests, and tree-space geometry](phylogenetic-network-identifiability-and-geometry/README.md)

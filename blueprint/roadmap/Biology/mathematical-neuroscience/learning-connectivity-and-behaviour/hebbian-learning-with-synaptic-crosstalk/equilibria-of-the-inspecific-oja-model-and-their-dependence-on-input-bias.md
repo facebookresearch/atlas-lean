@@ -23,7 +23,7 @@ where the $\delta_j$ are input biases (some inputs more variable than others) an
 $$\epsilon_j^* = \frac{-c}{v + \delta_j - c}, \qquad 0 < \epsilon_1^* < \epsilon_2^* < \dots < \epsilon_n^*,$$
 
 are where the auxiliary functions $f_j(\epsilon)$ locating the eigenvalues of $\mathbf E\mathbf C$ change sign ($f_j > 0$ iff $\epsilon > \epsilon_j^*$). If moreover $v + \delta_n > (n-1)|c|$, so that $\epsilon_n^* < 1/n$, then as $\epsilon$ increases from $0$ to $1/n$ it crosses all of them in order (without this condition it crosses, in order, those $\epsilon_j^*$ that lie below $1/n$), and between consecutive critical values the eigenvalues interlace differently with the diagonal values $(q-\epsilon)(v + \delta_j - c)$.
-3. For $\epsilon < \epsilon_1^*$ and $2 \le k \le n$, a bias loss of order $k$ ($\delta_1 = \dots = \delta_k$) produces a leading eigenvalue of multiplicity $k-1$ for $\mathbf E\mathbf C$, so the learned direction is no longer unique.
+3. For $\epsilon < \epsilon_1^*$ and $2 \le k \le n$, a bias loss of order $k$ ($\delta_1 = \dots = \delta_k$) produces a leading eigenvalue of multiplicity $k-1$ for $\mathbf E\mathbf C$. For $k = 2$ this eigenvalue is simple, so the learned direction stays unique; for $3 \le k \le n$ its multiplicity is at least $2$, so the learned direction is no longer unique.
 
 ## Proof sketch
 

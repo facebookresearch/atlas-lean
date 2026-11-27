@@ -8,7 +8,7 @@ $$
 \partial_t R(t,x) = \gamma(x)I(t,x),
 $$
 
-and population averages $S(t) = \int_\Omega S(t,x)\,dx$ etc. Assume $0 < \beta_{\min} \le \beta(x,y) \le \beta_{\max} < \infty$, $R(0) = 0$ and $I(0) > 0$. The model has the *herd immunity property* if $S(\infty) = \lim_{t\to\infty}S(t) > 0$, i.e. the epidemic burns out before infecting everyone.
+and population averages $S(t) = \int_\Omega S(t,x)\,dx$ etc. Assume $0 < \beta_{\min} \le \beta(x,y) \le \beta_{\max} < \infty$, $R(0) = 0$, $I(0) > 0$ and $S(0) > 0$. The model has the *herd immunity property* if $S(\infty) = \lim_{t\to\infty}S(t) > 0$, i.e. the epidemic burns out before infecting everyone.
 
 **Statement.**
 
@@ -19,7 +19,7 @@ $$
 $$
 
 (with $1/\gamma = +\infty$ where $\gamma = 0$).
-2. *SEIR.* The same equivalence holds for the heterogeneous SEIR model, with an exposed class $E$ leaving at trait-dependent rate $\alpha(x)$, $0 < \alpha_{\min} \le \alpha(x) \le \alpha_{\max} < \infty$, under $R(0) = 0$ and $E(0) + I(0) > 0$.
+2. *SEIR.* The same equivalence holds for the heterogeneous SEIR model, with an exposed class $E$ leaving at trait-dependent rate $\alpha(x)$, $0 < \alpha_{\min} \le \alpha(x) \le \alpha_{\max} < \infty$, under $R(0) = 0$, $E(0) + I(0) > 0$ and $S(0) > 0$.
 
 In particular the mean recovery *rate* $\mathbb{E}[\gamma]$ does not decide herd immunity. With $\beta = 1/4$ and $\mathbb{E}[\gamma] = 1/6$ in each case: constant $\gamma = 1/6$ leaves $S(\infty) \approx 0.42$; a two-group population with $\gamma \in \{0, 1/3\}$ equally likely, or $\gamma(x) = x/3$ on $\Omega = [0,1]$ (where $\mathbb{E}[1/\gamma] = \infty$), infects everyone, $S(\infty) = 0$; while $\gamma(x) = \sqrt x/4$ (where $\mathbb{E}[1/\gamma] = 8$) restores herd immunity.
 

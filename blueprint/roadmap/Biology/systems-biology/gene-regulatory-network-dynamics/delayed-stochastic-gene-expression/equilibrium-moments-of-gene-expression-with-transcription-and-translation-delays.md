@@ -21,7 +21,11 @@ with
 
 $$A=\frac{\tau_2}{\tau_2+\tau_3}\,\frac{\tau_2\mathbf E\big[e^{-|G_3-G_3'|/\tau_2}\big]-\tau_3\mathbf E\big[e^{-|G_3-G_3'|/\tau_3}\big]}{\tau_2-\tau_3}.$$
 
-$B$ is the analogous combination of $\mathbf E\big[e^{-|G_3-G_3'+G_2-G_2'|/\tau_j}\big]$, $j=1,2,3$.
+and, writing $e_j=\mathbf E\big[e^{-|G_3-G_3'+G_2-G_2'|/\tau_j}\big]$ for $j=1,2,3$,
+
+$$B=\frac{\tau_1}{\tau_1+\tau_3}\Big(\frac{\tau_1^2}{\tau_1+\tau_2}\,\frac{\tau_1e_1-\tau_2e_2}{(\tau_1-\tau_3)(\tau_1-\tau_2)}-\frac{\tau_3^2}{\tau_2+\tau_3}\,\frac{\tau_2e_2-\tau_3e_3}{(\tau_1-\tau_3)(\tau_2-\tau_3)}\Big)$$
+
+(for coinciding $\tau_j$, the continuous extension).
 
 Means do not depend on the delays. Delays enter the variances only through the Laplace-type quantities $\mathbf E[e^{-|D-D'|/\tau}]$ of the difference of two independent delays. These quantities equal $1$ for deterministic delays and are smaller otherwise. In particular $\mathbf{Var}[\mathcal N_2]\le\lambda_1^+\lambda_2\tau_1\tau_2+\lambda_1^+\lambda_1^-\lambda_2^2\tau_1^2\tau_2^2\frac{\tau_1}{\tau_1+\tau_2}$, the delay-free value, with equality iff $\mu$ is a point mass: random transcription delays strictly reduce equilibrium RNA noise. For exponential delays with means $\sigma_2,\sigma_3$, $\mathbf E[e^{-|G_2-G_2'|/\tau}]=\tau/(\sigma_2+\tau)$.
 

@@ -36,3 +36,6 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [LD-based haplotype blocks](ld-based-haplotype-blocks/README.md)
 - [Read-based single-individual haplotyping](read-based-single-individual-haplotyping/README.md)
 - [Statistical and combinatorial analysis of genomic data](statistical-and-combinatorial-genomic-data-analysis/README.md)
+- [Statistical models of genomic data](statistical-models-of-genomic-data/README.md)
+- [Sequence design and binding prediction](sequence-design-and-binding-prediction/README.md)
+- [Variant edges in bidirected pangenome graphs](variant-edges-in-bidirected-pangenome-graphs/README.md)

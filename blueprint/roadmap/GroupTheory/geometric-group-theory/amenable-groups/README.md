@@ -3,3 +3,7 @@
 - [Amenable group (Følner condition)](is-amenable.md)
 - [Finite groups are amenable](is-amenable-of-finite.md)
 - [Trivial groups are amenable](is-amenable-of-subsingleton.md)
+
+- [Amenability and unitarizability of arbitrary discrete groups](amenable-iff-all-bounded-representations-unitarizable.md)
+- [A separable 101-bounded representation of a countable nonamenable group](countable-nonamenable-separable-representation.md)
+- [Near-isometric nonunitarizable representations of nonamenable groups](near-isometric-nonamenable-witness.md)

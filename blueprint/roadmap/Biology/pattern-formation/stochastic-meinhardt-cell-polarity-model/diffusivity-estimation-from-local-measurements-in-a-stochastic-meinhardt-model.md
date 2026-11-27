@@ -10,7 +10,7 @@ $$f_A(y, x) = r_A\frac{\zeta(x)(b_A + y_1^2)}{(\zeta_I + |y_2|)(1 + \zeta_A y_1^
 
 and external signal $\zeta(x) = 1 - a\cos(2\pi x/L)$ (e.g. a chemoattractant gradient whose maximum defines the cell front).
 
-**Theorem (well-posedness).** For initial data $(A_0, I_0) \in C^{2+s}(\Lambda; \mathbb{R}^2)$, $0 < s < \tfrac12$, there is a unique mild solution $X = (A, I) \in C([0,T]; C^s(\Lambda; \mathbb{R}^2))$; it decomposes as $X = \bar X + \tilde X$ with $\bar X$ the stochastic convolution solving the linear equation (no reaction terms, zero initial value) and $\tilde X$ a more regular perturbation.
+**Theorem (well-posedness).** For initial data $(A_0, I_0) \in C^{2+s}(\Lambda; \mathbb{R}^2)$, $0 < s < \tfrac12$, there is a unique mild solution $X = (A, I) \in C([0,T]; C^s(\Lambda; \mathbb{R}^2))$; it decomposes as $X = \bar X + \tilde X$ with $\bar X$ the stochastic convolution solving the linear equation (no reaction terms, zero initial value) and $\tilde X \in C([0,T]; C^{2+s}(\Lambda; \mathbb{R}^2))$ a perturbation process.
 
 **Estimator.** Activator fluorescence is observed through a point spread function: $A_\delta(t, x_k) = \langle A(t), K_{\delta,x_k}\rangle$, $K_{\delta,x_k}(x) = \delta^{-1/2}K((x - x_k)/\delta)$, at $M$ locations, together with $A^\Delta_\delta(t, x_k) = \langle A(t), \partial_x^2 K_{\delta,x_k}\rangle$. The augmented maximum-likelihood estimator (ignoring the nonlinear term) is
 

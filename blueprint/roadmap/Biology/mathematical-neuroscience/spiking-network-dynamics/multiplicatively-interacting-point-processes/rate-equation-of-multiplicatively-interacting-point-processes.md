@@ -24,7 +24,7 @@ Separating constant-rate Poisson inputs $P \subset A$ (with $\ell_{pa'} = 0$, ra
 
 **Results.**
 1. The positive cone of $\mathbb{R}^{|A|}$ is invariant under the rate equation.
-2. Every equilibrium has, for each $r$, either $y_r = 0$ or $(\mathcal{L}_R y + \mathcal{L}_P i)_r = 0$; with $\mathcal{L}_R$ invertible, the interior equilibrium is $y = -\mathcal{L}_R^{-1}\mathcal{L}_P i$, which need not be positive.
+2. Every equilibrium has, for each $r$, either $y_r = 0$ or $(\mathcal{L}_R y + \mathcal{L}_P i)_r = 0$; with $\mathcal{L}_R$ invertible, the interior equilibrium is $y = -\mathcal{L}_R^{-1}\mathcal{L}_P i$, which need not be positive. This corrects Proposition 4.5 of the source, which prints "If $\mathcal L_R$ is invertible, then Equation (4.1) has $2^{|A|}$ critical points", after "we either have $y_r=0$ or $y_r=-(\mathcal L^{-1}_R\mathcal L_P i)_r$": on a face where the coordinates outside a set $S \subseteq R$ vanish, the others solve $(\mathcal{L}_R)_{SS}\,y_S = -(\mathcal{L}_P i)_S$, whose solution is in general not the restriction of $-\mathcal{L}_R^{-1}\mathcal{L}_P i$, and whose matrix, a principal submatrix of $\mathcal{L}_R$, can be singular even when $\mathcal{L}_R$ is invertible, so the number of equilibria is not $2^{|A|}$ in general.
 3. If $\mathcal{L}_R$ is negative definite, then all positive solutions are bounded.
 
 ## Proof sketch

@@ -20,7 +20,15 @@ where $X_{11}, X_{12}$ are two continuations sharing the path up to $t-h$.
 
 $$\mathbb{E}_\nu\Big[\int_0^{t-h}\lambda_0(X(s))\,ds\Big] + m\,\mathbb{E}_\nu\Big[\int_{t-h}^t \lambda_0(X(s))\,ds\Big].$$
 
-**Theorem (coalescence probability).** If $X$ and $Z$ are driven by the same intensity path $\Lambda_r^{a,b} = \int_a^b \lambda_r(X(s))\,ds$ but independent Poisson processes, the probability $P_\nu(X(t) = Z(t))$ is an explicit sum, over integer vectors $k$ in the right null space of the stoichiometric matrix $S = [\zeta_1 \cdots \zeta_R]$, of products of Skellam$(\Lambda_r^{a,b}, \Lambda_r^{a,b})$ probabilities; this yields a computable approximation of the collision term in the error formula.
+**Theorem (coalescence probability).** Let $S = [\zeta_1 \cdots \zeta_R]$ be the $d \times R$ stoichiometric matrix and $\mathrm{null}(S) = \{k \in \mathbb{Z}^R : Sk = 0\}$ its integer right null space. Let $X$ be non-explosive and
+
+$$Z(t) = X(0) + \sum_{r=1}^R Y_r^Z\Big(\int_0^t \lambda_r(X(s))\,ds\Big)\zeta_r,$$
+
+with unit-rate Poisson processes $Y_r^Z$ independent of the $Y_r$ driving $X$, so that $Z$ uses the intensity path of $X$. Write $\Lambda_r^{0,t} = \int_0^t \lambda_r(X(s))\,ds$ and, given $\Lambda_r^{0,t}$, let $K_r^{0,t}$ have the Skellam$(\Lambda_r^{0,t}, \Lambda_r^{0,t})$ law, that of the difference of two independent Poisson variables with mean $\Lambda_r^{0,t}$. Then
+
+$$P_\nu(X(t) = Z(t)) = \sum_{k \in \mathrm{null}(S)} \mathbb{E}_\nu\Big[\prod_{r=1}^R P\big(K_r^{0,t} = k_r \,\big|\, \Lambda_r^{0,t}\big)\Big],$$
+
+where the expectation is over the random intensity integrals $\Lambda^{0,t} = (\Lambda_r^{0,t})_r$. Applied on $[t-h, t]$, under the approximation that the two continuations have nearly equal intensity integrals there (valid for small $h$), this yields a computable approximation of the collision term in the error formula.
 
 ## Proof sketch
 
@@ -28,4 +36,4 @@ Expanding the square and using that the $m$ continuations in a group are exchang
 
 ## Sources
 
-- David F. Anderson and Kurt W. Ehlert, "Conditional Monte Carlo for Reaction Networks", *SIAM Journal on Scientific Computing* 44 (2022), A993–A1019, <https://doi.org/10.1137/21m144267x>. Preprint version: arXiv:1906.05353 (2019), estimator definition (Introduction), the mean integrated squared error theorem, the Skellam approximation theorem and the theorem on the expected number of reactions (Proofs section), <https://doi.org/10.48550/arXiv.1906.05353>.
+- David F. Anderson and Kurt W. Ehlert, "Conditional Monte Carlo for Reaction Networks", *SIAM Journal on Scientific Computing* 44 (2022), A993–A1019, <https://doi.org/10.1137/21m144267x>. Preprint version: arXiv:1906.05353 (2019), estimator definition (Introduction), the mean integrated squared error theorem, the Skellam approximation theorem (Theorem 3.2) and the theorem on the expected number of reactions (Proofs section), <https://doi.org/10.48550/arXiv.1906.05353>.

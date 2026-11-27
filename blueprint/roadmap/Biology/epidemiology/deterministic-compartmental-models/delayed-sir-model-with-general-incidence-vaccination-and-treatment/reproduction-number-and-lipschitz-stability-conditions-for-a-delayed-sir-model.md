@@ -24,7 +24,7 @@ $$R_0 = \frac{b_1 f_y(x^*, 0)}{r\,p'(0) + d_1}.$$
 
 $$\big(\lambda - b_1 f_y(x^*,0) + r p'(0) + d_1\big)\,(\lambda+\alpha)\,\big(\lambda + d + c\,v'(x^*)\,e^{-\lambda\eta}\big) = 0 .$$
 
-If $R_0 > 1$ the disease-free equilibrium is unstable for all delays. If $R_0 < 1$ and either $\eta = 0$ or $c\,v'(x^*) < d$, every root has negative real part, so the disease-free equilibrium is locally asymptotically stable for all $\tau,\delta \ge 0$; the treatment delay $\delta$ does not enter.
+If $R_0 > 1$ the disease-free equilibrium is unstable for all delays. If $R_0 < 1$ and either $\eta = 0$ or $c\,v'(x^*) < d$, every root has negative real part, so the disease-free equilibrium is locally asymptotically stable for all $\tau,\delta \ge 0$; the treatment delay $\delta$ does not enter. This corrects Theorem 3.4 of the source, which prints that for $R_0<1$ the system "will be locally stable provided the condition $\dfrac{r}{\alpha}e^{-\lambda \delta}\dfrac{dp(0)}{d y_\delta}< 1$ holds true": that condition plays no role in the factorization above, while the vaccination factor needs $\eta = 0$ or $c\,v'(x^*) < d$.
 
 **Theorem (global stability without delays).** Let $\eta=\tau=\delta=0$ and let $(x^*,y^*,z^*)$ be an endemic equilibrium. It is globally asymptotically stable among nonnegative solutions whenever
 

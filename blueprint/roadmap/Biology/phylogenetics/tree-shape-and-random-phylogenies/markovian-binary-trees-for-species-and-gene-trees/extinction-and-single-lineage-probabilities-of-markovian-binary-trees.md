@@ -14,11 +14,13 @@ $$\frac{d\mathbf D^{(1)}(t)}{dt} = \mathbf D_0\mathbf D^{(1)}(t) + \mathbf B\big
 
 equivalently $\mathbf D^{(1)}(t) = e^{\mathbf D_0t}\mathbf 1 + \int_0^t e^{\mathbf D_0(t-u)}\mathbf B\big(\mathbf E(u)\otimes\mathbf D^{(1)}(u) + \mathbf D^{(1)}(u)\otimes\mathbf E(u)\big)du$.
 
-**Lemma ($n$ surviving lineages).** With $\mathbf D^{(0)} = \mathbf E$, the probability vectors $\mathbf D^{(n)}(t)$ of exactly $n$ extant lineages satisfy
+**Lemma ($n$ surviving lineages).** With $\mathbf D^{(0)}(t) = \mathbf E(t)$, the probability vectors $\mathbf D^{(n)}(t)$ of exactly $n$ extant lineages satisfy
 
-$$\frac{d\mathbf D^{(n)}}{dt} = \mathbf D_0\mathbf D^{(n)} + \mathbf B\big(\mathbf D^{(0)}\otimes\mathbf D^{(n)} + \mathbf D^{(n)}\otimes\mathbf D^{(0)}\big) + \sum_{n_L=1}^{n-1}\mathbf B\big(\mathbf D^{(n_L)}\otimes\mathbf D^{(n-n_L)}\big),\qquad \mathbf D^{(n)}(0) = \mathbb 1\{n=1\}\mathbf 1,$$
+$$\frac{d\mathbf D^{(n)}}{dt} = \mathbf D_0\mathbf D^{(n)} + \mathbf B\big(\mathbf D^{(0)}\otimes\mathbf D^{(n)} + \mathbf D^{(n)}\otimes\mathbf D^{(0)}\big) + \sum_{n_L=1}^{n-1}\mathbf B\big(\mathbf D^{(n_L)}\otimes\mathbf D^{(n-n_L)}\big),\qquad \mathbf D^{(n)}(0) = \mathbb 1\{n=1\}\mathbf 1.$$
 
-and analogous equations hold for the probability that $n_L$ of the $n$ lineages descend from the left subtree.
+For $n \ge 2$ and $n_L = 1, \dots, n-1$, let $N(t)$ be the number of extant lineages at time $t$, $N_L(t)$ the number of them in the left subtree of the reconstructed tree, and $\mathbf D^{(n_L,n)}(t)$ the vector whose $i$-th entry is $\mathbb P(N_L(t) = n_L,\ N(t) = n)$ for a tree started by one branch in phase $i$. Then
+
+$$\frac{d\mathbf D^{(n_L,n)}}{dt} = \mathbf D_0\mathbf D^{(n_L,n)} + \mathbf B\big(\mathbf D^{(0)}\otimes\mathbf D^{(n_L,n)} + \mathbf D^{(n_L,n)}\otimes\mathbf D^{(0)}\big) + \mathbf B\big(\mathbf D^{(n_L)}\otimes\mathbf D^{(n-n_L)}\big),\qquad \mathbf D^{(n_L,n)}(0) = \mathbf 0.$$
 
 ## Proof sketch
 
@@ -26,4 +28,4 @@ All equations come from a first-step (backward Kolmogorov) decomposition on the 
 
 ## Sources
 
-- Albert Ch. Soewongsono, Jiahao Diao, Tristan Stark, Amanda E. Wilson, David A. Liberles, Barbara R. Holland and Małgorzata M. O’Reilly, "Matrix-analytic Methods for the Evolution of Species Trees, Gene Trees, and Their Reconciliation", *Methodology and Computing in Applied Probability* 27 (2025), 9, <https://doi.org/10.1007/s11009-025-10135-z>. Preprint version: arXiv:2309.06447 (2023), Section 2 (MBT model) and Lemmas 1–3 (Section 3), <https://doi.org/10.48550/arXiv.2309.06447>.
+- Albert Ch. Soewongsono, Jiahao Diao, Tristan Stark, Amanda E. Wilson, David A. Liberles, Barbara R. Holland and Małgorzata M. O’Reilly, "Matrix-analytic Methods for the Evolution of Species Trees, Gene Trees, and Their Reconciliation", *Methodology and Computing in Applied Probability* 27 (2025), 9, <https://doi.org/10.1007/s11009-025-10135-z>. Preprint version: arXiv:2309.06447 (2023), Section 2 (MBT model) and Lemmas 1–3 (Section 3; the left-subtree equation is (26)), <https://doi.org/10.48550/arXiv.2309.06447>.

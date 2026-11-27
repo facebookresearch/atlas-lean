@@ -28,6 +28,10 @@ $$R_0 = \frac{\sigma^\alpha}{m_1m_2}\frac{\partial F}{\partial I}(S_0, 0),$$
 
 the disease-free equilibrium is asymptotically stable when $R_0 \le 1$, and the endemic equilibrium is asymptotically stable when $R_0 > 1$.
 
+## Proof depends on
+
+- [Generalized Volterra estimate for Caputo derivatives](../../../systems-biology/cellular-and-biochemical-dynamics/lyapunov-functions-for-caputo-fractional-biological-models/generalized-volterra-estimate-for-caputo-derivatives.md)
+
 ## Proof sketch
 
 The proof writes $\Psi(u(t))$ through its derivative $1 - g(u^*)/g(u)$, integrates by parts against the kernel (exponential for CF, Mittag-Leffler for ABC), and uses that the kernel is positive and decreasing while $\Psi$ is convex in the appropriate sense, so the remainder term has a sign. The inequality lets one differentiate Lyapunov functions such as $V = \Psi_1(S) + E - E^* - E^*\ln(E/E^*) + c\,(I - I^* - I^*\ln(I/I^*))$ along fractional dynamics exactly as in the integer-order case; choosing $g(S) = F(S, I^*)$ handles non-separable incidences, which the plain Volterra estimate cannot.

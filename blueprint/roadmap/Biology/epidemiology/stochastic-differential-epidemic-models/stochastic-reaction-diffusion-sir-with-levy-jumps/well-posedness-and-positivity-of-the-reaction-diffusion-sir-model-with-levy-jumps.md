@@ -10,12 +10,12 @@ dR &= \bigl[d_3\Delta R - \mu(x) R + \gamma(x) I\bigr]dt + \int_{\mathbb{Z}} \ma
 \end{aligned}
 $$
 
-where $d_i > 0$, $\Lambda, \mu, \gamma$ are positive essentially bounded functions, $\tilde N$ is a compensated Poisson random measure with $\sigma$-finite intensity $\nu$, and the jump intensities $\mathcal{C}_i$ are essentially bounded. The incidence $F : [0,\infty)^2 \to [0,\infty)$ is either
+where $d_i > 0$, $\Lambda, \mu, \gamma$ are positive essentially bounded functions, $\tilde N$ is a compensated Poisson random measure whose intensity $\nu$ is a finite measure on a measurable set $\mathbb{Z} \subset [0,\infty)$, $\nu(\mathbb{Z}) < \infty$, and the jump intensities $\mathcal{C}_i$ are essentially bounded with $\mathcal{C}_i > -1$ (so a jump never makes a compartment negative). The incidence $F : [0,\infty)^2 \to [0,\infty)$ is either
 - **(P1)** globally Lipschitz (e.g. standard incidence $\beta(x)\,si/(s+i)$), or
-- **(P3)** locally Lipschitz with $F(s, i) \le C_F s$ (e.g. Crowley–Martin incidence $\beta(x)\,si/(1 + ai + bsi)$).
+- **(P2)** locally Lipschitz with $F(s, i) \le C_F s$ (e.g. Crowley–Martin incidence $\beta(x)\,si/(1 + ai + bsi)$).
 
 **Theorem.**
-1. Under (P1), for every $u_0 = (S_0, I_0, R_0) \in L^2(\mathcal{U})^3$, and under (P3), for every $u_0 \in L^\infty(\mathcal{U})^3$, the system has a pathwise unique global càdlàg mild solution $u(t) = \mathcal{S}(t)u_0 + \int_0^t \mathcal{S}(t-s)\mathcal{F}(u(s))\,ds + \int_0^t\!\int_{\mathbb{Z}} \mathcal{S}(t-s)\mathcal{G}(z, u(s-))\,\tilde N(ds, dz)$, depending continuously on $u_0$; here $\mathcal{S}$ is the Neumann heat semigroup.
+1. Under (P1), for every $u_0 = (S_0, I_0, R_0) \in L^2(\mathcal{U})^3$, and under (P2), for every $u_0 \in L^\infty(\mathcal{U})^3$, the system has a pathwise unique global càdlàg mild solution $u(t) = \mathcal{S}(t)u_0 + \int_0^t \mathcal{S}(t-s)\mathcal{F}(u(s))\,ds + \int_0^t\!\int_{\mathbb{Z}} \mathcal{S}(t-s)\mathcal{G}(z, u(s-))\,\tilde N(ds, dz)$, depending continuously on $u_0$; here $\mathcal{S}$ is the Neumann heat semigroup.
 2. The mild solution is the mean-square limit, uniformly on $[0,T]$, of strong solutions of the problems regularized by the resolvent $\theta\mathcal{R}(\theta)$ of the diffusion operator, as $\theta \to \infty$.
 3. For both incidence classes the mild solution stays almost surely nonnegative.
 
@@ -29,4 +29,4 @@ Writing the system as an abstract evolution equation $du = (\mathcal{A}u + \math
 
 ## Sources
 
-- Mohamed Mehdaoui, "Well-posedness results for a new class of stochastic spatio-temporal SIR-type models driven by proportional pure-jump Lévy noise", *Applied Mathematical Modelling* 126 (2024), 543–567, <https://doi.org/10.1016/j.apm.2023.11.017>. Preprint version: arXiv:2303.18239 (2023), spatio-temporal SIR system with Neumann boundary conditions (Section 1), Definition 2.4, Theorems 3.1–3.3, Lemmas 4.1–4.3, Theorem 4.1, <https://doi.org/10.48550/arXiv.2303.18239>.
+- Mohamed Mehdaoui, "Well-posedness results for a new class of stochastic spatio-temporal SIR-type models driven by proportional pure-jump Lévy noise", *Applied Mathematical Modelling* 126 (2024), 543–567, <https://doi.org/10.1016/j.apm.2023.11.017>. Preprint version: arXiv:2303.18239 (2023), spatio-temporal SIR system with Neumann boundary conditions and the assumptions $\nu(\mathbb{Z})<+\infty$, $C_i(z)>-1$ (Section 1, (1.3)), Definition 2.4, Theorems 3.1–3.3, Lemmas 4.1–4.3, Theorem 4.1, <https://doi.org/10.48550/arXiv.2303.18239>.

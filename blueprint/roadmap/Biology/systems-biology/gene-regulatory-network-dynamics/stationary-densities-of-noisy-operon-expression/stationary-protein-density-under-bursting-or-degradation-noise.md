@@ -16,7 +16,7 @@ with $\mathcal{C}$ a normalizing constant, and every solution converges to it in
 
 $$u_*(x) = \mathcal{C}\,e^{-x/b}\,x^{\kappa_b/K - 1}\,(K + x^n)^{\theta}, \qquad \theta = \frac{\kappa_b}{n}\Big(1 - \frac1K\Big),$$
 
-whose interior critical points solve $\frac{1}{\kappa_b}\big(\frac{x}{b} + 1\big) = \frac{1 + x^n}{K + x^n}$; the density is bimodal for $\kappa_b$ in an explicit window $(\kappa_{b-}, \kappa_{b+})$ (for $n = 4$, $K = 10$, $b = 1$: $\kappa_{b-} \approx 4.29$, $\kappa_{b+} \approx 14.35$), the stochastic counterpart of deterministic bistability.
+whose interior critical points solve $\frac{1}{\kappa_b}\big(\frac{x}{b} + 1\big) = \frac{1 + x^n}{K + x^n}$. Let $x_\pm$ be the positive roots of the tangency equation $x^{2n} - (K-1)\big[n - \frac{K+1}{K-1}\big]x^n - nb(K-1)x^{n-1} + K = 0$ and $\kappa_{b\pm} = \frac{x_\mp + b}{b}\cdot\frac{K + x_\mp^n}{1 + x_\mp^n}$. Then $u_*$ is bimodal of type 1 ($u_*(0) = \infty$ and a single interior maximum) for $\kappa_{b-} < \kappa_b < K$, and bimodal of type 2 ($u_*(0) = 0$ and two interior maxima $0 < \tilde x_1 < \tilde x_3$) for $\kappa_{b-} < \kappa_b < \kappa_{b+}$ and $K < \kappa_b$ (for $n = 4$, $K = 10$, $b = 1$: $\kappa_{b-} \approx 4.29$, $\kappa_{b+} \approx 14.35$). This is the stochastic counterpart of deterministic bistability.
 2. With degradation noise, the unique, asymptotically stable stationary density is
 
 $$u_*(x) = \frac{\mathcal{C}}{x}\,e^{-2\gamma x/\sigma^2}\exp\Big[\kappa_e\int^x \frac{f(y)}{y}\,dy\Big], \qquad \kappa_e = \frac{2\gamma\kappa_d}{\sigma^2}.$$
@@ -29,4 +29,4 @@ Writing $y = xu_*$, the stationary bursting equation becomes, after a Laplace tr
 
 ## Sources
 
-- Michael C. Mackey, Marta Tyran-Kamińska and Romain Yvinec, "Molecular distributions in gene regulatory dynamics", *Journal of Theoretical Biology* 274 (2011), 84–96, <https://doi.org/10.1016/j.jtbi.2011.01.020>. Preprint version: arXiv:1009.5810 (2010), Section 2 (operon model, Theorems 1 and 2 quoted from earlier work), Section 4 (bursting: Theorem 3 and the inducible-operon bimodality analysis), Section 5 (degradation noise: Theorem 4), <https://doi.org/10.48550/arXiv.1009.5810>.
+- Michael C. Mackey, Marta Tyran-Kamińska and Romain Yvinec, "Molecular distributions in gene regulatory dynamics", *Journal of Theoretical Biology* 274 (2011), 84–96, <https://doi.org/10.1016/j.jtbi.2011.01.020>. Preprint version: arXiv:1009.5810 (2010), Section 2 (operon model, Theorems 1 and 2 quoted from earlier work), Section 4 (bursting: Theorem 3 and the inducible-operon bimodality analysis, with the tangency equation for $x_\pm$, the formula for $\kappa_{b\pm}$ and the unimodal and bimodal types), Section 5 (degradation noise: Theorem 4), <https://doi.org/10.48550/arXiv.1009.5810>.

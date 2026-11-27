@@ -18,3 +18,4 @@
 - [Slack reactant truncation of the chemical master equation](slack-reactant-truncation-of-the-chemical-master-equation/README.md)
 - [Steady-state sensitivity of stochastic reaction networks](steady-state-sensitivity-of-stochastic-reaction-networks/README.md)
 - [Stochastic bistability in reaction networks](stochastic-bistability-in-reaction-networks/README.md)
+- [Stochastic first-passage, immune dynamics, and weak-form estimation](stochastic-and-inverse-systems-biology/README.md)
