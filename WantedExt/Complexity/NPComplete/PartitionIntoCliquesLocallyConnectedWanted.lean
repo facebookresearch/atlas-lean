@@ -26,7 +26,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -52,7 +52,7 @@ either reading.
 
 The instance, the graph, the parent well-formedness (`PartitionIntoCliques.WellFormed`: a simple
 edge list on `Fin n` and `0 < K ≤ |V|`) and the question
-(`PartitionIntoCliques.PartitionIntoCliquesFeasible`) are those of `PartitionIntoCliquesWanted`,
+(`PartitionIntoCliques.PartitionIntoCliquesFeasible`) are those of `PartitionIntoCliquesDefs`,
 unchanged; the restriction adds to `WellFormed` that the graph is locally connected.
 
 Reduction from PARTITION INTO CLIQUES on connected graphs (ISGCI note `ref_1506`): for a
