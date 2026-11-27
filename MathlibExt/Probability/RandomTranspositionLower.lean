@@ -46,7 +46,9 @@ private theorem swap_eq_swap_iff {a b i j : Fin n} (hab : a ≠ b) :
     · rfl
     · exact swap_comm _ _
 
-private theorem randomTransposition_eq_expect (σ : WalkPerm n) :
+/-- Sampling two independent uniform endpoints and interchanging them gives the
+random-transposition measure, including the identity step when the endpoints agree. -/
+public theorem randomTransposition_eq_expect (σ : Equiv.Perm (Fin n)) :
     randomTransposition n σ =
       𝔼 i : Fin n, 𝔼 j : Fin n, if swap i j = σ then (1 : ℝ) else 0 := by
   classical
