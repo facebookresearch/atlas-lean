@@ -275,18 +275,90 @@ class Describe(unittest.TestCase):
                       f"af_{'2' * 24}\n#9: af_{'1' * 24}\n```\n", short)
         self.assertNotIn(pointer, short)
         # Else how many, with what the other ids are, the pull requests aside, and where to read them in full.
+        # The reasons say which pages a page's own dependency sections link, and which declaration a page holds back:
+        # the short form counts the pages by the kind of reason.
+        gaps = [(f"af_{number:024x}", [8 + number % 2], f"its own dependency sections link {1 + number % 3} page(s), "
+                 f"such as `../p{number}.md`, and the batch cannot tell whether the declaration's Lean records them: "
+                 f"linking it is an editor's call; #{8 + number % 2} adds no candidate the batch would give a page")
+                for number in range(3000, 3100)]
+        held = [(f"af_{number:024x}", [10], f"it holds `Ext.held_{number}` back: relinking it is an editor's call; #10 "
+                 "adds no candidate the batch would give a page") for number in range(3100, 3105)]
         links = batch.LinkPlan(linked={f"af_{number:024x}": [7] for number in range(3000)},
-                               unchanged=[(f"af_{number:024x}", [8 + number % 2], f"#{8 + number % 2} names a `folder` page")
-                                          for number in range(3000, 3100)] + [("af_" + "f" * 24, [9], "no row has this "
-                                                                               "article id")])
+                               unchanged=gaps + held + [("af_" + "f" * 24, [9], "no row has this article id")])
         long = self.describe(links=links)
-        self.assertIn("### Pages named on `Graph:` lines, left as they are\n\n3000 ids name pages linked already; 100 ids: "
-                      f"#N names a folder page; 1 ids: no row has this article id, too many to list here: {pointer}\n",
+        self.assertIn("### Pages named on `Graph:` lines, left as they are\n\n3000 ids name pages linked already; 5 ids: "
+                      "it holds … back: relinking it is an editor's call; #N adds no candidate the batch would give a "
+                      "page; 100 ids: its own dependency sections link other pages, and the batch cannot tell whether "
+                      "the declaration's Lean records them: linking it is an editor's call; #N adds no candidate the "
+                      f"batch would give a page; 1 ids: no row has this article id, too many to list here: {pointer}\n",
                       long)
         self.assertLess(len(long), batch.BODY_LIMIT)
         whole = self.describe(links=links, full=True)
         self.assertIn(f"af_{'f' * 24} (#9): no row has this article id", whole)
+        self.assertIn("such as ../p3000.md, and the batch", whole)
         self.assertGreater(len(whole), batch.BODY_LIMIT)
+
+    def test_the_kind_of_a_reason(self) -> None:
+        self.assertEqual(batch.reason_kind("its own dependency sections link 3 page(s), such as `../a b.md`, and the "
+                                           "batch cannot tell whether the declaration's Lean records them: linking it is "
+                                           "an editor's call; #9102 adds no candidate the batch would give a page"),
+                         "its own dependency sections link other pages, and the batch cannot tell whether the "
+                         "declaration's Lean records them: linking it is an editor's call; #N adds no candidate the "
+                         "batch would give a page")
+        # A fixed word in code stays, without its backticks, as in the full form.
+        self.assertEqual(batch.reason_kind("#7 adds one documented declaration in its topic that could state it, "
+                                           "`Ext.a`, which `main` had before this batch's base"),
+                         "#N adds one documented declaration in its topic that could state it, …, which main had before "
+                         "this batch's base")
+        self.assertEqual(batch.reason_kind("#9937, #10600 name it, and the batch does not choose between them"),
+                         "#N name it, and the batch does not choose between them")
+        self.assertEqual(batch.reason_kind("no row has this article id"), "no row has this article id")
+
+    def test_the_line_of_a_page_left_for_an_editor(self) -> None:
+        # The page, the pull requests that name it, outside code, the short names of its reason, how many it withholds.
+        self.assertEqual(batch.left_line("A/b.md", "#9937, #10600 name it, and the batch does not choose between them; "
+                                         "it is a node still to expand: expanding or linking it is an editor's call",
+                                         ["Ext.a", "Ext.b"]),
+                         "- `A/b.md`, #9937, #10600: several pull requests name it; a node still to expand; 2 given no "
+                         "page")
+        self.assertEqual(batch.left_line("A/b.md", "#10533 names it; its own dependency sections link 3 page(s), such as "
+                                         "`#12.md`, and the batch cannot tell whether the declaration's Lean records "
+                                         "them: linking it is an editor's call", ["Ext.a"]),
+                         "- `A/b.md`, #10533: its own dependency sections link pages; 1 given no page")
+        self.assertEqual(batch.left_line("A/b.md", "`Ext.a`, the one declaration in its topic that #26 adds and that could "
+                                         "state it, is gone or deprecated on `main` now: compare what replaced it, if "
+                                         "anything, with the page", []),
+                         "- `A/b.md`, #26: its one candidate is gone or deprecated")
+        # A reason none of the phrases names is given by its kind.
+        self.assertEqual(batch.left_line("A/b.md", "#7 names it; a reason no phrase names, `A/c.md`", ["Ext.a"]),
+                         "- `A/b.md`, #7: a reason no phrase names, …; 1 given no page")
+
+    def test_the_description_keeps_within_any_bound_its_short_forms_keep_within(self) -> None:
+        # Lists that give way before the pages left for an editor, which withhold many names each: for every bound that
+        # the description keeps within with every list given way (the pages left for an editor a line each), make's
+        # description keeps within it too; past the bound, it gives every list that can give way as a count.
+        plan = batch.PlacementPlan(added=[batch.Placement(f"MathlibExt/A/M{number}", "Algebra/groups", f"Topic {number}",
+                                                          f"#{number}") for number in range(300)],
+                                   dropped=[f"MathlibExt/Gone/M{number}" for number in range(300)])
+        links = batch.LinkPlan(left=[(f"af_{page:024x}", f"Algebra/groups/topic-{page}/p{page}.md",
+                                      f"#{page} adds 40 documented declarations in its topic that could state it",
+                                      [f"Ext.topic{page}.name_{name}" for name in range(40)]) for page in range(60)])
+        report = {"missing": [f"Ext.n{number}" for number in range(400)],
+                  "new": {f"Ext.n{number}": f"MathlibExt/A/M{number}" for number in range(400)}}
+        whole = self.describe(plan, links, report, full=True)
+        with patch.object(batch, "BODY_LIMIT", 0):
+            floor = self.describe(plan, links, report)
+        self.assertIn("- `Algebra/groups/topic-0/p0.md`, #0: several candidates in its topic; 40 given no page\n", floor)
+        self.assertLess(len(floor), len(whole) // 4)
+        for limit in range(len(floor), len(whole) + 2, 97):
+            with self.subTest(limit=limit), patch.object(batch, "BODY_LIMIT", limit):
+                text = self.describe(plan, links, report)
+                self.assertLessEqual(len(text), limit)
+                # The pages left for an editor keep their names while any other list can still give way.
+                if "Ext.topic0.name_0" not in text:
+                    self.assertNotIn("- `MathlibExt/A/M0`: 1\n", text)
+                    self.assertNotIn("| `MathlibExt/A/M0` |", text)
+                    self.assertNotIn("- `MathlibExt/Gone/M0`\n", text)
 
     def test_the_longest_list_gives_way_first(self) -> None:
         pointer = f"`python3 scripts/graph_batch.py verify {'c' * 40}`, run from a checkout of `main`, prints them all."
@@ -318,12 +390,31 @@ class Describe(unittest.TestCase):
         whole = self.describe(plan, links, report(4000), full=True)
         self.assertTrue("| `MathlibExt/A/M1499` | `Algebra/groups` | `Topic 1499` | #1499 |" in whole)
         self.assertTrue("- `MathlibExt/A/M3999`: 1" in whole)
-        # The pages left for an editor never give way: their list is the only record of what the batch withholds.
+        # The pages left for an editor give way last, and only to a line each, with how many declarations each gives no
+        # page: their list is the only record of what the batch withholds, whose names verify prints.
         many = batch.LinkPlan(left=[("af_" + "3" * 24, "Algebra/a.md", "#7 adds 4000 documented declarations in its "
-                                     "topic that could state it", [f"Ext.name_{number}" for number in range(4000)])])
+                                     "topic that could state it", [f"Ext.name_{number}" for number in range(4000)]),
+                                    ("af_" + "4" * 24, "Algebra/b.md", "#8 names it; its candidate is gone", [])])
         text = self.describe(plan, many, report(1000))
         self.assertTrue(f"### Placements\n\n1500 modules placed, too many to list here: {pointer}\n" in text)
-        self.assertTrue("`Ext.name_0`, `Ext.name_1`, " in text and "`Ext.name_3999`\n" in text)
+        self.assertTrue("and those counted here then get their pages only from such a batch ([Graph-sync batches]"
+                        "(docs/BLUEPRINT.md#graph-sync-batches)). A line a page gives the pull requests that name it, the "
+                        "short names of its reason and how many declarations it gives no page, too many to name here: "
+                        f"{pointer}\n\n- `Algebra/a.md`, #7: several candidates in its topic; 4000 given no page\n"
+                        "- `Algebra/b.md`, #8: its candidate is gone\n\n" in text)
+        self.assertNotIn("Ext.name_0", text)
+        self.assertLess(len(text), batch.BODY_LIMIT)
+        self.assertTrue("`Ext.name_0`, `Ext.name_1`, " in self.describe(plan, many, report(1000), full=True))
+        # While another list can give way, they keep every name.
+        some = batch.LinkPlan(left=[(f"af_{page:024x}", f"Algebra/p{page}.md", f"#{page} adds 30 documented declarations "
+                                     "in its topic that could state it", [f"Ext.n{page}_{name}" for name in range(30)])
+                                    for page in range(50)])
+        dropped = batch.PlacementPlan(dropped=[f"MathlibExt/Gone/LongModuleName{number}" for number in range(1500)])
+        self.assertGreater(len(self.describe(dropped, some, full=True)), batch.BODY_LIMIT)
+        text = self.describe(dropped, some)
+        self.assertTrue(f"### Placements dropped\n\n1500 placements dropped, too many to list here: {pointer}\n" in text)
+        self.assertTrue("; given no page: `Ext.n0_0`, `Ext.n0_1`, " in text and "`Ext.n49_29`\n" in text)
+        self.assertLess(len(text), batch.BODY_LIMIT)
 
 
 class LinkedRows(unittest.TestCase):

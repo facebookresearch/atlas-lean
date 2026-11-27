@@ -8,6 +8,8 @@ Logical characterizations of complexity classes on finite structures: Fagin's th
 - [Finite model theory](finite-model-theory/README.md)
 
 - [Pebble games with counting and the Sherali–Adams hierarchy](pebble-games-with-counting.md)
+- [A polynomial-time linear-system query outside choiceless polynomial time with counting](choiceless-polynomial-time-counting-separation.md)
+- [Strict expressive gain from one witnessed symmetric choice](one-witnessed-choice-expressive-gain.md)
 - [First-order projections](first-order-projections/README.md)
 - [Ehrenfeucht–Fraïssé Games](ehrenfeucht-fraisse-games/README.md)
 - [Finite Structures and First-Order Definability](finite-structures-and-definability/README.md)

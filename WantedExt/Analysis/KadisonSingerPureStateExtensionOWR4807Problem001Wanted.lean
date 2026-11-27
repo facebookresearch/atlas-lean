@@ -27,8 +27,8 @@ namespace MathlibExt.Analysis.KadisonSingerPureStateExtensionOWR4807Problem001Wa
 
 /-!
 Source: workshop introduction, in Operator Algebras and Representation Theory: Frames, Wavelets and
-Fractals, Oberwolfach Reports 8 (2011), no. 17, p. 902, DOI 10.4171/OWR/2011/17. UnsolvedMath record
-UM-30001746 (`OWR-4807-001`), dataset ulamai/UnsolvedMath v1.8.0.
+Fractals, Oberwolfach Reports 8 (2011), no. 1 (Report 17/2011), p. 902, DOI 10.4171/OWR/2011/17.
+UnsolvedMath record UM-30001746 (`OWR-4807-001`), dataset ulamai/UnsolvedMath v1.8.0.
 
 `H = ℓ²(ℕ)`. A state on `B(H)` is a linear functional `ψ` with `ψ 1 = 1` and `ψ(T* T) ≥ 0` (positive
 functionals on a C*-algebra are automatically bounded). States and pure states on the diagonal
@@ -82,11 +82,11 @@ Resolved true: Marcus, Spielman and Srivastava proved Weaver's `KS₂` conjectur
 paving conjecture, each known to imply that every pure state on the diagonal operators of `B(ℓ²)`
 has a unique extension to a state on `B(ℓ²)` (Kadison-Singer). Source: workshop introduction, in
 Operator Algebras and Representation Theory: Frames, Wavelets and Fractals, Oberwolfach Reports 8
-(2011), no. 17, p. 902, DOI 10.4171/OWR/2011/17; resolution: A. W. Marcus, D. A. Spielman and N.
-Srivastava, Interlacing families II: Mixed characteristic polynomials and the Kadison-Singer
-problem, Ann. of Math. (2) 182 (2015), 327-350, proof of Weaver's KS2 conjecture and of Anderson's
-paving conjecture, each known to imply that every pure state on the diagonal masa of B(ℓ²) has a
-unique state extension, https://doi.org/10.4007/annals.2015.182.1.8.
+(2011), no. 1 (Report 17/2011), p. 902, DOI 10.4171/OWR/2011/17; resolution: A. W. Marcus, D. A.
+Spielman and N. Srivastava, Interlacing families II: Mixed characteristic polynomials and the
+Kadison-Singer problem, Ann. of Math. (2) 182 (2015), 327-350, proof of Weaver's KS2 conjecture and
+of Anderson's paving conjecture, each known to imply that every pure state on the diagonal masa of
+B(ℓ²) has a unique state extension, https://doi.org/10.4007/annals.2015.182.1.8.
 -/
 public theorem_wanted pureStateUniqueExtension_holds : pureStateUniqueExtension
 

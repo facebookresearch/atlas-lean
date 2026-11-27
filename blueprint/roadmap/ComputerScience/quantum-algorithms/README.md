@@ -24,6 +24,10 @@ Algorithms for quantum computers and their analysis: Fourier sampling with the D
 - [Quantum Adversary Methods](quantum-adversary-methods/README.md)
 - [Quantum Query Bounds and Algorithms](quantum-query-bounds-and-algorithms/README.md)
 
+## Planned results
+
+- [Probability-one complete factoring with a fixed finite quantum gate set](exact-factoring-over-a-fixed-gate-set.md)
+
 ## Related topics
 
 - [Quantum Information](../../QuantumInformation/README.md): states, channels, the quantum Fourier transform and error correction.
