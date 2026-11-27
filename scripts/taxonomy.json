@@ -14178,6 +14178,7 @@
   "MathlibExt/NumberTheory/SquareTriangularRepresentationDivisibility": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representations by squares and triangular numbers"},
   "MathlibExt/NumberTheory/SquarefreeOneModEight": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Generalized fruit equation"},
   "MathlibExt/NumberTheory/SquaresModTwoPow": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
+  "MathlibExt/NumberTheory/SternBrocotPathSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of two squares via the Stern–Brocot tree"},
   "MathlibExt/NumberTheory/SquaresTriangularRepresentationsSumOfSquaresRepCountIntegerRoot": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representations by squares and triangular numbers"},
   "MathlibExt/NumberTheory/SternBrocotSumTwoSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of two squares via the Stern–Brocot tree"},
   "MathlibExt/NumberTheory/SternSequence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Stern's diatomic sequence"},
