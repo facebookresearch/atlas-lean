@@ -1,6 +1,6 @@
 # Triangle detection in the congested clique in sublinear rounds
 
-In the congested clique, a deterministic algorithm detects and lists all triangles of the input graph in $O(n^{1/3} / \log n)$ rounds; deciding whether a triangle exists can be done in $O(n^{1 - 2/\omega}) = O(n^{0.158})$ rounds. Listing all triangles requires $\Omega(n^{1/3}/\log n)$ rounds, since some processor must output a $1/n$ fraction of up to $\Theta(n^3)$ triangles while learning only $O(n \log n)$ bits per round.
+In the congested clique, a deterministic algorithm detects and lists all triangles of the input graph in $O(n^{1/3} / \log n)$ rounds; deciding whether a triangle exists can be done in $O(n^{1 - 2/\omega + \eta})$ rounds for every fixed $\eta > 0$, which is $O(n^{0.158})$ with $\omega < 2.3729$. Listing all triangles requires $\Omega(n^{1/3}/\log n)$ rounds, since some processor must output a $1/n$ fraction of up to $\Theta(n^3)$ triangles while learning only $O(n \log n)$ bits per round.
 
 ## Proof sketch
 
@@ -14,7 +14,7 @@ Partition the vertex set into $n^{1/3}$ parts and assign each of the $n$ triples
 ## Proof depends on
 
 - [Lenzen's deterministic constant-round routing and sorting in the congested clique](congested-clique-constant-round-routing.md)
-- [Matrix multiplication in O(n^(1 - 2/omega)) rounds of the congested clique](congested-clique-matrix-multiplication.md)
+- [Matrix multiplication in O(n^(1 - 2/omega + eta)) rounds of the congested clique](congested-clique-matrix-multiplication.md)
 
 ## Sources
 

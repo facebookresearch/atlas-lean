@@ -1,6 +1,6 @@
 # Squared-logarithmic lower bound for greedy worst-case probes
 
-Let $1/n \le \delta \le 1/2$ with $\delta n$ an integer, so in particular $1 - \delta = \Omega(1)$ as the source's greedy lower bound assumes. Every greedy open-addressed hash table without reordering filled to $n - \delta n$ keys has worst-case expected probe complexity $\Omega(\log^2 \delta^{-1})$, so funnel hashing is optimal among greedy tables. Furthermore, for every open-addressed table without reordering (greedy or not), the high-probability worst-case probe complexity is $\Omega(\log^2 \delta^{-1} + \log \log n)$, matching the high-probability bound of funnel hashing.
+Let $1/n \le \delta \le 1/2$ with $\delta n$ an integer, so in particular $1 - \delta = \Omega(1)$ as the source's greedy lower bound assumes. Every greedy open-addressed hash table without reordering filled to $n - \delta n$ keys has worst-case expected probe complexity $\Omega(\log^2 \delta^{-1})$. In the common range $\delta \ge n^{-o(1)}$ of this bound and the funnel hashing upper bound, funnel hashing is therefore optimal among greedy tables. Furthermore, for every open-addressed table without reordering (greedy or not), the high-probability worst-case probe complexity is $\Omega(\log^2 \delta^{-1} + \log \log n)$, matching the high-probability bound of funnel hashing in that common range.
 
 ## Proof sketch
 

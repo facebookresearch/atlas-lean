@@ -1,6 +1,6 @@
 # A weighted picking sequence yields WEF1 allocations
 
-Throughout, $N = \{1, \dots, n\}$ is a finite set of agents and $M$ a finite set of indivisible goods; agent $i$ has an additive valuation $v_i(S) = \sum_{g \in S} v_i(g)$ with $v_i(g) \ge 0$. Consider the picking sequence in which, at each step, the agent $i$ minimizing $t_i/w_i$ picks her most valuable remaining good, where $t_i$ is the number of goods she has picked so far (ties broken arbitrarily but consistently). The resulting complete allocation is WEF1, and it can be computed in polynomial time. Moreover the weighted maximum Nash welfare allocation, maximizing $\prod_i v_i(X_i)^{w_i}$, is Pareto optimal but in general not WEF1.
+Throughout, $N = \{1, \dots, n\}$ is a finite set of agents and $M$ a finite set of indivisible goods; agent $i$ has an additive valuation $v_i(S) = \sum_{g \in S} v_i(g)$ with $v_i(g) \ge 0$. Consider the picking sequence in which, at each step, the agent $i$ minimizing $t_i/w_i$ picks her most valuable remaining good, where $t_i$ is the number of goods she has picked so far (ties broken arbitrarily but consistently). The resulting complete allocation is WEF1, and it can be computed in polynomial time. Moreover a maximum weighted Nash welfare allocation, one that first maximizes the number of agents with positive value and, among those, maximizes $\prod_{i : v_i(X_i) > 0} v_i(X_i)^{w_i}$, is Pareto optimal but in general not WEF1.
 
 ## Proof sketch
 

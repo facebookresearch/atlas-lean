@@ -1,10 +1,10 @@
 # Maximum Nash welfare is EFX for two-valued instances
 
-Throughout, $N = \{1, \dots, n\}$ is a finite set of agents and $M$ a finite set of indivisible goods; agent $i$ has an additive valuation $v_i(S) = \sum_{g \in S} v_i(g)$ with $v_i(g) \ge 0$. Suppose there are real numbers $0 < a < b$ such that $v_i(g) \in \{a, b\}$ for every agent $i$ and good $g$. Then every allocation maximizing $\prod_i v_i(X_i)$ is envy-free up to any good: $v_i(X_i) \ge v_i(X_j \setminus \{g\})$ for all $i, j$ and all $g \in X_j$.
+Throughout, $N = \{1, \dots, n\}$ is a finite set of agents and $M$ a finite set of indivisible goods; agent $i$ has an additive valuation $v_i(S) = \sum_{g \in S} v_i(g)$ with $v_i(g) \ge 0$. Suppose there are real numbers $0 < a < b$ such that $v_i(g) \in \{a, b\}$ for every agent $i$ and good $g$. Then every maximum Nash welfare allocation, one that first maximizes the number of agents with positive value and, among those, maximizes the product of the positive agents' values, is envy-free up to any good: $v_i(X_i) \ge v_i(X_j \setminus \{g\})$ for all $i, j$ and all $g \in X_j$.
 
 ## Proof sketch
 
-Suppose agent $i$ violates EFX towards $j$ for some $g \in X_j$. Because values take only two levels, one can choose the good to move (a good that $j$ values at $a$ if one exists in $X_j$ valued $b$ by $i$, otherwise the good minimizing $v_j$) and verify through a case analysis on the four value patterns that the transfer to $i$ strictly increases $v_i(X_i) v_j(X_j)$, contradicting optimality. The two-level structure makes the local swap inequality strong enough to exclude every EFX violation.
+Suppose agent $i$ violates EFX towards $j$ for some $g \in X_j$. Then $X_j \setminus \{g\} \ne \emptyset$, so $j$ keeps positive value after losing any one good. If $v_i(X_i) = 0$, moving a good of $X_j$ to $i$ makes $i$ positive and keeps $j$ positive, raising the number of positive agents, a contradiction; so both agents are positive. Because values take only two levels, one can choose the good to move (a good that $j$ values at $a$ if one exists in $X_j$ valued $b$ by $i$, otherwise the good minimizing $v_j$) and verify through a case analysis on the four value patterns that the transfer to $i$ strictly increases $v_i(X_i) v_j(X_j)$ while keeping the same agents positive, contradicting optimality. The two-level structure makes the local swap inequality strong enough to exclude every EFX violation.
 
 ## Depends on
 

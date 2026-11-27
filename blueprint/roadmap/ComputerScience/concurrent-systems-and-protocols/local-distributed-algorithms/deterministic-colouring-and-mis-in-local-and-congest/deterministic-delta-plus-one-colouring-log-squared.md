@@ -8,7 +8,7 @@ Colour a constant fraction of the remaining vertices per phase, so $O(\log n)$ p
 
 ## Depends on
 
-- [Degree-plus-one list colouring instance](degree-plus-one-list-colouring.md)
+- [The (deg + 1)-list-coloring problem (D1LC)](../../../randomized-algorithms/palette-sparsification-and-sublinear-coloring/degree-plus-one-list-coloring.md)
 - [The CONGEST model of distributed computing](../deterministic-network-decomposition/the-congest-model.md)
 
 ## Sources

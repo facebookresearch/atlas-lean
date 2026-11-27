@@ -9,12 +9,12 @@ Brodal and Fagerberg run a fixed cache-oblivious algorithm against two cache con
 ## Depends on
 
 - [Tall-cache assumptions](tall-cache-assumption.md)
-- [Funnelsort](funnelsort.md)
+- [Funnelsort](../cache-oblivious-algorithms/funnelsort.md)
 - [The ideal-cache model](../cache-oblivious-algorithms/the-ideal-cache-model.md)
 
 ## Proof depends on
 
-- [Funnelsort is cache-obliviously optimal under a tall cache](funnelsort-optimal.md)
+- [Cache-complexity lower bound for sorting](../cache-oblivious-algorithms/cache-complexity-lower-bound-for-sorting.md)
 - [I/O complexity of permuting](../external-memory-algorithms/i-o-complexity-of-permuting.md)
 
 ## Sources

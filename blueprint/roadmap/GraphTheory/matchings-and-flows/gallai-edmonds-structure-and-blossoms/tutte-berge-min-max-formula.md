@@ -6,7 +6,7 @@ $$
 \nu(G) = \min_{X \subseteq V} \frac{|V| + |X| - o(G - X)}{2} = \frac{|V| - \operatorname{def}(G)}{2} .
 $$
 
-Equivalently, a maximum matching of $G$ misses exactly $\operatorname{def}(G)$ vertices.
+Equivalently, a maximum matching of $G$ misses exactly $\operatorname{def}(G)$ vertices. In particular, $G$ has a near-perfect matching, one missing exactly one vertex, if and only if $\operatorname{def}(G) = 1$.
 
 ## Proof sketch
 
@@ -15,12 +15,12 @@ The inequality $\le$ is the odd-component bound. For $\ge$ (Anderson's method as
 ## Depends on
 
 - [Odd components and the Tutte deficiency of a vertex set](odd-components-and-tutte-deficiency.md)
+- [Factor-critical graphs and near-perfect matchings](factor-critical-graphs.md)
 
 ## Proof depends on
 
 - [Every vertex set bounds the matching number through its odd components](odd-components-bound-matching-number.md)
 - [Kőnig's theorem for finite bipartite graphs](../k-nig-s-theorem/konig-matching-cover.md)
-- [Factor-critical graphs and near-perfect matchings](factor-critical-graphs.md)
 
 ## Sources
 

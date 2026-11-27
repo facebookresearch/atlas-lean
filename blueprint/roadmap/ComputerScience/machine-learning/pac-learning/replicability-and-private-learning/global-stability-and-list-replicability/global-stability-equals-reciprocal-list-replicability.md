@@ -3,10 +3,10 @@
 For every concept class $H$,
 
 $$
-\rho(H) \cdot \mathrm{LR}(H) = 1 \quad \text{and} \quad \rho_{\mathrm{agn}}(H) \cdot \mathrm{LR}_{\mathrm{agn}}(H) = 1,
+\rho(H) = \frac{1}{\mathrm{LR}(H)} \quad \text{and} \quad \rho_{\mathrm{agn}}(H) = \frac{1}{\mathrm{LR}_{\mathrm{agn}}(H)},
 $$
 
-with the conventions $1/0 = \infty$ and $1/\infty = 0$. In particular global stability parameters are always reciprocals of integers or zero, a class is globally stable exactly when it is list replicable, and global stability can be weakly boosted (for instance $\rho(H) \ge 0.31$ implies $\rho(H) \ge 1/3$). The conversions between the two kinds of learners are algorithmic.
+where the list numbers take values in $\{1, 2, \dots\} \cup \{\infty\}$ and $1/\infty = 0$. Thus $\rho(H) = 0$ exactly when $\mathrm{LR}(H) = \infty$, as for a class of infinite VC dimension, and likewise in the agnostic case; no product $0 \cdot \infty$ is involved. In particular global stability parameters are always reciprocals of integers or zero, a class is globally stable exactly when it is list replicable, and global stability can be weakly boosted (for instance $\rho(H) \ge 0.31$ implies $\rho(H) \ge 1/3$). The conversions between the two kinds of learners are algorithmic.
 
 ## Proof sketch
 

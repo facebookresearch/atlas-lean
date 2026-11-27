@@ -4,7 +4,7 @@ Let $n \in \mathbb{N}$ and $\delta \in (0, 1/2]$ with $\delta n$ an integer and 
 
 ## Proof sketch
 
-A key reaches level $i+1$ only if its bucket in level $i$ is full; since bucket loads in a level concentrate around the level's fill fraction and the levels shrink geometrically, the number of levels a key passes through has a geometric tail, each level costing at most $\beta = O(\log\delta^{-1})$ probes. With $\alpha = \Theta(\log\delta^{-1})$ levels the worst case is $O(\alpha\beta) = O(\log^2 \delta^{-1})$ probes, and the keys reaching the overflow array are few enough that two-choice probing there costs $O(\log \log n)$ with high probability.
+A key reaches level $i+1$ only if its bucket in level $i$ is full; since bucket loads in a level concentrate around the level's fill fraction and the levels shrink geometrically, the number of levels a key passes through has a geometric tail, each level costing at most $\beta = O(\log\delta^{-1})$ probes. With $\alpha = \Theta(\log\delta^{-1})$ levels the worst case is $O(\alpha\beta) = O(\log^2 \delta^{-1})$ probes, and fewer than $\delta n/8$ keys reach the overflow array with high probability. There a key first makes at most $\log\log n$ uniform probes into the half $B$, whose load stays at most $1/2$, so it reaches the two-choice half $C$ with probability at most $1/\log n$; by the power-of-two-choices load bound no bucket of $C$ overflows with probability $1 - 1/\mathrm{poly}(n)$. An overflow insertion thus costs $O(1)$ expected and $O(\log \log n)$ worst-case probes, and the table succeeds with high probability.
 
 ## Depends on
 

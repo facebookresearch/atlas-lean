@@ -1,6 +1,6 @@
 # Efficient algorithms cannot answer quadratically many adaptive statistical queries
 
-Assuming one-way functions exist, for every polynomial-time mechanism that receives $n$ samples from an unknown distribution, there is a polynomial-time analyst that, after $O(n^2)$ adaptively chosen statistical queries, causes the mechanism to give an answer with error at least a constant, with constant probability. Together with the $\tilde O(n^2)$ upper bound obtained from differential privacy, this shows that $\tilde\Theta(n^2)$ adaptive queries is the limit for efficient mechanisms; information-theoretically, with unbounded computation, exponentially many queries can be answered.
+Assuming one-way functions exist, for every polynomial-time mechanism that receives $n$ samples from an unknown distribution, there is a polynomial-time analyst that, after $O(n^2)$ adaptively chosen statistical queries, causes the mechanism to give an answer with error at least a constant, with constant probability. Together with the $\tilde O(n^2)$ upper bound obtained from differential privacy, this shows that $\tilde\Theta(n^2)$ adaptive queries is the limit for efficient mechanisms. Unbounded computation does not remove the dependence on the data universe: over $\{\pm 1\}^d$ with $d$ sufficiently large relative to $n$, even a computationally unbounded mechanism fails after $O(n^2)$ adaptive queries, with no cryptographic assumption (Theorem 1.2 and Section 3.6). Exponentially many queries in a power of $n$ can be answered only over a finite universe $\mathcal{X}$, by an inefficient mechanism whose sample size grows with $\log |\mathcal{X}|$ (Dwork et al., Theorem 1).
 
 ## Proof sketch
 
@@ -18,3 +18,4 @@ The analyst runs an **interactive fingerprinting code**: it adaptively issues qu
 ## Sources
 
 - T. Steinke, J. Ullman, "Interactive Fingerprinting Codes and the Hardness of Preventing False Discovery", COLT (2015), arXiv:1410.1228.
+- C. Dwork, V. Feldman, M. Hardt, T. Pitassi, O. Reingold, A. Roth, "Preserving Statistical Validity in Adaptive Data Analysis", STOC (2015), arXiv:1411.2664.

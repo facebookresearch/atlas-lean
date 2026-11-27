@@ -1,6 +1,5 @@
 # Deterministic Colouring and MIS in LOCAL and CONGEST
 
-- [Degree-plus-one list colouring instance](degree-plus-one-list-colouring.md)
 - [Defective colouring](defective-colouring.md)
 - [Deterministic (Delta+1)-colouring in O(log^2 Delta log n) rounds without network decomposition](deterministic-delta-plus-one-colouring-log-squared.md)
 - [Arboricity and H-partitions](arboricity-and-h-partitions.md)
