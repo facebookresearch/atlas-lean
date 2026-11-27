@@ -39,23 +39,13 @@ public import MathlibExt.NumberTheory.SZumkellerSixDvdOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerThreeLeCardPrimeFactorsOfIsSZumkellerEven
 public import MathlibExt.NumberTheory.SZumkellerNotIsUnitarySZumkellerOfOdd
 public import MathlibExt.NumberTheory.SZumkellerIsUnitarySZumkellerBounds
+public import MathlibExt.NumberTheory.SZumkellerEightLeCardPrimeFactorsOfIsSZumkellerOdd
 public import MathlibExt.NumberTheory.SZumkellerTwelveLeCardDivisorsOfIsSZumkeller
+public import MathlibExt.NumberTheory.SZumkellerIsSZumkellerEvenProps
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Properties of even s-Zumkeller numbers.** Let $n$ be an even s-Zumkeller number and let
-$\sigma_2(n)$ be the sum of the squares of the positive divisors of $n$. Then $\sigma_2(n)$ is
-even, some odd prime $p$ divides $n$ with an odd exponent in the prime factorization of $n$, and
-$3n^2 \le 2\sigma_2(n)$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 1. -/
-public theorem_wanted isSZumkeller_even_props (n : ℕ) (h : IsSZumkeller n) (he : Even n) :
-    Even (ArithmeticFunction.sigma 2 n) ∧
-      (∃ p ∈ n.primeFactors, Odd p ∧ Odd (n.factorization p)) ∧
-      3 * n ^ 2 ≤ 2 * ArithmeticFunction.sigma 2 n
 
 /-- **A prime-factor product bound for s-Zumkeller numbers.** Let $n$ be an s-Zumkeller number
 and let $p_1$ be its least prime factor. Then
@@ -66,14 +56,6 @@ Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 5. -/
 public theorem_wanted two_div_minFac_sq_add_one_lt_prod (n : ℕ) (h : IsSZumkeller n) :
     2 / (n.minFac : ℚ) ^ 2 + 1 < ∏ p ∈ n.primeFactors, (p : ℚ) ^ 2 / (p ^ 2 - 1)
-
-/-- **Odd s-Zumkeller numbers divisible by $3$ have at least eight prime factors.** Every odd
-s-Zumkeller number divisible by $3$ has at least $8$ distinct prime factors.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 6(ii). -/
-public theorem_wanted eight_le_card_primeFactors_of_isSZumkeller_odd (n : ℕ)
-    (h : IsSZumkeller n) (ho : Odd n) (h3 : 3 ∣ n) : 8 ≤ n.primeFactors.card
 
 /-- **Odd s-Zumkeller numbers are perfect squares.** Every odd s-Zumkeller number is a perfect
 square.
