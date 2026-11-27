@@ -23,3 +23,4 @@ Lossless compression of information sources by variable-length codes, including 
 - [Gaussian distortion feasibility](gaussian-distortion-feasibility/README.md)
 - [The Gaussian rate-distortion function at every distortion level](the-gaussian-rate-distortion-function-at-every-d/README.md)
 - [Slepian-Wolf core: chain rule and random binning](slepian-wolf-core-chain-rule-and-random-binning/README.md)
+- [Prefix-Free Compression Bounds](prefix-free-compression-bounds/README.md)

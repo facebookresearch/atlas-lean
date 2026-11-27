@@ -9,3 +9,4 @@ Shannon entropy, conditional entropy, mutual information and Kullback–Leibler 
 - [Method of types](method-of-types/README.md)
 - [Gaussian entropy](gaussian-entropy/README.md)
 - [Mutual information on finite types, in nats](mutual-information-on-finite-types-in-nats/README.md)
+- [Continuity of Entropy and Guessing Bounds](entropy-continuity-and-guessing/README.md)

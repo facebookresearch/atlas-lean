@@ -1,6 +1,6 @@
 # Evra–Kaufman: bounded-degree cosystolic expanders of every dimension
 
-For every $d \ge 2$ there exist $\varepsilon_d, \mu_d > 0$ and $q_0(d)$ such that for every prime power $q \ge q_0(d)$, the $d$-skeletons of $(d+1)$-dimensional Ramanujan complexes of type $A_{d+1}$ over $\mathbb{F}_q$ are $(\varepsilon_d, \mu_d)$-cosystolic expanders over $\mathbb{F}_2$ in every dimension $0 \le i < d$. Consequently, bounded-degree $d$-dimensional topological expanders exist for every $d$.
+For every $d \ge 2$ there exist $\varepsilon_d, \mu_d > 0$ and $q_0(d)$ such that for every prime power $q \ge q_0(d)$, the $d$-skeletons of $(d+1)$-dimensional Ramanujan complexes of type $\tilde A_{d+1}$ over $\mathbb{F}_q$ are $(\varepsilon_d, \mu_d)$-cosystolic expanders over $\mathbb{F}_2$ in every dimension $0 \le i < d$. Consequently, bounded-degree $d$-dimensional topological expanders exist for every $d$.
 
 ## Proof sketch
 
@@ -9,7 +9,7 @@ One proves a local-to-global criterion: a complex whose proper links are $\beta$
 ## Depends on
 
 - [Cosystolic expansion and cosystolic distance](cosystolic-expansion.md)
-- [Ramanujan complexes of type A_d](../local-spectral-high-dimensional-expanders/ramanujan-complex.md)
+- [Ramanujan complexes of type Ã_{d-1}](../local-spectral-high-dimensional-expanders/ramanujan-complex.md)
 
 ## Proof depends on
 

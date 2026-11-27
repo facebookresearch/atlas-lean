@@ -22,9 +22,10 @@ untouched by either endpoint of any transposition is still a fixed point.
 
 open scoped BigOperators Topology
 open Equiv Filter
-open MathlibExt.RepresentationTheory.FourierTransformFiniteGroup (conv convPow sum_conv)
+open MathlibExt.RepresentationTheory.FourierTransformFiniteGroup (conv convPow)
 open MathlibExt.Probability.RandomWalkFiniteGroup
-  (uniform randomTransposition sum_randomTransposition)
+  (uniform randomTransposition randomTransposition_eq_expect randomTransposition_convPow_nonneg
+    sum_randomTransposition_convPow)
 open MathlibExt.Probability.MarkovMixing (tvDist)
 
 namespace MathlibExt.Probability.RandomWalkFiniteGroupWanted
@@ -33,62 +34,7 @@ variable {n : ℕ} [NeZero n]
 
 private abbrev WalkPerm (n : ℕ) := Equiv.Perm (Fin n)
 
-omit [NeZero n] in
-private theorem swap_eq_swap_iff {a b i j : Fin n} (hab : a ≠ b) :
-    swap i j = swap a b ↔ (i = a ∧ j = b) ∨ (i = b ∧ j = a) := by
-  constructor
-  · intro h
-    have ha := DFunLike.congr_fun h a
-    have hb := DFunLike.congr_fun h b
-    simp only [swap_apply_def] at ha hb
-    grind
-  · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-    · rfl
-    · exact swap_comm _ _
-
-private theorem randomTransposition_eq_expect (σ : WalkPerm n) :
-    randomTransposition n σ =
-      𝔼 i : Fin n, 𝔼 j : Fin n, if swap i j = σ then (1 : ℝ) else 0 := by
-  classical
-  by_cases h : σ = 1
-  · subst σ
-    simp [randomTransposition, swap_eq_one_iff]
-  by_cases hs : σ.IsSwap
-  · obtain ⟨a, b, hab, rfl⟩ := hs
-    have hsplit (i j : Fin n) :
-        (if swap i j = swap a b then (1 : ℝ) else 0) =
-          (if i = a then (if j = b then 1 else 0) else 0) +
-          (if i = b then (if j = a then 1 else 0) else 0) := by
-      simp only [swap_eq_swap_iff hab]
-      split_ifs <;> grind
-    simp_rw [hsplit, Fintype.expect_eq_sum_div_card, Finset.sum_add_distrib,
-      Finset.sum_ite_irrel, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.sum_const_zero]
-    simp [randomTransposition, h, Perm.swap_isSwap_iff, hab, add_div, ite_div,
-      Finset.sum_add_distrib]
-    ring
-  · have hne (i j : Fin n) : swap i j ≠ σ := by
-      rintro rfl
-      by_cases hij : i = j
-      · exact h (swap_eq_one_iff.mpr hij)
-      · exact hs (Perm.swap_isSwap_iff.mpr hij)
-    simp [randomTransposition, h, hs, hne]
-
 private noncomputable abbrev walk (n k : ℕ) [NeZero n] := convPow (randomTransposition n) k
-
-private theorem walk_nonneg (k : ℕ) (σ : WalkPerm n) : 0 ≤ walk n k σ := by
-  induction k generalizing σ with
-  | zero => simp [walk, convPow]; split <;> norm_num
-  | succ k ih =>
-    apply Finset.sum_nonneg
-    intro τ _
-    apply mul_nonneg _ (ih τ)
-    unfold randomTransposition
-    split_ifs <;> positivity
-
-private theorem sum_walk (k : ℕ) : ∑ σ, walk n k σ = 1 := by
-  induction k with
-  | zero => simp [walk, convPow]
-  | succ k ih => rw [walk, convPow, sum_conv, sum_randomTransposition, one_mul]; exact ih
 
 private theorem walk_succ_expect (k : ℕ) (f : WalkPerm n → ℝ) :
     ∑ σ, walk n (k + 1) σ * f σ =
@@ -175,7 +121,7 @@ private theorem movedMass_le (k : ℕ) (s : Finset (Fin n)) :
         apply Finset.expect_le_expect fun i _ => ?_
         apply Finset.expect_le_expect fun j _ => ?_
         exact Finset.sum_le_sum fun σ _ =>
-          mul_le_mul_of_nonneg_left (moved_swap_le s i j σ) (walk_nonneg k σ)
+          mul_le_mul_of_nonneg_left (moved_swap_le s i j σ) (randomTransposition_convPow_nonneg k σ)
       _ ≤ 𝔼 i : Fin n, (1 - (1 - 1 / (n : ℝ)) ^ (2 * k + 1)) ^ (s.erase i).card := by
         apply Finset.expect_le_expect fun i _ => ?_
         rw [pow_succ]
@@ -208,7 +154,8 @@ private theorem derangement_test (k : ℕ) :
       linarith [le_abs_self (walk n k σ - uniform _ σ), neg_le_abs (walk n k σ - uniform _ σ)]
   have hs := Finset.sum_le_sum (s := Finset.univ) fun σ _ => h σ
   have hU : ∑ σ : WalkPerm n, uniform _ σ = 1 := by simp [uniform]
-  simp only [← Finset.mul_sum, Finset.sum_add_distrib, Finset.sum_sub_distrib, sum_walk, hU,
+  simp only [← Finset.mul_sum, Finset.sum_add_distrib, Finset.sum_sub_distrib,
+    sum_randomTransposition_convPow, hU,
     uniform_movedMass, sub_self, add_zero] at hs
   unfold tvDist movedMass
   linarith

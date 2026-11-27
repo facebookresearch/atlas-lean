@@ -26,6 +26,19 @@ Lemma 11 (`tendsto_sum_integral_cos_sub_cos_even_odd`), for an odd multiplier `q
 Lemma 12 for the multiplier `2 * q` instead of repeating the paper's argument: the substitution
 `x = 2 * y` halves the grids `2 * ℓ * π / (2 * m ± 1)` and doubles the multiplier, so the sum is
 twice the sum of Lemma 12, which tends to `16 / ((2 * q) ^ 2 * π)` since `2 * q ≡ 2 (mod 4)`.
+
+For Lemma 9, both grid denominators are even. The even-modulus sine sum gives two weighted
+cotangents, to which we apply the cotangent limit along the odd frequencies.
+
+## References
+
+* Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*, Journal of Integer
+  Sequences 28 (2025), Article 25.2.3, pp. 1–31, Section 5.3, Lemmas 9, 11 and 12;
+  supporting identities and limits in Lemmas 5, 6 and 8.
+  <https://cs.uwaterloo.ca/journals/JIS/VOL28/Dresden/dresden4.pdf>
+* Jonathan Balsam, *Proof Without Words: Lagrange’s Trigonometric Identity (Part II)*,
+  The College Mathematics Journal 54 (2023), p. 235, cited by Dombrowski and Dresden
+  for Lagrange's identity in the proof of Lemma 5.
 -/
 
 namespace MetaMathlibExt
@@ -292,5 +305,100 @@ public theorem tendsto_sum_integral_cos_sub_cos_even_odd {q : ℕ} (hq : Odd q) 
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [hsub, hsub, mul_sub]
+
+open tendsto_sum_integral_cos_sub_cos_even_even in
+private lemma sum_integral_odd_odd_eq_weighted_cot {q m : ℕ} (hq : Odd q) (hm : 1 ≤ m) :
+    let k : ℝ := 2 * m + 1
+    (∑ l ∈ Finset.Icc 1 m,
+      ∫ x in (2 * π * l / (k + 1))..(2 * π * l / (k - 1)),
+        (cos (q * k * x) - cos (q * x))) =
+      (1 / (q : ℝ)) * ((1 / k - 1) * cot (q * π / (k - 1)) +
+        (1 / k + 1) * cot (q * π / (k + 1))) := by
+  let k : ℝ := 2 * m + 1
+  change (∑ l ∈ Finset.Icc 1 m,
+    ∫ x in (2 * π * l / (k + 1))..(2 * π * l / (k - 1)),
+      (cos (q * k * x) - cos (q * x))) =
+    (1 / (q : ℝ)) * ((1 / k - 1) * cot (q * π / (k - 1)) +
+      (1 / k + 1) * cot (q * π / (k + 1)))
+  have hq0 : (q : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hq.pos.ne'
+  have h2q : (2 * q : ℝ) ≠ 0 := mul_ne_zero (by norm_num) hq0
+  have hk : k ≠ 0 := by dsimp [k]; positivity
+  have hkm : k - 1 = (2 * m : ℝ) := by dsimp [k]; ring
+  have hkp : k + 1 = (2 * (m + 1) : ℝ) := by dsimp [k]; ring
+  have hmR : (0 : ℝ) < m := Nat.cast_pos.mpr (by omega)
+  have hpred : k - 1 ≠ 0 := by rw [hkm]; positivity
+  have hsucc : k + 1 ≠ 0 := by rw [hkp]; positivity
+  have hterm (l : ℕ) :
+      (∫ x in (2 * π * l / (k + 1))..(2 * π * l / (k - 1)),
+        (cos (q * k * x) - cos (q * x))) =
+        (1 / (q : ℝ)) * ((1 / k - 1) * sin (q * l * 2 * π / (k - 1)) +
+          (1 / k + 1) * sin (q * l * 2 * π / (k + 1))) := by
+    let a : ℝ := l * π / (k + 1)
+    let b : ℝ := l * π / (k - 1)
+    rw [show 2 * π * (l : ℝ) / (k + 1) = 2 * a by dsimp [a]; ring,
+      show 2 * π * (l : ℝ) / (k - 1) = 2 * b by dsimp [b]; ring,
+      ← intervalIntegral.smul_integral_comp_mul_left, smul_eq_mul]
+    have hrescale :
+        (∫ y in a..b, (cos (q * k * (2 * y)) - cos (q * (2 * y)))) =
+          -(∫ y in a..b, (cos ((2 * q : ℝ) * y) - cos ((2 * q : ℝ) * k * y))) := by
+      rw [← intervalIntegral.integral_neg]
+      refine intervalIntegral.integral_congr fun y _ => ?_
+      rw [show (q : ℝ) * k * (2 * y) = 2 * q * k * y by ring,
+        show (q : ℝ) * (2 * y) = 2 * q * y by ring]
+      ring
+    rw [hrescale, integral_eq_primitive_sub h2q hk]
+    dsimp only [a, b]
+    rw [primitive_pred_grid q l hk hpred, primitive_succ_grid q l hk hsucc]
+    field_simp [hq0, hk]
+    ring
+  have hsum (n : ℕ) (hn : 0 < n) :
+      (∑ l ∈ Finset.Icc 1 n, sin (q * l * 2 * π / (2 * n : ℝ))) =
+        cot (q * π / (2 * n : ℝ)) := by
+    simpa only [show (2 * n) / 2 = n by omega, ite_eq_right (Nat.not_even_iff_odd.mpr hq),
+      Nat.cast_mul, Nat.cast_ofNat]
+      using sum_sin_two_pi_mul_div_of_even (N := 2 * n) (by omega) (even_two_mul n) q
+  have hminus : (∑ l ∈ Finset.Icc 1 m, sin (q * l * 2 * π / (k - 1))) =
+      cot (q * π / (k - 1)) := by
+    rw [hkm]
+    exact hsum m (by omega)
+  have hplus : (∑ l ∈ Finset.Icc 1 m, sin (q * l * 2 * π / (k + 1))) =
+      cot (q * π / (k + 1)) := by
+    rw [hkp]
+    -- The extra endpoint at `m + 1` contributes `sin (q * π) = 0`.
+    have hlast : (q : ℝ) * ((m : ℝ) + 1) * 2 * π / (2 * (m + 1)) = (q : ℝ) * π := by
+      field_simp
+    calc
+      _ = ∑ l ∈ Finset.Icc 1 (m + 1), sin (q * l * 2 * π / (2 * (m + 1) : ℝ)) := by
+        rw [Finset.sum_Icc_succ_top (by omega)]
+        simp only [Nat.cast_add, Nat.cast_one, hlast, sin_nat_mul_pi, add_zero]
+      _ = _ := by simpa only [Nat.cast_add, Nat.cast_one] using hsum (m + 1) (by omega)
+  rw [Finset.sum_congr rfl (fun l _ => hterm l), ← Finset.mul_sum, Finset.sum_add_distrib,
+    ← Finset.mul_sum, ← Finset.mul_sum, hminus, hplus]
+
+open tendsto_sum_integral_cos_sub_cos_even_even in
+/-- **Integral sums of $\cos qkx - \cos qx$ for odd $q$ and odd $k$.** Let $q$ be an odd natural
+number, and for each natural number $m$ put $k = 2m + 1$. Then, as $m \to \infty$,
+$$\sum_{\ell=1}^{m} \int_{2\pi\ell/(k+1)}^{2\pi\ell/(k-1)} \bigl(\cos(qkx) - \cos(qx)\bigr)\,dx
+\to \frac{4}{q^2\pi}.$$
+
+Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
+Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 9
+(`jis-2025-25.2.3-lem-9`). -/
+public theorem tendsto_sum_integral_cos_sub_cos_odd_odd {q : ℕ} (hq : Odd q) :
+    Tendsto (fun m : ℕ => ∑ l ∈ Finset.Icc 1 m,
+      ∫ x in (2 * π * l / ((2 * m + 1 : ℝ) + 1))..(2 * π * l / ((2 * m + 1 : ℝ) - 1)),
+        (cos (q * (2 * m + 1 : ℝ) * x) - cos (q * x))) atTop
+      (𝓝 (4 / ((q : ℝ) ^ 2 * π))) := by
+  have hq0 : (q : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hq.pos.ne'
+  have hk : Tendsto (fun m : ℕ => 2 * m + 1) atTop atTop :=
+    tendsto_atTop_mono (fun m => Nat.le_succ (2 * m)) tendsto_twice
+  have h := ((tendsto_cot_div_pred_add_cot_div_succ (mul_ne_zero hq0 pi_ne_zero)).comp hk).const_mul
+    (1 / (q : ℝ))
+  rw [show (1 / (q : ℝ)) * (4 / (q * π)) = 4 / ((q : ℝ) ^ 2 * π) by
+    field_simp [hq0, pi_ne_zero]] at h
+  refine h.congr' ?_
+  filter_upwards [eventually_ge_atTop 1] with m hm
+  simpa only [Function.comp_apply, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_one] using
+    (sum_integral_odd_odd_eq_weighted_cot hq hm).symm
 
 end MetaMathlibExt
