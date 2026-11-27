@@ -56,4 +56,8 @@
 - [Fisher's fundamental theorem with the additive genetic variance](two-mul-sum-avg-effect-mul-diploid-selec.md)
 - [Total change in mean fitness under diploid selection](diploid-mean-fitness-diploid-select-sub.md)
 - [Total change in mean fitness without dominance](diploid-mean-fitness-diploid-select-sub-2.md)
+
+## Further topics
+
+- [Fisher-information form of the fundamental theorem](fisher-information-form-of-the-fundamental-theorem/README.md)
 - [Two-locus selection with mutation in changing environments](two-locus-selection-with-mutation-in-changing-environments/README.md)
