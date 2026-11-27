@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.JosephusFunction
 public import MathlibExt.Combinatorics.MaximumNimFloorReduction
+public import MathlibExt.Combinatorics.MaximumNimIterates
 public import MathlibExt.Combinatorics.MaximumNimJosephus
 public import MathlibExt.GameTheory.SpragueGrundy
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -377,16 +378,6 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_succ_iterate_F (k n t h i : �
         maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) ∧
       maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) =
         maximumNimGrundy (· / k) ((n - 1) * k - (n - h + i))
-
-/-- **Iterates of the Maximum Nim map $h_k$ tend to infinity.** Let $k \ge 2$ be a natural
-number and let $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers.
-For every natural number $x_0$, the iterates $h_k^p(x_0)$ tend to infinity as $p \to \infty$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 6(iii) (`integers-2024-G5-lem-6`). -/
-public theorem_wanted maximumNimH_iterate_tendsto_atTop (k x₀ : ℕ) (hk : 2 ≤ k) :
-    Filter.Tendsto (fun p => Nat.iterate (maximumNimH k) p x₀)
-      Filter.atTop Filter.atTop
 
 /-- **Josephus elimination positions as Maximum Nim Grundy numbers.** Let $k \ge 2$ and
 $1 \le m \le n$. Write $o_n(m)$ for the position, counting from $1$, at which $m$ appears in the
