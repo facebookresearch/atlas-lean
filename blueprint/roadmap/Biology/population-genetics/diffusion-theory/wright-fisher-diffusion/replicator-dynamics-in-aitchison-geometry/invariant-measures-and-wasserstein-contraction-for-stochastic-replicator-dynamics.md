@@ -19,7 +19,7 @@ If $\lambda > 0$, additionally $W_\Delta(\mu_t,\mu'_t) \le e^{-\lambda t}W_A(\mu
 ## Depends on
 
 - [Aitchison diffusion: Brownian motion on the simplex as neutral stochastic replicator dynamics](aitchison-diffusion-as-brownian-motion-on-the-simplex.md)
-- [Solution of the replicator equation](../../../population-dynamics/replicator-dynamics/is-solution.md)
+- [Solution of the replicator equation](../../../../population-dynamics/replicator-dynamics/is-solution.md)
 
 ## Proof depends on
 

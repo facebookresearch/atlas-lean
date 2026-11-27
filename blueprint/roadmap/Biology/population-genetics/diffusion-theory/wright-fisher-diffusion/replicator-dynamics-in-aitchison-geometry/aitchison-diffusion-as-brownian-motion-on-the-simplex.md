@@ -20,12 +20,12 @@ Neutral evolution of type frequencies under purely random selection is therefore
 
 ## Depends on
 
-- [Closure of a positive composition to total one](../../../../Probability/linear-models-multivariate/centred-log-ratio-transform-of-compositional-dat/closure-op.md)
-- [Centred log-ratio transform of a positive composition](../../../../Probability/linear-models-multivariate/centred-log-ratio-transform-of-compositional-dat/clr.md)
-- [Squared Aitchison distance](../../../../Probability/linear-models-multivariate/centred-log-ratio-transform-of-compositional-dat/aitchison-dist-sq.md)
+- [Closure of a positive composition to total one](../../../../../Probability/linear-models-multivariate/centred-log-ratio-transform-of-compositional-dat/closure-op.md)
+- [Centred log-ratio transform of a positive composition](../../../../../Probability/linear-models-multivariate/centred-log-ratio-transform-of-compositional-dat/clr.md)
+- [Squared Aitchison distance](../../../../../Probability/linear-models-multivariate/centred-log-ratio-transform-of-compositional-dat/aitchison-dist-sq.md)
 
-- [Multidimensional Brownian motion](../../../../Probability/stochastic-calculus/construction-and-sample-paths-of-brownian-motion/multidimensional-brownian-motion.md)
-- [Solution of the replicator equation](../../../population-dynamics/replicator-dynamics/is-solution.md)
+- [Multidimensional Brownian motion](../../../../../Probability/stochastic-calculus/construction-and-sample-paths-of-brownian-motion/multidimensional-brownian-motion.md)
+- [Solution of the replicator equation](../../../../population-dynamics/replicator-dynamics/is-solution.md)
 
 ## Proof depends on
 
