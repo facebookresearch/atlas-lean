@@ -29,10 +29,11 @@ import Mathlib.Topology.MetricSpace.PiNat
 /-!
 # Mazur and Orlicz's Scottish Book Problem 26
 
-`foBoundedUniformNeighborhood_continuous_refuted` answers Problem 26 in the negative for
-continuous linear functionals (`ScottishBookProblem26ContinuousClaim`), and
-`foBoundedUniformNeighborhood_refuted` follows for the formally stronger claim about all linear
-functionals (`ScottishBookProblem26Claim`).
+`foBoundedUniformNeighborhood_continuous_refuted` answers Mazur and Orlicz's Problem 26 in the
+negative: their claim, about continuous linear functionals
+(`ScottishBookProblem26ContinuousClaim`), is false. `foBoundedUniformNeighborhood_refuted`
+follows for the formally stronger variant about all linear functionals
+(`ScottishBookProblem26Claim`).
 
 A closed subspace of a countable product of Banach spaces provides a sequence of continuous linear
 functionals converging uniformly to zero on bounded sets but on no neighborhood of zero.
@@ -264,11 +265,11 @@ private theorem spikes_tendsto (m : ℕ → ℕ) :
     simp [spike, block, hk.ne]
 
 /--
-**Mazur and Orlicz's Problem 26 has a negative answer for continuous functionals.** Mazur and
-Orlicz's claim is false: there are a real vector space $E$ with a topology, of type $\{F_o\}$,
-and a sequence $(F_n)_{n \ge 0}$ of continuous linear functionals $E \to \mathbb{R}$ that
-converges to $0$ uniformly on every bounded subset of $E$ but does not converge to $0$ uniformly
-on any open set containing $0$.
+**Mazur and Orlicz's Problem 26 has a negative answer.** The claim of Scottish Book Problem 26
+is false: there are a real vector space $E$ with a topology, of type $\{F_o\}$, and a sequence
+$(F_n)_{n \ge 0}$ of continuous linear functionals $E \to \mathbb{R}$ that converges to $0$
+uniformly on every bounded subset of $E$ but does not converge to $0$ uniformly on any open set
+containing $0$.
 
 Source: S. Mazur and W. Orlicz, Problem 26 of the Scottish Book (prize: one small beer);
 S. M. Ulam, *The Scottish Book*, Los Alamos report LA-6832 (1977), Problem 26, p. 8, which
@@ -290,11 +291,14 @@ theorem foBoundedUniformNeighborhood_continuous_refuted :
   simp (disch := positivity) [spike, block, a, abs_of_pos] at h
 
 /--
-**Mazur and Orlicz's Problem 26 has a negative answer.** The claim of Scottish Book Problem 26
-is false: there are a real vector space $E$ with a topology, of type $\{F_o\}$, and a sequence
-$(F_n)_{n \ge 0}$ of linear functionals $E \to \mathbb{R}$ that converges to $0$ uniformly on
-every bounded subset of $E$ but does not converge to $0$ uniformly on any open set containing
-$0$.
+**Problem 26 for all linear functionals has a negative answer.** The variant of Scottish Book
+Problem 26 for all linear functionals (`ScottishBookProblem26Claim`), formally stronger than
+Mazur and Orlicz's claim because its functionals need not be continuous, is false: there are a
+real vector space $E$ with a topology, of type $\{F_o\}$, and a sequence $(F_n)_{n \ge 0}$ of
+linear functionals $E \to \mathbb{R}$ that converges to $0$ uniformly on every bounded subset of
+$E$ but does not converge to $0$ uniformly on any open set containing $0$. This is weaker than,
+and follows from, the negative answer to Mazur and Orlicz's problem
+(`foBoundedUniformNeighborhood_continuous_refuted`).
 
 Source: S. Mazur and
 W. Orlicz, Problem 26 of the Scottish Book (prize: one small beer); S. M. Ulam,
