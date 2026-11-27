@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Proved in `MathlibExt.Combinatorics.Enumerative.CompositionsOddParts`, which this module imports:
-the roots-of-unity partial fraction identity (`MetaMathlibExt.pow_div_one_sub_pow_eq_sum`).
+The roots-of-unity partial fraction identity and the first identity of Lemma 9 are proved in
+`MathlibExt.Combinatorics.Enumerative.CompositionsOddParts`, which this module re-exports.
 -/
 
 module
@@ -37,56 +37,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-! ### Compositions with a congruence condition on the number of parts
+/-!
+## Compositions with a congruence condition on the number of parts
 
 Following Bowman, a multiset of positive integers is given by its multiplicity function
 `μ : ℕ → ℕ` (the paper's `ℕ_[μ]`; a set `A` is `setMultiplicity A`, the paper's indicator
 `i(A; ·)`). A composition with parts in `ℕ_[μ]` is a composition in which each part `a` carries
 one of `μ a` colors. -/
-
-/-- The multiplicity function (indicator sequence `i(A; n)`) of a set `A ⊆ ℕ`: `1` on `A`,
-`0` off `A`.
-
-Source: Bowman, *Compositions with an Odd Number of Parts, and Other
-Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,
-Section 2 (`jis-2024-24.3.6-thm-3`). -/
-public def setMultiplicity (A : Set ℕ) [DecidablePred (· ∈ A)] (a : ℕ) : ℕ :=
-  if a ∈ A then 1 else 0
-
-/-- `b(ℕ_[μ], m, q; n)`: the number of (linear) compositions of `n` with parts in the multiset
-`ℕ_[μ]` whose number of parts is congruent to `q` modulo `m`; a composition with `k` parts is a
-`k`-tuple of positive integers summing to `n`, weighted by its `∏ μ(part)` colorings. The empty
-composition of `0` has `0` parts.
-
-Source: Bowman, *Compositions with an Odd Number of Parts, and Other
-Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,
-Section 3 (`jis-2024-24.3.6-thm-3`). -/
-public def compositionCountMod (μ : ℕ → ℕ) (m q n : ℕ) : ℕ :=
-  ∑ k ∈ (Finset.range (n + 1)).filter (fun k => k % m = q % m),
-    ∑ c ∈ (Finset.Nat.antidiagonalTuple k n).filter (fun c => ∀ i, 0 < c i), ∏ i, μ (c i)
-
-/-- The size of the part of a circular composition of `n` that starts right after the removed
-edge `s`. The cycle graph `C_n` has vertices `0, …, n - 1` and edges `s = {s, s + 1 mod n}`;
-a circular composition is a nonempty set `S` of removed edges, and the part after edge `s`
-ends at the next removed edge, so its size is the least `d ∈ [1, n]` with `(s + d) % n ∈ S`.
-
-Source: Bowman, *Compositions with an Odd Number of Parts, and Other
-Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,
-Section 2 (`jis-2024-24.3.6-thm-3`). -/
-public def circularPartSize (n : ℕ) (S : Finset ℕ) (s : ℕ) : ℕ :=
-  (((Finset.Icc 1 n).filter fun d => (s + d) % n ∈ S).min).untopD 0
-
-/-- `c(ℕ_[μ], m, q; n)`: the number of circular compositions of `n` (nonempty sets of removed
-edges of the cycle graph `C_n`, one part per removed edge) with parts in `ℕ_[μ]` whose number
-of parts is congruent to `q` modulo `m`, each weighted by its `∏ μ(part size)` colorings.
-There are none for `n = 0`.
-
-Source: Bowman, *Compositions with an Odd Number of Parts, and Other
-Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,
-Section 3 (`jis-2024-24.3.6-thm-3`). -/
-public def circularCompositionCountMod (μ : ℕ → ℕ) (m q n : ℕ) : ℕ :=
-  ∑ S ∈ (Finset.range n).powerset.filter (fun S => S.Nonempty ∧ S.card % m = q % m),
-    ∏ s ∈ S, μ (circularPartSize n S s)
 
 /-- `d(ℕ_[μ], m, q; n)`: the number of cyclic compositions of `n` with parts in `ℕ_[μ]` whose
 number of parts is congruent to `q` modulo `m`: classes of nonempty colored compositions
@@ -284,17 +241,6 @@ public theorem_wanted cyclicCompositionCountMod_two_eq_sum (A : Set ℕ)
         = (1 / 2 : ℚ) * ∑ k ∈ n.divisors.filter Odd, ((Nat.totient k : ℚ) / k)
             * (2 * PowerSeries.coeff (n / k)
                 ((logSeriesMod 2 1).subst (partSeries (setMultiplicity A))))
-
-/-- Lemma 9: for `0 ≤ q < m` and `n ≥ 1`, `b(ℕ, m, q; n) = c(ℕ, m, q; n) - c(ℕ, m, q; n - 1)`.
-
-Source: Bowman, *Compositions with an Odd Number of Parts, and Other
-Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,
-Lemma 9 (`jis-2024-24.3.6-lem-9`). -/
-public theorem_wanted compositionCountMod_univ_eq_circular_sub {m q n : ℕ} (hq : q < m)
-    (hn : 0 < n) :
-    (compositionCountMod (setMultiplicity Set.univ) m q n : ℤ)
-      = circularCompositionCountMod (setMultiplicity Set.univ) m q n
-        - circularCompositionCountMod (setMultiplicity Set.univ) m q (n - 1)
 
 /-- Lemma 9 (second identity): for `m > 1`, `0 ≤ q < m` and `n ≥ 1`, `b(ℕ, m, q; n)` equals
 `c(ℕ, m, m - 1; n - 1)` if `q = 0`, `c(ℕ, m, 0; n - 1) + 1` if `q = 1`, and

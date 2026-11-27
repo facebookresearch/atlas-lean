@@ -62,4 +62,34 @@ example (α β : ℕ) (h0 : 0 < α) (hα : α < β) :
   have h := pow_div_one_sub_pow_eq_sum α β hα 0 (by simp [zero_pow (by omega : β ≠ 0)])
   simpa [zero_pow (by omega : α ≠ 0), zero_pow (by omega : β ≠ 0), hβ] using h.symm
 
+-- At `n = 1` the previous circle is empty. The single cut has residue `1`, not `0`.
+example : (compositionCountMod (setMultiplicity Set.univ) 2 1 1 : ℤ) = 1 := by
+  have h := compositionCountMod_univ_eq_circular_sub (m := 2) (q := 1) (n := 1)
+    (by decide) (by decide)
+  have hzero : circularCompositionCountMod (setMultiplicity Set.univ) 2 1 0 = 0 := by
+    decide
+  have hone : circularCompositionCountMod (setMultiplicity Set.univ) 2 1 1 = 1 := by
+    decide
+  simpa [hone, hzero] using h
+
+example : circularCompositionCountMod (setMultiplicity Set.univ) 2 0 1 = 0 := by
+  decide
+
+-- For `m = 3`, residue `0`, the length-three tuples give 3, and the two circles give 4 and 1.
+example : (compositionCountMod (setMultiplicity Set.univ) 3 0 4 : ℤ) = 3 := by
+  have h := compositionCountMod_univ_eq_circular_sub (m := 3) (q := 0) (n := 4)
+    (by decide) (by decide)
+  have hc₄ : circularCompositionCountMod (setMultiplicity Set.univ) 3 0 4 = 4 := by
+    decide
+  have hc₃ : circularCompositionCountMod (setMultiplicity Set.univ) 3 0 3 = 1 := by
+    decide
+  simpa [hc₄, hc₃] using h
+
+-- Modulus one counts every positive number of parts, including one part.
+example :
+    (compositionCountMod (setMultiplicity Set.univ) 1 0 3 : ℤ) =
+      circularCompositionCountMod (setMultiplicity Set.univ) 1 0 3 -
+        circularCompositionCountMod (setMultiplicity Set.univ) 1 0 2 :=
+  compositionCountMod_univ_eq_circular_sub (by decide) (by decide)
+
 end MathlibExtTest.CompositionsOddParts
