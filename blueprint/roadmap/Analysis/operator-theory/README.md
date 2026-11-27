@@ -12,3 +12,5 @@ Bounded linear operators on Banach and Hilbert spaces: spectra, compact and Fred
 - [Range criterion for a core of a semigroup generator](core-criterion-for-semigroup-generators.md)
 - [Trotter–Kato approximation theorem](trotter-kato-approximation-theorem.md)
 - [Integral identities for a strongly continuous semigroup and its generator](integral-identities-for-semigroup-generators.md)
+
+- [Sharp scalar Lieb–Thirring bound on the line](sharp-one-dimensional-scalar-lieb-thirring.md)

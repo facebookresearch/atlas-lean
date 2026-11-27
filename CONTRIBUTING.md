@@ -71,6 +71,18 @@ one, and people and agents follow the same steps:
    that others see the task is taken. Mark it ready for review when it is done,
    or close it if you stop.
 
+Graph-building tasks are on the same list: `next_task.py --graph` also prints
+the next [nodes still to expand](docs/BLUEPRINT.md#nodes-still-to-expand),
+which each `main` build publishes as
+[`graph-tasks.json`](https://facebookresearch.github.io/atlas-lean/graph-tasks.json)
+with `tasks.json`'s commit, and skips those that a pull request names by their
+node id or page path. Take one the same way, with a draft pull request that
+names its node id. Read the page's `## Expansion` section first: a page
+imported from mathgraph may only need a missing link
+([Pages imported from mathgraph](docs/BLUEPRINT.md#pages-imported-from-mathgraph)),
+and other nodes are expanded as
+[Expanding a node](docs/BLUEPRINT.md#expanding-a-node) says.
+
 Proving a task needs a built checkout. `lake exe cache get` fetches only
 Mathlib's build, and ATLAS's own modules take hours to build from source, so
 start from CI's build of `main` instead. It needs a `gh` login, `zstd` and

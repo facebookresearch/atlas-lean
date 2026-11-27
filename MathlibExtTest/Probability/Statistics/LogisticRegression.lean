@@ -117,4 +117,19 @@ example {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n → ℝ)
   gd_logisticNLL_rate X y hmin hL hη hβseq k hk
 
 
+-- Different signed margins for the two labels; the same ray drives both losses to zero.
+example : sInf (Set.range (logisticNLL (![![-2], ![3]] : Matrix (Fin 2) (Fin 1) ℝ)
+      (![0, 1] : Fin 2 → ℝ))) = 0 :=
+  (logisticNLL_infimum_zero_not_attained_of_separable _ _
+    (by intro i; fin_cases i <;> simp) (βsep := ![1])
+    (by intro i; fin_cases i <;> norm_num [Matrix.mulVec, dotProduct])).1
+
+-- The empty sample has the same infimum but attains it at every coefficient.
+example (X : Matrix (Fin 0) (Fin 1) ℝ) (y : Fin 0 → ℝ) (β : Fin 1 → ℝ) :
+    IsGLB (Set.range (logisticNLL X y)) 0 ∧ IsMinOn (logisticNLL X y) Set.univ β := by
+  refine ⟨isGLB_logisticNLL_of_separable X y (fun i => Fin.elim0 i)
+    (βsep := 0) (fun i => Fin.elim0 i), ?_⟩
+  intro γ _
+  simp [logisticNLL]
+
 end MathlibExtTest.Probability.Statistics.LogisticRegression

@@ -2346,8 +2346,8 @@
       "path": "MathlibExt/Algebra/DeepPowerSumCongruences/PowerSumExp.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "380f3e1c250ae7003af9989b4feebb8e9d0c5cde4d841d6cb10df47b5307c989",
-      "rationale": "Moved the restricted power-sum exponential from WantedExt/Algebra/DeepPowerSumCongruencesWanted.lean when its wanted statement was proved, preserving its name, statement and docstring."
+      "published_sha256": "67381918595fe8a6d56320ef8a756b19881337461b98ed3c7d33a7fca6c92277",
+      "rationale": "Moved the restricted power-sum exponential from WantedExt/Algebra/DeepPowerSumCongruencesWanted.lean when its wanted statement was proved, preserving its name, statement and docstring. Also: Prove the elementary symmetric polynomial partition expansion of Corollary 21, preserving its name, statement and docstring."
     },
     {
       "path": "MathlibExt/Algebra/DirectSum/InternalGrade.lean",
@@ -2877,10 +2877,10 @@
     },
     {
       "path": "MathlibExt/Algebra/Homology/ChainComplex/MixedBicomplex.lean",
-      "backport": "not-needed",
+      "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "c836aee6bf1e7983a91b3eb5ce05d8f4e30f7c832ae56f2ff0f0b63d0b815d54",
-      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "published_sha256": "ba091dbecce19fcb62ce4aec2f30771ccc060825d3c01940d845d0d83605f962",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary. Also: use the successors of the deprecated if_pos, if_neg, dif_pos, dif_neg, if_true and if_false.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "db2f3966b26ce6b1ac35e2f307e9912102aa93f965f1f8b1bb57698cbfb47510"
     },
@@ -9857,10 +9857,10 @@
     },
     {
       "path": "MathlibExt/Algebra/Homology/MixedComplex/ConnesConstruction.lean",
-      "backport": "not-needed",
+      "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "77430acc739ff7fe0029d8961f6c92e8c55392c0b271c85d4aeeb1c7cf390b12",
-      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "published_sha256": "2295eb422329423b66bf4eed01e603cc3eb6440c580f069fe7fc3d9095204243",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary. Also: use the successors of the deprecated if_pos, if_neg, dif_pos, dif_neg, if_true and if_false.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "949ed1796e027d183e8cf9484f38f4bf44a31de3763bf7701622179d9871532f"
     },
@@ -9929,10 +9929,10 @@
     },
     {
       "path": "MathlibExt/Algebra/Homology/MixedComplex/OfBoundaryHomotopy.lean",
-      "backport": "not-needed",
+      "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "f6afa9283d90e6ce06b7c395cd99eed7913f5591ebc91fa87afe0322a3379cce",
-      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
+      "published_sha256": "dd3468698b7408d1fb82b7fad39384dbab1b759245e72f08296cafc3339e4b44",
+      "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary. Also: use the successors of the deprecated if_pos, if_neg, dif_pos, dif_neg, if_true and if_false.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "0ef4ace74ea97a2ea26b76df1961a326c2b1cca10088fe340a2af5612b4c4667"
     },
@@ -10246,8 +10246,8 @@
       "path": "MathlibExt/Algebra/Homology/PartialTotalSecondPageVerticalHomology.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "b5cbf02bbf7e08ec7853d41bc3c0cd81099bcaf9ad67891ff0f87c777fd0c6a9",
-      "rationale": "Repair native Lean4.36 equality transport and typed coordinate/cancellation calculations, actual colimit homology mapping and private constructor instances, and redundant annotations; all original public hypotheses, maps, signs, degree/index conventions, independent worlds and default limits retained. Repair actual pinned Native coordinate equalities, explicit categories, canonical filtered-object transport and redundant local attributes; preserve original first-quadrant maps, signs, coefficients and universes. Native verification pending. Make spectral/filtered/totalization, matrix-Morita and Kunneth/scalar APIs mathematically self-contained: actual support/rectangle/cochain-degree/filtration/sign/splitting/universe hypotheses and concrete maps. Retain every current repaired proof/code/name/privacy/import/option/legal token.",
+      "published_sha256": "67149e08d9326492ca7b5fff9a5c1b802ccc1e906c5a588b0451a7a61d818754",
+      "rationale": "Preserves partial-total shifted homology and cycle comparison statements. Two private proof bodies use the native reflexive homology shift identification and the exact shifted-cycle homology projection law, with typed identity compositions instead of fragile casts.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "0242d38cc6e3900ae1fd97a2336aee499050e8c56023d8b4eb0dcfe20ed890fc"
     },
@@ -12402,8 +12402,8 @@
       "path": "MathlibExt/Algebra/RationalFunctionFareyPathArePolyFareyNeighborsIff.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "03638c2fe8ec32f54e05dcc00a77fe87cc0019427ea904315035a0247970d594",
-      "rationale": "Moved `polyFareySeries`, `polyFrac`, `IsPolyFareyDegNeighbor`, `ArePolyFareyNeighbors` from WantedExt/Algebra/RationalFunctionFareyPathWanted.lean when `arePolyFareyNeighbors_iff` was proved, preserving their names, definitions and statements."
+      "published_sha256": "12e97d5316706c6c10738a269f3f418a934bb78460a24f30978ea88837204aeb",
+      "rationale": "Moved `polyFareySeries`, `polyFrac`, `IsPolyFareyDegNeighbor`, `ArePolyFareyNeighbors` from WantedExt/Algebra/RationalFunctionFareyPathWanted.lean when `arePolyFareyNeighbors_iff` was proved, preserving their names, definitions and statements. Also: Prove the polynomial Farey neighbour count by the determinant parametrization of Webb, Lemma 1 and Theorem 2, and credit the published sources in the module references. Also: Use Mathlib's monic polynomial equivalence in the Farey neighbour count proof."
     },
     {
       "path": "MathlibExt/Algebra/RealZerosParityChangeBound.lean",

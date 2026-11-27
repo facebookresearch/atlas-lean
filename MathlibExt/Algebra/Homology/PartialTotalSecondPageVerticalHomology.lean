@@ -97,11 +97,13 @@ private theorem partialTotalShiftMapHomology
     (HomologicalComplex.homologyFunctor D (ComplexShape.up ℤ) 0).shiftMap z i i' hi' =
       HomologicalComplex.homologyMap z i ≫
         (partialTotalShiftHomologyIso L n i i' hi').hom := by
-  simp only [Functor.shiftMap, partialTotalShiftHomologyIso, Iso.trans_hom, Iso.symm_hom,
-    eqToIso.hom, eqToIso.inv, partialTotalHomologyFunctorShiftObj,
-    CochainComplex.homologyFunctor_shift,
-    HomologicalComplex.homologyFunctor_obj, HomologicalComplex.homologyFunctor_map,
-    eqToHom_refl, Category.id_comp, Category.comp_id]
+  let s :=
+    ((HomologicalComplex.homologyFunctor D (ComplexShape.up ℤ) 0).shiftIso
+      n i i' hi').app L
+  change HomologicalComplex.homologyMap z i ≫ s.hom =
+    HomologicalComplex.homologyMap z i ≫
+      (𝟙 ((L⟦n⟧).homology i) ≫ s.hom ≫ 𝟙 (L.homology i'))
+  rw [Category.id_comp, Category.comp_id]
 
 private theorem partialTotalLiftCyclesShiftHomology
     {D : Type*} [Category D] [Abelian D]
@@ -137,11 +139,12 @@ private theorem partialTotalLiftCyclesShiftHomology
     K.liftCycles (f ≫ (K.shiftFunctorObjXIso n i i' (by omega)).hom) j' hj' hy ≫
       K.homologyπ i' ≫ eT.inv
   have hnative : f₀ = g₀ ≫ s.inv := by
-    simpa only [f₀, g₀, s, eS, eT, eqToIso.inv, partialTotalHomologyFunctorShiftObj,
-      CochainComplex.homologyFunctor_shift,
-      HomologicalComplex.homologyFunctor_obj, eqToHom_refl,
-      Category.comp_id, Category.assoc] using
-      CochainComplex.liftCycles_shift_homologyπ K f j hj hf i' hi' j' hj'
+    change (K⟦n⟧).liftCycles f j hj hf ≫
+        (K⟦n⟧).homologyπ i ≫ 𝟙 ((K⟦n⟧).homology i) =
+      (K.liftCycles (f ≫ (K.shiftFunctorObjXIso n i i' (by omega)).hom)
+          j' hj' hy ≫ K.homologyπ i' ≫ 𝟙 (K.homology i')) ≫ s.inv
+    rw [Category.comp_id, Category.comp_id, Category.assoc]
+    exact CochainComplex.liftCycles_shift_homologyπ K f j hj hf i' hi' j' hj'
   have htransport := partialTotalIsoTransportEq s eS eT hnative
   change f₀ ≫ eS.hom = (g₀ ≫ eT.hom) ≫ E.inv at htransport
   have hS :
