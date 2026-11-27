@@ -13,6 +13,12 @@ In [λΠUN](the-type-theory-lambda-pi-u-n.md):
 
 - [The type theory λΠUN](the-type-theory-lambda-pi-u-n.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- The Kripke logical relation of reducibility for λΠUN, its fundamental theorem and the corollary that every well-formed object is reducible (Theorem 3.21 and Corollary 3.22 of the source) (proof prerequisite; not yet stated)
+
 ## Sources
 
 - A. Abel, J. Öhman and A. Vezzosi, "Decidability of conversion for type theory in type theory", *Proceedings of the ACM on Programming Languages* 2(POPL), Article 23, 2018, <https://doi.org/10.1145/3158111>: Section 3.6, Theorem 3.25 (Π-injectivity), Theorem 3.26 (syntactic validity) and Theorem 3.30 (syntactic inequality).

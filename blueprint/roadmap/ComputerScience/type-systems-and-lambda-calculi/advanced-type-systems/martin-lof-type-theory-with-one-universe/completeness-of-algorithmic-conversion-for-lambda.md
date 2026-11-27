@@ -1,7 +1,7 @@
 # Completeness of algorithmic conversion for λΠUN
 
-In λΠUN, declarative conversion implies [algorithmic conversion](algorithmic-conversion-for-lambda-pi-u-n.md): if $\Gamma \vdash A = B$ then $\Gamma \vdash A \Leftrightarrow B$, and if
-$\Gamma \vdash t = u : A$ then $\Gamma \vdash t \Leftrightarrow u : A$. The proof instantiates the generic equality of the logical relation with algorithmic conversion, which requires its
+In λΠUN, declarative conversion implies [algorithmic conversion](algorithmic-conversion-for-lambda-pi-u-n.md): if $\Gamma \vdash A = B$ then $\Gamma \vdash A\, \hat\Leftrightarrow\, B$, and if
+$\Gamma \vdash t = u : A$ then $\Gamma \vdash t\, \hat\Leftrightarrow\, u : A$. The proof instantiates the generic equality of the logical relation with algorithmic conversion, which requires its
 symmetry, transitivity, weakening and the lifting of weak head normal forms and of neutrals, and applies the fundamental theorem.
 
 ## Depends on
@@ -11,6 +11,13 @@ symmetry, transitivity, weakening and the lifting of weak head normal forms and 
 ## Proof depends on
 
 - [Soundness of algorithmic conversion for dependent type theory](../soundness-of-algorithmic-conversion-for.md)
+
+## Expansion
+
+This page becomes ready once:
+
+- The Kripke logical relation of reducibility for λΠUN, its fundamental theorem and the corollary that every well-formed object is reducible (Theorem 3.21 and Corollary 3.22 of the source) (proof prerequisite; not yet stated)
+- Algorithmic conversion as a generic equality instance of the logical relation: its symmetry, transitivity, weakening, and the lifting of weak head normal forms and of neutrals (Section 4.3 of the source, through Lemma 4.10) (proof prerequisite; not yet stated)
 
 ## Sources
 

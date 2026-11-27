@@ -21,6 +21,7 @@ The algorithm is [sound and complete](correctness-of-the-amadio-cardelli-subtypi
 ## Depends on
 
 - [The tree ordering on recursive types](tree-ordering-on-recursive-types.md)
+- [Canonical forms and regular systems of equations](canonical-forms-and-regular-systems-of-equations.md)
 
 ## Sources
 
