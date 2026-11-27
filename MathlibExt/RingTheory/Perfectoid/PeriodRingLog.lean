@@ -35,8 +35,8 @@ show that `log` is additive: `log((1 + y)(1 + z)) = log(1 + y) + log(1 + z)`
   (`PadicComplexInt.logTeichmuller`), which is nonzero for `ε ≠ 1`
   (`PadicComplexInt.logTeichmuller_ne_zero`); for `ε = (1, ζ_p, ζ_{p²}, …)` this is Fontaine's
   period `t` of `ℤ_p(1)`;
-* `log [p̃] = log([p̃]/p) = log(1 - ξ/p)` (`PadicComplexInt.logPTilde`), where `p̃ = p♭` is the
-  element of the tilt with `p̃♯ = p` (`PadicComplexInt.pFlat`) and `ξ = p - [p̃]`.
+* `log [p̃] = log([p̃]/p) = log(1 - ξ/p)` (`PadicComplexInt.logPTilde`), where `p̃ = p♭` is a
+  chosen element of the tilt with `p̃♯ = p` (`PadicComplexInt.pFlat`) and `ξ = p - [p̃]`.
 
 These are the logarithms of J.-M. Fontaine, *Le corps des périodes p-adiques*, Astérisque 223
 (1994), Exposé II, §1.5.4 (the period `t`) and §4.3.1 (the element `log([u₀]/p)`).
@@ -45,8 +45,8 @@ These are the logarithms of J.-M. Fontaine, *Le corps des périodes p-adiques*, 
 
 Modulo `(ker θ)^N`, both sides are values of the truncated logarithm `P_N`, and the polynomial
 identity `T^N ∣ P_N(Y + Z + YZ) - P_N(Y) - P_N(Z)` in `A[T]`, for `Y = yT` and `Z = zT`, holds
-because the derivatives of both sides agree modulo `T^N` and the constant terms vanish. Evaluating
-at `T = 1` inside the Rees algebra of `ker θ` gives the congruence.
+because the derivatives of both sides agree modulo `T^(N-1)` and the constant terms vanish.
+Evaluating at `T = 1` inside the Rees algebra of `ker θ` gives the congruence.
 -/
 
 @[expose] public noncomputable section

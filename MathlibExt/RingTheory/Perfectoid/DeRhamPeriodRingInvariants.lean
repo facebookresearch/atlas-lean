@@ -30,8 +30,8 @@ in `B_dR = BDeRham 𝓞_ℂ_[p] p` through `ℚ̄_p ⊆ B_dR^+ ⊆ B_dR`
 `PadicComplexInt.galoisBDeRham p σ`. This is the statement `(B_dR)^{G_K} = K` of J.-M. Fontaine,
 *Le corps des périodes p-adiques*, Astérisque 223 (1994), Exposé II, §1.5.7 p. 74 (there for
 every open subgroup of `Gal(ℚ̄_p/ℚ_p)`, deduced from Tate's theorems), for `K` finite over `ℚ_p`;
-for `K = ℚ_p` it reads `(B_dR)^{G_{ℚ_p}} = ℚ_p`
-(`PadicComplexInt.exists_eq_algebraMap_of_forall_galoisBDeRham_eq_self`).
+for `K = ℚ_p` it reads `(B_dR)^{G_{ℚ_p}} = ℚ_p`, whose inclusion `⊆` is
+`PadicComplexInt.exists_eq_algebraMap_of_forall_galoisBDeRham_eq_self`.
 
 ## Proof
 
@@ -161,7 +161,7 @@ theorem fixedPoints_bDeRham_eq_range (K : IntermediateField ℚ_[p] (PadicAlgCl 
   · rintro ⟨y, rfl⟩ σ hσ
     rw [galoisBDeRham_algebraMap, hι σ hσ y]
 
-/-- **`B_dR ^ Gal(ℚ̄_p/ℚ_p) = ℚ_p`**: an element of `B_dR` fixed by every `σ ∈ Gal(ℚ̄_p/ℚ_p)` is the
+/-- **`B_dR ^ Gal(ℚ̄_p/ℚ_p) ⊆ ℚ_p`**: an element of `B_dR` fixed by every `σ ∈ Gal(ℚ̄_p/ℚ_p)` is the
 image of an element of `ℚ_[p]`. -/
 theorem exists_eq_algebraMap_of_forall_galoisBDeRham_eq_self {x : 𝔹}
     (hx : ∀ σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p, galoisBDeRham p σ x = x) :

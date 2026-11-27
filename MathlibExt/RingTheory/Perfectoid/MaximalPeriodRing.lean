@@ -229,7 +229,8 @@ private theorem exists_map_xi_eq_mul (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlg
   rw [ker_fontaineTheta_eq_span_xi, Ideal.mem_span_singleton] at hk
   exact hk
 
-/-- The coefficientwise image of a restricted power series under a ring map is restricted. -/
+/-- The coefficientwise image of a restricted power series under a ring endomorphism of
+`W(𝓞_ℂ_[p]♭)` is restricted. -/
 theorem map_mem_restrictedPowerSeries (g : 𝔸 →+* 𝔸) {f : 𝔸⟦X⟧}
     (hf : f ∈ restrictedPowerSeries p) : PowerSeries.map g f ∈ restrictedPowerSeries p := by
   refine (mem_restrictedPowerSeries p).2 fun k => ?_
@@ -239,7 +240,7 @@ theorem map_mem_restrictedPowerSeries (g : 𝔸 →+* 𝔸) {f : 𝔸⟦X⟧}
   have := map_dvd g (hN n hn)
   rwa [map_pow, map_natCast] at this
 
-/-- `Σ cⁿ aₙ Xⁿ` is restricted if `Σ aₙ Xⁿ` is. -/
+/-- For `c ∈ W(𝓞_ℂ_[p]♭)`, `Σ cⁿ aₙ Xⁿ` is restricted if `Σ aₙ Xⁿ` is. -/
 theorem rescale_mem_restrictedPowerSeries (c : 𝔸) {f : 𝔸⟦X⟧}
     (hf : f ∈ restrictedPowerSeries p) : rescale c f ∈ restrictedPowerSeries p := by
   refine (mem_restrictedPowerSeries p).2 fun k => ?_
