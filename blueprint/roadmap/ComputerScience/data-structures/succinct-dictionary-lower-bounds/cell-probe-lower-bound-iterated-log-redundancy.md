@@ -17,8 +17,8 @@ Choose a meta-operation tree with roughly $k$ levels whose fanouts grow like ite
 - [Deterministic dynamic cell-probe scheme](../cell-probe-complexity/deterministic-cell-probe-scheme.md)
 - [Randomized cell-probe scheme with private coins](../cell-probe-complexity/randomized-cell-probe-scheme.md)
 - [Hard operation distributions for dynamic dictionaries](hard-operation-distributions.md)
-- [Information-theoretic space bound for dictionaries](../hashing/dictionary-specifications/information-theoretic-dictionary-space.md)
-- [Iterated logarithm and log-star](../hashing/dictionary-specifications/iterated-logarithm.md)
+- [Information-theoretic space bound for dictionaries](../hashing/succinct-dictionaries-and-hash-families/dictionary-specifications/information-theoretic-dictionary-space.md)
+- [Iterated logarithm and log-star](../hashing/succinct-dictionaries-and-hash-families/dictionary-specifications/iterated-logarithm.md)
 
 ## Proof depends on
 

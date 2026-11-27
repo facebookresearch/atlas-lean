@@ -24,7 +24,4 @@ Algorithms whose identity is their use of randomness or whose analysis averages 
 - [Karger-Stein Recursive Contraction](karger-stein-recursive-contraction/README.md)
 - [Planted Clique Recovery](planted-clique-recovery/README.md)
 - [Random Strings, Sign Sums and Fingerprints](random-strings-and-fingerprints/README.md)
-- [Concentration and Sampling under Limited Independence](concentration-under-limited-independence/README.md)
-- [Fooling Tests with Bounded Independence](fooling-with-bounded-independence/README.md)
-- [Streaming Models, Sketches and Lower Bounds](streaming-models-and-lower-bounds/README.md)
-- [Testing Properties of Distributions](distribution-testing/README.md)
+- [Limited Independence, Streaming and Distribution Testing](limited-independence-streaming-and-distribution-testing/README.md)

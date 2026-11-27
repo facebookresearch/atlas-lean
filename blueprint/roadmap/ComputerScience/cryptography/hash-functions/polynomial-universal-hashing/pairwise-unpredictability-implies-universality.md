@@ -8,7 +8,7 @@ Given $m \ne m'$ and $d$, the adversary queries $m'$, receives $t = H(k, m')$ an
 
 ## Depends on
 
-- [Almost Δ-universal (difference-universal) hash families](../../../data-structures/hashing/limited-independence-hash-families/almost-delta-universal-hash-family.md)
+- [Almost Δ-universal (difference-universal) hash families](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/limited-independence-hash-families/almost-delta-universal-hash-family.md)
 - [Carter–Wegman MACs](../../symmetric-key/macs-and-modes/carterwegman-macs.md)
 - [Bounded universal hash functions](../bounded-universal-hash-functions.md)
 

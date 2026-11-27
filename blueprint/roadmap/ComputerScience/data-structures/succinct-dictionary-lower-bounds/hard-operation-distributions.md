@@ -9,7 +9,7 @@ At every time the dictionary holds exactly $n$ keys, and the key set after any p
 
 ## Depends on
 
-- [Bounded-capacity dictionary specification](../hashing/dictionary-specifications/bounded-capacity-dictionary.md)
+- [Bounded-capacity dictionary specification](../hashing/succinct-dictionaries-and-hash-families/dictionary-specifications/bounded-capacity-dictionary.md)
 
 ## Sources
 

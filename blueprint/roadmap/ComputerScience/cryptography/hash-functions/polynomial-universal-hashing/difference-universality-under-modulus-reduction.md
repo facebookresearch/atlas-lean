@@ -8,7 +8,7 @@ A target difference $d$ modulo $N$ arises from an integer difference of represen
 
 ## Depends on
 
-- [Almost Δ-universal (difference-universal) hash families](../../../data-structures/hashing/limited-independence-hash-families/almost-delta-universal-hash-family.md)
+- [Almost Δ-universal (difference-universal) hash families](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/limited-independence-hash-families/almost-delta-universal-hash-family.md)
 
 ## Sources
 

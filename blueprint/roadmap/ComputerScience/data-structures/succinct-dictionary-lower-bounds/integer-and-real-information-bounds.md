@@ -14,7 +14,7 @@ Each ceiling adds less than one bit: $\lceil \log_2 \binom{U}{n}\rceil < \log_2\
 
 ## Depends on
 
-- [Information-theoretic space bound for dictionaries](../hashing/dictionary-specifications/information-theoretic-dictionary-space.md)
+- [Information-theoretic space bound for dictionaries](../hashing/succinct-dictionaries-and-hash-families/dictionary-specifications/information-theoretic-dictionary-space.md)
 
 ## Sources
 

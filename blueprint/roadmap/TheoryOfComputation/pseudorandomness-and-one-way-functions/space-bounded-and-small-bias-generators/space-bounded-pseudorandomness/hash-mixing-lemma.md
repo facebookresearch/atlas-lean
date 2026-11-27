@@ -8,7 +8,7 @@ $|X| D_i$ counts the points of $A$ retained in $B$; each is retained with probab
 
 ## Depends on
 
-- [k-wise independent hash families](../../../../ComputerScience/data-structures/hashing/word-ram-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash families](../../../../ComputerScience/data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 

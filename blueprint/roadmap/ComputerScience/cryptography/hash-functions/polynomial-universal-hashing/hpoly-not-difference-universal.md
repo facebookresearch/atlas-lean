@@ -8,7 +8,7 @@ $H_{\mathrm{poly}}(k,(a)) = k + a$, so the difference of the two hashes is the c
 
 ## Depends on
 
-- [Almost Δ-universal (difference-universal) hash families](../../../data-structures/hashing/limited-independence-hash-families/almost-delta-universal-hash-family.md)
+- [Almost Δ-universal (difference-universal) hash families](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/limited-independence-hash-families/almost-delta-universal-hash-family.md)
 - [Carter–Wegman MACs](../../symmetric-key/macs-and-modes/carterwegman-macs.md)
 
 ## Sources

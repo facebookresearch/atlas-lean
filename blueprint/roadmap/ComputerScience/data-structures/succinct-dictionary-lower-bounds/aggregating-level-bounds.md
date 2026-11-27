@@ -9,7 +9,7 @@ Attributions to distinct nodes are disjoint, so the attributed probes over all l
 ## Depends on
 
 - [Meta-operation tree and probe attribution](meta-operation-tree.md)
-- [Iterated logarithm and log-star](../hashing/dictionary-specifications/iterated-logarithm.md)
+- [Iterated logarithm and log-star](../hashing/succinct-dictionaries-and-hash-families/dictionary-specifications/iterated-logarithm.md)
 
 ## Sources
 

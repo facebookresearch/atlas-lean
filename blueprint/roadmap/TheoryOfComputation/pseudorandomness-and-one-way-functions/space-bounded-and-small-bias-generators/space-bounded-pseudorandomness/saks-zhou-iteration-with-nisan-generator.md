@@ -12,7 +12,7 @@ By the hash mixing lemma and a union bound over $2^k - 1$ levels and the entries
 
 - [Saks–Zhou randomized rounding with a random shift](saks-zhou-random-shift-rounding.md)
 - [Nisan's hash mixing lemma](hash-mixing-lemma.md)
-- [Toeplitz hashing is pairwise independent](../../../../ComputerScience/data-structures/hashing/limited-independence-hash-families/toeplitz-hashing.md)
+- [Toeplitz hashing is pairwise independent](../../../../ComputerScience/data-structures/hashing/succinct-dictionaries-and-hash-families/limited-independence-hash-families/toeplitz-hashing.md)
 - [Read-once branching program and space-bounded pseudorandom generator](../read-once-branching-programs-and-space-bounded-prgs.md)
 
 ## Sources

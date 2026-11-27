@@ -9,7 +9,7 @@ A prefix-free message encoding the probed cells and their contents lets the rece
 ## Depends on
 
 - [Meta-operation tree and probe attribution](meta-operation-tree.md)
-- [Information-theoretic space bound for dictionaries](../hashing/dictionary-specifications/information-theoretic-dictionary-space.md)
+- [Information-theoretic space bound for dictionaries](../hashing/succinct-dictionaries-and-hash-families/dictionary-specifications/information-theoretic-dictionary-space.md)
 
 ## Proof depends on
 

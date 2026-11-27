@@ -11,7 +11,7 @@ Toeplitz: $Td$ is uniform for $d \ne 0$, so the leftover hash lemma applies. Tre
 ## Depends on
 
 - [F2-linear strong seeded extractors](linear-strong-seeded-extractors.md)
-- [Toeplitz hashing is pairwise independent](../../../../ComputerScience/data-structures/hashing/limited-independence-hash-families/toeplitz-hashing.md)
+- [Toeplitz hashing is pairwise independent](../../../../ComputerScience/data-structures/hashing/succinct-dictionaries-and-hash-families/limited-independence-hash-families/toeplitz-hashing.md)
 - [Leftover hash lemma](../../../../ComputerScience/cryptography/randomness-extraction/leftover-hash-lemma.md)
 - [Combinatorial designs for the Nisan–Wigderson generator](../../derandomization/combinatorial-designs-for-the-nisanwigderson.md)
 - [Reed-Solomon code](../../../../InformationTheory/error-correcting-codes/reed-solomon-codes/code.md)
