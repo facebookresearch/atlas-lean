@@ -77,7 +77,10 @@ public theorem randomTransposition_eq_expect (σ : Equiv.Perm (Fin n)) :
 
 private noncomputable abbrev walk (n k : ℕ) [NeZero n] := convPow (randomTransposition n) k
 
-private theorem walk_nonneg (k : ℕ) (σ : WalkPerm n) : 0 ≤ walk n k σ := by
+/-- Every convolution power of the random-transposition measure is nonnegative. -/
+public theorem randomTransposition_convPow_nonneg (k : ℕ) (σ : Equiv.Perm (Fin n)) :
+    0 ≤ convPow (randomTransposition n) k σ := by
+  change 0 ≤ walk n k σ
   induction k generalizing σ with
   | zero => simp [walk, convPow]; split <;> norm_num
   | succ k ih =>
@@ -87,7 +90,10 @@ private theorem walk_nonneg (k : ℕ) (σ : WalkPerm n) : 0 ≤ walk n k σ := b
     unfold randomTransposition
     split_ifs <;> positivity
 
-private theorem sum_walk (k : ℕ) : ∑ σ, walk n k σ = 1 := by
+/-- Every convolution power of the random-transposition measure has total mass one. -/
+public theorem sum_randomTransposition_convPow (k : ℕ) :
+    ∑ σ, convPow (randomTransposition n) k σ = 1 := by
+  change ∑ σ, walk n k σ = 1
   induction k with
   | zero => simp [walk, convPow]
   | succ k ih => rw [walk, convPow, sum_conv, sum_randomTransposition, one_mul]; exact ih
@@ -177,7 +183,7 @@ private theorem movedMass_le (k : ℕ) (s : Finset (Fin n)) :
         apply Finset.expect_le_expect fun i _ => ?_
         apply Finset.expect_le_expect fun j _ => ?_
         exact Finset.sum_le_sum fun σ _ =>
-          mul_le_mul_of_nonneg_left (moved_swap_le s i j σ) (walk_nonneg k σ)
+          mul_le_mul_of_nonneg_left (moved_swap_le s i j σ) (randomTransposition_convPow_nonneg k σ)
       _ ≤ 𝔼 i : Fin n, (1 - (1 - 1 / (n : ℝ)) ^ (2 * k + 1)) ^ (s.erase i).card := by
         apply Finset.expect_le_expect fun i _ => ?_
         rw [pow_succ]
@@ -210,7 +216,8 @@ private theorem derangement_test (k : ℕ) :
       linarith [le_abs_self (walk n k σ - uniform _ σ), neg_le_abs (walk n k σ - uniform _ σ)]
   have hs := Finset.sum_le_sum (s := Finset.univ) fun σ _ => h σ
   have hU : ∑ σ : WalkPerm n, uniform _ σ = 1 := by simp [uniform]
-  simp only [← Finset.mul_sum, Finset.sum_add_distrib, Finset.sum_sub_distrib, sum_walk, hU,
+  simp only [← Finset.mul_sum, Finset.sum_add_distrib, Finset.sum_sub_distrib,
+    sum_randomTransposition_convPow, hU,
     uniform_movedMass, sub_self, add_zero] at hs
   unfold tvDist movedMass
   linarith

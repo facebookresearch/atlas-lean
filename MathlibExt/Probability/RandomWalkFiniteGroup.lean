@@ -397,7 +397,7 @@ theorem sum_randomTransposition (n : ℕ) [NeZero n] :
     ring
 
 /-- The random-transposition measure is invariant under inversion. -/
-private theorem randomTransposition_inv (n : ℕ) [NeZero n] (σ : Equiv.Perm (Fin n)) :
+theorem randomTransposition_inv (n : ℕ) [NeZero n] (σ : Equiv.Perm (Fin n)) :
     randomTransposition n σ⁻¹ = randomTransposition n σ := by
   have h2 : σ⁻¹.IsSwap ↔ σ.IsSwap := by
     rw [← Equiv.Perm.card_support_eq_two, ← Equiv.Perm.card_support_eq_two,
