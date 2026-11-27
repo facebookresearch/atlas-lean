@@ -12,6 +12,8 @@ public import CSLibExt.Algorithms.Lean.DataStructures.UniversalHashing.NearUnive
 public import Mathlib.Algebra.BigOperators.Expect
 public import Mathlib.Basic.Real.Basic
 
+import CSLibExt.Algorithms.Lean.DataStructures.HashTable.UniversalChain
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.GCongr
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -31,9 +33,12 @@ at most `1 + (#S - 1) / m`, hence less than `1 + #S / m`, when `x ∈ S`. If `H`
 `x ∉ S`, and at most `1 + 2 * (#S - 1) / m < 1 + 2 * #S / m` for `x ∈ S`.
 
 The proof writes the chain length as the sum, over the stored keys `y`, of the indicator of
-`h y = h x`. By linearity of expectation its average is the sum of the collision probabilities
-`collisionCount H y x / #H`, each at most `1 / m` (or `2 / m`) for `y ≠ x`, and equal to `1`
-for `y = x`.
+`h y = h x`. Summed over the members of `H`, this counting gives the multiplied-out bounds
+`sum_card_collide_mul_le_of_not_mem` and `sum_card_collide_mul_le_of_mem` for universal
+families, applied here with `H` indexing itself; dividing by `#H` and `m` gives the universal
+bounds. For a near-universal family, linearity of expectation writes the average as the sum of
+the collision probabilities `collisionCount H y x / #H`, each at most `2 / m` for `y ≠ x` and
+equal to `1` for `y = x`.
 
 This file bounds chain lengths only. For indexed universal families (`IsUniversalOn`),
 `HashTable.UniversalChain` bounds the scan events of the concrete hash table's lookups and
@@ -72,6 +77,17 @@ private theorem expect_card_filter_eq_sum (H : Finset (α → Fin m)) (S : Finse
   refine sum_congr rfl fun y _ => ?_
   rw [expect_eq_sum_div_card, collisionCount, card_filter, Nat.cast_sum]
   simp only [Nat.cast_ite, Nat.cast_one, Nat.cast_zero]
+
+/-- A universal family is universal as the indexed family of its own members. -/
+private theorem isUniversalOn_id {H : Finset (α → Fin m)} (hH : IsUniversal H) :
+    IsUniversalOn H id :=
+  hH
+
+/-- The average chain length is the total chain length over the family divided by its size. -/
+private theorem expect_card_filter_eq_div (H : Finset (α → Fin m)) (S : Finset α) (x : α) :
+    𝔼 h ∈ H, (#{y ∈ S | h y = h x} : ℝ) =
+      ((∑ h ∈ H, #{y ∈ S | h y = h x} : ℕ) : ℝ) / #H := by
+  rw [expect_eq_sum_div_card, Nat.cast_sum]
 
 /-- A collision bound `c / m`, in the multiplied-out form, bounds a collision probability. -/
 private theorem collision_div_le {H : Finset (α → Fin m)} {c : ℕ} (hm : 0 < m)
@@ -144,14 +160,28 @@ public theorem expected_chain_length_le (H : Finset (α → Fin m)) (S : Finset 
       (x ∉ S → 𝔼 h ∈ H, (#{y ∈ S | h y = h x} : ℝ) ≤ 2 * #S / m) ∧
       (x ∈ S → 𝔼 h ∈ H, (#{y ∈ S | h y = h x} : ℝ) ≤ 1 + 2 * (#S - 1) / m ∧
         𝔼 h ∈ H, (#{y ∈ S | h y = h x} : ℝ) < 1 + 2 * #S / m)) := by
-  refine ⟨fun ⟨hm, hH, hc⟩ => ?_, fun ⟨hm, hH, hc⟩ => ?_⟩
-  · have hc₁ : ∀ y z : α, y ≠ z → collisionCount H y z * m ≤ 1 * #H := by
-      simpa only [one_mul] using hc
+  refine ⟨fun hH => ?_, fun ⟨hm, hH, hc⟩ => ?_⟩
+  · have hm' : (0 : ℝ) < m := by exact_mod_cast hH.1
+    have hH' : (0 : ℝ) < #H := by exact_mod_cast hH.2.1.card_pos
     refine ⟨fun hx => ?_, fun hx => ?_⟩
-    · simpa using expect_le_of_notMem hm hH hc₁ hx
-    · have hle := expect_le_of_mem hm hH hc₁ hx
-      have hlt := one_add_mul_sub_one_div_lt one_pos hm #S
-      simp only [Nat.cast_one, one_mul] at hle hlt
+    · have hsum := sum_card_collide_mul_le_of_not_mem (isUniversalOn_id hH) S x hx
+      simp only [id] at hsum
+      rw [expect_card_filter_eq_div, div_le_div_iff₀ hH' hm']
+      exact_mod_cast hsum.trans_eq (Nat.mul_comm _ _)
+    · have hsum := sum_card_collide_mul_le_of_mem (isUniversalOn_id hH) S x hx
+      simp only [id] at hsum
+      have hsum' : (∑ h ∈ H, (#{y ∈ S | h y = h x} : ℝ)) * m ≤
+          #H * (m + ((#S : ℝ) - 1)) := by
+        have hcast := (Nat.cast_le (α := ℝ)).mpr hsum
+        push_cast [Nat.cast_sub (card_pos.mpr ⟨x, hx⟩)] at hcast
+        exact hcast
+      have hle : 𝔼 h ∈ H, (#{y ∈ S | h y = h x} : ℝ) ≤ 1 + (#S - 1) / m := by
+        rw [expect_eq_sum_div_card, div_le_iff₀ hH']
+        calc ∑ h ∈ H, (#{y ∈ S | h y = h x} : ℝ)
+            ≤ #H * (m + ((#S : ℝ) - 1)) / m := (le_div_iff₀ hm').mpr hsum'
+          _ = (1 + (#S - 1) / m) * #H := by field_simp
+      have hlt := one_add_mul_sub_one_div_lt one_pos hH.1 #S
+      simp only [Nat.cast_one, one_mul] at hlt
       exact ⟨hle, hle.trans_lt hlt⟩
   · refine ⟨fun hx => ?_, fun hx => ?_⟩
     · exact_mod_cast expect_le_of_notMem hm hH hc hx
