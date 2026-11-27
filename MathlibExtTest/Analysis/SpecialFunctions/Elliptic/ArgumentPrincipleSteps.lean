@@ -48,13 +48,15 @@ example (L : PeriodPair) (z₀ : ℂ) :
 example (c z₀ ω₁ ω₂ : ℂ) : parallelogramBoundaryIntegral (fun _ ↦ c) z₀ ω₁ ω₂ = 0 :=
   Function.Periodic.parallelogramBoundaryIntegral_eq_zero (fun _ ↦ rfl) (fun _ ↦ rfl) z₀
 
-/-- The boundary integral of the Weierstrass function over a period parallelogram is zero,
-although the Weierstrass function has poles at the vertices. -/
+/-- The boundary integral of the Weierstrass function over a period parallelogram is zero, for
+every vertex `z₀`, including `z₀ = 0`, where all four vertices are poles of the Weierstrass
+function (the integral is then the totalised sum of four interval integrals). -/
 example (L : PeriodPair) (z₀ : ℂ) :
     parallelogramBoundaryIntegral L.weierstrassP z₀ L.ω₁ L.ω₂ = 0 :=
   IsLatticePeriodic.parallelogramBoundaryIntegral_eq_zero L.periodic_weierstrassP z₀
 
-/-- A nonzero constant has no zeros or poles in any closed period parallelogram. -/
+/-- A nonzero constant has finitely many zeros and poles (in fact none) in any closed period
+parallelogram; the example checks the finiteness statement. -/
 example (L : PeriodPair) (c z₀ : ℂ) (hc : c ≠ 0) :
     {P : ℂ | ∃ t₁ t₂ : ℝ, 0 ≤ t₁ ∧ t₁ ≤ 1 ∧ 0 ≤ t₂ ∧ t₂ ≤ 1 ∧
       P = z₀ + t₁ • L.ω₁ + t₂ • L.ω₂ ∧ meromorphicOrderAt (fun _ ↦ c) P ≠ 0}.Finite :=
