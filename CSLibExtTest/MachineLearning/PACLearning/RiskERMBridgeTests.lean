@@ -14,13 +14,13 @@ import CSLibExt.MachineLearning.PACLearning.RiskERMBridge
 # Risk ERM bridge tests
 
 Closed checks over the two-point domain `Bool`: on the realizable sample `id` is a 0-1 empirical
-risk minimizer while `not` is not, a finite class has a consistent ERM learner, the finite-family
-selector lands in the version space, both 0-1 bridges evaluate exactly (the empirical error is
-derived from the empirical 0-1 risk through the bridge), plus boundary cases (single-point samples,
-one-member and duplicate families, empty classes, and empty domains or label sets, where every
-learner is vacuously an ERM learner) and negative cases (an ERM outside the version space on a
-non-realizable sample, a consistent learner that is not an ERM learner, and an infinite class with
-no minimizer).
+risk minimizer while `not` is not (and Mathlib's `IsMinOn` API applies to `id` through
+`isERM_iff_isMinOn`), a finite class has a consistent ERM learner, the finite-family selector lands
+in the version space, both 0-1 bridges evaluate exactly (the empirical error is derived from the
+empirical 0-1 risk through the bridge), plus boundary cases (single-point samples, one-member and
+duplicate families, empty classes, and empty domains or label sets, where every learner is vacuously
+an ERM learner) and negative cases (an ERM outside the version space on a non-realizable sample, a
+consistent learner that is not an ERM learner, and an infinite class with no minimizer).
 -/
 
 namespace Cslib.MachineLearning.PACLearning
@@ -56,6 +56,16 @@ example : ¬ IsERM zeroOneLoss ({id, not} : ConceptClass Bool Bool)
 example : id ∈ VersionSpace ({id, not} : ConceptClass Bool Bool)
     (![(true, true), (false, false)] : LabeledSample Bool Bool 2) :=
   ⟨Set.mem_insert _ _, by decide⟩
+
+example : IsMinOn (empiricalRisk zeroOneLoss
+    (![(true, true), (false, false)] : LabeledSample Bool Bool 2)) {not} id := by
+  have hreal : Realizable ({id, not} : ConceptClass Bool Bool)
+      (![(true, true), (false, false)] : LabeledSample Bool Bool 2) :=
+    ⟨id, Set.mem_insert _ _, by decide⟩
+  have herm : IsERM zeroOneLoss ({id, not} : ConceptClass Bool Bool)
+      (![(true, true), (false, false)] : LabeledSample Bool Bool 2) id :=
+    (isERM_zeroOneLoss_iff_mem_versionSpace hreal).mpr ⟨Set.mem_insert _ _, by decide⟩
+  exact (isERM_iff_isMinOn.mp herm).2.of_subset (Set.subset_insert _ _)
 
 /-! ### A finite class has a consistent ERM learner -/
 
@@ -524,6 +534,7 @@ example : ¬ ∃ h : ℝ, IsERM (fun h _ => h) (Set.Ioi (0 : ℝ))
 end Cslib.MachineLearning.PACLearning
 
 #print axioms Cslib.MachineLearning.PACLearning.empiricalRisk_zeroOneLoss_eq_toReal_empiricalError
+#print axioms Cslib.MachineLearning.PACLearning.isERM_iff_isMinOn
 #print axioms Cslib.MachineLearning.PACLearning.exists_isERM_of_finite
 #print axioms Cslib.MachineLearning.PACLearning.exists_isERMLearner_of_finite
 #print axioms Cslib.MachineLearning.PACLearning.isERM_zeroOneLoss_iff_mem_versionSpace

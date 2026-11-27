@@ -30,8 +30,9 @@ to both sides.
 
 ## Main results
 
-- `empiricalRisk_zeroOneLoss_eq_toReal_empiricalError`: the empirical 0-1 risk is CSLib's
-  empirical error.
+- `empiricalRisk_zeroOneLoss_eq_toReal_empiricalError`: when singletons are measurable, the
+  empirical 0-1 risk is CSLib's empirical error.
+- `isERM_iff_isMinOn`: `IsERM L C S h` is `h ∈ C` with Mathlib's `IsMinOn` for the empirical risk.
 - `exists_isERM_of_finite`, `exists_isERMLearner_of_finite`: a nonempty finite class has an
   empirical risk minimizer on every sample, hence an ERM learner.
 - `isERM_zeroOneLoss_iff_mem_versionSpace`: on a realizable sample, the 0-1 empirical risk
@@ -65,9 +66,10 @@ open CSLibExt.MachineLearning.GeneralizationBounds (empiricalRisk empiricalRisk_
 
 /-! ### The empirical 0-1 risk is CSLib's empirical error -/
 
-/-- **The empirical 0-1 risk is CSLib's empirical error.** On a nonempty labelled sample `S`,
-the empirical risk of the 0-1 loss is the real value of `empiricalError h S`, the mass that the
-empirical distribution of `S` puts on the disagreement set of `h`. -/
+/-- **The empirical 0-1 risk is CSLib's empirical error.** When singletons are measurable in `X`
+and `Y`, on a nonempty labelled sample `S` the empirical risk of the 0-1 loss is the real value of
+`empiricalError h S`, the mass that the empirical distribution of `S` puts on the disagreement set
+of `h`. -/
 theorem empiricalRisk_zeroOneLoss_eq_toReal_empiricalError {X Y : Type*}
     [MeasurableSpace X] [MeasurableSpace Y]
     [MeasurableSingletonClass X] [MeasurableSingletonClass Y]
@@ -80,21 +82,32 @@ theorem empiricalRisk_zeroOneLoss_eq_toReal_empiricalError {X Y : Type*}
 
 /-! ### Empirical risk minimization -/
 
-/-- **Empirical risk minimizer.** For a loss `L h z`, a class `C` and a nonempty sample `S`, the
-predictor `h` is an empirical risk minimizer over `C` on `S` if `h ∈ C` and no member of `C` has
-smaller empirical risk on `S` (Shalev-Shwartz and Ben-David, *Understanding Machine Learning*,
-2014, Section 2.3: `ERM_H(S) ∈ argmin_{h ∈ H} L_S(h)`). Ties are allowed, so a sample can have
-several minimizers; over an empty class there is none. -/
+/-- **Empirical risk minimizer.** For a real-valued loss `L h z`, a class `C` and a nonempty
+sample `S`, the predictor `h` is an empirical risk minimizer over `C` on `S` if `h ∈ C` and no
+member of `C` has smaller empirical risk on `S` (Shalev-Shwartz and Ben-David, *Understanding
+Machine Learning*, 2014, Section 2.3: `ERM_H(S) ∈ argmin_{h ∈ H} L_S(h)`, with the empirical risk
+`L_S(h) = (1/m) ∑ᵢ ℓ(h, zᵢ)` of a general loss from equation (3.4) in Section 3.2.2, where the
+loss is nonnegative). Ties are allowed, so a sample can have several minimizers; over an empty
+class there is none. -/
 def IsERM {H Z : Type*} {n : ℕ} [NeZero n] (L : H → Z → ℝ) (C : Set H) (S : Fin n → Z)
     (h : H) : Prop :=
   h ∈ C ∧ ∀ h' ∈ C, empiricalRisk L S h ≤ empiricalRisk L S h'
 
+/-- **An empirical risk minimizer minimizes the empirical risk on the class.** `IsERM L C S h`
+holds exactly when `h ∈ C` and `IsMinOn (empiricalRisk L S) C h`, that is,
+`empiricalRisk L S h ≤ empiricalRisk L S h'` for every `h' ∈ C`. -/
+theorem isERM_iff_isMinOn {H Z : Type*} {n : ℕ} [NeZero n] {L : H → Z → ℝ} {C : Set H}
+    {S : Fin n → Z} {h : H} :
+    IsERM L C S h ↔ h ∈ C ∧ IsMinOn (empiricalRisk L S) C h :=
+  Iff.rfl
+
 /-- **ERM learner.** A learner `A` on samples of size `m ≥ 1` follows the empirical risk
 minimization rule for the loss `L` over the class `C` if, on every labelled sample `S`, its output
 `A S` is an empirical risk minimizer over `C` (the rule `ERM_H` of Shalev-Shwartz and Ben-David,
-*Understanding Machine Learning*, 2014, Section 2.3). No ERM learner exists over a class on which
-some sample has no minimizer; when `X` and `Y` are nonempty, that includes the empty class. When
-`X` or `Y` is empty there is no labelled sample, so every learner is vacuously an ERM learner. -/
+*Understanding Machine Learning*, 2014, Section 2.3, with the general-loss empirical risk of
+equation (3.4)). No ERM learner exists over a class on which some sample has no minimizer; when
+`X` and `Y` are nonempty, that includes the empty class. When `X` or `Y` is empty there is no
+labelled sample, so every learner is vacuously an ERM learner. -/
 def IsERMLearner {X Y : Type*} {m : ℕ} [NeZero m] (L : (X → Y) → X × Y → ℝ)
     (C : ConceptClass X Y) (A : Learner X Y m) : Prop :=
   ∀ S : LabeledSample X Y m, IsERM L C S (A S)
