@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.JosephusFunction
 public import MathlibExt.Combinatorics.MaximumNimJosephus
 public import MathlibExt.GameTheory.SpragueGrundy
+public import MathlibExt.Combinatorics.MaximumNimFloorNonmultiple
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Tactic
 
@@ -331,15 +332,8 @@ public theorem_wanted maximumNimGrundy_eq_sub_rule_succ (f : ℕ → ℕ) (hf0 :
 -- `maximumNimGrundy_div_eq_of_dvd` in `MathlibExt.Combinatorics.MaximumNimJosephus`, which this
 -- module imports.
 
-/-- **Maximum Nim Grundy numbers at non-multiples of the divisor.** Let $k \ge 2$ and let $G$
-be the Grundy number of Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$. If $x$ is a
-natural number not divisible by $k$, then $G(x) = G(\lfloor (k-1)x/k \rfloor)$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 3(ii) (`integers-2024-G5-lem-3`). -/
-public theorem_wanted maximumNimGrundy_eq_F_of_not_dvd (k x : ℕ) (hk : 2 ≤ k)
-     (hkx : ¬k ∣ x) :
-    maximumNimGrundy (· / k) x = maximumNimGrundy (· / k) ((k - 1) * x / k)
+-- `maximumNimGrundy_eq_F_of_not_dvd` is proved in
+-- `MathlibExt.Combinatorics.MaximumNimFloorNonmultiple`, which this module publicly imports.
 
 -- Lemma 4(ii) is proved as `maximumNim_not_dvd_mul_sub_of_ne` in
 -- `MathlibExt.Combinatorics.MaximumNimJosephus`, which this module publicly imports.
