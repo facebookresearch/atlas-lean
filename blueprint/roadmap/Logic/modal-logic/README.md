@@ -22,3 +22,4 @@ Logics of necessity and possibility interpreted on Kripke models, their axiomati
 - [Description logics](description-logics/README.md)
 
 - [Action model logic](action-model-logic.md)
+- [Undecidable modal logics](undecidable-modal-logics/README.md)
