@@ -16,7 +16,7 @@ holds if and only if $\mathrm{NDE}(x, x^*; Y) = -\mathrm{NDE}(x^*, x; Y)$, that 
 
 $$E\bigl(Y_{x, Z_x} - Y_{x^*, Z_x}\bigr) = E\bigl(Y_{x, Z_{x^*}} - Y_{x^*, Z_{x^*}}\bigr),$$
 
-since, expanding the definitions with $Y_{x, Z_x} = Y_x$, the left side minus the right side equals $\mathrm{TE}(x, x^*; Y) - \mathrm{NDE}(x, x^*; Y) - \mathrm{NIE}(x, x^*; Y)$. A sufficient condition is an outcome equation additive in treatment and mediator, $Y_{x, z} = g_1(x) + g_2(z) + \varepsilon$ with $\varepsilon$ not depending on $(x, z)$, with no treatment–mediator interaction; linearity in the regression coefficients alone is not sufficient, since a model linear in its coefficients may contain an interaction term $\beta_{xz}\, xz$, under which the two contrasts differ by $\beta_{xz}(x - x^*)\,E(Z_x - Z_{x^*})$. Identification of the natural effects from observational data, by covariate adjustment or by the mediation formulas of [natural direct/indirect effects and the mediation formula](../../../ComputerScience/machine-learning/probabilistic-graphical-models/natural-direct-indirect-effects-and-the-mediation-formula.md), is a separate statement.
+since, expanding the definitions with $Y_{x, Z_x} = Y_x$, the left side minus the right side equals $\mathrm{TE}(x, x^*; Y) - \mathrm{NDE}(x, x^*; Y) - \mathrm{NIE}(x, x^*; Y)$. A sufficient condition is an outcome equation additive in treatment and mediator, $Y_{x, z} = g_1(x) + g_2(z) + \varepsilon$ with $\varepsilon$ not depending on $(x, z)$, with no treatment–mediator interaction; linearity in the regression coefficients alone is not sufficient, since a model linear in its coefficients may contain an interaction term $\beta_{xz}\, xz$, under which the two contrasts differ by $\beta_{xz}(x - x^*)\,E(Z_x - Z_{x^*})$. Identification of the natural effects from observational data, by covariate adjustment or by the mediation formulas for [the natural direct effect](../../../ComputerScience/machine-learning/probabilistic-graphical-models/natural-direct-and-indirect-effects/nde-eq-mediation-formula-nde.md) and [the natural indirect effect](../../../ComputerScience/machine-learning/probabilistic-graphical-models/natural-direct-and-indirect-effects/nie-eq-mediation-formula-nie.md), is a separate statement.
 
 ## Expansion
 
@@ -26,7 +26,7 @@ since, expanding the definitions with $Y_{x, Z_x} = Y_x$, the left side minus th
 
 ## Related topics
 
-- [Natural direct/indirect effects and the mediation formula](../../../ComputerScience/machine-learning/probabilistic-graphical-models/natural-direct-indirect-effects-and-the-mediation-formula.md)
+- [Natural direct and indirect effects](../../../ComputerScience/machine-learning/probabilistic-graphical-models/natural-direct-and-indirect-effects/README.md)
 
 ## Sources
 
