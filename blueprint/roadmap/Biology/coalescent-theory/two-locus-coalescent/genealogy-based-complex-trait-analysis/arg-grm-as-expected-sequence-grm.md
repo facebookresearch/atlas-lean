@@ -21,6 +21,7 @@ where $D^{\mathrm{seq}}$ is the per-base-pair Hamming distance of the sequences 
 ## Depends on
 
 - [Genetic relationship matrix](../../../statistical-genetics/greml-and-haseman-elston-estimation-of-snp-herit/grm.md)
+- [Genome ARGs: interval-annotated inheritance graphs and their local trees](../genome-arg-interval-annotated-inheritance-graph.md)
 
 ## Expansion
 

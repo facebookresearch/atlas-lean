@@ -6,9 +6,9 @@ $$p_g^{\min} = \min_{i \in I(g)} p_i,$$
 
 converted to a z-score $z_g$ through the standard normal quantile function. Because $p_g^{\min}$ is stochastically smaller for genes with more SNPs or more independent LD units, MAGENTA regresses $z_g$ across all genes on gene properties $v_{g1}, \dots, v_{gq}$ (physical gene size, number of SNPs per kilobase, number of independent SNPs, number of recombination hotspots, genetic distance, and LD-unit distance normalized to the extended gene length) by step-wise multiple linear regression,
 
-$$z_g = \alpha + \sum_{r} \beta_r v_{gr} + \varepsilon_g,$$
+$$z_g = \sum_{r} \beta_r v_{gr} + \varepsilon_g,$$
 
-and uses the residual $\varepsilon_g$ as the corrected gene score, with a corrected gene p-value read from the standard normal distribution. The analytical alternative is Šidák's correction for the $N_g = |I(g)|$ SNP tests,
+with no intercept (the source's Equation (2)), and uses the residual $\varepsilon_g = z_g - \sum_r \hat\beta_r v_{gr}$ (Equation (3)) as the corrected gene score, with a corrected gene p-value read from the standard normal distribution. The analytical alternative is Šidák's correction for the $N_g = |I(g)|$ SNP tests,
 
 $$p_g^{\mathrm{Sidak}} = 1 - \big(1 - p_g^{\min}\big)^{N_g},$$
 

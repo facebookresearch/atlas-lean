@@ -2,7 +2,7 @@
 
 Let $Y \in \mathbb R^n$ be a standardized phenotype (mean $0$, variance $1$ after fixed effects $X\beta$) for $n$ genotyped individuals, possibly including close relatives. From $N$ genotyped SNPs with genotypes $x_{ij} \in \{0,1,2\}$ and allele frequencies $p_i$, form the identity-by-state genetic relationship matrix
 
-$$K^{\mathrm{IBS}}_{jk} = \frac1N\sum_{i=1}^{N}\frac{(x_{ij}-2p_i)(x_{ik}-2p_i)}{2p_i(1-p_i)},$$
+$$K^{\mathrm{IBS}}_{jk} = \frac1N\sum_{i=1}^{N}\frac{(x_{ij}-2p_i)(x_{ik}-2p_i)}{2p_i(1-p_i)} \quad (j \ne k), \qquad K^{\mathrm{IBS}}_{jj} = 1 + \frac1N\sum_{i=1}^{N}\frac{x_{ij}^2 - (1+2p_i)\,x_{ij} + 2p_i^2}{2p_i(1-p_i)},$$
 
 and, for a threshold $t \ge 0$, its thresholded version $K^{\mathrm{IBS}>t}$, obtained by setting every off-diagonal entry $\le t$ to $0$ and leaving the diagonal unchanged: an off-diagonal entry is kept exactly when it is strictly greater than $t$, and an entry equal to $t$ is set to $0$. The joint model is
 

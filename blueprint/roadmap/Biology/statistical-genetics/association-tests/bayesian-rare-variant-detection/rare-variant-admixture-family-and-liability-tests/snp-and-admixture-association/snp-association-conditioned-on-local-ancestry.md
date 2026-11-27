@@ -2,11 +2,21 @@
 
 Consider a case–control sample from a two-way admixed population whose ancestral populations are labelled $A$ and $E$. At a candidate biallelic SNP each individual has a local ancestry state $X \in \{AA, AE, EE\}$ giving the number of chromosomes of each ancestry at the locus, and a phenotype $Y \in \{0, 1\}$. Let $p_A, p_E$ be the reference-allele frequencies in controls on chromosomes of ancestry $A$ and $E$, and let $R$ be the allelic odds ratio, assumed equal across ancestries.
 
-Writing $n^{X,Y}_2, n^{X,Y}_1, n^{X,Y}_0$ for the counts of individuals with local ancestry $X$, phenotype $Y$ and $2, 1, 0$ reference alleles, the likelihood is the product over $(X, Y)$ cells of multinomial terms in which each chromosome of ancestry $a \in \{A, E\}$ carries the reference allele with probability $p_a$ in controls and with the odds-ratio-tilted frequency
+Write $RR_{X,Y}, RV_{X,Y}, VV_{X,Y}$ for the numbers of individuals with local ancestry $X$ and phenotype $Y$ that carry $2, 1, 0$ reference alleles, and $p_{a,Y}$ for the reference-allele frequency on chromosomes of ancestry $a \in \{A, E\}$ in phenotype group $Y$: $p_{a,0} = p_a$ in controls and the odds-ratio-tilted frequency
 
-$$p_a^{\text{case}} = \frac{R\, p_a}{R\, p_a + (1 - p_a)}$$
+$$p_{a,1} = \frac{R\, p_a}{R\, p_a + (1 - p_a)}$$
 
-in cases. Conditioning on $X$ means the frequency used for each chromosome is the one of its own ancestry, so stratification by ancestry — both global and local — cannot create a spurious allele-frequency difference between cases and controls.
+in cases. The likelihood is the allele-count likelihood
+
+$$
+\begin{aligned}
+L(R, p_A, p_E) = {} & \prod_{Y} p_{A,Y}^{2RR_{AA,Y}+RV_{AA,Y}}\,(1-p_{A,Y})^{2VV_{AA,Y}+RV_{AA,Y}} \\
+& \cdot \prod_{Y} p_{A,Y}^{RR_{AE,Y}+0.5RV_{AE,Y}}\,(1-p_{A,Y})^{VV_{AE,Y}+0.5RV_{AE,Y}}\; p_{E,Y}^{RR_{AE,Y}+0.5RV_{AE,Y}}\,(1-p_{E,Y})^{VV_{AE,Y}+0.5RV_{AE,Y}} \\
+& \cdot \prod_{Y} p_{E,Y}^{2RR_{EE,Y}+RV_{EE,Y}}\,(1-p_{E,Y})^{2VV_{EE,Y}+RV_{EE,Y}},
+\end{aligned}
+$$
+
+with $Y$ ranging over $\{0, 1\}$. An $AA$ or $EE$ individual contributes both of its alleles to the frequency of its single ancestry, and a heterozygote ($RV$) with local ancestry $AE$, whose phase is not known, is credited with half a reference allele and half a variant allele on each ancestry, that is, with the factor $\bigl[p_{A,Y}(1-p_{A,Y})\,p_{E,Y}(1-p_{E,Y})\bigr]^{1/2}$ rather than the phase sum $p_{A,Y}(1-p_{E,Y}) + (1-p_{A,Y})\,p_{E,Y}$. Conditioning on $X$ means the frequency used for each chromosome is the one of its own ancestry, so stratification by ancestry — both global and local — cannot create a spurious allele-frequency difference between cases and controls.
 
 The statistic is the likelihood-ratio test of $R = 1$ against $R \neq 1$, with $p_A, p_E$ profiled out as nuisance parameters,
 

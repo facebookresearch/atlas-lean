@@ -21,6 +21,7 @@ with equality only when $\bar F = 0$; the limit rises to $2$ as $F_1, F_2 \to 1$
 ## Depends on
 
 - [Hudson's $F_{ST}$ (ratio of averages)](../abba-baba-test-and-f-statistic-estimators/hudson-fst.md)
+- [Weir–Cockerham estimator of $\theta$ (moment estimator of $F_{ST}$)](weir-cockerham-theta-estimator.md)
 
 ## Expansion
 

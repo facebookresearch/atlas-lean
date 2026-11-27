@@ -3,7 +3,7 @@
 Let gene $i$ have data $x_i$ — the de novo, transmitted, non-transmitted and case–control counts of one mutation class — with likelihood $L(x_i \mid q_i, \gamma_i)$ the [Poisson product](poisson-counts-of-de-novo-and-transmitted-variants.md) in the variant frequency $q_i$ and relative risk $\gamma_i$, the mutation rate being known. Model a fraction $\pi$ of genes as risk genes:
 
 - under $H_0$: $\gamma_i = 1$ and $q_i \sim \rho_0$;
-- under $H_1$: $\gamma_i \sim \rho_\gamma$ supported on $(1, \infty)$ and $q_i \sim \rho_1$.
+- under $H_1$: $\gamma_i \ne 1$, with $\gamma_i \sim \rho_\gamma$ a law on $(0, \infty)$ (in the source $\mathrm{Gamma}(\bar\gamma\beta, \beta)$) and $q_i \sim \rho_1$.
 
 The **evidence** for each model is the marginal likelihood
 

@@ -12,6 +12,10 @@ $$\beta_c = \sum_{b \subseteq c} (-1)^{|c| - |b|}\, y(b), \qquad c \subseteq [L]
 
 In particular $\beta_{\{i,j\}} = y(\{i,j\}) - y(\{i\}) - y(\{j\}) + y(\emptyset)$, the usual pairwise epistasis on the ancestral background. A model of order $K < L$ is exact iff $\beta_c = 0$ for all $|c| > K$, with $\beta_c$ given by the same formula.
 
+## Depends on
+
+- [Truncated-order epistasis model of a combinatorial landscape](antibody-affinity-landscapes/truncated-order-epistasis-model-of-a-combinatorial-landscape.md)
+
 ## Expansion
 
 The map $\beta \mapsto y$, $y(s) = \sum_{c \subseteq s} \beta_c$, is summation over the Boolean lattice of subsets; by Möbius inversion on that lattice, whose Möbius function is $\mu(b, c) = (-1)^{|c| - |b|}$ for $b \subseteq c$, its inverse is the stated alternating sum. Concretely, substituting gives $\sum_{b \subseteq c} (-1)^{|c|-|b|} \sum_{a \subseteq b} \beta_a = \sum_{a \subseteq c} \beta_a \sum_{a \subseteq b \subseteq c} (-1)^{|c| - |b|}$, and the inner sum is $(1 - 1)^{|c \setminus a|}$, which is $1$ if $a = c$ and $0$ otherwise. Both sides have $2^L$ coordinates, so the linear map is a bijection. Moulana et al. measure all $2^{15} = 32768$ intermediates between the Wuhan Hu-1 and Omicron BA.1 receptor-binding domains, choose $K = 5$ by ten-fold cross-validation, and contrast this "biochemical" reference with the "statistical" (ensemble) parametrization, whose baseline is the library mean, and with a logistic global-epistasis transform for diminishing returns.
