@@ -572,7 +572,8 @@ def main() -> int:
                       f"| Linter | Findings |\n|---|---:|\n{rows}{note}\n")
     if kept:
         print(f"{len(kept)} finding(s) on added declarations. Fix them, or where a finding is "
-              "wrong, mark the declaration `@[nolint <linter>]`.")
+              "wrong, mark the declaration `@[nolint <linter>]`, or for duplicateStatement and "
+              "rootNamespace list it in scripts/nolints.json.")
         return 0 if args.report_only else 1
     print("No environment-linter finding on the added declarations.")
     return 0

@@ -23,15 +23,26 @@ environment of `ROOT`, this lints the declarations of the `MODULE`s with:
   and `explicitVarsOfIff` (variables on both sides of an `↔` that should be implicit, here only
   in public declarations);
 - `duplicateStatement`: a theorem whose statement another theorem of the environment already
-  proves, up to the names of binders and universes. Deprecated theorems, instances and generated
-  declarations are not compared;
+  proves, up to the names of binders and a renaming of universes. Deprecated and generated
+  theorems are not compared, on either side, nor is a statement that is just `True`. An instance
+  of the changed modules is not reported, since typeclass resolution needs it even where a
+  theorem already proves its statement; a theorem that restates an instance is, since the
+  instance proves it. The environment is that of `ROOT`: the changed modules and what they
+  import, not the modules they do not import;
 - `rootNamespace`: a public declaration outside any namespace, with which a later Mathlib
   declaration of the same name would collide.
 
 Like `runLinter`, it prints the findings with their file, line and column, grouped by linter and
-module, and exits 1 if there is one, 0 if there is none, and 2 if it cannot run. `@[nolint X]`
-keeps linter `X` off a declaration, as for `#lint`. Unlike `runLinter`, every linter lints only
-the declarations of the `MODULE`s, which is what the check reports on.
+module, and exits 1 if there is one, 0 if there is none, and 2 if it cannot run. Unlike
+`runLinter`, every linter lints only the declarations of the `MODULE`s, which is what the check
+reports on.
+
+`@[nolint X]` keeps one of Batteries' or Mathlib's linters off a declaration, as for `#lint`.
+`duplicateStatement` and `rootNamespace` are this script's own, so Lean does not know them when it
+builds a file, and `@[nolint]` cannot name them. For them, and for any linter, an entry
+`["X", "Declaration.name"]` in `scripts/nolints.json`, the list of exceptions that `runLinter`
+reads too, keeps linter `X` off that declaration (a private one by its name without the private
+prefix).
 -/
 
 open Lean Core Meta Batteries.Tactic.Lint
@@ -48,12 +59,48 @@ def restrict (linter : NamedLinter) : NamedLinter :=
     { linter with test := fun decl => if isPrivateName decl then pure none else linter.test decl }
   else linter
 
-/-- The statement of a theorem, with its universe parameters renamed `u_1`, `u_2`, … in order. -/
+/-- The exceptions file, as for `runLinter`: a JSON array of `[linter, declaration]` pairs. -/
+def nolintsFile : System.FilePath := "scripts/nolints.json"
+
+/-- The exceptions of `nolintsFile`, or none if there is no such file. -/
+def readNolints : IO (Array (Name × Name)) := do
+  unless ← nolintsFile.pathExists do return #[]
+  match Json.parse (← IO.FS.readFile nolintsFile) >>= fromJson? with
+  | .ok nolints => return nolints
+  | .error error => throw <| IO.userError s!"{nolintsFile}: {error}"
+
+/-- `results` without the findings that `nolints` lists. -/
+def dropNolints (nolints : Array (Name × Name))
+    (results : Array (NamedLinter × Std.HashMap Name MessageData)) :
+    Array (NamedLinter × Std.HashMap Name MessageData) :=
+  results.map fun (linter, found) =>
+    let listed := nolints.filterMap fun (name, decl) =>
+      if name == linter.name then some decl else none
+    (linter, found.filter fun decl _ =>
+      !listed.contains decl && !listed.contains (privateToUserName decl))
+
+/--
+The statement of a theorem, with its universe parameters renamed `u_1`, `u_2`, … in the order in
+which they first occur in it, so that statements that differ only in the names of their universes,
+or in the order in which they were declared, get one key.
+-/
 def canonicalStatement (info : ConstantInfo) : Expr :=
-  let params := info.levelParams
+  let occurring := (collectLevelParams {} info.type).params.toList
+  let params := occurring ++ info.levelParams.filter (!occurring.contains ·)
   let canonical := (List.range params.length).map fun i => Name.mkSimple s!"u_{i + 1}"
-  if params == canonical then info.type
-  else info.type.instantiateLevelParams params (canonical.map Level.param)
+  let renamed := if params == canonical then info.type
+    else info.type.instantiateLevelParams params (canonical.map Level.param)
+  -- Lean orders the arguments of a `max` by universe name, so order them again after renaming.
+  renamed.replaceLevel fun level => some level.normalize
+
+/--
+A theorem's statement with every universe parameter replaced by `0`, which leaves only explicit
+levels, so `max` and `imax` reduce to numbers. Renaming universes cannot change it, and its hash
+is cached, so it finds the few theorems worth canonicalizing cheaply.
+-/
+def erased (info : ConstantInfo) : Expr :=
+  if info.levelParams.isEmpty then info.type
+  else info.type.instantiateLevelParams info.levelParams (info.levelParams.map fun _ => .zero)
 
 /-- Whether the duplicate check compares the theorem `name`. -/
 def comparable (env : Environment) (name : Name) (info : ConstantInfo) : Bool :=
@@ -66,17 +113,24 @@ statement (`Expr` equality ignores binder names and binder annotations).
 def findDuplicates (decls : Array Name) : CoreM (Std.HashMap Name (Array Name)) := do
   let env ← getEnv
   let mut statements : Std.HashMap Expr (Array Name) := {}
+  let mut erasedKeys : Std.HashSet Expr := {}
   for decl in decls do
     let some info := env.find? decl | continue
     unless comparable env decl info do continue
+    -- Typeclass resolution needs an instance even where a theorem proves its statement, so an
+    -- instance is not reported; a theorem that restates one is, below.
     if ← isInstance decl then continue
     let statement := canonicalStatement info
-    -- A statement with no premise and no structure, such as `True`, says nothing.
-    if statement.isConst then continue
+    -- `True` says nothing; a named proposition such as `def Claim : Prop := …` does.
+    if statement.isConstOf ``True then continue
     statements := statements.alter statement (·.getD #[] |>.push decl)
+    erasedKeys := erasedKeys.insert (erased info)
   if statements.isEmpty then return {}
+  -- Cheap tests first: the environment holds hundreds of thousands of theorems.
   let record (found : Std.HashMap Name (Array Name)) (name : Name) (info : ConstantInfo) :
       Std.HashMap Name (Array Name) := Id.run do
+    unless info matches .thmInfo _ do return found
+    unless erasedKeys.contains (erased info) do return found
     unless comparable env name info do return found
     let some targets := statements[canonicalStatement info]? | return found
     let mut found := found
@@ -129,6 +183,9 @@ def rootNamespace : NamedLinter where
     | _ => return none
 
 unsafe def lint (root : Name) (modules : List Name) : IO UInt32 := do
+  let nolints ← try readNolints catch error =>
+    IO.eprintln s!"{error}"
+    return 2
   initSearchPath (← findSysroot)
   -- Run the modules' initializers, which register Batteries' and Mathlib's linters.
   enableInitializersExecution
@@ -145,8 +202,10 @@ unsafe def lint (root : Name) (modules : List Name) : IO UInt32 := do
     let decls := env.constants.map₁.fold (init := #[]) fun decls name _ =>
       if (env.getModuleIdxFor? name).any indices.contains then decls.push name else decls
     let linters ← getChecks (slow := true) (runOnly := none) (runAlways := some extraLinters)
-    let linters := linters.map restrict ++ #[duplicateStatement (← findDuplicates decls), rootNamespace]
-    let results ← lintCore decls linters (currentModule := root) (inIO := true)
+    let linters :=
+      linters.map restrict ++ #[duplicateStatement (← findDuplicates decls), rootNamespace]
+    let results := dropNolints nolints
+      (← lintCore decls linters (currentModule := root) (inIO := true))
     if results.all (·.2.isEmpty) then
       IO.println s!"-- Linting passed for {root}."
       return 0

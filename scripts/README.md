@@ -72,12 +72,15 @@ five production libraries once (`scripts/lean_changes.py build --base <ref>`), t
   `runLinter` does, and four more: `docBlameThm` (a public theorem without a docstring),
   `explicitVarsOfIff` (variables on both sides of an `↔` that should be implicit),
   `duplicateStatement` (a theorem whose statement another theorem of Atlas, Mathlib or their
-  dependencies already proves, up to binder and universe names) and `rootNamespace` (a public
-  declaration outside any namespace, which a later Mathlib name could collide with).
-  `@[nolint <linter>]` turns one off for a declaration. A declaration counts as added when the
-  change adds the line that declares it, below its docstring and attributes, and no declaration of
-  that name is in the changed files at the base (for a private declaration, including a `module`
-  file's declarations outside a `public section` that are not marked `public`, in its own file), so
+  dependencies already proves, up to binder names and a renaming of universes; it searches the
+  changed modules and what they import) and `rootNamespace` (a public declaration outside any
+  namespace, which a later Mathlib name could collide with). `@[nolint <linter>]` turns one of
+  Batteries' or Mathlib's linters off for a declaration. Lean does not know the two Atlas ones when
+  it builds a file, so for them an entry `["<linter>", "<declaration>"]` in `scripts/nolints.json`,
+  which `runLinter` reads too, does instead. A declaration counts as added when the change adds the
+  line that declares it, below its docstring and attributes, and no declaration of that name is in
+  the changed files at the base (for a private declaration, including a `module` file's
+  declarations outside a `public section` that are not marked `public`, in its own file), so
   documenting, tagging, editing or moving an existing declaration does not report it. A
   `theorem_wanted` or `def_wanted` statement is not the declaration that proves it, so a proof's
   findings are reported;

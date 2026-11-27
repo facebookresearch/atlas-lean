@@ -16,6 +16,7 @@ Exit 0 if every check reports what it should, 1 otherwise.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import subprocess
@@ -25,6 +26,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = Path(__file__).resolve().parent
 PROBE = Path("MathlibExt/LintersSelfTestProbe.lean")
+# The exceptions file of scripts/lint_declarations.lean (and runLinter). The probe commit adds an
+# entry, and the self-test puts the file back as it was.
+NOLINTS = Path("scripts/nolints.json")
+PROBE_NOLINTS = [["rootNamespace", "lintersProbeListed"]]
 
 LONG = "a + b = b + a ∧ a * b = b * a ∧ a + 0 = a ∧ b + 0 = b ∧ a * 1 = a ∧ b * 1 = b"
 PROBE_TEXT = f"""\
@@ -49,6 +54,32 @@ def lintersProbeUnused (n : Nat) (m : Nat) : Nat := n + 1
 theorem lintersProbeAddComm (a b : Nat) : a + b = b + a := Nat.add_comm a b
 
 theorem lintersProbeIff (a b : Nat) : a + 0 = b ↔ a = b := by simp
+
+universe u v
+
+/-- A named proposition: its proofs have one statement. -/
+def LintersProbeClaim : Prop := ∀ p : Nat, p + 0 = p
+
+theorem lintersProbeClaimA : LintersProbeClaim := fun _ => rfl
+
+theorem lintersProbeClaimB : LintersProbeClaim := fun _ => rfl
+
+theorem lintersProbePairUV {{A : Type u}} {{B : Type v}} (a : A) (b : B) : (a, b) = (a, b) := rfl
+
+theorem lintersProbePairVU {{A : Type v}} {{B : Type u}} (a : A) (b : B) : (a, b) = (a, b) := rfl
+
+/-- A class of propositions, whose instances are theorems. -/
+class LintersProbeFact (p : Prop) : Prop where
+  out : p
+
+instance lintersProbeInst : LintersProbeFact (2 = 2) := ⟨rfl⟩
+
+theorem lintersProbeFact : LintersProbeFact (2 = 2) := ⟨rfl⟩
+
+@[nolint docBlameThm]
+theorem lintersProbeNoDocOk : 3 = 3 := rfl
+
+theorem lintersProbeListed : 4 = 4 := rfl
 """
 # Only documents an existing declaration, whose unused argument stays.
 DOCUMENTED = PROBE_TEXT.replace("def lintersProbeUnused",
@@ -68,9 +99,28 @@ EXPECTED = {
                               r"explicitVarsOfIff: lintersProbeIff should be made implicit",
                               r"duplicateStatement: lintersProbeAddComm has the same statement as "
                               r"`Nat\.add_comm`",
-                              r"rootNamespace: lintersProbeNoDoc is in the root namespace"],
+                              r"rootNamespace: lintersProbeNoDoc is in the root namespace",
+                              # Two proofs of a named proposition, and two statements that differ
+                              # only in which universe is which.
+                              r"duplicateStatement: lintersProbeClaimA has the same statement as "
+                              r"`lintersProbeClaimB`",
+                              r"duplicateStatement: lintersProbePairUV has the same statement as "
+                              r"`lintersProbePairVU`",
+                              # A theorem that restates an instance is reported.
+                              r"duplicateStatement: lintersProbeFact has the same statement as "
+                              r"`lintersProbeInst`",
+                              # `@[nolint docBlameThm]` and the exceptions file each drop exactly
+                              # one finding.
+                              r"rootNamespace: lintersProbeNoDocOk is in the root namespace",
+                              r"docBlameThm: lintersProbeListed theorem missing documentation"],
                              [r" 0 on declarations the change adds, [1-9]\d* on declarations it "
                               r"keeps", r"No environment-linter finding on the added declarations"]),
+}
+# Patterns that the output must not match after the first and the second commit.
+ABSENT = {
+    "check_env_linters.py": ([r"duplicateStatement: lintersProbeInst ",
+                              r"docBlameThm: lintersProbeNoDocOk ",
+                              r"rootNamespace: lintersProbeListed "], []),
 }
 # Exit codes after the first and the second commit.
 EXIT_CODES = (1, 0)
@@ -82,10 +132,15 @@ def git(*args: str) -> str:
                           text=True).stdout.strip()
 
 
-def commit(text: str, message: str) -> str:
+def commit(text: str, message: str, nolints: list | None = None) -> str:
+    """Commit the probe module, and `nolints` as the exceptions file if given."""
     (ROOT / PROBE).write_text(text, encoding="utf-8")
-    git("add", "--", str(PROBE))
-    git("commit", "-q", "--no-verify", "-m", message, "--", str(PROBE))
+    paths = [str(PROBE)]
+    if nolints is not None:
+        (ROOT / NOLINTS).write_text(json.dumps(nolints, indent=2) + "\n", encoding="utf-8")
+        paths.append(str(NOLINTS))
+    git("add", "--", *paths)
+    git("commit", "-q", "--no-verify", "-m", message, "--", *paths)
     return git("rev-parse", "HEAD")
 
 
@@ -105,10 +160,12 @@ def run_checks(base: str, round_: int) -> bool:
         output = result.stdout + result.stderr
         want_code = EXIT_CODES[round_]
         missing = [pattern for pattern in expected[round_] if not re.search(pattern, output)]
-        if result.returncode != want_code or missing:
+        unexpected = [pattern for pattern in ABSENT.get(script, ([], []))[round_]
+                      if re.search(pattern, output)]
+        if result.returncode != want_code or missing or unexpected:
             ok = False
             print(f"FAIL {script} (round {round_ + 1}): exit {result.returncode}, wanted "
-                  f"{want_code}; missing {missing}\n{output}")
+                  f"{want_code}; missing {missing}; unexpected {unexpected}\n{output}")
         else:
             print(f"ok {script} (round {round_ + 1}): exit {result.returncode}")
     return ok
@@ -122,12 +179,16 @@ def main() -> int:
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true" and not args.local:
         parser.error("this commits to the checkout; pass --local to run it outside GitHub Actions")
-    if (ROOT / PROBE).exists() or git("diff", "--cached", "--name-only"):
-        print(f"{PROBE} exists or changes are staged; not running.", file=sys.stderr)
+    if (ROOT / PROBE).exists() or git("diff", "--cached", "--name-only") or \
+            git("status", "--porcelain", "--", str(NOLINTS)):
+        print(f"{PROBE} exists, changes are staged or {NOLINTS} has local changes; "
+              "not running.", file=sys.stderr)
         return 1
     start = git("rev-parse", "HEAD")
+    had_nolints = (ROOT / NOLINTS).exists()
+    nolints = json.loads((ROOT / NOLINTS).read_text()) if had_nolints else []
     try:
-        first = commit(PROBE_TEXT, "linters self-test: probe module")
+        first = commit(PROBE_TEXT, "linters self-test: probe module", nolints + PROBE_NOLINTS)
         ok = run_checks(start, 0)
         commit(DOCUMENTED, "linters self-test: document an existing declaration")
         ok = run_checks(first, 1) and ok
@@ -135,6 +196,11 @@ def main() -> int:
         git("reset", "-q", "--soft", start)
         git("rm", "-q", "--cached", "--ignore-unmatch", "--", str(PROBE))
         (ROOT / PROBE).unlink(missing_ok=True)
+        if had_nolints:
+            git("checkout", start, "--", str(NOLINTS))
+        else:
+            git("rm", "-q", "--cached", "--ignore-unmatch", "--", str(NOLINTS))
+            (ROOT / NOLINTS).unlink(missing_ok=True)
     print("The checks report what they should." if ok else "A check reported something else.")
     return 0 if ok else 1
 
