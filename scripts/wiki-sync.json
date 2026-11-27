@@ -19772,7 +19772,7 @@
 "Cslib.CodingTheory.CRC.encode_eq_add": "918441dbbb33c316",
 "Cslib.CodingTheory.CRC.encoding": "b99246f8efe2aa38",
 "Cslib.CodingTheory.CRC.encoding_decode_encode_add_eq_none_iff": "76363c84a56ac4a7",
-"Cslib.CodingTheory.CRC.encoding_decode_eq_none_of_isBurstLE": "2b39d85a3cfa2f53",
+"Cslib.CodingTheory.CRC.encoding_decode_eq_none_of_isBurstLE": "f472bdb05e6e162f",
 "Cslib.CodingTheory.CRC.encoding_decode_eq_none_of_single": "fe0065cdd7029d7f",
 "Cslib.CodingTheory.CRC.isBurstLE_of_support": "0ca0222a7429ec3f",
 "Cslib.CodingTheory.CRC.not_dvd_C_mul_X_pow": "a5bf1be65d34a07a",

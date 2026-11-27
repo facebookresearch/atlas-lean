@@ -88,7 +88,7 @@ theorem CRC.encoding_decode_encode_add_eq_none_iff {F : Type*} [Field F] {g : F[
   rw [ofCoeffList_reverse_coeffList, CRC.dvd_encode_add_iff]
   by_cases h : g ∣ e <;> simp [h]
 
-/-- Burst errors within the degree bound are always detected. -/
+/-- Burst errors of length at most `deg g` are always detected when `X` does not divide `g`. -/
 theorem CRC.encoding_decode_eq_none_of_isBurstLE {F : Type*} [Field F] {g : F[X]} (hg : g ≠ 0) (hX : ¬ X ∣ g) (m : F[X]) {e : F[X]} (he : CRC.IsBurstLE e g.natDegree) : (CRC.encoding g hg).decode (CRC.encode g m + e).coeffList.reverse = none := by
   exact (CRC.encoding_decode_encode_add_eq_none_iff hg m e).2
     (CRC.not_dvd_of_isBurstLE hX he le_rfl)
