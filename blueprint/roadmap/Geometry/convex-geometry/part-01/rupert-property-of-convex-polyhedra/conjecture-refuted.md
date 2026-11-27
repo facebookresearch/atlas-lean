@@ -9,5 +9,6 @@ $$\{\pi(Q_1 x) + t : x \in P\} \subseteq \operatorname{int} \{\pi(Q_2 x) : x \in
 ## Sources
 
 - Wikipedia, List of unsolved problems in mathematics, Geometry: Rupert's property
+- E. W. Weisstein, "Prince Rupert's Problem", *MathWorld*, Wolfram Research, https://mathworld.wolfram.com/PrinceRupertsProblem.html (states the disproof by Steininger and Yurkevich)
 - J. Steininger and S. Yurkevich, A convex polyhedron without Rupert's property, arXiv:2508.18475 (2025), Theorem 1, https://arxiv.org/abs/2508.18475
 - T. Zeng, A stellated tetrahedron that is probably not Rupert, arXiv:2604.26531 (2026), https://arxiv.org/abs/2604.26531

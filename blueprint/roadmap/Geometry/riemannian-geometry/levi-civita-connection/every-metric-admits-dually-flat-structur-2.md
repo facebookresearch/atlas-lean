@@ -6,9 +6,9 @@ This result refutes the proposition stated as [Amari's question: does every metr
 - $T$ is totally symmetric at every point: $T_{ijk} = T_{jik} = T_{ikj}$;
 - for every $x \in U$ and all indices, both connections
 
-$$\nabla:\ \Gamma^k_{ij} - \tfrac{1}{2} \sum_l g^{kl} T_{ijl}, \qquad \nabla^*:\ \Gamma^k_{ij} + \tfrac{1}{2} \sum_l g^{kl} T_{ijl}$$
+    $$\nabla:\ \Gamma^k_{ij} - \tfrac{1}{2} \sum_l g^{kl} T_{ijl}, \qquad \nabla^*:\ \Gamma^k_{ij} + \tfrac{1}{2} \sum_l g^{kl} T_{ijl}$$
 
-have vanishing curvature $R^l_{\ kij}(x) = 0$. Here $\Gamma^k_{ij}$ are the Christoffel symbols of the Levi-Civita connection of $g$ and $g^{kl}$ are the entries of $g^{-1}$.
+    have vanishing curvature $R^l_{\ kij}(x) = 0$. Here $\Gamma^k_{ij}$ are the Christoffel symbols of the Levi-Civita connection of $g$ and $g^{kl}$ are the entries of $g^{-1}$.
 
 In other words, not every Riemannian metric on an open subset of $\mathbb{R}^n$ admits such a dually flat structure $(g, \nabla, \nabla^*)$ built from a symmetric cubic tensor.
 

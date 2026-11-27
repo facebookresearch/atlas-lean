@@ -2,7 +2,7 @@
 
 The statement: there is a dimension $n \ge 6$ in which Milnor's finite-generation property holds, that is, for every connected smooth ($C^\infty$) manifold $M$ without boundary, modeled on $\mathbb{R}^n$, with a $C^\infty$ Riemannian metric whose Riemannian distance is the metric of $M$, complete for that distance, and with nonnegative Ricci curvature $\operatorname{Ric} \ge 0$, the fundamental group $\pi_1(M, x)$ is finitely generated for every $x \in M$.
 
-Its negation says that in every dimension $n \ge 6$ some connected complete Riemannian $n$-manifold with nonnegative Ricci curvature has a fundamental group that is not finitely generated. It is false; the refutation is [Milnor's conjecture fails in every dimension at least six](milnor-finite-generation-in-some-dimensi-2.md).
+Its negation says that in every dimension $n \ge 6$ some connected complete Riemannian $n$-manifold with nonnegative Ricci curvature has a fundamental group that is not finitely generated. This existence statement is false; the refutation is [Milnor's conjecture fails in every dimension at least six](milnor-finite-generation-in-some-dimensi-2.md).
 
 ## Sources
 

@@ -11,3 +11,4 @@ It is false; the refutation is [A convex polyhedron without Rupert's property](c
 ## Sources
 
 - Wikipedia, List of unsolved problems in mathematics, Geometry: Rupert's property
+- E. W. Weisstein, "Prince Rupert's Problem", *MathWorld*, Wolfram Research, https://mathworld.wolfram.com/PrinceRupertsProblem.html (states the disproof by Steininger and Yurkevich)

@@ -6,7 +6,7 @@ $$F = \{v \in V : \ell(v) = c\},$$
 
 so that $\ell$ attains its maximum $c$ over $V$ exactly on $F$, and the direction of the affine span of $F$ (the span of the differences of its points) has dimension $d - 1$. For $d = 0$ there are no facets.
 
-The nonemptiness, that is the attainment of the bound, is essential: without it the empty set would pass for a segment ($V = \{0, 1\} \subseteq \mathbb{R}$, $\ell(x) = x$, $c = 2$), since the direction of the empty affine span is zero.
+The nonemptiness, that is the attainment of the bound, is essential: without it the empty set would pass for a facet of the segment ($V = \{0, 1\} \subseteq \mathbb{R}$, $\ell(x) = x$, $c = 2$), since the direction of the empty affine span is zero.
 
 ## Depends on
 
