@@ -1,14 +1,15 @@
 # Deciding the winner of a finite game with a computable winning function is undecidable
 
-No algorithm decides, given the number of moves and a program for the winning function, which player has a winning strategy in a finite game of perfect information whose moves are natural numbers; one move already suffices.
+No algorithm decides, given the number of moves and a program for the winning function, which player has a winning strategy in a finite game of perfect information whose moves are natural numbers.
 
-**Theorem.** The following problem is undecidable. Input: $m \ge 1$ and a program computing a function $W \colon \mathbb{N}^m \to \{\mathrm{A}, \mathrm{B}\}$. Question: does player A have a winning strategy in the [game](finite-games-with-a-computable-winning-function.md) $\mathcal{G}(m, W)$? It stays undecidable for $m = 1$.
+**Theorem.** The following problem is undecidable. Input: $m \ge 1$ and a program computing a function $W \colon \mathbb{N}^m \to \{\mathrm{A}, \mathrm{B}\}$. Question: does player A have a winning strategy in the [game](finite-games-with-a-computable-winning-function.md) $\mathcal{G}(m, W)$? The proof in the source uses only one-move games ($m = 1$).
 
 Exactly one of the players has a winning strategy (Kalmár), so the question "which player has a winning strategy?" is the same problem.
 
 ## Depends on
 
 - [Finite games with a computable winning function](finite-games-with-a-computable-winning-function.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

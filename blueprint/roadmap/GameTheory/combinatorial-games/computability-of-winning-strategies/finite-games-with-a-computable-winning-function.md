@@ -1,6 +1,6 @@
 # Finite games with a computable winning function
 
-In such a game two players alternately choose natural numbers for a fixed number m of moves, with perfect information, and a computable function of the m choices names the winner. Exactly one player has a winning strategy, but which one need not be computable.
+In such a game two players alternately choose natural numbers for a fixed number m of moves, with perfect information, and a computable function of the m choices names the winner. By a theorem of Kalmár, exactly one player has a winning strategy.
 
 Fix $m \ge 1$ and a computable function $W \colon \mathbb{N}^m \to \{\mathrm{A}, \mathrm{B}\}$. In the game $\mathcal{G}(m, W)$:
 

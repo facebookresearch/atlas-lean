@@ -11,10 +11,11 @@ For a single strongly terminating game and a single word the outcome is computab
 - [Rewrite games](rewrite-games.md)
 - [P-positions](../sprague-grundy-theorem/is-p.md)
 - [Star-free languages](../../../TheoryOfComputation/not-yet-classified/part-05/part-02/varieties/is-star-free.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-None.
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 

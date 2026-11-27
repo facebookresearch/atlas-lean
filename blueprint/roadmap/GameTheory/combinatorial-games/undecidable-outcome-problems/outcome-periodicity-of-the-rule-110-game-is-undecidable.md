@@ -11,6 +11,7 @@ This is Corollary 3 of the source; its proof transfers the corresponding undecid
 ## Depends on
 
 - [Take-away games emulating cellular automata](take-away-games-emulating-cellular-automata.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,5 +23,5 @@ By Theorem 2 of the source, for super-critical tape-heaps the P-positions of $\m
 
 ## Sources
 
-- U. Larsson, "Impartial games emulating one-dimensional cellular automata and undecidability", *Journal of Combinatorial Theory, Series A* 120(5):1116–1130, 2013, doi:10.1016/j.jcta.2013.02.009 (checked with Crossref); read as arXiv:1201.1039v1, <https://arxiv.org/abs/1201.1039v1>: Corollaries 2–4 in Section 4, Corollary 5 in Section 5, Theorem 2 and Lemma 3 in Section 2.
+- U. Larsson, "Impartial games emulating one-dimensional cellular automata and undecidability", *Journal of Combinatorial Theory, Series A* 120(5):1116–1130, 2013, doi:10.1016/j.jcta.2013.02.009 (checked with Crossref); read as arXiv:1201.1039v1, <https://arxiv.org/abs/1201.1039v1>: Corollaries 2–5 in Section 4, Theorem 2 and Lemma 3 in Section 2; the triangle placing game is introduced in Section 3.
 - M. Cook, "Universality in elementary cellular automata", *Complex Systems* 15(1):1–40, 2004, cited by the source for rule 110 (not read here).
