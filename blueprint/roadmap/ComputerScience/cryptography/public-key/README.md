@@ -24,3 +24,5 @@ Diffie–Hellman key agreement; ElGamal encryption and its security under the de
 - [Circular security from fully composable homomorphic encryption](circular-security-from-composable-homomorphic-encryption.md)
 
 - [Post-quantum indistinguishability obfuscation from standard assumptions](post-quantum-obfuscation-from-standard-assumptions.md)
+- [Isogeny and lattice foundations](isogeny-and-lattice-foundations/README.md)
+- [Obfuscation and witness encryption](obfuscation-and-witness-encryption/README.md)
