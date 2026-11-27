@@ -107,7 +107,7 @@ example (L : ℕ) (c : Fin 2 → Fin (2 * L + 1)) :
     (bc74_fiberForest_of_emptyFiber _ L 1 c (fiber_closed L 1 c) b₁_mem b₂_mem b₁_ne_b₂)
 
 -- The origin and `(5, 0)` have the same residue modulo `5`.
-example : bc73_resVec 2 (0 : Site 2) = bc73_resVec 2 (bc57_pt (2 * (2 : ℕ) + 1) 0) :=
+example : bc73_resVec 2 (0 : Site 2) = bc73_resVec 2 (faceCorner00 (2 * (2 : ℕ) + 1) 0) :=
   bc74_upperLines_sameResidue 2
 
 -- A global contracted forest gives the fibre bound.

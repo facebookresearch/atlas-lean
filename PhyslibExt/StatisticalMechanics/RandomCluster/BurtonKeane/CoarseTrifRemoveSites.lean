@@ -455,15 +455,15 @@ lemma bc62_coarseTrifExistence_of_route
 /-! ## D. The upper-lines configuration -/
 
 lemma bc62_boxVertex_mem {L : ℕ} {h : ℤ} (hh : 1 ≤ h) (hhL : h ≤ (L : ℤ)) :
-    bc57_pt (L : ℤ) h ∈ bc61_boxAround 2 L 0 := by
+    faceCorner00 (L : ℤ) h ∈ bc61_boxAround 2 L 0 := by
   rw [bc61_mem_boxAround_zero, mem_box]; intro i; fin_cases i
-  · change ((bc57_pt (L : ℤ) h) 0).natAbs ≤ L; rw [bc57_pt_fst]; simp
-  · change ((bc57_pt (L : ℤ) h) 1).natAbs ≤ L; rw [bc57_pt_snd]; omega
+  · change ((faceCorner00 (L : ℤ) h) 0).natAbs ≤ L; rw [bc57_pt_fst]; simp
+  · change ((faceCorner00 (L : ℤ) h) 1).natAbs ≤ L; rw [bc57_pt_snd]; omega
 
 lemma bc62_upperLines_mem_coarsePrecursor {L : ℕ} (hL : 3 ≤ L) :
     bc60_upperLines ∈ bc62_CoarseTrifPrecursor 2 L
-      (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt ((L : ℤ) + 1) 2) (bc57_pt ((L : ℤ) + 1) 3)
-      (bc57_pt (L : ℤ) 1) (bc57_pt (L : ℤ) 2) (bc57_pt (L : ℤ) 3) := by
+      (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 ((L : ℤ) + 1) 2) (faceCorner00 ((L : ℤ) + 1) 3)
+      (faceCorner00 (L : ℤ) 1) (faceCorner00 (L : ℤ) 2) (faceCorner00 (L : ℤ) 3) := by
   refine ⟨⟨?_, ?_, ?_⟩, ⟨?_, ?_, ?_⟩, ⟨?_, ?_, ?_⟩, ?_, ?_, ?_⟩
   · exact bc62_boxVertex_mem (by norm_num) (by exact_mod_cast (by omega : (1:ℤ) ≤ L))
   · exact bc62_boxVertex_mem (by norm_num) (by exact_mod_cast (by omega : (2:ℤ) ≤ L))
@@ -480,9 +480,9 @@ lemma bc62_upperLines_mem_coarsePrecursor {L : ℕ} (hL : 3 ≤ L) :
 
 lemma bc62_upperLines_forced_coarseTrif {L : ℕ} (hL : 3 ≤ L) :
     bc61_IsCoarseTrifurcation
-      (forceOpenFinset {s(bc57_pt (L : ℤ) 1, bc57_pt ((L : ℤ) + 1) 1),
-        s(bc57_pt (L : ℤ) 2, bc57_pt ((L : ℤ) + 1) 2),
-        s(bc57_pt (L : ℤ) 3, bc57_pt ((L : ℤ) + 1) 3)} bc60_upperLines) L 0 :=
+      (forceOpenFinset {s(faceCorner00 (L : ℤ) 1, faceCorner00 ((L : ℤ) + 1) 1),
+        s(faceCorner00 (L : ℤ) 2, faceCorner00 ((L : ℤ) + 1) 2),
+        s(faceCorner00 (L : ℤ) 3, faceCorner00 ((L : ℤ) + 1) 3)} bc60_upperLines) L 0 :=
   bc62_coarseTrif_of_precursor_mem bc60_upperLines L _ _ _ _ _ _
     (bc62_upperLines_mem_coarsePrecursor hL)
 
@@ -493,8 +493,8 @@ lemma bc62_status :
           = ∫⁻ ω, (bc61_coarseTcount ω L R : ℝ≥0∞) ∂μ) ∧
     (∀ {L : ℕ}, 3 ≤ L →
       bc60_upperLines ∈ bc62_CoarseTrifPrecursor 2 L
-        (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt ((L : ℤ) + 1) 2) (bc57_pt ((L : ℤ) + 1) 3)
-        (bc57_pt (L : ℤ) 1) (bc57_pt (L : ℤ) 2) (bc57_pt (L : ℤ) 3)) :=
+        (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 ((L : ℤ) + 1) 2) (faceCorner00 ((L : ℤ) + 1) 3)
+        (faceCorner00 (L : ℤ) 1) (faceCorner00 (L : ℤ) 2) (faceCorner00 (L : ℤ) 3)) :=
   ⟨fun μ hinv L R => bc62_coarse_expectation μ hinv L R,
    fun hL => bc62_upperLines_mem_coarsePrecursor hL⟩
 

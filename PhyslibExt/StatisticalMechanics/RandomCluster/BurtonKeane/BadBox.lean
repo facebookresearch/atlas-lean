@@ -104,8 +104,8 @@ lemma bc93_not_le_one_of_badBox (ω : ConfigSpace (Sym2 (Site d))) (L : ℕ) {y'
   exact absurd (le_trans this hle) (by decide)
 
 lemma bc93_upperLines_witnesses_in_box {L : ℕ} (hL : 3 ≤ L) :
-    bc57_pt (3 * (L : ℤ) + 1) 1 ∈ bc61_boxAround 2 L (bc76_yBuf L) ∧
-    bc57_pt (3 * (L : ℤ) + 1) 3 ∈ bc61_boxAround 2 L (bc76_yBuf L) := by
+    faceCorner00 (3 * (L : ℤ) + 1) 1 ∈ bc61_boxAround 2 L (bc76_yBuf L) ∧
+    faceCorner00 (3 * (L : ℤ) + 1) 3 ∈ bc61_boxAround 2 L (bc76_yBuf L) := by
   refine ⟨bc76_boxBuf_boundary_mem ?_, bc76_boxBuf_boundary_mem ?_⟩
   · simp only [Int.natAbs_one]; omega
   · rw [show (3 : ℤ).natAbs = 3 from rfl]; omega
@@ -140,8 +140,8 @@ lemma bc93_upperLines_multiBox_fails_and_N_top {L : ℕ} (hL : 3 ≤ L) :
     (bc67_IsGnTrifurcation bc60_upperLines L (0 : Site 2) ∧
      Disjoint (bc61_boxAround 2 L (0 : Site 2)) (bc61_boxAround 2 L (bc76_yBuf L)) ∧
      ((bc76_twoBoxGn L).induce ({(0 : Site 2)}ᶜ : Set (Site 2))).Reachable
-        ⟨bc57_pt ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
-        ⟨bc57_pt ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩) ∧
+        ⟨faceCorner00 ((L : ℤ) + 1) 1, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩
+        ⟨faceCorner00 ((L : ℤ) + 1) 3, by simpa using bc76_pt_ne_zero_of_height (by norm_num)⟩) ∧
     numInfiniteClusters 2 bc60_upperLines = ⊤ :=
   ⟨bc76_buffer_insufficient hL, bc60_numInfiniteClusters_top⟩
 

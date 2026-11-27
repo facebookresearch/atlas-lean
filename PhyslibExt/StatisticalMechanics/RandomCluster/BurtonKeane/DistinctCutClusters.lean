@@ -53,10 +53,8 @@ variable {d : ℕ}
 /-! ## A. Distinct cut clusters -/
 
 /-- Every configuration of `threeMeetBox d n` has three sites of the box in distinct infinite
-clusters,
-with sites whose cut clusters are infinite and pairwise distinct. Same statement as
-`bc7_DistinctWitnessClusters`; kept because replacing a definition changes the statements that
-mention it. -/
+clusters, and in each of these clusters a site whose cluster in `removeSite 0 ω` is infinite, the
+three clusters in `removeSite 0 ω` being pairwise distinct. -/
 def bc8_DistinctCutClusters (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∃ x₁ x₂ x₃ : Site d, x₁ ∈ box d n ∧ x₂ ∈ box d n ∧ x₃ ∈ box d n ∧

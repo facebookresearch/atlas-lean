@@ -252,9 +252,10 @@ lemma bc30_globalCutDownArmData_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : 
 
 /-! ## C. Up-arm funnelling -/
 
-/-- Up-arm funnelling along `rank`: arm ends `b x` and up-arm sites `u y` such that, after removing
-`y`,
-`b y` is cut from `u y` while the ends of lower connected trifurcations reach `u y`. -/
+/-- Up-arm funnelling along `rank`: arm ends `b x ∈ B_n` connected to each trifurcation `x` of
+`B_n`, with clusters infinite after all trifurcations of `B_n` are removed, and up-arm sites `u y`
+such that, after removing `y`, `b y` is cut from `u y` while the ends of lower connected
+trifurcations reach `u y`. -/
 def bc30_UpArmFunneling (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) : Prop :=
   ∃ (b : Site d → Site d) (u : Site d → Site d),

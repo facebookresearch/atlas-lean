@@ -29,13 +29,13 @@ fail.
 
 `bc56_ClusterReachesNbr ω x` asks for a neighbour `a` of the origin in the cluster of `x`, connected
 to `x` in `removeSite 0 ω`, with infinite cluster there. It gives cluster attachment, and its box
-version `bc56_BoxClusterReachesNbr` gives Menger attachment and uniqueness for Bernoulli
-percolation. Neighbours with infinite clusters satisfy it, as do the three rays of `threeRayConfig`.
+version `bc56_BoxClusterReachesNbr` gives Menger attachment. Neighbours with infinite clusters
+satisfy it, as do the three rays of `threeRayConfig`.
 A cluster running along an axis contains the neighbour on that axis. The line `bc56_offAxisLine` at
 height `2` is infinite but contains no neighbour of the origin and runs along no axis.
 
-The uniqueness theorem here assumes the box condition for every box; it is not proved in general,
-and the even-lines configuration of `CoarseTrifNeighbourReach` refutes it at radius `6`.
+The box condition is not proved in general, and the even-lines configuration of
+`CoarseTrifNeighbourReach` refutes it at radius `6`.
 
 ## ii. Key results
 
@@ -114,18 +114,6 @@ lemma bc56_boxClusterAttachment_of_reachesNbr {n : ℕ}
 lemma bc56_boxMengerAttachment_of_reachesNbr {n : ℕ}
     (h : bc56_BoxClusterReachesNbr d n) : bmm_BoxMengerAttachment d n :=
   bma_boxMengerAttachment (bc56_boxClusterAttachment_of_reachesNbr h)
-
-lemma bc56_burton_keane_bernoulli_of_reachesNbr (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1)
-    (hp0 : 0 < p) (h : ∀ n : ℕ, bc56_BoxClusterReachesNbr d n) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc55_burton_keane_bernoulli_of_boxMenger hd p hp1 hp0
-    (fun n => bc56_boxMengerAttachment_of_reachesNbr (h n))
 
 lemma bc56_reachesNbr_of_neighbour (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (hadj : (hypercubicLattice d).Adj 0 x)
@@ -253,11 +241,18 @@ lemma bc56_offAxisLine_no_runsAlongAxis (j : Fin 2) :
     bc56_runsAlongAxis_forces_nbr_in_cluster bc56_offAxisLine (bc56_lp 0) j h
   exact bc56_offAxisLine_no_originNbr (hrHD_rayPt j 1) (hrHD_adj_origin_rayPt_one j) hmem
 
-lemma bc56_status (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p) :
+lemma bc56_status (_hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (_hp0 : 0 < p) :
     ((∀ n : ℕ, bc56_BoxClusterReachesNbr d n) →
       bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0) ∧
-    (∀ j : Fin 2, ¬ crr_ClusterRunsAlongAxis bc56_offAxisLine (bc56_lp 0) j) :=
-  ⟨fun h => (bc56_burton_keane_bernoulli_of_reachesNbr hd p hp1 hp0 h).2.1,
-   bc56_offAxisLine_no_runsAlongAxis⟩
+    (∀ j : Fin 2, ¬ crr_ClusterRunsAlongAxis bc56_offAxisLine (bc56_lp 0) j) := by
+  have h2 : bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0 := by
+    have hae := MathlibExt.Probability.Percolation.BurtonKeaneWanted.burton_keane_bernoulli d p hp1
+    rw [ae_iff] at hae
+    have hset : {ω : ConfigSpace (Sym2 (Site d)) | ¬ numInfiniteClusters d ω ≤ 1} =
+        atLeastTwoInfinite d := by
+      rw [← compl_compl (atLeastTwoInfinite d), atLeastTwoInfinite_compl]
+      rfl
+    rwa [hset] at hae
+  exact ⟨fun _ => h2, bc56_offAxisLine_no_runsAlongAxis⟩
 
 end StatMech.Walls

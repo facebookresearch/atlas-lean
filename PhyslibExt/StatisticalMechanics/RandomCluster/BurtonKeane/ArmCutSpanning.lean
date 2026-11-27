@@ -178,9 +178,10 @@ lemma bc39_armCutGeometry_false_of_armAdjacent (ω : ConfigSpace (Sym2 (Site d))
   obtain ⟨_hloc, hself, hfun⟩ := hclauses t s htbox htri hadj
   exact hself (hfun t hadj.1)
 
-/-- Fixed arm cut geometry: as `bc38_ArmCutGeometry`, but the two endpoints of each arm-adjacent
-pair
-are exempt from the separation clause. -/
+/-- Fixed arm cut geometry: as `bc38_ArmCutGeometry`, but with both sites of each arm-adjacent pair
+exempt from the reaching clause: for every trifurcation `t` of the box `Λ_n` and every `s`
+arm-adjacent to `t`, after `t` is removed, `b t` is connected neither to `b s` nor to `s`, while
+`b x` is connected to `s` for every site `x` other than `s` and `t`. -/
 def bc39_ArmCutGeometryFixed (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

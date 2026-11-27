@@ -174,9 +174,10 @@ lemma rfp_armGeometry_consistent :
 
 /-! ## C. Claws -/
 
-/-- Claw arm geometry: some trifurcation `x₀` of the box such that every arm end for `x₀` is
-reached,
-after removing `x₀`, by a trifurcation connected to `x₀`. -/
+/-- Claw arm geometry: some trifurcation `x₀` of the box such that every site whose cluster is
+infinite after all trifurcations of the box are removed is connected, once `x₀` is removed, to
+another trifurcation `z` of the box connected to `x₀`, and is disconnected from `x₀` once `z` is
+removed. -/
 def rfp_ClawArmGeometry (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ x₀ : Site d, x₀ ∈ box d n ∧ IsTrifurcation d ω x₀ ∧
     ∀ b : Site d → Site d,
@@ -215,10 +216,10 @@ lemma rfp_clawArmGeometry_of_claw (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
 
 /-! ## D. Rooted arm divergence -/
 
-/-- Rooted arm divergence: arm ends `b x` with infinite clusters outside the trifurcation set and a
-rank
-separating connected trifurcations, such that removing the higher of two connected trifurcations
-cuts its end from the end of the lower one. -/
+/-- Rooted arm divergence: arm ends `b x ∈ B_n` connected to each trifurcation `x` of `B_n`, with
+clusters infinite after all trifurcations of `B_n` are removed, and a rank separating connected
+trifurcations, such that removing the higher of two connected trifurcations cuts its end from the
+end of the lower one. -/
 def rfp_RootedArmDivergence (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (b : Site d → Site d) (rank : Site d → ℕ ×ₗ ℕ),
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

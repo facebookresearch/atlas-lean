@@ -50,6 +50,9 @@ configuration gives one.
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph MeasureTheory
 open StatMech.Lattice StatMech.ConfigSpace
 
@@ -163,7 +166,7 @@ lemma bc24_removeSites_box_zero (ω : ConfigSpace (Sym2 (Site d))) :
     simp [hnex, h0]
 
 lemma bc24_coarseTrif_of_canonical_origin {ω : ConfigSpace (Sym2 (Site d))}
-    (h : IsCanonicalTrifurcation d ω (0 : Site d)) :
+    (h : IsEncounterPoint d ω (0 : Site d)) :
     IsCoarseTrifurcation d 0 ω := by
   obtain ⟨a₁, a₂, a₃, hne, hadj, hinf, hsep⟩ := h
   have hbox0 : (0 : Site d) ∈ box d 0 := by intro i; simp

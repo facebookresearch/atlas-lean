@@ -17,28 +17,27 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonFor
 /-!
 # Coarse arm embeddings
 
-Arms of coarse trifurcations reach the boundary; the coarse arm embedding is the coarse forest leaf
-count and gives the coarse count, and coarse precursors give the coarse trifurcation step.
+Arms of coarse trifurcations reach the boundary, the coarse forest leaf count holds with no coarse
+trifurcation and for a star, and coarse precursors give the coarse trifurcation step.
 
 ## i. Overview
 
 An infinite arm of the `L`-box around `y` started in the box of radius `R` reaches its boundary. The
-coarse forest leaf count holds with no coarse trifurcation and for a star. The coarse arm embedding
-`bc63_CoarseArmEmbedding` is defined as that leaf count and bounds the coarse count. A coarse
-precursor of positive probability gives, for a measure with finite energy, the coarse trifurcation
-step, and the upper-lines configuration gives such precursors. With the embedding and the step,
-`μ(N = ⊤) = 0`.
+coarse forest leaf count holds with no coarse trifurcation and for a star; it bounds the coarse
+count (`bc61_coarseTcount_le_boundary_of_forest`). A coarse precursor of positive probability
+gives, for a measure with finite energy, the coarse trifurcation step, and the upper-lines
+configuration gives such precursors. With the leaf count and the step, `μ(N = ⊤) = 0`
+(`bc62_infiniteClusters_top_null_of_forest_route`).
 
 ## ii. Key results
 
-- `bc63_coarseTcount_le_boundary_of_armEmbedding` : the coarse count from the arm embedding.
+- `bc63_coarseForestLeafCount_star` : the coarse forest leaf count for a star.
 - `bc63_coarseTrifExistence_of_precursor_pos` : the coarse step from precursors.
 
 ## iii. Table of contents
 
 - A. Coarse arms and leaf counts
-- B. The coarse arm embedding
-- C. Coarse precursors
+- B. Coarse precursors
 
 ## iv. References
 
@@ -127,33 +126,8 @@ lemma bc63_coarseForestLeafCount_star (ω : ConfigSpace (Sym2 (Site d))) (L R : 
         | rfl
         | (revert huv; simp only [hlamL]; intro huv; exact absurd (hzinj huv) (by decide))
 
-/-! ## B. The coarse arm embedding -/
 
-/-- The coarse arm embedding, defined as the coarse forest leaf count `bc61_CoarseForestLeafCount`.
--/
-def bc63_CoarseArmEmbedding (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
-  bc61_CoarseForestLeafCount ω L R
-
-lemma bc63_coarseArmEmbedding_iff_forestLeafCount (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) :
-    bc63_CoarseArmEmbedding ω L R ↔ bc61_CoarseForestLeafCount ω L R :=
-  Iff.rfl
-
-lemma bc63_coarseForestLeafCount (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (h : bc63_CoarseArmEmbedding ω L R) : bc61_CoarseForestLeafCount ω L R :=
-  (bc63_coarseArmEmbedding_iff_forestLeafCount ω L R).mp h
-
-lemma bc63_coarseTcount_le_boundary_of_armEmbedding (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (h : bc63_CoarseArmEmbedding ω L R) : bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  StatMech.Walls.bc61_coarseTcount_le_boundary_of_forest ω L R (bc63_coarseForestLeafCount ω L R h)
-
-lemma bc63_coarseArmEmbedding_star (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    {r : Site d} (hrbox : r ∈ box d R) (htri_r : bc61_IsCoarseTrifurcation ω L r)
-    (z : Fin 3 → Site d) (hzb : ∀ i, z i ∈ vertexBoundary d R) (hzinj : Function.Injective z)
-    (hsingle : ∀ y, y ∈ box d R → bc61_IsCoarseTrifurcation ω L y → y = r) :
-    bc63_CoarseArmEmbedding ω L R :=
-  bc63_coarseForestLeafCount_star ω L R hrbox htri_r z hzb hzinj hsingle
-
-/-! ## C. Coarse precursors -/
+/-! ## B. Coarse precursors -/
 
 lemma bc63_coarseRoute_of_precursor_pos
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) (L : ℕ)
@@ -174,33 +148,21 @@ lemma bc63_coarseTrifExistence_of_precursor_pos
     (bc63_coarseRoute_of_precursor_pos μ L a₁ a₂ a₃ b₁ b₂ b₃ hpre)
 
 lemma bc63_upperLines_arm_reaches_boundary {L R : ℕ} (hR : 1 ≤ R) {h : ℤ} (hh : 1 ≤ h)
-    (hbox : bc57_pt ((L : ℤ) + 1) h ∈ box 2 R) :
+    (hbox : faceCorner00 ((L : ℤ) + 1) h ∈ box 2 R) :
     ∃ z ∈ vertexBoundary 2 R,
       Connected 2 (removeSites (bc61_boxAround 2 L 0) bc60_upperLines)
-        (bc57_pt ((L : ℤ) + 1) h) z :=
-  bc63_coarseArm_reaches_boundary bc60_upperLines L R hR 0 (bc57_pt ((L : ℤ) + 1) h) hbox
+        (faceCorner00 ((L : ℤ) + 1) h) z :=
+  bc63_coarseArm_reaches_boundary bc60_upperLines L R hR 0 (faceCorner00 ((L : ℤ) + 1) h) hbox
     (bc61_upperLines_rightArm_infinite hh)
 
 lemma bc63_upperLines_coarseTrifExistence
     (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ]
     (hfe : HasFiniteEnergyMerge μ) {L : ℕ}
     (hpre : 0 < μ (bc62_CoarseTrifPrecursor 2 L
-      (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt ((L : ℤ) + 1) 2) (bc57_pt ((L : ℤ) + 1) 3)
-      (bc57_pt (L : ℤ) 1) (bc57_pt (L : ℤ) 2) (bc57_pt (L : ℤ) 3))) :
+      (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 ((L : ℤ) + 1) 2) (faceCorner00 ((L : ℤ) + 1) 3)
+      (faceCorner00 (L : ℤ) 1) (faceCorner00 (L : ℤ) 2) (faceCorner00 (L : ℤ) 3))) :
     bc61_CoarseTrifExistence μ L :=
   bc63_coarseTrifExistence_of_precursor_pos μ hfe L _ _ _ _ _ _ hpre
-
-lemma bc63_infiniteClusters_top_null_of_armEmbedding_route
-    (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ] (hd : 1 ≤ d)
-    (hinv : IsTranslationInvariant (G := Multiplicative (Site d)) μ)
-    (hfe : HasFiniteEnergyMerge μ) (L : ℕ)
-    (harm : ∀ (ω : ConfigSpace (Sym2 (Site d))) (R : ℕ), bc63_CoarseArmEmbedding ω L R)
-    (hcoarseRoute : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      ∃ a₁ a₂ a₃ b₁ b₂ b₃ : Site d,
-        0 < μ (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃)) :
-    μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc62_infiniteClusters_top_null_of_forest_route μ hd hinv hfe L
-    (fun ω R => bc63_coarseForestLeafCount ω L R (harm ω R)) hcoarseRoute
 
 lemma bc63_status :
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ), 1 ≤ R → ∀ (y a : Site d), a ∈ box d R →
@@ -208,14 +170,14 @@ lemma bc63_status :
       ∃ z ∈ vertexBoundary d R, Connected d (removeSites (bc61_boxAround d L y) ω) a z) ∧
     (∀ {V : Type} [Fintype V] (G : SimpleGraph V), (osf_spanForest G).IsAcyclic) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ),
-      bc63_CoarseArmEmbedding ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) ∧
+      bc61_CoarseForestLeafCount ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) ∧
     (∀ {L : ℕ}, 3 ≤ L →
       bc60_upperLines ∈ bc62_CoarseTrifPrecursor 2 L
-        (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt ((L : ℤ) + 1) 2) (bc57_pt ((L : ℤ) + 1) 3)
-        (bc57_pt (L : ℤ) 1) (bc57_pt (L : ℤ) 2) (bc57_pt (L : ℤ) 3)) :=
+        (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 ((L : ℤ) + 1) 2) (faceCorner00 ((L : ℤ) + 1) 3)
+        (faceCorner00 (L : ℤ) 1) (faceCorner00 (L : ℤ) 2) (faceCorner00 (L : ℤ) 3)) :=
   ⟨fun ω L R hR y a habox hinf => bc63_coarseArm_reaches_boundary ω L R hR y a habox hinf,
    fun G => Percolation.osf_spanForest_acyclic G,
-   fun ω L R h => bc63_coarseTcount_le_boundary_of_armEmbedding ω L R h,
+   fun ω L R h => bc61_coarseTcount_le_boundary_of_forest ω L R h,
    fun hL => StatMech.Walls.bc62_upperLines_mem_coarsePrecursor hL⟩
 
 end StatMech.Walls

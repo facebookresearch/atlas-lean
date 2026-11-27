@@ -21,6 +21,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicF
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.AcyclicForestJordanBridge
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.ConfigSpace
@@ -40,7 +43,7 @@ example (P : PlanarZ2Subgraph) (hac : P.G.IsAcyclic) :
 
 -- Canonical trifurcations with arms in the box give the global arm forest.
 example {d : ℕ} (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x)
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
       ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n)
     (hexists : ∃ x, x ∈ box d n ∧ IsTrifurcation d ω x) :

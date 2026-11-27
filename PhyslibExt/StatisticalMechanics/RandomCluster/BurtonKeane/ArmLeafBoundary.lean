@@ -86,9 +86,9 @@ lemma bc102_status :
     (bc64_starG.degree 0 = 3 ∧ (∀ i : Fin 4, i ≠ 0 → bc64_starG.degree i = 1)) ∧
     (∀ (L : ℕ),
       Disjoint (bc61_boxAround 2 L (0 : Site 2))
-          (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
+          (bc61_boxAround 2 L (faceCorner00 (2 * (L : ℤ) + 1) 0)) ∧
         Connected 2 bc60_upperLines
-          (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) ∧
+          (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) (z₀ z₁ : Site d),
       z₀ ∈ vertexBoundary d R → z₁ ∈ vertexBoundary d R → z₀ ≠ z₁ →
       bc64_CoarseBoundaryInjection ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) := by

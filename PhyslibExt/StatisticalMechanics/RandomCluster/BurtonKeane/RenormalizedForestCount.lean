@@ -64,6 +64,9 @@ configuration by configuration; the deterministic counting bound is the reusable
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph MeasureTheory
 open scoped ENNReal NNReal Topology
 open StatMech.Lattice StatMech.ConfigSpace
@@ -97,7 +100,7 @@ lemma bc25_isTrifurcation_of_coarseTrif_zero {ω : ConfigSpace (Sym2 (Site d))}
   · exact hsep
 
 lemma bc25_coarseTrif_zero_chain {ω : ConfigSpace (Sym2 (Site d))} :
-    (IsCanonicalTrifurcation d ω (0 : Site d) → IsCoarseTrifurcation d 0 ω) ∧
+    (IsEncounterPoint d ω (0 : Site d) → IsCoarseTrifurcation d 0 ω) ∧
       (IsCoarseTrifurcation d 0 ω → IsTrifurcation d ω (0 : Site d)) :=
   ⟨bc24_coarseTrif_of_canonical_origin, bc25_isTrifurcation_of_coarseTrif_zero⟩
 

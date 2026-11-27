@@ -126,9 +126,10 @@ lemma bhs_hall_of_pairwiseDisjoint {V : Type*} [DecidableEq V] (T : Finset V)
         Finset.sum_le_sum (fun x hx => Finset.Nonempty.card_pos (hne x (hS hx)))
 
 open Classical in
-/-- Hall's condition for arm ends in `B_n`: each trifurcation has an arm site whose cluster stays
-infinite after all trifurcations are removed, and every set of trifurcations reaches at least as
-many boundary sites from its arms. -/
+/-- Hall's condition for arm ends in `B_n`: each trifurcation `x` of `B_n` has an arm site
+`b x ∈ B_n` connected to `x` whose cluster stays infinite after all trifurcations of `B_n` are
+removed, and every set of trifurcations reaches at least as many boundary sites of `B_n` from its
+arm sites once all trifurcations of `B_n` are removed. -/
 def bhs_HallArmEnds (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ b : Site d → Site d,
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

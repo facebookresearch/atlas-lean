@@ -111,8 +111,9 @@ lemma lmg_threeClustersReachOrigin (ω : ConfigSpace (Sym2 (Site d)))
   tex_threeClustersReachOrigin ω x₁ x₂ x₃ ⟨hcd12, hcd13, hcd23⟩
     (lmg_attachData ω x₁ x₂ x₃ j₁ j₂ j₃ hcd12 hcd13 hcd23 h1 h2 h3)
 
-/-- In every configuration with three distinct infinite clusters meeting `B_n`, the clusters run
-along three distinct coordinate axes. -/
+/-- In every configuration of `threeMeetBox d n` (infinitely many infinite clusters, three of them
+distinct and meeting `B_n`), any three box sites in distinct infinite clusters run along three
+distinct coordinate axes. -/
 def lmg_BoxAxisAssignment (d n : ℕ) : Prop :=
   ∀ ω ∈ threeMeetBox d n,
     ∀ x₁ x₂ x₃ : Site d, x₁ ∈ box d n → x₂ ∈ box d n → x₃ ∈ box d n →

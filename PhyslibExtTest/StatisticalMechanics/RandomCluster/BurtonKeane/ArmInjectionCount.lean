@@ -16,8 +16,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmInjec
 
 * `bc50_countBound_of_noTrif` for the all-closed configuration, fed to
   `bc50_injection_iff_countBound`;
-* the finite shadows `bc50_armEndpoint_map_not_injective` and `bc50_abstract_injection_exists`;
-* `bc50_burton_keane_bernoulli_of_armForest_routingCover` checked by type.
+* the finite shadows `bc50_armEndpoint_map_not_injective` and `bc50_abstract_injection_exists`.
 -/
 
 @[expose] public section
@@ -45,7 +44,5 @@ example : bc48_ClassicalBoundaryArmInjection (d := 2) (fun _ => false) 1 :=
 example : bc50_shadowArmEnd 0 0 = bc50_shadowArmEnd 1 0 := bc50_armEndpoint_map_not_injective.1
 example := bc50_abstract_injection_exists
 
--- The routing-cover Burton–Keane route, by type.
-example := @bc50_burton_keane_bernoulli_of_armForest_routingCover
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.ArmInjectionCount

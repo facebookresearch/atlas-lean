@@ -102,21 +102,21 @@ lemma bc68_Gn_singleTrif_distinct_leaves (ω : ConfigSpace (Sym2 (Site d))) (L :
           hcut12 (hreach 1) (hij ▸ hreach 2))
 
 lemma bc68_upperLines_boundaryPt {R : ℕ} (hR : 1 ≤ R) {h : ℤ} (hh : 1 ≤ h) (hhR : h ≤ (R : ℤ) - 1) :
-    bc57_pt (R : ℤ) h ∈ vertexBoundary 2 R := by
+    faceCorner00 (R : ℤ) h ∈ vertexBoundary 2 R := by
   rw [vertexBoundary, Set.mem_sdiff]
   refine ⟨?_, ?_⟩
   · rw [mem_box]; intro i; fin_cases i
-    · change ((bc57_pt (R : ℤ) h) 0).natAbs ≤ R; rw [bc57_pt_fst]; simp
-    · change ((bc57_pt (R : ℤ) h) 1).natAbs ≤ R; rw [bc57_pt_snd]; omega
+    · change ((faceCorner00 (R : ℤ) h) 0).natAbs ≤ R; rw [bc57_pt_fst]; simp
+    · change ((faceCorner00 (R : ℤ) h) 1).natAbs ≤ R; rw [bc57_pt_snd]; omega
   · rw [mem_box]; simp only [not_forall, not_le]
     refine ⟨0, ?_⟩
-    have hcoord : ((bc57_pt (R : ℤ) h) 0).natAbs = R := by
+    have hcoord : ((faceCorner00 (R : ℤ) h) 0).natAbs = R := by
       rw [bc57_pt_fst]; exact Int.natAbs_natCast R
     rw [hcoord]; omega
 
 lemma bc68_upperLines_arm_reaches_R {L R : ℕ} (hLR : L + 1 ≤ R) {h : ℤ} (hh : 1 ≤ h) :
     Connected 2 (removeSites (bc61_boxAround 2 L 0) bc60_upperLines)
-      (bc57_pt ((L : ℤ) + 1) h) (bc57_pt (R : ℤ) h) := by
+      (faceCorner00 ((L : ℤ) + 1) h) (faceCorner00 (R : ℤ) h) := by
   have hj := bc61_upperLines_rightArm_reach (L := L) hh (R - (L + 1))
   have hcast : ((L : ℤ) + 1 + ((R - (L + 1) : ℕ) : ℤ)) = (R : ℤ) := by
     have : ((R - (L + 1) : ℕ) : ℤ) = (R : ℤ) - ((L : ℤ) + 1) := by
@@ -127,9 +127,9 @@ lemma bc68_upperLines_arm_reaches_R {L R : ℕ} (hLR : L + 1 ≤ R) {h : ℤ} (h
 lemma bc68_upperLines_arms_reach_distinct {L R : ℕ} (hLR : L + 1 ≤ R) (hR3 : 4 ≤ R) :
     (∀ i : Fin 3,
       (bc67_contractedLattice bc60_upperLines L (0 : Site 2)).Reachable
-        (bc57_pt ((L : ℤ) + 1) ((i : ℤ) + 1)) (bc57_pt (R : ℤ) ((i : ℤ) + 1)) ∧
-      bc57_pt (R : ℤ) ((i : ℤ) + 1) ∈ vertexBoundary 2 R) ∧
-    Function.Injective (fun i : Fin 3 => bc57_pt (R : ℤ) ((i : ℤ) + 1)) := by
+        (faceCorner00 ((L : ℤ) + 1) ((i : ℤ) + 1)) (faceCorner00 (R : ℤ) ((i : ℤ) + 1)) ∧
+      faceCorner00 (R : ℤ) ((i : ℤ) + 1) ∈ vertexBoundary 2 R) ∧
+    Function.Injective (fun i : Fin 3 => faceCorner00 (R : ℤ) ((i : ℤ) + 1)) := by
   refine ⟨?_, ?_⟩
   · intro i
     refine ⟨?_, ?_⟩
@@ -158,14 +158,14 @@ def bc68_GnForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ) : Prop :=
     Set.InjOn lamL (univ.filter (fun v => G.degree v = 1))
 
 lemma bc68_connectedForest_of_GnForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
-    (h : bc68_GnForestData ω L R) : bc65_ConnectedCoarseForest ω L R := by
+    (h : bc68_GnForestData ω L R) : bc61_CoarseForestLeafCount ω L R := by
   obtain ⟨W, _, _, _, G, _, ιU, lamL, hacyc, hmin, hdeg3, hιinj, hlammap, hlaminj⟩ := h
   exact bc67_Gn_armForest_of_forestData ω L R W G ιU lamL hacyc hmin hdeg3 hιinj hlammap hlaminj
 
 lemma bc68_coarseTcount_le_boundary_of_GnForestData (ω : ConfigSpace (Sym2 (Site d))) (L R : ℕ)
     (h : bc68_GnForestData ω L R) :
     bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R :=
-  bc65_coarseTcount_le_boundary_of_connectedForest ω L R
+  bc61_coarseTcount_le_boundary_of_forest ω L R
     (bc68_connectedForest_of_GnForestData ω L R h)
 
 lemma bc68_infiniteClusters_top_null_of_GnForestData
@@ -177,7 +177,7 @@ lemma bc68_infiniteClusters_top_null_of_GnForestData
       ∃ a₁ a₂ a₃ b₁ b₂ b₃ : Site d,
         0 < μ (bc62_CoarseTrifPrecursor d L a₁ a₂ a₃ b₁ b₂ b₃)) :
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
-  bc65_infiniteClusters_top_null_of_connectedForest_route μ hd hinv hfe L
+  bc62_infiniteClusters_top_null_of_forest_route μ hd hinv hfe L
     (fun ω R => bc68_connectedForest_of_GnForestData ω L R (hGnData ω R)) hcoarseRoute
 
 /-! ## B. Summary -/
@@ -194,9 +194,9 @@ lemma bc68_status :
       bc68_GnForestData ω L R → bc61_coarseTcount ω L R ≤ boxSV_boundaryCard d R) ∧
     (∀ (L : ℕ),
       Disjoint (bc61_boxAround 2 L (0 : Site 2))
-          (bc61_boxAround 2 L (bc57_pt (2 * (L : ℤ) + 1) 0)) ∧
+          (bc61_boxAround 2 L (faceCorner00 (2 * (L : ℤ) + 1) 0)) ∧
         Connected 2 bc60_upperLines
-          (bc57_pt ((L : ℤ) + 1) 1) (bc57_pt (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) := by
+          (faceCorner00 ((L : ℤ) + 1) 1) (faceCorner00 (2 * (L : ℤ) + 1 + ((L : ℤ) + 1)) 1)) := by
   refine ⟨?_, ?_, ?_⟩
   · intro ω L y a z h01 h02 h12 hreach
     exact bc68_Gn_singleTrif_distinct_leaves ω L y a h01 h02 h12 z hreach

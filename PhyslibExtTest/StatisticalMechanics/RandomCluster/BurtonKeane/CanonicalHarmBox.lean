@@ -22,6 +22,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Canonica
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalHarmBox
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.ConfigSpace
@@ -36,7 +39,7 @@ example : IsTrifurcation 2 Bc53Witness.bwallConfig (![(1 : ℤ), 0] : Site 2) :=
 example : (![(2 : ℤ), 0] : Site 2) ∉ box 2 1 := Bc53Witness.bwall_arm_outside_box
 
 -- The three-ray configuration has a canonical trifurcation at the origin.
-example : IsCanonicalTrifurcation 2 CtcWitness.threeRayConfig (CtcWitness.px 0) :=
+example : IsEncounterPoint 2 CtcWitness.threeRayConfig (CtcWitness.px 0) :=
   Bc53Witness.threeRay_canonical_origin
 
 -- Arms stay in the next box (all-open configuration).

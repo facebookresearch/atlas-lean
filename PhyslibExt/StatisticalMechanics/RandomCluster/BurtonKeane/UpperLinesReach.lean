@@ -70,12 +70,12 @@ open StatMech.Percolation
 open Classical in
 /-- The configuration with exactly the horizontal edges at heights `h ≥ 1` open. -/
 noncomputable def bc60_upperLines : ConfigSpace (Sym2 (Site 2)) :=
-  fun e => if (∃ (k : ℤ) (h : ℤ), 1 ≤ h ∧ e = s(bc57_pt k h, bc57_pt (k + 1) h)) then true else false
+  fun e => if (∃ (k : ℤ) (h : ℤ), 1 ≤ h ∧ e = s(faceCorner00 k h, faceCorner00 (k + 1) h)) then true else false
 
 /-! ## B. Results -/
 
 lemma bc60_open (k : ℤ) {h : ℤ} (hh : 1 ≤ h) :
-    bc60_upperLines s(bc57_pt k h, bc57_pt (k + 1) h) = true := by
+    bc60_upperLines s(faceCorner00 k h, faceCorner00 (k + 1) h) = true := by
   classical
   rw [bc60_upperLines, ite_eq_left]; exact ⟨k, h, hh, rfl⟩
 
@@ -92,7 +92,7 @@ lemma bc60_connected_forceOpen {G : Finset (Sym2 (Site 2))} {x y : Site 2}
     Connected 2 (removeSite 0 (forceOpenFinset G bc60_upperLines)) x y :=
   connected_mono (bc60_removeSite_mono G) h
 
-lemma bc60_pt_eq_origin_iff {a b : ℤ} : bc57_pt a b = (0 : Site 2) ↔ a = 0 ∧ b = 0 := by
+lemma bc60_pt_eq_origin_iff {a b : ℤ} : faceCorner00 a b = (0 : Site 2) ↔ a = 0 ∧ b = 0 := by
   rw [bc59_origin_eq]
   constructor
   · intro h
@@ -106,7 +106,7 @@ lemma bc60_open_edge_heights {u v : Site 2}
     (hopen : bc60_upperLines s(u, v) = true) : 1 ≤ u 1 ∧ 1 ≤ v 1 ∧ u 1 = v 1 := by
   classical
   rw [bc60_upperLines] at hopen
-  by_cases hk : ∃ (k : ℤ) (h : ℤ), 1 ≤ h ∧ s(u, v) = s(bc57_pt k h, bc57_pt (k + 1) h)
+  by_cases hk : ∃ (k : ℤ) (h : ℤ), 1 ≤ h ∧ s(u, v) = s(faceCorner00 k h, faceCorner00 (k + 1) h)
   · obtain ⟨k, h, hh, hkeq⟩ := hk
     rw [Sym2.eq_iff] at hkeq
     rcases hkeq with ⟨hu', hv'⟩ | ⟨hu', hv'⟩
@@ -115,43 +115,44 @@ lemma bc60_open_edge_heights {u v : Site 2}
   · rw [ite_eq_right hk] at hopen; exact absurd hopen (by decide)
 
 lemma bc60_line1_reach_pos (j : ℕ) :
-    Connected 2 (removeSite 0 bc60_upperLines) (bc57_pt 0 1) (bc57_pt (j : ℤ) 1) := by
+    Connected 2 (removeSite 0 bc60_upperLines) (faceCorner00 0 1) (faceCorner00 (j : ℤ) 1) := by
   induction j with
-  | zero => simpa using connected_refl _ (bc57_pt 0 1)
+  | zero => simpa using connected_refl _ (faceCorner00 0 1)
   | succ i ih =>
-    have h0 : (0 : Site 2) ∉ s(bc57_pt (i : ℤ) 1, bc57_pt ((i : ℤ) + 1) 1) := by
+    have h0 : (0 : Site 2) ∉ s(faceCorner00 (i : ℤ) 1, faceCorner00 ((i : ℤ) + 1) 1) := by
       rw [Sym2.mem_iff]
       rintro (h | h) <;> exact absurd (bc60_pt_eq_origin_iff.mp h.symm).2 (by decide)
-    have hopen : (removeSite 0 bc60_upperLines) s(bc57_pt (i : ℤ) 1, bc57_pt ((i : ℤ) + 1) 1) = true := by
+    have hopen : (removeSite 0 bc60_upperLines) s(faceCorner00 (i : ℤ) 1, faceCorner00 ((i : ℤ) + 1) 1) = true := by
       rw [removeSite_apply_of_notMem h0]; exact bc60_open (i : ℤ) (by norm_num)
-    have step : Connected 2 (removeSite 0 bc60_upperLines) (bc57_pt (i : ℤ) 1)
-        (bc57_pt ((i : ℤ) + 1) 1) :=
+    have step : Connected 2 (removeSite 0 bc60_upperLines) (faceCorner00 (i : ℤ) 1)
+        (faceCorner00 ((i : ℤ) + 1) 1) :=
       IsOpenEdge.connected ⟨bc57_pt_adj (i : ℤ) 1, hopen⟩
     have hcast : ((i + 1 : ℕ) : ℤ) = (i : ℤ) + 1 := by push_cast; ring
     rw [hcast]; exact ih.trans step
 
 lemma bc60_line1_reach_neg (j : ℕ) :
-    Connected 2 (removeSite 0 bc60_upperLines) (bc57_pt 0 1) (bc57_pt (-(j : ℤ)) 1) := by
+    Connected 2 (removeSite 0 bc60_upperLines) (faceCorner00 0 1) (faceCorner00 (-(j : ℤ)) 1) := by
   induction j with
-  | zero => simpa using connected_refl _ (bc57_pt 0 1)
+  | zero => simpa using connected_refl _ (faceCorner00 0 1)
   | succ i ih =>
-    have hadj : (hypercubicLattice 2).Adj (bc57_pt (-((i : ℤ)) - 1) 1) (bc57_pt (-((i : ℤ)) - 1 + 1) 1) :=
+    have hadj : (hypercubicLattice 2).Adj (faceCorner00 (-((i : ℤ)) - 1) 1) (faceCorner00 (-((i : ℤ)) - 1 + 1) 1) :=
       bc57_pt_adj _ 1
     have heq : (-((i : ℤ)) - 1 + 1) = -((i : ℤ)) := by ring
-    have h0 : (0 : Site 2) ∉ s(bc57_pt (-((i : ℤ)) - 1) 1, bc57_pt (-((i : ℤ)) - 1 + 1) 1) := by
+    have h0 : (0 : Site 2) ∉ s(faceCorner00 (-((i : ℤ)) - 1) 1,
+        faceCorner00 (-((i : ℤ)) - 1 + 1) 1) := by
       rw [Sym2.mem_iff]
       rintro (h | h) <;> exact absurd (bc60_pt_eq_origin_iff.mp h.symm).2 (by decide)
-    have hopen : (removeSite 0 bc60_upperLines) s(bc57_pt (-((i : ℤ)) - 1) 1, bc57_pt (-((i : ℤ)) - 1 + 1) 1) = true := by
+    have hopen : (removeSite 0 bc60_upperLines) s(faceCorner00 (-((i : ℤ)) - 1) 1, faceCorner00 (-((i : ℤ)) - 1 + 1) 1) = true := by
       rw [removeSite_apply_of_notMem h0]; exact bc60_open (-((i : ℤ)) - 1) (by norm_num)
     have step0 := IsOpenEdge.connected (d := 2) ⟨hadj, hopen⟩
     rw [heq] at step0
-    have step : Connected 2 (removeSite 0 bc60_upperLines) (bc57_pt (-((i : ℤ))) 1)
-        (bc57_pt (-((i : ℤ)) - 1) 1) := step0.symm
+    have step : Connected 2 (removeSite 0 bc60_upperLines) (faceCorner00 (-((i : ℤ))) 1)
+        (faceCorner00 (-((i : ℤ)) - 1) 1) := step0.symm
     have hcast : (-(((i + 1 : ℕ)) : ℤ)) = -((i : ℤ)) - 1 := by push_cast; ring
     rw [hcast]; exact ih.trans step
 
 lemma bc60_line1_connected_zero (m : ℤ) :
-    Connected 2 (removeSite 0 bc60_upperLines) (bc57_pt m 1) (bc57_pt 0 1) := by
+    Connected 2 (removeSite 0 bc60_upperLines) (faceCorner00 m 1) (faceCorner00 0 1) := by
   rcases le_or_gt 0 m with hm | hm
   · have : (m.toNat : ℤ) = m := Int.toNat_of_nonneg hm
     have h := bc60_line1_reach_pos m.toNat
@@ -166,7 +167,7 @@ lemma bc60_line1_connected_zero (m : ℤ) :
     exact h.symm
 
 lemma bc60_line1_all_connected (m m' : ℤ) :
-    Connected 2 (removeSite 0 bc60_upperLines) (bc57_pt m 1) (bc57_pt m' 1) :=
+    Connected 2 (removeSite 0 bc60_upperLines) (faceCorner00 m 1) (faceCorner00 m' 1) :=
   (bc60_line1_connected_zero m).trans (bc60_line1_connected_zero m').symm
 
 lemma bc60_step_height_diff {ω : ConfigSpace (Sym2 (Site 2))} {u v : Site 2}
@@ -253,23 +254,26 @@ lemma bc60_arm_reaches_up {G : Finset (Sym2 (Site 2))} {a : Site 2}
     exact bc60_confined_mem_insert hlow w
   exact hinf ((insert a (bc60_Gverts G)).finite_toSet.subset hsub)
 
-lemma bc60_pt_coord (v : Site 2) : v = bc57_pt (v 0) (v 1) := by
-  funext i; fin_cases i <;> simp [bc57_pt]
+lemma bc60_pt_coord (v : Site 2) : v = faceCorner00 (v 0) (v 1) := by
+  funext i; fin_cases i <;> simp [faceCorner00]
 
 lemma bc60_arm_reaches_line1 {G : Finset (Sym2 (Site 2))} {a : Site 2} (ha : a 1 ≤ 1)
     (hinf : (cluster 2 (removeSite 0 (forceOpenFinset G bc60_upperLines)) a).Infinite) :
-    ∃ m : ℤ, Connected 2 (removeSite 0 (forceOpenFinset G bc60_upperLines)) a (bc57_pt m 1) := by
+    ∃ m : ℤ,
+      Connected 2 (removeSite 0 (forceOpenFinset G bc60_upperLines)) a (faceCorner00 m 1) := by
   rcases eq_or_lt_of_le ha with ha1 | ha0
   · refine ⟨a 0, ?_⟩
-    have hav : a = bc57_pt (a 0) 1 := by conv_lhs => rw [bc60_pt_coord a]
-                                         rw [ha1]
+    have hav : a = faceCorner00 (a 0) 1 := by
+      conv_lhs => rw [bc60_pt_coord a]
+      rw [ha1]
     rw [← hav]
   · have ha0' : a 1 ≤ 0 := by omega
     obtain ⟨w, hw1, hwconn⟩ := bc60_arm_reaches_up hinf
     obtain ⟨v, hv1, hvconn⟩ := bc60_reach_height_one ha0' hw1 hwconn
     refine ⟨v 0, ?_⟩
-    have hvv : v = bc57_pt (v 0) 1 := by conv_lhs => rw [bc60_pt_coord v]
-                                         rw [hv1]
+    have hvv : v = faceCorner00 (v 0) 1 := by
+      conv_lhs => rw [bc60_pt_coord v]
+      rw [hv1]
     rw [← hvv]; exact hvconn
 
 lemma bc60_arms_connected {G : Finset (Sym2 (Site 2))} {a a' : Site 2}
@@ -282,34 +286,35 @@ lemma bc60_arms_connected {G : Finset (Sym2 (Site 2))} {a a' : Site 2}
   exact (hm.trans (bc60_connected_forceOpen (bc60_line1_all_connected m m'))).trans hm'.symm
 
 lemma bc60_line_reach_pos {h : ℤ} (hh : 1 ≤ h) (j : ℕ) :
-    Connected 2 bc60_upperLines (bc57_pt 0 h) (bc57_pt (j : ℤ) h) := by
+    Connected 2 bc60_upperLines (faceCorner00 0 h) (faceCorner00 (j : ℤ) h) := by
   induction j with
-  | zero => simpa using connected_refl _ (bc57_pt 0 h)
+  | zero => simpa using connected_refl _ (faceCorner00 0 h)
   | succ i ih =>
-    have step : Connected 2 bc60_upperLines (bc57_pt (i : ℤ) h) (bc57_pt ((i : ℤ) + 1) h) :=
+    have step : Connected 2 bc60_upperLines (faceCorner00 (i : ℤ) h)
+        (faceCorner00 ((i : ℤ) + 1) h) :=
       IsOpenEdge.connected ⟨bc57_pt_adj (i : ℤ) h, bc60_open (i : ℤ) hh⟩
     have hcast : ((i + 1 : ℕ) : ℤ) = (i : ℤ) + 1 := by push_cast; ring
     rw [hcast]; exact ih.trans step
 
-lemma bc60_pt_outside_box (j : ℕ) (h : ℤ) : bc57_pt ((j : ℤ) + 1) h ∉ box 2 j := by
+lemma bc60_pt_outside_box (j : ℕ) (h : ℤ) : faceCorner00 ((j : ℤ) + 1) h ∉ box 2 j := by
   rw [mem_box]; simp only [not_forall, not_le]; refine ⟨0, ?_⟩
   rw [bc57_pt_fst]
   have : ((j : ℤ) + 1).natAbs = (j + 1 : ℕ) := by omega
   omega
 
 lemma bc60_cluster_infinite {h : ℤ} (hh : 1 ≤ h) :
-    (cluster 2 bc60_upperLines (bc57_pt 0 h)).Infinite := by
+    (cluster 2 bc60_upperLines (faceCorner00 0 h)).Infinite := by
   rw [cluster_infinite_iff]
   intro j
-  refine ⟨bc57_pt ((j : ℤ) + 1) h, bc60_pt_outside_box j h, ?_⟩
+  refine ⟨faceCorner00 ((j : ℤ) + 1) h, bc60_pt_outside_box j h, ?_⟩
   have := bc60_line_reach_pos hh (j + 1)
   have hcast : ((j + 1 : ℕ) : ℤ) = (j : ℤ) + 1 := by push_cast; ring
   rwa [hcast] at this
 
-lemma bc60_pt_zero_mem_box {h : ℤ} {n : ℕ} (hh : h.natAbs ≤ n) : bc57_pt 0 h ∈ box 2 n := by
+lemma bc60_pt_zero_mem_box {h : ℤ} {n : ℕ} (hh : h.natAbs ≤ n) : faceCorner00 0 h ∈ box 2 n := by
   rw [mem_box]; intro i; fin_cases i
-  · change ((bc57_pt 0 h) 0).natAbs ≤ n; rw [bc57_pt_fst]; simp
-  · change ((bc57_pt 0 h) 1).natAbs ≤ n; rw [bc57_pt_snd]; exact hh
+  · change ((faceCorner00 0 h) 0).natAbs ≤ n; rw [bc57_pt_fst]; simp
+  · change ((faceCorner00 0 h) 1).natAbs ≤ n; rw [bc57_pt_snd]; exact hh
 
 lemma bc60_height_invariant {h : ℤ} {u y : Site 2} (hu : u 1 = h)
     (hconn : Connected 2 bc60_upperLines u y) : y 1 = h := by
@@ -322,17 +327,18 @@ lemma bc60_height_invariant {h : ℤ} {u y : Site 2} (hu : u 1 = h)
     exact ih (by omega)
 
 lemma bc60_cluster_ne {h h' : ℤ} (hne : h ≠ h') :
-    cluster 2 bc60_upperLines (bc57_pt 0 h) ≠ cluster 2 bc60_upperLines (bc57_pt 0 h') := by
+    cluster 2 bc60_upperLines (faceCorner00 0 h) ≠
+      cluster 2 bc60_upperLines (faceCorner00 0 h') := by
   intro hEq
-  have hmem : bc57_pt 0 h' ∈ cluster 2 bc60_upperLines (bc57_pt 0 h) := by
+  have hmem : faceCorner00 0 h' ∈ cluster 2 bc60_upperLines (faceCorner00 0 h) := by
     rw [hEq]; exact self_mem_cluster _ _
   rw [mem_cluster] at hmem
-  have hht : (bc57_pt 0 h') 1 = h := bc60_height_invariant (by rw [bc57_pt_snd]) hmem
+  have hht : (faceCorner00 0 h') 1 = h := bc60_height_invariant (by rw [bc57_pt_snd]) hmem
   rw [bc57_pt_snd] at hht
   omega
 
 lemma bc60_cluster_family_inj :
-    Function.Injective (fun n : ℕ => cluster 2 bc60_upperLines (bc57_pt 0 ((n : ℤ) + 1))) := by
+    Function.Injective (fun n : ℕ => cluster 2 bc60_upperLines (faceCorner00 0 ((n : ℤ) + 1))) := by
   intro n n' h
   by_contra hne
   exact bc60_cluster_ne (by simp only [ne_eq]; omega) h
@@ -341,14 +347,14 @@ lemma bc60_numInfiniteClusters_top : numInfiniteClusters 2 bc60_upperLines = ⊤
   unfold numInfiniteClusters
   apply Set.Infinite.encard_eq
   apply Set.infinite_of_injective_forall_mem
-    (f := fun n : ℕ => cluster 2 bc60_upperLines (bc57_pt 0 ((n : ℤ) + 1)))
+    (f := fun n : ℕ => cluster 2 bc60_upperLines (faceCorner00 0 ((n : ℤ) + 1)))
   · intro n n' h; exact bc60_cluster_family_inj h
   · intro n
-    exact ⟨bc60_cluster_infinite (by omega), bc57_pt 0 ((n : ℤ) + 1), rfl⟩
+    exact ⟨bc60_cluster_infinite (by omega), faceCorner00 0 ((n : ℤ) + 1), rfl⟩
 
 lemma bc60_mem_threeMeetBox : bc60_upperLines ∈ threeMeetBox 2 3 := by
   refine ⟨bc60_numInfiniteClusters_top,
-    bc57_pt 0 1, bc57_pt 0 2, bc57_pt 0 3, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    faceCorner00 0 1, faceCorner00 0 2, faceCorner00 0 3, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact bc60_pt_zero_mem_box (by decide)
   · exact bc60_pt_zero_mem_box (by decide)
   · exact bc60_pt_zero_mem_box (by decide)

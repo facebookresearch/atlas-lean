@@ -100,12 +100,12 @@ lemma bc99_bk_from_reachesNbr
   bc98_bk_from_boxAttach μ hfe hprob0 (fun n => bc99_texBoxAttach_of_reachesNbr (h n))
 
 lemma bc99_upperLines_cluster_height {h : ℤ} {a : Site 2}
-    (ha : a ∈ cluster 2 bc60_upperLines (bc57_pt 0 h)) : a 1 = h := by
+    (ha : a ∈ cluster 2 bc60_upperLines (faceCorner00 0 h)) : a 1 = h := by
   rw [mem_cluster] at ha
   exact bc60_height_invariant (by rw [bc57_pt_snd]) ha
 
 lemma bc99_reachesNbr_fails_upperLines :
-    ¬ bc56_ClusterReachesNbr bc60_upperLines (bc57_pt 0 3) := by
+    ¬ bc56_ClusterReachesNbr bc60_upperLines (faceCorner00 0 3) := by
   rintro ⟨a, hadj, hmem, _hreach, _hinf⟩
   have hheight3 : a 1 = 3 := bc99_upperLines_cluster_height hmem
   have hle1 : a 1 ≤ 1 := bc60_nbr_height_le hadj
@@ -113,20 +113,27 @@ lemma bc99_reachesNbr_fails_upperLines :
 
 lemma bc99_boxReachesNbr_fails : ¬ bc56_BoxClusterReachesNbr 2 3 := by
   intro h
-  have hb1 : bc57_pt 0 1 ∈ box 2 3 := bc60_pt_zero_mem_box (by decide)
-  have hb2 : bc57_pt 0 2 ∈ box 2 3 := bc60_pt_zero_mem_box (by decide)
-  have hb3 : bc57_pt 0 3 ∈ box 2 3 := bc60_pt_zero_mem_box (by decide)
-  have hi1 : (cluster 2 bc60_upperLines (bc57_pt 0 1)).Infinite := bc60_cluster_infinite (by decide)
-  have hi2 : (cluster 2 bc60_upperLines (bc57_pt 0 2)).Infinite := bc60_cluster_infinite (by decide)
-  have hi3 : (cluster 2 bc60_upperLines (bc57_pt 0 3)).Infinite := bc60_cluster_infinite (by decide)
-  have hcd12 : cluster 2 bc60_upperLines (bc57_pt 0 1) ≠ cluster 2 bc60_upperLines (bc57_pt 0 2) :=
+  have hb1 : faceCorner00 0 1 ∈ box 2 3 := bc60_pt_zero_mem_box (by decide)
+  have hb2 : faceCorner00 0 2 ∈ box 2 3 := bc60_pt_zero_mem_box (by decide)
+  have hb3 : faceCorner00 0 3 ∈ box 2 3 := bc60_pt_zero_mem_box (by decide)
+  have hi1 : (cluster 2 bc60_upperLines (faceCorner00 0 1)).Infinite :=
+    bc60_cluster_infinite (by decide)
+  have hi2 : (cluster 2 bc60_upperLines (faceCorner00 0 2)).Infinite :=
+    bc60_cluster_infinite (by decide)
+  have hi3 : (cluster 2 bc60_upperLines (faceCorner00 0 3)).Infinite :=
+    bc60_cluster_infinite (by decide)
+  have hcd12 : cluster 2 bc60_upperLines (faceCorner00 0 1) ≠
+      cluster 2 bc60_upperLines (faceCorner00 0 2) :=
     bc60_cluster_ne (by decide)
-  have hcd13 : cluster 2 bc60_upperLines (bc57_pt 0 1) ≠ cluster 2 bc60_upperLines (bc57_pt 0 3) :=
+  have hcd13 : cluster 2 bc60_upperLines (faceCorner00 0 1) ≠
+      cluster 2 bc60_upperLines (faceCorner00 0 3) :=
     bc60_cluster_ne (by decide)
-  have hcd23 : cluster 2 bc60_upperLines (bc57_pt 0 2) ≠ cluster 2 bc60_upperLines (bc57_pt 0 3) :=
+  have hcd23 : cluster 2 bc60_upperLines (faceCorner00 0 2) ≠
+      cluster 2 bc60_upperLines (faceCorner00 0 3) :=
     bc60_cluster_ne (by decide)
   obtain ⟨_, _, h3⟩ := h bc60_upperLines bc60_mem_threeMeetBox
-    (bc57_pt 0 1) (bc57_pt 0 2) (bc57_pt 0 3) hb1 hb2 hb3 hi1 hi2 hi3 hcd12 hcd13 hcd23
+    (faceCorner00 0 1) (faceCorner00 0 2)
+      (faceCorner00 0 3) hb1 hb2 hb3 hi1 hi2 hi3 hcd12 hcd13 hcd23
   exact bc99_reachesNbr_fails_upperLines h3
 
 lemma bc99_notFree_of_coarseTrif {L : ℕ} (hL : 3 ≤ L) :

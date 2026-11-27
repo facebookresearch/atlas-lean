@@ -57,6 +57,7 @@ rewiring with the counting hypotheses. Those hypotheses are unsatisfiable for `d
 
 open Set SimpleGraph
 open StatMech.Lattice StatMech.ConfigSpace
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted (IsEncounterPoint)
 open StatMech.Percolation StatMech.Percolation.DisjointPaths
 open MeasureTheory
 
@@ -78,7 +79,7 @@ lemma bc8_isCanonicalTrifurcation_of_arms (ω : ConfigSpace (Sym2 (Site d)))
     (hcd12 : cluster d (removeSite 0 ω) a₁ ≠ cluster d (removeSite 0 ω) a₂)
     (hcd13 : cluster d (removeSite 0 ω) a₁ ≠ cluster d (removeSite 0 ω) a₃)
     (hcd23 : cluster d (removeSite 0 ω) a₂ ≠ cluster d (removeSite 0 ω) a₃) :
-    IsCanonicalTrifurcation d ω 0 := by
+    IsEncounterPoint d ω 0 := by
   refine ⟨a₁, a₂, a₃, hne, hadj, hinf, ?_, ?_, ?_⟩
   · exact bc8_cut_ne_iff_disconnected.mp hcd12
   · exact bc8_cut_ne_iff_disconnected.mp hcd13
@@ -98,7 +99,7 @@ lemma bc8_isCanonicalTrifurcation_of_threeArms (ω : ConfigSpace (Sym2 (Site d))
     (hcd12 : cluster d (removeSite 0 ω) a₁ ≠ cluster d (removeSite 0 ω) a₂)
     (hcd13 : cluster d (removeSite 0 ω) a₁ ≠ cluster d (removeSite 0 ω) a₃)
     (hcd23 : cluster d (removeSite 0 ω) a₂ ≠ cluster d (removeSite 0 ω) a₃) :
-    IsCanonicalTrifurcation d ω 0 :=
+    IsEncounterPoint d ω 0 :=
   bc8_isCanonicalTrifurcation_of_arms ω
     ⟨bc8_arm_ne_of_cut_ne hcd12, bc8_arm_ne_of_cut_ne hcd13, bc8_arm_ne_of_cut_ne hcd23⟩
     ⟨hadj1, hadj2, hadj3⟩ ⟨hi1, hi2, hi3⟩ hcd12 hcd13 hcd23
@@ -111,7 +112,7 @@ lemma bc8_isCanonicalTrifurcation_of_originSplits (ω : ConfigSpace (Sym2 (Site 
       cluster d (removeSite 0 ω) a₁ ≠ cluster d (removeSite 0 ω) a₂ ∧
       cluster d (removeSite 0 ω) a₁ ≠ cluster d (removeSite 0 ω) a₃ ∧
       cluster d (removeSite 0 ω) a₂ ≠ cluster d (removeSite 0 ω) a₃) :
-    IsCanonicalTrifurcation d ω 0 := by
+    IsEncounterPoint d ω 0 := by
   obtain ⟨a₁, a₂, a₃, hadj1, hadj2, hadj3, hi1, hi2, hi3, hcd12, hcd13, hcd23⟩ := h
   exact bc8_isCanonicalTrifurcation_of_threeArms ω hadj1 hadj2 hadj3 hi1 hi2 hi3 hcd12 hcd13 hcd23
 
@@ -141,7 +142,7 @@ def bc8_OriginRewiring (d n : ℕ) : Prop :=
 lemma bc8_canonicalTrif_of_originRewiring (n : ℕ) (hrw : bc8_OriginRewiring d n)
     (ω : ConfigSpace (Sym2 (Site d))) (hω : ω ∈ threeMeetBox d n) :
     ∃ W : Finset (Sym2 (Site d)), (∀ e ∈ W, (0 : Site d) ∉ e) ∧
-      IsCanonicalTrifurcation d (forceOpenFinset W ω) 0 := by
+      IsEncounterPoint d (forceOpenFinset W ω) 0 := by
   obtain ⟨W, hW0, a₁, a₂, a₃, hadj1, hadj2, hadj3, hi1, hi2, hi3, hcd12, hcd13, hcd23⟩ := hrw ω hω
   exact ⟨W, hW0, bc8_isCanonicalTrifurcation_of_threeArms (forceOpenFinset W ω)
     hadj1 hadj2 hadj3 hi1 hi2 hi3 hcd12 hcd13 hcd23⟩

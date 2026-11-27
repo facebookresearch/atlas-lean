@@ -168,9 +168,12 @@ lemma bc44_chainFar_consistent :
 
 /-! ## C. Geometry-consistent root-ward walks -/
 
-/-- Geometry-consistent root-ward walks: for connected trifurcations of different rank, an open walk
-from the lower one to the parent of the higher one avoiding the higher one whenever the parent is on
-the root side. -/
+/-- Geometry-consistent root-ward walks: if `rank` is injective on connected trifurcations of the
+box `Λ_n`, then for any two distinct connected trifurcations `x`, `y` of `Λ_n` with
+`rank x < rank y` and `x ≠ par y`, where `par y` is a trifurcation of `Λ_n` arm-adjacent to `y` and
+of lower rank, and `x` is still connected to `par y` after `y` is removed, there is an open walk
+from `x` to `par y` that avoids `y`. The last premise gives such a walk, so the condition always
+holds (`bc44_geometryConsistentRootWard_true`). -/
 def bc44_GeometryConsistentRootWard (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (rank : Site d → ℕ ×ₗ ℕ) (par : Site d → Site d) : Prop :=
   (∀ a, a ∈ box d n → IsTrifurcation d ω a → ∀ b, b ∈ box d n → IsTrifurcation d ω b →

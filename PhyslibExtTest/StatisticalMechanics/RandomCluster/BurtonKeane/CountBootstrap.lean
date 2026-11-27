@@ -10,6 +10,7 @@ module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CountBootstrap
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
 
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CountBootstrap`
@@ -24,6 +25,9 @@ In the plane:
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (bernoulli_finiteEnergyMerge bernoulli_lattice_ergodic)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CountBootstrap
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.ConfigSpace
@@ -36,11 +40,11 @@ noncomputable abbrev bern2 : Measure (ConfigSpace (Sym2 (Site 2))) :=
 
 /-- `bern2` has finite energy. -/
 theorem bern2_fe : HasFiniteEnergyMerge bern2 :=
-  bkc_bernoulli_hasFiniteEnergyMerge _ _ (by norm_num)
+  bernoulli_finiteEnergyMerge _ _ (by norm_num)
 
 /-- `bern2` is translation invariant. -/
 theorem bern2_inv : IsTranslationInvariant (G := Multiplicative (Site 2)) bern2 :=
-  (bkc_bernoulli_isErgodic (d := 2) (by norm_num) _ _).isTranslationInvariant
+  (bernoulli_lattice_ergodic (d := 2) (by norm_num) _ _).isTranslationInvariant
 
 -- The upper-lines example at `L = 3`.
 example : bc67_IsGnTrifurcation bc60_upperLines 3 (0 : Site 2) ∧

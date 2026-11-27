@@ -10,6 +10,7 @@ module
 
 public import Mathlib
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRemoveSites
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
 
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRemoveSites`
@@ -24,6 +25,9 @@ In the plane:
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (bernoulli_finiteEnergyMerge bernoulli_lattice_ergodic)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRemoveSites
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.ConfigSpace
@@ -36,21 +40,21 @@ noncomputable abbrev bern2 : Measure (ConfigSpace (Sym2 (Site 2))) :=
 
 /-- `bern2` has finite energy. -/
 theorem bern2_fe : HasFiniteEnergyMerge bern2 :=
-  bkc_bernoulli_hasFiniteEnergyMerge _ _ (by norm_num)
+  bernoulli_finiteEnergyMerge _ _ (by norm_num)
 
 /-- `bern2` is translation invariant. -/
 theorem bern2_inv : IsTranslationInvariant (G := Multiplicative (Site 2)) bern2 :=
-  (bkc_bernoulli_isErgodic (d := 2) (by norm_num) _ _).isTranslationInvariant
+  (bernoulli_lattice_ergodic (d := 2) (by norm_num) _ _).isTranslationInvariant
 
 -- Forcing the three arm edges of the upper lines gives a coarse trifurcation at `L = 3`.
 example : bc61_IsCoarseTrifurcation
-    (forceOpenFinset {s(bc57_pt ((3 : ℕ) : ℤ) 1, bc57_pt (((3 : ℕ) : ℤ) + 1) 1),
-      s(bc57_pt ((3 : ℕ) : ℤ) 2, bc57_pt (((3 : ℕ) : ℤ) + 1) 2),
-      s(bc57_pt ((3 : ℕ) : ℤ) 3, bc57_pt (((3 : ℕ) : ℤ) + 1) 3)} bc60_upperLines) 3 0 :=
+    (forceOpenFinset {s(faceCorner00 ((3 : ℕ) : ℤ) 1, faceCorner00 (((3 : ℕ) : ℤ) + 1) 1),
+      s(faceCorner00 ((3 : ℕ) : ℤ) 2, faceCorner00 (((3 : ℕ) : ℤ) + 1) 2),
+      s(faceCorner00 ((3 : ℕ) : ℤ) 3, faceCorner00 (((3 : ℕ) : ℤ) + 1) 3)} bc60_upperLines) 3 0 :=
   bc62_upperLines_forced_coarseTrif le_rfl
 
 -- The vertex `(3, 2)` lies in the radius-3 box.
-example : bc57_pt ((3 : ℕ) : ℤ) 2 ∈ bc61_boxAround 2 3 0 :=
+example : faceCorner00 ((3 : ℕ) : ℤ) 2 ∈ bc61_boxAround 2 3 0 :=
   bc62_boxVertex_mem (by norm_num) (by norm_num)
 
 -- The expected coarse count under Bernoulli(1/2).
@@ -60,13 +64,13 @@ example (L R : ℕ) :
   bc62_coarse_expectation bern2 bern2_inv L R
 
 -- The coarse-trifurcation probability does not depend on the centre.
-example (L : ℕ) : bern2 {ω | bc61_IsCoarseTrifurcation ω L (bc57_pt 5 7)}
+example (L : ℕ) : bern2 {ω | bc61_IsCoarseTrifurcation ω L (faceCorner00 5 7)}
     = bern2 {ω | bc61_IsCoarseTrifurcation ω L 0} :=
   bc62_coarseTrifProb_const bern2 bern2_inv L _
 
 -- Coarse trifurcation events are measurable.
 example : MeasurableSet {ω : ConfigSpace (Sym2 (Site 2)) |
-    bc61_IsCoarseTrifurcation ω 3 (bc57_pt 1 1)} :=
+    bc61_IsCoarseTrifurcation ω 3 (faceCorner00 1 1)} :=
   bc62_measurableSet_coarseTrif 3 _
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseTrifRemoveSites

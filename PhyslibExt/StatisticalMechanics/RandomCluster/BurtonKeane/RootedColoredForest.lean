@@ -87,9 +87,12 @@ variable {d : ℕ}
 
 /-! ## A. Definitions -/
 
-/-- A rooted coloured forest for `B_n`: infinite arm sites, an order on connected trifurcations, and
-a three-colouring of arms such that each later trifurcation's arm avoids the earlier connected
-ones. -/
+/-- A rooted coloured forest for `B_n`: arm sites `b x ∈ B_n` connected to each trifurcation `x` of
+`B_n`, with clusters infinite after all trifurcations of `B_n` are removed; a relation `lt`
+comparing any two distinct connected trifurcations (not required to be an order); and a
+three-colouring `c y` of the arms at each trifurcation `y` (equal colours exactly for sites in the
+same arm), such that `lt x y` for connected `x`, `y` gives `b x` and `b y` different colours at
+`y`. -/
 def rts_RootedColoredForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (b : Site d → Site d) (lt : Site d → Site d → Prop) (c : Site d → Site d → Fin 3),
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

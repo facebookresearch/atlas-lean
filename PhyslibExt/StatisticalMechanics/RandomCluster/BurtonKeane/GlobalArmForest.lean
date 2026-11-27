@@ -95,8 +95,11 @@ lemma bc51_arms_edgeDisjoint (ω : ConfigSpace (Sym2 (Site d))) (T : SimpleGraph
     exact hd u (w0.fst_mem_support_of_mem_edges he0) (w1.fst_mem_support_of_mem_edges he1)
 
 open Classical in
-/-- A global arm forest for `B_n`: an acyclic open subgraph on finitely many sites, with three arms
-from every trifurcation to boundary sites, the arms of distinct trifurcations disjoint. -/
+/-- A global arm forest for `B_n`: an acyclic subgraph `T` of the open subgraph whose edges lie
+within a finite set of sites, and a set `B` of boundary sites of `B_n`, such that `B_n` contains a
+trifurcation or some site lies on a `T`-path between two sites of `B` (`spc_OnBPath`), and every
+trifurcation `x` of `B_n` has three `T`-neighbours, pairwise disconnected after `x` is removed,
+each joined in `T` to a site of `B` by a walk avoiding `x`. -/
 def bc51_GlobalArmForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (Vall : Finset (Site d)) (T : SimpleGraph (Site d)) (_ : DecidableRel T.Adj)
     (B : Set (Site d)) (c : Site d → Fin 3 → Site d) (zr : Site d → Fin 3 → Site d),

@@ -59,6 +59,7 @@ box is canonical and its infinite arms start in the box, this gives arm forest r
 
 open Set SimpleGraph Finset
 open StatMech.Lattice StatMech.ConfigSpace
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted (IsEncounterPoint)
 
 namespace StatMech
 
@@ -302,7 +303,7 @@ lemma cfc_trif_data (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
 
 lemma cfc_armForestReaching_of_canonical_armsInBox
     (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x)
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
       ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n)
     (hexists : ∃ x, x ∈ box d n ∧ IsTrifurcation d ω x) :
@@ -356,7 +357,7 @@ lemma cfc_Tcount_le_boundary_of_no_trif (ω : ConfigSpace (Sym2 (Site d))) (n : 
   exact Nat.zero_le _
 
 lemma cfc_Tcount_le_boundary_of_canonical (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsCanonicalTrifurcation d ω x)
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
       ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n := by

@@ -86,8 +86,10 @@ lemma bas_sameArm_symm (ω : ConfigSpace (Sym2 (Site d))) (x u v : Site d)
     (h : fsp_sameArm ω x u v) : fsp_sameArm ω x v u :=
   Connected.symm h
 
-/-- Rooted tree arm selection for `B_n`: infinite arm sites and an order comparing connected
-trifurcations such that the arm of the later one avoids the earlier one. -/
+/-- Rooted tree arm selection for `B_n`: arm sites `b x ∈ B_n` connected to each trifurcation `x` of
+`B_n`, with clusters infinite after all trifurcations of `B_n` are removed, and a relation `lt`
+comparing any two distinct connected trifurcations (not required to be an order), such that `lt x y`
+for connected `x`, `y` puts `b x` and `b y` in different arms at `y`. -/
 def bas_RootedTreeArmSelection (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : Prop :=
   ∃ (b : Site d → Site d) (lt : Site d → Site d → Prop),
     (∀ x, x ∈ box d n → IsTrifurcation d ω x →

@@ -19,21 +19,19 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Classica
 # Boundary arm injections for classical trifurcations
 
 A boundary arm injection for classical trifurcations is equivalent to the classical count bound; arm
-forest reaching gives it, and with the route hypothesis it gives Burton–Keane uniqueness.
+forest reaching gives it.
 
 ## i. Overview
 
 `bc48_ClassicalBoundaryArmInjection ω n` holds iff the classical count `bc48_Tcount_classical` is at
 most the boundary size. The three arms of a classical trifurcation reach distinct boundary sites.
-Arm forest reaching gives the classical count, the injection, and, together with the route
-hypothesis (or a routing cover), Burton–Keane uniqueness for Bernoulli percolation. Arm endpoints
-themselves need not be injective, as a small example shows.
+Arm forest reaching gives the classical count and the injection. Arm endpoints themselves need not
+be injective, as a small example shows.
 
 ## ii. Key results
 
 - `bc50_injection_iff_countBound` : the injection is the count bound.
-- `bc50_burton_keane_bernoulli_of_armForest` : uniqueness from arm forest reaching and the route
-  hypothesis.
+- `bc50_ClassicalBoundaryArmInjection_of_armForest` : the injection from arm forest reaching.
 
 ## iii. Table of contents
 
@@ -48,6 +46,9 @@ themselves need not be injective, as a small example shows.
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
 
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
@@ -99,7 +100,7 @@ lemma bc50_injection_iff_countBound (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
       bc50_injection_of_countBound ω n⟩
 
 lemma bc50_arms_reach_distinct_boundary (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
-    (x : Site d) (hxbox : x ∈ box d n) (hcl : bc47_IsClassicalTrifurcation ω x) :
+    (x : Site d) (hxbox : x ∈ box d n) (hcl : IsEncounterPoint d ω x) :
     ∃ a₁ a₂ a₃ z₁ z₂ z₃ : Site d,
       (z₁ ≠ z₂ ∧ z₁ ≠ z₃ ∧ z₂ ≠ z₃) ∧
       (z₁ ∈ vertexBoundary d (n + 1) ∧ z₂ ∈ vertexBoundary d (n + 1) ∧
@@ -135,37 +136,6 @@ lemma bc50_ClassicalBoundaryArmInjection_of_armForest_all
     (h : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), sfa_ArmForestReaching ω n) :
     ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), bc48_ClassicalBoundaryArmInjection ω n :=
   fun ω n => bc50_ClassicalBoundaryArmInjection_of_armForest ω n (h ω n)
-
-lemma bc50_burton_keane_bernoulli_of_armForest (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (harm : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), sfa_ArmForestReaching ω n)
-    (hroute : ∀ n : ℕ,
-      0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (threeMeetBox d n) →
-        ∃ a₁ a₂ a₃ : Site d,
-          0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-            (NeighborTrifPrecursor d a₁ a₂ a₃)) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc49_burton_keane_bernoulli_of_route hd p hp1 hp0
-    (bc50_ClassicalBoundaryArmInjection_of_armForest_all harm) hroute
-
-lemma bc50_burton_keane_bernoulli_of_armForest_routingCover
-    (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (harm : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), sfa_ArmForestReaching ω n)
-    (hrt : ∀ n : ℕ, hrHD_DisjointRouting d n) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc49_burton_keane_bernoulli_of_routingCover hd p hp1 hp0
-    (bc50_ClassicalBoundaryArmInjection_of_armForest_all harm) hrt
 
 lemma bc50_countBound_of_noTrif (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hno : ∀ x, x ∈ box d n → ¬ IsTrifurcation d ω x) :

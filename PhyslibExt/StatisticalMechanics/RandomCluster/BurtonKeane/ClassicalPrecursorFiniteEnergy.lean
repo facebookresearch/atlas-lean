@@ -15,6 +15,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Trifurca
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationExistence
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationFiniteEnergy
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
 
 /-!
 # Classical trifurcations from precursors
@@ -28,14 +29,12 @@ Three neighbours of the origin in pairwise distinct infinite clusters without th
 classical trifurcation once the edges to them are open. Forcing those edges on a
 `NeighborTrifPrecursor` event therefore gives a classical trifurcation. For a measure with finite
 energy, a precursor of positive probability gives a classical trifurcation of positive probability,
-and the route hypothesis (or a routing cover) gives the classical trifurcation step. With the
-classical boundary arm injection for every configuration, this gives uniqueness for Bernoulli
-percolation.
+and the route hypothesis (or a routing cover) gives the classical trifurcation step.
 
 ## ii. Key results
 
 - `bc49_classicalTrif_pos_of_precursor_pos` : classical trifurcations of positive probability.
-- `bc49_burton_keane_bernoulli_of_route` : uniqueness from the classical injection and the route.
+- `bc49_classical_htrif_of_route` : the classical trifurcation step from the route.
 
 ## iii. Table of contents
 
@@ -49,6 +48,9 @@ percolation.
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint measurableSet_isEncounterPoint)
 
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
@@ -78,7 +80,7 @@ lemma bc49_isClassicalTrifurcation_of_neighbors
     (hsep12 : ¬ Connected d (removeSite 0 ω) a₁ a₂)
     (hsep13 : ¬ Connected d (removeSite 0 ω) a₁ a₃)
     (hsep23 : ¬ Connected d (removeSite 0 ω) a₂ a₃) :
-    bc47_IsClassicalTrifurcation
+    IsEncounterPoint d
       (forceOpenFinset {s((0:Site d), a₁), s((0:Site d), a₂), s((0:Site d), a₃)} ω) 0 := by
   classical
   set F : Finset (Sym2 (Site d)) :=
@@ -103,7 +105,7 @@ lemma bc49_isClassicalTrifurcation_of_neighbors
 lemma bc49_precursor_subset_force_classicalTrif (a₁ a₂ a₃ : Site d) :
     NeighborTrifPrecursor d a₁ a₂ a₃ ⊆
       (fun ω => forceOpenFinset {s((0:Site d), a₁), s((0:Site d), a₂), s((0:Site d), a₃)} ω)
-        ⁻¹' {ω | bc47_IsClassicalTrifurcation ω 0} := by
+        ⁻¹' {ω | IsEncounterPoint d ω 0} := by
   rintro ω ⟨hne, ⟨hadj1, hadj2, hadj3⟩, ⟨hinf1, hinf2, hinf3⟩, ⟨hsep12, hsep13, hsep23⟩⟩
   simp only [Set.mem_preimage, Set.mem_ofPred_eq]
   exact bc49_isClassicalTrifurcation_of_neighbors ω a₁ a₂ a₃ hne hadj1 hadj2 hadj3
@@ -111,7 +113,7 @@ lemma bc49_precursor_subset_force_classicalTrif (a₁ a₂ a₃ : Site d) :
 
 lemma bc49_classicalTrif_of_precursor_mem (ω : ConfigSpace (Sym2 (Site d)))
     (a₁ a₂ a₃ : Site d) (hω : ω ∈ NeighborTrifPrecursor d a₁ a₂ a₃) :
-    bc47_IsClassicalTrifurcation
+    IsEncounterPoint d
       (forceOpenFinset {s((0:Site d), a₁), s((0:Site d), a₂), s((0:Site d), a₃)} ω) 0 :=
   bc49_precursor_subset_force_classicalTrif a₁ a₂ a₃ hω
 
@@ -119,22 +121,22 @@ lemma bc49_classicalTrif_pos_of_precursor_pos
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (hfe : HasFiniteEnergyMerge μ) (a₁ a₂ a₃ : Site d)
     (hpos : 0 < μ (NeighborTrifPrecursor d a₁ a₂ a₃)) :
-    0 < μ {ω | bc47_IsClassicalTrifurcation ω 0} := by
+    0 < μ {ω | IsEncounterPoint d ω 0} := by
   classical
   set F : Finset (Sym2 (Site d)) :=
     {s((0:Site d), a₁), s((0:Site d), a₂), s((0:Site d), a₃)} with hFdef
   by_contra h
   rw [not_lt, nonpos_iff_eq_zero] at h
   have hac : (μ.map (fun ω => forceOpenFinset F ω)) ≪ μ := hfe F
-  have hpush : (μ.map (fun ω => forceOpenFinset F ω)) {ω | bc47_IsClassicalTrifurcation ω 0}
-      = μ ((fun ω => forceOpenFinset F ω) ⁻¹' {ω | bc47_IsClassicalTrifurcation ω 0}) :=
+  have hpush : (μ.map (fun ω => forceOpenFinset F ω)) {ω | IsEncounterPoint d ω 0}
+      = μ ((fun ω => forceOpenFinset F ω) ⁻¹' {ω | IsEncounterPoint d ω 0}) :=
     Measure.map_apply (measurable_forceOpenFinset F)
-      (bc48_measurableSet_isClassicalTrifurcation 0)
-  have hpre0 : μ ((fun ω => forceOpenFinset F ω) ⁻¹' {ω | bc47_IsClassicalTrifurcation ω 0}) = 0 :=
+      (measurableSet_isEncounterPoint 0)
+  have hpre0 : μ ((fun ω => forceOpenFinset F ω) ⁻¹' {ω | IsEncounterPoint d ω 0}) = 0 :=
       by
     rw [← hpush]; exact hac h
   have hAle : μ (NeighborTrifPrecursor d a₁ a₂ a₃)
-      ≤ μ ((fun ω => forceOpenFinset F ω) ⁻¹' {ω | bc47_IsClassicalTrifurcation ω 0}) :=
+      ≤ μ ((fun ω => forceOpenFinset F ω) ⁻¹' {ω | IsEncounterPoint d ω 0}) :=
     measure_mono (bc49_precursor_subset_force_classicalTrif a₁ a₂ a₃)
   rw [hpre0] at hAle
   exact absurd (le_antisymm hAle bot_le) (ne_of_gt hpos)
@@ -147,7 +149,7 @@ lemma bc49_classical_htrif_of_route
     (hroute : ∀ n : ℕ, 0 < μ (threeMeetBox d n) →
       ∃ a₁ a₂ a₃ : Site d, 0 < μ (NeighborTrifPrecursor d a₁ a₂ a₃)) :
     0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      0 < μ {ω | bc47_IsClassicalTrifurcation ω 0} := by
+      0 < μ {ω | IsEncounterPoint d ω 0} := by
   intro htop
   obtain ⟨n, hn⟩ := exists_threeMeetBox_pos μ htop
   obtain ⟨a₁, a₂, a₃, hpre⟩ := hroute n hn
@@ -158,40 +160,8 @@ lemma bc49_classical_htrif_of_routingCover
     (hfe : HasFiniteEnergyMerge μ)
     (hrt : ∀ n : ℕ, hrHD_DisjointRouting d n) :
     0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-      0 < μ {ω | bc47_IsClassicalTrifurcation ω 0} :=
+      0 < μ {ω | IsEncounterPoint d ω 0} :=
   bc49_classical_htrif_of_route μ hfe (hrHD_route_of_routing μ hfe hrt)
-
-lemma bc49_burton_keane_bernoulli_of_route (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hinj : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), bc48_ClassicalBoundaryArmInjection ω n)
-    (hroute : ∀ n : ℕ,
-      0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (threeMeetBox d n) →
-        ∃ a₁ a₂ a₃ : Site d,
-          0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-            (NeighborTrifPrecursor d a₁ a₂ a₃)) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc48_burton_keane_bernoulli_of_classicalInjection hd p hp1 hp0 hinj
-    (bc49_classical_htrif_of_route (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-      (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0) hroute)
-
-lemma bc49_burton_keane_bernoulli_of_routingCover (hd : 1 ≤ d) (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
-    (hinj : ∀ (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ), bc48_ClassicalBoundaryArmInjection ω n)
-    (hrt : ∀ n : ℕ, hrHD_DisjointRouting d n) :
-    (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 0} = 1 ∨
-      bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-        {ω | numInfiniteClusters d ω = 1} = 1)
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1 (atLeastTwoInfinite d) = 0
-      ∧ bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
-          {ω | numInfiniteClusters d ω ≤ 1} = 1 :=
-  bc49_burton_keane_bernoulli_of_route hd p hp1 hp0 hinj
-    (hrHD_route_of_routing (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-      (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0) hrt)
 
 lemma bc49_precursor_nonvacuous (ω : ConfigSpace (Sym2 (Site d)))
     (a₁ a₂ a₃ : Site d)
@@ -204,7 +174,7 @@ lemma bc49_precursor_nonvacuous (ω : ConfigSpace (Sym2 (Site d)))
     (hd12 : cluster d (removeSite 0 ω) a₁ ≠ cluster d (removeSite 0 ω) a₂)
     (hd13 : cluster d (removeSite 0 ω) a₁ ≠ cluster d (removeSite 0 ω) a₃)
     (hd23 : cluster d (removeSite 0 ω) a₂ ≠ cluster d (removeSite 0 ω) a₃) :
-    bc47_IsClassicalTrifurcation
+    IsEncounterPoint d
       (forceOpenFinset {s((0:Site d), a₁), s((0:Site d), a₂), s((0:Site d), a₃)} ω) 0 := by
   have hsep : ∀ b c : Site d, cluster d (removeSite 0 ω) b ≠ cluster d (removeSite 0 ω) c →
       ¬ Connected d (removeSite 0 ω) b c := by

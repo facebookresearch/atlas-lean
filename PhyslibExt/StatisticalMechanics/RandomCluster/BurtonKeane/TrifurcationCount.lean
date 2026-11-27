@@ -18,7 +18,9 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneUniqueness
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneMerge
-public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneMergeGeom
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected
+public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeaneZeroOrOne
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy
 
 /-!

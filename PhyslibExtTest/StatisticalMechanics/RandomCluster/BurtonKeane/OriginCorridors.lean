@@ -22,6 +22,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCo
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCorridors
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation _root_.StatMech.Walls
@@ -32,7 +35,7 @@ example : bc59_DisjointCorridors bc57_evenLines :=
 
 -- Forcing the corridors gives a classical trifurcation at the origin.
 example : ∃ G : Finset (Sym2 (Site 2)),
-    bc47_IsClassicalTrifurcation (forceOpenFinset G bc57_evenLines) 0 :=
+    IsEncounterPoint 2 (forceOpenFinset G bc57_evenLines) 0 :=
   bc59_corridors_give_trifurcation _ bc59_evenLines_hasDisjointCorridors
 
 -- The three arms are distinct.

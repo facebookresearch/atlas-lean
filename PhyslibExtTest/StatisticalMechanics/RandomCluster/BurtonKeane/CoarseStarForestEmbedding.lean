@@ -66,12 +66,12 @@ example (L : ℕ) : bc61_coarseTcount closed2 L 1 ≤ boxSV_boundaryCard 2 1 :=
     (closed_boundaryInjection L 1)
 
 -- The height-one line of the upper lines is connected.
-example : Connected 2 bc60_upperLines (bc57_pt (-2) 1) (bc57_pt 5 1) :=
+example : Connected 2 bc60_upperLines (faceCorner00 (-2) 1) (faceCorner00 5 1) :=
   bc64_line1_connected _ _
 
 -- Sublattice boxes at different multiples are disjoint.
-example : Disjoint (bc61_boxAround 2 3 (bc57_pt ((2 * ((3 : ℕ) : ℤ) + 1) * 0) 0))
-    (bc61_boxAround 2 3 (bc57_pt ((2 * ((3 : ℕ) : ℤ) + 1) * 1) 0)) :=
+example : Disjoint (bc61_boxAround 2 3 (faceCorner00 ((2 * ((3 : ℕ) : ℤ) + 1) * 0) 0))
+    (bc61_boxAround 2 3 (faceCorner00 ((2 * ((3 : ℕ) : ℤ) + 1) * 1) 0)) :=
   bc64_disjointBoxes_sublattice 3 (by norm_num)
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.CoarseStarForestEmbedding

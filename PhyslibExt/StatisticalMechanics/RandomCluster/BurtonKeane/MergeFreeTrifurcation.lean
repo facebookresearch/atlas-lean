@@ -14,6 +14,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.Bernoull
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneAttachment
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting
 public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationConstruction
+public import MathlibExt.Probability.Percolation.BurtonKeane.FiniteModification
 
 /-!
 # Trifurcations from merge-free configurations
@@ -55,6 +56,7 @@ namespace StatMech
 namespace Percolation
 
 open DisjointPaths
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted (bernoulli_finiteEnergyMerge)
 
 variable {d : ℕ}
 
@@ -80,7 +82,7 @@ lemma bkc_htrif_bernoulli (p : ℝ≥0) (hp1 : p ≤ 1) (hp0 : 0 < p)
         0 < bernoulliProductMeasure (E := Sym2 (Site d)) p hp1
           {ω | IsTrifurcation d ω 0} :=
   tfx_htrif_of_mergeFree (bernoulliProductMeasure (E := Sym2 (Site d)) p hp1)
-    (bkc_bernoulli_hasFiniteEnergyMerge p hp1 hp0) hmf
+    (bernoulli_finiteEnergyMerge p hp1 hp0) hmf
 
 end Percolation
 
