@@ -10,7 +10,7 @@ factor $F_i$, such that
 
 $$\psi(r_L(x)) = \prod_i N_{F_i/K}\bigl(q_i(1 \otimes x)\bigr)^{-n_i}$$
 
-for all $x$ in some neighbourhood of $1$ in $L^\times$. The integers $n_i$ are then unique. Whether $\psi$ is
+for all $x$ in some neighbourhood of $1$ in $L^\times$. Whether $\psi$ is
 locally algebraic does not depend on the normalization of $r_L$; changing it replaces each $n_i$ by $-n_i$.
 
 Conrad's definition (Definition B.1) asks for a homomorphism of $\mathbb{Q}_p$-tori
@@ -24,6 +24,11 @@ for $x \in \mathbb{Q}_p^\times$ near $1$.
 ## Depends on
 
 - [Local class field theory: the local Artin map](../../../../p-adic-numbers/local-class-field-theory.md), for $r_L$
+
+## Proof depends on
+
+The definition needs no proof. The effect of the normalization holds because the two normalizations of $r_L$ are
+inverse to each other, and the comparison with Conrad's formulation is his Lemma B.2 and (B.1).
 
 ## Sources
 

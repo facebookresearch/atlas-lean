@@ -53,4 +53,5 @@ Its proof uses the descent steps listed in the expansion note, and:
   inside of $\overline{K}$, an object $W$ in $\mathrm{Rep}_{C_K}(G_K)$ is Hodge–Tate if and only iff it is Hodge–Tate when
   viewed in $\mathrm{Rep}_{C_K}(G_{K'})$"), for the first descent step.
 - J.-P. Serre, *Abelian l-adic representations and elliptic curves*, 2nd edition, A. K. Peters (1998),
-  Chapter III, Appendix, A6, Corollary 2, the reference [S6, III, A6, Cor. 2] of Conrad's sentence; not read here.
+  Chapter III, Appendix, A6, Corollary 2, as cited by Conrad ([S6, III, A6, Cor. 2], his reference [S6] being the
+  2nd edition, A. K. Peters, 1998); not read here, so this locator is unverified.

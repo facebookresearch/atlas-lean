@@ -36,7 +36,7 @@ to $g = \tau^{-1}$.
 - [Tate–Sen theorem on the Galois cohomology of C(i)](../tate-sen-theorem.md), for $C_F(i)^{G_F} = 0$ when $i \ne 0$, which makes the weights well defined
 
 Its proof also uses the inputs listed in the expansion note, in particular Tate's $G_F$-equivariant and
-$\mathcal{O}_F$-equivariant Hodge–Tate sequence, which the page on the Hodge–Tate sequence of a $p$-divisible group does not state.
+$\mathcal{O}_F$-equivariant Hodge–Tate sequence.
 
 ## Sources
 

@@ -33,6 +33,10 @@ eigenform is that of a newform of a level dividing $N$.
 
 - [Hecke operator](hecke-operators/hecke-operator.md), for the Hecke operators as double coset operators
 
+## Proof depends on
+
+Its proof uses the inputs listed in the expansion note.
+
 ## Sources
 
 - F. Diamond and J. Im, "Modular forms and modular curves", Canadian Mathematical Society Conference Proceedings
