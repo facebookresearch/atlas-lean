@@ -12,10 +12,12 @@ import MathlibExt.NumberTheory.RepetendTableSmallBaseConstraint
 
 open MetaMathlibExt
 
--- The upper bound can be attained.
-example : (2 : ℤ) ≠ (0 : ℤ) + 1 :=
-  ne_add_one_of_sq_add_mul_mem 6 2 0 (by decide) (by decide)
+-- A positive quotient with the residue at the lower bound.
+example : (3 : ℤ) ≠ (1 : ℤ) + 1 :=
+  ne_add_one_of_sq_add_mul_mem 7 3 (by decide) (by decide) (by decide)
+    1 2 (by decide) (by decide) (by decide)
 
--- The lower bound can be attained even when the base exceeds the modulus.
-example : (10 : ℤ) ≠ (-14 : ℤ) + 1 :=
-  ne_add_one_of_sq_add_mul_mem 7 10 (-14) (by decide) (by decide)
+-- The upper bound can also be attained.
+example : (8 : ℤ) ≠ (5 : ℤ) + 1 :=
+  ne_add_one_of_sq_add_mul_mem 11 8 (by decide) (by decide) (by decide)
+    5 9 (by decide) (by decide) (by decide)
