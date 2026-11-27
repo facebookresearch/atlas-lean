@@ -27,13 +27,20 @@ private def reset : MDP (Fin 2) Unit ℝ where
   reward := fun _ _ => 0
   prob := fun _ _ y => if y = 0 then 1 else 0
 
-example : transitionConcentrationCoefficient reset reference = 1 := by
+private theorem reset_stochastic : reset.Stochastic := by
+  constructor
+  · intro s a y
+    by_cases hy : y = 0 <;> norm_num [reset, hy]
+  · intro s a
+    norm_num [reset, Fin.sum_univ_two]
+
+example : transitionConcentrationCoefficient reset reset_stochastic reference = 1 := by
   apply le_antisymm
   · rw [transitionConcentrationCoefficient_le_iff]
     intro s a y
     fin_cases y <;> norm_num [reset, reference, StdSimplex.weights_single, Finsupp.single_apply]
-  · have h := (transitionConcentrationCoefficient_le_iff reset reference
-      (transitionConcentrationCoefficient reset reference)).mp le_rfl 1 () 0
+  · have h := (transitionConcentrationCoefficient_le_iff reset reset_stochastic reference
+      (transitionConcentrationCoefficient reset reset_stochastic reference)).mp le_rfl 1 () 0
     simpa [reset, reference, StdSimplex.weights_single, Finsupp.single_apply] using h
 
 -- The extra action stays at the source. The transition from state one to itself
@@ -42,8 +49,15 @@ private def resetOrStay : MDP (Fin 2) Bool ℝ where
   reward := fun _ _ => 0
   prob := fun s a y => if y = (if a then s else 0) then 1 else 0
 
-example : transitionConcentrationCoefficient resetOrStay reference = ∞ := by
-  apply (transitionConcentrationCoefficient_eq_top_iff _ _).mpr
+private theorem resetOrStay_stochastic : resetOrStay.Stochastic := by
+  constructor
+  · intro s a y
+    by_cases hy : y = (if a then s else 0) <;> norm_num [resetOrStay, hy]
+  · intro s a
+    fin_cases s <;> cases a <;> norm_num [resetOrStay, Fin.sum_univ_two]
+
+example : transitionConcentrationCoefficient resetOrStay resetOrStay_stochastic reference = ∞ := by
+  apply (transitionConcentrationCoefficient_eq_top_iff _ _ _).mpr
   refine ⟨1, true, 1, ?_, ?_⟩
   · norm_num [resetOrStay]
   · norm_num [reference, StdSimplex.weights_single, Finsupp.single_apply]
@@ -57,8 +71,8 @@ private noncomputable def uniformTwo : StdSimplex ℝ (Fin 2) where
     norm_num [Fin.sum_univ_two]
 
 -- A full-support reference gives a finite maximum, and the ratio can exceed one.
-example : transitionConcentrationCoefficient reset uniformTwo = 2 := by
-  have hbound := transitionConcentrationCoefficient_le_iff reset uniformTwo
+example : transitionConcentrationCoefficient reset reset_stochastic uniformTwo = 2 := by
+  have hbound := transitionConcentrationCoefficient_le_iff reset reset_stochastic uniformTwo
   have hμ : ∀ y, uniformTwo.weights y = 1 / 2 := fun _ => rfl
   apply le_antisymm
   · apply (hbound 2).mpr
