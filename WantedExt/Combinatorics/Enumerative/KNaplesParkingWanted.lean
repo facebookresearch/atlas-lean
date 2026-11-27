@@ -16,6 +16,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.DescendingNaplesBinaryTrees
 public import MathlibExt.Combinatorics.Enumerative.DescendingNaplesDyckPath
+public import MathlibExt.Combinatorics.Enumerative.DescendingNaplesPaddedDyckWord
 public import MathlibExt.Combinatorics.Enumerative.KNaplesParking
 public import MathlibExt.Combinatorics.Enumerative.KNaplesParkingInt
 public import MathlibExt.Combinatorics.FineNumber
@@ -131,22 +132,6 @@ Article A44, Section 2, Remark 2. -/
 public theorem naplesParkInt_example_three :
     naplesParkInt 3 [] [1, 2, 2, 5, 7, 7, 7, 3] = [3, 4, 6, 7, 5, 0, 2, 1] := by
   decide
-
-open Classical in
-/-- **Descending $k$-Naples parking functions and Dyck paths.** For all natural numbers $n \ge 1$
-and $k \ge 1$, the number of weakly decreasing $k$-Naples parking functions of length $n$ equals
-the number of Dyck paths of semilength $n + k$ (that is, with $2(n + k)$ steps) whose first $k$
-steps are Up and whose last $k + 1$ steps are Down.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Proposition 3. -/
-public theorem_wanted descendingNaplesCount_eq_card_dyckPath {n k : ℕ} (hn : 1 ≤ n)
-    (hk : 1 ≤ k) :
-    descendingNaplesCount n k = (Finset.univ.filter
-      fun p : {p : DyckWord // p.semilength = n + k} =>
-        List.replicate k DyckStep.U <+: p.1.toList ∧
-          List.replicate (k + 1) DyckStep.D <:+ p.1.toList).card
 
 open Classical in
 /-- **Descending strictly $k$-Naples parking functions and Dyck paths with an early return.**

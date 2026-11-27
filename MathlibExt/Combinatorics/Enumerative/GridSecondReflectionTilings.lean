@@ -13,8 +13,9 @@ public import MathlibExt.Combinatorics.Enumerative.GridReflectionTilings
 /-!
 # Tilings fixed by the second reflection of a rectangular grid
 
-Transposing the grid turns the reflection $r^2 f$ into $f$. This gives the even-side count
-from `rectangularGrid_f_even`, with the same permutation of tile designs.
+Transposing the grid turns the reflection $r^2 f$ into $f$. This gives the even- and odd-side
+counts from `rectangularGrid_f_even` and `rectangularGrid_f_odd`, with the same permutation of
+tile designs.
 
 ## References
 
@@ -62,5 +63,33 @@ public theorem rectangularGrid_r2f_even {T : Type*} [Fintype T] [DecidableEq T]
         exact h (y, x)
     _ = Fintype.card T ^ (n * m / 2) := by
       simpa only [Nat.mul_comm m n] using rectangularGrid_f_even m n σ hσ heven
+
+/-- **Rectangular-grid tilings fixed by the reflection $r^2 f$, $m$ odd.** Let $n$ and $m$ be
+positive integers with $m$ odd, let $T$ be a finite set of tiles, let $\sigma$ be a permutation of
+$T$ with $\sigma^2 = 1$, and let $t$ be the number of tiles $d \in T$ with $\sigma(d) = d$. Let $g$
+be the reflection $r^2 f$ of $\mathbb{Z}/n \times \mathbb{Z}/m$, given by $g(x, y) = (x, -1 - y)$.
+Then the number of tilings $F : \mathbb{Z}/n \times \mathbb{Z}/m \to T$ with
+$F(g(c)) = \sigma(F(c))$ for every cell $c$ equals $|T|^{n(m-1)/2} \, t^n$.
+
+Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
+        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 22. -/
+public theorem rectangularGrid_r2f_odd {T : Type*} [Fintype T] [DecidableEq T]
+    (n m : ℕ) [NeZero n] [NeZero m] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1)
+    (hodd : Odd m) :
+    fixedTilingCount (cellR2F n m) σ =
+      Fintype.card T ^ (n * (m - 1) / 2) * tileFixedCount σ 1 ^ n := by
+  calc
+    fixedTilingCount (cellR2F n m) σ = fixedTilingCount (cellF m n) σ := by
+      unfold fixedTilingCount
+      refine Fintype.card_congr ((Equiv.arrowCongr (Equiv.prodComm (ZMod n) (ZMod m))
+        (Equiv.refl T)).subtypeEquiv ?_)
+      -- Swapping the coordinates swaps which coordinate the reflection reverses.
+      intro F
+      constructor
+      · rintro h ⟨y, x⟩
+        exact h (x, y)
+      · rintro h ⟨x, y⟩
+        exact h (y, x)
+    _ = _ := rectangularGrid_f_odd m n σ hσ hodd
 
 end MetaMathlibExt
