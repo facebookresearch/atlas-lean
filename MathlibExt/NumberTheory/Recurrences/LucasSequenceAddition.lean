@@ -74,3 +74,24 @@ theorem two_mul_lucasU_add
     linear_combination params.p * ih1 - params.q * ih0
 
 end MathlibExt.NumberTheory.Recurrences.KruchininPerminovaHadamardWanted
+
+namespace MetaMathlibExt
+
+/-- **Doubling formula $U_{2n} = U_n V_n$ for Lucas sequences.** Let $P$ and $Q$ be integers with
+$Q \ne 0$, and let $U$ and $V$ be the Lucas sequences $U(P, Q)$ and $V(P, Q)$. Then
+$U_{2n} = U_n V_n$ for every natural number $n$.
+
+Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
+INTEGERS 25 (2025), Article A107, Proposition 2.3 (i) (`integers-2025-A107-prop-2-3`). -/
+theorem lucasU_two_mul_eq_lucasU_mul_lucasV
+    (L : LucasSequenceParams) (n : ℕ) :
+    lucasU L (2 * n) = lucasU L n * lucasV L n := by
+  have h :=
+    MathlibExt.NumberTheory.Recurrences.KruchininPerminovaHadamardWanted.two_mul_lucasU_add
+      L n n
+  rw [show n + n = 2 * n by omega] at h
+  have h2 : 2 * lucasU L (2 * n) = 2 * (lucasU L n * lucasV L n) := by
+    linear_combination h
+  omega
+
+end MetaMathlibExt

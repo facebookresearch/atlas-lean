@@ -42,3 +42,5 @@
 - [Primes in arithmetic progressions](../../primes-in-progressions/README.md): Dirichlet's theorem and the prime number theorem for progressions, whose averaged error terms define the level of distribution.
 - [Prime number theorem](../../prime-number-theorem/prime-number-theorem/README.md): average gap $\log p_n$, the scale against which bounded gaps are measured.
 - [Brun's theorem](../../prime-patterns/brun-s-theorem/README.md): the sieve upper bound for twin primes.
+
+- [Two primes in infinitely many translates of the explicit forty shifts](infinitely-many-two-prime-translates-of-the-explicit-tuple.md)
