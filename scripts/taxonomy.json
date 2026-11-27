@@ -13274,7 +13274,6 @@
   "MathlibExt/NumberTheory/GleefulNumbers": {"to": "NumberTheory/additive-number-theory", "title": "Sums of powers of consecutive primes"},
   "MathlibExt/NumberTheory/GobelBSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelNonIntegrality": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
-  "MathlibExt/NumberTheory/GobelResidue": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelResidueExponentPeriod": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelSequenceError": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
