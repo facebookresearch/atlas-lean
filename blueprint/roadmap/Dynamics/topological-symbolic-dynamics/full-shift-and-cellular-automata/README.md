@@ -8,3 +8,4 @@
 - [Jointly periodic points](jointly-periodic-points.md)
 - [Joint periodic count](joint-periodic-count.md)
 - [Joint periodic growth rate](joint-periodic-growth-rate.md)
+- [Whether two automorphisms of a full shift generate a free group of rank two is undecidable](free-group-generated-by-two-automorphisms.md)
