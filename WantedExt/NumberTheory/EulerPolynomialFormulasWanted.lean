@@ -62,6 +62,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyGenRecurrence
 public import MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyHalfEqSum
 public import MathlibExt.NumberTheory.EulerPolynomialGeneralizedStirling
+public import MathlibExt.NumberTheory.EulerPolynomialFormulasDoubleSum
 
 set_option autoImplicit false
 
@@ -70,24 +71,6 @@ set_option autoImplicit false
 open Polynomial
 
 namespace MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
-
-/-- **Double-sum formula for Euler polynomials.** Let $E_n(x)$ denote the Euler polynomial and
-$S(n, k, x) = \frac{1}{k!} \sum_{j=0}^{k} \binom{k}{j} (-1)^{k-j} (x + j)^n$ the generalized
-Stirling polynomial. For every $n \ge 0$, as polynomials in $x$ with rational coefficients,
-$2^n E_n(x) = \sum_{\ell=0}^{n} \frac{(-1)^\ell}{\ell + 1}
-\sum_{k=0}^{n-\ell} \frac{(k + \ell + 1)!}{2^k} \binom{\ell + 1}{k} S(n, k + \ell, 2x - 1)$.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Theorem 4.3. -/
-theorem_wanted eulerPoly_eq_double_sum (n : ℕ) :
-    (2 : ℚ) ^ n • eulerPoly n =
-      ∑ l ∈ Finset.range (n + 1),
-        ((-1) ^ l / (l + 1 : ℚ)) •
-          ∑ k ∈ Finset.range (n - l + 1),
-            ((Nat.factorial (k + l + 1) : ℚ) / (2 : ℚ) ^ k *
-                (Nat.choose (l + 1) k : ℚ)) •
-              (genStirlingPoly n (k + l)).comp (C 2 * X - 1)
 
 /-- The composition operator `S(D) = ∑_k s_k D^k` of a formal
 power series `S = ∑_k s_k z^k`, applied to a polynomial `p`
