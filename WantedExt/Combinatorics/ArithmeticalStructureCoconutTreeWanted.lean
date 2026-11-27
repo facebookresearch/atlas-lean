@@ -17,6 +17,7 @@ public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutCount
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutSubdivision
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTree
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTwoLeaves
+public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutUnsmoothedLeaves
 public import MathlibExt.Combinatorics.ArithmeticalStructureStar
 public import MathlibExt.Combinatorics.EuclideanChainLength
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTreeCoconutSmoothPath
@@ -241,23 +242,6 @@ public theorem_wanted ncard_coconutDescendants {p s i : ℕ} (hs : 2 ≤ s) (hi 
     Set.ncard {x : (Fin p ⊕ Fin s → ℕ) × (Fin p ⊕ Fin s → ℕ) |
       IsArithmeticalStructure (coconutTree p s) x.1 x.2 ∧ CoconutAncestor p s x i s y}
       = ballotNumber (p - 1) (p - i)
-
-/-- **Counting coconut structures whose leaves cannot be smoothed.** For $p \ge 1$ and $s \ge 2$,
-the number of arithmetical structures $(d, r)$ on the coconut tree $CT(p, s)$ with $d(\ell_j) \ge 2$
-at every leaf $\ell_j$ is
-$$\sum_{i=1}^{p} B(p - 1, p - i)\, N(i),$$
-where $B(n, k)$ is the ballot number and $N(i)$ is the number of smooth arithmetical structures on
-$CT(i, s)$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 4.6
-(`integers-2025-A82-cor-1`). -/
-public theorem_wanted ncard_arithmeticalStructure_coconutTree_leaves_ge_two {p s : ℕ}
-    (hp : 1 ≤ p) (hs : 2 ≤ s) :
-    Set.ncard {x : (Fin p ⊕ Fin s → ℕ) × (Fin p ⊕ Fin s → ℕ) |
-      IsArithmeticalStructure (coconutTree p s) x.1 x.2 ∧ ∀ j, 2 ≤ x.1 (.inr j)}
-      = ∑ i ∈ Finset.Icc 1 p, ballotNumber (p - 1) (p - i) *
-          Set.ncard {z : (Fin i ⊕ Fin s → ℕ) × (Fin i ⊕ Fin s → ℕ) | IsSmoothCoconut i s z.1 z.2}
 
 end
 
