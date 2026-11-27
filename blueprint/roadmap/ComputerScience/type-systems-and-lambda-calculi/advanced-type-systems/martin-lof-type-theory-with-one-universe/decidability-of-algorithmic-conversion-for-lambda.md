@@ -17,12 +17,13 @@ The hypotheses that each side is related to itself supply the termination measur
 - [Π-injectivity and syntactic validity for λΠUN](pi-injectivity-and-syntactic-validity-for-lambda-pi-u-n.md)
 - [Weak head normalization for λΠUN](weak-head-normalization-for-lambda-pi-u-n.md)
 - [Soundness of algorithmic conversion for dependent type theory](../soundness-of-algorithmic-conversion-for.md)
+- [Typed weak head reduction in λΠUN](typed-weak-head-reduction-in-lambda-pi-u-n.md): determinism of reduction
 
 ## Expansion
 
 This page becomes ready once:
 
-- Substitution, neutral type equality and strong syntactic equality for λΠUN, determinism of weak head reduction, and context conversion for typing and for algorithmic conversion (Theorems 3.29, 3.31 and 3.33, Lemma 2.5, Lemmas 4.1 and 4.4 of the source) (proof prerequisites; not yet stated)
+- Substitution, neutral type equality and strong syntactic equality for λΠUN (Theorems 3.29, 3.31 and 3.33 of the source), context conversion for typing and for algorithmic conversion (Lemmas 4.1 and 4.2), and conversion of algorithmic conversion along a convertible comparison type (Lemma 4.4) (proof prerequisites; not yet stated)
 
 ## Sources
 

@@ -17,7 +17,7 @@ symmetry, transitivity, weakening and the lifting of weak head normal forms and 
 This page becomes ready once:
 
 - The Kripke logical relation of reducibility for λΠUN, its fundamental theorem and the corollary that every well-formed object is reducible (Theorem 3.21 and Corollary 3.22 of the source) (proof prerequisite; not yet stated)
-- Algorithmic conversion as a generic equality instance of the logical relation: its symmetry, transitivity, weakening, and the lifting of weak head normal forms and of neutrals (Section 4.3 of the source, through Lemma 4.10) (proof prerequisite; not yet stated)
+- Algorithmic conversion as a generic equality instance of the logical relation (Instance 2 in Section 4.2 of the source): its conversion along a convertible type (Lemma 4.4), symmetry, transitivity, weakening, and the lifting of weak head normal forms and of neutrals (Lemmas 4.6–4.10) (proof prerequisite; not yet stated)
 
 ## Sources
 

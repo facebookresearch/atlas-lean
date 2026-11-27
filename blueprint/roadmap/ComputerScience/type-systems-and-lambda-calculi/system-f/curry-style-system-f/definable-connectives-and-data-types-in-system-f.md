@@ -20,6 +20,7 @@ $\Lambda \alpha.\, \lambda f{:}\alpha \to \alpha.\, f$, which is only η-equal t
 ## Depends on
 
 - [Extrinsic typing of pure System F terms](../the-five-typing-rules-of-pure-system-f/typing.md)
+- [System F in Church style](../../normalization-and-logical-relations/system-f-in-church-style.md)
 
 ## Sources
 

@@ -4,6 +4,8 @@ In [λΠUN](the-type-theory-lambda-pi-u-n.md):
 
 1. (Π-injectivity) if $\Gamma \vdash \Pi\, F\, G = \Pi\, H\, E$ then $\Gamma \vdash F = H$ and $\Gamma.F \vdash G = E$;
 2. (syntactic validity) if $\Gamma \vdash A = B$ then $\Gamma \vdash A$ and $\Gamma \vdash B$; if $\Gamma \vdash t : A$ then $\Gamma \vdash A$; if $\Gamma \vdash t = u : A$ then $\Gamma \vdash t : A$ and $\Gamma \vdash u : A$;
+   if $\Gamma \vdash A \longrightarrow^* B$ then $\Gamma \vdash A$ and $\Gamma \vdash B$; and if $\Gamma \vdash t \longrightarrow^* u : A$ then $\Gamma \vdash t : A$ and $\Gamma \vdash u : A$, so [weak head reduction](typed-weak-head-reduction-in-lambda-pi-u-n.md)
+   ends in a well-formed type or a well-typed term;
 3. (syntactic inequality) distinct type formers are not convertible: for $A$ and $B$ among $\mathsf{U}$, $\mathsf{N}$, a neutral type and a Π-type, with different head forms,
    $\Gamma \vdash A = B$ does not hold.
 
@@ -12,6 +14,7 @@ In [λΠUN](the-type-theory-lambda-pi-u-n.md):
 ## Depends on
 
 - [The type theory λΠUN](the-type-theory-lambda-pi-u-n.md)
+- [Typed weak head reduction in λΠUN](typed-weak-head-reduction-in-lambda-pi-u-n.md)
 
 ## Expansion
 

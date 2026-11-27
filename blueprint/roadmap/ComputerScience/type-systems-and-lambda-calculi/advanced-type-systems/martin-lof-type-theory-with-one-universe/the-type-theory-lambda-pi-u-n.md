@@ -5,13 +5,29 @@ of $\Pi$ and the first argument of $\mathsf{natrec}$ bind one index; contexts ar
 substitution of $u$ for index $0$ and $A \to B = \Pi\, A\, B[\uparrow]$. *Weak head normal forms* are $\lambda t$, $\mathsf{U}$, $\mathsf{N}$, $\Pi\, A\, B$, $\mathsf{zero}$, $\mathsf{suc}\, t$ and neutral
 expressions $n ::= i_x \mid n\, t \mid \mathsf{natrec}\, A\, t\, u\, n$.
 
-The judgements $\vdash \Gamma$, $\Gamma \vdash A$, $\Gamma \vdash A = B$, $\Gamma \vdash t : A$ and $\Gamma \vdash t = u : A$ are defined simultaneously by: formation rules for $\mathsf{U}$, $\mathsf{N}$ and $\Pi$;
-$\mathsf{N} : \mathsf{U}$ and $\Pi\, F\, G : \mathsf{U}$ for $F : \mathsf{U}$ and $G : \mathsf{U}$ in the extended context; a term of type $\mathsf{U}$ is a type (universe à la Russell); variables,
-abstraction, application with $g\, a : G[a]$, $\mathsf{zero}$, $\mathsf{suc}$ and $\mathsf{natrec}\, G\, z\, s\, t : G[t]$ for $z : G[\mathsf{zero}]$ and $s : \Pi\, \mathsf{N}\, (G \to G[\uparrow, \mathsf{suc}\, i_0])$;
-conversion of terms and of term equalities along type equality; reflexivity, symmetry, transitivity and congruence rules for every former; and the
-computation rules $(\lambda t)\, a = t[a]$, $\mathsf{natrec}\, F\, z\, s\, \mathsf{zero} = z$, $\mathsf{natrec}\, F\, z\, s\, (\mathsf{suc}\, t) = (s\, t)\, (\mathsf{natrec}\, F\, z\, s\, t)$, and the
-extensionality rule $f = g : \Pi\, F\, G$ when $f[\uparrow]\, i_0 = g[\uparrow]\, i_0 : G$. With $\mathsf{natrec}$ into $\mathsf{U}$, types can depend on numbers (large elimination). Every judgement
-$\Gamma \vdash J$ implies $\vdash \Gamma$, and judgements are stable under well-formed weakenings.
+The judgements $\vdash \Gamma$, $\Gamma \vdash A$, $\Gamma \vdash A = B$, $\Gamma \vdash t : A$ and $\Gamma \vdash t = u : A$ are defined simultaneously by the following rules, where
+$\Gamma.F$ and $\Gamma.\mathsf{N}$ extend a context by one variable and $\uparrow$ is the weakening by one:
+
+- **contexts and types:** $\vdash \epsilon$; $\vdash \Gamma.A$ if $\Gamma \vdash A$; $\Gamma \vdash \mathsf{U}$ and $\Gamma \vdash \mathsf{N}$ if $\vdash \Gamma$; $\Gamma \vdash \Pi\, F\, G$ if $\Gamma \vdash F$ and
+  $\Gamma.F \vdash G$; $\Gamma \vdash A$ if $\Gamma \vdash A : \mathsf{U}$ (universe à la Russell);
+- **typing:** $\Gamma \vdash \mathsf{N} : \mathsf{U}$ if $\vdash \Gamma$; $\Gamma \vdash \Pi\, F\, G : \mathsf{U}$ if $\Gamma \vdash F : \mathsf{U}$ and $\Gamma.F \vdash G : \mathsf{U}$; $\Gamma \vdash i_x : A$ if $\vdash \Gamma$
+  and $i_x : A \in \Gamma$; $\Gamma \vdash \lambda t : \Pi\, F\, G$ if $\Gamma \vdash F$ and $\Gamma.F \vdash t : G$; $\Gamma \vdash g\, a : G[a]$ if $\Gamma \vdash g : \Pi\, F\, G$ and $\Gamma \vdash a : F$;
+  $\Gamma \vdash \mathsf{zero} : \mathsf{N}$ if $\vdash \Gamma$; $\Gamma \vdash \mathsf{suc}\, t : \mathsf{N}$ if $\Gamma \vdash t : \mathsf{N}$; $\Gamma \vdash \mathsf{natrec}\, G\, z\, s\, t : G[t]$ if $\Gamma.\mathsf{N} \vdash G$,
+  $\Gamma \vdash z : G[\mathsf{zero}]$, $\Gamma \vdash s : \Pi\, \mathsf{N}\, (G \to G[\uparrow, \mathsf{suc}\, i_0])$ and $\Gamma \vdash t : \mathsf{N}$; and $\Gamma \vdash t : B$ if $\Gamma \vdash t : A$ and $\Gamma \vdash A = B$;
+- **type equality:** reflexivity for $\Gamma \vdash A$, symmetry and transitivity; $\Gamma \vdash \Pi\, F\, G = \Pi\, H\, E$ if $\Gamma \vdash F$, $\Gamma \vdash F = H$ and
+  $\Gamma.F \vdash G = E$; and $\Gamma \vdash A = B$ if $\Gamma \vdash A = B : \mathsf{U}$;
+- **term equality:** reflexivity for $\Gamma \vdash t : A$, symmetry, transitivity and conversion along $\Gamma \vdash A = B$; congruence:
+  $\Gamma \vdash \Pi\, F\, G = \Pi\, H\, E : \mathsf{U}$ if $\Gamma \vdash F$, $\Gamma \vdash F = H : \mathsf{U}$ and $\Gamma.F \vdash G = E : \mathsf{U}$; $\Gamma \vdash f\, a = g\, b : G[a]$ if
+  $\Gamma \vdash f = g : \Pi\, F\, G$ and $\Gamma \vdash a = b : F$; $\Gamma \vdash \mathsf{suc}\, t = \mathsf{suc}\, u : \mathsf{N}$ if $\Gamma \vdash t = u : \mathsf{N}$;
+  $\Gamma \vdash \mathsf{natrec}\, F\, z\, s\, t = \mathsf{natrec}\, F'\, z'\, s'\, t' : F[t]$ if $\Gamma.\mathsf{N} \vdash F = F'$, $\Gamma \vdash z = z' : F[\mathsf{zero}]$,
+  $\Gamma \vdash s = s' : \Pi\, \mathsf{N}\, (F \to F[\uparrow, \mathsf{suc}\, i_0])$ and $\Gamma \vdash t = t' : \mathsf{N}$; extensionality: $\Gamma \vdash f = g : \Pi\, F\, G$ if $\Gamma \vdash F$,
+  $\Gamma \vdash f : \Pi\, F\, G$, $\Gamma \vdash g : \Pi\, F\, G$ and $\Gamma.F \vdash f[\uparrow]\, i_0 = g[\uparrow]\, i_0 : G$;
+- **computation:** $\Gamma \vdash (\lambda t)\, a = t[a] : G[a]$ if $\Gamma \vdash F$, $\Gamma.F \vdash t : G$ and $\Gamma \vdash a : F$; and, under the premises $\Gamma.\mathsf{N} \vdash F$,
+  $\Gamma \vdash z : F[\mathsf{zero}]$ and $\Gamma \vdash s : \Pi\, \mathsf{N}\, (F \to F[\uparrow, \mathsf{suc}\, i_0])$, $\Gamma \vdash \mathsf{natrec}\, F\, z\, s\, \mathsf{zero} = z : F[\mathsf{zero}]$ and, if also
+  $\Gamma \vdash t : \mathsf{N}$, $\Gamma \vdash \mathsf{natrec}\, F\, z\, s\, (\mathsf{suc}\, t) = (s\, t)\, (\mathsf{natrec}\, F\, z\, s\, t) : F[\mathsf{suc}\, t]$.
+
+With $\mathsf{natrec}$ into $\mathsf{U}$, types can depend on numbers (large elimination). Every judgement $\Gamma \vdash J$ implies $\vdash \Gamma$, and judgements are stable under
+well-formed weakenings.
 
 ## Depends on
 

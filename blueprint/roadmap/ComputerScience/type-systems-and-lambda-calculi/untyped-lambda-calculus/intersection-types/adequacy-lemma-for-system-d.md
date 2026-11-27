@@ -8,13 +8,17 @@ type variables and extends to types of [system D](intersection-type-system-d.md)
 2. if $|X|_I$ is an $N$-saturated set with $N_0 \subseteq |X|_I \subseteq N$ for every type variable, then $N_0 \subseteq |A|_I \subseteq N$ for every type $A$;
 3. (adequacy) under that assumption, if $x_1 : A_1, \dots, x_k : A_k \vdash_D u : A$ and $t_i \in |A_i|_I$, then $u[t_1/x_1, \dots, t_k/x_k] \in |A|_I$.
 
-Taking $t_i = x_i \in N_0$ gives that every term typable in D is strongly normalizing. Part 1 uses that a strongly normalizing term has only finitely many
-maximal reduction sequences (König's lemma).
+Taking $t_i = x_i \in N_0$ gives that every term typable in D is strongly normalizing. Part 1 uses that the reduction sequences from a strongly normalizing term have bounded length (Kőnig's lemma, since a term
+has only finitely many one-step reducts).
 
 ## Depends on
 
 - [The intersection type system D](intersection-type-system-d.md)
 - [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
+
+## Proof depends on
+
+- [Kőnig's lemma for inverse systems](../../../process-calculi/csp-semantic-models/konig-s-lemma-for-inverse-systems.md): with the reduction sequences of length $i$ from a term as the $i$-th level, each with finitely many one-step extensions, unbounded lengths would give an infinite reduction sequence
 
 ## Sources
 
