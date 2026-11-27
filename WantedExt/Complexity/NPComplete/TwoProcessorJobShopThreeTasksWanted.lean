@@ -22,7 +22,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -37,7 +37,7 @@ collection of `n_j ≤ 3` tasks `t_k[j]`, `1 ≤ k ≤ n_j`, for each such task 
 and `1 ≤ k < n_j`, and a deadline `D ∈ ℤ⁺`. QUESTION: is there a job-shop schedule for `J`
 that meets the overall deadline?
 
-This is the restriction of JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingWanted`) to `m = 2`
+This is the restriction of JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingDefs`) to `m = 2`
 and `n_j ≤ 3` for all `j ∈ J`. The instance type, `JobShopScheduling.WellFormed` (which
 includes `n_j ≥ 1`) and `JobShopScheduling.JobShopSchedulingFeasible` are the parent's,
 unchanged; `WellFormed` adds `m = 2` and `n_j ≤ 3`. Garey and Johnson record NP-completeness

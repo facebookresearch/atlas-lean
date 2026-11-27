@@ -29,7 +29,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -46,7 +46,7 @@ integer `K ≤ |V|`.
 QUESTION: can `V` be partitioned into `k' ≤ K` disjoint sets `V₁, …, V_k'` such that each `Vᵢ`
 induces a complete subgraph of `G`?
 
-This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesWanted`) restricted to the
+This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesDefs`) restricted to the
 degree-`k` graphs of Johnson's Table 1 (1985), "graphs in which no vertex has degree exceeding
 `k`", for a fixed `k`. Johnson lists the problem as NP-complete there; de Figueiredo, de Melo,
 Sasaki and Silva (2022) note that the reduction cited for that entry does not bound degrees and
@@ -56,7 +56,7 @@ their instances are instances of this problem for every fixed `k ≥ 3`, the ran
 below states. Membership in NP: the certificate is the partition.
 
 The instance, the graph, the well-formedness `0 < K ≤ |V|` and the question are those of
-`PartitionIntoCliquesWanted`; the restriction adds to the well-formedness that every vertex has
+`PartitionIntoCliquesDefs`; the restriction adds to the well-formedness that every vertex has
 degree at most `k`, with Mathlib's `SimpleGraph.degree` on the instance graph.
 
 Encoding: the instance is decoded from a bitstring with the repository's

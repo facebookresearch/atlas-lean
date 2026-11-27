@@ -12,6 +12,7 @@ public import Mathlib.Analysis.Complex.Order
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.Analysis.RCLike.Basic
 public import Mathlib.LinearAlgebra.UnitaryGroup
+public import MathlibExt.LinearAlgebra.Matrix.RealSVD
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Matrix.Order
 import MathlibExt.LinearAlgebra.Matrix.Factorizations.SVD
@@ -23,7 +24,9 @@ Every square complex matrix admits a polar decomposition, derived from the singu
 decomposition: if `A = U * D * star V`, then `A = (U * star V) * (V * D * star V)`.
 The result is `Matrix.exists_unitaryGroup_posSemidef`. For an invertible square matrix over an
 `RCLike` field, `Matrix.exists_unique_unitaryGroup_posDef_of_isUnit_det` gives the unique
-unitary-positive-definite polar decomposition.
+unitary-positive-definite polar decomposition. For a real rectangular matrix, `Matrix.polarFactor`
+is the canonical polar factor $U_r V_r^{\mathsf T}$, where the columns of $U_r$ and $V_r$ are the
+left and right singular vectors for the positive singular values.
 -/
 
 @[expose] public section
@@ -161,5 +164,149 @@ theorem exists_unique_unitaryGroup_posDef_of_isUnit_det [DecidableEq n]
       _ = A := hdecomp'.symm
       _ = U * P := hdecomp
   exact ⟨Subtype.ext hU'eq, hP'eq⟩
+
+private abbrev polarRectangularDiagonal {m n : ℕ} (d : Fin n → ℝ) : Matrix (Fin m) (Fin n) ℝ :=
+  of fun i j => if i.val = j.val then d j else 0
+
+open MathlibExt.LinearAlgebra.Matrix.RealSVDWanted in
+/-- **Canonical polar factor of a rectangular matrix.** Let $G$ be a real $m \times n$ matrix and
+choose a real singular value decomposition $G = U \Sigma V^{\mathsf T}$, with $U$ and $V$
+orthogonal and $\Sigma$ rectangular diagonal with nonnegative entries. Form $D$ by replacing each
+positive entry of $\Sigma$ by $1$ and keeping the zeros. The polar factor is $U D V^{\mathsf T}$,
+equivalently $U_r V_r^{\mathsf T}$, where the columns of $U_r$ and $V_r$ are the left and right
+singular vectors for the positive singular values. The factor of the zero matrix is zero.
+
+The construction uses classical choice to obtain an SVD, but the product is the same for every
+such decomposition.
+
+The definition follows the rank-reduced (compact SVD) convention. For every $G$, the factor is
+the partial isometry $P$ of the canonical polar decomposition $G = P H$: the unique decomposition
+with $P$ a partial isometry, $H$ symmetric positive semidefinite and the row space of $P$ equal
+to the range of $H$, in which $H = (G^{\mathsf T} G)^{1/2}$. If $G$ has full rank $\min(m, n)$,
+$P$ is semi-orthogonal ($P P^{\mathsf T} = I_m$ or $P^{\mathsf T} P = I_n$) and is the unique
+polar factor of $G$ with orthonormal columns (or, when $m < n$, the transpose of that of
+$G^{\mathsf T}$). It is also a semi-orthogonal matrix nearest to $G$ in every unitarily invariant
+norm, and the unique nearest one in the Frobenius norm. In the spectral norm a nearest
+semi-orthogonal matrix need not be unique: for $G = \operatorname{diag}(3, 1)$, both $I$ and
+$\operatorname{diag}(1, -1)$ attain the least distance, $2$. If the rank of $G$ is less than
+$\min(m, n)$, $P$ is not semi-orthogonal.
+
+Sources: Amsel, Persson, Musco and Gower, *The Polar Express*, ICLR 2026, arXiv:2505.16932 v5,
+Section 1.1, equation (1), and the Notation paragraph at the end of Section 1 (polynomials of a
+matrix through its rank-reduced SVD); they describe the factor as the closest semi-orthogonal
+matrix without naming a norm, and this definition gives a nearest semi-orthogonal matrix only at
+full rank. Higham, *Functions of Matrices: Theory and Computation*, SIAM, 2008, Chapter 8,
+Theorem 8.1 (the polar decomposition with orthonormal columns, unique at full rank), Theorem 8.3
+(the canonical polar decomposition) and Theorem 8.4 (the polar factor as a nearest matrix with
+orthonormal columns in every unitarily invariant norm, and the unique nearest one in the Frobenius
+norm at full rank). -/
+noncomputable def polarFactor {m n : ℕ} (G : Matrix (Fin m) (Fin n) ℝ) :
+    Matrix (Fin m) (Fin n) ℝ :=
+  let h := real_singular_value_decomposition m n G
+  let σ := h.choose_spec.choose_spec.choose
+  let D : Matrix (Fin m) (Fin n) ℝ :=
+    of fun i j => if i.val = j.val then (if 0 < σ j then 1 else 0) else 0
+  h.choose * D * h.choose_spec.chooseᵀ
+
+private theorem polarRectangularDiagonal_transpose_mul_self {m n : ℕ} (σ : Fin n → ℝ)
+    (hσ : ∀ j, m ≤ j.val → σ j = 0) :
+    (polarRectangularDiagonal (m := m) σ)ᵀ * polarRectangularDiagonal σ =
+      diagonal (fun j => σ j ^ 2) := by
+  ext i j
+  simp only [Matrix.mul_apply, transpose_apply, of_apply, diagonal_apply]
+  by_cases hi : i.val < m
+  · rw [Finset.sum_eq_single (⟨i.val, hi⟩ : Fin m)]
+    · by_cases hij : i = j
+      · subst j
+        simp [pow_two]
+      · simp [hij, Fin.val_ne_of_ne hij]
+    · intro k _ hk
+      have hki : k.val ≠ i.val := fun h => hk (Fin.ext h)
+      simp [hki]
+    · simp
+  · have hki (k : Fin m) : k.val ≠ i.val := fun h => hi (h ▸ k.isLt)
+    by_cases hij : i = j
+    · subst j
+      simp [hki, hσ i (Nat.le_of_not_gt hi)]
+    · simp [hki, hij]
+
+private theorem polarFactor_of_svd_eq_mul {m n : ℕ} {G : Matrix (Fin m) (Fin n) ℝ}
+    {U : Matrix (Fin m) (Fin m) ℝ} {V : Matrix (Fin n) (Fin n) ℝ} {σ : Fin n → ℝ}
+    (hσ : ∀ j, 0 ≤ σ j) (hV : V ∈ orthogonalGroup (Fin n) ℝ)
+    (hG : G = U * polarRectangularDiagonal σ * Vᵀ) :
+    U * polarRectangularDiagonal (fun j => if 0 < σ j then 1 else 0) * Vᵀ =
+      G * (V * diagonal (fun j => (σ j)⁻¹) * Vᵀ) := by
+  have hD : polarRectangularDiagonal (m := m) σ * diagonal (fun j => (σ j)⁻¹) =
+      polarRectangularDiagonal (fun j => if 0 < σ j then 1 else 0) := by
+    ext i j
+    rw [mul_diagonal]
+    by_cases hj : 0 < σ j
+    · simp [hj, hj.ne', apply_ite (· * (σ j)⁻¹)]
+    · have hz : σ j = 0 := le_antisymm (le_of_not_gt hj) (hσ j)
+      simp [hz]
+  have hVtV := (mem_orthogonalGroup_iff' (Fin n) ℝ).mp hV
+  rw [hG, ← hD]
+  simp only [Matrix.mul_assoc, ← Matrix.mul_assoc Vᵀ V, hVtV, Matrix.one_mul]
+
+private theorem polarFactor_gram_eq {m n : ℕ} {G : Matrix (Fin m) (Fin n) ℝ}
+    {U : Matrix (Fin m) (Fin m) ℝ} {V : Matrix (Fin n) (Fin n) ℝ} {σ : Fin n → ℝ}
+    (hzero : ∀ j, m ≤ j.val → σ j = 0) (hU : U ∈ orthogonalGroup (Fin m) ℝ)
+    (hG : G = U * polarRectangularDiagonal σ * Vᵀ) :
+    Gᵀ * G = V * diagonal (fun j => σ j ^ 2) * Vᵀ := by
+  have hUtU := (mem_orthogonalGroup_iff' (Fin m) ℝ).mp hU
+  rw [hG, transpose_mul, transpose_mul, transpose_transpose]
+  simp only [Matrix.mul_assoc, ← Matrix.mul_assoc Uᵀ U, hUtU, Matrix.one_mul]
+  rw [← Matrix.mul_assoc (polarRectangularDiagonal σ)ᵀ,
+    polarRectangularDiagonal_transpose_mul_self σ hzero]
+
+open MathlibExt.LinearAlgebra.Matrix.RealSVDWanted in
+private theorem polarFactor_eq_of_svd {m n : ℕ} {G : Matrix (Fin m) (Fin n) ℝ}
+    {U : Matrix (Fin m) (Fin m) ℝ} {V : Matrix (Fin n) (Fin n) ℝ} {σ : Fin n → ℝ}
+    (hσ : ∀ j, 0 ≤ σ j) (hzero : ∀ j, m ≤ j.val → σ j = 0)
+    (hU : U ∈ orthogonalGroup (Fin m) ℝ) (hV : V ∈ orthogonalGroup (Fin n) ℝ)
+    (hG : G = U * polarRectangularDiagonal σ * Vᵀ) :
+    G.polarFactor = U * polarRectangularDiagonal (fun j => if 0 < σ j then 1 else 0) * Vᵀ := by
+  let h := real_singular_value_decomposition m n G
+  let U' := h.choose
+  let V' := h.choose_spec.choose
+  let σ' := h.choose_spec.choose_spec.choose
+  have hspec : (∀ j, 0 ≤ σ' j) ∧ (∀ j, m ≤ j.val → σ' j = 0) ∧
+      U' ∈ orthogonalGroup (Fin m) ℝ ∧ V' ∈ orthogonalGroup (Fin n) ℝ ∧
+      G = U' * polarRectangularDiagonal σ' * V'ᵀ := h.choose_spec.choose_spec.choose_spec
+  obtain ⟨hσ', hzero', hU', hV', hG'⟩ := hspec
+  change U' * polarRectangularDiagonal (m := m) (fun j => if 0 < σ' j then 1 else 0) * V'ᵀ = _
+  rw [polarFactor_of_svd_eq_mul hσ' hV' hG', polarFactor_of_svd_eq_mul hσ hV hG]
+  -- In the change of right singular basis, entries joining distinct singular values vanish.
+  have hVtV := (mem_orthogonalGroup_iff' (Fin n) ℝ).mp hV
+  have hV'tV' := (mem_orthogonalGroup_iff' (Fin n) ℝ).mp hV'
+  have hV'V't := (mem_orthogonalGroup_iff (Fin n) ℝ).mp hV'
+  have hVVt := (mem_orthogonalGroup_iff (Fin n) ℝ).mp hV
+  have hsquares : diagonal (fun j => σ' j ^ 2) * (V'ᵀ * V) =
+      (V'ᵀ * V) * diagonal (fun j => σ j ^ 2) := by
+    calc
+      _ = V'ᵀ * (Gᵀ * G) * V := by
+        rw [polarFactor_gram_eq hzero' hU' hG', ← Matrix.mul_assoc V'ᵀ,
+          ← Matrix.mul_assoc V'ᵀ, hV'tV', Matrix.one_mul, Matrix.mul_assoc]
+      _ = _ := by
+        rw [polarFactor_gram_eq hzero hU hG]
+        simp only [Matrix.mul_assoc, hVtV, Matrix.mul_one]
+  have hinvs : diagonal (fun j => (σ' j)⁻¹) * (V'ᵀ * V) =
+      (V'ᵀ * V) * diagonal (fun j => (σ j)⁻¹) := by
+    ext i j
+    have hij := congr(($hsquares) i j)
+    simp only [diagonal_mul, mul_diagonal] at hij ⊢
+    by_cases hz : (V'ᵀ * V) i j = 0
+    · simp [hz]
+    have heq := mul_right_cancel₀ hz (hij.trans (mul_comm _ _))
+    rw [(sq_eq_sq₀ (hσ' i) (hσ j)).mp heq, mul_comm]
+  congr 1
+  calc
+    _ = V' * (diagonal (fun j => (σ' j)⁻¹) * (V'ᵀ * V)) * Vᵀ := by
+      symm
+      rw [← Matrix.mul_assoc (diagonal _), ← Matrix.mul_assoc V', ← Matrix.mul_assoc V',
+        Matrix.mul_assoc _ V Vᵀ, hVVt, Matrix.mul_one]
+    _ = V' * ((V'ᵀ * V) * diagonal (fun j => (σ j)⁻¹)) * Vᵀ := by rw [hinvs]
+    _ = _ := by
+      rw [← Matrix.mul_assoc V', ← Matrix.mul_assoc V', hV'V't, Matrix.one_mul]
 
 end Matrix
