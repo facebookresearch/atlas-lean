@@ -9,17 +9,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Int.ModEq
-public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
-public import MathlibExt.NumberTheory.GreeneSellersInitialRepetitionsCardNotIsSquareTwelveMulAddOneEightMulAddOne
 public import MathlibExt.NumberTheory.InitialRepetitionsC3
 public import MathlibExt.NumberTheory.InitialRepetitionsC8
 public import MathlibExt.NumberTheory.InitialRepetitionsC8Prime
 public import MathlibExt.NumberTheory.InitialRepetitionsQuadraticNonresidues
 public import MathlibExt.NumberTheory.SquaresModTwoPow
+public import MathlibExt.NumberTheory.GreeneSellersInitialRepetitionsCardNotIsSquareTwelveMulAddOneEightMulAddOne
 
 namespace MetaMathlibExt
 
