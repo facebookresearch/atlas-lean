@@ -58,4 +58,11 @@ Its proof uses the inputs listed in the expansion note.
   Dirichlet character $\varepsilon$").
 - K. Kato, "p-adic Hodge theory and values of zeta functions of modular forms", Astérisque 295 (2004),
   117–290, <https://www.numdam.org/item/AST_2004__295__117_0.pdf>: §6.3, p. 161 (for a normalized newform $f$,
-  "$F = \mathbb{Q}(a_n ; n \ge 1) \subset \mathbb{C}$. Then $F$ is a finite extension of $\mathbb{Q}$").
+  "$F = \mathbb{Q}(a_n ; n \ge 1) \subset \mathbb{C}$. Then $F$ is a finite extension of $\mathbb{Q}$"), where §6 fixes
+  $k \geq 2$ (p. 160).
+- P. Deligne and J.-P. Serre, "Formes modulaires de poids 1", Ann. Sci. École Norm. Sup. (4) 7 (1974),
+  507–530, <http://www.numdam.org/item?id=ASENS_1974_4_7_4_507_0>: Théorème 4.1, pp. 513–514, and Théorème 4.6 (b), p. 514, for weight $1$:
+  for a newform $f$ of weight $1$ ("parabolique primitive", §1.7) with nebentypus $\varepsilon$, which is odd as
+  $f \ne 0$, the series $\sum_{n \geq 1} a_n n^{-s}$ is the Artin $L$-function $L(s, \rho)$ of a continuous
+  representation $\rho \colon \mathrm{Gal}(\overline{\mathbb{Q}}/\mathbb{Q}) \to \mathrm{GL}_2(\mathbb{C})$, whose image is finite
+  (Remarque 3.4), so that all the $a_n$ lie in one cyclotomic field.

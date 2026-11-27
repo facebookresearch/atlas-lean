@@ -34,6 +34,7 @@ to $g = \tau^{-1}$.
 
 - [Hodge–Tate sequence of a p-divisible group](../hodge-tate-sequence-of-p-divisible-groups.md), for the exactness of the Hodge–Tate sequence of the Lubin–Tate group after base change to the ring of integers of $C_F$, without Galois action
 - [Tate–Sen theorem on the Galois cohomology of C(i)](../tate-sen-theorem.md), for $C_F(i)^{G_F} = 0$ when $i \ne 0$, which makes the weights well defined
+- [Sen's theorem on C-admissible representations](sen-theorem-on-c-admissible-representations.md), for the passage by characters of finite order on inertia: such a character $\eta \colon G_F \to F^\times$, of finite image on inertia though perhaps not of finite image, makes $F$ with $G_F$ acting through $\eta$ a $C_F$-admissible representation, so that twisting by $\eta$ leaves the weight of each line unchanged
 
 Its proof also uses the inputs listed in the expansion note, in particular Tate's $G_F$-equivariant and
 $\mathcal{O}_F$-equivariant Hodge–Tate sequence.

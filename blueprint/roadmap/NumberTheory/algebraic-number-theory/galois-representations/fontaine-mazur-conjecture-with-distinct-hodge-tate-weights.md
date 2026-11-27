@@ -54,7 +54,9 @@ the deduction of this theorem from them.
 
 ## Proof depends on
 
-Its proof uses the inputs listed in the expansion note.
+- [Chebotarev density theorem](../adeles-class-field-theory/chebotarev-density-theorem.md), for the step from equal traces of Frobenius at almost all primes to isomorphic semisimple representations, with the Brauer–Nesbitt theorem (Deligne–Serre, Lemma 3.2)
+
+Its proof also uses the inputs listed in the expansion note.
 
 ## Sources
 
@@ -71,6 +73,11 @@ Its proof uses the inputs listed in the expansion note.
   character $\eta$. Then $\rho$ comes from a cuspidal eigenform up to twist"); pp. 6–7, Notation (the isomorphism
   $\iota_p$, geometric Frobenius elements $\mathrm{Frob}_v$, $\omega$ the mod $p$ cyclotomic character, and the
   Hodge–Tate weight of the cyclotomic character $-1$). The journal text was not compared.
+- P. Deligne and J.-P. Serre, "Formes modulaires de poids 1", Ann. Sci. École Norm. Sup. (4) 7 (1974),
+  507–530, <http://www.numdam.org/item?id=ASENS_1974_4_7_4_507_0>: §3, Lemme 3.2, p. 513 (two semisimple linear
+  representations of $\mathrm{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$ unramified at a set of primes of density $1$, with equal
+  traces of Frobenius there in characteristic $0$, are isomorphic; "Cela résulte du théorème de densité de
+  Cebotarev", with the determination of a semisimple representation by its traces).
 - J.-M. Fontaine and B. Mazur, "Geometric Galois representations", in *Elliptic curves, modular forms, and
   Fermat's last theorem* (Hong Kong, 1993), Ser. Number Theory I, International Press (1995), 41–78, where the
   conjecture is made.

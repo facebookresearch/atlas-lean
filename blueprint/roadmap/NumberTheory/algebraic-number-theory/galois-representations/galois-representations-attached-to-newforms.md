@@ -59,8 +59,9 @@ Its proof uses the inputs listed in the expansion note.
 
 - K. Kato, "p-adic Hodge theory and values of zeta functions of modular forms", Astérisque 295 (2004),
   117–290, <https://www.numdam.org/item/AST_2004__295__117_0.pdf>: §6.3, pp. 161–162 ($F = \mathbb{Q}(a_n ; n \ge 1)$,
-  a finite extension of $\mathbb{Q}$, and $V_F(f)$, the quotient of $V_{k,\mathbb{Q}}(Y_1(N))$ by the images of
-  $T(n) \otimes 1 - 1 \otimes a_n$, of dimension $2$ over $F$; $V_A(f) = V_F(f) \otimes_F A$); §8.3, pp. 181–182
+  a finite extension of $\mathbb{Q}$, and $V_F(f)$, "the quotient of $V_{k,F}(Y_1(N))$ by the $F$-submodule generated
+  by the images of $T(n) \otimes 1 - 1 \otimes a_n$ for all $n \geq 1$", a quotient of $V_{k,\mathbb{Q}}(Y_1(N))$ as a
+  $\mathbb{Q}$-vector space, of dimension $2$ over $F$; $V_A(f) = V_F(f) \otimes_F A$); §8.3, pp. 181–182
   ($F_\lambda$, the action of $\mathrm{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$ on $V_{F_\lambda}(f)$, unramified at
   the primes not dividing $pMN$ on the cohomology of $Y(M, N)$, and the ad hoc definition for $N \le 3$); (9.2.2),
   p. 187 ($V_{k,\mathbb{Q}_p}(Y)$ is de Rham, $D_{\mathrm{dR}}^i = D_{\mathrm{dR}}$ for $i \le 0$, $0$ for $i \ge k$,

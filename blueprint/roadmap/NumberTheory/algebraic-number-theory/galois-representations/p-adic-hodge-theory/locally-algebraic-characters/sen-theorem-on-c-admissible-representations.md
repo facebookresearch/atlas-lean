@@ -17,6 +17,7 @@ $1$, for $V = \mathbb{Q}_p(\eta)$, the statement is Tate's, the case of the
 ## Depends on
 
 - [Admissible representations for a regular ring of periods](../admissible-representations.md), for $C$-admissibility
+- [Hodge–Tate representations](../hodge-tate-representations.md), for the Hodge–Tate numbers $h_i$ and the decomposition $C \otimes_{\mathbb{Q}_p} V \cong \bigoplus_i C(i)^{h_i}$
 
 ## Proof depends on
 

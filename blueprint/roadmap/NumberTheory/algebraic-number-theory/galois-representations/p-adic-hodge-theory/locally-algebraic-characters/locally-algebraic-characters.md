@@ -17,7 +17,7 @@ for all $x$ in some neighbourhood of $1$ in $L^\times$. Whether $\psi$ is locall
 normalization of $r_L$; changing it replaces each $n_i$ by $-n_i$.
 
 The second form follows from Serre's Proposition 2, which applies as $\psi$ is semisimple on inertia, the elements
-of $K$ acting on $K$ by commuting semisimple operators: after extending scalars to a finite extension $E$ of
+of $K$ acting on $K$ by commuting semisimple operators: after extending scalars to a finite Galois extension $E$ of
 $\mathbb{Q}_p$ that contains all conjugates of $K$ and $L$, the characters $\sigma \circ \psi$, for the embeddings
 $\sigma \colon K \to E$, are near $1$ products of the characters $x \mapsto a(x)^{-1}$ for the embeddings
 $a \colon L \to E$, and invariance under $\operatorname{Gal}(E/\mathbb{Q}_p)$ makes their exponents depend only on the factor
