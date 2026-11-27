@@ -6,6 +6,8 @@ A map $P$ from messages to subsets of $\{1, \dots, n\}$ is *containment free* if
 
 - [Lamport signing](../sign.md)
 - [Signature scheme](../../../security-games/generic-security-games/sig-scheme.md)
+- [Collision resistance and target collision resistance](../../../hash-functions/collision-resistance-and-target-collision-resistance.md)
+- [Asymptotic PRG security relative to a class of distinguishers](../../../symmetric-key/pseudorandom-generators/prgsecure.md)
 
 ## Sources
 
