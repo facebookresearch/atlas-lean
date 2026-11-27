@@ -16,6 +16,7 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPolynomial
 public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialConvolution
 public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.BinomialPolynomialRescale
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
 public import MathlibExt.Combinatorics.Enumerative.CosinePowerIntegral
 public import MathlibExt.Combinatorics.Enumerative.ParityWeightedBinomialSum
@@ -818,21 +819,6 @@ public theorem_wanted knuth_poly_gammaBinom_mul_pow (n : ℕ) (v : ℝ) (hv : -1
       ∑ k ∈ range (n / 2 + 1),
         (n.choose (2 * k) : ℂ) / 2 ^ (2 * k) * ((2 * k).choose k : ℂ) *
           (gammaBinom ((2 * k + v) / 2) k)⁻¹ * (1 - x) ^ (2 * k)
-
-/-- **Polynomial identity in $x$ and $1 - x$ with weights $2^k/(k+1)$.** For every natural
-number $n$ and every complex number $x$,
-$$
-\sum_{k=0}^{n} \binom{n}{k} \frac{2^k}{k+1} (1-x)^k x^{n-k}
-= \sum_{k=0}^{\lfloor n/2 \rfloor} \frac{1}{2k+1} \binom{n}{2k} (1-x)^{2k}.
-$$
-
-This is equation (53) of the source.
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Corollary 6 (`integers-2026-A19-cor-6`). -/
-public theorem_wanted sum_choose_two_pow_div_succ_one_sub_pow_mul_pow (n : ℕ) (x : ℂ) :
-    ∑ k ∈ range (n + 1), (n.choose k : ℂ) * 2 ^ k / (k + 1) * (1 - x) ^ k * x ^ (n - k) =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℂ) / (2 * k + 1) * (1 - x) ^ (2 * k)
 
 /-- **Catalan polynomial identity, Bernstein form.** Let $C_m = \binom{2m}{m}/(m+1)$ denote the
 $m$-th Catalan number. For every natural number $n$ and every complex $x$,
