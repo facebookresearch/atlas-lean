@@ -1,6 +1,8 @@
 # Chemical reaction network theory
 
 - [Persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md)
+
+- [Global bounds for positive weakly reversible mass-action trajectories](global-bounded-persistent-weakly-reversible-trajectories.md)
 - [Autocatalytic cores are Metzler unstable-positive feedbacks](autocatalytic-cores-are-metzler-unstable-positive-feedbacks.md)
 - [Boundary reproduction number of a critical siphon](boundary-reproduction-number-of-a-critical-siphon.md)
 - [Flux parametrization of the disguised toric locus](flux-parametrization-of-the-disguised-toric-locus.md)

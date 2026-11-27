@@ -14,6 +14,7 @@ public import Mathlib.GroupTheory.Finiteness
 public import MathlibExt.NumberTheory.LexMinimalExtensionMonoid
 public import WantedExt.NumberTheory.BinomidIndexWanted
 public import MathlibExt.NumberTheory.LexMinimalExtensionMonoidBinomidAverageLe
+public import MathlibExt.NumberTheory.LexMinimalExtensionPeriod
 
 namespace MetaMathlibExt
 
@@ -76,20 +77,6 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_knapsack {η : ℕ → ℕ}
       ∀ n' : ℕ → ℕ, ∑ i ∈ Finset.Icc 1 m, n' i * i ≤ c →
         ∑ i ∈ Finset.Icc 1 m, n' i * ∑ l ∈ Finset.range i, η l
           ≤ ∑ i ∈ Finset.Icc 1 m, n i * ∑ l ∈ Finset.range i, η l
-
-/-- **The gcd of the maximizing indices divides the minimal period.** Let $m \ge 1$, let
-$\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $m$ entries, with averages
-$A_i = (e_1 + \dots + e_i)/i$, and let $g$ be the greatest common divisor of the indices
-$1 \le i \le m$ with $A_i = \max \{A_j \mid 1 \le j \le m\}$. If $p$ is the least $q \ge 1$
-such that $e_{i+q} = e_i$ for all sufficiently large $i$, then $g$ divides $p$.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Lemma 3 (`integers-2026-A113-lem-3`). -/
-public theorem_wanted IsLexMinimalExtensionOf.gcd_maxAverageIndices_dvd_minimalPeriod
-    {η : ℕ → ℕ} {m : ℕ} (hη : IsLexMinimalExtensionOf η m) (hm : 1 ≤ m) {p : ℕ}
-    (hp : IsLeast {q : ℕ | 0 < q ∧ ∃ N, ∀ i, N ≤ i → η (i + q) = η i} p) :
-    (maxAverageIndices η m).gcd id ∣ p
 
 /-- **A preperiod bound for lex-minimal extensions.** Let $m \ge 0$, let
 $\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $m$ entries, with averages

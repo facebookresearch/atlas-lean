@@ -99,7 +99,7 @@ def fieldToRational (C : NativeChowComparison F) (d : ℕ) :
     RelativeCurveClasses.ChowGroup F.scheme d →ₗ[ℚ] TensorProduct ℤ ℚ (Chow F (d : ℤ)) :=
   (LinearEquiv.ofBijective (rationalToField F d (C.descent d)) (C.bijective d)).symm.toLinearMap
 
-def rationalGradeCast {d e : ℤ} (h : d=e) :
+def rationalGradeCast {d e : ℤ} (h : d = e) :
     TensorProduct ℤ ℚ (Chow F d) →ₗ[ℚ] TensorProduct ℤ ℚ (Chow F e) := by
   cases h
   exact LinearMap.id

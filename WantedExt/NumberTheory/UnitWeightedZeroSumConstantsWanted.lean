@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Additive.ConsecutiveOrthogonal
 public import MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum
+public import MathlibExt.Combinatorics.Additive.DavenportElementaryTwo
 public import MathlibExt.Combinatorics.Additive.DavenportModuleProd
 public import MathlibExt.NumberTheory.EvenIntersectionSubset
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfDivPrime
@@ -127,18 +128,6 @@ public theorem_wanted unitWeightedZeroSum_of_even_nonDivisible {p r k : ℕ} (hp
     (x : Fin k → ZMod (p ^ r))
     (h : ∀ i ∈ Finset.Icc 1 r, Even (Finset.univ.filter fun j => ¬ p ^ i ∣ (x j).val).card) :
     IsUnitWeightedZeroSum (p ^ r) x
-
-/-- **Davenport constant of $\mathbb{Z}_2^a$.** Let $\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$. For
-every natural number $a$, the least positive integer $k$ such that every sequence of $k$ elements
-of the group $\mathbb{Z}_2^a$ has a nonempty subsequence with sum zero is $a + 1$; that is, the
-Davenport constant of $\mathbb{Z}_2^a$ is $a + 1$.
-
-The paper states this for positive $a$; for $a = 0$ both sides equal $1$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 4.1 (`integers-2024-A38-thm-4-1`). -/
-public theorem_wanted davenport_zmod_two_pow (a : ℕ) :
-    IsLeast (davenportSet (ZMod 2) (Fin a → ZMod 2) ({1} : Set (ZMod 2))) (a + 1)
 
 /-- **Zero-sum subsequences of length $m$ in $\mathbb{Z}_2^a$.** Let $a$ and $m$ be natural numbers
 with $m$ even and $2^a \le m$, and write $\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$. Every sequence

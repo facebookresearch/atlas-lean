@@ -9,3 +9,5 @@
 - [Kayal–Limaye–Saha–Srinivasan: exponential lower bounds for homogeneous depth-four formulas](klss-homogeneous-depth4.md)
 - [Kayal–Saha–Saptharishi: superpolynomial lower bounds for regular formulas](kss-regular-formulas.md)
 - [Fournier–Limaye–Malod–Srinivasan: the depth-four chasm is tight](flms-imm-tight-chasm.md)
+- [Uniform characteristic-zero depth-five lower bound for iterated matrix multiplication](imm-characteristic-zero-depth-five-lower-bound.md)
+- [Complex depth-five homogeneous lower bound for iterated matrix multiplication](imm-complex-depth-five-lower-bound.md)
