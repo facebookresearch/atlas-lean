@@ -30,8 +30,9 @@ the counts satisfy `mpf (m + 1) = n * mpf m - mpf (m - 1)` for `1 ≤ m ≤ n`, 
 ## References
 
 * Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-  Functions*, INTEGERS 25 (2025), Article A73, pp. 1–37, especially Theorem 2 (p. 15) and
-  Corollary 5 (p. 16).
+  Functions*, INTEGERS 25 (2025), Article A73, pp. 1–37. See Lemmas 2–3 (pp. 13–14) for the
+  last-spot counts, Theorem 2 (p. 15) for the recurrence, Corollary 5 (p. 16) for the Binet
+  formula, and Proposition 7 (p. 19) for the three-car count.
 -/
 
 namespace MetaMathlibExt
@@ -426,5 +427,28 @@ public theorem meteredParkingCount_one_binet {m n : ℕ} (hm : m ≤ n + 1) (hn 
     have h' : (meteredParkingCount 1 (k + 2) n : ℝ) + meteredParkingCount 1 k n =
         n * meteredParkingCount 1 (k + 1) n := by exact_mod_cast h
     linarith
+
+/-- **1-metered parking functions with three cars.** For every natural number $n \ge 2$, the
+number of $1$-metered $(3, n)$-parking functions is $\mathrm{mpf}_{3,n}(1) = n^3 - 2n$.
+
+Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
+Functions*, INTEGERS 25 (2025), Article A73, Proposition 7 (`integers-2025-A73-prop-7`). -/
+public theorem meteredParkingCount_one_three {n : ℕ} (hn : 2 ≤ n) :
+    meteredParkingCount 1 3 n = n ^ 3 - 2 * n := by
+  have hone := meteredParkingCount_one_binet.count_one (by omega : 0 < n)
+  have htwo : meteredParkingCount 1 2 n + 1 = n ^ 2 := by
+    have h := meteredParkingCount_one_binet.count_recursion (m := 1) (n := n) (by decide)
+      (by omega)
+    change meteredParkingCount 1 2 n + meteredParkingCount 1 0 n =
+      n * meteredParkingCount 1 1 n at h
+    simpa only [meteredParkingCount_one_binet.count_zero, hone, pow_two] using h
+  have hthree : meteredParkingCount 1 3 n + n = n * meteredParkingCount 1 2 n := by
+    have h := meteredParkingCount_one_binet.count_recursion (m := 2) (n := n) (by decide) hn
+    change meteredParkingCount 1 3 n + meteredParkingCount 1 1 n =
+      n * meteredParkingCount 1 2 n at h
+    simpa only [hone] using h
+  have hscaled : n * meteredParkingCount 1 2 n + n = n ^ 3 := by
+    simpa only [Nat.mul_add, Nat.mul_one, pow_succ' n 2] using congrArg (n * ·) htwo
+  omega
 
 end MetaMathlibExt
