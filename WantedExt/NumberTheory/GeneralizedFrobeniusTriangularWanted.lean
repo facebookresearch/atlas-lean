@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.GCDMonoid.Finset
 public import MathlibExt.NumberTheory.GeneralizedFrobeniusTriangular
+public import MathlibExt.NumberTheory.GeneralizedFrobeniusTriangularIsGenFrobeniusNumberConsMulOfGcd
 
 /-!
 Statements from Subwattanachai on the generalized Frobenius number of three consecutive triangular
@@ -24,55 +25,6 @@ generator vector below is positive, so the `ℕ∞`-valued representation count 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Beck–Kifer reduction by a common factor of all generators but the first.** Let $K \ge 2$,
-let $a_1$ and $\ell$ be positive integers, and let $a'_2, \dots, a'_K$ be positive integers with
-$\gcd(a'_2, \dots, a'_K) = 1$ such that $\gcd(a_1, \ell a'_2, \dots, \ell a'_K) = 1$. Let $s$ be a
-natural number. If $g'$ is the generalized Frobenius number $g(a_1, a'_2, \dots, a'_K; s)$, then
-$\ell g' + a_1(\ell - 1)$ is the generalized Frobenius number
-$g(a_1, \ell a'_2, \dots, \ell a'_K; s)$.
-
-Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-Numbers*, INTEGERS 26 (2026), Article A63, Lemma 1 (`integers-2026-A63-lem-1`), quoted from Beck
-and Kifer, Lemma 4. -/
-public theorem_wanted isGenFrobeniusNumber_cons_mul_of_gcd (k : ℕ) (a₁ ℓ : ℕ)
-    (a' : Fin (k + 1) → ℕ) (ha₁ : 0 < a₁) (ha' : ∀ i, 0 < a' i) (hℓ : 0 < ℓ)
-    (hgcd' : Finset.univ.gcd a' = 1)
-    (hgcd : Finset.univ.gcd (Fin.cons a₁ (fun i => ℓ * a' i) : Fin (k + 2) → ℕ) = 1)
-    (s : ℕ) (g' : ℤ) (hg' : IsGenFrobeniusNumber (Fin.cons a₁ a' : Fin (k + 2) → ℕ) s g') :
-    IsGenFrobeniusNumber (Fin.cons a₁ (fun i => ℓ * a' i) : Fin (k + 2) → ℕ) s
-      (ℓ * g' + a₁ * ((ℓ : ℤ) - 1))
-
-/-- **Representation counts between consecutive two-generator Frobenius numbers.** Let $a$ and $b$
-be coprime positive integers. For a natural number $r$ let $g(a, b; r)$ be the generalized
-Frobenius number of $(a, b)$ at $r$, and for an integer $m$ let $d(m; a, b)$ be the number of
-representations of $m$ by $(a, b)$. Let $i$ and $s$ be natural numbers, let $c$ be a positive
-integer divisible by $a$ or by $b$, and let $j$ be an integer. Then $d(g(a, b; s) + jc; a, b) = i$
-if and only if $g(a, b; s) + jc \le g(a, b; i)$ and, in case $i \ge 1$, also
-$g(a, b; i - 1) < g(a, b; s) + jc$.
-
-Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-Numbers*, INTEGERS 26 (2026), Article A63, Lemma 3 (`integers-2026-A63-lem-3`), quoted from
-Subwattanachai, *Generalized Frobenius number of three variables*. -/
-public theorem_wanted frobeniusRepCount_pair_eq_iff (a b : ℕ) (ha : 0 < a) (hb : 0 < b)
-    (hab : Nat.Coprime a b) (G : ℕ → ℤ) (hG : ∀ r, IsGenFrobeniusNumber ![a, b] r (G r))
-    (i s c : ℕ) (hc : 0 < c) (hdvd : a ∣ c ∨ b ∣ c) (j : ℤ) :
-    frobeniusRepCount ![a, b] (G s + j * c) = i ↔
-      (i = 0 ∨ G (i - 1) < G s + j * c) ∧ G s + j * c ≤ G i
-
-/-- **Representation counts above a shifted two-generator Frobenius number.** Let $a < b$ be
-coprime positive integers, let $s$ and $k$ be natural numbers, let $g$ be the generalized Frobenius
-number $g(a, b; s)$, and for an integer $m$ let $d(m; a, b)$ be the number of representations of
-$m$ by $(a, b)$. If $m$ is an integer with $m > g + ka$, then for every natural number $j$,
-$d(m - ja; a, b) \ge d(g + (k - j)a; a, b)$.
-
-Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-Numbers*, INTEGERS 26 (2026), Article A63, Lemma 4 (`integers-2026-A63-lem-4`), quoted from
-Subwattanachai, *Generalized Frobenius number of three variables*. -/
-public theorem_wanted frobeniusRepCount_pair_sub_ge (a b : ℕ) (ha : 0 < a) (hab' : a < b)
-    (hab : Nat.Coprime a b) (s k : ℕ) (g : ℤ) (hg : IsGenFrobeniusNumber ![a, b] s g) (m : ℤ)
-    (hm : g + k * a < m) (j : ℕ) :
-    frobeniusRepCount ![a, b] (g + ((k : ℤ) - j) * a) ≤ frobeniusRepCount ![a, b] (m - j * a)
 
 /-- **Representation count of the reduced triangular triple at a shifted Frobenius number.** For a
 natural number $r$ write $t_r = r(r+1)/2$. Let $n$, $k$, $i$ be natural numbers with $i \le 2k + 1$

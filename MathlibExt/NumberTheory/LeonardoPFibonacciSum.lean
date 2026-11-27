@@ -14,8 +14,14 @@ public import MathlibExt.NumberTheory.Recurrences.HonsbergerFibonacciP
 /-!
 # Sums of consecutive Fibonacci `p`-numbers
 
-The sum of `p + 1` consecutive Fibonacci `p`-numbers, scaled by `k + 1`, gives a shifted
-generalized Leonardo `p`-number plus `k`.
+This file relates generalized Leonardo `p`-numbers to shifted Fibonacci `p`-numbers, and
+expresses a sum of `p + 1` consecutive Fibonacci `p`-numbers in terms of a Leonardo `p`-number.
+
+## References
+
+* Kantaphon Kuhapatanakul and Pongpol Ruankong,
+  [On Generalized Leonardo p-Numbers](https://cs.uwaterloo.ca/journals/JIS/VOL27/Kuhapatanakul/kuha13.pdf),
+  *Journal of Integer Sequences* 27 (2024), Article 24.4.6, pp. 1–10, Theorem 2 and Lemma 12.
 -/
 
 public section
@@ -26,7 +32,8 @@ open MetaMathlibExt
 
 private theorem fibonacciP_step (p i : ℕ) :
     (fibonacciP p (p + i + 1) : ℤ) = (fibonacciP p (p + i) : ℤ) + fibonacciP p i := by
-  rw [fibonacciP, ite_eq_right (by omega), Nat.add_sub_cancel_left, Nat.cast_add]
+  rw [fibonacciP_rec p _ (by omega), show p + i + 1 - 1 = p + i by omega,
+    show p + i + 1 - p - 1 = i by omega, Nat.cast_add]
 
 -- Adding k makes the Leonardo recurrence homogeneous, with initial terms scaled by k + 1.
 private theorem scaled_fibonacciP (p k : ℕ) (hp : 1 ≤ p) (m : ℕ) :
@@ -38,13 +45,28 @@ private theorem scaled_fibonacciP (p k : ℕ) (hp : 1 ≤ p) (m : ℕ) :
         rcases hm.lt_or_eq with hlt | heq
         · exact fibonacciP_eq_one p _ (by omega) hlt
         · subst m
-          rw [fibonacciP, ite_eq_right (by omega), Nat.sub_self, fibonacciP_zero, Nat.add_zero,
+          rw [fibonacciP_rec p (p + 1) (Nat.lt_succ_self p), Nat.add_sub_cancel,
+            show p + 1 - p - 1 = 0 by omega, fibonacciP_zero, Nat.add_zero,
             fibonacciP_eq_one p p hp le_rfl]
       simp [h, leonardoPK_of_le p k m hm, add_comm]
     · obtain ⟨i, rfl⟩ : ∃ i, m = p + i + 1 := ⟨m - p - 1, by omega⟩
       rw [leonardoPK_recurrence, show p + i + 1 + 1 = p + (i + 1) + 1 by omega,
         fibonacciP_step, ← Nat.add_assoc, mul_add, ih (p + i) (by omega), ih i (by omega)]
       omega
+
+/-- **Generalized Leonardo $p$-numbers in terms of Fibonacci $p$-numbers.** For all natural
+numbers $p$, $k$ and $n$ with $p \ge 1$ and $k \ge 1$, the generalized Leonardo $p$-number
+$\mathcal{L}_{p,k}(n)$ and the Fibonacci $p$-number $F_p(n+1)$ satisfy
+$\mathcal{L}_{p,k}(n) = (k+1)F_p(n+1) - k$.
+
+Source: "On Generalized Leonardo `p`-Numbers", Journal
+of Integer Sequences 27 (2024), Article 24.4.6, Theorem 2. -/
+theorem leonardoPK_eq (p k n : ℕ) (hp : 1 ≤ p)
+    (hk : 1 ≤ k) :
+    leonardoPK p k n = ((k : ℤ) + 1) * (MetaMathlibExt.fibonacciP p (n + 1) : ℤ) - (k : ℤ) := by
+  -- Positivity of k is part of the published statement, not needed by the recurrence proof.
+  have _ := hk
+  rw [scaled_fibonacciP p k hp n, add_sub_cancel_right]
 
 /-- **Sums of $p+1$ consecutive Fibonacci $p$-numbers.** Let $p \ge 1$ and $n \ge 1$ be natural
 numbers and let $k$ be a natural number. Let $F_p$ denote the Fibonacci $p$-numbers
