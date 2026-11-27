@@ -75,4 +75,44 @@ example : ¬ ShiftIdentity 1 0 0 1 := by decide
 -- Without `n + 1 ≤ m + t`.
 example : ¬ ShiftIdentity 1 0 1 1 := by decide
 
+-- The first admissible pair gives difference indices one and zero, respectively.
+example (k : ℤ) :
+    (genLeonardo k 3 ^ 2 - genLeonardo k 1 ^ 2 =
+      (genLeonardo k 5 + k) * (genLeonardo k 1 + k) -
+        2 * k * (genLeonardo k 3 - genLeonardo k 1)) ∧
+    (genLeonardo k 3 ^ 2 + genLeonardo k 0 ^ 2 =
+      (genLeonardo k 4 + k) * (genLeonardo k 2 + k) -
+        2 * k * (genLeonardo k 3 + genLeonardo k 0) - 2 * k ^ 2) :=
+  genLeonardo_sq_sum_diff k 2 1 (by decide) (by decide)
+
+-- At k = 1, m = 3, n = 1, the corrected index gives 82 and the printed index gives 78.
+example :
+    genLeonardo 1 4 ^ 2 + genLeonardo 1 1 ^ 2 = 82 ∧
+    (genLeonardo 1 6 + 1) * (genLeonardo 1 2 + 1) -
+      2 * (genLeonardo 1 4 + genLeonardo 1 2) - 2 = 78 := by
+  constructor
+  · rw [(genLeonardo_sq_sum_diff 1 3 1 (by decide) (by decide)).2]
+    decide
+  · decide
+
+-- Test section: the square-difference identity.
+/-- The identity of `genLeonardo_sq_sub_sq`, without its hypothesis. -/
+private abbrev SqSubSqIdentity (k : ℤ) (n : ℕ) : Prop :=
+  genLeonardoCompanion k n ^ 2 - genLeonardo k n ^ 2
+    = 4 * genLeonardo k (n - 1) * genLeonardo k (n + 1) + 2 * k * genLeonardo k n + k ^ 2
+
+example (k : ℤ) (n : ℕ) (hn : 1 ≤ n) : SqSubSqIdentity k n :=
+  genLeonardo_sq_sub_sq k n hn
+
+-- A numerical instance, `k = 1`, `n = 4`: `M_{1,4} = 5 + 15 = 20`, and both sides equal `319`.
+example : genLeonardoCompanion 1 4 = 20 ∧
+    genLeonardoCompanion 1 4 ^ 2 - genLeonardo 1 4 ^ 2 = 319 ∧ SqSubSqIdentity 1 4 :=
+  ⟨by decide, by decide, genLeonardo_sq_sub_sq 1 4 (by omega)⟩
+
+-- A negative parameter, `k = -3`, `n = 3`.
+example : SqSubSqIdentity (-3) 3 := genLeonardo_sq_sub_sq (-3) 3 (by omega)
+
+-- The hypothesis `1 ≤ n` cannot be dropped: at `n = 0`, `L_{k,n-1}` reads `L_{k,0}`.
+example : ¬ SqSubSqIdentity 1 0 := by decide
+
 end MathlibExtTest.GenLeonardo

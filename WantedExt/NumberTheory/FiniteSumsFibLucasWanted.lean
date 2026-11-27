@@ -58,6 +58,7 @@ public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
 public import MathlibExt.NumberTheory.BernoulliFibonacciExpansion
 public import MathlibExt.NumberTheory.BernoulliFibonacciMultinomial
 public import MathlibExt.NumberTheory.BernoulliFibonacciVanishing
+public import MathlibExt.NumberTheory.EulerLucasBinomialSum
 public import MathlibExt.NumberTheory.ForwardDiffPow
 public import MathlibExt.NumberTheory.GenocchiNumber
 public import MathlibExt.NumberTheory.LucasSequence
@@ -69,17 +70,6 @@ set_option autoImplicit false
 namespace MathlibExt.NumberTheory.FiniteSumsFibLucasWanted
 
 open MetaMathlibExt
-
-/-- **Euler numbers.** For a natural number $n$, the Euler number $E_n \in \mathbb{Q}$ is $0$ when
-$n$ is odd, and when $n = 2k$ is even it is the even-index Euler number $E_{2k}$, where
-$E_0 = 1$ and $\sum_{i=0}^{k} \binom{2k}{2i} E_{2i} = 0$ for $k \ge 1$. The first values are
-$E_0 = 1$, $E_2 = -1$, $E_4 = 5$.
-
-These are the Euler (secant) numbers, with exponential generating function $2/(e^t + e^{-t})$. -/
-noncomputable def eulerSecNumber (n : ℕ) : ℚ :=
-  if n % 2 = 1 then 0
-  else ((MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry.chapter5EulerEven
-    (n / 2) : ℤ) : ℚ)
 
 /-- **Genocchi–Lucas coefficients.** For a natural number $n$, the Genocchi–Lucas coefficient is
 the real number
@@ -217,20 +207,6 @@ theorem_wanted sum_eulerSec_lucas_eq_two_fibBeta_pow (m : ℕ) :
           (Nat.choose n k : ℝ) * (Nat.choose m n : ℝ) *
           (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) =
       2 * fibBeta ^ m
-
-/-- **A binomial sum of Euler and Lucas numbers.** Let $L_n$ be the Lucas numbers and let $E_k$
-be the Euler (secant) numbers, given by $2/(e^t + e^{-t}) = \sum_{k \ge 0} E_k t^k / k!$. For
-every natural number $n$,
-$$\sum_{k=0}^{n} \binom{n}{k} \left(\frac{\sqrt{5}}{2}\right)^{k} E_k L_{n-k} = \frac{2}{2^n}.$$
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Corollary 10. -/
-theorem_wanted sum_choose_eulerSec_lucas (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-        (Nat.choose n k : ℝ) * ((Real.sqrt 5) / 2) ^ k *
-          (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) =
-      2 / 2 ^ n
 
 /-- **Genocchi–Lucas expansion of $(x + \beta)^m$.** Let $\beta = (1 - \sqrt{5})/2$, and for every
 natural number $n$ let

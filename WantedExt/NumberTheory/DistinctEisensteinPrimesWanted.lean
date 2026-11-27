@@ -33,6 +33,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Nat.Prime.Basic
+public import MathlibExt.NumberTheory.DistinctEisensteinPrimes
 
 set_option autoImplicit false
 
@@ -49,17 +50,6 @@ Eisenstein Primes", Lemma 2 (citing Breusch). -/
 theorem_wanted exists_prime_modEq_five_between (x : ℕ)
     (hx : 7 ≤ x) :
     ∃ p : ℕ, p.Prime ∧ x < p ∧ p < 2 * x ∧ p % 6 = 5
-
-/-- **Makowski's theorem on sums of distinct primes of the form $6k - 1$.** Every natural number
-$n > 161$ is the sum of the elements of some finite set of primes $p$ with $p \equiv 5 \pmod 6$;
-that is, $n$ is a sum of distinct primes of the form $6k - 1$.
-
-Source: Elchin Hasanalizade, "Sums of Distinct
-Eisenstein Primes", Lemma 3 (citing Makowski). -/
-theorem_wanted eq_sum_distinct_primes_modEq_five (n : ℕ)
-    (hn : 161 < n) :
-    ∃ S : Finset ℕ, (∀ p ∈ S, p.Prime ∧ p % 6 = 5) ∧
-      (∑ p ∈ S, p) = n
 
 /-- **Lemma 1** (analogue of Kløve's lemma): let `H ⊆ E`
 contain the distinct positive integers `x₁, x₂, …` with

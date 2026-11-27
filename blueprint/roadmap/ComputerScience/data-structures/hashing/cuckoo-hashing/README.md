@@ -26,3 +26,4 @@
 - [Cuckoo lookup returns an inserted value](lookup-insert.md)
 - [Cuckoo insertion preserves the bindings of other keys](stored-insert-iff-of-ne.md)
 - [Cuckoo insertion leaves lookups of other keys unchanged](lookup-insert-of-ne.md)
+- [Cuckoo insertion succeeds without rehashing with high probability](cuckoo-insertion-succeeds-without-rehashing.md)

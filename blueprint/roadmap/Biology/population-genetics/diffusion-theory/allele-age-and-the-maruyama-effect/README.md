@@ -45,3 +45,5 @@
 - [Stronger positive selection, younger alleles](mean-age-lt-mean-age-of-lt.md)
 - [Stronger selection, younger alleles](mean-age-lt-mean-age-of-abs-lt.md)
 - [Mean time as a sum of sojourn times](lintegral-mul-eq-lintegral-sojourn-mul.md)
+
+- [Process interpretation of allele age via time reversal](process-interpretation-of-allele-age-via-time-re.md)

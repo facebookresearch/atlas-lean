@@ -49,7 +49,10 @@ public theorem_wanted integralFinite
     (hℓ : ℓ ≠ ringChar k) :
     Module.Finite ℤ_[ℓ] (X.left.EllAdicCohomology ℓ n)
 
-/-- Rational cohomology is finite-dimensional (a consequence of `integralFinite`). -/
+/-- Let $\ell$ be a prime, $k$ an algebraically closed field of characteristic different from
+$\ell$, and $X$ a proper smooth $k$-scheme. Then for every $n$ the rational $\ell$-adic cohomology
+$\mathbb{Q}_\ell \otimes_{\mathbb{Z}_\ell} H^n(X, \mathbb{Z}_\ell)$ is finite-dimensional over
+$\mathbb{Q}_\ell$. -/
 public theorem_wanted rationalFinite
     (k : Type u) [Field k] [IsAlgClosed k]
     (X : Over (Spec (.of k))) (n : ℕ)
@@ -57,7 +60,9 @@ public theorem_wanted rationalFinite
     (hℓ : ℓ ≠ ringChar k) :
     FiniteDimensional ℚ_[ℓ] (RationalCohomology ℓ X.left n)
 
-/-- Integral cohomology vanishes above twice the pure relative dimension. -/
+/-- Let $\ell$ be a prime, $k$ an algebraically closed field of characteristic different from
+$\ell$, and $X$ a proper $k$-scheme that is smooth of relative dimension $d$. Then
+$H^n(X, \mathbb{Z}_\ell) = 0$ for every $n > 2d$. -/
 public theorem_wanted integralVanish
     (k : Type u) [Field k] [IsAlgClosed k]
     (X : Over (Spec (.of k))) (d n : ℕ)
@@ -65,8 +70,9 @@ public theorem_wanted integralVanish
     (hℓ : ℓ ≠ ringChar k) (hn : 2 * d < n) :
     Subsingleton (X.left.EllAdicCohomology ℓ n)
 
-/-- Rational cohomology vanishes above twice the pure relative dimension (a consequence of
-`integralVanish`). -/
+/-- Let $\ell$ be a prime, $k$ an algebraically closed field of characteristic different from
+$\ell$, and $X$ a proper $k$-scheme that is smooth of relative dimension $d$. Then
+$\mathbb{Q}_\ell \otimes_{\mathbb{Z}_\ell} H^n(X, \mathbb{Z}_\ell) = 0$ for every $n > 2d$. -/
 public theorem_wanted rationalVanish
     (k : Type u) [Field k] [IsAlgClosed k]
     (X : Over (Spec (.of k))) (d n : ℕ)

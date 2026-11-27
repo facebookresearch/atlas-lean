@@ -148,5 +148,22 @@ theorem partition_pairwiseProducts_eq_iff
     rw [pow_succ]
     omega
 
+set_option linter.unusedVariables false in
+/-- **Li's lemma: reconstruction from the largest part and pairwise products.** Let $n$ be a
+positive integer and let $\lambda$ and $\mu$ be partitions of $n$ with a common largest part,
+that is, some $a$ is a part of both $\lambda$ and $\mu$ and no part of either exceeds $a$. If the
+pairwise products of the parts of $\lambda$ and the pairwise products of the parts of $\mu$ form
+the same multiset, then $\lambda = \mu$.
+
+Source: Stella Jiahui Li, "A Note on Multiset Reconstruction from
+Pairwise Products and Total Sum", Lemma 1. -/
+theorem partition_eq_of_pairwiseProducts_eq_of_max_eq
+    {n : ℕ} (hn : 0 < n) (lam mu : Nat.Partition n)
+    (hmax : ∃ a : ℕ, a ∈ lam.parts ∧ a ∈ mu.parts ∧
+      (∀ x ∈ lam.parts, x ≤ a) ∧ (∀ x ∈ mu.parts, x ≤ a))
+    (hpre : pairwiseProducts lam.parts = pairwiseProducts mu.parts) :
+    lam = mu :=
+  (partition_pairwiseProducts_eq_iff hn lam mu).mp hpre
+
 end MultisetReconstructionPairwiseProductsWanted
 end MathlibExt.Combinatorics.Enumerative.Partition

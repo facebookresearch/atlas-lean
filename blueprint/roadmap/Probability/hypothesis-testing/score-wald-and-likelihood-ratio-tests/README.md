@@ -4,6 +4,7 @@
 
 - [Squared normalized Gaussian is chi-square with one degree of freedom](gaussian-real-map-sq-div.md)
 - [Law of the positive part squared of a standard normal variable](gaussian-real-map-max-zero-sq.md)
+- [Asymptotic law of the Pearson chi-square test of independence](pearson-chi-square-test-of-independence.md)
 
 ## Asymptotic tests
 
@@ -16,6 +17,7 @@
 - [Wilks' theorem (simple null)](tendsto-in-distribution-two-mul-log-like.md)
 - [Wilks' theorem, supremum form](tendsto-in-distribution-two-mul-i-sup-lo.md)
 - [Likelihood ratio on the boundary](tendsto-in-distribution-two-mul-log-like-2.md)
+- [Asymptotic normality of the difference of two sample proportions](asymptotic-difference-in-proportions-interval.md)
 
 ## Kernel score statistics
 

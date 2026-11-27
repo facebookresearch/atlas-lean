@@ -17,6 +17,15 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [PAC-Bayes bounds](pac-bayes-bounds/README.md)
 - [Algorithmic stability](algorithmic-stability/README.md)
 
+- [Generalization bound for sample compression schemes](generalization-bound-for-sample-compression-schemes.md)
+- [Generalization bound for norm-bounded linear predictors with Lipschitz loss](generalization-bound-for-norm-bounded-linear-predictors-with.md)
+- [Stability of regularized loss minimization](stability-of-regularized-loss-minimization.md)
+- [Shattering lower bound for PAC learning](shattering-lower-bound-for-pac-learning.md)
+- [Learning a discrete distribution in total variation](remaining-clauses-of-learning-a-discrete-distribution-in-tot.md)
+- [Weak learnability implies PAC learnability via boosting](weak-learnability-implies-pac-learnability-via-boosting.md)
+- [VC and Natarajan classes: uniform convergence and the fundamental theorems](vc-and-natarajan-classes/README.md)
+- [Limits of uniform convergence for explaining deep-learning generalization](limits-of-uniform-convergence-for-explaining-deep-learning-g.md)
+
 ## Related topics
 
 - [Hedge algorithm](../online-learning-and-boosting/hedge-algorithm/README.md): regret bounds, the online counterpart of uniform deviation bounds; the $\sqrt{T \log n}$ regret of Hedge mirrors the $\sqrt{\log \lvert \mathcal{F} \rvert / n}$ deviation of a finite class.
@@ -33,3 +42,8 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [PAC learning](../pac-learning/README.md): the realizable case, where a consistent learner over a finite class needs only $\log(|H|/\delta)/\varepsilon$ examples and no concentration inequality.
 - [Two-layer neural networks and Barron space](../supervised-learning/two-layer-neural-networks-and-barron-space/README.md): Rademacher bounds for path-norm balls of two-layer networks and the a priori estimate of the population risk of the path-norm regularized estimator.
 - [Finite-sample expressivity of ReLU networks](../supervised-learning/finite-sample-expressivity-of-relu-networks/README.md): two-layer ReLU networks with $2n + d$ weights fit every labelling of $n$ distinct points, so uniform deviation bounds over such a class cannot explain generalization at that sample size.
+
+## Research directions
+
+- [Generalization of trained finite-width neural networks with feature learning](generalization-of-trained-finite-width-networks.md)
+- [Sharp guarantees for out-of-distribution generalization](out-of-distribution-generalization-guarantees.md)

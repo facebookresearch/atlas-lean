@@ -58,3 +58,16 @@ example (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) (N : ℕ)
   refine ValuationSubring.exists_inertia_fixed_and_pow_eq_pow_of_isPrimitiveRoot
     p hp hp2 N P hP ζ hζ 0 (fun σ _ _ => map_zero σ) (fun σ _ => ?_)
   rw [zero_pow (pow_pos hp.pos N).ne', map_zero]
+
+/-- Consumer for the finite-level inertia dictionary: the center of `A` on the integers of a
+finite Galois subextension contains `p`. -/
+example (A : ValuationSubring (AlgebraicClosure ℚ)) {p : ℕ} (hp : p.Prime)
+    (hA : A.LiesOverPrime p) (L : IntermediateField ℚ (AlgebraicClosure ℚ))
+    [FiniteDimensional ℚ L] [IsGalois ℚ L] :
+    ∃ Q : Ideal (NumberField.RingOfIntegers L), Q.IsMaximal ∧
+      (p : NumberField.RingOfIntegers L) ∈ Q ∧
+      (A.inertiaSubgroupIn ℚ).map (AlgEquiv.restrictNormalHom L) =
+        Q.inertia (L ≃ₐ[ℚ] L) := by
+  obtain ⟨Q, hQ, hpQ, -, -, hI⟩ :=
+    ValuationSubring.exists_isMaximal_inertia_eq_map_restrictNormalHom A L hp hA
+  exact ⟨Q, hQ, hpQ, hI⟩

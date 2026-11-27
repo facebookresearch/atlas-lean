@@ -56,12 +56,10 @@ def IsGeometricDVR {k K : Type} [Field k] [Field K] [Algebra k K] (A : Subalgebr
     [IsDiscreteValuationRing A] [IsFractionRing A K] : Prop :=
   Algebra.trdeg k (IsLocalRing.ResidueField A) + 1 = Algebra.trdeg k K
 
-/-- A class of `K ⊇ k` is unramified if it extends over every geometric discrete-valuation
-subalgebra of `K` containing `k`, through the actual DVR restriction maps (Schreieder,
-§2.3; allowing arbitrary rank-one valuations would change the group outside function
-fields of smooth proper varieties). The coefficient prime `l` is assumed invertible in `k`
-(hypothesis `hl`), hence in every such subalgebra: without it the condition is not
-unramifiedness (e.g. Artin--Schreier classes in characteristic `l`). -/
+/-- A class $a ∈ H^i(K, μ_l^{⊗ j})$ of a field $K ⊇ k$, in the cohomology system `S`, is unramified
+if for every geometric discrete valuation subalgebra $A$ of $K$ containing $k$, with fraction field
+$K$, $a$ is the restriction of a class in $H^i(\operatorname{Spec} A, μ_l^{⊗ j})$ (Schreieder,
+§2.3). Here $l$ is a natural number invertible in $k$ (hypothesis `hl`). -/
 def IsUnramified {l : ℕ} (S : System l) (k K : Type) [Field k] [Field K] [Algebra k K]
     (_hl : IsUnit (l : k)) (i : ℤ) (j : ℕ) (a : S.toData.H (Spec (.of K)) i j) : Prop :=
   ∀ (A : Subalgebra k K) [IsDiscreteValuationRing A] [IsFractionRing A K],

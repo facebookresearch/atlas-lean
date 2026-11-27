@@ -1065,9 +1065,9 @@ Smith–Waterman dynamic-programming table.
 
 For $g \le 0$ it equals the maximum Needleman–Wunsch score over pairs of suffixes of $x$ and $y$;
 for $g > 0$ it can be strictly smaller (for one-letter sequences with $\sigma = -100$ and
-$g = 1$ the cell is $1$, while the alignment with two gap columns scores $2$). It is not the
-optimal local alignment score over all positions; that is the Smith–Waterman score, the maximum
-of this cell over all pairs of prefixes. -/
+$g = 1$ the cell is $1$, while the alignment with two gap columns scores $2$). It need not be the
+optimal local alignment score over all positions; for $g \le 0$ that is the Smith–Waterman score,
+the maximum of this cell over all pairs of prefixes. -/
 def swCellScore (xs ys : List α) : ℤ :=
   swCellFront σ gap (xs.length + ys.length) xs.reverse ys.reverse
 
@@ -1475,11 +1475,11 @@ theorem nwScore_le_nwScore_snoc_right (σ : α → α → ℤ) (gap : ℤ) (xs y
   rw [← hsc]
   exact alignmentScore_le_nwScore σ gap xs (ys ++ [b]) (A ++ [(none, some b)]) hA'
 
-/-- **Suffix pairs score at most the terminal Smith–Waterman cell.** Let
+/-- **For nonpositive gaps, suffix pairs score at most the terminal Smith–Waterman cell.** Let
 $\sigma : \alpha \to \alpha \to \mathbb{Z}$ be a substitution score and $g \le 0$ a gap score. If
 $x'$ is a suffix of a sequence $x$ and $y'$ is a suffix of a sequence $y$ over $\alpha$, then the
-Needleman–Wunsch score of $x'$ and $y'$ is at most the terminal Smith–Waterman cell score of $x$
-and $y$, both with respect to $\sigma$ and $g$. -/
+Needleman–Wunsch score of $x'$ and $y'$ is at most the terminal Smith–Waterman cell score of $x$ and
+$y$, both with respect to $\sigma$ and $g$. -/
 theorem nwScore_le_swCellScore_of_suffix (hgap : gap ≤ 0) {xs' ys' xs ys : List α}
     (hxs : xs' <:+ xs) (hys : ys' <:+ ys) :
     nwScore σ gap xs' ys' ≤ swCellScore σ gap xs ys := by
@@ -1644,9 +1644,9 @@ theorem swCellScore_le_suffixMax (xs ys : List α) :
               exact le_trans (le_trans h1 hNW) hPair
   exact key (xs.length + ys.length) xs ys le_rfl
 
-/-- **The suffix maximum is at most the terminal Smith–Waterman cell.** Let $\sigma$ be a
-substitution score and $g \le 0$ an integer gap score. For all lists $xs$ and $ys$, the
-maximum Needleman–Wunsch score over all pairs of a suffix of $xs$ and a suffix of $ys$ is at
+/-- **For nonpositive gaps, the suffix maximum is at most the terminal Smith–Waterman cell.** Let
+$\sigma$ be a substitution score and $g \le 0$ an integer gap score. For all lists $xs$ and $ys$,
+the maximum Needleman–Wunsch score over all pairs of a suffix of $xs$ and a suffix of $ys$ is at
 most the terminal Smith–Waterman cell score of $xs$ and $ys$. -/
 theorem suffixMax_le_swCellScore (hgap : gap ≤ 0) (xs ys : List α) :
     suffixMax σ gap xs ys ≤ swCellScore σ gap xs ys := by
@@ -1776,11 +1776,11 @@ theorem swScore_le {xs ys : List α} {y : ℤ}
       (mem_prefixPairs.mpr ⟨List.nil_prefix (l := xs), List.nil_prefix (l := ys)⟩)
     simpa [swCellScore_nil_left] using h0
 
-/-- **The local score equals the Smith–Waterman score.** Let $\sigma$ be an integer-valued
-substitution score on letters and let $g$ be an integer gap score with $g \le 0$. Then for all
-sequences $x$ and $y$, the local score of $x$ and $y$ (the maximum Needleman–Wunsch score over
-pairs of infixes) equals their Smith–Waterman score (the maximum terminal-cell score over pairs
-of prefixes).
+/-- **For nonpositive gaps, the local score equals the Smith–Waterman score.** Let $\sigma$ be an
+integer-valued substitution score on letters and let $g$ be an integer gap score with $g \le 0$.
+Then for all sequences $x$ and $y$, the local score of $x$ and $y$ (the maximum Needleman–Wunsch
+score over pairs of infixes) equals their Smith–Waterman score (the maximum terminal-cell score over
+pairs of prefixes).
 
 The proof uses that an infix is a suffix of a prefix and that the terminal cell is a maximum
 over pairs of suffixes. -/

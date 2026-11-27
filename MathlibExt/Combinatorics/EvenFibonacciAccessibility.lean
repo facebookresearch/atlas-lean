@@ -14,10 +14,11 @@ import Mathlib.NumberTheory.Real.GoldenRatio
 /-!
 # Accessibility of the even Fibonacci numbers
 
-The even Fibonacci numbers have degree of accessibility one. For the two-color obstruction,
-color a positive integer $x$ by the parity of $\lfloor x/(2\varphi)\rfloor$, where $\varphi$
-is the golden ratio. Along each monochromatic even Fibonacci step, the fractional part of
-$x/(2\varphi)$ increases by at least $1/3$, so a monochromatic sequence has at most three terms.
+The even Fibonacci set is not two-accessible, and the even Fibonacci numbers have degree of
+accessibility one. For the two-color obstruction, color a positive integer $x$ by the parity of
+$\lfloor x/(2\varphi)\rfloor$, where $\varphi$ is the golden ratio. Along each monochromatic even
+Fibonacci step, the fractional part of $x/(2\varphi)$ increases by at least $1/3$, so a
+monochromatic sequence has at most three terms.
 -/
 
 namespace MetaMathlibExt
@@ -96,7 +97,17 @@ private lemma fract_step {a b : ℕ+} {d : ℕ} (hd : d ∈ evenFibonacciSet)
   simp only [Int.fract, hfloor, Int.cast_add, Int.cast_mul, Int.cast_ofNat]
   linarith
 
-private lemma not_two_accessible : ¬ IsRAccessible 2 evenFibonacciSet := by
+end evenFibonacciSet_degreeOfAccessibility_eq_one
+
+open evenFibonacciSet_degreeOfAccessibility_eq_one in
+/-- **The even Fibonacci set is not 2-accessible.** Let $F_m$ denote the $m$-th Fibonacci number,
+with $F_0 = 0$ and $F_1 = 1$. The even Fibonacci set
+$\{F_{3n+3} : n \ge 0\} = \{2, 8, 34, \dots\}$ is not $2$-accessible.
+
+Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
+        Proposition 2 (consequence). -/
+public theorem even_fibonacci_not_two_accessible :
+    ¬ IsRAccessible 2 evenFibonacciSet := by
   intro h
   obtain ⟨x, hmono, hdiff⟩ := h.2.2 color 4 (by decide)
   have step (i : ℕ) (hi : i + 1 < 4) :
@@ -111,9 +122,6 @@ private lemma not_two_accessible : ¬ IsRAccessible 2 evenFibonacciSet := by
       linarith [ih (by omega), step i hi]
   exact (not_le_of_gt (Int.fract_lt_one (phase (x 3)))) (by simpa using bound 3 (by decide))
 
-end evenFibonacciSet_degreeOfAccessibility_eq_one
-
-open evenFibonacciSet_degreeOfAccessibility_eq_one in
 /-- **The even Fibonacci numbers have degree of accessibility $1$.** The even Fibonacci set
 $\{2, 8, 34, \dots\}$ is $1$-accessible, and it is not $r$-accessible for any natural number
 $r \ge 2$.
@@ -129,6 +137,6 @@ public theorem evenFibonacciSet_degreeOfAccessibility_eq_one :
     · refine ⟨fun i => ⟨2 * (i : ℕ) + 1, by omega⟩, fun _ _ => Subsingleton.elim .., ?_⟩
       intro i hi
       exact ⟨2, ⟨0, by decide⟩, by simp; ring⟩
-  · exact fun r hr h => not_two_accessible (IsRAccessible.mono _ h (by decide) hr)
+  · exact fun r hr h => even_fibonacci_not_two_accessible (IsRAccessible.mono _ h (by decide) hr)
 
 end MetaMathlibExt

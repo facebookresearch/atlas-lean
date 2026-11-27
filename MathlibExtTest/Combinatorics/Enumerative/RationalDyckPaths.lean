@@ -10,7 +10,9 @@ module
 
 import MathlibExt.Combinatorics.Enumerative.RationalDyckPaths
 
-/-! # Tests for the shifted bijection of rational Dyck path families -/
+/-!
+# Tests for the shifted correspondences between rational Dyck path families
+-/
 
 open MetaMathlibExt
 
@@ -30,3 +32,23 @@ example : IsQBonacciRuns 2 3 (boolRuns [true, true, false]) ∧
 -- With t = 0 the shift is one semilength.
 example (n : ℕ) : Nonempty (qBonacciDyckPaths 1 1 n ≃ tildeRationalDyckPaths 1 1 (n + 1)) :=
   nonempty_equiv_qBonacci_tildeRational (t := 0) (by decide) rfl n
+
+-- With r = 2 and s = 3 the shift is two, including for the empty path.
+example : (qBonacciDyckPaths 2 3 0).card = 1 ∧ (tildeRationalDyckPaths 2 3 2).card = 1 := by
+  decide +kernel
+
+-- A single terminal peak can use the exception. Adding just one valley removes it.
+example : IsQBonacciRuns 2 3 (boolRuns [true]) ∧
+    ¬ IsTildeRationalRuns 2 3 (boolRuns [true]) ∧
+    ¬ IsQBonacciRuns 2 3 (boolRuns [true, false]) := by
+  decide
+
+-- At r = 1 every positive denominator satisfies the criterion.
+example (n : ℕ) : Nonempty (tildeRationalDyckPaths 1 3 (n + 2 + 1) ≃ qBonacciDyckPaths 1 3 n) :=
+  (forall_nonempty_equiv_qBonacci_tildeRational_iff (r := 1) (s := 3)
+    (by decide) (by decide) (by decide)).2 (by decide) n
+
+-- For r = 3, s = 2 the exceptional choice really does produce different counts.
+example : (tildeRationalDyckPaths 3 2 5).card < (qBonacciDyckPaths 3 2 4).card := by
+  obtain ⟨hq, hr⟩ := card_qBonacciDyckPaths_three_two_four
+  omega

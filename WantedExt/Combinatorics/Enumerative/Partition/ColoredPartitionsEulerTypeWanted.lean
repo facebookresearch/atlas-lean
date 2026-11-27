@@ -34,19 +34,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Colored partitions into fully different parts with bounded size.** A colored part is a pair
-$(m, j)$ of integers with $1 \le j \le m$, read as the part $m$ in color $j$. For every $n \ge 0$,
-the number of nonempty finite sets of colored parts $(m, j)$ with $m \le n$ in which no two
-colored parts have the same size $m$ and no two have the same color $j$ is $B_{n+1} - 1$, where
-$B_k$ denotes the $k$-th Bell number.
-
-Source: Beimar J. Naranjo and José L. Ramírez, *On Colored Partitions and Euler-Type
-Identities*, INTEGERS 26 (2026), Article A20, Theorem 3 (`integers-2026-A20-thm-3`). -/
-public theorem_wanted card_coloredPartitions_fullyDifferent_le (n : ℕ) :
-    (((Finset.Icc 1 n ×ˢ Finset.Icc 1 n).filter (fun x : ℕ × ℕ => x.2 ≤ x.1)).powerset.filter
-      (fun T => T.Nonempty ∧ (T.image Prod.fst).card = T.card ∧
-        (T.image Prod.snd).card = T.card)).card = Nat.bell (n + 1) - 1
-
 /-- **Constant-block partitions and double compositions.** For $n \ge 0$, count the pairs
 $(A, P)$ where $A$ is a multiset of $n$ positive integers whose distinct elements are exactly
 $1, \dots, k$ for some $k \ge 0$, and $P$ is a partition of $A$ into constant blocks, that is,

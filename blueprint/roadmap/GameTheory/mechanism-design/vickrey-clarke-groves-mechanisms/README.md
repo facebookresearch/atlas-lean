@@ -28,6 +28,10 @@ Agents with quasi-linear utilities report valuations over a set of alternatives.
 - [The second-price auction is the VCG mechanism with Clarke pivot payments](groves-payment-single-item.md)
 - [Vickrey's theorem](second-price-truthful.md)
 
+## Vickrey–Clarke–Groves mechanisms
+
+- [Efficiency and truthfulness do not imply budget balance](vcg-is-not-budget-balanced.md)
+
 ## Related topics
 
 - [Revelation principle](../revelation-principle/README.md): dominant-strategy incentive compatibility of direct mechanisms.

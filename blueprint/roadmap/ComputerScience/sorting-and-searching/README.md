@@ -18,3 +18,5 @@ Comparison and distribution sorting algorithms (including their expected-cost an
 - [Quickselect](quickselect/README.md)
 - [Median of medians](median-of-medians/README.md)
 - [Quicksort](quicksort/README.md)
+- [Algorithm analysis models](algorithm-analysis-models/README.md)
+- [Selection bounds](selection-bounds/README.md)

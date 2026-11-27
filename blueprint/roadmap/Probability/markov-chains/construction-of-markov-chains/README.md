@@ -22,3 +22,5 @@
 - [Measurability of the Markov expectation](measurable-markov-expectation.md)
 - [Path measure from a point as a trajectory measure](markov-chain-path-measure-dirac-eq-traj.md)
 - [Integral of a shifted path functional](integral-shift-path-traj-eq-markov-expec.md)
+
+- [A Markov kernel run on a Poisson clock is a pure-jump Markov process](uniformized-pure-jump-markov-process-on-a-polish.md)

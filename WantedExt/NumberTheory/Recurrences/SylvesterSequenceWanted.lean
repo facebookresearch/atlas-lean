@@ -32,30 +32,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.NumberTheory.Divisors
-public import MathlibExt.NumberTheory.GeneralizedSylvester
+public import MathlibExt.NumberTheory.Recurrences.SylvesterSequence
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Recurrences.SylvesterSequenceWanted
-
-/-- **Sylvester numbers.** The Sylvester numbers $S_0, S_1, S_2, \dots$ are the natural numbers
-given by $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$ for $n \ge 0$, so the sequence begins
-$2, 3, 7, 43, 1807, \dots$. It is the generalized Sylvester sequence with parameter $1$. -/
-abbrev sylvesterNumber (n : ℕ) : ℕ :=
-  Nat.generalizedSylvester 1 n
-
-/-- **Divisibility of differences of Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
-sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For all natural numbers $k$, $m$ and $n$
-with $k \ge 1$, $m \ge k$ and $n \ge k$, the integer $(S_k - 1)^2$ divides $S_n - S_m$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, divisibility
-(4). -/
-theorem_wanted sylvester_sub_dvd
-    (k m n : ℕ) (hk : 1 ≤ k) (hm : k ≤ m) (hn : k ≤ n) :
-    ((sylvesterNumber k : ℤ) - 1) ^ 2 ∣
-      (sylvesterNumber n : ℤ) - (sylvesterNumber m : ℤ)
 
 /-- **Sylvester numbers modulo 4.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
 $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 1$, $S_n \equiv 3 \pmod 4$.
@@ -64,22 +47,6 @@ Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1
 theorem_wanted sylvester_modEq_three_mod_four
     (n : ℕ) (hn : 1 ≤ n) :
     sylvesterNumber n % 4 = 3
-
-/-- **Sylvester numbers modulo 36.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
-$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 2$, $S_n \equiv 7 \pmod{36}$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (6). -/
-theorem_wanted sylvester_modEq_seven_mod_thirty_six
-    (n : ℕ) (hn : 2 ≤ n) :
-    sylvesterNumber n % 36 = 7
-
-/-- **Sylvester numbers modulo 1764.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
-$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 3$, $S_n \equiv 43 \pmod{1764}$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (7). -/
-theorem_wanted sylvester_modEq_forty_three_mod_1764
-    (n : ℕ) (hn : 3 ≤ n) :
-    sylvesterNumber n % 1764 = 43
 
 /-- **Alternating divisibility for Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For all natural numbers $k$ and $n$ with

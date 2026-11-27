@@ -7,4 +7,5 @@ not Lebesgue integrable on $(1, \infty)$.
 
 ## Sources
 
-- W. Rudin, *Principles of Mathematical Analysis*, 3rd ed., Ch. 11, Exercise 15 (conditional convergence of the sine integral).
+- W. Rudin, *Principles of Mathematical Analysis*, 3rd ed., Ch. 6, Exercise 9 (integration by parts and conditional convergence).
+- T. Apostol, *Mathematical Analysis*, 2nd ed., Exercise 10.9(b) with $p=1$ (improper convergence without Lebesgue integrability).

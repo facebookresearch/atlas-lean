@@ -155,8 +155,7 @@ noncomputable def
       (CommRingCat.of R)).congrFullSubcategory
         (finiteLocallyFreeCommAffineGroupSchemeProperty_inverseImage R)
 
-namespace
-  finiteLocallyFreeBicommutativeHopfAlgCatOpEquivFiniteLocallyFreeCommAffineGroupSchemeCat
+namespace finiteLocallyFreeBicommutativeHopfAlgCatOpEquivFiniteLocallyFreeCommAffineGroupSchemeCat
 
 /-- The restricted equivalence followed by the finite-locally-free inclusion is the unrestricted
 equivalence applied after forgetting the property proofs. This isomorphism isolates the
@@ -171,9 +170,10 @@ noncomputable def functorCompFullSubcategoryιIso (R : Type u) [CommRing R] :
         (commHopfAlgCatOpEquivAffineGroupSchemeCat (CommRingCat.of R)).functor :=
   Iso.refl _
 
-/-- The restricted anti-equivalence followed by the inclusions into affine group schemes and all
-group schemes is Mathlib's `hopfSpec` after forgetting the finiteness, projectivity, and
-cocommutativity proofs. -/
+/-- Over a commutative ring $R$, the anti-equivalence from finite locally free bicommutative Hopf
+algebras to finite locally free commutative affine group schemes, followed by the inclusions into
+affine group schemes and into all group schemes over $\operatorname{Spec} R$, is isomorphic to the
+forgetful functor to commutative Hopf algebras followed by the Hopf spectrum functor `hopfSpec`. -/
 noncomputable def functorCompιIso (R : Type u) [CommRing R] :
     (finiteLocallyFreeBicommutativeHopfAlgCatOpEquivFiniteLocallyFreeCommAffineGroupSchemeCat
           R).functor ⋙
@@ -250,8 +250,7 @@ noncomputable def rightOpInverseCompιIso (R : Type u) [CommRing R] :
     { hom := e.inv.leftOp
       inv := e.hom.leftOp }
 
-end
-  finiteLocallyFreeBicommutativeHopfAlgCatOpEquivFiniteLocallyFreeCommAffineGroupSchemeCat
+end finiteLocallyFreeBicommutativeHopfAlgCatOpEquivFiniteLocallyFreeCommAffineGroupSchemeCat
 
 namespace FiniteLocallyFreeCommAffineGroupSchemeCat
 

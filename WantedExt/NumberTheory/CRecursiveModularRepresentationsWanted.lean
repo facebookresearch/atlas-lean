@@ -16,6 +16,8 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.NumberTheory.Recurrences.CRecursiveIteratedRemainders
 public import MathlibExt.NumberTheory.Recurrences.CRecursiveModModRepresentation
 public import MathlibExt.NumberTheory.Recurrences.CRecursiveModularRepresentations
+public import MathlibExt.NumberTheory.Recurrences.CRecursiveRemainderIncrement
+public import MathlibExt.NumberTheory.Recurrences.SmallProductRemainder
 
 namespace MetaMathlibExt
 
@@ -74,29 +76,6 @@ public theorem_wanted generating_function_term_representation_mono_base
     (n : ℕ) (hmn : m ≤ n) :
     t n = Nat.floor ((r : ℝ) ^ (n ^ 2) *
       (∑' k : ℕ, (t k : ℝ) * (((r : ℝ) ^ n)⁻¹) ^ k)) % r ^ n
-
-/--
-**Pulling a factor out of a remainder.** Let $a$, $y$ and $C$ be natural numbers with $ay < C$.
-Then $(ay) \bmod C = a \cdot (y \bmod C)$.
-
-Source: M. Prunescu and J. M. Shunia, *On Modular Representations of C-Recursive Integer Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.3, Lemma 5.
--/
-public theorem_wanted mul_mod_eq_mul_mod_of_mul_lt
-    (a y C : ℕ) (hbound : a * y < C) :
-    (a * y) % C = a * (y % C)
-
-/--
-**Adding one to a remainder without wrap-around.** Let $x$ and $C$ be natural numbers with
-$C \ge 2$. If $x \bmod C \ne (C - 1) \bmod C$, that is, if $x$ is not congruent to $C - 1$
-modulo $C$, then $(x + 1) \bmod C = (x \bmod C) + 1$.
-
-Source: M. Prunescu and J. M. Shunia, *On Modular Representations of C-Recursive Integer Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.3, Lemma 6.
--/
-public theorem_wanted add_one_mod_eq_mod_add_one_of_ne
-    (x C : ℕ) (hC : 2 ≤ C) (hne : x % C ≠ (C - 1) % C) :
-    (x + 1) % C = x % C + 1
 
 /--
 **Remainder of a remainder, negative residue case.** Let $a$, $A$, $B$ and $C$ be integers with

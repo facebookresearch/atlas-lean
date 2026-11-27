@@ -11,45 +11,16 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
+public import MathlibExt.NumberTheory.DivRunCountFour
+public import MathlibExt.NumberTheory.DivRunCountOne
 public import MathlibExt.NumberTheory.DivisibilityRuns
+public import MathlibExt.NumberTheory.GeneralizedTribonacciBasis
+public import MathlibExt.NumberTheory.DivisibilityRunsGibonacciNumberEqFib
+public import MathlibExt.NumberTheory.DivisibilityRunsDivRunCountTwo
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Gibonacci numbers in terms of Fibonacci numbers.** Let $x, y$ be integers, let
-$(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$, and let $(F_n)_{n \ge 0}$
-be the Fibonacci sequence with $F_0 = 0$ and $F_1 = 1$. For every $n \ge 1$,
-$P_n = F_{n-1}\,x + F_n\,y$.
-
-The paper indexes $P$ from $1$ and states this as $P_n = F_{n-2}\,x + F_{n-1}\,y$ for $n \ge 2$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 1
-(`integers-2026-A122-prop-1`). -/
-public theorem_wanted gibonacciNumber_eq_fib (x y : ℤ) (n : ℕ) (hn : 1 ≤ n) :
-    gibonacciNumber x y n = (Nat.fib (n - 1) : ℤ) * x + (Nat.fib n : ℤ) * y
-
-/-- **Basis sequences for generalized Tribonacci sequences.** There are integer sequences
-$(u_n)_{n \ge 0}$, $(v_n)_{n \ge 0}$ and $(w_n)_{n \ge 0}$, each satisfying the Tribonacci
-recurrence $s_{n+3} = s_{n+2} + s_{n+1} + s_n$ for all $n \ge 0$, with initial values
-$(u_0, u_1, u_2) = (1, 0, 0)$, $(v_0, v_1, v_2) = (0, 1, 0)$ and $(w_0, w_1, w_2) = (0, 0, 1)$,
-such that for all integers $a, b, c$ and every $n \ge 0$ the $n$-th term of the generalized
-Tribonacci sequence with initial values $a, b, c$ equals $u_n a + v_n b + w_n c$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 2
-(`integers-2026-A122-prop-2`). -/
-public theorem_wanted exists_generalizedTribonacci_basis :
-    ∃ u v w : ℕ → ℤ,
-      (∀ n, u (n + 3) = u (n + 2) + u (n + 1) + u n) ∧
-      (∀ n, v (n + 3) = v (n + 2) + v (n + 1) + v n) ∧
-      (∀ n, w (n + 3) = w (n + 2) + w (n + 1) + w n) ∧
-      u 0 = 1 ∧ u 1 = 0 ∧ u 2 = 0 ∧
-      v 0 = 0 ∧ v 1 = 1 ∧ v 2 = 0 ∧
-      w 0 = 0 ∧ w 1 = 0 ∧ w 2 = 1 ∧
-      ∀ a b c : ℤ, ∀ n : ℕ,
-        generalizedTribonacci a b c n = u n * a + v n * b + w n * c
 
 /-- **Divisibility by a Gibonacci sequence forces a Tribonacci sequence to vanish.** Let
 $x, y, a, b, c$ be integers, let $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and
@@ -114,19 +85,6 @@ public theorem_wanted divRun_length_le_log :
       (x, y) ≠ (0, 0) → (a, b, c) ≠ (0, 0, 0) →
       ∀ L : ℕ, IsDivRunUpTo x y a b c L → (L : ℝ) ≤ C * Real.log B
 
-/-- **Exact formula for the length-one run count.** For every natural number $B$, let
-$D(B) = \sum_{m=1}^{B} \lfloor B/m \rfloor$ and let $A_B(1)$ be the number of integer tuples
-$(x, y, a, b, c) \in [-B, B]^5$ with $(x, y) \ne (0, 0)$ and $(a, b, c) \ne (0, 0, 0)$ that have
-a divisibility run of length at least $1$. Then
-$$A_B(1) = 4(2B+1)^3 D(B) + 2B(2B+1)\left((2B+1)^2 - 1\right).$$
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 4
-(`integers-2026-A122-prop-4`). -/
-public theorem_wanted divRunCount_one (B : ℕ) :
-    divRunCount B 1 = 4 * (2 * B + 1) ^ 3 * ∑ m ∈ Finset.Icc 1 B, B / m
-      + 2 * B * (2 * B + 1) * ((2 * B + 1) ^ 2 - 1)
-
 /-- **Asymptotics of the length-one run count.** There is a real constant $K$ such that for every
 natural number $B \ge 2$ the number $A_B(1)$ of integer tuples $(x, y, a, b, c) \in [-B, B]^5$
 with $(x, y) \ne (0, 0)$ and $(a, b, c) \ne (0, 0, 0)$ that have a divisibility run of length at
@@ -139,20 +97,6 @@ Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 4
 public theorem_wanted divRunCount_one_asymptotic :
     ∃ K : ℝ, ∀ B : ℕ, 2 ≤ B →
       |(divRunCount B 1 : ℝ) - 32 * (B : ℝ) ^ 4 * Real.log B| ≤ K * (B : ℝ) ^ 4
-
-/-- **Exact formula for the length-two run count.** For every natural number $B$, let
-$S(B) = \sum_{m=1}^{B} \left(2\lfloor B/m \rfloor + 1\right)$ and let $A_B(2)$ be the number of
-integer tuples $(x, y, a, b, c) \in [-B, B]^5$ with $(x, y) \ne (0, 0)$ and
-$(a, b, c) \ne (0, 0, 0)$ that have a divisibility run of length at least $2$. Then
-$S(B) = 2 \sum_{m=1}^{B} \lfloor B/m \rfloor + B$ and $A_B(2) = 4(2B+1) S(B)^2 - 4B^2$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 5
-(`integers-2026-A122-prop-5`). -/
-public theorem_wanted divRunCount_two (B : ℕ) :
-    ∑ m ∈ Finset.Icc 1 B, (2 * (B / m) + 1) = 2 * ∑ m ∈ Finset.Icc 1 B, B / m + B ∧
-      (divRunCount B 2 : ℤ)
-        = 4 * (2 * B + 1) * (∑ m ∈ Finset.Icc 1 B, (2 * (B / m) + 1) : ℕ) ^ 2 - 4 * B ^ 2
 
 /-- **Asymptotics of the length-two run count.** There is a real constant $K$ such that for every
 natural number $B \ge 2$ the number $A_B(2)$ of integer tuples $(x, y, a, b, c) \in [-B, B]^5$
@@ -196,42 +140,6 @@ public theorem_wanted divRunCount_three (B : ℕ) :
           + 4 * ∑ m ∈ Finset.Icc 1 B, ∑ n ∈ Finset.Ico 1 m,
             ((2 * (B / m) + 1) * (2 * (B / n) + 1) * (2 * (B / (m - n)) + 1) : ℕ)
           - (4 * B ^ 2 - 2 * B)
-
-/-- **Divisor-sum formula for the length-four run count.** For a natural number $B$, let $A_B(4)$
-be the number of integer tuples $(x, y, a, b, c) \in [-B, B]^5$ with $(x, y) \ne (0, 0)$ and
-$(a, b, c) \ne (0, 0, 0)$ that have a divisibility run of length at least $4$. For integers $x, y$
-let $T_B(x, y)$ be the number of integer triples $(a, b, c) \in [-B, B]^3$ with $x \mid a$,
-$y \mid b$, $x + y \mid c$ and $x + 2y \mid a + b + c$, and let $T'_B(x, y)$ be the number of
-integer triples $(\alpha, \beta, \gamma)$ with $|\alpha| \le \lfloor B/|x| \rfloor$,
-$|\beta| \le \lfloor B/|y| \rfloor$, $|\gamma| \le \lfloor B/|x+y| \rfloor$ and
-$x + 2y \mid x\alpha + y\beta + (x+y)\gamma$. Then
-$$A_B(4) = \sum_{x, y} \left(T_B(x, y) - 1\right) = \sum_{x, y} \left(T'_B(x, y) - 1\right),$$
-where both sums run over the integers $x, y \in [-B, B]$ with $x \ne 0$, $y \ne 0$, $x + y \ne 0$
-and $x + 2y \ne 0$.
-
-The second form comes from writing $a = x\alpha$, $b = y\beta$, $c = (x+y)\gamma$; it is the
-paper's $\sum \chi_{x,y}(\alpha, \beta, \gamma)$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 7
-(`integers-2026-A122-prop-7`). -/
-public theorem_wanted divRunCount_four (B : ℕ) :
-    ((divRunCount B 4 : ℤ)
-        = ∑ x ∈ Finset.Icc (-(B : ℤ)) B, ∑ y ∈ Finset.Icc (-(B : ℤ)) B,
-            if x ≠ 0 ∧ y ≠ 0 ∧ x + y ≠ 0 ∧ x + 2 * y ≠ 0 then
-              (((Finset.Icc (-(B : ℤ)) B ×ˢ Finset.Icc (-(B : ℤ)) B ×ˢ
-                  Finset.Icc (-(B : ℤ)) B).filter fun t =>
-                    x ∣ t.1 ∧ y ∣ t.2.1 ∧ x + y ∣ t.2.2 ∧
-                      x + 2 * y ∣ t.1 + t.2.1 + t.2.2).card : ℤ) - 1
-            else 0) ∧
-    (divRunCount B 4 : ℤ)
-        = ∑ x ∈ Finset.Icc (-(B : ℤ)) B, ∑ y ∈ Finset.Icc (-(B : ℤ)) B,
-            if x ≠ 0 ∧ y ≠ 0 ∧ x + y ≠ 0 ∧ x + 2 * y ≠ 0 then
-              (((Finset.Icc (-((B / x.natAbs : ℕ) : ℤ)) (B / x.natAbs : ℕ) ×ˢ
-                  Finset.Icc (-((B / y.natAbs : ℕ) : ℤ)) (B / y.natAbs : ℕ) ×ˢ
-                  Finset.Icc (-((B / (x + y).natAbs : ℕ) : ℤ)) (B / (x + y).natAbs : ℕ)).filter
-                    fun t => x + 2 * y ∣ x * t.1 + y * t.2.1 + (x + y) * t.2.2).card : ℤ) - 1
-            else 0
 
 end
 

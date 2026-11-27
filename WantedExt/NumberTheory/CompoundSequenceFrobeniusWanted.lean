@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Group.Submonoid.Basic
 public import Mathlib.Data.Nat.ModEq
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.NumberTheory.BrauerShockley
 
 /-!
 # Deletions from compound sequences that leave the Frobenius number invariant — wishlist
@@ -68,24 +69,6 @@ Section 2, eq. (1). -/
 public theorem compoundSequence_self (n : ℕ) (a b : ℕ → ℕ) :
     compoundSequence n a b n = ∏ i ∈ Finset.Icc 1 n, b i := by
   simp [compoundSequence]
-
-/-- **Brauer–Shockley formula for the Frobenius number.** Let $A_1, \dots, A_k$ be positive
-integers with $\gcd(A_1, \dots, A_k) = 1$, let $S$ be the additive submonoid of $\mathbb{N}$ they
-generate, and let $a = A_i$ be one of them with $a \ge 2$. For $1 \le x \le a - 1$ let $m_x$ be
-the least element of $S$ congruent to $x$ modulo $a$. If $M$ is the largest of the numbers $m_x$,
-then $M - a$ is the largest integer not in $S$, that is, the Frobenius number of $S$.
-
-The case $a = 1$, where the maximum would be over an empty set, is excluded.
-
-Source: Edgar Federico Elizeche and Amitabha Tripathi, *A Note on Deletions from Compound
-Sequences That Leave the Frobenius Number Invariant*, INTEGERS 25 (2025), Article A6,
-Lemma 1 (`integers-2025-A6-lem-1`), quoting Brauer and Shockley. -/
-public theorem_wanted frobenius_eq_max_apery_sub {k : ℕ} (A : Fin k → ℕ) (hA : ∀ i, 0 < A i)
-    (hgcd : Finset.univ.gcd A = 1) (i : Fin k) (ha : 2 ≤ A i) (M : ℕ)
-    (hM : IsGreatest {m | ∃ x ∈ Finset.Icc 1 (A i - 1),
-      IsLeast {s | s ∈ AddSubmonoid.closure (Set.range A) ∧ s ≡ x [MOD A i]} m} M) :
-    IsGreatest {m : ℤ | ∀ s ∈ AddSubmonoid.closure (Set.range A), (s : ℤ) ≠ m}
-      ((M : ℤ) - A i)
 
 /-- **Apéry set and Frobenius number of a compound sequence.** Let $n$ be a natural number and
 let $a_1, \dots, a_n$ and $b_1, \dots, b_n$ be natural numbers with $0 < a_i < b_i$ for

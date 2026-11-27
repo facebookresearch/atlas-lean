@@ -28,3 +28,4 @@ orbits on $\mathrm{SL}(2, \mathbb{Z}) \backslash \mathrm{SL}(2, \mathbb{R})$, bo
 - [Smooth dynamics](smooth-dynamics/README.md)
 - [Complex dynamics](complex-dynamics/README.md)
 - [Homogeneous dynamics](homogeneous-dynamics/README.md)
+- [Not yet classified](not-yet-classified/README.md)

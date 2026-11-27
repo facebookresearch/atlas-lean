@@ -15,3 +15,5 @@ Recursive and recursively enumerable predicates and their closure properties, th
 - [Rice–Shapiro theorem](rice-shapiro-theorem/README.md)
 - [Totality problem for programs](totality-problem-for-programs/README.md)
 - [Finiteness problem for programs](finiteness-problem-for-programs/README.md)
+
+- [Kleene's theorem: the $\Delta^1_1$ sets are the hyperarithmetical sets](hyperarithmetical-sets-are-the-delta-1-1-sets.md)

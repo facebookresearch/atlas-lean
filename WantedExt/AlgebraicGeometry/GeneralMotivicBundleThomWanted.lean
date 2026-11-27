@@ -127,17 +127,33 @@ local notation "AffineSource" => CanonicalAffineSource
   (L := K) (F₀ := F₀) (D := D) (H := H) (M₁ := M₁) (hF := hF)
   K₀ E₀ O R₀ C₀ L₀ Z₀
 
-/-- Construct the generic-open normalized class from the actual canonical affine source. -/
+/-- Construction of Thom classes: let $k$ be a perfect field, and fix the given motivic interface
+data, whose affine-to-Tate comparison has the properties of the canonical one
+(`CanonicalAffineSource`). For every smooth $k$-scheme $X$ and rank-$d$ bundle geometry $G$ on a
+sheaf of modules on $X$ (`BundleGeometry`): a Thom class of $G$ (`ThomClass`), that is, a class
+of bidegree $(2d, d)$ with integer coefficients in the reduced motivic cohomology of the Thom
+space of $G$ that agrees, on a framed open neighbourhood of the generic point of each
+irreducible component of $X$, with the pullback of the affine orientation. -/
 public def_wanted native_bundle_thom_class [PerfectField k]
     (hSource : AffineSource) (X : SmoothScheme k) (M : X.scheme.left.Modules) (d : ℕ)
     (G : BundleGeometry X M d) : ThomClass N B I Q F J V T₀ G
 
-/-- The actual generic-open normalization uniquely fixes the Thom class. -/
+/-- Uniqueness of Thom classes: let $k$ be a perfect field, and fix the given motivic interface
+data, whose affine-to-Tate comparison has the properties of the canonical one
+(`CanonicalAffineSource`). For every smooth $k$-scheme $X$ and rank-$d$ bundle geometry $G$ on a
+sheaf of modules on $X$ (`BundleGeometry`), any two Thom classes of $G$ (`ThomClass`) have the
+same value. -/
 public theorem_wanted native_bundle_thom_class_unique [PerfectField k]
     (hSource : AffineSource) (X : SmoothScheme k) (M : X.scheme.left.Modules) (d : ℕ)
     (G : BundleGeometry X M d) (a b : ThomClass N B I Q F J V T₀ G) : a.value = b.value
 
-/-- Pullback uses the original whole total-space map and its nonzero complement square. -/
+/-- Thom classes are compatible with pullback: let $k$ be a perfect field, and fix the given
+motivic interface data, whose affine-to-Tate comparison has the properties of the canonical one
+(`CanonicalAffineSource`). Let $f : X → Y$ be a morphism of smooth $k$-schemes, $G$ a rank-$d$
+bundle geometry on a sheaf of modules $M$ on $Y$, $G'$ a rank-$d$ bundle geometry on $f^* M$, and
+$C$ a given restriction of the induced map of total spaces to the complements of the zero
+sections (`ComplementMap`). Then for all Thom classes $t$ of $G$ and $t'$ of $G'$, the pullback
+of $t$ along the induced map of Thom spaces is $t'$. -/
 public theorem_wanted native_bundle_thom_class_pullback [PerfectField k]
     (hSource : AffineSource) (X Y : SmoothScheme k) (f : X ⟶ Y)
     (M : Y.scheme.left.Modules) (d : ℕ) (G : BundleGeometry Y M d)
@@ -147,7 +163,12 @@ public theorem_wanted native_bundle_thom_class_pullback [PerfectField k]
     ReducedMotivicCohomologyModels.pullback B F (thomMap G' G f (𝟙 _) Cj)
       (2 * (d : ℤ)) (d : ℤ) integerCoefficients t.value = t'.value
 
-/-- The Euler comparison is the actual zero-section pullback on both sides. -/
+/-- Euler classes are compatible with pullback: let $k$ be a perfect field, and fix the given
+motivic interface data, whose affine-to-Tate comparison has the properties of the canonical one
+(`CanonicalAffineSource`). Let $f : X → Y$ be a morphism of smooth $k$-schemes, $G$ a rank-$d$
+bundle geometry on a sheaf of modules $M$ on $Y$ and $G'$ a rank-$d$ bundle geometry on $f^* M$.
+Then for all Thom classes $t$ of $G$ and $t'$ of $G'$, $f^* e(G, t) = e(G', t')$, where the Euler
+class `euler` is the pullback of the Thom class along the zero section. -/
 public theorem_wanted native_bundle_euler_pullback [PerfectField k]
     (hSource : AffineSource) (X Y : SmoothScheme k) (f : X ⟶ Y)
     (M : Y.scheme.left.Modules) (d : ℕ) (G : BundleGeometry Y M d)
@@ -157,7 +178,13 @@ public theorem_wanted native_bundle_euler_pullback [PerfectField k]
       (2 * (d : ℤ)) (d : ℤ) integerCoefficients (euler N B I Q F J V T₀ G t) =
     euler N B I Q F J V T₀ G' t'
 
-/-- Lemma 4.6 uses native direct-sum bundles and the original coefficient cup product. -/
+/-- Euler class of a direct sum (Voevodsky, arXiv:math/0107109): let $k$ be a perfect field, and
+fix the given motivic interface data, whose affine-to-Tate comparison has the properties of the
+canonical one (`CanonicalAffineSource`). Let $X$ be a smooth $k$-scheme, $G$ and $G'$ bundle
+geometries of ranks $d$ and $r$ on sheaves of modules $M$ and $N$ on $X$, and $G_S$ one of rank
+$d + r$ on $M \oplus N$. Then for all Thom classes $t$, $t'$, $t_S$ of $G$, $G'$, $G_S$ and a
+chosen coefficient identification $U_0$ (`IntegerCoefficientUnits`), $e(G_S, t_S)$ is the cup
+product of $e(G, t)$ and $e(G', t')$, in bidegree $(2(d + r), d + r)$. -/
 public theorem_wanted native_bundle_euler_sum [PerfectField k]
     (hSource : AffineSource) (X : SmoothScheme k) (M N₁ : X.scheme.left.Modules)
     (d e : ℕ) (G : BundleGeometry X M d) (G' : BundleGeometry X N₁ e)
@@ -175,7 +202,13 @@ public theorem_wanted native_bundle_euler_sum [PerfectField k]
         (U₀.map integerCoefficients) (euler N B I Q F J V T₀ G t)
         (euler N B I Q F J V T₀ G' t'))
 
-/-- The source's general pointed Thom action is bijective in every bidegree and coefficient. -/
+/-- Thom isomorphism: let $k$ be a perfect field, and fix the given motivic interface data, whose
+affine-to-Tate comparison has the properties of the canonical one (`CanonicalAffineSource`).
+Let $X$ be a smooth $k$-scheme, $G$ a rank-$d$ bundle geometry on a sheaf of modules on $X$ with
+chosen bundle diagonals $Δ$ (`BundleThomDiagonals`), $t$ a Thom class of $G$ and $U_0$ a chosen
+coefficient identification. Then for every pointed space $W$, all $p, q ∈ ℤ$ and every abelian
+group $A$, the Thom action $u ↦ Δ^*(u ∪ t)$ (`thomAction`) from $\tilde H^{p,q}(W ∧ X_+; A)$ to
+$\tilde H^{p+2d,q+d}(W ∧ \mathrm{Th}(G); A)$ is bijective. -/
 public theorem_wanted native_general_thom_isomorphism [PerfectField k]
     (hSource : AffineSource) (X : SmoothScheme k) (M : X.scheme.left.Modules) (d : ℕ)
     (G : BundleGeometry X M d) (Δ : BundleThomDiagonals G)
@@ -184,7 +217,13 @@ public theorem_wanted native_general_thom_isomorphism [PerfectField k]
     Function.Bijective (thomAction N B I Q F J V T₀ K F₀ D H M₁ hF U₀
       G Δ t W p q A₁)
 
-/-- The original bundle-base Thom action is bijective, with no assumed inverse in its recipe. -/
+/-- Thom isomorphism on the base: let $k$ be a perfect field, and fix the given motivic interface
+data, whose affine-to-Tate comparison has the properties of the canonical one
+(`CanonicalAffineSource`). Let $X$ be a smooth $k$-scheme, $G$ a rank-$d$ bundle geometry on a
+sheaf of modules on $X$ with chosen bundle diagonals $Δ$ (`BundleThomDiagonals`), $t$ a Thom
+class of $G$ and $U_0$ a chosen coefficient identification. Then for all $p, q ∈ ℤ$ and every
+abelian group $A$, the Thom action $u ↦ Δ^*(u ∪ t)$ (`baseThomAction`) from
+$\tilde H^{p,q}(X_+; A)$ to $\tilde H^{p+2d,q+d}(\mathrm{Th}(G); A)$ is bijective. -/
 public theorem_wanted native_base_thom_isomorphism [PerfectField k]
     (hSource : AffineSource) (X : SmoothScheme k) (M : X.scheme.left.Modules) (d : ℕ)
     (G : BundleGeometry X M d) (Δ : BundleThomDiagonals G)
@@ -204,7 +243,17 @@ public theorem_wanted native_finite_bundle_complement_null
     ComplementNull (D₀ := D₀) (G₀ := G₀) (R := R)
       A G G_L G_S φ N Q Msec C_G A₁ z
 
-/-- The source cycle class is constructed after its actual cofiber realization and Thom action. -/
+/-- Voevodsky, Construction 5.1 (class of a finite relative cycle): let $k$ be a perfect field,
+and fix the given motivic interface data, whose affine-to-Tate comparison has the properties of
+the canonical one (`CanonicalAffineSource`). Let $X$ be a smooth $k$-scheme, $G$ and $G_L$
+bundle geometries of ranks $d$ and $e$ on sheaves of modules $M$ and $L$ on $X$, $G_S$ one of
+rank $n = d + e$ on $M ⊕ L$ with a chosen frame $φ : M ⊕ L ≅ \mathcal{O}_X^n$, $C_G$ given cycle
+geometry data for every relative generator of $G$ (`CycleGeometry`), $Δ$ chosen bundle
+diagonals of $G_L$, $t$ a Thom class of $G_L$, $U_0$ a chosen coefficient identification, $A$ an
+abelian group and $z$ a finite relative cycle on $G$ with coefficients in $A$ whose coefficient
+section vanishes on the complement of the zero section of $G_L$ (`ComplementNull`). Then: a
+class $u ∈ \tilde H^{2d,d}(X_+; A)$ whose image under the Thom action of $t$ is the finite Thom
+class of $z$ (`IsFiniteBundleCycleClass`). -/
 public def_wanted native_finite_bundle_cycle_class [PerfectField k]
     (hSource : AffineSource)
     (X : SmoothScheme k) (M L : X.scheme.left.Modules) (d e n : ℕ)
@@ -221,7 +270,17 @@ public def_wanted native_finite_bundle_cycle_class [PerfectField k]
       IsFiniteBundleCycleClass N B I Q F J Msec V G G_L G_S φ C_G
         K F₀ D H M₁ hF U₀ T₀ Δ t hn A₁ z h u}
 
-/-- Lemma5.2 compares the classes extracted from two actual complement bundles and frames. -/
+/-- Voevodsky, Lemma 5.2 (independence of the complement): let $k$ be a perfect field, and fix
+the given motivic interface data, whose affine-to-Tate comparison has the properties of the
+canonical one (`CanonicalAffineSource`). Let $X$ be a smooth $k$-scheme, $G$ a rank-$d$ bundle
+geometry on a sheaf of modules $M$ on $X$, $A$ an abelian group and $z$ a finite relative cycle
+on $G$ with coefficients in $A$. Take two choices of complement data: bundle geometries $G_L$,
+$G_{L'}$ of ranks $e$, $e'$ on sheaves $L$, $L'$, bundle geometries of ranks $n = d + e$ and
+$n' = d + e'$ on $M ⊕ L$ and $M ⊕ L'$ with chosen frames, cycle geometry data, bundle diagonals
+and Thom classes for each, and one chosen coefficient identification, such that the coefficient
+section of $z$ vanishes on the complement of the zero section in both cases
+(`ComplementNull`). If $u$ and $v$ in $\tilde H^{2d,d}(X_+; A)$ are finite bundle cycle classes
+of $z$ for the first and the second choice (`IsFiniteBundleCycleClass`), then $u = v$. -/
 public theorem_wanted native_finite_bundle_cycle_class_independent [PerfectField k]
     (hSource : AffineSource) (X : SmoothScheme k) (M L L' : X.scheme.left.Modules)
     (d e e' n n' : ℕ) (G : BundleGeometry X M d)

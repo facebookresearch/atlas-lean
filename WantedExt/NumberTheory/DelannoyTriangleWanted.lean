@@ -52,39 +52,16 @@ public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
 public import MathlibExt.NumberTheory.BinomialHarmonicExpansion
 public import MathlibExt.NumberTheory.DelannoyBinomialSum
+public import MathlibExt.NumberTheory.DelannoyBinomialCongruence
+public import MathlibExt.NumberTheory.DelannoyPrimeCube
 public import MathlibExt.NumberTheory.FermatQuotient
+public import MathlibExt.NumberTheory.DelannoyTriangle
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.DelannoyTriangleWanted
-
-/-- **Delannoy triangle entries $T(2p, p; 1)$ and $T(2p-1, p-1; 1)$ modulo $p^3$.** Let
-$p \ge 5$ be a prime, let $q_p(2) = (2^{p-1} - 1)/p$ be the Fermat quotient of $2$, and let
-$T(n, k; 1)$ denote the entry of the ordinary Riordan Pascal-like triangle with $r = 1$ (the
-Delannoy triangle). Then
-$$T(2p, p; 1) \equiv 3 + 2p\,q_p(2) - p^2 q_p(2)^2 \pmod{p^3}$$
-and
-$$T(2p-1, p-1; 1) \equiv 1 + 2p\,q_p(2) - p^2 q_p(2)^2 \pmod{p^3}.$$
-
-Source: Chahinaze Djadi and Hacène Belbachir,
-"Congruence Properties for the Delannoy Triangle
-Coefficients", Theorem 1. -/
-theorem_wanted delannoy_two_mul (p : ℕ) (hp : p.Prime)
-    (hp5 : 5 ≤ p) (h2p : IsCoprime (2 : ℤ) (p : ℤ)) :
-    (MetaMathlibExt.ordinaryRiordanPascalLikeMatrix
-          (2 * p) p 1 : ZMod (p ^ 3)) =
-        3 + 2 * (p : ZMod (p ^ 3)) *
-            (Int.fermatQuotient p hp 2 h2p : ZMod (p ^ 3)) -
-          (p : ZMod (p ^ 3)) ^ 2 *
-            (Int.fermatQuotient p hp 2 h2p : ZMod (p ^ 3)) ^ 2 ∧
-      (MetaMathlibExt.ordinaryRiordanPascalLikeMatrix
-            (2 * p - 1) (p - 1) 1 : ZMod (p ^ 3)) =
-        1 + 2 * (p : ZMod (p ^ 3)) *
-            (Int.fermatQuotient p hp 2 h2p : ZMod (p ^ 3)) -
-          (p : ZMod (p ^ 3)) ^ 2 *
-            (Int.fermatQuotient p hp 2 h2p : ZMod (p ^ 3)) ^ 2
 
 /-- **Delannoy triangle entry $T(np-1, p-1; 1)$ modulo $p^3$.** Let $p \ge 5$ be a prime and
 $n \ge 1$ a natural number, let $q_p(2) = (2^{p-1} - 1)/p$ be the Fermat quotient of $2$, and
@@ -138,34 +115,6 @@ theorem_wanted sum_harmonic_two_pow_div (p : ℕ)
     (∑ k ∈ Finset.Icc 1 (p - 1),
         harmonicMod p k * (2 : ZMod p) ^ k * (k : ZMod p)⁻¹) =
       -((Int.fermatQuotient p hp 2 h2p : ZMod p)) ^ 2
-
-/-- **Sum of the Delannoy triangle entries in rows $0$ to $p - 1$ modulo $p$.** Let $p$ be an
-odd prime and let $T(n, k; 1)$ denote the entry of the ordinary Riordan Pascal-like triangle
-with $r = 1$ (the Delannoy triangle). Then
-$$\sum_{n=0}^{p-1} \sum_{k=0}^{n} T(n, k; 1) \equiv \left(\frac{2}{p}\right) \pmod{p},$$
-where $\left(\frac{2}{p}\right)$ is the Legendre symbol.
-
-Source: Chahinaze Djadi and Hacène Belbachir,
-"Congruence Properties for the Delannoy Triangle
-Coefficients", Theorem 9. -/
-theorem_wanted sum_delannoy (p : ℕ) [Fact p.Prime]
-    (hp2 : p ≠ 2) :
-    (∑ n ∈ Finset.range p, ∑ k ∈ Finset.range (n + 1),
-        (MetaMathlibExt.ordinaryRiordanPascalLikeMatrix
-            n k 1 : ZMod p)) =
-      (legendreSym p 2 : ZMod p)
-
-/-- **Reflection congruence for binomial coefficients modulo a prime.** For a prime $p$ and
-natural numbers $j$ and $k$ with $j \le k \le p - 2$,
-$$\binom{p-j}{k+1} + (-1)^k \binom{k+j}{k+1} \equiv 0 \pmod{p}.$$
-
-Source: Chahinaze Djadi and Hacène Belbachir,
-"Congruence Properties for the Delannoy Triangle
-Coefficients", Lemma 11. -/
-theorem_wanted choose_add_choose_mod (p j k : ℕ)
-    (hp : p.Prime) (hjk : j ≤ k) (hk : k ≤ p - 2) :
-    (Nat.choose (p - j) (k + 1) : ZMod p) +
-        (-1) ^ k * (Nat.choose (k + j) (k + 1) : ZMod p) = 0
 
 /-- Bridge to the existing symmetric-case API: the constant
 term of `(a x⁻¹ + b + a x)ⁿ`

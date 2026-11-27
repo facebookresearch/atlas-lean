@@ -27,23 +27,14 @@ Here `ℕ` contains `0`, while the paper works in positive integers; translating
 the all-ones vector identifies the two settings and preserves all notions above.
 
 Proved in `MathlibExt.Combinatorics.PiecewiseSyndetic`, which this module imports:
-the definitions above, Lemma 1 (`exists_subcube_isDenseInCubes_colorClass`) and
-Lemma 2 (`exists_cube_bound_isDenseInCubes`).
+the definitions above, the partition regularity of piecewise syndeticity
+(`IsPiecewiseSyndetic.exists_of_eq_iUnion`), Lemma 1
+(`exists_subcube_isDenseInCubes_colorClass`) and Lemma 2 (`exists_cube_bound_isDenseInCubes`).
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Piecewise syndeticity is partition regular.** Let $A \subseteq \mathbb{N}^t$ be piecewise
-syndetic and let $A_1, \dots, A_r \subseteq \mathbb{N}^t$ with $A = A_1 \cup \dots \cup A_r$. Then
-some $A_i$ is piecewise syndetic.
-
-Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
-(2024), Article A2, Theorem 1 (`integers-2024-A2-thm-1`). -/
-public theorem_wanted IsPiecewiseSyndetic.exists_of_eq_iUnion {t r : ℕ}
-    {A : Set (Fin t → ℕ)} (hA : IsPiecewiseSyndetic A) (B : Fin r → Set (Fin t → ℕ))
-    (hAB : A = ⋃ i, B i) : ∃ i, IsPiecewiseSyndetic (B i)
 
 /-- **Monochromatic sets that are large relative to their gap size.** Let $r, t \in \mathbb{N}$ with
 $t \ge 1$, and let $f : \mathbb{N} \to \mathbb{N}$ be nondecreasing. There is $B \in \mathbb{N}$

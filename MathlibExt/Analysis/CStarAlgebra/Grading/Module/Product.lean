@@ -1,0 +1,246 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Grading.Module
+public import MathlibExt.Analysis.CStarAlgebra.Module.Product
+
+/-!
+# Graded binary products of right C-star modules
+
+This file connects the existing coordinatewise module grading with the
+block-diagonal adjointable calculus.  It also pairs two graded
+representations into the operator grading of the product module.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open scoped RightActions
+
+universe uA uB uE uF uE' uF'
+
+namespace CStarModuleGrading
+
+variable {A : Type uA} {B : Type uB}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+variable [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
+variable {gammaA : CStarGrading A} {gammaB : CStarGrading B}
+variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
+  [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
+variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace ℂ F]
+  [SMul Bᵐᵒᵖ F] [CStarModule Bᵐᵒᵖ F] [CompleteSpace F]
+variable {E' : Type uE'} [NormedAddCommGroup E'] [NormedSpace ℂ E']
+  [SMul Bᵐᵒᵖ E'] [CStarModule Bᵐᵒᵖ E'] [CompleteSpace E']
+variable {F' : Type uF'} [NormedAddCommGroup F'] [NormedSpace ℂ F']
+  [SMul Bᵐᵒᵖ F'] [CStarModule Bᵐᵒᵖ F'] [CompleteSpace F']
+
+private theorem prod_generator_fst
+    (deltaE : CStarModuleGrading gammaB E)
+    (deltaF : CStarModuleGrading gammaB F)
+    (x : CStarModule.Product B E F) :
+    ((prod deltaE deltaF).generator x).1 = deltaE.generator x.1 :=
+  congrArg Prod.fst (prod_generator_apply deltaE deltaF x)
+
+private theorem prod_generator_snd
+    (deltaE : CStarModuleGrading gammaB E)
+    (deltaF : CStarModuleGrading gammaB F)
+    (x : CStarModule.Product B E F) :
+    ((prod deltaE deltaF).generator x).2 = deltaF.generator x.2 :=
+  congrArg Prod.snd (prod_generator_apply deltaE deltaF x)
+
+omit [CompleteSpace E] [CompleteSpace F]
+  [CompleteSpace E'] [CompleteSpace F'] in
+private theorem prodMap_equiv_apply
+    (T : CStarModule.AdjointableOperator B E E')
+    (S : CStarModule.AdjointableOperator B F F')
+    (x : CStarModule.Product B E F) :
+    WithCStarModule.equiv Bᵐᵒᵖ (E' × F')
+        (CStarModule.AdjointableOperator.prodMap T S x) =
+      (T x.1, S x.2) := by
+  rw [CStarModule.AdjointableOperator.prodMap_apply]
+  rfl
+
+omit [CompleteSpace E] [CompleteSpace F]
+  [CompleteSpace E'] [CompleteSpace F'] in
+private theorem prodMap_fst
+    (T : CStarModule.AdjointableOperator B E E')
+    (S : CStarModule.AdjointableOperator B F F')
+    (x : CStarModule.Product B E F) :
+    (CStarModule.AdjointableOperator.prodMap T S x).1 = T x.1 := by
+  simpa only [WithCStarModule.equiv_fst] using
+    congrArg Prod.fst (prodMap_equiv_apply T S x)
+
+omit [CompleteSpace E] [CompleteSpace F]
+  [CompleteSpace E'] [CompleteSpace F'] in
+private theorem prodMap_snd
+    (T : CStarModule.AdjointableOperator B E E')
+    (S : CStarModule.AdjointableOperator B F F')
+    (x : CStarModule.Product B E F) :
+    (CStarModule.AdjointableOperator.prodMap T S x).2 = S x.2 := by
+  simpa only [WithCStarModule.equiv_snd] using
+    congrArg Prod.snd (prodMap_equiv_apply T S x)
+
+/-- **Homogeneous block-diagonal module operators.** Let `B` be a graded nonunital complex C*-algebra
+with a star-compatible order on its opposite algebra, and let `E,F,E′,F′` be complete right Hilbert
+`B`-modules with compatible gradings. If adjointable operators `T : E → E′` and `S : F → F′` both
+have degree `n`, their block-diagonal map `(x,y) ↦ (Tx,Sy)` from `E ⊕ F` to `E′ ⊕ F′` has degree
+`n`. -/
+theorem prodMap_isHomogeneousOperator
+    (deltaE : CStarModuleGrading gammaB E)
+    (deltaF : CStarModuleGrading gammaB F)
+    (deltaE' : CStarModuleGrading gammaB E')
+    (deltaF' : CStarModuleGrading gammaB F')
+    {n : ZMod 2}
+    {T : CStarModule.AdjointableOperator B E E'}
+    {S : CStarModule.AdjointableOperator B F F'}
+    (hT : IsHomogeneousOperator deltaE deltaE' n T)
+    (hS : IsHomogeneousOperator deltaF deltaF' n S) :
+    IsHomogeneousOperator (prod deltaE deltaF) (prod deltaE' deltaF') n
+      (CStarModule.AdjointableOperator.prodMap T S) := by
+  intro x
+  apply (WithCStarModule.equivL (R := ℂ) (A := Bᵐᵒᵖ)
+    (E := E' × F')).injective
+  change WithCStarModule.equiv Bᵐᵒᵖ (E' × F')
+      ((prod deltaE' deltaF').generator
+        (CStarModule.AdjointableOperator.prodMap T S x)) =
+    WithCStarModule.equiv Bᵐᵒᵖ (E' × F')
+      (CStarGrading.degreeSign n •
+        CStarModule.AdjointableOperator.prodMap T S
+          ((prod deltaE deltaF).generator x))
+  rw [prod_generator_apply, WithCStarModule.equiv_smul,
+    prodMap_equiv_apply]
+  apply Prod.ext
+  · simp only [Prod.smul_fst]
+    rw [prodMap_fst, prod_generator_fst]
+    exact hT x.1
+  · simp only [Prod.smul_snd]
+    rw [prodMap_snd, prod_generator_snd]
+    exact hS x.2
+
+/-- **Graded block-diagonal endomorphism homomorphism.** Let `B` be a graded nonunital complex
+C*-algebra with a star-compatible order on its opposite algebra, and let `E,F` be compatibly graded
+complete right Hilbert `B`-modules. The block-diagonal map from `End*(E) × End*(F)` into `End*(E ⊕
+F)` is a star homomorphism equivariant for their induced gradings, where `End*` denotes adjointable
+endomorphisms. -/
+def prodEndHom
+    (deltaE : CStarModuleGrading gammaB E)
+    (deltaF : CStarModuleGrading gammaB F) :
+    CStarGrading.Hom
+      (CStarGrading.prod deltaE.operatorGrading deltaF.operatorGrading)
+      (prod deltaE deltaF).operatorGrading where
+  toNonUnitalStarAlgHom :=
+    { toFun := fun p => CStarModule.AdjointableOperator.prodMap p.1 p.2
+      map_zero' := CStarModule.AdjointableOperator.prodMap_zero
+      map_add' := by
+        intro p q
+        exact CStarModule.AdjointableOperator.prodMap_add p.1 q.1 p.2 q.2
+      map_mul' := by
+        intro p q
+        change CStarModule.AdjointableOperator.prodMap
+            (p.1.comp q.1) (p.2.comp q.2) =
+          (CStarModule.AdjointableOperator.prodMap p.1 p.2).comp
+            (CStarModule.AdjointableOperator.prodMap q.1 q.2)
+        exact (CStarModule.AdjointableOperator.prodMap_comp
+          q.1 q.2 p.1 p.2).symm
+      map_star' := by
+        intro p
+        change CStarModule.AdjointableOperator.prodMap
+            p.1.adjointOperator p.2.adjointOperator =
+          (CStarModule.AdjointableOperator.prodMap p.1 p.2).adjointOperator
+        exact
+          (CStarModule.AdjointableOperator.prodMap_adjointOperator p.1 p.2).symm
+      map_smul' := by
+        intro c p
+        ext x
+        apply (WithCStarModule.equivL (R := ℂ) (A := Bᵐᵒᵖ)
+          (E := E × F)).injective
+        change WithCStarModule.equiv Bᵐᵒᵖ (E × F)
+            (CStarModule.AdjointableOperator.prodMap
+              (c • p).1 (c • p).2 x) =
+          WithCStarModule.equiv Bᵐᵒᵖ (E × F)
+            ((c • CStarModule.AdjointableOperator.prodMap p.1 p.2) x)
+        rw [prodMap_equiv_apply,
+          CStarModule.AdjointableOperator.smul_apply,
+          WithCStarModule.equiv_smul, prodMap_equiv_apply]
+        apply Prod.ext
+        · simp only [Prod.smul_fst,
+            CStarModule.AdjointableOperator.smul_apply]
+        · simp only [Prod.smul_snd,
+            CStarModule.AdjointableOperator.smul_apply] }
+  equivariant' := by
+    intro n p
+    fin_cases n
+    · change CStarModule.AdjointableOperator.prodMap p.1 p.2 =
+        PointNormCStarAddAction.aut (prod deltaE deltaF).operatorGrading 0
+          (CStarModule.AdjointableOperator.prodMap p.1 p.2)
+      simp [PointNormCStarAddAction.aut_zero]
+    · change CStarModule.AdjointableOperator.prodMap
+          (deltaE.operatorGrading.generatorAut p.1)
+          (deltaF.operatorGrading.generatorAut p.2) =
+        (prod deltaE deltaF).operatorGrading.generatorAut
+          (CStarModule.AdjointableOperator.prodMap p.1 p.2)
+      rw [operatorGrading_generatorAut, operatorGrading_generatorAut,
+        operatorGrading_generatorAut]
+      ext x
+      apply (WithCStarModule.equivL (R := ℂ) (A := Bᵐᵒᵖ)
+        (E := E × F)).injective
+      change WithCStarModule.equiv Bᵐᵒᵖ (E × F)
+          (CStarModule.AdjointableOperator.prodMap
+            (operatorGenerator deltaE p.1)
+            (operatorGenerator deltaF p.2) x) =
+        WithCStarModule.equiv Bᵐᵒᵖ (E × F)
+          (operatorGenerator (prod deltaE deltaF)
+            (CStarModule.AdjointableOperator.prodMap p.1 p.2) x)
+      rw [prodMap_equiv_apply]
+      simp only [operatorGenerator_apply]
+      rw [prod_generator_apply]
+      apply Prod.ext
+      · rw [prodMap_fst, prod_generator_fst]
+      · rw [prodMap_snd, prod_generator_snd]
+
+@[simp]
+theorem prodEndHom_apply
+    (deltaE : CStarModuleGrading gammaB E)
+    (deltaF : CStarModuleGrading gammaB F)
+    (T : CStarModule.AdjointableOperator.End B E)
+    (S : CStarModule.AdjointableOperator.End B F) :
+    prodEndHom deltaE deltaF (T, S) =
+      CStarModule.AdjointableOperator.prodMap T S :=
+  rfl
+
+/-- **Product of graded module representations.** Let `A,B` be graded nonunital complex C*-algebras,
+with a star-compatible order on `Bᵐᵒᵖ`, and let `E,F` be compatibly graded complete right Hilbert
+`B`-modules. Graded star representations `φ : A → End*(E)` and `ψ : A → End*(F)` define the graded
+block-diagonal representation `a ↦ φ(a) ⊕ ψ(a)` on the Hilbert-module direct sum `E ⊕ F`. -/
+def prodRepresentation
+    (deltaE : CStarModuleGrading gammaB E)
+    (deltaF : CStarModuleGrading gammaB F)
+    (phi : CStarGrading.Hom gammaA deltaE.operatorGrading)
+    (psi : CStarGrading.Hom gammaA deltaF.operatorGrading) :
+    CStarGrading.Hom gammaA (prod deltaE deltaF).operatorGrading :=
+  CStarGrading.Hom.comp (prodEndHom deltaE deltaF)
+    (CStarGrading.Hom.prod phi psi)
+
+@[simp]
+theorem prodRepresentation_apply
+    (deltaE : CStarModuleGrading gammaB E)
+    (deltaF : CStarModuleGrading gammaB F)
+    (phi : CStarGrading.Hom gammaA deltaE.operatorGrading)
+    (psi : CStarGrading.Hom gammaA deltaF.operatorGrading)
+    (a : A) :
+    prodRepresentation deltaE deltaF phi psi a =
+      CStarModule.AdjointableOperator.prodMap (phi a) (psi a) :=
+  rfl
+
+end CStarModuleGrading

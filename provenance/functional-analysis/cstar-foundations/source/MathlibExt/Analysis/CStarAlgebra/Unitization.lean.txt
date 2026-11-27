@@ -1,0 +1,85 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.Unitization
+
+/-!
+# The scalar projection from a C-star unitization
+
+This file bundles the scalar-coordinate projection from the unitization of a
+complex nonunital C-star algebra as a star algebra homomorphism.  The
+projection is natural for the canonical unitization of nonunital star algebra
+homomorphisms.
+-/
+
+@[expose] public section
+
+namespace Unitization
+
+universe u v
+
+/-- The canonical scalar-coordinate projection from a complex C-star
+unitization. -/
+def fstStarAlgHom (A : Type u) [NonUnitalCStarAlgebra A] :
+    Unitization ℂ A →⋆ₐ[ℂ] ℂ where
+  toAlgHom := Unitization.fstHom ℂ A
+  map_star' := Unitization.fst_star
+
+@[simp]
+theorem fstStarAlgHom_apply
+    (A : Type u) [NonUnitalCStarAlgebra A] (x : Unitization ℂ A) :
+    fstStarAlgHom A x = x.fst :=
+  rfl
+
+@[simp]
+theorem fstStarAlgHom_inl
+    (A : Type u) [NonUnitalCStarAlgebra A] (z : ℂ) :
+    fstStarAlgHom A (Unitization.inl z) = z := by
+  simp
+
+@[simp]
+theorem fstStarAlgHom_inr
+    (A : Type u) [NonUnitalCStarAlgebra A] (a : A) :
+    fstStarAlgHom A (Unitization.inr a) = 0 := by
+  simp
+
+/-- Scalar projection is natural for the canonical unitization of a
+nonunital complex star algebra homomorphism. -/
+@[simp]
+theorem fstStarAlgHom_comp_starMap
+    {A : Type u} {B : Type v}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (phi : A →⋆ₙₐ[ℂ] B) :
+    (fstStarAlgHom B).comp (Unitization.starMap phi) = fstStarAlgHom A := by
+  apply StarAlgHom.ext
+  intro x
+  induction x using Unitization.ind with
+  | inl_add_inr z a =>
+      simp [Unitization.algebraMap_eq_inl]
+
+/-- Unitization of a nonunital star homomorphism preserves the scalar
+coordinate. -/
+theorem starMap_fst
+    {A : Type u} {B : Type v}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (phi : A →⋆ₙₐ[ℂ] B) (x : Unitization ℂ A) :
+    (Unitization.starMap phi x).fst = x.fst := by
+  change fstStarAlgHom B (Unitization.starMap phi x) = fstStarAlgHom A x
+  exact DFunLike.congr_fun (fstStarAlgHom_comp_starMap phi) x
+
+/-- Unitization of a nonunital star homomorphism applies the original map to
+the non-scalar coordinate. -/
+theorem starMap_snd
+    {A : Type u} {B : Type v}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (phi : A →⋆ₙₐ[ℂ] B) (x : Unitization ℂ A) :
+    (Unitization.starMap phi x).snd = phi x.snd := by
+  induction x using Unitization.ind with
+  | inl_add_inr z a =>
+      simp only [map_add, Unitization.starMap_inl, Unitization.starMap_inr,
+        Unitization.algebraMap_eq_inl, Unitization.snd_add,
+        Unitization.snd_inl, Unitization.snd_inr, zero_add]
+
+end Unitization

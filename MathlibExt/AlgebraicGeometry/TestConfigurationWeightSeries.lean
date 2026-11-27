@@ -70,7 +70,12 @@ def centralComparison (T : TestConfiguration k X L) [ModObj (Torus k) (central T
   (Scheme.Modules.pullbackComp (projection (Torus k) (central T))
     (centralInclusion T).left).inv.app T.polarization
 
-/-- Source-covered central equivariant pullback, with the comparison fixed by the actual map. -/
+/-- A $\mathbb{G}_m$-linearization of the central fibre of a test configuration $T$ of $(X, L)$ over
+a field $k$, induced from $T$: a $\mathbb{G}_m$-action on the central fibre $T_0$ (the fibre of $T$
+over $0 \in \mathbb{A}^1$) for which the inclusion $T_0 \to T$ is equivariant, and a
+$\mathbb{G}_m$-linearization of the restriction $L_0$ of the polarization of $T$ to $T_0$ whose
+comparison isomorphism $a^*L_0 \cong \mathrm{pr}^*L_0$ is the one induced by the linearization of
+$T$ along the inclusion (`centralComparison`). -/
 structure CentralLinearization (T : TestConfiguration k X L) where
   [action : ModObj (Torus k) (central T)]
   over : γ[Torus k,central T] ≫ centralInclusion T =

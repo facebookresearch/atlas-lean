@@ -394,4 +394,46 @@ public theorem redeiRenyi_diffBasis (n : ℕ) (hn : 0 < n) :
     rw [add_mul, one_mul]
     omega
 
+/-- **Upper bound for the $g$-difference basis number.** For natural numbers $g$ and $n$, let
+$\eta_g(n)$ be the least size of a finite set $A \subseteq \mathbb{Z}$ such that every
+$x \in \{1, \dots, n\}$ is the difference $a - a'$ of at least $g$ ordered pairs
+$(a, a') \in A \times A$. Then for all natural numbers $g$ and $n$,
+
+$$\frac{\eta_g(n)}{\sqrt{n}} \le 2\left(1 + \frac{1}{\sqrt{n}}\right) g,$$
+
+where for $n = 0$ both quotients are read with the convention that division by $0$ gives $0$.
+
+Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
+(2025), Article A77, Corollary 1 (`integers-2025-A77-cor-1`). -/
+public theorem diffBasisNumber_div_sqrt_le (g n : ℕ) :
+    (diffBasisNumber g n : ℝ) / Real.sqrt n ≤ 2 * (1 + 1 / Real.sqrt n) * g := by
+  by_cases hn : n = 0
+  · subst n
+    simp
+  have hnpos := Nat.pos_of_ne_zero hn
+  let k : ℕ := ⌈Real.sqrt (n : ℝ)⌉₊
+  let A : Finset ℤ :=
+    Finset.Icc 1 ((k : ℤ) - 1) ∪ (Finset.Icc (1 : ℤ) (k + 1)).image (· * (k : ℤ))
+  have hA : A.card = 2 * k ∧ ∀ x ∈ Finset.Icc (1 : ℤ) n, 1 ≤ subRepCount A x :=
+    redeiRenyi_diffBasis n hnpos
+  have h1 : (1 : ℤ) ∈ Finset.Icc (1 : ℤ) n :=
+    Finset.mem_Icc.mpr ⟨le_rfl, by exact_mod_cast hnpos⟩
+  have htwo := two_le_card_of_subRepCount one_ne_zero (hA.2 1 h1)
+  have hne : A.Nonempty := Finset.card_pos.mp (by omega)
+  obtain ⟨B, hBcard, hB⟩ := exists_disjoint_translates hne g
+  have hbound : diffBasisNumber g n ≤ g * (2 * k) :=
+    Nat.sInf_le ⟨B, hBcard.trans (congrArg (g * ·) hA.1), fun x hx => hB x (hA.2 x hx)⟩
+  have hs : 0 < Real.sqrt (n : ℝ) := Real.sqrt_pos.2 (by exact_mod_cast hnpos)
+  have hk : (k : ℝ) ≤ Real.sqrt n + 1 := (Nat.ceil_lt_add_one hs.le).le
+  rw [div_le_iff₀ hs]
+  calc
+    (diffBasisNumber g n : ℝ) ≤ (g : ℝ) * (2 * (k : ℝ)) := by exact_mod_cast hbound
+    _ ≤ (g : ℝ) * (2 * (Real.sqrt n + 1)) :=
+      mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hk (by norm_num)) (Nat.cast_nonneg g)
+    _ = 2 * (1 + 1 / Real.sqrt n) * (g : ℝ) * Real.sqrt n := by
+      have h : (1 + 1 / Real.sqrt (n : ℝ)) * Real.sqrt n = Real.sqrt n + 1 := by
+        rw [add_mul, one_mul, div_mul_cancel₀ _ hs.ne']
+      rw [show 2 * (1 + 1 / Real.sqrt (n : ℝ)) * (g : ℝ) * Real.sqrt n =
+        (g : ℝ) * (2 * ((1 + 1 / Real.sqrt n) * Real.sqrt n)) by ac_rfl, h]
+
 end MetaMathlibExt

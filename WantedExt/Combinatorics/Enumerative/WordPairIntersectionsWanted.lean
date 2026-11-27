@@ -38,54 +38,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Generating function of non-intersecting pairs of words of equal length.** Let $k$ be a
-natural number, let $S(n, j)$ denote the Stirling numbers of the second kind, and for $n \ge 1$ let
-$h(n)$ be the number of pairs $(u, v)$ of words of length $n$ over an alphabet of $k$ letters such
-that no letter occurs in both. Then, as formal power series over $\mathbb{Q}$,
-$\sum_{n \ge 1} h(n) x^n = \sum_{n \ge 0} \sum_{j=1}^{k-1} \binom{k}{j} \, j! \, S(n, j) \,
-(k-j)^n x^n$.
-
-The constant term on the right is $0$ because $S(0, j) = 0$ for $j \ge 1$: the empty pair is not
-counted.
-
-Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
-Article A107, Corollary 1 (`integers-2024-A107-cor-1`). -/
-public theorem_wanted nonIntersectingWordPairs_sameLength_generatingFunction (k : ℕ) :
-    (PowerSeries.mk fun n => if n = 0 then (0 : ℚ) else
-        (((Finset.univ : Finset ((Fin n → Fin k) × (Fin n → Fin k))).filter fun p => Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card : ℚ)) =
-      PowerSeries.mk fun n => ∑ j ∈ Finset.Icc 1 (k - 1),
-        (k.choose j : ℚ) * j.factorial * Nat.stirlingSecond n j * ((k - j : ℕ) : ℚ) ^ n
-
-/-- **Non-intersecting pairs of words of equal length.** Let $S(n, j)$ denote the Stirling numbers
-of the second kind. For natural numbers $k$ and $n \ge 1$, the number of pairs $(u, v)$ of words
-of length $n$ over an alphabet of $k$ letters such that no letter occurs in both $u$ and $v$ is
-$\sum_{j=1}^{k-1} \binom{k}{j} \, j! \, S(n, j) \, (k-j)^n$.
-
-Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
-Article A107, Corollary 2 (`integers-2024-A107-cor-2`). -/
-public theorem_wanted nonIntersectingWordPairs_sameLength_card (k n : ℕ) (hn : 1 ≤ n) :
-    ((Finset.univ : Finset ((Fin n → Fin k) × (Fin n →
-        Fin k))).filter fun p => Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card =
-      ∑ j ∈ Finset.Icc 1 (k - 1), k.choose j * j.factorial * Nat.stirlingSecond n j * (k - j) ^ n
-
-/-- **Overlap statistic on pairs of words.** Fix natural numbers $k$, $n \ge 1$, $r \ge 1$ and a
-rational number $q$. For words $u$ and $v$ over an alphabet of $k$ letters, the overlap of
-$(u, v)$ is the number of positions of $v$ whose letter occurs in $u$. Write $[x^m] F$ for the
-coefficient of $x^m$ in a formal power series $F$ over $\mathbb{Q}$, $S(m, j)$ for the Stirling
-numbers of the second kind, and $c_j = qj + k - j$. Then the sum of $q^{\text{overlap}}$ over all
-pairs $(u, v)$ with $u$ of length $n$ and $v$ of length $r$ equals
-$\sum_{j=1}^{k} \binom{k}{j} \, [x^r]\bigl(c_j x \, (1 - c_j x)^{-1}\bigr) \, j! \, S(n, j)$.
-
-Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
-Article A107, Theorem 2 (`integers-2024-A107-thm-2`). -/
-public theorem_wanted wordPairs_overlap_sum_eq_coeff (k n r : ℕ) (hn : 1 ≤ n) (hr : 1 ≤ r) (q : ℚ) :
-    ∑ p ∈ (Finset.univ : Finset ((Fin n → Fin k) × (Fin r → Fin k))),
-        q ^ (Finset.univ.filter fun i => p.2 i ∈ Finset.univ.image p.1).card =
-      ∑ j ∈ Finset.Icc 1 k, (k.choose j : ℚ) *
-        coeff r (PowerSeries.C (q * j + (k - j : ℕ)) * X *
-          (1 - PowerSeries.C (q * j + (k - j : ℕ)) * X)⁻¹) *
-        (j.factorial * Nat.stirlingSecond n j)
-
 /-- **Non-intersecting pairs of weakly decreasing words.** Fix natural numbers $k$, $n \ge 1$ and
 $r \ge 1$, and order an alphabet of $k$ letters. Write $[x^m] F$ for the coefficient of $x^m$ in a
 formal power series $F$ over $\mathbb{Q}$. The number of pairs $(u, v)$ of weakly decreasing words
@@ -120,38 +72,6 @@ public theorem_wanted weaklyDecreasingNonIntersectingPairs_generatingFunction (k
       if 1 ≤ n ∧ 1 ≤ r then (((Finset.univ : Finset ((Fin n → Fin k) × (Fin r →
           Fin k))).filter fun p => Antitone p.1 ∧ Antitone p.2 ∧
           Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card : ℚ) else 0
-
-/-- **Overlap statistic on pairs of weakly decreasing words.** Fix natural numbers $k$, $n \ge 1$,
-$r \ge 1$ and a rational number $q$, and order an alphabet of $k$ letters. For words $u$ and $v$
-over this alphabet, the overlap of $(u, v)$ is the number of positions of $v$ whose letter occurs
-in $u$. Write $[x^m] F$ for the coefficient of $x^m$ in a formal power series $F$ over
-$\mathbb{Q}$. Let $T$ be the sum of $q^{\text{overlap}}$ over all pairs $(u, v)$ of weakly
-decreasing words, $u$ of length $n$ and $v$ of length $r$. Then
-$T = \sum_{j=1}^{k} \binom{k}{j} \, [x^n]\bigl(x^j (1-x)^{-j}\bigr) \,
-[x^r]\Bigl((1-x)^{-(k-j)} - 1 + (1-x)^{-(k-j)} \sum_{m \ge 1} \binom{m+j-1}{m} q^m x^m\Bigr)$
-and
-$T = \sum_{j=1}^{k} \binom{k}{j} \, [x^n]\bigl(x^j (1-x)^{-j}\bigr) \,
-[x^r]\bigl(-1 + (1-x)^{-(k-j)} (1 - qx)^{-j}\bigr)$.
-
-The paper prints these sums over $j$ with upper limit $k - 1$, which omits the pairs whose first
-word uses all $k$ letters ($j = k$, which Theorem 2 includes): for $k = 1$ and $n = r = 1$ the
-only pair contributes $q$, while the printed sum is empty.
-
-Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
-Article A107, Theorem 4 (`integers-2024-A107-thm-4`). -/
-public theorem_wanted weaklyDecreasingPairs_overlap_sum_eq_coeff (k n r : ℕ) (hn : 1 ≤ n)
-    (hr : 1 ≤ r) (q : ℚ) :
-    ∑ p ∈ ((Finset.univ : Finset ((Fin n → Fin k) × (Fin r → Fin k))).filter fun p => Antitone p.1 ∧
-        Antitone p.2), q ^ (Finset.univ.filter fun i => p.2 i ∈ Finset.univ.image p.1).card =
-        ∑ j ∈ Finset.Icc 1 k, (k.choose j : ℚ) * coeff n (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) *
-          coeff r ((((1 - X) ^ (k - j))⁻¹ - 1 + ((1 - X) ^ (k - j))⁻¹ *
-            PowerSeries.mk fun m => if m = 0 then 0 else ((m + j - 1).choose m : ℚ) *
-                q ^ m : ℚ⟦X⟧)) ∧
-      ∑ p ∈ ((Finset.univ : Finset ((Fin n → Fin k) × (Fin r →
-          Fin k))).filter fun p => Antitone p.1 ∧
-          Antitone p.2), q ^ (Finset.univ.filter fun i => p.2 i ∈ Finset.univ.image p.1).card =
-        ∑ j ∈ Finset.Icc 1 k, (k.choose j : ℚ) * coeff n (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) *
-          coeff r ((-1 + ((1 - X) ^ (k - j))⁻¹ * ((1 - PowerSeries.C q * X) ^ j)⁻¹ : ℚ⟦X⟧))
 
 end
 

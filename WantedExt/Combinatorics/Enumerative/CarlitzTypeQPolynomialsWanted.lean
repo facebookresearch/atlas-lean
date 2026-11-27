@@ -16,6 +16,8 @@ public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.NumberTheory.Bernoulli
 public import MathlibExt.Combinatorics.Enumerative.BinomialInversion
 public import MathlibExt.Combinatorics.Enumerative.CarlitzTypeQPolynomials
+public import MathlibExt.Combinatorics.Enumerative.ConsecutiveBernoulliNumbers
+public import MathlibExt.Combinatorics.Enumerative.QFallingFactorialSums
 
 namespace MetaMathlibExt
 
@@ -139,23 +141,6 @@ public theorem_wanted tendsto_tsum_qBracket_bernoulli (r n : ℕ) (hr : 0 < r) (
         ((r : ℝ) * q ^ (r * k) - ((n : ℝ) + r) * q ^ ((r + 1) * k)) * qBracket q k ^ (n - 1))
       (𝓝[<] 1) (𝓝 (bernoulli n : ℝ))
 
-/-- **Sums of $q^{ir}$ times $q$-falling factorials.** Let $q > 0$ with $q \ne 1$, let
-$[x] = (q^x - 1)/(q - 1)$, and write $[x]_m = [x][x-1]\cdots[x-m+1]$ for the $q$-falling factorial
-(with $[x]_0 = 1$). Then for all natural numbers $r \ge 1$, $k$ and $N$,
-$$\sum_{i=0}^{N-1} q^{ir} [i]_k = \left(\sum_{\ell=0}^{r-1}
-\frac{q^{(r-\ell-1)N + (\ell+1)k} \, [r-1]_\ell}{[k+r]_{\ell+1}}\right) [N]_{k+1}.$$
-
-Source: Bakir Farhi, *q-Analogues of Sums of Consecutive Powers of Natural Numbers and Extended
-Carlitz q-Bernoulli Numbers and Polynomials*, INTEGERS 26 (2026), Article A85, Proposition 2.14
-(`integers-2026-A85-prop-2-14`). -/
-public theorem_wanted sum_qpow_mul_qFalling (q : ℝ) (hq0 : 0 < q) (hq1 : q ≠ 1) (r k N : ℕ)
-    (hr : 0 < r) :
-    ∑ i ∈ range N, q ^ (i * r) * ∏ j ∈ range k, qBracket q ((i : ℝ) - j) =
-      (∑ l ∈ range r, q ^ ((r - l - 1) * N + (l + 1) * k) *
-          (∏ j ∈ range l, qBracket q ((r : ℝ) - 1 - j)) /
-            ∏ j ∈ range (l + 1), qBracket q (((k + r : ℕ) : ℝ) - j)) *
-        ∏ j ∈ range (k + 1), qBracket q ((N : ℝ) - j)
-
 /-- **Limit of the $q$-power-sum interpolant at $0$: first closed form.** Let $q > 0$ with
 $q \ne 1$, let $r \ge 1$ and $k \ge 0$ be integers, and for real $x$ write
 $[x] = (q^x - 1)/(q - 1)$, $[x]_m = [x][x-1]\cdots[x-m+1]$ (with $[x]_0 = 1$) and
@@ -275,18 +260,6 @@ public theorem_wanted carlitzBeta_add_mul_succ_eq_sum_qStirling (q : ℝ) (hq0 :
       q ^ (k * (k - 1) / 2) * S m k * ∏ j ∈ range k, qBracket q (x - j)) :
     carlitzBetaPoly q n 0 + q * carlitzBetaPoly q (n + 1) 0 = ∑ k ∈ range (n + 1),
       (-1 : ℝ) ^ k * (∏ j ∈ range k, qBracket q ((j : ℝ) + 1)) / qBracket q ((k : ℝ) + 2) * S n k
-
-/-- **Sum of consecutive Bernoulli numbers via Stirling numbers.** For every natural number $n$,
-$B_n + B_{n+1} = \sum_{k=0}^{n} (-1)^k \frac{k!}{k+2} S(n,k)$, where $B_n$ are the Bernoulli numbers
-with $B_1 = -1/2$ (generating function $t/(e^t - 1)$, the paper's convention) and $S(n,k)$ are the
-Stirling numbers of the second kind.
-
-Source: Bakir Farhi, *q-Analogues of Sums of Consecutive Powers of Natural Numbers and Extended
-Carlitz q-Bernoulli Numbers and Polynomials*, INTEGERS 26 (2026), Article A85, Corollary 2.19
-(`integers-2026-A85-cor-2-19`). -/
-public theorem_wanted bernoulli_add_bernoulli_succ_eq_sum_stirlingSecond (n : ℕ) :
-    bernoulli n + bernoulli (n + 1) = ∑ k ∈ range (n + 1),
-      (-1 : ℚ) ^ k * (k.factorial : ℚ) / ((k : ℚ) + 2) * (Nat.stirlingSecond n k : ℚ)
 
 end
 

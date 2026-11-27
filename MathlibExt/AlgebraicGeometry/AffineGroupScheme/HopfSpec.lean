@@ -177,12 +177,9 @@ lemma hopfSpec_obj_tensor_X_left (H : CommHopfAlgCat.{u} R) :
   cases hopfSpec_obj_X_left R H
   exact congrArg (fun k ↦ Limits.pullback k k) (eq_of_heq h)
 
-/-- Applying `algSpec` to an algebra homomorphism has underlying scheme map `Spec.map` of its
-underlying ring homomorphism.
-
-Mathlib's `algSpec_map_left` leaves this map expressed through the `CommAlgCat`/under-category
-equivalence, and no public computation lemma exposes the resulting `Under.Hom.right`. The final
-reduction is therefore definitional and is localized here. -/
+/-- For commutative $R$-algebras $A$, $B$ and an $R$-algebra homomorphism $f : A \to B$, the
+morphism of schemes underlying `algSpec` applied to $f$ is `Spec.map` of the underlying ring
+homomorphism of $f$, a morphism $\operatorname{Spec} B \to \operatorname{Spec} A$. -/
 @[simp↓]
 lemma algSpec_map_left_ofAlgHom {A B : Type u} [CommRing A] [CommRing B]
     [Algebra R A] [Algebra R B] (f : A →ₐ[R] B) :
@@ -192,11 +189,9 @@ lemma algSpec_map_left_ofAlgHom {A B : Type u} [CommRing A] [CommRing B]
   rw [AlgebraicGeometry.algSpec_map_left, ← AlgHom.toRingHom_eq_coe]
   rfl
 
-/-- Mathlib's `hopfSpec` object is the group object on the ordinary spectrum.
-
-This bundled identification carries the group structure across the two instance paths.
-Mathlib's operation computation lemmas are stated for `(Spec H).asOver (Spec R)`, while
-`hopfSpec` reaches that group object through the Hopf-algebra/cogroup equivalence. -/
+/-- The Hopf spectrum of a commutative Hopf algebra $H$ over $R$ is $\operatorname{Spec} H$ as a
+scheme over $\operatorname{Spec} R$ (`(Spec H).asOver (Spec R)`), with the group structure given
+by the counit, comultiplication and antipode of $H$. -/
 lemma hopfSpec_obj_eq_asOver (H : CommHopfAlgCat.{u} R) :
     (AlgebraicGeometry.hopfSpec (CommRingCat.of R)).obj (Opposite.op H) =
       Grp.mk ((Spec (CommRingCat.of H)).asOver (Spec (CommRingCat.of R))) :=

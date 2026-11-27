@@ -271,6 +271,28 @@ public theorem parkingFunction_descentSet_card_eq_ascentSet_reflect (n : ℕ)
     obtain ⟨j, hij, _⟩ := (Finset.mem_filter.mp hi).2
     exact Finset.mem_Ico.mpr ⟨by omega, hij ▸ j.isLt⟩
 
+open Classical in
+/-- **Reflection symmetry of descent sets of parking functions.** Write a parking function $f$ of
+length $n$ as the sequence $(a_1, \dots, a_n)$ with $a_j = f(j-1) + 1$. Its descent set is the set
+of $j \in \{1, \dots, n-1\}$ with $a_j > a_{j+1}$. For every $n$ and every
+$I \subseteq \{1, \dots, n-1\}$, let $J = \{n - i : i \in I\}$. Then the number of parking
+functions of length $n$ with descent set $I$ equals the number with descent set $J$.
+
+Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
+Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
+Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6, Theorem 16
+(`jis-2024-24.8.6-thm-16`). -/
+public theorem parkingFunction_descentSet_card_reflect (n : ℕ) (I : Finset ℕ)
+    (hI : I ⊆ Finset.Ico 1 n) :
+    ((pfSet n).filter (fun f => desSet f = I)).card =
+      ((pfSet n).filter (fun f => desSet f = I.image (fun i => n - i))).card := by
+  refine (parkingFunction_descentSet_card_eq_ascentSet_reflect n I hI).trans
+    (parkingFunction_descentSet_card_eq_ascentSet n _ ?_).symm
+  intro j hj
+  obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hj
+  obtain ⟨hil, hiu⟩ := Finset.mem_Ico.mp (hI hi)
+  exact Finset.mem_Ico.mpr ⟨by omega, by omega⟩
+
 namespace sum_ndpf_multisetDescent_eq
 
 private lemma content_eq_iff_sorted_eq {n : ℕ} (w β : Fin n → Fin n) (hβ : Monotone β) :

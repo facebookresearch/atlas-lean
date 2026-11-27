@@ -71,8 +71,13 @@ def Related {R : Stack S} {A B : Chart R} (f g : RawHom A B) : Prop :=
 
 abbrev QuotientHom {R : Stack S} (A B : Chart R) := Quot (@Related S R A B)
 
-/-- Raw category operations are fixed on their cartesian functors and
-all triangle components; generic bicategorical assembly is deferred. -/
+/-- For a stack `R` over `S`, identity and composition for morphisms of charts of `R` (`RawHom`: a
+morphism of stacks with an invertible triangle over `R`). For each chart there is an identity
+morphism whose underlying morphism of stacks is the identity and whose triangle has identity
+components (`identity`). For composable `f` and `g` there is a composite (`compose`) whose
+underlying morphism of stacks is the composite and whose triangle has, at each object `x` over
+`T`, the component of the triangle of `g` at `f(x)` followed by the component of the triangle of
+`f` at `x`. -/
 structure RawOperations (R : Stack S) where
   identity : ∀ A : Chart R, RawHom A A
   identity_map : ∀ A : Chart R,

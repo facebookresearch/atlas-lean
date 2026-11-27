@@ -71,3 +71,32 @@ example : Set.range (fun n : ℕ => 2 ^ n - 1) ∈ sidonIdeal := by
 -- An empty system of almost-thin generators also gives a Sidon cover.
 example : (∅ : Set ℕ) ∈ sidonIdeal :=
   almostThinIdeal_subset_sidonIdeal ⟨0, Fin.elim0, fun i => Fin.elim0 i, Set.empty_subset _⟩
+
+-- The three consecutive points are weak Sidon but not Sidon: 0 + 2 = 1 + 1.
+example : ¬ ({0, 1, 2} : Set ℕ).IsSidon ∧
+    ∃ B C : Set ℕ, B ∪ C = {0, 1, 2} ∧ Disjoint B C ∧ B.IsSidon ∧ C.IsSidon := by
+  have hweak : IsWeakSidonSet ({0, 1, 2} : Set ℕ) := by
+    intro a ha b hb c hc d hd hab hcd heq
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha hb hc hd
+    omega
+  refine ⟨?_, exists_partition_isSidon_of_isWeakSidonSet hweak⟩
+  intro h
+  have htriv := h 0 (by simp) 2 (by simp) 1 (by simp) 1 (by simp) (by decide)
+  omega
+
+-- The partition also exists for the empty set, with no midpoint witnesses.
+example : ∃ B C : Set ℕ, B ∪ C = ∅ ∧ Disjoint B C ∧ B.IsSidon ∧ C.IsSidon :=
+  exists_partition_isSidon_of_isWeakSidonSet (by simp [IsWeakSidonSet])
+
+-- A weak generator that is not itself Sidon still belongs to the Sidon ideal.
+example : ({0, 1, 2} : Set ℕ) ∈ sidonIdeal := by
+  rw [← generatedIdeal_isWeakSidonSet_eq_sidonIdeal]
+  apply mem_generatedIdeal
+  intro a ha b hb c hc d hd hab hcd heq
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha hb hc hd
+  omega
+
+-- The zero-generator cover survives the refinement as well.
+example : (∅ : Set ℕ) ∈ sidonIdeal := by
+  rw [← generatedIdeal_isWeakSidonSet_eq_sidonIdeal]
+  exact ⟨0, Fin.elim0, fun j => Fin.elim0 j, Set.empty_subset _⟩

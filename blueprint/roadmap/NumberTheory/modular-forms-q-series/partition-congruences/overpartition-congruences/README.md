@@ -1,5 +1,6 @@
 # Overpartition congruences
 
+- [Theta mul rescale gen Fun](theta-mul-rescale-gen-fun.md)
 - [Overpartitions of $5n$ modulo $5$, explicit form](overpartition-mul-five-mod-five.md)
 - [Overpartitions as pairs of a multiset and a set](nat-card-eq-card-subtype.md)
 - [The three-square count counts all integer solutions](three-square-representation-count-eq-nat.md)

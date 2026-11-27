@@ -16,3 +16,12 @@
 - [Continuous modified Wright–Fisher process](modified-process.md)
 - [Modified process has the raw finite-dimensional laws](map-restrict-modified-eq-raw.md)
 - [Modified process has the canonical coordinate laws](map-restrict-modified-eq-coordinate.md)
+
+- [Fourth-moment increment bound and continuous modification for the mutation diffusion](fourth-moment-increment-bound-and-continuous-mod.md)
+- [Increment bound and continuous modification on the simplex](increment-bound-and-continuous-modification-on-t.md)
+- [K-allele transition kernel and canonical path measure on the simplex](k-allele-transition-kernel-and-canonical-path-me.md)
+- [Law of a continuous modification on the space of continuous paths, measurable in the initial point](law-of-a-continuous-modification-on-c-0-infinity.md)
+- [Mutation Wright–Fisher transition kernel and canonical path measure](mutation-wf-transition-kernel-and-canonical-path.md)
+- [Selection density on neutral path space without stochastic integrals](selection-density-on-neutral-path-space-no-stoch.md)
+- [Selection path measure by exponential change of measure](selection-path-measure-by-exponential-change-of.md)
+- [Tilted path measure on a canonical space](tilted-path-measure-on-a-canonical-space-generic.md)

@@ -1,0 +1,3 @@
+# One-sided correction on a step
+
+Let $g > 0$ and let a numerical flux $\mathcal F$ be consistent on wet states: $\mathcal F((h, hu), (h, hu)) = (hu,\ hu^2 + g h^2/2)$ for every $h > 0$ and $u$. Consider a lake at rest over a step: bed heights $z_L < z_R$, a common free surface $\eta = h_L + z_L = h_R + z_R$ with $\max(z_L, z_R) < \eta$, and zero discharges $h_L u_L = h_R u_R = 0$. Evaluate $\mathcal F$ at the hydrostatically reconstructed face states $(h', h' u)$, with $h' = \max(0, h + z - \max(z_L, z_R))$ on each side. Then the momentum component of this uncorrected interface flux equals $g h_R^2/2$ and is strictly less than $g h_L^2/2$.

@@ -6,4 +6,4 @@ So the local norm alone certifies that a Newton step of local length less than $
 
 ## Sources
 
-- A. Nemirovski, *Interior Point Polynomial Time Methods in Convex Programming*, lecture notes (Georgia Tech, 2004); author PDF at <https://www2.isye.gatech.edu/~nemirovs/Lect_IPM.pdf>, Section 2.2, item I ("the open unit Dikin ellipsoid $W_1(x)$ is contained in $Q$").
+- A. Nemirovski, *Interior Point Polynomial Time Methods in Convex Programming*, Spring Semester 1996 lecture notes, [author PDF](https://www2.isye.gatech.edu/~nemirovs/Lect_IPM.pdf), §2.2, item I, pp. 20–22 ("the open unit Dikin ellipsoid $W_1(x)$ is contained in $Q$").

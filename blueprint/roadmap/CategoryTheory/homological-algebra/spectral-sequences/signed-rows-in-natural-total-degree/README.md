@@ -1,0 +1,16 @@
+# Signed rows in natural total degree
+
+- [Signed Row](signed-row.md)
+- [Total Row](total-row.md)
+- [Total Row XIso](total-row-xiso.md)
+- [Total Row is Zero X](total-row-is-zero-x.md)
+- [Total Row d eq](total-row-d-eq.md)
+- [Total Row XIso inv comp d](total-row-xiso-inv-comp-d.md)
+- [Signed Row Map](signed-row-map.md)
+- [Total Row Map](total-row-map.md)
+- [Total Row Map f](total-row-map-f.md)
+- [Total Row Functor](total-row-functor.md)
+- [Total Row Zero Iso](total-row-zero-iso.md)
+- [Total Row Zero Iso hom f](total-row-zero-iso-hom-f.md)
+- [Total Row Zero Iso inv f](total-row-zero-iso-inv-f.md)
+- [Total Row Zero Iso hom naturality](total-row-zero-iso-hom-naturality.md)

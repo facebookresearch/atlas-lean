@@ -1,0 +1,3 @@
+# No-regret dynamics give approximate saddle points
+
+In a matrix game with payoff $u(p, q) = p^{\mathsf T} A q$ to the row player, let $p_1, \dots, p_T$ and $q_1, \dots, q_T$ ($T \ge 1$) be mixed strategies. Suppose $\frac{1}{T}\sum_t u(x, q_t) - \frac{1}{T}\sum_t u(p_t, q_t) \le \varepsilon_{\mathrm{row}}$ for every mixed $x$ and $\frac{1}{T}\sum_t u(p_t, q_t) - \frac{1}{T}\sum_t u(p_t, y) \le \varepsilon_{\mathrm{col}}$ for every mixed $y$. Then the average strategies $\bar p = \frac{1}{T}\sum_t p_t$ and $\bar q = \frac{1}{T}\sum_t q_t$ satisfy $u(x, \bar q) - u(\bar p, y) \le \varepsilon_{\mathrm{row}} + \varepsilon_{\mathrm{col}}$ for all mixed $x$, $y$.

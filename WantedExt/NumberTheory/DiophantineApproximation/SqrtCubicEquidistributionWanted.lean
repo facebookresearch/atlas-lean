@@ -15,6 +15,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Topology.UniformSpace.UniformConvergence
+public import MathlibExt.NumberTheory.DiophantineApproximation.DistRoundPowFourierExpansion
+public import MathlibExt.NumberTheory.DiophantineApproximation.SquarePyramidalEquidistribution
 
 /-! # Square roots of cubic polynomials modulo one
 
@@ -92,50 +94,6 @@ public theorem_wanted exists_sqrt_cubic_equidistributed_mod_one {a b c d : ℝ} 
           C * (|(γ : ℝ)| ^ (1 / 2 : ℝ) * (N : ℝ) ^ (3 / 4 : ℝ) + |(γ : ℝ)| * (N : ℝ) ^ (1 / 2 : ℝ) +
             |(γ : ℝ)| ^ (-(1 / 2) : ℝ) * (N : ℝ) ^ (1 / 4 : ℝ) + 1)
 
-
-/-- **Square pyramidal number.** For a natural number $n$, the $n$-th square pyramidal number
-is $P_n = 1^2 + 2^2 + \dots + n^2 = \sum_{i=1}^{n} i^2$ (so $P_0 = 0$).
-
-Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
-Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
-(2026), Article 26.5.5, equation (defn: square pyramidal number) of arXiv:2412.10097v2. -/
-def squarePyramidalNumber (n : ℕ) : ℕ :=
-  ∑ i ∈ Finset.Icc 1 n, i ^ 2
-
-/-- **Distance from a square pyramidal number to the nearest square.** For a natural number
-$n$, let $P_n$ be the $n$-th square pyramidal number and $s = \lfloor \sqrt{P_n} \rfloor$. The
-distance from $P_n$ to the nearest square is
-$$a_n = \min\bigl(P_n - s^2, (s + 1)^2 - P_n\bigr).$$
-Since $s^2 \le P_n < (s + 1)^2$, this is $a_n = |P_n - y_n^2|$, where $y_n^2$ is the square
-nearest to $P_n$.
-
-No ties occur, since the midpoint $m^2 + m + 1/2$ of two consecutive squares is never an integer.
-
-Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
-Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
-(2026), Article 26.5.5, equation (a_n first definition) of arXiv:2412.10097v2 (OEIS A351830). -/
-def squarePyramidalSquareDistance (n : ℕ) : ℕ :=
-  min (squarePyramidalNumber n - Nat.sqrt (squarePyramidalNumber n) ^ 2)
-    ((Nat.sqrt (squarePyramidalNumber n) + 1) ^ 2 - squarePyramidalNumber n)
-
-/-- **Small square pyramidal numbers and their distances to squares.** Let $P_n$ be the $n$-th
-square pyramidal number and $a_n$ the distance from $P_n$ to the nearest square. Then
-$P_1, P_2, P_3, P_4$ are $1, 5, 14, 30$; $a_2 = 1$ (since $P_2 = 5$ and the nearest square is
-$4$); $P_{24} = 4900 = 70^2$; and $a_{24} = 0$ (the cannonball solution).
-
-Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
-Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
-(2026), Article 26.5.5, Introduction. -/
-theorem squarePyramidalSquareDistance_examples :
-    (List.range 4).map (fun i => squarePyramidalNumber (i + 1)) = [1, 5, 14, 30] ∧
-      squarePyramidalSquareDistance 2 = 1 ∧ squarePyramidalNumber 24 = 4900 ∧
-      squarePyramidalSquareDistance 24 = 0 := by
-  have h2 : squarePyramidalNumber 2 = 5 := by decide
-  have h24 : squarePyramidalNumber 24 = 4900 := by decide
-  have s2 : Nat.sqrt 5 = 2 := (Nat.eq_sqrt.2 ⟨by norm_num, by norm_num⟩).symm
-  have s24 : Nat.sqrt 4900 = 70 := (Nat.eq_sqrt.2 ⟨by norm_num, by norm_num⟩).symm
-  refine ⟨by decide, ?_, h24, ?_⟩ <;> simp [squarePyramidalSquareDistance, h2, h24, s2, s24]
-
 /-- **Average distance from square pyramidal numbers to the nearest square.** Let $a_n$ be the
 distance from the $n$-th square pyramidal number to the nearest square, and for real $x \ge 1$
 let $A(x) = \frac{1}{x} \sum_{1 \le n \le x} a_n$. There is a real constant $C$ such that for
@@ -168,61 +126,6 @@ public theorem_wanted squarePyramidalSquareDistance_moment_asymptotic (k : ℕ) 
           x ^ (3 / 2 * (k : ℝ) + 1) /
             ((3 : ℝ) ^ ((k : ℝ) / 2) * (3 / 2 * (k : ℝ) + 1) * ((k : ℝ) + 1))| ≤
         C * x ^ (3 / 2 * (k : ℝ) + 3 / 4)
-
-/-- **The distance from the square root of a square pyramidal number to the nearest integer is
-uniformly distributed.** Let $P_n$ be the $n$-th square pyramidal number, write
-$\|x\| = |x - \operatorname{round}(x)|$ for the distance from a real $x$ to the nearest integer,
-and let $(y_n)_{n \ge 0}$ be natural numbers such that $|P_n - y_n^2| \le |P_n - z^2|$ for all
-natural numbers $n$ and $z$ (so $y_n^2$ is a square nearest to $P_n$). Put
-$d_n = |\sqrt{P_n} - y_n|$. Then $d_n = \|\sqrt{P_n}\|$ and $d_n \le 1/2$ for every $n \ge 0$,
-and $(d_n)_{n \ge 1}$ is uniformly distributed in $[0, 1/2]$: for all real $\alpha, \beta$ with
-$0 \le \alpha < \beta \le 1/2$,
-$$\lim_{N \to \infty} \frac{1}{N}
-\#\{1 \le n \le N : \alpha \le d_n \le \beta\} = 2(\beta - \alpha).$$
-
-The source shows that $y_n$ is unique, and takes the limit over real $x \to \infty$, which is
-equivalent to the limit along integers $N$.
-
-Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
-Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
-(2026), Article 26.5.5, Proposition 9 (`jis-2026-26.5.5-prop-9`). -/
-public theorem_wanted squarePyramidal_dist_nearest_square_root_equidistributed (y : ℕ → ℕ)
-    (hy : ∀ n z : ℕ, |(squarePyramidalNumber n : ℤ) - (y n : ℤ) ^ 2| ≤
-      |(squarePyramidalNumber n : ℤ) - (z : ℤ) ^ 2|) :
-    (∀ n : ℕ, |Real.sqrt (squarePyramidalNumber n) - y n| =
-        |Real.sqrt (squarePyramidalNumber n) - round (Real.sqrt (squarePyramidalNumber n))| ∧
-      |Real.sqrt (squarePyramidalNumber n) - y n| ≤ 1 / 2) ∧
-    ∀ α β : ℝ, 0 ≤ α → α < β → β ≤ 1 / 2 →
-      Tendsto (fun N : ℕ =>
-        ((Finset.filter (fun n : ℕ => |Real.sqrt (squarePyramidalNumber n) - y n| ∈ Set.Icc α β)
-          (Finset.Icc 1 N)).card : ℝ) / (N : ℝ)) atTop (nhds (2 * (β - α)))
-
-/-- **Fourier expansion of a power of the distance to the nearest integer.** Let $k$ be a
-positive integer, let $g(u) = |u - \operatorname{round}(u)|^k$ be the $k$-th power of the
-distance from a real $u$ to the nearest integer, let $e(x) = e^{2\pi i x}$, and for every
-integer $m$ let $c(m) = \int_0^1 g(u)\, e(-mu)\, du$. Then $c(0) = 1/(2^k (k + 1))$, the mean of
-$g$ over a period; there is a real constant $C$ with $|c(m)| \le C / m^2$ for every integer
-$m \ne 0$; the series $\sum_{m \in \mathbb{Z}} |c(m)|$ converges; the symmetric partial sums
-$\sum_{|m| \le H} c(m)\, e(mu)$ converge to $g(u)$ uniformly in real $u$ as $H \to \infty$; and
-there is a real constant $C'$ such that for every integer $H \ge 1$ and every real $u$,
-$$\Bigl|g(u) - c(0) - \sum_{0 < |m| \le H} c(m)\, e(mu)\Bigr| \le \frac{C'}{H}.$$
-
-Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
-Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
-(2026), Article 26.5.5, Lemma 10 (`jis-2026-26.5.5-lem-10`). -/
-public theorem_wanted dist_round_pow_fourier_expansion (k : ℕ) (hk : 1 ≤ k) :
-    let g : ℝ → ℝ := fun u => |u - round u| ^ k
-    let c : ℤ → ℂ := fun m => ∫ u in (0 : ℝ)..1,
-      (g u : ℂ) * Complex.exp (-(2 * Real.pi * Complex.I * (m : ℂ) * (u : ℂ)))
-    c 0 = ((1 / (2 ^ k * ((k : ℝ) + 1)) : ℝ) : ℂ) ∧
-      (∃ C : ℝ, ∀ m : ℤ, m ≠ 0 → ‖c m‖ ≤ C / (m : ℝ) ^ 2) ∧
-      Summable (fun m : ℤ => ‖c m‖) ∧
-      TendstoUniformly (fun (H : ℕ) (u : ℝ) => ∑ m ∈ Finset.Icc (-(H : ℤ)) H,
-          c m * Complex.exp (2 * Real.pi * Complex.I * (m : ℂ) * (u : ℂ)))
-        (fun u => (g u : ℂ)) atTop ∧
-      ∃ C : ℝ, ∀ H : ℕ, 1 ≤ H → ∀ u : ℝ,
-        ‖(g u : ℂ) - c 0 - ∑ m ∈ (Finset.Icc (-(H : ℤ)) H).erase 0,
-            c m * Complex.exp (2 * Real.pi * Complex.I * (m : ℂ) * (u : ℂ))‖ ≤ C / H
 
 /-- **Power sums of the distance from the square root of a square pyramidal number to the nearest
 integer.** Let $P_n$ be the $n$-th square pyramidal number and write

@@ -32,3 +32,10 @@
 ## Local existence and compact continuation
 
 - [Global forward existence of the Arrhenius reactor path](exists-arrhenius-path.md)
+
+## The dimensionless adiabatic reactor
+
+- [Nondimensionalization of the adiabatic stirred-tank reactor](nondimensionalization-of-the-adiabatic-reactor.md)
+- [Steady states and an energy invariant of the dimensionless adiabatic reactor](steady-states-of-the-dimensionless-adiabatic-reactor.md)
+- [Unique steady state of the adiabatic reactor when $\beta b < 4$](unique-steady-state-of-the-adiabatic-reactor.md)
+- [Global dynamics of nonisothermal stirred tanks](global-dynamics-of-nonisothermal-stirred-tanks.md)

@@ -15,9 +15,12 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.PellLucasNumber
+public import MathlibExt.NumberTheory.FibonacciCompanionCompositionSum
+public import MathlibExt.NumberTheory.GibonacciCompositionSum
 public import MathlibExt.NumberTheory.GibonacciNumber
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
+public import MathlibExt.NumberTheory.PellPellLucasCompositionSumsSqrtTwo
 
 namespace MetaMathlibExt
 
@@ -163,30 +166,6 @@ public theorem_wanted fib_mul_add_eq_toeplitzHessenberg_det_iff (ℓ m : ℕ) (h
           else 0)) ↔
       (ℓ = 1 ∧ m = 3) ∨ (ℓ = 2 ∧ m = 0)
 
-/-- **Pell and Pell–Lucas numbers as composition sums with $\sqrt 2$ weights.** Let $P_n$ be the
-Pell numbers and $Q_n$ the Pell–Lucas numbers ($Q_0 = Q_1 = 2$, $Q_{k+2} = 2Q_{k+1} + Q_k$). For
-every $n \ge 1$, with $c$ running over the compositions of $n$ (ordered tuples of positive
-integers with sum $n$) and the products running over the parts $j$ of $c$, the real number
-$$\sum_c \prod_{j \in c} (j - 1) (\sqrt 2)^{j-2}$$
-equals $\sqrt 2\, P_{n-1}$ for odd $n$ and $Q_{n-1}/2$ for even $n$ (identity (10)), and
-$$\sum_c \prod_{j \in c} \frac{j + 1}{(\sqrt 2)^j}$$
-equals $P_{n+1}/\sqrt 2$ for odd $n$ and $Q_{n+1}/4$ for even $n$ (identity (11)).
-
-In the source both are multinomial sums; the weight of the first vanishes on parts $1$, so its
-sum runs over the compositions of $n$ without parts $1$.
-
-Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
-Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 2 (`integers-2025-A97-cor-2`). -/
-public theorem_wanted pell_pellLucas_composition_sums_sqrt_two (n : ℕ) (hn : 1 ≤ n) :
-    ∑ c : Composition n, ∏ i : Fin c.length,
-        ((c.blocksFun i : ℝ) - 1) * Real.sqrt 2 ^ (c.blocksFun i - 2) =
-      (if Odd n then Real.sqrt 2 * (pellNumber (n - 1) : ℝ)
-        else (pellLucas (n - 1) : ℝ) / 2) ∧
-    ∑ c : Composition n, ∏ i : Fin c.length,
-        ((c.blocksFun i : ℝ) + 1) / Real.sqrt 2 ^ c.blocksFun i =
-      (if Odd n then (pellNumber (n + 1) : ℝ) / Real.sqrt 2
-        else (pellLucas (n + 1) : ℝ) / 4)
-
 /-- **Toeplitz–Hessenberg determinants with Oresme entries.** For numbers $a_0, a_1, \dots, a_n$,
 let $\det(a_0; a_1, \dots, a_n)$ be the determinant of the $n \times n$ matrix whose $(i, j)$
 entry is $a_{i-j+1}$ if $j \le i + 1$ and $0$ otherwise, so that $a_0$ fills the superdiagonal.
@@ -300,32 +279,6 @@ public theorem_wanted horadam_composition_sum_recurrence (p q r s : ℂ)
         ∏ i : Fin c.length,
           ((q + 2 * p * s / (r - q)) * (c.blocksFun i : ℂ) - 2 * p * s / (r - q))
 
-/-- **Translates of a Gibonacci sequence as composition sums.** Let $y$ and $z$ be non-negative
-integers, not both zero, and let $(G_k)$ be the Gibonacci sequence with $G_0 = y$ and $G_1 = z$.
-Let $m \ge 3$ and $n \ge 1$, and let $D$ be a complex number with
-$D^2 = (-1)^m (y^2 + yz - z^2)$. Then
-$$G_{n+m} = \frac{(G_{m+2} + G_m + 2D)^{n-1}}{G_{m+1}^{n-2} (G_m + D)^n} \sum_c
-\left(-\frac{(G_m + D)^2}{G_{m+2} + G_m + 2D}\right)^{n-r} \prod_{i=1}^{r} (D c_i + G_m),$$
-where the sum runs over all compositions $c = (c_1, \dots, c_r)$ of $n$ (tuples of positive
-integers with $c_1 + \dots + c_r = n$) and $r$ is the number of parts of $c$.
-
-The two square roots $D$ give the two sign choices of identity (28) of the source.
-
-Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
-Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Theorem 2 (`integers-2025-A97-thm-2`). -/
-public theorem_wanted gibonacci_add_eq_composition_sum (y z : ℤ) (hy : 0 ≤ y) (hz : 0 ≤ z)
-    (hyz : y ≠ 0 ∨ z ≠ 0) (m : ℕ) (hm : 3 ≤ m) (D : ℂ)
-    (hD : D ^ 2 = (-1) ^ m * ((y : ℂ) ^ 2 + y * z - z ^ 2)) (n : ℕ) (hn : 1 ≤ n) :
-    (gibonacciNumber y z (n + m) : ℂ) =
-      ((gibonacciNumber y z (m + 2) : ℂ) + gibonacciNumber y z m + 2 * D) ^ (n - 1) /
-        ((gibonacciNumber y z (m + 1) : ℂ) ^ ((n : ℤ) - 2) *
-          ((gibonacciNumber y z m : ℂ) + D) ^ n) *
-      ∑ c : Composition n,
-        (-((gibonacciNumber y z m : ℂ) + D) ^ 2 /
-          ((gibonacciNumber y z (m + 2) : ℂ) + gibonacciNumber y z m + 2 * D)) ^
-            (n - c.length) *
-        ∏ i : Fin c.length, (D * (c.blocksFun i : ℂ) + gibonacciNumber y z m)
-
 /-- **Multiples of a shifted Gibonacci sequence that are Toeplitz–Hessenberg determinants.** Let
 $y$ and $z$ be non-negative integers, not both zero, and let $(G_k)$ be the Gibonacci sequence
 with $G_0 = y$ and $G_1 = z$. For complex numbers $a, b, c, d$ and $n \ge 1$, let
@@ -428,21 +381,6 @@ public theorem_wanted fib_lucas_add_eq_composition_sum (m n : ℕ) (hn : 1 ≤ n
           (-((lucasNumber m : ℂ) + rho) ^ 2 /
             ((lucasNumber (m + 2) : ℂ) + lucasNumber m + 2 * rho)) ^ (n - c.length) *
           ∏ j : Fin c.length, (rho * (c.blocksFun j : ℂ) + lucasNumber m))
-
-/-- **Companion composition-sum formula for $F_{n+3}$.** Let $F_k$ be the Fibonacci numbers. For
-every $n \ge 1$,
-$$\frac{5}{9} F_{n+3} = \left(-\frac{1}{3}\right)^n \sum \prod_{i=1}^{r} (5 c_i - 10),$$
-where the sum runs over all compositions $(c_1, \dots, c_r)$ of $n$ (tuples of positive integers
-with $c_1 + \dots + c_r = n$).
-
-This is the companion of identity (13) of the source: identity (30) with $m = 3$ and the square
-root $\lambda = -1$.
-
-Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
-Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 5 (`integers-2025-A97-cor-5`). -/
-public theorem_wanted fib_add_three_companion_composition_sum (n : ℕ) (hn : 1 ≤ n) :
-    5 / 9 * (Nat.fib (n + 3) : ℚ) =
-      (-1 / 3) ^ n * ∑ c : Composition n, ∏ i : Fin c.length, (5 * (c.blocksFun i : ℚ) - 10)
 
 /-- **Gibonacci subsequences $G_{2n+m}$ as composition sums.** Let $y$ and $z$ be non-negative
 integers, not both zero, and let $(G_k)$ be the Gibonacci sequence with $G_0 = y$ and $G_1 = z$.

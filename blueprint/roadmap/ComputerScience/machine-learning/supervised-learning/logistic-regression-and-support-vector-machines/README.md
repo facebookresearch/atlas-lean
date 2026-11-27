@@ -15,6 +15,7 @@ With a kernel $k$, the linear predictor $x \mapsto x^{\mathsf T} w$ is replaced 
 
 - [Soft-margin support vector machine objective with offset](svm-risk.md)
 - [The support vector expansion](exists-eq-kernel-expansion-of-is-minimiz.md)
+- [Hard-margin SVM and margin-based sample complexity](hard-margin-svm-and-margin-based-sample-complexity.md)
 
 ## Related topics
 

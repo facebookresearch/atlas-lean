@@ -60,7 +60,8 @@ statements only: no trajectory and no transfer optimality.
 ## ii. Key results
 
 - `PrefixFeasible.terminal`: the prefix check contains the terminal check.
-- `PrefixFeasible.lo_le_stock`: a feasible schedule never goes below the floor.
+- `PrefixFeasible.lo_le_stock`: a feasible schedule never goes below the floor at a prefix
+  `t ≤ N`.
 - `prefixFeasible_iff_reserve_deducted_once`: the reserve in the floor is one deduction from
   the initial stock.
 - `stock_reserve_every_step`: a per-step reserve deduction removes the reserve `t` times.
@@ -148,8 +149,8 @@ lemma PrefixFeasible.terminal {lo hi s₀ : ι → ℝ} {r : ι → NNReal} {flo
     lo i + r i ≤ s₀ i + ∑ k ∈ range N, flow i k ∧ s₀ i + ∑ k ∈ range N, flow i k ≤ hi i := by
   exact h i N le_rfl
 
-/-- A prefix-feasible schedule never takes a stock below its floor, because the reserve is
-nonnegative. -/
+/-- A prefix-feasible schedule never takes a stock below its floor at a prefix `t ≤ N`, because the
+reserve is nonnegative. -/
 lemma PrefixFeasible.lo_le_stock {lo hi s₀ : ι → ℝ} {r : ι → NNReal} {flow : ι → ℕ → ℝ}
     {N : ℕ} (h : PrefixFeasible lo hi r s₀ flow N) (i : ι) {t : ℕ} (ht : t ≤ N) :
     lo i ≤ stock s₀ flow i t := by
@@ -225,7 +226,9 @@ def AdmissibleStageMasses (m₀ m₁ : ℕ → ℝ) (n : ℕ) : Prop :=
   (∀ k < n, 0 < m₁ k ∧ m₁ k ≤ m₀ k) ∧ ∀ k, k + 1 < n → m₀ (k + 1) ≤ m₁ k
 
 /-- The ideal velocity increment `ve log (m₀ k / m₁ k)` of burn `k`, from its start mass `m₀ k` to
-its end mass `m₁ k` at the exhaust speed `ve`. Read for admissible (positive) stage masses. -/
+its end mass `m₁ k` at the exhaust speed `ve`. Read for admissible (positive) stage masses; with the
+conventions `x / 0 = 0`, `log 0 = 0` and `log x = log |x|` it is `0` when `m₀ k = 0` or `m₁ k = 0`,
+and `ve log |m₀ k / m₁ k|` for masses of opposite signs. -/
 noncomputable def stageIncrement (ve : ℝ) (m₀ m₁ : ℕ → ℝ) (k : ℕ) : ℝ :=
   ve * Real.log (m₀ k / m₁ k)
 
@@ -376,12 +379,12 @@ lemma remaining_fraction_burns {fuel : ℝ → ℝ → ℝ} {ve : ℝ} (hzero : 
   | zero => simp [hzero]
   | succ n ih => rw [prod_range_succ, ih, sum_range_succ, hcomp]
 
-/-- **Fuel follows the cost, not the net change.** For a consumed-fraction functional that
-consumes nothing on a zero burn, composes burns at the exhaust speed `ve` and is monotone in
-delta-v: the burns consume `fuel ve (cost)`, the net change would give the smaller
-`fuel ve ‖net‖`, and a cost within the budget `B` consumes at most `fuel ve B`. No sign condition
-on `ve` is needed: the cost is a sum of norms, nonnegative for every `ve`, which only indexes the
-supplied functional. -/
+/-- **Fuel follows the cost, not the net change.** For a consumed-fraction functional that consumes
+nothing on a zero burn, composes burns at the exhaust speed `ve` and is monotone in delta-v: the
+burns consume `fuel ve (cost)`, the net change would give at most as much,
+`fuel ve ‖net‖ ≤ fuel ve (cost)`, and a cost within the budget `B` consumes at most `fuel ve B`. No
+sign condition on `ve` is needed: the cost is a sum of norms, nonnegative for every `ve`, which only
+indexes the supplied functional. -/
 lemma fuel_burnCost {E : Type*} [SeminormedAddCommGroup E] {fuel : ℝ → ℝ → ℝ} {ve B : ℝ}
     (hzero : fuel ve 0 = 0)
     (hcomp : ∀ d₁ d₂, (1 - fuel ve d₁) * (1 - fuel ve d₂) = 1 - fuel ve (d₁ + d₂))

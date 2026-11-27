@@ -124,10 +124,10 @@ def exteriorDerivative {U : Opens M} {p : ℕ} (α : RoughForm k E M U p) :
     (extChartAt 𝓘(k, E) x.val x.val)).compContinuousLinearMap
       (mfderiv 𝓘(k, E) 𝓘(k, E) (extChartAt 𝓘(k, E) x.val) x.val)
 
-/-- The basic laws of the displayed exterior derivative on smooth global forms:
-smoothness, linearity and `d² = 0`. A hypothesis class with no Kähler, Hodge,
-period or analytic-cycle content; its instances on smooth manifolds over `ℝ`
-or `ℂ` are requested in `ManifoldDifferentialFormsWanted`. -/
+/-- For a smooth manifold $M$ modelled on a normed space $E$ over a nontrivially normed field
+$k$, an instance asserts the basic laws of the exterior derivative `exteriorDerivative`
+(computed in charts) on smooth global forms: the exterior derivative of a smooth form is smooth,
+it is $k$-linear, and $d(dα) = 0$. -/
 class ExteriorTheory [IsManifold 𝓘(k, E) ∞ M] : Prop where
   smooth : ∀ p (α : GlobalForms k E M p), IsSmooth k E M (exteriorDerivative k E M α.val)
   add : ∀ p (α β : GlobalForms k E M p),

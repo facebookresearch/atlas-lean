@@ -6,3 +6,7 @@ Modules over rings and semirings: linear maps and equivalences, submodules and t
 - [Linear map](linear-map.md)
 - [Module over a semiring](module.md)
 - [Localization of a module at a multiplicatively closed subset](module-localization.md)
+- [Exact pair of maps and exact sequences of groups](exact-sequence-groups.md)
+- [Baer's criterion for injective modules](baer-criterion.md)
+- [Range of a linear map as a subspace of its target](range-linear-map.md)
+- [Quotient module](quotient-module.md)

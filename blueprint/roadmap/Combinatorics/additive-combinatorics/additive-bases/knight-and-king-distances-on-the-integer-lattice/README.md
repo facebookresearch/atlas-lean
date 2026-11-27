@@ -3,6 +3,7 @@
 - [Knight moves](knight-moves.md)
 - [King moves](king-moves.md)
 - [Piece distance on the integer lattice](piece-distance.md)
+- [Bounded reachability for generalized knights](exists-knight-path-on-box.md)
 - [Max-norm ball](max-norm-ball.md)
 - [Piece distance from a minimal fold](piece-distance-eq-of-mem-of-forall.md)
 - [King distance is the max norm](piece-distance-king-moves.md)

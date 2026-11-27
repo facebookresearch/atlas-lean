@@ -22,8 +22,9 @@ domination of that literal form current, rather than a free positivity label
 or a numeric oracle.
 
 `CurrentDifferentialTheory` (the differential of a current is again bounded) is
-a hypothesis class; its instance is requested in
-`WantedExt/AlgebraicGeometry/AnalyticCurrentsWanted.lean`.
+a hypothesis class; `currentDifferentialTheory` in
+`MathlibExt/AlgebraicGeometry/AnalyticCurrentsCurrentDifferentialTheory.lean`
+proves it.
 
 Reference: J.-P. Demailly and M. Păun, *Numerical characterization of the
 Kähler cone of a compact Kähler manifold*, Ann. of Math. 159 (2004),
@@ -73,8 +74,10 @@ def differentialFunctional {p : ℕ} (T : Current n M p) (h : p + 1 ≤ n * 2) :
     ((castFormLinear n M (by omega)).comp
       (d ℝ (Coordinates n) M (n * 2 - (p + 1))))
 
-/-- The differential of a current is again bounded. A hypothesis class; its
-instance is requested in `AnalyticCurrentsWanted`. -/
+/-- The differential of a current is again a current: an instance asserts that for every current $T$
+of degree $p$ on the compact complex manifold $M$ of dimension $n$ with $p + 1 \le 2n$, the
+distributional differential $\beta \mapsto (-1)^{p+1} T(d\beta)$ (`differentialFunctional`)
+satisfies the finite-seminorm bound `IsDistribution`, so that it is a current of degree $p + 1$. -/
 class CurrentDifferentialTheory : Prop where
   bounded : ∀ p (T : Current n M p) (h : p + 1 ≤ n * 2),
     IsDistribution n M (n * 2 - (p + 1)) (differentialFunctional n M T h)

@@ -32,7 +32,10 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.NumberTheory.Recurrences.JacobsthalOffsetIntegral
 public import MathlibExt.NumberTheory.Recurrences.KJacobsthal
+public import MathlibExt.NumberTheory.Recurrences.KJacobsthalGeneratingFunction
+public import MathlibExt.NumberTheory.Recurrences.KJacobsthalIntegralCompanionKJacobsthalCatalan
 
 namespace MetaMathlibExt
 
@@ -200,22 +203,6 @@ public theorem_wanted jacobsthalLucas_mul_eq_integral (ℓ n : ℕ) :
       1 / 2 ^ n * ∫ x in (-1 : ℝ)..1,
         (jL[1, ℓ] + 3 * (n + 1) * J[1, ℓ] * x) * (jL[1, ℓ] + 3 * J[1, ℓ] * x) ^ ((n : ℤ) - 1)
 
-/-- **Integral representation of Jacobsthal numbers with an offset.** Let $\ell$, $n$ and $r$ be
-natural numbers and let $J_n = U_n(1, -2)$ and $j_n = V_n(1, -2)$ be the Jacobsthal and
-Jacobsthal–Lucas numbers (the case $k = 1$). Then
-$$J_{\ell n + r} = \frac{1}{2^{n+1}} \int_{-1}^{1}
-(n J_\ell j_r + J_r j_\ell + 3(n+1) J_\ell J_r x) (j_\ell + 3 J_\ell x)^{n-1} \, dx.$$
-Here $n - 1$ is an integer exponent, so for $n = 0$ the power is a reciprocal.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Corollary 4 (`integers-2025-A74-cor-4`). -/
-public theorem_wanted jacobsthal_mul_add_eq_integral (ℓ n r : ℕ) :
-    (lucasU (kJacobsthalParams 1) (ℓ * n + r) : ℝ) =
-      1 / 2 ^ (n + 1) * ∫ x in (-1 : ℝ)..1,
-        (n * J[1, ℓ] * jL[1, r] + J[1, r] * jL[1, ℓ] +
-            3 * (n + 1) * J[1, ℓ] * J[1, r] * x) * (jL[1, ℓ] + 3 * J[1, ℓ] * x) ^ ((n : ℤ) - 1)
-
 /-- **Integral representation of the Jacobsthal-Lucas numbers along arithmetic progressions.**
 Let $J_m = U_m(1, -2)$ be the Jacobsthal numbers and $j_m = V_m(1, -2)$ the Jacobsthal-Lucas
 numbers ($j_0 = 2$, $j_1 = 1$, $j_{m+2} = j_{m+1} + 2j_m$). For all natural numbers $\ell$, $n$
@@ -249,43 +236,6 @@ Theorem 9 (`integers-2025-A74-thm-9`). -/
 public theorem_wanted two_mul_companionKJacobsthal (k : ℕ) (a b : ℤ) (n : ℕ) :
     2 * companionKJacobsthal k a b n =
       a * lucasV (kJacobsthalParams k) n + (2 * b - a * k) * lucasU (kJacobsthalParams k) n
-
-/-- **Generating function of the companion $k$-Jacobsthal numbers.** For every natural number $k$
-and all integers $a, b$, the companion $k$-Jacobsthal numbers $\mathcal{J}_{k,n} =
-\mathcal{J}_{k,n}(a, b)$ satisfy, in the ring $\mathbb{Z}[[x]]$ of formal power series,
-$$\Bigl(\sum_{n \ge 0} \mathcal{J}_{k,n} x^n\Bigr)(1 - kx - 2x^2) = a + (b - ak)x.$$
-
-This is the identity $\sum_{n \ge 0} \mathcal{J}_{k,n} x^n = \frac{a + (b - ak)x}{1 - kx - 2x^2}$
-with the denominator cleared.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Theorem 10 (`integers-2025-A74-thm-10`). -/
-public theorem_wanted companionKJacobsthal_generatingFunction (k : ℕ) (a b : ℤ) :
-    PowerSeries.mk (companionKJacobsthal k a b) *
-        (1 - PowerSeries.C (k : ℤ) * PowerSeries.X - PowerSeries.C 2 * PowerSeries.X ^ 2) =
-      PowerSeries.C a + PowerSeries.C (b - a * k) * PowerSeries.X
-
-/-- **Catalan's identity for the companion $k$-Jacobsthal numbers.** Let $k$ be a natural number,
-$a, b$ integers, $\mathcal{J}_{k,m} = \mathcal{J}_{k,m}(a, b)$ the companion $k$-Jacobsthal numbers
-and $J_{k,m} = U_m(k, -2)$ the $k$-Jacobsthal numbers. For all natural numbers $r \le n$,
-$$
-\mathcal{J}_{k,n-r}\,\mathcal{J}_{k,n+r} - \mathcal{J}_{k,n}^2 =
-\bigl(a^2 (k^2 + 8) - (2b - ak)^2\bigr)\,(-2)^{n-r-2}\,J_{k,r}^2
-$$
-in $\mathbb{Q}$, where $(-2)^{n-r-2}$ is an integer power.
-
-With $\Delta_k = \sqrt{k^2 + 8}$, the first factor on the right equals
-$(2b - ak + a\Delta_k)(ak - 2b + a\Delta_k)$, the form in which the source states it.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Theorem 11 (`integers-2025-A74-thm-11`). -/
-public theorem_wanted companionKJacobsthal_catalan (k : ℕ) (a b : ℤ) (n r : ℕ) (hrn : r ≤ n) :
-    ((companionKJacobsthal k a b (n - r) * companionKJacobsthal k a b (n + r) -
-        companionKJacobsthal k a b n ^ 2 : ℤ) : ℚ) =
-      ((a ^ 2 * ((k : ℤ) ^ 2 + 8) - (2 * b - a * k) ^ 2 : ℤ) : ℚ) *
-        (-2 : ℚ) ^ ((n : ℤ) - r - 2) * (lucasU (kJacobsthalParams k) r : ℚ) ^ 2
 
 /-- **Integral representation of the companion $k$-Jacobsthal numbers.** Let $k$, $\ell$, $n$ be
 natural numbers and $a, b$ integers. Write $\mathcal{J}_{k,m} = \mathcal{J}_{k,m}(a, b)$ for the

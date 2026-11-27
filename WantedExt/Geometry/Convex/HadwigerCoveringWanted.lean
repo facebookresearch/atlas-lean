@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Geometry.Convex.IlluminationFiniteMinimum
+public import MathlibExt.Geometry.Convex.IlluminationInteriorCovering
 import Batteries.Util.ProofWanted
 
 /-!
@@ -107,17 +108,6 @@ equivalence, whose Lean proof is also requested here. -/
 theorem_wanted directionalExternalIlluminationNumbersEqual (n : ℕ) (hn : 0 < n)
     (K : Set (EuclideanSpace ℝ (Fin n))) (hK : IsConvexBody K) :
     directionalIlluminationNumber K = externalPointIlluminationNumber K
-
-/-- **Directional illumination number equals the interior-translate covering number.** For every
-$n \ge 1$ and every convex body $K \subseteq \mathbb{R}^n$, the directional illumination number of
-$K$ equals the least $q$ such that $K$ is covered by $q$ translates of its interior
-$\operatorname{int} K$. Both sides take the value $\infty$ when no finite family exists.
-
-Source: Arman, Kaire and Prymak, arXiv:2510.25968v3, introduction; follows from the
-finite-count equivalence, whose Lean proof is also requested here. -/
-theorem_wanted directionalInteriorCoveringNumbersEqual (n : ℕ) (hn : 0 < n)
-    (K : Set (EuclideanSpace ℝ (Fin n))) (hK : IsConvexBody K) :
-    directionalIlluminationNumber K = translateCoveringNumber K (interior K)
 
 /-- **Uniform covering by interior translates and uniform directional illumination.** For
 integers $n \ge 1$ and $q \ge 0$, every convex body in $\mathbb{R}^n$ (a compact convex set with

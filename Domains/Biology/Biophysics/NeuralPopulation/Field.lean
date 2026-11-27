@@ -46,7 +46,9 @@ with gain `fE` differentiable at the E input with derivative `fE'`,
 the partial derivatives are
 `∂E/∂x = (-1 - rE * fE + (1 - rE * x) * fE' * wEE) / tauE` and
 `∂E/∂y = ((1 - rE * x) * fE' * (-wEI)) / tauE`. The `-rE * fE` term
-comes from differentiating the refractory factor `1 - rE * x`. -/
+comes from differentiating the refractory factor `1 - rE * x`. In the
+model `tauE > 0`; at `tauE = 0` both sides are `0` by the convention
+`q / 0 = 0`. -/
 theorem rate_field_E_deriv {tauE rE x y hE wEI wEE : ℝ} {fE : ℝ → ℝ} {fE' : ℝ}
     (hfE : HasDerivAt fE fE' (hE - wEI * y + wEE * x)) :
     HasDerivAt (fun x' => (-x' + (1 - rE * x') * fE (hE - wEI * y + wEE * x')) / tauE)
@@ -105,7 +107,8 @@ theorem rate_field_E_deriv {tauE rE x y hE wEI wEE : ℝ} {fE : ℝ → ℝ} {fE
 `I(x, y) = (-y + (1 - rI * y) * fI (hI + wIE * x - wII * y)) / tauI`
 with gain derivative `fI'` at the I input, the partial derivatives are
 `∂I/∂y = (-1 - rI * fI + (1 - rI * y) * fI' * (-wII)) / tauI` and
-`∂I/∂x = ((1 - rI * y) * fI' * wIE) / tauI`. -/
+`∂I/∂x = ((1 - rI * y) * fI' * wIE) / tauI`. In the model `tauI > 0`; at
+`tauI = 0` both sides are `0` by the convention `q / 0 = 0`. -/
 theorem rate_field_I_deriv {tauI rI x y hI wIE wII : ℝ} {fI : ℝ → ℝ} {fI' : ℝ}
     (hfI : HasDerivAt fI fI' (hI + wIE * x - wII * y)) :
     HasDerivAt (fun y' => (-y' + (1 - rI * y') * fI (hI + wIE * x - wII * y')) / tauI)

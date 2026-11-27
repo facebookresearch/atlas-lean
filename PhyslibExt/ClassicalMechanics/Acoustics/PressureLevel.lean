@@ -46,7 +46,8 @@ namespace Acoustics
 /-! ## A. Pressure and intensity levels -/
 
 /-- Intensity level equals the 20-log pressure level at matched
-impedance. -/
+impedance: for positive `p_rms`, `p_ref` and `Z`, the intensity level of
+`p_rms ^ 2 / Z` against `p_ref ^ 2 / Z` is `20 * log10 (p_rms / p_ref)`. -/
 theorem intensityLevel_eq_pressureLevel {p_rms p_ref Z : ℝ}
     (hp : 0 < p_rms) (hpref : 0 < p_ref) (hZ : 0 < Z) :
     intensityLevel (p_ref ^ 2 / Z) (p_rms ^ 2 / Z)

@@ -9,3 +9,8 @@
 - [Powers of I − E are signed powers of the forward difference](iterate-sub-shift-eq-neg-one-pow-mul-fwd.md)
 - [Consistency unrolls along a row](consistent-eq-iterate-sub-shift.md)
 - [Complete monotonicity of the diagonal rates](completely-monotone-diag-of-consistent.md)
+
+- [Uniformity after lifting an edge of a random recursive tree](lifting-an-edge-of-a-uniform-random-recursive-tr.md)
+- [Exponential edge lifting constructs the finite Bolthausen–Sznitman coalescent](lifting-the-edges-of-a-random-recursive-tree-at.md)
+
+- [The Beta-coalescent on a finite sample](beta-2-alpha-alpha-coalescent-n-sample-chains-pa.md)

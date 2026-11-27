@@ -22,8 +22,8 @@ import Mathlib.Tactic.Ring
 # Gauss–Kuzmin masses and characteristic numbers
 
 This module defines the Gauss–Kuzmin mass and characteristic number of a digit string and
-proves that swapping the first two distinct digits of a positive triple changes its
-characteristic number.
+proves the matrix formulas for reversal and one-digit extensions. It also proves that swapping
+the first two distinct digits of a positive triple changes its characteristic number.
 -/
 
 namespace MetaMathlibExt
@@ -65,6 +65,46 @@ equation (2.8). -/
 theorem convergentMatrix_cons (t : ℕ) (a : List ℕ) :
     convergentMatrix (t :: a) = !![0, 1; 1, (t : ℤ)] * convergentMatrix a := by
   simp [convergentMatrix]
+
+set_option linter.unusedVariables false in
+/-- **Convergent matrices of reversed and extended strings.** Let $a = (a_1, \ldots, a_n)$ be a
+finite string of positive integers with convergent matrix
+$C(a) = \begin{pmatrix} p' & p \\ q' & q \end{pmatrix}$, let $t \ge 1$ be an integer, and write
+$\overleftarrow{a} = (a_n, \ldots, a_1)$ for the reversed string. Then
+(i) $C(\overleftarrow{a}) = \begin{pmatrix} p' & q' \\ p & q \end{pmatrix}$;
+(ii) $C(a_1, \ldots, a_n, t) = \begin{pmatrix} p & p' + tp \\ q & q' + tq \end{pmatrix}$;
+(iii) $C(t, a_1, \ldots, a_n) = \begin{pmatrix} q' & q \\ p' + tq' & p + tq \end{pmatrix}$;
+(iv) $C(t, a_n, \ldots, a_1) = \begin{pmatrix} p & q \\ p' + tp & q' + tq \end{pmatrix}$.
+
+Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
+Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
+Lemma 2.2 (`integers-2025-A89-lem-2-2`). -/
+theorem convergentMatrix_reverse_append_cons (a : List ℕ) (ha : (∀ x ∈ a, 0 < x))
+    (t : ℕ) (ht : 1 ≤ t) :
+    convergentMatrix a.reverse = !![convergentMatrix a 0 0,
+        convergentMatrix a 1 0; convergentMatrix a 0 1, convergentMatrix a 1 1] ∧
+      convergentMatrix (a ++ [t]) = !![convergentMatrix a 0 1, convergentMatrix a 0 0 + t *
+          convergentMatrix a 0 1; convergentMatrix a 1 1, convergentMatrix a 1 0 + t *
+          convergentMatrix a 1 1] ∧
+      convergentMatrix (t :: a) = !![convergentMatrix a 1 0,
+          convergentMatrix a 1 1; convergentMatrix a 0 0 + t *
+          convergentMatrix a 1 0, convergentMatrix a 0 1 + t * convergentMatrix a 1 1] ∧
+      convergentMatrix (t :: a.reverse) =
+        !![convergentMatrix a 0 1, convergentMatrix a 1 1; convergentMatrix a 0 0 + t *
+            convergentMatrix a 0 1, convergentMatrix a 1 0 + t * convergentMatrix a 1 1] := by
+  have happend (b : List ℕ) (s : ℕ) :
+      convergentMatrix (b ++ [s]) = convergentMatrix b * !![0, 1; 1, (s : ℤ)] := by
+    simp [convergentMatrix]
+  have hrev (b : List ℕ) : convergentMatrix b.reverse = (convergentMatrix b).transpose := by
+    induction b with
+    | nil => simp [convergentMatrix_nil]
+    | cons s b ih =>
+      have hsym : !![0, 1; 1, (s : ℤ)].transpose = !![0, 1; 1, (s : ℤ)] := Matrix.eta_fin_two _
+      rw [List.reverse_cons, happend, convergentMatrix_cons, Matrix.transpose_mul, hsym, ih]
+  simp only [happend, convergentMatrix_cons, hrev]
+  refine ⟨Matrix.eta_fin_two _, ?_, ?_, ?_⟩ <;>
+    ext i j <;> fin_cases i <;> fin_cases j <;>
+    simp [Matrix.mul_apply, Fin.sum_univ_two, mul_comm]
 
 /-- **Fundamental interval of a string.** For a finite string $a = (a_1, \ldots, a_n)$ of natural
 numbers, the fundamental interval $I(a)$ is the set of real numbers $x \in [0, 1)$ whose

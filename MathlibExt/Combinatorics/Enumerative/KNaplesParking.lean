@@ -14,9 +14,10 @@ import Mathlib.Data.List.Nodup
 import Mathlib.Logic.Equiv.Basic
 
 /-!
-# Moving a parked car under the Naples rule
+# Finite Naples parking functions
 
 Moving a parked car to an earlier vacant spot preserves the success of the remaining cars.
+Increasing the backward search limit also preserves successful parking.
 -/
 
 namespace MetaMathlibExt
@@ -51,6 +52,23 @@ Article A44, Section 1. -/
 public def naplesPark (n k : ℕ) : List ℕ → List ℕ → Option (List ℕ)
   | occ, [] => some occ
   | occ, a :: as => (naplesSpot n k occ a).bind fun s => naplesPark n k (s :: occ) as
+
+/-- **$k$-Naples parking function.** A preference $\alpha = (a_1, \dots, a_n)$ of length $n$
+is a $k$-Naples parking function if $1 \le a_i \le n$ for every $i$ and all $n$ cars park on
+the spots $1, \dots, n$ when they arrive in order and follow the $k$-Naples rule: car $i$ takes
+spot $a_i$ if it is free; otherwise the first free spot among $a_i - 1, \dots, a_i - k$, checked
+in decreasing order and only among spots at least $1$; otherwise the first free spot after
+$a_i$, if there is one. For $k = 0$ these are the ordinary parking functions.
+
+Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
+*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
+Article A44, Section 1. -/
+public def IsNaplesParkingFunction (k : ℕ) {n : ℕ} (α : Fin n → ℕ) : Prop :=
+  (∀ i, 1 ≤ α i ∧ α i ≤ n) ∧ (naplesPark n k [] (List.ofFn α)).isSome
+
+public instance (k n : ℕ) : DecidablePred (IsNaplesParkingFunction k (n := n)) := fun α => by
+  unfold IsNaplesParkingFunction
+  infer_instance
 
 end
 
@@ -129,8 +147,8 @@ private theorem spot_spec {n k a : ℕ} (occ : List ℕ) (ha : 1 ≤ a ∧ a ≤
 private def Matches (n : ℕ) (old new : List ℕ) (e : Equiv.Perm ℕ) : Prop :=
   ∀ t, Free n old t → t ≤ e t ∧ Free n new (e t)
 
-private theorem matches_cons {n k a x y : ℕ} {old new : List ℕ} {e : Equiv.Perm ℕ}
-    (h : Matches n old new e) (hx : Choice n k old a x) (hy : Choice n k new a y) :
+private theorem matches_cons {n k k' a x y : ℕ} {old new : List ℕ} {e : Equiv.Perm ℕ}
+    (hk : k ≤ k') (h : Matches n old new e) (hx : Choice n k old a x) (hy : Choice n k' new a y) :
     Matches n (x :: old) (y :: new) (e.trans (Equiv.swap y (e x))) := by
   intro t ⟨htpos, htn, htfree⟩
   simp only [List.mem_cons, not_or] at htfree
@@ -157,30 +175,31 @@ private theorem matches_cons {n k a x y : ℕ} {old new : List ℕ} {e : Equiv.P
   · rw [Equiv.trans_apply, Equiv.swap_apply_of_ne_of_ne hty hne]
     exact ⟨htle, htnew.1, htnew.2.1, List.not_mem_cons_of_ne_of_not_mem hty htnew.2.2⟩
 
-private theorem park_of_matches {n k : ℕ} (prefs : List ℕ) {old new : List ℕ}
+private theorem park_of_matches {n k k' : ℕ} (hk : k ≤ k') (prefs : List ℕ) {old new : List ℕ}
     {e : Equiv.Perm ℕ} (hm : Matches n old new e)
     (ha : ∀ a ∈ prefs, 1 ≤ a ∧ a ≤ n) (hrun : (naplesPark n k old prefs).isSome) :
-    (naplesPark n k new prefs).isSome := by
+    (naplesPark n k' new prefs).isSome := by
   induction prefs generalizing old new e with
   | nil => rfl
   | cons a prefs ih =>
     have hvalid := ha a List.mem_cons_self
     have hx := spot_spec (k := k) old hvalid
-    have hy := spot_spec (k := k) new hvalid
+    have hy := spot_spec (k := k') new hvalid
     cases hs : naplesSpot n k old a with
     | none => simp [naplesPark, hs] at hrun
     | some x =>
       rw [hs] at hx
       obtain ⟨hle, hfree⟩ := hm x hx.free
-      cases hs' : naplesSpot n k new a with
+      cases hs' : naplesSpot n k' new a with
       | none =>
         rw [hs'] at hy
-        exact (not_lt_of_ge (hx.reach.trans hle) (hy _ hfree)).elim
+        have hreach := (Nat.sub_le_sub_left hk a).trans (hx.reach.trans hle)
+        exact (not_lt_of_ge hreach (hy _ hfree)).elim
       | some y =>
         rw [hs'] at hy
         simp only [naplesPark, hs, Option.bind_some] at hrun
         simpa only [naplesPark, hs', Option.bind_some] using
-          ih (matches_cons hm hx hy) (fun t ht => ha t (List.mem_cons_of_mem _ ht)) hrun
+          ih (matches_cons hk hm hx hy) (fun t ht => ha t (List.mem_cons_of_mem _ ht)) hrun
 
 private theorem park_append (n k : ℕ) (old as bs : List ℕ) :
     naplesPark n k old (as ++ bs) =
@@ -285,8 +304,24 @@ public theorem naplesPark_drop_set_isSome {n k i l q : ℕ} {α : Fin n → ℕ}
       omega
     · exact hqd j (by omega) hjl ((hget j hj).trans heq)
   rw [htake]
-  exact park_of_matches (prefs.drop i)
+  exact park_of_matches le_rfl (prefs.drop i)
     (matches_set hld (List.nodup_reverse.mp hn) (hb _ (by simp)) hfree hlt)
     hav (by simp [htail])
+
+open naplesPark_drop_set_isSome in
+/-- **Every $k$-Naples parking function is $(k + 1)$-Naples.** For all natural numbers $k$
+and $n$, every $k$-Naples parking function $\alpha$ of length $n$ is also a $(k + 1)$-Naples
+parking function.
+
+Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
+*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
+Article A44, Proposition 1. -/
+public theorem IsNaplesParkingFunction.succ {k n : ℕ} {α : Fin n → ℕ}
+    (h : IsNaplesParkingFunction k α) : IsNaplesParkingFunction (k + 1) α := by
+  refine ⟨h.1, park_of_matches (Nat.le_succ k) (List.ofFn α) (e := Equiv.refl ℕ) ?_ ?_ h.2⟩
+  · exact fun _ ht => ⟨le_rfl, ht⟩
+  · intro a ha
+    obtain ⟨i, rfl⟩ := List.mem_ofFn.mp ha
+    exact h.1 i
 
 end MetaMathlibExt

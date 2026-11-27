@@ -5,3 +5,4 @@
 - [NPV strictly decreases in r for nonnegative later flows](strict-anti-on-npv.md)
 - [A conventional project has a unique IRR](exists-unique-is-irr.md)
 - [NPV is positive exactly when the rate is below the IRR](npv-pos-iff-lt-irr.md)
+- [Cash flows with several internal rates of return](cash-flows-with-multiple-internal-rates-of-return.md)

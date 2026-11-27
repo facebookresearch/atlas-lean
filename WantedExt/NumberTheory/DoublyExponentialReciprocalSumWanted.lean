@@ -10,11 +10,13 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.Defs
-public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Int.ModEq
-public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSum
 public import MathlibExt.NumberTheory.GeneralizedSylvester
+public import MathlibExt.NumberTheory.MillinSeries
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumExistsTailEqPseudoGreedyExpansion
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEventuallyPseudoGreedyGapEqZero
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEqRoundInvRemainderAdd
 
 /-!
 # Reciprocal sums of doubly exponential sequences
@@ -33,24 +35,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Recovering a doubly exponential sequence from its reciprocal sum.** Let $\beta \ge 0$ and
-$r$ be real numbers, and let $(a_n)_{n \ge 0}$ be a sequence of positive integers with
-$|a_n^2 / a_{n+1} - \beta| \le 1/3$ for all $n$ and $\sum_n 1 / a_n = r$. Write
-$x_n = r - \sum_{k<n} 1 / a_k$. Then for every $n$ with $a_n \ge 8 (\beta + 1/3)^2$ we have
-$a_n = \lfloor x_n^{-1} + \beta + 1/2 \rfloor$, that is, $a_n$ is the integer nearest to
-$x_n^{-1} + \beta$, with halves rounded up. Moreover, if $a_n^2 / a_{n+1} \to \beta$, then
-$|x_n^{-1} + \beta - a_n| \to 0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Theorem 1 (`integers-2026-A28-thm-1`). -/
-public theorem_wanted eq_round_inv_remainder_add {β r : ℝ} (hβ : 0 ≤ β) {a : ℕ → ℕ}
-    (hpos : ∀ n, 0 < a n) (hratio : ∀ n, |(a n : ℝ) ^ 2 / a (n + 1) - β| ≤ 1 / 3)
-    (hsum : HasSum (fun n => 1 / (a n : ℝ)) r) :
-    (∀ n, 8 * (β + 1 / 3) ^ 2 ≤ (a n : ℝ) →
-      (a n : ℤ) = ⌊(r - ∑ k ∈ Finset.range n, 1 / (a k : ℝ))⁻¹ + β + 1 / 2⌋) ∧
-    (Tendsto (fun n => (a n : ℝ) ^ 2 / a (n + 1)) atTop (𝓝 β) →
-      Tendsto (fun n => |(r - ∑ k ∈ Finset.range n, 1 / (a k : ℝ))⁻¹ + β - a n|) atTop (𝓝 0))
-
 /-- **Characterization of the Sylvester sequence.** Let $(a_n)_{n \ge 0}$ be a sequence of
 positive integers with $2/3 \le a_n^2 / a_{n+1} \le 4/3$ for all $n$ and $\sum_n 1 / a_n = 1$.
 Then $a_n = s_n(1)$ for all $n \ge 0$, where $(s_n(1))_{n \ge 0}$ is the generalized Sylvester
@@ -63,19 +47,6 @@ public theorem_wanted eq_sylvester_of_ratio_mem_of_hasSum_one {a : ℕ → ℕ}
     (hratio : ∀ n, 2 / 3 ≤ (a n : ℝ) ^ 2 / a (n + 1) ∧ (a n : ℝ) ^ 2 / a (n + 1) ≤ 4 / 3)
     (hsum : HasSum (fun n => 1 / (a n : ℝ)) 1) :
     ∀ n, a n = Nat.generalizedSylvester 1 n
-
-/-- **Characterization of the denominators of the Millin series.** Let $(a_n)_{n \ge 0}$ be a
-sequence of positive integers with $a_n^2 / a_{n+1} \le 2/3$ for all $n$ and
-$\sum_n 1 / a_n = (5 - \sqrt 5) / 2$. Then $a_n = F_{2^{n+1}}$ for all $n \ge 0$, where $F_k$
-is the $k$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$); that is, $a$ is the sequence
-$F_2, F_4, F_8, \ldots$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Corollary 2 (`integers-2026-A28-cor-2`). -/
-public theorem_wanted eq_fib_two_pow_of_ratio_le_of_hasSum_millin {a : ℕ → ℕ}
-    (hpos : ∀ n, 0 < a n) (hratio : ∀ n, (a n : ℝ) ^ 2 / a (n + 1) ≤ 2 / 3)
-    (hsum : HasSum (fun n => 1 / (a n : ℝ)) ((5 - √5) / 2)) :
-    ∀ n, a n = Nat.fib (2 ^ (n + 1))
 
 /-- **Doubly exponential floors are Type 2 irrationality sequences for all but countably many
 bases.** For all real numbers $\alpha > 1$ outside a countable set, the sequence
@@ -90,15 +61,6 @@ public theorem_wanted countable_not_type2IrrationalitySequence_floor_pow_two_pow
     Set.Countable {α : ℝ | 1 < α ∧ ¬∀ b : ℕ → ℕ, (∀ n, 0 < b n) →
       Tendsto (fun n => (b n : ℝ) / ⌊α ^ 2 ^ (n + 1)⌋₊) atTop (𝓝 1) →
         ∀ q : ℚ, ¬HasSum (fun n => 1 / (b n : ℝ)) q}
-
-/-- **A vanishing gap stays zero.** Let $r > 0$ be a real number and let $(\varepsilon_n)$ be
-the gap sequence of its pseudo-greedy expansion. For every $n \ge 0$, if $\varepsilon_n = 0$,
-then $\varepsilon_{n+1} = 0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Lemma 3 (`integers-2026-A28-lem-3`). -/
-public theorem_wanted pseudoGreedyGap_succ_eq_zero {r : ℝ} (hr : 0 < r) {n : ℕ}
-    (h : pseudoGreedyGap r n = 0) : pseudoGreedyGap r (n + 1) = 0
 
 /-- **Structure of the pseudo-greedy expansion of a rational.** Let $p$ and $q$ be positive
 integers, let $r = p/q$, and let $(x_n)$, $(a_n)$ and $(\varepsilon_n)$ be the remainder
@@ -124,36 +86,6 @@ public theorem_wanted pseudoGreedyExpansion_rational_structure {p q : ℕ} (hp :
         d (n + 1) = d n * a n) ∧
       (fun n => (c n : ℝ)) =O[atTop] (fun n => (∏ k ∈ Finset.range n, (a k : ℝ)) / a n) ∧
       (fun n => (c n : ℝ)) =O[atTop] (fun n => (1.5 : ℝ) ^ n)
-
-/-- **Eventual vanishing of the pseudo-greedy gaps of a rational number.** Let $r$ be a positive
-rational number and let $(\varepsilon_n)_{n \ge 0}$ be the gap sequence of the pseudo-greedy
-expansion of $r$. Suppose that $\liminf_n \varepsilon_n \prod_{k<n} (1 - \varepsilon_k) \ge 0$,
-that is, for every $\delta > 0$ we have $\varepsilon_n \prod_{k<n} (1 - \varepsilon_k) \ge -\delta$
-for all sufficiently large $n$; or that $\varepsilon_n \ge 0$ for all sufficiently large $n$.
-Then $\varepsilon_n = 0$ for all sufficiently large $n$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Proposition 1 (`integers-2026-A28-prop-1`). -/
-public theorem_wanted eventually_pseudoGreedyGap_eq_zero {r : ℚ} (hr : 0 < r)
-    (h : (∀ δ : ℝ, 0 < δ → ∀ᶠ n in atTop,
-        -δ ≤ pseudoGreedyGap r n * ∏ k ∈ Finset.range n, (1 - pseudoGreedyGap r k)) ∨
-      ∀ᶠ n in atTop, 0 ≤ pseudoGreedyGap r n) :
-    ∀ᶠ n in atTop, pseudoGreedyGap r n = 0
-
-/-- **Tails that are pseudo-greedy expansions.** Let $(a_n)_{n \ge 0}$ be a sequence of positive
-integers with $a_n^2 / a_{n+1} \to 1$ such that $\sum_n 1 / a_n$ converges. Then there is a
-natural number $N$ such that, with $r = \sum_{k \ge 0} 1 / a_{N+k}$, the tail
-$(a_{N+n})_{n \ge 0}$ is the pseudo-greedy expansion of $r$, and the gap sequence of this
-expansion tends to $0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Corollary 3 (`integers-2026-A28-cor-3`). -/
-public theorem_wanted exists_tail_eq_pseudoGreedyExpansion {a : ℕ → ℕ} (hpos : ∀ n, 0 < a n)
-    (hratio : Tendsto (fun n => (a n : ℝ) ^ 2 / a (n + 1)) atTop (𝓝 1))
-    (hsum : Summable fun n => 1 / (a n : ℝ)) :
-    ∃ N : ℕ,
-      (∀ n, (a (N + n) : ℤ) = pseudoGreedyExpansion (∑' k, 1 / (a (N + k) : ℝ)) n) ∧
-      Tendsto (pseudoGreedyGap (∑' k, 1 / (a (N + k) : ℝ))) atTop (𝓝 0)
 
 /-- **Erdős–Straus and Badea criterion for the Sylvester recurrence.** Let $(a_n)_{n \ge 0}$ be a
 sequence of positive integers with $a_n^2 / a_{n+1} \to 1$ such that $\sum_n 1 / a_n$ converges
