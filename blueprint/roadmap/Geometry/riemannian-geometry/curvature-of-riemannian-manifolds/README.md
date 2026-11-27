@@ -23,3 +23,15 @@
 - [Euclidean space has zero sectional curvature](sectional-curvature-vector-space.md)
 - [Euclidean space is Ricci-flat](ricci-vector-space.md)
 - [Euclidean space has zero scalar curvature](scalar-curvature-vector-space.md)
+
+## Milnor's conjecture on fundamental groups of nonnegatively curved manifolds
+
+- [Milnor's finite-generation property in dimension $n$](milnor-finite-generation.md)
+- [Milnor's conjecture in some dimension at least six](milnor-finite-generation-in-some-dimensi.md)
+- [Milnor's conjecture fails in every dimension at least six](milnor-finite-generation-in-some-dimensi-2.md)
+
+## Tori cannot collapse to an interval
+
+- [Manifolds diffeomorphic to the standard torus](is-standard-torus.md)
+- [Statement of tori cannot collapse to an interval](tori-cannot-collapse-to-interval.md)
+- [Tori cannot collapse to an interval](tori-cannot-collapse-to-interval-holds.md)

@@ -26,8 +26,3 @@ Manifolds with smoothly varying inner products or norms on tangent spaces: conne
 - [Variational Laplace eigenvalues on Riemannian manifolds](variational-laplace-eigenvalues-on-riemannian-ma/README.md)
 - [Existence of Riemannian metrics](riemannian-metric-existence.md)
 - [Manifolds admitting a metric of positive scalar curvature](admits-positive-scalar-curvature-metric.md)
-- [Dually flat structures](dually-flat-structures/README.md)
-- [Projective rigidity of Finsler metrics on hyperbolic surfaces](projective-rigidity-of-finsler-metrics-on-hyperb/README.md)
-- [Closed geodesics on Finsler spheres: two or infinitely many](closed-geodesics-on-finsler-spheres-two-or-infin/README.md)
-- [Milnor's conjecture on fundamental groups of nonnegatively curved manifolds](milnor-s-conjecture-on-fundamental-groups-of-non/README.md)
-- [Tori cannot collapse to an interval](tori-cannot-collapse-to-an-interval/README.md)
