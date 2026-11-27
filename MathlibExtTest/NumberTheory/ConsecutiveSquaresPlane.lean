@@ -32,3 +32,11 @@ example :
   obtain ⟨f, hinj, hf⟩ := soCS_infinite_family_plane 11 50 63 h
   refine ⟨f, hinj, fun n => ?_⟩
   simpa [Int.even_iff, Int.ModEq] using (hf n).2.2
+
+-- The plane of the span-52 solution also holds triples off the diagonal: (24, -15, -28)
+-- satisfies the three conditions of the theorem and has x ≠ z.
+example :
+    ∃ t : ℤ × ℤ × ℤ, t.1 ≠ t.2.2 ∧ SoCSEq t.1 t.2.1 t.2.2 ∧
+      (50 - 63) * t.1 + (63 - 11) * t.2.1 + (11 - 50) * t.2.2 = 0 ∧
+      t.2.2 - t.1 ≡ 63 - 11 [ZMOD 2] :=
+  ⟨(24, -15, -28), by norm_num [SoCSEq, Int.ModEq]⟩
