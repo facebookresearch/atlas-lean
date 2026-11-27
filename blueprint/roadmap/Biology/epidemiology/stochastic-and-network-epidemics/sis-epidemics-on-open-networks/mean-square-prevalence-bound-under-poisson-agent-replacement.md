@@ -36,7 +36,7 @@ So a stable epidemic on an open network does not die out: replacement keeps rein
 
 ## Depends on
 
-- [Spectral radius and die-out of SIS epidemics on graphs](../../epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics.md)
+- [Spectral radius and die-out of SIS epidemics on graphs](../../sis-extinction-times-on-finite-graphs/prob-ne-empty-le.md)
 
 ## Proof sketch
 
