@@ -30,7 +30,7 @@ The Erlang-2 law is the length-biased version of the exponential($2tr$) length o
 
 ## Depends on
 
-- [Structured coalescent for n lineages with a general migration matrix](../../../coalescent-theory/structured-coalescent/structured-coalescent-for-n-lineages-with-a-gene.md)
+- [Structured coalescent for n lineages with a general migration matrix](../../../../coalescent-theory/structured-coalescent/structured-coalescent-for-n-lineages-with-a-gene.md)
 
 ## Sources
 

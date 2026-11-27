@@ -33,4 +33,3 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 - [Chromosome-painting coancestry and fineSTRUCTURE](chromopainter-coancestry-and-finestructure/README.md)
 - [STRUCTURE Bayesian clustering of multilocus genotypes](structure-bayesian-clustering/README.md)
 - [Population structure and eigenanalysis](eigenanalysis-of-population-structure/README.md)
-- [Estimated effective migration surfaces](estimated-effective-migration-surfaces/README.md)
