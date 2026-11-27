@@ -12,11 +12,11 @@ public import Mathlib.Analysis.Calculus.FDeriv.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
+public import MathlibExt.Probability.Distributions.GaussianDensity
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import MathlibExt.MeasureTheory.Integral.PrekopaLeindler
-import MathlibExt.Probability.Distributions.GaussianDensity
 
 /-!
 # Gross' logarithmic Sobolev inequality for the Gaussian measure
@@ -88,8 +88,11 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
 /-! ### Prékopa–Leindler for the standard Gaussian measure -/
 
-/-- `(1 - t) ‖x‖² + t ‖y‖² = ‖(1 - t) x + t y‖² + t (1 - t) ‖x - y‖²`. -/
-private lemma convex_comb_norm_sq {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
+/-- **Squared norm of an affine combination.** In a real inner product space, for any real $t$,
+$$(1-t)\|x\|^2 + t\|y\|^2 = \|(1-t)x+ty\|^2 + t(1-t)\|x-y\|^2.$$
+
+Source: The real inner product expansions `norm_add_sq_real` and `norm_sub_sq_real`. -/
+lemma convex_comb_norm_sq {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
     (t : ℝ) (x y : F) :
     (1 - t) * ‖x‖ ^ 2 + t * ‖y‖ ^ 2 =
       ‖(1 - t) • x + t • y‖ ^ 2 + t * (1 - t) * ‖x - y‖ ^ 2 := by
@@ -97,9 +100,12 @@ private lemma convex_comb_norm_sq {F : Type*} [NormedAddCommGroup F] [InnerProdu
     real_inner_smul_right, Real.norm_eq_abs, Real.norm_eq_abs, mul_pow, mul_pow, sq_abs, sq_abs]
   ring
 
-/-- The density `(2π)^(-n/2) exp (-‖v‖² / 2)` of the standard Gaussian satisfies
-`p(x)^(1-t) p(y)^t = p((1-t) x + t y) exp (-t (1-t) ‖x - y‖² / 2)`. -/
-private lemma stdGaussianPDFReal_rpow_mul_rpow {n : ℕ} (t : ℝ) (x y : EuclideanSpace ℝ (Fin n)) :
+/-- **Interpolation identity for the standard Gaussian density.** For the standard Gaussian
+density $p$ on $\mathbb R^n$, all $x,y\in\mathbb R^n$ and every real $t$,
+$$p(x)^{1-t}p(y)^t = p((1-t)x+ty)\exp(-t(1-t)\|x-y\|^2/2).$$
+
+Source: The formula for `stdGaussianPDFReal` and the squared norm of an affine combination. -/
+lemma stdGaussianPDFReal_rpow_mul_rpow {n : ℕ} (t : ℝ) (x y : EuclideanSpace ℝ (Fin n)) :
     MetaMathlibExt.stdGaussianPDFReal x ^ (1 - t) * MetaMathlibExt.stdGaussianPDFReal y ^ t =
       MetaMathlibExt.stdGaussianPDFReal ((1 - t) • x + t • y) *
         Real.exp (-(t * (1 - t) * ‖x - y‖ ^ 2 / 2)) := by
@@ -118,8 +124,15 @@ private lemma stdGaussianPDFReal_rpow_mul_rpow {n : ℕ} (t : ℝ) (x y : Euclid
         rw [hcc]; congr 2; linear_combination (-1 / 2 : ℝ) * key
     _ = _ := by rw [Real.exp_add]; ring
 
-/-- Prékopa–Leindler for the standard Gaussian on `ℝⁿ`, from the Lebesgue version. -/
-private lemma lintegral_rpow_mul_le_stdGaussian_euclidean {n : ℕ} {t : ℝ} (ht0 : 0 < t)
+/-- **Prékopa–Leindler inequality for the standard Gaussian on Euclidean space.** Let $\gamma$
+be the standard Gaussian on $\mathbb R^n$, let $0<t<1$, and let $u,v,w$ be Borel measurable
+functions with values in $[0,\infty]$. If for all $x,y$,
+$$u(x)^{1-t}v(y)^t\exp(-t(1-t)\|x-y\|^2/2)\le w((1-t)x+ty),$$
+then $(\int u\,d\gamma)^{1-t}(\int v\,d\gamma)^t\le \int w\,d\gamma$.
+
+Source: The Lebesgue Prékopa–Leindler inequality (`prekopa_leindler`) applied after
+multiplication by the standard Gaussian density. -/
+lemma lintegral_rpow_mul_le_stdGaussian_euclidean {n : ℕ} {t : ℝ} (ht0 : 0 < t)
     (ht1 : t < 1) {u v w : EuclideanSpace ℝ (Fin n) → ℝ≥0∞} (hu : Measurable u)
     (hv : Measurable v) (hw : Measurable w)
     (huvw : ∀ x y, u x ^ (1 - t) * v y ^ t *
@@ -178,10 +191,15 @@ private lemma exists_le_add_fderiv_add_mul_norm_sq {G : E → ℝ} (hG : ContDif
 
 variable [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
 
-/-- **Prékopa–Leindler inequality for the standard Gaussian measure.** If
-`u(x)^(1-t) v(y)^t exp (-t (1-t) ‖x - y‖² / 2) ≤ w((1-t) x + t y)` for all `x, y`, then
-`(∫ u dγ)^(1-t) (∫ v dγ)^t ≤ ∫ w dγ`. -/
-private lemma lintegral_rpow_mul_le_stdGaussian {t : ℝ} (ht0 : 0 < t) (ht1 : t < 1)
+/-- **Prékopa–Leindler inequality for the standard Gaussian measure.** Let $\gamma$ be the
+standard Gaussian on a finite-dimensional real inner product space, let $0<t<1$, and let $u,v,w$
+be Borel measurable functions with values in $[0,\infty]$. If for all $x,y$,
+$$u(x)^{1-t}v(y)^t\exp(-t(1-t)\|x-y\|^2/2)\le w((1-t)x+ty),$$
+then $(\int u\,d\gamma)^{1-t}(\int v\,d\gamma)^t\le \int w\,d\gamma$.
+
+Source: The Euclidean Gaussian Prékopa–Leindler inequality in orthonormal coordinates, using
+invariance of the standard Gaussian under linear isometries (`stdGaussian_map`). -/
+lemma lintegral_rpow_mul_le_stdGaussian {t : ℝ} (ht0 : 0 < t) (ht1 : t < 1)
     {u v w : E → ℝ≥0∞} (hu : Measurable u) (hv : Measurable v) (hw : Measurable w)
     (huvw : ∀ x y, u x ^ (1 - t) * v y ^ t *
       ENNReal.ofReal (Real.exp (-(t * (1 - t) * ‖x - y‖ ^ 2 / 2))) ≤ w ((1 - t) • x + t • y)) :

@@ -18,6 +18,14 @@ the toy BDH insecurity witness, DDH-game distinction in `G1` and `G2` on the
 DDH exponent relation, an SXDH advantage bound, a randomized two-coin
 distinguisher with computed advantage, and axiom audits for the toy
 construction and the headline theorems.
+
+The q-SDH tests: the decoding insecurity witness at `q = 7`; two losing
+adversaries with advantage zero, one losing at every secret and one winning
+only at the secret `0`, which the game never samples; and `sdhWin` on unit
+secrets, the game's support: rejection at the zero denominator `c = -x`
+(`q = 7`), the prime-order characterization in both directions (`q = 5`),
+rejection at the nonzero nonunit denominator `x + c = 2` (`q = 4`), and
+acceptance at a unit denominator at composite order (`q = 4`).
 -/
 
 namespace Cslib.Crypto.Framework
@@ -246,5 +254,206 @@ theorem winProb_twoCoins : winProb (toy7.ddh1RealGame ddh1TwoCoins) = 1 / 4 := b
 #print axioms sxdhAdvBound_toy7
 #print axioms ddh1Advantage_twoCoins
 #print axioms winProb_twoCoins
+
+/-- The toy q-SDH insecurity witness at `q = 7`: the decoding adversary wins
+with probability one. -/
+example (t : ℕ) :
+    toy7.sdhAdvantage t (BilinearGroupData.sdhDecodingAdversary toy7 t) = 1 :=
+  BilinearGroupData.sdhAdvantage_decoding_eq_one toy7 t
+
+/-- An always-losing q-SDH adversary: outputs `(0, 1)` regardless of input. -/
+noncomputable def sdhLosing (t : ℕ) :
+    (Fin (t + 1) → toy7.G1) → toy7.G2 → toy7.G2 → PMF (ZMod toy7.q × toy7.G1) :=
+  fun _ _ _ => PMF.pure (0, 1)
+
+/-- The always-losing adversary loses at every secret exponent: the identity
+output fails the pairing check. -/
+theorem sdhWin_losing (t : ℕ) (x : ZMod toy7.q) :
+    toy7.sdhWin t (sdhLosing t) x = PMF.pure false := by
+  classical
+  have hcond : (sdhLosing t)
+      (fun i => toy7.exp1 (Multiplicative.ofAdd (x ^ (i : ℕ)))) toy7.g2
+      (toy7.exp2 (Multiplicative.ofAdd x)) = PMF.pure (0, 1) := rfl
+  unfold BilinearGroupData.sdhWin
+  rw [hcond, PMF.pure_map]
+  dsimp only
+  have hne : toy7.e 1 (toy7.exp2 (Multiplicative.ofAdd (x + 0))) ≠
+      toy7.e toy7.g1 toy7.g2 := by
+    intro hcon
+    rw [BilinearGroupData.e_one_left] at hcon
+    exact BilinearGroupData.e_g1_g2_ne_one toy7 hcon.symm
+  rw [ite_eq_right hne]
+
+/-- The q-SDH game against the always-losing adversary is constantly `false`. -/
+theorem sdhGame_losing (t : ℕ) :
+    toy7.sdhGame t (sdhLosing t) = PMF.pure false := by
+  unfold BilinearGroupData.sdhGame
+  simp only [sdhWin_losing, PMF.bind_const]
+
+/-- The always-losing adversary has q-SDH advantage zero. -/
+theorem sdhAdvantage_losing (t : ℕ) :
+    toy7.sdhAdvantage t (sdhLosing t) = 0 := by
+  unfold BilinearGroupData.sdhAdvantage
+  rw [sdhGame_losing]
+  simp [winProb_pure]
+
+/-- A constant q-SDH adversary outputting `(1, g1)`: its check needs `x + 1 = 1`,
+so it wins only at the secret `0`, which the game never samples. -/
+noncomputable def sdhConstOne (t : ℕ) :
+    (Fin (t + 1) → toy7.G1) → toy7.G2 → toy7.G2 → PMF (ZMod toy7.q × toy7.G1) :=
+  fun _ _ _ => PMF.pure (1, toy7.g1)
+
+/-- The constant `(1, g1)` adversary loses at every nonzero secret exponent: its
+check needs `x + 1 = 1`. -/
+theorem sdhWin_constOne (t : ℕ) (x : ZMod toy7.q) (hx : x ≠ 0) :
+    toy7.sdhWin t (sdhConstOne t) x = PMF.pure false := by
+  classical
+  have hcond : (sdhConstOne t)
+      (fun i => toy7.exp1 (Multiplicative.ofAdd (x ^ (i : ℕ)))) toy7.g2
+      (toy7.exp2 (Multiplicative.ofAdd x)) = PMF.pure (1, toy7.g1) := rfl
+  unfold BilinearGroupData.sdhWin
+  rw [hcond, PMF.pure_map]
+  dsimp only
+  have hne : toy7.e toy7.g1 (toy7.exp2 (Multiplicative.ofAdd (x + 1))) ≠
+      toy7.e toy7.g1 toy7.g2 := by
+    intro hcon
+    have hL : toy7.e toy7.g1 (toy7.exp2 (Multiplicative.ofAdd (x + 1))) =
+        toy7.expT (Multiplicative.ofAdd (x + 1)) := by
+      change toy7.e (toy7.exp1 (Multiplicative.ofAdd (1 : ZMod toy7.q))) _ = _
+      rw [toy7.compat, one_mul]
+    rw [hL, toy7.e_g1_g2] at hcon
+    have hgT : toy7.gT = toy7.expT (Multiplicative.ofAdd (1 : ZMod toy7.q)) := rfl
+    rw [hgT] at hcon
+    have hinj := toy7.expT.injective hcon
+    have hexp : x + 1 = 1 := by simpa using congrArg Multiplicative.toAdd hinj
+    have hx0 : x = 0 := by simpa using congrArg (fun y : ZMod toy7.q => y - 1) hexp
+    exact hx hx0
+  rw [ite_eq_right hne]
+
+/-- The q-SDH game against the constant `(1, g1)` adversary is constantly
+`false`: every sampled secret is a unit, hence nonzero. -/
+theorem sdhGame_constOne (t : ℕ) :
+    toy7.sdhGame t (sdhConstOne t) = PMF.pure false := by
+  unfold BilinearGroupData.sdhGame
+  have h : ∀ x : (ZMod toy7.q)ˣ,
+      toy7.sdhWin t (sdhConstOne t) x = PMF.pure false :=
+    fun x => sdhWin_constOne t x x.ne_zero
+  simp only [h, PMF.bind_const]
+
+/-- The constant `(1, g1)` adversary has q-SDH advantage zero. -/
+theorem sdhAdvantage_constOne (t : ℕ) :
+    toy7.sdhAdvantage t (sdhConstOne t) = 0 := by
+  unfold BilinearGroupData.sdhAdvantage
+  rw [sdhGame_constOne]
+  simp [winProb_pure]
+
+/-- A constant q-SDH adversary outputting `(c, h)` on every input. -/
+noncomputable def sdhConst (B : BilinearGroupData) (t : ℕ) (c : ZMod B.q) (h : B.G1) :
+    (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1) :=
+  fun _ _ _ => PMF.pure (c, h)
+
+/-- A constant adversary whose answer passes the pairing check wins the win experiment. -/
+theorem sdhWin_sdhConst_of_check (B : BilinearGroupData) (t : ℕ) (c : ZMod B.q) (h : B.G1)
+    (x : ZMod B.q) (hc : B.e h (B.exp2 (Multiplicative.ofAdd (x + c))) = B.e B.g1 B.g2) :
+    B.sdhWin t (sdhConst B t c h) x = PMF.pure true := by
+  simp only [BilinearGroupData.sdhWin, sdhConst, PMF.pure_map]
+  exact congrArg PMF.pure (ite_eq_left hc)
+
+/-- A constant adversary whose answer fails the pairing check loses the win experiment. -/
+theorem sdhWin_sdhConst_of_not_check (B : BilinearGroupData) (t : ℕ) (c : ZMod B.q)
+    (h : B.G1) (x : ZMod B.q)
+    (hc : B.e h (B.exp2 (Multiplicative.ofAdd (x + c))) ≠ B.e B.g1 B.g2) :
+    B.sdhWin t (sdhConst B t c h) x = PMF.pure false := by
+  simp only [BilinearGroupData.sdhWin, sdhConst, PMF.pure_map]
+  exact congrArg PMF.pure (ite_eq_right hc)
+
+/-- Rejection at a zero denominator on the game's support: at `q = 7`, for every unit
+secret `x` and every `h`, the answer `c = -x` fails, since `exp2 (x + c)` is the
+identity. -/
+theorem sdhWin_zeroDenominator_toy7 (t : ℕ) (x : (ZMod toy7.q)ˣ) (h : toy7.G1) :
+    toy7.sdhWin t (sdhConst toy7 t (-(x : ZMod toy7.q)) h) x = PMF.pure false := by
+  apply sdhWin_sdhConst_of_not_check
+  rw [add_neg_cancel, ofAdd_zero, map_one, BilinearGroupData.e_one_right]
+  exact fun hcon => BilinearGroupData.e_g1_g2_ne_one toy7 hcon.symm
+
+/-- The toy model at `q = 5`. -/
+def toy5 : BilinearGroupData := BilinearGroupData.toyModel 5 (by decide)
+
+/-- `5` is prime. -/
+instance toy5FactPrime : Fact (Nat.Prime toy5.q) := ⟨by change Nat.Prime 5; decide⟩
+
+/-- At `q = 5`, the inverse exponent `(2 + 1)⁻¹` is `2`. -/
+theorem sdhInvExponent_toy5 : (2 : ZMod toy5.q) = (2 + 1)⁻¹ := by
+  have h3 : (2 : ZMod toy5.q) * (2 + 1) = 1 := by
+    change (2 : ZMod 5) * (2 + 1) = 1
+    decide
+  exact eq_inv_of_mul_eq_one_left h3
+
+/-- At `q = 5`, the unit secret `x = 2` and the answer `c = 1`: `h = exp1 2` passes, by
+the prime-order characterization (`sdhCheck_iff_prime`). -/
+theorem sdhWin_winner_toy5 (t : ℕ) :
+    toy5.sdhWin t (sdhConst toy5 t 1 (toy5.exp1 (Multiplicative.ofAdd 2))) 2 =
+      PMF.pure true :=
+  sdhWin_sdhConst_of_check toy5 t 1 _ 2
+    ((BilinearGroupData.sdhCheck_iff_prime toy5 2 1
+      (by change (1 : ZMod 5) ≠ -(2 : ZMod 5); decide) _).mpr
+      (congrArg (fun a : ZMod toy5.q => toy5.exp1 (Multiplicative.ofAdd a))
+        sdhInvExponent_toy5))
+
+/-- At `q = 5`, the unit secret `x = 2` and the answer `c = 1`: `h = exp1 3` fails, by
+the prime-order characterization (`sdhCheck_iff_prime`). -/
+theorem sdhWin_nonWinner_toy5 (t : ℕ) :
+    toy5.sdhWin t (sdhConst toy5 t 1 (toy5.exp1 (Multiplicative.ofAdd 3))) 2 =
+      PMF.pure false := by
+  apply sdhWin_sdhConst_of_not_check
+  intro hcon
+  have h := (BilinearGroupData.sdhCheck_iff_prime toy5 2 1
+    (by change (1 : ZMod 5) ≠ -(2 : ZMod 5); decide) _).mp hcon
+  have hinj := toy5.exp1.injective h
+  have h3 : (3 : ZMod toy5.q) = (2 + 1)⁻¹ := by
+    simpa using congrArg Multiplicative.toAdd hinj
+  have hne : (3 : ZMod toy5.q) ≠ (2 + 1)⁻¹ := by
+    rw [← sdhInvExponent_toy5]
+    change (3 : ZMod 5) ≠ 2
+    decide
+  exact hne h3
+
+/-- The toy model at `q = 4`. -/
+def toy4 : BilinearGroupData := BilinearGroupData.toyModel 4 (by decide)
+
+/-- Rejection at a nonzero nonunit denominator on the game's support: at `q = 4`, for
+every unit secret `x` and every `h`, the answer `c = 2 - x` fails, since the check
+reduces to `a * 2 = 1` in `ZMod 4`. -/
+theorem sdhWin_nonunitDenominator_toy4 (t : ℕ) (x : (ZMod toy4.q)ˣ) (h : toy4.G1) :
+    toy4.sdhWin t (sdhConst toy4 t (2 - (x : ZMod toy4.q)) h) x = PMF.pure false := by
+  apply sdhWin_sdhConst_of_not_check
+  have h2 : (x : ZMod toy4.q) + (2 - x) = 2 := by ring
+  rw [h2]
+  obtain ⟨a, rfl⟩ := toy4.exp1.surjective h
+  rw [← ofAdd_toAdd a, toy4.compat, BilinearGroupData.e_g1_g2]
+  intro hcon
+  have hgT : toy4.gT = toy4.expT (Multiplicative.ofAdd (1 : ZMod toy4.q)) := rfl
+  rw [hgT] at hcon
+  have hexp : a.toAdd * 2 = 1 := by
+    simpa using congrArg Multiplicative.toAdd (toy4.expT.injective hcon)
+  have hno : ∀ b : ZMod toy4.q, b * 2 ≠ 1 := by
+    change ∀ b : ZMod 4, b * 2 ≠ 1
+    decide
+  exact hno _ hexp
+
+/-- Acceptance at a unit denominator at composite order: at `q = 4`, the unit secret
+`x = 1` and the answer `c = 2` give the unit `x + c = 3`, its own inverse, so
+`h = exp1 3` passes (`sdhCheck_iff`). -/
+theorem sdhWin_unitDenominator_toy4 (t : ℕ) :
+    toy4.sdhWin t (sdhConst toy4 t 2 (toy4.exp1 (Multiplicative.ofAdd 3))) 1 =
+      PMF.pure true := by
+  apply sdhWin_sdhConst_of_check
+  have hmul : ((1 : ZMod toy4.q) + 2) * 3 = 1 := by
+    change ((1 : ZMod 4) + 2) * 3 = 1
+    decide
+  rw [BilinearGroupData.sdhCheck_iff toy4 1 2 (IsUnit.of_mul_eq_one _ hmul),
+    ZMod.inv_eq_of_mul_eq_one _ _ _ hmul]
+
+#print axioms BilinearGroupData.sdhAdvantage_decoding_eq_one
 
 end Cslib.Crypto.Framework

@@ -81,7 +81,7 @@ def branchDTMC : DTMC (Fin 3) where
     · intro s t
       fin_cases s <;> fin_cases t <;> norm_num
     · intro s
-      fin_cases s <;> simp [Fin.sum_univ_three] <;> norm_num
+      fin_cases s <;> simp [Fin.sum_univ_three]; norm_num
 
 /-- The deterministic two-step chain `0 → 1 → 2`, with `2` absorbing. -/
 def chainDTMC : DTMC (Fin 3) where

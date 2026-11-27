@@ -6,6 +6,7 @@
 - [ElGamal encryption](encrypt.md)
 - [ElGamal decryption](decrypt.md)
 - [Correctness of ElGamal](decrypt-encrypt.md)
+- [ElGamal Variants and Their Properties](elgamal-variants-and-properties/README.md)
 
 ## Eavesdropping security from DDH
 
