@@ -1,6 +1,6 @@
 # Kayal–Limaye–Saha–Srinivasan: exponential lower bounds for homogeneous depth-four formulas
 
-There is an explicit family $\{P_n\}$ in $\mathrm{VNP}$ (a variant of the Nisan-Wigderson design polynomial) with $P_n$ of degree $n$ in $n^2$ variables such that every homogeneous $\Sigma\Pi\Sigma\Pi$ formula computing $P_n$, with no restriction on bottom fan-in, has size $2^{\Omega(\sqrt{n}\log n)}$. Kumar and Saraf extended superpolynomial homogeneous depth-four lower bounds of the form $n^{\Omega(\sqrt{d})}$ to an explicit family in $\mathrm{VP}$.
+Over any field of characteristic $0$, there is an explicit family $\{P_d\}$ in $\mathrm{VNP}$ (the Nisan-Wigderson design polynomial $\mathrm{NW}_r$ over $\mathbb{F}_{d^2}$) with $P_d$ of degree $d$ in $N = d^3$ variables (and more generally in any $N \ge d^{2+\varepsilon}$ variables for fixed $\varepsilon > 0$) such that every homogeneous $\Sigma\Pi\Sigma\Pi$ formula computing $P_d$, with no restriction on bottom fan-in, has size $2^{\Omega(\sqrt{d}\log d)}$ (and $N^{\Omega(\sqrt{d})}$ for general $N \ge d^{2+\varepsilon}$). Over any field (of arbitrary characteristic), Kumar and Saraf proved a superpolynomial homogeneous depth-four lower bound of $n^{\Omega(\sqrt{n})}$ (for degree $n$ in $N = n^{O(1)}$ variables) for an explicit family in $\mathrm{VP}$.
 
 ## Proof sketch
 

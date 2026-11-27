@@ -78,7 +78,7 @@ private theorem chainRec_corr (r : ℕ → ℤ) (ν : ℤ) (d : ℕ) :
     rcases Nat.eq_zero_or_pos d with rfl | hdp
     · simp [chainRec_zero, chainRec_one, corr]; ring
     · have hc : corr r ν (d + 1) = r (d + 1) := by
-        unfold corr; rw [if_neg (by omega)]
+        unfold corr; rw [ite_eq_right (by omega)]
       rw [hc]
       have h1 : ((d + 1 - 1 : ℕ) : ℤ) = d := by omega
       have h2 : ((d - 1 : ℕ) : ℤ) = d - 1 := by omega
@@ -113,32 +113,32 @@ public theorem exists_depthOne_correction_dirichlet {ι : Type*} (n : ι → ℕ
   refine ⟨ν, c, ?_, ?_, ?_, ?_⟩
   · intro i hi
     show (if n i = 1 then (0 : ℤ) else chainRec (r i) 0 (n i)) = 0
-    rw [if_pos hi]
+    rw [ite_eq_left hi]
   · intro i
     have hni : ¬ n i ≤ 0 := by have := hn i; omega
     show (if n i ≤ 0 then (0 : ℤ)
       else chainRec (corr (r i) (ν i)) (-(chainRec (r i) 0 (n i))) 0) = 0
-    rw [if_neg hni, chainRec_zero]
+    rw [ite_eq_right hni, chainRec_zero]
   · intro i d hd
     show (if n i ≤ d then (0 : ℤ)
       else chainRec (corr (r i) (ν i)) (-(chainRec (r i) 0 (n i))) d) = 0
-    rw [if_pos hd]
+    rw [ite_eq_left hd]
   · intro i d hd1 hd2
     have hni : ¬ n i = 1 := by omega
     have hνi : ν i = chainRec (r i) 0 (n i) := by
       show (if n i = 1 then (0 : ℤ) else chainRec (r i) 0 (n i)) = _
-      rw [if_neg hni]
+      rw [ite_eq_right hni]
     have hc : ∀ e, c i e = if n i ≤ e then 0
         else chainRec (corr (r i) (ν i)) (-(chainRec (r i) 0 (n i))) e := fun e => rfl
     have hcorr : corr (r i) (ν i) d = (if d = 1 then r i d - ν i else r i d) := rfl
     have key := chainRec_laplace (corr (r i) (ν i)) (-(chainRec (r i) 0 (n i))) d hd1
     have hend : chainRec (corr (r i) (ν i)) (-(chainRec (r i) 0 (n i))) (n i) = 0 := by
       rw [hνi]; exact chainRec_corr_self_eq_zero (r i) (n i) (hn i)
-    rw [hc (d - 1), hc d, hc (d + 1), if_neg (by omega), if_neg (by omega), ← hcorr]
+    rw [hc (d - 1), hc d, hc (d + 1), ite_eq_right (by omega), ite_eq_right (by omega), ← hcorr]
     by_cases h2 : n i ≤ d + 1
     · have heq : d + 1 = n i := by omega
-      rw [if_pos h2, ← key, heq, hend]
-    · rw [if_neg h2, ← key]
+      rw [ite_eq_left h2, ← key, heq, hend]
+    · rw [ite_eq_right h2, ← key]
 
 end ChainDirichlet
 end ModularCurve
