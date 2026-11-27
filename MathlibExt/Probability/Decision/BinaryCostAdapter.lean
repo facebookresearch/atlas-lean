@@ -50,15 +50,24 @@ noncomputable abbrev binaryPrior (pi0 pi1 : ℝ) : Measure Bool :=
 
 /-- The finite-cost threshold rule: decide `true` where
 `pi1 * (C01 - C11) * p1 x > pi0 * (C10 - C00) * p0 x`, the tie decision `tie` where the
-two sides are equal, and `false` otherwise. -/
+two sides are equal, and `false` otherwise. The definition takes arbitrary reals. For nonnegative
+prior weights `pi0, pi1` and densities `p0, p1`, it compares the posterior expected costs of the
+two decisions at the points `x` where `pi0 * p0 x + pi1 * p1 x > 0`, that is almost everywhere
+under the marginal law (`posterior_lintegral_binaryShiftedLoss` states the posterior losses for a
+probability prior). Where `pi0 * p0 x + pi1 * p1 x = 0` both sides are `0` and the rule returns
+`tie`, though the model does not determine the posterior at `x`. -/
 noncomputable def binaryCostRule {𝓧 : Type*} (pi0 pi1 C00 C01 C10 C11 : ℝ)
     (p0 p1 : 𝓧 → ℝ) (tie : Bool) (x : 𝓧) : Bool :=
   if pi0 * (C10 - C00) * p0 x < pi1 * (C01 - C11) * p1 x then true
   else if pi1 * (C01 - C11) * p1 x = pi0 * (C10 - C00) * p0 x then tie
   else false
 
-/-- Real-valued Bayes average cost of a decision kernel `κ` under the original costs:
-`pi0 * E_{κ∘P0}[C(·, 0)] + pi1 * E_{κ∘P1}[C(·, 1)]`. -/
+/-- The weighted cost `pi0 * E_{κ∘P0}[C(·, 0)] + pi1 * E_{κ∘P1}[C(·, 1)]` of a decision kernel
+`κ` under the original costs, with Bochner integrals against `(κ ∘ₖ P) false` and
+`(κ ∘ₖ P) true`; the definition takes any inputs. For nonnegative prior weights `pi0, pi1` and
+Markov kernels `P` and `κ` it is the cost of `κ` averaged over the truth against the finite
+prior with weights `pi0, pi1`, and an expected cost under a probability prior only when
+`pi0 + pi1 = 1`. -/
 noncomputable def binaryCostAvgRisk {𝓧 : Type*} [MeasurableSpace 𝓧]
     (C00 C01 C10 C11 : ℝ) (P : Kernel Bool 𝓧) (κ : Kernel 𝓧 Bool) (pi0 pi1 : ℝ) : ℝ :=
   pi0 * ∫ y, binaryCost C00 C01 C10 C11 y false ∂((κ ∘ₖ P) false) +

@@ -10,6 +10,7 @@ module
 
 import Mathlib.Data.Fin.VecNotation
 import MathlibExt.GameTheory.ChocolateBarNSProperty
+import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtFoldlXor
 
 open MetaMathlibExt
 
@@ -81,3 +82,34 @@ example : {c : ℕ | ∃ w < 3, c = 3 ^^^ w} =
     ⟨hasNSProperty_div_two_pow (m := 1) (by decide), hasNSProperty_const 2⟩
   have hx : ∀ t, (![1, 2] : Fin 2 → ℕ) t ≤ f t 3 := by decide
   simpa [f, List.ofFn_succ] using image_foldl_xor_eq_image_min hf hx
+
+-- The target three requires a coordinate move; neither smaller width attains it.
+example :
+    ∃ i, ∃ u < (![1, 4] : Fin 2 → ℕ) i,
+      3 = (List.ofFn (Function.update ![1, 4] i u)).foldl (· ^^^ ·) 0 ^^^ 2 := by
+  obtain h | ⟨w, hw, he⟩ := exists_of_lt_foldl_xor (f := fun _ _ ↦ 4)
+    (x := ![1, 4]) (z := 2) (c := 3) (fun _ ↦ hasNSProperty_const 4) (by decide) (by decide)
+  · exact h
+  · obtain rfl | rfl : w = 0 ∨ w = 1 := by omega
+    all_goals revert he; decide
+
+-- At width zero, the remaining coordinate is clamped. Lowering only the coordinate gives two.
+example : ∃ w < 2, 0 = min 1 (w / 2) ^^^ w := by
+  obtain ⟨i, u, hu, he⟩ | h := exists_of_lt_foldl_xor
+    (f := fun _ : Fin 1 ↦ fun w ↦ w / 2) (x := ![1]) (z := 2) (c := 0)
+    (fun _ ↦ hasNSProperty_div_two_pow (m := 1) (by decide)) (by decide) (by decide)
+  · have hi : i = 0 := Subsingleton.elim _ _
+    subst i
+    have hu0 : u = 0 := by simpa using hu
+    subst u
+    revert he
+    decide
+  · simpa [List.ofFn_succ] using h
+
+-- With no coordinates, any smaller target is attained by a width move.
+example {c z : ℕ} (hc : c < z) : ∃ w < z, c = w := by
+  obtain ⟨i, _⟩ | h := exists_of_lt_foldl_xor (m := 0) (f := fun i ↦ i.elim0)
+    (x := fun i ↦ i.elim0) (z := z) (c := c) (fun i ↦ i.elim0) (fun i ↦ i.elim0)
+    (by simpa using hc)
+  · exact i.elim0
+  · simpa using h
