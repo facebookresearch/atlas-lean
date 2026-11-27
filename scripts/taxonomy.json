@@ -12855,7 +12855,6 @@
   "MathlibExt/NumberTheory/BernoulliFibonacciExpansion": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Bernoulli–Fibonacci and Euler–Lucas double sums"},
   "MathlibExt/NumberTheory/BernoulliFibonacciMultinomial": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Bernoulli–Fibonacci and Euler–Lucas double sums"},
   "MathlibExt/NumberTheory/BernoulliFibonacciVanishing": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Bernoulli–Fibonacci and Euler–Lucas double sums"},
-  "MathlibExt/NumberTheory/BernoulliSecondKindBernoulliSecondEqNegSum": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Bernoulli numbers of the second kind"},
   "MathlibExt/NumberTheory/BinetClosedForm": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Binet formulas for linear recurrences"},
   "MathlibExt/NumberTheory/BinomidAverage": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomid indices and generalized binomial coefficients"},
   "MathlibExt/NumberTheory/BinomidIndex": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomid indices and generalized binomial coefficients"},
