@@ -10283,6 +10283,7 @@
   "MathlibExt/Analysis/Series/Kronecker": {"to": "Analysis/sequences-and-series/convergence", "title": "Kronecker's lemma"},
   "MathlibExt/Analysis/Series/ReciprocalCentralBinomialSums": {"to": "Analysis/sequences-and-series/series-for-constants", "title": "Reciprocal central binomial sums"},
   "MathlibExt/Analysis/Series/RiemannRearrangement": {"to": "Analysis/sequences-and-series/convergence", "title": "Riemann rearrangement theorem"},
+  "MathlibExt/Analysis/Series/ScottishBook5Bounded": {"to": "Analysis/sequences-and-series/summability", "title": "Permanent summability methods"},
   "MathlibExt/Analysis/Series/SilvermanToeplitz": {"to": "Analysis/sequences-and-series/summability", "title": "Silverman–Toeplitz theorem"},
   "MathlibExt/Analysis/Series/SquareSummableComplexInequality": {"to": "Analysis/inequalities", "title": "Inequality for square-summable complex sequences"},
   "MathlibExt/Analysis/Series/StolzCesaro": {"to": "Analysis/sequences-and-series/convergence", "title": "Stolz–Cesàro theorem"},

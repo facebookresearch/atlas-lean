@@ -6,4 +6,4 @@
 - [Permanent matrix methods](is-permanent.md)
 - [Bounded sequences](is-bounded.md)
 - [The bounded case of Scottish Book Problem 5](scottish-book-problem5-claim.md)
-- [Negative answer to Scottish Book Problem 5 for bounded sequences](mazur5-bounded-refuted.md)
+- [A permanent matrix for bounded asymptotically convergent sequences](mazur5-bounded-refuted.md)
