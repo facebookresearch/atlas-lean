@@ -15,6 +15,8 @@ public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasures
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesLeadingIntegral
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresLocalMass
 public import MathlibExt.NumberTheory.Digits.OrdinaryMomentRecurrence
+public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresIrwinSumZeroLowerBounds
+public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresComplementaryMomentRecurrenceProperties
 
 namespace MetaMathlibExt
 
@@ -97,28 +99,6 @@ public theorem_wanted irwinSum_hasSum_positive
           ∑ n ∈ Finset.Ico (b ^ (l - 1)) (b ^ l),
             if digitCount b d n ≤ k then (1 : ℝ) / ((n : ℝ) + 1) else 0)
 
-/-- **Properties of the complementary moment recurrence.** Let $b > 1$ and $d < b$ be natural
-numbers, and let $(v_{j,m})_{j, m \ge 0}$ be any family of real numbers satisfying the
-complementary moment recurrence for $b$ and $d$. Then $v_{j,0} = b$ for every $j$. For every $j$
-and every $m \ge 1$: $0 < v_{j,m} \le b$; if $(b, d, j) = (2, 1, 0)$ then $v_{j,m} = 2$, and
-otherwise $v_{j,m+1} < v_{j,m}$; and $v_{j+1,m} < v_{j,m}$. Finally, for every $m \ge 1$,
-$v_{j,m} \to b/(m+1)$ as $j \to \infty$.
-
-Source: Jean-François
-Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026),
-Article A11, Theorem 2. -/
-public theorem_wanted complementaryMomentRecurrence_properties
-    (b d : ℕ) (hb : 1 < b) (hd : d < b) (v : ℕ → ℕ → ℝ)
-    (hv : ComplementaryMomentRecurrence b d v) :
-    (∀ j, v j 0 = b) ∧
-    (∀ j m, 1 ≤ m → 0 < v j m ∧ v j m ≤ b) ∧
-    (∀ j m, 1 ≤ m →
-      ((b = 2 ∧ d = 1 ∧ j = 0) → v j m = 2) ∧
-      (¬(b = 2 ∧ d = 1 ∧ j = 0) → v j (m + 1) < v j m)) ∧
-    (∀ j m, 1 ≤ m → v (j + 1) m < v j m) ∧
-    (∀ m, 1 ≤ m →
-      Tendsto (fun j : ℕ => v j m) atTop (nhds ((b : ℝ) / (m + 1))))
-
 /-- **Monotonicity and limit of the Irwin sums.** Let $b > 1$ be a base and $d < b$ a digit, and
 for $k \ge 0$ let $H^{(k)}$ be the Irwin sum, the sum of $1/n$ over the positive integers $n$ whose
 base-$b$ expansion contains exactly $k$ occurrences of $d$. If $d \ne 0$, then $k \mapsto H^{(k)}$
@@ -132,20 +112,6 @@ public theorem_wanted irwinSum_strictAnti_and_tendsto
     (d ≠ 0 → StrictAntiOn (irwinSum b d) (Set.Ici 1)) ∧
     (d = 0 → StrictAnti (irwinSum b d)) ∧
     Tendsto (irwinSum b d) atTop (nhds ((b : ℝ) * Real.log b))
-
-/-- **Lower bounds for the Irwin sum without the digit.** Let $b > 2$ be a base and let $d$ be a
-nonzero digit, $0 < d < b$. Let $H^{(0)}$ be the Irwin sum of $1/n$ over the positive integers $n$
-whose base-$b$ expansion does not contain $d$. Then
-$b \log b - b \log(1 + 1/d) < H^{(0)}$ and $b \log(b/2) < H^{(0)}$.
-
-Source:
-Jean-François Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26
-(2026), Article A11, Proposition 2. -/
-public theorem_wanted irwinSum_zero_lowerBounds
-    (b d : ℕ) (hb : 2 < b) (hd : d < b) (hd0 : d ≠ 0) :
-    (b : ℝ) * Real.log b - (b : ℝ) * Real.log (1 + 1 / (d : ℝ)) <
-      irwinSum b d 0 ∧
-    (b : ℝ) * Real.log ((b : ℝ) / 2) < irwinSum b d 0
 
 /-- **Prefix sums as alternating ordinary-moment series.** Let $b > 1$, let $d < b$ be a digit, let
 $n$ be a positive integer, let $k(n)$ be the number of occurrences of $d$ in the base-$b$
@@ -282,34 +248,6 @@ public theorem_wanted irwinMeasure_halfOpen_deeper_local_mass
       (b : ℝ) ^ (-(l' : ℤ)) *
         (irwinMeasure b d (k - (if 0 < d then j else j + l' - l)) hd
           (affineScaleSet b l' x U)).toReal
-
-/-- **Local structure of the Irwin measures on cylinders.** Let $b > 1$ and $d < b$ be natural
-numbers, and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and digit
-$d$ with index $k$. Let $x \in [0, 1)$ have base-$b$ depth $l$, that is, $l$ is the least natural
-number such that $b^l x$ is an integer; let $X$ be a string of $l$ base-$b$ digits, read most
-significant digit first, whose value $n(X)$ satisfies $n(X)/b^l = x$; and let $j$ be the number
-of occurrences of $d$ in $X$. Then for every $k < j$ the restriction of $\mu_k$ to
-$[x, x + b^{-l})$ is the zero measure, and for every $k \ge j$ and every subset
-$U \subseteq [x, x + b^{-l})$, as real numbers $\mu_k(U) = b^{-l} \mu_{k-j}(b^l U - b^l x)$,
-where $b^l U - b^l x$ is the image of $U$ under $y \mapsto b^l y - b^l x$.
-
-Source: Jean-François Burnol, *Measures for the
-Summation of Irwin Series*, INTEGERS 26 (2026), Article A11, Proposition 8. -/
-public theorem_wanted irwinMeasure_halfOpen_local_mass
-    (b d : ℕ) (hb : 1 < b) (hd : d < b) (x : ℝ) (l : ℕ)
-    (hx : x ∈ Set.Ico (0 : ℝ) 1) (hdepth : HasBaseDepth b x l)
-    (X : List (Fin b)) (hXlen : X.length = l)
-    (hXval : normalizedStringValue b X = x) (j : ℕ)
-    (hj : j = X.count ⟨d, hd⟩) :
-    (∀ k, k < j →
-      (irwinMeasure b d k hd).restrict
-        (Set.Ico x (x + (b : ℝ) ^ (-(l : ℤ)))) = 0) ∧
-    (∀ k, j ≤ k → ∀ U : Set ℝ,
-      U ⊆ Set.Ico x (x + (b : ℝ) ^ (-(l : ℤ))) →
-      (irwinMeasure b d k hd U).toReal =
-        (b : ℝ) ^ (-(l : ℤ)) *
-          (irwinMeasure b d (k - j) hd
-            (affineScaleSet b l x U)).toReal)
 
 /-- **Masses of intervals under the Irwin measures.** Let $b > 1$ and $d < b$ be natural numbers,
 and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and digit $d$ with

@@ -3,26 +3,33 @@
 Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers, the reporting of incidence, and the accuracy of diagnostic tests.
 
 - [Branching-process approximation of early epidemics](branching-process-approximation-of-early-epidemi/README.md)
+- [Contact process on power-law random graphs](contact-process-on-power-law-random-graphs/README.md)
 - [Diffusion approximation of the stochastic SIR epidemic](diffusion-approximation-of-the-stochastic-sir-ep/README.md)
 - [Euler–Lotka equation and the reproduction number](euler-lotka-equation-and-the-reproduction-number/README.md)
 - [Final size of a stochastic epidemic in a large population](final-size-of-a-stochastic-epidemic-in-a-large-p/README.md)
 - [Global behaviour of the SIR model](global-behaviour-of-the-sir-model/README.md)
 - [Global stability of the SEIR model](global-stability-of-the-seir-model/README.md)
+- [Household reproduction number and threshold](household-reproduction-number-and-threshold/README.md)
 - [Kermack–McKendrick SIR model](kermack-mckendrick-sir-model/README.md)
 - [Next-generation matrix and the basic reproduction number](next-generation-matrix-and-the-basic-reproductio/README.md)
 - [Poisson reporting of epidemic incidence](poisson-reporting-of-epidemic-incidence/README.md)
 - [SEIR epidemic model](seir-epidemic-model/README.md)
 - [Sensitivity, specificity and predictive values](sensitivity-specificity-and-predictive-values/README.md)
+- [SIR epidemics on configuration-model graphs](sir-epidemics-on-configuration-model-graphs/README.md)
 - [SIS epidemic model](sis-epidemic-model/README.md)
+- [SIS extinction times on finite graphs](sis-extinction-times-on-finite-graphs/README.md)
 - [SIS model with leaky vaccination](sis-model-with-leaky-vaccination/README.md)
 - [Stochastic SEIR epidemic with vital dynamics](stochastic-seir-epidemic-with-vital-dynamics/README.md)
 - [Stochastic SIR epidemic and its law of large numbers](stochastic-sir-epidemic-and-its-law-of-large-num/README.md)
 - [Superspreading and negative-binomial offspring](superspreading-and-negative-binomial-offspring/README.md)
 
 - [Epidemics on networks](epidemics-on-networks/README.md)
-
+- [Age-of-infection epidemic models and the McKendrick–von Foerster equation](age-of-infection-mckendrick-von-foerster-models/README.md)
+- [Incentive design for epidemic control](incentive-design-for-epidemic-control/README.md)
+- [Seasonally forced SIRS model](seasonally-forced-sirs-model/README.md)
+- [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
+- [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
 ## [Vector-borne, spatial and metapopulation models](part-01/README.md)
-
 - [Age- and infection-age-structured malaria models](part-01/age-and-infection-age-structured-malaria-models/README.md)
 - [Age-structured dengue model with time-varying parameters](part-01/age-structured-dengue-with-time-varying-parameters/README.md)
 - [Age-structured malaria transmission models](part-01/age-structured-malaria-transmission-models/README.md)
@@ -44,9 +51,7 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Traveling waves of lattice vaccination epidemic models](part-01/traveling-waves-of-lattice-vaccination-epidemic-models/README.md)
 - [Two-strain periodic reaction–diffusion malaria model](part-01/two-strain-periodic-reaction-diffusion-malaria-model/README.md)
 - [Vector-borne SEIRS model with random delays](part-01/vector-borne-seirs-model-with-random-delays/README.md)
-
 ## [Infection, immunity and within-host dynamics](part-02/README.md)
-
 - [Antigenicity-structured HIV model](part-02/antigenicity-structured-hiv-model/README.md)
 - [Antimicrobial resistance by mutation and horizontal gene transfer](part-02/antimicrobial-resistance-by-mutation-and-horizontal-gene-transfer/README.md)
 - [Bacterial growth in a dynamical immune environment](part-02/bacterial-growth-in-a-dynamical-immune-environment/README.md)
@@ -66,9 +71,7 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Spatially heterogeneous in-host viral dynamics](part-02/spatially-heterogeneous-in-host-viral-dynamics/README.md)
 - [Time-since-vaccination structured epidemic models](part-02/time-since-vaccination-structured-epidemic-models/README.md)
 - [Within-host HIV dynamics in a heterogeneous viral environment](part-02/within-host-hiv-dynamics-in-a-heterogeneous-viral-environment/README.md)
-
 ## [Compartmental models with vaccination, control and noise](part-03/README.md)
-
 - [Adaptive dynamics of vaccination games](part-03/adaptive-dynamics-of-vaccination-games/README.md)
 - [Age-structured SEQIR model](part-03/age-structured-seqir-model/README.md)
 - [Behavioral quarantine and vaccination with distributed delay](part-03/behavioral-quarantine-and-vaccination-with-distributed-delay/README.md)

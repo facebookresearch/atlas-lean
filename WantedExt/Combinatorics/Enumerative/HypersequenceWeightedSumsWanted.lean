@@ -18,9 +18,11 @@ public import MathlibExt.Combinatorics.Enumerative.Hypersequence
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceAbelSummation
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceBinomial
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceRecurrence
+public import MathlibExt.Combinatorics.Enumerative.HypersequenceWeightedSums
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.HyperFibonacciBinomial
 public import WantedExt.NumberTheory.HyperLeonardoWanted
 
 /-!
@@ -58,17 +60,6 @@ public theorem hyperFibonacci_eq_hypersequence (r n : ℕ) :
   induction r generalizing n with
   | zero => rfl
   | succ r ih => simp [hyperFibonacci, hypersequence, ih]
-
-/-- **Hyperfibonacci numbers in terms of Fibonacci numbers.** Let $F_k$ denote the $k$th Fibonacci
-number and $F^{(r)}_n$ the hyperfibonacci numbers, given by $F^{(0)}_n = F_n$ and
-$F^{(r+1)}_n = \sum_{k=0}^{n} F^{(r)}_k$. For all natural numbers $r$ and $n$,
-$$F^{(r)}_n = F_{n+2r} - \sum_{k=0}^{r-1} \binom{n + k - 1}{k} F_{2(r-k)}.$$
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 3, Equation (2.8) (`integers-2024-A70-thm-3`). -/
-public theorem_wanted hyperFibonacci_eq_fib_sub_sum (r n : ℕ) :
-    (hyperFibonacci r n : ℤ) =
-      Nat.fib (n + 2 * r) - ∑ k ∈ range r, ((n + k - 1).choose k * Nat.fib (2 * (r - k)) : ℕ)
 
 /-- **Fibonacci numbers as binomially weighted sums.** Let $F_k$ denote the $k$th Fibonacci
 number. For every natural number $r \ge 1$ and every natural number $n$,
@@ -128,21 +119,6 @@ public theorem_wanted hyperLucas_recurrence (r n : ℕ) :
         ((hypersequence lucasNumber (r + 1) (n + 1) : ℕ) : ℚ) +
           ((hypersequence lucasNumber (r + 1) n : ℕ) : ℚ) +
           ((n + 2 * (r + 1) : ℕ) : ℚ) / (n + 2) * ((n + r + 1).choose r : ℚ)
-
-/-- **Recurrence for power-weighted sums of hypersequences.** Let $a$ be a sequence of complex
-numbers, let $a^{(r)}_k$ denote its hypersequence of generation $r$, and for natural numbers
-$\ell$, $r$ and $n$ let $t^{(r)}_\ell(n) = \sum_{k=0}^{n} k^\ell a^{(r)}_k$, with the convention
-$0^0 = 1$. Then for all natural numbers $\ell$, $r$ and $n$,
-$$t^{(r)}_\ell(n) = (n + 1)^\ell a^{(r+1)}_n - \sum_{j=0}^{\ell-1} \binom{\ell}{j} t^{(r+1)}_j(n),$$
-where the sum over $j$ is empty when $\ell = 0$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 8, Equation (3.5) (`integers-2024-A70-thm-8`). -/
-public theorem_wanted sum_pow_mul_hypersequence_recurrence (a : ℕ → ℂ) (ℓ r n : ℕ) :
-    ∑ k ∈ range (n + 1), (k : ℂ) ^ ℓ * hypersequence a r k =
-      ((n : ℂ) + 1) ^ ℓ * hypersequence a (r + 1) n -
-        ∑ j ∈ range ℓ, (ℓ.choose j : ℂ) *
-          ∑ k ∈ range (n + 1), (k : ℂ) ^ j * hypersequence a (r + 1) k
 
 /-- **Power-weighted sums of hypersequences.** Let $a$ be a sequence of complex numbers, let
 $a^{(r)}_n$ denote its hypersequence of generation $r$, let

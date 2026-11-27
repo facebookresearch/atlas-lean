@@ -28,8 +28,11 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 - [Phylogenetic inference and comparison](inference-and-comparison/README.md)
 
+- [Phylogenetic diversity](phylogenetic-diversity/README.md)
+- [Phylogenetic invariants](phylogenetic-invariants/README.md)
+- [Displayed-tree measures on phylogenetic networks](displayed-tree-measures-on-phylogenetic-networks/README.md)
+- [Trinet encoding of phylogenetic networks](trinet-encoding-of-phylogenetic-networks/README.md)
 ## [Models of sequence, trait and lineage evolution](part-01/README.md)
-
 - [Anagenetic and cladogenetic trait change on Yule trees](part-01/anagenetic-and-cladogenetic-trait-change-on-yule-trees/README.md)
 - [Cophenetic distance between random trees](part-01/cophenetic-distance-between-random-trees/README.md)
 - [Disentangling number of tree mixtures](part-01/disentangling-number-of-tree-mixtures/README.md)
@@ -47,9 +50,7 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Sampled trees of epidemics with age-dependent removal](part-01/sampled-trees-of-epidemics-with-age-dependent-removal/README.md)
 - [Semialgebraic description of the general Markov model](part-01/semialgebraic-description-of-the-general-markov-model/README.md)
 - [Symmetry classification of Lie Markov models](part-01/symmetry-classification-of-lie-markov-models/README.md)
-
 ## [Tree space, networks, diversity and combinatorics](part-02/README.md)
-
 - [Computational geometry of BHV Fréchet means](part-02/computational-geometry-of-bhv-frechet-means/README.md)
 - [Connected surjective digraph maps of networks](part-02/connected-surjective-digraph-maps-of-networks/README.md)
 - [Fixing taxon traceability](part-02/fixing-taxon-traceability/README.md)

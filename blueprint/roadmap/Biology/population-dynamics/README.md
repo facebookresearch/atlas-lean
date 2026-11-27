@@ -24,9 +24,10 @@ Differential-equation and matrix models of population growth, structure, species
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
 - [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)
-
+- [Nonlocal selection–mutation equations](nonlocal-selection-mutation-equations/README.md)
+- [Phase-field models of tumor growth](phase-field-models-of-tumor-growth/README.md)
+- [Phenotype-structured population models](phenotype-structured-population-models/README.md)
 ## [Branching and stochastic population processes](part-01/README.md)
-
 - [Bak–Sneppen model of coevolution](part-01/bak-sneppen-model-of-coevolution/README.md)
 - [Bifurcating processes with dependent lifetimes](part-01/bifurcating-processes-with-dependent-lifetimes/README.md)
 - [Birth–death process with weak competition](part-01/birth-death-process-with-weak-competition/README.md)
@@ -46,9 +47,7 @@ Differential-equation and matrix models of population growth, structure, species
 - [Stochastic metapopulation growth with dispersal](part-01/stochastic-metapopulation-growth-with-dispersal/README.md)
 - [Survival of the fittest species in random birth–death ecosystems](part-01/survival-of-the-fittest-species-in-random-birth-death-ecosystems/README.md)
 - [Unlimited growth of critical multitype populations](part-01/unlimited-growth-of-critical-multitype-populations/README.md)
-
 ## [Evolutionary dynamics, games and quasispecies](part-02/README.md)
-
 - [Canonical equation from individual-based models](part-02/canonical-equation-from-individual-based-models/README.md)
 - [Evolutionary game dynamics on time scales](part-02/evolutionary-game-dynamics-on-time-scales/README.md)
 - [Habitat selection in stochastic patchy environments](part-02/habitat-selection-in-stochastic-patchy-environments/README.md)
@@ -65,9 +64,7 @@ Differential-equation and matrix models of population growth, structure, species
 - [Stationary stability in finite-population evolutionary dynamics](part-02/stationary-stability-in-finite-population-evolutionary-dynamics/README.md)
 - [Stochastic replicator dynamics with random jumps](part-02/stochastic-replicator-dynamics-with-random-jumps/README.md)
 - [Two-scale selection ball-and-urn process](part-02/two-scale-selection-ball-and-urn-process/README.md)
-
 ## [Interacting species, structured populations and pest control](part-03/README.md)
-
 - [Aquatic-stage feedback control of age-structured mosquito populations](part-03/aquatic-stage-feedback-control-of-age-structured-mosquito-populations/README.md)
 - [Beverton–Holt competition with Allee effects](part-03/beverton-holt-competition-with-allee-effects/README.md)
 - [Capacity–predation number and the paradox of enrichment](part-03/capacity-predation-number-and-the-paradox-of-enrichment/README.md)
