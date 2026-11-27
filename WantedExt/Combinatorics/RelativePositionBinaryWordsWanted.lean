@@ -28,6 +28,7 @@ public import MathlibExt.Combinatorics.Words.GoldenEigenvector
 public import MathlibExt.Combinatorics.Words.LetterPositionReconstruction
 public import MathlibExt.Combinatorics.Words.MetallicEigenvector
 public import MathlibExt.Combinatorics.Words.MonotoneRelativePosition
+public import MathlibExt.Combinatorics.Words.PeriodicRelativePosition
 public import MathlibExt.Combinatorics.Words.PisaEigenvector
 public import MathlibExt.Combinatorics.Words.PisaRelativePosition
 public import MathlibExt.Combinatorics.Words.RelativePositionBinaryWords
@@ -127,25 +128,6 @@ public theorem_wanted periodic_iff_letterPosition_diff_periodic {w : ℕ → Boo
       ∀ u : List Bool, 0 < u.length → (∀ i, w i = u.getD (i % u.length) false) →
         (∀ n, 1 ≤ n → dpa (n + u.count true) = dpa n) ∧
           ∀ n, 1 ≤ n → dpb (n + u.count false) = dpb n
-
-/-- **Periodicity of the relative position differences.** Let $w = w_0 w_1 w_2 \cdots$ be an
-infinite word over $\{a, b\}$ in which both letters occur infinitely often, let $p_a(n)$ and
-$p_b(n)$ be the positions of the $n$-th $a$ and the $n$-th $b$ in $w$, let
-$r(n) = p_b(n) - p_a(n)$, and let $\Delta r(n) = r(n + 1) - r(n)$. If $w$ is purely periodic
-(there is $q > 0$ with $w_{i + q} = w_i$ for all $i \ge 0$), then there is $q > 0$ with
-$\Delta r(n + q) = \Delta r(n)$ for all $n \ge 1$. Moreover, if $w = uuu\cdots$ for a nonempty
-finite word $u$ containing $k$ letters $a$ and $j$ letters $b$, then
-$\Delta r(n + \operatorname{lcm}(k, j)) = \Delta r(n)$ for all $n \ge 1$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 17
-(`jis-2025-25.1.5-cor-17`). -/
-public theorem_wanted relativePosition_diff_periodic_of_periodic {w : ℕ → Bool}
-    (hw : BothLettersInfinite w) :
-    let dr := fun n => relativePosition w (n + 1) - relativePosition w n
-    ((∃ q, 0 < q ∧ ∀ i, w (i + q) = w i) → ∃ q, 0 < q ∧ ∀ n, 1 ≤ n → dr (n + q) = dr n) ∧
-      ∀ u : List Bool, 0 < u.length → (∀ i, w i = u.getD (i % u.length) false) →
-        ∀ n, 1 ≤ n → dr (n + Nat.lcm (u.count true) (u.count false)) = dr n
 
 /-- **Reflection of binary words and relative position.** Let $\mathcal{W}$ be the set of
 infinite words over $\{a, b\}$ in which both letters occur infinitely often, and let

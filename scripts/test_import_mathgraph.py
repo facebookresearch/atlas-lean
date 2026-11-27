@@ -1233,14 +1233,39 @@ class FailClosed(Fixture):
                      "blueprint/roadmap/Algebra/groups/actions/, which holds only the statements its editors place in it")
 
     def test_an_address_the_card_move_ledger_records_is_never_taken(self) -> None:
-        self.write("scripts/card-moves.jsonl", "".join(json.dumps(row) + "\n" for row in (
+        # One row in the frozen file, one in a fragment: the logical ledger records both addresses.
+        self.write("scripts/card-moves.jsonl", json.dumps(
             {"page": "Algebra/groups/sylow-existence", "to": "Algebra/groups/actions/sylow-existence",
-             "article_id": f"af_{99:024x}"},
-            {"card": f"af_{98:024x}", "folder": "Algebra/rings", "replaced_by": f"af_{97:024x}"})))
+             "article_id": f"af_{99:024x}"}) + "\n")
+        self.write("scripts/card-moves.d/20200101T000000Z-rings.jsonl", json.dumps(
+            {"card": f"af_{98:024x}", "folder": "Algebra/rings", "replaced_by": f"af_{97:024x}"}) + "\n")
         self.refused([planned("prime-ideal", page_dir="blueprint/roadmap/Algebra/rings")],
-                     "blueprint/roadmap/Algebra/rings/ cannot be made a folder: scripts/card-moves.jsonl records the address")
+                     "blueprint/roadmap/Algebra/rings/ cannot be made a folder: the card move ledger records the "
+                     "address")
         self.refused([planned("sylow-existence")], "its stem sylow-existence collides with the address "
-                     "blueprint/roadmap/Algebra/groups/sylow-existence, which scripts/card-moves.jsonl records")
+                     "blueprint/roadmap/Algebra/groups/sylow-existence, which the card move ledger records")
+
+    def test_a_ledger_that_cannot_be_read_retires_no_less(self) -> None:
+        # An entry of the folder of fragments that is no fragment stops the run: it never stands for no retired address.
+        self.write("scripts/card-moves.jsonl", "")
+        self.write("scripts/card-moves.d/notes.txt", "x\n")
+        self.refused([planned("prime-ideal", page_dir="blueprint/roadmap/Algebra/rings")],
+                     "the card move ledger (scripts/card-moves.jsonl and scripts/card-moves.d/) cannot be read: "
+                     "scripts/card-moves.d/notes.txt: not a fragment")
+        # Nor are fragments without the frozen file a ledger.
+        (self.tmp / "scripts" / "card-moves.d" / "notes.txt").unlink()
+        self.write("scripts/card-moves.d/20200101T000000Z-rings.jsonl", json.dumps(
+            {"card": f"af_{98:024x}", "folder": "Algebra/rings", "replaced_by": f"af_{97:024x}"}) + "\n")
+        (self.tmp / "scripts" / "card-moves.jsonl").unlink()
+        self.refused([planned("prime-ideal", page_dir="blueprint/roadmap/Algebra/rings")],
+                     "scripts/card-moves.jsonl is missing, and its fragments are no ledger without it")
+        # A fragment that is a symbolic link is refused before anything is read.
+        self.write("scripts/card-moves.jsonl", "")
+        target = self.tmp / "scripts" / "card-moves.d" / "20200101T000000Z-rings.jsonl"
+        target.rename(target.with_name("elsewhere"))
+        target.symlink_to(target.with_name("elsewhere"))
+        self.refused([planned("prime-ideal", page_dir="blueprint/roadmap/Algebra/rings")],
+                     "scripts/card-moves.d/20200101T000000Z-rings.jsonl is a symbolic link")
 
     def test_a_folder_page_the_sync_only_appends_to_gets_a_checked_insertion_that_the_plan_names(self) -> None:
         # An item that runs on to an indented line is no simple page, so the sync would only append at the end.
