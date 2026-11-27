@@ -1,0 +1,3 @@
+# Every configuration terminates, goes wrong or reacts
+
+Let $S$ be an operational semantics and $c$ a configuration. Then at least one of the following holds: some finite execution from $c$ reaches a final configuration; some finite execution from $c$ reaches a stuck configuration; or some infinite execution starts at $c$. Equivalently, the [behavior set](beh.md) of $c$ is nonempty: it contains a behavior "terminates with trace $\mu$", "goes wrong with trace $\mu$" or "reacts with infinite trace $\mu$". The three cases are exhaustive but not exclusive: a nondeterministic configuration can exhibit more than one.

@@ -1,0 +1,3 @@
+# A program yields an outcome
+
+Fix a [contextual observation structure](ctx-obs.md): at each program judgment $k$, an operational semantics on the terms of judgment $k$ (with its steps and final configurations) and a relation between configurations and outcomes. At a program judgment $k$, a term $p$ yields an outcome $o$ when some configuration $q$ is reachable from $p$ in [zero or more steps](../operational-semantics-over-labelled-transition-s/steps.md), is final, and is related to $o$ by the outcome relation. Reaching a final configuration is not enough by itself: if the outcome relation is empty, no program yields any outcome, even one that starts in a final configuration.

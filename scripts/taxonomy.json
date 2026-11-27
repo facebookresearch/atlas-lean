@@ -323,7 +323,9 @@
      {"slug": "session-types", "title": "Session types", "description": "Session types for the π-calculus: binary protocols and their duality, linear endpoint typing with ownership contexts, subject reduction, progress by priorities, typing up to protocol equivalence, and shared and recursive services."}
     ]},
     {"slug": "concurrent-systems-and-protocols", "title": "Concurrent systems and protocols", "description": "Specific concurrent or distributed systems and their verified properties: deadlock and its detection, the banker's algorithm, dining philosophers, and communication protocols such as the alternating-bit protocol and go-back-N.", "msc": ["68M14", "68M12", "68Q60"], "subfields": []},
-    {"slug": "programming-language-semantics", "title": "Programming language semantics", "description": "Operational and denotational semantics of programming languages and correctness of compilation: the IMP language (syntax, big- and small-step, heap semantics, denotational semantics, stack-machine compilation), PCF with adequacy and contextual equivalence, CPS translation and closure conversion.", "msc": ["68Q55", "68N20"], "subfields": []},
+    {"slug": "programming-language-semantics", "title": "Programming language semantics", "description": "Operational and denotational semantics of programming languages and correctness of compilation: the IMP language (syntax, big- and small-step, heap semantics, denotational semantics, stack-machine compilation), PCF with adequacy and contextual equivalence, CPS translation and closure conversion.", "msc": ["68Q55", "68N20"], "subfields": [
+     {"slug": "operational-semantics-and-program-equivalence", "title": "Operational semantics and program equivalence", "description": "Operational semantics as labelled transition systems with final states, program behaviors and semantic preservation, and contextual approximation and equivalence in general, with their coincidence with operational approximation and equivalence for PCF and a context algebra with a context-closed model-equality family for the simply typed λ-calculus."}
+    ]},
     {"slug": "type-systems-and-lambda-calculi", "title": "Type systems and lambda calculi", "description": "Typed lambda calculi and type inference: the simply typed lambda calculus (syntax, substitution, normalization, logical relations, normalization by evaluation, elaboration, its models), lambda calculus with references and type safety, and Hindley-Milner let-polymorphism with Algorithm W.", "msc": ["68N18", "03B40", "68Q55"], "subfields": []},
     {"slug": "functional-programming", "title": "Functional programming structures", "description": "Functors, applicative functors, monads and traversal as structures of functional programming, together with recursive computations, lazy lists and streams. Abstract categories, functors and monads are treated under Category Theory.", "msc": ["68N18", "68Q55"], "subfields": []},
     {"slug": "program-logics-and-verification", "title": "Program logics and verification", "description": "Logics for proving programs correct: Hoare logic for partial and total correctness with soundness and relative completeness, weakest preconditions, verification-condition generation, and separation logic.", "msc": ["68Q60", "03B70"], "subfields": []},
@@ -912,6 +914,20 @@
   }
  },
  "placements": {
+  "CSLibExt/Foundations/Control/Monad/Free/Handlers": {"to": "ComputerScience/programming-language-semantics", "title": "Free-model handlers: exceptions, state run laws, explicit nondeterminism"},
+  "CSLibExt/Languages/ContextualEquivalence": {"to": "ComputerScience/programming-language-semantics/operational-semantics-and-program-equivalence", "title": "Generic contextual equivalence"},
+  "CSLibExt/Languages/ContextualEquivalencePCF": {"to": "ComputerScience/programming-language-semantics/operational-semantics-and-program-equivalence", "title": "PCF instance of contextual equivalence"},
+  "CSLibExt/Languages/ContextualEquivalenceSTLC": {"to": "ComputerScience/programming-language-semantics/operational-semantics-and-program-equivalence", "title": "STLC instance of contextual equivalence"},
+  "CSLibExt/Languages/FeatherweightJava/Basic": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Featherweight Java core"},
+  "CSLibExt/Languages/IMP/CategoricalHoare": {"to": "ComputerScience/program-logics-and-verification", "title": "IMP Hoare logic through categorical verification"},
+  "CSLibExt/Languages/IMP/Collecting": {"to": "ComputerScience/programming-language-semantics", "title": "Collecting semantics of IMP"},
+  "CSLibExt/Languages/IMP/DiagramCompiler": {"to": "ComputerScience/program-logics-and-verification", "title": "Compiling IMP programs and Hoare derivations into traced diagrams"},
+  "CSLibExt/Languages/IMP/DiagramVCG": {"to": "ComputerScience/program-logics-and-verification", "title": "Compiling IMP verification conditions into diagram annotations"},
+  "CSLibExt/Languages/IMP/SeparationPrecondition": {"to": "ComputerScience/program-logics-and-verification", "title": "Separating implication and safe backward preconditions"},
+  "CSLibExt/Languages/MiniImp/BinarySearch": {"to": "ComputerScience/program-logics-and-verification", "title": "Verified MiniImp binary search"},
+  "CSLibExt/Languages/OperationalSemantics": {"to": "ComputerScience/programming-language-semantics/operational-semantics-and-program-equivalence", "title": "Operational semantics over labelled transition systems"},
+  "CSLibExt/Languages/PointerAnalysis/HeapLang": {"to": "ComputerScience/programming-language-semantics", "title": "A heap language for pointer analysis"},
+  "CSLibExt/Languages/ProgramBehaviors": {"to": "ComputerScience/programming-language-semantics/operational-semantics-and-program-equivalence", "title": "Program behaviors and semantic preservation"},
   "MathlibExt/AlgebraicTopology/EilenbergMacLane/Basic": {"to": "Topology/algebraic-topology", "title": "Higher homotopy groups"},
   "MathlibExt/AlgebraicTopology/SimplicialSet/Marked/Basic": {"to": "Topology/simplicial-homotopy-theory", "title": "Marked simplicial sets"},
   "MathlibExt/AlgebraicTopology/SimplicialSet/Marked/Colimits": {"to": "Topology/simplicial-homotopy-theory", "title": "Colimits of marked simplicial sets"},

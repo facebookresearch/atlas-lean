@@ -1,0 +1,3 @@
+# Form (2) preservation holds from the nondeterministic to the deterministic toy
+
+Preservation in [form (2)](preserves2.md) from a source configuration to a target configuration says: if the source is safe, every behavior of the target is a behavior of the source. It holds from the [nondeterministic toy](nondet-toy.md) to the [deterministic toy](det-toy.md) when both start at configuration $a$. Every step of the deterministic toy, the single step from $a$ to $b_1$ labelled $\mathrm{true}$, is a step of the nondeterministic toy, and the two toys have the same final configurations, so every behavior of the target from $a$ is a behavior of the source from $a$. This inclusion holds without the safety hypothesis, so it gives form (2) a fortiori.

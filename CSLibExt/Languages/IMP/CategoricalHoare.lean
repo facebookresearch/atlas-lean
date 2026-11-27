@@ -115,7 +115,8 @@ theorem commandRel_while (b : BExp) (c : Cmd) :
   ext ⟨s, t⟩
   exact (loopBody_path_iff b c (Sum.inl s) t).symm
 
-/-- Validity of a while loop is equivalent to an invariant for its categorical body. -/
+/-- `{P} while b do c {Q}` is valid iff some `I` makes the categorical loop body satisfy the
+powerset tensor triple from `(P, I)` to `(Q, I)`. -/
 theorem while_valid_iff_invariant (b : BExp) (c : Cmd) (P Q : Assertion) :
     Valid P (.while b c) Q ↔ ∃ I : Set State,
       TensorTriple PowersetVerification.verification (loopBody b c) ({s | P s}, I)

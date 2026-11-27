@@ -30,3 +30,8 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [Crash safety](crash-safety/README.md)
 - [Completeness of simulation methods](completeness-of-simulation-methods/README.md)
 - [Refinement](refinement/README.md)
+- [Compiling IMP programs and Hoare derivations into traced diagrams](compiling-imp-programs-and-hoare-derivations-int/README.md)
+- [Compiling IMP verification conditions into diagram annotations](compiling-imp-verification-conditions-into-diagr/README.md)
+- [IMP Hoare logic through categorical verification](imp-hoare-logic-through-categorical-verification/README.md)
+- [Separating implication and safe backward preconditions](separating-implication-and-safe-backward-precond/README.md)
+- [Verified MiniImp binary search](verified-miniimp-binary-search/README.md)

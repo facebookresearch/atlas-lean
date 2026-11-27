@@ -1,0 +1,3 @@
+# Compiling IMP commands to diagrams
+
+The compiler translates IMP commands into typed diagrams over the primitive blocks: `skip` and assignment become their blocks, sequencing becomes sequential composition, and `if b then c else d` becomes a branch on $b$, then `d` on the left wire beside `c` on the right wire, then a join, so the else branch is on the left and the then branch on the right. `while b do c` becomes feedback around a join, a branch on $b$, and `skip` on the left wire beside `c` on the right wire: the loop exits on the left when $b$ is false and feeds the right, body, result back.

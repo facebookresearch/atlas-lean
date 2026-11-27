@@ -155,7 +155,8 @@ theorem eq_of_steps_of_final {Config : Type u} {Label : Type v}
 
 end OpSem
 
-/-- IMP adapter with unit labels; steps are exactly `Cslib.IMP.Step`. -/
+/-- IMP adapter with unit labels; steps are exactly `Cslib.IMP.Step`, and a configuration is
+final iff its command is `skip`. -/
 def imp : OpSem Cslib.IMP.Config Unit where
   lts := { Tr := fun x _ y => Cslib.IMP.Step x y }
   Final := fun c => c.1 = Cslib.IMP.Cmd.skip
@@ -214,7 +215,8 @@ def stlc {Base : Type u} {A : Stlc.Ty Base} :
     intro c hv μ s' h
     exact Stlc.Step.value_irreducible hv h
 
-/-- STLC unlabelled steps coincide with native steps on the fibre. -/
+/-- For closed STLC terms of one type, an unlabelled step of the adapter is exactly a native
+call-by-value step. -/
 theorem stlc_step_iff {Base : Type u} {A : Stlc.Ty Base}
     {x y : Stlc.Tm ([] : List (Stlc.Ty Base)) A} :
     OpSem.Step stlc x y ↔ Stlc.Step x y := by
@@ -224,7 +226,8 @@ theorem stlc_step_iff {Base : Type u} {A : Stlc.Ty Base}
   · intro h
     exact ⟨(), h⟩
 
-/-- STLC is deterministically unlabelled on the fibre. -/
+/-- The STLC adapter on closed terms of one type is deterministic: two unlabelled successors
+of the same closed term are equal. -/
 theorem stlc_deterministic {Base : Type u} {A : Stlc.Ty Base} :
     OpSem.Deterministic (stlc (Base := Base) (A := A)) := by
   intro x y z h1 h2

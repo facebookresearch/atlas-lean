@@ -1,0 +1,3 @@
+# Form (1) preservation fails from the nondeterministic to the deterministic toy
+
+Preservation in [form (1)](preserves1.md) from a source configuration to a target configuration is equality of their behavior sets. It fails from the [nondeterministic toy](nondet-toy.md) to the [deterministic toy](det-toy.md) when both start at configuration $a$. The source has the behavior "terminates with trace $[\mathrm{false}]$", by its step from $a$ to the final configuration $b_2$ with label $\mathrm{false}$. The target has no such behavior, since its only step from $a$ is labelled $\mathrm{true}$. So the source's behavior set is not contained in the target's, and the two sets differ. Started at $b_1$ instead, both systems have exactly one behavior, termination with the empty trace.

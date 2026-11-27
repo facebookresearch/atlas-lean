@@ -47,20 +47,23 @@ def Beh {Config : Type u} {Label : Type v} (S : OpSem Config Label) (c : Config)
     | .reacts μs => ∃ ss : Cslib.ωSequence Config, ss 0 = c ∧ S.lts.OmegaExecution ss μs
     | .goesWrong μs => ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Stuck c'}
 
-/-- Termination membership unfolds to a multistep reaching some final configuration. -/
+/-- `terminates μs` is a behavior of `c` iff an execution from `c` with trace exactly `μs`
+reaches a final configuration. -/
 theorem terminates_mem_iff {Config : Type u} {Label : Type v} (S : OpSem Config Label)
     {c : Config} {μs : List Label} :
     Behavior.terminates μs ∈ Beh S c ↔ ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Final c' := by
   exact Iff.rfl
 
-/-- Reaction membership unfolds to an infinite omega execution. -/
+/-- `reacts μs` is a behavior of `c` iff an infinite execution starting at `c` has labels
+exactly `μs`. -/
 theorem reacts_mem_iff {Config : Type u} {Label : Type v} (S : OpSem Config Label)
     {c : Config} {μs : Cslib.ωSequence Label} :
     Behavior.reacts μs ∈ Beh S c ↔
       ∃ ss : Cslib.ωSequence Config, ss 0 = c ∧ S.lts.OmegaExecution ss μs := by
   exact Iff.rfl
 
-/-- Wrong-going membership unfolds to a multistep reaching some stuck configuration. -/
+/-- `goesWrong μs` is a behavior of `c` iff an execution from `c` with trace exactly `μs`
+reaches a stuck configuration. -/
 theorem goesWrong_mem_iff {Config : Type u} {Label : Type v} (S : OpSem Config Label)
     {c : Config} {μs : List Label} :
     Behavior.goesWrong μs ∈ Beh S c ↔ ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Stuck c' := by
@@ -169,7 +172,8 @@ theorem Preserves2.trans {Config : Type u} {Label : Type v} {S T U : OpSem Confi
   have hsub2 := h2 hsafeT
   exact hsub2.trans hsub1
 
-/-- Configurations of the nondeterminism counterexample toy semantics. -/
+/-- Configurations of the nondeterminism counterexample toy semantics: exactly `a`, `b1` and
+`b2`. -/
 inductive NondetToyCfg where
   | a
   | b1
@@ -188,7 +192,8 @@ def detToy : OpSem NondetToyCfg Bool where
   Final := fun c => c = .b1 ∨ c = .b2
   final_terminal := by intro c hc μ s' h; cases c <;> simp_all
 
-/-- Preservation in form (1) fails from the nondeterministic to the deterministic toy. -/
+/-- Preservation in form (1) fails from the nondeterministic to the deterministic toy, both
+starting at `a`. -/
 theorem preserves1_fails_nondet_to_det :
     ¬ Preserves1 nondetToy detToy NondetToyCfg.a NondetToyCfg.a := by
   unfold Preserves1
@@ -208,7 +213,8 @@ theorem preserves1_fails_nondet_to_det :
   obtain ⟨_, hlabel, _⟩ := hTrD
   cases hlabel
 
-/-- Preservation in form (2) holds from the nondeterministic to the deterministic toy. -/
+/-- Preservation in form (2) holds from the nondeterministic to the deterministic toy, both
+starting at `a`. -/
 theorem preserves2_nondet_to_det :
     Preserves2 nondetToy detToy NondetToyCfg.a NondetToyCfg.a := by
   unfold Preserves2
