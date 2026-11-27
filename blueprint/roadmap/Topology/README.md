@@ -35,6 +35,7 @@ and draws data sets with [Mapper](algebraic-topology/mapper/README.md); its zero
 - [Descriptive set theory](descriptive-set-theory/README.md)
 - [Continuum theory and infinite-dimensional topology](continua-infinite-dimensional/README.md)
 - [Topological groups](topological-groups/README.md)
+- [Infinite sums and products](infinite-sums/README.md)
 - [Topological modules and vector spaces](topological-modules/README.md)
 - [Categories of spaces and locales](categorical-topology/README.md)
 - [Algebraic topology](algebraic-topology/README.md)
@@ -47,3 +48,4 @@ and draws data sets with [Mapper](algebraic-topology/mapper/README.md); its zero
 - [Simplicial homotopy theory](simplicial-homotopy-theory/README.md)
 - [Model categories and homotopical algebra](homotopical-algebra/README.md)
 - [Metric spaces](metric-spaces/README.md)
+- [Ordered topological spaces](ordered-topological-spaces/README.md)

@@ -1,90 +1,699 @@
 {
   "rows": [
-    {"path": "MathlibExt/Topology/Algebra/BirkhoffKakutani.lean", "disposition": "identical", "published_sha256": "51997fb0b9da7b4b0aa205c6cbc410846cad4baa98d0d7146baf93e2bad8185d", "upstream_sha256": "4b79077823b18c2c0fa8a77333cdaed2fd840b6d201bf8fa71258bc1cfa4aaf2"},
-    {"path": "MathlibExt/Topology/Algebra/ContinuousSemilinearRepresentation.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6f5552f4563cfc72f6ad17ba9c4f2fd6ba1b84e536ff90b459a8d3a8c51a74bc", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "86ed7388f8edf3847a53c117a960b8f8f20f8c2f4287ada80834e5cfb5dec41f"},
-    {"path": "MathlibExt/Topology/Algebra/Group/OpenProfiniteCompletion.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "97fc3f9ea0a93d411e9745474536ee27239d589bfdb5b516b503b265d2cb2439", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.", "upstream_sha256": "b297d5a5299d90861dfb904116370d0aab717d9d16d509ec9a6f8be0e59e81bc"},
-    {"path": "MathlibExt/Topology/Algebra/PeterWeyl.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ca56a4746fa4f2437caefd6ef1bb8839b4f66d6257c2712f66f24971f242a09e", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "5754bb9fa5e3f43abf85fa99610f94361694b58c5e016765f77699becf1095c9"},
-    {"path": "MathlibExt/Topology/Algebra/StrongCompleteness.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "d6e95b310e065813adda87aa4a7c58cdc7927ce11916ed026c3550c6e0801e69", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "020f07445c22032f7d76913cc758c6af6e050b9872dc04b5553c7724df30e0b2"},
-    {"path": "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSet.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "908cc9c4a0fae109ec4ce048396c346ed4b9d4ad5c242550a41029d9e6226016", "rationale": "Move completed declarations from WantedExt/Topology/ArithmeticalSelfSimilarCompactSetWanted.lean when proving the layer-index identity, preserving their names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ArithmeticalSelfSimilarCompactSetWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSetDerived.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "65a5bf2f00fd215134ae75687e170ff689d4e90cfc680ba3ce064e34875bcfd3", "rationale": "Move the derived-set enumeration from WantedExt/Topology/ArithmeticalSelfSimilarCompactSetWanted.lean when proving it, preserving its name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ArithmeticalSelfSimilarCompactSetWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSetLayerEnumTendsto.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "9e766d91d62ca2f5d4abe7b701a996243bb078b5466eaf1018cf32401a62c70b", "rationale": "Move the proved `isSelfSimilarCompactSet_layer_enum_tendsto` from WantedExt/Topology/ArithmeticalSelfSimilarCompactSetWanted.lean when the wanted statement was proved; same name and statement."},
-    {"path": "MathlibExt/Topology/CWComplex/CompactGeneration.lean", "disposition": "identical", "published_sha256": "1d8ea42fcbe00b2073867925199ddba0b147cba347074b8b722da9dd3fd294f5", "upstream_sha256": "ce8f9a17fcadc97ced5c93a2d68ba73c908c813eec317561d88fb5933268696c"},
-    {"path": "MathlibExt/Topology/Category/CompactlyGenerated/GeneratedBy.lean", "disposition": "identical", "published_sha256": "cf20d9301d8d07e0184b94c655f3055f8d27aeae0bdb87572ce9ad4afc79db79", "upstream_sha256": "776dff46f65037dd01f71ce77d7a677303c369109a8fe565f3611e6cac3fe5ff"},
-    {"path": "MathlibExt/Topology/Category/TopCat/Colimits/FiniteClosedColimit.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "945d3fcac5948768f57222f84f0fc31bf0a27ee39433f96e1ac76962cd288a80", "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state simplex contraction, twisting/nilpotence, bialgebra/Hopf, coefficient squares and topological colimit contracts with their exact hypotheses, maps and universes; all code and legal text are unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "7b5a409cea09c986f65f1bfff5ea78a3e4b0d172dfe3381ad4a7565d828771be"},
-    {"path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedSequentialColimit.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c691c1243a49e2ae66de7d6571f5d8304013b380217cfcae3771a05d40037f17", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "ce64796afe67b1387a1a95a43da129d5c6c8db47efc8079689fc2672d7cb39ca"},
-    {"path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedSequentialPreserves.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "2fe8b714bbbc9f69371e21d63e421c9123bceb247da33793452fa60212c5aebf", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "255416c2faa549ef6bd06d6cce9f22eb01afc796281f79542655c4175a017f9e"},
-    {"path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedTransfiniteColimit.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ee3a00733ee4db2e76c8f4cca435fb6ac0c83cecf286eddaedea300b5a95254c", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "1c8b0089638b1f839f26dcc01182a91a906117e4968cca270eee1ba0bebc9e51"},
-    {"path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedTransfiniteContinuous.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "a5b454205c10b71b8134b923c8c65df605f83edb8edd9960b5355f6422acc74f", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "4195641c40a547bc3d1e5421a656f95ddbf85d215ae83163195fcd5e3e973d5c"},
-    {"path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedTransfinitePreserves.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ec2f3f64e8e231f7fe69a0f3334e2519237b39153b7f58491f86701c51bf2bc4", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "1eaeae5e03519f3e901aa60fd19ecaa2eb48a3f35cb70a7350a737b3e72c37ba"},
-    {"path": "MathlibExt/Topology/Category/TopCat/CompactPushoutProduct.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "883abcb39cd504bf345e841313eab5951a247eba8787cd92ce6ff538a3a8671e", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "d916f679226195596a7e1d2dfe5595189f4a0fbb518dc8090ac95d159e0ca7fd"},
-    {"path": "MathlibExt/Topology/Category/TopCat/DeltaGeneratedOpen.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "31e311552cc592d051b024b3789e89c9430f80ee6cffb2a99aa3ab3e4017d7b4", "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state simplex contraction, twisting/nilpotence, bialgebra/Hopf, coefficient squares and topological colimit contracts with their exact hypotheses, maps and universes; all code and legal text are unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "4a0724bec7fbd878abb076d9b43c5a8fd8a619ca9e47c77713cba388cd42c632"},
-    {"path": "MathlibExt/Topology/Category/TopCat/Embedding/ClosedT1EmbeddingCoproducts.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e499c47704652defa419c72adbba778c75676b6783d11cfb7c951a2f2b5b5a5d", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "015247f7098d903cf38e3dca9bb224375811261141e76e034d52be8a4a056b4b"},
-    {"path": "MathlibExt/Topology/Category/TopCat/Embedding/TopCatHornCoproductClosedT1.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c707bca17b1e20fdadfe265f0490846c4bd57be64f0c64e788a934304f5516da", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "45572b6850c3bf44ae089332e201e97abb15d72ce18f65b14bdd79eb7da02b4d"},
-    {"path": "MathlibExt/Topology/Category/TopCat/FixedFiberGauge.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "dd9ec784e7b575d8670259d1808e0edf79d3710abae06140a45052bcb2cfb60f", "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state fixed-fiber gauges, canonical preimage pullbacks, product symmetry and induced-subspace maps with precise hypotheses and coordinate directions; all code/legal text is unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "c99dda7cf84e94aa5b7ce0824559d12c29c717b7e0b6c9d431b7fc9538c77ccf"},
-    {"path": "MathlibExt/Topology/Category/TopCat/PreimageSubspacePullback.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0c478acd3a54fd58c6674d71fa9b4c6b9781c54f6d7c9f6d0e08037b4a0440fa", "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Repair actual pinned native imports, projections, tensor coercions, composition proofs and module visibility while preserving the public mathematical hypotheses, maps, signs, worlds and meaningful clients. Native verification pending. Mathematical docs state fixed-fiber gauges, canonical preimage pullbacks, product symmetry and induced-subspace maps with precise hypotheses and coordinate directions; all code/legal text is unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "344281f40848b6fce312e9567f04338c12cca2fd37a905427bc31513dc0bc021"},
-    {"path": "MathlibExt/Topology/Category/TopCat/ProdPushoutFactors.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "cda6a06ff2d7457550992cb68369ccc25d9807b7c3f1bbb6941c69e584ddabb1", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "471cf486edb077ccb1dd1a1ffe572dc8685ae2775e5a011ba7db7709f26d7935"},
-    {"path": "MathlibExt/Topology/Category/TopCat/ProdPushoutFiberDesc.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5eeec6ed690d590a0f04e579981180fbac664f8dd0bd1b3f13939528f0d7d26f", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "b0e5ed36819d80a3dd45ab41d224d9cd23748d304a091a3d5d9efec0ed0fdf69"},
-    {"path": "MathlibExt/Topology/Category/TopCat/ProdPushoutFiberFormula.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ae111c08de0d856b117ef49ceb9d57eba80610b8a8c53161ff201e504126adee", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "ec94962dc61480db7ff4843ee95be186513df1545c381e259f9bc763925033a1"},
-    {"path": "MathlibExt/Topology/Category/TopCat/ProdPushoutQuotient.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e2d8fced320044502b9e86acc3443bcfaab0620ffdfd5fdfb6e987b28320c196", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "5ef96df92b59588c9187091b320d8cfff1853f47403179b7c143be92a0e553bb"},
-    {"path": "MathlibExt/Topology/Category/TopCat/ProdPushoutSymm.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "512c6aabdc1c8abf8fae7a6888147c175718e1cb420b62afa4435f13d3bbc6ea", "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state fixed-fiber gauges, canonical preimage pullbacks, product symmetry and induced-subspace maps with precise hypotheses and coordinate directions; all code/legal text is unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "9c30c2e5bd11016e0b03b255d811d01d91b0194ae2d3a40a88c9f6e7c48f9f25"},
-    {"path": "MathlibExt/Topology/Category/TopCat/PushoutOpenComplement.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0d17fad795e925bfb8187e5e45db7d4406f2903bec98c875b93c36e1c821d206", "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. The module and five public declarations now state the pushout-complement and quotient-topology results with all hypotheses; proof tokens and legal credits are unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "970327fa658fe925eb3dee8f3813b94952962837f36484645ca151b6a7edc088"},
-    {"path": "MathlibExt/Topology/Category/TopCat/PushoutOpenRestriction.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "900f5dd4ce6a4483458532bc2c61d467de0748e6d1bd64260d5256ea575d9f4c", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "7753707acd5fb03afa0ec70908b757f6bc4e4a38631f6e687ceb4a24d93eaae2"},
-    {"path": "MathlibExt/Topology/Category/TopCat/QuotientPushout.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "abb4bb65f5b7655b1027117903e692693ec8244313a0902f2f4c562b404297f9", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "86e9164f0c676cf04e324425c7142ae8b07569b1a02a4cacf9c3951aa80a99b1"},
-    {"path": "MathlibExt/Topology/Category/TopCat/Subspace.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "49106ed0f9de9d60eba775391b2d2ff86a2d0ee660d0d5fe46299cf7e031fc05", "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state fixed-fiber gauges, canonical preimage pullbacks, product symmetry and induced-subspace maps with precise hypotheses and coordinate directions; all code/legal text is unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "066f744f14e1e243078ec9a32a098930a36565d9b45fe39be39a835e2d4e0984"},
-    {"path": "MathlibExt/Topology/Compactness/CompactlyGeneratedProduct.lean", "disposition": "identical", "published_sha256": "b4bfda1ae3f1161c4f4f356e915c86b6a3ec3080214c8f4060c6bd1ffed9650c", "upstream_sha256": "e1d33d7c86ffb413e3564b01288dedaf5fbd19d14c476498f5e7b143e4f9f881"},
-    {"path": "MathlibExt/Topology/Compactness/WeakHausdorffSpace.lean", "disposition": "identical", "published_sha256": "3845b3dec3a61800cf74fee5cfa72f41ddf97633b35aefee359c196243bebd85", "upstream_sha256": "d90225f774371f8a65eef4aa34ddc9fac860bd7f898e304655cf410b09a358bf"},
-    {"path": "MathlibExt/Topology/Connected/Frontier.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "8987409398f34e19d79ff9abfb91e1c882c1295270517213d7e3bc9ae50913cc", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "b15b65e36911e5152f4b97ab2d0431593e22f47eed417ccb75173be2b032f148"},
-    {"path": "MathlibExt/Topology/ContinuousMap/CompactDiscrete.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "905d5f2a7782a8b66f644b4385c0dadb04bb7ec250e055398d1e18a23a1301e2", "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds. Mathematical docs state the acting-group/scalar restriction comparison, the exact universe-zero coefficient tensor comparison including modulus zero, and compact-open discreteness under compact/discrete hypotheses; code and legal credits are unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "7f2441fc0f6fbe05cdae45365f9492a1ebb236f5f5aaf4930f4549e65a21531b"},
-    {"path": "MathlibExt/Topology/Continuum/HahnMazurkiewicz.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c874aa8488b9d2825c02e1471fb895e87f8cd3d3d9596d6a6fc9a6845cc40d6b", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "0b998385289ff1624f7390323405f3391d85ce0a120067fe6a7c8fd4327b8c48"},
-    {"path": "MathlibExt/Topology/Continuum/PeanoCurve.lean", "disposition": "identical", "published_sha256": "df52aea3eee04f0605c4363e6bee92b5725951ae2c00b918c6dc64f5894bc521", "upstream_sha256": "67ba7ee279784180fa96718f5a34f68ec4bcade41ef2853e420b566683bff963"},
-    {"path": "MathlibExt/Topology/Convenient/DeltaGeneratedProduct.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "abc21643733411059e7da82b1a0cbefb90843b32fa8d8ee986e590fd767b0db8", "rationale": "Clarify that both factors are Delta-generated and the left factor is locally compact in the theorem docstring; theorem type, proof and source credit are unchanged.", "upstream_sha256": "9d5d8d4149a34cf9c3908adffee6f437195d43f5b75efebc018af9935f78953b"},
-    {"path": "MathlibExt/Topology/Convenient/ProperQuotientProduct.lean", "disposition": "identical", "published_sha256": "a8ed29889e8e21dd924f45c1b18943e353a7c9a379def6ce2e8a2a3b14d04a7c", "upstream_sha256": "cb43a20f242032758b637c6f91e2e139b560e63d591321aaa2ed4ba75dab912d"},
-    {"path": "MathlibExt/Topology/Convenient/QuotientProduct.lean", "disposition": "identical", "published_sha256": "3c27bb0f0dbb064f4d30ff070f4b98eee4a90c9f611bcae92a967eee9123706a", "upstream_sha256": "4e9d705a72ef48ee08c37d93ab6db12d50dd9489daf78adfbf8d7692245e989f"},
-    {"path": "MathlibExt/Topology/Convenient/StdSimplexMinimalFace.lean", "disposition": "identical", "published_sha256": "25cc02471dc44acc77a27baf9362882a143d332ca48bf7be255ca9097b6bef37", "upstream_sha256": "76777a074c4753e8989834a250b3f3e5a58327620cc4e7772f73a58b59498df6"},
-    {"path": "MathlibExt/Topology/Convenient/StdSimplexProductCell.lean", "disposition": "identical", "published_sha256": "df7e19384038a1a3aaf5b8051194a1d3de0e0bd78b974945f61b32e63fdf74cf", "upstream_sha256": "06d2a3073e87cda1c0d7eec8d2749e7ae1bae806a3b54c5d6d915fae165fed0b"},
-    {"path": "MathlibExt/Topology/Convenient/StdSimplexProductCellGluing.lean", "disposition": "identical", "published_sha256": "fb0aac3b4300ff65e8f7afa220eb508f180d1cfc5ad9f91152090dfa801d637c", "upstream_sha256": "2de4176262e57127e9e4ea1d525473465e0d75125a32810976eed46d6d8844d9"},
-    {"path": "MathlibExt/Topology/Convenient/StdSimplexRadialBoundary.lean", "disposition": "identical", "published_sha256": "5fa30ca25b7a0870fb6b8e656f69213c596286f0eb1dbab6f98148e231451656", "upstream_sha256": "3268b7f8bd352668b5a4becf9ae9ebb87d5a8078357b22a3e3c487e6e422d0a0"},
-    {"path": "MathlibExt/Topology/ConwayKnotEuclideanBridge.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "3a38f36621c289a4c900619264216475e3ea12eb92c9c5d26d0b96f7beda10cd", "rationale": "Moved the completed bridge from WantedExt/Topology/ConwayKnotEuclideanBridge.lean to MathlibExt with the same declaration names and statements."},
-    {"path": "MathlibExt/Topology/ConwayKnotShared.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0da10360fb1ac31e633c3027e4e7ff5f58e5e16633a320d4e51037c4542f1a1b", "rationale": "Moved from WantedExt/Topology/ConwayKnotShared.lean to support the Conway polyline simplicity proof, preserving declaration names, types and bodies. Also: Document the Euclidean API for new work and the bridge for the benchmark types. Also: The docstring restatements from #993 and the v4.36.0 API adaptations still need to be backported to Formal-Math. Consolidate the shared definitions' attribution."},
-    {"path": "MathlibExt/Topology/ConwayKnotSimple.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "a1f8cbcfaceaa5c15c9d392bd85e8a5f47288abc22e8444bf1fd0cb4b1ca8d42", "rationale": "The Conway polyline simplicity statement moved from WantedExt/Topology/PiccirilloWanted.lean when it was proved, preserving its name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/PiccirilloWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Topology/CountablyMonolithic.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "2df6e7ffed4549eb71bf3c9eac3c6902515b9e227d6e61b8dc7579636512271d", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "85cc475865fa0e7827e06e73deaaa77c7c5c054892ecb5772a61c30b9ad5476f"},
-    {"path": "MathlibExt/Topology/DescriptiveSetTheory/BaireSpaceCharacterization.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "76004f5b18809e0dd4d7072cff25a67aea8975505977329f0bebbbf144a96370", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "fde63c36d9341fb7b7feb96d3c962b35ff1d08bbf23ae8c4b66fb44aa1759ddb"},
-    {"path": "MathlibExt/Topology/DescriptiveSetTheory/BernsteinSet.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "3065a3a9847550d3ebd6fc0d7b23c094a9dc1c7bd42d022a4cb10f79f88d2738", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "ed16a24622d19411c6653399ddcfcf4c5597b9f52583adb828356d4d699061eb"},
-    {"path": "MathlibExt/Topology/DescriptiveSetTheory/CantorSpaceCharacterization.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "4dfe26573e42cff4e71f833a8ce1c2a0e5d68bb1aa558bbc22fb4ee571b29555", "rationale": "Record the ATLAS-side changes already merged in 5a030cc0faeb0949db37b2d51cc38cb02d2bec7d (MathlibExt: retire private copies of Mathlib lemmas); the previous published hash predates those changes.", "upstream_sha256": "c249d8137744caf400724cd66325387c0c354a27a401ff63057689ea374204d2"},
-    {"path": "MathlibExt/Topology/DescriptiveSetTheory/RationalsCharacterization.lean", "disposition": "identical", "published_sha256": "9feb8b1468f80dad700d748d8d0516ac0f85bc6aac53d0bde241cb7a6f2669c9", "upstream_sha256": "494ef24faf92161fcbf8a9beb51027e08b84fde2d4efed81c6b257f39f0a55ed"},
-    {"path": "MathlibExt/Topology/FiberBundle/Separation.lean", "disposition": "identical", "published_sha256": "732fe8d0604ef99ca7e978a94833b4b0dea1261fc6f8c8fdd88961c3d7776d23", "upstream_sha256": "c85eb4d8315330a8d84a09297d46ba2b078008964be5c191414e49e266b34c62"},
-    {"path": "MathlibExt/Topology/Homeomorph/Set.lean", "disposition": "identical", "published_sha256": "c8708b25168ee5feb7801f1a130255930a30678611203e4544420ac18a62a413", "upstream_sha256": "44d4958bd746feebdf460e22d375110db78011464dcf5ad9fb169ab21b5fb292"},
-    {"path": "MathlibExt/Topology/HomogeneousSpace.lean", "disposition": "behind", "published_sha256": "f5792fbc637e93d48f3dbc4f9a54a4b1f4e1b38ea70ce93ef9ffabd248025016", "upstream_commit": "5747688fbecf1aec366a3200daa67d164154458f", "upstream_sha256": "4f29e85167ff0461f854de78177da8684478cefd9a5280f47ec8fd0600593d32"},
-    {"path": "MathlibExt/Topology/Homotopy/BorsukUlam.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "2c3e62bed643bc072ded87cfa231cce4362297e773fe736c31dd5b174e999fae", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "7d6e9c46f2e2bcbecb9b31690437acbc413443d544bad1dba4d990f9492ba6ea"},
-    {"path": "MathlibExt/Topology/Homotopy/TopCat/Singular/SingularKanPolymorphic.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "bb796a707af9b9d632bed8fc39431e1a5cdb4d0c20f67448c41e8350ceddbbef", "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "9b9c47c8f8bdc3f0f3e4c4988c230a4b52cc3de580615928b7642c46b9b158a6"},
-    {"path": "MathlibExt/Topology/InverseLimit.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "4b89acf9c72ff6cd102714789db6f6b8f1d32389545e42294e2d6e768a1477b9", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "d547887bfc588bedaae5fc0638831d1d5a49670ea8f6f2e3e49a340b00d689b5"},
-    {"path": "MathlibExt/Topology/KirkNormalStructure.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "d7691170b942c29a974cf3730a245aa3b17e463ac339a0dd2ba291184f3c837a", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #993). Also: move the definitions and theorem from WantedExt/Topology/KirkNormalStructureWanted.lean after proving Kirk’s theorem, preserving their names and statements."},
-    {"path": "MathlibExt/Topology/Knot/EuclideanLink.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ed92b8c495903aa542420fb8bcb3b81101c012405e6fd53abb9d27d16385deb8", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also: Update the module documentation to point to the shared Conway definitions in MathlibExt. Identify the API for new work and point to the relocated Conway knot bridge.", "upstream_sha256": "b1344e33b02224d858cbe3440b8f90503a7ab6af828575a51f91f3b9fc5e510e"},
-    {"path": "MathlibExt/Topology/Knot/RegularProjection.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f3b834f0e1fe82fd90721f96f39649a8fb814091837dc7454642e755be9dc8c4", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_commit": "c6f5038d246b197ad35f7a43cc5b919ebe5f7586", "upstream_sha256": "c6651fa57054ecca1554ab9ba8aea350ba6f09df9de4abe165a5a05c2d87a831"},
-    {"path": "MathlibExt/Topology/Knot/TightAlternatingKnotConstant.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5a992d558d9f59699e15176bc19f4923b2c04fdf7227f73de76be7ee3c53d889", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "5b28111cb586374a5df100b2438de99cace88da7cd31ae268d280ec7cce9f071"},
-    {"path": "MathlibExt/Topology/Knot/TightKnotConstant.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "bca92d37962503a7de69934a3923992f6a8b6120e672bd795614ad3f5653e473", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "e1504ebdfd9333d4e9162b284f6e2524a64b8385d41300ad8da553a98fd28ff4"},
-    {"path": "MathlibExt/Topology/KuratowskiClosureComplement.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ef74672b182c2a637a5a4aa5a43f78703ecf1da3d278880bb6ca14158f943dc1", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "5a7aa12817e8a62be6cc8f9c6b5e186b52b4f758bc48d19b1e08874363c71cd9"},
-    {"path": "MathlibExt/Topology/MaciasArithmeticProgressions.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5064e3646f41b20da472bce9730b333fde3ccbd1c3a9a0dd11bd020d53d97527", "rationale": "Moved from WantedExt/Topology/MaciasArithmeticProgressionsWanted.lean when proving the density theorem, preserving declaration names and statements. Also: Moved the remaining statement on sets of primes to this module when it was proved, preserving its name, statement and docstring. The docstring revisions from the retired file still await backport. Also: reuse the shared basis theorem from MaciasCoprimeTopology."},
-    {"path": "MathlibExt/Topology/MaciasCoprimeTopology.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "84466c5b47988e452bc7a395f7fad68349fcea9b59892e3593a62ed3c18c7b99", "rationale": "Extract the definitions from WantedExt/Topology/MaciasCoprimeTopologyWanted.lean for the proof of density of coprime arithmetic progressions, preserving their names, types, and bodies. Also: prove and move the basis theorem with its original declaration name, proposition and audited docstring; backport of the docstring remains pending."},
-    {"path": "MathlibExt/Topology/MaciasPrimeClosure.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ac60be0e653d3bafe9314b9a64d637954843683fe785b28a09a0a6d47a1f5bd2", "rationale": "Move the prime singleton closure theorem from WantedExt/Topology/MaciasCoprimeTopologyWanted.lean when it was proved, preserving its name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/MaciasCoprimeTopologyWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Topology/MaciasPrimeDensity.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "06adac1b18ea265e505db8858cb843f08637f0fc5e8dff51d4df9ef3118387c4", "rationale": "Moved from WantedExt/Topology/MaciasCoprimeTopologyWanted.lean when the prime density equivalence was proved, preserving its name and statement. The moved docstring keeps ATLAS-side text from WantedExt/Topology/MaciasCoprimeTopologyWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: reuse the shared basis and move the two proved prime density statements with their original names, propositions and audited docstrings."},
-    {"path": "MathlibExt/Topology/Maps/CollapsedAxes.lean", "disposition": "identical", "published_sha256": "8f23fc8332187b9e9f5aad91b0d51b9820b79f6a928301e59be445ced5ade822", "upstream_sha256": "c34614d9556eb1b970cd8206f2f24ff3fa92a04eb0f83c389804b40c66e0d568"},
-    {"path": "MathlibExt/Topology/MetricSpace/BoundedMetricTopologicallyEquivalent.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "b915b7ceeeca56818e75218eb4e25337afbb09c29ab20ef9fb1721bb2a225a59", "rationale": "Moved from WantedExt/Analysis/FunctionalAnalysis/BoundedMetricTopologicallyEquivalentWanted.lean (retired row) when its theorem_wanted dist_div_one_add_dist_balls_equivalent was proved: same namespace, declaration name, statement and docstring, a narrow Mathlib import instead of Batteries.Util.ProofWanted and Mathlib, the MA-ProofBench (OpenBMB, MIT) attribution restated for the adapted portion, a module docstring and the proof; the statement is unchanged, so formal-math needs no fix; upstream_sha256 is that of the old path", "upstream_sha256": "60829eb49e5e79843224b4293b315c87e950fa1f7200a7473314990edb1ec220"},
-    {"path": "MathlibExt/Topology/MetricSpace/Geodesic.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "12611d692bcf4524ef97863c39d1dd173c9c9880b40a251ee28f802c156fd820", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "601896d76a59f4ea8ba0a625e9e15c7404359807d28f6ad17c9097f21d592694"},
-    {"path": "MathlibExt/Topology/MetricSpace/GromovHyperbolic.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "cbc63d623f2b21f8493b4049a65aa8382646887a9a0cc057f332a73a7ff84096", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change f1849cc5d ([formal-math] Import Boolean-cube influence and hyperbolic-group tests); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "2a5a9b8133f2b906322b68ceb5f447d13c7c4526178777467d0e74d485169f08"},
-    {"path": "MathlibExt/Topology/MetricSpace/HausdorffCodimension.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b2585c5c33c79d840e70dc20f4247ffe368c9d7118b8c4b606ec87eb163d4c68", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "749e37011158a2f49a17b0c868a0889cbd9d6745defd7b32f31954637643c907"},
-    {"path": "MathlibExt/Topology/MetricSpace/HausdorffDimensionFunction.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "84db65a4fcfd2cd32eb8cc72380a5381bbe07170cd60213f7af3c70c0d5380fb", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "70f39cac56da5f30501090e60652b4220d47c56f9f7f95b676ded00ae47ca5b1"},
-    {"path": "MathlibExt/Topology/MetricSpace/LengthSpace.lean", "disposition": "identical", "published_sha256": "1e5f7537ec94d4b23a9a5961f264f1b1e584c2425310ba95f0f4f4e575cab211", "upstream_sha256": "33b100574c8d8f55428478742bfe2de074017c58c7ebf86acf1a33f2384fa079"},
-    {"path": "MathlibExt/Topology/MetricSpace/LipschitzParametrizable.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "dc08dac5a5b71aec021a8f904b3b9defe1f56936b523144495b0f0b20f7f47c8", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "d77e14ac9915a80099aa5a2fc9c0240e52e4f0bb6109d28e8956add7aac9750a"},
-    {"path": "MathlibExt/Topology/MetricSpace/MeasurableNet.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5f54886fa945ec4119736c8f54e9aaf86888a85c7b63e2eb2e9579b2ac4afda5", "rationale": "Adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.", "upstream_sha256": "b4c6d968ca4ac26b4106d8fb9e6f63d43a8be85e333a4a4340045cf642c09300"},
-    {"path": "MathlibExt/Topology/MetricSpace/MetricSeparated.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "06fa6582aa0d7ac3f2a74ec21a63f3eb5dcf8d5879f80de6e8c157bba999556e", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "a3ce74ba8f436630c67f1478fe5429dd3de3eb46b1b3d9ea435e71fd20763ff1"},
-    {"path": "MathlibExt/Topology/MetricSpace/PointedGromovHausdorff.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "7a4e7fab6cb2737fe87a779f60d72069dabbbe471f446254218a2a77918a44cf", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "60c6672694400e064982a9163d2d3065af40b2d2c2be67ad88ca94a95bbb23bd"},
-    {"path": "MathlibExt/Topology/MetricSpace/PointedGromovHausdorffBorel.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "476b29cfcbf4b6872c514c3d6fe727fa1a4514fcf0f9ef393091456d4eb55add", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "a3716820f977253b853444ae53994093d9d8b80e2a11507afea4b50715e454d9"},
-    {"path": "MathlibExt/Topology/ScottishBook136.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6290311671413e5ccb5b93f77ee0c6be4a39f32242eba52f5ce1b850ab4fdb66", "rationale": "Move the statement from WantedExt/Topology/ScottishBook136Wanted.lean after proving it, preserving its name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ScottishBook136Wanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Topology/ScottishBook42.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "36fcaacf54e4f3790b1244556af3869afdcd91d97c0c4a329ebdcd39a7af6812", "rationale": "Moved from WantedExt/Topology/ScottishBook42Wanted.lean when the wanted statement was proved, preserving names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ScottishBook42Wanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Topology/ScottishBook43.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f0f1cf87c7fad5bd1383102cd114f7cdd7762a143a741112ad72c0dc07f167cb", "rationale": "Move the game definitions and theorem from WantedExt/Topology/ScottishBook43Wanted.lean when proving the winning strategy characterization, preserving their names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ScottishBook43Wanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Topology/ScottishBook52.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "024438660b27e10ca0bfede0f28f14fe9811cf1b5cfb84994d315c1c6770d42a", "rationale": "Moved from WantedExt/Topology/ScottishBook52Wanted.lean when the wanted statement was proved, preserving the declaration names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ScottishBook52Wanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Topology/Sphere/ContinuousLinearEquiv.lean", "disposition": "identical", "published_sha256": "23dd1c9b5ac79af6bfb338c9b884308a28e1415dba1d6d6a2273847cdc82a3dc", "upstream_sha256": "38cb59bb9ac7747f87a10036993b772d4a6ae6873800bd1d2a36dff1834527e0"},
-    {"path": "MathlibExt/Topology/ThreeManifold.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "be7ae25015cccb61a08b540b9670ae862728028abc0c3b835137d7ada258b8ec", "rationale": "ATLAS-side fix in #1142 (fixes #602): IsThreeManifoldWithBoundary is modelled on EuclideanHalfSpace 3 rather than EuclideanHalfSpace 2, so it describes 3-manifolds with boundary. Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "054c738642b79c9b3b97db13b5945fef4a8098c1494ccb6c2040ca41a2ec4773"}
+    {
+      "path": "MathlibExt/Topology/Algebra/BirkhoffKakutani.lean",
+      "disposition": "identical",
+      "published_sha256": "51997fb0b9da7b4b0aa205c6cbc410846cad4baa98d0d7146baf93e2bad8185d",
+      "upstream_sha256": "4b79077823b18c2c0fa8a77333cdaed2fd840b6d201bf8fa71258bc1cfa4aaf2"
+    },
+    {
+      "path": "MathlibExt/Topology/Algebra/ContinuousSemilinearRepresentation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6f5552f4563cfc72f6ad17ba9c4f2fd6ba1b84e536ff90b459a8d3a8c51a74bc",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "86ed7388f8edf3847a53c117a960b8f8f20f8c2f4287ada80834e5cfb5dec41f"
+    },
+    {
+      "path": "MathlibExt/Topology/Algebra/Group/OpenProfiniteCompletion.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "97fc3f9ea0a93d411e9745474536ee27239d589bfdb5b516b503b265d2cb2439",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.",
+      "upstream_sha256": "b297d5a5299d90861dfb904116370d0aab717d9d16d509ec9a6f8be0e59e81bc"
+    },
+    {
+      "path": "MathlibExt/Topology/Algebra/PeterWeyl.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ca56a4746fa4f2437caefd6ef1bb8839b4f66d6257c2712f66f24971f242a09e",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "5754bb9fa5e3f43abf85fa99610f94361694b58c5e016765f77699becf1095c9"
+    },
+    {
+      "path": "MathlibExt/Topology/Algebra/StrongCompleteness.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d6e95b310e065813adda87aa4a7c58cdc7927ce11916ed026c3550c6e0801e69",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "020f07445c22032f7d76913cc758c6af6e050b9872dc04b5553c7724df30e0b2"
+    },
+    {
+      "path": "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSet.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "908cc9c4a0fae109ec4ce048396c346ed4b9d4ad5c242550a41029d9e6226016",
+      "rationale": "Move completed declarations from WantedExt/Topology/ArithmeticalSelfSimilarCompactSetWanted.lean when proving the layer-index identity, preserving their names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ArithmeticalSelfSimilarCompactSetWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSetDerived.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "65a5bf2f00fd215134ae75687e170ff689d4e90cfc680ba3ce064e34875bcfd3",
+      "rationale": "Move the derived-set enumeration from WantedExt/Topology/ArithmeticalSelfSimilarCompactSetWanted.lean when proving it, preserving its name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ArithmeticalSelfSimilarCompactSetWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Topology/ArithmeticalSelfSimilarCompactSetLayerEnumTendsto.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9e766d91d62ca2f5d4abe7b701a996243bb078b5466eaf1018cf32401a62c70b",
+      "rationale": "Move the proved `isSelfSimilarCompactSet_layer_enum_tendsto` from WantedExt/Topology/ArithmeticalSelfSimilarCompactSetWanted.lean when the wanted statement was proved; same name and statement."
+    },
+    {
+      "path": "MathlibExt/Topology/CWComplex/CompactGeneration.lean",
+      "disposition": "identical",
+      "published_sha256": "1d8ea42fcbe00b2073867925199ddba0b147cba347074b8b722da9dd3fd294f5",
+      "upstream_sha256": "ce8f9a17fcadc97ced5c93a2d68ba73c908c813eec317561d88fb5933268696c"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/CompactlyGenerated/GeneratedBy.lean",
+      "disposition": "identical",
+      "published_sha256": "cf20d9301d8d07e0184b94c655f3055f8d27aeae0bdb87572ce9ad4afc79db79",
+      "upstream_sha256": "776dff46f65037dd01f71ce77d7a677303c369109a8fe565f3611e6cac3fe5ff"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Colimits/FiniteClosedColimit.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "945d3fcac5948768f57222f84f0fc31bf0a27ee39433f96e1ac76962cd288a80",
+      "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state simplex contraction, twisting/nilpotence, bialgebra/Hopf, coefficient squares and topological colimit contracts with their exact hypotheses, maps and universes; all code and legal text are unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "7b5a409cea09c986f65f1bfff5ea78a3e4b0d172dfe3381ad4a7565d828771be"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedSequentialColimit.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c691c1243a49e2ae66de7d6571f5d8304013b380217cfcae3771a05d40037f17",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ce64796afe67b1387a1a95a43da129d5c6c8db47efc8079689fc2672d7cb39ca"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedSequentialPreserves.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "2fe8b714bbbc9f69371e21d63e421c9123bceb247da33793452fa60212c5aebf",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "255416c2faa549ef6bd06d6cce9f22eb01afc796281f79542655c4175a017f9e"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedTransfiniteColimit.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ee3a00733ee4db2e76c8f4cca435fb6ac0c83cecf286eddaedea300b5a95254c",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "1c8b0089638b1f839f26dcc01182a91a906117e4968cca270eee1ba0bebc9e51"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedTransfiniteContinuous.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a5b454205c10b71b8134b923c8c65df605f83edb8edd9960b5355f6422acc74f",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "4195641c40a547bc3d1e5421a656f95ddbf85d215ae83163195fcd5e3e973d5c"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Colimits/TopCatSingularClosedTransfinitePreserves.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ec2f3f64e8e231f7fe69a0f3334e2519237b39153b7f58491f86701c51bf2bc4",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "1eaeae5e03519f3e901aa60fd19ecaa2eb48a3f35cb70a7350a737b3e72c37ba"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/CompactPushoutProduct.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "883abcb39cd504bf345e841313eab5951a247eba8787cd92ce6ff538a3a8671e",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "d916f679226195596a7e1d2dfe5595189f4a0fbb518dc8090ac95d159e0ca7fd"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/DeltaGeneratedOpen.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "31e311552cc592d051b024b3789e89c9430f80ee6cffb2a99aa3ab3e4017d7b4",
+      "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state simplex contraction, twisting/nilpotence, bialgebra/Hopf, coefficient squares and topological colimit contracts with their exact hypotheses, maps and universes; all code and legal text are unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "4a0724bec7fbd878abb076d9b43c5a8fd8a619ca9e47c77713cba388cd42c632"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Embedding/ClosedT1EmbeddingCoproducts.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e499c47704652defa419c72adbba778c75676b6783d11cfb7c951a2f2b5b5a5d",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "015247f7098d903cf38e3dca9bb224375811261141e76e034d52be8a4a056b4b"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Embedding/TopCatHornCoproductClosedT1.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c707bca17b1e20fdadfe265f0490846c4bd57be64f0c64e788a934304f5516da",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "45572b6850c3bf44ae089332e201e97abb15d72ce18f65b14bdd79eb7da02b4d"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/FixedFiberGauge.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "dd9ec784e7b575d8670259d1808e0edf79d3710abae06140a45052bcb2cfb60f",
+      "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state fixed-fiber gauges, canonical preimage pullbacks, product symmetry and induced-subspace maps with precise hypotheses and coordinate directions; all code/legal text is unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "c99dda7cf84e94aa5b7ce0824559d12c29c717b7e0b6c9d431b7fc9538c77ccf"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/PreimageSubspacePullback.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "0c478acd3a54fd58c6674d71fa9b4c6b9781c54f6d7c9f6d0e08037b4a0440fa",
+      "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Repair actual pinned native imports, projections, tensor coercions, composition proofs and module visibility while preserving the public mathematical hypotheses, maps, signs, worlds and meaningful clients. Native verification pending. Mathematical docs state fixed-fiber gauges, canonical preimage pullbacks, product symmetry and induced-subspace maps with precise hypotheses and coordinate directions; all code/legal text is unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "344281f40848b6fce312e9567f04338c12cca2fd37a905427bc31513dc0bc021"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/ProdPushoutFactors.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "cda6a06ff2d7457550992cb68369ccc25d9807b7c3f1bbb6941c69e584ddabb1",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "471cf486edb077ccb1dd1a1ffe572dc8685ae2775e5a011ba7db7709f26d7935"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/ProdPushoutFiberDesc.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5eeec6ed690d590a0f04e579981180fbac664f8dd0bd1b3f13939528f0d7d26f",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "b0e5ed36819d80a3dd45ab41d224d9cd23748d304a091a3d5d9efec0ed0fdf69"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/ProdPushoutFiberFormula.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ae111c08de0d856b117ef49ceb9d57eba80610b8a8c53161ff201e504126adee",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ec94962dc61480db7ff4843ee95be186513df1545c381e259f9bc763925033a1"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/ProdPushoutQuotient.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e2d8fced320044502b9e86acc3443bcfaab0620ffdfd5fdfb6e987b28320c196",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "5ef96df92b59588c9187091b320d8cfff1853f47403179b7c143be92a0e553bb"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/ProdPushoutSymm.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "512c6aabdc1c8abf8fae7a6888147c175718e1cb420b62afa4435f13d3bbc6ea",
+      "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state fixed-fiber gauges, canonical preimage pullbacks, product symmetry and induced-subspace maps with precise hypotheses and coordinate directions; all code/legal text is unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9c30c2e5bd11016e0b03b255d811d01d91b0194ae2d3a40a88c9f6e7c48f9f25"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/PushoutOpenComplement.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "0d17fad795e925bfb8187e5e45db7d4406f2903bec98c875b93c36e1c821d206",
+      "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. The module and five public declarations now state the pushout-complement and quotient-topology results with all hypotheses; proof tokens and legal credits are unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "970327fa658fe925eb3dee8f3813b94952962837f36484645ca151b6a7edc088"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/PushoutOpenRestriction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "900f5dd4ce6a4483458532bc2c61d467de0748e6d1bd64260d5256ea575d9f4c",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "7753707acd5fb03afa0ec70908b757f6bc4e4a38631f6e687ceb4a24d93eaae2"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/QuotientPushout.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "abb4bb65f5b7655b1027117903e692693ec8244313a0902f2f4c562b404297f9",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "86e9164f0c676cf04e324425c7142ae8b07569b1a02a4cacf9c3951aa80a99b1"
+    },
+    {
+      "path": "MathlibExt/Topology/Category/TopCat/Subspace.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "49106ed0f9de9d60eba775391b2d2ff86a2d0ee660d0d5fe46299cf7e031fc05",
+      "rationale": "General homological algebra API with Atlas copyright and mathematical documentation; original maps, hypotheses and independent universes retained. Mathematical docs state fixed-fiber gauges, canonical preimage pullbacks, product symmetry and induced-subspace maps with precise hypotheses and coordinate directions; all code/legal text is unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "066f744f14e1e243078ec9a32a098930a36565d9b45fe39be39a835e2d4e0984"
+    },
+    {
+      "path": "MathlibExt/Topology/Compactness/CompactlyGeneratedProduct.lean",
+      "disposition": "identical",
+      "published_sha256": "b4bfda1ae3f1161c4f4f356e915c86b6a3ec3080214c8f4060c6bd1ffed9650c",
+      "upstream_sha256": "e1d33d7c86ffb413e3564b01288dedaf5fbd19d14c476498f5e7b143e4f9f881"
+    },
+    {
+      "path": "MathlibExt/Topology/Compactness/WeakHausdorffSpace.lean",
+      "disposition": "identical",
+      "published_sha256": "3845b3dec3a61800cf74fee5cfa72f41ddf97633b35aefee359c196243bebd85",
+      "upstream_sha256": "d90225f774371f8a65eef4aa34ddc9fac860bd7f898e304655cf410b09a358bf"
+    },
+    {
+      "path": "MathlibExt/Topology/Connected/Frontier.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "8987409398f34e19d79ff9abfb91e1c882c1295270517213d7e3bc9ae50913cc",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "b15b65e36911e5152f4b97ab2d0431593e22f47eed417ccb75173be2b032f148"
+    },
+    {
+      "path": "MathlibExt/Topology/ContinuousMap/CompactDiscrete.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "905d5f2a7782a8b66f644b4385c0dadb04bb7ec250e055398d1e18a23a1301e2",
+      "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds. Mathematical docs state the acting-group/scalar restriction comparison, the exact universe-zero coefficient tensor comparison including modulus zero, and compact-open discreteness under compact/discrete hypotheses; code and legal credits are unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "7f2441fc0f6fbe05cdae45365f9492a1ebb236f5f5aaf4930f4549e65a21531b"
+    },
+    {
+      "path": "MathlibExt/Topology/Continuum/HahnMazurkiewicz.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c874aa8488b9d2825c02e1471fb895e87f8cd3d3d9596d6a6fc9a6845cc40d6b",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "0b998385289ff1624f7390323405f3391d85ce0a120067fe6a7c8fd4327b8c48"
+    },
+    {
+      "path": "MathlibExt/Topology/Continuum/PeanoCurve.lean",
+      "disposition": "identical",
+      "published_sha256": "df52aea3eee04f0605c4363e6bee92b5725951ae2c00b918c6dc64f5894bc521",
+      "upstream_sha256": "67ba7ee279784180fa96718f5a34f68ec4bcade41ef2853e420b566683bff963"
+    },
+    {
+      "path": "MathlibExt/Topology/Convenient/DeltaGeneratedProduct.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "abc21643733411059e7da82b1a0cbefb90843b32fa8d8ee986e590fd767b0db8",
+      "rationale": "Clarify that both factors are Delta-generated and the left factor is locally compact in the theorem docstring; theorem type, proof and source credit are unchanged.",
+      "upstream_sha256": "9d5d8d4149a34cf9c3908adffee6f437195d43f5b75efebc018af9935f78953b"
+    },
+    {
+      "path": "MathlibExt/Topology/Convenient/ProperQuotientProduct.lean",
+      "disposition": "identical",
+      "published_sha256": "a8ed29889e8e21dd924f45c1b18943e353a7c9a379def6ce2e8a2a3b14d04a7c",
+      "upstream_sha256": "cb43a20f242032758b637c6f91e2e139b560e63d591321aaa2ed4ba75dab912d"
+    },
+    {
+      "path": "MathlibExt/Topology/Convenient/QuotientProduct.lean",
+      "disposition": "identical",
+      "published_sha256": "3c27bb0f0dbb064f4d30ff070f4b98eee4a90c9f611bcae92a967eee9123706a",
+      "upstream_sha256": "4e9d705a72ef48ee08c37d93ab6db12d50dd9489daf78adfbf8d7692245e989f"
+    },
+    {
+      "path": "MathlibExt/Topology/Convenient/StdSimplexMinimalFace.lean",
+      "disposition": "identical",
+      "published_sha256": "25cc02471dc44acc77a27baf9362882a143d332ca48bf7be255ca9097b6bef37",
+      "upstream_sha256": "76777a074c4753e8989834a250b3f3e5a58327620cc4e7772f73a58b59498df6"
+    },
+    {
+      "path": "MathlibExt/Topology/Convenient/StdSimplexProductCell.lean",
+      "disposition": "identical",
+      "published_sha256": "df7e19384038a1a3aaf5b8051194a1d3de0e0bd78b974945f61b32e63fdf74cf",
+      "upstream_sha256": "06d2a3073e87cda1c0d7eec8d2749e7ae1bae806a3b54c5d6d915fae165fed0b"
+    },
+    {
+      "path": "MathlibExt/Topology/Convenient/StdSimplexProductCellGluing.lean",
+      "disposition": "identical",
+      "published_sha256": "fb0aac3b4300ff65e8f7afa220eb508f180d1cfc5ad9f91152090dfa801d637c",
+      "upstream_sha256": "2de4176262e57127e9e4ea1d525473465e0d75125a32810976eed46d6d8844d9"
+    },
+    {
+      "path": "MathlibExt/Topology/Convenient/StdSimplexRadialBoundary.lean",
+      "disposition": "identical",
+      "published_sha256": "5fa30ca25b7a0870fb6b8e656f69213c596286f0eb1dbab6f98148e231451656",
+      "upstream_sha256": "3268b7f8bd352668b5a4becf9ae9ebb87d5a8078357b22a3e3c487e6e422d0a0"
+    },
+    {
+      "path": "MathlibExt/Topology/ConwayKnotEuclideanBridge.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "3a38f36621c289a4c900619264216475e3ea12eb92c9c5d26d0b96f7beda10cd",
+      "rationale": "Moved the completed bridge from WantedExt/Topology/ConwayKnotEuclideanBridge.lean to MathlibExt with the same declaration names and statements."
+    },
+    {
+      "path": "MathlibExt/Topology/ConwayKnotShared.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "0da10360fb1ac31e633c3027e4e7ff5f58e5e16633a320d4e51037c4542f1a1b",
+      "rationale": "Moved from WantedExt/Topology/ConwayKnotShared.lean to support the Conway polyline simplicity proof, preserving declaration names, types and bodies. Also: Document the Euclidean API for new work and the bridge for the benchmark types. Also: The docstring restatements from #993 and the v4.36.0 API adaptations still need to be backported to Formal-Math. Consolidate the shared definitions' attribution."
+    },
+    {
+      "path": "MathlibExt/Topology/ConwayKnotSimple.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a1f8cbcfaceaa5c15c9d392bd85e8a5f47288abc22e8444bf1fd0cb4b1ca8d42",
+      "rationale": "The Conway polyline simplicity statement moved from WantedExt/Topology/PiccirilloWanted.lean when it was proved, preserving its name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/PiccirilloWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Topology/CountablyMonolithic.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "2df6e7ffed4549eb71bf3c9eac3c6902515b9e227d6e61b8dc7579636512271d",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "85cc475865fa0e7827e06e73deaaa77c7c5c054892ecb5772a61c30b9ad5476f"
+    },
+    {
+      "path": "MathlibExt/Topology/DescriptiveSetTheory/BaireSpaceCharacterization.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "76004f5b18809e0dd4d7072cff25a67aea8975505977329f0bebbbf144a96370",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "fde63c36d9341fb7b7feb96d3c962b35ff1d08bbf23ae8c4b66fb44aa1759ddb"
+    },
+    {
+      "path": "MathlibExt/Topology/DescriptiveSetTheory/BernsteinSet.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "3065a3a9847550d3ebd6fc0d7b23c094a9dc1c7bd42d022a4cb10f79f88d2738",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "ed16a24622d19411c6653399ddcfcf4c5597b9f52583adb828356d4d699061eb"
+    },
+    {
+      "path": "MathlibExt/Topology/DescriptiveSetTheory/CantorSpaceCharacterization.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4dfe26573e42cff4e71f833a8ce1c2a0e5d68bb1aa558bbc22fb4ee571b29555",
+      "rationale": "Record the ATLAS-side changes already merged in 5a030cc0faeb0949db37b2d51cc38cb02d2bec7d (MathlibExt: retire private copies of Mathlib lemmas); the previous published hash predates those changes.",
+      "upstream_sha256": "c249d8137744caf400724cd66325387c0c354a27a401ff63057689ea374204d2"
+    },
+    {
+      "path": "MathlibExt/Topology/DescriptiveSetTheory/RationalsCharacterization.lean",
+      "disposition": "identical",
+      "published_sha256": "9feb8b1468f80dad700d748d8d0516ac0f85bc6aac53d0bde241cb7a6f2669c9",
+      "upstream_sha256": "494ef24faf92161fcbf8a9beb51027e08b84fde2d4efed81c6b257f39f0a55ed"
+    },
+    {
+      "path": "MathlibExt/Topology/FiberBundle/Separation.lean",
+      "disposition": "identical",
+      "published_sha256": "732fe8d0604ef99ca7e978a94833b4b0dea1261fc6f8c8fdd88961c3d7776d23",
+      "upstream_sha256": "c85eb4d8315330a8d84a09297d46ba2b078008964be5c191414e49e266b34c62"
+    },
+    {
+      "path": "MathlibExt/Topology/Homeomorph/Set.lean",
+      "disposition": "identical",
+      "published_sha256": "c8708b25168ee5feb7801f1a130255930a30678611203e4544420ac18a62a413",
+      "upstream_sha256": "44d4958bd746feebdf460e22d375110db78011464dcf5ad9fb169ab21b5fb292"
+    },
+    {
+      "path": "MathlibExt/Topology/HomogeneousSpace.lean",
+      "disposition": "behind",
+      "published_sha256": "f5792fbc637e93d48f3dbc4f9a54a4b1f4e1b38ea70ce93ef9ffabd248025016",
+      "upstream_commit": "5747688fbecf1aec366a3200daa67d164154458f",
+      "upstream_sha256": "4f29e85167ff0461f854de78177da8684478cefd9a5280f47ec8fd0600593d32"
+    },
+    {
+      "path": "MathlibExt/Topology/Homotopy/BorsukUlam.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "2c3e62bed643bc072ded87cfa231cce4362297e773fe736c31dd5b174e999fae",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "7d6e9c46f2e2bcbecb9b31690437acbc413443d544bad1dba4d990f9492ba6ea"
+    },
+    {
+      "path": "MathlibExt/Topology/Homotopy/TopCat/Singular/SingularKanPolymorphic.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "bb796a707af9b9d632bed8fc39431e1a5cdb4d0c20f67448c41e8350ceddbbef",
+      "rationale": "Imported general MathlibExt API from formal-math commit 9a495da20622876d4a72852b4de7e0921e976bc0; adapted Meta/author notices and self-contained ATLAS mathematical documentation.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9b9c47c8f8bdc3f0f3e4c4988c230a4b52cc3de580615928b7642c46b9b158a6"
+    },
+    {
+      "path": "MathlibExt/Topology/HomotopyGroups.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d1adf6318b623bed7a5dceaea36c93bf4b8e4adb7ec0496e1f867f8bd79566f0",
+      "rationale": "Moved from WantedExt/Topology/HomotopyGroupsWanted.lean when the wanted statement was proved; same names and statements. Also: Correct the lean-eval attribution and modification notice and use Mathlib’s exponential homeomorphism for the circle."
+    },
+    {
+      "path": "MathlibExt/Topology/HouseWithTwoRooms.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d4ab852b9dd15f28bd9baf04ead669254fe473b9ad8ec6be2d941285a120a029",
+      "rationale": "Moved from WantedExt/Topology/HouseWithTwoRoomsWanted.lean (retired row) when its theorem_wanted contractibleSpace_houseWithTwoRooms was proved: same declaration names, statements and docstrings for HouseWithTwoRooms and contractibleSpace_houseWithTwoRooms, the lean-eval attribution restated for the adapted portions, the dupNamespace linter turned off for these two declarations only, and the proof. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/HouseWithTwoRoomsWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Topology/Hurewicz.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c9c9a3037daafdf67a4aeed19a63e5f043c76e275de890bd0d4f504ab0df5765",
+      "rationale": "Moved from WantedExt/Topology/HurewiczWanted.lean when the wanted statement was proved; same names and statements. Also: Replace wanted-stage benchmark wording in the module docstring following the PR review. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/HurewiczWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: The moved statement keeps the adaptation of WantedExt/Topology/HurewiczWanted.lean to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (`Group.Abelianization` for `Abelianization`); formal-math needs the same change when it moves to v4.36.0."
+    },
+    {
+      "path": "MathlibExt/Topology/InverseLimit.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4b89acf9c72ff6cd102714789db6f6b8f1d32389545e42294e2d6e768a1477b9",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "d547887bfc588bedaae5fc0638831d1d5a49670ea8f6f2e3e49a340b00d689b5"
+    },
+    {
+      "path": "MathlibExt/Topology/KirkNormalStructure.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d7691170b942c29a974cf3730a245aa3b17e463ac339a0dd2ba291184f3c837a",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #993). Also: move the definitions and theorem from WantedExt/Topology/KirkNormalStructureWanted.lean after proving Kirk’s theorem, preserving their names and statements."
+    },
+    {
+      "path": "MathlibExt/Topology/Knot/EuclideanLink.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ed92b8c495903aa542420fb8bcb3b81101c012405e6fd53abb9d27d16385deb8",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991). Also: Update the module documentation to point to the shared Conway definitions in MathlibExt. Identify the API for new work and point to the relocated Conway knot bridge.",
+      "upstream_sha256": "b1344e33b02224d858cbe3440b8f90503a7ab6af828575a51f91f3b9fc5e510e"
+    },
+    {
+      "path": "MathlibExt/Topology/Knot/RegularProjection.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f3b834f0e1fe82fd90721f96f39649a8fb814091837dc7454642e755be9dc8c4",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_commit": "c6f5038d246b197ad35f7a43cc5b919ebe5f7586",
+      "upstream_sha256": "c6651fa57054ecca1554ab9ba8aea350ba6f09df9de4abe165a5a05c2d87a831"
+    },
+    {
+      "path": "MathlibExt/Topology/Knot/TightAlternatingKnotConstant.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5a992d558d9f59699e15176bc19f4923b2c04fdf7227f73de76be7ee3c53d889",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "5b28111cb586374a5df100b2438de99cace88da7cd31ae268d280ec7cce9f071"
+    },
+    {
+      "path": "MathlibExt/Topology/Knot/TightKnotConstant.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "bca92d37962503a7de69934a3923992f6a8b6120e672bd795614ad3f5653e473",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "e1504ebdfd9333d4e9162b284f6e2524a64b8385d41300ad8da553a98fd28ff4"
+    },
+    {
+      "path": "MathlibExt/Topology/KuratowskiClosureComplement.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ef74672b182c2a637a5a4aa5a43f78703ecf1da3d278880bb6ca14158f943dc1",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "5a7aa12817e8a62be6cc8f9c6b5e186b52b4f758bc48d19b1e08874363c71cd9"
+    },
+    {
+      "path": "MathlibExt/Topology/MaciasArithmeticProgressions.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5064e3646f41b20da472bce9730b333fde3ccbd1c3a9a0dd11bd020d53d97527",
+      "rationale": "Moved from WantedExt/Topology/MaciasArithmeticProgressionsWanted.lean when proving the density theorem, preserving declaration names and statements. Also: Moved the remaining statement on sets of primes to this module when it was proved, preserving its name, statement and docstring. The docstring revisions from the retired file still await backport. Also: reuse the shared basis theorem from MaciasCoprimeTopology."
+    },
+    {
+      "path": "MathlibExt/Topology/MaciasCoprimeTopology.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "84466c5b47988e452bc7a395f7fad68349fcea9b59892e3593a62ed3c18c7b99",
+      "rationale": "Extract the definitions from WantedExt/Topology/MaciasCoprimeTopologyWanted.lean for the proof of density of coprime arithmetic progressions, preserving their names, types, and bodies. Also: prove and move the basis theorem with its original declaration name, proposition and audited docstring; backport of the docstring remains pending."
+    },
+    {
+      "path": "MathlibExt/Topology/MaciasPrimeClosure.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ac60be0e653d3bafe9314b9a64d637954843683fe785b28a09a0a6d47a1f5bd2",
+      "rationale": "Move the prime singleton closure theorem from WantedExt/Topology/MaciasCoprimeTopologyWanted.lean when it was proved, preserving its name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/MaciasCoprimeTopologyWanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Topology/MaciasPrimeDensity.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "06adac1b18ea265e505db8858cb843f08637f0fc5e8dff51d4df9ef3118387c4",
+      "rationale": "Moved from WantedExt/Topology/MaciasCoprimeTopologyWanted.lean when the prime density equivalence was proved, preserving its name and statement. The moved docstring keeps ATLAS-side text from WantedExt/Topology/MaciasCoprimeTopologyWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: reuse the shared basis and move the two proved prime density statements with their original names, propositions and audited docstrings."
+    },
+    {
+      "path": "MathlibExt/Topology/Maps/CollapsedAxes.lean",
+      "disposition": "identical",
+      "published_sha256": "8f23fc8332187b9e9f5aad91b0d51b9820b79f6a928301e59be445ced5ade822",
+      "upstream_sha256": "c34614d9556eb1b970cd8206f2f24ff3fa92a04eb0f83c389804b40c66e0d568"
+    },
+    {
+      "path": "MathlibExt/Topology/MetricSpace/BoundedMetricTopologicallyEquivalent.lean",
+      "backport": "not-needed",
+      "disposition": "diverged",
+      "published_sha256": "b915b7ceeeca56818e75218eb4e25337afbb09c29ab20ef9fb1721bb2a225a59",
+      "rationale": "Moved from WantedExt/Analysis/FunctionalAnalysis/BoundedMetricTopologicallyEquivalentWanted.lean (retired row) when its theorem_wanted dist_div_one_add_dist_balls_equivalent was proved: same namespace, declaration name, statement and docstring, a narrow Mathlib import instead of Batteries.Util.ProofWanted and Mathlib, the MA-ProofBench (OpenBMB, MIT) attribution restated for the adapted portion, a module docstring and the proof; the statement is unchanged, so formal-math needs no fix; upstream_sha256 is that of the old path",
+      "upstream_sha256": "60829eb49e5e79843224b4293b315c87e950fa1f7200a7473314990edb1ec220"
+    },
+    {
+      "path": "MathlibExt/Topology/MetricSpace/Geodesic.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "12611d692bcf4524ef97863c39d1dd173c9c9880b40a251ee28f802c156fd820",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "601896d76a59f4ea8ba0a625e9e15c7404359807d28f6ad17c9097f21d592694"
+    },
+    {
+      "path": "MathlibExt/Topology/MetricSpace/GromovHyperbolic.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "cbc63d623f2b21f8493b4049a65aa8382646887a9a0cc057f332a73a7ff84096",
+      "rationale": "ATLAS-side edit not in formal-math; last ATLAS change f1849cc5d ([formal-math] Import Boolean-cube influence and hyperbolic-group tests); Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "2a5a9b8133f2b906322b68ceb5f447d13c7c4526178777467d0e74d485169f08"
+    },
+    {
+      "path": "MathlibExt/Topology/MetricSpace/HausdorffCodimension.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b2585c5c33c79d840e70dc20f4247ffe368c9d7118b8c4b606ec87eb163d4c68",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "749e37011158a2f49a17b0c868a0889cbd9d6745defd7b32f31954637643c907"
+    },
+    {
+      "path": "MathlibExt/Topology/MetricSpace/HausdorffDimensionFunction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "84db65a4fcfd2cd32eb8cc72380a5381bbe07170cd60213f7af3c70c0d5380fb",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "70f39cac56da5f30501090e60652b4220d47c56f9f7f95b676ded00ae47ca5b1"
+    },
+    {
+      "path": "MathlibExt/Topology/MetricSpace/LengthSpace.lean",
+      "disposition": "identical",
+      "published_sha256": "1e5f7537ec94d4b23a9a5961f264f1b1e584c2425310ba95f0f4f4e575cab211",
+      "upstream_sha256": "33b100574c8d8f55428478742bfe2de074017c58c7ebf86acf1a33f2384fa079"
+    },
+    {
+      "path": "MathlibExt/Topology/MetricSpace/LipschitzParametrizable.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "dc08dac5a5b71aec021a8f904b3b9defe1f56936b523144495b0f0b20f7f47c8",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "d77e14ac9915a80099aa5a2fc9c0240e52e4f0bb6109d28e8956add7aac9750a"
+    },
+    {
+      "path": "MathlibExt/Topology/MetricSpace/MeasurableNet.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5f54886fa945ec4119736c8f54e9aaf86888a85c7b63e2eb2e9579b2ac4afda5",
+      "rationale": "Adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.",
+      "upstream_sha256": "b4c6d968ca4ac26b4106d8fb9e6f63d43a8be85e333a4a4340045cf642c09300"
+    },
+    {
+      "path": "MathlibExt/Topology/MetricSpace/MetricSeparated.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "06fa6582aa0d7ac3f2a74ec21a63f3eb5dcf8d5879f80de6e8c157bba999556e",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "a3ce74ba8f436630c67f1478fe5429dd3de3eb46b1b3d9ea435e71fd20763ff1"
+    },
+    {
+      "path": "MathlibExt/Topology/MetricSpace/PointedGromovHausdorff.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7a4e7fab6cb2737fe87a779f60d72069dabbbe471f446254218a2a77918a44cf",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "60c6672694400e064982a9163d2d3065af40b2d2c2be67ad88ca94a95bbb23bd"
+    },
+    {
+      "path": "MathlibExt/Topology/MetricSpace/PointedGromovHausdorffBorel.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "476b29cfcbf4b6872c514c3d6fe727fa1a4514fcf0f9ef393091456d4eb55add",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "a3716820f977253b853444ae53994093d9d8b80e2a11507afea4b50715e454d9"
+    },
+    {
+      "path": "MathlibExt/Topology/NonlinearThreeManifoldGroup.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "38c8a294914264a709cf626ef822c23c3c581d00584c5e5ba9183f24df52bda3",
+      "rationale": "Moved from WantedExt/Topology/NonlinearThreeManifoldGroupWanted.lean (retired row) when its theorem_wanted nonlinear_three_manifold_group was proved: same namespace, declaration names, statements and docstrings for Closed3Manifold and nonlinear_three_manifold_group, narrow Mathlib imports instead of Batteries.Util.ProofWanted and Mathlib, the lean-eval attribution restated for the adapted portions, declaration-local dupNamespace linter options, a module docstring that describes the proof, and the proof. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/NonlinearThreeManifoldGroupWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: As a review on #10174 asked, the citation of J. O. Button's paper in the docstring of nonlinear_three_manifold_group, the attribution notice and the module docstring now names arXiv:1210.3068 under its own title instead of a wrong title and, in the first two, arXiv:1404.4639, an unrelated paper; the docstring also says that Button's result covers every field while the quaternionic double gives the counterexample over the reals only."
+    },
+    {
+      "path": "MathlibExt/Topology/ScottishBook136.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6290311671413e5ccb5b93f77ee0c6be4a39f32242eba52f5ce1b850ab4fdb66",
+      "rationale": "Move the statement from WantedExt/Topology/ScottishBook136Wanted.lean after proving it, preserving its name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ScottishBook136Wanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Topology/ScottishBook42.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "36fcaacf54e4f3790b1244556af3869afdcd91d97c0c4a329ebdcd39a7af6812",
+      "rationale": "Moved from WantedExt/Topology/ScottishBook42Wanted.lean when the wanted statement was proved, preserving names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ScottishBook42Wanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Topology/ScottishBook43.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f0f1cf87c7fad5bd1383102cd114f7cdd7762a143a741112ad72c0dc07f167cb",
+      "rationale": "Move the game definitions and theorem from WantedExt/Topology/ScottishBook43Wanted.lean when proving the winning strategy characterization, preserving their names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ScottishBook43Wanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Topology/ScottishBook46.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "482b59f12833dd68a5c8938cd192fbd09b01b23cb35f3b9e4b904780f930e9d0",
+      "rationale": "Moved from WantedExt/Topology/ScottishBook46Wanted.lean when its wanted theorem was proved, keeping the declaration name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ScottishBook46Wanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Topology/ScottishBook52.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "024438660b27e10ca0bfede0f28f14fe9811cf1b5cfb84994d315c1c6770d42a",
+      "rationale": "Moved from WantedExt/Topology/ScottishBook52Wanted.lean when the wanted statement was proved, preserving the declaration names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Topology/ScottishBook52Wanted.lean that Formal-Math does not have yet (its backport is still owed)."
+    },
+    {
+      "path": "MathlibExt/Topology/Sphere/ContinuousLinearEquiv.lean",
+      "disposition": "identical",
+      "published_sha256": "23dd1c9b5ac79af6bfb338c9b884308a28e1415dba1d6d6a2273847cdc82a3dc",
+      "upstream_sha256": "38cb59bb9ac7747f87a10036993b772d4a6ae6873800bd1d2a36dff1834527e0"
+    },
+    {
+      "path": "MathlibExt/Topology/ThreeManifold.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "be7ae25015cccb61a08b540b9670ae862728028abc0c3b835137d7ada258b8ec",
+      "rationale": "ATLAS-side fix in #1142 (fixes #602): IsThreeManifoldWithBoundary is modelled on EuclideanHalfSpace 3 rather than EuclideanHalfSpace 2, so it describes 3-manifolds with boundary. Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "054c738642b79c9b3b97db13b5945fef4a8098c1494ccb6c2040ca41a2ec4773"
+    }
   ]
 }

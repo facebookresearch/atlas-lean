@@ -4,4 +4,6 @@ Modules and vector spaces over topological rings with continuous operations: con
 
 - [Finite-dimensional subspaces are complete](complete-of-finite-dimensional.md)
 - [Closed submodule of a module equipped with a topology](closed-linear-subspace.md)
+- [Weak-star topology on the continuous dual](weak-star-topology.md)
+- [Continuous dual of a topological module](dual-space.md)
 - [Homology of topological modules](homology-of-topological-modules/README.md)

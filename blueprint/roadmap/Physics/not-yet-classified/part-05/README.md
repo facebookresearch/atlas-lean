@@ -3,7 +3,6 @@
 - [Inverse Calibration Budget](inverse-calibration-budget/README.md)
 - [Junction Boundary Flow](junction-boundary-flow/README.md)
 - [Kron Port Reduction](kron-port-reduction/README.md)
-- [Laminar Flow Ports](laminar-flow-ports/README.md)
 - [Laminate Models](laminate-models/README.md)
 - [Line Wave Termination](line-wave-termination/README.md)
 - [Linear MNAStamping](linear-mnastamping/README.md)

@@ -83,7 +83,8 @@ def afold : ConstTable → AExp → AExp
       | .const m, .const n => .const (m * n)
       | l', r' => .mul l' r'
 
-/-- Folded arithmetic evaluates like the original expression. -/
+/-- Folded arithmetic evaluates like the original expression when the table agrees with the
+state. -/
 theorem afold_eval (t : ConstTable) (a : AExp) (s : State)
     (h : ConstApprox t s) :
     (afold t a).eval s = a.eval s := by
@@ -198,7 +199,8 @@ def bfold : ConstTable → BExp → BExp
       | .truth a, .truth b => .truth (a && b)
       | l', r' => .and l' r'
 
-/-- Folded booleans evaluate like the original expression. -/
+/-- Folded booleans evaluate like the original expression when the table agrees with the
+state. -/
 theorem bfold_eval (t : ConstTable) (b : BExp) (s : State)
     (h : ConstApprox t s) :
     (bfold t b).eval s = b.eval s := by
@@ -970,7 +972,8 @@ end
 
 namespace Cslib.IMP
 
-/-- Folded commands terminate exactly like the originals. -/
+/-- Folded commands terminate exactly like the originals when the table agrees with the
+initial state. -/
 theorem fold_equiv (t : ConstTable) (c : Cmd) (s f : State)
     (h : ConstApprox t s) :
     BigStep (fold t c) s f ↔ BigStep c s f := by
@@ -988,7 +991,8 @@ theorem fold_equiv_empty (c : Cmd) (s f : State) :
     BigStep (fold emptyTable c) s f ↔ BigStep c s f :=
   fold_equiv emptyTable c s f (emptyTable_approx s)
 
-/-- Compiled folded code reflects source executions. -/
+/-- Code compiled from commands constant-folded from the empty table reflects source
+executions. -/
 theorem compile_fold_correct (c : Cmd) (s s' : State) :
     StackMachine.Steps
         (StackMachine.compile (fold emptyTable c) 0) (0, [], s)
