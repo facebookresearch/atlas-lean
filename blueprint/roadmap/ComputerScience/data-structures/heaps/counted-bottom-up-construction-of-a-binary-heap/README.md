@@ -1,0 +1,15 @@
+# Counted bottom-up construction of a binary heap
+
+- [Timed Max Child](timed-max-child.md)
+- [Counted child selection returns the standard larger child](ret-timed-max-child.md)
+- [Time timed Max Child](time-timed-max-child.md)
+- [Time timed Max Child of none](time-timed-max-child-of-none.md)
+- [Heapify Down](heapify-down.md)
+- [Heapify Down eq of max Child none](heapify-down-eq-of-max-child-none.md)
+- [Heapify Down eq of lt child](heapify-down-eq-of-lt-child.md)
+- [Heapify Down eq of not lt child](heapify-down-eq-of-not-lt-child.md)
+- [Ret heapify Down](ret-heapify-down.md)
+- [Heapify Down time le](heapify-down-time-le.md)
+- [Mk Heap](mk-heap.md)
+- [Counted bottom-up heap construction returns the standard heap](ret-mk-heap.md)
+- [Mk Heap time le](mk-heap-time-le.md)
