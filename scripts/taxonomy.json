@@ -11437,6 +11437,7 @@
   "MathlibExt/Combinatorics/Enumerative/SetPartitionPeaks": {"to": "Combinatorics/set-partitions", "title": "Peaks in set partitions"},
   "MathlibExt/Combinatorics/Enumerative/SetPartitionSymmetricPeaks": {"to": "Combinatorics/set-partitions", "title": "Peaks in set partitions"},
   "MathlibExt/Combinatorics/Enumerative/SetPartitionsByTwoRises": {"to": "Combinatorics/set-partitions", "title": "Rises in set partitions"},
+  "MathlibExt/Combinatorics/Enumerative/ShiftedAlphaStirlingMatrix": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "α-Stirling matrices"},
   "MathlibExt/Combinatorics/Enumerative/ShiftedEulerianHankel": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Hankel determinants of Eulerian polynomials"},
   "MathlibExt/Combinatorics/Enumerative/ShiftedRiordanArrayRowSums": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Row sums of shifted Riordan arrays"},
   "MathlibExt/Combinatorics/Enumerative/SignedInversionSequenceLength2": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Pattern avoidance in inversion sequences"},
