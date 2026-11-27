@@ -13,6 +13,7 @@ public import Mathlib.Algebra.MvPolynomial.Rename
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.KingFlatPOPSymmetry
+public import MathlibExt.Combinatorics.Enumerative.KingFlatPOPPositionReversal
 public import MathlibExt.Combinatorics.Enumerative.KingPermutationPatterns
 public import MathlibExt.Combinatorics.Enumerative.PermutationStatistics
 public import WantedExt.Combinatorics.Enumerative.OddFibonacciWanted
@@ -238,22 +239,6 @@ theorem_wanted kingFlatPOPAboveGF_three_eq_rename :
     kingFlatPOPAboveGF 3 =
       PowerSeries.map (MvPolynomial.rename ⇑(Equiv.swap (2 : Fin 4) 3)).toRingHom
         (kingFlatPOPBelowGF 0)
-
-/-- **The generating functions for $P_3$ and $P_2$ differ by a change of variables.** For $k = 2$
-and $k = 3$ let $P_k$ be the flat partially ordered pattern of length $4$ whose $k$-th element lies
-below each of the other three, and let $A_{P_k}(x; p, q, u, v)$ be the generating function of king
-permutations avoiding $P_k$, in which $x$ marks length and $p$, $q$, $u$, $v$ mark ascents,
-descents, left-to-right maxima and right-to-left maxima. Then
-$A_{P_3}(x; p, q, u, v) = A_{P_2}(x; q, p, v, u)$: the series $A_{P_3}$ is obtained from
-$A_{P_2}$ by exchanging $p$ with $q$ and $u$ with $v$ in every coefficient.
-
-Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
-INTEGERS 26 (2026), Article A59, Corollary 4. -/
-theorem_wanted kingFlatPOPBelowGF_two_eq_rename :
-    kingFlatPOPBelowGF 2 =
-      PowerSeries.map (MvPolynomial.rename
-          ⇑(Equiv.swap 0 1 * Equiv.swap 2 3 : Equiv.Perm (Fin 4))).toRingHom
-        (kingFlatPOPBelowGF 1)
 
 /-- **The king generating function avoiding $Q_2$.** Let $A_{P_2}(x, p, q, u, v)$ be the
 generating function of king permutations avoiding the flat pattern $P_2$ (label $2$ below labels
