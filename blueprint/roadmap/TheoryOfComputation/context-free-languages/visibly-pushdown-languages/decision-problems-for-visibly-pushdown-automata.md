@@ -9,6 +9,7 @@ the specification.
 
 ## Depends on
 
+- [Nested words and nested word automata](nested-words-and-nested-word-automata.md)
 - [Visibly pushdown automata and visibly pushdown languages](visibly-pushdown-automata.md)
 - [The class EXP](../../complexity-classes/time-and-space-complexity-classes/exp.md)
 

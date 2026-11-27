@@ -4,9 +4,8 @@ A *timed arena* is a tuple $(L, C, E_{\mathrm{Eve}}, E_{\mathrm{Adam}}, c)$ of a
 of edges controlled by Eve and by Adam, each with a guard (a clock constraint, conjunctive and with integer bounds as for [zones](zones-and-difference-bound-matrices.md)) and a set of clocks to reset, and a colouring $c$ of the edges, as in
 [timed automata](timed-buchi-automata.md). Configurations are pairs $(\ell, \nu)$ with $\nu \in \mathbb{R}_{\ge 0}^C$. In a configuration both players propose an action $(d, e)$: a delay $d \ge 0$
 and one of their edges $e = (\ell, g, R, \ell')$ with $\nu + d \models g$ (or a dummy action, available only when the player has no edge action); if both propose edge actions the one with the smaller delay is
-performed, ties going to Adam, and if only one does it is performed whatever its delay (the arena is assumed to give at least one player an edge action in
-every configuration), leading to $(\ell', (\nu + d)[R \leftarrow 0])$. A *timed game* adds a winning condition on the sequence of colours, and the
-*timed reachability game* problem asks whether Eve has a strategy that reaches a target set from $(\ell_0, \vec 0)$.
+performed, ties going to Adam, and if only one does it is performed whatever its delay (arenas in which neither player has an edge action in some reachable configuration are excluded here), leading to $(\ell', (\nu + d)[R \leftarrow 0])$. A *timed game* adds a winning condition on the sequence of colours, and the
+*timed reachability game* problem asks whether Eve has a (deterministic) strategy that reaches a target set from $(\ell_0, \vec 0)$.
 
 ## Depends on
 

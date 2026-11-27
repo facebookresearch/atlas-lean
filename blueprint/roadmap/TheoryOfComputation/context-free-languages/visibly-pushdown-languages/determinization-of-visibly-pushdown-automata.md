@@ -9,6 +9,7 @@ words accepted by nondeterministic automata with $O(s)$ states for which every d
 
 ## Depends on
 
+- [Nested words and nested word automata](nested-words-and-nested-word-automata.md)
 - [Deterministic context-free language](../grammars-and-pushdown-automata/deterministic-context-free-languages/is-deterministic-context-free.md)
 - [Visibly pushdown automata and visibly pushdown languages](visibly-pushdown-automata.md)
 

@@ -4,7 +4,7 @@ Over words on an alphabet $A$, finite or infinite, *MSO₀-logic* has only set v
 $X \subseteq Y$, $\mathrm{Sing}(X)$, $\mathrm{Suc}(X, Y)$ and $X \subseteq Q_a$ for $a \in A$, meaning that $X$ is a subset of $Y$, that $X$ is a singleton, that $X$ and
 $Y$ are singletons $\{x\}$ and $\{y\}$ with $y$ the successor of $x$, and that every position of $X$ carries the letter $a$; formulas are closed
 under Boolean connectives and set quantifiers. A formula $\varphi(X_1, \dots, X_n)$ defines the set of words over $A \times \{0,1\}^n$ whose
-$k$-th extra component is the characteristic sequence of a set satisfying $\varphi$ for $X_k$. Every formula of
+extra components are the characteristic sequences of sets $P_1, \dots, P_n$ such that $(P_1, \dots, P_n)$ satisfies $\varphi$. Every formula of
 [monadic second-order logic](../logic-and-tree-automata/monadic-second-order-logic-over-words.md) over words is equivalent to an MSO₀-formula, effectively, by representing
 each element $x$ by the singleton $\{x\}$ (so $X(x)$ becomes $\{x\} \subseteq X$).
 

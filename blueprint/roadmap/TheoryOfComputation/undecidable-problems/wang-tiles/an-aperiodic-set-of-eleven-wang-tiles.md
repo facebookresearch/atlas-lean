@@ -1,8 +1,7 @@
 # An aperiodic set of eleven Wang tiles, and none smaller
 
 There is an aperiodic set of $11$ [Wang tiles](wang-tiles-and-valid-tilings.md) on $4$ colours (Jeandel and Rao), and it is minimal: no set of at most $10$ Wang tiles
-is aperiodic, and no set of Wang tiles with fewer than $4$ colours is aperiodic, colours being counted as in the source, where horizontal and vertical
-edges take their colours from separate sets. The bounds on the number of tiles were obtained by
+is aperiodic, and no set of Wang tiles with fewer than $4$ colours is aperiodic. The bounds on the number of tiles were obtained by
 an exhaustive computer search of all candidate sets with at most $11$ tiles, combined with proofs of aperiodicity based on
 transducers; the bound on colours is due to Chen, Hu, Lai and Lin.
 
