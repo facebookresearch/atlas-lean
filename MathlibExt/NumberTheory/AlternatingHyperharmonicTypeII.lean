@@ -19,6 +19,15 @@ import Mathlib.Tactic.Ring
 
 Li's coefficients express the iterated partial sums as a finite sum of alternating
 harmonic numbers with shifted exponents.
+
+## References
+
+- Rusen Li, [*Sums over Primes II*](https://cs.uwaterloo.ca/journals/JIS/VOL27/Li/li15.html),
+  Journal of Integer Sequences 27 (2024), Article 24.4.1, Lemma 3 (the type II finite-sum formula).
+- Rusen Li, [*Euler sums of generalized hyperharmonic numbers*](https://doi.org/10.7169/facm/1953),
+  Functiones et Approximatio Commentarii Mathematici 66, no. 2 (2022), pp. 179–189
+  (the polynomial expansion of the iterated-sum kernel and its coefficient recurrence via
+  Faulhaber's formula).
 -/
 
 namespace MetaMathlibExt
