@@ -643,6 +643,40 @@ jobs:
       - name: Check routes, anchors, and article cards
         run: python scripts/check_blueprint_site.py site-src site
 
+      # The card pages hook keeps the move ledger's old addresses
+      # (docs/cards.md#reading); when it cannot, it only says why, and MkDocs
+      # builds the site without them. So whenever the ledger has a row, the
+      # site must have the hook's table of them, javascripts/atlas-card-moves.js,
+      # starting with the line the hook writes first (a file of that name from
+      # the theme would not), and the site source none (the hook would keep
+      # nothing rather than replace it): else the job fails here, before the
+      # site is kept, packed or uploaded, so nothing is published and the last
+      # published site stays. A pull request's build fails alike, before the
+      # pull request merges.
+      - name: Check that the site keeps the moved addresses
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          table=javascripts/atlas-card-moves.js
+          # The table's first line, as the hook writes it (moves_script).
+          header='/* Written by hooks/card_pages.py from scripts/card-moves.jsonl. An explorer link #node=<old address> is'
+          refuse() {
+            echo "::error title=Moved addresses not kept::$1, so this build keeps no moved address: nothing is published, and the last published site stays. See the card_pages hook's lines in the log of the step Build the Markdown site."
+            exit 1
+          }
+          # The ledger is the frozen file, which must exist, and its fragments,
+          # if any; a blank line is no row.
+          [[ -f scripts/card-moves.jsonl ]] || refuse "There is no scripts/card-moves.jsonl"
+          fragments=(scripts/card-moves.d/*.jsonl)
+          if (( ${#fragments[@]} == 0 )) && ! grep -q '[^[:space:]]' scripts/card-moves.jsonl; then
+            echo "The move ledger has no row: there is no moved address to keep."
+            exit 0
+          fi
+          [[ ! -e "site-src/$table" ]] || refuse "The site source has a $table of its own"
+          [[ -f "site/$table" && "$(head -n 1 "site/$table")" == "$header" ]] ||
+            refuse "The move ledger has rows, but the site has no $table written by the card_pages hook"
+          echo "The site has the card_pages hook's $table: it keeps the moved addresses."
+
       - name: Keep dependency diagnostics
         if: always()
         continue-on-error: true

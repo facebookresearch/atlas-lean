@@ -6,5 +6,6 @@ Sylow theory and its generalization to sets of primes: Hall π-subgroups, the cl
 - [Coverings of Sylow subgroups by their conjugates](coverings-of-sylow-subgroups-by-their-conjugates/README.md)
 - [Groups with Hall maximal subgroups](groups-with-hall-maximal-subgroups/README.md)
 - [Hall π-subgroups](hall-subgroups/README.md)
+- [Intersections of Sylow 2-subgroups](intersections-of-sylow-2-subgroups/README.md)
 - [Pronormality of Hall subgroups](pronormality-of-hall-subgroups/README.md)
 - [Finite groups have subgroups of every prime-power order dividing their order (Sylow existence)](sylow-existence.md)

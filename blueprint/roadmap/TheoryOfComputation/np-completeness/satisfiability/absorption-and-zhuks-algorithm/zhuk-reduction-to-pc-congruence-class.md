@@ -1,6 +1,6 @@
 # Zhuk: reducing to a class of a congruence with polynomially complete quotient preserves solvability
 
-Let $\Theta$ be a cycle-consistent irreducible instance over a language with idempotent WNU $w$ such that no domain $D_j$ has a proper binary absorbing subuniverse or a proper center. Let $\sigma$ be a congruence of $(D_i;w)$ such that $(D_i;w)/\sigma$ is polynomially complete, and let $E$ be any $\sigma$-class. Then $\Theta$ has a solution if and only if $\Theta$ has a solution with $x_i\in E$.
+Let $\Theta$ be a cycle-consistent irreducible instance over a language preserved by a special WNU $w$ (an idempotent WNU with $x\circ(x\circ y)=x\circ y$ for $x\circ y=w(x,\dots,x,y)$; the clone of every idempotent WNU on a finite set contains one), such that no domain $D_j$ has a nonempty proper binary absorbing subuniverse or a nonempty proper center in $(D_j;w)$. Let $\sigma$ be a congruence of $(D_i;w)$ such that $(D_i;w)/\sigma$ is polynomially complete, and let $E$ be any $\sigma$-class. Then $\Theta$ has a solution if and only if $\Theta$ has a solution with $x_i\in E$.
 
 ## Proof sketch
 
