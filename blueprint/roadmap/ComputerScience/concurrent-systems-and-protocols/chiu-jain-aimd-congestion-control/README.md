@@ -1,7 +1,6 @@
 # Chiu–Jain AIMD congestion control
 
 - [Total](total.md)
-- [Fairness](fairness.md)
 - [Linear Step](linear-step.md)
 - [Aimd Step](aimd-step.md)
 - [Aiad Step](aiad-step.md)
