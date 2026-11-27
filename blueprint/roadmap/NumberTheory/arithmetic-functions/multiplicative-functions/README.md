@@ -28,4 +28,5 @@ Dirichlet and unitary convolution, completely multiplicative and additive functi
 - [Prime powers fixed by a uniform power sum of their prime factors](prime-power-factorization-sum-eq-iff.md)
 - [Von Mangoldt function](von-mangoldt-function.md)
 - [The von Mangoldt function summed over the divisors of a positive integer n gives log n](von-mangoldt-divisor-sum.md)
+- [Ordinary two-point correlations](ordinary-two-point-correlations/README.md)
 - [Arithmetic function on the positive integers](arithmetic-function.md)

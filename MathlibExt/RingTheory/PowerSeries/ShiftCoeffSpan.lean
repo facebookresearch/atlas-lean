@@ -60,15 +60,15 @@ private theorem coeff_pred_eq (u : PowerSeries A) (a : A) (n : ℕ) (hn : 1 ≤ 
   refine ⟨coeff (n - 1) (u * G), ?_⟩
   rw [hG, map_sub, mul_add, mul_sub, map_add, map_sub]
   have h1 : coeff (n - 1) (u * X ^ n) = 0 := by
-    rw [coeff_mul_X_pow', if_neg (by omega)]
+    rw [coeff_mul_X_pow', ite_eq_right (by omega)]
   have h2 : coeff (n - 1) (u * (C ((n : A) * a) * X ^ (n - 1))) =
       (n : A) * a * constantCoeff u := by
-    rw [← mul_assoc, coeff_mul_X_pow', if_pos le_rfl, Nat.sub_self, mul_comm u, coeff_C_mul,
+    rw [← mul_assoc, coeff_mul_X_pow', ite_eq_left le_rfl, Nat.sub_self, mul_comm u, coeff_C_mul,
       coeff_zero_eq_constantCoeff]
   have h3 : coeff (n - 1) (u * (C (a ^ 2) * G)) = a ^ 2 * coeff (n - 1) (u * G) := by
     rw [mul_left_comm, coeff_C_mul]
   have h4 : coeff (n - 1) ((X : PowerSeries A) ^ n) = 0 := by
-    rw [coeff_X_pow, if_neg (by omega)]
+    rw [coeff_X_pow, ite_eq_right (by omega)]
   rw [h1, h2, h3, h4]
   ring
 
@@ -110,13 +110,13 @@ private theorem exists_coeff_low_eq (u : PowerSeries A) (a : A) (n : ℕ) (hn : 
   refine ⟨coeff k (u * G), ?_⟩
   rw [hG, map_sub, mul_add, mul_sub, map_add, map_sub]
   have h1 : coeff k (u * X ^ n) = 0 := by
-    rw [coeff_mul_X_pow', if_neg (by omega)]
+    rw [coeff_mul_X_pow', ite_eq_right (by omega)]
   have h2 : coeff k (u * (C ((n : A) * a) * X ^ (n - 1))) = 0 := by
-    rw [← mul_assoc, coeff_mul_X_pow', if_neg (by omega)]
+    rw [← mul_assoc, coeff_mul_X_pow', ite_eq_right (by omega)]
   have h3 : coeff k (u * (C (a ^ 2) * G)) = a ^ 2 * coeff k (u * G) := by
     rw [mul_left_comm, coeff_C_mul]
   have h4 : coeff k ((X : PowerSeries A) ^ n) = 0 := by
-    rw [coeff_X_pow, if_neg (by omega)]
+    rw [coeff_X_pow, ite_eq_right (by omega)]
   rw [h1, h2, h3, h4]
   ring
 

@@ -20,9 +20,9 @@ example : ∃ k ≤ 4, (fun x : ℕ => if x < 3 then x + 1 else x)^[k + 1] 0
     (fun s => Nat.min_le_right s 3)
     (fun s hs => by
       by_cases h : s < 3
-      · simp only [h, if_true]
+      · simp only [h, ite_true]
         omega
-      · simp only [h, if_false] at hs
+      · simp only [h, ite_false] at hs
         exact absurd rfl hs) 0
 
 end

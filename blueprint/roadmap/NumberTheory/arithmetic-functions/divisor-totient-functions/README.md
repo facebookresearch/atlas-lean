@@ -43,3 +43,4 @@
 - [Sums of smallest divisors](part-02/sums-of-smallest-divisors/README.md)
 - [Gronwall's theorem](part-02/gronwall-sigma-limsup.md)
 - [Relatively prime subset counts](part-02/mobius-formula-relatively-prime-subset-c.md)
+- [Totient-counting asymptotics](totient-counting-asymptotics/README.md)

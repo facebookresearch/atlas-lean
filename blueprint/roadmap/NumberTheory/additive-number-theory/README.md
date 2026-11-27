@@ -37,3 +37,5 @@ Representing integers as sums from special sets, and the density of integer sets
 - [Sums of practical and polygonal numbers](sums-of-practical-and-polygonal-numbers/README.md)
 - [Disproof of Erdős Problem 1 on distinct subset sums](conjecture-refuted.md)
 - [Odd numbers $1 < n < 2^{50}$ are squarefree plus a power of two](exists-squarefree-add-two-pow-of-odd-lt.md)
+- [Joint Dickman law for consecutive integers](joint-dickman-law/README.md)
+- [Additive indecomposability of the primes](additive-indecomposability-of-the-primes/README.md)

@@ -29,3 +29,4 @@ Vertex, edge, list and fractional colorings of graphs and the chromatic number, 
 
 - [Five color theorem](part-02/five-color-theorem.md)
 - [Mycielski's theorem](part-02/mycielski-theorem.md)
+- [Linear list-chromatic bound in clique-minor order](linear-list-chromatic-hadwiger-bound.md)

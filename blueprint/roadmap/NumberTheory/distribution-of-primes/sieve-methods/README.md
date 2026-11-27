@@ -11,4 +11,5 @@ Selberg, Brun and large sieves, almost primes, parity problem, counting integers
 - [Selberg sieve](selberg-sieve/README.md)
 - [Sieving half the residues modulo large primes](sieving-half-the-residues-modulo-large-primes/README.md)
 - [Sieving shifted primes and the parity problem](sieving-shifted-primes-and-the-parity-problem/README.md)
+- [Bounds for Jacobsthal’s function](jacobsthal-bounds/README.md)
 - [Sifting by sets with bounded reciprocal sum](sifting-by-sets-with-bounded-reciprocal-sum/README.md)
