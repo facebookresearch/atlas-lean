@@ -12,7 +12,8 @@ Before Eve is declared the winner, the record takes at most $(d + 1)^{\lceil \lo
 $O(m \cdot (d + 1)^{\lceil \log_2 n \rceil + 2})$.
 
 Read for Adam, the record gives a deterministic safety automaton over priorities that rejects as soon as Adam is declared the winner. This
-automaton is a strong $(n, d)$-[separator](separating-automata-for-parity-games.md) of size $n^{\log_2 d + O(1)}$:
+automaton is a strong $(n, d)$-[separator](separating-automata-for-parity-games.md) with at most $1 + (d + 1)^{\lceil \log_2 n \rceil + 2}$ states (the top entry is $0$ before rejection, and one
+rejecting sink suffices), which is $n^{\log_2 d + O(1)}$ when $d \le 2n$:
 
 - it accepts every path of an $n$-vertex parity graph all of whose cycles have even maximum;
 - it rejects every word whose largest priority seen infinitely often is odd.
