@@ -1,6 +1,6 @@
 # Error bound for fitted Q-iteration
 
-With batch data whose distribution has concentrability coefficient $C$ and a finite value-function class that is approximately closed under the Bellman optimality operator, the greedy policy of fitted Q-iteration after $k$ iterations is within $O\big(\frac{V_{\max}}{(1-\gamma)^2}\sqrt{C\ln(|\mathcal F|/\delta)/n}\big)$ of optimal, up to completeness-error and $\gamma^k$ terms.
+With batch data whose distribution has concentrability coefficient $C$ and a finite value-function class that is approximately closed under the Bellman optimality operator, the greedy policy of fitted Q-iteration after $k$ iterations is, with probability at least $1-\delta$, within $O\big(\frac{V_{\max}}{(1-\gamma)^2}\sqrt{C\ln(|\mathcal F|/\delta)/n}\big)$ of optimal, up to completeness-error and $\gamma^k$ terms.
 
 **Setting.** Use the MDP $M=(S,A,P,R,\gamma,\eta_1)$ of the [concentrability coefficient over admissible distributions](concentrability-over-admissible-distributions.md): finite nonempty $S$ and $A$, deterministic rewards $R(s,a)\in[0,R_{\max}]$, $\gamma\in[0,1)$, $V_{\max}=R_{\max}/(1-\gamma)$. For a policy $\pi$, $v^\pi=\mathbb E[\sum_{h\ge1}\gamma^{h-1}r_h\mid s_1\sim\eta_1,\pi]$, and $v^\star$ is the largest value, attained by a deterministic optimal policy. For $f:S\times A\to\mathbb R$ let $V_f(s)=\max_a f(s,a)$, let $\pi_f$ be a policy greedy for $f$ (any maximizing action), and let
 

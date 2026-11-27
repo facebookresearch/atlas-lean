@@ -1,6 +1,6 @@
 # Bellman-consistent pessimism under single-policy coverage
 
-If the data distribution covers the optimal policy in the Bellman-consistent sense, $\mathscr C(d_{\pi^\star};\mu,\mathcal F,\pi^\star)\le C_2$, then Bellman-consistent pessimism returns a policy whose suboptimality is $O\big(\frac{V_{\max}\sqrt{C_2}}{1-\gamma}\sqrt{\log(|\mathcal F||\Pi|/\delta)/n}\big)$ plus approximation error, with no coverage assumption on other policies.
+If the data distribution covers the optimal policy in the Bellman-consistent sense, $\mathscr C(d_{\pi^\star};\mu,\mathcal F,\pi^\star)\le C_2$, then Bellman-consistent pessimism returns, with probability at least $1-\delta$, a policy whose suboptimality is $O\big(\frac{V_{\max}\sqrt{C_2}}{1-\gamma}\sqrt{\log(|\mathcal F||\Pi|/\delta)/n}\big)$ plus approximation error, with no coverage assumption on other policies.
 
 Use the setting, assumptions and threshold $\varepsilon=\varepsilon_r$ of the [regret bound for Bellman-consistent pessimism](bellman-consistent-pessimism-regret-bound.md): finite classes $\Pi$ and $\mathcal F$, realizability error $\varepsilon_{\mathcal F}$ (Assumption 1), completeness error $\varepsilon_{\mathcal F,\mathcal F}$ under $\mu$ (Assumption 2), and $n$ independent tuples from $\mu$. Let $\pi^\star$ be an optimal policy, and assume $\pi^\star\in\Pi$, since the regret bound compares with policies in $\Pi$.
 
@@ -22,7 +22,7 @@ Classical analyses that compete with $\pi^\star$ often require $\|\nu/\mu\|_\inf
 
 ## Proof depends on
 
-None beyond the statement prerequisites: the proof applies the regret bound listed above.
+- [Regret bound for Bellman-consistent pessimism](bellman-consistent-pessimism-regret-bound.md)
 
 ## Expansion
 

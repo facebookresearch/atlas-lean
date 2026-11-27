@@ -1,6 +1,6 @@
 # Discounted state-action density ratio
 
-For off-policy evaluation in a discounted MDP, the density ratio $w_{\pi_e/\pi_b}(s,a)=d_{\pi_e,\gamma}(s,a)/d_{\pi_b}(s,a)$ compares the target policy's normalized discounted occupancy with the data distribution; reweighting observed rewards by it recovers the target policy's normalized return.
+For off-policy evaluation in a discounted MDP, the density ratio $w_{\pi_e/\pi_b}(s,a)=d_{\pi_e,\gamma}(s,a)/d_{\pi_b}(s,a)$ compares the target policy's normalized discounted occupancy with the data distribution; reweighting observed rewards by it recovers the target policy's normalized return when the data cover the target occupancy.
 
 **Setting.** A discounted MDP has finite state and action sets $S$ and $A$, $\mathcal X=S\times A$, transition kernel $P(\cdot\mid s,a)$, reward distributions $\mathcal R(s,a)$ on $[0,R_{\max}]$, discount $\gamma\in[0,1)$ and initial state distribution $d_0$. For a stochastic policy $\pi$ with trajectory $s_0\sim d_0$, $a_t\sim\pi(\cdot\mid s_t)$, $r_t\sim\mathcal R(s_t,a_t)$, $s_{t+1}\sim P(\cdot\mid s_t,a_t)$, the normalized expected discounted return is
 

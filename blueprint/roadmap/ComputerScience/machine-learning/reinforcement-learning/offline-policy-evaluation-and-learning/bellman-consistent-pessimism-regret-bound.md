@@ -1,6 +1,6 @@
 # Regret bound for Bellman-consistent pessimism
 
-With the version-space threshold set by sample size, realizability and completeness errors, Bellman-consistent pessimism competes with every policy in its class: the regret against $\pi$ splits into an on-support term of order $\frac{V_{\max}\sqrt{C_2}}{1-\gamma}\sqrt{\log(|\mathcal F||\Pi|/\delta)/n}$ and an off-support bias term.
+With the version-space threshold set by sample size, realizability and completeness errors, Bellman-consistent pessimism competes, with probability at least $1-\delta$, with every policy in its class: the regret against $\pi$ splits into an on-support term of order $\frac{V_{\max}\sqrt{C_2}}{1-\gamma}\sqrt{\log(|\mathcal F||\Pi|/\delta)/n}$ and an off-support bias term.
 
 Use the setting and notation of [Bellman-consistent pessimism](bellman-consistent-pessimism.md) and the [Bellman-consistent distribution-shift coefficient](bellman-consistent-distribution-shift.md). Let $d_\pi$ be the normalized discounted state-action occupancy of $\pi$ from $s_0$, and $(\mathcal P^\pi f)(s,a)=\mathbb E_{s'\sim P(\cdot\mid s,a)}[f(s',\pi)]$. Assume:
 
