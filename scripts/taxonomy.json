@@ -14228,7 +14228,6 @@
   "MathlibExt/NumberTheory/ThueLemma": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Thue's lemma"},
   "MathlibExt/NumberTheory/ThueSiegelRoth": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Thue–Siegel–Roth theorem"},
   "MathlibExt/NumberTheory/TothOddZeta": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Paperfolding series for odd zeta values"},
-  "MathlibExt/NumberTheory/TothOddZetaTsumPaperfoldingTwoMulAddOne": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Paperfolding series for odd zeta values"},
   "MathlibExt/NumberTheory/TriangularRepresentationWindow": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representations by squares and triangular numbers"},
   "MathlibExt/NumberTheory/TribonacciInt": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tribonacci numbers"},
   "MathlibExt/NumberTheory/BrocardRamanujanNotTetranacci": {"to": "NumberTheory/linear-recurrences/diophantine-recurrences", "title": "Brocard–Ramanujan equation in recurrence sequences"},
