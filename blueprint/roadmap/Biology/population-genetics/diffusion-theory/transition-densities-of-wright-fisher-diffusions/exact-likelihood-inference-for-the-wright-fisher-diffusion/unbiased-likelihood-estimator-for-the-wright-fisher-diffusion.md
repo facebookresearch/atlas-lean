@@ -6,7 +6,19 @@ $$
 dX_t = \gamma(X_t, \vartheta)\,dt + \sqrt{X_t(1 - X_t)}\,dB_t, \qquad X_0 = x_0 \in [0,1],
 $$
 
-with drift $\gamma(\cdot,\vartheta)$ encoding mutation and selection with unknown parameter $\vartheta \in \Theta$, observed at discrete times. Let $X^\alpha$ be a reference neutral Wright–Fisher diffusion with mutation, with transition density $p(x, y, t)$, and let $A(\cdot;\vartheta)$ and $\phi(\cdot;\vartheta)$ be the potential and the rate function given by Girsanov's theorem for the change of drift from $X^\alpha$ to $X$, with $\phi^-(\vartheta)$ a lower bound of $\phi$.
+with unknown parameter $\vartheta \in \Theta$, observed at discrete times, where $\Theta \subset \mathbb{R}^d$ is compact and contains the maximum likelihood estimator. The drift has the form
+
+$$
+\gamma(x,\vartheta) = \alpha(x) + x(1-x)\,\eta(x;\vartheta), \qquad \alpha(x) = \tfrac12\big(\theta_a - (\theta_a + \theta_A)x\big),
+$$
+
+with fixed mutation rates $\theta_a, \theta_A > 0$ and a selection function $\eta(\cdot;\vartheta) \in C^1[0,1]$ for every $\vartheta \in \Theta$, with $\eta(x;\cdot)$ continuous on $\Theta$ for every $x \in [0,1]$. Let $X^\alpha$ be the reference neutral Wright–Fisher diffusion with mutation (drift $\alpha$, i.e. $\eta \equiv 0$), with transition density $p(x, y, t)$. The change of drift from $X^\alpha$ to $X$ is governed, via Girsanov's theorem and Itô's formula, by the potential and the rate function
+
+$$
+A(x;\vartheta) = \int_0^x \eta(z;\vartheta)\,dz, \qquad \phi(x;\vartheta) = \tfrac12\Big[x(1-x)\big(\eta^2(x;\vartheta) + \eta'(x;\vartheta)\big) + 2\eta(x;\vartheta)\,\alpha(x)\Big],
+$$
+
+where $A(x;\cdot)$ is continuous on $\Theta$, and $\phi$ is continuous in $x$ with bounds $\phi^-(\vartheta) \le \phi(x;\vartheta) \le \phi^+(\vartheta)$ for all $x \in [0,1]$, $\vartheta \in \Theta$, with $\phi^-$ and $\phi^+$ continuous on $\Theta$.
 
 **Results.**
 

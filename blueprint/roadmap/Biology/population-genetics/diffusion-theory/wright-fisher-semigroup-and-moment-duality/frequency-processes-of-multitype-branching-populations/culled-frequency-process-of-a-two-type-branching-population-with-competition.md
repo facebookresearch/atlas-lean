@@ -1,6 +1,10 @@
 # Culled frequency process of a two-type branching population with competition and its large-population limit
 
-**Model.** Let $X = (X^{(1)}, X^{(2)})$ be a two-type continuous-state branching process with immigration and competition (in the sense of Ma): type-$i$ mass has immigration rate $\eta_i \ge 0$, a deterministic interaction drift in which $b_{ij}(x)$ is the contribution of type-$j$ mass $x$ to the growth of type $i$ (allowing logistic competition and cross-type effects), Gaussian branching coefficients $c_i$, and jumps driven by measures $\mu_i$ on $U_2 \subset [0,\infty)^2$ (a type-$i$ parent producing masses $w = (w_1, w_2)$ of both types). Let $Z = X^{(1)} + X^{(2)}$ and $R = X^{(1)}/Z$. The pair $(R, Z)$ is Markov, but $R$ alone is not.
+**Model.** Let $X = (X^{(1)}, X^{(2)})$ be a two-type continuous-state branching process with immigration and competition (in the sense of Ma): type-$i$ mass has immigration rate $\eta_i \ge 0$, a deterministic interaction drift in which $b_{ij}(x)$ is the contribution of type-$j$ mass $x$ to the growth of type $i$, Gaussian branching coefficients $c_i \ge 0$, reproduction jumps driven by Borel measures $\mu_i$ on $U_2 = [0,\infty)^2 \setminus \{0\}$ (a type-$i$ parent producing masses $w = (w_1, w_2)$ of both types), and immigration jumps driven by a Borel measure $\nu$ on $U_2$. Throughout, each $b_{ij} : \mathbb{R} \to \mathbb{R}$ is locally Lipschitz with $b_{ij}(x) = 0$ for $x \le 0$ and $b_{ij}(x) \ge 0$ for $i \ne j$ (so competition acts only through $b_{ii}$, and cross-type effects are nonnegative), and, with $\|w\| = (w_1^2 + w_2^2)^{1/2}$,
+
+$$\int_{U_2} (1 \wedge \|w\|)\,\nu(dw) < \infty, \qquad \int_{U_2} \big(\|w\| \wedge \|w\|^2 + w_j\big)\,\mu_i(dw) < \infty \quad (i \ne j).$$
+
+Let $Z = X^{(1)} + X^{(2)}$ and $R = X^{(1)}/Z$. The pair $(R, Z)$ is Markov, but $R$ alone is not.
 
 **Culling.** Fix a total mass $z > 0$. Run $(R, Z)$ on short time intervals of length $1/n$ and after each interval rescale the population back to total mass $z$ while keeping the frequency $R$ (culling). The resulting frequency processes $\bar R^{(z,n)}$ live on $[0,1]$.
 

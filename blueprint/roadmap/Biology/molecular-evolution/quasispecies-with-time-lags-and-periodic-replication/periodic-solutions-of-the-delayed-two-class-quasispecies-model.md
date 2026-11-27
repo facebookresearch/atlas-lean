@@ -1,6 +1,6 @@
 # Periodic solutions of the delayed two-class quasispecies model with periodic replication
 
-**Model.** A population of replicators is split into the master sequence (fraction $x_0$) and a pool of mutants ($x_1$). Replication takes time, introducing lags $r_0, r_1 \ge 0$, and replication rates $f_0(t), f_1(t)$ are positive continuous $T$-periodic functions (for example seasonal or therapy-driven forcing). With forward mutation probability $\mu \in [0,1]$ (master to mutant) and backward probability $\xi$ (mutant to master), and the constant-population dilution $\Phi(t) = f_0(t)x_0(t - r_0) + f_1(t)x_1(t - r_1)$,
+**Model.** A population of replicators is split into the master sequence (fraction $x_0$) and a pool of mutants ($x_1$). Replication takes time, introducing lags $r_0, r_1 \ge 0$, and replication rates $f_0(t), f_1(t)$ are positive continuous $T$-periodic functions (for example seasonal or therapy-driven forcing). With forward mutation probability $\mu \in [0,1]$ (master to mutant) and backward probability $\xi \in [0,1]$ (mutant to master), and the constant-population dilution $\Phi(t) = f_0(t)x_0(t - r_0) + f_1(t)x_1(t - r_1)$,
 
 $$\dot x_0 = f_0(1-\mu)\,x_0(t - r_0) + f_1\,\xi\,x_1(t - r_1) - x_0(t)\,\Phi(t),$$
 
@@ -8,7 +8,7 @@ $$\dot x_1 = f_0\,\mu\,x_0(t - r_0) + f_1(1 - \xi)\,x_1(t - r_1) - x_1(t)\,\Phi(
 
 For continuous positive initial histories with $x_0 + x_1 = 1$ at the initial time, the simplex $\Sigma = \{x_0 + x_1 = 1,\ x_0, x_1 > 0\}$ is invariant, as it is for the general $(n+1)$-class model $\dot x_i = \sum_j f_j Q_{ji} x_j(t - r_j) - x_i(t)\sum_j f_j x_j(t - r_j)$; and any positive $T$-periodic solution in $(0,1)^{n+1}$ automatically lies in the simplex.
 
-**Theorem.**
+**Theorem.** Assume $\mu, \xi \in (0,1)$ (both mutation directions present, neither certain).
 
 1. *Existence.* If $\xi \ne 1 - \mu$, the delayed system has at least one non-trivial positive $T$-periodic solution in $\Sigma$, and it satisfies
 
