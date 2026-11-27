@@ -4,7 +4,7 @@ Let $G$ be a control-flow graph with $N$ nodes and $E$ edges and an entry node t
 
 $$\mathrm{DF}(X) = \{Y \in \mathrm{Succ}(X) \mid \mathrm{idom}(Y) \ne X\} \cup \bigcup_{Z \in \mathrm{Children}(X)} \{Y \in \mathrm{DF}(Z) \mid \mathrm{idom}(Y) \ne X\}$$
 
-from the successors of $X$ and the already computed frontiers of its children. This computes $\mathrm{DF}(X)$ for every node, in time $O(E + \sum_X |\mathrm{DF}(X)|)$, which is $O(E + N^2)$ in the worst case.
+from the successors of $X$ and the already computed frontiers of its children. This computes $\mathrm{DF}(X)$ for every node, in time $O(N + E + \sum_X |\mathrm{DF}(X)|)$, which is $O(E + N^2)$ in the worst case; since every node is reachable from the entry, $N \le E + 1$, and the bound is the source's $O(E + \sum_X |\mathrm{DF}(X)|)$ whenever $E \ge 1$.
 
 **Proof.** The formula is correct by [the decomposition](dominance-frontier-decomposition.md) together with [the local test](local-test-for-dominance-frontiers.md) and [the upward test](upward-test-for-dominance-frontiers.md). Each successor edge and each element of a child's frontier is examined once.
 
