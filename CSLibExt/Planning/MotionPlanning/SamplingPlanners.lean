@@ -2662,7 +2662,7 @@ private theorem recomputeCosts_cost_start_uncond_aux {C : Type} [DecidableEq C]
   rw [treeCostsAux_cons_new]
   · refine (treeCostsAux_cost_mem _ _ _ _ _ _ (by simp)).trans ?_
     first | exact costToCome_cons_eq | simp [costToCome_cons_eq]
-  all_goals simp
+  simp
 
 theorem pairVal_costToCome_recomputeCosts {S : Type} [DecidableEq S]
     (O : Oracles S) (verts : List S) (edges : List (S × S)) (start v : S)

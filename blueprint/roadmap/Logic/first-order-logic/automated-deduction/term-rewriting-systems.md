@@ -5,12 +5,7 @@ A *term rewriting system* over a signature $\Sigma$ and a set of variables $V$ i
 ## Depends on
 
 - [Terms for unification](../first-order-unification/term.md)
-
-## Expansion
-
-This page becomes ready once these prerequisites are stated:
-
-- N-ary ranked-signature adapter for curried unification (proof prerequisite)
+- [Unification of ranked terms through the curried encoding](../first-order-unification/unification-of-ranked-terms-through-the-curried-encoding.md)
 
 ## Sources
 
