@@ -28,24 +28,27 @@ When the generator has constant coefficient `1`, every nonzero nonwrapping
 burst of length at most the register width `r` in the codeword is rejected
 (`runRegister_ne_zero_of_isBitBurstLE`, and `serialCRC_rejects_burst` for a
 monic generator); the augmented check over the received word followed by `r`
-zero bits rejects it too (`finalRegister_ne_zero_of_isBitBurstLE`). The CRC-16/XMODEM
-convention (width `16`, taps `0x1021`, check value `0x31C3` for the ASCII
-payload `"123456789"`) is validated, including leading zero bytes, detection
-of a length-16 burst, and the length-17 generator pattern that is not
+zero bits rejects it too (`finalRegister_ne_zero_of_isBitBurstLE`). The test module
+validates the CRC-16/XMODEM convention (width `16`, taps `0x1021`, check value
+`0x31C3` for the ASCII payload `"123456789"`), including leading zero bytes,
+detection of a length-16 burst, and the length-17 generator pattern that is not
 detected.
+
+## References
+
+* W. W. Peterson, D. T. Brown, "Cyclic codes for error detection", *Proceedings of the IRE* 49
+  (1961), 228-235.
+* G. Cook, *Catalogue of parametrised CRC algorithms* (CRC RevEng), entry CRC-16/XMODEM,
+  https://reveng.sourceforge.io/crc-catalogue/16.htm#crc.cat.crc-16-xmodem
 -/
 
 namespace CSLibExt.Coding.SerialCRCBurstDetection
 
-/-- The field structure on `ZMod 2` used by `Cslib.CodingTheory.CRC`,
-registered only while this module is elaborated. -/
-local instance : Fact (Nat.Prime 2) := ⟨by decide⟩
-
 open CSLibExt.Coding.UnreflectedSerialCRC
 open CSLibExt.Coding.FixedLengthCRCFrames
 
-/-- A nonzero nonwrapping bit burst of length at most `L`: `e` has a `true` bit, and all its
-`true` bits lie in the `L` consecutive positions `i, ..., i + L - 1`. -/
+/-- **Nonwrapping bit burst.** A nonzero nonwrapping bit burst of length at most `L`: `e` has a
+`true` bit, and all its `true` bits lie in the `L` consecutive positions `i, ..., i + L - 1`. -/
 def IsBitBurstLE (e : List Bool) (L : ℕ) : Prop :=
   true ∈ e ∧ ∃ i : ℕ, ∀ j : ℕ, ∀ hj : j < e.length, e[j] = true → i ≤ j ∧ j < i + L
 
@@ -145,14 +148,16 @@ private theorem messagePoly_ne_zero (e : List Bool) (he : true ∈ e) : messageP
   · intro h
     exact absurd (Finset.mem_univ _) h
 
-/-- The canonical modulus determines its taps word. -/
-private theorem eq_of_monicModulus_eq {r : ℕ} {a b : BitVec r}
-    (h : a.monicModulus = b.monicModulus) : a = b := by
-  unfold BitVec.monicModulus at h
-  simpa using congrArg (Polynomial.toBitVec r) (add_left_cancel h)
+/-- A bit burst has positive length: its window holds a `true` bit. -/
+private theorem one_le_of_isBitBurstLE {e : List Bool} {L : ℕ} (he : IsBitBurstLE e L) :
+    1 ≤ L := by
+  obtain ⟨hmem, i, hi⟩ := he
+  obtain ⟨j, hj, hej⟩ := List.mem_iff_getElem.mp hmem
+  have := hi j hj hej
+  omega
 
 /-- The codeword has the fixed length `bits.length + r`. -/
-theorem length_encodedBody (r : ℕ) (taps : BitVec r) (bits : List Bool) :
+private theorem length_encodedBody (r : ℕ) (taps : BitVec r) (bits : List Bool) :
     (encodedBody r taps bits).length = bits.length + r := by
   simp [encodedBody, checkBits, Nat.length_toBitsBE]
 
@@ -171,9 +176,10 @@ theorem isBurstLE_messagePoly_of_isBitBurstLE (e : List Bool) (L : ℕ)
 
 /-- A nonzero nonwrapping burst of length at most `r`, shifted by any power of `X`, is not a
 multiple of a generator `X ^ r + taps` with constant coefficient `1`. -/
-private theorem not_dvd_messagePoly_mul_X_pow {r : ℕ} (hr : 1 ≤ r) (taps : BitVec r)
+private theorem not_dvd_messagePoly_mul_X_pow {r : ℕ} (taps : BitVec r)
     (h0 : taps.getLsbD 0 = true) (e : List Bool) (L : ℕ) (he : IsBitBurstLE e L) (hL : L ≤ r)
     (k : ℕ) : ¬taps.monicModulus ∣ messagePoly e * X ^ k := by
+  have hr : 1 ≤ r := (one_le_of_isBitBurstLE he).trans hL
   have hburst : Cslib.CodingTheory.CRC.IsBurstLE (messagePoly e * X ^ k) L := by
     obtain ⟨i, b, heq, hb0, hbL⟩ := isBurstLE_messagePoly_of_isBitBurstLE e L he
     exact ⟨i + k, b, by rw [heq, pow_add]; ring, hb0, hbL⟩
@@ -184,7 +190,8 @@ private theorem not_dvd_messagePoly_mul_X_pow {r : ℕ} (hr : 1 ≤ r) (taps : B
   exact Cslib.CodingTheory.CRC.not_dvd_of_isBurstLE hX hburst
     (by rw [BitVec.monicModulus_natDegree]; exact hL)
 
-/-- The taps word of a monic generator of degree `r ≥ 1` with `g(0) = 1` has bit `0` set. -/
+/-- The taps word of a monic generator of degree `r ≥ 1` with `g(0) = 1` has bit `0` set
+(for `r = 0` the taps word is empty). -/
 private theorem getLsbD_toBitVec_zero (g : Polynomial (ZMod 2)) (r : ℕ) (hg : g.Monic)
     (hr : g.natDegree = r) (hr1 : 1 ≤ r) (hg0 : g.eval 0 = 1) :
     (g.toBitVec r).getLsbD 0 = true := by
@@ -195,8 +202,9 @@ private theorem getLsbD_toBitVec_zero (g : Polynomial (ZMod 2)) (r : ℕ) (hg : 
   revert hc
   cases (g.toBitVec r).getLsbD 0 <;> decide
 
-/-- The augmented check of an error-free codeword (the codeword followed by `r` zero bits) is
-also the zero register; a corollary of `runRegister_encodedBody_eq_zero`. -/
+/-- **Augmented check of a codeword.** The augmented check of an error-free codeword (the
+codeword followed by `r` zero bits) is also the zero register; a corollary of
+`runRegister_encodedBody_eq_zero`. -/
 theorem finalRegister_encodedBody_eq_zero (r : ℕ) (taps : BitVec r) (bits : List Bool) :
     finalRegister r taps (encodedBody r taps bits) = 0#r := by
   rw [finalRegister_eq_zero_iff]
@@ -207,7 +215,7 @@ theorem finalRegister_encodedBody_eq_zero (r : ℕ) (taps : BitVec r) (bits : Li
 `X ^ r + taps` with constant coefficient `1`), every nonzero nonwrapping burst of length at most
 `r` in the codeword is rejected by the receiver: running the serial register over the received
 word leaves a nonzero register. -/
-theorem runRegister_ne_zero_of_isBitBurstLE (r : ℕ) (hr : 1 ≤ r) (taps : BitVec r)
+theorem runRegister_ne_zero_of_isBitBurstLE (r : ℕ) (taps : BitVec r)
     (h0 : taps.getLsbD 0 = true) (bits e : List Bool) (hlen : e.length = bits.length + r)
     (L : ℕ) (he : IsBitBurstLE e L) (hL : L ≤ r) :
     runRegister r taps (List.zipWith Bool.xor (encodedBody r taps bits) e) ≠ 0#r := by
@@ -215,14 +223,14 @@ theorem runRegister_ne_zero_of_isBitBurstLE (r : ℕ) (hr : 1 ≤ r) (taps : Bit
   have hc := (runRegister_eq_zero_iff taps _).mp (runRegister_encodedBody_eq_zero r taps bits)
   rw [runRegister_eq_zero_iff,
     messagePoly_zipWith_xor _ _ (by rw [length_encodedBody, hlen])] at hz
-  refine not_dvd_messagePoly_mul_X_pow hr taps h0 e L he hL 0 ?_
+  refine not_dvd_messagePoly_mul_X_pow taps h0 e L he hL 0 ?_
   rw [pow_zero, mul_one]
   exact (dvd_add_right hc).mp hz
 
 /-- **Burst detection, augmented check.** Under the hypotheses of
 `runRegister_ne_zero_of_isBitBurstLE`, the register after the received word followed by `r` zero
 bits is nonzero as well. -/
-theorem finalRegister_ne_zero_of_isBitBurstLE (r : ℕ) (hr : 1 ≤ r) (taps : BitVec r)
+theorem finalRegister_ne_zero_of_isBitBurstLE (r : ℕ) (taps : BitVec r)
     (h0 : taps.getLsbD 0 = true) (bits e : List Bool) (hlen : e.length = bits.length + r)
     (L : ℕ) (he : IsBitBurstLE e L) (hL : L ≤ r) :
     finalRegister r taps (List.zipWith Bool.xor (encodedBody r taps bits) e) ≠ 0#r := by
@@ -230,106 +238,31 @@ theorem finalRegister_ne_zero_of_isBitBurstLE (r : ℕ) (hr : 1 ≤ r) (taps : B
   have hc := (finalRegister_eq_zero_iff taps _).mp (finalRegister_encodedBody_eq_zero r taps bits)
   rw [finalRegister_eq_zero_iff,
     messagePoly_zipWith_xor _ _ (by rw [length_encodedBody, hlen]), add_mul] at hz
-  exact not_dvd_messagePoly_mul_X_pow hr taps h0 e L he hL r ((dvd_add_right hc).mp hz)
+  exact not_dvd_messagePoly_mul_X_pow taps h0 e L he hL r ((dvd_add_right hc).mp hz)
 
-/-- **Serial CRC burst detection.** For a monic binary generator `g` of degree `r ≥ 1` with
+/-- **Serial CRC burst detection.** For a monic binary generator `g` of degree `r` with
 `g(0) = 1`, run as the `UnreflectedSerialCRC` serial LFSR with taps `g.toBitVec r`, every nonzero
 nonwrapping burst of length at most `r` in the fixed-length codeword is rejected: the register
 after the received word is nonzero. -/
 theorem serialCRC_rejects_burst (g : Polynomial (ZMod 2)) (r : ℕ) (hg : g.Monic)
-    (hr : g.natDegree = r) (hr1 : 1 ≤ r) (hg0 : g.eval 0 = 1) (bits e : List Bool)
+    (hr : g.natDegree = r) (hg0 : g.eval 0 = 1) (bits e : List Bool)
     (hlen : e.length = bits.length + r) (L : ℕ) (he : IsBitBurstLE e L) (hL : L ≤ r) :
     runRegister r (g.toBitVec r)
       (List.zipWith Bool.xor (encodedBody r (g.toBitVec r) bits) e) ≠ 0#r :=
-  runRegister_ne_zero_of_isBitBurstLE r hr1 _ (getLsbD_toBitVec_zero g r hg hr hr1 hg0) bits e
+  runRegister_ne_zero_of_isBitBurstLE r _
+    (getLsbD_toBitVec_zero g r hg hr ((one_le_of_isBitBurstLE he).trans hL) hg0) bits e
     hlen L he hL
 
 /-- **Serial CRC burst detection, augmented check.** Under the hypotheses of
 `serialCRC_rejects_burst`, the register after the received word followed by `r` zero bits is
 nonzero as well. -/
 theorem serialCRC_rejects_burst_finalRegister (g : Polynomial (ZMod 2)) (r : ℕ) (hg : g.Monic)
-    (hr : g.natDegree = r) (hr1 : 1 ≤ r) (hg0 : g.eval 0 = 1) (bits e : List Bool)
+    (hr : g.natDegree = r) (hg0 : g.eval 0 = 1) (bits e : List Bool)
     (hlen : e.length = bits.length + r) (L : ℕ) (he : IsBitBurstLE e L) (hL : L ≤ r) :
     finalRegister r (g.toBitVec r)
       (List.zipWith Bool.xor (encodedBody r (g.toBitVec r) bits) e) ≠ 0#r :=
-  finalRegister_ne_zero_of_isBitBurstLE r hr1 _ (getLsbD_toBitVec_zero g r hg hr hr1 hg0) bits e
+  finalRegister_ne_zero_of_isBitBurstLE r _
+    (getLsbD_toBitVec_zero g r hg hr ((one_le_of_isBitBurstLE he).trans hL) hg0) bits e
     hlen L he hL
-
-/-! ### Validation: CRC-16/XMODEM -/
-
-/-- The CRC-16/XMODEM generator `X^16 + X^12 + X^5 + 1`. -/
-noncomputable def xmodemGenerator : Polynomial (ZMod 2) :=
-  Polynomial.X ^ 16 + Polynomial.X ^ 12 + Polynomial.X ^ 5 + 1
-
-/-- The CRC-16/XMODEM taps word `0x1021`. -/
-def xmodemTaps : BitVec 16 :=
-  0x1021#16
-
-/-- The standard CRC check payload, ASCII `"123456789"`, as MSB-first bits, eight bits per
-character. Every character of the literal is ASCII, so its low eight bits are its byte. -/
-def xmodemCheckPayload : List Bool :=
-  "123456789".toList.flatMap fun c => Nat.toBitsBE 8 c.toNat
-
-private theorem monicModulus_xmodemTaps : xmodemTaps.monicModulus = xmodemGenerator := by
-  have h : xmodemTaps.toBoolListLE = [true, false, false, false, false, true, false, false,
-      false, false, false, false, true, false, false, false] := by decide
-  simp only [BitVec.monicModulus, BitVec.toPolynomial, xmodemGenerator, h]
-  simp [Polynomial.ofCoeffList_cons, Polynomial.ofCoeffList_nil]
-  ring
-
-/-- The XMODEM generator enters the serial register model through the taps word `0x1021`. -/
-theorem toBitVec_xmodemGenerator : xmodemGenerator.toBitVec 16 = xmodemTaps := by
-  apply eq_of_monicModulus_eq
-  rw [← monicModulus_xmodemTaps, BitVec.monicModulus_toBitVec _
-    (BitVec.monicModulus_monic _) (BitVec.monicModulus_natDegree _)]
-
-/-- CRC-16/XMODEM check value: the serial register over `"123456789"` is `0x31C3`. -/
-theorem finalRegister_xmodem_check :
-    finalRegister 16 xmodemTaps xmodemCheckPayload = 0x31C3#16 := by
-  decide +kernel
-
-/-- The transmitted XMODEM check frame is the payload followed by `0x31C3`, MSB first. -/
-theorem encodedBody_xmodem_check :
-    encodedBody 16 xmodemTaps xmodemCheckPayload =
-      xmodemCheckPayload ++ Nat.toBitsBE 16 0x31C3 := by
-  decide +kernel
-
-/-- Leading zeros: a leading zero byte lengthens the payload but leaves the zero-init
-XMODEM check value unchanged. -/
-theorem finalRegister_xmodem_leading_zero_byte :
-    finalRegister 16 xmodemTaps (List.replicate 8 false ++ xmodemCheckPayload) = 0x31C3#16 := by
-  decide +kernel
-
-/-- A length-16 burst (sixteen flipped bits at positions `3, ..., 18` of the 88-bit check
-frame) is detected by the receiver. -/
-theorem xmodem_detects_length_sixteen_burst :
-    IsBitBurstLE (List.replicate 3 false ++ List.replicate 16 true ++ List.replicate 69 false) 16 ∧
-      runRegister 16 xmodemTaps
-        (List.zipWith Bool.xor (encodedBody 16 xmodemTaps xmodemCheckPayload)
-          (List.replicate 3 false ++ List.replicate 16 true ++ List.replicate 69 false)) ≠
-        0#16 := by
-  refine ⟨⟨by decide, 3, by decide⟩, by decide +kernel⟩
-
-/-- A too-long error that is a multiple of `g` need not be detected: the 17-bit burst equal to
-the generator `0x11021` itself, at positions `3, ..., 19` of the check frame, passes the
-receiver's check. -/
-theorem xmodem_misses_generator_burst :
-    IsBitBurstLE (List.replicate 3 false ++ Nat.toBitsBE 17 0x11021 ++ List.replicate 68 false)
-        17 ∧
-      runRegister 16 xmodemTaps
-        (List.zipWith Bool.xor (encodedBody 16 xmodemTaps xmodemCheckPayload)
-          (List.replicate 3 false ++ Nat.toBitsBE 17 0x11021 ++ List.replicate 68 false)) =
-        0#16 := by
-  refine ⟨⟨by decide, 3, by decide +kernel⟩, by decide +kernel⟩
-
-/-- Violated premise `g(0) = 1`: for `g = X^2 + X` (taps `0b10`), the length-2 burst `110`
-(the error polynomial `X^2 + X = g`) on the codeword of the one-bit payload `0` passes the
-receiver's check. -/
-theorem misses_burst_of_generator_divisible_by_X :
-    IsBitBurstLE [true, true, false] 2 ∧
-      runRegister 2 0b10#2
-          (List.zipWith Bool.xor (encodedBody 2 0b10#2 [false]) [true, true, false]) =
-        0#2 := by
-  refine ⟨⟨by decide, 0, by decide⟩, by decide⟩
 
 end CSLibExt.Coding.SerialCRCBurstDetection
