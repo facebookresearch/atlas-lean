@@ -36,10 +36,10 @@ denote rationals and small letters integers, and `(k / p)` is the Legendre symbo
 * `Rat.Robinson.lemma_four` (Lemma 4): for odd primes `p ≡ 1 (mod 4)` and `q` with
   `(q / p) = -1`, `2 + p q M ^ 2 + p Z ^ 2 = X ^ 2 + q Y ^ 2` is solvable in rationals exactly
   when the denominator of `M` is prime to `p` and `q`.
-* `Rat.Robinson.exists_sq_add_mul_sq_sub_mul_sq_eq`: `X ^ 2 + a Y ^ 2 - p Z ^ 2` represents every
-  positive integer `m` prime to `a` and `p` with `m ≡ 2 (mod 4)`, or `m` odd and
-  `(p / m) = (m / p)`; this is the case of the "if" halves of Lemmas 1 and 2 that Lemmas 3 and 4
-  use.
+* `Rat.Robinson.exists_sq_add_mul_sq_sub_mul_sq_eq`: for an odd prime `p` and an odd squarefree
+  `a` prime to `p`, `X ^ 2 + a Y ^ 2 - p Z ^ 2` represents every positive integer `m` prime to `a`
+  and `p` with `m ≡ 2 (mod 4)`, or `m` odd and `(p / m) = (m / p)`; this is the case of the "if"
+  halves of Lemmas 1 and 2 that Lemmas 3 and 4 use.
 
 The "only if" halves of Lemmas 1 and 2 are local obstructions, at `p` and `2`, and at `p` and `q`.
 They are proved by descent: a solution in integers with the last variable nonzero would have all
@@ -226,8 +226,9 @@ nonzero rational number `M`, if and only if `M` is not of the form `pk·S²` wit
 `k·S²` with `k ≡ p (mod 8)`." Capital letters denote rationals and small letters integers
 (p. 106). This theorem is the "only if" half: the conditions are the obstructions at `p` and at
 `2`, proved here by descent. The converse is a case of the Hasse–Minkowski theorem for
-representations by ternary forms; the special case of positive integers prime to `p` used in
-Lemma 3 is `exists_sq_add_mul_sq_sub_mul_sq_eq`. -/
+representations by ternary forms. The case used in Lemma 3 is `exists_sq_add_mul_sq_sub_mul_sq_eq`
+with `a = 1`: it covers the positive integers `m` prime to `p` with `m ≡ 2 (mod 4)`, or `m` odd
+and `(p / m) = (m / p)`. -/
 theorem lemma_one_only_if {p : ℕ} [Fact p.Prime] (hp : p % 4 = 3) {M : ℚ} (hM : M ≠ 0)
     (h : ∃ X Y Z : ℚ, X ^ 2 + Y ^ 2 - p * Z ^ 2 = M) :
     (¬∃ (k : ℤ) (S : ℚ), M = p * k * S ^ 2 ∧ legendreSym p k = 1) ∧
@@ -263,8 +264,9 @@ form `pk·S²` with `(k/p) = −1` or `qk·S²` with `(k/q) = −1`." Capital le
 small letters integers (p. 106). This theorem is the "only if" half: the conditions are the
 obstructions at `p` and at `q`, proved here by descent, with quadratic reciprocity for
 `(p / q) = (q / p)`. The converse is a case of the Hasse–Minkowski theorem for representations by
-ternary forms; the special case of positive integers prime to `p` and `q` used in Lemma 4 is
-`exists_sq_add_mul_sq_sub_mul_sq_eq`. -/
+ternary forms. The case used in Lemma 4 is `exists_sq_add_mul_sq_sub_mul_sq_eq` with `a = q`: it
+covers the positive integers `m` prime to `p` and `q` with `m ≡ 2 (mod 4)`, or `m` odd and
+`(p / m) = (m / p)`. -/
 theorem lemma_two_only_if {p q : ℕ} [Fact p.Prime] [Fact q.Prime] (hp : p % 4 = 1) (hq : q ≠ 2)
     (hqp : legendreSym p q = -1) {M : ℚ} (hM : M ≠ 0)
     (h : ∃ X Y Z : ℚ, X ^ 2 + q * Y ^ 2 - p * Z ^ 2 = M) :
