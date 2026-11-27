@@ -86,6 +86,23 @@ theorem exists_not_mersenneEtaCondition_of_plus (s₁ : ℤ) (hs₁ : 3 ≤ s₁
   rw [hsign.neg_one_pow] at hplus
   norm_num [mersenne, jacobiSym.one_left] at hplus
 
+/-- A reduced residue failing condition (etar) makes the qualifying count less than the totient. -/
+private theorem mersenneEtaCondition_ncard_lt_totient_of_missing {sm sp Ω n : ℕ}
+    (hn : n < Ω) (hcop : n.Coprime Ω) (hfail : ¬ MersenneEtaCondition sm sp n) :
+    {m | m ∈ Finset.Ico 1 Ω ∧ m.Coprime Ω ∧ MersenneEtaCondition sm sp m}.ncard <
+      Nat.totient Ω := by
+  let A : Set ℕ := {m | m ∈ Finset.Ico 1 Ω ∧ m.Coprime Ω ∧ MersenneEtaCondition sm sp m}
+  let R : Set ℕ := {m | m < Ω ∧ Ω.Coprime m}
+  have hAR : A ⊂ R := by
+    refine ⟨?_, fun hRA ↦ hfail (hRA ⟨hn, hcop.symm⟩).2.2⟩
+    intro m hm
+    exact ⟨(Finset.mem_Ico.mp hm.1).2, hm.2.1.symm⟩
+  have hRfin : R.Finite := (Set.finite_Iio Ω).subset fun _ hm ↦ hm.1
+  have hRcard : R.ncard = Nat.totient Ω := by
+    rw [Nat.totient_eq_card_lt_and_coprime]
+    rfl
+  exact hRcard ▸ Set.ncard_lt_ncard hAR hRfin
+
 set_option linter.unusedVariables false in
 /-- **Condition (etar) fails for some reduced residue when the seed is odd.** Let $s_1 \ge 3$ be
 an odd integer, let $s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and $s_1 + 2$,
@@ -177,31 +194,8 @@ theorem mersenneEtaCondition_not_all_of_odd (s₁ : ℤ) (hs₁ : 3 ≤ s₁)
     · omega
     · rw [Nat.odd_iff] at h
       omega
-  intro hEq
-  set Ω := mersenneOmega (sm * sp) with hΩdef
-  set A : Set ℕ := {n | n ∈ Finset.Ico 1 Ω ∧ n.Coprime Ω ∧ MersenneEtaCondition sm sp n} with
-    hAdef
-  have hAB : A ⊂ {m | m < Ω ∧ Ω.Coprime m} := by
-    refine ⟨?_, ?_⟩
-    · intro n hn
-      obtain ⟨h1, h2, -⟩ := hn
-      simp only [Finset.mem_Ico] at h1
-      exact ⟨h1.2, Nat.coprime_comm.mp h2⟩
-    · intro hsub
-      have h1B : (1 : ℕ) ∈ {m | m < Ω ∧ Ω.Coprime m} := ⟨hΩ, Nat.coprime_one_right _⟩
-      have h1A : (1 : ℕ) ∈ A := hsub h1B
-      obtain ⟨h1, -, heta⟩ := h1A
-      exact hfail heta
-  have hBfin : ({m | m < Ω ∧ Ω.Coprime m} : Set ℕ).Finite := by
-    apply Set.Finite.subset (Set.finite_Iio Ω)
-    intro m hm
-    exact hm.1
-  have hlt := Set.ncard_lt_ncard hAB hBfin
-  have hBcard : ({m | m < Ω ∧ Ω.Coprime m} : Set ℕ).ncard = Nat.totient Ω := by
-    rw [Nat.totient_eq_card_lt_and_coprime]
-    rfl
-  rw [hBcard] at hlt
-  exact absurd hEq (ne_of_lt hlt)
+  exact ne_of_lt (mersenneEtaCondition_ncard_lt_totient_of_missing hΩ
+    (Nat.coprime_one_left _) hfail)
 
 end
 

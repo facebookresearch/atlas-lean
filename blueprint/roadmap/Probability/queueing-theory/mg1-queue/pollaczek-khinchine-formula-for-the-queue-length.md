@@ -14,15 +14,16 @@ Since customers arrive and leave one at a time, arriving customers, departing cu
 
 ## Proof depends on
 
+- [The embedded Markov chain of the M/G/1 queue](the-embedded-markov-chain-of-the-mg1-queue.md)
+- [Poisson arrivals during an independent service time](poisson-arrivals-during-an-independent-service-time.md)
+- [Arrivals and departures see the same queue length](arrivals-and-departures-see-the-same-queue-length.md)
 - [Poisson arrivals see time averages](../poisson-arrivals-see-time-averages.md): the arrival distribution is the time-stationary one.
 
 ## Expansion
 
-This page becomes ready once these prerequisites are stated:
+This page becomes ready once this prerequisite is stated:
 
-- the embedded Markov chain of the M/G/1 queue at departure epochs and its positive recurrence exactly when $\rho < 1$, with its limiting distribution $(d_n)$;
-- the number of Poisson arrivals during an independent service time, with generating function $\tilde B(\lambda - \lambda z)$;
-- equality of the distributions seen at arrivals and at departures for systems in which customers arrive and leave one by one.
+- positive recurrence of the embedded Markov chain exactly when $\rho < 1$, with its limiting distribution $(d_n)$, for example from [Foster's criterion for positive recurrence](../../markov-chains/foster-lyapunov-criteria/foster-s-criterion-for-positive-recurrence.md) with $V(n) = n/(1 - \rho)$.
 
 ## Sources
 

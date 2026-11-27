@@ -174,7 +174,8 @@ instance : verification.{u}.Braided where
 def safeInvariant {X Y U : SumRelCat.{u}} (f : X ⊗ U ⟶ Y ⊗ U) (R : Set Y) : Set U :=
   {u | ∀ y, SumRelCat.FeedbackPath f (Sum.inr u) y → y ∈ R}
 
-/-- Partial correctness of feedback is equivalent to preservation of a hidden invariant. -/
+/-- Partial correctness of feedback is equivalent to a hidden invariant `Q` whose assembled
+image stays inside the assembled postcondition: `f[P ⊕ Q] ⊆ R ⊕ Q`. -/
 theorem feedback_image_subset_iff {X Y U : SumRelCat.{u}} (f : X ⊗ U ⟶ Y ⊗ U)
     (P : Set X) (R : Set Y) :
     (SumRelCat.feedback f).rel.image P ⊆ R ↔
