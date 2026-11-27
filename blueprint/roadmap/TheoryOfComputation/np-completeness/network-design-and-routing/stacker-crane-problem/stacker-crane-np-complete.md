@@ -4,7 +4,7 @@ The STACKER-CRANE decision problem lies in NP, and every decision problem in NP 
 
 The decision problem accepts exactly the encodings of the following yes-instances. Instance: a mixed graph on $V = \{0, \dots, n - 1\}$ with a list $A$ of directed edges and a list $E$ of undirected edges, each joining two distinct vertices, no two directed edges with the same tail and head and no two undirected edges joining the same two vertices, a length $l(e) \in \mathbb N$ for each edge, and a positive integer bound $B$. Question: is there a closed walk that traverses every directed edge in $A$ at least once, in its specified direction, and has total length at most $B$? The walk is a sequence of [moves](moves.md), each traversing a directed edge from its tail to its head or an undirected edge in either direction, and each move starts where the previous one ends. It may repeat vertices and edges, and its length counts the length of an edge once per traversal. The last move ends where the first one starts. When $A$ is empty the walk with no moves qualifies, even on the graph with no vertices.
 
-The exact conditions are those of [well-formedness](well-formed-2.md) and [feasibility](stacker-crane-feasible.md). Numbers are encoded in binary.
+The exact conditions are those of [well-formedness](../chinese-postman-for-mixed-graphs/well-formed.md) and [feasibility](stacker-crane-feasible.md). Numbers are encoded in binary.
 
 ## Sources
 

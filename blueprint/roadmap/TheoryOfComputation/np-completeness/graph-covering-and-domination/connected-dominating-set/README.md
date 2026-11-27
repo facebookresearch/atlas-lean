@@ -7,7 +7,6 @@
 - [The decision problem CONNECTED DOMINATING SET](connected-dominating-set-dec.md)
 - [CONNECTED DOMINATING SET is NP-complete](connected-dominating-set-np-complete.md)
 - [Instances of CONNECTED DOMINATING SET ON SPLIT GRAPHS](split-connected-dominating-set-instance.md)
-- [Feasible instances of CONNECTED DOMINATING SET ON SPLIT GRAPHS](split-connected-dominating-set-feasible.md)
 - [The CONNECTED DOMINATING SET ON SPLIT GRAPHS decision problem](split-connected-dominating-set-dec.md)
 - [CONNECTED DOMINATING SET ON SPLIT GRAPHS is NP-complete](split-connected-dominating-set-np-comple.md)
 - [Well-formed instances of CONNECTED DOMINATING SET ON SPLIT GRAPHS](well-formed-5.md)

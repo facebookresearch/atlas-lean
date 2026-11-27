@@ -1,7 +1,6 @@
 # Two-layer routing
 
 - [Instances of TWO-LAYER CHANNEL ROUTING](two-layer-channel-routing-instance.md)
-- [Integer an encoded coordinate stands for in TWO-LAYER CHANNEL ROUTING](to-int.md)
 - [Labeled grid points of `P` in TWO-LAYER CHANNEL ROUTING](terminals.md)
 - [Well-formed instances of TWO-LAYER CHANNEL ROUTING](well-formed.md)
 - [TWO-LAYER CHANNEL ROUTING: `v` is a leaf of `T`](is-leaf.md)

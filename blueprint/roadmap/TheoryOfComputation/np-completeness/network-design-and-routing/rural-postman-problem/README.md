@@ -1,7 +1,6 @@
 # Rural postman problem
 
 - [Instances of RURAL POSTMAN](rural-postman-instance.md)
-- [The graph of an instance of RURAL POSTMAN](graph.md)
 - [Length of an edge `s` in RURAL POSTMAN](edge-length.md)
 - [Well-formed instances of RURAL POSTMAN](well-formed.md)
 - [Feasible instances of RURAL POSTMAN](rural-postman-feasible.md)

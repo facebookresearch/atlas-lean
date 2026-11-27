@@ -2,7 +2,7 @@
 
 The STEINER TREE IN SPLIT GRAPHS decision problem lies in NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
-Instance: a connected split graph `G = (V, E)` (its vertex set partitions into a clique and an independent set), a terminal set `R ⊆ V`, and an integer `K`. Question: is there a subtree of `G` containing every vertex of `R` with at most `K` edges?
+Instance: a connected split graph `G = (V, E)` (its vertex set partitions into a clique and an independent set), a terminal set `R ⊆ V`, and a nonnegative integer `K` (`K = 0` is allowed). Question: is there a subtree of `G` containing every vertex of `R` with at most `K` edges?
 
 ## Sources
 

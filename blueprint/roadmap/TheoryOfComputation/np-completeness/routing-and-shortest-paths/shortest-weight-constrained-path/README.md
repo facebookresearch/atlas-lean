@@ -1,6 +1,5 @@
 # Shortest weight-constrained path
 
-- [Arcs of the instance as `(tail, head)` pairs in SHORTEST WEIGHT-CONSTRAINED PATH for directed graphs](arcs.md)
 - [Length and weight of an arc in SHORTEST WEIGHT-CONSTRAINED PATH for directed graphs](arc-data.md)
 - [Well-formed instances of SHORTEST WEIGHT-CONSTRAINED PATH for directed graphs](well-formed.md)
 - [Feasible instances of SHORTEST WEIGHT-CONSTRAINED PATH for directed graphs](shortest-weight-constrained-path-directe.md)
