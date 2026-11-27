@@ -43,6 +43,9 @@
 - [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
 - [Isolation by distance](isolation-by-distance.md)
 - [Structured coalescent at a neutral site linked to a cyclically fluctuating balanced polymorphism](structured-coalescent-linked-to-cyclic-balanced-polymorphism.md)
+- [Pairwise coalescence time in the spatial Λ-Fleming–Viot process as a Cox process](pairwise-coalescence-time-in-the-slfv-as-a-cox-process.md)
+## Further topics
+- [Coalescing Brownian motion genealogies](coalescing-brownian-motion-genealogies/README.md)
 
 ## Further structured ancestral models
 
@@ -50,7 +53,7 @@
 - [The coalescent with partial self-fertilization](partial-selfing-coalescent.md)
 - [Genealogies within a fixed pedigree](fixed-pedigree-versus-averaged-genealogy.md)
 - [The coalescent with separate sexes](coalescent-limit-with-separate-sexes.md)
-- [Unlinked loci are not unconditionally independent](unlinked-does-not-mean-universally-independent.md)
+- [Genealogies at unlinked loci are conditionally independent given the pedigree](unlinked-does-not-mean-universally-independent.md)
 - [Backward migration probabilities from forward migration and deme sizes](backward-versus-forward-migration.md)
 - [Distribution of the pairwise coalescence time in the island model](island-coalescence-time-distribution.md)
 - [Scattering and collecting phases of the many-demes coalescent](many-demes-scattering-collecting-phases.md)

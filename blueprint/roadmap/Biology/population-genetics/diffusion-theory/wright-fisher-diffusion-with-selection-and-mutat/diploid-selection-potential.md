@@ -12,7 +12,7 @@ and $\mathcal L$ is symmetric with respect to $\Pi$ (equation (20), with the Dir
 
 ## Depends on
 
-- [Dirichlet stationary law under parent-independent mutation](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/dirichlet-stationary-law-under-parent-independent-mutation.md)
+- [Uniqueness of the Dirichlet stationary law under parent-independent mutation](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/dirichlet-stationary-law-under-parent-independent-mutation.md)
 - [Transition density of the multi-allelic Wright–Fisher diffusion with selection](../../../../Biology/population-genetics/diffusion-theory/transition-densities-of-wright-fisher-diffusions/multi-allelic-transition-density-with-selection.md)
 - [Partition function of the selection–mutation stationary density](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-selection-and-mutat/selection-mutation-partition.md)
 

@@ -50,5 +50,7 @@
 ## Further topics
 
 - [Best-fit population simulation](best-fit-population-simulation/README.md)
+- [Estimating recombination from haplotype frequency paths](estimating-recombination-from-haplotype-frequency-paths/README.md)
+- [Recombination equations and labelled partitioning duality](recombination-equations-and-labelled-partitioning-duality/README.md)
 ## Further results
 - [Linked selection with recombination: background effects on fixation](linked-selection-and-hill-robertson-interference.md)

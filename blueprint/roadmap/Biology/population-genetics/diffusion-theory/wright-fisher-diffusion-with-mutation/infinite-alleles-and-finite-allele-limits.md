@@ -10,7 +10,7 @@ With $\varepsilon = \theta/(K - 1)$ and $\theta = 2Nu$ fixed, $K\varepsilon \to 
 
 ## Depends on
 
-- [Uniqueness and reversibility of the Dirichlet stationary law under parent-independent mutation](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/dirichlet-stationary-law-under-parent-independent-mutation.md)
+- [Uniqueness of the Dirichlet stationary law under parent-independent mutation](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/dirichlet-stationary-law-under-parent-independent-mutation.md)
 - [Ranked masses of the stationary Fleming–Viot measure](../../../../Biology/population-genetics/diffusion-theory/fleming-viot-processes/ranked-frequencies-are-poisson-dirichlet.md)
 - [Kimura–Crow limit](../../../../Biology/population-genetics/infinite-alleles-model-and-homozygosity/tendsto-eq-homozygosity.md)
 

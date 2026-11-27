@@ -1,22 +1,17 @@
 # The coalescent with partial self-fertilization
 
-In a population of $N$ diploid hermaphrodites in which each fertilization occurs by selfing with probability $S$ and by outcrossing otherwise, Nordborg (2001, section "Hermaphrodites") derives the genealogy of a sample by a separation of time scales. With time in units of $2N$ generations, each pair of lineages enters a common individual at rate $2$; half of these events are real coalescences, and otherwise the two lineages occupy distinct genes of one individual. From there they coalesce before separating into different individuals with probability
-
-$$F = \frac{S/2}{S/2 + 1 - S} = \frac{S}{2 - S},$$
-
-the equilibrium inbreeding coefficient (equation (13)), so the coalescence rate per pair is $1 + F$ and all states with two lineages in one individual are instantaneous on this time scale. The genealogy of a random sample of gene copies is therefore [Kingman's coalescent](../partition-valued-kingman-coalescent/kingman-coalescent-on-n-as-a-time-indexed-cadlag.md) with time measured in units of $2N_e = 2N/(1 + F)$ generations (equation (14); compare the [effective size of a finite population with partial selfing](../../population-genetics/effective-population-size/effective-size-under-partial-selfing.md)). The two copies sampled from one individual coalesce instantaneously with probability $F$, so a sample of $2n$ copies from $n$ individuals starts with $2n - X$ distinct lineages, $X$ binomial with parameters $n$ and $F$. With recombination, the ancestral recombination graph of a partially selfing population reduces to the standard graph with the effective recombination rate $\rho_e = \rho(1 - F)$ (Nordborg 2001, section on the ancestral recombination graph; Nordborg 2000).
+In a population of $N$ diploid hermaphrodites in which each fertilization occurs by selfing with probability $S$ and by outcrossing otherwise, the law of two lineages is stated in the single-locus part of [correlation of two-locus coalescence times under partial selfing and recombination](../two-locus-coalescent/linked-coalescence-times-under-partial-selfing/correlation-of-two-locus-coalescence-times-under-selfing-and-recombination.md): two copies in one individual coalesce instantaneously with probability $F = S/(2 - S)$, the equilibrium inbreeding coefficient (Nordborg 2001, equation (13)), and otherwise two lineages coalesce at rate $1 + F$ with time in units of $2N$ generations. Nordborg (2001, section "Hermaphrodites") extends this to samples of any size by a separation of time scales, in which all states with two lineages in one individual are instantaneous. The genealogy of a random sample of gene copies is therefore [Kingman's coalescent](../partition-valued-kingman-coalescent/kingman-coalescent-on-n-as-a-time-indexed-cadlag.md) with time measured in units of $2N_e = 2N/(1 + F)$ generations (equation (14); compare the [effective size of a finite population with partial selfing](../../population-genetics/effective-population-size/effective-size-under-partial-selfing.md)). A sample of $2n$ copies from $n$ individuals starts with $2n - X$ distinct lineages, $X$ binomial with parameters $n$ and $F$. With recombination, the ancestral recombination graph of a partially selfing population reduces to the standard graph with the effective recombination rate $\rho_e = \rho(1 - F)$ (Nordborg 2001, section on the ancestral recombination graph; Nordborg 2000).
 
 ## Depends on
 
+- [Correlation of two-locus coalescence times under partial selfing and recombination](../two-locus-coalescent/linked-coalescence-times-under-partial-selfing/correlation-of-two-locus-coalescence-times-under-selfing-and-recombination.md)
 - [Inbreeding coefficient under partial self-fertilization](../../../Biology/population-genetics/inbreeding-and-regular-systems-of-mating/inbreeding-under-partial-selfing.md)
 
 ## Expansion
 
-1. The partial-selfing model and the two-lineage chain: lineages in distinct individuals, in one individual, or coalesced.
-2. The fast phase within an individual: absorption probabilities $F$ and $1 - F$.
-3. The separation-of-time-scales limit, giving Kingman's coalescent with pair rate $1 + F$ on the $2N$-generation scale.
-4. The initial instantaneous coalescence of copies sampled from one individual, with the binomial number of merged pairs.
-5. The ancestral recombination graph with selfing and the effective recombination rate $\rho(1 - F)$.
+1. The separation-of-time-scales limit for $n$ lineages, giving Kingman's coalescent with pair rate $1 + F$ on the $2N$-generation scale.
+2. The initial instantaneous coalescence of copies sampled from one individual, with the binomial number of merged pairs.
+3. The ancestral recombination graph with selfing and the effective recombination rate $\rho(1 - F)$.
 
 ## Sources
 

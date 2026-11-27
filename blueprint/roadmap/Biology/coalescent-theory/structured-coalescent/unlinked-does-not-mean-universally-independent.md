@@ -1,6 +1,6 @@
-# Unlinked loci are not unconditionally independent
+# Genealogies at unlinked loci are conditionally independent given the pedigree
 
-Coalescent likelihoods often treat unlinked loci as independent. In the fixed-pedigree model of Wakeley, King, Low and Ramachandran (2012, Methods), lineages percolate through one population pedigree by Mendelian transmission, and independent assortment is modelled by tracing each unlinked locus independently on the same pedigree, with free recombination between loci; hence, given the pedigree, the genealogies at unlinked loci are independent. The standard coalescent applied separately to unlinked loci instead implicitly draws a new random pedigree for every locus (their Introduction). Because all loci share one pedigree, the genealogies at unlinked loci are conditionally independent given that pedigree but need not be independent when the pedigree is regarded as random and averaged over, so independence of unlinked loci is a statement conditional on the pedigree.
+Coalescent likelihoods often treat unlinked loci as independent. In the fixed-pedigree model of Wakeley, King, Low and Ramachandran (2012, Methods), lineages percolate through one population pedigree by Mendelian transmission, and independent assortment is modelled by tracing each unlinked locus independently on the same pedigree, with free recombination between loci; hence, given the pedigree, the genealogies at unlinked loci are independent. The standard coalescent applied separately to unlinked loci instead implicitly draws a new random pedigree for every locus (their Introduction). Because all loci share one pedigree, independence of the genealogies at unlinked loci is a statement conditional on that pedigree. That they need not be independent once the pedigree is regarded as random and averaged over is shown, for coalescence times under partial selfing, in [selfing keeps unlinked coalescence times correlated](../two-locus-coalescent/linked-coalescence-times-under-partial-selfing/selfing-keeps-unlinked-coalescence-times-correlated.md).
 
 ## Depends on
 
@@ -10,8 +10,7 @@ Coalescent likelihoods often treat unlinked loci as independent. In the fixed-pe
 
 1. Conditional independence of genealogies at unlinked loci given the pedigree, from independent tracing on a common pedigree.
 2. The contrast with applying the coalescent separately to each locus, which corresponds to an independent pedigree per locus.
-3. Dependence of genealogies at unlinked loci when the pedigree is random, with an explicit covariance in a small population, as a separate statement.
-4. The consequences for products of single-locus likelihoods.
+3. The consequences for products of single-locus likelihoods.
 
 ## Sources
 
