@@ -59,4 +59,5 @@
 
 - [Latent subspace estimation of admixture](latent-subspace-estimation-of-admixture/README.md)
 - [Uncertainty of supervised individual admixture estimates](uncertainty-of-supervised-individual-admixture-estimates/README.md)
+- [Spectral estimation of admixture models](spectral-estimation-of-admixture-models/README.md)
 - [Maximum likelihood in the admixture model](maximum-likelihood-in-the-admixture-model/README.md)

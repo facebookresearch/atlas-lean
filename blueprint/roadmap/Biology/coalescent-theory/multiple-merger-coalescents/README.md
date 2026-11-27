@@ -25,5 +25,8 @@ frequency spectrum under multiple mergers.
 - [Intrahost HIV genealogies under CTL escape](intrahost-hiv-genealogies-under-ctl-escape/README.md)
 - [Minimal clade size in the Bolthausen–Sznitman coalescent](minimal-clade-size-in-the-bolthausen-sznitman-coalescent/README.md)
 - [Renewal seed-bank ancestral process](renewal-seed-bank-ancestral-process/README.md)
+- [Asymmetric Wright–Fisher genealogies](asymmetric-wright-fisher-genealogies/README.md)
+- [Coming down from infinity of interacting particle systems](coming-down-from-infinity-of-interacting-particle-systems/README.md)
+- [Λ-asymmetric ancestral selection graph](lambda-asymmetric-ancestral-selection-graph/README.md)
 - [Expected SFS of time-inhomogeneous Ξ-coalescents](expected-sfs-of-time-inhomogeneous-xi-coalescents/README.md)
 - [Nonparametric inference of Lambda-coalescents](nonparametric-inference-of-lambda-coalescents/README.md)
