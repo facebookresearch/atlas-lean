@@ -1,20 +1,16 @@
 # Amplification of replicability from rho below one half
 
-Let the output set have decidable equality and let $A$ be $\rho_0$-replicable over $\mathcal{D}$ with $\rho_0 < 1/2$. For every target $\rho > 0$ there is an algorithm built from $A$ that is $\rho$-replicable over $\mathcal{D}$: draw $T$ candidate shared seeds and one shared threshold, estimate for each candidate seed its collision probability and its strict-majority output from fresh blocks of samples, and output the majority output of the first seed whose estimated collision probability passes the threshold. For every $\beta > 0$ the parameters can be chosen so that, in addition, any such $A$ whose error is at most a threshold $\beta_0^{\mathrm{req}} > 0$ (depending on $\beta$ and the chosen parameters) yields an algorithm that errs with probability at most $\beta$. Quantitatively its disagreement is at most $(\mathrm{dis}_D(A)/(1 - \theta))^T$ plus twice the probability that some of the $T$ collision-probability estimates of one run is off by more than $\delta$, plus $T(2\delta/(b-a) + 1/N)$, for a window $\frac12 + \delta < a < b \le \theta - \delta$ with $\theta < 1$.
+Let $\alpha > 0$ and let $A$ be $\rho$-replicable over a distribution $D$ with $\rho < 1/4 - \alpha$, using $m$ samples and erring with probability at most $\beta$. Then for every $\rho'$ with $0 < \rho' < \rho$ there is a $\rho'$-replicable algorithm $A'$ for $D$ with sample complexity $\tilde O\big(m \log^3(1/\beta)/(\rho'^2 \alpha^2)\big)$ that errs with probability at most $O(\beta + \rho')$ (Impagliazzo, Lei, Pitassi and Sorrell, Corollary A.4). The algorithm $A'$ draws $k = O(\log(1/\beta))$ shared random strings $r_1, \dots, r_k$ for $A$, runs the replicable heavy-hitters algorithm on the output distributions of $A$ with these strings (sampling each by running $A$ on fresh samples), and outputs the first heavy hitter returned, or $\bot$ if every call returns the empty list; its construction does not depend on $D$, so it serves every distribution of a family $\mathcal{D}$ over which $A$ satisfies the hypotheses (proof of Theorem A.3).
 
 ## Proof sketch
 
-A seed whose two-run collision probability exceeds $\frac12$ has a strict-majority output that two independent runs find with high probability. By Markov's inequality on the disagreement over seeds, a random seed is bad with probability at most $\rho_0/(1-\theta)$, so with $T$ candidates some good seed appears except with probability $(\rho_0/(1-\theta))^T$. The shared random threshold makes both runs select the same first passing seed except with the rounding error, and accuracy follows from a union bound over candidate seeds.
+A $\rho$-replicable algorithm is $(\rho/x, x)$-replicable: for all but an $x$-fraction of random strings $r$, the output distribution $D_r$ of $A$ with string $r$ has an element of probability at least $1 - \rho/x$. Taking $x = 1/2 - \alpha$, Theorem A.3 applies for every $\rho < 1/4$. For a good string $r$ the replicable heavy-hitters algorithm, with thresholds set so that it returns the unique majority element of $D_r$, returns it with probability at least $1 - \rho'/k$, and for strings without a majority element it returns the empty list with probability at least $1 - \rho'/k$; two runs with the same shared randomness disagree only if some call disagrees, which costs at most $\rho'/k$ per call. All $k$ calls return the empty list with probability at most $(3/4)^k \le \beta$, and a returned majority element is incorrect with conditional probability $O(\beta + \rho')$ (proofs of Theorem A.3 and Corollary A.4).
 
 ## Depends on
 
 - [Replicable algorithms with shared randomness](replicable-algorithms-with-shared-seed.md)
 - [Randomized-threshold and random-grid rounding lemmas](randomized-rounding-disagreement.md)
 
-## Proof depends on
-
-- [Randomized-threshold and random-grid rounding lemmas](randomized-rounding-disagreement.md)
-
 ## Sources
 
-- R. Impagliazzo, R. Lei, T. Pitassi and J. Sorrell, "Reproducibility in Learning", Proceedings of the 54th Annual ACM SIGACT Symposium on Theory of Computing (STOC), 2022.
+- R. Impagliazzo, R. Lei, T. Pitassi and J. Sorrell, "Reproducibility in Learning", Proceedings of the 54th Annual ACM SIGACT Symposium on Theory of Computing (STOC), 2022, Appendix A, Theorem A.3 and Corollary A.4; open copy: <https://arxiv.org/abs/2201.08430>.

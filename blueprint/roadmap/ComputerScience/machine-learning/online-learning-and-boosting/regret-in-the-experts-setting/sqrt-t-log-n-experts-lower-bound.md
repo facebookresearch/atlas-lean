@@ -1,14 +1,10 @@
 # General $\Omega(\sqrt{T \ln N})$ lower bound on expected external regret
 
-Let $X$ have $N \ge 2$ actions and let $T \ge \lfloor \log_2 N \rfloor$ (for instance any $T \ge N$). There is a family of binary loss sequences indexed by uniform $w \in \{0,1\}^T$ such that every causal online algorithm $H$ has expected external regret
-
-$$
-\mathbb{E}_w\left[L_H^T(\ell^w) - L_{\min}^T(\ell^w)\right] \ge \frac{1}{4e}\sqrt{T \ln N}.
-$$
+Let $X$ have $N \ge 2$ actions and let $T \ge N$. There is a random generation of loss sequences (an oblivious adversary chosen at random) against which every online algorithm has expected external regret $\Omega(\sqrt{T \log N})$ (Blum and Mansour, Exercise 4.5, "Show a $\Omega(\sqrt{T \log N})$ lower bound on external regret, for the case that $T \ge N$"; in time-averaged form, Roughgarden, Lecture 17, Example 1.8: with $n$ actions, expected regret cannot vanish faster than $\Theta(\sqrt{(\ln n)/T})$).
 
 ## Proof sketch
 
-Split the horizon into $k = \lfloor \log_2 N \rfloor$ blocks and arrange $2^k \le N$ actions as the leaves of a binary tree: in block $j$, each action follows the coin sequence or its complement according to its $j$-th label bit. The best leaf picks the better side in every block, so the expected regret is a sum of $k$ two-expert regrets on blocks of length about $T/k$, each at least of order $\sqrt{T/k}/(2e)$ by the two-expert bound; summing gives order $\sqrt{kT}/(2e)$, and the constant $1/(4e)$ absorbs the rounding of block lengths and the comparison $k \ge \tfrac12\log_2 N \ge \tfrac12\ln N$ for $N \ge 2$.
+Derived (not stated in the cited sources): for $T \ge \lfloor \log_2 N \rfloor$ there is a family of binary loss sequences indexed by uniform $w \in \{0,1\}^T$ such that every causal online algorithm $H$ has $\mathbb{E}_w[L_H^T(\ell^w) - L_{\min}^T(\ell^w)] \ge \frac{1}{4e}\sqrt{T \ln N}$. Split the horizon into $k = \lfloor \log_2 N \rfloor$ blocks and arrange $2^k \le N$ actions as the leaves of a binary tree: in block $j$, each action follows the coin sequence or its complement according to its $j$-th label bit. The best leaf picks the better side in every block, so the expected regret is a sum of $k$ two-expert regrets on blocks of length about $T/k$, each at least of order $\sqrt{T/k}/(2e)$ by the two-expert bound; summing gives order $\sqrt{kT}/(2e)$, and the constant $1/(4e)$ absorbs the rounding of block lengths and the comparison $k \ge \tfrac12\log_2 N \ge \tfrac12\ln N$ for $N \ge 2$.
 
 ## Depends on
 
@@ -21,4 +17,5 @@ Split the horizon into $k = \lfloor \log_2 N \rfloor$ blocks and arrange $2^k \l
 
 ## Sources
 
-- Avrim Blum and Yishay Mansour, "Learning, Regret Minimization, and Equilibria", in N. Nisan, T. Roughgarden, É. Tardos and V. V. Vazirani (eds.), Algorithmic Game Theory, Cambridge University Press, 2007, Chapter 4.
+- Avrim Blum and Yishay Mansour, "Learning, Regret Minimization, and Equilibria", in N. Nisan, T. Roughgarden, É. Tardos and V. V. Vazirani (eds.), Algorithmic Game Theory, Cambridge University Press, 2007, Chapter 4, Section 4.3.4 and Exercise 4.5.
+- Tim Roughgarden, "CS364A: Algorithmic Game Theory, Lecture #17: No-Regret Dynamics", Stanford University, 2013, Example 1.8; open copy: <http://timroughgarden.org/f13/l/l17.pdf>.
