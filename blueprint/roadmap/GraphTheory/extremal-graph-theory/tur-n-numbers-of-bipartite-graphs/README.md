@@ -17,3 +17,7 @@
 - [The graph $H_k$ of Erdős Problem 926](h-graph.md)
 - [Erdős Problem 926 (Turán numbers of the graphs $H_k$)](extremal-number-three-halves.md)
 - [Resolution of Erdős Problem 926](extremal-number-three-halves-holds.md)
+- [Quantitative counterexample for two-degenerate bipartite graphs](exists-two-degenerate-extremal-lower-bou.md)
+- [Pair-layer graphs](pair-layer-graphs.md)
+- [Extremal lower bound for pair-layer graphs along Hamming sampling orders](sampled-hamming-hosts-excluding-pair-layer-graphs.md)
+- [Extremal lower bounds between sampled orders](extremal-lower-bounds-between-sampled-orders.md)

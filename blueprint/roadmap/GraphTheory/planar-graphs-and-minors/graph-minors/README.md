@@ -21,3 +21,5 @@
   and the tree-width and grid theorems used to prove the graph minor theorem.
 - [Rank-width and vertex-minors](../rank-width-and-vertex-minors/README.md): vertex-minors play
   for rank-width the role that minors play for tree-width.
+- [Quantitative clique-minor and chromatic separation](quantitative-hadwiger-counterexamples.md)
+- [Counterexample to the ordinary chromatic Hadwiger inequality](ordinary-hadwiger-conjecture-counterexample.md)

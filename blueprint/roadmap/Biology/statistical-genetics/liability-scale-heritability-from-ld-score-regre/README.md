@@ -43,3 +43,9 @@
 - [Population consistency on the liability scale](liability-h2-hat-integral-chi-sq-strat.md)
 - [Unbiasedness of the liability-scale estimator](integral-liability-h2-hat-chi-sq-strat.md)
 - [Consistency in probability of the liability-scale estimator](tendsto-in-measure-liability-h2-hat.md)
+
+## Liability-threshold risk prediction
+
+- [Differential diagnosis from polygenic scores](differential-diagnosis-from-polygenic-scores/README.md)
+- [Polygenic risk with family history](polygenic-risk-with-family-history/README.md)
+- [Polygenic score probability conversion](polygenic-score-probability-conversion/README.md)

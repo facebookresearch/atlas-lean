@@ -14,3 +14,4 @@ Independent sets, cliques and dominating sets in graphs, with bounds on their si
 - [Maximal cliques and triangles](maximal-cliques-and-triangles/README.md)
 - [Odd independent sets](odd-independent-sets/README.md)
 - [High-degree vertices lie in every small vertex cover](mem-of-card-le-of-lt-degree.md)
+- [Logarithmic independence bound for clique-free graphs](logarithmic-independence-bound-clique-free.md)

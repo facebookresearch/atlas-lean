@@ -24,5 +24,8 @@ How many edges or copies of a subgraph a graph can have while avoiding a forbidd
 - [Turán numbers of cycles](tur-n-numbers-of-cycles/README.md)
 - [Turán problems in the hypercube](tur-n-problems-in-the-hypercube/README.md)
 - [Unique subgraphs](unique-subgraphs/README.md)
+- [Extremal number for one forbidden graph](extremal-number-for-one-forbidden-graph.md)
 - [Kővári–Sós–Turán bound](kovari-sos-turan.md)
 - [Monomial graphs of girth eight](monomial-graph-girth-eight-classificatio.md)
+
+- [Compactness of forbidden graph families](compactness-of-forbidden-families/README.md)

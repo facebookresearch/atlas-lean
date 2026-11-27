@@ -21,3 +21,7 @@ Graphs drawn in the plane and on the square lattice, crossing numbers, Euler's f
 - [Planar graphs of positive combinatorial curvature](planar-graphs-of-positive-combinatorial-curvatur/README.md)
 - [Planar subgraphs of dense graphs](planar-subgraphs-of-dense-graphs/README.md)
 - [Crossing points of the regular drawing of the complete bipartite graph](legendre-regular-crossing.md)
+- [Constant-distortion L¹ embedding of planar graph metrics](planar-metrics-l1-distortion.md)
+- [Ordinary crossing formula for complete bipartite graphs](complete-bipartite-ordinary-crossing-number.md)
+- [Hill formula for the ordinary crossing number of complete graphs](complete-graph-ordinary-crossing-number.md)
+- [Hamiltonian cycle in a cubic bipartite three-connected planar graph](barnette-hamiltonian-cycle.md)
