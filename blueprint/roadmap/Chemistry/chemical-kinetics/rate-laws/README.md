@@ -104,4 +104,4 @@
 
 ## Diffusion-controlled reactions
 
-- [Debye–Smoluchowski diffusion-limited rate constant](debye-smoluchowski-diffusion-limited-rate-constant.md)
+- [Collins–Kimball rate constant for a partially absorbing sphere](debye-smoluchowski-diffusion-limited-rate-constant.md)

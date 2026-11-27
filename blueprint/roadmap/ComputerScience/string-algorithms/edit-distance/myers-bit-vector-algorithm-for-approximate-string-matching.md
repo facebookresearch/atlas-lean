@@ -12,4 +12,5 @@ For a nonempty pattern $P$ of length $m \ge 1$ and a text $T$ of length $n$, let
 
 ## Sources
 
-- G. Myers, A fast bit-vector algorithm for approximate string matching based on dynamic programming, J. ACM 46 (1999), 395–415, Lemma 1. <https://doi.org/10.1145/316542.316550>
+- G. Myers, A fast bit-vector algorithm for approximate string matching based on dynamic programming, J. ACM 46 (1999), 395–415, Lemma 1 and Section 4. <https://doi.org/10.1145/316542.316550>
+- W. I. Chang and J. Lampe, Theoretical and empirical comparisons of approximate string matching algorithms, in Combinatorial Pattern Matching (CPM 1992), Lecture Notes in Computer Science 644, Springer, 1992, 175–184.

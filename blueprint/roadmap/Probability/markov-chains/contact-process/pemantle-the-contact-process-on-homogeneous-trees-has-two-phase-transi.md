@@ -11,4 +11,4 @@ Let $T$ be the homogeneous tree in which every vertex has $n + 1$ neighbours, an
 
 ## Sources
 
-- R. Pemantle, The contact process on trees, Ann. Probab. 20 (1992), 2089–2116, Theorems 2.1 and 2.2. <https://arxiv.org/abs/math/0404046>
+- R. Pemantle, The contact process on trees, Ann. Probab. 20 (1992), 2089–2116, Theorems 2.1 and 2.2. <https://doi.org/10.1214/aop/1176989541> (arXiv: <https://arxiv.org/abs/math/0404046>)

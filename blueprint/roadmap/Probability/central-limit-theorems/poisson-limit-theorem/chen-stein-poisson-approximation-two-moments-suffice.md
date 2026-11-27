@@ -9,6 +9,7 @@ and $|P(W = 0) - e^{-\lambda}| \le (1 \wedge \lambda^{-1})(b_1 + b_2 + b_3)$. Th
 ## Depends on
 
 - [Total variation distance between finite measures](../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
+- [Poisson law as a probability measure](poisson-prob-measure.md)
 
 ## Expansion
 
