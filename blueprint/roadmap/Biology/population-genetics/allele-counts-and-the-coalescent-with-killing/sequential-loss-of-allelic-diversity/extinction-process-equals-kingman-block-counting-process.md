@@ -8,7 +8,7 @@ so $\hat T^{N,2}$ is the fixation time. For the $N$-Kingman coalescent let $A^N_
 
 **Theorem.** For every $N \in \mathbb{N}$, the forward-time extinction process $(\hat A^N_t)_{t\ge 0}$ and the backward-time block-counting process $(A^N_t)_{t\ge 0}$ are identical in law. In particular the loss of allelic diversity is a pure-death process with rates $k(k-1)/2$, and $\hat T^{N,k}$ has the law of $T^{N,k}$, a sum of independent exponentials with rates $j(j-1)/2$, $j = k, \dots, N$.
 
-**Extension to $\Lambda$-Fleming–Viot populations.** For the $N$-particle $\Lambda$-Fleming–Viot process and its genealogy, the $\Lambda$-coalescent, the one-dimensional marginals agree: for every fixed $t > 0$, $A^N_t$ and $\hat A^N_t$ have the same law, and for every fixed $k$, $T^{N,k}$ and $\hat T^{N,k}$ have the same law. Equality of the whole processes is special to the binary (Kingman) case.
+**Extension to $\Lambda$-Fleming–Viot populations.** For the $N$-particle $\Lambda$-Fleming–Viot process and its genealogy, the $\Lambda$-coalescent, the one-dimensional marginals agree: for every fixed $t > 0$, $A^N_t$ and $\hat A^N_t$ have the same law, and for every fixed $k$, $T^{N,k}$ and $\hat T^{N,k}$ have the same law. Equality of the whole processes fails in general (it does hold in degenerate cases such as $N=2$ or the star coalescent $\Lambda=\delta_1$, where both processes jump from $N$ to $1$ at rate $1$): if $\Lambda\neq\Lambda(\{0\})\delta_0$ and $\psi$ is regularly varying at $\infty$ with index in $(1,2]$, the limiting block-counting process $A^\infty$ has multiple jumps almost surely, while the limiting extinction process $\hat A^\infty$ has only unit jumps (Labbé), so the two differ in law.
 
 ## Depends on
 
@@ -16,7 +16,7 @@ so $\hat T^{N,2}$ is the fixation time. For the $N$-Kingman coalescent let $A^N_
 
 ## Expansion
 
-In the Moran model, conditionally on the current allele count $k$ and the allele sizes, the next event that removes an allele is a birth–death pair in which the dying individual is the last carrier of its allele. A martingale or exchangeability argument shows that, whatever the allele sizes, the rate at which the number of alleles drops is the same function of $k$ as the merger rate $k(k-1)/2$ of $k$ Kingman lineages after averaging over the uniform (Dirichlet) allele-size configuration, and this configuration is preserved at jump times. The block-counting process is classical: each of the $\binom{k}{2}$ pairs of lineages merges at rate $1$. For multiple-merger $\Lambda$-coalescents the allele-size configuration at extinction times is no longer independent of the past in the same way, so only fixed-time and fixed-level marginals coincide.
+In the Moran model, conditionally on the current allele count $k$ and the allele sizes, the next event that removes an allele is a birth–death pair in which the dying individual is the last carrier of its allele. A martingale or exchangeability argument shows that, whatever the allele sizes, the rate at which the number of alleles drops is the same function of $k$ as the merger rate $k(k-1)/2$ of $k$ Kingman lineages after averaging over the uniform (Dirichlet) allele-size configuration, and this configuration is preserved at jump times. The block-counting process is classical: each of the $\binom{k}{2}$ pairs of lineages merges at rate $1$. For multiple-merger $\Lambda$-coalescents the allele-size configuration at extinction times is no longer independent of the past in the same way, and in general only fixed-time and fixed-level marginals coincide.
 
 ## Sources
 

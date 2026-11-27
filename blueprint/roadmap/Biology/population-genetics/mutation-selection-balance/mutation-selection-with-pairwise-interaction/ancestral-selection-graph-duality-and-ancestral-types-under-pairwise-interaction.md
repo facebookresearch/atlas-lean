@@ -8,13 +8,13 @@ the law-of-large-numbers limit of a Moran model of size $N$ in which, besides ne
 
 **Theorem (duality).** For every tree $\alpha$ and $t\ge0$, $H\big(\alpha,y(t;y_0)\big)=\mathbb E_\alpha[H(\alpha_t,y_0)]$, where $(\alpha_t)$ is the eASG process; in particular $y(t;y_0)=\mathbb E[H(\alpha_t,y_0)]$ starting from a single line. The same duality holds for the pruned ASG (cut at mutations) and for its stratified tripod-tree version.
 
-**Theorem (stochastic representation of equilibria).** For the stratified ASG started from one line, $H(\mathscr T_t,y_0)$ converges almost surely to a limit $H_\infty(y_0)$; if $y_0$ is not an unstable interior equilibrium, $H_\infty(y_0)$ is Bernoulli with parameter $y_\infty(y_0)=\lim_t y(t;y_0)$. The smallest and largest equilibria $y_{\min}\le y_{\max}$ in $[0,1]$ (not necessarily attracting: in the source's region $\Theta_2^a$, where $\nu_0=0$, $y_{\min}=\bar y_-$ is stable and $y_{\max}=1$ is unstable) equal the probability that the process absorbs in the type-0 leaf and the probability that it never absorbs in the cemetery state, respectively.
+**Theorem (stochastic representation of equilibria).** For the stratified ASG started from one line, $H(\mathscr T_t,y_0)$ converges almost surely to a limit $H_\infty(y_0)$; if $y_0$ is not an unstable interior equilibrium, $H_\infty(y_0)$ is Bernoulli with parameter $y_\infty(y_0)=\lim_t y(t;y_0)$. The smallest and largest equilibria $y_{\min}\le y_{\max}$ in $[0,1]$ (not necessarily attracting: in the source's region $\Theta_2^a$, where $\nu_0=0$, $y_{\min}=\bar y_-$ is stable and $y_{\max}=1$ is unstable) equal the probability that the stratified ASG is absorbed in the state $0$ (the tree reduced to a root of weight $0$: every line has been pruned by a deleterious mutation, so the root is unfit and $H=1$) and the probability that it is never absorbed in the cemetery state $\Delta$ (reached at a beneficial mutation, which makes the root fit and $H=0$), respectively.
 
 **Theorem (ancestral type distribution, $\nu_0=0$).** Let $g_r(y_0)$ be the probability that the ancestor, $r$ time units back, of an individual sampled today is of type $1$, when the type-1 frequency at that past time is $y_0$. Then
 
 $$g_r(y_0)=y_0\exp\!\Big(-\int_0^r\big(1-y(\xi;y_0)\big)\big(s+\gamma(1-y(\xi;y_0))\big)\,d\xi\Big),$$
 
-and $g_\infty(y_0)=\lim_{r\to\infty}g_r(y_0)$ exists. At equilibrium, $g_\infty(y_\infty(y_0))=1$ in the extinction region, $=0$ in the region where the fit type persists from any positive frequency, and in the bistable region it equals $0$ if $y_0\le\bar y_+$ and $1$ if $y_0>\bar y_+$.
+and $g_\infty(y_0)=\lim_{r\to\infty}g_r(y_0)$ exists. At equilibrium, $g_\infty(y_\infty(1))=1$, and for $y_0\in[0,1)$: $g_\infty(y_\infty(y_0))=1$ in the extinction region, $=0$ in the region where the fit type persists from any positive frequency, and in the bistable region it equals $0$ if $y_0\le\bar y_+$ and $1$ if $y_0>\bar y_+$.
 
 ## Expansion
 
