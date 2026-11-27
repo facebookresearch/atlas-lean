@@ -1,6 +1,6 @@
 # Kaufman–Kazhdan–Lubotzky: bounded-degree 2-dimensional cosystolic expanders
 
-There exist $\varepsilon, \mu > 0$ and an explicit infinite family of $2$-dimensional complexes of bounded degree, obtained as $2$-skeletons of $3$-dimensional Ramanujan complexes of type $A_3$ over $\mathbb{F}_q$ with $q$ sufficiently large, which are $(\varepsilon, \mu)$-cosystolic expanders in dimension $1$ over $\mathbb{F}_2$. As a consequence these complexes have the topological overlapping property, giving the first bounded-degree family of $2$-dimensional topological expanders.
+There exist $\varepsilon, \mu > 0$ and an explicit infinite family of $2$-dimensional complexes of bounded degree, obtained as $2$-skeletons of $3$-dimensional Ramanujan complexes of type $\tilde A_3$ over $\mathbb{F}_q$ with $q$ sufficiently large, which are $(\varepsilon, \mu)$-cosystolic expanders in dimension $1$ over $\mathbb{F}_2$. As a consequence these complexes have the topological overlapping property, giving the first bounded-degree family of $2$-dimensional topological expanders.
 
 ## Proof sketch
 
@@ -10,7 +10,7 @@ The key is a local-to-global principle: if all vertex links are coboundary expan
 
 - [Cosystolic expansion and cosystolic distance](cosystolic-expansion.md)
 - [Gromov: coboundary expansion implies topological overlapping](gromov-topological-overlap.md)
-- [Ramanujan complexes of type A_d](../local-spectral-high-dimensional-expanders/ramanujan-complex.md)
+- [Ramanujan complexes of type Ã_{d-1}](../local-spectral-high-dimensional-expanders/ramanujan-complex.md)
 
 ## Proof depends on
 
