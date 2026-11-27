@@ -19,9 +19,23 @@ import Mathlib.Tactic.LinearCombination
 # Convolutions of Fibonacci step sequences
 
 The recurrence for the Fibonacci `m`-step numbers gives the denominator of their generating
-function. Subtracting the identities for consecutive orders expresses both sides of the
-convolution as coefficients of the same product of three generating functions. The six-step
-convolution with the Fibonacci numbers follows by combining the two denominator identities.
+function. For two consecutive orders, the coefficient at `n + m` of their difference
+in the appropriate order gives the convolution at `n`. A related calculation expresses
+both sides of the convolution for three consecutive orders as coefficients of the same
+product of three generating functions. The six-step convolution with the Fibonacci numbers
+follows by combining the two denominator identities.
+
+The shared coefficient proof generalizes the original Lean arguments for `sum_fib_mul_trib`
+and `sum_trib_mul_tetra` (in `FibStepConvolutionTribonacciTetranacci`).
+
+## References
+
+* Robert Frontczak and Karol Gryszka, *General Convolution Sums Involving Fibonacci m-Step
+  Numbers*, Journal of Integer Sequences 27 (2024), Article 24.8.8, pp. 4–5, Theorem 1 and
+  Corollary 2, <https://cs.uwaterloo.ca/journals/JIS/VOL27/Gryszka/gryszka12.html>.
+* Robert Frontczak, *Some Fibonacci-Lucas-Tribonacci-Lucas Identities*, The Fibonacci Quarterly
+  56 (2018), pp. 263–274, Theorem 2.1, credited by Frontczak and Gryszka for the
+  Fibonacci–tribonacci case of Corollary 2.
 -/
 
 @[expose] public section
@@ -142,6 +156,18 @@ private lemma fibStepGF_sub_succ (m : ℕ) :
   apply X_mul_cancel
   linear_combination fibStepGF (m + 1) * hm - fibStepGF m * hs
 
+-- Extracting degree `n + m` removes the shift and leaves the product coefficient at `n`.
+private lemma sum_fibStep_mul_succ_eq_sub (m n : ℕ) :
+    ∑ j ∈ Finset.range (n + 1), fibStep m j * fibStep (m + 1) (n - j) =
+      fibStep (m + 1) (n + m) - fibStep m (n + m) := by
+  have h : X ^ m * (fibStepGF m * fibStepGF (m + 1)) = fibStepGF (m + 1) - fibStepGF m := by
+    linear_combination fibStepGF_sub_succ m
+  have hc := congrArg (coeff (n + m) (R := ℚ)) h
+  rw [coeff_X_pow_mul] at hc
+  simp only [coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, map_sub,
+    fibStepGF, coeff_mk] at hc
+  exact_mod_cast hc
+
 /-- **A product identity for three consecutive Fibonacci step generating functions.** Let
 $m \ge 1$ be a natural number. For each $k$, let $F^{(k)} = \sum_{n \ge 0} F^{(k)}_n X^n$ in
 $\mathbb{Q}[[X]]$ be the ordinary generating function of the Fibonacci $k$-step numbers
@@ -210,14 +236,8 @@ Convolution Sums Involving Fibonacci `m`-Step Numbers",
 Corollary 2. -/
 theorem sum_fib_mul_trib (n : ℕ) :
     ∑ j ∈ Finset.range (n + 1), fibStep 2 j * fibStep 3 (n - j) =
-      fibStep 3 (n + 2) - fibStep 2 (n + 2) := by
-  have hg : X ^ 2 * (fibStepGF 2 * fibStepGF 3) = fibStepGF 3 - fibStepGF 2 := by
-    linear_combination fibStepGF_sub_succ 2
-  have hc := congrArg (coeff (n + 2) (R := ℚ)) hg
-  rw [coeff_X_pow_mul] at hc
-  simp only [coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, map_sub,
-    fibStepGF, coeff_mk] at hc
-  exact_mod_cast hc
+      fibStep 3 (n + 2) - fibStep 2 (n + 2) :=
+  sum_fibStep_mul_succ_eq_sub 2 n
 
 /-- **Difference of the Fibonacci 3-step and 2-step numbers as a convolution.** Let $F_j$ and
 $T_j$ be the Fibonacci $2$-step and $3$-step numbers, where the Fibonacci $k$-step numbers start
