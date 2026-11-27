@@ -17095,7 +17095,7 @@
   "WantedExt/Complexity/NPComplete/ZeigerWanted": {"to": "TheoryOfComputation/np-completeness/strings-and-puzzles", "title": "ZEIGER is NP-complete"},
   "WantedExt/Complexity/NPComplete/ZeroForcingNumberWanted": {"to": "TheoryOfComputation/np-completeness/graph-covering-and-domination", "title": "Zero forcing"},
   "WantedExt/Complexity/NPComplete/ZeroOneILPWanted": {"to": "TheoryOfComputation/np-completeness/number-and-packing-problems", "title": "0-1 integer programming"},
-  "WantedExt/Computation/EllipticCurvePointWanted": {"to": "TheoryOfComputation/complexity-classes", "title": "Finding points on elliptic curves modulo a prime"},
+  "WantedExt/Computation/EllipticCurvePointWanted": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Finding points on elliptic curves modulo a prime"},
   "WantedExt/ComputerScience/AcyclicDatabaseSchemasWanted": {"to": "ComputerScience/databases", "title": "Join processing"},
   "WantedExt/ComputerScience/DSeparationCompletenessWanted": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Bayesian networks"},
   "WantedExt/ComputerScience/DifferentialPrivacyWanted": {"to": "ComputerScience/cryptography", "title": "Differential privacy"},
