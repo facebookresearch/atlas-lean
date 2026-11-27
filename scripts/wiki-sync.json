@@ -102863,7 +102863,6 @@
 "SL2.isConj_diag2_iff": "705d04621390bf75",
 "SL2.normal_contains_all_with_eigenvalues": "f956a859bd3d9695",
 "SL2.normal_subgroup_contains_all_conj_to_diag": "82433a0c954706dc",
-"SL2.range_toGL_le_of_irreducible_of_exists_unipotent": "e357ef0d8f180935",
 "SOSCertificate.eval_gramPoly_nonneg": "434e7c34c353110f",
 "SOSCertificate.gramPoly": "1ac064ce6f14f6c7",
 "SSet.Edge.InvStruct.isEquivalence": "6dcd67b0a9b0ff61",
