@@ -13,9 +13,9 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.NumberTheory.Bernoulli
 import Mathlib.Analysis.Calculus.DSlope
-import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import MathlibExt.Combinatorics.Enumerative.StirlingSecondExpDeriv
 
 /-!
 # Derivatives of powers and the reciprocal of $(1 - e^x)/x$ at zero
@@ -28,7 +28,8 @@ Bernoulli numbers.
 
 The function $f$ is the slope function `dslope` of $h(x) = 1 - e^x$ at $0$. For the powers,
 Leibniz's rule applied to $x^k f(x)^k = (1-e^x)^k$ isolates the derivative of $f^k$.
-Differentiating powers of $e^x - 1$ gives the Stirling recurrence. For the reciprocal,
+The derivative of $(1-e^x)^k$ is given by `iteratedDeriv_one_sub_exp_pow` in
+`MathlibExt.Combinatorics.Enumerative.StirlingSecondExpDeriv`. For the reciprocal,
 differentiating $(1/f) \cdot h = \mathrm{id}$ gives the Bernoulli recurrence `sum_bernoulli`.
 
 ## References
@@ -37,6 +38,9 @@ differentiating $(1/f) \cdot h = \mathrm{id}$ gives the Bernoulli recurrence `su
   Various Related Results*, INTEGERS 25 (2025), Article A61, pp. 1–20, Lemmas 1 and 2 (p. 9).
 * I. S. Gradshteyn and I. M. Ryzhik, *Table of Integrals, Series, and Products*, 7th ed.,
   Elsevier, 2007, p. 1047 (the expansion cited in Lemma 1).
+* Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving
+  Central Binomial Coefficients and Harmonic Numbers*, INTEGERS 26 (2026), Article A109,
+  pp. 1–16, Lemma 1 (p. 10), for the derivative of $(1-e^x)^k$.
 -/
 
 namespace MetaMathlibExt
@@ -112,32 +116,6 @@ public theorem iteratedDeriv_inv_one_sub_exp_div_self_zero {f : ℝ → ℝ} (hf
     apply mul_left_cancel₀ hk
     linear_combination hB - hR
 
-private theorem iteratedDeriv_exp_sub_one_pow_zero (n k : ℕ) :
-    iteratedDeriv n (fun x : ℝ => (Real.exp x - 1) ^ k) 0 =
-      (k.factorial : ℝ) * (Nat.stirlingSecond n k : ℝ) := by
-  have ha (j m : ℕ) : ContDiffAt ℝ m (fun x : ℝ => (Real.exp x - 1) ^ j) 0 :=
-    ((analyticAt_rexp.sub analyticAt_const).pow j).contDiffAt
-  induction n generalizing k with
-  | zero =>
-    cases k <;> simp
-  | succ n ih =>
-    cases k with
-    | zero => simp [iteratedDeriv_const]
-    | succ k =>
-      -- Differentiation gives exactly the two terms of the Stirling recurrence.
-      have hder : deriv (fun x : ℝ => (Real.exp x - 1) ^ (k + 1)) =
-          fun x => ((k + 1 : ℕ) : ℝ) * ((Real.exp x - 1) ^ (k + 1) +
-            (Real.exp x - 1) ^ k) := by
-        funext x
-        rw [(((Real.hasDerivAt_exp x).sub_const 1).fun_pow (k + 1)).deriv]
-        rw [show k + 1 - 1 = k by omega, pow_succ (Real.exp x - 1) k]
-        ring
-      rw [iteratedDeriv_succ', hder, iteratedDeriv_const_mul_field,
-        iteratedDeriv_fun_add (ha (k + 1) n) (ha k n), ih (k + 1), ih k,
-        Nat.stirlingSecond_succ_succ]
-      simp only [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
-      ring
-
 /-- **Derivatives at zero of powers of $(1 - e^x)/x$.** Write $S(n, k)$ for the Stirling numbers
 of the second kind. Let $f : \mathbb{R} \to \mathbb{R}$ satisfy $f(0) = -1$ and
 $f(x) = (1 - e^x)/x$ for every $x \ne 0$. Then for all natural numbers $k$ and $r$, the $r$-th
@@ -152,22 +130,21 @@ public theorem iteratedDeriv_pow_one_sub_exp_div_self_zero {f : ℝ → ℝ} (hf
     iteratedDeriv r (fun x => f x ^ k) 0 =
       (-1 : ℝ) ^ k * (Nat.stirlingSecond (r + k) k : ℝ) / ((r + k).choose k : ℝ) := by
   have hfa := analyticAt_one_sub_exp_div_self hf0 hf
-  have hprod : (fun x => x ^ k * f x ^ k) =
-      fun x => (-1 : ℝ) ^ k * (Real.exp x - 1) ^ k := by
-    have hxmul (x : ℝ) : x * f x = -(Real.exp x - 1) := by
+  have hprod : (fun x => x ^ k * f x ^ k) = fun x => (1 - Real.exp x) ^ k := by
+    have hxmul (x : ℝ) : x * f x = 1 - Real.exp x := by
       rcases eq_or_ne x 0 with rfl | hx
       · simp
       · rw [hf x hx, mul_comm x, div_mul_cancel₀ _ hx]
-        ring
     funext x
-    rw [← mul_pow, hxmul, neg_eq_neg_one_mul, mul_pow]
+    rw [← mul_pow, hxmul]
   -- In the Leibniz sum, only the order-`k` derivative of `x^k` is nonzero at `0`.
   have hxpow : ContDiffAt ℝ (r + k : ℕ) (fun x : ℝ => x ^ k) 0 := contDiffAt_id.pow k
   have h : ∑ j ∈ range (r + k + 1), ((r + k).choose j : ℝ) *
       iteratedDeriv j (fun x : ℝ => x ^ k) 0 * iteratedDeriv (r + k - j) (fun x => f x ^ k) 0 =
         iteratedDeriv (r + k) (fun x : ℝ => x ^ k * f x ^ k) 0 :=
     (iteratedDeriv_fun_mul hxpow (hfa.pow k).contDiffAt).symm
-  rw [hprod, iteratedDeriv_const_mul_field, iteratedDeriv_exp_sub_one_pow_zero] at h
+  have hExp := (iteratedDeriv_one_sub_exp_pow k (r + k) 0).1
+  rw [hprod, hExp.1.trans hExp.2] at h
   rw [sum_eq_single k] at h
   · rw [iteratedDeriv_fun_pow_zero, ite_eq_left rfl, show r + k - k = r by omega] at h
     have hk : (k.factorial : ℝ) ≠ 0 := by positivity
