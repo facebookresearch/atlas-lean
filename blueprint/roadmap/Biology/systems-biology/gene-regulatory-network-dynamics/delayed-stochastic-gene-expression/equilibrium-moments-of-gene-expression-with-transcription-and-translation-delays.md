@@ -35,4 +35,4 @@ propagates these terms through each stage. With all delays set to zero the formu
 
 ## Sources
 
-- Martin Jansen and Peter Pfaffelhuber, "Stochastic gene expression with delay", *Journal of Theoretical Biology* 364 (2015), 355–363, <https://doi.org/10.1016/j.jtbi.2014.09.031>. Preprint version: arXiv:1305.6635 (2013), Section 2 (model), Proposition 3.1 (gene state), Theorem 3.2 (RNA moments), Theorem 3.3 (protein moments with $A,B$), Lemmas 4.1–4.2 and Corollary 4.3 (uniform, exponential and nearly deterministic delays), Lemma 6.1 (key lemma), <https://doi.org/10.48550/arXiv.1305.6635>.
+- Martin Jansen and Peter Pfaffelhuber, "Stochastic gene expression with delay", *Journal of Theoretical Biology* 364 (2015), 355–363, <https://doi.org/10.1016/j.jtbi.2014.09.031>. Preprint version: arXiv:1305.6635v2 (2014), Section 2 (model), Proposition 3.1 (gene state), Theorem 3.2 (RNA moments), Theorem 3.4 (protein moments with $A,B$), Lemmas 4.1–4.2 and Corollary 4.3 (uniform, exponential and nearly deterministic delays), Lemma A.1 (key lemma), <https://doi.org/10.48550/arXiv.1305.6635>.

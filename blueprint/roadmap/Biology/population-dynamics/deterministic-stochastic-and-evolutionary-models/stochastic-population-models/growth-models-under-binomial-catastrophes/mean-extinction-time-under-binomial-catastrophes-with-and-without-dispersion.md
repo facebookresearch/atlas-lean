@@ -36,4 +36,4 @@ Without dispersion the colony size is a Markov chain on $\{0, 1, \dots\}$ whose 
 
 ## Sources
 
-- F. Duque, V. V. Junior, F. P. Machado and A. Roldán-Correa, "Extinction time in growth models subject to binomial catastrophes *", *Journal of Statistical Mechanics: Theory and Experiment* 2023 (2023), 103501, <https://doi.org/10.1088/1742-5468/acf8bc>. Preprint version: arXiv:2302.02826 (2023), Section 2, Theorems 2.1–2.3, Propositions 3.1–3.3, Lemma 4.1, <https://doi.org/10.48550/arXiv.2302.02826>.
+- F. Duque, V. V. Junior, F. P. Machado and A. Roldán-Correa, "Extinction time in growth models subject to binomial catastrophes *", *Journal of Statistical Mechanics: Theory and Experiment* 2023 (2023), 103501, <https://doi.org/10.1088/1742-5468/acf8bc>. Preprint version: arXiv:2302.02826v4 (2023), Section 2, Theorems 2.1, 2.3 and 2.4, Propositions 3.1, 3.3 and 3.5, Lemma 4.1, <https://doi.org/10.48550/arXiv.2302.02826>.

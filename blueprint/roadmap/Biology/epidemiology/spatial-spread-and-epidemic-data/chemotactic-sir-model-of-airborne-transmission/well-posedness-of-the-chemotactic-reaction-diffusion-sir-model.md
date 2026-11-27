@@ -28,4 +28,4 @@ The cross-diffusion term $\nabla\cdot(\chi(i)\nabla s)$ is the Keller–Segel st
 
 ## Sources
 
-- Pierluigi Colli, Gabriela Marinoschi, Elisabetta Rocca and Alex Viguerie, "Chemotaxis-inspired PDE model for airborne infectious disease transmission: analysis and simulations", *Journal of Nonlinear Science* 35 (2025), 28, <https://doi.org/10.1007/s00332-024-10121-8>. Preprint version: arXiv:2404.17506 (2024), Theorems 1–2, Propositions 3–4, Theorems 5–6, <https://doi.org/10.48550/arXiv.2404.17506>.
+- Pierluigi Colli, Gabriela Marinoschi, Elisabetta Rocca and Alex Viguerie, "Chemotaxis-inspired PDE model for airborne infectious disease transmission: analysis and simulations", *Journal of Nonlinear Science* 35 (2025), 28, <https://doi.org/10.1007/s00332-024-10121-8>. Preprint version: arXiv:2404.17506 (2024), Theorems 3.1–3.2, Propositions 3.3–3.4, Theorems 3.5 and 4.1, <https://doi.org/10.48550/arXiv.2404.17506>.

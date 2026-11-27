@@ -29,4 +29,4 @@ Writing the system as an abstract evolution equation $du = (\mathcal{A}u + \math
 
 ## Sources
 
-- Mohamed Mehdaoui, "Well-posedness results for a new class of stochastic spatio-temporal SIR-type models driven by proportional pure-jump Lévy noise", *Applied Mathematical Modelling* 126 (2024), 543–567, <https://doi.org/10.1016/j.apm.2023.11.017>. Preprint version: arXiv:2303.18239 (2023), spatio-temporal SIR system with Neumann boundary conditions (Section 1), Definition 3.4, Theorems 4.1–4.3, Lemmas 5.1–5.3, Theorem 5.1, <https://doi.org/10.48550/arXiv.2303.18239>.
+- Mohamed Mehdaoui, "Well-posedness results for a new class of stochastic spatio-temporal SIR-type models driven by proportional pure-jump Lévy noise", *Applied Mathematical Modelling* 126 (2024), 543–567, <https://doi.org/10.1016/j.apm.2023.11.017>. Preprint version: arXiv:2303.18239 (2023), spatio-temporal SIR system with Neumann boundary conditions (Section 1), Definition 2.4, Theorems 3.1–3.3, Lemmas 4.1–4.3, Theorem 4.1, <https://doi.org/10.48550/arXiv.2303.18239>.

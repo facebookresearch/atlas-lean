@@ -12,7 +12,7 @@ $$
 \frac{d}{dt}\mathbb{E}\lambda_a = \sum_{a'} (w_{aa'} - 1)\,\mathbb{E}[\lambda_a\lambda_{a'}] = \sum_{a'} (w_{aa'} - 1)\bigl(\mathbb{E}\lambda_a\,\mathbb{E}\lambda_{a'} + \operatorname{Cov}(\lambda_a, \lambda_{a'})\bigr).
 $$
 
-Write $\ell_{aa'} = \log w_{aa'}$. For weak couplings $w_{aa'} - 1 = \ell_{aa'} + O(\ell_{aa'}^2)$. The source's eq. (expectode) (arXiv:0904.1505) arrives at the same identity with $\ell_{aa'}$ in place of $w_{aa'} - 1$ through a heuristic "grid differential" approximation; that form is an approximation, not an identity (one self-coupled neuron with $w = e$ has $\frac{d}{dt}\mathbb{E}\lambda = (e-1)\mathbb{E}[\lambda^2]$, not $\mathbb{E}[\lambda^2]$).
+Write $\ell_{aa'} = \log w_{aa'}$. For weak couplings $w_{aa'} - 1 = \ell_{aa'} + O(\ell_{aa'}^2)$. The source's eq. (2.8) (arXiv:0904.1505v3) arrives at the same identity with $\ell_{aa'}$ in place of $w_{aa'} - 1$ through a heuristic "grid differential" approximation; that form is an approximation, not an identity (one self-coupled neuron with $w = e$ has $\frac{d}{dt}\mathbb{E}\lambda = (e-1)\mathbb{E}[\lambda^2]$, not $\mathbb{E}[\lambda^2]$).
 
 **Rate equation.** Following the source, the rate equation is *defined* by replacing $w_{aa'} - 1$ with $\ell_{aa'}$ and neglecting covariances, which gives the Lotka–Volterra-type system
 
@@ -37,4 +37,4 @@ Because rates are exponentials of linear functionals of the spike counts, a spik
 
 ## Sources
 
-- Stefano Cardanobile and Stefan Rotter, "Multiplicatively interacting point processes and applications to neural modeling", *Journal of Computational Neuroscience* 28 (2010), 267–284, <https://doi.org/10.1007/s10827-009-0204-0>. Preprint version: arXiv:0904.1505 (2009), definition of multiplicatively interacting processes, definition of the rate equation, Propositions 10–12, <https://doi.org/10.48550/arXiv.0904.1505>.
+- Stefano Cardanobile and Stefan Rotter, "Multiplicatively interacting point processes and applications to neural modeling", *Journal of Computational Neuroscience* 28 (2010), 267–284, <https://doi.org/10.1007/s10827-009-0204-0>. Preprint version: arXiv:0904.1505v3 (2009), Definition 2.5 (multiplicatively interacting processes), Definition 2.6 (rate equation), Propositions 4.4, 4.5 and 4.7, <https://doi.org/10.48550/arXiv.0904.1505>.

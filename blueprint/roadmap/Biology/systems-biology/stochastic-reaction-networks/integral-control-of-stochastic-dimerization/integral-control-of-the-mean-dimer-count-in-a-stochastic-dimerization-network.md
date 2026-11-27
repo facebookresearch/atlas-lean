@@ -38,4 +38,4 @@ Ergodicity and moment convergence come from a Foster-Lyapunov drift condition wi
 
 ## Sources
 
-- Corentin Briat and Mustafa Khammash, "Integral population control of a quadratic dimerization process", in *52nd IEEE Conference on Decision and Control*, IEEE, 2013, 3367–3372, <https://doi.org/10.1109/cdc.2013.6760398>. Preprint version: arXiv:1307.6446 (2013), Proposition 1, Theorem 2, Assumption 3, Proposition 4, Theorem 5 and Theorem 6, Remark 7, <https://doi.org/10.48550/arXiv.1307.6446>.
+- Corentin Briat and Mustafa Khammash, "Integral population control of a quadratic dimerization process", in *52nd IEEE Conference on Decision and Control*, IEEE, 2013, 3367–3372, <https://doi.org/10.1109/cdc.2013.6760398>. Preprint version: arXiv:1307.6446v2 (2013), Proposition 2, Theorem 3, Assumption 4, Proposition 5, Theorem 6 and Theorem 7, Remark 8, <https://doi.org/10.48550/arXiv.1307.6446>.

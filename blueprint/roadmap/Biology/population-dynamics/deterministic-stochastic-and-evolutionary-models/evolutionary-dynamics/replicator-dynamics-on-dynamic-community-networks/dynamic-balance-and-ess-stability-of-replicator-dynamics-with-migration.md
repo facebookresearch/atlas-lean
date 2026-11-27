@@ -22,4 +22,4 @@ Because migration is action-independent, it moves all actions of a community in 
 
 ## Sources
 
-- Alain Govaert, Lorenzo Zino and Emma Tegling, "Population Games on Dynamic Community Networks", *IEEE Control Systems Letters* 6 (2022), 2695–2700, <https://doi.org/10.1109/lcsys.2022.3174916>. Preprint version: arXiv:2203.00371 (2022), Section 2 (model, Assumptions 1–2), Theorem 1, Corollary 1 and Theorem 2 (Section 3), <https://doi.org/10.48550/arXiv.2203.00371>.
+- Alain Govaert, Lorenzo Zino and Emma Tegling, "Population Games on Dynamic Community Networks", *IEEE Control Systems Letters* 6 (2022), 2695–2700, <https://doi.org/10.1109/lcsys.2022.3174916>. Preprint version: arXiv:2203.00371 (2022), Section 2 (model, Assumptions 1–2), Theorem 1, Corollary 1.1 and Theorem 2 (Section 3), <https://doi.org/10.48550/arXiv.2203.00371>.

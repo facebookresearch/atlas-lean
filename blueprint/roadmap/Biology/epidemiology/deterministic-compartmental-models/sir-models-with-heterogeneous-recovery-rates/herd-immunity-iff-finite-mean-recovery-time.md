@@ -39,4 +39,4 @@ If $\mathbb{E}[1/\gamma] < \infty$, then $R \le 1$ gives $S(\infty) \ge S(0)\exp
 
 ## Sources
 
-- Gabriel Turinici, "The impact of recovery rate heterogeneity in achieving herd immunity", *Bollettino dell'Unione Matematica Italiana* 18 (2025), 1171–1179, <https://doi.org/10.1007/s40574-025-00471-w>. Preprint version: arXiv:2411.13130 (2024), Definition 1, Lemma 2, Propositions 3 and 4, <https://doi.org/10.48550/arXiv.2411.13130>.
+- Gabriel Turinici, "The impact of recovery rate heterogeneity in achieving herd immunity", *Bollettino dell'Unione Matematica Italiana* 18 (2025), 1171–1179, <https://doi.org/10.1007/s40574-025-00471-w>. Preprint version: arXiv:2411.13130v2 (2025), Definition 1, Lemma 2, Propositions 3 and 5, <https://doi.org/10.48550/arXiv.2411.13130>.

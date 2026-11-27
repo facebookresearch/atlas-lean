@@ -28,4 +28,4 @@ Two copies of the process driven by the same environment path satisfy $\frac{d}{
 
 ## Sources
 
-- Bertrand Cloez, Renaud Dessalles, Alexandre Genadot, Florent Malrieu, Aline Marguet and Romain Yvinec, "Probabilistic and Piecewise Deterministic models in Biology", *ESAIM: Proceedings and Surveys* 60 (2017), 225–245, <https://doi.org/10.1051/proc/201760225>. Preprint version: arXiv:1706.09163 (2017), Section 2 (Theorem 2, Lemma 3 and Theorem 4), <https://doi.org/10.48550/arXiv.1706.09163>.
+- Bertrand Cloez, Renaud Dessalles, Alexandre Genadot, Florent Malrieu, Aline Marguet and Romain Yvinec, "Probabilistic and Piecewise Deterministic models in Biology", *ESAIM: Proceedings and Surveys* 60 (2017), 225–245, <https://doi.org/10.1051/proc/201760225>. Preprint version: arXiv:1706.09163 (2017), Section 1 (Theorem 1.2, Lemma 1.3 and Theorem 1.4), <https://doi.org/10.48550/arXiv.1706.09163>.

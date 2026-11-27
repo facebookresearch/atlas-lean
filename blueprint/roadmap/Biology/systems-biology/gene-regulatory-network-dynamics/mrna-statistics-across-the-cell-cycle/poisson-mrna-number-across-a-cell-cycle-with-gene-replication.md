@@ -26,4 +26,4 @@ Poisson laws are preserved by every step of the cycle: an immigration–death pr
 
 ## Sources
 
-- Bertrand Cloez, Renaud Dessalles, Alexandre Genadot, Florent Malrieu, Aline Marguet and Romain Yvinec, "Probabilistic and Piecewise Deterministic models in Biology", *ESAIM: Proceedings and Surveys* 60 (2017), 225–245, <https://doi.org/10.1051/proc/201760225>. Preprint version: arXiv:1706.09163 (2017), section on stochastic models of protein production with cell division and gene replication, Propositions 11 and 12, <https://doi.org/10.48550/arXiv.1706.09163>.
+- Bertrand Cloez, Renaud Dessalles, Alexandre Genadot, Florent Malrieu, Aline Marguet and Romain Yvinec, "Probabilistic and Piecewise Deterministic models in Biology", *ESAIM: Proceedings and Surveys* 60 (2017), 225–245, <https://doi.org/10.1051/proc/201760225>. Preprint version: arXiv:1706.09163 (2017), section on stochastic models of protein production with cell division and gene replication (Section 4), Propositions 4.1 and 4.2, <https://doi.org/10.48550/arXiv.1706.09163>.

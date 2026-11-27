@@ -19,4 +19,4 @@ The proof is an induction over days using only means and variances. A sequence o
 
 ## Sources
 
-- François Rousse, Marcus Carlsson, Magnus Ögren and Benjamin Kalischer Wellander, "The role of super-spreaders in modeling of SARS-CoV-2", *Infectious Disease Modelling* 7 (2022), 778–794, <https://doi.org/10.1016/j.idm.2022.10.003>. Preprint version: arXiv:2212.04545 (2022), Section 2 (agent-based model 1), Theorem 3.1 (convergence to discrete SEIR), Theorem 5.1 with Lemmas 5.2–5.3 and Propositions 5.4–5.6 (rigorous statement and proof, including the saturated contact model), <https://doi.org/10.48550/arXiv.2212.04545>.
+- François Rousse, Marcus Carlsson, Magnus Ögren and Benjamin Kalischer Wellander, "The role of super-spreaders in modeling of SARS-CoV-2", *Infectious Disease Modelling* 7 (2022), 778–794, <https://doi.org/10.1016/j.idm.2022.10.003>. Preprint version: arXiv:2212.04545 (2022), Section 2 (agent-based model 1), Theorem 3.1 (convergence to discrete SEIR), Theorem 5.1 with Lemmas 5.2, 5.3 and 5.5 and Propositions 5.4 and 5.6 (rigorous statement and proof, including the saturated contact model), <https://doi.org/10.48550/arXiv.2212.04545>.

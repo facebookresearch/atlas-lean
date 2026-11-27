@@ -28,4 +28,4 @@ The per-capita growth $g(u) = \bar r u/(\hat K + u^2) - \bar d_h$ attains its ma
 
 ## Sources
 
-- Jun Chen, Jordy O. Rodriguez Rincon, Gloria DeGrandi-Hoffman, Jennifer Fewell, Jon Harrison and Yun Kang, "Impacts of seasonality and parasitism on honey bee population dynamics", *Journal of Mathematical Biology* 87 (2023), 19, <https://doi.org/10.1007/s00285-023-01952-2>. Preprint version: arXiv:2306.13300 (2023), Proposition 3.2, Theorems 3.3, 3.4 and 4.1, <https://doi.org/10.48550/arXiv.2306.13300>.
+- Jun Chen, Jordy O. Rodriguez Rincon, Gloria DeGrandi-Hoffman, Jennifer Fewell, Jon Harrison and Yun Kang, "Impacts of seasonality and parasitism on honey bee population dynamics", *Journal of Mathematical Biology* 87 (2023), 19, <https://doi.org/10.1007/s00285-023-01952-2>. Preprint version: arXiv:2306.13300 (2023), Proposition 1, Theorems 2, 3 and 6, <https://doi.org/10.48550/arXiv.2306.13300>.

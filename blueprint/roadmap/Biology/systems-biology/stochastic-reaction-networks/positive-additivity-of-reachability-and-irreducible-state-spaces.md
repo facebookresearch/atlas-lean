@@ -22,4 +22,4 @@ Positive additivity holds because a reaction path enabled from $x$ remains enabl
 
 ## Sources
 
-- Ankit Gupta and Mustafa Khammash, "Computational Identification of Irreducible State-Spaces for Stochastic Reaction Networks", *SIAM Journal on Applied Dynamical Systems* 17 (2018), 1213–1266, <https://doi.org/10.1137/17m1134299>. Preprint version: arXiv:1505.06594 (2015), Assumption 3.1, Propositions 3.2–3.3 (Section 3), Proposition 4.2 (Section 4), Propositions 5.2–5.3 and Theorem 5.4 (Section 5), <https://doi.org/10.48550/arXiv.1505.06594>.
+- Ankit Gupta and Mustafa Khammash, "Computational Identification of Irreducible State-Spaces for Stochastic Reaction Networks", *SIAM Journal on Applied Dynamical Systems* 17 (2018), 1213–1266, <https://doi.org/10.1137/17m1134299>. Preprint version: arXiv:1505.06594v5 (2018), Assumption 2.1 and Proposition 2.2 (Section 2), Assumption 3.1 and Proposition 3.2 (Section 3), Propositions 4.2–4.3 and Theorem 4.4 (Section 4), <https://doi.org/10.48550/arXiv.1505.06594>.

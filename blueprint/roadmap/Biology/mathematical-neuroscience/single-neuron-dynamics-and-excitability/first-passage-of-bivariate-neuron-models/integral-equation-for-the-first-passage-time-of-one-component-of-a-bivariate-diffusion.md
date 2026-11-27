@@ -28,4 +28,4 @@ This is the bivariate analogue of the Fortet equation: to be above $S$ at time $
 
 ## Sources
 
-- Elisa Benedetto, Laura Sacerdote and Cristina Zucca, "A first passage problem for a bivariate diffusion process: Numerical solution with an application to neuroscience when the process is Gauss–Markov", *Journal of Computational and Applied Mathematics* 242 (2013), 41–52, <https://doi.org/10.1016/j.cam.2012.10.014>. Preprint version: arXiv:1204.5307 (2012), Theorem 1, Corollary 2, Theorem 3, <https://doi.org/10.48550/arXiv.1204.5307>.
+- Elisa Benedetto, Laura Sacerdote and Cristina Zucca, "A first passage problem for a bivariate diffusion process: Numerical solution with an application to neuroscience when the process is Gauss–Markov", *Journal of Computational and Applied Mathematics* 242 (2013), 41–52, <https://doi.org/10.1016/j.cam.2012.10.014>. Preprint version: arXiv:1204.5307 (2012), Theorem 2, Corollary 3, Theorem 4, <https://doi.org/10.48550/arXiv.1204.5307>.
