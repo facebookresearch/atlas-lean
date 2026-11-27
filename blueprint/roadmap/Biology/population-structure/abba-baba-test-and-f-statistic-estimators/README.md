@@ -66,3 +66,5 @@
 - [Genome-wide f-statistic estimation with dependent loci](genome-wide-f-statistic-estimation-with-dependen.md)
 - [Goodness of fit of a qpGraph model and its limits](qp-graph-goodness-of-fit-and-model-ambiguity.md)
 - [Asymptotic rank test for qpWave and qpAdm](rank-test-for-qp-wave-qp-adm.md)
+- [The f-branch statistic](f-branch-statistic.md)
+- [Frequency-based ABBA–BABA counts and the minimum D statistic of a trio](frequency-based-abba-baba-counts-and-dmin.md)
