@@ -1,0 +1,16 @@
+# Lattice Problems: SIS, Module-SIS and Module-LWE
+
+- [LWE with uniform errors has zero advantage](lwe-with-uniform-error.md)
+- [The negacyclic ring $\mathbb{Z}_q[X]/(X^n+1)$](negacyclic-ring.md)
+- [The short integer solution problem (SIS)](short-integer-solution-problem.md)
+- [Exact sampling of LWE key-generation inputs from fair coins](lwe-sampling-from-fair-coins.md)
+- [Normal-form LWE: secrets drawn from the error distribution](normal-form-lwe.md)
+- [Search-to-decision reduction for LWE with prime modulus](lwe-search-to-decision.md)
+- [Decision Module-LWE](decision-module-lwe.md)
+- [Module-SIS and Ring-SIS](module-sis.md)
+- [The short integer solution problem in the Euclidean norm](sis-euclidean-norm.md)
+- [Module-LWE is LWE over the negacyclic ring](module-lwe-is-lwe-over-a-ring.md)
+- [Module-SIS in Hermite normal form](hermite-normal-form-module-sis.md)
+- [Module-SIS solutions are SIS solutions of the expanded matrix](module-sis-as-structured-sis.md)
+- [Micciancio–Regev combining step: uniform SIS queries from Gaussian lattice samples](micciancio-regev-combining-step.md)
+- [Short integer solutions exist when $\beta \ge \sqrt{m}\, q^{n/m}$](existence-of-short-integer-solutions.md)
