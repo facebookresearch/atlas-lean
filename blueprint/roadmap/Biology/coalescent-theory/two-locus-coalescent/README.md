@@ -61,8 +61,14 @@
 - [Two-locus Hudson simulator samples the two-locus ancestral process](two-locus-hudson-simulator-samples-the-two-locus.md)
 - [Two-locus coalescence times of a pair: a diagonal atom and an absolutely continuous part](two-locus-n-2-joint-law-of-t-a-t-b-is-diagonal-a.md)
 - [Wiuf–Hein algorithm reproduces the joint law of local trees](wiuf-hein-algorithm-reproduces-the-joint-law-of.md)
-
+- [Frequency-resolved linkage disequilibrium $\sigma_d^k(f_0)$ and its rare-mutation scaling collapse](frequency-weighted-ld-sigma-d-k-rare-mutation-scaling.md)
+- [Genome ARGs: interval-annotated inheritance graphs and their local trees](genome-arg-interval-annotated-inheritance-graph.md)
+- [Rare-mutation LD under strong selection or recombination and in quasi-linkage equilibrium](rare-mutation-ld-strong-selection-and-qle-limits.md)
+- [A sample-resolved genome ARG is determined by its node-labelled local trees](sample-resolved-genome-arg-equals-its-labelled-local-trees.md)
+- [Probability that a recombination leaves the local tree unchanged under the SMC'](smc-prime-tree-unchanging-probability.md)
+- [Topology-unchanging probability and the waiting distance between topology changes](topology-change-waiting-distance-smc-prime.md)
+- [Unbiased sample estimators of frequency-weighted haplotype moments](unbiased-poisson-estimator-frequency-weighted-ld.md)
+- [Waiting distance until the next tree change under the SMC'](waiting-distance-until-next-tree-change-smc-prime.md)
 ## Related topics
-
 - [Conditioned ancestral recombination graph dual](conditioned-ancestral-recombination-graph-dual/README.md)
 - [Two-locus sampling probabilities under variable population size](two-locus-sampling-probabilities-under-variable-population-size/README.md)
