@@ -18,6 +18,10 @@ $$q(\mathbf n) = \prod_l q^{(l)}(\mathbf n^{(l)}) + \frac{q_1(\mathbf n)}{\rho} 
 
 The mutation model enters only through the one-locus marginals (for parent-independent mutation, Wright's formula; for infinite alleles, the Ewens sampling formula), so the first two terms are universal. For $L = 2$ the formula reduces to the Jenkins–Song two-locus result.
 
+## Depends on
+
+- [Coalescent with recombination: ancestral-material state space and generator](../coalescent-with-recombination-ancestral-material.md)
+
 ## Expansion
 
 At infinite $\rho$ every haplotype shatters into single-locus fragments that coalesce independently, giving the product form. Substituting the expansion into the coalescent-with-recombination recursion and collecting the $\rho^0$ terms gives a recursion for $q_1$ driven only by recombination splits on the left and by coalescences among fragments on the right; inclusion–exclusion over which loci a pair of lineages still shares turns the right-hand side into the signed sums over $X \supseteq S(h)$. The closed form is verified to solve this recursion by a direct combinatorial argument (equivalently, via Wallenius noncentral hypergeometric probabilities for the order in which shared segments are broken): the weight $1/r(X)$ is the expected time a pair sharing the loci $X$ stays linked before recombination separates them.
