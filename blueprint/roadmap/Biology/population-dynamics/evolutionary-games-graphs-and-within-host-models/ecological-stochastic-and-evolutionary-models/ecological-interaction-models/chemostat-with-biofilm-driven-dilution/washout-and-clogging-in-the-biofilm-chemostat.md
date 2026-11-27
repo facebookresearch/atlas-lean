@@ -20,11 +20,11 @@ Thus washout is decided by the $2\times2$ linearization $M = \begin{pmatrix} A &
 
 ## Depends on
 
-- [Chemostat equilibria and the washout threshold](../../../chemostat/chemostat-equilibria-and-washout.md)
+- [Chemostat equilibria and the washout threshold](../../../../chemostat/chemostat-equilibria-and-washout.md)
 
 ## Proof depends on
 
-- [LaSalle's invariance principle](../../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+- [LaSalle's invariance principle](../../../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
 
 ## Expansion
 

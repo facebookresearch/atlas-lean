@@ -22,7 +22,7 @@ For linear $g$ (the replicator time scale) $\Delta(u) \propto u$ and the second 
 
 ## Proof depends on
 
-- [Poincaré–Bendixson theorem](../../../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)
+- [Poincaré–Bendixson theorem](../../../../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)
 
 ## Expansion
 

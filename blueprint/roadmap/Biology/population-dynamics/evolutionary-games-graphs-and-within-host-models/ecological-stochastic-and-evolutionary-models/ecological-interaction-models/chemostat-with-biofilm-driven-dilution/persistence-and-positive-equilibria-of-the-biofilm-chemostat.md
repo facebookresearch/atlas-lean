@@ -26,7 +26,7 @@ In the regime of Theorem 6.3 the clogged state is also stable, giving bistabilit
 
 ## Proof depends on
 
-- [Routh–Hurwitz criterion for cubic polynomials](../../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
 
 ## Expansion
 

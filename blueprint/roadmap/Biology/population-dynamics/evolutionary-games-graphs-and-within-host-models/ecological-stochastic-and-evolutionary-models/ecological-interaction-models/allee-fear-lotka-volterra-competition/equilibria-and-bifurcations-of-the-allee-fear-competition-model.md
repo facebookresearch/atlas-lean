@@ -28,7 +28,7 @@ the value where $\Delta = 0$: as $q$ crosses $q_*$ the number of interior equili
 
 ## Depends on
 
-- [Logistic growth equation](../../../logistic-growth-equation/logistic.md)
+- [Logistic growth equation](../../../../logistic-growth-equation/logistic.md)
 
 ## Expansion
 

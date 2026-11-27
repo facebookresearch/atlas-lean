@@ -67,4 +67,3 @@ Differential-equation and matrix models of population growth, structure, species
 - [Telomere length branching models](ecological-stochastic-and-evolutionary-models/stochastic-and-evolutionary-population-models/telomere-length-branching-models/README.md)
 - [Two-patch Allee models with nonlinear dispersal](ecological-stochastic-and-evolutionary-models/ecological-interaction-models/two-patch-allee-models-with-nonlinear-dispersal/README.md)
 - [Voter model perturbations and spatial competition](ecological-stochastic-and-evolutionary-models/stochastic-and-evolutionary-population-models/voter-model-perturbations-and-spatial-competition/README.md)
-- [Ecological, stochastic and evolutionary population models](ecological-stochastic-and-evolutionary-models/README.md)

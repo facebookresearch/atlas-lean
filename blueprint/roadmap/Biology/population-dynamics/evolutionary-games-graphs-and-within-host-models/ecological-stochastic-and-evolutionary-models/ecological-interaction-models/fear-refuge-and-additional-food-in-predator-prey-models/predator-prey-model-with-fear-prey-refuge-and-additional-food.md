@@ -20,12 +20,12 @@ with $s = b + \alpha\eta A$ and positive parameters, $r > d$. Here fear of preda
 
 ## Depends on
 
-- [Linearly unstable Fourier mode](../../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/is-unstable-mode.md)
+- [Linearly unstable Fourier mode](../../../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/is-unstable-mode.md)
 
 ## Proof depends on
 
-- [Mode instability iff the dispersion polynomial is negative](../../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/is-unstable-mode-iff-dispersion-det-neg.md)
-- [Dispersion polynomial is negative exactly on the unstable band](../../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/dispersion-det-neg-iff.md)
+- [Mode instability iff the dispersion polynomial is negative](../../../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/is-unstable-mode-iff-dispersion-det-neg.md)
+- [Dispersion polynomial is negative exactly on the unstable band](../../../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/dispersion-det-neg-iff.md)
 
 ## Expansion
 

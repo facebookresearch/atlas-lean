@@ -18,12 +18,12 @@ i.e. $\Delta(\hat{q}) < 0$ and $\Delta(\tilde{q}) < 0$, then the solution conver
 
 ## Depends on
 
-- [Linearly unstable Fourier mode](../../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/is-unstable-mode.md)
+- [Linearly unstable Fourier mode](../../../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/is-unstable-mode.md)
 - [Equilibria and bifurcations of the Lotka–Volterra competition model with Allee and fear effects](equilibria-and-bifurcations-of-the-allee-fear-competition-model.md)
 
 ## Proof depends on
 
-- [Mode instability iff the dispersion polynomial is negative](../../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/is-unstable-mode-iff-dispersion-det-neg.md)
+- [Mode instability iff the dispersion polynomial is negative](../../../../../pattern-formation/turing-patterns-and-diffusion-driven-instability/is-unstable-mode-iff-dispersion-det-neg.md)
 
 ## Expansion
 
