@@ -9,6 +9,7 @@ Point-set topology of topological and metric spaces: connectedness, separation a
 - [Inverse limits of topological spaces](inverse-limits-of-topological-spaces/README.md)
 - [Networks and monolithic spaces](networks-and-monolithic-spaces/README.md)
 - [Restricted products of topological spaces](restricted-products-of-topological-spaces/README.md)
+- [Selection principles](selection-principles/README.md)
 - [Hausdorff separation](hausdorff-separation/README.md)
 - [A preconnected set meets the frontier of every set it crosses](inter-frontier-nonempty-of-inter-compl.md)
 - [Bounded metric $d/(1+d)$ is equivalent to $d$](dist-div-one-add-dist-balls-equivalent.md)
