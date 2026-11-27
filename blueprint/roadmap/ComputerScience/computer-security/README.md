@@ -16,3 +16,6 @@
 - [Secure compilation](secure-compilation/README.md)
 - [Control-flow integrity](control-flow-integrity/README.md)
 - [Memory safety](memory-safety/README.md)
+- [Intransitive noninterference](intransitive-noninterference/README.md)
+- [Probabilistic opacity](probabilistic-opacity/README.md)
+- [Timed opacity](timed-opacity/README.md)

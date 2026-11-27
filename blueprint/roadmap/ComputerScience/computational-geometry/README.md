@@ -22,3 +22,4 @@ Algorithms on points and segments in the plane: orientation and segment intersec
 - [Well-separated pair decompositions](well-separated-pair-decompositions/README.md)
 - [Coresets for directional width](coresets-for-directional-width/README.md)
 - [Curve similarity](curve-similarity/README.md)
+- [Origami flat folding](origami-flat-folding/README.md)

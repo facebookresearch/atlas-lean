@@ -17,3 +17,4 @@
 - [Weak secrecy in the applied pi calculus](weak-secrecy-in-the-applied-pi-calculus.md)
 - [Lowe's hierarchy of authentication properties](lowes-hierarchy-of-authentication-properties.md)
 - [Needham–Schroeder guarantees weak agreement to the initiator but not to the responder](needham-schroeder-gives-weak-agreement-only-to-the-initiator.md)
+- [Deduction modulo homeomorphic-embedded convergent rewrite systems is undecidable](deduction-modulo-embedded-convergent-systems.md)
