@@ -19,10 +19,6 @@ Let $I$ be the union of all tone intervals. Assume (U1) $a - b < \theta$ and (U2
 
 These states map onto percepts: responses of both units to every tone correspond to integration, responses of each unit only to its own tone to segregation, with slow delayed inhibition masking the subsequent tone during segregation and fast excitation allowing integration even for large pitch differences.
 
-## Depends on
-
-- [Wilson–Cowan neural population model](../../wilson-cowan-neural-population-model/README.md)
-
 ## Expansion
 
 With $\tau \to 0$ the rates are slaved to the quasi-equilibria of the fast subsystem, which for a Heaviside gain take values in $\{0,1\}^2$ and depend on the delayed synaptic values $\tilde s_X = s_X(t-D)$ through threshold inequalities; between tones ($c = d = 0$) only $(0,0)$ and, when $a - b\tilde s_A \ge \theta$ and $a - b\tilde s_B \ge \theta$, $(1,1)$ exist, which gives part 2. The synaptic variables then evolve by explicit exponentials, rising toward $1$ at rate $1/\tau + 1/\tau_i$ while their unit is ON and decaying at rate $1/\tau_i$ while it is OFF, so the switching times solve scalar equations in these exponentials. Under $T_D + D < T_R$ the inhibition felt during a tone comes from activity that ended before it, so the delayed synaptic input is monotonically decreasing over the first $D$ of each tone, which yields the single switch per interval and the finite binary bookkeeping of part 3. A smooth sigmoid gain reproduces the same states numerically.

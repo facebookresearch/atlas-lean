@@ -26,11 +26,6 @@ above the upper bound, infection drives the plants, and with them the vectors, e
 
 At the disease-free state the vector population settles where Ricker recruitment balances death, $\ln(\bar b/c) = \bar v_2/(a\bar x)$, so the vector-to-plant ratio is $a\ln(\bar b/c)$; $\mathcal{R}_0$ is the product of infections of plants by one infected vector, $\lambda/c$, and of vectors by one infected plant, $\beta/(\alpha+\mu)$ scaled by the vector-to-plant ratio. Because $\ln(\bar b/c) = \ln(b/c) - c\tau$, longer maturation lowers $\mathcal{R}_0$ linearly, and the disease is eliminated for $\tau > \big(\ln(b/c) - c(\alpha+\mu)/(\beta\lambda a)\big)/c$, while vectors themselves persist only for $\tau < \ln(b/c)/c$. Linearization gives a transcendental characteristic equation $\xi^4 + \sum \sigma_i \xi^{4-i} + e^{-\tau\xi}\sum \eta_i \xi^{4-i} = 0$; substituting $\xi = i\omega$ gives a quartic in $\omega^2$ whose positive roots locate the delay-induced Hopf points. Numerical continuation shows that the maturation delay can both stabilize and destabilize the endemic state.
 
-## Depends on
-
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
-- [Hutchinson delayed logistic equation](../../../population-dynamics/hutchinson-delayed-logistic-equation/README.md)
-
 ## Sources
 
 - F. Al Basir, Y. N. Kyrychko, K. B. Blyuss, S. Ray, "Effects of vector maturation time on the dynamics of cassava mosaic disease", Bulletin of Mathematical Biology (2021), model (3)–(4) with invariant region, equilibria (5)–(6), existence condition (7)–(9), characteristic equation (10)–(11), Theorems 1–3, <https://doi.org/10.1007/s11538-021-00921-4>, PMCID PMC8238769.

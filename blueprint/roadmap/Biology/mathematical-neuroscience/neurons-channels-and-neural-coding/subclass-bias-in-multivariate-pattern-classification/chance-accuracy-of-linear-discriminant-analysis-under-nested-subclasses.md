@@ -1,12 +1,12 @@
 # Chance accuracy of linear discriminant analysis under nested subclasses
 
-In multivariate pattern analysis of neural data, trials of each class often fall into **nested subclasses** (distinct stimuli, sessions or subjects) that do not overlap between classes. Model two classes $x$ and $y$, each with $K$ subclasses of $N$ trials, projected onto the linear discriminant axis. Within a subclass the projected trials are Gaussian with variance $\sigma_W^2$; the subclass means are independent Gaussians with variance $\sigma_S^2$ around the class means $\hat\mu$ (class $x$) and $\hat\nu$ (class $y$). The total variance is $\sigma^2 = \sigma_W^2 + \sigma_S^2$, and the intraclass correlation is $\mathrm{ICC} = \rho = \sigma_S^2 / \sigma^2 \in [0, 1]$. LDA assigns a test trial to the class whose empirical mean lies on its side of the midpoint threshold $\theta = (\bar\mu + \bar\nu)/2$ of the empirical class means.
+In multivariate pattern analysis of neural data, trials of each class often fall into **nested subclasses** (distinct stimuli, sessions or subjects) that do not overlap between classes. Model two classes $x$ and $y$, each with $K$ subclasses of $N$ trials, projected onto the linear discriminant axis. Within a subclass the projected trials are Gaussian with variance $\sigma_W^2$; the subclass means are independent Gaussians with variance $\sigma_S^2$ around the class means $\hat\mu$ (class $x$) and $\hat\nu$ (class $y$). The total variance is $\sigma^2 = \sigma_W^2 + \sigma_S^2$, and the intraclass correlation is $\mathrm{ICC} = \rho = \sigma_S^2 / \sigma^2 \in [0, 1]$. LDA assigns a test trial to the class whose empirical mean lies on its side of the midpoint threshold $\theta = (\bar\mu + \bar\nu)/2$ of the empirical class means. Following the source (App. A, Eq. 6), work in the limit of many trials per subclass ($N \to \infty$): each empirical class mean is the average of its $K$ subclass means, the $\sigma_W^2/N$ error of the empirical means being neglected.
 
-**Result (expected correct classification rate with no class effect).** If $\hat\mu = \hat\nu$, so that the classes are indistinguishable, the expected correct classification rate (CCR) of this rule depends only on $K$ and $\rho$:
+**Result (expected correct classification rate with no class effect).** If $\hat\mu = \hat\nu$, so that the classes are indistinguishable, then in this model the expected correct classification rate (CCR) of this rule depends only on $K$ and $\rho$:
 
 $$\mathrm{CCR} = 1 - \frac{1}{\pi} \arctan\sqrt{2\left(\frac{K}{\rho} - 1\right)}.$$
 
-It equals $1/2$ only when $\rho = 0$, increases with $\rho$ (subclass variance), and decreases toward $1/2$ as the number $K$ of subclasses grows.
+For finite $N$ the formula is not exact: with $K = N = 1$, $\rho = 1/2$ and a held-out trial of the same subclass the CCR is $\tfrac12 + \tfrac1\pi\arcsin\tfrac1{2\sqrt2} \approx 0.615$, while the formula gives $0.696$. In the model, the CCR equals $1/2$ only when $\rho = 0$, increases with $\rho$ (subclass variance), and decreases toward $1/2$ as the number $K$ of subclasses grows.
 
 ## Expansion
 

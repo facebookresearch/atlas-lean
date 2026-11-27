@@ -20,10 +20,6 @@ $$\gamma^* = \tan\frac{\pi}{8}\,\sec^4\frac{\pi}{8} = 0.56854\ldots,$$
 
 in agreement with the Routh–Hurwitz computation. The same argument applies to a chain of $n$ transit compartments, where $\lambda(\lambda+k_{tr})^{n+1} + \gamma k_{tr}^{n+2} = 0$ and the threshold $\tan\theta\,\sec^{n+1}\theta$ with $\theta = \pi/(2(n+1))$ decreases with $n$ (it is $2$ for $n=1$), so longer maturation delays destabilize the feedback. Variants that estimate the progenitor pool separately or decouple proliferation from maturation have thresholds depending on $P^*/C^*$ or MTT. In a thrombocytopenia case study, fitted values of $\gamma$ above $\gamma^*$ produced unreliable long-term predictions, so fitted parameters should be checked against the stability region.
 
-## Depends on
-
-- [Pharmacodynamic response models](../pharmacodynamic-response-models/README.md)
-
 ## Sources
 
 - C. Fornari, C. Pin, J. W. T. Yates, J. T. Mettetal, T. A. Collins, "Importance of stability analysis when using nonlinear semimechanistic models to describe drug-induced hematotoxicity", CPT: Pharmacometrics & Systems Pharmacology (2020), Methods (Eqs 1–8, Table 1, Models A–D) and Results (stability threshold $\gamma^* = 0.5685\ldots$), <https://doi.org/10.1002/psp4.12514>, PMCID PMC7499189.

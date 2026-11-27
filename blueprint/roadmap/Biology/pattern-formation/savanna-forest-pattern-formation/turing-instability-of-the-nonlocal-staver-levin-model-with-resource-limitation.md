@@ -20,11 +20,7 @@ $$\partial_t G = (1 - G)\,\phi(w * G) - \alpha G\big(1 - J_F * G\big)\Big(1 - \t
 
 $$\lambda(\xi) = A\,\hat w(|\xi|) + B\,\hat R(|\xi|) + C\,\hat J_F(|\xi|) + D,$$
 
-with $A = \phi'(\bar G)(1 - \bar G)$ ($= 0$ almost everywhere under (H3)), $B = -\tfrac{\alpha}{r}\bar G(1 - \bar G) < 0$ from resource competition, $C > 0$ from seed dispersal and $D = \lim_{|\xi|\to\infty}\lambda(\xi)$. A Turing instability occurs iff $\lambda(0) = A + B + C + D < 0$, $D < 0$, and $\lambda(\xi) > 0$ for some $\xi \ne 0$; this requires $\hat R$ to decay faster than $\hat J_F$, i.e. competition acting over longer distances than seed dispersal in the relevant range of wave numbers.
-
-## Depends on
-
-- [Fisher–KPP travelling waves](../fisher-kpp-travelling-waves/README.md)
+with $A = \phi'(\bar G)(1 - \bar G)$ ($= 0$ almost everywhere under (H3)), $B = -\tfrac{\alpha}{r}\bar G(1 - \bar G) < 0$ from resource competition, $C > 0$ from seed dispersal and $D = \lim_{|\xi|\to\infty}\lambda(\xi)$. A Turing instability occurs iff $\lambda(0) = A + B + C + D < 0$, $D < 0$, and $\lambda(\xi) > 0$ for some $\xi \ne 0$. Where $A = 0$ the last condition reads $|B|\big(1 - \hat R(|\xi|)\big) - C\big(1 - \hat J_F(|\xi|)\big) > -\lambda(0)$ for some $\xi \ne 0$: the loss of competition at that wave number must outweigh the loss of dispersal by more than the margin $-\lambda(0)$. This can hold even with $1 - \hat R < 1 - \hat J_F$ when $|B|/C$ is large, so it does not require competition to act over longer distances than seed dispersal.
 
 ## Expansion
 

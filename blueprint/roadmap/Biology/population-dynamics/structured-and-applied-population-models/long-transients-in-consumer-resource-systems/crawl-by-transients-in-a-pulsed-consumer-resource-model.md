@@ -25,10 +25,6 @@ pulses.
 
 For $\gamma_p$ slightly below $\gamma_p^*$, trajectories converge to $(0,n^*)$ only after long pseudo-oscillations (a ghost of the cycle present for $\gamma_p > \gamma_p^*$), whose duration is fitted numerically by a power law $\tau \approx A(\gamma_p^* - \gamma_p)^{-B}$.
 
-## Depends on
-
-- [Lotka–Volterra predator–prey model](../../lotka-volterra-predator-prey-model/README.md)
-
 ## Expansion
 
 The model arises by integrating continuous-time mortality and consumption between pulses and applying a discrete recruitment map at each pulse. Linearizing at $(0, n^*)$, the consumer direction has multiplier $\lambda_1 = \delta_p + \gamma_p n^*/(1+\sigma n^{*2})$, which exceeds 1 exactly when $\gamma_p > \gamma_p^*$; a consumer perturbation of size $\varepsilon$ grows like $\lambda_1^m\varepsilon$ and becomes of order 1 after $\log(1/\varepsilon)/\log\lambda_1$ pulses. At resource extinction the consumer equation reduces to $p_{m+1} \approx \delta_p p_m$, so a consumer density of order $\varepsilon^{-1}$ needs $\log\varepsilon/\log\delta_p$ pulses to fall to order 1 and release the resource. Existence of the global attractor follows from showing the pulse map is point dissipative and compact on the first quadrant (Theorem 2.9 of Magal and Zhao), using that the resource multiplier is below 1 above $n^*$, and connectedness from a result of Gobbino and Sardella.

@@ -14,7 +14,9 @@ $$J(r) = \sum_{t=0}^{T-1}\int_\Omega \Big(m_t W_t(x) + n_t r_t(x)\bar W(x) + s_t
 
 **Theorem (necessary conditions).** The control-to-state map is differentiable, with sensitivity $\psi$ solving the linearized integrodifference equation with $\psi_0 = 0$. If $r^*$ is optimal with state $W$, there is a weak solution $\lambda$ of the adjoint system
 
-$$\lambda_t(x) = \frac{1}{1 + r_t(x)\bar W(x)/W_t(x)}\,\frac{\partial f}{\partial W}\big(W_t(x), x\big)\int_\Omega k(y,x)\lambda_{t+1}(y)\,dy + m_t, \qquad \lambda_T = 0,$$
+$$\lambda_t(x) = \frac{\partial}{\partial W}\Big[\frac{W f(W, x)}{W + r_t(x)\bar W(x)}\Big]_{W = W_t(x)}\int_\Omega k(y,x)\lambda_{t+1}(y)\,dy + m_t, \qquad \lambda_T = 0,$$
+
+where the coefficient equals $\dfrac{W_t\,\partial_W f(W_t, x)}{W_t + r_t\bar W} + \dfrac{f(W_t, x)\, r_t \bar W}{(W_t + r_t\bar W)^2}$, the second term coming from the dependence of the mating fraction on $W_t$,
 
 and the optimal release ratio is
 
@@ -22,13 +24,13 @@ $$r_t^*(x) = \big(X - 1\big)\,\frac{W_t(x)}{\bar W(x)},$$
 
 where $X$ is the real root of the cubic $X^3 + bX^2 + d = 0$ with
 
-$$b = \frac{n_t}{2 s_t W_t(x)} - 1, \qquad d = -\,\frac{f\big(W_t(x), x\big)\int_\Omega \lambda_{t+1}(y)k(y,x)\,dy}{2 s_t\, W_t(x)\,\bar W(x)} ;$$
+$$b = \frac{n_t}{2 s_t W_t(x)} - 1, \qquad d = -\,\frac{f\big(W_t(x), x\big)\int_\Omega \lambda_{t+1}(y)k(y,x)\,dy}{2 s_t\, W_t(x)^2} ;$$
 
 when the root gives a negative ratio the control is set to zero (no release).
 
 ## Expansion
 
-The directional derivative of $J$ at $r^*$ along an admissible variation $l$ is $\sum_t\int (m_t\psi_t + n_t\bar W l_t + 2 s_t r^*_t \bar W^2 l_t)$; the adjoint absorbs the $m_t\psi_t$ term after exchanging integration order. Setting the remaining integrand to zero gives, with $A_1 = f\int\lambda_{t+1}k$, $B = \bar W/W_t$, $C = n_t\bar W$, $D = 2 s_t\bar W^2$, the scalar condition $-A_1/(1 + Br)^2 + C + Dr = 0$; substituting $X = 1 + Br$ turns it into the cubic. The left-hand side is increasing in $r$ when $A_1 \ge 0$, so the stationary point is unique. Solved by forward–backward sweeps with a Laplace kernel on $\Omega = [0,1]$ ($A = 2$, $K = 0.001$, $m = n = 1$, $s = 5$), the optimum starts at about $1.23$ sterile per wild insect, releases more where wild density is higher, and suppresses the wild population by about $73\%$ by generation $5$ without eliminating it.
+The directional derivative of $J$ at $r^*$ along an admissible variation $l$ is $\sum_t\int (m_t\psi_t + n_t\bar W l_t + 2 s_t r^*_t \bar W^2 l_t)$; the adjoint absorbs the $m_t\psi_t$ term after exchanging integration order. Setting the remaining integrand to zero gives, with $A_1 = f\int\lambda_{t+1}k$, $B = \bar W/W_t$, $C = n_t\bar W$, $D = 2 s_t\bar W^2$, the scalar condition $-A_1 B/(1 + Br)^2 + C + Dr = 0$, since $\partial_r[W f/(W + r\bar W)] = -f\,W\bar W/(W + r\bar W)^2 = -fB/(1 + Br)^2$; substituting $X = 1 + Br$ turns it into the cubic, with $b = CB/D - 1$ and $d = -A_1 B^2/D$. (The source keeps the factor $B$ in its Eq. (19) but drops it in Eqs. (23) and (26), and omits the mating-fraction term of the adjoint.) The left-hand side is increasing in $r$ when $A_1 \ge 0$, so the stationary point is unique. Solved by forward–backward sweeps with a Laplace kernel on $\Omega = [0,1]$ ($A = 2$, $K = 0.001$, $m = n = 1$, $s = 5$), the optimum starts at about $1.23$ sterile per wild insect, releases more where wild density is higher, and suppresses the wild population by about $73\%$ by generation $5$ without eliminating it.
 
 ## Sources
 

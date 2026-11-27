@@ -14,10 +14,6 @@ $$\pi_w(\mathcal M') \ge \frac{\pi_w(\mathcal M)}{\prod_{m=1}^{i-1} W_m}.$$
 
 Consequently, if $\mathcal M$ must reach a quorum of $q$ occurrences, every suffix $\mathcal M'$ that can be extended to such an $\mathcal M$ must have $\pi_w(\mathcal M') \ge q / \prod_{m=1}^{i-1}W_m$, and suffixes below this bound can be pruned.
 
-## Depends on
-
-- [Position weight matrices](../../position-weight-matrices/README.md)
-
 ## Expansion
 
 Every occurrence of $\mathcal M$ restricts to an occurrence of the suffix $\mathcal M'$, and conversely one occurrence of $\mathcal M'$ extends to at most $\prod_{m<i} W_m$ occurrences of $\mathcal M$, since once $M_i$ is fixed each preceding component $M_m$ has at most $W_m$ admissible end positions determined by the gap range (for exact components). Hence $|\mathcal O(\mathcal M')|\prod_{m<i}W_m \ge |\mathcal O(\mathcal M)|$. For the template NN[3,5]NNN[0,4]NNN with quorum $q = 100$, $W_1 = 3$ and $W_2 = 5$, so the last component must occur at least $\lceil 100/15 \rceil = 7$ times. EXMOTIF combines this bound with bit-vector occurrence lists on a suffix tree to extract structured motifs from right to left, and then scores each frequent motif with an information-content-weighted position weight matrix, $W^c_{ij} = \mathcal I_j \ln(r_{ij}/p_i)$.

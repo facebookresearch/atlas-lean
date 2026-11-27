@@ -16,10 +16,6 @@ $$\dim V_N(G) = m - (c_{\ge 5} + 2c_4 + 3c_3) + 1.$$
 
 After the discrete Fourier transform on $G$, tree varieties of group-based models become toric, and cutting a tree at an internal edge corresponds to a toric fiber product of ideals. Network varieties are not toric, but the fiber-product decomposition still applies along cut edges, so the computation reduces to sunlet networks (a single cycle with one leaf hanging from each cycle vertex). The paper proves a general dimension formula for codimension-zero toric fiber products, $\dim(I \times_{\mathcal{A}} J) = \dim I + \dim J - |\mathcal{A}|$ for prime ideals under a maximal-independence condition on initial ideals, and computes sunlet dimensions with tropical lower bounds (rank of the parameterization's Jacobian at tropical points). Contracting 2-cycles and pendant structure does not change the variety. Knowing that different networks give varieties of the expected dimension, and that the varieties are distinct, is the input to generic identifiability of network topology from site-pattern distributions.
 
-## Depends on
-
-- [Phylogenetic invariants](../../random-trees-tree-spaces-and-tree-models/phylogenetic-invariants/README.md)
-
 ## Sources
 
 - E. Gross, R. Krone, S. Martin, "Dimensions of level-1 group-based phylogenetic networks", Bulletin of Mathematical Biology (2024), Introduction (expected dimension $l(m-c)+1$, Theorems 1 and 2), Section 2 (Lemmas 3–6) and Section 3 (Theorem 9 on toric fiber products), <https://doi.org/10.1007/s11538-024-01314-z>, PMCID PMC11182832.

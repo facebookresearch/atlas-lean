@@ -10,7 +10,7 @@ Moreover, a $G$-compatible labeling never gives the identity element the label o
 
 ## Depends on
 
-- [Kimura two-parameter model](../../kimura-two-parameter-model/README.md)
+- [Entries of the K80 rate matrix](../../kimura-two-parameter-model/k80-rate-apply.md)
 
 ## Expansion
 

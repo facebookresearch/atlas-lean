@@ -24,10 +24,6 @@ with value $(C_0^{(i)} - C_T^{(i)})N_i$ (hosts saved) and weight $k_i\gamma_C^{(
 
 Unsaturated burden $\tfrac12 N_i (C_0 + \sqrt{C_0^2 - c\,x_i})$ is concave in $x_i$, so a sum of such terms over the simplex is minimized at extreme points of each face. This is why spreading resources thinly is never optimal and why treatment should be focused. Saturation is a threshold: once $\gamma_i$ reaches $\gamma_C^{(i)}$ the burden drops to $C_T^{(i)} N_i$, a jump that rewards finishing one sub-population before starting another. In the bistable regime ($\eta_i > (\beta_i - 1)/2$) the backward-bifurcation-like structure of the constrained SIS model makes the saturating cost depend on initial prevalence, so identical sub-populations can need different budgets. In numerical tests over 50,000 parameter sets the knapsack rule had mean worst-case relative error $0.28\%$, and it outperformed allocating by size, by prevalence, or equally.
 
-## Depends on
-
-- [SIS epidemic model](../../sis-epidemic-model/README.md)
-
 ## Sources
 
 - C. E. Dangerfield, M. Vyska, C. A. Gilligan, "Resource allocation for epidemic control across multiple sub-populations", Bulletin of Mathematical Biology (2019), Eqs. (1)–(3), (8)–(25), Table 2 and Appendix A, <https://doi.org/10.1007/s11538-019-00584-2>, PMCID PMC6491412.

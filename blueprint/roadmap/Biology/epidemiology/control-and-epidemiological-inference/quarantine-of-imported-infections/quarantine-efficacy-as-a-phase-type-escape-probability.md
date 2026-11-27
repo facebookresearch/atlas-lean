@@ -14,10 +14,6 @@ the probability that at release the traveller is detected, dead, or removed rath
 1. $c(t_q) \in [0,1]$ is non-decreasing in $t_q$, with $c(0) = 0$ when $C(0)$ is supported on unobserved states and $c(t_q) \to 1$ as $t_q \to \infty$.
 2. If arrivals form a Poisson process of rate $\lambda$ and travellers evolve independently, the releases that still carry an unobserved infection form a Poisson process of rate $\lambda_q = (1 - c(t_q))\lambda$, entering the community with distribution proportional to the unobserved-state entries of $e^{Tt_q}C(0)$.
 
-## Depends on
-
-- [SEIR epidemic model](../../seir-epidemic-model/README.md)
-
 ## Expansion
 
 $u\,e^{Tt}C(0)$ is the probability that a continuous-time Markov chain on the stage graph has not yet been absorbed into the detected or removed states, i.e. the survival function of a phase-type distribution. Since the unobserved states form a transient block from which mass can only flow out (to detected or removed states), this survival function decreases to $0$, which gives part 1. Part 2 is Poisson thinning: each arrival independently survives quarantine undetected with probability $1-c$, and independent marking of a Poisson process yields a Poisson process. With two stages per phase and the default $C(0) = (\tfrac14, \tfrac14, 0,0, \tfrac14, \tfrac14, 0,0,0)$, a 7-day quarantine reached an efficacy of about $98.4\%$ for the parameters used, i.e. the effective importation rate fell roughly sixtyfold. The same thinning explains why full border closure helps only when started early: once a few undetected importations seed community transmission, local transmission rather than importation drives the variant's growth.

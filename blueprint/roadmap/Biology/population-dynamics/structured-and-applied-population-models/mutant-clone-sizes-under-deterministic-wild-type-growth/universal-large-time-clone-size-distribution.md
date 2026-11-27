@@ -26,10 +26,6 @@ so the large-time tail decays as $k^{-(1+\gamma^*)}$, and as $k^{-1}$ for subexp
 
 Conditioning on the initiation time turns the clone size into a mixture of geometric-type laws, so its generating function is $a_t^{-1}\int_0^t n_\tau Z_{t-\tau}(s)\,d\tau$. Its singularity closest to the origin is at $s = S_t > 1$, which gives the finite-time cut-off. As $t \to \infty$, the initiation-time density seen backwards from $t$ converges to an exponential with rate $\delta^*$ (or flattens when $\delta^* = 0$), and integrating the birth–death generating function against it gives a hypergeometric limit, $(a_t/n_t)(Y_t(s) - \beta) \to \frac{1}{\gamma^*}\big(1 - {}_2F_1(1,\gamma^*;1+\gamma^*;\xi)\big)$. Singularity analysis at $s = 1$ then gives the power-law tail. The exponent depends on the wild-type growth only through the single number $\delta^*$, which is why the same two-parameter form covers exponential, power-law and logistic growth; the classical Luria–Delbrück setting is the exponential case. Analysis of metastasis size data favored a power-law over an exponential tail.
 
-## Depends on
-
-- [Luria–Delbrück distribution](../../../population-genetics/luria-delbr-ck-distribution/README.md)
-
 ## Sources
 
 - M. D. Nicholson, T. Antal, "Universal asymptotic clone size distribution for general population growth", Bulletin of Mathematical Biology 78 (2016), Equations (1)–(9), Theorem 1, Assumption 1, Lemma 1, Theorem 3 and Corollaries 1–3, <https://doi.org/10.1007/s11538-016-0221-x>, PMCID PMC5090018.

@@ -4,15 +4,15 @@
 
 **Projections.** For a partition $V_1, \dots, V_k$ of $V$, write $s|_{V_j}$ for the projection of a state and lift it to sets; $C_j \subseteq \mathrm{ind}(V_j)$ is an APC on $V_j$ if the APC condition holds after projecting attractors and basins to $V_j$.
 
-**Proposition 1.** If $C^{\min}$ is a min-APC of the network, then for every block $V_j$ the restriction $C^{\min} \cap \mathrm{ind}(V_j)$ is a min-APC on $V_j$, and
+**Proposition 1.** If $C^{\min}$ is a min-APC of the network, then for every block $V_j$ the restriction $C^{\min} \cap \mathrm{ind}(V_j)$ is an APC on $V_j$ (not necessarily a minimum one), and
 
 $$C^{\min} = \bigcup_{j=1}^k \big( C^{\min} \cap \mathrm{ind}(V_j) \big).$$
 
-Consequently $\sum_j |C_j| \le |C^{\min}|$ for any choice of min-APCs $C_j$ on the blocks, and a min-APC of the whole network can be searched for among unions of block-wise min-APCs, enlarging the blocks' candidate sets only when no union is a valid global APC.
+Consequently $\sum_j |C_j| \le |C^{\min}|$ for any choice of min-APCs $C_j$ on the blocks, and a search for a min-APC of the whole network can start from unions of block-wise min-APCs, enlarging the blocks' candidate sets to larger block APCs when no union is a valid global APC. The restriction need not be a min-APC on its block: in the source's Example 2 ($f_1 = f_2 = x_1$, $f_3 = f_4 = x_1 \vee (x_2 \wedge x_4) \vee x_3$, blocks $\{v_1, v_2\}$, $\{v_3, v_4\}$, asynchronous update) the block min-APCs are $\{1\}$ and $\{3\}$, the global ones $\{1,2,3\}$ and $\{1,3,4\}$, and $\{1,3,4\} \cap \mathrm{ind}(V_2) = \{3,4\}$ is not minimum.
 
 ## Expansion
 
-If a perturbation of $s$ lands in $\mathrm{bas}(A_t)$, its projection lands in the projected basin, so the restriction of a global control to a block controls the projected problem; disjointness of the blocks makes the union exact. Minimality transfers because replacing one block's part by a strictly smaller block control would produce a smaller global candidate. Projected basins over-approximate the true ones, so block-wise solutions give a lower bound and candidate sets but must be verified on the full network. Computing basins dominates the cost; the decomposition lets the exponential state space be explored block by block, which makes single-step control (target control from one attractor and full control between all pairs) feasible for large real-life networks and gives perturbation sets for cellular reprogramming.
+If a perturbation of $s$ lands in $\mathrm{bas}(A_t)$, its projection lands in the projected basin, so the restriction of a global control to a block controls the projected problem; disjointness of the blocks makes the union exact. Projected basins over-approximate the true ones, so block-wise solutions give a lower bound and candidate sets but must be verified on the full network. Computing basins dominates the cost; the decomposition lets the exponential state space be explored block by block, which makes single-step control (target control from one attractor and full control between all pairs) feasible for large real-life networks and gives perturbation sets for cellular reprogramming.
 
 ## Sources
 

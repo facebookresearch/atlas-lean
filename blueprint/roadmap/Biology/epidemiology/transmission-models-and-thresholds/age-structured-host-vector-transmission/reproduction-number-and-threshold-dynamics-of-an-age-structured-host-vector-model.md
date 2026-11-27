@@ -18,7 +18,7 @@ where $\mathcal R_{iM}$ is the expected number of infectious humans that end up 
 
 ## Depends on
 
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 ## Proof depends on
 
 - [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)

@@ -19,10 +19,6 @@ $$\lambda_+ = \frac{-(k_1+k_2) + \sqrt{k_1^2 + 6k_1k_2 + k_2^2}}{2},$$
 
 with phase-2 proportion converging to $\tilde g_2 = \lambda_+/k_2$ independently of initial conditions. Matching $\lambda_+ = \bar\beta$ and $\tilde g_2$ to the cycle-averaged PDE proportion $\bar\pi_2$ defines a corresponding ODE; since $\bar\pi_2$ depends on the initial phase ratio while $\bar\beta$ does not, two different initial ratios can map to the same ODE parameters, so the ODE cannot distinguish them.
 
-## Depends on
-
-- [Euler–Lotka equation and the reproduction number](../../../epidemiology/euler-lotka-equation-and-the-reproduction-number/README.md)
-
 ## Expansion
 
 Along characteristics $d\phi/dt = v(\phi)$ the flux $vp$ is conserved, so density jumps by $v_1/u$ or $u/v_1$ when a cohort crosses $\phi = 1/2$ and doubles when it passes through mitosis. After one full cycle every cohort has divided exactly once, giving the factor 2 and the time-periodic shape $\tilde p$, from which $N(t+\eta_1) = 2N(t)$ and periodicity of the proportions follow (for any speed profile $v(\phi)$, not only piecewise-constant ones). This persistent oscillation reflects the deterministic inter-mitotic time; in the ODE, exponentially distributed phase durations dephase cohorts and produce asynchronous exponential growth with fixed proportions. The ODE growth rate is the positive root of the characteristic polynomial $\lambda^2 + (k_1+k_2)\lambda - k_1k_2$ of its rate matrix, and $\tilde g_2$ follows from the eigenvector.

@@ -18,10 +18,6 @@ $$-\mu_{i+1}\,p'(z_i^+) = -\mu_i\,p'(z_i^-) = c, \qquad i = 1, \dots, I-1.$$
 
 So phenotype $1$ fills the rear of the wave and phenotypes of increasing mobility occupy successive bands toward the invading edge.
 
-## Depends on
-
-- [Fisher–KPP travelling waves](../fisher-kpp-travelling-waves/README.md)
-
 ## Expansion
 
 On the support of each phenotype only one species is present, so $p = \omega_i n_i$ there and the travelling-wave equation becomes a scalar equation for $p$: in the rear, $-c p' - \mu_1(p p')' = \alpha_1 G(p)\,p$, a porous-medium-type equation with a pressure-limited source whose solution decreases from $\bar p$; in the non-proliferating bands, mass conservation integrates to $-c\,n_i = \mu_i n_i p'$, i.e. $p' = -c/\mu_i$, so the pressure is linear with slope $-c/\mu_i$ and steeper for less mobile phenotypes. Continuity of the pressure and of the flux at each interface gives the kink conditions; on band $j$ the mass is $M_j = \mu_j(p(z_{j-1})^2 - p(z_j)^2)/(2c\,\omega_j)$, and summing with $p(z_I) = 0$ gives the value of $p(0)$; imposing the masses $M_i$ fixes the interface positions; a shooting argument in $c$ matches the rear solution to the front, as in the single-phenotype case. Segregation requires the ordering of mobilities: a more mobile phenotype behind a less mobile one would overtake it. Numerical simulations of the individual-based model agree closely with the travelling-wave profiles.

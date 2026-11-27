@@ -2,7 +2,7 @@
 
 Let a protein-ligand complex have $n$ protein atoms and $m$ ligand atoms, and let its persistence fingerprint be a fixed vector of bin integrals of internuclear persistence contours, sums of Gaussians centered at the critical values of opposition-distance Vietoris-Rips persistence (protein-ligand interatomic distances). Let $\omega \approx 2.4$ be the matrix multiplication exponent.
 
-**Theorem.** Assume a fixed positive lower bound on interatomic distances. For every $\varepsilon > 0$, after an $O(mn \log(mn))$ preprocessing step, an approximation of the persistence fingerprint can be computed in time $O\big(m \log^{6\omega}(m/\varepsilon)\big)$, independent of the protein size $n$, such that every component differs from the exact component by less than $\varepsilon$.
+**Theorem.** Assume a fixed positive lower bound on interatomic distances. For every $0 < \varepsilon < 1$, after an $O(mn \log(mn))$ preprocessing step, an approximation of the persistence fingerprint can be computed in time $O\big(m \log^{6\omega}(m/\varepsilon)\big)$, independent of the protein size $n$, such that every component differs from the exact component by less than $\varepsilon$.
 
 ## Depends on
 

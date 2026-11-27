@@ -32,10 +32,6 @@ $$V(I,S) = S - S^*\ln\frac{S}{S^*} + I - I^*\ln\frac{I}{I^*} + \frac{1}{\beta}\i
 
 Trajectories crossing the nullcline $S = S^*$ only finitely often eventually stay on one branch and converge. For infinitely many crossings, the successive crossing points are compared arc by arc, which forces convergence to a simple periodic orbit along which the operator traces a hysteresis loop. Convexity of the loops makes the sublevel sets of the branch Lyapunov functions convex, and a small loop width bounds the jump $V_{u_1} - V_{u_2}$ incurred at each switch, which rules out the periodic orbit. With a single relay (perfectly homogeneous response) a stable endemic equilibrium can instead coexist with a stable periodic orbit, so heterogeneity of the behavioral response is what stabilizes the endemic state.
 
-## Depends on
-
-- [Kermack–McKendrick SIR model](../../kermack-mckendrick-sir-model/README.md)
-
 ## Sources
 
 - J. Kopfová, P. Nábělková, D. Rachinskii, S. C. Rouf, "Dynamics of SIR model with vaccination and heterogeneous behavioral response of individuals modeled by the Preisach operator", Journal of Mathematical Biology (2021), model (3), (7), (13), (24), equilibria (25)–(28), Proposition 1 with Lyapunov function (32)–(33), Theorem 1, assumption (A), loop width (22) and Theorem 2, <https://doi.org/10.1007/s00285-021-01629-8>, PMCID PMC8255057.

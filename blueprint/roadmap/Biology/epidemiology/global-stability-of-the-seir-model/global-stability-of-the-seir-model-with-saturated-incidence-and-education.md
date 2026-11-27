@@ -17,11 +17,6 @@ $$\mathcal R_0 = \frac{\beta \Pi \kappa (k_3 + \eta\sigma)}{\mu k_1 k_2 k_3}.$$
 2. The system is uniformly persistent in the interior of $\mathcal D$ if and only if $\mathcal R_0 > 1$, and then has at least one endemic equilibrium.
 3. If educated infected do not transmit ($\eta = 0$), then $\mathcal R_0^r = \beta\Pi\kappa/(\mu k_1 k_2)$ and for $\mathcal R_0^r > 1$ the endemic equilibrium is unique and globally asymptotically stable in the interior of $\mathcal D$.
 
-## Depends on
-
-- [Global stability of the SEIR model](README.md)
-- [Next-generation matrix and the basic reproduction number](../next-generation-matrix-and-the-basic-reproductio/README.md)
-
 ## Proof depends on
 
 - [LaSalle's invariance principle](../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)

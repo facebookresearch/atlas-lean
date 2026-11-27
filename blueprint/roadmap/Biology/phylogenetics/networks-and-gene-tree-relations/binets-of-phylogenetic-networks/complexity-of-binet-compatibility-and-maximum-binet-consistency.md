@@ -1,6 +1,6 @@
-# Complexity of binet compatibility and maximum binet consistency
+# Complexity of binet compatibility and maximum binet compatibility
 
-Use the definitions of binets, subnets and compatibility from [Compatibility of level-1 binets](compatibility-of-level-1-binets.md). For a digraph $G$ on $X$ let $\mathcal R(G) = \{R(x;y) : (x,y) \in E(G)\}$ be the set of reticulate binary level-1 binets it induces. The **maximum binet consistency** problem (MBC) asks, for a set $\mathcal B$ of binary level-1 binets and an integer $k$, whether some network displays at least $k$ binets of $\mathcal B$.
+Use the definitions of binets, subnets and compatibility from [Compatibility of level-1 binets](compatibility-of-level-1-binets.md). For a digraph $G$ on $X$ let $\mathcal R(G) = \{R(x;y) : (x,y) \in E(G)\}$ be the set of reticulate binary level-1 binets it induces. The **maximum binet compatibility** problem (MBC) asks, for a set $\mathcal B$ of binary level-1 binets and an integer $k$, whether some binary network displays at least $k$ binets of $\mathcal B$, that is, whether $\mathcal B$ has a compatible subset of size at least $k$ (compatibility meaning display by a binary network; display by an arbitrary network is a different notion).
 
 **Theorem.**
 1. (Acyclicity) $\mathcal R(G)$ is compatible if and only if $G$ is acyclic.

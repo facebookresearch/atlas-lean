@@ -6,7 +6,7 @@ $$J_1(v) = \lim_{T \to \infty} \frac{1}{T}\int_0^T \frac{\partial_t \eta(v, t)}{
 
 **Theorem.** Assume the limit exists for every $v$ with $\eta(v, 0) > 0$, and that every point has a neighbourhood on which the convergence is uniform. Then $J_1(v) > J_1(w)$ implies $v \succ w$; that is, $J_1$ is an evolutionary fitness.
 
-**Corollary.** If in addition $J_1$ is continuous and $v^*$ is a global maximiser, then $J_1(v^*) = 0$: the fittest strategy has zero long-run per-capita growth.
+**Corollary.** If in addition $J_1$ is continuous, the total presence $\mu^{(t)}(V)$ does not tend to $0$ as $t \to \infty$ (persistence), and $v^*$ is a global maximiser, then $J_1(v^*) = 0$: the fittest strategy has zero long-run per-capita growth.
 
 **Example (logistic selection).** For $\partial_t \rho(v,t) = k(v)\rho - r(v)\rho\int_0^1 \rho\,dv$ with $k, r > 0$, the generalised density $\eta = \rho^{1/r(v)}$ obeys $\partial_t \eta = \big(k(v)/r(v)\big)\eta - \eta\int_0^1 \rho\,dw$, so $J = k(v)/r(v)$ is an evolutionary fitness independent of initial conditions.
 

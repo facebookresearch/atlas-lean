@@ -13,15 +13,14 @@ $\delta = 0$ is exactly the condition for $D$ to be additive (realized by a weig
 **Theorem.**
 1. For every $d \ge 2$ and $\kappa < 0$, $\mathbb H^d$ with curvature $\kappa$ is $\delta$-hyperbolic, and the minimal constant scales as $\delta_{d,\kappa} = \delta_{d,-1}/\sqrt{-\kappa}$; in particular $\delta_{d,\kappa} \to 0$ as $\kappa \to -\infty$.
 2. (Stability of neighbour-joining) If $\|D - D_T\|_\infty < \tfrac12 \min_{e \in E(T)} \ell_e$ for an additive tree metric $D_T$, then $\mathrm{NJ}(D)$ has the topology of $T$.
-3. Consequently, as $\kappa \to -\infty$, the embedded distances approach tree-additive distances, neighbour-joining decodes a unique tree, and the length of the decoded tree $\ell(\mathrm{NJ}(D(X)))$ depends continuously on the embedding locations $X$, even across topology changes.
 
 ## Depends on
 
-- [Atteson's theorem on neighbor-joining](../../atteson-s-theorem-on-neighbor-joining/README.md)
+- [Atteson's theorem: neighbor joining has sup-norm radius one half](../../atteson-s-theorem-on-neighbor-joining/nj-run-splits-of-abs-sub-lt.md)
 
 ## Expansion
 
-Part 1: all hyperbolic spaces of constant curvature $\kappa$ are rescalings of the unit-curvature space by the factor $1/\sqrt{-\kappa}$, and the four-point defect scales linearly with distances, which gives the scaling of $\delta$. Part 2 is the $\ell_\infty$ radius $1/2$ of neighbour-joining. Part 3 combines the two: for sufficiently negative curvature the defect of the embedded distances is small relative to the shortest branch, so NJ is in its consistent regime, where its output distances match the input distances up to the defect; since hyperbolic distances are continuous in $X$, so are the decoded branch lengths and total tree length. This continuity justifies Markov chain Monte Carlo that moves taxon points in $\mathbb R^{n \times d}$ instead of making discrete tree moves. When the curvature is too close to $0$, NJ ties and non-additivity make the decoded tree depend on arbitrary merge choices, and the embedding loses fidelity for Bayesian inference.
+Part 1: all hyperbolic spaces of constant curvature $\kappa$ are rescalings of the unit-curvature space by the factor $1/\sqrt{-\kappa}$, and the four-point defect scales linearly with distances, which gives the scaling of $\delta$. Part 2 is the $\ell_\infty$ radius $1/2$ of neighbour-joining. The source combines the two heuristically: for strongly negative curvature the four-point defect is small, so NJ should be in its consistent regime, and since hyperbolic distances are continuous in $X$ the decoded branch lengths would be too, which motivates Markov chain Monte Carlo that moves taxon points in $\mathbb R^{n \times d}$ instead of making discrete tree moves. This is not a theorem for a fixed embedding: for fixed $X$, $D(X)$ is only rescaled by $1/\sqrt{-\kappa}$ as $\kappa$ varies, and neighbour-joining is scale invariant, so changing $\kappa$ resolves no tie (four points with tangent coordinates of equal norm at angles $0, \pi/2, \pi, 3\pi/2$ leave the two quartet splits $12|34$ and $14|23$ tied for every $\kappa < 0$); the defect is small relative to the branch lengths only if the embedding is rescaled with $\kappa$.
 
 ## Sources
 

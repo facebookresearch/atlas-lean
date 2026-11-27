@@ -18,7 +18,7 @@ $$\Delta_{\tilde b}(x) = \max\big(0,\; |\tilde b(x) - \tilde b(x_l)| + |\tilde b
 
 ## Depends on
 
-- [Small parsimony problem](../../small-parsimony-problem/README.md)
+- [Fitch's algorithm](../../small-parsimony-problem/fitch.md)
 
 ## Expansion
 

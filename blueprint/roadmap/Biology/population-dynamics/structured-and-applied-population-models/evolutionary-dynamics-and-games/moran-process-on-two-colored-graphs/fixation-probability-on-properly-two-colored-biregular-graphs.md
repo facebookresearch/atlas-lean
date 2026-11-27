@@ -16,10 +16,6 @@ $$\rho_A = \frac{1 - \frac{1}{N}\big(N_G\,\zeta_G + N_R\,\zeta_R\big)}{1 - \zeta
 
 and $\rho_B$ is obtained by exchanging the roles of $(a_G, a_R)$ and $(b_G, b_R)$. In particular, $\rho_A$ depends on the graph only through $(N_G, N_R, k_G, k_R)$, so every properly two-colored regular graph ($k_G = k_R$, hence $N_G = N_R$) has the same fixation probabilities as the complete bipartite graph $K_{N/2,N/2}$, independently of the degree.
 
-## Depends on
-
-- [Isothermal theorem for evolutionary graph dynamics](../../../isothermal-theorem-for-evolutionary-graph-dynami/README.md)
-
 ## Expansion
 
 Seek constants $\zeta_1,\dots,\zeta_N$ such that $\zeta^{X_n} = \prod_i \zeta_i^{X_{n,i}}$ is a martingale for the state $X_n \in \{0,1\}^N$ (1 marks an $A$ node). The martingale condition is a pseudo-Boolean identity in $x$, so its linear and quadratic coefficients must vanish separately. With a proper two-coloring and color-constant degrees one can take $\zeta_i = \zeta_G$ on green and $\zeta_i = \zeta_R$ on red nodes; the linear equations then force the stated values of $\zeta_G, \zeta_R$, and the quadratic equations hold automatically. Optional stopping gives $\zeta^{x} = (1 - \rho_A(x)) + \rho_A(x)\,\zeta_G^{N_G}\zeta_R^{N_R}$, i.e. $\rho_A(x) = (1 - \zeta^x)/(1 - \zeta_G^{N_G}\zeta_R^{N_R})$, and averaging over a uniformly placed mutant (green with probability $N_G/N$) yields the formula. Example: on the star with a red center, $N_G = k_R = N-1$ and $N_R = k_G = 1$.

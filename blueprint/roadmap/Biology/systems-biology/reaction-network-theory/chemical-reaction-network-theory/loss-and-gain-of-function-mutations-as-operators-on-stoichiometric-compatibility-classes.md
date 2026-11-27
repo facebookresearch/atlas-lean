@@ -12,7 +12,7 @@ Let a chemical reaction network with $n$ species and $r$ reactions evolve by $\d
 
 ## Depends on
 
-- [Chemical reaction network theory](README.md)
+- [Stoichiometric subspace](../../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
 
 ## Expansion
 

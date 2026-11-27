@@ -21,8 +21,8 @@ a Lotka–Volterra system up to a remainder of order $\varepsilon^2$.
 
 ## Depends on
 
-- [Classification of adaptive dynamics singular strategies](../../../classification-of-adaptive-dynamics-singular-str/README.md)
-- [Replicator and Lotka–Volterra equivalence](../../../replicator-and-lotka-volterra-equivalence/README.md)
+- [Singular strategy of an invasion fitness](../../../classification-of-adaptive-dynamics-singular-str/is-singular.md)
+- [Generalized Lotka–Volterra vector field](../../../replicator-and-lotka-volterra-equivalence/lv-field.md)
 
 ## Expansion
 

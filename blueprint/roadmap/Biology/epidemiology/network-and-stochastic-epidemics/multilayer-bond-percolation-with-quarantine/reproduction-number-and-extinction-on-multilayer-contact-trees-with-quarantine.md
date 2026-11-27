@@ -18,10 +18,6 @@ where $\sigma(k_j)^2$ is the variance of the class-$j$ degree.
 
 An individual reached along a class-$i$ edge has that edge's class-$i$ excess degree and unchanged degrees in the other classes. It is reached via class $i$ with probability $E(k_i)/E(k)$. Summing the expected number of onward transmissions $T_j$ per edge over the excess-degree means $E(k_j) - \delta_{ij} + \delta_{ij}\sigma(k_j)^2/E(k_j)$ gives the formula: the variance term shows that heterogeneity in any single layer inflates $R_0$ in proportion to that layer's transmissibility. Isolation multiplies every non-trivial offspring event by $1-Q$, so it scales $R_0$ linearly. The fixed-point statements are the Galton–Watson dichotomy, proved here from convexity of $\tilde Z$: $f(x) = x - \tilde Z(x)$ is strictly concave, so it has at most one zero in $(0,1)$, which exists exactly when $f'(1) = 1 - R_0 < 0$. The single-layer case recovers the classical bond-percolation results for configuration-model networks.
 
-## Depends on
-
-- [Epidemics on networks](../../epidemics-on-networks/README.md)
-
 ## Sources
 
 - G. Oliveira, "Early epidemic spread, percolation and Covid-19", Journal of Mathematical Biology (2020), Sections 2–4, Eqs. (2.1)–(2.4), Propositions 1–2, Remarks 3–4 and Theorems 3–4, <https://doi.org/10.1007/s00285-020-01539-1>, PMCID PMC7499022.

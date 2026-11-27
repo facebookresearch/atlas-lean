@@ -6,7 +6,7 @@ $$\dot I_0=-(\lambda I+\delta)I_0+\gamma_LI_L-rI_0,\qquad \dot I=(1-\alpha)(\lam
 
 Without importation, the reproduction numbers without and with control are
 
-$$R_0=\frac{\lambda(\gamma_L+f)(\gamma_L+r)}{r\gamma_L(f+\gamma_L+r)}=\frac\lambda r+\frac{\lambda f}{\gamma_L(f+\gamma_L+r)},\qquad R_c=\frac{\lambda(1-\alpha)(\gamma_L+r)(f+\gamma_L)}{r\gamma_L(f+\gamma_L+r)+\alpha f\bigl(\beta(r+\gamma_L)-\gamma_L\bigr)}.$$
+$$R_0=\frac{\lambda(\gamma_L+f)(\gamma_L+r)}{r\gamma_L(f+\gamma_L+r)}=\frac\lambda r+\frac{\lambda f}{\gamma_L(f+\gamma_L+r)},\qquad R_c=\frac{\lambda(1-\alpha)(\gamma_L+r)(f+\gamma_L)}{r\bigl[\gamma_L(f+\gamma_L+r)+\alpha f\bigl(\beta(r+\gamma_L)-\gamma_L\bigr)\bigr]}.$$
 
 **Calibration.** Let $h$ be the observed incidence of treated cases, $\rho$ the observation rate and $p$ the observed proportion of imported cases. At equilibrium,
 

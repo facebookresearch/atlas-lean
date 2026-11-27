@@ -24,10 +24,6 @@ exists and is bounded. Then there is an optimal policy that uses the full effort
 
 Monotonicity is proved by comparing the two solutions componentwise: with more cumulative vaccination, at every time the unvaccinated susceptible pool is smaller and the combined "ever infected" counts $I_i + I_i^V + R_i + R_i^V$ end up no larger, although at a fixed finite time the better policy can transiently show more infections or deaths, which is why intuition alone does not settle the claim. The random-allocation model is what makes cumulative doses, rather than instantaneous rates, the natural control: giving a dose earlier is equivalent to raising $W_i$ at every later time. Optimality of maximal effort then follows by building, from an optimal policy, a full-effort policy whose cumulative doses are at least as large in every group, which by monotonicity is no worse. The result covers both mortality and infection objectives, but leaves open which group should receive the doses.
 
-## Depends on
-
-- [Kermack–McKendrick SIR model](../../kermack-mckendrick-sir-model/README.md)
-
 ## Sources
 
 - M. J. Penn, C. A. Donnelly, "Optimality of maximal-effort vaccination", Bulletin of Mathematical Biology (2023), model (1)–(5) and its reduction to the standard model (Eq 4), optimization problem (6), Theorems 1–3 and Propositions 1–2, <https://doi.org/10.1007/s11538-023-01179-8>, PMCID PMC10290047.

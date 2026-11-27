@@ -10,9 +10,9 @@ with total population $T = S + I$. The disease-free fixed point is $\bar S^* = \
 
 **Hydra effects.** At a fixed point $(S^*, I^*)$, a *classical* hydra effect with respect to a fitness-reducing parameter $\alpha \in \{\tilde w, \mu\}$ means $\partial T^*/\partial\alpha > 0$; at a $k$-cycle, the cycle average of $\partial T_i^*/\partial\alpha$ is positive. An *infection-induced* hydra effect means the with-disease system has a fixed point with $S^* + I^* > \bar S^*$.
 
-1. **Endemic equilibrium.** The endemic fixed point ($I^* > 0$) exists and is unique, and it satisfies $S^* + wI^* < \bar S^*$: the *effective reproducing* population is always below the disease-free level.
+1. **Endemic equilibrium.** Let $\nu = (1 - d)(1 - \mu)$ and $C = b(1 - \nu)/(\beta(1 - d))$. If $\tilde w = 0$, an endemic fixed point ($I^* > 0$) exists if and only if $d/r < e^{-C}$, and it is then unique; if $\tilde w > 0$ the same holds when $C \ge 3$ (the convexity condition used in the source's proof of Lemma 4, App. B.5). An endemic fixed point satisfies $S^* + wI^* < \bar S^*$: the *effective reproducing* population is always below the disease-free level.
 2. **Mortality hydra implies fecundity hydra.** If $\ln\frac rd < \dfrac{wbd}{\beta(1 - d)}$ and there is a classical hydra effect in $\mu$ at the fixed point ($\partial T^*/\partial\mu > 0$), then there is also one in the fecundity reduction ($\partial T^*/\partial\tilde w > 0$).
-3. **Sufficient condition for an infection-induced hydra effect.** If
+3. **Sufficient condition for an infection-induced hydra effect.** If the endemic fixed point exists (item 1) and
 
 $$w < 1 - \frac{\beta}{b} \qquad\text{and}\qquad d \ge \frac12,$$
 
@@ -22,7 +22,7 @@ Numerically, hydra effects are most widespread when the disease-free population 
 
 ## Expansion
 
-Item 1 reduces the fixed-point equations to a single equation in $z \propto I^*/S^*$ and shows it has exactly one positive root. The inequality $S^* + wI^* < \bar S^*$ reflects that Ricker reproduction depends only on the effective density $S + wI$, while the extra loss of infected hosts must be compensated by more reproduction, which for overcompensatory growth occurs at lower effective density. The total $S^* + I^*$ exceeds $\bar S^*$ when the infected class is large but contributes little to density dependence: low $w$ (infected hosts barely reproduce, so they do not depress others' fecundity) and high natural turnover $d$ (so the growth term dominates) give item 3. Item 2 follows by comparing the implicit derivatives of $T^*$ with respect to $\mu$ and $\tilde w$ through the Jacobian of the fixed-point map, using item 1 and the stated bound to fix signs.
+Item 1 reduces the fixed-point equations to a single equation $\ln(1 - Cz) = g(z)$ in $z = \beta I^*/(bS^*)$; the left side is strictly concave on $(0, 1/C)$ and, when $g$ is strictly convex, the graphs meet at a positive $z$ at most once, and exactly once iff $d/r < e^{-C}$. The inequality $S^* + wI^* < \bar S^*$ reflects that Ricker reproduction depends only on the effective density $S + wI$, while the extra loss of infected hosts must be compensated by more reproduction, which for overcompensatory growth occurs at lower effective density. The total $S^* + I^*$ exceeds $\bar S^*$ when the infected class is large but contributes little to density dependence: low $w$ (infected hosts barely reproduce, so they do not depress others' fecundity) and high natural turnover $d$ (so the growth term dominates) give item 3. Item 2 follows by comparing the implicit derivatives of $T^*$ with respect to $\mu$ and $\tilde w$ through the Jacobian of the fixed-point map, using item 1 and the stated bound to fix signs.
 
 ## Sources
 

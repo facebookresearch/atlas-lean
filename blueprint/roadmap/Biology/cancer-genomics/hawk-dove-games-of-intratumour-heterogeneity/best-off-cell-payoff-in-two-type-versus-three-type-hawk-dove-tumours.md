@@ -21,7 +21,7 @@ the best-off payoff $U_A^{***}(x_A, x_E)$ increases in $x_A$ and decreases in $x
 
 ## Depends on
 
-- [Stability of evolutionarily stable states](../../population-dynamics/stability-of-evolutionarily-stable-states/README.md)
+- [Evolutionarily stable state of a matrix game](../../population-dynamics/stability-of-evolutionarily-stable-states/is-ess.md)
 
 ## Expansion
 

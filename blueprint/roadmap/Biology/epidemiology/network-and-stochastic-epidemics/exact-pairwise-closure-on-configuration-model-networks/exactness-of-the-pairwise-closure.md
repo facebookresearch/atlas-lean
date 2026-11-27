@@ -13,7 +13,6 @@ $$[ASI] \simeq \kappa\,\frac{[AS][SI]}{[S]}.$$
 ## Depends on
 
 - [Poisson-type degree distributions](poisson-type-degree-distributions.md)
-- [Epidemics on networks](../../epidemics-on-networks/README.md)
 
 ## Expansion
 

@@ -10,7 +10,7 @@ Fix disease compartments $S_I = \{x_1, \dots, x_s\}$. Fix three disjoint sets of
 
 - **(G1)** No arrows join $S_I$ and $T_S$, and no arrow goes from a compartment outside $S_I$ to a transition in $T_I$.
 - **(G2)** If $z_j \in T_{IP}$ has no input from $S_I$, then it has no output to $S_I$.
-- **(G3)** $n_{ij} \ge m_{ij}$ for $x_i \in S_I$ and $z_j \in T_{IP} \cup T_I$.
+- **(G3)** $n_{ij} \ge m_{ij}$ for $x_i \in S_I$ and $z_j \in T_{IP}$.
 - **(G4)** $\sum_{i=1}^{s}(m_{ij} - n_{ij}) \ge 0$ for every $z_j \in T_I$.
 - **(G5)** The rate equations of the net with the infection module removed have a locally asymptotically stable disease-free equilibrium.
 
@@ -36,7 +36,7 @@ Under (G1)–(G4), this splitting satisfies the van den Driessche–Watmough hyp
 
 ## Expansion
 
-(G1) removes demographic transitions from the disease equations, which gives the split. Hypothesis (A1) holds because $\mathcal{F}_i(0, y)$ only collects transitions in $T_{IP}$ with no disease input, and (G2) kills these. (A2), $\mathcal{F} \ge 0$, follows from (G3). For (A3), at $x_i = 0$ only terms with $m_{ij} = 0$ survive in $\mathcal{V}_i$, and they carry the sign of $-n_{ij} \le 0$. (A4), $\sum_i \mathcal{V}_i \ge 0$, is (G4). Differentiating, (G3) gives $F \ge 0$ and makes the off-diagonal entries of $V$ nonpositive. Since $\sum_i \mathcal{V}_i \ge 0$ vanishes at the equilibrium, the column sums of $V$ are nonnegative, so $V$ is an M-matrix. The Jacobian is block triangular, $\begin{pmatrix} F - V & 0 \\ J_{21} & J_{22} \end{pmatrix}$, with $J_{22}$ Hurwitz by (G5). The $R_0$ threshold for $F - V$ then gives the result. The $(i,k)$ entry of $FV^{-1}$ can also be read as a sum over paths in the net from $x_k$ to $x_i$ that cross exactly one infection-process transition. Each path is weighted by the flow of susceptibles at that transition times the product of branching ratios along the path.
+(G1) removes demographic transitions from the disease equations, which gives the split. Hypothesis (A1) holds because $\mathcal{F}_i(0, y)$ only collects transitions in $T_{IP}$ with no disease input, and (G2) kills these. (A2), $\mathcal{F} \ge 0$, follows from (G3). For (A3), at $x_i = 0$ only terms with $m_{ij} = 0$ survive in $\mathcal{V}_i$, and they carry the sign of $-n_{ij} \le 0$. (A4), $\sum_i \mathcal{V}_i \ge 0$, is (G4). Differentiating, (G3) gives $F \ge 0$. The off-diagonal entries of $V$ are nonpositive without further hypotheses: by (G1) every $z_j \in T_I$ has all its inputs in $S_I$, so at the disease-free equilibrium $\partial \mathcal V_i/\partial x_k$ ($k \ne i$) collects only transitions whose single input arrow comes from $x_k$; for these $m_{ij} = 0$, and the entry is $-\sum_j r_j n_{ij} \le 0$. (Requiring (G3) on $T_I$ as well would, with (G4), force $m_{ij} = n_{ij}$ on $S_I \times T_I$ and so $\mathcal V \equiv 0$.) Since $\sum_i \mathcal{V}_i \ge 0$ vanishes at the equilibrium, the column sums of $V$ are nonnegative, so $V$ is an M-matrix. The Jacobian is block triangular, $\begin{pmatrix} F - V & 0 \\ J_{21} & J_{22} \end{pmatrix}$, with $J_{22}$ Hurwitz by (G5). The $R_0$ threshold for $F - V$ then gives the result. The $(i,k)$ entry of $FV^{-1}$ can also be read as a sum over paths in the net from $x_k$ to $x_i$ that cross exactly one infection-process transition. Each path is weighted by the flow of susceptibles at that transition times the product of branching ratios along the path.
 
 ## Sources
 

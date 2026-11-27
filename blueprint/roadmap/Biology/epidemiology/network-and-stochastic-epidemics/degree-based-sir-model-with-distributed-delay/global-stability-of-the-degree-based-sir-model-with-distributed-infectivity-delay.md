@@ -4,12 +4,12 @@
 
 $$\dot S_k = \mu - \mu S_k - \beta k S_k \int_0^\infty f(\tau) e^{-(\mu+\gamma)\tau}\, \theta(t-\tau)\, d\tau, \qquad \dot I_k = \beta k S_k \int_0^\infty f(\tau) e^{-(\mu+\gamma)\tau}\, \theta(t-\tau)\, d\tau - (\mu + \gamma) I_k,$$
 
-$k = 1, \dots, n$, with $\theta(t) = \sum_k a_k I_k(t)$, $a_k = kP(k)/\langle k\rangle$, $\mu, \beta, \gamma > 0$, an integrable kernel $f \ge 0$, $\hat f = \int_0^\infty f(\tau) e^{-(\mu+\gamma)\tau}\, d\tau > 0$, and $\mathcal R_0 = \beta \hat f \langle k^2\rangle / ((\mu+\gamma)\langle k\rangle)$. Initial data are continuous with $I_k(u) = \phi_k(u) \ge 0$ for $u \le 0$; the set $\Omega = \{0 \le S_k, I_k,\ S_k + I_k \le 1\}$ is positively invariant.
+$k = 1, \dots, n$, with $\theta(t) = \sum_k a_k I_k(t)$, $a_k = kP(k)/\langle k\rangle$, $\mu, \beta, \gamma > 0$, an integrable kernel $f \ge 0$, $\hat f = \int_0^\infty f(\tau) e^{-(\mu+\gamma)\tau}\, d\tau > 0$, and $\mathcal R_0 = \beta \hat f \langle k^2\rangle / ((\mu+\gamma)\langle k\rangle)$. Initial data are continuous with positive histories, $I_k(u) = \phi_k(u) > 0$ for $u \le 0$ (source Eq. (4)); the set $\Omega = \{0 \le S_k, I_k,\ S_k + I_k \le 1\}$ is positively invariant.
 
 **Theorem.**
 
 1. If $\mathcal R_0 \le 1$, the disease-free equilibrium $E_0$ ($S_k = 1$, $I_k = 0$) is the only equilibrium and is globally asymptotically stable in $\Omega$.
-2. If $\mathcal R_0 > 1$, the unique endemic equilibrium $E_+ = (S_k^*, I_k^*)_k$ is globally asymptotically stable in $\Omega \setminus \{E_0\}$.
+2. If $\mathcal R_0 > 1$, the unique endemic equilibrium $E_+ = (S_k^*, I_k^*)_k$ is globally asymptotically stable for solutions in $\Omega$ with such positive histories.
 
 So the delay kernel changes the value of the threshold through $\hat f$ but cannot create oscillations or multistability: the dynamics are those of a sharp threshold at $\mathcal R_0 = 1$.
 

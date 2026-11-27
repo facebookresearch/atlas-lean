@@ -4,7 +4,7 @@ In the [activation-status structured HIV model](reproduction-number-threshold-of
 
 **Lyapunov functional.** Let $\kappa(a) = a - 1 - \ln a \ge 0$, with equality only at $a = 1$, and set
 
-$$\psi(x, y) = \beta(x)\eta(y)(1 - \xi) k_2 H^* + d\, \gamma(y, x) I^*(y) + d\, \beta(x)(1 - \epsilon(y)) k_1 H^* I^*(y), \qquad x, y \in [0, 1].$$
+$$\psi(x, y) = \big[\beta(x)\eta(y)(1 - \xi) k_2 H^* + d\, \gamma(y, x)\big] I^*(y) + d\, \beta(x)(1 - \epsilon(y)) k_1 H^* I^*(y), \qquad x, y \in [0, 1].$$
 
 Since $\psi$ is continuous with $\psi(x, x) > 0$, there is a nonnegative Borel weight $w$ on $[0, 1]$ (Thieme 2011, Proposition 11.1) such that $w(x)\int_0^1 \psi(x, y)\, dy$ is integrable and
 

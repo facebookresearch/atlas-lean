@@ -26,7 +26,8 @@ $$\frac{dx_1}{d\tau} = \tfrac12\mu_1\sigma_1^2 S^*\,g_1, \qquad \frac{dx_2}{d\ta
 
 ## Depends on
 
-- [Classification of adaptive dynamics singular strategies](../../../classification-of-adaptive-dynamics-singular-str/README.md)
+- [Convergence stability](../../../classification-of-adaptive-dynamics-singular-str/convergence-stable-iff-and-gradient.md)
+- [Evolutionary branching point](../../../classification-of-adaptive-dynamics-singular-str/branching-point.md)
 
 ## Proof depends on
 

@@ -8,15 +8,15 @@ $$p_l(t) = P(\tau'_l \le t < \tau'_{l+1}) = \Big(\prod_{i=0}^{l-1} u_i\Big) \sum
 
 where $\tau'_{l+1} = \sum_{i=0}^{l} \mathrm{Exp}(u_i)$ is the arrival time of type $l+1$ in one lineage (a hypoexponential law with density $\sum_{i=0}^l \prod_{j \ne i} \frac{u_j}{u_j - u_i}\, u_i e^{-u_i x}$). Hence $N_l(t) \sim \mathrm{Binomial}(N, p_l(t))$ and, for small mutation rates,
 
-$$p_l(t) = \frac{\prod_{i=0}^{l-1} u_i\; t^l}{l!} + o\big(\|u\|^{l+1}\big), \qquad \mathbb E[N_l(t)] \approx N \prod_{i=0}^{l-1} u_i \frac{t^l}{l!},$$
+$$p_l(t) = \frac{\prod_{i=0}^{l-1} u_i\; t^l}{l!} + O\big(\|u\|^{l+1}\big), \qquad \mathbb E[N_l(t)] \approx N \prod_{i=0}^{l-1} u_i \frac{t^l}{l!},$$
 
 the Armitage–Doll power law of cancer incidence.
 
-**Lemma 1 (first growing type).** In a single lineage, the first growing type satisfies almost surely
+**Lemma 1 (first growing type).** In a single lineage, let $N^{*\prime}_{k+1}$ be the type-$(k+1)$ count of the approximating process in which type-$k+1$ cells do not mutate further (the source's $Z^*_{k+1}$; in the true process, for $u_{k+1}>0$, the clone grows at rate $\lambda_{k+1}-u_{k+1}$ and the limit below is $0$). Then almost surely
 
-$$\lim_{t \to \infty} e^{-\lambda_{k+1} t} N'_{k+1}(t) = X_{k+1} := V_{k+1} e^{-\lambda_{k+1}\tau'_{k+1}},$$
+$$\lim_{t \to \infty} e^{-\lambda_{k+1} t} N^{*\prime}_{k+1}(t) = X_{k+1} := V_{k+1} e^{-\lambda_{k+1}\tau'_{k+1}},$$
 
-where $V_{k+1}$ is the limit for a clone founded at time $0$, and
+where $V_{k+1}$ is the limit for a clone founded at time $0$. If moreover type $k+1$ does not die ($d_{k+1} = 0$, the source's assumption A2), so that $\mathbb E\big[e^{-\theta V_{k+1}}\big] = 1/(1+\theta)$, then
 
 $$\mathbb E\big[e^{-\theta X_{k+1}}\big] = \sum_{i=0}^k \Big(\prod_{j \ne i} \frac{u_j}{u_j - u_i}\Big)\, {}_2F_1\Big(1, \frac{u_i}{\lambda_{k+1}}; 1 + \frac{u_i}{\lambda_{k+1}}; -\theta\Big).$$
 

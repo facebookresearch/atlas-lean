@@ -18,10 +18,6 @@ $$E[X_\infty] = (e^{\top}\otimes I_d)\,(\mathcal A - \Lambda\otimes I_d)^{-1}\,\
 
 When only zero-order rates are modulated ($A(z) \equiv A$), $E[X_\infty] = A^{-1}E_\pi[b(Z)]$ coincides with the averaged-rate (quasi-steady-state) prediction $\bar A^{-1}\bar b$; when first-order rates are modulated the two generally differ, so environmental randomness is visible already in the stationary mean.
 
-## Depends on
-
-- [Stochastic reaction networks](../stochastic-reaction-networks/README.md)
-
 ## Expansion
 
 By the ergodic theorem, $E[X_\infty]$ is the long-run time average of $X$, which can be split over the sojourn intervals $[\tau_n, \tau_{n+1})$ of the environment. Within a sojourn in state $z$ the conditional mean $Y(t) = E[X(t)\mid Z_{[0,t]}]$ solves the linear ODE $\dot Y = b(z) - A(z)Y$, and the sojourn length is exponential with rate $\Lambda_0(z)$; integrating against this exponential law (using $E[e^{-AT}] = \mu(\mu I + A)^{-1}$ for $T \sim \mathrm{Exp}(\mu)$, valid because the eigenvalues of $A$ have non-negative real part) expresses the expected end value and time integral of $Y$ over a sojourn linearly in the start value. Stationarity of the embedded chain with weights $\tilde\pi = \pi\Lambda_0$ turns these into the linear recursion for $x(z)$, and reweighting each state's time integral by its stationary sojourn frequency gives the sum $\sum_z\pi(z)x(z)$. For $d = 1$ the block formula becomes $e^\top(\mathcal A - \Lambda)^{-1}\mathcal B\pi$, matching a queueing-theory result of O'Cinneide and Purdue (1986, Theorem 3.1).

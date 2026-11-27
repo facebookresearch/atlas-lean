@@ -12,7 +12,9 @@ $$x(n+1) = \frac{A_n\, x(n)}{b\, x(n) + \big(A_n - b\, x(n)\big) e^{-A_n}} \qqua
 
 with the limit $x(n+1) = x(n)/(1 + b\,x(n))$ when $A_n = 0$. Hence the continuous-time system is equivalent to an explicit system of difference equations whose global behavior is that of the original model at integer times.
 
-**Proposition (diagonal multiplier).** If $A$ does not depend on $x$ and $A > 0$, the one-dimensional map $f(x) = A x / (b x + (A - bx) e^{-A})$ has the positive fixed point $x^* = A/b$ with $f'(x^*) = e^{-A} \in (0,1)$, so $x^*$ is locally asymptotically stable. In a coupled system the diagonal Jacobian entries at a positive equilibrium are $e^{-\bar A}$, with $\bar A$ the frozen growth term evaluated there.
+**Proposition (diagonal multiplier).** If $A$ does not depend on $x$ and $A > 0$, the one-dimensional map $f(x) = A x / (b x + (A - bx) e^{-A})$ has the positive fixed point $x^* = A/b$ with $f'(x^*) = e^{-A} \in (0,1)$, so $x^*$ is locally asymptotically stable. In a coupled system, at a positive equilibrium with $x^* = \bar A/b$, $\bar A$ the frozen growth term evaluated there, the diagonal Jacobian entry of the component $x$ is
+$$\frac{\partial x(n+1)}{\partial x(n)} = e^{-\bar A} + \frac{\partial A}{\partial x}\,\frac{1 - e^{-\bar A}}{b},$$
+which is $e^{-\bar A}$ exactly when the frozen term does not depend on $x$ itself.
 
 **Lemma (second-order Schur–Cohn test).** The roots of $\lambda^2 - p\lambda - q = 0$ with real $p, q$ satisfy $|\lambda_{1,2}| < 1$ if and only if
 

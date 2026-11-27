@@ -8,7 +8,7 @@ $$p(T \mid \theta, t, H, \sigma) = \prod_{i=0}^{n}\Big(\prod_{j=1}^{d_i}\theta_i
 
 $$L(T \mid \theta, t, H, \sigma) = \sum_{i=0}^n \theta_i t_i + \sum_{i=0}^n\sum_{j=1}^{d_i}\log(t_{\sigma_{i,j}} - t_{\sigma_{i,j-1}}) - H\sum_{i=0}^n \theta_i + \sum_{i=0}^n (2d_i + 1)\log\theta_i .$$
 
-For fixed $\sigma$ and $\theta$, maximizing over $t, H$ is a convex problem with linear constraints, and for fixed times the maximizing rates are $\theta_i = d_i/(H - t_i)$.
+For fixed $\sigma$ and $\theta$, maximizing over $t, H$ is a convex problem with linear constraints, and for fixed times $\partial L/\partial\theta_i = t_i - H + (2d_i + 1)/\theta_i$, so the maximizing rates are $\theta_i = (2d_i + 1)/(H - t_i)$. (The source uses $\theta_i = d_i/(H - t_i)$ as the expected-rate update of its EM procedure, Eq. 4, not as this maximizer.)
 
 **Theorem (stable optimal orderings).** Fix $\theta$ and let $L_{T,\theta}(H) = \max_{\sigma, t} L(T \mid \theta, t, H, \sigma)$. For all sufficiently large $H$ the maximizing ordering is the same and has the recursive form $\sigma^* = \{\sigma_0^*\} \cup \bigcup_{k=1}^{d} \sigma_k^*$, where $\sigma_k^*$ is an optimal ordering of the subtree rooted at the $k$-th child of the root and $\sigma_0^*$ is the permutation of the root's children maximizing the recurrence
 

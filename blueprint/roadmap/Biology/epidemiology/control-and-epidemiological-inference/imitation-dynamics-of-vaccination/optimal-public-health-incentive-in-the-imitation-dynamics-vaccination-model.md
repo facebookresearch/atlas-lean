@@ -25,9 +25,6 @@ $$u^*(t) = \min\Bigl\{u_{\max},\ \max\Bigl\{0,\ \frac{\xi\, \lambda_x(t)\, k\, x
 
 The factor $x(1-x)$ shows that effort is worth most when vaccinating behaviour is most divided ($x$ near $1/2$) and worthless when the population is nearly unanimous, because imitation then has no one to copy or no one left to convert.
 
-## Depends on
-
-- [Replicator dynamics](../../../population-dynamics/replicator-dynamics/README.md)
 ## Expansion
 
 The $x$-equation is the two-strategy replicator equation $\dot x = k\,x(1-x)\bigl(\pi(V) - \pi(NV)\bigr)$, with payoff gain $\Delta E = -r_v + r_i m I + f(u)$: individuals switch towards vaccinating when perceived infection risk outweighs perceived vaccine risk, so vaccine uptake responds to prevalence with feedback and free riding near herd immunity. Existence follows from convexity of the integrand in $u$, compactness of the control set and Lipschitz state dynamics. The stationarity condition is $\partial H/\partial u = -\eta + \lambda_x k x(1-x) f'(u) = 0$; the adjoint $\lambda_x$ is the marginal value of an extra vaccinator, so effort is high when an extra vaccinator is valuable and the population is persuadable. If perceived vaccine risk decays with cumulative uptake $V_d$ ($\dot V_d = xS$, payoff $-r_v e^{-\delta V_d}$) and disease deaths raise the vaccinating payoff, uptake becomes self-reinforcing, and the same quadratic-cost formula holds with the enlarged adjoint system. Numerically, optimal effort concentrates at the start and the end of the outbreak rather than at its peak.

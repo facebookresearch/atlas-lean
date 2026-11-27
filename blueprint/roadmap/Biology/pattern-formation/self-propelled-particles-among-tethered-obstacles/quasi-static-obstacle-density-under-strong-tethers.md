@@ -22,7 +22,7 @@ $$
 \rho_f = 1 - \frac{\gamma}{\delta\eta}\big[\bar\rho_g - M_{2\delta} * \bar\rho_g\big] - \frac{\gamma^2}{\eta}\, \partial_t \Delta_x \bar\rho_g + \frac{\gamma^2}{\eta^2} N(\bar\rho_g) + O(\gamma^2 \delta) + O(\gamma^3),
 $$
 
-with $N(\rho) = \tfrac{1}{2}(\Delta\rho)^2 - H(\rho) : H(\rho)$, where $H$ is the Hessian. In the noiseless limit $\delta \to 0$,
+with $N(\rho) = \tfrac{1}{2}\big((\Delta\rho)^2 - H(\rho) : H(\rho)\big)$, where $H$ is the Hessian. In the noiseless limit $\delta \to 0$,
 
 $$
 \rho_f = 1 + \frac{\gamma}{\eta}\Delta_x \bar\rho_g - \frac{\gamma^2}{\eta}\partial_t \Delta_x \bar\rho_g + \frac{\gamma^2}{\eta^2} N(\bar\rho_g) + O(\gamma^3),

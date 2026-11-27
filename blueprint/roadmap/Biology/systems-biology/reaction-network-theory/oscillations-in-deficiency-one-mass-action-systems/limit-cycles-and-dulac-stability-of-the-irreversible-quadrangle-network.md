@@ -23,8 +23,7 @@ and the ordering conditions are exactly those under which $\alpha, \beta$ can be
 
 ## Depends on
 
-- [Complex balancing and the deficiency-zero theorem](../../complex-balancing-and-the-deficiency-zero-theore/README.md)
-- [Chemical reaction network theory](../chemical-reaction-network-theory/README.md)
+- [Weakly reversible reaction network](../../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
 
 ## Proof depends on
 

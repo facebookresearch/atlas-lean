@@ -27,10 +27,6 @@ $$1 - (1-k_1)\,e^{(1-\alpha)\tau} = 0,$$
 independent of $k_2$.
 4. (Fast-fire limit) With fixed intensities per unit time $r_1 = k_1/\tau$, $r_2 = k_2/\tau$, the flow-kick dynamics converge as $\tau \to 0$ to the flow $\dot x = x(1 - r_1 - x - \alpha y)$, $\dot y = \delta y(1-y)$: frequent mild fires act on grass as extra mortality and, because $\omega(0) = 0$, do not affect trees.
 
-## Depends on
-
-- [Lotka–Volterra predator–prey model](../../lotka-volterra-predator-prey-model/README.md)
-
 ## Expansion
 
 On $y = 0$ the grass follows the logistic flow, so the map is $x \mapsto (1-k_1)xe^{\tau}/(1 + x(e^\tau - 1))$, whose nonzero fixed point is $x_g$. A coexistence branch meets $(x_g,0)$ when the tree-direction multiplier of $\Phi$ there equals 1: a small tree population grows by $e^{\delta\tau}$ during the flow and is multiplied by $1 - k_2\omega(\xi_g)$ at the fire, where $\xi_g$ is the grass burned, i.e. $k_1$ times the pre-fire grass $x_g/(1-k_1)$. At $(0,1)$ a small grass population grows at rate $1 - \alpha$ under full tree cover and loses the fraction $k_1$ at each fire, giving multiplier $(1-k_1)e^{(1-\alpha)\tau}$. Part 4 follows from Taylor-expanding the flow-kick map in $\tau$ and taking the limit of the difference quotient $(\Phi(x,y) - (x,y))/\tau$. Numerical continuation of $\Phi$ further reveals saddle-node curves and four bistable regimes (forest–grassland, forest–savanna, savanna–savanna, grassland–savanna), so the coexistence fixed point need not be unique.

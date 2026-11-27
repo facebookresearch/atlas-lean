@@ -10,10 +10,6 @@ An **activator–inhibitor oscillator** has signed Jacobian $\begin{pmatrix} + &
 1. If $x^*$ is stable for $\tau = 0$ and the signed Jacobian is of activator–inhibitor (or substrate-depletion) type, then increasing $\tau$ eventually destabilizes $x^*$: there is a threshold $\tau^*$ with $x^*$ unstable for $\tau > \tau^*$. In particular, when $x^*$ is the only fixed point and lies between the extrema of the activator nullcline ($a_{11} > 0$), a sufficiently long delay yields sustained oscillations.
 2. For a single negative feedback loop $x_1 \to x_2 \to \cdots \to x_n \to x_1$ (product of edge signs negative) with one delayed interaction, the fixed point is unique, and every Hopf bifurcation produced by increasing $\tau$ is a loss of stability: at the crossing $\lambda = i\omega$, $\operatorname{Re}\,\frac{d\lambda}{d\tau} > 0$. Hence an unstable fixed point cannot be stabilized by a delay, and when the fixed point is destabilized a stable limit cycle exists.
 
-## Depends on
-
-- [Three-variable repressilator](../../three-variable-repressilator/README.md)
-
 ## Proof depends on
 
 - [Poincaré–Bendixson theorem](../../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)

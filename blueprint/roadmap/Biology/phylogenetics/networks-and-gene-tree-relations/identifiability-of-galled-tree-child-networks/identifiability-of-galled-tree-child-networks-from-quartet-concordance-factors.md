@@ -14,7 +14,7 @@ The proof separates combinatorics from models. Combinatorially, a $C_4$ network 
 
 ## Depends on
 
-- [Multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/README.md)
+- [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](../../../coalescent-theory/multispecies-coalescent/network-multispecies-coalescent-fixed-network-ge.md)
 
 ## Sources
 

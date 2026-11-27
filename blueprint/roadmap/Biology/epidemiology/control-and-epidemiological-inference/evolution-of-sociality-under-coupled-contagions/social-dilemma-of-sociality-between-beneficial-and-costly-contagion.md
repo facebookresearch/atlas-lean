@@ -26,10 +26,6 @@ and $R^{(g)}_{\mathrm{ESS}} > R^{(g)}_{\mathrm{opt}}$ when $c < 1$, $R^{(g)}_{\m
 
 For a rare mutant the resident sits at the monomorphic equilibrium and the mutant's prevalences are explicit, for example $\hat S^{(b)}_m = R^{(g)}_r / [R^{(g)}_m (cR^{(g)}_r - 1) + R^{(g)}_r]$ when $R^{(g)}_r > 1/c$. Differentiating the mutant log-utility at $R^{(g)}_m = R^{(g)}_r$ gives a local selection gradient that is positive below $1/c$ and decreasing above it, so it has a single zero, which is the ESS when it is at least $1$. The dilemma arises because a mutant's contact rate changes its own exposure but its effect on population prevalence is diluted. When the good contagion spreads more easily ($c < 1$), selection overshoots the optimum and sustains the bad contagion even where the optimum would eliminate it. When the bad contagion spreads more easily ($c > 1$), selection undershoots. The two coincide only in the structurally unstable case $c = 1$.
 
-## Depends on
-
-- [SIS epidemic model](../../sis-epidemic-model/README.md)
-
 ## Sources
 
 - D. B. Cooney, D. H. Morris, S. A. Levin, D. I. Rubenstein, P. Romanczuk, "Social dilemmas of sociality due to beneficial and costly contagion", PLoS Computational Biology (2022), Eqs. (2)–(12), (8), (10), (16), (27), Proposition 1 and Table 1, <https://doi.org/10.1371/journal.pcbi.1010670>, PMCID PMC9721494.

@@ -18,9 +18,6 @@ The parameters $\epsilon_0, \epsilon_1, \phi_1, \phi_2$ are always positive, whi
 
 The key fact is that, in the linear framework, any enzyme mechanism's intermediate complexes at steady state are linear in the free enzyme concentration times free substrate concentrations, with positive coefficients that are rational functions of the rate constants (matrix-tree formulas). This is an instance of the general result that a modification system with $k$ enzymes acting on one substrate has all steady-state concentrations rational in the $k$ free enzyme concentrations, which solve $k$ polynomial equations. Here $k = 2$, and only the aggregate binding of the intermediate modform $S_1$ to each enzyme matters, cutting twelve generalized parameters to ten and then, after nondimensionalization, to eight. Under strong irreversibility of the $S_1$-consuming reactions the system still has degree 4, so Bézout's theorem gives 16 projective solutions; numerically the origin has multiplicity 6 and either one or three of the five remaining finite nonzero solutions are positive. Using homotopy continuation over about $10^9$ sampled parameter points, the bistable region was found to be empty for $\sigma$ below a threshold near $1$ and to grow sigmoidally with $\sigma$.
 
-## Depends on
-
-- [Goldbeter–Koshland ultrasensitivity](../../goldbeter-koshland-ultrasensitivity/README.md)
 ## Sources
 
 - K.-M. Nam, B. M. Gyori, S. V. Amethyst, D. J. Bates, J. Gunawardena, "Robustness and parameter geography in post-translational modification systems", PLoS Computational Biology 16(5) (2020) e1007573, Results ("Steady-state polynomial equations", Eqs 2–10; "The strongly irreversible case") and Materials and methods ("Derivation of Eq 10"), <https://doi.org/10.1371/journal.pcbi.1007573>, PMCID PMC7224580.

@@ -20,11 +20,6 @@ with $I(S) = v_0 - S + (\gamma/\beta_a)\ln S$ the SIR orbit through $(S_0, I_0)$
 
 Along a sheet, $\log x$ (or $\log(1-x)$) evolves at the rate $(k - (m_n - m_a)I)/\epsilon$ to leading order, so a trajectory that has been attracted toward $x = 0$ while $I > I_c$ must spend an equal accumulated amount of repulsion after $I$ drops below $I_c$ before it can leave. This is the entry–exit (way-in/way-out) principle of geometric singular perturbation theory, which also requires tracking the $O(\epsilon)$ term $x(1-x)(\beta_a - \beta_n)I$. The resulting delay makes behavior "sticky": with $\mathcal{R}_0 = 3$ under normal behavior, $0.6$ under altered behavior and $I_c = 0.1$, the population switches to altered behavior only near $I \approx 0.18$ and back near $I \approx 0.05$, producing second and later waves before the epidemic ends.
 
-## Depends on
-
-- [Kermack–McKendrick SIR model](../../kermack-mckendrick-sir-model/README.md)
-- [Replicator dynamics](../../../population-dynamics/replicator-dynamics/README.md)
-
 ## Sources
 
 - S. Schecter, "Geometric singular perturbation theory analysis of an epidemic model with spontaneous human behavioral change", Journal of Mathematical Biology (2021), model (7)–(12), Sections 4–5 (fast and slow limit systems, entry–exit integral (27), Proposition 1) and Theorem 1, <https://doi.org/10.1007/s00285-021-01605-2>, PMCID PMC8092374.

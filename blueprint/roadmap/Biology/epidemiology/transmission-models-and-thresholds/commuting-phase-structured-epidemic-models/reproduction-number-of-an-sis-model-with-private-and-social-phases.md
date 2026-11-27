@@ -28,8 +28,7 @@ The infected compartments are private-phase infectives (non-commuters and commut
 
 ## Depends on
 
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
-- [SIS epidemic model](../../sis-epidemic-model/README.md)
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Sources
 

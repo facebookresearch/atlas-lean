@@ -12,7 +12,7 @@ $$\left(\frac{S_{\mathrm{mes}}(\infty)}{z}\right)^{1/n} = 1 - p + p\,y + p\,z\le
 
 and $R_{\mathrm{mes}}(\infty) = 1 - S_{\mathrm{mes}}(\infty)$. With $R_0 := (n-1)p$, as the initially infected fraction vanishes ($z \uparrow 1 - y$), $P_S(\infty) = P_S(0)$ whenever $R_0 \le 1$ or $y \ge 1 - 1/R_0$: vaccinating a fraction at least $1 - 1/R_0$ prevents a major outbreak. If moreover $n \to \infty$ with $(n-1)p \to R_0$, the relation becomes $\dfrac{S(\infty)}{1-y} = e^{-R_0(1 - S(\infty) - y)}$.
 
-**Theorem 6 (Kermack–McKendrick limit).** Let $f = f_n$ depend on $n$ with $n f_n(\tau) \to f^*(\tau)$, $\sup_{[0,T]} f^* < \infty$ for all $T$, each $f_n$ continuously differentiable, and fixed initial conditions $(z, 1-z-y, y)$. Then for every $T > 0$, $\sup_{0 \le t \le T}|S^{(n)}_{\mathrm{mes}}(t) - S(t)| \to 0$ (and likewise for $I$, $R$), where
+**Theorem 6 (Kermack–McKendrick limit).** Let $f = f_n$ depend on $n$ with $n f_n \to f^*$ uniformly on $[0,T]$ and $\sup_{[0,T]} f^* < \infty$ for every $T > 0$, each $f_n$ continuously differentiable, and fixed initial conditions $(z, 1-z-y, y)$. Then for every $T > 0$, $\sup_{0 \le t \le T}|S^{(n)}_{\mathrm{mes}}(t) - S(t)| \to 0$ (and likewise for $I$, $R$), where
 
 $$\dot S(t) = S(t)\int_0^t f^*(\tau)\,\dot S(t-\tau)\,d\tau - I(0) f^*(t), \qquad R(t) = R(0) + \int_0^t r(\tau)\bigl[1 - R(0) - S(t-\tau)\bigr]d\tau$$
 
@@ -25,7 +25,6 @@ Since $F$ is non-increasing and bounded, it has a limit $F(\infty)$, and dominat
 ## Depends on
 
 - [Message passing bounds the stochastic SIR epidemic on any graph](message-passing-bounds-the-stochastic-sir-epidemic-on-any-graph.md)
-- [Kermack–McKendrick SIR model](../../kermack-mckendrick-sir-model/README.md)
 
 ## Proof depends on
 

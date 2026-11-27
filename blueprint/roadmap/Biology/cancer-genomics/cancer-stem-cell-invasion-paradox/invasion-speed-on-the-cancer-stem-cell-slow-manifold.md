@@ -1,6 +1,6 @@
 # Invasion speed on the cancer stem cell slow manifold
 
-Let $u(x,t)$ and $v(x,t)$ be the densities of cancer stem cells and non-stem tumour cells, $n=u+v$, and let $F:[0,1]\to[0,1]$ be a decreasing volume-limitation function with $F(0)=1$ and $F(1)=0$ (e.g. $F(n)=1-n$). With stem-cell self-renewal probability $p_s=\varepsilon$, slow motility $D=\varepsilon d$ and tumour-cell death rate $\alpha>0$,
+Let $u(x,t)$ and $v(x,t)$ be the densities of cancer stem cells and non-stem tumour cells, $n=u+v$, and let $F:[0,\infty)\to[0,1]$ be a continuous volume-limitation function with $F(0)=1$ and $F(n)=0$ for $n\ge 1$, differentiable on $[0,1]$ with $F'(n)<0$ there (e.g. $F(n)=(1-n)^+$). With stem-cell self-renewal probability $p_s=\varepsilon$, slow motility $D=\varepsilon d$ and tumour-cell death rate $\alpha>0$,
 
 $$u_t=\varepsilon du_{xx}+\varepsilon F(n)u,\qquad v_t=\varepsilon dv_{xx}+(1-\varepsilon)F(n)u+F(n)v-\alpha v .$$
 
