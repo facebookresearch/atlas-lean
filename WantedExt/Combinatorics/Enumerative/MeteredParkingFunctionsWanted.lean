@@ -14,6 +14,7 @@ public import MathlibExt.Combinatorics.Enumerative.ClassicalMeteredParkingFuncti
 public import MathlibExt.Combinatorics.Enumerative.LongMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.MeteredParkingDiagonalChoose
 public import MathlibExt.Combinatorics.Enumerative.MeteredParkingLowerBound
+public import MathlibExt.Combinatorics.Enumerative.OneMeteredLuckyLaces
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredTwoSpots
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
@@ -46,21 +47,6 @@ public theorem_wanted metered_window_count_ge {m n t : ℕ} {f : Fin m → Fin n
     t + 1 + i ≤
       (Finset.univ.filter fun k : Fin m =>
           j ≤ (k : ℕ) + 1 ∧ (k : ℕ) + 1 ≤ j + t ∧ (f k : ℕ) + 1 ≤ i).card + n
-
-/-- **Lucky cars of 1-metered parking are the lace starts.** Let $0 < m \le n$ and let
-$\alpha = (a_1, \dots, a_m)$, with each $a_i \in \{1, \dots, n\}$, be any sequence of preferred
-spots of $m$ cars on $n$ spots. Under the $1$-metered parking scheme, car $i$ is lucky (it parks
-in its preferred spot $a_i$) if and only if position $i$ is the first position of one of the
-laces of the lace decomposition $\mathrm{lace}(\alpha)$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Lemma 1 (`integers-2025-A73-lem-1`). -/
-public theorem_wanted one_metered_lucky_iff_lace_start {m n : ℕ} (hm : 0 < m) (hmn : m ≤ n)
-    (f : Fin m → Fin n) :
-    ((List.ofFn fun i => (f i : ℕ)).zip (meteredOutcome 1 n (List.ofFn fun i => (f i : ℕ)))).map
-        (fun p => decide (p.2 = some p.1)) =
-      (laceDecomposition (List.ofFn fun i => (f i : ℕ))).flatMap
-        fun c => true :: List.replicate (c.length - 1) false
 
 /-- **One-metered parking functions and laces.** Let $0 < m \le n$ and
 $f : \{0, \dots, m-1\} \to \{0, \dots, n-1\}$. Then $f$ is a $1$-metered parking function if and

@@ -90,3 +90,4 @@ See [potential outcomes and the local average treatment effect](../../../Probabi
 - [MVMR-Median: least absolute deviations Mendelian randomization](multivariable-mr-median-lad.md)
 - [Multivariable constrained maximum likelihood (MVMR-cML) and its BIC consistency](multivariable-mr-constrained-maximum-likelihood.md)
 - [Within-family Mendelian randomization](within-family-mendelian-randomization.md)
+- [Point identification under a budget of invalid instruments](point-identification-under-a-budget-of-invalid-instruments.md)

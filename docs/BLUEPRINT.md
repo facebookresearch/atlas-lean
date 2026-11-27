@@ -13,8 +13,8 @@ What a PR may change in the graph, and how to expand a node, is in
 - `blueprint/links/`: literature-links annotations associating articles with
   Lean declarations, stable article IDs, and navigation metadata.
 - `scripts/taxonomy.json` and `blueprint/atlas.json`: subject organization.
-- Card records in `blueprint/links/` and `scripts/card-moves.jsonl`: the cards readers navigate by,
-  and the addresses moves retire ([cards.md](cards.md)).
+- Card records in `blueprint/links/`, and the move ledger, `scripts/card-moves.jsonl` and the fragments of
+  `scripts/card-moves.d/`: the cards readers navigate by, and the addresses moves retire ([cards.md](cards.md)).
 - `scripts/mathgraph-map.jsonl`: the mathgraph results imported and the page
   each was written at ([mathgraph-import.md](mathgraph-import.md#the-map)).
 - Lean sources: declaration kinds and statement/proof status.
@@ -41,8 +41,8 @@ and docstring changes should be reviewed with the sync report below.
 
 These rules apply to any PR that changes the graph: `blueprint/roadmap/`,
 `blueprint/links/`, `blueprint/atlas.json`, `blueprint/coverage/`,
-`scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl` or
-`scripts/mathgraph-map.jsonl`. They add only what ATLAS
+`scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl`,
+`scripts/card-moves.d/` or `scripts/mathgraph-map.jsonl`. They add only what ATLAS
 needs to AutoformBot's
 [blueprint format](https://github.com/facebookresearch/autoform-bot/blob/b1fe52ba726bb675d9c974203fce427fe4927ff9/autoform_cli/reference/blueprint-format.md),
 at the commit in `.github/autoform-ref`; where ATLAS needs something the
@@ -160,7 +160,7 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 - **Moving a module or folder changes `scripts/taxonomy.json` in the same
   PR,** or the next sync and the next generated layout follow the old place.
   See [Moving a page](#moving-a-page). Moving pages into a card inside their
-  topic is not a taxonomy change; it is recorded in `scripts/card-moves.jsonl`
+  topic is not a taxonomy change; it is recorded in the move ledger
   ([Cards](#cards)). A Lean pull request that moves a module's declarations to
   a new module leaves this to the next
   [graph-sync batch](#graph-sync-batches), which gives the new module their
@@ -200,10 +200,13 @@ Do not edit generated counts or add another `Library navigation` section.
   links; elsewhere a card links another card's main statement. Every card
   edge is derived from the statements, with witnesses, which keeps the card
   map honest about what uses what.
-- **A move that retires an address goes into `scripts/card-moves.jsonl`,**
-  and a page gets an `id` before it moves; so does the retirement of a card or
-  of a statement page, with what replaces it. `scripts/cards.py check` must
-  pass.
+- **A move that retires an address goes into a new fragment of the move
+  ledger,** `scripts/card-moves.d/<stamp>-<slug>.jsonl`, which
+  `python scripts/card_moves.py new-moves <slug>` starts; one fragment holds a PR's
+  rows, in the order they happened, and a page gets an `id` before it moves; so
+  does the retirement of a card or of a statement page, with what replaces it.
+  Never edit `scripts/card-moves.jsonl`, which is frozen, or a merged fragment
+  ([cards.md](cards.md#move-ledger)). `scripts/cards.py check` must pass.
 - **A planned page may record its counterparts,** the Mathlib or ATLAS
   declarations that state its result or a close form, with how each compares
   ([cards.md](cards.md#counterparts)). Each is verified clause by clause against
@@ -273,17 +276,18 @@ Move it with `autoform move`, which rewrites the links. In the same PR, change
 module or folder, list the page on its new folder page, and, across subjects,
 move its annotation to the new subject's links file, which `autoform move` does
 not do. A move into a card inside the page's topic leaves the taxonomy as it is;
-record it in `scripts/card-moves.jsonl` instead ([Cards](#cards)).
+record it in the PR's fragment of the move ledger instead ([Cards](#cards)).
 
 #### Expanding a node
 
 1. Add the new pages beside the node and list them on the folder page. Move
    the node's prose and sources to the folder page or the new pages.
-2. Delete the node's page and annotation, and append the retirement row to
-   `scripts/card-moves.jsonl`, `{"statement": "<its id>", "page": "<its
-   path>", "replaced_by": "<the id of the new page or folder page a reader
-   should go to>"}` ([cards.md](cards.md#move-ledger)), so that its address
-   keeps leading somewhere and its id is never reused. Repoint every link to
+2. Delete the node's page and annotation, and add the retirement row to the
+   PR's fragment of the move ledger (`python scripts/card_moves.py new-moves
+   <slug>` starts one), `{"statement": "<its id>", "page": "<its path>",
+   "replaced_by": "<the id of the new page or folder page a reader should go
+   to>"}` ([cards.md](cards.md#move-ledger)), so that its address keeps
+   leading somewhere and its id is never reused. Repoint every link to
    it, under `## Depends on`, `## Proof depends on` or `## Informally uses`, to
    the new pages that link actually needs. `autoform check` fails on a link
    left under the first two but only warns under `## Informally uses`.
@@ -527,7 +531,7 @@ editor ([Graph-sync batches](#graph-sync-batches)): link those planned pages
 first, or leave what it writes for them out. It never places a new page in a
 card or below one: such a page goes to the card's parent folder and is listed
 as unassigned, for an editor to place in a card, and no new page takes the name
-of a folder or an address `scripts/card-moves.jsonl` records. It also refreshes
+of a folder or an address the move ledger records. It also refreshes
 the source-derived area catalog and coverage metadata without replacing article
 prose. A row the build refuses ([Mathlib-credited
 pages](#mathlib-credited-pages)), such as a flagged row that also names a
@@ -1013,8 +1017,9 @@ Autoform leave its directory out of the Lean source index. It also lets it run
 when the PR changes the wiki (`blueprint/`), whose pages, annotations and site
 inputs it builds and checks, or one of the two ledgers its checks compare with
 the PR's base commit, the import map `scripts/mathgraph-map.jsonl`
-([The map](mathgraph-import.md#the-map)) and the card move ledger
-`scripts/card-moves.jsonl` ([Move ledger](cards.md#move-ledger)). Only a PR's
+([The map](mathgraph-import.md#the-map)) and the card move ledger,
+`scripts/card-moves.jsonl` and the fragments of `scripts/card-moves.d/`
+([Move ledger](cards.md#move-ledger)). Only a PR's
 build checks the wiki's moves and card retirements since that base against the
 move ledger, and fails on a Mathlib source link that disagrees with its title:
 `main`'s runs have no base commit and report such a link without failing
@@ -1031,10 +1036,22 @@ changes only Lean library files those tests do not read, provenance and
 documentation skips them too: `scripts/ci_scope.py` lists the four Lean modules
 and the document the tests read besides the graph's data and their own code.
 `lean-facts` turns a renamed or deleted declaration into an unlinked page rather
-than a failure, CI's `check the graph` checks the graph as committed,
-`Graph sync` checks every PR's declarations, and `main`'s daily build checks the
-whole wiki, its site and its cards as they stand, a failure there being fixed on
-`main`.
+than a failure, CI's `check the graph` checks the graph as committed and, on
+every PR and merge group, the move ledger's integrity
+([Move ledger](cards.md#move-ledger)), `Graph sync` checks every PR's
+declarations, and `main`'s daily build checks the whole wiki, its site and its
+cards as they stand, a failure there being fixed on `main`. The ledger step,
+`scripts/card_moves.py check --base` against the commit the merge commit or
+group was made from, is there because fragments, with distinct names, merge
+without the shared end-of-file conflict of one file, so that only this step
+sees them together before they merge. It reads the ledger's files and Git
+tree-entry metadata (names, modes and types) for regular roadmap `README.md`
+files, not page contents, and nothing else: it fails on rows that break a rule
+among them, an edited frozen file, an edited merged fragment or new fragments
+that interact. Whether each move ends at a live page of its article is the wiki
+job's ledger step's (`scripts/cards.py moves`), and whether every move since the
+base has its row stays `check the cards`'s; neither gates a merge. A push to
+main checks the combined ledger alone.
 With write access, build and check a branch before it merges with
 `gh workflow run blueprint-pages.yml --ref <branch>`, or pick the branch under
 **Run workflow**: the run builds the branch as a run of `main` does, without a
