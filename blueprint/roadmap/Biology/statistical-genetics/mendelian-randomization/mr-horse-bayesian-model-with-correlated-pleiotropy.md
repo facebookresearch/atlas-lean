@@ -27,7 +27,7 @@ $$\hat\beta_{Yj}\sim N(\theta^\top\beta_{Xj\cdot}+\alpha_j,\ \sigma_{Yj}^2),\qqu
 
 $$\begin{pmatrix}\beta_{Xj\cdot}\\ \alpha_j\end{pmatrix}\sim N\!\left(\begin{pmatrix}\mu\\0\end{pmatrix},\begin{pmatrix}V_X & \operatorname{diag}(V_X)^{1/2}\rho_j\phi_j\tau\\ \rho_j\phi_j\tau\,\{\operatorname{diag}(V_X)^{1/2}\}^\top & \phi_j^2\tau^2\end{pmatrix}\right),$$
 
-with $\mu\sim N(0,I_K)$, $\theta_k\sim N(0,1)$, the same half-Cauchy $\phi_j$ and $\tau$, and $\rho_j$ as above.
+where $V_X=\operatorname{diag}(v_1,\ldots,v_K)$ and $\operatorname{diag}(V_X)^{1/2}$ denotes the vector $(v_1^{1/2},\ldots,v_K^{1/2})^\top$, with priors $\mu\sim N(0,I_K)$, $(v_1,\ldots,v_K)\sim N^+(0,I_K)$ (the analogue of $s_X^2\sim N^+(0,1)$), $\theta_k\sim N(0,1)$, the same half-Cauchy $\phi_j$ and $\tau$, and $\rho_j$ as above.
 
 ## Depends on
 

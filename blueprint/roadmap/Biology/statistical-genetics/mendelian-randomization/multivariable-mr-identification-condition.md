@@ -15,6 +15,7 @@ then $\theta$ is identified as the unique $q \in \mathbb{R}^K$ maximizing $\#\{j
 ## Depends on
 
 - [Multivariable inverse-variance weighted and MR-Egger estimators](multivariable-mr-ivw-and-egger.md)
+- [Identifiability of multivariable Mendelian randomization under a plurality rule](multivariable-mr-plurality-identifiability.md)
 
 ## Expansion
 

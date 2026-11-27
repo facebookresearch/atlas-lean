@@ -20,6 +20,7 @@ with $n = \min(n_1, n_2)$ the smaller GWAS sample size.
 
 - [Ratio estimate of a single SNP](ratio-estimate.md)
 - [Inverse-variance-weighted estimator](ivw.md)
+- [Profile-likelihood Mendelian randomization estimator under many weak instruments](mr-profile-likelihood-estimator-under-weak-instruments.md)
 
 ## Expansion
 
