@@ -119,7 +119,7 @@ example (α : ℝ) : likelihood (fun _ : Unit => acSite 1) (fun _ => allHet) one
     Fintype.sum_bool, hwGenotype_allHet_zero, hwGenotype_allHet_one, hwGenotype_allHet_two]
   norm_num [oneCall, callProb, alleleCallProb, errorProb, acSite, phredErrorProb_ten]
 
-/-- The sequence-only likelihood is a probability mass function of the two base calls. -/
+/-- The masses of all two-base calls sum to one for every real `α`. -/
 example (α : ℝ) : ∑ b : (∀ _ : Unit, Fin (acSite 2).depth → Fin 4),
     likelihood (fun _ : Unit => acSite 2) (fun _ => allHet) b α = 1 :=
   sum_likelihood _ _ _

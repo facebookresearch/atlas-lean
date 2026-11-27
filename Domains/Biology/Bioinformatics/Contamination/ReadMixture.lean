@@ -215,13 +215,15 @@ where `b i j` is the base call of read `j` at site `s i`, `P(b | g, e)` is `call
 sequencing-error indicator of read `j` has `P(eᵢⱼ = 1) = 10^(-Qᵢⱼ/10)` and
 `P(eᵢⱼ = 0) = 1 - 10^(-Qᵢⱼ/10)` for the phred quality `Qᵢⱼ = (s i).quality j` of its call
 (`errorProb`). For `α ∈ [0, 1]` and genotype priors `π₁ i` and `π₂ i` that are probability
-vectors, this is the likelihood of the model in which the sites are independent, the two
-genotypes `g₁, g₂` of a site are independent with laws `π₁ i` and `π₂ i`, and, conditionally on
-the genotype pair of their site, the reads are independent, each read's error indicator is
-independent of everything else, and its base call is drawn from the two-sample mixture
-`(1 - α) P(b | g₁, e) + α P(b | g₂, e)`. With the array-genotype priors `arrayGenotypeProb` of the
-target and of a study individual `k` as `π₁` and `π₂` it is the source's likelihood `L(α, k)`,
-which the source maximises over `(α, k)` to find the most likely contaminating sample. -/
+vectors, this is the likelihood of the following model. The genotype pairs of different sites are
+independent, and the two genotypes `g₁, g₂` of a site are independent with laws `π₁ i` and `π₂ i`.
+The error indicators `eᵢⱼ` are independent across reads and independent of the genotypes and of
+which individual each read comes from, with the laws above. Conditionally on the genotype pair of
+its site and on its own error indicator, each read's base call is drawn, independently of the
+other reads, from the two-sample mixture `(1 - α) P(b | g₁, eᵢⱼ) + α P(b | g₂, eᵢⱼ)`. With the
+array-genotype priors `arrayGenotypeProb` of the target and of a study individual `k` as `π₁` and
+`π₂` it is the source's likelihood `L(α, k)`, which the source maximises over `(α, k)` to find the
+most likely contaminating sample. -/
 noncomputable def likelihoodWithPriors (s : ι → Site) (π₁ π₂ : ι → Fin 3 → ℝ)
     (b : ∀ i, Fin (s i).depth → Fin 4) (α : ℝ) : ℝ :=
   ∏ i, ∑ g₁ : Fin 3, ∑ g₂ : Fin 3,
@@ -235,12 +237,13 @@ and a genotype is the number `g ∈ {0, 1, 2}` of copies of its alternative alle
 `g₁` of the target and `g₂` of the contaminant at site `i` are unknown, independent, and both drawn
 from the Hardy–Weinberg proportions `P(g) = hwGenotype (pop i) g` at the population allele
 frequencies `HardyWeinberg.gamete (pop i)`, where `pop i` is the genotype law of the population's
-parents at site `i`; the genotype pairs of different sites are independent. Conditionally on the
-genotype pair of their site, the reads are independent, each read's sequencing-error indicator
-`eᵢⱼ` is independent of everything else, with `P(eᵢⱼ = 1) = 10^(-Qᵢⱼ/10)` and
-`P(eᵢⱼ = 0) = 1 - 10^(-Qᵢⱼ/10)` for the phred quality `Qᵢⱼ = (s i).quality j` of its call
-(`errorProb`), and its base call `b i j` is drawn from the two-sample mixture
-`(1 - α) P(b | g₁, e) + α P(b | g₂, e)`, where `P(b | g, e)` is `callProb`. The likelihood is
+parents at site `i`; the genotype pairs of different sites are independent. The sequencing-error
+indicators `eᵢⱼ` of the reads are independent across reads and independent of the genotypes and
+of which individual each read comes from, with `P(eᵢⱼ = 1) = 10^(-Qᵢⱼ/10)` and
+`P(eᵢⱼ = 0) = 1 - 10^(-Qᵢⱼ/10)` for the phred quality `Qᵢⱼ = (s i).quality j` of the call
+(`errorProb`). Conditionally on the genotype pair of its site and on its own error indicator, each
+read's base call `b i j` is drawn, independently of the other reads, from the two-sample mixture
+`(1 - α) P(b | g₁, eᵢⱼ) + α P(b | g₂, eᵢⱼ)`, where `P(b | g, e)` is `callProb`. The likelihood is
 
 `L(α) = ∏ᵢ ∑_{g₁} ∑_{g₂} {∏ⱼ ∑ₑ [(1 - α) P(bᵢⱼ | g₁, e) + α P(bᵢⱼ | g₂, e)] P(eᵢⱼ = e)}
 P(g₂) P(g₁)`,
