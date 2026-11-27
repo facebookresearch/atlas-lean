@@ -184,6 +184,42 @@ private lemma evenOrSmallOdd_eq (k n : ℕ) :
   rw [allowed, Nat.even_iff]
   omega
 
+private lemma evenOrSmallOdd_recurrence (k n : ℕ) (hn : 3 ≤ n) :
+    (evenOrSmallOddCompositionCount k n : ℤ) =
+      evenOrSmallOddCompositionCount k (n - 1) + 2 * evenOrSmallOddCompositionCount k (n - 2) -
+        if 2 * k + 3 ≤ n then (evenOrSmallOddCompositionCount k (n - 3 - 2 * k) : ℤ)
+        else 0 := by
+  simp only [evenOrSmallOdd_eq]
+  rw [show n - 3 - 2 * k = n - (2 * k + 3) by omega]
+  exact restrictedCount_recurrence (2 * k + 3) n (by omega) hn
+
+/-- **Generalized Arndt compositions with negative odd shift.** For all natural numbers $j$ and
+$n$, the number $a(n, -2j - 1)$ of compositions $(c_1, \dots, c_m)$ of $n$ with
+$c_{2i-1} > c_{2i} - 2j - 1$ whenever $2i \le m$ equals the number $c^{2j+1}_e(n)$ of
+compositions of $n$ in which every part is even or at most $2j + 1$. This includes $n = 0$.
+
+Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
+(2026), Article A64, Theorem 6 (`integers-2026-A64-thm-6`). -/
+public theorem kArndtTotalCount_neg_odd (j n : ℕ) :
+    kArndtTotalCount (-(2 * j + 1 : ℤ)) n = evenOrSmallOddCompositionCount j n := by
+  have hshift : (-(2 * j + 1 : ℤ)) = -((2 * j + 1 : ℕ) : ℤ) := by push_cast; rfl
+  induction n using Nat.strong_induction_on with
+  | ind n ih =>
+    by_cases hn : 3 ≤ n
+    · have harndt := kArndtTotalCount_recurrence.1 (2 * j + 1) n hn
+      rw [← hshift, show n - 2 - (2 * j + 1) = n - 3 - 2 * j by omega,
+        ih (n - 1) (by omega), ih (n - 2) (by omega), ih (n - 3 - 2 * j) (by omega)] at harndt
+      exact_mod_cast harndt.trans (evenOrSmallOdd_recurrence j n hn).symm
+    · obtain rfl | rfl | rfl : n = 0 ∨ n = 1 ∨ n = 2 := by omega
+      all_goals
+        simp [kArndtTotalCount, kArndtCompositionCount, evenOrSmallOddCompositionCount,
+          Finset.sum_range_succ, Fin.forall_fin_one, Finset.filter_singleton]
+      -- At weight two, only (1, 1) has two positive parts.
+      have hpairs : Finset.Nat.antidiagonalTuple 2 2 = {![0, 2], ![1, 1], ![2, 0]} := by
+        decide
+      simp [hpairs, Finset.filter_insert, Finset.filter_singleton,
+        show -(2 * (j : ℤ)) < 1 by omega]
+
 /-- **Recurrences for even-or-small-odd and odd-or-small-even compositions.** For natural
 numbers $k$ and $n$, let $c^{2k+1}_e(n)$ be the number of compositions of $n$ in which every part
 is even or at most $2k + 1$, and $c^{2k}_o(n)$ the number in which every part is odd or at most
@@ -206,12 +242,9 @@ public theorem evenOrSmallOdd_oddOrSmallEven_recurrence (k n : ℕ) (hk : 1 ≤ 
       (oddOrSmallEvenCompositionCount k n : ℤ) =
         oddOrSmallEvenCompositionCount k (n - 1) + 2 * oddOrSmallEvenCompositionCount k (n - 2) -
           if 2 * k + 2 ≤ n then (oddOrSmallEvenCompositionCount k (n - 2 - 2 * k) : ℤ) else 0 := by
-  constructor
-  · simp only [evenOrSmallOdd_eq]
-    rw [show n - 3 - 2 * k = n - (2 * k + 3) by omega]
-    exact restrictedCount_recurrence (2 * k + 3) n (by omega) hn
-  · have h (m : ℕ) := kArndtTotalCount_neg_even k m hk
-    simpa only [Nat.cast_mul, Nat.cast_ofNat, h] using kArndtTotalCount_recurrence.1 (2 * k) n hn
+  refine ⟨evenOrSmallOdd_recurrence k n hn, ?_⟩
+  have h (m : ℕ) := kArndtTotalCount_neg_even k m hk
+  simpa only [Nat.cast_mul, Nat.cast_ofNat, h] using kArndtTotalCount_recurrence.1 (2 * k) n hn
 
 end
 

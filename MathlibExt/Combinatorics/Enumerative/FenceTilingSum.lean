@@ -9,10 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.Algebra.Field.Basic
 public import Mathlib.Algebra.Group.Nat.Even
+public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Finset.Powerset
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Finset.Prod
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
 /-!
@@ -21,7 +24,18 @@ import Mathlib.Tactic.Ring
 The half-cells of an $n$-board split into two paths: fences only join half-cells of the same
 parity. Each path has the same alternating half-square weights. The weighted count of fence
 tilings is therefore the square of the weighted count of path matchings, whose two-term recurrence
-gives the even-board recurrence of Belaggoun and Belbachir.
+gives the even- and odd-board recurrences of Belaggoun and Belbachir.
+
+## References
+
+* Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic Fibonacci
+  Numbers Squared*, The Fibonacci Quarterly 62(2) (2024), 136–146, Definition 1.1, Lemma 2.1,
+  and Theorem 2.2.
+  Equation (2.1) of Lemma 2.1 gives both the even- and odd-board recurrences.
+* Kenneth Edwards and Michael A. Allen, *A new combinatorial interpretation of the Fibonacci
+  numbers squared*, The Fibonacci Quarterly 57(5) (2019), 48–53, Theorem 3.2 (the unweighted case).
+* Marcia Edson and Omer Yayenie, *A New Generalization of Fibonacci Sequence and Extended Binet’s
+  Formula*, Integers 9 (2009), 639–654, Article A48, Definition 1 (the alternating recurrence).
 -/
 
 namespace MetaMathlibExt
@@ -321,6 +335,165 @@ private theorem pathSum_rec {R : Type*} [CommSemiring R] (a b : R) (n : ℕ) :
     obtain ⟨G, _, rfl⟩ := mem_image.mp h
     exact not_last hF (i := n) (by omega) (mem_insert_self _ _)
 
+section BiPeriodicFibonacciSquares
+
+@[expose] public section
+
+/-- **Bi-periodic Fibonacci numbers squared.** For elements $a$ and $b$ of a field $K$, the
+sequence $q^2_n \in K$ ($n \ge 0$) is defined by $q^2_0 = 0$, $q^2_1 = 1$, $q^2_2 = a^2$ and, for
+$n \ge 3$,
+$$
+q^2_n = \frac{a}{b}(ab+1)\,q^2_{n-1} + (ab+1)\,q^2_{n-2} - \frac{a}{b}\,q^2_{n-3}
+$$
+if $n$ is even, and
+$$
+q^2_n = \frac{b}{a}(ab+1)\,q^2_{n-1} + (ab+1)\,q^2_{n-2} - \frac{b}{a}\,q^2_{n-3}
+$$
+if $n$ is odd. For nonzero $a$ and $b$, $q^2_n$ is the square of the $n$th bi-periodic Fibonacci
+number.
+
+Division by zero gives $0$, so the sequence is defined for all $a$ and $b$; when $a = 0$ or
+$b = 0$ its terms need not be squares of bi-periodic Fibonacci numbers.
+
+Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
+Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
+Definition 1.1. -/
+def biPeriodicFibonacciSq {K : Type*} [Field K] (a b : K) : ℕ → K
+  | 0 => 0
+  | 1 => 1
+  | 2 => a ^ 2
+  | n + 3 =>
+    if Even (n + 3) then
+      a / b * (a * b + 1) * biPeriodicFibonacciSq a b (n + 2) +
+        (a * b + 1) * biPeriodicFibonacciSq a b (n + 1) - a / b * biPeriodicFibonacciSq a b n
+    else
+      b / a * (a * b + 1) * biPeriodicFibonacciSq a b (n + 2) +
+        (a * b + 1) * biPeriodicFibonacciSq a b (n + 1) - b / a * biPeriodicFibonacciSq a b n
+
+/-- **Zeroth bi-periodic Fibonacci number squared.** For elements $a$ and $b$ of a field $K$, the
+bi-periodic Fibonacci number squared $q^2_0$ equals $0$.
+
+Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
+Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
+Definition 1.1. -/
+@[simp]
+theorem biPeriodicFibonacciSq_zero {K : Type*} [Field K] (a b : K) :
+    biPeriodicFibonacciSq a b 0 = 0 := rfl
+
+/-- **First bi-periodic Fibonacci number squared.** For elements $a$ and $b$ of a field $K$, the
+bi-periodic Fibonacci number squared $q^2_1$ equals $1$.
+
+Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
+Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
+Definition 1.1. -/
+@[simp]
+theorem biPeriodicFibonacciSq_one {K : Type*} [Field K] (a b : K) :
+    biPeriodicFibonacciSq a b 1 = 1 := rfl
+
+/-- **Second bi-periodic Fibonacci number squared.** For elements $a$ and $b$ of a field $K$, the
+bi-periodic Fibonacci number squared $q^2_2$ equals $a^2$.
+
+Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
+Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
+Definition 1.1. -/
+@[simp]
+theorem biPeriodicFibonacciSq_two {K : Type*} [Field K] (a b : K) :
+    biPeriodicFibonacciSq a b 2 = a ^ 2 := rfl
+
+/-- **Recurrence for the bi-periodic Fibonacci numbers squared.** For elements $a$ and $b$ of a
+field $K$ and every $n \ge 0$, the recursively defined sequence $q^2_m$ (for nonzero $a$ and $b$,
+the squares of the bi-periodic Fibonacci numbers) satisfies
+$$
+q^2_{n+3} = \frac{a}{b}(ab+1)\,q^2_{n+2} + (ab+1)\,q^2_{n+1} - \frac{a}{b}\,q^2_n
+$$
+if $n + 3$ is even, and
+$$
+q^2_{n+3} = \frac{b}{a}(ab+1)\,q^2_{n+2} + (ab+1)\,q^2_{n+1} - \frac{b}{a}\,q^2_n
+$$
+if $n + 3$ is odd.
+
+Division by zero gives $0$, so this holds for all $a$ and $b$.
+
+Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
+Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
+Definition 1.1, (1.1). -/
+theorem biPeriodicFibonacciSq_add_three {K : Type*} [Field K] (a b : K) (n : ℕ) :
+    biPeriodicFibonacciSq a b (n + 3) =
+      if Even (n + 3) then
+        a / b * (a * b + 1) * biPeriodicFibonacciSq a b (n + 2) +
+          (a * b + 1) * biPeriodicFibonacciSq a b (n + 1) - a / b * biPeriodicFibonacciSq a b n
+      else
+        b / a * (a * b + 1) * biPeriodicFibonacciSq a b (n + 2) +
+          (a * b + 1) * biPeriodicFibonacciSq a b (n + 1) - b / a * biPeriodicFibonacciSq a b n :=
+  rfl
+
+end
+
+-- Eliminate the mixed product using x = z - c * y before clearing the denominator.
+private theorem square_of_alternating_steps {K : Type*} [Field K] {c d x y z w : K}
+    (hc : c ≠ 0) (hz : z = c * y + x) (hw : w = d * z + y) :
+    w ^ 2 = d / c * (d * c + 1) * z ^ 2 + (d * c + 1) * y ^ 2 - d / c * x ^ 2 := by
+  rw [hw, hz]
+  field_simp [hc]
+  ring
+
+-- Board size n + 3 corresponds to Fibonacci index n + 4.
+private theorem pathSum_sq_rec {K : Type*} [Field K] {a b : K} (ha : a ≠ 0) (hb : b ≠ 0)
+    (n : ℕ) :
+    pathSum a b (n + 3) ^ 2 =
+      if Even (n + 4) then
+        a / b * (a * b + 1) * pathSum a b (n + 2) ^ 2 +
+          (a * b + 1) * pathSum a b (n + 1) ^ 2 - a / b * pathSum a b n ^ 2
+      else
+        b / a * (a * b + 1) * pathSum a b (n + 2) ^ 2 +
+          (a * b + 1) * pathSum a b (n + 1) ^ 2 - b / a * pathSum a b n ^ 2 := by
+  have h₁ := pathSum_rec a b n
+  have h₂ := pathSum_rec a b (n + 1)
+  by_cases h : Even (n + 4)
+  · rw [ite_eq_left h]
+    rw [Nat.even_iff] at h
+    simp only [cellWeight, ite_eq_right (show (n + 1) % 2 ≠ 0 by omega)] at h₁
+    simp only [cellWeight, ite_eq_left (show (n + 1 + 1) % 2 = 0 by omega)] at h₂
+    exact square_of_alternating_steps hb h₁ h₂
+  · rw [ite_eq_right h, mul_comm a b]
+    rw [Nat.even_iff] at h
+    simp only [cellWeight, ite_eq_left (show (n + 1) % 2 = 0 by omega)] at h₁
+    simp only [cellWeight, ite_eq_right (show (n + 1 + 1) % 2 ≠ 0 by omega)] at h₂
+    exact square_of_alternating_steps ha h₁ h₂
+
+private theorem pathSum_sq_eq_biPeriodicFibonacciSq {K : Type*} [Field K] {a b : K}
+    (ha : a ≠ 0) (hb : b ≠ 0) : ∀ n : ℕ, pathSum a b n ^ 2 = biPeriodicFibonacciSq a b (n + 1)
+  | 0 => by rw [pathSum_zero, biPeriodicFibonacciSq_one, one_pow]
+  | 1 => by rw [pathSum_one, biPeriodicFibonacciSq_two]
+  | 2 => by
+    rw [pathSum_rec a b 0, pathSum_one, pathSum_zero, biPeriodicFibonacciSq_add_three a b 0]
+    simp only [Nat.zero_add, cellWeight, ite_eq_right (show 1 % 2 ≠ 0 by decide),
+      ite_eq_right (show ¬ Even 3 by decide), biPeriodicFibonacciSq_zero,
+      biPeriodicFibonacciSq_one, biPeriodicFibonacciSq_two]
+    field_simp [ha]
+    ring
+  | n + 3 => by
+    rw [pathSum_sq_rec ha hb n, biPeriodicFibonacciSq_add_three a b (n + 1),
+      pathSum_sq_eq_biPeriodicFibonacciSq ha hb (n + 2),
+      pathSum_sq_eq_biPeriodicFibonacciSq ha hb (n + 1),
+      pathSum_sq_eq_biPeriodicFibonacciSq ha hb n]
+
+/-- **Fence tilings and the bi-periodic Fibonacci numbers squared.** Let $a$ and $b$ be nonzero
+elements of a field $K$. For every $n \ge 0$, let $S_n$ be the weighted number of tilings of an
+$n$-board, with cells numbered $1, \dots, n$, by half-squares and $(1/2, 1/2)$-fences, a
+half-square weighing $a$ in an odd cell and $b$ in an even cell. Then $S_n$ equals the
+bi-periodic Fibonacci number squared $q^2_{n+1}$.
+
+Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
+Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
+Theorem 2.2 (`fq-2024-belaggoun01132024-thm-2.2`). -/
+public theorem fenceTilingSum_eq_biPeriodicFibonacciSq {K : Type*} [Field K] {a b : K}
+    (ha : a ≠ 0) (hb : b ≠ 0) (n : ℕ) :
+    fenceTilingSum a b n = biPeriodicFibonacciSq a b (n + 1) := by
+  rw [fenceTilingSum_eq_pathSum_sq, pathSum_sq_eq_biPeriodicFibonacciSq ha hb]
+
+end BiPeriodicFibonacciSquares
+
 -- Expanding the cross term twice leaves the preceding cross term, with no subtraction.
 private theorem evenCross {R : Type*} [CommSemiring R] (a b : R) (k : ℕ) :
     b * pathSum a b (2 * k + 1) * pathSum a b (2 * k) =
@@ -364,6 +537,84 @@ private theorem sum_reverse_interval {M : Type*} [AddCommMonoid M] (f : ℕ → 
   · intro i hi
     rw [mem_range] at hi
     exact ⟨m - i, mem_Icc.mpr (by omega), by omega⟩
+
+private theorem pathSum_odd_step {R : Type*} [CommSemiring R] (a b : R) (k : ℕ) :
+    pathSum a b (2 * k + 3) = a * pathSum a b (2 * k + 2) + pathSum a b (2 * k + 1) := by
+  simpa only [Nat.add_assoc, cellWeight, ite_eq_left (show (2 * k + 2) % 2 = 0 by omega)] using
+    pathSum_rec a b (2 * k + 1)
+
+-- As in `evenCross`, two positive expansions reduce the cross term to the previous one.
+private theorem oddCross {R : Type*} [CommSemiring R] (a b : R) (k : ℕ) :
+    a * pathSum a b (2 * k + 2) * pathSum a b (2 * k + 1) =
+      a * b * ∑ i ∈ range (k + 1), pathSum a b (2 * i + 1) ^ 2 +
+        a ^ 2 * ∑ i ∈ range (k + 1), pathSum a b (2 * i) ^ 2 := by
+  induction k with
+  | zero =>
+    simp [pathSum_rec a b 0, pathSum_zero, pathSum_one, cellWeight]
+    ring
+  | succ k ih =>
+    have he : pathSum a b (2 * (k + 1) + 2) =
+        b * pathSum a b (2 * (k + 1) + 1) + pathSum a b (2 * k + 2) := by
+      simpa only [show 2 * (k + 1) = 2 * k + 2 by omega, cellWeight,
+        ite_eq_right (show (2 * k + 2 + 1) % 2 ≠ 0 by omega)] using
+        pathSum_rec a b (2 * (k + 1))
+    rw [he, sum_range_succ (fun i => pathSum a b (2 * i + 1) ^ 2) (k + 1),
+      sum_range_succ (fun i => pathSum a b (2 * i) ^ 2) (k + 1)]
+    calc
+      _ = a * b * pathSum a b (2 * (k + 1) + 1) ^ 2 +
+          a * pathSum a b (2 * k + 2) * pathSum a b (2 * (k + 1) + 1) := by ring
+      _ = a * b * pathSum a b (2 * (k + 1) + 1) ^ 2 +
+          (a ^ 2 * pathSum a b (2 * k + 2) ^ 2 +
+            a * pathSum a b (2 * k + 2) * pathSum a b (2 * k + 1)) := by
+        congr 1
+        rw [show 2 * (k + 1) + 1 = 2 * k + 3 by omega, pathSum_odd_step]
+        ring
+      _ = _ := by rw [ih, show 2 * (k + 1) = 2 * k + 2 by omega]; ring
+
+/-- **Recurrence for weighted fence tilings of odd boards.** Let $a$ and $b$ be elements of a
+commutative semiring $R$, and let $S_m$ be the weighted number of tilings of an $m$-board, with
+cells numbered $1, \dots, m$, by half-squares and $(1/2, 1/2)$-fences, a half-square weighing $a$
+in an odd cell and $b$ in an even cell. Then for every odd $n \ge 3$,
+$$
+S_n = a^2 S_{n-1} + (2ab+1) S_{n-2} +
+2ab \sum_{j=2}^{(n-1)/2} S_{n-2j} + 2a^2 \sum_{j=1}^{(n-1)/2} S_{n-2j-1}.
+$$
+
+Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
+Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
+Lemma 2.1, (2.1) (`fq-2024-belaggoun01132024-lem-2.1`). -/
+public theorem fenceTilingSum_odd {R : Type*} [CommSemiring R] (a b : R) {n : ℕ}
+    (hn : 2 ≤ n) (ho : Odd n) :
+    fenceTilingSum a b n =
+      a ^ 2 * fenceTilingSum a b (n - 1) + (2 * a * b + 1) * fenceTilingSum a b (n - 2) +
+        2 * a * b * ∑ j ∈ Icc 2 ((n - 1) / 2), fenceTilingSum a b (n - 2 * j) +
+        2 * a ^ 2 * ∑ j ∈ Icc 1 ((n - 1) / 2), fenceTilingSum a b (n - 2 * j - 1) := by
+  obtain ⟨m, hm⟩ := ho
+  obtain ⟨k, rfl⟩ : ∃ k, m = k + 1 := ⟨m - 1, by omega⟩
+  have h : n = 2 * k + 3 := by omega
+  rw [h]
+  simp only [fenceTilingSum_eq_pathSum_sq, show 2 * k + 3 - 1 = 2 * k + 2 by omega,
+    show (2 * k + 2) / 2 = k + 1 by omega, show 2 * k + 3 - 2 = 2 * k + 1 by omega]
+  have hOdd : (∑ j ∈ Icc 2 (k + 1), pathSum a b (2 * k + 3 - 2 * j) ^ 2) =
+      ∑ i ∈ range k, pathSum a b (2 * i + 1) ^ 2 := by
+    calc
+      _ = ∑ j ∈ Icc 2 (k + 1), pathSum a b (2 * (k + 1 - j) + 1) ^ 2 := by
+        refine sum_congr rfl fun j hj => ?_
+        have := (mem_Icc.mp hj).2
+        rw [show 2 * k + 3 - 2 * j = 2 * (k + 1 - j) + 1 by omega]
+      _ = _ := by
+        simpa only [show k + 1 + 1 - 2 = k by omega] using
+          sum_reverse_interval (fun i => pathSum a b (2 * i + 1) ^ 2) 2 (k + 1)
+  have hEven : (∑ j ∈ Icc 1 (k + 1), pathSum a b (2 * k + 3 - 2 * j - 1) ^ 2) =
+      ∑ i ∈ range (k + 1), pathSum a b (2 * i) ^ 2 := by
+    simp_rw [show ∀ j : ℕ, 2 * k + 3 - 2 * j - 1 = 2 * (k + 1 - j) from fun j => by omega]
+    simpa only [Nat.add_sub_cancel] using
+      sum_reverse_interval (fun i => pathSum a b (2 * i) ^ 2) 1 (k + 1)
+  rw [hOdd, hEven, pathSum_odd_step]
+  calc
+    _ = a ^ 2 * pathSum a b (2 * k + 2) ^ 2 + pathSum a b (2 * k + 1) ^ 2 +
+        2 * (a * pathSum a b (2 * k + 2) * pathSum a b (2 * k + 1)) := by ring
+    _ = _ := by rw [oddCross, sum_range_succ (fun i => pathSum a b (2 * i + 1) ^ 2) k]; ring
 
 /-- **Recurrence for weighted fence tilings of even boards.** Let $a$ and $b$ be elements of a
 commutative semiring $R$, and let $S_m$ be the weighted number of tilings of an $m$-board, with

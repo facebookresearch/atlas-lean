@@ -101,3 +101,9 @@
 - [The shrinkage error is orthogonal to the shrunk estimates](integral-sub-blup-score-mul-blup-score.md)
 - [The shrunk PRS is calibrated when its score term is nonzero](calib-slope-blup.md)
 - [Squared accuracy of the shrunk PRS](accuracy-sq-blup.md)
+
+## Further topics
+
+- [Pseudo-GWAS subsampling for PRS ensembles](pseudo-gwas-subsampling-for-prs-ensembles/README.md)
+- [Local and global ancestry interaction models](local-and-global-ancestry-interaction-models/README.md)
+- [Imputation-aware SNP panel design](imputation-aware-snp-panel-design/README.md)

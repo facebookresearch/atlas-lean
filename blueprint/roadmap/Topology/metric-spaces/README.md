@@ -7,3 +7,4 @@ Metric, pseudometric and extended metric spaces: balls, boundedness and diameter
 - [Ultrametric distance](is-ultrametric-dist.md)
 - [The distance to a set is 1-Lipschitz](distance-to-a-set.md)
 - [The distance to a nonempty set vanishes exactly on its closure](distance-to-a-set-vanishes-exactly-on-the-closure.md)
+- [Minkowski dimension](minkowski-dimension/README.md)
