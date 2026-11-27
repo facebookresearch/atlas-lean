@@ -29,9 +29,9 @@ namespace MathlibExt.Analysis.TwoPhaseEigenvalueOptimalDesignOWR12180Problem001W
 
 /-!
 Source: A. Laurain (with C. Conca and R. Mahadevan), in Mini-Workshop: Geometries, Shapes and
-Topologies in PDE-based Applications, Oberwolfach Reports 9 (2012), no. 57, pp. 3407-3408, DOI
-10.4171/OWR/2012/57. UnsolvedMath record UM-30002244 (`OWR-12180-001`), dataset ulamai/UnsolvedMath
-v1.8.0.
+Topologies in PDE-based Applications, Oberwolfach Reports 9 (2012), no. 4 (Report 57/2012), pp.
+3407-3408, DOI 10.4171/OWR/2012/57. UnsolvedMath record UM-30002244 (`OWR-12180-001`), dataset
+ulamai/UnsolvedMath v1.8.0.
 
 `λ` is the infimum of the Rayleigh quotient `∫ σ |∇u|² / ∫ u²` over nonzero smooth functions with
 compact support in `Ω`; they are dense in `H¹₀(Ω)` and the quotient is continuous there for bounded
@@ -44,9 +44,12 @@ ranges over bounded domains (connected open sets) as in the source, `d ≥ 1`.
 open MeasureTheory
 open scoped ContDiff
 
-/-- The first Dirichlet eigenvalue of `-div(σ ∇u)` on the open set `Ω`, as the infimum of the
-Rayleigh quotient `∫ σ |∇u|² / ∫ u²` over nonzero smooth functions with compact support in `Ω`
-(they are dense in `H¹₀(Ω)` and the quotient is continuous there for bounded `σ`). -/
+/-- The infimum, taken in `ℝ`, of the Rayleigh quotient `∫ σ |∇u|² / ∫ u²` over nonzero smooth
+functions with compact support in `Ω` (Bochner integrals, `0` when not integrable); the infimum of
+the empty family is `0`, for instance for `Ω = ∅`. For a nonempty bounded open domain `Ω` and a
+bounded measurable `σ` bounded below by a positive constant, as in the two-phase problem, the test
+functions are dense in `H¹₀(Ω)` and the quotient is continuous there, so this is the first Dirichlet
+eigenvalue of `-div(σ ∇u)` on `Ω`; in general it need not be an eigenvalue. -/
 noncomputable def firstEigenvalue {d : ℕ} (Ω : Set (EuclideanSpace ℝ (Fin d)))
     (σ : EuclideanSpace ℝ (Fin d) → ℝ) : ℝ :=
   sInf ((fun u : EuclideanSpace ℝ (Fin d) → ℝ =>
@@ -75,15 +78,16 @@ def twoPhaseOptimalDesignExists : Prop :=
 /--
 Resolved false: Casado-Díaz proved that for a smooth, simply connected bounded domain `Ω ⊆ ℝ^N` with
 connected boundary the problem has a solution if and only if `Ω` is a ball, so a smooth non-ball
-such domain, for instance an open ellipse in `ℝ²`, has no optimal `A` for any `0 < κ < |Ω|` and `0 <
-α < β`. Source: A. Laurain (with C. Conca and R. Mahadevan), in Mini-Workshop: Geometries, Shapes
-and Topologies in PDE-based Applications, Oberwolfach Reports 9 (2012), no. 57, pp. 3407-3408, DOI
-10.4171/OWR/2012/57; resolution: J. Casado-Díaz, A characterization result for the existence of a
-two-phase material minimizing the first eigenvalue, Ann. Inst. H. Poincaré C Anal. Non Linéaire 34
-(2017), no. 5, 1215-1226, DOI 10.1016/j.anihpc.2016.09.006, abstract: for 0 < α < β, 0 < κ < |Ω| and
-Ω ⊂ ℝ^N smooth, simply connected and with connected boundary, minimizing the first eigenvalue of u ∈
-H¹₀(Ω) ↦ -div((αχ_ω + β(1 - χ_ω))∇u) over measurable ω with |ω| ≤ κ has a solution if and only if Ω
-is a ball; an earlier paper of the author shows that the problem has no solution in general,
+such domain, for instance an open ellipse in `ℝ²`, has no optimal `A` for any `0 < κ < |Ω|` and
+`0 < α < β`. Source: A. Laurain (with C. Conca and R. Mahadevan), in Mini-Workshop: Geometries,
+Shapes and Topologies in PDE-based Applications, Oberwolfach Reports 9 (2012),
+no. 4 (Report 57/2012), pp. 3407-3408, DOI 10.4171/OWR/2012/57; resolution: J. Casado-Díaz, A
+characterization result for the existence of a two-phase material minimizing the first eigenvalue,
+Ann. Inst. H. Poincaré C Anal. Non Linéaire 34 (2017), no. 5, 1215-1226, DOI
+10.1016/j.anihpc.2016.09.006, abstract: for 0 < α < β, 0 < κ < |Ω| and Ω ⊂ ℝ^N smooth, simply
+connected and with connected boundary, minimizing the first eigenvalue of u ∈ H¹₀(Ω) ↦ -div((αχ_ω +
+β(1 - χ_ω))∇u) over measurable ω with |ω| ≤ κ has a solution if and only if Ω is a ball; an earlier
+paper of the author shows that the problem has no solution in general,
 https://www.sciencedirect.com/science/article/pii/S0294144916300695.
 -/
 public theorem_wanted twoPhaseOptimalDesignExists_refuted : ¬ twoPhaseOptimalDesignExists
