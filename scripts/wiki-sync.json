@@ -49295,7 +49295,7 @@
 "MathlibExt.Analysis.WirsingConstant.isEigenvalue_one": "d2bdedd03ff0764e",
 "MathlibExt.Analysis.WirsingConstant.wirsingConstant": "6d53dae25c7a4396",
 "MathlibExt.Analysis.WirsingConstantWanted.mayerRoepstorffLowerBound_wanted": "b04b553cdc2f3b6e",
-"MathlibExt.Analysis.WirsingConstantWanted.mayerRoepstorffUpperBound_wanted": "dbf004e698deb33a",
+"MathlibExt.Analysis.WirsingConstantWanted.mayerRoepstorffUpperBound_wanted": "74b6d5055c41fc33",
 "MathlibExt.Analysis.first_order_propagation_remainder_bound": "5273d2aa224fa7f8",
 "MathlibExt.Analysis.iharaConstantOf": "87a86ca33479a4a5",
 "MathlibExt.Analysis.iharaConstantOf_congr": "5583c3dcfeac0285",

@@ -10165,7 +10165,6 @@
   "MathlibExt/Analysis/Wavelet/WaveletBasis": {"to": "Analysis/harmonic-analysis/wavelets", "title": "Multiresolution approximations"},
   "MathlibExt/Analysis/WienerAtom": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Fourier coefficients of measures on the circle"},
   "MathlibExt/Analysis/WirsingConstant": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin–Wirsing operator"},
-  "MathlibExt/Analysis/WirsingConstantUpperBound": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin–Wirsing operator"},
   "Domains/Biology/CancerGenomics/Absolute": {"to": "Biology/cancer-genomics", "title": "Tumour purity, ploidy and copy-ratio algebra"},
   "Domains/Biology/CancerGenomics/CancerCellFraction": {"to": "Biology/cancer-genomics", "title": "Cancer cell fraction estimation"},
   "Domains/Biology/CancerGenomics/DetectionPower": {"to": "Biology/cancer-genomics", "title": "Detection power for somatic mutations"},

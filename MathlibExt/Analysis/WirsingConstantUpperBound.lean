@@ -23,6 +23,13 @@ Markov operator $U$ that sends increasing functions to decreasing functions. We 
 rational function $h$ with $h' ≥ 1$ and $(c h + U h)' ≥ 0$ for $c = 0.30366327$. For an
 eigenfunction with $|λ| > c$, iterating the resulting difference estimate makes the normalized
 eigenfunction constant on the interval. The identity theorem then rules out $λ ≠ 1$.
+
+## Main results
+
+* `norm_le_of_isHolomorphicEigenvalue`: every holomorphic eigenvalue other than one has modulus at
+  most $0.30366327$.
+* `bddAbove_norm_isHolomorphicEigenvalue`: the set of these moduli is bounded above.
+* `mayerRoepstorffUpperBound_wanted`: the Wirsing constant is at most $0.30366327$.
 -/
 
 open Set Filter Topology
@@ -426,8 +433,14 @@ private theorem mixture_linear (L : Terms) (f g : ℝ → ℝ → ℝ) (r s x : 
     simp only [mixture_cons, ih]
     ring
 
-private theorem certificate_bound {l : ℂ} (hl : IsHolomorphicEigenvalue l) (hn : l ≠ 1) :
-    ‖l‖ ≤ (30366327 / 100000000 : ℝ) := by
+/-- **Mayer–Roepstorff bound for each holomorphic eigenvalue.** Every holomorphic eigenvalue
+$\lambda \ne 1$ of the Gauss–Kuzmin–Wirsing operator on the Mayer disk
+$\{z \in \mathbb{C} : |z - 1| < 3/2\}$ satisfies $|\lambda| \le 0.30366327$.
+
+Source: Mayer and Roepstorff (1987), eq. (5.20), catalogue upper
+bound `0.30366327`. -/
+public theorem norm_le_of_isHolomorphicEigenvalue {l : ℂ} (hl : IsHolomorphicEigenvalue l)
+    (hl₁ : l ≠ 1) : ‖l‖ ≤ (30366327 / 100000000 : ℝ) := by
   let c : ℝ := 30366327 / 100000000
   let h x := -mixture certificate atom x
   let H x := -mixture certificate imageAtom x
@@ -443,7 +456,7 @@ private theorem certificate_bound {l : ℂ} (hl : IsHolomorphicEigenvalue l) (hn
     exact he
   have hD (x : ℝ) (hx : 0 ≤ x) : HasDerivAt H (-mixture certificate imageSlope x) x :=
     (mixture_deriv (f' := imageSlope) (fun a ha => image_deriv ha hx) certificate).neg
-  apply eigenvalue_bound (h := h) (H := H) (by norm_num) _ _ _ hl hn
+  apply eigenvalue_bound (h := h) (H := H) (by norm_num) _ _ _ hl hl₁
   · simpa only [neg_one_mul] using transfers_mul (-1) (mixture_transfer certificate)
   · apply monotoneOn_of_deriv_nonneg (convex_Icc 0 1)
     · exact fun x hx => ((hd _ hx.1).sub (hasDerivAt_id x)).continuousAt.continuousWithinAt
@@ -472,16 +485,28 @@ private theorem certificate_bound {l : ℂ} (hl : IsHolomorphicEigenvalue l) (hn
 
 end
 
+/-- **The holomorphic eigenvalue moduli are bounded above.** The set of moduli $|\lambda|$ of the
+holomorphic eigenvalues $\lambda \ne 1$ of the Gauss–Kuzmin–Wirsing operator on the Mayer disk
+$\{z \in \mathbb{C} : |z - 1| < 3/2\}$, whose supremum defines the Wirsing constant, is bounded
+above.
+
+Source: Mayer and Roepstorff (1987), eq. (5.20), catalogue upper
+bound `0.30366327`. -/
+public theorem bddAbove_norm_isHolomorphicEigenvalue :
+    BddAbove {r : ℝ | ∃ lam : ℂ, IsHolomorphicEigenvalue lam ∧ lam ≠ 1 ∧ r = ‖lam‖} := by
+  refine ⟨30366327 / 100000000, ?_⟩
+  rintro _ ⟨l, hl, hl₁, rfl⟩
+  exact norm_le_of_isHolomorphicEigenvalue hl hl₁
+
 /-- **Mayer–Roepstorff upper bound for the Wirsing constant.** The
 Wirsing constant is at most $0.30366327$.
 
 Source: Mayer and Roepstorff (1987), eq. (5.20), catalogue upper
-bound `0.30366327`. Known literature result; its proof is not
-supplied here. -/
+bound `0.30366327`. -/
 public theorem mayerRoepstorffUpperBound_wanted :
     wirsingConstant ≤ (30366327 / 100000000 : ℝ) := by
   apply Real.sSup_le _ (by norm_num)
-  rintro _ ⟨l, hl, hn, rfl⟩
-  exact certificate_bound hl hn
+  rintro _ ⟨l, hl, hl₁, rfl⟩
+  exact norm_le_of_isHolomorphicEigenvalue hl hl₁
 
 end MathlibExt.Analysis.WirsingConstantWanted
