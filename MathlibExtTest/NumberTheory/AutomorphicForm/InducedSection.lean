@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+The example on `etaFst * etaSnd` reproduces the theorem type of `etaFst_mul_etaSnd` from
+`Definitions/Def_AutomorphicForm_EtaFamily.lean`
+in https://github.com/anthropics/fermats-last-theorem at commit
+6e837e75355538c7f80bab5b956861e86c4eacc2.
+Copyright (c) 2026 Anthropic, PBC. Licensed under the Apache License, Version 2.0.
+The upstream NOTICE also credits Mathlib and its respective authors under Apache 2.0.
+-/
+
 module
 
 import MathlibExt.NumberTheory.AutomorphicForm.InducedSection

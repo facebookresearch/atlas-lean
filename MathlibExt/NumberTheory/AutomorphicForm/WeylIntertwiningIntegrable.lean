@@ -25,6 +25,12 @@ Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+
+`Mathlib/NumberTheory/NumberField/DedekindZeta.lean` (Mathlib, revision
+fc4f59e577feb1a4956671bc04ac18aaaf8cd842), for the proof of `tendsto_sum_idealCount_div`:
+Copyright (c) 2025 Xavier Roblot. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Xavier Roblot
 -/
 
 module
