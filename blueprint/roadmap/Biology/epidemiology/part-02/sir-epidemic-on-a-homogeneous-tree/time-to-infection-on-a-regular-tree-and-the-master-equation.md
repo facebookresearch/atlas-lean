@@ -20,7 +20,7 @@ $$
 s_t=\varphi_t-(1-p)\int_0^t f_u\,s_u^{\,n}\,\varphi'_{t-u}\,du .
 $$
 
-Here $s_t$ is the probability that the vertex receives no infection from one fixed neighbor by time $t$ (computed in the tree with the vertex removed). Special cases: with exponential recovery at rate $\mu$ and constants $\varepsilon,\lambda$, the equation is equivalent to the Bernoulli-type ODE $s'_t=-(\mu+\varepsilon)s_t+\varepsilon e^{-\lambda t}s_t^{\,n}+\mu$, $s_0=1$; with no recovery it is solved in closed form.
+Here $s_t$ is the probability that the vertex receives no infection from one fixed neighbor by time $t$ (computed in the tree with the vertex removed). Special cases, with all vertices initially susceptible ($p=0$) and constants $\varepsilon,\lambda$: with exponential recovery at rate $\mu$, the equation is equivalent to the Bernoulli-type ODE $s'_t=-(\mu+\varepsilon)s_t+\varepsilon e^{-\lambda t}s_t^{\,n}+\mu$, $s_0=1$; with no recovery ($H\equiv\infty$) it is solved in closed form. For general $p$ the same differentiation gives $s'_t=-(\mu+\varepsilon)s_t+\varepsilon(1-p)e^{-\lambda t}s_t^{\,n}+\mu$.
 
 **Theorem (high-degree limit).** Scale the transmission rate to $\varepsilon_t/(n+1)$, keeping $H$ and $\lambda$ fixed, and let $S_{t,n}=\mathbb P(\tau>t)$ be the expected susceptible fraction. Every pointwise limit point $S_t$ of $(S_{t,n})_n$ as $n\to\infty$ satisfies the **master equation**
 
@@ -40,4 +40,4 @@ On a tree, the infection events arriving at a susceptible vertex $x$ through its
 
 ## Sources
 
-- A. Gairat and V. Shcherbakov, "Discrete SIR model on a homogeneous tree and its continuous limit", arXiv:2005.04743 (2020), Section 2 (assumptions (A1)–(A2), definition of $\varphi$ and $f$, main theorem on the time to infection and corollaries for no recovery, constant and exponential recovery) and Section 3 (continuous-limit theorem and master equation), <https://doi.org/10.48550/arXiv.2005.04743>.
+- A. Gairat and V. Shcherbakov, "Discrete SIR model on a homogeneous tree and its continuous limit", arXiv:2005.04743 (2020), Section 2 (assumptions (A1)–(A2), definition of $\varphi$ and $f$, Theorem 1 on the time to infection), Section 3 (Theorem 2, continuous limit and master equation) and Section 5 (Appendix, Corollaries 1–3 for no recovery, constant and exponential recovery, stated for $p=0$), <https://doi.org/10.48550/arXiv.2005.04743>.

@@ -36,4 +36,4 @@ where $h_j \in \{-1,0,1\}^{2\ell}$ are the jump directions, $\beta_j$ the jump r
 
 ## Sources
 
-- T. Yeo, "Stochastic and deterministic SIS patch model", arXiv:2007.07583 (2020), Section 2 (model) and Theorem 3.1, <https://doi.org/10.48550/arXiv.2007.07583>.
+- T. Yeo, "Stochastic and deterministic SIS patch model", arXiv:2007.07583 (2020), Section 2 (model and Theorem 2.1, law of large numbers), <https://doi.org/10.48550/arXiv.2007.07583>.

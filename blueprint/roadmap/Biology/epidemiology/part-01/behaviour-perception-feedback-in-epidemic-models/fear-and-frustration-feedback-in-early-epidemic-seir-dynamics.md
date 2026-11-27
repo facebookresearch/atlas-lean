@@ -31,4 +31,4 @@ Without fear the linear growth rate is governed by $\beta-\gamma$. Fear saturate
 
 ## Sources
 
-- Matthew D. Johnston, Bruce Pell, "A Dynamical Framework for Modeling Fear of Infection and Frustration with Social Distancing in COVID-19 Spread", arXiv:2008.06023: Section 2 (behaviour–perception SEIR model); Section 6: reduced direct system, endemic steady state and Theorem 6.1, with Theorems 6.2–6.3 for the delayed-perception variants. <https://doi.org/10.48550/arXiv.2008.06023>
+- Matthew D. Johnston, Bruce Pell, "A Dynamical Framework for Modeling Fear of Infection and Frustration with Social Distancing in COVID-19 Spread", arXiv:2008.06023: Section 2 (behaviour–perception SEIR model); Section 3.1 (reduced models); Appendix A: reduced direct system, endemic steady state and Theorem A.1, with Theorems A.2–A.3 for the delayed-perception variants. <https://doi.org/10.48550/arXiv.2008.06023>

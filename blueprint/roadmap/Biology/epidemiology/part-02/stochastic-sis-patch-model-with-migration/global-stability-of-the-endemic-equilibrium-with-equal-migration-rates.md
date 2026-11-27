@@ -30,5 +30,5 @@ Its Jacobian is an irreducible Metzler matrix that is strictly decreasing in $i$
 
 ## Sources
 
-- T. Yeo, "Stochastic and deterministic SIS patch model", arXiv:2007.07583 (2020), Proposition 4.1, Lemmas 4.1–4.3 and Theorem 4.3, <https://doi.org/10.48550/arXiv.2007.07583>.
+- T. Yeo, "Stochastic and deterministic SIS patch model", arXiv:2007.07583 (2020), Proposition 3.1, Lemmas 3.1–3.3 and Theorem 3.3, <https://doi.org/10.48550/arXiv.2007.07583>.
 - L. J. S. Allen, B. M. Bolker, Y. Lou and A. L. Nevai, "Asymptotic profiles of the steady states for an SIS epidemic patch model", SIAM J. Appl. Math. 67 (2007).

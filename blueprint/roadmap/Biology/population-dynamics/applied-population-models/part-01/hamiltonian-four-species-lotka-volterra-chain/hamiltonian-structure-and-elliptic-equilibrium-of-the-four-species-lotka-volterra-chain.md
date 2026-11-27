@@ -20,17 +20,19 @@ H(\mathbf x)=\sum_{i=1}^4\big(x_i+k_i\log x_i\big),\qquad
 k_1=-r_2+r_3-r_4,\ k_2=r_1-r_3+r_4,\ k_3=-r_1+r_2-r_4,\ k_4=r_1-r_2+r_3 .
 $$
 
-**Proposition (elliptic equilibrium).** The system has a single elliptic equilibrium, located at
+**Proposition (elliptic equilibrium).** The only equilibrium that can be elliptic (all four Jacobian eigenvalues nonzero and purely imaginary) is
 
 $$
 \mathbf x_0=-\mathbf k=(r_2-r_3+r_4,\ -r_1+r_3-r_4,\ r_1-r_2+r_4,\ -r_1+r_2-r_3),
 $$
 
-if and only if
+and with $\alpha=\sum_{i<j}k_ik_j$, $\beta=\prod_{i=1}^4k_i$ it is elliptic if and only if
 
 $$
-\sum_{i<j}k_ik_j>0\qquad\text{and}\qquad\prod_{i=1}^4k_i>0 .
+\alpha>0,\qquad\beta>0\qquad\text{and}\qquad\alpha^2\ge4\beta
 $$
+
+(with $\alpha^2>4\beta$ the four eigenvalues are simple). In particular $\mathbf x_0$ lies in the open positive orthant iff all $k_i<0$, and it is then elliptic. The source (Proposition 1) gives only the conditions $\alpha>0$, $\beta>0$ and asserts that $\alpha^2-4\beta\ge0$ always; that holds when all $k_i$ have the same sign but not in general: for $\mathbf k=(0.307,-2.575,-2.549,0.812)$ one has $\alpha\approx1.079>0$, $\beta\approx1.636>0$, $\alpha^2<4\beta$, and the Jacobian at $\mathbf x_0$ has eigenvalues $\pm0.608\pm0.954\,i$.
 
 **Lemma (first integrals).** Let
 
@@ -48,7 +50,7 @@ then $\Phi(I_1,I_2,I_3)$ is a first integral. This recovers the two-parameter in
 
 ## Expansion
 
-The equilibrium is $\mathbf x_0=-A^{-1}\mathbf r=-\mathbf k$, and it lies in the open positive orthant exactly when all $k_i<0$. The Jacobian there has rows $(0,-k_1,-k_1,-k_1)$, $(k_2,0,-k_2,-k_2)$, $(k_3,k_3,0,-k_3)$, $(k_4,k_4,k_4,0)$; its characteristic polynomial is even, $\lambda^4+\alpha\lambda^2+\beta$ with $\alpha=\sum_{i<j}k_ik_j$ and $\beta=\prod_ik_i$, so the eigenvalues are $\pm i\sqrt{(\alpha\pm\sqrt{\alpha^2-4\beta})/2}$ and the sign conditions on $\alpha,\beta$ make them purely imaginary. The other seven equilibria (origin and six on coordinate planes) always have real eigenvalues. The dichotomy that follows is biological: on integrable parameter sets the extra invariants confine trajectories so that populations grow without bound or collapse (no sustainable coexistence), whereas non-integrable parameter sets near an elliptic $\mathbf x_0$ show bounded chaotic motion (positive Lyapunov exponents, structured Poincaré sections) in which all four species persist.
+The equilibrium is $\mathbf x_0=-A^{-1}\mathbf r=-\mathbf k$, and it lies in the open positive orthant exactly when all $k_i<0$. The Jacobian there has rows $(0,-k_1,-k_1,-k_1)$, $(k_2,0,-k_2,-k_2)$, $(k_3,k_3,0,-k_3)$, $(k_4,k_4,k_4,0)$; its characteristic polynomial is even, $\lambda^4+\alpha\lambda^2+\beta$ with $\alpha=\sum_{i<j}k_ik_j$ and $\beta=\prod_ik_i$, so the eigenvalues are $\pm i\sqrt{(\alpha\pm\sqrt{\alpha^2-4\beta})/2}$. They are nonzero and purely imaginary exactly when both values $\lambda^2=(-\alpha\pm\sqrt{\alpha^2-4\beta})/2$ are real and negative, that is, when $\alpha>0$, $\beta>0$ and $\alpha^2\ge4\beta$. When all $k_i$ have the same sign, the Jacobian $-\operatorname{diag}(\mathbf k)A$ is similar to the real skew-symmetric matrix $\pm|\operatorname{diag}(\mathbf k)|^{1/2}A\,|\operatorname{diag}(\mathbf k)|^{1/2}$, so the discriminant condition holds automatically. The other seven equilibria (origin and six on coordinate planes) always have real eigenvalues. The dichotomy that follows is biological: on integrable parameter sets the extra invariants confine trajectories so that populations grow without bound or collapse (no sustainable coexistence), whereas non-integrable parameter sets near an elliptic $\mathbf x_0$ show bounded chaotic motion (positive Lyapunov exponents, structured Poincaré sections) in which all four species persist.
 
 ## Sources
 

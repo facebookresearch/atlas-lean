@@ -25,7 +25,7 @@ $$
 
 The disease-free state is globally unstable and the fully infected state is globally stable: any introduction of infection eventually infects every host, and all vectors become infectious, distributed with density inversely proportional to their motility.
 
-**Proposition (exponential convergence, Proposition 2.2).** For smooth initial data, after the normalization used in the source, there are constants $C,\lambda>0$ with $S_h,E_h\le Ce^{-\lambda t}$, the susceptible vector density $\le Ce^{-\lambda t}$, $\|I_h-N\|_\infty\le Ce^{-\lambda t}$, and the infectious vector density converging in $L^2$ to its spatial mean at rate $Ce^{-\lambda t}$.
+**Proposition (exponential convergence, Proposition 2.2).** Write $s_v=DS_v$ and $i_v=DI_v$. For smooth nonnegative initial data that carry some infection, $E_h^0+I_h^0\not\equiv0$ or $I_v^0\not\equiv0$, there are constants $C,\lambda>0$ with $\|S_h(t)\|_\infty,\|E_h(t)\|_\infty\le Ce^{-\lambda t}$, $\|s_v(t)\|_\infty\le Ce^{-\lambda t}$, $\|I_h(t)-N\|_\infty\le Ce^{-\lambda t}$, and $\|i_v(t)-\langle i_v(t)\rangle\|_{L^2(\Omega)}\le Ce^{-\lambda t}$, where $\langle\cdot\rangle$ is the spatial mean. The infection hypothesis is needed: disease-free data $(N,0,0,S_v^0,0)$ give $S_h\equiv N$ for all time. The source states the proposition for all smooth data; its proof uses that $i_v$ tends to the total vector density, which holds only when infection is present.
 
 ## Expansion
 
