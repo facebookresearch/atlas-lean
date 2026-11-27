@@ -33,3 +33,5 @@ Clique, independent set, vertex cover, domination variants, feedback vertex and 
 - [Oriented radius](oriented-radius/README.md)
 - [Target set selection](target-set-selection/README.md)
 - [Threshold editing](threshold-editing/README.md)
+- [Clique on restricted graph classes](clique-on-restricted-graph-classes/README.md)
+- [Edge deletion, editing and contraction](edge-deletion-editing-and-contraction/README.md)

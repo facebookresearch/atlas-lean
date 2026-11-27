@@ -259,6 +259,34 @@ public theorem IsSmoothCoconut.eq_one_of_dvd_leaves {p s : ℕ}
     exact (hpair i.val i.isLt.le).2
   · exact hg j
 
+/-- **Smooth coconut structures with central label above one.** Let $p \ge 1$ and let $(d, r)$ be
+a smooth arithmetical structure on the coconut tree $\mathrm{CT}(p, s)$, with central vertex $v_p$
+and leaves $\ell_1, \ldots, \ell_s$. Then $d_{v_p} > 1$ if and only if
+$r_{v_p} < \sum_{j=1}^{s} r_{\ell_j}$.
+
+Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
+Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 8
+(`integers-2025-A82-prop-8`). -/
+public theorem IsSmoothCoconut.one_lt_center_iff {p s : ℕ} (hp : 0 < p)
+    {d r : Fin p ⊕ Fin s → ℕ} (h : IsSmoothCoconut p s d r) :
+    1 < d (.inl ⟨p - 1, by omega⟩) ↔ r (.inl ⟨p - 1, by omega⟩) < ∑ j, r (.inr j) := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hp)
+  let c : Fin (n + 1) ⊕ Fin s := .inl (Fin.last n)
+  change 1 < d c ↔ r c < ∑ j, r (.inr j)
+  have hc : levelSum r (n + 1) = r c := levelSum_path r (Fin.last n)
+  have hprev := levelSum_lt_succ h n le_rfl
+  rw [hc] at hprev
+  have heq := path_equation h (Fin.last n)
+  simp only [Fin.val_last, hc, levelSum_leaves] at heq
+  change d c * r c = _ at heq
+  constructor
+  · intro hd
+    have hmul := Nat.mul_le_mul_right (r c) (show 2 ≤ d c from hd)
+    omega
+  · intro hsum
+    have hmul : 1 * r c < d c * r c := by omega
+    exact (Nat.mul_lt_mul_right (h.1.2.1 c)).mp hmul
+
 /-- **Smooth structures on coconut trees with two leaves.** Let $p \ge 1$ and let $(d, r)$ be a
 smooth arithmetical structure on the coconut tree $CT(p, 2)$, whose path is
 $v_1, \dots, v_p$ and whose two leaves are attached to the central vertex $v_p$. Then

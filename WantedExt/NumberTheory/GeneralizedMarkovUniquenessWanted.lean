@@ -21,6 +21,8 @@ public import MathlibExt.NumberTheory.GeneralizedMarkovVietaEq
 public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessPairwiseCoprime
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessExistsUniqueMemGenCohnTree
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessParent
 
 namespace MetaMathlibExt
 
@@ -299,18 +301,6 @@ public theorem_wanted genSecondMarkovTree_induced_and_once (k : ℕ) :
         (3 + 3 * k) * ((genMarkovTree k w).2.1 : ℤ) - k,
         (3 + 3 * k) * ((genMarkovTree k w).2.2 : ℤ) - k) = (a, b, c)
 
-/-- **The matrix $S$ of the generalized Cohn triple relation.** For a natural number $k$, $S$
-is the $2 \times 2$ integer matrix
-
-$$S = \begin{pmatrix} k & 0 \\ 3k^2 + 3k & k \end{pmatrix}.$$
-
-It is the matrix in the relation $Q = PR - S$ that defines $k$-generalized Cohn triples.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 3.2. -/
-public def genCohnS (k : ℕ) : Matrix (Fin 2) (Fin 2) ℤ :=
-  !![(k : ℤ), 0; 3 * (k : ℤ) ^ 2 + 3 * k, k]
-
 /-- **The matrix $S$ vanishes for $k = 0$.** For $k = 0$, the matrix $S$ of the generalized
 Cohn triple relation is the zero $2 \times 2$ matrix, so the relation $Q = PR - S$ reduces to
 the classical Cohn relation $Q = PR$.
@@ -320,18 +310,6 @@ Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 1.3. -/
 public theorem genCohnS_zero : genCohnS 0 = 0 := by
   ext i j
   fin_cases i <;> fin_cases j <;> simp [genCohnS]
-
-/-- **Generalized Cohn triple.** Let $k$ be a natural number and let $S$ be the integer matrix
-with rows $(k, 0)$ and $(3k^2 + 3k, k)$. A triple $(P, Q, R)$ of integer $2 \times 2$ matrices is
-a $k$-generalized Cohn triple associated with natural numbers $(a, b, c)$ when $P$, $Q$ and $R$
-are $k$-generalized Cohn matrices, $Q = PR - S$, the $(1, 2)$-entries of $P$, $Q$ and $R$ are
-$a$, $b$ and $c$ respectively, and $(a, b, c)$ is a $k$-generalized Markov triple.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 3.2. -/
-public def IsGenCohnTriple (k : ℕ) (P Q R : Matrix (Fin 2) (Fin 2) ℤ) (a b c : ℕ) : Prop :=
-  IsGenCohnMatrix k P ∧ IsGenCohnMatrix k Q ∧ IsGenCohnMatrix k R ∧ Q = P * R - genCohnS k ∧
-    P 0 1 = a ∧ Q 0 1 = b ∧ R 0 1 = c ∧ IsGenMarkovTriple k a b c
 
 /-- **Generalized Cohn triples give generalized Markov triples.** Let $k$ be a natural number.
 If $(P, Q, R)$ is a $k$-generalized Cohn triple associated with $(a, b, c)$, then $(a, b, c)$ is
@@ -343,35 +321,6 @@ public theorem IsGenCohnTriple.isGenMarkovTriple {k : ℕ} {P Q R : Matrix (Fin 
     {a b c : ℕ} (h : IsGenCohnTriple k P Q R a b c) : IsGenMarkovTriple k a b c :=
   h.2.2.2.2.2.2.2
 
-/-- **The matrix $P_{1;\ell}$.** For a natural number $k$ and an integer $\ell$, $P_{1;\ell}$ is
-the integer $2 \times 2$ matrix with first row $(\ell, 1)$ and second row
-$(-\ell^2 + 2k\ell + 3\ell - 1, -\ell + 2k + 3)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 3.1. -/
-public def genCohnP1 (k : ℕ) (ℓ : ℤ) : Matrix (Fin 2) (Fin 2) ℤ :=
-  !![ℓ, 1; -ℓ ^ 2 + 2 * k * ℓ + 3 * ℓ - 1, -ℓ + 2 * k + 3]
-
-/-- **The matrix $Q_{1;\ell}$.** For a natural number $k$ and an integer $\ell$, $Q_{1;\ell}$ is
-the $2 \times 2$ integer matrix
-
-$$\begin{pmatrix} k + \ell + 1 & 1 \\ k^2 - \ell^2 + 3k + \ell + 1 & k - \ell + 2 \end{pmatrix}.$$
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 3.1. -/
-public def genCohnQ1 (k : ℕ) (ℓ : ℤ) : Matrix (Fin 2) (Fin 2) ℤ :=
-  !![k + ℓ + 1, 1; (k : ℤ) ^ 2 - ℓ ^ 2 + 3 * k + ℓ + 1, k - ℓ + 2]
-
-/-- **The matrix $R_{1;\ell}$.** For a natural number $k$ and an integer $\ell$, $R_{1;\ell}$ is
-the $2 \times 2$ integer matrix
-
-$$\begin{pmatrix} 2k + \ell + 2 & 1 \\ -\ell^2 - 2k\ell + 2k - \ell + 1 & -\ell + 1 \end{pmatrix}.$$
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 3.1. -/
-public def genCohnR1 (k : ℕ) (ℓ : ℤ) : Matrix (Fin 2) (Fin 2) ℤ :=
-  !![2 * k + ℓ + 2, 1; -ℓ ^ 2 - 2 * k * ℓ + 2 * k - ℓ + 1, -ℓ + 1]
-
 /-- **The matrices $P_{1;\ell}$, $Q_{1;\ell}$ and $R_{1;\ell}$ have determinant $1$.** For every
 natural number $k$ and every integer $\ell$, the $2 \times 2$ integer matrices $P_{1;\ell}$,
 $Q_{1;\ell}$ and $R_{1;\ell}$ (which depend on $k$) all have determinant $1$.
@@ -382,69 +331,6 @@ public theorem genCohnPQR1_det (k : ℕ) (ℓ : ℤ) :
     (genCohnP1 k ℓ).det = 1 ∧ (genCohnQ1 k ℓ).det = 1 ∧ (genCohnR1 k ℓ).det = 1 := by
   refine ⟨?_, ?_, ?_⟩ <;>
     simp [genCohnP1, genCohnQ1, genCohnR1, Matrix.det_fin_two_of] <;> ring
-
-/-- **One step of the wide generalized Cohn tree.** Fix a natural number $k$ and let $S$ be the
-matrix of the $k$-generalized Cohn triple relation. On triples $(P, Q, R)$ of $2 \times 2$
-integer matrices, the left step (encoded by the Boolean false) sends $(P, Q, R)$ to its left
-child $(P, PQ - S, Q)$, and the right step (encoded by true) sends it to its right child
-$(Q, QR - S, R)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 3.1. -/
-public def genCohnStep (k : ℕ) : Bool →
-    Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ →
-      Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ
-  | false, (P, Q, _) => (P, P * Q - genCohnS k, Q)
-  | true, (_, Q, R) => (Q, Q * R - genCohnS k, R)
-
-/-- **Paths of generalized Cohn steps.** Fix a natural number $k$ and let $S$ be the integer
-$2 \times 2$ matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$. For a triple $T$ of integer
-$2 \times 2$ matrices and a path $w$, a finite sequence of left and right moves, this is the
-triple obtained from $T$ by applying the moves of $w$ in order, where a left move sends
-$(P, Q, R)$ to $(P, PQ - S, Q)$ and a right move sends $(P, Q, R)$ to $(Q, QR - S, R)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 1.10. -/
-public def genCohnPath (k : ℕ)
-    (T : Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ)
-    (w : List Bool) :
-    Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ :=
-  w.foldl (fun T d => genCohnStep k d T) T
-
-/-- **The wide generalized Cohn tree.** Fix a natural number $k$ and an integer $\ell$, and let
-$S = \begin{pmatrix} k & 0 \\ 3k^2 + 3k & k \end{pmatrix}$. The wide $k$-generalized Cohn tree
-$\mathrm{WGCT}(k, \ell)$ is the binary tree of triples of $2 \times 2$ integer matrices whose
-root is $(P_{1;\ell}, Q_{1;\ell}, R_{1;\ell})$, where
-
-$$P_{1;\ell}=\begin{pmatrix}\ell & 1\\ -\ell^2+2k\ell+3\ell-1 & -\ell+2k+3\end{pmatrix},$$
-
-$$Q_{1;\ell}=\begin{pmatrix}k+\ell+1 & 1\\ k^2-\ell^2+3k+\ell+1 & k-\ell+2\end{pmatrix},$$
-
-$$R_{1;\ell}=\begin{pmatrix}2k+\ell+2 & 1\\ -\ell^2-2k\ell+2k-\ell+1 & -\ell+1\end{pmatrix},$$
-
-and in which a vertex $(P, Q, R)$ has left child $(P, PQ - S, Q)$ and right child
-$(Q, QR - S, R)$. For a path $w$, a finite sequence of left and right steps, the vertex of
-$\mathrm{WGCT}(k, \ell)$ at $w$ is the triple reached from the root by taking the steps of $w$ in
-order; the empty path gives the root.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 3.1. -/
-public def wideGenCohnTree (k : ℕ) (ℓ : ℤ) (w : List Bool) :
-    Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ :=
-  genCohnPath k (genCohnP1 k ℓ, genCohnQ1 k ℓ, genCohnR1 k ℓ) w
-
-/-- **The $k$-generalized Cohn tree.** For $k \in \mathbb{N}$ and $\ell \in \mathbb{Z}$, the
-$k$-generalized Cohn tree $\mathrm{GCT}(k, \ell)$ is the full subtree of the wide
-$k$-generalized Cohn tree $\mathrm{WGCT}(k, \ell)$ rooted at the left child of its root. For a
-finite sequence $w$ of left and right moves, this is the vertex of $\mathrm{GCT}(k, \ell)$
-reached from its root along $w$, that is, the vertex of $\mathrm{WGCT}(k, \ell)$ reached from
-the root of $\mathrm{WGCT}(k, \ell)$ by one left move followed by the moves of $w$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 3.1. -/
-public def genCohnTree (k : ℕ) (ℓ : ℤ) (w : List Bool) :
-    Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ :=
-  wideGenCohnTree k ℓ (false :: w)
 
 /-- **Children in the wide generalized Cohn tree.** Let $k$ be a natural number, $\ell$ an
 integer, and $S$ the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$. For every path $w$
@@ -560,19 +446,6 @@ public theorem_wanted IsGenCohnTriple.mem_wideGenCohnTree {k a b c : ℕ}
     {P Q R : Matrix (Fin 2) (Fin 2) ℤ} (h : IsGenCohnTriple k P Q R a b c) (hab : a ≤ b)
     (hcb : c ≤ b) : ∃ ℓ w, wideGenCohnTree k ℓ w = (P, Q, R)
 
-/-- **Parent triples of a generalized Cohn triple.** Let $k$ be a natural number and let $S$ be
-the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$. Let $(P, Q, R)$ be a $k$-generalized
-Cohn triple associated with $(a, b, c)$, and let $b' = \lfloor (a^2 + kac + c^2)/b \rfloor$. Then
-$(P, R, P^{-1}(R + S))$ is a $k$-generalized Cohn triple associated with $(a, c, b')$, and
-$((P + S)R^{-1}, P, R)$ is a $k$-generalized Cohn triple associated with $(b', a, c)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.11. -/
-public theorem_wanted IsGenCohnTriple.parent {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2) ℤ}
-    (h : IsGenCohnTriple k P Q R a b c) :
-    IsGenCohnTriple k P R (P⁻¹ * (R + genCohnS k)) a c ((a ^ 2 + k * a * c + c ^ 2) / b) ∧
-      IsGenCohnTriple k ((P + genCohnS k) * R⁻¹) P R ((a ^ 2 + k * a * c + c ^ 2) / b) a c
-
 /-- **Distinct paths give distinct middle matrices in the wide generalized Cohn tree.** For
 every natural number $k$ and every integer $\ell$, if the vertices $(P, Q, R)$ and $(P', Q', R')$
 of the wide $k$-generalized Cohn tree $\mathrm{WGCT}(k, \ell)$ at paths $w$ and $w'$ (finite
@@ -606,18 +479,6 @@ Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numb
 Are Prime Powers*, INTEGERS 26 (2026), Article A91, Corollary 3.16. -/
 public theorem_wanted genCohnTree_snd_injective (k : ℕ) (ℓ : ℤ) :
     Function.Injective fun w => (genCohnTree k ℓ w).2.1
-
-/-- **Cohn triples sit at a unique vertex of a Cohn tree.** Let $(P, Q, R)$ be a
-$k$-generalized Cohn triple associated with $(a, b, c)$, where $b > \max\{a, c\}$. Then there is
-exactly one pair $(\ell, w)$ of an integer $\ell$ and a path $w$ (a finite sequence of left and
-right moves) such that $(P, Q, R)$ is the vertex of the $k$-generalized Cohn tree
-$\mathrm{GCT}(k, \ell)$ reached along $w$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 3.17. -/
-public theorem_wanted IsGenCohnTriple.existsUnique_mem_genCohnTree {k a b c : ℕ}
-    {P Q R : Matrix (Fin 2) (Fin 2) ℤ} (h : IsGenCohnTriple k P Q R a b c) (hab : a < b)
-    (hcb : c < b) : ∃! p : ℤ × List Bool, genCohnTree k p.1 p.2 = (P, Q, R)
 
 /-- **Farey triples.** Write a pair $(a, b)$ of natural numbers as the fraction $a/b$, so that
 $1/0$ is allowed. Three such fractions $(a/b, c/d, e/f)$ form a Farey triple if
