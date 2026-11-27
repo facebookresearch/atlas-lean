@@ -49,13 +49,16 @@ namespace Stratification
 
 variable {μ : Measure α} [IsProbabilityMeasure μ] (S : Stratification μ J)
 
-/-- The probability of a cell under the original sampling law. -/
+/-- The real mass of cell $j$, `μ.real (S.cell j)`. For a population probability law
+$\mu$, this is the stratum probability $\omega_j$. -/
 def weight (j : J) : ℝ := μ.real (S.cell j)
 
 lemma weight_pos (j : J) : 0 < S.weight j :=
   ENNReal.toReal_pos (S.mass_ne_zero j) (measure_ne_top _ _)
 
-/-- Integration over the population is a weighted sum of conditional integrals over its cells. -/
+/-- For a real function $g$ integrable under the population law $\mu$, its integral is
+$\sum_j \omega_j E_{\mu_j}[g]$, where $\omega_j$ is the probability of cell $j$ and
+$\mu_j$ is the normalized restriction of $\mu$ to that cell. -/
 theorem integral_eq_sum_cond {g : α → ℝ} (hg : Integrable g μ) :
     μ[g] = ∑ j, S.weight j * (μ[|S.cell j])[g] := by
   calc
@@ -77,11 +80,16 @@ omit [IsProbabilityMeasure μ] in
 lemma memLp_cond {f : α → ℝ} (hf : MemLp f 2 μ) (j : J) : MemLp f 2 μ[|S.cell j] :=
   (hf.restrict _).smul_measure (ENNReal.inv_ne_top.mpr (S.mass_ne_zero j))
 
-/-- The within-stratum component of population variance: the mean of the conditional variances. -/
+/-- The sum $\sum_j \omega_j\sigma_j^2$, with $\omega_j$ the real mass of cell $j$ and
+$\sigma_j^2$ the variance of $f$ under the normalized restriction to that cell. For a
+square-integrable real $f$ and a population probability law, this is the within-stratum
+component of population variance. -/
 def withinVariance (f : α → ℝ) : ℝ := ∑ j, S.weight j * Var[f; μ[|S.cell j]]
 
-/-- Total variance is the within-stratum variance plus the weighted squared deviations of
-conditional means from the population mean. -/
+/-- Let $f$ be real and square-integrable under the population law $\mu$. In a finite
+stratification with cell probabilities $\omega_j$, let $m_j$ and $\sigma_j^2$ be the mean
+and variance of $f$ under the law conditional on cell $j$. Writing $m=E_\mu[f]$, the
+population variance is $\sum_j \omega_j \sigma_j^2 + \sum_j \omega_j(m_j-m)^2$. -/
 theorem variance_eq_within_add_between {f : α → ℝ} (hf : MemLp f 2 μ) :
     Var[f; μ] = S.withinVariance f + ∑ j, S.weight j * ((μ[|S.cell j])[f] - μ[f]) ^ 2 := by
   let g := fun x ↦ f x - μ[f]
@@ -105,14 +113,18 @@ theorem variance_eq_within_add_between {f : α → ℝ} (hf : MemLp f 2 μ) :
 def sampleLaw (k : J → ℕ) : Measure ((Σ j, Fin (k j)) → α) :=
   Measure.pi fun t ↦ μ[|S.cell t.1]
 
-/-- Every coordinate has the conditional law of its own cell. -/
+/-- Under the product of the conditional sampling laws, each coordinate $(j,i)$ has the
+population law conditioned on cell $j$: evaluation at $(j,i)$ is a measure-preserving map
+from the product space to the population space with that conditional measure. -/
 theorem measurePreserving_draw (k : J → ℕ) (t : Σ j, Fin (k j)) :
     MeasurePreserving (Function.eval t) (S.sampleLaw k) μ[|S.cell t.1] := by
   let (i : Σ j, Fin (k j)) : IsProbabilityMeasure μ[|S.cell i.1] :=
     cond_isProbabilityMeasure (S.mass_ne_zero _)
   exact measurePreserving_eval (fun i : Σ j, Fin (k j) ↦ μ[|S.cell i.1]) t
 
-/-- The weighted sum of the sample means of the strata. -/
+/-- Weight the empirical mean of $f$ in each cell $j$ by the cell's real mass and sum
+over the cells. With positive counts $k_j$, the cell mean is the sum of its $k_j$ observations
+of $f$ divided by $k_j$; a cell with zero draws contributes zero by convention. -/
 def estimator (f : α → ℝ) (k : J → ℕ) (x : (Σ j, Fin (k j)) → α) : ℝ :=
   ∑ j, S.weight j * ((∑ i, f (x ⟨j, i⟩)) / k j)
 
@@ -123,8 +135,10 @@ theorem card_draws {n : ℕ} {k : J → ℕ} (hk : ∀ j, (k j : ℝ) = n * S.we
   simp only [Fintype.card_fin]
   exact_mod_cast (show ∑ j, (k j : ℝ) = n by simp_rw [hk, ← Finset.mul_sum, S.sum_weights, mul_one])
 
-/-- Under exact proportional allocation the weights cancel: the estimator is the unweighted
-mean of all the draws, pointwise, without using independence. -/
+/-- Let $n>0$ be an integer, and let the integer count in each stratum satisfy
+$k_j=n\omega_j$ exactly, where $\omega_j$ is its population probability. For every array
+of observations, the probability-weighted sum of the stratum means of $f$ then equals the
+unweighted mean of $f$ over all $n$ draws. This identity does not require independence. -/
 theorem estimator_eq_mean (f : α → ℝ) {k : J → ℕ} {n : ℕ} (hn : 0 < n)
     (hk : ∀ j, (k j : ℝ) = n * S.weight j) (x : (Σ j, Fin (k j)) → α) :
     S.estimator f k x = (∑ t, f (x t)) / n := by
@@ -133,7 +147,11 @@ theorem estimator_eq_mean (f : α → ℝ) {k : J → ℕ} {n : ℕ} (hn : 0 < n
   rw [hk]
   field_simp [(S.weight_pos j).ne', Nat.cast_ne_zero.mpr hn.ne']
 
-/-- The variance for arbitrary positive integer counts, before imposing proportionality. -/
+/-- Let $f$ be real and square-integrable under the population law. Draw $k_j>0$ samples
+from the conditional law of each stratum $j$, independently within and across strata. For
+these fixed integer counts, the variance of the weighted stratified estimator under the product
+law is $\sum_j \omega_j^2\sigma_j^2/k_j$, where $\omega_j$ is the stratum probability and
+$\sigma_j^2$ is the conditional variance of $f$ in that stratum. -/
 theorem variance_estimator {f : α → ℝ} (hf : MemLp f 2 μ) {k : J → ℕ} (hk : ∀ j, 0 < k j) :
     Var[S.estimator f k; S.sampleLaw k] = ∑ j, S.weight j ^ 2 * Var[f; μ[|S.cell j]] / k j := by
   let a := fun j ↦ S.weight j / k j
@@ -151,7 +169,11 @@ theorem variance_estimator {f : α → ℝ} (hf : MemLp f 2 μ) {k : J → ℕ} 
     nsmul_eq_mul, a]
   field_simp [Nat.cast_ne_zero.mpr (hk j).ne']
 
-/-- Under proportional allocation the independent stratified estimator has variance `σ_W² / n`. -/
+/-- For a real integrand square-integrable under the population law, let $n>0$ and the
+stratum counts $k_j$ be integers with $k_j=n\omega_j$ for every stratum of probability
+$\omega_j$. Under the product law of the independent conditional draws, the weighted
+stratified estimator has variance $\sigma_W^2/n$, where $\sigma_W^2$ is the sum of the
+conditional variances weighted by their stratum probabilities. -/
 theorem variance_proportional {f : α → ℝ} (hf : MemLp f 2 μ) {k : J → ℕ} {n : ℕ}
     (hn : 0 < n) (hk : ∀ j, (k j : ℝ) = n * S.weight j) :
     Var[S.estimator f k; S.sampleLaw k] = S.withinVariance f / n := by
@@ -163,8 +185,12 @@ theorem variance_proportional {f : α → ℝ} (hf : MemLp f 2 μ) {k : J → �
   rw [hk]
   field_simp [(S.weight_pos j).ne', Nat.cast_ne_zero.mpr hn.ne']
 
-/-- The same variance formula on any sample space: the draws have their respective conditional
-laws and the entire family (both within and across strata) is independent. -/
+/-- Let $f$ be real and square-integrable under the population law, and let the integer
+counts satisfy $n>0$ and $k_j=n\omega_j$ for every stratum of probability $\omega_j$. On
+any common sample space with measure $P$, suppose each draw $X_{ji}$ has the population law
+conditional on stratum $j$, and the entire family of draws is independent under $P$. Then the
+weighted stratified estimator formed from these draws has variance $\sigma_W^2/n$ under $P$,
+where $\sigma_W^2$ is the probability-weighted sum of the conditional variances of $f$. -/
 theorem variance_proportional_of_indep {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {f : α → ℝ} (hf : MemLp f 2 μ) {k : J → ℕ} {n : ℕ} (hn : 0 < n)
     (hk : ∀ j, (k j : ℝ) = n * S.weight j) {X : (Σ j, Fin (k j)) → Ω → α}
@@ -182,11 +208,14 @@ theorem variance_proportional_of_indep {Ω : Type*} [MeasurableSpace Ω] {P : Me
     variance_map (hjoint.map_eq ▸ he) hjoint.aemeasurable]
   rfl
 
-/-- The mean of `n` observations evaluated by the integrand. Under `Measure.pi (fun _ ↦ μ)`
-this is ordinary i.i.d. Monte Carlo. -/
+/-- The sum of $f$ over an array of $n$ observations, divided by $n$ (zero for an empty
+array). For $n>0$ observations under the product of $n$ copies of the population law, this is
+the ordinary i.i.d. Monte Carlo mean. -/
 def plainMean (f : α → ℝ) (n : ℕ) (x : Fin n → α) : ℝ := (∑ i, f (x i)) / n
 
-/-- Variance of the plain i.i.d. estimator sampled directly from the population law. -/
+/-- If $f$ is real and square-integrable under the population law $\mu$ and $n>0$ is an
+integer, the mean of $f$ over $n$ independent draws with law $\mu$ has variance
+$\sigma^2/n$, where $\sigma^2$ is the variance of $f$ under $\mu$. -/
 theorem variance_plainMean {f : α → ℝ} (hf : MemLp f 2 μ) {n : ℕ} (hn : 0 < n) :
     Var[plainMean f n; Measure.pi (fun _ : Fin n ↦ μ)] = Var[f; μ] / n := by
   let : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
@@ -198,7 +227,12 @@ theorem variance_plainMean {f : α → ℝ} (hf : MemLp f 2 μ) {n : ℕ} (hn : 
   change Var[fun x : Fin n → α ↦ (∑ i, f (x i)) / n; Measure.pi ν] = _
   simpa only [Fintype.card_fin] using h
 
-/-- For the same number of draws, stratification cannot have larger variance than plain MC. -/
+/-- Let $f$ be real and square-integrable under the population law. Fix an integer $n>0$
+and allocate integer counts exactly in proportion to the stratum probabilities:
+$k_j=n\omega_j$ for every stratum $j$. With independent draws from the respective conditional
+laws, the stratified estimator's variance $\sigma_W^2/n$ is at most the plain i.i.d. variance
+$\sigma^2/n$ for $n$ draws from the population law. Here $\sigma_W^2$ is the weighted mean
+of the conditional variances of $f$, and $\sigma^2$ is its population variance. -/
 theorem variance_le_plainMean {f : α → ℝ} (hf : MemLp f 2 μ) {k : J → ℕ} {n : ℕ}
     (hn : 0 < n) (hk : ∀ j, (k j : ℝ) = n * S.weight j) :
     Var[S.estimator f k; S.sampleLaw k] ≤ Var[plainMean f n; Measure.pi (fun _ : Fin n ↦ μ)] := by
@@ -208,9 +242,15 @@ theorem variance_le_plainMean {f : α → ℝ} (hf : MemLp f 2 μ) {k : J → �
   exact le_add_of_nonneg_right <| Finset.sum_nonneg fun j _ ↦
     mul_nonneg (S.weight_pos j).le (sq_nonneg _)
 
-/-- For an exact common budget, the two estimator variances are the corresponding cost-variance
-products divided by the budget. Stratification is at least as efficient if and only if its
-cost-variance product is no greater. Both sample sizes are natural numbers; neither is rounded. -/
+/-- Let $f$ be real and square-integrable under the population law. Suppose a budget
+$C>0$ buys exactly $n_s$ stratified draws at cost $c_s>0$ each or $n_p$ plain draws at
+cost $c_p>0$ each, so $n_s c_s=n_p c_p=C$. Both counts are integers, and the stratified
+allocation must be feasible: each cell of probability $\omega_j$ receives an integer number
+$k_j=n_s\omega_j$ of draws. The variance with independent conditional draws is
+$c_s\sigma_W^2/C$, and with plain i.i.d. population draws it is $c_p\sigma^2/C$, where
+$\sigma_W^2$ is the probability-weighted mean of the conditional variances of $f$ and
+$\sigma^2$ is its population variance. Thus the stratified variance is no greater than the
+plain variance if and only if $c_s\sigma_W^2 \le c_p\sigma^2$. -/
 theorem equal_budget {f : α → ℝ} (hf : MemLp f 2 μ) {k : J → ℕ} {ns np : ℕ}
     {C cs cp : ℝ} (hC : 0 < C) (hs : 0 < cs) (hp : 0 < cp)
     (hns : (ns : ℝ) * cs = C) (hnp : (np : ℝ) * cp = C)
