@@ -203,7 +203,7 @@ def ofBoundaryHomotopyConnesDoubleData : ConnesDoubleData (ofBoundaryHomotopy K 
       ofBoundaryHomotopy_underlying, ofBoundaryHomotopy_boundaryHomotopy,
       ofBoundaryHomotopy_B, ChainComplex.mixedBicomplex,
       ChainComplex.mixedBicomplexCellIso, ChainComplex.of_d, ChainComplex.mixedHorizontalMap_f,
-      ChainComplex.mixedHorizontalComponent, dif_pos hpq, boundaryHomotopy_hom] using h
+      ChainComplex.mixedHorizontalComponent, dite_eq_left hpq, boundaryHomotopy_hom] using h
 
 /-- The compatibility data retain the complete original bicomplex definition. -/
 @[simp]
