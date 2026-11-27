@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.MersenneEtaCondition
+import all MathlibExt.NumberTheory.MersenneEtaCondition
 import MathlibExt.NumberTheory.LucasLehmerRationalSeedExistsNotMersenneEtaConditionOfMinus
 
 /-!
@@ -44,21 +45,9 @@ theorem minus_mod_four_of_mersenneEtaCondition_all (s₁ : ℤ) (hs₁ : 3 ≤ s
       Nat.totient (mersenneOmega (sm * sp))) :
     sm % 4 = 1 ∧ sp % 4 = 3 := by
   let Ω := mersenneOmega (sm * sp)
-  let A : Set ℕ := {n | n ∈ Finset.Ico 1 Ω ∧ n.Coprime Ω ∧ MersenneEtaCondition sm sp n}
-  let R : Set ℕ := {n | n < Ω ∧ Ω.Coprime n}
-  change A.ncard = Nat.totient Ω at hq
-  have hRcard : R.ncard = Nat.totient Ω := by
-    rw [Nat.totient_eq_card_lt_and_coprime]
-    rfl
-  have hRfin : R.Finite := (Set.finite_Iio Ω).subset fun _ hn ↦ hn.1
-  -- Any missing reduced residue would make `A` a strict subset of `R`.
   have hno : ¬ ∃ n, 1 ≤ n ∧ n < Ω ∧ n.Coprime Ω ∧ ¬ MersenneEtaCondition sm sp n := by
     rintro ⟨n, -, hlt, hcop, hfail⟩
-    have hAR : A ⊂ R := by
-      refine ⟨?_, fun hRA ↦ hfail (hRA ⟨hlt, hcop.symm⟩).2.2⟩
-      intro m hm
-      exact ⟨(Finset.mem_Ico.mp hm.1).2, hm.2.1.symm⟩
-    exact (ne_of_lt (Set.ncard_lt_ncard hAR hRfin)) (hq.trans hRcard.symm)
+    exact (ne_of_lt (mersenneEtaCondition_ncard_lt_totient_of_missing hlt hcop hfail)) hq
   have hsmOdd : sm % 2 = 1 := Nat.odd_iff.mp hsm.1
   have hspOdd : sp % 2 = 1 := Nat.odd_iff.mp hsp.1
   constructor
