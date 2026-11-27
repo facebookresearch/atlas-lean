@@ -24,6 +24,3 @@
 - [Genetic contribution of advantaged ancestors](genetic-contribution-of-advantaged-ancestors/README.md)
 - [Ancestral learning graphs](ancestral-learning-graphs/README.md)
 - [Selection, gene drives, and polygenic adaptation](selection-drives-and-polygenic-adaptation/README.md)
-- [Recombination equation and the partitioning process](recombination-equation-and-partitioning-process/README.md)
-- [Selection–recombination equation](selection-recombination-equation/README.md)
-- [Fitness trajectory of the long-term evolution experiment](fitness-trajectory-of-the-long-term-evolution-experiment/README.md)

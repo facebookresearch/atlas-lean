@@ -12,3 +12,6 @@
 - [Stochastic models of viral evolution](stochastic-models-of-viral-evolution/README.md)
 - [Survival of the flattest in the quasispecies model](survival-of-the-flattest-in-the-quasispecies-model/README.md)
 - [Mutation-accumulation rate from allele frequencies](mutation-accumulation-rate-from-allele-frequencies/README.md)
+- [Accessibility percolation on trees](accessibility-percolation-on-trees/README.md)
+- [Limit laws for accessible path counts](limit-laws-for-accessible-path-counts/README.md)
+- [Open quasispecies systems](open-quasispecies-systems/README.md)

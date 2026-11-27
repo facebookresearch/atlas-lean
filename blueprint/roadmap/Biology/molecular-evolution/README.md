@@ -27,6 +27,3 @@
 - [Minimum epistasis interpolation](minimum-epistasis-interpolation/README.md)
 - [Rho statistic dating of lineages](rho-statistic-dating-of-lineages/README.md)
 - [Sparse Walsh approximation of fitness landscapes](sparse-walsh-approximation-of-fitness-landscapes/README.md)
-- [Accessibility percolation on trees](accessibility-percolation-on-trees/README.md)
-- [Limit laws for accessible path counts](limit-laws-for-accessible-path-counts/README.md)
-- [Open quasispecies systems](open-quasispecies-systems/README.md)

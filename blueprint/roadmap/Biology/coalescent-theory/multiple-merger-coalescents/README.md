@@ -29,6 +29,3 @@ frequency spectrum under multiple mergers.
 - [Coming down from infinity of interacting particle systems](coming-down-from-infinity-of-interacting-particle-systems/README.md)
 - [Λ-asymmetric ancestral selection graph](lambda-asymmetric-ancestral-selection-graph/README.md)
 - [Sweepstakes reproduction coalescents](sweepstakes-reproduction-coalescents/README.md)
-- [Diploid sweepstakes coalescents](diploid-sweepstakes-coalescents/README.md)
-- [Ξ-ancestral recombination graph](xi-ancestral-recombination-graph/README.md)
-- [Subsample and clade statistics of Ξ-coalescents](subsample-and-clade-statistics-of-xi-coalescents/README.md)
