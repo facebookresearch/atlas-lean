@@ -1,10 +1,11 @@
 # Structured, spatial and applied population models
 
-Structured, spatial and stochastic models of cell, tumour, microbial, insect and ecological populations: clonal and lineage dynamics, immunotherapy, biofilms and plasmids, dispersal and integrodifference models, range shifts, fire disturbance, sterile insect releases, consumer–resource transients, stoichiometric food chains and species richness.
+Structured, spatial and stochastic models of cell, tumour, microbial, insect and ecological populations: clonal and lineage dynamics, immunotherapy, biofilms and plasmids, dispersal and integrodifference models, range shifts, fire disturbance, sterile insect releases, consumer–resource transients, stoichiometric food chains and species richness, together with the evolutionary dynamics and games of such populations.
 
 - [Branching models of germinal-centre clonal dynamics](branching-models-of-germinal-centre-clonal-dynamics/README.md)
 - [CAR T-cell dynamics in a lymphoma lymph node](car-t-cell-dynamics-in-a-lymphoma-lymph-node/README.md)
 - [Continuum biofilm models](continuum-biofilm-models/README.md)
+- [Evolutionary dynamics and games](evolutionary-dynamics-and-games/README.md)
 - [Fitness-gradient dispersal of two species](fitness-gradient-dispersal-of-two-species/README.md)
 - [Impulsive fire disturbance in savanna models](impulsive-fire-disturbance-in-savanna-models/README.md)
 - [Integrodifference equations in random environments](integrodifference-equations-in-random-environments/README.md)

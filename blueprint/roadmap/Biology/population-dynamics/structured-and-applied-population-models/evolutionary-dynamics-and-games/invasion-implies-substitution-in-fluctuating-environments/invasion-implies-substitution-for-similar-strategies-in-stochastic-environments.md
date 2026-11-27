@@ -20,7 +20,7 @@ with $p^* = 1$ if $S_{x_1}(x_2) > 0 > S_{x_2}(x_1)$ and $p^* = 0$ if $S_{x_1}(x_
 
 ## Depends on
 
-- [Fitness Gradient](../../classification-of-adaptive-dynamics-singular-str/fitness-gradient.md)
+- [Fitness Gradient](../../../classification-of-adaptive-dynamics-singular-str/fitness-gradient.md)
 
 ## Expansion
 

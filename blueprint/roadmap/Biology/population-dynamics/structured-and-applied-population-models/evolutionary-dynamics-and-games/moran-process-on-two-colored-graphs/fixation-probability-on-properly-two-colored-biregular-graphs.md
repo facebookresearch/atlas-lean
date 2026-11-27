@@ -18,7 +18,7 @@ and $\rho_B$ is obtained by exchanging the roles of $(a_G, a_R)$ and $(b_G, b_R)
 
 ## Depends on
 
-- [Isothermal theorem for evolutionary graph dynamics](../../isothermal-theorem-for-evolutionary-graph-dynami/README.md)
+- [Isothermal theorem for evolutionary graph dynamics](../../../isothermal-theorem-for-evolutionary-graph-dynami/README.md)
 
 ## Expansion
 

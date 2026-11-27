@@ -21,7 +21,7 @@ If instead $(\xi_2 - \xi_1)^\top(C_{22} + C_{11})(\xi_2 - \xi_1) = 0$ but $(\xi_
 ## Depends on
 
 - [Invasion implies substitution for similar strategies in stochastic environments](invasion-implies-substitution-for-similar-strategies-in-stochastic-environments.md)
-- [Mutual invasibility](../../classification-of-adaptive-dynamics-singular-str/mutual-invasibility.md)
+- [Mutual invasibility](../../../classification-of-adaptive-dynamics-singular-str/mutual-invasibility.md)
 
 ## Expansion
 
