@@ -16,7 +16,7 @@ public import Mathlib.Tactic
 
 * `icc_card_two_dichotomy` on `Bool`.
 * `icc_induce_reachable_iff` for the trivial closed walk at the origin: reachability in
-  `icc_offComplGraph` is reachability in `offSupport`.
+  `fcb_offComplGraph` is reachability in `offSupport`.
 -/
 
 @[expose] public section
@@ -32,7 +32,7 @@ example (c : Bool) : c = true ∨ c = false :=
 abbrev W0 : (hypercubicLattice 2).Walk ![0, 0] ![0, 0] := Walk.nil
 
 example (x y : {z : Site 2 // z ∉ W0.support}) :
-    (icc_offComplGraph W0).Reachable x y ↔ (offSupport W0).Reachable (x : Site 2) y :=
+    (fcb_offComplGraph W0).Reachable x y ↔ (offSupport W0).Reachable (x : Site 2) y :=
   icc_induce_reachable_iff _
 
 end MathlibExtTest.StatMech.Combinatorics.SimpleGraph.Lattice.OffWalkInducedGraph

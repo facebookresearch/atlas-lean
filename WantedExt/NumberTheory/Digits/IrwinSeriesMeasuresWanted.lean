@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresLocalMass
 public import MathlibExt.NumberTheory.Digits.OrdinaryMomentRecurrence
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresIrwinSumZeroLowerBounds
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresComplementaryMomentRecurrenceProperties
+public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresIntegralIrwinMeasureSucc
 
 namespace MetaMathlibExt
 
@@ -166,33 +167,6 @@ public theorem_wanted leadingReciprocal_hasSum_complementaryMoments
       Summable (fun m : ℕ =>
         complementaryMoment b d (k - digitCount b d n) m hd /
           ((n : ℝ) + 1) ^ (m + 1))
-
-/-- **Digit decomposition of the Irwin measures, positive index.** Let $b > 1$ and $d < b$ be
-natural numbers, and for each natural number $j$ let $\mu_j$ be the Irwin measure of base $b$ and
-digit $d$ with index $j$. Let $f : \mathbb{R} \to \mathbb{R}$ be measurable and bounded on
-$[0, b)$, and let $k \ge 1$. Then
-$$\int_{[0,1)} f(bx)\, d\mu_k(x) =
-\frac{1}{b} \sum_{a \ne d} \int_{[0,1)} f(a + x)\, d\mu_k(x) +
-\frac{1}{b} \int_{[0,1)} f(d + x)\, d\mu_{k-1}(x),$$
-where $a$ ranges over the digits $0, 1, \dots, b - 1$ other than $d$.
-
-Measurability of $f$ is a hypothesis added to the paper's boundedness assumption.
-
-Source: Jean-François
-Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026),
-Article A11, Lemma 1. -/
-public theorem_wanted integral_irwinMeasure_succ
-    (b d : ℕ) (hb : 1 < b) (hd : d < b) (f : ℝ → ℝ)
-    (hf_measurable : Measurable f)
-    (hf_bounded : Bornology.IsBounded (f '' Set.Ico (0 : ℝ) b))
-    (k : ℕ) (hk : 1 ≤ k) :
-    (∫ x in Set.Ico (0 : ℝ) 1, f (b * x) ∂irwinMeasure b d k hd) =
-      (1 / (b : ℝ)) *
-        (∑ a ∈ Finset.range b,
-          if a = d then 0 else
-            ∫ x in Set.Ico (0 : ℝ) 1, f (a + x) ∂irwinMeasure b d k hd) +
-      (1 / (b : ℝ)) *
-        ∫ x in Set.Ico (0 : ℝ) 1, f (d + x) ∂irwinMeasure b d (k - 1) hd
 
 /-- **Digit decomposition of the Irwin measure, zero index.** Let $b > 1$ and $d < b$ be natural
 numbers, and let $\mu_0$ be the Irwin measure of base $b$ and digit $d$ with index $0$. For every

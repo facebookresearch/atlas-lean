@@ -26,7 +26,7 @@ are imported from `Cslib.Foundations.Relation.Confluence`. In particular use
 Mathlib's relation closures and join primitives.
 
 This module develops their consequences for `NormalForm` and `Normalizer`:
-normalizers agree under confluence, reduction and conversion preserve their
+under confluence, normalizers agree, reduction and conversion preserve their
 results, and equality of results characterizes conversion. Conversely, a
 normalizer invariant under single steps certifies confluence. This gives a
 useful proof method for evaluators and simplifiers without requiring termination
@@ -69,7 +69,7 @@ theorem NormalForm.of_reduces (hn : NormalForm r a n) (hc : Confluent r)
     (hab : ReflTransGen r a b) : NormalForm r b n :=
   hn.of_convertible hc (.symm _ _ hab.to_eqvGen)
 
-/-- Two convertible states have exactly the same specified normal forms. -/
+/-- Two convertible states have exactly the same specified normal forms under confluence. -/
 theorem normalForm_iff_of_convertible (hc : Confluent r) (hab : EqvGen r a b) :
     NormalForm r a n ↔ NormalForm r b n :=
   ⟨fun h => h.of_convertible hc (.symm _ _ hab), fun h => h.of_convertible hc hab⟩
@@ -118,15 +118,15 @@ theorem run_eq_of_convertible (hc : Confluent r) (hab : EqvGen r a b) :
     N.run a = N.run b :=
   N.run_eq_of_normalForm hc ((N.normalForm b).of_convertible hc hab)
 
-/-- Multi-step reduction preserves the result of normalization. -/
+/-- Multi-step reduction preserves the result of normalization under confluence. -/
 theorem run_eq_of_reduces (hc : Confluent r) (hab : ReflTransGen r a b) :
     N.run a = N.run b := N.run_eq_of_convertible hc hab.to_eqvGen
 
-/-- Single-step reduction preserves the result of normalization. -/
+/-- Single-step reduction preserves the result of normalization under confluence. -/
 theorem run_eq_of_step (hc : Confluent r) (hab : r a b) : N.run a = N.run b :=
   N.run_eq_of_reduces hc (.single hab)
 
-/-- Chosen results decide conversion when equality of those results is decidable. -/
+/-- Conversion is equality of normalizer results under confluence. -/
 theorem convertible_iff_run_eq (hc : Confluent r) :
     EqvGen r a b ↔ N.run a = N.run b :=
   ⟨N.run_eq_of_convertible hc, N.convertible_of_run_eq⟩
@@ -163,7 +163,8 @@ theorem confluent_of_unique_normalForm (N : Normalizer r)
   intro a b hab
   exact hu (N.normalForm a) ((N.normalForm b).prepend_step hab)
 
-/-- Newman's lemma makes the normalizer chosen from termination invariant under conversion. -/
+/-- For a locally confluent system, Newman's lemma makes the normalizer chosen from
+termination invariant under conversion. -/
 theorem ofTerminating_run_eq (ht : Terminating r) (hl : LocallyConfluent r)
     (hab : EqvGen r a b) :
     (ofTerminating ht).run a = (ofTerminating ht).run b :=
@@ -191,7 +192,7 @@ theorem convertible_iff_result_eq (hc : Confluent r) :
 /-- An observation on normal states extends to all states by normalization. -/
 def observe (f : {n : α // Normal r n} → β) (a : α) : β := f (N.result a)
 
-/-- Observations of normalized states are invariant under conversion. -/
+/-- Under confluence, observations of normalized states are invariant under conversion. -/
 theorem observe_convertible (hc : Confluent r)
     (f : {n : α // Normal r n} → β) (hab : EqvGen r a b) :
     N.observe f a = N.observe f b :=
