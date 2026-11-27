@@ -9,7 +9,9 @@ In particular, if Eve is declared the winner, the prefix contains an $\ell$-sequ
 
 Conversely, Eve is eventually declared the winner on every infinite play whose largest priority $c$ seen infinitely often is even. After the last visit
 of a priority above $c$, the number
+
 $$\sum \{ 2^k : b_k \text{ is even and } b_k \ge c \}$$
+
 strictly increases between any two consecutive visits to $c$. It is bounded while Eve is not declared the winner.
 
 ## Depends on
