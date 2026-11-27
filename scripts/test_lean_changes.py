@@ -153,21 +153,31 @@ class ParseTests(unittest.TestCase):
             "::50%25 off%0Asecond line")
 
     def test_lean_name_quotes_the_components_that_are_not_identifiers(self):
-        self.assertEqual(lean_changes.lean_name("MathlibExt.X.Basic'"), "MathlibExt.X.Basic'")
-        self.assertEqual(lean_changes.lean_name("MathlibExt.New-Name"), "MathlibExt.«New-Name»")
-        self.assertEqual(lean_changes.lean_name("MathlibExt.2D"), "MathlibExt.«2D»")
-        self.assertEqual(lean_changes.lean_name("MathlibExt.Sum×Prod"), "MathlibExt.«Sum×Prod»")
+        def name(module: str) -> str | None:
+            return lean_changes.lean_name(module.split("/"))
+
+        self.assertEqual(name("MathlibExt/X/Basic'"), "MathlibExt.X.Basic'")
+        self.assertEqual(name("MathlibExt/New-Name"), "MathlibExt.«New-Name»")
+        self.assertEqual(name("MathlibExt/2D"), "MathlibExt.«2D»")
+        self.assertEqual(name("MathlibExt/Sum×Prod"), "MathlibExt.«Sum×Prod»")
+        # A dot in a file's name is not the dot between components.
+        self.assertEqual(name("MathlibExt/First.Second"), "MathlibExt.«First.Second»")
         # Lean's identifiers take Latin-1 and Latin Extended-A letters, Greek but λ, Π and Σ,
         # letter-like symbols and subscripts, as `Name.toString` prints them.
-        for bare in ("MathlibExt.Système", "MathlibExt.Łukasiewicz", "MathlibExt.αβ",
-                     "MathlibExt.ℕSum", "MathlibExt.X₁"):
-            self.assertEqual(lean_changes.lean_name(bare), bare)
-        self.assertEqual(lean_changes.lean_name("MathlibExt.λCalc"), "MathlibExt.«λCalc»")
-        self.assertEqual(lean_changes.lean_name("MathlibExt.₁X"), "MathlibExt.«₁X»")
-        for unnameable in ("MathlibExt.A«B", "MathlibExt.A»B", "MathlibExt.A\nB"):
-            self.assertIsNone(lean_changes.lean_name(unnameable))
-        self.assertEqual(lean_changes.lean_unescaped("MathlibExt.«New-Name»"),
-                         "MathlibExt.New-Name")
+        for bare in ("MathlibExt/Système", "MathlibExt/Łukasiewicz", "MathlibExt/αβ",
+                     "MathlibExt/ℕSum", "MathlibExt/X₁"):
+            self.assertEqual(name(bare), bare.replace("/", "."))
+        self.assertEqual(name("MathlibExt/λCalc"), "MathlibExt.«λCalc»")
+        self.assertEqual(name("MathlibExt/₁X"), "MathlibExt.«₁X»")
+        for unnameable in ("MathlibExt/A«B", "MathlibExt/A»B", "MathlibExt/A\nB"):
+            self.assertIsNone(name(unnameable))
+
+    def test_a_dotted_file_name_and_a_directory_are_two_modules(self):
+        flat = ChangedFile("MathlibExt/First.Second.lean", "A", frozenset({1}))
+        nested = ChangedFile("MathlibExt/First/Second.lean", "A", frozenset({1}))
+        self.assertEqual(flat.module, nested.module)
+        self.assertEqual((flat.lean_module, nested.lean_module),
+                         ("MathlibExt.«First.Second»", "MathlibExt.First.Second"))
 
     def test_inert_breaks_up_workflow_commands_in_github_actions(self):
         text = ("fine\n::error file=A.lean::forged\n  ::add-mask::x\nnot :: a command\n"
@@ -233,6 +243,18 @@ class GitTests(unittest.TestCase):
         self.assertEqual(deleted, ["MathlibExt/Gone.lean"])
         self.assertTrue(old.startswith("line 0\n"))
         self.assertIsNone(missing)
+
+    def test_a_link_that_becomes_a_file_is_a_modification(self):
+        with repository({"MathlibExt/B.lean": "b\n"}) as tmp:
+            root = Path(tmp)
+            (root / "MathlibExt/A.lean").symlink_to("B.lean")
+            commit(root)
+            git(root, "branch", "-f", "main")
+            (root / "MathlibExt/A.lean").unlink()
+            write(root, {"MathlibExt/A.lean": "a\nb\n"})
+            commit(root)
+            files = lean_changes.changed_files("main", cwd=root)
+        self.assertEqual(files, [ChangedFile("MathlibExt/A.lean", "T", frozenset({1, 2}))])
 
     def test_a_later_hunk_after_an_added_plus_plus_line_is_kept(self):
         with repository({"MathlibExt/A.lean": "".join(f"line {i}\n" for i in range(1, 6))}) as tmp:
@@ -340,7 +362,26 @@ class AggregatorTests(unittest.TestCase):
                 self.assertEqual(names, ["MathlibExt.LintChanged"])
                 self.assertEqual((root / "MathlibExt/LintChanged.lean").read_text(),
                                  "import MathlibExt.B\nimport MathlibExt.X.«New-Name»\n")
+            # A file named `First.Second.lean` and the file `First/Second.lean` both get theirs.
+            files = [ChangedFile("MathlibExt/First.Second.lean", "A", frozenset({1})),
+                     ChangedFile("MathlibExt/First/Second.lean", "A", frozenset({1}))]
+            with lean_changes.aggregators(files, cwd=root):
+                self.assertEqual((root / "MathlibExt/LintChanged.lean").read_text(),
+                                 "import MathlibExt.First.Second\n"
+                                 "import MathlibExt.«First.Second»\n")
             self.assertIn("MathlibExt/C«D.lean: Lean cannot name the module", err.getvalue())
+
+    def test_refuses_to_write_through_a_dangling_link(self):
+        files = [ChangedFile("MathlibExt/B.lean", "A", frozenset({1}))]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "MathlibExt").mkdir()
+            (root / "MathlibExt/LintChanged.lean").symlink_to(root / "elsewhere.lean")
+            with self.assertRaises(AggregatorError):
+                with lean_changes.aggregators(files, cwd=root):
+                    pass
+            self.assertFalse((root / "elsewhere.lean").exists())
+            self.assertTrue((root / "MathlibExt/LintChanged.lean").is_symlink())
 
     def test_refuses_to_overwrite_a_module(self):
         files = [ChangedFile("MathlibExt/B.lean", "A", frozenset({1}))]

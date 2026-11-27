@@ -43,6 +43,7 @@ import Mathlib.Tactic.Ring
 /-- Needs nothing from its import. -/
 public theorem lintersModuleProbe : True := trivial
 """
+# The files that the self-test creates, and deletes again.
 PROBES = (PROBE, MODULE_PROBE)
 
 LONG = "a + b = b + a ∧ a * b = b * a ∧ a + 0 = a ∧ b + 0 = b ∧ a * 1 = a ∧ b * 1 = b"
@@ -135,6 +136,21 @@ def git(*args: str) -> str:
                           text=True).stdout.strip()
 
 
+def reserve(paths: tuple[Path, ...]) -> bool:
+    """Create each of `paths`, empty and new, so that the probes never write through a file or
+    a link already there; `False`, creating none, if one is there."""
+    created: list[Path] = []
+    for path in paths:
+        try:
+            (ROOT / path).open("x").close()
+        except FileExistsError:
+            for done in created:
+                (ROOT / done).unlink()
+            return False
+        created.append(path)
+    return True
+
+
 def commit(text: str, message: str, module_text: str | None = None) -> str:
     """Commit the probe module, and the `module` probe too if `module_text` is given."""
     (ROOT / PROBE).write_text(text, encoding="utf-8")
@@ -193,10 +209,14 @@ def main() -> int:
     args = parser.parse_args()
     if os.environ.get("GITHUB_ACTIONS") != "true" and not args.local:
         parser.error("this commits to the checkout; pass --local to run it outside GitHub Actions")
-    if any((ROOT / probe).exists() for probe in PROBES) or git("diff", "--cached", "--name-only"):
-        print("A probe module exists or changes are staged; not running.", file=sys.stderr)
+    if git("diff", "--cached", "--name-only"):
+        print("Changes are staged; not running.", file=sys.stderr)
         return 1
     start = git("rev-parse", "HEAD")
+    if not reserve(PROBES):
+        print(f"A file or link is at {' or '.join(map(str, PROBES))}; not running.",
+              file=sys.stderr)
+        return 1
     try:
         first = commit(PROBE_TEXT, "linters self-test: probe modules", MODULE_PROBE_TEXT)
         ok = run_checks(start, 0)

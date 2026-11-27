@@ -380,6 +380,39 @@ end
 """
 
 
+# `let rec` and `where` helpers, named after the helpers whose values hold them, as Lean's `#print`
+# names each: a `let rec` in a `where` helper's value, in another `let rec`'s value (by indentation
+# or inside brackets), after another one's `;`, and in a structure-instance field's value.
+LET_RECS = """\
+namespace LR
+
+def total (n : Nat) : Nat := go n
+where
+  go (k : Nat) : Nat :=
+    let rec inner (j : Nat) : Nat := j
+    inner k
+
+def outer (n : Nat) : Nat :=
+  let rec a (k : Nat) : Nat :=
+    let rec b (j : Nat) : Nat := j
+    b k
+  a n
+
+def flat (n : Nat) : Nat := let rec c (k : Nat) : Nat := k; let rec d (k : Nat) : Nat := k; c (d n)
+
+def nest (n : Nat) : Nat := let rec e (k : Nat) : Nat := (let rec f (j : Nat) : Nat := j; f k); e n
+
+/-- A structure. -/
+structure Box where
+  value : Nat
+
+def boxed : Box where
+  value := let rec g (k : Nat) : Nat := k; g 1
+
+end LR
+"""
+
+
 class IndexTests(unittest.TestCase):
     def test_names_declarations_in_their_namespaces(self):
         index = check.index_source(SOURCE)
@@ -465,6 +498,14 @@ class IndexTests(unittest.TestCase):
         self.assertNotIn("Crate.mk", index.names)
         self.assertIn("instP.help", index.private_names)
 
+    def test_names_let_recs_after_the_helpers_that_hold_them(self):
+        names = check.index_source(LET_RECS).names
+        self.assertTrue({"LR.total.go", "LR.total.go.inner", "LR.outer.a", "LR.outer.a.b",
+                         "LR.flat.c", "LR.flat.d", "LR.nest.e", "LR.nest.e.f",
+                         "LR.boxed.g"} <= names)
+        self.assertFalse({"LR.total.inner", "LR.outer.b", "LR.flat.c.d", "LR.nest.f",
+                          "LR.boxed.value.g"} & names)
+
     def test_dotted_sections_open_and_close_one_scope_per_component(self):
         # `end Inner` closes only the inner of `section Outer.Inner`, so `Outer` stays public;
         # `end Shelf.Level` closes both `section Shelf` and `section Level`.
@@ -506,6 +547,16 @@ class PlaceTests(unittest.TestCase):
                  for path, (_, lines) in head.items()}
         indexes = {path: check.index_source(text) for path, (text, _) in head.items()}
         return check.place(finding, files, indexes, base)
+
+    def test_a_finding_without_a_position_goes_to_the_module_that_lean_names(self):
+        # `First.Second.lean` and `First/Second.lean` are two modules, which Lean names apart.
+        text = "namespace X\n\nstructure Pt where\n  x : Nat\n\nend X\n"
+        head = {"MathlibExt/First.Second.lean": (text, set(range(1, 7))),
+                "MathlibExt/First/Second.lean": (text, set(range(1, 7)))}
+        for module, path in (("MathlibExt.«First.Second»", "MathlibExt/First.Second.lean"),
+                             ("MathlibExt.First.Second", "MathlibExt/First/Second.lean")):
+            finding = Finding("X.Pt.mk.injEq", "simpNF", "", module)
+            self.assertEqual(self.place_in(finding, head, base_names()).path, path)
 
     def test_a_declaration_that_only_gains_a_docstring_is_not_added(self):
         placement = self.place(Finding("X.old", "unusedArguments", "", "MathlibExt.A",
@@ -680,6 +731,25 @@ class PlaceTests(unittest.TestCase):
             finding = Finding(name, "unusedArguments", "", "MathlibExt.B", "MathlibExt/B.lean",
                               line, 1)
             self.assertTrue(self.place_in(finding, head, base).added, name)
+
+    def test_a_let_rec_in_a_helper_hides_no_declaration_of_the_parent(self):
+        # `total.go.inner` is the `let rec` in `go`; a new `total.inner` is another declaration,
+        # and an edit of the `let rec`'s line keeps `total.go.inner`.
+        base_text = LET_RECS
+        head = LET_RECS.replace("    let rec inner (j : Nat) : Nat := j",
+                                "    let rec inner (j : Nat) : Nat := j + 0").replace(
+            "end LR\n", "/-- New. -/\ndef total.inner (k spare : Nat) : Nat := k\n\nend LR\n")
+        lines = head.splitlines()
+        rec_line = lines.index("    let rec inner (j : Nat) : Nat := j + 0") + 1
+        new_line = lines.index("def total.inner (k spare : Nat) : Nat := k") + 1
+        base = base_names(MathlibExt__A=base_text)
+        files = {"MathlibExt/A.lean": (head, {rec_line, new_line - 1, new_line})}
+        new = Finding("LR.total.inner", "unusedArguments", "", "MathlibExt.A", "MathlibExt/A.lean",
+                      new_line, 1)
+        self.assertTrue(self.place_in(new, files, base).added)
+        kept = Finding("LR.total.go.inner", "unusedArguments", "", "MathlibExt.A",
+                       "MathlibExt/A.lean", rec_line, 5)
+        self.assertFalse(self.place_in(kept, files, base).added)
 
     def test_a_new_helper_on_its_parent_s_line_is_new(self):
         # `retainedDef` stays; the change adds `where go` on its line, and `go` is new.
