@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.SquareRepresentationCongruences
 public import MathlibExt.NumberTheory.SquareTriangularRepresentationDivisibility
 public import MathlibExt.NumberTheory.TriangularRepresentationWindow
 public import MathlibExt.NumberTheory.SquaresTriangularRepresentationsSumOfSquaresRepCountIntegerRoot
+public import MathlibExt.NumberTheory.SquaresTriangularRepresentationsRepCountNeZeroOfWindow
 
 /-!
 # Congruences for representations as sums of squares and triangular numbers
@@ -63,38 +64,6 @@ Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
 public theorem_wanted sum_sumOfSquaresRepCount_window {n p : ℕ} (hn : 1 ≤ n) (hp : p.Prime)
     (hp2 : p ≠ 2) (hpn : n + 1 ≤ p - 1) {s : ℤ} (hs : (p : ℤ) ≤ s) :
     (p : ℤ) ∣ ∑ i ∈ Finset.range p, sumOfSquaresRepCount (s - i) n
-
-/-- **Representability criterion from a window of counts.** For an integer $k$ and $n \ge 0$, let
-$r_k(n)$ and $t_k(n)$ be the coefficients of $q^n$ in $\theta(q)^k$ and $\psi(q)^k$, where $\theta$
-and $\psi$ are the square and triangular theta series (units of $\mathbb{Z}[[q]]$). Let $n \ge 1$,
-let $p$ be an odd prime with $p - 1 \ge n + 1$, and let $s$ be an integer. If $p$ does not divide
-$r_{s-1}(n) + r_{s-2}(n) + \cdots + r_{s-(p-1)}(n)$, then $r_s(n) \ne 0$. Likewise, if $p$ does not
-divide $t_{s-1}(n) + t_{s-2}(n) + \cdots + t_{s-(p-1)}(n)$, then $t_s(n) \ne 0$.
-
-The source places no condition on $s$, so the statement is made for every integer $s$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Theorem 7 (`integers-2026-A93-thm-7`). -/
-public theorem_wanted repCount_ne_zero_of_window {n p : ℕ} (hn : 1 ≤ n) (hp : p.Prime)
-    (hp2 : p ≠ 2) (hpn : n + 1 ≤ p - 1) (s : ℤ) :
-    (¬ (p : ℤ) ∣ ∑ i ∈ Finset.Icc 1 (p - 1), sumOfSquaresRepCount (s - i) n →
-      sumOfSquaresRepCount s n ≠ 0) ∧
-    (¬ (p : ℤ) ∣ ∑ i ∈ Finset.Icc 1 (p - 1), sumOfTriangularRepCount (s - i) n →
-      sumOfTriangularRepCount s n ≠ 0)
-
-/-- **Window criterion for representability by triangular numbers.** For an integer $k$, let
-$t_k(n)$ be the coefficient of $q^n$ in $\psi(q)^k$, where $\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$.
-Let $n \ge 1$ and let $p$ be an odd prime with $p - 1 \ge n + 1$. For every integer $s$, if $p$ does
-not divide $\sum_{i=1}^{p-1} t_{s-i}(n)$, then $t_s(n) \ne 0$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Theorem 8 (`integers-2026-A93-thm-8`). -/
-public theorem_wanted sumOfTriangularRepCount_ne_zero_of_window {n p : ℕ} (hn : 1 ≤ n)
-    (hp : p.Prime) (hp2 : p ≠ 2) (hpn : n + 1 ≤ p - 1) (s : ℤ)
-    (h : ¬ (p : ℤ) ∣ ∑ i ∈ Finset.Icc 1 (p - 1), sumOfTriangularRepCount (s - i) n) :
-    sumOfTriangularRepCount s n ≠ 0
 
 /-- **Logarithmic coefficients of the triangular theta series.** For a natural number $n$, let
 $b_n$ be the rational number

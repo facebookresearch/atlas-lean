@@ -9,6 +9,7 @@ $x : a \to \forall b.\, (b \to b) \vdash x : a \to b \to b$ does not hold. The C
 
 - [Curry-style System F](curry-style-system-f.md)
 - [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
+- [β-reduction](../../untyped-lambda-calculus/beta-reduction-and-confluence/beta-reduction.md)
 
 ## Sources
 

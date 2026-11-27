@@ -12,3 +12,7 @@ Matchings and factors in graphs, stable matchings, and flows in networks, includ
 - [Max-flow min-cut theorem](max-flow-min-cut-theorem/README.md)
 - [Petersen's theorem](petersen-s-theorem/README.md)
 - [Stable marriage problem](stable-marriage-problem/README.md)
+- [Strong thin spanning trees in multigraphs](strong-thin-spanning-trees.md)
+- [Deterministic polynomial-bit construction of strong thin trees](deterministic-bit-construction-of-strong-thin-trees.md)
+- [Properties of the Top Trading Cycles Mechanism](top-trading-cycles-mechanism-properties/README.md)
+- [Structure of Stable Matchings](stable-matching-structure-and-polytopes/README.md)

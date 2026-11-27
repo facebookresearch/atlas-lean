@@ -1,10 +1,10 @@
 # Directed graphs and tournaments
 
-Directed graphs, orientations of undirected graphs, digraph colorings and tournaments.
-
 - [Acyclic orientations](acyclic-orientations/README.md)
 - [Acyclic sets in planar oriented graphs](acyclic-sets-in-planar-oriented-graphs/README.md)
 - [Colouring tournaments](colouring-tournaments/README.md)
+Directed graphs, orientations of undirected graphs, digraph colorings and tournaments.
+
 - [Connectivity of directed graphs](connectivity-of-directed-graphs/README.md)
 - [Critical-path scheduling on activity networks](critical-path-scheduling-on-activity-networks/README.md)
 - [Dichromatic number](dichromatic-number/README.md)
@@ -20,3 +20,5 @@ Directed graphs, orientations of undirected graphs, digraph colorings and tourna
 - [Tournaments and score sequences](tournaments-and-score-sequences/README.md)
 - [Transitive subtournaments](transitive-subtournaments/README.md)
 - [Walks and edge volumes in arc networks](walks-and-edge-volumes-in-arc-networks/README.md)
+- [Seymour's second out-neighborhood inequality](seymour-second-neighborhood-bound.md)
+- [Functional graphs](functional-graphs/README.md)
