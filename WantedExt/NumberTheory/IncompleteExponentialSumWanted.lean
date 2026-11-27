@@ -31,7 +31,8 @@ written out inline: `∑ x ∈ Finset.Icc 1 B, Complex.exp (2 * π * I * f(x) / 
 Lemma 2.2 is proved in `MathlibExt.NumberTheory.TwistedCompleteExponentialSum` and
 Lemma 3.1 in `MathlibExt.NumberTheory.IncompleteExponentialSum`. Lemma 2.1 and Corollary 1.1
 are proved in `MathlibExt.NumberTheory.LogarithmicCompletion`. The reciprocal sine bound is
-proved in `MathlibExt.NumberTheory.ReciprocalSineSum`.
+proved in `MathlibExt.NumberTheory.ReciprocalSineSum`, together with the bound
+`sum_min_one_div_abs_sin_lt` for the sum with each term capped at the length.
 -/
 
 namespace MetaMathlibExt
@@ -138,22 +139,6 @@ public theorem_wanted norm_incompleteSum_le_min_mul_sup (p : ℕ) (hp : p.Prime)
         (((range p).sup fun y : ℕ =>
           ‖∑ x ∈ Icc 1 p,
             exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ)
-
-/-- **Bound for a truncated sum of reciprocal sines.** Let $p$ be a prime, let $a$ be an integer
-not divisible by $p$, and let $B$ be an integer with $\sqrt{p/\pi} < B < p/2$. Then
-$$
-\sum_{h=1}^{B} \min\left\{B, \frac{1}{|\sin(\pi a h / p)|}\right\} <
-\frac{p}{\pi}\left(\log\frac{\pi B^2}{p} + 1 + \frac{\pi B}{p}\right) +
-\frac{pB(B+1)}{\pi(p^2 - B^2)}.
-$$
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 3.3 (`integers-2025-A48-lem-3-3`). -/
-public theorem_wanted sum_min_one_div_abs_sin_lt (p : ℕ) (hp : p.Prime) (a : ℤ)
-    (ha : ¬ (p : ℤ) ∣ a) (B : ℕ) (hB₁ : Real.sqrt (p / Real.pi) < B) (hB₂ : (B : ℝ) < p / 2) :
-    ∑ h ∈ Icc 1 B, min (B : ℝ) (1 / |Real.sin (Real.pi * a * h / p)|) <
-      (p / Real.pi) * (Real.log (Real.pi * B ^ 2 / p) + 1 + Real.pi * B / p) +
-        p * B * (B + 1) / (Real.pi * ((p : ℝ) ^ 2 - (B : ℝ) ^ 2))
 
 /-- **Bound for a sum of sine ratios.** Let $q$, $K$ and $B$ be natural numbers with
 $1 \le K < q$ and $B \ge 1$, and let $\gamma$ be the Euler–Mascheroni constant. Then

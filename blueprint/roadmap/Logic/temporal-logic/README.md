@@ -11,6 +11,7 @@ Linear and branching-time temporal logics interpreted over infinite words and tr
 - [Model checking for linear temporal logic](model-checking-for-linear-temporal-logic/README.md)
 
 - [Continuous stochastic logic](continuous-stochastic-logic.md)
+- [Probabilistic model checking](probabilistic-model-checking/README.md)
 
 - [Model-checking algorithms](model-checking-algorithms/README.md)
 - [Temporal specification](temporal-specification/README.md)
