@@ -47,7 +47,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lean_changes import (ROOT, ChangedFile, add_common_arguments, annotation, changed_files,
-                          in_actions, relative, write_summary)
+                          guarded, in_actions, relative, write_summary)
 
 # With --gh-style, agitate prints one of these for each import that it would remove,
 # with a 1-based column.
@@ -183,6 +183,7 @@ def run_agitate(binary: Path, flags: tuple[str, ...], modules: list[str]
                           capture_output=True, text=True)
 
 
+@guarded
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)

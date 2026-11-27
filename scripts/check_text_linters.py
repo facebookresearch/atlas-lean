@@ -27,10 +27,15 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lean_changes import (ROOT, AggregatorError, add_common_arguments, aggregators, annotation,
-                          changed_files, in_actions, relative, write_summary)
+                          changed_files, guarded, in_actions, relative, write_summary)
 
 LINE_ERROR = re.compile(r"^error: (?P<file>\S.*?\.lean):(?P<line>\d+): (?P<message>.*)$")
-MODULE_ERROR = re.compile(r"^error: module name ['`](?P<module>[^'`]+)['`] (?P<message>.*)$")
+# Module-name errors quote the name in one of two ways, and a name can hold an apostrophe:
+# "module name 'M' is not in 'UpperCamelCase': ..." and "module name `M` contains ...".
+MODULE_ERROR = re.compile(r"^error: module name (?:'(?P<quoted>.+?)' (?=is not in )|"
+                          r"`(?P<ticked>[^`]+)` )(?P<message>.*)$")
+# Any other module-name error still shows that lint-style ran.
+OTHER_MODULE_ERROR = re.compile(r"^error: module name ")
 SUMMARY = re.compile(r"^error: found \d+ new style error")
 
 
@@ -63,13 +68,17 @@ def parse_lint_style(text: str, module_paths: dict[str, str],
                                      match.group("message")))
         elif match := MODULE_ERROR.match(line):
             reported = True
-            path = module_paths.get(match.group("module"))
+            path = module_paths.get(match.group("quoted") or match.group("ticked"))
             if path is not None:
                 errors.append(StyleError(path, 1, f"Module name {match.group('message')}",
                                          module_name=True))
+        elif OTHER_MODULE_ERROR.match(line):
+            reported = True
+            print(f"Not understood: {line}", file=sys.stderr)
     return list(dict.fromkeys(errors)), reported
 
 
+@guarded
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)

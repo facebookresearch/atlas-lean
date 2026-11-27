@@ -18,7 +18,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import check_unused_imports as check
-from lean_changes import ROOT, ChangedFile
+from lean_changes import ROOT, ChangedFile, GitError
 
 A = f"{ROOT}/MathlibExt/A.lean"
 B = f"{ROOT}/MathlibExt/B.lean"
@@ -92,21 +92,36 @@ def agitate_build(toolchain: str | None = None):
         yield tmp
 
 
-def run_main(results, files=FILES, extra=(), toolchain=None, agitate_dir=True):
-    """Run main() with `results` as the agitate runs, in order; return code, output, calls."""
+@contextlib.contextmanager
+def job_summary():
+    """A job summary of the test's own, so that the fixtures' findings never reach the real one."""
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp, "summary.md")
+        path.write_text("")
+        with patch.dict("os.environ", {"GITHUB_ACTIONS": "true", "GITHUB_STEP_SUMMARY": str(path),
+                                       "AGITATE_DIR": ""}):
+            yield path
+
+
+def run_main(results, files=FILES, extra=(), toolchain=None, agitate_dir=True,
+             summary: list[str] | None = None):
+    """Run main() with `results` as the agitate runs, in order; return code, output, calls.
+
+    The job summary that main() writes is appended to `summary`."""
     if not isinstance(results, list):
         results = [results]
     out = io.StringIO()
-    with agitate_build(toolchain) as tmp, \
+    with agitate_build(toolchain) as tmp, job_summary() as summary_path, \
             patch.object(check, "changed_files", return_value=files), \
             patch.object(check, "read_source", side_effect=SOURCES.__getitem__), \
             patch.object(check.subprocess, "run", side_effect=results) as run, \
-            patch.dict("os.environ", {"GITHUB_ACTIONS": "true", "AGITATE_DIR": ""}), \
             patch.object(sys, "argv", ["check_unused_imports.py", "--base", "HEAD^1",
                                        *(["--agitate-dir", tmp] if agitate_dir else []),
                                        *extra]), \
             contextlib.redirect_stdout(out), contextlib.redirect_stderr(io.StringIO()):
         code = check.main()
+        if summary is not None:
+            summary.append(summary_path.read_text())
     return code, out.getvalue(), [call.args[0] for call in run.call_args_list]
 
 
@@ -177,15 +192,27 @@ class MainTests(unittest.TestCase):
                          "a namespace). agitate also", out)
 
     def test_report_only_annotates_and_passes(self):
+        summary: list[str] = []
         code, out, _ = run_main([done(MODULE_OUTPUT), done(NONMODULE_OUTPUT)],
-                                extra=["--report-only"])
+                                extra=["--report-only"], summary=summary)
         self.assertEqual(code, 0)
+        self.assertIn("| unused import | 1 |", summary[0])
         self.assertIn("::warning file=MathlibExt/A.lean,line=9,col=1,", out)
 
     def test_passes_when_agitate_suggests_nothing(self):
-        code, out, _ = run_main([done("", 0), done("", 0)])
+        summary: list[str] = []
+        code, out, _ = run_main([done("", 0), done("", 0)], summary=summary)
         self.assertEqual(code, 0)
         self.assertNotIn("::", out)
+        self.assertEqual(summary, [""])
+
+    def test_an_unreadable_base_is_a_failure_to_run(self):
+        out = io.StringIO()
+        with patch.object(check, "changed_files", side_effect=GitError("no such ref: nope")), \
+                patch.object(sys, "argv", ["check_unused_imports.py", "--base", "nope"]), \
+                contextlib.redirect_stdout(out), contextlib.redirect_stderr(out):
+            self.assertEqual(check.main(), 2)
+        self.assertIn("no such ref: nope", out.getvalue())
 
     def test_skips_agitate_when_no_import_line_is_added(self):
         files = [ChangedFile("MathlibExt/A.lean", "M", frozenset({17}))]
