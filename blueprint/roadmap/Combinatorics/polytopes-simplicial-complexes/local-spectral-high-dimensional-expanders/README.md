@@ -1,0 +1,18 @@
+# Local Spectral High-Dimensional Expanders
+
+- [Coset complexes of a group with a family of subgroups](coset-complex.md)
+- [Pure weighted simplicial complexes and their face distributions](pure-weighted-complex.md)
+- [Link of a face in a weighted complex](link-of-face.md)
+- [Up-down and down-up random walks on a weighted complex](up-down-walks.md)
+- [Garland's method: localization of the link Laplacian quadratic form](garland-method.md)
+- [Local spectral expanders (one-sided and two-sided)](local-spectral-expander.md)
+- [Alev–Lau local-to-global bound for the down-up walk](alev-lau-local-to-global.md)
+- [Garland's vanishing theorem for cohomology of high-dimensional expanders](garland-vanishing.md)
+- [Spectral gap of high-order walks on local spectral expanders](kaufman-oppenheim-walk-gap.md)
+- [Oppenheim's trickling-down theorem for spectral gaps](oppenheim-trickle-down.md)
+- [Ramanujan complexes of type A_d](ramanujan-complex.md)
+- [Spectral independence of a distribution on the hypercube](spectral-independence.md)
+- [Matroid independence complexes are 0-local spectral expanders](alov-matroid-complex.md)
+- [Kaufman–Oppenheim elementary bounded-degree local spectral expanders](kaufman-oppenheim-construction.md)
+- [Explicit Ramanujan complexes and their local spectral expansion](ramanujan-complex-existence.md)
+- [Spectral independence implies polynomial mixing of Glauber dynamics](spectral-independence-glauber.md)
