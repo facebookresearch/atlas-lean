@@ -14,7 +14,7 @@ Write $\bar b = b e^{-c\tau}$. For $r > \mu$ and $\bar b > c$ the disease-free s
 $$\mathcal{R}_0 = \frac{\beta\lambda\,\bar v_2}{c\,\bar x\,(\alpha + \mu)} = \frac{\beta\lambda\,a\,\ln(\bar b/c)}{c\,(\alpha + \mu)} = \frac{\beta\lambda a\,\big(\ln(b/c) - c\tau\big)}{c(\alpha + \mu)} .$$
 
 **Theorem.**
-1. Assume in addition $\ln(\bar b/c) \le 2$ (that is, $c < \bar b \le c e^2$), so that the vector-only factor of the characteristic equation is stable for every delay. Then the disease-free equilibrium is stable for $\mathcal{R}_0 < 1$, unstable for $\mathcal{R}_0 > 1$, and undergoes a steady-state bifurcation at $\mathcal{R}_0 = 1$.
+1. Assume in addition $\ln(\bar b/c) \le 2$ (that is, $c < \bar b \le c e^2$), so that the vector-only factor of the characteristic equation is stable for every delay. Then the disease-free equilibrium is stable for $\mathcal{R}_0 < 1$, unstable for $\mathcal{R}_0 > 1$, and undergoes a steady-state bifurcation at $\mathcal{R}_0 = 1$. Theorem 1 states stability for $\mathcal{R}_0<1$ without this restriction, but its claim that $-c+c(1-\ln(\bar b/c))\cos(\omega\tau)=0$ "can never be satisfied" fails for $\ln(\bar b/c)>2$.
 2. A biologically feasible endemic equilibrium exists if and only if
 
 $$1 < \mathcal{R}_0 < 1 + \frac{(\beta + c)(r - \mu)}{c\,(\alpha + \mu)};$$

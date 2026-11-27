@@ -16,7 +16,7 @@ plus, in the **general variance model**, individual death $A_i \xrightarrow{d} \
 
 $$\pi(N) = \frac{(r\Omega)^{N_i}}{N_i!\,\big(e^{r\Omega} - 1\big)}\ \delta(N_{i+1})\,\delta(N_{i+2}), \qquad N_i \ge 1,$$
 
-a zero-truncated Poisson law of mean parameter $r\Omega$ for the surviving species, the others being extinct.
+a zero-truncated Poisson law of mean parameter $r\Omega$ for the surviving species, the others being extinct. Proposition 2's "four distinct stationary distributions" are the four **extremal** ones; their convex mixtures are stationary too.
 
 ## Expansion
 

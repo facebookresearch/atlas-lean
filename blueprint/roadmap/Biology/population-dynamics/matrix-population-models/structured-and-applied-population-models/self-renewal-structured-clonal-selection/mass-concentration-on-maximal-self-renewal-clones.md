@@ -14,7 +14,7 @@ $$\bar\rho_1=\frac dp\,\frac{2\bar a-1}{K},\qquad \bar\rho_2=\frac{2\bar a-1}{K}
 
 If $\Omega_a=\{\bar x\}$, then $(u_1,u_2)\to(\bar\rho_1,\bar\rho_2)\,\delta_{\bar x}$ in the bounded Lipschitz (flat) distance; if $|\Omega_a|>0$, convergence is strong in $L^1(\Omega)$ to multiples of $u_i^0\mathbf 1_{\Omega_a}$.
 3. If $\bar a\le\tfrac12$, then $u_1,u_2\to 0$ in $L^1(\Omega)$.
-4. (Coexistence; here $\Omega_a=\{\bar x_1,\bar x_2\}$.) If $\bar a>\tfrac12$, $u^0_i\in C(\Omega)$ and $u_1^0>0$ on $\Omega_a$: when a $C^1$ diffeomorphism $\Phi$ from a neighbourhood of $\bar x_1$ with $\Phi(\bar x_1)=\bar x_2$ and $a=a\circ\Phi$ exists, the limit is a combination of Dirac masses at both points with strictly positive weights; when $\Phi$ is only a homeomorphism whose inverse has singular Jacobian at $\bar x_2$, all the mass concentrates at $\bar x_2$.
+4. (Coexistence; here $\Omega_a=\{\bar x_1,\bar x_2\}$.) If $\bar a>\tfrac12$, $u^0_i\in C(\Omega)$ and $u_1^0>0$ on $\Omega_a$: when a $C^1$ diffeomorphism $\Phi$ from a neighbourhood of $\bar x_1$ with $\Phi(\bar x_1)=\bar x_2$ and $a=a\circ\Phi$ exists, the limit is a combination of Dirac masses at both points with strictly positive weights; when $\Phi$ is only a homeomorphism whose inverse has singular Jacobian at $\bar x_2$, all the mass concentrates at $\bar x_2$. Theorem 3 states "strictly positive constants" without $\bar a>1/2$; the limit masses in Corollary 2 are multiples of $2\bar a-1$.
 
 ## Expansion
 

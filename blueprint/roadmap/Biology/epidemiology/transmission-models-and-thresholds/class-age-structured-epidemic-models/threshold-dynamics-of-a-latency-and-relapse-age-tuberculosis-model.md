@@ -18,7 +18,7 @@ $$\mathcal{R}_0 = \frac{\beta (K_1 + K_2 K_3)}{D_I}\frac{\Lambda}{\mu} + \frac{\
 **Theorem.**
 1. The system generates a continuous, point-dissipative, asymptotically smooth semiflow on $Y$ with a global attractor; the set $\{\|x\|_Y \le \Lambda/\mu\}$ is positively invariant.
 2. The disease-free equilibrium $E_0 = (\Lambda/\mu, 0, 0, 0, 0)$ always exists and is globally asymptotically stable if $\mathcal{R}_0 < 1$.
-3. If $\mathcal{R}_0 > 1$ there is a unique endemic equilibrium $E^*$. If moreover $\sigma$, $\delta$ and $\omega$ are not eventually zero (none vanishes almost everywhere on a half-line $(A, \infty)$), the semiflow is uniformly persistent and $E^*$ is globally asymptotically stable on the set of states with some infection present.
+3. If $\mathcal{R}_0 > 1$ there is a unique endemic equilibrium $E^*$. If moreover $\sigma$, $\delta$ and $\omega$ are not eventually zero (none vanishes almost everywhere on a half-line $(A, \infty)$), the semiflow is uniformly persistent and $E^*$ is globally asymptotically stable on the set of states with some infection present. Theorems 6 and 8 state "if $\mathcal{R}_0>1$" without the tail condition; without it, latent individuals whose ages already exceed the supports of both $\sigma$ and $\delta$ need never produce a case.
 
 ## Expansion
 

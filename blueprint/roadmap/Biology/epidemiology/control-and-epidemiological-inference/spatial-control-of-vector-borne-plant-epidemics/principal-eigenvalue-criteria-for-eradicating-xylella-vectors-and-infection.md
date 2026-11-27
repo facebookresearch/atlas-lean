@@ -33,7 +33,7 @@ where $C_I^\ast$ is the stationary solution of Proposition 1(2) and $\lambda_1$ 
 
 $$-d\,\Delta\varphi + \big(n + \gamma_1 I_\omega(x)\big)\varphi + r\chi\, C_I^\ast(x)\,\varphi = \lambda\varphi \ \text{in } \Omega, \qquad \partial_\nu\varphi = 0$$
 
-(source Eq. (18); so $\lambda_1 \ge n$, and it can be made arbitrarily large by strong culling over a large enough region), then $i_1(\cdot, t) \to 0$ and $i_2(\cdot, t) \to 0$ in $L^1(\Omega)$.
+(source Eq. (18); so $\lambda_1 \ge n$, and it can be made arbitrarily large by strong culling over a large enough region), then $i_1(\cdot, t) \to 0$ and $i_2(\cdot, t) \to 0$ in $L^1(\Omega)$. Eq. (25) prints $(1-\gamma_{23})\|C_I^\ast\|_\infty\|k\|_2$ for a kernel "normalized to $\beta$"; Eqs. (21)–(22) use $\beta k$, giving the explicit factor $\beta$ for the kernel used here.
 
 ## Expansion
 

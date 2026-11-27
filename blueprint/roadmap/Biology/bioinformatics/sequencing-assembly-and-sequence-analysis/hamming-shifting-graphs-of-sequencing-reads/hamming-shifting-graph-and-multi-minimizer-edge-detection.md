@@ -10,7 +10,7 @@ which decreases with $k_i$. With independent indexing over $n$ minimizers and $k
 
 $$\mathbb P(\text{the pair shares at least one block})=1-\prod_{i=1}^n\bigl(1-p(k_i)\bigr)\ge1-\bigl(1-p(k_j)\bigr)^n ,$$
 
-with equality iff all $p(k_i)$ are equal. For example $n=20$ and $p(k_j)=0.15$ give probability at least $0.961$.
+with equality iff all $p(k_i)$ are equal. Proposition 1 prints $>$; the correct bound is $\ge$ because $p(k_j)=\min_i p(k_i)$, with equality when all the probabilities coincide. For example $n=20$ and $p(k_j)=0.15$ give probability at least $0.961$.
 
 ## Expansion
 

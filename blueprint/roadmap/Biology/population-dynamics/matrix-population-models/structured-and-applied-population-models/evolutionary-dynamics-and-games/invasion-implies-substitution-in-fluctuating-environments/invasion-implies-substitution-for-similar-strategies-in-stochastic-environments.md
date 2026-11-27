@@ -12,11 +12,11 @@ $$\dot{\bar P}_{t_1} = \bar P_{t_1}(1 - \bar P_{t_1})\,\partial_y S_x(y)|_{y=x}\
 
 and $S_{x_1}(x_2) = -S_{x_2}(x_1) = \epsilon\,\partial_y S_x(y)|_{y=x}(\xi_2 - \xi_1) + O(\epsilon^2)$.
 
-**Theorem (invasion implies substitution).** Assume $\int|f(y,e,\theta)|^2\mu(de\,d\theta) < \infty$ for $y$ near $x$ and $\partial_y S_x(y)|_{y=x}(\xi_2 - \xi_1) \ne 0$. For every $\delta \in (0,1)$ there is $T_\delta$ such that, for all initial $p \in (0,1)$ and $\mu$-a.e. initial state,
+**Theorem (invasion implies substitution).** Assume $\int|f(y,e,\theta)|^2\mu(de\,d\theta) < \infty$ for $y$ near $x$ and $\partial_y S_x(y)|_{y=x}(\xi_2 - \xi_1) \ne 0$. For each initial $p \in (0,1)$ and each $\delta \in (0,1)$ there is $T_{\delta,p}$ such that, for $\mu$-a.e. initial state,
 
-$$P\Big\{\lim_{\epsilon\to 0}\sup_{t_1 \ge T_\delta}|P^\epsilon_{t_1} - p^*| \le \delta\Big\} = 1,$$
+$$P\Big\{\lim_{\epsilon\to 0}\sup_{t_1 \ge T_{\delta,p}}|P^\epsilon_{t_1} - p^*| \le \delta\Big\} = 1,$$
 
-with $p^* = 1$ if $S_{x_1}(x_2) > 0 > S_{x_2}(x_1)$ and $p^* = 0$ if $S_{x_1}(x_2) < 0 < S_{x_2}(x_1)$. So away from evolutionarily singular strategies (and, in several dimensions, for deviations not orthogonal to the selection gradient) a successful invader of a similar resident replaces it, even in a fluctuating environment.
+with $p^* = 1$ if $S_{x_1}(x_2) > 0 > S_{x_2}(x_1)$ and $p^* = 0$ if $S_{x_1}(x_2) < 0 < S_{x_2}(x_1)$. The time must depend on $p$: with $c = \partial_y S_x(y)|_{y=x}(\xi_2 - \xi_1) > 0$, Eq. (2.9) gives $\bar P(T) = pe^{cT}/(1 - p + pe^{cT})$, which equals $1/2$ at $p = 1/(1 + e^{cT})$ for any proposed $T$, and Appendix C fixes the initial value before choosing the time. Lemma 1 prints "for all $p \in [0,1]$"; the endpoints are absorbing, so (2.10) fails at the endpoint opposite $p^*$, and the statement here takes $p \in (0,1)$. So away from evolutionarily singular strategies (and, in several dimensions, for deviations not orthogonal to the selection gradient) a successful invader of a similar resident replaces it, even in a fluctuating environment.
 
 ## Depends on
 

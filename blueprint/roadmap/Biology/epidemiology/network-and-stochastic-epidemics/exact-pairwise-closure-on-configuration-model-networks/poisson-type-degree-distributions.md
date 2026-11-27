@@ -14,6 +14,8 @@ for some constants $\alpha > 0$, $\kappa \ge 0$.
 | $\kappa = 1$ | Poisson $\mathrm{Poi}(\lambda)$ | $\lambda = \alpha$ |
 | $\kappa > 1$ | negative binomial $\mathrm{NB}(r,p)$ | $r = 1/(\kappa-1)$, $p = \alpha(\kappa-1)/(\alpha(\kappa-1)+1)$ |
 
+Eq. (19) requires $\kappa>0$; at the added endpoint $\kappa=0$, $\psi'=\alpha$ and $\psi(1)=1$ give $\psi(u)=1-\alpha+\alpha u$, the PGF of $\mathrm{Bin}(1,\alpha)$.
+
 Equivalently, when $\psi(0) > 0$ and $\psi'(0) > 0$, the PT laws are exactly those with
 
 $$\frac{\psi''(u)\,\psi(u)}{\psi'(u)^2} = \kappa \quad\text{constant on } [0,1],$$
