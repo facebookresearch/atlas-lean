@@ -27,6 +27,8 @@
 
 - [The common ancestor of a subsample is that of the whole sample with probability (n+1)(m−1)/((n−1)(m+1))](mrca-of-a-subsample-equals-sample-mrca-with-prob.md)
 
-## Further results
+## Ranked tree shapes
 
+- [F-matrix distances between ranked tree shapes](f-matrix-distances-between-ranked-tree-shapes/README.md)
+## Further results
 - [Cherries of the Kingman genealogy](external-branches-and-cherries.md)
