@@ -2,7 +2,7 @@
 
 In the [traveling-wave framework](traveling-wave-self-consistency-for-fixation-probabilities.md) with mutation spectrum $\mu(s)$, speed $v$ and coalescent timescale $T_c$ defined by $v = \int \mu(s)\,s\,e^{T_c s}\,ds$, define the fitness scales
 
-$$b^3 = \int \mu(s)\, s^2 e^{T_c s}\,ds, \qquad c = T_c v - \int \mu(s)\bigl(e^{T_c s} - 1\bigr)\,ds,$$
+$$b^3 = \tfrac{1}{2}\int \mu(s)\, s^2 e^{T_c s}\,ds, \qquad c = T_c v - \int \mu(s)\bigl(e^{T_c s} - 1\bigr)\,ds,$$
 
 and write $f(x) = e^{-T_c x}\psi(x)$, $w(x) = e^{T_c x}\xi(x)$. Taylor expansion of $\psi(x - s)$ and $\xi(x+s)$ to second order (after the exponential prefactors are removed) gives $b^3\psi'' = (c - x)\psi$ and the same equation for $\xi$, so below the nose
 

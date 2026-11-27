@@ -2,7 +2,7 @@
 
 **Setting.** In the [SMCSD hidden Markov model](smcsd-hidden-markov-model-with-variable-population-size.md), the trunk genealogy absorbs the new lineage at total rate $n/\lambda(t)$ at every time $t$. In the true coalescent the number $A_n(t)$ of lineages ancestral to the $n$ observed haplotypes decreases, and a new lineage is absorbed at rate $A_n(t)/\lambda(t)$.
 
-**Proposition (bias of the trunk).** Because $A_n(t) \le n$ with $A_n(t) < n$ for $t > 0$ almost surely, the constant trunk makes absorption too fast, so absorption events concentrate in the recent past; when $\lambda$ is estimated from the inferred distribution of absorption times, few events fall in the middle and ancient past and ancient population sizes are overestimated. Recent sizes are almost unaffected, since $A_n(t) \approx n$ for small $t$.
+**Proposition (bias of the trunk).** Because $A_n(t) \le n$, with $\mathbb{E}[A_n(t)] < n$ for every $t > 0$ when $n \ge 2$, the constant trunk makes absorption too fast, so absorption events concentrate in the recent past; when $\lambda$ is estimated from the inferred distribution of absorption times, few events fall in the middle and ancient past and ancient population sizes are overestimated. Recent sizes are almost unaffected, since $A_n(t) \approx n$ for small $t$.
 
 **Wedding-cake correction.** Partition time into intervals $D_i = [t_{i-1}, t_i)$ and, on $D_i$, replace the absorption multiplicity $n$ by
 

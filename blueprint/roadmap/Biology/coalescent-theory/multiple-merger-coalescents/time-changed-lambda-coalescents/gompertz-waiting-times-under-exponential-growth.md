@@ -1,6 +1,6 @@
 # Gompertz waiting times under exponential growth
 
-Consider a variable-size Cannings model whose fixed-size coalescence probability satisfies $c_N = c N^{-\gamma} + o(N^{-\gamma})$ for constants $c, \gamma > 0$, with exponential growth on the coalescent time scale: $\nu(t) = e^{-\rho t}$ for $\rho > 0$, corresponding to sizes $N_{r-1} = \lfloor N_r (1 - c_N \rho) \rfloor$. Then the time change of the limiting Λ-coalescent is (Cor. 3, Eq. 10)
+Consider a variable-size Cannings model whose fixed-size coalescence probability satisfies $c_N = c N^{-\gamma} + o(N^{-\gamma})$ for constants $c, \gamma > 0$, with exponential growth on the coalescent time scale: $\nu(t) = e^{-\rho t}$ for $\rho > 0$, corresponding to sizes $N_r = \lfloor N_{r-1} (1 - c_N \rho) \rfloor$. Then the time change of the limiting Λ-coalescent is (Cor. 3, Eq. 10)
 
 $$G(t) = \int_0^t e^{\rho \gamma s}\, ds = \frac{e^{\rho \gamma t} - 1}{\rho \gamma}.$$
 

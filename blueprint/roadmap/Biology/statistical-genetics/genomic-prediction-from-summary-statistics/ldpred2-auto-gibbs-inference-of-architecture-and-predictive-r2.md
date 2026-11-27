@@ -8,7 +8,7 @@ with SNP heritability $h^2$ and polygenicity $p \in (0, 1]$. The **extended thre
 
 $$\gamma_j \sim \begin{cases} \mathcal{N}\big(0, \sigma_\beta^2\, S_j^{2\alpha}\big) & \text{with probability } p, \\ 0 & \text{otherwise,} \end{cases}$$
 
-which reduces to the LDpred model at $\alpha = -1$, $\sigma_\beta^2 = h^2/(Mp)$; $\alpha > -1$ gives larger allele-scale effects to rarer variants under negative selection.
+which reduces to the LDpred model at $\alpha = -1$, $\sigma_\beta^2 = h^2/(Mp)$; $\alpha < 0$ gives larger allele-scale effects to rarer variants; estimates between $-1$ and $0$ are read as a signature of negative selection.
 
 **Estimators.** LDpred2-auto runs a Gibbs sampler on $\beta$ given marginal summary statistics $\hat\beta$ and $R$, and within each iteration:
 1. estimates the heritability as the variance of the current genetic predictor, $\hat h^2 = \beta^\top R \beta$ (local heritability of an LD block is $\beta_B^\top R_{BB} \beta_B$ restricted to the block);

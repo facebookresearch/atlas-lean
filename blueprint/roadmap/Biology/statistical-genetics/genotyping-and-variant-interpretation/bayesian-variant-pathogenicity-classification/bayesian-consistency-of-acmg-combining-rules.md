@@ -12,7 +12,7 @@ so it reaches only the likely-pathogenic band.
 - The *likely pathogenic* rule "one very strong and one moderate item" has $e = 5/4$, $O_P = 350^{5/4} \approx 1514$ and $\mathrm{Post}_P \approx 0.994$, so it reaches the pathogenic band.
 - The likely-pathogenic rules "one strong and one moderate", "one strong and two supporting", "three moderate" and "two moderate and two supporting" all have $e = 3/4$ and $\mathrm{Post}_P \approx 0.90$, at the lower edge of their band; the remaining pathogenic rules (for example one very strong plus one strong, $e = 3/2$) give $\mathrm{Post}_P \ge 0.994$.
 
-Thus, of the 18 ACMG/AMP combining rules, only these two (pathogenic rule (ii) and likely pathogenic rule (i)) are inconsistent with the Bayesian framework; the paper found $X = 2$ to be the uniquely best exponent and other $(O_{\mathrm{VSt}}, P_0)$ pairs in the same region to give the same conclusions.
+Thus, of the 18 ACMG/AMP combining rules, only these two (pathogenic rule (ii) and likely pathogenic rule (i)) are inconsistent with the Bayesian framework; the paper found $X = 2$ to be the uniquely best exponent and other $(O_{\mathrm{VSt}}, P_0)$ pairs in the same region to give the same conclusions. (The four rules with $e = 3/4$ give $350^{3/4} \approx 80.92$ and $\mathrm{Post}_P \approx 0.8999$, which count as consistent after rounding to $0.90$ as in the source.)
 
 ## Depends on
 
