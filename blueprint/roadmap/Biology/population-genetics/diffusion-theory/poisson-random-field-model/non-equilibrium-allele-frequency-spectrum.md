@@ -10,7 +10,7 @@ Start a population of size $N$ at time $0$ in a completely monomorphic state; ne
 
 $$ \lim_{N\to\infty} \mathbb{E}\langle \mathcal{X}^N_t, f\rangle = \theta\omega_\gamma \int_0^1 f(y)\, \mathbb{P}^{*\gamma}_{1-y}(\tau_1 \le t)\, \pi_\gamma(y)\, dy = \theta \int_0^1 f(y)\, \frac{\mathbb{P}^{\gamma}_{1-y}(\tau_1 \le t)}{1-y}\, \pi_0(y)\, dy . $$
 
-Thus the time-$t$ spectrum is the stationary spectrum $\theta\omega_\gamma\pi_\gamma(y)$ weighted by the probability that a diffusion started at $1-y$ and conditioned to fix has done so by time $t$; it increases to the stationary spectrum as $t\to\infty$. For bounded $f$ with $f(0) = 0$ but $f(1) \neq 0$ an extra term $\theta f(1)\omega_\gamma t$ accounts for mutations fixed by time $t$.
+Thus the time-$t$ spectrum is the stationary spectrum $\theta\omega_\gamma\pi_\gamma(y)$ weighted by the probability that a diffusion started at $1-y$ and conditioned to fix has done so by time $t$; it increases to the stationary spectrum as $t\to\infty$. For bounded $f$ with $f(0) = 0$, $\int_0^1 y^{-1}|f(y)|\,dy < \infty$, and $f(1) \neq 0$, the limit becomes $\theta \omega_\gamma \int_0^1 \big(f(y) - f(1) q_\gamma(y)\big)\,\mathbb{P}^{*\gamma}_{1-y}(\tau_1 \le t)\,\pi_\gamma(y)\,dy + \theta f(1)\omega_\gamma t$, where the added term accounts for mutations fixed by time $t$ and $q_\gamma(y)$ subtracts their contribution from the integrand.
 
 ## Depends on
 
