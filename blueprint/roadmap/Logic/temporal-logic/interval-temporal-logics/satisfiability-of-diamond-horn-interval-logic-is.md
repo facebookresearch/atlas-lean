@@ -12,6 +12,7 @@ The same source proves that the box-only fragment $\mathcal{HS}^\Box_{\mathit{ho
 ## Depends on
 
 - [Horn fragments of the Halpern–Shoham logic](horn-fragments-of-the-halpern-shoham-logic.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

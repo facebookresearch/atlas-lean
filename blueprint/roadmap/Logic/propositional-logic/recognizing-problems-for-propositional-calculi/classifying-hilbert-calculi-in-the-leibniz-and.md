@@ -11,7 +11,7 @@ Here a logic $L$ is *protoalgebraic* if it has a set $\rho(x, y)$ of formulas wi
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

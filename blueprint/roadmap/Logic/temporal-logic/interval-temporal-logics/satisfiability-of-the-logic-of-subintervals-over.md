@@ -12,6 +12,7 @@ This settles the last open case of the classification of fragments of Halpern–
 ## Depends on
 
 - [Logic of subintervals](logic-of-subintervals.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

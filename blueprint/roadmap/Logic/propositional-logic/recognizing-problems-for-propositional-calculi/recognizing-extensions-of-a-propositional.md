@@ -12,6 +12,7 @@ Consequently, recognizing axiomatizations (Axm: given $P$, is $P \sim P_0$?) is 
 ## Depends on
 
 - [Propositional calculi with modus ponens and substitution](propositional-calculi-with-modus-ponens-and.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

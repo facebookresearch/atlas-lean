@@ -8,7 +8,7 @@ The source contrasts weak soundness with two stronger notions in which every axi
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

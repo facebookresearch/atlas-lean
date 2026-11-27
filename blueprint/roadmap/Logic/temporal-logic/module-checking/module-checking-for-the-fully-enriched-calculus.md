@@ -10,6 +10,7 @@ By contrast, module checking finite-state and pushdown systems against the hybri
 
 - [Module checking](module-checking.md)
 - [Formulas of the modal μ-calculus](../../modal-logic/modal-calculus/mu-formula.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

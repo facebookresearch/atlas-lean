@@ -9,6 +9,7 @@ Here $P_0$ is fixed and $P$ ranges over finite sets of $\Sigma$-formulas, with m
 ## Depends on
 
 - [Propositional calculi with modus ponens and substitution](propositional-calculi-with-modus-ponens-and.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ The proof reduces the halting problem for Post tag systems (Minsky: some tag sys
 
 ## Sources
 
-- Grigoriy V. Bokov, "Undecidability of the problem of recognizing axiomatizations for propositional calculi with implication", *Logic Journal of the IGPL* 23(2):341–353, 2015, doi:10.1093/jigpal/jzu047; read as arXiv:1407.7010v1, <https://arxiv.org/abs/1407.7010v1>: Theorem 2.7, Theorem 2.6, Theorem 3.1 (Minsky) and Section 3 of arXiv:1407.7010v1.
+- Grigoriy V. Bokov, "Undecidability of the problem of recognizing axiomatizations for propositional calculi with implication", *Logic Journal of the IGPL* 23(2):341–353, 2015, doi:10.1093/jigpal/jzu047; read as arXiv:1407.7010v1, <https://arxiv.org/abs/1407.7010v1>: Theorem 2.7, Theorem 2.6, Theorem 3.2 (Minsky) and Section 3 of arXiv:1407.7010v1.

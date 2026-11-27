@@ -9,6 +9,7 @@ For finite deterministic matrices the equivalence problem is decidable, as the s
 ## Depends on
 
 - [Non-deterministic logical matrices and their decision problems](non-deterministic-logical-matrices.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

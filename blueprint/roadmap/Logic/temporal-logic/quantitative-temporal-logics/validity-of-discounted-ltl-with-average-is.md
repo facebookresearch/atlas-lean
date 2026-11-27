@@ -9,6 +9,7 @@ Undecidability already holds with a single discounting function, so it is the co
 ## Depends on
 
 - [Discounted LTL](discounted-ltl.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

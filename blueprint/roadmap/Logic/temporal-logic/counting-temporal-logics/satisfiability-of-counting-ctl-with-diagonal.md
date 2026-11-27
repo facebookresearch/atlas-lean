@@ -9,6 +9,7 @@ Without diagonal constraints, satisfiability is 2EXPTIME-complete for every logi
 ## Depends on
 
 - [Counting CTL](counting-ctl.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

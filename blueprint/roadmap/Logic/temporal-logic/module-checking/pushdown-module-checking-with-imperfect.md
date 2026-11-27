@@ -11,6 +11,7 @@ Here stability is a uniformity condition: any two non-terminal pairs (control st
 - [Module checking](module-checking.md)
 - [CTL formulas](../computation-tree-logic/formula.md)
 - [Pushdown automaton](../../../TheoryOfComputation/context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

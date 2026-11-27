@@ -12,6 +12,7 @@ The input is a formula together with the set of letters and temporal requests co
 ## Depends on
 
 - [Synthesis problem for interval temporal logic with an equivalence over points](synthesis-problem-for-interval-temporal-logic.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -12,6 +12,7 @@ By contrast, the fragment that allows constrained modalities only for $B$, $D$, 
 
 - [Horn fragments of the Halpern–Shoham logic](horn-fragments-of-the-halpern-shoham-logic.md)
 - [Kripke structures with initial states](../temporal-specification/kripke-structures-with-initial-states.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

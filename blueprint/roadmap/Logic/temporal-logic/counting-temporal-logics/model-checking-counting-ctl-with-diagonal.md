@@ -9,6 +9,7 @@ In contrast, model checking CCTL$_{\pm 1}$, with diagonal constraints but no Boo
 ## Depends on
 
 - [Counting CTL](counting-ctl.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

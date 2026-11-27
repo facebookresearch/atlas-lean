@@ -9,6 +9,7 @@ The source revisits this result from the authors' earlier work and uses it to pr
 ## Depends on
 
 - [Non-deterministic logical matrices and their decision problems](non-deterministic-logical-matrices.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
