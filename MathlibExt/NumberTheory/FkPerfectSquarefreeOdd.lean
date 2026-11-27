@@ -51,17 +51,11 @@ public theorem not_isNearFkPerfect_prod_primes
   -- Parity of powers does not require the source's restriction on the exponent.
   have _hk := hk
   rintro ⟨d, hdvd, hlt, hsum⟩
-  rcases s.eq_empty_or_nonempty with rfl | ⟨q, hq⟩
-  · simp only [Finset.prod_empty] at hdvd hlt
-    exact (Nat.ne_of_lt hlt) (Nat.dvd_one.mp hdvd)
-  · have hn := odd_prod_of_odd s (fun p hp => (hs p hp).2)
-    have hd := odd_of_dvd_of_odd d _ hn hdvd
-    have hσ : Even (∑ e ∈ (∏ p ∈ s, p).divisors, e ^ k) := by
-      rw [sigma_prod_eq k s (fun p hp => (hs p hp).1),
-        ← Finset.mul_prod_erase s (fun p => 1 + p ^ k) hq]
-      exact ((hs q hq).2.pow.one_add).mul_right _
-    have h3n : Odd (3 * (∏ p ∈ s, p)) := (show Odd (3 : ℕ) from ⟨1, rfl⟩).mul hn
-    rw [hsum] at hσ
-    exact (Nat.not_even_iff_odd.mpr ((hn.pow.add_odd hd.pow).add_odd h3n)) hσ
+  have hσ := even_sigma_prod_of_nonempty k s hs (nonempty_of_proper_dvd_prod hdvd hlt)
+  have hn := odd_prod_of_odd s (fun p hp => (hs p hp).2)
+  have hd := odd_of_dvd_of_odd d _ hn hdvd
+  have h3n : Odd (3 * (∏ p ∈ s, p)) := (show Odd (3 : ℕ) from ⟨1, rfl⟩).mul hn
+  rw [hsum] at hσ
+  exact (Nat.not_even_iff_odd.mpr ((hn.pow.add_odd hd.pow).add_odd h3n)) hσ
 
 end MathlibExt.NumberTheory.FkPerfectWanted
