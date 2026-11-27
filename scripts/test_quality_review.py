@@ -157,59 +157,56 @@ class RunTest(unittest.TestCase):
         base.update(kw)
         return argparse.Namespace(**base)
 
-    def test_create_freezes_sources_and_finds_new_by_qualified_name(self):
-        self.out.mkdir()
-        manifest = qr.create(self.repo, self.out, self.args())
+    def test_run_freezes_sources_and_finds_new_by_qualified_name(self):
+        with mock.patch.object(qr, "judge", lambda *a: qr.parse_verdict(0, good())):
+            summary = qr.run(self.args(), self.repo)
         samples = [json.loads(line) for line in (self.out / "samples.jsonl").read_text().splitlines()]
         self.assertEqual([(s["stratum"], s["id"]) for s in samples], [("new", "C.fresh")])
+        self.assertEqual((summary["status"], summary["population"]), ("complete", 6))
         self.assertTrue((self.out / "source" / "MathlibExt" / "D.lean").is_file())
+        self.assertTrue((self.out / "mathlib" / "Mathlib" / "Basic.lean").is_file())
         self.assertFalse((self.out / "source" / ".git").exists())
         self.assertFalse((self.out / "source" / "lake-manifest.json").exists())
-        self.assertEqual(manifest["population"], 6)
-        self.assertTrue((self.out / "mathlib" / "Mathlib" / "Basic.lean").is_file())
-        self.assertEqual(set(manifest["files"]["mathlib"]), {"Mathlib/Basic.lean"})
-        self.assertEqual(manifest["model"], "m")
+        with self.assertRaises(SystemExit):  # one run per directory
+            qr.run(self.args(), self.repo)
 
-    def test_create_rejects_unpinned_mathlib(self):
+    def test_run_rejects_unpinned_mathlib(self):
         (self.mathlib / "x").write_text("x")
         git(self.mathlib, "add", "-A"); git(self.mathlib, "commit", "-qm", "drift")
-        self.out.mkdir()
         with self.assertRaises(SystemExit):
-            qr.create(self.repo, self.out, self.args())
+            qr.run(self.args(), self.repo)
+        self.assertFalse(self.out.exists())
 
-    def test_resume_is_verified_and_incomplete_runs_are_visible(self):
-        with mock.patch.object(qr, "REPO", self.repo):
-            calls = iter([qr.parse_verdict(0, good(4)), qr.parse_verdict(0, "[]")])
-            with mock.patch.object(qr, "judge", lambda *a: next(calls)), self.assertRaises(SystemExit):
-                qr.run(self.args(random=2, new=0))
-            summary = json.loads((self.out / "summary.json").read_text())
-            self.assertEqual(summary["status"], "incomplete")
-            self.assertEqual((summary["sampled"], summary["judged"], summary["missing"]), (2, 1, 1))
-            block = summary["strata"]["random"]["all"]
-            self.assertEqual((block["sampled"], block["judged"], block["missing"]), (2, 1, 1))
-            self.assertEqual(block["mean"]["faithfulness"], 4.0)
-            self.assertEqual(len((self.out / "failures.jsonl").read_text().splitlines()), 1)
-            # An invalid saved verdict and a torn final line do not count, and are re-judged.
-            samples = [json.loads(line)["id"] for line in (self.out / "samples.jsonl").read_text().splitlines()]
-            with (self.out / "results.jsonl").open("a") as fh:
-                fh.write(json.dumps(dict(id=samples[1], scores={"faithfulness": {"score": 9}})) + "\n")
-                fh.write('{"id": "%s", "scor' % samples[1])
-            self.assertEqual(qr.summarize(self.out)["status"], "incomplete")
-            # Resume refuses another model or tampered frozen sources; it no longer needs --mathlib.
-            with self.assertRaises(SystemExit):
-                qr.run(self.args(random=2, new=0, model="other", mathlib=None))
-            frozen = self.out / "mathlib" / "Mathlib" / "Basic.lean"
-            original = frozen.read_text()
-            frozen.write_text("theorem m : False := sorry\n")
-            with self.assertRaises(SystemExit):
-                qr.run(self.args(random=2, new=0, mathlib=None))
-            frozen.write_text(original)
-            judged = []
-            with mock.patch.object(qr, "judge", lambda row, *a: judged.append(row["id"]) or qr.parse_verdict(0, good())):
-                qr.run(self.args(random=2, new=0, mathlib=None))
-            self.assertEqual(judged, [samples[1]])
-            summary = json.loads((self.out / "summary.json").read_text())
-            self.assertEqual((summary["status"], summary["missing"]), ("complete", 0))
+    def test_run_rejects_uncommitted_sources(self):
+        (self.repo / "MathlibExt" / "D.lean").write_text("theorem edited : True := trivial\n")
+        with self.assertRaisesRegex(SystemExit, "uncommitted"):
+            qr.run(self.args(), self.repo)
+        self.assertFalse(self.out.exists())
+
+    def test_failed_and_malformed_judgments_make_the_run_incomplete(self):
+        responses = iter([(0, good(4)), (0, "[]")])
+
+        def fake(*a):
+            code, stdout = next(responses)
+            return qr.parse_verdict(code, stdout)
+
+        with mock.patch.object(qr, "judge", fake):
+            summary = qr.run(self.args(random=2, new=0, jobs=1), self.repo)
+        self.assertEqual(summary["status"], "incomplete")
+        self.assertEqual((summary["sampled"], summary["judged"], summary["missing"]), (2, 1, 1))
+        block = summary["strata"]["random"]["all"]
+        self.assertEqual((block["sampled"], block["judged"], block["missing"]), (2, 1, 1))
+        self.assertEqual(block["mean"]["faithfulness"], 4.0)
+        self.assertEqual(json.loads((self.out / "summary.json").read_text()), summary)
+        self.assertEqual(len((self.out / "results.jsonl").read_text().splitlines()), 1)
+        self.assertEqual(len((self.out / "failures.jsonl").read_text().splitlines()), 1)
+        with mock.patch.object(qr, "judge", lambda *a: (_ for _ in ()).throw(RuntimeError("boom"))):
+            summary = qr.run(self.args(out=str(self.out) + "-2", random=2, new=0), self.repo)
+        self.assertEqual((summary["status"], summary["judged"]), ("incomplete", 0))
+        with mock.patch.object(qr, "REPO", self.repo), \
+                mock.patch.object(qr, "judge", lambda *a: qr.parse_verdict(0, "[]")), \
+                self.assertRaisesRegex(SystemExit, "lack a valid verdict"):
+            qr.main(["--out", str(self.out) + "-3", "--mathlib", str(self.mathlib), "--random", "1", "--new", "0"])
 
 if __name__ == "__main__":
     unittest.main()
