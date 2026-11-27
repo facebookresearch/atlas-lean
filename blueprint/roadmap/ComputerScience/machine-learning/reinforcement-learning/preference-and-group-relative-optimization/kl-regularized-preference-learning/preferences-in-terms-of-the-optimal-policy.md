@@ -1,6 +1,6 @@
 # Preference probabilities in terms of the optimal policy
 
-If preferences follow the Bradley–Terry model with reward $r^*$, they can be written using only the KL-regularized optimal policy $\pi^*$ of $r^*$ and the reference policy, because the partition function cancels.
+If preferences follow the Bradley–Terry model with reward $r^*$, they can be written, for responses that the reference policy charges, using only the KL-regularized optimal policy $\pi^*$ of $r^*$ and the reference policy, because the partition function cancels.
 
 Let $X$ and $Y$ be finite, $\pi_{\mathrm{ref}}$ a reference policy, $\beta > 0$, $r^*$ a reward, and $\pi^* = \pi_{r^*}$ the [optimal policy of KL-regularized reward maximization](optimal-policy-of-kl-regularized-rewards.md) for $r^*$. Suppose the preference distribution follows the [Bradley–Terry model](bradley-terry-and-plackett-luce-models.md) with reward $r^*$, $p^*(y_1 \succ y_2 \mid x) = \sigma(r^*(x,y_1) - r^*(x,y_2))$. Then for every prompt $x$ and all responses $y_1, y_2$ with $\pi_{\mathrm{ref}}(y_1 \mid x) > 0$ and $\pi_{\mathrm{ref}}(y_2 \mid x) > 0$,
 

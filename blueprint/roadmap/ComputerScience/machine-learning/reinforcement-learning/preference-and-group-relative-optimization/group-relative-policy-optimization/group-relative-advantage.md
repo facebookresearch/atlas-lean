@@ -10,7 +10,7 @@ where $\sigma_{\alpha,r}(x)^2 = \mathbb{E}_{y \sim \alpha(\cdot \mid x)}(r(x,y) 
 
 $$\hat A_i = \frac{r_i - \bar r}{\sqrt{s^2 + \varepsilon}}, \qquad \bar r = \frac{1}{G} \sum_{j=1}^{G} r_j,$$
 
-with $s$ the empirical standard deviation of $r_1, \dots, r_G$. The original GRPO formulation takes $\varepsilon = 0$, $\hat A_i = (r_i - \bar r)/s$, and in outcome supervision assigns $\hat A_i$ to every token of response $y_i$. The sources do not fix whether $s^2$ divides by $G$ or by $G - 1$.
+with $s^2 = \frac{1}{G} \sum_{j=1}^{G} (r_j - \bar r)^2$ the empirical variance with divisor $G$. The original GRPO formulation takes $\varepsilon = 0$, $\hat A_i = (r_i - \bar r)/s$, and in outcome supervision assigns $\hat A_i$ to every token of response $y_i$. The sources do not fix whether $s^2$ divides by $G$ or by $G - 1$; this page fixes the divisor $G$, the plug-in counterpart of $\sigma_{\alpha,r}(x)^2$. With divisor $G - 1$ the estimate changes by a factor depending on $G$ and on $s$ (exactly the factor $\sqrt{(G-1)/G}$ when $\varepsilon = 0$ and $s>0$).
 
 ## Depends on
 

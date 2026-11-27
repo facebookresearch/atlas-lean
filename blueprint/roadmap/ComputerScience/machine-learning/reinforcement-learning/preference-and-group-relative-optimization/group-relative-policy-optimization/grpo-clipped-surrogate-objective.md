@@ -16,7 +16,7 @@ In the **token-level sample form** used to train language models, for each quest
 
 $$\frac{1}{G} \sum_{i=1}^{G} \frac{1}{|o_i|} \sum_{t=1}^{|o_i|} \Bigl\{\min\bigl(\rho_{i,t}(\theta) \hat A_{i,t},\ \mathrm{clip}(\rho_{i,t}(\theta), 1-\epsilon, 1+\epsilon) \hat A_{i,t}\bigr) - \beta\, \hat D_{i,t}(\theta)\Bigr\},$$
 
-where $\rho_{i,t}(\theta) = \pi_\theta(o_{i,t} \mid q, o_{i,<t})/\pi_{\theta_{\mathrm{old}}}(o_{i,t} \mid q, o_{i,<t})$, $\hat A_{i,t}$ is the group estimate of the advantage, and $\hat D_{i,t} = u - \log u - 1$ with $u = \pi_{\mathrm{ref}}(o_{i,t} \mid q, o_{i,<t})/\pi_\theta(o_{i,t} \mid q, o_{i,<t})$ is a per-token estimate of the KL penalty; it requires $\pi_\theta$ and $\pi_{\mathrm{ref}}$ to give positive probability to the sampled tokens (as softmax policies do), while $\pi_{\theta_{\mathrm{old}}}(o_{i,t} \mid q, o_{i,<t}) > 0$ holds because the tokens were drawn from it.
+where $\rho_{i,t}(\theta) = \pi_\theta(o_{i,t} \mid q, o_{i,<t})/\pi_{\theta_{\mathrm{old}}}(o_{i,t} \mid q, o_{i,<t})$, $\hat A_{i,t} = \hat A_i$ is the [group estimate](group-relative-advantage.md) for response $o_i$ with the same $\varepsilon > 0$ and the divisor $G$ in $s^2$, assigned to every token of $o_i$, and $\hat D_{i,t} = u - \log u - 1$, with $\log$ the natural logarithm, with $u = \pi_{\mathrm{ref}}(o_{i,t} \mid q, o_{i,<t})/\pi_\theta(o_{i,t} \mid q, o_{i,<t})$ is a per-token estimate of the KL penalty; it requires $\pi_\theta$ and $\pi_{\mathrm{ref}}$ to give positive probability to the sampled tokens (as softmax policies do), while $\pi_{\theta_{\mathrm{old}}}(o_{i,t} \mid q, o_{i,<t}) > 0$ holds because the tokens were drawn from it.
 
 ## Depends on
 

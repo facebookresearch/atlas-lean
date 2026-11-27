@@ -1,6 +1,6 @@
 # The population IPO loss matches the root-finding loss
 
-The population IPO loss, built from Bernoulli preference samples, equals the IPO root-finding loss up to an additive constant independent of the policy, which justifies minimizing a loss computed from sampled preferences.
+For complementary preference probabilities, the population IPO loss, built from Bernoulli preference samples, equals the IPO root-finding loss up to an additive constant independent of the policy, which justifies minimizing a loss computed from sampled preferences.
 
 Fix a context and suppress it from the notation. Let $Y$ be finite, $\tau > 0$, $\mu$ a behavior policy, and $p^*(y \succ y') \in [0,1]$ complementary preference probabilities, $p^*(y' \succ y) = 1 - p^*(y \succ y')$ for all $y, y'$ (so $p^*(y \succ y) = 1/2$). Let $\pi_{\mathrm{ref}}$ be a reference policy positive on the support of $\mu$. Let $y, y'$ be independent draws from $\mu$ and, given them, let $I(y,y') \in \{0,1\}$ have mean $p^*(y \succ y')$. Then for every policy $\pi$ positive on the support of $\mu$, with $h_\pi$ and $L$ as in the [IPO loss](identity-preference-optimization-loss.md),
 

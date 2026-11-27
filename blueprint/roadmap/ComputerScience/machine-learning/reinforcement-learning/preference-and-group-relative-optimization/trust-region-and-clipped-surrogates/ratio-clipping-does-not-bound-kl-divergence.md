@@ -1,12 +1,12 @@
 # Ratio clipping does not bound the KL divergence
 
-Keeping the probability ratio of the sampled action inside the PPO clipping range does not bound the KL divergence between the old and new action distributions at that state: over the set of parameters satisfying the ratio constraint, the divergence is unbounded.
+Keeping the probability ratio of the sampled action inside the PPO clipping range does not bound the KL divergence between the old and new action distributions at that state: for rich enough policy classes (all positive probability vectors on at least three actions, or all Gaussian policies), the divergence is unbounded over the parameters satisfying the ratio constraint.
 
 Fix a state $s_t$, a sampled action $a_t$, a clipping parameter $\epsilon \in (0,1)$ and an old parameter $\theta_{\mathrm{old}}$, and let $r_t(\theta) = \pi_\theta(a_t \mid s_t)/\pi_{\theta_{\mathrm{old}}}(a_t \mid s_t)$ be the ratio of the [PPO clipped surrogate](ppo-clipped-surrogate-objective.md). Let
 
 $$\Theta = \{\theta : 1 - \epsilon \le r_t(\theta) \le 1 + \epsilon\}.$$
 
-1. Finite discrete actions: if $A$ is finite with $|A| \ge 3$ and, as $\theta$ varies, $\pi_\theta(\cdot \mid s_t)$ ranges over all probability vectors on $A$ with positive entries, then $\sup_{\theta \in \Theta} \mathrm{KL}\bigl(\pi_{\theta_{\mathrm{old}}}(\cdot \mid s_t) \,\|\, \pi_\theta(\cdot \mid s_t)\bigr) = +\infty$.
+1. Finite discrete actions: if $A$ is finite with $|A| \ge 3$ and, as $\theta$ varies, $\pi_\theta(\cdot \mid s_t)$ ranges over all probability vectors on $A$ with positive entries, then $\sup_{\theta \in \Theta} \mathrm{KL}\bigl(\pi_{\theta_{\mathrm{old}}}(\cdot \mid s_t) \,\|\, \pi_\theta(\cdot \mid s_t)\bigr) = +\infty$. The source writes the class as $\{p\in\mathbb R_+^D:\sum p=1\}$; this page takes positive entries (as for softmax outputs), where the supremum is approached but not attained. Keeping the old policy strictly positive, allowing zero entries only in the new policy makes the supremum attained at a vector vanishing on an action other than $a_t$.
 2. Gaussian policies: if $D \ge 1$ is an integer, $A = \mathbb{R}^D$, $\pi_\theta(\cdot \mid s_t) = \mathcal{N}(\mu_\theta(s_t), \Sigma_\theta(s_t))$ and $(\mu_\theta(s_t), \Sigma_\theta(s_t))$ ranges over all pairs of a mean in $\mathbb{R}^D$ and a symmetric positive definite $D \times D$ matrix (the source writes semidefinite; a Lebesgue density, and hence the ratio $r_t$, exists only for definite covariance), then the same supremum is $+\infty$.
 
 ## Depends on

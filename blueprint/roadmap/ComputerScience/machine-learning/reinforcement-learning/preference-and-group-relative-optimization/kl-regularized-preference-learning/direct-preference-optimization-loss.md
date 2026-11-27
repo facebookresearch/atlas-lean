@@ -2,7 +2,7 @@
 
 Direct preference optimization (DPO) fits a policy to a fixed dataset of pairwise comparisons by maximum likelihood in the Bradley–Terry model whose reward is the implicit reward $\beta \log(\pi_\theta/\pi_{\mathrm{ref}})$. It needs no separate reward model, no sampling from the policy during training and no reinforcement-learning loop.
 
-Let $\mathcal{D} = \{(x^{(i)}, y_w^{(i)}, y_l^{(i)})\}_{i=1}^{N}$, with $N \ge 1$, be a finite dataset of comparisons in which $y_w^{(i)}$ was preferred to $y_l^{(i)}$, let $\pi_{\mathrm{ref}}$ be a reference policy, $\beta > 0$, and $\pi_\theta$ a parameterized policy, with $\pi_\theta(y \mid x) > 0$ and $\pi_{\mathrm{ref}}(y \mid x) > 0$ for the pairs in $\mathcal{D}$. The implicit reward of $\pi_\theta$ is $\hat r_\theta(x,y) = \beta \log\bigl(\pi_\theta(y \mid x)/\pi_{\mathrm{ref}}(y \mid x)\bigr)$, and the **DPO loss** is
+Let $\mathcal{D} = \{(x^{(i)}, y_w^{(i)}, y_l^{(i)})\}_{i=1}^{N}$, with $N \ge 1$, be a finite dataset of comparisons in which $y_w^{(i)}$ was preferred to $y_l^{(i)}$, let $\pi_{\mathrm{ref}}$ be a reference policy, $\beta > 0$, and $\pi_\theta$ a parameterized policy, with $\pi_\theta(y \mid x) > 0$ and $\pi_{\mathrm{ref}}(y \mid x) > 0$ for the pairs in $\mathcal{D}$. With $\log$ the natural logarithm, the implicit reward of $\pi_\theta$ is $\hat r_\theta(x,y) = \beta \log\bigl(\pi_\theta(y \mid x)/\pi_{\mathrm{ref}}(y \mid x)\bigr)$, and the **DPO loss** is
 
 $$\mathcal{L}_{\mathrm{DPO}}(\pi_\theta; \pi_{\mathrm{ref}}) = -\mathbb{E}_{(x, y_w, y_l) \sim \mathcal{D}} \log \sigma\Bigl(\beta \log \frac{\pi_\theta(y_w \mid x)}{\pi_{\mathrm{ref}}(y_w \mid x)} - \beta \log \frac{\pi_\theta(y_l \mid x)}{\pi_{\mathrm{ref}}(y_l \mid x)}\Bigr),$$
 

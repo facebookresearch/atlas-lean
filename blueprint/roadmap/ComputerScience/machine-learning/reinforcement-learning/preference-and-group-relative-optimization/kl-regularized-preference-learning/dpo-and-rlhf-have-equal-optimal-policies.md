@@ -7,7 +7,7 @@ Let $X$ and $Y$ be finite, $\rho$ a distribution on $X$, $\mu$ a policy generati
 1. if $\hat r$ minimizes $\mathcal{L}_{\mathrm{BT}}$, then $\pi_{\hat r}$ minimizes $\mathcal{L}_{\mathrm{DPO}}$;
 2. if $\pi^*$ minimizes $\mathcal{L}_{\mathrm{DPO}}$, then $r^* = \beta \log(\pi^*/\pi_{\mathrm{ref}})$ minimizes $\mathcal{L}_{\mathrm{BT}}$ and $\pi^* = \pi_{r^*}$.
 
-In particular, when $\mathcal{L}_{\mathrm{BT}}$ has a minimizer, the policies obtained by reward modeling followed by KL-regularized maximization and those obtained by minimizing the DPO loss are the same.
+In particular, when $\mathcal{L}_{\mathrm{BT}}$ has a minimizer, the minimizers of $\mathcal{L}_{\mathrm{DPO}}$ are exactly the policies $\pi_{\hat r}$ with $\hat r$ a minimizer of $\mathcal{L}_{\mathrm{BT}}$. Each such $\pi_{\hat r}$ maximizes the KL-regularized objective for $\hat r$, and a policy maximizes that objective exactly when it agrees with $\pi_{\hat r}$ at every prompt with $\rho(x) > 0$. So reward modeling followed by KL-regularized maximization and minimizing the DPO loss give the same policies at every prompt with $\rho(x) > 0$; at prompts with $\rho(x) = 0$ neither problem constrains the policy beyond the full support required of DPO candidates.
 
 ## Depends on
 
@@ -18,6 +18,7 @@ In particular, when $\mathcal{L}_{\mathrm{BT}}$ has a minimizer, the policies ob
 ## Proof depends on
 
 - [Reward reparameterization through the optimal policy](reward-reparameterization-by-optimal-policy.md)
+- [Optimal policy of KL-regularized reward maximization](optimal-policy-of-kl-regularized-rewards.md)
 
 ## Expansion
 

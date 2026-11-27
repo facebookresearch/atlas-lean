@@ -31,7 +31,7 @@ $$\sum_y \delta(y)\Bigl(\frac{r(x,y)}{\beta} - \log\frac{\delta(y)}{\pi_{\mathrm
 
 which is the identity. The partition function $Z(x)$ depends on $x$, $r$ and $\pi_{\mathrm{ref}}$ but not on $\delta$, so maximizing the left side means minimizing $\mathrm{KL}(\delta \,\|\, \pi_r(\cdot \mid x))$, which is nonnegative and vanishes only at $\delta = \pi_r(\cdot \mid x)$ (Gibbs' inequality and its equality case). On the finite set $Y$ this is the Gibbs variational principle for the base measure $\pi_{\mathrm{ref}}(\cdot \mid x)$ and the bounded function $r(x,\cdot)/\beta$, multiplied by $\beta$. Because the objective $J_\beta$ averages the per-prompt objectives with weights $\rho(x)$, a policy is optimal exactly when it is optimal at every prompt of positive probability; at prompts with $\rho(x) = 0$ it is unconstrained.
 
-Rafailov et al. observe that $Z(x)$ is expensive to evaluate when $Y$ is large, which is why the closed form is not used directly. The same closed form, with reward $g(x,y) = \mathbb{E}_{y' \sim \mu(\cdot \mid x)} \Psi(p^*(y \succ y' \mid x))$, gives the optimal policy of [Ψ-preference optimization](psi-preference-optimization.md).
+Rafailov et al. observe that $Z(x)$ is expensive to evaluate when $Y$ is large, which is why the closed form is not used directly. The same closed form, with reward $g(x,y) = \mathbb{E}_{y' \sim \mu(\cdot \mid x)} \Psi(p^*(y \succ y' \mid x))$, gives the closed-form optimum of [Ψ-preference optimization](psi-preference-optimization.md).
 
 ## Sources
 

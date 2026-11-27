@@ -18,7 +18,7 @@ for $K = 2$ it is the Bradley–Terry model.
 
 $$\mathcal{L}_R(r, \mathcal{D}) = -\mathbb{E}_{(x, y_w, y_l) \sim \mathcal{D}} \log \sigma\bigl(r(x, y_w) - r(x, y_l)\bigr),$$
 
-the expectation being the average over $\mathcal{D}$. For finite nonempty $X$ and $Y$, a prompt distribution $\rho$, a policy $\mu$ that generates the compared responses, and arbitrary preference probabilities $p^*(y \succ y' \mid x) \in [0,1]$, its population form is
+the expectation being the average over $\mathcal{D}$ and $\log$ the natural logarithm. For finite nonempty $X$ and $Y$, a prompt distribution $\rho$, a policy $\mu$ that generates the compared responses, and arbitrary preference probabilities $p^*(y \succ y' \mid x) \in [0,1]$, its population form is
 
 $$\mathcal{L}_{\mathrm{BT}}(r) = -\mathbb{E}_{x \sim \rho,\ y, y' \sim \mu(\cdot \mid x)}\Bigl[p^*(y \succ y' \mid x) \log \sigma\bigl(r(x,y) - r(x,y')\bigr)\Bigr],$$
 

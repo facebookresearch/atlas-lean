@@ -16,6 +16,7 @@ the maximizer of the [IPO objective](psi-preference-optimization.md). Then $\pi^
 
 ## Proof depends on
 
+- [Optimal policy of KL-regularized reward maximization](optimal-policy-of-kl-regularized-rewards.md)
 - [Stationary points of convex functions are global minimizers](../../../../../Analysis/convex-analysis-and-variations/first-order-conditions-for-convexity/is-min-on-of-has-fderiv-at-eq-zero.md)
 - [Strict convexity of a positive-definite quadratic form](../../../../../LinearAlgebra/positive-definite-matrices/strict-convexity-of-positive-definite-quadratic.md)
 

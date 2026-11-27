@@ -1,6 +1,6 @@
 # GRPO policy improvement lower bound
 
-For rewards in $[0,1]$, the gain in expected reward of a candidate policy over the current one is at least its importance-weighted group-relative advantage under a sampling policy, minus total variation penalties whose weight grows as the reward variance under the sampling policy shrinks.
+For rewards in $[0,1]$, a constant $0 < \varepsilon \le 3/4$ and a candidate policy absolutely continuous with respect to a sampling policy, the candidate's gain in expected reward over the current policy is at least its importance-weighted group-relative advantage, minus a total variation penalty weighted more as the reward variance shrinks and twice the total variation between the current and sampling policies.
 
 Let $\rho_X$ be a distribution on a measurable space of prompts, $Y$ a measurable space of responses, $r$ a reward with $0 \le r(x,y) \le 1$, and $0 < \varepsilon \le 3/4$. Let $\pi_k$ (current), $\alpha$ (sampling) and $\pi$ (candidate) be policies with $\pi(\cdot \mid x)$ absolutely continuous with respect to $\alpha(\cdot \mid x)$. The ratio $\pi(y\mid x)/\alpha(y\mid x)$ below denotes a Radon–Nikodym derivative $d\pi(\cdot\mid x)/d\alpha(\cdot\mid x)$, not a quotient of point masses on a nonatomic response space. Assume the scalar functions of $x$ appearing in the averaged bound below are measurable. With $J(\pi(\cdot \mid x)) = \mathbb{E}_{y \sim \pi(\cdot \mid x)} r(x,y)$, the population [group-relative advantage](group-relative-advantage.md) $A_\alpha$ and its normalizer $\sigma_{\alpha,r,\varepsilon}$, put
 

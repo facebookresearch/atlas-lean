@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-The problem is a one-step, contextual-bandit problem: each prompt receives one response and there are no state transitions. In the standard pipeline of reinforcement learning from human feedback, $r$ is a learned reward model, $\pi_{\mathrm{ref}}$ is the supervised fine-tuned model, and the objective is maximized with a policy-gradient method such as proximal policy optimization; the penalty keeps the policy near the distribution on which the reward model is accurate. Gheshlaghi Azar et al. write $\tau$ for $\beta$ and $D_{\mathrm{KL}}(\pi \,\|\, \pi_{\mathrm{ref}})$ for the $\rho$-average of the per-prompt divergences. The maximizer has a closed form, the reference policy tilted by $e^{r/\beta}$; see [the optimal policy of KL-regularized reward maximization](optimal-policy-of-kl-regularized-rewards.md).
+The problem is a one-step, contextual-bandit problem: each prompt receives one response and there are no state transitions. In the standard pipeline of reinforcement learning from human feedback, $r$ is a learned reward model, $\pi_{\mathrm{ref}}$ is the supervised fine-tuned model, and the objective is maximized with a policy-gradient method such as proximal policy optimization; the penalty keeps the policy near the distribution on which the reward model is accurate. Gheshlaghi Azar et al. write $\tau$ for $\beta$ and $D_{\mathrm{KL}}(\pi \,\|\, \pi_{\mathrm{ref}})$ for the $\rho$-average of the per-prompt divergences. The maximizers agree, at every prompt with $\rho(x)>0$, with a closed form, the reference policy tilted by $e^{r/\beta}$; see [the optimal policy of KL-regularized reward maximization](optimal-policy-of-kl-regularized-rewards.md).
 
 ## Sources
 
