@@ -132,6 +132,7 @@
 - [A degree-2 sub-blob can be replaced by a single edge without changing quartet CFs](two-sub-blob-replacement-preserves-quartet-cfs.md)
 ## Networks: the tree of blobs
 - [Tree of blobs of a species network under the coalescent](tree-of-blobs-identifiability/README.md)
+- [Species tree estimation under taxon deletion](species-tree-estimation-under-taxon-deletion/README.md)
 - [Flattening rank under the multispecies coalescent](flattening-rank-under-the-multispecies-coalescent.md)
 - [Gene tree topology probabilities on a phylogenetic network via MUL-trees and allele mappings](gene-tree-topology-probability-on-a-network-via-mul-trees.md)
 - [Maximum-likelihood inference of phylogenetic networks from gene trees, and nesting of network models](maximum-likelihood-network-inference-from-gene-trees.md)

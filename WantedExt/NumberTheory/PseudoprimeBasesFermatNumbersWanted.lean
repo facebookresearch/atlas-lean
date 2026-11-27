@@ -23,6 +23,7 @@ public import MathlibExt.NumberTheory.StrongPseudoprime
 public import MathlibExt.NumberTheory.StrongPseudoprimeBaseCount
 public import MathlibExt.NumberTheory.StrongPseudoprimePrimitivePart
 public import MathlibExt.NumberTheory.StrongPseudoprimeZPowNeg
+public import MathlibExt.NumberTheory.PseudoprimeBasesFermatNumbersFermatNumberStrongPseudoprimeBasesSubgroup
 
 /-!
 # Pseudoprime bases and Fermat numbers
@@ -31,8 +32,10 @@ Statements from Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTE
 (2024), Article A23. The paper's `F_n` (pseudoprime bases `1 ≤ b < n`) is written with
 Mathlib's `Nat.FermatPsp`, and its `R_n` (strong pseudoprime bases `1 ≤ b < n`) with the
 predicate `MetaMathlibExt.IsStrongPseudoprime` (`MathlibExt/NumberTheory/StrongPseudoprime.lean`),
-which follows the paper's Congruences (2) and (3). Theorems 1 and 9 (polynomial-time factoring
-algorithms) are not
+which follows the paper's Congruences (2) and (3). Theorem 8
+(`MetaMathlibExt.fermatNumber_strongPseudoprime_bases_subgroup`) is proved in
+`MathlibExt.NumberTheory.PseudoprimeBasesFermatNumbersFermatNumberStrongPseudoprimeBasesSubgroup`.
+Theorems 1 and 9 (polynomial-time factoring algorithms) are not
 stated; see the source audit table.
 -/
 
@@ -122,28 +125,6 @@ public theorem_wanted isStrongPseudoprime_zpow_of_dvd_primitivePart {b m c : ℕ
     ((c : ℤ) ∣ Φ m / (Int.gcd (Φ m) m : ℤ) ∨ (c : ℤ) ∣ Φ (2 * m) / (Int.gcd (Φ (2 * m)) m : ℤ)) →
       ∀ u : (ZMod c)ˣ, (u : ZMod c) = b → ∀ t : ℤ,
         IsStrongPseudoprime c ((u ^ t : (ZMod c)ˣ) : ZMod c)
-
-/-- **A subgroup of strong pseudoprime bases of a composite Fermat number.** Let $k$ be a natural
-number such that the Fermat number $F_k = 2^{2^k} + 1$ is composite, and let $S_k$ be the set of
-residues modulo $F_k$ of the form $2^t$, $2^{2^{k-1}+t} + 2^t$ or $2^{2^{k-1}+t} - 2^t$ with $t$ a
-natural number. Then the units of $\mathbb{Z}/F_k\mathbb{Z}$ that lie in $S_k$ form a subgroup of
-the unit group of order $2^{k+2}$, and $F_k$ is a strong pseudoprime to every base in $S_k$.
-
-The source also asserts that this subgroup is isomorphic to $C_{2^{k+1}} \times C_2$. This is
-false: the residue $2^{16} + 1$ has multiplicative order $128 = 2^{k+2}$ modulo $F_5$, so the
-subgroup is cyclic for $k = 5$.
-
-Source: Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTEGERS 24 (2024),
-Article A23, Theorem 8 (`integers-2024-A23-thm-8`). -/
-public theorem_wanted fermatNumber_strongPseudoprime_bases_subgroup {k : ℕ}
-    (hk : ¬(Nat.fermatNumber k).Prime) :
-    let S : Set (ZMod (Nat.fermatNumber k)) :=
-      {x | (∃ t : ℕ, x = 2 ^ t) ∨
-        ∃ t : ℕ, x = 2 ^ (2 ^ (k - 1) + t) + 2 ^ t ∨ x = 2 ^ (2 ^ (k - 1) + t) - 2 ^ t}
-    ∃ H : Subgroup (ZMod (Nat.fermatNumber k))ˣ,
-      (∀ u : (ZMod (Nat.fermatNumber k))ˣ, u ∈ H ↔ (u : ZMod (Nat.fermatNumber k)) ∈ S) ∧
-      Nat.card H = 2 ^ (k + 2) ∧
-      ∀ x ∈ S, IsStrongPseudoprime (Nat.fermatNumber k) x
 
 end
 

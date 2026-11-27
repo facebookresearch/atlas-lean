@@ -62,6 +62,8 @@ See [potential outcomes and the local average treatment effect](../../../Probabi
 - [Selection bias in two-sample Mendelian randomization](selection-bias-in-two-sample-mendelian-randomization/README.md)
 - [Time-varying Mendelian randomization](time-varying-mendelian-randomization/README.md)
 - [Winner's-curse-free Mendelian randomization](winner-s-curse-free-mendelian-randomization/README.md)
+## Correlated cis-instruments
+- [Cis-Mendelian randomization with correlated instruments](cis-mendelian-randomization-with-correlated-instruments/README.md)
 - [Adjusted Cochran's Q for pleiotropy in multivariable Mendelian randomization](adjusted-cochran-q-for-pleiotropy-in-multivariable-mr.md)
 - [Conditional instrument strength in multivariable Mendelian randomization](conditional-instrument-strength-in-multivariable-mr.md)
 - [Exact-weight IVW estimator and the generalized Cochran's Q beyond the NOME assumption](exact-weight-ivw-and-generalized-cochran-q.md)

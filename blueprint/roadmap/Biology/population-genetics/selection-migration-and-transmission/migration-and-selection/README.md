@@ -5,4 +5,5 @@
 - [Source–sink equilibrium in a two-habitat quantitative-trait model](source-sink-two-habitat-equilibrium.md)
 - [Two-locus migration–selection on a quantitative trait](two-locus-migration-selection-on-a-quantitative-trait/README.md)
 - [Two-locus migration–selection with dominance](two-locus-migration-selection-with-dominance/README.md)
+- [Two-locus two-deme migration–selection model](two-locus-two-deme-migration-selection-model/README.md)
 - [Multilocus barriers to gene flow](multilocus-barriers-to-gene-flow/README.md)
