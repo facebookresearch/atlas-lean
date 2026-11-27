@@ -32,6 +32,16 @@ First partition by the set of leaves with label `d = 1`. Among the remaining str
 restrict where a noncentral path vertex may have `d = 1`. Insertion and contraction at the
 rightmost allowed position give a recurrence whose coefficients are ballot numbers. On a path
 the recurrence starts from the single vertex and gives the Catalan numbers.
+
+## References
+
+* A. Diaz-Lopez, B. Ha, P. E. Harris, J. Rogers, T. Koss, and D. Smith,
+  *Arithmetical Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Theorem 1
+  and Proposition 5.
+* B. Braun, H. Corrales, S. Corry, L. D. García Puente, D. Glass, N. Kaplan, J. L. Martin,
+  G. Musiker, and C. E. Valencia, *Counting arithmetical structures on paths and cycles*,
+  Discrete Mathematics 341 (2018), 2949–2963, Lemma 1 and Theorem 3. This is the source
+  cited for the path endpoint property and the Catalan count used in Proposition 5.
 -/
 
 namespace MetaMathlibExt
@@ -1242,5 +1252,29 @@ public theorem ncard_arithmeticalStructure_coconutTree {p s : ℕ} (hp : 1 ≤ p
   rw [reduced_count_term]
   rw [mem_range] at hj
   rw [show n + 1 + (s - j) = n + 1 + s - j by omega]
+
+open ncard_arithmeticalStructure_coconutTree in
+/-- **Arithmetical structures on a one-leaf coconut tree with a non-smoothable leaf.** For every
+integer $p \ge 1$, the number of arithmetical structures $(d, r)$ on the coconut tree
+$\mathrm{CT}(p, 1)$, which is the path on $p + 1$ vertices, whose leaf $\ell_1$ has
+$d_{\ell_1} \ne 1$ (so that the leaf cannot be smoothed) is $C_p - C_{p-1}$, where $C_n$
+denotes the $n$-th Catalan number.
+
+Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
+Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 5
+(`integers-2025-A82-prop-5`). -/
+public theorem ncard_arithmeticalStructure_coconutTree_one_leaf_ne_one {p : ℕ}
+    (hp : 1 ≤ p) :
+    Set.ncard {x : (Fin p ⊕ Fin 1 → ℕ) × (Fin p ⊕ Fin 1 → ℕ) |
+      IsArithmeticalStructure (coconutTree p 1) x.1 x.2 ∧ x.1 (.inr 0) ≠ 1}
+      = catalan p - catalan (p - 1) := by
+  obtain ⟨n, rfl⟩ : ∃ n, p = n + 1 := ⟨p - 1, by omega⟩
+  let A : Set (Labels n (Fin 1)) :=
+    {x | IsArithmeticalStructure (coconutTree (n + 1) 1) x.1 x.2 ∧ x.1 (.inr 0) ≠ 1}
+  let e : A ≃ Reduced n (Fin 1) := Equiv.subtypeEquivRight fun x => by
+    change (_ ∧ _) ↔ Valid x ∧ ∀ j : Fin 1, x.1 (.inr j) ≠ 1
+    rw [valid_iff (Or.inr Nat.zero_lt_one) x, Fin.forall_fin_one]
+  change A.ncard = _
+  rw [← Nat.card_coe_set_eq, Nat.card_congr e, one_leaf_count, Nat.add_sub_cancel]
 
 end MetaMathlibExt

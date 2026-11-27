@@ -1,0 +1,3 @@
+# The lexical environment of the fragment
+
+The fragment is a small context-free grammar for sentences such as "everybody admires someone", whose parse trees are compiled into terms of a simply typed lambda calculus over two base types, entities $e$ and truth values $t$. A model consists of a set $D$ of entities, a predicate "person" on $D$ and a binary relation "admire" on $D$. The lexical context has three slots, two of quantifier type $(e \to t) \to t$ and one of relation type $e \to e \to t$. In a model, the lexical environment assigns to slot $0$ the meaning of "everybody", to slot $1$ the meaning of "someone", and to slot $2$ the meaning of "admires".

@@ -102,13 +102,45 @@ private theorem kurepa_formula (n : ℕ) (x : ℝ) :
     exact ((Real.continuous_exp.comp continuous_neg).mul
       (continuous_id.pow k)).intervalIntegrable _ _
 
-private theorem kurepa_lt (n : ℕ) (hn : 1 ≤ n) (x : ℝ) (hx : 0 ≤ x) :
+/-- **Kurepa's partial integral stays below the left factorial.** For a natural number $n \ge 1$ and
+a real number $x \ge 0$, $K_n(x) < \sum_{k=0}^{n-1} k!$, where the sum is the left factorial $!n$.
+
+Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
+Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
+Article 24.5.7, Sections 3.1-3.3. -/
+public theorem kurepaPartialIntegral_lt_sum_factorial (n : ℕ) (hn : 1 ≤ n) (x : ℝ) (hx : 0 ≤ x) :
     kurepaPartialIntegral n x < ∑ k ∈ Finset.range n, (k.factorial : ℝ) := by
   rw [kurepa_formula]
   have hp : 0 < ∑ k ∈ Finset.range n, tailPolynomial k x := by
     exact Finset.sum_pos (fun k _ => tailPolynomial_pos k x hx)
       (Finset.nonempty_range_iff.mpr (by omega))
   exact sub_lt_self _ (mul_pos (exp_pos _) hp)
+
+private theorem tailPolynomial_eq_factorial_mul_sum (k : ℕ) (x : ℝ) :
+    tailPolynomial k x =
+      (k.factorial : ℝ) * ∑ j ∈ Finset.range (k + 1), x ^ j / (j.factorial : ℝ) := by
+  induction k with
+  | zero => simp [tailPolynomial]
+  | succ k ih =>
+    have hk : (k.factorial : ℝ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero k
+    rw [tailPolynomial, ih, Finset.sum_range_succ _ (k + 1), Nat.factorial_succ]
+    push_cast
+    field_simp
+    ring
+
+/-- **The remainder of Kurepa's partial integral, explicitly.** For a natural number $n$ and a real
+number $x$, $\sum_{k=0}^{n-1} k! - K_n(x) = e^{-x} \sum_{k=0}^{n-1} k! \sum_{j=0}^{k} x^j / j!$.
+
+Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
+Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
+Article 24.5.7, Sections 3.1-3.3. -/
+public theorem sum_factorial_sub_kurepaPartialIntegral (n : ℕ) (x : ℝ) :
+    (∑ k ∈ Finset.range n, (k.factorial : ℝ)) - kurepaPartialIntegral n x =
+      exp (-x) * ∑ k ∈ Finset.range n,
+        (k.factorial : ℝ) * ∑ j ∈ Finset.range (k + 1), x ^ j / (j.factorial : ℝ) := by
+  rw [kurepa_formula, sub_sub_cancel]
+  congr 1
+  exact Finset.sum_congr rfl (fun k _ => tailPolynomial_eq_factorial_mul_sum k x)
 
 private theorem kurepa_monotone (n : ℕ) {x y : ℝ} (hx : 0 ≤ x) (hxy : x ≤ y) :
     kurepaPartialIntegral n x ≤ kurepaPartialIntegral n y := by
@@ -319,7 +351,7 @@ public theorem kurepaPartialIntegral_goldenFactorialExponent_bounds (n : ℕ)
       ∑ k ∈ Finset.range n, (k.factorial : ℝ) <
         kurepaPartialIntegral n (goldenFactorialExponent n) + 1 := by
   have ha : (0 : ℝ) ≤ goldenFactorialExponent n := by positivity
-  refine ⟨kurepa_lt n hn _ ha, ?_⟩
+  refine ⟨kurepaPartialIntegral_lt_sum_factorial n hn _ ha, ?_⟩
   have hx : ∃ x : ℝ, 0 ≤ x ∧ x ≤ goldenFactorialExponent n ∧
       (∑ k ∈ Finset.range n, tailPolynomial k x) < exp x := by
     by_cases hlarge : 40 ≤ n

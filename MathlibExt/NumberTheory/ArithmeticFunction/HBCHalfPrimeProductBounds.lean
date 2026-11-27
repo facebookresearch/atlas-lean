@@ -35,6 +35,9 @@ domination inequality for $\prod (1 - 1/x_i)$, which follows from the concavity 
 $t \mapsto \log(1 - e^{-t})$ by Abel summation. Since consecutive odd primes differ by at least
 $2$, the prefix products of the tail are large, which forces $\kappa$ to be large; comparing
 $d \alpha^{2^\kappa}$ with the constants of the statement then gives the four bounds.
+
+The same recursion gives Stone's $\sqrt{d}$ product bound for HBC-admissible tuples
+(`MetaMathlibExt.hbcAdmissible_prod_le_sqrt`).
 -/
 
 namespace MetaMathlibExt
@@ -946,5 +949,55 @@ public theorem hbcAdmissible_half_prime_prod_le_of_five_le (k : ℕ) (y : ℕ �
   exact ⟨hbound _ (by positivity) h₁, fun h6 h18 => hbound _ (by positivity) (hB h6 h18),
     fun h18 h258 => hbound _ (by positivity) (hC h18 h258),
     fun h258 => hbound _ (by positivity) (hD h258)⟩
+
+
+open hbcAdmissible_half_prime_prod_le_of_five_le in
+/-- **Stone's $\sqrt{d}$ product bound for HBC-admissible tuples.** Let $a$ and $d$ be coprime
+positive integers, let $k \ge 1$, and let $y_1 < y_2 < \dots < y_k$ be positive integers with
+$\prod_{i=1}^{k} (1 - 1/y_i) \le a/(a + d) < \prod_{i=1}^{k-1} (1 - 1/y_i)$. Put
+$\beta = (a + d)/\sqrt{d}$. Then $a \prod_{i=1}^{k} y_i \le \beta^{2^k} - \beta^{2^{k-1}}$.
+
+Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
+(2024), Article A114, Corollary 1. -/
+public theorem hbcAdmissible_prod_le_sqrt (a d k : ℕ) (ha : 0 < a) (hd : 0 < d)
+    (hcop : Nat.Coprime a d) (hk : 1 ≤ k) (y : ℕ → ℕ) (hy0 : 0 < y 1)
+    (hmono : ∀ i, 1 ≤ i → i < k → y i < y (i + 1))
+    (hle : ∏ i ∈ Finset.Icc 1 k, (1 - 1 / (y i : ℝ)) ≤ (a : ℝ) / (a + d))
+    (hlt : (a : ℝ) / (a + d) < ∏ i ∈ Finset.Icc 1 (k - 1), (1 - 1 / (y i : ℝ))) :
+    a * ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
+      ((a + d) / Real.sqrt d) ^ 2 ^ k - ((a + d) / Real.sqrt d) ^ 2 ^ (k - 1) := by
+  have _ := hcop
+  have hI : ∀ (f : ℕ → ℝ) (n : ℕ), ∏ i ∈ Icc 1 n, f i = ∏ i ∈ range n, f (1 + i) := by
+    intro f n
+    rw [← Ico_add_one_right_eq_Icc, prod_Ico_eq_prod_range]
+    simp
+  -- With `u i = y (1 + i)`, the recursion applies to the tuple as it stands.
+  obtain ⟨κ, hκ1, hκm, -, hκlt, hκeq⟩ := hbc_recursion k a d (fun i => y (1 + i)) ha hd hk
+    (fun i hi => by
+      have h := hmono (1 + i) (by omega) (by omega)
+      rwa [show 1 + i + 1 = 1 + (i + 1) by omega] at h)
+    (by simpa using hy0) (by simpa only [hI] using hle) (by simpa only [hI] using hlt)
+  have hd0 : (0 : ℝ) < d := by exact_mod_cast hd
+  have hd1 : (1 : ℝ) ≤ d := by exact_mod_cast hd
+  have ha0 : (0 : ℝ) < a := by exact_mod_cast ha
+  have hα1 : (1 : ℝ) ≤ ((a : ℝ) + d) / d := by
+    rw [le_div_iff₀ hd0]
+    linarith
+  have hs0 : 0 < Real.sqrt d := Real.sqrt_pos.mpr hd0
+  have hs2 := Real.sq_sqrt hd0.le
+  have hs1 : 1 ≤ Real.sqrt d := by nlinarith
+  -- `(a + d)/√d = α √d` with `α = (a + d)/d`, and `d ≤ (√d) ^ 2 ^ κ` since `κ ≥ 1`.
+  have hceq : ((a : ℝ) + d) / Real.sqrt d = ((a : ℝ) + d) / d * Real.sqrt d := by
+    rw [eq_comm, div_mul_eq_mul_div, div_eq_div_iff hd0.ne' hs0.ne', mul_assoc,
+      Real.mul_self_sqrt hd0.le]
+  have he2 : 2 ≤ 2 ^ κ :=
+    calc 2 = 2 ^ 1 := (pow_one 2).symm
+      _ ≤ 2 ^ κ := Nat.pow_le_pow_right (by decide) hκ1
+  have hds : (d : ℝ) ≤ Real.sqrt d ^ 2 ^ κ := hs2.symm.trans_le (pow_le_pow_right₀ hs1 he2)
+  have hc : (d : ℝ) * (((a : ℝ) + d) / d) ^ 2 ^ κ ≤ (((a : ℝ) + d) / Real.sqrt d) ^ 2 ^ κ := by
+    rw [hceq, mul_pow, mul_comm (d : ℝ)]
+    exact mul_le_mul_of_nonneg_left hds (pow_nonneg (by linarith) _)
+  rw [hI (fun i => (y i : ℝ)) k]
+  exact range_bound hκ1 hκm hd1 hα1 hκlt hκeq hc
 
 end MetaMathlibExt
