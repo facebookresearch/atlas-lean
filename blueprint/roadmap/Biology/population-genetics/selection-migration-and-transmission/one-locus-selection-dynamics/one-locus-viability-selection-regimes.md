@@ -1,14 +1,15 @@
 # Directional selection, overdominance and underdominance at one locus
 
 Consider one diploid locus with alleles $A$ and $a$ in an infinite randomly mating population with
-nonoverlapping generations and constant genotype viabilities $w_{AA}, w_{Aa}, w_{aa}$. If $p$
-is the frequency of $A$ among newborns (in Hardy–Weinberg proportions), $q = 1 - p$ and
-$\bar w = p^2 w_{AA} + 2pq w_{Aa} + q^2 w_{aa}$ is the mean viability, viability selection changes
-the frequency of $A$ to $p' = p\,(p w_{AA} + q w_{Aa})/\bar w$, so that
+nonoverlapping generations and constant nonnegative genotype viabilities $w_{AA}, w_{Aa}, w_{aa}$.
+If $p \in [0, 1]$ is the frequency of $A$ among newborns (in Hardy–Weinberg proportions),
+$q = 1 - p$ and the mean viability $\bar w = p^2 w_{AA} + 2pq w_{Aa} + q^2 w_{aa}$ is positive,
+viability selection changes the frequency of $A$ to $p' = p\,(p w_{AA} + q w_{Aa})/\bar w$, and
 
-$$p' - p = \frac{pq\,[\,p (w_{AA} - w_{Aa}) + q (w_{Aa} - w_{aa})\,]}{\bar w}$$
+$$p' - p = \frac{pq\,[\,p (w_{AA} - w_{Aa}) + q (w_{Aa} - w_{aa})\,]}{\bar w}.$$
 
-for every real $p$ and all real viabilities with $\bar w \ne 0$.
+This identity is algebraic: with $p' = p\,(p w_{AA} + q w_{Aa})/\bar w$ it holds for every real $p$
+and all real viabilities with $\bar w \ne 0$, although $p'$ is then not necessarily a frequency.
 Let $p_0 \in (0, 1)$ and $p_{n+1} = p_n'$.
 
 1. **Directional selection.** Let $w_{AA} \ge w_{Aa} \ge w_{aa} \ge 0$, not all equal (that is,

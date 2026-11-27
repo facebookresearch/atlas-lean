@@ -448,13 +448,15 @@ end Step
 
 /-- **Directional selection, overdominance and underdominance at one locus.** Let genotypes `AA`,
 `Aa`, `aa` of a diploid locus with alleles `A` (allele `0`) and `a` (allele `1`) have viabilities
-`wAA`, `wAa`, `waa`, given as the symmetric genotype-fitness matrix `w`. Under random mating, a
-population whose newborns carry `A` at frequency `p` has mean viability
+`wAA`, `wAa`, `waa`, given as the symmetric genotype-fitness matrix `w`, and let
 `w̄ p = diploidMeanFitness ![p, 1 - p] w = p² wAA + 2 p q wAa + q² waa`, where `q = 1 - p`, and
-after one generation of viability selection the frequency of `A` is
-`f p = diploidSelect ![p, 1 - p] w 0`. Let `p₀ ∈ (0, 1)` and `p_n = f^[n] p₀`.
+`f p = diploidSelect ![p, 1 - p] w 0`. For `p ∈ [0, 1]`, nonnegative viabilities and `w̄ p > 0`,
+under random mating `w̄ p` is the mean viability of a population whose newborns carry `A` at
+frequency `p`, and `f p` is the frequency of `A` after one generation of viability selection. Let
+`p₀ ∈ (0, 1)` and `p_n = f^[n] p₀`.
 
-* For every real `p` with `w̄ p ≠ 0`, `f p - p = p q (p (wAA - wAa) + q (wAa - waa)) / w̄ p`.
+* The change formula is an algebraic identity: for all real viabilities and every real `p` with
+  `w̄ p ≠ 0`, `f p - p = p q (p (wAA - wAa) + q (wAa - waa)) / w̄ p`.
 * **Directional selection.** Let `0 ≤ waa ≤ wAa ≤ wAA` with `waa < wAA` (the viabilities are
   nonnegative and not all equal). Then `wAA > 0` and `w̄ > 0` on `(0, 1]`. If `wAa > 0`, then
   `p_n ∈ (0, 1)` for all `n`, `p_n` increases strictly and `p_n → 1`; if `wAa = waa = 0`, then
