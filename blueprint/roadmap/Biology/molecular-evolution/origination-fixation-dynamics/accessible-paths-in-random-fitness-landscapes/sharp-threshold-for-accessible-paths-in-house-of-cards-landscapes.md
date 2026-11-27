@@ -15,7 +15,7 @@ Let $P(n,\alpha)$ be the probability that the $\alpha$-HoC landscape has at leas
 
 ## Depends on
 
-- [Accessible mutational paths in the House-of-Cards landscape](../../population-genetics/selection-migration-and-transmission/fitness-landscapes/accessible-adaptive-paths.md)
+- [Accessible mutational paths in the House-of-Cards landscape](../../../population-genetics/selection-migration-and-transmission/fitness-landscapes/accessible-adaptive-paths.md)
 
 ## Proof depends on
 
