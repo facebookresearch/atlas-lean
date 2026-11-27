@@ -12,11 +12,13 @@ LICENSE file in the root directory of this source tree.
 For a population projection matrix `A` with a simple real eigenvalue `λ`, right eigenvector `w`
 (the stable stage structure when `λ` is dominant) and left eigenvector `v` (reproductive value),
 Caswell (1978) showed that `λ` depends differentiably on the entries of `A` with sensitivity
-`∂λ/∂a_ij = v_i w_j / ⟨v, w⟩`. The elasticities `e_ij = (a_ij / λ) ∂λ/∂a_ij` then sum to one,
-because `vᵀ A w = λ ⟨v, w⟩` (Euler's identity for the degree-one homogeneous function `λ`).
-Simplicity of `λ` (multiplicity one as a root of the characteristic polynomial) also forces
-`⟨v, w⟩ ≠ 0`. Matrices are written as functions `Fin n → Fin n → ℝ` so that the sup norm
-measures perturbations of the entries.
+`∂λ/∂a_ij = v_i w_j / ⟨v, w⟩`. Simplicity of `λ` (multiplicity one as a root of the
+characteristic polynomial) also forces `⟨v, w⟩ ≠ 0`. For the dominant eigenvalue of a
+nonnegative primitive matrix, the population growth rate and the setting in which Jones's notes
+state it, the elasticities `e_ij = (a_ij / λ) ∂λ/∂a_ij` sum to one, because
+`vᵀ A w = λ ⟨v, w⟩` (Euler's identity for the degree-one homogeneous function `λ`). Matrices are
+written as functions `Fin n → Fin n → ℝ` so that the sup norm measures perturbations of the
+entries.
 
 `Domains.Biology.Demography.Leslie` lists sensitivity and elasticity analysis as not covered.
 
@@ -25,7 +27,8 @@ changes in life history parameters", Theor. Popul. Biol. 14 (1978) 215–230; J.
 "On differentiating eigenvalues and eigenvectors", Econometric Theory 1 (1985) 179–191,
 Theorem 2, eq. (17); H. de Kroon, A. Plaisier, J. van Groenendael and H. Caswell, "Elasticity:
 the relative contribution of demographic parameters to population growth rate", Ecology 67
-(1986) 1427–1431.
+(1986) 1427–1431; J. H. Jones, "Notes on Fitness Sensitivities", Stanford University (2023),
+§§1.3, 1.4, 1.5.1, 1.8 and 1.9.
 -/
 module
 
@@ -69,14 +72,19 @@ public theorem_wanted eigenvalue_sensitivity (a : Fin n → Fin n → ℝ) (lam 
         (∀ᶠ b in 𝓝 a, (Matrix.of b).charpoly.eval (Λ b) = 0) ∧
         ∀ i j, fderiv ℝ Λ a (Pi.single i (Pi.single j (1 : ℝ))) = v i * w j / (v ⬝ᵥ w)
 
-/-- **Elasticities sum to one** (de Kroon et al. 1986). Under the hypotheses of
-`eigenvalue_sensitivity` and `lam ≠ 0`, the elasticities
+/-- **Elasticities sum to one** (de Kroon et al. 1986; Jones 2023, §1.9). Let `A = (a_ij)` be a
+nonnegative primitive matrix (some power of `A` has all entries positive) and let `lam` be its
+dominant eigenvalue, given by a right eigenvector `w` (`A w = lam w`) and a left eigenvector `v`
+(`vᵀ A = lam vᵀ`) whose entries are all positive; by the Perron–Frobenius theorem no other
+eigenvalue has such an eigenvector. Then the elasticities
 `e_ij = (a_ij / lam) · v_i w_j / ⟨v, w⟩` satisfy `∑_{i,j} e_ij = 1`.
 
-Sources: de Kroon, Plaisier, van Groenendael and Caswell (1986); Caswell (1978). -/
-public theorem_wanted sum_elasticities (a : Fin n → Fin n → ℝ) (lam : ℝ)
-    (hsimple : IsSimpleEigenvalue a lam) (hlam : lam ≠ 0) (w v : Fin n → ℝ) (hw : w ≠ 0)
-    (hv : v ≠ 0) (hAw : Matrix.of a *ᵥ w = lam • w) (hvA : v ᵥ* Matrix.of a = lam • v) :
+Sources: Jones, "Notes on Fitness Sensitivities" (2023), §§1.3, 1.4, 1.5.1, 1.8 and 1.9;
+de Kroon, Plaisier, van Groenendael and Caswell (1986). -/
+public theorem_wanted sum_elasticities (a : Fin n → Fin n → ℝ) (ha : ∀ i j, 0 ≤ a i j)
+    (hprim : ∃ k : ℕ, ∀ i j, 0 < (Matrix.of a ^ k) i j) (lam : ℝ) (w v : Fin n → ℝ)
+    (hw : ∀ i, 0 < w i) (hv : ∀ i, 0 < v i) (hAw : Matrix.of a *ᵥ w = lam • w)
+    (hvA : v ᵥ* Matrix.of a = lam • v) :
     ∑ i, ∑ j, a i j / lam * (v i * w j / (v ⬝ᵥ w)) = 1
 
 end WantedExt.Biology.Ecology.EigenvalueSensitivityWanted

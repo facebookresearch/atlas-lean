@@ -62,7 +62,8 @@ public theorem_wanted tendsto_orbit_const {ν K x₀ : ℝ} (hν : 1 < ν) (hK :
 `ν > 1`, `p ≥ 1` and a `p`-periodic sequence of carrying capacities `K_t > 0`, there is a unique
 `x₀ > 0` whose solution is `p`-periodic, and every positive solution approaches it.
 
-Sources: Cushing and Henson (2002), Conjecture 1; Elaydi and Sacker (2005), §3. -/
+Sources: Cushing and Henson (2002), Conjecture 1; Elaydi and Sacker (2005, J. Difference Equ.
+Appl.), §4. -/
 public theorem_wanted exists_unique_periodic_attractor {ν : ℝ} (hν : 1 < ν) {p : ℕ}
     (hp : 0 < p) {K : ℕ → ℝ} (hK : ∀ t, 0 < K t) (hKp : Function.Periodic K p) :
     ∃ x₀, 0 < x₀ ∧ Function.Periodic (orbit ν K x₀) p ∧
