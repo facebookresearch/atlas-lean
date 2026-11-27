@@ -11043,6 +11043,7 @@
   "MathlibExt/Combinatorics/Enumerative/AlzerRichardsReciprocalSum": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Alzer–Richards identities for Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/AlzerRichardsSabarIdentity": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Alzer–Richards identities for Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/AlzerRichardsSignedStirlingSum": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Alzer–Richards identities for Stirling numbers"},
+  "MathlibExt/Combinatorics/Enumerative/AlzerRichardsVanishingStirlingSum": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Alzer–Richards identities for Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/AlternatingBinomialPowerSum": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/Combinatorics/Enumerative/AntiBonacci": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Anti-recurrence and greedy subsum-free sequences"},
   "MathlibExt/Combinatorics/Enumerative/AntiTribonacci": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Anti-recurrence and greedy subsum-free sequences"},
