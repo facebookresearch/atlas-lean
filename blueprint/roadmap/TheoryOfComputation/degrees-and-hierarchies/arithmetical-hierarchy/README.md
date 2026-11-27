@@ -16,3 +16,7 @@
 - [Monotonicity of the Π hierarchy](pi-mono.md)
 - [Σₙ and Πₙ predicates are Δₙ₊₁](sigma-pi-subset-delta-succ.md)
 - [Σ₁ is the class of recursively enumerable predicates](sigma-one-eq-re.md)
+- [The cofiniteness index set is Σ⁰₃-complete](cofiniteness-index-set-is-sigma03-complete.md)
+- [The emptiness index set is Π⁰₁-complete](emptiness-index-set-is-pi01-complete.md)
+- [The index set of computable c.e. sets is Σ⁰₃-complete](recursiveness-index-set-is-sigma03-complete.md)
+- [TOT is Π⁰₂-complete and FIN is Σ⁰₂-complete](totality-and-finiteness-index-sets-are-complete.md)
