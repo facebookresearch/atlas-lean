@@ -21,6 +21,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+Portions of this file are adapted from:
+
+`LeanEval/ProgramVerification/CoCStrongNormalization.lean` (leanprover/lean-eval):
+the statements for typing the polymorphic identity and its application to falsity.
+Copyright 2026 Lean FRO, LLC.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Kim Morrison (submitter)
+
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
 38361be884302c7edce1908c4aef8296eb2cb27e, module
@@ -51,7 +59,8 @@ public import CSLibExt.Languages.LambdaCalculus.CoC.Reduction
 
 This module extracts beta conversion, the sort and product rules, and the mutual context and
 term typing judgements unchanged from `WantedExt.TheoryOfComputation.CoCStrongNormalizationWanted`.
-It retains their historical namespace and proves the original `typing_polyId` statement.
+It proves that the polymorphic identity is well typed (`typing_polyId`) and that applying
+it to falsity gives a function from falsity to itself (`typing_polyId_app`).
 -/
 
 @[expose] public section
@@ -173,6 +182,29 @@ public theorem typing_polyId :
   have hPi : Typing [.srt .prop] (.pi (.var 0) (.var 1)) (.srt .prop) :=
     .pi hA hA' (.prop .prop)
   exact .lam (.pi hProp hPi (.prop (.type 0))) (.lam hPi hx)
+
+/--
+**Typing the polymorphic identity applied to falsity.** Write $\bot$ for
+$\Pi (P : \mathrm{Prop}).\, P$. In the empty context, the application of the polymorphic
+identity $\lambda (A : \mathrm{Prop}).\, \lambda (x : A).\, x$ to $\bot$ has type
+$\Pi (x : \bot).\, \bot$.
+
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus
+of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+-/
+public theorem typing_polyId_app :
+    Typing []
+      (.app
+        (.lam (.srt .prop) (.lam (.var 0) (.var 0)))
+        (.pi (.srt .prop) (.var 0)))
+      (.pi (.pi (.srt .prop) (.var 0)) (.pi (.srt .prop) (.var 0))) := by
+  have hProp : Typing [] (.srt .prop) (.srt (.type 0)) := .srt .nil .prop
+  have hP : Typing [.srt .prop] (.var 0) (.srt .prop) :=
+    Typing.var (A := .srt .prop) (.cons .nil hProp) rfl
+  have hBot : Typing [] (.pi (.srt .prop) (.var 0)) (.srt .prop) :=
+    .pi hProp hP (.prop (.type 0))
+  exact Typing.app typing_polyId hBot
 
 end CoCStrongNormalization
 end ProgramVerification

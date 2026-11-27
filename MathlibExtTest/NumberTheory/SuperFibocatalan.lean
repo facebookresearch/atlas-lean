@@ -10,9 +10,28 @@ module
 
 import MathlibExt.NumberTheory.SuperFibocatalan
 
-/-! # Boundary and sign checks for the Fibonacci and Lucas Catalan identities -/
+/-! # Boundary, integrality, and sign checks for Fibonacci and Lucas Catalan numbers -/
 
 open MathlibExt.NumberTheory.SuperFibocatalanWanted
+
+open MetaMathlibExt (fibonacciFactorial fibonacciFactorial_zero)
+
+example (m n : ℕ) :
+    ∃ k : ℕ, 0 < k ∧ (k : ℚ) =
+      fibonacciFactorial (2 * m) * fibonacciFactorial (2 * n) /
+        (fibonacciFactorial m * fibonacciFactorial n * fibonacciFactorial (m + n)) :=
+  superFibonacciCatalan_isPosInt m n
+
+-- The empty factorials give 1 when both indices are zero.
+example : ∃ k : ℕ, 0 < k ∧ (k : ℚ) = 1 := by
+  simpa only [Nat.mul_zero, Nat.add_zero, fibonacciFactorial_zero, one_mul, div_one] using
+    superFibonacciCatalan_isPosInt 0 0
+
+-- At level d = 3, adding 1 and 2 carries, but only doubling 2 carries.
+example : ∃ k : ℕ, 0 < k ∧ (k : ℚ) = 3 := by
+  have h := superFibonacciCatalan_isPosInt 1 2
+  norm_num [fibonacciFactorial, Nat.fib] at h
+  exact h
 
 example : (Nat.fib 0 : ℤ) * Nat.fib 2 - (Nat.fib 2 : ℤ) * Nat.fib 0 = 0 :=
   fib_mul_sub_mul 0
@@ -35,6 +54,16 @@ example : 15 * fiboCatalan 2 - 2 * fiboCatalan 3 = 5 := by
   have h := fiboCatalan_identity 2
   norm_num [Nat.fib, MetaMathlibExt.fibonacciFactorial] at h
   exact h
+
+example : fibonomial 1 2 = 0 := by simp [fibonomial]
+
+example : fibonomial 3 1 / (Nat.fib 3 : ℚ) = 1 := by
+  rw [← (fib_mul_factorialQuotient_eq_and_isInt 1 le_rfl).1]
+  norm_num [MetaMathlibExt.fibonacciFactorial, Nat.fib]
+
+example : ∃ k : ℤ, (k : ℚ) = fibonomial 7 3 / (Nat.fib 5 : ℚ) := by
+  obtain ⟨h, hk⟩ := fib_mul_factorialQuotient_eq_and_isInt 3 (by decide)
+  simpa only [h] using hk
 
 open MvPolynomial
 

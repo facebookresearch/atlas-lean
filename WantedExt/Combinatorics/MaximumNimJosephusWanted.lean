@@ -10,8 +10,11 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.JosephusFunction
+public import MathlibExt.Combinatorics.MaximumNimFloorReduction
+public import MathlibExt.Combinatorics.MaximumNimIterates
 public import MathlibExt.Combinatorics.MaximumNimJosephus
 public import MathlibExt.GameTheory.SpragueGrundy
+public import MathlibExt.Combinatorics.MaximumNimFloorNonmultiple
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Tactic
 
@@ -297,31 +300,8 @@ public theorem_wanted maximumNimGrundy_eq_zero_iff_isP (f : ℕ → ℕ) (hf0 : 
     (hf : ∀ m, 1 ≤ m → f (m - 1) ≤ f m ∧ f m ≤ f (m - 1) + 1) (x : ℕ) :
     maximumNimGrundy f x = 0 ↔ SpragueGrundy.IsP (maximumNimGame f) x
 
-/-- **Grundy number where the rule function increases.** Let $f : \mathbb{N} \to \mathbb{N}$
-satisfy $f(0) = 0$ and $f(m-1) \le f(m) \le f(m-1) + 1$ for every $m \ge 1$, and let $G$ be the
-Grundy number of Maximum Nim with rule function $f$. If $x \ge 1$ and $f(x-1) < f(x)$, then
-$G(x) = f(x)$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 1(i) (`integers-2024-G5-lem-1`). -/
-public theorem_wanted maximumNimGrundy_eq_rule_of_lt (f : ℕ → ℕ) (hf0 : f 0 = 0)
-    (hf : ∀ m, 1 ≤ m → f (m - 1) ≤ f m ∧ f m ≤ f (m - 1) + 1)
-    (x : ℕ) (hx : 1 ≤ x) (hfx : f (x - 1) < f x) :
-    maximumNimGrundy f x = f x
-
-/-- **Grundy number where the rule function is flat.** Let $f : \mathbb{N} \to \mathbb{N}$
-satisfy $f(0) = 0$ and $f(m-1) \le f(m) \le f(m-1) + 1$ for every $m \ge 1$, and let $G$ be the
-Grundy number of Maximum Nim with rule function $f$. If $x \ge 1$ and $f(x) = f(x-1)$, then
-$G(x) = G(x - f(x) - 1)$.
-
-Here $x - f(x) - 1 \ge 0$, since the hypotheses give $f(x) = f(x-1) \le x - 1$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 1(ii) (`integers-2024-G5-lem-1`). -/
-public theorem_wanted maximumNimGrundy_eq_sub_rule_succ (f : ℕ → ℕ) (hf0 : f 0 = 0)
-    (hf : ∀ m, 1 ≤ m → f (m - 1) ≤ f m ∧ f m ≤ f (m - 1) + 1)
-    (x : ℕ) (hx : 1 ≤ x) (hfx : f x = f (x - 1)) :
-    maximumNimGrundy f x = maximumNimGrundy f (x - f x - 1)
+-- Lemma 1(i) and (ii) are proved in `MathlibExt.Combinatorics.MaximumNimJosephus`,
+-- which this module publicly imports.
 
 -- Lemma 2 (`integers-2024-G5-lem-2`), the floor identity for non-multiples of `k`, is proved as
 -- `maximumNim_sub_div_sub_one_eq` in `MathlibExt.Combinatorics.MaximumNimJosephus`, which this
@@ -331,25 +311,8 @@ public theorem_wanted maximumNimGrundy_eq_sub_rule_succ (f : ℕ → ℕ) (hf0 :
 -- `maximumNimGrundy_div_eq_of_dvd` in `MathlibExt.Combinatorics.MaximumNimJosephus`, which this
 -- module imports.
 
-/-- **Maximum Nim Grundy numbers at non-multiples of the divisor.** Let $k \ge 2$ and let $G$
-be the Grundy number of Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$. If $x$ is a
-natural number not divisible by $k$, then $G(x) = G(\lfloor (k-1)x/k \rfloor)$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 3(ii) (`integers-2024-G5-lem-3`). -/
-public theorem_wanted maximumNimGrundy_eq_F_of_not_dvd (k x : ℕ) (hk : 2 ≤ k)
-     (hkx : ¬k ∣ x) :
-    maximumNimGrundy (· / k) x = maximumNimGrundy (· / k) ((k - 1) * x / k)
-
-/-- **Floor-rule Maximum Nim: positions below k have Grundy number zero.** For every natural
-number $k \ge 2$ and every natural number $j$ with $1 \le j \le k$, a pile of $k - j$ stones has
-Grundy number $0$ in Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 3(iii) (`integers-2024-G5-lem-3`). -/
-public theorem_wanted maximumNimGrundy_sub_eq_zero (k j : ℕ) (hk : 2 ≤ k)
-    (hj : 1 ≤ j) (hjk : j ≤ k) :
-    maximumNimGrundy (· / k) (k - j) = 0
+-- `maximumNimGrundy_eq_F_of_not_dvd` is proved in
+-- `MathlibExt.Combinatorics.MaximumNimFloorNonmultiple`, which this module publicly imports.
 
 -- Lemma 4(ii) is proved as `maximumNim_not_dvd_mul_sub_of_ne` in
 -- `MathlibExt.Combinatorics.MaximumNimJosephus`, which this module publicly imports.
@@ -373,23 +336,6 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_decomposition (k n t u i : ℕ
     (hi : 1 ≤ i) (hin : i ≤ n) (hki : ¬k ∣ i) :
     maximumNimGrundy (· / k) (n * k - i) =
       maximumNimGrundy (· / k) ((n - t) * k - (u + i - i / k))
-
-/-- **Floor-rule Maximum Nim: one-step Grundy reduction when k = nt + h.** Let $n$, $t$, $h$ be
-natural numbers with $t \ge 1$ and $1 \le h \le n$, and let $k = nt + h$. Write $G(x)$ for the
-Grundy number of a pile of $x$ stones in Maximum Nim with rule function
-$f(y) = \lfloor y/k \rfloor$, and let $F(x) = \lfloor (k-1)x/k \rfloor$. Then for every natural
-number $i$ with $1 \le i \le n$,
-$$G(nk - i) = G(F(nk - i)) = G(n(k - 1) - i).$$
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 5(ii.1) (`integers-2024-G5-lem-5`). -/
-public theorem_wanted maximumNimGrundy_mul_sub_eq_F_eq_pred (k n t h i : ℕ)
-    (ht : 1 ≤ t) (hh : 1 ≤ h)
-    (hdecomp : k = n * t + h) (hhn : h ≤ n) (hi : 1 ≤ i) (hin : i ≤ n) :
-    maximumNimGrundy (· / k) (n * k - i) =
-        maximumNimGrundy (· / k) ((k - 1) * (n * k - i) / k) ∧
-      maximumNimGrundy (· / k) ((k - 1) * (n * k - i) / k) =
-        maximumNimGrundy (· / k) (n * (k - 1) - i)
 
 /-- **Floor-rule Maximum Nim: t-step Grundy reduction when k = nt + h.** Let $n$, $t$, $h$ be
 natural numbers with $t \ge 1$ and $1 \le h \le n$, and let $k = nt + h$. Write $G(x)$ for the
@@ -426,25 +372,6 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_succ_iterate_F (k n t h i : �
         maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) ∧
       maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) =
         maximumNimGrundy (· / k) ((n - 1) * k - (n - h + i))
-
-/-- **The Maximum Nim map $h_k$ exceeds its argument.** Let $k \ge 2$ be a natural number and let
-$h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. Every natural
-number $x$ satisfies $x < x + 1 \le h_k(x)$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 6(ii) (`integers-2024-G5-lem-6`). -/
-public theorem_wanted maximumNimH_succ_le (k x : ℕ) (hk : 2 ≤ k) :
-    x < x + 1 ∧ x + 1 ≤ maximumNimH k x
-
-/-- **Iterates of the Maximum Nim map $h_k$ tend to infinity.** Let $k \ge 2$ be a natural
-number and let $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers.
-For every natural number $x_0$, the iterates $h_k^p(x_0)$ tend to infinity as $p \to \infty$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 6(iii) (`integers-2024-G5-lem-6`). -/
-public theorem_wanted maximumNimH_iterate_tendsto_atTop (k x₀ : ℕ) (hk : 2 ≤ k) :
-    Filter.Tendsto (fun p => Nat.iterate (maximumNimH k) p x₀)
-      Filter.atTop Filter.atTop
 
 /-- **Josephus elimination positions as Maximum Nim Grundy numbers.** Let $k \ge 2$ and
 $1 \le m \le n$. Write $o_n(m)$ for the position, counting from $1$, at which $m$ appears in the
