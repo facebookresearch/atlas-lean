@@ -17,20 +17,11 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import MathlibExt.Combinatorics.Enumerative.Catalan.Recurrence
 
 @[expose] public section
 
 namespace MetaMathlibExt
-
-private theorem touchard_catalan_rec (n : ℕ) :
-    (n + 2) * catalan (n + 1) = 2 * (2 * n + 1) * catalan n := by
-  have h1 := succ_mul_catalan_eq_centralBinom (n + 1)
-  have h2 := Nat.succ_mul_centralBinom_succ n
-  have h3 := succ_mul_catalan_eq_centralBinom n
-  have key : (n + 1) * ((n + 2) * catalan (n + 1))
-      = (n + 1) * (2 * (2 * n + 1) * catalan n) := by
-    linear_combination h2 + (n + 1) * h1 - 2 * (2 * n + 1) * h3
-  exact mul_left_cancel₀ (by omega : n + 1 ≠ 0) key
 
 private theorem touchard_choose_down (n k : ℕ) :
     n * (n - 1).choose k = n.choose k * (n - k) := by
@@ -114,7 +105,7 @@ theorem touchard_catalan_identity (n : Nat) :
               = 2 * (2 * (i : ℚ) + 1) * (catalan i : ℚ) := by
             have hc : ((((i + 2) * catalan (i + 1) : ℕ)) : ℚ)
                 = (((2 * (2 * i + 1) * catalan i : ℕ)) : ℚ) := by
-              exact_mod_cast touchard_catalan_rec i
+              exact_mod_cast add_two_mul_catalan_succ i
             push_cast at hc
             linear_combination hc
           have hChQ : (m.choose (2 * i + 2) : ℚ)
@@ -250,7 +241,7 @@ theorem touchard_catalan_identity (n : Nat) :
       push_cast at hrec
       have hcat : ((k : ℚ) + 1 + 2) * (catalan (k + 1 + 1) : ℚ)
           = 2 * (2 * ((k : ℚ) + 1) + 1) * (catalan (k + 1) : ℚ) := by
-        exact_mod_cast touchard_catalan_rec (k + 1)
+        exact_mod_cast add_two_mul_catalan_succ (k + 1)
       have hpos : ((k : ℚ) + 1 + 2) ≠ 0 := by positivity
       have e : ((k : ℚ) + 1 + 2)
             * (Finset.range ((k + 1) / 2 + 1)).sum (fun i => F (k + 1) i)
@@ -308,13 +299,6 @@ private theorem touchard_div_pow (k n : ℕ) (hkn : k ≤ n) :
       have hlt : k < 2 * j := by rw [mem_range] at hj; omega
       rw [Nat.choose_eq_zero_of_lt hlt, Nat.cast_zero, zero_mul, zero_div]
 
-private theorem catalan_step_Q (k : ℕ) :
-    (catalan (k + 1) : ℚ) = (2 * (k : ℚ) + 1) / (k + 2) * 2 * catalan k := by
-  have h : ((k : ℚ) + 2) * (catalan (k + 1) : ℚ) = 2 * (2 * (k : ℚ) + 1) * catalan k := by
-    exact_mod_cast touchard_catalan_rec k
-  field_simp
-  linear_combination h
-
 open Finset in
 /-- **Binomial transform of weighted Catalan numbers.** Write $C_m = \binom{2m}{m}/(m+1)$ for the
 $m$-th Catalan number. For every natural number $n$,
@@ -330,7 +314,7 @@ public theorem sum_choose_two_mul_add_one_div_catalan (n : ℕ) :
     _ = ∑ k ∈ range (n + 1), (n.choose k : ℚ) * ((catalan (k + 1) : ℚ) / 2 ^ k) := by
       apply sum_congr rfl
       intro k _
-      rw [catalan_step_Q]
+      rw [cast_catalan_succ_eq]
       ring
     _ = ∑ k ∈ range (n + 1), ∑ j ∈ range (n / 2 + 1),
         ((n.choose k : ℚ) * k.choose (2 * j)) * ((catalan j : ℚ) / 2 ^ (2 * j)) := by
@@ -371,7 +355,7 @@ theorem sum_choose_even_centralBinom_div_succ (n : ℕ) :
     exact_mod_cast touchard_catalan_identity n
   have hrec : ((n : ℚ) + 2) * catalan (n + 1) =
       2 * (2 * (n : ℚ) + 1) * catalan n := by
-    exact_mod_cast touchard_catalan_rec n
+    exact_mod_cast add_two_mul_catalan_succ n
   calc
     _ = (catalan (n + 1) : ℚ) / 2 ^ n := by
       conv_rhs => rw [htouchard, div_eq_mul_inv, Finset.sum_mul]

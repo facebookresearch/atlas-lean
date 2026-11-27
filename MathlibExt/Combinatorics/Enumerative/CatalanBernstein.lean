@@ -8,16 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Algebra.Polynomial.Expand
 import Mathlib.Algebra.Ring.CharZero
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.LinearCombination
+import Mathlib.Data.Rat.Cast.CharZero
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
+import MathlibExt.Combinatorics.Enumerative.Catalan.Recurrence
 
 /-!
 # Catalan polynomial identity in Bernstein form
@@ -144,19 +143,6 @@ public theorem sum_choose_catalan_succ_one_sub_pow_mul_pow (n : ℕ) (x : ℂ) :
           coeff_catalan, a, div_pow]
         ring
 
-private theorem catalan_succ_ratio (k : ℕ) :
-    (catalan (k + 1) : ℂ) = (2 * (k : ℂ) + 1) / (k + 2) * 2 * catalan k := by
-  have h := Nat.succ_mul_centralBinom_succ k
-  rw [← succ_mul_catalan_eq_centralBinom (k + 1), ← succ_mul_catalan_eq_centralBinom k] at h
-  have hnat : (k + 2) * catalan (k + 1) = 2 * (2 * k + 1) * catalan k := by
-    apply mul_left_cancel₀ (by omega : k + 1 ≠ 0)
-    simpa only [Nat.succ_eq_add_one, mul_assoc, mul_left_comm, mul_comm] using h
-  have hc : ((k : ℂ) + 2) * (catalan (k + 1) : ℂ) = 2 * (2 * (k : ℂ) + 1) * catalan k := by
-    exact_mod_cast hnat
-  have hk : (k : ℂ) + 2 ≠ 0 := by exact_mod_cast (show k + 2 ≠ 0 by omega)
-  field_simp [hk]
-  linear_combination hc
-
 /-- **Alternating binomial sum of Catalan numbers.** For every natural number $n$, in the
 rational numbers
 
@@ -191,6 +177,6 @@ public theorem sum_neg_one_pow_choose_two_pow_catalan (n : ℕ) :
   calc
     _ = (-1 : ℂ) ^ k * (n.choose k : ℂ) * (2 ^ n / 2 ^ (2 * k)) *
           ((2 * (k : ℂ) + 1) / (k + 2) * 2 * catalan k) := by rw [pow_succ]; ring
-    _ = _ := by rw [hpow, ← catalan_succ_ratio]; ring
+    _ = _ := by rw [hpow, ← cast_catalan_succ_eq (K := ℂ)]; ring
 
 end MetaMathlibExt
