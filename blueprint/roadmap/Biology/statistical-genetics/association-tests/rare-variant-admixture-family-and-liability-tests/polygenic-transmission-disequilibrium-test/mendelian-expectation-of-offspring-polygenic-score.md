@@ -20,7 +20,7 @@ where $H^{\mathrm m}_j = \mathbf 1[g^{\mathrm m}_j = 1]$ and $H^{\mathrm f}_j = 
 
 ## Depends on
 
-- [Mendel's law of segregation](../../../population-genetics/hardy-weinberg-law/transmit.md)
+- [Mendel's law of segregation](../../../../population-genetics/hardy-weinberg-law/transmit.md)
 
 ## Expansion
 

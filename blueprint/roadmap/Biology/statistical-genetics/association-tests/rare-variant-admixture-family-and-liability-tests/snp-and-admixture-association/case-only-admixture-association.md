@@ -16,7 +16,7 @@ No controls enter, which is the point: the comparison is between the local ances
 
 ## Depends on
 
-- [Genomic control inflation factor](../genomic-control/lambda-gc.md)
+- [Genomic control inflation factor](../../genomic-control/lambda-gc.md)
 
 ## Expansion
 

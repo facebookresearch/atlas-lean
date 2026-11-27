@@ -14,7 +14,7 @@ The case value is decreasing in $\mu(t)$ and the control value is decreasing in 
 
 ## Depends on
 
-- [Case indicator of the threshold model](../../liability-scale-heritability-from-ld-score-regre/case-ind.md)
+- [Case indicator of the threshold model](../../../liability-scale-heritability-from-ld-score-regre/case-ind.md)
 
 ## Expansion
 

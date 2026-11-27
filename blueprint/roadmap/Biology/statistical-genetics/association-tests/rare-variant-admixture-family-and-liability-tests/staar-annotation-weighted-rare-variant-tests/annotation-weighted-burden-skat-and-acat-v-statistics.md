@@ -14,8 +14,8 @@ where the sum runs over the $p'$ variants with minor allele count above $10$, $p
 
 ## Depends on
 
-- [SKAT variance-component score statistic](../skat-variance-component-test/skat-q.md)
-- [Default SKAT variant weight from the Beta(1, 25) density](../skat-variance-component-test/beta-weight.md)
+- [SKAT variance-component score statistic](../../skat-variance-component-test/skat-q.md)
+- [Default SKAT variant weight from the Beta(1, 25) density](../../skat-variance-component-test/beta-weight.md)
 
 ## Expansion
 

@@ -8,8 +8,8 @@ so that $Z_{\cdot t} = X_{\cdot t^+} - X_{\cdot t^-}$ and no information is lost
 
 ## Depends on
 
-- [Reconstruction matrix in nonnegative matrix factorization](../../../cancer-genomics/mutational-signatures-and-bayesian-nmf/recon.md)
-- [Relevance update in ARD-NMF](../../../cancer-genomics/mutational-signatures-and-bayesian-nmf/relevance.md)
+- [Reconstruction matrix in nonnegative matrix factorization](../../../../cancer-genomics/mutational-signatures-and-bayesian-nmf/recon.md)
+- [Relevance update in ARD-NMF](../../../../cancer-genomics/mutational-signatures-and-bayesian-nmf/relevance.md)
 
 ## Expansion
 
