@@ -1,9 +1,13 @@
 # Expected truncated lifetime as a survival integral
 
-Let $L$ be a nonnegative random variable and $T > 0$. Then $E[\min(L, T)] = \int_0^T P(L > t)\,dt$, and $E[L] = \int_0^\infty P(L > t)\,dt$ in $[0, \infty]$.
+Let $\mu$ be a finite measure, let $L$ be an almost everywhere measurable and nonnegative real-valued function, and let $T\ge 0$. Then
 
-Proof. $\min(L, T) = \int_0^T \mathbf 1\{L > t\}\,dt$ pointwise; take expectations and exchange expectation and integral by Tonelli's theorem for the nonnegative integrand. Letting $T \to \infty$ with monotone convergence gives the second formula.
+$$\int \min(L,T)\,d\mu = \int_0^T \mu(\{L>t\})\,dt.$$
+
+For a probability measure, this gives the expected capped lifetime $E[\min(L,T)]$. It includes $T=0$ and requires no density or absence of atoms.
+
+Proof. Replacing $L$ by a measurable representative does not change either side. Almost everywhere, $\min(L,T)=\int_0^T \mathbf 1\{L>t\}\,dt$. Integrating and exchanging the two integrals by Tonelli's theorem gives the formula.
 
 ## Sources
 
-- C. M. Grinstead and J. L. Snell, *Introduction to Probability*, 2nd rev. ed., American Mathematical Society, 1997, Section 6.3, Exercise 13, <https://math.dartmouth.edu/~prob/prob/prob.pdf>. The source states a special case or part of the statement; the rest is derived on this page.
+- C. M. Grinstead and J. L. Snell, *Introduction to Probability*, online version dated 4 July 2006, §6.3, Exercise 13 (p. 280), <https://math.dartmouth.edu/~prob/prob/prob.pdf>. The exercise gives the related uncapped expectation identity; the argument above applies the same idea to the capped lifetime.

@@ -76432,6 +76432,7 @@
 "MeasureTheory.integral_const_mul_add_const": "3d0b8f2d434c615d",
 "MeasureTheory.integral_doubleCosetCutoff_mul": "7c6a378f50bc422e",
 "MeasureTheory.integral_eq_integral_smul_mul_of_normalized": "ab79695152a4cad1",
+"MeasureTheory.integral_min_eq_intervalIntegral_meas_lt": "fa93fcf35fc4213c",
 "MeasureTheory.integral_modularCharacter_smul_inv_of_hasCompactSupport": "180c0728acd0f3be",
 "MeasureTheory.integral_mul_eq_integral_mul_of_integral_subgroup_translate_eq_one": "f62947f407fc8fc4",
 "MeasureTheory.integral_mul_eq_integral_subgroup_average": "6d85fb6d5bf299d5",
