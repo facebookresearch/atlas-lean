@@ -10,6 +10,7 @@ module
 
 import MathlibExt.NumberTheory.ZeckendorfNewInformationZone
 import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Order.Filter.AtTopBot.Basic
 import Mathlib.Tactic.IntervalCases
 
 open MetaMathlibExt
@@ -143,5 +144,68 @@ example {r : ℕ} (hr : 1 ≤ r) :
     ⟨by decide, by decide, fun i => by simp only [decide_eq_false_iff_not]; omega⟩
   exact ⟨fun h => absurd (zeckNIZ_leading_zeros hr (by omega) hx h).1 (by decide),
     fun h => absurd (zeckNIZ_leading_zeros hr (by omega) hx h).2 (by decide)⟩
+
+/-- The Zeckendorf digit sequence of `1 = F₂` has its only digit `1` at index `2`. -/
+private theorem zeckAdicOfNat_one : zeckAdicOfNat 1 = fun i => decide (i = 2) := by
+  have h : Nat.zeckendorf 1 = [2] :=
+    Nat.zeckendorf_sum_fib (l := [2]) (by unfold List.IsZeckendorfRep; decide)
+  funext i
+  simp only [zeckAdicOfNat, h, List.mem_singleton]
+
+-- On the digit sequences of natural numbers the odometer is addition: two steps from `i(2)`, the
+-- point with the single digit `x₃ = 1`, reach `i(4)`, whose digits `x₄ = x₂ = 1` give `F₄ + F₂`.
+example : zeckOdometer^[2] (zeckAdicOfNat 2) = fun i => decide (i = 2 ∨ i = 4) := by
+  have h : Nat.zeckendorf 4 = [4, 2] :=
+    Nat.zeckendorf_sum_fib (l := [4, 2]) (by unfold List.IsZeckendorfRep; decide)
+  rw [zeckOdometer_iterate_zeckAdicOfNat]
+  funext i
+  simp only [zeckAdicOfNat, show 2 + 2 = 4 from rfl, h, List.mem_cons, List.not_mem_nil,
+    or_false]
+  by_cases hi : i = 2 <;> simp [hi, or_comm]
+
+-- The variation `Δ^{(1)}` at the zero sequence is `s(1) - s(0) = 1`: every truncated variation of
+-- order `k ≥ 2` counts the new digit `x₂ = 1`.
+example : zeckAdicVariation 1 (fun _ => false) = 1 := by
+  apply zeckAdicVariation_eq_of_eventually
+  refine Filter.eventually_atTop.2 ⟨2, fun k hk => ?_⟩
+  have h0 : (fun _ : ℕ => false) = zeckAdicOfNat 0 := by
+    funext i
+    simp [zeckAdicOfNat]
+  rw [zeckAdicTruncVariation, h0, zeckOdometer_iterate_zeckAdicOfNat, Nat.zero_add,
+    zeckAdicOfNat_one]
+  have h : ∀ i ∈ Finset.Icc 2 k, (((decide (i = 2)).toNat : ℕ) : ℤ) = if i = 2 then 1 else 0 :=
+    fun i _ => by by_cases hi : i = 2 <;> simp [hi]
+  simp only [Finset.sum_congr rfl h, Finset.sum_ite_eq', Finset.mem_Icc, le_refl, hk, and_self,
+    ite_true]
+  simp
+
+-- For `ℓ = 3`, the shift is `F₃ = 2`: among the `v < F₆ = 8` whose digit sequence lies in `NIZ₄`
+-- (these are `v = 1, 2`), the variation is `0` once and `1` once.
+example :
+    {v | v < 8 ∧ zeckAdicOfNat v ∈ zeckNIZ 2 4 ∧
+        zeckAdicVariation 2 (zeckAdicOfNat v) = 0}.ncard = 1 ∧
+      {v | v < 8 ∧ zeckAdicOfNat v ∈ zeckNIZ 2 4 ∧
+        zeckAdicVariation 2 (zeckAdicOfNat v) = 1}.ncard = 1 :=
+  zeckNIZ_fib_variation_order_succ (ℓ := 3) le_rfl
+
+-- For `ℓ = 5`, the shift is `F₅ = 5`: among the `v < F₈ = 21` whose digit sequence lies in
+-- `NIZ₆`, the variation is `0` for `F₄ = 3` of them and `1` for `F₃ = 2` of them.
+example :
+    {v | v < 21 ∧ zeckAdicOfNat v ∈ zeckNIZ 5 6 ∧
+        zeckAdicVariation 5 (zeckAdicOfNat v) = 0}.ncard = 3 ∧
+      {v | v < 21 ∧ zeckAdicOfNat v ∈ zeckNIZ 5 6 ∧
+        zeckAdicVariation 5 (zeckAdicOfNat v) = 1}.ncard = 2 :=
+  zeckNIZ_fib_variation_order_succ (ℓ := 5) (by omega)
+
+-- Together the two counts give `F_{ℓ-1} + F_{ℓ-2} = F_ℓ` levels of `NIZ_{ℓ+1}` below `F_{ℓ+3}`.
+example {ℓ : ℕ} (hℓ : 3 ≤ ℓ) :
+    {v | v < Nat.fib (ℓ + 3) ∧ zeckAdicOfNat v ∈ zeckNIZ (Nat.fib ℓ) (ℓ + 1) ∧
+        zeckAdicVariation (Nat.fib ℓ) (zeckAdicOfNat v) = 0}.ncard +
+      {v | v < Nat.fib (ℓ + 3) ∧ zeckAdicOfNat v ∈ zeckNIZ (Nat.fib ℓ) (ℓ + 1) ∧
+        zeckAdicVariation (Nat.fib ℓ) (zeckAdicOfNat v) = 1}.ncard = Nat.fib ℓ := by
+  obtain ⟨h0, h1⟩ := zeckNIZ_fib_variation_order_succ hℓ
+  obtain ⟨n, rfl⟩ : ∃ n, ℓ = n + 2 := ⟨ℓ - 2, by omega⟩
+  rw [h0, h1, show n + 2 - 1 = n + 1 by omega, show n + 2 - 2 = n by omega, Nat.fib_add_two,
+    Nat.add_comm]
 
 end ZeckendorfNewInformationZoneTest
