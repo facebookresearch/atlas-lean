@@ -11,7 +11,6 @@ module
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Combinatorics.Enumerative.ReducedUnicellularHypermonopoles
-import all MathlibExt.Combinatorics.Enumerative.ZagierCyclicPermutationProduct
 
 /-!
 # Genus bounds for reduced unicellular hypermonopoles
@@ -28,8 +27,6 @@ hyperedge permutations with one face cycle and `n - 2 * g` hyperedge cycles.
   Sequences 28 (2025), Article 25.3.3, pp. 1–15, Lemma 2 and Proposition 15.
 * A. Jacques, *Sur le genre d'une paire de substitutions*, C. R. Acad. Sci. Paris 267 (1968),
   pp. 625–627 (the genus formula, Equation (1) of Cori and Hetyei).
-* `MathlibExt.Combinatorics.Enumerative.ZagierCyclicPermutationProduct`,
-  `zagFinRotate_cycleCount` (the one-cycle count for a nonempty rotation).
 -/
 
 namespace MetaMathlibExt
@@ -60,6 +57,12 @@ public theorem genus_bounds_of_reduced_unicellular_hypermonopole {n g : ℕ}
   obtain ⟨hlower, hupper⟩ := cycleCount_bounds_of_reduced hn α hred
   rw [hσ, hface] at hgenus
   constructor <;> omega
+
+private theorem cycleQuotientCount_finRotate {n : ℕ} (hn : 2 ≤ n) :
+    cycleQuotientCount (finRotate n) = 1 := by
+  rw [cycleQuotientCount_eq, Equiv.Perm.card_fixedPoints, Fintype.card_fin,
+    cycleType_finRotate_of_le hn]
+  simp
 
 /-- **Counting reduced unicellular hypermonopoles by genus.** Fix $g \in \mathbb{N}$. For
 each $n \in \mathbb{N}$ let $\zeta_n$ be the cyclic permutation of $\{0, \ldots, n - 1\}$
@@ -108,7 +111,7 @@ public theorem reduced_unicellular_hypermonopoles_of_genus_count (g : ℕ) :
       omega
     · rintro ⟨n, α, hface, hred, hcount⟩
       have hn := Finset.mem_Icc.mp n.property
-      have hσ : cycleQuotientCount (finRotate n) = 1 := zagFinRotate_cycleCount n (by omega)
+      have hσ : cycleQuotientCount (finRotate n) = 1 := cycleQuotientCount_finRotate (by omega)
       refine ⟨⟨n, α⟩, hσ, hface, hred, ?_⟩
       change (n : ℕ) + 2 = cycleQuotientCount (finRotate n) + cycleQuotientCount α +
         cycleQuotientCount (α⁻¹ * finRotate n) + 2 * g
