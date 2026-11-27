@@ -2009,6 +2009,7 @@
   "CSLibExt/MachineLearning/GeneralizationBounds/TwoLayerAPriori": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Two-layer neural networks and Barron space"},
   "CSLibExt/MachineLearning/GeneralizationBounds/TwoLayerReLURademacher": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Two-layer neural networks and Barron space"},
   "CSLibExt/MachineLearning/Generative/BayesClassifier": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Bayes classifier"},
+  "CSLibExt/MachineLearning/Generative/ScoreDiffusion": {"to": "ComputerScience/machine-learning/diffusion-and-flow-generative-models", "title": "Sampling guarantees for score-based diffusion models"},
   "CSLibExt/MachineLearning/GraphicalModels/BayesianDirichletScore": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Markov equivalence and Bayesian network scores"},
   "CSLibExt/MachineLearning/GraphicalModels/BayesianNetwork": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Bayesian networks"},
   "CSLibExt/MachineLearning/GraphicalModels/BeliefPropagation": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Variable elimination and belief propagation"},
