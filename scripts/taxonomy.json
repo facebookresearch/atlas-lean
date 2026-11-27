@@ -18494,7 +18494,9 @@
   "WantedExt/Probability/AngularSynchronizationShared": {"to": "Probability/high-dimensional-probability", "title": "Angular synchronization"},
   "MathlibExt/Combinatorics/SimpleGraph/MulticolorTriangleRamsey": {"to": "GraphTheory/graph-ramsey-theory", "title": "Multicolor triangle Ramsey numbers"},
   "MathlibExt/NumberTheory/LSeries/MontgomeryTaylorWindow": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Zeros of the Riemann zeta function"},
-  "MathlibExt/NumberTheory/LSeries/ZeroCounts": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Zeros of the Riemann zeta function"}
+  "MathlibExt/NumberTheory/LSeries/ZeroCounts": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Zeros of the Riemann zeta function"},
+  "MathlibExt/Analysis/InnerProductSpace/CompleteNumericalRangeSharpness": {"to": "Analysis/operator-theory/spectral-theory", "title": "Numerical range and numerical radius"},
+  "MathlibExt/Analysis/InnerProductSpace/NumericalRangeRationalDenominators": {"to": "Analysis/operator-theory/spectral-theory", "title": "Numerical range and numerical radius"}
  },
  "mathlib_exclusions": {
   "Mathlib/Algebra/AddTorsor": "Deprecated re-export of the corresponding torsor module",
