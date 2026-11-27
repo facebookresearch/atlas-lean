@@ -23,6 +23,8 @@ residue one modulo five.
 * Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
   Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
   233–240, Corollary 4.4 (p. 236).
+* A. F. Horadam, *Oresme numbers*, The Fibonacci Quarterly 12 (1974), no. 3, 267–271.
+  Bacon and Cook cite Horadam for the Oresme-number background, not for the weighted Lucas proof.
 -/
 
 namespace MetaMathlibExt
