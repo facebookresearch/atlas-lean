@@ -12,11 +12,11 @@ For small $c_1, c_2$ the maximizers are sparse. The problem is solved by alterna
 
 ## Depends on
 
-- [Standardized genotype matrix](../../ld-score-regression/is-standardized.md): the standardization of $G$ and $X$ (column sums $0$, sums of squares $n$)
+- [Standardized genotype matrix](../../../ld-score-regression/is-standardized.md): the standardization of $G$ and $X$ (column sums $0$, sums of squares $n$)
 
 ## Proof depends on
 
-- [Soft thresholding solves the one-dimensional lasso](../../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/soft-threshold-le.md): each alternating step is a soft-thresholding
+- [Soft thresholding solves the one-dimensional lasso](../../../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/soft-threshold-le.md): each alternating step is a soft-thresholding
 
 ## Expansion
 

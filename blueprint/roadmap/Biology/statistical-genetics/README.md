@@ -7,7 +7,6 @@ Statistical methods for genome-wide association studies, heritability estimation
 - [Bernstein's triple-allele law for the ABO blood groups](bernstein-s-triple-allele-law-for-the-abo-blood/README.md)
 - [BOLT-LMM mixed-model association](bolt-lmm-mixed-model-association/README.md)
 - [Gene constraint scores (pLI and LOEUF)](gene-constraint-scores-pli-and-loeuf/README.md)
-- [Genetically predicted gene expression](genetically-predicted-gene-expression/README.md)
 - [Imputation of association summary statistics](imputation-of-association-summary-statistics/README.md)
 - [Lander–Green multipoint pedigree likelihood](lander-green-multipoint-pedigree-likelihood/README.md)
 - [Latent causal variable model](latent-causal-variable-model/README.md)

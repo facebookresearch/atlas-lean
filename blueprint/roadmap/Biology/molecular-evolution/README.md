@@ -27,4 +27,3 @@
 - [Selection stringency in directed evolution](selection-stringency-in-directed-evolution/README.md)
 - [Sex-specific generation times and the yearly mutation rate](sex-specific-generation-times-and-the-yearly-mutation-rate/README.md)
 - [Time scale of evolutionary discovery](time-scale-of-evolutionary-discovery/README.md)
-- [Walsh decomposition of fitness landscapes](walsh-decomposition-of-fitness-landscapes/README.md)

@@ -16,13 +16,13 @@ Thus the variance of the landscape across genotypes splits exactly into contribu
 
 ## Depends on
 
-- [Fitness landscapes as mathematical objects](../../population-genetics/selection-migration-and-transmission/fitness-landscapes/fitness-landscapes-as-explicit-mathematical-obje.md)
-- [Fourier coefficient on the subsets of a finite set](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/fourier-coeff.md)
+- [Fitness landscapes as mathematical objects](../../../population-genetics/selection-migration-and-transmission/fitness-landscapes/fitness-landscapes-as-explicit-mathematical-obje.md)
+- [Fourier coefficient on the subsets of a finite set](../../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/fourier-coeff.md)
 
 ## Proof depends on
 
-- [Fourier inversion on the subsets of a finite set](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/fourier-inversion.md)
-- [Plancherel identity on the subsets of a finite set](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/fourier-plancherel.md)
+- [Fourier inversion on the subsets of a finite set](../../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/fourier-inversion.md)
+- [Plancherel identity on the subsets of a finite set](../../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/fourier-plancherel.md)
 
 ## Expansion
 

@@ -24,7 +24,7 @@ so the noise in the specific component falls as the cross-context noise correlat
 
 ## Depends on
 
-- [Group mean of observations](../../../../Probability/linear-models-multivariate/cochran-s-theorem/group-mean.md): the individual mean $\bar E_{i\cdot}$, with individuals as groups
+- [Group mean of observations](../../../../../Probability/linear-models-multivariate/cochran-s-theorem/group-mean.md): the individual mean $\bar E_{i\cdot}$, with individuals as groups
 
 ## Expansion
 
