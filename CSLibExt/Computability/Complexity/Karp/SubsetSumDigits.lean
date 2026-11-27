@@ -54,7 +54,7 @@ $b$ is true and $0$ if $b$ is false. For every bit $b$ and every bit list $l$, t
 entry $b$ followed by $l$ has value $[b] + 2 \cdot \mathrm{val}(l)$. -/
 @[simp] theorem bitsVal_cons (b : Bool) (l : List Bool) :
     bitsVal (b :: l) = b.toNat + 2 * bitsVal l := by
-  cases b <;> simp [bitsVal] <;> omega
+  cases b <;> simp [bitsVal]; omega
 
 theorem bitsVal_append (l l' : List Bool) :
     bitsVal (l ++ l') = bitsVal l + 2 ^ l.length * bitsVal l' := by
