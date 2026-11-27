@@ -19,8 +19,8 @@ public import MathlibExt.Combinatorics.Additive.ThickBhSets
 # Constructing thick `B_h`-sets
 
 Statements from Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer
-Sequences 27 (2024), Article 24.1.2 (arXiv:2308.12406): the generalized Bose construction of
-`B_h`-sets in cyclic groups (the generalized Singer construction is in
+Sequences 27 (2024), Article 24.1.2 (arXiv:2308.12406): the generalized Bose and Singer
+constructions of `B_h`-sets in cyclic groups (both proved in
 `MathlibExt.Combinatorics.Additive.ThickBhSets`), sufficient conditions for two such sets to be
 affinely equivalent, the prime-gap results the paper quotes, and the resulting bounds on
 `R_h(n)` and `R_h⁻¹(k)`.
@@ -35,22 +35,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Filter
-
-/-- **Generalized Bose set.** Let $F$ be a finite field with $q$ elements, $K$ a field extension
-of $F$, $h$ and $b$ natural numbers and $\theta \in K$. The generalized Bose set
-$\mathrm{Bose}_h(q, b)$ is the set of residues $a \in \mathbb{Z}/(q^h - 1)\mathbb{Z}$ such that
-$\theta^a = \theta^b + v$ for some $v \in F$, where $\theta^a$ is computed with the least
-nonnegative representative of $a$ (for $h = 0$ the modulus is $0$, $a$ ranges over $\mathbb{Z}$
-and $\theta^a$ means $\theta^{|a|}$).
-
-In the paper $K$ has degree $h$ over $F$ and $\theta$ generates $K^\times$; the definition does
-not need these assumptions.
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, Definition 1. -/
-public def boseSet (F : Type*) {K : Type*} [Field F] [Fintype F] [Field K] [Algebra F K]
-    (h : ℕ) (θ : K) (b : ℕ) : Set (ZMod (Fintype.card F ^ h - 1)) :=
-  {a | ∃ v : F, θ ^ a.val = θ ^ b + algebraMap F K v}
 
 /-- **Membership in a Bose set.** Let $F$ be a finite field with $q$ elements, let $K$ be a field
 extension of $F$, let $\theta \in K$, and let $h$ and $b$ be natural numbers. A residue
@@ -132,21 +116,6 @@ public theorem bhMinLength_one {h : ℕ} (hh : 0 < h) : bhMinLength h 1 = 1 := b
   rintro ⟨A, hA, -, hcard⟩
   have : A = ∅ := by simpa using hA
   simp [this] at hcard
-
-/-- **Bose's construction of $B_h$-sets.** Let $h \ge 2$, let $F$ be a finite field with $q$
-elements, let $K$ be a field extension of $F$ of degree $h$, let $\theta$ be a generator of the
-multiplicative group $K^\times$, and let $b$ be a natural number such that $\theta^b$ has degree
-$h$ over $F$. Then the generalized Bose set $\mathrm{Bose}_h(q, b)$, a subset of
-$\mathbb{Z}/(q^h - 1)\mathbb{Z}$, is a $B_h$-set with exactly $q$ elements.
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, Theorem 3 (first sentence) (`jis-2024-24.1.2-thm-3`). -/
-public theorem_wanted isBhSet_boseSet {F K : Type*} [Field F] [Fintype F] [Field K]
-    [Fintype K] [Algebra F K] {h : ℕ} (hh : 2 ≤ h) (hK : Module.finrank F K = h) {θ : K}
-    (hθ : orderOf θ = Fintype.card K - 1) {b : ℕ}
-    (hb : (minpoly F (θ ^ b)).natDegree = h) :
-    AdditiveCombinatorics.IsBhSet (boseSet F h θ b) h ∧
-      (boseSet F h θ b).ncard = Fintype.card F
 
 /-- **Affine equivalences between Bose sets.** Let $F$ be a finite field with $q$ elements and
 characteristic $p$, let $h \ge 2$, let $K$ be a field extension of $F$ of degree $h$, and let
