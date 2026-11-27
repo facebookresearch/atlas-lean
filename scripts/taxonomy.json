@@ -13125,6 +13125,7 @@
   "MathlibExt/NumberTheory/Digits/OrdinaryMomentRecurrence": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Irwin series"},
   "MathlibExt/NumberTheory/Digits/PalindromicTwoPowBinomialForm": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/Permutiple": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
+  "MathlibExt/NumberTheory/Digits/PermutipleCarryBound": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
   "MathlibExt/NumberTheory/Digits/PermutipleStrings": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
   "MathlibExt/NumberTheory/Digits/PermutipleStringsExistsIsPermutipleStringOfHasEulerianCircuitFromZero": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
   "MathlibExt/NumberTheory/Digits/PermutipleStringsPermutipleEdgeResidueLe": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
