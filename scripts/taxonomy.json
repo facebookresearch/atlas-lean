@@ -13833,7 +13833,6 @@
   "MathlibExt/NumberTheory/Recurrences/CRecursiveRemainderIncrement": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Mod-mod representations of C-recursive sequences"},
   "MathlibExt/NumberTheory/Recurrences/CircuitArray": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Annihilators and recursions of the circuit array"},
   "MathlibExt/NumberTheory/Recurrences/CircuitArrayM": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Annihilators and recursions of the circuit array"},
-  "MathlibExt/NumberTheory/Recurrences/CircuitArrayRecursionsCircuitArrayMRowTwo": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Annihilators and recursions of the circuit array"},
   "MathlibExt/NumberTheory/Recurrences/CohnSquareFibonacci": {"to": "NumberTheory/linear-recurrences/diophantine-recurrences", "title": "Squares in Fibonacci and Lucas sequences"},
   "MathlibExt/NumberTheory/Recurrences/CohnTwiceSquareFibonacci": {"to": "NumberTheory/linear-recurrences/diophantine-recurrences", "title": "Squares in Fibonacci and Lucas sequences"},
   "MathlibExt/NumberTheory/Recurrences/CohnTwiceSquareLucas": {"to": "NumberTheory/linear-recurrences/diophantine-recurrences", "title": "Squares in Fibonacci and Lucas sequences"},

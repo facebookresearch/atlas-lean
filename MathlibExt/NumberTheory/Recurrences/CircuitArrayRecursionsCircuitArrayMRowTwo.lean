@@ -41,137 +41,7 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-private theorem grid_succ_left {K : Type*} [Field K] (bdry : ℕ → Option K) (m r d : ℕ)
-    (hd : d ≠ 1) :
-    circuitGrid bdry (m + 1) r d .left =
-      circuitLeftEdge (circuitGrid bdry m r (d - 1)) (circuitGrid bdry m r d)
-        (circuitGrid bdry m (r + 1) d) := by
-  simp [circuitGrid, circuitReduce, hd]
-
-private theorem grid_succ_right {K : Type*} [Field K] (bdry : ℕ → Option K) (m r d : ℕ)
-    (hd : d ≠ r) :
-    circuitGrid bdry (m + 1) r d .right =
-      circuitRightEdge (circuitGrid bdry m r d) (circuitGrid bdry m r (d + 1))
-        (circuitGrid bdry m (r + 1) (d + 1)) := by
-  simp [circuitGrid, circuitReduce, hd]
-
-private theorem grid_succ_base {K : Type*} [Field K] (bdry : ℕ → Option K) (m r d : ℕ) :
-    circuitGrid bdry (m + 1) r d .base =
-      circuitBaseEdge (circuitGrid bdry m (r + 2) (d + 1)) (circuitGrid bdry m (r + 1) d)
-        (circuitGrid bdry m (r + 1) (d + 1)) := by
-  simp [circuitGrid, circuitReduce]
-
-private theorem grid_one_left {K : Type*} [Field K] (bdry : ℕ → Option K) (r : ℕ) :
-    circuitGrid bdry 1 r 1 .left =
-      (bdry 1).getD (circuitPerimeter (fun _ => 1) (fun _ => 1)) := by
-  simp [circuitGrid, circuitReduce]
-
-private theorem leftEdge_one {K : Type*} [Field K] [CharZero K] :
-    circuitLeftEdge (fun _ => (1 : K)) (fun _ => 1) (fun _ => 1) = 1 := by
-  norm_num [circuitLeftEdge, circuitY, circuitRightArm, circuitLeftArm, circuitTopArm,
-    circuitDelta]
-
-private theorem rightEdge_one {K : Type*} [Field K] [CharZero K] :
-    circuitRightEdge (fun _ => (1 : K)) (fun _ => 1) (fun _ => 1) = 1 := by
-  norm_num [circuitRightEdge, circuitY, circuitRightArm, circuitLeftArm, circuitTopArm,
-    circuitDelta]
-
-private theorem baseEdge_one {K : Type*} [Field K] [CharZero K] :
-    circuitBaseEdge (fun _ => (1 : K)) (fun _ => 1) (fun _ => 1) = 1 := by
-  norm_num [circuitBaseEdge, circuitY, circuitRightArm, circuitLeftArm, circuitTopArm,
-    circuitDelta]
-
-private theorem grid_eq_one {K : Type*} [Field K] [CharZero K] (bdry : ℕ → Option K) (m : ℕ) :
-    (∀ r d, m + 1 ≤ d → m + d ≤ r + 1 → circuitGrid bdry m r d .left = 1) ∧
-      (∀ r d, m ≤ d → m + d ≤ r → circuitGrid bdry m r d .right = 1) ∧
-      (∀ r d, m ≤ d → m + d ≤ r + 1 → circuitGrid bdry m r d .base = 1) := by
-  induction m with
-  | zero => exact ⟨fun _ _ _ _ => rfl, fun _ _ _ _ => rfl, fun _ _ _ _ => rfl⟩
-  | succ m ih =>
-    obtain ⟨hL, hR, hB⟩ := ih
-    have hA : ∀ r d, m + 1 ≤ d → m + d ≤ r → circuitGrid bdry m r d = fun _ => 1 := by
-      intro r d h1 h2
-      funext e
-      cases e
-      · exact hL r d h1 (by omega)
-      · exact hR r d (by omega) h2
-      · exact hB r d (by omega) (by omega)
-    refine ⟨fun r d h1 h2 => ?_, fun r d h1 h2 => ?_, fun r d h1 h2 => ?_⟩
-    · rw [grid_succ_left bdry m r d (by omega), hA r (d - 1) (by omega) (by omega),
-        hA r d (by omega) (by omega), hA (r + 1) d (by omega) (by omega)]
-      exact leftEdge_one
-    · rw [grid_succ_right bdry m r d (by omega), hA r d (by omega) (by omega),
-        hA r (d + 1) (by omega) (by omega), hA (r + 1) (d + 1) (by omega) (by omega)]
-      exact rightEdge_one
-    · rw [grid_succ_base bdry m r d, hA (r + 2) (d + 1) (by omega) (by omega),
-        hA (r + 1) d (by omega) (by omega), hA (r + 1) (d + 1) (by omega) (by omega)]
-      exact baseEdge_one
-
-private theorem grid_eq_one_fun {K : Type*} [Field K] [CharZero K] (bdry : ℕ → Option K)
-    (m r d : ℕ) (h1 : m + 1 ≤ d) (h2 : m + d ≤ r) :
-    circuitGrid bdry m r d = fun _ => 1 := by
-  obtain ⟨hL, hR, hB⟩ := grid_eq_one bdry m
-  funext e
-  cases e
-  · exact hL r d h1 (by omega)
-  · exact hR r d (by omega) h2
-  · exact hB r d (by omega) (by omega)
-
-private theorem front_step {K : Type*} [Field K] [CharZero K] (c x : K) (hx : x ≠ 0)
-    (hc : c ≠ 3 * x) :
-    circuitY (circuitDelta 1 1 (1 - c / x)) (circuitDelta 1 1 1) (circuitDelta 1 1 1) =
-      1 - c / (9 * x) := by
-  obtain ⟨D, rfl⟩ : ∃ D, c = 3 * x - D := ⟨3 * x - c, by ring⟩
-  have hD : D ≠ 0 := by rintro rfl; exact hc (by ring)
-  have e1 : (1 + 1 + (1 - (3 * x - D) / x) : K) = D / x := by field_simp; ring
-  rw [circuitY, circuitDelta, circuitDelta, e1]
-  field_simp
-  ring
-
-private theorem grid_front {K : Type*} [Field K] [CharZero K] (bdry : ℕ → Option K) (c : K)
-    (h1 : (bdry 1).getD (2 / 3) = 1 - c) (hc : ∀ k : ℕ, c ≠ 3 * 9 ^ k) (k : ℕ) :
-    ∀ r : ℕ, 2 * k + 1 ≤ r → circuitGrid bdry (k + 1) r (k + 1) .left = 1 - c / 9 ^ k := by
-  induction k with
-  | zero =>
-    intro r _
-    have hP : circuitPerimeter (fun _ => (1 : K)) (fun _ => 1) = 2 / 3 := by
-      norm_num [circuitPerimeter, circuitLeftArm, circuitTopArm, circuitDelta]
-    rw [grid_one_left, hP, h1, pow_zero, div_one]
-  | succ k ih =>
-    intro r hr
-    obtain ⟨_, hR, hB⟩ := grid_eq_one bdry (k + 1)
-    rw [grid_succ_left bdry (k + 1) r (k + 1 + 1) (by omega),
-      grid_eq_one_fun bdry (k + 1) r (k + 1 + 1) (by omega) (by omega),
-      grid_eq_one_fun bdry (k + 1) (r + 1) (k + 1 + 1) (by omega) (by omega),
-      show k + 1 + 1 - 1 = k + 1 by omega]
-    simp only [circuitLeftEdge, circuitRightArm, circuitLeftArm, circuitTopArm]
-    rw [hR r (k + 1) le_rfl (by omega), hB r (k + 1) le_rfl (by omega), ih r (by omega)]
-    rw [front_step c (9 ^ k) (pow_ne_zero _ (by norm_num)) (hc k), pow_succ']
-
-private theorem front_nonsingular (k : ℕ) :
-    1 - circuitVar 1 ≠ 3 * 9 ^ k := by
-  intro h
-  have hp : 1 - MvPolynomial.X 1 = (3 : MvPolynomial ℕ ℚ) * 9 ^ k := by
-    apply IsFractionRing.injective (MvPolynomial ℕ ℚ) (FractionRing (MvPolynomial ℕ ℚ))
-    simpa only [map_sub, map_one, map_mul, map_ofNat, map_pow, circuitVar] using h
-  have he := congrArg (MvPolynomial.eval (fun _ => (1 : ℚ))) hp
-  simp at he
-
-private theorem rightEdge_value {K : Type*} [Field K] [CharZero K] (x q : K)
-    (hq : q ≠ 0) (hd : x + 3 * q - 1 ≠ 0) :
-    circuitY (circuitDelta 1 1 1) (circuitDelta 1 1 (1 - (1 - x) / q)) (circuitDelta 1 1 1) =
-      (9 * q - 1 + x) / (3 * (3 * q - 1 + x)) := by
-  have hsum : 1 + 1 + (1 - (1 - x) / q) = (x + 3 * q - 1) / q := by
-    field_simp
-    ring
-  have hd' : 3 * q - 1 + x ≠ 0 := by
-    intro h
-    apply hd
-    linear_combination h
-  rw [circuitY, circuitDelta, circuitDelta, hsum]
-  field_simp
-  ring
+open circuitArrayM_row_one
 
 private theorem arrayM_two (bdry : ℕ → Option (FractionRing (MvPolynomial ℕ ℚ))) (k : ℕ) :
     circuitArrayOf bdry 2 (k + 2) =
@@ -327,11 +197,12 @@ private theorem second_front (bdry : ℕ → Option (FractionRing (MvPolynomial 
       rw [eq_div_iff hden]
       simp only [zero_add, pow_zero, pow_one, Nat.cast_zero, mul_zero, sub_zero]
       ring
-    · rw [grid_succ_right bdry (0 + 1) r (0 + 1) (by omega)]
-      have hfront := grid_front bdry (1 - circuitVar 1) h1front front_nonsingular 0 r (by omega)
-      obtain ⟨_, hR, hB⟩ := grid_eq_one bdry 1
-      rw [grid_eq_one_fun bdry (0 + 1) r ((0 + 1) + 1) le_rfl (by omega),
-        grid_eq_one_fun bdry (0 + 1) (r + 1) ((0 + 1) + 1) le_rfl (by omega)]
+    · rw [circuitGrid_succ_right bdry (0 + 1) r (0 + 1) (by omega)]
+      have hfront :=
+        circuitGrid_front bdry (1 - circuitVar 1) h1front front_nonsingular 0 r (by omega)
+      obtain ⟨_, hR, hB⟩ := circuitGrid_eq_one bdry 1
+      rw [circuitGrid_eq_one_fun bdry (0 + 1) r ((0 + 1) + 1) le_rfl (by omega),
+        circuitGrid_eq_one_fun bdry (0 + 1) (r + 1) ((0 + 1) + 1) le_rfl (by omega)]
       simp only [circuitRightEdge, circuitLeftArm, circuitRightArm, circuitTopArm]
       rw [hfront, hR r (0 + 1) (by omega) (by omega), hB r (0 + 1) (by omega) (by omega)]
       have hd : circuitVar 1 + 3 * 9 ^ (0:ℕ) - 1 ≠ 0 := by
@@ -339,13 +210,13 @@ private theorem second_front (bdry : ℕ → Option (FractionRing (MvPolynomial 
         intro hcon
         apply hns
         linear_combination -hcon
-      exact rightEdge_value _ _ (pow_ne_zero _ (by norm_num)) hd
-    · rw [grid_succ_base bdry (0 + 1) r (0 + 1)]
-      have hfront := grid_front bdry (1 - circuitVar 1) h1front front_nonsingular 0
+      exact (rightEdge_value _ _ (pow_ne_zero _ (by norm_num)) hd).trans (by ring)
+    · rw [circuitGrid_succ_base bdry (0 + 1) r (0 + 1)]
+      have hfront := circuitGrid_front bdry (1 - circuitVar 1) h1front front_nonsingular 0
         (r + 1) (by omega)
-      obtain ⟨_, hR, hB⟩ := grid_eq_one bdry 1
-      rw [grid_eq_one_fun bdry (0 + 1) (r + 2) ((0 + 1) + 1) le_rfl (by omega),
-        grid_eq_one_fun bdry (0 + 1) (r + 1) ((0 + 1) + 1) le_rfl (by omega)]
+      obtain ⟨_, hR, hB⟩ := circuitGrid_eq_one bdry 1
+      rw [circuitGrid_eq_one_fun bdry (0 + 1) (r + 2) ((0 + 1) + 1) le_rfl (by omega),
+        circuitGrid_eq_one_fun bdry (0 + 1) (r + 1) ((0 + 1) + 1) le_rfl (by omega)]
       simp only [circuitBaseEdge, circuitLeftArm, circuitRightArm, circuitTopArm]
       rw [hfront, hR (r + 1) (0 + 1) (by omega) (by omega),
         hB (r + 1) (0 + 1) (by omega) (by omega)]
@@ -354,20 +225,20 @@ private theorem second_front (bdry : ℕ → Option (FractionRing (MvPolynomial 
         intro hcon
         apply hns
         linear_combination -hcon
-      exact rightEdge_value _ _ (pow_ne_zero _ (by norm_num)) hd
+      exact (rightEdge_value _ _ (pow_ne_zero _ (by norm_num)) hd).trans (by ring)
   | succ j ih =>
     intro hr
     have ih' := ih (by omega)
     obtain ⟨ihL, ihR, ihB⟩ := ih'
     refine ⟨?_, ?_, ?_⟩
-    · rw [grid_succ_left bdry ((j + 1) + 1) r ((j + 1) + 1) (by omega),
+    · rw [circuitGrid_succ_left bdry ((j + 1) + 1) r ((j + 1) + 1) (by omega),
         show ((j + 1) + 1) - 1 = j + 1 by omega]
       simp only [circuitLeftEdge, circuitRightArm, circuitLeftArm, circuitTopArm]
-      have hfrontB := grid_front bdry (1 - circuitVar 1) h1front front_nonsingular
+      have hfrontB := circuitGrid_front bdry (1 - circuitVar 1) h1front front_nonsingular
         (j + 1) r (by omega)
-      have hfrontC := grid_front bdry (1 - circuitVar 1) h1front front_nonsingular
+      have hfrontC := circuitGrid_front bdry (1 - circuitVar 1) h1front front_nonsingular
         (j + 1) (r + 1) (by omega)
-      obtain ⟨_, hR, hB⟩ := grid_eq_one bdry ((j + 1) + 1)
+      obtain ⟨_, hR, hB⟩ := circuitGrid_eq_one bdry ((j + 1) + 1)
       rw [ihL, ihR, ihB, hfrontB, hfrontC, hR r ((j + 1) + 1) le_rfl (by omega),
         hB r ((j + 1) + 1) le_rfl (by omega), hR (r + 1) ((j + 1) + 1) le_rfl (by omega),
         hB (r + 1) ((j + 1) + 1) le_rfl (by omega)]
@@ -429,12 +300,12 @@ private theorem second_front (bdry : ℕ → Option (FractionRing (MvPolynomial 
       rw [h81]
       push_cast
       ring
-    · rw [grid_succ_right bdry ((j + 1) + 1) r ((j + 1) + 1) (by omega)]
-      have hfront := grid_front bdry (1 - circuitVar 1) h1front front_nonsingular
+    · rw [circuitGrid_succ_right bdry ((j + 1) + 1) r ((j + 1) + 1) (by omega)]
+      have hfront := circuitGrid_front bdry (1 - circuitVar 1) h1front front_nonsingular
         (j + 1) r (by omega)
-      obtain ⟨_, hR, hB⟩ := grid_eq_one bdry ((j + 1) + 1)
-      rw [grid_eq_one_fun bdry ((j + 1) + 1) r (((j + 1) + 1) + 1) le_rfl (by omega),
-        grid_eq_one_fun bdry ((j + 1) + 1) (r + 1) (((j + 1) + 1) + 1) le_rfl (by omega)]
+      obtain ⟨_, hR, hB⟩ := circuitGrid_eq_one bdry ((j + 1) + 1)
+      rw [circuitGrid_eq_one_fun bdry ((j + 1) + 1) r (((j + 1) + 1) + 1) le_rfl (by omega),
+        circuitGrid_eq_one_fun bdry ((j + 1) + 1) (r + 1) (((j + 1) + 1) + 1) le_rfl (by omega)]
       simp only [circuitRightEdge, circuitLeftArm, circuitRightArm, circuitTopArm]
       rw [hfront, hR r ((j + 1) + 1) le_rfl (by omega), hB r ((j + 1) + 1) le_rfl (by omega)]
       have hd : circuitVar 1 + 3 * 9 ^ (j + 1) - 1 ≠ 0 := by
@@ -442,13 +313,13 @@ private theorem second_front (bdry : ℕ → Option (FractionRing (MvPolynomial 
         intro hcon
         apply hns
         linear_combination -hcon
-      exact rightEdge_value _ _ (pow_ne_zero _ (by norm_num)) hd
-    · rw [grid_succ_base bdry ((j + 1) + 1) r ((j + 1) + 1)]
-      have hfront := grid_front bdry (1 - circuitVar 1) h1front front_nonsingular
+      exact (rightEdge_value _ _ (pow_ne_zero _ (by norm_num)) hd).trans (by ring)
+    · rw [circuitGrid_succ_base bdry ((j + 1) + 1) r ((j + 1) + 1)]
+      have hfront := circuitGrid_front bdry (1 - circuitVar 1) h1front front_nonsingular
         (j + 1) (r + 1) (by omega)
-      obtain ⟨_, hR, hB⟩ := grid_eq_one bdry ((j + 1) + 1)
-      rw [grid_eq_one_fun bdry ((j + 1) + 1) (r + 2) (((j + 1) + 1) + 1) le_rfl (by omega),
-        grid_eq_one_fun bdry ((j + 1) + 1) (r + 1) (((j + 1) + 1) + 1) le_rfl (by omega)]
+      obtain ⟨_, hR, hB⟩ := circuitGrid_eq_one bdry ((j + 1) + 1)
+      rw [circuitGrid_eq_one_fun bdry ((j + 1) + 1) (r + 2) (((j + 1) + 1) + 1) le_rfl (by omega),
+        circuitGrid_eq_one_fun bdry ((j + 1) + 1) (r + 1) (((j + 1) + 1) + 1) le_rfl (by omega)]
       simp only [circuitBaseEdge, circuitLeftArm, circuitRightArm, circuitTopArm]
       rw [hfront, hR (r + 1) ((j + 1) + 1) le_rfl (by omega),
         hB (r + 1) ((j + 1) + 1) le_rfl (by omega)]
@@ -457,7 +328,7 @@ private theorem second_front (bdry : ℕ → Option (FractionRing (MvPolynomial 
         intro hcon
         apply hns
         linear_combination -hcon
-      exact rightEdge_value _ _ (pow_ne_zero _ (by norm_num)) hd
+      exact (rightEdge_value _ _ (pow_ne_zero _ (by norm_num)) hd).trans (by ring)
 
 private theorem sum_add_G (s : ℕ) (G : ℕ → ℚ) (p q : ℚ[X]) :
     (p + q).sum (fun i b => b * G (s + i)) =
