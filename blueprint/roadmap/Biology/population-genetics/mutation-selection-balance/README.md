@@ -49,5 +49,3 @@
 - [Almost-sure repeated clicking of a finite mutation ratchet](muller-s-ratchet-model-and-almost-sure-clicking.md)
 
 - [Fates of a duplicated gene in a finite duplication–degeneration–complementation model](gene-duplicate-fates-in-a-finite-ddc-style-model.md)
-- [Metastability of the two-type Moran model with one-way mutation](metastability-of-the-two-type-moran-model-with-one-way-mutation.md)
-- [Poisson clicktimes of the tournament ratchet](poisson-clicktimes-of-the-tournament-ratchet.md)

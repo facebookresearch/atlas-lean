@@ -16,6 +16,3 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Pedigree kinship and inbreeding](pedigree-kinship-and-inbreeding/README.md)
 
 - [Optimal selection indices](optimal-selection-indices/README.md)
-- [Mean-field limit of polygenic selection](mean-field-limit-of-polygenic-selection/README.md)
-- [Multivariate assortative mating](multivariate-assortative-mating/README.md)
-- [Stability of the discrete multivariate breeder's equation](stability-of-the-discrete-multivariate-breeder-s-equation/README.md)

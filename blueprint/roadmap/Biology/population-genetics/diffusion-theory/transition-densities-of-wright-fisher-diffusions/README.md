@@ -13,5 +13,3 @@
 - [Orthonormal normalization of shifted Jacobi polynomials](jacobi-and-gegenbauer-polynomials-on-0-1.md)
 
 - [Jacobi series of the Wright–Fisher transition density with mutation](jacobi-series-of-the-mutation-transition-density.md)
-- [Dirichlet-mixture transition function via gamma duality](dirichlet-mixture-transition-function-via-gamma-duality.md)
-- [Gamma duality for the Wright-Fisher diffusion with genic selection](gamma-duality-for-the-wright-fisher-diffusion-with-genic-selection.md)

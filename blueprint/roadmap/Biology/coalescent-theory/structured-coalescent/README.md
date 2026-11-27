@@ -42,4 +42,3 @@
 - [Coalescing random walks dual to the voter model on a finite graph](coalescing-random-walks-dual-to-the-voter-moran.md)
 - [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
 - [Isolation by distance](isolation-by-distance.md)
-- [Structured coalescent with soft bottlenecks](soft-bottleneck-structured-coalescent.md)

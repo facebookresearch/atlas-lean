@@ -25,4 +25,3 @@ Statistical methods for genome-wide association studies, heritability estimation
 - [Stratified LD-score regression](stratified-ld-score-regression/README.md)
 - [Testing LD consistency of association statistics](testing-ld-consistency-of-association-statistics/README.md)
 - [Transmission disequilibrium test](transmission-disequilibrium-test/README.md)
-- [Latent-factor models of multi-phenotype GWAS](latent-factor-models-of-multi-phenotype-gwas/README.md)

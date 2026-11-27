@@ -26,3 +26,6 @@ The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamic
 
 - [Conditioned Wright–Fisher diffusions](conditioned-wright-fisher-diffusions/README.md)
 - [Numerical analysis of Wright–Fisher equations](numerical-analysis-of-wright-fisher-equations/README.md)
+
+- [Diffusion hidden Markov models and filtering](diffusion-hidden-markov-models/README.md)
+- [Two-size Wright–Fisher model](two-size-wright-fisher-model/README.md)

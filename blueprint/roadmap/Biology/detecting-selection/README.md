@@ -14,4 +14,3 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Tajima's D](tajima-s-d/README.md)
 
 - [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)
-- [Exact MCMC for selection and allele age](exact-mcmc-for-selection-and-allele-age/README.md)

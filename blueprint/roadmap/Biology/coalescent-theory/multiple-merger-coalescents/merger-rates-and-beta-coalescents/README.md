@@ -14,4 +14,3 @@
 - [Exponential edge lifting constructs the finite Bolthausen–Sznitman coalescent](lifting-the-edges-of-a-random-recursive-tree-at.md)
 
 - [The Beta-coalescent on a finite sample](beta-2-alpha-alpha-coalescent-n-sample-chains-pa.md)
-- [Incomplete Beta-coalescent from truncated offspring numbers](incomplete-beta-coalescent-from-truncated-offspring-numbers.md)
