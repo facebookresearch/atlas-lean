@@ -118,7 +118,8 @@ def reserve (i : Fin (n + 1)) : ℝ := complete C i (Fin.last n) - latest C i
 /-- Observed cumulative amounts do not decrease across any adjacent observed pair in a row. -/
 def Nondecreasing : Prop := ∀ i j (h : i + (j + 1) ≤ n), C i j (by omega) ≤ C i (j + 1) h
 
-/-- Termwise comparison on the paired years bounds each fitted factor below by one. -/
+/-- If the observed rows are nondecreasing and the paired denominator at age `j` is strictly
+positive, the fitted factor from age `j` to `j + 1` is at least one. -/
 theorem one_le_factor (hmono : Nondecreasing C) (j : Fin n) (hpos : 0 < pairedBase C j) :
     1 ≤ factor C j := by
   apply (one_le_div hpos).mpr
