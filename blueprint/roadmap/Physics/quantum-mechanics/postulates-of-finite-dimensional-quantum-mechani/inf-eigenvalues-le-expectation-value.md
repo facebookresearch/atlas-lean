@@ -1,0 +1,3 @@
+# Variational principle for the smallest eigenvalue
+
+Let $\mathbb{C}^n$ carry its standard inner product $\langle\cdot,\cdot\rangle$ (conjugate-linear in the first argument); a state $\psi$ is normalized when $\lVert\psi\rVert = 1$. For an $n \times n$ complex matrix $A$ and any vector $\psi$, the expectation value of $A$ in $\psi$ is $\langle A\rangle_\psi = \operatorname{Re}\langle\psi, A\psi\rangle$; it is the expectation of the observable $A$ in the state $\psi$ when $A$ is Hermitian and $\psi$ is normalized. If $n \ge 1$ and $A$ is Hermitian, then the smallest eigenvalue of $A$ is at most $\langle A\rangle_\psi$ for every normalized $\psi$.
