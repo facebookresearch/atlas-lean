@@ -1,0 +1,3 @@
+# Sampling bound of a monadic CPA adversary
+
+A [monadic CPA adversary](mcpaadversary.md) makes at most $s$ sampling steps when its first stage satisfies the [sampling bound](sample-bounded-with.md) with budget $s$ and the following condition on outputs: at an output $((m_0, m_1), g)$ reached with $j$ sampling units unused, for **each** possible challenge ciphertext $c$, the second stage $g(c)$ makes at most $j$ sampling steps along every path. So every first-stage path, followed by the second stage on any challenge ciphertext, makes at most $s$ sampling steps in total. Encryption queries are free.

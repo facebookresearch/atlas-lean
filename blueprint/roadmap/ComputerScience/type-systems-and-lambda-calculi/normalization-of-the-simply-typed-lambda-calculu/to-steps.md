@@ -1,0 +1,3 @@
+# Reduction in exactly n call-by-value steps is multi-step reduction
+
+Consider call-by-value reduction $t \to u$ on intrinsically typed terms of the simply typed lambda calculus (left-to-right and weak: an application first reduces its function position, then its argument once the function is a value, and $(\lambda b)\,a$ contracts to the instantiation $b[a]$ only when $a$ is a value, a value being a lambda abstraction; no step goes under a binder). For every natural number $n$ and terms $t, u$ of type $A$ in context $\Gamma$, if $t \to^n u$ in exactly $n$ steps, then $t \to^* u$, where $\to^*$ is the reflexive transitive closure of one-step reduction.
