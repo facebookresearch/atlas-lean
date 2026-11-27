@@ -17,6 +17,13 @@ import Mathlib.NumberTheory.ZetaValues
 
 `eulerPoly_eq_binomial_average` expresses each Euler polynomial as a finite alternating sum
 of binomial averages. The proof uses the average of translation by the two half-steps.
+
+## References
+
+* Nouara Mokhtari, Rachid Boumahdi, and Farid Bencherif,
+  *Generalizations of Several Explicit Formulas for Euler Polynomials*, Section 1 and
+  Theorem 4.1.
+* NIST Digital Library of Mathematical Functions, equation (24.4.2) (`eulerPoly_shift`).
 -/
 
 @[expose] public section
