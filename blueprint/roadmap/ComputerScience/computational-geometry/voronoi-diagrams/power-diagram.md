@@ -9,4 +9,4 @@ A *weighted site* is a pair $(p, w)$ of a point $p \in \mathbb{R}^d$ and a real 
 
 ## Sources
 
-- F. Aurenhammer, "Voronoi diagrams — a survey of a fundamental geometric data structure", *ACM Computing Surveys* 23(3), 1991, <https://doi.org/10.1145/116873.116880>: pp. 355–356, the power distance $\delta^2(x, p) - w$ of weighted sites, the power line of two circles, and Figure 4 (power diagram of seven circles)
+- F. Aurenhammer, "Voronoi diagrams — a survey of a fundamental geometric data structure", *ACM Computing Surveys* 23(3), 1991, <https://doi.org/10.1145/116873.116880>: pp. 355–356, the power distance $\delta^2(x, p) - w$ of weighted sites, the power line of two circles; and Figure 4, p. 349 (power diagram for seven circles)
