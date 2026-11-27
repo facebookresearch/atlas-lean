@@ -1,0 +1,20 @@
+# Correctness and cost of bucket elimination
+
+For any elimination order covering all variables, bucket elimination returns the contraction $\sum_{\sigma} \prod_{\phi} \phi(\sigma)$ of the factor network (in particular the number of solutions of a CSP, or the partition function of a weighted CSP), and its time and space are exponential in the induced width $w^*$ of the order (Dechter, Theorem 4). The proof sketch bounds the number of semiring operations explicitly; on the word RAM with unit-cost multiplication, the same bounds hold for instructions up to a constant factor, at word sizes that hold all intermediate entries.
+
+## Proof sketch
+
+Distributivity: the sum over $x_i$ commutes with every factor not containing $x_i$, so eliminating $x_i$ preserves the contraction. Each entry of a bucket's new factor costs $d(|\text{bucket}| - 1)$ multiplications and $d - 1$ additions, so the bucket costs at most $d^{\,|\text{joint scope}|} \cdot |\text{bucket}|$ operations, and its joint scope has at most $w^* + 1$ variables. Suppose every variable lies in the scope of some initial factor. A factor containing a variable either lies in that variable's bucket or was absorbed into a factor that still contains it, so no bucket is empty and each bucket replaces at least one live factor by one; the number of live factors never increases, at most $|F|$ constant factors remain, and multiplying them costs at most $\max(|F| - 1, 0)$ operations. With $|\text{bucket}| \le |F|$ the total is therefore at most $\ell \cdot |F| \cdot d^{\,w^* + 1} + \max(|F| - 1, 0)$ semiring operations, exponential in $w^*$ for fixed $\ell$, $|F|$ and $d$. The final term is needed: one variable with $d = 2$, one factor on it and $100$ factors with empty scope cost $1 + 100$ operations.
+
+## Depends on
+
+- [Bucket elimination over explicit factor tables](bucket-elimination-over-factor-tables.md)
+- [The word-RAM model](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
+
+## Proof depends on
+
+- [Variable elimination computes the partition function](../../machine-learning/probabilistic-graphical-models/variable-elimination-and-belief-propagation/partition-eq.md)
+
+## Sources
+
+- R. Dechter, "Bucket Elimination: A Unifying Framework for Reasoning", Artificial Intelligence 113(1-2), 1999, Theorem 4 (p. 61); author's copy: <http://ics.uci.edu/~dechter/publications/r76A.pdf>.

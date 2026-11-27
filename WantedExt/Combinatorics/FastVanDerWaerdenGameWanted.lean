@@ -174,19 +174,6 @@ public theorem_wanted isSymmetric_of_makerWinsWithin_card (S : Finset ℕ)
     (hS : 2 ≤ S.card) (h : MakerWinsWithin S S.card ∅ ∅) :
     IsSymmetric (S.image fun s : ℕ => (s : ℚ))
 
-/-- **Possible types of a symmetric set.** Let $S$ be a finite set of rational numbers with
-$n \ge 4$ elements. If $S$ is symmetric of type $(i, j)$, with positions counted from $0$, then
-$(i, j)$ is $(0, n - 1)$, $(1, n - 1)$ or $(0, n - 2)$. In the paper's one-based numbering these
-are the types $(1, n)$, $(2, n)$ and $(1, n - 1)$.
-
-Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
-Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Lemma 2
-(`integers-2026-A40-lem-2`). -/
-public theorem_wanted isSymmetricOfType_cases (S : Finset ℚ) (hS : 4 ≤ S.card)
-    (i j : Fin S.card) (h : IsSymmetricOfType S i j) :
-    (i.val = 0 ∧ j.val = S.card - 1) ∨ (i.val = 1 ∧ j.val = S.card - 1) ∨
-      (i.val = 0 ∧ j.val = S.card - 2)
-
 /-- **Zero-geometric copies of symmetric sets.** Let $S = \{s_0 < s_1 < \dots < s_{n-1}\}$ be a
 finite set of $n$ rational numbers, and let $i, j < n$ be such that $S$ is symmetric of type
 $(i, j)$, with positions counted from $0$. If $i = 1$ and $j = n - 1$, then there is a rational

@@ -5,3 +5,5 @@ more than half of the values are at most $y_j$:
 $\operatorname{med}(y) = \inf\{y_j : s < 2 \cdot \#\{i : y_i \le y_j\}\}$. For odd $s$ this is the
 usual median, for even $s$ the upper of the two middle values, and for $s = 0$ it is $0$ (the
 infimum of the empty set is read as $0$).
+
+For a nonempty sample, equivalently, it is the entry at index $\lfloor s/2 \rfloor$ (counting from $0$) of the values sorted in nondecreasing order, ties included.

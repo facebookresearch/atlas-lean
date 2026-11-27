@@ -1,0 +1,3 @@
+# The concatenation of a function below its dual with its dual
+
+Order $\{0,1\}$ by $0 < 1$, inputs coordinatewise and Boolean functions pointwise, with $\lor$ the pointwise disjunction; let $f^*(x) = \lnot f(\bar x)$ be the dual of $f$, where $\bar x$ is the coordinatewise complement of $x$, and call a Boolean function self-dual monotone when it is monotone and equals its dual. Let $b$ be a monotone Boolean function on $\{0,1\}^n$ with $b \le b^*$. Then the Boolean function on $\{0,1\}^{n+1}$ sending $(x, y)$, with $x \in \{0,1\}^n$ and $y \in \{0,1\}$, to $b(x)$ if $y = 0$ and to $b^*(x)$ if $y = 1$ (the concatenation $b \cdot b^*$) is self-dual monotone.

@@ -13,9 +13,25 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Finset.Range
 import Mathlib.Data.List.OfFn
 
-/-! Tests for Hales–Jewett configurations in J-sets and C-sets of words. -/
+/-! Tests for Hales–Jewett configurations in large sets of words. -/
 
 open MetaMathlibExt
+
+-- The empty initial level has one substitution for zero variables.
+example {D : Set (FreeSemigroup ℕ)} (hD : IsMulPiecewiseSyndetic D) : D.Nonempty := by
+  obtain ⟨w, _, hw⟩ := exists_variableWord_subst_mem_of_isMulPiecewiseSyndetic
+    Finset.range Finset.range_mono (fun x => ⟨x + 1, Finset.mem_range.mpr (Nat.lt_succ_self x)⟩)
+    (m := 0) (n := 0) hD
+  exact ⟨_, hw Fin.elim0 (fun i => i.elim0)⟩
+
+-- The same word contains both variables and works for all four binary assignments.
+example {D : Set (FreeSemigroup Bool)} (hD : IsMulPiecewiseSyndetic D) :
+    ∃ w : FreeSemigroup (Bool ⊕ Fin 2), Sum.inr 0 ∈ w.head :: w.tail ∧
+      Sum.inr 1 ∈ w.head :: w.tail ∧
+      ∀ a : Fin 2 → Bool, FreeSemigroup.map (Sum.elim id a) w ∈ D := by
+  obtain ⟨w, hvars, hw⟩ := exists_variableWord_subst_mem_of_isMulPiecewiseSyndetic
+    (fun _ => Finset.univ) monotone_const (fun x => ⟨0, Finset.mem_univ x⟩) 0 2 hD
+  exact ⟨w, hvars 0, hvars 1, fun a => hw a (fun i => Finset.mem_univ (a i))⟩
 
 -- With no variables, the unique substitution gives a member of D even at an empty level.
 example {D : Set (FreeSemigroup ℕ)} (hD : IsMulJSet D) : D.Nonempty := by
@@ -111,5 +127,41 @@ example {D : Set (FreeSemigroup Bool)} (hD : IsCSet D) :
     fun _ _ h => Nat.mul_lt_mul_of_pos_left h (by decide)
   simpa [List.ofFn_succ] using
     hw 1 _ (Fin.cons a fun _ => b) hm (fun _ _ => Finset.mem_univ _)
+
+-- The same words give both the C-set product for independent assignments and an ordered pattern
+-- product, even when an intermediate level is skipped.
+example {C : Set (FreeSemigroup Bool)} (hC : IsCSet C) :
+    ∃ w : ℕ → FreeSemigroup (Bool ⊕ Fin 3), (∀ m i, Sum.inr i ∈ (w m).head :: (w m).tail) ∧
+      (∀ a b : Fin 3 → Bool,
+        FreeSemigroup.map (Sum.elim id a) (w 0) * FreeSemigroup.map (Sum.elim id b) (w 2) ∈ C) ∧
+      ∃ (r : ℕ) (t : Fin (r + 1) → ℕ), StrictMono t ∧
+        firstTwo (w 0) ++ firstTwo (w 2) = (List.ofFn fun j => runs (t j)).flatten := by
+  have hy : ∀ i : Fin 2, i ∈ [1, 0] := by decide
+  obtain ⟨w, hvars, hw⟩ := exists_variableWords_prod_mem_prod_pattern_mem_finiteProducts_of_isCSet
+    (fun _ => Finset.univ) monotone_const (fun x => ⟨0, Finset.mem_univ x⟩)
+    (k := 2) (n := 3) (by decide) (by decide) runs (fun _ i => List.mem_append_left _ (hy i)) hC
+  have hm : StrictMono (fun j : Fin 2 => 2 * j.val) :=
+    fun _ _ h => Nat.mul_lt_mul_of_pos_left h (by decide)
+  obtain ⟨hmem, r, t, ht, hpat⟩ := hw 1 _ hm
+  refine ⟨w, hvars, fun a b => ?_, r, t, ht, ?_⟩
+  · simpa [List.ofFn_succ] using hmem (Fin.cons a fun _ => b) (fun _ _ => Finset.mem_univ _)
+  · change (List.ofFn fun j : Fin 2 => firstTwo (w (2 * j.val))).flatten = _ at hpat
+    simpa [List.ofFn_succ] using hpat
+
+-- Even at the empty initial alphabet level, a singleton stage realizes a nonempty pattern block.
+example {C : Set (FreeSemigroup ℕ)} (hC : IsCSet C) :
+    ∃ w : FreeSemigroup (ℕ ⊕ Fin 2),
+      2 ≤ ((w.head :: w.tail).filterMap (Sum.elim (fun _ => none) fun i : Fin 2 =>
+        if h : (i : ℕ) < 1 then some (⟨i, h⟩ : Fin 1) else none)).length := by
+  obtain ⟨w, _, hw⟩ := exists_variableWords_prod_mem_prod_pattern_mem_finiteProducts_of_isCSet
+    Finset.range Finset.range_mono (fun x => ⟨x + 1, Finset.mem_range.mpr (Nat.lt_succ_self x)⟩)
+    (k := 1) (n := 2) (by decide) (by decide) (fun _ => [0, 0])
+    (fun _ i => by simp [Subsingleton.elim i 0]) hC
+  obtain ⟨_, r, _, _, hpat⟩ := hw 0 (fun _ => 0) (Fin.strictMono_iff_lt_succ.mpr fun i => i.elim0)
+  refine ⟨w 0, ?_⟩
+  have hlength := congrArg List.length hpat
+  simp only [List.ofFn_succ, List.ofFn_zero, List.flatten_cons, List.flatten_nil, List.append_nil,
+    List.length_append, List.length_cons, List.length_nil] at hlength
+  omega
 
 end MetaMathlibExt.InfinitaryHalesJewettTest
