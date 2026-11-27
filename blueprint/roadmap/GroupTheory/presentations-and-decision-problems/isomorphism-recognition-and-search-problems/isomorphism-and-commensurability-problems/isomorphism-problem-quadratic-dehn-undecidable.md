@@ -13,12 +13,12 @@ By contrast, the isomorphism problem is solvable for hyperbolic groups (Sela; Da
 
 ## Proof depends on
 
-- [Novikov–Boone theorem (unsolvability of the word problem)](../../word-problem-for-groups/novikov-unsolvable.md)
+- [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-The proof builds on the authors' construction of finitely presented groups with quadratic Dehn function from $S$-machines, as in their group with quadratic Dehn function and undecidable conjugacy problem. Embedding a recursive family of presentations, uniform in a parameter that encodes an undecidable question, into groups that all keep quadratic Dehn function, the source arranges that a member is isomorphic to a fixed group $\bar G$ exactly when the encoded question has a positive answer.
+The proof builds on the authors' construction of finitely presented groups with quadratic Dehn function from $S$-machines, as in their group with quadratic Dehn function and undecidable conjugacy problem. Starting from a Turing machine $M_0$ whose language of accepted input words is not recursive, the source builds finitely presented groups $G_k$ with quadratic Dehn function, one for each input word $\alpha_k$, such that $G_k$ is isomorphic to a fixed group $\bar G$ exactly when $M_0$ accepts $\alpha_k$ (Lemma 4.10 and the proof of Theorem 1.1). The $S$-machine construction and its lemmas have no page here.
 
 ## Sources
 
-- A. Yu. Olshanskii and M. V. Sapir, "Algorithmic problems in groups with quadratic Dehn function", Groups, Geometry, and Dynamics 16 (2022), no. 4, 1289–1339, https://doi.org/10.4171/GGD/694; read in arXiv:2012.10417v1 (Theorem 1.1 of arXiv:2012.10417v1).
+- A. Yu. Olshanskii and M. V. Sapir, "Algorithmic problems in groups with quadratic Dehn function", Groups, Geometry, and Dynamics 16 (2022), no. 4, 1289–1339, https://doi.org/10.4171/GGD/694; read in arXiv:2012.10417v1 (Theorem 1.1, its proof and Lemma 4.10 of arXiv:2012.10417v1).

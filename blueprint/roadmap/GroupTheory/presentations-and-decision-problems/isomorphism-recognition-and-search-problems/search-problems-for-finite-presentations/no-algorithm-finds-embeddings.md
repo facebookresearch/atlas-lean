@@ -9,6 +9,7 @@ Here $W(X)$ is the set of words over $X \cup X^{-1}$, a finite presentation $P =
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
+- [Group homomorphism](../../../semigroups-and-monoids/group-homomorphism.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

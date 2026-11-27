@@ -1,4 +1,4 @@
-# The word problem of a finitely presented amenable group is unsolvable on every exponentially generic set
+# A finitely presented amenable group with unsolvable word problem has unsolvable word problem on every exponentially generic set
 
 If $G$ is a finitely presented amenable group with unsolvable word problem, then for every finite generating set no algorithm solves the word problem on an exponentially generic set of words.
 

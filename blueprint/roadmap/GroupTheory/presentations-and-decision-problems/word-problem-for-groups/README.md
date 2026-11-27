@@ -18,4 +18,4 @@
 - [A stackable group with unsolvable word problem](stackable-group-unsolvable-word-problem.md)
 - [Infinite algorithmically finite groups have unsolvable generic word problem](algorithmically-finite-group-unsolvable-generic-word-problem.md)
 - [Some finitely presented solvable group has unsolvable generic equality problem](solvable-group-unsolvable-generic-equality.md)
-- [The word problem of a finitely presented amenable group is unsolvable on every exponentially generic set](amenable-unsolvable-word-problem-not-exponentially-generic.md)
+- [A finitely presented amenable group with unsolvable word problem has unsolvable word problem on every exponentially generic set](amenable-unsolvable-word-problem-not-exponentially-generic.md)

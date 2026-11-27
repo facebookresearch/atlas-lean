@@ -19,8 +19,8 @@ As a consequence, Stallings' theorem that a finitely generated group with more t
 
 ## Expansion
 
-Lemma 5.4: no algorithm, given a presentation $\Pi_{n,a} * \Pi_{n,b} * \Pi_{n,c}$ in which at most one of $a, b, c$ lies in $W_n$, outputs two finite presentations of non-trivial groups whose free product is isomorphic to the given group. The proof shows that such a splitting would single out factors that are non-trivial, contradicting the recursive inseparability arguments of Section 4.
+Lemma 5.4: no algorithm, given a presentation $\Pi_{n,a} * \Pi_{n,b} * \Pi_{n,c}$ in which at most one of $a, b, c$ lies in $W_n$, outputs two finite presentations of non-trivial groups whose free product is isomorphic to the given group. The proof shows that such a splitting would single out a factor that is non-trivial, contradicting Lemma 3.4 of the source: no partial recursive function picks, from finitely many numbers at most one of which lies in a recursively enumerable set $W_n$, one that lies outside $W_n$.
 
 ## Sources
 
-- M. Chiodo, "Finding non-trivial elements and splittings in groups", Journal of Algebra 331 (2011), no. 1, 271–284, https://doi.org/10.1016/j.jalgebra.2010.12.013; arXiv:1002.2786v3 (Lemma 5.4, Theorem 5.5, Corollary 7.2 and Corollary 7.4 of arXiv:1002.2786v3).
+- M. Chiodo, "Finding non-trivial elements and splittings in groups", Journal of Algebra 331 (2011), no. 1, 271–284, https://doi.org/10.1016/j.jalgebra.2010.12.013; arXiv:1002.2786v3 (Lemma 3.4, Lemma 5.4, Theorem 5.5, Corollary 7.2 and Corollary 7.4 of arXiv:1002.2786v3).

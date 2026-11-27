@@ -12,6 +12,7 @@ The source deduces this from a conjugacy-preserving embedding theorem: every fin
 
 - [Branch group](../maximal-subgroups-of-branch-groups/is-branch-group-2.md)
 - [Group](../../../group-basics/group.md)
+- [Recursively presented group](../../../orderable-groups/word-problem-for-orderable-groups/is-recursively-presented.md)
 - [Solvable word problem](../../../presentations-and-decision-problems/word-problem-for-groups/word-problem-solvable.md)
 - [Solvable conjugacy problem for a quotient of a free group](../../../presentations-and-decision-problems/decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)

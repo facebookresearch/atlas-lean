@@ -9,11 +9,13 @@ The groups constructed are neither bicombable nor automatic; for those classes t
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
+- [Cayley digraph](../../../../GraphTheory/algebraic-graph-theory/part-01/directed-cayley-graph.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 - [Novikov–Boone theorem (unsolvability of the word problem)](../../word-problem-for-groups/novikov-unsolvable.md)
+- [Serre's Property FA](../../../free-groups/automorphisms-of-free-groups/finite-index-subgroups-of-automorphism-groups-of/has-property-fa.md)
 
 ## Expansion
 

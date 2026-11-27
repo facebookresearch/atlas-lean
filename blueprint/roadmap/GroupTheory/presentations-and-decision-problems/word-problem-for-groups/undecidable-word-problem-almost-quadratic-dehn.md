@@ -14,7 +14,7 @@ By Theorem 1.1 of the source, there exists a finitely presented group $G$ with u
 
 ## Proof depends on
 
-- [Novikov–Boone theorem (unsolvability of the word problem)](novikov-unsolvable.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
