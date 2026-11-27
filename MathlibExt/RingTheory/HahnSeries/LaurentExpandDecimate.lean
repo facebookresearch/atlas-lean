@@ -57,8 +57,9 @@ section Expand
 
 variable {R : Type*} [Semiring R]
 
-/-- **Expansion of Laurent series.** It replaces `X ^ k` by `X ^ (N * k)`, stretching the
-exponents by `N`. -/
+/-- **Expansion of Laurent series.** For a semiring `R` and a positive natural number `N`
+(`[NeZero N]`), `expand R N` is the ring homomorphism of Laurent series over `R` that replaces
+`X ^ k` by `X ^ (N * k)`, stretching the exponents by `N`. -/
 public noncomputable def expand (R : Type*) [Semiring R] (N : ℕ) [NeZero N] :
     LaurentSeries R →+* LaurentSeries R :=
   HahnSeries.embDomainRingHom (AddMonoidHom.mulLeft (N : ℤ))
@@ -123,8 +124,9 @@ section Decimate
 
 variable {K : Type*} (p : ℕ) [NeZero p]
 
-/-- **Bounded support of decimated coefficients.** The coefficient support of a decimated
-Laurent series is bounded below. -/
+/-- **Bounded support of decimated coefficients.** For a positive natural number `p`
+(`[NeZero p]`) and a Laurent series `x` whose coefficients lie in a type with zero, the set of
+integers `k` with `x.coeff (p * k) ≠ 0` is bounded below. -/
 public theorem bddBelow_support_decimate [Zero K] (x : LaurentSeries K) :
     BddBelow (Function.support fun k : ℤ => x.coeff ((p : ℤ) * k)) := by
   by_cases hne : x.support.Nonempty
@@ -146,8 +148,10 @@ public theorem bddBelow_support_decimate [Zero K] (x : LaurentSeries K) :
 variable [Semiring K]
 
 variable (K) in
-/-- **Decimation of Laurent series.** It keeps only the coefficients whose index is divisible
-by `p`, reindexed by division by `p`. -/
+/-- **Decimation of Laurent series.** For a semiring `K` and a positive natural number `p`
+(`[NeZero p]`), `decimate K p` is the `K`-linear map of Laurent series over `K` that keeps only
+the coefficients whose index is divisible by `p`, reindexed by division by `p`: the coefficient
+of `X ^ k` in `decimate K p x` is the coefficient of `X ^ (p * k)` in `x`. -/
 public noncomputable def decimate : LaurentSeries K →ₗ[K] LaurentSeries K where
   toFun x := HahnSeries.ofSuppBddBelow (fun k : ℤ => x.coeff ((p : ℤ) * k))
     (bddBelow_support_decimate p x)
@@ -163,8 +167,9 @@ public theorem coeff_decimate (x : LaurentSeries K) (k : ℤ) :
     (decimate K p x).coeff k = x.coeff ((p : ℤ) * k) := by
   simp only [decimate, LinearMap.coe_mk, AddHom.coe_mk, HahnSeries.coeff_ofSuppBddBelow]
 
-/-- **Decimation undoes expansion.** Decimating the expansion of a Laurent series by the same
-factor gives the series back. -/
+/-- **Decimation undoes expansion.** For a semiring `K` and a positive natural number `p`
+(`[NeZero p]`), decimating by `p` the expansion by `p` of a Laurent series over `K` gives the
+series back: `decimate K p (expand K p x) = x`. -/
 public theorem decimate_expand (x : LaurentSeries K) :
     decimate K p (expand K p x) = x := by
   ext k
