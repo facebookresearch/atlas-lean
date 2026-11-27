@@ -56,8 +56,9 @@ private theorem not_free_of_factor_mem {m n q : ℕ} {A : Finset ℕ} (hm : 0 < 
     simpa only [hqm] using Nat.mul_dvd_mul_left q hdvd
   simpa [nsmul_eq_mul, Finset.mul_sum] using (ZMod.natCast_eq_zero_iff _ _).mpr hnSum
 
-private theorem replicate_one_free {l r n : ℕ} {A : Finset ℕ} (hsub : A ⊆ Finset.Icc 1 r)
-    (hlt : l * r < n) : IsWeightedZeroSumFree A (List.replicate l (1 : ZMod n)) := by
+private theorem replicate_one_free_of_subset {l r n : ℕ} {A : Finset ℕ}
+    (hsub : A ⊆ Finset.Icc 1 r) (hlt : l * r < n) :
+    IsWeightedZeroSumFree A (List.replicate l (1 : ZMod n)) := by
   intro I hI a ha hz
   have ha' : ∀ i ∈ I, 1 ≤ a i ∧ a i ≤ r := fun i hi => Finset.mem_Icc.mp (hsub (ha i hi))
   have hpos : 0 < ∑ i ∈ I, a i := Finset.sum_pos (fun i hi => (ha' i hi).1) hI
@@ -69,6 +70,15 @@ private theorem replicate_one_free {l r n : ℕ} {A : Finset ℕ} (hsub : A ⊆ 
   have hdvd : n ∣ ∑ i ∈ I, a i := (ZMod.natCast_eq_zero_iff _ _).mp (by
     simpa [List.get_eq_getElem, nsmul_eq_mul] using hz)
   exact (Nat.le_of_dvd hpos hdvd).not_gt hsum
+
+namespace weightedDavenport_zmod_Icc_of_dvd
+
+-- The initial-interval formula uses this specialization via `import all`.
+private theorem replicate_one_free {l r n : ℕ} (hlt : l * r < n) :
+    IsWeightedZeroSumFree (Finset.Icc 1 r) (List.replicate l (1 : ZMod n)) :=
+  replicate_one_free_of_subset (fun _ ha => ha) hlt
+
+end weightedDavenport_zmod_Icc_of_dvd
 
 /-- **Weight sets with weighted Davenport constant $m$ on $\mathbb{Z}/n\mathbb{Z}$.** Let
 $n \ge 2$ be a natural number and $m \ge 2$ a divisor of $n$. Every finite set $A$ of natural
@@ -90,7 +100,8 @@ public theorem weightedDavenport_zmod_of_dvd (m n : ℕ) (hm : 2 ≤ m) (hn : 2 
       (gc_mul_ceilDiv hm1).lt_iff_lt.mpr (by simpa using hnpos)
     have hr : (m - 1) * (n ⌈/⌉ (m - 1) - 1) < n :=
       (gc_mul_ceilDiv hm1).lt_iff_lt.mp (by omega)
-    have h := Order.add_one_le_of_lt (lt_weightedDavenport (replicate_one_free hsub hr))
+    have h := Order.add_one_le_of_lt
+      (lt_weightedDavenport (replicate_one_free_of_subset hsub hr))
     simpa only [List.length_replicate, ← Nat.cast_succ, Nat.succ_eq_add_one,
       Nat.sub_add_cancel (by omega : 1 ≤ m)] using h
 
