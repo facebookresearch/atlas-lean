@@ -16,3 +16,8 @@ Triangulations of planar point sets with empty circumcircles: edge flips, angle 
 - [Delaunay triangles are the lower faces of the lifted points](delaunay-triangles-are-lower-hull-facets-of-the-lifted-points.md)
 - [Randomized incremental Delaunay triangulation](randomized-incremental-delaunay-triangulation.md)
 - [The Delaunay triangulation is a geometric spanner](the-delaunay-triangulation-is-a-geometric-spanner.md)
+- [The closest pair is a Delaunay edge](the-closest-pair-is-a-delaunay-edge.md)
+- [Euclidean minimum spanning tree in O(n log n) time](euclidean-minimum-spanning-tree-in-o-n-log-n-time.md)
+- [Existence of constrained Delaunay triangulations](existence-of-constrained-delaunay-triangulations.md)
+- [Alpha complex](alpha-complex.md)
+- [The union of disks deformation retracts to the alpha shape](the-union-of-disks-deformation-retracts-to-the-alpha-shape.md)
