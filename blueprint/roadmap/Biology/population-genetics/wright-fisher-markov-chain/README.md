@@ -27,3 +27,5 @@
 ## Gaussian approximation of multi-locus time series
 
 - [Gaussian-process approximation of multi-locus Wright–Fisher time series](gaussian-process-approximation-of-multi-locus-wright-fisher-time-series/README.md)
+- [Dirichlet approximation of Wright–Fisher stationary laws](dirichlet-approximation-of-wright-fisher-stationary-laws/README.md)
+- [Wright–Fisher kernels](wright-fisher-kernels/README.md)
