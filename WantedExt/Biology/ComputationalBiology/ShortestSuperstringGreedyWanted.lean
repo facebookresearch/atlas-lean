@@ -19,20 +19,21 @@ string of `S` as a contiguous substring, and `OPT(S)` is the length of a shortes
   until one string remains. Theorem 12: its output has length at most `4 OPT(S)`.
 * MGREEDY repeatedly chooses `s, t` (not necessarily distinct) of maximum overlap, ties broken
   arbitrarily; if `s ≠ t` it replaces them by their merge, and if `s = t` it moves `s` to a set
-  `T`; when no string is left it outputs the concatenation of `T`. Theorems 8 and 10 together: its
-  output has length at most `4 OPT(S)`.
+  `T`; when no string is left it outputs the concatenation of the strings of `T`, in any order.
+  Section 3 (its opening paragraph), from Theorems 8 and 10: its output has length at most
+  `4 OPT(S)`.
 * TGREEDY runs MGREEDY and then merges the strings of `T` by GREEDY. Theorem 11: its output has
   length at most `3 OPT(S)`.
 
 Every run with any tie-breaking is covered: the runs are relations (`GreedyReaches`,
-`MGreedyReaches`), and the theorems hold for every result they relate to `S`. The strings of `S`
-are listed without repetition. Not recorded here: Theorem 18 (shortest superstring is MAX
-SNP-hard), which needs the class MAX SNP and L-reductions. NP-completeness variants of the
-decision problem are in `WantedExt.Complexity.NPComplete`.
+`MGreedyReaches`), and the theorems hold for every result they relate to `S`, MGREEDY's for every
+order of the strings of `T`. The strings of `S` are listed without repetition. Not recorded here:
+Theorem 18 (shortest superstring is MAX SNP-hard), which needs the class MAX SNP and L-reductions.
+NP-completeness variants of the decision problem are in `WantedExt.Complexity.NPComplete`.
 
 Sources: A. Blum, T. Jiang, M. Li, J. Tromp and M. Yannakakis, "Linear approximation of shortest
-superstrings", Journal of the ACM 41 (1994) 630–647, doi:10.1145/179812.179818, Section 2 and
-Theorems 8, 10, 11 and 12.
+superstrings", Journal of the ACM 41 (1994) 630–647, doi:10.1145/179812.179818, Sections 2 and 3
+and Theorems 8, 10, 11 and 12.
 -/
 module
 
@@ -50,7 +51,7 @@ variable {α : Type*} [DecidableEq α]
 
 /-- **Overlap.** `ov(s, t)` is the largest `k` with `k < |s|`, `k < |t|` and the last `k` letters of
 `s` equal to the first `k` letters of `t` (so `s = u v`, `t = v w` with `|v| = k` and `u`, `w`
-nonempty): main's `Cslib.Bioinformatics.Assembly.StringOverlap.overlapAux` searching the lengths
+nonempty): `Cslib.Bioinformatics.Assembly.StringOverlap.overlapAux` searching the lengths
 below `min (|s|, |t|)`, and `0` when there is none. Unlike that module's `overlap`, which allows
 `k = min (|s|, |t|)`, it is a proper overlap, as in the source; MGREEDY's self-overlap `ov(s, s)`
 needs this. -/
@@ -94,7 +95,9 @@ inductive GreedyReaches : List (List α) → List α → Prop
 /-- `MGreedyReaches L T R`: some run of **MGREEDY** started from the working list `L` and the
 finished list `T` ends with the finished list `R`. At each step positions `i, j` (possibly equal)
 of maximum overlap among all ordered pairs are chosen, ties broken arbitrarily; if `i ≠ j` the
-two strings are replaced by their merge, and if `i = j` the string moves to the finished list. -/
+two strings are replaced by their merge, and if `i = j` the string moves to the front of the
+finished list. The source's `T` is a set; `mgreedy_le_four_opt` concatenates its strings in every
+order. -/
 inductive MGreedyReaches : List (List α) → List (List α) → List (List α) → Prop
   | done (T : List (List α)) : MGreedyReaches [] T T
   | mergeStep (L T : List (List α)) (i j : Fin L.length) (hij : i ≠ j)
@@ -118,16 +121,19 @@ public theorem_wanted greedy_le_four_opt (S : List (List α)) (hne : S ≠ []) (
     (hfree : SubstringFree S) (r : List α) (hr : GreedyReaches S r) :
     IsSuperstring r S ∧ r.length ≤ 4 * optLength S
 
-/-- **MGREEDY is a 4-approximation** (Blum, Jiang, Li, Tromp and Yannakakis 1994, Theorems 8 and
-10: MGREEDY builds an optimal cycle cover, and concatenating the opened cycles of an optimal cycle
-cover costs at most `4 OPT(S)`): for a nonempty, substring-free list `S` without repetition, for
-every run of MGREEDY from `S` with an empty finished list that ends with the finished list `T`,
-the concatenation of `T` is a common superstring of `S` of length at most `4 OPT(S)`.
+/-- **MGREEDY is a 4-approximation** (Blum, Jiang, Li, Tromp and Yannakakis 1994, Section 3, from
+Theorems 8 and 10: MGREEDY builds an optimal cycle cover, and concatenating the opened cycles of an
+optimal cycle cover costs at most `4 OPT(S)`): for a nonempty, substring-free list `S` without
+repetition, for every run of MGREEDY from `S` with an empty finished list that ends with the
+finished list `T`, and every reordering `T'` of `T` (MGREEDY outputs the concatenation of the set
+`T` in any order), the concatenation of `T'` is a common superstring of `S` of length at most
+`4 OPT(S)`.
 
-Source: Blum, Jiang, Li, Tromp and Yannakakis (1994), Theorems 8 and 10. -/
+Source: Blum, Jiang, Li, Tromp and Yannakakis (1994), Section 3, Theorems 8 and 10. -/
 public theorem_wanted mgreedy_le_four_opt (S : List (List α)) (hne : S ≠ []) (hnd : S.Nodup)
-    (hfree : SubstringFree S) (T : List (List α)) (hT : MGreedyReaches S [] T) :
-    IsSuperstring T.flatten S ∧ T.flatten.length ≤ 4 * optLength S
+    (hfree : SubstringFree S) (T : List (List α)) (hT : MGreedyReaches S [] T)
+    (T' : List (List α)) (hT' : T'.Perm T) :
+    IsSuperstring T'.flatten S ∧ T'.flatten.length ≤ 4 * optLength S
 
 /-- **TGREEDY is a 3-approximation** (Blum, Jiang, Li, Tromp and Yannakakis 1994, Theorem 11): for
 a nonempty, substring-free list `S` without repetition, for every run of MGREEDY from `S` with an

@@ -26,8 +26,9 @@ and over all structures on `n` points (sums over structures, so `X_n / S_n` is t
 * external points (unpaired points enclosed by no pair), Theorem 4.16: `E_n / S_n → 2`;
 * unpaired points, Theorem 4.17:
   `U_n / S_n ~ (2α + m(1 - 2α)) / (2 + m(1 - 2α)) · n`;
-* base pairs, Remark 4.18 (`U_n + 2 P_n = n S_n`): `P_n / S_n ~ (1 - c_U) / 2 · n`, with `c_U`
-  the constant of Theorem 4.17;
+* base pairs, Remark 4.18: the finite identity `U_n + 2 P_n = n S_n`. With Theorem 4.17 it gives
+  `P_n / S_n ~ (1 - c_U) / 2 · n`, with `c_U` the constant of Theorem 4.17, a limit the source does
+  not display;
 * stacks (maximal runs of stacked pairs `(p, q), (p + 1, q - 1), …`), Theorem 4.19:
   `N_n / S_n ~ (1 - α)²(1 + α) / (2 + m - 2mα) · n`.
 
@@ -82,7 +83,8 @@ noncomputable def externals (n : ℕ) (P : Finset (ℕ × ℕ)) : ℕ :=
   ((Finset.range n).filter fun i =>
     (∀ p ∈ P, p.1 ≠ i ∧ p.2 ≠ i) ∧ ¬ ∃ p ∈ P, p.1 < i ∧ i < p.2).card
 
-/-- The number of **unpaired points** of `P` on `n` points: `n - 2 |P|`. -/
+/-- `n - 2 |P|`: the number of **unpaired points** of `P` when `P` is a structure on `n` points,
+in which every point lies in at most one pair. -/
 def unpaired (n : ℕ) (P : Finset (ℕ × ℕ)) : ℕ :=
   n - 2 * P.card
 
@@ -139,14 +141,15 @@ public theorem_wanted tendsto_unpaired (m : ℕ) :
     Tendsto (fun n : ℕ => total m n (unpaired n) / S m n / n) atTop
       (𝓝 ((2 * alpha m + m * (1 - 2 * alpha m)) / (2 + m * (1 - 2 * alpha m))))
 
-/-- **Average number of base pairs** (Hofacker, Schuster and Stadler 1998, Remark 4.18 with
-Theorem 4.17): for every minimum hairpin size `m`, `(P_n / S_n) / n → (1 - c_U) / 2` with
-`c_U = (2α + m(1 - 2α)) / (2 + m(1 - 2α))`.
+/-- **Unpaired points and base pairs** (Hofacker, Schuster and Stadler 1998, Remark 4.18): for
+every minimum hairpin size `m` and every `n`, `U_n + 2 P_n = n S_n`, where `U_n` and `P_n` are the
+numbers of unpaired points and of base pairs summed over all structures on `n` points. With
+Theorem 4.17 it gives `(P_n / S_n) / n → (1 - c_U) / 2` with
+`c_U = (2α + m(1 - 2α)) / (2 + m(1 - 2α))`, a limit the source does not display.
 
-Source: Hofacker, Schuster and Stadler (1998), Remark 4.18 and Theorem 4.17. -/
-public theorem_wanted tendsto_pairs (m : ℕ) :
-    Tendsto (fun n : ℕ => total m n Finset.card / S m n / n) atTop
-      (𝓝 ((1 - (2 * alpha m + m * (1 - 2 * alpha m)) / (2 + m * (1 - 2 * alpha m))) / 2))
+Source: Hofacker, Schuster and Stadler (1998), Remark 4.18. -/
+public theorem_wanted total_unpaired_add_two_mul_total_card (m n : ℕ) :
+    total m n (unpaired n) + 2 * total m n Finset.card = n * S m n
 
 /-- **Average number of stacks** (Hofacker, Schuster and Stadler 1998, Theorem 4.19): for every
 minimum hairpin size `m`, `(N_n / S_n) / n → (1 - α)²(1 + α) / (2 + m - 2mα)`.

@@ -37,8 +37,10 @@ Sources: A. M. Odlyzko, "Enumeration of strings", in *Combinatorial Algorithms o
 (A. Apostolico and Z. Galil, eds.), NATO ASI Series F12, Springer, 1985, 205–228, presenting
 L. J. Guibas and A. M. Odlyzko, "String overlaps, pattern matching, and nontransitive games",
 Journal of Combinatorial Theory, Series A 30 (1981) 183–208, doi:10.1016/0097-3165(81)90005-4;
-and L. J. Guibas and A. M. Odlyzko, "Periods in strings", Journal of Combinatorial Theory,
-Series A 30 (1981) 19–42.
+L. J. Guibas and A. M. Odlyzko, "Periods in strings", Journal of Combinatorial Theory, Series A
+30 (1981) 19–42; Y. Peres, lecture notes for Math 523A, University of Washington, Lecture 6
+(2009), Section 1.1; and J. B. Miller, "Penney's game odds from no-arbitrage", arXiv:1904.09888
+(2019), Section 3.
 -/
 module
 
@@ -74,16 +76,13 @@ of `A`, while `corr A B 2 = 0`. -/
 def corr (A B : List α) (z : ℚ) : ℚ :=
   ∑ r ∈ corrSet A B, z ^ (r - 1)
 
-/-- `A` occurs in the word `w` as a contiguous factor. -/
-def Occurs (A : List α) (w : List α) : Prop :=
-  A <:+: w
-
 variable [Fintype α]
 
 open Classical in
-/-- `f(n)`: the number of words of length `n` over `α` with no occurrence of `A`. -/
+/-- `f(n)`: the number of words `w` of length `n` over `α` in which `A` is not a contiguous factor
+(`A <:+: w`, `List.IsInfix`). -/
 noncomputable def avoidCount (A : List α) (n : ℕ) : ℕ :=
-  (Finset.univ.filter fun w : Fin n → α => ¬ Occurs A (List.ofFn w)).card
+  (Finset.univ.filter fun w : Fin n → α => ¬ A <:+: List.ofFn w).card
 
 /-- The polynomial `c(x) = ∑_{r border of A} x^{|A| - r}` as a power series. -/
 noncomputable def corrSeries (A : List α) : PowerSeries ℤ :=
@@ -121,7 +120,8 @@ alphabet of `q = |α| ≥ 2` letters with the discrete measurable structure, eac
 probability `1 / q` under the probability measure `ν`, and a nonempty word `A`, the expected
 waiting time until `A` first appears is `F(q) = q AA_q = ∑_{r border of A} q^r`.
 
-Source: Odlyzko (1985), presenting Guibas and Odlyzko (1981). -/
+Source: Odlyzko (1985), presenting Guibas and Odlyzko (1981); for every alphabet size, Peres
+(2009), Section 1.1. -/
 public theorem_wanted lintegral_waitingTime [MeasurableSpace α] [DiscreteMeasurableSpace α]
     (ν : Measure α) [IsProbabilityMeasure ν] (hν : IsUniformLetterLaw ν)
     (hq : 2 ≤ Fintype.card α) (A : List α) (hA : A ≠ []) :
@@ -135,10 +135,11 @@ binary letters (each of the two letters has probability `1 / 2` under the probab
 appears before `A` are `(AA_2 - AB_2) : (BB_2 - BA_2)`. Here `XY_2` is `corr X Y 2`, which for
 such words is Odlyzko's correlation.
 
-Source: Odlyzko (1985), presenting Guibas and Odlyzko (1981). -/
+Source: Odlyzko (1985), presenting Guibas and Odlyzko (1981); for words of any lengths, Miller
+(2019), Section 3, equations (3)–(4). -/
 public theorem_wanted conway_odds (ν : Measure Bool) [IsProbabilityMeasure ν]
     (hν : IsUniformLetterLaw ν) (A B : List Bool) (hA : A ≠ []) (hB : B ≠ [])
-    (hAB : ¬ Occurs A B) (hBA : ¬ Occurs B A) :
+    (hAB : ¬ A <:+: B) (hBA : ¬ B <:+: A) :
     (textLaw ν {ω | waitingTime B ω < waitingTime A ω}).toReal *
         ((corr B B 2 - corr B A 2 : ℚ) : ℝ) =
       (textLaw ν {ω | waitingTime A ω < waitingTime B ω}).toReal *
