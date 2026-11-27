@@ -9,6 +9,7 @@ There is an algorithm that decides, given an ordinary Petri net $(N, M_0)$ and a
 - [The coverability graph algorithm](coverability-graph-algorithm.md)
 - [Connected and strongly connected nets](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md)
 - [Petri nets are well-structured transition systems](petri-nets-are-well-structured-transition-systems.md)
+- [Backward reachability from an upward-closed set stabilizes](backward-reachability-stabilizes.md)
 
 ## Proof depends on
 
