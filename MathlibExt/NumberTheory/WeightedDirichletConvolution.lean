@@ -19,11 +19,13 @@ import Mathlib.Algebra.Order.Floor.Semifield
 # Weighted summation of Dirichlet convolutions
 
 This module proves the weighted summation formula for the Dirichlet convolution of two
-completely multiplicative complex-valued arithmetic functions.
+completely multiplicative complex-valued arithmetic functions. It also proves
+`sum_dirichletConvolution_mul_eq`: the sum of such a convolution over multiples of `r` equals a
+divisor sum weighted by the Möbius function.
 
 Reference: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
 to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Theorem 1, Equation (8).
+Theorem 1, Equation (8), and Lemma 3, Equation (20).
 -/
 
 namespace MetaMathlibExt
@@ -298,5 +300,34 @@ public theorem weighted_sum_dirichletConvolution_eq {u v : ArithmeticFunction �
   rw [sum_mul_dirichletConvolution_eq_sum_moebius]
   refine sum_congr rfl fun r hr ↦ ?_
   rw [sum_convolution_multiples hu hv r (mem_Icc.mp hr).1 x]
+
+/-- **Sums of a Dirichlet convolution over multiples of $r$.** Let $u$ and $v$ be completely
+multiplicative arithmetic functions with complex values, let $u * v$ be their Dirichlet
+convolution, let $\mu$ be the Möbius function, and for real $y$ put
+$D(y) = \sum_{1 \le j \le y} (u * v)(j)$. Then for every natural number $r$ and every real $x$,
+$$
+\sum_{1 \le j \le x/r} (u * v)(rj) =
+\sum_{d \mid r} u(d)\, v(r/d) \sum_{m \mid d} \mu(m)\, v(m)\, D\left(\frac{x}{mr}\right).
+$$
+For $r>0$, the divisor sums run over positive divisors. For $r=0$, the outer divisor sum is
+empty by convention, and the left sum is empty because $x/0=0$.
+
+Both sides also vanish for $x < 1$; the source assumes $r \ge 1$ and $x \ge 1$.
+
+Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
+to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
+Lemma 3, Equation (20) (`integers-2024-A75-lem-3`). -/
+public theorem sum_dirichletConvolution_mul_eq {u v : ArithmeticFunction ℂ}
+    (hu : u.IsCompletelyMultiplicative) (hv : v.IsCompletelyMultiplicative) (r : ℕ) (x : ℝ) :
+    ∑ j ∈ Finset.Icc 1 ⌊x / r⌋₊, (u * v) (r * j) =
+      ∑ d ∈ r.divisors, u d * v (r / d) * ∑ m ∈ d.divisors, (μ m : ℂ) * v m *
+        ∑ j ∈ Finset.Icc 1 ⌊x / (m * r)⌋₊, (u * v) j
+    := by
+  by_cases hr : r = 0
+  · subst hr
+    rw [Nat.cast_zero, div_zero, Nat.floor_zero,
+      Finset.Icc_eq_empty (show ¬ (1 : ℕ) ≤ 0 by decide), Nat.divisors_zero,
+      Finset.sum_empty, Finset.sum_empty]
+  · exact sum_convolution_multiples hu hv r (Nat.pos_of_ne_zero hr) x
 
 end MetaMathlibExt
