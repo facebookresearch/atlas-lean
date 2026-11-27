@@ -26,5 +26,3 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Informative trait selection for multitrait QTL mapping](informative-trait-selection-for-multitrait-qtl-mapping/README.md)
 - [Translation invariance of marker coding](translation-invariance-of-marker-coding/README.md)
 - [Minorize–maximize REML for variance components](minorize-maximize-reml-for-variance-components/README.md)
-- [Alpha model of frequency-dependent effect sizes](alpha-model-of-frequency-dependent-effect-sizes/README.md)
-- [Cross-validated forward search QTL mapping](cross-validated-forward-search-qtl-mapping/README.md)

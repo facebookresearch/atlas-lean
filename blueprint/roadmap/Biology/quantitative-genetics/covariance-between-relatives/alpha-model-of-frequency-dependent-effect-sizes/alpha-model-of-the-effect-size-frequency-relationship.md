@@ -18,9 +18,9 @@ where $s_{ud}$ is the selection coefficient of the heterozygote for a rare allel
 
 ## Depends on
 
-- [Additive variance at a biallelic locus](../fisher-s-decomposition-of-genetic-variance/add-var-biallelic.md)
-- [Gaussian stabilizing fitness](../continuum-of-alleles-model-of-mutation-and-stabi/fitness.md)
-- [Directional selection, overdominance and underdominance at one locus](../../population-genetics/selection-migration-and-transmission/one-locus-selection-dynamics/one-locus-viability-selection-regimes.md)
+- [Additive variance at a biallelic locus](../../fisher-s-decomposition-of-genetic-variance/add-var-biallelic.md)
+- [Gaussian stabilizing fitness](../../continuum-of-alleles-model-of-mutation-and-stabi/fitness.md)
+- [Directional selection, overdominance and underdominance at one locus](../../../population-genetics/selection-migration-and-transmission/one-locus-selection-dynamics/one-locus-viability-selection-regimes.md)
 
 ## Expansion
 

@@ -14,8 +14,8 @@ If selection on a replacement does not depend on its mutational context then $u_
 
 ## Depends on
 
-- [Selected origination flux and its weak-selection scaling function](../substitution-rate-with-selection.md)
-- [Weak-mutation limit justifies the origination–fixation chain](../origination-fixation-dynamics/weak-mutation-limit-justifies-the-origination-fi.md)
+- [Selected origination flux and its weak-selection scaling function](../../substitution-rate-with-selection.md)
+- [Weak-mutation limit justifies the origination–fixation chain](../../origination-fixation-dynamics/weak-mutation-limit-justifies-the-origination-fi.md)
 
 ## Expansion
 

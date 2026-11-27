@@ -38,3 +38,5 @@
 ## Twin design
 
 - [Classical twin design and the ACE model](classical-twin-design-and-the-ace-model/README.md)
+- [Alpha model of frequency-dependent effect sizes](alpha-model-of-frequency-dependent-effect-sizes/README.md)
+- [Cross-validated forward search QTL mapping](cross-validated-forward-search-qtl-mapping/README.md)

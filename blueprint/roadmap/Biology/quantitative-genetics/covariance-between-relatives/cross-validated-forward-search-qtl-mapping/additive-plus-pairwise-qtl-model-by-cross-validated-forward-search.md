@@ -12,7 +12,7 @@ fitted by least squares. The model is selected by an L0-penalized forward search
 
 ## Depends on
 
-- [Ordinary least-squares estimator](../../../Probability/linear-models-multivariate/ordinary-least-squares/sampling-properties-of-the-ordinary-least-square/ols-estimator.md)
+- [Ordinary least-squares estimator](../../../../Probability/linear-models-multivariate/ordinary-least-squares/sampling-properties-of-the-ordinary-least-square/ols-estimator.md)
 
 ## Expansion
 

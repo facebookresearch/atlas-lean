@@ -10,7 +10,7 @@ Above that length the dynamics decouple from substitution: the per-unit expansio
 
 ## Depends on
 
-- [Stationary law of a finite birth–death chain](../../../Probability/markov-chains/birth-death-processes/stationary-law-of-a-finite-birth-death-chain.md)
+- [Stationary law of a finite birth–death chain](../../../../Probability/markov-chains/birth-death-processes/stationary-law-of-a-finite-birth-death-chain.md)
 
 ## Expansion
 

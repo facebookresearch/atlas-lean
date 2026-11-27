@@ -7,3 +7,6 @@ Relating mutation rates per generation, per year and over long evolutionary time
 - [Generation time from mutation spectra](generation-time-from-mutation-spectra/README.md)
 - [Neutral molecular clock under spatial structure](neutral-molecular-clock-under-spatial-structure/README.md)
 - [Phenotypic mutation rates and translational errors](phenotypic-mutation-rates-and-translational-errors/README.md)
+- [Compositional diversity of prebiotic sequences](compositional-diversity-of-prebiotic-sequences/README.md)
+- [Context-dependent mutation and selection](context-dependent-mutation-and-selection/README.md)
+- [Distribution of simple repeat lengths](distribution-of-simple-repeat-lengths/README.md)
