@@ -20,11 +20,6 @@ namespace MathlibExtTest.NumberTheory.Digits.BasePhiConjugate
 
 open MetaMathlibExt MetaMathlibExt.BasePhiConjugate
 
--- Binet's formula at `m = 3`: `L_3 = 4 = φ³ + ψ³`.
-example : ((4 : ℕ) : ℝ) = φ ^ (3 : ℤ) + ψ ^ (3 : ℤ) := by
-  have h := lucasNumber_eq_pow_add_pow 3
-  rwa [show lucasNumber 3 = 4 from rfl] at h
-
 -- `φ⁻¹` and `ψ⁻¹` share their integer coordinates.
 example : ∃ a b : ℤ, φ ^ (-1 : ℤ) = a + b * φ ∧ ψ ^ (-1 : ℤ) = a + b * ψ :=
   pow_repr (-1)

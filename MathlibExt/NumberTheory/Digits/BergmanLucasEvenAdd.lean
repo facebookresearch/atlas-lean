@@ -12,6 +12,7 @@ import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
+import MathlibExt.NumberTheory.ChurchBicknellFibonacciConvolution
 import MathlibExt.NumberTheory.Digits.BasePhiConjugate
 public import MathlibExt.NumberTheory.LucasSequence
 
@@ -135,7 +136,7 @@ private theorem bergman_eq_of_value_eq {S T : Finset ℤ}
 
 private theorem lucas_lt_pow {n : ℕ} (hn : 1 ≤ n) :
     (lucasNumber (2 * n - 1) : ℝ) < φ ^ ((2 * n - 1 : ℕ) : ℤ) := by
-  rw [lucasNumber_eq_pow_add_pow]
+  rw [← cb_lucas_binet, ← zpow_natCast φ, ← zpow_natCast ψ]
   have hψneg : ψ ^ ((2 * n - 1 : ℕ) : ℤ) < 0 := by
     have hexp : ((2 * n - 1 : ℕ) : ℤ) = 2 * ((n : ℤ) - 1) + 1 := by
       rw [show 2 * n - 1 = 2 * (n - 1) + 1 by omega, Nat.cast_add, Nat.cast_mul,
@@ -263,7 +264,7 @@ private theorem pair_value (n : ℕ) :
   have hev : Even (2 * (n : ℤ)) := by
     use (n : ℤ)
     ring
-  rw [lucasNumber_eq_pow_add_pow, hcast]
+  rw [← cb_lucas_binet, ← zpow_natCast φ, ← zpow_natCast ψ, hcast]
   congr 1
   exact (even_pow_eq hev).symm
 

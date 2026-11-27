@@ -12,7 +12,6 @@ import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
-public import MathlibExt.NumberTheory.LucasSequence
 
 /-!
 # Conjugate golden ratio sums of base phi expansions
@@ -20,7 +19,6 @@ public import MathlibExt.NumberTheory.LucasSequence
 Facts about the conjugate $\psi = 1 - \varphi$ of the golden ratio $\varphi$ shared by the proofs
 about the lowest position of a Bergman expansion:
 
-* `lucasNumber_eq_pow_add_pow`: Binet's formula $L_m = \varphi^m + \psi^m$ for the Lucas numbers.
 * `pow_repr`: $\varphi^i = a + b\varphi$ and $\psi^i = a + b\psi$ for the same integers $a, b$.
 * `conj_sum_eq`: a finite set $S$ of integers with $\sum_{i \in S} \varphi^i = k \in \mathbb{N}$
   also has $\sum_{i \in S} \psi^i = k$.
@@ -34,29 +32,6 @@ open scoped goldenRatio
 namespace MetaMathlibExt
 
 namespace BasePhiConjugate
-
-/-- **Binet's formula for the Lucas numbers.** For every natural number $m$, the $m$-th Lucas
-number is $L_m = \varphi^m + \psi^m$, where $\varphi$ is the golden ratio and $\psi$ its
-conjugate. -/
-public theorem lucasNumber_eq_pow_add_pow (m : ℕ) :
-    (lucasNumber m : ℝ) = φ ^ (m : ℤ) + ψ ^ (m : ℤ) := by
-  induction m using Nat.twoStepInduction with
-  | zero => change ((2 : ℕ) : ℝ) = φ ^ (0 : ℤ) + ψ ^ (0 : ℤ); norm_num
-  | one => rw [show lucasNumber 1 = 1 from rfl]; simp [Real.goldenRatio_add_goldenConj]
-  | more m ih1 ih2 =>
-    have hL : lucasNumber (m + 2) = lucasNumber (m + 1) + lucasNumber m := rfl
-    rw [hL, Nat.cast_add, ih1, ih2]
-    push_cast
-    have hφz : φ ^ ((m : ℤ) + 2) = φ ^ ((m : ℤ) + 1) + φ ^ (m : ℤ) := by
-      rw [zpow_add₀ Real.goldenRatio_ne_zero, zpow_add₀ Real.goldenRatio_ne_zero,
-        zpow_ofNat, zpow_one, Real.goldenRatio_sq]
-      ring
-    have hψz : ψ ^ ((m : ℤ) + 2) = ψ ^ ((m : ℤ) + 1) + ψ ^ (m : ℤ) := by
-      rw [zpow_add₀ Real.goldenConj_ne_zero, zpow_add₀ Real.goldenConj_ne_zero,
-        zpow_ofNat, zpow_one, Real.goldenConj_sq]
-      ring
-    rw [hφz, hψz]
-    ring
 
 /-- **Integer powers of the golden ratio.** For every integer $i$ there are integers $a$ and $b$
 with $\varphi^i = a + b\varphi$ and $\psi^i = a + b\psi$, where $\psi$ is the conjugate of the

@@ -13,6 +13,7 @@ import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
+import MathlibExt.NumberTheory.ChurchBicknellFibonacciConvolution
 import MathlibExt.NumberTheory.Digits.BasePhiConjugate
 public import MathlibExt.NumberTheory.Digits.BergmanLucasEvenAdd
 public import MathlibExt.NumberTheory.Digits.BergmanWordFib
@@ -193,14 +194,14 @@ private theorem psi_even_pow_pos (k : ℕ) : (0 : ℝ) < ψ ^ (2 * k) := by
 
 private theorem lucas_even_gt (k : ℕ) :
     φ ^ ((2 * k : ℕ) : ℤ) < (lucasNumber (2 * k) : ℝ) := by
-  rw [lucasNumber_eq_pow_add_pow]
+  rw [← cb_lucas_binet]
   simp only [zpow_natCast]
   have hψ := psi_even_pow_pos k
   linarith
 
 private theorem lucas_odd_lt (k : ℕ) :
     (lucasNumber (2 * k + 1) : ℝ) < φ ^ ((2 * k + 1 : ℕ) : ℤ) := by
-  rw [lucasNumber_eq_pow_add_pow]
+  rw [← cb_lucas_binet]
   simp only [zpow_natCast]
   have hodd : Odd (2 * k + 1) := ⟨k, rfl⟩
   have hψr : ψ = -(-ψ) := by ring
@@ -213,7 +214,7 @@ private theorem lucas_odd_lt (k : ℕ) :
 
 private theorem lucas_odd_add_one_gt (k : ℕ) :
     φ ^ ((2 * k + 1 : ℕ) : ℤ) < (lucasNumber (2 * k + 1) : ℝ) + 1 := by
-  rw [lucasNumber_eq_pow_add_pow]
+  rw [← cb_lucas_binet]
   simp only [zpow_natCast]
   have hodd : Odd (2 * k + 1) := ⟨k, rfl⟩
   have hψr : ψ = -(-ψ) := by ring
@@ -227,7 +228,7 @@ private theorem lucas_odd_add_one_gt (k : ℕ) :
 
 private theorem lucas_even_sub_one_lt (k : ℕ) :
     (lucasNumber (2 * k + 2) : ℝ) - 1 < φ ^ ((2 * k + 2 : ℕ) : ℤ) := by
-  rw [lucasNumber_eq_pow_add_pow]
+  rw [← cb_lucas_binet]
   simp only [zpow_natCast]
   have hev : Even (2 * k + 2) := ⟨k + 1, by ring⟩
   have hψr : ψ = -(-ψ) := by ring
