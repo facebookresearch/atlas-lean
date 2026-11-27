@@ -25,7 +25,7 @@ where $\Phi$ ($\|\Phi\| = 1$) and $\Psi$ ($\Psi\Phi = 1$) are the right and left
 
 ## Depends on
 
-- [Discrete Euler–Lotka equation](../../leslie-matrix-model/sum-fertility-mul-survivorship-div-pow-e.md)
+- [Discrete Euler–Lotka equation](../../../leslie-matrix-model/sum-fertility-mul-survivorship-div-pow-e.md)
 
 ## Proof sketch
 
@@ -33,7 +33,7 @@ Taking $z$-transforms turns the convolution into $\bar b(z) = \bar g(z)/(1 - \ba
 
 ## Related topics
 
-- [Euler–Lotka equation and the reproduction number](../../../epidemiology/euler-lotka-equation-and-the-reproduction-number/README.md)
+- [Euler–Lotka equation and the reproduction number](../../../../epidemiology/euler-lotka-equation-and-the-reproduction-number/README.md)
 
 ## Sources
 

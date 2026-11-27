@@ -26,7 +26,7 @@ The defence factor equals $1$ at $v=0$, so it does not affect invasion at $E_1$.
 
 ## Related topics
 
-- [Lotka–Volterra predator–prey model](../../lotka-volterra-predator-prey-model/README.md)
+- [Lotka–Volterra predator–prey model](../../../lotka-volterra-predator-prey-model/README.md)
 
 ## Sources
 

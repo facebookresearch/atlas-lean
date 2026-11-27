@@ -15,11 +15,11 @@ A network is an *amplifier* of selection if $\rho > \rho_{\mathrm{Moran}}$ for $
 
 ## Depends on
 
-- [Moran Fixation](../../isothermal-theorem-for-evolutionary-graph-dynami/moran-fixation.md)
+- [Moran Fixation](../../../isothermal-theorem-for-evolutionary-graph-dynami/moran-fixation.md)
 
 ## Proof depends on
 
-- [Isothermal theorem, "if" direction](../../isothermal-theorem-for-evolutionary-graph-dynami/average-fixation-eq-moran-fixation.md)
+- [Isothermal theorem, "if" direction](../../../isothermal-theorem-for-evolutionary-graph-dynami/average-fixation-eq-moran-fixation.md)
 
 ## Proof sketch
 

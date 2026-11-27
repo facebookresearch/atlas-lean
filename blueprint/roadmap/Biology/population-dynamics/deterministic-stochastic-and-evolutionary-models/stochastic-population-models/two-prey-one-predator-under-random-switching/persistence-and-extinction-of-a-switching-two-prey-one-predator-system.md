@@ -30,7 +30,7 @@ The invasion rate is the long-run per-capita growth rate of a rare species when 
 
 ## Related topics
 
-- [Lotka–Volterra predator–prey model](../../lotka-volterra-predator-prey-model/README.md)
+- [Lotka–Volterra predator–prey model](../../../lotka-volterra-predator-prey-model/README.md)
 
 ## Sources
 

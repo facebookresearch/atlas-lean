@@ -30,7 +30,7 @@ So, to leading order, a single mutant placed at the centre fixes with probabilit
 
 ## Depends on
 
-- [Moran fixation probability](../../../population-genetics/moran-model/moran-fixation.md)
+- [Moran fixation probability](../../../../population-genetics/moran-model/moran-fixation.md)
 
 ## Proof sketch
 

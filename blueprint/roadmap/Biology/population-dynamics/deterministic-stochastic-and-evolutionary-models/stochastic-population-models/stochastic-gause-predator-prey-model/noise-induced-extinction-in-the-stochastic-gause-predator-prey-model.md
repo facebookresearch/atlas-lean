@@ -28,7 +28,7 @@ By Itô's formula, $d\log x=(1-x-\varphi(x)y/x-\sigma_x^2/2)\,dt+\sigma_x\,dB_x$
 
 ## Related topics
 
-- [Lotka–Volterra predator–prey model](../../lotka-volterra-predator-prey-model/README.md)
+- [Lotka–Volterra predator–prey model](../../../lotka-volterra-predator-prey-model/README.md)
 
 ## Sources
 

@@ -29,7 +29,7 @@ Positive definiteness of the symmetric part follows from the block variance prof
 
 ## Related topics
 
-- [Lotka–Volterra predator–prey model](../../lotka-volterra-predator-prey-model/README.md)
+- [Lotka–Volterra predator–prey model](../../../lotka-volterra-predator-prey-model/README.md)
 
 ## Sources
 

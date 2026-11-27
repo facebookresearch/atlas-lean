@@ -20,7 +20,7 @@ Ergodicity of products of nonnegative matrices (the Furstenberg–Kesten and Coh
 
 ## Related topics
 
-- [Matrix population models](../../matrix-population-models/README.md)
+- [Matrix population models](../../../matrix-population-models/README.md)
 
 ## Sources
 
