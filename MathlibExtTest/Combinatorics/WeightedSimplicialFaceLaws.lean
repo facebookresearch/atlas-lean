@@ -16,6 +16,8 @@ import Mathlib.Tactic.NormNum
 
 The two edges of a path share exactly one vertex. Sampling a top edge before choosing a
 vertex distinguishes the middle vertex even when the two edges have equal probabilities.
+For top cardinality zero, the family `{∅}` has one top face and its rank law is the same
+point mass. The void family `∅` has no weighting at any top cardinality.
 -/
 
 open MathlibExt.Combinatorics MathlibExt.Combinatorics.RationalSimplicialHomologyShared
@@ -86,7 +88,8 @@ example : ((fair.faceLaw (by decide : 1 ≤ 2) a).toReal,
     (fair.faceLaw (by decide : 1 ≤ 2) b).toReal, (fair.faceLaw (by decide : 1 ≤ 2) c).toReal) =
     (1 / 4, 1 / 2, 1 / 4) := by
   rw [vertexMasses]
-  norm_num [fair, PureWeightedComplex.uniform, show Fintype.card ↥(facesOfCard path 2) = 2 by decide]
+  norm_num [fair, PureWeightedComplex.uniform, PureWeightedComplexOfRank.uniform,
+    show Fintype.card ↥(facesOfCard path 2) = 2 by decide]
 
 -- The augmented bottom rank has one outcome; the top rank retains the unequal edge masses.
 example : weighted.faceLaw (by decide : 0 ≤ 2) ⟨∅, by decide⟩ = 1 := by
@@ -97,8 +100,34 @@ example : (weighted.faceLaw (by decide : 2 ≤ 2) rightEdge).toReal = 3 / 4 := b
   rw [weighted.faceLaw_top]
   norm_num [weighted, w, show rightEdge ≠ leftEdge by decide]
 
--- The vacuously downward-closed void family cannot carry any top law.
-example (d : ℕ) : ¬ Nonempty (PureWeightedComplex ∅ d) := by
+-- In the family whose sole face is empty, that face itself is the top draw.
+private def emptyOnly : Finset (Finset ℕ) := {∅}
+private def rootFace : facesOfCard emptyOnly 0 := ⟨∅, by decide⟩
+
+private noncomputable def augmented : PureWeightedComplexOfRank emptyOnly 0 :=
+  PureWeightedComplexOfRank.uniform (by
+    intro σ hσ τ hτ
+    have hs : σ = ∅ := Finset.mem_singleton.mp hσ
+    exact Finset.mem_singleton.mpr (Finset.subset_empty.mp (hs ▸ hτ))) (by
+    intro τ hτ
+    exact ⟨rootFace, (Finset.mem_singleton.mp hτ) ▸ Finset.Subset.rfl⟩)
+    ⟨∅, rootFace.property⟩
+
+example : augmented.topLaw = PMF.pure rootFace := by
+  calc augmented.topLaw = augmented.faceLaw (le_refl 0) := augmented.faceLaw_top.symm
+    _ = PMF.pure rootFace := augmented.faceLaw_zero
+
+example : augmented.faceLaw (le_refl 0) = PMF.pure rootFace := augmented.faceLaw_zero
+
+example : augmented.topLaw rootFace = 1 ∧ augmented.faceLaw (le_refl 0) rootFace = 1 := by
+  have ht : augmented.topLaw = PMF.pure rootFace := augmented.faceLaw_top.symm.trans
+    augmented.faceLaw_zero
+  rw [ht, augmented.faceLaw_zero]
+  exact ⟨PMF.pure_apply_self _, PMF.pure_apply_self _⟩
+
+-- Downward closure and the covering condition hold vacuously for the void family,
+-- but a PMF on any of its (empty) ranks is impossible.
+example (r : ℕ) : ¬ Nonempty (PureWeightedComplexOfRank ∅ r) := by
   rintro ⟨X⟩
   obtain ⟨σ, _⟩ := X.topLaw.support_nonempty
   simpa [facesOfCard] using σ.property
