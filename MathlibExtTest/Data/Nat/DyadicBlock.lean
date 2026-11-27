@@ -12,6 +12,20 @@ import MathlibExt.Data.Nat.DyadicBlock
 
 open MetaMathlibExt
 
+-- The bound changes only the larger input within the same block.
+example : min 9 10 / 2 ^ 2 = min 11 10 / 2 ^ 2 :=
+  min_div_two_pow_eq_of_div_two_pow_eq (a := 9) (b := 11) (k := 2) (by decide) 10
+
+-- The bound lies in the previous block.
+example : min 9 7 / 2 ^ 2 = min 11 7 / 2 ^ 2 :=
+  min_div_two_pow_eq_of_div_two_pow_eq (a := 9) (b := 11) (k := 2) (by decide) 7
+
+-- At exponent zero, quotient equality is equality of the inputs.
+example {a b : ℕ} (hab : a = b) (c : ℕ) : min a c = min b c := by
+  simpa only [pow_zero, Nat.div_one] using
+    min_div_two_pow_eq_of_div_two_pow_eq (k := 0)
+      (by simpa only [pow_zero, Nat.div_one] using hab) c
+
 -- The first and last members of a block of width four have the same quotient.
 example : 12 / 2 ^ 2 = 15 / 2 ^ 2 :=
   (div_two_pow_eq_iff_exists_block (i := 2) (by decide : 12 < 15)).mpr ⟨3, by decide, by decide⟩

@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.FiniteRamificationConductors
+public import MathlibExt.AlgebraicGeometry.RamificationConductorsExistsLowerGroupEqBot
 
 @[expose] public noncomputable section
 
@@ -25,8 +26,9 @@ representation and invariant subspaces are actual Mathlib objects.
 The conductors are computed from a certified bound N with G_N=1. The
 existence of such a bound, i.e. the termination of the lower filtration of a
 finite Galois extension of nonarchimedean local fields (Serre, Corps Locaux,
-Chapter IV, §1), is requested first; the completed bound-independence laws
-then make the conductors intrinsic.
+Chapter IV, §1), is proved in
+`MathlibExt.AlgebraicGeometry.RamificationConductorsExistsLowerGroupEqBot`;
+the completed bound-independence laws then make the conductors intrinsic.
 The integrality request is arbitrary finite-dimensional Q_ell representation
 integrality, beyond the verified one-dimensional abelian formula. It needs no
 condition relating ell to the residue characteristic: the Artin conductor of a
@@ -41,19 +43,12 @@ open MathlibExt.NumberTheory.FiniteRamificationConductors
 
 universe u v w
 
-/-- The lower ramification filtration of a finite Galois extension of
-nonarchimedean local fields terminates: some `G_N` is trivial. -/
-public theorem_wanted exists_lowerGroup_eq_bot
-    (K : Type u) [Field K] [ValuativeRel K] [TopologicalSpace K]
-    [IsNonarchimedeanLocalField K]
-    (L : Type v) [Field L] [ValuativeRel L] [TopologicalSpace L]
-    [IsNonarchimedeanLocalField L] [Algebra K L] [ValuativeExtension K L]
-    [Module.Finite K L] [IsGalois K L] :
-    ∃ N : ℕ, lowerGroup K L N = ⊥
-
-/-- Serre's higher-rank conductor integrality, for the conductors computed from
-any certified ramification bound (one exists by `exists_lowerGroup_eq_bot`), with
-the standard omission of i=0 in the Swan term. -/
+/-- Integrality of Artin and Swan conductors (Serre, *Corps locaux*, VI §2): let $L/K$ be a finite
+Galois extension of nonarchimedean local fields, $ℓ$ a prime, $V$ a finite-dimensional
+$ℚ_ℓ$-vector space with a representation $ρ$ of the decomposition group of the valuation ring of
+$L$ over $K$, and $N$ a natural number with $G_N = 1$ for the lower ramification groups. Then the
+Artin conductor and the Swan conductor of $ρ$, computed from the bound $N$ (the Swan term
+omitting $i = 0$), are natural numbers. -/
 public theorem_wanted finiteImage_artin_swan_integral
     (K : Type u) [Field K] [ValuativeRel K] [TopologicalSpace K]
     [IsNonarchimedeanLocalField K]

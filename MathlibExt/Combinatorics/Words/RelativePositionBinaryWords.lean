@@ -232,4 +232,113 @@ public theorem relativePosition_of_dimers {w : ℕ → Bool}
 
 end
 
+/-- Consecutive copies of a letter are exactly consecutive occurrences at distance one. -/
+private theorem run_iff_letterPosition_diff {w : ℕ → Bool} {α : Bool}
+    (hInf : {i | w i = α}.Infinite) {k : ℕ} (hk : 1 ≤ k) :
+    (∃ i, ∀ j < k, w (i + j) = α) ↔
+      ∃ n, 1 ≤ n ∧ ∀ j < k - 1,
+        letterPosition w α (n + j + 1) - letterPosition w α (n + j) = 1 := by
+  let p (i : ℕ) : Prop := w i = α
+  have hp : (Set.ofPred p).Infinite := hInf
+  constructor
+  · rintro ⟨i, hr⟩
+    let n := Nat.count p i
+    have pos (j : ℕ) (hj : j < k) : letterPosition w α (n + 1 + j) = i + j := by
+      have hcount : Nat.count p (i + j) = n + j := by
+        rw [Nat.count_add]
+        change n + Nat.count (fun a => p (i + a)) j = n + j
+        congr 1
+        rw [Nat.count_eq_card_filter_range, Finset.filter_true_of_mem, Finset.card_range]
+        intro a ha
+        exact hr a ((Finset.mem_range.mp ha).trans hj)
+      change Nat.nth p (n + 1 + j - 1) = i + j
+      rw [show n + 1 + j - 1 = n + j by omega, ← hcount]
+      exact Nat.nth_count (p := p) (hr j hj)
+    refine ⟨n + 1, by omega, fun j hj => ?_⟩
+    have hnext := pos (j + 1) (by omega)
+    rw [← Nat.add_assoc (n + 1) j 1] at hnext
+    rw [hnext, pos j (by omega)]
+    omega
+  · rintro ⟨n, _, hd⟩
+    have pos (j : ℕ) (hj : j < k) :
+        letterPosition w α (n + j) = letterPosition w α n + j := by
+      induction j with
+      | zero => simp
+      | succ j ih =>
+        have hstep := hd j (by omega)
+        have hprev := ih (by omega)
+        change letterPosition w α (n + (j + 1)) = letterPosition w α n + (j + 1)
+        rw [← Nat.add_assoc n j 1]
+        omega
+    refine ⟨letterPosition w α n, fun j hj => ?_⟩
+    rw [← pos j hj]
+    exact Nat.nth_mem_of_infinite hp (n + j - 1)
+
+/-- **Runs of one letter and gaps between letter positions.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$
+be an infinite word over the letters $a$ and $b$ in which both letters occur infinitely often and
+$\ell_0 = a$. For a letter $\alpha$ and $n \ge 1$, let $p_\alpha(n)$ be the position of the $n$-th
+occurrence of $\alpha$ in $w$, counting positions from $0$. Let $k \ge 1$. Then the following are
+equivalent: there is $i$ with $\ell_{i+j} = b$ for all $0 \le j < k$ (the block $b^k$ occurs in
+$w$); there is $n \ge 1$ with $p_a(n+1) - p_a(n) > k$; and there is $n \ge 1$ with
+$p_b(n+j+1) - p_b(n+j) = 1$ for all $0 \le j < k - 1$. Moreover, there is $i$ with
+$\ell_{i+j} = a$ for all $0 \le j < k$ (the block $a^k$ occurs in $w$) if and only if there is
+$n \ge 1$ with $p_a(n+j+1) - p_a(n+j) = 1$ for all $0 \le j < k - 1$.
+
+Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
+Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 13
+(`jis-2025-25.1.5-lem-13`). -/
+public theorem subword_run_iff_letterPosition_diff {w : ℕ → Bool}
+    (hw : BothLettersInfinite w) (h₀ : w 0 = true) {k : ℕ} (hk : 1 ≤ k) :
+    ((∃ i, ∀ j < k, w (i + j) = false) ↔
+        ∃ n, 1 ≤ n ∧ k < letterPosition w true (n + 1) - letterPosition w true n) ∧
+      ((∃ i, ∀ j < k, w (i + j) = false) ↔
+        ∃ n, 1 ≤ n ∧ ∀ j < k - 1,
+          letterPosition w false (n + j + 1) - letterPosition w false (n + j) = 1) ∧
+      ((∃ i, ∀ j < k, w (i + j) = true) ↔
+        ∃ n, 1 ≤ n ∧ ∀ j < k - 1,
+          letterPosition w true (n + j + 1) - letterPosition w true (n + j) = 1) := by
+  refine ⟨?_, run_iff_letterPosition_diff hw.2 hk, run_iff_letterPosition_diff hw.1 hk⟩
+  let p (i : ℕ) : Prop := w i = true
+  have hp : (Set.ofPred p).Infinite := hw.1
+  constructor
+  · rintro ⟨i, hr⟩
+    have hi : 0 < i := by
+      by_contra! hi
+      have he : i = 0 := by omega
+      simpa [he, h₀] using hr 0 hk
+    let n := Nat.count p i
+    have hn : 1 ≤ n := by
+      have hc := Nat.count_strict_mono (p := p) h₀ hi
+      simpa only [n, Nat.count_zero] using Nat.succ_le_of_lt hc
+    have hleft : Nat.nth p (n - 1) < i := Nat.nth_lt_of_lt_count (p := p) (by
+      change n - 1 < n
+      omega)
+    have hir : i ≤ Nat.nth p n := Nat.le_nth_count hp i
+    have hright : i + k ≤ Nat.nth p n := by
+      by_contra! hl
+      have hj : Nat.nth p n - i < k := by omega
+      have hfalse := hr _ hj
+      have he : i + (Nat.nth p n - i) = Nat.nth p n := by omega
+      rw [he] at hfalse
+      have htrue : w (Nat.nth p n) = true := Nat.nth_mem_of_infinite hp n
+      rw [htrue] at hfalse
+      contradiction
+    refine ⟨n, hn, ?_⟩
+    change k < Nat.nth p (n + 1 - 1) - Nat.nth p (n - 1)
+    rw [Nat.add_sub_cancel]
+    omega
+  · rintro ⟨n, hn, hg⟩
+    have hg' : k < Nat.nth p n - Nat.nth p (n - 1) := by
+      simpa only [letterPosition, p, Nat.add_sub_cancel] using hg
+    refine ⟨Nat.nth p (n - 1) + 1, fun j hj => ?_⟩
+    let i := Nat.nth p (n - 1) + 1 + j
+    have hno : ¬p i := by
+      intro hi
+      have hl : Nat.nth p (n - 1) < i := by dsimp [i]; omega
+      have hu : i < Nat.nth p n := by dsimp [i]; omega
+      have hwit := (Nat.nth_add_one_le_iff hp (n := n - 1) hi).mpr hl
+      rw [show n - 1 + 1 = n by omega] at hwit
+      exact (not_lt_of_ge hwit) hu
+    simpa only [p, Bool.not_eq_true] using hno
+
 end MetaMathlibExt

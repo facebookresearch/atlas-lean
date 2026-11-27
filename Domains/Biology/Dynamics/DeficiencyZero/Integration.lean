@@ -37,8 +37,8 @@ This file connects the three parts of the deficiency-zero development:
   compatibility class contains exactly one equilibrium (the deficiency-zero theorem, weakly
   reversible case).
 
-The non-weakly-reversible half of the deficiency-zero theorem remains recorded in
-`WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`.
+The non-weakly-reversible half of the deficiency-zero theorem is in
+`MathlibExt.Dynamics.PolynomialNetworks.DeficiencyZero`.
 
 ## References
 

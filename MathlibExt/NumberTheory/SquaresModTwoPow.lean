@@ -17,8 +17,7 @@ import Mathlib.Tactic.Ring
 # Squares modulo consecutive powers of two
 
 We classify the residues that cease to be squares when the exponent of two increases
-from an even number to the next odd number. The theorem docstring retains the source
-attribution from the ATLAS wanted declaration.
+by one, for both odd and even starting exponents.
 -/
 
 namespace MetaMathlibExt
@@ -85,6 +84,29 @@ private theorem exceptional_residue (k x : ℕ) (hx : x < 8 * 4 ^ k) :
       · rintro rfl
         exact (h (dvd_mul_right ..)).elim
 
+/-- For the step from an odd exponent to an even one, each pair of exceptional residues
+is four times the preceding pair. -/
+private theorem exceptional_residues_odd_to_even (k x : ℕ) (hx : x < 4 ^ k * 4) :
+    (IsSquare (x : ZMod (4 ^ k * 2)) ∧ ¬IsSquare (x : ZMod (4 ^ k * 4))) ↔
+      x = 4 ^ k * 2 ∨ x = 4 ^ k * 3 := by
+  induction k generalizing x with
+  | zero =>
+    simp only [pow_zero, one_mul] at hx ⊢
+    interval_cases x <;> unfold IsSquare <;> decide
+  | succ k ih =>
+    rw [pow_succ' 4 k, mul_assoc 4 (4 ^ k) 4] at hx
+    rw [pow_succ' 4 k, mul_assoc 4 (4 ^ k) 2, mul_assoc 4 (4 ^ k) 4, mul_assoc 4 (4 ^ k) 3]
+    by_cases h : 4 ∣ x
+    · obtain ⟨y, rfl⟩ := h
+      rw [isSquare_four_mul_iff, isSquare_four_mul_iff, ih y (by omega)]
+      omega
+    · constructor
+      · rintro ⟨hs, hn⟩
+        apply (h (four_dvd_of_not_isSquare (m := 4 ^ k) ?_ ?_)).elim
+        · rwa [show 8 * 4 ^ k = 4 * (4 ^ k * 2) by ring]
+        · rwa [show 16 * 4 ^ k = 4 * (4 ^ k * 4) by ring]
+      · omega
+
 end SquaresModTwoPow
 
 /-- **Residues that are squares modulo $2^{2k}$ but not modulo $2^{2k+1}$.** Let $k \ge 0$ and let
@@ -117,5 +139,36 @@ public theorem isSquare_mod_two_pow_even_not_odd_iff (k : ℕ) (x : ℕ)
     rw [hlarge] at hx
     rw [hlarge, hsmall, he, Nat.add_sub_cancel, hpow, ← Nat.succ_mul]
     exact SquaresModTwoPow.exceptional_residue k x hx
+
+/-- **Residues that are squares modulo $2^{2k-1}$ but not modulo $2^{2k}$.** Let $k \ge 0$ and let
+$x$ be an integer with $0 \le x < 2^{2k}$, where the exponents $2k - 1$ and $2k - 2$ are truncated
+at $0$. Then $x$ is a square modulo $2^{2k-1}$ but not a square modulo $2^{2k}$ if and only if
+$x = 2^{2k-1}$ or $x = 2^{2k-1} + 2^{2k-2}$.
+
+For $k \ge 1$ these are exactly two residues; for $k = 0$ both sides of the equivalence are false.
+
+Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
+Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32, Lemma 2
+(`integers-2025-A32-lem-2`). -/
+public theorem isSquare_mod_two_pow_odd_not_even_iff (k : ℕ) (x : ℕ)
+    (hx : x < 2 ^ (2 * k)) :
+    (IsSquare (x : ZMod (2 ^ (2 * k - 1))) ∧ ¬IsSquare (x : ZMod (2 ^ (2 * k)))) ↔
+      x = 2 ^ (2 * k - 1) ∨ x = 2 ^ (2 * k - 1) + 2 ^ (2 * k - 2) := by
+  cases k with
+  | zero =>
+    have hx0 : x = 0 := by simpa using hx
+    subst x
+    norm_num
+  | succ k =>
+    have hp : (2 : ℕ) ^ (2 * k) = 4 ^ k := by rw [pow_mul]; rfl
+    have hlarge : (2 : ℕ) ^ (2 * (k + 1)) = 4 ^ k * 4 := by
+      rw [show 2 * (k + 1) = 2 * k + 2 by omega, pow_add, hp]
+      rfl
+    have hsmall : (2 : ℕ) ^ (2 * (k + 1) - 1) = 4 ^ k * 2 := by
+      rw [show 2 * (k + 1) - 1 = 2 * k + 1 by omega, pow_succ, hp]
+    rw [hlarge] at hx
+    rw [hlarge, hsmall, show 2 * (k + 1) - 2 = 2 * k by omega, hp,
+      show 4 ^ k * 2 + 4 ^ k = 4 ^ k * 3 by omega]
+    exact SquaresModTwoPow.exceptional_residues_odd_to_even k x hx
 
 end MetaMathlibExt

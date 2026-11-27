@@ -7,14 +7,12 @@ Let $n \ge 0$ be an integer, $X$ a topological space and $A \subseteq X$ a subsp
 
 For $n = 0$ only the first condition remains: it says that the map $\pi_0(A) \to \pi_0(X)$ induced by the inclusion is surjective.
 
-## Expansion
-
-A good expansion of this node links each notion it is built from: path components; the subspace topology.
-
 ## Depends on
 
 - [Topological space](../../topological-spaces/topological-space.md)
 - [Relative homotopy groups of a pair of spaces](relative-homotopy-group.md)
+- [Path component of a point](../../general-topology/path-component.md)
+- [Subspace topology](../../topological-spaces/lattice-of-topologies-and-induced-topologies/subspace-topology.md)
 
 ## Sources
 

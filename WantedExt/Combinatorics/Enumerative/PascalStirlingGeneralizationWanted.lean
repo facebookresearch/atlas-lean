@@ -15,7 +15,9 @@ public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.AlphaUpperMatrix
+public import MathlibExt.Combinatorics.Enumerative.HessenbergToeplitzRecurrence
 public import MathlibExt.Combinatorics.Enumerative.PascalStirlingGeneralization
+public import MathlibExt.Combinatorics.Enumerative.PascalDiagonalExponential
 
 /-!
 # A generalization of the Pascal and Stirling matrices
@@ -26,8 +28,9 @@ and Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4.
 For a sequence `α = (α_j)_{j ≥ 1}` (here `α : ℕ → R` with `α 0` unused) the paper's matrices
 `S_α(n)`, `𝖲_α(n)` and `𝖴_α(n)` are given by recurrences on their entries; the entry functions
 below use 0-based indices, so entry `(i, j)` here is the paper's `(i + 1, j + 1)`. Statements were
-checked with exact rational arithmetic before stating. The α-upper entries, matrix and determinant
-formula are in `MathlibExt.Combinatorics.Enumerative.AlphaUpperMatrix`.
+checked with exact rational arithmetic before stating. The α-upper entries, their symmetric
+polynomial formula, the matrix and its determinant formula are in
+`MathlibExt.Combinatorics.Enumerative.AlphaUpperMatrix`.
 
 The factorial matrix of a power series (`powerSeriesFactorialMatrix`), the lemma on its diagonal
 entries (`powerSeriesFactorialMatrix_apply_self`) and the proved multiplicativity
@@ -147,24 +150,6 @@ Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Sect
 def shiftedAlphaStirlingMatrix (α : ℕ → R) (n : ℕ) : Matrix (Fin n) (Fin n) R :=
   Matrix.of fun a b => shiftedAlphaStirlingEntry α a b
 
-/-- **α-upper entries are complete homogeneous symmetric polynomials.** Let $R$ be a commutative
-ring, let $\alpha$ be a sequence in $R$, and let $u_{i,j}$ ($i, j \ge 0$) be the α-upper entries
-of $\alpha$. For all $i \le j$, $u_{i,j} = h_i(\alpha_{i+1}, \alpha_{i+2}, \dots, \alpha_{j+1})$,
-where $h_i$ is the complete homogeneous symmetric polynomial of degree $i$ in $j - i + 1$
-variables.
-
-Writing $\mathsf{U}_{i,j}$ for the entries of the paper's matrix $\mathsf{U}_\alpha(n)$ in its
-$1$-based indexing, this reads $\mathsf{U}_{i,j} = h_{i-1}(\alpha_i, \dots, \alpha_j)$ for
-$j \ge i \ge 1$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Lemma 1
-(`jis-2026-26.5.4-lem-1`). -/
-public theorem_wanted alphaUpperEntry_eq_hsymm (α : ℕ → R) {i j : ℕ} (hij : i ≤ j) :
-    alphaUpperEntry α i j =
-      MvPolynomial.eval (fun t : Fin (j - i + 1) => α (i + 1 + t))
-        (MvPolynomial.hsymm (Fin (j - i + 1)) R i)
-
 /-- **LU decomposition of the shifted α-Stirling matrix.** Let $R$ be a commutative ring, let
 $\alpha = (\alpha_j)_{j \ge 1}$ be a sequence in $R$, and let $n$ be a natural number. Then
 $$\mathsf{S}_\alpha(n) = S_\alpha(n) \mathsf{U}_\alpha(n),$$
@@ -193,119 +178,6 @@ Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Theo
 (`jis-2026-26.5.4-thm-2`). -/
 public theorem_wanted det_shiftedAlphaStirlingMatrix (α : ℕ → R) (hα : α 1 = 1) (n : ℕ) :
     (shiftedAlphaStirlingMatrix α n).det = ∏ j : Fin n, α (j + 1) ^ (j : ℕ)
-
-/-- **Pascal diagonal matrices.** For $m, n \ge 0$, $\mathsf{L}_{d^{(m)}}(n)$ is the $n \times n$
-real matrix that carries the $m$-th diagonal $d^{(m)}_b = \binom{m+b}{b}$ ($b \ge 0$) of Pascal's
-triangle on its $m$-th subdiagonal: with rows and columns indexed from $0$, its $(b + m, b)$ entry
-is $\binom{m+b}{b}$ for every $b$ with $b + m < n$, and all its other entries are $0$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Section 3. -/
-def pascalDiagonalMatrix (m n : ℕ) : Matrix (Fin n) (Fin n) ℝ :=
-  Matrix.of fun a b => if (a : ℕ) = b + m then ((m + b).choose b : ℝ) else 0
-
-/-- **The zeroth Pascal diagonal matrix is the identity.** For $m, n \ge 0$ let
-$\mathsf{L}_{d^{(m)}}(n)$ be the $n \times n$ real matrix whose $(b + m, b)$ entry is
-$\binom{m+b}{b}$ for each $b$ with $b + m < n$ and whose other entries are $0$, with rows and
-columns indexed from $0$. Then $\mathsf{L}_{d^{(0)}}(n) = I_n$, the $n \times n$ identity matrix,
-for every $n \ge 0$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Section 3. -/
-theorem pascalDiagonalMatrix_zero (n : ℕ) : pascalDiagonalMatrix 0 n = 1 := by
-  ext a b
-  simp [pascalDiagonalMatrix, Matrix.one_apply, Fin.val_inj]
-
-/-- **First-column sequence for exponentials of Pascal diagonal matrices.** For $k \ge 0$, the
-sequence of natural numbers $\alpha^{(k)} = (\alpha^{(k)}_i)_{i \ge 0}$ is defined by
-$\alpha^{(k)}_0 = 0$, $\alpha^{(k)}_1 = 1$ and, for $i \ge 2$,
-$\alpha^{(k)}_i = \binom{i-2}{k-1} \alpha^{(k)}_{i-k}$ if $1 \le k < i$ and $\alpha^{(k)}_i = 0$
-otherwise. Thus $\alpha^{(k)}_i = 0$ for $2 \le i \le k$, and $\alpha^{(0)}_i = 0$ for all
-$i \ne 1$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Theorem 3. -/
-def pascalExpFirstColumn (k i : ℕ) : ℕ :=
-  if i = 1 then 1
-  else if _h : 0 < k ∧ k < i then (i - 2).choose (k - 1) * pascalExpFirstColumn k (i - k)
-  else 0
-termination_by i
-decreasing_by omega
-
-/-- **First term of the Pascal first-column sequence.** For every $k \ge 0$, the first-column
-sequence $\alpha^{(k)}$ satisfies $\alpha^{(k)}_1 = 1$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Theorem 3. -/
-theorem pascalExpFirstColumn_one (k : ℕ) : pascalExpFirstColumn k 1 = 1 := by
-  rw [pascalExpFirstColumn]
-  simp
-
-/-- **Vanishing terms of the Pascal first-column sequence.** For all natural numbers $k$ and $i$
-with $2 \le i \le k$, the first-column sequence $\alpha^{(k)}$ satisfies $\alpha^{(k)}_i = 0$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Theorem 3. -/
-theorem pascalExpFirstColumn_of_le {k i : ℕ} (h2 : 2 ≤ i) (hik : i ≤ k) :
-    pascalExpFirstColumn k i = 0 := by
-  rw [pascalExpFirstColumn]
-  split_ifs <;> omega
-
-/-- **Recurrence for the Pascal first-column sequence.** For all natural numbers $k$ and $i$ with
-$1 \le k < i$, the first-column sequence $\alpha^{(k)}$ satisfies
-$\alpha^{(k)}_i = \binom{i-2}{k-1} \alpha^{(k)}_{i-k}$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Theorem 3. -/
-theorem pascalExpFirstColumn_of_lt {k i : ℕ} (hk : 1 ≤ k) (hki : k < i) :
-    pascalExpFirstColumn k i = (i - 2).choose (k - 1) * pascalExpFirstColumn k (i - k) := by
-  rw [pascalExpFirstColumn]
-  split_ifs <;> first | rfl | omega
-
-/-- **Exponential of a Pascal diagonal matrix.** Let $k \ge 1$ and $n \ge 0$. For $m \ge 0$ let
-$\mathsf{L}_{d^{(m)}}(n)$ be the $n \times n$ real matrix whose $(b + m, b)$ entry is
-$\binom{m+b}{b}$ for each $b$ with $b + m < n$ and whose other entries are $0$ (indices from
-$0$). Let $\alpha^{(k)} = (\alpha^{(k)}_i)_{i \ge 1}$ be given by $\alpha^{(k)}_1 = 1$,
-$\alpha^{(k)}_i = 0$ for $2 \le i \le k$ and
-$\alpha^{(k)}_i = \binom{i-2}{k-1} \alpha^{(k)}_{i-k}$ for $i > k$, and let
-$T_{\alpha^{(k)}, \beta}(n)$ be the $n \times n$ lower triangular Toeplitz matrix with first
-column $\alpha^{(k)}$ and first row $\beta = (1, 0, 0, \ldots)$, that is, with $(a, b)$ entry
-$\alpha^{(k)}_{a-b+1}$ for $b \le a$ and $0$ for $b > a$. Then $\exp(\mathsf{L}_{d^{(k)}}(n))$
-equals the Hadamard (entrywise) product
-$T_{\alpha^{(k)}, \beta}(n) \odot \sum_{i=0}^{n-1} \mathsf{L}_{d^{(ki)}}(n)$.
-
-The paper sums over all $i \ge 0$; the terms with $i \ge n$ are zero matrices, since then
-$ki \ge n$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Theorem 3
-(`jis-2026-26.5.4-thm-3`). -/
-public theorem_wanted exp_pascalDiagonalMatrix (k : ℕ) (hk : 1 ≤ k) (n : ℕ) :
-    NormedSpace.exp (pascalDiagonalMatrix k n) =
-      (Matrix.of fun a b : Fin n =>
-          if (b : ℕ) ≤ a then (pascalExpFirstColumn k ((a : ℕ) - b + 1) : ℝ) else 0) ⊙
-        ∑ i ∈ Finset.range n, pascalDiagonalMatrix (k * i) n
-
-/-- **Banded Hessenberg–Toeplitz determinants and linear recurrences.** Let $R$ be a commutative
-ring, let $k \ge 1$, and let $(c_j)_{j \ge 1}$ and $(\beta_m)_{m \ge 1}$ be sequences in $R$ such
-that $\beta_1 = \cdots = \beta_{k-1} = 0$, $\beta_k = 1$ and
-$\beta_m = \sum_{j=1}^{k} c_j \beta_{m-j}$ for every $m > k$. For $n \ge 0$ let $H_n$ be the
-$n \times n$ upper Hessenberg Toeplitz matrix whose $(i, j)$ entry is $c_{j-i+1}$ if
-$0 \le j - i \le k - 1$, is $-1$ if $i = j + 1$, and is $0$ otherwise. Then
-$\det H_n = \beta_{n+k}$.
-
-Unlike the paper, this is stated over any commutative ring, without the assumption $c_k \ne 0$,
-and also for $n = 0$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Theorem 7
-(`jis-2026-26.5.4-thm-7`). -/
-public theorem_wanted det_hessenbergToeplitz_eq_recurrence (k : ℕ) (hk : 1 ≤ k) (c β : ℕ → R)
-    (hβ : ∀ i, 1 ≤ i → i < k → β i = 0) (hβk : β k = 1)
-    (hrec : ∀ m, k < m → β m = ∑ j ∈ Finset.Icc 1 k, c j * β (m - j)) (n : ℕ) :
-    (Matrix.of fun a b : Fin n =>
-        if (a : ℕ) ≤ b ∧ (b : ℕ) - a < k then c ((b : ℕ) - a + 1)
-        else if (a : ℕ) = b + 1 then -1 else 0).det = β (n + k)
 
 end
 

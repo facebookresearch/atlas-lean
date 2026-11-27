@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Field.Rat
+public import Mathlib.Algebra.Polynomial.Coeff
 public import Mathlib.Analysis.Normed.Group.Ultra
 public import Mathlib.Analysis.Normed.Module.Basic
 public import Mathlib.Data.Nat.Choose.Basic
@@ -49,13 +50,14 @@ private theorem choose_blocks_eq_quotient (d m p : ℕ) :
     intro j _
     exact_mod_cast Nat.choose_ne_zero (show p ≤ (j + 1) * p by simp [Nat.succ_mul])
 
+set_option linter.unusedVariables false in
 /-- For prime `p` and `1 ≤ m ≤ n`, the binomial coefficient at `(n * p, m * p)` is a
 quotient of products of binomial coefficients with lower index `p - 1` or `p`.
 
 Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
 Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 6
 (`integers-2026-A32-lem-6`). -/
-public theorem choose_mul_prime_eq_prod_div_prod (p m n : ℕ) (hp : p.Prime) (_hm : 1 ≤ m)
+public theorem choose_mul_prime_eq_prod_div_prod (p m n : ℕ) (hp : p.Prime) (hm : 1 ≤ m)
     (hmn : m ≤ n) :
     ((n * p).choose (m * p) : ℚ) =
         (n.choose m : ℚ) * (∏ j ∈ Finset.range m, (((n - m + j + 1) * p - 1).choose (p - 1) : ℚ)) /
@@ -138,5 +140,46 @@ public theorem ringChoose_neg_mul_mul_eq (p n k : ℕ) (hp : 0 < p) (hk : 1 ≤ 
     exact_mod_cast Nat.mul_right_cancel hp lower
   · rw [div_mul_eq_mul_div, eq_div_iff (by positivity), mul_comm (n : ℚ)]
     exact_mod_cast Nat.mul_right_cancel hp upper
+
+open Polynomial in
+/-- **Coefficients of $(x + 1)^{jp} (x^p + 1)^{n-j}$.** Let $n$, $j$ and $k$ be natural numbers and
+$p$ a positive integer, and let $d = \max(n - j, 0)$. Then the coefficient of $x^{kp}$ in the
+polynomial $(x + 1)^{jp} (x^p + 1)^{d}$ is
+$$\sum_{s=0}^{\min(j, k)} \binom{jp}{sp} \binom{d}{k - s}.$$
+
+The source takes $p$ prime; here $p$ is any positive integer.
+
+Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
+Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 2
+(`integers-2026-A32-lem-2`). -/
+public theorem coeff_add_one_pow_mul_X_pow_add_one_pow (p n j k : ℕ) (hp : 0 < p) :
+    ((X + 1 : ℕ[X]) ^ (j * p) * (X ^ p + 1) ^ (n - j)).coeff (k * p) =
+      ∑ s ∈ Finset.range (j + 1),
+        if s ≤ k then (j * p).choose (s * p) * (n - j).choose (k - s) else 0 := by
+  rw [add_pow (X ^ p : ℕ[X]) 1]
+  simp only [one_pow, mul_one, ← pow_mul', Finset.mul_sum, finsetSum_coeff, ← mul_assoc,
+    coeff_mul_natCast, coeff_mul_X_pow', Nat.mul_le_mul_right_iff hp, ← Nat.sub_mul,
+    coeff_X_add_one_pow, Nat.cast_id, ite_mul, zero_mul]
+  -- The two exponents are `(k - r) * p` and `r * p`; zero terms need not be reindexed.
+  refine Finset.sum_bij_ne_zero (fun r _ _ => k - r) ?_ ?_ ?_ ?_
+  · intro r _ hr
+    apply Finset.mem_range.mpr
+    apply Nat.lt_succ_of_le
+    by_contra! h
+    exact hr (by simp [Nat.choose_eq_zero_of_lt ((Nat.mul_lt_mul_right hp).2 h)])
+  · intro r₁ _ h₁ r₂ _ h₂ heq
+    have hr₁ : r₁ ≤ k := by by_contra h; exact h₁ (ite_eq_right h)
+    have hr₂ : r₂ ≤ k := by by_contra h; exact h₂ (ite_eq_right h)
+    omega
+  · intro s _ hs
+    have hsk : s ≤ k := by by_contra h; exact hs (ite_eq_right h)
+    have hr : k - s ≤ n - j := by
+      by_contra! h
+      exact hs (by simp [Nat.choose_eq_zero_of_lt h])
+    refine ⟨k - s, Finset.mem_range.mpr (Nat.lt_succ_of_le hr), ?_, Nat.sub_sub_self hsk⟩
+    simpa only [ite_eq_left (Nat.sub_le _ _), Nat.sub_sub_self hsk, ite_eq_left hsk] using hs
+  · intro r _ hr
+    have hrk : r ≤ k := by by_contra h; exact hr (ite_eq_right h)
+    simp only [ite_eq_left hrk, ite_eq_left (Nat.sub_le _ _), Nat.sub_sub_self hrk]
 
 end MetaMathlibExt

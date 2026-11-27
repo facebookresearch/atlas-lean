@@ -1,5 +1,6 @@
 """Real Lean regressions for isolated compiled policy audits (build-tier only)."""
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -8,8 +9,8 @@ import unittest
 import audit_compiled_modules as audit
 
 ROOT = Path(__file__).resolve().parent.parent
-PAIR = ['MathlibExtTest.AlgebraicGeometry.ProjHomExtBasicOpen',
-        'MathlibExtTest.AlgebraicGeometry.SeparatedOpenCover']
+# Two fixture modules that never import each other declare one name with different statements.
+PAIR = ['MathlibExtTest.AuditFixture.CollisionA', 'MathlibExtTest.AuditFixture.CollisionB']
 
 
 class CompiledAuditTests(unittest.TestCase):
@@ -18,10 +19,6 @@ class CompiledAuditTests(unittest.TestCase):
         if shutil.which('lake') is None:
             raise RuntimeError('native compiled-audit regressions require Lake')
         cls.checker = (ROOT / 'scripts/check_axioms.lean').read_text()
-        result = subprocess.run(['lake', 'build', *['+' + name for name in PAIR]], cwd=ROOT,
-                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        if result.returncode:
-            raise RuntimeError(result.stdout[-5000:])
         cls.storage = tempfile.TemporaryDirectory(prefix='atlas-audit-regression-')
         cls.fixture = Path(cls.storage.name)
         for name in ('lean-toolchain', 'lakefile.toml', 'lake-manifest.json'):
@@ -29,6 +26,8 @@ class CompiledAuditTests(unittest.TestCase):
         (cls.fixture / '.lake').mkdir()
         (cls.fixture / '.lake/packages').symlink_to((ROOT / '.lake/packages').resolve(), target_is_directory=True)
         sources = {
+            'CollisionA': 'module\n@[expose] public section\ntheorem auditCollision : True := trivial\n',
+            'CollisionB': 'module\n@[expose] public section\ntheorem auditCollision : 1 = 1 := rfl\n',
             'Forbidden': 'module\n@[expose] public section\naxiom alien : False\ntheorem poisoned : False := alien\n',
             'Implemented': 'module\n@[expose] public section\ndef fast (n : Nat) : Nat := n + 1\n@[implemented_by fast] def substituted (n : Nat) : Nat := n\n',
             'PrivateUnsafe': 'module\nprivate unsafe def unchecked : Nat := 0\n',
@@ -115,35 +114,65 @@ class CompiledAuditTests(unittest.TestCase):
         with tempfile.NamedTemporaryFile(mode='w', suffix='.lean') as driver:
             driver.write(''.join(f'import {name}\n' for name in PAIR) + self.checker)
             driver.flush()
-            result = subprocess.run(['lake', 'env', 'lean', driver.name], cwd=ROOT,
+            result = subprocess.run(['lake', 'env', 'lean', driver.name], cwd=self.fixture,
                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("environment already contains 'exactSource'", result.stdout)
-        repaired = audit.audit(ROOT, PAIR, self.checker)
+        self.assertIn("environment already contains 'auditCollision'", result.stdout)
+        repaired = audit.audit(self.fixture, PAIR, self.checker)
         self.assertEqual(repaired['checkedModules'], PAIR)
         self.assertEqual(repaired['successfulGroups'], 2)
         self.assertEqual(repaired['importCollisionSplits'], 1)
 
     def test_domain_import_boundary(self):
         sources = {
-            'Domains.AuditFixture.Model': 'module\npublic def domainFixture : Nat := 1\n',
+            'PhyslibExt.AuditFixture.Model': 'module\npublic def physicsFixture : Nat := 1\n',
+            'Domains.AuditFixture.Model': (
+                'module\npublic import PhyslibExt.AuditFixture.Model\n'
+                'public def domainFixture : Nat := physicsFixture\n'),
             'DomainsTest.AuditFixture.Model': 'module\npublic import Domains.AuditFixture.Model\n',
-            'WantedExt.AuditFixture.Model': 'module\npublic import Domains.AuditFixture.Model\n',
-            'MathlibExt.AuditFixture.Reverse': 'module\npublic import Domains.AuditFixture.Model\n',
+            'WantedExt.AuditFixture.Model': (
+                'module\npublic import Batteries.Util.ProofWanted\n'
+                'public import Domains.AuditFixture.Model\n'
+                'public theorem_wanted domainFixtureWanted : domainFixture = 1\n'),
+            'WantedExt.AuditFixture.Physics': (
+                'module\npublic import Batteries.Util.ProofWanted\n'
+                'public import PhyslibExt.AuditFixture.Model\n'
+                'public theorem_wanted physicsFixtureWanted : physicsFixture = 1\n'),
         }
+        allowed = list(sources)
+        forbidden = {}
+        for library in ('MathlibExt', 'CSLibExt', 'PhyslibExt'):
+            forbidden[f'{library}.AuditFixture.DomainImport'] = 'Domains.AuditFixture.Model'
+        for library in audit.ROOTS:
+            if library != 'WantedExt':
+                forbidden[f'{library}.AuditFixture.WantedImport'] = 'WantedExt.AuditFixture.Model'
+        for library in ('MathlibExt', 'CSLibExt', 'PhyslibExt', 'Domains', 'WantedExt'):
+            forbidden[f'{library}.AuditFixture.TestImport'] = 'DomainsTest.AuditFixture.Model'
+        forbidden['WantedExt.AuditFixture.FoundationTestImport'] = PAIR[0]
+        for module, target in forbidden.items():
+            sources[module] = f'module\npublic import {target}\n'
         for module, source in sources.items():
             path = self.fixture.joinpath(*module.split('.')).with_suffix('.lean')
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(source)
         subprocess.run(['lake', 'build', *('+' + name for name in sources)], cwd=self.fixture, check=True)
-        allowed = ['Domains.AuditFixture.Model', 'DomainsTest.AuditFixture.Model']
         self.assertEqual(audit.audit(self.fixture, allowed, self.checker)['checkedModules'], allowed)
+        for module, target in forbidden.items():
+            with self.subTest(module=module), self.assertRaisesRegex(
+                    audit.AuditFailure, re.escape(f'{module} must not import {target}')):
+                audit.audit(self.fixture, [module], self.checker)
+
+    def test_domain_wanted_declaration_still_fails(self):
+        module = 'Domains.AuditFixture.WantedDeclaration'
+        path = self.fixture.joinpath(*module.split('.')).with_suffix('.lean')
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            'module\npublic import Batteries.Util.ProofWanted\n'
+            'public theorem_wanted misplacedDomainWanted : True\n')
+        subprocess.run(['lake', 'build', '+' + module], cwd=self.fixture, check=True)
         with self.assertRaisesRegex(audit.AuditFailure,
-                                    r'MathlibExt\.AuditFixture\.Reverse must not import Domains\.AuditFixture\.Model'):
-            audit.audit(self.fixture, ['MathlibExt.AuditFixture.Reverse'], self.checker)
-        with self.assertRaisesRegex(audit.AuditFailure,
-                                    r'WantedExt\.AuditFixture\.Model must not import Domains\.AuditFixture\.Model'):
-            audit.audit(self.fixture, ['WantedExt.AuditFixture.Model'], self.checker)
+                                    re.escape(f'{module} contains a wanted declaration outside WantedExt')):
+            audit.audit(self.fixture, [module], self.checker)
 
     def test_forbidden_axiom_still_fails(self):
         with self.assertRaisesRegex(audit.AuditFailure, 'depends on forbidden axioms'):

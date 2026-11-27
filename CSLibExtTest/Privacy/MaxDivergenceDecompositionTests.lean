@@ -466,3 +466,466 @@ theorem delta_zero_forward {Outcome : Type*} [Fintype Outcome]
 #print axioms CSLibExt.Privacy.MaxDivergenceDecomposition.approxMaxDivLE_both_iff_exists_repair
 
 end CSLibExtTest.Privacy.MaxDivergenceDecompositionPart2Tests
+
+/-
+Dominated-repair tests for
+`exists_dominated_pure_pair_of_approxMaxDivLE_both` on `Fin 2`:
+(a) `P = Q` at `delta = 0`, (b) `eps = 0` with `P ≠ Q`,
+(c) `eps = Real.log 2` with `P ≠ Q`.
+-/
+
+namespace CSLibExtTest.Privacy.MaxDivergenceDecompositionDominatedTests
+
+open CSLibExt.Privacy.MaxDivergenceDecomposition
+
+/-- `PFinA = (3/4, 1/4)` on `Fin 2`. -/
+noncomputable def PFinA : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (3 / 4), ENNReal.ofReal (1 / 4)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+/-- `QFinA = (1/2, 1/2)` on `Fin 2`. -/
+noncomputable def QFinA : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (1 / 2), ENNReal.ofReal (1 / 2)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+@[simp]
+theorem PFinA_zero_toReal : (PFinA 0).toReal = 3 / 4 := by
+  simp only [PFinA, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem PFinA_one_toReal : (PFinA 1).toReal = 1 / 4 := by
+  simp only [PFinA, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem QFinA_zero_toReal : (QFinA 0).toReal = 1 / 2 := by
+  simp only [QFinA, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem QFinA_one_toReal : (QFinA 1).toReal = 1 / 2 := by
+  simp only [QFinA, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+theorem PFinA_ne_QFinA : PFinA ≠ QFinA := by
+  intro h
+  have h0 : (PFinA 0).toReal = (QFinA 0).toReal :=
+    congrArg (fun P => (P 0).toReal) h
+  simp only [PFinA_zero_toReal, QFinA_zero_toReal] at h0
+  norm_num at h0
+
+/-- Case (a): self bound at `(0, 0)`. -/
+theorem approx_domA : approxMaxDivLE PFinA PFinA 0 0 :=
+  CSLibExtTest.Privacy.MaxDivergenceDecompositionTests.approx_self_of_nonneg
+    PFinA 0 (by norm_num)
+
+/-- Case (a): domination at each atom is the pointwise bound. -/
+theorem domA_atoms :
+    ∃ P₀ Q₀ : PMF (Fin 2),
+      (P₀ 0).toReal ≤ (PFinA 0).toReal ∧
+      (P₀ 1).toReal ≤ (PFinA 1).toReal ∧
+      (Q₀ 0).toReal ≤ (PFinA 0).toReal ∧
+      (Q₀ 1).toReal ≤ (PFinA 1).toReal := by
+  obtain ⟨P₀, Q₀, _, _, hdomP, hdomQ⟩ :=
+    exists_dominated_pure_pair_of_approxMaxDivLE_both PFinA PFinA 0 0
+      (by norm_num) (by norm_num) (by norm_num) approx_domA approx_domA
+  refine ⟨P₀, Q₀, ?_, ?_, ?_, ?_⟩
+  · have h := hdomP 0; simpa using h
+  · have h := hdomP 1; simpa using h
+  · have h := hdomQ 0; simpa using h
+  · have h := hdomQ 1; simpa using h
+
+/-- Case (b): the `PFinA → QFinA` bound at `(0, 1/4)`. -/
+theorem approx_domB_PQ : approxMaxDivLE PFinA QFinA 0 (1 / 4) := by
+  intro s
+  simp only [Real.exp_zero, one_mul]
+  fin_cases s <;> simp <;> norm_num
+
+/-- Case (b): the `QFinA → PFinA` bound at `(0, 1/4)`. -/
+theorem approx_domB_QP : approxMaxDivLE QFinA PFinA 0 (1 / 4) := by
+  intro s
+  simp only [Real.exp_zero, one_mul]
+  fin_cases s <;> simp <;> norm_num
+
+/-- Case (b): two-sided pure bounds at `eps = 0` give pointwise equality. -/
+theorem domB_eq (P₀ Q₀ : PMF (Fin 2)) (hPQ : maxDivLE P₀ Q₀ 0)
+    (hQP : maxDivLE Q₀ P₀ 0) (w : Fin 2) :
+    (P₀ w).toReal = (Q₀ w).toReal := by
+  have h1 := hPQ w
+  have h2 := hQP w
+  simp only [Real.exp_zero, one_mul] at h1 h2
+  exact le_antisymm h1 h2
+
+/-- Case (b): witnesses agree at each atom. -/
+theorem domB_atoms :
+    ∃ P₀ Q₀ : PMF (Fin 2),
+      (P₀ 0).toReal = (Q₀ 0).toReal ∧ (P₀ 1).toReal = (Q₀ 1).toReal := by
+  obtain ⟨P₀, Q₀, hPQ, hQP, _, _⟩ :=
+    exists_dominated_pure_pair_of_approxMaxDivLE_both PFinA QFinA 0 (1 / 4)
+      (by norm_num) (by norm_num) (by norm_num) approx_domB_PQ approx_domB_QP
+  exact ⟨P₀, Q₀, domB_eq P₀ Q₀ hPQ hQP 0, domB_eq P₀ Q₀ hPQ hQP 1⟩
+
+/-- `Real.exp (Real.log 2) = 2`. -/
+theorem exp_log_two_dom : Real.exp (Real.log 2) = 2 :=
+  Real.exp_log (by norm_num)
+
+/-- `Real.log 2` is nonnegative. -/
+theorem log_two_nonneg_dom : 0 ≤ Real.log 2 :=
+  Real.log_nonneg (by norm_num)
+
+/-- Case (c): `PFinC = (4/5, 1/5)` on `Fin 2`. -/
+noncomputable def PFinC : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (4 / 5), ENNReal.ofReal (1 / 5)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+/-- Case (c): `QFinC = (1/5, 4/5)` on `Fin 2`. -/
+noncomputable def QFinC : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (1 / 5), ENNReal.ofReal (4 / 5)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+@[simp]
+theorem PFinC_zero_toReal : (PFinC 0).toReal = 4 / 5 := by
+  simp only [PFinC, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem PFinC_one_toReal : (PFinC 1).toReal = 1 / 5 := by
+  simp only [PFinC, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem QFinC_zero_toReal : (QFinC 0).toReal = 1 / 5 := by
+  simp only [QFinC, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem QFinC_one_toReal : (QFinC 1).toReal = 4 / 5 := by
+  simp only [QFinC, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+theorem PFinC_ne_QFinC : PFinC ≠ QFinC := by
+  intro h
+  have h0 : (PFinC 0).toReal = (QFinC 0).toReal :=
+    congrArg (fun P => (P 0).toReal) h
+  simp only [PFinC_zero_toReal, QFinC_zero_toReal] at h0
+  norm_num at h0
+
+/-- Case (c): the `PFinC → QFinC` bound at `(log 2, 2/5)`. -/
+theorem approx_domC_PQ : approxMaxDivLE PFinC QFinC (Real.log 2) (2 / 5) := by
+  intro s
+  simp only [exp_log_two_dom]
+  fin_cases s <;> simp <;> norm_num
+
+/-- Case (c): the `QFinC → PFinC` bound at `(log 2, 2/5)`. -/
+theorem approx_domC_QP : approxMaxDivLE QFinC PFinC (Real.log 2) (2 / 5) := by
+  intro s
+  simp only [exp_log_two_dom]
+  fin_cases s <;> simp <;> norm_num
+
+/-- Case (c): all four conclusions asserted at each atom. -/
+theorem domC_atoms :
+    ∃ P₀ Q₀ : PMF (Fin 2),
+      (P₀ 0).toReal ≤ 2 * (Q₀ 0).toReal ∧
+      (Q₀ 0).toReal ≤ 2 * (P₀ 0).toReal ∧
+      (P₀ 1).toReal ≤ 2 * (Q₀ 1).toReal ∧
+      (Q₀ 1).toReal ≤ 2 * (P₀ 1).toReal ∧
+      (1 - 2 / 5) * (P₀ 0).toReal ≤ (PFinC 0).toReal ∧
+      (1 - 2 / 5) * (P₀ 1).toReal ≤ (PFinC 1).toReal ∧
+      (1 - 2 / 5) * (Q₀ 0).toReal ≤ (QFinC 0).toReal ∧
+      (1 - 2 / 5) * (Q₀ 1).toReal ≤ (QFinC 1).toReal := by
+  obtain ⟨P₀, Q₀, hPQ, hQP, hdomP, hdomQ⟩ :=
+    exists_dominated_pure_pair_of_approxMaxDivLE_both PFinC QFinC (Real.log 2)
+      (2 / 5) log_two_nonneg_dom (by norm_num) (by norm_num)
+      approx_domC_PQ approx_domC_QP
+  have e0 := hPQ 0
+  have e1 := hPQ 1
+  have f0 := hQP 0
+  have f1 := hQP 1
+  rw [exp_log_two_dom] at e0 e1 f0 f1
+  exact ⟨P₀, Q₀, e0, f0, e1, f1, hdomP 0, hdomP 1, hdomQ 0, hdomQ 1⟩
+
+/-
+Asymmetric cases for `exists_dominated_pure_pair_of_approxMaxDivLE_both`:
+(d) `PFinD = (2/5, 3/5)`, `QFinD = (4/5, 1/5)` at `(log 2, 1/5)`,
+whose capped sums `4/5 < 1` lie in the `v > u` strict interpolation
+branch; (e) the swapped pair `(QFinD, PFinD)`, covering `u > v`.
+-/
+
+/-- Case (d): `PFinD = (2/5, 3/5)` on `Fin 2`. -/
+noncomputable def PFinD : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (2 / 5), ENNReal.ofReal (3 / 5)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+/-- Case (d): `QFinD = (4/5, 1/5)` on `Fin 2`. -/
+noncomputable def QFinD : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (4 / 5), ENNReal.ofReal (1 / 5)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+@[simp]
+theorem PFinD_zero_toReal : (PFinD 0).toReal = 2 / 5 := by
+  simp only [PFinD, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem PFinD_one_toReal : (PFinD 1).toReal = 3 / 5 := by
+  simp only [PFinD, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem QFinD_zero_toReal : (QFinD 0).toReal = 4 / 5 := by
+  simp only [QFinD, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem QFinD_one_toReal : (QFinD 1).toReal = 1 / 5 := by
+  simp only [QFinD, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+/-- Case (d): capped sum `∑ w, capEnvelope PFinD QFinD (log 2) w = 4/5`. -/
+theorem capSum_d_PQ :
+    ∑ w, capEnvelope PFinD QFinD (Real.log 2) w = 4 / 5 := by
+  have h0 : min ((2 : ℝ) / 5) (2 * (4 / 5)) = 2 / 5 :=
+    min_eq_left (by norm_num)
+  have h1 : min ((3 : ℝ) / 5) (2 * (1 / 5)) = 2 * (1 / 5) :=
+    min_eq_right (by norm_num)
+  rw [Fin.sum_univ_two]
+  simp only [capEnvelope, exp_log_two_dom, PFinD_zero_toReal,
+    PFinD_one_toReal, QFinD_zero_toReal, QFinD_one_toReal, h0, h1]
+  norm_num
+
+/-- Case (d): capped sum `∑ w, capEnvelope QFinD PFinD (log 2) w = 1`. -/
+theorem capSum_d_QP :
+    ∑ w, capEnvelope QFinD PFinD (Real.log 2) w = 1 := by
+  have h0 : min ((4 : ℝ) / 5) (2 * (2 / 5)) = 4 / 5 :=
+    min_eq_left (by norm_num)
+  have h1 : min ((1 : ℝ) / 5) (2 * (3 / 5)) = 1 / 5 :=
+    min_eq_left (by norm_num)
+  rw [Fin.sum_univ_two]
+  simp only [capEnvelope, exp_log_two_dom, PFinD_zero_toReal,
+    PFinD_one_toReal, QFinD_zero_toReal, QFinD_one_toReal, h0, h1]
+  norm_num
+
+/-- Case (d) lies in the `v > u` strict interpolation branch. -/
+theorem capSum_d_strict :
+    ∑ w, capEnvelope PFinD QFinD (Real.log 2) w <
+      ∑ w, capEnvelope QFinD PFinD (Real.log 2) w := by
+  rw [capSum_d_PQ, capSum_d_QP]
+  norm_num
+
+/-- Case (d): the `PFinD → QFinD` bound at `(log 2, 1/5)`. -/
+theorem approx_domD_PQ : approxMaxDivLE PFinD QFinD (Real.log 2) (1 / 5) := by
+  intro s
+  simp only [exp_log_two_dom]
+  fin_cases s <;> simp <;> norm_num
+
+/-- Case (d): the `QFinD → PFinD` bound at `(log 2, 1/5)`. -/
+theorem approx_domD_QP : approxMaxDivLE QFinD PFinD (Real.log 2) (1 / 5) := by
+  intro s
+  simp only [exp_log_two_dom]
+  fin_cases s <;> simp <;> norm_num
+
+/-- Case (d): all four conclusions asserted at each atom. -/
+theorem domD_atoms :
+    ∃ P₀ Q₀ : PMF (Fin 2),
+      (P₀ 0).toReal ≤ 2 * (Q₀ 0).toReal ∧
+      (Q₀ 0).toReal ≤ 2 * (P₀ 0).toReal ∧
+      (P₀ 1).toReal ≤ 2 * (Q₀ 1).toReal ∧
+      (Q₀ 1).toReal ≤ 2 * (P₀ 1).toReal ∧
+      (1 - 1 / 5) * (P₀ 0).toReal ≤ (PFinD 0).toReal ∧
+      (1 - 1 / 5) * (P₀ 1).toReal ≤ (PFinD 1).toReal ∧
+      (1 - 1 / 5) * (Q₀ 0).toReal ≤ (QFinD 0).toReal ∧
+      (1 - 1 / 5) * (Q₀ 1).toReal ≤ (QFinD 1).toReal := by
+  obtain ⟨P₀, Q₀, hPQ, hQP, hdomP, hdomQ⟩ :=
+    exists_dominated_pure_pair_of_approxMaxDivLE_both PFinD QFinD (Real.log 2)
+      (1 / 5) log_two_nonneg_dom (by norm_num) (by norm_num)
+      approx_domD_PQ approx_domD_QP
+  have e0 := hPQ 0
+  have e1 := hPQ 1
+  have f0 := hQP 0
+  have f1 := hQP 1
+  rw [exp_log_two_dom] at e0 e1 f0 f1
+  exact ⟨P₀, Q₀, e0, f0, e1, f1, hdomP 0, hdomP 1, hdomQ 0, hdomQ 1⟩
+
+/-- Case (e): swapped capped sum `∑ w, capEnvelope QFinD PFinD (log 2) w = 1`. -/
+theorem capSum_e_QP :
+    ∑ w, capEnvelope QFinD PFinD (Real.log 2) w = 1 :=
+  capSum_d_QP
+
+/-- Case (e): swapped capped sum `∑ w, capEnvelope PFinD QFinD (log 2) w = 4/5`. -/
+theorem capSum_e_PQ :
+    ∑ w, capEnvelope PFinD QFinD (Real.log 2) w = 4 / 5 :=
+  capSum_d_PQ
+
+/-- Case (e) lies in the `u > v` strict interpolation branch. -/
+theorem capSum_e_strict :
+    ∑ w, capEnvelope QFinD PFinD (Real.log 2) w >
+      ∑ w, capEnvelope PFinD QFinD (Real.log 2) w := by
+  rw [capSum_d_QP, capSum_d_PQ]
+  norm_num
+
+/-- Case (e): all four conclusions asserted at each atom. -/
+theorem domE_atoms :
+    ∃ P₀ Q₀ : PMF (Fin 2),
+      (P₀ 0).toReal ≤ 2 * (Q₀ 0).toReal ∧
+      (Q₀ 0).toReal ≤ 2 * (P₀ 0).toReal ∧
+      (P₀ 1).toReal ≤ 2 * (Q₀ 1).toReal ∧
+      (Q₀ 1).toReal ≤ 2 * (P₀ 1).toReal ∧
+      (1 - 1 / 5) * (P₀ 0).toReal ≤ (QFinD 0).toReal ∧
+      (1 - 1 / 5) * (P₀ 1).toReal ≤ (QFinD 1).toReal ∧
+      (1 - 1 / 5) * (Q₀ 0).toReal ≤ (PFinD 0).toReal ∧
+      (1 - 1 / 5) * (Q₀ 1).toReal ≤ (PFinD 1).toReal := by
+  obtain ⟨P₀, Q₀, hPQ, hQP, hdomP, hdomQ⟩ :=
+    exists_dominated_pure_pair_of_approxMaxDivLE_both QFinD PFinD (Real.log 2)
+      (1 / 5) log_two_nonneg_dom (by norm_num) (by norm_num)
+      approx_domD_QP approx_domD_PQ
+  have e0 := hPQ 0
+  have e1 := hPQ 1
+  have f0 := hQP 0
+  have f1 := hQP 1
+  rw [exp_log_two_dom] at e0 e1 f0 f1
+  exact ⟨P₀, Q₀, e0, f0, e1, f1, hdomP 0, hdomP 1, hdomQ 0, hdomQ 1⟩
+
+#print axioms CSLibExt.Privacy.MaxDivergenceDecomposition.exists_dominated_pure_pair_of_approxMaxDivLE_both
+
+end CSLibExtTest.Privacy.MaxDivergenceDecompositionDominatedTests
+
+namespace CSLibExtTest.Privacy.MaxDivergenceDecompositionCommonMassTests
+
+open CSLibExt.Privacy.MaxDivergenceDecomposition
+
+/-- `Pcm0 = (3/4, 1/4)` on `Fin 2`. -/
+noncomputable def Pcm0 : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (3 / 4), ENNReal.ofReal (1 / 4)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+/-- `Qcm0 = (1/2, 1/2)` on `Fin 2`. -/
+noncomputable def Qcm0 : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (1 / 2), ENNReal.ofReal (1 / 2)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+/-- `Pcm = (7/8, 1/8)` on `Fin 2`. -/
+noncomputable def Pcm : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (7 / 8), ENNReal.ofReal (1 / 8)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+/-- `Qcm = (3/4, 1/4)` on `Fin 2`. -/
+noncomputable def Qcm : PMF (Fin 2) :=
+  PMF.ofFintype ![ENNReal.ofReal (3 / 4), ENNReal.ofReal (1 / 4)] (by
+    rw [Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    norm_num)
+
+@[simp]
+theorem Pcm0_zero_toReal : (Pcm0 0).toReal = 3 / 4 := by
+  simp only [Pcm0, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Pcm0_one_toReal : (Pcm0 1).toReal = 1 / 4 := by
+  simp only [Pcm0, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Qcm0_zero_toReal : (Qcm0 0).toReal = 1 / 2 := by
+  simp only [Qcm0, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Qcm0_one_toReal : (Qcm0 1).toReal = 1 / 2 := by
+  simp only [Qcm0, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Pcm_zero_toReal : (Pcm 0).toReal = 7 / 8 := by
+  simp only [Pcm, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Pcm_one_toReal : (Pcm 1).toReal = 1 / 8 := by
+  simp only [Pcm, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Qcm_zero_toReal : (Qcm 0).toReal = 3 / 4 := by
+  simp only [Qcm, PMF.ofFintype_apply, Matrix.cons_val_zero]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+@[simp]
+theorem Qcm_one_toReal : (Qcm 1).toReal = 1 / 4 := by
+  simp only [Qcm, PMF.ofFintype_apply, Matrix.cons_val_one]
+  exact ENNReal.toReal_ofReal (by norm_num)
+
+/-- Outer `P` dominates half the ideal mass. -/
+theorem cm_hP : ∀ w, (1 / 2 : ℝ) * (Pcm0 w).toReal ≤ (Pcm w).toReal := by
+  intro w
+  fin_cases w <;> simp <;> norm_num
+
+/-- Outer `Q` dominates half the ideal mass. -/
+theorem cm_hQ : ∀ w, (1 / 2 : ℝ) * (Qcm0 w).toReal ≤ (Qcm w).toReal := by
+  intro w
+  fin_cases w <;> simp <;> norm_num
+
+/-- Ideal bound at `(0, 1/4)`. -/
+theorem cm_hideal : approxMaxDivLE Pcm0 Qcm0 0 (1 / 4) := by
+  intro s
+  simp only [Real.exp_zero, one_mul]
+  fin_cases s <;> simp <;> norm_num
+
+/-- Transferred conclusion at `alpha = 1/2`. -/
+theorem cm_main : approxMaxDivLE Pcm Qcm 0 ((1 / 2) * (1 / 4) + 1 - (1 / 2)) :=
+  approxMaxDivLE_of_common_mass Pcm Qcm Pcm0 Qcm0 (1 / 2) 0 (1 / 4)
+    (by norm_num) cm_hP cm_hQ cm_hideal
+
+/-- Independent check of the conclusion at all four `Fin 2` events. -/
+theorem cm_direct : approxMaxDivLE Pcm Qcm 0 ((1 / 2) * (1 / 4) + 1 - (1 / 2)) := by
+  intro s
+  simp only [Real.exp_zero, one_mul]
+  fin_cases s <;> simp <;> norm_num
+
+/-- The applied conclusion instantiated at the full event. -/
+theorem cm_at_univ : ∑ w ∈ Finset.univ, (Pcm w).toReal ≤
+    Real.exp 0 * ∑ w ∈ Finset.univ, (Qcm w).toReal +
+      ((1 / 2) * (1 / 4) + 1 - (1 / 2)) :=
+  cm_main Finset.univ
+
+/-- At `alpha = 1` the transferred budget is exactly the ideal budget. -/
+theorem cm_one_delta : ((1 : ℝ) * (1 / 4) + 1 - 1) = 1 / 4 := by norm_num
+
+theorem cm_one : approxMaxDivLE Pcm0 Qcm0 0 (1 / 4) := by
+  have h := approxMaxDivLE_of_common_mass Pcm0 Qcm0 Pcm0 Qcm0 (1 : ℝ) 0 (1 / 4)
+    (by norm_num) (by intro w; simp) (by intro w; simp) cm_hideal
+  rw [cm_one_delta] at h
+  exact h
+
+#print axioms CSLibExt.Privacy.MaxDivergenceDecomposition.approxMaxDivLE_of_common_mass
+
+end CSLibExtTest.Privacy.MaxDivergenceDecompositionCommonMassTests

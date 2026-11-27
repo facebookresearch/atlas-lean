@@ -34,7 +34,7 @@ example : (eqHashProtocol 2 0).errorProb (eqFn 2) (fun _ => false) (fun _ => tru
   · norm_num
   · intro h; simpa using congrFun h 0
 
-/-- The hypotheses of `newman_private_coins` (WantedExt) are jointly satisfiable at the largest
+/-- The hypotheses of `newman_private_coins` are jointly satisfiable at the largest
 allowed error `ε = 1 / 2`: the random-hash protocol with one-bit hashes on one-bit inputs, with a
 nonempty set of random strings, has error at most `1 / 2` on every input. -/
 example : ∀ x y : Fin 1 → Bool, ((eqHashProtocol 1 1).errorProb (eqFn 1) x y : ℝ) ≤ 1 / 2 := by

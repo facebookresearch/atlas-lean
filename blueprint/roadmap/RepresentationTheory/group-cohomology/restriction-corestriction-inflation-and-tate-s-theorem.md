@@ -19,8 +19,8 @@ contains the following statements.
    $0 \to H^r(G/H, M^H) \to H^r(G, M) \to H^r(H, M)$, by inflation and restriction, is exact (Milne,
    Proposition II.1.34).
 3. **Cup products.** The cup products $H^r(G, M) \times H^s(G, N) \to H^{r+s}(G, M \otimes N)$, with their
-   compatibility with connecting maps, restriction, corestriction and inflation (Milne, Propositions
-   II.1.38 and II.1.39), and their extension to Tate cohomology; the identification
+   compatibility with the connecting maps of exact sequences that stay exact after tensoring, and with restriction,
+   corestriction and inflation (Milne, Propositions II.1.38 and II.1.39), and their extension to Tate cohomology; the identification
    $H^2(G, \mathbb{Z}) \cong \mathrm{Hom}(G, \mathbb{Q}/\mathbb{Z})$ by the connecting map of
    $0 \to \mathbb{Z} \to \mathbb{Q} \to \mathbb{Q}/\mathbb{Z} \to 0$ (Milne, Lemma II.3.3(c)). For $G$ cyclic,
    cup product with the class $\delta\chi$ of an injective character $\chi \colon G \to \mathbb{Q}/\mathbb{Z}$
@@ -41,8 +41,16 @@ contains the following statements.
    $\hat H^{-1}(G, \mathbb{Z}) = 0$ (the norm is multiplication by $|G|$) and $H^1(G, \mathbb{Z}) = 0$
    (Milne, Lemma II.3.3(b)).
 
+## Expansion
+
 A good expansion has a page for each numbered item, splitting the first into the formula
 $\mathrm{Cor} \circ \mathrm{Res} = (G : H)$ and its consequences.
+
+## Depends on
+
+- [Abelianization of a group](../../GroupTheory/commutators-and-engel-conditions/abelianization.md), for $G^{\mathrm{ab}}$ and $H^{\mathrm{ab}}$ and the map $H^{\mathrm{ab}} \to G^{\mathrm{ab}}$ in items 1 and 4
+- [Tate cohomology groups of a finite group](tate-cohomology-and-the-herbrand-quotient/tate-cohomology.md), for the Tate cohomology groups of a finite group, for all the items
+- [Cup products in Tate cohomology](cup-products-in-tate-cohomology.md), for cup products, in items 3 and 4
 
 ## Proof depends on
 

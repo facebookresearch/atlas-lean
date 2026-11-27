@@ -65,7 +65,6 @@ noncomputable def oneStep (f : X ⟶ Spec (.of k)) [IsProperCurve f]
     (hE : IsVectorBundle E r) (hr : 0 < r) (h : IsSemistable f E r hE hr) :
     Filtration f E r where
   steps := 1
-  steps_pos := one_pos
   bundle := ![0, E]
   rank := ![0, r]
   zero := isZero_zero _
@@ -105,12 +104,47 @@ example (f : X ⟶ Spec (.of k)) [IsProperCurve f]
       (oneStep f E r hE hr h).rank (Fin.last _) - (oneStep f E r hE hr h).rank 0 = r :=
   ⟨rfl, by simp [oneStep]⟩
 
-/-- Every Harder–Narasimhan filtration is of a bundle of positive rank: the ranks start at
+/-- The filtration `0 ≅ E` with no steps of a zero sheaf, of rank zero. -/
+noncomputable def zeroStep (f : X ⟶ Spec (.of k)) [IsProperCurve f]
+    [SmoothOfRelativeDimension 1 f] [IsIntegral X]
+    (E : X.Modules) (hE : IsZero E) : Filtration f E 0 where
+  steps := 0
+  bundle := fun _ ↦ E
+  rank := fun _ ↦ 0
+  zero := hE
+  rank_zero := rfl
+  final := Iso.refl _
+  rank_final := rfl
+  locallyFree := fun _ ↦ isVectorBundle_zero hE
+  inclusion := fun j ↦ j.elim0
+  monic := fun j ↦ j.elim0
+  rank_increases := fun j ↦ j.elim0
+  quotientLocallyFree := fun j ↦ j.elim0
+  semistable := fun j ↦ j.elim0
+  slope_decreases := fun i ↦ i.elim0
+
+/-- Every vector bundle of rank zero has a Harder–Narasimhan filtration, since it is zero: the
+existence request holds in rank zero. -/
+example (f : X ⟶ Spec (.of k)) [IsProperCurve f]
+    [SmoothOfRelativeDimension 1 f] [IsIntegral X] (E : X.Modules) (hE : IsVectorBundle E 0) :
+    Nonempty (Filtration f E 0) :=
+  ⟨zeroStep f E (isZero_of_isVectorBundle_zero hE)⟩
+
+/-- A filtration of a bundle of positive rank has at least one step. -/
+theorem steps_pos (f : X ⟶ Spec (.of k)) [IsProperCurve f]
+    [SmoothOfRelativeDimension 1 f] [IsIntegral X]
+    {E : X.Modules} {r : ℕ}
+    (F : Filtration f E r) (hr : 0 < r) : 0 < F.steps := by
+  refine Nat.pos_of_ne_zero fun h ↦ hr.ne' ?_
+  have e : (Fin.last F.steps : Fin (F.steps + 1)) = 0 := Fin.ext (by simp [h])
+  rw [← F.rank_final, e, F.rank_zero]
+
+/-- A filtration with at least one step is of a bundle of positive rank: the ranks start at
 `0` and strictly increase up to `r`. -/
 theorem rank_pos (f : X ⟶ Spec (.of k)) [IsProperCurve f]
     [SmoothOfRelativeDimension 1 f] [IsIntegral X]
     {E : X.Modules} {r : ℕ}
-    (F : Filtration f E r) : 0 < r := by
+    (F : Filtration f E r) (hpos : 0 < F.steps) : 0 < r := by
   have key : ∀ m (hm : m < F.steps), 0 < F.rank ⟨m + 1, Nat.succ_lt_succ hm⟩ := by
     intro m
     induction m with
@@ -123,7 +157,6 @@ theorem rank_pos (f : X ⟶ Spec (.of k)) [IsProperCurve f]
     | succ m ih =>
       intro hm
       exact (ih (Nat.lt_of_succ_lt hm)).trans (F.rank_increases ⟨m + 1, hm⟩)
-  have hpos := F.steps_pos
   have h := key (F.steps - 1) (Nat.sub_lt hpos one_pos)
   have e : (⟨F.steps - 1 + 1, Nat.succ_lt_succ (Nat.sub_lt hpos one_pos)⟩ :
       Fin (F.steps + 1)) = Fin.last F.steps := Fin.ext (by simp only [Fin.val_last]; omega)

@@ -4,3 +4,4 @@ Actions of monoids and groups on sets in general: orbits, stabilizers and the or
 
 - [Stabilizer of a point under a group action](stabilizer-group-action.md)
 - [The orbits of a group action partition the set acted on](orbits-partition.md)
+- [Action of a monoid or a group on a set](group-action.md)

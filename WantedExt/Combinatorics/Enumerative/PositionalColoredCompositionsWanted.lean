@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Enumerative.PositionalColoredCompositions
+public import MathlibExt.Combinatorics.Enumerative.PositionalColoredCompositionChooseTwo
+public import MathlibExt.Combinatorics.Enumerative.PositionalColoredCompositionRuns
 public import Mathlib.Data.Set.Card
 
 /-!
@@ -44,18 +45,6 @@ public theorem_wanted colorTwoRestrictedCompositions_eq_even (k : ℕ) :
     ∑ c : Composition k, (c.blocks.map fun p => if 2 ≤ p then p - 1 else p).prod =
       positionalColoredCompositionCount 2 0 k
 
-/-- **Odd colored compositions and binomial-color compositions.** For every $k \ge 1$, the number
-$o(k) = c_{2,1}(k)$ of odd colored compositions of $k$, in which only the parts at odd positions
-are colored, equals the sum, over all compositions $(p_1, \dots, p_r)$ of $k + 1$, of
-$\prod_i \binom{p_i}{2}$; that is, the number of compositions of $k + 1$ in which a part $p$ has
-$\binom{p}{2}$ colors.
-
-Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
-(2026), Article A49, Theorem 2 (`integers-2026-A49-thm-2`). -/
-public theorem_wanted odd_eq_choose_two_colorCompositions (k : ℕ) (hk : 1 ≤ k) :
-    positionalColoredCompositionCount 2 1 k =
-      ∑ c : Composition (k + 1), (c.blocks.map fun p => p.choose 2).prod
-
 /-- **Odd colored compositions and ternary strings.** For every $k \ge 1$, the number
 $o(k) = c_{2,1}(k)$ of odd colored compositions of $k$, in which only the parts at odd positions
 are colored, equals the number of strings of length $k - 1$ over the alphabet $\{0, 1, 2\}$ that
@@ -81,19 +70,6 @@ public theorem_wanted even_eq_ternaryStrings_avoiding (k : ℕ) :
     positionalColoredCompositionCount 2 0 k =
       {w : List (Fin 3) | w.length = k ∧ ¬ [0, 1] <:+: w ∧ ¬ [1, 2] <:+: w ∧
         w.head? ≠ some 2 ∧ w.getLast? ≠ some 0}.ncard
-
-/-- **Even colored compositions and runs in binary strings.** For every $k \ge 0$, the number
-$e(k + 1) = c_{2,0}(k + 1)$ of even colored compositions of $k + 1$, in which only the parts at
-even positions are colored, equals the sum, over all binary strings of length $k$, of the
-product of the lengths of the maximal runs of $1$s in the string; a string without a $1$
-contributes the empty product $1$.
-
-Source: Andrew Li and Hua Wang, *Combinatorics of Positional Colored Compositions*, INTEGERS 26
-(2026), Article A49, Theorem 4 (`integers-2026-A49-thm-4`). -/
-public theorem_wanted even_succ_eq_sum_runLength_prod (k : ℕ) :
-    positionalColoredCompositionCount 2 0 (k + 1) =
-      ∑ f : Fin k → Bool,
-        ((((List.ofFn f).splitOn false).map List.length).filter (· ≠ 0)).prod
 
 /-- **Odd colored compositions and runs in binary strings.** For every $k \ge 1$, the number
 $o(k) = c_{2,1}(k)$ of odd colored compositions of $k$, in which only the parts at odd positions

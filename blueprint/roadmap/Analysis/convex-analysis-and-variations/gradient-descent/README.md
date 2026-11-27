@@ -13,6 +13,7 @@
 - [Gradient descent with zero step sizes stays put](gradient-descent-trajectory-zero-schedul.md)
 - [Descent lemma](gradient-descent-descent-lemma.md)
 - [Sufficient decrease of a gradient step](gradient-descent-sufficient-decrease.md)
+- [Gradient norm bound for smooth lower-bounded functions](gradient-descent-norm-gradient-sq-le.md)
 - [Convergence of the subgradient method](subgradient-method-rate.md)
 - [Convergence of stochastic gradient descent](integral-sgd-average-sub-le.md)
 
@@ -22,6 +23,7 @@
 - [Suboptimality bound from strong convexity](sub-le-norm-sq-div-of-strong-convex-on.md)
 - [Strong convexity modulus is at most the smoothness constant](le-of-strong-convex-on-of-lipschitz-with.md)
 - [Linear convergence of gradient descent for strongly convex functions](gradient-descent-strongly-convex-linear.md)
+- [Linear convergence of gradient descent under the Polyak–Łojasiewicz inequality](linear-convergence-under-the-polyak-lojasiewicz-inequality.md)
 
 ## Expansiveness of the gradient step
 
@@ -31,6 +33,10 @@ How far the gradient update $G(w) = w - \alpha \nabla f(w)$ can move two points 
 - [The gradient update is $(1 + \alpha\beta)$-expansive](norm-gradient-step-sub-le-one-add-mul.md)
 - [The gradient update of a convex smooth function is non-expansive](norm-gradient-step-sub-le.md)
 - [The gradient update of a Lipschitz function is $\alpha L$-bounded](norm-smul-gradient-le.md)
+
+## Nonconvex stochastic gradients
+
+- [Nonconvex stochastic gradients: unbiased oracles and ABC expected smoothness](nonconvex-stochastic-gradients/README.md)
 
 ## Related topics
 

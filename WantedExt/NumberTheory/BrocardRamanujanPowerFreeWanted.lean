@@ -12,6 +12,10 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.IsPrimePow
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Nat.PrimeFin
+public import MathlibExt.NumberTheory.BrocardRamanujanFewPrimeFactors
+public import MathlibExt.NumberTheory.BrocardRamanujanPowerFree
+public import MathlibExt.NumberTheory.FactorialDivisor
+public import MathlibExt.NumberTheory.FactorialDivisorBound
 public import MathlibExt.NumberTheory.PowerFree
 public import Mathlib.Algebra.MvPolynomial.Eval
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -43,17 +47,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ power-free are finite.** For every
-natural number $k \ge 2$, there are only finitely many pairs of natural numbers $(n, x)$ with
-$n! + 1 = x^2$ such that $x - 1$ or $x + 1$ is $k$-free.
-
-Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
-Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(i), first
-sentence (`integers-2025-A71-thm-1`). -/
-public theorem_wanted brocardRamanujan_powerFree_finite (k : ℕ) (hk : 2 ≤ k) :
-    {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧
-      ((p.2 - 1).IsPowerFree k ∨ (p.2 + 1).IsPowerFree k)}.Finite
-
 /-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ seven-free.** If natural numbers $n$
 and $x$ satisfy $n! + 1 = x^2$ and $x - 1$ or $x + 1$ is $7$-free, then $(n, x)$ is one of
 $(4, 5)$, $(5, 11)$ and $(7, 71)$.
@@ -66,18 +59,6 @@ public theorem_wanted brocardRamanujan_sevenFree_subset :
       ((p.2 - 1).IsPowerFree 7 ∨ (p.2 + 1).IsPowerFree 7)} ⊆
       {(4, 5), (5, 11), (7, 71)}
 
-/-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ having few prime factors are finite.**
-For every natural number $l \ge 2$, there are only finitely many pairs of natural numbers
-$(n, x)$ with $n! + 1 = x^2$ such that $x - 1$ or $x + 1$ has fewer than $l$ distinct prime
-divisors.
-
-Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
-Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(ii), first
-sentence (`integers-2025-A71-thm-1`). -/
-public theorem_wanted brocardRamanujan_fewPrimeFactors_finite (l : ℕ) (hl : 2 ≤ l) :
-    {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧
-      ((p.2 - 1).primeFactors.card < l ∨ (p.2 + 1).primeFactors.card < l)}.Finite
-
 /-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ a prime power.** If natural numbers
 $n$ and $x$ satisfy $n! + 1 = x^2$ and $x - 1$ or $x + 1$ is a prime power, then
 $(n, x) = (4, 5)$.
@@ -88,28 +69,6 @@ second sentence (`integers-2025-A71-thm-1`). -/
 public theorem_wanted brocardRamanujan_primePow_subset :
     {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧ (IsPrimePow (p.2 - 1) ∨ IsPrimePow (p.2 + 1))} ⊆
       {(4, 5)}
-
-/-- **Divisors of a factorial bounded by their largest prime exponent.** Let $n \ge 1$ and let
-$x$ be a positive integer dividing $n!$. Write $K(x)$ for the largest exponent in the prime
-factorization of $x$, with $K(1) = 0$. Then $x \le \exp(3 n K(x) / 2)$.
-
-Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
-Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Lemma 1 (`integers-2025-A71-lem-1`). -/
-public theorem_wanted le_exp_of_dvd_factorial {n x : ℕ} (hn : 0 < n) (hx : 0 < x)
-    (hdvd : x ∣ n !) :
-    (x : ℝ) ≤ Real.exp (3 * n * (x.primeFactors.sup x.factorization : ℕ) / 2)
-
-/-- **Divisors of a factorial bounded by their number of prime factors.** Let $n \ge 1$ and let
-$x$ be a positive integer dividing $n!$, and write $\omega(x)$ for the number of distinct prime
-divisors of $x$. Then for every positive integer $a$,
-$x \le n^{n/a} (a \, \omega(x) + 1)^{n \, \omega(x)}$, where $n^{n/a}$ is a real power.
-
-Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
-Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Lemma 2 (`integers-2025-A71-lem-2`). -/
-public theorem_wanted le_rpow_mul_pow_of_dvd_factorial {n x : ℕ} (hn : 0 < n) (hx : 0 < x)
-    (hdvd : x ∣ n !) {a : ℕ} (ha : 0 < a) :
-    (x : ℝ) ≤ (n : ℝ) ^ ((n : ℝ) / a) *
-      ((a * x.primeFactors.card + 1 : ℕ) : ℝ) ^ (n * x.primeFactors.card)
 
 /-- **Finitely many Brocard–Ramanujan solutions of polynomial shape.** Let $k \ge 2$, $l \ge 2$
 and $m \ge 1$ be natural numbers and let $P \in \mathbb{Z}[X_1, \ldots, X_m]$. Write

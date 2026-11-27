@@ -33,3 +33,15 @@ example :
 example : negNeg ⟨0, 0, 1, 0, 0, 1⟩ (-2) (-5) = -4 := by
   change negNegAux _ 1 3 = -4
   norm_num [negNegAux.eq_1, negNegAux.eq_2, negNegAux.eq_3, negNegAux.eq_4, weight, weight']
+
+-- With unequal coefficients and nonzero constant term, the dual entry is in row 3, column 1.
+example : negNeg ⟨2, -1, 3, 0, 0, 1⟩ (-2) (-4) = 48 := by
+  rw [negNeg_duality 2 (-1) 3 2 4]
+  change array _ 3 1 = 48
+  norm_num [array]
+
+-- Column -1 of the negative triangle reflects to row zero of the ordinary array.
+example (α β γ : ℤ) (p : ℕ) :
+    negNeg ⟨α, β, γ, 0, 0, 1⟩ (.negSucc p) (-1) = if p = 0 then 1 else 0 := by
+  rw [Int.negSucc_eq, negNeg_duality α β γ (p + 1) 1]
+  simp [negNeg]

@@ -93,6 +93,131 @@ public theorem generalizedMotzkin_centralTrinomial_relation
   rw [hsym]
   ring
 
+/-- The Euler derivative multiplies each coefficient by its exponent. -/
+private noncomputable def euler (p : LaurentPolynomial ℤ) :
+    LaurentPolynomial ℤ :=
+  AddMonoidAlgebra.ofCoeff <|
+    Finsupp.onFinset p.coeff.support (fun j => j * p.coeff j) (by
+      intro j hj
+      by_contra hn
+      exact hj (by rw [Finsupp.notMem_support_iff.mp hn, mul_zero]))
+
+private theorem euler_coeff (p : LaurentPolynomial ℤ) (j : ℤ) :
+    (euler p).coeff j = j * p.coeff j := rfl
+
+private theorem euler_add (p q : LaurentPolynomial ℤ) :
+    euler (p + q) = euler p + euler q := by
+  apply LaurentPolynomial.ext
+  intro j
+  simp only [euler_coeff, AddMonoidAlgebra.coeff_add,
+    Finsupp.add_apply, mul_add]
+
+private theorem euler_sub (p q : LaurentPolynomial ℤ) :
+    euler (p - q) = euler p - euler q := by
+  apply LaurentPolynomial.ext
+  intro j
+  simp only [euler_coeff, AddMonoidAlgebra.coeff_sub,
+    Finsupp.sub_apply, mul_sub]
+
+private theorem euler_single (j c : ℤ) :
+    euler (AddMonoidAlgebra.single j c) =
+      AddMonoidAlgebra.single j (j * c) := by
+  apply LaurentPolynomial.ext
+  intro k
+  simp only [euler_coeff, AddMonoidAlgebra.coeff_single, Finsupp.single_apply]
+  split <;> simp_all
+
+private theorem euler_mul (p q : LaurentPolynomial ℤ) :
+    euler (p * q) = euler p * q + p * euler q := by
+  refine p.induction_on' (fun p₁ p₂ h₁ h₂ => ?_) (fun i c => ?_)
+  · simp only [add_mul, euler_add, h₁, h₂]
+    ac_rfl
+  refine q.induction_on' (fun q₁ q₂ h₁ h₂ => ?_) (fun j d => ?_)
+  · simp only [mul_add, euler_add, h₁, h₂]
+    ac_rfl
+  rw [← single_eq_C_mul_T, ← single_eq_C_mul_T]
+  simp only [AddMonoidAlgebra.single_mul_single, euler_single,
+    ← AddMonoidAlgebra.single_add]
+  congr 1
+  ring
+
+private theorem euler_pow_succ (p : LaurentPolynomial ℤ) (n : ℕ) :
+    euler (p ^ (n + 1)) = C (n + 1 : ℤ) * euler p * p ^ n := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [pow_succ p (n + 1), euler_mul, ih, pow_succ p n]
+    simp only [Nat.cast_succ, map_add, map_one]
+    ring
+
+private theorem euler_monomial (j c : ℤ) :
+    euler (C c * T j) = C (j * c) * T j := by
+  simp only [← single_eq_C_mul_T, euler_single]
+
+private theorem euler_C (c : ℤ) : euler (C c) = 0 := by
+  rw [← single_eq_C, euler_single, zero_mul, AddMonoidAlgebra.single_zero]
+
+private theorem euler_trinomial (a b : ℤ) :
+    euler (trinomialLaurent a b) = C a * T 1 - C a * T (-1) := by
+  simp only [trinomialLaurent, euler_add, euler_monomial, euler_C]
+  norm_num [map_neg]
+  ring
+
+private theorem euler_euler_trinomial (a b : ℤ) :
+    euler (euler (trinomialLaurent a b)) = trinomialLaurent a b - C b := by
+  rw [euler_trinomial, euler_sub, euler_monomial, euler_monomial,
+    trinomialLaurent]
+  norm_num [map_neg]
+  ring
+
+private theorem euler_trinomial_sq (a b : ℤ) :
+    euler (trinomialLaurent a b) ^ 2 =
+      (trinomialLaurent a b - C b) ^ 2 - C (4 * a ^ 2) := by
+  have hprod : C a * T (-1) * (C a * T 1) = C (a ^ 2) := calc
+    _ = C (a * a) * (T (-1) * T 1) := by rw [map_mul]; ac_rfl
+    _ = _ := by rw [← T_add]; norm_num [T_zero, pow_two]
+  rw [euler_trinomial, trinomialLaurent, map_mul, ← hprod]
+  norm_num [map_ofNat]
+  ring
+
+private theorem coeff_C_mul (c : ℤ) (p : LaurentPolynomial ℤ) (j : ℤ) :
+    (C c * p).coeff j = c * p.coeff j := by
+  rw [← single_eq_C, AddMonoidAlgebra.coeff_single_mul_apply,
+    neg_zero, zero_add]
+
+/-- **Recurrence for generalized central trinomial coefficients.** Let $a, b$ be integers and let
+$T_n$ be the constant term of $(a x^{-1} + b + a x)^n$. For every natural number $n$,
+$$(n + 2) T_{n+2} = b (2n + 3) T_{n+1} - (b^2 - 4a^2)(n + 1) T_n.$$
+
+This is the source's recurrence with its index shifted by two, so that every index is a natural
+number.
+
+Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*,
+INTEGERS 26 (2026), Article A22, Proposition 2. -/
+public theorem centralTrinomial_recurrence (a b : ℤ) (n : ℕ) :
+    (n + 2 : ℤ) * centralTrinomial a b (n + 2) =
+      b * (2 * n + 3 : ℤ) * centralTrinomial a b (n + 1) -
+        (b ^ 2 - 4 * a ^ 2) * (n + 1 : ℤ) * centralTrinomial a b n := by
+  let P := trinomialLaurent a b
+  -- Expand the derivative before taking its (vanishing) constant coefficient.
+  have hpoly : euler (euler P * P ^ (n + 1)) =
+      C (n + 2 : ℤ) * P ^ (n + 2) - C (b * (2 * n + 3 : ℤ)) * P ^ (n + 1) +
+        C ((b ^ 2 - 4 * a ^ 2) * (n + 1 : ℤ)) * P ^ n := by
+    calc
+      _ = (P - C b) * P ^ (n + 1) +
+          C (n + 1 : ℤ) * euler P ^ 2 * P ^ n := by
+        rw [euler_mul, euler_pow_succ, euler_euler_trinomial]
+        ring
+      _ = _ := by
+        rw [euler_trinomial_sq, pow_succ P (n + 1), pow_succ P n]
+        simp only [map_add, map_sub, map_mul, map_pow, map_ofNat, map_one]
+        ring
+  have h := congrArg (fun f : LaurentPolynomial ℤ => f.coeff 0) hpoly
+  simp only [euler_coeff, zero_mul, AddMonoidAlgebra.coeff_add,
+    Finsupp.add_apply, AddMonoidAlgebra.coeff_sub, Finsupp.sub_apply,
+    coeff_C_mul, sub_add_eq_add_sub] at h
+  exact eq_sub_of_add_eq (sub_eq_zero.mp h.symm)
+
 /-- **OEIS A005717.** For a natural number $n$, $a_n$ is the constant term of the Laurent
 polynomial $x (x^{-1} + 1 + x)^n$ with integer coefficients.
 

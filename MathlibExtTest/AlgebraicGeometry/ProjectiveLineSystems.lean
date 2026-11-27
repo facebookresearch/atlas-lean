@@ -23,13 +23,14 @@ universe u
 
 variable {k : Type u} [Field k]
 
--- `IsProjectiveVariety` is the projectivity predicate of `ProjectiveSpace`, not a
--- parallel definition.
+-- The deprecated `IsProjectiveVariety` is the projectivity predicate of `ProjectiveSpace`, not a
+-- parallel definition, so existing statements keep elaborating while they migrate.
+set_option linter.deprecated false in
 example (X : Over (Spec (.of k))) : IsProjectiveVariety X ↔ ProjectiveSpace.IsProjective X :=
   Iff.rfl
 
--- Projective space is a projective variety.
-example (n : ℕ) : IsProjectiveVariety (ProjectiveSpace.projectiveSpace k n) :=
+-- Projective space is projective.
+example (n : ℕ) : ProjectiveSpace.IsProjective (ProjectiveSpace.projectiveSpace k n) :=
   ⟨n + 1, 𝟙 _, show IsClosedImmersion (𝟙 _) from inferInstance, (Category.id_comp _).symm⟩
 
 -- On a Noetherian scheme, ampleness is Serre's criterion over Mathlib's finitely presented

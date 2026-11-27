@@ -59,24 +59,6 @@ public theorem_wanted degenerateHarmonicRank_exp_weighted_sum {lam α : ℝ}
           degenerateHarmonicRank lam α (n + 1) k =
       generalizedDegenerateHarmonic lam α (n + 1) - generalizedDegenerateHarmonic lam α n / α
 
-/-- **Shifted alternating degenerate exponential sum of degenerate harmonic numbers of rank.**
-Let $\lambda > 0$ and $\alpha > 0$ be real and let $n$ be a natural number. Write
-$(1)_{k,\lambda} = 1 \cdot (1 - \lambda) \cdots (1 - (k-1)\lambda)$ for the generalized falling
-factorial and $H_\lambda(m, r, \alpha)$ for the generalized degenerate harmonic numbers of rank $r$.
-Then
-$$\sum_{k=0}^{n} (-1)^k \frac{(1)_{k+1,\lambda}}{(k+1)!} H_\lambda(n+1, k, \alpha) =
-\frac{1}{\alpha}.$$
-
-Source: Ömer Duran, Neşe Ömür and Sibel Koparal, *Generalized Degenerate Harmonic Numbers and
-Their Applications with Riordan Arrays*, INTEGERS 24 (2024), Article A41, Theorem 5
-(`integers-2024-A41-thm-5`). -/
-public theorem_wanted degenerateHarmonicRank_shifted_exp_weighted_sum {lam α : ℝ} (hlam : 0 < lam)
-    (hα : 0 < α) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-        (-1 : ℝ) ^ k * generalizedFallingFactorial 1 lam (k + 1) / (k + 1).factorial *
-          degenerateHarmonicRank lam α (n + 1) k =
-      1 / α
-
 /-- **A binomial sum equal to a degenerate hyperharmonic number.** Let $\lambda > 0$ and
 $\alpha > 0$ be real numbers and let $r \le n$ be natural numbers. Write
 $\binom{\lambda}{j} = \lambda(\lambda - 1)\cdots(\lambda - j + 1)/j!$ and $H^s_{m,\lambda}(\alpha)$

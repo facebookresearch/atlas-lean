@@ -11,12 +11,80 @@ module
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Logic.Function.Iterate
+public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
+import Mathlib.Data.Nat.Choose.Vandermonde
 
 /-! # Generalized Delannoy numbers and parity in Delannoy arrays -/
 
 namespace MetaMathlibExt.DelannoyConstructions
 
 open Finset
+
+/-- Expand the triangle entry by Vandermonde and sum over the possible marked subsets. -/
+private theorem delannoy_sum_nat (m n : ℕ) :
+    ∑ j ∈ range (m + 1), m.choose j * (m + n - j).choose m =
+      ∑ k ∈ range (min m n + 1), m.choose k * n.choose k * 2 ^ k := by
+  have hsplit (j : ℕ) (hj : j ≤ m) : (m + n - j).choose m =
+      ∑ k ∈ range (m + 1), n.choose k * (m - j).choose (m - k) := by
+    rw [show m + n - j = n + (m - j) by omega, Nat.add_choose_eq,
+      Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
+  -- Choosing j of k marked elements is equivalent to choosing j first and then k - j.
+  have hmark (j k : ℕ) (hj : j ≤ m) (hk : k ≤ m) :
+      m.choose j * (m - j).choose (m - k) = m.choose k * k.choose j := by
+    by_cases hjk : j ≤ k
+    · rw [show m - k = (m - j) - (k - j) by omega,
+        Nat.choose_symm (show k - j ≤ m - j by omega)]
+      exact (Nat.choose_mul hjk).symm
+    · simp [Nat.choose_eq_zero_of_lt (show m - j < m - k by omega),
+        Nat.choose_eq_zero_of_lt (show k < j by omega)]
+  have hbinom (k : ℕ) (hk : k ≤ m) : ∑ j ∈ range (m + 1), k.choose j = 2 ^ k := by
+    rw [← Nat.sum_range_choose k]
+    symm
+    apply sum_subset (range_subset_range.mpr (by omega))
+    intro j _ hj
+    exact Nat.choose_eq_zero_of_lt (by simpa [mem_range_succ_iff] using hj)
+  calc
+    _ = ∑ j ∈ range (m + 1), ∑ k ∈ range (m + 1),
+        (m.choose k * n.choose k) * k.choose j := by
+      apply sum_congr rfl
+      intro j hj
+      rw [hsplit j (mem_range_succ_iff.mp hj), mul_sum]
+      apply sum_congr rfl
+      intro k hk
+      calc
+        _ = (m.choose j * (m - j).choose (m - k)) * n.choose k := by ac_rfl
+        _ = _ := by
+          rw [hmark j k (mem_range_succ_iff.mp hj) (mem_range_succ_iff.mp hk)]
+          ac_rfl
+    _ = ∑ k ∈ range (m + 1), (m.choose k * n.choose k) * 2 ^ k := by
+      rw [sum_comm]
+      apply sum_congr rfl
+      intro k hk
+      rw [← mul_sum, hbinom k (mem_range_succ_iff.mp hk)]
+    _ = _ := by
+      symm
+      apply sum_subset (range_subset_range.mpr (Nat.succ_le_succ (Nat.min_le_left m n)))
+      intro k hk hkm
+      have hkn : n < k := by
+        have hk' := mem_range_succ_iff.mp hk
+        have hkm' : ¬ k ≤ min m n := by simpa [mem_range_succ_iff] using hkm
+        omega
+      simp [Nat.choose_eq_zero_of_lt hkn]
+
+/-- **Delannoy numbers as a sum of powers of two.** For all natural numbers $m$ and $n$, the
+Delannoy number $D(m, n)$, that is, the Delannoy triangle entry $T(m + n, m; 1)$, satisfies
+$D(m, n) = \sum_{j=0}^{\min(m, n)} \binom{m}{j} \binom{n}{j} 2^j$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Theorem 8
+(`jis-2024-24.1.8-thm-8`). -/
+public theorem delannoy_eq_sum_choose_mul_choose_two_pow (m n : ℕ) :
+    ordinaryRiordanPascalLikeMatrix (m + n) m 1 =
+      ∑ j ∈ range (min m n + 1), (m.choose j : ℤ) * (n.choose j : ℤ) * 2 ^ j := by
+  rw [ordinaryRiordanPascalLikeMatrix_def]
+  simp only [one_pow, mul_one]
+  simpa only [Nat.cast_sum, Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat] using
+    congrArg (fun a : ℕ => (a : ℤ)) (delannoy_sum_nat m n)
 
 /-- **Generalized Delannoy number with upper index.** For natural numbers $k$, $m$ and $n$, the
 generalized Delannoy number $D^k(m, n)$ is the natural number
@@ -103,6 +171,46 @@ public theorem genDelannoyUpper_add_succ_right (k m n : ℕ) :
   rw [← Nat.add_mul, ← Nat.choose_succ_succ']
   have hj' := mem_range.mp hj
   congr 2
+  omega
+
+/-- **Vertical sum identity for the upper generalized Delannoy numbers.**
+For natural numbers $k$, $m$ and $n$, write
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
+generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$ with $k \ge 1$,
+$D^k(m, n) + D^k(m + 1, n) = D^{k-1}(m + 1, n + 1)$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Theorem 4
+(`jis-2024-24.1.8-thm-4`). -/
+public theorem genDelannoyUpper_add_succ_left (k m n : ℕ) (hk : 1 ≤ k) :
+    genDelannoyUpper k m n + genDelannoyUpper k (m + 1) n =
+      genDelannoyUpper (k - 1) (m + 1) (n + 1) := by
+  obtain ⟨s, rfl⟩ := Nat.exists_eq_add_of_le' hk
+  rw [add_comm (genDelannoyUpper (s + 1) m n)]
+  simp only [Nat.add_sub_cancel]
+  have hsplit := sum_choose_succ_mul
+    (fun j _ ↦ (m + n + (s + 1) + 1 - j).choose (n + (s + 1))) n
+  have htop : m + 1 + n + (s + 1) = m + n + (s + 1) + 1 := by omega
+  have htop' : m + 1 + (n + 1) + s = m + n + (s + 1) + 1 := by omega
+  have hbot : n + 1 + s = n + (s + 1) := by omega
+  simpa only [genDelannoyUpper, htop, htop', hbot, Nat.add_sub_add_right, Nat.cast_id,
+    Nat.mul_comm] using hsplit.symm
+
+/-- **Vertical difference identity for the upper generalized Delannoy numbers.**
+For natural numbers $k$, $m$ and $n$, write
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
+generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$ with $k \ge 1$,
+$D^k(m + 1, n) - D^k(m, n) = D^{k-1}(m + 1, n)$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Corollary 6
+(`jis-2024-24.1.8-cor-6`). -/
+public theorem genDelannoyUpper_succ_left_sub (k m n : ℕ) (hk : 1 ≤ k) :
+    (genDelannoyUpper k (m + 1) n : ℤ) - genDelannoyUpper k m n =
+      genDelannoyUpper (k - 1) (m + 1) n := by
+  have hv := genDelannoyUpper_add_succ_left k m n hk
+  have hh := genDelannoyUpper_add_succ_right (k - 1) (m + 1) n
+  rw [Nat.sub_add_cancel hk] at hh
   omega
 
 /-- **Horizontal difference identity for the upper generalized Delannoy numbers.**

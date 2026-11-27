@@ -9,10 +9,24 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Group.Nat.Defs
+import Mathlib.Order.MinMax
 
 /-! # Dyadic blocks of natural numbers -/
 
 namespace MetaMathlibExt
+
+/-- **Taking a minimum preserves quotients by powers of two.** Let $a, b, c, k \in \mathbb{N}$. If
+$\lfloor a / 2^k \rfloor = \lfloor b / 2^k \rfloor$, then
+$\lfloor \min(a, c) / 2^k \rfloor = \lfloor \min(b, c) / 2^k \rfloor$.
+
+Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
+Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
+Article G3, Lemma 2 (i) (`integers-2025-G3-lem-2`). -/
+public theorem min_div_two_pow_eq_of_div_two_pow_eq {a b k : ℕ}
+    (hab : a / 2 ^ k = b / 2 ^ k) (c : ℕ) :
+    min a c / 2 ^ k = min b c / 2 ^ k := by
+  have hmono : Monotone (fun n : ℕ ↦ n / 2 ^ k) := fun _ _ h ↦ Nat.div_le_div_right h
+  simp only [hmono.map_min, hab]
 
 /-- **Equal quotients by a power of two lie in one dyadic block.** Let $i$ be a natural number
 and let $z < z'$ be natural numbers. Then $\lfloor z / 2^i \rfloor = \lfloor z' / 2^i \rfloor$ if

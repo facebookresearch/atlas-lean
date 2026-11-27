@@ -50,19 +50,20 @@ steps of the jump-chain construction of `ProbabilityTheory.ctmcPath`, so the pat
 
 ## Main results
 
-* `isChainPath_sir`: **pathwise existence**. For all positive interarrival times `e₁`, `e₂`,
-  dependent or not, and every initial state with `S₀ + I₀ ≤ N`, the constructed counts solve the
-  time-change equations `IsChainPath β γ N (clockCount e₁) (clockCount e₂) S I R` for all
-  `t ≥ 0`. The chain is absorbed after at most `2 N` jumps (`sir_exists_absorbing`), so the
+* `isChainPath_sir`: **pathwise existence**. For `β, γ ≥ 0`, all positive interarrival times
+  `e₁`, `e₂`, dependent or not, and every initial state with `S₀ + I₀ ≤ N`, the constructed counts
+  solve the time-change equations `IsChainPath β γ N (clockCount e₁) (clockCount e₂) S I R` for
+  all `t ≥ 0`. The chain is absorbed after at most `2 N` jumps (`sir_exists_absorbing`), so the
   paths are defined for all times.
 * `ae_isChainPath_sir`: the same for almost every outcome of two independent unit Poisson
   clocks (`clockLaw`, under which both counting paths are unit-rate Poisson processes,
   `isPoissonProcess_clockCount_fst`, `isPoissonProcess_clockCount_snd`). This gives a
   non-trivial instance of the `hchain` hypothesis of Kurtz's theorem.
 * `TwoChannel.IsValid.map_path`, `map_sirPath`: **law identification**. Driven by independent
-  rate-`1` exponential clocks, the constructed path has the law, on the path space `ℝ≥0 → ι`
-  with its product σ-algebra, of `ctmcPath` under `ctmcInputMeasure`: the continuous-time
-  Markov chain with the same rate matrix built from the jump chain and holding times.
+  rate-`1` exponential clocks, the constructed path of a valid chain (for SIR, `β, γ ≥ 0`) has
+  the law, on the path space `ℝ≥0 → ι` with its product σ-algebra, of `ctmcPath` under
+  `ctmcInputMeasure`: the continuous-time Markov chain with the same rate matrix built from the
+  jump chain and holding times.
   `map_sirPath_of_hasLaw` states it on any probability space.
 * `TwoChannel.IsValid.clockMeasure_real_path_fdd`, `clockLaw_real_sirPath_eq`: consequently the
   finite-dimensional distributions of the constructed chain are products of `exp (t Q)`.
@@ -82,10 +83,10 @@ then identifies the law of the whole step sequence with `ctmcInputMeasure`
 
 ## Scope
 
-* Existence is pathwise and uses only positivity of the interarrival times; it holds for
-  dependent clocks. The law identification needs independent exponential clocks: with a single
-  clock driving both channels the first jump can be a simultaneous infection and recovery,
-  which the jump chain makes with probability `0` (see the tests).
+* Existence is pathwise and, besides `β, γ ≥ 0` and `S₀ + I₀ ≤ N`, needs only positive interarrival
+  times; it holds for dependent clocks. The law identification needs independent exponential
+  clocks: with a single clock driving both channels the first jump can be a simultaneous
+  infection and recovery, which the jump chain makes with probability `0` (see the tests).
 * The clocks are the canonical counting processes of exponential interarrival times. A general
   `IsPoissonProcess` only fixes finite-dimensional distributions, not path regularity, so the
   construction is not stated for it.
@@ -156,7 +157,8 @@ theorem infinitePi_map_head_tail :
   · exact Measure.map_infinitePi_infinitePi_of_inj (P := fun _ : ℕ => μ)
       (f := fun j => j + 1) (add_left_injective 1)
 
-/-- Integrals against an i.i.d. product law, split into the head and the tail. -/
+/-- Integrals of a measurable function with values in `[0, ∞]` against an i.i.d. product law,
+split into the head and the tail. -/
 theorem lintegral_infinitePi_head_tail {G : α × (ℕ → α) → ℝ≥0∞} (hG : Measurable G) :
     ∫⁻ f, G (f 0, seqTail f) ∂(Measure.infinitePi fun _ : ℕ => μ) =
       ∫⁻ a, ∫⁻ f, G (a, f) ∂(Measure.infinitePi fun _ : ℕ => μ) ∂μ := by
@@ -201,7 +203,8 @@ theorem pi_map_update (x : ι) :
   congr 1
   exact Finset.prod_congr rfl fun i hi => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hi)]
 
-/-- Integrals against a product law, with coordinate `x` resampled from its marginal. -/
+/-- Integrals of a measurable function with values in `[0, ∞]` against a product law, with
+coordinate `x` resampled from its marginal. -/
 theorem lintegral_pi_update (x : ι) {G : (∀ i, α i) → ℝ≥0∞} (hG : Measurable G) :
     ∫⁻ ξ, G ξ ∂(Measure.pi μ) = ∫⁻ z, ∫⁻ ξ, G (Function.update ξ x z) ∂(Measure.pi μ) ∂(μ x) := by
   have hm : Measurable fun p : α x × (∀ i, α i) => Function.update p.2 x p.1 :=
@@ -354,14 +357,15 @@ theorem ae_pos_expMeasure : ∀ᵐ s ∂(expMeasure 1), 0 < s := by
   rw [this]
   exact expMeasure_Iic_zero
 
-/-- Measurability of a partial Lebesgue integral, in a form usable by `fun_prop`. -/
+/-- Measurability of the partial Lebesgue integral `x ↦ ∫⁻ y, f x y ∂ν` of a function that is
+measurable on `α × β`, against an s-finite measure `ν`, in a form usable by `fun_prop`. -/
 theorem measurable_lintegral_of_uncurry {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
     {ν : Measure β} [SFinite ν] {f : α → β → ℝ≥0∞}
     (hf : Measurable fun p : α × β => f p.1 p.2) : Measurable fun x => ∫⁻ y, f x y ∂ν :=
   hf.lintegral_prod_right'
 
-/-- For independent exponential clocks and speeds `a, b ≥ 0`, not both `0`, a tie
-`a r₂ = b r₁` has probability `0`. -/
+/-- For independent rate-`1` exponential clocks and real `a, b` with `0 < a` or `0 < b` (for
+instance speeds `a, b ≥ 0`, not both `0`), a tie `a r₂ = b r₁` has probability `0`. -/
 theorem prod_expMeasure_tie {a b : ℝ} (hab : 0 < a ∨ 0 < b) :
     ((expMeasure 1).prod (expMeasure 1)) {r : ℝ × ℝ | a * r.2 = b * r.1} = 0 := by
   have hS : MeasurableSet {r : ℝ × ℝ | a * r.2 = b * r.1} :=
@@ -386,7 +390,8 @@ theorem prod_expMeasure_tie {a b : ℝ} (hab : 0 < a ∨ 0 < b) :
       · intro h; rw [h]; field_simp
     simp [this]
 
-/-- For a nonnegative speed `b`, the event `b r₁ < 0` has probability `0`. -/
+/-- For independent rate-`1` exponential clocks `r₁, r₂` and a nonnegative speed `b`, the event
+`b r₁ < 0` has probability `0`. -/
 theorem prod_expMeasure_neg {b : ℝ} (hb : 0 ≤ b) :
     ((expMeasure 1).prod (expMeasure 1)) {r : ℝ × ℝ | b * r.1 < 0 * r.2} = 0 := by
   refine measure_mono_null (t := Iic 0 ×ˢ univ) (fun r hr => ?_) ?_
@@ -396,7 +401,8 @@ theorem prod_expMeasure_neg {b : ℝ} (hb : 0 ≤ b) :
       exact absurd hr (not_lt.mpr (mul_nonneg hb (le_of_lt (not_le.mp h)))), mem_univ _⟩
   · rw [Measure.prod_prod, expMeasure_Iic_zero, zero_mul]
 
-/-- For a nonnegative speed `a`, the event `a r₂ < 0` has probability `0`. -/
+/-- For independent rate-`1` exponential clocks `r₁, r₂` and a nonnegative speed `a`, the event
+`a r₂ < 0` has probability `0`. -/
 theorem prod_expMeasure_neg' {a : ℝ} (ha : 0 ≤ a) :
     ((expMeasure 1).prod (expMeasure 1)) {r : ℝ × ℝ | a * r.2 < 0 * r.1} = 0 := by
   refine measure_mono_null (t := univ ×ˢ Iic 0) (fun r hr => ?_) ?_
@@ -427,7 +433,9 @@ instance : IsProbabilityMeasure clockMeasure := by
 
 /-- A **two-channel chain** on a state space `ι`: in state `x`, channel `1` fires at rate
 `rate₁ x` and moves the chain to `target₁ x`, channel `2` fires at rate `rate₂ x` and moves it
-to `target₂ x`; `target₁₂ x` is the state reached when both channels fire at the same instant. -/
+to `target₂ x`; `target₁₂ x` is the state reached when both channels fire at the same instant.
+No condition is imposed: the rates are arbitrary real functions, and reading them as jump rates
+presumes the nonnegative rates of a valid chain (`TwoChannel.IsValid`). -/
 structure TwoChannel (ι : Type*) where
   /-- The rate of channel `1`. -/
   rate₁ : ι → ℝ
@@ -456,27 +464,31 @@ structure IsValid : Prop where
   /-- Channel `2` is inactive where its jump would not move the chain. -/
   rate₂_eq_zero : ∀ x, K.target₂ x = x → K.rate₂ x = 0
 
-/-- The total jump rate out of `x`. -/
+/-- The total rate `rate₁ x + rate₂ x`; for a valid chain, the total jump rate out of `x`. -/
 def totalRate (x : ι) : ℝ := K.rate₁ x + K.rate₂ x
 
 /-- The time to the next jump from `x` with residual clocks `r`: channel `1` rings first when
-`rate₂ x * r₁ < rate₁ x * r₂`, after time `r₁ / rate₁ x`, and symmetrically for channel `2`. -/
+`rate₂ x * r₁ < rate₁ x * r₂`, after time `r₁ / rate₁ x`, and symmetrically for channel `2`.
+At a tie the value is `r₁ / rate₁ x`. With the convention `t / 0 = 0`, it is `0` when both
+rates vanish. -/
 noncomputable def hold (x : ι) (r : ℝ × ℝ) : ℝ :=
   if K.rate₂ x * r.1 < K.rate₁ x * r.2 then r.1 / K.rate₁ x
   else if K.rate₁ x * r.2 < K.rate₂ x * r.1 then r.2 / K.rate₂ x
   else r.1 / K.rate₁ x
 
-/-- The state after the next jump from `x` with residual clocks `r` (`x` itself when no channel
-is active). -/
+/-- The state after the next jump from `x` with residual clocks `r`: `target₁ x` or `target₂ x`
+for the channel that rings first, `target₁₂ x` at a tie, and `x` itself when the total rate
+`rate₁ x + rate₂ x` is `0` (for nonnegative rates, when no channel is active). -/
 noncomputable def next (x : ι) (r : ℝ × ℝ) : ι :=
   if K.totalRate x = 0 then x
   else if K.rate₂ x * r.1 < K.rate₁ x * r.2 then K.target₁ x
   else if K.rate₁ x * r.2 < K.rate₂ x * r.1 then K.target₂ x
   else K.target₁₂ x
 
-/-- The clock configuration after the next jump from `x`: a channel that fires draws its next
-interarrival time, and the residual of a channel that does not fire decreases by the internal
-time it has consumed. -/
+/-- The clock configuration after the next jump from `x`: a channel that fires (both, at a tie)
+draws its next interarrival time, and the residual of a channel that does not fire decreases by
+the internal time it has consumed. When the total rate `rate₁ x + rate₂ x` is `0`, the
+configuration is unchanged. -/
 noncomputable def nextClock (x : ι) (c : ClockConfig) : ClockConfig :=
   if K.totalRate x = 0 then c
   else if K.rate₂ x * c.1.1 < K.rate₁ x * c.1.2 then
@@ -485,17 +497,20 @@ noncomputable def nextClock (x : ι) (c : ClockConfig) : ClockConfig :=
     ((c.1.1 - K.rate₁ x * K.hold x c.1, c.2.2 0), (c.2.1, seqTail c.2.2))
   else ((c.2.1 0, c.2.2 0), (seqTail c.2.1, seqTail c.2.2))
 
-/-- One jump of the chain together with its clocks. -/
+/-- One jump of the chain together with its clocks; at a state of total rate `0` it leaves the
+state and the clocks unchanged. -/
 noncomputable def step (p : ι × ClockConfig) : ι × ClockConfig :=
   (K.next p.1 p.2.1, K.nextClock p.1 p.2)
 
-/-- The state and clocks after `n` jumps. -/
+/-- The state and clocks after `n` jumps: the `n`-th iterate of `step`, which leaves a state of
+total rate `0` and its clocks unchanged. -/
 noncomputable def config (n : ℕ) (p : ι × ClockConfig) : ι × ClockConfig := K.step^[n] p
 
 variable [DecidableEq ι]
 
 /-- The rate matrix of the chain: `x → target₁ x` at rate `rate₁ x` and `x → target₂ x` at
-rate `rate₂ x`. -/
+rate `rate₂ x` off the diagonal, the two rates adding up when the targets coincide, and the
+diagonal entry `-(rate₁ x + rate₂ x)` whatever the targets; `target₁₂` plays no role. -/
 def rateMatrix : Matrix ι ι ℝ := fun x y =>
   if y = x then -K.totalRate x
   else (if K.target₁ x = y then K.rate₁ x else 0) + (if K.target₂ x = y then K.rate₂ x else 0)
@@ -503,7 +518,7 @@ def rateMatrix : Matrix ι ι ℝ := fun x y =>
 /-- The step of the jump-chain construction of `ProbabilityTheory.ctmcPath` read off one jump of
 the clock chain: the map `ξ` sends the current state to the next one and agrees with the
 auxiliary map `g.1` elsewhere; the exponential clock is the total rate times the holding time
-(the auxiliary clock `g.2` when no channel is active). -/
+(the auxiliary clock `g.2` when the total rate is `0`). -/
 noncomputable def output (p : ι × ClockConfig) (g : (ι → ι) × ℝ) : (ι → ι) × ℝ :=
   (Function.update g.1 p.1 (K.next p.1 p.2.1),
     if K.totalRate p.1 = 0 then g.2 else K.totalRate p.1 * K.hold p.1 p.2.1)
@@ -514,7 +529,10 @@ noncomputable def steps (x : ι) (w : ClockConfig × (ℕ → (ι → ι) × ℝ
     ℕ → (ι → ι) × ℝ :=
   fun n => K.output (K.config n (x, w.1)) (w.2 n)
 
-/-- **The path of the clock chain** started at `x` with clock configuration `c`. -/
+/-- **The path of the clock chain** started at `x` with clock configuration `c`: for
+`T n ≤ t < T (n + 1)` it is the state after `n` jumps, where the jump time `T n` is the sum of the
+first `n` holding times (`∞` at a state of total rate `0`, otherwise `hold` replaced by `0` when
+negative). If `T n ≤ t` for every `n`, it is a fixed state of `ι`, as for `ctmcPath`. -/
 noncomputable def path (x : ι) (c : ClockConfig) (t : ℝ≥0) : ι :=
   ctmcPath K.rateMatrix x (K.steps x (c, fun _ => (id, 0))) t
 
@@ -551,7 +569,9 @@ theorem IsValid.ctmcJumpMatrix_eq (hK : K.IsValid) {x : ι} (hx : K.totalRate x 
   · simp only [hz, ↓reduceIte, rateMatrix, Ne.symm hz]
     split_ifs <;> ring
 
-/-- Integrals against a row of the jump matrix of a valid two-channel chain. -/
+/-- Integrals against row `x` of the jump matrix of a valid two-channel chain on a finite state
+space, at an active state `x` (total rate `≠ 0`): the integral of `ψ ≥ 0` is
+`(rate₁ x / totalRate x) ψ (target₁ x) + (rate₂ x / totalRate x) ψ (target₂ x)`. -/
 theorem IsValid.lintegral_ctmcJumpPMF [Fintype ι] [MeasurableSpace ι] [DiscreteMeasurableSpace ι]
     (hK : K.IsValid) {x : ι} (hx : K.totalRate x ≠ 0) (ψ : ι → ℝ≥0∞) :
     ∫⁻ z, ψ z ∂(hK.isRateMatrix.ctmcJumpPMF x).toMeasure =
@@ -607,7 +627,8 @@ theorem measurable_nextClock (x : ι) : Measurable (K.nextClock x) := by
 
 attribute [local fun_prop] measurable_lintegral_of_uncurry
 
-/-- Integrals against `clockMeasure`, as iterated integrals over the four components. -/
+/-- Integrals of a measurable `G ≥ 0` against `clockMeasure`, as iterated integrals over the four
+components. -/
 theorem lintegral_clockMeasure {G : ClockConfig → ℝ≥0∞} (hG : Measurable G) :
     ∫⁻ c, G c ∂clockMeasure = ∫⁻ r₁, ∫⁻ r₂, ∫⁻ u₁, ∫⁻ u₂, G ((r₁, r₂), (u₁, u₂))
       ∂(Measure.infinitePi fun _ : ℕ => expMeasure 1)
@@ -616,11 +637,11 @@ theorem lintegral_clockMeasure {G : ClockConfig → ℝ≥0∞} (hG : Measurable
   refine lintegral_congr fun r₁ => lintegral_congr fun r₂ => ?_
   exact lintegral_prod _ (by fun_prop)
 
-/-- **One jump of the clocks from an active state.** If the clock configuration has law
-`clockMeasure`, then the next state, the total clock `totalRate x * hold`, and the clock
-configuration after the jump are independent, with laws the row of the jump matrix at `x`, the
-rate-`1` exponential law, and `clockMeasure` again (competing exponential clocks and the
-memoryless property). -/
+/-- **One jump of the clocks from an active state.** For a valid chain on a finite state space and
+a state `x` of total rate `≠ 0`: if the clock configuration has law `clockMeasure`, then the next
+state, the total clock `totalRate x * hold`, and the clock configuration after the jump are
+independent, with laws the row of the jump matrix at `x`, the rate-`1` exponential law, and
+`clockMeasure` again (competing exponential clocks and the memoryless property). -/
 theorem IsValid.map_clock [Fintype ι] [MeasurableSpace ι] [DiscreteMeasurableSpace ι]
     (hK : K.IsValid) {x : ι} (hx : K.totalRate x ≠ 0) :
     clockMeasure.map (fun c => ((K.next x c.1, K.totalRate x * K.hold x c.1), K.nextClock x c)) =
@@ -787,7 +808,8 @@ theorem ctmcJumpChain_steps (x : ι) (w : ClockConfig × (ℕ → (ι → ι) ×
     simp only [ctmcJumpChain, ih, steps, output, Function.update_self, config_succ', step]
 
 variable (K) in
-/-- The holding times of the steps read off the clock chain are its holding times. -/
+/-- The holding times of the steps read off the clock chain: `∞` at a state of total rate `0`,
+and otherwise the clock chain's holding time `hold`, replaced by `0` when negative. -/
 theorem ctmcHoldingTime_steps (x : ι) (w : ClockConfig × (ℕ → (ι → ι) × ℝ)) (n : ℕ) :
     ctmcHoldingTime K.rateMatrix x (K.steps x w) n =
       if K.totalRate (K.config n (x, w.1)).1 = 0 then ∞
@@ -877,10 +899,11 @@ theorem measurable_firstStep [MeasurableSpace ι] [Countable ι] [MeasurableSing
     (((K.measurable_nextClock x).comp measurable_fst).prodMk
       (measurable_seqTail.comp measurable_snd))
 
-/-- **One step of the coupling.** When the clocks have law `clockMeasure` and the auxiliary
-steps are i.i.d. with the step law of `ProbabilityTheory.ctmcInputMeasure`, the first step read
-off the clock chain has the step law and is independent of the restarted input, which has the
-same law as the input. -/
+/-- **One step of the coupling.** For a valid chain on a finite state space and any starting
+state `x`: when the clocks have law `clockMeasure`, the auxiliary steps are i.i.d. with the step
+law of `ProbabilityTheory.ctmcInputMeasure`, and the clocks are independent of the auxiliary
+steps, the first step read off the clock chain has the step law and is independent of the
+restarted input, which has the same law as the input. -/
 theorem IsValid.map_firstStep [Fintype ι] [MeasurableSpace ι] [DiscreteMeasurableSpace ι]
     (hK : K.IsValid) (x : ι) :
     (clockMeasure.prod (ctmcInputMeasure hK.isRateMatrix)).map (K.firstStep x) =
@@ -957,9 +980,10 @@ theorem IsValid.map_firstStep [Fintype ι] [MeasurableSpace ι] [DiscreteMeasura
           lintegral_congr fun E => lintegral_lintegral_swap (by fun_prop)
       _ = _ := lintegral_lintegral_swap (by fun_prop)
 
-/-- **The coupling has the input law.** When the clocks have law `clockMeasure` and the
-auxiliary steps are i.i.d. with the step law, the steps read off the clock chain started at
-`x` are i.i.d. with the step law: their law is `ProbabilityTheory.ctmcInputMeasure`. -/
+/-- **The coupling has the input law.** For a valid chain on a finite state space: when the
+clocks have law `clockMeasure`, the auxiliary steps are i.i.d. with the step law, and the clocks
+are independent of the auxiliary steps, the steps read off the clock chain started at `x` are
+i.i.d. with the step law: their law is `ProbabilityTheory.ctmcInputMeasure`. -/
 theorem IsValid.map_steps [Fintype ι] [MeasurableSpace ι] [DiscreteMeasurableSpace ι]
     (hK : K.IsValid) (x : ι) :
     (clockMeasure.prod (ctmcInputMeasure hK.isRateMatrix)).map (K.steps x) =
@@ -1044,11 +1068,11 @@ theorem IsValid.map_steps [Fintype ι] [MeasurableSpace ι] [DiscreteMeasurableS
   rw [← Finset.prod_subset hn (fun i _ hi => by simp [ht', hi])]
   exact Finset.prod_congr rfl fun i hi => by simp [ht', hi]
 
-/-- **Law identification.** For independent rate-`1` exponential clocks (law `clockMeasure`),
-the path of the clock chain started at `x` has the law of the continuous-time Markov chain with
-rate matrix `rateMatrix`, built from the jump chain and holding times in
-`MathlibExt.Probability.Process.ContinuousTimeMarkovChain.Path`. The laws are measures on the
-path space `ℝ≥0 → ι` with its product σ-algebra. -/
+/-- **Law identification.** For a valid chain on a finite state space and independent rate-`1`
+exponential clocks (law `clockMeasure`), the path of the clock chain started at `x` has the law
+of the continuous-time Markov chain with rate matrix `rateMatrix`, built from the jump chain and
+holding times in `MathlibExt.Probability.Process.ContinuousTimeMarkovChain.Path`. The laws are
+measures on the path space `ℝ≥0 → ι` with its product σ-algebra. -/
 theorem IsValid.map_path [Fintype ι] [MeasurableSpace ι] [DiscreteMeasurableSpace ι]
     (hK : K.IsValid) (x : ι) :
     clockMeasure.map (fun c t => K.path x c t) =
@@ -1069,8 +1093,9 @@ theorem IsValid.map_path [Fintype ι] [MeasurableSpace ι] [DiscreteMeasurableSp
     _ = P.map (fun ω t => ctmcPath K.rateMatrix x ω t) := by
         rw [← Measure.map_map hX (K.measurable_steps x), hK.map_steps x]
 
-/-- **Finite-dimensional distributions of the clock chain**: with increments
-`s 0, …, s (n - 1)`, times `t k = s 0 + ⋯ + s k`, and states `j 0, …, j (n - 1)`,
+/-- **Finite-dimensional distributions of the clock chain**: for a valid chain on a finite state
+space, with `P = clockMeasure`, `Q = rateMatrix`, increments `s 0, …, s (n - 1) ≥ 0`, times
+`t k = s 0 + ⋯ + s k`, and states `j 0, …, j (n - 1)`,
 `P(X (t k) = j k for all k) = ∏ₖ exp (s k Q) (j (k - 1)) (j k)`, where `j (-1) = x`. -/
 theorem IsValid.clockMeasure_real_path_fdd [Fintype ι] [MeasurableSpace ι]
     [DiscreteMeasurableSpace ι] (hK : K.IsValid) (x : ι) {n : ℕ} (s : Fin n → ℝ≥0)
@@ -1093,7 +1118,9 @@ theorem IsValid.clockMeasure_real_path_fdd [Fintype ι] [MeasurableSpace ι]
   rw [h1, hK.map_path x, map_measureReal_apply hX hBm]
   exact hK.isRateMatrix.ctmcInputMeasure_real_ctmcPath_fdd x s j
 
-/-- **Transition probabilities of the clock chain** (Kolmogorov): `P(X t = j) = exp (t Q) x j`. -/
+/-- **Transition probabilities of the clock chain** (Kolmogorov): for a valid chain on a finite
+state space, with `P = clockMeasure` and `Q = rateMatrix`, `P(X t = j) = exp (t Q) x j` for
+every `t ≥ 0`. -/
 theorem IsValid.clockMeasure_real_path_eq [Fintype ι] [MeasurableSpace ι]
     [DiscreteMeasurableSpace ι] (hK : K.IsValid) (x j : ι) (t : ℝ≥0) :
     clockMeasure.real {c | K.path x c t = j} = ctmcTransition K.rateMatrix t x j := by
@@ -1113,13 +1140,14 @@ theorem IsValid.clockMeasure_real_path_eq [Fintype ι] [MeasurableSpace ι]
 
 omit [DecidableEq ι] in
 variable (K) in
-/-- The duration of a jump from `y` with residual clocks `r`; `0` when `y` is absorbing. -/
+/-- The duration of a jump from `y` with residual clocks `r`: `hold y r`, and `0` when the total
+rate at `y` is `0` (for a valid chain: when `y` is absorbing). -/
 noncomputable def dur (y : ι) (r : ℝ × ℝ) : ℝ := if K.totalRate y = 0 then 0 else K.hold y r
 
 omit [DecidableEq ι] in
 variable (K) in
-/-- The time of the `n`-th jump of the clock chain, as a real number (jumps from absorbing
-states take no time). -/
+/-- The time of the `n`-th jump of the clock chain, as a real number: the sum of the first `n`
+durations (jumps from states of total rate `0` take no time). -/
 noncomputable def eventTime (p : ι × ClockConfig) (n : ℕ) : ℝ :=
   ∑ j ∈ Finset.range n, K.dur (K.config j p).1 (K.config j p).2.1
 
@@ -1133,7 +1161,9 @@ theorem eventTime_mono {p : ι × ClockConfig}
     (hdur : ∀ j, 0 ≤ K.dur (K.config j p).1 (K.config j p).2.1) : Monotone (K.eventTime p) :=
   monotone_nat_of_le_succ fun n => by rw [eventTime_succ]; linarith [hdur n]
 
-/-- Before absorption, the jump times of the steps are the real event times. -/
+/-- Before absorption, the jump times of the steps are the real event times: if the states
+before the `n`-th jump have total rate `≠ 0` and all the durations are nonnegative, then the
+`n`-th jump time is `eventTime (x, c) n`. -/
 theorem ctmcJumpTime_steps_eq (x : ι) (c : ClockConfig) (f : ℕ → (ι → ι) × ℝ) {n : ℕ}
     (hact : ∀ j < n, K.totalRate (K.config j (x, c)).1 ≠ 0)
     (hdur : ∀ j, 0 ≤ K.dur (K.config j (x, c)).1 (K.config j (x, c)).2.1) :
@@ -1149,7 +1179,8 @@ theorem ctmcJumpTime_steps_eq (x : ι) (c : ClockConfig) (f : ℕ → (ι → ι
     congr 1
     simp only [dur, h, ↓reduceIte]
 
-/-- After an absorbing state, the next jump time is infinite. -/
+/-- After a state of total rate `0` (an absorbing state, for a valid chain), the next jump time
+is infinite. -/
 theorem ctmcJumpTime_steps_succ_eq_top (x : ι) (c : ClockConfig) (f : ℕ → (ι → ι) × ℝ) {n : ℕ}
     (habs : K.totalRate (K.config n (x, c)).1 = 0) :
     ctmcJumpTime K.rateMatrix x (K.steps x (c, f)) (n + 1) = ∞ := by
@@ -1167,7 +1198,8 @@ theorem path_eq_config (x : ι) (c : ClockConfig) {t : ℝ≥0} {m : ℕ}
 noncomputable def realPath (x : ι) (c : ClockConfig) (t : ℝ) : ι := K.path x c t.toNNReal
 
 /-- The real path is the `m`-th state between the `m`-th and the next event time, before the
-absorbing index `n`, and the absorbing state after the `n`-th event. -/
+absorbing index `n`, and the absorbing state after the `n`-th event, provided all the durations
+are nonnegative. -/
 theorem realPath_eq (x : ι) (c : ClockConfig) {n : ℕ}
     (hact : ∀ j < n, K.totalRate (K.config j (x, c)).1 ≠ 0)
     (habs : K.totalRate (K.config n (x, c)).1 = 0)
@@ -1193,7 +1225,8 @@ theorem measurable_realPath [Finite ι] [MeasurableSpace ι] [DiscreteMeasurable
   have h := measurable_ctmcPath_uncurry (Q := K.rateMatrix) x
   exact (h.comp (measurable_real_toNNReal.prodMk measurable_const) :)
 
-/-- The integral of a constant-on-`[u, t)` function. -/
+/-- For `u ≤ t`, the integral over `[u, t]` of a function equal to `C` on `[u, t)` is
+`C * (t - u)`. -/
 theorem integral_eq_of_forall_Ico {g : ℝ → ℝ} {C u t : ℝ} (hut : u ≤ t)
     (hg : ∀ s ∈ Ico u t, g s = C) : ∫ s in u..t, g s = C * (t - u) := by
   have hae : ∀ᵐ s ∂(volume : Measure ℝ), s ≠ t := by rw [ae_iff]; simp
@@ -1202,9 +1235,11 @@ theorem integral_eq_of_forall_Ico {g : ℝ → ℝ} {C u t : ℝ} (hut : u ≤ t
   · rw [uIoc_of_le hut] at hmem
     exact hg s ⟨le_of_lt hmem.1, lt_of_le_of_ne hmem.2 hs⟩
 
-/-- **Integrated rates along the path.** For a function `φ` of the state, the integral of
-`φ (X s)` over `[0, t]` is the sum of `φ` times the durations of the completed jumps, plus `φ`
-of the current state times the time elapsed since the last jump. -/
+/-- **Integrated rates along the path.** For a chain on a finite state space absorbed at index
+`n` (total rate `≠ 0` at the states before, `0` at the `n`-th), with nonnegative durations, and
+for `m ≤ n` and `eventTime m ≤ t` (with `t ≤ eventTime (m + 1)` if `m < n`): for a function `φ`
+of the state, the integral of `φ (X s)` over `[0, t]` is the sum of `φ` times the durations of
+the completed jumps, plus `φ` of the current state times the time elapsed since the last jump. -/
 theorem integral_realPath [Finite ι] [MeasurableSpace ι] [DiscreteMeasurableSpace ι]
     (φ : ι → ℝ) (x : ι) (c : ClockConfig) {n : ℕ}
     (hact : ∀ j < n, K.totalRate (K.config j (x, c)).1 ≠ 0)
@@ -1251,8 +1286,9 @@ namespace TwoChannel
 
 variable {ι : Type*} {K : TwoChannel ι}
 
-/-- The three cases of a jump from an active state with positive residual clocks: channel `1`
-first, channel `2` first, or a tie with both channels active. -/
+/-- The three cases of a jump of a valid chain from an active state with positive residual
+clocks: channel `1` first (with positive rate), channel `2` first (with positive rate), or a tie
+with both channels active. -/
 theorem IsValid.jump_cases (hK : K.IsValid) {y : ι} (hy : K.totalRate y ≠ 0) {r : ℝ × ℝ}
     (hr₁ : 0 < r.1) (hr₂ : 0 < r.2) :
     (K.rate₂ y * r.1 < K.rate₁ y * r.2 ∧ 0 < K.rate₁ y) ∨
@@ -1289,8 +1325,8 @@ theorem IsValid.jump_cases (hK : K.IsValid) {y : ι} (hy : K.totalRate y ≠ 0) 
   field_simp
   linarith
 
-/-- From an active state with positive residual clocks, the jump takes a positive time, during
-which neither channel consumes more than its residual clock. -/
+/-- For a valid chain, from an active state with positive residual clocks, the jump takes a
+positive time, during which neither channel consumes more than its residual clock. -/
 theorem IsValid.hold_bounds (hK : K.IsValid) {y : ι} (hy : K.totalRate y ≠ 0) {r : ℝ × ℝ}
     (hr₁ : 0 < r.1) (hr₂ : 0 < r.2) :
     0 < K.hold y r ∧ K.rate₁ y * K.hold y r ≤ r.1 ∧ K.rate₂ y * K.hold y r ≤ r.2 := by
@@ -1310,12 +1346,15 @@ theorem IsValid.hold_bounds (hK : K.IsValid) {y : ι} (hy : K.totalRate y ≠ 0)
     exact ⟨div_pos hr₁ ha, le_rfl, le_rfl⟩
 
 variable (K) in
-/-- The internal clock of channel `1` after `n` jumps: its rate integrated over the jumps. -/
+/-- The internal clock of channel `1` after `n` jumps: the sum over the first `n` jumps of the
+rate of channel `1` times the duration of the jump (`0` when the total rate is `0`); for
+nonnegative durations, its rate integrated over the jumps. -/
 noncomputable def internal₁ (p : ι × ClockConfig) (n : ℕ) : ℝ :=
   ∑ j ∈ Finset.range n, K.rate₁ (K.config j p).1 * K.dur (K.config j p).1 (K.config j p).2.1
 
 variable (K) in
-/-- The internal clock of channel `2` after `n` jumps. -/
+/-- The internal clock of channel `2` after `n` jumps: the sum over the first `n` jumps of the
+rate of channel `2` times the duration of the jump (`0` when the total rate is `0`). -/
 noncomputable def internal₂ (p : ι × ClockConfig) (n : ℕ) : ℝ :=
   ∑ j ∈ Finset.range n, K.rate₂ (K.config j p).1 * K.dur (K.config j p).1 (K.config j p).2.1
 
@@ -1323,13 +1362,17 @@ end TwoChannel
 
 /-! ### The SIR epidemic as a two-channel chain -/
 
-/-- States `(S, I)` of the SIR epidemic in a population of size `N` (the number of removed
-individuals is `N - S - I`). -/
+/-- States `(S, I)` of the SIR epidemic in a population of size `N`: pairs with `S ≤ N` and
+`I ≤ N`. The constraint `S + I ≤ N` is not part of the type; for a state satisfying it, the
+number of removed individuals is `N - S - I`. -/
 abbrev SIRState (N : ℕ) := Fin (N + 1) × Fin (N + 1)
 
-/-- **The SIR epidemic as a two-channel chain**: infection `(S, I) → (S - 1, I + 1)` at rate
-`β S I / N` and recovery `(S, I) → (S, I - 1)` at rate `γ I`; an infection and a recovery at the
-same instant lead to `(S - 1, I)`. -/
+/-- **The SIR epidemic as a two-channel chain**: infection `(S, I) → (S - 1, min (I + 1) N)` at
+rate `β S I / N` and recovery `(S, I) → (S, I - 1)` at rate `γ I`, with truncated subtraction
+(`0 - 1 = 0`); an infection and a recovery at the same instant lead to `(S - 1, I)`. On a state
+with `S + I ≤ N`, infection leads to `(S - 1, I + 1)` when `S ≥ 1` and recovery to `(S, I - 1)`
+when `I ≥ 1`; otherwise the channel's rate is `0`. For `N = 0` the only state is `(0, 0)`, whose
+infection rate is `0` by the convention `x / 0 = 0`. -/
 noncomputable def sirChannels (β γ : ℝ) (N : ℕ) : TwoChannel (SIRState N) where
   rate₁ x := β * (x.1 : ℕ) * (x.2 : ℕ) / N
   rate₂ x := γ * (x.2 : ℕ)
@@ -1358,12 +1401,13 @@ clocks are the first interarrival times, and the future interarrivals are the re
 def initClock (e₁ e₂ : ℕ → ℝ) : ClockConfig := ((e₁ 0, e₂ 0), (seqTail e₁, seqTail e₂))
 
 /-- The counting path of a unit clock with interarrival times `e`: the number of arrivals
-`e 0 + ⋯ + e n ≤ u`. -/
+`e 0 + ⋯ + e n ≤ u`, taken to be `0` when infinitely many of these sums are at most `u`. -/
 noncomputable def clockCount (e : ℕ → ℝ) (u : ℝ≥0) : ℕ :=
   PoissonProcess.count (fun n (e : ℕ → ℝ) => e n) u e
 
 /-- **The constructed SIR path**, started at `x₀` and driven by unit clocks with interarrival
-times `e₁` (infection) and `e₂` (recovery). -/
+times `e₁` (infection) and `e₂` (recovery). For `t < 0` it is the value at time `0`; if
+infinitely many jumps occur by time `t`, it is a fixed state depending only on `N`. -/
 noncomputable def sirPath (β γ : ℝ) (N : ℕ) (x₀ : SIRState N) (e₁ e₂ : ℕ → ℝ) (t : ℝ) :
     SIRState N :=
   (sirChannels β γ N).realPath x₀ (initClock e₁ e₂) t
@@ -1376,11 +1420,12 @@ noncomputable def sirS (β γ : ℝ) (N : ℕ) (x₀ : SIRState N) (e₁ e₂ : 
 noncomputable def sirI (β γ : ℝ) (N : ℕ) (x₀ : SIRState N) (e₁ e₂ : ℕ → ℝ) (t : ℝ) : ℕ :=
   (sirPath β γ N x₀ e₁ e₂ t).2
 
-/-- The removed count of the constructed SIR path. -/
+/-- The removed count `N - S - I` of the constructed SIR path, with truncated subtraction: it is
+`0` when `S + I > N`. -/
 noncomputable def sirR (β γ : ℝ) (N : ℕ) (x₀ : SIRState N) (e₁ e₂ : ℕ → ℝ) (t : ℝ) : ℕ :=
   N - sirS β γ N x₀ e₁ e₂ t - sirI β γ N x₀ e₁ e₂ t
 
-/-- The arrival times `e 0 + ⋯ + e (k - 1)` of a unit clock. -/
+/-- The arrival times `e 0 + ⋯ + e (k - 1)` of a unit clock (the empty sum `0` for `k = 0`). -/
 def arrival (e : ℕ → ℝ) (k : ℕ) : ℝ := ∑ j ∈ Finset.range k, e j
 
 theorem arrival_succ (e : ℕ → ℝ) (k : ℕ) : arrival e (k + 1) = arrival e k + e k :=
@@ -1389,7 +1434,8 @@ theorem arrival_succ (e : ℕ → ℝ) (k : ℕ) : arrival e (k + 1) = arrival e
 theorem arrival_mono {e : ℕ → ℝ} (he : ∀ n, 0 < e n) : Monotone (arrival e) :=
   monotone_nat_of_le_succ fun k => by rw [arrival_succ]; linarith [he k]
 
-/-- The counting path between the `k`-th and the next arrival is `k`. -/
+/-- For positive interarrival times, the counting path at a time `v ≥ 0` between the `k`-th and
+the next arrival is `k`. -/
 theorem clockCount_eq {e : ℕ → ℝ} (he : ∀ n, 0 < e n) {k : ℕ} {v : ℝ} (hv : 0 ≤ v)
     (h₁ : arrival e k ≤ v) (h₂ : v < arrival e (k + 1)) : clockCount e v.toNNReal = k := by
   have hset : {n : ℕ | PoissonProcess.arrivalTime (fun n (e : ℕ → ℝ) => e n) (n + 1) e ≤
@@ -1413,11 +1459,12 @@ variable {β γ : ℝ} {N : ℕ} {x₀ : SIRState N} {e₁ e₂ : ℕ → ℝ}
 
 open TwoChannel
 
-/-- **Bookkeeping invariant** of the constructed SIR chain after `n` jumps, with `k₁`
-infections and `k₂` recoveries so far: the counts are `S = S₀ - k₁`, `I = I₀ + k₁ - k₂`; the
-future interarrivals of each clock are its interarrivals after the ones consumed; the internal
-clock plus the residual is the next arrival time; the internal clock is at least the last
-arrival time; and the residuals are positive. -/
+/-- **Bookkeeping invariant** of the constructed SIR chain after `n` jumps: there are `k₁`, `k₂`
+(the infections and recoveries so far) such that the counts are `S = S₀ - k₁`,
+`I = I₀ + k₁ - k₂` (without truncation) with `S + I ≤ N`; the future interarrivals of each clock
+are its interarrivals after the ones consumed; the internal clock plus the residual is the next
+arrival time; the internal clock is at least the last arrival time; and the residuals are
+positive. -/
 def SIRInv (β γ : ℝ) (N : ℕ) (x₀ : SIRState N) (e₁ e₂ : ℕ → ℝ) (n : ℕ) : Prop :=
   ∃ k₁ k₂ : ℕ,
     (((sirChannels β γ N).config n (x₀, initClock e₁ e₂)).1.1 : ℕ) + k₁ = x₀.1 ∧
@@ -1540,7 +1587,8 @@ theorem sirInv (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hx₀ : (x₀.1 : ℕ) + x₀.
   | zero => exact sirInv_zero hx₀ he₁ he₂
   | succ n ih => exact sirInv_succ hβ hγ he₁ he₂ ih
 
-/-- Each jump of the constructed SIR chain lowers `2 S + I`. -/
+/-- For `β, γ ≥ 0`, each jump of the constructed SIR chain from a state with `S + I ≤ N` and
+nonzero total rate, with positive residual clocks, lowers `2 S + I`. -/
 theorem sir_next_potential (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {y : SIRState N}
     (hy : (sirChannels β γ N).totalRate y ≠ 0) (hSI : (y.1 : ℕ) + y.2 ≤ N) {r : ℝ × ℝ}
     (hr₁ : 0 < r.1) (hr₂ : 0 < r.2) :
@@ -1571,7 +1619,9 @@ theorem sir_next_potential (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {y : SIRState N}
     simp only [K, sirChannels]
     omega
 
-/-- **The constructed SIR chain is absorbed after at most `2 N` jumps.** -/
+/-- **The constructed SIR chain is absorbed after at most `2 N` jumps**: for `β, γ ≥ 0`, an
+initial state with `S₀ + I₀ ≤ N` and positive interarrival times, the state after some `n ≤ 2 N`
+jumps has total rate `0`. -/
 theorem sir_exists_absorbing (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hx₀ : (x₀.1 : ℕ) + x₀.2 ≤ N)
     (he₁ : ∀ n, 0 < e₁ n) (he₂ : ∀ n, 0 < e₂ n) :
     ∃ n ≤ 2 * N, (sirChannels β γ N).totalRate
@@ -1614,7 +1664,8 @@ theorem clockCount_zero {e : ℕ → ℝ} (he : ∀ n, 0 < e n) : clockCount e 0
     (by simp [arrival, he 0])
   simpa using this
 
-/-- The jumps of the constructed SIR chain take nonnegative time. -/
+/-- For `β, γ ≥ 0`, an initial state with `S₀ + I₀ ≤ N` and positive interarrival times, the
+jumps of the constructed SIR chain take nonnegative time. -/
 theorem sir_dur_nonneg (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hx₀ : (x₀.1 : ℕ) + x₀.2 ≤ N)
     (he₁ : ∀ n, 0 < e₁ n) (he₂ : ∀ n, 0 < e₂ n) (j : ℕ) :
     0 ≤ (sirChannels β γ N).dur ((sirChannels β γ N).config j (x₀, initClock e₁ e₂)).1
@@ -1625,9 +1676,11 @@ theorem sir_dur_nonneg (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hx₀ : (x₀.1 : ℕ)
   · exact le_rfl
   · exact ((sirChannels_isValid hβ hγ N).hold_bounds h hr₁ hr₂).1.le
 
-/-- **The time-change equations at one time**, relative to the initial state: at every time
-`t ≥ 0` the constructed SIR counts are `S = S₀ - Y₁(∫₀ᵗ β S I / N)`,
-`I = I₀ + Y₁(∫₀ᵗ β S I / N) - Y₂(∫₀ᵗ γ I)` and `R = R₀ + Y₂(∫₀ᵗ γ I)`, with `S + I ≤ N`. -/
+/-- **The time-change equations at one time**, relative to the initial state: for `β, γ ≥ 0`,
+an initial state with `S₀ + I₀ ≤ N` and positive interarrival times, at every time `t ≥ 0` the
+constructed SIR counts are `S = S₀ - Y₁(∫₀ᵗ β S I / N)`,
+`I = I₀ + Y₁(∫₀ᵗ β S I / N) - Y₂(∫₀ᵗ γ I)` and `R = R₀ + Y₂(∫₀ᵗ γ I)` with
+`R₀ = N - S₀ - I₀`, and `S + I ≤ N` (the integrand `β S I / N` is `0` when `N = 0`). -/
 theorem sir_timeChange (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hx₀ : (x₀.1 : ℕ) + x₀.2 ≤ N)
     (he₁ : ∀ n, 0 < e₁ n) (he₂ : ∀ n, 0 < e₂ n) {t : ℝ} (ht : 0 ≤ t) :
     (sirS β γ N x₀ e₁ e₂ t : ℝ) = (x₀.1 : ℕ) - clockCount e₁
@@ -1748,10 +1801,11 @@ theorem sir_timeChange (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hx₀ : (x₀.1 : ℕ)
   · simp only [sirR, hXS, hXI]
     omega
 
-/-- **Pathwise existence of the SIR chain.** For every pair of unit clocks with positive
-interarrival times `e₁` (infection) and `e₂` (recovery), dependent or not, and every initial
-state `(S₀, I₀)` with `S₀ + I₀ ≤ N`, the constructed counts `(S, I, R)` solve the random
-time-change equations of `IsChainPath`, for all times `t ≥ 0`, with `S(0) = S₀`, `I(0) = I₀`. -/
+/-- **Pathwise existence of the SIR chain.** For `β, γ ≥ 0`, every pair of unit clocks with
+positive interarrival times `e₁` (infection) and `e₂` (recovery), dependent or not, and every
+initial state `(S₀, I₀)` with `S₀ + I₀ ≤ N`, the constructed counts `(S, I, R)` solve the random
+time-change equations of `IsChainPath` (relative to `S(0)`, `I(0)`, `R(0)`), for all times
+`t ≥ 0`. That `S(0) = S₀` and `I(0) = I₀` is `sirPath_zero`. -/
 theorem isChainPath_sir (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hx₀ : (x₀.1 : ℕ) + x₀.2 ≤ N)
     (he₁ : ∀ n, 0 < e₁ n) (he₂ : ∀ n, 0 < e₂ n) :
     IsChainPath β γ N (clockCount e₁) (clockCount e₂) (sirS β γ N x₀ e₁ e₂)
@@ -1779,7 +1833,8 @@ theorem isChainPath_sir (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hx₀ : (x₀.1 : ℕ
     push_cast
     ring
 
-/-- The constructed SIR path starts at the initial state. -/
+/-- For `β, γ ≥ 0`, an initial state with `S₀ + I₀ ≤ N` and positive interarrival times, the
+constructed SIR path starts at the initial state. -/
 theorem sirPath_zero (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hx₀ : (x₀.1 : ℕ) + x₀.2 ≤ N)
     (he₁ : ∀ n, 0 < e₁ n) (he₂ : ∀ n, 0 < e₂ n) : sirPath β γ N x₀ e₁ e₂ 0 = x₀ := by
   have h0 := sir_timeChange hβ hγ hx₀ he₁ he₂ (t := 0) le_rfl
@@ -1805,8 +1860,10 @@ noncomputable def clockLaw : Measure ((ℕ → ℝ) × (ℕ → ℝ)) :=
 instance : IsProbabilityMeasure clockLaw := by
   unfold clockLaw; infer_instance
 
-/-- Independence is preserved by composing with a map that pushes the measure forward to the
-law under which the variables are independent. -/
+/-- Independence is preserved by composing with a measurable map that pushes the measure forward
+to the law under which the measurable variables are independent. No probability measure is
+assumed, but independence under `μ'` (for the empty set of indices) forces `μ'`, and hence `μ`,
+to have total mass `1`. -/
 theorem iIndepFun_comp_of_map_eq {Ω Ω' ι : Type*} {β : ι → Type*} [MeasurableSpace Ω]
     [MeasurableSpace Ω'] [∀ i, MeasurableSpace (β i)] {μ : Measure Ω} {μ' : Measure Ω'}
     {g : Ω → Ω'} (hg : Measurable g) (hmap : μ.map g = μ') {X : ∀ i, Ω' → β i}
@@ -1842,9 +1899,9 @@ theorem ae_clockLaw_pos : ∀ᵐ ω ∂clockLaw, (∀ n, 0 < ω.1 n) ∧ ∀ n, 
     exact ae_pos_infinitePi
   filter_upwards [h1, h2] with ω h1 h2 using ⟨h1, h2⟩
 
-/-- **Almost-sure existence of the SIR chain**: for almost every outcome of two independent
-unit Poisson clocks, the constructed counts solve the random time-change equations for all
-`t ≥ 0`. -/
+/-- **Almost-sure existence of the SIR chain**: for `β, γ ≥ 0` and an initial state with
+`S₀ + I₀ ≤ N`, for almost every outcome of two independent unit Poisson clocks, the constructed
+counts solve the random time-change equations for all `t ≥ 0`. -/
 theorem ae_isChainPath_sir {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {N : ℕ} {x₀ : SIRState N}
     (hx₀ : (x₀.1 : ℕ) + x₀.2 ≤ N) :
     ∀ᵐ ω ∂clockLaw, IsChainPath β γ N (clockCount ω.1) (clockCount ω.2)
@@ -1915,10 +1972,10 @@ theorem measurable_sirPath {β γ : ℝ} {N : ℕ} (x₀ : SIRState N) (t : ℝ)
     Measurable fun ω : (ℕ → ℝ) × (ℕ → ℝ) => sirPath β γ N x₀ ω.1 ω.2 t :=
   ((sirChannels β γ N).measurable_path x₀ t.toNNReal).comp measurable_initClock
 
-/-- **Law identification for the SIR chain.** Driven by two independent unit Poisson clocks,
-the constructed SIR path has the law of the continuous-time Markov chain with the SIR rate
-matrix, built from the jump chain and holding times of
-`MathlibExt.Probability.Process.ContinuousTimeMarkovChain.Path`. -/
+/-- **Law identification for the SIR chain.** For `β, γ ≥ 0` and any initial state, driven by two
+independent unit Poisson clocks, the constructed SIR path on times `t ≥ 0` has the law of the
+continuous-time Markov chain with the SIR rate matrix, built from the jump chain and holding
+times of `MathlibExt.Probability.Process.ContinuousTimeMarkovChain.Path`. -/
 theorem map_sirPath {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {N : ℕ} (x₀ : SIRState N) :
     clockLaw.map (fun ω (t : ℝ≥0) => sirPath β γ N x₀ ω.1 ω.2 t) =
       (ctmcInputMeasure (sirChannels_isValid hβ hγ N).isRateMatrix).map
@@ -1932,9 +1989,10 @@ theorem map_sirPath {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {N : ℕ} (x
   rw [heq, ← Measure.map_map hpath measurable_initClock, clockLaw_map_initClock,
     (sirChannels_isValid hβ hγ N).map_path x₀]
 
-/-- Law identification on any probability space: if the interarrival times `T ω` of the two
-clocks are independent rate-`1` exponentials (law `clockLaw`), the constructed SIR path has the
-law of the jump-chain construction. -/
+/-- Law identification on any probability space: for `β, γ ≥ 0` and any initial state, if the
+interarrival times `T ω` of the two clocks are independent rate-`1` exponentials (law
+`clockLaw`), the constructed SIR path on times `t ≥ 0` has the law of the jump-chain
+construction. -/
 theorem map_sirPath_of_hasLaw {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {P : Measure Ω} {T : Ω → (ℕ → ℝ) × (ℕ → ℝ)} (hT : HasLaw T clockLaw P) {β γ : ℝ}
     (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {N : ℕ} (x₀ : SIRState N) :
@@ -1947,8 +2005,9 @@ theorem map_sirPath_of_hasLaw {Ω : Type*} {mΩ : MeasurableSpace Ω}
     (hT.map_eq ▸ hm.aemeasurable) hT.aemeasurable]
   rfl
 
-/-- **Transition probabilities of the SIR chain** (Kolmogorov): driven by independent unit
-Poisson clocks, `P(X t = j) = exp (t Q) x₀ j` for the SIR rate matrix `Q`. -/
+/-- **Transition probabilities of the SIR chain** (Kolmogorov): for `β, γ ≥ 0`, states `x₀`, `j`
+and a time `t ≥ 0`, driven by independent unit Poisson clocks, `P(X t = j) = exp (t Q) x₀ j` for
+the SIR rate matrix `Q`. -/
 theorem clockLaw_real_sirPath_eq {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {N : ℕ} (x₀ j : SIRState N)
     (t : ℝ≥0) :
     clockLaw.real {ω | sirPath β γ N x₀ ω.1 ω.2 t = j} =

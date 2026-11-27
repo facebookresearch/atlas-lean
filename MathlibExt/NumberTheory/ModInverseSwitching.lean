@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Int.ModEq
+public import Mathlib.Data.Nat.GCD.Basic
 import Mathlib.Algebra.Order.Ring.Abs
 import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.Tactic.Linarith
@@ -19,7 +20,9 @@ import Mathlib.Tactic.Linarith
 
 The switching criterion characterizes when a Bézout coefficient for `m` modulo `n`
 is also an inverse of `t` modulo `n`. The two predicates describe least absolute inverses
-and the switching identities along a Euclidean remainder sequence.
+and the switching identities along a Euclidean remainder sequence. Least absolute inverses
+propagate from each remainder to the preceding one. When the first remainder is odd and the
+second is even, both initial inverses are extremal exactly when the second remainder is two.
 -/
 
 @[expose] public section
@@ -98,6 +101,42 @@ theorem exists_eq_mul_add_iff_switching
       _ ≡ (m : ℤ) [ZMOD (n : ℤ)] := by simpa using hxt.mul_right (m : ℤ)
     simpa only [Int.modEq_iff_add_fac, add_comm t, mul_comm (n : ℤ)] using htm
 
+-- The strict lower bound on x gives one unit of slack because x and n are integers.
+private theorem isLeastAbsInverse_succ_imp.switchingBounds {m n x y : ℤ}
+    (hm : 2 ≤ m) (hn : 0 < n) (hswitch : x * m + y * n = 1)
+    (hlo : -n < 2 * x) (hhi : 2 * x ≤ n) :
+    -m < 2 * y ∧ 2 * y ≤ m := by
+  have hm₀ : 0 ≤ m := by omega
+  have hgap : 1 - n ≤ 2 * x := by omega
+  constructor
+  · apply lt_of_mul_lt_mul_right _ hn.le
+    nlinarith only [hswitch, mul_le_mul_of_nonneg_right hhi hm₀]
+  · apply le_of_mul_le_mul_right _ hn
+    nlinarith only [hswitch, hm, mul_le_mul_of_nonneg_right hgap hm₀]
+
+/-- **Least absolute inverses propagate down the Euclidean sequence.** Let $r_0, r_1, \ldots$ be
+natural numbers, $s_0, s_1, \ldots$ integers and $N \ge 1$ such that $(r, s, N)$ is Euclidean
+switching data: $r_0 > r_1 > \cdots > r_{N+1} = 1$ are the successive remainders of the Euclidean
+algorithm, $s_{N+1} = 1$, and $s_{i+1} r_{i-1} + s_i r_i = 1$ for $1 \le i \le N$. If
+$1 \le j \le N$ and $s_{j+1}$ is the least absolute inverse of $r_{j+1}$ modulo $r_j$, then $s_j$
+is the least absolute inverse of $r_j$ modulo $r_{j-1}$.
+
+Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
+Sequence of Modular Inverse Switching Formulas", Lemma 3. -/
+theorem isLeastAbsInverse_succ_imp
+    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
+    (j : ℕ) (hj1 : 1 ≤ j) (hj2 : j ≤ N)
+    (h : IsLeastAbsInverse (s (j + 1)) (r (j + 1) : ℤ) (r j)) :
+    IsLeastAbsInverse (s j) (r j : ℤ) (r (j - 1)) := by
+  obtain ⟨_, hpos, hdesc, _, _, _, hswitch⟩ := hseq
+  have hbez := hswitch j hj1 hj2
+  have hn : 0 < r j := hpos j (by omega)
+  have hlt := hdesc (j - 1) (by omega)
+  rw [Nat.sub_add_cancel hj1] at hlt
+  exact ⟨by simp [← hbez],
+    isLeastAbsInverse_succ_imp.switchingBounds (by omega) (by exact_mod_cast hn)
+      hbez h.2.1 h.2.2⟩
+
 -- Propagate the half-open bounds backwards from the final inverse, which is one.
 private theorem switching_bounds {r : ℕ → ℕ} {s : ℕ → ℤ} {N : ℕ}
     (hseq : IsEuclidSwitchSeq r s N) {i : ℕ} (hi : i ≤ N) :
@@ -113,15 +152,72 @@ private theorem switching_bounds {r : ℕ → ℕ} {s : ℕ → ℤ} {N : ℕ}
     obtain ⟨hlo, hhi⟩ := ih
     have h := hbez (i + 1) (by omega) hi
     rw [Nat.add_sub_cancel] at h
-    have hpos' : 0 < (r (i + 1) : ℤ) := by exact_mod_cast hpos (i + 1) (by omega)
+    have hp := hpos (i + 1) (by omega)
     have hr := hdesc i hi.le
-    have hr' : 2 ≤ (r i : ℤ) := by omega
-    have hgap : 1 - (r (i + 1) : ℤ) ≤ 2 * s (i + 1 + 1) := by omega
-    constructor
-    · apply lt_of_mul_lt_mul_right _ hpos'.le
-      nlinarith only [h, mul_le_mul_of_nonneg_right hhi (Int.natCast_nonneg (r i))]
-    · apply le_of_mul_le_mul_right _ hpos'
-      nlinarith only [h, hr', mul_le_mul_of_nonneg_right hgap (Int.natCast_nonneg (r i))]
+    exact isLeastAbsInverse_succ_imp.switchingBounds (by omega) (by exact_mod_cast hp) h hlo hhi
+
+set_option linter.unusedVariables false in
+/-- **The Euclidean Bézout coefficients are least absolute inverses.** Let $m > n > 1$ be
+integers, write $g = \gcd(m, n)$, and let $(r_i)$, $(s_i)$ and $N$ be Euclidean switching data
+with $r_0 = m/g$ and $r_1 = n/g$. Then $s_2 m + s_1 n = g$, $s_2$ is the least absolute inverse
+of $m/g$ modulo $n/g$, and $s_1$ is the least absolute inverse of $n/g$ modulo $m/g$.
+
+Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
+Sequence of Modular Inverse Switching Formulas", Lemma 4. -/
+theorem euclid_bezout_coeffs_leastAbsInverse
+    (m n : ℕ) (h : n < m) (hn : 1 < n)
+    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
+    (hr0 : r 0 = m / Nat.gcd m n) (hr1 : r 1 = n / Nat.gcd m n) :
+    s 2 * (m : ℤ) + s 1 * (n : ℤ) = (Nat.gcd m n : ℤ) ∧
+      IsLeastAbsInverse (s 2) ((m / Nat.gcd m n : ℕ) : ℤ)
+        (n / Nat.gcd m n) ∧
+      IsLeastAbsInverse (s 1) ((n / Nat.gcd m n : ℕ) : ℤ)
+        (m / Nat.gcd m n) := by
+  obtain ⟨hN, hpos, hdesc, hlast, hdiv, hs, hbez⟩ := hseq
+  have hsw1 : s 2 * (r 0 : ℤ) + s 1 * (r 1 : ℤ) = 1 := by
+    have h := hbez 1 le_rfl hN
+    simpa using h
+  rw [hr0, hr1] at hsw1
+  have hm : (m : ℤ) = (Nat.gcd m n : ℤ) * ((m / Nat.gcd m n : ℕ) : ℤ) := by
+    have hnat : Nat.gcd m n * (m / Nat.gcd m n) = m :=
+      Nat.mul_div_cancel' (Nat.gcd_dvd_left m n)
+    have hcast : ((Nat.gcd m n * (m / Nat.gcd m n) : ℕ) : ℤ) = (m : ℤ) := by
+      rw [hnat]
+    simpa [Nat.cast_mul] using hcast.symm
+  have hncast : (n : ℤ) = (Nat.gcd m n : ℤ) * ((n / Nat.gcd m n : ℕ) : ℤ) := by
+    have hnat : Nat.gcd m n * (n / Nat.gcd m n) = n :=
+      Nat.mul_div_cancel' (Nat.gcd_dvd_right m n)
+    have hcast : ((Nat.gcd m n * (n / Nat.gcd m n) : ℕ) : ℤ) = (n : ℤ) := by
+      rw [hnat]
+    simpa [Nat.cast_mul] using hcast.symm
+  have hBez : s 2 * (m : ℤ) + s 1 * (n : ℤ) = (Nat.gcd m n : ℤ) := by
+    have hmul : (Nat.gcd m n : ℤ) *
+        (s 2 * ((m / Nat.gcd m n : ℕ) : ℤ) + s 1 * ((n / Nat.gcd m n : ℕ) : ℤ)) =
+        (Nat.gcd m n : ℤ) := by
+      rw [hsw1, mul_one]
+    rw [hm, hncast]
+    linarith [hmul]
+  have hb2 : -((n / Nat.gcd m n : ℕ) : ℤ) < 2 * s 2 ∧
+      2 * s 2 ≤ ((n / Nat.gcd m n : ℕ) : ℤ) := by
+    have h := switching_bounds
+      (r := r) (s := s) (N := N) ⟨hN, hpos, hdesc, hlast, hdiv, hs, hbez⟩
+      (i := 1) hN
+    rw [hr1] at h
+    exact h
+  have hb1 : -((m / Nat.gcd m n : ℕ) : ℤ) < 2 * s 1 ∧
+      2 * s 1 ≤ ((m / Nat.gcd m n : ℕ) : ℤ) := by
+    have h := switching_bounds
+      (r := r) (s := s) (N := N) ⟨hN, hpos, hdesc, hlast, hdiv, hs, hbez⟩
+      (i := 0) (Nat.zero_le N)
+    rw [hr0] at h
+    exact h
+  have hmod2 : s 2 * ((m / Nat.gcd m n : ℕ) : ℤ) ≡
+      1 [ZMOD ((n / Nat.gcd m n : ℕ) : ℤ)] := by
+    simp [← hsw1]
+  have hmod1 : s 1 * ((n / Nat.gcd m n : ℕ) : ℤ) ≡
+      1 [ZMOD ((m / Nat.gcd m n : ℕ) : ℤ)] := by
+    simp [← hsw1]
+  exact ⟨hBez, ⟨hmod2, hb2.1, hb2.2⟩, ⟨hmod1, hb1.1, hb1.2⟩⟩
 
 /-- **First inverses not both extremal, even–odd case.** Let $(r_i)$, $(s_i)$ and $N$ be
 Euclidean switching data with $r_0$ even and $r_1$ odd. Then $2|s_1| < r_0$ or
@@ -158,5 +254,46 @@ theorem abs_lt_of_even_odd
     _ ≤ _ := add_le_add_right (mul_le_mul_of_nonneg_right hs (Int.natCast_nonneg _)) 1
   rw [hm, hn] at hle
   linarith only [ha', hle]
+
+/-- **Both first inverses extremal, odd–even case.** Let $(r_i)$, $(s_i)$ and $N$ be Euclidean
+switching data with $r_0$ odd and $r_1$ even. Then $2|s_1| = r_0 - 1$ and $2|s_2| = r_1$ hold
+simultaneously if and only if $r_1 = 2$.
+
+Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
+Sequence of Modular Inverse Switching Formulas", Lemma 7. -/
+theorem abs_eq_halves_iff_eq_two_of_odd_even
+    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
+    (h0 : Odd (r 0)) (h1 : Even (r 1)) :
+    (2 * |s 1| = (r 0 : ℤ) - 1 ∧ 2 * |s 2| = (r 1 : ℤ)) ↔
+      r 1 = 2 := by
+  have ⟨hN, _, _, _, _, _, hswitch⟩ := hseq
+  have hbez : s 2 * (r 0 : ℤ) + s 1 * (r 1 : ℤ) = 1 := hswitch 1 le_rfl hN
+  constructor
+  · rintro ⟨_, hs₂⟩
+    obtain ⟨k, hk⟩ := h1
+    have hr₁ : (r 1 : ℤ) = 2 * k := by omega
+    have habs : |s 2| = (k : ℤ) := by omega
+    -- Half the second remainder divides both summands of the Bézout identity.
+    have hdvd : (k : ℤ) ∣ (1 : ℤ) := by
+      have hs : (k : ℤ) ∣ s 2 := habs ▸ abs_dvd_self (s 2)
+      rw [← hbez, hr₁]
+      exact dvd_add (hs.mul_right _) ((dvd_mul_left (k : ℤ) 2).mul_left _)
+    have hk_one : k = 1 := Nat.dvd_one.mp (by exact_mod_cast hdvd)
+    omega
+  · intro hr
+    obtain ⟨hlo, hhi⟩ : -(r 1 : ℤ) < 2 * s 2 ∧ 2 * s 2 ≤ (r 1 : ℤ) :=
+      switching_bounds hseq (i := 1) hN
+    rw [hr] at hbez hlo hhi
+    have hs₂ : s 2 = 1 := by
+      by_contra h
+      have hz : s 2 = 0 := by omega
+      rw [hz, zero_mul, zero_add] at hbez
+      omega
+    obtain ⟨k, hk⟩ := h0
+    have hr₀ : (r 0 : ℤ) = 2 * k + 1 := by omega
+    have hs₁ : s 1 = -(k : ℤ) := by
+      rw [hs₂, one_mul, hr₀] at hbez
+      omega
+    simp [hs₁, hs₂, hr₀, hr]
 
 end MathlibExt.NumberTheory.ModInverseSwitchingWanted

@@ -51,17 +51,19 @@ namespace EarthScience
 /-! ## A. Explicit profile and its derivative -/
 
 /-- Storage of a linear reservoir with constant inflow `I`, recession coefficient `k`,
-and initial storage `S0`. The physical decay regime has `0 < k`. -/
+and initial storage `S0`. The physical decay regime has `0 < k`. With the convention
+`x / 0 = 0`, the storage is constantly `S0` when `k = 0`. -/
 noncomputable def linearReservoirStorage (I k S0 t : ℝ) : ℝ :=
   I / k + (S0 - I / k) * Real.exp (-k * t)
 
-/-- Storage at time `0` is the initial storage `S0`. -/
+/-- For all real `I`, `k` and `S0`, storage at time `0` is the initial storage `S0`. This includes
+`k = 0`, where the convention `x / 0 = 0` makes the storage constantly `S0`. -/
 theorem storage_initial (I k S0 : ℝ) :
     linearReservoirStorage I k S0 0 = S0 := by
   simp only [linearReservoirStorage, mul_zero, Real.exp_zero, mul_one]
   ring
 
-/-- The explicit profile `S(t) = I/k + (S0 - I/k) * exp (-k t)` satisfies
+/-- For `k > 0`, the explicit profile `S(t) = I/k + (S0 - I/k) * exp (-k t)` satisfies
 the linear-reservoir ODE `S' = I - k * S` at every time `t`. -/
 theorem hasDerivAt_storage_solution {I k S0 : ℝ} (hk : 0 < k) (t : ℝ) :
     HasDerivAt (linearReservoirStorage I k S0)
@@ -87,9 +89,9 @@ theorem hasDerivAt_storage_solution {I k S0 : ℝ} (hk : 0 < k) (t : ℝ) :
 
 /-! ## B. Integrated water budget -/
 
-/-- Integrated water budget: the time integral of storage has the closed
+/-- Integrated water budget for `k > 0`: the time integral of storage has the closed
 form below, and the storage change closes the budget
-`S(t) - S0 = I * t - k * ∫₀ᵗ S`. -/
+`S(t) - S0 = I * t - k * ∫₀ᵗ S`. For `t < 0` the integral is oriented. -/
 theorem integrated_water_budget {I k S0 : ℝ} (hk : 0 < k) (t : ℝ) :
     (∫ u in (0 : ℝ)..t, linearReservoirStorage I k S0 u)
         = I * t / k + (S0 - I / k) * (1 - Real.exp (-k * t)) / k ∧

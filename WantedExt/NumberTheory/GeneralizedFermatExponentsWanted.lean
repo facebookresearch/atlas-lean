@@ -14,6 +14,7 @@ public import Mathlib.Data.Int.GCD
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.RingTheory.Coprime.Basic
+public import MathlibExt.NumberTheory.GeneralizedFermatExponents
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -30,15 +31,6 @@ Throughout the paper `x`, `y`, `z` are nonzero integers ("solutions" are triples
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Solvable generalized Fermat equation.** For natural numbers $m$, $n$, $r$, the equation
-$x^m + y^n = z^r$ is called solvable when there are nonzero integers $x$, $y$, $z$ with
-$x^m + y^n = z^r$.
-
-Source: Richard F. Ryan, *Under What Conditions on the Exponents Does `x^m + y^n = z^r` Have
-Solutions?*, INTEGERS 24 (2024), Article A48, Section 1, equation (1). -/
-def GeneralizedFermatSolvable (m n r : ℕ) : Prop :=
-  ∃ x y z : ℤ, x ≠ 0 ∧ y ≠ 0 ∧ z ≠ 0 ∧ x ^ m + y ^ n = z ^ r
 
 /-- **A solution of x³ + y⁶ = z².** The equation $x^3 + y^6 = z^2$ has a solution in nonzero
 integers, namely $2^3 + 1^6 = 3^2$.
@@ -90,21 +82,6 @@ public theorem_wanted pow_add_pow_ne_pow_of_prime_five_le {p q : ℕ} (hp : p.Pr
     (h5 : 5 ≤ p) (hpq : p ≤ q) {x y z : ℤ} (hx : x ≠ 0) (hy : y ≠ 0) (hz : z ≠ 0)
     (hxy : IsCoprime x y) (hyz : IsCoprime y z) (hxz : IsCoprime x z) :
     x ^ p + y ^ p ≠ z ^ q
-
-/-- **Generalized Fermat equations with exponents 3s, 6t and 2w.** Let $s, t, w$ be positive
-integers. If $s, t, w$ are pairwise coprime, $s$ is odd and $3 \nmid w$, then the equation
-$x^{3s} + y^{6t} = z^{2w}$ has infinitely many solutions $(x, y, z)$ in nonzero integers;
-otherwise it has no solution in nonzero integers.
-
-Source: Richard F. Ryan, *Under What Conditions on the Exponents Does `x^m + y^n = z^r` Have
-Solutions?*, INTEGERS 24 (2024), Article A48, Lemma 1 (`integers-2024-A48-lem-1`). -/
-public theorem_wanted generalizedFermat_three_six_two_mul {s t w : ℕ} (hs : 0 < s) (ht : 0 < t)
-    (hw : 0 < w) :
-    (Nat.Coprime s t ∧ Nat.Coprime s w ∧ Nat.Coprime t w ∧ Odd s ∧ ¬ 3 ∣ w →
-      {xyz : ℤ × ℤ × ℤ | xyz.1 ≠ 0 ∧ xyz.2.1 ≠ 0 ∧ xyz.2.2 ≠ 0 ∧
-        xyz.1 ^ (3 * s) + xyz.2.1 ^ (6 * t) = xyz.2.2 ^ (2 * w)}.Infinite) ∧
-    (¬ (Nat.Coprime s t ∧ Nat.Coprime s w ∧ Nat.Coprime t w ∧ Odd s ∧ ¬ 3 ∣ w) →
-      ¬ GeneralizedFermatSolvable (3 * s) (6 * t) (2 * w))
 
 /-- **Generalized Fermat equations with exponents u, uv and v.** Let $u, v \ge 2$ be integers.
 (A) The equation $x^u + y^{uv} = z^v$ has a solution in nonzero integers $x, y, z$ if and only

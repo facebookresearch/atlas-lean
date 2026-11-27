@@ -35,9 +35,11 @@ open Real MeasureTheory
 
 namespace MathlibExt.Biology.Biophysics.Pharmacodynamics.EffectCompartment
 
-/-- The effect-compartment concentration with lag rate `ke0`,
-plasma input `Cp`, and initial effect `Ce0`, as the canonical
-relaxation solution. -/
+/-- The effect-compartment concentration with lag rate `ke0`, plasma input `Cp`, and initial effect
+`Ce0`, as the canonical relaxation solution
+`Ce0 * exp (-ke0 * t) + ∫ s in 0..t, exp (-ke0 * (t - s)) * (ke0 * Cp s)`. The integral is oriented
+for `t < 0` and is `0` when the integrand is not integrable on the interval. The intended domain is
+`ke0 > 0`, `Ce0 ≥ 0`, `Cp ≥ 0` and `t ≥ 0`. -/
 noncomputable def effectConc (ke0 Ce0 : ℝ) (Cp : ℝ → ℝ) (t : ℝ) : ℝ :=
   MathlibExt.Biology.Dynamics.FeedForwardLoop.relaxation ke0 (fun s => ke0 * Cp s) Ce0 t
 
@@ -47,9 +49,8 @@ theorem effectConc_zero (ke0 Ce0 : ℝ) (Cp : ℝ → ℝ) :
   unfold effectConc MathlibExt.Biology.Dynamics.FeedForwardLoop.relaxation
   simp [intervalIntegral.integral_same]
 
-/-- **The lag equation.** Where the plasma input is continuous
-and locally integrable, the effect solves
-`Ce' = ke0 * (Cp - Ce)`. -/
+/-- **The lag equation.** If the plasma input is integrable on every bounded interval and continuous
+at `t`, the effect solves `Ce' = ke0 * (Cp - Ce)` at `t`. -/
 theorem hasDerivAt_effectConc {ke0 Ce0 t : ℝ} {Cp : ℝ → ℝ}
     (hCp : ∀ a b, IntervalIntegrable Cp MeasureTheory.volume a b)
     (ht : ContinuousAt Cp t) :
@@ -64,9 +65,9 @@ theorem hasDerivAt_effectConc {ke0 Ce0 t : ℝ} {Cp : ℝ → ℝ}
   convert h using 1
   ring
 
-/-- **Nonnegative effect.** For `ke0 > 0`, nonnegative plasma
-input on `[0, t]`, and `Ce0 ≥ 0`, the effect at `t ≥ 0` is
-nonnegative. -/
+/-- **Nonnegative effect.** For `ke0 > 0`, nonnegative plasma input on `[0, t]`, and `Ce0 ≥ 0`, the
+effect at `t ≥ 0` is nonnegative. No integrability of `Cp` is assumed: where the integrand is not
+integrable the integral is `0`, and the effect is `Ce0 * exp (-ke0 * t) ≥ 0`. -/
 theorem effectConc_nonneg {ke0 Ce0 t : ℝ} {Cp : ℝ → ℝ} (hke : 0 < ke0)
     (hCe : 0 ≤ Ce0) (ht : 0 ≤ t) (hCp : ∀ s ∈ Set.Icc 0 t, 0 ≤ Cp s) :
     0 ≤ effectConc ke0 Ce0 Cp t := by

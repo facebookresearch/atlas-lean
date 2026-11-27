@@ -7,7 +7,7 @@ import io
 import json
 import tempfile
 import unittest
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import ExitStack, redirect_stderr, redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -246,6 +246,15 @@ class Join(unittest.TestCase):
         "Mathlib/Data/Nat/Prime": {"to": "NumberTheory/primes-primality", "title": "Prime numbers"},
         "Mathlib": {"exclude": "the root import file"},
     }
+
+    def test_the_committed_taxonomy_places_mathlib_where_a_strict_join_accepts(self) -> None:
+        # What `join --strict` reads from scripts/taxonomy.json by default, on the committed file: a PR that changes
+        # only the taxonomy skips the Mathlib layer's build, so its unit tests catch what that join would refuse.
+        placements = graph.load_placements([graph.TAXONOMY])
+        scopes = graph.defined_scopes(graph.read_json_object(graph.TAXONOMY, "taxonomy"), str(graph.TAXONOMY))
+        self.assertTrue(scopes)
+        unknown = sorted(key for key, entry in placements.items() if "to" in entry and entry["to"] not in scopes)
+        self.assertEqual(unknown, [])
 
     def test_a_module_takes_its_own_key_else_its_nearest_placed_directory(self) -> None:
         cases = {
@@ -732,6 +741,210 @@ class Bridge(unittest.TestCase):
         # The same articles with other edges.
         code, agreement = self.run_bridge_against({"MathlibExt.D": d, "MathlibExt.T": d})
         self.assertEqual((code, agreement["articles_differing"], agreement["examples"]), (1, 1, ["MathlibExt.T"]))
+
+
+class QuotedArticles(unittest.TestCase):
+    """An article the annotations name with redundant quotes, joined to its compiled row as in the v2 extraction."""
+
+    QUOTED, RAW = "A.«x»", "A.x"
+    # The Lean sources test_extract_v2_lean_dependencies.QuotedArticleNames gives the real source scanner.
+    SOURCE = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+    MATHLIB = [row("Group", "inductive", **{"class": True}), row("mul_comm")]
+    ARTICLES = {QUOTED, "MathlibExt.S", "MathlibExt.P"}
+    # Unjoined, A.x is a hidden constant that S and P reach Group and mul_comm through.
+    HIDDEN = [("MathlibExt.P", "Group", "proof", ("atlas_non_article",)),
+              ("MathlibExt.P", "mul_comm", "proof", ("atlas_non_article",)),
+              ("MathlibExt.S", "Group", "statement", ("atlas_non_article",))]
+    # Mathlib constants of either spelling, one for each way the Mathlib layer can take a constant.
+    CLASSES = {"node": {}, "excluded_module": {"module": "Mathlib.Tactic.Hidden"}, "lean:reserved": {"aux": "reserved"},
+               "constructor": {"kind": "constructor"}, "generated": {"line": None},
+               "deprecated": {"deprecated": {"new": "A.y", "since": "2026-01-01"}}, "metaprogramming": {"meta": True}}
+
+    def run_bridge(self, atlas: list[dict], articles: set[str], *, lean_sources: dict[str, str] | None = None,
+                   aliases: dict[str, str] | None = None, mathlib: list[dict] | None = None,
+                   toolchain: str = "leanprover/lean4:v4.36.0", check_v2: bool = True, explicit: bool = False,
+                   index_error: OSError | None = None
+                   ) -> tuple[int | str, dict | None, list[dict], dict | None, bool]:
+        """Run the v2 extraction (with *check_v2*) and the bridge over *atlas*, the annotations giving *articles* and
+        *aliases*, the checkout *lean_sources* and *toolchain*: the bridge's exit code, or its SystemExit message, its
+        meta and edges, the v2 extraction's articles, and whether the bridge wrote anything."""
+        aliases = aliases or {}
+        with tempfile.TemporaryDirectory() as directory, ExitStack() as stack:
+            root = Path(directory)
+            (root / "lean-toolchain").write_text(toolchain + "\n", encoding="utf-8")
+            for path, source in (self.SOURCE if lean_sources is None else lean_sources).items():
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_text(source, encoding="utf-8")
+            project = {r["name"] for r in atlas}
+            for module in (v2, graph.v2):  # the test's import of the v2 extractor, and the bridge's own
+                stack.enter_context(patch.object(module, "ROOT", root))
+                stack.enter_context(patch.object(module, "BLUEPRINT", root / "blueprint"))
+                stack.enter_context(patch.object(module, "article_manifest", lambda: set(articles)))
+                stack.enter_context(patch.object(module, "article_aliases", lambda: dict(aliases)))
+            if explicit:
+                for name in ("article_manifest", "article_aliases", "lean_index", "join_missing_quoted_articles"):
+                    stack.enter_context(patch.object(graph.v2, name, side_effect=AssertionError(f"called {name}")))
+            elif index_error is not None:
+                stack.enter_context(patch.object(graph.v2, "lean_index", side_effect=index_error))
+            stack.enter_context(redirect_stdout(io.StringIO()))
+            stack.enter_context(redirect_stderr(io.StringIO()))
+            out = root / "out"
+            arguments = ["bridge", str(write_dump(root, atlas, "v2.jsonl.gz")), str(out), "--mathlib-dump",
+                         str(write_dump(root, self.MATHLIB if mathlib is None else mathlib, "mathlib.jsonl.gz"))]
+            expected = None
+            if check_v2:
+                # The v2 extractor's view of the same build: only the project's uses.
+                v2_rows = [{**r, **{field: [u for u in r[field] if u in project] for field in ("type", "value")}}
+                           for r in atlas]
+                v2_dump = write_dump(root, v2_rows, "v2-only.jsonl.gz")
+                with patch("sys.argv", ["extract", str(v2_dump), str(root / "lean-dependencies.json")]):
+                    self.assertEqual(v2.main(), 0)
+                expected = json.loads((root / "lean-dependencies.json").read_text())["articles"]
+                arguments += ["--check-v2", str(root / "lean-dependencies.json")]
+            if explicit:
+                (root / "articles.txt").write_text("".join(f"{name}\n" for name in sorted(articles)), encoding="utf-8")
+                arguments += ["--articles", str(root / "articles.txt")]
+            try:
+                code: int | str = graph.main(arguments)
+            except SystemExit as error:
+                code = str(error)
+            wrote = out.exists()
+            meta = json.loads((out / "bridge-meta.json").read_text()) if (out / "bridge-meta.json").exists() else None
+            edges = list(graph.read_jsonl(out / "bridge-edges.jsonl.gz")) if (out / "bridge-edges.jsonl.gz").exists() \
+                else []
+        return code, meta, edges, expected, wrote
+
+    def statement_and_proof_rows(self, kind: str = "theorem", module: str = "MathlibExt.T", **extra) -> list[dict]:
+        # A.x states with Group and uses mul_comm in its value; S states with it, and P proves with it.
+        return [row(self.RAW, kind, ["Group"], ["mul_comm"], module=module, **extra),
+                row("MathlibExt.S", "theorem", [self.RAW], [], module="MathlibExt.T"),
+                row("MathlibExt.P", "theorem", [], [self.RAW], module="MathlibExt.T")]
+
+    def assert_refused(self, result: tuple, message: str) -> None:
+        code, meta, edges, _, wrote = result
+        self.assertIsInstance(code, str)
+        self.assertIn(message, code)
+        self.assertEqual((wrote, meta, edges), (False, None, []))
+
+    def test_a_quoted_article_bridges_and_agrees_with_the_v2_extraction(self) -> None:
+        # The v2 extraction joins A.«x» to the row A.x; the bridge must too, or its check against that extraction fails
+        # with A.«x» missing. A theorem's value gives proof edges; a definition's value is part of what it states.
+        for kind, found in (("theorem", [(self.QUOTED, "Group", "statement", True),
+                                         (self.QUOTED, "mul_comm", "proof", True)]),
+                            ("def", [(self.QUOTED, "Group", "statement", True),
+                                     (self.QUOTED, "mul_comm", "statement", True)])):
+            with self.subTest(kind=kind):
+                code, meta, edges, expected, _ = self.run_bridge(self.statement_and_proof_rows(kind), self.ARTICLES)
+                self.assertEqual((expected["MathlibExt.S"]["statement"], expected["MathlibExt.P"]["proof"]),
+                                 ([self.QUOTED], [self.QUOTED]))
+                self.assertEqual(code, 0, meta and meta.get("v2_agreement"))
+                self.assertEqual(sorted((e["source"], e["target"], e["kind"], e["direct"]) for e in edges), found)
+                self.assertEqual({e["library"] for e in edges}, {"MathlibExt"})
+                self.assertEqual((meta["articles"], meta["manifest_without_v2_row"], meta["atlas_edges"]), (3, 0, 2))
+                agreement = meta["v2_agreement"]
+                self.assertEqual((agreement["articles_compared"], agreement["missing_articles"],
+                                  agreement["unexpected_articles"], agreement["articles_differing"]), (3, 0, 0, 0))
+
+    def test_the_join_s_checks_stop_the_bridge_before_it_writes(self) -> None:
+        source, other = self.SOURCE, {"MathlibExt/U.lean": "def A.«x» := 0\n"}
+        rows = self.statement_and_proof_rows()
+        quoted_use = row("MathlibExt.Q", "theorem", [self.QUOTED], [], module="MathlibExt.T")
+        cases = {
+            "wrong source owner": (self.statement_and_proof_rows(module="MathlibExt.Wrong")[:1] + rows[1:], {},
+                                   source, f"cannot bind {self.RAW} to the unique public source owner of "
+                                           f"{self.QUOTED}"),
+            "two source owners": (rows, {}, {**source, **other}, "unique public source owner"),
+            "a private row": (self.statement_and_proof_rows(private=True)[:1] + rows[1:], {}, source,
+                              "unique public source owner"),
+            "a competing source spelling": (rows, {}, {**source, "MathlibExt/U.lean": "def A.x := 1\n"},
+                                            "competing source spelling"),
+            "a duplicate endpoint": (rows, {"MathlibExt.Twin": self.QUOTED}, source,
+                                     "quoted-name fallback overlaps a duplicate or registry endpoint"),
+            "a dangling use of the quoted spelling": (rows + [quoted_use], {}, source,
+                                                      "MathlibExt.Q has a dangling type reference"),
+        }
+        for case, (atlas, aliases, lean_sources, message) in cases.items():
+            with self.subTest(case=case):
+                self.assert_refused(self.run_bridge(atlas, self.ARTICLES, lean_sources=lean_sources, aliases=aliases,
+                                                    check_v2=False), message)
+        # Both spellings credited: the articles compete.
+        self.assert_refused(self.run_bridge(rows, {self.QUOTED, self.RAW}, check_v2=False),
+                            f"competing article spellings for {self.RAW}")
+
+    def test_neither_spelling_of_a_joined_article_may_be_a_mathlib_constant(self) -> None:
+        # Mathlib's copy of a compiled spelling that is not a node used to be dropped from the v2 rows as a constant
+        # realised in both dumps, before the join: the article then lost its row and the bridge wrote without it.
+        for spelling in (self.RAW, self.QUOTED):
+            for rule, extra in self.CLASSES.items():
+                constant = row(spelling, **{"module": "Mathlib.T", **extra})
+                self.assertEqual(graph.removal_rule(constant), rule)
+                for check_v2 in (False, True):
+                    with self.subTest(spelling=spelling, rule=rule, check_v2=check_v2):
+                        self.assert_refused(self.run_bridge(self.statement_and_proof_rows(), self.ARTICLES,
+                                                            mathlib=self.MATHLIB + [constant], check_v2=check_v2),
+                                            f"quoted articles whose compiled or authored names are in the Mathlib "
+                                            f"dump: ['{spelling}']")
+
+    def test_a_constant_realised_in_both_dumps_is_still_dropped_beside_a_joined_article(self) -> None:
+        # A generated lemma both dumps realise, which P's proof uses, is Mathlib's, as before: P reaches mul_comm
+        # through it, and the quoted article still joins and agrees with the v2 extraction.
+        shared = "AddMonoidHom.mk.congr_simp"
+        realised = row(shared, "theorem", [], ["mul_comm"], aux="reserved")
+        atlas = self.statement_and_proof_rows()
+        atlas[2] = row("MathlibExt.P", "theorem", [], [self.RAW, shared], module="MathlibExt.T")
+        code, meta, edges, _, _ = self.run_bridge(atlas + [{**realised, "module": "MathlibExt.T"}], self.ARTICLES,
+                                                  mathlib=self.MATHLIB + [realised])
+        self.assertEqual(code, 0, meta and meta.get("v2_agreement"))
+        self.assertEqual(meta["realised_in_both_dumps"], [shared])
+        self.assertEqual(sorted((e["source"], e["target"], e["kind"]) for e in edges),
+                         [(self.QUOTED, "Group", "statement"), (self.QUOTED, "mul_comm", "proof"),
+                          ("MathlibExt.P", "mul_comm", "proof")])
+        self.assertEqual(meta["v2_agreement"]["missing_articles"], 0)
+        self.assertEqual(meta["v2_agreement"]["articles_differing"], 0)
+
+    def test_the_join_needs_the_pinned_toolchain_and_safe_index_errors(self) -> None:
+        from autoform_cli.lean import LeanSourceError
+
+        # Under another toolchain neither side joins: both leave A.«x» out, and agree; A.x is then a hidden constant.
+        code, meta, edges, expected, _ = self.run_bridge(self.statement_and_proof_rows(), self.ARTICLES,
+                                                         toolchain="leanprover/lean4:v4.37.0")
+        self.assertEqual((code, sorted(expected), meta["manifest_without_v2_row"]),
+                         (0, ["MathlibExt.P", "MathlibExt.S"], 1))
+        self.assertEqual(sorted((e["source"], e["target"], e["kind"], tuple(e["through"])) for e in edges),
+                         self.HIDDEN)
+        self.assert_refused(self.run_bridge(self.statement_and_proof_rows(), self.ARTICLES, check_v2=False,
+                                            index_error=LeanSourceError("MathlibExt/T.lean changed")),
+                            "Lean sources could not be indexed: MathlibExt/T.lean changed")
+
+    def test_an_explicit_manifest_takes_its_names_as_given_and_reads_no_lean_sources(self) -> None:
+        # --articles comes with no Lean sources: the bridge reads neither them nor the annotations, does not join, and
+        # its check against the v2 extraction, which the annotations' sources let join, fails with A.«x» missing.
+        code, meta, edges, _, _ = self.run_bridge(self.statement_and_proof_rows(), self.ARTICLES, explicit=True)
+        self.assertEqual((code, meta["v2_agreement"]["missing_examples"], meta["manifest_without_v2_row"]),
+                         (1, [self.QUOTED], 1))
+        self.assertEqual(sorted((e["source"], e["target"], e["kind"], tuple(e["through"])) for e in edges),
+                         self.HIDDEN)
+
+    def test_exact_ordinary_and_private_articles_need_no_join(self) -> None:
+        quoted_row = {**self.statement_and_proof_rows()[0], "name": self.QUOTED}
+        private_row = {**quoted_row, "name": f"_private.MathlibExt.T.0.{self.QUOTED}", "private": True}
+        for case, first, article in (("exact quoted row", quoted_row, self.QUOTED),
+                                     ("published private row", private_row, self.QUOTED),
+                                     ("ordinary name", self.statement_and_proof_rows()[0], self.RAW)):
+            join_wrapper = patch.object(graph.v2, "join_missing_quoted_articles",
+                                        wraps=graph.v2.join_missing_quoted_articles)
+            with self.subTest(case=case), join_wrapper as join, \
+                    patch.object(graph.v2, "lean_index", wraps=graph.v2.lean_index) as index:
+                uses = [{**r, "type": [first["name"] if u == self.RAW else u for u in r["type"]],
+                         "value": [first["name"] if u == self.RAW else u for u in r["value"]]}
+                        for r in self.statement_and_proof_rows()[1:]]
+                code, meta, edges, _, _ = self.run_bridge([first, *uses], {article, "MathlibExt.S", "MathlibExt.P"},
+                                                          lean_sources={}, check_v2=False)
+                join.assert_not_called()
+                index.assert_not_called()
+                self.assertEqual((code, meta["articles"]), (0, 3))
+                self.assertEqual(sorted((e["source"], e["target"]) for e in edges),
+                                 [(article, "Group"), (article, "mul_comm")])
 
 
 class Stats(unittest.TestCase):

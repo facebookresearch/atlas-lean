@@ -23,7 +23,7 @@ public import MathlibExt.RingTheory.WittVector.AddCoeffIdealPower
 
 universe u
 
-theorem exactSource
+private theorem exactSource
     (p : ℕ) [hp : Fact p.Prime] {R : Type u} [CommRing R] (I : Ideal R) (c : ℕ)
     (x y : WittVector p R) (hx : ∀ i : ℕ, x.coeff i ∈ I)
     (hy : ∀ i : ℕ, y.coeff i ∈ I ^ (p ^ i + c)) (n : ℕ) :

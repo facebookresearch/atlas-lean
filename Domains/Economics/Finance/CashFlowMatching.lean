@@ -37,7 +37,7 @@ target FI04.T04.
 
 namespace MathlibExt.Economics.Finance.CashFlowMatching
 
-/-- Surplus of exactly matched cash-flow streams under a common discount curve `D`:
+/-- Surplus of asset and liability cash-flow streams under a common discount curve `D`:
 the asset present value minus the liability present value, via the shared
 `presentValue` interface. -/
 noncomputable def cashFlowSurplus (D : ℕ → ℝ) (s : Finset ℕ) (a l : ℕ → ℝ) : ℝ :=

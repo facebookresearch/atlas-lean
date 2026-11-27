@@ -15,3 +15,6 @@
 - [Sojourn integral vanishes for an absent allele](integral-neutral-green-left.md)
 - [Sojourn integral vanishes for a fixed allele](integral-neutral-green-right.md)
 - [Mean absorption time as a sojourn integral](integral-neutral-green.md)
+
+- [Occupation times and mean absorption time of the Wright–Fisher diffusion with selection](occupation-time-formula-and-mean-absorption-time.md)
+- [Feynman–Kac formula with killing for the Wright–Fisher diffusion](feynman-kac-formula-with-killing.md)

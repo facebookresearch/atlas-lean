@@ -22,7 +22,7 @@ model) and Section 1.3 (precedence relations).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Logic.Relation
@@ -85,9 +85,11 @@ def ImmediatePredecessor (prs : List (ℕ × ℕ)) {n : ℕ} (i k : Fin n) : Pro
   Relation.TransGen (Prec prs) i k ∧
     ∀ c, ¬ (Relation.TransGen (Prec prs) i c ∧ Relation.TransGen (Prec prs) c k)
 
-/-- The precedence relation of the listed arcs on `n` jobs is a tree: an intree (every job has at
-most one immediate successor) or an outtree (every job has at most one immediate
-predecessor). -/
+/-- Every job has at most one immediate successor, or every job has at most one immediate
+predecessor, in the precedence relation of the listed arcs on `n` jobs (the intree and outtree
+conditions). On its own this is not a tree test: acyclicity is checked separately
+(`PrecWellFormed`), connectivity is not required, and a self-loop gives a job no immediate
+predecessor or successor. -/
 def IsTreePrecedence (n : ℕ) (prs : List (ℕ × ℕ)) : Prop :=
   (∀ j a b : Fin n, ImmediatePredecessor prs j a → ImmediatePredecessor prs j b → a = b) ∨
     ∀ j a b : Fin n, ImmediatePredecessor prs a j → ImmediatePredecessor prs b j → a = b
@@ -108,11 +110,14 @@ def bound (i : MultiprocessorTaskFlowShopTreeLatenessInstance) : ℤ :=
   (i.2.2.2.2.1 : ℤ) - (i.2.2.2.2.2 : ℤ)
 
 /-- Well-formedness of an instance: there is at least one job, the machine environment is well
-formed (`StagesWellFormed`), every job has `r` unit processing times (`UnitJobs`), the listed arcs
+formed (`StagesWellFormed`), every stage needs at least one processor (each stage's processor
+list is nonempty), every job has `r` unit processing times (`UnitJobs`), the listed arcs
 describe an acyclic precedence digraph on the jobs (`PrecWellFormed`), and its
-precedence relation is a tree (`IsTreePrecedence`). -/
+precedence relation is an in-forest or an out-forest, not necessarily connected
+(`IsTreePrecedence`). -/
 def WellFormed (i : MultiprocessorTaskFlowShopTreeLatenessInstance) : Prop :=
-  i.2.2.1 ≠ [] ∧ StagesWellFormed i.1 i.2.1 ∧ UnitJobs i.2.1.length (i.2.2.1.map Prod.fst) ∧
+  i.2.2.1 ≠ [] ∧ StagesWellFormed i.1 i.2.1 ∧ (∀ M ∈ i.2.1, M ≠ []) ∧
+    UnitJobs i.2.1.length (i.2.2.1.map Prod.fst) ∧
     PrecWellFormed i.2.2.1.length i.2.2.2.1 ∧ IsTreePrecedence i.2.2.1.length i.2.2.2.1
 
 /-- Some MPT flow-shop schedule of the unit-time jobs obeys the precedence constraints and has

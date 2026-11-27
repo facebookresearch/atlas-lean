@@ -20,12 +20,15 @@ All three maps respect homotopies. At $\pi_n(X, x_0)$, $n \ge 1$: $j_* i_*$ is t
 
 ## Expansion
 
-A good expansion of this node links each prerequisite of its statement and proof: the homotopy extension property of CW pairs; the compression criterion for relative homotopy classes; the criterion that a based map of a sphere is trivial in homotopy exactly when it extends over the disc; exact sequences of pointed sets; homotopy groups; homotopy groups as based homotopy classes of maps of spheres; the homomorphisms induced on homotopy groups by based maps; path components; quotient maps of topological spaces; the subspace topology.
+A good expansion of this node links each prerequisite of its statement and proof: the homotopy extension property of CW pairs; the compression criterion for relative homotopy classes; the criterion that a based map of a sphere is trivial in homotopy exactly when it extends over the disc; exact sequences of pointed sets; homotopy groups; homotopy groups as based homotopy classes of maps of spheres; the homomorphisms induced on homotopy groups by based maps.
 
 ## Depends on
 
 - [Topological space](../../topological-spaces/topological-space.md)
 - [Relative homotopy groups of a pair of spaces](relative-homotopy-group.md)
+- [Path component of a point](../../general-topology/path-component.md)
+- [Quotient map](../../topological-spaces/lattice-of-topologies-and-induced-topologies/quotient-map-topological.md)
+- [Subspace topology](../../topological-spaces/lattice-of-topologies-and-induced-topologies/subspace-topology.md)
 
 ## Sources
 

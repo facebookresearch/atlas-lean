@@ -57,8 +57,8 @@ theorem steady_unemployment {s f u : ℝ} (hpos : 0 < s + f)
   field_simp
   linarith [hflow]
 
-/-- **Verification.** The rate `s / (s + f)` satisfies the steady-state flow-balance
-equation, and it lies in `[0, 1]` when `s, f ≥ 0` and `s + f > 0`. -/
+/-- **Verification.** For `s, f ≥ 0` and `s + f > 0`, the rate `s / (s + f)` satisfies the
+steady-state flow-balance equation and lies in `[0, 1]`. -/
 theorem steady_unemployment_satisfies {s f : ℝ} (hs : 0 ≤ s) (hf : 0 ≤ f)
     (hpos : 0 < s + f) :
     s * (1 - s / (s + f)) = f * (s / (s + f)) ∧ 0 ≤ s / (s + f) ∧ s / (s + f) ≤ 1 := by

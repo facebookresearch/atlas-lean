@@ -26,6 +26,10 @@ write `wⱼ`); SKAT then uses T37's `skatQ` with weights `aⱼ²`.
 
 ## Main results
 
+The laws, the covariate removal, `tendsto_davies_kernelQ` and the validity results assume
+`Xᵀ V⁻¹ X` invertible; the null results for the burden score also assume `V` positive definite,
+and its law under `N(X α, V')` assumes `V'` positive semidefinite.
+
 * **Kernel score statistics.** `kernelQ X V K y = (P y)ᵀ K (P y)` for any kernel `K`, with law
   `map_kernelQ_multivariateGaussian`: if `y ~ N(X α, V')` and `K` is symmetric, then
   `Q_K ~ ∑ⱼ λⱼ χ²₁`, `λ` the eigenvalues of `(P V'^{1/2})ᵀ K (P V'^{1/2})`. SKAT is the kernel
@@ -119,39 +123,48 @@ section Kernel
 variable {n q m : Type*} [Fintype n] [DecidableEq n] [Fintype q] [DecidableEq q] [Fintype m]
   [DecidableEq m]
 
-/-- The variance-component score statistic for a general kernel `K`:
-`Q_K = (y - X α̂)ᵀ V⁻¹ K V⁻¹ (y - X α̂) = (P y)ᵀ K (P y)`. SKAT, the burden test and SKAT-O are
-the kernels `G W Gᵀ`, `G a aᵀ Gᵀ` and `G diag(a) R_ρ diag(a) Gᵀ`. -/
+/-- The variance-component score statistic for a general kernel `K`: `Q_K = (P y)ᵀ K (P y)`, with
+`P = V⁻¹ - V⁻¹ X (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹` and total inverses (a singular matrix has inverse `0`). As
+`P y = V⁻¹ (y - X α̂)` with `α̂ = (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹ y`, for symmetric `V` it equals
+`(y - X α̂)ᵀ V⁻¹ K V⁻¹ (y - X α̂)`. SKAT, the burden test and SKAT-O are the kernels `G W Gᵀ`,
+`G a aᵀ Gᵀ` and `G diag(a) R_ρ diag(a) Gᵀ`. -/
 noncomputable def kernelQ (X : Matrix n q ℝ) (V : Matrix n n ℝ) (K : Matrix n n ℝ) (y : n → ℝ) :
     ℝ :=
   (projP X V *ᵥ y) ⬝ᵥ K *ᵥ (projP X V *ᵥ y)
 
-/-- The matrix whose eigenvalues are the mixture weights of `Q_K` when the phenotype has
-covariance `V'`: `(P V'^{1/2})ᵀ K (P V'^{1/2})`. -/
+/-- The matrix whose eigenvalues are the mixture weights of `Q_K` when the phenotype has law
+`N(X α, V')` (the point mass at `X α` when `V'` is not positive semidefinite):
+`(P V'^{1/2})ᵀ K (P V'^{1/2})`, where `V'^{1/2}` is the positive semidefinite square root of `V'`
+when `V'` is positive semidefinite and `0` otherwise (`P` with total inverses). The mixture reading
+needs `K` symmetric and `Xᵀ V⁻¹ X` invertible. -/
 noncomputable def kernelMixtureMatrix (X : Matrix n q ℝ) (V : Matrix n n ℝ) (K : Matrix n n ℝ)
     (V' : Matrix n n ℝ) : Matrix n n ℝ :=
   (projP X V * CFC.sqrt V')ᵀ * K * (projP X V * CFC.sqrt V')
 
 variable {X : Matrix n q ℝ} {V : Matrix n n ℝ} {K : Matrix n n ℝ}
 
-/-- SKAT is the kernel statistic of `K = G W Gᵀ`. -/
+/-- SKAT is the kernel statistic of `K = G W Gᵀ`, for arbitrary `X`, `V`, `G` and `w` (total
+inverses in `P`). -/
 theorem skatQ_eq_kernelQ (G : Matrix n m ℝ) (w : m → ℝ) (y : n → ℝ) :
     skatQ X V G w y = kernelQ X V (skatKernel G w) y :=
   skatQ_eq y
 
-/-- The SKAT mixture matrix is the kernel mixture matrix of `K = G W Gᵀ`. -/
+/-- The SKAT mixture matrix is the kernel mixture matrix of `K = G W Gᵀ` (total inverses in `P`;
+`V'^{1/2} = 0` when `V'` is not positive semidefinite). -/
 theorem skatMixtureMatrix_eq_kernelMixtureMatrix (G : Matrix n m ℝ) (w : m → ℝ)
     (V' : Matrix n n ℝ) :
     skatMixtureMatrix X V G w V' = kernelMixtureMatrix X V (skatKernel G w) V' :=
   rfl
 
-/-- The kernel mixture matrix of a symmetric kernel is symmetric. -/
+/-- The kernel mixture matrix of a symmetric kernel is symmetric, for every `V'` (total inverses in
+`P`; `V'^{1/2} = 0` when `V'` is not positive semidefinite). -/
 theorem isHermitian_kernelMixtureMatrix (hK : K.IsHermitian) (V' : Matrix n n ℝ) :
     (kernelMixtureMatrix X V K V').IsHermitian := by
   simpa [kernelMixtureMatrix, conjTranspose_eq_transpose_of_trivial] using
     isHermitian_conjTranspose_mul_mul (projP X V * CFC.sqrt V') hK
 
-/-- With a positive semidefinite kernel the mixture weights are nonnegative. -/
+/-- With a positive semidefinite kernel the mixture weights are nonnegative, for every `V'` (total
+inverses in `P`; `V'^{1/2} = 0` when `V'` is not positive semidefinite). -/
 theorem eigenvalues_kernelMixtureMatrix_nonneg (hK : K.PosSemidef) (V' : Matrix n n ℝ) (j : n) :
     0 ≤ (isHermitian_kernelMixtureMatrix (X := X) (V := V) hK.isHermitian V').eigenvalues j := by
   have h : (kernelMixtureMatrix X V K V').PosSemidef := by
@@ -159,20 +172,23 @@ theorem eigenvalues_kernelMixtureMatrix_nonneg (hK : K.PosSemidef) (V' : Matrix 
       hK.conjTranspose_mul_mul_same (projP X V * CFC.sqrt V')
   exact h.eigenvalues_nonneg j
 
-/-- The covariate effects drop out of `Q_K`. -/
+/-- The covariate effects drop out of `Q_K` when `Xᵀ V⁻¹ X` is invertible (`V⁻¹` the inverse of `V`,
+or `0` when `V` is singular). -/
 theorem kernelQ_add_covariates (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ) (y : n → ℝ) :
     kernelQ X V K (X *ᵥ α + y) = kernelQ X V K y := by
   simp only [kernelQ, mulVec_add, mulVec_mulVec, projP_mul_self hX, zero_mulVec, zero_add]
 
-/-- `Q_K` is continuous in the phenotype. -/
+/-- `Q_K` is continuous in the phenotype, for arbitrary `X`, `V` and `K` (total inverses in `P`). -/
 theorem continuous_kernelQ : Continuous (kernelQ X V K) := by
   unfold kernelQ
   fun_prop
 
-/-- **The law of a kernel score statistic is a weighted chi-square mixture.** If
-`y ~ N(X α, V')` and `K` is symmetric, then `Q_K ~ ∑ⱼ λⱼ χ²₁` with `λ` the eigenvalues of
-`(P V'^{1/2})ᵀ K (P V'^{1/2})`. This is T37's `map_skatQ_multivariateGaussian` for an
-arbitrary symmetric kernel. -/
+/-- **The law of a kernel score statistic is a weighted chi-square mixture.** If `Xᵀ V⁻¹ X` is
+invertible (`V⁻¹` the inverse of `V`, or `0` when `V` is singular), `y ~ N(X α, V')` and `K` is
+symmetric, then `Q_K ~ ∑ⱼ λⱼ χ²₁` with `λ` the eigenvalues of `(P V'^{1/2})ᵀ K (P V'^{1/2})`. Here
+`N(X α, V')` is the image of the standard Gaussian under `z ↦ X α + V'^{1/2} z`: the Gaussian law
+with covariance `V'` for positive semidefinite `V'`; otherwise `V'^{1/2} = 0` and both laws are
+point masses. This is T37's `map_skatQ_multivariateGaussian` for an arbitrary symmetric kernel. -/
 theorem map_kernelQ_multivariateGaussian (hX : IsUnit (Xᵀ * V⁻¹ * X)) (hK : K.IsHermitian)
     (α : q → ℝ) (V' : Matrix n n ℝ) :
     (multivariateGaussian (toLp 2 (X *ᵥ α)) V').map (fun y => kernelQ X V K (ofLp y)) =
@@ -194,13 +210,14 @@ section Burden
 
 variable {n q m : Type*} [Fintype n] [DecidableEq n] [Fintype q] [DecidableEq q] [Fintype m]
 
-/-- The **burden score** `B = ∑ⱼ aⱼ Sⱼ`: the variant weights `a` collapse the single-variant
-scores `Sⱼ = gⱼᵀ P y` into one score. -/
+/-- The **burden score** `B = ∑ⱼ aⱼ Sⱼ`: the variant weights `a` collapse the single-variant scores
+`Sⱼ = gⱼᵀ P y` into one score (any real inputs; total inverses in `P`). -/
 noncomputable def burdenScore (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matrix n m ℝ)
     (a : m → ℝ) (y : n → ℝ) : ℝ :=
   ∑ j, a j * variantScore X V G y j
 
-/-- The **burden test statistic** `Q_B = B² = (∑ⱼ aⱼ Sⱼ)²` (Lee, Wu and Lin 2012, §2). -/
+/-- The **burden test statistic** `Q_B = B² = (∑ⱼ aⱼ Sⱼ)²` (Lee, Wu and Lin 2012, §2), with total
+inverses in `P`. -/
 noncomputable def burdenQ (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matrix n m ℝ) (a : m → ℝ)
     (y : n → ℝ) : ℝ :=
   burdenScore X V G a y ^ 2
@@ -209,22 +226,25 @@ noncomputable def burdenQ (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matrix 
 def burdenKernel (G : Matrix n m ℝ) (a : m → ℝ) : Matrix n n ℝ :=
   vecMulVec (G *ᵥ a) (G *ᵥ a)
 
-/-- The null variance of the burden score, `Cᵀ P C` with `C = G a` the per-individual weighted
-count of rare alleles. -/
+/-- The quadratic form `Cᵀ P C`, with `C = G a` the per-individual weighted count of rare alleles
+and total inverses in `P`. When `V` is positive definite and `Xᵀ V⁻¹ X` is invertible it is the null
+variance of the burden score; for other `V` it can be negative (`-Cᵀ C` for `V = -1` without
+covariates). -/
 noncomputable def burdenVar (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matrix n m ℝ)
     (a : m → ℝ) : ℝ :=
   (G *ᵥ a) ⬝ᵥ projP X V *ᵥ (G *ᵥ a)
 
 variable {X : Matrix n q ℝ} {V : Matrix n n ℝ} {G : Matrix n m ℝ} {a : m → ℝ}
 
-/-- **The burden score is the score of the collapsed genotype** `C = G a`, the weighted sum of
-rare alleles carried by each individual: `B = Cᵀ P y`. -/
+/-- **The burden score is the score of the collapsed genotype** `C = G a`, the weighted sum of rare
+alleles carried by each individual: `B = Cᵀ P y`, with no condition (total inverses in `P`). -/
 theorem burdenScore_eq (y : n → ℝ) :
     burdenScore X V G a y = (G *ᵥ a) ⬝ᵥ projP X V *ᵥ y := by
   rw [burdenScore, variantScore, ← dotProduct, dotProduct_mulVec, vecMul_transpose,
     dotProduct_comm]
 
-/-- The burden statistic is the kernel statistic of `K_B = C Cᵀ`. -/
+/-- The burden statistic is the kernel statistic of `K_B = C Cᵀ`, for arbitrary `X` and `V` (total
+inverses in `P`). -/
 theorem burdenQ_eq_kernelQ (y : n → ℝ) :
     burdenQ X V G a y = kernelQ X V (burdenKernel G a) y := by
   rw [burdenQ, burdenScore_eq, kernelQ, burdenKernel, vecMulVec_mulVec, op_smul_eq_smul,
@@ -236,12 +256,14 @@ theorem posSemidef_burdenKernel [Finite n] : (burdenKernel G a).PosSemidef := by
   have := Fintype.ofFinite n
   simpa [burdenKernel] using Matrix.posSemidef_vecMulVec_self_star (G *ᵥ a)
 
-/-- The covariate effects drop out of the burden score. -/
+/-- The covariate effects drop out of the burden score when `Xᵀ V⁻¹ X` is invertible (`V⁻¹` the
+inverse of `V`, or `0` when `V` is singular). -/
 theorem burdenScore_add_covariates (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ) (y : n → ℝ) :
     burdenScore X V G a (X *ᵥ α + y) = burdenScore X V G a y := by
   simp only [burdenScore_eq, mulVec_add, mulVec_mulVec, projP_mul_self hX, zero_mulVec, zero_add]
 
-/-- The null variance `Cᵀ P C` is nonnegative. -/
+/-- For positive definite `V` and invertible `Xᵀ V⁻¹ X`, the null variance `Cᵀ P C` is
+nonnegative. -/
 theorem burdenVar_nonneg (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) :
     0 ≤ burdenVar X V G a := by
   have h := hV.posSemidef.dotProduct_mulVec_nonneg (projP X V *ᵥ (G *ᵥ a))
@@ -249,8 +271,10 @@ theorem burdenVar_nonneg (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) :
     dotProduct_mulVec, ← mulVec_transpose, transpose_projP hV]
   simpa using h
 
-/-- **The law of the burden score.** If `y ~ N(X α, V')`, the burden score is centred Gaussian
-with variance `(Pᵀ C)ᵀ V' (Pᵀ C)`. -/
+/-- **The law of the burden score.** If `Xᵀ V⁻¹ X` is invertible (`V⁻¹` the inverse of `V`, or `0`
+when `V` is singular) and `y ~ N(X α, V')` with `V'` positive semidefinite, the burden score is
+centred Gaussian with variance `(Pᵀ C)ᵀ V' (Pᵀ C)` (the point mass at `0` when this variance is
+`0`). -/
 theorem map_burdenScore_multivariateGaussian (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ)
     {V' : Matrix n n ℝ} (hV' : V'.PosSemidef) :
     (multivariateGaussian (toLp 2 (X *ᵥ α)) V').map (fun y => burdenScore X V G a (ofLp y)) =
@@ -274,7 +298,8 @@ theorem map_burdenScore_multivariateGaussian (hX : IsUnit (Xᵀ * V⁻¹ * X)) (
     change Var[fun y => ⟪u, y⟫; _] = _
     rw [← covarianceBilin_self IsGaussian.memLp_two_id, covarianceBilin_multivariateGaussian hV']
 
-/-- **Null law of the burden score**: under `H₀` (`y ~ N(X α, V)`), `B ~ N(0, Cᵀ P C)`. -/
+/-- **Null law of the burden score**: for positive definite `V` and invertible `Xᵀ V⁻¹ X`, under
+`H₀` (`y ~ N(X α, V)`), `B ~ N(0, Cᵀ P C)`, the point mass at `0` when `Cᵀ P C = 0`. -/
 theorem map_burdenScore_null (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ) :
     (multivariateGaussian (toLp 2 (X *ᵥ α)) V).map (fun y => burdenScore X V G a (ofLp y)) =
       gaussianReal 0 (burdenVar X V G a).toNNReal := by
@@ -285,8 +310,8 @@ theorem map_burdenScore_null (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) (
   rw [← mulVec_mulVec, ← mulVec_mulVec, dotProduct_mulVec (G *ᵥ a) (projP X V),
     ← mulVec_transpose, transpose_projP hV]
 
-/-- A centred Gaussian squared is a one-term weighted chi-square: if `B ~ N(0, v)` then
-`B² ~ v χ²₁`. -/
+/-- A centred Gaussian squared is a one-term weighted chi-square: for `v ≥ 0`, if `B ~ N(0, v)` (the
+point mass at `0` when `v = 0`) then `B² ~ v χ²₁`. -/
 theorem gaussianReal_map_sq {v : ℝ} (hv : 0 ≤ v) :
     (gaussianReal 0 v.toNNReal).map (· ^ 2) = weightedChiSq (fun _ : Unit => v) := by
   have hg : gaussianReal 0 v.toNNReal = (gaussianReal 0 1).map (Real.sqrt v * ·) := by
@@ -303,8 +328,8 @@ theorem gaussianReal_map_sq {v : ℝ} (hv : 0 ≤ v) :
   funext ξ
   simp [mul_pow, Real.sq_sqrt hv]
 
-/-- **Null law of the burden statistic**: under `H₀`, `Q_B ~ (Cᵀ P C) χ²₁`, a one-term weighted
-chi-square. -/
+/-- **Null law of the burden statistic**: for positive definite `V` and invertible `Xᵀ V⁻¹ X`, under
+`H₀`, `Q_B ~ (Cᵀ P C) χ²₁`, a one-term weighted chi-square. -/
 theorem map_burdenQ_null (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ) :
     (multivariateGaussian (toLp 2 (X *ᵥ α)) V).map (fun y => burdenQ X V G a (ofLp y)) =
       weightedChiSq (fun _ : Unit => burdenVar X V G a) := by
@@ -317,7 +342,8 @@ theorem map_burdenQ_null (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α :
     Measure.map_map (by fun_prop) hm]
   rfl
 
-/-- **Null mean of the burden statistic**: `𝔼₀ Q_B = Cᵀ P C`. -/
+/-- **Null mean of the burden statistic**: for positive definite `V` and invertible `Xᵀ V⁻¹ X`,
+`𝔼₀ Q_B = Cᵀ P C`. -/
 theorem integral_burdenQ_null (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ) :
     ∫ y, burdenQ X V G a (ofLp y) ∂multivariateGaussian (toLp 2 (X *ᵥ α)) V =
       burdenVar X V G a := by
@@ -346,8 +372,9 @@ theorem burdenScore_update_of_col [DecidableEq m] {j : m} (hj : ∀ i, G i j = 0
     · rw [Function.update_of_ne hk]
   rw [burdenScore_eq, burdenScore_eq, h]
 
-/-- **No carriers in the region**: when the collapsed genotype `C = G a` vanishes, the burden
-score is identically `0`, its null variance is `0`, and its null law is the point mass at `0`. -/
+/-- **No carriers in the region**: for positive definite `V` and invertible `Xᵀ V⁻¹ X`, when the
+collapsed genotype `C = G a` vanishes, the burden score is identically `0`, its null variance is
+`0`, and its null law is the point mass at `0`. -/
 theorem map_burdenScore_null_of_collapse_eq_zero (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X))
     (α : q → ℝ) (hC : G *ᵥ a = 0) :
     (multivariateGaussian (toLp 2 (X *ᵥ α)) V).map (fun y => burdenScore X V G a (ofLp y)) =
@@ -355,8 +382,9 @@ theorem map_burdenScore_null_of_collapse_eq_zero (hV : V.PosDef) (hX : IsUnit (X
   rw [map_burdenScore_null hV hX α, burdenVar, hC, zero_dotProduct, Real.toNNReal_zero,
     gaussianReal_zero_var]
 
-/-- **Burden versus SKAT**: by Cauchy–Schwarz, `Q_B = (∑ⱼ aⱼ Sⱼ)² ≤ m ∑ⱼ aⱼ² Sⱼ²`, i.e. the
-burden statistic is at most `m` times the SKAT statistic with weights `wⱼ = aⱼ²`. -/
+/-- **Burden versus SKAT**: by Cauchy–Schwarz, `Q_B = (∑ⱼ aⱼ Sⱼ)² ≤ m ∑ⱼ aⱼ² Sⱼ²`, i.e. the burden
+statistic is at most `m` times the SKAT statistic with weights `wⱼ = aⱼ²` (total inverses in `P`;
+both sides are `0` when `m = 0`). -/
 theorem burdenQ_le_card_mul_skatQ [DecidableEq m] (y : n → ℝ) :
     burdenQ X V G a y ≤ Fintype.card m * skatQ X V G (fun j => a j ^ 2) y := by
   rw [burdenQ, burdenScore, skatQ_eq_sum_variantScore]
@@ -373,22 +401,24 @@ section SKATO
 variable {n q m : Type*} [Fintype n] [DecidableEq n] [Fintype q] [DecidableEq q] [Fintype m]
   [DecidableEq m]
 
-/-- The SKAT-O correlation matrix `R_ρ = (1 - ρ) I + ρ 𝟙 𝟙ᵀ` between the variant effects. -/
+/-- The SKAT-O matrix `R_ρ = (1 - ρ) I + ρ 𝟙 𝟙ᵀ`, with unit diagonal and off-diagonal entries `ρ`,
+defined for every real `ρ`; for `ρ ∈ [0, 1]` it is the correlation matrix of the variant effects. -/
 def skatOCorr (ρ : ℝ) : Matrix m m ℝ := (1 - ρ) • 1 + ρ • Matrix.of fun _ _ => 1
 
 /-- The SKAT-O kernel `K_ρ = G diag(a) R_ρ diag(a) Gᵀ` (Lee, Wu and Lin 2012, §2). -/
 def skatOKernel (G : Matrix n m ℝ) (a : m → ℝ) (ρ : ℝ) : Matrix n n ℝ :=
   G * diagonal a * (skatOCorr ρ : Matrix m m ℝ) * diagonal a * Gᵀ
 
-/-- The **SKAT-O family of statistics** `Q_ρ = (1 - ρ) Q_S + ρ Q_B`, the convex combination of
-the SKAT statistic `Q_S` with weights `wⱼ = aⱼ²` and the burden statistic `Q_B`. -/
+/-- The **SKAT-O family of statistics** `Q_ρ = (1 - ρ) Q_S + ρ Q_B`, for every real `ρ`, of the SKAT
+statistic `Q_S` with weights `wⱼ = aⱼ²` and the burden statistic `Q_B` (total inverses in `P`); a
+convex combination when `ρ ∈ [0, 1]`. -/
 noncomputable def skatOQ (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matrix n m ℝ) (a : m → ℝ)
     (ρ : ℝ) (y : n → ℝ) : ℝ :=
   (1 - ρ) * skatQ X V G (fun j => a j ^ 2) y + ρ * burdenQ X V G a y
 
 variable {X : Matrix n q ℝ} {V : Matrix n n ℝ} {G : Matrix n m ℝ} {a : m → ℝ}
 
-/-- `ρ = 0` gives SKAT. -/
+/-- `ρ = 0` gives SKAT with weights `aⱼ²`. -/
 theorem skatOQ_zero (y : n → ℝ) : skatOQ X V G a 0 y = skatQ X V G (fun j => a j ^ 2) y := by
   simp [skatOQ]
 
@@ -397,8 +427,9 @@ theorem skatOQ_one (y : n → ℝ) : skatOQ X V G a 1 y = burdenQ X V G a y := b
   simp [skatOQ]
 
 omit [Fintype n] [DecidableEq n] in
-/-- **The SKAT-O kernel is the convex combination of the SKAT and burden kernels**:
-`G diag(a) R_ρ diag(a) Gᵀ = (1 - ρ) G diag(a²) Gᵀ + ρ (G a)(G a)ᵀ`. -/
+/-- **The SKAT-O kernel is an affine combination of the SKAT and burden kernels**: for every real
+`ρ`, `G diag(a) R_ρ diag(a) Gᵀ = (1 - ρ) G diag(a²) Gᵀ + ρ (G a)(G a)ᵀ`, a convex combination when
+`ρ ∈ [0, 1]`. -/
 theorem skatOKernel_eq (ρ : ℝ) :
     skatOKernel G a ρ = (1 - ρ) • skatKernel G (fun j => a j ^ 2) + ρ • burdenKernel G a := by
   have hJ : diagonal a * (Matrix.of fun _ _ => (1 : ℝ)) * diagonal a = vecMulVec a a := by
@@ -420,13 +451,14 @@ theorem skatOKernel_eq (ρ : ℝ) :
   simp only [skatOKernel, skatOCorr, Matrix.mul_add, Matrix.add_mul, Matrix.mul_smul,
     Matrix.smul_mul, Matrix.mul_one, h1, h2]
 
-/-- `Q_K` is linear in the kernel. -/
+/-- `Q_K` is linear in the kernel, for arbitrary `X` and `V` (total inverses in `P`). -/
 theorem kernelQ_add_smul (c₁ c₂ : ℝ) (K₁ K₂ : Matrix n n ℝ) (y : n → ℝ) :
     kernelQ X V (c₁ • K₁ + c₂ • K₂) y = c₁ * kernelQ X V K₁ y + c₂ * kernelQ X V K₂ y := by
   rw [kernelQ, kernelQ, kernelQ, add_mulVec, smul_mulVec, smul_mulVec, dotProduct_add,
     dotProduct_smul, dotProduct_smul, smul_eq_mul, smul_eq_mul]
 
-/-- **SKAT-O is a kernel score statistic**: `Q_ρ = (P y)ᵀ K_ρ (P y)`. -/
+/-- **SKAT-O is a kernel score statistic**: `Q_ρ = (P y)ᵀ K_ρ (P y)` for every real `ρ` (total
+inverses in `P`). -/
 theorem skatOQ_eq_kernelQ (ρ : ℝ) (y : n → ℝ) :
     skatOQ X V G a ρ y = kernelQ X V (skatOKernel G a ρ) y := by
   rw [skatOKernel_eq, kernelQ_add_smul, skatOQ, skatQ_eq_kernelQ, burdenQ_eq_kernelQ]
@@ -447,9 +479,11 @@ theorem posSemidef_skatOKernel [Finite n] {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ �
   exact ((posSemidef_skatKernel fun j => sq_nonneg (a j)).smul (by linarith)).add
     (posSemidef_burdenKernel.smul h0)
 
-/-- **The law of the SKAT-O statistic.** If `y ~ N(X α, V')`, then for each `ρ`,
-`Q_ρ ~ ∑ⱼ λⱼ(ρ) χ²₁` with `λ(ρ)` the eigenvalues of `(P V'^{1/2})ᵀ K_ρ (P V'^{1/2})`; `V' = V`
-gives the null law. -/
+/-- **The law of the SKAT-O statistic.** If `Xᵀ V⁻¹ X` is invertible (`V⁻¹` the inverse of `V`, or
+`0` when `V` is singular) and `y ~ N(X α, V')`, then for each real `ρ`, `Q_ρ ~ ∑ⱼ λⱼ(ρ) χ²₁` with
+`λ(ρ)` the eigenvalues of `(P V'^{1/2})ᵀ K_ρ (P V'^{1/2})`; `V' = V` gives the null law. For `V'`
+not positive semidefinite, `V'^{1/2} = 0`, `N(X α, V')` is the point mass at `X α` and both laws are
+the point mass at `0`. -/
 theorem map_skatOQ_multivariateGaussian (hX : IsUnit (Xᵀ * V⁻¹ * X)) (ρ : ℝ) (α : q → ℝ)
     (V' : Matrix n n ℝ) :
     (multivariateGaussian (toLp 2 (X *ᵥ α)) V').map (fun y => skatOQ X V G a ρ (ofLp y)) =
@@ -458,7 +492,8 @@ theorem map_skatOQ_multivariateGaussian (hX : IsUnit (Xᵀ * V⁻¹ * X)) (ρ : 
   simp_rw [skatOQ_eq_kernelQ]
   exact map_kernelQ_multivariateGaussian hX (isHermitian_skatOKernel ρ) α V'
 
-/-- For `ρ ∈ [0, 1]` the SKAT-O mixture weights are nonnegative. -/
+/-- For `ρ ∈ [0, 1]` the SKAT-O mixture weights are nonnegative, for every `V'` (total inverses in
+`P`; `V'^{1/2} = 0` when `V'` is not positive semidefinite). -/
 theorem eigenvalues_skatO_nonneg {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (V' : Matrix n n ℝ) (j : n) :
     0 ≤ (isHermitian_kernelMixtureMatrix (X := X) (V := V)
       (isHermitian_skatOKernel (G := G) (a := a) ρ) V').eigenvalues j :=
@@ -474,10 +509,12 @@ open MathlibExt.Probability.Distributions.DaviesFormula
 variable {n q m : Type*} [Fintype n] [DecidableEq n] [Fintype q] [DecidableEq q] [Fintype m]
   [DecidableEq m] {X : Matrix n q ℝ} {V : Matrix n n ℝ}
 
-/-- **Davies' formula for a kernel score test.** Under `y ~ N(X α, V')`, the Davies integral
-built from the eigenvalues `λ` of `(P V'^{1/2})ᵀ K (P V'^{1/2})` converges to the mid-p upper
-tail `½ (P(Q_K > c) + P(Q_K ≥ c))` of the statistic. This covers SKAT, the burden test and
-every SKAT-O statistic `Q_ρ`. -/
+/-- **Davies' formula for a kernel score test.** If `Xᵀ V⁻¹ X` is invertible (`V⁻¹` the inverse of
+`V`, or `0` when `V` is singular), `K` is symmetric and `y ~ N(X α, V')`, the Davies integral, with
+`φ(t) = ∏ⱼ (1 - 2 i λⱼ t)^{-1/2}` (principal branch), built from the eigenvalues `λ` of
+`(P V'^{1/2})ᵀ K (P V'^{1/2})` converges to the mid-p upper tail `½ (P(Q_K > c) + P(Q_K ≥ c))` of
+the statistic. For `V'` not positive semidefinite, `V'^{1/2} = 0` and `N(X α, V')` is the point mass
+at `X α`. This covers SKAT, the burden test and every SKAT-O statistic `Q_ρ`. -/
 theorem tendsto_davies_kernelQ (hX : IsUnit (Xᵀ * V⁻¹ * X)) {K : Matrix n n ℝ}
     (hK : K.IsHermitian) (α : q → ℝ) (V' : Matrix n n ℝ) (c : ℝ) :
     Tendsto (fun T => 1 / 2 + π⁻¹ * ∫ t in (0 : ℝ)..T,
@@ -494,15 +531,19 @@ theorem tendsto_davies_kernelQ (hX : IsUnit (Xᵀ * V⁻¹ * X)) {K : Matrix n n
   rwa [← map_kernelQ_multivariateGaussian hX hK α V', map_measureReal_apply hm measurableSet_Ioi,
     map_measureReal_apply hm measurableSet_Ici] at h
 
-/-- The exact null p-value of the SKAT-O statistic at a fixed `ρ`:
-`p_ρ(y) = P₀(Q_ρ ≥ Q_ρ(y))`, computed from the null mixture law `∑ⱼ λⱼ(ρ) χ²₁`. -/
+/-- The SKAT-O p-value at a fixed `ρ`: `p_ρ(y) = ν_ρ([Q_ρ(y), ∞))` for the mixture law
+`ν_ρ = ∑ⱼ λⱼ(ρ) χ²₁` with `λ(ρ)` the eigenvalues of `(P V^{1/2})ᵀ K_ρ (P V^{1/2})` (total inverses
+in `P`; `V^{1/2} = 0` when `V` is not positive semidefinite). When `Xᵀ V⁻¹ X` is invertible, `ν_ρ`
+is the law of `Q_ρ` under `P₀ = N(X α, V)` (the point mass at `X α` when `V` is not positive
+semidefinite) and `p_ρ(y) = P₀(Q_ρ ≥ Q_ρ(y))`, the exact null p-value for positive semidefinite
+`V`. -/
 noncomputable def skatOPValue (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matrix n m ℝ)
     (a : m → ℝ) (ρ : ℝ) (y : n → ℝ) : ℝ :=
   (weightedChiSq (isHermitian_kernelMixtureMatrix (X := X) (V := V)
     (isHermitian_skatOKernel (G := G) (a := a) ρ) V).eigenvalues).real
       (Ici (skatOQ X V G a ρ y))
 
-/-- The **SKAT-O statistic**: the minimum of the SKAT-O p-values over a finite grid of `ρ`
+/-- The **SKAT-O statistic**: the minimum of the SKAT-O p-values over a nonempty finite grid of `ρ`
 (Lee, Wu and Lin 2012, §2.2). -/
 noncomputable def skatOMinP (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matrix n m ℝ) (a : m → ℝ)
     (grid : Finset ℝ) (hgrid : grid.Nonempty) (y : n → ℝ) : ℝ :=
@@ -510,7 +551,10 @@ noncomputable def skatOMinP (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matri
 
 variable {G : Matrix n m ℝ} {a : m → ℝ}
 
-/-- **Each SKAT-O p-value is valid under the null**: `P₀(p_ρ ≤ t) ≤ t` for `t ∈ [0, 1]`. -/
+/-- **Each SKAT-O p-value is valid under the null**: if `Xᵀ V⁻¹ X` is invertible (`V⁻¹` the inverse
+of `V`, or `0` when `V` is singular), then for every real `ρ`, `P₀(p_ρ ≤ t) ≤ t` for `t ∈ [0, 1]`,
+where `P₀` is the law `N(X α, V)` (the point mass at `X α` when `V` is not positive
+semidefinite). -/
 theorem isValidPValue_skatOPValue (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ) (ρ : ℝ) :
     IsValidPValue (multivariateGaussian (toLp 2 (X *ᵥ α)) V)
       fun y => skatOPValue X V G a ρ (ofLp y) := by
@@ -528,9 +572,12 @@ theorem isValidPValue_skatOPValue (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → 
   rw [ofReal_measureReal, hν, Measure.map_apply hm measurableSet_Ici]
   rfl
 
-/-- **Davies' formula computes the SKAT-O p-value.** If some weight `λⱼ(ρ)` of the null mixture is
-nonzero, the Davies integral at `c = Q_ρ(y)` converges to `skatOPValue ρ y = P₀(Q_ρ ≥ Q_ρ(y))`,
-the p-value proved valid in `isValidPValue_skatOPValue`. -/
+/-- **Davies' formula computes the SKAT-O p-value.** If some weight `λⱼ(ρ)` of the mixture law `ν_ρ`
+is nonzero, the Davies integral at `c = Q_ρ(y)`, with `φ(t) = ∏ⱼ (1 - 2 i λⱼ(ρ) t)^{-1/2}`
+(principal branch), converges to `skatOPValue ρ y = ν_ρ([Q_ρ(y), ∞))`, with no condition on `X`
+(total inverses in `P`; `V^{1/2} = 0` when `V` is not positive semidefinite). When `Xᵀ V⁻¹ X` is
+invertible this is `P₀(Q_ρ ≥ Q_ρ(y))` for `P₀ = N(X α, V)` (the point mass at `X α` when `V` is not
+positive semidefinite), the p-value proved valid in `isValidPValue_skatOPValue`. -/
 theorem tendsto_davies_skatOPValue (ρ : ℝ) {j : n}
     (hj : (isHermitian_kernelMixtureMatrix (X := X) (V := V)
       (isHermitian_skatOKernel (G := G) (a := a) ρ) V).eigenvalues j ≠ 0) (y : n → ℝ) :
@@ -542,8 +589,10 @@ theorem tendsto_davies_skatOPValue (ρ : ℝ) {j : n}
   have h := tendsto_davies_of_ne_zero hj (skatOQ X V G a ρ y)
   rwa [measureReal_congr (Ioi_ae_eq_Ici' (weightedChiSq_singleton hj _))] at h
 
-/-- **Bonferroni validity of SKAT-O**: under the null,
-`P₀(min_{ρ ∈ grid} p_ρ ≤ t) ≤ |grid| t`. -/
+/-- **Bonferroni validity of SKAT-O**: if `Xᵀ V⁻¹ X` is invertible (`V⁻¹` the inverse of `V`, or `0`
+when `V` is singular) and the grid is nonempty, then under the null `N(X α, V)` (the point mass at
+`X α` when `V` is not positive semidefinite), `P₀(min_{ρ ∈ grid} p_ρ ≤ t) ≤ |grid| t` for
+`t ∈ [0, 1]`. -/
 theorem measure_skatOMinP_le (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ) (grid : Finset ℝ)
     (hgrid : grid.Nonempty) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
     multivariateGaussian (toLp 2 (X *ᵥ α)) V {y | skatOMinP X V G a grid hgrid (ofLp y) ≤ t} ≤

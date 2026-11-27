@@ -50,6 +50,18 @@ smooth if it is $C^\infty$ in the variable of $G_\infty$ and locally constant in
 ## Depends on
 
 - [Topological idele class group](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/topological-idele-class-group.md), on which the central characters $\omega$ are defined
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for parabolic $k$-subgroups $P = MN$ and, for $\mathrm{GL}_n$, the standard maximal ones
+- [Compactness of adelic quotients of unipotent groups](compactness-of-unipotent-adelic-quotients.md), for the compact quotient $N(k) \backslash N(\mathbb{A})$ and its invariant probability measure, which define the constant term $\varphi_P$
+- [The Hecke algebra of a real reductive group](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/hecke-algebra-of-a-real-reductive-group.md), for the archimedean Hecke algebras $\mathcal{H}_v$, the action of $\mathcal{U}(\mathfrak{g}_v)$ on them by multipliers, their description through the convolutions $D * \xi$, $\mathcal{U}(\mathfrak{g}_v) \otimes_{\mathcal{U}(\mathfrak{k}_v)} \mathcal{A}(K_v)$, and the idempotents of irreducible $K_v$-types
+
+## Proof depends on
+
+- [Product formula for principal ideles](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/adelic-norm-principal-embedding.md), for the remark that with the entries of $r(x)$ alone every element of $\mathbb{Q}^\times$ would have height $1$
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the compactness of the balls of the two-sided height, which its item on heights states, and for $\lVert xy \rVert \le c \lVert x \rVert \lVert y \rVert$, so that right convolution by compactly supported functions at the finite places preserves moderate growth; changing $r$ changes the height by bounded powers, the entries of $r'(x)$ and $r'(x)^{-1}$ being polynomials in those of $r(x)$ and $r(x)^{-1}$
+- [Additive duality of adeles and the volume of A/K](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/additive-duality-of-adeles.md), for the compactness of $k \backslash \mathbb{A}$, from which that of $N(k) \backslash N(\mathbb{A})$ follows along a filtration of $N$ by vector groups
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the reduction to standard maximal parabolic subgroups of $\mathrm{GL}_n$: every proper parabolic $k$-subgroup is $\mathrm{GL}_n(k)$-conjugate to a standard one, contained in a standard maximal one $Q$; $\varphi_{\gamma P \gamma^{-1}}(g) = \varphi_P(\gamma^{-1} g)$ for $\gamma \in \mathrm{GL}_n(k)$, and for $P \subseteq Q$ the constant term along $P$ is the constant term of $\varphi_Q$ along $N_P \cap M_Q$, as $N_P = N_Q (N_P \cap M_Q)$, so $\varphi_Q = 0$ implies $\varphi_P = 0$ (Cogdell, Lecture 2, §5)
+- [Integration over quotients of locally compact groups](../../../MeasureTheory/haar-measure/integration-over-quotients-of-locally-compact-groups.md), for the iterated integration over $N_P(k) \backslash N_P(\mathbb{A})$ through $N_Q$ and $N_P \cap M_Q$ in the transitivity of constant terms
+- [Harish-Chandra's convolution identity and uniform moderate growth](harish-chandra-convolution-identity.md), for the action of the archimedean Hecke algebras on $\mathcal{A}(G)$: the derivatives $D\varphi$ of an automorphic form have moderate growth
 
 ## Sources
 

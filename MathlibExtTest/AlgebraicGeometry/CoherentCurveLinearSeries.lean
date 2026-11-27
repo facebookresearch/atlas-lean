@@ -119,7 +119,7 @@ example [HasConstantGlobalSections f] :
 
 -- A linear series is an invertible sheaf of the given degree with a subspace of sections of
 -- the given dimension.
-example (d : ℤ) (r : ℕ) (L : X.Modules) (hL : IsLineBundle L) (hd : degree f L hL = d)
+example (d r : ℕ) (L : X.Modules) (hL : IsLineBundle L) (hd : degree f L hL = d)
     (V : Submodule k (cohomology f L 0)) (hV : Module.finrank k V = r + 1) :
     LinearSeries f d r :=
   ⟨L, hL, hd, V, hV⟩
@@ -131,8 +131,12 @@ noncomputable example [HasConstantGlobalSections f] : LinearSeries f 0 0 :=
     simp [finrank_cohomology_zero_structureModule]⟩
 
 -- Its selected space of sections is finite-dimensional.
-example (d : ℤ) (r : ℕ) (D : LinearSeries f d r) : FiniteDimensional k D.V :=
+example (d r : ℕ) (D : LinearSeries f d r) : FiniteDimensional k D.V :=
   Module.finite_of_finrank_pos (by rw [D.finrank_eq]; omega)
+
+-- The degree of a linear series is nonnegative.
+example (d r : ℕ) (D : LinearSeries f d r) : 0 ≤ degree f D.L D.isLineBundle := by
+  rw [D.degree_eq]; exact Int.natCast_nonneg d
 
 end ProperCurve
 

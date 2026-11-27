@@ -23,10 +23,10 @@ jobs", Discrete Applied Mathematics 59 (1995), 237-266, doi:10.1016/0166-218X(95
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
 
 @[expose] public section
 
@@ -55,7 +55,7 @@ as minimal NP-hard in the ordinary sense, citing Sotskov and Shakhlevich, who pr
 `μ_jk = {M}`.
 
 The instance data are those of the multipurpose-machine job shop of
-`MultiPurposeJobShopThreeJobsWanted` (`MultiPurposeJobShopThreeJobs.MPMJobShopInstance`: the
+`MultiPurposeJobShopThreeJobsDefs` (`MultiPurposeJobShopThreeJobs.MPMJobShopInstance`: the
 machine count, the jobs as lists of tasks `(p_jk, μ_jk)` with machines numbered `1, …, m`, and the
 bound), with its operations `Operation`, processing times `opLength` and machine lists `eligible`,
 here read as the sets `μ_jk` of machines a task occupies; `MPMWellFormed 3` gives `m = 3`, jobs

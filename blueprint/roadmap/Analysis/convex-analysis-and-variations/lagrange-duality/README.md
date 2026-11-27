@@ -22,6 +22,8 @@ Equality constraints are not covered yet: Boyd–Vandenberghe's Slater theorem a
 - [Slater's theorem, multiplier form](exists-multiplier-of-slater.md)
 - [Strong duality under Slater's condition](dual-value-eq-primal-value-of-slater.md)
 - [Dual attainment under Slater's condition](exists-dual-function-eq-primal-value-of.md)
+- [Weak duality and strong duality for conic programs](conic-duality.md)
+- [Strong duality under Slater's condition with affine equality constraints](strong-duality-under-slater-with-affine-equality-constraints.md)
 
 ## Duals through conjugates
 
@@ -33,6 +35,7 @@ Equality constraints are not covered yet: Boyd–Vandenberghe's Slater theorem a
 - [Derivative of the Lagrangian](has-fderiv-at-lagrangian.md)
 - [The dual function at a stationary point of the Lagrangian](dual-function-eq-lagrangian-of-stationar.md)
 - [Sufficiency of the KKT conditions for convex problems](kkt-sufficient.md)
+- [Saddle points of the Lagrangian are primal–dual optimal pairs](saddle-points-of-the-lagrangian.md)
 
 ## Interior-point methods
 

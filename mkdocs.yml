@@ -6,9 +6,10 @@ docs_dir: site-src
 site_dir: site
 use_directory_urls: false
 # blueprint/migrations/ holds the records of the pinned-bump tooling
-# (scripts/bump/), not wiki pages, so the site leaves them out.
+# (scripts/bump/), not wiki pages, so the site leaves them out. Only the
+# top-level folder: a topic the taxonomy names "Migrations" keeps its pages.
 exclude_docs: |
-  migrations/
+  /migrations/
 
 hooks:
   # Material eagerly builds its search index in every browser tab. Keep one

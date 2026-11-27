@@ -67,7 +67,12 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
 3. **Open the bump** when every pinned dependency has tagged `vX.Y.Z`. Commit
    the output of `python3 scripts/bump/pinned_bump.py prepare vX.Y.Z` unchanged,
    so that `guard` accepts it. Put the remaining fixes in separate commits after
-   it.
+   it. A bump is a Lean pull request and runs no wiki sync, but when it renames,
+   moves or removes a declaration it updates the links, `held` markers and
+   `duplicates` entries that name it, and the rows of the Mathlib-credited
+   pages whose Mathlib declarations it moves
+   ([Say how a pull request touches the graph](../CONTRIBUTING.md#say-how-a-pull-request-touches-the-graph),
+   [Mathlib-credited pages](BLUEPRINT.md#mathlib-credited-pages)).
 
 4. **Keep it close to main.** Merge main in, never rebase, so the first commit
    stays exactly what `pinned_bump.py` produced:
@@ -137,20 +142,25 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    so a later dispatch, and the bump's own CI, start from the newest saved
    build and rebuild only what changed since.
 
+   It runs on a 64-core runner, which GitHub bills at about $0.16 a minute:
+   about $8 for a cold build. The bump's own pull request CI stays on the
+   standard runner: a run of it whose "Restore local build" step found no build
+   on the new pins is a cold build of several hours, so re-run it once the
+   warm-up reports `Saved`.
+
    - Dispatch first as soon as the bump's head passes the guard. That run is a
-     cold build, about five hours on a CI runner, and nobody needs to wait for
-     it. A run that runs out of time saves a checkpoint, which only a dispatch
-     for the same SHA can resume, and only while that SHA is still the pull
-     request's head. So leave the branch alone until the first run finishes; a
-     dispatch for a newer head starts from the newest complete build on the new
-     pins, or from scratch if there is none yet.
+     cold build, about 50 minutes, and nobody needs to wait for it. A run that
+     runs out of time saves a checkpoint, which only a dispatch for the same
+     SHA can resume, and only while that SHA is still the pull request's head.
+     So leave the branch alone until the first run finishes; a dispatch for a
+     newer head starts from the newest complete build on the new pins, or from
+     scratch if there is none yet.
    - Dispatch again after merging main into the bump. Starting from the last
-     saved build, it takes about as long as an ordinary pull request build
-     (30 to 40 minutes on 22 November) when a few hours of main came in since,
-     and it keeps a recent build in the cache: GitHub evicts the least recently
-     used entries first. On 22 November main saved a new entry every 30 to 60
-     minutes and about five fitted; if main saves one on every push, as #6159
-     proposes, an entry nobody uses may last only tens of minutes.
+     saved build, it rebuilds only what came in since, and it keeps a recent
+     build in the cache: GitHub evicts the least recently used entries first.
+     On 22 November main saved a new entry every 30 to 60 minutes and about
+     five fitted; if main saves one on every push, as #6159 proposes, an entry
+     nobody uses may last only tens of minutes.
    - Dispatch last for the head you will queue. Queue it (step 6) once that run
      reports `Saved` (or `Already warm`, if that exact head was warmed before)
      and the required checks are green. If a merge group still builds from
@@ -178,10 +188,32 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    permission. Without it, queue the bump normally once the queue is short. If
    main conflicts with the bump before its checks pass, go back to step 4.
 
-7. **After it merges.** The queue removes any pull request whose merge group
-   fails on the new toolchain, and its timeline says why. Its author merges
-   main, fixes it, and queues it again. Post the common fixes on the bump pull
-   request so they are easy to find.
+7. **After it merges.** Dispatch Blueprint Pages on main once:
+
+   ```sh
+   gh workflow run blueprint-pages.yml --repo facebookresearch/atlas-lean --ref main
+   ```
+
+   Pull request runs of Blueprint Pages never save the Mathlib graph; a run on
+   main does, and later pull request runs restore what it saved. The cache key
+   includes the pins, so after a bump every Blueprint Pages run builds the
+   graph again until a run on main has saved it. Without a dispatch, that is
+   the daily build at 03:17 UTC. Like the daily build, a dispatched run on main
+   also publishes the site when Pages publishing is enabled.
+
+   The queue removes any pull request whose merge group fails on the new
+   toolchain, and its timeline says why. Its author merges main, fixes it, and
+   queues it again. Post the common fixes on the bump pull request so they are
+   easy to find.
+
+   A pull request whose CI ran before the bump merged has not been tested on the
+   new toolchain. Merge main into it and wait for CI and Codex before you queue
+   it again. Preflight reports such a head as stale; run main's copy of it from
+   a clean checkout of main, as the
+   [atlas-merge-queue](../.agents/skills/atlas-merge-queue/SKILL.md) skill
+   shows, never the copy on the pull request's branch. Don't queue stale heads
+   in bulk. Each one that fails makes every merge group behind it fail and
+   rebuild until the queue removes it.
 
 ## Contributors and agents
 
@@ -190,4 +222,7 @@ while the bump is in the queue, build its head in a separate worktree. Once it
 has merged, merge main into your branch and copy that build's `.lake` into your
 worktree (`cp -a --reflink=auto`), so only what changed since gets rebuilt. A
 pull request that was queued behind the bump and fails is removed from the
-queue, not merged. Watch for that and fix it as in step 7.
+queue, not merged. Watch for that and fix it as in step 7. While the bump is
+queued, `scripts/queue/preflight.py` reports any other pull request whose CI
+has not run on the new pins as not ready. Once the bump has merged, merge main
+into your branch, wait for CI and Codex, and queue it then.

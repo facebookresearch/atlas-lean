@@ -43,64 +43,16 @@ expression values for `n < 60`).
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Log.Base
-public import MathlibExt.NumberTheory.IntegerComplexityBounds
+public import MathlibExt.NumberTheory.IntegerComplexityLogBound
+public import MathlibExt.NumberTheory.IntegerComplexityRecurrence
+public import MathlibExt.NumberTheory.IntegerComplexitySubadditive
+public import MathlibExt.NumberTheory.IntegerComplexityTwoPowMulThreePow
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.IntegerComplexityWanted
-
-/-- **Integer complexity as a minimum over factorizations and sums.** Write
-$\lVert m \rVert$ for the integer complexity of a positive integer $m$, the least number of ones
-needed to write $m$ using $1$, $+$, $\times$ and parentheses. For every integer $n \ge 2$,
-$\lVert n \rVert$ is the least element of the set consisting of the numbers
-$\lVert d \rVert + \lVert n/d \rVert$ for the divisors $d \ge 2$ of $n$ and the numbers
-$\lVert j \rVert + \lVert n - j \rVert$ for the integers $j$ with $1 \le j \le n/2$.
-
-Source: Juan Arias de Reyna, "Complexity of Natural
-Numbers", Proposition 1. -/
-theorem_wanted complexity_eq_min (n : ℕ) (hn : 2 ≤ n) :
-    IsLeast {k | (∃ d : ℕ, 2 ≤ d ∧ d ∣ n ∧
-        k = cx d + cx (n / d)) ∨
-      (∃ j : ℕ, 1 ≤ j ∧ j ≤ n / 2 ∧ k = cx j + cx (n - j))}
-      (cx n)
-
-/-- **A criterion for lower bounds on integer complexity.** Write $\lVert n \rVert$ for the
-integer complexity of a positive integer $n$, the least number of ones needed to write $n$ using
-$1$, $+$, $\times$ and parentheses. Let $P$ be a real-valued function on the natural numbers with
-$P(1) = 1$ such that $P(n + m) \le P(n) + P(m)$ and $P(nm) \le P(n) + P(m)$ for all positive
-integers $n$ and $m$. Then $P(n) \le \lVert n \rVert$ for every positive integer $n$.
-
-Source: Juan Arias de Reyna, "Complexity of Natural
-Numbers", Proposition 2. -/
-theorem_wanted le_complexity_of_subadditive (P : ℕ → ℝ)
-    (h1 : P 1 = 1)
-    (hadd : ∀ n m : ℕ, 1 ≤ n → 1 ≤ m → P (n + m) ≤ P n + P m)
-    (hmul : ∀ n m : ℕ, 1 ≤ n → 1 ≤ m → P (n * m) ≤ P n + P m)
-    (n : ℕ) (hn : 1 ≤ n) :
-    P n ≤ (cx n : ℝ)
-
-/-- **Logarithmic lower bound for integer complexity.** Write $\lVert n \rVert$ for the integer
-complexity of a positive integer $n$, the least number of ones needed to write $n$ using $1$, $+$,
-$\times$ and parentheses. For every positive integer $n$, $\log_2(1 + n) \le \lVert n \rVert$.
-
-Source: Juan Arias de Reyna, "Complexity of Natural
-Numbers", Corollary 1. -/
-theorem_wanted logb_two_add_one_le (n : ℕ) (hn : 1 ≤ n) :
-    Real.logb 2 (1 + n) ≤ (cx n : ℝ)
-
-/-- **Integer complexity of $2^a 3^b$ for $a \le 2$.** Write $\lVert n \rVert$ for the integer
-complexity of a positive integer $n$, the least number of ones needed to write $n$ using $1$, $+$,
-$\times$ and parentheses. For all natural numbers $a \le 2$ and $b$, not both zero,
-$\lVert 2^a 3^b \rVert = 2a + 3b$.
-
-Source: Juan Arias de Reyna, "Complexity of Natural
-Numbers", Corollary 2. -/
-theorem_wanted complexity_two_pow_mul_three_pow (a b : ℕ)
-    (ha : a ≤ 2) (hab : 1 ≤ 2 * a + 3 * b) :
-    cx (2 ^ a * 3 ^ b) = 2 * a + 3 * b
 
 /-- **Proposition 3**: `‖n‖ ≤ L(n)` for every positive `n`,
 where `L` is the function of Definition 1, given by its

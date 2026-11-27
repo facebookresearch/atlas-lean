@@ -25,26 +25,13 @@ import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import MathlibExt.NumberTheory.CompletelyAdditiveHeight
+public import MathlibExt.NumberTheory.CompletelyAdditiveHeightExistsHeightFunctionWithProfile
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Filter
-
-/-- **Level construction for a height function.** Let $H$ be a height function and let $n \ge 1$,
-and for $k \ge 0$ write $\mathcal{H}_k = \{m \ge 1 : H(m) = k\}$. Then $\mathcal{H}_n$ is the union
-of two sets: the set of products $p m'$, where $p$ is a prime with $H(p) = \ell$ for some integer
-$\ell$ with $1 \le \ell \le \lfloor n/2 \rfloor$ and $m' \in \mathcal{H}_{n - \ell}$; and the set
-of primes $p$ with $H(p) = n$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Theorem 1 (`integers-2026-A116-thm-1`). -/
-public theorem_wanted heightLevel_eq_products_union_primes {H : ℕ → ℕ} (hH : IsHeightFunction H)
-    {n : ℕ} (hn : 1 ≤ n) :
-    {m : ℕ | 0 < m ∧ H m = n} =
-      {m : ℕ | ∃ ℓ, 1 ≤ ℓ ∧ ℓ ≤ n / 2 ∧ ∃ p m', p.Prime ∧ H p = ℓ ∧ 0 < m' ∧ H m' = n - ℓ ∧
-        m = p * m'} ∪ {p : ℕ | p.Prime ∧ H p = n}
 
 /-- **Height levels are counted by coloured partitions.** Let $H$ be a height function and, for
 $\ell \ge 1$, let $\pi_\ell$ be the number of primes $p$ with $H(p) = \ell$. For every $n \ge 0$,
@@ -64,33 +51,6 @@ public theorem_wanted heightLevel_card_eq_multipartitions {H : ℕ → ℕ} (hH 
     Nat.card {m : ℕ // 0 < m ∧ H m = n} =
       Nat.card {α : (Σ ℓ : Fin n, Fin {p : ℕ | p.Prime ∧ H p = ℓ.1 + 1}.ncard) → ℕ //
         ∑ x, (x.1.1 + 1) * α x = n}
-
-/-- **Realizing a prescribed profile.** Let $(\pi_k)_{k \ge 1}$ be nonnegative integers with
-$\pi_k \ne 0$ for infinitely many $k$ (equivalently, $\sum_k \pi_k = \infty$). Then there is a
-height function $H$ such that for every $k \ge 1$ exactly $\pi_k$ primes $p$ satisfy $H(p) = k$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 2
-(`integers-2026-A116-prop-2`). -/
-public theorem_wanted exists_heightFunction_with_profile (π : ℕ → ℕ)
-    (hπ : {k : ℕ | 1 ≤ k ∧ π k ≠ 0}.Infinite) :
-    ∃ H : ℕ → ℕ, IsHeightFunction H ∧ ∀ k, 1 ≤ k → {p : ℕ | p.Prime ∧ H p = k}.ncard = π k
-
-/-- **Height functions with prescribed values at the primes.** Let $f : \mathbb{N} \to \mathbb{N}$
-satisfy $f(i) \ge 1$ for every $i \ge 1$, and suppose that for every $t \ge 1$ only finitely many
-$i \ge 1$ have $f(i) = t$. Let $H$ be the completely additive function on the positive integers
-with $H(p) = f(i)$ when $p$ is the $i$-th prime (so $H(2) = f(1)$). Then $H$ is a height function,
-and for every $n \ge 1$ the number of primes $p$ with $H(p) = n$ equals the number of integers
-$i \ge 1$ with $f(i) = n$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 3
-(`integers-2026-A116-prop-3`). -/
-public theorem_wanted isHeightFunction_of_finite_fibers (f : ℕ → ℕ)
-    (hpos : ∀ i, 1 ≤ i → 1 ≤ f i) (hfin : ∀ t, 1 ≤ t → {i : ℕ | 1 ≤ i ∧ f i = t}.Finite) :
-    let H := additiveOfPrimeValues fun p => f (Nat.count Nat.Prime p + 1)
-    IsHeightFunction H ∧
-      ∀ n, 1 ≤ n → {p : ℕ | p.Prime ∧ H p = n}.ncard = {i : ℕ | 1 ≤ i ∧ f i = n}.ncard
 
 /-- **The largest integer at each height for the prime-index height.** Let $H$ be the completely
 additive function on the positive integers with $H(p) = i$ when $p$ is the $i$-th prime, so that

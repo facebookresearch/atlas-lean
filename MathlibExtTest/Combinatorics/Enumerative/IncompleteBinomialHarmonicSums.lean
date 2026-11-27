@@ -60,3 +60,16 @@ example : (2 : ℚ) ^ 4 * (harmonic 5 - 2 * invPowTwoSum 5 + centralBinomWeighte
     _ = ∑ i ∈ Finset.range 3, (Nat.choose 5 i : ℚ) * harmonic i :=
       (sum_range_choose_two_mul_sub_one_mul_harmonic 3 (by decide)).symm
     _ = 20 := by norm_num [Finset.sum_range_succ, Nat.choose, harmonic_succ]
+
+-- At the smallest positive index the sum is 2, including a central correction of 1.
+example : (∑ i ∈ Finset.range 2, (Nat.choose 2 i : ℚ) * harmonic i) = 2 := by
+  rw [sum_range_choose_two_mul_mul_harmonic 1 (by decide)]
+  have h : Finset.Icc 1 2 = ({1, 2} : Finset ℕ) := by decide
+  norm_num [invPowTwoSum, centralBinomWeightedSum, h, harmonic_succ, Nat.choose]
+
+-- At n = 2 the central correction is 9/2 and the half-row sums to 13.
+example : (2 : ℚ) ^ 3 * (harmonic 4 - 2 * invPowTwoSum 4 + centralBinomWeightedSum 2) +
+    9 / 2 = 13 := by
+  have h := (sum_range_choose_two_mul_mul_harmonic 2 (by decide)).symm
+  norm_num [Finset.sum_range_succ, Nat.choose, harmonic_succ] at h ⊢
+  exact h

@@ -17,6 +17,27 @@ import Mathlib.RingTheory.Ideal.Span
 
 open MetaMathlibExt
 
+-- The ideal (2) in ℤ/8ℤ is not square-zero, but squaring lands in twice the ideal.
+example : IsDividedPowerIdeal (Ideal.span {(2 : ZMod 8)}) := by
+  let : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+  have hA (k : ℕ) : ¬ 2 ∣ k → IsUnit (k : ZMod 8) :=
+    (ZMod.isUnit_natCast_iff_not_dvd_pow (d := 3) Nat.prime_two (by decide)).mpr
+  apply (isDividedPowerIdeal_iff_pow_prime_mem hA _).mpr
+  intro a ha
+  obtain ⟨b, rfl⟩ := Ideal.mem_span_singleton'.mp ha
+  refine ⟨b ^ 2 * 2, Ideal.mem_span_singleton'.mpr ⟨b ^ 2, rfl⟩, ?_⟩
+  rw [Nat.cast_ofNat]
+  ring
+
+-- The whole ring ℤ/2ℤ fails the criterion at 1.
+example : ¬ IsDividedPowerIdeal (⊤ : Ideal (ZMod 2)) := by
+  let : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+  have hA (k : ℕ) : ¬ 2 ∣ k → IsUnit (k : ZMod 2) :=
+    (CharP.isUnit_natCast_iff Nat.prime_two).mpr
+  intro h
+  obtain ⟨c, _, hc⟩ := (isDividedPowerIdeal_iff_pow_prime_mem hA ⊤).mp h 1 (by simp)
+  simp [show (2 : ZMod 2) = 0 by decide] at hc
+
 -- In characteristic p the prime-power congruence gives equality of p-th powers.
 example {p : ℕ} [hp : Fact p.Prime] {A : Type*} [CommRing A] [CharP A p]
     {I : Ideal A} (hI : IsDividedPowerIdeal I) {x y : A} (hxy : x - y ∈ I) :

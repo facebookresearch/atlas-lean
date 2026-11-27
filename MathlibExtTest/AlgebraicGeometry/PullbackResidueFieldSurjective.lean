@@ -25,7 +25,7 @@ open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 
 universe u
 
-theorem exactSource
+private theorem exactSource
     {P X T S : Scheme.{u}} {fst : P ⟶ X} {snd : P ⟶ T} {f : X ⟶ S} {g : T ⟶ S}
     (H : IsPullback fst snd f g) (t : ↥P)
     [IsIso (f.residueFieldMap (fst.base t))] :

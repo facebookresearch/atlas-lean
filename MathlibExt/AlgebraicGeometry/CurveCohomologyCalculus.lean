@@ -263,24 +263,25 @@ theorem finrankEuler01_coproduct {k : Type u} [Field k] {X : Scheme.{u}}
   rw [finrankEuler01, finrank_cohomology_coproduct f L 0 h₀, finrank_cohomology_coproduct f L 1 h₁]
   simp only [Nat.cast_sum, ← Finset.sum_sub_distrib, finrankEuler01]
 
-/-- Source-covered generic curve inputs, on the existing actual tensor
-and coherent-cohomology carriers. No spectral endpoint is among the fields.
-The tensor Euler law is Stacks 0AYX specialized to invertible factors. -/
+/-- Conditions on a proper curve $X$ over a field $k$, that is, a proper morphism
+$f : X \to \operatorname{Spec} k$ with $X$ of Krull dimension one: the tensor product
+`moduleTensor X L M` of two line bundles $L$ and $M$ on $X$ is a line bundle, and every line bundle
+$L$ on $X$ has finite-dimensional cohomology $H^0(X, L)$ and $H^1(X, L)$ over $k$ (`cohomology`, the
+right derived functors of global sections). -/
 structure CurveTensorEulerInputs {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) [IsProperCurve f] : Prop where
   tensor_line : ∀ (L M : X.Modules), IsLineBundle L → IsLineBundle M →
     IsLineBundle (moduleTensor X L M)
   finite : ∀ (L : X.Modules), IsLineBundle L → ∀ j : ℕ, j ≤ 1 →
     FiniteDimensional k (cohomology f L j)
-  tensor_euler : ∀ (L M : X.Modules) (hL : IsLineBundle L), IsLineBundle M →
-    finrankEuler01 f (moduleTensor X L M) = degree f L hL + finrankEuler01 f M
 
-theorem tensor_degree {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (T : CurveTensorEulerInputs f)
-    (L M : X.Modules) (hL : IsLineBundle L) (hM : IsLineBundle M) :
-    degree f (moduleTensor X L M) (T.tensor_line L M hL hM) = degree f L hL + degree f M hM := by
-  rw [degree_eq_finrankEuler01_sub, T.tensor_euler L M hL hM, degree_eq_finrankEuler01_sub f M]
-  ring
+/-- The condition that the degree is additive under tensor products of line bundles on a proper
+curve $X$ over a field $k$: for all line bundles $L$ and $M$ on $X$,
+$\deg(L ⊗ M) = \deg L + \deg M$, where the curve inputs `T` make $L ⊗ M$ a line bundle. -/
+def IsDegreeAdditive {k : Type u} [Field k] {X : Scheme.{u}}
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (T : CurveTensorEulerInputs f) : Prop :=
+  ∀ (L M : X.Modules) (hL : IsLineBundle L) (hM : IsLineBundle M),
+    degree f (moduleTensor X L M) (T.tensor_line L M hL hM) = degree f L hL + degree f M hM
 
 theorem power_isLine {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) [IsProperCurve f] (T : CurveTensorEulerInputs f)
@@ -289,16 +290,17 @@ theorem power_isLine {k : Type u} [Field k] {X : Scheme.{u}}
   | zero => exact isLineBundle_structureModule X
   | succ n hn => exact T.tensor_line _ _ hn hL
 
+/-- Degree additivity gives `deg (L^{⊗ n}) = n deg L`. -/
 theorem degree_power {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) [IsProperCurve f] (T : CurveTensorEulerInputs f)
-    (L : X.Modules) (hL : IsLineBundle L) (n : ℕ) :
+    (hadd : IsDegreeAdditive f T) (L : X.Modules) (hL : IsLineBundle L) (n : ℕ) :
     degree f (power L n) (power_isLine f T L hL n) = n * degree f L hL := by
   induction n with
   | zero => exact (degree_structureModule f _).trans (by simp)
   | succ n hn =>
       rw [show degree f (power L (n + 1)) (power_isLine f T L hL (n + 1)) =
           degree f (moduleTensor X (power L n) L) (T.tensor_line _ _ (power_isLine f T L hL n) hL)
-          from rfl, tensor_degree f T _ _ (power_isLine f T L hL n) hL, hn]
+          from rfl, hadd _ _ (power_isLine f T L hL n) hL, hn]
       push_cast
       ring
 

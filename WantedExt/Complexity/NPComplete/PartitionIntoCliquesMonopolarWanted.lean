@@ -20,11 +20,11 @@ graphs: NP-complete, with the attribution to Barbato and Bezzi.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.ClusterDeletionWanted
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -46,7 +46,7 @@ predicate `ClusterDeletion.IsClusterGraph` (two distinct vertices joined by a wa
 applied to the induced subgraph `G.induce Aᶜ`; stability of `A` is Mathlib's `IsIndepSet`.
 
 The instance, its graph, its well-formedness (a simple edge list and `0 < K ≤ |V|`) and the
-question are those of PARTITION INTO CLIQUES (`PartitionIntoCliquesWanted`, Garey and Johnson's
+question are those of PARTITION INTO CLIQUES (`PartitionIntoCliquesDefs`, Garey and Johnson's
 [GT15]); this module adds the monopolar restriction to well-formedness. Barbato and Bezzi prove
 that computing the clique partitioning number of a monopolar graph is NP-hard, by reductions whose
 graphs come with their monopolar partition. Recognizing monopolar graphs is itself NP-complete, but

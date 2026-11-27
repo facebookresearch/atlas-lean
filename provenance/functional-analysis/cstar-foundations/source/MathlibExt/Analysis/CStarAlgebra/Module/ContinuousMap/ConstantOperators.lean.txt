@@ -1,0 +1,120 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.ContinuousMap.TensorModel
+public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.CanonicalBaseChange
+
+/-!
+# Constant adjointable operators on the original continuous-section module
+
+The existing full constant-coefficient tensor model supplies a unital
+endomorphism homomorphism and countable generation. Its dense pure span
+identifies the operator with literal pointwise composition. The canonical
+vector map is the actual constant section, giving the constant rank-one
+formula and preservation of genuine Hilbert-module compacts.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open Set
+open scoped CStarAlgebra CStarModule.Right RightActions
+
+namespace CStarModule.ContinuousMap
+
+universe uX uB uE
+
+variable (X : Type uX) [TopologicalSpace X] [CompactSpace X]
+variable {B : Type uB} [NonUnitalCStarAlgebra B]
+  [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
+  [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ]
+variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
+  [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
+
+attribute [local instance] CStarModule.ContinuousMap.rightAction
+  CStarModule.ContinuousMap.cstarModule
+
+/-- The actual constant-family unital star hom on the original function-module End algebra. -/
+def constantEndomorphismMap : AdjointableOperator.End B E →⋆ₐ[ℂ]
+    AdjointableOperator.End C(X, B) C(X, E) := by
+  letI : CStarModule (C(X, B))ᵐᵒᵖ C(X, B) := CStarModule.Right.selfModule
+  exact InternalTensorProduct.IsModel.mapLeftStarAlgHom
+    (InternalTensorProduct.continuousMap_isModel (B := B) (E := E) X)
+
+/-- The genuine tensor-model End map is the original pointwise bounded operator. -/
+theorem constantEndomorphismMap_toContinuousLinearMap (T : AdjointableOperator.End B E) :
+    (constantEndomorphismMap (B := B) (E := E) X T).toContinuousLinearMap =
+      T.toContinuousLinearMap.compLeftContinuous ℂ X := by
+  let : CStarModule (C(X, B))ᵐᵒᵖ C(X, B) := CStarModule.Right.selfModule
+  apply ContinuousLinearMap.ext_on
+    (InternalTensorProduct.continuousMap_isModel (B := B) (E := E) X).2.2.2.2.2.2.2
+  rintro _ ⟨⟨e, b⟩, rfl⟩
+  change constantEndomorphismMap (B := B) (E := E) X T
+      (InternalTensorProduct.continuousMapPure (B := B) X e b) =
+    T.toContinuousLinearMap.compLeftContinuous ℂ X
+      (InternalTensorProduct.continuousMapPure (B := B) X e b)
+  rw [constantEndomorphismMap, InternalTensorProduct.IsModel.mapLeftStarAlgHom_pure]
+  apply _root_.ContinuousMap.ext
+  intro t
+  change T e <• b t = T (e <• b t)
+  exact (T.map_right_smul e (b t)).symm
+
+/-- Every actual continuous vector is acted on by the same original operator at every point. -/
+@[simp]
+theorem constantEndomorphismMap_apply (T : AdjointableOperator.End B E)
+    (f : C(X, E)) (t : X) :
+    constantEndomorphismMap (B := B) (E := E) X T f t = T (f t) :=
+  congrArg (fun L : C(X, E) →L[ℂ] C(X, E) => L f t)
+    (constantEndomorphismMap_toContinuousLinearMap (B := B) (E := E) X T)
+
+/-- The existing canonical coefficient-change vector map is exactly the literal constant section. -/
+theorem canonicalBaseChangeMap_eq_const (x : E) :
+    InternalTensorProduct.IsModel.canonicalBaseChangeMap
+        (InternalTensorProduct.continuousMap_isModel (B := B) (E := E) X) x =
+      _root_.ContinuousMap.const X x := by
+  let : CStarModule (C(X, B))ᵐᵒᵖ C(X, B) := CStarModule.Right.selfModule
+  obtain ⟨y, b, h⟩ := CStarModule.exists_right_factor_of_starOrderedRing (B := B) x
+  rw [InternalTensorProduct.IsModel.canonicalBaseChangeMap_factor
+    (InternalTensorProduct.continuousMap_isModel (B := B) (E := E) X) x y b h]
+  apply _root_.ContinuousMap.ext
+  intro t
+  change y <• b = x
+  exact h.symm
+
+/-- Constant extension carries the actual module rank-one to the rank-one of constant vectors. -/
+theorem constantEndomorphismMap_rankOne (x y : E) :
+    constantEndomorphismMap (B := B) (E := E) X (AdjointableOperator.rankOne (B := B) x y) =
+      AdjointableOperator.rankOne (B := C(X, B))
+        (_root_.ContinuousMap.const X x) (_root_.ContinuousMap.const X y) := by
+  let : CStarModule (C(X, B))ᵐᵒᵖ C(X, B) := CStarModule.Right.selfModule
+  have h := InternalTensorProduct.IsModel.mapLeftStarAlgHom_rankOne_baseChange
+    (InternalTensorProduct.continuousMap_isModel (B := B) (E := E) X) x y
+  rw [canonicalBaseChangeMap_eq_const (B := B) X x,
+    canonicalBaseChangeMap_eq_const (B := B) X y] at h
+  exact h
+
+/-- True Hilbert-module compacts are preserved by the actual constant End hom. -/
+theorem constantEndomorphismMap_mem_compact {T : AdjointableOperator.End B E}
+    (hT : T ∈ AdjointableOperator.compactSubmodule (B := B) (E := E) (F := E)) :
+    constantEndomorphismMap (B := B) (E := E) X T ∈
+      AdjointableOperator.compactSubmodule (B := C(X, B)) (E := C(X, E)) (F := C(X, E)) := by
+  let : CStarModule (C(X, B))ᵐᵒᵖ C(X, B) := CStarModule.Right.selfModule
+  exact InternalTensorProduct.IsModel.mapLeftStarAlgHom_mem_compact_baseChange
+    (InternalTensorProduct.continuousMap_isModel (B := B) (E := E) X) hT
+
+/-- Countable generation of the original module gives actual countable generation of
+its stock supremum-norm continuous-section module over continuous coefficients. -/
+theorem countablyGenerated
+    (hE : CStarModule.IsCountablyGenerated (B := B) (E := E)) :
+    CStarModule.IsCountablyGenerated (B := C(X, B)) (E := C(X, E)) := by
+  let : CStarModule (C(X, B))ᵐᵒᵖ C(X, B) := CStarModule.Right.selfModule
+  exact InternalTensorProduct.IsModel.countablyGenerated_baseChange
+    (InternalTensorProduct.continuousMap_isModel (B := B) (E := E) X) hE
+
+end CStarModule.ContinuousMap

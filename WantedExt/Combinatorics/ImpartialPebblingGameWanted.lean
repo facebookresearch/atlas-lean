@@ -12,6 +12,8 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.GameTheory.ImpartialPebblingGame
+public import MathlibExt.GameTheory.PebblingCompleteThree
+public import MathlibExt.GameTheory.PebblingCompleteTwo
 
 /-!
 # Impartial two-player `(k+1:k)`-pebbling games on `K_3` and `C_4`
@@ -37,32 +39,6 @@ namespace MetaMathlibExt
 open SpragueGrundy
 
 /-! ### Theorem 1 (Fiorini, Lind, Woldar, and Wong), quoted -/
-
-/-- **Winning positions of $(2:1)$-pebbling on $K_2$.** Let $a = (a_0, a_1)$ be a position of the
-$(2:1)$-pebbling game on the complete graph $K_2$, with $a_0$ and $a_1$ pebbles on its two
-vertices. If $a_0 + a_1$ is even, then $a$ is an N-position (that is, not a P-position) if and
-only if $a_0 \not\equiv a_1 \pmod 3$. If $a_0 + a_1$ is odd, then $a$ is an N-position if and
-only if $a_0 \equiv a_1 \pmod 3$.
-
-Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
-Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
-Article 24.5.8, Theorem 1(a), quoting E. Fiorini, M. Lind, A. Woldar, and T. W. H. Wong,
-J. Integer Sequences 24 (2021), Article 21.6.4. -/
-public theorem_wanted pebbling_completeTwo_isN_iff (a : Fin 2 → ℕ) :
-    (Even (a 0 + a 1) →
-      (¬ IsP (pebblingGame (⊤ : SimpleGraph (Fin 2)) 1) a ↔ ¬ a 0 ≡ a 1 [MOD 3])) ∧
-    (Odd (a 0 + a 1) →
-      (¬ IsP (pebblingGame (⊤ : SimpleGraph (Fin 2)) 1) a ↔ a 0 ≡ a 1 [MOD 3]))
-
-/-- **No all-N threshold for $(2:1)$-pebbling on $K_2$.** For every natural number $m$, some
-$(2:1)$-pebbling game on the complete graph $K_2$ with $m$ pebbles in total is a P-game; that is,
-$m^{(2:1)}(K_2)$, the least total at which every game is an N-game, does not exist.
-
-Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
-Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
-Article 24.5.8, Theorem 1(a), quoting Fiorini, Lind, Woldar, and Wong (2021). -/
-public theorem_wanted pebblingAllNTotals_completeTwo_eq_empty :
-    pebblingAllNTotals (⊤ : SimpleGraph (Fin 2)) 1 = ∅
 
 /-- **All-N threshold of $(2:1)$-pebbling on $K_3$.** The least number $m$ such that every
 $(2:1)$-pebbling game on the complete graph $K_3$ with $m$ pebbles in total is an N-game, written
@@ -168,33 +144,6 @@ public theorem_wanted pebbling_completeThree_isP_of_le (k ℓ : ℕ) (hk : 0 < k
     (hmax : ∀ i, a i ≤ 3 * k - ℓ) :
     IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) k) a
 
-/-- **Pebbling on the triangle: N-positions with total 6k-2ℓ+1 and a small pile.** Let $k$ be a
-positive integer and consider the $(k+1:k)$-pebbling game on the complete graph $K_3$, where a
-move removes $k+1$ pebbles from one vertex and adds $k$ pebbles to another. Let $\ell$ be an
-integer with $1 \le \ell \le 2k - 1$. Every position with $6k - 2\ell + 1$ pebbles in total in
-which every pile is at most $4k - \ell + 1$ and some pile is at most $2k - \ell$ is an
-N-position, that is, not a P-position.
-
-Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
-Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
-Article 24.5.8, Lemma 9. -/
-public theorem_wanted pebbling_completeThree_isN_of_le (k ℓ : ℕ) (hk : 0 < k) (hℓ₁ : 1 ≤ ℓ)
-    (hℓ : ℓ + 1 ≤ 2 * k) (a : Fin 3 → ℕ) (hsum : ∑ i, a i = 6 * k - 2 * ℓ + 1)
-    (hmax : ∀ i, a i ≤ 4 * k - ℓ + 1) (hmin : ∃ i, a i ≤ 2 * k - ℓ) :
-    ¬ IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) k) a
-
-/-- **Pebbling on the triangle: total 6k-1 with every pile at most 4k.** Let $k$ be a positive
-integer and consider the $(k+1:k)$-pebbling game on the complete graph $K_3$, where a move removes
-$k+1$ pebbles from one vertex and adds $k$ pebbles to another. Every position with $6k - 1$
-pebbles in total in which every pile is at most $4k$ is an N-position, that is, not a P-position.
-
-Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
-Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
-Article 24.5.8, Corollary 10. -/
-public theorem_wanted pebbling_completeThree_isN_of_le_fourK (k : ℕ) (hk : 0 < k)
-    (a : Fin 3 → ℕ) (hsum : ∑ i, a i = 6 * k - 1) (hmax : ∀ i, a i ≤ 4 * k) :
-    ¬ IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) k) a
-
 /-- **Pebbling on the triangle: N-positions with an empty vertex.** Let $k$ be a natural number
 and consider the $(k+1:k)$-pebbling game on the complete graph $K_3$, where a move removes $k+1$
 pebbles from one vertex and adds $k$ pebbles to another. Let $\ell$ be an integer with
@@ -228,22 +177,6 @@ public theorem_wanted pebbling_completeThree_isN_of_ge_fourKAddOne (k : ℕ) (hk
     ¬ IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) k) a
 
 /-! ### `(2:1)`-pebbling on `C_4` -/
-
-/-- **Closure of the mod-$3$ pattern classes under moves on $C_4$.** Let $a$ and $b$ be
-distributions of pebbles on the vertices of the $4$-cycle $C_4$ such that $b$ is obtained from $a$
-by one $(2:1)$-pebbling move, that is, by removing two pebbles from a vertex holding at least two
-pebbles and adding one pebble to an adjacent vertex. If $a \in \hat X_{aabb} \cup X_{abac}$, then
-$b \in \hat X_{aabb} \cup X_{abac}$; and if $a \in X_{aaab} \cup X_{abab} \cup X_{aabc}$, then
-$b \in X_{aaab} \cup X_{abab} \cup X_{aabc}$.
-
-Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
-Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
-Article 24.5.8, Lemma 15. -/
-public theorem_wanted c4Pattern_closed_under_moves (a b : Fin 4 → ℕ)
-    (hb : b ∈ pebblingMoves (SimpleGraph.cycleGraph 4) 1 a) :
-    ((C4PatternAABBHat a ∨ C4PatternABAC a) → (C4PatternAABBHat b ∨ C4PatternABAC b)) ∧
-      ((C4PatternAAAB a ∨ C4PatternABAB a ∨ C4PatternAABC a) →
-        (C4PatternAAAB b ∨ C4PatternABAB b ∨ C4PatternAABC b))
 
 /-- **Parity decides $(2:1)$-pebbling on $C_4$ in $\hat X_{aabb} \cup X_{abac}$.** Consider the
 $(2:1)$-pebbling game on the cycle $C_4$ with vertices $v_0, v_1, v_2, v_3$, where $v_i$ is

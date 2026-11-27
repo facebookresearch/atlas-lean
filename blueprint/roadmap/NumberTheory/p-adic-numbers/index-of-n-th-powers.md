@@ -22,10 +22,15 @@ $h_n(U) = h_n(\mathcal{O}_K) = (\mathcal{O}_K : n\mathcal{O}_K) = |n|^{-1}$ beca
 [Herbrand quotients agree across a map with finite kernel and cokernel](../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/herbrand-quotient-finite-kernel-cokernel.md);
 and $U[n] = \mu_n(K)$, which gives $(U : U^n) = |\mu_n(K)| \, h_n(U)$.
 
+## Depends on
+
+- [Residue field of a local ring](../../RingTheory/local-rings/local-rings-and-residue-fields/residue-field-local-ring.md), for the residue characteristic in the example
+
 ## Proof depends on
 
 - [Herbrand quotients agree across a map with finite kernel and cokernel](../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/herbrand-quotient-finite-kernel-cokernel.md), for the trivial action of a cyclic group of order $n$
 - [The p-adic exponential on a neighbourhood of zero](p-adic-exponential.md), for open subgroups of finite index of $\mathcal{O}_K$ and $U$ that are isomorphic
+- [Natural numbers that are units in a local ring](../../RingTheory/ramification/ramification-index-and-inertia-degree/is-unit-nat-cast-iff-ring-char-not-dvd.md), for $\lvert n \rvert = 1$ in the example: $n$ is a unit of $\mathcal{O}_K$ when the residue characteristic does not divide $n$
 
 ## Sources
 

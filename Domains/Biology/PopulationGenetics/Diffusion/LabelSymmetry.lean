@@ -22,21 +22,20 @@ reflection is the complementary allele. Writing `g(z) = f(1 - z)` for a test fun
 the chain rule gives `g'(y) = -f'(1 - y)` and `g''(y) = f''(1 - y)`; hence the neutral part
 of the backward generator is invariant under `y ↦ 1 - y` while the genic drift changes sign.
 Transporting the martingale clause along this conjugation shows the reflected process solves
-the `-σ` martingale problem on the same probability space, filtration, and measure.
+the `-σ` martingale problem on the same measurable space, filtration, and measure.
 Reflection swaps the absorbing states, so the loss probability of `X` is the fixation
 probability of the reflection, and the absorption time is unchanged.
 
 Conventions are those of `Domains.Biology.PopulationGenetics.Diffusion.KimuraFixationProcess`:
 scaled genic selection coefficient `σ = 2Ns` for a diploid population of `N` individuals and
 time in units of `2N` generations, with continuous `[0, 1]`-valued paths. The formula-level
-symmetry `kimuraFixation_neg (σ x : ℝ) :
-kimuraFixation σ x = 1 - kimuraFixation (-σ) (1 - x)` proved in
-`Domains.Biology.PopulationGenetics.Diffusion.KimuraFixationSelection` is quoted, not
+symmetry `kimuraFixation_neg (σ x : ℝ) : kimuraFixation σ x = 1 - kimuraFixation (-σ) (1 - x)`
+proved in `Domains.Biology.PopulationGenetics.Diffusion.KimuraFixationSelection` is quoted, not
 restated. The neutral case, where reflection preserves the selection coefficient, is
 `NeutralMartingaleProblem.isWrightFisherSolution_one_sub` (with loss formula
 `NeutralMartingaleProblem.measureReal_loss_eq`).
 
-The reflection stays on the same probability space, filtration, and
+The reflection stays on the same measurable space, filtration, and
 measure, and no new process is constructed. What is not claimed is
 uniqueness in law or equality of path laws beyond the
 solution-predicate transport `IsWrightFisherSolution.one_sub` stated below.
@@ -71,9 +70,9 @@ open MathlibExt.Biology.PopulationGenetics.Diffusion.KimuraFixationProcess
 arbitrary test function `f` and every `y`,
 `generator (-σ) f (1 - y) = generator σ (fun z => f (1 - z)) y`. The neutral
 part is invariant under `y ↦ 1 - y` while the genic drift changes sign. No
-regularity is needed because the derivative is the totalized Mathlib
-derivative; the martingale-problem transport below applies the identity to
-its smooth test functions. -/
+regularity is needed: the derivative is total (`deriv h x = 0` where `h` is not
+differentiable at `x`, applied twice for the second-order term), and the identity holds for
+these total derivatives; `IsWrightFisherSolution.one_sub` applies it to `C²` test functions. -/
 theorem generator_neg_one_sub (σ : ℝ) (f : ℝ → ℝ) (y : ℝ) :
     generator (-σ) f (1 - y) = generator σ (fun z => f (1 - z)) y := by
   have h1 : deriv (fun z => f (1 - z)) = fun z => -deriv f (1 - z) :=
@@ -87,8 +86,8 @@ theorem generator_neg_one_sub (σ : ℝ) (f : ℝ → ℝ) (y : ℝ) :
 
 /-- **Allele relabeling with selection.** If `X` solves the Wright–Fisher martingale problem
 with scaled selection coefficient `σ`, then `1 - X` solves it with `-σ`, on the same
-probability space, filtration, and measure; the focal allele after reflection is the
-complementary allele. No new process is constructed and no uniqueness in law is claimed.
+measurable space, filtration, and measure (`μ` any measure); the focal allele after reflection
+is the complementary allele. No new process is constructed and no uniqueness in law is claimed.
 
 Source: Ewens (2004), ch. 4. The neutral case is
 `NeutralMartingaleProblem.isWrightFisherSolution_one_sub`. -/
@@ -104,7 +103,8 @@ theorem IsWrightFisherSolution.one_sub {Ω : Type*} {mΩ : MeasurableSpace Ω} {
     simpa only [generator_neg_one_sub σ f] using hX.2.2.2 _ hg
 
 /-- Reflection preserves the absorption time: the first time `1 - X` is at `0` or `1` is the
-first time `X` is at `1` or `0`. Stated as equality of the two `Ω → ℝ≥0` functions. -/
+first time `X` is at `1` or `0`. Stated as equality of the two `Ω → ℝ≥0` functions, for every
+process `X`; both sides use `sInf ∅ = 0`, so it also holds for paths that are never absorbed. -/
 theorem absorptionTime_one_sub {Ω : Type*} {X : ℝ≥0 → Ω → ℝ} :
     absorptionTime (fun t ω => 1 - X t ω) = absorptionTime X := by
   funext ω
@@ -118,10 +118,10 @@ theorem absorptionTime_one_sub {Ω : Type*} {X : ℝ≥0 → Ω → ℝ} :
   · exact Or.inr (by linarith)
   · exact Or.inl (by linarith)
 
-/-- **Kimura's loss probability, process form.** For a solution of the Wright–Fisher
-martingale problem with scaled selection coefficient `σ = 2Ns` started at frequency `x`, the
-probability that the allele is eventually lost is `1 - kimuraFixation σ x`: the loss
-probability of `X` is the fixation probability of the reflected process `1 - X`.
+/-- **Kimura's loss probability, process form.** Under a probability measure `μ`, for a solution of
+the Wright–Fisher martingale problem with scaled selection coefficient `σ = 2Ns` and `X 0 = x`
+almost surely, the probability that the allele is eventually lost is `1 - kimuraFixation σ x`: the
+loss probability of `X` is the fixation probability of the reflected process `1 - X`.
 
 Source: Kimura (1962); Ewens (2004), ch. 4. -/
 theorem measureReal_loss {Ω : Type*} {mΩ : MeasurableSpace Ω} {σ x : ℝ}

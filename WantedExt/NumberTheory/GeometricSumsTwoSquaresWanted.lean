@@ -30,8 +30,12 @@ by solving `X_1^2 + Y_1^2 = Φ_{4p}(x)` for small primes.
 Proposition 1 is stated from the journal text (its
 parity conclusions are truncated in the extraction).
 Not stated (see the source audit table): Proposition 12
-(a summary paragraph restating Theorem 10 and
-Corollary 11, both stated here).
+(a summary paragraph restating Theorem 10, proved in
+`MathlibExt.NumberTheory.GeometricSumsTwoSquares` and
+re-exported here, and Corollary 11, stated here).
+Theorem 6 is proved in
+`MathlibExt.NumberTheory.GeometricSumsTwoSquaresAltBigeomPythagorean`
+and re-exported here.
 -/
 module
 
@@ -44,7 +48,9 @@ public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
+public import MathlibExt.NumberTheory.AlternatingGeometricSumDifferenceOfSquares
 public import MathlibExt.NumberTheory.GeometricSumsTwoSquares
+public import MathlibExt.NumberTheory.GeometricSumsTwoSquaresAltBigeomPythagorean
 
 set_option autoImplicit false
 
@@ -185,41 +191,6 @@ theorem_wanted altGeomSumPow_eq_sq_add_sq (p n k : ℕ) (hp : p.Prime)
     ∃ a b : ℤ,
       (∑ j ∈ Finset.range (p ^ k), (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j)) =
         a ^ 2 + b ^ 2
-
-/-- **Alternating geometric sums for primes $p \equiv 3 \pmod 4$ and odd $n$ are differences of
-two squares.** Let $p$ be a prime with $p \equiv 3 \pmod 4$ and let $n$ be a positive odd integer.
-Then there are integers $a, b$ with
-$\sum_{j=0}^{p-1} (-1)^j p^{nj} = 1 - p^n + p^{2n} - \cdots + p^{(p-1)n} = a^2 - b^2$.
-
-Source: Lorenz Halbeisen, Norbert Hungerbühler, and
-Franz Lemmermeyer, "Geometric Sums as Sums of Two
-Squares", Proposition 9. -/
-theorem_wanted altGeomSum_eq_sq_sub_sq (p n : ℕ) (hp : p.Prime)
-    (hp4 : p % 4 = 3) (hn : Odd n) (hn0 : 0 < n) :
-    ∃ a b : ℤ,
-      (∑ j ∈ Finset.range p, (-1 : ℤ) ^ j * (p : ℤ) ^ (n * j)) =
-        a ^ 2 - b ^ 2
-
-/-- **An alternating sum in coprime integers $x, y$ is a sum of two coprime squares.**
-Let $x$ and $y$ be coprime integers, let $n$ be a positive integer, and let
-$S = \sum_{j=0}^{2n} (-1)^j x^{4n-2j} y^{2j}$, that is,
-$S = x^{4n} - x^{4n-2} y^2 + \cdots - x^2 y^{4n-2} + y^{4n}$. Then every prime divisor of $S$ is
-$2$ or congruent to $1$ modulo $4$, and there are coprime natural numbers $a, b$ with
-$S = a^2 + b^2$.
-
-Source: Lorenz Halbeisen, Norbert Hungerbühler, and
-Franz Lemmermeyer, "Geometric Sums as Sums of Two
-Squares", Theorem 6. -/
-theorem_wanted altBigeom_pythagorean (x y : ℤ) (n : ℕ)
-    (hxy : IsCoprime x y) (hn : 0 < n) :
-    (∀ q : ℕ, q.Prime →
-      (q : ℤ) ∣ ∑ j ∈ Finset.range (2 * n + 1),
-        (-1 : ℤ) ^ j * x ^ (4 * n - 2 * j) * y ^ (2 * j) →
-        q = 2 ∨ q % 4 = 1) ∧
-      ∃ a b : ℕ,
-        (∑ j ∈ Finset.range (2 * n + 1),
-          (-1 : ℤ) ^ j * x ^ (4 * n - 2 * j) * y ^ (2 * j)) =
-          (a : ℤ) ^ 2 + (b : ℤ) ^ 2 ∧ Nat.Coprime a b
 
 /-- **Proposition 1**: for an odd prime `p` there are
 `X_j, Y_j ∈ ℚ[x]` with

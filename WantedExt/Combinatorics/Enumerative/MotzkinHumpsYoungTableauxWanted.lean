@@ -13,8 +13,11 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Rat.Defs
-public import MathlibExt.Combinatorics.Enumerative.MotzkinHumpsYoungTableaux
+public import MathlibExt.Combinatorics.Enumerative.AdjustedSytHookCount
+public import MathlibExt.Combinatorics.Enumerative.MotzkinFirstDownLastUp
+public import MathlibExt.Combinatorics.Enumerative.MotzkinHumpGeneratingFunction
 public import MathlibExt.Combinatorics.Enumerative.MotzkinNumber
+public import MathlibExt.Combinatorics.Enumerative.SytHookCountGeneratingFunction
 
 open scoped BigOperators
 
@@ -68,78 +71,6 @@ public theorem_wanted motzkinHumpFamily_equiv_lastUpEvenFamily (n : ℕ) :
       (∀ q, (e q).val.1 = q.val.1) ∧
         ∀ q, IsMotzkinPeak n q.val.1 q.val.2.1 q.val.2.2.1 q.val.2.2.2 ↔
           EndsWithUp n (e q).val.2
-
-/-- **Generating function for humps of a fixed height.** Let $H_{n,k}$ be the number of pairs
-$(P, h)$ where $P$ is a Motzkin path of length $n$ and $h$ is a hump of height $k$ in $P$ (an up
-step and a later down step with only flat steps between them, the up step ending at height
-$k$), and let $M(x) = \sum_{n \ge 0} m_n x^n$, where $m_n$ is the $n$-th Motzkin number. For
-every integer $k \ge 1$, in the ring $\mathbb{Z}[[x]]$ of formal power series,
-$$(1 - x) \sum_{n \ge 2k} H_{n,k} \, x^n = x^{2k} M(x)^{2k}.$$
-
-The source also states this result in Riordan-array form.
-
-Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
-        of Integer Sequences 28 (2025), Article 25.8.1, Corollary 5 (`jis-2025-25.8.1-cor-5`).
--/
-public theorem_wanted motzkinHumpCount_generatingFunction (k : ℕ) (hk : 1 ≤ k) :
-    (1 - (PowerSeries.X : PowerSeries ℤ)) *
-        PowerSeries.mk (fun n => if 2 * k ≤ n then (motzkinHumpCount n k : ℤ) else 0) =
-      PowerSeries.X ^ (2 * k) * motzkinSeries ^ (2 * k)
-
-/-- **A bijection between first-down and even-height last-up Motzkin prefixes.** Use the steps
-$U = (1,1)$, $F = (1,0)$ and $D = (1,-1)$, and call a word in these steps a Motzkin prefix if
-none of its initial segments ends below height $0$. For every natural number $n$ there is a
-bijection between the set of pairs $(k, p)$, where $k$ is a natural number with $k + 2 \le n$ and
-$p$ is a Motzkin prefix of length $n$ ending at height $k$ whose first step other than $U$ exists
-and is $D$, and the set of pairs $(k, p)$, where $k$ is a natural number with
-$1 \le k \le \lfloor n/2 \rfloor$ and $p$ is a Motzkin prefix of length $n$ ending at height $2k$
-that contains a $U$ after which every step is $F$.
-
-Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
-        of Integer Sequences 28 (2025), Article 25.8.1, Lemma 6 (`jis-2025-25.8.1-lem-6`).
--/
-public theorem_wanted motzkinFirstDownFamily_equiv_lastUpEvenFamily (n : ℕ) :
-    Nonempty (MotzkinFirstDownFamily n ≃ MotzkinLastUpEvenFamily n)
-
-/-- **Generating function for the adjusted $(2,1)$-hook tableau counts.** Let $k$ be a natural
-number, and let $\mathrm{SYT}_k(2,1;n)$ be the number of standard Young tableaux with $n$ cells
-in the $(2,1)$-hook whose first two rows differ in length by $k$. Set
-$T_{n,k} = \mathrm{SYT}_k(2,1;n) + (-1)^{n+k+1}$ for $n \ge k$ and $T_{n,k} = 0$ for $n < k$, and
-let $M(x) = \sum_{n \ge 0} m_n x^n$ be the generating function of the Motzkin numbers $m_n$.
-Then in the ring $\mathbb{Z}[[x]]$ of formal power series
-
-$$(1 + x) \sum_{n \ge 0} T_{n,k} x^n = (x M(x))^{k+1}.$$
-
-Equivalently, $\sum_{n \ge k} T_{n,k} x^n = x^{k+1} M(x)^{k+1} / (1 + x)$; the identity is
-stated without division.
-
-Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
-        of Integer Sequences 28 (2025), Article 25.8.1, Lemma 7 (`jis-2025-25.8.1-lem-7`).
--/
-public theorem_wanted adjustedSytHookCount_generatingFunction (k : ℕ) :
-    (1 + (PowerSeries.X : PowerSeries ℤ)) *
-        PowerSeries.mk (fun n =>
-          if k ≤ n then (sytHookCount n k : ℤ) + (-1 : ℤ) ^ (n + k + 1) else 0) =
-      (PowerSeries.X * motzkinSeries) ^ (k + 1)
-
-/-- **Generating function for hook tableau counts.** For a natural number $k$, let
-$\mathrm{SYT}_k(2,1;n)$ be the number of standard Young tableaux of order $n$ in the
-$(2,1)$-hook whose first row is longer than its second row by exactly $k$, and let
-$M(x) = \sum_{n \ge 0} m_n x^n$ be the generating function of the Motzkin numbers $m_n$. Then,
-in the ring of formal power series with integer coefficients,
-$$
-(1 + x) \sum_{n \ge k} \mathrm{SYT}_k(2,1;n)\, x^n = x^k \bigl(1 + x\, M(x)^{k+1}\bigr).
-$$
-
-The factor $1 + x$ is cleared, so the identity involves no division.
-
-Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
-        of Integer Sequences 28 (2025), Article 25.8.1, Corollary 9 (`jis-2025-25.8.1-cor-9`).
--/
-public theorem_wanted sytHookCount_generatingFunction (k : ℕ) :
-    (1 + (PowerSeries.X : PowerSeries ℤ)) *
-        PowerSeries.mk (fun n => if k ≤ n then (sytHookCount n k : ℤ) else 0) =
-      PowerSeries.X ^ k * (1 + PowerSeries.X * motzkinSeries ^ (k + 1))
 
 end
 

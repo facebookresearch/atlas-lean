@@ -13,10 +13,11 @@ public import Mathlib.Data.ZMod.Basic
 import Mathlib.Combinatorics.HalesJewett
 
 /-!
-# Zero-sum van der Waerden theorem
+# Vanishing blocks for symmetric functions
 
 We use a monochromatic arithmetic progression of prefix sums to find consecutive
-blocks of equal length whose sums vanish in `ZMod n`.
+blocks of equal length whose sums vanish in `ZMod n`. Over `ZMod 6`, every sequence
+contains a block of length at least two whose sum plus product vanishes.
 -/
 
 namespace MetaMathlibExt
@@ -125,6 +126,105 @@ public theorem isVanishingFamily_sum {n : ℕ} (hn : 0 < n) :
     ← Finset.sum_range_add_sub_sum_range]
   change prefixSum (s * 2 + j * (d * 2) + d * 2) - prefixSum (s * 2 + j * (d * 2)) = 0
   rw [Nat.add_assoc, ← Nat.succ_mul, boundary (j + 1) hj, boundary j hj.le, sub_self]
+
+namespace isMVanishingFamily_one_sumAddMulProd_one_six
+
+private abbrev Summary := ZMod 6 × ZMod 6
+
+private def extend (x : ZMod 6) (p : Summary) : Summary :=
+  (p.1 + x, p.2 * x)
+
+-- Every continuation must either make the running product zero or complete a vanishing block.
+-- Only extended suffixes have length at least two. A singleton seeds the next step.
+private def forced : ℕ → ZMod 6 → List Summary → Bool
+  | 0, _, _ => false
+  | d + 1, product, suffixes => (List.finRange 6).all fun (x : ZMod 6) =>
+    let longer := suffixes.map (extend x)
+    ((product * x == 0) || longer.any (fun p => p.1 + p.2 == 0)) ||
+      forced d (product * x) ((x, x) :: longer)
+
+private theorem forced_fourteen : forced 14 1 [] = true := by decide +kernel
+
+private def summary (a : ℕ → ZMod 6) (s l : ℕ) : Summary :=
+  (∑ i : Fin l, a (s + i), ∏ i : Fin l, a (s + i))
+
+private theorem summary_succ (a : ℕ → ZMod 6) (s l : ℕ) :
+    summary a s (l + 1) = extend (a (s + l)) (summary a s l) := by
+  simp [summary, extend, Fin.sum_univ_castSucc, Fin.prod_univ_castSucc]
+
+-- Each stored pair is the sum and product of a nonempty suffix ending just before index k.
+private theorem exists_block_of_forced (a : ℕ → ZMod 6) (d k : ℕ) (suffixes : List Summary)
+    (h : forced d (∏ i ∈ Finset.range k, a i) suffixes = true)
+    (hnz : ∀ t ≤ k + d, (∏ i ∈ Finset.range t, a i) ≠ 0)
+    (hs : ∀ p ∈ suffixes, ∃ s l, 0 < l ∧ s + l = k ∧ summary a s l = p) :
+    ∃ s l, 1 < l ∧ sumAddMulProdFamily 1 l (fun i => a (s + i)) = 0 := by
+  induction d generalizing k suffixes with
+  | zero => simp [forced] at h
+  | succ d ih =>
+    have step := List.all_eq_true.mp h (a k) (List.mem_finRange (a k))
+    have hprod := hnz (k + 1) (by omega)
+    rw [Finset.prod_range_succ] at hprod
+    simp only [hprod, beq_iff_eq, Bool.or_eq_true, false_or] at step
+    have longer (p) (hp : p ∈ suffixes.map (extend (a k))) :
+        ∃ s l, 1 < l ∧ s + l = k + 1 ∧ summary a s l = p := by
+      obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hp
+      obtain ⟨s, l, hl, rfl, rfl⟩ := hs q hq
+      exact ⟨s, l + 1, by omega, rfl, summary_succ ..⟩
+    rcases step with hit | next
+    · obtain ⟨p, hp, hz⟩ := List.any_eq_true.mp hit
+      obtain ⟨s, l, hl, _, rfl⟩ := longer p hp
+      exact ⟨s, l, hl, by simpa [summary, sumAddMulProdFamily] using hz⟩
+    · apply ih (k + 1) _ (by simpa only [Finset.prod_range_succ] using next)
+      · exact fun t ht => hnz t (by omega)
+      · intro p hp
+        rcases List.mem_cons.mp hp with rfl | hp
+        · exact ⟨k, 1, by decide, rfl, by simp [summary]⟩
+        · obtain ⟨s, l, hl, hend, heq⟩ := longer p hp
+          exact ⟨s, l, by omega, hend, heq⟩
+
+end isMVanishingFamily_one_sumAddMulProd_one_six
+
+open isMVanishingFamily_one_sumAddMulProd_one_six in
+/-- **The sum-plus-product family is $1$-vanishing over $\mathbb{Z}/6\mathbb{Z}$.** Let $F_1$ be
+the family over $\mathbb{Z}/6\mathbb{Z}$ sending a block $(b_1, \dots, b_l)$ to
+$\sum_i b_i + \prod_i b_i$. Then $F_1$ is $1$-vanishing: every sequence over
+$\mathbb{Z}/6\mathbb{Z}$ contains a block of consecutive terms, of some length $l > 1$, on which
+$F_1$ vanishes.
+
+Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
+to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 3
+(`integers-2026-A25-lem-3`). -/
+public theorem isMVanishingFamily_one_sumAddMulProd_one_six :
+    IsMVanishingFamily 1 (sumAddMulProdFamily (1 : ZMod 6)) := by
+  intro a
+  suffices h : ∃ s l, 1 < l ∧ sumAddMulProdFamily 1 l (fun i => a (s + i)) = 0 by
+    obtain ⟨s, l, hl, hz⟩ := h
+    exact ⟨l, hl, s, by simpa using hz⟩
+  -- Two equal prefix sums at multiples of 14 enclose a long zero-sum block.
+  obtain ⟨u, v, huv, heq⟩ := Set.finite_univ.exists_lt_map_eq_of_forall_mem
+    (f := fun n : ℕ => ∑ i ∈ Finset.range (14 * n), a i) (fun _ => Set.mem_univ _)
+  let s := 14 * u
+  let l := 14 * (v - u)
+  have hlen : 14 ≤ l := by dsimp [l]; omega
+  have hend : s + l = 14 * v := by dsimp [s, l]; omega
+  let b (i : ℕ) := a (s + i)
+  have hsum : ∑ i : Fin l, b i = 0 := by
+    rw [Fin.sum_univ_eq_sum_range b]
+    change ∑ i ∈ Finset.range l, a (s + i) = 0
+    rw [← Finset.sum_range_add_sub_sum_range, hend, ← heq]
+    exact sub_self _
+  by_cases hprod : (∏ i ∈ Finset.range l, b i) = 0
+  · refine ⟨s, l, by omega, ?_⟩
+    change sumAddMulProdFamily 1 l (fun i => b i) = 0
+    simp [sumAddMulProdFamily, hsum, Fin.prod_univ_eq_prod_range b, hprod]
+  · have hnz (t : ℕ) (ht : t ≤ 14) : (∏ i ∈ Finset.range t, b i) ≠ 0 := by
+      apply mt _ hprod
+      intro htzero
+      obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le (show t ≤ l by omega)
+      rw [hr, Finset.prod_range_add, htzero, zero_mul]
+    obtain ⟨s', l', hl', hz⟩ := exists_block_of_forced b 14 0 [] (by simpa using forced_fourteen)
+      (by simpa using hnz) (by simp)
+    exact ⟨s + s', l', hl', by simpa only [b, Nat.add_assoc] using hz⟩
 
 end
 

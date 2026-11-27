@@ -29,8 +29,9 @@ polygenic effect with covariance `σ_g² Φ`, and `ε` noise with covariance `σ
 and `KinshipIBD` files (`pedigreeRelationship`). The variant effects are random with mean `0`
 and covariance `τ W`, `W = diag w`, so `Cov y = Σ₀ + τ K` with `Σ₀ = σ_g² Φ + σ_e² I`
 (`nullCov`) and `K = G W Gᵀ` (`skatKernel`). The null hypothesis is `H₀ : τ = 0`. Gaussian
-phenotypes are encoded by Mathlib's `multivariateGaussian (X α) V'`, with `V' = Σ₀` under `H₀`
-and `V' = Σ₀ + τ K` (`altCov`) under the alternative.
+phenotypes with mean `X α` in the span of the covariates are encoded by
+`multivariateGaussian (X α) V'`, with `V' = Σ₀` under `H₀` and `V' = Σ₀ + τ K` (`altCov`) under
+the alternative.
 
 **Statistic.** With the null GLS fit `α̂ = (Xᵀ Σ₀⁻¹ X)⁻¹ Xᵀ Σ₀⁻¹ y`, the statistic is
 `Q = (y - X α̂)ᵀ Σ₀⁻¹ K Σ₀⁻¹ (y - X α̂) = (P y)ᵀ K (P y)`, where
@@ -39,10 +40,10 @@ and `V' = Σ₀ + τ K` (`altCov`) under the alternative.
 ## Main results
 
 * `map_skatQ_multivariateGaussian`: **the law of `Q` is a weighted chi-square mixture.** If
-  `y ~ N(X α, V')`, then `Q ~ ∑ₖ λₖ χ²₁`, where `λ` are the eigenvalues of
-  `A = (P V'^{1/2})ᵀ K (P V'^{1/2})` (`skatMixtureMatrix`). The proof diagonalises `A`
-  in an orthonormal eigenbasis (`stdGaussian_map_inner_eq_weightedChiSq`). `V' = Σ₀` gives the
-  null law, and `V' = Σ₀ + τ K` the law under the alternative.
+  `y ~ N(X α, V')` with mean `X α` in the span of the covariates, then `Q ~ ∑ₖ λₖ χ²₁`, where
+  `λ` are the eigenvalues of `A = (P V'^{1/2})ᵀ K (P V'^{1/2})` (`skatMixtureMatrix`). The proof
+  diagonalises `A` in an orthonormal eigenbasis (`stdGaussian_map_inner_eq_weightedChiSq`).
+  `V' = Σ₀` gives the null law, and `V' = Σ₀ + τ K` the law under the alternative.
 * `eigenvalues_skatMixtureMatrix_nonneg`: the weights are nonnegative when `w ≥ 0`.
 * `skatQ_add_covariates`: the covariate effects `X α` drop out of `Q` (`P X = 0`).
 * `skatQ_eq_sum_variantScore`: `Q = ∑ⱼ wⱼ Sⱼ²`, with `Sⱼ = gⱼᵀ P y`.
@@ -99,7 +100,7 @@ H. Chen, J. B. Meigs, J. Dupuis, *Sequence kernel association test for quantitat
 family samples*, Genet. Epidemiol. 37 (2013), 196–204; it is used here only as the model, not
 as a second source contract.
 
-## API-00 receipt (base `origin/main` 53666a3c1)
+## Reuse (base `origin/main` 53666a3c1)
 
 Reuse search of `MathlibExt`, `WantedExt`, `CSLibExt` and the pinned Mathlib for SKAT, burden
 tests, variance-component score tests and weighted chi-square mixtures found nothing. Reused:
@@ -199,7 +200,8 @@ variable {n q m : Type*} [Fintype n] [DecidableEq n] [Fintype q] [DecidableEq q]
   [DecidableEq m]
 
 /-- The null phenotypic covariance of the polygenic mixed model with relatedness:
-`Σ₀ = σ_g² Φ + σ_e² I`, for a relationship matrix `Φ` (for a pedigree, twice the kinship). -/
+`Σ₀ = σ_g² Φ + σ_e² I`, for a relationship matrix `Φ` (for a pedigree, twice the kinship). It is
+a covariance matrix when `Φ` is positive semidefinite and `σ_g², σ_e² ≥ 0`. -/
 def nullCov (Φ : Matrix n n ℝ) (σg2 σe2 : ℝ) : Matrix n n ℝ := σg2 • Φ + σe2 • 1
 
 /-- The weighted linear SKAT kernel `K = G W Gᵀ`, `W = diag w`, for the genotype matrix `G`
@@ -211,18 +213,24 @@ effects `β ~ (0, τ W)` add `τ K` to the null covariance `V`. -/
 def altCov (V : Matrix n n ℝ) (G : Matrix n m ℝ) (w : m → ℝ) (τ : ℝ) : Matrix n n ℝ :=
   V + τ • skatKernel G w
 
-/-- The null-model GLS residual `y - X α̂`, with `α̂ = (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹ y`. -/
+/-- The null-model GLS residual `y - X α̂`, with `α̂ = (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹ y`. With the convention
+that the inverse of a singular matrix is `0`, it is `y` when `V` or `Xᵀ V⁻¹ X` is singular. -/
 noncomputable def glsResidual (X : Matrix n q ℝ) (V : Matrix n n ℝ) (y : n → ℝ) : n → ℝ :=
   y - X *ᵥ (glsMatrix X V *ᵥ y)
 
-/-- The SKAT variance-component score statistic
-`Q = (y - X α̂)ᵀ V⁻¹ K V⁻¹ (y - X α̂)` (Wu et al. 2011, eq. (3), with the null covariance `V`
-in place of `σ² I`). -/
+/-- The SKAT variance-component score statistic `Q = (V⁻¹ r)ᵀ K (V⁻¹ r)`, `r = y - X α̂`, which
+is `rᵀ V⁻¹ K V⁻¹ r` for symmetric `V`. The intended use has `V` and `Xᵀ V⁻¹ X` invertible. With
+the convention that the inverse of a singular matrix is `0`, `Q = 0` when `V` is singular, and
+`r = y`, so `Q = (V⁻¹ y)ᵀ K (V⁻¹ y)`, when `V` is invertible but `Xᵀ V⁻¹ X` is singular. For
+`V = σ² I`, `σ² > 0`, and `Xᵀ X` invertible it is `σ⁻⁴` times the statistic
+`(y - μ̂)ᵀ K (y - μ̂)` of Wu et al. (2011, eq. (3)). -/
 noncomputable def skatQ (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matrix n m ℝ) (w : m → ℝ)
     (y : n → ℝ) : ℝ :=
   (V⁻¹ *ᵥ glsResidual X V y) ⬝ᵥ skatKernel G w *ᵥ (V⁻¹ *ᵥ glsResidual X V y)
 
-/-- The null projection `P = V⁻¹ - V⁻¹ X (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹`. -/
+/-- The null projection `P = V⁻¹ - V⁻¹ X (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹`. With the convention that the
+inverse of a singular matrix is `0`, `P = 0` when `V` is singular and `P = V⁻¹` when `V` is
+invertible but `Xᵀ V⁻¹ X` is singular. The intended use has `V` and `Xᵀ V⁻¹ X` invertible. -/
 noncomputable def projP (X : Matrix n q ℝ) (V : Matrix n n ℝ) : Matrix n n ℝ :=
   V⁻¹ - V⁻¹ * X * glsMatrix X V
 
@@ -233,8 +241,10 @@ noncomputable def variantScore (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Ma
   Gᵀ *ᵥ (projP X V *ᵥ y)
 
 /-- The matrix whose eigenvalues are the mixture weights of `Q` when the phenotype has
-covariance `V'`: `A = (P V'^{1/2})ᵀ K (P V'^{1/2})`, with `P` built from the null covariance
-`V`. Under the null hypothesis `V' = V`. -/
+covariance `V'` (when `Xᵀ V⁻¹ X` is invertible): `A = (P V'^{1/2})ᵀ K (P V'^{1/2})`, with `P`
+built from the null covariance `V`. Here `V'^{1/2}` is the positive semidefinite square root of
+`V'` when `V'` is positive semidefinite, and `0` otherwise (then `A = 0`). Under the null
+hypothesis `V' = V`. -/
 noncomputable def skatMixtureMatrix (X : Matrix n q ℝ) (V : Matrix n n ℝ) (G : Matrix n m ℝ)
     (w : m → ℝ) (V' : Matrix n n ℝ) : Matrix n n ℝ :=
   (projP X V * CFC.sqrt V')ᵀ * skatKernel G w * (projP X V * CFC.sqrt V')
@@ -266,12 +276,12 @@ theorem skatQ_eq_sum_variantScore (y : n → ℝ) :
     skatQ X V G w y = ∑ j, w j * variantScore X V G y j ^ 2 := by
   rw [skatQ_eq, dotProduct_skatKernel_mulVec, variantScore]
 
-/-- The null projection annihilates the covariates: `P X = 0`. -/
+/-- The null projection annihilates the covariates: `P X = 0` when `Xᵀ V⁻¹ X` is invertible. -/
 theorem projP_mul_self (hX : IsUnit (Xᵀ * V⁻¹ * X)) : projP X V * X = 0 := by
   rw [projP, Matrix.sub_mul, Matrix.mul_assoc (V⁻¹ * X), glsMatrix_mul_self hX, Matrix.mul_one,
     sub_self]
 
-/-- **Covariate effects drop out of `Q`**: `Q(X α + y) = Q(y)`. -/
+/-- **Covariate effects drop out of `Q`**: `Q(X α + y) = Q(y)` when `Xᵀ V⁻¹ X` is invertible. -/
 theorem skatQ_add_covariates (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ) (y : n → ℝ) :
     skatQ X V G w (X *ᵥ α + y) = skatQ X V G w y := by
   simp only [skatQ_eq, mulVec_add, mulVec_mulVec, projP_mul_self hX, zero_mulVec, zero_add]
@@ -316,10 +326,13 @@ theorem continuous_skatQ : Continuous (skatQ X V G w) := by
   unfold skatQ glsResidual
   fun_prop
 
-/-- **The law of the SKAT statistic is a weighted chi-square mixture.** If the phenotype is
-Gaussian, `y ~ N(X α, V')`, then `Q ~ ∑ⱼ λⱼ χ²₁` with `λ` the eigenvalues of
-`A = (P V'^{1/2})ᵀ K (P V'^{1/2})`, `P` the null projection built from `V`. Taking `V' = V`
-gives the null law; `V' = V + τ K` gives the law under the variance-component alternative. -/
+/-- **The law of the SKAT statistic is a weighted chi-square mixture.** If `Xᵀ V⁻¹ X` is invertible
+and the phenotype is Gaussian with mean `X α` in the span of the covariates, `y ~ N(X α, V')`, then
+`Q ~ ∑ⱼ λⱼ χ²₁` (independent `χ²₁` terms) with `λ` the eigenvalues of
+`A = (P V'^{1/2})ᵀ K (P V'^{1/2})`, `P` the null projection built from `V`. For `V'` not positive
+semidefinite, `V'^{1/2} = 0` and `N(X α, V')` is the point mass at `X α`, so both sides are the
+point mass at `0`. Taking `V' = V` gives the null law; `V' = V + τ K` gives the law under the
+variance-component alternative. -/
 theorem map_skatQ_multivariateGaussian (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ)
     (V' : Matrix n n ℝ) :
     (multivariateGaussian (toLp 2 (X *ᵥ α)) V').map (fun y => skatQ X V G w (ofLp y)) =
@@ -345,7 +358,7 @@ theorem trace_skatKernel_mul (N : Matrix n n ℝ) :
   rw [skatKernel, Matrix.mul_assoc, Matrix.mul_assoc, trace_mul_comm, Matrix.mul_assoc]
   simp [trace, diagonal_mul, Matrix.mul_assoc]
 
-/-- The total mixture weight is `∑ⱼ λⱼ = tr(K P V' Pᵀ)`. -/
+/-- For positive semidefinite `V'` the total mixture weight is `∑ⱼ λⱼ = tr(K P V' Pᵀ)`. -/
 theorem sum_eigenvalues_skatMixtureMatrix {V' : Matrix n n ℝ} (hV' : V'.PosSemidef) :
     ∑ j, (isHermitian_skatMixtureMatrix (X := X) (V := V) (G := G) (w := w) V').eigenvalues j =
       trace (skatKernel G w * (projP X V * V' * (projP X V)ᵀ)) := by
@@ -361,7 +374,8 @@ theorem sum_eigenvalues_skatMixtureMatrix {V' : Matrix n n ℝ} (hV' : V'.PosSem
   rw [transpose_mul, hS, Matrix.mul_assoc, ← Matrix.mul_assoc (CFC.sqrt V'), hSS,
     Matrix.mul_assoc]
 
-/-- The mean of `Q` under `y ~ N(X α, V')`: `𝔼 Q = tr(K P V' Pᵀ)`. -/
+/-- The mean of `Q` under `y ~ N(X α, V')`, a Gaussian phenotype with mean `X α` in the span of the
+covariates, for `V'` positive semidefinite and `Xᵀ V⁻¹ X` invertible: `𝔼 Q = tr(K P V' Pᵀ)`. -/
 theorem integral_skatQ_multivariateGaussian (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ)
     {V' : Matrix n n ℝ} (hV' : V'.PosSemidef) :
     ∫ y, skatQ X V G w (ofLp y) ∂multivariateGaussian (toLp 2 (X *ᵥ α)) V' =
@@ -374,7 +388,7 @@ theorem integral_skatQ_multivariateGaussian (hX : IsUnit (Xᵀ * V⁻¹ * X)) (�
   rw [h1, map_skatQ_multivariateGaussian hX, integral_weightedChiSq,
     sum_eigenvalues_skatMixtureMatrix hV']
 
-/-- The null projection is symmetric. -/
+/-- For positive definite `V` the null projection is symmetric. -/
 theorem transpose_projP (hV : V.PosDef) : (projP X V)ᵀ = projP X V := by
   have hVt : Vᵀ = V := by
     simpa [conjTranspose_eq_transpose_of_trivial] using hV.isHermitian.eq
@@ -385,7 +399,8 @@ theorem transpose_projP (hV : V.PosDef) : (projP X V)ᵀ = projP X V := by
   simp only [projP, glsMatrix, transpose_sub, transpose_mul, hVi, hC, transpose_transpose]
   simp only [Matrix.mul_assoc]
 
-/-- The null projection is a `V`-generalized inverse: `P V P = P`. -/
+/-- For positive definite `V` and invertible `Xᵀ V⁻¹ X` the null projection satisfies
+`P V P = P`, so `P V` is idempotent. -/
 theorem projP_mul_mul_projP (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) :
     projP X V * V * projP X V = projP X V := by
   have hd := (Matrix.isUnit_iff_isUnit_det _).mp hV.isUnit
@@ -399,8 +414,10 @@ theorem projP_mul_mul_projP (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) :
     mul_nonsing_inv _ hd, nonsing_inv_mul _ hd, Matrix.mul_one, Matrix.one_mul]
   abel
 
-/-- **The null mean of `Q` is `tr(P K)`**: under `H₀` (`y ~ N(X α, V)`) the mixture weights sum
-to `tr(K P)`, so the centred score `Q - tr(K P)` has mean zero. -/
+/-- **The null mean of `Q` is `tr(P K)`**: for positive definite `V` and invertible `Xᵀ V⁻¹ X`,
+under `H₀` (`y ~ N(X α, V)`, with mean `X α` in the span of the covariates) `𝔼₀ Q = tr(K P)`, so the
+centred score `Q - tr(K P)` has mean zero and the mixture weights of the null law sum to
+`tr(K P)`. -/
 theorem integral_skatQ_null (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ) :
     ∫ y, skatQ X V G w (ofLp y) ∂multivariateGaussian (toLp 2 (X *ᵥ α)) V =
       trace (skatKernel G w * projP X V) := by
@@ -409,7 +426,7 @@ theorem integral_skatQ_null (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) (�
 
 /-! ### Boundary case: the variance component at `τ = 0` -/
 
-/-- `Q ≥ 0`: the score test of `τ = 0` against `τ > 0` is one-sided. -/
+/-- With nonnegative weights `Q ≥ 0`: the score test of `τ = 0` against `τ > 0` is one-sided. -/
 theorem skatQ_nonneg (hw : 0 ≤ w) (y : n → ℝ) : 0 ≤ skatQ X V G w y := by
   rw [skatQ_eq_sum_variantScore]
   exact Finset.sum_nonneg fun j _ => mul_nonneg (hw j) (sq_nonneg _)
@@ -418,7 +435,8 @@ omit [Fintype n] [DecidableEq n] in
 /-- At `τ = 0` the alternative covariance is the null covariance. -/
 @[simp] theorem altCov_zero (V : Matrix n n ℝ) : altCov V G w 0 = V := by simp [altCov]
 
-/-- The mean excess `tr(K P K Pᵀ) ≥ 0` that a variance component adds to `𝔼 Q`. -/
+/-- With nonnegative weights `tr(K P K Pᵀ) ≥ 0`. For positive definite `V` and invertible
+`Xᵀ V⁻¹ X` it is the slope of the mean `τ ↦ 𝔼_τ Q` on `τ ≥ 0`: the excess per unit of `τ`. -/
 theorem trace_skatKernel_mul_projP_nonneg (hw : 0 ≤ w) :
     0 ≤ trace (skatKernel G w * (projP X V * skatKernel G w * (projP X V)ᵀ)) := by
   rw [trace_skatKernel_mul]
@@ -429,8 +447,10 @@ theorem trace_skatKernel_mul_projP_nonneg (hw : 0 ≤ w) :
     simpa [conjTranspose_eq_transpose_of_trivial] using hN.conjTranspose_mul_mul_same G
   exact Finset.sum_nonneg fun j _ => mul_nonneg (hw j) hM.diag_nonneg
 
-/-- **The mean of `Q` along the variance-component alternative**: for `τ ≥ 0`,
-`𝔼_τ Q = tr(K P) + τ tr(K P K Pᵀ)`, an affine function of `τ` with nonnegative slope. -/
+/-- **The mean of `Q` along the variance-component alternative**: for positive definite `V`,
+invertible `Xᵀ V⁻¹ X`, nonnegative weights and `τ ≥ 0`, under `y ~ N(X α, V + τ K)` with mean `X α`
+in the span of the covariates, `𝔼_τ Q = tr(K P) + τ tr(K P K Pᵀ)`, an affine function of `τ` with
+nonnegative slope. -/
 theorem integral_skatQ_altCov (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) (hw : 0 ≤ w)
     {τ : ℝ} (hτ : 0 ≤ τ) (α : q → ℝ) :
     ∫ y, skatQ X V G w (ofLp y) ∂multivariateGaussian (toLp 2 (X *ᵥ α)) (altCov V G w τ) =
@@ -443,8 +463,10 @@ theorem integral_skatQ_altCov (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) 
     integral_skatQ_null hV hX α, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_smul, trace_smul,
     smul_eq_mul]
 
-/-- **Boundary behaviour at `τ = 0`**: the null mean is the smallest mean on `τ ≥ 0`, so
-departures from the boundary `τ = 0` only push `Q` up and the test rejects for large `Q`. -/
+/-- **Boundary behaviour at `τ = 0`**: for positive definite `V`, invertible `Xᵀ V⁻¹ X` and
+nonnegative weights, for Gaussian phenotypes with the same mean `X α` in the span of the covariates,
+the null mean is the smallest mean on `τ ≥ 0`, so departures from the boundary `τ = 0` can only
+increase the mean of `Q`, and the test rejects for large `Q`. -/
 theorem integral_skatQ_null_le_altCov (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X))
     (hw : 0 ≤ w) {τ : ℝ} (hτ : 0 ≤ τ) (α : q → ℝ) :
     ∫ y, skatQ X V G w (ofLp y) ∂multivariateGaussian (toLp 2 (X *ᵥ α)) V ≤
@@ -452,7 +474,8 @@ theorem integral_skatQ_null_le_altCov (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻�
   rw [integral_skatQ_altCov hV hX hw hτ, integral_skatQ_null hV hX]
   exact le_add_of_nonneg_right (mul_nonneg hτ (trace_skatKernel_mul_projP_nonneg hw))
 
-/-- Under `H₀` the law of `Q` puts no mass below `0`. -/
+/-- For invertible `Xᵀ V⁻¹ X` and nonnegative weights, under `H₀` (`y ~ N(X α, V)`, with mean `X α`
+in the span of the covariates) the law of `Q` puts no mass below `0`. -/
 theorem map_skatQ_null_Iio (hX : IsUnit (Xᵀ * V⁻¹ * X)) (hw : 0 ≤ w) (α : q → ℝ) :
     (multivariateGaussian (toLp 2 (X *ᵥ α)) V).map (fun y => skatQ X V G w (ofLp y))
       (Set.Iio 0) = 0 := by
@@ -462,7 +485,8 @@ theorem map_skatQ_null_Iio (hX : IsUnit (Xᵀ * V⁻¹ * X)) (hw : 0 ≤ w) (α 
 /-! ### Boundary case: rare alleles -/
 
 /-- The default SKAT variant weight of Wu et al. (2011): `√wⱼ = Beta(MAFⱼ; 1, 25)`, the
-`Beta(1, 25)` density `25 (1 - MAF)²⁴`, so `wⱼ = (25 (1 - MAFⱼ)²⁴)²`. -/
+`Beta(1, 25)` density `25 (1 - MAF)²⁴`, so `wⱼ = (25 (1 - MAFⱼ)²⁴)²`. The polynomial is
+defined for every real `MAF`; it is the squared density only for `MAF ∈ [0, 1]`. -/
 noncomputable def betaWeight (maf : ℝ) : ℝ := (25 * (1 - maf) ^ 24) ^ 2
 
 /-- The weight of a variant of vanishing frequency is `25² = 625`. -/
@@ -473,14 +497,14 @@ theorem betaWeight_one : betaWeight 1 = 0 := by norm_num [betaWeight]
 
 theorem betaWeight_nonneg (maf : ℝ) : 0 ≤ betaWeight maf := sq_nonneg _
 
-/-- **Rarer variants get larger weights**: `betaWeight` is antitone on `[0, 1]`. -/
+/-- **Rarer variants get weights at least as large**: `betaWeight` is antitone on `[0, 1]`. -/
 theorem betaWeight_antitoneOn : AntitoneOn betaWeight (Set.Icc 0 1) := by
   intro a ha b hb hab
   have h1 : 0 ≤ 1 - b := by linarith [hb.2]
   have h2 : (1 - b) ^ 24 ≤ (1 - a) ^ 24 := pow_le_pow_left₀ h1 (by linarith) 24
   exact pow_le_pow_left₀ (by positivity) (by linarith) 2
 
-/-- The weights are bounded by their rare-variant limit `625`. -/
+/-- On `[0, 1]` the weights are bounded by their rare-variant limit `625`. -/
 theorem betaWeight_le {maf : ℝ} (h0 : 0 ≤ maf) (h1 : maf ≤ 1) : betaWeight maf ≤ 625 :=
   betaWeight_zero ▸ betaWeight_antitoneOn ⟨le_rfl, zero_le_one⟩ ⟨h0, h1⟩ h0
 
@@ -493,8 +517,9 @@ theorem transpose_mul_mul_apply_self (N : Matrix n n ℝ) (j : m) :
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun l _ => ?_
   ring
 
-/-- **The null mean splits over variants**: `𝔼₀ Q = ∑ⱼ wⱼ gⱼᵀ P gⱼ`. A variant enters the
-calibration only through `wⱼ` times the quadratic form of its genotype column. -/
+/-- **The null mean splits over variants**: for positive definite `V` and invertible `Xᵀ V⁻¹ X`,
+under `y ~ N(X α, V)` with mean `X α` in the span of the covariates, `𝔼₀ Q = ∑ⱼ wⱼ gⱼᵀ P gⱼ`. A
+variant enters the calibration only through `wⱼ` times the quadratic form of its genotype column. -/
 theorem integral_skatQ_null_eq_sum (hV : V.PosDef) (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → ℝ) :
     ∫ y, skatQ X V G w (ofLp y) ∂multivariateGaussian (toLp 2 (X *ᵥ α)) V =
       ∑ j, w j * ((fun i => G i j) ⬝ᵥ projP X V *ᵥ (fun i => G i j)) := by
@@ -544,8 +569,8 @@ variable {Φ : Matrix n n ℝ} {σg2 σe2 : ℝ}
 
 omit [Fintype n] in
 /-- **A singular relationship matrix is harmless when there is residual noise**: for `Φ`
-positive semidefinite (possibly singular) and `σ_e² > 0` the null covariance is positive
-definite. -/
+positive semidefinite (possibly singular), `σ_g² ≥ 0` and `σ_e² > 0` the null covariance is
+positive definite. -/
 theorem posDef_nullCov (hΦ : Φ.PosSemidef) (hg : 0 ≤ σg2) (he : 0 < σe2) :
     (nullCov Φ σg2 σe2).PosDef :=
   PosDef.posSemidef_add (hΦ.smul hg) (PosDef.one.smul he)
@@ -554,18 +579,20 @@ theorem posDef_nullCov (hΦ : Φ.PosSemidef) (hg : 0 ≤ σg2) (he : 0 < σe2) :
 theorem nullCov_zero_mulVec {v : n → ℝ} (hv : Φ *ᵥ v = 0) : nullCov Φ σg2 0 *ᵥ v = 0 := by
   simp [nullCov, smul_mulVec, hv]
 
-/-- **Singular kinship without noise makes `Σ₀` singular.** -/
+/-- **Singular kinship without noise makes `Σ₀` singular**: if `Φ v = 0` for some `v ≠ 0`,
+then `det Σ₀ = 0` for `σ_e² = 0` and every `σ_g²`. -/
 theorem det_nullCov_zero {v : n → ℝ} (hv0 : v ≠ 0) (hv : Φ *ᵥ v = 0) :
     (nullCov Φ σg2 0).det = 0 :=
   exists_mulVec_eq_zero_iff.1 ⟨v, hv0, nullCov_zero_mulVec hv⟩
 
-/-- With a singular covariance `V`, Mathlib's inverse is `V⁻¹ = 0`, so the null projection, and
-with it `Q`, collapses to `0`: the GLS formula defining the test is not available. -/
+/-- With a singular covariance `V`, the inverse of a singular matrix being `0`, `V⁻¹ = 0`, so the
+null projection, and with it `Q`, collapses to `0`: the GLS formula defining the test is not
+available. -/
 theorem projP_of_det_eq_zero (h : V.det = 0) : projP X V = 0 := by
   have hV : V⁻¹ = 0 := nonsing_inv_apply_not_isUnit V (by simp [h])
   simp [projP, glsMatrix, hV]
 
-/-- `Q ≡ 0` for a singular null covariance (Mathlib's inverse convention). -/
+/-- `Q ≡ 0` for a singular null covariance (the inverse of a singular matrix is `0`). -/
 theorem skatQ_of_det_eq_zero (h : V.det = 0) (y : n → ℝ) : skatQ X V G w y = 0 := by
   simp [skatQ_eq, projP_of_det_eq_zero h]
 
@@ -607,8 +634,9 @@ section Kinship
 
 open Relatedness Kinship
 
-/-- **Twice the kinship matrix of an IBD model is positive semidefinite**: it is the genotype
-covariance `Cov(xᵢ, xⱼ) = 2p(1 - p) · 2 φᵢⱼ` divided by `2p(1 - p) > 0`. -/
+/-- **Twice the kinship matrix of an IBD model is positive semidefinite** (finitely many
+individuals, `μ` a probability measure): it is the genotype covariance
+`Cov(xᵢ, xⱼ) = 2p(1 - p) · 2 φᵢⱼ` divided by `2p(1 - p) > 0`. -/
 theorem posSemidef_two_kinship {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     [IsProbabilityMeasure μ] {ι : Type*} [Finite ι] (D : IBDModel μ ι) :
     (Matrix.of fun i j => 2 * D.kinship i j).PosSemidef := by
@@ -654,14 +682,14 @@ theorem posSemidef_two_kinship {Ω : Type*} [MeasurableSpace Ω] {μ : Measure �
 noncomputable def pedigreeRelationship {N : ℕ} (P : Pedigree N) : Matrix (Fin N) (Fin N) ℝ :=
   Matrix.of fun i j => 2 * P.kinship i j
 
-/-- The pedigree relationship matrix is positive semidefinite (it may be singular). -/
+/-- The pedigree relationship matrix is positive semidefinite. -/
 theorem posSemidef_pedigreeRelationship {N : ℕ} (P : Pedigree N) :
     (pedigreeRelationship P).PosSemidef := by
   have h := posSemidef_two_kinship (P.ibdModel (1 / 2) (by norm_num) (by norm_num))
   simpa [pedigreeRelationship, Pedigree.ibdModel_kinship_eq_kinship] using h
 
 /-- **The famSKAT null covariance of a pedigree** `Σ₀ = σ_g² · 2Φ + σ_e² I` is positive definite
-whenever `σ_e² > 0`. -/
+whenever `σ_g² ≥ 0` and `σ_e² > 0`. -/
 theorem posDef_nullCov_pedigreeRelationship {N : ℕ} (P : Pedigree N) {σg2 σe2 : ℝ}
     (hg : 0 ≤ σg2) (he : 0 < σe2) : (nullCov (pedigreeRelationship P) σg2 σe2).PosDef :=
   posDef_nullCov (posSemidef_pedigreeRelationship P) hg he

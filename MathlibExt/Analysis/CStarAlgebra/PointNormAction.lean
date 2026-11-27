@@ -1,0 +1,379 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Algebra.Group.Monoid
+public import Mathlib.Analysis.CStarAlgebra.Spectrum
+public import Mathlib.Topology.Algebra.ContinuousMonoidHom
+
+/-!
+# Point-norm continuous actions on C-star algebras
+
+This file defines explicit multiplicative monoid actions by complex
+star-algebra automorphisms. Continuity is recorded in point-norm form: the
+orbit of every coefficient is continuous. Since every automorphism is
+isometric, point-norm continuity implies joint continuity of evaluation.
+
+The action is an explicit value rather than a typeclass, so several actions
+on one algebra may be used simultaneously.
+-/
+
+@[expose] public section
+
+open Filter
+open scoped CStarAlgebra
+
+universe uG uH uA uB uC uD uX
+
+noncomputable section
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+A point-norm continuous multiplicative monoid action by complex star-algebra automorphisms. -/
+structure PointNormCStarAction
+    (G : Type uG) (A : Type uA)
+    [Monoid G] [TopologicalSpace G] [NonUnitalCStarAlgebra A] where
+  /-- The action as a monoid homomorphism into star-algebra automorphisms. -/
+  toMonoidHom : G →* (A ≃⋆ₐ[ℂ] A)
+  /-- Every coefficient has a continuous orbit map. -/
+  continuous_orbit : ∀ a : A, Continuous fun g ↦ toMonoidHom g a
+
+namespace PointNormCStarAction
+
+variable {G : Type uG} {H : Type uH}
+variable {A : Type uA} {B : Type uB}
+variable [TopologicalSpace G] [TopologicalSpace H]
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+
+section Monoid
+
+variable [Monoid G]
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+Two point-norm actions are equal when their monoid homomorphisms are equal. -/
+theorem ext {α β : PointNormCStarAction G A}
+    (h : α.toMonoidHom = β.toMonoidHom) : α = β := by
+  cases α
+  cases β
+  cases h
+  rfl
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The automorphism at one monoid element. -/
+def aut (α : PointNormCStarAction G A) (g : G) : A ≃⋆ₐ[ℂ] A :=
+  α.toMonoidHom g
+
+instance : CoeFun (PointNormCStarAction G A) fun _ ↦ G → A → A where
+  coe α g := α.aut g
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+Two point-norm actions are equal when they agree on every monoid element and coefficient. -/
+@[ext]
+theorem ext_apply {α β : PointNormCStarAction G A}
+    (h : ∀ g a, α g a = β g a) : α = β := by
+  apply ext
+  apply MonoidHom.ext
+  intro g
+  apply StarAlgEquiv.ext
+  intro a
+  exact h g a
+
+theorem aut_apply (α : PointNormCStarAction G A) (g : G) (a : A) :
+    α.aut g a = α g a :=
+  rfl
+
+@[simp]
+theorem aut_one (α : PointNormCStarAction G A) : α.aut 1 = 1 :=
+  α.toMonoidHom.map_one
+
+@[simp]
+theorem aut_mul (α : PointNormCStarAction G A) (g h : G) :
+    α.aut (g * h) = α.aut g * α.aut h :=
+  α.toMonoidHom.map_mul g h
+
+@[simp]
+theorem apply_one (α : PointNormCStarAction G A) (a : A) : α 1 a = a := by
+  change α.aut 1 a = a
+  rw [aut_one]
+  rfl
+
+@[simp]
+theorem apply_mul (α : PointNormCStarAction G A) (g h : G) (a : A) :
+    α (g * h) a = α g (α h a) := by
+  change α.aut (g * h) a = α.aut g (α.aut h a)
+  rw [aut_mul]
+  rfl
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The orbit of a coefficient as a continuous map. -/
+def orbit (α : PointNormCStarAction G A) (a : A) : C(G, A) :=
+  ⟨fun g ↦ α g a, α.continuous_orbit a⟩
+
+@[simp]
+theorem orbit_apply (α : PointNormCStarAction G A) (a : A) (g : G) :
+    α.orbit a g = α g a :=
+  rfl
+
+@[simp]
+theorem apply_zero (α : PointNormCStarAction G A) (g : G) : α g 0 = 0 :=
+  map_zero (α.aut g)
+
+@[simp]
+theorem apply_add (α : PointNormCStarAction G A) (g : G) (a b : A) :
+    α g (a + b) = α g a + α g b :=
+  map_add (α.aut g) a b
+
+@[simp]
+theorem apply_mul_elem (α : PointNormCStarAction G A) (g : G) (a b : A) :
+    α g (a * b) = α g a * α g b :=
+  map_mul (α.aut g) a b
+
+@[simp]
+theorem apply_star (α : PointNormCStarAction G A) (g : G) (a : A) :
+    α g (star a) = star (α g a) :=
+  map_star (α.aut g) a
+
+@[simp]
+theorem apply_smul (α : PointNormCStarAction G A) (g : G) (z : ℂ) (a : A) :
+    α g (z • a) = z • α g a :=
+  map_smul (α.aut g) z a
+
+theorem norm_apply (α : PointNormCStarAction G A) (g : G) (a : A) :
+    ‖α g a‖ = ‖a‖ :=
+  StarAlgEquiv.norm_map (α.aut g) a
+
+theorem dist_apply (α : PointNormCStarAction G A) (g : G) (a b : A) :
+    dist (α g a) (α g b) = dist a b :=
+  (StarAlgEquiv.isometry (α.aut g)).dist_eq a b
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology. Let `X` be a topological parameter space. The group or monoid parameter and
+the coefficient or vector parameter are continuous functions on `X`.
+
+Point-norm continuity and isometry imply continuity when both the monoid element and coefficient
+vary. -/
+theorem continuous_apply
+    {X : Type uX} [TopologicalSpace X]
+    (α : PointNormCStarAction G A)
+    {g : X → G} {a : X → A}
+    (hg : Continuous g) (ha : Continuous a) :
+    Continuous fun x ↦ α (g x) (a x) := by
+  rw [continuous_iff_continuousAt]
+  intro x
+  rw [ContinuousAt, Metric.tendsto_nhds]
+  intro ε hε
+  filter_upwards
+      [(Metric.tendsto_nhds.mp ha.continuousAt) (ε / 2) (half_pos hε),
+        (Metric.tendsto_nhds.mp
+          ((α.continuous_orbit (a x)).comp hg).continuousAt)
+            (ε / 2) (half_pos hε)] with y hya hyg
+  calc
+    dist (α (g y) (a y)) (α (g x) (a x)) ≤
+        dist (α (g y) (a y)) (α (g y) (a x)) +
+          dist (α (g y) (a x)) (α (g x) (a x)) :=
+      dist_triangle _ _ _
+    _ = dist (a y) (a x) +
+          dist (α (g y) (a x)) (α (g x) (a x)) := by
+      rw [α.dist_apply]
+    _ < ε / 2 + ε / 2 := add_lt_add hya hyg
+    _ = ε := add_halves ε
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+Joint continuity of the action map. -/
+theorem continuous_action (α : PointNormCStarAction G A) :
+    Continuous fun p : G × A ↦ α p.1 p.2 :=
+  α.continuous_apply continuous_fst continuous_snd
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The trivial point-norm action. -/
+def trivial (G : Type uG) (A : Type uA)
+    [Monoid G] [TopologicalSpace G] [NonUnitalCStarAlgebra A] :
+    PointNormCStarAction G A where
+  toMonoidHom := 1
+  continuous_orbit := fun _ ↦ continuous_const
+
+@[simp]
+theorem trivial_apply (g : G) (a : A) : trivial G A g a = a :=
+  rfl
+
+section Restrict
+
+variable [Monoid H]
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology. The restricting map from a second monoid `H` to `G` is a continuous monoid
+homomorphism.
+
+Restrict an action along a continuous monoid homomorphism. -/
+def restrict (α : PointNormCStarAction G A) (f : ContinuousMonoidHom H G) :
+    PointNormCStarAction H A where
+  toMonoidHom := α.toMonoidHom.comp f.toMonoidHom
+  continuous_orbit := fun a ↦ (α.continuous_orbit a).comp (map_continuous f)
+
+@[simp]
+theorem restrict_apply (α : PointNormCStarAction G A)
+    (f : ContinuousMonoidHom H G) (h : H) (a : A) :
+    α.restrict f h a = α (f h) a :=
+  rfl
+
+end Restrict
+
+/-! ## Equivariant homomorphisms -/
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` and `B` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+A nonunital star-algebra homomorphism intertwining two point-norm actions. -/
+structure Hom (α : PointNormCStarAction G A) (β : PointNormCStarAction G B)
+    extends A →⋆ₙₐ[ℂ] B where
+  equivariant' : ∀ g a, toFun (α g a) = β g (toFun a)
+
+namespace Hom
+
+variable {α : PointNormCStarAction G A} {β : PointNormCStarAction G B}
+
+@[macro_inline]
+instance : FunLike (Hom α β) A B where
+  coe φ := φ.toNonUnitalStarAlgHom
+  coe_injective φ ψ h := by
+    cases φ with
+    | mk φ hφ =>
+      cases ψ with
+      | mk ψ hψ =>
+        have h' : φ = ψ := NonUnitalStarAlgHom.ext (congrFun h)
+        subst ψ
+        rfl
+
+instance : NonUnitalAlgHomClass (Hom α β) ℂ A B where
+  map_smulₛₗ φ := φ.toNonUnitalStarAlgHom.map_smul'
+  map_add φ := φ.toNonUnitalStarAlgHom.map_add'
+  map_zero φ := φ.toNonUnitalStarAlgHom.map_zero'
+  map_mul φ := φ.toNonUnitalStarAlgHom.map_mul'
+
+instance : StarHomClass (Hom α β) A B where
+  map_star φ := φ.toNonUnitalStarAlgHom.map_star'
+
+@[simp]
+theorem equivariant (φ : Hom α β) (g : G) (a : A) :
+    φ (α g a) = β g (φ a) :=
+  φ.equivariant' g a
+
+@[ext]
+theorem ext {φ ψ : Hom α β} (h : ∀ a, φ a = ψ a) : φ = ψ := by
+  exact DFunLike.ext φ ψ h
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The identity equivariant homomorphism. -/
+def id (α : PointNormCStarAction G A) : Hom α α where
+  toNonUnitalStarAlgHom := NonUnitalStarAlgHom.id ℂ A
+  equivariant' := fun _ _ ↦ rfl
+
+@[simp]
+theorem id_apply (α : PointNormCStarAction G A) (a : A) : id α a = a :=
+  rfl
+
+/-- Let `G` be a monoid equipped with a topology, and let `A`, `B` and `C` be possibly nonunital
+complex C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient
+orbits in the norm topology.
+
+Composition of equivariant homomorphisms. -/
+def comp {C : Type uC} [NonUnitalCStarAlgebra C]
+    {γ : PointNormCStarAction G C}
+    (ψ : Hom β γ) (φ : Hom α β) : Hom α γ where
+  toNonUnitalStarAlgHom := NonUnitalStarAlgHom.comp
+    ψ.toNonUnitalStarAlgHom φ.toNonUnitalStarAlgHom
+  equivariant' := fun g a ↦ by
+    change ψ (φ (α g a)) = γ g (ψ (φ a))
+    rw [equivariant φ, equivariant ψ]
+
+@[simp]
+theorem comp_apply {C : Type uC} [NonUnitalCStarAlgebra C]
+    {γ : PointNormCStarAction G C}
+    (ψ : Hom β γ) (φ : Hom α β) (a : A) :
+    comp ψ φ a = ψ (φ a) :=
+  rfl
+
+@[simp]
+theorem id_comp (φ : Hom α β) : comp (id β) φ = φ := by
+  ext a
+  rfl
+
+@[simp]
+theorem comp_id (φ : Hom α β) : comp φ (id α) = φ := by
+  ext a
+  rfl
+
+theorem comp_assoc
+    {C : Type uC} {D : Type uD}
+    [NonUnitalCStarAlgebra C] [NonUnitalCStarAlgebra D]
+    {γ : PointNormCStarAction G C} {δ : PointNormCStarAction G D}
+    (χ : Hom γ δ) (ψ : Hom β γ) (φ : Hom α β) :
+    comp (comp χ ψ) φ = comp χ (comp ψ φ) := by
+  ext a
+  rfl
+
+end Hom
+
+end Monoid
+
+section Group
+
+variable [Group G]
+
+@[simp]
+theorem aut_inv (α : PointNormCStarAction G A) (g : G) :
+    α.aut g⁻¹ = (α.aut g)⁻¹ :=
+  α.toMonoidHom.map_inv g
+
+@[simp]
+theorem apply_inv_apply (α : PointNormCStarAction G A) (g : G) (a : A) :
+    α g⁻¹ (α g a) = a := by
+  calc
+    α g⁻¹ (α g a) = α (g⁻¹ * g) a := (α.apply_mul g⁻¹ g a).symm
+    _ = a := by simp
+
+@[simp]
+theorem apply_apply_inv (α : PointNormCStarAction G A) (g : G) (a : A) :
+    α g (α g⁻¹ a) = a := by
+  calc
+    α g (α g⁻¹ a) = α (g * g⁻¹) a := (α.apply_mul g g⁻¹ a).symm
+    _ = a := by simp
+
+end Group
+
+end PointNormCStarAction

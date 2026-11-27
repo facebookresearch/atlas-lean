@@ -45,6 +45,8 @@ splitting characters $(\chi_V, \chi_W)$, and Jacquet functors and parabolic indu
   of $\mathrm{GL}_n(F) \times \mathrm{GL}_m(F)$ on $\mathcal{S}(\mathrm{M}_{n \times m}(F))$ by rank and the unique-socle lemma
   used by Mínguez.
 
+## Expansion
+
 A good expansion has pages for Kudla's filtration of the Jacquet modules of the Weil representation, for
 the orbit filtration of the doubled degenerate principal series, for the reducibility points and module
 structure of the Siegel degenerate principal series $I_n(s, \chi)$ (non-archimedean and archimedean), for
@@ -57,6 +59,10 @@ statement and the sources below.
 
 - [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md), for the local Weil representation
 - [Parabolic induction and Jacquet functors](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md), for Jacquet modules and induced representations
+
+## Proof depends on
+
+- [ℓ-spaces, distributions and smooth representations of ℓ-groups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/l-spaces-distributions-and-smooth-representations-of-l-groups.md), for the exact sequences of Schwartz–Bruhat functions attached to an open subset and its closed complement in an $\ell$-space (Bernstein–Zelevinsky 1976, Chapter I, §1, as cited by Mínguez), for Kudla's filtration and the orbit filtrations
 
 ## Sources
 

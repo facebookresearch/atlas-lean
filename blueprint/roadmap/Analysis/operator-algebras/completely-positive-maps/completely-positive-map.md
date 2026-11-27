@@ -2,13 +2,10 @@
 
 Let $\mathcal S \subseteq B(H)$ and $\mathcal T \subseteq B(K)$ be operator systems, with $H$ and $K$ complex Hilbert spaces, and let $\varphi\colon \mathcal S \to \mathcal T$ be a linear map. For $n \ge 1$, the *$n$-th amplification* $\varphi_n\colon M_n(\mathcal S) \to M_n(\mathcal T)$ is $\varphi_n([a_{ij}]) = [\varphi(a_{ij})]$. The map $\varphi$ is *$n$-positive* if $\varphi_n(M_n(\mathcal S)^+) \subseteq M_n(\mathcal T)^+$. It is *completely positive* if it is $n$-positive for every $n \ge 1$.
 
-## Expansion
-
-A good expansion of this node links each notion it is built from: linear maps.
-
 ## Depends on
 
 - [Concrete operator system](concrete-operator-system.md)
+- [Linear map](../../../Algebra/modules/linear-map.md)
 
 ## Sources
 

@@ -17,6 +17,7 @@ public import Mathlib.RingTheory.PowerSeries.Expand
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
 public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorInverseConvolution
 public import MathlibExt.RingTheory.PowerSeries.PowerRecursion
+public import MathlibExt.RingTheory.PowerSeries.PowerRecursionZPow
 public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorProduct
 public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorPowRecursion
 
@@ -225,25 +226,6 @@ public theorem_wanted glaisher_theta_divisor_recursions (n : ℕ) (hn : 0 < n) :
     4 * ∑ j ∈ Finset.Icc 1 n, (dF j) * σ₁ (2 * n + 1 - 2 * j) = (n : ℤ) * σ₁ (2 * n + 1) ∧
     16 * ∑ j ∈ Finset.Ioo 0 n, (dD j) * σtilde₃ (n - j) = (dD n) - (n : ℤ) * σtilde₃ n ∧
     8 * ∑ j ∈ Finset.Icc 1 n, (dF j) * σbar₃ (n + 1 - j) = (n : ℤ) * σbar₃ (n + 1)
-
-/-- **Power recursion lemma for nonzero integer exponents.** Let $K$ be a field of characteristic
-zero, let $A$ be an invertible formal power series in $K[[X]]$, and let $u$ and $v$ be nonzero
-integers. Write $a_u(k)$ and $a_v(k)$ for the coefficients of $X^k$ in $A^u$ and $A^v$. Then for
-every natural number $n$,
-
-$$\sum_{k=0}^{n} \left(n - \left(\frac{u}{v} + 1\right) k\right) a_u(n-k)\, a_v(k) = 0.$$
-
-Invertibility of $A$ is assumed so that the negative powers $A^u$, $A^v$ make sense.
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Lemma 17
-(`jis-2024-24.1.6-lem-17`). -/
-public theorem_wanted power_coeff_convolution_zpow {K : Type*} [Field K] [CharZero K]
-    (A : (PowerSeries K)ˣ) (u v : ℤ) (hu : u ≠ 0) (hv : v ≠ 0) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-      ((n : K) - ((u : K) / v + 1) * k) *
-        coeff (n - k) ((A ^ u : (PowerSeries K)ˣ) : PowerSeries K) *
-        coeff k ((A ^ v : (PowerSeries K)ˣ) : PowerSeries K) = 0
 
 /-- **Six divisor-function identities from the power recursion lemma.** Let $n \ge 1$ be a
 natural number. Write $\sigma(m)$ for the sum of the positive divisors of $m$,

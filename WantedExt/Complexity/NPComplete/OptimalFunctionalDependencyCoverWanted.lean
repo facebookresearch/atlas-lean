@@ -18,7 +18,7 @@ Definition 5.1 and Section 5.7 (optimal covers; finding one is NP-complete).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Databases.FunctionalDependencies
 public import CSLibExt.Databases.NormalForms
 public import MathlibExt.Computability.BinaryNatEncoding

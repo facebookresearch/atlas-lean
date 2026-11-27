@@ -18,9 +18,9 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 public import WantedExt.Complexity.NPComplete.UnitDiskDominatingSetWanted
 
 @[expose] public section
@@ -47,7 +47,7 @@ Euclidean distance at most `1` are adjacent). The instance lists the points, the
 and `K`: well-formedness requires positive denominators, distinct centers ("the centers of disks
 do not coincide"), a MAXIMUM CUT edge list on the vertices `0, ..., |P| - 1`, and that this edge
 list is exactly the unit disk graph of the points. The question is MAXIMUM CUT's
-(`WantedExt.Complexity.NPComplete.MaxCutWanted`) on `(|P|, E, K)`, reused unchanged.
+(`CSLibExt.Complexity.NPComplete.MaxCutDefs`) on `(|P|, E, K)`, reused unchanged.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and

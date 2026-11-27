@@ -11,4 +11,5 @@ Pairwise and multiple alignment of biological sequences: Needleman–Wunsch and 
 - [Profile hidden Markov models](profile-hidden-markov-models/README.md)
 - [Semi-global and overlap alignment](semi-global-and-overlap-alignment/README.md)
 - [Smith–Waterman local alignment](smith-waterman-local-alignment/README.md)
+- [Two-sequence Karlin–Altschul statistics](two-sequence-karlin-altschul-statistics/README.md)
 - [Wavefront alignment algorithm](wavefront-alignment-algorithm/README.md)

@@ -1,15 +1,23 @@
 #!/usr/bin/env python3
-"""Unit tests for pinned_bump.py. No network, no git, no Lake. Run:
+"""Unit tests for pinned_bump.py and the bump guard workflow's API reads.
+No network, no git, no Lake. Run:
 python3 scripts/bump/test_pinned_bump.py
 """
 
+import contextlib
 import hashlib
+import io
 import json
+import os
+import re
 import shutil
+import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -99,7 +107,7 @@ class FakeGitHub(GitHub):
         if path in ("lakefile.toml", "lakefile.lean"):
             if (slug, path) in self._lakefiles:
                 return b"# fixture lakefile\n"
-            raise RuntimeError(
+            raise pinned_bump.GitHubNotFound(
                 f"gh api repos/{slug}/contents/{path} failed: Not Found (HTTP 404)")
         return json.dumps(self._upstream[(slug, ref)]).encode()
 
@@ -2322,6 +2330,409 @@ class VersionTests(unittest.TestCase):
     def test_release_sorts_after_rc(self):
         self.assertGreater(pinned_bump.version_key("v4.36.0"),
                            pinned_bump.version_key("v4.36.0-rc2"))
+
+
+def http_answer(status, body=b"", headers=()):
+    """What `gh api --include` prints for an HTTP answer."""
+    head = f"HTTP/2.0 {status} Status\n".encode()
+    head += b"".join(f"{name}: {value}\r\n".encode() for name, value in headers)
+    return head + b"Content-Type: application/json\r\n\r\n" + body
+
+
+# (returncode, stdout, stderr) of `gh api --include` for each kind of transient failure.
+TRANSIENT_ANSWERS = {
+    "no answer": (1, b"", b'Get "https://api.github.com/x": dial tcp: i/o timeout'),
+    "empty 200": (0, http_answer(200), b""),
+    "cut-off 200": (0, http_answer(200, b'{"a": '), b""),
+    "cut-off character": (0, http_answer(200, b'"\xe2\x82'), b""),
+    "HTML 502": (1, http_answer(502, b"<html>"), b"gh: HTTP 502"),
+    "503 without its status in gh's message": (1, http_answer(503, b'{"errors": "x"}'),
+                                               b"gh: Service unavailable"),
+    "408": (1, http_answer(408, b"{}"), b"gh: Request Timeout (HTTP 408)"),
+    "200 with a leading zero": (0, http_answer(200, b'{"count": 01, "content": "aGk="}'), b""),
+    "200 with NaN": (0, http_answer(200, b'{"count": NaN, "content": "aGk="}'), b""),
+}
+NOW = 1_800_000_000
+SECONDARY = b'{"message": "You have exceeded a secondary rate limit. Please wait."}'
+
+
+def rate_limited(status, headers, body=b"{}"):
+    return (1, http_answer(status, body, headers), f"gh: rate limited (HTTP {status})".encode())
+
+
+# A rate limit that asks for a wait, and how long it asks for, in seconds, at NOW.
+RATE_LIMITS = {
+    "Retry-After": (rate_limited(403, [("Retry-After", "30")]), 30),
+    "429 with Retry-After": (rate_limited(429, [("Retry-After", "45")]), 45),
+    "no request left": (rate_limited(403, [("X-Ratelimit-Remaining", "0"),
+                                           ("X-Ratelimit-Reset", str(NOW + 20))]), 21),
+    "secondary limit, by its message": (
+        rate_limited(403, [("X-Ratelimit-Remaining", "4000")], SECONDARY), 60),
+    "429 without timing headers": (rate_limited(429, []), 60),
+}
+# A rate limit that asks for more than the guard waits.
+LONG_RATE_LIMITS = {
+    "Retry-After": rate_limited(429, [("Retry-After", "120")]),
+    "no request left": rate_limited(403, [("X-Ratelimit-Remaining", "0"),
+                                          ("X-Ratelimit-Reset", str(NOW + 3600))]),
+}
+# Failures that are not retried; the stderr of the first misleads on purpose.
+PERMANENT_ANSWERS = {
+    "403 that mentions 404": (1, http_answer(403, b"{}", [("X-Ratelimit-Remaining", "4404")]),
+                              b"gh: Not Found (HTTP 404); rate limit; timeout"),
+    "401": (1, http_answer(401, b"{}"), b"gh: Bad credentials (HTTP 401)"),
+    "422": (1, http_answer(422, b"{}"), b"gh: No commit found for SHA: abc (HTTP 422)"),
+    "204": (0, http_answer(204), b""),
+}
+
+
+class GitHubApiRetryTests(unittest.TestCase):
+    """GitHub.api retries a transient failure, judged by HTTP status only."""
+
+    PATH = "repos/o/r/contents/f?ref=abc"
+    OK = (0, http_answer(200, b"[]"), b"")
+
+    def call(self, *outcomes):
+        """Run GitHub.api with each gh call producing the next outcome: an
+        exception to raise, or (returncode, stdout, stderr). Returns the result
+        (or the exception raised), the gh calls, the sleeps and stderr."""
+        calls, sleeps = [], []
+
+        def run(args, **kwargs):
+            calls.append((args, kwargs))
+            outcome = outcomes[len(calls) - 1]
+            if isinstance(outcome, BaseException):
+                raise outcome
+            code, stdout, stderr = outcome
+            return subprocess.CompletedProcess(args, code, stdout, stderr)
+
+        err = io.StringIO()
+        with mock.patch.object(pinned_bump.subprocess, "run", run), \
+                mock.patch.object(pinned_bump.time, "sleep", sleeps.append), \
+                contextlib.redirect_stderr(err):
+            try:
+                result = GitHub("o/r").api(self.PATH)
+            except (RuntimeError, ValueError) as exc:
+                result = exc
+        return result, calls, sleeps, err.getvalue()
+
+    def test_returns_the_json_of_a_200(self):
+        result, calls, sleeps, err = self.call((0, http_answer(200, b'{"a": "\xc3\xa9"}'), b""))
+        self.assertEqual((result, sleeps, err), ({"a": "\u00e9"}, [], ""))
+        self.assertEqual(calls[0][0], ["gh", "api", "--include", self.PATH])
+        self.assertEqual(calls[0][1]["timeout"], 30)
+
+    def test_a_transient_failure_is_retried(self):
+        answers = [*TRANSIENT_ANSWERS.items(), ("timeout", subprocess.TimeoutExpired(["gh"], 30))]
+        for kind, first in answers:
+            with self.subTest(kind):
+                result, calls, sleeps, err = self.call(first, self.OK)
+                self.assertEqual(result, [])
+                self.assertEqual((len(calls), len(sleeps)), (2, 1))
+                self.assertIn(f"::warning::gh api {self.PATH}: attempt 1 of 5 failed", err)
+
+    def test_waits_double_between_attempts(self):
+        result, calls, sleeps, _ = self.call(*[TRANSIENT_ANSWERS["HTML 502"]] * 4, self.OK)
+        self.assertEqual((result, len(calls)), ([], 5))
+        for wait, base in zip(sleeps, (2, 4, 8, 16), strict=True):
+            self.assertTrue(base <= wait <= 2 * base, (wait, base))
+
+    def test_the_last_transient_failure_is_raised_as_before(self):
+        result, calls, sleeps, _ = self.call(*[TRANSIENT_ANSWERS["HTML 502"]] * 5)
+        self.assertNotIsInstance(result, pinned_bump.GitHubNotFound)
+        self.assertEqual(str(result), f"gh api {self.PATH} failed: gh: HTTP 502")
+        self.assertEqual((len(calls), len(sleeps)), (5, 4))
+        result, _, _, _ = self.call(*[TRANSIENT_ANSWERS["empty 200"]] * 5)
+        self.assertIsInstance(result, json.JSONDecodeError)
+        result, _, _, _ = self.call(*[TRANSIENT_ANSWERS["cut-off character"]] * 5)
+        self.assertIsInstance(result, UnicodeDecodeError)
+        result, _, _, _ = self.call(*[subprocess.TimeoutExpired(["gh"], 30)] * 5)
+        self.assertEqual(str(result), f"gh api {self.PATH} failed: no answer within 30 seconds")
+
+    def test_a_404_raises_not_found_at_once(self):
+        result, calls, sleeps, err = self.call(
+            (1, http_answer(404, b'{"message": "Not Found"}'), b"gh: Not Found (HTTP 404)"))
+        self.assertIsInstance(result, pinned_bump.GitHubNotFound)
+        self.assertEqual(str(result), f"gh api {self.PATH} failed: gh: Not Found (HTTP 404)")
+        self.assertEqual((len(calls), sleeps, err), (1, [], ""))
+
+    def test_any_other_status_raises_at_once(self):
+        for kind, answer in PERMANENT_ANSWERS.items():
+            with self.subTest(kind):
+                result, calls, sleeps, err = self.call(answer)
+                self.assertIs(type(result), RuntimeError)
+                self.assertEqual((len(calls), sleeps, err), (1, [], ""))
+        self.assertEqual(str(self.call(PERMANENT_ANSWERS["204"])[0]),
+                         f"gh api {self.PATH} failed: HTTP 204")
+
+    def test_a_rate_limit_waits_as_long_as_it_asks(self):
+        with mock.patch.object(pinned_bump.time, "time", return_value=float(NOW)):
+            for kind, (answer, wait) in RATE_LIMITS.items():
+                with self.subTest(kind):
+                    result, calls, sleeps, _ = self.call(answer, self.OK)
+                    self.assertEqual((result, len(calls), sleeps), ([], 2, [wait]))
+            for kind, answer in LONG_RATE_LIMITS.items():
+                with self.subTest(kind):
+                    result, calls, sleeps, err = self.call(answer, self.OK)
+                    self.assertIs(type(result), RuntimeError)
+                    self.assertEqual((len(calls), sleeps), (1, []))
+                    self.assertIn("longer than the guard waits", err)
+
+    def test_a_second_fallback_wait_fails_at_once(self):
+        for answer in (rate_limited(429, []),
+                       rate_limited(403, [("X-Ratelimit-Remaining", "4000")], SECONDARY)):
+            with self.subTest(answer=answer[1][:12]):
+                result, calls, sleeps, err = self.call(answer, answer, self.OK)
+                self.assertIs(type(result), RuntimeError)
+                self.assertEqual((len(calls), sleeps), (2, [60]))
+                self.assertIn("rate limited for 120 s, longer than the guard waits", err)
+
+    def test_a_retry_notice_is_one_workflow_command(self):
+        _, _, _, err = self.call((1, http_answer(500), b"50%\r\nfine"), self.OK)
+        self.assertEqual(err.count("\n"), 1)
+        self.assertIn("50%25%0D%0Afine", err)
+
+
+class UpstreamConfigFilesTests(unittest.TestCase):
+    def probe(self, lean_error):
+        class Client:
+            def contents(self, slug, path, ref):
+                if path == "lakefile.lean":
+                    raise lean_error
+                return b""
+        return pinned_bump._upstream_config_files(Client(), "o/r", "404" * 13 + "4")
+
+    def test_only_a_404_means_absent(self):
+        self.assertEqual(self.probe(pinned_bump.GitHubNotFound("gh: Not Found (HTTP 404)")),
+                         {"lakefile.toml"})
+        # Any other failure is indeterminate, even when its text mentions 404.
+        self.assertIsNone(self.probe(RuntimeError(
+            "gh api repos/o/r/contents/lakefile.lean?ref=4044 failed: no answer within 30 seconds")))
+
+
+class GuardWorkflowApiReadTests(unittest.TestCase):
+    """bump-guard.yml reads GitHub through gh_api, which retries a transient
+    failure, judged by HTTP status only; download_one tolerates only a 404."""
+
+    WORKFLOW = Path(__file__).resolve().parents[2] / ".github" / "workflows" / "bump-guard.yml"
+    FAKE_GH = textwrap.dedent("""\
+        #!/usr/bin/env bash
+        n=$(( $(cat "$FAKE_DIR/count") + 1 ))
+        echo "$n" > "$FAKE_DIR/count"
+        printf '%s\\n' "$*" >> "$FAKE_DIR/calls"
+        cat "$FAKE_DIR/$n.out"
+        cat "$FAKE_DIR/$n.err" >&2
+        exit "$(cat "$FAKE_DIR/$n.code")"
+        """)
+    OK = (0, http_answer(200, b'{"type": "file", "encoding": "base64", "content": "aGVsbG8K"}'), b"")
+    # Valid answers without the wanted value: not retried.
+    WITHOUT_CONTENT = {
+        "directory": (0, http_answer(200, b'[{"name": "f", "type": "file"}]'), b""),
+        "file over 1 MB": (0, http_answer(200, b'{"type": "file", "encoding": "none", "content": ""}'), b""),
+        "no content": (0, http_answer(200, b'{"type": "file", "encoding": "base64"}'), b""),
+        "invalid base64": (0, http_answer(200, b'{"encoding": "base64", "content": "aGVs\\u0000bG8K"}'), b""),
+    }
+
+    @classmethod
+    def setUpClass(cls):
+        cls.text = cls.WORKFLOW.read_text(encoding="utf-8")
+        helpers = re.search(r"^( +)exec 3>&2\n.*?^\1GH_API_VALUE='\n.*?^\1'\n", cls.text, re.S | re.M)
+        download = re.search(r"^( +)download_one\(\) \{\n.*?^\1\}\n", cls.text, re.S | re.M)
+        assert helpers and download, "gh_api or download_one not found in bump-guard.yml"
+        cls.helpers = textwrap.dedent(helpers.group(0))
+        cls.download_one = textwrap.dedent(download.group(0))
+
+    def run_step(self, command, *outcomes, awk_fails=False, cat_fails=False):
+        """Run `command` after the workflow's helpers, each gh call producing
+        the next (returncode, stdout, stderr). Returns its status, stdout, the
+        stderr of `command`, the job log (fd 3), the gh calls, the sleeps and
+        the guard tree."""
+        with tempfile.TemporaryDirectory() as tmp:
+            fake = Path(tmp)
+            bin_dir = fake / "bin"
+            bin_dir.mkdir()
+            fakes = {"gh": self.FAKE_GH,
+                     "sleep": '#!/usr/bin/env bash\necho "$1" >> "$FAKE_DIR/sleeps"\n',
+                     # As the real one runs `timeout --kill-after=5 30 gh ...`.
+                     "timeout": '#!/usr/bin/env bash\nshift 2\nexec "$@"\n',
+                     # The clock that rate-limit resets are measured against.
+                     "date": f'#!/usr/bin/env bash\necho {NOW}\n'}
+            if awk_fails:
+                fakes["awk"] = "#!/usr/bin/env bash\nexit 2\n"
+            if cat_fails:
+                # Fails to copy only the value gh_api prints, the line "hello".
+                real = shutil.which("cat")
+                fakes["cat"] = (f'#!/usr/bin/env bash\nif [ -f "$1" ] && grep -qx hello "$1"; '
+                                f'then exit 1; fi\nexec {real} "$@"\n')
+            for name, body in fakes.items():
+                (bin_dir / name).write_text(body)
+                (bin_dir / name).chmod(0o755)
+            for n, (code, out, err) in enumerate(outcomes, 1):
+                (fake / f"{n}.code").write_text(str(code))
+                (fake / f"{n}.out").write_bytes(out)
+                (fake / f"{n}.err").write_bytes(err + b"\n" if err else err)
+            (fake / "count").write_text("0")
+            for name in ("calls", "sleeps", "command-err"):
+                (fake / name).write_text("")
+            guard = fake / "guard"
+            script = ("set -euo pipefail\nGITHUB_REPOSITORY=o/r\n" + self.helpers
+                      + self.download_one.replace("/tmp/guard", str(guard))
+                      + command + ' 2>"$FAKE_DIR/command-err"\n')
+            result = subprocess.run(
+                ["bash", "-c", script], capture_output=True, text=True, check=False,
+                env={**os.environ, "FAKE_DIR": tmp,
+                     "PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}"})
+            tree = {path.relative_to(guard).as_posix(): path.read_bytes()
+                    for path in guard.rglob("*") if path.is_file()} if guard.exists() else {}
+            return (result.returncode, result.stdout, (fake / "command-err").read_text(),
+                    result.stderr, (fake / "calls").read_text().splitlines(),
+                    [int(line) for line in (fake / "sleeps").read_text().split()], tree)
+
+    def read(self, *outcomes):
+        return self.run_step('gh_api "repos/o/r/contents/f?ref=abc" content', *outcomes)
+
+    def download(self, required, *outcomes, **options):
+        return self.run_step(f"download_one tree abc dir/f {required}", *outcomes, **options)
+
+    def test_every_api_read_goes_through_gh_api(self):
+        self.assertNotRegex(self.text, r'(?<![\w-])gh api "repos/')
+        self.assertEqual(len(re.findall(r'\bgh_api "repos/', self.text)), 2)
+        self.assertIn('timeout --kill-after=5 30 gh api --include "$path" >', self.helpers)
+
+    def test_a_200_prints_the_value(self):
+        status, out, err, log, calls, sleeps, _ = self.read(self.OK)
+        self.assertEqual((status, out, err, log, sleeps), (0, "hello\n", "", "", []))
+        self.assertEqual(calls, ["api --include repos/o/r/contents/f?ref=abc"])
+
+    def test_a_transient_failure_is_retried(self):
+        answers = [*TRANSIENT_ANSWERS.items(), ("timeout", (124, b"", b""))]
+        for kind, first in answers:
+            with self.subTest(kind):
+                status, out, err, log, calls, sleeps, _ = self.read(first, self.OK)
+                self.assertEqual((status, out, err), (0, "hello\n", ""))
+                self.assertEqual(len(calls), 2)
+                self.assertEqual(len(sleeps), 1)
+                self.assertTrue(2 <= sleeps[0] <= 3, sleeps)
+                self.assertIn("::warning::gh api repos/o/r/contents/f?ref=abc: attempt 1 of 5 "
+                              "failed", log)
+
+    def test_gives_up_after_five_attempts(self):
+        last = TRANSIENT_ANSWERS["503 without its status in gh's message"]
+        status, out, err, log, calls, sleeps, _ = self.read(
+            *[TRANSIENT_ANSWERS["HTML 502"]] * 4, last)
+        self.assertEqual((status, out), (1, ""))
+        self.assertEqual(err, "gh: Service unavailable\n"
+                              "gh api repos/o/r/contents/f?ref=abc failed: HTTP 503\n")
+        self.assertEqual(len(calls), 5)
+        for wait, base in zip(sleeps, (2, 4, 8, 16), strict=True):
+            self.assertTrue(base <= wait < 2 * base, (wait, base))
+        self.assertEqual(log.count("::warning::"), 4)
+        self.assertIn("::error::gh api repos/o/r/contents/f?ref=abc failed 5 times (503)", log)
+
+    def test_408_is_retried_until_the_attempts_run_out(self):
+        status, _, err, _, calls, sleeps, _ = self.read(*[TRANSIENT_ANSWERS["408"]] * 5)
+        self.assertEqual((status, len(calls), len(sleeps)), (1, 5, 4))
+        self.assertTrue(err.endswith("failed: HTTP 408\n"), err)
+
+    def test_a_rate_limit_waits_as_long_as_it_asks(self):
+        for kind, (answer, wait) in RATE_LIMITS.items():
+            with self.subTest(kind):
+                status, value, _, log, calls, sleeps, _ = self.read(answer, self.OK)
+                self.assertEqual((status, value, len(calls), sleeps), (0, "hello\n", 2, [wait]))
+                self.assertIn(f"retrying in {wait} s", log)
+        for kind, answer in LONG_RATE_LIMITS.items():
+            with self.subTest(kind):
+                status, _, _, log, calls, sleeps, _ = self.read(answer, self.OK)
+                self.assertEqual((status, len(calls), sleeps), (1, 1, []))
+                self.assertIn("longer than the guard waits", log)
+
+    def test_a_second_fallback_wait_fails_at_once(self):
+        for answer in (rate_limited(429, []),
+                       rate_limited(403, [("X-Ratelimit-Remaining", "4000")], SECONDARY)):
+            with self.subTest(answer=answer[1][:12]):
+                status, _, _, log, calls, sleeps, _ = self.read(answer, answer, self.OK)
+                self.assertEqual((status, len(calls), sleeps), (1, 2, [60]))
+                self.assertIn("rate limited for 120 s, longer than the guard waits", log)
+
+    def test_the_value_check_is_strict(self):
+        program = re.search(r"^ *GH_API_VALUE='\n(.*?)\n *'\n", self.text, re.S | re.M).group(1)
+        program = textwrap.dedent(program)
+
+        def check(kind, body):
+            result = subprocess.run([sys.executable, "-c", program, kind], input=body,
+                                    capture_output=True, check=False)
+            self.check_stderr = result.stderr
+            return result.returncode, result.stdout
+
+        self.assertEqual(check("content", b'{"encoding": "base64", "content": "aGVs\\nbG8K\\n"}'),
+                         (0, b"hello\n"))
+        self.assertEqual(check("content", b'{"encoding": "base64", "content": ""}'), (0, b""))
+        for body in (b"", b'{"a": ', b'{"count": 01, "encoding": "base64", "content": "aGk="}',
+                     b'{"count": NaN, "encoding": "base64", "content": "aGk="}', b"<html>",
+                     b'"\xe2\x82"'):
+            with self.subTest(body=body):
+                self.assertEqual(check("content", body), (3, b""))
+        for body in (b'{"encoding": "base64"}', b'{"encoding": "base64", "content": null}',
+                     b'{"encoding": "none", "content": ""}', b'[{"name": "f"}]', b"null",
+                     b'{"encoding": "base64", "content": "aGVs\\u0000bG8K"}',
+                     b'{"encoding": "base64", "content": "aGVsbG8K!"}',
+                     '{"encoding": "base64", "content": "aGVs\u00e9bG8K"}'.encode()):
+            with self.subTest(body=body):
+                self.assertEqual(check("content", body), (1, b""))
+                self.assertNotIn(b"Traceback", self.check_stderr)
+        sha = "0123456789abcdef" * 2 + "01234567"
+        self.assertEqual(check("merge-base", f'{{"merge_base_commit": {{"sha": "{sha}"}}}}'.encode()),
+                         (0, f"{sha}\n".encode()))
+        for value in ("{}", '{"merge_base_commit": null}', f'{{"merge_base_commit": {{"sha": "{sha.upper()}"}}}}',
+                      f'{{"merge_base_commit": {{"sha": "{sha[:-1]}"}}}}',
+                      f'{{"merge_base_commit": {{"sha": "{sha}\\n"}}}}', '{"merge_base_commit": {"sha": 1}}'):
+            with self.subTest(value=value):
+                self.assertEqual(check("merge-base", value.encode()), (1, b""))
+
+    def test_a_404_returns_44_at_once(self):
+        status, out, err, log, calls, sleeps, _ = self.read(
+            (1, http_answer(404, b"{}"), b"gh: Not Found (HTTP 404)"))
+        self.assertEqual((status, out, log, len(calls), sleeps), (44, "", "", 1, []))
+        self.assertIn("gh: Not Found (HTTP 404)", err)
+
+    def test_any_other_status_returns_1_at_once(self):
+        for kind, answer in PERMANENT_ANSWERS.items():
+            with self.subTest(kind):
+                status, out, err, log, calls, sleeps, _ = self.read(answer)
+                self.assertEqual((status, out, log, len(calls), sleeps), (1, "", "", 1, []))
+                self.assertTrue(err.endswith(f"failed: HTTP {answer[1][9:12].decode()}\n"), err)
+
+    def test_a_retry_notice_is_one_workflow_command(self):
+        _, _, _, log, _, _, _ = self.read((1, http_answer(500), b"50%\rfine"), self.OK)
+        self.assertEqual(log.count("\n"), 1)
+        self.assertIn("50%25%0Dfine", log)
+
+    def test_download_one_writes_the_decoded_file(self):
+        status, _, err, _, _, _, tree = self.download("true", self.OK)
+        self.assertEqual((status, err, tree), (0, "", {"tree/dir/f": b"hello\n"}))
+        empty = b'{"type": "file", "encoding": "base64", "content": ""}'
+        status, _, _, _, _, _, tree = self.download("true", (0, http_answer(200, empty), b""))
+        self.assertEqual((status, tree), (0, {"tree/dir/f": b""}))
+        status, _, _, _, calls, _, tree = self.download("false", self.WITHOUT_CONTENT["directory"])
+        self.assertEqual((status, tree, len(calls)), (1, {}, 1))
+
+    def test_download_one_tolerates_only_a_404_of_an_optional_file(self):
+        missing = (1, http_answer(404, b"{}"), b"gh: Not Found (HTTP 404)")
+        status, _, _, _, _, _, tree = self.download("false", missing)
+        self.assertEqual((status, tree), (0, {}))
+        status, _, err, _, _, _, tree = self.download("true", missing)
+        self.assertEqual((status, tree), (1, {}))
+        self.assertIn("gh: Not Found (HTTP 404)", err)
+        for answers in ([PERMANENT_ANSWERS["403 that mentions 404"]],
+                        [TRANSIENT_ANSWERS["HTML 502"]] * 5):
+            status, _, _, _, calls, _, tree = self.download("false", *answers)
+            self.assertEqual((status, tree, len(calls)), (1, {}, len(answers)))
+
+    def test_download_one_fails_when_the_value_cannot_be_copied(self):
+        for fault in ("awk_fails", "cat_fails"):
+            with self.subTest(fault):
+                status, _, _, _, _, _, tree = self.download("true", self.OK, **{fault: True})
+                self.assertEqual((status, tree), (1, {}))
 
 
 if __name__ == "__main__":

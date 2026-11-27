@@ -37,7 +37,7 @@ example : Generated k Γ r ρ
 example : Generated k Γ r ρ (FDRep.of (Representation.dual (generatorRepresentation k Γ r ρ).ρ)) :=
   .dual .generator
 
--- The fibre functor and its scalar extensions are faithful and monoidal.
+-- The fibre functor is faithful and monoidal, and its scalar extensions are monoidal.
 example : (fibre k Γ r ρ).Faithful := inferInstance
 
 example : (fibre k Γ r ρ).Monoidal := inferInstance

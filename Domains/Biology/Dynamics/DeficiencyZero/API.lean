@@ -30,17 +30,19 @@ network `N : ReactionNetwork S ρ` (whose shared definitions live in
 * `deficiency`: `δ = n - ℓ - s`, also for finitely many complexes;
 * `IsWeaklyReversible`: every reaction `y → y'` can be undone by a directed path `y' ⟶* y`.
 
-`WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean` imports the shared definitions
-without depending on this domain library.
+`MathlibExt.Dynamics.PolynomialNetworks.DeficiencyZero` uses these definitions to prove
+`ReactionNetwork.not_exists_positive_equilibrium`.
 
 ## Main results
 
 * `linkageGraph_adj`, `Reacts.reachable`, `reachable_of_reflTransGen`: directed reaction paths
   stay inside a linkage class.
-* `reachable_imp_iff_of_reacts`: a property of complexes preserved by every reaction is
-  constant on each linkage class (the usual way to separate linkage classes).
-* `card_le_numLinkageClasses`, `numLinkageClasses_le_card`: counting linkage classes by
-  pairwise unreachable complexes and by complexes reaching every complex.
+* `reachable_imp_iff_of_reacts`: a property of complexes with the same truth value at both ends
+  of every reaction is constant on each linkage class (the usual way to separate linkage
+  classes).
+* `card_le_numLinkageClasses`, `numLinkageClasses_le_card`: a set of pairwise unreachable
+  complexes has at most as many elements as there are linkage classes, and a set of complexes
+  meeting every linkage class has at least as many.
 * `numLinkageClasses_le_card_complexes`, `numLinkageClasses_le_card_reactions`,
   `numLinkageClasses_pos`; the empty network has no complexes, no linkage classes and
   deficiency `0` (`numLinkageClasses_of_isEmpty`, `deficiency_of_isEmpty`).
@@ -124,8 +126,9 @@ theorem reachable_of_reflTransGen {y y' : S → ℕ} (h : Relation.ReflTransGen 
     exact ⟨hbc.right_mem,
       hreach.trans (Reacts.reachable (c := ⟨_, hb⟩) (c' := ⟨_, hbc.right_mem⟩) hbc)⟩
 
-/-- A property of complexes that every reaction preserves is constant on each linkage class.
-This is the standard way to show that two complexes lie in different linkage classes. -/
+/-- A property `P` of complexes with `P y ↔ P y'` for every reaction `y → y'` is constant on
+each linkage class. This is the standard way to show that two complexes lie in different linkage
+classes. -/
 theorem reachable_imp_iff_of_reacts (P : (S → ℕ) → Prop)
     (hP : ∀ y y', N.Reacts y y' → (P y ↔ P y')) {c c' : N.complexes}
     (h : N.linkageGraph.Reachable c c') : P c ↔ P c' := by
@@ -150,7 +153,9 @@ theorem reachable_iff_eq_of_forall_not_adj {c : N.complexes}
 
 /-! ### Counting linkage classes -/
 
-/-- Pairwise unreachable complexes lie in distinct linkage classes. -/
+/-- Pairwise unreachable complexes lie in distinct linkage classes: a finite set `T` of complexes,
+no two distinct members of which lie in the same linkage class, has at most as many elements as
+there are linkage classes. -/
 theorem card_le_numLinkageClasses [Finite N.complexes] (T : Finset N.complexes)
     (hT : ∀ c ∈ T, ∀ c' ∈ T, N.linkageGraph.Reachable c c' → c = c') :
     T.card ≤ N.numLinkageClasses := by
@@ -161,8 +166,8 @@ theorem card_le_numLinkageClasses [Finite N.complexes] (T : Finset N.complexes)
     (fun _ _ => Finset.mem_univ _) fun c hc c' hc' h => hT c hc c' hc' ?_
   exact SimpleGraph.ConnectedComponent.eq.1 h
 
-/-- If every complex reaches one of the complexes in `T`, there are at most `#T` linkage
-classes. -/
+/-- If every complex lies in the same linkage class as one of the complexes in `T` (is joined to
+it by a path in the linkage graph), there are at most `#T` linkage classes. -/
 theorem numLinkageClasses_le_card [Finite N.complexes] (T : Finset N.complexes)
     (hT : ∀ c, ∃ c' ∈ T, N.linkageGraph.Reachable c c') :
     N.numLinkageClasses ≤ T.card := by

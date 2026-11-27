@@ -1,11 +1,24 @@
 # Linear programming
 
 - [Strong linear programming duality](strong-linear-programming-duality.md)
+- [Exists nonneg mul Vec le iff](exists-nonneg-mul-vec-le-iff.md)
+- [Exists nonneg mul Vec eq iff](exists-nonneg-mul-vec-eq-iff.md)
 - [Linear program](linear-program.md)
 - [Feasible region of a linear program](feasible.md)
 - [Objective function of a linear program](objective.md)
+- [Is Closed feasible](is-closed-feasible.md)
+- [Convex feasible](convex-feasible.md)
+- [Is Compact feasible](is-compact-feasible.md)
 - [Maximum principle for linear programming](lp-maximum-principle.md)
 - [Optimal vertices of linear programs](simplex-algorithm.md)
+- [Complementary slackness and the feasibility–boundedness trichotomy](complementary-slackness-and-the-lp-trichotomy.md)
+- [Optimal dual solutions are supergradients of the LP value function](lp-value-supporting-price-inequality.md)
+- [Differentiability of the LP value function and shadow prices](differentiability-of-the-lp-value-function.md)
+- [Optimal dual solutions are the supergradients of the LP value function](optimal-dual-solutions-are-the-supergradients-of-the-lp-value.md)
+- [Existence and uniqueness of the central path of a linear program](central-path-of-a-linear-program.md)
+- [Deterministic equivalent of a two-stage stochastic linear program](deterministic-equivalent-of-a-two-stage-program.md)
+- [Consistency of sample average approximation over finitely many decisions](consistency-of-sample-average-approximation.md)
+- [Validity and attainment of Benders cuts](validity-of-benders-cuts.md)
 
 ## Related topics
 

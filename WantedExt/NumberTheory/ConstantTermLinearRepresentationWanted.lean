@@ -16,6 +16,7 @@ public import Mathlib.Data.Matrix.Basis
 public import Mathlib.Data.ZMod.Basic
 public import MathlibExt.Data.Set.Density
 public import MathlibExt.NumberTheory.ConstantTermLinearRepresentation
+public import MathlibExt.NumberTheory.LaurentCartierCongruence
 
 namespace MetaMathlibExt
 
@@ -27,35 +28,6 @@ constant term `ct[f]` is `f.coeff 0`. Kohen's array `a^n_k = coef_{-k}[P^n]` is
 `(P ^ n).coeff (-k)`. The paper's index box `T = [-m, m]^r` is
 `Fintype.piFinset fun _ => Finset.Icc (-m) m`. Definitions follow Kohen's arXiv
 version (arXiv:2503.21988v1, Sections 1, 2 and 5), which matches the journal records. -/
-
-/-- **Degree of a Laurent polynomial.** Let $R$ be a semiring and let $f$ be a Laurent polynomial
-in $r$ variables $x_1, \dots, x_r$ with coefficients in $R$. Kohen's degree $\deg f$ of $f$ is the
-largest absolute value $|j_i|$ of a single exponent, taken over all $i$ and all exponent vectors
-$j \in \mathbb{Z}^r$ whose monomial $x^j$ has nonzero coefficient in $f$, and is $0$ if there is
-no such exponent (in particular for the zero polynomial). For example, over $\mathbb{Z}$ in two
-variables $x, y$ one has $\deg(5x^{-3}y^{-2} + 2xy^{-1}) = 3$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Section 1.1. -/
-public def laurentDeg {R : Type*} [Semiring R] {r : ℕ}
-    (f : AddMonoidAlgebra R (Fin r → ℤ)) : ℕ :=
-  f.coeff.support.sup fun j => Finset.univ.sup fun i => (j i).natAbs
-
-/-- **Exponent criterion for the degree of a Laurent polynomial.** Let $R$ be a semiring, let
-$r$ and $m$ be natural numbers, and let $f$ be a Laurent polynomial in $r$ variables
-$x_1, \dots, x_r$ with coefficients in $R$. Then Kohen's degree of $f$ (the largest absolute
-value of a single exponent occurring in $f$, or $0$ if there is none) is at most $m$ if and only
-if every exponent vector $j \in \mathbb{Z}^r$ whose monomial $x^j$ has nonzero coefficient in
-$f$ satisfies $|j_i| \le m$ for every $i$, that is, lies in $[-m, m]^r$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Section 1.1. -/
-public theorem laurentDeg_le_iff {R : Type*} [Semiring R] {r : ℕ}
-    (f : AddMonoidAlgebra R (Fin r → ℤ)) (m : ℕ) :
-    laurentDeg f ≤ m ↔ ∀ j ∈ f.coeff.support, ∀ i, (j i).natAbs ≤ m := by
-  simp [laurentDeg, Finset.sup_le_iff]
 
 /-- **Occurrence of a sequence factor at a position.** Let $s = (s_n)_{n \ge 0}$ be a sequence and
 let $i$, $\ell$ and $i'$ be natural numbers. The factor of $s$ of length $\ell$ starting at
@@ -143,23 +115,6 @@ public theorem isLinearlyRecurrentSeq_const {α : Type*} (c : α) :
 
 /-! ### Section 2: the Rowland–Zeilberger congruence and the degree bound -/
 
-/-- **Rowland–Zeilberger congruence.** Let $p$ be a prime and let $P$ and $Q$ be Laurent
-polynomials in $r$ variables with integer coefficients. Write $\operatorname{ct}[F]$ for the
-constant term of a Laurent polynomial $F$ and $\Lambda_p$ for Kohen's operator, which keeps the
-terms whose exponents are all divisible by $p$ and replaces $x^{pj}$ by $x^j$. Then for all
-natural numbers $n$ and $k$,
-$\operatorname{ct}[P^{pn+k} Q] \equiv \operatorname{ct}[P^n \Lambda_p(P^k Q)] \pmod{p}$.
-
-The exponents $n$ and $k$ are natural numbers; the paper writes "integers", but negative powers
-of a general Laurent polynomial are undefined.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 3 (`jis-2026-26.4.2-lem-3`). -/
-public theorem_wanted constantTerm_pow_mul_modEq_laurentCartier {r p : ℕ} (hp : p.Prime)
-    (P Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) (n k : ℕ) :
-    (P ^ (p * n + k) * Q).coeff 0 ≡ (P ^ n * laurentCartier p (P ^ k * Q)).coeff 0 [ZMOD p]
-
 /-- **Degree bound for the Rowland–Zeilberger states.** Let $p$ be a prime and let $P$ and $Q$
 be Laurent polynomials in $r$ variables with integer coefficients. Write $\deg F$ for the largest
 absolute value of an exponent of a variable occurring in $F$, and $\Lambda_p$ for the operator
@@ -177,28 +132,6 @@ public theorem_wanted laurentDeg_foldl_laurentCartier_le {r p : ℕ} (hp : p.Pri
       max (laurentDeg P - 1) (laurentDeg Q)
 
 /-! ### Section 3: the linear representation mod `p` -/
-
-/-- **Cartier operator applied to a power times a monomial.** Let $p$ be a prime and $P$ a
-Laurent polynomial in $r$ variables with integer coefficients. Write $\mathrm{coef}_e[F]$ for the
-coefficient of $x^e$ in a Laurent polynomial $F$, $\deg F$ for the largest absolute value of an
-exponent of a variable occurring in $F$, and $\Lambda_p$ for the Cartier operator with
-$\mathrm{coef}_j[\Lambda_p F] = \mathrm{coef}_{pj}[F]$. Let $m \in \mathbb{N}$ with
-$\deg P \le m + 1$, put $T = [-m, m]^r \subset \mathbb{Z}^r$, and let $k < p$ be a natural
-number and $i \in T$. Then
-$\Lambda_p(P^k x^i) = \sum_{j \in T} \mathrm{coef}_{pj - i}[P^k] \, x^j$.
-
-In Kohen's notation $\mathrm{coef}_{pj - i}[P^k]$ is $a^k_{i - pj}$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Proposition 6 (`jis-2026-26.4.2-prop-6`). -/
-public theorem_wanted laurentCartier_pow_mul_single_eq_sum {r p : ℕ} (hp : p.Prime)
-    (P : AddMonoidAlgebra ℤ (Fin r → ℤ)) (m : ℕ) (hm : laurentDeg P ≤ m + 1) (k : ℕ)
-    (hk : k < p) (i : Fin r → ℤ)
-    (hi : i ∈ Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) :
-    laurentCartier p (P ^ k * AddMonoidAlgebra.single i 1) =
-      ∑ j ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
-        AddMonoidAlgebra.single j ((P ^ k).coeff (p • j - i))
 
 /-- **Kohen's linear representation step modulo $p$.** Let $p$ be a prime, let $P$ be a Laurent
 polynomial in $r$ variables with integer coefficients, and write $\deg P$ for the largest absolute
@@ -222,21 +155,6 @@ public theorem_wanted coeff_pow_modEq_sum_gamma_mul_V {r p : ℕ} (hp : p.Prime)
     (P ^ (p * n + k)).coeff (-i) ≡
       ∑ j ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
         (P ^ k).coeff (p • j - i) * (P ^ n).coeff (-j) [ZMOD p]
-
-/-- **Powers of $\gamma(0)$ modulo $p$ stabilize at a matrix unit.** Let $p$ be a prime, let
-$r, m \ge 0$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$, and let
-$\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p\mathbb{Z}$ whose $(i, j)$ entry is $1$
-if $i = p j$ and $0$ otherwise. Then there is $s \in \mathbb{N}$ such that for every $s' \ge s$,
-$\gamma(0)^{s'}$ is the matrix whose $(0, 0)$ entry is $1$ and whose other entries are $0$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 11 (`jis-2026-26.4.2-lem-11`). -/
-public theorem_wanted exists_gammaZero_pow_eq_single {p : ℕ} (hp : p.Prime) (r m : ℕ) :
-    ∃ s : ℕ, ∀ s' ≥ s,
-      (Matrix.of fun i j : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) =>
-        if (i : Fin r → ℤ) = p • (j : Fin r → ℤ) then (1 : ZMod p) else 0) ^ s' =
-        Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1
 
 /-! ### Section 4: classification mod `p` -/
 
@@ -406,26 +324,6 @@ public theorem_wanted coeff_tilde_pow_modEq_sum_gamma_mul_V {r p a : ℕ} (hp : 
     (Pt ^ (p * n + k)).coeff (-i) ≡
       ∑ j ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
         (Pt ^ k).coeff (p • j - i) * (Pt ^ n).coeff (-j) [ZMOD (p : ℤ) ^ a]
-
-/-- **Powers of $\tilde\gamma(0)$ modulo $p^a$ stabilize at a matrix unit.** Let $p$ be a prime,
-let $a \ge 1$, $r$ and $m$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$,
-and let $\tilde\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p^a\mathbb{Z}$ whose
-$(i, j)$ entry is $1$ if $i = p j$ and $0$ otherwise. Then there is $s \in \mathbb{N}$ such that for
-every $s' \ge s$, $\tilde\gamma(0)^{s'}$ is the matrix whose $(0, 0)$ entry is $1$ and whose other
-entries are $0$.
-
-Kohen's Lemma 30 prints $\tilde\gamma(0)^s$; as in Lemma 11, it is read for every exponent
-$s' \ge s$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 30 (`jis-2026-26.4.2-lem-30`). -/
-public theorem_wanted exists_gammaZero_pow_eq_single_zmod {p : ℕ} (hp : p.Prime)
-    (a : ℕ) (ha : 0 < a) (r m : ℕ) :
-    ∃ s : ℕ, ∀ s' ≥ s,
-      (Matrix.of fun i j : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) =>
-        if (i : Fin r → ℤ) = p • (j : Fin r → ℤ) then (1 : ZMod (p ^ a)) else 0) ^ s' =
-        Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1
 
 /-- **Density-one zeros of constant terms modulo $p^a$.** Let $p$ be a prime, let $a$ be a natural
 number, and let $\tilde P$ be a Laurent polynomial in $r$ variables with integer coefficients such

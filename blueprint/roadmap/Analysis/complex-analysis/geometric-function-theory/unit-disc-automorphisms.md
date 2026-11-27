@@ -8,11 +8,16 @@ For $|\alpha| < 1$, $\psi_\alpha(z) = (\alpha - z)/(1 - \bar\alpha z)$ is holomo
 
 ## Expansion
 
-A good expansion of this node links each prerequisite of its proof: the chain rule for holomorphic functions; the holomorphy of the inverse of a bijective holomorphic map; the maximum modulus principle; Riemann's theorem on removable singularities; the Schwarz lemma.
+A good expansion of this node links each prerequisite of its proof: the holomorphy of the inverse of a bijective holomorphic map; Riemann's theorem on removable singularities; the Schwarz lemma.
 
 ## Depends on
 
 - [Open unit disc](riemann-mapping-theorem/unit-disk.md)
+
+## Proof depends on
+
+- [A holomorphic map into a strictly convex space is constant if its norm attains a maximum on a connected open set](../cauchy-theory/maximum-modulus-principle.md)
+- [Chain rule for derivatives of functions of one variable over normed fields](../../calculus-in-normed-spaces/frechet-derivatives/chain-rule-holomorphic.md)
 
 ## Sources
 

@@ -15,6 +15,9 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 public import Mathlib.Data.Nat.Choose.Central
+public import MathlibExt.Combinatorics.Enumerative.CentralBinomialReciprocalLinearMultisection
+public import MathlibExt.Combinatorics.Enumerative.CentralBinomialReciprocalMultisection
+public import MathlibExt.Combinatorics.Enumerative.CentralBinomialReciprocalSquaredMultisection
 
 /-!
 # Multisections of reciprocal central binomial series
@@ -39,59 +42,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- **Multisection formula for $\sum_k x^k / \binom{2mk}{mk}$.** Let $m \ge 1$ be a natural number
-and $x$ a complex number with $|x| < 4^m$. Write $H(y) = \sum_{n \ge 0} y^n / \binom{2n}{n}$,
-$w = e^{2\pi i/m}$, and let $x^{1/m}$ be the principal $m$-th root of $x$. Then
-$$
-\sum_{k \ge 0} \frac{x^k}{\binom{2mk}{mk}} = \frac{1}{m} \sum_{j=0}^{m-1} H(w^j x^{1/m}).
-$$
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Theorem 7 (`jis-2024-24.6.8-thm-7`). -/
-public theorem_wanted tsum_div_centralBinom_mul_eq_multisection {m : ℕ} (hm : 1 ≤ m) {x : ℂ}
-    (hx : ‖x‖ < 4 ^ m) :
-    ∑' k : ℕ, x ^ k / (Nat.centralBinom (m * k) : ℂ) =
-      (1 / m : ℂ) * ∑ j ∈ Finset.range m,
-        ∑' n : ℕ, (Complex.exp (2 * Real.pi * Complex.I / m) ^ j * x ^ ((1 : ℂ) / m)) ^ n /
-          (Nat.centralBinom n : ℂ)
-
-/-- **Multisection formula for $\sum_k x^k / (k \binom{2mk}{mk})$.** Let $m \ge 1$ be a natural
-number and $x$ a complex number with $|x| < 4^m$. Write
-$L(y) = \sum_{n \ge 1} y^n / (n \binom{2n}{n})$, $w = e^{2\pi i/m}$, and let $x^{1/m}$ be the
-principal $m$-th root of $x$. Then
-$$
-\sum_{k \ge 1} \frac{x^k}{k \binom{2mk}{mk}} = \sum_{j=0}^{m-1} L(w^j x^{1/m}).
-$$
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Theorem 8 (`jis-2024-24.6.8-thm-8`). -/
-public theorem_wanted tsum_div_mul_centralBinom_mul_eq_multisection {m : ℕ} (hm : 1 ≤ m)
-    {x : ℂ} (hx : ‖x‖ < 4 ^ m) :
-    ∑' k : ℕ, x ^ (k + 1) / (((k + 1 : ℕ) : ℂ) * Nat.centralBinom (m * (k + 1))) =
-      ∑ j ∈ Finset.range m,
-        ∑' n : ℕ, (Complex.exp (2 * Real.pi * Complex.I / m) ^ j * x ^ ((1 : ℂ) / m)) ^ (n + 1) /
-          (((n + 1 : ℕ) : ℂ) * Nat.centralBinom (n + 1))
-
-/-- **Multisection formula for $\sum_k x^k / (k^2 \binom{2mk}{mk})$.** Let $m \ge 1$ be a natural
-number and $x$ a complex number with $|x| < 4^m$. Write
-$K(y) = \sum_{n \ge 1} y^n / (n^2 \binom{2n}{n})$, $w = e^{2\pi i/m}$, and let $x^{1/m}$ be the
-principal $m$-th root of $x$. Then
-$$
-\sum_{k \ge 1} \frac{x^k}{k^2 \binom{2mk}{mk}} = m \sum_{j=0}^{m-1} K(w^j x^{1/m}).
-$$
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Theorem 10 (`jis-2024-24.6.8-thm-10`). -/
-public theorem_wanted tsum_div_sq_mul_centralBinom_mul_eq_multisection {m : ℕ} (hm : 1 ≤ m)
-    {x : ℂ} (hx : ‖x‖ < 4 ^ m) :
-    ∑' k : ℕ, x ^ (k + 1) / (((k + 1 : ℕ) : ℂ) ^ 2 * Nat.centralBinom (m * (k + 1))) =
-      (m : ℂ) * ∑ j ∈ Finset.range m,
-        ∑' n : ℕ, (Complex.exp (2 * Real.pi * Complex.I / m) ^ j * x ^ ((1 : ℂ) / m)) ^ (n + 1) /
-          (((n + 1 : ℕ) : ℂ) ^ 2 * Nat.centralBinom (n + 1))
 
 /-- **Closed form of the reciprocal central binomial series.** For every real number $x$, let
 $$

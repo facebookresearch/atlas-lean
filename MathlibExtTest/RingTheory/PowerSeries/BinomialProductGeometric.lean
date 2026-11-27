@@ -25,4 +25,20 @@ example (α : ℚ) :
       3 * X ^ 3 := by
   simpa [Nat.choose] using binomialProduct_X_pow_mul_inv_pow 1 2 α (-α)
 
+/-- The zero geometric parameter makes the right input the binomial product identity. -/
+example (A : PowerSeries ℚ) : binomialProduct A 1 = A := by
+  simpa using binomialProduct_inv_one_sub A (0 : ℚ)
+
+/-- A nonzero geometric parameter acts by substitution on both terms of a polynomial. -/
+example :
+    let G : PowerSeries ℚ := (1 - C 2 * X)⁻¹
+    binomialProduct (C 3 + X ^ 2) G = G * (C 3 + (X * G) ^ 2) := by
+  intro G
+  have h : HasSubst (X * G) := .of_constantCoeff_zero' (by simp)
+  change binomialProduct (C 3 + X ^ 2) G = G * (C 3 + (X * G) ^ 2)
+  rw [binomialProduct_inv_one_sub (C 3 + X ^ 2) (2 : ℚ)]
+  change G * subst (X * G) (C 3 + X ^ 2) = G * (C 3 + (X * G) ^ 2)
+  rw [subst_add h, subst_C, subst_pow h, subst_X h]
+  rfl
+
 end MetaMathlibExt

@@ -11,6 +11,29 @@ module
 import MathlibExt.Combinatorics.Additive.ChuMSTDFamilies
 
 open MetaMathlibExt
+open scoped Pointwise
+
+-- For k = l = t = 1, T = 3. Take the upper endpoint of each progression and i = 0 in the last.
+example : 16 ∈ chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1 ∧
+    17 ∈ chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1 ∧
+    15 ∈ chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1 ∧
+    3 ∈ chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1 := by
+  have h := chuFamilyKLT_mem_sub (k := 1) (l := 1) (t := 1) (by decide) (by decide) (by decide)
+  have h₄ := h.1 4 (by decide) (by decide)
+  exact ⟨h₄.1, h₄.2, h.2 3 (by decide), h.2 0 (by decide)⟩
+
+-- At the largest allowed indices, both the terminal block and the grid endpoints are needed.
+example : 33 ∈ chuFamilyKLT 1 1 1 + chuFamilyKLT 1 1 1 ∧
+    34 ∈ chuFamilyKLT 1 1 1 + chuFamilyKLT 1 1 1 ∧
+    31 ∈ chuFamilyKLT 1 1 1 + chuFamilyKLT 1 1 1 := by
+  have h := chuFamilyKLT_mem_add (k := 1) (l := 1) (t := 1) (by decide) (by decide) (by decide)
+  have h₈ := h.1 8 (by decide)
+  exact ⟨h₈.1, h₈.2, h.2 7 (by decide)⟩
+
+-- The same proposition is visible at its zero index.
+example : 1 ∈ chuFamilyKLT 1 1 1 + chuFamilyKLT 1 1 1 :=
+  ((chuFamilyKLT_mem_add (k := 1) (l := 1) (t := 1) (by decide) (by decide)
+    (by decide)).1 0 (by decide)).1
 
 -- A zero gap repeats the previous partial sum, even when the start is negative.
 example : setOfConsecutiveDifferences (-1) [0, 2] = {-1, 1} := by decide
@@ -26,3 +49,22 @@ example :
       ([1, 1] ++ (List.replicate j
         (2 :: (List.replicate 2 (chuBlock 1)).flatten ++ [1, 1])).flatten).sum) = {22, 42} :=
   (chuFamilyKLT_run_sums_R1_eq_R3 1 2 2).trans (by decide)
+
+-- The first and last indexed starts in the last outer block.
+example : (32 : ℤ) ∈ chuFamilyKLT 2 2 2 := by
+  simpa using chuFamilyKLT_mem_block_starts (k := 2) (l := 2) (t := 2)
+    (by decide) (by decide) (by decide) 0 1 (by decide) (by decide)
+
+example : (56 : ℤ) ∈ chuFamilyKLT 2 2 2 := by
+  simpa using chuFamilyKLT_mem_block_starts (k := 2) (l := 2) (t := 2)
+    (by decide) (by decide) (by decide) 2 1 (by decide) (by decide)
+
+/-- At $k = l = t = 1$ the difference set of the Kumar–Mohan–Pandey set has
+$11 + 6 + 8 + 8 = 33$ elements. -/
+example : (chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1).card = 33 :=
+  chuFamilyKLT_card_sub (by decide) (by decide) (by decide)
+
+/-- The same count, computed directly from the elements of $A_{1,1,1}$. -/
+example : (chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1).card = 33 := by
+  rw [chuFamilyKLT_one_one_one]
+  decide +kernel

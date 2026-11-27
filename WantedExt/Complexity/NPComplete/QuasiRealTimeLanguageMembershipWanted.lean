@@ -21,7 +21,7 @@ S. A. Greibach, "The hardest context-free language", SIAM Journal on Computing 2
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Languages.ContextFree.Encoded
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

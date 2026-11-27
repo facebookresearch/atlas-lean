@@ -25,3 +25,4 @@
 - [The monotone chain hull makes at most $4n$ orientation tests](convex-hull-time-le.md)
 - [Lists of points turning strictly left](turns-left.md)
 - [The monotone chain hull of non-collinear points turns strictly left at every vertex](convex-hull-turns-left.md)
+- [The computed convex hull equals the convex hull](the-computed-convex-hull-equals-the-convex-hull.md)

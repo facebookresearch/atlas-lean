@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Privacy.ApproximateDifferentialPrivacy
 public import CSLibExt.Privacy.DifferentialPrivacy
+public import CSLibExt.Privacy.MaxDivergenceDecomposition
 public import CSLibExt.Privacy.PrivacyLoss
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -17,13 +19,17 @@ public import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.GroupWithZero.Defs
 public import Mathlib.Algebra.GroupWithZero.Units.Basic
+public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Basic.ENNReal.Basic
+public import Mathlib.Basic.ENNReal.BigOperators
 public import Mathlib.Basic.ENNReal.Real
 public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Probability.Moments.SubGaussian
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
+public import Mathlib.Probability.ProbabilityMassFunction.Integrals
 public import Mathlib.Probability.ProbabilityMassFunction.Monad
 public import Mathlib.Tactic.Ring
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
@@ -578,5 +584,1058 @@ theorem transcript_prefix_marginal {C Y Database : Type*} [Fintype C]
     exact PMF.map_id _
   · intro k hle ih
     rw [prefixProj_succ _ hle, ← PMF.map_comp, transcript_map_histInit, ih]
+
+/- Finite-sum concentration for summed privacy loss.
+
+Per-stage Hoeffding bounds from the sub-Gaussian MGF interface feed an
+induction over the transcript length, giving a Chernoff tail bound in
+finite-sum form plus its outer-measure wrapper and degenerate cases. -/
+
+open scoped NNReal
+
+/-- The Hoeffding variance proxy on `[−ε, ε]` coerces to `ε ^ 2`. -/
+private theorem stage_mgf_param_eq (ε : ℝ) (hε : 0 ≤ ε) :
+    ((((‖(ε - -ε)‖₊ / 2) ^ 2 : ℝ≥0)) : ℝ) = ε ^ 2 := by
+  rw [NNReal.coe_pow, NNReal.coe_div, coe_nnnorm]
+  simp only [Real.norm_eq_abs]
+  rw [sub_neg_eq_add]
+  have h2 : |ε + ε| = 2 * ε := by
+    rw [abs_of_nonneg (by linarith)]
+    ring
+  rw [h2]
+  norm_num
+
+/-- Finite-sum stage MGF bound: Hoeffding's lemma at one history. -/
+private theorem stage_mgf_le {C Y Database : Type*} [Fintype C] [Fintype Y]
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (ε : ℝ) (i : ℕ)
+    (h : Hist C Y i) (d d' : Database) (lam : ℝ)
+    (hK : ∀ (n : ℕ) (h : Hist C Y n), IsDP (fun d => K n h d) adj ε)
+    (hε : 0 ≤ ε) (hadj : adj d d') (hadj_symm : adj d' d) :
+    ∑ y : Y, (K i h d y).toReal
+        * Real.exp (lam * (privacyLoss (K i h d) (K i h d') y
+          - stageDrift K i h d d'))
+      ≤ Real.exp (lam ^ 2 * ε ^ 2 / 2) := by
+  let : MeasurableSpace Y := ⊤
+  have hIcc : ∀ y : Y,
+      privacyLoss (K i h d) (K i h d') y ∈ Set.Icc (-ε) ε := by
+    intro y
+    by_cases hy : K i h d y = 0
+    · have h0 : privacyLoss (K i h d) (K i h d') y = 0 := by
+        simp only [privacyLoss, hy, ENNReal.toReal_zero, zero_div,
+          Real.log_zero]
+      rw [h0]
+      exact ⟨neg_nonpos.mpr hε, hε⟩
+    · have habs := abs_stageLoss_le K adj ε i h d d' y hK hadj hadj_symm hy
+      rwa [abs_le] at habs
+  have hm : AEMeasurable (fun y => privacyLoss (K i h d) (K i h d') y)
+      (K i h d).toMeasure :=
+    (measurable_of_countable _).aemeasurable
+  have hb : ∀ᵐ y ∂(K i h d).toMeasure,
+      privacyLoss (K i h d) (K i h d') y ∈ Set.Icc (-ε) ε :=
+    Filter.Eventually.of_forall hIcc
+  have hsub := ProbabilityTheory.hasSubgaussianMGF_of_mem_Icc
+    (μ := (K i h d).toMeasure)
+    (X := fun y => privacyLoss (K i h d) (K i h d') y) hm hb
+  have hmgf := hsub.mgf_le lam
+  have hexp : ∫ y, privacyLoss (K i h d) (K i h d') y ∂(K i h d).toMeasure
+      = stageDrift K i h d d' := by
+    rw [PMF.integral_eq_sum]
+    simp only [smul_eq_mul, stageDrift]
+  simp only [ProbabilityTheory.mgf] at hmgf
+  simp only [hexp] at hmgf
+  rw [PMF.integral_eq_sum] at hmgf
+  simp only [smul_eq_mul] at hmgf
+  rw [stage_mgf_param_eq ε hε] at hmgf
+  have heq : ε ^ 2 * lam ^ 2 / 2 = lam ^ 2 * ε ^ 2 / 2 := by ring
+  rw [heq] at hmgf
+  exact hmgf
+
+/-- Finite-sum MGF bound for the centered transcript loss. -/
+theorem transcript_centered_mgf_le {C Y Database : Type*} [Fintype C]
+    [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (ε : ℝ) (k : ℕ) (d d' : Database)
+    (lam : ℝ)
+    (hK : ∀ (n : ℕ) (h : Hist C Y n), IsDP (fun d => K n h d) adj ε)
+    (hε : 0 ≤ ε) (hadj : adj d d') (hadj_symm : adj d' d) :
+    ∑ ω : Hist C Y k, (transcript R K k d ω).toReal
+        * Real.exp (lam * ∑ i : Fin k, (stageLoss K k d d' i ω
+          - stageDrift K i.val (histPrefix i ω) d d'))
+      ≤ Real.exp ((k : ℝ) * lam ^ 2 * ε ^ 2 / 2) := by
+  induction k with
+  | zero =>
+    have htsum := (transcript R K 0 d).tsum_coe
+    rw [tsum_fintype] at htsum
+    have hfin : ∀ ω ∈ (Finset.univ : Finset (Hist C Y 0)),
+        transcript R K 0 d ω ≠ ⊤ :=
+      fun ω _ => (transcript R K 0 d).apply_ne_top ω
+    have h1 : ∑ ω : Hist C Y 0, (transcript R K 0 d ω).toReal = 1 := by
+      have h2 := congrArg ENNReal.toReal htsum
+      rw [ENNReal.toReal_sum hfin, ENNReal.toReal_one] at h2
+      exact h2
+    have hexp1 : ∀ ω : Hist C Y 0, Real.exp (lam * ∑ i : Fin 0,
+        (stageLoss K 0 d d' i ω
+          - stageDrift K i.val (histPrefix i ω) d d')) = 1 := by
+      intro ω
+      have huniv : (Finset.univ : Finset (Fin 0)) = ∅ :=
+        Finset.card_eq_zero.mp (by simp)
+      have hsum : (∑ i : Fin 0, (stageLoss K 0 d d' i ω
+          - stageDrift K i.val (histPrefix i ω) d d')) = 0 := by
+        rw [huniv]
+        exact Finset.sum_empty
+      rw [hsum, mul_zero, Real.exp_zero]
+    simp only [hexp1, mul_one]
+    rw [h1]
+    simp
+  | succ n ih =>
+    have hstep := transcript_expectation_succ R K n d
+      (fun ω => Real.exp (lam * ∑ i : Fin (n + 1), (stageLoss K (n + 1) d d' i ω
+        - stageDrift K i.val (histPrefix i ω) d d')))
+    have hsplit : ∀ h : Hist C Y n, ∀ y : Y,
+        (∑ i : Fin (n + 1), (stageLoss K (n + 1) d d' i (histExtend h y)
+          - stageDrift K i.val (histPrefix i (histExtend h y)) d d'))
+        = (∑ i : Fin n, (stageLoss K n d d' i h
+            - stageDrift K i.val (histPrefix i h) d d'))
+          + (privacyLoss (K n h d) (K n h d') y
+            - stageDrift K n h d d') := by
+      intro h y
+      have hpre : ∀ i : Fin n,
+          histPrefix i.castSucc (histExtend h y) = histPrefix i h := by
+        intro i
+        rw [histPrefix_castSucc, histInit_histExtend]
+      have hout : ∀ i : Fin n,
+          histOut i.castSucc (histExtend h y) = histOut i h := by
+        intro i
+        rw [histOut_castSucc, histInit_histExtend]
+      have ha : ∀ i : Fin n,
+          stageLoss K (n + 1) d d' i.castSucc (histExtend h y)
+          = stageLoss K n d d' i h := by
+        intro i
+        simp only [stageLoss]
+        rw [hpre i, hout i]
+        exact rfl
+      have hbdrift : ∀ i : Fin n, stageDrift K i.castSucc.val
+            (histPrefix i.castSucc (histExtend h y)) d d'
+          = stageDrift K i.val (histPrefix i h) d d' := by
+        intro i
+        rw [hpre i]
+        exact rfl
+      have hclast : stageLoss K (n + 1) d d' (Fin.last n) (histExtend h y)
+          = privacyLoss (K n h d) (K n h d') y := by
+        simp only [stageLoss]
+        rw [histPrefix_last, histInit_histExtend, histOut_last,
+          histLast_histExtend]
+        exact rfl
+      have hddrift : stageDrift K (Fin.last n).val
+            (histPrefix (Fin.last n) (histExtend h y)) d d'
+          = stageDrift K n h d d' := by
+        rw [histPrefix_last, histInit_histExtend]
+        exact rfl
+      simp only [Fin.sum_univ_castSucc]
+      congr 1
+      · apply Finset.sum_congr rfl
+        intro i _
+        rw [ha i, hbdrift i]
+      · rw [hclast, hddrift]
+    have hexpsplit : ∀ h : Hist C Y n, ∀ y : Y,
+        Real.exp (lam * (∑ i : Fin (n + 1), (stageLoss K (n + 1) d d' i
+            (histExtend h y)
+            - stageDrift K i.val (histPrefix i (histExtend h y)) d d')))
+        = Real.exp (lam * (∑ i : Fin n, (stageLoss K n d d' i h
+            - stageDrift K i.val (histPrefix i h) d d')))
+          * Real.exp (lam * (privacyLoss (K n h d) (K n h d') y
+            - stageDrift K n h d d')) := by
+      intro h y
+      rw [hsplit h y, mul_add, Real.exp_add]
+    have hinner : ∀ h : Hist C Y n,
+        (∑ y : Y, (K n h d y).toReal * Real.exp (lam * (∑ i : Fin (n + 1),
+          (stageLoss K (n + 1) d d' i (histExtend h y)
+            - stageDrift K i.val (histPrefix i (histExtend h y)) d d'))))
+        ≤ Real.exp (lam * (∑ i : Fin n, (stageLoss K n d d' i h
+            - stageDrift K i.val (histPrefix i h) d d')))
+          * Real.exp (lam ^ 2 * ε ^ 2 / 2) := by
+      intro h
+      have hbridge :=
+        stage_mgf_le K adj ε n h d d' lam hK hε hadj hadj_symm
+      have hfactor : (∑ y : Y, (K n h d y).toReal * Real.exp (lam *
+            (∑ i : Fin (n + 1), (stageLoss K (n + 1) d d' i (histExtend h y)
+              - stageDrift K i.val (histPrefix i (histExtend h y)) d d'))))
+          = Real.exp (lam * (∑ i : Fin n, (stageLoss K n d d' i h
+              - stageDrift K i.val (histPrefix i h) d d')))
+            * ∑ y : Y, (K n h d y).toReal * Real.exp (lam *
+              (privacyLoss (K n h d) (K n h d') y
+                - stageDrift K n h d d')) := by
+        rw [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro y _
+        rw [hexpsplit h y]
+        ring
+      rw [hfactor]
+      exact mul_le_mul_of_nonneg_left hbridge (Real.exp_nonneg _)
+    calc (∑ ω : Hist C Y (n + 1), (transcript R K (n + 1) d ω).toReal
+            * Real.exp (lam * ∑ i : Fin (n + 1), (stageLoss K (n + 1) d d' i ω
+              - stageDrift K i.val (histPrefix i ω) d d')))
+        = ∑ h : Hist C Y n, (transcript R K n d h).toReal
+          * ∑ y : Y, (K n h d y).toReal * Real.exp (lam * (∑ i : Fin (n + 1),
+            (stageLoss K (n + 1) d d' i (histExtend h y)
+              - stageDrift K i.val (histPrefix i (histExtend h y)) d d'))) :=
+          hstep
+      _ ≤ ∑ h : Hist C Y n, (transcript R K n d h).toReal
+          * (Real.exp (lam * (∑ i : Fin n, (stageLoss K n d d' i h
+            - stageDrift K i.val (histPrefix i h) d d')))
+            * Real.exp (lam ^ 2 * ε ^ 2 / 2)) :=
+          Finset.sum_le_sum fun h _ =>
+            mul_le_mul_of_nonneg_left (hinner h) ENNReal.toReal_nonneg
+      _ = (∑ h : Hist C Y n, (transcript R K n d h).toReal
+          * Real.exp (lam * (∑ i : Fin n, (stageLoss K n d d' i h
+            - stageDrift K i.val (histPrefix i h) d d'))))
+          * Real.exp (lam ^ 2 * ε ^ 2 / 2) := by
+          rw [Finset.sum_mul]
+          apply Finset.sum_congr rfl
+          intro h _
+          ring
+      _ ≤ Real.exp ((n : ℝ) * lam ^ 2 * ε ^ 2 / 2)
+          * Real.exp (lam ^ 2 * ε ^ 2 / 2) :=
+          mul_le_mul_of_nonneg_right ih (Real.exp_nonneg _)
+      _ = Real.exp ((((n + 1 : ℕ)) : ℝ) * lam ^ 2 * ε ^ 2 / 2) := by
+          rw [← Real.exp_add]
+          congr 1
+          have hcast : ((((n + 1 : ℕ))) : ℝ) = (n : ℝ) + 1 := by
+            rw [Nat.cast_add, Nat.cast_one]
+          rw [hcast]
+          ring
+
+/-- Summed stage drift is at most `k` times the per-stage upper bound. -/
+private theorem summed_drift_le {C Y Database : Type*} [Fintype C] [Fintype Y]
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (ε : ℝ) (k : ℕ) (d d' : Database)
+    (ω : Hist C Y k)
+    (hK : ∀ (n : ℕ) (h : Hist C Y n), IsDP (fun d => K n h d) adj ε)
+    (hadj : adj d d') (hadj_symm : adj d' d) :
+    (∑ i : Fin k, stageDrift K i.val (histPrefix i ω) d d')
+      ≤ (k : ℝ) * (ε * (Real.exp ε - 1)) := by
+  calc (∑ i : Fin k, stageDrift K i.val (histPrefix i ω) d d')
+      ≤ ∑ _i : Fin k, (ε * (Real.exp ε - 1)) :=
+        Finset.sum_le_sum fun i _ => stageDrift_le K adj ε i.val
+          (histPrefix i ω) d d' hK hadj hadj_symm
+    _ = (k : ℝ) * (ε * (Real.exp ε - 1)) := by
+        rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+          nsmul_eq_mul]
+
+/-- Finite-sum tail bound for the transcript loss (strict event). -/
+theorem transcript_tail_le {C Y Database : Type*} [Fintype C]
+    [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (ε : ℝ) (k : ℕ) (d d' : Database)
+    (t : ℝ)
+    (hK : ∀ (n : ℕ) (h : Hist C Y n), IsDP (fun d => K n h d) adj ε)
+    (hε : 0 ≤ ε) (hadj : adj d d') (hadj_symm : adj d' d)
+    (hk : 0 < k) (hεpos : 0 < ε) (ht : 0 ≤ t) :
+    ∑ ω ∈ Finset.univ.filter
+          (fun ω => (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+            < totalLoss R K k d d' ω),
+        (transcript R K k d ω).toReal
+      ≤ Real.exp (-(t ^ 2) / (2 * (k : ℝ) * ε ^ 2)) := by
+  set lam : ℝ := t / ((k : ℝ) * ε ^ 2) with hlam_def
+  have hkpos : (0 : ℝ) < k := Nat.cast_pos.mpr hk
+  have hε2pos : (0 : ℝ) < ε ^ 2 := by
+    rw [pow_two]
+    exact mul_pos hεpos hεpos
+  have hkεpos : (0 : ℝ) < (k : ℝ) * ε ^ 2 := mul_pos hkpos hε2pos
+  have hlam : 0 ≤ lam := by
+    rw [hlam_def]
+    exact div_nonneg ht hkεpos.le
+  have hD : ∀ ω : Hist C Y k,
+      (∑ i : Fin k, stageDrift K i.val (histPrefix i ω) d d')
+        ≤ (k : ℝ) * (ε * (Real.exp ε - 1)) :=
+    fun ω => summed_drift_le K adj ε k d d' ω hK hadj hadj_symm
+  have hembed : ∀ ω : Hist C Y k, ω ∈ (transcript R K k d).support →
+      (k : ℝ) * (ε * (Real.exp ε - 1)) + t < totalLoss R K k d d' ω →
+      t < ∑ i : Fin k, (stageLoss K k d d' i ω
+        - stageDrift K i.val (histPrefix i ω) d d') := by
+    intro ω hω hth
+    have hci :=
+      centered_loss_identity R K adj ε k d d' hK hε hadj hadj_symm ω hω
+    rw [hci]
+    have hDω := hD ω
+    linarith
+  have hmarkov : ∀ ω ∈ Finset.univ.filter (fun ω => (k : ℝ)
+        * (ε * (Real.exp ε - 1)) + t < totalLoss R K k d d' ω),
+      (transcript R K k d ω).toReal ≤ (transcript R K k d ω).toReal
+        * Real.exp (lam * ((∑ i : Fin k, (stageLoss K k d d' i ω
+          - stageDrift K i.val (histPrefix i ω) d d')) - t)) := by
+    intro ω hmem
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hmem
+    by_cases h0 : (transcript R K k d ω).toReal = 0
+    · simp [h0]
+    · have hsup : ω ∈ (transcript R K k d).support := by
+        rw [PMF.mem_support_iff]
+        intro hcon
+        exact h0 (by simp [hcon])
+      have hct := hembed ω hsup hmem
+      have hnn : (0 : ℝ) ≤ lam * ((∑ i : Fin k, (stageLoss K k d d' i ω
+          - stageDrift K i.val (histPrefix i ω) d d')) - t) :=
+        mul_nonneg hlam (sub_nonneg.mpr hct.le)
+      have hexp1 : (1 : ℝ) ≤ Real.exp (lam * ((∑ i : Fin k,
+          (stageLoss K k d d' i ω
+            - stageDrift K i.val (histPrefix i ω) d d')) - t)) :=
+        Real.one_le_exp hnn
+      calc (transcript R K k d ω).toReal
+          = (transcript R K k d ω).toReal * 1 := (mul_one _).symm
+        _ ≤ (transcript R K k d ω).toReal * Real.exp (lam *
+            ((∑ i : Fin k, (stageLoss K k d d' i ω
+              - stageDrift K i.val (histPrefix i ω) d d')) - t)) :=
+          mul_le_mul_of_nonneg_left hexp1 ENNReal.toReal_nonneg
+  have hsub : (∑ ω ∈ Finset.univ.filter (fun ω => (k : ℝ)
+          * (ε * (Real.exp ε - 1)) + t < totalLoss R K k d d' ω),
+        (transcript R K k d ω).toReal)
+      ≤ ∑ ω : Hist C Y k, (transcript R K k d ω).toReal * Real.exp (lam *
+        ((∑ i : Fin k, (stageLoss K k d d' i ω
+          - stageDrift K i.val (histPrefix i ω) d d')) - t)) := by
+    calc (∑ ω ∈ Finset.univ.filter (fun ω => (k : ℝ)
+            * (ε * (Real.exp ε - 1)) + t < totalLoss R K k d d' ω),
+          (transcript R K k d ω).toReal)
+        ≤ ∑ ω ∈ Finset.univ.filter (fun ω => (k : ℝ)
+            * (ε * (Real.exp ε - 1)) + t < totalLoss R K k d d' ω),
+          (transcript R K k d ω).toReal * Real.exp (lam *
+            ((∑ i : Fin k, (stageLoss K k d d' i ω
+              - stageDrift K i.val (histPrefix i ω) d d')) - t)) :=
+          Finset.sum_le_sum hmarkov
+      _ ≤ ∑ ω ∈ Finset.univ, (transcript R K k d ω).toReal * Real.exp (lam *
+          ((∑ i : Fin k, (stageLoss K k d d' i ω
+            - stageDrift K i.val (histPrefix i ω) d d')) - t)) :=
+          Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+            (fun ω _ _ => mul_nonneg ENNReal.toReal_nonneg
+              (Real.exp_nonneg _))
+  have hexpfac : ∀ ω : Hist C Y k, Real.exp (lam *
+        ((∑ i : Fin k, (stageLoss K k d d' i ω
+          - stageDrift K i.val (histPrefix i ω) d d')) - t))
+      = Real.exp (lam * (∑ i : Fin k, (stageLoss K k d d' i ω
+        - stageDrift K i.val (histPrefix i ω) d d')))
+        * Real.exp (-(lam * t)) := by
+    intro ω
+    rw [← Real.exp_add]
+    congr 1
+    ring
+  have hfactor : (∑ ω : Hist C Y k, (transcript R K k d ω).toReal
+        * Real.exp (lam * ((∑ i : Fin k, (stageLoss K k d d' i ω
+          - stageDrift K i.val (histPrefix i ω) d d')) - t)))
+      = (∑ ω : Hist C Y k, (transcript R K k d ω).toReal
+          * Real.exp (lam * (∑ i : Fin k, (stageLoss K k d d' i ω
+            - stageDrift K i.val (histPrefix i ω) d d'))))
+        * Real.exp (-(lam * t)) := by
+    rw [Finset.sum_mul]
+    apply Finset.sum_congr rfl
+    intro ω _
+    rw [hexpfac ω]
+    ring
+  have hmgf :=
+    transcript_centered_mgf_le R K adj ε k d d' lam hK hε hadj hadj_symm
+  calc (∑ ω ∈ Finset.univ.filter (fun ω => (k : ℝ)
+          * (ε * (Real.exp ε - 1)) + t < totalLoss R K k d d' ω),
+        (transcript R K k d ω).toReal)
+      ≤ (∑ ω : Hist C Y k, (transcript R K k d ω).toReal
+          * Real.exp (lam * (∑ i : Fin k, (stageLoss K k d d' i ω
+            - stageDrift K i.val (histPrefix i ω) d d'))))
+        * Real.exp (-(lam * t)) := by
+        rw [← hfactor]
+        exact hsub
+    _ ≤ Real.exp ((k : ℝ) * lam ^ 2 * ε ^ 2 / 2) * Real.exp (-(lam * t)) :=
+        mul_le_mul_of_nonneg_right hmgf (Real.exp_nonneg _)
+    _ = Real.exp (-(t ^ 2) / (2 * (k : ℝ) * ε ^ 2)) := by
+        rw [← Real.exp_add]
+        congr 1
+        rw [hlam_def]
+        have hkε : ((k : ℝ) * ε ^ 2) ≠ 0 := ne_of_gt hkεpos
+        have h2kε : (2 * (k : ℝ) * ε ^ 2) ≠ 0 :=
+          ne_of_gt (mul_pos (mul_pos (by norm_num) hkpos) hε2pos)
+        field_simp
+        ring
+
+/-- Outer-measure tail bound for the transcript loss. -/
+theorem transcript_tail_outer_le {C Y Database : Type*} [Fintype C]
+    [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (ε : ℝ) (k : ℕ) (d d' : Database)
+    (t : ℝ)
+    (hK : ∀ (n : ℕ) (h : Hist C Y n), IsDP (fun d => K n h d) adj ε)
+    (hε : 0 ≤ ε) (hadj : adj d d') (hadj_symm : adj d' d)
+    (hk : 0 < k) (hεpos : 0 < ε) (ht : 0 ≤ t) :
+    (transcript R K k d).toOuterMeasure
+        {ω | (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+          < totalLoss R K k d d' ω}
+      ≤ ENNReal.ofReal (Real.exp (-(t ^ 2) / (2 * (k : ℝ) * ε ^ 2))) := by
+  have hset : {ω | (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+        < totalLoss R K k d d' ω}
+      = ↑(Finset.univ.filter (fun ω => (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+        < totalLoss R K k d d' ω)) := by
+    ext ω
+    simp
+  rw [hset, PMF.toOuterMeasure_apply_finset]
+  have htail :=
+    transcript_tail_le R K adj ε k d d' t hK hε hadj hadj_symm hk hεpos ht
+  have hfin : (∑ x ∈ Finset.univ.filter (fun ω => (k : ℝ)
+        * (ε * (Real.exp ε - 1)) + t < totalLoss R K k d d' ω),
+      transcript R K k d x) ≠ ⊤ :=
+    ENNReal.sum_ne_top.mpr
+      (fun x _ => (transcript R K k d).apply_ne_top x)
+  have htoReal : ∀ x ∈ Finset.univ.filter (fun ω => (k : ℝ)
+        * (ε * (Real.exp ε - 1)) + t < totalLoss R K k d d' ω),
+      transcript R K k d x ≠ ⊤ :=
+    fun x _ => (transcript R K k d).apply_ne_top x
+  rw [ENNReal.le_ofReal_iff_toReal_le hfin (Real.exp_nonneg _),
+    ENNReal.toReal_sum htoReal]
+  exact htail
+
+/-- At zero length, the transcript loss vanishes identically. -/
+private theorem totalLoss_zero_of_zero_length {C Y Database : Type*}
+    [Fintype C] [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y) (k : ℕ)
+    (d d' : Database) (ω : Hist C Y k) (hk0 : k = 0) :
+    totalLoss R K k d d' ω = 0 := by
+  subst hk0
+  simp only [totalLoss, transcript_zero_apply]
+  by_cases hx : (R ω.1).toReal = 0
+  · rw [hx, zero_div, Real.log_zero]
+  · rw [div_self hx, Real.log_one]
+
+/-- At zero budget, the transcript loss vanishes identically. -/
+private theorem totalLoss_zero_of_zero_budget {C Y Database : Type*}
+    [Fintype C] [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (ε : ℝ) (k : ℕ) (d d' : Database)
+    (ω : Hist C Y k)
+    (hK : ∀ (n : ℕ) (h : Hist C Y n), IsDP (fun d => K n h d) adj ε)
+    (hε : 0 ≤ ε) (hadj : adj d d') (hadj_symm : adj d' d) (hε0 : ε = 0) :
+    totalLoss R K k d d' ω = 0 := by
+  subst hε0
+  by_cases hω : ω ∈ (transcript R K k d).support
+  · have hdecomp :=
+      transcript_loss_decomp R K adj 0 k d d' hK hε hadj hadj_symm ω hω
+    have hstage : ∀ i : Fin k, privacyLoss (K i.val (histPrefix i ω) d)
+        (K i.val (histPrefix i ω) d') (histOut i ω) = 0 := by
+      intro i
+      have hmem : transcript R K k d ω ≠ 0 :=
+        (PMF.mem_support_iff _ _).mp hω
+      have hAd : (transcript R K k d ω).toReal ≠ 0 :=
+        toReal_ne_zero_of_ne_zero hmem ((transcript R K k d).apply_ne_top ω)
+      have hA := transcript_toReal_factor R K k d ω
+      have hF : (K i.val (histPrefix i ω) d (histOut i ω)).toReal ≠ 0 := by
+        have h1 := hAd
+        rw [hA, mul_ne_zero_iff, Finset.prod_ne_zero_iff] at h1
+        exact h1.2 i (Finset.mem_univ i)
+      have hsup : K i.val (histPrefix i ω) d (histOut i ω) ≠ 0 := by
+        intro hcon
+        exact hF (by simp [hcon])
+      have habs := abs_stageLoss_le K adj 0 i.val (histPrefix i ω) d d'
+        (histOut i ω) hK hadj hadj_symm hsup
+      have h0 : |privacyLoss (K i.val (histPrefix i ω) d)
+          (K i.val (histPrefix i ω) d') (histOut i ω)| = 0 :=
+        le_antisymm habs (abs_nonneg _)
+      rwa [abs_eq_zero] at h0
+    simp only [totalLoss]
+    rw [hdecomp]
+    simp [hstage]
+  · simp only [PMF.mem_support_iff, not_not] at hω
+    simp only [totalLoss, hω, ENNReal.toReal_zero, zero_div, Real.log_zero]
+
+/-- Degenerate case `k = 0`: the strict tail event has mass zero. -/
+theorem transcript_tail_zero_length {C Y Database : Type*} [Fintype C]
+    [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (ε : ℝ) (k : ℕ) (d d' : Database)
+    (t : ℝ) (ht : 0 ≤ t) (hk0 : k = 0) :
+    ∑ ω ∈ Finset.univ.filter
+          (fun ω => (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+            < totalLoss R K k d d' ω),
+        (transcript R K k d ω).toReal = 0 := by
+  have hempty : Finset.univ.filter
+        (fun ω : Hist C Y k => (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+          < totalLoss R K k d d' ω) = ∅ := by
+    rw [Finset.eq_empty_iff_forall_notMem]
+    intro ω hmem
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hmem
+    rw [totalLoss_zero_of_zero_length R K k d d' ω hk0] at hmem
+    rw [hk0] at hmem
+    simp only [Nat.cast_zero, zero_mul, zero_add] at hmem
+    linarith
+  rw [hempty, Finset.sum_empty]
+
+/-- Degenerate case `ε = 0`: the strict tail event has mass zero. -/
+theorem transcript_tail_zero_budget {C Y Database : Type*} [Fintype C]
+    [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (ε : ℝ) (k : ℕ) (d d' : Database)
+    (t : ℝ)
+    (hK : ∀ (n : ℕ) (h : Hist C Y n), IsDP (fun d => K n h d) adj ε)
+    (hε : 0 ≤ ε) (hadj : adj d d') (hadj_symm : adj d' d)
+    (ht : 0 ≤ t) (hε0 : ε = 0) :
+    ∑ ω ∈ Finset.univ.filter
+          (fun ω => (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+            < totalLoss R K k d d' ω),
+        (transcript R K k d ω).toReal = 0 := by
+  have hempty : Finset.univ.filter
+        (fun ω : Hist C Y k => (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+          < totalLoss R K k d d' ω) = ∅ := by
+    rw [Finset.eq_empty_iff_forall_notMem]
+    intro ω hmem
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hmem
+    rw [totalLoss_zero_of_zero_budget R K adj ε k d d' ω hK hε hadj hadj_symm
+      hε0] at hmem
+    rw [hε0] at hmem
+    simp only [zero_mul, mul_zero, zero_add] at hmem
+    linarith
+  rw [hempty, Finset.sum_empty]
+
+/-- Degenerate case `k = 0`: the strict tail event has outer mass zero. -/
+theorem transcript_tail_outer_zero_length {C Y Database : Type*}
+    [Fintype C] [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (ε : ℝ) (k : ℕ) (d d' : Database)
+    (t : ℝ) (ht : 0 ≤ t) (hk0 : k = 0) :
+    (transcript R K k d).toOuterMeasure
+        {ω | (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+          < totalLoss R K k d d' ω} = 0 := by
+  have hset : {ω | (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+        < totalLoss R K k d d' ω}
+      = (∅ : Set (Hist C Y k)) := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+    intro hmem
+    rw [totalLoss_zero_of_zero_length R K k d d' ω hk0] at hmem
+    rw [hk0] at hmem
+    simp only [Nat.cast_zero, zero_mul, zero_add] at hmem
+    linarith
+  rw [hset]
+  simp
+
+/-- Degenerate case `ε = 0`: the strict tail event has outer mass zero. -/
+theorem transcript_tail_outer_zero_budget {C Y Database : Type*} [Fintype C]
+    [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (ε : ℝ) (k : ℕ) (d d' : Database)
+    (t : ℝ)
+    (hK : ∀ (n : ℕ) (h : Hist C Y n), IsDP (fun d => K n h d) adj ε)
+    (hε : 0 ≤ ε) (hadj : adj d d') (hadj_symm : adj d' d)
+    (ht : 0 ≤ t) (hε0 : ε = 0) :
+    (transcript R K k d).toOuterMeasure
+        {ω | (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+          < totalLoss R K k d d' ω} = 0 := by
+  have hset : {ω | (k : ℝ) * (ε * (Real.exp ε - 1)) + t
+        < totalLoss R K k d d' ω}
+      = (∅ : Set (Hist C Y k)) := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+    intro hmem
+    rw [totalLoss_zero_of_zero_budget R K adj ε k d d' ω hK hε hadj hadj_symm
+      hε0] at hmem
+    rw [hε0] at hmem
+    simp only [zero_mul, mul_zero, zero_add] at hmem
+    linarith
+  rw [hset]
+  simp
+
+/- Pure-stage advanced composition.
+
+A pointwise transcript ratio from a total-loss bound feeds a good/bad
+event split: on the good set the ratio is uniform, and the bad tail is
+controlled by the finite-sum Chernoff bound. Instantiating the deviation
+gives the standard pure-DP advanced-composition guarantee. -/
+
+/-- Pointwise transcript ratio from a total-loss bound.
+
+Off the numerator support the mass is zero; on support both masses are
+positive (via `transcript_support_eq`), so the log bound exponentiates. -/
+theorem transcript_toReal_le_exp_mul_of_totalLoss_le {C Y Database : Type*}
+    [Fintype C] [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (eps : ℝ) (k : ℕ) (d d' : Database)
+    (hK : ∀ (n : ℕ) (h : Hist C Y n), IsDP (fun d => K n h d) adj eps)
+    (hε : 0 ≤ eps) (hadj : adj d d') (hadj_symm : adj d' d)
+    (omega : Hist C Y k) (E : ℝ)
+    (hLoss : totalLoss R K k d d' omega ≤ E) :
+    (transcript R K k d omega).toReal ≤
+      Real.exp E * (transcript R K k d' omega).toReal := by
+  by_cases hω : transcript R K k d omega = 0
+  · rw [show (transcript R K k d omega).toReal = 0 by simp [hω]]
+    exact mul_nonneg (Real.exp_nonneg _) ENNReal.toReal_nonneg
+  · have hsup := transcript_support_eq R K adj eps k d d' hK hε hadj hadj_symm
+    have hmem : omega ∈ (transcript R K k d).support :=
+      (PMF.mem_support_iff _ _).mpr hω
+    rw [hsup] at hmem
+    have hQω : transcript R K k d' omega ≠ 0 :=
+      (PMF.mem_support_iff _ _).mp hmem
+    have hPpos : 0 < (transcript R K k d omega).toReal :=
+      ENNReal.toReal_pos hω ((transcript R K k d).apply_ne_top _)
+    have hQpos : 0 < (transcript R K k d' omega).toReal :=
+      ENNReal.toReal_pos hQω ((transcript R K k d').apply_ne_top _)
+    have hLoss' : Real.log ((transcript R K k d omega).toReal /
+        (transcript R K k d' omega).toReal) ≤ E := hLoss
+    have hx : 0 < (transcript R K k d omega).toReal /
+        (transcript R K k d' omega).toReal := div_pos hPpos hQpos
+    have hle : (transcript R K k d omega).toReal /
+        (transcript R K k d' omega).toReal ≤ Real.exp E := by
+      conv_lhs => rw [← Real.exp_log hx]
+      exact Real.exp_le_exp.mpr hLoss'
+    have hmul := mul_le_mul_of_nonneg_right hle hQpos.le
+    rwa [div_mul_cancel₀ _ (ne_of_gt hQpos)] at hmul
+
+/-- Approximate DP of the transcript from the tail bound.
+
+With `E` the drift-plus-deviation threshold, split each event into the good
+set `{ω | totalLoss ≤ E}` (uniform pointwise ratio) and the strict tail
+(`transcript_tail_outer_le`). -/
+theorem transcript_isApproxDP_of_tail {C Y Database : Type*} [Fintype C]
+    [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (eps : ℝ) (k : ℕ) (t : ℝ)
+    (hK : ∀ (n : ℕ) (h : Hist C Y n), IsDP (fun d => K n h d) adj eps)
+    (hε : 0 ≤ eps)
+    (hadj_symm : ∀ d d', adj d d' → adj d' d)
+    (hk : 0 < k) (hεpos : 0 < eps) (ht : 0 ≤ t) :
+    IsApproxDP (fun d => transcript R K k d) adj
+      ((k : ℝ) * (eps * (Real.exp eps - 1)) + t)
+      (Real.exp (-(t ^ 2) / (2 * (k : ℝ) * eps ^ 2))) := by
+  have hE : (0 : ℝ) ≤ (k : ℝ) * (eps * (Real.exp eps - 1)) + t := by
+    have h1 : (1 : ℝ) ≤ Real.exp eps := Real.one_le_exp hε
+    have h2 : (0 : ℝ) ≤ eps * (Real.exp eps - 1) :=
+      mul_nonneg hε (by linarith)
+    exact add_nonneg (mul_nonneg (Nat.cast_nonneg k) h2) ht
+  refine ⟨hE, Real.exp_nonneg _, fun d d' hadj s => ?_⟩
+  set E : ℝ := (k : ℝ) * (eps * (Real.exp eps - 1)) + t with hEdef
+  set G : Set (Hist C Y k) :=
+    {ω | totalLoss R K k d d' ω ≤ E} with hGdef
+  show (transcript R K k d).toOuterMeasure s ≤
+    ENNReal.ofReal (Real.exp E) * (transcript R K k d').toOuterMeasure s +
+      ENNReal.ofReal (Real.exp (-(t ^ 2) / (2 * (k : ℝ) * eps ^ 2)))
+  have hadj' : adj d' d := hadj_symm d d' hadj
+  have hpt : ∀ ω ∈ G, transcript R K k d ω ≤
+      ENNReal.ofReal (Real.exp E) * transcript R K k d' ω := by
+    intro ω hω
+    rw [hGdef] at hω
+    simp only [Set.mem_ofPred_eq] at hω
+    have h1 := transcript_toReal_le_exp_mul_of_totalLoss_le R K adj eps k d d'
+      hK hε hadj hadj' ω E hω
+    have hPfin : transcript R K k d ω ≠ ⊤ :=
+      (transcript R K k d).apply_ne_top ω
+    have hQfin : transcript R K k d' ω ≠ ⊤ :=
+      (transcript R K k d').apply_ne_top ω
+    conv_lhs => rw [← ENNReal.ofReal_toReal hPfin]
+    rw [← ENNReal.ofReal_toReal hQfin,
+      ← ENNReal.ofReal_mul (Real.exp_nonneg E)]
+    exact ENNReal.ofReal_le_ofReal h1
+  have hsplit := MeasureTheory.measure_le_inter_add_sdiff
+    ((transcript R K k d).toOuterMeasure) s G
+  have hgood : (transcript R K k d).toOuterMeasure (s ∩ G) ≤
+      ENNReal.ofReal (Real.exp E) *
+        (transcript R K k d').toOuterMeasure s := by
+    rw [PMF.toOuterMeasure_apply_fintype, PMF.toOuterMeasure_apply_fintype,
+      Finset.mul_sum]
+    apply Finset.sum_le_sum
+    intro ω _
+    by_cases hωG : ω ∈ G
+    · by_cases hωs : ω ∈ s
+      · rw [Set.indicator_of_mem ((Set.mem_inter_iff ω s G).mpr ⟨hωs, hωG⟩),
+          Set.indicator_of_mem hωs]
+        exact hpt ω hωG
+      · rw [Set.indicator_of_notMem (fun h => hωs ((Set.mem_inter_iff ω s G).mp h).1),
+          Set.indicator_of_notMem hωs, mul_zero]
+    · rw [Set.indicator_of_notMem (fun h => hωG ((Set.mem_inter_iff ω s G).mp h).2)]
+      by_cases hωs : ω ∈ s
+      · rw [Set.indicator_of_mem hωs]
+        exact zero_le
+      · rw [Set.indicator_of_notMem hωs, mul_zero]
+  have hbad : (transcript R K k d).toOuterMeasure (s \ G) ≤
+      ENNReal.ofReal (Real.exp (-(t ^ 2) / (2 * (k : ℝ) * eps ^ 2))) := by
+    have hsub : s \ G ⊆
+        {ω | (k : ℝ) * (eps * (Real.exp eps - 1)) + t <
+          totalLoss R K k d d' ω} := by
+      intro ω hω
+      have hnot : ω ∉ G := hω.2
+      rw [hGdef] at hnot
+      simp only [Set.mem_ofPred_eq] at hnot
+      simp only [Set.mem_ofPred_eq]
+      rw [← hEdef]
+      exact not_le.mp hnot
+    calc (transcript R K k d).toOuterMeasure (s \ G)
+        ≤ (transcript R K k d).toOuterMeasure
+          {ω | (k : ℝ) * (eps * (Real.exp eps - 1)) + t <
+            totalLoss R K k d d' ω} :=
+          MeasureTheory.measure_mono hsub
+      _ ≤ ENNReal.ofReal (Real.exp (-(t ^ 2) / (2 * (k : ℝ) * eps ^ 2))) :=
+          transcript_tail_outer_le R K adj eps k d d' t hK hε hadj hadj'
+            hk hεpos ht
+  calc (transcript R K k d).toOuterMeasure s
+      ≤ (transcript R K k d).toOuterMeasure (s ∩ G) +
+        (transcript R K k d).toOuterMeasure (s \ G) := hsplit
+    _ ≤ ENNReal.ofReal (Real.exp E) *
+          (transcript R K k d').toOuterMeasure s +
+        ENNReal.ofReal (Real.exp (-(t ^ 2) / (2 * (k : ℝ) * eps ^ 2))) :=
+        add_le_add hgood hbad
+
+/-- Pure-stage advanced composition.
+
+This is the pure-stage (per-stage `δ = 0`) specialization of advanced
+composition (Dwork and Roth, *The Algorithmic Foundations of Differential
+Privacy*, 2014, Theorem 3.20) for adaptive discrete PMF transcripts;
+per-stage `δ > 0` is not covered here. Each stage is pure-DP; the transcript is approximately DP with deviation
+`t = eps * sqrt (2 * k * log (1 / δ'))` on top of the summed drift
+`k * eps * (exp eps - 1)`. The degenerate cases are exact with zero budget:
+at `k = 0` the transcript law does not depend on the database, and at
+`eps = 0` adjacent databases give equal transcript laws. -/
+theorem transcript_isApproxDP_advanced_composition_pure {C Y Database : Type*}
+    [Fintype C] [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (eps : ℝ) (k : ℕ) (δ' : ℝ)
+    (hK : ∀ (n : ℕ) (h : Hist C Y n), IsDP (fun d => K n h d) adj eps)
+    (hε : 0 ≤ eps)
+    (hadj_symm : ∀ d d', adj d d' → adj d' d)
+    (hδpos : 0 < δ') (hδlt : δ' < 1) :
+    IsApproxDP (fun d => transcript R K k d) adj
+      (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / δ')) +
+        (k : ℝ) * (eps * (Real.exp eps - 1)))
+      δ' := by
+  by_cases hk0 : k = 0
+  · subst hk0
+    have hbudget : eps * Real.sqrt (2 * ((0 : ℕ) : ℝ) * Real.log (1 / δ')) +
+        ((0 : ℕ) : ℝ) * (eps * (Real.exp eps - 1)) = 0 := by
+      simp [Real.sqrt_zero]
+    rw [hbudget]
+    refine ⟨le_refl 0, hδpos.le, fun d d' hadj s => ?_⟩
+    show (transcript R K 0 d).toOuterMeasure s ≤
+      ENNReal.ofReal (Real.exp 0) * (transcript R K 0 d').toOuterMeasure s +
+        ENNReal.ofReal δ'
+    have h0 : ∀ d, transcript R K 0 d = R.map histZeroMk := fun d => rfl
+    rw [h0 d, h0 d', Real.exp_zero, ENNReal.ofReal_one, one_mul]
+    exact le_add_of_nonneg_right zero_le
+  · by_cases hε0 : eps = 0
+    · subst hε0
+      clear hk0
+      have hstage : ∀ n h d d', adj d d' → K n h d = K n h d' := by
+        intro n h d d' hadj
+        apply PMF.ext
+        intro o
+        have h1 := (hK n h).2 d d' hadj o
+        have h2 := (hK n h).2 d' d (hadj_symm d d' hadj) o
+        simp only [Real.exp_zero, ENNReal.ofReal_one, one_mul] at h1 h2
+        exact le_antisymm h1 h2
+      have hlaw : ∀ d d', adj d d' → transcript R K k d = transcript R K k d' := by
+        intro d d' hadj
+        induction k with
+        | zero => rfl
+        | succ n ih =>
+          have hfun : (fun h => (K n h d).map (histExtend h)) =
+              (fun h => (K n h d').map (histExtend h)) := by
+            funext h
+            rw [hstage n h d d' hadj]
+          show (transcript R K n d).bind
+              (fun h => (K n h d).map (histExtend h)) =
+            (transcript R K n d').bind
+              (fun h => (K n h d').map (histExtend h))
+          rw [ih, hfun]
+      have hbudget : (0 : ℝ) *
+          Real.sqrt (2 * (k : ℝ) * Real.log (1 / δ')) +
+          (k : ℝ) * (0 * (Real.exp 0 - 1)) = 0 := by simp
+      rw [hbudget]
+      refine ⟨le_refl 0, hδpos.le, fun d d' hadj s => ?_⟩
+      show (transcript R K k d).toOuterMeasure s ≤
+        ENNReal.ofReal (Real.exp 0) * (transcript R K k d').toOuterMeasure s +
+          ENNReal.ofReal δ'
+      rw [hlaw d d' hadj, Real.exp_zero, ENNReal.ofReal_one, one_mul]
+      exact le_add_of_nonneg_right zero_le
+    · have hk' : 0 < k := Nat.pos_of_ne_zero hk0
+      have hεpos' : 0 < eps := lt_of_le_of_ne hε (Ne.symm hε0)
+      have h1δ : (1 : ℝ) ≤ 1 / δ' := (one_le_div hδpos).mpr hδlt.le
+      have hlog : (0 : ℝ) ≤ Real.log (1 / δ') := Real.log_nonneg h1δ
+      have hu : (0 : ℝ) ≤ 2 * (k : ℝ) * Real.log (1 / δ') :=
+        mul_nonneg (mul_nonneg (by norm_num) (Nat.cast_nonneg k)) hlog
+      have ht : (0 : ℝ) ≤ eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / δ')) :=
+        mul_nonneg hε (Real.sqrt_nonneg _)
+      have hmain := transcript_isApproxDP_of_tail R K adj eps k
+        (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / δ')))
+        hK hε hadj_symm hk' hεpos' ht
+      have hE : (k : ℝ) * (eps * (Real.exp eps - 1)) +
+            eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / δ')) =
+          eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / δ')) +
+            (k : ℝ) * (eps * (Real.exp eps - 1)) :=
+        add_comm _ _
+      have htsq : (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / δ'))) ^ 2 =
+          eps ^ 2 * (2 * (k : ℝ) * Real.log (1 / δ')) := by
+        rw [mul_pow, Real.sq_sqrt hu]
+      have hdenom : (2 : ℝ) * (k : ℝ) * eps ^ 2 ≠ 0 := by
+        have hkpos : (0 : ℝ) < k := Nat.cast_pos.mpr hk'
+        have heps2 : (0 : ℝ) < eps ^ 2 := pow_pos hεpos' 2
+        exact ne_of_gt (mul_pos (mul_pos (by norm_num) hkpos) heps2)
+      have hexp_arg : -((eps * Real.sqrt (2 * (k : ℝ) *
+          Real.log (1 / δ'))) ^ 2) / (2 * (k : ℝ) * eps ^ 2) =
+          -Real.log (1 / δ') := by
+        rw [htsq, div_eq_iff hdenom]
+        ring
+      have hδ : Real.exp (-((eps * Real.sqrt (2 * (k : ℝ) *
+          Real.log (1 / δ'))) ^ 2) / (2 * (k : ℝ) * eps ^ 2)) = δ' := by
+        rw [hexp_arg, Real.exp_neg, Real.exp_log (div_pos zero_lt_one hδpos),
+          one_div, inv_inv]
+      rw [hE, hδ] at hmain
+      exact hmain
+
+/-- Domination transport: per-stage domination scales to transcript laws. -/
+theorem transcript_domination {C Y D E : Type*} [Fintype C] [Fintype Y]
+    (R : PMF C) (K : (n : ℕ) → Hist C Y n → D → PMF Y)
+    (L : (n : ℕ) → Hist C Y n → E → PMF Y) (d : D) (e : E) (k : ℕ)
+    (m : ℝ) (hm : 0 ≤ m) (hm_one : m ≤ 1)
+    (hstage : ∀ n, n < k → ∀ (h : Hist C Y n) (y : Y),
+      m * (L n h e y).toReal ≤ (K n h d y).toReal) :
+    ∀ w : Hist C Y k,
+      m ^ k * (transcript R L k e w).toReal
+        ≤ (transcript R K k d w).toReal := by
+  intro w
+  rw [transcript_toReal_factor R L k e w, transcript_toReal_factor R K k d w]
+  have hpow : (∏ _i : Fin k, m) = m ^ k := by
+    rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  have hle : (∏ i : Fin k, m * (L i.val (histPrefix i w) e (histOut i w)).toReal)
+      ≤ ∏ i : Fin k, (K i.val (histPrefix i w) d (histOut i w)).toReal :=
+    Finset.prod_le_prod₀ (fun i _ => mul_nonneg hm ENNReal.toReal_nonneg)
+      (fun i _ => hstage i.val i.isLt _ _)
+  calc m ^ k * ((R w.1).toReal
+          * ∏ i : Fin k, (L i.val (histPrefix i w) e (histOut i w)).toReal)
+      = (R w.1).toReal * ((∏ _i : Fin k, m)
+          * ∏ i : Fin k, (L i.val (histPrefix i w) e (histOut i w)).toReal) := by
+        rw [hpow]
+        ring
+    _ = (R w.1).toReal
+          * ∏ i : Fin k, m * (L i.val (histPrefix i w) e (histOut i w)).toReal := by
+        rw [Finset.prod_mul_distrib]
+    _ ≤ (R w.1).toReal
+          * ∏ i : Fin k, (K i.val (histPrefix i w) d (histOut i w)).toReal :=
+        mul_le_mul_of_nonneg_left hle ENNReal.toReal_nonneg
+
+open CSLibExt.Privacy.MaxDivergenceDecomposition
+
+instance Hist.nonempty {C Y : Type*} [Nonempty C] [Nonempty Y] (k : ℕ) :
+    Nonempty (Hist C Y k) := by
+  obtain ⟨c⟩ := (inferInstance : Nonempty C)
+  obtain ⟨y⟩ := (inferInstance : Nonempty Y)
+  refine ⟨?_⟩
+  show C × (Fin k → Y)
+  exact (c, fun _ => y)
+
+private theorem isDP_bool_of_maxDivLE_both {Y : Type*} [Fintype Y] [Nonempty Y]
+    (P Q : PMF Y) (eps : ℝ) (heps : 0 ≤ eps)
+    (hPQ : maxDivLE P Q eps) (hQP : maxDivLE Q P eps) :
+    IsDP (fun b : Bool => if b = false then P else Q) (fun b b' => b ≠ b') eps := by
+  have hconv : ∀ A B : PMF Y, maxDivLE A B eps →
+      ∀ o, A o ≤ ENNReal.ofReal (Real.exp eps) * B o := by
+    intro A B h o
+    have hAfin : A o ≠ ⊤ := (A.apply_ne_top o)
+    have hBfin : B o ≠ ⊤ := (B.apply_ne_top o)
+    conv_lhs => rw [← ENNReal.ofReal_toReal hAfin]
+    rw [← ENNReal.ofReal_toReal hBfin, ← ENNReal.ofReal_mul (Real.exp_nonneg eps)]
+    exact ENNReal.ofReal_le_ofReal (h o)
+  refine ⟨heps, fun b b' hadj o => ?_⟩
+  cases b <;> cases b'
+  · exact (hadj rfl).elim
+  · simpa using hconv P Q hPQ o
+  · simpa using hconv Q P hQP o
+  · exact (hadj rfl).elim
+
+theorem transcript_approxMaxDivLE_advanced_composition_pair {C Y : Type*}
+    [Fintype C] [Fintype Y] [Nonempty C] [Nonempty Y]
+    (R : PMF C) (L : (n : ℕ) → Hist C Y n → Bool → PMF Y) (eps : ℝ) (k : ℕ)
+    (delta' : ℝ) (heps : 0 ≤ eps)
+    (hL : ∀ n h, maxDivLE (L n h false) (L n h true) eps ∧
+      maxDivLE (L n h true) (L n h false) eps)
+    (hdelta'pos : 0 < delta') (hdelta'lt : delta' < 1) :
+    approxMaxDivLE (transcript R L k false) (transcript R L k true)
+        (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+          (k : ℝ) * (eps * (Real.exp eps - 1))) delta' ∧
+      approxMaxDivLE (transcript R L k true) (transcript R L k false)
+        (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+          (k : ℝ) * (eps * (Real.exp eps - 1))) delta' := by
+  have hK : ∀ (n : ℕ) (h : Hist C Y n),
+      IsDP (fun d => L n h d) (fun b b' => b ≠ b') eps := by
+    intro n h
+    obtain ⟨h1, h2⟩ := hL n h
+    have hfun : (fun b : Bool => if b = false then L n h false else L n h true) =
+        fun d => L n h d := by
+      funext b
+      cases b <;> simp
+    rw [← hfun]
+    exact isDP_bool_of_maxDivLE_both (L n h false) (L n h true) eps heps h1 h2
+  have hadj_symm : ∀ d d' : Bool, d ≠ d' → d' ≠ d := fun d d' h => Ne.symm h
+  have hmain := transcript_isApproxDP_advanced_composition_pure R L
+    (fun b b' => b ≠ b') eps k delta' hK heps hadj_symm hdelta'pos hdelta'lt
+  constructor
+  · exact approxMaxDivLE_of_isApproxDP hmain (by decide : false ≠ true)
+  · exact approxMaxDivLE_of_isApproxDP hmain (by decide : true ≠ false)
+
+private theorem nonempty_of_pmf {T : Type*} (P : PMF T) : Nonempty T := by
+  by_contra hcon
+  rw [not_nonempty_iff] at hcon
+  let : IsEmpty T := hcon
+  have h1 := P.tsum_coe
+  simp only [tsum_empty] at h1
+  exact zero_ne_one h1
+
+private theorem composition_budget_le (delta delta' : ℝ) (k : ℕ)
+    (hdelta : 0 ≤ delta) (hdelta_one : delta ≤ 1)
+    (hdelta' : 0 ≤ delta') :
+    (1 - delta) ^ k * delta' + 1 - (1 - delta) ^ k
+      ≤ (k : ℝ) * delta + delta' := by
+  have hnn : (0 : ℝ) ≤ 1 - delta := by linarith
+  have hle1 : (1 : ℝ) - delta ≤ 1 := by linarith
+  have hpow1 : ∀ m : ℕ, (1 - delta) ^ m ≤ 1 :=
+    fun m => pow_le_one₀ hnn hle1
+  have hgap : (1 : ℝ) - (1 - delta) ^ k ≤ (k : ℝ) * delta := by
+    induction k with
+    | zero => simp
+    | succ n ih =>
+        rw [pow_succ, Nat.cast_add, Nat.cast_one]
+        have h3 : (1 - delta) ^ n * delta ≤ 1 * delta :=
+          mul_le_mul_of_nonneg_right (hpow1 n) hdelta
+        have hring : (1 : ℝ) - (1 - delta) ^ n * (1 - delta)
+            = (1 - (1 - delta) ^ n) + (1 - delta) ^ n * delta := by ring
+        have hcast : ((n : ℝ) + 1) * delta = (n : ℝ) * delta + delta := by ring
+        rw [hring, hcast]
+        linarith [ih, h3]
+  have h2 : (1 - delta) ^ k * delta' ≤ 1 * delta' :=
+    mul_le_mul_of_nonneg_right (hpow1 k) hdelta'
+  linarith [hgap, h2]
+
+private theorem approxMaxDivLE_mono_delta {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) {E b₁ b₂ : ℝ}
+    (h : approxMaxDivLE P Q E b₁) (hle : b₁ ≤ b₂) :
+    approxMaxDivLE P Q E b₂ := by
+  intro s
+  have hs := h s
+  linarith [hs, hle]
+
+/-- full Dwork-Roth 2014 Theorem 3.20 form for (eps, delta)-DP stages. -/
+theorem transcript_isApproxDP_advanced_composition {C Y Database : Type*}
+    [Fintype C] [Fintype Y] (R : PMF C)
+    (K : (n : ℕ) → Hist C Y n → Database → PMF Y)
+    (adj : Database → Database → Prop) (eps delta : ℝ) (k : ℕ)
+    (delta' : ℝ)
+    (hK : ∀ n h, IsApproxDP (fun d => K n h d) adj eps delta)
+    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta)
+    (hadj_symm : ∀ d d', adj d d' → adj d' d)
+    (hdelta'pos : 0 < delta') (hdelta'lt : delta' < 1) :
+    IsApproxDP (fun d => transcript R K k d) adj
+      (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+        (k : ℝ) * (eps * (Real.exp eps - 1)))
+      ((k : ℝ) * delta + delta') := by
+  have hC : Nonempty C := nonempty_of_pmf R
+  let : Nonempty C := hC
+  have hexp1 : (1 : ℝ) ≤ Real.exp eps := Real.one_le_exp heps
+  have hdrift : (0 : ℝ) ≤ eps * (Real.exp eps - 1) :=
+    mul_nonneg heps (sub_nonneg.mpr hexp1)
+  have hE : (0 : ℝ) ≤ eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+      (k : ℝ) * (eps * (Real.exp eps - 1)) :=
+    add_nonneg (mul_nonneg heps (Real.sqrt_nonneg _))
+      (mul_nonneg (Nat.cast_nonneg k) hdrift)
+  have hD : (0 : ℝ) ≤ (k : ℝ) * delta + delta' :=
+    add_nonneg (mul_nonneg (Nat.cast_nonneg k) hdelta) hdelta'pos.le
+  by_cases hDB : Nonempty Database
+  · obtain ⟨d0⟩ := hDB
+    obtain ⟨c⟩ := hC
+    let : Nonempty Y := nonempty_of_pmf (K 0 (histZeroMk c) d0)
+    refine isApproxDP_of_forall_approxMaxDivLE (fun d => transcript R K k d)
+      adj hE hD fun d d' hadj => ?_
+    show approxMaxDivLE (transcript R K k d) (transcript R K k d') _ _
+    by_cases hk0 : k = 0
+    · subst hk0
+      intro s
+      have h0 : ∀ d, transcript R K 0 d = R.map histZeroMk := fun d => rfl
+      rw [h0 d, h0 d']
+      have hx : (0 : ℝ) ≤ ∑ w ∈ s, ((R.map histZeroMk) w).toReal :=
+        Finset.sum_nonneg fun w _ => ENNReal.toReal_nonneg
+      have hmul := mul_le_mul_of_nonneg_right (Real.one_le_exp hE) hx
+      linarith [hmul, hD]
+    · by_cases hlt : delta < 1
+      · have hadj' : adj d' d := hadj_symm d d' hadj
+        have hstage : ∀ (n : ℕ) (h : Hist C Y n), ∃ P0 Q0 : PMF Y,
+            maxDivLE P0 Q0 eps ∧ maxDivLE Q0 P0 eps ∧
+            (∀ w, (1 - delta) * (P0 w).toReal ≤ ((K n h d) w).toReal) ∧
+            (∀ w, (1 - delta) * (Q0 w).toReal ≤ ((K n h d') w).toReal) := by
+          intro n h
+          exact exists_dominated_pure_pair_of_approxMaxDivLE_both
+            (K n h d) (K n h d') eps delta heps hdelta hlt
+            (approxMaxDivLE_of_isApproxDP (hK n h) hadj)
+            (approxMaxDivLE_of_isApproxDP (hK n h) hadj')
+        choose P0 Q0 hmaxPQ hmaxQP hdomP hdomQ using hstage
+        let L : (n : ℕ) → Hist C Y n → Bool → PMF Y :=
+          fun n h b => if b = false then P0 n h else Q0 n h
+        have hLfalse : ∀ n h, L n h false = P0 n h := fun n h => rfl
+        have hLtrue : ∀ n h, L n h true = Q0 n h := fun n h => rfl
+        have hL : ∀ n h, maxDivLE (L n h false) (L n h true) eps ∧
+            maxDivLE (L n h true) (L n h false) eps := by
+          intro n h
+          rw [hLfalse n h, hLtrue n h]
+          exact ⟨hmaxPQ n h, hmaxQP n h⟩
+        have hpair := transcript_approxMaxDivLE_advanced_composition_pair R L
+          eps k delta' heps hL hdelta'pos hdelta'lt
+        have hm : (0 : ℝ) ≤ 1 - delta := sub_nonneg.mpr hlt.le
+        have hm1 : (1 : ℝ) - delta ≤ 1 := by linarith
+        have hdomTK : ∀ w, (1 - delta) ^ k
+            * ((transcript R L k false) w).toReal
+            ≤ ((transcript R K k d) w).toReal :=
+          transcript_domination R K L d false k (1 - delta) hm hm1 (by
+            intro n _ h y
+            rw [hLfalse n h]
+            exact hdomP n h y)
+        have hdomTK' : ∀ w, (1 - delta) ^ k
+            * ((transcript R L k true) w).toReal
+            ≤ ((transcript R K k d') w).toReal :=
+          transcript_domination R K L d' true k (1 - delta) hm hm1 (by
+            intro n _ h y
+            rw [hLtrue n h]
+            exact hdomQ n h y)
+        have hcommon := approxMaxDivLE_of_common_mass
+          (transcript R K k d) (transcript R K k d')
+          (transcript R L k false) (transcript R L k true)
+          ((1 - delta) ^ k)
+          (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+            (k : ℝ) * (eps * (Real.exp eps - 1))) delta'
+          (pow_nonneg hm k) hdomTK hdomTK' hpair.1
+        have hbudget := composition_budget_le delta delta' k hdelta hlt.le
+          hdelta'pos.le
+        exact approxMaxDivLE_mono_delta _ _ hcommon hbudget
+      · have hge : (1 : ℝ) ≤ delta := le_of_not_gt hlt
+        have hnpos : 0 < k := Nat.pos_of_ne_zero hk0
+        have h1k : (1 : ℝ) ≤ (k : ℝ) := by
+          have h1n : 1 ≤ k := hnpos
+          calc (1 : ℝ) = ((1 : ℕ) : ℝ) := (Nat.cast_one).symm
+            _ ≤ (k : ℝ) := Nat.cast_le.mpr h1n
+        have hDlo : (1 : ℝ) ≤ (k : ℝ) * delta + delta' := by
+          have hkd : (1 : ℝ) ≤ (k : ℝ) * delta := by
+            calc (1 : ℝ) = 1 * 1 := (mul_one 1).symm
+              _ ≤ (k : ℝ) * delta :=
+                mul_le_mul h1k hge zero_le_one (Nat.cast_nonneg k)
+          linarith [hkd, hdelta'pos.le]
+        intro s
+        have hsum1 : ∑ w ∈ s, ((transcript R K k d) w).toReal ≤ 1 := by
+          have hsub : ∑ w ∈ s, ((transcript R K k d) w).toReal ≤
+              ∑ w, ((transcript R K k d) w).toReal :=
+            Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ s)
+              (fun w _ _ => ENNReal.toReal_nonneg)
+          have htot : ∑ w, ((transcript R K k d) w).toReal = 1 := by
+            have h1' : (∑ w, transcript R K k d w) = 1 := by
+              have htsum := (transcript R K k d).tsum_coe
+              rwa [tsum_fintype] at htsum
+            have h2 : (∑ w, transcript R K k d w).toReal
+                = (1 : ENNReal).toReal := by rw [h1']
+            rw [ENNReal.toReal_sum
+              (fun a _ => (transcript R K k d).apply_ne_top a)] at h2
+            simpa using h2
+          linarith [hsub, htot]
+        have hnn : (0 : ℝ) ≤ Real.exp
+            (eps * Real.sqrt (2 * (k : ℝ) * Real.log (1 / delta')) +
+              (k : ℝ) * (eps * (Real.exp eps - 1))) *
+            ∑ w ∈ s, ((transcript R K k d') w).toReal :=
+          mul_nonneg (Real.exp_nonneg _)
+            (Finset.sum_nonneg fun w _ => ENNReal.toReal_nonneg)
+        linarith [hsum1, hDlo, hnn]
+  · refine ⟨hE, hD, fun d _ _ _ => ?_⟩
+    exact (hDB ⟨d⟩).elim
 
 end CSLibExt.Privacy.DifferentialPrivacy

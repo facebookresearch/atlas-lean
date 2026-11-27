@@ -19,7 +19,7 @@ NP-complete", SIAM Journal on Computing 5 (1976), 704-714, doi:10.1137/0205049.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.HamiltonianCircuitRegularWanted
@@ -45,7 +45,7 @@ Cubic means 3-regular, so this is the case `k = 3` of HAMILTONIAN CIRCUIT on `k`
 (`HamiltonianCircuitRegularWanted`), whose decision problem
 `HamiltonianCircuitRegular.hamiltonianCircuitRegularDec 3` is stated NP-complete below. That
 module's theorem covers `k ≥ 4` (Picouleau); `k = 3` rests on Garey, Johnson and Tarjan. Its
-instance, graph and question are those of HAMILTONIAN CIRCUIT (`HamiltonianCycleUndirectedWanted`: a
+instance, graph and question are those of HAMILTONIAN CIRCUIT (`HamiltonianCycleUndirectedDefs`: a
 vertex count and a simple edge list on `Fin n`, and `3 ≤ n` with Mathlib's
 `SimpleGraph.IsHamiltonian`), and its well-formedness `HamiltonianCircuitRegular.WellFormed 3` adds
 Mathlib's `SimpleGraph.IsRegularOfDegree 3`.

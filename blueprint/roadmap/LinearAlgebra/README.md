@@ -25,4 +25,6 @@ The accuracy and cost of these algorithms are analysed in three steps. [Perturba
 - [Determinants and matrix identities](determinants-and-matrix-identities/README.md)
 - [Positive definite matrices and matrix inequalities](positive-definite-matrices/README.md)
 - [Bilinear and quadratic forms](bilinear-and-quadratic-forms/README.md)
+- [Tensor products and multilinear algebra](multilinear-algebra/README.md)
 - [Special matrices](special-matrices/README.md)
+- [Not yet classified](not-yet-classified/README.md)

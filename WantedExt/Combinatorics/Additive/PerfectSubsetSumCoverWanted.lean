@@ -17,7 +17,9 @@ public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.LinearAlgebra.Span.Defs
 public import Mathlib.Order.Interval.Finset.Fin
-public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCover
+public import MathlibExt.Combinatorics.Additive.PerfectCoverPrescribedOddCoordinates
+public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverErase
+public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverInit
 
 /-!
 # Perfect subset-sum covers of abelian groups of order a power of two
@@ -150,56 +152,6 @@ public theorem_wanted count_elementary_two_three_prod_zmod :
       (2 : ℚ) ^ (3 * (n : ℤ) - 3) * 2 ^ (n * (n - 1) / 2) *
         (28 * (n : ℚ) ^ 3 + 196 * n ^ 2 + 392 * n + 224)
 
-/-- **Removing one element from a perfect cover.** Let $G$ be a finite abelian group of order $2^n$,
-let $S$ be a perfect cover of $G$, let $z \in S$ and let $S_1 = S \setminus \{z\}$. Then (a) every
-element of $G$ is the sum of at most one subset of $S_1$, and exactly half of the $2^n$ elements
-of $G$ are the sum of a subset of $S_1$; (b) if $g \in G$ is the sum of a subset of $S_1$ and $j$
-is an integer with $j \ge 1$, then $g + 2jz$ is the sum of a subset of $S_1$ and $g + (2j-1)z$ is
-not.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 7
-(`jis-2025-25.7.8-lem-7`). -/
-public theorem_wanted perfectCover_erase_coverCount {G : Type*} [AddCommGroup G]
-    [DecidableEq G] [Fintype G] {n : ℕ} (hG : Fintype.card G = 2 ^ n) {S : Finset G}
-    (hS : IsPerfectCover S) {z : G} (hz : z ∈ S) :
-    ((∀ g : G, coverCount (fun x : S.erase z => (x : G)) g ≤ 1) ∧
-      2 * (Finset.univ.filter fun g : G =>
-        coverCount (fun x : S.erase z => (x : G)) g = 1).card = 2 ^ n) ∧
-    ∀ g : G, 1 ≤ coverCount (fun x : S.erase z => (x : G)) g → ∀ j : ℕ, 1 ≤ j →
-      1 ≤ coverCount (fun x : S.erase z => (x : G)) (g + (2 * j) • z) ∧
-        coverCount (fun x : S.erase z => (x : G)) (g + (2 * j - 1) • z) = 0
-
-/-- **Removing the last element of a perfect $2^j$-cover.** Let $G$ be an abelian group, let
-$s = (x_1, \dots, x_{k+1})$ be a family in $G$ that is a perfect $2^j$-cover of $G$, and let
-$S_1 = (x_1, \dots, x_k)$. For every $a \in G$, if $S_1$ covers $a$ exactly $c$ times, then
-$S_1$ covers $a + x_{k+1}$ exactly $2^j - c$ times.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 8
-(`jis-2025-25.7.8-lem-8`). The paper's `|G| = 2^n` and `k + 1 = j + n` are not needed. -/
-public theorem_wanted coverCount_init_add_last {G : Type*} [AddCommGroup G] [DecidableEq G]
-    {j k : ℕ} {s : Fin (k + 1) → G} (hs : IsPerfectMCover (2 ^ j) s) (a : G) :
-    coverCount (s ∘ Fin.castSucc) (a + s (Fin.last k)) =
-      2 ^ j - coverCount (s ∘ Fin.castSucc) a
-
-/-- **Shifting by multiples of the last element of a perfect $2^j$-cover.** Let $G$ be an
-abelian group, let $s = (x_1, \dots, x_{k+1})$ be a family in $G$ that is a perfect $2^j$-cover
-of $G$, and let $S_1 = (x_1, \dots, x_k)$. For every $b \in G$, if $S_1$ covers $b$ exactly $c$
-times, then for every integer $t$ it covers $b + 2t\,x_{k+1}$ exactly $c$ times and
-$b + (2t + 1)\,x_{k+1}$ exactly $2^j - c$ times.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Corollary 9
-(`jis-2025-25.7.8-cor-9`). `t` ranges over `ℤ`. -/
-public theorem_wanted coverCount_init_add_zsmul_last {G : Type*} [AddCommGroup G]
-    [DecidableEq G] {j k : ℕ} {s : Fin (k + 1) → G} (hs : IsPerfectMCover (2 ^ j) s)
-    (b : G) (t : ℤ) :
-    coverCount (s ∘ Fin.castSucc) (b + (2 * t) • s (Fin.last k)) =
-        coverCount (s ∘ Fin.castSucc) b ∧
-      coverCount (s ∘ Fin.castSucc) (b + (2 * t + 1) • s (Fin.last k)) =
-        2 ^ j - coverCount (s ∘ Fin.castSucc) b
-
 /-- **Odd multiples and replacement in perfect covers.** Let $G$ be a finite abelian group of order
 $2^n$ and let $a, b \in G$ be nonzero. Then $b = (2j+1)a$ for some integer $j$ if and only if, for
 every perfect cover $S$ of $G$ with $a \in S$, the set $(S \setminus \{a\}) \cup \{b\}$ is again a
@@ -288,35 +240,6 @@ public theorem_wanted oddCombinations_inter_of_isPerfectCover {G : Type*} [AddCo
       oddCombinations A ∩ oddCombinations B = {0}) ∧
     ∀ A : Finset G, A ⊆ S → ∀ s ∈ S, s ∉ A → s ∉ oddCombinations A
 
-/-- **Odd combinations are closed under odd multiples.** Let $A$ be a finite subset of an abelian
-group $G$. If $g$ lies in the set $\mathcal{T}(A)$ of odd combinations of $A$, then
-$(2j+1)g \in \mathcal{T}(A)$ for every integer $j$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Theorem 15 (c)
-(`jis-2025-25.7.8-thm-15`). "Union of equivalence classes" is stated as closure under odd
-multiples (`0 ∈ 𝒯(A)` is `zero_mem_oddCombinations`). -/
-public theorem_wanted zsmul_mem_oddCombinations {G : Type*} [AddCommGroup G] [DecidableEq G]
-    (A : Finset G) {g : G} (hg : g ∈ oddCombinations A) (j : ℤ) :
-    (2 * j + 1) • g ∈ oddCombinations A
-
-/-- **Distinct subset sums from the odd-combination condition.** Let $G$ be an abelian group,
-and for a finite set $A \subseteq G$ write $\mathcal{T}(A)$ for the set of odd combinations of
-$A$. Let $x = (x_1, \dots, x_m)$ be a family in $G$ such that
-$x_i \notin \mathcal{T}(\{x_1, \dots, x_{i-1}\})$ for every $i$ (for $i = 1$ this says
-$x_1 \ne 0$, and for $i \ge 2$ it forces $x_i \ne 0$). Then $x$ covers every element of $G$ at
-most once, that is, all subset sums of $x$ are distinct; if moreover $|G| = 2^m$, then $x$ is a
-perfect $1$-cover of $G$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 16
-(`jis-2025-25.7.8-lem-16`). The paper's "nonzero" hypothesis is the `i = 1` case of `hx`;
-distinctness needs no finiteness, and "`m = n`" is `Nat.card G = 2 ^ m`. -/
-public theorem_wanted coverCount_le_one_of_not_mem_oddCombinations {G : Type*}
-    [AddCommGroup G] [DecidableEq G] {m : ℕ} {x : Fin m → G}
-    (hx : ∀ i : Fin m, x i ∉ oddCombinations ((Finset.Iio i).image x)) :
-    (∀ g : G, coverCount x g ≤ 1) ∧ (Nat.card G = 2 ^ m → IsPerfectMCover 1 x)
-
 /-- **Perfect covers containing a perfect cover of a subgroup.** Let $G$ be an abelian group of
 order $2^n$ and $H$ a subgroup of order $2^m$. Then the number of perfect covers of $G$ that
 contain a perfect cover of $H$ is $2^{m(n-m)} \cdot C(G/H) \cdot C(H)$, where $C(K)$ denotes the
@@ -358,21 +281,6 @@ cover is empty. -/
 public theorem_wanted exists_addOrderOf_eq_two_of_isPerfectCover {m n : ℕ} (hmn : 0 < m + n)
     {S : Finset (ZMod (2 ^ m) × ZMod (2 ^ n))} (hS : IsPerfectCover S) :
     ∃ x ∈ S, addOrderOf x = 2
-
-/-- **Perfect covers with a prescribed number of odd last coordinates.** Let $H$ be a finite
-abelian group of order $2^m$, let $n \ge 1$, and let $G = H \oplus \mathbb{Z}_{2^n}$. For every
-$k$ with $1 \le k \le m + 1$, some perfect cover $S$ of $G$ has exactly $k$ elements $(h, y)$
-whose coordinate $y \in \mathbb{Z}_{2^n}$ is odd.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 20
-(`jis-2025-25.7.8-lem-20`). The setting `G = H ⊕ ℤ_{2^n}`, `|H| = 2^m`, is the one fixed
-before the lemma in Section 5; `y` odd means `y.val` odd; `n ≥ 1` added (for `n = 0` no `y` is
-odd). -/
-public theorem_wanted exists_isPerfectCover_card_odd {H : Type*} [AddCommGroup H]
-    [DecidableEq H] [Fintype H] {m n k : ℕ} (hH : Fintype.card H = 2 ^ m) (hn : 1 ≤ n)
-    (hk : 1 ≤ k) (hkm : k ≤ m + 1) :
-    ∃ S : Finset (H × ZMod (2 ^ n)), IsPerfectCover S ∧ (S.filter fun x => Odd x.2.val).card = k
 
 /-- **Perfect covers with exactly one odd element.** Let $H$ be an abelian group of order $2^m$,
 let $n \ge 1$ and let $G = H \oplus \mathbb{Z}_{2^n}$. Call an element of $G$ odd when its

@@ -32,11 +32,13 @@ recursion `t² δ_t ≤ (t − 1)² δ_{t−1} + M²` for the squared distance `
 (Hart 2005, Appendix, equation (13); Blackwell 1956, inequalities (2)–(5)), which gives the rate
 `dist(x̄_t, C) ≤ M / √t`, and its application to the averages of the *expected* vector payoffs of
 the Blackwell strategy against any sequence of opponent actions. Passing from expected to
-realised payoffs needs a strong law of large numbers for martingale differences; that
-almost-sure statement is recorded as wanted in `BlackwellApproachabilityWanted`.
+realised payoffs needs a strong law of large numbers for martingale differences; the
+almost-sure statement is `blackwell_approachability` in
+`MathlibExt.GameTheory.BlackwellApproachabilityAlmostSure`.
 
 ## Main results
 
+* `sq_succ_mul_infDist_average_le`: one step of the recursion, for any point of `C`.
 * `sq_mul_infDist_average_le`, `infDist_average_le`: the deterministic approachability
   recursion and the `M / √t` rate.
 * `exists_inner_sub_nonpos_of_enforceable`: Blackwell's half-space step.
@@ -79,6 +81,54 @@ theorem succ_smul_average (y : ℕ → E) (n : ℕ) :
   push_cast at this
   rw [this, natCast_smul_average, sum_range_succ]
 
+/-- **Norm bound for the running averages.** Let `y : ℕ → E` be a sequence in a real inner product
+space `E`. If every vector `y k` has norm at most `R`, then so does every average
+`x̄_n = (1/n) ∑_{k < n} y k`, including `x̄_0 = 0`. -/
+theorem norm_average_le {y : ℕ → E} {R : ℝ} (hy : ∀ k, ‖y k‖ ≤ R) (n : ℕ) :
+    ‖average y n‖ ≤ R := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simpa [average] using (norm_nonneg _).trans (hy 0)
+  · rw [average, norm_smul, Real.norm_of_nonneg (by positivity)]
+    have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+    calc (n : ℝ)⁻¹ * ‖∑ k ∈ range n, y k‖ ≤ (n : ℝ)⁻¹ * ∑ k ∈ range n, ‖y k‖ :=
+          mul_le_mul_of_nonneg_left (norm_sum_le _ _) (by positivity)
+      _ ≤ (n : ℝ)⁻¹ * ∑ _k ∈ range n, R :=
+          mul_le_mul_of_nonneg_left (sum_le_sum fun k _ => hy k) (by positivity)
+      _ = R := by rw [sum_const, card_range, nsmul_eq_mul]; field_simp
+
+/-- **One step of Blackwell's recursion.** Let `y : ℕ → E` be a sequence in a real inner product
+space `E`. Let `x̄_n` be the averages of a sequence `y` and let `c ∈ C`. Then, for every `n`,
+`((n + 1) dist(x̄_{n+1}, C))² ≤ (n ‖x̄_n − c‖)² + 2 n ⟪x̄_n − c, y_n − c⟫ + ‖y_n − c‖²`,
+because `(n + 1)(x̄_{n+1} − c) = n (x̄_n − c) + (y_n − c)` and `dist(x̄_{n+1}, C) ≤ ‖x̄_{n+1} − c‖`
+(Blackwell 1956, (2)–(3); Hart 2005, Appendix, proof of Theorem 5 (ii), the inequality before
+(13)). No half-space condition is assumed. -/
+theorem sq_succ_mul_infDist_average_le {C : Set E} (y : ℕ → E) {c : E} (hc : c ∈ C) (n : ℕ) :
+    (((n : ℝ) + 1) * infDist (average y (n + 1)) C) ^ 2 ≤
+      ((n : ℝ) * ‖average y n - c‖) ^ 2 + 2 * n * ⟪average y n - c, y n - c⟫ +
+        ‖y n - c‖ ^ 2 := by
+  set u : E := (n : ℝ) • (average y n - c)
+  set w : E := y n - c
+  have hkey : ((n : ℝ) + 1) • (average y (n + 1) - c) = u + w := by
+    rw [smul_sub, succ_smul_average]
+    simp only [u, w, smul_sub]
+    rw [add_smul, one_smul]
+    abel
+  have hdist : ((n : ℝ) + 1) * infDist (average y (n + 1)) C ≤ ‖u + w‖ := by
+    rw [← hkey, norm_smul, Real.norm_of_nonneg (by positivity)]
+    gcongr
+    rw [← dist_eq_norm]
+    exact infDist_le_dist_of_mem hc
+  have hnn : 0 ≤ ((n : ℝ) + 1) * infDist (average y (n + 1)) C := by
+    have := infDist_nonneg (x := average y (n + 1)) (s := C)
+    positivity
+  have hu : ‖u‖ = n * ‖average y n - c‖ := by
+    simp only [u, norm_smul, Real.norm_of_nonneg (Nat.cast_nonneg n)]
+  have hinner : ⟪u, w⟫ = n * ⟪average y n - c, y n - c⟫ := by
+    simp only [u, w, real_inner_smul_left]
+  calc _ ≤ ‖u + w‖ ^ 2 := pow_le_pow_left₀ hnn hdist 2
+    _ = ‖u‖ ^ 2 + 2 * ⟪u, w⟫ + ‖w‖ ^ 2 := norm_add_sq_real u w
+    _ = _ := by rw [hu, hinner]; ring
+
 /-- **Blackwell's approachability recursion** (Hart 2005, Appendix, equation (13), here without
 expectations; Blackwell 1956, (2)–(5)). Let `x̄_n` be the averages of `y`, let `c n ∈ C` be a
 nearest point of `C` to `x̄_n` for `n ≥ 1`, suppose each new vector `y n` lies in the half-space
@@ -92,37 +142,18 @@ theorem sq_mul_infDist_average_le {C : Set E} {y c : ℕ → E} {M : ℝ} (hc : 
   induction n with
   | zero => simp
   | succ n ih =>
-    set u : E := (n : ℝ) • (average y n - c n)
-    set w : E := y n - c n
-    have hkey : ((n : ℝ) + 1) • (average y (n + 1) - c n) = u + w := by
-      rw [smul_sub, succ_smul_average]
-      simp only [u, w, smul_sub]
-      rw [add_smul, one_smul]
-      abel
-    have hdist : ((n : ℝ) + 1) * infDist (average y (n + 1)) C ≤ ‖u + w‖ := by
-      rw [← hkey, norm_smul, Real.norm_of_nonneg (by positivity)]
-      gcongr
-      rw [← dist_eq_norm]
-      exact infDist_le_dist_of_mem (hc n)
-    have hu : ‖u‖ ^ 2 ≤ n * M ^ 2 := by
+    have h := sq_succ_mul_infDist_average_le y (hc n) n
+    have hu : ((n : ℝ) * ‖average y n - c n‖) ^ 2 ≤ n * M ^ 2 := by
       rcases Nat.eq_zero_or_pos n with h0 | hn
-      · subst h0; simp [u]
-      · rw [norm_smul, Real.norm_of_nonneg (by positivity), hnear n hn]
-        exact ih
-    have hinner : ⟪u, w⟫ ≤ 0 := by
+      · subst h0; simp
+      · rw [hnear n hn]; exact ih
+    have hinner : (n : ℝ) * ⟪average y n - c n, y n - c n⟫ ≤ 0 := by
       rcases Nat.eq_zero_or_pos n with h0 | hn
-      · subst h0; simp [u]
-      · simp only [u, w, real_inner_smul_left]
-        exact mul_nonpos_of_nonneg_of_nonpos (by positivity) (hhalf n hn)
-    have hw : ‖w‖ ^ 2 ≤ M ^ 2 := by
-      have := hM n
-      exact pow_le_pow_left₀ (norm_nonneg _) this 2
-    have hsq := norm_add_sq_real u w
-    have hnn : 0 ≤ ((n : ℝ) + 1) * infDist (average y (n + 1)) C := by
-      have := infDist_nonneg (x := average y (n + 1)) (s := C)
-      positivity
+      · subst h0; simp
+      · exact mul_nonpos_of_nonneg_of_nonpos (by positivity) (hhalf n hn)
+    have hw : ‖y n - c n‖ ^ 2 ≤ M ^ 2 := pow_le_pow_left₀ (norm_nonneg _) (hM n) 2
     push_cast
-    nlinarith [pow_le_pow_left₀ hnn hdist 2]
+    nlinarith
 
 /-- **The `M / √t` rate of approachability**: under the hypotheses of
 `sq_mul_infDist_average_le`, `dist(x̄_n, C) ≤ M / √n` for every `n ≥ 1` (Hart 2005, Appendix:
@@ -237,18 +268,7 @@ theorem blackwell_expected_approachability [CompleteSpace E] {A B : Type*} [Fint
     rw [hnear x, infDist_eq_iInf]
     simp [dist_eq_norm]
   have hy : ∀ m, ‖y m‖ ≤ R := fun m => norm_mixedPayoff_le hR (σ _) _
-  -- `R ≥ 0` (B is inhabited by `β 0`, A by any point of the simplex)
-  have hR0 : 0 ≤ R := (norm_nonneg _).trans (hy 0)
-  have havgR : ∀ m, ‖average y m‖ ≤ R := fun m => by
-    rcases Nat.eq_zero_or_pos m with rfl | hm
-    · simp [average, hR0]
-    · rw [average, norm_smul, Real.norm_of_nonneg (by positivity)]
-      have hm' : (0 : ℝ) < m := by exact_mod_cast hm
-      calc (m : ℝ)⁻¹ * ‖∑ k ∈ range m, y k‖ ≤ (m : ℝ)⁻¹ * ∑ k ∈ range m, ‖y k‖ :=
-            mul_le_mul_of_nonneg_left (norm_sum_le _ _) (by positivity)
-        _ ≤ (m : ℝ)⁻¹ * ∑ _k ∈ range m, R :=
-            mul_le_mul_of_nonneg_left (sum_le_sum fun k _ => hy k) (by positivity)
-        _ = R := by rw [sum_const, card_range, nsmul_eq_mul]; field_simp
+  have havgR : ∀ m, ‖average y m‖ ≤ R := norm_average_le hy
   refine infDist_average_le (c := fun m => near (average y m)) (fun m => hnearC _)
     (fun m _ => hinfD _) (fun m _ => ?_) (fun m => ?_) hn
   · have := hσb (average y m) (β m)

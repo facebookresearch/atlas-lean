@@ -9,6 +9,8 @@ Coron proves the single-input case through the controller (companion) form of $(
 - [Pole-shifting theorem](exists-charpoly-add-comp-eq.md)
 - [Controllable linear systems have a Hurwitz closed loop](exists-is-hurwitz-add-mul.md)
 - [Exponential stabilisation of controllable linear systems](exists-norm-exp-add-mul-le.md)
+- [Hautus test for stabilizability and detectability](hautus-test-for-stabilizability-and-detectability.md)
+- [Hautus test for stabilizability and detectability, discrete time](hautus-test-for-stabilizability-and-detectability-discrete-time.md)
 
 ## Related topics
 

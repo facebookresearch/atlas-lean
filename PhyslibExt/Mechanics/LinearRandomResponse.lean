@@ -164,9 +164,9 @@ lemma stationaryVarianceDim :
       single ISQDimensionBase.length * single ISQDimensionBase.length := by
   decide
 
-/-- The stationary-variance formula commutes with every change of unit scales: converting the
-coordinates of `σ`, `c` and `k` and evaluating `σ² / (2 c k)` gives the converted coordinate of
-the displacement variance. -/
+/-- The stationary-variance formula commutes with every change of unit scales: for `c, k > 0`,
+converting the coordinates of `σ`, `c` and `k` and evaluating `σ² / (2 c k)` gives the converted
+coordinate of the displacement variance. -/
 lemma stationaryVariance_coord_dimScale (u1 u2 : UnitScale ISQDimensionBase) (σ c k : ℝ)
     (_hc : 0 < c) (_hk : 0 < k) :
     ((u1.dimScale u2 forceNoiseDim : ℝ) * σ) ^ 2 /
@@ -212,9 +212,9 @@ lemma physical_iff_langevin {c : ℝ} (hc : 0 < c) (k σ x₀ : ℝ) (x w : ℝ 
     field_simp
     ring
 
-/-- The existing OU path solution with `θ = k / c` and `σ' = σ / c` solves the physical equation
-`c (x t - x₀) = -k ∫₀ᵗ x + σ (w t - w 0)` for every continuous driving path `w` and every
-`t`. -/
+/-- For `c > 0`, the existing OU path solution with `θ = k / c` and `σ' = σ / c` solves the
+physical equation `c (x t - x₀) = -k ∫₀ᵗ x + σ (w t - w 0)` for every continuous driving path `w`
+and every `t`. -/
 lemma ouPathSolution_solves_physical {c : ℝ} (hc : 0 < c) (k σ x₀ : ℝ) {w : ℝ → ℝ}
     (hw : Continuous w) (t : ℝ) :
     c * (ouPathSolution (k / c) (σ / c) x₀ w t - x₀) =
@@ -222,8 +222,8 @@ lemma ouPathSolution_solves_physical {c : ℝ} (hc : 0 < c) (k σ x₀ : ℝ) {w
   exact (physical_iff_langevin hc k σ x₀ _ w t).2
     (ouPathSolution_integral_eq (k / c) (σ / c) x₀ hw t)
 
-/-- **Uniqueness.** A continuous solution of the physical equation on `t ≥ 0` is the OU path
-solution with `θ = k / c` and `σ' = σ / c` there. -/
+/-- **Uniqueness.** For `c > 0` and a continuous driving path `w`, a continuous solution of the
+physical equation on `t ≥ 0` is the OU path solution with `θ = k / c` and `σ' = σ / c` there. -/
 lemma eq_ouPathSolution_of_physical {c k σ x₀ : ℝ} (hc : 0 < c) {w x : ℝ → ℝ}
     (hw : Continuous w) (hx : Continuous x)
     (h : ∀ t, 0 ≤ t → c * (x t - x₀) = -k * (∫ u in (0 : ℝ)..t, x u) + σ * (w t - w 0))
@@ -265,8 +265,8 @@ lemma exists_stationaryResponse {c k : ℝ} (hc : 0 < c) (hk : 0 < k) (σ : ℝ)
   · exact IsBrownianReal.isStationaryOrnsteinUhlenbeck_ouPathSolution hB (div_pos hk hc)
       (σ / c) (by rwa [hv]) hind
 
-/-- **Covariance of the stationary response**:
-`cov(X s, X t) = σ² / (2 c k) · e^{-(k / c)|t - s|}`. -/
+/-- **Covariance of the stationary response**: for `c > 0` and a stationary OU process `X` with
+rate `k / c` and noise amplitude `σ / c`, `cov(X s, X t) = σ² / (2 c k) · e^{-(k / c)|t - s|}`. -/
 lemma stationaryResponse_covariance {c k σ : ℝ} (hc : 0 < c) {X : ℝ≥0 → Ω → ℝ}
     (hX : IsStationaryOrnsteinUhlenbeck (k / c) (σ / c) X P) (s t : ℝ≥0) :
     cov[X s, X t; P] = σ ^ 2 / (2 * c * k) * Real.exp (-(k / c) * |(t : ℝ) - s|) := by
@@ -277,7 +277,8 @@ lemma stationaryResponse_covariance {c k σ : ℝ} (hc : 0 < c) {X : ℝ≥0 →
   congr 1
   field_simp
 
-/-- **Stationary variance** of the displacement: `Var (X t) = σ² / (2 c k)`. -/
+/-- **Stationary variance** of the displacement: for `c > 0` and a stationary OU process `X` with
+rate `k / c` and noise amplitude `σ / c`, `Var (X t) = σ² / (2 c k)`. -/
 lemma stationaryResponse_variance {c k σ : ℝ} (hc : 0 < c) {X : ℝ≥0 → Ω → ℝ}
     (hX : IsStationaryOrnsteinUhlenbeck (k / c) (σ / c) X P) (t : ℝ≥0) :
     Var[X t; P] = σ ^ 2 / (2 * c * k) := by
@@ -288,7 +289,8 @@ lemma stationaryResponse_variance {c k σ : ℝ} (hc : 0 < c) {X : ℝ≥0 → �
     ouStationaryCovariance_self]
   field_simp
 
-/-- **Stationary law** of the displacement: `X t ~ N(0, σ² / (2 c k))`. -/
+/-- **Stationary law** of the displacement: for `c > 0` and a stationary OU process `X` with
+rate `k / c` and noise amplitude `σ / c`, `X t ~ N(0, σ² / (2 c k))`. -/
 lemma stationaryResponse_hasLaw {c k σ : ℝ} (hc : 0 < c) {X : ℝ≥0 → Ω → ℝ}
     (hX : IsStationaryOrnsteinUhlenbeck (k / c) (σ / c) X P) (t : ℝ≥0) :
     HasLaw (X t) (gaussianReal 0 (σ ^ 2 / (2 * c * k)).toNNReal) P := by
@@ -300,8 +302,9 @@ lemma stationaryResponse_hasLaw {c k σ : ℝ} (hc : 0 < c) {X : ℝ≥0 → Ω 
 
 /-! ## D. Nonzero noise and the white-noise boundary -/
 
-/-- **Nonzero noise gives nonzero variance**, and only nonzero noise does: the stationary
-variance vanishes exactly when `σ = 0`. -/
+/-- **Nonzero noise gives nonzero variance**, and only nonzero noise does: for `c > 0` and a
+stationary OU process `X` with rate `k / c` and noise amplitude `σ / c`, the stationary variance
+vanishes exactly when `σ = 0`. -/
 lemma stationaryResponse_variance_eq_zero_iff {c k σ : ℝ} (hc : 0 < c) {X : ℝ≥0 → Ω → ℝ}
     (hX : IsStationaryOrnsteinUhlenbeck (k / c) (σ / c) X P) (t : ℝ≥0) :
     Var[X t; P] = 0 ↔ σ = 0 := by

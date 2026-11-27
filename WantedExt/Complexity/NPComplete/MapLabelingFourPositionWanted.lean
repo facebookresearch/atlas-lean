@@ -17,7 +17,7 @@ M. Formann and F. Wagner, "A packing problem with applications to lettering of m
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 
@@ -71,7 +71,9 @@ def WellFormed (i : MapLabelingFourPositionInstance) : Prop :=
 /-- `|d| ≥ p`. -/
 def AtLeast (p : ℕ) (d : ℤ) : Prop := (p : ℤ) ≤ d ∨ d ≤ -(p : ℤ)
 
-/-- Some choice of corners `(a, b) ∈ {0, 1}²` gives pairwise non-overlapping labels. -/
+/-- Some choice of corners `(a, b) ∈ {0, 1}²` satisfies the displayed integer inequalities for
+every two distinct points. For `p, q > 0`, as well-formedness requires, this says the labels,
+squares of side `p / q`, pairwise do not overlap. -/
 def MapLabelingFourPositionFeasible (i : MapLabelingFourPositionInstance) : Prop :=
   ∃ a b : Fin (points i).length → Fin 2, ∀ j k : Fin (points i).length, j ≠ k →
     AtLeast i.2.1 ((i.2.2 : ℤ) * ((points i)[j].1 - (points i)[k].1) -

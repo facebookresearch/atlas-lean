@@ -9,12 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Complex.Basic
+import Mathlib.Tactic.IntervalCases
 
 /-!
 # Errors of Hurwitz continued fraction convergents
 
 `hurwitzQ_mul_sub_hurwitzP` expresses the convergent error as a signed reciprocal
 product of the iterates and recovers the next iterate from two consecutive errors.
+`norm_hurwitzQ_lt_succ` proves that the denominator norms increase at legal indices.
 
 The iterates and convergents follow Zhaonan Wang and Yingpu Deng, *Finding Sums of Four
 Squares via Complex Continued Fractions*. Rounding ties go to the larger integer in each
@@ -189,6 +191,184 @@ theorem hurwitzQ_mul_sub_hurwitzP (z : ℂ) (n : ℕ) (hn : HurwitzLegal z n) :
     rw [(ih (fun j hj => hn j (Nat.lt_succ_of_lt hj))).1, Finset.prod_range_succ _ (n + 1),
       pow_succ, mul_inv_rev, div_eq_mul_inv]
     ring
+
+
+namespace norm_hurwitzQ_lt_succ
+
+private def gaussian (a b : ℤ) : ℂ := (a : ℂ) + (b : ℂ) * I
+
+@[local simp] private theorem gaussian_re (a b : ℤ) : (gaussian a b).re = a := by
+  simp [gaussian, mul_re]
+
+@[local simp] private theorem gaussian_im (a b : ℤ) : (gaussian a b).im = b := by
+  simp [gaussian, mul_im]
+
+private theorem gaussian_add (a b p q : ℤ) :
+    gaussian a b + gaussian p q = gaussian (a + p) (b + q) := by
+  apply Complex.ext <;> simp
+
+private def InSquare (u : ℂ) : Prop := |u.re| ≤ 1 / 2 ∧ |u.im| ≤ 1 / 2
+
+private theorem normSq_le_half {u : ℂ} (hu : InSquare u) : normSq u ≤ 1 / 2 := by
+  obtain ⟨hr₁, hr₂⟩ := abs_le.mp hu.1
+  obtain ⟨hi₁, hi₂⟩ := abs_le.mp hu.2
+  rw [normSq_apply]
+  nlinarith [mul_nonneg (sub_nonneg.mpr hr₂) (sub_nonneg.mpr hr₁),
+    mul_nonneg (sub_nonneg.mpr hi₂) (sub_nonneg.mpr hi₁)]
+
+private theorem gaussian_cases (a b : ℤ) :
+    4 ≤ normSq (gaussian a b) ∨ normSq (gaussian a b) = 2 ∨
+      gaussian a b ∈ ({0, 1, -1, I, -I} : Set ℂ) := by
+  by_cases h : 4 ≤ a * a + b * b
+  · left
+    simpa [normSq_apply] using (show (4 : ℝ) ≤ (↑a : ℝ) * ↑a + ↑b * ↑b by exact_mod_cast h)
+  · right
+    have bounds (x y : ℤ) (hxy : ¬ 4 ≤ x * x + y * y) : -1 ≤ x ∧ x ≤ 1 := by
+      constructor <;> by_contra! hx
+      · have hx' : x ≤ -2 := by omega
+        nlinarith [mul_nonneg (show 0 ≤ -x - 2 by omega) (show 0 ≤ -x + 2 by omega)]
+      · have hx' : 2 ≤ x := by omega
+        nlinarith [mul_nonneg (show 0 ≤ x - 2 by omega) (show 0 ≤ x + 2 by omega)]
+    obtain ⟨ha₁, ha₂⟩ := bounds a b h
+    obtain ⟨hb₁, hb₂⟩ := bounds b a (by simpa [add_comm] using h)
+    interval_cases a <;> interval_cases b <;>
+      norm_num [normSq_apply, gaussian, neg_mul]
+
+private theorem inv_sub_comparison {u : ℂ} (d : ℂ) (hu : u ≠ 0) :
+    (normSq (u⁻¹ - d) - 1) * normSq u =
+      1 - 2 * (d * u).re + (normSq d - 1) * normSq u := by
+  rw [sub_mul, one_mul, ← normSq_mul, sub_mul, inv_mul_cancel₀ hu]
+  simp only [normSq_apply, sub_re, sub_im, one_re, one_im, mul_re, mul_im]
+  ring
+
+private theorem inv_sub_diagonal {u : ℂ} (a b : ℤ) (hu : u ≠ 0)
+    (hd : normSq (gaussian a b) = 2) :
+    (normSq (u⁻¹ - gaussian a b) - 1) * normSq u =
+      normSq (u - gaussian a (-b)) - 1 := by
+  rw [inv_sub_comparison _ hu]
+  simp only [normSq_apply, mul_re, sub_re, sub_im, gaussian_re, gaussian_im, Int.cast_neg] at hd ⊢
+  linear_combination (u.re * u.re + u.im * u.im - 1) * hd
+
+private theorem one_le_normSq_inv_sub {u d : ℂ} (hu : u ≠ 0) (hs : InSquare u)
+    (hd : d ∈ ({0, 1, -1, I, -I} : Set ℂ)) : 1 ≤ normSq (u⁻¹ - d) := by
+  apply sub_nonneg.mp
+  apply nonneg_of_mul_nonneg_left _ (normSq_pos.mpr hu)
+  rw [inv_sub_comparison d hu]
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hd
+  have hhalf := normSq_le_half hs
+  obtain ⟨hr, hi⟩ := hs
+  obtain rfl | rfl | rfl | rfl | rfl := hd
+  · simpa using (show 0 ≤ 1 - normSq u by linarith)
+  all_goals
+    simp [mul_re, normSq_neg]
+    linarith [abs_le.mp hr, abs_le.mp hi]
+
+private theorem one_lt_normSq_sub_of_large {w d : ℂ} (hw : normSq w < 1)
+    (hd : 4 ≤ normSq d) : 1 < normSq (w - d) := by
+  simp only [normSq_eq_norm_sq] at hw hd ⊢
+  have hw' : ‖w‖ < 1 := by nlinarith [norm_nonneg w]
+  have hd' : 2 ≤ ‖d‖ := by nlinarith [norm_nonneg d]
+  have hdist : 1 < ‖w - d‖ := by
+    have h := norm_sub_norm_le d w
+    rw [norm_sub_rev] at h
+    linarith
+  simpa using (sq_lt_sq₀ zero_le_one (norm_nonneg _)).2 hdist
+
+-- The forward iterate and the negative previous denominator ratio are separated by the
+-- lattice unit disks. The open disk on the forward side accommodates rounding ties.
+private def Separated (x w : ℂ) : Prop :=
+  ∀ a b : ℤ, normSq (x - gaussian a b) < 1 → 1 < normSq (w - gaussian a b)
+
+private theorem separated_zero {u : ℂ} (hu : u ≠ 0) (hs : InSquare u) :
+    Separated u⁻¹ 0 := by
+  intro p q hclose
+  rcases gaussian_cases p q with hlarge | hdiag | hsmall
+  · exact one_lt_normSq_sub_of_large (by simp) hlarge
+  · simp [hdiag]
+  · exact (not_lt_of_ge (one_le_normSq_inv_sub hu hs hsmall) hclose).elim
+
+private theorem separated_step {x w : ℂ} (a b : ℤ) (hsep : Separated x w)
+    (hx : x - gaussian a b ≠ 0) (hs : InSquare (x - gaussian a b))
+    (hw : 1 < normSq (w - gaussian a b)) :
+    Separated (x - gaussian a b)⁻¹ (w - gaussian a b)⁻¹ := by
+  have hw₀ := normSq_pos.mp (zero_lt_one.trans hw)
+  intro p q hclose
+  rcases gaussian_cases p q with hlarge | hdiag | hsmall
+  · apply one_lt_normSq_sub_of_large _ hlarge
+    rw [normSq_inv, inv_lt_one₀ (by linarith : 0 < normSq (w - gaussian a b))]
+    exact hw
+  · have hforward := inv_sub_diagonal p q hx hdiag
+    have hbackward := inv_sub_diagonal p q hw₀ hdiag
+    have hclose' : normSq (x - gaussian (a + p) (b - q)) < 1 := by
+      rw [sub_eq_add_neg b q, ← gaussian_add, ← sub_sub]
+      have h := mul_neg_of_neg_of_pos (sub_neg.mpr hclose) (normSq_pos.mpr hx)
+      rw [hforward] at h
+      exact sub_neg.mp h
+    have hfar := hsep (a + p) (b - q) hclose'
+    rw [sub_eq_add_neg b q, ← gaussian_add, ← sub_sub] at hfar
+    rw [← sub_pos, ← mul_pos_iff_of_pos_right (normSq_pos.mpr hw₀), hbackward]
+    exact sub_pos.mpr hfar
+  · exact (not_lt_of_ge (one_le_normSq_inv_sub hx hs hsmall) hclose).elim
+
+private theorem digit_far {x w : ℂ} (hsep : Separated x w) :
+    1 < normSq (w - hurwitzRound x) := by
+  exact hsep ⌊x.re + 1 / 2⌋ ⌊x.im + 1 / 2⌋
+    ((normSq_le_half (abs_re_sub_hurwitzRound_le x)).trans_lt (by norm_num))
+
+private theorem denominator_step {z w : ℂ} {n : ℕ}
+    (hw : w * hurwitzQ z n = -(hurwitzPQ z n).1.2) :
+    hurwitzQ z (n + 1) = (hurwitzDigit z (n + 1) - w) * hurwitzQ z n := by
+  change hurwitzDigit z (n + 1) * hurwitzQ z n + (hurwitzPQ z n).1.2 = _
+  rw [sub_mul, hw, sub_neg_eq_add]
+
+private theorem denominator_state (z : ℂ) (n : ℕ) (hn : HurwitzLegal z (n + 1)) :
+    ∃ w, w * hurwitzQ z n = -(hurwitzPQ z n).1.2 ∧
+      hurwitzQ z n ≠ 0 ∧ Separated (hurwitzIter z (n + 1)) w := by
+  induction n with
+  | zero =>
+    refine ⟨0, by simp [hurwitzPQ], by simp [hurwitzQ, hurwitzPQ], ?_⟩
+    exact separated_zero (sub_ne_zero.mpr (hn 0 Nat.zero_lt_one))
+      (abs_re_sub_hurwitzRound_le z)
+  | succ n ih =>
+    obtain ⟨w, hw, hq, hsep⟩ := ih (fun j hj => hn j (Nat.lt_succ_of_lt hj))
+    have hfar := digit_far hsep
+    let a := hurwitzDigit z (n + 1)
+    change 1 < normSq (w - a) at hfar
+    have hw₀ := normSq_pos.mp (zero_lt_one.trans hfar)
+    have hrec : hurwitzQ z (n + 1) = (a - w) * hurwitzQ z n := denominator_step hw
+    have hneg : a - w = -(w - a) := by ring
+    refine ⟨(w - a)⁻¹, ?_, ?_, ?_⟩
+    · change (w - a)⁻¹ * hurwitzQ z (n + 1) = -hurwitzQ z n
+      rw [hrec, hneg, neg_mul, mul_neg, ← mul_assoc, inv_mul_cancel₀ hw₀, one_mul]
+    · rw [hrec, hneg]
+      exact mul_ne_zero (neg_ne_zero.mpr hw₀) hq
+    · have hx : hurwitzIter z (n + 1) - hurwitzDigit z (n + 1) ≠ 0 :=
+        sub_ne_zero.mpr (hn (n + 1) (Nat.lt_succ_self _))
+      exact separated_step ⌊(hurwitzIter z (n + 1)).re + 1 / 2⌋
+        ⌊(hurwitzIter z (n + 1)).im + 1 / 2⌋ hsep hx
+        (abs_re_sub_hurwitzRound_le _) hfar
+
+end norm_hurwitzQ_lt_succ
+
+/-- **Hurwitz's theorem: the convergent denominators grow in absolute value.** Let $z$ be a
+complex number and let $Q_0, Q_1, \dots$ be the convergent denominators of its Hurwitz continued
+fraction expansion. For every $n \ge 0$ such that $n + 1$ is a legal index for $z$ (the
+expansion has not terminated before step $n + 1$), $|Q_n| < |Q_{n+1}|$.
+
+Since $Q_0 = 1$, this gives $1 = |Q_0| < |Q_1| < \cdots < |Q_m|$ for every legal index $m$.
+
+Source: Zhaonan Wang and Yingpu Deng, *Finding Sums of Four Squares via Complex Continued
+Fractions*, INTEGERS 24 (2024), Article A25, Lemma 1 (`integers-2024-A25-lem-1`). -/
+theorem norm_hurwitzQ_lt_succ (z : ℂ) (n : ℕ) (hn : HurwitzLegal z (n + 1)) :
+    ‖hurwitzQ z n‖ < ‖hurwitzQ z (n + 1)‖ := by
+  obtain ⟨w, hw, hq, hsep⟩ := norm_hurwitzQ_lt_succ.denominator_state z n hn
+  have hfar : 1 < normSq (w - hurwitzDigit z (n + 1)) :=
+    norm_hurwitzQ_lt_succ.digit_far hsep
+  rw [normSq_eq_norm_sq] at hfar
+  have hnorm : 1 < ‖w - hurwitzDigit z (n + 1)‖ :=
+    (sq_lt_sq₀ zero_le_one (norm_nonneg _)).1 (by simpa using hfar)
+  rw [norm_hurwitzQ_lt_succ.denominator_step hw, norm_mul, norm_sub_rev]
+  simpa only [one_mul] using mul_lt_mul_of_pos_right hnorm (norm_pos_iff.mpr hq)
 
 end
 

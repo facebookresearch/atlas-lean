@@ -21,12 +21,13 @@ The ATLAS wiki attributes the formula to E. L. Roettger and H. C. Williams,
 
 namespace MetaMathlibExt
 
+set_option linter.unusedVariables false in
 /-- The multiplicative order of two modulo a product of coprime odd natural numbers is the
 least common multiple of its orders modulo the two factors.
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
 Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Proposition 11. -/
-public theorem orderOf_two_mul_coprime {m₁ m₂ : ℕ} (_h₁ : Odd m₁) (_h₂ : Odd m₂)
+public theorem orderOf_two_mul_coprime {m₁ m₂ : ℕ} (h₁ : Odd m₁) (h₂ : Odd m₂)
     (hc : m₁.Coprime m₂) :
     orderOf (2 : ZMod (m₁ * m₂)) =
       Nat.lcm (orderOf (2 : ZMod m₁)) (orderOf (2 : ZMod m₂)) := by

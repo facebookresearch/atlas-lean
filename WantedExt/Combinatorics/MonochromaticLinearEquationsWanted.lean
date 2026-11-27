@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.MonochromaticLinearEquations
+public import MathlibExt.Combinatorics.MonochromaticLinearEquations.NoCancelingPartition
+public import MathlibExt.Combinatorics.MonochromaticLinearEquations.OneTwo
 
 /-!
 # Uncommon linear equations over the integers
@@ -33,40 +34,5 @@ public theorem_wanted isUncommonOverIntegers_of_odd (m : ℕ) (hm : 1 ≤ m)
     (a : Fin (2 * m + 1) → ℤ) (ha : ∀ i, a i ≠ 0) (hsign : ∃ i j, a i < 0 ∧ 0 < a j)
     (r : ℕ) (hr : 3 ≤ r) :
     IsUncommonOverIntegers a r
-
-/-- **Two-colour uncommonness over the integers extends to more colours.** Let
-$k \ge 3$ and let $a_1, \dots, a_k$ be nonzero integers. If the equation
-$a_1x_1 + \cdots + a_kx_k = 0$ is $2$-uncommon over the integers, then it is $r$-uncommon
-over the integers for every $r \ge 3$.
-
-Source: Laurence P. Wijaya, *On Monochromatic Solutions of Linear Equations Using at Least
-Three Colors*, INTEGERS 25 (2025), Article A88, Theorem 2 (`integers-2025-A88-thm-2`). -/
-public theorem_wanted isUncommonOverIntegers_of_two (k : ℕ) (hk : 3 ≤ k) (a : Fin k → ℤ)
-    (ha : ∀ i, a i ≠ 0) (h2 : IsUncommonOverIntegers a 2) (r : ℕ) (hr : 3 ≤ r) :
-    IsUncommonOverIntegers a r
-
-/-- **Uncommonness of even-length equations without a canceling partition.** Let $m \ge 2$
-and let $a_1, \dots, a_{2m}$ be nonzero integers, at least one negative and at least one
-positive, such that the equation $a_1x_1 + \cdots + a_{2m}x_{2m} = 0$ has no canceling
-partition. Then this equation is $r$-uncommon over the integers for every $r \ge 2$.
-
-The sign condition excludes equations such as $x_1 + x_2 + x_3 + x_4 = 0$, which has no
-canceling partition and no solutions in positive integers.
-
-Source: Laurence P. Wijaya, *On Monochromatic Solutions of Linear Equations Using at Least
-Three Colors*, INTEGERS 25 (2025), Article A88, Corollary 2 (`integers-2025-A88-cor-2`). -/
-public theorem_wanted isUncommonOverIntegers_of_not_hasCancelingPartition (m : ℕ)
-    (hm : 2 ≤ m) (a : Fin (2 * m) → ℤ) (ha : ∀ i, a i ≠ 0)
-    (hsign : ∃ i j, a i < 0 ∧ 0 < a j) (hcan : ¬ HasCancelingPartition a) (r : ℕ)
-    (hr : 2 ≤ r) :
-    IsUncommonOverIntegers a r
-
-/-- **Uncommonness of $x + 2y - z - 2w = 0$ over the integers.** For every $r \ge 2$,
-the equation $x + 2y - z - 2w = 0$ is $r$-uncommon over the integers.
-
-Source: Laurence P. Wijaya, *On Monochromatic Solutions of Linear Equations Using at Least
-Three Colors*, INTEGERS 25 (2025), Article A88, Corollary 2 (`integers-2025-A88-cor-2`). -/
-public theorem_wanted isUncommonOverIntegers_one_two_neg_one_neg_two (r : ℕ) (hr : 2 ≤ r) :
-    IsUncommonOverIntegers (![1, 2, -1, -2] : Fin 4 → ℤ) r
 
 end MetaMathlibExt

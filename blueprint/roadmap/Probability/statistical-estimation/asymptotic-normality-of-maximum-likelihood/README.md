@@ -19,3 +19,4 @@
 - [Slutsky's theorem (scalar-multiple form)](smul-of-tendsto-in-measure-const.md)
 - [Continuous mapping for convergence in probability to a constant](comp-const-of-continuous-at.md)
 - [Convergence in probability of reciprocals](inv-const.md)
+- [Asymptotic coverage of studentized confidence intervals](asymptotic-coverage-of-studentized-intervals.md)

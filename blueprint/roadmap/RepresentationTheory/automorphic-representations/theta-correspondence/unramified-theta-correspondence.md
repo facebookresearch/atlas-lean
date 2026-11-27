@@ -45,6 +45,8 @@ maximal compact subgroups $K$ and $K'$ fixing the vacuum vector $\varphi_0$ of t
   untwisted model; at equal ranks with a twist $\chi(\det g')$ on one side this is Liu's $\pi^\vee \otimes \chi$ (Corollary
   A.6 (2)).
 
+## Expansion
+
 A good expansion has pages for the lattice model and the vacuum vector, for the one-sided generation
 theorem in the stated range (and separately, with sources, for other parities and the dyadic case), for
 the correspondence of unramified representations among corresponding pairs, for the explicit matching of
@@ -55,6 +57,11 @@ sources below, with the Satake isomorphism for hyperspecial subgroups as a prere
 
 - [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md), for the Weil representation of a unitary dual pair
 - [Howe duality for unitary dual pairs over p-adic fields](howe-duality-over-p-adic-fields.md), for the local theta correspondence and the split case
+- [Cartan decomposition and Satake isomorphism for special maximal compact subgroups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/cartan-decomposition-and-satake-isomorphism.md), for the Satake isomorphism for the spherical Hecke algebras of the unramified unitary groups and their hyperspecial subgroups, in whose coordinates the Satake parameters of the statements are written (Liu, Appendix)
+
+## Proof depends on
+
+- [Cartan decomposition and Satake isomorphism for special maximal compact subgroups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/cartan-decomposition-and-satake-isomorphism.md), for the Satake isomorphism for hyperspecial maximal compact subgroups, for the calculation in the Hecke algebras behind the matching of Satake parameters
 
 ## Sources
 

@@ -22,7 +22,7 @@ public import MathlibExt.GroupTheory.KuroshRank
 
 @[expose] public section
 
-theorem exactSource {G : Fin 2 → Type*} [∀ i, Group (G i)] [∀ i, Finite (G i)]
+private theorem exactSource {G : Fin 2 → Type*} [∀ i, Group (G i)] [∀ i, Finite (G i)]
     (H : Subgroup (Monoid.CoprodI G)) [H.FiniteIndex]
     (hH : ∀ (i : Fin 2) (g : Monoid.CoprodI G) (x : G i),
       g⁻¹ * Monoid.CoprodI.of x * g ∈ H → x = 1) :
@@ -30,7 +30,7 @@ theorem exactSource {G : Fin 2 → Type*} [∀ i, Group (G i)] [∀ i, Finite (G
       (Fin (1 + H.index - H.index / Nat.card (G 0) - H.index / Nat.card (G 1))) H) :=
   Monoid.CoprodI.nonempty_freeGroupBasis_fin_kuroshRank H hH
 
-theorem exactSourceIsTree {G : Fin 2 → Type*} [∀ i, Group (G i)] :
+private theorem exactSourceIsTree {G : Fin 2 → Type*} [∀ i, Group (G i)] :
     (SimpleGraph.fromRel fun v w : (i : Fin 2) ×
         (Monoid.CoprodI G ⧸ (Monoid.CoprodI.of (M := G) (i := i)).range) =>
         v.1 ≠ w.1 ∧ ∃ g : Monoid.CoprodI G,
@@ -41,7 +41,7 @@ theorem exactSourceIsTree {G : Fin 2 → Type*} [∀ i, Group (G i)] :
   Monoid.CoprodI.isTree_cosetGraph
 
 /-- The rank formula in a higher universe. -/
-theorem exactSourceTypeOne {G : Fin 2 → Type 1} [∀ i, Group (G i)] [∀ i, Finite (G i)]
+private theorem exactSourceTypeOne {G : Fin 2 → Type 1} [∀ i, Group (G i)] [∀ i, Finite (G i)]
     (H : Subgroup (Monoid.CoprodI G)) [H.FiniteIndex]
     (hH : ∀ (i : Fin 2) (g : Monoid.CoprodI G) (x : G i),
       g⁻¹ * Monoid.CoprodI.of x * g ∈ H → x = 1) :

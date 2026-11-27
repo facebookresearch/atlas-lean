@@ -9,9 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Polynomial.Eval.Defs
-public import Mathlib.RingTheory.PowerSeries.Log
-public import MathlibExt.Combinatorics.Enumerative.GeneralizedEulerianGamma
+public import MathlibExt.Combinatorics.Enumerative.CyclicExcedanceEGF
+public import MathlibExt.Combinatorics.Enumerative.GeneralizedEulerianUnimodal
 
 /-!
 # Generalized Eulerian polynomials with a nonnegative gamma vector
@@ -35,44 +34,6 @@ open PowerSeries
 
 @[expose] public section
 
-/-- **Exponential generating function of excedances over cyclic permutations.** Let $x \ne 1$ be
-a rational number. For $n \ge 1$ let $C_n(x) = \sum_{m=0}^{n} C_{n,m} x^m$, where the circular
-Eulerian number $C_{n,m}$ is the number of permutations $w$ of $\{0, 1, \dots, n-1\}$ whose points
-all lie in a single cycle and which have exactly $m$ excedances, that is, points $i$ with
-$w(i) > i$. Then, as formal power series in $z$ over $\mathbb{Q}$,
-$$\sum_{n \ge 1} C_n(x) \frac{z^n}{n!} = z + \log \frac{x - 1}{x e^z - e^{xz}},$$
-where the quotient has constant term $1$ and $\log$ is the formal logarithm of a power series
-with constant term $1$.
-
-Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Proposition 1
-(`jis-2024-24.1.5-prop-1`). -/
-public theorem_wanted cyclicExcedanceEGF_eq (x : ℚ) (hx : x ≠ 1) :
-    PowerSeries.mk (fun n ↦ if n = 0 then 0 else
-        (∑ m ∈ Finset.range (n + 1), (circularEulerian n m : ℚ) * x ^ m) / (n.factorial : ℚ)) =
-      X + logOf (C (x - 1) * (C x * exp ℚ - rescale x (exp ℚ))⁻¹)
-
-/-- **Permutation expansion of the generalized Eulerian polynomials.** Let $P_n(q, t; x, y)$ be
-the generalized Eulerian polynomial and let $S_n$ be the set of permutations of
-$\{0, 1, \dots, n-1\}$. For $w \in S_n$ write $\mathrm{cyc}(w)$ for the number of cycles of $w$
-(fixed points counted as cycles), $\mathrm{fix}(w)$ for the number of fixed points of $w$, and
-$\mathrm{exc}(w)$ for the number of excedances of $w$, the points $i$ with $w(i) > i$. Then for
-all rational numbers $q, t, x, y$ with $x \ne y$ and every $n \ge 0$,
-$$
-P_n(q, t; x, y) = \sum_{w \in S_n} q^{\mathrm{cyc}(w)} t^{\mathrm{fix}(w)} x^{\mathrm{exc}(w)}
-y^{\mathrm{exc}(w^{-1})} (x + y)^{\mathrm{fix}(w)}.
-$$
-
-Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 2
-(`jis-2024-24.1.5-thm-2`). -/
-public theorem_wanted generalizedEulerianP_eq_sum_perm (q t x y : ℚ) (hxy : x ≠ y) (n : ℕ) :
-    generalizedEulerianP q t x y n =
-      ∑ w : Equiv.Perm (Fin n),
-        q ^ cycleQuotientCount w * t ^ Fintype.card (Function.fixedPoints w) *
-          x ^ excedanceCount n w * y ^ excedanceCount n w⁻¹ *
-          (x + y) ^ Fintype.card (Function.fixedPoints w)
-
 /-- **The gamma coefficients of the generalized Eulerian polynomials have nonnegative integer
 coefficients.** Fix $n \ge 0$ and let $P_n(q, t; x, y)$ be the generalized Eulerian polynomial.
 There are natural numbers $c_{k,i,j}$, for $k, i, j \ge 0$, such that, writing
@@ -93,22 +54,6 @@ public theorem_wanted generalizedEulerianP_gamma_nonneg (n : ℕ) :
         ∑ k ∈ Finset.range (n / 2 + 1),
           (∑ i ∈ Finset.range (n + 1), ∑ j ∈ Finset.range (n + 1),
             (c k i j : ℚ) * q ^ i * t ^ j) * x ^ k * y ^ k * (x + y) ^ (n - 2 * k)
-
-/-- **Unimodality of the generalized Eulerian polynomials.** Let $P_n(q, t; x, y)$ be the
-generalized Eulerian polynomial. For all natural numbers $q$, $t$ and $n$ there are a polynomial
-$p$ with rational coefficients $p_0, p_1, p_2, \dots$ and an index $m$ such that
-$p(x) = P_n(q, t; x, 1)$ for every rational $x \ne 1$, $p_i \le p_{i+1}$ for every $i < m$, and
-$p_{i+1} \le p_i$ for every $i \ge m$. That is, $P_n(q, t; x, 1)$ is a unimodal polynomial in $x$.
-
-Only unimodality is asserted, not symmetry of the coefficients.
-
-Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Corollary 5
-(`jis-2024-24.1.5-cor-5`). -/
-public theorem_wanted generalizedEulerianP_unimodal (q t n : ℕ) :
-    ∃ p : Polynomial ℚ, (∀ x : ℚ, x ≠ 1 → p.eval x = generalizedEulerianP q t x 1 n) ∧
-      ∃ m : ℕ, (∀ i < m, p.coeff i ≤ p.coeff (i + 1)) ∧
-        ∀ i, m ≤ i → p.coeff (i + 1) ≤ p.coeff i
 
 /-- **The gamma coefficients of the generalized Eulerian polynomials count permutations.** Fix
 $n \ge 0$ and let $P_n(q, t; x, y)$ be the generalized Eulerian polynomial. For a permutation $w$

@@ -44,7 +44,11 @@ def pureTensorSection (X : Scheme.{0}) (M N : X.Modules) (U : X.Opens)
   exact ((PresheafOfModules.sheafificationAdjunction (𝟙 X.ringCatSheaf.obj)).unit.app P).app
     (op U) (s ⊗ₜ[Γ(X,U)] t)
 
-/-- Source-covered pullback/tensor comparison pinned on all actual local pure tensors. -/
+/-- Comparison isomorphisms $f^*(M \otimes N) \cong f^* M \otimes f^* N$ of tensor products of
+module sheaves, for a morphism of schemes $f : Y \to X$ and every pair of $\mathcal{O}_X$-modules
+$M$, $N$, compatible with pure tensors: for opens $U \subseteq X$ and $W \subseteq f^{-1}(U)$ and
+sections $s$ of $M$ and $t$ of $N$ over $U$, the pullback of $s \otimes t$ to $W$ goes to the
+tensor product of the pullbacks of $s$ and $t$ to $W$. -/
 structure PullbackTensor {X Y : Scheme.{0}} (f : Y ⟶ X) where
   comparison : ∀ M N : X.Modules,
     (Scheme.Modules.pullback f).obj (moduleTensor X M N) ≅

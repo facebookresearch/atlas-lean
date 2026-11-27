@@ -1,0 +1,3 @@
+# UNIT-TIME PARALLEL BATCHING WITH PRECEDENCE, TOTAL COMPLETION TIME as a decision problem
+
+The decision problem UNIT-TIME PARALLEL BATCHING WITH PRECEDENCE, TOTAL COMPLETION TIME accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(l, m, P, D)$ (a list of natural numbers, a natural number, a list of pairs and a natural number), to an instance that is well-formed for UNIT-TIME PARALLEL BATCHING WITH PRECEDENCE, MAKESPAN (well-formed for PRECEDENCE CONSTRAINED SCHEDULING and $b < n$) and feasible for PRECEDENCE CONSTRAINED SCHEDULING TO MINIMIZE TOTAL COMPLETION TIME with $b$ in place of $m$. It rejects every bitstring that does not decode to such an instance.

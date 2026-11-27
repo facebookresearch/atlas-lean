@@ -50,3 +50,16 @@ example : C4PatternAABC ![0, 0, 1, 2] := by
   apply h.2.2.1
   unfold C4PatternAABC
   decide
+
+-- Moving from 3 to 0 empties the source and changes adjacent pairs into an ABAC pattern.
+example : C4PatternABAC ![1, 0, 2, 0] := by
+  have h := (c4Pattern_closed_under_moves ![0, 0, 2, 2] ![1, 0, 2, 0] (by decide)).1
+  have ha : C4PatternAABBHat ![0, 0, 2, 2] := by unfold C4PatternAABBHat; decide
+  exact (h (Or.inl ha)).resolve_left (by unfold C4PatternAABBHat; decide)
+
+-- In the other union, a move from alternating residues can leave an equal pair across 3 and 0.
+example : C4PatternAABC ![0, 1, 2, 0] := by
+  have h := (c4Pattern_closed_under_moves ![2, 0, 2, 0] ![0, 1, 2, 0] (by decide)).2
+  have ha : C4PatternABAB ![2, 0, 2, 0] := by unfold C4PatternABAB; decide
+  have hb := (h (Or.inr (Or.inl ha))).resolve_left (by unfold C4PatternAAAB; decide)
+  exact hb.resolve_left (by unfold C4PatternABAB; decide)

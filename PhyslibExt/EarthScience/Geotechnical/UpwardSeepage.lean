@@ -86,7 +86,7 @@ private lemma upwardSeepage_effectiveStress_of
   rw [h]
   ring
 
-/-- Effective stress under upward seepage:
+/-- Effective stress under upward seepage, for `1 + e ≠ 0`:
 `σ'(z) = z * (γ_sub - i * γw)`. -/
 theorem upwardSeepage_effectiveStress {Gs e γw i z : ℝ}
     (he : 1 + e ≠ 0) :
@@ -95,8 +95,9 @@ theorem upwardSeepage_effectiveStress {Gs e γw i z : ℝ}
   upwardSeepage_effectiveStress_of
     (fun he => submerged_eq_sat_sub_water he) he
 
-/-- The submerged-to-water unit-weight ratio is
-`(Gs - 1) / (1 + e)`. -/
+/-- For `γw ≠ 0`, the submerged-to-water unit-weight ratio is
+`(Gs - 1) / (1 + e)`. With the convention `x / 0 = 0`, both sides
+are `0` at `e = -1`. -/
 lemma submergedUnitWeight_div_water {Gs e γw : ℝ} (hγ : γw ≠ 0) :
     submergedUnitWeight Gs e γw / γw = (Gs - 1) / (1 + e) := by
   unfold submergedUnitWeight
@@ -117,7 +118,7 @@ lemma porePressureOfHead_upwardHead_zero_eq_hydrostatic (ρ g z : ℝ) :
 
 /-! ## B. Critical-gradient threshold -/
 
-/-- Main result: effective stress is nonnegative at every
+/-- Main result: for `0 < γw`, effective stress is nonnegative at every
 positive depth exactly when `i ≤ (Gs - 1) / (1 + e)`. The
 premises `_hi` and `_he` mark the physical domain (upward
 flow, nonnegative void ratio, so the critical gradient is
@@ -160,8 +161,8 @@ private lemma upwardSeepage_nonneg_total_iff_of
   simp_rw [heff]
   exact upwardSeepage_nonneg_iff hγ _hi _he
 
-/-- The threshold stated on total stress minus pore pressure
-(requires `1 + e ≠ 0` for the submerged-weight bridge, on
+/-- The threshold stated on total stress minus pore pressure, for
+`0 < γw` (requires `1 + e ≠ 0` for the submerged-weight bridge, on
 the physical void-ratio domain `0 ≤ e`). -/
 theorem upwardSeepage_nonneg_total_iff {Gs e γw i : ℝ}
     (he : 1 + e ≠ 0) (hγ : 0 < γw) (_hi : 0 ≤ i) (_he : 0 ≤ e) :

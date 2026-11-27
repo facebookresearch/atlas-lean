@@ -18,7 +18,7 @@ center", Algorithms - ESA 2002, LNCS 2461 (2002), 54-63, doi:10.1007/3-540-45749
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.LinearAlgebra.AffineSpace.AffineSubspace.Defs

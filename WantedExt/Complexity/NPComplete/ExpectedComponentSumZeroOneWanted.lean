@@ -17,7 +17,7 @@ pp. 224-225 (comment: "NP-complete even if all entries are 0's and 1's.").
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.ExpectedComponentSumWanted

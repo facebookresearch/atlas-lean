@@ -104,8 +104,9 @@ def targetReduction (i : ℤ) (r : ℕ) : finiteTarget p C X G A E i (r + 1) ⟶
     (E.nearby.map ((DerivedCategory.singleFunctor (FormalNearbyCycleModels.GenericSheaves p G) 0).map
       ((K.reduction r).sheafMap i)))
 
-/-- This type is construction/theorem output. Its inputs contain no
-finite syntomic equivalence or unconstrained purported comparison map. -/
+/-- For every degree $i$ and modulus $r$, an isomorphism in the derived category between the
+finite syntomic complex `R.finite i r` and the finite target `finiteTarget i r`, compatible with
+the reduction maps $r+1 \to r$ (`modulus`). -/
 structure FiniteEquivalences where
   iso : ∀ (i : ℤ) (r : ℕ), DerivedCategory.Q.obj (R.finite Q RQ i r) ≅ finiteTarget p C X G A E i r
   modulus : ∀ (i : ℤ) (r : ℕ),
@@ -222,9 +223,15 @@ def nearbyProjection (i : ℤ) (r : ℕ) : integralTarget p C X G A E K P S VG H
   (H.truncatedNearby S (R := P) i).map (genericProjection p G K S VG RG i r)
 
 set_option maxHeartbeats 2000000 in
-/-- Integral comparison output includes all finite-level equivalences,
-their actual coefficient maps and compatibility with every resolved
-Milnor projection. No finite or integral target equivalence is input. -/
+/-- For every degree $i$ and modulus $r$, an isomorphism in the derived category between the
+finite syntomic complex pulled back to the formal pro-étale site and K-injectively resolved,
+`proResolvedFinite i r`, and the finite target `finiteProTarget i r`, the truncation
+$\tau^{\le i}$ of the derived nearby-cycle pushforward of $\mathbb{Z}/p^{r+1}(i)$ from the
+pro-étale site of the generic fibre (`finite`), compatible with the reduction maps $r+1 \to r$
+(`modulus`); and, for every degree $i$, an isomorphism between `integralSource i`, the derived
+limit over $r$ of the `proResolvedFinite i r`, and `integralTarget i`, the same truncated
+pushforward of the derived limit over $r$ of the $\mathbb{Z}/p^{r+1}(i)$ (`integral`), compatible
+with the projections to every level $r$ (`projections`). -/
 structure IntegralEquivalences where
   finite : ∀ (i : ℤ) (r : ℕ),
     DerivedCategory.Q.obj (proResolvedFinite p C B D Z T F X R Q RQ P VP RP i r) ≅

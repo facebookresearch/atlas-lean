@@ -37,7 +37,9 @@ or bound becomes a Batteries `theorem_wanted` about the repository's canonical
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.SimpleGraph.Ramsey
+public import MathlibExt.Combinatorics.SimpleGraph.RamseyFiveFiveLowerBound
+public import MathlibExt.Combinatorics.SimpleGraph.RamseyFourFour
+public import MathlibExt.Combinatorics.SimpleGraph.RamseyThreeFive
 
 @[expose] public section
 
@@ -54,26 +56,10 @@ is containment of `K_s` in `G` or of `K_t` in `Gᶜ`.
 
 `R(3,3) = 6` is `SimpleGraph.graphRamsey_three_three` and `R(3,4) = 9` is
 `SimpleGraph.graphRamsey_three_four` in `MathlibExt`. The open conjecture
-`R(5,5) ≤ 43` is `OpenConjectures.Combinatorics.RamseyFiveFiveExactValue`.
+`R(5,5) ≤ 43` is `OpenConjectures.Combinatorics.RamseyFiveFiveExactValue`. Exoo's lower bound
+`R(5,5) ≥ 43` is proved in `MathlibExt.Combinatorics.SimpleGraph.RamseyFiveFiveLowerBound`,
+which this module imports.
 -/
-
-/-- **The value of $R(4, 4)$.** The classical Ramsey number $R(4, 4)$ equals $18$.
-
-Source: R. E. Greenwood and A. M. Gleason, *Combinatorial relations and
-chromatic graphs*, Canad. J. Math. 7 (1955), 1–7; S. P. Radziszowski, *Small
-Ramsey Numbers*, Electron. J. Combin. Dynamic Survey DS1;
-listed in leansolving/SqueezeBench `SqueezeBench/Problems/Ramsey/README.md`. -/
-public theorem_wanted graphRamsey_four_four : graphRamsey 4 4 = 18
-
-/-- **Exoo's lower bound for $R(5, 5)$.** The classical Ramsey number $R(5, 5)$ is at
-least $43$.
-
-Thus some simple graph on $42$ vertices contains no $K_5$ and no independent set of size $5$.
-
-Source: G. Exoo, *A lower bound for R(5,5)*, J. Graph Theory 13 (1989),
-97–98; Radziszowski, DS1; listed in SqueezeBench
-`SqueezeBench/Problems/Ramsey/README.md`. -/
-public theorem_wanted forty_three_le_graphRamsey_five_five : 43 ≤ graphRamsey 5 5
 
 /-- **The Angeltveit–McKay upper bound for $R(5, 5)$.** The classical Ramsey number
 $R(5, 5)$ is at most $46$.
@@ -81,12 +67,6 @@ $R(5, 5)$ is at most $46$.
 Source: V. Angeltveit and B. D. McKay, *R(5,5) ≤ 46*, arXiv:2409.15709 (2024);
 listed in SqueezeBench `SqueezeBench/Problems/Ramsey/README.md`. -/
 public theorem_wanted graphRamsey_five_five_le_forty_six : graphRamsey 5 5 ≤ 46
-
-/-- **The value of $R(3, 5)$.** The classical Ramsey number $R(3, 5)$ equals $14$.
-
-Source: Greenwood and Gleason (1955), op. cit.; Radziszowski, DS1;
-OEIS A000791; listed in SqueezeBench `SqueezeBench/Problems/Ramsey3/README.md`. -/
-public theorem_wanted graphRamsey_three_five : graphRamsey 3 5 = 14
 
 /-- **The value of $R(3, 6)$.** The classical Ramsey number $R(3, 6)$ equals $18$.
 

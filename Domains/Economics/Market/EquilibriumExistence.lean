@@ -74,7 +74,9 @@ theorem strictAntiOn_excessDemand {D S : ℝ → ℝ} {s : Set ℝ} (hD : Antito
   simp only [excessDemand]
   linarith
 
-/-- **Existence and uniqueness** of the equilibrium price in `[a, b]`. -/
+/-- **Existence and uniqueness** of the equilibrium price in `[a, b]`, for schedules continuous on
+`[a, b]` whose excess demand is nonnegative at `a`, nonpositive at `b` and strictly decreasing on
+`[a, b]`. -/
 theorem existsUnique_isEquilibrium {D S : ℝ → ℝ} {a b : ℝ} (hab : a ≤ b)
     (hD : ContinuousOn D (Set.Icc a b)) (hS : ContinuousOn S (Set.Icc a b))
     (ha : 0 ≤ excessDemand D S a) (hb : excessDemand D S b ≤ 0)

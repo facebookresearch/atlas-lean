@@ -2666,6 +2666,19 @@ class RealLinks(unittest.TestCase):
         self.assertEqual(cards.links_digest(snapshot), load_hook().links_digest(cards.links_dir()))
 
 
+class RealCards(unittest.TestCase):
+    """On the checkout's own cards: the check refuses a card that the taxonomy makes a subject, a field or a
+    subfield. A PR that changes only scripts/taxonomy.json skips the card job, so its unit tests hold the committed
+    cards to the committed taxonomy with the same rule."""
+
+    def test_no_real_card_is_a_folder_of_the_taxonomy(self) -> None:
+        if not any(cards.links_dir().glob("*.jsonl")):
+            self.skipTest("this checkout has no blueprint/links/")
+        folders = cards.card_folders(cards.read_annotations())
+        self.assertEqual({folder.as_posix(): structure for folder in folders
+                          if (structure := cards.structural(folder)) is not None}, {})
+
+
 class SiteHistory(Vault):
     """Histories the strict check accepts, made in a real Git repository (the base commit, the change and its
     ledger rows, Git's renames between them, the base commit's annotations and ledger), keep every old address on
@@ -2866,14 +2879,14 @@ class SiteHistory(Vault):
 
 class Workflow(unittest.TestCase):
     def test_the_card_inputs_exist_and_trigger_the_check(self) -> None:
-        # The wiki job's workflow test leaves these to the card job, so that no card file can fail the wiki job.
+        # The wiki job's workflow test leaves the card files' presence on disk to the card job.
         import yaml
 
-        from scripts.test_blueprint_workflow import CARD_INPUTS
+        from scripts.test_blueprint_workflow import CARD_INPUTS, build_paths
 
         root = Path(__file__).resolve().parent.parent
         workflow = yaml.safe_load((root / ".github" / "workflows" / "blueprint-pages.yml").read_text())
-        paths = workflow[True]["pull_request"]["paths"]
+        paths = build_paths(workflow)
         for path in CARD_INPUTS:
             self.assertIn(path, paths)
             self.assertTrue((root / path).is_file(), path)

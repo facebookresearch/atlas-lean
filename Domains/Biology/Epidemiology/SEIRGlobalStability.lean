@@ -37,8 +37,8 @@ the first three equations, so the dynamics is that of `(S, E, I)`.
 
   `S* = N / R₀`,   `E* = μ (N - S*) / (μ + σ)`,   `I* = σ E* / (μ + γ)`
 
-lies in the open positive orthant (`endemicS_lt`: `S* < N` exactly because `R₀ > 1`). The
-disease-free case `R₀ ≤ 1` is treated at the end of the file.
+lies in the open positive orthant (`endemicS_lt`: `S* < N`, since `S* = N / R₀` with `R₀ > 1`).
+The disease-free case `R₀ ≤ 1` is treated at the end of the file.
 
 **Lyapunov function** (Korobeinikov 2004), with `g(a, x) = x - a - a log (x / a)`:
 
@@ -94,10 +94,11 @@ asymptotic stability on the nonnegative orthant.
 * `IsSolution.hasDerivAt_lyapunov`, `lyapunovDeriv_nonpos`, `lyapunovDeriv_le`,
   `lyapunovDeriv_eq_zero_iff`: the Lyapunov decrease and its zero set.
 * `IsSolution.pos`, `IsSolution.lyapunov_le_initial`, `IsSolution.exists_box_forall`:
-  invariance of the positive orthant, monotonicity of `V`, persistence and boundedness.
-* `IsSolution.tendsto_endemic`: global attractivity, `(S, E, I) → (S*, E*, I*)`.
+  invariance of the open positive orthant, `V(t) ≤ V(0)`, persistence and boundedness.
+* `IsSolution.tendsto_endemic`: attractivity from the open positive orthant,
+  `(S, E, I) → (S*, E*, I*)`.
 * `endemic_lyapunovStable`, `endemic_globallyAsymptoticallyStable`: Lyapunov stability, and
-  stability with global attractivity together.
+  stability with attractivity from the open positive orthant together.
 * `IsSolution.tendsto_removed`, `IsSolution.tendsto_total`, `IsSolution.tendsto_removed_endemic`:
   `R → γ I∞ / μ`, `S + E + I + R → N`, and `R → R* = γ I* / μ` (`endemicR`) for `R₀ > 1`.
 * `dfeLyapunov`, `dfeLyapunovDeriv`, `dfeLyapunovDeriv_le`, `IsSolution.pos_of_R0_le_one`,
@@ -129,11 +130,11 @@ open scoped Topology
 
 namespace MathlibExt.Biology.Epidemiology.SEIRVital
 
-/-- `(S, E, I, R)` solves the SEIR system with vital dynamics for all times `t ≥ 0`:
-births and deaths at the common per-capita rate `μ` (births into `S`, population scale `N`),
-transmission rate `β`, rate `σ` of leaving the latent class and removal rate `γ`:
-`S' = μ N - β S I / N - μ S`, `E' = β S I / N - (μ + σ) E`, `I' = σ E - (μ + γ) I`,
-`R' = γ I - μ R`. -/
+/-- `(S, E, I, R)` solves the SEIR system with vital dynamics for all times `t ≥ 0` (two-sided
+derivatives, also at `t = 0`): births and deaths at the common per-capita rate `μ` (births into `S`,
+population scale `N`), transmission rate `β`, rate `σ` of leaving the latent class and removal rate
+`γ`: `S' = μ N - β S I / N - μ S`, `E' = β S I / N - (μ + σ) E`, `I' = σ E - (μ + γ) I`,
+`R' = γ I - μ R`. With the convention `x / 0 = 0` the infection term is `0` when `N = 0`. -/
 structure IsSolution (β σ γ μ N : ℝ) (S E I R : ℝ → ℝ) : Prop where
   /-- Births enter `S`; susceptibles are infected at rate `β S I / N` and die at rate `μ`. -/
   hasDerivAt_susceptible : ∀ t, 0 ≤ t → HasDerivAt S (μ * N - β * S t * I t / N - μ * S t) t
@@ -158,21 +159,29 @@ theorem isSolution_zero_iff {β σ γ N : ℝ} {S E I R : ℝ → ℝ} :
       fun t ht => (h.4 t ht).congr_deriv (by ring)⟩
 
 /-- The **basic reproduction number** of the SEIR model with vital dynamics,
-`R₀ = β σ / ((μ + σ) (μ + γ))`: a newly infected individual survives the latent period with
-probability `σ / (μ + σ)` and then infects at rate `β` for a mean time `1 / (μ + γ)`. -/
+`R₀ = β σ / ((μ + σ) (μ + γ))`. For `β ≥ 0`, `σ > 0`, `γ ≥ 0` and `μ > 0`, a newly infected
+individual survives the latent period with probability `σ / (μ + σ)` and then infects at rate `β`
+for a mean time `1 / (μ + γ)`. With the convention `x / 0 = 0`, `R₀ = 0` when `μ + σ = 0` or
+`μ + γ = 0`. -/
 noncomputable def R0 (β σ γ μ : ℝ) : ℝ := β * σ / ((μ + σ) * (μ + γ))
 
-/-- At `μ = 0`, `R₀` is the closed-model value `β / γ` of `SEIR.R0_eq`. -/
+/-- At `μ = 0`, `R₀` is the closed-model value `β / γ` of `SEIR.R0_eq` (both sides are `0` when
+`γ = 0`, by `x / 0 = 0`). -/
 theorem R0_zero {β σ γ : ℝ} (hσ : σ ≠ 0) : R0 β σ γ 0 = β / γ := by
   rw [R0, zero_add, zero_add, mul_comm σ γ, mul_div_mul_right _ _ hσ]
 
-/-- Susceptible level `S* = N / R₀` at the endemic equilibrium. -/
+/-- Susceptible level `S* = N / R₀`. With the convention `x / 0 = 0`, it is `0` when `β σ = 0` or
+`(μ + σ) (μ + γ) = 0`. For `σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ > 1` it is the susceptible
+coordinate of the endemic equilibrium. -/
 noncomputable def endemicS (β σ γ μ N : ℝ) : ℝ := N * (μ + σ) * (μ + γ) / (β * σ)
 
-/-- Exposed level `E* = μ (N - S*) / (μ + σ)` at the endemic equilibrium. -/
+/-- Exposed level `E* = μ (N - S*) / (μ + σ)` (`0` when `μ + σ = 0`, by `x / 0 = 0`). For `σ > 0`,
+`γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ > 1` it is the exposed coordinate of the endemic equilibrium. -/
 noncomputable def endemicE (β σ γ μ N : ℝ) : ℝ := μ * (N - endemicS β σ γ μ N) / (μ + σ)
 
-/-- Infectious level `I* = σ E* / (μ + γ)` at the endemic equilibrium. -/
+/-- Infectious level `I* = σ E* / (μ + γ)` (`0` when `μ + γ = 0`, by `x / 0 = 0`). For `σ > 0`,
+`γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ > 1` it is the infectious coordinate of the endemic
+equilibrium. -/
 noncomputable def endemicI (β σ γ μ N : ℝ) : ℝ := σ * endemicE β σ γ μ N / (μ + γ)
 
 section Equilibrium
@@ -208,7 +217,8 @@ theorem endemicS_pos : 0 < endemicS β σ γ μ N := by
   rw [endemicS]
   positivity
 
-/-- **The threshold**: `S* < N` exactly because `R₀ > 1`. -/
+/-- **The threshold**: under the standing hypotheses, `S* < N`, since `S* = N / R₀` with
+`R₀ > 1`. -/
 theorem endemicS_lt : endemicS β σ γ μ N < N := by
   rw [endemicS_eq hσ hγ hμ hR, div_lt_iff₀ (zero_lt_one.trans hR)]
   nlinarith
@@ -250,8 +260,9 @@ end Equilibrium
 
 /-! ### The scalar Volterra function `x - a - a log (x / a)` -/
 
-/-- The **Volterra function** `g(a, x) = x - a - a log (x / a)`, the building block of
-Goh–Volterra Lyapunov functions: `g ≥ 0` for `a, x > 0`, with equality only at `x = a`. -/
+/-- The **Volterra function** `g(a, x) = x - a - a log (x / a)`, the building block of Goh–Volterra
+Lyapunov functions: `g ≥ 0` for `a, x > 0`, with equality only at `x = a`. With the conventions
+`x / 0 = 0`, `log 0 = 0` and `log y = log |y|`, it is defined for all real `a, x`; `g(0, x) = x`. -/
 noncomputable def volterra (a x : ℝ) : ℝ := x - a - a * log (x / a)
 
 theorem volterra_nonneg {a x : ℝ} (ha : 0 < a) (hx : 0 < x) : 0 ≤ volterra a x := by
@@ -359,15 +370,20 @@ theorem eq_one_of_add_eq_three {p q r : ℝ} (hp : 0 < p) (hq : 0 < q) (hr : 0 <
 
 /-! ### The Lyapunov function and its derivative -/
 
-/-- The **Korobeinikov Lyapunov function** of the SEIR endemic equilibrium
-`(S*, E*, I*)`:
-`V(S, E, I) = g(S*, S) + g(E*, E) + ((μ + σ) / σ) g(I*, I)`, `g` the Volterra function. -/
+/-- The **Korobeinikov Lyapunov function** of the SEIR endemic equilibrium `(S*, E*, I*)`:
+`V(S, E, I) = g(S*, S) + g(E*, E) + ((μ + σ) / σ) g(I*, I)`, `g` the Volterra function. With the
+convention `x / 0 = 0` the last coefficient is `0` at `σ = 0`, and `g` uses `x / 0 = 0`,
+`log 0 = 0` and `log y = log |y|`, so `V` is finite, and can be negative, off the open orthant
+`S, E, I > 0`. The intended domain is the standing hypotheses and `S, E, I > 0`. -/
 noncomputable def lyapunov (β σ γ μ N S E I : ℝ) : ℝ :=
   volterra (endemicS β σ γ μ N) S + volterra (endemicE β σ γ μ N) E +
     (μ + σ) / σ * volterra (endemicI β σ γ μ N) I
 
 /-- The derivative of `lyapunov` along the SEIR vector field (`IsSolution.hasDerivAt_lyapunov`):
-`V̇ = -μ (S - S*)² / S - (β S* I* / N) (S* / S + S I E* / (S* I* E) + E I* / (E* I) - 3)`. -/
+`V̇ = -μ (S - S*)² / S - (β S* I* / N) (S* / S + S I E* / (S* I* E) + E I* / (E* I) - 3)`, with the
+convention `x / 0 = 0` in every quotient. Under the standing hypotheses (`σ > 0`, `γ ≥ 0`, `μ > 0`,
+`N > 0` and `R₀ > 1`) it is the derivative of `lyapunov` along solutions at times `t ≥ 0` with
+`S(t), E(t), I(t) > 0`. -/
 noncomputable def lyapunovDeriv (β σ γ μ N S E I : ℝ) : ℝ :=
   -(μ * (S - endemicS β σ γ μ N) ^ 2 / S) -
     β * endemicS β σ γ μ N * endemicI β σ γ μ N / N *
@@ -444,7 +460,8 @@ theorem lyapunovDeriv_nonpos {S E I : ℝ} (hS : 0 < S) (hE : 0 < E) (hI : 0 < I
   rw [lyapunovDeriv]
   nlinarith [mul_nonneg hc (sub_nonneg.2 h3)]
 
-/-- `V̇ ≤ -μ (S - S*)² / S`: the AM–GM part is nonpositive. -/
+/-- `V̇ ≤ -μ (S - S*)² / S` on the positive orthant `S, E, I > 0`: the AM–GM part is
+nonpositive. -/
 theorem lyapunovDeriv_le {S E I : ℝ} (hS : 0 < S) (hE : 0 < E) (hI : 0 < I) :
     lyapunovDeriv β σ γ μ N S E I ≤ -(μ * (S - endemicS β σ γ μ N) ^ 2 / S) := by
   have ha := endemicS_pos hσ hγ hμ hN hR
@@ -504,7 +521,8 @@ theorem lyapunovDeriv_eq_zero_iff {S E I : ℝ} (hS : 0 < S) (hE : 0 < E) (hI : 
     rw [hSa, hr, hq1, div_self ha.ne']
     ring
 
-/-- Each Volterra term of `V` is bounded by `V` (the coefficient `(μ + σ) / σ` is `≥ 1`). -/
+/-- On the positive orthant `S, E, I > 0`, each Volterra term of `V` is bounded by `V` (each term
+is `≥ 0` and the coefficient `(μ + σ) / σ` is `≥ 1`). -/
 theorem volterra_le_lyapunov {S E I : ℝ} (hS : 0 < S) (hE : 0 < E) (hI : 0 < I) :
     volterra (endemicS β σ γ μ N) S ≤ lyapunov β σ γ μ N S E I ∧
       volterra (endemicE β σ γ μ N) E ≤ lyapunov β σ γ μ N S E I ∧
@@ -637,8 +655,9 @@ namespace IsSolution
 
 variable {β σ γ μ N : ℝ} {S E I R : ℝ → ℝ}
 
-/-- **Derivative of the Lyapunov function along solutions.** At a time `t ≥ 0` with
-`S(t), E(t), I(t) > 0`, `d/dt V(S(t), E(t), I(t)) = lyapunovDeriv (S(t), E(t), I(t))`. -/
+/-- **Derivative of the Lyapunov function along solutions.** Under the standing hypotheses
+(`σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ > 1`), at a time `t ≥ 0` with `S(t), E(t), I(t) > 0`,
+`d/dt V(S(t), E(t), I(t)) = lyapunovDeriv (S(t), E(t), I(t))`. -/
 theorem hasDerivAt_lyapunov (h : IsSolution β σ γ μ N S E I R) (hσ : 0 < σ) (hγ : 0 ≤ γ)
     (hμ : 0 < μ) (hN : 0 < N) (hR : 1 < R0 β σ γ μ) {t : ℝ} (ht : 0 ≤ t) (hSt : 0 < S t)
     (hEt : 0 < E t) (hIt : 0 < I t) :
@@ -691,7 +710,8 @@ variable (h : IsSolution β σ γ μ N S E I R) (hσ : 0 < σ) (hγ : 0 ≤ γ) 
   (hR : 1 < R0 β σ γ μ)
 include h hσ hγ hμ hN hR
 
-/-- `V` does not increase while the solution stays in the positive orthant. -/
+/-- `V` stays below its initial value while the solution stays in the open positive orthant: if
+`t ≥ 0` and `S, E, I > 0` on `[0, t]`, then `V(t) ≤ V(0)`. -/
 theorem lyapunov_le_of_pos_on {t : ℝ} (ht : 0 ≤ t)
     (hpos : ∀ s ∈ Icc 0 t, 0 < S s ∧ 0 < E s ∧ 0 < I s) :
     lyapunov β σ γ μ N (S t) (E t) (I t) ≤ lyapunov β σ γ μ N (S 0) (E 0) (I 0) :=
@@ -758,13 +778,15 @@ theorem pos {t : ℝ} (ht : 0 ≤ t) : 0 < S t ∧ 0 < E t ∧ 0 < I t := by
     fun s hs => (hb s hs).2.2.1
   exact ((memA τ).1 hτA).2 ⟨hm.trans_le h1, hm.trans_le h2, hm.trans_le h3⟩
 
-/-- **`V` is nonincreasing along solutions**: `V(t) ≤ V(0)` for `t ≥ 0`. -/
+/-- **`V` stays below its initial value** along a solution starting in the open positive orthant:
+`V(t) ≤ V(0)` for `t ≥ 0`. -/
 theorem lyapunov_le_initial {t : ℝ} (ht : 0 ≤ t) :
     lyapunov β σ γ μ N (S t) (E t) (I t) ≤ lyapunov β σ γ μ N (S 0) (E 0) (I 0) :=
   h.lyapunov_le_of_pos_on hσ hγ hμ hN hR ht fun _ hs =>
     h.pos hσ hγ hμ hN hR hS0 hE0 hI0 hs.1
 
-/-- **Uniform persistence and boundedness**: the solution stays in a box `[m, M]³`, `m > 0`. -/
+/-- **Persistence and boundedness**: a solution starting in the open positive orthant stays in a
+box `[m, M]³` with `m > 0`; the constants depend on the solution. -/
 theorem exists_box_forall :
     ∃ m M : ℝ, 0 < m ∧ ∀ t, 0 ≤ t →
       (m ≤ S t ∧ S t ≤ M) ∧ (m ≤ E t ∧ E t ≤ M) ∧ (m ≤ I t ∧ I t ≤ M) := by
@@ -773,9 +795,9 @@ theorem exists_box_forall :
   have hp := h.pos hσ hγ hμ hN hR hS0 hE0 hI0 ht
   exact hbox _ _ _ hp.1 hp.2.1 hp.2.2 (h.lyapunov_le_initial hσ hγ hμ hN hR hS0 hE0 hI0 ht)
 
-/-- **Global attractivity of the endemic equilibrium.** If `σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0`
-and `R₀ = β σ / ((μ + σ) (μ + γ)) > 1`, every solution starting in the open positive orthant
-(`S(0), E(0), I(0) > 0`) converges to `(S*, E*, I*)`.
+/-- **Convergence to the endemic equilibrium from the open positive orthant when `R₀ > 1`.** If
+`σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ = β σ / ((μ + σ) (μ + γ)) > 1`, every solution starting
+in the open positive orthant (`S(0), E(0), I(0) > 0`) converges to `(S*, E*, I*)`.
 
 The invariance step, done along the trajectory: `V̇ ≤ -μ (S - S*)² / S` and `V` converges, so
 by Barbalat's lemma `S → S*`; then Barbalat for `S` gives `S' → 0`, i.e. `I → I*`; and for `I`
@@ -969,11 +991,12 @@ theorem endemic_lyapunovStable (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ) (h
   exact ⟨key _ _ hp.1 ha (by linarith) vS, key _ _ hp.2.1 he (by linarith) vE,
     key _ _ hp.2.2 hi (by linarith) vI⟩
 
-/-- **Global asymptotic stability of the SEIR endemic equilibrium.** If `σ > 0`, `γ ≥ 0`,
-`μ > 0`, `N > 0` and the threshold condition `R₀ = β σ / ((μ + σ) (μ + γ)) > 1` holds, the
-endemic equilibrium `(S*, E*, I*)` is Lyapunov stable and attracts every solution starting in
-the open positive orthant `S, E, I > 0`; both facts are proved from the Korobeinikov function
-`lyapunov`. -/
+/-- **Stability and attractivity of the SEIR endemic equilibrium relative to the open positive
+orthant.** If `σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and the threshold condition
+`R₀ = β σ / ((μ + σ) (μ + γ)) > 1` holds, the endemic equilibrium `(S*, E*, I*)` is Lyapunov stable
+relative to the open positive orthant `S, E, I > 0` and attracts every solution starting in it; both
+facts are proved from the Korobeinikov function `lyapunov`. Initial states on the boundary of the
+orthant are not covered. -/
 theorem endemic_globallyAsymptoticallyStable (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ)
     (hN : 0 < N) (hR : 1 < R0 β σ γ μ) :
     (∀ ε > 0, ∃ δ > 0, ∀ S E I R : ℝ → ℝ, IsSolution β σ γ μ N S E I R → 0 < S 0 → 0 < E 0 →
@@ -1034,8 +1057,9 @@ private theorem tendsto_zero_of_hasDerivAt_relax {u f : ℝ → ℝ} {μ : ℝ} 
   filter_upwards [this] with t ht
   linarith
 
-/-- Removed level `R* = γ I* / μ` at the endemic equilibrium. Meaningful for `μ > 0`, which
-every theorem using it assumes (at `μ = 0` Lean's division returns `0`). -/
+/-- Removed level `R* = γ I* / μ`; with the convention `x / 0 = 0` it is `0` at `μ = 0`. The
+intended domain is `μ > 0`; for `σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ > 1` it is the removed
+coordinate of the endemic equilibrium. -/
 noncomputable def endemicR (β σ γ μ N : ℝ) : ℝ := γ * endemicI β σ γ μ N / μ
 
 namespace IsSolution
@@ -1075,16 +1099,17 @@ end IsSolution
 /-! ### The disease-free equilibrium when `R₀ ≤ 1` -/
 
 /-- The **Lyapunov function of the disease-free equilibrium** `(N, 0, 0)`:
-`V₀(S, E, I) = g(N, S) + E + ((μ + σ) / σ) I`, `g` the Volterra function. Meaningful for
-`S > 0`, `N > 0` and `σ > 0`, which every theorem about it assumes; outside that domain Lean's
-`log` and division return junk values. -/
+`V₀(S, E, I) = g(N, S) + E + ((μ + σ) / σ) I`, `g` the Volterra function. The intended domain is
+`S > 0`, `N > 0` and `σ > 0`; elsewhere it follows the conventions `x / 0 = 0`, `log 0 = 0` and
+`log y = log |y|`. -/
 noncomputable def dfeLyapunov (σ μ N S E I : ℝ) : ℝ :=
   volterra N S + E + (μ + σ) / σ * I
 
-/-- The derivative of `dfeLyapunov` along the vector field
-(`IsSolution.hasDerivAt_dfeLyapunov`): `V̇₀ = -μ (S - N)² / S + (β - (μ + σ) (μ + γ) / σ) I`.
-The coefficient of `I` is `((μ + σ) (μ + γ) / σ) (R₀ - 1)`. Meaningful for `S > 0` and
-`σ > 0`, where it is the derivative; at `S = 0` or `σ = 0` Lean's division returns `0`. -/
+/-- The derivative of `dfeLyapunov` along the vector field (`IsSolution.hasDerivAt_dfeLyapunov`):
+`V̇₀ = -μ (S - N)² / S + (β - (μ + σ) (μ + γ) / σ) I`. For `σ > 0`, `γ ≥ 0` and `μ > 0` the
+coefficient of `I` is `((μ + σ) (μ + γ) / σ) (R₀ - 1)`. Meaningful for `S > 0`, `σ > 0` and
+`N > 0`, where it is the derivative; with the convention `x / 0 = 0`, the first term is `0` at
+`S = 0` and the quotient in the coefficient is `0` at `σ = 0`. -/
 noncomputable def dfeLyapunovDeriv (β σ γ μ N S I : ℝ) : ℝ :=
   -(μ * (S - N) ^ 2 / S) + (β - (μ + σ) * (μ + γ) / σ) * I
 
@@ -1099,8 +1124,8 @@ theorem beta_le_of_R0_le_one (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ) (hR 
   rw [le_div_iff₀ hσ]
   linarith
 
-/-- **Lyapunov decrease at the disease-free equilibrium**: for `R₀ ≤ 1`, `S > 0` and `I ≥ 0`,
-`V̇₀ ≤ -μ (S - N)² / S ≤ 0`. -/
+/-- **Lyapunov decrease at the disease-free equilibrium**: for `R₀ ≤ 1`, every real `S` and `I ≥ 0`,
+`V̇₀ ≤ -μ (S - N)² / S`, which is `≤ 0` when `S > 0`. -/
 theorem dfeLyapunovDeriv_le (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ) (hR : R0 β σ γ μ ≤ 1)
     {S I : ℝ} (hI : 0 ≤ I) : dfeLyapunovDeriv β σ γ μ N S I ≤ -(μ * (S - N) ^ 2 / S) := by
   have := beta_le_of_R0_le_one hσ hγ hμ hR
@@ -1139,8 +1164,8 @@ namespace IsSolution
 
 variable {β σ γ μ N : ℝ} {S E I R : ℝ → ℝ}
 
-/-- **Derivative of `V₀` along solutions**: at a time `t ≥ 0` with `S(t) ≠ 0`,
-`d/dt V₀(S(t), E(t), I(t)) = dfeLyapunovDeriv (S(t), I(t))`. -/
+/-- **Derivative of `V₀` along solutions**: for `σ ≠ 0` and `N ≠ 0`, at a time `t ≥ 0` with
+`S(t) ≠ 0`, `d/dt V₀(S(t), E(t), I(t)) = dfeLyapunovDeriv (S(t), I(t))`. -/
 theorem hasDerivAt_dfeLyapunov (h : IsSolution β σ γ μ N S E I R) (hσ : σ ≠ 0) (hN : N ≠ 0)
     {t : ℝ} (ht : 0 ≤ t) (hSt : S t ≠ 0) :
     HasDerivAt (fun s => dfeLyapunov σ μ N (S s) (E s) (I s))
@@ -1176,7 +1201,8 @@ variable (h : IsSolution β σ γ μ N S E I R) (hβ : 0 ≤ β) (hσ : 0 < σ) 
   (hN : 0 < N) (hR : R0 β σ γ μ ≤ 1)
 include h hσ hγ hμ hN hR
 
-/-- `V₀` does not increase while the solution stays in the positive orthant. -/
+/-- `V₀` stays below its initial value while the solution stays in the open positive orthant: if
+`t ≥ 0` and `S, E, I > 0` on `[0, t]`, then `V₀(t) ≤ V₀(0)`. -/
 theorem dfeLyapunov_le_of_pos_on {t : ℝ} (ht : 0 ≤ t)
     (hpos : ∀ s ∈ Icc 0 t, 0 < S s ∧ 0 < E s ∧ 0 < I s) :
     dfeLyapunov σ μ N (S t) (E t) (I t) ≤ dfeLyapunov σ μ N (S 0) (E 0) (I 0) :=
@@ -1247,7 +1273,8 @@ theorem pos_of_R0_le_one {t : ℝ} (ht : 0 ≤ t) : 0 < S t ∧ 0 < E t ∧ 0 < 
   exact ((memA τ).1 hτA).2 ⟨(by positivity : (0 : ℝ) < N * exp (-(C + N) / N)).trans_le hSτ,
     hEτ, hIτ⟩
 
-/-- **`V₀` is nonincreasing along solutions** for `R₀ ≤ 1`: `V₀(t) ≤ V₀(0)` for `t ≥ 0`. -/
+/-- **`V₀` stays below its initial value** for `R₀ ≤ 1`, along a solution starting in the open
+positive orthant: `V₀(t) ≤ V₀(0)` for `t ≥ 0`. -/
 theorem dfeLyapunov_le_initial {t : ℝ} (ht : 0 ≤ t) :
     dfeLyapunov σ μ N (S t) (E t) (I t) ≤ dfeLyapunov σ μ N (S 0) (E 0) (I 0) :=
   h.dfeLyapunov_le_of_pos_on hσ hγ hμ hN hR ht fun _ hs =>
@@ -1605,10 +1632,11 @@ private theorem isCompact_feasible (M : ℝ) :
     fin_cases i <;> simp <;> linarith
 
 /-- **Forward-global solutions in the feasible region (nonnegative rates).** For `β, σ, γ, μ ≥ 0`
-and `N ≥ 0` (so `μ = 0`, the closed model of `isSolution_zero_iff`, is included) and every
-nonnegative initial state `(S₀, E₀, I₀, R₀)`, the SEIR system with vital dynamics has a solution
-with these initial values, with two-sided derivatives at every `t ≥ 0`, whose compartments stay
-nonnegative and whose total stays `≤ max N (S₀ + E₀ + I₀ + R₀)` for all `t ≥ 0`.
+and `N ≥ 0` (so `μ = 0`, the closed model of `isSolution_zero_iff`, is included, and so is `N = 0`,
+where the infection term `β S I / N` is `0` by `x / 0 = 0`) and every nonnegative initial state
+`(S₀, E₀, I₀, R₀)`, the SEIR system with vital dynamics has a solution with these initial values,
+with two-sided derivatives at every `t ≥ 0`, whose compartments stay nonnegative and whose total
+stays `≤ max N (S₀ + E₀ + I₀ + R₀)` for all `t ≥ 0`.
 
 Proof: run `ode_maximal_solution_exit_compact` (`U = univ`, `t₀ = 0`) on the auxiliary field
 `posField` with inflows `β S⁺ I⁺ / N`, `σ E⁺`, `γ I⁺` and `μ N`. Each compartment then solves a

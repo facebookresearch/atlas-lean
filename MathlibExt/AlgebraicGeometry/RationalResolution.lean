@@ -11,7 +11,7 @@ public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import Mathlib.RingTheory.Depth.Basic
 public import Mathlib.AlgebraicGeometry.Noetherian
 public import MathlibExt.AlgebraicGeometry.BirationalResolution
-public import MathlibExt.AlgebraicGeometry.CurveCohomologyCalculus
+public import MathlibExt.AlgebraicGeometry.FiniteCoverLocalComparison
 
 /-!
 # Rational resolutions and canonical direct images

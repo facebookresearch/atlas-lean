@@ -1,0 +1,5 @@
+# Induction machine quantities at zero slip
+
+Consider the steady-state Thevenin equivalent of an induction machine with Thevenin voltage $V_{th} \in \mathbb{C}$, Thevenin resistance $R_{th}$, rotor resistance $R_2$, equivalent reactance $X_{eq}$, synchronous mechanical speed $\omega_s$ and slip $s$. The rotor current is $I_2(s) = \dfrac{V_{th}\, s}{R_{th} s + R_2 + i X_{eq} s}$, the air-gap power of a rotor current $I$ is $P_{ag} = 3\|I\|^2 R_2/s$, the developed torque is $\tau = P_{ag}/\omega_s$, the rotor copper loss is $P_{cu} = 3\|I\|^2 R_2$, and the converted power is $P_{conv} = P_{ag} - P_{cu}$.
+
+For all $V_{th}, R_{th}, R_2, X_{eq}, \omega_s$, at slip $s = 0$: the rotor current $I_2(0)$ is $0$; the air-gap power, rotor copper loss and converted power of $I_2(0)$ are $0$; and the developed torque equals the value at $t = 0$ of the rational torque curve $\tau_c(t) = \dfrac{3\|V_{th}\|^2 R_2\, t}{\omega_s\left((R_{th} t + R_2)^2 + (X_{eq} t)^2\right)}$. Every quotient here is read with the convention $x/0 = 0$: this covers $R_2/0$ in the air-gap power, and the denominators of $I_2(0)$, of $\tau$ and of $\tau_c(0)$ when $R_2 = 0$ or $\omega_s = 0$.

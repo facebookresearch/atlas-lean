@@ -17,6 +17,11 @@ namespace MathlibExtTest.Dynamics.MoebiusSingularDual
 
 open MetaMathlibExt
 
+-- At the allowed boundary δ = 0, the two endpoint values are 0 and -1 / (α + 1).
+example (α : ℝ) (hα : 0 < α) : (0 : ℝ) ≠ -1 / (α + 1) := by
+  simpa [two_mul, add_right_comm] using
+    moebius_dual_endpoint_ne_neg_one α 0 0 hα zero_lt_one le_rfl
+
 -- Test section: a singular natural dual. At `α = 1`, `β = 0`, `γ = 2`, `δ = 1/2` the fixed point
 -- is `η = (-2 + 2β + γ) / (2 - β) = 0`, and `ξ = V^#_{αγ}(η) = 0` satisfies both endpoint
 -- equations with denominators `3` and `3`, so the hypotheses of both parts hold together. The

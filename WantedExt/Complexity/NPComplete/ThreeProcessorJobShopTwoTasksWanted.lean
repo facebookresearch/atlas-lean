@@ -20,10 +20,10 @@ Operations Research 26 (1978), 36-52, doi:10.1287/opre.26.1.36.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -41,7 +41,7 @@ QUESTION: is there a job-shop schedule for `J` on the `m = 3` processors that me
 overall deadline `D`?
 
 This is the restriction of JOB-SHOP SCHEDULING
-(`WantedExt.Complexity.NPComplete.JobShopSchedulingWanted`) to instances with `m = 3`
+(`CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs`) to instances with `m = 3`
 processors and `n_j ≤ 2` tasks in every job. The instance type, its `WellFormed` and
 `JobShopSchedulingFeasible` are reused unchanged; the restriction is added to
 well-formedness. Lengths and the deadline use the canonical binary encoding; the problem is

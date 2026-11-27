@@ -4,7 +4,7 @@ EM is a minorize–maximize (MM) algorithm. For any distribution $q$ on the late
 
 ## Gibbs' inequality
 
-- [Probability distributions on a finite latent space](is-dist.md)
+- [Probability distributions on a finite set](is-dist.md)
 - [Gibbs' inequality (evidence lower bound form)](sum-mul-log-sub-le.md)
 - [Equality case of Gibbs' inequality](sum-div-mul-log-sub.md)
 
@@ -23,6 +23,8 @@ EM is a minorize–maximize (MM) algorithm. For any distribution $q$ on the late
 - [The EM inequality](em-q-sub-le-log-lik-sub.md)
 - [The EM theorem](log-lik-le-of-em-q-le.md)
 - [EM iterates have monotone likelihood](log-lik-iterate-monotone.md)
+- [Haplotype-frequency EM from unphased genotypes](haplotype-frequency-em-from-unphased-genotypes-a.md)
+- [Genotype likelihoods from sequencing reads](genotype-likelihoods-from-sequencing-reads-with.md)
 
 ## Related topics
 

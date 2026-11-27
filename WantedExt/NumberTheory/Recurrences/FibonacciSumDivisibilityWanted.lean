@@ -23,41 +23,20 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Set.Finite.Basic
-public import Mathlib.Data.ZMod.Basic
-public import Mathlib.Dynamics.PeriodicPts.Defs
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Topology.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
+public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibility
+public import MathlibExt.NumberTheory.Recurrences.OddFibonacciSumDivisibility
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted
-
-/-- **Pisano period.** For a natural number $n$, the Pisano period $\pi(n)$ is the minimal period
-of the pair $(0, 1)$ under the Fibonacci step $(a, b) \mapsto (b, a + b)$ on
-$\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/n\mathbb{Z}$: the least $k \ge 1$ such that $k$
-applications of the step map $(0, 1)$ back to $(0, 1)$, or $0$ if there is no such $k$ (as for
-$n = 0$, where $\mathbb{Z}/0\mathbb{Z} = \mathbb{Z}$). -/
-noncomputable def pisanoPeriod (n : ℕ) : ℕ :=
-  Function.minimalPeriod
-    (fun p : ZMod n × ZMod n => (p.2, p.1 + p.2)) (0, 1)
-
-/-- **The Pisano period of $F_n$ divides $2n$ for even $n$.** Let $F_n$ denote the $n$-th Fibonacci
-number and $\pi(m)$ the Pisano period of $m$. For every even natural number $n > 1$, $\pi(F_n)$
-divides $2n$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Proposition 2. -/
-theorem_wanted pisanoPeriod_fib_dvd_two_mul
-    (n : ℕ) (hn : 1 < n) (hn2 : 2 ∣ n) :
-    pisanoPeriod (Nat.fib n) ∣ 2 * n
 
 /-- **The minimum of $\pi(n)/n$ over $1 \le n < N$ tends to zero.** Let $\pi(n)$ denote the Pisano
 period of $n$. As $N \to \infty$, the minimum of the real numbers $\pi(n)/n$ over the integers
@@ -105,16 +84,5 @@ theorem_wanted fib_two_mul_prime_odd_and_fib_fib_add_two_mod
     (hn : n = 2 * p ∨ n = 4 * p) :
     Nat.fib n % 2 = 1 ∧
       Nat.fib (Nat.fib n + 2) % Nat.fib n = 1
-
-/-- **Infinitely many odd $k$ divide the sum of the first $k$ Fibonacci numbers.** Let $F_i$ denote
-the $i$-th Fibonacci number, with $F_1 = F_2 = 1$. There are infinitely many odd positive integers
-$k$ such that $k$ divides $F_1 + F_2 + \dots + F_k$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Corollary 2. -/
-theorem_wanted infinite_setOf_odd_dvd_sum_fib
-    :
-    {k : ℕ | Odd k ∧ k ∣ (∑ i ∈ Finset.Icc 1 k, Nat.fib i)}.Infinite
 
 end MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted

@@ -59,6 +59,22 @@ example {S X Y : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) {Φ Ψ : D X ⥤ D Y} (
     (h : IsFourierMukaiFunctor f g Φ) : IsFourierMukaiFunctor f g Ψ :=
   h.of_iso f g e
 
+-- A complex is a kernel of its own Fourier–Mukai functor, and a kernel transfers along natural
+-- isomorphisms.
+example {S X Y : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (K : D (pullback f g)) :
+    IsFourierMukaiKernel f g (fourierMukai f g K) K :=
+  isFourierMukaiKernel_self f g K
+
+example {S X Y : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) {Φ Ψ : D X ⥤ D Y} {K : D (pullback f g)}
+    (e : Ψ ≅ Φ) (h : IsFourierMukaiKernel f g Φ K) : IsFourierMukaiKernel f g Ψ K :=
+  h.of_iso f g e
+
+-- Tensoring on the right with a complex is the fixed derived tensor product with that complex
+-- in the second variable.
+example (X : Scheme.{u}) (K M : D X) :
+    (tensorRightDerived X K).obj M = ((derivedTensor X).obj M).obj K :=
+  rfl
+
 -- The restriction to full subcategories has the same underlying values.
 example {S X Y : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (K : D (pullback f g))
     (P : ObjectProperty (D X)) (Q : ObjectProperty (D Y))
@@ -78,6 +94,15 @@ example {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S) :
 
 example {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S) :
     pr12 f g h ≫ pullback.snd f g = pr23 f g h ≫ pullback.fst g h := by
+  simp [pr23]
+
+-- The two projections to pairs containing `Z` end in the projection of the triple product to `Z`.
+example {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S) :
+    pr13 f g h ≫ pullback.snd f h = pullback.snd (pullback.fst f g ≫ f) h := by
+  simp [pr13]
+
+example {S X Y Z : Scheme.{u}} (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S) :
+    pr23 f g h ≫ pullback.snd g h = pullback.snd (pullback.fst f g ≫ f) h := by
   simp [pr23]
 
 -- The convolution kernel is the pushforward to `X ×_S Z` of the tensor of the two pulled-back

@@ -32,8 +32,9 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Perm.Fin
 public import Mathlib.RingTheory.Polynomial.Pochhammer
-public import MathlibExt.Combinatorics.Enumerative.ReducedUnicellularHypermonopoles
+public import MathlibExt.Combinatorics.Enumerative.ReducedUnicellularHypermonopolesVanishing
 public import MathlibExt.Combinatorics.Enumerative.Stirling
+public import MathlibExt.Combinatorics.Enumerative.UnicellularHypermonopolesFinRotate
 
 namespace MetaMathlibExt
 
@@ -60,49 +61,6 @@ public theorem_wanted genus_bounds_of_reduced_unicellular_hypermonopole {n g : �
       cycleQuotientCount (α⁻¹ * σ) + 2 * g) :
     2 * g + 1 ≤ n ∧ n ≤ 4 * g
 
-/-- **Generating polynomial of the cyclic product numbers.** For every natural number $n$, let
-$H(n, k)$ be the cyclic product numbers, viewed as rational numbers. Then in the polynomial
-ring $\mathbb{Q}[x]$
-$$\sum_{k=0}^{n} H(n, k) x^k = c_n (x (x + 1) \cdots (x + n) - x (x - 1) \cdots (x - n)),$$
-where $c_n = \frac{1}{(n + 1) n}$ for $n \ge 1$ and $c_0 = 0$; for $n = 0$ both sides are $0$.
-
-Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Lemma 6 (`jis-2025-25.3.3-lem-6`), quoting
-S. Grusea and A. Labarre. -/
-public theorem_wanted sum_cyclicProductNumber_mul_X_pow (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), C (cyclicProductNumber n k : ℚ) * X ^ k =
-      C (((n + 1 : ℚ) * n)⁻¹) * (ascPochhammer ℚ (n + 1) - descPochhammer ℚ (n + 1))
-
-/-- **Unicellular hypermonopoles with a cyclic vertex permutation.** Let $n$ and $k$ be natural
-numbers, let $\sigma$ be the cyclic permutation $i \mapsto i + 1$ (modulo $n$) of
-$\{0, 1, \dots, n - 1\}$, and write $z(\pi)$ for the number of cycles of a permutation $\pi$,
-fixed points included. Then the number of permutations $\alpha$ of $\{0, 1, \dots, n - 1\}$ with
-$z(\alpha^{-1} \circ \sigma) = 1$ and $z(\alpha) = k$ is the cyclic product number $H(n, k)$.
-
-In the terms of the source, these $\alpha$ are the unicellular hypermonopoles $(\sigma, \alpha)$
-with $\sigma = (1, \dots, n)$ and $z(\alpha) = k$.
-
-Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Corollary 8 (`jis-2025-25.3.3-cor-8`). -/
-public theorem_wanted card_unicellular_hypermonopoles_finRotate (n k : ℕ) :
-    Fintype.card {α : Equiv.Perm (Fin n) //
-      cycleQuotientCount (α⁻¹ * finRotate n) = 1 ∧ cycleQuotientCount α = k} =
-      cyclicProductNumber n k
-
-/-- **Cycle count of a fixed-point-free permutation.** Let $n \ge 1$ and let $\alpha$ be a
-permutation of $\{0, 1, \dots, n - 1\}$ with no fixed point. Then the number $z(\alpha)$ of
-cycles of $\alpha$ satisfies $1 \le z(\alpha)$ and $2 z(\alpha) \le n$.
-
-This is the source's bound $1 \le z(\alpha) \le n / 2$ for a reduced unicellular
-hypermonopole $(\sigma, \alpha)$ on $n$ points: only $n \ge 1$ (forced by $z(\sigma) = 1$) and
-the absence of buds (fixed points of $\alpha$) are used.
-
-Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Corollary 11 (`jis-2025-25.3.3-cor-11`). -/
-public theorem_wanted cycleCount_bounds_of_reduced {n : ℕ} (hn : 1 ≤ n)
-    (α : Equiv.Perm (Fin n)) (hred : ∀ i, α i ≠ i) :
-    1 ≤ cycleQuotientCount α ∧ 2 * cycleQuotientCount α ≤ n
-
 /-- **Counting reduced unicellular hypermonopoles with a cyclic vertex permutation.** Let
 $n \ge 2$ and $k \ge 1$ be natural numbers with $2k \le n$, let $\sigma$ be the cyclic
 permutation $i \mapsto i + 1$ (modulo $n$) of $\{0, 1, \dots, n - 1\}$, and write $z(\pi)$ for
@@ -125,34 +83,6 @@ public theorem_wanted card_reduced_unicellular_hypermonopoles_finRotate {n k : �
         cycleQuotientCount α = k} : ℤ) =
       ∑ i ∈ Finset.range k,
         (-1) ^ i * (n.choose i : ℤ) * cyclicProductNumber (n - i) (k - i)
-
-/-- **Vanishing of the reduced unicellular hypermonopole counts.** Let $\sigma_n$ be the cyclic
-permutation $i \mapsto i + 1$ (modulo $n$) of $\{0, 1, \dots, n - 1\}$, write $z(\pi)$ for the
-number of cycles of a permutation $\pi$, fixed points included, and let $r(n, k)$ be the number
-of permutations $\alpha$ of $\{0, 1, \dots, n - 1\}$ with no fixed point such that
-$z(\alpha^{-1} \circ \sigma_n) = 1$ and $z(\alpha) = k$. Then $r(n, k) = 0$ for all natural
-numbers $n$ and $k$ with $n - k$ odd; $r(3, k) > 0$ for some natural number $k$ with $2k \le 3$;
-and $r(n, k) = 0$ whenever $n < 3$ and $2k \le n$.
-
-So the least $n$ with $r(n, k) > 0$ for some $k \le n / 2$ is $n = 3$. In the terms of the
-source, $r(n, k)$ counts the reduced unicellular hypermonopoles $(\sigma_n, \alpha)$ with
-$\sigma_n = (1, \dots, n)$ and $z(\alpha) = k$.
-
-Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Corollary 13 (`jis-2025-25.3.3-cor-13`). -/
-public theorem_wanted reduced_unicellular_hypermonopoles_finRotate_vanishing :
-    (∀ n k : ℕ, Odd ((n : ℤ) - k) →
-      Fintype.card {α : Equiv.Perm (Fin n) //
-        cycleQuotientCount (α⁻¹ * finRotate n) = 1 ∧ (∀ i, α i ≠ i) ∧
-          cycleQuotientCount α = k} = 0) ∧
-    (∃ k : ℕ, 2 * k ≤ 3 ∧
-      0 < Fintype.card {α : Equiv.Perm (Fin 3) //
-        cycleQuotientCount (α⁻¹ * finRotate 3) = 1 ∧ (∀ i, α i ≠ i) ∧
-          cycleQuotientCount α = k}) ∧
-    ∀ n < 3, ∀ k : ℕ, 2 * k ≤ n →
-      Fintype.card {α : Equiv.Perm (Fin n) //
-        cycleQuotientCount (α⁻¹ * finRotate n) = 1 ∧ (∀ i, α i ≠ i) ∧
-          cycleQuotientCount α = k} = 0
 
 /-- **Counting reduced unicellular hypermonopoles by genus.** Fix $g \in \mathbb{N}$. For
 each $n \in \mathbb{N}$ let $\zeta_n$ be the cyclic permutation of $\{0, \ldots, n - 1\}$

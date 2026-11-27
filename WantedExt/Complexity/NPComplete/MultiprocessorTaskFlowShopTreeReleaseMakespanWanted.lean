@@ -22,7 +22,7 @@ model) and Section 1.3 (precedence relations).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.MultiprocessorTaskFlowShopTreeLatenessWanted
@@ -85,11 +85,14 @@ def releaseDate (i : MultiprocessorTaskFlowShopTreeReleaseMakespanInstance)
   (i.2.2.1.get j).2
 
 /-- Well-formedness of an instance: the machine environment is well formed
-(`StagesWellFormed`), every job has `r` unit processing times (`UnitJobs`), the listed arcs
+(`StagesWellFormed`), every stage needs at least one processor (each stage's processor list is
+nonempty), every job has `r` unit processing times (`UnitJobs`), the listed arcs
 describe an acyclic precedence digraph on the jobs (`PrecWellFormed`), and its
-precedence relation is a tree (`IsTreePrecedence`). -/
+precedence relation is an in-forest or an out-forest, not necessarily connected
+(`IsTreePrecedence`). -/
 def WellFormed (i : MultiprocessorTaskFlowShopTreeReleaseMakespanInstance) : Prop :=
-  StagesWellFormed i.1 i.2.1 ∧ UnitJobs i.2.1.length (i.2.2.1.map Prod.fst) ∧
+  StagesWellFormed i.1 i.2.1 ∧ (∀ M ∈ i.2.1, M ≠ []) ∧
+    UnitJobs i.2.1.length (i.2.2.1.map Prod.fst) ∧
     PrecWellFormed i.2.2.1.length i.2.2.2.1 ∧ IsTreePrecedence i.2.2.1.length i.2.2.2.1
 
 /-- Some MPT flow-shop schedule of the unit-time jobs obeys the precedence constraints, starts no

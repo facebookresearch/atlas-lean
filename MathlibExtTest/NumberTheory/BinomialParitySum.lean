@@ -40,3 +40,19 @@ example : ∑ k ∈ Finset.range 16, ((4 * k).choose (15 + k) * (15 : ℕ).choos
   have h : 2 ∣ (4 : ℕ) := by decide
   simpa only [Nat.reducePow, Nat.reduceSub, Nat.reduceAdd, ite_eq_left h] using
     sum_choose_two_pow_mul_mod_two_two_pow_sub_one 2 4
+
+-- Zero has no runs, and a single 1-bit creates no adjacent pair.
+example : ((∑ k ∈ Finset.range (0 + 1),
+    (Nat.choose 0 (2 * k) * Nat.choose 0 k) % 2 : ℕ) : ℤ) = 1 := by
+  rw [runLengthTransform_choose_two_mul_pow_two, runLengthTransform_zero]
+
+example : ((∑ k ∈ Finset.range (8 + 1),
+    (Nat.choose 8 (2 * k) * Nat.choose 8 k) % 2 : ℕ) : ℤ) = 1 := by
+  rw [runLengthTransform_choose_two_mul_pow_two]
+  decide
+
+-- The runs of 110111₂ have different lengths and contribute factors 2 and 4.
+example : ((∑ k ∈ Finset.range (55 + 1),
+    (Nat.choose 55 (2 * k) * Nat.choose 55 k) % 2 : ℕ) : ℤ) = 8 := by
+  rw [runLengthTransform_choose_two_mul_pow_two]
+  decide

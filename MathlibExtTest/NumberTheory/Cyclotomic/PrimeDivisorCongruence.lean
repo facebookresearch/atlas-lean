@@ -31,4 +31,15 @@ example {x : ℤ} (hx : 0 < x) : ¬ (5 : ℤ) ∣ (cyclotomic 3 ℤ).eval x := f
   (by decide : ¬ Nat.ModEq 3 5 1)
     (prime_modEq_one_of_dvd_cyclotomic_eval (by decide) (by decide) (by decide) hx h)
 
+-- The criterion includes p = 2; Φ₂(3) is divisible by 2.
+example : (2 : ℤ) ∣ (cyclotomic 2 ℤ).eval 3 :=
+  ((prime_dvd_pow_self_sub_one_iff (p := 2) (x := 3) (by decide) (by decide)).mp
+    (by decide)).2
+
+-- A positive multiple of p is not congruent to 1 modulo p.
+example : ¬ (3 : ℤ) ∣ (3 : ℤ) ^ 3 - 1 := by
+  intro h
+  have hx := ((prime_dvd_pow_self_sub_one_iff (p := 3) (x := 3) (by decide) (by decide)).mp h).1
+  exact (by decide : ¬ (3 : ℤ) ∣ (3 : ℤ) - 1) hx
+
 end MetaMathlibExt

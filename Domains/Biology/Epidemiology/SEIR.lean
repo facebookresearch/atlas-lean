@@ -40,25 +40,28 @@ includes the degenerate `N = 0`.
 ## Main results
 
 * `IsSolution β σ γ N S E I R` and `IsSolution.total_eq`: conservation of `S + E + I + R`.
-* `IsSolution.deriv_exposed_add_infected_pos_iff`: the infected total grows initially,
-  `(E + I)'(0) > 0`, iff `R₀ S(0) / N > 1`, `R₀ = β / γ` (for `I(0) > 0`); and
-  `IsSolution.deriv_infected_pos_of_exposed`: a purely latent seed (`I(0) = 0 < E(0)`) gives
-  `I'(0) = σ E(0) > 0`.
+* `IsSolution.deriv_exposed_add_infected_pos_iff`: the infected total has `(E + I)'(0) > 0` iff
+  `R₀ S(0) / N > 1`, `R₀ = β / γ` (for `I(0) > 0`, `γ > 0`, `N > 0`); and
+  `IsSolution.deriv_infected_pos_of_exposed`: a purely latent seed (`I(0) = 0 < E(0)`, `σ > 0`)
+  gives `I'(0) = σ E(0) > 0`.
 * `exists_isSolution_nonneg`, `exists_isSolution_simplex`, `IsSolution.eq_of_initial`:
-  forward-global existence and uniqueness for nonnegative initial data, with nonnegative
-  compartments of constant total (`N` on the simplex).
+  forward-global existence for `β, σ, γ, N ≥ 0` (`N > 0` on the simplex) and nonnegative initial
+  data, with nonnegative compartments of constant total (`N` on the simplex), and forward
+  uniqueness for any real parameters.
 * `IsSolution.nonneg`, `IsSolution.susceptible_pos_iff`, `IsSolution.exposed_ge`,
   `IsSolution.infected_ge`: forward invariance, `S(t) > 0 ↔ S(0) > 0`,
-  `E(t) ≥ E(0) e^{-σ t}`, `I(t) ≥ I(0) e^{-γ t}`. Positivity of the infected classes is not
-  preserved compartment by compartment: `IsSolution.infected_pos_of_exposed_pos` (`E(0) > 0`
-  forces `I(t) > 0` for `t > 0`, even if `I(0) = 0`) and
-  `IsSolution.exposed_pos_of_infected_pos` (`S(0), I(0) > 0` force `E(t) > 0` for `t > 0`).
+  `E(t) ≥ E(0) e^{-σ t}`, `I(t) ≥ I(0) e^{-γ t}` (all but the second for `β, σ, γ, N ≥ 0` and
+  nonnegative initial data). Positivity of the infected classes is not preserved compartment by
+  compartment: under the same nonnegativity hypotheses, `IsSolution.infected_pos_of_exposed_pos`
+  (`σ > 0` and `E(0) > 0` force `I(t) > 0` for `t > 0`, even if `I(0) = 0`) and
+  `IsSolution.exposed_pos_of_infected_pos` (`β, N, S(0), I(0) > 0` force `E(t) > 0` for `t > 0`).
 * `IsSolution.susceptible_mul_exp_eq`, `IsSolution.final_size`: `S e^{R₀ R / N}` is conserved,
   as for SIR, since `E` enters neither `S'` nor `R'`.
-* `IsSolution.tendsto_final_size`: `S → S∞`, `E → 0`, `I → 0`, `R → R∞`, with
-  `S∞ + R∞ = S(0) + E(0) + I(0) + R(0)` and the final-size relation
-  `S∞ = S(0) e^{-R₀ (S(0) + E(0) + I(0) - S∞) / N}`; `IsSolution.final_size_eq_of_root`: for
-  `E(0) + I(0) > 0` it determines `S∞`. The closed model has no endemic equilibrium.
+* `IsSolution.tendsto_final_size`: for `β ≥ 0`, `σ, γ > 0`, `N ≥ 0` and nonnegative initial
+  data, `S → S∞`, `E → 0`, `I → 0`, `R → R∞`, with `S∞ + R∞ = S(0) + E(0) + I(0) + R(0)` and
+  the final-size relation `S∞ = S(0) e^{-R₀ (S(0) + E(0) + I(0) - S∞) / N}`;
+  `IsSolution.final_size_eq_of_root`: for also `N > 0` and `E(0) + I(0) > 0` it determines
+  `S∞`. For `σ, γ > 0` the closed model has no endemic equilibrium.
 * `newInfections`, `transfers`, `hasFDerivAt_newInfections`, `hasFDerivAt_transfers`,
   `hasFDerivAt_infectedField`: the next-generation splitting `ℱ - 𝒱` of the infected rates and
   its Jacobians `F = [[0, β], [0, 0]]`, `V = [[σ, 0], [-σ, γ]]` at the disease-free equilibrium.
@@ -74,8 +77,9 @@ continuous-induction argument (`IsClosed.Icc_subset_of_forall_mem_nhdsWithin`) k
 perturbed pair nonnegative; then `ε → 0`. Global existence follows the SIR pattern
 (`SIR.exists_isSolution_nonneg`): the maximal solution of `ode_maximal_solution_exit_compact`
 for the field `seirField` on `Fin 4 → ℝ` stays in the compact simplex, so it cannot leave every
-compact set in finite forward time. For the limits, `S` and `S + E` (`(S + E)' = -σ E`) decrease
-and `R` increases; a positive limit of `E` or `I` would make `S + E` or `R` unbounded.
+compact set in finite forward time. For the limits, `S` and `S + E` (`(S + E)' = -σ E`) are
+nonincreasing and `R` is nondecreasing; a positive limit of `E` or `I` would make `S + E` or `R`
+unbounded.
 
 ## References
 
@@ -96,7 +100,11 @@ namespace MathlibExt.Biology.Epidemiology.SEIR
 
 /-- `(S, E, I, R)` solves the closed SEIR system with transmission rate `β`, rate `σ` of leaving
 the latent class, removal rate `γ` and population size `N` for all times `t ≥ 0`:
-`S' = -β S I / N`, `E' = β S I / N - σ E`, `I' = σ E - γ I`, `R' = γ I`. -/
+`S' = -β S I / N`, `E' = β S I / N - σ E`, `I' = σ E - γ I`, `R' = γ I`. Each function has a
+two-sided derivative at every `t ≥ 0`. The parameters are arbitrary reals; with the convention
+`a / 0 = 0`, the quotient by `N` is `0` when `N = 0`. No initial condition is imposed, and `N`
+need not equal `S + E + I + R`; the epidemiological domain is `β ≥ 0`, `σ, γ, N > 0`, with
+nonnegative compartments summing to `N`. -/
 structure IsSolution (β σ γ N : ℝ) (S E I R : ℝ → ℝ) : Prop where
   /-- Susceptibles are infected at rate `β S I / N`. -/
   hasDerivAt_susceptible : ∀ t, 0 ≤ t → HasDerivAt S (-(β * S t * I t / N)) t
@@ -127,9 +135,9 @@ theorem total_eq (h : IsSolution β σ γ N S E I R) {t : ℝ} (ht : 0 ≤ t) :
       (h.hasDerivAt_infected s hs)).add (h.hasDerivAt_removed s hs) using 1
     ring) ht
 
-/-- **Infected subsystem.** The infected total `E + I` has derivative
-`β S I / N - γ I = γ I (R₀ S / N - 1)` with `R₀ = β / γ` (`γ ≠ 0`, `N ≠ 0`): passing from `E`
-to `I` does not change it. -/
+/-- **Infected subsystem.** Along a solution, at every time `t ≥ 0`, the infected total `E + I`
+has derivative `β S I / N - γ I = γ I (R₀ S / N - 1)` with `R₀ = β / γ` (`γ ≠ 0`, `N ≠ 0`):
+passing from `E` to `I` does not change it. -/
 theorem hasDerivAt_exposed_add_infected (h : IsSolution β σ γ N S E I R) (hγ : γ ≠ 0)
     (hN : N ≠ 0) {t : ℝ} (ht : 0 ≤ t) :
     HasDerivAt (fun s => E s + I s) (γ * I t * (β / γ * S t / N - 1)) t := by
@@ -138,7 +146,8 @@ theorem hasDerivAt_exposed_add_infected (h : IsSolution β σ γ N S E I R) (hγ
   ring
 
 /-- **Threshold theorem.** If initially `I(0) > 0`, with `γ > 0` and `N > 0`, the infected
-total `E + I` initially increases iff `R₀ S(0) / N > 1` with `R₀ = β / γ`. -/
+total `E + I` has positive derivative at `t = 0`, `(E + I)'(0) > 0`, iff `R₀ S(0) / N > 1` with
+`R₀ = β / γ`. -/
 theorem deriv_exposed_add_infected_pos_iff (h : IsSolution β σ γ N S E I R) (hγ : 0 < γ)
     (hN : 0 < N) (hI : 0 < I 0) :
     0 < deriv (fun s => E s + I s) 0 ↔ 1 < β / γ * S 0 / N := by
@@ -146,7 +155,8 @@ theorem deriv_exposed_add_infected_pos_iff (h : IsSolution β σ γ N S E I R) (
     mul_pos_iff_of_pos_left (mul_pos hγ hI), sub_pos]
 
 /-- **A latent seed becomes infectious.** If initially there are no infectives but `E(0) > 0`
-(and `σ > 0`), the number of infectives initially increases: `I'(0) = σ E(0) > 0`. -/
+(and `σ > 0`), the number of infectives has positive derivative at `t = 0`:
+`I'(0) = σ E(0) > 0`. -/
 theorem deriv_infected_pos_of_exposed (h : IsSolution β σ γ N S E I R) (hσ : 0 < σ)
     (hE : 0 < E 0) (hI : I 0 = 0) : 0 < deriv I 0 := by
   rw [(h.hasDerivAt_infected 0 le_rfl).deriv, hI, mul_zero, sub_zero]
@@ -154,7 +164,8 @@ theorem deriv_infected_pos_of_exposed (h : IsSolution β σ γ N S E I R) (hσ :
 
 /-- **Conserved quantity behind the final-size relation.** For `γ ≠ 0`, the quantity
 `S(t) e^{R₀ R(t) / N}` (`R₀ = β / γ`) is constant along a solution on `[0, ∞)`, exactly as for
-SIR: the latent class does not enter `S'` or `R'`. -/
+SIR: the latent class does not enter `S'` or `R'`. With the convention `a / 0 = 0`, the exponent
+is `0` when `N = 0`, and the identity reads `S(t) = S(0)`. -/
 theorem susceptible_mul_exp_eq (h : IsSolution β σ γ N S E I R) (hγ : γ ≠ 0) {t : ℝ}
     (ht : 0 ≤ t) :
     S t * exp (β / γ * R t / N) = S 0 * exp (β / γ * R 0 / N) :=
@@ -224,7 +235,10 @@ private theorem continuousOn_S : ContinuousOn S (Icc 0 T) :=
 private theorem continuousOn_I : ContinuousOn I (Icc 0 T) :=
   fun t ht => (hd t ht).2.2.1.continuousAt.continuousWithinAt
 
-/-- **Susceptibles, integrating-factor form.** `S(t) = S(0) e^{-∫₀ᵗ β I / N}` on `[0, T]`. -/
+/-- **Susceptibles, integrating-factor form.** If `S, E, I, R` satisfy the SEIR equations, with
+two-sided derivatives, at every time of `[0, T]` (any real parameters), then
+`S(t) = S(0) e^{-∫₀ᵗ β I / N}` on `[0, T]`. With the convention `a / 0 = 0`, the integrand is `0`
+when `N = 0`, and then `S(t) = S(0)`. -/
 theorem susceptible_eq_mul_exp_of_hasDerivAt :
     ∀ t ∈ Icc 0 T, S t = S 0 * exp (∫ s in (0 : ℝ)..t, -(β * I s / N)) :=
   SIR.eq_mul_exp_integral_of_hasDerivAt (u := S) (g := fun s => -(β * I s / N))
@@ -232,7 +246,9 @@ theorem susceptible_eq_mul_exp_of_hasDerivAt :
     convert (hd t ht).1 using 1
     ring
 
-/-- **Conservation on `[0, T]`.** `S + E + I + R` is constant on `[0, T]`. -/
+/-- **Conservation on `[0, T]`.** If `S, E, I, R` satisfy the SEIR equations, with two-sided
+derivatives, at every time of `[0, T]` (any real parameters, the quotient `β S I / N` being `0`
+when `N = 0`), then `S + E + I + R` is constant on `[0, T]`. -/
 theorem total_eq_of_hasDerivAt :
     ∀ t ∈ Icc 0 T, S t + E t + I t + R t = S 0 + E 0 + I 0 + R 0 := by
   have hF : ∀ t ∈ Icc 0 T, HasDerivAt (fun s => S s + E s + I s + R s) 0 t := fun t ht => by
@@ -291,9 +307,10 @@ private theorem exposed_infected_nonneg_of_hasDerivAt (hβ : 0 ≤ β) (hσ : 0 
   exact ⟨hlim (exp_pos (K * t)) fun ε hε => (hpert ε hε t ht).1,
     hlim (exp_pos (K * t)) fun ε hε => (hpert ε hε t ht).2⟩
 
-/-- **Forward nonnegativity on `[0, T]`.** For `β, σ, γ, N ≥ 0`, nonnegative initial
-compartments stay nonnegative on `[0, T]`. (`N ≥ 0` matters: it makes the infection coefficient
-`β S / N` nonnegative.) -/
+/-- **Forward nonnegativity on `[0, T]`.** If `S, E, I, R` satisfy the SEIR equations, with
+two-sided derivatives, at every time of `[0, T]`, then for `β, σ, γ, N ≥ 0`, nonnegative initial
+compartments stay nonnegative on `[0, T]`. (`N ≥ 0` matters: with `β ≥ 0` it makes the infection
+coefficient `β S / N` nonnegative; `N = 0` is included through the convention `a / 0 = 0`.) -/
 theorem nonneg_of_hasDerivAt (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (hγ : 0 ≤ γ) (hN : 0 ≤ N)
     (hS : 0 ≤ S 0) (hE : 0 ≤ E 0) (hI : 0 ≤ I 0) (hR : 0 ≤ R 0) :
     ∀ t ∈ Icc 0 T, 0 ≤ S t ∧ 0 ≤ E t ∧ 0 ≤ I t ∧ 0 ≤ R t := by
@@ -334,7 +351,8 @@ private theorem hasDerivAt_Icc (h : IsSolution β σ γ N S E I R) (T : ℝ) :
   fun t ht => ⟨h.hasDerivAt_susceptible t ht.1, h.hasDerivAt_exposed t ht.1,
     h.hasDerivAt_infected t ht.1, h.hasDerivAt_removed t ht.1⟩
 
-/-- Along a solution, `S(t) = S(0) e^{-∫₀ᵗ β I / N}` for `t ≥ 0`. -/
+/-- Along a solution, `S(t) = S(0) e^{-∫₀ᵗ β I / N}` for `t ≥ 0`. With the convention
+`a / 0 = 0`, the integrand is `0` when `N = 0`, and then `S(t) = S(0)`. -/
 theorem susceptible_eq_mul_exp (h : IsSolution β σ γ N S E I R) {t : ℝ} (ht : 0 ≤ t) :
     S t = S 0 * exp (∫ s in (0 : ℝ)..t, -(β * I s / N)) :=
   susceptible_eq_mul_exp_of_hasDerivAt (h.hasDerivAt_Icc t) t ⟨ht, le_rfl⟩
@@ -350,7 +368,8 @@ theorem susceptible_eq_zero_iff (h : IsSolution β σ γ N S E I R) {t : ℝ} (h
   rw [h.susceptible_eq_mul_exp ht, mul_eq_zero, or_iff_left (exp_pos _).ne']
 
 /-- **Forward invariance of the nonnegative orthant.** Along a solution with `β, σ, γ, N ≥ 0`
-and nonnegative initial compartments, all compartments stay nonnegative for `t ≥ 0`. -/
+and nonnegative initial compartments, all compartments stay nonnegative for `t ≥ 0`. With the
+convention `a / 0 = 0`, `N = 0` is allowed. -/
 theorem nonneg (h : IsSolution β σ γ N S E I R) (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (hγ : 0 ≤ γ)
     (hN : 0 ≤ N) (hS : 0 ≤ S 0) (hE : 0 ≤ E 0) (hI : 0 ≤ I 0) (hR : 0 ≤ R 0) {t : ℝ}
     (ht : 0 ≤ t) : 0 ≤ S t ∧ 0 ≤ E t ∧ 0 ≤ I t ∧ 0 ≤ R t :=
@@ -431,7 +450,8 @@ end IsSolution
 
 /-- The closed SEIR vector field on `Fin 4 → ℝ`, with coordinates `x 0 = S`, `x 1 = E`,
 `x 2 = I`, `x 3 = R`: `S' = -β S I / N`, `E' = β S I / N - σ E`, `I' = σ E - γ I`,
-`R' = γ I`. The field is autonomous; the time argument is ignored. -/
+`R' = γ I`. The field is autonomous; the time argument is ignored. With the convention
+`a / 0 = 0`, the quotient `β S I / N` is `0` when `N = 0`, and the field is then linear. -/
 noncomputable def seirField (β σ γ N : ℝ) (_t : ℝ) (x : Fin 4 → ℝ) : Fin 4 → ℝ :=
   ![-(β * x 0 * x 2 / N), β * x 0 * x 2 / N - σ * x 1, σ * x 1 - γ * x 2, γ * x 2]
 
@@ -490,7 +510,8 @@ private theorem isCompact_seirSimplex (P : ℝ) :
 /-- **Forward-global nonnegative SEIR solutions.** For `β, σ, γ, N ≥ 0` and every nonnegative
 initial state `(S₀, E₀, I₀, R₀)`, the SEIR system has a solution with these initial values,
 with two-sided derivatives at every `t ≥ 0`, whose compartments stay nonnegative and keep the
-total `S₀ + E₀ + I₀ + R₀` for all `t ≥ 0`. The epidemiological domain `β ≥ 0`, `σ, γ, N > 0`,
+total `S₀ + E₀ + I₀ + R₀` for all `t ≥ 0`. With the convention `a / 0 = 0`, `N = 0` is allowed.
+The epidemiological domain `β ≥ 0`, `σ, γ, N > 0`,
 `S₀ + E₀ + I₀ + R₀ = N` is a special case (`exists_isSolution_simplex`); uniqueness is
 `IsSolution.eq_of_initial`.
 
@@ -593,7 +614,7 @@ theorem IsSolution.eq_of_initial {β σ γ N : ℝ} {S E I R S' E' I' R' : ℝ �
   exact ⟨by simpa using congrFun heq 0, by simpa using congrFun heq 1,
     by simpa using congrFun heq 2, by simpa using congrFun heq 3⟩
 
-/-- **Global solutions on the simplex.** For `β ≥ 0`, `σ, γ ≥ 0`, `N > 0` and nonnegative
+/-- **Forward-global solutions on the simplex.** For `β ≥ 0`, `σ, γ ≥ 0`, `N > 0` and nonnegative
 initial compartments with `S₀ + E₀ + I₀ + R₀ = N`, the SEIR system has a solution with these
 initial values whose compartments are nonnegative and sum to `N` for all `t ≥ 0`; it is unique
 on `[0, ∞)` by `IsSolution.eq_of_initial`. -/
@@ -643,7 +664,8 @@ namespace IsSolution
 variable {β σ γ N : ℝ} {S E I R : ℝ → ℝ}
 
 /-- **Final-size relation.** If along a solution (`γ ≠ 0`) `S(t) → S∞` and `R(t) → R∞` as
-`t → ∞`, then `S∞ = S(0) e^{-R₀ (R∞ - R(0)) / N}` with `R₀ = β / γ`. -/
+`t → ∞`, then `S∞ = S(0) e^{-R₀ (R∞ - R(0)) / N}` with `R₀ = β / γ`. With the convention
+`a / 0 = 0`, the exponent is `0` when `N = 0`, and then `S∞ = S(0)`. -/
 theorem final_size (h : IsSolution β σ γ N S E I R) (hγ : γ ≠ 0) {Sinf Rinf : ℝ}
     (hS : Tendsto S atTop (𝓝 Sinf)) (hR : Tendsto R atTop (𝓝 Rinf)) :
     Sinf = S 0 * exp (-(β / γ * (Rinf - R 0) / N)) := by
@@ -662,11 +684,12 @@ theorem final_size (h : IsSolution β σ γ N S E I R) (hγ : γ ≠ 0) {Sinf Ri
 /-- **Limits and final size.** Along a solution with `β ≥ 0`, `σ, γ > 0`, `N ≥ 0` and
 nonnegative initial compartments, `S(t) → S∞`, `E(t) → 0`, `I(t) → 0` and `R(t) → R∞` as
 `t → ∞`, with `0 ≤ S∞ ≤ S(0)`, `S∞ + R∞ = S(0) + E(0) + I(0) + R(0)`, and the final-size relation
-`S∞ = S(0) e^{-R₀ (S(0) + E(0) + I(0) - S∞) / N}` (`R₀ = β / γ`).
+`S∞ = S(0) e^{-R₀ (S(0) + E(0) + I(0) - S∞) / N}` (`R₀ = β / γ`). With the convention
+`a / 0 = 0`, the exponent is `0` when `N = 0`, and then `S∞ = S(0)`.
 
-`S` and `S + E` decrease (`(S + E)' = -σ E`) and `R` increases, so all three converge; then
-`E → 0` because `S + E ≥ 0` cannot decrease at a rate bounded away from `0`, and `I → 0`
-because `R ≤ S(0) + E(0) + I(0) + R(0)` cannot increase at such a rate. -/
+`S` and `S + E` are nonincreasing (`(S + E)' = -σ E`) and `R` is nondecreasing, so all three
+converge; then `E → 0` because `S + E ≥ 0` cannot decrease at a rate bounded away from `0`, and
+`I → 0` because `R ≤ S(0) + E(0) + I(0) + R(0)` cannot increase at such a rate. -/
 theorem tendsto_final_size (h : IsSolution β σ γ N S E I R) (hβ : 0 ≤ β) (hσ : 0 < σ)
     (hγ : 0 < γ) (hN : 0 ≤ N) (hS : 0 ≤ S 0) (hE : 0 ≤ E 0) (hI : 0 ≤ I 0) (hR : 0 ≤ R 0) :
     ∃ Sinf Rinf : ℝ, Tendsto S atTop (𝓝 Sinf) ∧ Tendsto E atTop (𝓝 0) ∧
@@ -786,10 +809,12 @@ ones for the infected block `F - V`. Theorem 2 of van den Driessche–Watmough
 (`NextGenerationMatrix.globalSolution_decay_of_R0_lt_one`) does not apply to this closed model:
 its uninfected block (`S`, `R`) of the Jacobian at a disease-free state is `0`, not Hurwitz,
 because every `(S, 0, 0, R)` is an equilibrium. The long-time behaviour of the closed model is
-`IsSolution.tendsto_final_size`: the epidemic always dies out, whatever `R₀`. -/
+`IsSolution.tendsto_final_size`: for `β ≥ 0`, `σ, γ > 0`, `N ≥ 0` and nonnegative initial data,
+`E` and `I` tend to `0` whatever `R₀`. -/
 
 /-- The **new-infection rates** `ℱ(S; E, I) = (β S I / N, 0)` of the infected compartments
-`(E, I)` (coordinates `x 0 = E`, `x 1 = I`), at susceptible level `S`. -/
+`(E, I)` (coordinates `x 0 = E`, `x 1 = I`), at susceptible level `S`. With the convention
+`a / 0 = 0`, `ℱ` is identically `0` when `N = 0`. -/
 noncomputable def newInfections (β N S : ℝ) (x : Fin 2 → ℝ) : Fin 2 → ℝ :=
   ![β * S * x 1 / N, 0]
 
@@ -799,7 +824,8 @@ def transfers (σ γ : ℝ) (x : Fin 2 → ℝ) : Fin 2 → ℝ :=
   ![σ * x 0, -(σ * x 0) + γ * x 1]
 
 /-- The infected components of the SEIR field are `ℱ - 𝒱`: for the state
-`(S, E, I, R) = (x 0, x 1, x 2, x 3)`, `E' = ℱ₀ - 𝒱₀` and `I' = ℱ₁ - 𝒱₁`. -/
+`(S, E, I, R) = (x 0, x 1, x 2, x 3)`, `E' = ℱ₀ - 𝒱₀` and `I' = ℱ₁ - 𝒱₁`, for all real
+parameters (with the convention `a / 0 = 0` on both sides when `N = 0`). -/
 theorem seirField_infected_eq (β σ γ N t : ℝ) (x : Fin 4 → ℝ) :
     seirField β σ γ N t x 1 = newInfections β N (x 0) ![x 1, x 2] 0 - transfers σ γ ![x 1, x 2] 0 ∧
       seirField β σ γ N t x 2 =
@@ -809,7 +835,7 @@ theorem seirField_infected_eq (β σ γ N t : ℝ) (x : Fin 4 → ℝ) :
 
 /-- **`F` is the Jacobian of `ℱ` at the disease-free equilibrium.** With `S = N` held at its
 disease-free value, `ℱ` has derivative `F = [[0, β], [0, 0]]` in `(E, I)` at `E = I = 0`
-(`N ≠ 0`). -/
+(`N ≠ 0`; for `N = 0`, the convention `a / 0 = 0` makes `ℱ` identically `0`). -/
 theorem hasFDerivAt_newInfections {β N : ℝ} (hN : N ≠ 0) :
     HasFDerivAt (newInfections β N N)
       (LinearMap.toContinuousLinearMap (Matrix.toLin' !![0, β; 0, 0])) 0 := by
@@ -913,7 +939,8 @@ theorem R0_eq {β σ γ : ℝ} (hβ : 0 ≤ β) (hσ : 0 < σ) (hγ : 0 < γ) :
 
 /-- **`R₀` from the derivatives.** With `F` and `V` the matrices of the derivatives at the
 disease-free equilibrium of `ℱ` (at `S = N`) and `𝒱`, `R₀ = ρ(F V⁻¹) = β / γ` (`β ≥ 0`,
-`σ, γ > 0`, `N ≠ 0`). -/
+`σ, γ > 0`, `N ≠ 0`). For `N = 0`, the convention `a / 0 = 0` makes `ℱ` identically `0`, so
+`F = 0` and `R₀ = 0`. -/
 theorem R0_fderiv_eq {β σ γ N : ℝ} (hβ : 0 ≤ β) (hσ : 0 < σ) (hγ : 0 < γ) (hN : N ≠ 0) :
     NextGenerationMatrix.R0 (LinearMap.toMatrix' (fderiv ℝ (newInfections β N N) 0 :
         (Fin 2 → ℝ) →ₗ[ℝ] Fin 2 → ℝ))

@@ -64,7 +64,8 @@ def borrowingFeasible (r y₀ y₁ b : ℝ) : Set ℝ :=
   {c₀ | 0 ≤ c₀ ∧ 0 ≤ secondPeriodConsumption r y₀ y₁ c₀ ∧ c₀ ≤ y₀ + b}
 
 /-- Euler condition with a borrowing constraint (KKT form): at a feasible
-maximizer with positive consumption in both periods, there is a multiplier
+maximizer with positive consumption in both periods, with `u` differentiable at both
+consumption levels, there is a multiplier
 `μ ≥ 0` on the borrowing limit, complementary slack with it, such that
 `u'(c₀) = β (1 + r) u'(c₁) + μ`. -/
 theorem euler_complementary_slackness {u : ℝ → ℝ} {β r y₀ y₁ b c₀ : ℝ}
@@ -135,7 +136,8 @@ theorem euler_complementary_slackness {u : ℝ → ℝ} {β r y₀ y₁ b c₀ :
     · ring
 
 /-- The Euler equality is replaced by the inequality `β (1 + r) u'(c₁) ≤ u'(c₀)`
-under a borrowing limit. -/
+under a borrowing limit, at a feasible maximizer with positive consumption in both periods
+and `u` differentiable at both consumption levels. -/
 theorem euler_inequality {u : ℝ → ℝ} {β r y₀ y₁ b c₀ : ℝ}
     (hmax : IsMaxOn (lifetimeUtility u β r y₀ y₁) (borrowingFeasible r y₀ y₁ b) c₀)
     (hmem : c₀ ∈ borrowingFeasible r y₀ y₁ b)
@@ -147,7 +149,8 @@ theorem euler_inequality {u : ℝ → ℝ} {β r y₀ y₁ b c₀ : ℝ}
     euler_complementary_slackness hmax hmem hc₀ hc₁ hu₀ hu₁
   linarith
 
-/-- If the borrowing limit is slack at the maximizer, the unconstrained Euler
+/-- If the borrowing limit is slack at the maximizer, with positive consumption in both
+periods and `u` differentiable at both consumption levels, the unconstrained Euler
 equation `u'(c₀) = β (1 + r) u'(c₁)` holds. -/
 theorem euler_equation_of_slack {u : ℝ → ℝ} {β r y₀ y₁ b c₀ : ℝ}
     (hmax : IsMaxOn (lifetimeUtility u β r y₀ y₁) (borrowingFeasible r y₀ y₁ b) c₀)

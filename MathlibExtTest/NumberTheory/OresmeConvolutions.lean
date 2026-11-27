@@ -17,6 +17,17 @@ import MathlibExt.NumberTheory.OresmeConvolutions
 
 open MetaMathlibExt
 
+-- At zero the sole summand vanishes, even though the rational factor n - 1 is negative.
+example : ∑ k ∈ Finset.range 1, ((k : ℚ) / 2 ^ k) * (((0 - k : ℕ) : ℚ) / 2 ^ (0 - k)) = 0 := by
+  rw [oresme_convolution_self 0]
+  norm_num
+
+-- At index four the three interior terms contribute 3/16, 4/16 and 3/16.
+example : ∑ k ∈ Finset.range 5, ((k : ℚ) / 2 ^ k) * (((4 - k : ℕ) : ℚ) / 2 ^ (4 - k)) =
+    5 / 8 := by
+  rw [oresme_convolution_self 4]
+  norm_num
+
 -- The initial convolution consists of the single term at zero.
 example : ∑ k ∈ Finset.range 1, (Nat.fib k : ℚ) * (((0 - k : ℕ) : ℚ) / 2 ^ (0 - k)) = 0 := by
   rw [fib_oresme_convolution 0]
@@ -56,6 +67,18 @@ example (n : ℕ) :
   field_simp
   ring
 
+-- At zero both factors in the only summand vanish.
+example : ∑ k ∈ Finset.range 1, (pellNumber k : ℚ) * (((0 - k : ℕ) : ℚ) / 2 ^ (0 - k)) =
+    0 := by
+  rw [pellNumber_oresme_convolution 0]
+  norm_num [pellNumber]
+
+-- At index four the three interior terms contribute 3/8, 1, and 5/2.
+example : ∑ k ∈ Finset.range 5, (pellNumber k : ℚ) * (((4 - k : ℕ) : ℚ) / 2 ^ (4 - k)) =
+    31 / 8 := by
+  rw [pellNumber_oresme_convolution 4]
+  norm_num [pellNumber]
+
 -- The Oresme factor `0 / 2 ^ 0` makes the initial convolution vanish, although `j₀ = 2`.
 example : ∑ k ∈ Finset.range 1,
     (jacobsthalLucasNumber k : ℚ) * (((0 - k : ℕ) : ℚ) / 2 ^ (0 - k)) = 0 := by
@@ -67,3 +90,16 @@ example : ∑ k ∈ Finset.range 5,
     (jacobsthalLucasNumber k : ℚ) * (((4 - k : ℕ) : ℚ) / 2 ^ (4 - k)) = 55 / 8 := by
   rw [jacobsthalLucasNumber_oresme_convolution 4]
   norm_num [jacobsthalLucasNumber]
+
+-- The first negative right-hand side is `-5`, whose least nonnegative residue is `44`.
+example : 4 * (5 * (pellLucasSequence 2 : ℤ) - 4 * pellLucasSequence 1) ≡ 44 [ZMOD 49] :=
+  (two_pow_succ_mul_pellLucasSequence_combination_modEq 1).trans (by decide)
+
+-- At every multiple of seven, including zero, the residue is two.
+example (k : ℕ) :
+    2 ^ (7 * k + 1) * (5 * (pellLucasSequence (7 * k + 1) : ℤ) - 4 * pellLucasSequence (7 * k)) ≡
+      2 [ZMOD 49] := by
+  refine (two_pow_succ_mul_pellLucasSequence_combination_modEq (7 * k)).trans ?_
+  refine Int.modEq_iff_dvd.mpr ⟨(k : ℤ), ?_⟩
+  push_cast
+  ring

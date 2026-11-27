@@ -11,6 +11,7 @@ module
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Ring
 
 /-!
 # Singularity of natural duals of Moebius maps
@@ -27,6 +28,7 @@ the endpoint equations `V^#_{βγ}(ξ) = V^#_{βδ}(ξ)` and `V^#_{αδ}(ξ) = V
 
 ## Main declarations
 
+* `MetaMathlibExt.moebius_dual_endpoint_ne_neg_one`: the two δ-branches disagree at `-1`.
 * `MetaMathlibExt.moebius_dual_central_equations`: the endpoint equations at `ξ`, with nonzero
   denominators, force `α + αδ + δ = β + γ + βδ`; if moreover `ξ = V^#_{αγ}(η)`, they force a
   second polynomial relation between `α`, `β`, `γ` and `δ`.
@@ -44,14 +46,37 @@ relation. For the second, multiply `α (1 + δ) (2 + ξ) = 1 + γ` by `2α + 1 +
 
 ## Implementation notes
 
-Both theorems keep their original names and statements. The proof of the central equations uses
-`β < 1` only through `2 - β ≠ 0` and `γ > -1` only through `1 + γ ≠ 0`. Its unused hypotheses
-`hα` and `hδ` retain their names for named arguments.
+The proof of the central equations uses `β < 1` only through `2 - β ≠ 0` and `γ > -1` only through
+`1 + γ ≠ 0`. Its unused hypotheses `hα` and `hδ` retain their names for named arguments.
 -/
 
 @[expose] public section
 
 namespace MetaMathlibExt
+
+/-- **Moebius dual branches disagree at −1.** Let $\alpha, \beta, \delta$ be real numbers with
+$\alpha > 0$, $\beta < 1$ and $\delta \ge 0$, and define the dual branches
+$V^\#_{\alpha\delta}(y) = (2\alpha\delta - 1 + \alpha\delta y)/(2\alpha + 1 + \alpha y)$ and
+$V^\#_{\beta\delta}(y) = (2\delta - 2\beta\delta - 1 + (\delta - \beta\delta - 1) y)/
+(3 - 2\beta + (2 - \beta) y)$. Then $V^\#_{\beta\delta}(-1) \ne V^\#_{\alpha\delta}(-1)$.
+
+Equality would force $\delta = -1$.
+
+Source: Fritz Schweiger, *A Remark on Singular Duals of Moebius Maps*, INTEGERS 24 (2024),
+Article A17, Lemma 2 (`integers-2024-A17-lem-2`). -/
+theorem moebius_dual_endpoint_ne_neg_one (α β δ : ℝ) (hα : 0 < α) (hβ : β < 1)
+    (hδ : 0 ≤ δ) :
+    let dualαδ : ℝ → ℝ := fun y => (2 * α * δ - 1 + α * δ * y) / (2 * α + 1 + α * y)
+    let dualβδ : ℝ → ℝ := fun y =>
+      (2 * δ - 2 * β * δ - 1 + (δ - β * δ - 1) * y) / (3 - 2 * β + (2 - β) * y)
+    dualβδ (-1) ≠ dualαδ (-1) := by
+  intro dualαδ dualβδ heq
+  have hβδ : dualβδ (-1) = δ := by
+    apply (div_eq_iff (by linarith only [hβ])).2
+    ring
+  rw [hβδ] at heq
+  have hαden : 2 * α + 1 + α * (-1) ≠ 0 := by linarith only [hα]
+  linarith only [(eq_div_iff hαden).mp heq, hδ]
 
 set_option linter.unusedVariables false in
 /-- **Central equations for natural duals of Moebius maps.** Let $\alpha, \beta, \gamma, \delta$

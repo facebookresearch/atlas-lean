@@ -16,7 +16,10 @@ public import Mathlib.Probability.Distributions.Geometric
 public import Mathlib.RingTheory.MvPolynomial.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.SymmetricPeaksCompositions
+public import MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightBivariateGeneratingFunction
 public import MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction
+public import MathlibExt.Combinatorics.Enumerative.SymmetricValleyDepthClosedForm
+public import MathlibExt.Combinatorics.Enumerative.SymmetricValleyDepthGeneratingFunction
 
 /-!
 # Heights of symmetric peaks and depths of symmetric valleys over compositions
@@ -42,7 +45,9 @@ multivariate power series; Theorem 3 uses the corrected reading recorded in its 
 and audit row.
 
 The univariate generating function of `hsp(n)` in Lemma 1, (5) is proved in
-`MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction`.
+`MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction`, and the bivariate
+generating function of `hsp(n, k)` in Lemma 1 in
+`MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightBivariateGeneratingFunction`.
 
 Not stated (see the source audit table): the bivariate part of Lemma 2 (false as
 extracted), Theorem 2(b) (false as extracted) and the variances of Theorem 6 (false as printed in the journal).
@@ -53,40 +58,6 @@ open MeasureTheory ProbabilityTheory PowerSeries
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Bivariate generating function of the total symmetric peak height over compositions.**
-For $n, k \ge 0$ let $\mathrm{hsp}(n, k)$ be the sum, over all compositions $c$ of $n$ with
-exactly $k$ parts, of the symmetric peak height sum of the sequence of parts of $c$. Then in
-the ring $\mathbb{Z}[y][[x]]$ of formal power series in $x$ over $\mathbb{Z}[y]$,
-$$
-\left(\sum_{n \ge 0} \sum_{k \ge 0} \mathrm{hsp}(n, k)\, y^k x^n\right)
-(1 - x^3)(1 - x - yx)^2 = y^3 x^4,
-$$
-that is, $\sum_{n, k \ge 0} \mathrm{hsp}(n, k)\, x^n y^k = y^3 x^4 / ((1 - x^3)(1 - x - yx)^2)$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Lemma 1 (`integers-2026-A65-lem-1`). -/
-public theorem_wanted symmetricPeakHeightSum_compositions_bivariate_genFun :
-    PowerSeries.mk (fun n => ∑ c : Composition n,
-        Polynomial.C ((symmetricPeakHeightSum c.blocks : ℕ) : ℤ) * Polynomial.X ^ c.length) *
-        ((1 - X ^ 3) * (1 - X - PowerSeries.C (Polynomial.X : Polynomial ℤ) * X) ^ 2) =
-      PowerSeries.C (Polynomial.X ^ 3 : Polynomial ℤ) * X ^ 4
-
-/-- **Generating function for the total depth of symmetric valleys over compositions.** For
-$n \ge 0$, let $\operatorname{dsv}(n)$ be the sum, over all compositions $c$ of $n$, of the total
-depth of the symmetric valleys of the sequence of parts of $c$. Then in the ring $\mathbb{Z}[[x]]$
-of formal power series,
-$$\Big(\sum_{n \ge 0} \operatorname{dsv}(n)\, x^n\Big)(1-2x)^2(1-x^3)(1-x^2)^2 = x^5 - 2x^6 + x^7,$$
-that is, $\sum_{n \ge 0} \operatorname{dsv}(n)\, x^n$ equals
-$(x^5 - 2x^6 + x^7)/((1-2x)^2(1-x^3)(1-x^2)^2)$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Lemma 2, (11) (`integers-2026-A65-lem-2`). -/
-public theorem_wanted symmetricValleyDepthSum_compositions_genFun :
-    PowerSeries.mk (fun n => ((∑ c : Composition n, symmetricValleyDepthSum c.blocks : ℕ) : ℤ)) *
-        ((1 - 2 * X) ^ 2 * (1 - X ^ 3) * (1 - X ^ 2) ^ 2) = X ^ 5 - 2 * X ^ 6 + X ^ 7
 
 /-- **Closed form for the total symmetric peak height over compositions.** For $n \ge 0$ let
 $\mathrm{hsp}(n)$ be the sum, over all compositions $c$ of $n$, of the symmetric peak height
@@ -108,25 +79,6 @@ public theorem_wanted symmetricPeakHeightSum_compositions_closed_form (n : ℕ) 
           (441 * (1 + Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) +
         (-33 + 15 * Complex.I * (Real.sqrt 3 : ℂ)) * (-2) ^ n /
           (441 * (1 - Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) + 1 / 3
-
-/-- **Closed form for the total depth of symmetric valleys over compositions.** For $n \ge 0$,
-let $\operatorname{dsv}(n)$ be the sum, over all compositions $c$ of $n$, of the total depth of
-the symmetric valleys of the sequence of parts of $c$, and write $\omega_\pm = 1 \pm i\sqrt{3}$.
-Then, as complex numbers,
-$$\operatorname{dsv}(n) = \frac{(-6n+7)(-1)^n}{108} + \frac{2^n(21n-79)}{1323} +
-\frac{(-33-15\sqrt{3}\,i)(-2)^n}{441\,\omega_+^{n+1}} +
-\frac{(-33+15\sqrt{3}\,i)(-2)^n}{441\,\omega_-^{n+1}} + \frac{1}{12}.$$
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Corollary 2, (12) (`integers-2026-A65-cor-2`). -/
-public theorem_wanted symmetricValleyDepthSum_compositions_closed_form (n : ℕ) :
-    ((∑ c : Composition n, symmetricValleyDepthSum c.blocks : ℕ) : ℂ) =
-      (-6 * n + 7) / 108 * (-1) ^ n + (2 : ℂ) ^ n * (21 * n - 79) / 1323 +
-        (-33 - 15 * (Real.sqrt 3 : ℂ) * Complex.I) * (-2) ^ n /
-          (441 * (1 + Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) +
-        (-33 + 15 * (Real.sqrt 3 : ℂ) * Complex.I) * (-2) ^ n /
-          (441 * (1 - Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) + 1 / 12
 
 /-- **Total symmetric peak height over compositions with a fixed number of parts.** For
 $n, k \ge 0$ let $\mathrm{hsp}(n, k)$ be the sum, over all compositions $c$ of $n$ with exactly

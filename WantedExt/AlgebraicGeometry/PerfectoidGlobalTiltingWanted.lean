@@ -33,7 +33,13 @@ open MathlibExt.AlgebraicGeometry.PerfectoidUntiltingSites
 open MathlibExt.AlgebraicGeometry.IntegralTiltModels
 open MathlibExt.AlgebraicGeometry.AffinePerfectoidVSite
 
-/-- Construct the rational comparison at the prescribed sharp numerator and denominator. -/
+/-- Tilting a rational localization (Scholze, *Perfectoid spaces*, Theorem 6.3): let $p$ be a prime,
+$P$ an affine perfectoid untilt, and $D$ a rational localization of $P$ whose numerators are the
+images under $\sharp$ of a finite set $T$, and whose denominator is the image under $\sharp$ of an
+element $s$, of the tilt of the ring of power-bounded elements of $P$ (`IntegralRing`). Then there
+are a rational localization of the tilt of $P$ at the images of $T$ and $s$ in the tilt, and an
+isomorphism from the tilt of $D$ to it compatible with the maps to the tilt of $P$
+(`RationalTiltComparison`). -/
 public def_wanted rationalTiltComparison (p : ℕ) [Fact p.Prime]
     (P : AffineUntilting p) (D : OriginalRationalModel p P)
     (T : Finset (IntegralRing p P.pair)) (s : IntegralRing p P.pair)
@@ -41,25 +47,37 @@ public def_wanted rationalTiltComparison (p : ℕ) [Fact p.Prime]
       sharp p P.pair '' (T : Set (IntegralRing p P.pair)))
     (hs : D.denominator = sharp p P.pair s) : RationalTiltComparison p P D T s
 
-/-- The actual relative affine tilting functor is an equivalence over the fixed field. -/
+/-- The tilting equivalence over a perfectoid field: let $p$ be a prime and $K$ an affine perfectoid
+untilt whose ring is a field. Then there is an equivalence of categories, from affine perfectoid
+untilts over $K$ to affine perfectoid pairs of characteristic $p$ over the tilt of $K$, whose
+functor is relative tilting (`relativeTilting`). -/
 public def_wanted relativeTiltingEquivalence (p : ℕ) [Fact p.Prime]
     (K : AffineUntilting p) (_hK : IsField K.pair.ring) :
     {e : RelativeAffine p K ≌ Over K.tilt.pair // e.functor = relativeTilting p K}
 
-/-- Continuity uses the original compact-open cover rule before tilting. -/
+/-- Relative tilting is continuous for the v-topologies: let $p$ be a prime and $K$ an affine
+perfectoid untilt whose ring is a field. Then the relative tilting functor, from affine perfectoid
+untilts over $K$, with the v-topology of covers of their original spaces, to affine perfectoid pairs
+of characteristic $p$ over the tilt of $K$, with the v-topology, is continuous. -/
 public theorem_wanted relativeTiltingContinuous (p : ℕ) [Fact p.Prime]
     (K : AffineUntilting p) (_hK : IsField K.pair.ring) :
     (relativeTilting p K).IsContinuous (relativeVTopology p K)
       ((topology p).over K.tilt.pair)
 
-/-- The actual original-ring etale property is preserved by the fixed tilt maps. -/
+/-- Tilting preserves étale maps: for a prime $p$, the tilt of every étale map of affine perfectoid
+untilts is étale. -/
 public theorem_wanted tiltingPreservesEtale (p : ℕ) [Fact p.Prime] : PreservesEtale p
 
-/-- The actual original cofiltered pro-etale presentations tilt to pro-etale maps. -/
+/-- Tilting preserves pro-étale maps: for a prime $p$, the tilt of every pro-étale map of affine
+perfectoid untilts is pro-étale. -/
 public theorem_wanted tiltingPreservesProEtale (p : ℕ) [Fact p.Prime] :
     PreservesProEtale p
 
-/-- The native global tilting unit is invertible on every actual source sheaf. -/
+/-- The tilting unit is an isomorphism: let $p$ be a prime and $K$ an affine perfectoid untilt whose
+ring is a field, and assume the relative tilting functor continuous for the v-topologies and
+restriction of sheaves along it (`untiltSheaves`) a right adjoint, with left adjoint `tiltSheaves`.
+Then for every v-sheaf of sets $F$ on affine perfectoid untilts over $K$, the unit
+$F \to \mathrm{untilt}(\mathrm{tilt}\,F)$ of this adjunction is an isomorphism. -/
 public theorem_wanted globalTiltingUnitIsIso (p : ℕ) [Fact p.Prime]
     (K : AffineUntilting p) (_hK : IsField K.pair.ring)
     [(relativeTilting p K).IsContinuous (relativeVTopology p K)
@@ -67,7 +85,11 @@ public theorem_wanted globalTiltingUnitIsIso (p : ℕ) [Fact p.Prime]
     [(untiltSheaves p K).IsRightAdjoint]
     (F : Sheaf (relativeVTopology p K) (Type 1)) : IsIso ((tiltingUnit p K).app F)
 
-/-- The native global tilting counit is invertible on every actual tilted sheaf. -/
+/-- The tilting counit is an isomorphism: let $p$ be a prime and $K$ an affine perfectoid untilt
+whose ring is a field, and assume the relative tilting functor continuous for the v-topologies and
+restriction of sheaves along it (`untiltSheaves`) a right adjoint, with left adjoint `tiltSheaves`.
+Then for every v-sheaf of sets $F$ on affine perfectoid pairs of characteristic $p$ over the tilt of
+$K$, the counit $\mathrm{tilt}(\mathrm{untilt}\,F) \to F$ of this adjunction is an isomorphism. -/
 public theorem_wanted globalTiltingCounitIsIso (p : ℕ) [Fact p.Prime]
     (K : AffineUntilting p) (_hK : IsField K.pair.ring)
     [(relativeTilting p K).IsContinuous (relativeVTopology p K)

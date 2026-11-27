@@ -181,7 +181,8 @@ theorem clr_subcomp_univ (x : PosComposition ι) (i : (univ : Finset ι)) :
 /-! ### Subcompositional dominance -/
 
 omit [Fintype ι] in
-/-- Re-centring over `S` does not increase the sum of squares over `S`. -/
+/-- Re-centring over `S` does not increase the sum of squares over `S`. For empty `S` both sides
+are `0`; the mean is then `0 / 0`, which is `0` by the convention `x / 0 = 0`. -/
 theorem sum_sq_sub_mean_le (S : Finset ι) (a : ι → ℝ) :
     ∑ i ∈ S, (a i - (∑ j ∈ S, a j) / #S) ^ 2 ≤ ∑ i ∈ S, a i ^ 2 := by
   rcases S.eq_empty_or_nonempty with rfl | hne

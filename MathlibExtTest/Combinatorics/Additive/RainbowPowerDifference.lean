@@ -92,18 +92,54 @@ example : ¬ ∀ x y z : ZMod 7, x - y = z ^ 2 → ¬ (d₇ x ≠ d₇ y ∧ d�
   revert hmem
   decide
 
+private theorem c₇_hits (j : Fin 3) : ∃ i : ℕ, 0 < i ∧ c₇ i = j := by
+  obtain ⟨a, ha⟩ := c₇_surjective j
+  refine ⟨a.val + 7, by omega, ?_⟩
+  simpa only [Nat.cast_add, ZMod.natCast_self, add_zero, ZMod.natCast_zmod_val] using ha
+
+private theorem c₇_nat_rainbowFree (x y z : ℕ) (_ : 0 < x) (_ : 0 < y) (_ : 0 < z)
+    (h : x = y + z ^ 2) : ¬ (c₇ x ≠ c₇ y ∧ c₇ y ≠ c₇ z ∧ c₇ x ≠ c₇ z) := by
+  apply c₇_rainbowFree
+  simp [h]
+
 -- Lift the coloring modulo seven to the positive integers. On [2, 7) the color changes only
 -- at the last entry, where 6 has the color of 1.
-example : c₇ 1 ∈ (Finset.Ico 2 7).image (fun n : ℕ => c₇ n) := by
-  apply color_one_dominant_of_rainbowFree_powDiff 3 2 (fun n => c₇ n) _ _ 2 5
-    (by decide) (by decide)
-  · intro j
-    obtain ⟨a, ha⟩ := c₇_surjective j
-    refine ⟨a.val + 7, by omega, ?_⟩
-    simpa only [Nat.cast_add, ZMod.natCast_self, add_zero, ZMod.natCast_zmod_val] using ha
-  · intro x y z _ _ _ h
-    apply c₇_rainbowFree
-    simp [h]
+example : c₇ 1 ∈ (Finset.Ico 2 7).image (fun n : ℕ => c₇ n) :=
+  color_one_dominant_of_rainbowFree_powDiff 3 2 (fun n => c₇ n) c₇_hits c₇_nat_rainbowFree
+    2 5 (by decide) (by decide)
+
+-- Every block of seven contains all colors, so n₀ = 8 gives unbounded excess for all three.
+-- The non-dominant run at 2, 3, 4, 5 forces the uniform bound to be at least four.
+example : ∃ L : ℕ, 4 ≤ L ∧ ∀ i ℓ : ℕ, 0 < i → c₇ i ≠ c₇ 1 →
+    (∀ t < ℓ, c₇ (i + t : ℕ) = c₇ i) → ℓ ≤ L := by
+  have hdom := color_one_dominant_of_rainbowFree_powDiff 3 2 (fun n => c₇ n) c₇_hits
+    c₇_nat_rainbowFree
+  obtain ⟨L, hL⟩ := nondominant_string_length_bounded 2 (fun n => c₇ n) c₇_nat_rainbowFree
+    8 (by decide) (by
+      intro M N
+      obtain ⟨m, hm⟩ := exists_nat_gt M
+      let t := m + N
+      refine ⟨56 * t, by dsimp [t]; omega, fun e => ?_⟩
+      obtain ⟨a, ha⟩ := c₇_surjective e
+      let r := (a - 1).val + 1
+      have hr : r ≤ 7 := ZMod.val_lt (a - 1)
+      have hmap : Set.MapsTo (fun j => 7 * j + r) (Finset.range (8 * t))
+          ((Finset.Icc 1 (56 * t)).filter fun x : ℕ => c₇ x = e) := by
+        intro j hj
+        have hj' := Finset.mem_range.mp hj
+        change 7 * j + r ∈ _
+        refine Finset.mem_filter.mpr ⟨Finset.mem_Icc.mpr ⟨by dsimp [r]; omega, by omega⟩, ?_⟩
+        simpa [r, show (7 : ZMod 7) = 0 by decide] using ha
+      have hcard := Finset.card_le_card_of_injOn _ hmap (by
+        intro x _ y _ h
+        dsimp at h
+        omega)
+      rw [Finset.card_range] at hcard
+      have hreal := (Nat.cast_le (α := ℝ)).mpr hcard
+      push_cast at hreal ⊢
+      have hmt : (m : ℝ) ≤ t := by exact_mod_cast Nat.le_add_right m N
+      linarith) (c₇ 1) hdom
+  exact ⟨L, hL 2 4 (by decide) (by decide) (by decide), hL⟩
 
 -- The inputs 6 and 2 share a factor, have different colors, and occur in decreasing order.
 example : ∃ a b : ℕ, 0 < a ∧ 0 < b ∧ a.Coprime b ∧ c₇ a = 1 ∧ c₇ b = 2 ∧
@@ -157,5 +193,65 @@ example (p : ℕ) [Fact p.Prime] (hp : p ≠ 2) (a : ZMod p) (ha : a ≠ 0)
   orderOf_eq_one_iff.1 <| Nat.dvd_one.1 <|
     (isCycleVertex_powMap_iff_orderOf_dvd p 0 hp 1 (one_dvd _) (Nat.coprime_one_left _)
       (fun s _ hs => ((Nat.coprime_zero_right s).1 hs).le) a ha).1 h
+
+-- For coprime generators, the divisibility condition is automatic.
+example : ∃ n₀ : ℕ, ∀ m : ℕ, n₀ < m → ∃ u v : ℕ, m = u * 4 + v * 7 := by
+  have hg : Nat.gcd 4 7 = 1 := by decide
+  simpa only [hg, one_dvd, true_implies] using
+    exists_forall_gcd_dvd_eq_add_mul 4 7 (by decide) (by decide)
+
+-- With gcd 2, the conclusion covers all sufficiently large even numbers.
+example : ∃ n₀ : ℕ, ∀ m : ℕ, n₀ < m → 2 ∣ m → ∃ u v : ℕ, m = u * 6 + v * 10 := by
+  have hg : Nat.gcd 6 10 = 2 := by decide
+  simpa only [hg] using exists_forall_gcd_dvd_eq_add_mul 6 10 (by decide) (by decide)
+
+-- A generator equal to 1 is allowed.
+example : ∃ n₀ : ℕ, ∀ m : ℕ, n₀ < m → ∃ u v : ℕ, m = u * 9 + v := by
+  simpa only [Nat.gcd_one_right, one_dvd, true_implies, mul_one] using
+    exists_forall_gcd_dvd_eq_add_mul 9 1 (by decide) (by decide)
+
+-- The solution 15 = 6 + 3² reduces to 1 - 6 = 3² modulo seven.
+example : ¬ (c₇ 1 ≠ c₇ 6 ∧ c₇ 6 ≠ c₇ 3 ∧ c₇ 1 ≠ c₇ 3) :=
+  rainbowFree_powDiff_lift_of_zmod 7 2 c₇ c₇_rainbowFree 15 6 3
+    (by decide) (by decide) (by decide) (by decide)
+
+-- At modulus zero the coloring has domain ℤ. Exponent zero gives consecutive inputs.
+example (c : ℤ → Fin 3)
+    (hrf : ∀ x y z : ℤ, x - y = 1 → ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z)) :
+    ¬ (c 6 ≠ c 5 ∧ c 5 ≠ c 2 ∧ c 6 ≠ c 2) :=
+  rainbowFree_powDiff_lift_of_zmod 0 0 c
+    (fun x y z h => hrf x y z (h.trans (pow_zero z))) 6 5 2
+    (by decide) (by decide) (by decide) (by decide)
+
+-- The orbits of 3 and 5 meet the orbit of 2 at different points, 2 and 4 respectively.
+example : c₇ 3 = c₇ 5 := by
+  let f (x : ZMod 7) := x ^ 2
+  have hf : ∀ x : ZMod 7, x ^ 2 = 0 ↔ x = 0 := by decide
+  have hzero (i : ℕ) (x : ZMod 7) : f^[i] x = 0 ↔ x = 0 := by
+    induction i with
+    | zero => rfl
+    | succ i ih =>
+      rw [Function.iterate_succ_apply']
+      exact (hf _).trans ih
+  have h0 (x : ZMod 7) (hx : ∃ i j : ℕ, f^[i] x = f^[j] 2) : c₇ x ≠ c₇ 0 := by
+    obtain ⟨i, j, hij⟩ := hx
+    have hx0 : x ≠ 0 := by
+      intro h
+      have ht := (hzero i x).mpr h
+      rw [hij] at ht
+      exact (by decide : (2 : ZMod 7) ≠ 0) ((hzero j 2).mp ht)
+    exact (by decide : ∀ y : ZMod 7, y ≠ 0 → c₇ y ≠ c₇ 0) x hx0
+  exact component_monochromatic_of_rainbowFree 7 3 f c₇ c₇_surjective c₇_rainbowFree 2 h0 3 5
+    ⟨1, 0, by change (3 : ZMod 7) ^ 2 = 2; decide⟩
+    ⟨1, 1, by change (5 : ZMod 7) ^ 2 = (2 : ZMod 7) ^ 2; decide⟩
+
+-- For the constant zero map, all edges lead to zero. The coloring is still rainbow-free,
+-- but the component containing zero need not be monochromatic.
+example : ∃ f : ZMod 7 → ZMod 7,
+    (∀ x y z : ZMod 7, x - y = f z → ¬ (c₇ x ≠ c₇ y ∧ c₇ y ≠ c₇ z ∧ c₇ x ≠ c₇ z)) ∧
+    (∃ i j : ℕ, f^[i] 0 = f^[j] 1) ∧ c₇ 0 ≠ c₇ 1 := by
+  refine ⟨fun _ => 0, ?_, ⟨1, 1, rfl⟩, by decide⟩
+  intro x y _ h hcolors
+  exact hcolors.1 (congrArg c₇ (sub_eq_zero.mp h))
 
 end MathlibExtTest.RainbowPowerDifference

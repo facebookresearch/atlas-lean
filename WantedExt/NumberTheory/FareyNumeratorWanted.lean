@@ -46,42 +46,14 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.Farey
 public import MathlibExt.NumberTheory.FareyNumerator
+public import MathlibExt.NumberTheory.FareyNumeratorFormula
+public import MathlibExt.NumberTheory.FareyNumeratorPrimePow
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FareyNumeratorWanted
-
-/-- **Number of Farey fractions with a given numerator.** For natural numbers $n$ and $h$, $N_n(h)$
-is the number of integers $b$ with $h \le b \le n$ and $\gcd(h, b) = 1$; for $h \ge 1$ this is
-the number of fractions with numerator $h$ in the Farey sequence of order $n$. -/
-def fareyNumeratorCount (n h : ℕ) : ℕ :=
-  ((Finset.Icc h n).filter (fun b => Nat.Coprime h b)).card
-
-/-- **Formula for the number of Farey fractions with a given numerator.** Let $h$ and $n$ be
-natural numbers with $0 < h < n$, and let $N_n(h)$ be the number of integers $b$ with
-$h \le b \le n$ and $\gcd(h, b) = 1$ (the number of fractions with numerator $h$ in the Farey
-sequence of order $n$). Then
-$$
-N_n(h) = \frac{n \varphi(h)}{h} - \sum_{d \mid h} \mu(d) \frac{n \bmod d}{d} -
-\varphi(h) + \delta_{1h},
-$$
-where $\varphi$ is Euler's totient function, $\mu$ is the Möbius function, the sum runs over the
-positive divisors $d$ of $h$, $(n \bmod d)/d$ is the fractional part of $n/d$, and $\delta_{1h}$ is
-$1$ if $h = 1$ and $0$ otherwise.
-
-Source: Rogelio Tomás García, "Farey Fractions with
-Equal Numerators and the Rank of Unit Fractions",
-Theorem 1. -/
-theorem_wanted fareyNumeratorCount_formula (h n : ℕ)
-    (hh : 0 < h) (hhn : h < n) :
-    (fareyNumeratorCount n h : ℚ) =
-      (Nat.totient h : ℚ) * (n : ℚ) / h -
-        ∑ d ∈ h.divisors,
-          (ArithmeticFunction.moebius d : ℚ) *
-            ((n % d : ℚ) / d) -
-        (Nat.totient h : ℚ) + (if h = 1 then 1 else 0)
 
 /-- The number of Farey fractions of order `n` with
 numerator `h` and value strictly below `x`: the
@@ -139,18 +111,6 @@ INTEGERS 24 (2024), Article A63, Section 1 (the
 listing of `F_5`). -/
 theorem fareyRank_five_half : fareyRank 5 (1 / 2) = 4 := by
   decide +kernel
-
-/-- **Corollary 1**: for a prime `p` and positive `m`
-with `p ^ m ≤ n`,
-`N_n(p^m) = ⌈(n - p^m)(1 - 1/p)⌉`.
-
-Source: Rogelio Tomás García, "Farey Fractions with
-Equal Numerators and the Rank of Unit Fractions",
-INTEGERS 24 (2024), Article A63, Corollary 1. -/
-theorem_wanted fareyNumeratorCount_prime_pow (p m n : ℕ)
-    (hp : p.Prime) (hm : 0 < m) (hpn : p ^ m ≤ n) :
-    (fareyNumeratorCount n (p ^ m) : ℤ) =
-      ⌈((n : ℚ) - (p : ℚ) ^ m) * (1 - 1 / (p : ℚ))⌉
 
 /-- **Corollary 2**: for `0 < h < n` and `m ≥ 0`,
 `N_{n + m h}(h) = N_n(h) + m φ(h)`.

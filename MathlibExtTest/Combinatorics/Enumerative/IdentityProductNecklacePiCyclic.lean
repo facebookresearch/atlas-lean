@@ -18,6 +18,16 @@ import Mathlib.Tactic.NormNum
 
 open MetaMathlibExt
 
+-- In the cyclic group of order 6, two elements have fourth power one.
+example : Fintype.card {x : Multiplicative (ZMod 6) // x ^ (4 : ℕ) = 1} = 2 := by
+  rw [card_pow_eq_one_zmod 6 4]
+  decide
+
+-- The zero exponent counts every element, even when the order is not prime.
+example : Fintype.card {x : Multiplicative (ZMod 6) // x ^ (0 : ℕ) = 1} = 6 := by
+  rw [card_pow_eq_one_zmod 6 0]
+  decide
+
 -- With no factors (`m = 0`) the group is trivial and there is exactly one necklace: the formula
 -- gives `(1 / n) ∑_{d ∣ n} φ(n / d) = 1` by Gauss's identity `∑_{d ∣ n} φ(d) = n`.
 example (n : ℕ) (hn : 0 < n) :

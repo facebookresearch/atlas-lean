@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Choose.Central
 public import MathlibExt.Data.Set.Density
 public import MathlibExt.NumberTheory.Padics.FactorialQuotient
+public import MathlibExt.NumberTheory.Padics.ShortRunValuations
 
 namespace MetaMathlibExt
 
@@ -82,27 +83,6 @@ public theorem_wanted card_padicValNat_centralBinom_le_isLittleO :
           (padicValNat p (centralBinom m) : ℝ) ≤
             ((1 + ⌊Real.log x / Real.log p⌋₊ : ℕ) : ℝ) /
               Real.log ((1 + ⌊Real.log x / Real.log p⌋₊ : ℕ) : ℝ)).card : ℕ) : ℝ))
-      =o[atTop] fun x : ℕ => (x : ℝ)
-
-open scoped Classical in
-/-- **Large valuations in short runs of consecutive integers are rare.** For a natural number
-$x$ let $K = \lfloor \exp(0.8 \sqrt{\log x}) \rfloor$ and, for a prime $p$, let
-$D_p = 1 + \lfloor \log x / \log p \rfloor$. Write $v_p(n)$ for the exponent of $p$ in a
-positive integer $n$. Then the number of integers $m$ with $1 \le m \le x$ for which some prime
-$p < 2K$ satisfies $\max \{ v_p(m + i) : 1 \le i \le K \} > D_p / \log D_p$ is $o(x)$ as
-$x \to \infty$.
-
-For large $x$ every prime $p < 2K$ is at most $x$, so $D_p \ge 2$ and $\log D_p > 0$.
-
-Source: Carl Pomerance, *Remarks on the Middle Binomial Coefficient*, INTEGERS 26 (2026),
-Article A47, Lemma 5 (`integers-2026-A47-lem-5`). -/
-public theorem_wanted card_max_padicValNat_add_gt_isLittleO :
-    (fun x : ℕ => ((((Finset.Icc 1 x).filter fun m => ∃ p : ℕ, p.Prime ∧
-        p < 2 * ⌊Real.exp (0.8 * Real.sqrt (Real.log x))⌋₊ ∧
-          ((1 + ⌊Real.log x / Real.log p⌋₊ : ℕ) : ℝ) /
-              Real.log ((1 + ⌊Real.log x / Real.log p⌋₊ : ℕ) : ℝ) <
-            (((Finset.Icc 1 ⌊Real.exp (0.8 * Real.sqrt (Real.log x))⌋₊).sup
-              fun i => padicValNat p (m + i) : ℕ) : ℝ)).card : ℕ) : ℝ))
       =o[atTop] fun x : ℕ => (x : ℝ)
 
 /-- **Binomial coefficients dividing the middle binomial coefficient.** The set of natural

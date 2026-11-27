@@ -8,3 +8,4 @@ Laplace, Mellin and Radon transforms (Ramanujan's master theorem, Fourier slice 
 - [Radon transform](radon-transform/README.md)
 - [Stieltjes moment problem](stieltjes-moment-problem/README.md)
 - [Ramanujan's master theorem](ramanujan-master-theorem.md)
+- [The z-transform: region of convergence, shifts and convolution](z-transform-region-of-convergence-shift-and-convolution.md)

@@ -20,8 +20,9 @@ import all Batteries.Data.UnionFind.Basic
 # Exact path compression for canonical Batteries union-find
 
 The public facts describe the actual original parent chain, complete saved records
-and first-root depth of canonical FIND. Private source-refinement proofs count
-one root test per visit and one carried parent assignment per nonroot. These
+and first-root depth of canonical FIND. Source-refinement definitions and proofs
+in `Internal` count one root test per visit and one carried parent assignment
+per nonroot. These
 selected events are not a logarithmic, inverse-Ackermann or physical RAM bound.
 
 Source: CLRS, fourth edition, §19.3, printed529–530. Codex-authored conversion
@@ -43,7 +44,7 @@ tests and the second counts parent writes.
 
 The returned array and root are exactly those of the Batteries FIND auxiliary; only the costs
 are added. -/
-@[no_expose] def countedAux (self : UnionFind) (x : Fin self.size) :
+@[no_expose] public def countedAux (self : UnionFind) (x : Fin self.size) :
     TimeM (Nat × Nat) (UnionFind.FindAux self.size) := do
   TimeM.tick (1, 0)
   let y := self.arr[x.val].parent
@@ -61,7 +62,7 @@ termination_by self.rankMax - self.rank x
 structure $S$ and a node $x < |S|$, the value returned by the cost-counted FIND auxiliary on $x$
 (the compressed node array together with the root of $x$), with its cost discarded, equals the
 result of the Batteries path-compression auxiliary routine of FIND on $x$. -/
-theorem countedAux_ret (self : UnionFind) (x : Fin self.size) :
+public theorem countedAux_ret (self : UnionFind) (x : Fin self.size) :
     (countedAux self x).ret = self.findAux x := by
   rw [countedAux, UnionFind.findAux]
   simp only [TimeM.ret_bind]
@@ -75,7 +76,7 @@ termination_by self.rankMax - self.rank x
 /-- **Cost of the FIND auxiliary at a root.** Let $S$ be a union-find structure and $x < |S|$
 a node. If the parent of $x$ in $S$ is $x$ itself, then the cost-counted FIND auxiliary on $x$
 has cost $(1, 0)$: one root test and no parent writes. -/
-theorem countedAux_time_root (self : UnionFind) (x : Fin self.size)
+public theorem countedAux_time_root (self : UnionFind) (x : Fin self.size)
     (h : self.arr[x.val].parent = x) : (countedAux self x).time = (1, 0) := by
   rw [countedAux]
   simp [h]
@@ -84,7 +85,7 @@ theorem countedAux_time_root (self : UnionFind) (x : Fin self.size)
 and $x < |S|$ a node whose parent $y$ in $S$ differs from $x$. If $c_x$ and $c_y$ are the costs
 of the cost-counted FIND auxiliary on $x$ and on $y$, then $c_x = (1, 0) + (c_y + (0, 1))$:
 one root test at $x$, then the run on $y$, then one parent write. -/
-theorem countedAux_time_step (self : UnionFind) (x : Fin self.size)
+public theorem countedAux_time_step (self : UnionFind) (x : Fin self.size)
     (h : self.arr[x.val].parent ≠ x) :
     (countedAux self x).time = (1, 0) +
       ((countedAux self ⟨self.arr[x.val].parent, self.parent'_lt _ x.isLt⟩).time +
@@ -95,7 +96,7 @@ theorem countedAux_time_step (self : UnionFind) (x : Fin self.size)
 /-- **Root tests exceed parent writes by one.** For a union-find structure $S$ and a node
 $x < |S|$, if the cost-counted FIND auxiliary on $x$ has cost $(t, w)$, where $t$ counts root
 tests and $w$ counts parent writes, then $t = w + 1$. -/
-theorem countedAux_time_balance (self : UnionFind) (x : Fin self.size) :
+public theorem countedAux_time_balance (self : UnionFind) (x : Fin self.size) :
     (countedAux self x).time.1 = (countedAux self x).time.2 + 1 := by
   if h : self.arr[x.val].parent = x then
     rw [countedAux_time_root self x h]
@@ -125,7 +126,7 @@ It returns the union-find structure with node array $A'$, together with $r$ as a
 structure (whose size equals $|S|$), at cost $(t, w)$.
 
 It reuses the array and root of that single run; FIND is not run a second time. -/
-@[no_expose] def countedFind (self : UnionFind) (x : Fin self.size) :
+@[no_expose] public def countedFind (self : UnionFind) (x : Fin self.size) :
     TimeM (Nat × Nat) ((s : UnionFind) × {_root : Fin s.size // s.size = self.size}) :=
   let result := countedAux self x
   let r := result.ret
@@ -150,7 +151,7 @@ It reuses the array and root of that single run; FIND is not run a second time. 
 $x < |S|$, the value returned by the cost-counted FIND on $x$ (the compressed union-find
 structure together with the root of $x$), with its cost discarded, equals the result of the
 Batteries FIND with path compression on $x$. -/
-theorem countedFind_ret (self : UnionFind) (x : Fin self.size) :
+public theorem countedFind_ret (self : UnionFind) (x : Fin self.size) :
     (countedFind self x).ret = self.find x := by
   apply result_ext
   · exact congrArg UnionFind.FindAux.s (countedAux_ret self x)
@@ -162,7 +163,7 @@ parent writes performed by the cost-counted FIND auxiliary on $x$ (the second co
 cost) is at most $R - \operatorname{rank}(x)$.
 
 This is a per-call bound, not a logarithmic or amortized inverse-Ackermann bound. -/
-theorem countedAux_writes_rank (self : UnionFind) (x : Fin self.size) :
+public theorem countedAux_writes_rank (self : UnionFind) (x : Fin self.size) :
     (countedAux self x).time.2 ≤ self.rankMax - self.rank x := by
   if h : self.arr[x.val].parent = x then
     rw [countedAux_time_root self x h]

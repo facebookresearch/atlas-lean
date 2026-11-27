@@ -84,3 +84,83 @@ example (k : ℕ) :
   exact (isUlamWord_zeros_four_ones_zeros_iff _ _ (by omega)).2 (by omega)
 
 end MetaMathlibExt.isUlamWord_zeros_four_ones_zeros_iff
+
+namespace MetaMathlibExt.isUlamWord_zeros_two_ones_zeros_iff
+
+-- At zero padding the halves of 11 coincide. Adding one zero at either end gives a unique cut.
+example : ¬IsUlamWord [true, true] ∧ IsUlamWord [false, true, true] ∧
+    IsUlamWord [true, true, false] := by
+  decide
+
+-- With padding at both ends, 01|10 competes with endpoint cuts in 0110.
+-- In 00110 the cut 001|10 is unique.
+example : ¬IsUlamWord [false, true, true, false] ∧
+    IsUlamWord [false, false, true, true, false] := by
+  decide
+
+example (k : ℕ) :
+    IsUlamWord (List.replicate k false ++ List.replicate 2 true ++ List.replicate (k + 1) false) :=
+  (isUlamWord_zeros_two_ones_zeros_iff k (k + 1)).2 (by omega)
+
+end MetaMathlibExt.isUlamWord_zeros_two_ones_zeros_iff
+
+namespace MetaMathlibExt.isUlamWord_zeros_one_zeros_iff
+
+-- The singleton is accepted; of the two endpoint extensions, precisely one is valid for 0010.
+example : IsUlamWord [true] ∧ IsUlamWord [false, false, true, false] := by
+  exact ⟨(isUlamWord_zeros_one_zeros_iff 0 0).2 (by decide),
+    (isUlamWord_zeros_one_zeros_iff 2 1).2 (by decide)⟩
+
+-- Both endpoint cuts of 010 are valid, so it is not an Ulam word.
+example : ¬ IsUlamWord [false, true, false] := by
+  intro h
+  exact (by decide : ¬ Odd ((1 + 1 : ℕ).choose 1))
+    ((isUlamWord_zeros_one_zeros_iff 1 1).1 h)
+
+end MetaMathlibExt.isUlamWord_zeros_one_zeros_iff
+
+namespace MetaMathlibExt.card_ulam_zeros_one_zeros
+
+-- With no padding, the only candidate is the singleton [true].
+example : ((Finset.range 1).filter fun a =>
+    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (1 - 1 - a) false)).card = 1 :=
+  card_ulam_zeros_one_zeros (n := 1) (hn := by decide)
+
+-- For 6 letters the Pascal row index is 5 = 101₂, with two nonadjacent set bits.
+example : ((Finset.range 6).filter fun a =>
+    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (6 - 1 - a) false)).card = 4 :=
+  card_ulam_zeros_one_zeros (n := 6) (hn := by decide)
+
+-- Check the actual positions independently against the recursive word predicate.
+example : ((Finset.range 6).filter fun a =>
+    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (6 - 1 - a) false)) =
+      {0, 1, 4, 5} := by
+  decide
+
+end MetaMathlibExt.card_ulam_zeros_one_zeros
+
+namespace MetaMathlibExt.two_mul_add_four_le_ulamWordCount
+
+-- Compute the exact count independently at the first admissible length.
+example : ulamWordCount 6 = 26 := by decide
+
+-- Check the boundary and representatives of the three cases through the public API.
+example : 16 ≤ ulamWordCount 6 :=
+  two_mul_add_four_le_ulamWordCount (n := 6) (hn := by decide)
+
+example : 18 ≤ ulamWordCount 7 :=
+  two_mul_add_four_le_ulamWordCount (n := 7) (hn := by decide)
+
+example : 20 ≤ ulamWordCount 8 :=
+  two_mul_add_four_le_ulamWordCount (n := 8) (hn := by decide)
+
+example : 22 ≤ ulamWordCount 9 :=
+  two_mul_add_four_le_ulamWordCount (n := 9) (hn := by decide)
+
+-- Test representative words independently of the lower-bound theorem.
+example : IsUlamWord [false, true, false, true, false, false] ∧
+    IsUlamWord [false, false, true, false, false, false, false] ∧
+    IsUlamWord [false, false, true, true, true, true, false, false, false] := by
+  decide
+
+end MetaMathlibExt.two_mul_add_four_le_ulamWordCount

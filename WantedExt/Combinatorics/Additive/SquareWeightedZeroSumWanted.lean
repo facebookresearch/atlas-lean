@@ -36,23 +36,6 @@ Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, 
 Sequences 27 (2024), Article 24.6.6, Introduction. -/
 public def unitSet (n : ℕ) : Set (ZMod n) := {x | IsUnit x}
 
-/-- **Squares of units modulo n.** For a natural number $n$, $U(n)^2$ is the set of elements of
-$\mathbb{Z}/n\mathbb{Z}$ of the form $u^2$ with $u$ a unit of $\mathbb{Z}/n\mathbb{Z}$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Introduction. -/
-public def unitSquareSet (n : ℕ) : Set (ZMod n) := {x | ∃ u, IsUnit u ∧ x = u ^ 2}
-
-/-- **Weighted zero-sum sequences.** Let $A \subseteq \mathbb{Z}/n\mathbb{Z}$ and let
-$S = (x_1, \dots, x_k)$ be a sequence in $\mathbb{Z}/n\mathbb{Z}$. Then $S$ is an $A$-weighted
-zero-sum sequence if there are weights $a_1, \dots, a_k \in A$ with
-$a_1 x_1 + a_2 x_2 + \dots + a_k x_k = 0$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Introduction. -/
-public def HasWeightedZeroSum {n k : ℕ} (A : Set (ZMod n)) (S : Fin k → ZMod n) : Prop :=
-  ∃ a : Fin k → ZMod n, (∀ i, a i ∈ A) ∧ ∑ i, a i * S i = 0
-
 /-- **Consecutive weighted zero-sum subsequences.** Let $A \subseteq \mathbb{Z}/n\mathbb{Z}$ and let
 $S = (x_1, \dots, x_k)$ be a sequence in $\mathbb{Z}/n\mathbb{Z}$. Then $S$ has an $A$-weighted
 zero-sum consecutive subsequence if there are indices $1 \le l \le h \le k$ and weights
@@ -162,18 +145,6 @@ public theorem_wanted squareSet_primePower_decomposition (p r : ℕ) (hp : p.Pri
       ((p : ZMod (p ^ r)) ^ (2 * (k : ℕ))) • unitSquareSet (p ^ r)
     squareSet (p ^ r) = ⋃ k, pieces k ∧ Set.PairwiseDisjoint Set.univ pieces
 
-/-- **Scaled unit squares modulo a prime power.** Let $p$ be a prime and $r, k$ natural numbers
-with $k = 0$ or $2k < r$, and write $U(m)^2$ for the set of squares of units of
-$\mathbb{Z}/m\mathbb{Z}$. Then the set $p^{2k} U(p^r)^2 = \{p^{2k} x : x \in U(p^r)^2\}$ in
-$\mathbb{Z}/p^r\mathbb{Z}$ has the same number of elements as $U(p^{r-2k})^2$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Lemma 5. -/
-public theorem_wanted ncard_scale_unitSquares_primePower (p r k : ℕ) (hp : p.Prime)
-    (hk : k ≤ (r - 1) / 2) :
-    (((p : ZMod (p ^ r)) ^ (2 * k)) • unitSquareSet (p ^ r)).ncard =
-      (unitSquareSet (p ^ (r - 2 * k))).ncard
-
 /-- **Number of nonzero squares modulo a prime power.** Let $p$ be a prime and $r \ge 1$, and write
 $S(m)$ for the set of nonzero squares and $U(m)^2$ for the set of squares of units in
 $\mathbb{Z}/m\mathbb{Z}$. If $r$ is even, then
@@ -187,22 +158,6 @@ public theorem_wanted ncard_squareSet_primePower (p r : ℕ) (hp : p.Prime) (hr 
       ∑ k ∈ Finset.range (r / 2), (unitSquareSet (p ^ (r - 2 * k))).ncard) ∧
     (Odd r → (squareSet (p ^ r)).ncard =
       ∑ k ∈ Finset.range ((r + 1) / 2), (unitSquareSet (p ^ (r - 2 * k))).ncard)
-
-/-- **Square-weighted zero sums lift from a prime-power component.** Let $n \ge 2$, let $p$ be a
-prime dividing $n$, and let $r$ be the exponent of $p$ in $n$. Write $S(m)$ for the set of
-nonzero squares in $\mathbb{Z}_m$. Let $x_1, \dots, x_k$ be a sequence in $\mathbb{Z}_n$ whose
-reduction $\bar x_1, \dots, \bar x_k$ modulo $p^r$ has an $S(p^r)$-weighted zero sum, that is,
-there are $b_1, \dots, b_k \in S(p^r)$ with $\sum_i b_i \bar x_i = 0$. Then there are
-$a_1, \dots, a_k \in S(n)$ with $\sum_i a_i x_i = 0$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Lemma 7. -/
-public theorem_wanted squareWeightedZeroSum_of_primePower_reduction (n p r k : ℕ)
-    (hn : 2 ≤ n) (hp : p.Prime) (hpn : p ∣ n) (hval : n.factorization p = r)
-    (S : Fin k → ZMod n)
-    (hS : HasWeightedZeroSum (squareSet (p ^ r))
-      (fun i => (ZMod.cast (S i) : ZMod (p ^ r)))) :
-    HasWeightedZeroSum (squareSet n) S
 
 /-- **Prime-power bound for the square-weighted consecutive constant.** Let $n \ge 2$, let $p$ be a
 prime dividing $n$ and let $r = v_p(n)$ be the exponent of $p$ in $n$. For a natural number $m$,
@@ -280,26 +235,6 @@ Sequences 27 (2024), Article 24.6.6, Theorem 12. -/
 public theorem_wanted weightedDavenport_squareSet_evenSquare_lowerBound (n : ℕ)
     (hn : 2 ≤ n) (heven : Even n) (hsquare : IsSquare n) :
     4 ≤ weightedDavenport (zmodWeightReps (squareSet n)) (ZMod n)
-
-/-- **Lifting weighted zero sums from p² to an even power of p.** Let $p \ge 2$, $r \ne 0$
-and $k$ be natural numbers with $r$ even, and let $t_1, \dots, t_k$ be elements of
-$\mathbb{Z}/p^r\mathbb{Z}$, with reductions $\bar t_1, \dots, \bar t_k$ modulo $p^2$. Write
-$U(p^2)^2$ for the set of squares of units of $\mathbb{Z}/p^2\mathbb{Z}$ and $S(p^r)$ for the
-set of nonzero squares of $\mathbb{Z}/p^r\mathbb{Z}$. If there are
-$a_1, \dots, a_k \in U(p^2)^2$ with $a_1 \bar t_1 + \dots + a_k \bar t_k = 0$ in
-$\mathbb{Z}/p^2\mathbb{Z}$, then there are $b_1, \dots, b_k \in S(p^r)$ with
-$b_1 t_1 + \dots + b_k t_k = 0$ in $\mathbb{Z}/p^r\mathbb{Z}$.
-
-The paper states the lemma for $p > 0$; the stronger hypothesis $p \ge 2$ is deliberate.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Lemma 13. -/
-public theorem_wanted squareWeightedZeroSum_of_reduction_square (p r k : ℕ)
-    (hp : 2 ≤ p) (hr0 : r ≠ 0) (hrEven : Even r)
-    (T : Fin k → ZMod (p ^ r))
-    (hT : HasWeightedZeroSum (unitSquareSet (p ^ 2))
-      (fun i => (ZMod.cast (T i) : ZMod (p ^ 2)))) :
-    HasWeightedZeroSum (squareSet (p ^ r)) T
 
 /-- **Square-weighted constants modulo $p^r$, for $p \ge 2$ and nonzero even $r$, are at most
 unit-square constants modulo $p^2$.** Let $p \ge 2$ be a natural number and let $r$ be a nonzero

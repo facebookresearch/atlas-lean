@@ -105,8 +105,9 @@ def fibre (s : S) : AbelianScheme (Spec (S.residueField s)) :=
 /-- The actual identity section. -/
 abbrev zero : 𝟙_ (Over S) ⟶ A.model := η[A.model]
 
-/-- Actual T-valued points. With `CategoryTheory.MonObj` open, they form a commutative group
-by Mathlib's `CategoryTheory.Hom.commGroup`. -/
+/-- The `T`-valued points of `A`, for a scheme `T` over `S`: the morphisms `T ⟶ A` over `S`. They
+form a commutative group under the group law of `A` (`CategoryTheory.Hom.commGroup`, a scoped
+instance in `CategoryTheory.MonObj`). -/
 abbrev Points (T : Over S) := T ⟶ A.model
 
 /-- Multiplication by n is the actual internal power map. -/
@@ -125,10 +126,7 @@ def IsNormalizedAtZero {S : Scheme.{u}} (A : AbelianScheme S) (T : Over S)
   Nonempty ((Scheme.Modules.pullback (zeroSectionAt A T).left).obj L ≅
     structureModule T.left)
 
-/-- The actual pullback of the Poincaré family along a parameter morphism. -/
-def familyPullback {S : Scheme.{u}} (A D T : Over S)
-    (P : (prod A D).left.Modules) (f : T ⟶ D) : (prod A T).left.Modules :=
-  (Scheme.Modules.pullback (prod.map (𝟙 A) f).left).obj P
+export AlgebraicLineBundleFamilies (familyPullback)
 
 /-- A relative dual abelian scheme with both normalized origins and a
 universal actual geometric Picard-zero line family. -/

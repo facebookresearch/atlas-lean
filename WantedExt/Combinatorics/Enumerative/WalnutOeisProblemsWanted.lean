@@ -13,8 +13,9 @@ public import Mathlib.Algebra.Polynomial.Coeff
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Nat.Log
 import Mathlib.Data.List.Infix
-public import MathlibExt.Combinatorics.Enumerative.AntiBonacci
-public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsumPalindrome
+public import MathlibExt.Combinatorics.Enumerative.AntiTribonacci
+public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsumGap
+public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsumPalindromeLimit
 
 /-!
 # Problems from the OEIS settled with Walnut
@@ -38,80 +39,6 @@ Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
 Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
 Section 4. -/
 public theorem antiTribonacciMex_example : antiTribonacciMex {1, 2, 3, 6} = 4 := by
-  decide +kernel
-
-/-- **Anti-Tribonacci construction.** Write $\mathrm{mex}(U)$ for the least positive integer not in
-a finite set $U$ of natural numbers. Set $(A_1, B_1, C_1, D_1) = (1, 2, 3, 6)$ and
-$U_1 = \{1, 2, 3, 6\}$. For $k \ge 1$ let $A_{k+1} = \mathrm{mex}(U_k)$,
-$B_{k+1} = \mathrm{mex}(U_k \cup \{A_{k+1}\})$,
-$C_{k+1} = \mathrm{mex}(U_k \cup \{A_{k+1}, B_{k+1}\})$, $D_{k+1} = A_{k+1} + B_{k+1} + C_{k+1}$
-and $U_{k+1} = U_k \cup \{A_{k+1}, B_{k+1}, C_{k+1}, D_{k+1}\}$. Entry $n$ of the construction is
-the pair $((A_{n+1}, B_{n+1}, C_{n+1}, D_{n+1}), U_{n+1})$, where $U_{n+1}$ is the set of all
-values used so far.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Section 4. -/
-public def antiTribonacciState : ℕ → (ℕ × ℕ × ℕ × ℕ) × Finset ℕ
-  | 0 => ((1, 2, 3, 6), {1, 2, 3, 6})
-  | n + 1 =>
-    let s := (antiTribonacciState n).2
-    let a := antiTribonacciMex s
-    let b := antiTribonacciMex (insert a s)
-    let c := antiTribonacciMex (insert b (insert a s))
-    ((a, b, c, a + b + c), insert (a + b + c) (insert c (insert b (insert a s))))
-
-/-- **First summands of the anti-Tribonacci construction.** For $n \ge 1$, $A_n$ is the first
-entry of the $n$-th quadruple $(A_n, B_n, C_n, D_n)$ of the anti-Tribonacci construction:
-$A_1 = 1$, and for $n \ge 2$, $A_n$ is the least positive integer that is not among the values
-$A_k$, $B_k$, $C_k$, $D_k$ with $1 \le k < n$. At $n = 0$ the definition gives $A_0 = A_1 = 1$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Section 4. -/
-public def antiTribonacciA (n : ℕ) : ℕ := (antiTribonacciState (n - 1)).1.1
-
-/-- **Second summands of the anti-Tribonacci construction.** For $n \ge 1$, $B_n$ is the second
-entry of the $n$-th quadruple $(A_n, B_n, C_n, D_n)$ of the anti-Tribonacci construction:
-$B_1 = 2$, and for $n \ge 2$, $B_n$ is the second smallest positive integer that is not among
-the values $A_k$, $B_k$, $C_k$, $D_k$ with $1 \le k < n$. At $n = 0$ the definition gives
-$B_0 = B_1 = 2$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Section 4. -/
-public def antiTribonacciB (n : ℕ) : ℕ := (antiTribonacciState (n - 1)).1.2.1
-
-/-- **Third summands of the anti-Tribonacci construction.** For $n \ge 1$, $C_n$ is the third
-entry of the $n$-th quadruple $(A_n, B_n, C_n, D_n)$ of the anti-Tribonacci construction:
-$C_1 = 3$, and for $n \ge 2$, $C_n$ is the third smallest positive integer that is not among
-the values $A_k$, $B_k$, $C_k$, $D_k$ with $1 \le k < n$. At $n = 0$ the definition gives
-$C_0 = C_1 = 3$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Section 4. -/
-public def antiTribonacciC (n : ℕ) : ℕ := (antiTribonacciState (n - 1)).1.2.2.1
-
-/-- **Anti-Tribonacci numbers.** For $n \ge 1$, the anti-Tribonacci number $D_n$ (OEIS A265389) is
-the fourth entry of the $n$-th quadruple $(A_n, B_n, C_n, D_n)$ of the anti-Tribonacci
-construction, so $D_n = A_n + B_n + C_n$ and $D_1 = 6$. At $n = 0$ the definition gives
-$D_0 = D_1 = 6$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Section 4. -/
-public def antiTribonacciD (n : ℕ) : ℕ := (antiTribonacciState (n - 1)).1.2.2.2
-
-/-- **First anti-Tribonacci numbers.** Writing $D_n$ for the $n$-th anti-Tribonacci number,
-the first four anti-Tribonacci numbers are $D_1 = 6$, $D_2 = 16$, $D_3 = 27$ and $D_4 = 36$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Section 4. -/
-public theorem antiTribonacciD_small :
-    antiTribonacciD 1 = 6 ∧ antiTribonacciD 2 = 16 ∧ antiTribonacciD 3 = 27 ∧
-      antiTribonacciD 4 = 36 := by
   decide +kernel
 
 /-- **Members of a greedy $3$-subsumfree sequence below a bound.** For natural numbers $x$, $y$
@@ -156,22 +83,6 @@ public theorem_wanted coeff_not_dvd_three_shape (c d : ℕ)
     ∃ i j : ℕ, j < i ∧ (c + d + 1 = 3 ^ j ∨ c + d + 1 = 2 * 3 ^ j ∨
       c + d + 1 = 3 ^ i + 3 ^ j ∨ c + d + 1 = 2 * 3 ^ i + 3 ^ j)
 
-/-- **Kimberling's conjecture on the anti-Tribonacci sequence.** Let $A_1 = 1$, $B_1 = 2$,
-$C_1 = 3$ and $D_1 = 6$, and for $n \ge 1$ let $A_{n+1} < B_{n+1} < C_{n+1}$ be the three
-smallest positive integers that are not among $A_i, B_i, C_i, D_i$ for $i \le n$, and
-$D_{n+1} = A_{n+1} + B_{n+1} + C_{n+1}$ (the $D_n$ are the anti-Tribonacci numbers). For every
-integer $n \ge 1$, $0 \le 10n - 6 - 3A_n \le 2$, $0 \le 10n - 2 - 3B_n \le 3$,
-$0 \le 10n + 1 - 3C_n \le 3$ and $0 \le 10n - 3 - D_n \le 2$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Theorem 12 (`jis-2025-25.3.8-thm-12`). -/
-public theorem_wanted kimberling_antiTribonacci {n : ℕ} (hn : 1 ≤ n) :
-    (0 ≤ 10 * (n : ℤ) - 6 - 3 * antiTribonacciA n ∧ 10 * (n : ℤ) - 6 - 3 * antiTribonacciA n ≤ 2) ∧
-    (0 ≤ 10 * (n : ℤ) - 2 - 3 * antiTribonacciB n ∧ 10 * (n : ℤ) - 2 - 3 * antiTribonacciB n ≤ 3) ∧
-    (0 ≤ 10 * (n : ℤ) + 1 - 3 * antiTribonacciC n ∧ 10 * (n : ℤ) + 1 - 3 * antiTribonacciC n ≤ 3) ∧
-    (0 ≤ 10 * (n : ℤ) - 3 - antiTribonacciD n ∧ 10 * (n : ℤ) - 3 - antiTribonacciD n ≤ 2)
-
 /-- **Membership in three greedy 3-subsumfree sequences.** For $x < y < z$, the greedy
 $3$-subsumfree sequence $S_{x,y,z}$ consists of $x$, $y$, $z$ and every $m > z$ that is not the
 sum of three different members of $S_{x,y,z}$ smaller than $m$. For every positive integer $n$:
@@ -191,16 +102,6 @@ public theorem_wanted mem_greedySubsumfree_iff {z : ℕ} (hz : 0 < z) :
     (z ∈ greedySubsumfreeBelow 1 4 5 (z + 1) ↔
       z ∈ ({1, 9, 25} : Finset ℕ) ∨ z % 43 ∈ ({4, 5, 6, 7, 8, 26, 27, 28, 29} : Finset ℕ))
 
-
-/-- **The last gap of size one between unsums.** Let $a_1 < a_2 < \cdots$ be the unsums
-(OEIS A260317), and for $i \ge 0$ let $g_i = a_{i+2} - a_{i+1}$ be the $i$-th gap between
-consecutive unsums, counted from zero. Then $g_9 = 1$, and $g_i \ne 1$ for every $i \ge 10$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Lemma 1 (`jis-2025-25.3.8-lem-1`). -/
-public theorem_wanted upperWythoffUnsumGap_ne_one :
-    upperWythoffUnsumGap 9 = 1 ∧ ∀ i, 10 ≤ i → upperWythoffUnsumGap i ≠ 1
 
 /-- **Digit sums between markers are two less than Fibonacci numbers.** For every $j$, the digit
 sum of the $j$-th word between markers of the unsum gap sequence, plus $2$, is a Fibonacci
@@ -274,22 +175,6 @@ public theorem_wanted upperWythoffUnsumPalindrome_succ :
         (upperWythoffUnsumPalindrome i).length + (upperWythoffUnsumPalindrome (i - 1)).length) ∧
     (upperWythoffUnsumPalindrome 1).length = 1 ∧ (upperWythoffUnsumPalindrome 2).length = 2 ∧
     ∀ i, 1 ≤ i → (upperWythoffUnsumPalindrome i).length = Nat.fib (i + 1)
-
-/-- **The words $W_i$ converge to $3$ followed by the coded Fibonacci word.** Let
-$u_0 u_1 u_2 \cdots$ be the infinite Fibonacci word over $\{0, 1\}$, indexed from $0$, and let
-$\mathbf{V}$ be the infinite word obtained from it by replacing each $0$ by $5$ and each
-$1$ by $3$. Then the words $W_i$ of the unsum gap sequence converge to the infinite word
-$3\mathbf{V}$: for every $k \ge 0$ there is $N$ such that for every $i \ge N$ the word $W_i$ has
-more than $k$ digits and its digit at position $k$ (counted from zero) is the digit of
-$3\mathbf{V}$ at position $k$, that is, $3$ if $k = 0$, and for $k \ge 1$ it is $3$ if
-$u_{k-1} = 1$ and $5$ if $u_{k-1} = 0$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Lemma 9 (`jis-2025-25.3.8-lem-9`). -/
-public theorem_wanted upperWythoffUnsumPalindrome_tendsto (k : ℕ) :
-    ∃ N, ∀ i, N ≤ i → (upperWythoffUnsumPalindrome i)[k]? =
-      some (if k = 0 then 3 else if fibInf (k - 1) = true then 3 else 5)
 
 /-- **Iterates of the period-doubling substitution.** Write the period-doubling substitution
 $a \mapsto ab$, $b \mapsto aa$ over the letters $a = 1$ and $b = 0$, so that it sends $1$ to $10$

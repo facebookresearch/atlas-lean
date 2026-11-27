@@ -15,6 +15,8 @@ public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import MathlibExt.Algebra.Polynomial.RealRooted
 public import MathlibExt.Combinatorics.Enumerative.MinusculePolynomial
+public import MathlibExt.Combinatorics.Enumerative.MinusculePolynomialClosedForm
+public import MathlibExt.Combinatorics.Enumerative.MinusculePolynomialLogConcavity
 public import MathlibExt.LinearAlgebra.Matrix.NonnegativeMinors
 
 /-!
@@ -62,18 +64,6 @@ public theorem_wanted minusculePolynomialA_interlaces_succ (n : ℕ) (hn : 2 ≤
       ∀ (j : ℕ) (hj : j + 1 < n),
         r ⟨j, by omega⟩ ≤ s ⟨j, by omega⟩ ∧ s ⟨j, by omega⟩ ≤ r ⟨j + 1, hj⟩
 
-/-- **Log-concavity of the coefficients of the minuscule polynomials.** Let $N_{n,k}$ be the
-coefficient of $x^k$ in the type-A minuscule polynomial $N_n(x)$. For all natural numbers $n$
-and $k$, $N_{n,k-1} N_{n,k+1} \le N_{n,k}^2$, where for $k = 0$ the index $k - 1$ is read as $0$.
-
-The cases outside $n \ge 1$, $1 \le k \le n - 1$ hold because the coefficients involved vanish.
-
-Source: Ding and Zeng, *Some New Results on the Minuscule Polynomials of Type A*, Journal of
-Integer Sequences 28 (2025), Article 25.1.2, Corollary 7. -/
-public theorem_wanted minusculePolynomialA_coeff_logConcave (n k : ℕ) :
-    (minusculePolynomialA n).coeff (k - 1) * (minusculePolynomialA n).coeff (k + 1) ≤
-      (minusculePolynomialA n).coeff k ^ 2
-
 /-- **Gamma-positivity of the minuscule polynomials.** For every natural number $n$ there are
 non-negative integers $\gamma_{n,0}, \dots, \gamma_{n,\lfloor n/2 \rfloor}$ such that the type-A
 minuscule polynomial $N_n$ satisfies
@@ -86,22 +76,6 @@ Integer Sequences 28 (2025), Article 25.1.2, Corollary 8. -/
 public theorem_wanted minusculePolynomialA_gamma_positive (n : ℕ) :
     ∃ γ : ℕ → ℕ, minusculePolynomialA n =
       ∑ k ∈ Finset.range (n / 2 + 1), C (γ k : ℚ) * X ^ k * (1 + X) ^ (n - 2 * k)
-
-/-- **Binomial closed form of the minuscule polynomials.** For every natural number $n$, the
-type-A minuscule polynomial $N_n$ satisfies the identity of polynomials with rational
-coefficients
-$16x\, N_n(x^2) = 2(n+1)x \bigl((1+x)^{2n} + (1-x)^{2n}\bigr) -
-\bigl((1+x)^{2n+2} - (1-x)^{2n+2}\bigr)$.
-
-Dividing by $16x$ gives $N_n(x^2) = \frac{n+1}{8} \bigl((1+x)^{2n} + (1-x)^{2n}\bigr) -
-\frac{1}{16x} \bigl((1+x)^{2n+2} - (1-x)^{2n+2}\bigr)$; both sides vanish at $n = 0$.
-
-Source: Ding and Zeng, *Some New Results on the Minuscule Polynomials of Type A*, Journal of
-Integer Sequences 28 (2025), Article 25.1.2, Proposition 9. -/
-public theorem_wanted minusculePolynomialA_comp_sq (n : ℕ) :
-    C 16 * X * (minusculePolynomialA n).comp (X ^ 2) =
-      C (2 * ((n : ℚ) + 1)) * X * ((1 + X) ^ (2 * n) + (1 - X) ^ (2 * n)) -
-        ((1 + X) ^ (2 * n + 2) - (1 - X) ^ (2 * n + 2))
 
 /-- **Bourn–Erickson formula for the minuscule polynomials at one.** For every integer $n \ge 1$,
 the type-A minuscule polynomial $N_n$ satisfies $N_n(1) = (n - 1)\, 2^{2n-3}$.

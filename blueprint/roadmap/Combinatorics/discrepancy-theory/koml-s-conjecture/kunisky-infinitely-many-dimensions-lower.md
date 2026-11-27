@@ -11,10 +11,6 @@ Since $\sum_{a=1}^{k} 2^{-a/2} = (1 + \sqrt{2})(1 - 2^{-k/2})$, this bound equal
 $1 + \sqrt{2} - \sqrt{2} \cdot 2^{-k/2}$: it is less than $1 + \sqrt{2}$ for every $k$ and tends to
 $1 + \sqrt{2}$ as $k \to \infty$.
 
-## Depends on
-
-- [Komlós constant in a fixed dimension](dimension-constant.md)
-
 ## Sources
 
 - Dmitriy Kunisky, *The discrepancy of unsatisfiable matrices and a lower bound for the Komlós conjecture constant*, SIAM J. Discrete Math. 37(2) (2023), 586–603, arXiv:2111.02974, Theorem 1.1.

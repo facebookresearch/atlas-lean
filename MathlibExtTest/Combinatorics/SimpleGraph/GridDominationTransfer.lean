@@ -11,9 +11,9 @@ module
 import MathlibExt.Combinatorics.SimpleGraph.GridDominationTransfer
 
 /-!
-# Tests for grid domination polynomials
+# Tests for grid and cylinder domination polynomials
 
-Check the signature sum for empty rows and the three last-row states of a single vertex.
+Check empty rows, the three last-row states of a single vertex, and a one-row cylinder.
 -/
 
 open MetaMathlibExt DominationState Polynomial SimpleGraph
@@ -47,3 +47,18 @@ example (s : DominationState) :
     vertexDominationState]
 
 #print axioms MetaMathlibExt.dominationPolynomial_grid_eq_sum_almostDominatingPolynomial
+
+-- In a one-row cylinder of width three, every nonempty vertex set dominates the triangle.
+example :
+    (∑ σ ∈ (Finset.univ : Finset (DominationSignature (cycleGraph 3))).filter
+        (fun σ => ∀ i, σ.1 i ≠ uncovered),
+      almostDominatingPolynomial (cycleGraph 3) 0 σ.1).eval 1 = 7 := by
+  let (S : Finset (Fin 3 × Fin 1)) :
+      Decidable ((cycleGraph 3 □ pathGraph 1).IsDominating (S : Set _)) := by
+    simp only [IsDominating, Finset.mem_coe, boxProd_adj]
+    infer_instance
+  rw [← dominationPolynomial_cylinder_eq_sum_almostDominatingPolynomial,
+    dominationPolynomial_eval_one]
+  decide
+
+#print axioms MetaMathlibExt.dominationPolynomial_cylinder_eq_sum_almostDominatingPolynomial

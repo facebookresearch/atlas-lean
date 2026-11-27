@@ -1,0 +1,17 @@
+# Simulated Annealing
+
+- [Strong irreducibility](strongly-irreducible.md)
+- [Weak reversibility](weakly-reversible.md)
+- [Hajek local minimum](is-hajek-local-min.md)
+- [Escape depth](depth.md)
+- [Critical depth](d-star.md)
+- [Gibbs law](gibbs.md)
+- [Simulated annealing acceptance probability](accept.md)
+- [Simulated annealing step](anneal-step.md)
+- [Law of simulated annealing](anneal-law.md)
+- [Annealing step is a Metropolis-Hastings step](anneal-step-eq-mh-step.md)
+- [Detailed balance of the annealing step](gibbs-detailed-balance.md)
+- [The Gibbs law is stationary for the annealing step](bind-anneal-step.md)
+- [Gibbs law concentrates on global minima](tendsto-gibbs-global-min-set.md)
+- [Non-global local minima have positive depth](depth-pos-of-local-min.md)
+- [The critical depth is finite under strong irreducibility](d-star-lt-top.md)

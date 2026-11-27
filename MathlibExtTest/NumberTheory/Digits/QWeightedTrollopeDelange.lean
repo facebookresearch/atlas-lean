@@ -10,7 +10,7 @@ module
 
 import MathlibExt.NumberTheory.Digits.QWeightedTrollopeDelange
 
-/-! # Tests for the dyadic values of the normalized `q`-weighted fluctuation -/
+/-! # Tests for the `q`-weighted Trollope–Delange formula and dyadic fluctuation -/
 
 namespace MetaMathlibExt.qWeightedDigitPartialSum_dyadic_fluctuation
 
@@ -102,3 +102,42 @@ example (q : ℂ) (hq : 1 / 2 < ‖q‖) :
   ring
 
 end MetaMathlibExt.qWeightedDigitPartialSum_dyadic_fluctuation
+
+namespace MetaMathlibExt.qWeighted_trollopeDelange
+
+open Finset
+
+-- At `n = 1`, the fractional logarithm is zero and the formula gives `𝒯_{1/4}(1/2) = 1/2`.
+example : takagiLandsberg (1 / 4 : ℝ) (1 / 2) = 1 / 2 := by
+  have h := qWeighted_trollopeDelange (q := 2) (hq := by norm_num) (hq1 := by norm_num)
+    (n := 1) (hn := by decide)
+  norm_num [qWeightedDigitPartialSum, qWeightedDigitSum_zero, Real.logb_one, Real.rpow_neg_one,
+    one_div] at h ⊢
+  linarith
+
+-- For `q = -1` and `n = 3`, the partial sum and the geometric term both cancel.
+example : takagiLandsberg (-1 / 2 : ℝ) (3 / 4) = 0 := by
+  have h := qWeighted_trollopeDelange (-1) (by norm_num) (by norm_num) 3 (by decide)
+  have hS : qWeightedDigitPartialSum (-1 : ℝ) 3 = 0 := by
+    norm_num [qWeightedDigitPartialSum, sum_range_succ, qWeightedDigitSum_of_pos,
+      qWeightedDigitSum_zero]
+  have hlog : Nat.log 2 3 = 1 := by decide
+  have hfloor : ⌊Real.logb 2 (3 : ℕ)⌋ = 1 := by
+    refine Int.floor_eq_iff.mpr ⟨?_, ?_⟩
+    · rw [Int.cast_one, Real.le_logb_iff_rpow_le (by norm_num) (by norm_num)]
+      norm_num
+    · rw [Int.cast_one, Real.logb_lt_iff_lt_rpow (by norm_num) (by norm_num)]
+      norm_num
+  have harg : (2 : ℝ) ^ (-(1 - Int.fract (Real.logb 2 (3 : ℕ)))) = 3 / 4 := by
+    rw [Int.fract, hfloor, Int.cast_one, show ∀ x : ℝ, -(1 - (x - 1)) = x - 2 by
+      intro x
+      ring]
+    rw [Real.rpow_sub (by norm_num), Real.rpow_logb (by norm_num) (by norm_num) (by norm_num)]
+    norm_num
+  have hscale := Real.rpow_pos_of_pos (by norm_num : (0 : ℝ) < 2)
+    (1 - Int.fract (Real.logb 2 (3 : ℕ)))
+  rw [hS, hlog, harg] at h
+  norm_num at h ⊢
+  exact h.resolve_left hscale.ne'
+
+end MetaMathlibExt.qWeighted_trollopeDelange

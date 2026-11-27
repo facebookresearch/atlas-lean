@@ -106,8 +106,9 @@ private lemma mms_exists_rep_lt (r bound n : ℕ) (hn : n < Nat.choose bound r) 
       rw [← hsum]
       omega
 
-/-- Every natural has a strict `r`-binomial cascade when `r` is positive. -/
-private lemma mms_exists_rep (r n : ℕ) (hr : 0 < r) :
+/-- Every natural has a strict `r`-binomial cascade when `r` is positive: digits
+`a₀ < a₁ < ⋯ < a_{r-1}` with `n = ∑ᵢ (aᵢ choose (i + 1))`. -/
+lemma exists_strictMono_eq_sum_choose (r n : ℕ) (hr : 0 < r) :
     ∃ digits : Fin r → ℕ, StrictMono digits ∧
       n = ∑ i, Nat.choose (digits i) (i.1 + 1) := by
   obtain ⟨digits, hstrict, -, hsum⟩ :=
@@ -184,17 +185,17 @@ private lemma mms_rep_unique (r : ℕ) (f g : Fin r → ℕ) (hf : StrictMono f)
 
 /-- The canonical strict binomial cascade, with the empty tuple at rank zero. -/
 private noncomputable def mms_digits (r n : ℕ) : Fin r → ℕ :=
-  if h : 0 < r then Classical.choose (mms_exists_rep r n h)
+  if h : 0 < r then Classical.choose (exists_strictMono_eq_sum_choose r n h)
   else fun i => Fin.elim0 (Nat.eq_zero_of_not_pos h ▸ i)
 
 private lemma mms_digits_strict (r n : ℕ) (hr : 0 < r) : StrictMono (mms_digits r n) := by
   simp only [mms_digits, dite_eq_left hr]
-  exact (Classical.choose_spec (mms_exists_rep r n hr)).1
+  exact (Classical.choose_spec (exists_strictMono_eq_sum_choose r n hr)).1
 
 private lemma mms_digits_sum (r n : ℕ) (hr : 0 < r) :
     n = ∑ i, Nat.choose (mms_digits r n i) (i.1 + 1) := by
   simp only [mms_digits, dite_eq_left hr]
-  exact (Classical.choose_spec (mms_exists_rep r n hr)).2
+  exact (Classical.choose_spec (exists_strictMono_eq_sum_choose r n hr)).2
 
 /-- The Macaulay lower function read from the canonical cascade. -/
 private noncomputable def mms_macaulay (r n : ℕ) : ℕ :=

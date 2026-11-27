@@ -133,6 +133,61 @@ example {T : AlgebraicGeometry.Scheme.{u}} (A : AlgebraicSpaceOver T) (c c' : A.
 
 end Stacks
 
+section Presentations
+
+variable {S : AlgebraicGeometry.Scheme.{u}} (X : RelativeStack S) {U T : Over S}
+  (x : X.Fibre U) (y : X.Fibre T)
+
+/-- Restriction along `f` of a comparison arrow precomposes its map to `U` with `f`. -/
+example {V W : (Over T)ᵒᵖ} (f : V ⟶ W)
+    (z : (pointComparisonPresheaf X.toPseudofunctor x y).obj V) :
+    ((pointComparisonPresheaf X.toPseudofunctor x y).map f z).1 = f.unop.left ≫ z.1 :=
+  rfl
+
+/-- Restriction of comparison arrows is functorial: identities act trivially and composites act
+in order. -/
+example (V : (Over T)ᵒᵖ) (z : (pointComparisonPresheaf X.toPseudofunctor x y).obj V) :
+    (pointComparisonPresheaf X.toPseudofunctor x y).map (𝟙 V) z = z :=
+  Functor.map_id_apply _ _ _
+
+example {V W Z : (Over T)ᵒᵖ} (f : V ⟶ W) (g : W ⟶ Z)
+    (z : (pointComparisonPresheaf X.toPseudofunctor x y).obj V) :
+    (pointComparisonPresheaf X.toPseudofunctor x y).map (f ≫ g) z =
+      (pointComparisonPresheaf X.toPseudofunctor x y).map g
+        ((pointComparisonPresheaf X.toPseudofunctor x y).map f z) :=
+  Functor.map_comp_apply _ _ _ _
+
+/-- For a stack in groupoids the comparison arrows are isomorphisms, so the presheaf is the
+2-fibre product. -/
+example (Y : AlgebraicGeometry.FppfStacks.StackInGroupoids.{u}) {U T : AlgebraicGeometry.Scheme.{u}}
+    (x : Fibre Y U) (y : Fibre Y T) (V : (Over T)ᵒᵖ) (z : (schemePointFibrePresheaf Y x y).obj V) :
+    IsIso z.2 :=
+  IsGroupoid.all_isIso _
+
+/-- A point of an algebraic space over `V ⟶ T` is a point of the quotient sheaf over `V` whose
+image under the structure map is `V ⟶ T`; restriction is restriction in the quotient sheaf. -/
+example {T : AlgebraicGeometry.Scheme.{u}} (A : AlgebraicSpaceOver T) (V : (Over T)ᵒᵖ)
+    (p : A.relativePresheaf.obj V) :
+    A.structural.hom.app (Opposite.op V.unop.left) p.val = ULift.up V.unop.hom :=
+  p.property
+
+example {T : AlgebraicGeometry.Scheme.{u}} (A : AlgebraicSpaceOver T) {V W : (Over T)ᵒᵖ}
+    (a : V ⟶ W) (p : A.relativePresheaf.obj V) :
+    (A.relativePresheaf.map a p).val = A.sheaf.obj.map a.unop.left.op p.val :=
+  rfl
+
+/-- The comparison of an atlas is natural in the scheme over `T`: restricting a point of the base
+change along `f` precomposes the corresponding map to the atlas with `f`. -/
+example (Y : AlgebraicGeometry.FppfStacks.StackInGroupoids.{u}) (a : Atlas Y)
+    (T : AlgebraicGeometry.Scheme.{u}) (y : Fibre Y T) {V W : (Over T)ᵒᵖ} (f : V ⟶ W)
+    (p : (a.baseChange T y).relativePresheaf.obj V) :
+    ((a.comparison T y).hom.app W ((a.baseChange T y).relativePresheaf.map f p)).down.1 =
+      f.unop.left ≫ ((a.comparison T y).hom.app V p).down.1 := by
+  rw [NatTrans.naturality_apply]
+  rfl
+
+end Presentations
+
 section Spaces
 
 open MathlibExtTest.AlgebraicGeometry.EtaleSpacePresentations

@@ -16,13 +16,19 @@ name: Bump build cache
 # the run checks that it is the pull request's current head. It then checks
 # that the head changes the contents of the pin files, so that its cache key
 # differs from main's, and runs main's bump guard on it against current main.
-# It builds and checks the head with the same commands as ci.yml's `build` job
-# (the memory-heavy modules, then scripts/check.sh build) and saves .lake/build
-# under ci.yml's key for the new pins. The bump's pull request runs, its merge
-# group, the merge groups queued behind it and main's first build after it
-# merges find it through ci.yml's restore-keys prefix. It does not run ci.yml's
-# regression suites or lesson checks: it warms the cache, it does not stand in
-# for CI.
+# It builds and checks the head with ci.yml's `build` command (scripts/check.sh
+# build) and saves .lake/build under ci.yml's key for the new pins. The bump's
+# pull request runs, its merge group, the merge groups queued behind it and
+# main's first build after it merges find it through ci.yml's restore-keys
+# prefix. It does not run ci.yml's regression suites or lesson checks: it warms
+# the cache, it does not stand in for CI.
+#
+# It runs on a 64-core runner (64 vCPUs, about 250 GB of memory and 2 TB of
+# disk), which bills about $0.16 a minute. A cold build and check of main's
+# 21,500 modules took 49 minutes there on 24 November 2026; on the standard
+# 4-core runner, the 18,000 modules of a day earlier took about 4.5 hours. With
+# that memory the memory-heavy modules, which ci.yml builds one at a time on its
+# 16 GB runner, build alongside the others.
 #
 # Trust: the run executes the bump's code, and later builds on the new pins
 # restore what it saves, so dispatch it only for a head you reviewed. Only
@@ -60,8 +66,8 @@ concurrency:
 jobs:
   warm:
     name: warm the bump's build cache
-    runs-on: ubuntu-24.04
-    timeout-minutes: 360
+    runs-on: 64-core-ubuntu
+    timeout-minutes: 120
     steps:
       - name: Record the start time
         id: start
@@ -244,25 +250,19 @@ jobs:
             echo "checkpoint=${checkpoints}${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           } >> "$GITHUB_OUTPUT"
 
-      # From here to the build, the same steps as ci.yml's build job.
+      # From here to the build, the same steps as ci.yml's build job, without its
+      # swap, which the 64-core runner's memory makes unnecessary.
       - name: Free disk space for Lean caches
         run: |
           set -euo pipefail
-          df -h /
-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
-          df -h /
-
-      - name: Add swap for cold Lean builds
-        run: |
-          set -euo pipefail
-          df -h /mnt
-          free -h
-          sudo fallocate -l 16G /mnt/lean-swap
-          sudo chmod 600 /mnt/lean-swap
-          sudo mkswap /mnt/lean-swap
-          sudo swapon /mnt/lean-swap
-          swapon --show
-          free -h
+          df -h / || true
+          # Unknown free space counts as too little: the second line of the
+          # report must be one decimal number.
+          free_kib="$(df --output=avail -k / | awk 'NR == 2 && NF == 1 && $1 ~ /^[0-9]+$/ { print $1 }')" || free_kib=""
+          if [[ -z "$free_kib" ]] || (( 10#$free_kib < 60 * 1024 * 1024 )); then
+            sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+            df -h / || true
+          fi
 
       - name: Install elan v4.2.4
         run: |
@@ -272,6 +272,7 @@ jobs:
           mkdir -p "$installer_dir"
           curl --fail --silent --show-error --location \
             --proto '=https' --tlsv1.2 \
+            --retry 5 --retry-all-errors --retry-delay 10 --connect-timeout 30 \
             https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
             --output "$archive"
           echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
@@ -296,11 +297,9 @@ jobs:
             ${{ steps.key.outputs.checkpoints }}
             ${{ steps.key.outputs.prefix }}
 
-      # The memory-heavy modules first, one at a time, as in ci.yml (keep the
-      # list the same; scripts/test_bump_cache_workflow.py checks it), then
-      # ci.yml's `scripts/check.sh build`. Each command gets the time left
-      # before the deadline, which leaves room to save the build. The step's
-      # shell runs with -e, so each exit status is caught where it happens.
+      # ci.yml's `scripts/check.sh build`, given the time left before the
+      # deadline, which leaves room to save the build. The step's shell runs
+      # with -e, so each exit status is caught where it happens.
       - name: Build and check the head
         id: build
         if: steps.restore.outputs.cache-hit != 'true'
@@ -308,7 +307,7 @@ jobs:
           START: ${{ steps.start.outputs.epoch }}
         run: |
           set -uo pipefail
-          deadline=$(( START + 325 * 60 ))
+          deadline=$(( START + 100 * 60 ))
           status=ok
           run_until_deadline() {
             local minutes=$(( (deadline - $(date +%s)) / 60 ))
@@ -330,19 +329,7 @@ jobs:
             fi
             return 0
           }
-          for module in \
-            MathlibExt.Combinatorics.Enumerative.Nontrivial1234_3412Classes \
-            MathlibExt.Combinatorics.Words.TernaryAbelianCubeFreeLowerBound \
-            MathlibExtTest.Combinatorics.InfiniteWord.CrochemoreSquarefreeCriterion; do
-            if [ "$status" = ok ]; then
-              run_until_deadline lake build "$module"
-            fi
-          done
-          # A failed heavy module would be retried alongside the others, which
-          # can exhaust the runner's memory.
-          if [ "$status" = ok ]; then
-            run_until_deadline scripts/check.sh build
-          fi
+          run_until_deadline scripts/check.sh build
           echo "status=${status}" >> "$GITHUB_OUTPUT"
 
       - name: Save the build

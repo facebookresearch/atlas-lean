@@ -1293,4 +1293,405 @@ theorem approxMaxDivLE_both_iff_exists_repair {Outcome : Type*}
     exact approx_both_of_exists_repair_both P Q eps delta P' Q' htvP htvQ
       hmaxPQ hmaxQP
 
+private theorem convex_le_of_le (θ x y : ℝ) (_h0 : 0 ≤ θ) (h1 : θ ≤ 1)
+    (h : y ≤ x) : θ * x + (1 - θ) * y ≤ x := by
+  have hnn : 0 ≤ 1 - θ := sub_nonneg.mpr h1
+  calc θ * x + (1 - θ) * y ≤ θ * x + (1 - θ) * x :=
+          add_le_add le_rfl (mul_le_mul_of_nonneg_left h hnn)
+    _ = x := by ring
+
+private theorem le_convex_of_le (θ x y : ℝ) (h0 : 0 ≤ θ) (_h1 : θ ≤ 1)
+    (h : y ≤ x) : y ≤ θ * x + (1 - θ) * y := by
+  calc y = θ * y + (1 - θ) * y := by ring
+    _ ≤ θ * x + (1 - θ) * y :=
+          add_le_add (mul_le_mul_of_nonneg_left h h0) le_rfl
+
+private theorem shrink_sum_eq (u v a θ : ℝ)
+    (hθ : θ * (u - v / a) = v - v / a) :
+    θ * u + (1 - θ) * (v / a) = v := by
+  have hring : θ * u + (1 - θ) * (v / a) = θ * (u - v / a) + v / a := by ring
+  rw [hring, hθ]
+  ring
+
+private theorem min_div_le_min_of_one_le (p q a : ℝ) (ha1 : 1 ≤ a)
+    (hapos : 0 < a) (_hp : 0 ≤ p) (hq : 0 ≤ q) :
+    min q (a * p) / a ≤ min p (a * q) := by
+  apply le_min
+  · rw [div_le_iff₀ hapos]
+    calc min q (a * p) ≤ a * p := min_le_right _ _
+      _ = p * a := by ring
+  · calc min q (a * p) / a ≤ q / a :=
+          div_le_div_of_nonneg_right (min_le_left _ _) (le_of_lt hapos)
+      _ ≤ a * q := by
+          rw [div_le_iff₀ hapos]
+          have h1 : q ≤ a * q := le_mul_of_one_le_left hq ha1
+          have h2 : a * q ≤ a * q * a :=
+            le_mul_of_one_le_right (mul_nonneg (le_of_lt hapos) hq) ha1
+          linarith
+
+private theorem min_le_mul_min_of_one_le (p q a : ℝ) (ha1 : 1 ≤ a)
+    (hapos : 0 < a) (hp : 0 ≤ p) (_hq : 0 ≤ q) :
+    min p (a * q) ≤ a * min q (a * p) := by
+  classical
+  by_cases h : q ≤ a * p
+  · rw [min_eq_left h]
+    exact min_le_right _ _
+  · have hlt : a * p < q := lt_of_not_ge h
+    rw [min_eq_right (le_of_lt hlt)]
+    have haa : (1:ℝ) ≤ a * a :=
+      calc (1:ℝ) = 1 * 1 := (mul_one 1).symm
+        _ ≤ a * a := mul_le_mul ha1 ha1 zero_le_one (le_of_lt hapos)
+    have hple : p ≤ a * (a * p) := by
+      calc p = 1 * p := (one_mul _).symm
+        _ ≤ (a * a) * p := mul_le_mul_of_nonneg_right haa hp
+        _ = a * (a * p) := by ring
+    exact (min_le_left _ _).trans hple
+
+private theorem exists_dominated_of_common {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q : PMF Outcome) (eps delta : ℝ)
+    (f g : Outcome → ℝ) (t : ℝ)
+    (hf_nonneg : ∀ w, 0 ≤ f w) (hg_nonneg : ∀ w, 0 ≤ g w)
+    (hf_sum : ∑ w, f w = t) (hg_sum : ∑ w, g w = t)
+    (ht_le : 1 - delta ≤ t) (ht_pos : 0 < t)
+    (hfg : ∀ w, f w ≤ Real.exp eps * g w)
+    (hgf : ∀ w, g w ≤ Real.exp eps * f w)
+    (hf_le : ∀ w, f w ≤ (P w).toReal)
+    (hg_le : ∀ w, g w ≤ (Q w).toReal) :
+    ∃ P₀ Q₀ : PMF Outcome,
+      maxDivLE P₀ Q₀ eps ∧ maxDivLE Q₀ P₀ eps ∧
+      (∀ w, (1 - delta) * (P₀ w).toReal ≤ (P w).toReal) ∧
+      (∀ w, (1 - delta) * (Q₀ w).toReal ≤ (Q w).toReal) := by
+  have ht0 : t ≠ 0 := ne_of_gt ht_pos
+  have hsumP : ∑ w, f w / t = 1 := by
+    rw [← Finset.sum_div, hf_sum, div_self ht0]
+  have hsumQ : ∑ w, g w / t = 1 := by
+    rw [← Finset.sum_div, hg_sum, div_self ht0]
+  have hnnP : ∀ i ∈ Finset.univ, 0 ≤ f i / t :=
+    fun i _ => div_nonneg (hf_nonneg i) (le_of_lt ht_pos)
+  have hnnQ : ∀ i ∈ Finset.univ, 0 ≤ g i / t :=
+    fun i _ => div_nonneg (hg_nonneg i) (le_of_lt ht_pos)
+  have hofP := ENNReal.ofReal_sum_of_nonneg (s := Finset.univ)
+    (f := fun w => f w / t) hnnP
+  have hofQ := ENNReal.ofReal_sum_of_nonneg (s := Finset.univ)
+    (f := fun w => g w / t) hnnQ
+  rw [hsumP, ENNReal.ofReal_one] at hofP
+  rw [hsumQ, ENNReal.ofReal_one] at hofQ
+  set P₀ : PMF Outcome :=
+    PMF.ofFintype (fun w => ENNReal.ofReal (f w / t)) hofP.symm with hP₀def
+  set Q₀ : PMF Outcome :=
+    PMF.ofFintype (fun w => ENNReal.ofReal (g w / t)) hofQ.symm with hQ₀def
+  have hP₀toReal : ∀ w : Outcome, (P₀ w).toReal = f w / t := by
+    intro w
+    simp only [hP₀def, PMF.ofFintype_apply]
+    exact ENNReal.toReal_ofReal (div_nonneg (hf_nonneg w) (le_of_lt ht_pos))
+  have hQ₀toReal : ∀ w : Outcome, (Q₀ w).toReal = g w / t := by
+    intro w
+    simp only [hQ₀def, PMF.ofFintype_apply]
+    exact ENNReal.toReal_ofReal (div_nonneg (hg_nonneg w) (le_of_lt ht_pos))
+  refine ⟨P₀, Q₀, ?_, ?_, ?_, ?_⟩
+  · intro w
+    rw [hP₀toReal w, hQ₀toReal w]
+    calc f w / t ≤ (Real.exp eps * g w) / t :=
+            div_le_div_of_nonneg_right (hfg w) (le_of_lt ht_pos)
+      _ = Real.exp eps * (g w / t) := mul_div_assoc _ _ _
+  · intro w
+    rw [hP₀toReal w, hQ₀toReal w]
+    calc g w / t ≤ (Real.exp eps * f w) / t :=
+            div_le_div_of_nonneg_right (hgf w) (le_of_lt ht_pos)
+      _ = Real.exp eps * (f w / t) := mul_div_assoc _ _ _
+  · intro w
+    rw [hP₀toReal w]
+    calc (1 - delta) * (f w / t) ≤ t * (f w / t) :=
+            mul_le_mul_of_nonneg_right ht_le
+              (div_nonneg (hf_nonneg w) (le_of_lt ht_pos))
+      _ = f w := by rw [mul_comm, div_mul_cancel₀ _ ht0]
+      _ ≤ (P w).toReal := hf_le w
+  · intro w
+    rw [hQ₀toReal w]
+    calc (1 - delta) * (g w / t) ≤ t * (g w / t) :=
+            mul_le_mul_of_nonneg_right ht_le
+              (div_nonneg (hg_nonneg w) (le_of_lt ht_pos))
+      _ = g w := by rw [mul_comm, div_mul_cancel₀ _ ht0]
+      _ ≤ (Q w).toReal := hg_le w
+
+theorem exists_dominated_pure_pair_of_approxMaxDivLE_both
+{Outcome : Type*} [Fintype Outcome] [Nonempty Outcome]
+(P Q : PMF Outcome) (eps delta : ℝ)
+(heps : 0 ≤ eps) (hdelta : 0 ≤ delta) (hdelta_lt : delta < 1)
+(hPQ : approxMaxDivLE P Q eps delta)
+(hQP : approxMaxDivLE Q P eps delta) :
+∃ P₀ Q₀ : PMF Outcome,
+maxDivLE P₀ Q₀ eps ∧ maxDivLE Q₀ P₀ eps ∧
+(∀ w, (1 - delta) * (P₀ w).toReal ≤ (P w).toReal) ∧
+(∀ w, (1 - delta) * (Q₀ w).toReal ≤ (Q w).toReal) := by
+  classical
+  have ha1 : (1:ℝ) ≤ Real.exp eps := Real.one_le_exp heps
+  have hapos : (0:ℝ) < Real.exp eps := Real.exp_pos eps
+  have ha0 : (0:ℝ) ≤ Real.exp eps := le_of_lt hapos
+  have hane : Real.exp eps ≠ 0 := ne_of_gt hapos
+  have _hdelta_nonneg : 0 ≤ delta := hdelta
+  have hp_nonneg : ∀ w : Outcome, 0 ≤ (P w).toReal :=
+    fun w => ENNReal.toReal_nonneg
+  have hq_nonneg : ∀ w : Outcome, 0 ≤ (Q w).toReal :=
+    fun w => ENNReal.toReal_nonneg
+  have hra_le_l : ∀ w : Outcome,
+      capEnvelope Q P eps w / Real.exp eps ≤ capEnvelope P Q eps w := by
+    intro w
+    show min ((Q w).toReal) (Real.exp eps * (P w).toReal) / Real.exp eps ≤
+      min ((P w).toReal) (Real.exp eps * (Q w).toReal)
+    exact min_div_le_min_of_one_le _ _ _ ha1 hapos (hp_nonneg w) (hq_nonneg w)
+  have hl_le_ar : ∀ w : Outcome,
+      capEnvelope P Q eps w ≤ Real.exp eps * capEnvelope Q P eps w := by
+    intro w
+    show min ((P w).toReal) (Real.exp eps * (Q w).toReal) ≤
+      Real.exp eps * min ((Q w).toReal) (Real.exp eps * (P w).toReal)
+    exact min_le_mul_min_of_one_le _ _ _ ha1 hapos (hp_nonneg w) (hq_nonneg w)
+  have hla_le_r : ∀ w : Outcome,
+      capEnvelope P Q eps w / Real.exp eps ≤ capEnvelope Q P eps w := by
+    intro w
+    show min ((P w).toReal) (Real.exp eps * (Q w).toReal) / Real.exp eps ≤
+      min ((Q w).toReal) (Real.exp eps * (P w).toReal)
+    exact min_div_le_min_of_one_le _ _ _ ha1 hapos (hq_nonneg w) (hp_nonneg w)
+  have hr_le_al : ∀ w : Outcome,
+      capEnvelope Q P eps w ≤ Real.exp eps * capEnvelope P Q eps w := by
+    intro w
+    show min ((Q w).toReal) (Real.exp eps * (P w).toReal) ≤
+      Real.exp eps * min ((P w).toReal) (Real.exp eps * (Q w).toReal)
+    exact min_le_mul_min_of_one_le _ _ _ ha1 hapos (hq_nonneg w) (hp_nonneg w)
+  have hsumL := sum_capEnvelope P Q eps
+  have hsumR := sum_capEnvelope Q P eps
+  have hexPQ := excessMass_le_delta P Q eps delta hPQ
+  have hexQP := excessMass_le_delta Q P eps delta hQP
+  have hu : 1 - delta ≤ ∑ w, capEnvelope P Q eps w := by linarith
+  have hv : 1 - delta ≤ ∑ w, capEnvelope Q P eps w := by linarith
+  have hm_pos : (0:ℝ) < 1 - delta := sub_pos.mpr hdelta_lt
+  have hu_pos : (0:ℝ) < ∑ w, capEnvelope P Q eps w :=
+    lt_of_lt_of_le hm_pos hu
+  have hv_pos : (0:ℝ) < ∑ w, capEnvelope Q P eps w :=
+    lt_of_lt_of_le hm_pos hv
+  have hl_nonneg : ∀ w : Outcome, 0 ≤ capEnvelope P Q eps w :=
+    fun w => capEnvelope_nonneg P Q eps w
+  have hr_nonneg : ∀ w : Outcome, 0 ≤ capEnvelope Q P eps w :=
+    fun w => capEnvelope_nonneg Q P eps w
+  rcases lt_trichotomy (∑ w, capEnvelope P Q eps w)
+      (∑ w, capEnvelope Q P eps w) with hlt | heq | hgt
+  · have hva : (∑ w, capEnvelope P Q eps w) / Real.exp eps ≤
+        ∑ w, capEnvelope P Q eps w := by
+      rw [div_le_iff₀ hapos]
+      exact le_mul_of_one_le_right (le_of_lt hu_pos) ha1
+    have hD_pos : (0:ℝ) < (∑ w, capEnvelope Q P eps w) -
+        (∑ w, capEnvelope P Q eps w) / Real.exp eps :=
+      sub_pos.mpr (lt_of_le_of_lt hva hlt)
+    have hD0 : (∑ w, capEnvelope Q P eps w) -
+        (∑ w, capEnvelope P Q eps w) / Real.exp eps ≠ 0 := ne_of_gt hD_pos
+    set θ : ℝ := ((∑ w, capEnvelope P Q eps w) -
+        (∑ w, capEnvelope P Q eps w) / Real.exp eps) /
+        ((∑ w, capEnvelope Q P eps w) -
+          (∑ w, capEnvelope P Q eps w) / Real.exp eps) with hθdef
+    have hN_nonneg : (0:ℝ) ≤ (∑ w, capEnvelope P Q eps w) -
+        (∑ w, capEnvelope P Q eps w) / Real.exp eps :=
+      sub_nonneg.mpr hva
+    have hθ0 : 0 ≤ θ := by
+      rw [hθdef]
+      exact div_nonneg hN_nonneg (le_of_lt hD_pos)
+    have hθ1 : θ ≤ 1 := by
+      rw [hθdef, div_le_one hD_pos]
+      exact sub_le_sub_right (le_of_lt hlt) _
+    have hθD : θ * ((∑ w, capEnvelope Q P eps w) -
+        (∑ w, capEnvelope P Q eps w) / Real.exp eps) =
+        (∑ w, capEnvelope P Q eps w) -
+          (∑ w, capEnvelope P Q eps w) / Real.exp eps := by
+      rw [hθdef]
+      exact div_mul_cancel₀ _ hD0
+    have hsplit : (∑ w, (θ * capEnvelope Q P eps w + (1 - θ) *
+        (capEnvelope P Q eps w / Real.exp eps))) =
+        θ * (∑ w, capEnvelope Q P eps w) + (1 - θ) *
+          ((∑ w, capEnvelope P Q eps w) / Real.exp eps) := by
+      rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum,
+        ← Finset.sum_div]
+    have hsum_g1 : (∑ w, (θ * capEnvelope Q P eps w + (1 - θ) *
+        (capEnvelope P Q eps w / Real.exp eps))) =
+        ∑ w, capEnvelope P Q eps w := by
+      rw [hsplit]
+      exact shrink_sum_eq _ _ _ _ hθD
+    have hg1_nonneg : ∀ w : Outcome, 0 ≤ θ * capEnvelope Q P eps w +
+        (1 - θ) * (capEnvelope P Q eps w / Real.exp eps) := by
+      intro w
+      apply add_nonneg
+      · exact mul_nonneg hθ0 (hr_nonneg w)
+      · apply mul_nonneg (sub_nonneg.mpr hθ1)
+        exact div_nonneg (hl_nonneg w) ha0
+    have hg1_ge : ∀ w : Outcome, capEnvelope P Q eps w / Real.exp eps ≤
+        θ * capEnvelope Q P eps w +
+          (1 - θ) * (capEnvelope P Q eps w / Real.exp eps) := by
+      intro w
+      exact le_convex_of_le θ _ _ hθ0 hθ1 (hla_le_r w)
+    have hg1_le : ∀ w : Outcome, θ * capEnvelope Q P eps w +
+        (1 - θ) * (capEnvelope P Q eps w / Real.exp eps) ≤
+        capEnvelope Q P eps w := by
+      intro w
+      exact convex_le_of_le θ _ _ hθ0 hθ1 (hla_le_r w)
+    have hfg : ∀ w : Outcome, capEnvelope P Q eps w ≤ Real.exp eps *
+        (θ * capEnvelope Q P eps w + (1 - θ) *
+          (capEnvelope P Q eps w / Real.exp eps)) := by
+      intro w
+      have hcancel : Real.exp eps * (capEnvelope P Q eps w / Real.exp eps) =
+          capEnvelope P Q eps w := by
+        rw [mul_comm, div_mul_cancel₀ _ hane]
+      calc capEnvelope P Q eps w
+          = Real.exp eps * (capEnvelope P Q eps w / Real.exp eps) :=
+            hcancel.symm
+        _ ≤ Real.exp eps * (θ * capEnvelope Q P eps w + (1 - θ) *
+            (capEnvelope P Q eps w / Real.exp eps)) :=
+            mul_le_mul_of_nonneg_left (hg1_ge w) ha0
+    have hgf : ∀ w : Outcome, (θ * capEnvelope Q P eps w + (1 - θ) *
+        (capEnvelope P Q eps w / Real.exp eps)) ≤
+        Real.exp eps * capEnvelope P Q eps w := by
+      intro w
+      exact (hg1_le w).trans (hr_le_al w)
+    have hf_le : ∀ w : Outcome, capEnvelope P Q eps w ≤ (P w).toReal :=
+      fun w => capEnvelope_le_left P Q eps w
+    have hg_le : ∀ w : Outcome, (θ * capEnvelope Q P eps w + (1 - θ) *
+        (capEnvelope P Q eps w / Real.exp eps)) ≤ (Q w).toReal := by
+      intro w
+      exact (hg1_le w).trans (capEnvelope_le_left Q P eps w)
+    exact exists_dominated_of_common P Q eps delta _ _ _
+      hl_nonneg hg1_nonneg rfl hsum_g1 hu hu_pos hfg hgf hf_le hg_le
+  · have hfg : ∀ w : Outcome, capEnvelope P Q eps w ≤
+        Real.exp eps * capEnvelope Q P eps w := hl_le_ar
+    have hgf : ∀ w : Outcome, capEnvelope Q P eps w ≤
+        Real.exp eps * capEnvelope P Q eps w := hr_le_al
+    have hf_le : ∀ w : Outcome, capEnvelope P Q eps w ≤ (P w).toReal :=
+      fun w => capEnvelope_le_left P Q eps w
+    have hg_le : ∀ w : Outcome, capEnvelope Q P eps w ≤ (Q w).toReal :=
+      fun w => capEnvelope_le_left Q P eps w
+    exact exists_dominated_of_common P Q eps delta _ _ _
+      hl_nonneg hr_nonneg rfl heq.symm hu hu_pos hfg hgf hf_le hg_le
+  · have hva : (∑ w, capEnvelope Q P eps w) / Real.exp eps ≤
+        ∑ w, capEnvelope Q P eps w := by
+      rw [div_le_iff₀ hapos]
+      exact le_mul_of_one_le_right (le_of_lt hv_pos) ha1
+    have hD_pos : (0:ℝ) < (∑ w, capEnvelope P Q eps w) -
+        (∑ w, capEnvelope Q P eps w) / Real.exp eps :=
+      sub_pos.mpr (lt_of_le_of_lt hva hgt)
+    have hD0 : (∑ w, capEnvelope P Q eps w) -
+        (∑ w, capEnvelope Q P eps w) / Real.exp eps ≠ 0 := ne_of_gt hD_pos
+    set θ : ℝ := ((∑ w, capEnvelope Q P eps w) -
+        (∑ w, capEnvelope Q P eps w) / Real.exp eps) /
+        ((∑ w, capEnvelope P Q eps w) -
+          (∑ w, capEnvelope Q P eps w) / Real.exp eps) with hθdef
+    have hN_nonneg : (0:ℝ) ≤ (∑ w, capEnvelope Q P eps w) -
+        (∑ w, capEnvelope Q P eps w) / Real.exp eps :=
+      sub_nonneg.mpr hva
+    have hθ0 : 0 ≤ θ := by
+      rw [hθdef]
+      exact div_nonneg hN_nonneg (le_of_lt hD_pos)
+    have hθ1 : θ ≤ 1 := by
+      rw [hθdef, div_le_one hD_pos]
+      exact sub_le_sub_right (le_of_lt hgt) _
+    have hθD : θ * ((∑ w, capEnvelope P Q eps w) -
+        (∑ w, capEnvelope Q P eps w) / Real.exp eps) =
+        (∑ w, capEnvelope Q P eps w) -
+          (∑ w, capEnvelope Q P eps w) / Real.exp eps := by
+      rw [hθdef]
+      exact div_mul_cancel₀ _ hD0
+    have hsplit : (∑ w, (θ * capEnvelope P Q eps w + (1 - θ) *
+        (capEnvelope Q P eps w / Real.exp eps))) =
+        θ * (∑ w, capEnvelope P Q eps w) + (1 - θ) *
+          ((∑ w, capEnvelope Q P eps w) / Real.exp eps) := by
+      rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum,
+        ← Finset.sum_div]
+    have hsum_f1 : (∑ w, (θ * capEnvelope P Q eps w + (1 - θ) *
+        (capEnvelope Q P eps w / Real.exp eps))) =
+        ∑ w, capEnvelope Q P eps w := by
+      rw [hsplit]
+      exact shrink_sum_eq _ _ _ _ hθD
+    have hf1_nonneg : ∀ w : Outcome, 0 ≤ θ * capEnvelope P Q eps w +
+        (1 - θ) * (capEnvelope Q P eps w / Real.exp eps) := by
+      intro w
+      apply add_nonneg
+      · exact mul_nonneg hθ0 (hl_nonneg w)
+      · apply mul_nonneg (sub_nonneg.mpr hθ1)
+        exact div_nonneg (hr_nonneg w) ha0
+    have hf1_ge : ∀ w : Outcome, capEnvelope Q P eps w / Real.exp eps ≤
+        θ * capEnvelope P Q eps w +
+          (1 - θ) * (capEnvelope Q P eps w / Real.exp eps) := by
+      intro w
+      exact le_convex_of_le θ _ _ hθ0 hθ1 (hra_le_l w)
+    have hf1_le : ∀ w : Outcome, θ * capEnvelope P Q eps w +
+        (1 - θ) * (capEnvelope Q P eps w / Real.exp eps) ≤
+        capEnvelope P Q eps w := by
+      intro w
+      exact convex_le_of_le θ _ _ hθ0 hθ1 (hra_le_l w)
+    have hfg : ∀ w : Outcome, (θ * capEnvelope P Q eps w + (1 - θ) *
+        (capEnvelope Q P eps w / Real.exp eps)) ≤
+        Real.exp eps * capEnvelope Q P eps w := by
+      intro w
+      exact (hf1_le w).trans (hl_le_ar w)
+    have hgf : ∀ w : Outcome, capEnvelope Q P eps w ≤ Real.exp eps *
+        (θ * capEnvelope P Q eps w + (1 - θ) *
+          (capEnvelope Q P eps w / Real.exp eps)) := by
+      intro w
+      have hcancel : Real.exp eps * (capEnvelope Q P eps w / Real.exp eps) =
+          capEnvelope Q P eps w := by
+        rw [mul_comm, div_mul_cancel₀ _ hane]
+      calc capEnvelope Q P eps w
+          = Real.exp eps * (capEnvelope Q P eps w / Real.exp eps) :=
+            hcancel.symm
+        _ ≤ Real.exp eps * (θ * capEnvelope P Q eps w + (1 - θ) *
+            (capEnvelope Q P eps w / Real.exp eps)) :=
+            mul_le_mul_of_nonneg_left (hf1_ge w) ha0
+    have hf_le : ∀ w : Outcome, (θ * capEnvelope P Q eps w + (1 - θ) *
+        (capEnvelope Q P eps w / Real.exp eps)) ≤ (P w).toReal := by
+      intro w
+      exact (hf1_le w).trans (capEnvelope_le_left P Q eps w)
+    have hg_le : ∀ w : Outcome, capEnvelope Q P eps w ≤ (Q w).toReal :=
+      fun w => capEnvelope_le_left Q P eps w
+    exact exists_dominated_of_common P Q eps delta _ _ _
+      hf1_nonneg hr_nonneg hsum_f1 rfl hv hv_pos hfg hgf hf_le hg_le
+
+/-- Common-mass transfer: an `alpha`-fraction of ideal mass satisfying the
+approximate bound transfers it to the outer distributions, charging the
+residual mass `1 - alpha`. No `alpha ≤ 1` hypothesis is needed. -/
+theorem approxMaxDivLE_of_common_mass {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] (P Q P₀ Q₀ : PMF Outcome) (alpha E beta : ℝ)
+    (halpha : 0 ≤ alpha)
+    (hP : ∀ w, alpha * (P₀ w).toReal ≤ (P w).toReal)
+    (hQ : ∀ w, alpha * (Q₀ w).toReal ≤ (Q w).toReal)
+    (hideal : approxMaxDivLE P₀ Q₀ E beta) :
+    approxMaxDivLE P Q E (alpha * beta + 1 - alpha) := by
+  classical
+  intro s
+  have hres_le : (∑ w ∈ s, ((P w).toReal - alpha * (P₀ w).toReal)) ≤ 1 - alpha := by
+    have hsub : (∑ w ∈ s, ((P w).toReal - alpha * (P₀ w).toReal)) ≤
+        ∑ w, ((P w).toReal - alpha * (P₀ w).toReal) :=
+      Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ s) (by
+        intro w _ _
+        have h := hP w
+        linarith)
+    have htot : (∑ w, ((P w).toReal - alpha * (P₀ w).toReal)) = 1 - alpha := by
+      rw [Finset.sum_sub_distrib, pmf_toReal_sum_univ P, ← Finset.mul_sum,
+        pmf_toReal_sum_univ P₀, mul_one]
+    linarith
+  have hPsplit : (∑ w ∈ s, (P w).toReal) =
+      alpha * (∑ w ∈ s, (P₀ w).toReal) +
+        ∑ w ∈ s, ((P w).toReal - alpha * (P₀ w).toReal) := by
+    rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl
+    intro w _
+    ring
+  have hideal_s := hideal s
+  have hscaled : alpha * (∑ w ∈ s, (P₀ w).toReal) ≤
+      alpha * (Real.exp E * ∑ w ∈ s, (Q₀ w).toReal + beta) :=
+    mul_le_mul_of_nonneg_left hideal_s halpha
+  have hQs : alpha * (∑ w ∈ s, (Q₀ w).toReal) ≤ ∑ w ∈ s, (Q w).toReal := by
+    rw [Finset.mul_sum]
+    exact Finset.sum_le_sum (fun w _ => hQ w)
+  have hexp : 0 ≤ Real.exp E := (Real.exp_pos E).le
+  rw [hPsplit]
+  have h2 : Real.exp E * (alpha * ∑ w ∈ s, (Q₀ w).toReal) ≤
+      Real.exp E * ∑ w ∈ s, (Q w).toReal :=
+    mul_le_mul_of_nonneg_left hQs hexp
+  linarith
+
 end CSLibExt.Privacy.MaxDivergenceDecomposition

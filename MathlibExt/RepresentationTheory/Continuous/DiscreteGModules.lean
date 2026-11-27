@@ -206,7 +206,8 @@ instance abelian : Abelian (ContinuousModule.{u, v, w} R G) :=
 
 end Abelian
 
-/-- The exact source invariants functor on discrete continuous modules. -/
+/-- The `G`-invariants functor `M ↦ M^G` on discrete continuous modules, valued in abelian groups.
+It is left exact, but not exact in general. -/
 abbrev invariantsFunctor (G : Type v) [Group G] [TopologicalSpace G] :
     ContinuousGModule.{v, w} G ⥤ AddCommGrpCat.{w} :=
   ObjectProperty.ι _ ⋙ ObjectProperty.ι _ ⋙ Rep.ActionToRep ℤ G ⋙

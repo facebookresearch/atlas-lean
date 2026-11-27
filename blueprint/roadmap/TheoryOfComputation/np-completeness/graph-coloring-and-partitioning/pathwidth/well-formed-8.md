@@ -1,0 +1,3 @@
+# Well-formed instances of PATHWIDTH ON DISTANCE-HEREDITARY GRAPHS
+
+An instance $(n, E, K)$ is well-formed for PATHWIDTH ON DISTANCE-HEREDITARY GRAPHS when its edge list $E$ has no repeated entries and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$, the graph of the instance (on the vertices $0, \dots, n-1$, with $u$ and $v$ adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$) is distance-hereditary (every connected induced subgraph preserves distances: for every vertex set $S$ inducing a connected subgraph and all $u, v \in S$, the distance between $u$ and $v$ in the induced subgraph equals their distance in the graph), and $K > 0$.

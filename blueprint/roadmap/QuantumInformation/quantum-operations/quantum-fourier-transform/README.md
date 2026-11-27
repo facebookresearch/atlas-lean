@@ -5,6 +5,7 @@ The quantum Fourier transform on $q$ basis states is the unitary matrix $A_q$ wi
 - [Quantum Fourier transform matrix](qft-matrix.md)
 - [The quantum Fourier transform is unitary](qft-matrix-mem-unitary-group.md)
 - [The quantum Fourier transform matrix is symmetric](qft-matrix-transpose.md)
+- [Product form and exact circuits for the quantum Fourier transform](remaining-clauses-of-quantum-fourier-transform-and-its-exact.md)
 
 ## Related topics
 

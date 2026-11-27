@@ -1,0 +1,79 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.NormNum
+import MathlibExt.Combinatorics.Enumerative.FenceTilingSum
+
+namespace MetaMathlibExt
+
+open Finset
+
+-- Check the public field-valued equality at the empty board.
+example {K : Type*} [Field K] {a b : K} (ha : a ≠ 0) (hb : b ≠ 0) :
+    fenceTilingSum a b 0 = 1 := by
+  rw [fenceTilingSum_eq_biPeriodicFibonacciSq ha hb, biPeriodicFibonacciSq_one]
+
+-- Unequal weights detect a swapped coefficient; board sizes 3 and 4 exercise both branches.
+example : fenceTilingSum (2 : ℚ) 3 3 = 256 := by
+  rw [fenceTilingSum_eq_biPeriodicFibonacciSq (by norm_num) (by norm_num)]
+  norm_num [biPeriodicFibonacciSq, Nat.even_iff]
+
+example : fenceTilingSum (2 : ℚ) 3 4 = 3025 := by
+  rw [fenceTilingSum_eq_biPeriodicFibonacciSq (by norm_num) (by norm_num)]
+  norm_num [biPeriodicFibonacciSq, Nat.even_iff]
+
+-- Direct enumeration with distinct weights, including the empty and one-cell boards.
+example : fenceTilingSum (2 : ℕ) 3 0 = 1 := by decide
+example : fenceTilingSum (2 : ℕ) 3 1 = 4 := by decide
+example : fenceTilingSum (2 : ℕ) 3 2 = 49 := by decide
+example : fenceTilingSum (2 : ℕ) 3 4 = 3025 := by decide
+
+-- Direct enumeration for odd boards, with unequal weights and with a zero weight.
+example : fenceTilingSum (2 : ℕ) 3 3 = 256 := by decide
+example : fenceTilingSum (2 : ℕ) 0 3 = 16 := by decide
+
+-- At n = 3 only the second interval contributes, and it includes the empty board.
+example {R : Type*} [CommSemiring R] (a b : R) :
+    fenceTilingSum a b 3 = a ^ 2 * fenceTilingSum a b 2 + (2 * a * b + 1) * fenceTilingSum a b 1 +
+      2 * a ^ 2 * fenceTilingSum a b 0 := by
+  have h₁ : Icc 2 ((3 - 1) / 2 : ℕ) = ∅ := by decide
+  have h₂ : Icc 1 ((3 - 1) / 2 : ℕ) = {1} := by decide
+  simpa only [h₁, h₂, sum_empty, sum_singleton, mul_zero, add_zero] using
+    fenceTilingSum_odd a b (n := 3) (by decide) (by decide)
+
+-- At n = 5 both intervals contribute; the second has two terms.
+example {R : Type*} [CommSemiring R] (a b : R) :
+    fenceTilingSum a b 5 = a ^ 2 * fenceTilingSum a b 4 + (2 * a * b + 1) * fenceTilingSum a b 3 +
+      2 * a * b * fenceTilingSum a b 1 +
+        2 * a ^ 2 * (fenceTilingSum a b 2 + fenceTilingSum a b 0) := by
+  have h₁ : Icc 2 ((5 - 1) / 2 : ℕ) = {2} := by decide
+  have h₂ : Icc 1 ((5 - 1) / 2 : ℕ) = {1, 2} := by decide
+  have h₃ : (1 : ℕ) ∉ ({2} : Finset ℕ) := by decide
+  simpa only [h₁, h₂, sum_insert h₃, sum_singleton] using
+    fenceTilingSum_odd a b (n := 5) (by decide) (by decide)
+
+-- At n = 2 both intervals are empty; at n = 4 both contribute a term.
+example {R : Type*} [CommSemiring R] (a b : R) :
+    fenceTilingSum a b 2 = b ^ 2 * fenceTilingSum a b 1 + (2 * a * b + 1) * fenceTilingSum a b 0 := by
+  have h₁ : Icc 2 (2 / 2 : ℕ) = ∅ := by decide
+  have h₂ : Icc 1 (2 / 2 - 1 : ℕ) = ∅ := by decide
+  simpa only [h₁, h₂, sum_empty, mul_zero, add_zero] using
+    fenceTilingSum_even a b (n := 2) (by decide) (by decide)
+
+example {R : Type*} [CommSemiring R] (a b : R) :
+    fenceTilingSum a b 4 = b ^ 2 * fenceTilingSum a b 3 + (2 * a * b + 1) * fenceTilingSum a b 2 +
+      2 * a * b * fenceTilingSum a b 0 + 2 * b ^ 2 * fenceTilingSum a b 1 := by
+  have h₁ : Icc 2 (4 / 2 : ℕ) = {2} := by decide
+  have h₂ : Icc 1 (4 / 2 - 1 : ℕ) = {1} := by decide
+  simpa only [h₁, h₂, sum_singleton] using
+    fenceTilingSum_even a b (n := 4) (by decide) (by decide)
+
+end MetaMathlibExt

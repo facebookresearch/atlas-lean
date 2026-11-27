@@ -28,6 +28,10 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.DyckPeakDescents
+public import MathlibExt.Combinatorics.Enumerative.EvenNoncrossingDyckDescents
+public import MathlibExt.Combinatorics.Enumerative.ToeplitzHessenbergDetFussCatalan
+public import MathlibExt.Combinatorics.Enumerative.ToeplitzHessenbergDetFussCatalanSpecial
+public import MathlibExt.Combinatorics.Enumerative.ToeplitzHessenbergDetGenFun
 public import MathlibExt.Combinatorics.Enumerative.TrudiFussCatalan
 public import MathlibExt.Combinatorics.NoncrossingPartition.Basic
 public import MathlibExt.LinearAlgebra.Matrix.TrudiBrioschiDeterminant
@@ -50,79 +54,6 @@ theorem toeplitzHessenberg_fussCatalan_examples :
     generalizedFussCatalanNumber 2 3 1 = 5 ∧ generalizedFussCatalanNumber 2 2 3 = 9 ∧
       generalizedFussCatalanNumber 3 3 1 = 12 ∧ generalizedFussCatalanNumber 3 2 2 = 7 := by
   decide
-
-/-- **Generating function of Toeplitz–Hessenberg determinants.** Let $R$ be a commutative ring and
-$a_0, a_1, a_2, \dots$ a sequence in $R$. Write $\det(a_0; a_1, \dots, a_n)$ for the determinant
-of the $n \times n$ Toeplitz–Hessenberg matrix whose entry in row $i$ and column $j$ is
-$a_{i+1-j}$ for $j \le i + 1$ and $0$ above the superdiagonal. In the ring of formal power series
-over $R$ let $f(x) = \sum_{n \ge 1} \det(a_0; a_1, \dots, a_n)\, x^n$ and
-$H(x) = \sum_{i \ge 1} a_i (-a_0)^{i-1} x^i$. Then $f = H + H f$.
-
-When $a_0$ is invertible, $H(x) = -g(-a_0 x)/a_0$ with $g(x) = \sum_{i \ge 1} a_i x^i$, and the
-identity is the paper's $f(x) = (-g(-a_0 x)/a_0)/(1 + g(-a_0 x)/a_0)$. The form $f = H + H f$
-needs no hypothesis on $a_0$; for $a_0 = 0$ it gives $\det(0; a_1, \dots, a_n) = a_1^n$.
-
-Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
-Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 2
-(`jis-2026-26.1.2-lem-2`). -/
-public theorem_wanted toeplitzHessenbergDet_genFun {R : Type*} [CommRing R] (a : ℕ → R) :
-    PowerSeries.mk (fun n => if n = 0 then 0 else toeplitzHessenbergDet a n) =
-      PowerSeries.mk (fun i => if i = 0 then 0 else a i * (-a 0) ^ (i - 1)) +
-        PowerSeries.mk (fun i => if i = 0 then 0 else a i * (-a 0) ^ (i - 1)) *
-          PowerSeries.mk (fun n => if n = 0 then 0 else toeplitzHessenbergDet a n)
-
-/-- **Toeplitz–Hessenberg determinants of Fuss–Catalan numbers.** Write
-$\det(a_0; a_1, \dots, a_n)$ for the determinant of the $n \times n$ Toeplitz–Hessenberg matrix
-whose entry in row $i$ and column $j$ is $a_{i+1-j}$ for $j \le i + 1$ and $0$ above the
-superdiagonal. For natural numbers $p, r, n$ let $A_n(p, r) = \frac{r}{pn + r} \binom{pn + r}{n}$
-be the generalized Fuss–Catalan number, taken to be $0$ when $pn + r = 0$. Then for all natural
-numbers $p, r$ and every $n \ge 1$,
-$$\det(1; A_1(p, r), \dots, A_n(p, r)) = (-1)^{n-1} \frac{r}{n} \binom{pn - r - 1}{n - 1}$$
-in $\mathbb{Q}$, where the binomial coefficient has an integer, possibly negative, upper index:
-$\binom{x}{k} = x (x - 1) \cdots (x - k + 1)/k!$.
-
-This includes $p = r = 0$, which the paper's standing assumption excludes; there every entry
-$A_i(0, 0)$ is $0$ and both sides vanish.
-
-Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
-Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Theorem 3
-(`jis-2026-26.1.2-thm-3`). -/
-public theorem_wanted toeplitzHessenbergDet_fussCatalan (p r n : ℕ) (hn : 1 ≤ n) :
-    toeplitzHessenbergDet
-        (fun i => if i = 0 then 1 else (generalizedFussCatalanNumber p i r : ℚ)) n =
-      (-1) ^ (n - 1) * (r : ℚ) / n * (Ring.choose ((p * n : ℤ) - r - 1) (n - 1) : ℚ)
-
-/-- **Special Toeplitz–Hessenberg determinants of Fuss–Catalan numbers.** Write
-$\det(a_0; a_1, \dots, a_n)$ for the determinant of the $n \times n$ Toeplitz–Hessenberg matrix
-whose entry in row $i$ and column $j$ is $a_{i+1-j}$ for $j \le i + 1$ and $0$ above the
-superdiagonal. For natural numbers $p, r \ge 1$ let $A_n(p, r) = \frac{r}{pn + r} \binom{pn + r}{n}$
-be the generalized Fuss–Catalan number, put
-$D_n(p, r) = (-1)^{n-1} \det(1; A_1(p, r), \dots, A_n(p, r))$, and let $C_n$ be the $n$-th
-Catalan number. Then, in $\mathbb{Q}$: $D_n(2, 3) = C_{n-1} - C_{n-2}$ for every $n \ge 2$;
-$D_n(2, 4) = C_{n-1} - 2 C_{n-2}$ for every $n \ge 3$;
-$D_n(3, 1) = \frac{1}{n} \binom{3n - 2}{n - 1}$ for every $n \ge 1$; and
-$D_n(3, 2) = \frac{2}{n} \binom{3n - 3}{n - 1}$ for every $n \ge 1$.
-
-Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
-Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Corollary 4
-(`jis-2026-26.1.2-cor-4`). -/
-public theorem_wanted toeplitzHessenbergDet_fussCatalan_special :
-    (∀ n : ℕ, 2 ≤ n →
-      (-1) ^ (n - 1) * toeplitzHessenbergDet
-          (fun i => if i = 0 then 1 else (generalizedFussCatalanNumber 2 i 3 : ℚ)) n =
-        (catalan (n - 1) : ℚ) - catalan (n - 2)) ∧
-    (∀ n : ℕ, 3 ≤ n →
-      (-1) ^ (n - 1) * toeplitzHessenbergDet
-          (fun i => if i = 0 then 1 else (generalizedFussCatalanNumber 2 i 4 : ℚ)) n =
-        (catalan (n - 1) : ℚ) - 2 * catalan (n - 2)) ∧
-    (∀ n : ℕ, 1 ≤ n →
-      (-1) ^ (n - 1) * toeplitzHessenbergDet
-          (fun i => if i = 0 then 1 else (generalizedFussCatalanNumber 3 i 1 : ℚ)) n =
-        1 / (n : ℚ) * ((3 * n - 2).choose (n - 1) : ℚ)) ∧
-    ∀ n : ℕ, 1 ≤ n →
-      (-1) ^ (n - 1) * toeplitzHessenbergDet
-          (fun i => if i = 0 then 1 else (generalizedFussCatalanNumber 3 i 2 : ℚ)) n =
-        2 / (n : ℚ) * ((3 * n - 3).choose (n - 1) : ℚ)
 
 /-- **Toeplitz–Hessenberg determinants with Catalan entries.** Write $\det(a_0; a_1, \dots, a_n)$
 for the determinant of the $n \times n$ Toeplitz–Hessenberg matrix whose entry in row $i$ and
@@ -187,20 +118,6 @@ public theorem_wanted toeplitzHessenbergDet_ternary :
       toeplitzHessenbergDet
           (fun i => if i = 0 then -1 else (generalizedFussCatalanNumber 3 (i - 1) 2 : ℚ)) n =
         (generalizedFussCatalanNumber 3 n 1 : ℚ)
-
-/-- **Even noncrossing partitions and Dyck paths with even descents.** For every natural number
-$n$, there is a bijection between the noncrossing partitions of $\{0, \dots, 2n - 1\}$ all of
-whose blocks have even size and the Dyck paths of semilength $2n$ all of whose descents have even
-length. Here the descents of a Dyck path are the lengths of its maximal runs of down steps, one
-for each peak $UD$: the run of down steps starting at the $D$ of that peak.
-
-Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
-Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 10
-(`jis-2026-26.1.2-lem-10`). -/
-public theorem_wanted nonempty_equiv_evenNoncrossing_evenDescentDyck (n : ℕ) :
-    Nonempty
-      ({P : _root_.NoncrossingPartition (2 * n) // ∀ B ∈ P.val.parts, Even B.card} ≃
-        {p : DyckWord // p.semilength = 2 * n ∧ ∀ j ∈ dyckPeakDescents p.toList, Even j})
 
 end
 

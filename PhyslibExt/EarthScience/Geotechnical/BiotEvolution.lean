@@ -460,8 +460,9 @@ private theorem biotStorage_neg {n m : Type*} [Fintype n]
   simp [biotStorage, Matrix.transpose_neg, Matrix.neg_mul,
     Matrix.mul_neg]
 
-/-- The pressure rate of a Biot solution solves the reduced
-storage equation `S p' = Qᵀ K⁻¹ df + s - H p` (dissipative in
+/-- For `K` invertible with inverse `Kinv`, the pressure rate of a Biot
+solution solves the reduced storage equation
+`S p' = Qᵀ K⁻¹ df + s - H p` (dissipative in
 `H`), and the displacement rate is recovered from the
 equilibrium rate equation. -/
 theorem biot_pressure_rate_eq {n m : Type*} [Fintype n]

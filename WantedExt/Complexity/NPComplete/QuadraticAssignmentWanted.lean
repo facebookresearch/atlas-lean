@@ -16,7 +16,7 @@ PROBLEM; S. Sahni and T. Gonzalez, "P-complete approximation problems" (1976).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

@@ -19,6 +19,7 @@ Lamport's single-decree Paxos ("the synod algorithm"), the consensus core of his
 
 - [Quorum system](quorum-system.md)
 - [Majorities form a quorum system](majority.md)
+- [Majority quorums intersect](majority-intersect.md)
 - [A Paxos voting history](voting.md)
 - [Chosen proposal](chosen-at.md)
 - [Chosen value](chosen.md)
@@ -43,6 +44,10 @@ Lamport's single-decree Paxos ("the synod algorithm"), the consensus core of his
 - [Reachable states are Paxos voting histories](voting-of-inv.md)
 - [Paxos safety: at most one value is chosen](chosen-unique-of-can-reach.md)
 - [Paxos safety: only a proposed value is chosen](proposed-of-chosen-of-can-reach.md)
+
+## A single proposal step with majority quorums
+
+- [Paxos proposal-safety step](proposal-safety-step.md)
 
 ## Related topics
 

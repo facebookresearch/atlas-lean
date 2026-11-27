@@ -48,7 +48,7 @@ terms: `Q * (S2 - S1) + Q * (S1 - S2) = 0`.
 namespace EarthScience
 
 
-/-- Two fixed-volume boxes exchanging volume flux `Q` symmetrically,
+/-- Two fixed-volume boxes, of volumes `V1, V2 > 0`, exchanging volume flux `Q` symmetrically,
 `V1 * S1' = Q * (S2 - S1) + F1`, `V2 * S2' = Q * (S1 - S2) + F2`:
 the total tracer stock `V1 * S1 + V2 * S2` changes only through the
 external fluxes `F1 + F2`. -/
@@ -67,7 +67,7 @@ theorem two_box_total_stock_deriv {V1 V2 Q F1 F2 : ℝ} {S1 S2 : ℝ → ℝ} {t
   rwa [heq] at h
 
 /-- Closed two-box exchange (`F1 = F2 = 0`): the total tracer stock has
-derivative `0`, for unequal volumes and any `Q`. -/
+derivative `0`, for unequal positive volumes and any `Q`. -/
 theorem two_box_total_stock_deriv_closed {V1 V2 Q : ℝ} {S1 S2 : ℝ → ℝ} {t : ℝ}
     (hV1 : 0 < V1) (hV2 : 0 < V2)
     (h1 : HasDerivAt S1 (Q * (S2 t - S1 t) / V1) t)

@@ -42,6 +42,7 @@ $r_{N,G} \circ i_{G,M}(\rho)$.
 
 - [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the Bruhat decomposition of $G$ into double cosets of standard parabolic subgroups, the filtration of $P_N \backslash G$ by unions of orbits, and $\ell$-sheaves
 - [Parabolic induction and Jacquet functors](parabolic-induction-and-jacquet-functors.md), for the exactness of the functors
+- [The Bernstein–Zelevinsky filtration of a restriction of an induced representation](bernstein-zelevinsky-filtration-theorem.md), for Bernstein and Zelevinsky's Theorem 5.2, of which the geometric lemma is the case of trivial characters (§6.4 there)
 
 ## Sources
 

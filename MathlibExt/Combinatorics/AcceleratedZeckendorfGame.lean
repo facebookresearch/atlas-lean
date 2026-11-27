@@ -242,6 +242,291 @@ public theorem zeckendorfState_four :
   · simp
   simp [Ne.symm h3, Ne.symm h1]
 
+-- The extra weight at index 2 makes even the split 2 + 2 → 1 + 3 decrease the rank.
+private def accelZeckWeight (i : ℕ) : ℕ :=
+  2 * i + 2 + if i = 2 then 1 else 0
+
+private def accelZeckRank : (ℕ →₀ ℕ) →+ ℕ where
+  toFun s := s.sum fun i m => m * accelZeckWeight i
+  map_zero' := by simp
+  map_add' s t := Finsupp.sum_add_index' (fun _ => Nat.zero_mul _) (fun _ _ _ => Nat.add_mul ..)
+
+private theorem accelZeckRank_single (i m : ℕ) :
+    accelZeckRank (Finsupp.single i m) = m * accelZeckWeight i :=
+  Finsupp.sum_single_index (h := fun i m => m * accelZeckWeight i) (Nat.zero_mul _)
+
+private theorem accelZeckRank_remove {s : ℕ →₀ ℕ} {i m : ℕ} (h : m ≤ s i) :
+    accelZeckRank (s - Finsupp.single i m) + m * accelZeckWeight i = accelZeckRank s := by
+  rw [← accelZeckRank_single, ← map_add, tsub_add_cancel_of_le (Finsupp.single_le_iff.mpr h)]
+
+private theorem accelZeckRank_lt {s t : ℕ →₀ ℕ} (h : AccelZeckMove s t) :
+    accelZeckRank t < accelZeckRank s := by
+  rcases h with ⟨m, hm, ⟨i, hi, h₁, h₂, rfl⟩ | ⟨h₁, rfl⟩ | ⟨h₂, rfl⟩ | ⟨i, hi, hᵢ, rfl⟩⟩
+  · have hcost : accelZeckWeight (i + 1) < accelZeckWeight (i - 1) + accelZeckWeight i := by
+      unfold accelZeckWeight
+      split_ifs <;> omega
+    have h₂' : m ≤ (s - Finsupp.single (i - 1) m) i := by
+      simpa [Finsupp.tsub_apply, Finsupp.single_eq_of_ne (show i ≠ i - 1 by omega)] using h₂
+    have hremove₁ := accelZeckRank_remove h₁
+    have hremove₂ := accelZeckRank_remove h₂'
+    have hlt := Nat.mul_lt_mul_of_pos_left hcost hm
+    rw [Nat.mul_add] at hlt
+    rw [map_add, accelZeckRank_single]
+    omega
+  · have hremove := accelZeckRank_remove h₁
+    rw [map_add, accelZeckRank_single]
+    simp [accelZeckWeight, Nat.mul_comm m] at hremove ⊢
+    omega
+  · have hremove := accelZeckRank_remove h₂
+    simp only [map_add, accelZeckRank_single] at ⊢
+    simp [accelZeckWeight, Nat.mul_comm m] at hremove ⊢
+    omega
+  · have hcost : accelZeckWeight (i - 2) + accelZeckWeight (i + 1) <
+        2 * accelZeckWeight i := by
+      unfold accelZeckWeight
+      split_ifs <;> omega
+    have hremove := accelZeckRank_remove hᵢ
+    have hlt := Nat.mul_lt_mul_of_pos_left hcost hm
+    rw [Nat.mul_add, ← Nat.mul_assoc, Nat.mul_comm m 2] at hlt
+    simp only [map_add, accelZeckRank_single]
+    omega
+
+private theorem accelZeckLosing_iff_not_winning (s : ℕ →₀ ℕ) :
+    AccelZeckLosing s ↔ ¬ AccelZeckWinning s := by
+  refine (measure fun s => accelZeckRank s).wf.induction
+    (C := fun s => AccelZeckLosing s ↔ ¬ AccelZeckWinning s) s ?_
+  intro s ih
+  constructor
+  · intro hl hw
+    obtain ⟨t, hmove, htl⟩ := (accelZeckWinning_iff s).mp hw
+    cases hl with
+    | intro _ hnext => exact (ih t (accelZeckRank_lt hmove)).mp htl (hnext t hmove)
+  · intro hn
+    refine .intro s fun t hmove => ?_
+    by_contra ht
+    exact hn (.intro s t hmove ((ih t (accelZeckRank_lt hmove)).mpr ht))
+
+private noncomputable def accelZeckPiles (a b c : ℕ) : ℕ →₀ ℕ :=
+  Finsupp.single 1 a + Finsupp.single 2 b + Finsupp.single 3 c
+
+/-- **Accelerated Zeckendorf Game: Conjecture 1.7 implies Conjecture 1.6.** Index the Fibonacci
+numbers as $F_1 = 1$, $F_2 = 2$, $F_{i+1} = F_i + F_{i-1}$. Suppose that for every $n$ such that
+the state consisting of $n$ copies of $F_1$ is losing, and every $k$ with $3k \le n$, the state
+consisting of $k$ copies of $F_3$ and $n - 3k$ copies of $F_1$ is losing. Then for every $n > 9$
+the state consisting of $n$ copies of $F_1$ (the starting position of the Accelerated Zeckendorf
+Game on $n$) is winning.
+
+Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
+Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
+Article milleretal04072023, Theorem 1.8 (with Conjectures 1.6 and 1.7). -/
+public theorem accelZeck_conjecture17_implies_conjecture16
+    (h17 : ∀ n, AccelZeckLosing (Finsupp.single 1 n) → ∀ k, 3 * k ≤ n →
+      AccelZeckLosing (Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k))) :
+    ∀ n, 9 < n → AccelZeckWinning (Finsupp.single 1 n) := by
+  intro n hn
+  by_contra h
+  have hlose := (accelZeckLosing_iff_not_winning _).mpr h
+  -- Take the largest odd integer at most n / 2. It is strictly larger than n / 3.
+  obtain ⟨k, hk, h₂k, h₃k⟩ : ∃ k : ℕ, k % 2 = 1 ∧ 2 * k ≤ n ∧ n < 3 * k := by
+    exact ⟨2 * ((n - 2) / 4) + 1, by omega, by omega, by omega⟩
+  let s := accelZeckPiles (n - 2 * k) k 0
+  have hfirst : AccelZeckMove (Finsupp.single 1 n) s := by
+    refine ⟨k, by omega, Or.inr (Or.inl ⟨by simpa, ?_⟩)⟩
+    simp [s, accelZeckPiles, ← Finsupp.single_tsub]
+  have hs : AccelZeckWinning s := by
+    cases hlose with
+    | intro _ hnext => exact hnext s hfirst
+  obtain ⟨t, hmove, ht⟩ := (accelZeckWinning_iff s).mp hs
+  apply (accelZeckLosing_iff_not_winning t).mp ht
+  -- Every reply leaves a positive number of twos, so it can also be reached by
+  -- combining ones from a state assumed losing by Conjecture 1.7.
+  have hreply (a b : ℕ) (hb : 0 < b) (hab : 3 * a + 2 * b ≤ n) :
+      AccelZeckWinning (accelZeckPiles (n - 3 * a - 2 * b) b a) := by
+    have hl := h17 n hlose a (by omega)
+    have hm : AccelZeckMove (Finsupp.single 3 a + Finsupp.single 1 (n - 3 * a))
+        (accelZeckPiles (n - 3 * a - 2 * b) b a) := by
+      refine ⟨b, hb, Or.inr (Or.inl ⟨?_, ?_⟩)⟩
+      · simp only [Finsupp.add_apply, Finsupp.single_eq_of_ne (by decide : 1 ≠ 3),
+          Finsupp.single_eq_same, zero_add]
+        omega
+      · ext i
+        simp only [accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+        split_ifs <;> omega
+    cases hl with
+    | intro _ hnext => exact hnext _ hm
+  rcases hmove with ⟨m, hm, ⟨i, hi, h₁, h₂, rfl⟩ | ⟨h₁, rfl⟩ | ⟨h₂, rfl⟩ | ⟨i, hi, hᵢ, rfl⟩⟩
+  · have hi₂ : i = 2 := by
+      by_contra hne
+      have hz : s i = 0 := by
+        simp [s, accelZeckPiles, Finsupp.single_eq_of_ne (show i ≠ 1 by omega),
+          Finsupp.single_eq_of_ne hne]
+      omega
+    subst i
+    have h₁' : m ≤ n - 2 * k := by simpa [s, accelZeckPiles] using h₁
+    have h₂' : m ≤ k := by simpa [s, accelZeckPiles] using h₂
+    have heq : s - Finsupp.single 1 m - Finsupp.single 2 m + Finsupp.single 3 m =
+        accelZeckPiles (n - 3 * m - 2 * (k - m)) (k - m) m := by
+      ext i
+      simp only [s, accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+      split_ifs <;> omega
+    change AccelZeckWinning (s - Finsupp.single 1 m - Finsupp.single 2 m + Finsupp.single 3 m)
+    rw [heq]
+    exact hreply m (k - m) (by omega) (by omega)
+  · have h₁' : 2 * m ≤ n - 2 * k := by simpa [s, accelZeckPiles] using h₁
+    have heq : s - Finsupp.single 1 (2 * m) + Finsupp.single 2 m =
+        accelZeckPiles (n - 3 * 0 - 2 * (k + m)) (k + m) 0 := by
+      ext i
+      simp only [s, accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+      split_ifs <;> omega
+    rw [heq]
+    exact hreply 0 (k + m) (by omega) (by omega)
+  · have h₂' : 2 * m ≤ k := by simpa [s, accelZeckPiles] using h₂
+    have heq : s - Finsupp.single 2 (2 * m) + Finsupp.single 1 m + Finsupp.single 3 m =
+        accelZeckPiles (n - 3 * m - 2 * (k - 2 * m)) (k - 2 * m) m := by
+      ext i
+      simp only [s, accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+      split_ifs <;> omega
+    rw [heq]
+    exact hreply m (k - 2 * m) (by omega) (by omega)
+  · have hz : s i = 0 := by
+      simp [s, accelZeckPiles, Finsupp.single_eq_of_ne (show i ≠ 1 by omega),
+        Finsupp.single_eq_of_ne (show i ≠ 2 by omega)]
+    omega
+
+/-- **Unique losing move from $k$ copies of $F_2$ for odd $k$.** Let $k$ be odd and $n \ge 2k$,
+and suppose that for every $i < k$ with $3i \le n$ the state with $i$ copies of $F_3$,
+$n - 3i$ copies of $F_1$ and nothing else is losing. Then $n \ge 3k$; the state $T$ with $k$
+copies of $F_3$, $n - 3k$ copies of $F_1$ and nothing else is losing and is reached in one
+move from the state $S$ with $k$ copies of $F_2$, $n - 2k$ copies of $F_1$ and nothing else;
+and every losing state reached in one move from $S$ equals $T$.
+
+Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
+Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
+Article milleretal04072023, Lemma 2.4. -/
+public theorem accelZeck_odd_unique_losing_move (k n : ℕ) (hk : Odd k) (hn : 2 * k ≤ n)
+    (hlose : ∀ i < k, 3 * i ≤ n →
+      AccelZeckLosing (Finsupp.single 3 i + Finsupp.single 1 (n - 3 * i))) :
+    3 * k ≤ n ∧
+      AccelZeckMove (Finsupp.single 2 k + Finsupp.single 1 (n - 2 * k))
+        (Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k)) ∧
+      AccelZeckLosing (Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k)) ∧
+      ∀ t, AccelZeckMove (Finsupp.single 2 k + Finsupp.single 1 (n - 2 * k)) t →
+        AccelZeckLosing t → t = Finsupp.single 3 k + Finsupp.single 1 (n - 3 * k) := by
+  let s := accelZeckPiles (n - 2 * k) k 0
+  let u := accelZeckPiles (n - 3 * k) 0 k
+  suffices h : 3 * k ≤ n ∧ AccelZeckMove s u ∧ AccelZeckLosing u ∧
+      ∀ t, AccelZeckMove s t → AccelZeckLosing t → t = u by
+    simpa [s, u, accelZeckPiles, add_comm] using h
+  obtain ⟨r, hr⟩ := hk
+  -- Every such state with positive twos comes from an assumed losing state by a C₁ move.
+  have hwinning (a b : ℕ) (ha : a < k) (hb : 0 < b) (hab : 3 * a + 2 * b ≤ n) :
+      AccelZeckWinning (accelZeckPiles (n - 3 * a - 2 * b) b a) := by
+    obtain ⟨_, hnext⟩ := hlose a ha (by omega)
+    apply hnext
+    refine ⟨b, hb, Or.inr (Or.inl ⟨?_, ?_⟩)⟩
+    · simp
+      omega
+    · ext i
+      simp only [accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+      split_ifs <;> omega
+  have hnotLosing (a b : ℕ) (ha : a < k) (hb : 0 < b) (hab : 3 * a + 2 * b ≤ n) :
+      ¬ AccelZeckLosing (accelZeckPiles (n - 3 * a - 2 * b) b a) :=
+    fun hl => (accelZeckLosing_iff_not_winning _).mp hl (hwinning a b ha hb hab)
+  have hs_zero {i : ℕ} (hi : 2 < i) : s i = 0 := by
+    simp [s, accelZeckPiles, Finsupp.single_eq_of_ne (show i ≠ 1 by omega),
+      Finsupp.single_eq_of_ne (show i ≠ 2 by omega)]
+  have hs : AccelZeckWinning s := by
+    simpa [s] using hwinning 0 k (by omega) (by omega) (by omega)
+  have hforced {t : ℕ →₀ ℕ} (hmove : AccelZeckMove s t) (ht : AccelZeckLosing t) :
+      3 * k ≤ n ∧ t = u := by
+    -- Only combining all k twos with ones can avoid leaving a winning state.
+    rcases hmove with ⟨m, hm, ⟨i, hi, h₁, h₂, rfl⟩ | ⟨h₁, rfl⟩ | ⟨h₂, rfl⟩ | ⟨i, hi, hᵢ, -⟩⟩
+    · have hi₂ : i = 2 := by
+        by_contra hne
+        have hz := hs_zero (show 2 < i by omega)
+        omega
+      subst i
+      have h₁' : m ≤ n - 2 * k := by simpa [s, accelZeckPiles] using h₁
+      have h₂' : m ≤ k := by simpa [s, accelZeckPiles] using h₂
+      by_cases hmk : m = k
+      · subst m
+        refine ⟨by omega, ?_⟩
+        ext j
+        simp only [s, u, accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply,
+          Finsupp.single_apply]
+        split_ifs <;> omega
+      · have hdest : s - Finsupp.single 1 m - Finsupp.single 2 m + Finsupp.single 3 m =
+            accelZeckPiles (n - 3 * m - 2 * (k - m)) (k - m) m := by
+          ext j
+          simp only [s, accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+          split_ifs <;> omega
+        exact (hnotLosing m (k - m) (by omega) (by omega) (by omega) (hdest ▸ ht)).elim
+    · have h₁' : 2 * m ≤ n - 2 * k := by simpa [s, accelZeckPiles] using h₁
+      have hdest : s - Finsupp.single 1 (2 * m) + Finsupp.single 2 m =
+          accelZeckPiles (n - 3 * 0 - 2 * (k + m)) (k + m) 0 := by
+        ext j
+        simp only [s, accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+        split_ifs <;> omega
+      exact (hnotLosing 0 (k + m) (by omega) (by omega) (by omega) (hdest ▸ ht)).elim
+    · have h₂' : 2 * m ≤ k := by simpa [s, accelZeckPiles] using h₂
+      have hdest : s - Finsupp.single 2 (2 * m) + Finsupp.single 1 m + Finsupp.single 3 m =
+          accelZeckPiles (n - 3 * m - 2 * (k - 2 * m)) (k - 2 * m) m := by
+        ext j
+        simp only [s, accelZeckPiles, Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+        split_ifs <;> omega
+      -- Oddness makes the number of remaining twos strictly positive after a split.
+      exact (hnotLosing m (k - 2 * m) (by omega) (by omega) (by omega) (hdest ▸ ht)).elim
+    · have hz := hs_zero (show 2 < i by omega)
+      omega
+  obtain ⟨t, hmove, ht⟩ := (accelZeckWinning_iff s).mp hs
+  obtain ⟨hbound, rfl⟩ := hforced hmove ht
+  exact ⟨hbound, hmove, ht, fun _ hmove' ht' => (hforced hmove' ht').2⟩
+
+private theorem accelZeckMove_from_ones {n : ℕ} {t : ℕ →₀ ℕ}
+    (h : AccelZeckMove (Finsupp.single 1 n) t) :
+    ∃ m, 0 < m ∧ 2 * m ≤ n ∧ t = Finsupp.single 1 (n - 2 * m) + Finsupp.single 2 m := by
+  rcases h with ⟨m, hm, ⟨i, hi, -, hs, -⟩ | ⟨hs, rfl⟩ | ⟨hs, -⟩ | ⟨i, hi, hs, -⟩⟩
+  · simp [Finsupp.single_eq_of_ne (show i ≠ 1 by omega)] at hs
+    omega
+  · exact ⟨m, hm, by simpa using hs, by rw [Finsupp.single_tsub]⟩
+  · simp at hs
+    omega
+  · simp [Finsupp.single_eq_of_ne (show i ≠ 1 by omega)] at hs
+    omega
+
+-- Combining the additional pairs of ones reaches the larger opening position.
+private theorem accelZeckMove_between_openings {n a b : ℕ} (hab : a < b) (hb : 2 * b ≤ n) :
+    AccelZeckMove (Finsupp.single 1 (n - 2 * a) + Finsupp.single 2 a)
+      (Finsupp.single 1 (n - 2 * b) + Finsupp.single 2 b) := by
+  refine ⟨b - a, by omega, Or.inr (Or.inl ⟨?_, ?_⟩)⟩
+  · simp
+    omega
+  · ext i
+    simp only [Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+    split_ifs <;> omega
+
+/-- **Unique winning first move.** For every $n$, if the state consisting of $n$ copies of $F_1$
+is winning, then exactly one state reachable from it in one move is losing: when the first
+player has a winning strategy in the game on $n$, exactly one first move preserves it.
+
+Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
+Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
+Article milleretal04072023, Proposition 1.5. -/
+public theorem accelZeck_unique_winning_first_move (n : ℕ)
+    (h : AccelZeckWinning (Finsupp.single 1 n)) :
+    ∃! t, AccelZeckMove (Finsupp.single 1 n) t ∧ AccelZeckLosing t := by
+  obtain ⟨t, ht, htl⟩ := (accelZeckWinning_iff _).mp h
+  refine ⟨t, ⟨ht, htl⟩, ?_⟩
+  rintro u ⟨hu, hul⟩
+  obtain ⟨a, _, ha, rfl⟩ := accelZeckMove_from_ones ht
+  obtain ⟨b, _, hb, rfl⟩ := accelZeckMove_from_ones hu
+  rcases lt_trichotomy a b with hab | rfl | hba
+  · exact ((accelZeckLosing_iff_not_winning _).mp htl
+      (.intro _ _ (accelZeckMove_between_openings hab hb) hul)).elim
+  · rfl
+  · exact ((accelZeckLosing_iff_not_winning _).mp hul
+      (.intro _ _ (accelZeckMove_between_openings hba ha) htl)).elim
+
 end
 
 end MetaMathlibExt

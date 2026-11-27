@@ -23,13 +23,13 @@ doi:10.1016/0167-6377(83)90016-0.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -52,7 +52,7 @@ planar graphs the problem is polynomial (Hadlock 1975), and Barahona's polynomia
 covers graphs not contractible to `K₅`; apex graphs are the next step.
 
 This is the restriction of SIMPLE MAX CUT ([ND16]; MAXIMUM CUT with unit weights,
-`WantedExt.Complexity.NPComplete.MaxCutWanted`, whose question already counts edges) to apex
+`CSLibExt.Complexity.NPComplete.MaxCutDefs`, whose question already counts edges) to apex
 graphs, with `K` positive as in [ND16]. The instance, the simple-edge-list conditions and the
 question are those of that module, reused here, as in
 `WantedExt.Complexity.NPComplete.SimpleMaxCutDegreeThreeWanted`. `G - v` is the subgraph

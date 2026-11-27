@@ -41,6 +41,7 @@ public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.NumberTheory.Padics.PadicNorm
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import MathlibExt.NumberTheory.FermatQuotient
+public import MathlibExt.NumberTheory.WilsonFermatQuotient
 
 set_option autoImplicit false
 
@@ -57,22 +58,6 @@ private theorem coprime_of_mem {p k : ℕ} (hp : p.Prime)
   exact Nat.isCoprime_iff_coprime.mpr
     ((hp.coprime_iff_not_dvd.mpr
       (Nat.not_dvd_of_pos_of_lt h.1 hlt)).symm)
-
-/-- **Wilson's theorem modulo $p^2$.** Let $p$ be an odd prime and, for $1 \le k \le p - 1$, let
-$q_p(k)$ be the Fermat quotient of $k$, the integer with $k^{p-1} = 1 + p\, q_p(k)$. Then
-$$
-(p - 1)! \equiv -1 + p \sum_{k=1}^{p-1} q_p(k) \pmod{p^2}.
-$$
-
-Source: Claire Levaillant, "Wilson's Theorem Modulo
-`p^2` Derived from Faulhaber Polynomials", Theorem 1. -/
-theorem_wanted wilson_mod_prime_sq (p : ℕ) (hp : p.Prime)
-    (hp2 : p ≠ 2) :
-    (Nat.factorial (p - 1) : ZMod (p ^ 2)) =
-      -1 + (p : ZMod (p ^ 2)) *
-        ∑ k ∈ (Finset.Icc 1 (p - 1)).attach,
-          ((Int.fermatQuotient p hp (k.1 : ℤ)
-            (coprime_of_mem hp k.2) : ℤ) : ZMod (p ^ 2))
 
 /-- **Lemma 1**: for `1 ≤ k ≤ p - 1` let `k + p t` (with `t ∈ ℤ`) satisfy
 `(k + p t)^(p-1) + (p - 1)! ≡ 0 (mod p^2)`, i.e. `t` reduces to the second

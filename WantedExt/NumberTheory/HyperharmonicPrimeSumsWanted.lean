@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.AlternatingHyperharmonic
+public import MathlibExt.NumberTheory.AlternatingHyperharmonicTypeIIISquarefree
 public import MathlibExt.Analysis.Asymptotics.Jakimczuk
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
@@ -16,7 +18,7 @@ public import Mathlib.NumberTheory.PrimeCounting
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import WantedExt.NumberTheory.GeneralizedHarmonicGammaWanted
+public import MathlibExt.NumberTheory.GeneralizedHarmonicGamma
 
 /-!
 # Sums over primes II (statements)
@@ -26,7 +28,9 @@ numbers, the asymptotics of the `n`-th (squarefree) number with
 exactly `k` prime factors, two power-log summation asymptotics, the explicit formulas and
 asymptotics of the generalized (alternating) hyperharmonic numbers `H_n^{(p,r)}` and
 `H_n^{(p,r,i)}` (`i = 1, 2, 3`), and the asymptotics of sums over primes and over squarefree
-numbers with `k` prime factors weighted by powers of these numbers.
+numbers with `k` prime factors weighted by powers of these numbers. The asymptotic of the type III
+numbers `H_n^{(p,r,3)}`, `alternatingHyperharmonic_typeIII_isEquivalent`, is not a target here:
+it is proved in `MathlibExt.NumberTheory.AlternatingHyperharmonicTypeIIISquarefree`.
 -/
 
 namespace MetaMathlibExt
@@ -137,90 +141,6 @@ public theorem_wanted sum_pow_mul_log_pow_isEquivalent (m n k : ℕ) :
         (l : ℝ) ^ m * Real.log l ^ n / Real.log (Real.log l) ^ k) ~[atTop]
       fun x : ℕ => (x : ℝ) ^ (m + 1) * Real.log x ^ n /
         ((m + 1) * Real.log (Real.log x) ^ k))
-
-
-/-- **Alternating generalized harmonic numbers.** For a real number $s$ and a natural number $n$,
-the alternating generalized harmonic number is
-$\overline{H}_n^{(s)} = \sum_{j=1}^{n} (-1)^{j-1} / j^s$, which is $0$ for $n = 0$.
-
-For $s = -p$ with $p$ a natural number this is $\sum_{j=1}^{n} (-1)^{j-1} j^p$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Section 1 (definition of `H̄_n^{(p)}` and `H̄_n^{(-p)}`). -/
-public noncomputable def alternatingGeneralizedHarmonic (s : ℝ) (n : ℕ) : ℝ :=
-  ∑ j ∈ Icc 1 n, (-1 : ℝ) ^ (j - 1) * ((j : ℝ) ^ s)⁻¹
-
-/-- **Alternating generalized harmonic numbers of index zero.** For every real number $s$, the
-alternating generalized harmonic number $\overline{H}_0^{(s)}$ is $0$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Section 1 (definition of `H̄_n^{(p)}`). -/
-@[simp]
-public theorem alternatingGeneralizedHarmonic_zero (s : ℝ) :
-    alternatingGeneralizedHarmonic s 0 = 0 := by
-  simp [alternatingGeneralizedHarmonic]
-
-/-- **Signed iterated partial sums.** Let $(b_n)_{n \ge 0}$ be a real sequence and fix a choice of
-signs, either alternating, $\varepsilon_k = (-1)^{k-1}$, or constant, $\varepsilon_k = 1$. The
-signed iterated partial sums $S^{(r)}_n$ of $b$, for orders $r \in \mathbb{N}$ and
-$n \in \mathbb{N}$, are defined by $S^{(0)}_n = 0$, $S^{(1)}_n = b_n$ and, for $r \ge 1$,
-$$S^{(r+1)}_n = \sum_{k=1}^{n} \varepsilon_k \, S^{(r)}_k.$$
-The value $0$ at order $0$ is a convention and is not used.
-
-With $b_n = H_n^{(p)} = \sum_{j=1}^{n} j^{-p}$, constant signs give the generalized hyperharmonic
-numbers $H_n^{(p,r)}$ and alternating signs give the type I alternating ones $H_n^{(p,r,1)}$; with
-$b_n = \bar H_n^{(p)} = \sum_{j=1}^{n} (-1)^{j-1} j^{-p}$, constant signs give type II,
-$H_n^{(p,r,2)}$, and alternating signs give type III, $H_n^{(p,r,3)}$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Section 1 (definitions of `H_n^{(p,r)}` and `H_n^{(p,r,i)}`, `i = 1, 2, 3`). -/
-public noncomputable def signedIteratedPartialSum (alt : Bool) (b : ℕ → ℝ) : ℕ → ℕ → ℝ
-  | 0, _ => 0
-  | 1, n => b n
-  | r + 2, n => ∑ k ∈ Icc 1 n, (if alt then (-1 : ℝ) ^ (k - 1) else 1) *
-      signedIteratedPartialSum alt b (r + 1) k
-
-/-- **Order one of the signed iterated partial sums.** For every real sequence
-$(b_n)_{n \ge 0}$, either choice of signs and every $n \in \mathbb{N}$, the signed iterated partial
-sum of $b$ of order $1$ at $n$ equals $b_n$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Section 1 (`H_n^{(p,1)} = H_n^{(p)}`, `H_n^{(p,1,1)} = H_n^{(p)}`,
-`H_n^{(p,1,2)} = H_n^{(p,1,3)} = H̄_n^{(p)}`). -/
-public theorem signedIteratedPartialSum_one (alt : Bool) (b : ℕ → ℝ) (n : ℕ) :
-    signedIteratedPartialSum alt b 1 n = b n := rfl
-
-/-- **Recursion for the signed iterated partial sums.** Let $(b_n)_{n \ge 0}$ be a real sequence,
-fix a choice of signs, either $\varepsilon_k = (-1)^{k-1}$ for all $k$ or $\varepsilon_k = 1$ for
-all $k$, and let $S^{(r)}_n$ denote the signed iterated partial sum of $b$ of order $r$ at $n$ for
-this choice. Then for every $r \ge 1$ and every $n \in \mathbb{N}$,
-$$S^{(r+1)}_n = \sum_{k=1}^{n} \varepsilon_k \, S^{(r)}_k.$$
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Section 1 (definitions of `H_n^{(p,r)}` and `H_n^{(p,r,i)}`). -/
-public theorem signedIteratedPartialSum_succ (alt : Bool) (b : ℕ → ℝ) (r n : ℕ) :
-    signedIteratedPartialSum alt b (r + 2) n = ∑ k ∈ Icc 1 n,
-      (if alt then (-1 : ℝ) ^ (k - 1) else 1) * signedIteratedPartialSum alt b (r + 1) k := rfl
-
-/-- **Alternating zeta values.** For a natural number $p$, the alternating zeta value
-$\bar\zeta(p)$ is defined by $\bar\zeta(1) = \log 2$, by $\bar\zeta(p) = (1 - 2^{1-p})\,\zeta(p)$
-for $p \ge 2$, where $\zeta(p) = \sum_{n \ge 1} 1/n^p$, and by $\bar\zeta(0) = 0$.
-
-For every $p \ge 1$ this is the alternating series $\bar\zeta(p) = \sum_{n \ge 1} (-1)^{n-1}/n^p$;
-the value at $p = 0$ is not used.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 10 (definition of `ζ̄(s)`). -/
-public noncomputable def alternatingZeta (p : ℕ) : ℝ :=
-  if p = 1 then Real.log 2 else (1 - 2 ^ (1 - (p : ℝ))) * ∑' n : ℕ, 1 / (n : ℝ) ^ p
-
-/-- **Alternating zeta value at one.** The alternating zeta value at $1$ is $\bar\zeta(1) = \log 2$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 10 (definition of `ζ̄(s)`). -/
-@[simp]
-public theorem alternatingZeta_one : alternatingZeta 1 = Real.log 2 := by
-  simp [alternatingZeta]
 
 /-- **Li's coefficients $a(r, m, j)$.** The rational numbers $a(r, m, j)$, for natural numbers
 $r$, $m$, $j$, are defined by recursion on $r$. For all $m$ and $j$, $a(0, m, j) = 0$; moreover
@@ -531,50 +451,6 @@ public theorem_wanted alternatingHyperharmonic_typeI_isEquivalent {y p : ℕ} (h
       fun n : ℕ => -((n : ℝ) ^ (y - 1) * (ζp - alternatingZeta p) /
         ((2 * (y - 1).factorial : ℕ) : ℝ))) ∧
     ((fun n : ℕ => HI p (2 * y) (2 * n - 1)) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ (y - 1) * (ζp + alternatingZeta p) /
-        ((2 * (y - 1).factorial : ℕ) : ℝ))
-
-/-- **Asymptotic of type II alternating hyperharmonic numbers.** For a natural number $p$ let
-$\overline{H}_n^{(p)} = \sum_{i=1}^{n} (-1)^{i-1}/i^p$ be the alternating generalized harmonic
-numbers, and let the type II generalized alternating hyperharmonic numbers be
-$H_n^{(p,1,2)} = \overline{H}_n^{(p)}$ and $H_n^{(p,r+1,2)} = \sum_{k=1}^{n} H_k^{(p,r,2)}$. Let
-$\bar\zeta(p)$ be the alternating zeta value at $p$, so that $\bar\zeta(1) = \log 2$. Then for all
-natural numbers $r, p \ge 1$, $H_n^{(p,r,2)} \sim n^{r-1} \bar\zeta(p) / (r-1)!$ as $n \to \infty$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 13 (`jis-2024-24.4.1-lem-13`). -/
-public theorem_wanted alternatingHyperharmonic_typeII_isEquivalent {r p : ℕ} (hr : 1 ≤ r)
-    (hp : 1 ≤ p) :
-    (fun n : ℕ => signedIteratedPartialSum false (alternatingGeneralizedHarmonic p) r n) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ (r - 1) * alternatingZeta p / (r - 1).factorial
-
-/-- **Asymptotics of type III alternating hyperharmonic numbers.** For real $s$ let
-$\overline{H}_n^{(s)} = \sum_{i=1}^{n} (-1)^{i-1}/i^s$ be the alternating generalized harmonic
-numbers, and let the type III generalized alternating hyperharmonic numbers be
-$H_n^{(s,1,3)} = \overline{H}_n^{(s)}$ and
-$H_n^{(s,r+1,3)} = \sum_{k=1}^{n} (-1)^{k-1} H_k^{(s,r,3)}$. Let $y \ge 1$ and $p \ge 1$ be natural
-numbers and let $\bar\zeta(p)$ be the alternating zeta value at $p$. Then, as $n \to \infty$,
-$H_n^{(p,2y+1,3)} \sim n^y \bar\zeta(p) / (2^y\, y!)$ and
-$H_n^{(1,2y,3)} \sim n^{y-1} \log n / (2^y (y-1)!)$. If moreover $p \ge 2$, then, with
-$\zeta(p) = \sum_{i \ge 1} 1/i^p$, as $n \to \infty$,
-$H_{2n}^{(p,2y,3)} \sim n^{y-1} (\zeta(p) - \bar\zeta(p)) / (2\,(y-1)!)$ and
-$H_{2n-1}^{(p,2y,3)} \sim n^{y-1} (\zeta(p) + \bar\zeta(p)) / (2\,(y-1)!)$.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Lemma 16 (`jis-2024-24.4.1-lem-16`). -/
-public theorem_wanted alternatingHyperharmonic_typeIII_isEquivalent {y p : ℕ} (hy : 1 ≤ y)
-    (hp : 1 ≤ p) :
-    let HIII := fun (s : ℝ) (r n : ℕ) =>
-      signedIteratedPartialSum true (alternatingGeneralizedHarmonic s) r n
-    let ζp : ℝ := ∑' i : ℕ, 1 / (i : ℝ) ^ p
-    ((fun n : ℕ => HIII p (2 * y + 1) n) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ y * alternatingZeta p / ((2 ^ y * y.factorial : ℕ) : ℝ)) ∧
-    ((fun n : ℕ => HIII 1 (2 * y) n) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ (y - 1) * Real.log n / ((2 ^ y * (y - 1).factorial : ℕ) : ℝ)) ∧
-    (2 ≤ p → (fun n : ℕ => HIII p (2 * y) (2 * n)) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ (y - 1) * (ζp - alternatingZeta p) /
-        ((2 * (y - 1).factorial : ℕ) : ℝ)) ∧
-    (2 ≤ p → (fun n : ℕ => HIII p (2 * y) (2 * n - 1)) ~[atTop]
       fun n : ℕ => (n : ℝ) ^ (y - 1) * (ζp + alternatingZeta p) /
         ((2 * (y - 1).factorial : ℕ) : ℝ))
 
@@ -992,102 +868,6 @@ public theorem_wanted sum_primes_pow_mul_alternatingHyperharmonic_typeIII_isEqui
       fun x : ℕ => (ζq - alternatingZeta q) ^ m * (x : ℝ) ^ (α + m * (y - 1) + 1) /
         (((2 * (y - 1).factorial : ℕ) : ℝ) ^ m * ((α + m * (y - 1) + 1 : ℕ) : ℝ) *
           Real.log x ^ (m * (y - 1) + 1)))
-
-/-- **Type III alternating hyperharmonic power sums weighted by squarefree $k$-prime numbers.**
-Let $\alpha, m, k, p, y \ge 1$ and $q \ge 2$ be integers. Let $p_{\ell,k}$ be the $\ell$-th
-squarefree number with exactly $k$ prime factors, let $H_n^{(s,r,3)}$ be the signed iterated
-partial sum of order $r$, with alternating signs, of the alternating generalized harmonic numbers
-$\bar H_n^{(s)} = \sum_{j=1}^{n} (-1)^{j-1} j^{-s}$, let $\zeta(q) = \sum_{n \ge 1} n^{-q}$, and
-let $\bar\zeta$ be the alternating zeta function ($\bar\zeta(1) = \log 2$). For a real sequence
-$f$ write
-$$S_x(f) = \sum_{\ell=1}^{x} p_{\ell,k}^\alpha f(\ell)^m, \qquad
-T_x(f) = \sum_{\substack{1 \le \ell \le x \\ p_{\ell,k} \le x}} p_{\ell,k}^\alpha f(\ell)^m,$$
-put $K = (k-1)!$, $E = my + 1$, $F = m(y-1) + 1$, $A = \alpha + E$ and $B = \alpha + F$, and let
-$f_1(\ell) = H_\ell^{(p,2y+1,3)}$, $f_2(\ell) = H_\ell^{(1,2y,3)}$,
-$f_3(\ell) = H_{2\ell-1}^{(q,2y,3)}$ and $f_4(\ell) = H_{2\ell}^{(q,2y,3)}$. Then, as the natural
-number $x$ tends to infinity,
-$$S_x(f_1) \sim
-\frac{K^\alpha \bar\zeta(p)^m x^A (\log x)^\alpha}{(2^y y!)^m A (\log \log x)^{\alpha(k-1)}},
-\qquad T_x(f_1) \sim
-\frac{\bar\zeta(p)^m x^A (\log \log x)^{E(k-1)}}{(2^y y!)^m K^E A (\log x)^E},$$
-$$S_x(f_2) \sim
-\frac{K^\alpha x^B (\log x)^{\alpha+m}}{(2^y (y-1)!)^m B (\log \log x)^{\alpha(k-1)}},
-\qquad T_x(f_2) \sim
-\frac{x^B (\log \log x)^{F(k-1)}}{(2^y (y-1)!)^m K^F B (\log x)^{m(y-2)+1}},$$
-$$S_x(f_3) \sim \frac{K^\alpha (\zeta(q) + \bar\zeta(q))^m x^B (\log x)^\alpha}
-{(2 (y-1)!)^m B (\log \log x)^{\alpha(k-1)}},
-\qquad T_x(f_3) \sim \frac{(\zeta(q) + \bar\zeta(q))^m x^B (\log \log x)^{F(k-1)}}
-{(2 (y-1)!)^m K^F B (\log x)^F},$$
-$$S_x(f_4) \sim \frac{K^\alpha (\zeta(q) - \bar\zeta(q))^m x^B (\log x)^\alpha}
-{(2 (y-1)!)^m B (\log \log x)^{\alpha(k-1)}},
-\qquad T_x(f_4) \sim \frac{(\zeta(q) - \bar\zeta(q))^m x^B (\log \log x)^{F(k-1)}}
-{(2 (y-1)!)^m K^F B (\log x)^F}.$$
-
-The exponent $m(y-2)+1$ of $\log x$ may be negative; the power is then an integer power.
-
-The paper prints the first two items with the type I numbers $H_\ell^{(p,2y+1,1)}$, but their
-asymptotics carry $\bar\zeta(p)$, the section treats type III, and the proof sums
-$H_\ell^{(p,2y+1,3)}$; they are read here with type III.
-
-Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
-Article 24.4.1, Theorem 18 (`jis-2024-24.4.1-thm-18`). -/
-public theorem_wanted sum_squarefreeKPrime_pow_mul_alternatingHyperharmonic_typeIII_isEquivalent
-    {α m k p q y : ℕ}
-    (hα : 1 ≤ α) (hm : 1 ≤ m) (hk : 1 ≤ k) (hp : 1 ≤ p) (hy : 1 ≤ y) (hq : 2 ≤ q) :
-    let pk : ℕ → ℕ := fun l =>
-      Nat.nth (fun t => Squarefree t ∧ t.primeFactors.card = k) (l - 1)
-    let ζq : ℝ := ∑' i : ℕ, 1 / (i : ℝ) ^ q
-    let HIII := fun (s : ℝ) (r n : ℕ) =>
-      signedIteratedPartialSum true (alternatingGeneralizedHarmonic s) r n
-    ((fun x : ℕ => ∑ l ∈ Icc 1 x,
-        (pk l : ℝ) ^ α * (HIII p (2 * y + 1) l) ^ m) ~[atTop]
-      fun x : ℕ => ((k - 1).factorial : ℝ) ^ α * alternatingZeta p ^ m *
-        (x : ℝ) ^ (α + m * y + 1) * Real.log x ^ (α) /
-        (((2 ^ y * y.factorial : ℕ) : ℝ) ^ m *
-          ((α + m * y + 1 : ℕ) : ℝ) * Real.log (Real.log x) ^ (α * (k - 1)))) ∧
-    ((fun x : ℕ => ∑ l ∈ (Icc 1 x).filter (fun l => pk l ≤ x),
-        (pk l : ℝ) ^ α * (HIII p (2 * y + 1) l) ^ m) ~[atTop]
-      fun x : ℕ => alternatingZeta p ^ m * (x : ℝ) ^ (α + m * y + 1) *
-        Real.log (Real.log x) ^ ((m * y + 1) * (k - 1)) /
-        (((2 ^ y * y.factorial : ℕ) : ℝ) ^ m * ((k - 1).factorial : ℝ) ^ (m * y + 1) *
-          ((α + m * y + 1 : ℕ) : ℝ) * Real.log x ^ (m * y + 1))) ∧
-    ((fun x : ℕ => ∑ l ∈ Icc 1 x,
-        (pk l : ℝ) ^ α * (HIII 1 (2 * y) l) ^ m) ~[atTop]
-      fun x : ℕ => ((k - 1).factorial : ℝ) ^ α * (x : ℝ) ^ (α + m * (y - 1) + 1) *
-        Real.log x ^ (α + m) /
-        (((2 ^ y * (y - 1).factorial : ℕ) : ℝ) ^ m *
-          ((α + m * (y - 1) + 1 : ℕ) : ℝ) * Real.log (Real.log x) ^ (α * (k - 1)))) ∧
-    ((fun x : ℕ => ∑ l ∈ (Icc 1 x).filter (fun l => pk l ≤ x),
-        (pk l : ℝ) ^ α * (HIII 1 (2 * y) l) ^ m) ~[atTop]
-      fun x : ℕ => (x : ℝ) ^ (α + m * (y - 1) + 1) *
-        Real.log (Real.log x) ^ ((m * (y - 1) + 1) * (k - 1)) /
-        (((2 ^ y * (y - 1).factorial : ℕ) : ℝ) ^ m *
-          ((k - 1).factorial : ℝ) ^ (m * (y - 1) + 1) *
-            ((α + m * (y - 1) + 1 : ℕ) : ℝ) * Real.log x ^ ((m : ℤ) * ((y : ℤ) - 2) + 1))) ∧
-    ((fun x : ℕ => ∑ l ∈ Icc 1 x,
-        (pk l : ℝ) ^ α * (HIII q (2 * y) (2 * l - 1)) ^ m) ~[atTop]
-      fun x : ℕ => ((k - 1).factorial : ℝ) ^ α * (ζq + alternatingZeta q) ^ m *
-        (x : ℝ) ^ (α + m * (y - 1) + 1) * Real.log x ^ (α) /
-        (((2 * (y - 1).factorial : ℕ) : ℝ) ^ m *
-          ((α + m * (y - 1) + 1 : ℕ) : ℝ) * Real.log (Real.log x) ^ (α * (k - 1)))) ∧
-    ((fun x : ℕ => ∑ l ∈ (Icc 1 x).filter (fun l => pk l ≤ x),
-        (pk l : ℝ) ^ α * (HIII q (2 * y) (2 * l - 1)) ^ m) ~[atTop]
-      fun x : ℕ => (ζq + alternatingZeta q) ^ m *
-        (x : ℝ) ^ (α + m * (y - 1) + 1) * Real.log (Real.log x) ^ ((m * (y - 1) + 1) * (k - 1)) /
-        (((2 * (y - 1).factorial : ℕ) : ℝ) ^ m * ((k - 1).factorial : ℝ) ^ (m * (y - 1) + 1) *
-          ((α + m * (y - 1) + 1 : ℕ) : ℝ) * Real.log x ^ (m * (y - 1) + 1))) ∧
-    ((fun x : ℕ => ∑ l ∈ Icc 1 x,
-        (pk l : ℝ) ^ α * (HIII q (2 * y) (2 * l)) ^ m) ~[atTop]
-      fun x : ℕ => ((k - 1).factorial : ℝ) ^ α * (ζq - alternatingZeta q) ^ m *
-        (x : ℝ) ^ (α + m * (y - 1) + 1) * Real.log x ^ (α) /
-        (((2 * (y - 1).factorial : ℕ) : ℝ) ^ m *
-          ((α + m * (y - 1) + 1 : ℕ) : ℝ) * Real.log (Real.log x) ^ (α * (k - 1)))) ∧
-    ((fun x : ℕ => ∑ l ∈ (Icc 1 x).filter (fun l => pk l ≤ x),
-        (pk l : ℝ) ^ α * (HIII q (2 * y) (2 * l)) ^ m) ~[atTop]
-      fun x : ℕ => (ζq - alternatingZeta q) ^ m *
-        (x : ℝ) ^ (α + m * (y - 1) + 1) * Real.log (Real.log x) ^ ((m * (y - 1) + 1) * (k - 1)) /
-        (((2 * (y - 1).factorial : ℕ) : ℝ) ^ m * ((k - 1).factorial : ℝ) ^ (m * (y - 1) + 1) *
-          ((α + m * (y - 1) + 1 : ℕ) : ℝ) * Real.log x ^ (m * (y - 1) + 1)))
 
 
 end

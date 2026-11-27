@@ -34,62 +34,6 @@ public theorem_wanted count_euclidPPosition_calkinWilfRow :
       ∀ k, 3 * ((calkinWilfRow k).countP (fun p => euclidPPosition p.1 p.2) : ℤ) =
         2 ^ k + 2 * (-1) ^ k
 
-/-- **Self-similarity of the P-positions of Euclid.** Call a pair $(a, b)$ of natural numbers a
-P-position when the Euclid P-position test returns true at $(a, b)$, and read it as the vertex
-$a/b$ of the Calkin–Wilf tree, with son $a/(a+b)$ and daughter $(a+b)/b$. Let $V$ be a vertex in
-some row of the Calkin–Wilf tree that is a P-position. Then for every finite sequence $w$ of steps,
-each step going to the son or to the daughter, the vertex reached from $V$ by following $w$ is a
-P-position if and only if the vertex reached from the root $1/1$ by following $w$ is one.
-
-In other words, below every P-position the P-positions sit exactly where they sit below the root.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Theorem 4.5. -/
-public theorem_wanted euclidPPosition_self_similar (k : ℕ) (V : ℕ × ℕ)
-    (hV : V ∈ calkinWilfRow k) (hP : euclidPPosition V.1 V.2 = true) (w : List Bool) :
-    let walk : ℕ × ℕ → ℕ × ℕ := fun p =>
-      w.foldl (fun q b => if b then (q.1 + q.2, q.2) else (q.1, q.1 + q.2)) p
-    euclidPPosition (walk V).1 (walk V).2 = euclidPPosition (walk (1, 1)).1 (walk (1, 1)).2
-
-/-- **Number of arch tops in a row of the Calkin–Wilf tree.** For $k \ge 2$ let $T_k$ be the
-number of vertices of row $k$ of the Calkin–Wilf tree of the form $(2m+n)/(m+n)$ with $m/n$ a
-P-position of Euclid in row $k - 2$. Then $3T_k = 2^{k-2} + 2(-1)^k$, that is,
-$T_k = 2^{k-2}/3 + 2(-1)^k/3$.
-
-The vertex $(2m+n)/(m+n)$ is the son's daughter of $m/n$, the left top of the arch below $m/n$;
-the daughter's son $(m+n)/(m+2n)$ is the right top, so $T_k$ counts the arches whose tops lie in
-row $k$.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Corollary 4.7. -/
-public theorem_wanted count_arch_tops_calkinWilfRow (k : ℕ) (hk : 2 ≤ k) :
-    3 * (((calkinWilfRow k).countP fun p => (calkinWilfRow (k - 2)).any fun V =>
-        euclidPPosition V.1 V.2 && p == (2 * V.1 + V.2, V.1 + V.2)) : ℤ) =
-      2 ^ (k - 2) + 2 * (-1) ^ k
-
-/-- **Levels of the branches of an arch.** On numerator–denominator pairs write
-$s(x, y) = (x, x + y)$ for the son and $t(x, y) = (x + y, y)$ for the daughter of a vertex of the
-Calkin–Wilf tree. Let $a, b, c, d, k$ be natural numbers with $0 < b < a$ and $0 < c < d$. Then
-$t(s^k(a - b, b))$, the daughter of the $k$-fold son of $(a - b, b)$, has first entry
-$(k+1)a - kb$ and second entry $ka - (k-1)b$, and $s(t^k(c, d - c))$, the son of the $k$-fold
-daughter of $(c, d - c)$, has first entry $kd - (k-1)c$ and second entry $(k+1)d - kc$, the
-right-hand sides computed in the integers.
-
-When $a/b$ and $c/d$ are the left and right tops of an arch, these pairs are level $k$ (level $0$
-the top) of its left branch, which descends by nieces, and of its right branch, which descends by
-nephews; the formulas hold without the arch-top hypothesis.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Lemma 5.1. -/
-public theorem_wanted arch_branch_levels (a b c d k : ℕ) (hb : 0 < b) (hab : b < a) (hc : 0 < c)
-    (hcd : c < d) :
-    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
-    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
-    let L := t (s^[k] (a - b, b))
-    let R := s (t^[k] (c, d - c))
-    ((L.1 : ℤ) = (k + 1) * a - k * b ∧ (L.2 : ℤ) = k * a - (k - 1) * b) ∧
-      ((R.1 : ℤ) = k * d - (k - 1) * c ∧ (R.2 : ℤ) = (k + 1) * d - k * c)
-
 /-- **The Fibonacci arches.** Let $F_j$ be the Fibonacci numbers with $F_0 = F_1 = 1$ and
 $F_{j+2} = F_{j+1} + F_j$. Call a pair $(a, b)$ of natural numbers a P-position when the Euclid
 P-position test returns true at $(a, b)$, read it as the vertex $a/b$ of the Calkin–Wilf tree, and

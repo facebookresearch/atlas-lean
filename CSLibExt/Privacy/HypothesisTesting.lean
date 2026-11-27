@@ -1176,4 +1176,562 @@ theorem tradeoff_PH5_QH5_quarter : tradeoff Bool PH5 QH5 (1/4 : ℝ) = 1/4 := by
     calc (1/4 : ℝ) = fEpsDelta (Real.log 3) 0 (1/4 : ℝ) := hf.symm
       _ ≤ tradeoff Bool PH5 QH5 (1/4 : ℝ) := hlow
 
+/-! ## Four-outcome randomized response
+
+Finite sharpness by an explicit construction: a pair on `Fin 4` whose
+tradeoff (Dong-Roth-Su Definition 2.1) meets `fEpsDelta` on `[0, 1]`,
+hence lies below every pair satisfying `KOVpair`
+(Kairouz-Oh-Viswanath Theorem 2.1 Eq. 1) by Proposition 2.5.
+-/
+
+/-- Shared mass scale for the four-outcome construction. -/
+noncomputable def rrC (eps delta : ℝ) : ℝ := (1 - delta) / (1 + Real.exp eps)
+
+/-- Masses under the first hypothesis. -/
+noncomputable def rrMass0 (eps delta : ℝ) : Fin 4 → ℝ := ![delta, Real.exp eps * rrC eps delta, rrC eps delta, 0]
+
+/-- Masses under the second hypothesis. -/
+noncomputable def rrMass1 (eps delta : ℝ) : Fin 4 → ℝ := ![0, rrC eps delta, Real.exp eps * rrC eps delta, delta]
+
+lemma rrC_nonneg (eps delta : ℝ) (hδ1 : delta ≤ 1) : 0 ≤ rrC eps delta := by
+  unfold rrC
+  apply div_nonneg
+  · linarith
+  · have hE : 0 ≤ Real.exp eps := (Real.exp_pos eps).le
+    linarith
+
+lemma rrC_pos (eps delta : ℝ) (hδ1 : delta < 1) : 0 < rrC eps delta := by
+  unfold rrC
+  apply div_pos
+  · linarith
+  · have hE : 0 ≤ Real.exp eps := (Real.exp_pos eps).le
+    linarith
+
+lemma rrC_add_exp_mul (eps delta : ℝ) :
+    rrC eps delta + Real.exp eps * rrC eps delta = 1 - delta := by
+  unfold rrC
+  have hE : 0 < 1 + Real.exp eps := by
+    have h := Real.exp_pos eps
+    linarith
+  have hne : (1 + Real.exp eps) ≠ 0 := ne_of_gt hE
+  field_simp
+
+lemma rrMass0_nonneg (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1)
+    (i : Fin 4) : 0 ≤ rrMass0 eps delta i := by
+  have hC := rrC_nonneg eps delta hδ1
+  have hE : 0 ≤ Real.exp eps := (Real.exp_pos eps).le
+  fin_cases i
+  · show 0 ≤ rrMass0 eps delta 0
+    simp only [rrMass0]
+    show 0 ≤ delta
+    exact hδ0
+  · show 0 ≤ rrMass0 eps delta 1
+    simp only [rrMass0]
+    show 0 ≤ Real.exp eps * rrC eps delta
+    exact mul_nonneg hE hC
+  · show 0 ≤ rrMass0 eps delta 2
+    simp only [rrMass0]
+    show 0 ≤ rrC eps delta
+    exact hC
+  · show 0 ≤ rrMass0 eps delta 3
+    simp only [rrMass0]
+    show (0 : ℝ) ≤ 0
+    exact le_refl 0
+
+lemma rrMass1_nonneg (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1)
+    (i : Fin 4) : 0 ≤ rrMass1 eps delta i := by
+  have hC := rrC_nonneg eps delta hδ1
+  have hE : 0 ≤ Real.exp eps := (Real.exp_pos eps).le
+  fin_cases i
+  · show 0 ≤ rrMass1 eps delta 0
+    simp only [rrMass1]
+    show (0 : ℝ) ≤ 0
+    exact le_refl 0
+  · show 0 ≤ rrMass1 eps delta 1
+    simp only [rrMass1]
+    show 0 ≤ rrC eps delta
+    exact hC
+  · show 0 ≤ rrMass1 eps delta 2
+    simp only [rrMass1]
+    show 0 ≤ Real.exp eps * rrC eps delta
+    exact mul_nonneg hE hC
+  · show 0 ≤ rrMass1 eps delta 3
+    simp only [rrMass1]
+    show 0 ≤ delta
+    exact hδ0
+
+lemma rrMass0_sum (eps delta : ℝ) : ∑ i, rrMass0 eps delta i = 1 := by
+  rw [Fin.sum_univ_four]
+  simp only [rrMass0]
+  have hadd := rrC_add_exp_mul eps delta
+  have e0 : (![delta, Real.exp eps * rrC eps delta, rrC eps delta, 0] : Fin 4 → ℝ) 0 = delta := rfl
+  have e1 : (![delta, Real.exp eps * rrC eps delta, rrC eps delta, 0] : Fin 4 → ℝ) 1 = Real.exp eps * rrC eps delta := by simp
+  have e2 : (![delta, Real.exp eps * rrC eps delta, rrC eps delta, 0] : Fin 4 → ℝ) 2 = rrC eps delta := by simp
+  have e3 : (![delta, Real.exp eps * rrC eps delta, rrC eps delta, 0] : Fin 4 → ℝ) 3 = 0 := by simp
+  rw [e0, e1, e2, e3]
+  linarith
+
+lemma rrMass1_sum (eps delta : ℝ) : ∑ i, rrMass1 eps delta i = 1 := by
+  rw [Fin.sum_univ_four]
+  simp only [rrMass1]
+  have hadd := rrC_add_exp_mul eps delta
+  have e0 : (![0, rrC eps delta, Real.exp eps * rrC eps delta, delta] : Fin 4 → ℝ) 0 = 0 := rfl
+  have e1 : (![0, rrC eps delta, Real.exp eps * rrC eps delta, delta] : Fin 4 → ℝ) 1 = rrC eps delta := by simp
+  have e2 : (![0, rrC eps delta, Real.exp eps * rrC eps delta, delta] : Fin 4 → ℝ) 2 = Real.exp eps * rrC eps delta := by simp
+  have e3 : (![0, rrC eps delta, Real.exp eps * rrC eps delta, delta] : Fin 4 → ℝ) 3 = delta := by simp
+  rw [e0, e1, e2, e3]
+  linarith
+
+/-- First distribution of the four-outcome construction. -/
+noncomputable def rrR0 (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    PMF (Fin 4) :=
+  PMF.ofFintype (fun i => ENNReal.ofReal (rrMass0 eps delta i)) (by
+    have hnn : ∀ i ∈ Finset.univ, 0 ≤ rrMass0 eps delta i :=
+      fun i _ => rrMass0_nonneg eps delta hδ0 hδ1 i
+    have hsum : ∑ i, rrMass0 eps delta i = 1 := rrMass0_sum eps delta
+    have h := ENNReal.ofReal_sum_of_nonneg hnn
+    simpa [hsum] using h.symm)
+
+/-- Second distribution of the four-outcome construction. -/
+noncomputable def rrR1 (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    PMF (Fin 4) :=
+  PMF.ofFintype (fun i => ENNReal.ofReal (rrMass1 eps delta i)) (by
+    have hnn : ∀ i ∈ Finset.univ, 0 ≤ rrMass1 eps delta i :=
+      fun i _ => rrMass1_nonneg eps delta hδ0 hδ1 i
+    have hsum : ∑ i, rrMass1 eps delta i = 1 := rrMass1_sum eps delta
+    have h := ENNReal.ofReal_sum_of_nonneg hnn
+    simpa [hsum] using h.symm)
+
+lemma rrR0_toReal (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1)
+    (i : Fin 4) :
+    ((rrR0 eps delta hδ0 hδ1) i).toReal = rrMass0 eps delta i := by
+  have h : (rrR0 eps delta hδ0 hδ1) i
+      = ENNReal.ofReal (rrMass0 eps delta i) := rfl
+  rw [h]
+  exact ENNReal.toReal_ofReal (rrMass0_nonneg eps delta hδ0 hδ1 i)
+
+lemma rrR1_toReal (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1)
+    (i : Fin 4) :
+    ((rrR1 eps delta hδ0 hδ1) i).toReal = rrMass1 eps delta i := by
+  have h : (rrR1 eps delta hδ0 hδ1) i
+      = ENNReal.ofReal (rrMass1 eps delta i) := rfl
+  rw [h]
+  exact ENNReal.toReal_ofReal (rrMass1_nonneg eps delta hδ0 hδ1 i)
+
+lemma rrR0_toReal_zero (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    ((rrR0 eps delta hδ0 hδ1) 0).toReal = delta := by
+  rw [rrR0_toReal]
+  rfl
+
+lemma rrR0_toReal_one (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    ((rrR0 eps delta hδ0 hδ1) 1).toReal
+      = Real.exp eps * rrC eps delta := by
+  rw [rrR0_toReal]
+  simp [rrMass0]
+
+lemma rrR0_toReal_two (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    ((rrR0 eps delta hδ0 hδ1) 2).toReal = rrC eps delta := by
+  rw [rrR0_toReal]
+  simp [rrMass0]
+
+lemma rrR0_toReal_three (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    ((rrR0 eps delta hδ0 hδ1) 3).toReal = 0 := by
+  rw [rrR0_toReal]
+  simp [rrMass0]
+
+lemma rrR1_toReal_zero (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    ((rrR1 eps delta hδ0 hδ1) 0).toReal = 0 := by
+  rw [rrR1_toReal]
+  rfl
+
+lemma rrR1_toReal_one (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    ((rrR1 eps delta hδ0 hδ1) 1).toReal = rrC eps delta := by
+  rw [rrR1_toReal]
+  simp [rrMass1]
+
+lemma rrR1_toReal_two (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    ((rrR1 eps delta hδ0 hδ1) 2).toReal
+      = Real.exp eps * rrC eps delta := by
+  rw [rrR1_toReal]
+  simp [rrMass1]
+
+lemma rrR1_toReal_three (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    ((rrR1 eps delta hδ0 hδ1) 3).toReal = delta := by
+  rw [rrR1_toReal]
+  simp [rrMass1]
+
+/-- Event bounds from a total positive-part bound. -/
+lemma sum_le_mul_sum_add_of_posPart (Ω : Type*) [Fintype Ω]
+    (p q : Ω → ℝ) (c delta : ℝ)
+    (h : ∑ w, (p w - c * q w)⁺ ≤ delta) (S : Finset Ω) :
+    (∑ w ∈ S, p w) ≤ c * (∑ w ∈ S, q w) + delta := by
+  have h1 : ∑ w ∈ S, (p w - c * q w) ≤ ∑ w ∈ S, (p w - c * q w)⁺ :=
+    Finset.sum_le_sum fun w _ => le_posPart _
+  have h2 : ∑ w ∈ S, (p w - c * q w)⁺ ≤ ∑ w, (p w - c * q w)⁺ :=
+    Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ S)
+      fun w _ _ => posPart_nonneg _
+  have h3 : ∑ w ∈ S, (p w - c * q w) ≤ delta := le_trans (le_trans h1 h2) h
+  have hexpand : ∑ w ∈ S, (p w - c * q w)
+      = (∑ w ∈ S, p w) - c * (∑ w ∈ S, q w) := by
+    rw [Finset.sum_sub_distrib]
+    congr 1
+    rw [Finset.mul_sum]
+  linarith [h3, hexpand]
+
+lemma rr_c_sub_le (eps delta : ℝ) (hε : 0 ≤ eps) (hδ1 : delta ≤ 1) :
+    rrC eps delta - Real.exp eps * (Real.exp eps * rrC eps delta) ≤ 0 := by
+  have hC0 := rrC_nonneg eps delta hδ1
+  have hE1 : (1 : ℝ) ≤ Real.exp eps := Real.one_le_exp hε
+  have hEE : (1 : ℝ) ≤ Real.exp eps * Real.exp eps := by
+    calc (1 : ℝ) = 1 * 1 := (mul_one 1).symm
+      _ ≤ Real.exp eps * Real.exp eps :=
+        mul_le_mul hE1 hE1 zero_le_one (le_trans zero_le_one hE1)
+  have heq : rrC eps delta - Real.exp eps * (Real.exp eps * rrC eps delta)
+      = rrC eps delta * (1 - Real.exp eps * Real.exp eps) := by ring
+  rw [heq]
+  exact mul_nonpos_of_nonneg_of_nonpos hC0 (by linarith [hEE])
+
+lemma rr_posPart_sum_01 (eps delta : ℝ) (hε : 0 ≤ eps)
+    (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    ∑ i, (rrMass0 eps delta i - Real.exp eps * rrMass1 eps delta i)⁺
+      = delta := by
+  rw [Fin.sum_univ_four]
+  have hE0 : 0 ≤ Real.exp eps := (Real.exp_pos eps).le
+  have e0 : rrMass0 eps delta 0 - Real.exp eps * rrMass1 eps delta 0
+      = delta := by simp [rrMass0, rrMass1]
+  have h0 : (rrMass0 eps delta 0 - Real.exp eps * rrMass1 eps delta 0)⁺
+      = delta := by rw [e0, posPart_of_nonneg hδ0]
+  have e1 : rrMass0 eps delta 1 - Real.exp eps * rrMass1 eps delta 1
+      = 0 := by simp [rrMass0, rrMass1]
+  have h1 : (rrMass0 eps delta 1 - Real.exp eps * rrMass1 eps delta 1)⁺
+      = 0 := by rw [e1]; exact posPart_of_nonpos le_rfl
+  have e2 : rrMass0 eps delta 2 - Real.exp eps * rrMass1 eps delta 2
+      = rrC eps delta - Real.exp eps * (Real.exp eps * rrC eps delta) := by
+    simp [rrMass0, rrMass1]
+  have h2 : (rrMass0 eps delta 2 - Real.exp eps * rrMass1 eps delta 2)⁺
+      = 0 := by
+    rw [e2]
+    exact posPart_of_nonpos (rr_c_sub_le eps delta hε hδ1)
+  have e3 : rrMass0 eps delta 3 - Real.exp eps * rrMass1 eps delta 3
+      = 0 - Real.exp eps * delta := by simp [rrMass0, rrMass1]
+  have h3 : (rrMass0 eps delta 3 - Real.exp eps * rrMass1 eps delta 3)⁺
+      = 0 := by
+    rw [e3]
+    apply posPart_of_nonpos
+    have hED : 0 ≤ Real.exp eps * delta := mul_nonneg hE0 hδ0
+    linarith
+  rw [h0, h1, h2, h3]
+  simp
+
+lemma rr_posPart_sum_10 (eps delta : ℝ) (hε : 0 ≤ eps)
+    (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    ∑ i, (rrMass1 eps delta i - Real.exp eps * rrMass0 eps delta i)⁺
+      = delta := by
+  rw [Fin.sum_univ_four]
+  have hE0 : 0 ≤ Real.exp eps := (Real.exp_pos eps).le
+  have e0 : rrMass1 eps delta 0 - Real.exp eps * rrMass0 eps delta 0
+      = 0 - Real.exp eps * delta := by simp [rrMass0, rrMass1]
+  have h0 : (rrMass1 eps delta 0 - Real.exp eps * rrMass0 eps delta 0)⁺
+      = 0 := by
+    rw [e0]
+    apply posPart_of_nonpos
+    have hED : 0 ≤ Real.exp eps * delta := mul_nonneg hE0 hδ0
+    linarith
+  have e1 : rrMass1 eps delta 1 - Real.exp eps * rrMass0 eps delta 1
+      = rrC eps delta - Real.exp eps * (Real.exp eps * rrC eps delta) := by
+    simp [rrMass0, rrMass1]
+  have h1 : (rrMass1 eps delta 1 - Real.exp eps * rrMass0 eps delta 1)⁺
+      = 0 := by
+    rw [e1]
+    exact posPart_of_nonpos (rr_c_sub_le eps delta hε hδ1)
+  have e2 : rrMass1 eps delta 2 - Real.exp eps * rrMass0 eps delta 2
+      = 0 := by simp [rrMass0, rrMass1]
+  have h2 : (rrMass1 eps delta 2 - Real.exp eps * rrMass0 eps delta 2)⁺
+      = 0 := by rw [e2]; exact posPart_of_nonpos le_rfl
+  have e3 : rrMass1 eps delta 3 - Real.exp eps * rrMass0 eps delta 3
+      = delta := by simp [rrMass0, rrMass1]
+  have h3 : (rrMass1 eps delta 3 - Real.exp eps * rrMass0 eps delta 3)⁺
+      = delta := by rw [e3, posPart_of_nonneg hδ0]
+  rw [h0, h1, h2, h3]
+  simp
+
+theorem rr_kovpair (eps delta : ℝ) (hε : 0 ≤ eps) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) : KOVpair (Fin 4) (rrR0 eps delta hδ0 hδ1) (rrR1 eps delta hδ0 hδ1) eps delta := by
+  rw [kovpair_iff_event_bounds]
+  intro S
+  have h01 : ∑ i, (rrMass0 eps delta i
+      - Real.exp eps * rrMass1 eps delta i)⁺ ≤ delta :=
+    le_of_eq (rr_posPart_sum_01 eps delta hε hδ0 hδ1)
+  have h10 : ∑ i, (rrMass1 eps delta i
+      - Real.exp eps * rrMass0 eps delta i)⁺ ≤ delta :=
+    le_of_eq (rr_posPart_sum_10 eps delta hε hδ0 hδ1)
+  have b01 := sum_le_mul_sum_add_of_posPart (Fin 4)
+    (fun w => rrMass0 eps delta w) (fun w => rrMass1 eps delta w)
+    (Real.exp eps) delta h01 S
+  have b10 := sum_le_mul_sum_add_of_posPart (Fin 4)
+    (fun w => rrMass1 eps delta w) (fun w => rrMass0 eps delta w)
+    (Real.exp eps) delta h10 S
+  have e0 : (∑ w ∈ S, ((rrR0 eps delta hδ0 hδ1) w).toReal)
+      = ∑ w ∈ S, rrMass0 eps delta w :=
+    Finset.sum_congr rfl fun w _ => rrR0_toReal eps delta hδ0 hδ1 w
+  have e1 : (∑ w ∈ S, ((rrR1 eps delta hδ0 hδ1) w).toReal)
+      = ∑ w ∈ S, rrMass1 eps delta w :=
+    Finset.sum_congr rfl fun w _ => rrR1_toReal eps delta hδ0 hδ1 w
+  rw [e0, e1]
+  exact ⟨b01, b10⟩
+
+lemma isTest_fin4 (phi : Fin 4 → ℝ)
+    (h0 : 0 ≤ phi 0 ∧ phi 0 ≤ 1)
+    (h1 : 0 ≤ phi 1 ∧ phi 1 ≤ 1)
+    (h2 : 0 ≤ phi 2 ∧ phi 2 ≤ 1)
+    (h3 : 0 ≤ phi 3 ∧ phi 3 ≤ 1) :
+    IsTest (Fin 4) phi := by
+  intro w
+  fin_cases w
+  · exact h0
+  · exact h1
+  · exact h2
+  · exact h3
+
+lemma rr_alphaOf_vec (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1)
+    (a b c d : ℝ) :
+    alphaOf (Fin 4) (rrR0 eps delta hδ0 hδ1) ![a, b, c, d]
+      = delta * a + (Real.exp eps * rrC eps delta) * b
+        + rrC eps delta * c + 0 * d := by
+  simp only [alphaOf, Fin.sum_univ_four,
+    rrR0_toReal_zero eps delta hδ0 hδ1,
+    rrR0_toReal_one eps delta hδ0 hδ1,
+    rrR0_toReal_two eps delta hδ0 hδ1,
+    rrR0_toReal_three eps delta hδ0 hδ1]
+  have p0 : (![a, b, c, d] : Fin 4 → ℝ) 0 = a := rfl
+  have p1 : (![a, b, c, d] : Fin 4 → ℝ) 1 = b := by simp
+  have p2 : (![a, b, c, d] : Fin 4 → ℝ) 2 = c := by simp
+  have p3 : (![a, b, c, d] : Fin 4 → ℝ) 3 = d := by simp
+  rw [p0, p1, p2, p3]
+
+lemma rr_betaOf_vec (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1)
+    (a b c d : ℝ) :
+    betaOf (Fin 4) (rrR1 eps delta hδ0 hδ1) ![a, b, c, d]
+      = 0 * (1 - a) + rrC eps delta * (1 - b)
+        + (Real.exp eps * rrC eps delta) * (1 - c) + delta * (1 - d) := by
+  simp only [betaOf, Fin.sum_univ_four,
+    rrR1_toReal_zero eps delta hδ0 hδ1,
+    rrR1_toReal_one eps delta hδ0 hδ1,
+    rrR1_toReal_two eps delta hδ0 hδ1,
+    rrR1_toReal_three eps delta hδ0 hδ1]
+  have p0 : (![a, b, c, d] : Fin 4 → ℝ) 0 = a := rfl
+  have p1 : (![a, b, c, d] : Fin 4 → ℝ) 1 = b := by simp
+  have p2 : (![a, b, c, d] : Fin 4 → ℝ) 2 = c := by simp
+  have p3 : (![a, b, c, d] : Fin 4 → ℝ) 3 = d := by simp
+  rw [p0, p1, p2, p3]
+
+lemma rr_regimeIII (eps delta : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) :
+    IsTest (Fin 4) ![0, 1, 1, 1] ∧
+      alphaOf (Fin 4) (rrR0 eps delta hδ0 hδ1) ![0, 1, 1, 1] = 1 - delta ∧
+      betaOf (Fin 4) (rrR1 eps delta hδ0 hδ1) ![0, 1, 1, 1] = 0 := by
+  have htest : IsTest (Fin 4) (![0, 1, 1, 1] : Fin 4 → ℝ) :=
+    isTest_fin4 _ (by simp) (by simp) (by simp) (by simp)
+  have hadd := rrC_add_exp_mul eps delta
+  have hα : alphaOf (Fin 4) (rrR0 eps delta hδ0 hδ1) ![0, 1, 1, 1]
+      = 1 - delta := by
+    rw [rr_alphaOf_vec]
+    simp only [mul_zero, mul_one, zero_add, add_zero]
+    linarith
+  have hβ : betaOf (Fin 4) (rrR1 eps delta hδ0 hδ1) ![0, 1, 1, 1] = 0 := by
+    rw [rr_betaOf_vec]
+    simp
+  exact ⟨htest, hα, hβ⟩
+
+lemma rr_regimeI (eps delta alpha : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1)
+    (hC : 0 < rrC eps delta) (hα0 : 0 ≤ alpha)
+    (hαC : alpha ≤ rrC eps delta) :
+    IsTest (Fin 4) ![0, 0, alpha / rrC eps delta, 1] ∧
+      alphaOf (Fin 4) (rrR0 eps delta hδ0 hδ1)
+        ![0, 0, alpha / rrC eps delta, 1] = alpha ∧
+      betaOf (Fin 4) (rrR1 eps delta hδ0 hδ1)
+        ![0, 0, alpha / rrC eps delta, 1]
+        = 1 - delta - Real.exp eps * alpha := by
+  have hCne : rrC eps delta ≠ 0 := ne_of_gt hC
+  have hdiv0 : 0 ≤ alpha / rrC eps delta :=
+    div_nonneg hα0 (le_of_lt hC)
+  have hdiv1 : alpha / rrC eps delta ≤ 1 := by
+    rw [div_le_one (by linarith [hC])]
+    exact hαC
+  have p2 : ((![0, 0, alpha / rrC eps delta, 1] : Fin 4 → ℝ)) 2
+      = alpha / rrC eps delta := by simp
+  have h2 : 0 ≤ ((![0, 0, alpha / rrC eps delta, 1] : Fin 4 → ℝ)) 2 ∧
+      ((![0, 0, alpha / rrC eps delta, 1] : Fin 4 → ℝ)) 2 ≤ 1 := by
+    rw [p2]
+    exact ⟨hdiv0, hdiv1⟩
+  have htest : IsTest (Fin 4) (![0, 0, alpha / rrC eps delta, 1] : Fin 4 → ℝ) :=
+    isTest_fin4 _ (by simp) (by simp) h2 (by simp)
+  have hadd := rrC_add_exp_mul eps delta
+  have hα : alphaOf (Fin 4) (rrR0 eps delta hδ0 hδ1)
+      ![0, 0, alpha / rrC eps delta, 1] = alpha := by
+    rw [rr_alphaOf_vec]
+    simp only [mul_zero, zero_mul, zero_add, add_zero]
+    field_simp
+  have hEC : (Real.exp eps * rrC eps delta) * (alpha / rrC eps delta)
+      = Real.exp eps * alpha := by
+    field_simp
+  have hβ : betaOf (Fin 4) (rrR1 eps delta hδ0 hδ1)
+      ![0, 0, alpha / rrC eps delta, 1]
+      = 1 - delta - Real.exp eps * alpha := by
+    rw [rr_betaOf_vec]
+    simp only [sub_zero, sub_self, mul_zero, mul_one,
+      zero_add, add_zero]
+    have hexpand : (Real.exp eps * rrC eps delta)
+        * (1 - alpha / rrC eps delta)
+        = (Real.exp eps * rrC eps delta) - Real.exp eps * alpha := by
+      rw [mul_sub, mul_one, hEC]
+    rw [hexpand]
+    linarith
+  exact ⟨htest, hα, hβ⟩
+
+lemma rr_regimeII (eps delta alpha : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1)
+    (hC : 0 < rrC eps delta) (hCα : rrC eps delta < alpha)
+    (hαδ : alpha ≤ 1 - delta) :
+    IsTest (Fin 4) ![0, (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta), 1, 1] ∧
+      alphaOf (Fin 4) (rrR0 eps delta hδ0 hδ1)
+        ![0, (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta), 1, 1]
+        = alpha ∧
+      betaOf (Fin 4) (rrR1 eps delta hδ0 hδ1)
+        ![0, (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta), 1, 1]
+        = Real.exp (-eps) * (1 - delta - alpha) := by
+  have hEpos : 0 < Real.exp eps := Real.exp_pos eps
+  have hdenom : 0 < Real.exp eps * rrC eps delta := mul_pos hEpos hC
+  have hdenom_ne : Real.exp eps * rrC eps delta ≠ 0 := ne_of_gt hdenom
+  have hEne : Real.exp eps ≠ 0 := ne_of_gt hEpos
+  have hnum0 : 0 ≤ alpha - rrC eps delta := le_of_lt (sub_pos.mpr hCα)
+  have hdiv0 : 0 ≤ (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta) :=
+    div_nonneg hnum0 (le_of_lt hdenom)
+  have hadd := rrC_add_exp_mul eps delta
+  have hdiv1 : (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta) ≤ 1 := by
+    rw [div_le_one hdenom]
+    linarith
+  have p1 : ((![0, (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta), 1, 1]
+      : Fin 4 → ℝ)) 1
+      = (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta) := by simp
+  have h1 : 0 ≤ ((![0, (alpha - rrC eps delta)
+      / (Real.exp eps * rrC eps delta), 1, 1] : Fin 4 → ℝ)) 1 ∧
+      ((![0, (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta), 1, 1]
+        : Fin 4 → ℝ)) 1 ≤ 1 := by
+    rw [p1]
+    exact ⟨hdiv0, hdiv1⟩
+  have htest : IsTest (Fin 4)
+      (![0, (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta), 1, 1]
+        : Fin 4 → ℝ) :=
+    isTest_fin4 _ (by simp) h1 (by simp) (by simp)
+  have hcancel : (Real.exp eps * rrC eps delta)
+      * ((alpha - rrC eps delta) / (Real.exp eps * rrC eps delta))
+      = alpha - rrC eps delta := by
+    field_simp
+  have hα : alphaOf (Fin 4) (rrR0 eps delta hδ0 hδ1)
+      ![0, (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta), 1, 1]
+      = alpha := by
+    rw [rr_alphaOf_vec]
+    simp only [mul_zero, mul_one, zero_add, add_zero]
+    rw [hcancel]
+    ring
+  have hEE : Real.exp (-eps) * Real.exp eps = 1 := by
+    rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
+  have h2 : Real.exp eps * (rrC eps delta
+      * (1 - (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta)))
+      = 1 - delta - alpha := by
+    have heq1 : Real.exp eps * (rrC eps delta
+        * (1 - (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta)))
+        = (Real.exp eps * rrC eps delta)
+          * (1 - (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta)) := by
+      ring
+    rw [heq1]
+    have heq2 : (Real.exp eps * rrC eps delta)
+        * (1 - (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta))
+        = (Real.exp eps * rrC eps delta)
+          - (Real.exp eps * rrC eps delta)
+            * ((alpha - rrC eps delta) / (Real.exp eps * rrC eps delta)) := by
+      rw [mul_sub, mul_one]
+    rw [heq2, hcancel]
+    linarith
+  have h3 : Real.exp eps * (Real.exp (-eps) * (1 - delta - alpha))
+      = 1 - delta - alpha := by
+    have hcomm : Real.exp eps * Real.exp (-eps) = 1 := by
+      rw [mul_comm]
+      exact hEE
+    calc Real.exp eps * (Real.exp (-eps) * (1 - delta - alpha))
+        = (Real.exp eps * Real.exp (-eps)) * (1 - delta - alpha) := by ring
+      _ = 1 * (1 - delta - alpha) := by rw [hcomm]
+      _ = 1 - delta - alpha := one_mul _
+  have hEq : Real.exp eps * (rrC eps delta
+      * (1 - (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta)))
+      = Real.exp eps * (Real.exp (-eps) * (1 - delta - alpha)) := by
+    rw [h2, h3]
+  have hcancelEq : rrC eps delta
+      * (1 - (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta))
+      = Real.exp (-eps) * (1 - delta - alpha) :=
+    mul_left_cancel₀ hEne hEq
+  have hβ : betaOf (Fin 4) (rrR1 eps delta hδ0 hδ1)
+      ![0, (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta), 1, 1]
+      = Real.exp (-eps) * (1 - delta - alpha) := by
+    rw [rr_betaOf_vec]
+    simp only [sub_zero, sub_self, mul_zero, mul_one,
+      zero_add, add_zero]
+    exact hcancelEq
+  exact ⟨htest, hα, hβ⟩
+
+theorem rr_tradeoff_le_fEpsDelta (eps delta alpha : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) (hα0 : 0 ≤ alpha) : tradeoff (Fin 4) (rrR0 eps delta hδ0 hδ1) (rrR1 eps delta hδ0 hδ1) alpha ≤ fEpsDelta eps delta alpha := by
+  unfold fEpsDelta
+  by_cases hle : 1 - delta ≤ alpha
+  · obtain ⟨htest, hαeq, hβeq⟩ := rr_regimeIII eps delta hδ0 hδ1
+    have hαle : alphaOf (Fin 4) (rrR0 eps delta hδ0 hδ1) ![0, 1, 1, 1]
+        ≤ alpha := by rw [hαeq]; exact hle
+    have hub := tradeoff_le_betaOf (Fin 4)
+      (rrR0 eps delta hδ0 hδ1) (rrR1 eps delta hδ0 hδ1) alpha
+      ![0, 1, 1, 1] hα0 htest hαle
+    rw [hβeq] at hub
+    exact le_trans hub (le_max_left _ _)
+  · have hlt : alpha < 1 - delta := lt_of_not_ge hle
+    have hδlt : delta < 1 := by linarith [hα0, hlt]
+    have hC : 0 < rrC eps delta := rrC_pos eps delta hδlt
+    by_cases hαC : alpha ≤ rrC eps delta
+    · obtain ⟨htest, hαeq, hβeq⟩ :=
+        rr_regimeI eps delta alpha hδ0 hδ1 hC hα0 hαC
+      have hαle : alphaOf (Fin 4) (rrR0 eps delta hδ0 hδ1)
+          ![0, 0, alpha / rrC eps delta, 1] ≤ alpha := le_of_eq hαeq
+      have hub := tradeoff_le_betaOf (Fin 4)
+        (rrR0 eps delta hδ0 hδ1) (rrR1 eps delta hδ0 hδ1) alpha
+        ![0, 0, alpha / rrC eps delta, 1] hα0 htest hαle
+      rw [hβeq] at hub
+      have hmax : 1 - delta - Real.exp eps * alpha
+          ≤ max 0 (max (1 - delta - Real.exp eps * alpha)
+            (Real.exp (-eps) * (1 - delta - alpha))) :=
+        le_trans (le_max_left _ _) (le_max_right _ _)
+      exact le_trans hub hmax
+    · have hCα : rrC eps delta < alpha := lt_of_not_ge hαC
+      have hαδ : alpha ≤ 1 - delta := le_of_lt hlt
+      obtain ⟨htest, hαeq, hβeq⟩ :=
+        rr_regimeII eps delta alpha hδ0 hδ1 hC hCα hαδ
+      have hαle : alphaOf (Fin 4) (rrR0 eps delta hδ0 hδ1)
+          ![0, (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta), 1, 1]
+          ≤ alpha := le_of_eq hαeq
+      have hub := tradeoff_le_betaOf (Fin 4)
+        (rrR0 eps delta hδ0 hδ1) (rrR1 eps delta hδ0 hδ1) alpha
+        ![0, (alpha - rrC eps delta) / (Real.exp eps * rrC eps delta), 1, 1]
+        hα0 htest hαle
+      rw [hβeq] at hub
+      have hmax : Real.exp (-eps) * (1 - delta - alpha)
+          ≤ max 0 (max (1 - delta - Real.exp eps * alpha)
+            (Real.exp (-eps) * (1 - delta - alpha))) :=
+        le_trans (le_max_right _ _) (le_max_right _ _)
+      exact le_trans hub hmax
+
+theorem rr_tradeoff_eq_fEpsDelta (eps delta alpha : ℝ) (hε : 0 ≤ eps) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) (hα0 : 0 ≤ alpha) (hα1 : alpha ≤ 1) : tradeoff (Fin 4) (rrR0 eps delta hδ0 hδ1) (rrR1 eps delta hδ0 hδ1) alpha = fEpsDelta eps delta alpha := by
+  apply le_antisymm
+  · exact rr_tradeoff_le_fEpsDelta eps delta alpha hδ0 hδ1 hα0
+  · exact kovpair_forward_tradeoff_ge (Fin 4)
+      (rrR0 eps delta hδ0 hδ1) (rrR1 eps delta hδ0 hδ1)
+      eps delta alpha (rr_kovpair eps delta hε hδ0 hδ1) hα0 hα1
+
+theorem rr_tradeoff_le_of_kovpair (Ω : Type*) [Fintype Ω] [DecidableEq Ω] (P Q : PMF Ω) (eps delta alpha : ℝ) (hδ0 : 0 ≤ delta) (hδ1 : delta ≤ 1) (hKov : KOVpair Ω P Q eps delta) (hα0 : 0 ≤ alpha) (hα1 : alpha ≤ 1) : tradeoff (Fin 4) (rrR0 eps delta hδ0 hδ1) (rrR1 eps delta hδ0 hδ1) alpha ≤ tradeoff Ω P Q alpha := by
+  exact (rr_tradeoff_le_fEpsDelta eps delta alpha hδ0 hδ1 hα0).trans
+    (kovpair_forward_tradeoff_ge Ω P Q eps delta alpha hKov hα0 hα1)
+
 end CSLibExt.Privacy.HypothesisTesting

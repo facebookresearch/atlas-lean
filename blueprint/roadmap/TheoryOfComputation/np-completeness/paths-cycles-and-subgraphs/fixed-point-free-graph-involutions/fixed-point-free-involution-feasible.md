@@ -1,0 +1,3 @@
+# Feasible instances of FIXED-POINT-FREE AUTOMORPHISM OF ORDER 2
+
+An instance $(n, E)$, a vertex count $n$ and an edge list $E$, is feasible for FIXED-POINT-FREE AUTOMORPHISM OF ORDER 2 when its graph (on $\{0, \dots, n - 1\}$, with $u$ and $v$ adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$) has an automorphism $f$ of order exactly $2$ that fixes no vertex: $f$ is not the identity, $f \circ f$ is the identity, and $f(v) \ne v$ for every vertex $v$. The instance with no vertices is not feasible, since its only automorphism is the identity, of order $1$; a triangle is not feasible either, although its rotations are automorphisms that fix no vertex.

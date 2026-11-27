@@ -13,9 +13,14 @@ import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
 import Mathlib.Data.Nat.Choose.Cast
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
+public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPolynomial
+public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialConvolution
 public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
+public import MathlibExt.Combinatorics.Enumerative.CosinePowerIntegral
 public import MathlibExt.Combinatorics.Enumerative.ParityWeightedBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.TouchardCatalanIdentity
+public import MathlibExt.Combinatorics.KnuthEvenBinomialReciprocal
 
 /-!
 # Knuth's old sum, generalizations and related sums
@@ -122,18 +127,6 @@ public theorem_wanted integral_sin_half_cpow (u : ℂ) (hu : -1 < u.re) :
     ∫ x in (0 : ℝ)..Real.pi, ((Real.sin (x / 2) : ℂ)) ^ u =
       (2 : ℂ) ^ (-u) * Real.pi * gammaBinom u (u / 2)
 
-/-- **Integral of $\cos^m x$ over $[0, \pi]$.** For every natural number $m$,
-$\int_0^\pi \cos^m x \, dx$ equals $\pi \binom{m}{m/2} / 2^m$ if $m$ is even and $0$ if $m$ is
-odd.
-
-This is equation (9) of the source.
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Lemma 1 (`integers-2026-A19-lem-1`). -/
-public theorem_wanted integral_cos_pow_zero_pi (m : ℕ) :
-    ∫ x in (0 : ℝ)..Real.pi, Real.cos x ^ m =
-      if Even m then Real.pi * (m.choose (m / 2) : ℝ) / 2 ^ m else 0
-
 /-- **Integral of $\cos^u(x/2)\sin^v(x/2)$ over $[0, \pi]$.** For all complex numbers $u$ and $v$
 with $\operatorname{Re} u > -1$ and $\operatorname{Re} v > -1$,
 $$
@@ -174,16 +167,6 @@ public theorem_wanted integral_cos_pow_mul_sin_cpow (m : ℕ) (v : ℂ) (hv : -1
       else 0
 
 /-! ## Knuth's old sum and its generalizations -/
-
-/-- **Knuth's old sum (the Reed–Dawson identity).** For every natural number $n$, the sum
-$\sum_{k=0}^{n} (-1)^k \binom{n}{k} \binom{2k}{k} 2^{-k}$ equals $2^{-n} \binom{n}{n/2}$ if $n$
-is even and $0$ if $n$ is odd.
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Theorem 1 (`integers-2026-A19-thm-1`). -/
-public theorem_wanted knuth_old_sum (n : ℕ) :
-    ∑ k ∈ range (n + 1), (-1 : ℚ) ^ k * (n.choose k : ℚ) * ((2 * k).choose k : ℚ) / 2 ^ k =
-      if Even n then (n.choose (n / 2) : ℚ) / 2 ^ n else 0
 
 /-- **Two-parameter generalization of Knuth's old sum.** For all natural numbers $m$ and $n$ and
 every real number $v > -1$,
@@ -327,16 +310,6 @@ public theorem_wanted sum_neg_one_pow_choose_two_pow_div_add_one (m n : ℕ) :
       else -∑ k ∈ Icc 1 ((m + 1) / 2), (m.choose (2 * k - 1) : ℚ) / (2 * k + n)
 
 /-! ## Complements of Knuth's old sum -/
-
-/-- **Alternating convolution of central binomial coefficients.** For every natural number
-$n$, the integer $\sum_{k=0}^{n} (-1)^k \binom{2k}{k} \binom{2(n-k)}{n-k}$ equals
-$2^n \binom{n}{n/2}$ when $n$ is even and $0$ when $n$ is odd.
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Theorem 3 (`integers-2026-A19-thm-3`). -/
-public theorem_wanted sum_neg_one_pow_centralBinom_mul_centralBinom (n : ℕ) :
-    ∑ k ∈ range (n + 1), (-1 : ℤ) ^ k * ((2 * k).choose k : ℤ) * ((2 * (n - k)).choose (n - k)) =
-      if Even n then 2 ^ n * (n.choose (n / 2) : ℤ) else 0
 
 /-- **Alternating convolution of generalized central binomial coefficients.** For every
 natural number $n$ and every real $v > -1$, the sum
@@ -761,21 +734,6 @@ public theorem_wanted knuth_poly_gammaBinom_one_sub_pow (n : ℕ) (v : ℝ) (hv 
         (n.choose (2 * k) : ℂ) / 2 ^ (2 * k) * ((2 * k).choose k : ℂ) *
           (gammaBinom ((2 * k + v) / 2) k)⁻¹ * x ^ (n - 2 * k)
 
-/-- **Alternating polynomial identity in $1 - x$ with weights $2^k/(k+1)$.** For every natural
-number $n$ and every complex number $x$,
-$$
-\sum_{k=0}^{n} (-1)^{n-k} \binom{n}{k} \frac{2^k}{k+1} (1-x)^{n-k}
-= \sum_{k=0}^{\lfloor n/2 \rfloor} \frac{1}{2k+1} \binom{n}{2k} x^{n-2k}.
-$$
-
-This is equation (45) of the source.
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Corollary 4 (`integers-2026-A19-cor-4`). -/
-public theorem_wanted sum_choose_two_pow_div_succ_one_sub_pow (n : ℕ) (x : ℂ) :
-    ∑ k ∈ range (n + 1), (-1) ^ (n - k) * (n.choose k : ℂ) * 2 ^ k / (k + 1) * (1 - x) ^ (n - k) =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℂ) / (2 * k + 1) * x ^ (n - 2 * k)
-
 /-- **A polynomial identity for weighted central binomial coefficients.** For every natural
 number $n$ and every complex number $x$,
 $$\sum_{k=0}^{n} (-1)^{n-k} \binom{n}{k} \frac{1}{(k+2) 2^k} \binom{2k+2}{k+1} (1-x)^{n-k} =
@@ -963,17 +921,6 @@ public theorem_wanted sum_neg_one_pow_choose_two_pow_centralBinom (n : ℕ) :
         ((2 * k).choose k : ℚ) =
       ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ)
 
-/-- **Even-index against odd-index reciprocal binomial sums.** For every natural number
-$n \ge 1$,
-$$\sum_{k=0}^{\lfloor n/2 \rfloor} \frac{1}{2k+1} \binom{n}{2k} =
-\frac{2^{n-1}}{2^n - 1} \sum_{k=1}^{\lceil n/2 \rceil} \frac{1}{k} \binom{n}{2k-1}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 3 (`integers-2026-A19-prop-3`). -/
-public theorem_wanted sum_choose_even_div_eq_sum_choose_odd_div (n : ℕ) (hn : n ≠ 0) :
-    ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / (2 * k + 1) =
-      2 ^ (n - 1) / (2 ^ n - 1) * ∑ k ∈ Icc 1 ((n + 1) / 2), (n.choose (2 * k - 1) : ℚ) / k
-
 /-- **Alternating binomial sum of Catalan numbers.** For every natural number $n$, in the
 rational numbers
 
@@ -991,25 +938,6 @@ public theorem_wanted sum_neg_one_pow_choose_two_pow_catalan (n : ℕ) :
         2 ^ (n + 1) / 2 ^ (2 * k) * catalan k =
       ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * catalan k
 
-/-- **Even-index binomial sum equal to a scaled central binomial coefficient.** For every
-natural number $n$,
-$$\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{1}{2^{2k}} \binom{2k}{k} =
-\frac{1}{2^n} \binom{2n}{n}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 4 (`integers-2026-A19-prop-4`). -/
-public theorem_wanted sum_choose_even_centralBinom_div_four_pow (n : ℕ) :
-    ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
-      ((2 * n).choose n : ℚ) / 2 ^ n
-
-/-- **Even-index binomial sum with odd reciprocal weights.** For every natural number $n$,
-$$\sum_{k=0}^{\lfloor n/2 \rfloor} \frac{1}{2k+1} \binom{n}{2k} = \frac{2^n}{n+1}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 4 (`integers-2026-A19-prop-4`). -/
-public theorem_wanted sum_choose_even_div_two_mul_add_one (n : ℕ) :
-    ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / (2 * k + 1) = 2 ^ n / (n + 1)
-
 /-- **Even-index binomial sum of weighted central binomial coefficients.** Write
 $C_m = \binom{2m}{m}/(m+1)$ for the $m$-th Catalan number. For every natural number $n$,
 $$\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{1}{(k+1) 2^{2k}} \binom{2k}{k} =
@@ -1021,27 +949,6 @@ public theorem_wanted sum_choose_even_centralBinom_div_succ (n : ℕ) :
     ∑ k ∈ range (n / 2 + 1),
         (n.choose (2 * k) : ℚ) / (k + 1) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
       2 / 2 ^ n / (n + 2) * (2 * n + 1) * catalan n
-
-/-- **Even-index expansion of a weighted central binomial sum.** For every natural number $n$,
-$$\sum_{k=0}^{n} \binom{n}{k} 2^{-k} \binom{2k}{k} =
-\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} 2^{n-4k} \binom{2k}{k}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 5 (`integers-2026-A19-prop-5`). -/
-public theorem_wanted sum_choose_centralBinom_div_two_pow (n : ℕ) :
-    ∑ k ∈ range (n + 1), (n.choose k : ℚ) / 2 ^ k * ((2 * k).choose k : ℚ) =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) * 2 ^ n / 2 ^ (4 * k) * ((2 * k).choose k : ℚ)
-
-/-- **Binomial transform of weighted Catalan numbers.** Write $C_m = \binom{2m}{m}/(m+1)$ for the
-$m$-th Catalan number. For every natural number $n$,
-$$\sum_{k=0}^{n} \binom{n}{k} \frac{2k+1}{k+2} \cdot \frac{2}{2^k} C_k =
-\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{2^n}{2^{4k}} C_k.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 5 (`integers-2026-A19-prop-5`). -/
-public theorem_wanted sum_choose_two_mul_add_one_div_catalan (n : ℕ) :
-    ∑ k ∈ range (n + 1), (n.choose k : ℚ) * (2 * k + 1) / (k + 2) * 2 / 2 ^ k * catalan k =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) * 2 ^ n / 2 ^ (4 * k) * catalan k
 
 /-- **One-parameter extension of the alternating sum of $\binom{n}{k} \binom{2k}{k}$.**
 Write $\binom{u}{w} = \Gamma(u+1)/(\Gamma(w+1)\,\Gamma(u-w+1))$ for the generalized binomial

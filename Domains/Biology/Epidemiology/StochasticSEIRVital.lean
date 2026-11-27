@@ -158,7 +158,9 @@ noncomputable def scaledRate (β σ γ μ s e i r : ℝ) : Channel → ℝ
   | .deathI => μ * i
   | .deathR => μ * r
 
-/-- A bound for every scaled intensity on the box `[0, K]⁴` (`scaledRate_le`). -/
+/-- The number `μ + β K ^ 2 + (σ + γ + μ) K`. For nonnegative `β, σ, γ, μ` it bounds every scaled
+intensity where `0 ≤ s ≤ K`, `0 ≤ i ≤ K`, `e ≤ K` and `r ≤ K`, in particular on the box `[0, K]⁴`
+(`scaledRate_le`). -/
 noncomputable def rateBound (β σ γ μ K : ℝ) : ℝ := μ + β * K ^ 2 + (σ + γ + μ) * K
 
 section ScaledRate
@@ -178,7 +180,8 @@ theorem scaledRate_nonneg {s e i r : ℝ} (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (hγ
   · exact mul_nonneg hμ hi
   · exact mul_nonneg hμ hr
 
-/-- On the box `[0, K]⁴` every scaled intensity is at most `rateBound β σ γ μ K`. -/
+/-- For nonnegative `β, σ, γ, μ`, if `0 ≤ s ≤ K`, `0 ≤ i ≤ K`, `e ≤ K` and `r ≤ K` (in particular on
+the box `[0, K]⁴`), every scaled intensity is at most `rateBound β σ γ μ K`. -/
 theorem scaledRate_le {K s e i r : ℝ} (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (hγ : 0 ≤ γ) (hμ : 0 ≤ μ)
     (hs0 : 0 ≤ s) (hi0 : 0 ≤ i) (hs : s ≤ K) (he : e ≤ K)
     (hi : i ≤ K) (hr : r ≤ K) (c : Channel) :
@@ -203,10 +206,10 @@ theorem scaledRate_le {K s e i r : ℝ} (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (hγ :
   · have := mul_le_mul_of_nonneg_left hi hμ; linarith
   · have := mul_le_mul_of_nonneg_left hr hμ; linarith
 
-/-- **Lipschitz bound for the scaled intensities.** If `0 ≤ s ≤ K` and `|i'| ≤ M`, then every
-channel's intensity at `(s, e, i, r)` differs from that at `(s', e', i', r')` by at most
-`(β (K + M) + σ + γ + μ)` times the `ℓ¹` distance. Only the infection term `β s i` is nonlinear;
-it needs the two bounds. -/
+/-- **Lipschitz bound for the scaled intensities.** For nonnegative `β, σ, γ, μ`, if `0 ≤ s ≤ K` and
+`|i'| ≤ M`, then every channel's intensity at `(s, e, i, r)` differs from that at `(s', e', i', r')`
+by at most `(β (K + M) + σ + γ + μ)` times the `ℓ¹` distance. Only the infection term `β s i` is
+nonlinear; it needs the two bounds. -/
 theorem abs_scaledRate_sub_le {K M s e i r s' e' i' r' : ℝ} (hβ : 0 ≤ β) (hσ : 0 ≤ σ)
     (hγ : 0 ≤ γ) (hμ : 0 ≤ μ) (hs0 : 0 ≤ s) (hsK : s ≤ K) (hi' : |i'| ≤ M) (c : Channel) :
     |scaledRate β σ γ μ s e i r c - scaledRate β σ γ μ s' e' i' r' c| ≤
@@ -258,16 +261,18 @@ end ScaledRate
 
 /-! ### The chain -/
 
-/-- The **intensity of channel `c` at time `x`** along the count paths `(S, E, I, R)` at
-population scale `N`, in Kurtz's density-dependent form
-`N · λ_c(S(x) / N, E(x) / N, I(x) / N, R(x) / N)`. For `N > 0` these are the Markov rates
-`μ N`, `β S I / N`, `σ E`, `γ I`, `μ S`, `μ E`, `μ I`, `μ R` (`rate_birth`, `rate_infection`,
-…). -/
+/-- The **intensity of channel `c` at time `x`** along the count paths `(S, E, I, R)` at population
+scale `N`, in Kurtz's density-dependent form `N · λ_c(S(x) / N, E(x) / N, I(x) / N, R(x) / N)`. For
+`N > 0` these are `μ N`, `β S I / N`, `σ E`, `γ I`, `μ S`, `μ E`, `μ I`, `μ R` (`rate_birth`,
+`rate_infection`, …), the Markov rates of the chain when `β, σ, γ, μ ≥ 0`. At `N = 0` division by
+zero gives `0`, and every intensity is `0`. -/
 noncomputable def rate (β σ γ μ : ℝ) (N : ℕ) (S E I R : ℝ → ℕ) (c : Channel) (x : ℝ) : ℝ :=
   N * scaledRate β σ γ μ ((S x : ℝ) / N) ((E x : ℝ) / N) ((I x : ℝ) / N) ((R x : ℝ) / N) c
 
 /-- The **internal clock of channel `c`** at time `t`: the integrated intensity `∫₀ᵗ rate_c`
-(truncated at `0` so it can be fed to a counting process indexed by `ℝ≥0`). -/
+(truncated at `0` so it can be fed to a counting process indexed by `ℝ≥0`). The integral is oriented
+(for `t < 0` it is `-∫ₜ⁰ rate_c`) and is `0` when the intensity is not integrable between `0` and
+`t`; for nonnegative parameters the clock is `0` for `t ≤ 0`. -/
 noncomputable def clock (β σ γ μ : ℝ) (N : ℕ) (S E I R : ℝ → ℕ) (c : Channel) (t : ℝ) : ℝ≥0 :=
   Real.toNNReal (∫ x in (0 : ℝ)..t, rate β σ γ μ N S E I R c x)
 
@@ -319,7 +324,7 @@ theorem rate_deathR (hN : 0 < N) : rate β σ γ μ N S E I R .deathR x = μ * R
   calc _ = μ * ((N : ℝ) * ((R x : ℝ) / N)) := by ring
     _ = _ := by rw [natCast_mul_div hN]
 
-/-- The clock in scaled form: `A_c(t) = N ∫₀ᵗ λ_c(S / N, E / N, I / N, R / N)`. -/
+/-- The clock in scaled form: `A_c(t) = max(N ∫₀ᵗ λ_c(S / N, E / N, I / N, R / N), 0)`. -/
 theorem clock_eq (c : Channel) (t : ℝ) :
     clock β σ γ μ N S E I R c t = Real.toNNReal (N * ∫ x in (0 : ℝ)..t,
       scaledRate β σ γ μ ((S x : ℝ) / N) ((E x : ℝ) / N) ((I x : ℝ) / N) ((R x : ℝ) / N) c) := by
@@ -328,7 +333,8 @@ theorem clock_eq (c : Channel) (t : ℝ) :
 
 end Rates
 
-/-- The birth clock does not depend on the state: `A_birth(t) = N μ t`. -/
+/-- The birth clock does not depend on the state: `A_birth(t) = max(N μ t, 0)`, which is `N μ t` for
+`μ ≥ 0` and `t ≥ 0`. -/
 theorem clock_birth (β σ γ μ : ℝ) (N : ℕ) (S E I R : ℝ → ℕ) (t : ℝ) :
     clock β σ γ μ N S E I R .birth t = Real.toNNReal (N * (μ * t)) := by
   rw [clock_eq]
@@ -338,20 +344,22 @@ theorem clock_birth (β σ γ μ : ℝ) (N : ℕ) (S E I R : ℝ → ℕ) (t : �
 
 /-- **One sample path of the stochastic SEIR chain with vital dynamics** at population scale `N`
 (Kurtz's random time-change representation; Ethier–Kurtz 1986, ch. 6, (4.1) and ch. 11, (2.1)).
-Given the paths `y c` of the eight driving unit-rate counting processes, the counts
-`S, E, I, R : ℝ → ℕ` satisfy, for `t ≥ 0`, writing `Y_c = y c (clock c t)`,
+Given functions `y c : ℝ≥0 → ℕ` (in the intended reading, the paths of the eight driving
+unit-rate counting processes), the counts `S, E, I, R : ℝ → ℕ` satisfy, for `t ≥ 0`, writing
+`Y_c = y c (clock c t)`,
 
   `S(t) = S(0) + Y_birth - Y_infection - Y_deathS`,
   `E(t) = E(0) + Y_infection - Y_progression - Y_deathE`,
   `I(t) = I(0) + Y_progression - Y_recovery - Y_deathI`,
   `R(t) = R(0) + Y_recovery - Y_deathR`.
 
-When the `y c` are independent unit-rate Poisson processes this is the continuous-time Markov
-chain with the jumps and rates of the module docstring. The counts are natural numbers, so they
-are nonnegative by construction; the paths are required to be measurable (a càdlàg path is), so
-that the clocks are genuine Lebesgue integrals. The population is not conserved, and `N` is the
-scale of the birth rate `μ N` and of the incidence `β S I / N`, not the size of the initial
-population. -/
+When `β, σ, γ, μ ≥ 0`, `N ≥ 1` and the `y c` are independent unit-rate Poisson processes, these
+are the random time-change equations of the continuous-time Markov chain with the jumps and
+rates of the module docstring; each rate vanishes where its jump would make a count negative.
+The counts are natural numbers, so they are nonnegative by construction; the paths are required
+to be measurable (a càdlàg path is), so that the intensities along them are measurable functions
+of time. The population is not conserved, and `N` is the scale of the birth rate `μ N` and of
+the incidence `β S I / N`, not the size of the initial population. -/
 structure IsChainPath (β σ γ μ : ℝ) (N : ℕ) (y : Channel → ℝ≥0 → ℕ) (S E I R : ℝ → ℕ) :
     Prop where
   /-- The susceptible path is measurable. -/
@@ -382,7 +390,8 @@ structure IsChainPath (β σ γ μ : ℝ) (N : ℕ) (y : Channel → ℝ≥0 →
     y .deathR (clock β σ γ μ N S E I R .deathR t)
 
 /-- The `ℓ¹` distance at time `t` between the scaled chain `(S, E, I, R) / N` and a deterministic
-path `(s, e, i, r)`. -/
+path `(s, e, i, r)`. At `N = 0` division by zero gives `0`, so the deviation is
+`|s t| + |e t| + |i t| + |r t|`. -/
 noncomputable def deviation (N : ℕ) (S E I R : ℝ → ℕ) (s e i r : ℝ → ℝ) (t : ℝ) : ℝ :=
   |(S t : ℝ) / N - s t| + |(E t : ℝ) / N - e t| + |(I t : ℝ) / N - i t| +
     |(R t : ℝ) / N - r t|
@@ -480,7 +489,10 @@ theorem rateConst_nonneg {β σ γ μ : ℝ} (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (
     (c : Channel) : 0 ≤ rateConst β σ γ μ c := by
   cases c <;> simp only [rateConst] <;> assumption
 
-/-- The stochastic mass-action system of `network` at system size `N`. -/
+/-- For nonnegative rate constants (`hκ`), the stochastic mass-action system of `network` at system
+size `N`: in the state `z`, reaction `c` has propensity `N κ_c ∏_X ((z_X)_(k_X) / N ^ k_X)` with
+`κ = rateConst β σ γ μ`, `k = networkSrc c` and falling factorials `(n)_(k)`. At `N = 0` division by
+zero gives `0`, and every propensity is `0`. -/
 noncomputable abbrev chainCRN (β σ γ μ : ℝ) (hκ : ∀ c, 0 ≤ rateConst β σ γ μ c) (N : ℕ) :
     StochasticCRNNonExplosion.StochasticCRN Compartment Channel :=
   StochasticCRNLLN.massAction network (rateConst β σ γ μ) hκ N
@@ -500,8 +512,10 @@ theorem networkRate_eq (u : Compartment → ℝ) (c : Channel) :
   cases c <;> simp [network, networkSrc, vec4, rateConst, scaledRate]
   ring
 
-/-- **The rates match exactly.** The stochastic mass-action propensity of each reaction is the
-chain's intensity `N λ_c(z / N)`: `μ N`, `β S I / N`, `σ E`, `γ I`, `μ S`, `μ E`, `μ I`, `μ R`. -/
+/-- **The rates match exactly.** For nonnegative parameters, the stochastic mass-action propensity
+of each reaction is the chain's intensity `N λ_c(z / N)`; for `N ≥ 1` these are `μ N`, `β S I / N`,
+`σ E`, `γ I`, `μ S`, `μ E`, `μ I`, `μ R`, and at `N = 0` (division by zero gives `0`) both sides are
+`0`. -/
 theorem propensity_chainCRN (hκ : ∀ c, 0 ≤ rateConst β σ γ μ c) (N : ℕ) (c : Channel)
     (z : Compartment → ℕ) :
     (chainCRN β σ γ μ hκ N).propensity c z = N * scaledRate β σ γ μ ((z .S : ℝ) / N)
@@ -572,7 +586,8 @@ theorem propensity_toPath (hκ : ∀ c, 0 ≤ rateConst β σ γ μ c) {u : ℝ}
   rw [propensity_chainCRN]
   simp only [toPath, vec4, max_eq_left hu, rate]
 
-/-- **The clocks agree** on `t ≥ 0`. -/
+/-- **The clocks agree** on `t ≥ 0`: for nonnegative parameters (`hκ`), the clock of reaction `c` of
+`chainCRN` along `toPath S E I R` is `clock β σ γ μ N S E I R c t`. -/
 theorem clock_toPath (hκ : ∀ c, 0 ≤ rateConst β σ γ μ c) {c : Channel} {t : ℝ} (ht : 0 ≤ t) :
     StochasticCRNLLN.clock (chainCRN β σ γ μ hκ N) c (toPath S E I R) t =
       clock β σ γ μ N S E I R c t := by
@@ -606,7 +621,8 @@ namespace IsChainPath
 variable {β σ γ μ : ℝ} {N : ℕ} {y : Channel → ℝ≥0 → ℕ} {S E I R : ℝ → ℕ}
 
 /-- **The population grows only by births.** Along a chain path, at every `t ≥ 0`,
-`S + E + I + R ≤ S(0) + E(0) + I(0) + R(0) + Y_birth(N μ t)`. -/
+`S + E + I + R ≤ S(0) + E(0) + I(0) + R(0) + Y_birth(A_birth(t))`, where
+`A_birth(t) = max(N μ t, 0)` (`clock_birth`) is `N μ t` for `μ ≥ 0`. -/
 theorem total_le (h : IsChainPath β σ γ μ N y S E I R) {t : ℝ} (ht : 0 ≤ t) :
     (S t : ℝ) + E t + I t + R t ≤
       (S 0 : ℝ) + E 0 + I 0 + R 0 + y .birth (clock β σ γ μ N S E I R .birth t) := by
@@ -620,11 +636,11 @@ theorem total_le (h : IsChainPath β σ γ μ N y S E I R) {t : ℝ} (ht : 0 ≤
   have d4 : (0 : ℝ) ≤ y .deathR (clock β σ γ μ N S E I R .deathR t) := Nat.cast_nonneg _
   linarith
 
-/-- **The path bridge.** A chain path whose birth counting path is nondecreasing (as unit Poisson
-paths are, almost surely) gives a chain path `toPath S E I R` of the stochastic mass-action system
-`chainCRN` in the sense of `StochasticCRNLLN.IsChainPath`. The propensities along `toPath` are
-constant on `(-∞, 0]`; on `[0, t]` every count is at most the initial total plus the births up to
-time `t` (`total_le`), so they are bounded. -/
+/-- **The path bridge.** For nonnegative parameters (`hκ`), a chain path whose birth counting path
+is nondecreasing (as unit Poisson paths are, almost surely) gives a chain path `toPath S E I R` of
+the stochastic mass-action system `chainCRN` in the sense of `StochasticCRNLLN.IsChainPath`. The
+propensities along `toPath` are constant on `(-∞, 0]`; on `[0, t]` every count is at most the
+initial total plus the births up to time `t` (`total_le`), so they are bounded. -/
 theorem toCRN (h : IsChainPath β σ γ μ N y S E I R) (hκ : ∀ c, 0 ≤ rateConst β σ γ μ c)
     (hmono : Monotone (y .birth)) :
     StochasticCRNLLN.IsChainPath (chainCRN β σ γ μ hκ N) y (toPath S E I R) := by
@@ -717,9 +733,9 @@ theorem toCRN (h : IsChainPath β σ γ μ N y S E I R) (hκ : ∀ c, 0 ≤ rate
       linarith
 
 /-- **Kurtz's pathwise estimate for SEIR with vital dynamics**, for every path and with explicit
-constants. Let `(S, E, I, R)` be a chain path at scale `N ≥ 1` with nondecreasing birth counting
-path and `(s, e, i, r)` a solution of the SEIR system with vital dynamics at scale `1`. Suppose
-that on `[0, T]`
+constants. Let `β, σ, γ, μ ≥ 0` and `η ≥ 0`, let `(S, E, I, R)` be a chain path at scale `N ≥ 1`
+with nondecreasing birth counting path and `(s, e, i, r)` a solution of the SEIR system with
+vital dynamics at scale `1`. Suppose that on `[0, T]`
 
 * `|s| + |e| + |i| + |r| ≤ M`, and
 * every scaled driving count stays within `η` of the identity on the clock range:
@@ -856,9 +872,10 @@ variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbability
   {s e i r : ℝ → ℝ}
 
 /-- **Kurtz's law of large numbers for the stochastic SEIR epidemic with vital dynamics**
-(Kurtz 1970, Thm 3.1; Ethier–Kurtz 1986, ch. 11, Thm 2.1). For each scale `N` let
-`(S N, E N, I N, R N)` be the chain driven by unit-rate Poisson processes `Y N c`, one per
-channel, i.e. almost every sample path solves the random time-change equations of `IsChainPath`.
+(Kurtz 1970, Thm 3.1; Ethier–Kurtz 1986, ch. 11, Thm 2.1). Let `P` be a probability measure and
+`β, σ, γ, μ ≥ 0`. For each scale `N` let `(S N, E N, I N, R N)` be a chain driven by unit-rate
+Poisson processes `Y N c`, one per channel and not necessarily independent, i.e. almost every
+sample path solves the random time-change equations of `IsChainPath`.
 Let `(s, e, i, r)` solve the SEIR system with vital dynamics at scale `1`,
 `s' = μ - β s i - μ s`, `e' = β s i - (μ + σ) e`, `i' = σ e - (μ + γ) i`, `r' = γ i - μ r`.
 If the scaled initial state converges to `(s 0, e 0, i 0, r 0)` in probability, then the scaled
@@ -927,8 +944,9 @@ theorem tendsto_measure_iSup_deviation (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (hγ : 
 omit [IsProbabilityMeasure P] in
 /-- Deterministic initial counts: if almost surely `S N 0 = S₀ N`, …, `R N 0 = R₀ N` and
 `S₀ N / N → s 0`, …, `R₀ N / N → r 0`, then the scaled initial state converges to
-`(s 0, e 0, i 0, r 0)` in probability (the hypothesis `hinit` of `tendsto_measure_deviation`).
-Derived from `StochasticCRNLLN.tendsto_measure_deviation_zero_of_initial`. -/
+`(s 0, e 0, i 0, r 0)` in measure (the hypothesis `hinit` of `tendsto_measure_deviation`). `P` need
+not be a probability measure, and the events are not assumed measurable: `P` is applied as an
+outer measure. Derived from `StochasticCRNLLN.tendsto_measure_deviation_zero_of_initial`. -/
 theorem tendsto_measure_deviation_zero_of_initial {S₀ E₀ I₀ R₀ : ℕ → ℕ}
     (hS₀ : ∀ N, ∀ᵐ ω ∂P, S N ω 0 = S₀ N) (hE₀ : ∀ N, ∀ᵐ ω ∂P, E N ω 0 = E₀ N)
     (hI₀ : ∀ N, ∀ᵐ ω ∂P, I N ω 0 = I₀ N) (hR₀ : ∀ N, ∀ᵐ ω ∂P, R N ω 0 = R₀ N)
@@ -955,16 +973,19 @@ theorem tendsto_measure_deviation_zero_of_initial {S₀ E₀ I₀ R₀ : ℕ →
       (X := fun N ω => toPath (S N ω) (E N ω) (I N ω) (R N ω)) (x := odePath s e i r)
       (z₀ := fun N => vec4 (S₀ N) (E₀ N) (I₀ N) (R₀ N)) hX₀ hz₀ hδ
 
-/-- **The scaled chain settles near the endemic equilibrium.** Combine Kurtz's theorem with the
-global stability of the endemic equilibrium (`SEIRVital.IsSolution.tendsto_endemic`): if
-`σ > 0`, `γ ≥ 0`, `μ > 0`, `R₀ = β σ / ((μ + σ) (μ + γ)) > 1`, the ODE solution starts in the
-open positive orthant and the scaled initial state converges to it in probability, then for
-every `ε > 0` there is `t₀` such that at each fixed time `t ≥ t₀`,
+/-- **When `R₀ > 1` and the scaled initial counts of `S`, `E` and `I` tend to positive limits, the
+scaled chain settles near the endemic equilibrium.** Combine Kurtz's theorem (with `P`, `Y` and
+the chains as in `tendsto_measure_deviation`) with the attractivity of the endemic equilibrium
+from the open positive orthant (`SEIRVital.IsSolution.tendsto_endemic`): if `σ > 0`,
+`γ ≥ 0`, `μ > 0`, `R₀ = β σ / ((μ + σ) (μ + γ)) > 1`, the ODE solution starts with
+`s 0, e 0, i 0 > 0` and the scaled initial state converges to it in probability, then for every
+`ε > 0` there is `t₀` such that at each fixed time `t ≥ t₀`,
 
   `P(|S(t)/N - S*| + |E(t)/N - E*| + |I(t)/N - I*| ≥ ε) → 0`  as `N → ∞`,
 
 where `(S*, E*, I*)` is the endemic equilibrium at scale `1`. The limit is `N → ∞` at fixed `t`;
-nothing is claimed uniformly in `t`. -/
+nothing is claimed uniformly in `t`. The events are not assumed measurable; `P` is applied as an
+outer measure. -/
 theorem eventually_tendsto_measure_endemic (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ)
     (hR : 1 < SEIRVital.R0 β σ γ μ) (hY : ∀ N c, IsPoissonProcess (Y N c) 1 P)
     (hchain : ∀ N, ∀ᵐ ω ∂P, IsChainPath β σ γ μ N (fun c u => Y N c u ω) (S N ω) (E N ω)

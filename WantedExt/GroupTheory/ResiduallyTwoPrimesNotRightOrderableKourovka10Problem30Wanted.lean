@@ -19,6 +19,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.GroupTheory.Index
+public import MathlibExt.GroupTheory.RightOrderable
 public import WantedExt.GroupTheory.KourovkaNotebookShared
 
 @[expose] public section
@@ -37,12 +38,6 @@ order is invariant under right multiplication.
 -/
 
 open MathlibExt.GroupTheory.KourovkaNotebookShared (IsResiduallyFiniteP)
-
-/-- **Right-orderable groups.** A group $G$ is right-orderable when it admits a linear order $\le$
-that is invariant under right multiplication: $a \le b$ implies $ac \le bc$ for all
-$a, b, c \in G$. -/
-def IsRightOrderable (G : Type*) [Group G] : Prop :=
-  ∃ _ : LinearOrder G, ∀ a b c : G, a ≤ b → a * c ≤ b * c
 
 /-- **Medvedev's question on right-orderability (Kourovka 10.30).** The statement that there exist
 a group $G$ and distinct primes $p$ and $q$ such that $G$ is residually a finite $p$-group and

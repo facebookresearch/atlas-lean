@@ -18,10 +18,27 @@ import yaml
 from scripts import next_task
 
 ROOT = Path(__file__).resolve().parent.parent
-# The card files: their tests run in the card job (scripts/test_cards.py), not in the wiki job.
-CARD_INPUTS = ("scripts/cards.py", "scripts/card-moves.jsonl", "scripts/test_cards.py", "docs/cards.md")
+# The card files, whose presence in the build's list and on disk the card job's own test checks
+# (scripts/test_cards.py). On a PR, that job compares the move ledger with the base commit's, which main's runs cannot.
+CARD_INPUTS = ("scripts/cards.py", "scripts/card-moves.jsonl", "scripts/test_cards.py")
 WORKFLOW = ROOT / ".github" / "workflows" / "blueprint-pages.yml"
 GRAPH_SYNC = ROOT / ".github" / "workflows" / "graph-sync.yml"
+# The condition of every step and job that publishes: the repository opted in, and the `changes` job found a run of main
+# itself, comparing the ref exactly (an expression's `==` ignores case).
+PUBLISH = "vars.BLUEPRINT_PAGES == 'true' && needs.changes.outputs.main == 'true'"
+# Where the build writes or fetches its outputs: a file committed there would be read with them.
+OUTPUTS = (".lake/**", "build/**", "site-src/**", ".autoform-publication-backup-site-src/**", "site/**",
+           "site-pages/**", "site-full/**", "mathlib-graph/**", "mathlib-pages-report.json", "v2-dependencies.jsonl",
+           "v2-dependencies.jsonl.gz", "v2-modules.txt")
+
+
+def build_paths(workflow):
+    """The `changes` job's explicit path list, each path matching itself and everything beneath it (`dir/**` marks a
+    directory); Git attributes and Autoform's output markers start the build too. Blank lines and lines starting with
+    `#` are not entries."""
+    decide = next(step for step in workflow["jobs"]["changes"]["steps"] if step.get("id") == "decide")
+    lines = (line.strip() for line in decide["env"]["BUILD_PATHS"].splitlines())
+    return [line for line in lines if line and not line.startswith("#")]
 
 
 class BlueprintWorkflowTests(unittest.TestCase):
@@ -36,53 +53,345 @@ class BlueprintWorkflowTests(unittest.TestCase):
     def step(self, name):
         return next(step for step in self.steps if step.get("name") == name)
 
-    def test_pull_requests_run_the_check_on_wiki_paths_and_merge_groups_never(self):
+    def test_a_pull_request_builds_only_when_it_changes_what_only_its_build_checks(self):
         events = self.workflow["on"]
         # Not a required check, so a merge-group run could not stop a merge; CI's
         # required build imports every v2 module together on each merge group.
         self.assertEqual(set(events), {"schedule", "pull_request", "workflow_dispatch"})
         # main is built once a day at 03:17 UTC (GitHub reads cron in UTC), not on every push.
         self.assertEqual(events["schedule"], [{"cron": "17 3 * * *"}])
-        paths = events["pull_request"]["paths"]
-        for path in (
-            "blueprint/**", "scripts/generate_wiki.py", "scripts/sync_wiki.py",
-            "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
-            "scripts/list_v2_modules.sh",
-            "scripts/check_blueprint_site.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
-            "scripts/mathgraph-map.jsonl", "scripts/import_mathgraph.py", "scripts/check_public_references.py",
-            "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
-            "docs/BLUEPRINT.md", "docs/mathgraph-import.md", ".github/workflows/blueprint-pages.yml",
-            ".github/autoform-ref",
-            "lean-toolchain", "lake-manifest.json", "lakefile.toml",
-        ):
-            self.assertIn(path, paths)
+        # No `paths` filter: GitHub matches one against the first 300 changed files only, so a PR with more changed
+        # files outside the list would hide a listed file after them. The `changes` job reads the whole diff, and the
+        # build's first jobs wait for its answer.
+        for name, event in events.items():
+            if isinstance(event, dict):
+                self.assertNotIn("paths", event)
+                self.assertNotIn("paths-ignore", event)
+        self.assertFalse(events["pull_request"])
+        jobs = self.workflow["jobs"]
+        for name in ("wiki", "mathlib"):
+            self.assertEqual(jobs[name]["needs"], "changes")
+            self.assertEqual(jobs[name]["if"], "needs.changes.outputs.build == 'true'")
+        # Every downstream build job waits for one of those two, directly or through another job, and none overrides a
+        # skip: the card and Mathlib pages jobs have no condition, and the two deployment jobs only the publication one.
+        later = {"mathlib-pages": ["changes", "wiki", "mathlib"], "cards": "wiki",
+                 "deploy": ["changes", "wiki"], "promote": ["changes", "deploy", "mathlib-pages"]}
+        self.assertEqual(set(jobs), {"changes", "scope", "tests", "wiki", "mathlib", *later})
+        for name, needs in later.items():
+            self.assertEqual(jobs[name]["needs"], needs)
+        for name in ("mathlib-pages", "cards"):
+            self.assertNotIn("if", jobs[name])
+        for name in ("deploy", "promote"):
+            self.assertEqual(jobs[name]["if"], PUBLISH)
+        changes = jobs["changes"]
+        self.assertNotIn("if", changes)
+        self.assertNotIn("permissions", changes)
+        self.assertEqual(changes["outputs"], {"build": "${{ steps.decide.outputs.build }}",
+                                              "main": "${{ steps.decide.outputs.main }}"})
+        checkout, decide = changes["steps"]
+        self.assertEqual(checkout["if"], "github.event_name == 'pull_request'")
+        # The event's own merge commit, whose first parent is the base it merges into: all of the PR's commits.
+        self.assertEqual(checkout["with"],
+                         {"persist-credentials": "false", "fetch-depth": "2", "sparse-checkout": ".github"})
+        self.assertEqual(decide["id"], "decide")
+        # Every event decides: a skipped decision would leave `build` unset and skip the daily build.
+        self.assertNotIn("if", decide)
+        # Isolated, so that no module of the checkout, in its working directory, can stand in for one it imports.
+        self.assertIn('python3 -I - "$RUNNER_TEMP/changed-paths"', decide["run"])
+        self.assertEqual(decide["env"]["EVENT"], "${{ github.event_name }}")
+        self.assertNotIn("${{", decide["run"])
+        paths = build_paths(self.workflow)
+        self.assertEqual(len(paths), len(set(paths)))
+        for path in paths:
+            # An exact path, or a directory and all it holds: what the job's matcher reads.
+            self.assertRegex(path, r"\A[^*?\[\]!\s]+(/\*\*)?\Z")
+        self.assertCountEqual(paths, (
+            # Every workflow, which the wiki job's tests read, and the Autoform pin it installs.
+            ".github/workflows/**", ".github/autoform-ref",
+            # The toolchain pins, the Python toolchain uv would read from the root, and the site configuration.
+            "lean-toolchain", "lake-manifest.json", "lakefile.toml", "lakefile.lean", ".python-version",
+            ".python-versions", "uv.toml", "pyproject.toml", ".venv/**", "scripts/__init__.py", "mkdocs.yml",
+            "theme/**", "hooks/**",
+            # Where the build writes or fetches its outputs.
+            *OUTPUTS,
+            # The scripts the jobs run or import, and the files they read beside the wiki.
+            "scripts/generate_wiki.py", "scripts/sync_wiki.py", "scripts/import_mathgraph.py",
+            "scripts/check_public_references.py", "scripts/extract_v2_lean_dependencies.py",
+            "scripts/dump_v2_dependencies.lean", "scripts/list_v2_modules.sh", "scripts/extract_mathlib_graph.py",
+            "scripts/dump_mathlib_dependencies.lean", "scripts/check_blueprint_site.py", "scripts/next_task.py",
+            "scripts/build_mathlib_pages.py", "scripts/mathlib_link.py", "scripts/mathlib_pages.css",
+            "scripts/pack_pages_site.py", "scripts/pages_packing.js", "scripts/pages_size.sh", "scripts/cards.py",
+            # Their tests.
+            "scripts/test_generate_wiki_navigation.py", "scripts/test_generate_wiki_docstrings.py",
+            "scripts/test_sync_wiki.py", "scripts/test_graph_batch.py", "scripts/test_import_mathgraph.py",
+            "scripts/test_extract_v2_lean_dependencies.py", "scripts/test_extract_mathlib_graph.py",
+            "scripts/test_check_blueprint_site_navigation.py", "scripts/test_site_chrome.py",
+            "scripts/test_blueprint_workflow.py", "scripts/test_blueprint_taxonomy.py",
+            "scripts/test_build_mathlib_pages.py", "scripts/test_pack_pages_site.py", "scripts/test_cards.py",
+            "scripts/test_card_pages.py",
+            # The documents the build reads: the importer's tests compare the JSON schemas of the first with the
+            # importer's, and the Mathlib layer job copies the second into its artifact.
+            "docs/mathgraph-import.md", "docs/mathlib-layer.md",
+            # The wiki, and what only a PR's build can check: the two ledgers, which its checks compare with the base
+            # commit's, the wiki's moves and card retirements since the base, which the card check compares with the
+            # move ledger, and its Mathlib source links, which it checks strictly.
+            "scripts/mathgraph-map.jsonl", "scripts/card-moves.jsonl", "blueprint/**",
+        ))
+        extract = next(step for step in jobs["mathlib"]["steps"] if step.get("name") == "Extract the Mathlib layer")
+        self.assertIn("cp docs/mathlib-layer.md mathlib-graph/SCHEMA.md", extract["run"])
         # The reader of the list the job writes: changing it runs the tests that hold the two to one format.
         self.assertIn("scripts/next_task.py", paths)
-        # Every test module the job runs is in the filter, so changing a test runs it.
+        # Every test module the job runs is in the list, so changing a test runs it.
         tests = self.step("Test the wiki scripts")["run"]
         for module in re.findall(r"scripts\.(test_\w+)", tests):
             self.assertIn(f"scripts/{module}.py", paths)
-        # So is every module of scripts/ the importer imports, whose tests run only in this job.
+        # So is every module of scripts/ the importer imports, whose tests run in this job (and, on a PR that skips the
+        # build, in the test job).
         importer = (ROOT / "scripts" / "import_mathgraph.py").read_text()
         modules = re.findall(r"(?m)^    from \. import (\w+)", importer)
         self.assertIn("check_public_references", modules)
         for module in modules:
             self.assertIn(f"scripts/{module}.py", paths)
-        # A path that no longer exists would silently stop triggering the check. The sync baseline
-        # scripts/wiki-sync.json arrives with the wiki's last page batch, and the import map
-        # scripts/mathgraph-map.jsonl with the first imported manifest, so they may not exist yet. The card
-        # inputs are checked by the card tests, in their own job, so that no card file can fail this one.
+        # A path that no longer exists would silently stop building the site. The card job's own test checks its files;
+        # the root has none of uv's Python toolchain files yet, and nothing is committed where the build writes.
         for path in paths:
-            if path in ("scripts/wiki-sync.json", "scripts/mathgraph-map.jsonl") or path in CARD_INPUTS:
+            if path in CARD_INPUTS or path in ("lakefile.lean", ".python-version", ".python-versions", "uv.toml",
+                                               "pyproject.toml", ".venv/**", "scripts/__init__.py", *OUTPUTS):
                 continue
             target = ROOT / path.removesuffix("/**")
             self.assertTrue(target.is_dir() if path.endswith("/**") else target.is_file(), path)
-        for name, event in events.items():
-            if isinstance(event, dict):
-                self.assertNotIn("paths-ignore", event)
-                if name != "pull_request":
-                    self.assertNotIn("paths", event)
-        self.assertNotIn("if", self.job)
+
+    def decide(self, event, base=None, commits=(), ref=None):
+        """Run the `changes` job's decision for `event` on `ref` (by default a PR's merge ref, or main), on a
+        repository whose HEAD, like a PR's merge commit, merges into a commit holding `base` a branch of `commits`
+        (each a dict of path: text, or None to delete); the job's outputs, its step summary, and the paths the merge
+        commit changes, as Git lists them."""
+        script = self.workflow["jobs"]["changes"]["steps"][1]["run"]
+        env_paths = self.workflow["jobs"]["changes"]["steps"][1]["env"]["BUILD_PATHS"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            # No global or system configuration (an excludes file, a signing key) reaches the fixture.
+            env = {**os.environ, "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1",
+                   "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@example.com",
+                   "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@example.com"}
+            changed = []
+            if event == "pull_request":
+                def git(*args):
+                    return subprocess.run(["git", "-C", str(root), *args], env=env, check=True,
+                                          capture_output=True).stdout
+
+                def commit(files, message):
+                    for path, text in files.items():
+                        target = root / path
+                        if text is None:
+                            target.unlink()
+                            continue
+                        target.parent.mkdir(parents=True, exist_ok=True)
+                        target.write_text(text)
+                    git("add", "--all", "--force")
+                    git("commit", "--quiet", "--allow-empty", "-m", message)
+
+                git("init", "--quiet", "--initial-branch=main")
+                commit(base, "base")
+                git("checkout", "--quiet", "-b", "topic")
+                for index, files in enumerate(commits):
+                    commit(files, f"topic {index}")
+                git("checkout", "--quiet", "main")
+                git("merge", "--quiet", "--no-ff", "-m", "merge", "topic")
+                changed = git("diff-tree", "-r", "-z", "--no-commit-id", "--name-only", "HEAD^1", "HEAD", "--").decode()
+                changed = [path for path in changed.split("\0") if path]
+            output, summary = root / "output.txt", root / "summary.md"
+            result = subprocess.run(
+                ["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False,
+                env={**env, "EVENT": event, "BUILD_PATHS": env_paths, "RUNNER_TEMP": directory,
+                     "GITHUB_REF": ref or ("refs/pull/1/merge" if event == "pull_request" else "refs/heads/main"),
+                     "GITHUB_OUTPUT": str(output), "GITHUB_STEP_SUMMARY": str(summary)},
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            # Nothing a changed path names reaches the log, where it could issue a workflow command.
+            self.assertEqual(result.stdout, "")
+            outputs = dict(line.split("=", 1) for line in output.read_text().splitlines())
+            self.assertEqual(set(outputs), {"build", "main"})
+            return outputs, summary.read_text() if summary.exists() else "", changed
+
+    def test_the_changes_job_builds_on_the_listed_paths_from_the_whole_diff(self):
+        row = '{"subject": [{"type": "generic", "uri": "../roadmap/%s/README.md"}], "id": "af_%s"%s}\n'
+        card = ', "extensions": {"org.atlas-wiki": {"card": {}}}'
+        base = {"README.md": "x\n", "scripts/sync_wiki.py": "x\n", "scripts/card-moves.jsonl": "{}\n",
+                "scripts/taxonomy.json": "{}\n", "blueprint/roadmap/a.md": "x\n", "MathlibExt/Old.lean": "x\n",
+                "blueprint/roadmap/T/README.md": "x\n", "blueprint/javascripts/mathjax.js": "x\n",
+                "blueprint/links/T.jsonl": row % ("T", "1" * 24, card),
+                # A file named like the revision the job compares, which `--` keeps from being ambiguous.
+                "HEAD": "x\n"}
+        skipped = [
+            {"scripts/taxonomy.json": "{\"x\": 1}\n"},
+            {"scripts/wiki-sync.json": "{}\n"},
+            {"docs/BLUEPRINT.md": "y\n", "docs/cards.md": "y\n", "README.md": "y\n"},
+            {"MathlibExt/A.lean": "theorem a : True := trivial\n"},
+            {"MathlibExt/Old.lean": None},
+            {"HEAD": "y\n"},
+            # A file whose name starts like a listed directory, or like a listed file, is another path.
+            {"themes/a.css": "y\n", "scripts/sync_wiki.py.orig": "y\n", "hooks.py": "y\n", "blueprints/a.md": "y\n"},
+            # The local install's pins: the workflow installs its own.
+            {"scripts/requirements-blueprint.txt": "mkdocs\n"},
+            # A JSON file Autoform does not take for a marker.
+            {"MathlibExt/Probability/notes.json": "{}\n"},
+            # A module at the root, the decision's working directory, named like one the decision imports (which an
+            # interpreter that builds that module in would not load anyway).
+            {"unicodedata.py": "raise SystemExit('the repository ran')\n"},
+            # A file only named like Git attributes.
+            {"docs/math.gitattributes": "*.md text eol=crlf\n"},
+        ]
+        built = [
+            {"scripts/card-moves.jsonl": "{}\n{}\n"},
+            {"scripts/card-moves.jsonl": "{}\n{}\n", "HEAD": "y\n"},
+            {"scripts/mathgraph-map.jsonl": "{}\n"},
+            {"scripts/sync_wiki.py": "y\n"},
+            {"scripts/sync_wiki.py": None},
+            # A rename: its old path is listed.
+            {"scripts/sync_wiki.py": None, "scripts/sync_wiki2.py": "x\n"},
+            {"theme/partials/nav.html": "y\n"},
+            # A new workflow: the wiki job's tests read them all.
+            {".github/workflows/other.yml": "on: push\n"},
+            # The wiki's other files, each a page or an input of the site: its landing page, a new page beside the
+            # roadmap, the files the sync makes from the taxonomy, and the MathJax inputs autoform render reads (a
+            # macros file the vault did not have, and the old copy of the script). Every published page's Mathlib
+            # source links are checked strictly.
+            {"blueprint/README.md": "y\n"},
+            {"blueprint/supplement.md": "y\n"},
+            {"blueprint/coverage/README.md": "y\n"},
+            {"blueprint/atlas.json": "{}\n"},
+            {"blueprint/tex-macros.json": "{}\n"},
+            {"blueprint/javascripts/mathjax.js": None},
+            {"lean-toolchain": "leanprover/lean4:v0\n"},
+            # A Lake configuration Lake would prefer to lakefile.toml.
+            {"lakefile.lean": "import Lake\n"},
+            # A Python toolchain file uv would read, which changes the Python the jobs run.
+            {".python-version": "3.9\n"},
+            {".python-versions": "3.9\n"},
+            {"uv.toml": "required-version = \"==0.1\"\n"},
+            {"pyproject.toml": "[tool.uv]\n"},
+            {".venv/pyvenv.cfg": "home = /usr/bin\n"},
+            {"scripts/__init__.py": "\n"},
+            # A file Autoform takes for a marker of its output, which hides its directory from the Lean source index.
+            {"MathlibExt/Probability/publication.json": "{}\n"},
+            {"MathlibExt/Probability/manifest.json": "{}\n"},
+            # Matched as Autoform matches them: case-folded.
+            {"MathlibExt/Probability/MANIFEST.JSON": "{}\n"},
+            {"MathlibExt/Probability/Publication.Json": "{}\n"},
+            {"MathlibExt/Probability/manifeſt.JSON": "{}\n"},
+            # A directory named like a marker, once folded, which can hide the marker beside it from Autoform.
+            {"MathlibExt/Probability/MANIFEST.JSON/note.txt": "x\n"},
+            # Git attributes, which can change how the checkout writes what the build reads: a ledger's line endings,
+            # the Autoform pin's, a document the Mathlib layer copies, or a marker's encoding.
+            {".gitattributes": "scripts/mathgraph-map.jsonl eol=crlf\n"},
+            {"scripts/.gitattributes": "*.jsonl eol=crlf\n"},
+            {".github/.gitattributes": "autoform-ref text eol=crlf\n"},
+            {"docs/.gitattributes": "*.md text eol=crlf\n"},
+            {"MathlibExt/.gitattributes": "manifest.json working-tree-encoding=UTF-16LE\n"},
+            # A file committed where the build writes its outputs: a page there would meet the strict link check.
+            {"site/notes.html": "<p>x</p>\n"},
+            {"build/lean-dependencies.json": "{}\n"},
+            # A file in the place of a listed directory, such as the output directory MkDocs must create, and a
+            # directory in the place of a listed file, such as the report the Mathlib pages write.
+            {"site": "x\n"},
+            {"build": "x\n"},
+            {"site-full": "x\n"},
+            {"mathlib-pages-report.json/notes.txt": "x\n"},
+            # The copy of site-src/ autoform render keeps while it writes, which it would restore over its output.
+            {".autoform-publication-backup-site-src": "x\n"},
+            {".autoform-publication-backup-site-src/notes.txt": "x\n"},
+            # Pages edited or added: only a PR's build fails on a Mathlib source link that disagrees with its
+            # declaration's title (docs/mathlib-pages.md).
+            {"blueprint/roadmap/a.md": "y\n", "blueprint/roadmap/b.md": "y\n"},
+            # A page removed or moved, with no annotation changed: the card job's strict check refuses a move with no
+            # row in the move ledger, even of a page with no id that Git sees renamed
+            # (scripts/test_cards.py, test_a_page_git_saw_renamed_needs_its_row_even_without_an_id).
+            {"blueprint/roadmap/a.md": None},
+            {"blueprint/roadmap/a.md": None, "blueprint/roadmap/moved/a.md": "x\n"},
+            # A card that stops being one, its folder page and id left in place: the strict check refuses it with no
+            # retirement row (docs/cards.md#move-ledger). Any annotation change builds, a new row's too.
+            {"blueprint/links/T.jsonl": row % ("T", "1" * 24, "")},
+            {"blueprint/links/T.jsonl": row % ("T", "1" * 24, card) + row % ("U", "2" * 24, "")},
+            {"blueprint/links/U.jsonl": row % ("U", "2" * 24, "")},
+        ]
+        for head in skipped + built:
+            with self.subTest(head=sorted(head)[:3]):
+                outputs, summary, changed = self.decide("pull_request", base, [head])
+                self.assertEqual(sorted(changed), sorted(head))
+                self.assertEqual(outputs, {"build": "true" if head in built else "false", "main": "false"})
+                self.assertTrue(summary)
+                # Only the list's own entries are written, never a changed path (unless it is one of them).
+                names = [pattern.removesuffix("/**") for pattern in build_paths(self.workflow)]
+                for path in changed:
+                    if path not in names:
+                        self.assertNotIn(path, summary)
+        # A path beneath a listed directory is named by the directory's entry alone.
+        _, summary, _ = self.decide("pull_request", base, [{"blueprint/roadmap/private-name.md": "y\n"}])
+        self.assertEqual(summary, "The PR changes `blueprint/**`: the site is built.\n")
+        # Each reason is given once, a listed entry by its name, the others with no path.
+        _, summary, _ = self.decide("pull_request", base,
+                                    [{"docs/mathlib-layer.md": "y\n", "docs/.gitattributes": "* -text\n",
+                                      "MathlibExt/x/manifest.json": "{}\n"}])
+        self.assertEqual(summary.splitlines(), [
+            "The PR changes `docs/mathlib-layer.md`: the site is built.",
+            "The PR changes Git attributes: the site is built.",
+            "The PR changes a file with the name of an Autoform output marker: the site is built."])
+        # Past the first 300 changed paths, all a `paths` filter reads: the ledger sorts after the Lean files.
+        lean = {f"MathlibExt/F{n:03}.lean": "y\n" for n in range(400)}
+        outputs, _, changed = self.decide("pull_request", base, [{**lean, "scripts/card-moves.jsonl": "{}\n{}\n"}])
+        self.assertEqual((len(changed), changed.index("scripts/card-moves.jsonl")), (401, 400))
+        self.assertEqual(outputs["build"], "true")
+        outputs, _, changed = self.decide("pull_request", base, [lean])
+        self.assertEqual((len(changed), outputs["build"]), (400, "false"))
+        # A ledger changed by an earlier commit of the PR than its last: the merge commit holds them all.
+        outputs, _, changed = self.decide("pull_request", base, [{"scripts/card-moves.jsonl": "{}\n{}\n"},
+                                                                 {"MathlibExt/A.lean": "z\n"}])
+        self.assertEqual((sorted(changed), outputs["build"]), (["MathlibExt/A.lean", "scripts/card-moves.jsonl"],
+                                                               "true"))
+        # Scheduled and manual runs always build, on any branch, and read no diff.
+        for event in ("schedule", "workflow_dispatch"):
+            for ref in ("refs/heads/main", "refs/heads/topic"):
+                outputs, summary, changed = self.decide(event, ref=ref)
+                self.assertEqual((outputs["build"], summary, changed), ("true", "", []))
+
+    def test_a_pull_request_that_skips_the_build_still_runs_the_unit_tests(self):
+        # Some of the build's unit tests read files the list leaves out, as scripts/test_blueprint_taxonomy.py and
+        # scripts/test_build_mathlib_pages.py read scripts/taxonomy.json: a PR that skips the build runs them all on
+        # their own, with the steps of the jobs that own them.
+        jobs = self.workflow["jobs"]
+        tests = jobs["tests"]
+        self.assertEqual((tests["name"], tests["needs"], tests["if"]), (
+            "test the site scripts", ["changes", "scope"],
+            "${{ !cancelled() && needs.changes.outputs.build == 'false' && needs.scope.outputs.site_tests != 'false' }}"))
+        self.assertNotIn("permissions", tests)
+        # The wiki job's first three steps: its checkout, the Autoform pin and uv.
+        self.assertEqual(tests["steps"][:3], jobs["wiki"]["steps"][:3])
+        self.assertEqual([step.get("name") for step in tests["steps"][:3]],
+                         ["Check out project", "Read the reviewed Autoform pin", "Install uv"])
+        # Then every unit test step of the build's jobs, as written there.
+        unit = [step for name in ("wiki", "mathlib", "mathlib-pages", "cards") for step in jobs[name]["steps"]
+                if "python -m unittest" in step.get("run", "")]
+        self.assertEqual(tests["steps"][3:], unit)
+        self.assertEqual([step["name"] for step in unit], ["Test the wiki scripts", "Test the Mathlib pages script",
+                                                           "Test the Pages packing script", "Test the card scripts"])
+
+    def test_only_a_run_of_main_itself_may_publish(self):
+        # The ref is compared exactly: GitHub's expressions would take `Main` for `main`.
+        for event, ref, main in (("schedule", "refs/heads/main", "true"),
+                                 ("workflow_dispatch", "refs/heads/main", "true"),
+                                 ("workflow_dispatch", "refs/heads/Main", "false"),
+                                 ("workflow_dispatch", "refs/heads/MAIN", "false"),
+                                 ("workflow_dispatch", "refs/heads/main-2", "false"),
+                                 ("workflow_dispatch", "refs/heads/topic/refs/heads/main", "false"),
+                                 ("workflow_dispatch", "refs/tags/main", "false"),
+                                 ("merge_group", "refs/heads/main", "false")):
+            with self.subTest(event=event, ref=ref):
+                self.assertEqual(self.decide(event, ref=ref)[0]["main"], main)
+        # Never a PR, whatever its ref.
+        for ref in ("refs/pull/1/merge", "refs/heads/main"):
+            outputs, _, _ = self.decide("pull_request", {"README.md": "x\n"}, [{"README.md": "y\n"}], ref=ref)
+            self.assertEqual(outputs["main"], "false")
 
     def test_reviewed_pin_is_a_full_sha(self):
         pin = (ROOT / ".github" / "autoform-ref").read_text().strip()
@@ -340,7 +649,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
     def test_deployment_is_opt_in_and_never_runs_on_pr_or_merge_group(self):
         jobs = self.workflow["jobs"]
         deploy, promote = jobs["deploy"], jobs["promote"]
-        self.assertEqual(deploy["needs"], "wiki")
+        self.assertEqual(deploy["needs"], ["changes", "wiki"])
         for job in (deploy, promote):
             self.assertEqual(job["permissions"], {
                 "pages": "write", "id-token": "write", "deployments": "read", "contents": "read",
@@ -349,13 +658,9 @@ class BlueprintWorkflowTests(unittest.TestCase):
         upload = next(step for step in jobs["mathlib-pages"]["steps"] if step.get("name") == "Upload the packed site")
         conditions = [deploy["if"], promote["if"], self.step("Upload Pages artifact")["if"], upload["if"]]
         for condition in conditions:
-            for clause in ("vars.BLUEPRINT_PAGES == 'true'",
-                           "github.ref == 'refs/heads/main'",
-                           "github.event_name != 'pull_request'",
-                           "github.event_name != 'merge_group'"):
-                self.assertIn(clause, condition)
-            # Scheduled and manual runs of main publish, so no clause may require a push.
-            self.assertNotIn("push", condition)
+            # Opted in by the repository, and a scheduled or manual run of main, never a PR or a merge group: the
+            # `changes` job decides (test_only_a_run_of_main_itself_may_publish). No clause requires a push.
+            self.assertEqual(condition, PUBLISH)
         # Each job first reads the commit of the published site and fails, publishing nothing, unless the site is of
         # this run's commit or of an ancestor: a re-run never takes the site back, and a deployment job that succeeds
         # is one that published. It runs no repository code.
@@ -449,10 +754,11 @@ elif "/compare/" in path:
         self.assertEqual(len(receipts.splitlines()), 2)
 
     def test_the_mathlib_layer_cannot_hold_back_the_site(self):
-        # The layer has its own job and check beside the wiki job, and deployment waits for the wiki job alone.
+        # The layer has its own job and check beside the wiki job, and deployment waits for the wiki job alone. Both
+        # jobs wait only for the decision whether to build.
         jobs = self.workflow["jobs"]
         mathlib = jobs["mathlib"]
-        self.assertNotIn("needs", mathlib)
+        self.assertEqual((mathlib["needs"], self.job["needs"]), ("changes", "changes"))
         self.assertEqual(mathlib["timeout-minutes"], self.job["timeout-minutes"])
         self.assertDeploysWhateverTheMathlibJobsDo()
         self.assertNotIn("permissions", mathlib)
@@ -500,14 +806,14 @@ elif "/compare/" in path:
         self.assertEqual(steps["Keep the Mathlib layer"]["with"]["name"], "mathlib-graph")
         self.assertEqual(steps["Keep the Mathlib layer"]["if"], "always()")
 
-    def test_the_ready_tasks_are_published_with_the_site_and_kept_on_every_run(self):
+    def test_the_ready_tasks_are_published_with_the_site_and_kept_on_every_build(self):
         # What the tools own (docs/BLUEPRINT.md): Autoform's task list on the checkout after lean-facts, published
         # as tasks.json.
         name = "List the ready formalization tasks"
         step = self.step(name)
         script = step["run"]
         self.assertIn("set -euo pipefail", script)
-        self.assertIn('uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" autoform work list . --json', script)
+        self.assertIn('uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" autoform work list blueprint --json', script)
         self.assertIn("cp build/tasks.json site-src/tasks.json", script)
         # The format it accepts is the one next_task.py reads.
         self.assertIn(f'.schema != "{next_task.SCHEMA}"', script)
@@ -526,14 +832,18 @@ elif "/compare/" in path:
         self.assertEqual((keep["with"]["name"], keep["with"]["path"], keep["with"]["if-no-files-found"]),
                          ("tasks", "build/tasks.json", "error"))
 
-    def run_task_step(self, output: str, status: int = 0):
-        """Run the task step in a fixture checkout, with an Autoform that writes *output* and exits with *status*."""
+    def run_task_step(self, output: str, status: int = 0, files: dict[str, str] | None = None):
+        """Run the task step in a fixture checkout of *files*, with an Autoform that writes *output* and exits with
+        *status*."""
         if shutil.which("jq") is None:
             self.skipTest("jq is not installed")
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         root = Path(directory.name)
         subprocess.run(["git", "init", "-q", str(root)], check=True)
+        for name, text in (files or {}).items():
+            (root / name).write_text(text)
+        subprocess.run(["git", "-C", str(root), "add", "--all"], check=True)
         subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q",
                         "--allow-empty", "-m", "fixture"], check=True)
         for folder in ("build", "site-src", "bin"):
@@ -547,7 +857,7 @@ elif "/compare/" in path:
                                 env=environment, text=True, capture_output=True, check=False)
         git = lambda *args: subprocess.run(["git", "-C", str(root), *args], text=True, capture_output=True,
                                            check=True).stdout.strip()
-        return root, result, git("rev-parse", "HEAD"), git("log", "-1", "--format=%cI", "HEAD")
+        return root, result, git("rev-parse", "--verify", "HEAD"), git("log", "-1", "--format=%cI", "HEAD", "--")
 
     def test_tasks_json_is_autoforms_list_with_the_commit_and_the_pin(self):
         work = {"schema": next_task.SCHEMA, "open_statements": False, "source_revision": "f" * 64,
@@ -557,10 +867,21 @@ elif "/compare/" in path:
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual((root / "uvx-arguments").read_text().split(), [
             "--from", "git+https://example.invalid/autoform.git@" + "a" * 40,
-            "autoform", "work", "list", ".", "--json"])
+            "autoform", "work", "list", "blueprint", "--json"])
         published = json.loads((root / "site-src" / "tasks.json").read_text())
         self.assertEqual(published, {**work, "commit": commit, "commit_date": date, "autoform_ref": "a" * 40})
         self.assertEqual((root / "build" / "tasks.json").read_text(), (root / "site-src" / "tasks.json").read_text())
+
+    def test_a_file_named_head_leaves_the_task_list_whole(self):
+        work = {"schema": next_task.SCHEMA, "open_statements": False, "source_revision": "f" * 64,
+                "items": [{"article_id": "af_" + "0" * 24, "node_id": "Algebra/t", "phase": "proof", "ready": True,
+                           "state": "can_prove", "lean_targets": [{"declaration": "Ext.t", "source_file": None}]}]}
+        root, result, commit, date = self.run_task_step(json.dumps(work), files={"HEAD": "x\n"})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        published = json.loads((root / "site-src" / "tasks.json").read_text())
+        self.assertTrue(date)
+        self.assertEqual((published["commit"], published["commit_date"]), (commit, date))
+        next_task.load_tasks(str(root / "site-src" / "tasks.json"))
 
     def test_a_refused_or_unknown_task_list_fails_the_build(self):
         task = {"article_id": "af_" + "0" * 24, "node_id": "Algebra/t", "phase": "proof", "ready": True,
@@ -614,7 +935,7 @@ elif "/compare/" in path:
         cards = jobs["cards"]
         self.assertEqual(cards["name"], "check the cards")
         self.assertEqual(cards["needs"], "wiki")
-        self.assertEqual(jobs["deploy"]["needs"], "wiki")
+        self.assertEqual(jobs["deploy"]["needs"], ["changes", "wiki"])
         self.assertNotIn("permissions", cards)
         self.assertNotIn("continue-on-error", cards)
         # The card tests do not run in the wiki job. It checks the move ledger the site serves and derives the card
@@ -713,19 +1034,15 @@ elif "/compare/" in path:
         full = steps["Keep the site with its Mathlib pages"]
         self.assertIn("actions/upload-artifact@", full["uses"])
         self.assertEqual((full["with"]["name"], full["with"]["path"]), ("blueprint-site-full", "site-full"))
-        for clause in ("github.ref == 'refs/heads/main'",
-                       "github.event_name != 'pull_request'",
-                       "github.event_name != 'merge_group'"):
-            self.assertIn(clause, full["if"])
-        self.assertNotIn("BLUEPRINT_PAGES", full["if"])
-        self.assertNotIn("push", full["if"])
+        # A run of main, as the `changes` job decides, whether or not the site is published.
+        self.assertEqual(full["if"], "needs.changes.outputs.main == 'true'")
 
     def test_the_mathlib_pages_cannot_hold_back_the_site(self):
         # The pages have their own read-only job after the wiki and the Mathlib layer; deployment waits for the
         # wiki job alone, and the wiki job never runs the pages script.
         jobs = self.workflow["jobs"]
         pages = jobs["mathlib-pages"]
-        self.assertEqual(pages["needs"], ["wiki", "mathlib"])
+        self.assertEqual(pages["needs"], ["changes", "wiki", "mathlib"])
         self.assertDeploysWhateverTheMathlibJobsDo()
         for key in ("permissions", "continue-on-error", "if"):
             self.assertNotIn(key, pages)
@@ -738,7 +1055,7 @@ elif "/compare/" in path:
         fetched = {(s["with"]["name"], s["with"]["path"]) for s in pages["steps"] if "download-artifact@" in s.get("uses", "")}
         self.assertEqual(fetched, {("blueprint-site", "site"), ("mathlib-graph", "mathlib-graph")})
         self.assertIn("python -m unittest scripts.test_build_mathlib_pages", steps["Test the Mathlib pages script"]["run"])
-        self.assertIn("scripts/test_build_mathlib_pages.py", self.workflow["on"]["pull_request"]["paths"])
+        self.assertIn("scripts/test_build_mathlib_pages.py", build_paths(self.workflow))
         build = steps["Build the Mathlib pages"]["run"]
         self.assertIn("build_mathlib_pages.py build", build)
         self.assertIn("github.event_name == 'pull_request' && '--strict-links' || ''", build)
@@ -750,9 +1067,9 @@ elif "/compare/" in path:
         # wiki job's, after the check that it gives back every file of the full site and of its size. The full site is
         # kept as it is before it is packed.
         self.assertIn("python -m unittest scripts.test_pack_pages_site", steps["Test the Pages packing script"]["run"])
-        self.assertIn("scripts/test_pack_pages_site.py", self.workflow["on"]["pull_request"]["paths"])
+        self.assertIn("scripts/test_pack_pages_site.py", build_paths(self.workflow))
         for path in ("scripts/pack_pages_site.py", "scripts/pages_packing.js", "scripts/pages_size.sh"):
-            self.assertIn(path, self.workflow["on"]["pull_request"]["paths"])
+            self.assertIn(path, build_paths(self.workflow))
         self.assertEqual(steps["Pack the full site for GitHub Pages"]["run"],
                          "python scripts/pack_pages_site.py pack site-full site-pages")
         checked = steps["Check the packed site"]["run"]
@@ -777,12 +1094,12 @@ elif "/compare/" in path:
         # job succeeded, a second job publishes that job's packed full site in its place.
         jobs = self.workflow["jobs"]
         deploy, promote = jobs["deploy"], jobs["promote"]
-        self.assertEqual(deploy["needs"], "wiki")
+        self.assertEqual(deploy["needs"], ["changes", "wiki"])
         self.assertNotIn("mathlib", deploy["if"])
         self.assertNotIn("with", next(step for step in deploy["steps"] if step["name"] == "Deploy"))
         self.assertNotIn("name", self.step("Upload Pages artifact").get("with", {}))
         self.assertEqual(promote["name"], "publish the full site")
-        self.assertEqual(promote["needs"], ["deploy", "mathlib-pages"])
+        self.assertEqual(promote["needs"], ["changes", "deploy", "mathlib-pages"])
         for function in ("always()", "!cancelled()", "failure()"):
             self.assertNotIn(function, promote["if"])
         self.assertEqual(promote["if"], deploy["if"])
@@ -851,13 +1168,31 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             if "uses" in step:
                 self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
 
-    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main"):
+    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main",
+                  changed: str | None = None, event: str = "pull_request", lean: bool = True):
         """Run the check's step with a uv that prints a verdict, writes *report* as the check's JSON report, if any,
-        and exits with *status*; returns the result, the job summary and the arguments uv got."""
+        and exits with *status*, in a repository whose HEAD changes the files *changed* names, beside a README and,
+        when *lean*, a Lean file, from the commit BASE names; with a git that fails when *changed* is None. Returns the
+        result, the job summary and the arguments uv got."""
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         root = Path(directory.name)
         (root / "bin").mkdir()
+        base = "b" * 40
+        if changed is None:
+            (root / "bin" / "git").write_text("#!/bin/sh\nexit 128\n")
+            (root / "bin" / "git").chmod(0o755)
+        else:
+            git = lambda *args: subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t",
+                                                *args], check=True, capture_output=True, text=True).stdout.strip()
+            git("init", "-q", "-b", "main")
+            git("commit", "-q", "--allow-empty", "-m", "base")
+            base = git("rev-parse", "HEAD")
+            for path in [*(["MathlibExt/Algebra/Changed.lean"] if lean else []), "README.md", *changed.split()]:
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_text("changed\n")
+            git("add", "-A")
+            git("commit", "-q", "-m", "change")
         if report is not None:
             (root / "report.json").write_text(report)
         (root / "bin" / "uv").write_text(f'#!/bin/sh\necho "$@" > uv-arguments\necho "In step: no"\necho "error: a link" >&2\n'
@@ -867,9 +1202,10 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         summary = root / "summary.md"
         result = subprocess.run(
             ["bash", "-c", self.steps["Check that the graph is in step with the Lean"]["run"]], cwd=root, text=True,
-            capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": "b" * 40,
+            capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": base,
                                       "AUTOFORM_SOURCE": "https://example.invalid/autoform.git", "AUTOFORM_REF": "a" * 40,
-                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_FETCH": fix_fetch})
+                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_FETCH": fix_fetch,
+                                      "EVENT": event})
         return result, summary.read_text(), (root / "uv-arguments").read_text().split()
 
     def test_the_check_output_can_neither_issue_a_command_nor_end_the_summary_block(self):
@@ -919,6 +1255,53 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             self.assertIn("::warning title=Graph sync::The check could not run", result.stdout)
             self.assertIn(f"The check could not run (exit {status})", summary)
             self.assertNotIn("merge-base", summary)
+
+    def test_a_lean_change_or_a_merge_group_is_held_only_to_the_errors(self):
+        # A Lean pull request changes no graph file but links files, which it changes only for the declarations it
+        # renames, moves or removes, and a merge group holds others' changes: their missing pages are the next
+        # graph-sync batch's (docs/BLUEPRINT.md, Maintaining articles), so the check passes and asks for no sync.
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        pages = '{"in_step": false, "errors": [], "missing": ["Ext.fresh"], "changed": ["Ext.edited (Algebra/edited.md)"]}'
+        for changed, event in (("", "pull_request"), ("blueprint/links/Algebra.jsonl", "pull_request"),
+                               ("blueprint/roadmap/Algebra/fresh.md", "merge_group")):
+            with self.subTest(changed=changed, event=event):
+                result, summary, _ = self.run_check(1, pages, changed=changed, event=event)
+                self.assertEqual(result.returncode, 0)
+                self.assertNotIn("::warning", result.stdout)
+                self.assertIn("the next graph-sync\nbatch writes its new declarations' pages", summary)
+                self.assertNotIn("merge-base", summary)
+                # The pages whose docstring changed are still listed, for the reviewer.
+                self.assertIn("for the reviewer to check", summary)
+                self.assertIn("\n    Ext.edited (Algebra/edited.md)\n", summary)
+        # What the errors name is the change's to fix, by hand: the summary shows them alone, with no command that
+        # would write the sync's output.
+        errors = ('{"in_step": false, "errors": ["blueprint/links/Algebra.jsonl:3 links Ext.gone", "two\\n```"], '
+                  '"changed": ["Ext.edited (Algebra/edited.md)"]}')
+        for event in ("pull_request", "merge_group"):
+            with self.subTest(event=event):
+                result, summary, _ = self.run_check(1, errors, changed="", event=event)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("::warning title=Graph sync::This change's Lean leaves links or markers behind",
+                              result.stdout)
+                self.assertIn("\n    blueprint/links/Algebra.jsonl:3 links Ext.gone\n    two\n    ```\n", summary)
+                self.assertIn("A Lean pull request runs no sync", summary)
+                self.assertIn("\n    Ext.edited (Algebra/edited.md)\n", summary)
+                self.assertNotIn("In step: no", summary)
+                self.assertNotIn("error: a link", summary)
+                self.assertNotIn("merge-base", summary)
+        # A graph pull request, which changes other graph files (the links' defaults or a page count) or links files
+        # with no Lean, or a change git cannot read, is held to the sync.
+        for changed, lean in (("blueprint/links/Algebra.jsonl scripts/taxonomy.json", True),
+                              ("blueprint/links/_defaults.json", True), ("blueprint/roadmap/Algebra/fresh.md", True),
+                              ("blueprint/links/Algebra.jsonl", False), (None, True)):
+            with self.subTest(changed=changed, lean=lean):
+                result, summary, _ = self.run_check(1, pages, changed=changed, lean=lean)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("::warning title=Graph sync::The graph is not in step", result.stdout)
+                self.assertIn('--base "$(git merge-base FETCH_HEAD HEAD)"', summary)
+                self.assertIn("    In step: no\n", summary)
+                self.assertNotIn("for the reviewer to check", summary)
 
     def find_base(self, event: str, env=lambda main, merge: {}):
         """Run the step that finds the base in a repository whose HEAD merges a branch into main, as a pull request's

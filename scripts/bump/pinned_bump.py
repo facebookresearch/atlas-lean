@@ -78,11 +78,13 @@ import difflib
 import hashlib
 import json
 import os
+import random
 import re
 import shutil
 import signal
 import subprocess
 import sys
+import time
 import tomllib
 from pathlib import Path, PurePosixPath
 
@@ -2153,19 +2155,135 @@ def current_tag(root: Path, config: dict) -> str:
     return toolchain
 
 
+class GitHubNotFound(RuntimeError):
+    """`gh api` answered HTTP 404: the only failure a caller may read as "absent"."""
+
+
+def _http_answer(raw: bytes) -> tuple[int | None, dict[str, str], bytes]:
+    """The status, headers and body in `gh api --include` output (status None: no answer)."""
+    lines = raw.split(b"\n")
+    match = re.match(rb"HTTP/[0-9.]+ ([0-9]{3})", lines[0])
+    if not match:
+        return None, {}, b""
+    headers: dict[str, str] = {}
+    for index, line in enumerate(lines[1:], 1):
+        line = line.rstrip(b"\r")
+        if not line:
+            return int(match.group(1)), headers, b"\n".join(lines[index + 1:])
+        name, _, value = line.decode("latin-1").partition(":")
+        headers[name.strip().lower()] = value.strip()
+    return int(match.group(1)), headers, b""
+
+
+def _rate_limit_wait(status: int, headers: dict[str, str],
+                     body: bytes) -> tuple[float, bool] | None:
+    """How long a rate-limited 403 or 429 asks to wait before a retry, as
+    (seconds, whether that is GitHub's fallback), or None when it is not
+    rate-limited: Retry-After; else, when no request is left, until
+    X-RateLimit-Reset; else GitHub's one-minute fallback, for a 429 or a 403
+    whose message names its secondary rate limit. As gh_api_rate_limit_wait
+    in .github/workflows/bump-guard.yml."""
+    retry_after = headers.get("retry-after", "")
+    if retry_after.isdigit():
+        return float(retry_after), False
+    exhausted = headers.get("x-ratelimit-remaining") == "0"
+    reset = headers.get("x-ratelimit-reset", "")
+    if exhausted and reset.isdigit():
+        return max(1.0, int(reset) - time.time() + 1), False
+    if exhausted or status == 429 or b"secondary rate limit" in body.lower():
+        return 60.0, True
+    return None
+
+
+def _reject_constant(name: str):
+    """Rejects NaN and Infinity, which json.loads accepts but JSON does not."""
+    raise ValueError(f"not strict JSON: {name}")
+
+
+def _command_data(text: str) -> str:
+    """`text` escaped as the data of a GitHub Actions workflow command."""
+    return text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+
 class GitHub:
     """Thin wrapper over `gh api`. Subclassed by the unit tests."""
+
+    API_ATTEMPTS = 5
+    API_TIMEOUT = 30
+    MAX_RATE_LIMIT_WAIT = 60
 
     def __init__(self, repo: str | None = None):
         self.repo = repo or os.environ.get("GITHUB_REPOSITORY", "")
 
     def api(self, path: str):
-        result = subprocess.run(
-            ["gh", "api", path], text=True, capture_output=True, check=False
-        )
-        if result.returncode != 0:
-            raise RuntimeError(f"gh api {path} failed: {result.stderr.strip()}")
-        return json.loads(result.stdout)
+        """`gh api PATH`, parsed as JSON.
+
+        Each attempt is judged by its HTTP status (`gh api --include`), never
+        by gh's message, as gh_api is in .github/workflows/bump-guard.yml. A
+        404 raises GitHubNotFound at once. No answer (a network error, or none
+        within API_TIMEOUT seconds), a 200 whose body is not strict UTF-8 JSON, 408,
+        429, 5xx and a rate-limited 403 are transient: tried up to
+        API_ATTEMPTS times, waiting about 2, 4, 8 and 16 seconds plus jitter in
+        between, or as long as a rate limit asks (_rate_limit_wait). After the
+        last attempt, at once when a rate limit asks for more than
+        MAX_RATE_LIMIT_WAIT seconds (a second fallback wait does), or at once
+        on any other status, it raises
+        what a single read raised before: RuntimeError naming gh's message, or
+        the error decoding the body.
+        """
+        delay = 2.0
+        fallbacks = 0
+        for attempt in range(1, self.API_ATTEMPTS + 1):
+            last = attempt == self.API_ATTEMPTS
+            pause = delay + random.uniform(0, delay)
+            try:
+                result = subprocess.run(
+                    ["gh", "api", "--include", path], capture_output=True, check=False,
+                    timeout=self.API_TIMEOUT,
+                )
+            except subprocess.TimeoutExpired:
+                status, error = None, f"no answer within {self.API_TIMEOUT} seconds"
+                if last:
+                    raise RuntimeError(f"gh api {path} failed: {error}") from None
+            else:
+                status, headers, body = _http_answer(result.stdout)
+                error = (result.stderr.decode("utf-8", "replace").strip()
+                         or (f"HTTP {status}" if status else "no answer"))
+                if status == 200 and result.returncode == 0:
+                    try:
+                        return json.loads(body.decode("utf-8"), parse_constant=_reject_constant)
+                    except ValueError as exc:
+                        if last:
+                            raise
+                        error = f"the answer is not UTF-8 JSON: {exc}"
+                elif status == 404:
+                    raise GitHubNotFound(f"gh api {path} failed: {error}")
+                else:
+                    limit = _rate_limit_wait(status, headers, body) if status in (403, 429) else None
+                    wait = None
+                    if limit is not None:
+                        wait, fallback = limit
+                        # GitHub asks for a longer wait after each fallback,
+                        # so a second one exceeds MAX_RATE_LIMIT_WAIT.
+                        if fallback:
+                            fallbacks += 1
+                            wait *= fallbacks
+                    transient = (status in (None, 200, 408, 429) or wait is not None
+                                 or (status is not None and status >= 500))
+                    pause = max(pause, wait or 0.0)
+                    too_long = wait is not None and wait > self.MAX_RATE_LIMIT_WAIT
+                    if transient and too_long:
+                        notice = (f"gh api {path}: rate limited for {wait:.0f} s, longer than "
+                                  f"the guard waits: {error[:300]}")
+                        print("::error::" + _command_data(notice), file=sys.stderr, flush=True)
+                    if last or not transient or too_long:
+                        raise RuntimeError(f"gh api {path} failed: {error}")
+            notice = (f"gh api {path}: attempt {attempt} of {self.API_ATTEMPTS} failed "
+                      f"({status or 'no answer'}), retrying in {pause:.0f} s: {error[:300]}")
+            print("::warning::" + _command_data(notice), file=sys.stderr, flush=True)
+            time.sleep(pause)
+            delay *= 2
+        raise AssertionError("unreachable")
 
     def tags(self, slug: str) -> list[dict]:
         return self.api(f"repos/{slug}/tags?per_page=100")
@@ -2425,18 +2543,18 @@ def _upstream_config_files(client: GitHub, slug: str, sha: str) -> set[str] | No
 
     The manifest's configFile is the dependency's own lakefile, so it
     must be derived from the pinned upstream tree, not chosen from
-    {lakefile.lean, lakefile.toml} by the PR author. A 404 means the
-    file is absent; any other API failure is indeterminate (None),
-    and the caller fails closed.
+    {lakefile.lean, lakefile.toml} by the PR author. A 404
+    (GitHubNotFound) means the file is absent; any other API failure is
+    indeterminate (None), and the caller fails closed.
     """
     found: set[str] = set()
     for name in ("lakefile.toml", "lakefile.lean"):
         try:
             client.contents(slug, name, sha)
             found.add(name)
-        except RuntimeError as exc:
-            if "404" in str(exc) or "Not Found" in str(exc):
-                continue
+        except GitHubNotFound:
+            continue
+        except RuntimeError:
             return None
     return found
 

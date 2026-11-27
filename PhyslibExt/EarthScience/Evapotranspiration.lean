@@ -59,14 +59,14 @@ actual ET.
 namespace EarthScience
 
 
-/-- Latent flux to evaporation: `E = LE / (rho_w * Lv)` satisfies
+/-- Latent flux to evaporation: for `rho_w, Lv > 0`, `E = LE / (rho_w * Lv)` satisfies
 `rho_w * Lv * E = LE`. -/
 theorem evaporation_rate {LE ρw Lv : ℝ} (hρ : 0 < ρw) (hLv : 0 < Lv) :
     ρw * Lv * (LE / (ρw * Lv)) = LE := by
   have hne : ρw * Lv ≠ 0 := ne_of_gt (mul_pos hρ hLv)
   field_simp
 
-/-- Evaporation is nonnegative for nonnegative latent flux. -/
+/-- Evaporation is nonnegative for nonnegative latent flux, when `rho_w, Lv > 0`. -/
 theorem evaporation_nonneg {LE ρw Lv : ℝ} (hLE : 0 ≤ LE) (hρ : 0 < ρw) (hLv : 0 < Lv) :
     0 ≤ LE / (ρw * Lv) := by
   exact div_nonneg hLE (le_of_lt (mul_pos hρ hLv))

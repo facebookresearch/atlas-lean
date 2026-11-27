@@ -116,7 +116,7 @@ private theorem discount_call_le {S K R : ℝ} (hR : 1 ≤ R) (hK : 0 ≤ K) :
     rw [heq]
     exact sub_le_sub_left hKR S
 
-/-- Under the risk-neutral (martingale) condition `p u + (1 - p) d = R` with gross
+/-- Under the risk-neutral (martingale) condition `p u + (1 - p) d = R` with `0 ≤ p ≤ 1`, gross
 interest rate `R ≥ 1`, discount factor `R⁻¹`, and strike `K ≥ 0`, the European
 call value with `k` periods left is at least the immediate exercise value. -/
 theorem callPayoff_le_european {S₀ u d K p R : ℝ} (hp₀ : 0 ≤ p) (hp₁ : p ≤ 1)
@@ -166,7 +166,8 @@ theorem callPayoff_le_european {S₀ u d K p R : ℝ} (hp₀ : 0 ≤ p) (hp₁ :
           hmono
 
 /-- No early exercise for an American call on a non-dividend binomial stock: with
-nonnegative interest (`R ≥ 1`), the American value (Snell envelope) equals the
+nonnegative interest (`R ≥ 1`), `0 ≤ p ≤ 1`, the risk-neutral condition
+`p u + (1 - p) d = R` and strike `K ≥ 0`, the American value (Snell envelope) equals the
 European value at every node and horizon. -/
 theorem snell_call_eq_european {S₀ u d K p R : ℝ} (hp₀ : 0 ≤ p) (hp₁ : p ≤ 1)
     (hR : 1 ≤ R) (hmart : p * u + (1 - p) * d = R) (hK : 0 ≤ K) (k : ℕ) (s : List Bool) :

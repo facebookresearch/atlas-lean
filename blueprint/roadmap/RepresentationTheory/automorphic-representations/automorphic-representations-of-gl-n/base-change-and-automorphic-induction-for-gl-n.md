@@ -43,17 +43,34 @@ $\mathbb{A}_F^\times / F^\times$ attached to $E/F$ by class field theory.
   Waldspurger came after Arthur and Clozel's work; combined with it, base change extends to the
   representations occurring in the discrete spectrum.
 
+## Expansion
+
 A good expansion has pages for the statements of cyclic base change and automorphic induction, for the
 solvable case, and for the trace formula comparison with its inputs (the twisted trace formula, the
 fundamental lemma for base change, the local base change of representations), citing J. Arthur and
 L. Clozel, *Simple Algebras, Base Change, and the Advanced Theory of the Trace Formula*, Annals of
-Mathematics Studies 120, Princeton University Press, 1989, Chapter 3 "Base Change", with locators once it
-has been consulted.
+Mathematics Studies 120, Princeton University Press, 1989, openly available as no. 30 of Arthur's collected
+works: Chapter 3, (2.1)–(2.4), p. 200, Theorem 3.1, p. 201, Definition 4.1 and Theorem 4.2, p. 202, and Theorem 6.2
+with its construction, pp. 215–217; Chapter 1, §§4, 6 and 7; Chapter 2, Theorems A and B, with the gap at p. 196
+that Arthur points out.
+
+It also writes out these steps of its own proof:
+
+- the comparison of the invariant trace formula of $\mathrm{GL}_n$ over $F$ with the $\sigma$-twisted trace formula of $\mathrm{R}_{E/F}\mathrm{GL}_n$, through the matching of twisted orbital integrals by the norm map, the extension of the fundamental lemma from unit elements to spherical Hecke functions with the simple forms of the two trace formulas (Arthur–Clozel, Chapter 1, §4), the local base change lifting (Chapter 1, §§6–7) and the averaging over the twists by powers of $\eta$ (Clozel's ICM report, §2, Theorems 2.1–2.3, Theorem 2.3 being the identity of traces; Arthur, §26, pp. 189–191).
 
 ## Depends on
 
 - [Jacquet–Shalika classification of automorphic representations of GLₙ](jacquet-shalika-classification.md), for induced cuspidal (isobaric) representations and their Satake parameters
 - [Global reciprocity law](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), for the character $\eta$ attached to $E/F$
+- [Cartan decomposition and Satake isomorphism for special maximal compact subgroups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/cartan-decomposition-and-satake-isomorphism.md), for the Satake parameters of unramified representations, for the description of automorphic induction at the unramified places
+- [Weil groups of local fields and the archimedean local Langlands correspondence for GLₙ](../../reductive-groups-over-local-fields/weil-groups-and-the-archimedean-local-langlands-correspondence.md), for unramified Langlands parameters as unramified representations of the Weil group, their identification with Satake parameters through the eigenvalues of a geometric Frobenius element, and induction from $W_E$ to $W_F$, for the description of automorphic induction at the unramified places
+
+## Proof depends on
+
+- [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for the operations on Rankin–Selberg $L$-functions which, with the identity of traces (26.8), establish all the assertions of the theorem, existence included (Arthur, §26, p. 190); not for the comparison of orbital integrals itself
+- [Jacquet–Shalika classification of automorphic representations of GLₙ](jacquet-shalika-classification.md), for the uniqueness of an isobaric sum of unitary cuspidal representations with given Satake parameters at almost all places, which gives the uniqueness of the extended maps; this is not ordinary multiplicity one for cusp forms
+- [The twisted trace formula and the fundamental lemma for cyclic base change of GLₙ](twisted-trace-formula-and-fundamental-lemma-for-base-change.md), for the invariant twisted trace formula, under the twisted trace Paley–Wiener condition that Arthur and Clozel verify in this case (Chapter 1, §7, Proposition 7.1, p. 72), and for Kottwitz's fundamental lemma for unit elements, from which the comparison starts; the gap in the density argument of Arthur and Clozel (p. 196) is filled by Arthur's "A stable trace formula III", Lemma 8.2 (Arthur, §26, p. 191)
+- [Mœglin–Waldspurger classification of the discrete spectrum of GLₙ](moeglin-waldspurger-classification-of-the-discrete-spectrum.md), for the extension of base change, after the Arthur–Clozel theorem, to the representations occurring in the discrete spectrum, not for the Arthur–Clozel theorem itself
 
 ## Sources
 

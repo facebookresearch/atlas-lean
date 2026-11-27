@@ -36,6 +36,11 @@ these modules are not unitarizable.
 - [Discrete series representations and formal degrees](discrete-series-and-formal-degrees.md), for square-integrable representations
 - [Admissible representations of real reductive groups](admissible-representations-of-real-reductive-groups.md), for $K$-finite vectors
 
+## Proof depends on
+
+- [Harish-Chandra's construction of the holomorphic discrete series](harish-chandra-construction-of-holomorphic-discrete-series.md), for the realization of $G/K$ as a bounded domain in $\mathfrak{p}_-$ through $G \subseteq P_- K^{\mathbb{C}} P_+$, on which the $K$-finite holomorphic sections are the polynomial functions on $\mathfrak{p}_-$, a $K$-module isomorphic to $V_\mu \otimes S(\mathfrak{p}_+)$ by the duality of $\mathfrak{p}_+$ and $\mathfrak{p}_-$ (Schmid, §7, p. 125); for the Fréchet topology; for the lowest $K$-type argument, by evaluation at the base point; and for Harish-Chandra's square-integrability under $(\lambda, \alpha) > 0$ for all $\alpha \in \Psi$
+- [Smooth vectors and K-finite vectors of continuous representations](../../lie-and-topological-representations/smooth-and-k-finite-vectors.md), for the continuous projection onto the $V_\mu$-isotypic component in the lowest $K$-type argument: a nonzero closed $G$-invariant subspace contains, after translation, a section nonzero at the base point, evaluation there maps its $V_\mu$-isotypic part onto the fibre $V_\mu$, and $V_\mu$ occurs only once in $\mathbf{F}_\lambda$
+
 ## Sources
 
 - W. Schmid, "On the characters of the discrete series. The Hermitian symmetric case", Invent.

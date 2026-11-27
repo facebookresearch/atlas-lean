@@ -65,4 +65,20 @@ example : rhs 4 = 8 / 15 := by
 example : ∀ n ∈ Finset.Icc 2 7, lhs n = rhs n := by
   decide +kernel
 
+example (n : ℕ) (hn : 2 ≤ n) :
+    ∑ i ∈ Finset.range (2 * n - 1), (-1 : ℚ) ^ i * sabarNumber (2 * n - 1) i / ((i + 1 : ℕ) : ℚ) =
+      harmonic n :=
+  sum_sabarNumber_div_succ_eq_harmonic (n := n) (hn := hn)
+
+-- Both sides of the harmonic identity, evaluated independently in the rationals.
+example : (∑ i ∈ Finset.range (2 * 2 - 1),
+    (-1 : ℚ) ^ i * sabarNumber (2 * 2 - 1) i / ((i + 1 : ℕ) : ℚ)) = 3 / 2 ∧
+    harmonic 2 = 3 / 2 := by
+  decide +kernel
+
+example : (∑ i ∈ Finset.range (2 * 3 - 1),
+    (-1 : ℚ) ^ i * sabarNumber (2 * 3 - 1) i / ((i + 1 : ℕ) : ℚ)) = 11 / 6 ∧
+    harmonic 3 = 11 / 6 := by
+  decide +kernel
+
 end MathlibExtTest.SabarTriangle

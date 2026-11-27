@@ -12,3 +12,13 @@ Polynomial-time algorithms with proved approximation ratios for NP-hard optimiza
 - [Scheduling unrelated parallel machines](scheduling-unrelated-parallel-machines/README.md)
 - [Vertex cover 2-approximation](vertex-cover-2-approximation/README.md)
 - [Weighted vertex cover by the pricing method](weighted-vertex-cover-by-the-pricing-method/README.md)
+- [Resource-constrained scheduling](resource-constrained-scheduling/README.md)
+- [Lp based approximation](lp-based-approximation/README.md)
+- [Approximation algorithms and approximation ratios](approximation-algorithms-and-approximation-ratios.md)
+
+- [Approximation ratio of the greedy superstring algorithm](approximation-ratio-of-the-greedy-superstring-algorithm.md)
+- [A fully polynomial-time approximation scheme for knapsack](fptas-for-the-knapsack-problem.md)
+- [Extended Formulations and Extension Complexity](extended-formulations-and-extension-complexity/README.md)
+- [Metric k-Center, Steiner Tree and TSP Approximation](metric-k-center-steiner-tree-and-tsp/README.md)
+- [Moser-Tardos Algorithmic Local Lemma](moser-tardos-algorithmic-local-lemma/README.md)
+- [Semidefinite Rounding for MAX-2SAT and MAX-DICUT](semidefinite-rounding-for-two-variable-csps/README.md)

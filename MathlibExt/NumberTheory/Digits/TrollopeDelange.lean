@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Asymptotics.Lemmas
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
@@ -15,9 +16,10 @@ import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 
 /-!
-# A weighted sum of the Trollope–Delange fluctuation
+# Bounds for Delange's function and the Trollope–Delange fluctuation
 
-The fluctuation is uniformly bounded in every base at least two. Multiplying its pointwise
+For every base at least two, `trollopeDelangeIntegral_isBigO_one` bounds Delange's function
+at infinity. The fluctuation is also uniformly bounded. Multiplying its pointwise
 supremum bound by the reciprocal digit-sum weights gives
 `digitSum_reciprocal_fluctuation_sum_le`.
 -/
@@ -26,7 +28,7 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-open Real
+open Asymptotics Filter Real
 
 /-- **Delange's function.** For a natural number $q$, Delange's function in base $q$ is the
 function of a real number $x$ given by
@@ -156,7 +158,9 @@ private lemma integral_bounded {q : ℕ} (hq : 2 ≤ q) :
   rw [abs_mul, abs_mul, abs_of_pos hq₀, abs_of_pos (inv_pos.mpr hq₀)]
   gcongr <;> apply hC
 
-private lemma series_bounded {q : ℕ} (hq : 2 ≤ q) :
+/-- **Delange's series is bounded.** For every natural number $q \ge 2$ there is a constant $C$
+with $|h(x)| \le C$ for every real $x$, where $h$ is Delange's series in base $q$. -/
+lemma series_bounded {q : ℕ} (hq : 2 ≤ q) :
     ∃ C : ℝ, ∀ x : ℝ, |trollopeDelangeSeries q x| ≤ C := by
   obtain ⟨C, hC⟩ := integral_bounded hq
   have hq₁ : 1 < (q : ℝ) := by exact_mod_cast (show 1 < q from hq)
@@ -171,7 +175,10 @@ private lemma series_bounded {q : ℕ} (hq : 2 ≤ q) :
     inv_pow, ← div_eq_mul_inv]
   exact div_le_div_of_nonneg_right (hC _) (by positivity)
 
-private lemma fluctuation_bddAbove {q : ℕ} (hq : 2 ≤ q) :
+/-- **The Trollope–Delange fluctuation is bounded.** For every natural number $q \ge 2$ the
+absolute values $|F(t)|$ of the Trollope–Delange fluctuation in base $q$, for real $t$, are
+bounded above. -/
+lemma fluctuation_bddAbove {q : ℕ} (hq : 2 ≤ q) :
     BddAbove (Set.range (fun t => |trollopeDelangeFluctuation q t|)) := by
   obtain ⟨C, hC⟩ := series_bounded hq
   have hq₁ : 1 ≤ (q : ℝ) := by exact_mod_cast (by omega : 1 ≤ q)
@@ -189,6 +196,17 @@ private lemma fluctuation_bddAbove {q : ℕ} (hq : 2 ≤ q) :
     (mul_le_mul hpow (hC _) (abs_nonneg _) (Nat.cast_nonneg q))
 
 end digitSum_reciprocal_fluctuation_sum_le
+
+/-- **Delange's function is eventually bounded.** For every natural number $q \ge 2$, Delange's
+function $g$ in base $q$ satisfies $g(x) = O(1)$ as $x \to +\infty$.
+
+Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
+Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
+Lemma 2 (`integers-2026-A43-lem-2`). -/
+theorem trollopeDelangeIntegral_isBigO_one (q : ℕ) (hq : 2 ≤ q) :
+    trollopeDelangeIntegral q =O[atTop] (fun _ => (1 : ℝ)) := by
+  obtain ⟨C, hC⟩ := digitSum_reciprocal_fluctuation_sum_le.integral_bounded hq
+  exact (isBigO_one_iff ℝ).mpr ⟨C, eventually_map.mpr (Eventually.of_forall hC)⟩
 
 set_option linter.unusedVariables false in
 /-- **Bound for a weighted sum of the fluctuation.** Let $q \ge 2$ be an integer, let $s_q(n)$

@@ -31,3 +31,5 @@
 - [Lucas analogue of the FiboCatalan identity, cleared of denominators](lucas-catalan-identity-mul-factorial.md)
 - [The Lucas quotient $\{2n+1\} \{2\} \{2n\}!/(\{n+2\}! \, \{n\}!)$ has non-negative coefficients](exists-nonneg-poly-lucas-quotient.md)
 - [$k$-divisible Lucas super Catalan numbers have non-negative coefficients](exists-nonneg-poly-k-div-lucas-catalan.md)
+- [Divisibility criterion for quotients of products of Lucas polynomials](lucas-poly-prod-quotient-iff.md)
+- [Exact power of a Lucas atom dividing a Lucas factorial](lucas-atom-pow-dvd-lucas-factorial.md)

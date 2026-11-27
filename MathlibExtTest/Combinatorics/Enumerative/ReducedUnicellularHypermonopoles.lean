@@ -25,3 +25,15 @@ example : ¬ ∀ i, (Equiv.swap (1 : Fin 3) 2) i ≠ i := by
 -- At size zero the binomial denominator vanishes for every second argument.
 example (k : ℕ) : cyclicProductNumber 0 k = 0 := by
   simp [cyclicProductNumber]
+
+-- A single transposition on two points attains both bounds.
+example : cycleQuotientCount (Equiv.swap (0 : Fin 2) 1) = 1 := by
+  obtain ⟨hlower, hupper⟩ := cycleCount_bounds_of_reduced (n := 2)
+    (hn := by decide) (α := Equiv.swap (0 : Fin 2) 1) (hred := by decide)
+  omega
+
+-- On three points the upper bound rounds down to one cycle.
+example : cycleQuotientCount (finRotate 3) = 1 := by
+  obtain ⟨hlower, hupper⟩ := cycleCount_bounds_of_reduced (n := 3)
+    (hn := by decide) (α := finRotate 3) (hred := by decide)
+  omega

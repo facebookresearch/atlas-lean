@@ -12,6 +12,16 @@ import MathlibExt.NumberTheory.Recurrences.ShiftedLucasComposite
 
 open MetaMathlibExt
 
+-- The index bound is sharp: the preceding Lucas term is prime.
+example : (lucasU ⟨3, -4, by decide⟩ 3).natAbs.Prime := by decide
+
+-- The first even and odd indices in the theorem give 51 and 205.
+example : 1 < (51 : ℤ) ∧ ¬ Nat.Prime 51 :=
+  lucasU_three_neg_four_composite (n := 4) (by decide)
+
+example : 1 < (205 : ℤ) ∧ ¬ Nat.Prime 205 :=
+  lucasU_three_neg_four_composite (n := 5) (by decide)
+
 -- The initial Fibonacci value is zero, so the shifted term is the shift itself.
 example : ¬ Nat.Prime 14475 := by
   simpa using fib_add_14475_not_prime 0

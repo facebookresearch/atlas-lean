@@ -8,12 +8,13 @@ Since $M$ is compact, the lemma on the homology of an $n$-manifold relative to t
 
 ## Expansion
 
-A good expansion of this node links each prerequisite of its statement and proof: the homology of a manifold relative to the complement of a compact set; connected spaces; singular homology.
+A good expansion of this node links each prerequisite of its statement and proof: the homology of a manifold relative to the complement of a compact set; singular homology.
 
 ## Depends on
 
 - [Closed manifold, not required to be connected](../manifolds-geometric-topology/closed-topological-manifold.md)
 - [R-orientation of a topological manifold](homological-orientation.md)
+- [Connectedness in the sense of Hausdorff](../../GroupTheory/profinite-and-topological-groups/arcwise-connectedness-of-metric-groups/is-hausdorff-connected.md)
 
 ## Sources
 

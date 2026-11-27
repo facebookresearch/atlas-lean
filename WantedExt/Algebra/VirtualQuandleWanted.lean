@@ -14,6 +14,7 @@ public import Mathlib.GroupTheory.SemidirectProduct
 public import Mathlib.Data.Nat.Totient
 public import Mathlib.RingTheory.Ideal.Quotient.Defs
 public import Mathlib.RingTheory.Ideal.Span
+public import MathlibExt.Algebra.Quandle
 public import MathlibExt.Algebra.VirtualQuandle
 
 namespace MetaMathlibExt
@@ -21,27 +22,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Equiv Quandles
-
-/-- **Automorphism group of a rack.** For a rack $R$ with operation $\triangleleft$, the
-automorphism group $\operatorname{Aut} R$ is the subgroup of the group of permutations of $R$
-consisting of the permutations $f$ with $f(x \triangleleft y) = f(x) \triangleleft f(y)$ for all
-$x, y \in R$.
-
-Here $x \triangleleft y$ is the paper's $s_x(y)$.
-
-Source: Lực Ta, *Enumeration of Virtual Quandles Up to Isomorphism*, Journal of Integer
-Sequences 28 (2025), Article 25.8.4, Section 2.2 (rack homomorphisms and `Aut R`). -/
-def rackAut (R : Type*) [Rack R] : Subgroup (Perm R) where
-  carrier := {f | ∀ x y, f (x ◃ y) = f x ◃ f y}
-  one_mem' := fun _ _ => rfl
-  mul_mem' := by
-    intro f g hf hg x y
-    simp only [Perm.mul_apply, hg x y, hf (g x) (g y)]
-  inv_mem' := by
-    intro f hf x y
-    apply f.injective
-    rw [hf (f⁻¹ x) (f⁻¹ y)]
-    simp
 
 /-- **Number of isomorphism classes of virtual racks on a rack.** For a rack $R$, let
 $\operatorname{Aut} R$ be its group of rack automorphisms; a virtual structure on $R$ is an
@@ -130,18 +110,6 @@ Source: Lực Ta, *Enumeration of Virtual Quandles Up to Isomorphism*, Journal o
 Sequences 28 (2025), Article 25.8.4, Proposition 14 (`jis-2025-25.8.4-prop-14`). -/
 public theorem_wanted virtualRackIso_iff_isConj {R : Type*} [Rack R] (f₁ f₂ : rackAut R) :
     VirtualRackIso (f₁ : Perm R) (f₂ : Perm R) ↔ IsConj f₁ f₂
-
-/-- **Trivial center and automorphisms of the conjugation quandle.** For a group $G$, let
-$\operatorname{Conj}(G)$ be the conjugation quandle on $G$, with $x \triangleleft y = x y x^{-1}$.
-Then $G$ has trivial center if and only if the permutations of $G$ that are group automorphisms
-are exactly the rack automorphisms of $\operatorname{Conj}(G)$.
-
-Source: Lực Ta, *Enumeration of Virtual Quandles Up to Isomorphism*, Journal of Integer
-Sequences 28 (2025), Article 25.8.4, Lemma 17 (`jis-2025-25.8.4-lem-17`), quoting Bardakov,
-Nasybullov, and Singh, Corollary 2. -/
-public theorem_wanted center_eq_bot_iff_mulAut_eq_rackAut_conj (G : Type*) [Group G] :
-    Subgroup.center G = ⊥ ↔
-      (MulAut.toPerm (M := G)).range = rackAut (Quandle.Conj G)
 
 /-- **Conjugacy in the holomorph of $\mathbb{Z}/n\mathbb{Z}$.** Let $n > 0$, let
 $A = \mathbb{Z}/n\mathbb{Z}$, and write $(a, u)$ for the element of the holomorph

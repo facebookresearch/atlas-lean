@@ -30,7 +30,7 @@ of Kurtz's theorem (Kurtz 1970, Thm 3.1; Ethier–Kurtz 1986, ch. 11, Thm 2.1).
 ## The chain
 
 We use Kurtz's random time-change representation (Ethier–Kurtz 1986, ch. 6, §4): with
-independent unit-rate Poisson processes `Y₁`, `Y₂`,
+independent unit-rate Poisson processes `Y₁`, `Y₂` and an initial state independent of them,
 
   `S(t) = S(0) - Y₁(∫₀ᵗ β S I / N)`,  `I(t) = I(0) + Y₁(∫₀ᵗ β S I / N) - Y₂(∫₀ᵗ γ I)`,
   `R(t) = R(0) + Y₂(∫₀ᵗ γ I)`.
@@ -74,7 +74,8 @@ are `ProbabilityTheory.IsPoissonProcess` of rate `1`.
 * Only the law of large numbers is proved, with an `O(1/N)` Chebyshev bound for the clock
   errors; the central limit (diffusion) correction is not treated.
 * The events over `[0, T]` (a time with deviation at least `ε`, or the supremum at least `ε`)
-  are not assumed measurable; their probabilities are outer measures.
+  and the initial events (deviation at time `0` at least `δ`) are not assumed measurable; their
+  probabilities are outer measures.
 
 ## References
 
@@ -95,28 +96,36 @@ namespace MathlibExt.Biology.Epidemiology.StochasticSIR
 
 /-! ### The chain -/
 
-/-- The internal clock of the infection channel at time `t`: `∫₀ᵗ β S(s) I(s) / N ds`, the
-integrated infection rate (truncated at `0` so it can be fed to a counting process indexed by
-`ℝ≥0`). -/
+/-- The internal clock of the infection channel at time `t`: `max (0, ∫₀ᵗ β S(s) I(s) / N ds)`,
+the integrated infection rate (truncated at `0` so it can be fed to a counting process indexed
+by `ℝ≥0`). It is meant for `β ≥ 0`, `N ≥ 1`, `t ≥ 0`. Otherwise: `N = 0` gives `0`
+(`x / 0 = 0`); for `t < 0` the integral is `-∫ₜ⁰`; a non-integrable integrand gives the integral
+`0`; a negative integral gives `0`. -/
 noncomputable def infectionClock (β : ℝ) (N : ℕ) (S I : ℝ → ℕ) (t : ℝ) : ℝ≥0 :=
   Real.toNNReal (∫ s in (0 : ℝ)..t, β * S s * I s / N)
 
-/-- The internal clock of the recovery channel at time `t`: `∫₀ᵗ γ I(s) ds`. -/
+/-- The internal clock of the recovery channel at time `t`: `max (0, ∫₀ᵗ γ I(s) ds)`, the
+integrated recovery rate truncated at `0`. It is meant for `γ ≥ 0`, `t ≥ 0`. Otherwise: for
+`t < 0` the integral is `-∫ₜ⁰`; a non-integrable integrand gives the integral `0`; a negative
+integral (for example `t < 0` with `γ ≥ 0`) gives `0`. -/
 noncomputable def recoveryClock (γ : ℝ) (I : ℝ → ℕ) (t : ℝ) : ℝ≥0 :=
   Real.toNNReal (∫ s in (0 : ℝ)..t, γ * I s)
 
 /-- **One sample path of the stochastic SIR chain** of population size `N` (Kurtz's random
-time-change representation; Ethier–Kurtz 1986, ch. 6, (4.1) and ch. 11, (2.1)). Given the
-paths `y₁`, `y₂` of the two driving unit-rate counting processes, the counts `S, I, R : ℝ → ℕ`
-satisfy, for `t ≥ 0`,
+time-change representation; Ethier–Kurtz 1986, ch. 6, (4.1) and ch. 11, (2.1)). Given two
+functions `y₁`, `y₂ : ℝ≥0 → ℕ` (in the intended use, paths of the two driving unit-rate counting
+processes; nothing else is required of them), the counts `S, I, R : ℝ → ℕ` satisfy, for
+`t ≥ 0` and in `ℝ`,
 
   `S(t) = S(0) - y₁(∫₀ᵗ β S I / N)`,
   `I(t) = I(0) + y₁(∫₀ᵗ β S I / N) - y₂(∫₀ᵗ γ I)`,
   `R(t) = R(0) + y₂(∫₀ᵗ γ I)`,
 
-with `S(0) + I(0) + R(0) = N`. When `y₁`, `y₂` are independent unit-rate Poisson processes,
-this is the continuous-time Markov chain that jumps `(S, I, R) → (S - 1, I + 1, R)` at rate
-`β S I / N` (infection) and `(S, I, R) → (S, I - 1, R + 1)` at rate `γ I` (recovery). The
+with `S(0) + I(0) + R(0) = N`; the clocks are truncated at `0` (`infectionClock`,
+`recoveryClock`). For `β, γ ≥ 0`, `N ≥ 1`, independent unit-rate Poisson processes `y₁`, `y₂`
+and an initial state independent of `(y₁, y₂)`, this is the continuous-time Markov chain that
+jumps `(S, I, R) → (S - 1, I + 1, R)` at rate `β S I / N` (infection) and
+`(S, I, R) → (S, I - 1, R + 1)` at rate `γ I` (recovery). The
 counts are natural numbers, so they are nonnegative by construction. The paths are required to
 be measurable (a càdlàg path is), so that the clocks are genuine Lebesgue integrals. -/
 structure IsChainPath (β γ : ℝ) (N : ℕ) (y₁ y₂ : ℝ≥0 → ℕ) (S I R : ℝ → ℕ) : Prop where
@@ -137,7 +146,8 @@ structure IsChainPath (β γ : ℝ) (N : ℕ) (y₁ y₂ : ℝ≥0 → ℕ) (S I
   removed_eq : ∀ t, 0 ≤ t → (R t : ℝ) = R 0 + y₂ (recoveryClock γ I t)
 
 /-- The `ℓ¹` distance at time `t` between the scaled chain `(S, I, R) / N` and a deterministic
-path `(s, i, r)`. -/
+path `(s, i, r)`. It is meant for `N ≥ 1`; for `N = 0`, `x / 0 = 0` gives
+`|s t| + |i t| + |r t|`. -/
 noncomputable def deviation (N : ℕ) (S I R : ℝ → ℕ) (s i r : ℝ → ℝ) (t : ℝ) : ℝ :=
   |(S t : ℝ) / N - s t| + |(I t : ℝ) / N - i t| + |(R t : ℝ) / N - r t|
 
@@ -177,7 +187,7 @@ namespace IsChainPath
 
 variable {β γ : ℝ} {N : ℕ} {y₁ y₂ : ℝ≥0 → ℕ} {S I R : ℝ → ℕ}
 
-/-- The scaled counts of a chain path lie in `[0, 1]` at every `t ≥ 0`. -/
+/-- For `N ≥ 1`, the scaled counts of a chain path lie in `[0, 1]` at every `t ≥ 0`. -/
 theorem scaled_mem_Icc (h : IsChainPath β γ N y₁ y₂ S I R) (hN : 0 < N) {t : ℝ} (ht : 0 ≤ t) :
     (S t : ℝ) / N ∈ Icc 0 1 ∧ (I t : ℝ) / N ∈ Icc 0 1 ∧ (R t : ℝ) / N ∈ Icc 0 1 := by
   have hNr : (0 : ℝ) < N := Nat.cast_pos.2 hN
@@ -414,7 +424,8 @@ variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilit
 
 /-- **Chebyshev at one time.** For a unit-rate Poisson process `Y`, `N ≥ 1`, `a ≥ 0` and
 `c > 0`, the scaled increment `(Y(N a) - Y(0)) / N` is at distance `≥ c` from `a` with
-probability at most `a / (N c²)`. -/
+probability at most `a / (N c²)`. The increment is truncated subtraction in `ℕ`; it is the true
+increment almost surely, since almost every path of `Y` is nondecreasing. -/
 theorem measure_le_abs_div_sub_le {Y : ℝ≥0 → Ω → ℕ} (hY : IsPoissonProcess Y 1 μ) {N : ℕ}
     (hN : 0 < N) {a c : ℝ} (ha : 0 ≤ a) (hc : 0 < c) :
     μ {ω | c ≤ |((Y (Real.toNNReal (N * a)) ω - Y 0 ω : ℕ) : ℝ) / N - a|} ≤
@@ -451,7 +462,8 @@ theorem measure_le_abs_div_sub_le {Y : ℝ≥0 → Ω → ℕ} (hY : IsPoissonPr
 
 /-- **Uniform law of large numbers for a unit Poisson clock**, with an explicit Chebyshev
 rate: for every `B` and `η > 0` there is `C` such that, for every unit-rate Poisson process `Y`
-and every `N ≥ 1`, `sup_{a ∈ [0, B]} |Y(N a) / N - a| > η` has probability at most `C / N`.
+and every `N ≥ 1`, `sup_{a ∈ [0, B]} |Y(N a) / N - a| > η` has probability at most
+`max (C / N, 0)`. The event is not assumed measurable; `μ` is applied as an outer measure.
 
 Proof: on the grid `a_k = k η / 4` (`k ≤ ⌈4 B / η⌉ + 1`) Chebyshev bounds each
 `|Y(N a_k) / N - a_k| ≥ η / 2`; off the union of these events (and the null event where `Y` is
@@ -520,9 +532,10 @@ theorem exists_measure_poissonClock_le (B : ℝ) {η : ℝ} (hη : 0 < η) :
         congr 1
         field_simp
 
-/-- **Uniform law of large numbers for unit Poisson clocks** (in probability, uniformly over
-families): if each `Y N` is a unit-rate Poisson process, then for every `B` and `η > 0`,
-`P(sup_{a ∈ [0, B]} |Y N (N a) / N - a| > η) → 0` as `N → ∞`. -/
+/-- **Uniform law of large numbers for unit Poisson clocks** (in probability): if each `Y N`
+is a unit-rate Poisson process, with no relation assumed between different `N`, then for every
+`B` and `η > 0`, `P(sup_{a ∈ [0, B]} |Y N (N a) / N - a| > η) → 0` as `N → ∞`. The event is
+not assumed measurable; `μ` is applied as an outer measure. -/
 theorem tendsto_measure_poissonClock {Y : ℕ → ℝ≥0 → Ω → ℕ}
     (hY : ∀ N, IsPoissonProcess (Y N) 1 μ) (B : ℝ) {η : ℝ} (hη : 0 < η) :
     Tendsto (fun N : ℕ =>
@@ -560,8 +573,9 @@ probability that the deviation reaches `ε` at some time of `[0, T]` tends to `0
 
 This event contains the strict supremum event `sup_{t ∈ [0, T]} deviation > ε`. A supremum need
 not be attained, so the non-strict supremum event `sup deviation ≥ ε` is the separate corollary
-`tendsto_measure_iSup_deviation`. The event is not assumed measurable; `μ` is applied as an outer
-measure. -/
+`tendsto_measure_iSup_deviation`. The events, in the conclusion and in the hypothesis on the
+initial state, are not assumed measurable; `μ` is applied to them as an outer measure.
+Independence of `Y₁ N` and `Y₂ N` is not assumed. -/
 theorem tendsto_measure_deviation (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
     (hY₁ : ∀ N, IsPoissonProcess (Y₁ N) 1 μ) (hY₂ : ∀ N, IsPoissonProcess (Y₂ N) 1 μ)
     (hchain : ∀ N, ∀ᵐ ω ∂μ, IsChainPath β γ N (fun u => Y₁ N u ω) (fun u => Y₂ N u ω)
@@ -631,9 +645,9 @@ and the ODE solution is at least `ε` with probability tending to `0`:
   `P(sup_{t ∈ [0, T]} |S/N - s| + |I/N - i| + |R/N - r| ≥ ε) → 0`  as `N → ∞`.
 
 The supremum is taken in `ℝ≥0∞` (the deviation is nonnegative), so it exists for every path,
-bounded or not, and need not be attained. The event lies inside the event of
-`tendsto_measure_deviation` at threshold `ε / 2`; it is not assumed measurable, and `μ` is applied
-as an outer measure. -/
+bounded or not, and need not be attained; for `T < 0` it is `0`. The event lies inside the
+event of `tendsto_measure_deviation` at threshold `ε / 2`; it is not assumed measurable, and `μ`
+is applied as an outer measure. -/
 theorem tendsto_measure_iSup_deviation (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
     (hY₁ : ∀ N, IsPoissonProcess (Y₁ N) 1 μ) (hY₂ : ∀ N, IsPoissonProcess (Y₂ N) 1 μ)
     (hchain : ∀ N, ∀ᵐ ω ∂μ, IsChainPath β γ N (fun u => Y₁ N u ω) (fun u => Y₂ N u ω)
@@ -659,10 +673,13 @@ theorem tendsto_measure_iSup_deviation (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
   exact ⟨t, htT, ((ENNReal.ofReal_lt_ofReal_iff_of_nonneg hε2.le).1 hdev).le⟩
 
 omit [IsProbabilityMeasure μ] in
-/-- Deterministic initial counts: if almost surely `S N 0 = S₀ N`, `I N 0 = I₀ N`,
-`R N 0 = R₀ N` and `S₀ N / N → s 0`, `I₀ N / N → i 0`, `R₀ N / N → r 0`, then the scaled initial
-state converges to `(s 0, i 0, r 0)` in probability (the hypothesis `hinit` of
-`tendsto_measure_deviation`). -/
+/-- Deterministic initial counts: for any measure `μ` (not necessarily a probability measure),
+if `μ`-almost everywhere `S N 0 = S₀ N`, `I N 0 = I₀ N`, `R N 0 = R₀ N`, and
+`S₀ N / N → s 0`, `I₀ N / N → i 0`, `R₀ N / N → r 0`, then for every `δ > 0`
+`μ {ω | δ ≤ deviation N (S N ω) (I N ω) (R N ω) s i r 0} → 0`; the event is not assumed
+measurable, and `μ` is applied to it as an outer measure. For a probability measure this
+says that the scaled initial state converges to `(s 0, i 0, r 0)` in probability (the hypothesis
+`hinit` of `tendsto_measure_deviation`). -/
 theorem tendsto_measure_deviation_zero_of_initial {S₀ I₀ R₀ : ℕ → ℕ}
     (hS₀ : ∀ N, ∀ᵐ ω ∂μ, S N ω 0 = S₀ N) (hI₀ : ∀ N, ∀ᵐ ω ∂μ, I N ω 0 = I₀ N)
     (hR₀ : ∀ N, ∀ᵐ ω ∂μ, R N ω 0 = R₀ N)
@@ -686,7 +703,8 @@ theorem tendsto_measure_deviation_zero_of_initial {S₀ I₀ R₀ : ℕ → ℕ}
 
 /-- **Convergence of means from convergence in probability.** If `X N` are measurable,
 `|X N - x| ≤ 1` almost surely for large `N`, and `X N → x` in probability, then
-`E[X N] → x`. -/
+`E[X N] → x`. For the finitely many other `N`, a non-integrable `X N` has integral `0`, which
+does not affect the limit. -/
 theorem tendsto_integral_of_tendsto_measure {X : ℕ → Ω → ℝ} {x : ℝ}
     (hX : ∀ N, Measurable (X N)) (hbd : ∀ᶠ N in atTop, ∀ᵐ ω ∂μ, |X N ω - x| ≤ 1)
     (hprob : ∀ ε, 0 < ε → Tendsto (fun N => μ {ω | ε ≤ |X N ω - x|}) atTop (𝓝 0)) :

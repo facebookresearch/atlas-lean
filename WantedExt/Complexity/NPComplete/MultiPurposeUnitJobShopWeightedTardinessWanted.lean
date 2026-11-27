@@ -21,11 +21,11 @@ model).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
 
 @[expose] public section
 
@@ -46,7 +46,7 @@ schedule whose total weighted tardiness `Σ_j w_j max(0, C_j - d_j)` is at most 
 the completion time of job `j` (of its last operation)?
 
 This is the job shop with multi-purpose machines (MPM) of Brucker (2004), Chapter 10, as stated in
-`MultiPurposeJobShopThreeJobsWanted` (instance, operations, eligible machine sets, schedules and
+`MultiPurposeJobShopThreeJobsDefs` (instance, operations, eligible machine sets, schedules and
 `MPMWellFormed` are reused from there), with `m = 2` machines, every operation of length `1`, and
 the total weighted tardiness criterion. Brucker and Knust's classification lists
 `JMPM2|p_ij=1|Σw_iT_i` as minimal NP-hard in the strong sense, citing Timkovsky (1998), who reduces
@@ -57,7 +57,7 @@ no condition on the machine sets of consecutive operations of a job.
 
 The last component `K` of the reused instance is the bound on the total weighted tardiness; the
 instance adds one pair `(d_j, w_j)` per job. Start times are natural numbers, which does not change
-the answer (see `MultiPurposeJobShopThreeJobsWanted`). Operations are listed one by one, so the
+the answer (see `MultiPurposeJobShopThreeJobsDefs`). Operations are listed one by one, so the
 instance size counts every operation (the cited hardness is in the strong sense). Binary encoding of
 all numbers.
 

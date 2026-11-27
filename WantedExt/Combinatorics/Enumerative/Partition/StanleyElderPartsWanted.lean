@@ -10,11 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
-public import Mathlib.Algebra.Order.BigOperators.Group.Multiset
-public import Mathlib.NumberTheory.ArithmeticFunction.Misc
-public import Mathlib.RingTheory.PowerSeries.Inverse
-public import Mathlib.RingTheory.PowerSeries.PiTopology
-public import Mathlib.Topology.Instances.Rat
+public import MathlibExt.Combinatorics.Enumerative.Partition.StanleyElderParts
 
 /-!
 # Stanley's and Elder's theorems on parts of partitions
@@ -50,196 +46,6 @@ INTEGERS 25 (2025), Article A94, Theorem 2 (Elder's theorem). -/
 public theorem_wanted sum_count_eq_sum_card_parts_count_ge (n k : ℕ) (hk : 1 ≤ k) :
     ∑ p : Nat.Partition n, p.parts.count k =
       ∑ p : Nat.Partition n, (p.parts.toFinset.filter fun i => k ≤ p.parts.count i).card
-
-/-- **Stanley's theorem.** For every natural number $n$, the total number of parts equal to $1$,
-counted with multiplicity, over all partitions of $n$ equals the sum, over all partitions
-$\lambda$ of $n$, of the number of distinct parts of $\lambda$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Theorem 1 (Stanley's theorem). -/
-public theorem_wanted sum_count_one_eq_sum_card_toFinset (n : ℕ) :
-    ∑ p : Nat.Partition n, p.parts.count 1 = ∑ p : Nat.Partition n, p.parts.toFinset.card
-
-
-/-! ### `n`-color partitions
-
-An `n`-color partition (Agarwal and Andrews) of `m` is a partition of `m` in which a part of
-size `k` comes in `k` colors `k_1, …, k_k`. It is encoded as a multiset of colored parts
-`(k, j)` with `1 ≤ j ≤ k`, whose sizes `k` sum to `m`; "distinct" means no colored part
-repeats, "odd parts" means every size `k` is odd, and the number of parts counts colored parts
-with multiplicity. -/
-
-/-- **The list of colored parts of size at most $m$.** For $m \ge 0$, this is the list of the
-colored parts $k_j$, that is, the pairs $(k, j)$ of natural numbers with $1 \le j \le k \le m$,
-each listed once, in the order $1_1, 2_1, 2_2, 3_1, 3_2, 3_3, \dots$ (by size $k$, then by
-color $j$).
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions). -/
-public def nColorPartsUpTo (m : ℕ) : List (ℕ × ℕ) :=
-  (List.range m).flatMap fun k => (List.range (k + 1)).map fun j => (k + 1, j + 1)
-
-/-- **Membership in the colored parts of bounded size.** For all natural numbers $m$, $k$ and
-$j$, the pair $(k, j)$ appears in the list of colored parts of size at most $m$ if and only if
-$1 \le j \le k \le m$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions). -/
-public theorem mem_nColorPartsUpTo (m : ℕ) (x : ℕ × ℕ) :
-    x ∈ nColorPartsUpTo m ↔ 1 ≤ x.2 ∧ x.2 ≤ x.1 ∧ x.1 ≤ m := by
-  obtain ⟨k, j⟩ := x
-  simp only [nColorPartsUpTo, List.mem_flatMap, List.mem_range, List.mem_map, Prod.mk.injEq]
-  constructor
-  · rintro ⟨a, ha, b, hb, rfl, rfl⟩; omega
-  · rintro ⟨h1, h2, h3⟩; exact ⟨k - 1, by omega, j - 1, by omega, by omega, by omega⟩
-
-/-- **Multisets of parts with a given size sum.** For a list $L$ of pairs of natural numbers, where
-the size of a pair $(k, j)$ is $k$, and a natural number $n$, this is the finite set of multisets
-of pairs defined by recursion on $L$. For the empty list it is the set containing only the empty
-multiset when $n = 0$, and the empty set otherwise. For a list with head $c$ of size $k$ and tail
-$L'$, it is the set of all multisets obtained by adding $i$ copies of $c$ to a member of the set
-for $L'$ and $n - ik$, where $i$ ranges over the natural numbers with $i \le n$ and $ik \le n$.
-
-When every pair in $L$ has positive size, this is exactly the set of multisets whose elements all
-lie in $L$ and whose sizes, counted with multiplicity, sum to $n$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions; helper for `C(m)`). -/
-public def multisetsWithSizeSum : List (ℕ × ℕ) → ℕ → Finset (Multiset (ℕ × ℕ))
-  | [], n => if n = 0 then {0} else ∅
-  | c :: cs, n => (Finset.range (n + 1)).biUnion fun i =>
-      if i * c.1 ≤ n then
-        (multisetsWithSizeSum cs (n - i * c.1)).image (Multiset.replicate i c + ·)
-      else ∅
-
-/-- **Membership in the multisets with a given size sum.** Let $L$ be a list of pairs of natural
-numbers in which every pair $(k, j)$ has size $k \ge 1$, and let $n$ be a natural number. A
-multiset $s$ of pairs belongs to the set of multisets drawn from $L$ with size sum $n$ if and only
-if every element of $s$ lies in $L$ and the sizes of the elements of $s$, counted with
-multiplicity, sum to $n$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions; helper for `C(m)`). -/
-public theorem mem_multisetsWithSizeSum (L : List (ℕ × ℕ)) (hL : ∀ c ∈ L, 1 ≤ c.1) (n : ℕ)
-    (s : Multiset (ℕ × ℕ)) :
-    s ∈ multisetsWithSizeSum L n ↔ (∀ x ∈ s, x ∈ L) ∧ (s.map Prod.fst).sum = n := by
-  induction L generalizing n s with
-  | nil =>
-    simp only [multisetsWithSizeSum, List.not_mem_nil, imp_false]
-    by_cases hn : n = 0
-    · subst hn
-      simp only [ite_true, Finset.mem_singleton]
-      constructor
-      · rintro rfl; simp
-      · rintro ⟨h, -⟩; exact Multiset.eq_zero_iff_forall_notMem.mpr h
-    · simp only [hn, ite_false, Finset.notMem_empty, false_iff, not_and]
-      intro h
-      rw [Multiset.eq_zero_iff_forall_notMem.mpr h]
-      simpa using Ne.symm hn
-  | cons c cs ih =>
-    have hc : 1 ≤ c.1 := hL c (by simp)
-    have hcs : ∀ d ∈ cs, 1 ≤ d.1 := fun d hd => hL d (by simp [hd])
-    simp only [multisetsWithSizeSum, Finset.mem_biUnion, Finset.mem_range]
-    constructor
-    · rintro ⟨i, -, hs⟩
-      split_ifs at hs with hi
-      · obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hs
-        obtain ⟨htm, hts⟩ := (ih hcs _ t).mp ht
-        refine ⟨fun x hx => ?_, ?_⟩
-        · rcases Multiset.mem_add.mp hx with hx | hx
-          · simp [Multiset.eq_of_mem_replicate hx]
-          · simp [htm x hx]
-        · simp [Multiset.map_replicate, Multiset.sum_replicate, hts]
-          omega
-      · simp at hs
-    · rintro ⟨hmem, hsum⟩
-      set i := s.count c
-      set t := s.filter (· ≠ c)
-      have hsplit : s = Multiset.replicate i c + t := by
-        rw [← Multiset.filter_add_not (· = c) s, Multiset.filter_eq' s c]
-      have hsum' : i * c.1 + (t.map Prod.fst).sum = n := by
-        rw [← hsum]; conv_rhs => rw [hsplit]
-        simp [Multiset.map_replicate, Multiset.sum_replicate]
-      have htmem : ∀ x ∈ t, x ∈ cs := by
-        intro x hx
-        obtain ⟨hxs, hxc⟩ := Multiset.mem_filter.mp hx
-        rcases List.mem_cons.mp (hmem x hxs) with h | h
-        · exact absurd h hxc
-        · exact h
-      refine ⟨i, ?_, ?_⟩
-      · have : i ≤ i * c.1 := Nat.le_mul_of_pos_right i hc
-        omega
-      · split_ifs with hi
-        · exact Finset.mem_image.mpr ⟨t, (ih hcs _ t).mpr ⟨htmem, by omega⟩, hsplit.symm⟩
-        · omega
-
-/-- **n-color partitions.** For a natural number $m$, the $n$-color partitions of $m$ form the
-finite set of multisets of colored parts $k_j$, that is pairs $(k, j)$ of natural numbers with
-$1 \le j \le k$ (a part of size $k$ comes in $k$ colors), whose sizes $k$, counted with
-multiplicity, sum to $m$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions; `C(m)` is their number). -/
-public def nColorPartitions (m : ℕ) : Finset (Multiset (ℕ × ℕ)) :=
-  multisetsWithSizeSum (nColorPartsUpTo m) m
-
-/-- **Characterization of $n$-color partitions.** For every natural number $m$, a multiset $s$ of
-pairs of natural numbers is an $n$-color partition of $m$ if and only if every element $(k, j)$ of
-$s$ satisfies $1 \le j \le k$ and the sizes $k$ of the elements of $s$, counted with
-multiplicity, sum to $m$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Section 1 (`n`-color partitions). -/
-public theorem mem_nColorPartitions (m : ℕ) (s : Multiset (ℕ × ℕ)) :
-    s ∈ nColorPartitions m ↔ (∀ x ∈ s, 1 ≤ x.2 ∧ x.2 ≤ x.1) ∧ (s.map Prod.fst).sum = m := by
-  rw [nColorPartitions, mem_multisetsWithSizeSum _ (fun c hc => by
-    have := (mem_nColorPartsUpTo m c).mp hc; omega)]
-  simp only [mem_nColorPartsUpTo]
-  constructor
-  · rintro ⟨h, hs⟩; exact ⟨fun x hx => ⟨(h x hx).1, (h x hx).2.1⟩, hs⟩
-  · rintro ⟨h, hs⟩
-    refine ⟨fun x hx => ⟨(h x hx).1, (h x hx).2, ?_⟩, hs⟩
-    rw [← hs]
-    exact Multiset.le_sum_of_mem (Multiset.mem_map_of_mem Prod.fst hx)
-
-/-- **Small values of the number of n-color partitions.** Let $C(m)$ be the number of $n$-color
-partitions of $m$, and write $k_j$ for the colored part of size $k$ and color $j$. Then
-$C(0) = C(1) = 1$, $C(2) = 3$ and $C(3) = 6$, and the $n$-color partitions of $2$ are exactly
-$2_1$, $2_2$ and $1_1 + 1_1$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Section 1 (`C(m)`, generating function
-`∏_{m ≥ 1} (1 - q^m)^{-m}`). -/
-public theorem nColorPartitions_card_small :
-    (nColorPartitions 0).card = 1 ∧ (nColorPartitions 1).card = 1 ∧
-      (nColorPartitions 2).card = 3 ∧ (nColorPartitions 3).card = 6 ∧
-      nColorPartitions 2 = {{(1, 1), (1, 1)}, {(2, 1)}, {(2, 2)}} := by
-  decide +kernel
-
-/-- **Sum of odd divisors.** For a natural number $k$, $\sigma_{\mathrm{odd}}(k)$ is the sum of
-the odd positive divisors of $k$. By convention $\sigma_{\mathrm{odd}}(0) = 0$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Corollaries 2, 4, 7, 10, 12 (`σ_odd`). -/
-public def sigmaOdd (k : ℕ) : ℕ := ∑ d ∈ k.divisors.filter Odd, d
-
-/-- **Sum of the even divisors.** For a natural number $k$, $\sigma_{\mathrm{even}}(k)$ is the
-sum of the even divisors of $k$ (so $\sigma_{\mathrm{even}}(0) = 0$).
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Corollary 3 (`σ_even`). -/
-public def sigmaEven (k : ℕ) : ℕ := ∑ d ∈ k.divisors.filter Even, d
-
-/-- **Odd and even divisor sums of 12 and 9.** The sums of the odd and of the even divisors
-of $12$ and $9$ are $\sigma_{\mathrm{odd}}(12) = 1 + 3 = 4$,
-$\sigma_{\mathrm{even}}(12) = 2 + 4 + 6 + 12 = 24$, $\sigma_{\mathrm{odd}}(9) = 1 + 3 + 9 = 13$
-and $\sigma_{\mathrm{even}}(9) = 0$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Corollaries 3 and 4. -/
-public theorem sigmaOdd_sigmaEven_small :
-    sigmaOdd 12 = 4 ∧ sigmaEven 12 = 24 ∧ sigmaOdd 9 = 13 ∧ sigmaEven 9 = 0 := by
-  decide
 
 /-- **Total number of parts of $n$-color partitions via the divisor sum.** For $r \ge 0$ let
 $C(r)$ be the number of $n$-color partitions of $r$, and let $T_o(r)$ (resp. $T_e(r)$) be the
@@ -298,20 +104,6 @@ INTEGERS 25 (2025), Article A94, Corollary 4 (`integers-2025-A94-cor-4`). -/
 public theorem_wanted nColor_oddParts_eq_sum_sigmaOdd (m : ℕ) (hm : 1 ≤ m) :
     ∑ s ∈ nColorPartitions m, (s.filter fun p => Odd p.1).card =
       ∑ k ∈ Finset.Icc 1 m, sigmaOdd k * (nColorPartitions (m - k)).card
-
-/-- **Parts of multiplicity at least t in n-color partitions.** Let $t \ge 1$. For $i \ge 0$ let
-$N^t(i)$ be the number of distinct colored parts occurring at least $t$ times in an $n$-color
-partition of $i$, summed over all $n$-color partitions of $i$, and let $C(i)$ be the number of
-$n$-color partitions of $i$. Then for every $m \ge t$,
-$$
-N^t(m) = \sum_{k=1}^{\lfloor m/t \rfloor} k\, C(m - tk).
-$$
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Corollary 5 (`integers-2025-A94-cor-5`). -/
-public theorem_wanted nColor_partsMultiplicityGe_eq_sum (m t : ℕ) (ht : 1 ≤ t) (htm : t ≤ m) :
-    ∑ s ∈ nColorPartitions m, (s.toFinset.filter fun p => t ≤ s.count p).card =
-      ∑ k ∈ Finset.Icc 1 (m / t), k * (nColorPartitions (m - t * k)).card
 
 /-- **Parts in a residue class over n-color partitions as a divisor sum.** Let $r$ and $k$ be
 natural numbers with $0 < k < r$. For $i \ge 0$ let $C(k \bmod r, i)$ be the total number of
@@ -419,22 +211,6 @@ public theorem_wanted nColor_totalParts_generatingFunction :
             ((∑ s ∈ (nColorPartitions n).filter (fun s => Odd s.card), s.card : ℕ) : ℚ) -
               ((∑ s ∈ (nColorPartitions n).filter (fun s => Even s.card), s.card : ℕ) : ℚ)
 
-/-- **Generating function for the even parts of $n$-color partitions.** Let $A_e(m)$ be the total
-number of parts of even size, counted with multiplicity, over the $n$-color partitions of $m$.
-Then, as formal power series in $q$ over $\mathbb{Q}$, with infinite sums and products taken
-coefficientwise,
-$$
-\sum_{m \ge 1} \frac{2m \, q^{2m}}{1 - q^{2m}} =
-\Big(\prod_{m \ge 1} (1 - q^m)^m\Big) \sum_{m \ge 0} A_e(m) \, q^m.
-$$
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Theorem 4 (`integers-2025-A94-thm-4`). -/
-public theorem_wanted nColor_evenParts_generatingFunction :
-    ∑' m : ℕ, ((2 * (m + 1) : ℕ) : ℚ⟦X⟧) * X ^ (2 * (m + 1)) * (1 - X ^ (2 * (m + 1)))⁻¹ =
-      (∏' m : ℕ, (1 - X ^ (m + 1)) ^ (m + 1) : ℚ⟦X⟧) *
-        PowerSeries.mk fun n => ((∑ s ∈ nColorPartitions n, (s.filter fun p => Even p.1).card : ℕ) : ℚ)
-
 /-- **Generating function for the number of odd parts in n-color partitions.** For $i \ge 0$ let
 $A_o(i)$ be the total number of odd parts (parts of odd size, counted with multiplicity) over the
 $n$-color partitions of $i$. Then in the ring $\mathbb{Q}[[q]]$ of formal power series, with
@@ -449,21 +225,8 @@ INTEGERS 25 (2025), Article A94, Theorem 5 (`integers-2025-A94-thm-5`). -/
 public theorem_wanted nColor_oddParts_generatingFunction :
     ∑' m : ℕ, ((2 * m + 1 : ℕ) : ℚ⟦X⟧) * X ^ (2 * m + 1) * (1 - X ^ (2 * m + 1))⁻¹ =
       (∏' m : ℕ, (1 - X ^ (m + 1)) ^ (m + 1) : ℚ⟦X⟧) *
-        PowerSeries.mk fun n => ((∑ s ∈ nColorPartitions n, (s.filter fun p => Odd p.1).card : ℕ) : ℚ)
-
-/-- **Generating function for colored parts of multiplicity at least $t$.** Let $t \ge 1$. For
-$m \ge 0$ let $N^t(m)$ be the sum, over all $n$-color partitions of $m$, of the number of
-distinct colored parts that occur at least $t$ times. Then, as formal power series in $q$ with
-rational coefficients,
-$$\sum_{m \ge 1} m q^{mt} = \prod_{m \ge 1} (1 - q^m)^m \sum_{m \ge 0} N^t(m) q^m.$$
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Theorem 6 (`integers-2025-A94-thm-6`). -/
-public theorem_wanted nColor_partsMultiplicityGe_generatingFunction (t : ℕ) (ht : 1 ≤ t) :
-    ∑' m : ℕ, ((m + 1 : ℕ) : ℚ⟦X⟧) * X ^ ((m + 1) * t) =
-      (∏' m : ℕ, (1 - X ^ (m + 1)) ^ (m + 1) : ℚ⟦X⟧) *
         PowerSeries.mk fun n =>
-          ((∑ s ∈ nColorPartitions n, (s.toFinset.filter fun p => t ≤ s.count p).card : ℕ) : ℚ)
+          ((∑ s ∈ nColorPartitions n, (s.filter fun p => Odd p.1).card : ℕ) : ℚ)
 
 /-- **Generating function for parts in a residue class over n-color partitions.** Let $r$ and
 $k$ be natural numbers with $0 < k < r$, and for $i \ge 0$ let $C(k \bmod r, i)$ be the total
@@ -506,7 +269,8 @@ public theorem_wanted nColor_distinctTotalParts_generatingFunction :
         (∏' m : ℕ, (1 + X ^ (m + 1)) ^ (m + 1) : ℚ⟦X⟧)⁻¹ *
           PowerSeries.mk fun n =>
             ((∑ s ∈ (nColorPartitions n).filter (fun s => s.Nodup ∧ Odd s.card), s.card : ℕ) : ℚ) +
-              ((∑ s ∈ (nColorPartitions n).filter (fun s => s.Nodup ∧ Even s.card), s.card : ℕ) : ℚ)) ∧
+              ((∑ s ∈ (nColorPartitions n).filter (fun s => s.Nodup ∧ Even s.card),
+                s.card : ℕ) : ℚ)) ∧
       ∑' m : ℕ, ((m + 1 : ℕ) : ℚ⟦X⟧) * X ^ (m + 1) * (1 - X ^ (m + 1))⁻¹ =
         (∏' m : ℕ, (1 - X ^ (m + 1)) ^ (m + 1) : ℚ⟦X⟧)⁻¹ *
           PowerSeries.mk fun n =>
@@ -599,15 +363,15 @@ public theorem_wanted nColor_oddPartitionParts_byParity_generatingFunction :
           PowerSeries.mk fun n =>
             ((∑ s ∈ (nColorPartitions n).filter (fun s => (∀ p ∈ s, Odd p.1) ∧ Odd s.card), s.card :
               ℕ) : ℚ) +
-            ((∑ s ∈ (nColorPartitions n).filter (fun s => (∀ p ∈ s, Odd p.1) ∧ Even s.card), s.card :
-              ℕ) : ℚ)) ∧
+            ((∑ s ∈ (nColorPartitions n).filter (fun s => (∀ p ∈ s, Odd p.1) ∧ Even s.card),
+              s.card : ℕ) : ℚ)) ∧
       ∑' m : ℕ, ((2 * m + 1 : ℕ) : ℚ⟦X⟧) * X ^ (2 * m + 1) * (1 + X ^ (2 * m + 1))⁻¹ =
         (∏' m : ℕ, (1 + X ^ (2 * m + 1)) ^ (2 * m + 1) : ℚ⟦X⟧) *
           PowerSeries.mk fun n =>
             ((∑ s ∈ (nColorPartitions n).filter (fun s => (∀ p ∈ s, Odd p.1) ∧ Odd s.card), s.card :
               ℕ) : ℚ) -
-            ((∑ s ∈ (nColorPartitions n).filter (fun s => (∀ p ∈ s, Odd p.1) ∧ Even s.card), s.card :
-              ℕ) : ℚ)
+            ((∑ s ∈ (nColorPartitions n).filter (fun s => (∀ p ∈ s, Odd p.1) ∧ Even s.card),
+              s.card : ℕ) : ℚ)
 
 /-- **Signed odd-divisor sum via $n$-color partitions into odd parts.** For $r \ge 0$ let
 $U_o(r)$ (resp. $U_e(r)$) be the total number of parts, counted with multiplicity, over the

@@ -16,7 +16,7 @@ import Mathlib.Tactic.NormNum.Basic
 @[expose] public section
 
 -- `exactSource` consumer with the original statement.
-theorem exactSource : FermatLastTheoremFor 5 :=
+private theorem exactSource : FermatLastTheoremFor 5 :=
   fermatLastTheoremFive
 
 /-- The statement with its binders unfolded. -/

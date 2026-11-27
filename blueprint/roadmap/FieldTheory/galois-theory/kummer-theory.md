@@ -22,12 +22,12 @@ $n$-th roots of unity in $F$.
 Milne obtains this isomorphism from the cohomology sequence of
 $1 \to \mu_n \to E^\times \xrightarrow{x \mapsto x^n} E^{\times n} \to 1$, which ends with
 $H^1(G, E^\times) = 0$, [Hilbert's Theorem 90](multiplicative-hilbert-s-theorem-90.md) for the finite Galois
-extension $E/F$ (Milne, *Fields and Galois Theory*, Theorem 5.23), and deduces the bijection from it by comparing
-the degrees $[E : F]$ with the indices $(B : F^{\times n})$.
-
-## Proof depends on
-
-- [Hilbert's Theorem 90 for the multiplicative group](multiplicative-hilbert-s-theorem-90.md), for $H^1(G, E^\times) = 0$
+extension $E/F$ (Milne, *Fields and Galois Theory*, Theorem 5.23). He compares the degrees $[E : F]$
+with the indices $(B : F^{\times n})$. In that comparison,
+$\lvert \mathrm{Hom}(G, \mu_n) \rvert = \lvert G \rvert$ by
+[finite abelian duality](../../GroupTheory/abelian-groups/dual-groups-of-finite-abelian-groups/finite-abelian-dual-iso.md):
+$G$ is killed by $n$, and a choice of primitive $n$-th roots identifies $\mu_n$ with the group of
+$n$-th roots of unity in $\mathbb C$.
 
 ## Sources
 

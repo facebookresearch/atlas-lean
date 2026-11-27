@@ -41,7 +41,8 @@ noncomputable def assetBeta {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) 
   cov[X, Y; μ] / Var[Y; μ]
 
 set_option linter.unusedVariables false in
-/-- **Portfolio beta is linear in portfolio weights (FI07.T01).** When the market
+/-- **Portfolio beta is linear in portfolio weights (FI07.T01).** Under a probability measure,
+with square-integrable asset and market returns, when the market
 variance is positive, the beta of the portfolio return `∑ i, w i * R i ω` is the
 weight-weighted sum of the asset betas. The proof is covariance additivity /
 homogeneity in the first slot (`covariance_fun_sum_left`,

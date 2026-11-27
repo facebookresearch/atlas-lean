@@ -64,8 +64,8 @@ private theorem term_bound (a : ℕ → ℝ) (i : ℕ) {z : ℝ} (hz : z ∈ Icc
   rw [norm_mul, norm_pow]
   exact mul_le_of_le_one_right (norm_nonneg _) (pow_le_one₀ (norm_nonneg _) (abs_le.mpr hz))
 
-/-- Uniform convergence extends the given half-open expansion to the right endpoint. -/
-private theorem hasSum_endpoint {a : ℕ → ℝ} {f : ℝ → ℝ}
+/- Uniform convergence extends the given half-open expansion to the right endpoint. -/
+public theorem hasSum_endpoint {a : ℕ → ℝ} {f : ℝ → ℝ}
     (hf : ContinuousOn f (Icc (-1 : ℝ) 1))
     (hs : ∀ z ∈ Ico (-1 : ℝ) 1, HasSum (fun i ↦ a i * z ^ i) (f z))
     (ha : Summable fun i ↦ ‖a i‖) : HasSum a (f 1) := by
@@ -80,7 +80,7 @@ private theorem hasSum_endpoint {a : ℕ → ℝ} {f : ℝ → ℝ}
   rw [← h]
   exact (Summable.of_norm ha).hasSum
 
-private theorem hasSum_integral {a : ℕ → ℝ} {f : ℝ → ℝ}
+public theorem hasSum_integral {a : ℕ → ℝ} {f : ℝ → ℝ}
     (hs : ∀ z ∈ Ico (-1 : ℝ) 1, HasSum (fun i ↦ a i * z ^ i) (f z))
     (ha : Summable fun i ↦ ‖a i‖) {z : ℝ} (hz : z ∈ Ico (-1 : ℝ) 1) :
     HasSum (fun i ↦ a i * ((z ^ (i + 1) - (-1 : ℝ) ^ (i + 1)) / (i + 1)))
@@ -96,7 +96,7 @@ private theorem hasSum_integral {a : ℕ → ℝ} {f : ℝ → ℝ}
     (ae_of_all _ fun t ht ↦ hs t (hmem ht))
   simpa only [intervalIntegral.integral_const_mul, integral_pow] using h
 
-private theorem coefficients_eq {a b : ℕ → ℝ} {f : ℝ → ℝ}
+public theorem coefficients_eq {a b : ℕ → ℝ} {f : ℝ → ℝ}
     (ha : ∀ z ∈ Ico (-1 : ℝ) 1, HasSum (fun i ↦ a i * z ^ i) (f z))
     (hb : ∀ z ∈ Ico (-1 : ℝ) 1, HasSum (fun i ↦ b i * z ^ i) (f z)) : a = b := by
   have series (d : ℕ → ℝ) (hd : ∀ z ∈ Ico (-1 : ℝ) 1, HasSum (fun i ↦ d i * z ^ i) (f z)) :

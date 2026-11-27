@@ -21,11 +21,11 @@ the strong sense, Brucker et al.).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.MultiprocessorTaskFlowShopTreeLatenessWanted
-public import WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
 public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
 
 @[expose] public section
@@ -59,7 +59,7 @@ machine of `μᵢ`, each machine processing at most one job at a time. With sing
 and identical machines this is `PMPM`, and `P` is the special case of `PMPM` in which every
 `μᵢ` contains all `m` machines. An instance is therefore an MPM job-shop instance
 (`MPMJobShopInstance` and `MPMWellFormed` of
-`WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted`: the number `m` of
+`CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs`: the number `m` of
 machines, numbered `1, …, m`, the jobs as lists of operations `(pᵢ, μᵢ)` with nonempty machine
 sets, and a bound) in which every job has exactly one operation, together with the list of
 precedence arcs, which must name jobs and form an acyclic digraph (`Prec` and `PrecWellFormed`

@@ -1,66 +1,34 @@
 name: Blueprint Pages
 
-# PRs that touch the wiki, its tooling, the site or the toolchain pins check
-# the graph. main is built once a day and on manual runs, not on every push:
-# merges land faster than a build finishes. Merge groups do not run it: it is
-# not a required check, so it could not stop a merge, and CI's required build
-# already imports every v2 module together (docs/BLUEPRINT.md).
-# Only the default branch can publish, and publishing is opt-in.
+# main is built once a day and on manual runs, not on every push: merges land
+# faster than a build finishes. A PR builds the site only when it changes what
+# builds and checks it (this workflow, the scripts it runs and their tests, the
+# documents they read, the site configuration, the Autoform pin, the toolchain
+# pins), a path where the build writes or fetches its outputs, the wiki
+# (blueprint/), or one of the two ledgers its checks compare with the PR's base
+# commit: only a PR's build checks the wiki's moves and card retirements since
+# that base against the move ledger, and fails on a Mathlib source link that
+# disagrees with its title. The `changes` job decides, and every other PR, such
+# as one that changes only Lean library files, scripts/taxonomy.json or
+# scripts/wiki-sync.json, skips the build and runs the build's unit tests
+# alone, in a few minutes (`tests`). A PR that changes only Lean library files
+# those tests do not read, provenance and documentation runs neither (`scope`,
+# scripts/ci_scope.py). main's daily build checks the whole wiki, its site and
+# its cards as they stand; a failure there is fixed on main.
+# Anyone with write access can build and check a branch on demand with
+# `gh workflow run blueprint-pages.yml --ref <branch>`.
+# Merge groups do not run it: it is not a required check, so it could not stop
+# a merge, and CI's required build already imports every v2 module together
+# (docs/BLUEPRINT.md). Only the default branch can publish, and publishing is
+# opt-in.
 on:
   schedule:
     - cron: "17 3 * * *" # Daily at 03:17 UTC, off the busy top of the hour.
+  # Every PR, with no `paths` filter: GitHub matches one against the first 300
+  # changed files only, so a PR with more changed files outside the list, Lean
+  # files say, would hide a listed file after them. The `changes` job reads the
+  # whole diff instead.
   pull_request:
-    paths:
-      - "blueprint/**"
-      - "scripts/generate_wiki.py"
-      - "scripts/sync_wiki.py"
-      - "scripts/import_mathgraph.py"
-      - "scripts/check_public_references.py"
-      - "scripts/extract_v2_lean_dependencies.py"
-      - "scripts/dump_v2_dependencies.lean"
-      - "scripts/list_v2_modules.sh"
-      - "scripts/extract_mathlib_graph.py"
-      - "scripts/dump_mathlib_dependencies.lean"
-      - "scripts/check_blueprint_site.py"
-      - "scripts/next_task.py"
-      - "scripts/build_mathlib_pages.py"
-      - "scripts/mathlib_link.py"
-      - "scripts/mathlib_pages.css"
-      - "scripts/pack_pages_site.py"
-      - "scripts/pages_packing.js"
-      - "scripts/pages_size.sh"
-      - "scripts/cards.py"
-      - "scripts/card-moves.jsonl"
-      - "scripts/taxonomy.json"
-      - "scripts/wiki-sync.json"
-      - "scripts/mathgraph-map.jsonl"
-      - "scripts/requirements-blueprint.txt"
-      - "scripts/test_generate_wiki_navigation.py"
-      - "scripts/test_generate_wiki_docstrings.py"
-      - "scripts/test_sync_wiki.py"
-      - "scripts/test_import_mathgraph.py"
-      - "scripts/test_extract_v2_lean_dependencies.py"
-      - "scripts/test_extract_mathlib_graph.py"
-      - "scripts/test_check_blueprint_site_navigation.py"
-      - "scripts/test_site_chrome.py"
-      - "scripts/test_blueprint_workflow.py"
-      - "scripts/test_blueprint_taxonomy.py"
-      - "scripts/test_build_mathlib_pages.py"
-      - "scripts/test_pack_pages_site.py"
-      - "scripts/test_cards.py"
-      - "scripts/test_card_pages.py"
-      - "mkdocs.yml"
-      - "theme/**"
-      - "hooks/**"
-      - "docs/BLUEPRINT.md"
-      - "docs/cards.md"
-      - "docs/mathgraph-import.md"
-      - ".github/workflows/blueprint-pages.yml"
-      - ".github/workflows/graph-sync.yml"
-      - ".github/autoform-ref"
-      - "lean-toolchain"
-      - "lake-manifest.json"
-      - "lakefile.toml"
   workflow_dispatch:
 
 permissions:
@@ -74,8 +42,304 @@ env:
   AUTOFORM_SOURCE: "https://github.com/facebookresearch/autoform-bot.git"
 
 jobs:
+  # Whether this run builds the site: scheduled and manual runs always do, and
+  # a PR does when its merge commit changes a path of the list below, Git
+  # attributes or an Autoform output marker, compared with the commit's first
+  # parent, the base it merges into. The wiki and Mathlib layer jobs run only
+  # then; the jobs after them follow. Also whether it is a run of main that may
+  # publish: an expression's `==` ignores case, so a branch `Main` would pass
+  # `github.ref == 'refs/heads/main'`, whereas Bash compares the ref exactly. It
+  # runs no repository code and prints no changed path.
+  changes:
+    name: decide whether to build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      build: ${{ steps.decide.outputs.build }}
+      main: ${{ steps.decide.outputs.main }}
+    steps:
+      - name: Check out the merge commit and its base
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+          sparse-checkout: .github
+
+      - name: Decide
+        id: decide
+        env:
+          EVENT: ${{ github.event_name }}
+          # One path a line, a directory written `dir/**`; each matches itself and
+          # everything beneath it. A line starting with `#` is a comment.
+          BUILD_PATHS: |
+            # What builds and checks the site. The wiki job's tests read every
+            # workflow: one checks that no other job is named `graph sync`.
+            # docs/mathgraph-import.md holds the JSON schemas the importer's
+            # tests compare with the importer's; the Mathlib layer job copies
+            # docs/mathlib-layer.md into its artifact.
+            scripts/generate_wiki.py
+            scripts/sync_wiki.py
+            scripts/import_mathgraph.py
+            scripts/check_public_references.py
+            scripts/extract_v2_lean_dependencies.py
+            scripts/dump_v2_dependencies.lean
+            scripts/list_v2_modules.sh
+            scripts/extract_mathlib_graph.py
+            scripts/dump_mathlib_dependencies.lean
+            scripts/check_blueprint_site.py
+            scripts/next_task.py
+            scripts/build_mathlib_pages.py
+            scripts/mathlib_link.py
+            scripts/mathlib_pages.css
+            scripts/pack_pages_site.py
+            scripts/pages_packing.js
+            scripts/pages_size.sh
+            scripts/cards.py
+            scripts/test_generate_wiki_navigation.py
+            scripts/test_generate_wiki_docstrings.py
+            scripts/test_sync_wiki.py
+            scripts/test_graph_batch.py
+            scripts/test_import_mathgraph.py
+            scripts/test_extract_v2_lean_dependencies.py
+            scripts/test_extract_mathlib_graph.py
+            scripts/test_check_blueprint_site_navigation.py
+            scripts/test_site_chrome.py
+            scripts/test_blueprint_workflow.py
+            scripts/test_blueprint_taxonomy.py
+            scripts/test_build_mathlib_pages.py
+            scripts/test_pack_pages_site.py
+            scripts/test_cards.py
+            scripts/test_card_pages.py
+            mkdocs.yml
+            theme/**
+            hooks/**
+            docs/mathgraph-import.md
+            docs/mathlib-layer.md
+            .github/workflows/**
+            .github/autoform-ref
+            lean-toolchain
+            lake-manifest.json
+            lakefile.toml
+            lakefile.lean
+            # The Python toolchain uv would read from the root, should one appear.
+            # (A .gitattributes file anywhere counts too: it can change how the
+            # checkout writes what the build reads.)
+            .python-version
+            .python-versions
+            uv.toml
+            pyproject.toml
+            # A Python environment uv would use from the root, and a package
+            # file Python would load before the scripts' tests.
+            .venv/**
+            scripts/__init__.py
+            # Where the build writes or fetches its outputs: a file committed
+            # there can be read alongside them (a page in site/ meets the Mathlib
+            # pages' strict link check), overwrite them, or stand in their way.
+            .lake/**
+            build/**
+            site-src/**
+            .autoform-publication-backup-site-src/**
+            site/**
+            site-pages/**
+            site-full/**
+            mathlib-graph/**
+            mathlib-pages-report.json
+            v2-dependencies.jsonl
+            v2-dependencies.jsonl.gz
+            v2-modules.txt
+            # The wiki, whose pages, annotations and site inputs the build checks,
+            # and what only a PR's build can check, since main's runs have
+            # no base commit and check Mathlib source links without failing: the
+            # import map and the card move ledger, which its checks compare with
+            # the base commit's, the moves and card retirements of the wiki's
+            # pages and annotations since the base, which the card check
+            # compares with the move ledger, and the wiki's Mathlib source links,
+            # which must match their declarations' titles
+            # (docs/mathgraph-import.md#the-map, docs/cards.md#move-ledger,
+            # docs/mathlib-pages.md).
+            scripts/mathgraph-map.jsonl
+            scripts/card-moves.jsonl
+            blueprint/**
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT" != pull_request && "$EVENT" != merge_group && "$GITHUB_REF" == refs/heads/main ]]; then
+            echo "main=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "main=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [[ "$EVENT" != pull_request ]]; then
+            echo "build=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # `--` ends the revisions: a file named HEAD must not make them ambiguous.
+          git diff-tree -r -z --no-commit-id --name-only HEAD^1 HEAD -- > "$RUNNER_TEMP/changed-paths"
+          # Isolated: the checkout's root, the working directory, must not shadow a module the decision imports.
+          python3 -I - "$RUNNER_TEMP/changed-paths" <<'PY'
+          import os
+          import sys
+          import unicodedata
+
+          patterns = [line.strip() for line in os.environ["BUILD_PATHS"].splitlines()]
+          patterns = [line for line in patterns if line and not line.startswith("#")]
+          with open(sys.argv[1], encoding="utf-8", errors="surrogateescape") as listing:
+              changed = [path for path in listing.read().split("\0") if path]
+
+
+          def matches(pattern, path):
+              # A listed path matches itself and everything beneath it, so a file in a directory's place, or a
+              # directory in a file's, counts; `dir/**` marks dir as a directory.
+              listed = pattern.removesuffix("/**")
+              return path == listed or path.startswith(listed + "/")
+
+
+          def folded(component):
+              return unicodedata.normalize("NFC", component).casefold()
+
+
+          matched = [pattern for pattern in patterns if any(matches(pattern, path) for path in changed)]
+          # A .gitattributes file can change how the checkout writes any file below it, the build's inputs or a
+          # marker as below, so one changed anywhere counts.
+          attributes = any(path.rsplit("/", 1)[-1] == ".gitattributes" for path in changed)
+          # Autoform leaves out of its Lean source index a directory that holds a complete publication.json or a
+          # manifest.json of its own output, matching names as it does, folded, so either name as any component of
+          # a path counts: a file, or a directory beside the file whose name it shares once folded.
+          marked = any(folded(component) in ("publication.json", "manifest.json")
+                       for path in changed for component in path.split("/"))
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"build={'true' if matched or attributes or marked else 'false'}\n")
+          # Only the list's own entries are written, never a changed path.
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
+              if matched:
+                  summary.write("The PR changes " + ", ".join(f"`{pattern}`" for pattern in matched)
+                                + ": the site is built.\n")
+              if attributes:
+                  summary.write("The PR changes Git attributes: the site is built.\n")
+              if marked:
+                  summary.write("The PR changes a file with the name of an Autoform output marker: the site is "
+                                "built.\n")
+              if not matched and not attributes and not marked:
+                  summary.write(f"None of the PR's {len(changed)} changed paths is on the list: the build is "
+                                "skipped.\n")
+          PY
+
+  # On a PR, whether it needs the build's unit tests when it skips the build
+  # (scripts/ci_scope.py): one that changes only Lean library files they do not
+  # read, provenance and documentation does not. Other runs never ask.
+  scope:
+    name: decide whether to test the site scripts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      site_tests: ${{ steps.decide.outputs.site_tests }}
+    steps:
+      - name: Check out the merge commit and its base
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+          sparse-checkout: /scripts/ci_scope.py
+          sparse-checkout-cone-mode: false
+
+      - name: Decide
+        id: decide
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          # `--` ends the revisions: a file named HEAD must not make them ambiguous.
+          git diff-tree -r -z --no-commit-id --name-only HEAD^1 HEAD -- > "$RUNNER_TEMP/changed-paths"
+          python3 -I scripts/ci_scope.py "$RUNNER_TEMP/changed-paths" >> "$GITHUB_OUTPUT"
+
+  # On a PR that skips the build, the build's unit tests still run, on the wiki
+  # job's checkout and in a few minutes: some read files the list above leaves
+  # out, as tests in scripts/test_blueprint_taxonomy.py,
+  # scripts/test_extract_mathlib_graph.py and scripts/test_build_mathlib_pages.py
+  # check the committed scripts/taxonomy.json with the build's own readers. A PR
+  # that builds runs them in the build's own jobs, and one that `scope` says
+  # does not need them, or that `changes` could not decide, skips them; one
+  # that `scope` could not decide runs them.
+  tests:
+    name: test the site scripts
+    needs: [changes, scope]
+    if: ${{ !cancelled() && needs.changes.outputs.build == 'false' && needs.scope.outputs.site_tests != 'false' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      # The wiki job's first steps, and each unit test step of the build's jobs,
+      # as written there.
+      - name: Check out project
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/v1/
+            !/Atlas/
+          sparse-checkout-cone-mode: false
+
+      - name: Read the reviewed Autoform pin
+        run: |
+          set -euo pipefail
+          ref="$(cat .github/autoform-ref)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]] || { echo "Invalid Autoform pin" >&2; exit 1; }
+          echo "AUTOFORM_REF=$ref" >> "$GITHUB_ENV"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.1"
+
+      - name: Test the wiki scripts
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          --with PyYAML==6.0.3
+          --with mkdocs==1.6.1
+          --with mkdocs-material==9.8.0
+          --with mkdocs-literate-nav==0.6.2
+          --with jsonschema==4.26.0
+          python -m unittest
+          scripts.test_generate_wiki_navigation
+          scripts.test_generate_wiki_docstrings
+          scripts.test_sync_wiki
+          scripts.test_graph_batch
+          scripts.test_import_mathgraph
+          scripts.test_extract_v2_lean_dependencies
+          scripts.test_extract_mathlib_graph
+          scripts.test_check_blueprint_site_navigation
+          scripts.test_site_chrome
+          scripts.test_blueprint_workflow
+          scripts.test_blueprint_taxonomy
+          scripts.test_card_pages
+
+      - name: Test the Mathlib pages script
+        run: >-
+          uv run --no-project
+          --with mkdocs==1.6.1
+          --with mkdocs-material==9.8.0
+          --with mkdocs-literate-nav==0.6.2
+          --with pymdown-extensions==11.0.1
+          --with markdown==3.10.3
+          python -m unittest scripts.test_build_mathlib_pages
+
+      - name: Test the Pages packing script
+        run: python -m unittest scripts.test_pack_pages_site
+
+      - name: Test the card scripts
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          --with PyYAML==6.0.3
+          --with mkdocs==1.6.1
+          --with mkdocs-material==9.8.0
+          --with mkdocs-literate-nav==0.6.2
+          --with pymdown-extensions==11.0.1
+          --with markdown==3.10.3
+          python -m unittest scripts.test_cards
+
   wiki:
     name: build the wiki
+    needs: changes
+    if: needs.changes.outputs.build == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 360
     steps:
@@ -115,6 +379,7 @@ jobs:
           scripts.test_generate_wiki_navigation
           scripts.test_generate_wiki_docstrings
           scripts.test_sync_wiki
+          scripts.test_graph_batch
           scripts.test_import_mathgraph
           scripts.test_extract_v2_lean_dependencies
           scripts.test_extract_mathlib_graph
@@ -168,6 +433,7 @@ jobs:
           mkdir -p "$installer_dir"
           curl --fail --silent --show-error --location \
             --proto '=https' --tlsv1.2 \
+            --retry 5 --retry-all-errors --retry-delay 10 --connect-timeout 30 \
             https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
             --output "$archive"
           echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
@@ -326,9 +592,14 @@ jobs:
       - name: List the ready formalization tasks
         run: |
           set -euo pipefail
-          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" autoform work list . --json > build/work-list.json
-          jq --slurp --compact-output --arg commit "$(git rev-parse HEAD)" \
-            --arg commit_date "$(git log -1 --format=%cI HEAD)" --arg autoform_ref "$AUTOFORM_REF" \
+          # The vault by name: a directory roadmap/ at the root would make `.` ambiguous.
+          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" autoform work list blueprint --json > build/work-list.json
+          # Read apart, so that a failure stops the step; `--verify` and `--` keep a file named HEAD from making the
+          # revision ambiguous.
+          commit=$(git rev-parse --verify HEAD)
+          commit_date=$(git log -1 --format=%cI HEAD --)
+          jq --slurp --compact-output --arg commit "$commit" \
+            --arg commit_date "$commit_date" --arg autoform_ref "$AUTOFORM_REF" \
             'if length != 1 or (.[0] | type) != "object"
              then error("autoform work list did not write one JSON object") else .[0] end
              | if .schema != "autoform-work/v2" or (.items | type) != "array"
@@ -351,7 +622,7 @@ jobs:
           mv build/tasks.json.part build/tasks.json
           cp build/tasks.json site-src/tasks.json
 
-      # Right away, so that every run's task list can be read, a pull request's too, whatever the later steps do.
+      # Right away, so that every build's task list can be read, a pull request's too, whatever the later steps do.
       - name: Keep the task list
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -405,17 +676,17 @@ jobs:
       # files, and refuses one over 950 MB, 5% below 10^9 bytes, before it is
       # uploaded.
       - name: Pack the site for GitHub Pages
-        if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        if: vars.BLUEPRINT_PAGES == 'true' && needs.changes.outputs.main == 'true'
         run: python scripts/pack_pages_site.py pack site site-pages
 
       - name: Check the packed site
-        if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        if: vars.BLUEPRINT_PAGES == 'true' && needs.changes.outputs.main == 'true'
         run: |
           python scripts/pack_pages_site.py check site site-pages
           bash scripts/pages_size.sh site-pages 950000000
 
       - name: Upload Pages artifact
-        if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        if: vars.BLUEPRINT_PAGES == 'true' && needs.changes.outputs.main == 'true'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: site-pages
@@ -429,6 +700,8 @@ jobs:
   # of shared .olean pages.
   mathlib:
     name: build the Mathlib layer
+    needs: changes
+    if: needs.changes.outputs.build == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 360
     steps:
@@ -493,6 +766,7 @@ jobs:
           mkdir -p "$installer_dir"
           curl --fail --silent --show-error --location \
             --proto '=https' --tlsv1.2 \
+            --retry 5 --retry-all-errors --retry-delay 10 --connect-timeout 30 \
             https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
             --output "$archive"
           echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
@@ -653,7 +927,7 @@ jobs:
   # wiki job's site is published (the `promote` job below).
   mathlib-pages:
     name: build the Mathlib pages
-    needs: [wiki, mathlib]
+    needs: [changes, wiki, mathlib]
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
@@ -718,7 +992,7 @@ jobs:
 
       # Kept as it is, for hosting the full site outside GitHub Pages.
       - name: Keep the site with its Mathlib pages
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        if: needs.changes.outputs.main == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: blueprint-site-full
@@ -737,7 +1011,7 @@ jobs:
           bash scripts/pages_size.sh site-pages 950000000
 
       - name: Upload the packed site
-        if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        if: vars.BLUEPRINT_PAGES == 'true' && needs.changes.outputs.main == 'true'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           name: github-pages-full
@@ -858,8 +1132,8 @@ jobs:
   # No package or Lean code executes in the job with deployment permissions.
   # Repository settings, not a PR, opt the official site into publication.
   deploy:
-    needs: wiki
-    if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+    needs: [changes, wiki]
+    if: vars.BLUEPRINT_PAGES == 'true' && needs.changes.outputs.main == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
@@ -923,8 +1197,8 @@ jobs:
   # waits for it.
   promote:
     name: publish the full site
-    needs: [deploy, mathlib-pages]
-    if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+    needs: [changes, deploy, mathlib-pages]
+    if: vars.BLUEPRINT_PAGES == 'true' && needs.changes.outputs.main == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:

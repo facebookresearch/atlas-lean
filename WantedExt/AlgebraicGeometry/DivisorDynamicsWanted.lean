@@ -32,6 +32,7 @@ height growth and entropy comparisons remain additional interfaces.
 namespace WantedExt.AlgebraicGeometry.DivisorDynamicsWanted
 
 open CategoryTheory _root_.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry (ProjectiveSpace.IsProjective)
 open MathlibExt.AlgebraicGeometry.ProjectiveLineSystems
 open MathlibExt.AlgebraicGeometry.DivisorDynamics
 open Filter Topology
@@ -41,7 +42,7 @@ universe u
 theorem_wanted degreeGrowth_converges (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom] [IsNoetherian X.left]
     (d : ℕ) (hd : 0 < d) [SmoothOfRelativeDimension d X.hom]
-    (projective : IsProjectiveVariety X) (H : LineBundle X.left)
+    (projective : ProjectiveSpace.IsProjective X) (H : LineBundle X.left)
     (ample : IsAmpleLine H) (f : X ⟶ X) [IsFinite f.left] [IsDominant f.left] :
     0 < firstDynamicalDegree d (topologicalKrullDim_eq_of_smooth X d) hd H ample f ∧
       Tendsto (degreeGrowth d (topologicalKrullDim_eq_of_smooth X d) hd H f) atTop
@@ -50,7 +51,7 @@ theorem_wanted degreeGrowth_converges (k : Type u) [Field k] [IsAlgClosed k] [Ch
 theorem_wanted firstDynamicalDegree_independent (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom] [IsNoetherian X.left]
     (d : ℕ) (hd : 0 < d) [SmoothOfRelativeDimension d X.hom]
-    (projective : IsProjectiveVariety X) (H : LineBundle X.left)
+    (projective : ProjectiveSpace.IsProjective X) (H : LineBundle X.left)
     (ample : IsAmpleLine H) (f : X ⟶ X) [IsFinite f.left] [IsDominant f.left]
     (H' : LineBundle X.left) (ample' : IsAmpleLine H') :
     firstDynamicalDegree d (topologicalKrullDim_eq_of_smooth X d) hd H ample f =
@@ -59,7 +60,7 @@ theorem_wanted firstDynamicalDegree_independent (k : Type u) [Field k] [IsAlgClo
 def_wanted nefEigenclass (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom] [IsNoetherian X.left]
     (d : ℕ) (hd : 0 < d) [SmoothOfRelativeDimension d X.hom]
-    (projective : IsProjectiveVariety X) (H : LineBundle X.left)
+    (projective : ProjectiveSpace.IsProjective X) (H : LineBundle X.left)
     (ample : IsAmpleLine H) (f : X ⟶ X) [IsFinite f.left] [IsDominant f.left] :
     {v : NDiv X // v ≠ 0 ∧ IsNefClass v ∧
       ∀ C, v.val (composeCurve f C) =

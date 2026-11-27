@@ -27,5 +27,18 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 
 ## [Part 2 of 2](part-02/README.md)
 
+- [Bravais lattices and lattice relabeling](part-02/bravais-lattices-and-lattice-relabeling/README.md)
+- [Metric tensors, Miller indices and interplanar spacing](part-02/metric-tensors-miller-indices-and-interplanar-sp/README.md)
+- [Reciprocal lattices and Brillouin zones](part-02/reciprocal-lattices-and-brillouin-zones/README.md)
+- [Unit cells and Bravais types](part-02/unit-cells-and-bravais-types/README.md)
 - [Squaring the square with distinct squares](part-02/squaring-the-square-distinct-squares.md)
 - [Sylvester–Gallai theorem](part-02/sylvester-gallai.md)
+- [Degenerate model angles and the real line](part-02/degenerate-model-angles-and-the-real-line/README.md)
+- [Derivatives of model trigonometry](part-02/derivatives-of-model-trigonometry/README.md)
+- [Euclidean affine spaces satisfy the curvature-0 four-point comparison](part-02/euclidean-affine-spaces-are-alexandrov-of-curvat/README.md)
+- [Four-point comparison for curvature bounded below](part-02/four-point-comparison-for-curvature-bounded-belo/README.md)
+
+## Research directions
+
+- [Crystallization for the Lennard-Jones potential in the plane](crystallization-for-the-lennard-jones-potential-in-the-plane.md)
+- [Optimality of the body-centered cubic Wigner crystal](optimality-of-the-body-centered-cubic-wigner-crystal.md)

@@ -39,12 +39,13 @@ is redefined here.
 * `sub_one_smul_sampleCov`, `sampleCov_eq_secondMoment` : `(n - 1) S = Xᵀ X - n x̄ x̄ᵀ` for
   every `n`, and `S = n / (n - 1) • (n⁻¹ Xᵀ X - x̄ x̄ᵀ)` for `2 ≤ n` (Bessel's correction).
 * `sampleCov_add_vecMulVec_one` : `S` does not see a common shift `𝟙 cᵀ` of all samples, while
-  the second moment does.
+  the second moment in general does.
 * `center_eq_zero_of_le_one`, `sampleCov_eq_zero_of_le_one` : with at most one sample the
   centered matrix and `S` vanish, so the rank and null-direction results below need no lower
   bound on `n`.
 * `rank_sampleCov`, `rank_center_le`, `det_sampleCov_eq_zero_of_le` : `rank S = rank (X - 𝟙 x̄ᵀ)
-  ≤ n - 1`, so `S` is singular whenever there are no more samples than features.
+  ≤ n - 1`, so `S` is singular whenever there are no more samples than features and at least
+  one feature.
 * `sampleCov_mulVec_eq_zero_iff`, `det_sampleCov_eq_zero_iff` : `S w = 0` exactly when every
   sample has the same projection on `w`, so `S` is singular exactly when the samples lie in an
   affine hyperplane.
@@ -54,8 +55,8 @@ is redefined here.
   all samples.
 * `sampleCov_batchModel_eq_of_add_eq`, `not_exists_batch_estimator` : when the batch and the
   biological condition are confounded (`s = b`), `S` depends on `(β, δ)` only through `β + δ`,
-  so no function of `S` recovers the batch effect (`not_exists_signal_estimator`: nor the
-  signal).
+  so, with at least one feature, no function of `S` recovers the batch effect
+  (`not_exists_signal_estimator`: nor the signal).
 * `sampleCov_batchModel_confounded_noiseless`, `rank_sampleCov_vecMulVec_le`,
   `rank_sampleCov_batchModel_confounded_noiseless_le` : without noise, the confounded `S` is
   `var(b) • (β + δ)(β + δ)ᵀ`, of rank at most one.
@@ -142,8 +143,9 @@ theorem sampleCov_eq_sub (X : Matrix (Fin n) (Fin p) ℝ) :
       ((n : ℝ) - 1)⁻¹ • (Xᵀ * X - (n : ℝ) • vecMulVec (colMean X) (colMean X)) := by
   rw [sampleCov, transpose_center_mul_center]
 
-/-- **Second moment minus mean outer product.** For `0 < n`, the biased (maximum-likelihood)
-covariance `n⁻¹ (X - 𝟙 x̄ᵀ)ᵀ (X - 𝟙 x̄ᵀ)` is `n⁻¹ Xᵀ X - x̄ x̄ᵀ`. -/
+/-- **Second moment minus mean outer product.** For `0 < n`, the covariance with divisor `n`,
+`n⁻¹ (X - 𝟙 x̄ᵀ)ᵀ (X - 𝟙 x̄ᵀ)` (the covariance matrix of the empirical distribution of the
+samples), is `n⁻¹ Xᵀ X - x̄ x̄ᵀ`. -/
 theorem inv_smul_transpose_center_mul_center (X : Matrix (Fin n) (Fin p) ℝ) (hn : 0 < n) :
     (n : ℝ)⁻¹ • ((center X)ᵀ * center X) =
       secondMoment X - vecMulVec (colMean X) (colMean X) := by
@@ -162,8 +164,8 @@ theorem sampleCov_eq_secondMoment (X : Matrix (Fin n) (Fin p) ℝ) (hn : 2 ≤ n
   congr 1
   field_simp
 
-/-- For data with zero column means, `S = n / (n - 1) • n⁻¹ Xᵀ X`: centered and uncentered
-matrices then differ only by the factor `n / (n - 1)`. -/
+/-- For data with zero column means and `2 ≤ n`, `S = n / (n - 1) • n⁻¹ Xᵀ X`: the sample
+covariance and the uncentered second moment then differ only by the factor `n / (n - 1)`. -/
 theorem sampleCov_eq_smul_secondMoment_of_colMean_eq_zero (X : Matrix (Fin n) (Fin p) ℝ)
     (hX : colMean X = 0) (hn : 2 ≤ n) :
     sampleCov X = ((n : ℝ) / ((n : ℝ) - 1)) • secondMoment X := by
@@ -172,7 +174,8 @@ theorem sampleCov_eq_smul_secondMoment_of_colMean_eq_zero (X : Matrix (Fin n) (F
 
 /-! ### Invariances of the centered covariance -/
 
-/-- Shifting every sample by `c` shifts the column means by `c` (for `0 < n`). -/
+/-- Shifting every sample by `c` shifts the column means by `c` (for `0 < n`). For `n = 0` all
+column means are `0` by convention, so the identity fails for `c ≠ 0`. -/
 theorem colMean_add_vecMulVec_one (X : Matrix (Fin n) (Fin p) ℝ) (c : Fin p → ℝ) (hn : 0 < n) :
     colMean (X + vecMulVec (fun _ => 1) c) = colMean X + c := by
   have : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
@@ -193,7 +196,7 @@ theorem center_add_vecMulVec_one (X : Matrix (Fin n) (Fin p) ℝ) (c : Fin p →
     ring
 
 /-- **Location invariance.** The sample covariance does not see a common shift `𝟙 cᵀ` of all
-samples (the second moment does, see the test file). -/
+samples (the uncentered second moment is not invariant under such shifts in general). -/
 theorem sampleCov_add_vecMulVec_one (X : Matrix (Fin n) (Fin p) ℝ) (c : Fin p → ℝ) :
     sampleCov (X + vecMulVec (fun _ => 1) c) = sampleCov X := by
   simp only [sampleCov, center_add_vecMulVec_one]
@@ -204,7 +207,8 @@ theorem center_neg (X : Matrix (Fin n) (Fin p) ℝ) : center (-X) = -center X :=
   simp only [center, colMean, of_apply, Matrix.neg_apply, Finset.sum_neg_distrib, neg_div]
   ring
 
-/-- **Sign invariance.** `S(-X) = S(X)`: the covariance does not see the sign of a shift. -/
+/-- **Sign invariance.** `S(-X) = S(X)`: negating every sample leaves the sample covariance
+unchanged. -/
 theorem sampleCov_neg (X : Matrix (Fin n) (Fin p) ℝ) : sampleCov (-X) = sampleCov X := by
   simp only [sampleCov, center_neg, transpose_neg, Matrix.neg_mul, Matrix.mul_neg, neg_neg]
 
@@ -219,7 +223,7 @@ theorem one_vecMul_center (X : Matrix (Fin n) (Fin p) ℝ) : (fun _ => (1 : ℝ)
     simp [vecMul, dotProduct, sum_center X hn j]
 
 /-- **Centering loses a dimension.** `rank (X - 𝟙 x̄ᵀ) ≤ n - 1`, because `𝟙` is in the left
-kernel. -/
+kernel (`n - 1` is truncated subtraction, `0` for `n = 0`). -/
 theorem rank_center_le (X : Matrix (Fin n) (Fin p) ℝ) : (center X).rank ≤ n - 1 := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · exact (rank_le_height _).trans (by simp)
@@ -263,12 +267,13 @@ theorem rank_sampleCov (X : Matrix (Fin n) (Fin p) ℝ) :
   · rw [sampleCov_eq_zero_of_le_one X (by omega), center_eq_zero_of_le_one X (by omega), rank_zero,
       rank_zero]
 
-/-- `rank S ≤ n - 1` for every `n`. -/
+/-- `rank S ≤ n - 1` for every `n` (`n - 1` is truncated subtraction, `0` for `n = 0`). -/
 theorem rank_sampleCov_le (X : Matrix (Fin n) (Fin p) ℝ) : (sampleCov X).rank ≤ n - 1 :=
   (rank_sampleCov X).le.trans (rank_center_le X)
 
-/-- **High-dimensional boundary case.** With no more samples than features (`n ≤ p`, the usual
-omics regime), the sample covariance is singular. -/
+/-- **High-dimensional boundary case.** With at least one feature and no more samples than
+features (`0 < p`, `n ≤ p`, the usual omics regime), the sample covariance is singular. For
+`p = 0` the empty matrix has determinant `1`. -/
 theorem det_sampleCov_eq_zero_of_le (X : Matrix (Fin n) (Fin p) ℝ) (hnp : n ≤ p) (hp : 0 < p) :
     (sampleCov X).det = 0 := by
   by_contra h
@@ -283,7 +288,7 @@ theorem center_mulVec (X : Matrix (Fin n) (Fin p) ℝ) (w : Fin p → ℝ) :
   ext i
   simp [center, mulVec, dotProduct, sub_mul, Finset.sum_sub_distrib]
 
-/-- The mean of the projections `X w` is `x̄ ⬝ w`: `∑ᵢ (X w)ᵢ = n (x̄ ⬝ w)`. -/
+/-- `∑ᵢ (X w)ᵢ = n (x̄ ⬝ w)` for every `n`; for `0 < n` the projections `X w` have mean `x̄ ⬝ w`. -/
 theorem sum_mulVec (X : Matrix (Fin n) (Fin p) ℝ) (w : Fin p → ℝ) :
     ∑ i, (X *ᵥ w) i = n * (colMean X ⬝ᵥ w) := by
   simp only [mulVec, dotProduct]
@@ -311,8 +316,8 @@ theorem sampleCov_mulVec_eq_zero_iff_center (X : Matrix (Fin n) (Fin p) ℝ)
     rw [sampleCov, Matrix.smul_mulVec, ← mulVec_mulVec, h, mulVec_zero, smul_zero]
 
 /-- **Null directions of `S`.** `S w = 0` iff every sample has the same projection `c` on `w`,
-i.e. the samples lie in the affine hyperplane `{x | x ⬝ w = c}` (for every `n`; trivially true
-for `n ≤ 1`). -/
+i.e. the samples lie in the set `{x | x ⬝ w = c}`, an affine hyperplane when `w ≠ 0` (for every
+`n`; trivially true for `n ≤ 1` and for `w = 0`). -/
 theorem sampleCov_mulVec_eq_zero_iff (X : Matrix (Fin n) (Fin p) ℝ)
     (w : Fin p → ℝ) : sampleCov X *ᵥ w = 0 ↔ ∃ c : ℝ, X *ᵥ w = fun _ => c := by
   rw [sampleCov_mulVec_eq_zero_iff_center X, center_mulVec, sub_eq_zero]
@@ -333,8 +338,9 @@ theorem sampleCov_mulVec_eq_zero_iff (X : Matrix (Fin n) (Fin p) ℝ)
 
 /-- **Singular covariance.** `det S = 0` iff the samples lie in an affine hyperplane
 `{x | x ⬝ w = c}` with `w ≠ 0` (for every `n`). Contrast: `det (Xᵀ X) = 0` iff they lie in a
-hyperplane through the origin, so data on an affine hyperplane missing the origin have a
-singular `S` but a nonsingular second moment (see the test file). -/
+hyperplane through the origin, so `S` can be singular while the second moment is not: the
+samples `(1, 0)` and `(0, 1)` lie on the line `x₁ + x₂ = 1`, and `Xᵀ X = 1` (see the test
+file). -/
 theorem det_sampleCov_eq_zero_iff (X : Matrix (Fin n) (Fin p) ℝ) :
     (sampleCov X).det = 0 ↔ ∃ w ≠ 0, ∃ c : ℝ, X *ᵥ w = fun _ => c := by
   rw [← exists_mulVec_eq_zero_iff]
@@ -377,7 +383,7 @@ theorem rank_le_rank_center_add_one (X : Matrix (Fin n) (Fin p) ℝ) :
 `X = E + 𝟙 μᵀ + b βᵀ + s δᵀ`: a residual matrix `E`, a feature-wise baseline `μ`, a batch
 covariate `b` (e.g. the batch indicator) with batch effect `β`, and a biological covariate `s`
 (e.g. the condition indicator) with biological signal `δ`. The design is *confounded* when
-`s = b`, i.e. every sample of one condition was processed in one batch. -/
+`s = b`; for indicators, the samples of the condition are exactly those of the batch. -/
 noncomputable def batchModel (E : Matrix (Fin n) (Fin p) ℝ) (μ : Fin p → ℝ) (b s : Fin n → ℝ)
     (β δ : Fin p → ℝ) : Matrix (Fin n) (Fin p) ℝ :=
   E + vecMulVec (fun _ => 1) μ + vecMulVec b β + vecMulVec s δ
@@ -405,7 +411,8 @@ theorem batchModel_confounded (E : Matrix (Fin n) (Fin p) ℝ) (μ : Fin p → �
   simp only [batchModel, vecMulVec_add, vecMulVec_zero', add_zero, add_assoc]
 
 /-- **Confounded designs, same covariance.** If `β + δ = β' + δ'`, the two parameter settings
-`(μ, β, δ)` and `(μ', β', δ')` give the same centered sample covariance. -/
+`(μ, β, δ)` and `(μ', β', δ')` of the confounded design (`s = b`, same `E` and `b`) give the
+same centered sample covariance. -/
 theorem sampleCov_batchModel_eq_of_add_eq (E : Matrix (Fin n) (Fin p) ℝ) (μ μ' : Fin p → ℝ)
     (b : Fin n → ℝ) {β δ β' δ' : Fin p → ℝ} (h : β + δ = β' + δ') :
     sampleCov (batchModel E μ b b β δ) = sampleCov (batchModel E μ' b b β' δ') := by
@@ -428,7 +435,9 @@ theorem not_exists_batch_estimator (hp : 0 < p) (E : Matrix (Fin n) (Fin p) ℝ)
     (by simp), hf] at h1
   simpa using congrFun h1 ⟨0, hp⟩
 
-/-- **Biological signal nonidentifiable.** Likewise no function of `S` recovers `δ`. -/
+/-- **Biological signal nonidentifiable.** In a confounded design (with at least one feature) no
+function of the centered sample covariance recovers the biological signal `δ`: `(β, δ) = (0, a)`
+and `(β, δ) = (a, 0)` give the same `S`. -/
 theorem not_exists_signal_estimator (hp : 0 < p) (E : Matrix (Fin n) (Fin p) ℝ)
     (μ : Fin p → ℝ) (b : Fin n → ℝ) :
     ¬ ∃ f : Matrix (Fin p) (Fin p) ℝ → Fin p → ℝ,
@@ -439,15 +448,17 @@ theorem not_exists_signal_estimator (hp : 0 < p) (E : Matrix (Fin n) (Fin p) ℝ
     (by simp), hf] at h1
   simpa using congrFun h1 ⟨0, hp⟩
 
-/-- Centering a rank-one matrix `u vᵀ` centers `u`. -/
+/-- Centering an outer product `u vᵀ` centers `u`. -/
 theorem center_vecMulVec (u : Fin n → ℝ) (v : Fin p → ℝ) :
     center (vecMulVec u v) = vecMulVec (fun i => u i - (∑ k, u k) / n) v := by
   ext i j
   simp only [center, colMean, of_apply, vecMulVec_apply, ← Finset.sum_mul]
   ring
 
-/-- The sample covariance of a rank-one matrix `u vᵀ` is `var(u) • v vᵀ` (of rank at most one,
-see `rank_sampleCov_vecMulVec_le`). -/
+/-- The sample covariance of an outer product `u vᵀ` is `var(u) • v vᵀ`, where
+`var(u) = (n - 1)⁻¹ ∑ᵢ (uᵢ - ū)²` is the sample variance of the entries of `u`; it is `0` for
+`n ≤ 1` (`(0 : ℝ)⁻¹ = 0` at `n = 1`, an empty sum at `n = 0`). Of rank at most one, see
+`rank_sampleCov_vecMulVec_le`. -/
 theorem sampleCov_vecMulVec (u : Fin n → ℝ) (v : Fin p → ℝ) :
     sampleCov (vecMulVec u v) =
       (((n : ℝ) - 1)⁻¹ * ∑ i, (u i - (∑ k, u k) / n) ^ 2) • vecMulVec v v := by
@@ -456,9 +467,11 @@ theorem sampleCov_vecMulVec (u : Fin n → ℝ) (v : Fin p → ℝ) :
   simp [dotProduct, sq]
 
 /-- **What `S` does see.** Without residual noise, the covariance of a confounded design is
-`var(b) • (β + δ)(β + δ)ᵀ`: the combined effect `β + δ` is visible (when `b` is not constant),
-only the split is not; `S` has rank at most one
-(`rank_sampleCov_batchModel_confounded_noiseless_le`), a singular boundary case for `2 ≤ p`. -/
+`var(b) • (β + δ)(β + δ)ᵀ`, with `var(b) = (n - 1)⁻¹ ∑ᵢ (bᵢ - b̄)²` (`0` for `n ≤ 1`, by
+`(0 : ℝ)⁻¹ = 0` at `n = 1` and an empty sum at `n = 0`): only the combined effect `β + δ` enters
+`S`, not its split. When `b` is not constant, `var(b) > 0`, so `S ≠ 0` exactly when `β + δ ≠ 0`. `S`
+has rank at most one (`rank_sampleCov_batchModel_confounded_noiseless_le`), so it is singular for
+`2 ≤ p`. -/
 theorem sampleCov_batchModel_confounded_noiseless (μ : Fin p → ℝ) (b : Fin n → ℝ)
     (β δ : Fin p → ℝ) :
     sampleCov (batchModel 0 μ b b β δ) =
@@ -466,7 +479,7 @@ theorem sampleCov_batchModel_confounded_noiseless (μ : Fin p → ℝ) (b : Fin 
   rw [sampleCov_batchModel_baseline 0 μ 0, batchModel_confounded, ← sampleCov_vecMulVec]
   simp [batchModel, vecMulVec_zero']
 
-/-- The sample covariance of a rank-one matrix `u vᵀ` has rank at most one. -/
+/-- The sample covariance of an outer product `u vᵀ` has rank at most one. -/
 theorem rank_sampleCov_vecMulVec_le (u : Fin n → ℝ) (v : Fin p → ℝ) :
     (sampleCov (vecMulVec u v)).rank ≤ 1 := by
   rw [sampleCov_vecMulVec, ← smul_one_mul]

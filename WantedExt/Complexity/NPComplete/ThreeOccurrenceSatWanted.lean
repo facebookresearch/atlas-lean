@@ -23,7 +23,7 @@ NP-Completeness*, W. H. Freeman (1979), problem [LO1] SATISFIABILITY.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Logics.Propositional.CNF.Semantics
@@ -45,8 +45,10 @@ Formulas are `Cslib.Logic.LegacyPL.CNF` (lists of clauses, a clause a list of li
 `(variable, sign)`), with satisfaction `Cslib.Logic.LegacyPL.CNF.Satisfies`, in the encoding of the
 existing `WantedExt.Complexity.NPComplete.BoundedOccurrenceThreeSatWanted` (variables
 `0, …, n - 1`; an assignment is a list of `n` truth values). A variable occurs in a clause when
-one of the clause's literals is on it. Tovey's Theorem 2.1 is stated with clauses of two or three
-literals and at most three occurrences per variable; those instances belong to this class, and
+one of the clause's literals is on it, and the bound counts the clauses that contain each
+variable, not its occurrences: a variable repeated within one clause counts once. Tovey's
+Theorem 2.1 is stated with clauses of two or three literals and at most three occurrences per
+variable; those instances belong to this class, and
 the bound three cannot be lowered (with every variable in at most two clauses the problem is
 solvable in polynomial time). This differs from `BoundedOccurrenceThreeSatWanted`, whose clauses
 have exactly three literals and whose variables occur at most four times (with exactly three
@@ -67,7 +69,8 @@ reduction from every language in `NP`
 abbrev ThreeOccurrenceSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- Well-formedness of an instance: every clause has at most three literals, all on variables
-`< n`, and every variable occurs in at most three clauses. -/
+`< n`, and every variable occurs in at most three clauses. The bound counts the clauses that
+contain a variable, not its occurrences: a variable repeated within one clause counts once. -/
 def WellFormed (i : ThreeOccurrenceSatInstance) : Prop :=
   (∀ clause ∈ i.2, clause.length ≤ 3 ∧ ∀ l ∈ clause, l.1 < i.1) ∧
     ∀ v < i.1, (i.2.filter (fun clause => clause.any (fun l => l.1 == v))).length ≤ 3

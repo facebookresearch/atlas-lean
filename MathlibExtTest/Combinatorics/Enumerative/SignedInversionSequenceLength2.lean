@@ -46,3 +46,24 @@ example (b : Bool) : signedInvAvoidCount (forbidden b) 2 = 5 := by
   cases b <;> decide
 
 end MetaMathlibExt.signedInvSeq_wilf_b1b0_b0b1_b00_b01_1b0.Tests
+
+namespace MetaMathlibExt.signedInvSeq_wilf_b1b0_b10_b0b1_b00_b01_0b0.Tests
+
+private abbrev forbidden (b : Bool) : Finset SignedPattern2 :=
+  {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.lt, true, true⟩, ⟨.eq, true, b⟩,
+    ⟨.lt, true, false⟩, ⟨.eq, false, true⟩}
+
+-- After an unbarred zero and a barred one, the sign of the last one selects the class.
+example (b : Bool) :
+    let e := fun i : Fin 3 => if i = 0 then (0, false) else (1, i == 1 || b)
+    SignedInvSeqContains e ⟨.eq, true, b⟩ ∧ ∀ p ∈ forbidden (!b), ¬ SignedInvSeqContains e p := by
+  cases b <;> unfold SignedInvSeqContains <;> decide
+
+-- An unbarred zero followed later by a barred zero rules out both classes.
+example (b : Bool) :
+    let e := fun i : Fin 3 => (if i = 1 then 1 else 0, i == 2)
+    ∃ p ∈ forbidden b, SignedInvSeqContains e p := by
+  refine ⟨⟨.eq, false, true⟩, by simp [forbidden], 0, 2, ?_⟩
+  decide
+
+end MetaMathlibExt.signedInvSeq_wilf_b1b0_b10_b0b1_b00_b01_0b0.Tests

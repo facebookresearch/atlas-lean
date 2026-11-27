@@ -89,6 +89,14 @@
 - [The four-species anomaly zone](caterpillar-exists-anomalous-iff.md)
 - [No anomalous gene trees on the balanced four-species tree](balanced-no-anomaly.md)
 
+## Five or more species: anomaly zones
+
+- [The five-taxon caterpillar species tree has an anomaly zone](five-taxon-anomaly-zone-for-the-caterpillar-shap.md)
+- [The five-taxon pseudocaterpillar species tree has an anomaly zone](five-taxon-anomaly-zone-for-the-pseudocaterpilla.md)
+- [The five-taxon balanced species tree has an anomaly zone](five-taxon-anomaly-zone-for-the-balanced-shape.md)
+- [An anomalous root subtree makes the whole species tree anomalous](extension-lemma-anomaly-persists-when-adding-a-t.md)
+- [Every species tree with at least five species has an anomaly zone](every-species-tree-with-5-species-has-an-anomaly.md)
+
 ## Unrooted quartets
 
 - [Gene tree displaying a quartet split](displays-split.md)
@@ -105,3 +113,23 @@
 - [Clade of a ranked history](is-clade.md)
 - [Clade probability](random-joining-is-clade.md)
 - [Clade probability under random joining for at most five genes](random-joining-is-clade-of-le-five.md)
+
+- [The multispecies coalescent as a constructed process](msc-realization-gene-tree-probability-equals-the.md)
+- [Identifiability of networks under the network multispecies coalescent](network-coalescent-identifiability-questions-spe.md)
+- [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
+- [One species-tree branch: exit law and merge order of the realized coalescent](one-species-tree-branch-exit-law-and-merge-order.md)
+- [Gene tree density under the multispecies coalescent with branch population functions](gene-tree-density-under-the-multispecies-coalescent-with-branch-population-functions.md)
+- [Hierarchical Bayesian posterior for species trees from multilocus data](hierarchical-bayesian-posterior-for-species-trees-from-multilocus-data.md)
+- [Hard and soft anomalous networks under the network multispecies coalescent](anomalous-networks-under-correlated-inheritance.md)
+- [Concordance-factor signatures of cycles in level-1 quartet networks](big-cycle-property-detects-4-cycles.md)
+- [Identifiability of level-1 networks from orderings of quartet concordance factors](level-1-network-identifiability-from-quartet-concordance-factor-orderings.md)
+- [Numerical parameter identifiability on a level-1 network from quartet CFs](level-1-numerical-parameter-identifiability.md)
+- [Topological identifiability of a level-1 species network from quartet CFs](level-1-topological-identifiability-from-quartet-cfs.md)
+- [Two-cycles of a level-1 network are not identifiable from quartet CFs](level-1-two-cycles-not-identifiable.md)
+- [Quartet concordance factors do not depend on the root of a network](quartet-cfs-independent-of-the-root.md)
+- [Quartet concordance factors depend only on the unrooted quartet network](quartet-concordance-factors-depend-only-on-the-unrooted-quartet-network.md)
+- [Three-cycles with a two-leaf hybrid are the source of four-taxon anomalies](three-two-cycles-and-four-taxon-anomalies.md)
+- [A degree-2 sub-blob can be replaced by a single edge without changing quartet CFs](two-sub-blob-replacement-preserves-quartet-cfs.md)
+## Networks: the tree of blobs
+- [Tree of blobs of a species network under the coalescent](tree-of-blobs-identifiability/README.md)
+- [Species tree estimation under taxon deletion](species-tree-estimation-under-taxon-deletion/README.md)

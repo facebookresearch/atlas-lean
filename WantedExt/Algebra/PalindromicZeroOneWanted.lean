@@ -38,6 +38,7 @@ public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
+public import MathlibExt.Algebra.Polynomial.ZeroOneSquareComposition
 
 set_option autoImplicit false
 
@@ -69,28 +70,6 @@ Non-cyclotomic 0,1-Polynomials", Section 1
 (terminology). -/
 theorem isReciprocalPoly_iff (f : ℤ[X]) :
     IsReciprocalPoly f ↔ f.reverse = f :=
-  Iff.rfl
-
-/-- **0,1-polynomial.** A polynomial $f \in \mathbb{Z}[x]$ is a *$0,1$-polynomial* if every
-coefficient of $f$ is $0$ or $1$.
-
-Source: Pradipto Banerjee and Amit Kundu, "On an
-Irreducibility Question Concerning Palindromic
-Non-cyclotomic 0,1-Polynomials", Section 1
-(terminology). -/
-def IsZeroOnePoly (f : ℤ[X]) : Prop :=
-  ∀ n : ℕ, f.coeff n = 0 ∨ f.coeff n = 1
-
-/-- **Characterization of 0,1-polynomials.** A polynomial $f \in \mathbb{Z}[x]$ is a
-$0,1$-polynomial if and only if, for every $n \ge 0$, the coefficient of $x^n$ in $f$ is
-$0$ or $1$.
-
-Source: Pradipto Banerjee and Amit Kundu, "On an
-Irreducibility Question Concerning Palindromic
-Non-cyclotomic 0,1-Polynomials", Section 1
-(terminology). -/
-theorem isZeroOnePoly_iff (f : ℤ[X]) :
-    IsZeroOnePoly f ↔ ∀ n : ℕ, f.coeff n = 0 ∨ f.coeff n = 1 :=
   Iff.rfl
 
 /-- **Non-cyclotomic polynomial.** A polynomial $f \in \mathbb{Z}[x]$ is *non-cyclotomic* if
@@ -217,21 +196,6 @@ theorem_wanted not_irreducible_comp_pow_iff (f : ℤ[X]) (r : ℕ)
     ¬ Irreducible (f.comp (X ^ r)) ↔
       (∃ p : ℕ, p.Prime ∧ p ∣ r ∧ ¬ Irreducible (f.comp (X ^ p))) ∨
         (4 ∣ r ∧ ¬ Irreducible (f.comp (X ^ 4)))
-
-/-- **Square compositions of $0,1$-polynomials modulo $4$.** Let $f \in \mathbb{Z}[x]$ be
-irreducible in $\mathbb{Z}[x]$, with every coefficient equal to $0$ or $1$ and with constant
-term $f(0) = 1$. If $f(x^2)$ is not irreducible in $\mathbb{Z}[x]$, then
-$f(x^2) \equiv f(x)\,f(-x) \pmod 4$ as polynomials, that is, the two polynomials have the
-same image in $(\mathbb{Z}/4\mathbb{Z})[x]$.
-
-Source: Pradipto Banerjee and Amit Kundu, "On an
-Irreducibility Question Concerning Palindromic
-Non-cyclotomic 0,1-Polynomials", Theorem 1.3. -/
-theorem_wanted map_comp_sq_eq_mul (f : ℤ[X])
-    (h01 : IsZeroOnePoly f) (hirr : Irreducible f) (hf0 : f.coeff 0 = 1)
-    (hred : ¬ Irreducible (f.comp (X ^ 2))) :
-    (f.comp (X ^ 2)).map (Int.castRingHom (ZMod 4)) =
-      (f * f.comp (-X)).map (Int.castRingHom (ZMod 4))
 
 /-- **Reducibility of $f(x^4)$ and $f(x^2)$ for $0,1$-polynomials.** Let
 $f \in \mathbb{Z}[x]$ be irreducible in $\mathbb{Z}[x]$ and of positive degree, with every

@@ -37,3 +37,4 @@ the almost everywhere differentiability of monotone functions.
 - [Differentiation of real functions](real-functions/README.md)
 - [Optimal transport](optimal-transport/README.md)
 - [Geometric measure theory](geometric-measure-theory/README.md)
+- [Not yet classified](not-yet-classified/README.md)

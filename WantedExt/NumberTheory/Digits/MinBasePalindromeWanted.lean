@@ -13,10 +13,17 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.Digits.BinomialDigits
 public import MathlibExt.NumberTheory.Digits.BinomialFormTwoPowBase
 public import MathlibExt.NumberTheory.Digits.DigitsPowAndPowAddOne
 public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
+public import MathlibExt.NumberTheory.Digits.OneCOneTwoPow
+public import MathlibExt.NumberTheory.Digits.PalindromicTwoPowBinomialForm
+public import MathlibExt.NumberTheory.Digits.SmallBaseBinomialForm
 public import MathlibExt.NumberTheory.Digits.ThreeDigitBinomialForm
+public import MathlibExt.NumberTheory.Digits.ThreeDigitPalindromeTwoPow
+public import MathlibExt.NumberTheory.Digits.TwoPowBinomialForm
+public import MathlibExt.NumberTheory.Digits.MinBasePalindromeMinPalindromicBaseEqPred
 
 /-!
 # Minimum-base palindromic representations of powers of 2
@@ -38,29 +45,6 @@ statement and docstring, as `succ_dvd_of_palindrome_even_length` in
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Minimum palindromic base.** For a natural number $N$, $b(N)$ is the smallest base $b \ge 2$
-in which $N$ is a palindrome, that is, in which the base-$b$ digits of $N$ read the same forwards
-and backwards. Such a base exists: $0$ has no digits and is a palindrome in every base, and for
-$N \ge 1$ the number $N$ is written with the single digit $N$ in base $N + 1$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Section 1. -/
-public noncomputable def minPalindromicBase (N : ℕ) : ℕ :=
-  sInf {b | 2 ≤ b ∧ (Nat.digits b N).Palindrome}
-
-/-- **Binomial form.** A natural number $N$ has a base-$b$ representation in binomial form if
-there are natural numbers $\alpha \ge 1$ and $k \ge 1$ such that the base-$b$ digits of $N$, from
-the most significant to the least significant, are
-$\alpha\binom{k}{k}, \alpha\binom{k}{k-1}, \dots, \alpha\binom{k}{0}$.
-
-The one-digit case $k = 0$ is excluded as degenerate.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Section 1
-(definition of binomial form). -/
-public def HasBinomialForm (b N : ℕ) : Prop :=
-  ∃ α k : ℕ, 1 ≤ α ∧ 1 ≤ k ∧ Nat.digits b N = (List.range (k + 1)).map fun i => α * k.choose i
 
 /-- **The minimum palindromic base of two.** The smallest base $b \ge 2$ in which the number $2$
 is a palindrome is $b(2) = 3$: in base $2$ the number $2$ is written $(1, 0)_2$, which is not a
@@ -92,97 +76,6 @@ Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
 Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Section 1. -/
 public theorem hasBinomialForm_16_2023 : HasBinomialForm 16 2023 :=
   ⟨7, 2, by norm_num, by norm_num, by norm_num [List.range_succ]⟩
-
-/-- **Brown's theorem on minimal palindromic base one less than the number.** Let $N \ge 1$ be a
-natural number and let $b(N)$ be the smallest base $b \ge 2$ in which $N$ is a palindrome. If
-$b(N) = N - 1$, then $N \in \{3, 4, 6\}$, or $N > 6$ and $N$ is prime.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 1
-(`integers-2024-A69-thm-1`), credited to K. Brown. -/
-public theorem_wanted minPalindromicBase_eq_pred (N : ℕ) (hN : 1 ≤ N)
-    (h : minPalindromicBase N = N - 1) : N = 3 ∨ N = 4 ∨ N = 6 ∨ (6 < N ∧ N.Prime)
-
-/-- **Digits of a multiple of a power of one more than the base.** Let $\alpha \ge 1$, $k$ and $b$
-be natural numbers with $\alpha\binom{k}{\lceil k/2 \rceil} < b$. Then the base-$b$
-representation of $\alpha(1 + b)^k$ has exactly the $k + 1$ digits
-$\alpha\binom{k}{k}, \alpha\binom{k}{k-1}, \dots, \alpha\binom{k}{0}$, from the most significant
-to the least significant.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Lemma 1
-(`integers-2024-A69-lem-1`). -/
-public theorem_wanted digits_mul_one_add_pow (α k b : ℕ) (hα : 1 ≤ α)
-    (h : α * k.choose ((k + 1) / 2) < b) :
-    Nat.digits b (α * (1 + b) ^ k) = (List.range (k + 1)).map fun i => α * k.choose i
-
-/-- **Sufficient condition for a binomial form of a power of 2.** Let $n$, $x$, $k$ and $r$ be
-natural numbers with $k \ge 1$, $n = xk + r$ and $2^r\binom{k}{\lceil k/2 \rceil} < 2^x - 1$.
-Then $2^n$ has a base-$(2^x - 1)$ representation in binomial form.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 1
-(`integers-2024-A69-cor-1`). -/
-public theorem_wanted hasBinomialForm_two_pow (n x k r : ℕ) (hk : 1 ≤ k) (hn : n = x * k + r)
-    (h : 2 ^ r * k.choose ((k + 1) / 2) < 2 ^ x - 1) : HasBinomialForm (2 ^ x - 1) (2 ^ n)
-
-/-- **Three-digit palindromic powers of two.** Let $n$ be a natural number, let $b \ge 2$ be a
-base, and let $c = 2^n \bmod b$. The base-$b$ representation of $2^n$ is a palindrome with exactly
-three digits if and only if $b^2 + 1 \le 2^n \le b^3 - 1$, $c \ne 0$, and
-$\frac{1}{b} \lfloor 2^n / b \rfloor - \frac{b - 1}{b} \le c \le
-\frac{1}{b} \lfloor 2^n / b \rfloor$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 2
-(`integers-2024-A69-thm-2`). -/
-public theorem_wanted three_digit_palindrome_two_pow_iff (n b : ℕ) (hb : 2 ≤ b) :
-    ((Nat.digits b (2 ^ n)).Palindrome ∧ (Nat.digits b (2 ^ n)).length = 3) ↔
-      b ^ 2 + 1 ≤ 2 ^ n ∧ 2 ^ n ≤ b ^ 3 - 1 ∧ 2 ^ n % b ≠ 0 ∧
-        ((2 ^ n / b : ℕ) : ℚ) / b - ((b : ℚ) - 1) / b ≤ ((2 ^ n % b : ℕ) : ℚ) ∧
-        ((2 ^ n % b : ℕ) : ℚ) ≤ ((2 ^ n / b : ℕ) : ℚ) / b
-
-/-- **Three-digit representations of powers of two with outer digits one.** Let $n$ be a natural
-number and $b \ge 2$ a base. There is a digit $c \ne 2$ such that the base-$b$ representation of
-$2^n$ is $(1, c, 1)_b$, that is, $2^n = 1 + cb + b^2$ with $0 \le c < b$, if and only if
-(i) $2^n - 1 = kb$ for some natural number $k$ with $b \le k \le 2b - 1$, and (ii) it is not the
-case that $n$ is even and $b = 2^{n/2} - 1$.
-
-The excluded digit $c = 2$ gives the binomial form $(1, 2, 1)_b = (b + 1)^2$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 4
-(`integers-2024-A69-thm-4`). -/
-public theorem_wanted one_c_one_two_pow_iff (n b : ℕ) (hb : 2 ≤ b) :
-    (∃ c, c ≠ 2 ∧ Nat.digits b (2 ^ n) = [1, c, 1]) ↔
-      (∃ k, 2 ^ n - 1 = k * b ∧ b ≤ k ∧ k ≤ 2 * b - 1) ∧ ¬ (Even n ∧ b = 2 ^ (n / 2) - 1)
-
-/-- **Palindromic powers of two in a base one less than a power of two.** Let $x \ge 2$ and
-$n \ge 1$ be natural numbers, let $b = 2^x - 1$, and suppose that the base-$b$ representation
-$2^n = (c_k, \dots, c_0)_b$ is a palindrome with $k + 1$ digits. Then (1) $n > k(x - 1)$; and
-(2) if $n = kx + r$ for a natural number $r$, and either $k \le x - r$, or $3 \le k \le x - r + 1$
-and $x \ge 3$, then $c_i = 2^r \binom{k}{i}$ for $i = 0, \dots, k$, that is, the representation
-is the binomial form $2^r (\binom{k}{k}, \dots, \binom{k}{0})_b$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Lemma 4
-(`integers-2024-A69-lem-4`). -/
-public theorem_wanted palindrome_two_pow_base_two_pow_sub_one (x n k : ℕ) (hx : 2 ≤ x)
-    (hn : 1 ≤ n) (hp : (Nat.digits (2 ^ x - 1) (2 ^ n)).Palindrome)
-    (hk : (Nat.digits (2 ^ x - 1) (2 ^ n)).length = k + 1) :
-    k * (x - 1) < n ∧
-      ∀ r : ℕ, n = k * x + r →
-        ((k : ℤ) ≤ (x : ℤ) - r ∨ (3 ≤ k ∧ (k : ℤ) ≤ (x : ℤ) - r + 1 ∧ 3 ≤ x)) →
-        Nat.digits (2 ^ x - 1) (2 ^ n) = (List.range (k + 1)).map fun i => 2 ^ r * k.choose i
-
-/-- **Powers of 2 have binomial forms in small bases.** For every natural number $n \ge 2$ there
-are natural numbers $y$ and $b$ with $y \le \lceil \sqrt{2n} \rceil + 1$ and $2 \le b \le 2^y - 1$
-such that $2^n$ has a base-$b$ representation in binomial form.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 5
-(`integers-2024-A69-thm-5`). -/
-public theorem_wanted exists_small_base_binomialForm_two_pow (n : ℕ) (hn : 2 ≤ n) :
-    ∃ y b : ℕ, y ≤ ⌈Real.sqrt (2 * n)⌉₊ + 1 ∧ 2 ≤ b ∧ b ≤ 2 ^ y - 1 ∧ HasBinomialForm b (2 ^ n)
 
 /-- **The Nagell–Ljunggren equation in natural numbers (Bugeaud–Mihăilescu).** Let $x, y, n, q$
 be natural numbers with $x \ge 2$, $y \ge 2$, $n \ge 3$ and $q \ge 2$ such that

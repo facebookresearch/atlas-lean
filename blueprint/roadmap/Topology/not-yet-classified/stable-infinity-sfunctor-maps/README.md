@@ -1,0 +1,15 @@
+# Stable Infinity SFunctor Maps
+
+- [Postcomposition](postcomposition.md)
+- [Mapping Zero postcomposition](mapping-zero-postcomposition.md)
+- [Postcomposed is Multi Gap](postcomposed-is-multi-gap.md)
+- [Multi Gap Functor](multi-gap-functor.md)
+- [Multi Gap Functor app val](multi-gap-functor-app-val.md)
+- [Multi Gap Functor restriction](multi-gap-functor-restriction.md)
+- [Multi Gap Functor id](multi-gap-functor-id.md)
+- [Multi Gap Functor comp](multi-gap-functor-comp.md)
+- [Multi Core Functor](multi-core-functor.md)
+- [Multi SNatural Map](multi-snatural-map.md)
+- [Diagonal Core Natural Map](diagonal-core-natural-map.md)
+- [Multi SDiagonal Map](multi-sdiagonal-map.md)
+- [Multi SDiagonal Map app](multi-sdiagonal-map-app.md)

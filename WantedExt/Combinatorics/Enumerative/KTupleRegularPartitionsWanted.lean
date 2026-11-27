@@ -13,103 +13,14 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import Mathlib.Data.Int.Interval
+public import MathlibExt.Combinatorics.Enumerative.Partition.KTupleRegularPartitions
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProductCongruence
+public import MathlibExt.Combinatorics.Enumerative.Partition.SignedEulerProduct
 import Mathlib
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Number of $\ell$-regular partitions.** For natural numbers $\ell$ and $n$, the number of
-$\ell$-regular partitions of $n$ is the number of partitions of $n$ none of whose parts is
-divisible by $\ell$.
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
-(definition of ℓ-regular partitions).
--/
-public def lRegularPartitionCount (ℓ n : ℕ) : ℕ :=
-  ((Finset.univ : Finset (Nat.Partition n)).filter fun p => ∀ a ∈ p.parts, ¬ ℓ ∣ a).card
-
-/-- **Number of $k$-tuples of $\ell$-regular partitions.** For natural numbers $\ell$, $k$ and
-$n$, the number $T_{\ell,k}(n)$ is defined by recursion on $k$: $T_{\ell,0}(n)$ is $1$ if
-$n = 0$ and $0$ otherwise, and
-$$T_{\ell,k+1}(n) = \sum_{i=0}^{n} r_\ell(i) \, T_{\ell,k}(n-i),$$
-where $r_\ell(i)$ is the number of $\ell$-regular partitions of $i$.
-
-Peeling off the first component in this way, $T_{\ell,k}(n)$ counts the $k$-tuples
-$(\lambda_1, \dots, \lambda_k)$ of $\ell$-regular partitions of $n_1, \dots, n_k$ with
-$n_1 + \dots + n_k = n$.
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
-(definition of `T_{ℓ,k}`).
--/
-public def kTupleRegularPartitionCount (ℓ : ℕ) : ℕ → ℕ → ℕ
-  | 0, n => if n = 0 then 1 else 0
-  | k + 1, n => ∑ i ∈ Finset.range (n + 1),
-      lRegularPartitionCount ℓ i * kTupleRegularPartitionCount ℓ k (n - i)
-
-/-- **The empty tuple of $\ell$-regular partitions.** For all natural numbers $\ell$ and $n$,
-writing $T_{\ell,k}(n)$ for the number of $k$-tuples of $\ell$-regular partitions with total
-$n$, we have $T_{\ell,0}(n) = 1$ if $n = 0$ and $T_{\ell,0}(n) = 0$ otherwise.
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
-(definition of `T_{ℓ,k}`).
--/
-public theorem kTupleRegularPartitionCount_zero (ℓ n : ℕ) :
-    kTupleRegularPartitionCount ℓ 0 n = if n = 0 then 1 else 0 := rfl
-
-/-- **Recurrence for tuples of $\ell$-regular partitions.** For all natural numbers $\ell$, $k$
-and $n$, writing $r_\ell(i)$ for the number of $\ell$-regular partitions of $i$ and
-$T_{\ell,k}(n)$ for the number of $k$-tuples of $\ell$-regular partitions with total $n$,
-$$T_{\ell,k+1}(n) = \sum_{i=0}^{n} r_\ell(i) \, T_{\ell,k}(n-i).$$
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
-(definition of `T_{ℓ,k}`).
--/
-public theorem kTupleRegularPartitionCount_succ (ℓ k n : ℕ) :
-    kTupleRegularPartitionCount ℓ (k + 1) n = ∑ i ∈ Finset.range (n + 1),
-      lRegularPartitionCount ℓ i * kTupleRegularPartitionCount ℓ k (n - i) := rfl
-
-/--
-**Triples of $\ell$-regular partitions.** For natural numbers $\ell$ and $n$,
-$T_\ell(n) = T_{\ell,3}(n)$ is the number of triples $(\lambda_1, \lambda_2, \lambda_3)$ of
-$\ell$-regular partitions (partitions with no part divisible by $\ell$) whose sizes add up to
-$n$.
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction (definition
-of `T_ℓ`).
--/
-public def tripleRegularPartitionCount (ℓ n : ℕ) : ℕ :=
-  kTupleRegularPartitionCount ℓ 3 n
-
-/-- **Zero has one $\ell$-regular partition.** For every natural number $\ell$, the number of
-$\ell$-regular partitions of $0$ is $1$; the only one is the empty partition.
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
-(definition of ℓ-regular partitions).
--/
-public theorem lRegularPartitionCount_zero (ℓ : ℕ) : lRegularPartitionCount ℓ 0 = 1 := by
-  simp [lRegularPartitionCount]
-
-/-- **One tuple of $\ell$-regular partitions of total zero.** For all natural numbers $\ell$
-and $k$, writing $T_{\ell,k}(n)$ for the number of $k$-tuples of $\ell$-regular partitions
-with total $n$, we have $T_{\ell,k}(0) = 1$: the only such tuple of total $0$ is the tuple of
-empty partitions.
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
-(definition of `T_{ℓ,k}`).
--/
-public theorem kTupleRegularPartitionCount_at_zero (ℓ k : ℕ) :
-    kTupleRegularPartitionCount ℓ k 0 = 1 := by
-  induction k with
-  | zero => rfl
-  | succ k ih => simp [kTupleRegularPartitionCount, lRegularPartitionCount_zero, ih]
 
 /--
 **Bounded bilateral series.** Given functions $e, w : \mathbb{Z} \to \mathbb{Z}$, the
@@ -270,21 +181,6 @@ public theorem_wanted qEulerProduct_fifth_power_identity :
       (fun m => m * (3 * m + 1) / 2) (fun m => 6 * m + 1)
 
 /--
-**A signed Euler product identity.** Write $f_k = \prod_{i \ge 1} (1 - q^{ki})$ for the Euler
-products, as integer power series in $q$, and let $(-q;-q)_\infty = \prod_{i \ge 1} (1 - (-q)^i)$
-be $f_1$ with $q$ replaced by $-q$. Then
-$$(-q;-q)_\infty \, f_1 f_4 = f_2^3.$$
-This is the identity $(-q;-q)_\infty = f_2^3 / (f_1 f_4)$ with the denominator cleared.
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 4, equation
-f1-q.
--/
-public theorem_wanted rescale_neg_one_qEulerProduct_identity :
-    PowerSeries.rescale (-1) (qEulerProduct 1) * qEulerProduct 1 * qEulerProduct 4 =
-      qEulerProduct 2 ^ 3
-
-/--
 **Gauss's theta identity for the Euler products.** Write $f_k = \prod_{i \ge 1} (1 - q^{ki})$
 for the Euler products, as integer power series in $q$, and let
 $\theta = \sum_{m \in \mathbb{Z}} (-1)^m q^{m^2}$. Then $f_1^2 = f_2\, \theta$ and
@@ -315,21 +211,6 @@ f22/f4.
 public theorem_wanted qEulerProduct_two_square_identity :
     qEulerProduct 2 ^ 2 = qEulerProduct 4 *
       (1 + 2 * positiveUnilateralSeries (fun n => 2 * n ^ 2) (fun n => (-1 : ℤ) ^ n))
-
-/--
-**Parity of triples of 2-regular partitions.** For a natural number $n$, let $T_2(n)$ be the
-number of triples of $2$-regular partitions (partitions with no even part) whose sizes add up to
-$n$. Then $T_2(n)$ is odd if and only if $n$ is a triangular number, that is, $n = m(m+1)/2$
-for some natural number $m$.
-
-Allowing integer $m$ gives no new values, since $m$ and $-m-1$ give the same triangular number.
-
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
-and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 8, equation
-mod2.
--/
-public theorem_wanted tripleTwo_odd_iff_triangular (n : ℕ) :
-    tripleRegularPartitionCount 2 n % 2 = 1 ↔ ∃ m : ℕ, n = m * (m + 1) / 2
 
 /--
 **Prime-power congruences for $k$-tuples of $\ell$-regular partitions.** Write $T_{\ell,k}(n)$

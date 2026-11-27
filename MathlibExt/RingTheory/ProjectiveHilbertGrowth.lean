@@ -12,12 +12,7 @@ public import Mathlib.RingTheory.Ideal.Quotient.Operations
 public import Mathlib.RingTheory.GradedAlgebra.Homogeneous.Ideal
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.Data.Nat.Choose.Basic
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Algebra.Order.Ring.Nat
-import Mathlib.Data.Nat.Find
-import Mathlib.Order.Fin.Basic
-import Mathlib.Order.Fin.Tuple
+import MathlibExt.Combinatorics.Enumerative.MacaulayMonomialShadow
 
 /-!
 # Projective Hilbert-function growth data
@@ -32,8 +27,9 @@ increasing upper indices `a₀ < a₁ < ⋯ < a_{d-1}`; a digit with `aᵢ = i` 
 natural number has one when `d > 0` (`MacaulayExpansion.nonempty`), and Macaulay's growth
 transform `h^⟨d⟩ = ∑_{i < d} (aᵢ + 1 choose (i + 2))` is computed from it.
 
-The existence proof is the greedy binomial-cascade argument of the private cascade lemmas in
-`MathlibExt/Combinatorics/Enumerative/MacaulayMonomialShadow.lean`, restated here.
+The existence of the expansion is the greedy binomial-cascade lemma
+`MetaMathlibExt.exists_strictMono_eq_sum_choose` of
+`MathlibExt/Combinatorics/Enumerative/MacaulayMonomialShadow.lean`.
 
 References: Macaulay, *Some properties of enumeration in the theory of
 modular systems* (1927); Gotzmann, *Eine Bedingung für die Flachheit und
@@ -87,89 +83,6 @@ structure MacaulayExpansion (d h : ℕ) where
 def MacaulayExpansion.successor {d h : ℕ} (E : MacaulayExpansion d h) : ℕ :=
   ∑ i : Fin d, Nat.choose (E.upper i + 1) (i.val + 2)
 
-
-/-- A binomial coefficient on the `r`th diagonal eventually exceeds any given natural. -/
-private lemma lt_choose_add (r n : ℕ) (hr : 0 < r) :
-    n < Nat.choose (n + r) r := by
-  obtain ⟨t, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hr)
-  induction t with
-  | zero => simp
-  | succ t ih =>
-    calc
-      n < Nat.choose (n + (t + 1)) (t + 1) := by
-        simpa only [Nat.succ_eq_add_one] using ih (by omega)
-      _ ≤ Nat.choose (n + (t + 2)) (t + 2) := by
-        rw [show n + (t + 2) = (n + (t + 1)).succ by omega,
-          show t + 2 = (t + 1).succ by omega, Nat.choose_succ_succ]
-        exact Nat.le_add_right _ _
-
-/-- Appending a larger value to a strictly increasing finite tuple preserves strictness. -/
-private lemma strictMono_snoc {r d : ℕ} {f : Fin r → ℕ} (hf : StrictMono f)
-    (hlt : ∀ i, f i < d) : StrictMono (Fin.snoc f d) := by
-  intro x y hxy
-  obtain ⟨x, rfl⟩ := Fin.exists_castSucc_eq.mpr (Fin.ne_last_of_lt hxy)
-  rcases y.eq_castSucc_or_eq_last with ⟨y, rfl⟩ | rfl
-  · simpa only [Fin.snoc_castSucc] using
-      hf (Fin.mk_lt_mk.mpr (Fin.mk_lt_mk.mp hxy))
-  · simpa only [Fin.snoc_castSucc, Fin.snoc_last] using hlt x
-
-/-- Every number below one binomial coefficient has a bounded strict cascade. -/
-private lemma exists_cascade_lt (r bound n : ℕ) (hn : n < Nat.choose bound r) :
-    ∃ digits : Fin r → ℕ, StrictMono digits ∧ (∀ i, digits i < bound) ∧
-      n = ∑ i, Nat.choose (digits i) (i.1 + 1) := by
-  induction r generalizing bound n with
-  | zero =>
-    have hn0 : n = 0 := by
-      simp only [Nat.choose_zero_right] at hn
-      omega
-    subst n
-    refine ⟨Fin.elim0, ?_, ?_, by simp⟩
-    · intro i
-      exact Fin.elim0 i
-    · intro i
-      exact Fin.elim0 i
-  | succ r ih =>
-    let P : ℕ → Prop := fun x => Nat.choose x (r + 1) ≤ n
-    let d := Nat.findGreatest P (bound - 1)
-    have hbound : 0 < bound := by
-      by_contra! h
-      have hb : bound = 0 := by omega
-      subst bound
-      simp at hn
-    have hdbound : d < bound := by
-      have := Nat.findGreatest_le (P := P) (bound - 1)
-      omega
-    have hdle : Nat.choose d (r + 1) ≤ n := by
-      change P d
-      apply Nat.findGreatest_spec (m := 0)
-      · omega
-      · simp [P]
-    have hnext : n < Nat.choose (d + 1) (r + 1) := by
-      by_cases h : d + 1 < bound
-      · have hnot : ¬P (d + 1) := by
-          apply Nat.findGreatest_is_greatest (P := P) (n := bound - 1)
-          · change d < d + 1
-            omega
-          · omega
-        simpa [P, Nat.not_le] using hnot
-      · have hdb : d + 1 = bound := by omega
-        simpa [hdb] using hn
-    have hrem : n - Nat.choose d (r + 1) < Nat.choose d r := by
-      rw [show d + 1 = d.succ by omega, show r + 1 = r.succ by omega,
-        Nat.choose_succ_succ] at hnext
-      exact (Nat.sub_lt_iff_lt_add hdle).2 hnext
-    obtain ⟨lower, hlower, hlowerd, hsum⟩ :=
-      ih d (n - Nat.choose d (r + 1)) hrem
-    refine ⟨Fin.snoc lower d, strictMono_snoc hlower hlowerd, ?_, ?_⟩
-    · intro i
-      rcases i.eq_castSucc_or_eq_last with ⟨i, rfl⟩ | rfl
-      · simpa only [Fin.snoc_castSucc] using (hlowerd i).trans hdbound
-      · simpa only [Fin.snoc_last] using hdbound
-    · rw [Fin.sum_univ_castSucc]
-      simp only [Fin.snoc_castSucc, Fin.snoc_last, Fin.val_castSucc, Fin.val_last]
-      rw [← hsum]
-      omega
-
 /-- A strictly increasing tuple of naturals dominates its positions. -/
 theorem val_le_of_strictMono {d : ℕ} {f : Fin d → ℕ} (hf : StrictMono f) (i : Fin d) :
     i.val ≤ f i := by
@@ -185,7 +98,7 @@ theorem val_le_of_strictMono {d : ℕ} {f : Fin d → ℕ} (hf : StrictMono f) (
 /-- Every natural number has a `d`-th Macaulay expansion when `d > 0`. -/
 theorem MacaulayExpansion.nonempty {d : ℕ} (hd : 0 < d) (h : ℕ) :
     Nonempty (MacaulayExpansion d h) := by
-  obtain ⟨digits, hstrict, -, hsum⟩ := exists_cascade_lt d (h + d) h (lt_choose_add d h hd)
+  obtain ⟨digits, hstrict, hsum⟩ := MetaMathlibExt.exists_strictMono_eq_sum_choose d h hd
   exact ⟨⟨digits, val_le_of_strictMono hstrict, hstrict, hsum.symm⟩⟩
 
 end MathlibExt.RingTheory.ProjectiveHilbertGrowth

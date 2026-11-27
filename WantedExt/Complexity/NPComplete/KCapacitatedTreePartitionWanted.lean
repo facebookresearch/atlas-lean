@@ -23,7 +23,7 @@ problems", SIAM Journal on Computing 24 (1995), 296-317, doi:10.1137/S0097539793
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import MathlibExt.Computability.BinaryNatEncoding
@@ -74,7 +74,8 @@ def WellFormed (i : BoundedDiameterSpanningTreeInstance) : Prop :=
     ∀ e ∈ endpoints i, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ endpoints i) ∧
     0 < i.2.2.1 ∧ 0 < i.2.2.2
 
-/-- The spanning subgraph of `G` with the edges listed in `F`. -/
+/-- The simple graph on the vertices `0, ..., n - 1` made from the edges listed in `F`; it is a
+spanning subgraph of `G` when `F` is a sublist of the input edges, as feasibility requires. -/
 def forest (i : BoundedDiameterSpanningTreeInstance) (F : List (ℕ × ℕ × ℕ)) :
     SimpleGraph (Fin i.1) :=
   Cslib.Complexity.Karp.edgeGraph i.1 (F.map fun e => (e.1, e.2.1))

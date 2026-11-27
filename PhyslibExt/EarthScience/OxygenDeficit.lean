@@ -83,7 +83,7 @@ theorem bod_decay_hasDerivAt (kd L0 t : ℝ) :
 /-! ## B. Oxygen deficit, unequal rates -/
 
 set_option linter.unusedVariables false in
-/-- Streeter-Phelps oxygen deficit, unequal rates (`ka ≠ kd`):
+/-- Streeter-Phelps oxygen deficit, unequal positive rates (`ka, kd > 0`, `ka ≠ kd`):
 `D(t) = D0*exp(-ka*t) + kd*L0*(exp(-kd*t)-exp(-ka*t))/(ka-kd)`
 solves `D' = kd*L - ka*D`. -/
 theorem oxygen_deficit_hasDerivAt (ka kd L0 D0 t : ℝ)
@@ -127,7 +127,7 @@ theorem oxygen_deficit_hasDerivAt (ka kd L0 D0 t : ℝ)
 /-! ## C. Oxygen deficit, equal rates -/
 
 set_option linter.unusedVariables false in
-/-- Streeter-Phelps oxygen deficit, equal rates (`ka = kd = k`):
+/-- Streeter-Phelps oxygen deficit, equal positive rates (`ka = kd = k > 0`):
 `D(t) = (D0 + k*L0*t)*exp(-k*t)` solves `D' = k*L - k*D`
 with `L(t) = L0*exp(-k*t)`. -/
 theorem oxygen_deficit_equalRate_hasDerivAt (k L0 D0 t : ℝ) (hk : 0 < k) :

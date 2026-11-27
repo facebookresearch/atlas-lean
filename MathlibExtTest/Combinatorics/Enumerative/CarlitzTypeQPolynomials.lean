@@ -95,4 +95,30 @@ example : carlitzEtaPoly (1 / 2) 3 3 - carlitzEtaPoly (1 / 2) 3 0 = 51 / 16 := b
   norm_num [sum_range_succ, qBracket] at h
   linarith
 
+-- At degree zero the first sum drops out and the second is geometric.
+example {q : ℝ} (hq0 : 0 < q) (hq1 : q ≠ 1) (N : ℕ) :
+    (q - 1) * ∑ k ∈ range N, q ^ k = q ^ N - 1 := by
+  simpa [carlitzBetaPoly_zero hq1] using
+    sum_qpow_mul_qBracket_pow_eq_carlitzBeta q hq0 hq1 0 N
+
+-- At degree one the k = 0 summand contributes 1. With q = 2 the k = 1 terms add 4 + 2.
+example : 4 * carlitzBetaPoly 2 1 2 - carlitzBetaPoly 2 1 0 = 7 := by
+  have h := sum_qpow_mul_qBracket_pow_eq_carlitzBeta 2 (by norm_num) (by norm_num) 1 2
+  norm_num [sum_range_succ, qBracket] at h
+  exact h.symm
+
+-- At order two and degree zero the second sum is geometric, with negative weight at q = 1/2.
+example : 1 / 16 * extendedCarlitzBetaPoly (1 / 2) 2 0 2 -
+    extendedCarlitzBetaPoly (1 / 2) 2 0 0 = -(5 / 4) := by
+  have h := sum_qpow_mul_qBracket_pow_eq_extendedCarlitzBeta (1 / 2) (by norm_num) (by norm_num)
+    2 0 2
+  norm_num [sum_range_succ] at h ⊢
+  linarith
+
+-- At order two and degree one the k = 0 term contributes 1, and k = 1 contributes 8 + 8.
+example : 16 * extendedCarlitzBetaPoly 2 2 1 2 - extendedCarlitzBetaPoly 2 2 1 0 = 17 := by
+  have h := sum_qpow_mul_qBracket_pow_eq_extendedCarlitzBeta 2 (by norm_num) (by norm_num) 2 1 2
+  norm_num [sum_range_succ, qBracket] at h
+  exact h.symm
+
 end MetaMathlibExt

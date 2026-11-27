@@ -13,7 +13,7 @@ public import MathlibExt.RingTheory.MvPowerSeries.PDerivSubst
 @[expose] public section
 
 open MvPowerSeries in
-theorem exactSource
+private theorem exactSource
     {σ : Type*} {R : Type*} [CommRing R] (i : σ) (a : MvPowerSeries σ R)
     (ha : MvPowerSeries.constantCoeff a = 0) (h : PowerSeries R) :
     MvPowerSeries.pderiv i (PowerSeries.subst a h) =
@@ -24,7 +24,7 @@ theorem exactSource
 universe u v
 
 /-- Higher-universe consumer: the statement is universe-polymorphic. -/
-theorem exactSourceUniverse
+private theorem exactSourceUniverse
     {σ : Type u} {R : Type v} [CommRing R] (i : σ) (a : MvPowerSeries σ R)
     (ha : MvPowerSeries.constantCoeff a = 0) (h : PowerSeries R) :
     MvPowerSeries.pderiv i (PowerSeries.subst a h) =

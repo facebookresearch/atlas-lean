@@ -23,95 +23,18 @@ at `l < 2` never enter the definitions.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSymmetricFunctions
+public import MathlibExt.Combinatorics.Additive.VanDerWaerdenNonvanishingAlternating
+public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductFourEight
+public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductPrimeOneModFour
+public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductThree
+public import MathlibExt.Combinatorics.Additive.VanDerWaerdenTransformationSums
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **$F_c$ with $c \notin \{0, \pm 1\}$ is not $m$-vanishing for $m > 0$.** Let $n > 1$ and let
-$c \in \mathbb{Z}/n$ with $c \ne 0$, $c \ne 1$ and $c \ne -1$. Then for every $m > 0$ the
-sum-plus-product family $F_c$ over $\mathbb{Z}/n$,
-$F_c(b_1, \dots, b_l) = b_1 + \dots + b_l + c\, b_1 \cdots b_l$, is not $m$-vanishing.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Theorem 2
-(`integers-2026-A25-thm-2`). -/
-public theorem_wanted not_isMVanishingFamily_sumAddMulProd_of_ne {n : ℕ} (hn : 1 < n)
-    (c : ZMod n) (hc0 : c ≠ 0) (hc1 : c ≠ 1) (hcm1 : c ≠ -1) {m : ℕ} (hm : 0 < m) :
-    ¬ IsMVanishingFamily m (sumAddMulProdFamily c)
-
-/-- **Classification of vanishing for the sum-plus-product family $F_1$.** Let $n > 1$ and let
-$F_1$ be the family over $\mathbb{Z}/n$ given by
-$F_1(b_1, \dots, b_l) = b_1 + \dots + b_l + b_1 \cdots b_l$. If $n \notin \{2, 3, 4, 6, 8\}$,
-then $F_1$ is not $m$-vanishing for any $m > 0$. If $n \in \{2, 3, 4, 8\}$, then $F_1$ is
-vanishing. If $n = 6$, then $F_1$ is $1$-vanishing but not $m$-vanishing for any $m > 1$.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Theorem 3
-(`integers-2026-A25-thm-3`). -/
-public theorem_wanted sumAddMulProd_one_classification {n : ℕ} (hn : 1 < n) :
-    (n ∉ ({2, 3, 4, 6, 8} : Finset ℕ) →
-      ∀ m, 0 < m → ¬ IsMVanishingFamily m (sumAddMulProdFamily (1 : ZMod n))) ∧
-    (n ∈ ({2, 3, 4, 8} : Finset ℕ) → IsVanishingFamily (sumAddMulProdFamily (1 : ZMod n))) ∧
-    (n = 6 → IsMVanishingFamily 1 (sumAddMulProdFamily (1 : ZMod n)) ∧
-      ∀ m, 1 < m → ¬ IsMVanishingFamily m (sumAddMulProdFamily (1 : ZMod n)))
-
-/-- **The sum-plus-product family is vanishing over $\mathbb{Z}/3\mathbb{Z}$.** Let $F_1$ be the
-family over $\mathbb{Z}/3\mathbb{Z}$ sending a block $(b_1, \dots, b_l)$ to
-$\sum_i b_i + \prod_i b_i$. Then $F_1$ is vanishing.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 1
-(`integers-2026-A25-lem-1`). -/
-public theorem_wanted isVanishingFamily_sumAddMulProd_one_three :
-    IsVanishingFamily (sumAddMulProdFamily (1 : ZMod 3))
-
-/-- **The sum-plus-product family is vanishing over $\mathbb{Z}/4\mathbb{Z}$ and
-$\mathbb{Z}/8\mathbb{Z}$.** Let $n \in \{4, 8\}$ and let $F_1$ be the family over
-$\mathbb{Z}/n\mathbb{Z}$ sending a block $(b_1, \dots, b_l)$ to $\sum_i b_i + \prod_i b_i$. Then
-$F_1$ is vanishing.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 2
-(`integers-2026-A25-lem-2`). -/
-public theorem_wanted isVanishingFamily_sumAddMulProd_one_four_eight {n : ℕ}
-    (hn : n = 4 ∨ n = 8) : IsVanishingFamily (sumAddMulProdFamily (1 : ZMod n))
-
-/-- **The sum-plus-product family is $1$-vanishing over $\mathbb{Z}/6\mathbb{Z}$.** Let $F_1$ be
-the family over $\mathbb{Z}/6\mathbb{Z}$ sending a block $(b_1, \dots, b_l)$ to
-$\sum_i b_i + \prod_i b_i$. Then $F_1$ is $1$-vanishing: every sequence over
-$\mathbb{Z}/6\mathbb{Z}$ contains a block of consecutive terms, of some length $l > 1$, on which
-$F_1$ vanishes.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 3
-(`integers-2026-A25-lem-3`). -/
-public theorem_wanted isMVanishingFamily_one_sumAddMulProd_one_six :
-    IsMVanishingFamily 1 (sumAddMulProdFamily (1 : ZMod 6))
-
-/-- **$F_{\pm 1}$ over $\mathbb{Z}/6$ is not $m$-vanishing for $m > 1$.** For every $m > 1$,
-neither of the sum-plus-product families $F_{-1}$ and $F_1$ over $\mathbb{Z}/6$, where
-$F_c(b_1, \dots, b_l) = b_1 + \dots + b_l + c\, b_1 \cdots b_l$, is $m$-vanishing.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 4
-(`integers-2026-A25-lem-4`). -/
-public theorem_wanted not_isMVanishingFamily_sumAddMulProd_six {m : ℕ} (hm : 1 < m) :
-    ¬ IsMVanishingFamily m (sumAddMulProdFamily (-1 : ZMod 6)) ∧
-      ¬ IsMVanishingFamily m (sumAddMulProdFamily (1 : ZMod 6))
-
-/-- **$F_1$ modulo a prime $n \equiv 1 \pmod 4$ is not $m$-vanishing for $m > 0$.** Let $n$ be
-a prime with $n \equiv 1 \pmod 4$. Then for every $m > 0$ the sum-plus-product family $F_1$
-over $\mathbb{Z}/n$, $F_1(b_1, \dots, b_l) = b_1 + \dots + b_l + b_1 \cdots b_l$, is not
-$m$-vanishing.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 5
-(`integers-2026-A25-lem-5`), quoting Theorem 3.6 of Bialostocki and Dierker. -/
-public theorem_wanted not_isMVanishingFamily_sumAddMulProd_one_prime_one_mod_four {n : ℕ}
-    (hp : n.Prime) (h4 : n % 4 = 1) {m : ℕ} (hm : 0 < m) :
-    ¬ IsMVanishingFamily m (sumAddMulProdFamily (1 : ZMod n))
+-- `not_isMVanishingFamily_sumAddMulProd_six` is proved in
+-- `MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductClassification`, re-exported here.
 
 /-- **Nonzero solutions of a two-equation system modulo primes greater than 3 congruent to 3
 mod 4.** Let $n > 3$ be a prime with $n \equiv 3 \pmod 4$. Then there are nonzero
@@ -173,21 +96,6 @@ to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Theorem 4
 public theorem_wanted isVanishingFamily_sumAddMulProd_neg_one_prime_pow {p k : ℕ}
     (hp : p.Prime) (hk : 0 < k) :
     IsVanishingFamily (sumAddMulProdFamily (-1 : ZMod (p ^ k)))
-
-/-- **Vanishing of families of sums of transformed entries.** Let $n$ be a positive integer, $d$ a
-natural number and $g_1, \dots, g_d : \mathbb{Z}/n\mathbb{Z} \to \mathbb{Z}/n\mathbb{Z}$ maps.
-Then the family over $\mathbb{Z}/n\mathbb{Z}$ sending a block $(b_1, \dots, b_l)$ to the vector
-$\left(\sum_i g_1(b_i), \dots, \sum_i g_d(b_i)\right) \in (\mathbb{Z}/n\mathbb{Z})^d$ is
-vanishing, where a block counts as vanishing when all $d$ coordinates of this vector are zero.
-
-The source assumes $d > 0$; for $d = 0$ the statement is trivial.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Theorem 6
-(`integers-2026-A25-thm-6`). -/
-public theorem_wanted isVanishingFamily_transformation_sums {n d : ℕ} (hn : 0 < n)
-    (g : Fin d → ZMod n → ZMod n) :
-    IsVanishingFamily (fun (l : ℕ) (b : Fin l → ZMod n) (t : Fin d) => ∑ i, g t (b i))
 
 end
 

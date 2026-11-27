@@ -11,6 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.CyclotomicTraceMetric
 public import MathlibExt.NumberTheory.SymmetricPowerSums
+public import MathlibExt.NumberTheory.CyclotomicTraceMetricCyclotomicDistMomentTwo
+public import MathlibExt.NumberTheory.CyclotomicTraceMetricEventuallyAdjoinAddNsmulEq
+public import MathlibExt.NumberTheory.CyclotomicTraceMetricAdjoinLeAdjoinOfCyclotomicTraceDistLt
+public import MathlibExt.NumberTheory.CyclotomicTraceMetricCyclotomicBoxDiam
 
 /-!
 # A trace metric on the `p`-th cyclotomic field
@@ -37,92 +41,6 @@ namespace MetaMathlibExt
 open IsCyclotomicExtension
 
 variable {p : ℕ} [NeZero p] {K : Type*} [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
-
-/-- **The trace norm is a norm.** Let $p$ be a prime and let $K$ be a $p$-th cyclotomic extension
-of $\mathbb{Q}$, viewed as a $\mathbb{Q}$-vector space. The trace norm $\lVert \cdot \rVert$ on $K$
-is a norm: for all $\alpha, \beta \in K$ and $q \in \mathbb{Q}$, we have
-$\lVert \alpha \rVert = 0$ if and only if $\alpha = 0$,
-$\lVert \alpha + \beta \rVert \le \lVert \alpha \rVert + \lVert \beta \rVert$, and
-$\lVert q \alpha \rVert = |q| \, \lVert \alpha \rVert$.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Theorem 2 (`integers-2025-A10-thm-2`). -/
-public theorem_wanted cyclotomicTraceNorm_isNorm (hp : p.Prime) :
-    (∀ α : K, cyclotomicTraceNorm p α = 0 ↔ α = 0) ∧
-    (∀ α β : K,
-      cyclotomicTraceNorm p (α + β) ≤ cyclotomicTraceNorm p α + cyclotomicTraceNorm p β) ∧
-    ∀ (q : ℚ) (α : K), cyclotomicTraceNorm p (q • α) = |(q : ℝ)| * cyclotomicTraceNorm p α
-
-/-- **Krasner-type lemma for the cyclotomic trace metric.** Let $p$ be a prime and let $K$ be a
-field generated over $\mathbb{Q}$ by a primitive $p$-th root of unity, with fixed primitive $p$-th
-root of unity $\omega \in K$. Write $d(\alpha, \beta) = \lVert \alpha - \beta \rVert$ for the trace
-metric on $K$, where $\lVert \gamma \rVert \ge 0$ and
-$\lVert \gamma \rVert^2 = \sum_{j=1}^{p-1} \operatorname{Tr}_{K/\mathbb{Q}}(\gamma \omega^j)^2$.
-Let $\alpha, \beta \in K$ and suppose that $d(\alpha, \beta) < d(\alpha, \sigma(\alpha)) / 2$ for
-every automorphism $\sigma$ of $K$ over $\mathbb{Q}$ with $\sigma(\alpha) \ne \alpha$. Then
-$\mathbb{Q}(\alpha) \subseteq \mathbb{Q}(\beta)$ as subfields of $K$.
-
-Since $K / \mathbb{Q}$ is Galois, the elements $\sigma(\alpha) \ne \alpha$ are exactly the
-conjugates of $\alpha$ over $\mathbb{Q}$ other than $\alpha$ itself.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Theorem 4 (`integers-2025-A10-thm-4`). -/
-public theorem_wanted adjoin_le_adjoin_of_cyclotomicTraceDist_lt (hp : p.Prime)
-    {α β : K}
-    (h : ∀ σ : K ≃ₐ[ℚ] K, σ α ≠ α →
-      cyclotomicTraceDist p α β < cyclotomicTraceDist p α (σ α) / 2) :
-    IntermediateField.adjoin ℚ {α} ≤ IntermediateField.adjoin ℚ {β}
-
-/-- **Primitive elements α + nβ in a prime cyclotomic field.** Let $p$ be a prime and let $K$
-be a $p$-th cyclotomic extension of $\mathbb{Q}$. For all $\alpha, \beta \in K$ there is a
-natural number $n_0$ such that, for every natural number $n \ge n_0$, the subfields
-$\mathbb{Q}(\alpha + n\beta)$ and $\mathbb{Q}(\alpha, \beta)$ of $K$ are equal.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Corollary 1 (`integers-2025-A10-cor-1`). -/
-public theorem_wanted eventually_adjoin_add_nsmul_eq (hp : p.Prime) (α β : K) :
-    ∃ n₀ : ℕ, ∀ n ≥ n₀,
-      IntermediateField.adjoin ℚ {α + (n : K) * β} =
-        IntermediateField.adjoin ℚ {α, β}
-
-/-- **Diameter of the cyclotomic box.** Let $p$ be an odd prime, let $N$ be a natural number, and
-let $K$ be a field generated over $\mathbb{Q}$ by a primitive $p$-th root of unity, with fixed
-primitive $p$-th root of unity $\omega \in K$. Let $d(\alpha, \beta) = \lVert \alpha - \beta \rVert$
-be the trace metric on $K$, where $\lVert \gamma \rVert \ge 0$ and
-$\lVert \gamma \rVert^2 = \sum_{j=1}^{p-1} \operatorname{Tr}_{K/\mathbb{Q}}(\gamma \omega^j)^2$.
-Let $B(p, N)$ be the set of integer vectors $a = (a_1, \dots, a_{p-1})$ with $-N \le a_i \le N$
-for all $i$, and write $\alpha_a = a_1 \omega + \dots + a_{p-1} \omega^{p-1}$. Then
-$d(\alpha_a, \alpha_b) \le 2 N p \sqrt{p - 1}$ for all $a, b \in B(p, N)$, and this bound is
-attained: $d(\alpha, -\alpha) = 2 N p \sqrt{p - 1}$ for
-$\alpha = N \omega - N \omega^2 + \dots + N \omega^{p-2} - N \omega^{p-1}$, the point whose
-coefficient of $\omega^i$ is $(-1)^{i-1} N$.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Lemma 2 (`integers-2025-A10-lem-2`). -/
-public theorem_wanted cyclotomicBox_diam (hp : p.Prime) (hp2 : p ≠ 2) (N : ℕ) :
-    (∀ a ∈ cyclotomicBox p N, ∀ b ∈ cyclotomicBox p N,
-      cyclotomicTraceDist p (cyclotomicLatticePoint K a) (cyclotomicLatticePoint K b) ≤
-        2 * N * p * √(p - 1 : ℝ)) ∧
-    cyclotomicTraceDist p (cyclotomicLatticePoint K fun i : Fin (p - 1) => (N : ℤ) * (-1) ^ i.val)
-        (cyclotomicLatticePoint K fun i : Fin (p - 1) => -((N : ℤ) * (-1) ^ i.val)) =
-      2 * N * p * √(p - 1 : ℝ)
-
-/-- **Second moment of the trace distance on the cyclotomic box.** Let $p$ be a prime, let $N$ be
-a natural number, and let $K$ be a field generated over $\mathbb{Q}$ by a primitive $p$-th root of
-unity, with fixed primitive $p$-th root of unity $\omega \in K$. Let $M_2(p, N)$ be the second
-moment of the trace metric $d$ of $K$ over the box $B(p, N)$: the average of
-$d(\alpha_a, \alpha_b)^2$ over all pairs $(a, b)$ of integer vectors in $\mathbb{Z}^{p-1}$ whose
-coordinates lie in $[-N, N]$, where $\alpha_a = a_1 \omega + \dots + a_{p-1} \omega^{p-1}$ and
-$d(\alpha, \beta)^2 = \sum_{j=1}^{p-1} \mathrm{Tr}_{K/\mathbb{Q}}((\alpha - \beta) \omega^j)^2$.
-Then $M_2(p, N) = \frac{2}{3} (p^3 - 2 p^2 + 1) N (N + 1)$.
-
-The asymptotic form $M_2(p, N) = \frac{2}{3} p^3 N^2 + O(p^2 N^2 + p^3 N)$ follows from this
-exact formula.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Lemma 4 (`integers-2025-A10-lem-4`). -/
-public theorem_wanted cyclotomicDistMoment_two (hp : p.Prime) (N : ℕ) :
-    cyclotomicDistMoment p K N 2 = 2 / 3 * ((p : ℝ) ^ 3 - 2 * p ^ 2 + 1) * N * (N + 1)
 
 /-- **Fourth-power sum of coordinate differences over a box.** Let $p$ be a prime and $N$ a
 natural number, and let $B(p, N)$ be the set of integer vectors $a = (a_1, \dots, a_{p-1})$

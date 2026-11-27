@@ -15,7 +15,7 @@ public import Mathlib.LinearAlgebra.AffineSpace.AffineSubspace.Basic
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Analysis.Complex.Basic
-public import MathlibExt.Combinatorics.CanonicalLineEhrhart
+public import MathlibExt.Combinatorics.CanonicalLineInterlacing
 public import MathlibExt.Combinatorics.Enumerative.OrdinaryEhrhartCount
 public import WantedExt.Combinatorics.WeightedProjectiveSimplexIDPWanted
 import Mathlib
@@ -28,58 +28,6 @@ open Filter Polynomial Set
 @[expose] public noncomputable section
 
 /-! # Ehrhart polynomials with roots on the canonical line -/
-
-/-- **The h-star coefficients of a polynomial.** Let $f$ be a complex polynomial of degree $d$,
-with $d = 0$ for the zero polynomial. For a natural number $i$, the $i$-th $h^*$-coefficient of
-$f$ is
-$$h^*_i(f) = \sum_{j=0}^{i} (-1)^j \binom{d+1}{j} f(i-j),$$
-the coefficient of $t^i$ in the power series $(1-t)^{d+1} \sum_{k \ge 0} f(k)\, t^k$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of the `h*`-polynomial.
--/
-public def hStarCoeff (f : Polynomial ℂ) (i : ℕ) : ℂ :=
-  ∑ j ∈ Finset.range (i + 1),
-    (-1 : ℂ) ^ j * (Nat.choose (f.natDegree + 1) j : ℂ) * f.eval (i - j : ℂ)
-
-/-- **SNN polynomials.** For a complex polynomial $f$ of degree $d$ and a natural number $i$, let
-$h^*_i(f)$ be the coefficient of $t^i$ in $(1 - t)^{d+1} \sum_{k \ge 0} f(k)\, t^k$. Then $f$ is
-SNN when $f \ne 0$ and its $h^*$-coefficients $h^*_0(f), \dots, h^*_d(f)$ are real and
-nonnegative.
-
-Coefficients beyond the degree, which vanish by the generating-series identity, are not part of
-the condition.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of SNN-polynomial.
--/
-public def IsSNN (f : Polynomial ℂ) : Prop :=
-  f ≠ 0 ∧ ∀ i ≤ f.natDegree, 0 ≤ (hStarCoeff f i).re ∧ (hStarCoeff f i).im = 0
-
-/-- **The basis polynomials $b^d_j$.** For natural numbers $d$ and $j$, $b^d_j$ is the complex
-polynomial $b^d_j = \prod_{i=0}^{d-1} (X + d - j - i)$.
-
-Integer constants are used before mapping to $\mathbb{C}$, avoiding any convention about rising
-versus falling Pochhammer symbols.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of `bᵈⱼ`.
--/
-public def bBasis (d j : ℕ) : Polynomial ℂ :=
-  ∏ i ∈ Finset.range d, (X + C (((d : ℤ) - (j : ℤ) - (i : ℤ) : ℤ) : ℂ))
-
-/-- **Symmetric basis polynomials.** For natural numbers $d$ and $j$, let $b^d_j$ be the complex
-polynomial $\prod_{i=0}^{d-1} (X + d - j - i)$. The polynomial $p^d_j$ is $b^d_j$ if $2j = d$, and
-$b^d_j + b^d_{d-j}$ otherwise, where $d - j$ is truncated at $0$ (so $p^d_j = b^d_j + b^d_0$ when
-$j > d$).
-
-Statements that use $p^d_j$ assume $j \le d$, where the truncation plays no role.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of `pᵈⱼ`.
--/
-public def pBasis (d j : ℕ) : Polynomial ℂ :=
-  if 2 * j = d then bBasis d j else bBasis d j + bBasis d (d - j)
 
 /-- **The basis polynomial $p^1_0$.** The symmetric basis polynomial $p^1_0$ equals the complex
 polynomial $2X + 1$.
@@ -98,27 +46,15 @@ Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Ca
 INTEGERS 25 (2025), Article A68, characteristic case of the `pᵈⱼ` definition.
 -/
 public theorem pBasis_two_zero : pBasis 2 0 = 2 * (X ^ 2 + X + 1) := by
-  simp [pBasis, bBasis, Finset.prod_range_succ]
+  simp only [pBasis, mul_zero, OfNat.zero_ne_ofNat, ↓reduceIte, bBasis, Nat.cast_ofNat,
+    CharP.cast_eq_zero, sub_zero, Int.cast_sub, Int.cast_ofNat, Int.cast_natCast, map_sub,
+    map_natCast, Finset.prod_range_succ, Finset.range_one, Finset.prod_singleton, Nat.cast_one,
+    tsub_zero, sub_self, zero_sub, Int.cast_neg, map_neg, neg_zero, add_zero]
   have hC2 : (C (2 : ℂ) : Polynomial ℂ) = 2 := by
     rw [show (2 : ℂ) = 1 + 1 by ring, map_add, C_1]
     ring
   rw [hC2]
   ring
-
-/-- **Interlacing lists.** Let $r$ be a binary relation on a type $\alpha$ and let $d \ge 0$.
-A list $(a_1, \dots, a_d)$ interlaces a list $(b_1, \dots, b_{d+1})$ with respect to $r$ when
-$b_1 \mathrel{r} a_1 \mathrel{r} b_2 \mathrel{r} \cdots \mathrel{r} a_d \mathrel{r} b_{d+1}$,
-that is, $b_k \mathrel{r} a_k$ and $a_k \mathrel{r} b_{k+1}$ for $1 \le k \le d$. Two lists
-interlace only when the second has exactly one more entry than the first; in particular the
-empty list interlaces every one-element list.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of interlacing.
--/
-public def ListInterlaces {α : Type*} (r : α → α → Prop) : List α → List α → Prop
-  | [], [_] => True
-  | a :: as, b :: b' :: bs => r b a ∧ r a b' ∧ ListInterlaces r as (b' :: bs)
-  | _, _ => False
 
 /-- **Alternating lists of equal length.** Let $r$ be a binary relation on a type $\alpha$ and
 let $n \ge 0$. A list $(a_1, \dots, a_n)$ alternates with a list $(b_1, \dots, b_n)$ with
@@ -176,27 +112,6 @@ public def RealAlternates (f g : Polynomial ℝ) : Prop :=
         List.Pairwise (· ≤ ·) as ∧ List.Pairwise (· ≤ ·) bs ∧
         (ListAlternates (· ≤ ·) as bs ∨ ListAlternates (· ≤ ·) bs as)
 
-/-- **Interlacing on the canonical line.** A complex polynomial $f$ CL-interlaces a complex
-polynomial $g$ when $f$ and $g$ are nonzero, $\deg g = \deg f + 1$, all roots of $f$ and of $g$
-lie on the canonical line, and, writing $d = \deg f$ and listing the roots with multiplicity as
-$a_1, \dots, a_d$ for $f$ and $b_1, \dots, b_{d+1}$ for $g$, each list sorted by increasing
-imaginary part, they alternate:
-$\operatorname{Im} b_1 \le \operatorname{Im} a_1 \le \operatorname{Im} b_2 \le \cdots \le
-\operatorname{Im} a_d \le \operatorname{Im} b_{d+1}$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, definition of CL-interlacing.
--/
-public def CLInterlaces (f g : Polynomial ℂ) : Prop :=
-  f ≠ 0 ∧ g ≠ 0 ∧ f.natDegree + 1 = g.natDegree ∧
-    ∃ as bs : List ℂ,
-      (as : Multiset ℂ) = f.roots ∧ (bs : Multiset ℂ) = g.roots ∧
-        as.length = f.natDegree ∧ bs.length = g.natDegree ∧
-        (∀ z ∈ as, z ∈ canonicalLine) ∧ (∀ z ∈ bs, z ∈ canonicalLine) ∧
-        List.Pairwise (fun x y => x.im ≤ y.im) as ∧
-        List.Pairwise (fun x y => x.im ≤ y.im) bs ∧
-        ListInterlaces (fun x y => x.im ≤ y.im) as bs
-
 /-- **Real-rooted polynomials.** A real polynomial $f$ has only real roots when $f \ne 0$ and the
 number of real roots of $f$, counted with multiplicity, equals the degree of $f$.
 
@@ -252,16 +167,6 @@ public def EhrhartCounts {d : ℕ} (vertices : Finset (Fin d → ℤ)) (E : Poly
     (ordinaryEhrhartCount d
       {x : Fin d → ℚ | (fun i => (x i : ℝ)) ∈ latticePolytope vertices} k : ℂ)
 
-/-- **Binomial polynomial.** For an integer $n$ and a natural number $d$, the binomial polynomial
-$\binom{X+n}{d}$ is the real polynomial $\frac{1}{d!} \prod_{i=0}^{d-1} (X + n - i)$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 7.
--/
-public def binomialPolynomial (n : ℤ) (d : ℕ) : Polynomial ℝ :=
-  ((d.factorial : ℝ)⁻¹) •
-    ∏ i ∈ Finset.range d, (X + C ((n - (i : ℤ) : ℤ) : ℝ))
-
 /-- **Complex binomial polynomial.** For an integer $n$ and a natural number $d$, the complex
 binomial polynomial $\binom{X+n}{d} \in \mathbb{C}[X]$ is
 $$\binom{X+n}{d} = \frac{1}{d!} \prod_{i=0}^{d-1} (X + n - i).$$
@@ -312,78 +217,6 @@ INTEGERS 25 (2025), Article A68, definition of `Ω_d`.
 public def canonicalLineRootSet (d : ℕ) : Set ℂ :=
   {z | z ∈ canonicalLine ∧
     ∃ f : Polynomial ℂ, f.natDegree = d ∧ IsCL f ∧ HasDiamond f ∧ f.IsRoot z}
-
-/-- **Functional equation versus palindromic h-star coefficients.** Let $f$ be a nonzero complex
-polynomial of degree $d$ with $h^*$-coefficients $h^*_0(f), \dots, h^*_d(f)$. Then
-$f(X-1) = (-1)^d f(-X)$ as polynomials if and only if $h^*_i(f) = h^*_{d-i}(f)$ for every
-$i \le d$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 1 (quoting Corollary 2.2 in Kölbl's [11]).
--/
-public theorem_wanted functionalEquation_iff_hStar_palindromic (f : Polynomial ℂ) (hf : f ≠ 0) :
-    f.comp (X - 1) = C ((-1 : ℂ) ^ f.natDegree) * f.comp (-X) ↔
-      ∀ i ≤ f.natDegree, hStarCoeff f i = hStarCoeff f (f.natDegree - i)
-
-/-- **$p^d_0$ CL-interlaces $p^{d+1}_0$.** For every natural number $d \ge 1$, the symmetric
-basis polynomial $p^d_0$ CL-interlaces $p^{d+1}_0$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 4.
--/
-public theorem_wanted pBasis_zero_interlaces_succ (d : ℕ) (hd : 0 < d) :
-    CLInterlaces (pBasis d 0) (pBasis (d + 1) 0)
-
-/-- **CL-interlacing of $p^d_0$ with a perturbation of $p^{d+1}_0$.** For every natural number
-$d \ge 1$ and every real number $w > 0$, the symmetric basis polynomial $p^d_0$ CL-interlaces
-the polynomial $p^{d+1}_0 + w \, (2X + 1) \, p^d_0$.
-
-The orientation follows the numbered statement in the INTEGERS version; the arXiv wording
-differs.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 5.
--/
-public theorem_wanted pBasis_zero_interlaces_perturbation (d : ℕ) (hd : 0 < d)
-    (w : ℝ) (hw : 0 < w) :
-    CLInterlaces (pBasis d 0)
-      (pBasis (d + 1) 0 + C (w : ℂ) * (2 * X + 1) * pBasis d 0)
-
-/-- **Multiplying by $2X+1$ preserves SNN.** For every complex polynomial $f$, if $f$ is an SNN
-polynomial, then so is $(2X + 1) f$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 6.
--/
-public theorem_wanted two_mul_X_add_one_preserves_snn (f : Polynomial ℂ) (hf : IsSNN f) :
-    IsSNN ((2 * X + 1) * f)
-
-/-- **Multiplying a binomial polynomial by a quadratic.** For an integer $n$ and a natural number
-$k$, write $\binom{X+n}{k} = \frac{1}{k!} \prod_{i=0}^{k-1} (X + n - i)$ for the real binomial
-polynomial. Let $d$ and $j$ be natural numbers with $0 < d$ and $j \le d$, and let $c$ be a real
-number. Then
-$$
-(X^2 + X + c) \binom{X+d-j}{d} = \alpha \binom{X+d-j+2}{d+2} + \beta \binom{X+d-j+1}{d+2} +
-\gamma \binom{X+d-j}{d+2},
-$$
-where $\alpha = j^2 + j + c$, $\beta = 2(dj - j^2 + d + 1 - c)$ and
-$\gamma = d^2 - 2dj - j + j^2 + d + c$.
-
-The paper assumes $c \ge 1/4$; the identity holds for every real $c$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 7.
--/
-public theorem_wanted quadratic_mul_binomialPolynomial (d j : ℕ) (hd : 0 < d) (hj : j ≤ d)
-    (c : ℝ) :
-    (X ^ 2 + X + C c) * binomialPolynomial ((d : ℤ) - (j : ℤ)) d =
-      C ((j : ℝ) ^ 2 + (j : ℝ) + c) *
-          binomialPolynomial ((d : ℤ) - (j : ℤ) + 2) (d + 2) +
-        C (2 * ((d : ℝ) * (j : ℝ) - (j : ℝ) ^ 2 + (d : ℝ) + 1 - c)) *
-          binomialPolynomial ((d : ℤ) - (j : ℤ) + 1) (d + 2) +
-        C ((d : ℝ) ^ 2 - 2 * (d : ℝ) * (j : ℝ) - (j : ℝ) +
-            (j : ℝ) ^ 2 + (d : ℝ) + c) *
-          binomialPolynomial ((d : ℤ) - (j : ℤ)) (d + 2)
 
 /-- **Fisk's Leibniz rule for interlacing.** Let $f, f_1, g, g_1$ be real polynomials with
 positive leading coefficients, each having only real roots, such that $f$ and $g$ have no common
@@ -539,7 +372,8 @@ $(\diamondsuit)$ is a nonempty connected subset of $\mathbb{C}$.
 Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
 INTEGERS 25 (2025), Article A68, Theorem 6.
 -/
-public theorem_wanted canonicalLineRootSet_isConnected (d : ℕ) (hd : 0 < d) : IsConnected (canonicalLineRootSet d)
+public theorem_wanted canonicalLineRootSet_isConnected (d : ℕ) (hd : 0 < d) :
+    IsConnected (canonicalLineRootSet d)
 
 /-- **Parameter bound for SNN CL-polynomials.** Let $f$ be a complex polynomial of degree $d$
 that is a CL-polynomial with real scale $a$ and list of real parameters $c_1, \dots, c_m$, and
@@ -652,7 +486,8 @@ Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Ca
 INTEGERS 25 (2025), Article A68, Proposition 4.
 -/
 public theorem_wanted clspan_ehrhart_subset_standardReflexiveSimplex {d : ℕ} (hd : d ≤ 9)
-    (vertices : Finset (Fin d → ℤ)) (hP : IsReflexive (latticePolytope vertices)) (E E' : Polynomial ℂ)
+    (vertices : Finset (Fin d → ℤ)) (hP : IsReflexive (latticePolytope vertices))
+    (E E' : Polynomial ℂ)
     (hE : EhrhartCounts vertices E) (hE' : EhrhartCounts (standardReflexiveSimplexVertices d) E') :
     clspan E ⊆ clspan E'
 

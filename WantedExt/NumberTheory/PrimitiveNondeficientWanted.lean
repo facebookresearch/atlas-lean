@@ -32,8 +32,11 @@ both in `ℚ`.
 The paper's Theorem (label `maintheoremboundwithkR`: some
 `p_i^{a_i+1} < 2kR`) is already proved in MathlibExt as
 `MetaMathlibExt.primitive_nondeficient_prime_power_bound` and is
-not restated; this module states the paper's remaining numbered
-lemmas and propositions.
+not restated. The statement
+`max_primeFactor_lt_sqrt_radical_or_exists_pow_lt` is proved in
+`MathlibExt.NumberTheory.PrimitiveNondeficient`. Grün's bound is
+proved in `MathlibExt.NumberTheory.PrimitiveNondeficientGrun`. This module
+states the remaining wanted lemmas.
 -/
 module
 
@@ -46,24 +49,15 @@ public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv
 public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientRadical
 public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientTwoPowMulPrime
+public import MathlibExt.NumberTheory.OddTwoPrimeFactorsDeficient
+public import MathlibExt.NumberTheory.PrimitiveNondeficient
+public import MathlibExt.NumberTheory.PrimitiveNondeficientGrun
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PrimitiveNondeficientWanted
-
-/-- **Odd numbers with two prime factors are deficient.** If $n$ is an odd natural number with
-exactly two distinct prime divisors, then $\sigma(n) < 2n$, where $\sigma(n)$ is the sum of the
-positive divisors of $n$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Lemma
-(label `Classificationofprimitivenondeficientwhenkis2`), second
-part. -/
-theorem_wanted deficient_of_odd_card_primeFactors_eq_two
-    (n : ℕ) (hno : Odd n) (hk : n.primeFactors.card = 2) :
-    ∑ d ∈ Nat.divisors n, d < 2 * n
 
 /-- **Small component for odd primitive non-deficient numbers with three or four prime factors.**
 Let $n$ be an odd primitive non-deficient number with exactly $3$ or exactly $4$ distinct prime
@@ -78,19 +72,6 @@ theorem_wanted exists_pow_factorization_add_one_lt_two_mul_radical
     (hk : n.primeFactors.card = 3 ∨ n.primeFactors.card = 4) :
     ∃ p ∈ n.primeFactors,
       p ^ (n.factorization p + 1) < 2 * ∏ q ∈ n.primeFactors, q
-
-/-- **Grün's bound for non-deficient numbers.** Let $n$ be a non-deficient number with $k$
-distinct prime factors, the least of which is $p_1$. Then $\tfrac{3}{2} p_1 - 2 < k$, and if
-$p_1 \ge 5$ then $p_1 + 2 \le k$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Lemma (label `Grun`). -/
-theorem_wanted grun_bounds_of_isNondeficient
-    (n p₁ : ℕ) (hn : IsNondeficient n)
-    (hp₁ : p₁ ∈ n.primeFactors)
-    (hmin : ∀ q ∈ n.primeFactors, p₁ ≤ q) :
-    (3 : ℚ) / 2 * (p₁ : ℚ) - 2 < (n.primeFactors.card : ℚ) ∧
-      (5 ≤ p₁ → p₁ + 2 ≤ n.primeFactors.card)
 
 /-- **Generalized Puchta lemma.** Let $n$ be a primitive non-deficient number with $k$ distinct
 prime factors, the least of which is $p_1$, and suppose that $(p_1, k) \ne (3, 3)$. Let $\alpha$
@@ -115,28 +96,5 @@ theorem_wanted exists_pow_factorization_add_one_lt_max
           (2 * ((n.primeFactors.card : ℚ) + 2 + (p₁ : ℚ)) / α)
           ((n.primeFactors.card : ℚ) *
             ((n.primeFactors.card : ℚ) + 1))
-
-/-- **Dichotomy for odd primitive non-deficient numbers.** Let $n$ be an odd primitive
-non-deficient number, that is, a positive integer with $\sigma(n) \ge 2n$ all of whose proper
-divisors $m$ satisfy $\sigma(m) < 2m$, where $\sigma$ is the sum of divisors. Let $k$ be the
-number of distinct prime factors of $n$, let $p_1$ and $p_k$ be its least and greatest prime
-factors, and let $R$ be the product of the distinct primes dividing $n$. Then either
-$p_k < \sqrt{R}$, or some prime $p$ dividing $n$ satisfies $p^{a+1} < (k + 2 + p_1)(p_k - 1)$,
-where $a$ is the exponent of $p$ in $n$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Proposition
-(label `dichotomywithpk`). -/
-theorem_wanted max_primeFactor_lt_sqrt_radical_or_exists_pow_lt
-    (n p₁ pK : ℕ) (hno : Odd n)
-    (hn : IsPrimitiveNondeficient n)
-    (hp₁ : p₁ ∈ n.primeFactors)
-    (hmin : ∀ q ∈ n.primeFactors, p₁ ≤ q)
-    (hpK : pK ∈ n.primeFactors)
-    (hmax : ∀ q ∈ n.primeFactors, q ≤ pK) :
-    (pK : ℝ) < Real.sqrt ((∏ q ∈ n.primeFactors, q : ℕ) : ℝ) ∨
-      ∃ p ∈ n.primeFactors,
-        p ^ (n.factorization p + 1) <
-          (n.primeFactors.card + 2 + p₁) * (pK - 1)
 
 end MathlibExt.NumberTheory.PrimitiveNondeficientWanted

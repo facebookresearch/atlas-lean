@@ -63,14 +63,16 @@ private theorem cashFlowPrice_eq_zpow_sum (c : ℕ → ℝ) (s : Finset ℕ) :
   intro t _
   rw [zpow_neg, zpow_natCast, mul_comm]
 
-/-- Macaulay duration: the payment-date-weighted average discount factor,
-divided by the price `cashFlowPrice` (source clause: "Macaulay =
-`Σ t * c_t (1+r)^(-t) / P`"). -/
+/-- Macaulay duration: the payment-date-weighted sum of discounted cash flows, divided by the price
+`cashFlowPrice` (source clause: "Macaulay = `Σ t * c_t (1+r)^(-t) / P`"). It is defined for every
+real `r`, with the conventions `x / 0 = 0` (so `D_Mac(r) = 0` when `P(r) = 0`) and `0⁻¹ = 0` at
+`r = -1`. -/
 noncomputable def macaulayDuration (c : ℕ → ℝ) (s : Finset ℕ) (r : ℝ) : ℝ :=
   (∑ t ∈ s, (t : ℝ) * c t * (1 + r) ^ (-(t : ℤ))) / cashFlowPrice c s r
 
-/-- Modified duration: Macaulay duration divided by `1 + r`
-(source clause: "`Dmod = Macaulay / (1 + r)`"). -/
+/-- Modified duration: Macaulay duration divided by `1 + r` (source clause: "`Dmod = Macaulay / (1 +
+r)`"). It is defined for every real `r`, with the convention `x / 0 = 0`: `D_mod(-1) = 0`, and
+`D_mod(r) = 0` when the price `∑_{t ∈ s} c_t (1 + r)⁻ᵗ` is `0`. -/
 noncomputable def modifiedDuration (c : ℕ → ℝ) (s : Finset ℕ) (r : ℝ) : ℝ :=
   macaulayDuration c s r / (1 + r)
 
@@ -95,8 +97,8 @@ theorem hasDerivAt_cashFlowPrice {c : ℕ → ℝ} {s : Finset ℕ} {r : ℝ} (h
   push_cast
   ring
 
-/-- `P′(r) = -Dmod(r) * P(r)` for the price `cashFlowPrice` at a nonzero price
-(Atlas roadmap FI04.T01). -/
+/-- `P′(r) = -Dmod(r) * P(r)` for the price `cashFlowPrice` at a yield `r > -1` with
+nonzero price (Atlas roadmap FI04.T01). -/
 theorem deriv_cashFlowPrice_eq_neg_modifiedDuration_mul {c : ℕ → ℝ} {s : Finset ℕ}
     {r : ℝ} (hr : -1 < r) (hP : cashFlowPrice c s r ≠ 0) :
     deriv (cashFlowPrice c s) r = -modifiedDuration c s r * cashFlowPrice c s r := by

@@ -12,6 +12,9 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import MathlibExt.Combinatorics.AccessibleSets
+public import MathlibExt.Combinatorics.AccessibleSetsGrowth
+public import MathlibExt.Combinatorics.AccessibleSetsRecurrence
+public import MathlibExt.Combinatorics.EvenFibonacciAccessibility
 
 /-!
 # Accessible and large sets (statements)
@@ -48,21 +51,6 @@ public theorem_wanted accessibility_degree_growth_bound (r : ℕ) (D : Set ℕ)
         (2 + (((r - 1 : ℕ) : ℝ)⁻¹) + δ) * (d n : ℝ)) :
     ¬ IsRAccessible r D
 
-/-- **Fast eventual growth rules out 2-accessibility.** Let $d_0 < d_1 < d_2 < \cdots$ be a
-strictly increasing sequence of natural numbers with $d_0 > 0$, and let
-$D = \{d_n : n \in \mathbb{N}\}$. Suppose there are a real number $\delta > 0$ and a natural
-number $N \ge 1$ such that $d_{n+1} \ge (3 + \delta) d_n$ for every $n \in \mathbb{N}$ with
-$n + 1 \ge N$. Then $D$ is not $2$-accessible.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Corollary 1. -/
-public theorem_wanted not_two_accessible_of_growth (D : Set ℕ) (d : ℕ → ℕ)
-    (hmono : StrictMono d) (hD : D = Set.range d) (hd0 : 0 < d 0)
-    (δ : ℝ) (hδ : 0 < δ) (N : ℕ) (hN : 0 < N)
-    (hgrowth : ∀ n : ℕ, N ≤ n + 1 →
-      (d (n + 1) : ℝ) ≥ (3 + δ) * (d n : ℝ)) :
-    ¬ IsRAccessible 2 D
-
 /-- **2-large sets contain multiples of every positive integer.** Every $2$-large set $D$ of
 positive integers contains a multiple of each positive integer $m$.
 
@@ -71,24 +59,18 @@ Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (202
 public theorem_wanted two_large_contains_multiples (D : Set ℕ) (h : IsRLarge 2 D) :
     ∀ m : ℕ, 0 < m → ∃ d ∈ D, m ∣ d
 
-/-- **Finite removal preserves $r$-largeness.** Let $r$ be a natural number. If a set
+/-- **Finite removal preserves $r$-largeness.** Let $r \ge 2$. If a set
 $D \subseteq \mathbb{N}$ is $r$-large and $F \subseteq \mathbb{N}$ is finite, then $D \setminus F$
 is $r$-large.
 
+The source states this for every $r$, but it fails for $r = 1$: $D = F = \{1\}$ is a
+counterexample, since $\{1\}$ is $1$-large and $\emptyset$ is not.
+
 Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
         Theorem 3. -/
-public theorem_wanted rLarge_sdiff_finite (r : ℕ) (D F : Set ℕ)
+public theorem_wanted rLarge_sdiff_finite (r : ℕ) (D F : Set ℕ) (hr : 2 ≤ r)
     (hD : IsRLarge r D) (hF : F.Finite) :
     IsRLarge r (D \ F)
-
-/-- **Largeness is partition regular.** If $D_1, D_2 \subseteq \mathbb{N}$ and their union
-$D = D_1 \cup D_2$ is large, then $D_1$ is large or $D_2$ is large.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 4. -/
-public theorem_wanted large_union_partition (D D₁ D₂ : Set ℕ)
-    (hD : D = D₁ ∪ D₂) (hlarge : IsLarge D) :
-    IsLarge D₁ ∨ IsLarge D₂
 
 /-- **Sets growing by a factor of three are not 2-large.** Let $d_0 < d_1 < d_2 < \cdots$ be a
 strictly increasing sequence of natural numbers with $d_0 > 0$ and $d_{n+1} \ge 3 d_n$ for every
@@ -148,24 +130,6 @@ public theorem_wanted polynomial_range_large (p : Polynomial ℤ)
     (hlead : 0 < p.leadingCoeff) (hzero : p.eval 0 = 0) :
     IsLarge {d : ℕ | 0 < d ∧ ∃ n : ℕ+, p.eval (n : ℤ) = (d : ℤ)}
 
-/-- **A coloring criterion for accessibility of a shifted set.** Let $r \ge 2$ and $c$ be natural
-numbers, let $D$ be a set of positive integers, and write $D + c = \{d + c : d \in D\}$. Suppose
-that for every coloring of $D$ with $r - 1$ colors and every $k \ge 1$ there are
-$x_0, \dots, x_{k-1} \in D$, all of the same color, that form a $(D + c)$-diffsequence, that is,
-$x_{i+1} - x_i \in D + c$ for every $i < k - 1$. Then $D + c$ is $r$-accessible.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 10. -/
-public theorem_wanted accessible_of_colored_subset_diffsequences (c r : ℕ)
-    (hr : 2 ≤ r) (D : Set ℕ) (hD : D ⊆ Set.Ioi 0)
-    (hcolor : ∀ χ : ({n : ℕ+ // (n : ℕ) ∈ D} → Fin (r - 1)),
-      ∀ k : ℕ, 1 ≤ k →
-        ∃ x : Fin k → {n : ℕ+ // (n : ℕ) ∈ D},
-          (∀ i j, χ (x i) = χ (x j)) ∧
-          IsDDiffSequence {e : ℕ | ∃ d ∈ D, e = d + c}
-            (fun i => (((x i : {n : ℕ+ // (n : ℕ) ∈ D}) : ℕ+) : ℕ))) :
-    IsRAccessible r {e : ℕ | ∃ d ∈ D, e = d + c}
-
 /-- **Integral quotients of an accessible set.** Let $d \ge 1$ and $r$ be natural numbers and let
 $A$ be a set of natural numbers. If $A$ is $rd$-accessible, then the set $\{n \ge 1 : nd \in A\}$,
 that is, the positive integers of the form $a/d$ with $a \in A$, is $r$-accessible.
@@ -175,27 +139,6 @@ Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (202
 public theorem_wanted accessible_integral_quotients (A : Set ℕ) (d r : ℕ)
     (hd : 0 < d) (hA : IsRAccessible (r * d) A) :
     IsRAccessible r {n : ℕ | 0 < n ∧ ∃ a ∈ A, a = n * d}
-
-/-- **Colorings avoiding long diffsequences under fractional-part bounds.** Let $r \ge 1$, let
-$d_0 < d_1 < \cdots$ be a strictly increasing sequence of natural numbers with $d_0 > 0$, and let
-$D = \{d_n : n \ge 0\}$. Suppose there are real numbers $\alpha$ and $\varepsilon > 0$ such that
-for every $n$ the fractional part of $\alpha d_n$ lies in the closed interval
-$[\varepsilon, (r-1)/r]$. Then there is a coloring of the positive integers with $r$ colors that
-has no monochromatic $D$-diffsequence of positive integers of length
-$\lceil 1/(r\varepsilon) \rceil + 1$.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 12. -/
-public theorem_wanted coloring_avoids_diffsequence_of_fractional_bounds
-    (r : ℕ) (hr : 1 ≤ r) (D : Set ℕ) (d : ℕ → ℕ)
-    (hmono : StrictMono d) (hD : D = Set.range d) (hd0 : 0 < d 0)
-    (α ε : ℝ) (hε : 0 < ε)
-    (hfrac : ∀ n : ℕ, Int.fract (α * (d n : ℝ)) ∈
-      Set.Icc ε (((r - 1 : ℕ) : ℝ) / (r : ℝ))) :
-    ∃ c : ℕ+ → Fin r,
-      ¬ ∃ x : Fin (Nat.ceil (((r : ℝ) * ε)⁻¹) + 1) → ℕ+,
-        IsMonochromatic c x ∧
-          IsDDiffSequence D (fun i => ((x i : ℕ) : ℤ))
 
 /-- **A 2-coloring with no monochromatic 6-term progression with positive Fibonacci gap.** There
 is a coloring of the positive integers with two colors such that no 6-term arithmetic progression
@@ -231,15 +174,6 @@ public theorem_wanted even_fibonacci_two_coloring_avoids_four_term_diffsequence 
       ¬ ∃ x : Fin 4 → ℕ+,
         IsMonochromatic c x ∧
           IsDDiffSequence evenFibonacciSet (fun i => ((x i : ℕ) : ℤ))
-
-/-- **The even Fibonacci set is not 2-accessible.** Let $F_m$ denote the $m$-th Fibonacci number,
-with $F_0 = 0$ and $F_1 = 1$. The even Fibonacci set
-$\{F_{3n+3} : n \ge 0\} = \{2, 8, 34, \dots\}$ is not $2$-accessible.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Proposition 2 (consequence). -/
-public theorem_wanted even_fibonacci_not_two_accessible :
-    ¬ IsRAccessible 2 evenFibonacciSet
 
 /-- **Furstenberg–Weiss correspondence for translation-invariant families.** Let $\mathcal{A}$ be
 a collection of finite sets of integers that is closed under translation, that is,
@@ -305,17 +239,6 @@ public theorem_wanted recurrence_accessibility_equivalences (D : Set ℕ)
               (U ∩ ⋂ i : Fin k, iteratePreimage T (s i) U).Nonempty) ↔
       IsAccessible D) ∧
     (IsAccessible D ↔ IsChromaticallyIntersective D)
-
-/-- **One part of a union inherits $k$-topological recurrence.** Let $k$ be a natural number
-and let $D_1, D_2 \subseteq \mathbb{N}$. If $D_1 \cup D_2$ is a set of $k$-topological recurrence,
-then $D_1$ or $D_2$ is a set of $k$-topological recurrence.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 14. -/
-public theorem_wanted topological_recurrence_union_partition (k : ℕ)
-    (D D₁ D₂ : Set ℕ) (hD : D = D₁ ∪ D₂)
-    (hrec : IsLTopologicalRecurrence k D) :
-    IsLTopologicalRecurrence k D₁ ∨ IsLTopologicalRecurrence k D₂
 
 end
 

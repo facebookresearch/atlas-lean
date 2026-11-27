@@ -21,7 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Algorithms.Lean.Online.ListUpdate
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 
@@ -66,8 +66,10 @@ that is, a permutation of `List.range m`. -/
 def WellFormed (i : KemenyScoreInstance) : Prop :=
   ∀ v ∈ i.2.1, v.Perm (List.range i.1)
 
-/-- Some ranking `π` of the candidates has total Kendall tau distance at most `k` from the
-voters' rankings. -/
+/-- Some ranking `π` of the candidates (a permutation of `0, …, m - 1`) has total inversion count
+`∑ ListUpdate.inv v π` at most `k` over the ballots `v`. The ballots are not required to be
+rankings here; when they are, as well-formedness requires, `inv v π` is the Kendall tau
+distance between `v` and `π`. -/
 def KemenyScoreFeasible (i : KemenyScoreInstance) : Prop :=
   ∃ π : List ℕ, π.Perm (List.range i.1) ∧
     (i.2.1.map fun v => Cslib.Algorithms.Lean.Online.ListUpdate.inv v π).sum ≤ i.2.2

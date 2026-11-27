@@ -38,9 +38,9 @@ open MathlibExt.AlgebraicGeometry.CurvePositivity
 universe u
 
 /-- A projective scheme over a field: a transparent alias of `ProjectiveSpace.IsProjective`
-(a closed immersion over `k` into projective space), kept because several statements name
-it. Despite the name it asserts projectivity only, not integrality or reducedness; new
-code should use `ProjectiveSpace.IsProjective` directly. -/
+(a closed immersion over `k` into projective space). Despite the name it asserts projectivity
+only, not integrality or reducedness. Deprecated: use `ProjectiveSpace.IsProjective`. -/
+@[deprecated MathlibExt.AlgebraicGeometry.ProjectiveSpace.IsProjective (since := "2026-11-24")]
 abbrev IsProjectiveVariety {k : Type u} [Field k] (X : Over (Spec (.of k))) : Prop :=
   ProjectiveSpace.IsProjective X
 

@@ -46,3 +46,4 @@ the Bernoulli and Catalan numbers, and integer sequences make up much of the res
 - [Numerical semigroups and the Frobenius problem](numerical-semigroups/README.md)
 - [Arithmetic geometry](arithmetic-geometry/README.md)
 - [Arithmetic of function fields](function-fields/README.md)
+- [Not yet classified](not-yet-classified/README.md)

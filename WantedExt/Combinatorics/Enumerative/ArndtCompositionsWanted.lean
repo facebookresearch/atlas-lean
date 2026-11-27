@@ -39,6 +39,8 @@ public import Mathlib.RingTheory.MvPowerSeries.Inverse
 public import Mathlib.RingTheory.MvPowerSeries.PiTopology
 public import Mathlib.RingTheory.MvPowerSeries.Substitution
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.Enumerative.ArndtCompositions
+public import MathlibExt.Combinatorics.Enumerative.ArndtSmallPartCounts
 public import MathlibExt.Combinatorics.Enumerative.ColoredArndt
 public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
 public import MathlibExt.NumberTheory.PadovanSequence
@@ -48,51 +50,6 @@ open scoped MvPowerSeries.WithPiTopology
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Number of Arndt compositions with parts in a set.** For a set $S$ of natural numbers and
-natural numbers $n$ and $k$, $a_S(n, k)$ is the number of $k$-tuples $(c_1, \dots, c_k)$ of
-positive integers such that $c_1 + \dots + c_k = n$, every $c_i$ lies in $S$, and
-$c_{2i-1} > c_{2i}$ for every $i$ with $2i \le k$. These tuples are the Arndt compositions of
-$n$ with $k$ parts in $S$.
-
-Source: Mohammed L. Nadji, Moussa Ahmia, Daniel F. Checa, and José L. Ramírez, *Arndt
-Compositions with Restricted Parts, Palindromes, and Colored Variants*, Journal of Integer
-Sequences 28 (2025), Article 25.3.6, Section 1 (definition of Arndt compositions, after
-D. F. Checa and J. L. Ramírez, arXiv:2311.15388, Section 1). -/
-def arndtCompositionCount (S : ℕ → Prop) [DecidablePred S] (n k : ℕ) : ℕ :=
-  ((Finset.Nat.antidiagonalTuple k n).filter fun c =>
-    (∀ i, 0 < c i ∧ S (c i)) ∧
-      ∀ i j : Fin k, (i : ℕ) % 2 = 0 → (j : ℕ) = i + 1 → c j < c i).card
-
-/-- **Arndt compositions of 6 with two parts.** There are exactly $2$ Arndt compositions of $6$
-with two parts.
-
-They are $(5, 1)$ and $(4, 2)$.
-
-Source: D. F. Checa and J. L. Ramírez, *Arndt compositions: a generating functions approach*,
-arXiv:2311.15388, Section 1 (list of the Arndt compositions of `6`). -/
-theorem arndtCompositionCount_six_two : arndtCompositionCount (fun _ => True) 6 2 = 2 := by
-  decide
-
-/-- **Arndt compositions of 6 with three parts.** There are exactly $4$ Arndt compositions of $6$
-with three parts.
-
-They are $(4, 1, 1)$, $(3, 2, 1)$, $(3, 1, 2)$ and $(2, 1, 3)$.
-
-Source: D. F. Checa and J. L. Ramírez, *Arndt compositions: a generating functions approach*,
-arXiv:2311.15388, Section 1 (list of the Arndt compositions of `6`). -/
-theorem arndtCompositionCount_six_three : arndtCompositionCount (fun _ => True) 6 3 = 4 := by
-  decide
-
-/-- **Arndt compositions of 6 with four parts.** There is exactly one Arndt composition of $6$
-with four parts.
-
-It is $(2, 1, 2, 1)$.
-
-Source: D. F. Checa and J. L. Ramírez, *Arndt compositions: a generating functions approach*,
-arXiv:2311.15388, Section 1 (list of the Arndt compositions of `6`). -/
-theorem arndtCompositionCount_six_four : arndtCompositionCount (fun _ => True) 6 4 = 1 := by
-  decide
 
 /-- **Generating function of Arndt compositions with parts in a set.** An Arndt composition is a
 finite sequence $(\sigma_1, \dots, \sigma_k)$ of positive integers such that
@@ -199,19 +156,6 @@ Sequences 28 (2025), Article 25.3.6, Theorem 2 (`jis-2025-25.3.6-thm-2`). -/
 public theorem_wanted sum_arndtCompositionCount_le_three (n : ℕ) :
     ∑ k ∈ Finset.range (n + 1), arndtCompositionCount (fun i => i ≤ 3) n k =
       shiftedPadovanSequence (n + 2)
-
-/-- **Arndt compositions with parts at most 4 and Narayana's cows sequence.** For every
-$n \ge 0$, the number of Arndt compositions of $n$ (compositions $(\sigma_1, \dots, \sigma_k)$
-with $\sigma_{2i-1} > \sigma_{2i}$ whenever $2i \le k$) with all parts in $\{1, 2, 3, 4\}$,
-counting the empty composition when $n = 0$, equals $N_{n+1}$, where $(N_m)$ is Narayana's cows
-sequence: $N_0 = 0$, $N_1 = N_2 = 1$ and $N_m = N_{m-1} + N_{m-3}$ for $m \ge 3$.
-
-Source: Mohammed L. Nadji, Moussa Ahmia, Daniel F. Checa, and José L. Ramírez, *Arndt
-Compositions with Restricted Parts, Palindromes, and Colored Variants*, Journal of Integer
-Sequences 28 (2025), Article 25.3.6, Theorem 4 (`jis-2025-25.3.6-thm-4`). -/
-public theorem_wanted sum_arndtCompositionCount_le_four (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), arndtCompositionCount (fun i => i ≤ 4) n k =
-      narayanaCowsSequence (n + 1)
 
 /-- **Generating function of Arndt compositions with bounded largest part.** For a natural number
 $\ell$, let $A(x, y; \ell)$ be the formal power series in $x$ over $\mathbb{Z}[y]$ whose
