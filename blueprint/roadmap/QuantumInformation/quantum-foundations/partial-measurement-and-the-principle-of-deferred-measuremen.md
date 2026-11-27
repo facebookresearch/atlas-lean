@@ -5,18 +5,13 @@ classically controlled on the outcome, where $A$ is not acted on again after the
 Replace each classical control by the corresponding quantum-controlled unitary with $A$ as control, and measure $A$ in
 the computational basis at the end. The two circuits give the same joint distribution of all measurement outcomes, and,
 for every outcome sequence of positive probability, the same conditional state of the remaining registers. If the
-original circuit reuses $A$ after the measurement, the outcome is first copied by CNOT into a fresh record register that
-is never touched again, and the record register plays the role of $A$.
-
-## Expansion
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Measurements (POVM, projective) and the Born rule.
+original circuit reuses $A$ after the measurement, the outcome is first copied by CNOT into a fresh record register initialized to $|0\rangle$
+that is never the target of a later gate (it may still control later gates), and the record register plays the role of $A$.
 
 ## Depends on
 
 - [Unitary evolution and elementary gates](unitary-evolution-and-elementary-gates.md)
+- [Positive-operator-valued measurements and the Born rule](../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Sources
 

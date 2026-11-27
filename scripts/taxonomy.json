@@ -10911,6 +10911,7 @@
   "MathlibExt/Combinatorics/Additive/PerfectSubsetSumCover": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Perfect subset-sum covers of abelian 2-groups"},
   "MathlibExt/Combinatorics/Additive/PerfectSubsetSumCoverErase": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Perfect subset-sum covers of abelian 2-groups"},
   "MathlibExt/Combinatorics/Additive/PerfectSubsetSumCoverInit": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Perfect subset-sum covers of abelian 2-groups"},
+  "MathlibExt/Combinatorics/Additive/PerfectSubsetSumCoverOddMultiple": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Perfect subset-sum covers of abelian 2-groups"},
   "MathlibExt/Combinatorics/Additive/RainbowPowerDifference": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Rainbow-free colorings for x − y = z^k"},
   "MathlibExt/Combinatorics/Additive/RainbowPowerDifferenceCycles": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Rainbow-free colorings for x − y = z^k"},
   "MathlibExt/Combinatorics/Additive/RepresentationCount": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Additive representation functions"},
