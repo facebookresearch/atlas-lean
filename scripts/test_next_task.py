@@ -915,10 +915,36 @@ class Graph(unittest.TestCase):
         self.assertEqual((code, out), (1, ""))
         self.assertIn("is not the graph's index of nodes", err)
 
-    def test_graph_takes_the_sites_task_list_only(self) -> None:
-        # Its pull requests merged since tasks.json's commit would not match the graph's index otherwise.
-        with self.assertRaises(SystemExit):
-            run(Site(), "--graph", "--tasks", "other.json", env=TOKEN)
+    def test_graph_takes_the_sites_task_list_and_this_repository_only(self) -> None:
+        # Its claims would not match the graph's index otherwise; nothing is read before the refusal.
+        for args in (["--tasks", "other.json"], ["--repo", "someone/fork"]):
+            site = Site()
+            with self.assertRaises(SystemExit):
+                run(site, "--graph", *args, env=TOKEN)
+            self.assertEqual(site.read, [])
+        self.assertEqual(run(Site(), "--repo", REPO, env=TOKEN)[0], 0)
+
+    def test_an_empty_or_repeated_node_id_stops_the_script(self) -> None:
+        for nodes in ([node("Algebra/a"), node("Algebra/a")], [dict(node("Algebra/a"), id=" ")]):
+            site = Site()
+            site.pages[next_task.DEPENDENCIES] = json.dumps(dict(INDEX, nodes=nodes)).encode()
+            code, out, err = run(site, "--graph", env=TOKEN)
+            self.assertEqual((code, out), (1, ""))
+            self.assertIn("an empty id, or one id twice", err)
+
+    def test_an_expansion_merged_shortly_before_the_lists_commit_takes_its_node(self) -> None:
+        # The index may come from a build a little older than tasks.json's; the ready tasks still count only the pull
+        # requests merged since tasks.json's commit, so #5, merged an hour before it, takes no task.
+        merged = {**MERGED_PULLS, 22: pull(22, body="Expands Combinatorics/ramsey.", merged_at="2026-11-20T11:30:00Z")}
+        site = Site(merged=merged)
+        site.pages[next_task.DEPENDENCIES] = json.dumps(INDEX).encode()
+        code, out, err = run(site, "--json", "--graph", "-n", "10", env=TOKEN)
+        self.assertEqual((code, err), (0, ""))
+        result = json.loads(out)
+        self.assertIn({"node_id": "Combinatorics/ramsey", "pull_requests": [22]}, result["graph"]["taken_by"])
+        self.assertIn("Algebra/t7", [task["node_id"] for task in result["next"]])
+        self.assertEqual(result["taken_by"], json.loads(run(Site(merged=merged), "--json", "-n", "10",
+                                                            env=TOKEN)[1])["taken_by"])
 
     def test_a_pull_request_takes_the_node_it_names_and_no_other(self) -> None:
         site = Site(open_pages=(OPEN_PULLS + GRAPH_PULLS,))

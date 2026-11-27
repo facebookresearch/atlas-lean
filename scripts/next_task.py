@@ -72,6 +72,9 @@ TASKS = "https://facebookresearch.github.io/atlas-lean/tasks.json"
 # Every node of the graph with its status, as the site publishes it; a node to expand is marked not_ready.
 DEPENDENCIES = "https://facebookresearch.github.io/atlas-lean/dependencies/index.json"
 GRAPH_SCHEMA = "autoform-dag-search/v1"
+# The site publishes the index with tasks.json, but its cache can serve the two from builds minutes apart, so graph
+# claims also count the pull requests merged up to this long before tasks.json's commit.
+GRAPH_MARGIN = timedelta(hours=1)
 REPOSITORY = "facebookresearch/atlas-lean"
 API = "https://api.github.com"
 # The branch tasks.json is built from, whose merged pull requests are read.
@@ -598,9 +601,13 @@ def load_graph() -> list[dict]:
     if not isinstance(nodes, list) or not all(isinstance(node, dict) and isinstance(node.get("id"), str)
                                               for node in nodes):
         raise Failure(f"{DEPENDENCIES} is not the graph's index of nodes ({GRAPH_SCHEMA})")
-    return [{"node_id": node["id"], "title": node.get("title"), "article_path": f"blueprint/roadmap/{node['id']}.md",
-             "page": urllib.parse.urljoin(DEPENDENCIES, node["route"]) if isinstance(node.get("route"), str) else None}
-            for node in nodes if node.get("kind") == "node" and node.get("status") == "not_ready"]
+    found = [{"node_id": node["id"], "title": node.get("title"), "article_path": f"blueprint/roadmap/{node['id']}.md",
+              "page": urllib.parse.urljoin(DEPENDENCIES, node["route"]) if isinstance(node.get("route"), str) else None}
+             for node in nodes if node.get("kind") == "node" and node.get("status") == "not_ready"]
+    ids = [item["node_id"] for item in found]
+    if "" in map(str.strip, ids) or len(set(ids)) != len(ids):
+        raise Failure(f"{DEPENDENCIES} marks a node to expand with an empty id, or one id twice")
+    return found
 
 
 def graph_taken(items: list[dict], pulls: list[dict]) -> dict[str, list[int]]:
@@ -654,24 +661,30 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--graph", action="store_true",
                         help="also print the next nodes of the graph still to expand, the graph-building tasks")
     args = parser.parse_args(argv)
-    if args.graph and args.tasks != TASKS:
-        # The site publishes the graph's index with tasks.json, so tasks.json's commit date dates both; another task
-        # list's would not.
-        parser.error("--graph reads the site's graph index, so it takes the site's tasks.json, not --tasks")
+    if args.graph and (args.tasks != TASKS or args.repo != REPOSITORY):
+        # The site publishes the graph's index with tasks.json, so tasks.json's commit date dates both, and the
+        # graph is this repository's; another task list or repository would not match it.
+        parser.error("--graph reads the site's graph index, so it takes the site's tasks.json and this repository, "
+                     "not --tasks or --repo")
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or None
     source = args.priorities if args.priorities is not None else str(PRIORITIES) if PRIORITIES.is_file() else None
     try:
         tasks = load_tasks(args.tasks)
         graph = load_graph() if args.graph else []
         priorities = None if source is None else load_priorities(source)
-        pulls = pull_requests(args.repo, tasks.get("commit_date"), token)
+        since = tasks.get("commit_date")
+        early = (moment(since) - GRAPH_MARGIN).isoformat() if args.graph and since else since
+        graph_pulls = pull_requests(args.repo, early, token)
     except Failure as failure:
         print(f"error: {shown(failure)}", file=sys.stderr)
         return 1
+    # The ready tasks count the pull requests merged since tasks.json's commit only, as without --graph.
+    pulls = [pull for pull in graph_pulls
+             if not since or not pull.get("merged_at") or merged_into_main(pull, moment(since))]
     held = taken(tasks["items"], pulls)
     free = [item for item in ordered(tasks["items"], priorities) if item["node_id"] not in held]
     chosen = free[:args.count]
-    graph_held = graph_taken(graph, pulls)
+    graph_held = graph_taken(graph, graph_pulls)
     graph_free = sorted((item for item in graph if item["node_id"] not in graph_held),
                         key=lambda item: -priority(item, priorities))
     graph_chosen = graph_free[:args.count]
