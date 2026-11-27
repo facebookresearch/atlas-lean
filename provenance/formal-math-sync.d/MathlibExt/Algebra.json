@@ -1878,8 +1878,8 @@
       "path": "MathlibExt/Algebra/Category/ModuleCat/Sheaf/ToSheafColimits.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "176534b0e9800a60dd16cb3f06dbd1c64d7e35b28eaaa79cbb1e85f77e8e853a",
-      "rationale": "Use explicit scalar-map parameters and independent carrier universes, canonical native projection/sheafification and abelian functor-category imports, and typed exterior-power coordinates; preserve general maps, hypotheses, signs and concrete nonzero regressions at pinned Lean defaults. Repair pinned native imports, argument names, notation projections and explicit coercion proofs. Mathematical statements, universes, coefficient objects and genuine nonzero regressions are retained; Native verification pending. Mathematical docs state semilinear/scalar tensor, local-freeness and sheaf-monoidal/coefficient colimit contracts with their full original hypotheses; public and private source docs remain correctly bound and all code/legal text is unchanged.",
+      "published_sha256": "a0e8fe58ce9db006a433d1bb764d60f18a88900d3e731de039a3cde416d27ec3",
+      "rationale": "Publishes the direct native filtered-colimit instance provider required during exporting elaboration of the general module-sheaf factories; all proof bodies, statements, universes and hypotheses are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "41062228f8ae9ca1163308b9b8729d23561de64a7ecb1f9898289974507e16c1"
     },
