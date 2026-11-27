@@ -20,6 +20,17 @@ import Mathlib.Order.MinMax
 The sequence `s n = (n + 1)! + n` grows by more than a factor of two at each step, so its range is
 Sidon. For any starting point `a` and positive step `d`, the index `n = a + d` gives a term of the
 progression: `d` divides `(n + 1)!`.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/SidonSetComplementProgressionErdosProblem198Wanted.lean`:
+
+Source: T. F. Bloom, Erdős Problems, Problem #198, https://www.erdosproblems.com/198 (status
+DISPROVED (LEAN)). UnsolvedMath record UM-30006760 (`EP-198`), dataset ulamai/UnsolvedMath v1.8.0.
+
+Sidon sets are the canonical `Set.IsSidon` of MathlibExt (`a + b = c + d` forces `{a, b} = {c, d}`,
+repeated summands included); an infinite progression is `a, a + d, a + 2d, …` with `d ≥ 1`. Compared
+with the formal-conjectures statement `ErdosProblems/198.lean` (equivalent; no code imported).
 -/
 
 @[expose] public section

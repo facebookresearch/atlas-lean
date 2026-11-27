@@ -20,3 +20,4 @@ Algebras over commutative rings: étale algebras and the trace form, norm and tr
 - [Surjectivity after localization at corresponding primes](local-ring-hom-surjective.md)
 - [A finitely generated commutative algebra over a Noetherian commutative ring is Noetherian](finitely-generated-algebra-noetherian.md)
 - [Discriminants under a change of basis](discriminant-change-of-basis.md)
+- [Finitely generated algebra](finitely-generated-algebra.md)
