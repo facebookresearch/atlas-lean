@@ -47452,6 +47452,7 @@
 "MathlibExt.Analysis.Convex.EstimateSequence.estimateSequence_optimal_rate": "dc10091f61bbf087",
 "MathlibExt.Analysis.Convex.EstimateSequence.estimateSequence_rate": "4e87b3378c94eab0",
 "MathlibExt.Analysis.Convex.EstimateSequence.estimateSequence_step": "19dfd74ebe0729f1",
+"MathlibExt.Analysis.Convex.ExpConcave.quadratic_lower_bound": "7c145402d63646a5",
 "MathlibExt.Analysis.Convex.ExtremePointsContinuousMapBall.extremePoints_closedBall_continuousMap": "7044240c8eba85e6",
 "MathlibExt.Analysis.Convex.ExtremePointsContinuousMapBall.mem_extremePoints_closedBall_continuousMap": "81324168a3a3fee7",
 "MathlibExt.Analysis.Convex.ExtremePointsLpBalls.extremePoints_closedBall_piLp_one": "5a1f1252bd4a9b10",

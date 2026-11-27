@@ -9814,6 +9814,7 @@
   "MathlibExt/Analysis/Convex/EllipsoidMethod": {"to": "Analysis/convex-analysis-and-variations", "title": "Ellipsoid method"},
   "MathlibExt/Analysis/Convex/EllipsoidVolume": {"to": "Analysis/convex-analysis-and-variations", "title": "Ellipsoid method"},
   "MathlibExt/Analysis/Convex/EstimateSequence": {"to": "Analysis/convex-analysis-and-variations", "title": "Accelerated gradient methods"},
+  "MathlibExt/Analysis/Convex/ExpConcave": {"to": "ComputerScience/machine-learning/online-learning-and-boosting", "title": "Quadratic lower bound for exp-concave functions"},
   "MathlibExt/Analysis/Convex/ExtremePointsContinuousMapBall": {"to": "Analysis/banach-spaces/geometry-of-banach-spaces", "title": "Extreme points of unit balls"},
   "MathlibExt/Analysis/Convex/ExtremePointsLpBalls": {"to": "Analysis/banach-spaces/geometry-of-banach-spaces", "title": "Extreme points of unit balls"},
   "MathlibExt/Analysis/Convex/FenchelMoreau": {"to": "Analysis/convex-analysis-and-variations", "title": "Fenchel–Moreau theorem"},
