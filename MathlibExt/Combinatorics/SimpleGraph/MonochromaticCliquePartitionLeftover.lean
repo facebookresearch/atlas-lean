@@ -20,6 +20,26 @@ import MathlibExt.Combinatorics.SimpleGraph.RamseyErdosLowerBound
 The Burr–Erdős–Spencer theorem gives the sharp leftover for monochromatic clique packings in
 large two-colourings. The upper bound reserves a large monochromatic clique, and the lower
 bound extends a colouring that fails the Ramsey property at one less than the Ramsey number.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/MonochromaticCliquePartitionLeftoverErdosProblem1015Wanted.lean`:
+
+Source: T. F. Bloom, Erdős Problems, Problem #1015, https://www.erdosproblems.com/1015 (status
+SOLVED). UnsolvedMath record UM-30007126 (`EP-1015`), dataset ulamai/UnsolvedMath v1.8.0.
+
+A two-colouring of the edges of `K_n` is a graph `G` on `Fin n` (red edges those of `G`, blue
+edges those of `Gᶜ`), and a monochromatic `K_k` is a `k`-clique of `G` or of `Gᶜ`. As the page
+notes, the question is meant for `n` sufficiently large depending on `t` (called `k` here), so the
+least leftover depends on `n`; Burr, Erdős and Spencer call it `f(n, k)`. The page records their
+answer as `R(t, t - 1) + x(t, n)` with `n + 1 ≡ R(t, t - 1) + x (mod t)`; Theorem 6 of the paper
+reads `r(k, k - 1) - 1 + rem(n - r(k, k - 1) + 1, k)`, so the page drops the `- 1` (the page's
+value is never congruent to `n` modulo `t`, while a leftover always is; for `t = 3` and `n ≡ 1
+(mod 3)` it gives `5` against Moon's `f(3) = 4`). This module states Theorem 6 as printed in the
+paper, with `r(k, k - 1)` the MathlibExt Ramsey number `SimpleGraph.graphRamsey k (k - 1)`, for
+every `k ≥ 2` (for `k = 2` the value is `n mod 2`). The two follow-up questions are not stated:
+their negative answers follow from Theorem 6 and the exponential growth of `r(t, t - 1)`, a step
+the page does not record. formal-conjectures has no statement of this problem.
 -/
 
 @[expose] public section

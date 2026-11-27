@@ -13,7 +13,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 
 /-!
-# Tests for `M₅ > 2` and `M₁₀₅ > 4`
+# Tests for `M₅ > 2`, `M₁₀₅ > 4` and the growth bound
 -/
 
 namespace MathlibExtTest.NumberTheory.MaynardVariationalBounds
@@ -76,5 +76,12 @@ example (H : Finset ℕ) (δ₀ : ℝ) (hδ₀ : 0 < δ₀)
     {n : ℕ | (1 : ℝ) < primeShiftCount H n}.Infinite :=
   infinite_lt_primeShiftCount_of_lt_maynardM H 105 (1 / 2) 1 (by norm_num)
     (by linarith [four_lt_maynardM_105]) δ₀ hδ₀ hasym
+
+/-- The growth bound holds at an index at least `105`. -/
+example : ∃ k : ℕ, 105 ≤ k ∧
+    Real.log k - 2 * Real.log (Real.log k) - 2 < maynardM k := by
+  obtain ⟨K, hK⟩ :=
+    WantedExt.NumberTheory.MaynardVariationalBounds.eventually_log_sub_lt_maynardM
+  exact ⟨max K 105, le_max_right _ _, hK _ (le_max_left _ _)⟩
 
 end MathlibExtTest.NumberTheory.MaynardVariationalBounds
