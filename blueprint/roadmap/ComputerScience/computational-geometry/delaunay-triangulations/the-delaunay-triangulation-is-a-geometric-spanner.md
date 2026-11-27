@@ -7,6 +7,7 @@ Assume no four points of $P$ lie on a common circle and let $t = 4\pi\sqrt{3}/9 
 ## Depends on
 
 - [Delaunay triangulation](delaunay-triangulation.md)
+- [Existence and uniqueness of the Delaunay triangulation](existence-and-uniqueness-of-the-delaunay-triangulation.md)
 
 ## Expansion
 
