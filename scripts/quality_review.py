@@ -16,14 +16,15 @@
     python3 scripts/quality_review.py --out ../quality/2026-11-27 --mathlib ../mathlib4
 
 The first run freezes the committed sources of MathlibExt, CSLibExt, PhyslibExt and
-Domains into `--out/source`, samples `--random` public theorems/lemmas plus `--new`
+Domains into `--out/source` and the pinned Mathlib into `--out/mathlib`, samples `--random` public theorems/lemmas plus `--new`
 ones added since `--since` (default: 14 days ago), and records the commit, model,
-Mathlib commit and rubric hash in `manifest.json`. Each statement is then scored by a
-Claude Code judge restricted to Read/Grep/Glob over the frozen sources and the pinned
-Mathlib checkout, on the rubrics in scripts/quality_review/RUBRICS.md.
+rubric hash, sample hash and every frozen file's hash in `manifest.json`. Each
+statement is then scored by a Claude Code judge restricted to Read/Grep/Glob over
+those two frozen trees, on the rubrics in scripts/quality_review/RUBRICS.md.
 
-Rerunning with the same `--out` resumes; it refuses if the model, Mathlib commit or
-rubrics differ from the manifest. Outputs in `--out`: samples.jsonl, results.jsonl,
+Rerunning with the same `--out` resumes; it refuses if the model, rubrics, sample or
+any frozen file differ from the manifest, and re-judges saved verdicts that do not
+validate. Outputs in `--out`: samples.jsonl, results.jsonl,
 failures.jsonl and summary.json, whose `status` is `incomplete` while any sampled
 statement lacks a valid verdict. Repository CI never calls the judge.
 """
@@ -33,15 +34,17 @@ import argparse
 import concurrent.futures
 import datetime as dt
 import hashlib
-import io
 import json
 import random
 import re
 import subprocess
 import sys
-import tarfile
 from pathlib import Path
 from typing import Dict, Iterator, List, Optional, Tuple
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from quality_eval import digest, snapshot  # noqa: E402  (frozen, hashed source-only copies)
+from source_diagnostics import clean_source  # noqa: E402  (blanks comments, docstrings, strings)
 
 RUBRICS = ("faithfulness", "tactics", "mathlib_conventions", "code_quality")
 LIBRARIES = ("MathlibExt", "CSLibExt", "PhyslibExt", "Domains")
@@ -98,16 +101,11 @@ def statements(text: str, path: str) -> List[Dict]:
     `module` file a declaration is public only if marked `public` or inside a public section).
     """
     lines = text.splitlines()
-    is_module = any(line.strip() == "module" for line in lines[:40])
+    code = clean_source(text).splitlines()
+    is_module = any(line.strip() == "module" for line in code[:40])
     scopes: List[Tuple[str, str, bool]] = []
-    out, in_comment = [], False
-    for i, line in enumerate(lines):
-        if in_comment:
-            in_comment = "-/" not in line
-            continue
-        if line.startswith("/-") and not line.startswith("/--") and "-/" not in line:
-            in_comment = True
-            continue
+    out = []
+    for i, line in enumerate(code):
         scope = SCOPE.match(line)
         if scope:
             scopes.append((scope.group("kind"), scope.group("name"), bool(scope.group("public"))))
@@ -177,12 +175,14 @@ def added_since(repo: Path, base: str, commit: str, current: List[Dict]) -> List
 # --------------------------------------------------------------------------- run setup
 
 def create(repo: Path, out: Path, args: argparse.Namespace) -> Dict:
+    if not args.mathlib:
+        sys.exit("--mathlib is required for a new run")
     commit = git(repo, "rev-parse", "HEAD").strip()
     pinned = next(p["rev"] for p in json.loads(git(repo, "show", f"{commit}:lake-manifest.json"))["packages"]
                   if p["name"] == "mathlib")
-    mathlib_commit = git(Path(args.mathlib), "rev-parse", "HEAD").strip()
-    if mathlib_commit != pinned:
-        sys.exit(f"--mathlib is at {mathlib_commit[:10]}, but lake-manifest.json pins {pinned[:10]}")
+    mathlib = Path(args.mathlib)
+    if git(mathlib, "rev-parse", "HEAD").strip() != pinned:
+        sys.exit(f"--mathlib must be checked out at the commit lake-manifest.json pins, {pinned[:10]}")
     base = git(repo, "rev-list", "-1", f"--before={args.since}", commit).strip()
     pop = population(repo, commit)
     rng = random.Random(commit)
@@ -190,32 +190,45 @@ def create(repo: Path, out: Path, args: argparse.Namespace) -> Dict:
     taken = {r["id"] for r in rows}
     fresh = [r for r in added_since(repo, base, commit, pop) if r["id"] not in taken] if base else []
     rows += [dict(r, stratum="new") for r in rng.sample(fresh, min(args.new, len(fresh)))]
-    # Freeze the committed sources the judges may read: no Git metadata, scripts or results.
-    present = [lib for lib in LIBRARIES if lib in git(repo, "ls-tree", "--name-only", commit).split()]
-    archive = subprocess.run(["git", "-C", str(repo), "archive", "--format=tar", commit, "--", *present],
-                             check=True, capture_output=True).stdout
-    with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
-        if any(not (m.isfile() or m.isdir()) for m in tar.getmembers()):
-            sys.exit("the committed sources contain links or special files; refusing to freeze them")
-        tar.extractall(out / "source", **({"filter": "data"} if hasattr(tarfile, "data_filter") else {}))
+    # The judges read only these frozen, hashed copies of committed sources.
+    present = tuple(lib for lib in LIBRARIES if lib in git(repo, "ls-tree", "--name-only", commit).split())
+    source = snapshot(repo, out / "source", present)
+    mathlib_source = snapshot(mathlib, out / "mathlib", ("Mathlib",))
+    samples = "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows)
+    (out / "samples.jsonl").write_text(samples)
     manifest = dict(commit=commit, base=base, created=dt.date.today().isoformat(), model=args.model,
-                    mathlib=str(Path(args.mathlib).resolve()), mathlib_commit=mathlib_commit,
-                    rubrics_sha256=sha256(RUBRIC_FILE), population=len(pop), new_population=len(fresh))
-    (out / "samples.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
+                    mathlib_commit=mathlib_source["commit"], rubrics_sha256=sha256(RUBRIC_FILE),
+                    samples_sha256=sha256(out / "samples.jsonl"), population=len(pop), new_population=len(fresh),
+                    files={"source": source["files"], "mathlib": mathlib_source["files"]})
     (out / "manifest.json").write_text(json.dumps(manifest, indent=1) + "\n")
     print(f"froze {commit[:10]}; sampled {len(rows)} of {len(pop)} statements ({len(fresh)} new since {base[:10]})")
     return manifest
 
 
-def check_resume(manifest: Dict, args: argparse.Namespace) -> None:
-    current = dict(model=args.model, mathlib_commit=git(Path(args.mathlib), "rev-parse", "HEAD").strip(),
-                   rubrics_sha256=sha256(RUBRIC_FILE))
-    changed = [k for k, v in current.items() if manifest[k] != v]
-    if changed:
-        sys.exit(f"cannot resume: {', '.join(changed)} differ from manifest.json; use a new --out")
+def check_resume(out: Path, manifest: Dict, args: argparse.Namespace) -> None:
+    problems = [k for k, v in (("model", args.model), ("rubrics_sha256", sha256(RUBRIC_FILE)),
+                               ("samples_sha256", sha256(out / "samples.jsonl"))) if manifest[k] != v]
+    for tree, files in manifest["files"].items():
+        on_disk = {str(p.relative_to(out / tree)) for p in (out / tree).rglob("*") if not p.is_dir()}
+        if on_disk != set(files) or any(digest((out / tree / f).read_bytes()) != h for f, h in files.items()):
+            problems.append(f"{tree}/ contents")
+    if problems:
+        sys.exit(f"cannot resume: {', '.join(problems)} differ from manifest.json; use a new --out")
 
 
 # --------------------------------------------------------------------------- judging
+
+def check_scores(scores: object) -> Optional[str]:
+    """Why a verdict is invalid, or None; the one validator for fresh and saved verdicts."""
+    if not isinstance(scores, dict) or set(scores) != set(RUBRICS):
+        return "missing or extra rubrics"
+    for r in RUBRICS:
+        v = scores[r]
+        if not (isinstance(v, dict) and type(v.get("score")) is int and 1 <= v["score"] <= 5
+                and isinstance(v.get("reason"), str) and v["reason"].strip()):
+            return f"invalid {r} verdict"
+    return None
+
 
 def parse_verdict(returncode: int, stdout: str) -> Tuple[Optional[Dict], Optional[str]]:
     """The validated rubric scores of one CLI run, or the reason it does not count."""
@@ -225,26 +238,24 @@ def parse_verdict(returncode: int, stdout: str) -> Tuple[Optional[Dict], Optiona
         raw = json.loads(stdout)
     except json.JSONDecodeError:
         return None, "unparseable CLI output"
+    if not isinstance(raw, dict):
+        return None, "CLI output is not an object"
     if raw.get("is_error"):
         return None, f"claude reported an error: {raw.get('subtype')}"
-    verdict = raw.get("structured_output")
-    if not isinstance(verdict, dict) or set(verdict) != set(RUBRICS):
-        return None, "missing or extra rubrics"
-    for r in RUBRICS:
-        v = verdict[r]
-        if not (isinstance(v, dict) and type(v.get("score")) is int and 1 <= v["score"] <= 5
-                and isinstance(v.get("reason"), str) and v["reason"].strip()):
-            return None, f"invalid {r} verdict"
-    return dict(scores=verdict, cost_usd=raw.get("total_cost_usd")), None
+    error = check_scores(raw.get("structured_output"))
+    if error:
+        return None, error
+    return dict(scores=raw["structured_output"], cost_usd=raw.get("total_cost_usd")), None
 
 
 def judge(row: Dict, out: Path, manifest: Dict, rubrics: str) -> Tuple[Optional[Dict], Optional[str]]:
-    prompt = PROMPT.format(rubrics=rubrics, mathlib=manifest["mathlib"], **row)
+    mathlib = str(out / "mathlib")
+    prompt = PROMPT.format(rubrics=rubrics, mathlib=mathlib, **row)
     cmd = ["claude", "-p", prompt, "--output-format", "json", "--model", manifest["model"],
            "--json-schema", json.dumps(SCHEMA), "--safe-mode", "--restricted",
            "--allowedTools", "Read", "Grep", "Glob",
            "--disallowedTools", "Bash", "Edit", "Write", "NotebookEdit", "WebFetch", "WebSearch", "Task",
-           "--add-dir", manifest["mathlib"], "--max-budget-usd", "2"]
+           "--add-dir", mathlib, "--max-budget-usd", "2"]
     try:
         proc = subprocess.run(cmd, cwd=out / "source", capture_output=True, text=True, timeout=900)
     except subprocess.TimeoutExpired:
@@ -252,15 +263,26 @@ def judge(row: Dict, out: Path, manifest: Dict, rubrics: str) -> Tuple[Optional[
     return parse_verdict(proc.returncode, proc.stdout)
 
 
+def load_results(out: Path) -> Dict[str, Dict]:
+    """Saved verdicts that still validate; a torn or invalid line is ignored and re-judged."""
+    results: Dict[str, Dict] = {}
+    path = out / "results.jsonl"
+    for line in path.read_text().splitlines() if path.exists() else []:
+        try:
+            r = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(r, dict) and isinstance(r.get("id"), str) and check_scores(r.get("scores")) is None:
+            results[r["id"]] = r
+    return results
+
+
 # --------------------------------------------------------------------------- summary
 
 def summarize(out: Path) -> Dict:
     manifest = json.loads((out / "manifest.json").read_text())
     samples = [json.loads(line) for line in (out / "samples.jsonl").read_text().splitlines()]
-    results_path = out / "results.jsonl"
-    results = {}
-    if results_path.exists():
-        results = {r["id"]: r for r in map(json.loads, results_path.read_text().splitlines())}
+    results = load_results(out)
 
     def block(rows: List[Dict]) -> Dict:
         judged = [results[r["id"]]["scores"] for r in rows if r["id"] in results]
@@ -289,19 +311,28 @@ def run(args: argparse.Namespace) -> None:
     out.mkdir(parents=True, exist_ok=True)
     if (out / "manifest.json").exists():
         manifest = json.loads((out / "manifest.json").read_text())
-        check_resume(manifest, args)
+        check_resume(out, manifest, args)
     else:
         manifest = create(REPO, out, args)
     samples = [json.loads(line) for line in (out / "samples.jsonl").read_text().splitlines()]
     results_path = out / "results.jsonl"
-    done = {r["id"] for r in map(json.loads, results_path.read_text().splitlines())} if results_path.exists() else set()
+    done = set(load_results(out))
+    if results_path.exists() and results_path.read_text()[-1:] not in ("", "\n"):
+        with results_path.open("a") as fh:
+            fh.write("\n")  # an interrupted write left a torn line; keep it out of the next verdict
     todo = [r for r in samples if r["id"] not in done]
     rubrics = RUBRIC_FILE.read_text()
     print(f"judging {len(todo)} statements ({len(done)} already done) with {manifest['model']}")
     failures = []
+
+    def safe_judge(row: Dict) -> Tuple[Optional[Dict], Optional[str]]:
+        try:
+            return judge(row, out, manifest, rubrics)
+        except Exception as exc:  # one bad response must not abort the run or skip the summary
+            return None, f"{type(exc).__name__}: {exc}"
+
     with concurrent.futures.ThreadPoolExecutor(args.jobs) as pool, results_path.open("a") as fh:
-        for n, (row, (verdict, error)) in enumerate(
-                zip(todo, pool.map(lambda r: judge(r, out, manifest, rubrics), todo)), 1):
+        for n, (row, (verdict, error)) in enumerate(zip(todo, pool.map(safe_judge, todo)), 1):
             if verdict is None:
                 failures.append(dict(id=row["id"], path=row["path"], error=error))
             else:
@@ -320,7 +351,7 @@ def run(args: argparse.Namespace) -> None:
 def main(argv: Optional[List[str]] = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--out", required=True, help="run directory; rerun with the same one to resume")
-    parser.add_argument("--mathlib", required=True, help="Mathlib checkout at the commit lake-manifest.json pins")
+    parser.add_argument("--mathlib", help="for a new run: Mathlib checkout at the commit lake-manifest.json pins")
     parser.add_argument("--random", type=int, default=400)
     parser.add_argument("--new", type=int, default=200)
     parser.add_argument("--since", default="14 days ago", help="window for new statements")

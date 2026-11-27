@@ -37,6 +37,14 @@ theorem hidden_by_module : True := trivial
 
 namespace A
 
+/-- An example that must not be scanned:
+```
+theorem in_docstring : True := trivial
+end A
+```
+-/
+theorem documented : True := trivial
+
 /-- **Doubling.** -/
 @[simp]
 theorem same (n : ℕ) : 2 * n = n + n := by
@@ -85,10 +93,10 @@ def git(repo: Path, *args: str, date: str = "") -> None:
 class StatementsTest(unittest.TestCase):
     def test_qualified_names_and_module_visibility(self):
         rows = qr.statements(MODULE, "MathlibExt/X.lean")
-        self.assertEqual([r["id"] for r in rows], ["A.same", "B.same", "rooted"])
-        self.assertTrue(rows[0]["text"].startswith("/-- **Doubling.**"))
-        self.assertIn("omega", rows[0]["text"])
-        self.assertNotIn("helper", rows[0]["text"])
+        self.assertEqual([r["id"] for r in rows], ["A.documented", "A.same", "B.same", "rooted"])
+        self.assertTrue(rows[1]["text"].startswith("/-- **Doubling.**"))
+        self.assertIn("omega", rows[1]["text"])
+        self.assertNotIn("helper", rows[1]["text"])
 
     def test_non_module_files_are_public_by_default(self):
         self.assertEqual([r["id"] for r in qr.statements(PLAIN, "MathlibExt/C.lean")], ["C.moved"])
@@ -103,6 +111,7 @@ class VerdictTest(unittest.TestCase):
         cases = {
             "exit": (1, good()),
             "json": (0, "not json"),
+            "array": (0, "[]"),
             "is_error": (0, json.dumps(dict(json.loads(good()), is_error=True))),
             "missing": (0, json.dumps(dict(bad, structured_output={"faithfulness": {"score": 5, "reason": "r"}}))),
             "range": (0, good(6)),
@@ -121,7 +130,8 @@ class RunTest(unittest.TestCase):
         self.mathlib = root / "mathlib"
         self.mathlib.mkdir()
         git(self.mathlib, "init", "-q")
-        (self.mathlib / "Mathlib.lean").write_text("")
+        (self.mathlib / "Mathlib").mkdir()
+        (self.mathlib / "Mathlib" / "Basic.lean").write_text("theorem m : True := trivial\n")
         git(self.mathlib, "add", "-A"); git(self.mathlib, "commit", "-qm", "m")
         pin = subprocess.run(["git", "-C", str(self.mathlib), "rev-parse", "HEAD"],
                              capture_output=True, text=True).stdout.strip()
@@ -155,7 +165,9 @@ class RunTest(unittest.TestCase):
         self.assertTrue((self.out / "source" / "MathlibExt" / "D.lean").is_file())
         self.assertFalse((self.out / "source" / ".git").exists())
         self.assertFalse((self.out / "source" / "lake-manifest.json").exists())
-        self.assertEqual(manifest["population"], 5)
+        self.assertEqual(manifest["population"], 6)
+        self.assertTrue((self.out / "mathlib" / "Mathlib" / "Basic.lean").is_file())
+        self.assertEqual(set(manifest["files"]["mathlib"]), {"Mathlib/Basic.lean"})
         self.assertEqual(manifest["model"], "m")
 
     def test_create_rejects_unpinned_mathlib(self):
@@ -165,9 +177,9 @@ class RunTest(unittest.TestCase):
         with self.assertRaises(SystemExit):
             qr.create(self.repo, self.out, self.args())
 
-    def test_incompatible_resume_and_incomplete_runs_are_visible(self):
+    def test_resume_is_verified_and_incomplete_runs_are_visible(self):
         with mock.patch.object(qr, "REPO", self.repo):
-            calls = iter([(qr.parse_verdict(0, good(4))), (qr.parse_verdict(0, "garbage"))])
+            calls = iter([qr.parse_verdict(0, good(4)), qr.parse_verdict(0, "[]")])
             with mock.patch.object(qr, "judge", lambda *a: next(calls)), self.assertRaises(SystemExit):
                 qr.run(self.args(random=2, new=0))
             summary = json.loads((self.out / "summary.json").read_text())
@@ -177,13 +189,27 @@ class RunTest(unittest.TestCase):
             self.assertEqual((block["sampled"], block["judged"], block["missing"]), (2, 1, 1))
             self.assertEqual(block["mean"]["faithfulness"], 4.0)
             self.assertEqual(len((self.out / "failures.jsonl").read_text().splitlines()), 1)
+            # An invalid saved verdict and a torn final line do not count, and are re-judged.
+            samples = [json.loads(line)["id"] for line in (self.out / "samples.jsonl").read_text().splitlines()]
+            with (self.out / "results.jsonl").open("a") as fh:
+                fh.write(json.dumps(dict(id=samples[1], scores={"faithfulness": {"score": 9}})) + "\n")
+                fh.write('{"id": "%s", "scor' % samples[1])
+            self.assertEqual(qr.summarize(self.out)["status"], "incomplete")
+            # Resume refuses another model or tampered frozen sources; it no longer needs --mathlib.
             with self.assertRaises(SystemExit):
-                qr.run(self.args(random=2, new=0, model="other"))
-            with mock.patch.object(qr, "judge", lambda *a: qr.parse_verdict(0, good())):
-                qr.run(self.args(random=2, new=0))
+                qr.run(self.args(random=2, new=0, model="other", mathlib=None))
+            frozen = self.out / "mathlib" / "Mathlib" / "Basic.lean"
+            original = frozen.read_text()
+            frozen.write_text("theorem m : False := sorry\n")
+            with self.assertRaises(SystemExit):
+                qr.run(self.args(random=2, new=0, mathlib=None))
+            frozen.write_text(original)
+            judged = []
+            with mock.patch.object(qr, "judge", lambda row, *a: judged.append(row["id"]) or qr.parse_verdict(0, good())):
+                qr.run(self.args(random=2, new=0, mathlib=None))
+            self.assertEqual(judged, [samples[1]])
             summary = json.loads((self.out / "summary.json").read_text())
             self.assertEqual((summary["status"], summary["missing"]), ("complete", 0))
-
 
 if __name__ == "__main__":
     unittest.main()
