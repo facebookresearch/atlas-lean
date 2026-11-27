@@ -87,7 +87,7 @@ private theorem mem_span_X_pow_of_coeff_eq_zero_aux (N : ℕ) :
       have hdiv : (X i₀ : MvPowerSeries (Fin n) K) ^ (N + 1) ∣ (f - r) := by
         rw [X_pow_dvd_iff]
         intro mo hmo
-        rw [map_sub, hr, if_pos (Nat.lt_succ_iff.mp hmo), sub_self]
+        rw [map_sub, hr, ite_eq_left (Nat.lt_succ_iff.mp hmo), sub_self]
       have hrmem : r ∈ Ideal.span (Set.range fun i : Fin n =>
           (X i : MvPowerSeries (Fin n) K) ^ (N + 1)) := by
         refine ih r fun mo hmo => ?_
@@ -329,7 +329,7 @@ public theorem exists_algEquiv_localization_atPrime_mvPowerSeries_quotient_apply
       refine Finset.sum_eq_zero fun k _ =>
         coeff_mul_eq_zero_of_coeff_eq_zero N _ _ (fun mo' hmo' => ?_) mo hmo
       rw [map_sub, MvPolynomial.coeff_coe, MvPowerSeries.coeff_trunc',
-        if_pos ((hb mo').2 hmo'), sub_self]
+        ite_eq_left ((hb mo').2 hmo'), sub_self]
     have hp0 : φloc p = 0 := by
       have h1 : φloc (p - ∑ k, t k * g k) = 0 :=
         eval_eq_zero_of_coeff_eq_zero K (S := (Localization.AtPrime 𝔫)) φloc N hxloc
@@ -369,7 +369,7 @@ public theorem exists_algEquiv_localization_atPrime_mvPowerSeries_quotient_apply
     rw [hΨ, hψ₀, Ideal.Quotient.eq, ← Ideal.neg_mem_iff, neg_sub]
     refine hUJ _ fun mo hmo => ?_
     rw [map_sub, MvPolynomial.coeff_coe, MvPowerSeries.coeff_trunc',
-      if_pos ((hb mo).2 hmo), sub_self]
+      ite_eq_left ((hb mo).2 hmo), sub_self]
   have hbij : Function.Bijective Ψ := ⟨hinj, hsurj⟩
   exact ⟨AlgEquiv.ofBijective Ψ hbij, fun p => by
     rw [AlgEquiv.ofBijective_apply, hΨ, hψ₀]⟩

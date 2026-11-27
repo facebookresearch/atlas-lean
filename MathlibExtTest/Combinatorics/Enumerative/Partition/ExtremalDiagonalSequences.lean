@@ -67,4 +67,32 @@ example : (diagonalClass (Nat.Partition.ofMultiset {4, 3, 2})).card = 4 := by
     (by decide +kernel) (by decide +kernel)]
   decide +kernel
 
+-- The class of `(3, 1)` has two partitions with two parts: `(3, 1)` and `(2, 2)`.
+example : ((diagonalClass (Nat.Partition.ofMultiset {3, 1})).filter
+    fun β => β.parts.card = 2).card = 2 := by
+  rw [card_diagonalClass_filter_card_parts_eq_q _ 2 3 (by decide +kernel) (by decide +kernel)
+    (by decide +kernel) (by decide +kernel)]
+  decide +kernel
+
+-- The paper's running example tests several levels, including two initial zero drops.
+example : ((diagonalClass (Nat.Partition.ofMultiset {7, 7, 4, 1, 1, 1})).filter
+    fun β => β.parts.card = 4).card = 6 := by
+  rw [card_diagonalClass_filter_card_parts_eq_q _ 4 8 (by decide +kernel) (by decide +kernel)
+    (by decide +kernel) (by decide +kernel)]
+  decide +kernel
+
+-- For `(4, 1)`, the drops are `1, 0, 1`: the missing middle letter gives factors of `1`.
+example : ((diagonalClass (Nat.Partition.ofMultiset {4, 1})).filter
+    fun β => β.parts.card = 2).card = 1 := by
+  rw [card_diagonalClass_filter_card_parts_eq_q _ 2 4 (by decide +kernel) (by decide +kernel)
+    (by decide +kernel) (by decide +kernel)]
+  decide +kernel
+
+-- A staircase has `q = L`, so the product is empty.
+example : ((diagonalClass (Nat.Partition.ofMultiset {3, 2, 1})).filter
+    fun β => β.parts.card = 3).card = 1 := by
+  rw [card_diagonalClass_filter_card_parts_eq_q _ 3 3 (by decide +kernel) (by decide +kernel)
+    (by decide +kernel) (by decide +kernel)]
+  rfl
+
 end MetaMathlibExt
