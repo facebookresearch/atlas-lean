@@ -47,6 +47,7 @@ public import MathlibExt.NumberTheory.Bernoulli.BernoulliStirlingSum
 public import MathlibExt.NumberTheory.Bernoulli.StirlingInversion
 public import MathlibExt.NumberTheory.Bernoulli.WeightedStirlingSum
 public import MathlibExt.NumberTheory.BernoulliSecondKindBernoulliSecondEqNegSum
+public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirlingSum
 
 set_option autoImplicit false
 
@@ -121,18 +122,6 @@ theorem_wanted sum_stirlingSecond_signed_div_delta (n k : ℕ)
           (MetaMathlibExt.signedStirlingFirst i k : ℚ) / i =
       (1 / (n : ℚ)) * (Nat.choose n k : ℚ) * bernoulli (n - k) +
         (if n - 1 = k then 1 else 0)
-
-/-- **Bernoulli numbers of the second kind via Stirling numbers of the first kind.** Let $B_m^*$
-be the Bernoulli numbers of the second kind and $s(m, j)$ the signed Stirling numbers of the
-first kind. For every natural number $n$,
-$$B_n^* = \sum_{i=0}^{n} \frac{s(n, i)}{i+1}.$$
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Proposition 11. -/
-theorem_wanted bernoulliSecond_eq_sum (n : ℕ) :
-    MetaMathlibExt.bernoulliSecond n =
-      ∑ i ∈ Finset.range (n + 1),
-        (MetaMathlibExt.signedStirlingFirst n i : ℚ) / (i + 1)
 
 /-- **Shifted Stirling convolution as a Bernoulli number of the second kind.** Let $s(m, j)$ be
 the signed Stirling numbers of the first kind, $S(m, j)$ the Stirling numbers of the second kind
