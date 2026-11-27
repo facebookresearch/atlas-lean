@@ -18,7 +18,7 @@ which supply covariances of polygenic random effects (computed leaving out the c
 
 ## Related topics
 
-- [Genomic relationship matrices](genomic-relationship-matrices/README.md): the diploid, biallelic relationship matrices that the haplotype-based IBD relationship matrices generalize.
+- [Genomic relationship matrices](../genomic-relationship-matrices/README.md): the diploid, biallelic relationship matrices that the haplotype-based IBD relationship matrices generalize.
 
 ## Expansion
 

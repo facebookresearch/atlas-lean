@@ -16,7 +16,7 @@ with bandwidth $h > 0$ controlling how fast genetic covariance decays with avera
 
 ## Depends on
 
-- [BLUP as a conditional law](../linear-mixed-models-and-blup/cond-distrib-mixed-model.md)
+- [BLUP as a conditional law](../../linear-mixed-models-and-blup/cond-distrib-mixed-model.md)
 
 ## Expansion
 

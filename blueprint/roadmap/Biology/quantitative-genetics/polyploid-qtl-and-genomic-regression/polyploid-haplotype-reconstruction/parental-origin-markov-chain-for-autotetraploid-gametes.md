@@ -18,7 +18,7 @@ A zygote is the Kronecker product of two independent gamete chains (one per pare
 
 ## Depends on
 
-- [Haldane's map function](../../population-genetics/linkage-disequilibrium-and-haldane-s-map-functio/haldane.md)
+- [Haldane's map function](../../../population-genetics/linkage-disequilibrium-and-haldane-s-map-functio/haldane.md)
 
 ## Expansion
 

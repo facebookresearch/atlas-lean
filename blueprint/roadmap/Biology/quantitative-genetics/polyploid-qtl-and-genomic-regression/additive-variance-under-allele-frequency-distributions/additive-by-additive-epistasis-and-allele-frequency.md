@@ -18,7 +18,7 @@ The additive fraction is $0$ at $p = q = 1/2$ (all variance epistatic) and tends
 
 ## Depends on
 
-- [Additive variance at a biallelic locus](../fisher-s-decomposition-of-genetic-variance/add-var-biallelic.md)
+- [Additive variance at a biallelic locus](../../fisher-s-decomposition-of-genetic-variance/add-var-biallelic.md)
 - [Expected additive fraction at a locus with dominance](expected-additive-fraction-at-a-locus-with-dominance.md)
 
 ## Expansion

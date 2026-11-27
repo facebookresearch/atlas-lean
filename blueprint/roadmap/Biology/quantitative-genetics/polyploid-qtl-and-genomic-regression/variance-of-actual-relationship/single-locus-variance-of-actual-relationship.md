@@ -12,7 +12,7 @@ For example, full sibs ($k_0,k_1,k_2=\tfrac14,\tfrac12,\tfrac14$) have $R=\tfrac
 
 ## Depends on
 
-- [Kinship coefficient by Malécot's recursion](../pedigree-kinship-and-inbreeding/kinship.md)
+- [Kinship coefficient by Malécot's recursion](../../pedigree-kinship-and-inbreeding/kinship.md)
 
 ## Expansion
 

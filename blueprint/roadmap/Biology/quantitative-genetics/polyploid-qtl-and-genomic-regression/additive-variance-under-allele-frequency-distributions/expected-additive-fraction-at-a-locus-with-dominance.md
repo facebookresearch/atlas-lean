@@ -20,9 +20,9 @@ $$\mathbb E V_A \approx \frac{a^2 + d^2/3}{K},\qquad \mathbb E V_D \approx \frac
 
 ## Depends on
 
-- [Additive variance at a biallelic locus](../fisher-s-decomposition-of-genetic-variance/add-var-biallelic.md)
-- [Dominance variance at a biallelic locus](../fisher-s-decomposition-of-genetic-variance/dom-var-biallelic.md)
-- [Fisher's variance decomposition](../fisher-s-decomposition-of-genetic-variance/gen-var-eq-add-var-add-dom-var.md)
+- [Additive variance at a biallelic locus](../../fisher-s-decomposition-of-genetic-variance/add-var-biallelic.md)
+- [Dominance variance at a biallelic locus](../../fisher-s-decomposition-of-genetic-variance/dom-var-biallelic.md)
+- [Fisher's variance decomposition](../../fisher-s-decomposition-of-genetic-variance/gen-var-eq-add-var-add-dom-var.md)
 
 ## Expansion
 
