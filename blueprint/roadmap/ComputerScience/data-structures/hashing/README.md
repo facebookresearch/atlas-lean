@@ -10,3 +10,8 @@ Hash tables (chaining, open addressing, cuckoo, perfect), universal hash familie
 - [Perfect hashing](perfect-hashing/README.md)
 - [Universal hashing](universal-hashing/README.md)
 - [Hashing analysis](hashing-analysis/README.md)
+- [Count-Min sketch: deterministic guarantees](count-min-sketch-deterministic-guarantees/README.md)
+- [FKS perfect hashing: a good primary hash exists](fks-perfect-hashing-a-good-primary-hash-exists/README.md)
+- [Hash-table erasure and scan-event bounds](hash-table-erasure-and-scan-event-bounds/README.md)
+- [Sequential idempotent requests to a hash table](sequential-idempotent-requests-to-a-hash-table/README.md)
+- [Universal hashing bounds for actual chain scans](universal-hashing-bounds-for-actual-chain-scans/README.md)
