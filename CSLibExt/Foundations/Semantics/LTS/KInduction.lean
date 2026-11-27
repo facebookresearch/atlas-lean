@@ -45,7 +45,7 @@ canon roadmap. Completeness of bounded model checking is not claimed.
 
 * M. Sheeran, S. Singh, and G. Stålmarck, *Checking safety properties using
   induction and a SAT-solver*, Formal Methods in Computer-Aided Design
-  (FMCAD 2000), LNCS 1954, Springer, 2000, pp. 108–125.
+  (FMCAD 2000), LNCS 1954, Springer, 2000, pp. 127–144.
 -/
 
 @[expose] public section
