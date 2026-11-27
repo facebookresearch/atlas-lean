@@ -116,7 +116,11 @@ private theorem integral_hasDerivAt_time {u : ℝ → ℝ → ℝ}
 noncomputable def forcedNormalizationRate (ν : ℝ) (u F : ℝ → ℝ → ℝ) (x₀ t : ℝ) : ℝ :=
   normalizationRate ν u x₀ t + F t x₀
 
-/-- Anchored logarithmic profile with the potential-dependent time correction. -/
+/-- The forced normalized inverse Cole–Hopf potential with potential `F` and base point
+`(t₀, x₀)`:
+`forcedInversePotential ν u F t₀ x₀ t x = (∫ s in t₀..t, r s) - (∫ y in x₀..x, u t y) / (2 * ν)`,
+where `r s = u s x₀ ^ 2 / (4 * ν) - deriv (u s) x₀ / 2 + F s x₀`, with oriented interval
+integrals and real division. -/
 noncomputable def forcedInversePotential (ν : ℝ) (u F : ℝ → ℝ → ℝ)
     (t₀ x₀ t x : ℝ) : ℝ :=
   (∫ s in t₀..t, forcedNormalizationRate ν u F x₀ s) - (∫ y in x₀..x, u t y) / (2 * ν)
@@ -140,7 +144,9 @@ theorem forcedInverseProfile_pos (ν : ℝ) (u F : ℝ → ℝ → ℝ) (t₀ x�
     forcedInverseProfile ν u F t₀ x₀ t₀ x₀ = 1 := by
   simp [forcedInverseProfile, forcedInversePotential]
 
-/-- The potential does not change the normalized initial spatial profile. -/
+/-- For every potential `F`, at the initial time `t₀` the forced inverse Cole–Hopf profile is
+`forcedInverseProfile ν u F t₀ x₀ t₀ x = exp (-(∫ y in x₀..x, u t₀ y) / (2 * ν))` for
+every `x`. -/
 theorem forcedInverseProfile_initial (ν : ℝ) (u F : ℝ → ℝ → ℝ) (t₀ x₀ x : ℝ) :
     forcedInverseProfile ν u F t₀ x₀ t₀ x =
       Real.exp (-(∫ y in x₀..x, u t₀ y) / (2 * ν)) := by
