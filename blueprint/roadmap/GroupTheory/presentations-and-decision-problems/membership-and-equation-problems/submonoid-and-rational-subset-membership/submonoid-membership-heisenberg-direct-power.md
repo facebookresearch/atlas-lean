@@ -15,6 +15,7 @@ This answers a question of Lohrey and Steinberg whether some finitely generated 
 
 - [Submonoid membership problem](submonoid-membership-problem.md)
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

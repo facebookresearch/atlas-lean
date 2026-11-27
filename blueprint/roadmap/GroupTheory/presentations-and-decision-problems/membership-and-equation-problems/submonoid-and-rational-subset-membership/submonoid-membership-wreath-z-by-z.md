@@ -2,12 +2,9 @@
 
 The wreath product $\mathbb{Z} \wr \mathbb{Z}$ contains a fixed finitely generated submonoid whose membership problem is undecidable; consequently Thompson's group $F$ and Baumslag's finitely presented metabelian group contain such submonoids.
 
-Let $\mathbb{Z} \wr \mathbb{Z}$ be the restricted wreath product, the semidirect product of the finitely supported functions $\mathbb{Z} \to \mathbb{Z}$ with $\mathbb{Z}$ acting by translation. Then (source):
+Let $\mathbb{Z} \wr \mathbb{Z}$ be the restricted wreath product, the semidirect product of the finitely supported functions $\mathbb{Z} \to \mathbb{Z}$ with $\mathbb{Z}$ acting by translation. There is a fixed finitely generated submonoid $M$ of $\mathbb{Z} \wr \mathbb{Z}$ whose membership problem is undecidable (Theorem 6 of the source).
 
-1. there is a fixed finitely generated submonoid $M$ of $\mathbb{Z} \wr \mathbb{Z}$ whose membership problem is undecidable (Theorem 6);
-2. Thompson's group $F$ and Baumslag's finitely presented metabelian group $\langle a, s, t \mid [s, t] = [a^t, a] = 1,\ a^s = a a^t \rangle$ both contain finitely generated submonoids with undecidable membership problem (Corollary 1).
-
-By contrast, the source proves that $H \wr V$ has decidable rational subset membership problem for every finite group $H$ and virtually free group $V$, in particular for $H \wr \mathbb{Z}$.
+Since $\mathbb{Z} \wr \mathbb{Z}$ embeds in both, Thompson's group $F$ and Baumslag's finitely presented metabelian group $\langle a, s, t \mid [s, t] = [a^t, a] = 1,\ a^s = a a^t \rangle$ contain finitely generated submonoids with undecidable membership problem (Corollary 1). By contrast, the source proves that $H \wr V$ has decidable rational subset membership problem for every finite group $H$ and virtually free group $V$, in particular for $H \wr \mathbb{Z}$ (Theorem 3).
 
 ## Depends on
 
@@ -16,6 +13,7 @@ By contrast, the source proves that $H \wr V$ has decidable rational subset memb
 - [Restricted wreath product](../../../soluble-finite-groups/solubility-nilpotency-and-subnormality/restricted-wreath.md)
 - [Group](../../../group-basics/group.md)
 - [Submonoid membership problem](submonoid-membership-problem.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -27,4 +25,4 @@ There is a fixed two-counter machine $C$ for which it is undecidable whether $C$
 
 ## Sources
 
-- M. Lohrey, B. Steinberg and G. Zetzsche, "Rational subsets and submonoids of wreath products", Information and Computation 243 (2015), 191–204, https://doi.org/10.1016/j.ic.2014.12.014; read in arXiv:1302.2455v1 (Theorems 4, 5 and 6 and Corollary 1 in Section 5, with the llncs class numbering theorems and corollaries separately, of arXiv:1302.2455v1).
+- M. Lohrey, B. Steinberg and G. Zetzsche, "Rational subsets and submonoids of wreath products", Information and Computation 243 (2015), 191–204, https://doi.org/10.1016/j.ic.2014.12.014; read in arXiv:1302.2455v1 (Theorem 3 in Section 4 and Theorems 4, 5 and 6 and Corollary 1 in Section 5, with the llncs class numbering theorems and corollaries separately, of arXiv:1302.2455v1).

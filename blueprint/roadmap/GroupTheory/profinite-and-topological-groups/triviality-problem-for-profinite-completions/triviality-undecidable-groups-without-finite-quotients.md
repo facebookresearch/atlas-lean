@@ -9,6 +9,7 @@ More precisely (Theorem 3.1), there are a finite set $X$ and a recursive sequenc
 ## Depends on
 
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

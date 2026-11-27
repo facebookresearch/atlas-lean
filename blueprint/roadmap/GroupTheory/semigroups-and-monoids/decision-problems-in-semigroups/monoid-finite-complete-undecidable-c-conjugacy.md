@@ -11,6 +11,7 @@ There exist a finite alphabet $\Sigma$ and a finite rewriting system $R$ on $\Si
 - [The word problem of a Thue system](../../../TheoryOfComputation/undecidable-problems/string-rewriting-systems/thue-wp.md)
 - [Abstract reduction system](../../../Logic/first-order-logic/term-rewriting/abstract-reduction-system.md)
 - [Confluence of a relation](../../../Logic/first-order-logic/term-rewriting/confluence-of-a-relation.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

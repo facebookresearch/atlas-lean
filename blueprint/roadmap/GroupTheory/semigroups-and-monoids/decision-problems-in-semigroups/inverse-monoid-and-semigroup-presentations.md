@@ -14,7 +14,7 @@ The word problem for a presentation with finite $A$ is the decision problem: giv
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

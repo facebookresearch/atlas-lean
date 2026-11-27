@@ -13,6 +13,7 @@ It is the membership problem for the fixed finitely generated submonoid $P$ with
 
 - [Membership problem for a subset of a finitely generated group](membership-problem-for-a-subset.md)
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

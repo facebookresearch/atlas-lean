@@ -15,6 +15,8 @@ Consequently, for every $1 \le d \le \infty$ there is no algorithm that determin
 - [Large group](large-group.md)
 - [First Betti number of a group](../../free-groups/automorphisms-of-free-groups/finite-index-subgroups-of-automorphism-groups-of/first-betti-rank.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -22,7 +24,7 @@ Consequently, for every $1 \le d \le \infty$ there is no algorithm that determin
 
 ## Expansion
 
-Start from the recursive sequence of fundamental groups $G_n$ of compact non-positively curved square complexes $X_n$ for which $X_n$ has a proper connected finite-sheeted cover exactly when $\pi_1 X_n$ is large, and the set of $n$ with $\pi_1 X_n$ large is recursively enumerable but not recursive (Corollary 7.8, the strengthening of Theorem B). Apply the Belegradek–Osin version of the Rips construction (Theorem 9.1, quoted) with a fixed torsion-free non-elementary hyperbolic group $H$ with Property (T), such as a torsion-free uniform lattice in $\mathrm{Sp}(n,1)$: it outputs torsion-free hyperbolic groups $\Gamma_n$ with short exact sequences $1 \to N_n \to \Gamma_n \to G_n \to 1$, $N_n$ a quotient of $H$. Then $vb_1(G_n) > 0$ implies $\Gamma_n$ large, which implies $vb_1(\Gamma_n) = \infty$; conversely, a finite-index $K \le \Gamma_n$ mapping onto $\mathbb{Z}$ kills $N_n \cap K$, whose abelianization is finite by Property (T), so $vb_1(G_n) > 0$. Statements (1) and (2) are items (1) and (2) of Theorem D in the introduction.
+Start from the recursive sequence of fundamental groups $G_n$ of compact non-positively curved square complexes $X_n$ for which $X_n$ has a proper connected finite-sheeted cover exactly when $\pi_1 X_n$ is large, and the set of $n$ with $\pi_1 X_n$ large is recursively enumerable but not recursive (Corollary 7.8, the strengthening of Theorem B). Apply the Belegradek–Osin version of the Rips construction (Theorem 9.1, quoted) with a fixed torsion-free non-elementary hyperbolic group $H$ with Property (T), such as a torsion-free uniform lattice in $\mathrm{Sp}(n,1)$: it outputs torsion-free hyperbolic groups $\Gamma_n$ with short exact sequences $1 \to N_n \to \Gamma_n \to G_n \to 1$, $N_n$ a quotient of $H$. Then $vb_1(G_n) > 0$ implies $\Gamma_n$ large, which implies $vb_1(\Gamma_n) = \infty$; conversely, a finite-index $K \le \Gamma_n$ mapping onto $\mathbb{Z}$ kills $N_n \cap K$, whose abelianization is finite by Property (T), so $vb_1(G_n) > 0$. The two consequences stated above are items (1) and (2) of Theorem D in the introduction, which the source derives from Theorem 9.2.
 
 ## Sources
 

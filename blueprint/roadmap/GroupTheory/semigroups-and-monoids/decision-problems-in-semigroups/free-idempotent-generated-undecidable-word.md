@@ -16,6 +16,7 @@ More precisely (Theorem 5.3), if $G$ is a finitely presented group with decidabl
 
 - [Solvable word problem](../../presentations-and-decision-problems/word-problem-for-groups/word-problem-solvable.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,8 +24,8 @@ More precisely (Theorem 5.3), if $G$ is a finitely presented group with decidabl
 
 ## Expansion
 
-Theorem 5.2 shows that a solution of the word problem of $\mathrm{IG}(\mathcal{B}_{G,H})$ would decide membership in $H$ within $G$; the band $B_{G,H}$ has five $\mathcal{D}$-classes, the least being a zero. Mihailova's theorem supplies the pair: for a free group $\Gamma$ of rank at least 2, the group $G = \Gamma \times \Gamma$ has decidable word problem and a finitely generated subgroup with undecidable membership problem, namely the fibre product of a surjection from $\Gamma$ onto a finitely presented group with undecidable word problem. Since every non-trivial maximal subgroup is isomorphic to $\Gamma \times \Gamma$, all maximal subgroups have decidable word problem.
+Theorem 5.2 shows that a solution of the word problem of $\mathrm{IG}(\mathcal{B}_{G,H})$ would decide membership in $H$ within $G$; the band $B_{G,H}$ has five $\mathcal{D}$-classes, the least being a zero. Mihailova's theorem (Theorem 5.4 of the source) supplies the pair: for a free group $\Gamma$ of rank at least 2, the group $G = \Gamma \times \Gamma$ has decidable word problem and a finitely generated subgroup with undecidable membership problem, namely the fibre product of a surjection from $\Gamma$ onto a finitely presented group with undecidable word problem. Since every non-trivial maximal subgroup is isomorphic to $\Gamma \times \Gamma$, all maximal subgroups have decidable word problem.
 
 ## Sources
 
-- I. Dolinka, R. D. Gray and N. Ruškuc, "On regularity and the word problem for free idempotent generated semigroups", Proceedings of the London Mathematical Society 114 (2017), no. 3, 401–432, https://doi.org/10.1112/plms.12011; arXiv:1412.5167v4 (Theorems 5.2, 5.3 and 5.5 of arXiv:1412.5167v4, with Mihailova's theorem stated before Theorem 5.5).
+- I. Dolinka, R. D. Gray and N. Ruškuc, "On regularity and the word problem for free idempotent generated semigroups", Proceedings of the London Mathematical Society 114 (2017), no. 3, 401–432, https://doi.org/10.1112/plms.12011; arXiv:1412.5167v4 (Theorems 5.2, 5.3, 5.4 (Mihailova) and 5.5 of arXiv:1412.5167v4).

@@ -10,6 +10,7 @@ The corresponding statement for finitely generated subgroups is much easier; the
 
 - [Group](../../../group-basics/group.md)
 - [Artin group](../artin-groups/artin-group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

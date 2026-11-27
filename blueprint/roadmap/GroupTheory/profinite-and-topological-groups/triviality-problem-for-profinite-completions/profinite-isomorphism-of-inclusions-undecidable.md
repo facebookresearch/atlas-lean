@@ -19,6 +19,8 @@ Conventions: the groups $\Gamma_n$ are of the form $H_n \times H_n$ with $H_n$ a
 - [Profinite completion](../profinite-rigidity/profinite-completion.md)
 - [Residually finite groups](../../geometric-group-theory/branch-and-thompson-groups/just-infinite-groups/is-residually-finite.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -30,4 +32,4 @@ The proof uses a strengthening, proved in the same paper, of the undecidability 
 
 ## Sources
 
-- Martin R. Bridson and Henry Wilton, *The isomorphism problem for profinite completions of finitely presented, residually finite groups*, Groups Geom. Dyn. 8 (2014), no. 3, 733–745, https://doi.org/10.4171/GGD/245, read in the copy arXiv:1401.2790v1: the statement is Theorem A of its introduction, the strengthened triviality result is Theorem B, and the tools are recalled in its second section.
+- Martin R. Bridson and Henry Wilton, *The isomorphism problem for profinite completions of finitely presented, residually finite groups*, Groups Geom. Dyn. 8 (2014), no. 3, 733–745, https://doi.org/10.4171/GGD/245, read in the copy arXiv:1401.2790v1: the statement is Theorem A of its introduction, the strengthened triviality result is Theorem B, and the tools are Theorems 2.1 (Wise) and 2.2 (the effective 1-2-3 Theorem) in Section 2.

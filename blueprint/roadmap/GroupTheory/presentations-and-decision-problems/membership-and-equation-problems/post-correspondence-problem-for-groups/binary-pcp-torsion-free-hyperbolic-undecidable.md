@@ -11,6 +11,7 @@ Neither of the maps $g, h$ used in the proof is injective. By contrast, the clas
 - [Post correspondence problem for a group](post-correspondence-problem-for-a-group.md)
 - [Word-hyperbolic groups](../../../geometric-group-theory/hyperbolic-groups/is-hyperbolic.md)
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

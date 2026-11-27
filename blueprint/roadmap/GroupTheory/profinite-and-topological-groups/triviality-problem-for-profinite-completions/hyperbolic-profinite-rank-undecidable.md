@@ -15,6 +15,8 @@ In particular no algorithm decides whether the profinite completion of a torsion
 - [Profinite completion](../profinite-rigidity/profinite-completion.md)
 - [Group](../../group-basics/group.md)
 - [Residually finite groups](../../geometric-group-theory/branch-and-thompson-groups/just-infinite-groups/is-residually-finite.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -22,8 +24,8 @@ In particular no algorithm decides whether the profinite completion of a torsion
 
 ## Expansion
 
-Take a recursive sequence of finitely presented groups $G_n$ such that $\{n : \widehat{G_n} \not\cong 1\}$ is recursively enumerable but not recursive, and let $G'_n$ be the free product of $M \ge \tfrac{60}{59} d_0$ copies of $G_n$; by a profinite Grushko lemma, either $\widehat{G'_n} \cong 1$ or $\hat d(G'_n) \ge d_0$. A version of the Rips construction (Theorem 8.2: Rips' $C'(1/6)$ construction, cubulated by Wise and virtually special by Agol) outputs residually finite torsion-free hyperbolic groups $\Gamma_n$ with $1 \to N_n \to \Gamma_n \to G'_n \to 1$ and $N_n$ two-generated. If $\hat d(\Gamma_n) < d_0$ then $\widehat{G'_n} \cong 1$, so $\widehat{N_n}$ maps onto $\widehat{\Gamma_n}$ and $\hat d(\Gamma_n) = 2$; and $\hat d(\Gamma_n) \ge d_0$ exactly when $\widehat{G_n} \not\cong 1$. This is item (5) of Theorem D in the introduction.
+Take a recursive sequence of finitely presented groups $G_n$ such that $\{n : \widehat{G_n} \not\cong 1\}$ is recursively enumerable but not recursive, and let $G'_n$ be the free product of $M \ge \tfrac{60}{59} d_0$ copies of $G_n$; by Lemma 8.1 of the source (a free product of $M$ copies of a group with non-trivial profinite completion has profinite rank at least $\tfrac{59}{60} M$), either $\widehat{G'_n} \cong 1$ or $\hat d(G'_n) \ge d_0$. A version of the Rips construction (Theorem 8.2: Rips' $C'(1/6)$ construction, cubulated by Wise and virtually special by Agol) outputs residually finite torsion-free hyperbolic groups $\Gamma_n$ with $1 \to N_n \to \Gamma_n \to G'_n \to 1$ and $N_n$ two-generated. If $\hat d(\Gamma_n) < d_0$ then $\widehat{G'_n} \cong 1$, so $\widehat{N_n}$ maps onto $\widehat{\Gamma_n}$ and $\hat d(\Gamma_n) = 2$; and $\hat d(\Gamma_n) \ge d_0$ exactly when $\widehat{G_n} \not\cong 1$. This is item (5) of Theorem D in the introduction.
 
 ## Sources
 
-- M. R. Bridson and H. Wilton, "The triviality problem for profinite completions", Inventiones Mathematicae 202 (2015), no. 2, 839–874, https://doi.org/10.1007/s00222-015-0578-8; arXiv:1401.2273v3 (Theorem D(5), Theorem 8.2 and Theorem 8.3 of arXiv:1401.2273v3).
+- M. R. Bridson and H. Wilton, "The triviality problem for profinite completions", Inventiones Mathematicae 202 (2015), no. 2, 839–874, https://doi.org/10.1007/s00222-015-0578-8; arXiv:1401.2273v3 (Theorem D(5), Lemma 8.1, Theorem 8.2 and Theorem 8.3 of arXiv:1401.2273v3).

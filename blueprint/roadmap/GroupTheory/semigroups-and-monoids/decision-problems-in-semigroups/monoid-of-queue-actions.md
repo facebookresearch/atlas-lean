@@ -26,4 +26,4 @@ If $A$ is a singleton the queue degenerates into a partially blind counter, whic
 
 ## Sources
 
-- M. Huschenbett, D. Kuske and G. Zetzsche, "The monoid of queue actions", *Semigroup Forum* 95(3):475–508, 2017, doi:10.1007/s00233-016-9835-4; read as arXiv:1404.5479v1, <https://arxiv.org/abs/1404.5479v1>, whose numbering is used here: Section 3 (definition of the action, the example and the definition of $\mathcal{Q}$) and Proposition 8.3.
+- M. Huschenbett, D. Kuske and G. Zetzsche, "The monoid of queue actions", *Semigroup Forum* 95(3):475–508, 2017, doi:10.1007/s00233-016-9835-4; read as arXiv:1404.5479v1, <https://arxiv.org/abs/1404.5479v1>, whose numbering is used here: Section 3 (the action, Example 3.1, Definition 3.2 of $\mathcal{Q}$, and Lemma 3.3(3) for $\bar a c \equiv c \bar a$) and Proposition 8.3(1).

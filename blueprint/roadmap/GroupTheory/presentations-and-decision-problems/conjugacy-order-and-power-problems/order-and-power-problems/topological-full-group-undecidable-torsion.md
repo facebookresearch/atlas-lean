@@ -10,6 +10,7 @@ More generally (Theorem 1.4), the group of reversible finite-state machines on $
 
 - [Order problem and torsion problem of a finitely generated group](order-problem.md)
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

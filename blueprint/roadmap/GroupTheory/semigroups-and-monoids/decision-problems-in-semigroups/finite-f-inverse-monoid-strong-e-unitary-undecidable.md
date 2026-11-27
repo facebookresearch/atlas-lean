@@ -2,18 +2,15 @@
 
 No algorithm decides, for a finite $F^*$-inverse monoid, whether it is strongly $E^*$-unitary over finite groups, whether it is strongly $F^*$-inverse over finite groups, or whether it is a Rees quotient of a finite $F$-inverse monoid by an ideal.
 
-Let $M$ be an inverse monoid with zero. A partial homomorphism from $M$ to a group $G$ is a map $\phi\colon M \setminus \{0\} \to G$ with $\phi(st) = \phi(s)\phi(t)$ whenever $st \ne 0$; it is idempotent pure if only idempotents map to $1$. For a class $\mathcal{C}$ of groups, $M$ is strongly $E^*$-unitary over $\mathcal{C}$ if it admits an idempotent pure partial homomorphism to a group in $\mathcal{C}$, and strongly $F^*$-inverse over $\mathcal{C}$ if it admits a partial homomorphism to a group in $\mathcal{C}$ each of whose non-empty fibres has a maximum element. It is undecidable whether a finite $F^*$-inverse monoid
+Let $M$ be an inverse monoid with zero. A partial homomorphism from $M$ to a group $G$ is a map $\phi\colon M \setminus \{0\} \to G$ with $\phi(st) = \phi(s)\phi(t)$ whenever $st \ne 0$; it is idempotent pure if only idempotents map to $1$. For a class $\mathcal{C}$ of groups, $M$ is strongly $E^*$-unitary over $\mathcal{C}$ if it admits an idempotent pure partial homomorphism to a group in $\mathcal{C}$, and strongly $F^*$-inverse over $\mathcal{C}$ if it admits a partial homomorphism to a group in $\mathcal{C}$ each of whose non-empty fibres has a maximum element. It is undecidable whether a finite $F^*$-inverse monoid is strongly $E^*$-unitary over finite groups (Theorem A.6 of the source).
 
-1. is strongly $E^*$-unitary over finite groups (Theorem A.6 of the source);
-2. is strongly $F^*$-inverse over finite groups (Theorem A.7);
-3. is a Rees quotient of a finite $F$-inverse monoid by an ideal (Theorem A.8).
-
-These are Steinberg's reformulations, in an appendix, of the undecidability of developability of finite rigid pseudogroups.
+It is likewise undecidable whether a finite $F^*$-inverse monoid is strongly $F^*$-inverse over finite groups (Theorem A.7), or is a Rees quotient of a finite $F$-inverse monoid by an ideal (Theorem A.8). These are Steinberg's reformulations, in an appendix, of the undecidability of developability of finite rigid pseudogroups.
 
 ## Depends on
 
 - [Inverse monoid and inverse semigroup presentations](inverse-monoid-and-semigroup-presentations.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

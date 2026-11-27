@@ -16,6 +16,8 @@ The property stays undecidable in restricted classes: there is no algorithm that
 
 - [Profinite completion](../profinite-rigidity/profinite-completion.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

@@ -15,6 +15,7 @@ The statement concerns a finitely presented subgroup; for finitely generated sub
 - [Group](../../../group-basics/group.md)
 - [Artin group](../artin-groups/artin-group.md)
 - [Solvable conjugacy problem for a quotient of a free group](../../decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

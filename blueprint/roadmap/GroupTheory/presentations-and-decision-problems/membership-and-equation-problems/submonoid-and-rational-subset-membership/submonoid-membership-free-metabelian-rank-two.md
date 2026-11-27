@@ -9,6 +9,7 @@ Let $M_2 = F_2 / F_2''$ be the free metabelian group of rank two, the quotient o
 - [Membership problem for a subset of a finitely generated group](membership-problem-for-a-subset.md)
 - [Group](../../../group-basics/group.md)
 - [Metabelian groups](../../../geometric-group-theory/permutation-stability/metabelian.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -12,6 +12,7 @@ With $P$ only finitely generated, $\Gamma$ can moreover be taken conjugacy separ
 - [Group](../../group-basics/group.md)
 - [Residually finite groups](../../geometric-group-theory/branch-and-thompson-groups/just-infinite-groups/is-residually-finite.md)
 - [Solvable conjugacy problem for a quotient of a free group](../../presentations-and-decision-problems/decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

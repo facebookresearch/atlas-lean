@@ -11,6 +11,7 @@ For a group $G = \langle X \mid R \rangle$, the power conjugacy problem asks for
 
 - [Group](../../../group-basics/group.md)
 - [Solvable conjugacy problem for a quotient of a free group](../../decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

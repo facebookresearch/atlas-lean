@@ -10,6 +10,7 @@ The source's main theorem gives an explicit recursive presentation of Mihailova'
 
 - [Group](../../../group-basics/group.md)
 - [Recursively presented group](../../../orderable-groups/word-problem-for-orderable-groups/is-recursively-presented.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -14,6 +14,7 @@ For $S = \{1\}$ this is the word problem of $G$; for a finitely generated subgro
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

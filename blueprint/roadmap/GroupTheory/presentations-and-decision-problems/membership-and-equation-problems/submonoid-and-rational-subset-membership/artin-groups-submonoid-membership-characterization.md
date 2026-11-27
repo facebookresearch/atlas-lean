@@ -17,6 +17,7 @@ The source also gives the condition in terms of induced subgraphs of $\Gamma$, e
 - [Rational subset membership problem](rational-subset-membership-problem.md)
 - [Group](../../../group-basics/group.md)
 - [Artin group](../../braid-and-artin/artin-groups/artin-group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

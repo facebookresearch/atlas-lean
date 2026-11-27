@@ -11,6 +11,7 @@ Adding the inverses of the generators shows that membership in finitely generate
 ## Depends on
 
 - [Membership problem for a subset of a finitely generated group](../../presentations-and-decision-problems/membership-and-equation-problems/submonoid-and-rational-subset-membership/membership-problem-for-a-subset.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -8,6 +8,7 @@ For $n \ge 1$ let $\mathfrak{C}_n$ be the class of finitely presented subgroups 
 
 - [Braid group on n strands](../endomorphisms-of-braid-groups/braid-group.md)
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -11,6 +11,7 @@ Automaton groups have decidable word problem, so by Higman's embedding theorem a
 - [Automaton group](automaton-group.md)
 - [Order problem and torsion problem of a finitely generated group](../../../presentations-and-decision-problems/conjugacy-order-and-power-problems/order-and-power-problems/order-problem.md)
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

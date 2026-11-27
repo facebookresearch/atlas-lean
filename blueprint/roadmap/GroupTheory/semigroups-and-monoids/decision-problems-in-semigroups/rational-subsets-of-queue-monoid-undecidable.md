@@ -17,6 +17,7 @@ By contrast, the uniform membership problem for rational subsets of $\mathcal{Q}
 
 - [Monoid of queue actions](monoid-of-queue-actions.md)
 - [Rational subset membership problem](../../presentations-and-decision-problems/membership-and-equation-problems/submonoid-and-rational-subset-membership/rational-subset-membership-problem.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

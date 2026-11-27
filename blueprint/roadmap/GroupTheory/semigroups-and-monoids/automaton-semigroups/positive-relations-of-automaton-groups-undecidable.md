@@ -20,6 +20,7 @@ Positive relations depend on the generating automaton, not only on the group. If
 - [Group](../../group-basics/group.md)
 - [Mealy machine](../../../TheoryOfComputation/regular-languages/automata-and-expressions/sequential-transducers-mealy-and-moore-machines/mealy-machine.md)
 - [Automaton group](../../geometric-group-theory/branch-and-thompson-groups/finite-state-automorphisms-of-rooted-trees/automaton-group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

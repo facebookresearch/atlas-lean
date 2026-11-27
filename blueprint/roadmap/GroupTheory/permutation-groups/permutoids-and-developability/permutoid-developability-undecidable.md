@@ -2,10 +2,9 @@
 
 No algorithm decides whether a permutoid on a finite set can be completed to a finite permutation group, proving a conjecture of Cameron; nor whether a finite rigid pseudogroup has a finite development.
 
-A permutoid $(\Pi; X)$ is a set $\Pi$ of partial permutations of a set $X$ that contains the identity and is such that partial compositions, when defined, have at most one extension in $\Pi$. A finite permutoid is developable (completable) if it embeds, compatibly with partial compositions, in a finite permutation group acting on a finite set containing $X$. Then (source):
+A permutoid $(\Pi; X)$ is a set $\Pi$ of partial permutations of a set $X$ that contains the identity and is such that partial compositions, when defined, have at most one extension in $\Pi$. A finite permutoid is developable (completable) if it embeds, compatibly with partial compositions, in a finite permutation group acting on a finite set containing $X$. There does not exist an algorithm that, given a finite permutoid $(\Pi; X)$, can determine whether or not it is developable (Theorem 4.1 of the source); this is Cameron's conjecture of 2004.
 
-1. there does not exist an algorithm that, given a finite permutoid $(\Pi; X)$, can determine whether or not it is developable (Theorem 4.1), which is Cameron's conjecture of 2004;
-2. there does not exist an algorithm that can determine whether or not a finite rigid pseudogroup has a finite development (Theorem 5.2): a finite set $Y \supseteq X$ and a finite group acting freely on $Y$ such that each non-empty element of the pseudogroup is a restriction of a group element.
+The same construction shows that no algorithm determines whether a finite rigid pseudogroup has a finite development (Theorem 5.2 of the source), that is, a finite set $Y \supseteq X$ and a finite group acting freely on $Y$ such that each non-empty element of the pseudogroup is a restriction of a group element.
 
 A naive search finds a completion when one exists, so the developable finite permutoids form a recursively enumerable set that is not recursive.
 
@@ -13,6 +12,7 @@ A naive search finds a completion when one exists, so the developable finite per
 
 - [Group](../../group-basics/group.md)
 - [Action of a monoid or a group on a set](../group-actions/group-action.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

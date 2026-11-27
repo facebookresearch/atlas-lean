@@ -10,6 +10,7 @@ In the example $A = \{a, z, t\}$ and $w = e \cdot azaz^{-1}a^{-1}za^{-1}z^{-1}$,
 
 - [Inverse monoid and inverse semigroup presentations](inverse-monoid-and-semigroup-presentations.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

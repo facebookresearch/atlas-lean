@@ -11,6 +11,7 @@ Let $\mathbb{Z} \wr (\mathbb{Z} \times \mathbb{Z})$ be the restricted wreath pro
 - [Group](../../../group-basics/group.md)
 - [Restricted wreath product](../../../soluble-finite-groups/solubility-nilpotency-and-subnormality/restricted-wreath.md)
 - [Metabelian groups](../../../geometric-group-theory/permutation-stability/metabelian.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

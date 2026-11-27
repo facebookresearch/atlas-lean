@@ -17,6 +17,7 @@ The monoid is fixed and the system of equations is the input. Since the trivial 
 
 - [Group](../../group-basics/group.md)
 - [Context-free languages](../../../TheoryOfComputation/context-free-languages/grammars-and-pushdown-automata/context-free-languages.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

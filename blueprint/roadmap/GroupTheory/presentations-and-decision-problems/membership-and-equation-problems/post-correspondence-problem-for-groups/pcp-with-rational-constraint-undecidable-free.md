@@ -11,6 +11,7 @@ The source leaves open whether the unconstrained Post correspondence problem for
 - [Rational subset membership problem](../submonoid-and-rational-subset-membership/rational-subset-membership-problem.md)
 - [Group](../../../group-basics/group.md)
 - [Multiplication-preserving maps and group homomorphisms](../../../semigroups-and-monoids/group-homomorphism.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

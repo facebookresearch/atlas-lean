@@ -11,7 +11,7 @@ Homogeneous monoids have no zero, so for them $o$-conjugacy coincides with $c$-c
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

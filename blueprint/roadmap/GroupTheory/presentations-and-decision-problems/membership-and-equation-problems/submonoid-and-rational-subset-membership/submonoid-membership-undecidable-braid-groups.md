@@ -18,6 +18,7 @@ This answers Potapov's question whether submonoid membership is decidable in $B_
 - [The braid group B4](../../braid-and-artin/braid-groups-in-automorphism-groups-of-free-grou/braid-group-four.md)
 - [Group](../../../group-basics/group.md)
 - [Braid group on n strands](../../braid-and-artin/endomorphisms-of-braid-groups/braid-group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

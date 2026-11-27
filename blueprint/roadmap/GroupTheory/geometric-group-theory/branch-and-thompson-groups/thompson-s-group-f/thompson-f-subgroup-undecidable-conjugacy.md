@@ -14,6 +14,8 @@ The subgroup $H$ is closed: every element of $F$ that is piecewise an element of
 - [Thompson's group $F$ by its standard presentation](thompson-f.md)
 - [Group](../../../group-basics/group.md)
 - [Membership problem for a subset of a finitely generated group](../../../presentations-and-decision-problems/membership-and-equation-problems/submonoid-and-rational-subset-membership/membership-problem-for-a-subset.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Solvable conjugacy problem for a quotient of a free group](../../../presentations-and-decision-problems/decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
 
 ## Proof depends on
 

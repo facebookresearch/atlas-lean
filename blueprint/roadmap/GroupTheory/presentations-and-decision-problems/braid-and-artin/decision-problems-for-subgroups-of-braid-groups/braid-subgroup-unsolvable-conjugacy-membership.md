@@ -15,6 +15,7 @@ The word problem is solvable in every finitely presented subgroup of a braid gro
 - [Membership problem for a subset of a finitely generated group](../../membership-and-equation-problems/submonoid-and-rational-subset-membership/membership-problem-for-a-subset.md)
 - [Group](../../../group-basics/group.md)
 - [Solvable conjugacy problem for a quotient of a free group](../../decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

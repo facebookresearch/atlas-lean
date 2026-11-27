@@ -9,6 +9,7 @@ A group $\Gamma$ with finite generating set $A$ is combable if there are words $
 - [Group](../../../group-basics/group.md)
 - [Solvable conjugacy problem for a quotient of a free group](../../decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
 - [Solvable word problem](../../word-problem-for-groups/word-problem-solvable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

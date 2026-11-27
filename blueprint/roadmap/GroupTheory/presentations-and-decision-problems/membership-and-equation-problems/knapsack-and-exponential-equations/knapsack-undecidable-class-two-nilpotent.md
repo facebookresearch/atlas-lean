@@ -13,6 +13,7 @@ The knapsack problem here is the integer version: given words $g_1, \dots, g_k, 
 - [Knapsack problem for a finitely generated group](knapsack-problem-for-a-group.md)
 - [Group](../../../group-basics/group.md)
 - [Commutator subgroup of a group](../../../commutators-and-engel-conditions/commutator-subgroup.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

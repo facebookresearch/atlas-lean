@@ -10,6 +10,7 @@ Let $M$ be a monoid with a surjective monoid homomorphism $\pi\colon A^* \to M$ 
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ Every finitely generated submonoid $\pi(W^*)$ is rational, and an automaton for 
 ## Sources
 
 - R. D. Gray, "Undecidability of the word problem for one-relator inverse monoids via right-angled Artin subgroups of one-relator groups", Inventiones Mathematicae 219 (2020), no. 3, 987–1008, https://doi.org/10.1007/s00222-019-00920-2; arXiv:1902.03822v3 (Section 2, definition of the rational subset membership problem in arXiv:1902.03822v3).
-- C. Bodart, "Membership problems in nilpotent groups", Journal of Groups, Complexity, Cryptology 17 (2025), no. 1, article 13954, https://doi.org/10.46298/jgcc.2025.17.1.13954; arXiv:2401.15504v6 (Section on background on rational subsets in arXiv:2401.15504v6).
+- C. Bodart, "Membership problems in nilpotent groups", Journal of Groups, Complexity, Cryptology 17 (2025), no. 1, article 13954, https://doi.org/10.46298/jgcc.2025.17.1.13954; arXiv:2401.15504v6 (Section 1, "Background on rational subsets", of arXiv:2401.15504v6).

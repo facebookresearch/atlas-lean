@@ -11,6 +11,7 @@ The same proposition gives undecidability of freeness for finitely generated sub
 ## Depends on
 
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

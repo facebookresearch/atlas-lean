@@ -14,6 +14,7 @@ The source does not settle these problems for Thompson's group $V$ itself and no
 - [Brin–Thompson groups](brin-thompson-group.md)
 - [Group](../../../group-basics/group.md)
 - [Membership problem for a subset of a finitely generated group](../../../presentations-and-decision-problems/membership-and-equation-problems/submonoid-and-rational-subset-membership/membership-problem-for-a-subset.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

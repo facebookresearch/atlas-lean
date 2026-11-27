@@ -15,6 +15,7 @@ This contrasts with amalgamated free products of finite inverse semigroups, whos
 ## Depends on
 
 - [Inverse monoid and inverse semigroup presentations](inverse-monoid-and-semigroup-presentations.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

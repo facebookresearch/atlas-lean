@@ -6,12 +6,13 @@ Let $B_n$ be the braid group on $n$ strands, with generators $\sigma_1, \dots, \
 
 **Theorem (Potapov).** The identity problem and the group problem are undecidable for braids in $B_5$ (Theorem 14 of the copy read).
 
-The braids, given as words in the generators, are the input; the number of strands is fixed at $5$. For $B_3$ both problems and the membership problem for semigroups of braids are decidable, membership being NP-hard (Theorems 11 and 12 of the same paper), while the case of $B_4$ is left open there. Later, Gray and Nyberg-Brodda showed that $B_4$ has undecidable submonoid membership, fixed-target submonoid membership and subsemigroup intersection problems ([submonoid membership is undecidable in the braid groups](submonoid-membership-undecidable-braid-groups.md)); they record the identity problem in $B_4$ as still open.
+The braids, given as words in the generators, are the input; the number of strands is fixed at $5$. For $B_3$ the membership problem for semigroups of braids is NP-hard and decidable (Theorems 11 and 12 of the same paper), so the identity problem and the group problem, which ask about membership of the trivial braid and of the inverses of the generators, are decidable there as well; the case of $B_4$ is left open in the paper. Later, Gray and Nyberg-Brodda showed that $B_4$ has undecidable submonoid membership, fixed-target submonoid membership and subsemigroup intersection problems ([submonoid membership is undecidable in the braid groups](submonoid-membership-undecidable-braid-groups.md)); they record the identity problem in $B_4$ as still open.
 
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
 - [Braid group on n strands](../../braid-and-artin/endomorphisms-of-braid-groups/braid-group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

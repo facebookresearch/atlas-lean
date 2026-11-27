@@ -10,6 +10,7 @@ For every integer $n \ge 2$ and every finite generating set of the Brin–Thomps
 - [Order problem and torsion problem of a finitely generated group](../../../presentations-and-decision-problems/conjugacy-order-and-power-problems/order-and-power-problems/order-problem.md)
 - [Group](../../../group-basics/group.md)
 - [Solvable word problem](../../../presentations-and-decision-problems/word-problem-for-groups/word-problem-solvable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

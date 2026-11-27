@@ -15,6 +15,7 @@ This strengthens [the undecidability of finiteness for automaton semigroups](fin
 
 - [Automaton semigroups, monoids and groups](automaton-semigroups.md)
 - [Mealy machine](../../../TheoryOfComputation/regular-languages/automata-and-expressions/sequential-transducers-mealy-and-moore-machines/mealy-machine.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

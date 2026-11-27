@@ -13,6 +13,7 @@ This fixed-target submonoid membership problem lies between the identity problem
 
 - [Submonoid membership problem](submonoid-membership-problem.md)
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

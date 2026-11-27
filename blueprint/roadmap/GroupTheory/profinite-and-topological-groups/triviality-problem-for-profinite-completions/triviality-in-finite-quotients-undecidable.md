@@ -16,6 +16,8 @@ The theorem is contained in Slobodskoi's proof that the universal theory of fini
 
 - [Profinite completion](../profinite-rigidity/profinite-completion.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

@@ -10,6 +10,7 @@ The groups $\mathrm{Gp}\langle A \mid u = 1, v = 1 \rangle$ arising in the proof
 
 - [Inverse monoid and inverse semigroup presentations](inverse-monoid-and-semigroup-presentations.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

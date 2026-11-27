@@ -12,6 +12,7 @@ Conventions: membership refers to the fixed subgroup $P$ of the fixed group $\Ga
 - [Membership problem for a subset of a finitely generated group](../submonoid-and-rational-subset-membership/membership-problem-for-a-subset.md)
 - [Solvable conjugacy problem for a quotient of a free group](../../decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

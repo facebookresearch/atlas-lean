@@ -9,6 +9,7 @@ Let $H_3(\mathbb{Z})$ be the discrete Heisenberg group of upper unitriangular $3
 - [Knapsack problem for a finitely generated group](knapsack-problem-for-a-group.md)
 - [Group](../../../group-basics/group.md)
 - [Restricted wreath product](../../../soluble-finite-groups/solubility-nilpotency-and-subnormality/restricted-wreath.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

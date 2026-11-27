@@ -18,6 +18,7 @@ The source also shows (Lemma 3.2) that $G_{m,n}$ has decidable submonoid members
 - [Submonoid membership problem](submonoid-membership-problem.md)
 - [Group](../../../group-basics/group.md)
 - [One-relator group](../../coherence-of-one-relator-groups/one-relator-group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -25,8 +26,8 @@ None.
 
 ## Expansion
 
-For $m, n \ge 2$ the source constructs an embedding of the right-angled Artin group $A(P_4)$ of the path with four vertices into $G_{m,n}$. Lohrey and Steinberg (J. Algebra 320 (2008)) proved that $A(P_4)$ contains a fixed finitely generated submonoid with undecidable membership problem; its image is the submonoid $N$. The positive presentation comes from the substitution $y = a$, $x = ba^n$, which turns the relator $x^m y^n x^m y^{-n}$ into $(ba^n)^m (a^n b)^m$. The result answers negatively whether positive one-relator groups, to whose submonoid membership problem Guba reduced the word problem of monoids $\mathrm{Mon}\langle a, b \mid bUa = a \rangle$, always have decidable submonoid membership problem.
+For $m, n \ge 2$ the source constructs (Lemma 3.6, by Reidemeister–Schreier rewriting) an embedding of the right-angled Artin group $A(P_4)$ of the path with four vertices into $G_{m,n}$. Lohrey and Steinberg (J. Algebra 320 (2008)) proved that $A(P_4)$ contains a fixed finitely generated submonoid with undecidable membership problem; its image is the submonoid $N$. The positive presentation comes from the substitution $y = a$, $x = ba^n$, which turns the relator $x^m y^n x^m y^{-n}$ into $(ba^n)^m (a^n b)^m$. The result answers negatively whether positive one-relator groups, to whose submonoid membership problem Guba reduced the word problem of monoids $\mathrm{Mon}\langle a, b \mid bUa = a \rangle$, always have decidable submonoid membership problem.
 
 ## Sources
 
-- I. Foniqi, R. D. Gray and C.-F. Nyberg-Brodda, "Membership problems for positive one-relator groups and one-relation monoids", Canadian Journal of Mathematics 78 (2026), no. 3, 802–841, https://doi.org/10.4153/S0008414X24000798; arXiv:2305.15672v2 (Lemma 3.2, Theorem 3.8 and Corollary 3.9 of arXiv:2305.15672v2).
+- I. Foniqi, R. D. Gray and C.-F. Nyberg-Brodda, "Membership problems for positive one-relator groups and one-relation monoids", Canadian Journal of Mathematics 78 (2026), no. 3, 802–841, https://doi.org/10.4153/S0008414X24000798; arXiv:2305.15672v2 (Lemma 3.2, Lemma 3.6, Theorem 3.8 and Corollary 3.9 of arXiv:2305.15672v2).

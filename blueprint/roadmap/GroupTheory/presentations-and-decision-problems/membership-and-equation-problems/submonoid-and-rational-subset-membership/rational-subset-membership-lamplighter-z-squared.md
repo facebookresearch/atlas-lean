@@ -13,6 +13,7 @@ For $n \ge 2$ let $\mathbb{Z}/n\mathbb{Z} \wr (\mathbb{Z} \times \mathbb{Z})$ be
 - [Membership problem for a subset of a finitely generated group](membership-problem-for-a-subset.md)
 - [Group](../../../group-basics/group.md)
 - [Restricted wreath product](../../../soluble-finite-groups/solubility-nilpotency-and-subnormality/restricted-wreath.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

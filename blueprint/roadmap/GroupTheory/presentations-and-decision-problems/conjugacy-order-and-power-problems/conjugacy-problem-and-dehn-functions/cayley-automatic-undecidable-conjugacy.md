@@ -1,18 +1,16 @@
 # Some Cayley automatic group has undecidable conjugacy problem
 
-There are Cayley automatic groups with undecidable conjugacy problem, and the isomorphism problem is undecidable in the class of Cayley automatic groups; consequently Cayley automatic groups need not be Cayley biautomatic.
+There are Cayley automatic groups with undecidable conjugacy problem; consequently Cayley automatic groups need not be Cayley biautomatic.
 
-A finitely generated group $G$ with finite generating set $S$ is Cayley automatic (Kharlampovich, Khoussainov and Miasnikov) if there are a finite alphabet $\Sigma$, a regular language $L \subseteq \Sigma^*$ and a bijection $\psi\colon L \to G$ such that for each $s \in S$ the relation $\{(u, v) \in L^2 : \psi(v) = \psi(u) s\}$ is recognized by a synchronous two-tape finite automaton; unlike for automatic groups, the words of $L$ need not be words in the generators. Then (source):
+A finitely generated group $G$ with finite generating set $S$ is Cayley automatic (Kharlampovich, Khoussainov and Miasnikov) if there are a finite alphabet $\Sigma$, a regular language $L \subseteq \Sigma^*$ and a bijection $\psi\colon L \to G$ such that for each $s \in S$ the relation $\{(u, v) \in L^2 : \psi(v) = \psi(u) s\}$ is recognized by a synchronous two-tape finite automaton; unlike for automatic groups, the words of $L$ need not be words in the generators. There are Cayley automatic groups with undecidable conjugacy problem (Theorem 2 of the source).
 
-1. there are Cayley automatic groups with undecidable conjugacy problem (Theorem 2);
-2. the isomorphism problem is undecidable in the class of Cayley automatic groups (Theorem 3).
-
-Since Cayley biautomatic groups have decidable conjugacy problem, there are Cayley automatic groups that are not Cayley biautomatic.
+Since Cayley biautomatic groups have decidable conjugacy problem, there are Cayley automatic groups that are not Cayley biautomatic. The source also shows that the isomorphism problem is undecidable in the class of Cayley automatic groups (Theorem 3).
 
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
 - [Solvable conjugacy problem for a quotient of a free group](../../decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,7 +18,7 @@ Since Cayley biautomatic groups have decidable conjugacy problem, there are Cayl
 
 ## Expansion
 
-All groups $\mathbb{Z}^d \rtimes F_n$ are Cayley automatic (a consequence of results of Kharlampovich, Khoussainov and Miasnikov). Bogopolski, Martino and Ventura gave groups of this form with undecidable conjugacy problem, which gives clause 1, and Levitt proved the isomorphism problem undecidable in the class of groups $\mathbb{Z}^d \rtimes F_n$, which gives clause 2. The examples are not automatic in the usual sense: a group $\mathbb{Z}^d \rtimes F_n$ with subexponential Dehn function has decidable conjugacy problem.
+All groups $\mathbb{Z}^d \rtimes F_n$ are Cayley automatic (a consequence of results of Kharlampovich, Khoussainov and Miasnikov). Bogopolski, Martino and Ventura gave groups of this form with undecidable conjugacy problem, which gives the theorem; Levitt's undecidability of the isomorphism problem in the class of groups $\mathbb{Z}^d \rtimes F_n$ gives the companion result on isomorphism. The examples are not automatic in the usual sense: a group $\mathbb{Z}^d \rtimes F_n$ with subexponential Dehn function has decidable conjugacy problem.
 
 ## Sources
 

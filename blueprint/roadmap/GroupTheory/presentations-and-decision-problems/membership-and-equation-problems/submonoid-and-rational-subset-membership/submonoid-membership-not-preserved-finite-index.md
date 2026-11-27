@@ -11,6 +11,7 @@ The source proves (Theorem 3.1) that submonoid membership is decidable in every 
 - [Submonoid membership problem](submonoid-membership-problem.md)
 - [Group](../../../group-basics/group.md)
 - [Restricted wreath product](../../../soluble-finite-groups/solubility-nilpotency-and-subnormality/restricted-wreath.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

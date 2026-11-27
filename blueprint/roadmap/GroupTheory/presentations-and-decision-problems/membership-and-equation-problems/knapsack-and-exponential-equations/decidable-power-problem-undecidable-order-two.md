@@ -14,6 +14,7 @@ Decidability of $\mathrm{P}[n+1]$ implies decidability of $\mathrm{P}[n]$, by pa
 - [Group](../../../group-basics/group.md)
 - [Recursively presented group](../../../orderable-groups/word-problem-for-orderable-groups/is-recursively-presented.md)
 - [Solvable conjugacy problem for a quotient of a free group](../../decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

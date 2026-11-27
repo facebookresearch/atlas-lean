@@ -11,6 +11,7 @@ Whether the problem is decidable for every cyclically reduced relator is open (a
 - [Prefix membership problem of a group presentation](prefix-membership-problem.md)
 - [Group](../../../group-basics/group.md)
 - [One-relator group](../../coherence-of-one-relator-groups/one-relator-group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

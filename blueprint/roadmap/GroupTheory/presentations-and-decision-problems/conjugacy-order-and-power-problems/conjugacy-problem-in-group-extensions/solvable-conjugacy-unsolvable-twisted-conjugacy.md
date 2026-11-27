@@ -10,6 +10,7 @@ There is a finitely presented group whose conjugacy problem is solvable while it
 - [Twisted conjugacy problem](twisted-conjugacy-problem.md)
 - [Group](../../../group-basics/group.md)
 - [Solvable conjugacy problem for a quotient of a free group](../../decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
