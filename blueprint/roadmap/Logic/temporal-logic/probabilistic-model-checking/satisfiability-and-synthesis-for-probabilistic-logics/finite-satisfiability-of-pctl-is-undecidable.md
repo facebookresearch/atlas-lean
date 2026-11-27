@@ -12,6 +12,9 @@ The arXiv version states more precisely that finite satisfiability is $\Sigma^0_
 
 - [PCTL](../pctl.md)
 - [Discrete-time Markov chains](../discrete-time-markov-chains.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [The arithmetical class $\Sigma_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
 
 ## Proof depends on
 

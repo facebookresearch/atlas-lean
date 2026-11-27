@@ -4,25 +4,24 @@ Whether a Markov decision process has a history-dependent randomized strategy un
 
 **Setting (Bordais, Busatto-Gaston, Guha and Raskin).** $L$-PCTL extends [PCTL](../pctl.md) by linear constraints between probabilities: state formulas are built from literals $p$, $\neg p$ with $\wedge$, $\vee$ and inequalities $\sum_{i=1}^n c_i \Pr(\varphi_i) \succcurlyeq c_0$ with integer $c_i$ and ${\succcurlyeq} \in \{\geq, >\}$, and path formulas are $\mathbf{X}^{\ell}\Phi$, $\Phi_1 \mathbf{U}^{\ell} \Phi_2$, $\Phi_1 \mathbf{W}^{\ell} \Phi_2$ with $\ell \in \mathbb{N} \cup \{\infty\}$. A *window formula* uses only finite horizons $\ell$ (encoded in unary); it is *flat* if probability operators are not nested and *non-strict* if every inequality uses $\geq$. A *global window formula* $\forall\mathbf{G}\,\Phi$, with $\Phi$ a window formula, holds in a state of a Markov chain when every state reachable from it satisfies $\Phi$. The *synthesis problem* asks, given a finite [Markov decision process](../markov-decision-processes-and-adversaries.md) $M$ and a formula, whether some strategy $\sigma$, history-dependent and randomized unless restricted, makes the induced Markov chain $M[\sigma]$ satisfy the formula.
 
-**Theorem (Bordais, Busatto-Gaston, Guha and Raskin).**
+**Theorem (Bordais, Busatto-Gaston, Guha and Raskin).** The synthesis problem for flat, non-strict global window $L$-PCTL formulas is in coRE (Theorem 24 of arXiv:2204.14107v1) and coRE-hard (Theorem 37), hence undecidable.
 
-1. The synthesis problem for flat, non-strict global window $L$-PCTL formulas is in coRE (Theorem 24 of arXiv:2204.14107v1) and coRE-hard (Theorem 37), hence undecidable.
-2. The synthesis problem for flat global window $L$-PCTL formulas is $\Sigma^1_1$-hard (Theorem 38 of arXiv:2204.14107v1).
-
-Restricted to deterministic strategies the problem is decidable: NP-complete for memoryless deterministic strategies and in 2EXPTIME for history-dependent deterministic ones; for memoryless randomized strategies it is in PSPACE. Synthesis for full PCTL with history-dependent deterministic strategies was known to be $\Sigma^1_1$-complete (Brázdil, Brožek, Forejt and Kučera), as the source recalls.
+With strict inequalities allowed, the synthesis problem for flat global window $L$-PCTL formulas is even $\Sigma^1_1$-hard (Theorem 38 of arXiv:2204.14107v1), by a reduction from [recurring computations of two-counter machines](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/recurring-computations-of-two-counter-machines.md). Restricted to deterministic strategies the problem is decidable: NP-complete for memoryless deterministic strategies and in 2EXPTIME for history-dependent deterministic ones; for memoryless randomized strategies it is in PSPACE. Synthesis for full PCTL with history-dependent deterministic strategies was known to be $\Sigma^1_1$-complete (Brázdil, Brožek, Forejt and Kučera), as the source recalls.
 
 ## Depends on
 
 - [PCTL](../pctl.md)
 - [Markov decision processes and adversaries](../markov-decision-processes-and-adversaries.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 
-- [Recurring computations of two-counter machines are Σ¹₁-hard](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/recurring-computations-of-two-counter-machines.md)
+None.
 
 ## Expansion
 
-For clause 1, coRE-hardness reduces from non-halting of two-counter Minsky machines: counter values $(x_2, x_3)$ are stored in the probability $\frac{5}{6} \cdot 2^{-x_2} \cdot 3^{-x_3}$, chosen by the strategy, of seeing a predicate within a few steps, and gadgets for increment, decrement, zero test and halting, chained by entering and exiting probabilities, let a strategy satisfy the formula exactly when the machine runs forever; membership in coRE comes from a fixpoint characterization in Section 3 of the source. For clause 2, strict inequalities let the strategy announce how many steps until the first instruction recurs, stored in an extra counter that must not reach $0$, which reduces from the existence of a computation visiting the first instruction infinitely often. A complete expansion links a page for the coRE-completeness of non-halting of two-counter machines, which has none on main.
+The coRE-hardness reduces from non-halting of two-counter Minsky machines: counter values $(x_2, x_3)$ are stored in the probability $\frac{5}{6} \cdot 2^{-x_2} \cdot 3^{-x_3}$, chosen by the strategy, of seeing a predicate within a few steps, and gadgets for increment, decrement, zero test and halting, chained by entering and exiting probabilities, let a strategy satisfy the formula exactly when the machine runs forever; membership in coRE comes from a fixpoint characterization in Section 3 of the source. For the $\Sigma^1_1$-hardness, strict inequalities let the strategy announce how many steps until the first instruction recurs, stored in an extra counter that must not reach $0$, which reduces from the existence of a computation visiting the first instruction infinitely often. A complete expansion links a page for the coRE-completeness of non-halting of two-counter machines, which has none on main.
 
 ## Sources
 

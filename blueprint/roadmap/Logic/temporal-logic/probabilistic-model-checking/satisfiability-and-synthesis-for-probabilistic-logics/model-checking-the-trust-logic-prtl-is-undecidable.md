@@ -16,16 +16,15 @@ $$
 
 with $p$ an atomic proposition, $A,B$ agents, $\bowtie\in\{<,\le,>,\ge\}$ and $q\in[0,1]$. Here $\mathtt B_A^{\bowtie q}\psi$ says that agent $A$ believes $\psi$ with probability $\bowtie q$, and $\mathtt{CT}_{A,B}^{\bowtie q}\psi$ and $\mathtt{DT}_{A,B}^{\bowtie q}\psi$ express competence trust and disposition trust of $A$ in $B$ for the task $\psi$; $\mathtt G_A$, $\mathtt I_A$ and $\mathtt C_A$ quantify over the goals, intentions and cognitive states that $A$ may adopt. The *model checking problem* asks, given a finite ASMAS and a formula, whether the formula holds at the initial states.
 
-**Theorem (Huang, Kwiatkowska and Olejnik).**
+**Theorem (Huang, Kwiatkowska and Olejnik).** Model checking PRTL* over ASMAS is undecidable, even if the guarding mechanism is trivial (Theorem 5 of the source).
 
-1. Model checking PRTL* over ASMAS is undecidable, even if the guarding mechanism is trivial.
-2. The synthesis of pro-attitude functions whose formulas are in the language $\mathcal L_A(\mathrm{PRTL}^*)$ is undecidable; this language consists of the Boolean combinations of atomic propositions and of belief and trust formulas of agent $A$ whose path formulas contain no temporal operators.
+The source also shows that the synthesis of pro-attitude functions whose formulas are in the language $\mathcal L_A(\mathrm{PRTL}^*)$ is undecidable (Theorem 4); this language consists of the Boolean combinations of atomic propositions and of belief and trust formulas of agent $A$ whose path formulas contain no temporal operators.
 
 Both problems remain undecidable for formulas concerning the beliefs of a single agent. The source identifies decidable fragments, among them a bounded fragment whose model checking problem is in EXPTIME.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -33,8 +32,8 @@ None.
 
 ## Expansion
 
-Both parts reduce from the emptiness and strict emptiness problems of probabilistic automata, which are undecidable (Paz): given a probabilistic automaton and a cut-point $\epsilon$, is there a word accepted with probability at least $\epsilon$ (respectively greater than $\epsilon$)? From the automaton one builds a single-agent ASMAS in which the agent chooses input letters without observing the automaton's state, so that its belief in reaching an accepting state after a word equals the acceptance probability of that word; a belief formula with threshold $\epsilon$ then holds exactly when some word meets the cut-point.
+Both results reduce from the emptiness and strict emptiness problems of probabilistic automata, which are undecidable (Paz): given a probabilistic automaton and a cut-point $\epsilon$, is there a word accepted with probability at least $\epsilon$ (respectively greater than $\epsilon$)? From the automaton one builds a single-agent ASMAS in which the agent chooses input letters without observing the automaton's state, so that its belief in reaching an accepting state after a word equals the acceptance probability of that word; a belief formula with threshold $\epsilon$ then holds exactly when some word meets the cut-point.
 
 ## Sources
 
-- X. Huang, M. Kwiatkowska and M. Olejnik, "Reasoning about cognitive trust in stochastic multiagent systems", *ACM Transactions on Computational Logic* 20(4), pp. 1–64, 2019, doi:[10.1145/3329123](https://doi.org/10.1145/3329123); read in arXiv:1905.06627v1 ([arXiv](https://arxiv.org/abs/1905.06627v1)): the definition of autonomous stochastic multiagent systems, the syntax of PRTL* in the section "Reasoning about Beliefs and Trust", the two undecidability theorems at the end of that section, their proofs in the appendix "Undecidability of the General Problem", and the section "Decidable Fragments".
+- X. Huang, M. Kwiatkowska and M. Olejnik, "Reasoning about cognitive trust in stochastic multiagent systems", *ACM Transactions on Computational Logic* 20(4), pp. 1–64, 2019, doi:[10.1145/3329123](https://doi.org/10.1145/3329123); read in arXiv:1905.06627v1 ([arXiv](https://arxiv.org/abs/1905.06627v1)): Definition 12 (autonomous stochastic multiagent systems), the syntax of PRTL* in Section 8 (Reasoning about Beliefs and Trust), Theorems 4 and 5 in Section 10 (Model Checking Complexity), their proofs in Appendix A (Undecidability of the General Problem), and Section 11 (Decidable Fragments).
