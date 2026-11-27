@@ -25,6 +25,7 @@ computed.
 ## Proof depends on
 
 - [Conjunctive queries of bounded generalized hypertreewidth are evaluable in polynomial time](bounded-ghw-cqs-are-evaluable-in-polynomial-time.md)
+- [Pairwise consistency](../join-processing/pairwise-consistent.md)
 
 ## Sources
 

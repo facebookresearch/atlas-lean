@@ -14,6 +14,7 @@ $O(\lVert D \rVert^{2k} \cdot \lVert q \rVert^{2k})$.
 ## Depends on
 
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [One semijoin command](../join-processing/semijoin-step.md)
 
 ## Sources
 

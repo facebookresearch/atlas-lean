@@ -1,10 +1,10 @@
 # Zhuk: reducing a domain to a binary absorbing subuniverse or a center preserves solvability
 
-Let $\Theta$ be a CSP instance over a constraint language preserved by an idempotent WNU $w$, with each domain $D_j$ a subuniverse, and suppose $\Theta$ is cycle-consistent and irreducible and satisfies the additional consistency condition maintained by Zhuk's algorithm (for every $i$ and $b\in D_i$, the instance obtained by replacing every constraint by all its weaker constraints has a solution with $x_i=b$). If $B\subsetneq D_i$ is a proper binary absorbing subuniverse or a proper center of $(D_i;w)$, then: if $\Theta$ has a solution, it has a solution with $x_i\in B$.
+Let $\Theta$ be a CSP instance over a constraint language preserved by a special WNU $w$, with each domain $D_j$ a subuniverse of $(A;w)$, and suppose $\Theta$ is cycle-consistent and irreducible. If $B\subsetneq D_i$ is a nonempty proper binary absorbing subuniverse or a nonempty proper center of $(D_i;w)$, then $\Theta$ has a solution if and only if $\Theta$ has a solution with $x_i\in B$ (Zhuk, Theorem 5.5).
 
 ## Proof sketch
 
-Assume solutions exist but none lies in $B$; choose a minimal "crucial" subinstance witnessing this. Absorption propagates along constraints: the set of values reachable from $B$ through a subdirect constraint is again absorbing (binary absorption or centrality transfers through pp-definitions), and cycle-consistency plus irreducibility force these propagated sets to be compatible across the instance. One then builds, from a solution of the weakened instance with $x_i\in B$ and a genuine solution, a solution with $x_i\in B$ by applying the absorbing term coordinatewise.
+Assume solutions exist but none lies in $B$; choose a minimal "crucial" subinstance witnessing this. Absorption propagates along constraints: the set of values reachable from $B$ through a subdirect constraint is again absorbing (binary absorption or centrality transfers through pp-definitions), and cycle-consistency plus irreducibility force these propagated sets to be compatible across the instance so that a contradiction is reached without requiring any extra weaker-instance consistency hypothesis.
 
 ## Depends on
 
