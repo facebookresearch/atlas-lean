@@ -3697,6 +3697,53 @@ class ScopedRows(Vault):
         sync.insert_rows(path, [self.about("Algebra/a.md")])
         self.assertEqual(path.read_text(), json.dumps(self.about("Algebra/a.md")) + "\n" + last)
 
+    def test_inserted_gives_the_bytes_insert_rows_writes_without_touching_the_links_file(self) -> None:
+        # The placement as a function of the text, for a tool that stages its writes (import_mathgraph): insert_rows
+        # writes exactly what it gives, for every kind of file, a file that is not there being the empty text. It
+        # neither reads nor writes the links file, which here holds other bytes, nor changes the rows it is given.
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        added = [self.about(f"Algebra/{name}.md") for name in ("e", "a", "c", "d/z")]
+        given = json.dumps(added)
+        rows = [json.dumps(self.about(f"Algebra/{name}.md")) for name in ("b", "d/README", "d")]
+        for text in ("", *(separator.join(rows) + last for separator, last in
+                           (("\n", "\n"), ("\n", ""), ("\r\n", "\r\n"), ("\r\n", ""), ("\r", "\r"), ("\n", "\n\n")))):
+            with self.subTest(text=text):
+                path.write_bytes(json.dumps(self.about("Algebra/other.md")).encode("utf-8") + b"\n")
+                before = path.read_bytes(), path.stat().st_mtime_ns
+                expected = sync.inserted(text, added)
+                self.assertEqual((path.read_bytes(), path.stat().st_mtime_ns), before)
+                self.assertEqual(json.dumps(added), given)
+                if text:
+                    path.write_bytes(text.encode("utf-8"))
+                else:
+                    path.unlink()
+                sync.insert_rows(path, added)
+                self.assertEqual(path.read_bytes(), expected.encode("utf-8"))
+
+    def test_a_row_that_takes_its_subject_from_the_folder_defaults_is_placed_by_it(self) -> None:
+        # A row may take its subject from the links folder's defaults (_defaults.json), as Autoform merges them over
+        # each row: it is placed by that page, as every reader of the row sees it, so other defaults place the same
+        # rows otherwise, and inserted and insert_rows agree for each.
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        inherited = '{"id": "af_000000000000000000000001"}'
+        explicit = json.dumps(self.about("Algebra/x.md"))
+        text = inherited + "\n" + explicit + "\n"
+        new = self.about("Algebra/c.md")
+        for default, lines in (("Algebra/a.md", [inherited, json.dumps(new), explicit]),
+                               ("Algebra/zz.md", [json.dumps(new), inherited, explicit])):
+            with self.subTest(default=default):
+                (sync.LINKS / "_defaults.json").write_text(json.dumps(
+                    {**sync.DEFAULTS, "subject": [{"type": "generic", "uri": f"../roadmap/{default}"}]}) + "\n")
+                self.assertEqual(sync.page_key(json.loads(inherited)), default)
+                self.assertEqual(sync.page_key(json.loads(explicit)), "Algebra/x.md")
+                placed = sync.inserted(text, [new])
+                self.assertEqual(placed, "".join(line + "\n" for line in lines))
+                path.write_text(text)
+                sync.insert_rows(path, [new])
+                self.assertEqual(path.read_text(), placed)
+
 
 class ScopedLayout(Vault):
     def test_a_scoped_run_passes_over_generate_wikis_parts_in_the_folders_it_makes(self) -> None:
