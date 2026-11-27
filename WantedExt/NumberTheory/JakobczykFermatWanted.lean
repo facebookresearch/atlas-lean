@@ -24,6 +24,7 @@ public import MathlibExt.NumberTheory.GeneralizedFermatSquareFactors
 public import MathlibExt.NumberTheory.GeneralizedFermatWieferich
 public import MathlibExt.NumberTheory.WieferichPrime
 public import MathlibExt.NumberTheory.WieferichOrder
+public import MathlibExt.NumberTheory.JakobczykFermatNotPowPowModEqOneOfLt
 
 /-!
 # Notes on Jakóbczyk's hypothesis on Fermat numbers
@@ -36,22 +37,13 @@ Numbers*, INTEGERS 26 (2026), Article A77, about the Fermat numbers
 
 The characterization of Wieferich primes to base `a` by multiplicative orders,
 `MetaMathlibExt.pow_sub_one_modEq_one_sq_iff_orderOf_eq`, is proved in
-`MathlibExt.NumberTheory.WieferichOrder`.
+`MathlibExt.NumberTheory.WieferichOrder`, and `MetaMathlibExt.not_pow_pow_modEq_one_of_lt`
+is proved in `MathlibExt.NumberTheory.JakobczykFermatNotPowPowModEqOneOfLt`.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Smaller iterated powers are not congruent to one.** Let $a, b, m \ge 2$ and $n \ge 1$ be
-natural numbers with $a^{b^n} \not\equiv 1 \pmod m$. Then $a^{b^t} \not\equiv 1 \pmod m$ for every
-natural number $t < n$.
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Lemma 2 (`integers-2026-A77-lem-2`). -/
-public theorem_wanted not_pow_pow_modEq_one_of_lt {a b m n t : ℕ} (ha : 2 ≤ a) (hb : 2 ≤ b)
-    (hm : 2 ≤ m) (hn : 1 ≤ n) (h : ¬ a ^ b ^ n ≡ 1 [MOD m]) (ht : t < n) :
-    ¬ a ^ b ^ t ≡ 1 [MOD m]
 
 end
 

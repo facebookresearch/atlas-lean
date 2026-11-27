@@ -16,6 +16,7 @@ public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Nat.Squarefree
 public import Mathlib.Data.Nat.Totient
 public import MathlibExt.NumberTheory.HurwitzQuaternionGreedy
+public import MathlibExt.NumberTheory.HurwitzGeometricProgressionFreeQuaternionGreedyNeNormPreimage
 
 /-!
 # Avoiding 3-term geometric progressions in Hurwitz quaternions: wishlist
@@ -285,23 +286,6 @@ public theorem_wanted quaternionGreedy_squarefree_norm_and_lowerDensity
     (∀ q ∈ 𝐇, (∃ n : ℕ, Squarefree n ∧ Quaternion.normSq q = (n : ℚ)) → q ∈ Gq) ∧
       60 / (7 * Real.pi ^ 2 * ∑' n : ℕ, 1 / ((n : ℝ) + 1) ^ 3) ≤
         Filter.liminf (fun N : ℕ => ρ Gq N) Filter.atTop
-
-/-- **The quaternion greedy set is not determined by norms.** A Hurwitz quaternion is a quaternion
-whose four rational coordinates are either all integers or all halves of odd integers; the norm
-$\mathrm{Nm}(q)$ of a quaternion $q$ is the sum of the squares of its coordinates. Let
-$\mathcal{G}$ be a set of quaternions such that a quaternion $q$ lies in $\mathcal{G}$ if and only
-if $q$ is a nonzero Hurwitz quaternion and there are no $a \in \mathcal{G}$ and Hurwitz quaternion
-$r \ne 0$ with norm $\mathrm{Nm}(r) \ne 1$, $ar \in \mathcal{G}$ and $q = ar^2$ (this recursion on
-the norm characterizes the quaternion greedy set). Then for every set $G$ of positive integers,
-$\mathcal{G}$ is not the set of Hurwitz quaternions whose norm lies in $G$.
-
-Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
-3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
-24.7.7, Proposition 18. -/
-public theorem_wanted quaternionGreedy_ne_norm_preimage
-    (Gq : Set (Quaternion ℚ)) (hGq : IsQuaternionGreedy Gq) (G : Set ℕ)
-    (hG : ∀ n ∈ G, 0 < n) :
-    Gq ≠ 𝐒ᴳ G
 
 /-- **The quaternion greedy set and the norm preimage of Rankin's set differ infinitely.** A
 Hurwitz quaternion is a quaternion whose four rational coordinates are either all integers or all
