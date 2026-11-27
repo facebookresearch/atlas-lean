@@ -46,19 +46,17 @@ module
 public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import Mathlib.RingTheory.MvPowerSeries.Substitution
 public import Mathlib.RingTheory.Noetherian.Defs
-import Mathlib.LinearAlgebra.FreeModule.PID
 import Mathlib.RingTheory.AdicCompletion.Completeness
-import Mathlib.RingTheory.Ideal.Quotient.Noetherian
 import Mathlib.RingTheory.KrullDimension.Field
 import Mathlib.RingTheory.KrullDimension.Regular
 import Mathlib.RingTheory.LocalRing.Module
-import Mathlib.RingTheory.Regular.Free
 import Mathlib.RingTheory.RingHom.Flat
 import MathlibExt.RingTheory.Depth.CohenMacaulaySystemOfParameters
 import MathlibExt.RingTheory.MvPowerSeries.RegularLocalRing
 import MathlibExt.RingTheory.MvPowerSeries.Span
 import MathlibExt.RingTheory.MvPowerSeries.TensorProductQuotientSpan
 import MathlibExt.RingTheory.PowerSeries.RegularLocalRing
+import MathlibExt.RingTheory.Regular.FreeOfRegularSequence
 
 @[expose] public section
 
@@ -82,68 +80,6 @@ dévissage on the ideals of coefficients (`eq_zero_of_sum_subst_mul_eq_zero_of_r
 field `k`, `k⟦X⟧` is Cohen–Macaulay, so the parameters form a regular sequence and `k⟦X⟧`, viewed
 over itself through the substitution, is free
 (`finite_flat_exists_basis_substAlgHom_of_finite_quotient`). -/
-
-private theorem map_mk_maximalIdeal {A : Type*} [CommRing A] [IsLocalRing A] (I : Ideal A)
-    (hI : I ≠ ⊤) [IsLocalRing (A ⧸ I)] :
-    (IsLocalRing.maximalIdeal A).map (Ideal.Quotient.mk I) =
-      IsLocalRing.maximalIdeal (A ⧸ I) := by
-  have hsurj : Function.Surjective (Ideal.Quotient.mk I) := Ideal.Quotient.mk_surjective
-  rcases Ideal.map_eq_top_or_isMaximal_of_surjective _ hsurj
-      (IsLocalRing.maximalIdeal.isMaximal A) with h | h
-  · exfalso
-    have h2 := congrArg (Ideal.comap (Ideal.Quotient.mk I)) h
-    rw [Ideal.comap_map_of_surjective _ hsurj, Ideal.comap_top, ← RingHom.ker_eq_comap_bot,
-      Ideal.mk_ker, sup_eq_left.mpr (IsLocalRing.le_maximalIdeal hI)] at h2
-    exact (IsLocalRing.maximalIdeal.isMaximal A).ne_top h2
-  · exact IsLocalRing.eq_maximalIdeal h
-
-private theorem free_of_isWeaklyRegular_aux (n : ℕ) :
-    ∀ (A : Type*) [CommRing A] [IsLocalRing A] [IsNoetherianRing A] (rs : List A),
-      rs.length = n → Ideal.ofList rs = IsLocalRing.maximalIdeal A →
-      ∀ (M : Type*) [AddCommGroup M] [Module A M] [Module.Finite A M],
-        RingTheory.Sequence.IsWeaklyRegular M rs → Module.Free A M := by
-  induction n with
-  | zero =>
-    intro A _ _ _ rs hlen hspan M _ _ _ _
-    obtain rfl : rs = [] := List.eq_nil_of_length_eq_zero hlen
-    rw [Ideal.ofList_nil] at hspan
-    have hF : IsField A := IsLocalRing.isField_iff_maximalIdeal_eq.mpr hspan.symm
-    let := hF.toField
-    infer_instance
-  | succ n ih =>
-    intro A _ _ _ rs hlen hspan M _ _ _ hM
-    cases rs with
-    | nil => simp at hlen
-    | cons r rs' =>
-      rw [RingTheory.Sequence.isWeaklyRegular_cons_iff'] at hM
-      obtain ⟨hr, hM'⟩ := hM
-      have hr𝔪 : r ∈ IsLocalRing.maximalIdeal A := hspan ▸ Ideal.subset_span (by simp)
-      have hne : Ideal.span {r} ≠ ⊤ :=
-        fun h => (IsLocalRing.mem_maximalIdeal r).mp hr𝔪 (Ideal.span_singleton_eq_top.mp h)
-      have : Nontrivial (A ⧸ Ideal.span {r}) := Ideal.Quotient.nontrivial_iff.mpr hne
-      have : IsLocalRing (A ⧸ Ideal.span {r}) :=
-        IsLocalRing.of_surjective' (Ideal.Quotient.mk _) Ideal.Quotient.mk_surjective
-      have hspan' : Ideal.ofList (rs'.map (Ideal.Quotient.mk (Ideal.span {r}))) =
-          IsLocalRing.maximalIdeal (A ⧸ Ideal.span {r}) := by
-        rw [← Ideal.map_ofList, ← map_mk_maximalIdeal _ hne, ← hspan, Ideal.ofList_cons,
-          Ideal.map_sup, Ideal.map_quotient_self, bot_sup_eq]
-      have : Module.Finite (A ⧸ Ideal.span {r}) (QuotSMulTop r M) :=
-        Module.Finite.of_restrictScalars_finite A _ _
-      have : Module.FinitePresentation A M := Module.finitePresentation_of_finite A M
-      have hfree := ih (A ⧸ Ideal.span {r}) _ (by simpa using hlen) hspan'
-        (QuotSMulTop r M) hM'
-      have hmem : r ∈ Ring.jacobson A := (IsLocalRing.ringJacobson_eq_maximalIdeal A).ge hr𝔪
-      exact (Module.free_quotSMulTop_iff_free A M hmem hr).mp hfree
-
--- A finite module on which a sequence generating the maximal ideal is weakly regular is free.
--- Replace with `Module.free_of_isWeaklyRegular_of_span_eq_maximalIdeal` once PR #5911 merges.
-private theorem free_of_isWeaklyRegular_of_span_eq_maximalIdeal
-    {A : Type*} [CommRing A] [IsLocalRing A] [IsNoetherianRing A]
-    (rs : List A) (hspan : Ideal.ofList rs = IsLocalRing.maximalIdeal A)
-    (M : Type*) [AddCommGroup M] [Module A M] [Module.Finite A M]
-    (hM : RingTheory.Sequence.IsWeaklyRegular M rs) :
-    Module.Free A M :=
-  free_of_isWeaklyRegular_aux rs.length A rs rfl hspan M hM
 
 section Support
 
@@ -658,7 +594,7 @@ private theorem finite_flat_exists_basis_substAlgHom_of_finite_quotient
     rw [ofList_ofFn]
     exact span_range_X_eq_maximalIdeal k d
   have hfree : Module.Free (MvPowerSeries (Fin d) k) T := by
-    refine free_of_isWeaklyRegular_of_span_eq_maximalIdeal _ hmaxX T ?_
+    refine Module.free_of_isWeaklyRegular_of_span_eq_maximalIdeal _ hmaxX T ?_
     rw [← RingTheory.Sequence.isWeaklyRegular_map_algebraMap_iff T T]
     have hmap : (List.ofFn (MvPowerSeries.X : Fin d → MvPowerSeries (Fin d) k)).map
         (algebraMap (MvPowerSeries (Fin d) k) T) = List.ofFn g := by

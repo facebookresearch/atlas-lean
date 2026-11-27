@@ -33,16 +33,12 @@ pattern containment is order-isomorphic subsequence
 (`List.Sublist`) as in the paper.
 
 Corrections to the printed statements, each found by brute
-force and verified numerically: Fleron's recurrence
-(Theorem 4) holds only for `0 < k < n` (at `k = 0` or `k = n`
-the right side is `2`, not `1`); Theorem 6 as printed fails
-for `k > n` and needs `k ≤ n`; Theorem 10 as printed has
-`2^{n-2}` where the correct exponent is `n - 1` (at `n = 2`
-the sum is `6`, the printed right side is `5`), stated below
-doubled to avoid negative exponents; Theorem 19's summation
+force and verified numerically: Theorem 19's summation
 index is `i` (the printed binder is `r`), and it needs
 `k ≤ n`; Theorem 23 uses the paper's convention
-`\binom{-1}{j} = (-1)^j` at `n = 0`.
+`\binom{-1}{j} = (-1)^j` at `n = 0`. The corrections to
+Theorems 4, 6 and 10 are recorded with their proofs in
+`MathlibExt.Combinatorics.Enumerative.RascalNumberIdentities`.
 -/
 module
 
@@ -52,6 +48,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.RascalNumberIdentities
 public import MathlibExt.Combinatorics.Enumerative.RascalNumbers
 public import MathlibExt.Combinatorics.Enumerative.RascalWordEnds
 public import MathlibExt.Combinatorics.Enumerative.RascalWords
@@ -61,178 +58,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted
-
-/-- **Symmetry of Rascal numbers.** For integers $n$ and $k$ with $0 \le k \le n$, the Rascal
-numbers satisfy $R_{n,k} = R_{n,n-k}$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 2. -/
-theorem_wanted rascalZ_symm (n k : ℤ) (h0 : 0 ≤ k) (h1 : k ≤ n) :
-    rascalZ n k = rascalZ n (n - k)
-
-/-- **Fleron's recurrence for Rascal numbers.** For integers $n$ and $k$ with $n \ge 2$ and
-$0 < k < n$, the Rascal numbers $R_{n,k}$ satisfy
-$R_{n,k} = R_{n-1,k} + R_{n-1,k-1} - R_{n-2,k-1} + 1$.
-
-The hypothesis $0 < k < n$ is needed: at $k = 0$ or $k = n$ the right side equals $2$ while
-$R_{n,k} = 1$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 4. -/
-theorem_wanted rascalZ_fleron (n k : ℤ) (hn : 2 ≤ n)
-    (hk0 : 0 < k) (hkn : k < n) :
-    rascalZ n k = rascalZ (n - 1) k + rascalZ (n - 1) (k - 1) -
-      rascalZ (n - 2) (k - 1) + 1
-
-/-- **Generalized diamond recurrence for Rascal numbers.** For integers $n$, $k$, $\ell$, $u$
-with $\ell \ge 0$, $u \ge 0$ and $\ell \le k \le n - u$, the Rascal numbers satisfy
-$R_{n,k} R_{n-u-\ell,k-\ell} = R_{n-u,k} R_{n-\ell,k-\ell} + u\ell$.
-
-Since $R_{n-u-\ell,k-\ell} \ge 1$ under these hypotheses, this is the paper's formula
-$R_{n,k} = (R_{n-u,k} R_{n-\ell,k-\ell} + u\ell) / R_{n-u-\ell,k-\ell}$ cleared of denominators.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 5. -/
-theorem_wanted rascalZ_mul_eq (n k ℓ u : ℤ) (hℓ : 0 ≤ ℓ)
-    (hu : 0 ≤ u) (h : ℓ ≤ k) (h2 : k ≤ n - u) :
-    rascalZ n k * rascalZ (n - u - ℓ) (k - ℓ) =
-      rascalZ (n - u) k * rascalZ (n - ℓ) (k - ℓ) + u * ℓ
-
-/-- **Row-shift identity for the Rascal numbers.** For integers $n$, $m$ and $k$ with $m \ge 0$
-and $0 \le k \le n$,
-$$R_{n+m,k} = R_{n,k} + R_{m+k,k} - 1,$$
-where $R_{a,b}$ denotes the Rascal numbers, which vanish unless $0 \le b \le a$.
-
-The hypothesis $k \le n$, absent from the printed statement, is needed: for $n = 0$, $m = 1$ and
-$k = 2$ the left side is $R_{1,2} = 0$ while the right side is $0 + 3 - 1 = 2$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 6. -/
-theorem_wanted rascalZ_add_eq (n m k : ℤ) (hm : 0 ≤ m)
-    (hk0 : 0 ≤ k) (hkn : k ≤ n) :
-    rascalZ (n + m) k = rascalZ n k + rascalZ (m + k) k - 1
-
-/-- **Diagonal recurrence for Rascal numbers.** For integers $n$ and $k$ with $0 < k < n$,
-$$k R_{n-1,k-1} - 1 = (k-1) R_{n,k},$$
-where $R_{a,b}$ is the Rascal number, equal to $b(a-b) + 1$ for $0 \le b \le a$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 7. -/
-theorem_wanted mul_rascalZ_sub_one (n k : ℤ) (hk0 : 0 < k)
-    (hkn : k < n) :
-    k * rascalZ (n - 1) (k - 1) - 1 = (k - 1) * rascalZ n k
-
-/-- **Row sums of the Rascal triangle.** For every natural number
-$n$, the Rascal numbers $R_{n,k} = k(n-k) + 1$ ($0 \le k \le n$)
-satisfy $\sum_{k=0}^{n} R_{n,k} = \binom{n+1}{3} + n + 1$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 8. -/
-theorem_wanted sum_rascalZ_row (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), rascalZ (n : ℤ) (k : ℤ) =
-      (Nat.choose (n + 1) 3 : ℤ) + (n : ℤ) + 1
-
-/-- **Column sums of the Rascal triangle.** For all natural numbers
-$k$ and $r$, the Rascal numbers $R_{n,k} = k(n-k) + 1$
-($0 \le k \le n$) satisfy
-$\sum_{i=0}^{r} R_{k+i,k} = k \binom{r+1}{2} + r + 1$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 9. -/
-theorem_wanted sum_rascalZ_column (k r : ℕ) :
-    ∑ i ∈ Finset.range (r + 1), rascalZ ((k + i : ℕ) : ℤ) (k : ℤ) =
-      (k : ℤ) * (Nat.choose (r + 1) 2 : ℤ) + (r : ℤ) + 1
-
-/-- **Binomial-weighted row sums of the Rascal triangle.** For
-every natural number $n$, the Rascal numbers
-$R_{n,k} = k(n-k) + 1$ ($0 \le k \le n$) satisfy
-$2 \sum_{k=0}^{n} \binom{n}{k} R_{n,k} = 2^n \binom{n}{2} + 2^{n+1}$.
-
-The paper prints the exponent $n - 2$ where the correct exponent
-is $n - 1$ in $\sum_{k} \binom{n}{k} R_{n,k} = 2^{n-1} \binom{n}{2} + 2^n$
-(at $n = 2$ the sum is $6$, not $5$); the identity is stated
-doubled so that no exponent is negative at $n = 0$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 10. -/
-theorem_wanted two_mul_sum_choose_mul_rascalZ (n : ℕ) :
-    2 * ∑ k ∈ Finset.range (n + 1),
-        (Nat.choose n k : ℤ) * rascalZ (n : ℤ) (k : ℤ) =
-      2 ^ n * (Nat.choose n 2 : ℤ) + 2 ^ (n + 1)
-
-/-- **Sum of the interior Rascal numbers.** For every natural
-number $n \ge 2$, the Rascal numbers $R_{i,j} = j(i-j) + 1$
-($0 \le j \le i$) satisfy
-$\sum_{i=1}^{n} \sum_{j=1}^{i-1} R_{i,j} = \binom{n+2}{4} + \binom{n}{2}$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 11. -/
-theorem_wanted sum_sum_rascalZ (n : ℕ) (hn : 2 ≤ n) :
-    ∑ i ∈ Finset.Icc 1 n, ∑ j ∈ Finset.Icc 1 (i - 1),
-        rascalZ (i : ℤ) (j : ℤ) =
-      (Nat.choose (n + 2) 4 : ℤ) + (Nat.choose n 2 : ℤ)
-
-/-- **Alternating row sums of the Rascal triangle, odd rows.**
-For every natural number $m$, the Rascal numbers
-$R_{n,k} = k(n-k) + 1$ ($0 \le k \le n$) satisfy
-$\sum_{k=0}^{2m+1} (-1)^k R_{2m+1,k} = 0$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 13. -/
-theorem_wanted sum_rascalZ_alternating_odd (m : ℕ) :
-    ∑ k ∈ Finset.range (2 * m + 2),
-        (-1 : ℤ) ^ k * rascalZ ((2 * m + 1 : ℕ) : ℤ) (k : ℤ) = 0
-
-/-- **Alternating row sums of Rascal numbers on even rows.** For every natural number $m$, the
-Rascal numbers satisfy $\sum_{k=0}^{2m} (-1)^k R_{2m,k} = 1 - m$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 13. -/
-theorem_wanted sum_rascalZ_alternating_even (m : ℕ) :
-    ∑ k ∈ Finset.range (2 * m + 1),
-        (-1 : ℤ) ^ k * rascalZ ((2 * m : ℕ) : ℤ) (k : ℤ) =
-      1 - (m : ℤ)
-
-/-- **Subset-sum expansion of the product of the shifted Rascal numbers.** For natural numbers
-$m$ and $n$ with $1 \le m \le n$, writing $[m] = \{1, \dots, m\}$,
-$$\prod_{k=1}^{m} (R_{n,k} - 1) = \sum_{S \subseteq [m]} (-1)^{m-|S|} \prod_{i \in S} R_{n,i},$$
-where $R_{n,k}$ denotes the Rascal numbers.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 14. -/
-theorem_wanted prod_rascalZ_sub_one_eq_sum (n m : ℕ)
-    (hm : 1 ≤ m) (hmn : m ≤ n) :
-    ∏ k ∈ Finset.Icc 1 m, (rascalZ (n : ℤ) (k : ℤ) - 1) =
-      ∑ S ∈ (Finset.Icc 1 m).powerset,
-        (-1 : ℤ) ^ (m - S.card) *
-          ∏ i ∈ S, rascalZ (n : ℤ) (i : ℤ)
-
-/-- **Closed form for the product of the shifted Rascal numbers.** For natural numbers $m$ and
-$n$ with $1 \le m \le n$,
-$$\prod_{k=1}^{m} (R_{n,k} - 1) = m! \, (n-1)^{\underline{m}},$$
-where $R_{n,k}$ denotes the Rascal numbers and $x^{\underline{m}} = x(x-1)\cdots(x-m+1)$ is the
-falling factorial.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 14. -/
-theorem_wanted prod_rascalZ_sub_one_eq_factorial_mul (n m : ℕ)
-    (hm : 1 ≤ m) (hmn : m ≤ n) :
-    ∏ k ∈ Finset.Icc 1 m, (rascalZ (n : ℤ) (k : ℤ) - 1) =
-      (m.factorial : ℤ) * (Nat.descFactorial (n - 1) m : ℤ)
-
-/-- **Binomial coefficients from products of Rascal numbers.** For natural numbers $n$ and $m$
-with $1 \le m \le n$,
-$$(m!)^2 \binom{n-1}{m} = \prod_{k=1}^{m} (R_{n,k} - 1),$$
-where $R_{n,k} = k(n-k) + 1$ is the Rascal number for $0 \le k \le n$.
-
-Equivalently, $\frac{1}{(m!)^2} \prod_{k=1}^{m} (R_{n,k} - 1) = \binom{n-1}{m}$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Corollary 15. -/
-theorem_wanted factorial_sq_mul_choose_eq_prod (n m : ℕ)
-    (hm : 1 ≤ m) (hmn : m ≤ n) :
-    (m.factorial : ℤ) ^ 2 * (Nat.choose (n - 1) m : ℤ) =
-      ∏ k ∈ Finset.Icc 1 m, (rascalZ (n : ℤ) (k : ℤ) - 1)
 
 /-- **Shape of ascent sequences avoiding 001 and 210.** Let $n$ and $k$ be natural numbers and
 let $w$ be an ascent sequence of length $n$ with exactly $k$ ascents that avoids the patterns

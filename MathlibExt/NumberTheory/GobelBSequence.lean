@@ -116,4 +116,67 @@ public theorem existsUnique_gobelBSequence
   obtain ⟨b, hb⟩ := existsUnique_gobelBSequence.exists_sequence l s hleven hcoprime
   exact ⟨b, hb, fun c hc => existsUnique_gobelBSequence.unique_sequence hcoprime hc hb⟩
 
+/-- **Complementary sequences $b_{l,s}$ and $b_{l,l-s}$.** Let $l \ge 2$ be an even natural
+number and $s \le l$ a natural number such that $2s + 1$ and $l + 1$ are coprime. Let
+$b_1, b_2 : \mathbb{Z} \to \mathbb{Z}$ satisfy the defining conditions of $b_{l,s}$ and of
+$b_{l,l-s}$ respectively. Then for every integer $n$, $b_1(n) = b_2(n)$ if $l + 1$ does not divide
+$n$, and $b_1(n) = -b_2(n)$ if $l + 1$ divides $n$.
+
+Source: Yuh Kobayashi and Shin-ichiro Seki, *A Note on Non-Integrality of the (k, l)-Göbel
+Sequences*, Journal of Integer Sequences 29 (2026), Article 26.3.8, Lemma 22. -/
+public theorem gobelBSequence_complement
+    (l s : ℕ) (hleven : Even l) (hs : s ≤ l) (hl2 : 2 ≤ l)
+    (hcoprime : Nat.Coprime (2 * s + 1) (l + 1))
+    (b₁ b₂ : ℤ → ℤ) (hb₁ : IsGobelBSequence l s b₁)
+    (hb₂ : IsGobelBSequence l (l - s) b₂) :
+    ∀ n, (Int.emod n (l + 1 : ℤ) ≠ 0 → b₁ n = b₂ n) ∧
+      (Int.emod n (l + 1 : ℤ) = 0 → b₁ n = -b₂ n) := by
+  obtain ⟨hsign, hperiod, hone, hanti, hreflect⟩ := hb₂
+  let L : ℤ := l + 1
+  have hp : Function.Periodic b₂ L := hperiod
+  have hneg (n : ℤ) (hn : n % L ≠ 0) : -b₂ (-n) = b₂ n := by
+    rw [← hp.sub_eq' (x := n)]
+    exact (hanti n hn).symm
+  let c : ℤ → ℤ := fun n => -b₂ (-n)
+  have hc : IsGobelBSequence l s c := by
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · intro n
+      rcases hsign (-n) with h | h
+      · exact Or.inr (congrArg Neg.neg h)
+      · exact Or.inl (by simp [c, h])
+    · intro n
+      change -b₂ (-(n + L)) = -b₂ (-n)
+      rw [show -(n + L) = -n - L by omega, hp.sub_eq]
+    · have hL : (1 : ℤ) < L := by
+        dsimp [L]
+        omega
+      have h1 : (1 : ℤ) % L ≠ 0 := by
+        rw [Int.emod_eq_of_lt (by decide) hL]
+        decide
+      exact (hneg 1 h1).trans hone
+    · intro n hn
+      change -b₂ (-n) = -(-b₂ (-(L - n)))
+      rw [hneg n hn, neg_neg, show -(L - n) = n - L by omega, hp.sub_eq]
+    · intro n
+      -- The reflected indices shift the doubled center by two periods.
+      have hs' : ((l - s : ℕ) : ℤ) = (l : ℤ) - s := Nat.cast_sub hs
+      have h := hreflect (L + n)
+      have hleft : ((l - s : ℕ) : ℤ) - (L + n) = -((s : ℤ) + 1 + n) := by
+        dsimp [L]
+        omega
+      have hright : ((l - s : ℕ) : ℤ) + 1 + (L + n) = -((s : ℤ) - n) + L + L := by
+        dsimp [L]
+        omega
+      rw [hleft, hright, hp, hp] at h
+      exact congrArg Neg.neg h.symm
+  have hbc : b₁ = c := (existsUnique_gobelBSequence l s hleven hs hcoprime).unique hb₁ hc
+  subst b₁
+  intro n
+  refine ⟨hneg n, fun hn => ?_⟩
+  obtain ⟨k, hk⟩ := Int.dvd_iff_emod_eq_zero.mpr hn
+  change -b₂ (-n) = -b₂ n
+  rw [hk, mul_comm L k]
+  have hpk := hp.int_mul k
+  exact congrArg Neg.neg (hpk.neg_eq.trans hpk.eq.symm)
+
 end MetaMathlibExt

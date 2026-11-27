@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Order.GaloisConnection.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.NumberTheory.GeneralizedHofstadterOrderHofLEqAddHofCount
 
 /-!
 # Pointwise order of generalized Hofstadter functions
@@ -69,21 +70,6 @@ public theorem_wanted hofstadterF_iterate_basic {j k : ℕ} (hj : 1 ≤ j) (hk :
       Monotone (hofstadterF k)^[j] ∧ Function.Surjective (hofstadterF k)^[j] ∧
       ¬ Function.Injective (hofstadterF k)^[j]
 
-/-- **Iterates of the Hofstadter substitution on the letter $k$.** Let $k \ge 1$, let $\tau_k$ be
-the morphism of finite words over $\mathbb{N}$ that replaces the letter $k$ by the word $k\,1$ and
-every other letter $i$ by $i + 1$, and write $\tau_k^j(k)$ for the word obtained by applying
-$\tau_k$ $j$ times to the one-letter word $k$. For every natural number $j$: if $j \le k$, then
-$\tau_k^j(k) = k\,1\,2 \cdots j$, the letter $k$ followed by $1, 2, \dots, j$; and if $j \ge k$,
-then $\tau_k^j(k)$ is the concatenation $\tau_k^{j-1}(k)\,\tau_k^{j-k}(k)$.
-
-Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
-Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
-Proposition 3 (`jis-2026-26.3.3-prop-3`). -/
-public theorem_wanted hofTauList_iterate_self {k : ℕ} (hk : 1 ≤ k) (j : ℕ) :
-    (j ≤ k → (hofTauList k)^[j] [k] = k :: List.range' 1 j) ∧
-      (k ≤ j → (hofTauList k)^[j] [k] =
-        (hofTauList k)^[j - 1] [k] ++ (hofTauList k)^[j - k] [k])
-
 /-- **Basic properties of the iterates of $L_k$.** Let $k \ge 1$, let $x_k$ be the fixed point of
 the substitution $\tau_k$, with letters $x_k[0], x_k[1], \dots$ and prefixes
 $x_k[0:n) = x_k[0] \cdots x_k[n-1]$, let $L_k(n) = |\tau_k(x_k[0:n))|$, and write $f^j$ for the
@@ -108,19 +94,6 @@ public theorem_wanted hofL_iterate_basic {k : ℕ} (hk : 1 ≤ k) (j : ℕ) :
       StrictMono (hofL k)^[j] ∧
       (∀ n, n ≤ (hofL k)^[j] n ∧ ((hofL k)^[j] n = n ↔ j = 0 ∨ n = 0)) ∧
       (∀ n, 1 ≤ n → StrictMono fun i => (hofL k)^[i] n)
-
-/-- **Bracketing by the iterates of $L_k$.** For $k \ge 1$, let $\tau_k$ be the substitution
-sending the letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $x_k$ be its fixed
-point starting with $k$, and let $L_k(n)$ be the length of the image under $\tau_k$ of the first
-$n$ letters of $x_k$; write $L_k^j$ for the $j$-fold iterate of $L_k$. For all $j \ge 0$ and
-$m \ge 1$ there is a unique $n \ge 1$ with $L_k^j(n - 1) < m \le L_k^j(n)$.
-
-Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
-Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
-Proposition 5 (`jis-2026-26.3.3-prop-5`). -/
-public theorem_wanted existsUnique_hofL_iterate_bracket {k m : ℕ} (hk : 1 ≤ k) (hm : 1 ≤ m)
-    (j : ℕ) :
-    ∃! n, 1 ≤ n ∧ (hofL k)^[j] (n - 1) < m ∧ m ≤ (hofL k)^[j] n
 
 /-- **Fibres of the iterated Hofstadter functions.** Let $k \ge 1$ and $j \ge 0$. Let $F_k$ be the
 generalized Hofstadter function, let $x_k[0]\,x_k[1] \cdots$ be the fixed point, beginning with
@@ -169,20 +142,6 @@ public theorem_wanted hofstadterF_iterate_eq_hofCount {k : ℕ} (hk : 1 ≤ k) (
     (hofstadterF k)^[k - 1] n = hofCount k (· = k) n ∧
       (∀ j < k, (hofstadterF k)^[j] n = hofCount k (j < ·) n) ∧
       (∀ i, 1 ≤ i → i < k → (hofstadterF k)^[k + i - 1] n = hofCount k (· = i) (n + i))
-
-/-- **The image length $L_k$ as a letter count.** Let $k \ge 1$. Let $F_k$ be the generalized
-Hofstadter function and $F_k^{k-1}$ its $(k-1)$-fold iterate, let $x_k[0]\,x_k[1] \cdots$ be the
-fixed point, beginning with $k$, of the substitution $\tau_k$ that sends $k$ to $k\,1$ and every
-other letter $i$ to $i + 1$, let $L_k(n)$ be the length of the word
-$\tau_k(x_k[0] \cdots x_k[n-1])$, and let $C_k^{(=k)}(n)$ be the number of indices $0 \le i < n$
-with $x_k[i] = k$. Then for every natural number $n$, $L_k(n) = n + C_k^{(=k)}(n)$ and
-$L_k(n) = n + F_k^{k-1}(n)$.
-
-Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
-Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
-Proposition 9 (`jis-2026-26.3.3-prop-9`). -/
-public theorem_wanted hofL_eq_add_hofCount {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
-    hofL k n = n + hofCount k (· = k) n ∧ hofL k n = n + (hofstadterF k)^[k - 1] n
 
 /-- **Generalized Hofstadter function as a letter count.** Let $k > 1$ and $n \ge 0$. Let $F_k$ be
 the generalized Hofstadter function, defined by $F_k(0) = 0$ and $F_k(m) = m - F_k^k(m - 1)$ for

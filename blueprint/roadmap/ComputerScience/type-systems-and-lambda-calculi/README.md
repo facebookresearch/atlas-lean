@@ -10,10 +10,13 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [System Fω](system-f-2/README.md)
 - [Operational semantics of the simply typed lambda calculus](operational-semantics-of-the-simply-typed-lambda/README.md)
 - [Denotational semantics of the simply typed lambda calculus](denotational-semantics-of-the-simply-typed-lambd/README.md)
+- [Effect-handling lambda calculus](effect-handling-lambda-calculus/README.md)
+- [Extended simply typed lambda calculus](extended-simply-typed-lambda-calculus/README.md)
 - [Normalization by evaluation](normalization-by-evaluation/README.md)
 - [Normalization of the simply typed lambda calculus](normalization-of-the-simply-typed-lambda-calculu/README.md)
 - [Type checking for the simply typed lambda calculus](type-checking-for-the-simply-typed-lambda-calcul/README.md)
 - [Lambda calculus with references](lambda-calculus-with-references/README.md)
+- [Named and locally nameless terms](named-and-locally-nameless-terms/README.md)
 - [Syntax with binders](syntax-with-binders/README.md)
 
 - [Gödel's System T](system-t/README.md)
@@ -24,3 +27,4 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [Curry–Howard correspondence for implicational logic](curry-howard-correspondence-for-implicational-logic.md)
 - [Typed terms give natural-deduction derivations](typed-terms-give-natural-deduction-derivations.md)
 - [Uniqueness of normal forms in System F](uniqueness-of-normal-forms-in-system-f.md)
+- [Partial Combinatory Algebras and Kleene's Models](partial-combinatory-algebras/README.md)

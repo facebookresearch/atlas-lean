@@ -34,6 +34,7 @@ public import Mathlib.GroupTheory.Perm.Fin
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import MathlibExt.Combinatorics.Enumerative.ReducedUnicellularHypermonopolesVanishing
 public import MathlibExt.Combinatorics.Enumerative.Stirling
+public import MathlibExt.Combinatorics.Enumerative.UnicellularHypermonopolesFinRotate
 
 namespace MetaMathlibExt
 
@@ -72,22 +73,6 @@ S. Grusea and A. Labarre. -/
 public theorem_wanted sum_cyclicProductNumber_mul_X_pow (n : ℕ) :
     ∑ k ∈ Finset.range (n + 1), C (cyclicProductNumber n k : ℚ) * X ^ k =
       C (((n + 1 : ℚ) * n)⁻¹) * (ascPochhammer ℚ (n + 1) - descPochhammer ℚ (n + 1))
-
-/-- **Unicellular hypermonopoles with a cyclic vertex permutation.** Let $n$ and $k$ be natural
-numbers, let $\sigma$ be the cyclic permutation $i \mapsto i + 1$ (modulo $n$) of
-$\{0, 1, \dots, n - 1\}$, and write $z(\pi)$ for the number of cycles of a permutation $\pi$,
-fixed points included. Then the number of permutations $\alpha$ of $\{0, 1, \dots, n - 1\}$ with
-$z(\alpha^{-1} \circ \sigma) = 1$ and $z(\alpha) = k$ is the cyclic product number $H(n, k)$.
-
-In the terms of the source, these $\alpha$ are the unicellular hypermonopoles $(\sigma, \alpha)$
-with $\sigma = (1, \dots, n)$ and $z(\alpha) = k$.
-
-Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Corollary 8 (`jis-2025-25.3.3-cor-8`). -/
-public theorem_wanted card_unicellular_hypermonopoles_finRotate (n k : ℕ) :
-    Fintype.card {α : Equiv.Perm (Fin n) //
-      cycleQuotientCount (α⁻¹ * finRotate n) = 1 ∧ cycleQuotientCount α = k} =
-      cyclicProductNumber n k
 
 /-- **Counting reduced unicellular hypermonopoles with a cyclic vertex permutation.** Let
 $n \ge 2$ and $k \ge 1$ be natural numbers with $2k \le n$, let $\sigma$ be the cyclic

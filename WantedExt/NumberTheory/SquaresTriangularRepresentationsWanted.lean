@@ -16,7 +16,9 @@ public import Mathlib.NumberTheory.Divisors
 public import Mathlib.RingTheory.PowerSeries.Inverse
 
 public import MathlibExt.NumberTheory.SquareRepresentationCongruences
+public import MathlibExt.NumberTheory.SquareTriangularRepresentationDivisibility
 public import MathlibExt.NumberTheory.TriangularRepresentationWindow
+public import MathlibExt.NumberTheory.SquaresTriangularRepresentationsSumOfSquaresRepCountIntegerRoot
 
 /-!
 # Congruences for representations as sums of squares and triangular numbers
@@ -30,7 +32,9 @@ as an ordered sum of `k` squares of integers and of `k` triangular numbers. The
 source treats them as polynomials in `k` (`n! r_k(n), n! t_k(n) ∈ ℤ[k]`) and
 evaluates at arbitrary integers `k` (e.g. `k + r p` with `r ∈ ℤ`); here `k ∈ ℤ`
 through the integer powers of the units `θ` and `ψ` of `ℤ⟦q⟧`, which agree with
-those polynomial values.
+those polynomial values. The integer-root theorem for sums of squares,
+`sumOfSquaresRepCount_integer_root`, is proved in
+`MathlibExt.NumberTheory.SquaresTriangularRepresentationsSumOfSquaresRepCountIntegerRoot`.
 -/
 
 namespace MetaMathlibExt
@@ -47,20 +51,6 @@ Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
 public theorem sumOfTriangularRepCount_one (n : ℕ) :
     sumOfTriangularRepCount 1 n = PowerSeries.coeff n triangularThetaSeries := by
   simp [sumOfTriangularRepCount]
-
-/-- **Prime divisibility of triangular representation numbers persists under prime shifts.** For an
-integer $k$, let $t_k(n)$ be the coefficient of $q^n$ in $\psi(q)^k$, where
-$\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$. Let $n \ge 1$ and $k \ge 1$ be natural numbers and let $p$
-be a prime with $p \ge n + 1$. If $p$ divides $t_k(n)$, then $p$ divides $t_{k+rp}(n)$ for every
-integer $r$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Theorem 4 (`integers-2026-A93-thm-4`). -/
-public theorem_wanted sumOfTriangularRepCount_add_mul_prime {n k p : ℕ} (hn : 1 ≤ n)
-    (hk : 1 ≤ k) (hp : p.Prime) (hpn : n + 1 ≤ p)
-    (h : (p : ℤ) ∣ sumOfTriangularRepCount k n) (r : ℤ) :
-    (p : ℤ) ∣ sumOfTriangularRepCount (k + r * p) n
 
 /-- **Window congruence for sums of squares.** For an integer $k$, let $r_k(n)$ be the coefficient
 of $q^n$ in $\theta(q)^k$, where $\theta(q) = \sum_{m \in \mathbb{Z}} q^{m^2}$. Let $n \ge 1$, let
@@ -105,19 +95,6 @@ public theorem_wanted sumOfTriangularRepCount_ne_zero_of_window {n p : ℕ} (hn 
     (hp : p.Prime) (hp2 : p ≠ 2) (hpn : n + 1 ≤ p - 1) (s : ℤ)
     (h : ¬ (p : ℤ) ∣ ∑ i ∈ Finset.Icc 1 (p - 1), sumOfTriangularRepCount (s - i) n) :
     sumOfTriangularRepCount s n ≠ 0
-
-/-- **A prime between $p/2$ and $p$ divides the representation counts of $p$.** For integers
-$k, n \ge 1$, let $r_k(n)$ be the number of representations of $n$ as an ordered sum of $k$ squares
-of integers and $t_k(n)$ the number of representations of $n$ as an ordered sum of $k$ triangular
-numbers $m(m+1)/2$ with $m \ge 0$. Let $p$ be an odd prime and $\ell$ a prime with
-$p/2 < \ell < p$. Then $\ell$ divides both $r_\ell(p)$ and $t_\ell(p)$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Theorem 11 (`integers-2026-A93-thm-11`). -/
-public theorem_wanted prime_dvd_repCount_of_half_lt {p q : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (hq : q.Prime) (hpq : p < 2 * q) (hqp : q < p) :
-    (q : ℤ) ∣ sumOfSquaresRepCount q p ∧ (q : ℤ) ∣ sumOfTriangularRepCount q p
 
 /-- **Logarithmic coefficients of the triangular theta series.** For a natural number $n$, let
 $b_n$ be the rational number
@@ -186,24 +163,6 @@ public theorem_wanted sumOfTriangularRepCount_succ (k : ℤ) (n : ℕ) :
     (sumOfTriangularRepCount k (n + 1) : ℚ) =
       ∑ j ∈ Finset.range (n + 1),
         (k : ℚ) * (j + 1) * triangularLogCoeff (j + 1) / (n + 1) * sumOfTriangularRepCount k (n - j)
-
-/-- **Integer zeros of the sums-of-squares counting polynomial.** For an integer $k$ and $n \ge 0$,
-let $r_k(n)$ be the coefficient of $q^n$ in $\theta(q)^k$, where $\theta$ is the square theta
-series. For every $n \ge 0$ there is a polynomial $P(z) = \sum_i c_i z^i$ with integer
-coefficients such that $P(z) = n! \, r_z(n)$ for every integer $z$, and every nonzero integer $k$
-with $r_k(n) = 0$ divides $c_1$ and satisfies $|k| < 2 |c_i|^{1/(n-i)}$ for some $i$ with
-$0 \le i < n$.
-
-Equivalently, $|k| < 2 R_n$ with $R_n = \max_{0 \le i \le n-1} |c_i|^{1/(n-i)}$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Theorem 9 (`integers-2026-A93-thm-9`). -/
-public theorem_wanted sumOfSquaresRepCount_integer_root (n : ℕ) :
-    ∃ P : Polynomial ℤ, (∀ z : ℤ, P.eval z = n.factorial * sumOfSquaresRepCount z n) ∧
-      ∀ k : ℤ, k ≠ 0 → sumOfSquaresRepCount k n = 0 →
-        k ∣ P.coeff 1 ∧
-          ∃ i < n, (|k| : ℝ) < 2 * (|P.coeff i| : ℝ) ^ ((1 : ℝ) / ((n : ℝ) - i))
 
 /-- **Integer roots of triangular representation numbers.** For an integer $k$, let $t_k(n)$ be the
 coefficient of $q^n$ in $\psi(q)^k$, where $\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$. For every

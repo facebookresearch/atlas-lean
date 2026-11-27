@@ -120,17 +120,6 @@ public theorem_wanted bishopsBlack_eq_sum (m k : ℕ) :
     bishopsBlack m k =
       ∑ j ∈ range (k + 1), (m / 2).choose j * extStirlingSecond ((m : ℤ) - j) ((m : ℤ) - k)
 
-/-- **Ward's identity for Stirling numbers of the second kind.** For natural numbers $k \le m$,
-$$S(m, m - k) = \sum_{p=0}^{k} S_2(k + p, p) \binom{m}{k + p},$$
-where $S$ denotes the Stirling numbers of the second kind and $S_2$ the 2-associated Stirling
-numbers of the second kind.
-
-Source: Eder G. Santos, *Counting Nonattacking Chess Piece Placements: Bishops and Anassas*,
-Journal of Integer Sequences 28 (2025), Article 25.8.6, Lemma 8 (`jis-2025-25.8.6-lem-8`). -/
-public theorem_wanted stirlingSecond_sub_eq_sum_associated (m k : ℕ) (hk : k ≤ m) :
-    (Nat.stirlingSecond m (m - k) : ℤ) =
-      ∑ p ∈ range (k + 1), twoAssocStirlingSecond (k + p) p * m.choose (k + p)
-
 /-- **Santos's expansion of a product of binomial coefficients.** For natural numbers $p$, $q$
 and complex numbers $x$, $z$,
 $$\binom{2x + z - q}{p} \binom{x}{q} = \sum_{i=0}^{p+q} \beta_i(p, q, z) \binom{2x + z}{i},$$

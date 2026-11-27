@@ -3,6 +3,7 @@
 - [Gal Restrict Ring Aut](gal-restrict-ring-aut.md)
 - [Cl End Hom](cl-end-hom.md)
 - [Cl Ring Action](cl-ring-action.md)
+- [Cl Ring Action apply of pow eq](cl-ring-action-apply-of-pow-eq.md)
 - [Cl Gal Action](cl-gal-action.md)
 - [Cl Gal Action cl Proj mk0](cl-gal-action-cl-proj-mk0.md)
 - [Units End](units-end.md)
@@ -16,3 +17,5 @@
 - [Omega Idempotent comp self](omega-idempotent-comp-self.md)
 - [Omega Idempotent mem units Omega Eigenspace](omega-idempotent-mem-units-omega-eigensp.md)
 - [Mem units Omega Eigenspace](mem-units-omega-eigenspace.md)
+- [Units Omega Eigenspace Finrank](finrank-units-omega-eigenspace-two.md)
+- [Cyclotomic Unit Omega Two](omega-idempotent-two-cyclo-unit-two-ne-z.md)
