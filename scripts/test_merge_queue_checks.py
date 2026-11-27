@@ -8,11 +8,15 @@ renames the job, or lets one merge group's run cancel another's would leave the
 check missing or wrong, and the queue would drop the PR or hold it until its
 timeout. The one job-level `if` allowed lets only a pull request skip a job,
 and only when the `changes` job of its workflow succeeds and says that the pull
-request does not need it (scripts/ci_scope.py). A required workflow also runs on `pull_request`, never
+request does not need it (scripts/ci_scope.py); `changes` itself may run on
+pull requests only. A required workflow also runs on `pull_request`, never
 `pull_request_target`: from 2 December 2026 GitHub blocks `pull_request_target`
 runs by default in public repositories, and a required check that never reports
-blocks every PR. The required checks are the ones listed under "How PRs merge"
-in CONTRIBUTING.md.
+blocks every PR. Merge groups run ci.yml's three required jobs on the 16-core
+runner (ci.yml's `build` says why), so a mistyped label there would leave a
+merge group's check waiting for a runner that does not exist; actionlint does
+not check labels inside an expression. The required checks are the ones listed
+under "How PRs merge" in CONTRIBUTING.md.
 
 Run with: python3 -m unittest discover -s scripts -p test_merge_queue_checks.py
 """
@@ -46,6 +50,9 @@ SCOPED_IF = re.compile(r"\$\{\{ !cancelled\(\) && \(github\.event_name != 'pull_
 # one of these never lets one merge group's run cancel another's.
 PER_MERGE_GROUP = ("github.ref", "github.sha", "github.run_id",
                    "github.event.merge_group.head_ref", "github.event.merge_group.head_sha")
+# The runner of ci.yml's required jobs: 16 cores for merge groups, the standard
+# runner for pull requests, pushes and manual runs.
+MERGE_GROUP_RUNNER = "${{ github.event_name == 'merge_group' && '16-core-ubuntu' || 'ubuntu-24.04' }}"
 
 
 def block(lines: list[str], key: str, indent: int) -> list[str] | None:
@@ -103,6 +110,13 @@ def documented_checks() -> list[str]:
 class MergeQueueChecks(unittest.TestCase):
     def test_contributing_lists_the_required_checks(self):
         self.assertEqual(documented_checks(), list(REQUIRED))
+
+    def test_merge_groups_run_cis_required_jobs_on_the_16_core_runner(self):
+        ci = jobs(workflow("ci.yml"))
+        for job in ("preflight", "graph", "build"):
+            with self.subTest(job=job):
+                self.assertIn(check_name(job, ci[job]), REQUIRED)
+                self.assertEqual(value(ci[job], "runs-on", 4), MERGE_GROUP_RUNNER)
 
     def test_the_graph_job_runs_the_graph_check(self):
         body = " ".join(jobs(workflow("ci.yml"))["graph"])
@@ -168,8 +182,12 @@ class MergeQueueChecks(unittest.TestCase):
                 self.assertIsNotNone(condition, f"job {job} needs changes without the condition above")
                 changes = jobs(workflow(name)).get("changes")
                 self.assertIsNotNone(changes, f"{name} has no changes job")
-                for key in ("if", "strategy", "needs"):
+                for key in ("strategy", "needs"):
                     self.assertIsNone(block(changes, key, 4), f"job changes has a job-level {key}")
+                # It may skip itself outside pull requests, which alone consult it, and nothing more.
+                if block(changes, "if", 4) is not None:
+                    self.assertIn(value(changes, "if", 4), ("github.event_name == 'pull_request'",
+                                                            "${{ github.event_name == 'pull_request' }}"))
                 self.assertNotIn(check_name("changes", changes), REQUIRED)
                 self.assertIn(condition.group(1), keys(block(changes, "outputs", 4) or [], 6),
                               f"job changes has no output {condition.group(1)}")

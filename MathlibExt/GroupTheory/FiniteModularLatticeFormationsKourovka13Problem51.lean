@@ -34,6 +34,9 @@ empty class counts as a formation, as in the resolving preprint. Meets are inter
 are generated formations. An embedding is an injective map preserving binary meets and joins;
 preservation of the least or greatest element is not required. Allowing the empty formation makes
 the refuted statement weaker, since the nonempty formations form a sublattice.
+
+The module also defines the inclusion of classes of finite groups, `ClassLE`, which other results
+on formations use to compare classes.
 -/
 
 @[expose] public section
@@ -577,3 +580,15 @@ public theorem finiteModularLatticeEmbedsInFormations_refuted :
   exact (of_decide_eq_false (by decide +kernel)) axial
 
 end MathlibExt.GroupTheory.FiniteModularLatticeFormationsKourovka13Problem51Wanted
+
+namespace MathlibExt.GroupTheory.FiniteGroupFormationShared
+
+open MathlibExt.GroupTheory.FiniteModularLatticeFormationsKourovka13Problem51Wanted
+
+/-- **Inclusion of classes of finite groups.** For classes $\mathfrak{F}$ and $\mathfrak{G}$ of
+finite groups, $\mathfrak{F} \subseteq \mathfrak{G}$ means that every finite group in
+$\mathfrak{F}$ belongs to $\mathfrak{G}$. -/
+def ClassLE (𝔉 𝔊 : FiniteGroupClass) : Prop :=
+  ∀ (G : Type) [Group G] [Finite G], 𝔉 G → 𝔊 G
+
+end MathlibExt.GroupTheory.FiniteGroupFormationShared

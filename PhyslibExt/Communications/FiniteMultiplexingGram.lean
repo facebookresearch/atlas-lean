@@ -190,9 +190,9 @@ lemma orthonormal_fdmaCarrier {κ : Type} (N : ℕ) [NeZero N] (f : κ → ZMod 
     by_cases hd : d = 0
     · simp only [hd, zero_mul]
       simp [ZMod.card]
-    · rw [if_neg hd]
+    · rw [ite_eq_right hd]
       have h := AddChar.sum_mulShift d (ZMod.isPrimitive_stdAddChar N)
-      rw [if_neg hd] at h
+      rw [ite_eq_right hd] at h
       simpa only [mul_comm, Nat.cast_zero] using h
   have innerForm : ∀ a b : ZMod N, ⟪fdmaCarrier N a, fdmaCarrier N b⟫_ℂ
       = (if a = b then (1 : ℂ) else 0) := by
@@ -219,10 +219,10 @@ lemma orthonormal_fdmaCarrier {κ : Type} (N : ℕ) [NeZero N] (f : κ → ZMod 
     rw [hinner, charSum]
     by_cases hab : a = b
     · subst hab
-      simp only [sub_self, eq_self_iff_true, if_true]
+      simp only [sub_self, eq_self_iff_true, ite_true]
       exact hc_sq
     · have hne : b - a ≠ 0 := fun h => hab (sub_eq_zero.mp h).symm
-      rw [if_neg hne, if_neg hab, mul_zero]
+      rw [ite_eq_right hne, ite_eq_right hab, mul_zero]
   refine ⟨fun j => ?_, fun i j hij => ?_⟩
   · have hself : ⟪fdmaCarrier N (f j), fdmaCarrier N (f j)⟫_ℂ = 1 := by
       rw [innerForm]
@@ -241,7 +241,7 @@ lemma orthonormal_fdmaCarrier {κ : Type} (N : ℕ) [NeZero N] (f : κ → ZMod 
       linarith
   · have hne : f i ≠ f j := fun h => hij (hf h)
     show ⟪fdmaCarrier N (f i), fdmaCarrier N (f j)⟫_ℂ = 0
-    rw [innerForm, if_neg hne]
+    rw [innerForm, ite_eq_right hne]
 
 /-- FDMA recovery for users on distinct DFT frequencies. -/
 lemma fdma_matchedOutput_eq {κ : Type} [Fintype κ] (N : ℕ) [NeZero N]
