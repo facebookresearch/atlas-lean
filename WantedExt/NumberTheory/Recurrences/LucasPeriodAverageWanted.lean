@@ -25,6 +25,7 @@ public import Mathlib.RingTheory.Coprime.Basic
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
 public import MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageDegenerateSecondOrderSums
+public import MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageLucasUSumDvdIffOfPEqOne
 
 /-!
 # Period lengths modulo `n` and averages of second-order recurrences
@@ -36,6 +37,8 @@ chain characterization of Theorem 4.3 are omitted, and false clauses are correct
 omitted as recorded in the source audit). The theorem `degenerate_secondOrder_sums` is proved,
 and the definition `lucasAllAveragesIntegral` is defined, in
 `MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageDegenerateSecondOrderSums`.
+The theorem `lucasU_sum_dvd_iff_of_p_eq_one` is proved in
+`MathlibExt.NumberTheory.Recurrences.LucasPeriodAverageLucasUSumDvdIffOfPEqOne`.
 
 The paper writes the recurrence as `W (n + 2) = a * W (n + 1) + b * W n` with discriminant
 `D = a ^ 2 + 4 * b`. This module uses the repository convention of `lucasU`: parameters
@@ -360,17 +363,6 @@ public theorem_wanted lcm_mem_lucasAverageSet (params : LucasSequenceParams) (m 
     lucasAllAveragesIntegral params (Nat.lcm m n) ∧
     ∀ w : ℕ → ℤ, (∀ k, w (k + 2) = params.p * w (k + 1) - params.q * w k) →
       (m : ℤ) ∣ ∑ i ∈ Finset.Icc 1 r, w i
-
-/-- **Divisibility of Lucas sums when $P = 1$.** Let $U$ be the Lucas sequence $U_0 = 0$,
-$U_1 = 1$, $U_{j+2} = P U_{j+1} - Q U_j$ with $P = 1$ and $Q \ne 0$. For every positive integer
-$n$ coprime to $Q$, $n \mid U_1 + \cdots + U_n$ if and only if $U_{n+2} \equiv 1 \pmod n$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.6
-(`integers-2024-A36-thm-2-6`). -/
-public theorem_wanted lucasU_sum_dvd_iff_of_p_eq_one (params : LucasSequenceParams)
-    (hp : params.p = 1) (n : ℕ) (hn : 0 < n) (hnb : IsCoprime (n : ℤ) params.q) :
-    (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i ↔ lucasU params (n + 2) ≡ 1 [ZMOD n]
 
 /-- **Integral averages extend to least common multiples.** Let $U$ be the Lucas sequence with
 parameters $P$ and $Q \ne 0$, given by $U_0 = 0$, $U_1 = 1$ and $U_{k+2} = P U_{k+1} - Q U_k$, and

@@ -15,11 +15,14 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Razborov: majority is not in AC0[mod 2]](razborov-majority-not-in-ac0-mod-two.md)
 - [Unbounded fan-in circuits](unbounded-fan-in-circuits/README.md)
 - [Constant depth circuit lower bounds](constant-depth-circuit-lower-bounds/README.md)
+- [Hardness Magnification for MCSP](hardness-magnification/README.md)
+- [The Minimum Circuit Size Problem](minimum-circuit-size-problem/README.md)
+- [Algorithmic Method: NQP and Almost-Everywhere Bounds](algorithmic-method-nqp-and-almost-everywhere-bounds/README.md)
+- [Monotone Separations and Supercritical Depth](monotone-separations-and-supercritical-depth/README.md)
+- [Near-Maximum Circuit Lower Bounds for Symmetric Exponential Time](symmetric-exponential-time-circuit-lower-bounds/README.md)
+- [Range Avoidance and Near-Maximum Circuit Lower Bounds](range-avoidance-and-near-maximum-lower-bounds/README.md)
+- [Learning under the uniform distribution](learning-under-the-uniform-distribution/README.md)
 - [Arrival times of a circuit with gate delays](arrival-times-of-a-circuit-with-gate-delays/README.md)
 - [Contamination delays and hold-time certificates](contamination-delays-and-hold-time-certificates/README.md)
 - [Exact arrival times under uniform gate delays](exact-arrival-times-under-uniform-gate-delays/README.md)
 - [Static mux hazard under transport delay](static-mux-hazard-under-transport-delay/README.md)
-
-- [Hardness Magnification for MCSP](hardness-magnification/README.md)
-
-- [The Minimum Circuit Size Problem](minimum-circuit-size-problem/README.md)
