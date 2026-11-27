@@ -17,3 +17,5 @@ Classical algebraic geometry of affine and projective varieties: hypersurfaces a
 - [Noncoordinate equations with affine-space zero fibers](noncoordinate-polynomial-affine-hypersurface.md)
 - [A degree-five stable noncoordinate with nonrectifiable affine-space fibers](degree-five-stable-noncoordinate.md)
 - [An explicit failure of complex affine-space cancellation](complex-affine-space-cancellation.md)
+- [Undecidability in real algebraic geometry](undecidability-in-real-algebraic-geometry/README.md)
+- [Undecidable problems for algebraic varieties](undecidable-problems-for-varieties/README.md)
