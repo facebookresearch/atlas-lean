@@ -11,6 +11,7 @@
 ## Depends on
 
 - [Merger rates of a coalescent with simultaneous multiple collisions](../../../coalescents/xi-coalescents-simultaneous-multiple-collisions.md)
+- [Cannings model of a haploid population](../../../multiple-merger-coalescents/cannings-models/cannings-model.md)
 
 ## Expansion
 

@@ -8,6 +8,8 @@
 
 All particles at a site act through one common fraction $z$, so large events are coordinated. A monotone Poisson construction extends the process to infinite initial states, and $X$ *comes down from infinity* if $\sum_v X_v(t) < \infty$ for all $t > 0$ almost surely.
 
+**Standing assumption.** None of the measures $\Lambda_v$, $D_v$, $M_{vu}$, $R_{vu}$ has an atom at $1$. This is assumed throughout the paragraph on $\Lambda$-strong measures and the theorem below (an atom at $1$ lets all particles at a site act at once after an exponential time, so the system could come down from infinity, but not instantaneously).
+
 **$\Lambda$-strong measures.** For a $\Lambda$ whose $\Lambda$-coalescent comes down from infinity, a migration (or reproduction) measure $M$ is *$\Lambda$-strong* if, in the two-site system with coalescence $\Lambda$ at $u$, migration $M$ from $u$ to $v$, $X_u(0) = \infty$, $X_v(0) = 0$ and all other measures zero, infinitely many particles reach $v$ before every time $t > 0$ almost surely. If $M(\{0\}) > 0$ or $\mathbb{E}[-\log Y] = \infty$ for $Y \sim M/M([0,1])$, then $M$ is $\Lambda$-strong for every $\Lambda$; adding a death measure without an atom at $1$ does not change $\Lambda$-strength.
 
 **Theorem.**

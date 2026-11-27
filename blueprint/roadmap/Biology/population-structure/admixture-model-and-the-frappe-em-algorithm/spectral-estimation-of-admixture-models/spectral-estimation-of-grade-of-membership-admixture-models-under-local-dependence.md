@@ -40,10 +40,6 @@ The dependence of these bounds on the block size $M$ is sharp, and when $\mu_1,\
 
 $$\|\hat\Pi-\Pi^*P\|_{2,\infty}\lesssim\frac{M^{3/2}K^{5/2}\sqrt{\log(N\vee J)}}{\sqrt J}+\frac{MK^{9/4}}{N}.$$
 
-## Depends on
-
-- [Admixture model and the FRAPPE EM algorithm](../README.md)
-
 ## Expansion
 
 Membership scores are convex weights, so $U^*=\Pi^*U^*_{\mathcal{S},:}$. The left singular vectors therefore form a $K$-vertex simplex cloud, and recovering memberships reduces to finding its vertices, which successive projection does stably. The analysis has two parts. The first is a leave-one-block-out perturbation bound for asymmetric low-rank matrices with locally dependent noise. It treats $U$ and $V$ separately, so that very unbalanced shapes ($N\ll J$ for SNP data) and incoherences ($\mu_1\ll\mu_2$) are not lost through symmetric dilation. The second uses matrix concentration universality to obtain $\|E\|\lesssim\tilde\sigma\sqrt N+\sigma\sqrt J$ without an extra $\sqrt{\log}$ factor. Applied to HapMap3 genotypes of four populations ($N=467$, $J=274{,}128$), the estimator places ASW individuals as an admixture of YRI-like and CEU-like ancestry and MEX individuals between CEU and a third ancestral component. It does so in seconds, without MCMC.

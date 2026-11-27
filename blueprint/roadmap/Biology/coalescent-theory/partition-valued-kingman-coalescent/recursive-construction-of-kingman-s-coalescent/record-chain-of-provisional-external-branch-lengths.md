@@ -16,6 +16,10 @@ $$\mathbb P(R_{i+1} \ge R_i + x \mid R_i, A_i) = \frac{\binom{2A_i - 1}{A_i - R_
 
 Moreover, the rescaled process $\big(R_{n+1+i}^2/A_{n+1+i},\ A_{n+i}/A_{n+1+i}\big)_{i\ge1}$ converges in finite-dimensional distributions as $n \to \infty$ to the stationary Markov chain $(\xi_i, \eta_i)_{i\ge1}$ given by $\xi_i = (\xi_{i-1} + X_i)\eta_i$ with $\xi_0, X_i \sim \mathrm{Exp}(1)$ and $\eta_i \sim \mathrm{Unif}(0,1)$ independent; its marginals are $\xi_i \sim \mathrm{Exp}(1)$ and $(\xi_1,\eta_1)$ has density $\frac{s}{t^2}e^{-s/t}$ on $s \ge 0$, $0 < t < 1$.
 
+## Depends on
+
+- [Kingman's coalescent](../../coalescents/merger-rate-dirac-zero.md)
+
 ## Expansion
 
 The proof uses Aldous's construction of Kingman's coalescent from a sequence of i.i.d. points in which the attachment of individual $n+1$ is encoded by the relative order of fresh uniform variables, so record-type statistics of $(L_n)$ reduce to exchangeable combinatorics. Summing the law of $A_1$ gives $\mathbb P(A_1 \ge n) = 2/n$, so the index of the longest provisional external branch has a heavy tail. The scaling limit shows records arrive geometrically, with $A_{i}/A_{i+1}$ asymptotically uniform.

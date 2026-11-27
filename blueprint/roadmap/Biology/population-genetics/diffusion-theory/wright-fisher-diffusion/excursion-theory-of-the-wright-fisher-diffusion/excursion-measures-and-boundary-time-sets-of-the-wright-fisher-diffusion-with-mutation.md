@@ -22,7 +22,7 @@ Concatenating marked excursions reconstructs the Wright-Fisher path.
 
 ## Depends on
 
-- [Absorption time of the Wright-Fisher diffusion](../fixation-and-absorption-in-the-wright-fisher-dif/absorption-time.md)
+- [Absorption time of the Wright-Fisher diffusion](../../fixation-and-absorption-in-the-wright-fisher-dif/absorption-time.md)
 
 ## Expansion
 

@@ -4,7 +4,7 @@
 
 $$y_i=Zv_i+Xw_i+\epsilon_i,\qquad \begin{bmatrix}v_i\\w_i\end{bmatrix}\sim\mathcal{N}\Big(0,\begin{bmatrix}B&D\\D^\top&A\end{bmatrix}\Big),\quad \epsilon_i\sim\mathcal{N}(0,\sigma^2I),$$
 
-with $A=\mathrm{diag}(\alpha_1^2,\dots,\alpha_p^2)$, so $y_i\sim\mathcal{N}(0,K)$ with $K=ZBZ^\top+ZDX^\top+XD^\top Z^\top+XAX^\top+\sigma^2I$. With $C=\frac1mYY^\top$ the sample covariance, the negative log-likelihood is (up to constants) $\log\det K+\mathrm{tr}(K^{-1}C)$. Write the SVD $Z=(U_1\ U_2)\binom{\Gamma_1}{0}V^\top$, $C_{11}=U_1^\top CU_1$, $C_{22}=U_2^\top CU_2$ with eigenvalues $\lambda_1\ge\dots\ge\lambda_{n-d}$ and eigenvectors $w_1,\dots,w_{n-d}$, and $W_p=(w_1,\dots,w_p)$.
+with $A=\mathrm{diag}(\alpha_1^2,\dots,\alpha_p^2)$, so $y_i\sim\mathcal{N}(0,K)$ with $K=ZBZ^\top+ZDX^\top+XD^\top Z^\top+XAX^\top+\sigma^2I$. Let $C=\frac1mYY^\top$ be the sample covariance; throughout, $C$ is assumed positive definite, which holds exactly when $Y$ has rank $n$ (so $m\ge n$; the source takes $m>n$). The negative log-likelihood is (up to constants) $\log\det K+\mathrm{tr}(K^{-1}C)$. Write the SVD $Z=(U_1\ U_2)\binom{\Gamma_1}{0}V^\top$, $C_{11}=U_1^\top CU_1$, $C_{22}=U_2^\top CU_2$ with eigenvalues $\lambda_1\ge\dots\ge\lambda_{n-d}$ and eigenvectors $w_1,\dots,w_{n-d}$, and $W_p=(w_1,\dots,w_p)$.
 
 **Statements.**
 1. *(Latent factors only.)* Without known covariates and with $\lambda_p>\lambda_j$ for some $j>p$, the maximum-likelihood solution of $K=XAX^\top+\sigma^2I$ has $\hat x_j=u_j$ (eigenvectors of $C$), $\hat\alpha_j^2=\lambda_j-\hat\sigma^2$ and $\hat\sigma^2=\frac{1}{n-p}\sum_{j>p}\lambda_j$ (probabilistic PCA).

@@ -50,3 +50,6 @@
 
 - [Loss of alleles and invariance of faces in the K-allele diffusion](loss-of-alleles-and-face-invariance-in-the-k-allele-diffusion.md)
 - [Laplace transform of the absorption time of the neutral Wright–Fisher diffusion](laplace-transform-of-the-absorption-time.md)
+
+- [Excursion theory of the Wright–Fisher diffusion](excursion-theory-of-the-wright-fisher-diffusion/README.md)
+- [Jacobi flows](jacobi-flows/README.md)

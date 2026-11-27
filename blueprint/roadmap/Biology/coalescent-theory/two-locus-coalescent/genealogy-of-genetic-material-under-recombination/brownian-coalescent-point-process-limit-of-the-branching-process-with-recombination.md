@@ -10,7 +10,17 @@ $$\lim_{R\to\infty}\lim_{N\to\infty} \frac{R\,\mathbb{P}_R(Z_N>0)}{N\log R} = 1.
 
 $$\lim_{R\to\infty}\lim_{N\to\infty}\Big[T_{\lfloor Nt\rfloor},\ \bar d^R_{\lfloor Nt\rfloor},\ \frac{\mu_{\lfloor Nt\rfloor}}{tN\log R}\Big] = \big[(0,Y),\ d_P,\ \mathrm{Leb}\otimes\mathrm{Exp}(t)\big]$$
 
-in distribution for the marked Gromov-weak topology. Here $[(0,Y), d_P]$ is the *Brownian coalescent point process*: $k$ points sampled from it have pairwise coalescence depths $H_{ij} = \max\{H_i,\ldots,H_{j-1}\}$ (for $i<j$, after a uniform relabeling) with $H_1,\ldots,H_{k-1}$ i.i.d. uniform on $(0,1)$; and the interval lengths carried by sampled carriers are asymptotically i.i.d. exponential with mean $1/t$, independent of the genealogy. The same limit holds jointly when distances are measured along the ancestry of the carried genetic material.
+in distribution for the marked Gromov-weak topology, where $\mathrm{Exp}(t)$ is the exponential law with mean $1/t$. Here $[(0,Y), d_P]$ is the *Brownian coalescent point process*: let $P$ be a Poisson point process on $(0,\infty)\times(0,1)$ with intensity $dt\otimes x^{-2}\,dx$, set $d_P(x,y) = \sup\{z : (t,z)\in P,\ x\le t\le y\}$ for $x\le y$, and let $Y$ be an exponential random variable with mean $1$, independent of $P$. Its moments are explicit: for every $k\ge1$ and bounded continuous $\phi$,
+
+$$\mathbb{E}\int_{(0,Y)^k}\phi\big(d_P(x_i,x_j);\ i,j\le k\big)\,dx_1\cdots dx_k = k!\,\mathbb{E}\big[\phi\big(H_{\sigma_i\sigma_j};\ i,j\le k\big)\big],$$
+
+where $H_{ij} = H_{ji} = \max\{H_i,\ldots,H_{j-1}\}$ for $i<j$, the variables $H_1,\ldots,H_{k-1}$ are i.i.d. uniform on $(0,1)$, and $\sigma$ is an independent uniform permutation of $\{1,\ldots,k\}$. The mark component says that the interval lengths carried by sampled carriers are asymptotically i.i.d. exponential with mean $1/t$, independent of the genealogy.
+
+**Theorem (genealogy and chromosomic distance).** For each $u \in T_n$ pick a reference point $M_u$ uniformly on $I_u$, and define the rescaled chromosomic distance $\bar D^R_n(u,v) = \log\big(|M_u - M_v| \vee 2\big)/\log R$. For fixed $t>0$, conditional on survival to generation $\lfloor Nt\rfloor$,
+
+$$\lim_{R\to\infty}\lim_{N\to\infty}\Big[T_{\lfloor Nt\rfloor},\ \bar d^R_{\lfloor Nt\rfloor},\ \bar D^R_{\lfloor Nt\rfloor},\ \frac{\mu_{\lfloor Nt\rfloor}}{tN\log R}\Big] = \big[(0,Y),\ d_P,\ d_P,\ \mathrm{Leb}\otimes\mathrm{Exp}(t)\big]$$
+
+in distribution for the marked Gromov-weak topology on marked bi-metric measure spaces. In the limit the rescaled genealogical and chromosomic distances coincide.
 
 ## Expansion
 

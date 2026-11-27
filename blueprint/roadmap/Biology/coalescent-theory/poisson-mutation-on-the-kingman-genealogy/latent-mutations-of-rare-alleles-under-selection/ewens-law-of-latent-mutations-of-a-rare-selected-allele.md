@@ -18,6 +18,7 @@ the number of alleles in an Ewens sample of size $n_1$ with parameter $\theta_1$
 ## Depends on
 
 - [Absorption time of the Wright-Fisher diffusion](../../../population-genetics/diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/absorption-time.md)
+- [Kingman's coalescent](../../coalescents/merger-rate-dirac-zero.md)
 
 ## Expansion
 
