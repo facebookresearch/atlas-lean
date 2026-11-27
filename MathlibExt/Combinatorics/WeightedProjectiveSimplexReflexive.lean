@@ -55,6 +55,8 @@ $M r_i$, hence also $M \gcd(r_1, \dots, r_d) = M$.
 
 ## Main results
 
+* `MetaMathlibExt.reflexive_iff_weight_dvd`: the simplex of positive weights $q$ is reflexive if
+  and only if each weight divides $1 + \sum_i q_i$.
 * `MetaMathlibExt.idp_reflexive_implies_support_necessary`: if the simplex is reflexive and IDP,
   one plus the sum of the remainders of its weights modulo each support value equals that value.
 * `MetaMathlibExt.weighted_free_sum_reflexive`: if the simplices of positive weights $p$ and $w$
@@ -72,10 +74,12 @@ $M r_i$, hence also $M \gcd(r_1, \dots, r_d) = M$.
 
 * Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
   Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-  A60; arXiv:2103.17156v2, Theorem 2.1 (the reflexivity criterion), Setup 2.2 and Lemma 2.3 (the
-  support gcd and the complementary lcm), Theorem 2.5 (weighted free sums), Theorem 2.11 (the
-  weight statistic), Definition 4.1 (reflexive stabilizations), Theorem 4.5 (the weight statistic
-  of the first reflexive stabilization) and Theorem 4.7.
+  A60, pp. 1–59, Theorem 1 (the reflexivity criterion); see also arXiv:2103.17156v2,
+  Setup 2.2 and Lemma 2.3 (the support gcd and the complementary lcm), Theorem 2.5 (weighted free
+  sums), Theorem 2.11 (the weight statistic), Definition 4.1 (reflexive stabilizations),
+  Theorem 4.5 (the weight statistic of the first reflexive stabilization) and Theorem 4.7.
+* Heinke Conrads, *Weighted projective spaces and reflexive simplices*, Manuscripta Math. 107 (2)
+  (2002), pp. 215–227, Proposition 5.1 (the original weight divisibility criterion).
 -/
 
 namespace MetaMathlibExt
@@ -602,6 +606,21 @@ private theorem isReflexive_weightedSimplex_iff {n : ℕ} (q : Fin n → ℕ) (h
         have := hi i
         have hqi : (1 : ℤ) ≤ q i := by exact_mod_cast hq i
         nlinarith
+
+/-- **Reflexivity criterion for weighted projective simplices.** Let $q = (q_1, \dots, q_n)$ be
+natural-number weights with $q_i \ge 1$ for every $i$. The weighted projective simplex with
+weights $q$ is reflexive if and only if $q_i$ divides $1 + \sum_{j=1}^n q_j$ for every $i$.
+
+Reflexivity here is the geometric, height-by-height notion rather than a divisibility condition,
+so the statement relates two independently defined properties.
+
+Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
+Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
+A60, Theorem 1. -/
+public theorem reflexive_iff_weight_dvd {n : ℕ} (q : Fin n → ℕ)
+    (hq : ∀ i, 1 ≤ q i) :
+    IsReflexive (weightedSimplex q) ↔ ∀ i, q i ∣ 1 + ∑ j, q j :=
+  isReflexive_weightedSimplex_iff q hq
 
 /-- The reflexivity criterion for a list of positive weights. -/
 private theorem isReflexive_weightedSimplexList_iff (l : List ℕ) (hl : ∀ a ∈ l, 1 ≤ a) :
