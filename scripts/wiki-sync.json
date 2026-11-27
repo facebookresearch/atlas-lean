@@ -73405,6 +73405,8 @@
 "MathlibExt.Probability.Statistics.Measurement.coefficientOmega_eq_variance_div_variance": "df17688e70e6f836",
 "MathlibExt.Probability.Statistics.Measurement.coefficientOmega_mem_Icc": "fc628d89e8a516cd",
 "MathlibExt.Probability.Statistics.Measurement.condExp_sub_condExp_ae_eq_zero": "5fb46f5381d51742",
+"MathlibExt.Probability.Statistics.Measurement.correlatedTwoFactorCov": "5c04e95bdc459849",
+"MathlibExt.Probability.Statistics.Measurement.correlated_two_factor_identification": "36b6e5d28b7d648f",
 "MathlibExt.Probability.Statistics.Measurement.covariance_condExp_sub_condExp_eq_zero": "8597eb46da2c6422",
 "MathlibExt.Probability.Statistics.Measurement.covariance_items_nonneg_of_monotone": "eb704459f0d7de48",
 "MathlibExt.Probability.Statistics.Measurement.covariance_structural": "485c391bf79b1303",

@@ -14950,6 +14950,7 @@
   "MathlibExt/Probability/Statistics/MLEAsymptoticNormality": {"to": "Probability/statistical-estimation", "title": "Asymptotic normality of maximum likelihood"},
   "MathlibExt/Probability/Statistics/MallowsMetric": {"to": "Probability/statistical-estimation", "title": "Bootstrap and the Mallows metric"},
   "MathlibExt/Probability/Statistics/MannWhitneyAUC": {"to": "Probability/hypothesis-testing", "title": "Mann–Whitney statistic and ROC area"},
+  "MathlibExt/Probability/Statistics/Measurement/CorrelatedTwoFactor": {"to": "Probability/linear-models-multivariate", "title": "Factor analysis and structural equation models"},
   "MathlibExt/Probability/Statistics/Measurement/ItemResponse": {"to": "Probability/statistical-estimation", "title": "Item response models"},
   "MathlibExt/Probability/Statistics/Measurement/Scales": {"to": "Probability/nonparametric-survival", "title": "Ordinal scales: ranks, order statistics and medians"},
   "MathlibExt/Probability/Statistics/MetaAnalysis": {"to": "Probability/hypothesis-testing", "title": "Meta-analysis"},
