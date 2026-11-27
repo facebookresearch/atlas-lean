@@ -1,4 +1,4 @@
-# I.i.d. prophet inequality with one randomized threshold: 1 - (1 - 1/n)^n
+# I.i.d. prophet inequality with one randomized threshold: 1 - 1/e
 
 Let $X_1, \dots, X_n$ be i.i.d. nonnegative random variables with law $\mu$, $n \ge 1$, observed one at a time, and consider single-threshold rules with randomized tie-breaking: for a threshold $\tau \ge 0$ and a probability $p \in [0, 1]$, accept the first $X_i$ with $X_i > \tau$, or with $X_i = \tau$ when an independent coin with probability $p$ shows heads. There exist $\tau$ and $p$ for which the rule accepts no value with probability exactly $1/e$ (for a continuous $\mu$, $\Pr[\max_i X_i \le \tau] = 1/e$), and this rule collects
 
@@ -6,13 +6,12 @@ $$
 \mathbb{E}[\text{reward}] \ge \Bigl(1 - \frac1e\Bigr)\,\mathbb{E}\bigl[\max_i X_i\bigr].
 $$
 
-Randomized tie-breaking is necessary for the constant $1 - 1/e$ with a single time-invariant threshold as $n \to \infty$: for every $n$ there is a nonnegative law on which every such rule with deterministic tie-breaking ($p \in \{0, 1\}$) collects at most $\bigl(\frac{1}{e-1} + O(\frac1n)\bigr)\,\mathbb{E}[\max_i X_i]$, and $\frac{1}{e-1} < 1 - \frac1e$.
 
 ## Proof sketch
 
 Ehsani, Hajiaghayi, Kesselheim and Singla prove Theorem 19 for independent values in uniformly random order (prophet secretary); for i.i.d. values the order does not matter. Their proof takes a continuous CDF and finite mean without loss of generality, the continuous approximation corresponding to randomized tie-breaking at atoms (their footnote 4). If $\mathbb{E}[X_1] = \infty$, both sides are infinite, since the first step accepts every value above $\tau$ with positive probability. As $\tau$ and $p$ vary, the probability $\Pr[X_1 < \tau] + (1 - p)\Pr[X_1 = \tau]$ of not accepting at one step takes every value in $[0, 1)$, so it can be set to $e^{-1/n}$. The rule then accepts some value with probability $1 - 1/e$, which yields $(1 - 1/e)\tau$, and reaches step $j$ with probability $e^{-(j-1)/n}$, where it collects $\mathbb{E}[(X_1 - \tau)^+]$ above the threshold (a value equal to $\tau$ adds nothing above it). Since $\sum_{j=1}^{n} e^{-(j-1)/n} \ge n\int_0^1 e^{-x}\,dx = n(1 - 1/e)$ and $\mathbb{E}[(\max_i X_i - \tau)^+] \le n\,\mathbb{E}[(X_1 - \tau)^+]$, the reward is at least $(1 - 1/e)\bigl(\tau + \mathbb{E}[(\max_i X_i - \tau)^+]\bigr) \ge (1 - 1/e)\,\mathbb{E}[\max_i X_i]$.
 
-On the instance in the proof of Theorem 21 of Ehsani, Hajiaghayi, Kesselheim and Singla (each value is $n/(e-1)$ with probability $1/n^2$ and $(e-2)/(e-1)$ otherwise, so $\mathbb{E}[\max_i X_i] = 1 - O(1/n)$), a deterministic threshold either accepts the first value, collecting $(e-2)/(e-1) + O(1/n)$, or accepts only the value $n/(e-1)$, collecting $1/(e-1) + O(1/n)$, or accepts nothing; all are below $1 - 1/e$ for large $n$.
+Randomized tie-breaking is necessary for the constant $1 - 1/e$ with a single time-invariant threshold as $n \to \infty$: on the instance in the proof of Theorem 21 of Ehsani, Hajiaghayi, Kesselheim and Singla (each value is $n/(e-1)$ with probability $1/n^2$ and $(e-2)/(e-1)$ otherwise, so $\mathbb{E}[\max_i X_i] = 1 - O(1/n)$), a deterministic threshold either accepts the first value, collecting $(e-2)/(e-1) + O(1/n)$, or accepts only the value $n/(e-1)$, collecting $1/(e-1) + O(1/n)$, or accepts nothing; all are below $1 - 1/e$ for large $n$.
 
 The quantile rule with $q_i = 1/n$ at every step gives the sharper constant $1 - (1 - 1/n)^n$. Choose $\tau$ and $p$ so that the rule accepts each value with probability exactly $1/n$, and write $R = \mathbb{E}[X_1;\, X_1 \text{ accepted}]$ for the expected reward collected at a step the rule reaches. The prophet's value is at most $\tau + n\mathbb{E}[(X_1-\tau)^+] \le nR$, because the rule accepts every value above $\tau$, only values at least $\tau$, and in total probability exactly $1/n$. The gambler reaches step $i$ with probability $(1-1/n)^{i-1}$ and collects $R$ there, so
 

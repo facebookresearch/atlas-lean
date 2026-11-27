@@ -17,6 +17,7 @@ Explicit additive constant: given the harmonic bound $n - s(H_n - H_s)$ for ever
 ## Depends on
 
 - [The RANKING algorithm](ranking-algorithm.md)
+- [Randomized online strategies against an oblivious adversary](../competitive-analysis/randomized-online-strategies.md)
 
 ## Proof depends on
 
