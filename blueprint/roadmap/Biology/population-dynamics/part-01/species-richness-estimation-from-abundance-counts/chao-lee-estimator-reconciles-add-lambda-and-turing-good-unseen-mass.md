@@ -37,7 +37,7 @@ Solving $(T-N)\lambda/(T\lambda+n) = n_1/n$ is linear in $T$: $T\lambda(n - n_1)
 
 ## Depends on
 
-- [Dirichlet distribution](../../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/README.md)
+- [Dirichlet distribution](../../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/dirichlet-measure.md)
 
 ## Proof depends on
 

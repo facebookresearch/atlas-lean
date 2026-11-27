@@ -20,4 +20,4 @@ At $q$, translated to the origin, the Jacobian has determinant $\delta=-(bk-c-m)
 
 ## Sources
 
-- Regilene D. S. Oliveira, Alex C. Rezende, "Global phase portrait of a SIS model", arXiv:1205.6015 (2012), system (1), Theorem 1, Propositions 11–13 and Section 4, <https://doi.org/10.48550/arXiv.1205.6015>.
+- Regilene D. S. Oliveira, Alex C. Rezende, "Global phase portraits of a SIS model", arXiv:1205.6015 (2012), system (1), system (1), Theorem 1.1, Propositions 3.1–3.3 and Section 4, <https://doi.org/10.48550/arXiv.1205.6015>.
