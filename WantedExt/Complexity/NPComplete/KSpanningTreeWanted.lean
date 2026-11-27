@@ -43,7 +43,7 @@ weight `∑_{e ∈ T} w(e)` is at most `K`?
 
 This is the decision version of MINIMUM K-SPANNING TREE from the Crescenzi-Kann compendium, the kMST
 problem of Ravi, Sundaram, Marathe, Rosenkrantz and Ravi ("a tree of minimum weight spanning at
-least `k` nodes in an edge-weighted graph"), which they prove NP-complete (Theorem 1.1, by a
+least `k` nodes in an edge-weighted graph"), which they prove NP-complete (Theorem 2.1, by a
 reduction from STEINER TREE whose weights include `0`).
 
 The instance, the graph and the weights are those of BOUNDED DIAMETER SPANNING TREE
@@ -88,7 +88,7 @@ noncomputable def kSpanningTreeDec :
   | none => false
 
 /-- **K-SPANNING TREE is NP-complete.** Source: Crescenzi and Kann, MINIMUM K-SPANNING TREE; Ravi,
-Sundaram, Marathe, Rosenkrantz, and Ravi (1996), Theorem 1.1. -/
+Sundaram, Marathe, Rosenkrantz, and Ravi (1996), Theorem 2.1. -/
 public theorem_wanted kSpanningTree_npComplete :
     kSpanningTreeDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

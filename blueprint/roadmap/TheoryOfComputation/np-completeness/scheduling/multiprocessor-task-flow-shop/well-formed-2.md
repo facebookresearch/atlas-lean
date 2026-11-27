@@ -1,0 +1,3 @@
+# Well-formed MPT FLOW SHOP WITH TREE PRECEDENCE AND UNIT TIMES (FMPT|tree; p_ij = 1|L_max) instances
+
+Well-formedness of an instance: there is at least one job; the machine environment is well formed (`StagesWellFormed`: at least one stage, every listed machine index is below $m$, and different stages have different machine sets); every stage needs at least one processor (its processor list is nonempty); every job has $r$ unit processing times (`UnitJobs`); the listed arcs describe an acyclic precedence digraph on the jobs (`PrecWellFormed`); and, as a separate condition, every job has at most one immediate successor or every job has at most one immediate predecessor ([`IsTreePrecedence`](is-tree-precedence.md)). Connectivity is not required.
