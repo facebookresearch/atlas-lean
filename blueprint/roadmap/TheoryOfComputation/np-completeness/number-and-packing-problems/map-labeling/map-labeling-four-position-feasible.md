@@ -1,0 +1,3 @@
+# Feasible MAP LABELING WITH FOUR POSITIONS instances
+
+A MAP LABELING WITH FOUR POSITIONS instance with points $(x_j, y_j)$ and natural numbers $p$, $q$ is feasible when some choice of a corner $(a_j, b_j) \in \{0, 1\}^2$ for each point satisfies, for all distinct points $j$ and $k$, $|q(x_j - x_k) - p(a_j - a_k)| \ge p$ or $|q(y_j - y_k) - p(b_j - b_k)| \ge p$. This integer test applies for all $p$ and $q$. For $p, q > 0$, as [well-formedness](well-formed.md) requires, it says that the labels, the $\sigma \times \sigma$ squares with $\sigma = p / q$ and lower-left corners $(x_j - a_j\sigma, y_j - b_j\sigma)$, pairwise do not overlap; labels may touch.
