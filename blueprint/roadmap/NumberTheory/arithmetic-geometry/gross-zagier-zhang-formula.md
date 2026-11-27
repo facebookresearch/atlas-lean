@@ -65,6 +65,7 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Proof depends on
 
+- [Unit groups of imaginary quadratic fields](../algebraic-number-theory/quadratic-fields/schatunowsky-type-theorems/imag-quadratic-units-is-cyclic-card.md), for $u_K = 1$: the unit group of $\mathcal{O}_K$ has order $2$ as $D_K \ne -3, -4$, so the factor $u_K^2$ of Miller's formula is $1$
 - [Gross–Zagier formula for the Heegner point](gross-zagier-formula.md), the case of odd $D_K$
 
 The rest of its proof is that of the sources below, as the Expansion describes.

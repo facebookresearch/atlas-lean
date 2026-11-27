@@ -35,12 +35,14 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Depends on
 
+- [Isogeny of abelian schemes](../abelian-varieties/gaudron-r-mond-isogeny-estimate/is-isogeny.md), for the isogeny over $\mathbb{Q}$ from $E$ to $E_f$
 - [Shimura's abelian variety attached to a weight-two eigenform](../../NumberTheory/modular-forms-q-series/modular-forms/shimura-abelian-variety-of-an-eigenform.md), for $E_f$
 - [Hecke TLin](../../NumberTheory/not-yet-classified/hecke-operator/hecke-tlin-2.md), for the Hecke operators $T_p$, $p \nmid N$, on cusp forms of weight $2$ for $\Gamma_0(N)$, of which $f$ is an eigenvector
 - [Hecke ULin](../../NumberTheory/not-yet-classified/hecke-operator/hecke-ulin-2.md), for the Hecke operators $U_p$, $p \mid N$, on the same space, of which $f$ is an eigenvector
 
 ## Proof depends on
 
+- [Galois representations attached to normalized eigenforms](../../NumberTheory/not-yet-classified/exists-galois-rep-charpoly-frob.md), for the $\ell$-adic representations attached to $f$ (Darmon, after Remark 2.14, p. 20): for $f$ of weight $2$ with trivial character, the characteristic polynomial of Frobenius at $p \nmid \ell N$ is $x^2 - a_p(f) x + p$
 - [Taylor–Wiles patching datum](../../NumberTheory/modular-forms-q-series/modular-forms/taylor-wiles-patching/patching-datum.md), for the patching data through which the modularity lifting theorems are proved
 
 The rest of its proof is that of the sources below, as the Expansion describes.

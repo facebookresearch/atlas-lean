@@ -40,6 +40,7 @@ Darmon, §§3.1–3.4, gives the same construction with $X_0(N)$ uniformised by 
 
 - [Modular parametrization of an elliptic curve over $\mathbb{Q}$](../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md), for $\varphi$ and $X_0(N)$
 - [Hilbert class field of a number field](../algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/is-hilbert-class-field.md), for $K_1$
+- [Unit groups of imaginary quadratic fields](../algebraic-number-theory/quadratic-fields/schatunowsky-type-theorems/imag-quadratic-units-is-cyclic-card.md), for the unit group $\{\pm 1\}$ of $\mathcal{O}$ when $D_K \ne -3, -4$, which the statement asserts
 
 ## Proof depends on
 

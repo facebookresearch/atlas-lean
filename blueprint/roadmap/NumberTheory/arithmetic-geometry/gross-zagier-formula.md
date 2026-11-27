@@ -62,6 +62,8 @@ Gross and Zagier assume throughout that the discriminant is odd (Chapter I, §3,
 ## Proof depends on
 
 - [Decomposition of rational primes in a quadratic field](../algebraic-number-theory/quadratic-fields/quadratic-field-prime-decomposition.md), for the comparison of the splitting condition with Gross and Zagier's: for $D_K$ prime to $N$, a prime $\ell \mid N$ splits in $K$ exactly when $\left(\frac{D_K}{\ell}\right) = 1$, from which, with Hensel's lemma, $D_K$ is a square modulo $4N$
+- [Hensel's lemma with a derivative bound](../../RingTheory/valuation-rings/henselian-rings-and-hensel-s-lemma/exists-is-root-of-two-mul-add-val-deriva.md), for that step: applied in $\mathbb{Z}_\ell$ to $X^2 - D_K$, with $a_0$ a square root of $D_K$ modulo $\ell$ for odd $\ell \mid N$, and with $a_0 = 1$ for $\ell = 2$, where $D_K \equiv 1 \pmod 8$ as $2$ splits, it makes $D_K$ a square in $\mathbb{Z}_\ell$, hence modulo every power of $\ell$; and $D_K \equiv 1 \pmod 4$ as $D_K$ is odd
+- [Unit groups of imaginary quadratic fields](../algebraic-number-theory/quadratic-fields/schatunowsky-type-theorems/imag-quadratic-units-is-cyclic-card.md), for $u_K = 1$: the unit group of $\mathcal{O}_K$ has order $2$ as $D_K \ne -3, -4$, so the factor $u_K^2$ of Gross and Zagier's formula is $1$
 - [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](../modular-forms-q-series/modular-forms/hecke-endomorphisms-of-the-modular-jacobian.md), for the Hecke correspondences $T_m$ acting on $J_0(N)$ in the pairings $\langle c, T_m c^\sigma \rangle$
 - [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-point-of-an-elliptic-curve.md), for the rationality of the Heegner points over the Hilbert class field
 
