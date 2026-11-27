@@ -12,3 +12,4 @@
 - [Complexity of HyperCTL* model checking](model-checking-hyperctl-star-by-alternation-depth.md)
 - [HyperLTL model checking is PSPACE-hard in the system size](hyperltl-model-checking-is-pspace-hard-in-the-system.md)
 - [HyperCTL* satisfiability is undecidable](hyperctl-star-satisfiability-is-undecidable.md)
+- [Temporal safety and liveness in HyperLTL](temporal-safety-and-liveness-in-hyperltl/README.md)

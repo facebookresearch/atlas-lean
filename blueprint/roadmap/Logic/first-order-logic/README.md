@@ -18,3 +18,4 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [Equational logic](equational-logic/README.md)
 - [Superposition](superposition/README.md)
 - [Herbrand's theorem](herbrand-s-theorem.md)
+- [Intuitionistic predicate logic](intuitionistic-predicate-logic/README.md)
