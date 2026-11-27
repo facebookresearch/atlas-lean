@@ -32,12 +32,12 @@ and its reverse by some face. `Orientable` asks for some choice of face reversal
 test, so a failed listed orientation is no obstruction: two copies of one triangle use the same
 directed edges, yet reversing one copy orients them. For a mesh with `ClosedSurface` the two
 predicates are the usual coherent orientation and orientability of the closed surface. On a raw
-mesh `Orientable` fails exactly when an undirected edge lies in only one face, which traverses it
-in one direction only (`EdgesPaired` fails), or when no flips meet the parity constraints between
-faces (`orientable_iff_edgesPaired_and_flipCompatible`). One face may supply both directions of an
-edge, so the single face `[0, 1]` is `Orientable`. `Valid` faces never do, so in a `Valid`
-orientable mesh every edge lies in a second face (`Orientable.edge_shared_of_valid`): there a
-boundary edge rules orientability out.
+mesh `Orientable` fails exactly when some face has a directed edge `(a, b)` that no other face uses
+in either direction, while `(b, a)` is absent from that face (`EdgesPaired` fails), or when no
+flips meet the parity constraints between faces (`orientable_iff_edgesPaired_and_flipCompatible`).
+One face may supply both directions of an edge, so the single face `[0, 1]` is `Orientable`.
+`Valid` faces never do, so in a `Valid` orientable mesh every edge lies in a second face
+(`Orientable.edge_shared_of_valid`): there a boundary edge rules orientability out.
 
 `faceCount` and `linkDegree` count list entries. On raw input a face that traverses an edge twice
 counts once in `faceCount`, and a loop `s(u, u)` in a vertex link counts once in `linkDegree`;
@@ -73,6 +73,9 @@ counts once in `faceCount`, and a loop `s(u, u)` in a vertex link counts once in
 
 namespace Cslib.Algorithms.Lean.Geometry.SurfaceMesh
 
+/-- **Surface mesh.** A list of faces, each a list of vertices read cyclically: the face `f` has
+the directed edges `(f[i], f[i + 1])`, with indices taken mod `f.length` (`directedEdgesOfFace`).
+The faces are raw lists; `Valid` asks for polygons. -/
 structure Mesh (V : Type _) where
   faces : List (List V)
 
@@ -101,19 +104,23 @@ entries of `M.faces`. -/
 def chi {V : Type _} [DecidableEq V] (M : Mesh V) : Int :=
   ((vertices M).card : Int) - ((edges M).card : Int) + (M.faces.length : Int)
 
+/-- **Valid faces.** Every face has at least three vertices, all distinct, and no two faces are
+cyclic rotations of each other, in the same or the opposite direction. -/
 def Valid {V : Type _} (M : Mesh V) : Prop :=
   (∀ f ∈ M.faces, 3 ≤ f.length ∧ f.Nodup) ∧
     M.faces.Pairwise (fun f₁ f₂ =>
       ¬ List.IsRotated f₁ f₂ ∧ ¬ List.IsRotated f₁.reverse f₂)
 
 /-- **Faces at an edge.** The number of entries of `M.faces` that traverse the undirected edge
-`e`. A face that traverses `e` more than once, which only a face with a repeated vertex can do,
-counts once. -/
+`e`. A face that traverses `e` more than once, which only a face with a repeated vertex or fewer
+than three vertices can do, counts once. -/
 def faceCount {V : Type _} [DecidableEq V] (M : Mesh V) (e : Sym2 V) :
     Nat :=
   (M.faces.filter (fun f => decide (e ∈ (directedEdgesOfFace f).map
     (fun p => Sym2.mk p.1 p.2)))).length
 
+/-- **Edge manifold.** Every edge of the mesh lies in exactly two faces, as `faceCount` counts
+them. -/
 def EdgeManifold {V : Type _} [DecidableEq V] (M : Mesh V) : Prop :=
   ∀ e ∈ edgesList M, faceCount M e = 2
 
@@ -141,9 +148,9 @@ def linkVerts {V : Type _} [DecidableEq V] (M : Mesh V) (v : V) :
 
 /-- **Link degree.** The number of entries of `linkEdgesList M v` that contain `u`. Each corner
 of a face at `v` contributes one entry, the edge joining the corner's two neighbors, so a loop
-`s(u, u)`, which only a face with a repeated vertex produces, counts once rather than twice.
-`Valid` faces produce no loops, so on the meshes `ClosedSurface` accepts this is the degree of `u`
-in the link of `v`, counted with multiplicity. -/
+`s(u, u)`, which only a face with a repeated vertex or fewer than three vertices produces, counts
+once rather than twice. `Valid` faces produce no loops, so on the meshes `ClosedSurface` accepts
+this is the degree of `u` in the link of `v`, counted with multiplicity. -/
 def linkDegree {V : Type _} [DecidableEq V] (M : Mesh V) (v u : V) :
     Nat :=
   ((linkEdgesList M v).filter (fun e => decide (u ∈ e))).length
@@ -166,10 +173,16 @@ def LinkConnected {V : Type _} [DecidableEq V] (M : Mesh V) (v : V) :
   ∃ r ∈ linkVertsList M v,
     (closureFinset M v (linkVerts M v).card {r} = linkVerts M v)
 
+/-- **Vertex links are cycles.** At every vertex `v`, each vertex `u` joined to `v` by an edge has
+degree `2` in the link of `v` (`linkDegree`), and the link of `v` is connected (`LinkConnected`).
+On `Valid` faces this says that every vertex link is a single cycle. -/
 def VertexLinkCycle {V : Type _} [DecidableEq V] (M : Mesh V) : Prop :=
   ∀ v ∈ verticesList M,
     (∀ u ∈ linkVertsList M v, linkDegree M v u = 2) ∧ LinkConnected M v
 
+/-- **Closed surface.** `Valid` faces, every edge in exactly two faces (`EdgeManifold`), and every
+vertex link a single cycle (`VertexLinkCycle`): the faces form a closed surface, not necessarily
+connected. -/
 def ClosedSurface {V : Type _} [DecidableEq V] (M : Mesh V) : Prop :=
   Valid M ∧ EdgeManifold M ∧ VertexLinkCycle M
 
@@ -195,12 +208,12 @@ def reorient {V : Type _} (M : Mesh V)
 mesh with `ClosedSurface` this is orientability of the closed surface it describes. On a raw mesh it
 is only the edge-parity condition, and a failed listed orientation is no obstruction: two copies of
 one triangle use the same directed edges, yet reversing one copy gives each direction once.
-Orientability fails exactly when an undirected edge lies in only one face, which traverses it in
-one direction only (`EdgesPaired` fails), or when no flips meet the parity constraints between
-faces (`orientable_iff_edgesPaired_and_flipCompatible`). One face may supply both directions of an
-edge: the single face `[0, 1]` is orientable. `Valid` faces never do, so in a `Valid` orientable
-mesh every edge lies in a second face (`Orientable.edge_shared_of_valid`), and a boundary edge
-rules orientability out. -/
+Orientability fails exactly when some face has a directed edge `(a, b)` that no other face uses in
+either direction, while `(b, a)` is absent from that face (`EdgesPaired` fails), or when no flips
+meet the parity constraints between faces (`orientable_iff_edgesPaired_and_flipCompatible`). One
+face may supply both directions of an edge: the single face `[0, 1]` is orientable. `Valid` faces
+never do, so in a `Valid` orientable mesh every edge lies in a second face
+(`Orientable.edge_shared_of_valid`), and a boundary edge rules orientability out. -/
 def Orientable {V : Type _} [DecidableEq V] (M : Mesh V) : Prop :=
   ∃ flip : Fin M.faces.length → Bool, ConsistentlyOriented (reorient M flip)
 
@@ -286,8 +299,8 @@ theorem mem_directedEdgesOfFace_reverse {f : List V} {a b : V} :
       rw [succ_mod_reflect hk]
       omega
 
-/-- **Valid faces use one direction per edge.** A face with at least three distinct vertices never
-traverses an edge in both directions. -/
+/-- **Valid faces use one direction per edge.** Only a face with a repeated vertex or fewer than
+three vertices can traverse an edge in both directions. -/
 theorem swap_notMem_directedEdgesOfFace_of_nodup {f : List V} (hnd : f.Nodup)
     (hlen : 3 ≤ f.length) {a b : V} (h : (a, b) ∈ directedEdgesOfFace f) :
     (b, a) ∉ directedEdgesOfFace f := by
@@ -367,10 +380,12 @@ def FlipCompatible (M : Mesh V) (flip : Fin M.faces.length → Bool) : Prop :=
     (sharesSameEdge M.faces[i] M.faces[j] = true → flip i ≠ flip j) ∧
       (sharesOppositeEdge M.faces[i] M.faces[j] = true → flip i = flip j)
 
-/-- **Paired edges.** Every directed edge of a face is traversed again, in either direction, by
-another face, or in the opposite direction by the same face. This is the part of `Orientable` that
-does not depend on the flips (`orientable_iff_edgesPaired_and_flipCompatible`); it fails exactly
-when an undirected edge lies in only one face, which traverses it in one direction only. -/
+/-- **Paired edges.** For every directed edge `(a, b)` of a face, either `(b, a)` is also a
+directed edge of that face (possibly the same occurrence, when `a = b`), or another face uses the
+edge in either direction. This is the part of `Orientable` that does not depend on the flips
+(`orientable_iff_edgesPaired_and_flipCompatible`); it fails exactly when some face has a directed
+edge `(a, b)` that no other face uses in either direction, while `(b, a)` is absent from that
+face. -/
 def EdgesPaired (M : Mesh V) : Prop :=
   ∀ (i : Fin M.faces.length), ∀ e ∈ directedEdgesOfFace M.faces[i],
     (e.2, e.1) ∈ directedEdgesOfFace M.faces[i] ∨
@@ -531,13 +546,14 @@ theorem Orientable.edge_shared_of_valid {M : Mesh V} (hO : Orientable M) (hV : V
 The algorithm grows a partial flip assignment on the face-adjacency (dual) graph. Each step
 either assigns every unassigned face that has an assigned neighbor, reading the neighbor's
 flip through the parity constraint (one breadth-first layer), or, when no such face exists,
-starts a new component by assigning the first unassigned face `false`. Each step assigns at least
-one face, so `M.faces.length` steps assign every face. The neighbor lists are computed once, in
-`O(F² L²)` time for `F` faces of length at most `L`, and each step costs `O(F + C)` for `C`
-constraints. -/
+starts a new component by assigning the first unassigned face `false`. While some face is
+unassigned, each step assigns at least one, so `M.faces.length` steps assign every face. The
+neighbor lists are computed once, in `O(F² L²)` time for `F` faces of length at most `L`, and each
+step costs `O(F + C)` for `C` constraints. -/
 
-/-- **Parity constraints at a face.** The constraints at face `j`: `(i, true)` when faces `i` and
-`j` share an edge in the same direction, `(i, false)` when they share one in opposite directions. -/
+/-- **Parity constraints at a face.** The constraints at face `j`: for each face `i ≠ j`,
+`(i, true)` when faces `i` and `j` share an edge in the same direction, and `(i, false)` when they
+share one in opposite directions. -/
 def faceConstraints (M : Mesh V) (j : Fin M.faces.length) : List (Fin M.faces.length × Bool) :=
   let fs := M.faces.toArray
   (List.finRange M.faces.length).flatMap fun i =>
@@ -582,7 +598,8 @@ def faceConstraintTable (M : Mesh V) : Array (List (Fin M.faces.length × Bool))
 def readFlip {n : ℕ} (arr : Array (Option Bool)) (j : Fin n) : Option Bool :=
   arr.getD j none
 
-/-- **Forced flip.** The flip that an assigned neighbor forces on face `j`, if any. -/
+/-- **Forced flip.** The flip forced on face `j` by the first entry of its constraint list whose
+face is assigned, if any. -/
 def pullFlip {n : ℕ} (table : Array (List (Fin n × Bool))) (a : Fin n → Option Bool)
     (j : Fin n) : Option Bool :=
   (table.getD j []).findSome? fun p => (a p.1).map (xor p.2)
@@ -595,8 +612,8 @@ def flipStepFun {n : ℕ} (table : Array (List (Fin n × Bool))) (a : Fin n → 
   fun j => if grow then (a j).or (pullFlip table a j) else if root = some j then some false else a j
 
 /-- **Propagation step on arrays.** One step of the algorithm, storing the new partial assignment
-in an array. It computes the same assignment as `flipStepFun` (`readFlip_flipStep`), testing the
-growth condition once. -/
+in an array. It computes the same assignment as `flipStepFun`, testing the growth condition
+once. -/
 def flipStep {n : ℕ} (table : Array (List (Fin n × Bool))) (arr : Array (Option Bool)) :
     Array (Option Bool) :=
   let a : Fin n → Option Bool := readFlip arr

@@ -48,6 +48,9 @@ def disk : Mesh (Fin 3) := ⟨[[0, 1, 2]]⟩
 /-- A single two-vertex face: not a valid polygon, but it uses both directions of its edge. -/
 def digon : Mesh (Fin 2) := ⟨[[0, 1]]⟩
 
+/-- A single one-vertex face: its only directed edge is the loop `(0, 0)`. -/
+def monogon : Mesh (Fin 1) := ⟨[[0]]⟩
+
 /-- Two copies of one triangle: as listed both use the same directed edges, but reversing one copy
 orients them. -/
 def twoCopies : Mesh (Fin 3) := ⟨[[0, 1, 2], [0, 1, 2]]⟩
@@ -176,6 +179,16 @@ lies in one face only. -/
 theorem digon_orientable_not_valid : Orientable digon ∧ ¬ Valid digon := by decide
 
 theorem digon_edge_in_one_face : faceCount digon s(0, 1) = 1 := by decide
+
+/-- A face with fewer than three vertices produces a link loop without repeating a vertex: since
+`[0, 1].rotate 2 = [0, 1]`, the corner of `digon` at `1` gives `s(0, 0)`. -/
+theorem digon_linkEdgesList : linkEdgesList digon 1 = [s(0, 0)] := by decide
+
+/-- Edge pairing is membership, not a second traversal: the loop `(0, 0)` occurs once in `[[0]]`
+and is its own reverse, so `[[0]]` is `EdgesPaired` and, as listed, consistently oriented. -/
+theorem monogon_edgesPaired :
+    allDirectedEdges monogon = [(0, 0)] ∧ EdgesPaired monogon ∧ ConsistentlyOriented monogon := by
+  decide
 
 /-- A failed listed orientation is no obstruction to orientability: `twoCopies` is not
 consistently oriented as listed, yet it is `Orientable`. -/
