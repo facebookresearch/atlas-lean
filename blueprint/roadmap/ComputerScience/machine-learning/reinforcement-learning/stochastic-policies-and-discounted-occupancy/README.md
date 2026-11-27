@@ -58,7 +58,7 @@ Stationary stochastic policies on finite discounted Markov decision processes, M
 - [State Kernel](state-kernel.md)
 - [Expected reward under a row-stochastic policy](policy-reward-2.md)
 - [Indicator Reward](indicator-reward.md)
-- [Sum mul q Value](sum-mul-q-value.md)
+- [Action-weighted sum of action values](sum-mul-q-value.md)
 - [Chain Value eq sum](chain-value-eq-sum.md)
 - [Chain Occupancy](chain-occupancy.md)
 - [Sum mul chain Value](sum-mul-chain-value.md)

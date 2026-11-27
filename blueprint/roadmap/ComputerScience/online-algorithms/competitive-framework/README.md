@@ -25,7 +25,7 @@
 - [Offline optima under a simulation](opt-cost-le.md)
 - [Competitive transfer](competitive-transfer.md)
 - [Refl](refl.md)
-- [Comp](comp.md)
+- [Composition of simulations](comp.md)
 - [Rand Strategy](rand-strategy.md)
 - [Expected Cost](expected-cost.md)
 - [Rand Competitive](rand-competitive.md)
