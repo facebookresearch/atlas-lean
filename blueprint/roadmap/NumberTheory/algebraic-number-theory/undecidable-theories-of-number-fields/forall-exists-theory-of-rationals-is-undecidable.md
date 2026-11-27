@@ -36,4 +36,4 @@ holds in $\mathbb{Q}$, an $\exists\forall$-sentence computable from $f$, where t
 ## Sources
 
 - Jochen Koenigsmann, *Undecidability in number theory*, in: Model Theory in Algebra, Analysis and Arithmetic, Lecture Notes in Mathematics 2111, Springer, 2014, pp. 159–195, https://doi.org/10.1007/978-3-642-54936-6_5; the universal definition is Theorem 4.1 and the undecidability of $\operatorname{Th}_{\forall\exists}(\mathbb{Q})$ is Corollary 4.4 of arXiv:1309.0441v1.
-- Jochen Koenigsmann, *Defining $\mathbb{Z}$ in $\mathbb{Q}$*, Ann. of Math. (2) 183 (2016), no. 1, 73–93, https://doi.org/10.4007/annals.2016.183.1.2, for the universal definition of $\mathbb{Z}$ in $\mathbb{Q}$.
+- Jochen Koenigsmann, *Defining $\mathbb{Z}$ in $\mathbb{Q}$*, Ann. of Math. (2) 183 (2016), no. 1, 73–93, https://doi.org/10.4007/annals.2016.183.1.2, for the universal definition of $\mathbb{Z}$ in $\mathbb{Q}$, as read in Theorem 4.1 of arXiv:1309.0441v1.

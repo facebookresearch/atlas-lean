@@ -23,6 +23,6 @@ Two ingredients. First, if an integral domain $R \supseteq \mathbb{N}$ has a uni
 
 ## Sources
 
-- Julia Robinson, *On the decision problem for algebraic rings*, in: Studies in Mathematical Analysis and Related Topics (essays in honor of George Pólya, G. Szegő et al., eds.), Stanford University Press, Stanford, 1962, pp. 297–304.
+- Julia Robinson, *On the decision problem for algebraic rings*, in: Studies in Mathematical Analysis and Related Topics (essays in honor of George Pólya, G. Szegő et al., eds.), Stanford University Press, Stanford, 1962, pp. 297–304; cited for attribution, with the statement and proof as read in Jochen Koenigsmann's survey below (Theorem 2.14 and Lemmas 2.15 and 2.16 of arXiv:1309.0441v1).
 - Jochen Koenigsmann, *Undecidability in number theory*, in: Model Theory in Algebra, Analysis and Arithmetic, Lecture Notes in Mathematics 2111, Springer, 2014, pp. 159–195, https://doi.org/10.1007/978-3-642-54936-6_5; Theorem 2.14 of arXiv:1309.0441v1, with the two ingredients as Lemmas 2.15 and 2.16.
-- Caleb Springer, *Definability and decidability for rings of integers in totally imaginary fields*, Bull. Lond. Math. Soc. 56 (2024), no. 1, 306–318, https://doi.org/10.1112/blms.12933, whose introduction recalls Robinson's theorem and the decidability of the field of totally real numbers due to Fried, Haran and Völklein.
+- Caleb Springer, *Definability and decidability for rings of integers in totally imaginary fields*, Bull. Lond. Math. Soc. 56 (2024), no. 1, 306–318, https://doi.org/10.1112/blms.12933, whose introduction (Section 1 of arXiv:2207.00140v3) recalls Robinson's theorem and the decidability of the field of totally real numbers due to Fried, Haran and Völklein.

@@ -32,5 +32,5 @@ an element $n \in \mathcal{O}_K$ is a natural number exactly when there are $f, 
 
 ## Sources
 
-- Julia Robinson, *The undecidability of algebraic rings and fields*, Proc. Amer. Math. Soc. 10 (1959), no. 6, 950–957, https://doi.org/10.1090/S0002-9939-1959-0112842-7.
+- Julia Robinson, *The undecidability of algebraic rings and fields*, Proc. Amer. Math. Soc. 10 (1959), no. 6, 950–957, https://doi.org/10.1090/S0002-9939-1959-0112842-7; cited for attribution, with the statement and proof as read in Jochen Koenigsmann's survey below (Theorem 2.13 of arXiv:1309.0441v1).
 - Jochen Koenigsmann, *Undecidability in number theory*, in: Model Theory in Algebra, Analysis and Arithmetic, Lecture Notes in Mathematics 2111, Springer, 2014, pp. 159–195, https://doi.org/10.1007/978-3-642-54936-6_5; Theorem 2.13 of arXiv:1309.0441v1, with the proof sketched above.

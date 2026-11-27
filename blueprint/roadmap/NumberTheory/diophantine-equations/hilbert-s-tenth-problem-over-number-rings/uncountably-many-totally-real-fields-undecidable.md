@@ -26,5 +26,5 @@ The result is a consequence of Diophantine stability. A variety $V$ over a numbe
 
 ## Sources
 
-- Barry Mazur and Karl Rubin, with an appendix by Michael Larsen, *Diophantine stability*, Amer. J. Math. 140 (2018), no. 3, 517–616, https://doi.org/10.1353/ajm.2018.0014. Ray and Weston quote the result as Corollary 1.6 of this paper.
+- Barry Mazur and Karl Rubin, with an appendix by Michael Larsen, *Diophantine stability*, Amer. J. Math. 140 (2018), no. 3, 517–616, https://doi.org/10.1353/ajm.2018.0014. Ray and Weston quote the result as Corollary 1.6 of this paper; it is read in the version of their paper below (Corollary 1.2 of arXiv:2304.09742v3), as is Theorem 1.2 of this paper (Theorem 1.1 there).
 - Anwesh Ray and Tom Weston, *Diophantine stability for elliptic curves on average*, European J. Math. 11 (2025), no. 4, article 78, https://doi.org/10.1007/s40879-025-00872-3; the statement is recalled verbatim as Corollary 1.2 of arXiv:2304.09742v3.

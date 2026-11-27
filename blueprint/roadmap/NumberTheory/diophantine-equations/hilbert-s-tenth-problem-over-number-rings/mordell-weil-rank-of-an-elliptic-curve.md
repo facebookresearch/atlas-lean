@@ -34,5 +34,5 @@ The decomposition is the structure theorem for finitely generated abelian groups
 
 ## Sources
 
-- Joseph H. Silverman, *The Arithmetic of Elliptic Curves*, 2nd ed., Graduate Texts in Mathematics 106, Springer, 2009, https://doi.org/10.1007/978-0-387-09494-6, Chapter VIII (the Mordell–Weil theorem).
-- Bjorn Poonen, *Using elliptic curves of rank one towards the undecidability of Hilbert's tenth problem over rings of algebraic integers*, in: Algorithmic Number Theory (ANTS-V, Sydney, 2002), Lecture Notes in Computer Science 2369, Springer, 2002, pp. 33–42, https://doi.org/10.1007/3-540-45455-1_4, which recalls the Mordell–Weil theorem and the notation $\operatorname{rk} E(F)$ before its main theorem.
+- Jochen Koenigsmann, *Undecidability in number theory*, in: Model Theory in Algebra, Analysis and Arithmetic, Lecture Notes in Mathematics 2111, Springer, 2014, pp. 159–195, https://doi.org/10.1007/978-3-642-54936-6_5; the footnote to Theorem 5.1 of arXiv:1309.0441v1 states the decomposition of $E(K)$ into its torsion subgroup and a free abelian group of rank $\operatorname{rk} E(K)$.
+- Bjorn Poonen, *Using elliptic curves of rank one towards the undecidability of Hilbert's tenth problem over rings of algebraic integers*, in: Algorithmic Number Theory (ANTS-V, Sydney, 2002), Lecture Notes in Computer Science 2369, Springer, 2002, pp. 33–42, https://doi.org/10.1007/3-540-45455-1_4, read as arXiv:math/0204001v1 (the only arXiv version), which recalls the Mordell–Weil theorem and the notation $\operatorname{rk} E(F)$ before its main theorem.

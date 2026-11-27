@@ -24,4 +24,4 @@ The earlier paper reduces first-order undecidability of a function field $K$ of 
 ## Sources
 
 - Kirsten Eisenträger (Eisentraeger) and Alexandra Shlapentokh, *Hilbert's tenth problem over function fields of positive characteristic not containing the algebraic closure of a finite field*, J. Eur. Math. Soc. 19 (2017), no. 7, 2103–2138, https://doi.org/10.4171/JEMS/714; Theorem 1.3 of arXiv:1306.2669v1, with the proof in its final section.
-- Kirsten Eisenträger (Eisentraeger) and Alexandra Shlapentokh, *Undecidability in function fields of positive characteristic*, Int. Math. Res. Not. IMRN 2009, 4051–4086, https://doi.org/10.1093/imrn/rnp079, for the reduction to definability of $p$-th powers and the removal of parameters.
+- Kirsten Eisenträger (Eisentraeger) and Alexandra Shlapentokh, *Undecidability in function fields of positive characteristic*, Int. Math. Res. Not. IMRN 2009, 4051–4086, https://doi.org/10.1093/imrn/rnp079 (version read: arXiv:0709.1739v2, Section 2 and Corollary 4.1), for the reduction to definability of $p$-th powers and the removal of parameters.

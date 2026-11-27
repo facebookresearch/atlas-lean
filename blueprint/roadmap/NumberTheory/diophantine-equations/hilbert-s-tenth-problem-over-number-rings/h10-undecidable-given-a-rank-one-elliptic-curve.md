@@ -36,5 +36,5 @@ For clause 2, the cited works of Denef, Denef and Lipshitz, Pheidas, and Shlapen
 
 ## Sources
 
-- Bjorn Poonen, *Using elliptic curves of rank one towards the undecidability of Hilbert's tenth problem over rings of algebraic integers*, in: Algorithmic Number Theory (ANTS-V, Sydney, 2002), Lecture Notes in Computer Science 2369, Springer, 2002, pp. 33–42, https://doi.org/10.1007/3-540-45455-1_4; also arXiv:math/0204001. Clause 1 is the main theorem and clause 2 its corollary, both in the section on Hilbert's tenth problem over rings of integers.
+- Bjorn Poonen, *Using elliptic curves of rank one towards the undecidability of Hilbert's tenth problem over rings of algebraic integers*, in: Algorithmic Number Theory (ANTS-V, Sydney, 2002), Lecture Notes in Computer Science 2369, Springer, 2002, pp. 33–42, https://doi.org/10.1007/3-540-45455-1_4; the version read is arXiv:math/0204001v1, the only arXiv version. Clause 1 is the main theorem and clause 2 its corollary, both in the section on Hilbert's tenth problem over rings of integers.
 - Jochen Koenigsmann, *Undecidability in number theory*, in: Model Theory in Algebra, Analysis and Arithmetic, Lecture Notes in Mathematics 2111, Springer, 2014, pp. 159–195, https://doi.org/10.1007/978-3-642-54936-6_5; the case $F = \mathbb{Q}$ is Theorem 5.1 of arXiv:1309.0441v1.

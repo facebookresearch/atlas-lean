@@ -22,5 +22,5 @@ Robinson writes down a first-order formula $\psi(n)$ of $\mathcal{L}_{\mathrm{ri
 
 ## Sources
 
-- Julia Robinson, *Definability and decision problems in arithmetic*, J. Symbolic Logic 14 (1949), no. 2, 98–114, https://doi.org/10.2307/2266510.
+- Julia Robinson, *Definability and decision problems in arithmetic*, J. Symbolic Logic 14 (1949), no. 2, 98–114, https://doi.org/10.2307/2266510; cited for attribution, with the statement and the formula as read in Jochen Koenigsmann's survey below (Theorem 2.11 and Corollary 2.12 of arXiv:1309.0441v1).
 - Jochen Koenigsmann, *Undecidability in number theory*, in: Model Theory in Algebra, Analysis and Arithmetic, Lecture Notes in Mathematics 2111, Springer, 2014, pp. 159–195, https://doi.org/10.1007/978-3-642-54936-6_5; Robinson's definition is Theorem 2.11 and the undecidability of the theory of $\mathbb{Q}$ is Corollary 2.12 of arXiv:1309.0441v1.
