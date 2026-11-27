@@ -20,9 +20,9 @@ $$\lambda_1 = \lambda_C - \eta T_0^*, \qquad \lambda_2 = -\frac{2a_T\rho T_0^*}{
 
 Hence the tumor-free equilibrium is locally asymptotically stable if $\lambda_C < \eta T_0^*$ and a saddle if $\lambda_C > \eta T_0^*$.
 
-## Depends on
+## Proof depends on
 
-- [Logistic growth equation](../../../../population-dynamics/logistic-growth-equation/README.md)
+- [Explicit solution of the logistic equation](../../../../population-dynamics/logistic-growth-equation/logistic.md)
 
 ## Expansion
 

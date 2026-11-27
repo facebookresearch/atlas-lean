@@ -22,7 +22,7 @@ so $(S, \bar\beta, I, R)$ is an SIR model whose transmission rate is depleted by
 
 ## Depends on
 
-- [Kermack–McKendrick SIR model](../../../kermack-mckendrick-sir-model/README.md)
+- [Solution of the Kermack–McKendrick SIR system](../../../kermack-mckendrick-sir-model/is-solution.md)
 
 ## Expansion
 

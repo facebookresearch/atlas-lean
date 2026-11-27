@@ -14,7 +14,8 @@ The denominator $k(2n-k-1)/2 = \sum_{d=1}^{k}(n - d)$ is the number of pairs ave
 
 ## Depends on
 
-- [Small parsimony problem](../../../small-parsimony-problem/README.md)
+- [Total substitution cost of a labeling](../../../small-parsimony-problem/edge-cost.md)
+- [Unit substitution cost](../../../small-parsimony-problem/unit-cost.md)
 
 ## Proof depends on
 

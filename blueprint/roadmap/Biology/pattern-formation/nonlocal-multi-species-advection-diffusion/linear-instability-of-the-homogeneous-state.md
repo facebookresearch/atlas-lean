@@ -28,10 +28,6 @@ $\gamma_{12} = \gamma_{21}$, the homogeneous state is linearly unstable iff for 
 
 $$-\gamma_{11}\hat K(\kappa) + |\gamma_{12}\hat K(\kappa)| > D_1 .$$
 
-## Depends on
-
-- [Turing patterns and diffusion-driven instability](../turing-patterns-and-diffusion-driven-instability/README.md)
-
 ## Expansion
 
 Linearizing $\nabla\cdot(u_i \gamma_{ij}\nabla K * u_j)$ at $\bar u$ gives $\bar u_i \gamma_{ij}\Delta(K * w_j)$, whose Fourier symbol is
