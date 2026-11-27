@@ -35,10 +35,13 @@ form class group (*Advanced Algebra*, Chapter I, §§3–4):
   form is the first coefficient of a properly equivalent form;
 * `BinaryQuadraticForm.exists_gcd_eq_one_value` (Knapp's Lemma 1.10): a primitive form
   primitively represents an integer prime to any given nonzero integer;
-* `BinaryQuadraticForm.exists_eq_mul_of_gcd_eq_one`: forms of one nonsquare discriminant with the
-  same middle coefficient and coprime first coefficients are aligned;
-* `BinaryQuadraticForm.composition_of_aligned` (Knapp's Proposition 1.9): the composition
-  $(a_1 a_2, b, j)$ of aligned forms is primitive of the same discriminant;
+* `BinaryQuadraticForm.exists_eq_mul_of_gcd_eq_one`: for forms of one nonsquare discriminant with
+  the same middle coefficient and coprime first coefficients, $c_1 / a_2 = c_2 / a_1$ is an integer
+  $j$, so the forms are aligned when both are primitive;
+* `BinaryQuadraticForm.composition_of_aligned` (Knapp's Proposition 1.9): for primitive forms
+  $(a_1, b, c_1)$, $(a_2, b, c_2)$ and an integer $j$ with $c_1 = j a_2$ and $c_2 = j a_1$, the form
+  $(a_1 a_2, b, j)$ is primitive of the same discriminant and satisfies Knapp's product identity;
+  for forms of nonsquare discriminant this is the composition of aligned forms;
 * `BinaryQuadraticForm.exists_aligned` (Knapp's Theorem 1.12(a)): two classes of primitive forms of
   a nonsquare discriminant contain aligned forms whose first coefficients are prime to each other
   and to a given nonzero integer.
@@ -252,13 +255,15 @@ theorem exists_properlyEquivalent_fst_eq (f : ℤ × ℤ × ℤ) {x₀ y₀ : �
       ProperlyEquivalent f (f.1 * x₀ ^ 2 + f.2.1 * x₀ * y₀ + f.2.2 * y₀ ^ 2, b', c') ∧
       discrim (f.1 * x₀ ^ 2 + f.2.1 * x₀ * y₀ + f.2.2 * y₀ ^ 2) b' c' =
         discrim f.1 f.2.1 f.2.2 := by
-  have hb : x₀ * Int.gcdA x₀ y₀ + y₀ * Int.gcdB x₀ y₀ = 1 := by
-    have := Int.gcd_eq_gcd_ab x₀ y₀
-    rw [h] at this
-    exact_mod_cast this.symm
-  have hpe := (properlyEquivalent_iff_exists (f := f)).mpr
-    ⟨x₀, -Int.gcdB x₀ y₀, y₀, Int.gcdA x₀ y₀, by linear_combination hb, rfl⟩
-  exact ⟨_, _, hpe, hpe.discrim_eq⟩
+  obtain ⟨γ, h₀, h₁⟩ := (Int.isCoprime_iff_gcd_eq_one.mpr h).exists_SL2_col 0
+  have hpe : ProperlyEquivalent f (substitute f γ) := ⟨γ, rfl⟩
+  have hfst : (substitute f γ).1 = f.1 * x₀ ^ 2 + f.2.1 * x₀ * y₀ + f.2.2 * y₀ ^ 2 := by
+    simp only [substitute, h₀, h₁]
+  refine ⟨(substitute f γ).2.1, (substitute f γ).2.2, ?_, ?_⟩
+  · rw [← hfst]
+    exact hpe
+  · rw [← hfst]
+    exact hpe.discrim_eq
 
 private theorem dvd_gcd_three {k : ℕ} {a b c : ℤ} (ha : (k : ℤ) ∣ a) (hb : (k : ℤ) ∣ b)
     (hc : (k : ℤ) ∣ c) : k ∣ Int.gcd (Int.gcd a b : ℤ) c :=
@@ -355,11 +360,16 @@ theorem exists_gcd_eq_one_value {a b c m : ℤ} (hprim : Int.gcd (Int.gcd a b : 
       · exact ha h
       · exact nX (hpk.dvd_of_dvd_pow h)
 
-/-- **Forms with coprime first coefficients and equal middle coefficients are aligned.** Let
+/-- **Coprime first coefficients and equal middle coefficients give an integral multiplier.** Let
 $(a_1, b, c_1)$ and $(a_2, b, c_2)$ be forms of the same discriminant $D$, not the square of an
 integer, with the same middle coefficient $b$ and with $\gcd(a_1, a_2) = 1$. Then $a_1 \ne 0$,
 $a_2 \ne 0$, and the rational number $c_1 / a_2 = c_2 / a_1$ is an integer $j$: $c_1 = j a_2$ and
 $c_2 = j a_1$.
+
+So if both forms are primitive, they are aligned in Knapp's sense (p. 25: primitive forms of the
+same nonsquare discriminant with equal middle coefficients and integral $j$). Without primitivity
+they need not be: $(2, 0, 2)$ and $(1, 0, 4)$ have discriminant $-16$, coprime first coefficients
+and $j = 2$, but $(2, 0, 2)$ is not primitive.
 
 Source: Anthony W. Knapp, *Advanced Algebra*, digital second edition, 2016, Chapter I, §4, p. 25,
 the paragraph after Proposition 1.9 ("the rational number $j$ is automatically an integer if
@@ -380,20 +390,24 @@ theorem exists_eq_mul_of_gcd_eq_one {a₁ a₂ b c₁ c₂ : ℤ} (hD : ¬ IsSqu
   rw [hac, hj]
   ring
 
-/-- **Composition of aligned forms (Knapp's Proposition 1.9).** Let $(a_1, b, c_1)$ and
-$(a_2, b, c_2)$ be primitive forms with the same middle coefficient that are aligned: there is an
-integer $j$ with $c_1 = j a_2$ and $c_2 = j a_1$, that is, $j = c_1 / a_2 = c_2 / a_1$. Then their
-composition $(a_1 a_2, b, j)$ is primitive with the discriminant $b^2 - 4 a_1 c_1$ of the two
-forms,
+/-- **Composition through an integral multiplier (Knapp's Proposition 1.9).** Let
+$(a_1, b, c_1)$ and $(a_2, b, c_2)$ be primitive forms with the same middle coefficient, and let $j$
+be an integer with $c_1 = j a_2$ and $c_2 = j a_1$. Then the form $(a_1 a_2, b, j)$ is primitive
+with the discriminant $b^2 - 4 a_1 c_1$ of the two forms,
 $$(a_1 x_1^2 + b x_1 y_1 + c_1 y_1^2)(a_2 x_2^2 + b x_2 y_2 + c_2 y_2^2)
   = a_1 a_2 X^2 + b X Y + j Y^2$$
 with $X = x_1 x_2 - j y_1 y_2$ and $Y = a_1 x_1 y_2 + a_2 x_2 y_1 + b y_1 y_2$, for all integers
 $x_1, y_1, x_2, y_2$, and if $a_1 > 0$ and $a_2 > 0$ then $a_1 a_2 > 0$.
 
-Knapp states the proposition for forms of the same nonsquare discriminant; with $c_1 = j a_2$ and
-$c_2 = j a_1$ the forms automatically have the same discriminant, and the conclusions do not need
-it to be a nonsquare. The positivity clause is Knapp's remark after Theorem 1.12, p. 28: the
-composition of aligned positive definite forms is positive definite.
+When $a_1 \ne 0$ and $a_2 \ne 0$, the integer $j$ is determined by the forms,
+$j = c_1 / a_2 = c_2 / a_1$. Knapp states the proposition for primitive forms of the same nonsquare
+discriminant, where the first coefficients are nonzero and such forms with integral $j$ are aligned
+(p. 25); there $(a_1 a_2, b, j)$ is his composition of the aligned forms. With $c_1 = j a_2$ and
+$c_2 = j a_1$ the two forms automatically have the same discriminant, and the conclusions do not
+need it to be a nonsquare; but without nonzero first coefficients $j$ is not determined: for
+$(0, 1, 0)$ taken twice the hypotheses hold for every integer $j$. The positivity clause is
+Knapp's remark after Theorem 1.12, p. 28: the composition of aligned positive definite forms is
+positive definite.
 
 Source: Anthony W. Knapp, *Advanced Algebra*, digital second edition, 2016, Chapter I, §4,
 Proposition 1.9 with its proof and the definition of aligned forms, p. 25, and the remark after
@@ -435,13 +449,13 @@ theorem composition_of_aligned {a₁ a₂ b c₁ c₂ j : ℤ}
 /-- **Two classes of primitive forms contain aligned forms (Knapp's Theorem 1.12(a)).** Let
 $f_1$ and $f_2$ be primitive forms of the same discriminant $D$, not the square of an integer, and
 let $m \ne 0$ be an integer. Then there are forms $(a_1, b, c_1)$ properly equivalent to $f_1$ and
-$(a_2, b, c_2)$ properly equivalent to $f_2$, with the same middle coefficient, that are aligned
-($c_1 = j a_2$ and $c_2 = j a_1$ for an integer $j$), with $\gcd(a_1, a_2) = 1$,
+$(a_2, b, c_2)$ properly equivalent to $f_2$, with the same middle coefficient and $c_1 = j a_2$ and
+$c_2 = j a_1$ for an integer $j$, with $\gcd(a_1, a_2) = 1$,
 $\gcd(a_1, m) = 1$ and $\gcd(a_2, m) = 1$.
 
 The proper equivalence classes of $f_1$ and $f_2$ are Knapp's classes $\mathcal{C}_1$ and
 $\mathcal{C}_2$; their members are primitive of discriminant $D$ by
-`properlyEquivalent_invariants`.
+`properlyEquivalent_invariants`, so the two forms found are aligned in Knapp's sense.
 
 Source: Anthony W. Knapp, *Advanced Algebra*, digital second edition, 2016, Chapter I, §4,
 Theorem 1.12(a), p. 27, with its proof, p. 28. -/

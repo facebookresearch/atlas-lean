@@ -17,14 +17,11 @@ Knapp's example after Proposition 1.9: the aligned forms $2x^2 + 2xy + 3y^2$ and
 $3x^2 + 2xy + 2y^2$ of discriminant $-20$, with $j = 1$, compose to the primitive form
 $6x^2 + 2xy + y^2$ of discriminant $-20$. Also: the translate $(2, 5, 6)$ of $(2, 1, 3)$, Knapp's
 remark after Lemma 1.11 with $l = 2$ and $(1, 2, 4)$, the alignment of $(2, 1, 3)$ and $(3, 1, 2)$,
-and the existence statements on small forms.
+the two cases where an integral multiplier does not give Knapp's aligned forms ($(2, 0, 2)$ with
+$(1, 0, 4)$, and $(0, 1, 0)$ taken twice), and the existence statements on small forms.
 -/
 
 namespace BinaryQuadraticForm.AlignedFormsTest
-
-theorem not_isSquare_of_neg {D : ℤ} (hD : D < 0) : ¬ IsSquare D := by
-  rintro ⟨r, rfl⟩
-  nlinarith [mul_self_nonneg r]
 
 -- Knapp, p. 25: `(2, 2, 3)` and `(3, 2, 2)` are aligned with `j = 1`, and compose to `(6, 2, 1)`.
 example : Int.gcd (Int.gcd (2 * 3) 2 : ℤ) 1 = 1 ∧ discrim (2 * 3 : ℤ) 2 1 = -20 := by
@@ -78,6 +75,20 @@ example : ∃ x₀ y₀ : ℤ, Int.gcd x₀ y₀ = 1 ∧
 example : ∃ j : ℤ, (3 : ℤ) = j * 3 ∧ (2 : ℤ) = j * 2 :=
   (exists_eq_mul_of_gcd_eq_one (a₁ := 2) (a₂ := 3) (b := 1) (c₁ := 3) (c₂ := 2)
     (not_isSquare_of_neg (by norm_num [discrim])) (by norm_num [discrim]) (by decide)).2.2
+
+-- Without primitivity an integral multiplier does not give aligned forms: `(2, 0, 2)` and
+-- `(1, 0, 4)`, of discriminant `-16`, have `j = 2`, but `(2, 0, 2)` has content `2`.
+example : ∃ j : ℤ, (2 : ℤ) = j * 1 ∧ (4 : ℤ) = j * 2 :=
+  (exists_eq_mul_of_gcd_eq_one (a₁ := 2) (a₂ := 1) (b := 0) (c₁ := 2) (c₂ := 4)
+    (not_isSquare_of_neg (by norm_num [discrim])) (by norm_num [discrim]) (by decide)).2.2
+
+example : Int.gcd (Int.gcd 2 0 : ℤ) 2 = 2 := by decide
+
+-- With zero first coefficients the multiplier is not determined: `(0, 1, 0)` taken twice meets
+-- the hypotheses of `composition_of_aligned` for every `j`.
+example (j : ℤ) : Int.gcd (Int.gcd (0 * 0) 1 : ℤ) j = 1 :=
+  (composition_of_aligned (a₁ := 0) (a₂ := 0) (b := 1) (c₁ := 0) (c₂ := 0) (j := j)
+    (by decide) (by decide) (by ring) (by ring)).1
 
 -- Theorem 1.12(a) for the classes of `2x² + xy + 3y²` and `2x² - xy + 3y²`, with `m = 6`.
 example : ∃ a₁ a₂ b c₁ c₂ j : ℤ, ProperlyEquivalent (2, 1, 3) (a₁, b, c₁) ∧
