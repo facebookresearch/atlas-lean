@@ -18,3 +18,5 @@
 - [Conformance of finite-state machines and fault domains](conformance-of-finite-state-machines-and-fault.md)
 - [The ioco conformance relation](the-ioco-conformance-relation.md)
 - [Soundness of ioco test generation](soundness-of-ioco-test-generation.md)
+- [Satisfiability of data-free nfer specifications is undecidable](satisfiability-of-data-free-nfer-undecidable.md)
+- [Supervisory control of discrete-event systems](supervisory-control-of-discrete-event-systems/README.md)

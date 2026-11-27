@@ -45,3 +45,4 @@
 - [Extending an observation does not change it on normal states](observe-normal.md)
 - [Conversion-invariant observations factor through normalization](observation-factors.md)
 - [Uniqueness of the factorization through normal states](observation-factor-unique.md)
+- [Graph rewriting](graph-rewriting/README.md)

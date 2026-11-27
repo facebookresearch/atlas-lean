@@ -6,3 +6,4 @@ Separating implication and local reasoning in the heap model, abstract separatio
 - [Abstract separation logic](abstract-separation-logic/README.md)
 - [List segments](list-segments/README.md)
 - [Symbolic heaps and bi-abduction](symbolic-heaps-and-bi-abduction/README.md)
+- [Decision problems for separation logic](separation-logic-decision-problems/README.md)
