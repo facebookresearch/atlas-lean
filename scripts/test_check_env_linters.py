@@ -447,6 +447,14 @@ def pd (n : Nat) : Nat :=
     @[reducible] a6 (k : Nat) : Nat := k
   a6 n
 
+def tactic (n : Nat) : Nat :=
+  let rec go (k : Nat) : ∃ a b : Nat, 0 + a = k ∧ b = n := by
+    exists k, n
+    generalize hx : k = y
+    let rec inner (j : Nat) : Nat := j
+    exact ⟨Nat.zero_add y, rfl⟩
+  n
+
 end LR
 """
 
@@ -547,11 +555,32 @@ class IndexTests(unittest.TestCase):
                          "LR.cons.v", "LR.cons.w",
                          # A declaration of a `let rec` may have a doc comment and attributes.
                          "LR.pf.a11", "LR.pf.a11.inner11", "LR.pa.a7", "LR.pa.b7",
-                         "LR.pd.a6"} <= names)
+                         "LR.pd.a6",
+                         # A tactic's `exists k, n` declares nothing.
+                         "LR.tactic.go", "LR.tactic.go.inner"} <= names)
         self.assertFalse({"LR.total.inner", "LR.outer.b", "LR.flat.c.d", "LR.nest.f",
                           "LR.boxed.value.g", "LR.boxed2.inner2", "LR.boxed2.value",
                           "LR.pair.p.q", "LR.props.m", "LR.props.s.m", "LR.typed.m",
-                          "LR.cons.k", "LR.pf.inner11"} & names)
+                          "LR.cons.k", "LR.pf.inner11", "LR.tactic.n", "LR.tactic.n.inner"}
+                         & names)
+
+    def test_reads_attributes_whose_arguments_hold_brackets(self):
+        text = """\
+namespace AB
+
+@[simp, aesop safe (rule_sets := [AB])]
+theorem t : True := trivial
+
+def f (n : Nat) : Nat :=
+  let rec @[aesop safe (rule_sets := [AB])] g (k : Nat) : Nat := k
+  g n
+
+end AB
+"""
+        index = check.index_source(text)
+        self.assertTrue({"AB.t", "AB.f", "AB.f.g"} <= index.names)
+        # A finding's range starts at the attributes; the declaration is on the next line.
+        self.assertEqual(index.declaration_line(3), 4)
 
     def test_dotted_sections_open_and_close_one_scope_per_component(self):
         # `end Inner` closes only the inner of `section Outer.Inner`, so `Outer` stays public;
@@ -798,6 +827,18 @@ class PlaceTests(unittest.TestCase):
         files = {"MathlibExt/A.lean": (head, {3})}
         self.assertTrue(self.place_in(new, files, base).added)
         self.assertFalse(self.place_in(kept, files, base).added)
+
+    def test_a_tactic_s_arguments_hide_no_declaration(self):
+        # `exists k, n` in `go`'s tactic value declares nothing, so a new `tactic.n` is new.
+        base_text = LET_RECS
+        head = LET_RECS.replace(
+            "end LR\n", "/-- New. -/\ndef tactic.n (k spare : Nat) : Nat := k\n\nend LR\n")
+        new_line = head.splitlines().index("def tactic.n (k spare : Nat) : Nat := k") + 1
+        files = {"MathlibExt/A.lean": (head, {new_line - 1, new_line})}
+        base = base_names(MathlibExt__A=base_text)
+        new = Finding("LR.tactic.n", "unusedArguments", "", "MathlibExt.A", "MathlibExt/A.lean",
+                      new_line, 1)
+        self.assertTrue(self.place_in(new, files, base).added)
 
     def test_a_let_rec_in_a_helper_hides_no_declaration_of_the_parent(self):
         # `total.go.inner` is the `let rec` in `go`; a new `total.inner` is another declaration,
