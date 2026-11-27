@@ -28,7 +28,7 @@ A good expansion adds a page for each pending prerequisite below.
 
 ## Proof depends on
 
-- [Dimension of a stabilizer code](../../../QuantumInformation/quantum-error-correction/finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../../../QuantumInformation/quantum-error-correction/stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Sources
 

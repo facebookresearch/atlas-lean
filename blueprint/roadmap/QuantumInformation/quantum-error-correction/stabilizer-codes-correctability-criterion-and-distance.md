@@ -26,7 +26,7 @@ as $-I$, acts on $C(S)$ as a scalar and is not a logical error.
 
 - [The Knill–Laflamme conditions](knill-laflamme-conditions/is-correctable-iff-knill-laflamme.md)
 - [Product of two Pauli operators](distance-of-a-quantum-code/conj-transpose-pauli-mul-pauli.md)
-- [Dimension of a stabilizer code](finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Related topics
 

@@ -19,4 +19,13 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Hardness Magnification for MCSP](hardness-magnification/README.md)
 
 - [The Minimum Circuit Size Problem](minimum-circuit-size-problem/README.md)
+
+- [Algorithmic Method: NQP and Almost-Everywhere Bounds](algorithmic-method-nqp-and-almost-everywhere-bounds/README.md)
+
+- [Monotone Separations and Supercritical Depth](monotone-separations-and-supercritical-depth/README.md)
+
+- [Near-Maximum Circuit Lower Bounds for Symmetric Exponential Time](symmetric-exponential-time-circuit-lower-bounds/README.md)
+
+- [Range Avoidance and Near-Maximum Circuit Lower Bounds](range-avoidance-and-near-maximum-lower-bounds/README.md)
+
 - [Boolean formulas: substitution, depth and size](boolean-formulas-substitution-depth-and-size/README.md)
