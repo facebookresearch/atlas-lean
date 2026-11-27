@@ -102,16 +102,6 @@ noncomputable def diff {d : ℕ} (a : (Fin d → ℕ) → ℝ) (k n : Fin d → 
   ∑ j ∈ Finset.Iic k,
     (-1 : ℝ) ^ (∑ i, (k i - j i)) * (multiChoose k j : ℝ) * a (n - j)
 
-/-- **Uniformly absolutely continuous measures.** A measure $\mu$ on $\mathbb{R}^d$ is uniformly
-absolutely continuous with respect to a measure $\nu$ on $\mathbb{R}^d$ if there is a real
-constant $C \ge 0$ with $\mu(S) \le C \, \nu(S)$ for every measurable set $S$.
-
-When $\nu$ is $\sigma$-finite, this says that $\mu$ has an essentially bounded Radon–Nikodym
-density with respect to $\nu$. -/
-def UniformlyAbsolutelyContinuous {d : ℕ}
-    (μ ν : Measure (EuclideanSpace ℝ (Fin d))) : Prop :=
-  ∃ C : ℝ≥0, μ ≤ C • ν
-
 end Analysis.HausdorffAbsoluteContinuity
 
 end MathlibExt.Analysis.HausdorffAbsoluteContinuityWanted

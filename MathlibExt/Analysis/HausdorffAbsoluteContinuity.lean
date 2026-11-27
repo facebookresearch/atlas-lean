@@ -7,8 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The theorem statement is adapted from `LeanEval/Analysis/HausdorffAbsoluteContinuity.lean`
-(leanprover/lean-eval), commit 38361be884302c7edce1908c4aef8296eb2cb27e.
+The theorem statement and the definition of uniform absolute continuity are adapted from
+`LeanEval/Analysis/HausdorffAbsoluteContinuity.lean` (leanprover/lean-eval), commit
+38361be884302c7edce1908c4aef8296eb2cb27e.
 Copyright 2026 Lean FRO, LLC. Submitter: Kim Morrison.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
@@ -19,8 +20,7 @@ public import MathlibExt.Analysis.HausdorffMoments
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 
 import all MathlibExt.Analysis.HausdorffMoments
-import Mathlib.Algebra.MvPolynomial.Eval
-import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
+import MathlibExt.MeasureTheory.Measure.UniquenessOnRd
 import Mathlib.MeasureTheory.Measure.Sub
 import Mathlib.Tactic.Ring
 
@@ -45,62 +45,51 @@ are defined without extending the sequence to negative indices.
   pp. 317–328, for the multivariate moment problem.
 * `MathlibExt.Analysis.HausdorffMoments`: `hausdorff_positivity`, `compact_cube`, and
   `continuous_monomial` are used for the positive residual measure and its moments.
+* `MathlibExt.MeasureTheory.Measure.UniquenessOnRd`:
+  `MeasureTheory.Measure.eq_of_forall_integral_monomial_eq` identifies the restricted measures
+  from their mixed moments.
 -/
 
 namespace MathlibExt.Analysis.HausdorffAbsoluteContinuityWanted.Analysis.HausdorffAbsoluteContinuity
 
 open MeasureTheory
-open scoped BigOperators NNReal BoundedContinuousFunction
+open scoped BigOperators NNReal
 
 open MathlibExt.Analysis.HausdorffMomentsWanted.Analysis
+
+@[expose] public section
+
+set_option linter.dupNamespace false in
+/-- **Uniformly absolutely continuous measures.** A measure $\mu$ on $\mathbb{R}^d$ is uniformly
+absolutely continuous with respect to a measure $\nu$ on $\mathbb{R}^d$ if there is a real
+constant $C \ge 0$ with $\mu(S) \le C \, \nu(S)$ for every measurable set $S$.
+
+When $\nu$ is $\sigma$-finite, this says that $\mu$ has an essentially bounded Radon–Nikodym
+density with respect to $\nu$. -/
+def UniformlyAbsolutelyContinuous {d : ℕ}
+    (μ ν : Measure (EuclideanSpace ℝ (Fin d))) : Prop :=
+  ∃ C : ℝ≥0, μ ≤ C • ν
+
+end
 
 variable {d : ℕ}
 
 private theorem restrict_eq_of_moments {μ ν : Measure (EuclideanSpace ℝ (Fin d))}
     [IsFiniteMeasure μ] [IsFiniteMeasure ν] (h : ∀ n, momentOf μ n = momentOf ν n) :
     μ.restrict (cube d) = ν.restrict (cube d) := by
-  classical
-  let : CompactSpace (cube d) := isCompact_iff_compactSpace.mp compact_cube
-  let coord (i : Fin d) : (cube d) →ᵇ ℝ :=
-    BoundedContinuousFunction.mkOfCompact
-      ⟨fun x => (x : EuclideanSpace ℝ (Fin d)) i,
-        (PiLp.continuous_apply 2 _ i).comp continuous_subtype_val⟩
-  let ev : MvPolynomial (Fin d) ℝ →ₐ[ℝ] ((cube d) →ᵇ ℝ) := MvPolynomial.aeval coord
-  let A : StarSubalgebra ℝ ((cube d) →ᵇ ℝ) :=
-    { ev.range with
-      star_mem' := fun {f} hf => by
-        rwa [show star f = f by ext x; exact star_trivial _] }
-  have hsep : (A.map (BoundedContinuousFunction.toContinuousMapStarₐ ℝ)).SeparatesPoints := by
-    intro x y hxy
-    have hne : ∃ i : Fin d, coord i x ≠ coord i y := by
-      by_contra! heq
-      exact hxy (Subtype.ext (PiLp.ext heq))
-    obtain ⟨i, hi⟩ := hne
-    refine ⟨fun x => coord i x,
-      ⟨BoundedContinuousFunction.toContinuousMapStarₐ ℝ (coord i), ?_, rfl⟩, hi⟩
-    exact StarSubalgebra.mem_map.mpr ⟨coord i, ⟨MvPolynomial.X i,
-      MvPolynomial.aeval_X coord i⟩, rfl⟩
-  let μ' : Measure (cube d) := μ.comap Subtype.val
-  let ν' : Measure (cube d) := ν.comap Subtype.val
-  have heq : μ' = ν' := by
-    apply ext_of_forall_mem_subalgebra_integral_eq_of_pseudoEMetric_complete_countable hsep
-    rintro _ ⟨p, rfl⟩
-    change (∫ x, ev p x ∂μ') = ∫ x, ev p x ∂ν'
-    induction p using MvPolynomial.induction_on' with
-    | monomial n r =>
-      rw [show (fun x => ev (MvPolynomial.monomial n r) x) =
-          (fun x : cube d => r * monomial n x.val) by
-        funext x
-        simp [ev, MvPolynomial.aeval_monomial, Finsupp.prod_fintype, coord, monomial]]
-      simp only [integral_const_mul, μ', ν', integral_subtype_comap compact_cube.measurableSet]
-      exact congrArg (r * ·) (h n)
-    | add p q hp hq =>
-      rw [map_add]
-      change (∫ x, ev p x + ev q x ∂μ') = ∫ x, ev p x + ev q x ∂ν'
-      rw [integral_add ((ev p).integrable μ') ((ev q).integrable μ'),
-        integral_add ((ev p).integrable ν') ((ev q).integrable ν'), hp, hq]
-  simpa only [μ', ν', map_comap_subtype_coe compact_cube.measurableSet] using
-    congrArg (Measure.map (Subtype.val : cube d → EuclideanSpace ℝ (Fin d))) heq
+  let e := PiLp.homeomorph 2 (fun _ : Fin d => ℝ)
+  let E := e '' cube d
+  have hE : IsCompact E := compact_cube.image e.continuous
+  have hsupport (ξ : Measure (EuclideanSpace ℝ (Fin d))) :
+      ((ξ.restrict (cube d)).map e) Eᶜ = 0 := by
+    rw [Measure.map_apply e.measurable hE.measurableSet.compl, Set.preimage_compl,
+      show e ⁻¹' E = cube d from e.injective.preimage_image _,
+      Measure.restrict_apply compact_cube.measurableSet.compl, Set.compl_inter_self, measure_empty]
+  apply e.measurableEmbedding.map_injective
+  apply Measure.eq_of_forall_integral_monomial_eq hE _ _ (hsupport μ) (hsupport ν)
+  intro n
+  rw [e.measurableEmbedding.integral_map, e.measurableEmbedding.integral_map]
+  exact h n
 
 private theorem momentOf_add {μ ν : Measure (EuclideanSpace ℝ (Fin d))}
     [IsFiniteMeasure μ] [IsFiniteMeasure ν] (n : Fin d → ℕ) :
@@ -141,7 +130,7 @@ Knill, *Some fundamental theorems in mathematics*, §115. Via leanprover/lean-ev
 public theorem hausdorff_absolute_continuity {d : ℕ}
     (μ : Measure (EuclideanSpace ℝ (Fin d)))
     [IsProbabilityMeasure μ] (hμ : μ ((cube d)ᶜ) = 0) :
-    (∃ c : ℝ≥0, μ ≤ c • volume.restrict (cube d)) ↔
+    UniformlyAbsolutelyContinuous μ (volume.restrict (cube d)) ↔
       ∃ C : ℝ, ∀ k n : Fin d → ℕ, k ≤ n →
         diff (momentOf μ) k n ≤ C * diff (momentOf (volume.restrict (cube d))) k n := by
   let ν₀ : Measure (EuclideanSpace ℝ (Fin d)) := volume.restrict (cube d)
