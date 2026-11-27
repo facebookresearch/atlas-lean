@@ -40,6 +40,7 @@
 - [Verifiable Quantum Advantage from Random Oracles](unstructured-verifiable-quantum-advantage/README.md)
 - [Witness-Preserving QMA Amplification, QCMA and Black-Box Groups](witness-preserving-amplification-and-black-box-groups/README.md)
 - [Repeated measurement of an isometry on entangled inputs](tensor-power-isometry-entangled-inputs.md)
+- [Quantum Circuit Models](quantum-circuit-models/README.md)
 
 ## Related topics
 

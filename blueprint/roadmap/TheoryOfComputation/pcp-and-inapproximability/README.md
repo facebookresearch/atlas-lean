@@ -17,3 +17,4 @@ The PCP theorem and Dinur's gap amplification, optimization classes (NPO, APX, M
 - [Agreement Tests on High-Dimensional Expanders](agreement-tests-on-high-dimensional-expanders/README.md)
 - [SDP Optimality and Approximation Resistance](sdp-optimality-and-approximation-resistance/README.md)
 - [Killed random walks](killed-random-walks/README.md)
+- [Maximum Satisfiability by Random Assignments](maximum-satisfiability-by-random-assignments/README.md)

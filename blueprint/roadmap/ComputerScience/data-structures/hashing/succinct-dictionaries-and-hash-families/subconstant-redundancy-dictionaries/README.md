@@ -1,0 +1,17 @@
+# Dictionaries with Subconstant Wasted Bits per Key
+
+- [Memoryless dynamic matching of balls to bins](memoryless-dynamic-matching.md)
+- [Multi-round consistent-hashing matching on a circle](multi-round-circle-matching.md)
+- [One-round Feistel permutations on mixed domains](one-round-feistel-on-mixed-domains.md)
+- [Minimap of a fixed-capacity leaf](minimap-of-a-leaf.md)
+- [Rounds and relocations of multi-round circle matching](rounds-and-relocations-of-circle-matching.md)
+- [Bucket-load concentration for Feistel routing](feistel-routing-concentration.md)
+- [A full minimap wastes at most three bits](full-minimap-wastes-three-bits.md)
+- [Multi-level dictionary tree with subconstant wasted bits](multi-level-dictionary-tree.md)
+- [Bijective multi-level coordinate routing](bijective-multi-level-routing.md)
+- [Root-to-leaf query and quotient-recovering deletion](query-and-deletion-in-the-tree.md)
+- [Waiting list of a dictionary-tree node](waiting-list-of-a-node.md)
+- [Padding entropy and seed sizes in the dictionary tree](padding-entropy-and-seed-sizes.md)
+- [Existence of good seed assignments for the dictionary tree](good-seed-existence.md)
+- [Local subtree reconstruction in the dictionary tree](local-subtree-reconstruction.md)
+- [Space of the multi-level dictionary tree is OPT + O(R)](space-of-the-multi-level-tree.md)

@@ -27,3 +27,4 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 
 - [Proof certificates](proof-certificates/README.md)
 - [SAT solving](sat-solving/README.md)
+- [Boolean Clones and CNF Encodings](boolean-clones-and-cnf-encodings/README.md)

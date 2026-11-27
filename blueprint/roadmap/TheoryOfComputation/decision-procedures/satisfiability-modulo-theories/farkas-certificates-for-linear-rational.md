@@ -5,12 +5,7 @@ Let $A \in \mathbb{Q}^{m \times n}$ and $b \in \mathbb{Q}^m$. The system $Ax \le
 ## Proof depends on
 
 - [Fourier–Motzkin elimination](fouriermotzkin-elimination.md)
-
-## Expansion
-
-This page becomes ready once these prerequisites are stated:
-
-- Soundness of Farkas certificates: if $y \ge 0$, $y^{\mathsf T} A = 0$ and $y^{\mathsf T} b < 0$, then $Ax \le b$ has no solution, since any solution would give $0 = y^{\mathsf T} A x \le y^{\mathsf T} b < 0$ (proof prerequisite)
+- [Farkas' lemma over linearly ordered fields](../../../LinearAlgebra/matrix-algebra/linear-inequality-systems-over-ordered-fields/farkas-lemma-over-ordered-fields.md)
 
 ## Sources
 

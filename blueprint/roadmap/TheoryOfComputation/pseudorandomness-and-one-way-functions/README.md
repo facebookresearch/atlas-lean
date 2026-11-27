@@ -20,6 +20,10 @@ Complexity-theoretic foundations of cryptography and derandomization: one-way fu
 - [Pseudorandom Quantum States and Unitaries](pseudorandom-quantum-states-and-unitaries/README.md)
 - [Weighted PRGs and Derandomization of Small Space](weighted-prgs-and-space-derandomization/README.md)
 - [Worst-Case and Meta-Complexity Characterizations of One-Way Functions](worst-case-characterizations-of-one-way-functions/README.md)
+- [Designs, Generators and Hardness versus Randomness](hardness-and-generators/README.md)
+- [Distributional Problems and Average-Case Complexity](average-case-complexity/README.md)
+- [Small-Bias Spaces](small-bias-spaces/README.md)
+- [Weak Sources and Randomness Extractors](weak-sources-and-extractors/README.md)
 
 ## Related topics
 

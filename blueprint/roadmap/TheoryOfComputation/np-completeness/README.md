@@ -16,3 +16,5 @@ Karp's 21 complete problems ("Reducibility among combinatorial problems", 1972, 
 - [Databases, concurrency control and protection](databases-and-concurrency/README.md)
 - [Scheduling problems](scheduling/README.md)
 - [Strings, puzzles and Latin squares](strings-and-puzzles/README.md)
+- [Boolean Constraint Satisfaction and the Schaefer Dichotomy](boolean-constraint-satisfaction/README.md)
+- [Further NP-Complete Problems and Variants](further-np-complete-variants/README.md)

@@ -16,3 +16,4 @@ Hash tables (chaining, open addressing, cuckoo, perfect), universal hash familie
 - [Sequential idempotent requests to a hash table](sequential-idempotent-requests-to-a-hash-table/README.md)
 - [Universal hashing bounds for actual chain scans](universal-hashing-bounds-for-actual-chain-scans/README.md)
 - [Constructing FKS Perfect Hash Tables](fks-table-construction/README.md)
+- [Succinct Dictionaries and Hash Families](succinct-dictionaries-and-hash-families/README.md)

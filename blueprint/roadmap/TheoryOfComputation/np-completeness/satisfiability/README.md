@@ -27,3 +27,6 @@ Variants of SAT and CSP: 3SAT and the SAT-to-3SAT reduction, bounded-occurrence,
 - [Absorption, Strong Subalgebras and Zhuk's Algorithm](absorption-and-zhuks-algorithm/README.md)
 - [Promise and Quantified Constraint Satisfaction](promise-and-quantified-csp/README.md)
 - [The Finite-Domain CSP Dichotomy](finite-domain-csp-dichotomy/README.md)
+- [Constraint Satisfaction Problems and Encodings](constraint-satisfaction-encodings/README.md)
+- [Exact-One and Not-All-Equal Satisfiability](exact-one-and-not-all-equal-satisfiability/README.md)
+- [Planar Satisfiability Gadgets](planar-satisfiability-gadgets/README.md)

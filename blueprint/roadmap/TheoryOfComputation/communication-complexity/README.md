@@ -5,6 +5,14 @@ Yao's two-party model: deterministic protocols as trees, the rectangle lemma, fo
 - [Deterministic communication protocols](deterministic-communication-protocols/README.md)
 - [Randomized communication protocols](randomized-communication-protocols/README.md)
 - [Randomized and DAG-like Lifting](randomized-and-dag-like-lifting/README.md)
+- [Discrepancy, Corruption and Sign-Rank](discrepancy-corruption-and-sign-rank/README.md)
+- [Nondeterministic Covers, Extension Complexity and Information Cost](nondeterministic-covers-and-information-cost/README.md)
+- [Number-on-Forehead Multiparty Communication](number-on-forehead-protocols/README.md)
+- [Query-to-Communication Lifting](query-to-communication-lifting/README.md)
+- [Randomized Decision Trees and Query Lower Bounds](randomized-decision-trees/README.md)
+- [Rectangle Partitions and Deterministic Communication Bounds](rectangle-partitions-and-deterministic-bounds/README.md)
+- [Sensitivity, Certificates and Degree](sensitivity-certificates-and-degree/README.md)
+- [Structure of Decision Trees](decision-tree-structure/README.md)
 
 ## Related topics
 

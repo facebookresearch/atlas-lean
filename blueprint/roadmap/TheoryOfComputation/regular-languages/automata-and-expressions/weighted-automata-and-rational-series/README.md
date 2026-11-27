@@ -21,3 +21,5 @@ undecidable. Boolean weights give back finite automata and [Kleene's theorem](..
 - [Rabin's reduction theorem for isolated cut-points](rabin-s-reduction-theorem-for-isolated-cut-points.md)
 - [The emptiness problem for probabilistic automata is undecidable](emptiness-problem-for-probabilistic-automata.md)
 - [The value-1 problem for probabilistic automata is undecidable](value-1-problem-for-probabilistic-automata.md)
+- [Rational series of bounded dimension](rational-series-linear-representations.md)
+- [Closure of rational series with dimension bounds](rational-series-closure-bounds.md)

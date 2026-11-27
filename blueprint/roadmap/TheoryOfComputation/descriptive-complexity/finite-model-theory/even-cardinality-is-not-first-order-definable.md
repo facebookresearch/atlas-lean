@@ -8,15 +8,10 @@ and each repeated element with its earlier partner, so the two sets satisfy the 
 linear orders of length at least $2^k$, such as those of lengths $2^k$ and $2^k + 1$, satisfy the same sentences of quantifier rank at most $k$. In both cases one
 structure of each pair has even size and the other odd size, so a defining sentence of quantifier rank $k$ would separate them.
 
-## Expansion
-
-This page becomes ready once this prerequisite is stated:
-
-- Proof prerequisite: for $k \ge 1$, any two finite linear orders of length at least $2^k$ satisfy the same first-order sentences of quantifier rank at most $k$ (statement prerequisite; not yet stated)
-
 ## Proof depends on
 
 - [Ehrenfeucht–Fraïssé theorem](ehrenfeuchtfraisse-theorem.md)
+- [EF games on finite linear orders: the $2^n - 1$ threshold](../ehrenfeucht-fraisse-games/ef-games-on-finite-linear-orders.md)
 
 ## Sources
 

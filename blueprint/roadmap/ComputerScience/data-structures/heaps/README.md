@@ -9,3 +9,4 @@ Priority queues: binary, d-ary, binomial, Fibonacci and catenable heaps, indexed
 - [Fibonacci heap](fibonacci-heap/README.md)
 - [Indexed minimum priority queue](indexed-minimum-priority-queue/README.md)
 - [Leftist heap](leftist-heap/README.md)
+- [Priority Queues on the Word RAM](word-ram-priority-queues/README.md)

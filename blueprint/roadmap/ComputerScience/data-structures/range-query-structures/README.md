@@ -12,3 +12,4 @@ Structures answering range, interval or nearest-point queries: segment trees, Fe
 - [Segment tree](segment-tree/README.md)
 - [Sparse table](sparse-table/README.md)
 - [Advanced data structures](advanced-data-structures/README.md)
+- [Dynamic Prefix Sums](dynamic-prefix-sums/README.md)

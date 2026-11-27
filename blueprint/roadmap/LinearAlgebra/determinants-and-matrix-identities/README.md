@@ -13,3 +13,4 @@ Determinant expansions and identities, determinants of special products and expo
 - [Jacobi's formula](jacobi-s-formula/README.md)
 - [Symmetry criterion for matrices indexed by a product](symmetry-of-matrices-indexed-by-a-product/README.md)
 - [Symplectic matrices have determinant one](determinant-of-symplectic-matrices/README.md)
+- [Determinant Identities for Complexity Theory](determinant-identities-for-complexity/README.md)

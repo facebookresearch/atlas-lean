@@ -11,3 +11,4 @@ Time and space hierarchy theorems and diagonalization against time-bounded machi
 - [Forrelation and the Oracle Separation of BQP and PH](forrelation-and-bqp-versus-ph/README.md)
 - [Learning algorithms from natural proofs](learning-algorithms-from-natural-proofs/README.md)
 - [Learning versus pseudorandomness](learning-versus-pseudorandomness/README.md)
+- [Refined Time Hierarchies, Padding and Translation](refined-time-hierarchies-and-padding/README.md)

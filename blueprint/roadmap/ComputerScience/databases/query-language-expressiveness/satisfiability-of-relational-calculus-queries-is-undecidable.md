@@ -8,6 +8,10 @@ is domain independence of a relational calculus query.
 
 - [Relational calculus and domain independence](../relational-calculus/relational-calculus-and-domain-independence.md)
 
+## Proof depends on
+
+- [Trakhtenbrot's theorem: finite satisfiability is undecidable](../../../TheoryOfComputation/descriptive-complexity/trakhtenbrot-theorem/trakhtenbrot-theorem.md)
+
 ## Sources
 
 - S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995 (authors' web edition), Theorem 6.3.1 and Corollary 6.3.2. <http://webdam.inria.fr/Alice/pdfs/all.pdf>

@@ -6,3 +6,8 @@ Exact running times of hard problems beyond the polynomial/non-polynomial divide
 - [Tensor-network contraction](tensor-network-contraction/README.md)
 - [Fine-grained hypotheses](fine-grained-hypotheses/README.md)
 - [Weaker Fine-Grained Hypotheses and Combinatorial Matrix Multiplication](real-hypotheses-and-combinatorial-matrix-multiplication/README.md)
+- [Conditional Fine-Grained Lower Bounds](conditional-lower-bounds/README.md)
+- [Exponential-Time Algorithms for k-SAT](exponential-sat-algorithms/README.md)
+- [Linear-Size Reductions and Exponential Lower Bounds for Graph Problems](linear-size-reductions-and-graph-lower-bounds/README.md)
+- [SAT Exponents and ETH Variants](sat-exponents-and-hypotheses/README.md)
+- [The Sparsification Lemma](sparsification-lemma/README.md)

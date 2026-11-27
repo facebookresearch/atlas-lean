@@ -7,3 +7,4 @@ Union-find with rank and path compression (including its connected-components ap
 - [Euler tour tree](euler-tour-tree/README.md)
 - [Link-cut tree](link-cut-tree/README.md)
 - [Rank grows along union-find parent chains](rank-grows-along-union-find-parent-chains/README.md)
+- [Disjoint-Set Interface](disjoint-set-interface/README.md)

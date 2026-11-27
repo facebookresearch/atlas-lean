@@ -22,3 +22,7 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Near-Maximum Circuit Lower Bounds for Symmetric Exponential Time](symmetric-exponential-time-circuit-lower-bounds/README.md)
 - [Range Avoidance and Near-Maximum Circuit Lower Bounds](range-avoidance-and-near-maximum-lower-bounds/README.md)
 - [Learning under the uniform distribution](learning-under-the-uniform-distribution/README.md)
+- [Hardness Amplification for Circuits](hardness-amplification-for-circuits/README.md)
+- [Monotone Circuit Complexity](monotone-circuit-complexity/README.md)
+- [Parallel Circuit Hierarchies](parallel-circuit-hierarchies/README.md)
+- [Circuit Models, Synthesis and Lower Bounds](circuit-models-synthesis-and-lower-bounds/README.md)

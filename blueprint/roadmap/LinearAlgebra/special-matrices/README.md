@@ -21,3 +21,4 @@ Classes of matrices defined by their structure or entries: Toeplitz, Hankel and 
 - [Generalized Householder matrices](generalized-householder-matrices/README.md)
 - [Real planar rotation matrices](rotation-matrices/README.md)
 - [Row-stochastic matrices](row-stochastic-matrices/README.md)
+- [Structured Matrices in Complexity Theory](structured-matrices-in-complexity/README.md)

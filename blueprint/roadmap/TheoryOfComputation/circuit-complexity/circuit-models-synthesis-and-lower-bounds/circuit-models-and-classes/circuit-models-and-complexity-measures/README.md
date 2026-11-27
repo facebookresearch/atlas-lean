@@ -1,0 +1,17 @@
+# Circuit Models and Complexity Measures
+
+- [Straight-line programs and circuits over a basis](straight-line-program-over-a-basis.md)
+- [Circuit complexity, binary cost and formula leaf size](circuit-complexity-and-formula-leaf-size.md)
+- [Circuit samplers and output distributions](circuit-samplers-and-output-distributions.md)
+- [Unfolding a circuit into a formula of the same depth](unfolding-a-circuit-into-a-formula.md)
+- [Cyclic circuits with least-fixed-point semantics](cyclic-circuits-least-fixed-point-semantics.md)
+- [A function depending on all inputs needs n - 1 binary gates](n-minus-one-binary-gates-for-essential-inputs.md)
+- [Simulating unbounded fan-in by fan-in two](simulating-unbounded-fan-in-by-fan-in-two.md)
+- [The full binary basis B2 and the basis U2](full-binary-basis-b2-and-u2.md)
+- [Register evaluation of straight-line programs is black pebbling](register-evaluation-equals-black-pebbling.md)
+- [Tseitin encoding of a Boolean circuit](tseitin-encoding-of-a-circuit.md)
+- [Counting functions with small De Morgan circuits](counting-functions-with-small-circuits.md)
+- [Shannon's sharp counting bound: almost all functions need more than 2^n/n gates](shannon-sharp-circuit-size-lower-bound.md)
+- [Changing one value changes circuit complexity by at most 2n + 3](one-point-update-changes-complexity-by-2n-plus-3.md)
+- [The Zhegalkin basis and multiplicative complexity](zhegalkin-basis-and-multiplicative-complexity.md)
+- [The circuit size hierarchy](circuit-size-hierarchy-theorem.md)
