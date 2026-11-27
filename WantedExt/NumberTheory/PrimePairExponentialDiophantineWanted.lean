@@ -9,9 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Order.Ring.Int
 public import Mathlib.Data.Nat.Prime.Defs
-public import MathlibExt.NumberTheory.PrimePairExponentialDiophantinePrimePairPowAddTwoPowOddMulPowNeSq
+public import Mathlib.Algebra.Order.Ring.Int
 public import MathlibExt.NumberTheory.PrimePairOneAddTwoPowMulPowEqSq
 public import MathlibExt.NumberTheory.PrimePairPowAddPowEqSq
 public import MathlibExt.NumberTheory.PrimePairPowAddTwoPowEvenMulPowEqSq
@@ -21,6 +20,7 @@ public import MathlibExt.NumberTheory.PrimePairTwoPowOddMulPowSubPowEqSq
 public import MathlibExt.NumberTheory.PrimePowAddOneEqSq
 public import MathlibExt.NumberTheory.ThreePowEqSqAddTwoIff
 public import MathlibExt.NumberTheory.TwoAddSevenPowEqSqIff
+public import MathlibExt.NumberTheory.PrimePairExponentialDiophantinePrimePairPowAddTwoPowOddMulPowNeSq
 
 /-!
 # The equations `(-1)^α pˣ + (-1)^β (2ᵏ(2p - 1))ʸ = z²` for prime pairs `(p, 2p - 1)`
