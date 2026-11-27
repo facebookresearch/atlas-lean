@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import MathlibExt.Analysis.SpecialFunctions.TakagiFunction
 public import MathlibExt.NumberTheory.Digits.BinaryDigitSum
 public import MathlibExt.NumberTheory.TakagiDyadicIdentities
+public import MathlibExt.NumberTheory.TakagiDNodeTreeCount
 
 /-!
 # Takagi function identities on dyadic rationals
@@ -60,16 +61,6 @@ Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal 
 Sequences 27 (2024), Article 24.2.7, Theorem 8 (`jis-2024-24.2.7-thm-8`). -/
 public theorem_wanted takagi_dyadic_eq_dcDNodes_div (k r : ℕ) (hr : r ≤ 2 ^ k) :
     takagiNewdef r ((k : ℤ) - 1) = (dcDNodes (2 ^ k + r) : ℝ) / 2 ^ k
-
-/-- **Coronado et al.'s count of $D$-nodes in divide-and-conquer trees.** Every
-divide-and-conquer tree with $n$ leaves has exactly $\delta(n)$ $D$-nodes, where $\delta$ is the
-function on positive integers given by $\delta(1) = 0$, $\delta(2m) = 2\delta(m)$ and
-$\delta(2m+1) = \delta(m) + \delta(m+1) + 1$ for $m \ge 1$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 9 (`jis-2024-24.2.7-thm-9`). -/
-public theorem_wanted treeDNodes_eq_dcDNodes_of_isDivideConquerTree (t : BinaryTree Unit)
-    (ht : IsDivideConquerTree t) : treeDNodes t = dcDNodes t.numLeaves
 
 /-- **Level-sum formula for the divide-and-conquer D-node count.** Let $\delta$ be the
 divide-and-conquer D-node count. For every integer $n > 0$, let $k = \lfloor \log_2 n \rfloor$,
