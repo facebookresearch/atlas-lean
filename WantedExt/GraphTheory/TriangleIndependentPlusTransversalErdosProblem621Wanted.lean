@@ -53,13 +53,15 @@ def triangleIndependentPlusTransversal : Prop :=
     4 * (triangleIndependenceNumber G + triangleTransversalNumber G) ≤ n ^ 2
 
 /--
-Resolved true: Norin and Sun proved `α₁(G) + τ_B(G) ≤ |V(G)|²/4`, where `τ_B(G)` is the least number
-of edges whose removal makes `G` bipartite; removing those edges destroys every triangle, so `τ₁(G)
-≤ τ_B(G)`. erdosproblems.com/621 lists the problem as proved. Source: T. F. Bloom, Erdős Problems,
-Problem #621, https://www.erdosproblems.com/621 (status PROVED (LEAN)); resolution: S. Norin and
-Y.-R. Sun, Triangle-independent sets vs. cuts, arXiv:1602.04370 (2016), abstract: α₁(G) + τ_B(G) ≤
-|V(G)|²/4, where τ_B(G) is the least size of an edge set whose removal makes G bipartite; τ₁ ≤ τ_B
-(erdosproblems.com/621), https://arxiv.org/abs/1602.04370.
+Reported true, but the only proof is an unpublished preprint, not a refereed source: Norin and Sun
+show `α₁(G) + τ_B(G) ≤ |V(G)|²/4`, where `τ_B(G)` is the least number of edges whose removal makes
+`G` bipartite; removing those edges destroys every triangle, so `τ₁(G) ≤ τ_B(G)`. Puleo's paper
+restates the result as its Theorem 1.1, with credit to the preprint. erdosproblems.com/621 lists
+the problem as proved. Source: T. F. Bloom, Erdős Problems, Problem #621,
+https://www.erdosproblems.com/621 (status PROVED (LEAN)); proof: S. Norin and Y. R. Sun,
+Triangle-independent sets vs. cuts, unpublished preprint, arXiv:1602.04370 (2016),
+https://arxiv.org/abs/1602.04370; restated in G. J. Puleo, Graphs with α₁ and τ₁ both large,
+Graphs Combin. 34 (2018), 639-645, Theorem 1.1, https://doi.org/10.1007/s00373-018-1902-z.
 -/
 public theorem_wanted triangleIndependentPlusTransversal_holds : triangleIndependentPlusTransversal
 

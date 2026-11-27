@@ -45,12 +45,15 @@ def containsSaturatedPlanarGraph : Prop :=
       H.edgeSet.ncard = 3 * m - 6 ∧ ∀ i j, H.Adj i j → G.Adj (f i) (f j)
 
 /--
-Resolved true: Simonovits proved that such a graph contains `K_4` or a double pyramid `C_l + 2K_1`
-(`l ≥ 3`), both saturated planar graphs; erdosproblems.com/1019 lists the problem as proved (Lean),
-with Cambie's proof in its comments. Source: T. F. Bloom, Erdős Problems, Problem #1019,
-https://www.erdosproblems.com/1019 (status PROVED (LEAN)); resolution: M. Simonovits, PhD thesis;
-proof by S. Cambie in the erdosproblems.com/1019 comments, G contains K_4 or C_l + 2K_1 for some l ≥
-3 (erdosproblems.com/1019), https://www.erdosproblems.com/1019.
+No published proof is known. The claimed resolution, that such a graph contains `K_4` or a double
+pyramid `C_l + 2K_1` (`l ≥ 3`), both saturated planar graphs, rests on Simonovits's PhD thesis,
+which has no bibliographic entry and is the sole source of its proof, and on S. Cambie's
+unrefereed proof in the erdosproblems.com/1019 comments; Simonovits's published 1975 paper does
+not settle the problem. erdosproblems.com/1019 lists the problem as proved (Lean). Source: T. F.
+Bloom, Erdős Problems, Problem #1019, https://www.erdosproblems.com/1019 (status PROVED (LEAN));
+claimed resolution: M. Simonovits, PhD thesis (no bibliographic entry); unrefereed proof by S.
+Cambie in the erdosproblems.com/1019 comments, G contains K_4 or C_l + 2K_1 for some l ≥ 3,
+https://www.erdosproblems.com/1019.
 -/
 public theorem_wanted containsSaturatedPlanarGraph_holds : containsSaturatedPlanarGraph
 
