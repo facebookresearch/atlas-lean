@@ -13213,6 +13213,7 @@
   "MathlibExt/NumberTheory/Digits/SmallBaseBinomialForm": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/SutcliffeReverseMultiple": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/SzuszVolkmannCounterexample": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Normal numbers"},
+  "MathlibExt/NumberTheory/Digits/SzuszVolkmannCounterexampleCampbellH1SumAndYRelations": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Normal numbers"},
   "MathlibExt/NumberTheory/Digits/SzuszVolkmannCounterexampleTendstoLogCampbellFDivLog": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Normal numbers"},
   "MathlibExt/NumberTheory/Digits/ThreeDigitBinomialForm": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/ThreeDigitPalindromeTwoPow": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
