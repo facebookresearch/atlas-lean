@@ -302,7 +302,8 @@ private theorem exists_finset_twistPeriods_eq_bot :
   have := h0 ⟨_, rTensor_lsingle_mem_periods_hodgeTateAction hy⟩
   simpa only [hodgeTateComponent_rTensor_lsingle, ↓reduceIte] using this
 
-/-- Only finitely many Hodge–Tate numbers of a finite-dimensional `V` are nonzero. -/
+/-- Only finitely many Hodge–Tate numbers of a finite-dimensional `V` over `K` are nonzero, for
+`K` finite over `ℚ_p` inside `ℚ̄_p`. -/
 theorem finite_support_hodgeTateNumber : (Function.support (ρ.hodgeTateNumber K)).Finite := by
   obtain ⟨s, hs⟩ := exists_finset_twistPeriods_eq_bot K ρ
   refine (Set.Finite.preimage neg_injective.injOn s.finite_toSet).subset fun i hi => ?_
