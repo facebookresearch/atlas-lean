@@ -1,0 +1,16 @@
+# Projection reduction of the global attractor conjecture
+
+**Setting.** For a mass-action reaction network on species set $S$, restrict the dynamics to a box (a *confined* reaction system: the rate constants may vary within positive bounds, giving a differential inclusion rather than a single ODE) and push it forward to the open hypercube $(0,1)^S$ by an order-preserving diffeomorphism. A differential inclusion is *persistent* relative to a set if no trajectory has an omega-limit point there, *repelled* by a set if trajectories starting near it move away from it, and *permanent* if trajectories eventually enter a fixed compact subset of the interior. Projecting away a species (forgetting its coordinate) maps a reaction network to a smaller one, and mass-action differential inclusions transform functorially under these projections. The global attractor conjecture asserts that every complex balanced mass-action system has a globally attracting positive equilibrium in each stoichiometric compatibility class.
+
+**Theorem.**
+1. *(Projection argument.)* For a family of differential inclusions on hypercubes closed under projection to faces (a vertexical family), if every member is persistent relative to the union of faces opposite to the origin and repelled by the origin, then every member is persistent relative to the whole boundary. This applies to the mass-action inclusions of confined networks that are integer, chemical, reversible, strongly connected, weakly reversible, endotactic or strongly endotactic, and to monotone combinations of these classes.
+2. *(Induction on species.)* If, for every confined weakly reversible system with at most $n$ species, the mass-action inclusion is persistent and repelled by the origin, then the global attractor conjecture holds for complex balanced systems with at most $n+1$ species. In particular, the conjecture follows from the statement that the mass-action inclusion of every confined weakly reversible system is repelled by the origin and has bounded trajectories.
+3. The mass-action differential inclusion of every confined strongly endotactic reaction system is permanent.
+
+## Expansion
+
+Near a boundary face of the hypercube where some coordinates are small, the dynamics of the remaining coordinates is approximated by the projected network, which belongs to the same family and lives in a lower-dimensional hypercube. Persistence can therefore be proved by induction on the number of species, with the only genuinely new input at each step being the behaviour near the corners (vertices) of the hypercube. For complex balanced systems, persistence implies global convergence because the pseudo-Helmholtz free energy is a strict Lyapunov function with a unique positive equilibrium per compatibility class, so boundary omega-limit points are the only obstruction.
+
+## Sources
+
+- Manoj Gopalkrishnan, Ezra Miller and Anne Shiu, "A Projection Argument for Differential Inclusions, with Applications to Persistence of Mass-Action Kinetics", Symmetry, Integrability and Geometry: Methods and Applications (2013), <https://doi.org/10.3842/sigma.2013.025>; numbering as in arXiv:1208.0874: Theorem 3.15, Corollaries 3.18 and 5.24, Theorems 6.8, 6.10 and 6.11.

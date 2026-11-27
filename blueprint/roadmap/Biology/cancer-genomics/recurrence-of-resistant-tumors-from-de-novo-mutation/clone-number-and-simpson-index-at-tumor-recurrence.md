@@ -26,4 +26,4 @@ Mutant clones arrive as a Cox process with intensity $Z_0^n(s)n^{-\alpha} \appro
 
 ## Sources
 
-- K. Leder, R. Sun, Z. Wang, X. Zhang, "Parameter Estimation from Single Patient, Single Time-Point Sequencing Data of Recurrent Tumors", arXiv:2403.13081 (2024), Theorems 1–4, Propositions 1–2 and Corollary 1, <https://doi.org/10.48550/arXiv.2403.13081>.
+- Kevin Leder, Ruping Sun, Zicheng Wang and Xuanming Zhang, "Parameter estimation from single patient, single time-point sequencing data of recurrent tumors", Journal of Mathematical Biology 89 (2024), 51, <https://doi.org/10.1007/s00285-024-02149-x>; numbering as in arXiv:2403.13081: Theorems 1–4, Propositions 1–2 and Corollary 1.

@@ -20,4 +20,4 @@ Between firings the subthreshold flow is a contraction towards $\beta$, but rese
 
 ## Sources
 
-- E. Catsigeras, P. Guiraud, "Integrate and Fire Neural Networks, Piecewise Contractive Maps and Limit Cycles", arXiv:1011.1525 (2010), model equations and hypotheses (H1)–(H4) (Sections 2–3), Theorem 1, Proposition 2.2, Theorem 2, Propositions 3.6, 3.8, 3.9, Theorem 3, Theorem 4 and Propositions 4.2–4.3, <https://doi.org/10.48550/arXiv.1011.1525>.
+- E. Catsigeras and P. Guiraud, "Integrate and fire neural networks, piecewise contractive maps and limit cycles", Journal of Mathematical Biology 67 (2012), 609–655, <https://doi.org/10.1007/s00285-012-0560-7>; numbering as in arXiv:1011.1525: model equations and hypotheses (H1)–(H4) (Sections 2–3), Theorem 1, Proposition 2.2, Theorem 2, Propositions 3.6, 3.8, 3.9, Theorem 3, Theorem 4 and Propositions 4.2–4.3.

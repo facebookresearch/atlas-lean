@@ -17,4 +17,4 @@ Within a mode the generator is a Kronecker sum, whose eigenvalues are sums of th
 
 ## Sources
 
-- I. Siekmann, M. Fackrell, E. J. Crampin, P. Taylor, "Modelling modal gating of ion channels with hierarchical Markov models", arXiv:1602.05877 (2016), Definition 2.5 and Propositions 4.1–4.4, <https://doi.org/10.48550/arXiv.1602.05877>.
+- Ivo Siekmann, Mark Fackrell, Edmund J. Crampin and Peter Taylor, "Modelling modal gating of ion channels with hierarchical Markov models", Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences 472 (2016), 20160122, <https://doi.org/10.1098/rspa.2016.0122>; numbering as in arXiv:1602.05877: Definition 2.5 and Propositions 4.1–4.4.

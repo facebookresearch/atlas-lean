@@ -23,4 +23,4 @@ Galerkin approximation in Fourier modes on the periodic domain with energy estim
 
 ## Sources
 
-- F. Shirani, W. M. Haddad and R. de la Llave, "On the Global Dynamics of an Electroencephalographic Mean Field Model of the Neocortex", arXiv:1610.03140 (2016), Theorems 4.5, 4.7, 6.2, 6.3 and 7.5 and Propositions 5.1–5.6, <https://doi.org/10.48550/arXiv.1610.03140>.
+- Farshad Shirani, Wassim M. Haddad and Rafael de la Llave, "On the Global Dynamics of an Electroencephalographic Mean Field Model of the Neocortex", SIAM Journal on Applied Dynamical Systems 16 (2017), 1969–2029, <https://doi.org/10.1137/16m1098577>; numbering as in arXiv:1610.03140: Theorems 4.5, 4.7, 6.2, 6.3 and 7.5 and Propositions 5.1–5.6.

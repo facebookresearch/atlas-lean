@@ -28,4 +28,4 @@ Before the fold, solutions are attracted towards the slow manifold, so noise-ind
 
 ## Sources
 
-- N. Berglund, B. Gentz, C. Kuehn, "Hunting French Ducks in a Noisy Environment", arXiv:1011.3193 (2010), Proposition 3.1, Theorems 3.2–3.4, Theorem 4.4, Theorems 6.1–6.2, Corollary 6.3 and Theorem 6.4, <https://doi.org/10.48550/arXiv.1011.3193>.
+- Nils Berglund, Barbara Gentz and Christian Kuehn, "Hunting French ducks in a noisy environment", Journal of Differential Equations 252 (2012), 4786–4841, <https://doi.org/10.1016/j.jde.2012.01.015>; numbering as in arXiv:1011.3193: Proposition 3.1, Theorems 3.2–3.4, Theorem 4.4, Theorems 6.1–6.2, Corollary 6.3 and Theorem 6.4.

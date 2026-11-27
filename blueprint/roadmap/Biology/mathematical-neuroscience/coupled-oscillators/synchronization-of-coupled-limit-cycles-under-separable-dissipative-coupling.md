@@ -22,11 +22,7 @@ and let $\lambda_1(t)$ be the largest eigenvalue of $G(t)$. The condition is $\i
 **Related results.**
 - *Consensus.* The linear system $\dot x=\mathbf{D}x$ synchronizes from every initial condition iff $\mathbf{D}$ is dissipative.
 - *Characterization.* $\mathbf{D}$ is dissipative iff $\mathbf{D}=\mathbf{Q}\mathbf{S}^T\mathbf{S}$ for some $\mathbf{Q}$ with negative definite symmetric part. This includes graph Laplacians of connected undirected graphs and many directed networks.
-- *Example.* For the radially symmetric oscillator $f(x)=(x_1-x_2-x_1|x|^2,\ x_1+x_2-x_1|x|^2)$, any nonzero positive semidefinite $L$ together with a dissipative $\mathbf{D}$ gives an exponentially stable synchronous cycle. In particular, coupling through a single variable suffices.
-
-## Depends on
-
-- [Coupled oscillators](README.md)
+- *Example.* For the radially symmetric oscillator $f(x)=(x_1-x_2-x_1|x|^2,\ x_1+x_2-x_2|x|^2)$, any nonzero positive semidefinite $L$ together with a dissipative $\mathbf{D}$ gives an exponentially stable synchronous cycle. In particular, coupling through a single variable suffices.
 
 ## Expansion
 
@@ -34,4 +30,4 @@ Linearize about the synchronous solution and apply $\mathbf{S}\otimes I_n$ to th
 
 ## Sources
 
-- G. S. Medvedev, "Synchronization of coupled limit cycles", arXiv preprint (2010): Lemma 2.1, Assumption 2.2, Lemma 2.3, Definitions 2.4, 2.5 and 2.7, Assumption 2.9, Theorem 2.10, Corollary 3.1, and Theorems 3.3 and 3.4 (Section 3, discussion and examples); proof in Section 4. <https://doi.org/10.48550/arXiv.1005.4074>
+- Georgi S. Medvedev, "Synchronization of Coupled Limit Cycles", Journal of Nonlinear Science 21 (2011), 441–464, <https://doi.org/10.1007/s00332-010-9088-4>; numbering as in arXiv:1005.4074: Lemma 2.1, Assumption 2.2, Lemma 2.3, Definitions 2.4, 2.5 and 2.7, Assumption 2.9, Theorem 2.10, Corollary 3.1, and Theorems 3.3 and 3.4 (Section 3, discussion and examples); proof in Section 4.

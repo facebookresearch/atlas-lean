@@ -23,4 +23,4 @@ Monotonicity of $q_i$ follows by coupling a fitter founder with a less fit one. 
 
 ## Sources
 
-- Ren-Yi Wang, Marek Kimmel, "A Countable-Type Branching Process Model for the Tug-of-War Cancer Cell Dynamics", arXiv:2302.08695 (2023), Section 2 (model and driver-passenger reduction), Section 3 (extinction equations and type transition process), Appendix theorems on monotonicity of extinction probabilities, transience for $\nu\le\mu L$ and positive recurrence for $\nu>\mu L$, <https://doi.org/10.48550/arXiv.2302.08695>.
+- Ren-Yi Wang and Marek Kimmel, "A Countable-Type Branching Process Model for the Tug-of-War Cancer Cell Dynamics", Bulletin of Mathematical Biology 86 (2024), 18, <https://doi.org/10.1007/s11538-023-01245-1>; numbering as in arXiv:2302.08695: Section 2 (model and driver-passenger reduction), Section 3 (extinction equations and type transition process), Appendix theorems on monotonicity of extinction probabilities, transience for $\nu\le\mu L$ and positive recurrence for $\nu>\mu L$.

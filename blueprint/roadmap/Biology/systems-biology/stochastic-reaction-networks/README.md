@@ -3,3 +3,13 @@
 - [Non-explosivity of complex-balanced stochastic reaction networks](non-explosivity-of-complex-balanced-stochastic-reaction-networks.md)
 - [Sum of reactions monoid and reachability in stochastic reaction networks](sum-of-reactions-monoid-and-reachability.md)
 - [Weak error of tau-leaping, midpoint and weak trapezoidal methods](weak-error-of-tau-leaping-midpoint-and-weak-trapezoidal-methods.md)
+
+- [Detailed balance of stochastic reaction networks](detailed-balance-of-stochastic-reaction-networks/README.md)
+- [Fast-reaction elimination in stochastic reaction networks](fast-reaction-elimination-in-stochastic-reaction-networks/README.md)
+- [Filtering of multiscale reaction networks](filtering-of-multiscale-reaction-networks/README.md)
+- [Mathematical programming bounds for the cme](mathematical-programming-bounds-for-the-cme/README.md)
+- [Non mass action stochastic reaction networks](non-mass-action-stochastic-reaction-networks/README.md)
+- [Positive recurrence of double full binary reaction networks](positive-recurrence-of-double-full-binary-reaction-networks/README.md)
+- [Single-molecule tracking in reaction networks](single-molecule-tracking-in-reaction-networks/README.md)
+- [Stochastic pairing of particles and agents](stochastic-pairing-of-particles-and-agents/README.md)
+- [Well-posedness of stochastic jump kinetics](well-posedness-of-stochastic-jump-kinetics/README.md)

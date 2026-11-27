@@ -26,4 +26,4 @@ In the mean-field limit each neuron's firing probability is driven by the popula
 
 ## Sources
 
-- J. Chevallier, E. Löcherbach, G. Ost, "Inferring the dependence graph density of binary graphical models in high dimension", arXiv:2406.07066 (2024), Section 2 (model, estimators, Theorem 2.1, Proposition 2.2, Corollary 2.4) and Proposition 3.5, <https://doi.org/10.48550/arXiv.2406.07066>.
+- Julien Chevallier, Eva Löcherbach and Guilherme Ost, "Inferring the dependence graph density of binary graphical models in high dimension", The Annals of Statistics 54 (2026), 861–881, <https://doi.org/10.1214/25-aos2592>; numbering as in arXiv:2406.07066: Section 2 (model, estimators, Theorem 2.1, Proposition 2.2, Corollary 2.4) and Proposition 3.5.

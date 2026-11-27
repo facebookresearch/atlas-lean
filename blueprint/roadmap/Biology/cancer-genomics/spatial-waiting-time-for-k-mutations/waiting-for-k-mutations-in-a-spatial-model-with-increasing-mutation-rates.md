@@ -25,4 +25,4 @@ A type-$j$ ball born at time $0$ has volume $\gamma_d(\alpha t)^d$ at time $t$, 
 
 ## Sources
 
-- Brian Chao and Jason Schweinsberg, "A Spatial Mutation Model with Increasing Mutation Rates", arXiv:2108.09590 (2021), Section 2 (notation, $\beta_k$, $\kappa_j$), Theorems 1–6, <https://doi.org/10.48550/arXiv.2108.09590>.
+- Brian Chao and Jason Schweinsberg, "A spatial mutation model with increasing mutation rates", Journal of Applied Probability 60 (2023), 1157–1180, <https://doi.org/10.1017/jpr.2022.120>; numbering as in arXiv:2108.09590: Section 2 (notation, $\beta_k$, $\kappa_j$), Theorems 1–6.

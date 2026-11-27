@@ -27,4 +27,4 @@ All transitions are first order, so the system is a network of linear (monomolec
 
 ## Sources
 
-- L. Popovic, S. A. McKinley, M. C. Reed, "A stochastic compartmental model for fast axonal transport", arXiv:0911.2722 (2009), Section 2 (model), Propositions 3.1–3.3, 4.1, 6.1–6.2 and Corollary 6.3, <https://doi.org/10.48550/arXiv.0911.2722>.
+- Lea Popovic, Scott A. McKinley and Michael C. Reed, "A Stochastic Compartmental Model for Fast Axonal Transport", SIAM Journal on Applied Mathematics 71 (2011), 1531–1556, <https://doi.org/10.1137/090775385>; numbering as in arXiv:0911.2722: Section 2 (model), Propositions 3.1–3.3, 4.1, 6.1–6.2 and Corollary 6.3.

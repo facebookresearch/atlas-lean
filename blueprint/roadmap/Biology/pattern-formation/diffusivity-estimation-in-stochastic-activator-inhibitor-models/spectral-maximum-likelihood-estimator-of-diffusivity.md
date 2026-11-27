@@ -29,4 +29,4 @@ Inserting the dynamics into the estimator splits the error into two bias terms f
 
 ## Sources
 
-- G. Pasemann, S. Flemming, S. Alonso, C. Beta and W. Stannat, *Diffusivity Estimation for Activator-Inhibitor Models: Theory and Application to Intracellular Dynamics of the Actin Cytoskeleton*, arXiv:2005.09421 (2020): Section 2, Proposition 1 (well-posedness), Lemma 4 (growth of the denominator), Theorem 5 (consistency, rates and asymptotic normality), Proposition 6 and Theorem 7 (the linear-in-parameters and activator–inhibitor cases). <https://doi.org/10.48550/arXiv.2005.09421>
+- Gregor Pasemann, Sven Flemming, Sergio Alonso, Carsten Beta and Wilhelm Stannat, "Diffusivity Estimation for Activator–Inhibitor Models: Theory and Application to Intracellular Dynamics of the Actin Cytoskeleton", Journal of Nonlinear Science 31 (2021), 59, <https://doi.org/10.1007/s00332-021-09714-4>; numbering as in arXiv:2005.09421: Section 2, Proposition 1 (well-posedness), Lemma 4 (growth of the denominator), Theorem 5 (consistency, rates and asymptotic normality), Proposition 6 and Theorem 7 (the linear-in-parameters and activator–inhibitor cases).

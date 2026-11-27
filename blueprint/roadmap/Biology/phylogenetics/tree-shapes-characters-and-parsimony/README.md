@@ -1,0 +1,27 @@
+# Tree shapes, characters and parsimony
+
+Balance indices and shape statistics of rooted trees under random tree models, phylogenetic diversity, birth–death tree models, perfect phylogenies, convex characters and parsimony, and graph representations of orthology and gene family histories.
+
+- [Axioms of tree balance indices](axioms-of-tree-balance-indices/README.md)
+- [B2 balance index of phylogenetic networks](b2-balance-index-of-phylogenetic-networks/README.md)
+- [B2 entropy balance index](b2-entropy-balance-index/README.md)
+- [Cherries and pitchforks under the Ford model](cherries-and-pitchforks-under-the-ford-model/README.md)
+- [Convex characters with large states](convex-characters-with-large-states/README.md)
+- [Enumeration of rooted binary perfect phylogenies](enumeration-of-rooted-binary-perfect-phylogenies/README.md)
+- [Equal- and prior-divergence-time graphs](equal-and-prior-divergence-time-graphs/README.md)
+- [Evolutionary rate under the Yule-Brownian-motion model](evolutionary-rate-under-the-yule-brownian-motion-model/README.md)
+- [Graph representations of gene family histories](graph-representations-of-gene-family-histories/README.md)
+- [Multitype birth death phylodynamics](multitype-birth-death-phylodynamics/README.md)
+- [Multitype pure-birth tree model](multitype-pure-birth-tree-model/README.md)
+- [Orientation of Fitch graphs](orientation-of-fitch-graphs/README.md)
+- [Parsimony $A_k$-alignments of phylogenetic trees](parsimony-k-alignments-of-phylogenetic-trees/README.md)
+- [Phylogenetic diversity](phylogenetic-diversity/README.md)
+- [Quasi-best match graphs](quasi-best-match-graphs/README.md)
+- [Sackin index with fixed numbers of inner vertices](sackin-index-with-fixed-numbers-of-inner-vertices/README.md)
+- [TBR distance kernelization](tbr-distance-kernelization/README.md)
+- [Three-dimensional imbalance of rooted trees](three-dimensional-imbalance-of-rooted-trees/README.md)
+- [Tree balance indices](tree-balance-indices/README.md)
+- [Tree shapes compatible with a perfect phylogeny](tree-shapes-compatible-with-a-perfect-phylogeny/README.md)
+- [Trees defined by parsimony alignments](trees-defined-by-parsimony-alignments/README.md)
+- [Trees defined by three characters](trees-defined-by-three-characters/README.md)
+- [Two-state maximum parsimony distance](two-state-maximum-parsimony-distance/README.md)

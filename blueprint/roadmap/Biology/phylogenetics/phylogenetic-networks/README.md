@@ -1,0 +1,28 @@
+# Phylogenetic networks
+
+Classes, encodings, metrics and reconstruction of rooted and semi-directed phylogenetic networks: tree-child, orchard, level-1 and labellable networks, quarnets and clustering systems, least common ancestors, display sets and display graphs, reticulation and hybrid numbers, and diversity and balance on networks.
+
+- [Branching–coalescing random phylogenetic networks](branching-coalescing-random-phylogenetic-networks/README.md)
+- [Circular orders of network blobs](circular-orders-of-network-blobs/README.md)
+- [Clustering systems of level-1 networks](clustering-systems-of-level-1-networks/README.md)
+- [Cut edge transfer spaces of semi directed networks](cut-edge-transfer-spaces-of-semi-directed-networks/README.md)
+- [Display sets of phylogenetic networks](display-sets-of-phylogenetic-networks/README.md)
+- [Equidistant circular split networks](equidistant-circular-split-networks/README.md)
+- [Labellable phylogenetic networks](labellable-phylogenetic-networks/README.md)
+- [LCA-relevant DAGs](lca-relevant-dags/README.md)
+- [Least common ancestors in phylogenetic DAGs](least-common-ancestors-in-phylogenetic-dags/README.md)
+- [Level k approximation of softwired parsimony](level-k-approximation-of-softwired-parsimony/README.md)
+- [Mu representation metrics for semi binary networks](mu-representation-metrics-for-semi-binary-networks/README.md)
+- [Non essential arcs of tree child networks](non-essential-arcs-of-tree-child-networks/README.md)
+- [Orchard phylogenetic networks](orchard-phylogenetic-networks/README.md)
+- [Perfect transfer networks](perfect-transfer-networks/README.md)
+- [Phylogenetic diversity on networks](phylogenetic-diversity-on-networks/README.md)
+- [Polynomial invariants of separable phylogenetic networks](polynomial-invariants-of-separable-networks/README.md)
+- [Quarnet encoding of semi directed networks](quarnet-encoding-of-semi-directed-networks/README.md)
+- [Quarnet-split reconstruction of semi-directed networks](quarnet-split-reconstruction-of-semi-directed-networks/README.md)
+- [Reticulation number of multiple trees](reticulation-number-of-multiple-trees/README.md)
+- [Treewidth of display graphs](treewidth-of-display-graphs/README.md)
+- [Unrooted hybrid number via cherry picking](unrooted-hybrid-number-via-cherry-picking/README.md)
+- [Weighted total cophenetic index for networks](weighted-total-cophenetic-index-for-networks/README.md)
+- [X-cactus encoding](x-cactus-encoding/README.md)
+- [μ-distance for semidirected networks](mu-distance-for-semidirected-networks/README.md)

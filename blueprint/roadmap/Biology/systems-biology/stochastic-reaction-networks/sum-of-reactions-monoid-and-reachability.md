@@ -21,8 +21,8 @@ the overall reaction obtained by firing $r_1$ and then $r_2$: species produced b
 
 ## Depends on
 
-- [Stochastic reaction networks](README.md)
-- [Chemical reaction network theory](../chemical-reaction-network-theory/README.md)
+- [Weakly reversible reaction network](../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
+- [Reversible networks are weakly reversible](../complex-balancing-and-the-deficiency-zero-theore/is-weakly-reversible-of-reversible.md)
 
 ## Expansion
 
@@ -30,4 +30,4 @@ Associativity is checked one coordinate at a time by splitting into the cases $y
 
 ## Sources
 
-- L. Hoessly, C. Wiuf, P. Xia, "On the sum of chemical reactions", arXiv preprint (2021): Definition 2.1, Propositions 2.2 and 2.4, Theorem 2.6, Definition 2.9, Lemma 2.10, Corollary 3.2, Lemma 3.3, Corollary 3.4, the theorem on networks without catalytic species (Section 3), Proposition 3.6, and the non-semi-linearity example (Section 3). <https://doi.org/10.48550/arXiv.2105.04353>
+- Linard Hoessly, Carsten Wiuf and Panqiu Xia, "On the sum of chemical reactions", European Journal of Applied Mathematics 34 (2022), 303–325, <https://doi.org/10.1017/s0956792522000146>; numbering as in arXiv:2105.04353: Definition 2.1, Propositions 2.2 and 2.4, Theorem 2.6, Definition 2.9, Lemma 2.10, Corollary 3.2, Lemma 3.3, Corollary 3.4, the theorem on networks without catalytic species (Section 3), Proposition 3.6, and the non-semi-linearity example (Section 3).

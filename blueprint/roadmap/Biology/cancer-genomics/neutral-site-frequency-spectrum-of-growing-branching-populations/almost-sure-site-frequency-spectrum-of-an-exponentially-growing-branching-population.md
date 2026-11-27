@@ -25,4 +25,4 @@ A mutation arising at time $s$ in one individual is carried, at time $t$, by tha
 
 ## Sources
 
-- Einar Bjarki Gunnarsson, Kevin Leder and Xuanming Zhang, "Limit theorems for the site frequency spectrum of neutral mutations in an exponentially growing population", arXiv:2307.03346 (2023), Section 2, Theorem 1, Propositions 1–2, Corollary 1 and Section 5, <https://doi.org/10.48550/arXiv.2307.03346>.
+- Einar Bjarki Gunnarsson, Kevin Leder and Xuanming Zhang, "Limit theorems for the site frequency spectrum of neutral mutations in an exponentially growing population", Stochastic Processes and their Applications 182 (2025), 104565, <https://doi.org/10.1016/j.spa.2025.104565>; numbering as in arXiv:2307.03346: Section 2, Theorem 1, Propositions 1–2, Corollary 1 and Section 5.

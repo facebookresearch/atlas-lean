@@ -26,4 +26,4 @@ Look backward in time: two particles' positions share a common ancestor, and the
 
 ## Sources
 
-- Cecilia González-Tokman and Dietmar B. Oelz, "Asymptotic limits of transient patterns in a continuous-space interacting particle system", arXiv:2409.19175 (2024), Section 1 (process), Section 2 (renormalized process), Theorem 3.1, Corollaries 3.2–3.3, Theorem 5.1, Corollary 5.2, Theorems 6.1–6.2, <https://doi.org/10.48550/arXiv.2409.19175>.
+- Cecilia González-Tokman and Dietmar B. Oelz, "Asymptotic limits of transient patterns in a continuous-space interacting particle system", Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences 480 (2024), 20230754, <https://doi.org/10.1098/rspa.2023.0754>; numbering as in arXiv:2409.19175: Section 1 (process), Section 2 (renormalized process), Theorem 3.1, Corollaries 3.2–3.3, Theorem 5.1, Corollary 5.2, Theorems 6.1–6.2.

@@ -22,4 +22,4 @@ The wild type grows like $W e^{\lambda(0)t}$, so at time $\mathfrak{t}_t$ it has
 
 ## Sources
 
-- Vianney Brouard, "Genetic Composition of Supercritical Branching Populations under Power Law Mutation Rates", arXiv:2309.12055 (2023), Definition of admissible walks, Theorems 2.7 and 2.9, Corollaries 2.10 and 2.12, <https://doi.org/10.48550/arXiv.2309.12055>.
+- Vianney Brouard, "Genetic composition of supercritical branching populations under power law mutation rates", The Annals of Applied Probability 35 (2025), 3717–3772, <https://doi.org/10.1214/25-aap2160>; numbering as in arXiv:2309.12055: Definition of admissible walks, Theorems 2.7 and 2.9, Corollaries 2.10 and 2.12.

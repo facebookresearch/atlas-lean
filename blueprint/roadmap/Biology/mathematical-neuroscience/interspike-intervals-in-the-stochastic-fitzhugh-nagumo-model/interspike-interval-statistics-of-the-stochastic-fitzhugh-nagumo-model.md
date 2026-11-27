@@ -29,4 +29,4 @@ Near the fold the dynamics reduces to a canonical slow–fast system in which a 
 
 ## Sources
 
-- N. Berglund, D. Landon, "Mixed-mode oscillations and interspike interval statistics in the stochastic FitzHugh–Nagumo model", arXiv:1105.1278 (2011), Section 2 (model, equations for $\alpha_*$ and $\delta$), Theorem on general properties of $N$ (Section 3), weak-noise Theorem (Section 4) and the transition Proposition (Section 5), <https://doi.org/10.48550/arXiv.1105.1278>.
+- Nils Berglund and Damien Landon, "Mixed-mode oscillations and interspike interval statistics in the stochastic FitzHugh–Nagumo model", Nonlinearity 25 (2012), 2303–2335, <https://doi.org/10.1088/0951-7715/25/8/2303>; numbering as in arXiv:1105.1278: Section 2 (model, equations for $\alpha_*$ and $\delta$), Theorem on general properties of $N$ (Section 3), weak-noise Theorem (Section 4) and the transition Proposition (Section 5).

@@ -22,4 +22,4 @@ A Lax-equivalence-type estimate bounds the global error by $n$ times the local (
 
 ## Sources
 
-- D. F. Anderson, M. Koyama, "Weak error analysis of numerical methods for stochastic models of population processes", arXiv:1102.2922 (2011), Section 1 (scaled model), Section 2.2 (scaled biochemical models), Algorithms 1–3, Theorem 4.1, Theorems 5.5, 5.6, 5.8, 6.1, 6.4, 6.5, 6.7 and Corollary 6.6, <https://doi.org/10.48550/arXiv.1102.2922>.
+- David F. Anderson and Masanori Koyama, "Weak Error Analysis of Numerical Methods for Stochastic Models of Population Processes", Multiscale Modeling & Simulation 10 (2012), 1493–1524, <https://doi.org/10.1137/110849699>; numbering as in arXiv:1102.2922: Section 1 (scaled model), Section 2.2 (scaled biochemical models), Algorithms 1–3, Theorem 4.1, Theorems 5.5, 5.6, 5.8, 6.1, 6.4, 6.5, 6.7 and Corollary 6.6.

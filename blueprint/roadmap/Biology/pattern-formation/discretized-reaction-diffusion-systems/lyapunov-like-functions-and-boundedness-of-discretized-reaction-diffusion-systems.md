@@ -24,10 +24,6 @@ where $(\mathbf{f})_i=f(u_i,v_i)$ and $(\mathbf{g})_i=g(u_i,v_i)$, and $D$ is th
 - The strongly mutualistic Lotka–Volterra system $f=u(a_1-b_1u+c_1v)$, $g=v(a_2+b_2u-c_2v)$ with $b_2c_1>b_1c_2$ has no LLF.
 - The reactions $f=uv(u-v)(u+1)-\delta u$, $g=uv(v-u)(v+1)-\delta v$ have a globally stable origin, yet no LLF exists. With two compartments and small $\delta$ the discretized system is unbounded, so diffusion-driven blow-up occurs.
 
-## Depends on
-
-- [Turing patterns and diffusion-driven instability](../turing-patterns-and-diffusion-driven-instability/README.md)
-
 ## Expansion
 
 The usual Lyapunov argument fails because diffusion moves mass between compartments and can push an individual compartment uphill in $W$. Instead, fix a level $K\ge\max\{\underline{K},\underline{u},\underline{v}\}$ such that $\max_{\|(u,v)\|=L}W<\max_{\|(u,v)\|=K}W=:M^{(K)}$ for every $L<K$. Then track
@@ -38,4 +34,4 @@ where $n_t$ counts the compartments inside $\Omega_K=\{\|(u,v)\|<K\}$. Convexity
 
 ## Sources
 
-- J. M. Wentz, D. M. Bortz, "Boundedness of a class of discretized reaction-diffusion systems", arXiv preprint (2019): Section 2 (definition of the Lyapunov-like function, properties (P1)–(P5) and secondary properties (C1)–(C5)), Section 3 (main boundedness theorem), Section 4 (corollaries on Lyapunov functions that are LLFs and on nonexistence of LLFs; Schnakenberg, mutualistic and Weinberger examples), with proofs in the appendices. <https://doi.org/10.48550/arXiv.1903.09680>
+- Jacqueline M. Wentz and David M. Bortz, "Boundedness of a Class of Spatially Discrete Reaction-Diffusion Systems", SIAM Journal on Applied Mathematics 81 (2021), 1870–1892, <https://doi.org/10.1137/20m131850x>; numbering as in arXiv:1903.09680: Section 2 (definition of the Lyapunov-like function, properties (P1)–(P5) and secondary properties (C1)–(C5)), Section 3 (main boundedness theorem), Section 4 (corollaries on Lyapunov functions that are LLFs and on nonexistence of LLFs; Schnakenberg, mutualistic and Weinberger examples), with proofs in the appendices.
