@@ -26,3 +26,4 @@ Topics added since this subject's fields were last revised.
 - [Degree of a singular modulus](finrank-adjoin-j-function-eq-gauss-class.md)
 - [Adelic Lift Exists](exists-is-adelic-lift-of.md)
 - [Eleven Pid](eleven-pid.md)
+- [Galois representations attached to normalized eigenforms](exists-galois-rep-charpoly-frob.md)

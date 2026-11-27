@@ -14,6 +14,7 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Antibody escape maps from deep mutational scanning](antibody-escape-maps-from-deep-mutational-scanning/README.md)
 - [Antibody affinity landscapes](antibody-affinity-landscapes/README.md)
 - [Biochemical epistasis on combinatorially complete libraries](biochemical-epistasis-on-combinatorially-complete-libraries/README.md)
 - [Germline de novo mutation rates](germline-de-novo-mutation-rates/README.md)

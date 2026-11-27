@@ -18,3 +18,4 @@
 - [Effective size for an X-linked locus](effective-size-for-x-linked-loci.md)
 
 - [Consistency of the linkage-disequilibrium estimator of effective population size under a calibration hypothesis](ld-based-effective-size-estimator-definition-and.md)
+- [Hitchhiking effective size under cyclically fluctuating balancing selection](hitchhiking-effective-size-under-cyclic-balancing-selection.md)
