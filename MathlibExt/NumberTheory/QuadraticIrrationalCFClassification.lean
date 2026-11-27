@@ -518,9 +518,6 @@ private theorem exists_iff_middle_odd (l : ℕ) (hl : Even l) (hl0 : 0 < l)
     exact Or.inr ⟨(hB.of_dvd_left hq'.two_dvd).odd_of_left,
       hD.mpr ⟨hm, (hprefix.of_dvd_left he.two_dvd).odd_of_left⟩, hq'⟩
 
-private theorem odd_iff_cast_eq_one (n : ℕ) : Odd n ↔ (n : ZMod 2) = 1 := by
-  rw [← Nat.cast_one, ZMod.natCast_eq_natCast_iff', Nat.odd_iff]
-
 private theorem exists_pattern_iff_last_one (l : ℕ) (hl : Even l) (hm : 0 < l / 2)
     (v : Fin (l / 2) → ZMod 2) :
     (∃ a : ℕ → ℕ,
@@ -535,7 +532,7 @@ private theorem exists_pattern_iff_last_one (l : ℕ) (hl : Even l) (hm : 0 < l 
   change _ ↔ v j = 1
   constructor
   · rintro ⟨a, hp, hs, hbits, hex⟩
-    rw [← hbits j, hj, ← odd_iff_cast_eq_one]
+    rw [← hbits j, hj, ZMod.natCast_eq_one_iff_odd]
     exact (exists_iff_middle_odd l hl hl0 a hp hs).mp hex
   · intro hv
     -- Lift each residue to a positive digit and reflect across the midpoint.
@@ -556,7 +553,7 @@ private theorem exists_pattern_iff_last_one (l : ℕ) (hl : Even l) (hm : 0 < l 
       simp only [a, hmin, lift, dite_eq_left hi', Nat.add_sub_cancel, Nat.cast_add, Nat.cast_ofNat,
         ZMod.natCast_zmod_val, htwo, add_zero]
     refine ⟨a, hp, hs, hbits, (exists_iff_middle_odd l hl hl0 a hp hs).mpr ?_⟩
-    rw [odd_iff_cast_eq_one, ← hj, hbits]
+    rw [← ZMod.natCast_eq_one_iff_odd, ← hj, hbits]
     exact hv
 
 private theorem ncard_last_zero (m : ℕ) (hm : 0 < m) :
