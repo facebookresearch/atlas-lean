@@ -24,9 +24,10 @@ Differential-equation and matrix models of population growth, structure, species
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
 - [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)
-
+- [Nonlocal selection–mutation equations](nonlocal-selection-mutation-equations/README.md)
+- [Phase-field models of tumor growth](phase-field-models-of-tumor-growth/README.md)
+- [Phenotype-structured population models](phenotype-structured-population-models/README.md)
 ## [Ecological, evolutionary and tumour–immune dynamics](part-01/README.md)
-
 - [Adaptive dynamics of memory-one strategies](part-01/adaptive-dynamics-of-memory-one-strategies/README.md)
 - [Clonal statistics of stem cell self-renewal](part-01/clonal-statistics-of-stem-cell-self-renewal/README.md)
 - [Clone-consistent ecosystem models](part-01/clone-consistent-ecosystem-models/README.md)
