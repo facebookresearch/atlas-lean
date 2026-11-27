@@ -93,15 +93,6 @@ theorem_wanted sylvester_not_perfect
     (n : ℕ) :
     ¬ (sylvesterNumber n).Perfect
 
-/-- **Prime divisors congruent to 3 modulo 4 of Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the
-Sylvester sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 1$, $S_n$ has a
-prime divisor $p$ with $p \equiv 3 \pmod 4$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(d). -/
-theorem_wanted sylvester_exists_prime_divisor_mod_four_eq_three
-    (n : ℕ) (hn : 1 ≤ n) :
-    ∃ p : ℕ, p.Prime ∧ p ∣ sylvesterNumber n ∧ p % 4 = 3
-
 /-- **Sylvester numbers are not perfect powers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n$ there are no natural numbers
 $a \ge 2$ and $m \ge 2$ with $S_n = a^m$.

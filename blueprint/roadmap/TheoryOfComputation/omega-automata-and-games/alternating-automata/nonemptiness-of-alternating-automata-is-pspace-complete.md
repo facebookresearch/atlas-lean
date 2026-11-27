@@ -10,14 +10,9 @@ universality for nondeterministic automata, since such an automaton is an altern
 
 ## Proof depends on
 
+- [Universality of nondeterministic finite automata is PSPACE-complete](../../regular-languages/automata-and-expressions/decision-problems-for-finite-automata/universality-of-finite-automata-is-pspace-complete.md)
 - [Alternating automata recognize exactly the regular languages](alternating-automata-recognize-exactly-the-regular.md)
 - [Complementing alternating automata by dualization](complementing-alternating-automata-by-dualization.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- PSPACE-completeness of the nonuniversality problem for nondeterministic finite automata (Meyer and Stockmeyer) (proof prerequisite; not yet stated)
 
 ## Sources
 
