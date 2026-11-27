@@ -754,13 +754,13 @@ private theorem colorBB_fixLeft_ne_red {α : Type u} {color : Color}
   | node cr rl rk rr =>
       cases cr with
       | black =>
-          cases rl <;> cases rr <;> (try cases ‹Color›) <;> (try cases ‹Color›) <;>
+          cases rl <;> cases rr <;> (cases ‹Color›) <;> (try cases ‹Color›) <;>
             simp [fixLeft, colorBB, colorOf]
       | red =>
           cases rl with
           | empty => simp [fixLeft, colorBB, colorOf]
           | node cl rll rlk rlr =>
-              cases cl <;> cases rll <;> cases rlr <;> (try cases ‹Color›) <;>
+              cases cl <;> cases rll <;> cases rlr <;> (cases ‹Color›) <;>
                 (try cases ‹Color›) <;> simp [fixLeft, colorBB, colorOf]
 
 private theorem colorBB_fixRight_ne_red {α : Type u} {color : Color}
@@ -772,13 +772,13 @@ private theorem colorBB_fixRight_ne_red {α : Type u} {color : Color}
   | node cl ll lk lr =>
       cases cl with
       | black =>
-          cases ll <;> cases lr <;> (try cases ‹Color›) <;> (try cases ‹Color›) <;>
+          cases ll <;> cases lr <;> (cases ‹Color›) <;> (try cases ‹Color›) <;>
             simp [fixRight, colorBB, colorOf]
       | red =>
           cases lr with
           | empty => simp [fixRight, colorBB, colorOf]
           | node cl2 ml mk mr =>
-              cases cl2 <;> cases ml <;> cases mr <;> (try cases ‹Color›) <;>
+              cases cl2 <;> cases ml <;> cases mr <;> (cases ‹Color›) <;>
                 (try cases ‹Color›) <;> simp [fixRight, colorBB, colorOf]
 
 private theorem inorder_balLeft {α : Type u} {color : Color} {left : BBTree α}

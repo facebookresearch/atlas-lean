@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Choose.Multinomial
 public import MathlibExt.NumberTheory.CentralBinomialProductAsymptotics
+public import MathlibExt.NumberTheory.BinomialProductAsymptoticsTendstoProdMultinomialDiv
 
 namespace MetaMathlibExt
 
@@ -61,26 +62,6 @@ public theorem_wanted factorialProductConstant_ratio_mem_Ico (a b : ℕ) (hb : 1
     factorialProductConstant a / (factorialProductConstant b * factorialProductConstant (a - b))
       ∈ Set.Ico (factorialProductConstant 2 / factorialProductConstant 1 ^ 2) 1
 
-/-- **Asymptotics of products of multinomial coefficients.** Let $r \ge 2$, let
-$b_1, \dots, b_r \ge 1$ be natural numbers with $a = b_1 + \dots + b_r$, let $F_k$ denote the
-factorial product constants and $P_k$ the factorial comparison functions, and put
-$c_{a,b} = F_a / (F_{b_1} \cdots F_{b_r})$. As $m \to \infty$, the ratio of
-$\prod_{n=1}^{m} \binom{an}{b_1 n, \dots, b_r n}$ to $P_a(m) / (P_{b_1}(m) \cdots P_{b_r}(m))$
-tends to $c_{a,b} (2\pi)^{(1-r)/4}$; moreover $0 < c_{a,b} < 1$.
-
-Source: Bernd C. Kellner, *Asymptotic Products of Binomial and Multinomial Coefficients
-Revisited*, INTEGERS 24 (2024), Article A59, Theorem 5. -/
-public theorem_wanted tendsto_prod_multinomial_div (r : ℕ) (hr : 2 ≤ r) (b : Fin r → ℕ)
-    (hb : ∀ i, 1 ≤ b i) :
-    Tendsto (fun m : ℕ => (∏ n ∈ Finset.Icc 1 m,
-        (Nat.multinomial Finset.univ (fun i => b i * n) : ℝ)) /
-        (factorialProductComparison (∑ i, b i) m /
-          ∏ i, factorialProductComparison (b i) m))
-      atTop (𝓝 (factorialProductConstant (∑ i, b i) / (∏ i, factorialProductConstant (b i)) *
-        (2 * Real.pi) ^ ((1 - (r : ℝ)) / 4))) ∧
-      factorialProductConstant (∑ i, b i) / (∏ i, factorialProductConstant (b i)) ∈
-        Set.Ioo 0 1
-
 /-- **Asymptotics of products of binomial coefficients $\binom{an}{bn}$.** Let $a > b \ge 1$ be
 natural numbers, let $F_k$ denote the factorial product constants and $P_{a,b}$ the binomial
 comparison function, and put $c_{a,b} = F_a / (F_b F_{a-b})$ and
@@ -106,22 +87,6 @@ public theorem_wanted tendsto_prod_choose_div (a b : ℕ) (hb : 1 ≤ b) (hab : 
       factorialProductConstant a /
           (factorialProductConstant b * factorialProductConstant (a - b)) ∈
         Set.Ico (factorialProductConstant 2 / factorialProductConstant 1 ^ 2) 1
-
-/-- **Asymptotics of the product of a row of Pascal's triangle.** Let $F_1$ be the first factorial
-product constant and $A$ the Glaisher–Kinkelin constant, and put
-$C_{\mathrm{row}} = \left(F_1 (2\pi)^{1/4}\right)^{-1}$. As $n \to \infty$, the ratio of
-$\prod_{\nu=0}^{n} \binom{n}{\nu}$ to $e^{n^2/2 + n} / \left((2\pi)^{n/2} n^{n/2 + 1/3}\right)$
-tends to $C_{\mathrm{row}}$, and $C_{\mathrm{row}} = A^2 / \left((2\pi)^{1/2} e^{1/12}\right)$.
-
-Source: Bernd C. Kellner, *Asymptotic Products of Binomial and Multinomial Coefficients
-Revisited*, INTEGERS 24 (2024), Article A59, Theorem 10. -/
-public theorem_wanted tendsto_prod_choose_row_div :
-    Tendsto (fun n : ℕ => (∏ ν ∈ Finset.range (n + 1), (n.choose ν : ℝ)) /
-        (Real.exp ((n : ℝ) ^ 2 / 2 + n) /
-          ((2 * Real.pi) ^ ((n : ℝ) / 2) * (n : ℝ) ^ ((n : ℝ) / 2 + 1 / 3))))
-      atTop (𝓝 ((factorialProductConstant 1 * (2 * Real.pi) ^ ((1 : ℝ) / 4))⁻¹)) ∧
-    (factorialProductConstant 1 * (2 * Real.pi) ^ ((1 : ℝ) / 4))⁻¹ =
-      glaisherKinkelinConstant ^ 2 / ((2 * Real.pi) ^ ((1 : ℝ) / 2) * Real.exp (1 / 12))
 
 /-- **Pascal-row asymptotics as a limit of binomial-product asymptotics.** Let $F_k$ denote the
 factorial product constants and $P_{a,b}$ the binomial comparison functions, and let $n \ge 1$

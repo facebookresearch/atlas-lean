@@ -22,8 +22,12 @@ hypercycle is asymptotically stable but not an ESS.
 The related interior-ESS development lives in `Domains.Biology.Dynamics.ReplicatorStability`.
 The global-attraction result `IsESS.tendsto_of_pos` is proved in
 `Domains.Biology.Ecology.BoundaryESSStabilityTendstoOfPos`, where `simplex`, `replicatorField`,
-`IsReplicatorSolution` and `IsESS` are defined; this module states the general boundary-ESS
-results.
+`IsReplicatorSolution` and `IsESS` are defined. The linear-stability result
+`IsRegularESS.re_lt_zero` is proved in `Domains.Biology.Ecology.BoundaryESSStabilityReLtZero`,
+where `replicatorJacobian` and `IsRegularESS` are defined. The local-superiority
+characterization `isESS_iff_isLocallySuperior` is proved in
+`Domains.Biology.Ecology.BoundaryESSStabilityIsESSIffIsLocallySuperior`, where
+`IsLocallySuperior` is defined; this module states the remaining general boundary-ESS results.
 
 Sources: J. Hofbauer, P. Schuster and K. Sigmund, "A note on evolutionary stable strategies and
 game dynamics", J. Theor. Biol. 81 (1979) 609–612; P. D. Taylor and L. B. Jonker,
@@ -41,6 +45,8 @@ public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.Analysis.Complex.Basic
 public import Domains.Biology.Ecology.BoundaryESSStabilityTendstoOfPos
+public import Domains.Biology.Ecology.BoundaryESSStabilityReLtZero
+public import Domains.Biology.Ecology.BoundaryESSStabilityIsESSIffIsLocallySuperior
 
 @[expose] public section
 
@@ -49,11 +55,6 @@ namespace WantedExt.Biology.Ecology.BoundaryESSStabilityWanted
 open Matrix Filter Topology
 
 variable {ι : Type*} [Fintype ι]
-
-/-- `p` is **locally superior**: `p ∈ Δ` and `x · A x < p · A x` for every `x ≠ p` in `Δ`
-near `p`. -/
-def IsLocallySuperior (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
-  p ∈ simplex ι ∧ ∀ᶠ x in 𝓝 p, x ∈ simplex ι → x ≠ p → x ⬝ᵥ A *ᵥ x < p ⬝ᵥ A *ᵥ x
 
 /-- `p` is **asymptotically stable** for the replicator dynamics of `A` on `Δ`: `p ∈ Δ`; every
 state of `Δ` has a forward solution; `p` is Lyapunov stable (for every `ε > 0` there is `δ > 0` such
@@ -68,26 +69,6 @@ def IsAsymptoticallyStable (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
   ∃ δ > 0, ∀ x : ℝ → ι → ℝ, IsReplicatorSolution A x → x 0 ∈ simplex ι →
     ‖x 0 - p‖ < δ → Tendsto x atTop (𝓝 p)
 
-/-- A **regular ESS** in the sense of Taylor and Jonker (1978): an ESS `p` such that
-`(A p)_i < p · A p` for every strategy `i` outside the support of `p`, and `x · A x < 0` for
-every nonzero `x` with `∑ x = 0` supported in the support of `p`. -/
-def IsRegularESS (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
-  IsESS A p ∧ (∀ i, p i = 0 → (A *ᵥ p) i < p ⬝ᵥ A *ᵥ p) ∧
-    ∀ x : ι → ℝ, x ≠ 0 → ∑ i, x i = 0 → (∀ i, p i = 0 → x i = 0) → x ⬝ᵥ A *ᵥ x < 0
-
-/-- The Jacobian matrix of the replicator vector field of `A` at `p`. -/
-noncomputable def replicatorJacobian [DecidableEq ι] (A : Matrix ι ι ℝ) (p : ι → ℝ) :
-    Matrix ι ι ℝ :=
-  LinearMap.toMatrix' (fderiv ℝ (replicatorField A) p : (ι → ℝ) →ₗ[ℝ] (ι → ℝ))
-
-/-- **ESS ⇔ local superiority** (Hofbauer, Schuster and Sigmund 1979). For every payoff matrix
-`A` and every `p`, `p` is an ESS of `A` iff `p ∈ Δ` and `x · A x < p · A x` for all `x ≠ p` in
-`Δ` near `p`.
-
-Source: Hofbauer, Schuster and Sigmund (1979), pp. 609–611. -/
-public theorem_wanted isESS_iff_isLocallySuperior (A : Matrix ι ι ℝ) (p : ι → ℝ) :
-    IsESS A p ↔ IsLocallySuperior A p
-
 /-- **Every ESS is asymptotically stable** (Hofbauer, Schuster and Sigmund 1979). For every
 payoff matrix `A` and every ESS `p` of `A`, interior or on the boundary of `Δ`, `p` is
 asymptotically stable for the replicator dynamics: `p ∈ Δ`, solutions from `Δ` exist, `p` is
@@ -96,16 +77,6 @@ Lyapunov stable on `Δ`, and `p` attracts every solution starting in `Δ` near `
 Source: Hofbauer, Schuster and Sigmund (1979), corollary after D4. -/
 public theorem_wanted IsESS.isAsymptoticallyStable {A : Matrix ι ι ℝ} {p : ι → ℝ}
     (h : IsESS A p) : IsAsymptoticallyStable A p
-
-/-- **A regular ESS is linearly stable** (Taylor and Jonker 1978, §3 Theorem). For every payoff
-matrix `A` and every regular ESS `p` of `A`, every complex eigenvalue `μ` of the Jacobian of the
-replicator field at `p` with an eigenvector `h ≠ 0` in the tangent space `∑ h = 0` has
-`Re μ < 0`.
-
-Source: Taylor and Jonker (1978), §2 (regular ESS, p. 148), §3 Theorem (p. 150). -/
-public theorem_wanted IsRegularESS.re_lt_zero [DecidableEq ι] {A : Matrix ι ι ℝ} {p : ι → ℝ}
-    (h : IsRegularESS A p) (μ : ℂ) (v : ι → ℂ) (hv : v ≠ 0) (hsum : ∑ i, v i = 0)
-    (hμ : (replicatorJacobian A p).map (fun a : ℝ => (a : ℂ)) *ᵥ v = μ • v) : μ.re < 0
 
 /-- The payoff matrix of the **four-member hypercycle** with rates `k`:
 `a_{i, i-1} = k_i` (indices mod 4) and all other entries `0`. -/
