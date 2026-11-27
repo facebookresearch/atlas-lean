@@ -1,6 +1,7 @@
 # External-memory algorithms
 
 - [The external-memory model](the-external-memory-model.md)
+- [External merge sort](external-merge-sort.md)
 - [I/O complexity of permuting](i-o-complexity-of-permuting.md)
 - [I/O complexity of permutation networks](i-o-complexity-of-permutation-networks.md)
 - [I/O complexity of the FFT digraph](i-o-complexity-of-the-fft-digraph.md)
