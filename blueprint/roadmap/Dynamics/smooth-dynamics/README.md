@@ -31,3 +31,5 @@ Smooth dynamics studies differentiable maps and flows: hyperbolicity, stable man
 ## Research directions
 
 - [Finiteness of planar central configurations of six bodies](finiteness-of-six-body-central-configurations.md)
+- [Undecidable billiard trajectory problems](undecidable-billiard-trajectory-problems/README.md)
+- [Undecidable orbit problems for Reeb flows](undecidable-orbit-problems-for-reeb-flows/README.md)
