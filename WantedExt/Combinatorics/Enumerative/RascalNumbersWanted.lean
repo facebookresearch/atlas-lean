@@ -48,6 +48,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.RascalBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.RascalNumberIdentities
 public import MathlibExt.Combinatorics.Enumerative.RascalNumbers
 public import MathlibExt.Combinatorics.Enumerative.RascalWordEnds
@@ -84,22 +85,6 @@ Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
 Interpretations of Rascal Numbers", Theorem 17. -/
 theorem_wanted apkCard_succ_eq_rascalZ (n k : ℕ) :
     (apkCard (n + 1) k : ℤ) = rascalZ (n : ℤ) (k : ℤ)
-
-/-- **Generalized Rascal numbers as sums of products of binomial coefficients.** For all natural
-numbers $j$, $n$ and $k$ with $k \le n$, the generalized Rascal number $R^{(j)}_{n,k}$, the
-number of binary words of length $n$ with exactly $k$ ones and at most $j$ ascents (positions
-where a $0$ is immediately followed by a $1$), equals
-$\sum_{i=0}^{j} \binom{k}{i} \binom{n-k}{i}$.
-
-The hypothesis $k \le n$ is needed: for $k > n$ the left side is $0$, while the right side,
-with $n - k$ read as $0$, is $1$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Theorem 19. -/
-theorem_wanted rascalGen_eq_sum (j n k : ℕ) (hkn : k ≤ n) :
-    (rascalGen j k n : ℤ) =
-      ∑ i ∈ Finset.range (j + 1),
-        (Nat.choose k i : ℤ) * (Nat.choose (n - k) i : ℤ)
 
 /-- **Forward differences of generalized Rascal row sums.** Fix a natural number $j$. For natural
 numbers $n$ and $k$ let $R^{(j)}_{n,k}$ be the number of binary words of length $n$ with exactly
