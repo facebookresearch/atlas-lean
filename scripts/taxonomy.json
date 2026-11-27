@@ -15859,7 +15859,7 @@
   "WantedExt/AlgebraicGeometry/GaudronRemondIsogenyWanted": {"to": "AlgebraicGeometry/abelian-varieties", "title": "Gaudron–Rémond isogeny estimate"},
   "WantedExt/AlgebraicGeometry/JacobianChallengeWanted": {"to": "AlgebraicGeometry/algebraic-curves", "title": "Jacobians of curves"},
   "WantedExt/AlgebraicGeometry/JavanpeykarBelyiWanted": {"to": "AlgebraicGeometry/algebraic-curves", "title": "Javanpeykar's bound for Belyi curves"},
-  "WantedExt/AlgebraicGeometry/LogCanonicalThresholdACCOWR3472Problem008Wanted": {"to": "AlgebraicGeometry/birational-geometry", "title": "Ascending chain condition for log canonical thresholds"},
+  "WantedExt/AlgebraicGeometry/LogCanonicalThresholdACCOWR3472Problem008Wanted": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Ascending chain condition for log canonical thresholds"},
   "WantedExt/AlgebraicGeometry/MotivicInvariantsWanted": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Birational maps and the Cremona group"},
   "WantedExt/AlgebraicGeometry/SecantConjectureDivisorFormAMR17Problem0002Wanted": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Divisor form of the secant conjecture"},
   "WantedExt/AlgebraicGeometry/SeshadriConstantWanted": {"to": "AlgebraicGeometry/birational-geometry", "title": "Seshadri constants of points in the plane"},

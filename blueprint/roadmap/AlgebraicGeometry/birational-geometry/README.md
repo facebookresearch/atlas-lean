@@ -3,7 +3,6 @@
 Resolution of singularities and principalization of ideals in characteristic zero, and explicit resolutions such as that of the crossing xy = t^e over any commutative ring, vanishing theorems (Kodaira, Kawamata–Viehweg, Nadel), multiplier ideals, positivity of line bundles and divisors (nef and big classes, volumes), L² extension theorems with currents of integration and the Poincaré–Lelong formula, and, in subfields, singularities of pairs with the minimal model program and K-stability of Fano varieties. Rational maps of particular varieties, Cremona groups, linear systems on projective space and intersection multiplicities are under varieties and projective geometry, and complex manifolds as such under complex and symplectic geometry.
 
 - [Simple normal crossing divisor](simple-normal-crossing-divisor.md)
-- [Ascending chain condition for log canonical thresholds](ascending-chain-condition-for-log-canonical-thre/README.md)
 - [Resolution of singularities in characteristic zero](resolution-of-singularities/README.md)
 - [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md)
 - [Nef and big line bundles](nef-and-big-line-bundles.md)
