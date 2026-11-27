@@ -1,4 +1,4 @@
-# Sigma
+# The graph-isomorphism Sigma protocol on Boolean adjacency functions
 
 The **graph-isomorphism Sigma protocol** on the vertices `Fin n`. Statements are pairs of graphs
 `(G₀, G₁)`, and the witnesses for `(G₀, G₁)` are the isomorphisms `φ` from `G₀` to `G₁`. The

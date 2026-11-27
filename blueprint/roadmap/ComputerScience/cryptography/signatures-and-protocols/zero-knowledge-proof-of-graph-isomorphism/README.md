@@ -34,6 +34,16 @@ simulator in expected polynomial time of their Theorem 2.
 - [One rewinding attempt for the graph-isomorphism protocol](win-prob-attempt-dist-half.md)
 - [Zero knowledge of the graph-isomorphism protocol against an arbitrary verifier, one round](abs-win-prob-simulator-k-sub-le-half-pow.md)
 
+## The Sigma protocol on adjacency functions
+
+The same protocol, with graphs on $\{0, \dots, n-1\}$ given as Boolean adjacency functions $G(u, v)$ and relabelling as an action of permutations, and its completeness.
+
+- [Relabelling a graph by a permutation](graph-act.md)
+- [Relabelling by a product of permutations](graph-act-mul.md)
+- [Relabelling by the identity permutation](graph-act-one.md)
+- [The graph-isomorphism Sigma protocol on Boolean adjacency functions](sigma-2.md)
+- [Completeness of the Sigma protocol on Boolean adjacency functions](sigma-complete-2.md)
+
 ## Related topics
 
 - [Zero-knowledge proofs](../zero-knowledge-proofs/README.md): the Sigma-protocol framework,
