@@ -6,7 +6,7 @@ $$\lambda_y = s\,y\,\frac{N-y}{N} \quad(\text{branching by learning}), \qquad \m
 
 Let $L_n = \int_0^\infty Y(\tau)\,d\tau$ be the total length of the genealogy and $C_n$ the number of traits of the sample (in stationarity).
 
-**Proposition (sojourn times).** For a birth–death chain absorbed at $0$ with rates $\lambda_j, \mu_j$, the expected total time spent in state $j \ge \ell$ between the first hitting of $\ell$ and of $\ell - 1$ is $\eta_{\ell j} = \frac{\lambda_\ell\cdots\lambda_{j-1}}{\mu_\ell\cdots\mu_j}$, independent of the starting state; hence the expected sojourn time in $j$ from $i$ is $\zeta_{ij} = \sum_{\ell=1}^{\min\{i,j\}}\eta_{\ell j}$, and for a path integral $\mathcal{I}_i(f) = \int_0^\infty f(Z(t))\,dt$,
+**Proposition (sojourn times; on $\{0, \dots, N\}$ with $\lambda_0 = \lambda_N = 0$, $\mu_j > 0$ for $1 \le j \le N$, and $f : \{0, \dots, N\} \to [0, \infty)$ with $f(0) = 0$).** For a birth–death chain absorbed at $0$ with rates $\lambda_j, \mu_j$, the expected total time spent in state $j \ge \ell$ between the first hitting of $\ell$ and of $\ell - 1$ is $\eta_{\ell j} = \frac{\lambda_\ell\cdots\lambda_{j-1}}{\mu_\ell\cdots\mu_j}$, independent of the starting state; hence the expected sojourn time in $j$ from $i$ is $\zeta_{ij} = \sum_{\ell=1}^{\min\{i,j\}}\eta_{\ell j}$, and for a path integral $\mathcal{I}_i(f) = \int_0^\infty f(Z(t))\,dt$,
 
 $$\mathbb{E}\big[\mathcal{I}_i(f)^m\big] = m!\sum_{j_1,\dots,j_m = 1}^N \zeta_{ij_1}\zeta_{j_1j_2}\cdots\zeta_{j_{m-1}j_m}\,f(j_1)\cdots f(j_m).$$
 
