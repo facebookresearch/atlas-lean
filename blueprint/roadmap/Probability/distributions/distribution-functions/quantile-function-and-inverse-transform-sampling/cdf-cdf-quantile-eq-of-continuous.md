@@ -1,0 +1,3 @@
+# Quantile inversion under a continuous cdf
+
+Let $\mu$ be a measure on $\mathbb{R}$ whose distribution function $F$ is continuous, and let $Q$ be its generalized inverse quantile. Then $F(Q(u)) = u$ for every $0 < u < 1$. The inequality $F(Q(u)) \ge u$ always holds; continuity rules out $>$, since just below the quantile the distribution function is below $u$. Here $F$ is the distribution function of $\mu$, extended by convention to every measure on $\mathbb{R}$: a monotone, right-continuous function with values in $[0, 1]$ that tends to $0$ at $-\infty$ and to $1$ at $+\infty$. It equals $x \mapsto \mu((-\infty, x])$ when $\mu$ is a probability measure, and need not otherwise.

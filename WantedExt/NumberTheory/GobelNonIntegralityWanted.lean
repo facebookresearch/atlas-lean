@@ -14,12 +14,19 @@ public import MathlibExt.NumberTheory.ArithmeticBilliardsRotatedRectangle
 public import MathlibExt.NumberTheory.GobelBSequence
 public import MathlibExt.NumberTheory.OddMultiplePrimeHalfSets
 public import WantedExt.NumberTheory.GobelSequenceWanted
+public import MathlibExt.NumberTheory.GobelNonIntegralityDiagonalIsZigzagBelowGobelResidueWalkOfOdd
+public import MathlibExt.NumberTheory.GobelNonIntegralityExistsUniqueGobelASequence
 
 /-!
 # Non-integrality of `(k, l)`-Göbel sequences (statements)
 
 Statement-only targets from Yuh Kobayashi and Shin-ichiro Seki, *A Note on Non-Integrality of
-the (k, l)-Göbel Sequences*. The sequence `g_{k,l}` is the existing `gobelSequence k l`;
+the (k, l)-Göbel Sequences*. The theorem `diagonal_isZigzagBelow_gobelResidueWalk_of_odd` from
+this paper is proved in
+`MathlibExt.NumberTheory.GobelNonIntegralityDiagonalIsZigzagBelowGobelResidueWalkOfOdd`, and the
+theorem `existsUnique_gobelASequence` from this paper is proved in
+`MathlibExt.NumberTheory.GobelNonIntegralityExistsUniqueGobelASequence`. The
+sequence `g_{k,l}` is the existing `gobelSequence k l`;
 `x ∈ ℤ_(p)` is `0 ≤ padicValRat p x`, as in `GobelSequenceWanted`. The thresholds `N_{k,l}`
 are not defined; claims about them are stated directly through `gobelSequence`.
 -/
@@ -113,18 +120,6 @@ public theorem_wanted gobelSequence_half_pred_congruent_residue_walk
     (0 ≤ padicValRat p (gobelSequence ((p - 1) / 2) l p) ↔
       gobelResidueWalk p l p = 0 ∨ gobelResidueWalk p l p = p)
 
-/-- **The diagonal is zigzag-below every odd residue walk.** Let $p$ be an odd prime, let $l$ be
-an odd natural number with $l < p$, and let $\tilde g_l$ be the residue walk of $l$ for $p$. Then
-the diagonal $n \mapsto n$ is zigzag-below $\tilde g_l$ up to $p$: there is $m \le p$ such that
-$n < \tilde g_l(n)$ for all $1 \le n \le m$ and $\tilde g_l(n) = n$ for all $m < n \le p$.
-
-Source: Yuh Kobayashi and
-Shin-ichiro Seki, *A Note on Non-Integrality of the (k, l)-Göbel Sequences*, Journal of Integer
-Sequences 29 (2026), Article 26.3.8, Proposition 9. -/
-public theorem_wanted diagonal_isZigzagBelow_gobelResidueWalk_of_odd
-    (p l : ℕ) (hp : p.Prime) (hpodd : Odd p) (hlodd : Odd l) (hlp : l < p) :
-    IsZigzagBelow p (fun n => (n : ℤ)) (fun n => gobelResidueWalk p l n)
-
 /-- **Even residue walks lie zigzag-below the antidiagonal when $p \equiv 3 \pmod 4$.** Let $p$
 be a prime with $p \equiv 3 \pmod 4$, let $l < p$ be an even natural number, and write
 $\tilde g_l$ for the residue walk of $p$ starting at $l$. Then $\tilde g_l$ is zigzag-below the
@@ -176,20 +171,6 @@ public theorem_wanted gobel_boundaries_eq_iff_jacobi_symmetries
           jacobiSym (n : ℤ) p = -jacobiSym (l + 1 - n : ℤ) p) ∧
         (∀ n, 1 ≤ n → n ≤ p - l - 2 →
           jacobiSym (n : ℤ) p = jacobiSym (l + 1 + n : ℤ) p)
-
-/-- **Existence and uniqueness of the sequence $a_{p,l}$.** Let $p$ be a prime with
-$p \equiv 1 \pmod 4$ and let $l$ be an even natural number with $l \le p - 3$. Then exactly one
-function $a : \mathbb{N} \to \mathbb{Z}$ satisfies the defining conditions of $a_{p,l}$:
-$a(n) = \pm 1$ for $1 \le n \le p - 1$, $a(n) = 0$ for $n = 0$ and for $n \ge p$, $a(1) = 1$,
-$a(n) = a(p - n)$ for $1 \le n \le (p - 1)/2$, $a(n) = -a(l + 1 - n)$ for $1 \le n \le l/2$, and
-$a(n) = a(l + 1 + n)$ for $1 \le n \le p - l - 2$.
-
-Source: Yuh Kobayashi and Shin-ichiro Seki, *A Note
-on Non-Integrality of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 29 (2026),
-Article 26.3.8, Proposition 17. -/
-public theorem_wanted existsUnique_gobelASequence
-    (p l : ℕ) (hp : p.Prime) (hmod : p % 4 = 1) (hleven : Even l) (hl : l ≤ p - 3) :
-    ∃! a : ℕ → ℤ, IsGobelASequence p l a
 
 /-- **Translation and reflection identities for $b_{l,s}$.** Let $l \ge 2$ be an even natural
 number and $s \le l$ a natural number such that $2s + 1$ and $l + 1$ are coprime, let
