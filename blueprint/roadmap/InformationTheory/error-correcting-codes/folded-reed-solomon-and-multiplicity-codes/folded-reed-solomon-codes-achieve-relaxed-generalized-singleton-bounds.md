@@ -1,6 +1,6 @@
 # Chen-Zhang: explicit FRS and multiplicity codes achieve relaxed generalized Singleton bounds
 
-Let $L \in [s]$. (1) A folded Reed-Solomon code of length $n$ and rate $R$ over $\mathbb{F}_q^s$ with distinct evaluation points is
+Let $L \in [s]$. (1) A folded Reed-Solomon code of length $n$ and rate $R$ over $\mathbb{F}_q^s$, with $\gamma$ a generator of $\mathbb{F}_q^{\times}$ and evaluation points $\alpha_1, \dots, \alpha_n$ for which the $sn$ points $\gamma^{j}\alpha_i$ are distinct, is
 
 $$
 \left( \frac{L}{L+1}\Big(1 - \frac{sR}{s-L+1}\Big),\ L \right)\text{-list decodable.}
@@ -25,4 +25,4 @@ Suppose $L + 1$ distinct messages are close to a received word and consider thei
 
 ## Sources
 
-- Yeyuan Chen, Zihan Zhang, "Explicit folded Reed-Solomon and multiplicity codes achieve relaxed generalized Singleton bounds", STOC (2025); arXiv:2408.15925.
+- Yeyuan Chen, Zihan Zhang, "Explicit folded Reed-Solomon and multiplicity codes achieve relaxed generalized Singleton bounds", STOC (2025); arXiv:2408.15925 (Definition 1.2, Theorems 1.3 and 1.5).

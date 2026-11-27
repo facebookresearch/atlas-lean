@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.FermatCongruenceTwinPrimes
 public import MathlibExt.NumberTheory.SophieGermainChainFermatCongruence
 public import MathlibExt.NumberTheory.SophieGermainChainLength
 public import MathlibExt.NumberTheory.SophieGermainPrime
+public import MathlibExt.NumberTheory.SophieGermainPrimeFermatCongruence
 
 /-!
 # Fermat's congruence for twin and Sophie Germain primes
@@ -45,21 +46,6 @@ Theorem 3.2, quoting A. Alahmadi and F. Luca, C. R. Math. Acad. Sci. Paris 360 (
 (`integers-2025-A31-thm-3-2`). -/
 public theorem_wanted not_isCarmichaelNumber_two_pow_mul_prime_add_one (n : ℕ) {p : ℕ}
     (hp : p.Prime) (hodd : Odd p) : ¬Nat.IsCarmichaelNumber (2 ^ n * p + 1)
-
-/-- **Fermat-type characterizations of Sophie Germain primes.** Let $p$ be a prime. Then $p$ is a
-Sophie Germain prime if and only if $a^{2p} \equiv (2p + 1)\,a^{p+1} - 2p \pmod{p(2p + 1)}$ for
-every integer $a$ coprime to $p(2p + 1)$; and $p$ is a Sophie Germain prime if and only if
-$(2p + 1)\,a^{p-1} \equiv p\,a^{2p} + p + 1 \pmod{p(2p + 1)}$ for every integer $a$ coprime to
-$p(2p + 1)$.
-
-Source: Takashi Agoh, *A Note on Fermat's Congruence*, INTEGERS 25 (2025), Article A31,
-Theorem 3.3, Congruences (3.5) (`integers-2025-A31-thm-3-3`). -/
-public theorem_wanted isSophieGermainPrime_iff_forall_fermat_congruence {p : ℕ}
-    (hp : p.Prime) :
-    (Nat.IsSophieGermainPrime p ↔ ∀ a : ℤ, IsCoprime a ((p : ℤ) * (2 * p + 1)) →
-        a ^ (2 * p) ≡ (2 * p + 1) * a ^ (p + 1) - 2 * p [ZMOD (p : ℤ) * (2 * p + 1)]) ∧
-      (Nat.IsSophieGermainPrime p ↔ ∀ a : ℤ, IsCoprime a ((p : ℤ) * (2 * p + 1)) →
-        (2 * p + 1) * a ^ (p - 1) ≡ p * a ^ (2 * p) + p + 1 [ZMOD (p : ℤ) * (2 * p + 1)])
 
 end
 
