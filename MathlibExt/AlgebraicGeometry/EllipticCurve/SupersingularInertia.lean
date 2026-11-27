@@ -50,6 +50,7 @@ import Mathlib.FieldTheory.IsAlgClosed.Basic
 import Mathlib.LinearAlgebra.Matrix.Basis
 import Mathlib.RingTheory.PrincipalIdealDomain
 import Mathlib.RingTheory.TensorProduct.Free
+import MathlibExt.AlgebraicGeometry.EllipticCurve.DivisionPolynomialMulFormula
 import MathlibExt.AlgebraicGeometry.EllipticCurve.TorsionCardinality
 import MathlibExt.RingTheory.Valuation.ResidueChar
 import MathlibExt.RingTheory.Valuation.ResidueField
@@ -78,6 +79,12 @@ eigencharacter `P.tameCharacter π`.
   eigenvector, with eigencharacter the tame character.
 * `WeierstrassCurve.exists_inertia_eigenvector_tameCharacter_residualGaloisRepOf_of_supersingular`:
   the same eigenvector, with eigencharacter the tame character or its `p`-th power.
+
+## References
+
+* J.-P. Serre, *Propriétés galoisiennes des points d'ordre fini des courbes elliptiques*,
+  Invent. Math. 15 (1972), 259–331: at a prime of good supersingular reduction, tame inertia acts
+  on the `p`-torsion through the fundamental characters of level 2.
 -/
 
 -- The point API needs decidable equality on `AlgebraicClosure ℚ`. Take it from classical
@@ -476,24 +483,6 @@ end WeierstrassCurve
 
 namespace SupersingularInertiaAux
 
-private theorem sub_negY_sq_eq_eval_Ψ₂Sq {R : Type*} [CommRing R] (W : WeierstrassCurve R)
-    {x y : R} (e : W.toAffine.Equation x y) :
-    (y - W.toAffine.negY x y) ^ 2 = W.Ψ₂Sq.eval x := by
-  rw [WeierstrassCurve.Affine.equation_iff] at e
-  simp only [WeierstrassCurve.Affine.negY, WeierstrassCurve.Ψ₂Sq, WeierstrassCurve.b₂,
-    WeierstrassCurve.b₄, WeierstrassCurve.b₆, eval_add, eval_mul, eval_pow, eval_C, eval_X]
-  linear_combination 4 * e
-
-private theorem two_smul_some_eq_zero_iff {F : Type*} [Field F] [DecidableEq F]
-    (W : WeierstrassCurve F) {x y : F} (h : W.toAffine.Nonsingular x y) :
-    2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ W.Ψ₂Sq.eval x = 0 := by
-  have key : 2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔
-      y = W.toAffine.negY x y := by
-    rw [two_nsmul, add_eq_zero_iff_eq_neg, WeierstrassCurve.Affine.Point.neg_some,
-      WeierstrassCurve.Affine.Point.some.injEq]
-    simp
-  rw [key, ← sub_negY_sq_eq_eval_Ψ₂Sq W h.left, pow_eq_zero_iff two_ne_zero, sub_eq_zero]
-
 open scoped Polynomial.Bivariate in
 private theorem nsmul_some_eq_zero_iff_eval_prePsi {F : Type*} [Field F] [DecidableEq F]
     (W : WeierstrassCurve F) [W.IsElliptic] {n : ℕ} (hn : Odd n) {x y : F}
@@ -538,7 +527,7 @@ theorem WeierstrassCurve.valuation_torsion_of_coeff_prePsi_dvd (W : WeierstrassC
     (SupersingularInertiaAux.map_residueField_discr_ne_zero_of_isGoodPrimeFor W Fact.out
       hgood A hA)
     (fun W' _ _ hn _ _ h' => SupersingularInertiaAux.nsmul_some_eq_zero_iff_eval_prePsi W' hn h')
-    (fun W' _ _ h' => SupersingularInertiaAux.two_smul_some_eq_zero_iff W' h') hss h hP
+    (fun _ _ _ h' => (WeierstrassCurve.Affine.Ψ₂Sq_eval_eq_zero_iff_two_smul h').symm) hss h hP
 
 /-- Good reduction at `p` makes the reduction of an integral Weierstrass curve elliptic over every
 field of characteristic `p`. -/
@@ -581,7 +570,7 @@ theorem WeierstrassCurve.isSupersingular_map_iff_coeff_prePsi_dvd (W : Weierstra
   · intro hss P hP
     obtain ⟨i, hiN, hi⟩ := W.exists_coeff_prePsi_not_dvd (F := AlgebraicClosure (ZMod p)) hp2 hΔ
       (fun W' _ _ hn _ _ h' => SupersingularInertiaAux.nsmul_some_eq_zero_iff_eval_prePsi W' hn h')
-      (fun W' _ _ h' => SupersingularInertiaAux.two_smul_some_eq_zero_iff W' h')
+      (fun _ _ _ h' => (WeierstrassCurve.Affine.Ψ₂Sq_eval_eq_zero_iff_two_smul h').symm)
     have hi0 : i = 0 := by
       by_contra hne
       rcases lt_or_eq_of_le hiN with hlt | rfl
@@ -1194,10 +1183,10 @@ open scoped WeierstrassCurve.Affine
 (the inner coefficients of the `p`-division polynomial are divisible by `p`). Assume that the
 `p`-torsion of `W` over `AlgebraicClosure ℚ` has `p ^ 2` points and that the Galois action on it
 is trivial on the automorphisms fixing some finite extension of `ℚ`; these two hypotheses define
-the residual representation of `W` at `p`. Then any matrix form `ρ` of this representation after
-extension of scalars to a finite field `k` has, after a suitable embedding of `k` into the residue
-field of a valuation subring `P` over `p`, a nonzero vector on which inertia at `P` acts through
-the tame character attached to a root `π` of `π ^ (p ^ 2 - 1) = p`. -/
+the residual representation of `W` at `p`. Then for every valuation subring `P` over `p` and every
+root `π` of `π ^ (p ^ 2 - 1) = p`, any matrix form `ρ` of this representation after extension of
+scalars to a finite field `k` has, after a suitable embedding of `k` into the residue field of `P`,
+a nonzero vector on which inertia at `P` acts through the tame character attached to `π`. -/
 theorem exists_inertia_mulVec_eq_tameCharacter_smul_of_supersingular
     (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) {k : Type*} [Field k] [Finite k]
     (ι : ZMod p →+* k) (hgood : W.IsGoodPrimeFor p)
@@ -1258,10 +1247,11 @@ theorem exists_inertia_mulVec_eq_tameCharacter_smul_of_supersingular
 (the inner coefficients of the `p`-division polynomial are divisible by `p`). Assume that the
 `p`-torsion of `W` over `AlgebraicClosure ℚ` has `p ^ 2` points and that the Galois action on it
 is trivial on the automorphisms fixing some finite extension of `ℚ`; these two hypotheses define
-the residual representation of `W` at `p`. Then any matrix form `ρ` of this representation after
-extension of scalars to a finite field `k` has, after a suitable embedding of `k` into the residue
-field of a valuation subring `P` over `p`, a nonzero vector on which inertia at `P` acts through
-the tame character attached to a root `π` of `π ^ (p ^ 2 - 1) = p`, or through its `p`-th power. -/
+the residual representation of `W` at `p`. Then for every valuation subring `P` over `p` and every
+root `π` of `π ^ (p ^ 2 - 1) = p`, any matrix form `ρ` of this representation after extension of
+scalars to a finite field `k` has, after a suitable embedding of `k` into the residue field of `P`,
+a nonzero vector on which inertia at `P` acts through the tame character attached to `π`, or
+through its `p`-th power. -/
 theorem exists_inertia_eigenvector_tameCharacter_residualGaloisRepOf_of_supersingular
     (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) {k : Type*} [Field k] [Finite k]
     (ι : ZMod p →+* k) (hgood : W.IsGoodPrimeFor p)
