@@ -245,9 +245,12 @@ theorem causal_delivery (L : Legal a) (R : Transport a) {x y : Message P D}
     obtain ⟨i, hi, ho⟩ := ih he
     exact ⟨i, hi.trans hj, ho⟩
 
-/-- After a non-self transport receipt at a correct receiver, reaching all transmitted counts
-suffices for eventual application delivery (possibly already past at that cut). Until delivery,
-the candidate stays pending; monotone counts and fair inspection force a successful inspection. -/
+/-- In a legal wrapper trace (`Legal`) with fair inspection of persistently pending packets at
+correct processes (`FairInspection`), suppose a correct receiver gets a packet from another
+process and its counts dominate the packet's tag at some cut (`Fits`). Then the receiver
+application-delivers the packet at some step, possibly before that cut. Fairness schedules an
+inspection if the packet stays pending; legality makes the inspection succeed when the packet
+is pending and fits. The receipt is a hypothesis; transport reliability is not required. -/
 theorem eventually_drain (L : Legal a) (F : FairInspection a) (hp : p ∈ correct a)
     (hne : p ≠ w.1.sender) (hr : a i = .receive p w) (hf : Fits a p w t) :
     ∃ j, (a j).output = some (p, w) := by
