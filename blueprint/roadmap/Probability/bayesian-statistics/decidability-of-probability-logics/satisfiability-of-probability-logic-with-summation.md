@@ -14,6 +14,7 @@ Over $\mathcal{M}_{\mathrm{fin}}$ both problems are recursively enumerable (Theo
 
 - [Probability measure](../../foundations/probability-measures/is-probability-measure.md)
 - [Finite recursive structural causal model](../../../ComputerScience/machine-learning/probabilistic-graphical-models/structural-causal-models-and-counterfactuals/finite-scm.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,9 +22,9 @@ None.
 
 ## Expansion
 
-The proof encodes the conditional independence implication problem: a [conditional independence](../../random-fields/conditional-independence-on-finite-configuration/cond-indep.md) statement $\mathbf{X} \perp \mathbf{Y} \mid \mathbf{Z}$ is the formula $\mathbf{P}(\mathbf{x} \wedge \mathbf{y} \mid \mathbf{z}) \approx \mathbf{P}(\mathbf{x} \mid \mathbf{z}) \cdot \mathbf{P}(\mathbf{y} \mid \mathbf{z})$ with the value variables left free, and an implication between such statements becomes an entailment $\bigwedge_i p_i \vDash p_0$. Li proved that this implication problem is undecidable for random variables with finite, unbounded supports (Theorem 1 of the source, quoting Li's Theorem 3), which gives the result. Li's theorem has no page in this subject.
+The proof encodes the conditional independence implication problem: a [conditional independence](../../random-fields/conditional-independence-on-finite-configuration/cond-indep.md) statement $\mathbf{X} \perp \mathbf{Y} \mid \mathbf{Z}$ is the formula $\mathbf{P}(\mathbf{x} \wedge \mathbf{y} \mid \mathbf{z}) \approx \mathbf{P}(\mathbf{x} \mid \mathbf{z}) \cdot \mathbf{P}(\mathbf{y} \mid \mathbf{z})$ with the value variables left free, and an implication between such statements becomes an entailment $\bigwedge_i p_i \vDash p_0$. Li proved that this implication problem is undecidable for random variables with finite, unbounded supports (Theorem 1 of the source, quoting Li's Theorem 3), which gives the result. Li's theorem has no page on main yet.
 
 ## Sources
 
-- D. Ibeling, T. Icard and M. Mossé, "On probabilistic and causal reasoning with summation operators", Journal of Logic and Computation 35 (2025), no. 8, article exae068, https://doi.org/10.1093/logcom/exae068; read in arXiv:2405.03069v2 (Section 2, Definition of satisfiability, Theorems 1 to 4 and the discussion after Theorem 1 in the introduction of arXiv:2405.03069v2).
+- D. Ibeling, T. Icard and M. Mossé, "On probabilistic and causal reasoning with summation operators", Journal of Logic and Computation 35 (2025), no. 8, article exae068, https://doi.org/10.1093/logcom/exae068; read in arXiv:2405.03069v2, whose numbering is used: Section 2 (syntax and semantics, Definitions 9, 10 and 11 for validity, the model classes and satisfiability), Theorem 1 and the discussion after it in Section 1, and Theorems 2, 3 and 4 at the start of Section 3.
 - C. T. Li, "Undecidability of network coding, conditional information inequalities, and conditional independence implication", IEEE Transactions on Information Theory 69 (2023), no. 6, 3493–3510, https://doi.org/10.1109/TIT.2023.3247570; read in arXiv:2205.11461v3 (Theorem 3 of arXiv:2205.11461v3).

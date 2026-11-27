@@ -12,11 +12,11 @@ so that $y_j$ increases only while $z_j = 0$. A matrix is an *S-matrix* if $Rw >
 
 **Theorem (Gamarnik and Katz).** There is no algorithm that, given $z_0 \in \mathbb{R}^d_+$, $\theta \in \mathbb{R}^d$ and a completely-S matrix $R$, decides whether the fluid model $(z_0, \theta, R)$ is stable (Theorem 5 of the source).
 
-The instances built in the proof have integer data: $R \in \mathbb{Z}^{d \times d}$, an integer drift vector and a starting state with nonnegative integer entries, so the problem is undecidable already for integer inputs. Global stability of $(\theta, R)$ for every starting state, and positive recurrence of the semimartingale reflected Brownian motion with data $(\theta, \Sigma, R)$, are decidable when $d \le 3$; the source conjectures that both are undecidable in general dimension.
+The instances built in the proof have integer data: $R \in \mathbb{Z}^{d \times d}$, an integer drift vector and a starting state with nonnegative integer entries, so the problem is undecidable already for integer inputs. When $d \le 3$, the semimartingale reflected Brownian motion with data $(\theta, \Sigma, R)$ is positive recurrent exactly when $(\theta, R)$ is globally stable (stable for every starting state), and global stability can be verified by checking a system of equalities and inequalities (Theorem 4 of the source); the source conjectures that both problems are undecidable in general dimension.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -24,8 +24,8 @@ None.
 
 ## Expansion
 
-The proof reduces the halting problem for counter machines with two counters. For a machine with $m$ states it builds a Skorokhod problem of dimension $5m + 9$ whose fluid path, started from the point encoding the initial configuration, passes through the encodings of successive configurations at times $0, 5, 10, \dots$; two coordinates carry the counter values and others mark the current state. A final modification of $R$ in the column of the halting state makes the fluid path reach $0$ (by time $5T + 1$ if the machine halts at step $T$) exactly when the machine halts, and stay away from $0$ otherwise (Proposition 2 of the source). That the constructed matrix is completely-S is Proposition 1. The simulation of counter machines by fluid paths has no page.
+The proof reduces the halting problem for counter machines with two counters. For a machine with $m$ states it builds a Skorokhod problem whose dimension is linear in $m$ (the coordinates fall into groups of sizes $5, m, 2, 2, 4m, 4m$) and whose fluid path, started from the point encoding the initial configuration, passes through the encodings of successive configurations at times $0, 5, 10, \dots$; two coordinates carry the counter values and others mark the current state. A final modification of $R$ in the column of the halting state makes the fluid path reach $0$ (by time $5T + 1$ if the machine halts at step $T$) exactly when the machine halts, and stay away from $0$ otherwise (Proposition 2 of the source). That the constructed matrix is completely-S is Proposition 1. The simulation of counter machines by fluid paths, and the reduction to reaching a given state with both counters equal to $1$ (Theorem 7 of the source), have no page on main.
 
 ## Sources
 
-- D. Gamarnik and D. Katz, "The stability of the deterministic Skorokhod problem is undecidable", Queueing Systems 79 (2015), no. 3–4, 221–249, https://doi.org/10.1007/s11134-014-9424-8; read in arXiv:1007.1694v1 (Section 2, Theorem 5, Section 4 and Propositions 1 and 2 of arXiv:1007.1694v1, where theorems and propositions are numbered separately).
+- D. Gamarnik and D. Katz, "The stability of the deterministic Skorokhod problem is undecidable", Queueing Systems 79 (2015), no. 3–4, 221–249, https://doi.org/10.1007/s11134-014-9424-8; read in arXiv:1007.1694v1, whose numbering is used (theorems, propositions and lemmas are numbered separately): Section 2 (the Skorokhod problem, Theorem 1, Definition 1 and Theorem 5), Section 3 (Theorems 6 and 7 on counter machines), Sections 4 and 5 (the construction and Theorem 8), and Section 6 (Propositions 1 and 2).
