@@ -23,13 +23,6 @@ using $(1 - 1/n)^n \le 1/e$. For continuous distributions this is the quantile c
 
 The optimal stopping rule, computed by backward induction, collects at least as much as these rules: a randomized rule is a mixture of deterministic ones, and none of them beats the optimal rule.
 
-## Depends on
-
-- [Prophet inequality with a single threshold](../../../Probability/martingales/prophet-inequalities/prophet-inequality-with-a-single-threshold.md)
-
-## Proof depends on
-
-- [Samuel-Cahn's median-threshold prophet inequality and optimality of 1/2](samuel-cahn-median-prophet-inequality.md)
 
 ## Sources
 
