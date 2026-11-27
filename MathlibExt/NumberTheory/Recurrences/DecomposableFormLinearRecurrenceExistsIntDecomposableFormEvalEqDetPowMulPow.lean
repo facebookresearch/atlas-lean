@@ -123,19 +123,6 @@ private theorem prod_enum_eq (E : LinearRecurrence ℤ) (r : Fin E.order → ℂ
       rw [mul_pow, mul_assoc]
     _ = (-1 : ℂ) ^ E.order * (charPolyC E).coeff 0 := by rw [← h0]
 
-private theorem natDegree_prod_X_sub_C {R : Type*} [CommRing R] [Nontrivial R]
-    [NoZeroDivisors R] (k : ℕ) (c : Fin k → R) :
-    (∏ i, (Polynomial.X - Polynomial.C (c i) : Polynomial R)).natDegree = k := by
-  have hne : ∀ i ∈ Finset.univ,
-      (Polynomial.X - Polynomial.C (c i) : Polynomial R) ≠ 0 := by
-    intro i _
-    have h1 := Polynomial.natDegree_X_sub_C (c i)
-    intro h0
-    rw [h0, Polynomial.natDegree_zero] at h1
-    exact one_ne_zero h1.symm
-  rw [Polynomial.natDegree_prod _ _ hne]
-  simp
-
 private theorem resultant_eq_prod_eval_of_factor {R : Type*} [CommRing R] [Nontrivial R]
     {k : ℕ} (χ Q : Polynomial R) (r : Fin k → R) (m n : ℕ)
     (hfac : χ = ∏ i, (Polynomial.X - Polynomial.C (r i)))
@@ -209,11 +196,8 @@ private theorem eval_eq_det_mul_pow (E : LinearRecurrence ℤ) (G : Fin E.order 
     change (∑ j, ((G j (m + E.order) : ℤ) : ℂ) * d j)
       = ∑ i, ((E.coeffs i : ℤ) : ℂ) * (∑ j, ((G j (m + (i : ℕ)) : ℤ) : ℂ) * d j)
     have hGj : ∀ j, ((G j (m + E.order) : ℤ) : ℂ)
-        = ∑ i, ((E.coeffs i : ℤ) : ℂ) * ((G j (m + (i : ℕ)) : ℤ) : ℂ) := by
-      intro j
-      rw [hG j m]
-      push_cast
-      rfl
+        = ∑ i, ((E.coeffs i : ℤ) : ℂ) * ((G j (m + (i : ℕ)) : ℤ) : ℂ) :=
+      fun j => recC_isSolution_cast E G hG j m
     simp only [hGj, Finset.sum_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -350,8 +334,10 @@ private theorem map_formF_eq_prod (E : LinearRecurrence ℤ) (G : Fin E.order �
     refine Finset.prod_congr rfl fun i _ => ?_
     rw [Polynomial.map_sub, Polynomial.map_X, Polynomial.map_C]
   have hdegY : (∏ i, (Polynomial.X - Polynomial.C (MvPolynomial.C (r i)) :
-      Polynomial (MvPolynomial (Fin E.order) ℂ))).natDegree = E.order :=
-    natDegree_prod_X_sub_C E.order (fun i => MvPolynomial.C (r i))
+      Polynomial (MvPolynomial (Fin E.order) ℂ))).natDegree = E.order := by
+    simpa only [Finset.card_univ, Fintype.card_fin] using
+      (Polynomial.natDegree_finsetProd_X_sub_C_eq_card (Finset.univ : Finset (Fin E.order))
+        (fun i => MvPolynomial.C (r i)))
   have hPle : (((polyP E G).map (MvPolynomial.map (Int.castRingHom ℂ))).natDegree)
       ≤ E.order :=
     Polynomial.natDegree_map_le.trans (polyP_natDegree_le E G)
@@ -421,8 +407,9 @@ private theorem eval_formF_eq (E : LinearRecurrence ℤ) (G : Fin E.order → �
   have hprod : ∏ i, r i = (-1) ^ E.order * (charPolyC E).coeff 0 :=
     prod_enum_eq E r hr
   have hdeg : (∏ i, (Polynomial.X - Polynomial.C (r i) : Polynomial ℂ)).natDegree
-      = E.order :=
-    natDegree_prod_X_sub_C E.order r
+      = E.order := by
+    simpa only [Finset.card_univ, Fintype.card_fin] using
+      (Polynomial.natDegree_finsetProd_X_sub_C_eq_card (Finset.univ : Finset (Fin E.order)) r)
   have hroot_eval : ∀ i, Polynomial.eval (r i)
       (((polyP E G).map (phiAt E G n)).map (Int.castRingHom ℂ))
       = ((Matrix.of fun j i : Fin E.order => G j i).det : ℂ) * (r i) ^ n :=
