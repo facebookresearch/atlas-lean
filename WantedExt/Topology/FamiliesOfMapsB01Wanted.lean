@@ -119,7 +119,7 @@ def IsPolyhedron (P : Set (Fin k → ℝ)) : Prop :=
 geometric simplicial complex in $\mathbb{R}^k$ with finitely many faces whose underlying space
 equals $P$. -/
 structure Subdivision (P : Set (Fin k → ℝ)) where
-  complex      : SimplicialComplex ℝ (Fin k → ℝ)
+  complex : SimplicialComplex ℝ (Fin k → ℝ)
   faces_finite : complex.faces.Finite
   space_eq     : complex.space = P
 
