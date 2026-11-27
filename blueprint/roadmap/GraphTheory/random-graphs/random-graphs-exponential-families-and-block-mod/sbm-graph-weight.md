@@ -1,0 +1,3 @@
+# Block-model graph weight
+
+Let $V$ be a finite linearly ordered vertex set, $K$ a finite set of classes, $p \in \mathbb{R}^K$ and $W \in \mathbb{R}^{K \times K}$. The block-model graph weight of a simple graph $G$ on $V$ is the sum over all labelings $z : V \to K$ of the prior weight $\prod_{v} p_{z(v)}$ of $z$ times the edge factor of $z$ at $G$, the product over unordered pairs of distinct vertices $u < v$ of $W_{z(u)z(v)}$ for an edge and $1 - W_{z(u)z(v)}$ for a non-edge. For arbitrary real $p$ and $W$ this is an unnormalized weight; for admissible parameters it is a probability law on graphs.
