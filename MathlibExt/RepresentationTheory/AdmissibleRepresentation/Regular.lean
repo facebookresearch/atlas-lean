@@ -41,14 +41,14 @@ Proposition 1.4.2 p. 123): for every representation `V` of `G`,
   (`Representation.IsRegularPeriodRing.linearIndependent`);
 * `dim_E D_S(V) ≤ dim_F V` if `V` is finite-dimensional
   (`Representation.IsRegularPeriodRing.finrank_periods_le`);
-* equality holds if and only if `α_V` is an isomorphism, that is, `V` is `S`-admissible in the
-  sense of Fontaine (*op. cit.*, Definition 1.5.1 p. 124)
+* if `V` is finite-dimensional, equality holds if and only if `α_V` is an isomorphism, that is,
+  `V` is `S`-admissible in the sense of Fontaine (*op. cit.*, Definition 1.5.1 p. 124)
   (`Representation.IsRegularPeriodRing.finrank_periods_eq_iff`,
   `Representation.IsRegularPeriodRing.isAdmissible_iff_comparison_bijective`), and if and only if
-  `S ⊗_F V` has an `S`-basis of `H`-fixed vectors
+  `S ⊗_F V` has a finite `S`-basis of `H`-fixed vectors
   (`Representation.IsRegularPeriodRing.isAdmissible_iff_hasFixedBasis`).
 
-So for a regular ring the three forms of admissibility of
+So for a regular ring and a finite-dimensional `V`, the three forms of admissibility of
 `MathlibExt.RepresentationTheory.AdmissibleRepresentation` agree. The injectivity is Fontaine's
 minimal relation argument (*op. cit.*, §1.6.2 p. 125), with coefficients in `S` rather than in a
 field, using (ii); the case of equality is his determinant argument (*op. cit.*, §1.4.3 p. 123),
@@ -324,8 +324,9 @@ theorem finrank_periods_le (hS : IsRegularPeriodRing act H) (ρ : Representation
   rw [Module.finrank_eq_card_basis b, ← Module.finrank_baseChange (R := S) (S := F) (M' := V)]
   exact hli.fintype_card_le_finrank
 
-/-- **The equality case for a regular ring** (Fontaine, Exposé III, §1.4.3 p. 123): if
-`dim_{S^H} D_S(V) = dim_F V`, then an `S^H`-basis `(dᵢ)` of `D_S(V)` is an `S`-basis of `S ⊗_F V`.
+/-- **The equality case for a regular ring** (Fontaine, Exposé III, §1.4.3 p. 123): if `V` is
+finite-dimensional and `dim_{S^H} D_S(V) = dim_F V`, then an `S^H`-basis `(dᵢ)` of `D_S(V)` is an
+`S`-basis of `S ⊗_F V`.
 Indeed, the determinant `δ` of `(dᵢ)` in a basis `1 ⊗ vᵢ` is nonzero, and
 `act g δ = det (ρ g)⁻¹ • δ`, so `δ` spans an `H`-stable line and is a unit by (iii). -/
 theorem hasFixedBasis_of_isAdmissible (hS : IsRegularPeriodRing act H) {ρ : Representation F G V}
@@ -368,7 +369,7 @@ theorem hasFixedBasis_of_isAdmissible (hS : IsRegularPeriodRing act H) {ρ : Rep
 
 /-- **Admissibility for a regular ring, dimension and basis forms** (Fontaine, Exposé III,
 Proposition 1.4.2 p. 123): for a finite-dimensional `V`, `dim_{S^H} D_S(V) = dim_F V` if and only
-if `S ⊗_F V` has an `S`-basis of `H`-fixed vectors. -/
+if `S ⊗_F V` has a finite `S`-basis of `H`-fixed vectors. -/
 theorem isAdmissible_iff_hasFixedBasis (hS : IsRegularPeriodRing act H)
     (ρ : Representation F G V) [FiniteDimensional F V] :
     ρ.IsAdmissible act H ↔ ρ.HasFixedBasis act H :=
