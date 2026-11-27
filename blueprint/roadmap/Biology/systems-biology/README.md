@@ -13,8 +13,6 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Six-variable repressilator](six-variable-repressilator/README.md)
 - [Stochastic mass action, metabolic control and flux balance](stochastic-mass-action-metabolic-control-and-flu/README.md)
 
-- [Extended Permanence Conjecture](chemical-reaction-network-theory/extended-permanence-conjecture.md)
-- [Nondegeneracy Conjecture for reaction networks](chemical-reaction-network-theory/nondegeneracy-conjecture-for-reaction-networks.md)
 - [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
 - [Leak removal in linear compartmental models](leak-removal-in-linear-compartmental-models.md)
 
@@ -30,6 +28,13 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Gillespie direct method (stochastic simulation algorithm)](gillespie-direct-method.md)
 - [Exactness of the SSA path law](exactness-of-the-ssa-path-law.md)
 - [Total-variation error of a finite-precision SSA step](total-variation-error-of-a-finite-precision-ssa-step.md)
+- [Reaction network structure and dynamics](reaction-network-structure/README.md)
+- [Molecular computation](molecular-computation/README.md)
+- [Identifiability and inference](identifiability-and-inference/README.md)
+- [Stochastic biochemical dynamics](stochastic-biochemical-dynamics/README.md)
+- [Regulatory and signalling circuits](regulatory-and-signalling-circuits/README.md)
+- [Extended Permanence Conjecture](chemical-reaction-network-theory/extended-permanence-conjecture.md)
+- [Nondegeneracy Conjecture for reaction networks](chemical-reaction-network-theory/nondegeneracy-conjecture-for-reaction-networks.md)
 - [Absolute concentration robustness](chemical-reaction-network-theory/absolute-concentration-robustness/README.md)
 - [Atoms of multistationarity](chemical-reaction-network-theory/atoms-of-multistationarity/README.md)
 - [Backward sde models of gene expression](gene-regulatory-network-dynamics/backward-sde-models-of-gene-expression/README.md)
