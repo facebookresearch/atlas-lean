@@ -238,10 +238,9 @@ private theorem double_iff {q : ℕ} (hq : Odd q) (x r : ℕ) :
 
 -- As the odd prefix h advances, h + h / b skips one value each time h crosses a multiple
 -- of b. Adding one to the skipped value gives (b + 1) times the new quotient.
-private theorem odd_count {b q : ℕ} (hq : Odd q) (hbq : b ≡ 1 [MOD q])
-    (r n : ℕ) :
+private theorem odd_count_with_skips {b q : ℕ} (hbq : b ≡ 1 [MOD q]) (r n : ℕ) :
     countTo n (fun h => h + h / b ≡ r [MOD q]) +
-        residueCount q (((q + 1) / 2) * (r + 1)) (n / b) =
+        countTo (n / b) (fun u => 2 * u ≡ r + 1 [MOD q]) =
       residueCount q r (n + n / b) := by
   induction n with
   | zero => simp [residueCount, countTo]
@@ -254,9 +253,7 @@ private theorem odd_count {b q : ℕ} (hq : Odd q) (hbq : b ≡ 1 [MOD q])
         rw [hs] at this
         rw [add_mul, one_mul, this]
         omega
-      have hstep : (n + n / b + 1 ≡ r [MOD q]) ↔
-          n / b + 1 ≡ ((q + 1) / 2) * (r + 1) [MOD q] := by
-        rw [← double_iff hq]
+      have hstep : (n + n / b + 1 ≡ r [MOD q]) ↔ 2 * (n / b + 1) ≡ r + 1 [MOD q] := by
         have H : (n + n / b + 1) + 1 ≡ 2 * (n / b + 1) [MOD q] := by
           rw [← he]
           exact (hbq.add_right 1).mul_right _
@@ -268,6 +265,12 @@ private theorem odd_count {b q : ℕ} (hq : Odd q) (hbq : b ≡ 1 [MOD q])
     · have hs := Nat.succ_div_of_not_dvd hd
       simp only [hs, show n + 1 + n / b = n + n / b + 1 by omega, countTo_succ]
       omega
+
+private theorem odd_count {b q : ℕ} (hq : Odd q) (hbq : b ≡ 1 [MOD q]) (r n : ℕ) :
+    countTo n (fun h => h + h / b ≡ r [MOD q]) +
+        residueCount q (((q + 1) / 2) * (r + 1)) (n / b) =
+      residueCount q r (n + n / b) := by
+  simpa only [double_iff hq, residueCount] using odd_count_with_skips hbq r n
 
 private theorem count_identity {b q : ℕ} (hb : 2 ≤ b) (hq : Odd q) (hbq : b ≡ 1 [MOD q])
     (m r : ℕ) :
@@ -299,7 +302,85 @@ private theorem cutoff_lt_base {b m : ℕ} (hb : 2 ≤ b) (hm : m < b ^ 2) :
   simp [mirror, hd, Nat.ofDigits_cons] at H
   nlinarith
 
+private theorem cutoff_base_pow {b k e : ℕ} (hb : 2 ≤ b) (hk : 1 ≤ k) (he : e ≤ 1) :
+    cutoff b e (b ^ k) = b ^ ((k + e) / 2) - 1 := by
+  have hendpoint : ¬ (b.digits (b ^ k)).Palindrome := by
+    obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : k ≠ 0)
+    have hd : b.digits (b ^ (j + 1)) = List.replicate (j + 1) 0 ++ [1] := by
+      simpa only [mul_one, Nat.digits_of_lt b 1 one_ne_zero hb] using
+        Nat.digits_base_pow_mul (k := j + 1) hb Nat.zero_lt_one
+    intro hp
+    have H := congrArg List.head? hp.reverse_eq
+    simp [hd, List.replicate_succ] at H
+  have hlen (n : ℕ) (hn : n ≠ 0) (i : ℕ) : n < b ^ i ↔ (b.digits n).length ≤ i := by
+    rw [Nat.length_digits b n hb hn, ← Nat.log_lt_iff_lt_pow hb hn]
+    omega
+  have hcut (h : ℕ) : h ≤ cutoff b e (b ^ k) ↔ h ≤ b ^ ((k + e) / 2) - 1 := by
+    rw [le_cutoff hb]
+    rcases eq_or_ne h 0 with rfl | hh
+    · simp [mirror]
+    have hhpos : 0 < h := Nat.pos_of_ne_zero hh
+    have hmpos : 0 < mirror b e h := hhpos.trans_le ((mirror_strictMono hb e).id_le h)
+    have hmne : mirror b e h ≠ b ^ k := fun H => hendpoint (H ▸ mirror_palindrome hb he h)
+    have hp : 0 < b ^ ((k + e) / 2) := by positivity
+    have hd := List.length_pos_iff.mpr ((Nat.digits_ne_nil_iff_ne_zero (b := b)).mpr hh)
+    rw [le_iff_lt_or_eq, or_iff_left hmne,
+      show h ≤ b ^ ((k + e) / 2) - 1 ↔ h < b ^ ((k + e) / 2) by omega,
+      hlen _ hmpos.ne', hlen _ hh, digits_mirror hb]
+    simp only [List.length_append, List.length_reverse, List.length_drop]
+    omega
+  exact le_antisymm ((hcut _).mp le_rfl) ((hcut _).mpr le_rfl)
+
 end abs_palindromeAPCount_sub_le
+
+open abs_palindromeAPCount_sub_le in
+/-- **Counting palindromes by filling the gaps in odd-length prefixes.** Let $b$, $k$, $q$, and $r$
+be natural numbers with $b \ge 2$, $k \ge 1$, and $b \equiv 1 \pmod q$. Write $A_b(b^k,q,r)$ for the
+count of positive base-$b$ palindromes up to $b^k$ congruent to $r$ modulo $q$. Put
+$S = b^{\lfloor k/2 \rfloor}$ and $T = b^{\lfloor (k-1)/2 \rfloor}$. Let $C(N,c,a)$ count integers
+$h$ with $1 \le h \le N$ and $ch \equiv a \pmod q$. Then
+
+$$
+A_b(b^k,q,r) + C(T-1,2,r+1) = C(S-1,2,r) + C((b+1)T-2,1,r).
+$$
+
+The even-length prefixes range from $1$ to $S-1$ and give the residues $2h$. The odd-length
+prefixes range from $1$ to $bT-1$ and give the residues of $h + \lfloor h/b \rfloor$. This latter
+sequence spans the interval from $1$ to $(b+1)T-2$, jumping by two whenever $h$ reaches a
+multiple $bu$ of $b$. At such a jump the skipped value is $(b+1)u-1$. Since $b \equiv 1 \pmod q$,
+the skipped value is congruent to $r$ exactly when $2u \equiv r+1 \pmod q$, giving the correction
+term $C(T-1,2,r+1)$. -/
+public theorem palindromeAPCount_base_pow_add_skipped_eq {b k q : ℕ} (hb : 2 ≤ b)
+    (hk : 1 ≤ k) (hbq : b ≡ 1 [MOD q]) (r : ℕ) :
+    palindromeAPCount b (b ^ k) q r +
+      ((Finset.Ioc 0 (b ^ ((k - 1) / 2) - 1)).filter fun h => 2 * h ≡ r + 1 [MOD q]).card =
+      ((Finset.Ioc 0 (b ^ (k / 2) - 1)).filter fun h => 2 * h ≡ r [MOD q]).card +
+      ((Finset.Ioc 0 ((b + 1) * b ^ ((k - 1) / 2) - 2)).filter fun h => h ≡ r [MOD q]).card := by
+  let t := b ^ ((k - 1) / 2)
+  have ht : 0 < t := by dsimp [t]; positivity
+  have hpow : b ^ ((k + 1) / 2) = t * b := by
+    rw [show (k + 1) / 2 = (k - 1) / 2 + 1 by omega, pow_succ]
+  have hdiv : (t * b - 1) / b = t - 1 := by
+    have hpred : t - 1 + 1 = t := by omega
+    have he : (t - 1) * b + b = t * b := by rw [← add_one_mul, hpred]
+    apply Nat.div_eq_of_lt_le
+    · omega
+    · rw [hpred]
+      omega
+  have hsum : t * b - 1 + (t - 1) = (b + 1) * t - 2 := by
+    have hp : 0 < t * b := by positivity
+    rw [add_mul, one_mul, mul_comm b t]
+    omega
+  have he (h : ℕ) : (mirror b 0 h ≡ r [MOD q]) ↔ (2 * h ≡ r [MOD q]) := by
+    have H : mirror b 0 h ≡ 2 * h [MOD q] := by simpa [two_mul] using mirror_modEq hb hbq 0 h
+    exact ⟨H.symm.trans, H.trans⟩
+  have ho (h : ℕ) : (mirror b 1 h ≡ r [MOD q]) ↔ (h + h / b ≡ r [MOD q]) := by
+    have H : mirror b 1 h ≡ h + h / b [MOD q] := by simpa using mirror_modEq hb hbq 1 h
+    exact ⟨H.symm.trans, H.trans⟩
+  rw [count_split hb, cutoff_base_pow hb hk (by decide), cutoff_base_pow hb hk (by decide)]
+  simp only [countTo, Nat.add_zero, hpow, he, ho, add_assoc]
+  congr 1
+  simpa only [hdiv, hsum, countTo, residueCount] using odd_count_with_skips hbq r (t * b - 1)
 
 open abs_palindromeAPCount_sub_le in
 /-- **Palindromes in residue classes: a logarithmic error bound.** Let $b \ge 2$ be a natural
