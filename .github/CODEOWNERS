@@ -1,8 +1,11 @@
 # The ATLAS wiki and its tooling. A change here needs one approval from the
 # code owners below (CONTRIBUTING.md, Graph PRs), except the wiki files that
 # scripts/sync_wiki.py declarations writes for a pull request's own
-# declarations, when those are its only wiki changes. Any other file here,
-# the tooling included, still needs that approval. GitHub enforces approvals
+# declarations, when those are its only wiki changes, a Lean pull request's
+# edits for the declarations it renames, moves or removes (but not unlinking a
+# page whose own declaration goes with no successor), and a graph-sync batch.
+# Any other file here, the tooling included, still needs that approval.
+# GitHub enforces approvals
 # only once a maintainer turns on "Require review from Code Owners" for main,
 # and then for every change here.
 /blueprint/                                       @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal

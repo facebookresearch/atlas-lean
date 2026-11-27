@@ -209,7 +209,8 @@ mutual
 /-- Projection of a global type onto one participant (Def. 4.1, finite
 fragment): principals send, receive, select or branch; a third party follows
 messages and needs every choice branch to project to brace-equal types
-(plain merging); reflexive interactions are undefined. -/
+(plain merging). A reflexive interaction has no projection onto its
+principal; a third party still projects it as above. -/
 def GlobalType.project {P S L : Type} [DecidableEq P] [DecidableEq S]
     [DecidableEq L] : GlobalType P S L → P → Option (LocalType P S L)
   | .end, _ => some .end
