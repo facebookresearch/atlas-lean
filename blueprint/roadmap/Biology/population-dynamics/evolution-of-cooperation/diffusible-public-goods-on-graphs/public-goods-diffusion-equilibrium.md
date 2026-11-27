@@ -20,7 +20,7 @@ $$(1 + \lambda)\,\phi_0 = 1 + \lambda\, \phi_1 .$$
 
 The limits are the expected ones: as $\lambda \to 0$, $\phi_0 \to 1$ and the good is private; as $\lambda \to \infty$, the stationary distribution tends to that of the random walk, which is uniform by the symmetry assumed above, so on a graph of $N$ vertices $\phi_0, \phi_1 \to 1/N$ and the good is shared evenly with the whole population.
 
-**Death rate.** If cells also die and are replaced at rate $d$, the rescaled quantities $\tilde\psi_i = (1+d)\psi_i$ and $\tilde\lambda = \lambda/(1+d)$ satisfy the same recurrence, so every statement about the pure diffusion model transfers, provided the benefit coefficient is rescaled by $1 + d$ as well.
+**Decay.** If the public good also decays (or escapes) at rate $d$ relative to the utilization rate, so that $\dot\psi_i = s_i - \psi_i - d\,\psi_i - \lambda\psi_i + \lambda\sum_{j \in G} e_{ji}\psi_j$, then $\tilde\psi_i = (1+d)\psi_i$ and $\tilde\lambda = \lambda/(1+d)$ satisfy the same stationary recurrence, so every statement about the model without decay transfers with $\lambda$ replaced by $\tilde\lambda$ and the benefit $b$ divided by $1 + d$.
 
 ## Expansion
 
@@ -28,4 +28,4 @@ The operator on the right is $\lambda$ times the transition matrix of the random
 
 ## Sources
 
-- B. Allen, J. Gore and M. A. Nowak, "Spatial dilemmas of diffusible public goods", eLife 2 (2013), e01169, Model and Results (Eq. (1), Eq. (3), definitions of $\phi_0, \phi_1$) and Materials and methods (death rate rescaling), <https://doi.org/10.7554/elife.01169>, PMCID PMC3865686.
+- B. Allen, J. Gore and M. A. Nowak, "Spatial dilemmas of diffusible public goods", eLife 2 (2013), e01169, Model and Results (Eq. (1), Eq. (3), definitions of $\phi_0, \phi_1$) and Materials and methods (Eq. (3), 'Decay of the public good'), <https://doi.org/10.7554/elife.01169>, PMCID PMC3865686.
