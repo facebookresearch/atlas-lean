@@ -3,6 +3,7 @@
 Typed lambda calculi and type inference: the simply typed lambda calculus (syntax, substitution, normalization, logical relations, normalization by evaluation, elaboration, its models), lambda calculus with references and type safety, and Hindley-Milner let-polymorphism with Algorithm W.
 
 - [Beta-eta conversion and normalization by evaluation](beta-eta-conversion-and-normalization-by-evaluat/README.md)
+- [Beta-eta classes and normalization by evaluation](beta-eta-classes-and-normalization-by-evaluation/README.md)
 - [Calculus of constructions](calculus-of-constructions/README.md)
 - [Completeness of normalization by evaluation](completeness-of-normalization-by-evaluation/README.md)
 - [De Bruijn and locally nameless terms](de-bruijn-and-locally-nameless-terms/README.md)

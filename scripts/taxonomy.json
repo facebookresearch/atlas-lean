@@ -1758,7 +1758,7 @@
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/LogicalRelation": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Normalization of the simply typed lambda calculus"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/Nbe": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Normalization by evaluation"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/NbeCanonical": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Normalization by evaluation"},
-  "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/NbeCompleteness": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Completeness of normalization by evaluation"},
+  "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/NbeCompleteness": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Beta-eta classes and normalization by evaluation"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/NbeConversion": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Beta-eta conversion and normalization by evaluation"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/NbeCorrectness": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Normalization by evaluation"},
   "CSLibExt/Languages/LambdaCalculus/DeBruijn/Stlc/NbeDecision": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Deciding beta-eta conversion by normalization by evaluation"},
