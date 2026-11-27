@@ -1,7 +1,6 @@
 # Graphs of uncountable chromatic number
 
 - [Erdős Problem 737 (an edge on cycles of all large lengths)](aleph-one-chromatic-edge-in-all-large-cy.md)
-- [Resolution of Erdős Problem 737](aleph-one-chromatic-edge-in-all-large-cy-2.md)
 - [Infinitely connected graph](is-infinitely-connected.md)
 - [Erdős Problem 1067 (infinitely connected subgraphs)](aleph-one-chromatic-has-infinitely-conne.md)
 - [Resolution of Erdős Problem 1067](aleph-one-chromatic-has-infinitely-conne-2.md)
