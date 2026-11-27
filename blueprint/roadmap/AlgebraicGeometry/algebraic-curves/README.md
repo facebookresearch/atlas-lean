@@ -1,6 +1,6 @@
 # Algebraic curves
 
-Algebraic curves and their invariants, including divisors, the genus, Jacobians and the Abel–Jacobi map.
+Algebraic curves and their invariants, including divisors, the genus, coherent cohomology and linear series, Jacobians and the Abel–Jacobi map, determinants of cohomology in families, fine compactified Jacobians of reduced curves, moduli of stable marked curves, and theta functions on the Drinfeld upper half plane.
 
 - [Divisors on curves](divisors-on-curves/README.md)
 - [Arakelov invariants of curves](arakelov-invariants-of-curves/README.md)
