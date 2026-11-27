@@ -8,3 +8,5 @@ Lattices and Boolean algebras, their representation theorems, and Boolean functi
 - [Complete lattice](complete-lattice.md)
 - [Complements in a bounded distributive lattice are unique](distributive-lattice-complement-unique.md)
 - [A colored-graph criterion for finite congruence lattices](finite-congruence-lattice-colored-graph-criterion.md)
+- [Decision problems for modular lattices](decision-problems-for-modular-lattices/README.md)
+- [Young's lattice](young-s-lattice/README.md)
