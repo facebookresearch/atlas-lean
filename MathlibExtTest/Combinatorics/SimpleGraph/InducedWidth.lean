@@ -8,15 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import CSLibExt.MachineLearning.GraphicalModels.InducedWidth
+import MathlibExt.Combinatorics.SimpleGraph.InducedWidth
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
 /-! # Regressions for induced width -/
 
-namespace CSLibExtTest.MachineLearning.GraphicalModels
+namespace MathlibExtTest.Combinatorics.SimpleGraph.InducedWidth
 
-open Cslib.MachineLearning.GraphicalModels
+open _root_.SimpleGraph
 
 -- The path with centre 2. Filling at 2 must connect 0 and 1.
 private def twoLeafPath : SimpleGraph (Fin 3) where
@@ -110,4 +110,4 @@ example : 3 ≤ inducedWidth (Equiv.refl (Fin 5)) forkGraph := by
 example : inducedWidth (Equiv.refl (Fin 0)) (⊥ : SimpleGraph (Fin 0)) = 0 := by
   simp [inducedWidth]
 
-end CSLibExtTest.MachineLearning.GraphicalModels
+end MathlibExtTest.Combinatorics.SimpleGraph.InducedWidth

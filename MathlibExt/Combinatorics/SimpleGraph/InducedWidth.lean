@@ -16,7 +16,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Finite
 
 set_option autoImplicit false
 
-namespace Cslib.MachineLearning.GraphicalModels
+namespace SimpleGraph
 
 variable {V : Type*} {n : ℕ}
 
@@ -59,4 +59,4 @@ noncomputable def inducedWidth [Fintype V] (order : V ≃ Fin n) (G : SimpleGrap
   exact Finset.univ.sup fun v =>
     (Finset.univ.filter fun u => order u < order v ∧ (inducedGraph order G).Adj v u).card
 
-end Cslib.MachineLearning.GraphicalModels
+end SimpleGraph
