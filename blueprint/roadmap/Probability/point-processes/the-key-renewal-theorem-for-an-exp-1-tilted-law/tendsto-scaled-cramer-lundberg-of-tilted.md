@@ -1,0 +1,3 @@
+# Cramér–Lundberg limit for a law with exponential tilt
+
+Let $G$ be a finite measure on $\mathbb{R}$ concentrated on $[0, \infty)$ with a Cramér root $\theta > 0$, $\int e^{\theta y}\, dG(y) = 1$, an integrable tilted mean $\int y\, e^{\theta y}\, dG(y)$, and Cramér tilt $e^{\theta y} dG(y)$ equal to $\operatorname{Exp}(1)$. If $Z$ is measurable, bounded, zero on $(-\infty, 0)$ and solves $Z(t) = \mathbf 1\{t \ge 0\}\, G(t, \infty) + \int Z(t - y)\, dG(y)$ for every real $t$, then $e^{\theta t} Z(t) \to (1 - G(\mathbb{R})) / (\theta \int y\, e^{\theta y}\, dG(y))$. The key renewal hypothesis of the general Cramér–Lundberg statement holds here because the tilted law is $\operatorname{Exp}(1)$.
