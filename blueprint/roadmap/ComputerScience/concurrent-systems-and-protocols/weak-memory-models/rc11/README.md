@@ -1,7 +1,8 @@
-# The RC11 memory model
+# The C11 and RC11 memory models
 
-The repaired C/C++11 memory model RC11 of Lahav, Vafeiadis, Kang, Hur and Dreyer: consistent executions and program outcomes, its relation to the C11 coherence and SC axioms, data-race freedom, SC fences, and sound compilation to x86-TSO.
+The axiomatic C11 concurrency model and its repair RC11 by Lahav, Vafeiadis, Kang, Hur and Dreyer: consistent executions and program outcomes, its relation to the C11 coherence and SC axioms, data-race freedom, SC fences, and sound compilation to x86-TSO.
 
+- [The axiomatic C11 concurrency model](the-axiomatic-c11-concurrency-model.md)
 - [RC11-consistent executions](rc11-consistent-executions.md)
 - [RC11 without mixed SC accesses gives the C11 guarantee](rc11-without-mixed-sc-accesses-gives-the-c11-guarantee.md)
 - [The RC11 SC condition as a total order on SC events](the-rc11-sc-condition-as-a-total-order.md)

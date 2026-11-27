@@ -23,5 +23,4 @@
 - [Execution witnesses of the axiomatic x86-TSO model](execution-witness.md)
 - [The axiomatic x86-TSO model](the-axiomatic-x86-tso-model.md)
 - [Equivalence of the operational and axiomatic x86-TSO models](equivalence-of-the-operational-and-axiomatic.md)
-- [The axiomatic C11 concurrency model](the-axiomatic-c11-concurrency-model.md)
-- [The RC11 memory model](rc11/README.md)
+- [The C11 and RC11 memory models](rc11/README.md)
