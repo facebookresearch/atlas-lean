@@ -57,23 +57,6 @@ Alphabets", Theorem 1. -/
 theorem_wanted rhoRed_thueMorse_odd (n : ℕ) (hn : Odd n) :
     rhoRed thueMorse n = rhoRed thueMorse ((n + 1) / 2)
 
-/-- **Runs in a word whose even-position letters alternate.** Let $n$ be a natural number and let
-$w = w_0 w_1 \cdots w_{2n}$ be a binary word of length $2n + 1$ with $w_{2i} \ne w_{2i+2}$ for
-every $i < n$, so that its even positions read $abab\cdots$ with $a \ne b$ and its odd positions
-are arbitrary. Then the reduction of $w$, the word obtained by collapsing each maximal run of
-equal letters of $w$ to a single letter, has length $n + 1$; that is, $w$ has exactly $n + 1$ runs.
-
-The paper applies this to factors of the paperfolding word.
-
-Source: John M. Campbell, James D. Currie, and Narad
-Rampersad, "Reduced Complexities for Sequences Over Finite
-Alphabets", Lemma 4. -/
-theorem_wanted redWord_length_alternating_even (n : ℕ)
-    (w : Fin (2 * n + 1) → Bool)
-    (h : ∀ i : Fin n,
-      w ⟨2 * i.val, by omega⟩ ≠ w ⟨2 * (i.val + 1), by omega⟩) :
-    (redWord (List.ofFn w)).length = n + 1
-
 /-- **Reduced complexity of the paperfolding word at lengths 8n + 1.** Let $f$ be the regular
 paperfolding sequence and let $\rho^{\mathrm{red}}_f(n)$ be the number of distinct reductions of
 length-$n$ factors of $f$. For every $n \ge 1$, $\rho^{\mathrm{red}}_f(8n+1) = 4$.
