@@ -21,6 +21,7 @@ The dimensions $n$, $m$, the number of layers and their widths are part of the i
 ## Depends on
 
 - [Global asymptotic stability of a discrete-time system](global-asymptotic-stability-of-discrete-time-maps.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

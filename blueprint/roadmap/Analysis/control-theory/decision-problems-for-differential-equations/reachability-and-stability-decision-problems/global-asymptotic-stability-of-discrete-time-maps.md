@@ -1,11 +1,11 @@
 # Global asymptotic stability of a discrete-time system
 
-The discrete-time system x⁺ = φ(x) on ℝⁿ, with φ(0) = 0, is globally asymptotically stable when every trajectory converges to the origin and trajectories that start near the origin stay near it.
+The discrete-time system x⁺ = φ(x) on ℝⁿ, with φ(0) = 0, is globally asymptotically stable when every trajectory tends to the origin and trajectories that start near the origin stay near it.
 
-**Definition.** Let $\varphi : \mathbb R^n \to \mathbb R^n$ with $\varphi(0) = 0$, and consider the autonomous discrete-time system $x_{k+1} = \varphi(x_k)$. It is *globally asymptotically stable* (the origin is a globally asymptotically stable equilibrium) if
+**Definition.** Let $\varphi : \mathbb R^n \to \mathbb R^n$ with $\varphi(0) = 0$, and consider the autonomous discrete-time system $x_{k+1} = \varphi(x_k)$. It is called *globally asymptotically stable* (the origin is a globally asymptotically stable equilibrium) if
 
 1. (global attractivity) for every initial state $x_0 \in \mathbb R^n$, $\lim_{k \to \infty} x_k = 0$; and
-2. (Lyapunov stability) for every $\varepsilon > 0$ there is $\delta > 0$ such that $\|x_0\|_2 \le \delta$ implies $\|x_k\|_2 \le \varepsilon$ for all $k \ge 0$.
+2. (Lyapunov stability) for every $\varepsilon > 0$ there is $\delta > 0$ such that $\|x_k\|_2 \le \varepsilon$ for all $k \ge 0$ whenever $\|x_0\|_2 \le \delta$.
 
 For a closed-loop system $x_{k+1} = f(x_k, \psi(x_k))$ obtained from a plant $x^+ = f(x, u)$ and a feedback law $u = \psi(x)$, the definition applies to $\varphi(x) = f(x, \psi(x))$.
 

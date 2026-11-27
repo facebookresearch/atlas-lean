@@ -8,14 +8,15 @@ $$
 \operatorname{curl} u = \lambda u
 $$
 
-for some constant $\lambda \neq 0$. There exists a Beltrami field $u$ on $\mathbb R^3$ that is [Turing complete](turing-complete-vector-fields-and-euler-flows.md) (it can simulate a universal Turing machine). Consequently it is undecidable to determine whether the trajectory of $u$ through an explicit point meets an explicit open set of $\mathbb R^3$.
+for some constant $\lambda \neq 0$. There exists a Beltrami field $u$ on $\mathbb R^3$ that is [Turing complete](turing-complete-vector-fields.md) (it can simulate a universal Turing machine). Consequently it is undecidable to determine whether the trajectory of $u$ through an explicit point meets an explicit open set of $\mathbb R^3$.
 
 The field is fixed; the points and open sets of the definition of Turing completeness vary with the machine, its input and the prescribed output. The proof gives such a field for every $\lambda \neq 0$. The field is defined with respect to the Euclidean metric but does not have finite energy, and all the simulated computations take place on the invariant plane $\{z = 0\}$, which is not compact.
 
 ## Depends on
 
-- [Turing complete vector fields and Turing complete Euler equations](turing-complete-vector-fields-and-euler-flows.md)
+- [Turing complete vector fields](turing-complete-vector-fields.md)
 - [Smooth vector fields](../../../../Geometry/complex-and-symplectic-geometry/weinstein-conjecture/smooth-vector-field.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

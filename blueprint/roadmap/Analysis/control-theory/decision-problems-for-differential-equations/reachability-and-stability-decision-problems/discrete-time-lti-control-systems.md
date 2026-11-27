@@ -15,6 +15,7 @@ satisfies $x_T = t$. The case $T = 0$ is allowed, so every state can reach itsel
 ## Depends on
 
 - [Discrete-time dynamical system](../../discrete-time-systems-and-safety/discrete-time-dynamical-system.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

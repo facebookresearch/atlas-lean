@@ -14,7 +14,7 @@ Moreover, there is a fixed vector $p : \mathbb R^{n+1} \to \mathbb R^n$ of compu
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

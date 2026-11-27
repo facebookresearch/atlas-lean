@@ -14,7 +14,7 @@ In particular, no algorithm decides whether a function in $\mathbb Z[x_1, \ldots
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

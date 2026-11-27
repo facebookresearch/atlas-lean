@@ -12,6 +12,7 @@ In the reduction the matrix is not diagonalizable. The same paper proves that in
 
 - [Semialgebraic set](../../../../Logic/model-theory/wilkie-s-conjecture/is-semialgebraic.md)
 - [Skolem, positivity and bounded reachability problems for LRS](../../../../NumberTheory/linear-recurrences/skolem-positivity-and-bounded-reachability-problems-for-lrs.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -19,7 +20,9 @@ In the reduction the matrix is not diagonalizable. The same paper proves that in
 
 ## Expansion
 
-The proof reduces from a variant of Hilbert's tenth problem: given $P \in \mathbb Z[x_1, \ldots, x_k]$, are there distinct positive integers $n_1, \ldots, n_k$ with $P(n_1, \ldots, n_k) = 0$? This variant is undecidable because Hilbert's tenth problem is (by the Davis–Putnam–Robinson–Matiyasevich theorem), and already for fixed $k = 9$ by Jones's result that Hilbert's tenth problem is undecidable with $9$ unknowns (no page here). Every univariate polynomial of degree $d$ satisfies the same linear recurrence, which turns into a matrix; from $P$ one builds an algebraic source set whose points' orbits hit a fixed hyperplane at times forming a root of $P$ in distinct positive integers. A decision procedure in dimension $2n + 1$ (algebraic source) or $n + 1$ (semialgebraic source, after projecting away auxiliary coordinates) would therefore solve Diophantine equations in $n$ unknowns.
+The proof uses "Hilbert's tenth problem over the natural numbers is undecidable with nine unknowns", which has no page on main yet; link it once its page lands.
+
+The proof reduces from a variant of Hilbert's tenth problem: given $P \in \mathbb Z[x_1, \ldots, x_k]$, are there distinct positive integers $n_1, \ldots, n_k$ with $P(n_1, \ldots, n_k) = 0$? This variant is undecidable because Hilbert's tenth problem is (by the Davis–Putnam–Robinson–Matiyasevich theorem), and already for fixed $k = 9$ by Jones's result that Hilbert's tenth problem is undecidable with $9$ unknowns (linked above; it is stated over $\mathbb N$, and the shift $x \mapsto x + 1$ passes to positive integers). Every univariate polynomial of degree $d$ satisfies the same linear recurrence, which turns into a matrix; from $P$ one builds an algebraic source set whose points' orbits hit a fixed hyperplane at times forming a root of $P$ in distinct positive integers. A decision procedure in dimension $2n + 1$ (algebraic source) or $n + 1$ (semialgebraic source, after projecting away auxiliary coordinates) would therefore solve Diophantine equations in $n$ unknowns.
 
 ## Sources
 

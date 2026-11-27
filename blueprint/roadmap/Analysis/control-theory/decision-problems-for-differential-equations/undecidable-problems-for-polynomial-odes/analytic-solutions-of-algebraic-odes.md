@@ -12,7 +12,7 @@ admit a real analytic solution $y$ on $[0, \infty)$? It remains undecidable when
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

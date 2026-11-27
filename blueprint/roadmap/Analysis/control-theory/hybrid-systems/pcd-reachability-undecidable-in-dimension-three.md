@@ -8,7 +8,7 @@ For deterministic dynamical systems on Euclidean space whose velocity is constan
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

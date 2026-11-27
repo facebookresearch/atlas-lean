@@ -8,7 +8,7 @@ More precisely, there are functions $F_a \in \mathscr S$ depending computably on
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

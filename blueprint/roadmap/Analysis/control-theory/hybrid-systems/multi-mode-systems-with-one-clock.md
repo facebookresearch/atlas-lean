@@ -8,11 +8,12 @@ Constant-rate multi-mode systems, whose modes may be switched freely inside a sa
 
 **Theorem (Krishna, Mathur and Trivedi).** The reachability problem is undecidable for constant-rate multi-mode systems with three variables extended by one unrestricted clock, that is, one further variable of rate $1$ in every mode that transitions may test in guards and reset.
 
-In the source's construction the guards and resets involve only the clock. The same section also states that reachability is undecidable for three-variable weak singular hybrid automata (layered compositions of CMS) when transitions may update variables inside a strongly connected component, whereas reachability for weak singular hybrid automata themselves is NP-complete.
+In the source's construction the guards and resets involve only the clock. The same section also states that reachability is undecidable for three-variable weak singular hybrid automata (layered compositions of CMS) extended with discrete updates of the variables (Theorem 7), whereas reachability for weak singular hybrid automata themselves is NP-complete (Theorem 5); the clock of the theorem above is the source's way of allowing such updates inside a strongly connected component.
 
 ## Depends on
 
 - [Hybrid automata and their executions](hybrid-automata-and-their-executions.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,7 +21,7 @@ In the source's construction the guards and resets involve only the clock. The s
 
 ## Expansion
 
-The proof simulates a two-counter machine: the rate variables $x_1, x_2$ store the counters as $x_i = 5 - 2^{-c_i}$, a third variable $y$ is returned to $1$ at the start of each widget, and the clock $x$, reset on every transition and tested against $1$, fixes the time spent in each mode, so that the constant rates move $x_1$, $x_2$ and $y$ by prescribed amounts. Increment, decrement and zero-test widgets are connected according to the machine's program, and the mode for the halting instruction is reachable exactly when the machine halts.
+The proof simulates a two-counter machine: the rate variables $x_1, x_2$ store the counters as $x_i = 5 - 2^{-c_i}$, a third variable $y$ is returned to $1$ at the start of each widget, and the clock $x$, reset on every transition and tested in guards (against $0$ and $1$), together with the invariants fixes the time spent in each mode, so that the constant rates move $x_1$, $x_2$ and $y$ by prescribed amounts. Increment, decrement and zero-test widgets are connected according to the machine's program, and the mode for the halting instruction is reachable exactly when the machine halts.
 
 ## Sources
 

@@ -11,6 +11,7 @@ It follows that deciding whether a state lies in the avoid-set of $B$, the state
 ## Depends on
 
 - [Hybrid automata and their executions](hybrid-automata-and-their-executions.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

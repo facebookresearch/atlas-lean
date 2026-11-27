@@ -12,11 +12,11 @@ is an elementary function on all of $\mathbb R$.
 
 ## Depends on
 
-- [Nonnegativity, positivity and zeros of one-variable sine expressions are undecidable](sign-and-zeros-of-one-variable-sine-terms.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-None.
+- [Nonnegativity, positivity and zeros of one-variable sine expressions are undecidable](sign-and-zeros-of-one-variable-sine-terms.md)
 
 ## Expansion
 

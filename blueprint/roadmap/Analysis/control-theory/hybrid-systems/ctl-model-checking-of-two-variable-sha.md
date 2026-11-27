@@ -13,6 +13,7 @@ For singular hybrid automata with one variable, reachability and schedulability 
 - [Hybrid automata and their executions](hybrid-automata-and-their-executions.md)
 - [CTL formulas](../../../Logic/temporal-logic/computation-tree-logic/formula.md)
 - [Satisfaction of CTL formulas](../../../Logic/temporal-logic/computation-tree-logic/satisfies.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -8,7 +8,7 @@ The same holds with several variables for expressions in $\mathbb Z[x_1, \ldots,
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
