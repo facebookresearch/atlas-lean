@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Probability.AffineMeansVariances
+import MathlibExtTest.Probability.Statistics.Measurement.FiniteFixtures
 import Mathlib.Tactic.NormNum
 
 /-! # Examples for affine changes of means and variances -/
@@ -36,3 +37,18 @@ example : (∫ _ : Ω, (1 : ℝ) ∂μ) / (∫ _ : Ω, (2 : ℝ) ∂μ) = 1 / 2 
 example : (∫ _ : Ω, (0 : ℝ) * 2 + 3 ∂μ) / (∫ _ : Ω, (0 : ℝ) * 2 + 3 ∂μ) = 1 := by
   exact div_means_affine_eq_one (μ := μ) (a := 0) (b := 3)
     (integrable_const 2) (integrable_const 2) (by norm_num) (by norm_num) (by norm_num)
+
+open MathlibExtTest.Probability.Statistics.Measurement.FiniteFixtures in
+-- The variance clause of the summary applies to both a negative slope and a constant recoding.
+example : variance (fun ω => (-2 : ℝ) * coord 1 0 ω + 3) (μUnif 1) = 4 ∧
+    variance (fun ω => (0 : ℝ) * coord 1 0 ω + 3) (μUnif 1) = 0 := by
+  have hX : MemLp (coord 1 0) 2 (μUnif 1) := by
+    apply MemLp.of_bound (coord_measurable 1 0).aestronglyMeasurable 1
+    exact Filter.Eventually.of_forall fun ω => by
+      cases h : ω 0 <;> norm_num [coord, h, Real.norm_eq_abs]
+  have hneg := (affine_mean_variance_laws (μUnif 1) (-2) 3).2.1 hX
+  have hzero := (affine_mean_variance_laws (μUnif 1) 0 3).2.1 hX
+  rw [coord_variance] at hneg hzero
+  constructor
+  · exact hneg.trans (by norm_num)
+  · exact hzero.trans (by norm_num)

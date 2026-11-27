@@ -6,4 +6,8 @@ Means, variances and covariances, among them the variance of a sum and Chebyshev
 - [Chebyshev's inequality](chebyshev-s-inequality/README.md)
 - [Truncated curtate expectation as a tail sum](integral-min-nat-floor-eq-sum.md)
 - [Variance of stopped sums](variance-stopped-sum-finite.md)
+- [Sub means affine](sub-means-affine.md)
+- [Div means const mul](div-means-const-mul.md)
+- [Div means affine eq one](div-means-affine-eq-one.md)
+- [Div sub means affine](div-sub-means-affine.md)
 - [Means and variances under affine change of scale](affine-transformations-of-means-and-variances.md)
