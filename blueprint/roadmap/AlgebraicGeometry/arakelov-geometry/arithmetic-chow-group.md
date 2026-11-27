@@ -109,8 +109,8 @@ theorem*, §2.1, Definition 2, and §2.3.1, Theorem 3).
   exact sequence (i), with the first paragraph of its proof (surjectivity of $\zeta$ and $\ker \zeta
   = \operatorname{im} a$, p. 128).
 - J.-B. Bost, H. Gillet and C. Soulé, "Heights of projective varieties and positive Green forms", J.
-  Amer. Math. Soc. 7 (1994), 903–1027, archived publisher scan
-  <https://web.archive.org/web/20170815232351id_/https://www.ams.org/journals/jams/1994-07-04/S0894-0347-1994-1260106-X/S0894-0347-1994-1260106-X.pdf>:
+  Amer. Math. Soc. 7 (1994), 903–1027,
+  <https://doi.org/10.1090/S0894-0347-1994-1260106-X>:
   §2.1.1, p. 930 (their arithmetic varieties; arithmetic Chow groups of a regular arithmetic
   variety, with the relations $(0, \partial u + \bar\partial v)$ and $(\operatorname{div} f, -\log
   |f|^2)$); §2.1.2, pp. 932–933 (Chow groups graded by dimension and operational Chern classes when
