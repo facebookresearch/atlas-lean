@@ -40,6 +40,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.SimpleGraph.RamseyFiveFiveLowerBound
 public import MathlibExt.Combinatorics.SimpleGraph.RamseyFourFour
 public import MathlibExt.Combinatorics.SimpleGraph.RamseyThreeFive
+public import MathlibExt.Combinatorics.SimpleGraph.RamseyThreeTenLowerBound
 
 @[expose] public section
 
@@ -100,14 +101,6 @@ Source: Kalbfleisch (1966), op. cit. (lower bound); Grinstead and Roberts
 (1982), op. cit. (upper bound); Radziszowski, DS1; OEIS A000791; listed in
 SqueezeBench `SqueezeBench/Problems/Ramsey3/README.md`. -/
 public theorem_wanted graphRamsey_three_nine : graphRamsey 3 9 = 36
-
-/-- **Exoo's lower bound for $R(3, 10)$.** The classical Ramsey number $R(3, 10)$ is at
-least $40$.
-
-Source: G. Exoo, *On two classical Ramsey numbers of the form R(3,n)*, SIAM
-J. Discrete Math. 2 (1989), 488–490; Radziszowski, DS1; listed in
-SqueezeBench `SqueezeBench/Problems/Ramsey3/README.md`. -/
-public theorem_wanted forty_le_graphRamsey_three_ten : 40 ≤ graphRamsey 3 10
 
 /-- **Angeltveit's upper bound for $R(3, 10)$.** The classical Ramsey number $R(3, 10)$
 is at most $41$.

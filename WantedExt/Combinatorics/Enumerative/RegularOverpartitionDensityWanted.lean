@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Polynomial.Coeff
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.Combinatorics.Enumerative.Partition.FiniteEulerProductCongruence
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
+public import MathlibExt.Combinatorics.Enumerative.Partition.RegularOverpartition
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
 /-!
@@ -29,108 +30,6 @@ open scoped Topology
 
 @[expose] public section
 
-
-/--
-**Number of $\ell$-regular overpartitions.** For natural numbers $\ell$ and $n$, $A_\ell(n)$ is
-the number of overpartitions of $n$ in which no part is divisible by $\ell$.
-
-No positivity restriction is placed on $\ell$; for $\ell = 0$ every overpartition of $n$ is
-counted, since parts are positive.
-
-Source: Murugan P and Fathima S. N, *Arithmetic Density of Certain ℓ-Regular Overpartitions*,
-INTEGERS 25 (2025), Article A3, Identity (1).
--/
-public noncomputable def regularOverpartitionCount (ℓ n : ℕ) : ℕ :=
-  Nat.card {O : Nat.Overpartition n // ∀ a ∈ O.toPartition.parts, ¬ ℓ ∣ a}
-
-/--
-**One $\ell$-regular overpartition of zero.** For every natural number $\ell$, the number
-$A_\ell(0)$ of overpartitions of $0$ with no part divisible by $\ell$ equals $1$: the only one is
-the empty overpartition.
-
-The statement also covers $\ell = 0$, a harmless extension of the paper's positive regularity
-parameter.
-
-Source: Murugan P and Fathima S. N, *Arithmetic Density of Certain ℓ-Regular Overpartitions*,
-INTEGERS 25 (2025), Article A3, Identity (1).
--/
-public theorem regularOverpartitionCount_zero (ℓ : ℕ) :
-    regularOverpartitionCount ℓ 0 = 1 := by
-  let O : {O : Nat.Overpartition 0 //
-      ∀ a ∈ O.toPartition.parts, ¬ ℓ ∣ a} :=
-    ⟨Nat.Overpartition.ofPartition default, by
-      intro a ha
-      simp [_root_.Nat.Partition.partition_zero_parts] at ha⟩
-  let _ : Nonempty {O : Nat.Overpartition 0 //
-      ∀ a ∈ O.toPartition.parts, ¬ ℓ ∣ a} := ⟨O⟩
-  let _ : Subsingleton {O : Nat.Overpartition 0 //
-      ∀ a ∈ O.toPartition.parts, ¬ ℓ ∣ a} :=
-    ⟨fun O₁ O₂ => Subtype.ext (Nat.Overpartition.eq_of_zero O₁.1 O₂.1)⟩
-  exact Nat.card_unique
-
-/--
-**Two $\ell$-regular overpartitions of one.** For every natural number $\ell \ge 2$, the number
-$A_\ell(1)$ of overpartitions of $1$ with no part divisible by $\ell$ equals $2$: they are the
-single part $1$, without and with an overline.
-
-Among positive $\ell$, the hypothesis $\ell \ge 2$ says exactly that $\ell$ does not divide the
-sole part $1$.
-
-Source: Murugan P and Fathima S. N, *Arithmetic Density of Certain ℓ-Regular Overpartitions*,
-INTEGERS 25 (2025), Article A3, Identity (1).
--/
-public theorem regularOverpartitionCount_one (ℓ : ℕ) (hℓ : 2 ≤ ℓ) :
-    regularOverpartitionCount ℓ 1 = 2 := by
-  let e :
-      {O : Nat.Overpartition 1 //
-        ∀ a ∈ O.toPartition.parts, ¬ ℓ ∣ a} ≃ Bool := {
-    toFun O := decide (1 ∈ O.1.overlines)
-    invFun b :=
-      ⟨{
-        toPartition := default
-        overlines := if b = true then {1} else ∅
-        overlines_subset := by
-          intro a ha
-          rw [_root_.Nat.Partition.partition_one_parts]
-          cases b <;> simp_all
-      }, by
-        intro a ha hdiv
-        rw [_root_.Nat.Partition.partition_one_parts] at ha
-        have haone : a = 1 := by simpa using ha
-        subst a
-        have hle : ℓ ≤ 1 := Nat.le_of_dvd (by decide) hdiv
-        omega⟩
-    left_inv O := by
-      apply Subtype.ext
-      apply Nat.Overpartition.ext
-      · exact Subsingleton.elim _ _
-      · have hsub : O.1.overlines ⊆ {1} := by
-          intro a ha
-          have h := O.1.overlines_subset ha
-          rw [_root_.Nat.Partition.partition_one_parts] at h
-          simpa using h
-        by_cases hmem : 1 ∈ O.1.overlines
-        · have hover : O.1.overlines = {1} := by
-            apply Finset.Subset.antisymm hsub
-            simpa using hmem
-          simp [hover]
-        · have hover : O.1.overlines = ∅ := by
-            apply Finset.Subset.antisymm
-            · intro a ha
-              have haone : a = 1 := by simpa using hsub ha
-              subst a
-              exact (hmem ha).elim
-            · exact Finset.empty_subset _
-          simp [hover]
-    right_inv b := by
-      cases b <;> simp
-  }
-  unfold regularOverpartitionCount
-  calc
-    Nat.card {O : Nat.Overpartition 1 //
-        ∀ a ∈ O.toPartition.parts, ¬ ℓ ∣ a} =
-        Nat.card Bool := Nat.card_congr e
-    _ = 2 := by simp
 
 /--
 **Truncated generating function for $\ell$-regular overpartitions.** Let $\ell \ge 1$, $N$ and
@@ -282,22 +181,6 @@ public theorem_wanted regularOverpartition_mod_four_single_prime
       (regularOverpartitionCount ℓ
         (p ^ (2 * k + 2) * (4 * n + 1) +
           p ^ (2 * k + 1) * (4 * j)))
-      0
-
-/--
-**$\ell$-regular overpartitions vanish modulo $4$ on progressions modulo $4\ell$.** For a
-natural number $\ell$, let $A_\ell(m)$ be the number of overpartitions of $m$ with no part
-divisible by $\ell$. Let $\ell \equiv 3 \pmod 4$, and let $n$ and $j$ be natural numbers with
-$j \not\equiv (\ell - 3)/4 \pmod{\ell}$. Then $A_\ell(4\ell n + 4j + 3) \equiv 0 \pmod 4$.
-
-Source: Murugan P and Fathima S. N, *Arithmetic Density of Certain ℓ-Regular Overpartitions*,
-INTEGERS 25 (2025), Article A3, Theorem 6.
--/
-public theorem_wanted regularOverpartition_mod_four_progression
-    (ℓ n j : ℕ) (hℓ : Nat.ModEq 4 ℓ 3)
-    (hj : ¬ Nat.ModEq ℓ j ((ℓ - 3) / 4)) :
-    Nat.ModEq 4
-      (regularOverpartitionCount ℓ (4 * ℓ * n + 4 * j + 3))
       0
 
 /--

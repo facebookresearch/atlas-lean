@@ -18,15 +18,15 @@ groups (Problems 8.69, 8.70, 8.71, 9.2) use `IsConjugacySeparable` of `KourovkaN
 Locally finite groups use `IsLocallyFinite` below and locally normal groups (Problems 6.8, 6.9)
 use `IsLocallyNormal`; Mathlib and MathlibExt have neither predicate (checked 2026-11-13).
 Polycyclic and almost polycyclic groups (Problems 1.84, 2.16, 8.70, 11.5, 13.11) use
-`IsPolycyclic` and `IsAlmostPolycyclic`, and Chernikov groups (Problems 1.81, 1.90, 4.36, 8.80,
-11.116) use `IsChernikov`; Mathlib and MathlibExt have none of these predicates (checked
-2026-11-13).
+`IsPolycyclic` and `IsAlmostPolycyclic` below. Chernikov groups (Problems 1.81, 1.90, 4.36, 8.80,
+11.116) use `IsChernikov` from `MathlibExt.GroupTheory.Chernikov`.
 -/
 
 module
 
 public import Mathlib.Algebra.Group.Subgroup.Map
 public import Mathlib.Data.Set.Finite.Basic
+public import MathlibExt.GroupTheory.Chernikov
 public import Mathlib.GroupTheory.Index
 public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import Mathlib.GroupTheory.SpecificGroups.Cyclic
@@ -64,12 +64,5 @@ def IsPolycyclic (G : Type*) [Group G] : Prop :=
 index is polycyclic. -/
 def IsAlmostPolycyclic (G : Type*) [Group G] : Prop :=
   ∃ H : Subgroup G, H.FiniteIndex ∧ IsPolycyclic H
-
-/-- `G` is a Chernikov group: it has an abelian subgroup of finite index satisfying the minimal
-condition on subgroups. An abelian group with the minimal condition is a direct product of finitely
-many quasicyclic groups and a finite group, so this is the usual definition: a finite extension of
-a direct product of finitely many quasicyclic groups (finite groups are the case of no factors). -/
-def IsChernikov (G : Type*) [Group G] : Prop :=
-  ∃ A : Subgroup G, A.FiniteIndex ∧ (∀ x ∈ A, ∀ y ∈ A, x * y = y * x) ∧ WellFoundedLT (Subgroup A)
 
 end MathlibExt.GroupTheory.GroupClassesShared

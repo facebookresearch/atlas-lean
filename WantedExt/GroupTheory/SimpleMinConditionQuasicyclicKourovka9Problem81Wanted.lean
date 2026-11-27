@@ -17,7 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Subgroup.Simple
-public import WantedExt.GroupTheory.ChernikovSubgroupLatticeDimensionKourovka11Problem116Wanted
+public import MathlibExt.GroupTheory.ChernikovSubgroupLatticeDimensionKourovka11Problem116
 
 @[expose] public section
 
