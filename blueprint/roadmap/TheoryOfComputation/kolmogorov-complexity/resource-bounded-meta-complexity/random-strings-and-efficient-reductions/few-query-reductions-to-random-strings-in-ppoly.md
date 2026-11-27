@@ -13,6 +13,7 @@ Drop all queries of length at least $s_n=2\log f(n)+2\log\log f(n)+c$. There are
 ## Depends on
 
 - [Sets of Kolmogorov-random strings R_C, R_K and R_{K^t}](kolmogorov-random-strings.md)
+- [Polynomial time with polynomial advice](../../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ None.
 
 ## Sources
 
-- Eric Allender, Harry Buhrman and Michal Koucký, "What Can Be Efficiently Reduced to the Kolmogorov-Random Strings?", *Annals of Pure and Applied Logic* 138, 2006, [doi:10.1016/j.apal.2005.05.013](https://doi.org/10.1016/j.apal.2005.05.013) (Theorem 8, Corollaries 9 and 10; numbering of the ECCC TR04-044 version).
+- Eric Allender, Harry Buhrman and Michal Koucký, "What Can Be Efficiently Reduced to the Kolmogorov-Random Strings?", *Annals of Pure and Applied Logic* 138(1–3), 2006, [doi:10.1016/j.apal.2005.06.003](https://doi.org/10.1016/j.apal.2005.06.003) (Theorem 8, Corollaries 9 and 10; numbering of the ECCC TR04-044 version).

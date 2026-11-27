@@ -18,7 +18,7 @@ The order of quantifiers is the point: in $\mathrm{pnK}$ the short program is ch
 
 ## Depends on
 
-- [Nondeterministic time-bounded Kolmogorov complexity CND^t = nK^t](nondeterministic-time-bounded-complexity.md)
+- [Nondeterministic time-bounded Kolmogorov complexity nK^t](nondeterministic-time-bounded-complexity.md)
 - [Probabilistic time-bounded Kolmogorov complexity pK^t and its conditional form](../../probabilistic-kolmogorov-and-symmetry-of-information/pkt-probabilistic-time-bounded-kolmogorov-complexity.md)
 
 ## Proof depends on

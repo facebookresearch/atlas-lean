@@ -2,7 +2,7 @@
 
 Polynomial-time nondeterministic distinguishing complexity matches deterministic generating or distinguishing complexity up to a logarithmic additive term exactly when logarithmically many adaptive NP queries compute the same functions as polynomially many nonadaptive ones (Buhrman, Fortnow and Laplante).
 
-Let $\mathrm{FP}^{\mathrm{NP}[\log n]}$ be the class of functions computable in polynomial time with at most $c\log n$ adaptive queries to an NP oracle, for some constant $c$, and $\mathrm{FP}^{\mathrm{NP}}_{tt}$ the class of functions computable in polynomial time with nonadaptive queries to an NP oracle. The following are equivalent:
+Let $\mathrm{FP}^{\mathrm{NP}[\log n]}$ be the class of functions computable in polynomial time with at most $c\log n$ adaptive queries to an NP oracle, for some constant $c$, and $\mathrm{FP}^{\mathrm{NP}}_{tt}$ the class of functions computable in polynomial time with nonadaptive queries to an NP oracle. $\mathrm{CND}^p$ is the nondeterministic distinguishing complexity of Buhrman, Fortnow and Laplante. The following are equivalent:
 
 1. For every polynomial $p_2$ there are a polynomial $p_1$ and a constant $c$ such that $C^{p_1}(x\mid y)\le\mathrm{CND}^{p_2}(x\mid y)+c\log(|x|+|y|)$ for all $x,y$.
 2. For every polynomial $p_2$ there are a polynomial $p_1$ and a constant $c$ such that $\mathrm{CD}^{p_1}(x\mid y)\le\mathrm{CND}^{p_2}(x\mid y)+c\log(|x|+|y|)$ for all $x,y$.
@@ -15,7 +15,7 @@ Item 1 implies item 2 because generating a string lets one distinguish it. For i
 ## Depends on
 
 - [Distinguishing complexity CD^t](distinguishing-complexity-cdt.md)
-- [Nondeterministic time-bounded Kolmogorov complexity CND^t = nK^t](../nondeterministic-kolmogorov-complexity/nondeterministic-time-bounded-complexity.md)
+- [Nondeterministic time-bounded Kolmogorov complexity nK^t](../nondeterministic-kolmogorov-complexity/nondeterministic-time-bounded-complexity.md)
 
 ## Proof depends on
 

@@ -25,10 +25,12 @@ For semi-symmetry the proof follows the direct-product-generator approach used t
 - [Probabilistic nondeterministic time-bounded complexity pnK^t](probabilistic-nondeterministic-complexity-pnkt.md)
 - [Probabilistic time-bounded Kolmogorov complexity pK^t and its conditional form](../../probabilistic-kolmogorov-and-symmetry-of-information/pkt-probabilistic-time-bounded-kolmogorov-complexity.md)
 - [Polynomial-time symmetry of information hypothesis for K^t and pK^t](../../probabilistic-kolmogorov-and-symmetry-of-information/polynomial-time-symmetry-of-information-hypothesis.md)
+- [Samplable distributions](../../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/samplable.md)
 
 ## Proof depends on
 
 - [Lu–Oliveira–Zimand: an optimal coding theorem for pK^t over polynomial-time samplable distributions](../../probabilistic-kolmogorov-and-symmetry-of-information/optimal-coding-theorem-for-pkt.md)
+- [MINKT and MINcKT are in NP](../../time-bounded-kolmogorov-complexity/minkt-is-in-np.md)
 
 ## Sources
 

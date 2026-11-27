@@ -8,7 +8,7 @@ $$
 \mathrm{Kt}_\lambda(w)=\min_{M,t}\bigl\{|M|+\lceil\log t\rceil : \Pr[M_{\le t}=w]\ge\lambda\bigr\},\qquad \mathrm{rKt}(w)=\mathrm{Kt}_{2/3}(w).
 $$
 
-Levin's $\mathrm{Kt}$ is $\mathrm{Kt}_1$, and $\mathrm{Kt}_\alpha(w)\le\mathrm{Kt}_\beta(w)$ when $\alpha\le\beta$. The threshold is robust: $\mathrm{rKt}(x)\le\mathrm{rKt}_\lambda(x)+O(\log(1/\lambda))$ for $\lambda\in(0,1]$ (Lu and Oliveira). A conditional version $\mathrm{rKt}_\lambda(x\mid y)$ gives the program $y$ as input.
+Levin's $\mathrm{Kt}$ is $\mathrm{Kt}_1$, and $\mathrm{Kt}_\alpha(w)\le\mathrm{Kt}_\beta(w)$ when $\alpha\le\beta$. The threshold is robust: $\mathrm{rKt}(x)\le\mathrm{Kt}_\lambda(x)+O(\log(1/\lambda))$ for $\lambda\in(0,1]$ (Lu and Oliveira; Hirahara writes $\mathrm{rKt}_\lambda$ for $\mathrm{Kt}_\lambda$). A conditional version $\mathrm{Kt}_\lambda(x\mid y)$ gives the program $y$ as input.
 
 **Decision problems.** For $0<\alpha\le\beta\le 1$ and $s:\mathbb{N}\to\mathbb{N}$, $\mathrm{MrKtP}[\beta,\alpha,s]$ is the promise problem with yes-instances $\{w\in\{0,1\}^n : \mathrm{Kt}_\beta(w)\le s(n)\}$ and no-instances $\{w\in\{0,1\}^n : \mathrm{Kt}_\alpha(w)>s(n)\}$; by default $\beta=3/4$, $\alpha=2/3$, $s=n/2$. For $s_1\le s_2$, $\mathrm{Gap}\text{-}\mathrm{MrKtP}[s_1,s_2]$ separates $\mathrm{rKt}(w)\le s_1(n)$ from $\mathrm{rKt}(w)>s_2(n)$. For rationals $0<\alpha<\beta\le 1$, $\mathrm{MrKtP}[\beta,\alpha,s]\in\text{Promise-BPE}$, and $\mathrm{Gap}\text{-}\mathrm{MrKtP}[s_1,s_2]\in\text{Promise-BPE}$ when $s_1(n)+c\log n\le s_2(n)$ for a large enough constant $c$.
 

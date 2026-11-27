@@ -20,7 +20,7 @@ $$
 K^{p(t)}(x)-\log p(t)\le\widetilde{K}(x,1^t)\le K^t(x)
 $$
 
-for every string $x$ and every $t\ge|x|$. Hirahara's non-black-box reductions show that $\mathrm{DistNP}\subseteq\mathrm{AvgP}$ implies $\mathrm{GapMINKT}\in\mathrm{P}$.
+for every string $x$ and every $t\ge|x|$. Hirahara's non-black-box reductions show that $\mathrm{DistNP}\subseteq\mathrm{AvgP}$, in the errorless sense, implies $\mathrm{GapMINKT}\in\mathrm{P}$.
 
 ## Expansion
 

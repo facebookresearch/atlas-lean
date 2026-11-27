@@ -8,7 +8,7 @@ $$
 \Pi_{\mathrm{Yes}}=\{(x,1^s,1^t) : K^{t,A}(x)\le s\},\qquad \Pi_{\mathrm{No}}=\{(x,1^s,1^t) : K^{\tau(|x|,t)}(x)>s+\log\tau(|x|,t)\},
 $$
 
-and $\mathrm{Gap}(K^A\text{ vs }K)\in\mathrm{P}$ means $\mathrm{Gap}_\tau(K^A\text{ vs }K)\in\mathrm{P}$ for some polynomial $\tau$.
+and $\mathrm{Gap}(K^A\text{ vs }K)\in\mathrm{P}$ means $\mathrm{Gap}_\tau(K^A\text{ vs }K)\in\mathrm{P}$ for some polynomial $\tau$. Here $\mathrm{DistNP}^A\subseteq\mathrm{AvgP}$ means that every language in $\mathrm{NP}^A$ has an oracle-free errorless heuristic scheme under every polynomial-time samplable distribution, and $\mathrm{DistPH}\subseteq\mathrm{AvgP}$ is the same for every language in PH.
 
 1. For every oracle $A$: if $\mathrm{DistNP}^A\subseteq\mathrm{AvgP}$, then $\mathrm{Gap}(K^A\text{ vs }K)\in\mathrm{P}$. With $A=\varnothing$ this approximates $K^t(x)$ within additive error $\log\tau(|x|,t)$, improving the $\widetilde{O}(\sqrt{s})$ error of the earlier non-black-box reduction.
 2. If $\mathrm{DistPH}\subseteq\mathrm{AvgP}$, there is a polynomial $\tau$ with $K^{\tau(|x|,t)}(x)\le K^{t,\mathrm{SAT}}(x)+\log\tau(|x|,t)$ for all $x$ and $t$.
@@ -23,7 +23,7 @@ The proof views a black-box pseudorandom generator construction meta-computation
 ## Depends on
 
 - [The promise problem GapMINKT](gap-minkt-promise-problem.md)
-- [Easy on average](../../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/avg-easy.md)
+- [Errorless average-case easiness: DistNP ⊆ AvgP, AvgBPP and Heuristica](errorless-average-case-easiness.md)
 
 ## Proof depends on
 

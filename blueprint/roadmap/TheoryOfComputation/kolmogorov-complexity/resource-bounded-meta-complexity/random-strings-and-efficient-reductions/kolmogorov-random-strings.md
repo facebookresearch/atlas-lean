@@ -29,5 +29,5 @@ None.
 
 ## Sources
 
-- Eric Allender, Harry Buhrman and Michal Koucký, "What Can Be Efficiently Reduced to the Kolmogorov-Random Strings?", *Annals of Pure and Applied Logic* 138, 2006, [doi:10.1016/j.apal.2005.05.013](https://doi.org/10.1016/j.apal.2005.05.013) (Section 1, Theorem 1, Corollaries 2 and 3; numbering of the ECCC TR04-044 version).
+- Eric Allender, Harry Buhrman and Michal Koucký, "What Can Be Efficiently Reduced to the Kolmogorov-Random Strings?", *Annals of Pure and Applied Logic* 138(1–3), 2006, [doi:10.1016/j.apal.2005.06.003](https://doi.org/10.1016/j.apal.2005.06.003) (Section 1, Theorem 1, Corollaries 2 and 3; numbering of the ECCC TR04-044 version).
 - Eric Allender, Harry Buhrman, Luke Friedman and Bruno Loff, "Reductions to the set of random strings: The resource-bounded case", *Logical Methods in Computer Science* 10(3:5), 2014, DOI 10.2168/LMCS-10(3:5)2014, [arXiv:1406.7658v2](https://arxiv.org/abs/1406.7658v2) (Section 2, Definition 2.1, Proposition 2.4).

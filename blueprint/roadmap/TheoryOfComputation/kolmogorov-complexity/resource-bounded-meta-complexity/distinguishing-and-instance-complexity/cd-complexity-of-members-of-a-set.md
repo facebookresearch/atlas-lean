@@ -16,7 +16,7 @@ The key is hashing by a prime modulus: if $S=\{x_1,\dots,x_d\}\subseteq\{0,\dots
 ## Depends on
 
 - [Distinguishing complexity CD^t](distinguishing-complexity-cdt.md)
-- [Nondeterministic time-bounded Kolmogorov complexity CND^t = nK^t](../nondeterministic-kolmogorov-complexity/nondeterministic-time-bounded-complexity.md)
+- [Nondeterministic time-bounded Kolmogorov complexity nK^t](../nondeterministic-kolmogorov-complexity/nondeterministic-time-bounded-complexity.md)
 
 ## Proof depends on
 

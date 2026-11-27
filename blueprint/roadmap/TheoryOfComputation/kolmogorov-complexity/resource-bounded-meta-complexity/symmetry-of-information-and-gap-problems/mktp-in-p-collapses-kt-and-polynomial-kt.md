@@ -2,7 +2,7 @@
 
 If Levin's Kt complexity can be computed in polynomial time, then for every string the polynomial-time-bounded complexity $K^t(x)$ exceeds $\mathrm{Kt}(x)$ by only $O(\sqrt{\mathrm{Kt}(x)\log n}+\log^2n)$. Derandomization of uniform exponential-time algorithms is equivalent to lower bounds for approximating Kt.
 
-Here Levin's complexity is taken in the bitwise form $\mathrm{Kt}(x)=\min\{|d|+t'+2 : U^d(i)\text{ outputs } x_i\text{ in time }2^{t'}\text{ for every } i\in[|x|+1]\}$, with $x_{|x|+1}$ an end marker, and $K^t$ is the bitwise time-bounded complexity.
+Here Levin's complexity is taken in the bitwise form $\mathrm{Kt}(x)=\min\{|d|+t'+2 : U^d(i)\text{ outputs } x_i\text{ in time }2^{t'}\text{ for every } i\in[|x|+1]\}$, with $x_{|x|+1}$ an end marker, while $K^t(x)$ is the length of a shortest program that prints the whole string $x$ within $t$ steps; since $t\ge\mathrm{poly}(n)$, the statements below do not depend on this choice.
 
 1. If $\mathrm{MKtP}\in\mathrm{P}$, there is a coRP algorithm that, given $x\in\{0,1\}^n$ and $s\in\mathbb{N}$, distinguishes $\mathrm{Kt}(x)\le s$ from $K^t(x)\ge s+O(\sqrt{s\log n}+\log^2n)$, where $t=\mathrm{poly}(n)$.
 2. If $\mathrm{MKtP}\in\mathrm{P}$, then $K^t(x)\le\mathrm{Kt}(x)+O(\sqrt{\mathrm{Kt}(x)\log n}+\log^2n)$ for every $x\in\{0,1\}^n$ and every $t\ge\mathrm{poly}(n)$.

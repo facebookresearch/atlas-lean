@@ -23,6 +23,8 @@ Given a decidable $A$ not computable in time $O(t^3)$, the proof builds a univer
 ## Depends on
 
 - [Sets of Kolmogorov-random strings R_C, R_K and R_{K^t}](kolmogorov-random-strings.md)
+- [The complexity class P](../../../complexity-classes/the-classes-p-np-and-conp/p.md)
+- [Polynomial time with polynomial advice](../../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
 
 ## Proof depends on
 
@@ -30,4 +32,4 @@ None.
 
 ## Sources
 
-- Eric Allender, Harry Buhrman and Michal Koucký, "What Can Be Efficiently Reduced to the Kolmogorov-Random Strings?", *Annals of Pure and Applied Logic* 138, 2006, [doi:10.1016/j.apal.2005.05.013](https://doi.org/10.1016/j.apal.2005.05.013) (Hypothesis 4, Theorem 5, Theorem 7, Theorem 13, Theorem 15; numbering of the ECCC TR04-044 version).
+- Eric Allender, Harry Buhrman and Michal Koucký, "What Can Be Efficiently Reduced to the Kolmogorov-Random Strings?", *Annals of Pure and Applied Logic* 138(1–3), 2006, [doi:10.1016/j.apal.2005.06.003](https://doi.org/10.1016/j.apal.2005.06.003) (Hypothesis 4, Theorem 5, Theorem 7, Theorem 13, Theorem 15; numbering of the ECCC TR04-044 version).

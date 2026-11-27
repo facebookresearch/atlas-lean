@@ -19,7 +19,6 @@ Assume $\delta=2^{-\ell}$. The decoder, given $m$ and $\delta$, runs $A(1^m)$ ab
 ## Depends on
 
 - [Randomized Levin complexity rKt and the problem MrKtP](randomized-levin-complexity-rkt.md)
-- [Samplable distributions](../../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/samplable.md)
 
 ## Proof depends on
 

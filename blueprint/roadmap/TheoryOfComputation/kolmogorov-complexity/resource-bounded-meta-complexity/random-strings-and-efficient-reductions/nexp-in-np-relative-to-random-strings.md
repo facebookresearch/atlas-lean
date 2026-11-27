@@ -16,6 +16,7 @@ It suffices to show $\mathrm{NEXP}\subseteq\mathrm{MA}^{R_C}$, since $\mathrm{MA
 
 - [Sets of Kolmogorov-random strings R_C, R_K and R_{K^t}](kolmogorov-random-strings.md)
 - [The complexity class NEXP](../../../complexity-classes/time-and-space-complexity-classes/nexp.md)
+- [NP relative to an oracle](../../../complexity-classes/time-and-space-complexity-classes/npwith-oracle.md)
 
 ## Proof depends on
 
@@ -23,5 +24,5 @@ None.
 
 ## Sources
 
-- Eric Allender, Harry Buhrman and Michal Koucký, "What Can Be Efficiently Reduced to the Kolmogorov-Random Strings?", *Annals of Pure and Applied Logic* 138, 2006, [doi:10.1016/j.apal.2005.05.013](https://doi.org/10.1016/j.apal.2005.05.013) (Theorem 6; numbering of the ECCC TR04-044 version).
+- Eric Allender, Harry Buhrman and Michal Koucký, "What Can Be Efficiently Reduced to the Kolmogorov-Random Strings?", *Annals of Pure and Applied Logic* 138(1–3), 2006, [doi:10.1016/j.apal.2005.06.003](https://doi.org/10.1016/j.apal.2005.06.003) (Theorem 6; numbering of the ECCC TR04-044 version).
 - Eric Allender, Harry Buhrman, Luke Friedman and Bruno Loff, "Reductions to the set of random strings: The resource-bounded case", *Logical Methods in Computer Science* 10(3:5), 2014, DOI 10.2168/LMCS-10(3:5)2014, [arXiv:1406.7658v2](https://arxiv.org/abs/1406.7658v2) (Section 1).

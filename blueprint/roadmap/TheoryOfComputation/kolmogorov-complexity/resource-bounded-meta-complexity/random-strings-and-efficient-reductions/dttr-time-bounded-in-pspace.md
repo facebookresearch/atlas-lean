@@ -5,13 +5,13 @@ Languages truth-table reducible in polynomial time to the time-bounded random st
 1. For every computable unbounded $\alpha(n)=\omega(1)$,
 
 $$
-\mathrm{DTTR}_t\subseteq\mathrm{PSPACE}/\alpha(n).
+\mathrm{TTRT}\subseteq\mathrm{PSPACE}/\alpha(n).
 $$
 
-2. For a function $f$, a prefix machine $U$ is an *$f$-efficient universal prefix machine* if there are constants $c_M$ for each prefix machine $M$ with $K_U(x)\le K_M(x)+c_M$ and $K^t_U(x)\le K^{t'}_M(x)+c_M$ for all $x$ whenever $t(n)>f(t'(n))$. Let $\mathrm{DTTR}'_t$ be the class of languages $L$ such that for every computable $f$ there is $t_0$ with $L\le^p_{tt}R_{K^t_U}$ for all $f$-efficient universal prefix machines $U$ and all $t\ge t_0$. Then
+2. For a function $f$, a prefix machine $U$ is an *$f$-efficient universal prefix machine* if there are constants $c_M$ for each prefix machine $M$ with $K_U(x)\le K_M(x)+c_M$ and $K^t_U(x)\le K^{t'}_M(x)+c_M$ for all $x$ whenever $t(n)>f(t'(n))$. Let $\mathrm{TTRT}'$ be the class of languages $L$ such that for every computable $f$ there is $t_0$ with $L\le^p_{tt}R_{K^t_U}$ for all $f$-efficient universal prefix machines $U$ and all $t\ge t_0$. Then
 
 $$
-\mathrm{BPP}\subseteq\mathrm{DTTR}'_t\subseteq\mathrm{PSPACE}\cap\mathrm{P}/\mathrm{poly}.
+\mathrm{BPP}\subseteq\mathrm{TTRT}'\subseteq\mathrm{PSPACE}\cap\mathrm{P}/\mathrm{poly}.
 $$
 
 For time-unbounded prefix complexity, the class of decidable sets polynomial-time truth-table reducible to $R_{K_U}$ for every universal prefix machine $U$ was earlier shown to satisfy $\mathrm{BPP}\subseteq\mathrm{DTTR}\subseteq\mathrm{PSPACE}$, and it is open whether it lies in P/poly.
@@ -24,6 +24,9 @@ The proof adapts the time-unbounded PSPACE upper bound. For a language outside $
 
 - [Sets of Kolmogorov-random strings R_C, R_K and R_{K^t}](kolmogorov-random-strings.md)
 - [Reductions to time-bounded random strings for fast-growing time bounds give P/poly](reductions-to-time-bounded-random-strings-in-ppoly.md)
+- [BPP](../../../complexity-classes/time-and-space-complexity-classes/bpp.md)
+- [Polynomial time with polynomial advice](../../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
+- [Polynomial space for decision problems](../../../complexity-classes/time-and-space-complexity-classes/pspace.md)
 
 ## Proof depends on
 
