@@ -20,7 +20,7 @@ For semidominance the heterozygote has advantage $s/2$, and Kimura's $u(p)=(1-e^
 
 ## Depends on
 
-- [Kimura's fixation probability](../wright-fisher-diffusion/kimura-fixation.md)
+- [Kimura's fixation probability](../../wright-fisher-diffusion/kimura-fixation.md)
 
 ## Sources
 

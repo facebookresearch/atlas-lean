@@ -16,7 +16,7 @@ The union bound gives $P(\bigcup_{j\in\mathcal H_0}\{p_j \le \alpha w_j/m\}) \le
 
 ## Depends on
 
-- [Valid p-value](../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/is-valid-pvalue.md)
+- [Valid p-value](../../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/is-valid-pvalue.md)
 
 ## Sources
 

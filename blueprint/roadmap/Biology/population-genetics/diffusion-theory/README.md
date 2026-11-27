@@ -26,5 +26,4 @@ The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamic
 
 - [Conditioned Wright–Fisher diffusions](conditioned-wright-fisher-diffusions/README.md)
 - [Numerical analysis of Wright–Fisher equations](numerical-analysis-of-wright-fisher-equations/README.md)
-- [Deleterious substitutions and sweeps](deleterious-substitutions-and-sweeps/README.md)
-- [Moment equations for the sample frequency spectrum](moment-equations-for-the-sample-frequency-spectrum/README.md)
+- [Substitutions and frequency-spectrum dynamics](substitutions-and-frequency-spectrum-dynamics/README.md)

@@ -19,8 +19,8 @@ Step (4) is the weighted Bonferroni procedure. SNPs that tag heritability-enrich
 ## Depends on
 
 - [Weighted Bonferroni procedure](weighted-bonferroni-procedure.md)
-- [Stratified LD-score regression](../../stratified-ld-score-regression/integral-chi-sq-of-annot.md)
-- [Annotation LD score of a marker](../../stratified-ld-score-regression/annot-ldscore.md)
+- [Stratified LD-score regression](../../../stratified-ld-score-regression/integral-chi-sq-of-annot.md)
+- [Annotation LD score of a marker](../../../stratified-ld-score-regression/annot-ldscore.md)
 
 ## Sources
 

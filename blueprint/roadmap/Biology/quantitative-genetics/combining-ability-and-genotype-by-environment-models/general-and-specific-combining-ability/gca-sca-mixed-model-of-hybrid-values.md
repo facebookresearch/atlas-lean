@@ -26,7 +26,7 @@ The covariance formula follows by bilinearity from independence of the three ran
 
 ## Depends on
 
-- [Marginal covariance of the mixed-model response](../linear-mixed-models-and-blup/covariance-mixed-model-response.md)
+- [Marginal covariance of the mixed-model response](../../linear-mixed-models-and-blup/covariance-mixed-model-response.md)
 
 ## Sources
 

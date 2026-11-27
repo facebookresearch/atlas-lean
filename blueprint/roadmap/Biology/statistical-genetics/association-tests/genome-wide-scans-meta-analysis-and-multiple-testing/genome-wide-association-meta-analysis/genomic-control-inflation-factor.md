@@ -20,7 +20,7 @@ If at most a small fraction of markers is truly associated, the median of $T_1, 
 
 ## Depends on
 
-- [Common-inflation model of Gaussian null scores](../genomic-control/common-inflation-model.md)
+- [Common-inflation model of Gaussian null scores](../../genomic-control/common-inflation-model.md)
 
 ## Sources
 
