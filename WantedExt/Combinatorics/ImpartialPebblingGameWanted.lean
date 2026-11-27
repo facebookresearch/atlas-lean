@@ -14,7 +14,6 @@ public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.GameTheory.ImpartialPebblingGame
 public import MathlibExt.GameTheory.PebblingCompleteThree
 public import MathlibExt.GameTheory.PebblingCompleteTwo
-public import MathlibExt.GameTheory.PebblingEvenTotalCompleteThree
 
 /-!
 # Impartial two-player `(k+1:k)`-pebbling games on `K_3` and `C_4`
