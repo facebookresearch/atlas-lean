@@ -17,7 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Computability.RE
-public import WantedExt.GroupTheory.BraidGroupShared
+public import MathlibExt.GroupTheory.BraidGroupShared
 
 @[expose] public section
 

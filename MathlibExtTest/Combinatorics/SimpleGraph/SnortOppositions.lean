@@ -94,3 +94,66 @@ example : IsAlmostOpposable (strongProd (⊥ : SimpleGraph (Fin 3)) (pathGraph 3
     have hval : (flip x).val = x.val := congrArg Subtype.val heq
     rcases hcases x with hx | hx <;> simp [flip, hx] at hval
   · exact ⟨1, by decide⟩
+
+private theorem cycleFourOpposable : IsOpposable (cycleGraph 4) := by
+  have hmap : ∀ x y : Fin 4,
+      (cycleGraph 4).Adj (x + 2) (y + 2) ↔ (cycleGraph 4).Adj x y := by decide
+  refine ⟨⟨Equiv.addRight 2, hmap _ _⟩, ?_⟩
+  change ∀ x : Fin 4, x + 2 + 2 = x ∧ x + 2 ≠ x ∧ ¬ (cycleGraph 4).Adj x (x + 2)
+  decide
+
+-- The half-turn of the four-cycle gives an opposition of its homomorphic product with a path.
+example : IsOpposable
+    (formulaProduct (fun eG eH qG _ => qG || (eG && !eH)) (cycleGraph 4) (pathGraph 3)) :=
+  (isOpposable_products (cycleGraph 4) (pathGraph 3) cycleFourOpposable).2.2.2.2.2
+
+-- Allow either edges in both factors or distinct second coordinates in a single fiber.
+example : IsOpposable
+    (formulaProduct (fun eG eH qG qH => (eG && eH) || (qG && !qH))
+      (cycleGraph 4) (pathGraph 3)) :=
+  isOpposable_formulaProduct _ _ _ (by decide) cycleFourOpposable
+
+-- An empty second factor makes the formula hypothesis vacuous, even for the constant true.
+example : IsOpposable
+    (formulaProduct (fun _ _ _ _ => true) (cycleGraph 4) (⊥ : SimpleGraph (Fin 0))) :=
+  isOpposable_formulaProduct _ _ _ (fun _ _ h => Fin.elim0 h) cycleFourOpposable
+
+-- Each block is an independent pair; the cross-block edges form a matching.
+private def pairedBlocks : SimpleGraph (Bool × Bool) where
+  Adj x y := x.1 ≠ y.1 ∧ x.2 = y.2
+  symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
+  loopless := ⟨fun _ h => h.1 rfl⟩
+
+example : IsOpposable pairedBlocks := by
+  let flip (x : Bool × Bool) := (x.1, !x.2)
+  refine isOpposable_of_blocks pairedBlocks Prod.fst flip ?_ ?_
+  · intro i
+    let swap (x : {v : Bool × Bool // v.1 = i}) : {v : Bool × Bool // v.1 = i} :=
+      ⟨flip x, x.property⟩
+    have hinv : Function.Involutive swap := by
+      intro x
+      apply Subtype.ext
+      change (x.val.1, !(!x.val.2)) = x.val
+      simp
+    have hmap (x y : {v : Bool × Bool // v.1 = i}) :
+        (pairedBlocks.induce {v | v.1 = i}).Adj (swap x) (swap y) ↔
+          (pairedBlocks.induce {v | v.1 = i}).Adj x y := by
+      have heq := x.property.trans y.property.symm
+      exact ⟨fun h => (h.1 heq).elim, fun h => (h.1 heq).elim⟩
+    refine ⟨⟨hinv.toPerm swap, hmap _ _⟩, fun x => ⟨hinv x, ?_, ?_⟩, fun _ => rfl⟩
+    · intro h
+      exact Bool.self_ne_not x.val.2 (congrArg (fun v => v.val.2) h).symm
+    · intro h
+      exact h.1 rfl
+  · change ∀ u w : Bool × Bool, u.1 ≠ w.1 →
+      ((u.1 ≠ w.1 ∧ u.2 = w.2) ↔ (u.1 ≠ w.1 ∧ (!u.2) = !w.2)) ∧
+      ((u.1 ≠ w.1 ∧ u.2 = !w.2) ↔ (u.1 ≠ w.1 ∧ (!u.2) = w.2))
+    decide
+
+-- The gluing theorem also allows empty blocks.
+example (G : SimpleGraph Empty) : IsOpposable G := by
+  refine isOpposable_of_blocks G (fun _ => ()) id ?_ (fun u => nomatch u)
+  intro i
+  refine ⟨.refl, ?_, fun _ => rfl⟩
+  intro x
+  exact nomatch x.val

@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.TwistedDigamma
+public import MathlibExt.Combinatorics.Enumerative.JensenHyperbolicity
 
 /-! # Jensen polynomials of coefficients from Wright's circle method
 
@@ -47,37 +48,6 @@ public theorem_wanted integral_exp_div_one_sub_exp_sub_eq_log_Gamma {N : ℝ} (h
           (1 / 2 - 1 / N) * Real.exp (-x) / x) =
       Real.log (Real.Gamma (1 / N)) + (1 / 2 - 1 / N) * Real.log (1 / N) -
         1 / 2 * Real.log (2 * Real.pi)
-
-/-- **Hyperbolicity of Jensen polynomials from a log-ratio expansion.** Let $\alpha$, $A$ and
-$\delta$ be sequences of positive real numbers indexed by $n \in \mathbb{N}$ with
-$\delta(n) \to 0$, let $d \ge 1$ be an integer, and for $3 \le j \le d$ let $g_j$ be a real
-sequence with $g_j(n) = o(\delta(n)^j)$ as $n \to \infty$. Suppose that for every natural number
-$k \le d$,
-$$
-\log \frac{\alpha(n + k)}{\alpha(n)} = A(n) k - \delta(n)^2 k^2 + \sum_{j=3}^{d} g_j(n) k^j +
-o(\delta(n)^d)
-$$
-as $n \to \infty$. Then for all sufficiently large $n$ the Jensen polynomial
-$J_\alpha^{d,n}(X) = \sum_{j=0}^{d} \binom{d}{j} \alpha(n + j) X^j$ is hyperbolic: the number of
-its real roots, counted with multiplicity, equals its degree.
-
-The source also proves that suitably renormalized Jensen polynomials converge to the Hermite
-polynomials; that conclusion is not part of this statement.
-
-Source: Jashan Bal, Fern Haraldson, Joshua Males and Ian Thompson, *Jensen Polynomials Associated
-with Wright's Circle Method: Hyperbolicity and Turán Inequalities*, INTEGERS 25 (2025),
-Article A36, Theorem 5 (`integers-2025-A36-thm-5`), quoted there from Griffin, Ono, Rolen and
-Zagier. -/
-public theorem_wanted eventually_jensen_hyperbolic_of_log_ratio_expansion {α A δ : ℕ → ℝ}
-    (hα : ∀ n, 0 < α n) (hA : ∀ n, 0 < A n) (hδ : ∀ n, 0 < δ n)
-    (hδ0 : Tendsto δ atTop (nhds 0)) {d : ℕ} (hd : 1 ≤ d) (g : ℕ → ℕ → ℝ)
-    (hg : ∀ j ∈ Finset.Icc 3 d, g j =o[atTop] fun n => δ n ^ j)
-    (hexp : ∀ k ≤ d, (fun n => Real.log (α (n + k) / α n) -
-        (A n * k - δ n ^ 2 * k ^ 2 + ∑ j ∈ Finset.Icc 3 d, g j n * (k : ℝ) ^ j)) =o[atTop]
-      fun n => δ n ^ d) :
-    ∀ᶠ n in atTop,
-      (∑ j ∈ Finset.range (d + 1), C ((d.choose j : ℝ) * α (n + j)) * X ^ j).roots.card =
-        (∑ j ∈ Finset.range (d + 1), C ((d.choose j : ℝ) * α (n + j)) * X ^ j).natDegree
 
 /-- **Eventual hyperbolicity for colored partitions.** Let $r \ge 1$ and $d \ge 1$ be integers. For
 $m \in \mathbb{N}$ let

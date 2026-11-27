@@ -40,16 +40,6 @@ open SpragueGrundy
 
 /-! ### Theorem 1 (Fiorini, Lind, Woldar, and Wong), quoted -/
 
-/-- **No all-N threshold for $(2:1)$-pebbling on $K_2$.** For every natural number $m$, some
-$(2:1)$-pebbling game on the complete graph $K_2$ with $m$ pebbles in total is a P-game; that is,
-$m^{(2:1)}(K_2)$, the least total at which every game is an N-game, does not exist.
-
-Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
-Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
-Article 24.5.8, Theorem 1(a), quoting Fiorini, Lind, Woldar, and Wong (2021). -/
-public theorem_wanted pebblingAllNTotals_completeTwo_eq_empty :
-    pebblingAllNTotals (⊤ : SimpleGraph (Fin 2)) 1 = ∅
-
 /-- **All-N threshold of $(2:1)$-pebbling on $K_3$.** The least number $m$ such that every
 $(2:1)$-pebbling game on the complete graph $K_3$ with $m$ pebbles in total is an N-game, written
 $m^{(2:1)}(K_3)$, exists and equals $7$.
@@ -153,21 +143,6 @@ public theorem_wanted pebbling_completeThree_isP_of_le (k ℓ : ℕ) (hk : 0 < k
     (hℓ : ℓ + 1 ≤ 2 * k) (a : Fin 3 → ℕ) (hsum : ∑ i, a i = 6 * k - 2 * ℓ)
     (hmax : ∀ i, a i ≤ 3 * k - ℓ) :
     IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) k) a
-
-/-- **Pebbling on the triangle: N-positions with total 6k-2ℓ+1 and a small pile.** Let $k$ be a
-positive integer and consider the $(k+1:k)$-pebbling game on the complete graph $K_3$, where a
-move removes $k+1$ pebbles from one vertex and adds $k$ pebbles to another. Let $\ell$ be an
-integer with $1 \le \ell \le 2k - 1$. Every position with $6k - 2\ell + 1$ pebbles in total in
-which every pile is at most $4k - \ell + 1$ and some pile is at most $2k - \ell$ is an
-N-position, that is, not a P-position.
-
-Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
-Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
-Article 24.5.8, Lemma 9. -/
-public theorem_wanted pebbling_completeThree_isN_of_le (k ℓ : ℕ) (hk : 0 < k) (hℓ₁ : 1 ≤ ℓ)
-    (hℓ : ℓ + 1 ≤ 2 * k) (a : Fin 3 → ℕ) (hsum : ∑ i, a i = 6 * k - 2 * ℓ + 1)
-    (hmax : ∀ i, a i ≤ 4 * k - ℓ + 1) (hmin : ∃ i, a i ≤ 2 * k - ℓ) :
-    ¬ IsP (pebblingGame (⊤ : SimpleGraph (Fin 3)) k) a
 
 /-- **Pebbling on the triangle: N-positions with an empty vertex.** Let $k$ be a natural number
 and consider the $(k+1:k)$-pebbling game on the complete graph $K_3$, where a move removes $k+1$

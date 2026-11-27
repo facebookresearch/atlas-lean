@@ -14,7 +14,7 @@ public import MathlibExt.NumberTheory.ModularForms.E4EtaProduct
 
 /-- Consumer with the original binders: the identity holds for every
 point of the upper half-plane. -/
-theorem exactSource (z : UpperHalfPlane) :
+private theorem exactSource (z : UpperHalfPlane) :
     ModularForm.E₄ z * (ModularForm.eta (z : ℂ) ^ 16 * ModularForm.eta (2 * (z : ℂ)) ^ 8 *
         ModularForm.eta (4 * (z : ℂ)) ^ 16) =
       ModularForm.eta (2 * (z : ℂ)) ^ 48 +
