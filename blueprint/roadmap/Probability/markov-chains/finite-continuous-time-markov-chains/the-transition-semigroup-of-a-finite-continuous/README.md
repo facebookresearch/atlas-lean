@@ -11,10 +11,13 @@
 - [Kolmogorov forward equation](has-deriv-at-ctmc-transition-forward.md)
 - [Uniformization of the transition function](ctmc-transition-eq-exp-smul-uniformized.md)
 - [Exponential of a nonnegative matrix is nonnegative](ctmc-transition-nonneg-of-nonneg.md)
+- [Metzler matrices generate nonnegative semigroups](ctmc-transition-nonneg-of-off-diag-nonne.md)
+- [The matrix exponential dominates the first two terms of its series](one-add-le-ctmc-transition-of-nonneg.md)
 - [Transition function fixes the constant vector](ctmc-transition-mul-vec-one.md)
 
 ## The transition function of a rate matrix
 
 - [Rows of the transition function sum to one](sum-ctmc-transition.md)
 - [Nonnegativity of the transition function of a rate matrix](ctmc-transition-nonneg.md)
+- [Positivity of the transition function](ctmc-transition-pos.md)
 - [Transition function of a rate matrix is stochastic](ctmc-transition-mem-row-stochastic.md)
