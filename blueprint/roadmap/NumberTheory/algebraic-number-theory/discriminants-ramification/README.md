@@ -8,6 +8,7 @@ Discriminants and their bounds, ramification and inertia, orders, units, ideal c
 - [Discriminants of number fields](discriminants-of-number-fields/README.md)
 - [Discriminants of truncated logarithmic polynomials](discriminants-of-truncated-logarithmic-polynomia/README.md)
 - [Enumerating number fields](enumerating-number-fields/README.md)
+- [Herbrand's functions, Herbrand's theorem and the Hasse–Arf theorem](upper-numbering-of-ramification-groups-results/README.md)
 - [Maximal unramified subextension](maximal-unramified-subextension/README.md)
 - [Orders in number fields](orders-in-number-fields/README.md)
 - [Ramification in extensions of number fields](ramification-in-extensions-of-number-fields/README.md)
