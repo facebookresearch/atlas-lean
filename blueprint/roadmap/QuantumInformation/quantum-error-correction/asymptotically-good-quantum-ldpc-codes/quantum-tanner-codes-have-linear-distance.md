@@ -4,7 +4,7 @@ Fix $\rho \in (0, 1/2)$, $\epsilon \in (0, 1/2)$, $\gamma \in (1/2 + \epsilon, 1
 
 1. $0 < \dim C_A \le \rho\Delta$ and $\dim C_B = \Delta - \dim C_A$;
 2. $C_A$, $C_B$, $C_A^\perp$ and $C_B^\perp$ all have minimum distance at least $\delta\Delta$;
-3. both dual tensor codes $C_A^\perp \boxplus C_B^\perp = (C_A \otimes C_B)^\perp$ and $C_A \boxplus C_B = (C_A^\perp \otimes C_B^\perp)^\perp$ are $\Delta^{3/2 - \epsilon/2}$-robust with $\Delta^{\gamma}$-resistance to puncturing. Here a dual tensor code $C \boxplus C'$ is $w$-robust if the support of each of its codewords $x$ with $|x| \le w$ lies in the union of $|x|/d(C)$ columns and $|x|/d(C')$ rows, and it has $p$-resistance to puncturing if it stays $w$-robust after puncturing to $A' \times B'$ for all $A' \subseteq A$, $B' \subseteq B$ with $|A'|, |B'| \ge \Delta - p$.
+3. both dual tensor codes $C_A^\perp \boxplus C_B^\perp = (C_A \otimes C_B)^\perp$ and $C_A \boxplus C_B = (C_A^\perp \otimes C_B^\perp)^\perp$ are $\Delta^{3/2 - \epsilon/2}$-robust with $\Delta^{\gamma}$-resistance to puncturing. Here a dual tensor code $C \boxplus C'$ is $w$-robust if the support of each of its codewords $x$ with $|x| \le w$ lies in the union of $|x|/d(C)$ columns and $|x|/d(C')$ rows, and it has $p$-resistance to puncturing if it stays $w$-robust after puncturing to $A' \times B'$ for all $A' \subseteq A$, $B' \subseteq B$ with $|A'| = |B'| = \Delta - w'$ and $w' \le p$.
 
 Then $\mathrm{QT}(G, A, B, C_A, C_B)$ is a quantum LDPC code with
 
@@ -12,7 +12,7 @@ $$
 k \ge (1 - 2\rho)^2 n, \qquad d \ge \frac{\delta}{4\Delta^{3/2 + \epsilon}}\, n .
 $$
 
-The relative distance $\beta(\Delta) = \delta/(4\Delta^{3/2+\epsilon})$ depends on $\Delta$; it is a positive constant for each fixed $\Delta$, not uniform in $\Delta$. For every $\Delta = q + 1$ with $q$ an odd prime power there are infinite families of such Ramanujan left-right Cayley complexes, over the groups $\mathrm{PSL}_2(q^i)$, and when $-\delta\log_2\delta - (1-\delta)\log_2(1-\delta) < \rho$, random $C_A, C_B$ of dimensions $\lfloor\rho\Delta\rfloor$ and $\Delta - \lfloor\rho\Delta\rfloor$ satisfy conditions 1-3 with positive probability for $\Delta$ large. This gives asymptotically good quantum LDPC codes for each such fixed $\Delta$. On the quadripartite variant of the complex, Leverrier and Zémor later replaced condition 3 by $\kappa$-product-expansion of both $(C_A, C_B)$ and $(C_A^\perp, C_B^\perp)$ (with the distance bound in condition 2), obtaining $d > \delta^2\kappa^2 n/(256\Delta)$ for $\Delta$ large enough.
+The relative distance $\beta(\Delta) = \delta/(4\Delta^{3/2+\epsilon})$ depends on $\Delta$; it is a positive constant for each fixed $\Delta$, not uniform in $\Delta$. For every $\Delta = q + 1$ with $q$ an odd prime power there are infinite families of such Ramanujan left-right Cayley complexes, over the groups $\mathrm{PSL}_2(q^i)$, and when $0 < \delta < 1/2$ and $-\delta\log_2\delta - (1-\delta)\log_2(1-\delta) < \rho$, random $C_A, C_B$ of dimensions $\lfloor\rho\Delta\rfloor$ and $\Delta - \lfloor\rho\Delta\rfloor$ satisfy conditions 1-3 with positive probability for $\Delta$ large. This gives asymptotically good quantum LDPC codes for each such fixed $\Delta$. On the quadripartite variant of the complex, Leverrier and Zémor later replaced condition 3 by $\kappa$-product-expansion of both $(C_A, C_B)$ and $(C_A^\perp, C_B^\perp)$ (with the distance bound in condition 2), obtaining $d > \delta^2\kappa^2 n/(256\Delta)$ for $\Delta$ large enough.
 
 ## Proof sketch
 

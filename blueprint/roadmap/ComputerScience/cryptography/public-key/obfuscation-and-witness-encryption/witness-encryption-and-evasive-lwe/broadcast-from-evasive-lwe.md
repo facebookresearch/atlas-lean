@@ -13,4 +13,4 @@ Ciphertexts are LWE samples with respect to a matrix encoding the recipient set 
 
 ## Sources
 
-- Hoeteck Wee, "Optimal Broadcast Encryption and CP-ABE from Evasive Lattice Assumptions", EUROCRYPT (2022), IACR ePrint 2023/906, Figure 1 and Sections 5.3 and 5.4.
+- Hoeteck Wee, "Optimal Broadcast Encryption and CP-ABE from Evasive Lattice Assumptions", EUROCRYPT (2022), IACR ePrint 2023/906, Figure 1 and Sections 5.2, 5.3 and 5.4.
