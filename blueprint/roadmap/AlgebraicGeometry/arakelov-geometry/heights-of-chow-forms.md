@@ -100,8 +100,8 @@ A good expansion has pages for:
 ## Sources
 
 - J.-B. Bost, H. Gillet and C. Soulé, "Heights of projective varieties and positive Green forms", J.
-  Amer. Math. Soc. 7 (1994), 903–1027, archived publisher scan
-  <https://web.archive.org/web/20170815232351id_/https://www.ams.org/journals/jams/1994-07-04/S0894-0347-1994-1260106-X/S0894-0347-1994-1260106-X.pdf>:
+  Amer. Math. Soc. 7 (1994), 903–1027,
+  <https://doi.org/10.1090/S0894-0347-1994-1260106-X>:
   §4.3 (generalized Chow divisors 4.3.1–4.3.2 and Lemma 4.3.1, pp. 973–975; (4.3.6′), p. 978;
   heights of Chow divisors and forms 4.3.3–4.3.4), Theorem 4.3.8 with (4.3.28)–(4.3.30) and its
   proof, pp. 989–990.

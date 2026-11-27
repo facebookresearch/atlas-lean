@@ -42,3 +42,9 @@
 - [Count of significant axes decreases with the threshold](num-significant-antitone.md)
 - [Significant-axis count for decreasing statistics](num-significant-eq-card-of-antitone.md)
 - [Conditional error bound for the count of significant axes](measure-lt-num-significant-le.md)
+
+## Further topics
+
+- [Principal component correction for population structure](principal-component-correction-for-population-structure/README.md)
+- [Ancestry composition of stratified case–control samples](ancestry-composition-of-stratified-case-control-samples/README.md)
+- [Selected-SNP relationship matrices with PC fixed effects](selected-snp-relationship-matrices-with-pc-fixed-effects/README.md)

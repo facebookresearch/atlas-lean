@@ -55,4 +55,17 @@ example : 2 * Real.exp (-6) < 3 / (Real.exp 3 - 1) := by
   norm_num [hIcc, hdiv, hsin, hsin₃, Real.sin_pi] at h
   linarith only [h]
 
+-- The retained ATLAS weight satisfies the error estimate's hypothesis uniformly.
+example :
+    (fun n : ℕ => ∑ k ∈ Icc 1 n,
+      Real.exp (-(n * k * (Real.pi ^ 2 * k ^ 2 / 2) * Real.sin (n * Real.pi / k) ^ 2)) -
+        (n.divisors.card : ℝ)) =O[atTop] fun n : ℕ => 1 / (Real.exp n - 1) := by
+  refine divisorCountApprox_sub_isBigO _ ?_
+  intro k n hk hkn hnd
+  exact one_le_pi_sq_mul_sq_div_two_mul_sin_sq k n hk (hk.trans hkn) hnd
+
+-- The residue lies past the midpoint, and the statement does not require k ≤ n.
+example : 1 ≤ Real.pi ^ 2 * (5 : ℝ) ^ 2 / 2 * Real.sin (4 * Real.pi / 5) ^ 2 :=
+  one_le_pi_sq_mul_sq_div_two_mul_sin_sq 5 4 (by decide) (by decide) (by decide)
+
 end MetaMathlibExt

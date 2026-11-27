@@ -19,4 +19,6 @@ step are in [sequential transducers, Mealy and Moore machines](../sequential-tra
 - [Choffrut's characterization of subsequential functions](choffrut-s-characterization-of-subsequential-functions.md)
 - [Ginsburg–Rose characterization of sequential functions](ginsburg-rose-characterization-of-sequential-functions.md)
 - [Rational functions factor into left and right sequential functions](rational-functions-factor-into-sequential-functions.md)
+- [Two-way transducers and MSO-definable string transductions](two-way-transducers-and-mso-transductions.md)
+- [MSO-definable string transductions are exactly the deterministic two-way transductions](mso-transductions-are-two-way-transductions.md)
 - [Subsequentiality of a rational function is decidable](subsequentiality-of-a-rational-function-is-decidable.md)
