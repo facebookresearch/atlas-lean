@@ -13,6 +13,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceNegation
 public import MathlibExt.Combinatorics.Additive.RainbowPowerDifference
+public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceCycles
 
 /-! # Rainbow-free colorings for `x - y = z ^ k`
 
@@ -55,22 +56,6 @@ public theorem_wanted eq_zero_of_color_eq_color_zero_of_rainbowFree_powDiff
     (hrf : ∀ x y z : ZMod p, x - y = z ^ k → ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
     (a : ZMod p) (ha : c a = c 0) : a = 0
 
-
-/-- **Each component of the power digraph has exactly one cycle.** Let $p$ be a prime and $k$ a
-natural number, and let $G^k_p$ be the digraph on $\mathbb{Z}/p\mathbb{Z}$ with edges
-$a \to a^k$, so that $m$ steps lead from $a$ to $a^{k^m}$. Call $a$ a cycle vertex if
-$a^{k^r} = a$ for some $r > 0$, and say that $a$ and $b$ lie in the same component if
-$a^{k^m} = b^{k^n}$ for some $m, n \ge 0$. Then every $a$ has a cycle vertex $a^{k^m}$ among its
-iterates, and if two cycle vertices $a$ and $b$ lie in the same component, then $b = a^{k^m}$
-for some $m \ge 0$. Thus every component of $G^k_p$ contains exactly one cycle.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 12
-(`integers-2024-A105-lem-12`). -/
-public theorem_wanted powMap_component_unique_cycle (p k : ℕ) [Fact p.Prime] :
-    (∀ a : ZMod p, ∃ m : ℕ, ∃ r : ℕ, 0 < r ∧ (a ^ k ^ m) ^ k ^ r = a ^ k ^ m) ∧
-      ∀ a b : ZMod p, (∃ r : ℕ, 0 < r ∧ a ^ k ^ r = a) → (∃ r : ℕ, 0 < r ∧ b ^ k ^ r = b) →
-        (∃ m n : ℕ, a ^ k ^ m = b ^ k ^ n) → ∃ m : ℕ, a ^ k ^ m = b
 
 /-- **Power digraphs modulo a prime with two components.** Let $p$ be a prime and $k > 0$ an even
 natural number, and let $G^k_p$ be the directed graph on $\mathbb{Z}/p\mathbb{Z}$ with an edge

@@ -38,8 +38,10 @@ assignment), and Dalal's Hamming-distance revision (`dalalRev`,
 
 namespace Cslib.BeliefRevision
 
-/-- Interpretations of a finite propositional signature `σ`: assignments of
-truth values to the atoms. Throughout, a propositional formula is represented
+/-- Interpretations of a propositional signature `σ`, which may be any type: assignments of
+truth values to the atoms. Finiteness of `σ` and decidable equality are assumptions of the
+model-set revision development that uses it (`minSet`, `dalalRev`), not of `Interp`.
+Throughout, a propositional formula is represented
 semantically by its model set, a `Finset` of interpretations; this is the
 semantic representation in which Katsuno–Mendelzon's syntax-irrelevance
 postulate (R4) is a congruence property of equality of model sets. -/
@@ -559,7 +561,8 @@ noncomputable def dalalAssignment (σ : Type*) [Fintype σ] [DecidableEq σ] :
       omega
 
 /-- Dalal's revision operator: revise by selecting the models of the new
-sentence closest (in Hamming distance) to the old model set. -/
+sentence closest (in Hamming distance) to the old model set `A`, when `A` is nonempty.
+For an empty old model set every key `dalalKey ∅ J` is `0`, so `dalalRev ∅ B = B`. -/
 noncomputable def dalalRev {σ : Type*} [Fintype σ] [DecidableEq σ]
     (A B : Finset (Interp σ)) : Finset (Interp σ) :=
   minSet (dalalLe A) B

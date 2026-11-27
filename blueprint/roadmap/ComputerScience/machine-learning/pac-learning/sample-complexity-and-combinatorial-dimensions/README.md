@@ -5,3 +5,4 @@ Sample-complexity bounds for PAC learning governed by combinatorial dimensions o
 - [VC Sample Complexity and Epsilon-Nets](vc-sample-complexity-and-epsilon-nets/README.md)
 - [Packing Numbers and One-Inclusion Graphs](packing-and-one-inclusion-graphs/README.md)
 - [Multiclass Learning Dimensions](multiclass-learning-dimensions/README.md)
+- [No free lunch: averaging over targets on a finite domain](no-free-lunch-averaging-over-targets-on-a-finite/README.md)
