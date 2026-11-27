@@ -12,9 +12,9 @@ A rule that satisfies the monotonicity hypothesis: partition the hypotheses into
 
 ## Depends on
 
-- [Benjamini–Hochberg rejection set](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
-- [False discovery proportion](../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/false-discovery-proportion.md)
-- [Hypothesis imposed by a dependence regime](../../../../Probability/hypothesis-testing/fisher-s-exact-test/holds.md)
+- [Benjamini–Hochberg rejection set](../../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
+- [False discovery proportion](../../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/false-discovery-proportion.md)
+- [Hypothesis imposed by a dependence regime](../../../../../Probability/hypothesis-testing/fisher-s-exact-test/holds.md)
 
 ## Expansion
 
