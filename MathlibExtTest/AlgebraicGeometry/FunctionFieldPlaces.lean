@@ -49,6 +49,10 @@ example :
       {v : Place K (RatFunc K) | (RatFunc.X : RatFunc K) ∉ v}.Nonempty :=
   ⟨finite_setOf_place_notMem K _, ⟨infinityPlace K, not_mem_inftyValuationSubring K⟩⟩
 
+-- The diagonal map also sends elements with poles to adeles, without modifying their coordinates.
+example : Adele.principal K (RatFunc.X : RatFunc K) (infinityPlace K) = RatFunc.X :=
+  Adele.principal_apply K _ _
+
 end
 
 example (K : Type*) [Field K] (c : K) :

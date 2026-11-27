@@ -164,7 +164,7 @@ private noncomputable def classOf (n : ℕ) (x : Kˣ) : ClassGroup R :=
 
 private theorem classOf_of_dvble {n : ℕ} (x : Kˣ) (h : Dvble (R := R) n x) :
     classOf (R := R) (K := K) n x = ClassGroup.mk K (rootUnit x h) :=
-  dif_pos h
+  dite_eq_left h
 
 private theorem classOf_mul {n : ℕ} (hn : n ≠ 0) {x y : Kˣ} (hx : Dvble (R := R) n x)
     (hy : Dvble (R := R) n y) :
@@ -186,7 +186,7 @@ private theorem classOf_mul_pow {n : ℕ} (hn : n ≠ 0) (x y : Kˣ) :
   by_cases hx : Dvble (R := R) n x
   · rw [classOf_mul hn hx (Dvble.pow y), classOf_pow_eq_one hn y, mul_one]
   · unfold classOf
-    rw [dif_neg (fun h => hx h.of_mul_pow), dif_neg hx]
+    rw [dite_eq_right (fun h => hx h.of_mul_pow), dite_eq_right hx]
 
 private noncomputable def classOfMod {n : ℕ} (hn : n ≠ 0) :
     (Kˣ ⧸ (powMonoidHom n : Kˣ →* Kˣ).range) → ClassGroup R := fun q =>

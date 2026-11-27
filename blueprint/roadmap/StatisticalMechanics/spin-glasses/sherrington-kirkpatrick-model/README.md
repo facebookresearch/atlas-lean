@@ -25,8 +25,10 @@ Source: M. Talagrand, *The Parisi formula*, Ann. of Math. 163 (2006), 221–263,
 - [One step of the Parisi recursion](parisi-step.md)
 - [The Parisi recursion](parisi-recursion.md)
 - [The Parisi functional](parisi-functional.md)
+- [Guerra's replica-symmetry-breaking bound for the SK model at every system size](free-energy-le-parisi-functional.md)
 - [Guerra's replica-symmetry-breaking bound for the SK model](free-energy-le-parisi-functional-eventua.md)
 - [The Parisi formula for the SK model](tendsto-free-energy-parisi.md)
+- [Gaussian SK energy and the single-site heat bath](gaussian-sk-heat-bath.md)
 
 ## Related topics
 
@@ -36,3 +38,13 @@ Source: M. Talagrand, *The Parisi formula*, Ann. of Math. 163 (2006), 221–263,
 - [Generic chaining and Gaussian processes](../../../Probability/high-dimensional-probability/generic-chaining-and-gaussian-processes/README.md):
   $(H_N(\sigma))_\sigma$ is a Gaussian process indexed by $\{-1, 1\}^N$, whose supremum is the
   ground-state energy; Talagrand studies both in the same Gaussian framework.
+
+- [Critical SK covariance norm and linear inverse-Rayleigh scale](critical-covariance-and-linear-rayleigh.md)
+- [Critical SK polynomial lower and subexponential upper mixing bounds](critical-mixing-subexponential-upper-bound.md)
+- [Critical SK obstruction for realized equilibrium starting states](critical-realized-equilibrium-starts.md)
+- [Critical SK worst-start mixing lower bounds](critical-worst-start-mixing-lower-bounds.md)
+- [Discrete SK ratio cutoff below inverse temperature one half](discrete-high-temperature-ratio-cutoff.md)
+- [High-temperature SK heat-bath Poincaré and gap bounds](high-temperature-poincare-gap.md)
+- [Low-temperature SK obstructions from Gibbs-distributed starts](low-temperature-realized-start-barriers.md)
+- [Full support and diffusion identities for zero-temperature SK minimizers](zero-temperature-full-support.md)
+- [Zero-temperature SK value identities and finite Gaussian approximants](zero-temperature-value-and-gaussian-approximation.md)

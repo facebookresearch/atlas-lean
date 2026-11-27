@@ -384,8 +384,8 @@ theorem exists_ne_zero_small_off (J : (FractionalIdeal (RingOfIntegers F)⁰ F)�
       refine Finset.prod_congr rfl fun w hw => ?_
       simp only [Finset.mem_erase] at hw
       rw [hf]
-      simp [if_neg hw.1]
-    rw [hrest, show f w₀ = M from if_pos rfl,
+      simp [ite_eq_right hw.1]
+    rw [hrest, show f w₀ = M from ite_eq_left rfl,
       show ((A' * M ^ mult w₀ : ℝ≥0) : ℝ≥0∞) = (A' : ℝ≥0∞) * (M : ℝ≥0∞) ^ mult w₀ by
         push_cast; ring,
       ← mul_assoc, ← hA]
@@ -407,7 +407,7 @@ theorem exists_ne_zero_small_off (J : (FractionalIdeal (RingOfIntegers F)⁰ F)�
   refine ⟨a, haJ, ha0, fun w hw => ?_⟩
   have hb := hbound w
   rw [hf] at hb
-  simp only [if_neg hw] at hb
+  simp only [ite_eq_right hw] at hb
   rwa [Real.coe_toNNReal _ hδ.le] at hb
 
 theorem exists_mem_sub_normAtPlace_lt_off (J : (FractionalIdeal (RingOfIntegers F)⁰ F)ˣ)

@@ -1,5 +1,6 @@
 # Runner labels that are not GitHub's own: the organization's larger runners,
-# which bump-cache.yml uses.
+# which bump-cache.yml and ci.yml's merge groups use.
 self-hosted-runner:
   labels:
+    - 16-core-ubuntu
     - 64-core-ubuntu

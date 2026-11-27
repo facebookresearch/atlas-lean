@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Nat.Log
+public import Mathlib.Data.Nat.PadicValNat
 public import Mathlib.Data.Tree.Basic
 
 /-!
@@ -101,6 +102,54 @@ public theorem dcDNodes_small :
     dcDNodes 2 = 0 ∧ dcDNodes 3 = 1 ∧ dcDNodes 4 = 0 ∧ dcDNodes 5 = 2 ∧ dcDNodes 6 = 2 ∧
       dcDNodes 7 = 2 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> simp [dcDNodes]
+
+/-- **Midpoint identity for the divide-and-conquer D-node count.** Let $\delta$ be the
+divide-and-conquer D-node count. Let $k$ and $r$ be natural numbers with $0 < r < 2^k$, put
+$n = 2^k + r$, and let $\nu_2(r)$ be the position of the lowest nonzero binary digit of $r$,
+counted from $0$ (the exponent of the largest power of $2$ dividing $r$). Then
+$\delta(n) = \frac{\delta(n-1) + \delta(n+1)}{2} + 1 - \nu_2(r)$.
+
+Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
+Sequences 27 (2024), Article 24.2.7, Corollary 10 (`jis-2024-24.2.7-cor-10`). -/
+public theorem dcDNodes_eq_midpoint_add_one_sub_lowestBit (k r : ℕ) (hr0 : 0 < r)
+    (hr : r < 2 ^ k) :
+    (dcDNodes (2 ^ k + r) : ℚ) =
+      ((dcDNodes (2 ^ k + r - 1) : ℚ) + dcDNodes (2 ^ k + r + 1)) / 2 + 1 - padicValNat 2 r := by
+  induction k generalizing r with
+  | zero => simp only [pow_zero] at hr; omega
+  | succ k ih =>
+    rw [pow_succ] at hr ⊢
+    have hpow : 0 < (2 : ℕ) ^ k := Nat.two_pow_pos k
+    rcases Nat.mod_two_eq_zero_or_one r with heven | hodd
+    · obtain ⟨d, rfl⟩ : ∃ d, r = 2 * d := ⟨r / 2, by omega⟩
+      have hd0 : 0 < d := by omega
+      have hmid := ih d hd0 (by omega)
+      set m := 2 ^ k + d with hm
+      have hm1 : 0 < m - 1 := by omega
+      have hm0 : 0 < m := by omega
+      have hval : padicValNat 2 (2 * d) = padicValNat 2 d + 1 := by
+        simpa only [Nat.padicValNat_def] using
+          (multiplicity_base_mul (p := 2) (by decide) hd0.ne')
+      rw [show 2 ^ k * 2 + 2 * d = 2 * m by omega,
+        show 2 * m - 1 = 2 * (m - 1) + 1 by omega, dcDNodes_two_mul hm0,
+        dcDNodes_two_mul_add_one hm1, dcDNodes_two_mul_add_one hm0,
+        show m - 1 + 1 = m by omega, hval]
+      push_cast
+      linarith only [hmid]
+    · obtain ⟨d, rfl⟩ : ∃ d, r = 2 * d + 1 := ⟨r / 2, by omega⟩
+      set m := 2 ^ k + d with hm
+      have hm0 : 0 < m := by omega
+      have hval : padicValNat 2 (2 * d + 1) = 0 := by
+        rw [Nat.padicValNat_def]
+        apply multiplicity_eq_zero_of_not_dvd
+        rw [Nat.dvd_iff_mod_eq_zero]
+        omega
+      rw [show 2 ^ k * 2 + (2 * d + 1) = 2 * m + 1 by omega,
+        show 2 * m + 1 - 1 = 2 * m by omega,
+        show 2 * m + 1 + 1 = 2 * (m + 1) by omega, dcDNodes_two_mul_add_one hm0,
+        dcDNodes_two_mul hm0, dcDNodes_two_mul (Nat.succ_pos m), hval]
+      push_cast
+      ring
 
 /-- **Level counts of D-nodes.** For natural numbers $n$ and $i$, let $n_i$ be the binary digit
 of $n$ at position $i$ (the coefficient of $2^i$ in the binary expansion of $n$). The value
@@ -208,6 +257,26 @@ Divide-and-conquer tree). -/
 public theorem treeNodes_nil :
     treeDNodes .nil = 0 ∧ treeSNodes .nil = 0 ∧ IsDivideConquerTree .nil :=
   ⟨rfl, rfl, trivial⟩
+
+/-- **$D$-nodes and $S$-nodes of a full binary tree.** Let $t$ be a full binary tree with $n$
+leaves and let $a$ be the number of $S$-nodes of $t$. Then the number of $D$-nodes of $t$ is
+$n - 1 - a$ (subtraction of natural numbers, truncated at $0$).
+
+Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
+Sequences 27 (2024), Article 24.2.7, Lemma 5 (`jis-2024-24.2.7-lem-5`). -/
+public theorem treeDNodes_eq_numLeaves_sub_one_sub_treeSNodes (t : BinaryTree Unit) :
+    treeDNodes t = t.numLeaves - 1 - treeSNodes t := by
+  have hcount : treeDNodes t + treeSNodes t + 1 = t.numLeaves := by
+    induction t with
+    | nil => rfl
+    | node u l r ihl ihr =>
+      rw [treeDNodes_node, treeSNodes_node, BinaryTree.numLeaves]
+      by_cases h : l.numLeaves = r.numLeaves
+      · simp only [ite_eq_left h]
+        omega
+      · simp only [ite_eq_right h]
+        omega
+  omega
 
 /-- **The divide-and-conquer condition at the root.** A full binary tree whose root has left
 subtree $L$ and right subtree $R$ is a divide-and-conquer tree if and only if the numbers of
