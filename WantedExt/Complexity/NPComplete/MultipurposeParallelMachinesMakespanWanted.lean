@@ -54,7 +54,7 @@ Johnson (1978).
 The instances and schedules are those of `MultipurposeParallelTwoMachinesMakespanWanted`
 (`PMPM2||C_max`) with the number `m` of machines taken from the instance instead of fixed to
 `2`: an MPM job-shop instance (`MPMJobShopInstance` and `MPMWellFormed` of
-`WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted`: `m`, the jobs as lists of
+`CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs`: `m`, the jobs as lists of
 operations `(pᵢ, μᵢ)` with nonempty machine sets in `{1, …, m}`, and the bound `K`) in which
 every job has exactly one operation, and the feasibility predicate
 `MultipurposeParallelTwoMachinesMakespanFeasible` (an MPM schedule, every job on a machine of
