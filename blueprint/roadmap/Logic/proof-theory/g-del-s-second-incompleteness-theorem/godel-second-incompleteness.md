@@ -18,5 +18,5 @@ The content is the existence of a provability formula for Peano arithmetic itsel
 ## Sources
 
 - K. Gödel, "Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme I", *Monatshefte für Mathematik und Physik* 38 (1931), 173-198.
-- H. Enderton, *A Mathematical Introduction to Logic*, 2nd ed., Academic Press, 2001, §3.5.
+- H. Enderton, *A Mathematical Introduction to Logic*, 2nd ed., Academic Press, 2001, §3.7.
 - G. Boolos, J. Burgess, and R. Jeffrey, *Computability and Logic*, 5th ed., Cambridge University Press, 2007, Chapter 18.
