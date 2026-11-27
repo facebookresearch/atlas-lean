@@ -31,7 +31,6 @@ Topics added since this subject's fields were last revised.
 - [Derived Module Scalar Operations](derived-module-scalar-operations/README.md)
 - [Dual Hochschild Forms](dual-hochschild-forms/README.md)
 - [Eval Points](eval-points/README.md)
-- [Flat Closure](flat-closure/README.md)
 - [Free Of Regular Sequence](free-of-regular-sequence/README.md)
 - [Frobenius Exists](frobenius-exists/README.md)
 - [Geometric Differential Operators](geometric-differential-operators/README.md)
