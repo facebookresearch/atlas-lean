@@ -18,8 +18,10 @@ The same four-event trace has three reads-from witnesses. Reading the latest wri
 consistent RMW. Dropping the edge leaves every cycle check intact but loses completeness.
 Reading the initial write instead keeps completeness and coherence but skips a write in
 modification order. The prefix language of this trace makes fullness and read completeness
-separate judgements. A five-event graph tests synchronisation through two fences; a six-event,
-two-location graph has a cycle in partial SC order but none in sequencing plus reads-from.
+separate judgements: swapping event numbers preserves fullness, whereas the initial write alone
+is generated but not full. A five-event graph tests synchronisation through two fences; a
+six-event graph has a cycle in the partial SC relation but none in sequencing plus reads-from.
+A seven-event graph has a base SC edge that disappears without the different-location bridge.
 All examples concern abstract labelled graphs.
 -/
 
@@ -150,6 +152,55 @@ private def program : ProgramTraces (Fin 1) Bool false where
   full := fun {n} t => t.IsPrefix trace ∧ n = 4
   full_generated _ h := h.1
   prefix_closed _ _ h i := h.trans i
+  full_rename := by
+    intro i j t u e h ht
+    have size : i = j := by simpa using Fintype.card_congr e
+    exact ⟨h.symm.isPrefix.trans ht.1, size.symm.trans ht.2⟩
+
+-- Move the initial event from 0 to 1, without changing any label or either trace relation
+-- under the permutation. Applying the public transport law does not inspect a memory witness.
+private abbrev swap01 : Fin 4 ≃ Fin 4 := Equiv.swap 0 1
+
+private abbrev renumbered : Trace (Fin 1) Bool false 4 where
+  lab a := lab (swap01 a)
+  legal := by decide
+  init _ := 1
+  init_lab := by decide
+  sb a b := sb (swap01 a) (swap01 b)
+  sb_irrefl := by decide
+  sb_trans := by decide
+  init_sb := by decide
+  rmw := rmw
+  rmw_spec := by
+    rintro a b ⟨rfl, rfl⟩
+    unfold Immediate Label.SameLoc
+    decide
+
+private theorem swap_renames : trace.IsRenaming renumbered swap01 where
+  init_eq := by decide
+  lab_eq := by decide
+  sb_iff := by decide
+  rmw_iff := by decide
+
+private theorem full_after_swap : trace.init 0 ≠ renumbered.init 0 ∧ program.full renumbered :=
+  ⟨by decide, (program.full_iff_of_renaming swap_renames).mp ⟨Trace.IsPrefix.refl trace, rfl⟩⟩
+
+-- The initial write alone is a proper induced prefix, not a bijective renumbering.
+private abbrev initOnly : Trace (Fin 1) Bool false 1 where
+  lab _ := .write .na 0 false
+  legal _ := rfl
+  init _ := 0
+  init_lab := by decide
+  sb _ _ := False
+  sb_irrefl := by decide
+  sb_trans := by decide
+  init_sb := by decide
+  rmw _ _ := False
+  rmw_spec := fun _ _ h => h.elim
+
+private theorem proper_prefix_not_full : program.generated initOnly ∧ ¬program.full initOnly := by
+  refine ⟨⟨fun _ => 0, fun _ _ _ => Subsingleton.elim .., ?_, ?_, ?_, ?_, ?_⟩,
+    fun h => (by decide : 1 ≠ 4) h.2⟩ <;> decide
 
 example : program.full (graph .missing).toTrace ∧ ¬(graph .missing).Complete :=
   ⟨⟨Trace.IsPrefix.refl trace, rfl⟩, fun h =>
@@ -252,5 +303,68 @@ example : twoLoc.Complete ∧ Acyclic (twoLoc.sb ⊔ twoLoc.rf) ∧ ¬Acyclic tw
     have s₂ := scPair (a := 4) (b := 5) rfl rfl (Or.inl (by decide))
     have r₂ := scPair (a := 5) (b := 2) rfl rfl (Or.inr ⟨0, by decide, by decide⟩)
     exact (((TransGen.single s₁).tail r₁).tail s₂).tail r₂
+
+-- The three initial writes are 0,1,2. On the first thread SC write 3 (X) precedes release
+-- write 4 (Y); on the second, acquire read 5 (Y) precedes SC write 6 (Z). No fence is present.
+private abbrev bridgeLab (e : Fin 7) : Label (Fin 3) Bool :=
+  if e = 0 then .write .na 0 false else if e = 1 then .write .na 1 false
+  else if e = 2 then .write .na 2 false else if e = 3 then .write .sc 0 true
+  else if e = 4 then .write .rel 1 true else if e = 5 then .read .acq 1 true
+  else .write .sc 2 true
+
+private abbrev bridgeGraph : Execution (Fin 3) Bool false 7 where
+  lab := bridgeLab
+  legal := by decide
+  init x := x.castLE (by decide)
+  init_lab := by decide
+  sb a b := (a < 3 ∧ 3 ≤ b) ∨ (a = 3 ∧ b = 4) ∨ (a = 5 ∧ b = 6)
+  sb_irrefl := by decide
+  sb_trans := by decide
+  init_sb := by decide
+  rmw _ _ := False
+  rmw_spec := fun _ _ h => h.elim
+  rf a b := a = 4 ∧ b = 5
+  rf_spec := by decide
+  rf_unique := by decide
+  mo a b := (a = 0 ∧ b = 3) ∨ (a = 1 ∧ b = 4) ∨ (a = 2 ∧ b = 6)
+  mo_spec := by unfold Label.SameLoc; decide
+  mo_irrefl := by decide
+  mo_trans := by decide
+  mo_total := by unfold Label.SameLoc; decide
+
+-- Here the release/acquire pair synchronises directly via its rf edge (neither fence leg).
+private theorem bridge_sw : bridgeGraph.sw 4 5 := by
+  refine ⟨4, ⟨rfl, rfl⟩, 4, .refl, 4, ?_, 5, by decide, 5, ⟨rfl, rfl, rfl⟩, 5, .refl, rfl, rfl⟩
+  exact ⟨4, ⟨rfl, rfl⟩, 4, .refl, 4, ⟨rfl, rfl, rfl⟩, .refl⟩
+
+private theorem viaBridge : bridgeGraph.pscBase 3 6 := by
+  refine ⟨3, Or.inl ⟨rfl, rfl⟩, 6, ?_, Or.inl ⟨rfl, rfl⟩⟩
+  refine Or.inl (Or.inl (Or.inl (Or.inr ⟨4, ?_, 5, .single (Or.inr bridge_sw), ?_⟩)))
+  all_goals unfold Execution.sbDiffLoc Label.SameLoc; decide
+
+-- Change only the middle of the base SC relation: keep both fence alternatives, but remove
+-- sbDiffLoc ; hb ; sbDiffLoc from scb. Every remaining way to connect 3 to 6 is impossible.
+private abbrev withoutBridge (a b : Fin 7) : Prop :=
+  bridgeGraph.sb a b ∨ (bridgeGraph.hb a b ∧ (bridgeLab a).SameLoc (bridgeLab b)) ∨
+    bridgeGraph.mo a b ∨ bridgeGraph.rb a b
+
+private abbrev baseUsing (middle : Fin 7 → Fin 7 → Prop) :=
+  Comp (bridgeGraph.scEvents ⊔ Comp bridgeGraph.scFences (ReflGen bridgeGraph.hb))
+    (Comp middle (bridgeGraph.scEvents ⊔ Comp (ReflGen bridgeGraph.hb) bridgeGraph.scFences))
+
+-- With its original middle restored the comparison is definitionally the library relation.
+example : baseUsing bridgeGraph.scb = bridgeGraph.pscBase := rfl
+
+private theorem bridge_necessary : bridgeGraph.pscBase 3 6 ∧ ¬baseUsing withoutBridge 3 6 := by
+  refine ⟨viaBridge, ?_⟩
+  rintro ⟨x, hx, y, hxy, hy⟩
+  have noFence : ∀ a : Fin 7, ¬(bridgeLab a).isFence := by decide
+  obtain rfl : 3 = x := hx.elim (fun h => h.1) (fun ⟨_, h, _⟩ => (noFence 3 h.2.1).elim)
+  obtain rfl : y = 6 := hy.elim (fun h => h.1) (fun ⟨z, _, h⟩ => (noFence z h.2.1).elim)
+  rcases hxy with hs | ⟨_, hloc⟩ | hm | hr
+  · exact (by decide : ¬bridgeGraph.sb 3 6) hs
+  · exact (by unfold Label.SameLoc; decide : ¬(bridgeLab 3).SameLoc (bridgeLab 6)) hloc
+  · exact (by decide : ¬bridgeGraph.mo 3 6) hm
+  · exact (by decide : ¬∃ w, bridgeGraph.rf w 3 ∧ bridgeGraph.mo w 6) hr
 
 end Cslib.Semantics.WeakMemory.RC11.Tests
