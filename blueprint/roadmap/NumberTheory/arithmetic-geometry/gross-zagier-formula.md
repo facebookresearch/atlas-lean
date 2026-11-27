@@ -19,7 +19,10 @@ extends to an entire function and vanishes at $s = 1$. Then
 $$L'(E/K, 1) = \frac{\lVert\omega\rVert^2 \, \hat h(y_K)}{c^2 \, \lvert D_K \rvert^{1/2}}, \qquad
 \lVert\omega\rVert^2 = \iint_{E(\mathbb{C})} \lvert \omega \wedge \bar\omega \rvert,$$
 
-where $\hat h$ is the canonical height of $E$ over $K$, normalised as by Gross and Zagier (Chapter I, §4, and (6.4)): a
+where $\hat h$ is the canonical height of $E$ over $K$, normalised as by Gross and Zagier (Chapter I, §4, and (6.4)),
+$\hat h(P) = \lim_{n \to \infty} 4^{-n} \log H_K(x(2^n P))$ with $H_K(x) = \prod_v \max(1, \lvert x \rvert_v)^{[K_v : \mathbb{Q}_v]}$
+over the places $v$ of $K$ (the height over $K$, as Coates defines it with the coordinates $(1 : x)$; twice the absolute height
+$\lim_{n \to \infty} 4^{-n} h(x(2^n P))$ of the [Gross–Zagier–Zhang page](gross-zagier-zhang-formula.md)): a
 positive definite quadratic form on $E(K) \otimes \mathbb{R}$, so that, like the
 [Néron–Tate height](../../AlgebraicGeometry/not-yet-classified/abelian-arithmetic-heights/neron-tate-height.md), it
 vanishes on $E(K)$ exactly at the torsion points. In particular, $y_K$ has infinite order in $E(K)$ if and only if
@@ -75,7 +78,10 @@ The rest of its proof is that of the sources below, as the Expansion describes.
   weight 2 and level $N$, which is just assertion of Theorem (6.1) of Chap. I.").
 - J. Coates, *The work of Gross and Zagier on Heegner points and the derivatives of $L$-series*, Séminaire Bourbaki,
   exp. 635 (1984/85), Astérisque 133–134 (1986), 57–72, <http://www.numdam.org/item?id=SB_1984-1985__27__57_0>:
-  Theorem 4, p. 64, and (7), p. 65 ("$L(E/K, s) = L(E, s)\,L(E^{(\varepsilon)}, s) = L(f, \chi_0, s)$").
+  Theorem 4, p. 64, and (7), p. 65 ("$L(E/K, s) = L(E, s)\,L(E^{(\varepsilon)}, s) = L(f, \chi_0, s)$"); pp. 60–61, the
+  canonical height on the Jacobian over a number field $F$ as a limit of $n^{-2} \sum_{v \in M_F} \max_i \log \lvert x_i(nP) \rvert_v$,
+  with $\lvert\cdot\rvert_v$ normalised by the local degree, and p. 65, the analogous height on $E$ through the
+  $x$-coordinate.
 - B. H. Gross, *Kolyvagin's work on modular elliptic curves*, in *L-functions and arithmetic* (Durham, 1989),
   London Math. Soc. Lecture Note Ser. 153, Cambridge Univ. Press, 1991, 235–256: (1.1), p. 235, and "In particular,
   the point $y_K$ has infinite order if and only if $L'(E/K, 1) \neq 0$."

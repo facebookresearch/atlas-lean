@@ -19,19 +19,28 @@ $$L'(E/K, 1) = \frac{2 \lVert\omega\rVert^2 \, \hat h(y_K)}{c^2 \, \lvert D_K \r
 \lVert\omega\rVert^2 = \iint_{E(\mathbb{C})} \lvert \omega \wedge \bar\omega \rvert,$$
 
 where $\hat h$ is the absolute Néron–Tate height on $E(K)$, normalised by
-$\hat h(P) = \frac{1}{2[K : \mathbb{Q}]} \lim_{n \to \infty} 4^{-n} \log H_K(x(2^n P))$ with
+$\hat h(P) = \frac{1}{[K : \mathbb{Q}]} \lim_{n \to \infty} 4^{-n} \log H_K(x(2^n P))$ with
 $H_K(x) = \prod_v \max(1, \lvert x \rvert_v)^{[K_v : \mathbb{Q}_v]}$ over the places $v$ of $K$, with the convention
-$\hat h(O) = 0$ at the origin; like the
+$\hat h(O) = 0$ at the origin. Since $\frac{1}{[K : \mathbb{Q}]} \log H_K(x)$ is the absolute logarithmic height of $x$,
+$\hat h(P) = \lim_{n \to \infty} 4^{-n} h(x(2^n P))$ for the absolute logarithmic height $h$, which is half of the
+height of the [Gross–Zagier page](gross-zagier-formula.md), taken over $K$. Like the
 [Néron–Tate height](../../AlgebraicGeometry/not-yet-classified/abelian-arithmetic-heights/neron-tate-height.md), it
 vanishes on $E(K)$ exactly at the torsion points. In particular, $y_K$ has infinite order in $E(K)$ if and only if
 $L'(E/K, 1) \ne 0$.
 
 Miller states the formula for every imaginary quadratic field in which the prime factors of $N$ split, with a factor
 $u_K^2$ in the denominator, where $2u_K$ is the number of roots of unity of $K$; this page is the case
-$D_K \ne -3, -4$, where $u_K = 1$, which covers the fields of the Heegner point page. Two normalisations differ from
-Miller's displays. Miller prints $H_K(x) = \prod_v \lvert x \rvert_v^{[K_v : \mathbb{Q}_v]}$, which is $1$ for every
-$x \in K^\times$ by the product formula; the $\max(1, \cdot)$ above corrects that display, and the limit is taken
-along $2^n P$ where Miller prints $2^N P$. Miller writes
+$D_K \ne -3, -4$, where $u_K = 1$, which covers the fields of the Heegner point page. Three normalisations differ from
+Miller's displays. Miller prints $\hat h(P) = \frac{1}{2[K : \mathbb{Q}]} \lim_{n \to \infty} 4^{-n} \log(H_K(x(2^N P)))$
+with $H_K(x) = \prod_v \lvert x \rvert_v^{[K_v : \mathbb{Q}_v]}$. That $H_K$ is $1$ for every $x \in K^\times$ by the
+product formula, and the $\max(1, \cdot)$ above corrects it; the limit is taken along $2^n P$ where Miller prints
+$2^N P$; and the factor $\frac{1}{2[K : \mathbb{Q}]}$ carries a spurious $\frac12$. Miller's own comparison on the
+same page, that the height of Gross and Zagier (their Chapter V, Theorem (2.1), taken over $K$) "is equal to our
+$2\hat h$", together with the definition of that height recorded by Coates (pp. 60–61 and 65: for $E$, with the
+coordinates $(1 : x)$ in place of those of his embedding (4), a limit of $n^{-2} \sum_{v} \log \max(1, \lvert x(nP) \rvert_v)$
+over the places of $K$, with $\lvert\cdot\rvert_v$ normalised by the local degree),
+gives the factor $\frac{1}{[K : \mathbb{Q}]}$ used here, and with it the formula displayed above agrees with
+Gross–Zagier's Theorem (2.1). Miller writes
 $\lVert\omega\rVert^2 = \int_{E(\mathbb{C})} \omega \wedge \overline{i\omega}$ and calls it twice the area of a
 fundamental domain of the period lattice of $\omega$; the integral $\iint_{E(\mathbb{C})} \lvert \omega \wedge \bar\omega \rvert$
 above is that positive quantity, as on the Gross–Zagier page.
@@ -71,8 +80,17 @@ The rest of its proof is that of the sources below, as the Expansion describes.
   $\lVert\omega\rVert^2 = \int_{E(\mathbb{C})} \omega \wedge \overline{i\omega}$ and the quadratic imaginary number field
   $K$ has $2u_K$ roots of unity and discriminant $\Delta(K)$."), its proof ("Gross and Zagier first proved this in [29]
   when $D$ is odd and Zhang generalized it in [62].") and the paragraph after it, p. 336, on $u_K$ and on the
-  normalisation of $\hat h$ (the displays of $\hat h$ and $H_K$ there, with the misprints corrected above); §1, p. 327,
+  normalisation of $\hat h$ (the display of $\hat h$ and $H_K$ there, with the three misprints corrected above, and the
+sentence "the $\hat h$ appearing in the formula as stated here is the absolute height, whereas the one appearing in [29,
+Theorem 2.1, p. 311] is equal to our $2\hat h$"); §1, p. 327,
 for $\lVert\omega\rVert^2$ as "twice the area of the fundamental domain of $\Lambda$".
+- J. Coates, *The work of Gross and Zagier on Heegner points and the derivatives of $L$-series*, Séminaire Bourbaki,
+  exp. 635 (1984/85), Astérisque 133–134 (1986), 57–72, <http://www.numdam.org/item?id=SB_1984-1985__27__57_0>:
+  pp. 60–61, the canonical height $\hat h_F(P) = \lim_{n \to \infty} \frac{1}{n^2} \sum_{v \in M_F} \max_{1 \le i \le \ell} \{\log \lvert x_i(nP) \rvert_v\}$
+  on the Jacobian over a number field $F$, with the absolute values $\lvert\cdot\rvert_v$ normalised as the $n_v$-th power of
+  the valuation of $\mathbb{Q}$ below, $n_v$ the local degree, and the projective coordinates $x_i$ of the embedding (4); p. 65,
+  the height pairing on $E$, "entirely analogous to that for $J$, the analogue of the embedding (4) being given by the
+  $x$-coordinate on a Weierstrass equation for $E$ over $\mathbb{Q}$".
 - S.-W. Zhang, *Gross–Zagier formula for $\mathrm{GL}(2)$ II*, in *Heegner points and Rankin $L$-series*, Math. Sci.
   Res. Inst. Publ. 49, Cambridge Univ. Press, 2004, 191–214. Not read here; cited as Miller cites it (p. 336 and his
   reference [62]).
