@@ -27,5 +27,3 @@
 - [Minimum epistasis interpolation](minimum-epistasis-interpolation/README.md)
 - [Rho statistic dating of lineages](rho-statistic-dating-of-lineages/README.md)
 - [Sparse Walsh approximation of fitness landscapes](sparse-walsh-approximation-of-fitness-landscapes/README.md)
-- [Quasispecies with time lags and periodic replication](quasispecies-with-time-lags-and-periodic-replication/README.md)
-- [Toroidal diffusions for protein evolution](toroidal-diffusions-for-protein-evolution/README.md)

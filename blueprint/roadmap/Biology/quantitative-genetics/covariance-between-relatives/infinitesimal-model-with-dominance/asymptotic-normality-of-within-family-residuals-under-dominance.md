@@ -24,7 +24,7 @@ where the constants $C',\widetilde C'$ depend only on the bound $B$, and $\mathf
 
 ## Depends on
 
-- [Infinitesimal model definition](../mendelian-segregation-and-the-infinitesimal-mode/infinitesimal-model-definition.md)
+- [Infinitesimal model definition](../../mendelian-segregation-and-the-infinitesimal-mode/infinitesimal-model-definition.md)
 
 ## Expansion
 

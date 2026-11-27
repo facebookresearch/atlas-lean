@@ -27,4 +27,3 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Translation invariance of marker coding](translation-invariance-of-marker-coding/README.md)
 - [Minorize–maximize REML for variance components](minorize-maximize-reml-for-variance-components/README.md)
 - [Look-ahead selection in genomic breeding](look-ahead-selection-in-genomic-breeding/README.md)
-- [Infinitesimal model with dominance](infinitesimal-model-with-dominance/README.md)
