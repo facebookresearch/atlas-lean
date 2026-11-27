@@ -1,6 +1,7 @@
 # Verification conditions for quantitative Hoare logic
 
 Annotate every loop with a potential, written $\{I\}\ \mathtt{while}\ b\ \mathtt{do}\ C$, and let $\lfloor C \rfloor$ erase the annotations. Define the prepotential $\mathrm{pre}(C, Q)$ by $\mathrm{pre}(\mathtt{skip}, Q) = Q + 1$, $\mathrm{pre}(x := a, Q)(s) = Q(s[a/x]) + 1$, $\mathrm{pre}(C_1 ; C_2, Q) = \mathrm{pre}(C_1, \mathrm{pre}(C_2, Q))$, $\mathrm{pre}(\mathtt{if}\ b\ \mathtt{then}\ C_1\ \mathtt{else}\ C_2, Q)(s) = \mathrm{pre}(C_i, Q)(s) + 1$ with $C_i$ the branch $b$ selects in $s$, and $\mathrm{pre}(\{I\}\ \mathtt{while}\ b\ \mathtt{do}\ C, Q) = I + 1$. The verification condition $\mathrm{vc}(C, Q)$ is true for $\mathtt{skip}$ and assignments, is $\mathrm{vc}(C_1, Q) \wedge \mathrm{vc}(C_2, Q)$ for conditionals and $\mathrm{vc}(C_1, \mathrm{pre}(C_2, Q)) \wedge \mathrm{vc}(C_2, Q)$ for sequences, and for a loop is
+
 $$\mathrm{pre}(C, I + 1) \le I + \uparrow b \ \wedge\ Q \le I + \uparrow \neg b \ \wedge\ \mathrm{vc}(C, I + 1).$$
 
 **Theorem.** For every unannotated command $c$ and potentials $P,Q$,
