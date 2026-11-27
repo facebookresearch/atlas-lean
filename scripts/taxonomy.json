@@ -13510,6 +13510,7 @@
   "MathlibExt/NumberTheory/GobelResidueExponentPeriod": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelSequenceError": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
+  "MathlibExt/NumberTheory/GobelSequenceRootLimit": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelSequenceRoots": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelSequenceSomosBound": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GoldenFactorialExponent": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Factorials bounded by powers of the golden ratio"},
