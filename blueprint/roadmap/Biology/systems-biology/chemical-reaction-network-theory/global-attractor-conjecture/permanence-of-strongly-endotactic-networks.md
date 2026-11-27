@@ -6,6 +6,8 @@
 
 ## Depends on
 
+- [A network with linearly independent complexes has deficiency zero](../../complex-balancing-and-the-deficiency-zero-theore/complexes-linkage-finrank-eq-zero-of-lin.md)
+- [Deficiency-zero theorem, weakly reversible case, linear form](../../complex-balancing-and-the-deficiency-zero-theore/exists-unique-equilibrium-of-deficiency.md)
 - [Global attractor conjecture for single linkage class networks](global-attractor-conjecture-for-single-linkage-class-networks.md)
 
 ## Expansion
