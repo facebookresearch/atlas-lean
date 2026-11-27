@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import MathlibExt.NumberTheory.GeneralizedMarkovCharacteristic
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
@@ -431,6 +432,25 @@ private theorem cohn_right_parent {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2
   · exact markov_rotate (markov_swap hd)
   · simp only [genCohnStep]
     rw [← he]
+
+/-- **Parent triples of a generalized Cohn triple.** Let $k$ be a natural number and let $S$ be
+the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$. Let $(P, Q, R)$ be a $k$-generalized
+Cohn triple associated with $(a, b, c)$, and let $b' = \lfloor (a^2 + kac + c^2)/b \rfloor$. Then
+$(P, R, P^{-1}(R + S))$ is a $k$-generalized Cohn triple associated with $(a, c, b')$, and
+$((P + S)R^{-1}, P, R)$ is a $k$-generalized Cohn triple associated with $(b', a, c)$.
+
+Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
+Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.11. -/
+public theorem IsGenCohnTriple.parent {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2) ℤ}
+    (h : IsGenCohnTriple k P Q R a b c) :
+    IsGenCohnTriple k P R (P⁻¹ * (R + genCohnS k)) a c ((a ^ 2 + k * a * c + c ^ 2) / b) ∧
+      IsGenCohnTriple k ((P + genCohnS k) * R⁻¹) P R ((a ^ 2 + k * a * c + c ^ 2) / b) a c := by
+  have hPinv : P⁻¹ = P.adjugate := by
+    rw [Matrix.inv_def, h.1.1, Ring.inverse_one, one_smul]
+  have hRinv : R⁻¹ = R.adjugate := by
+    rw [Matrix.inv_def, h.2.2.1.1, Ring.inverse_one, one_smul]
+  rw [hPinv, hRinv]
+  exact ⟨(cohn_left_parent h).1, (cohn_right_parent h).1⟩
 
 private theorem det_sub_cohnS (k : ℕ) (P : Matrix (Fin 2) (Fin 2) ℤ) :
     (P - genCohnS k).det = P.det - k * P.trace +

@@ -27,7 +27,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Combinatorics.SimpleGraph.VertexConnectivity
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -43,7 +43,7 @@ INSTANCE: a finite simple undirected graph `G = (V, E)` that is 3-connected, cub
 has degree 3) and bipartite. QUESTION: does `G` contain a Hamiltonian circuit?
 
 This is HAMILTONIAN CIRCUIT ([GT37], stated on `main` as
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted`) restricted to 3-connected cubic
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs`) restricted to 3-connected cubic
 bipartite graphs, which Akiyama, Nishizeki and Saito (1980) prove NP-complete. The instance type,
 the graph, the parent's well-formedness (at least one vertex, simple edge list on `Fin n`) and the
 question (`3 ≤ n` and Mathlib's `SimpleGraph.IsHamiltonian`) are the parent's; the restriction adds
