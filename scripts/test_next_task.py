@@ -884,22 +884,18 @@ class Requests(unittest.TestCase):
         self.assertEqual(err.getvalue(), f"error: {next_task.TASKS}: no route to host\n")
 
 
-def node(node_id: str, status: str = "not_ready", kind: str = "node") -> dict:
-    """A node of the site's dependencies/index.json."""
-    scope = node_id.rpartition("/")[0]
-    return {"id": node_id, "kind": kind, "status": status, "title": f"Node {node_id}", "scope": scope,
-            "route": f"../roadmap/{scope}/index.html#{node_id.rpartition('/')[2]}", "result": True, "parent": 0}
+def node(node_id: str, page: object = "") -> dict:
+    """A node to expand, as graph-tasks.json lists it."""
+    return {"node_id": node_id, "title": f"Node {node_id}",
+            "page": page if page != "" else f"roadmap/{node_id.rpartition('/')[0]}/index.html"}
 
 
-INDEX = {"schema": "autoform-dag-search/v1", "relations": [], "nodes": [
-    node("Algebra", kind="scope"),
-    node("Algebra/groups", kind="scope"),          # a folder still to expand is not a node to expand
+GRAPH = {"schema": "atlas-graph-tasks/v1", "commit": TASKS["commit"], "commit_date": TASKS["commit_date"], "nodes": [
     node("Algebra/groups/sylow"),                  # its page's path is in an open pull request's body
     node("Algebra/groups/sylow-applications"),     # a longer id than the one a pull request gives
-    node("Algebra/groups/cayley", status="can_state"),
     node("Algebra/t1"),                            # its id is an open pull request's branch
     node("Algebra/t10"),
-    dict(node("Combinatorics/ramsey"), route=7),  # a route that is not a text gives no page
+    node("Combinatorics/ramsey", page=7),          # a page that is not a text gives no link
 ]}
 GRAPH_PULLS = [
     pull(20, "Expand the Sylow theorems", "Expands `blueprint/roadmap/Algebra/groups/sylow.md` into its parts."),
@@ -907,94 +903,98 @@ GRAPH_PULLS = [
 ]
 
 
+def graph_site(graph: dict | None = None, **kwargs) -> Site:
+    site = Site(**kwargs)
+    site.pages[next_task.GRAPH_TASKS] = json.dumps(GRAPH if graph is None else graph).encode()
+    return site
+
+
 class Graph(unittest.TestCase):
-    def test_an_unreadable_index_stops_the_script(self) -> None:
-        site = Site()
-        site.pages[next_task.DEPENDENCIES] = b"{}"
-        code, out, err = run(site, "--graph", env=TOKEN)
-        self.assertEqual((code, out), (1, ""))
-        self.assertIn("is not the graph's index of nodes", err)
-
-    def test_graph_takes_the_sites_task_list_and_this_repository_only(self) -> None:
-        # Its claims would not match the graph's index otherwise; nothing is read before the refusal.
-        for args in (["--tasks", "other.json"], ["--repo", "someone/fork"]):
-            site = Site()
-            with self.assertRaises(SystemExit):
-                run(site, "--graph", *args, env=TOKEN)
-            self.assertEqual(site.read, [])
-        self.assertEqual(run(Site(), "--repo", REPO, env=TOKEN)[0], 0)
-
-    def test_an_empty_or_repeated_node_id_stops_the_script(self) -> None:
-        for nodes in ([node("Algebra/a"), node("Algebra/a")], [dict(node("Algebra/a"), id=" ")]):
-            site = Site()
-            site.pages[next_task.DEPENDENCIES] = json.dumps(dict(INDEX, nodes=nodes)).encode()
-            code, out, err = run(site, "--graph", env=TOKEN)
-            self.assertEqual((code, out), (1, ""))
-            self.assertIn("an empty id, or one id twice", err)
-
-    def test_an_expansion_merged_shortly_before_the_lists_commit_takes_its_node(self) -> None:
-        # The index may come from a build a little older than tasks.json's; the ready tasks still count only the pull
-        # requests merged since tasks.json's commit, so #5, merged an hour before it, takes no task.
-        merged = {**MERGED_PULLS, 22: pull(22, body="Expands Combinatorics/ramsey.", merged_at="2026-11-20T11:30:00Z")}
-        site = Site(merged=merged)
-        site.pages[next_task.DEPENDENCIES] = json.dumps(INDEX).encode()
-        code, out, err = run(site, "--json", "--graph", "-n", "10", env=TOKEN)
+    def test_a_pull_request_takes_the_node_it_names_and_no_other(self) -> None:
+        code, out, err = run(graph_site(open_pages=(OPEN_PULLS + GRAPH_PULLS,)), "--json", "--graph", "-n", "10",
+                             env=TOKEN)
         self.assertEqual((code, err), (0, ""))
         result = json.loads(out)
-        self.assertIn({"node_id": "Combinatorics/ramsey", "pull_requests": [22]}, result["graph"]["taken_by"])
-        self.assertIn("Algebra/t7", [task["node_id"] for task in result["next"]])
-        self.assertEqual(result["taken_by"], json.loads(run(Site(merged=merged), "--json", "-n", "10",
-                                                            env=TOKEN)[1])["taken_by"])
-
-    def test_a_pull_request_takes_the_node_it_names_and_no_other(self) -> None:
-        site = Site(open_pages=(OPEN_PULLS + GRAPH_PULLS,))
-        site.pages[next_task.DEPENDENCIES] = json.dumps(INDEX).encode()
-        code, out, err = run(site, "--json", "--graph", "-n", "10", env=TOKEN)
-        self.assertEqual((code, err), (0, ""))
-        graph = json.loads(out)["graph"]
+        graph = result["graph"]
         self.assertEqual(graph["taken_by"], [{"node_id": "Algebra/groups/sylow", "pull_requests": [20]},
                                              {"node_id": "Algebra/t1", "pull_requests": [21]}])
         self.assertEqual([item["node_id"] for item in graph["next"]],
                          ["Algebra/groups/sylow-applications", "Algebra/t10", "Combinatorics/ramsey"])
         self.assertEqual((graph["to_expand"], graph["taken"], graph["free"]), (5, 2, 3))
-        # Folders and nodes of other statuses are not nodes to expand.
         self.assertEqual(graph["next"][0], {
             "node_id": "Algebra/groups/sylow-applications", "title": "Node Algebra/groups/sylow-applications",
             "article_path": "blueprint/roadmap/Algebra/groups/sylow-applications.md",
-            "page": "https://facebookresearch.github.io/atlas-lean/roadmap/Algebra/groups/index.html"
-                    "#sylow-applications", "priority": 1})
-        # The formalization tasks are listed as before.
-        self.assertEqual(json.loads(out)["free"], 4)
+            "page": "https://facebookresearch.github.io/atlas-lean/roadmap/Algebra/groups/index.html",
+            "priority": 1})
+        self.assertIsNone(graph["next"][2]["page"])
+        # The ready tasks are listed as without --graph.
+        self.assertEqual({key: value for key, value in result.items() if key != "graph"},
+                         json.loads(run(Site(open_pages=(OPEN_PULLS + GRAPH_PULLS,)), "--json", "-n", "10",
+                                        env=TOKEN)[1]))
+
+    def test_an_expansion_merged_since_the_lists_commit_takes_its_node(self) -> None:
+        merged = {**MERGED_PULLS, 22: pull(22, body="Expands Combinatorics/ramsey.", merged_at="2026-11-20T13:00:00Z"),
+                  23: pull(23, body="Expands Algebra/t10.", merged_at="2026-11-20T11:00:00Z")}
+        code, out, err = run(graph_site(merged=merged), "--json", "--graph", "-n", "10", env=TOKEN)
+        self.assertEqual((code, err), (0, ""))
+        graph = json.loads(out)["graph"]
+        # #23 merged before the commit both lists come from, so the graph already shows its work.
+        self.assertEqual(graph["taken_by"], [{"node_id": "Combinatorics/ramsey", "pull_requests": [22]}])
+
+    def test_lists_from_two_builds_stop_the_script(self) -> None:
+        for graph in (dict(GRAPH, commit="d" * 40), {key: value for key, value in GRAPH.items() if key != "commit"}):
+            code, out, err = run(graph_site(graph), "--graph", env=TOKEN)
+            self.assertEqual((code, out), (1, ""))
+            self.assertIn("run this script again in a few minutes", err)
+        # Nor does a task list without its commit date give a cutoff.
+        tasks = {key: value for key, value in TASKS.items() if key != "commit_date"}
+        site = graph_site(tasks=tasks)
+        self.assertEqual(run(site, "--graph", env=TOKEN)[:2], (1, ""))
+        self.assertEqual([url for url, _ in site.read], [next_task.TASKS, next_task.GRAPH_TASKS])
+
+    def test_a_malformed_graph_list_stops_the_script(self) -> None:
+        cases = [({}, "is not a list of nodes to expand"), (dict(GRAPH, schema="other"), "is not a list of nodes"),
+                 (dict(GRAPH, nodes=[{"title": "no id"}]), "each with its node id"),
+                 (dict(GRAPH, nodes=[node(" ")]), "each with its node id"),
+                 (dict(GRAPH, nodes=[node("Algebra/a"), node("Algebra/a")]), "lists one node twice")]
+        for graph, message in cases:
+            code, out, err = run(graph_site(graph), "--graph", env=TOKEN)
+            self.assertEqual((code, out), (1, ""), graph)
+            self.assertIn(message, err, graph)
+
+    def test_graph_reads_this_repositorys_pull_requests_only(self) -> None:
+        site = graph_site()
+        with self.assertRaises(SystemExit):
+            run(site, "--graph", "--repo", "someone/fork", env=TOKEN)
+        self.assertEqual(site.read, [])
+        self.assertEqual(run(Site(), "--repo", REPO, env=TOKEN)[0], 0)
 
     def test_the_graph_comes_by_priority(self) -> None:
-        site = Site()
-        site.pages[next_task.DEPENDENCIES] = json.dumps(INDEX).encode()
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "priorities.json"
             path.write_text(json.dumps({"schema": next_task.PRIORITIES_SCHEMA, "default": 1,
                                         "weights": {"Combinatorics": 2, "Algebra/groups": 0.5}}))
-            code, out, err = run(site, "--json", "--graph", "-n", "10", "--priorities", str(path), env=TOKEN)
+            code, out, err = run(graph_site(), "--json", "--graph", "-n", "10", "--priorities", str(path), env=TOKEN)
         self.assertEqual((code, err), (0, ""))
         self.assertEqual([item["node_id"] for item in json.loads(out)["graph"]["next"]],
                          ["Combinatorics/ramsey", "Algebra/t1", "Algebra/t10", "Algebra/groups/sylow",
                           "Algebra/groups/sylow-applications"])
-        self.assertIsNone(json.loads(out)["graph"]["next"][0]["page"])
 
-    def test_without_graph_the_index_is_not_read(self) -> None:
-        site = Site()
-        code, out, _ = run(site, "--json", env=TOKEN)
+    def test_without_graph_the_graph_is_neither_read_nor_matched(self) -> None:
+        site = graph_site()
+        with mock.patch.object(next_task, "graph_taken") as matcher:
+            code, out, _ = run(site, "--json", env=TOKEN)
         self.assertEqual(code, 0)
         self.assertNotIn("graph", json.loads(out))
-        self.assertNotIn(next_task.DEPENDENCIES, [url for url, _ in site.read])
+        self.assertNotIn(next_task.GRAPH_TASKS, [url for url, _ in site.read])
+        matcher.assert_not_called()
 
     def test_the_text_lists_the_nodes_to_expand(self) -> None:
-        site = Site(open_pages=(OPEN_PULLS + GRAPH_PULLS,))
-        site.pages[next_task.DEPENDENCIES] = json.dumps(INDEX).encode()
-        code, out, err = run(site, "--graph", "-n", "1", env=TOKEN)
+        code, out, err = run(graph_site(open_pages=(OPEN_PULLS + GRAPH_PULLS,)), "--graph", "-n", "1", env=TOKEN)
         self.assertEqual((code, err), (0, ""))
         self.assertIn("5 nodes to expand; pull requests take 2 of them, so 3 are free.", out)
         self.assertIn("expand: Node Algebra/groups/sylow-applications", out)
-        self.assertIn("names its node id", out)
+        self.assertIn("Read its page's `## Expansion` section first", out)
 
 
 if __name__ == "__main__":

@@ -40,9 +40,11 @@ outside the repository, all tasks have the same priority. --json prints the task
 fields, and their priorities.
 
 --graph also lists the graph-building tasks: the nodes still to expand (docs/BLUEPRINT.md, Nodes still to expand),
-which the site's dependencies/index.json marks not_ready. A pull request takes one when its title, body or branch
-name holds the node id (`Logic/modal-logic/epistemic-logic/common-knowledge`), or the path of its page, as a whole
-word. Of the free ones it prints the next N too, by priority, highest first, then in the index's order.
+which the site publishes as graph-tasks.json from the same build as tasks.json, with the same commit. It stops if
+the two commits differ, as the pull requests merged since tasks.json's commit would then not be those that the graph
+misses. A pull request takes a node when its title, body or branch name holds the node id
+(`Logic/modal-logic/epistemic-logic/common-knowledge`), or the path of its page, as a whole word. Of the free ones it
+prints the next N too, by priority, highest first, then in graph-tasks.json's order.
 
 Reading the open pull requests needs no token, within the GitHub API's limit of 60 requests an hour from one
 address, but reading those merged since tasks.json's commit does, as they come from GitHub's GraphQL API: set
@@ -69,12 +71,10 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 TASKS = "https://facebookresearch.github.io/atlas-lean/tasks.json"
-# Every node of the graph with its status, as the site publishes it; a node to expand is marked not_ready.
-DEPENDENCIES = "https://facebookresearch.github.io/atlas-lean/dependencies/index.json"
-GRAPH_SCHEMA = "autoform-dag-search/v1"
-# The site publishes the index with tasks.json, but its cache can serve the two from builds minutes apart, so graph
-# claims also count the pull requests merged up to this long before tasks.json's commit.
-GRAPH_MARGIN = timedelta(hours=1)
+# The nodes still to expand, as the site publishes them with tasks.json's commit, and the format of that file.
+SITE = "https://facebookresearch.github.io/atlas-lean/"
+GRAPH_TASKS = SITE + "graph-tasks.json"
+GRAPH_SCHEMA = "atlas-graph-tasks/v1"
 REPOSITORY = "facebookresearch/atlas-lean"
 API = "https://api.github.com"
 # The branch tasks.json is built from, whose merged pull requests are read.
@@ -590,24 +590,27 @@ def taken(items: list[dict], pulls: list[dict]) -> dict[str, list[int]]:
     return found
 
 
-def load_graph() -> list[dict]:
-    """The nodes still to expand: each node (not a folder) that the site's dependencies/index.json marks not_ready,
-    with its node id, title, page and article path, in the index's order."""
+def load_graph(tasks: dict) -> list[dict]:
+    """The nodes still to expand, from the site's graph-tasks.json, which has to come from the build that wrote
+    *tasks*: with its commit, so that the pull requests merged since tasks.json's commit are those the graph misses."""
     try:
-        index = json.loads(request(DEPENDENCIES))
+        graph = json.loads(request(GRAPH_TASKS))
     except ValueError:
-        index = None
-    nodes = index.get("nodes") if isinstance(index, dict) and index.get("schema") == GRAPH_SCHEMA else None
-    if not isinstance(nodes, list) or not all(isinstance(node, dict) and isinstance(node.get("id"), str)
-                                              for node in nodes):
-        raise Failure(f"{DEPENDENCIES} is not the graph's index of nodes ({GRAPH_SCHEMA})")
-    found = [{"node_id": node["id"], "title": node.get("title"), "article_path": f"blueprint/roadmap/{node['id']}.md",
-              "page": urllib.parse.urljoin(DEPENDENCIES, node["route"]) if isinstance(node.get("route"), str) else None}
-             for node in nodes if node.get("kind") == "node" and node.get("status") == "not_ready"]
-    ids = [item["node_id"] for item in found]
-    if "" in map(str.strip, ids) or len(set(ids)) != len(ids):
-        raise Failure(f"{DEPENDENCIES} marks a node to expand with an empty id, or one id twice")
-    return found
+        graph = None
+    nodes = graph.get("nodes") if isinstance(graph, dict) and graph.get("schema") == GRAPH_SCHEMA else None
+    if not isinstance(nodes, list) or not all(isinstance(node, dict) and isinstance(node.get("node_id"), str)
+                                              and node["node_id"].strip() != "" for node in nodes):
+        raise Failure(f"{GRAPH_TASKS} is not a list of nodes to expand ({GRAPH_SCHEMA}), each with its node id")
+    if len({node["node_id"] for node in nodes}) != len(nodes):
+        raise Failure(f"{GRAPH_TASKS} lists one node twice")
+    if not tasks.get("commit") or graph.get("commit") != tasks.get("commit") or not tasks.get("commit_date"):
+        raise Failure(f"{GRAPH_TASKS} comes from commit {shown(graph.get('commit'))} and tasks.json from "
+                      f"{shown(tasks.get('commit'))}, or tasks.json has no commit date: the site may be deploying, "
+                      "so run this script again in a few minutes")
+    return [{"node_id": node["node_id"], "title": node.get("title"),
+             "article_path": f"blueprint/roadmap/{node['node_id']}.md",
+             "page": urllib.parse.urljoin(SITE, node["page"]) if isinstance(node.get("page"), str)
+             and node["page"].strip() else None} for node in nodes]
 
 
 def graph_taken(items: list[dict], pulls: list[dict]) -> dict[str, list[int]]:
@@ -661,30 +664,23 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--graph", action="store_true",
                         help="also print the next nodes of the graph still to expand, the graph-building tasks")
     args = parser.parse_args(argv)
-    if args.graph and (args.tasks != TASKS or args.repo != REPOSITORY):
-        # The site publishes the graph's index with tasks.json, so tasks.json's commit date dates both, and the
-        # graph is this repository's; another task list or repository would not match it.
-        parser.error("--graph reads the site's graph index, so it takes the site's tasks.json and this repository, "
-                     "not --tasks or --repo")
+    if args.graph and args.repo != REPOSITORY:
+        # The graph is this repository's, so its pull requests are the ones that take its nodes.
+        parser.error("--graph lists this repository's graph, so it reads this repository's pull requests, not --repo")
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or None
     source = args.priorities if args.priorities is not None else str(PRIORITIES) if PRIORITIES.is_file() else None
     try:
         tasks = load_tasks(args.tasks)
-        graph = load_graph() if args.graph else []
+        graph = load_graph(tasks) if args.graph else []
         priorities = None if source is None else load_priorities(source)
-        since = tasks.get("commit_date")
-        early = (moment(since) - GRAPH_MARGIN).isoformat() if args.graph and since else since
-        graph_pulls = pull_requests(args.repo, early, token)
+        pulls = pull_requests(args.repo, tasks.get("commit_date"), token)
     except Failure as failure:
         print(f"error: {shown(failure)}", file=sys.stderr)
         return 1
-    # The ready tasks count the pull requests merged since tasks.json's commit only, as without --graph.
-    pulls = [pull for pull in graph_pulls
-             if not since or not pull.get("merged_at") or merged_into_main(pull, moment(since))]
     held = taken(tasks["items"], pulls)
     free = [item for item in ordered(tasks["items"], priorities) if item["node_id"] not in held]
     chosen = free[:args.count]
-    graph_held = graph_taken(graph, graph_pulls)
+    graph_held = graph_taken(graph, pulls) if graph else {}
     graph_free = sorted((item for item in graph if item["node_id"] not in graph_held),
                         key=lambda item: -priority(item, priorities))
     graph_chosen = graph_free[:args.count]
@@ -728,7 +724,7 @@ def main(argv: list[str] | None = None) -> int:
                   f"  priority     {shown(priority(item, priorities))}")
         if graph_chosen:
             print("\nTo take one, open a draft pull request that names its node id (CONTRIBUTING.md, Picking a "
-                  "task), and expand it as docs/BLUEPRINT.md, Expanding a node, says.")
+                  "task). Read its page's `## Expansion` section first: it may only ask for a missing link.")
     return 0
 
 
