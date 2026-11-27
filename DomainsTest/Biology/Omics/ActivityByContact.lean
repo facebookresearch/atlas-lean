@@ -30,9 +30,9 @@ one on chromosome `1`:
   further, and element `3`, at the promoter's position on another chromosome, are not;
 * ground truth from the definition: the denominator is `2 * 1 + 6 * (1/2) + 0 * (1/4) = 5`, so the
   promoter scores `2/5`, element `1` scores `3/5`, and element `2`, accessible but not acetylated,
-  scores `0`; the formula also scores elements outside the window;
+  scores `0`; elements `3` and `4`, outside the window, get no score;
 * the theorems on these data: their hypotheses hold, the scores are nonnegative and those of the
-  window sum to `1`;
+  window sum to `1`; contacts need only be positive within the window;
 * a gene gets no score when no element of its window is acetylated, however accessible;
 * positive activity needs both signals positive. -/
 
@@ -101,41 +101,61 @@ theorem total_eq :
     Finset.sum_singleton, activity_zero, activity_one, activity_two]
   norm_num [contact]
 
-theorem abcScore_eq (E : Fin 5) :
+theorem abcScore_eq (E : Fin 5)
+    (hE : chrom E = chrom (promoter ()) ∧ |pos E - pos (promoter ())| ≤ 5 * 10 ^ 6) :
     abcScore chrom pos promoter dnase h3k27ac contact E () =
       some (√(dnase E * h3k27ac E) * contact E () / 5) := by
-  simp only [abcScore, total_eq]
+  simp only [abcScore, total_eq, hE]
   norm_num
 
 /-- The promoter scores `2 * 1 / 5`. -/
 example : abcScore chrom pos promoter dnase h3k27ac contact 0 () = some (2 / 5) := by
-  rw [abcScore_eq, activity_zero]
+  rw [abcScore_eq 0 (by decide), activity_zero]
   norm_num [contact]
 
 /-- The acetylated element 100 kb away scores `6 * (1/2) / 5`. -/
 example : abcScore chrom pos promoter dnase h3k27ac contact 1 () = some (3 / 5) := by
-  rw [abcScore_eq, activity_one]
+  rw [abcScore_eq 1 (by decide), activity_one]
   norm_num [contact]
 
-/-- The accessible but unacetylated element scores `0`. -/
+/-- The accessible but unacetylated element, exactly 5 Mb away, scores `0`. -/
 example : abcScore chrom pos promoter dnase h3k27ac contact 2 () = some 0 := by
-  rw [abcScore_eq, activity_two]
+  rw [abcScore_eq 2 (by decide), activity_two]
   norm_num
 
-/-- The formula also scores an element outside the window: `4 * (1/10) / 5`. -/
-example : abcScore chrom pos promoter dnase h3k27ac contact 3 () = some (2 / 25) := by
-  rw [abcScore_eq, activity_three]
-  norm_num [contact]
+/-- The element on another chromosome gets no score, though its activity is `4`. -/
+example : abcScore chrom pos promoter dnase h3k27ac contact 3 () = none := by
+  have h : ¬ (chrom 3 = chrom (promoter ()) ∧ |pos 3 - pos (promoter ())| ≤ 5 * 10 ^ 6) := by
+    decide
+  simp only [abcScore, h, false_and, ↓reduceIte]
+
+/-- The element one base pair beyond 5 Mb gets no score. -/
+example : abcScore chrom pos promoter dnase h3k27ac contact 4 () = none := by
+  have h : ¬ (chrom 4 = chrom (promoter ()) ∧ |pos 4 - pos (promoter ())| ≤ 5 * 10 ^ 6) := by
+    decide
+  simp only [abcScore, h, false_and, ↓reduceIte]
 
 /-! ### The theorems on these data -/
 
 theorem contact_pos (e : Fin 5) : 0 < contact e () := by
   fin_cases e <;> norm_num [contact]
 
-/-- The gene gets scores: its promoter has positive activity. -/
+/-- Element `1` gets a score: it is in the window, and the promoter has positive activity. -/
 theorem isSome : (abcScore chrom pos promoter dnase h3k27ac contact 1 ()).isSome :=
-  (isSome_abcScore_iff fun e => contact_pos e).2
-    ⟨0, by decide, by decide, by rw [activity_zero]; norm_num⟩
+  (isSome_abcScore_iff fun e _ _ => contact_pos e).2
+    ⟨by decide, 0, by decide, by decide, by rw [activity_zero]; norm_num⟩
+
+/-- Contacts that vanish outside the window. -/
+noncomputable def contactInWindow : Fin 5 → Unit → ℝ := fun e _ => ![1, 1 / 2, 1 / 4, 0, 0] e
+
+/-- Contacts need only be positive within the window. -/
+example : (abcScore chrom pos promoter dnase h3k27ac contactInWindow 0 ()).isSome := by
+  refine (isSome_abcScore_iff fun e h1 h2 => ?_).2
+    ⟨by decide, 0, by decide, by decide, by rw [activity_zero]; norm_num⟩
+  have he : e ∈ ({0, 1, 2} : Finset (Fin 5)) := by
+    rw [← window_eq]
+    exact Finset.mem_filter.2 ⟨Finset.mem_univ e, h1, h2⟩
+  fin_cases e <;> simp_all [contactInWindow]
 
 example (E : Fin 5) {s : ℝ} (h : abcScore chrom pos promoter dnase h3k27ac contact E () = some s) :
     0 ≤ s :=
@@ -143,7 +163,8 @@ example (E : Fin 5) {s : ℝ} (h : abcScore chrom pos promoter dnase h3k27ac con
 
 /-- The scores of the window sum to `1`, as `2/5 + 3/5 + 0` does. -/
 example : ∃ s : Fin 5 → ℝ,
-    (∀ E, abcScore chrom pos promoter dnase h3k27ac contact E () = some (s E)) ∧
+    (∀ E, chrom E = chrom (promoter ()) → |pos E - pos (promoter ())| ≤ 5 * 10 ^ 6 →
+      abcScore chrom pos promoter dnase h3k27ac contact E () = some (s E)) ∧
       ∑ E with chrom E = chrom (promoter ()) ∧ |pos E - pos (promoter ())| ≤ 5 * 10 ^ 6, s E = 1 :=
   exists_abcScore_sum_eq_one isSome
 
@@ -152,7 +173,7 @@ example : ∃ s : Fin 5 → ℝ,
 /-- With no H3K27ac signal anywhere, every activity vanishes and the gene gets no score, however
 accessible its elements are. -/
 example (E : Fin 5) : abcScore chrom pos promoter dnase (fun _ => 0) contact E () = none := by
-  rw [← Option.not_isSome_iff_eq_none, isSome_abcScore_iff fun e => contact_pos e]
+  rw [← Option.not_isSome_iff_eq_none, isSome_abcScore_iff fun e _ _ => contact_pos e]
   simp
 
 /-! ### Positive activity needs both signals -/

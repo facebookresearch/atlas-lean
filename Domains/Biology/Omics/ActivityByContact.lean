@@ -30,8 +30,9 @@ of the promoter of `G`, where that distance is zero, is set to a finite positive
   `ABC E G = A E * C E G / ∑ e ∈ 𝓔 G, A e * C e G`,
 
 where `𝓔 G` is the set of candidate elements within 5 Mb of the promoter of `G`, the promoter
-included. A gene whose denominator is not positive gets no score. An element is predicted to
-regulate `G` when its score exceeds a chosen threshold.
+included. Only the elements of `𝓔 G` are scored for `G`, and a gene whose denominator is not
+positive gets no score. An element is predicted to regulate `G` when its score exceeds a chosen
+threshold.
 
 ## Conventions
 
@@ -43,11 +44,11 @@ regulate `G` when its score exceeds a chosen threshold.
   of elements within 5 Mb of `promoter G` and contains it.
 * The signals `dnase`, `h3k27ac` and the contacts `contact` are real inputs. The source takes the
   signals nonnegative and the contacts positive; each theorem assumes only what it uses: positive
-  contacts with the gene in `isSome_abcScore_iff`, a nonnegative contact in `abcScore_nonneg`,
-  and nothing in `exists_abcScore_sum_eq_one`.
-* The score is an `Option ℝ`: `none` for every element when the denominator of `G` is not
-  positive, so that such a gene gets no score; otherwise every element `E` gets the value of the
-  formula, and those of the elements of `𝓔 G` sum to `1`.
+  contacts of the gene with the elements of `𝓔 G` in `isSome_abcScore_iff`, a nonnegative contact
+  in `abcScore_nonneg`, and nothing in `exists_abcScore_sum_eq_one`.
+* The score is an `Option ℝ`: `none` for an element outside `𝓔 G`, and for every element when the
+  denominator of `G` is not positive, so that such a gene gets no score; otherwise every element
+  of `𝓔 G` gets the value of the formula, and these values sum to `1`.
 
 ## Main definition
 
@@ -56,11 +57,12 @@ regulate `G` when its score exceeds a chosen threshold.
 
 ## Main results
 
-* `isSome_abcScore_iff`: with positive contacts, a gene gets scores exactly when some element
-  within 5 Mb of its promoter has positive activity.
+* `isSome_abcScore_iff`: with positive contacts in the window, an element gets a score for a gene
+  exactly when it lies within 5 Mb of the gene's promoter and some element there has positive
+  activity.
 * `abcScore_nonneg`: a score is nonnegative when its contact is.
-* `exists_abcScore_sum_eq_one`: when a gene gets scores, every element gets one, and the scores
-  of the elements within 5 Mb of its promoter sum to `1`.
+* `exists_abcScore_sum_eq_one`: when a gene gets a score, every element within 5 Mb of its
+  promoter gets one, and these scores sum to `1`.
 
 ## References
 
@@ -91,10 +93,11 @@ position `pos e`, and `𝓔 G` is the set of elements within 5 Mb of the promote
 `G`: those on its chromosome whose position differs from its own by at most `5 * 10 ^ 6`, the
 promoter included.
 
-The score is `none` when the denominator `∑ e ∈ 𝓔 G, A e * C e G` is not positive: such a gene
-gets no score, for any `E`. Otherwise every element `E` gets the value of the formula, and the
-scores of the elements of `𝓔 G` sum to `1` (`exists_abcScore_sum_eq_one`). With positive
-contacts, the denominator is positive exactly when some element of `𝓔 G` has positive activity
+Only the elements of `𝓔 G` are scored for `G`: the score is `none` when `E` is not in `𝓔 G`,
+and when the denominator `∑ e ∈ 𝓔 G, A e * C e G` is not positive, in which case the gene gets
+no score at all. Otherwise every element `E` of `𝓔 G` gets the value of the formula, and these
+scores sum to `1` (`exists_abcScore_sum_eq_one`). With positive contacts in the window, the
+denominator is positive exactly when some element of `𝓔 G` has positive activity
 (`isSome_abcScore_iff`). An element is predicted to regulate `G` when its score exceeds a chosen
 threshold. -/
 noncomputable def abcScore (chrom : Element → Chrom) (pos : Element → ℤ)
@@ -103,23 +106,50 @@ noncomputable def abcScore (chrom : Element → Chrom) (pos : Element → ℤ)
   let activity : Element → ℝ := fun e => √(dnase e * h3k27ac e)
   let total : ℝ := ∑ e with chrom e = chrom (promoter G) ∧ |pos e - pos (promoter G)| ≤ 5 * 10 ^ 6,
     activity e * contact e G
-  if 0 < total then some (activity E * contact E G / total) else none
+  if (chrom E = chrom (promoter G) ∧ |pos E - pos (promoter G)| ≤ 5 * 10 ^ 6) ∧ 0 < total then
+    some (activity E * contact E G / total)
+  else none
 
 variable {chrom : Element → Chrom} {pos : Element → ℤ} {promoter : Gene → Element}
   {dnase h3k27ac : Element → ℝ} {contact : Element → Gene → ℝ} {E : Element} {G : Gene}
 
-/-- With positive contacts with the gene `G`, the ABC score of an element `E` and `G` is defined
-exactly when some candidate element within 5 Mb of the promoter of `G` has positive activity
-`√(dnase e * h3k27ac e)`. In particular, whether `G` gets scores does not depend on `E`. -/
-theorem isSome_abcScore_iff (hcontact : ∀ e, 0 < contact e G) :
+/-- With positive contacts of the gene `G` with the candidate elements within 5 Mb of its promoter,
+the ABC score of an element `E` and `G` is defined exactly when `E` lies within 5 Mb of the
+promoter of `G` and some element there has positive activity `√(dnase e * h3k27ac e)`. -/
+theorem isSome_abcScore_iff
+    (hcontact : ∀ e, chrom e = chrom (promoter G) → |pos e - pos (promoter G)| ≤ 5 * 10 ^ 6 →
+      0 < contact e G) :
     (abcScore chrom pos promoter dnase h3k27ac contact E G).isSome ↔
+      (chrom E = chrom (promoter G) ∧ |pos E - pos (promoter G)| ≤ 5 * 10 ^ 6) ∧
+        ∃ e, chrom e = chrom (promoter G) ∧ |pos e - pos (promoter G)| ≤ 5 * 10 ^ 6 ∧
+          0 < √(dnase e * h3k27ac e) := by
+  have hterm : ∀ e ∈ ({e | chrom e = chrom (promoter G) ∧
+      |pos e - pos (promoter G)| ≤ 5 * 10 ^ 6} : Finset Element),
+      0 < √(dnase e * h3k27ac e) * contact e G ↔ 0 < √(dnase e * h3k27ac e) := by
+    intro e he
+    rw [Finset.mem_filter] at he
+    exact mul_pos_iff_of_pos_right (hcontact e he.2.1 he.2.2)
+  have hsum : 0 < ∑ e with chrom e = chrom (promoter G) ∧ |pos e - pos (promoter G)| ≤ 5 * 10 ^ 6,
+      √(dnase e * h3k27ac e) * contact e G ↔
       ∃ e, chrom e = chrom (promoter G) ∧ |pos e - pos (promoter G)| ≤ 5 * 10 ^ 6 ∧
         0 < √(dnase e * h3k27ac e) := by
+    rw [Finset.sum_pos_iff_of_nonneg fun e he =>
+      mul_nonneg (Real.sqrt_nonneg _) (hcontact e (Finset.mem_filter.1 he).2.1
+        (Finset.mem_filter.1 he).2.2).le]
+    constructor
+    · rintro ⟨e, he, hpos⟩
+      exact ⟨e, (Finset.mem_filter.1 he).2.1, (Finset.mem_filter.1 he).2.2, (hterm e he).1 hpos⟩
+    · rintro ⟨e, h1, h2, hpos⟩
+      have he : e ∈ ({e | chrom e = chrom (promoter G) ∧
+          |pos e - pos (promoter G)| ≤ 5 * 10 ^ 6} : Finset Element) :=
+        Finset.mem_filter.2 ⟨Finset.mem_univ e, h1, h2⟩
+      exact ⟨e, he, (hterm e he).2 hpos⟩
   simp only [abcScore]
-  split_ifs with h <;>
-    rw [Finset.sum_pos_iff_of_nonneg fun e _ => mul_nonneg (Real.sqrt_nonneg _) (hcontact e).le]
-      at h <;>
-    simpa [mul_pos_iff_of_pos_right (hcontact _), and_assoc] using h
+  split_ifs with h
+  · simp only [Option.isSome_some, true_iff]
+    exact ⟨h.1, hsum.1 h.2⟩
+  · simp only [Option.isSome_none, Bool.false_eq_true, false_iff]
+    exact fun ⟨hE, hex⟩ => h ⟨hE, hsum.2 hex⟩
 
 /-- An ABC score is nonnegative when its contact is: the activity, a square root, is nonnegative,
 and the denominator of a defined score is positive. -/
@@ -129,18 +159,21 @@ theorem abcScore_nonneg (hcontact : 0 ≤ contact E G) {s : ℝ}
   split_ifs at h with htotal
   rw [Option.some_inj] at h
   rw [← h]
-  exact div_nonneg (mul_nonneg (Real.sqrt_nonneg _) hcontact) htotal.le
+  exact div_nonneg (mul_nonneg (Real.sqrt_nonneg _) hcontact) htotal.2.le
 
-/-- When the gene `G` gets an ABC score for some element `E₀`, it gets one for every element `E`,
-and the scores of the candidate elements within 5 Mb of the promoter of `G` sum to `1`: they are
-the fractions of the gene's total activity-by-contact that these elements contribute. -/
+/-- When the gene `G` gets an ABC score for some element `E₀`, every candidate element `E` within
+5 Mb of the promoter of `G` gets one, and these scores sum to `1`: they are the fractions of the
+gene's total activity-by-contact that these elements contribute. -/
 theorem exists_abcScore_sum_eq_one {E₀ : Element}
     (h : (abcScore chrom pos promoter dnase h3k27ac contact E₀ G).isSome) :
-    ∃ s : Element → ℝ, (∀ E, abcScore chrom pos promoter dnase h3k27ac contact E G = some (s E)) ∧
+    ∃ s : Element → ℝ,
+      (∀ E, chrom E = chrom (promoter G) → |pos E - pos (promoter G)| ≤ 5 * 10 ^ 6 →
+        abcScore chrom pos promoter dnase h3k27ac contact E G = some (s E)) ∧
       ∑ E with chrom E = chrom (promoter G) ∧ |pos E - pos (promoter G)| ≤ 5 * 10 ^ 6, s E = 1 := by
   simp only [abcScore] at h ⊢
   split_ifs at h with htotal
-  · exact ⟨_, fun E => ite_eq_left htotal, by rw [← Finset.sum_div, div_self htotal.ne']⟩
+  · exact ⟨_, fun E h1 h2 => ite_eq_left ⟨⟨h1, h2⟩, htotal.2⟩,
+      by rw [← Finset.sum_div, div_self htotal.2.ne']⟩
   · simp at h
 
 end Domains.Biology.Omics.ActivityByContact
