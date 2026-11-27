@@ -20,3 +20,4 @@ Algorithmic information content of individual strings: universal description met
 - [Upper semicomputability of Kolmogorov complexity, and incompressible strings](upper-semicomputability-of-kolmogorov-complexity/README.md)
 - [Time-Bounded Kolmogorov Complexity and Meta-Complexity](time-bounded-kolmogorov-complexity/README.md)
 - [Probabilistic Kolmogorov Complexity and Symmetry of Information](probabilistic-kolmogorov-and-symmetry-of-information/README.md)
+- [Computability of Solomonoff induction](computability-of-solomonoff-induction/README.md)
