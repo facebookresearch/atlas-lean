@@ -66,9 +66,10 @@ fuel `n`, where `acc` holds the columns already emitted. A cell of the top row s
 of the left column steps up; an interior cell steps diagonally if `T[i-1][j-1] + σ` gives the
 cell, else up if `T[i-1][j] + gap` does, else left. It returns `acc` unchanged at cell `(0, 0)`,
 when the fuel is `0` (at any cell), and when a letter it needs is missing (`i > |xs|` or
-`j > |ys|`). `nwTraceback` starts at `(|xs|, |ys|)` with fuel `|xs| + |ys|`, and each step lowers
-the fuel and `i + j` by one, so only `(0, 0)` stops it. The table and the sequences are arrays, so
-a step reads its cells and letters in constant time. -/
+`j > |ys|`). `nwTraceback` starts at `(|xs|, |ys|)` with fuel `|xs| + |ys|`. Each move consumes
+one unit of fuel and decreases `i + j` by one on an up or left move and by two on a diagonal. Thus
+`i + j ≤ remaining fuel` is preserved, so it stops only at `(0, 0)`. The table and the sequences
+are arrays, so a step reads its cells and letters in constant time. -/
 def nwTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : Array (Array ℤ)) (xs ys : Array α) :
     ℕ → ℕ → ℕ → Alignment α → Alignment α
   | 0, _, _, acc => acc
@@ -112,8 +113,9 @@ fuel `n`, where `acc` holds the columns already emitted. It stops at a cell of t
 left column, at an interior cell equal to `0`, when the fuel is `0` (even at a nonzero interior
 cell), and when a letter it needs is missing (`i > |xs|` or `j > |ys|`); it then returns that
 cell's position and `acc`. Otherwise it steps as in `nwTraceAux`, in constant time per step.
-`swTraceback` starts at a cell `(i, j)` of the table with fuel `i + j`, and each step lowers both
-by one, so only the border or a cell equal to `0` stops it. -/
+`swTraceback` starts at a cell `(i, j)` of the table with fuel `i + j`. Each move consumes one unit
+of fuel and decreases `i + j` by one on an up or left move and by two on a diagonal. Thus
+`i + j ≤ remaining fuel` is preserved, so only the border or a cell equal to `0` stops it. -/
 def swTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : Array (Array ℤ)) (xs ys : Array α) :
     ℕ → ℕ → ℕ → Alignment α → ℕ × ℕ × Alignment α
   | 0, i, j, acc => (i, j, acc)

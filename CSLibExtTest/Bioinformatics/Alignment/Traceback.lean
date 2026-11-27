@@ -61,8 +61,8 @@ example : Cslib.Bioinformatics.Alignment.SmithWaterman.swTab s 1 [5, 6] [7, 8] =
 
 example : localScore s 1 [5, 6] [7, 8] = 4 := by decide +kernel
 
-/-- `argmaxCell` returns a real entry even when row `0` is empty, and `(0, 0)` only for a table
-with no entry. -/
+/-- `argmaxCell` returns a real entry even when row `0` is empty. The `(0, 0)` fallback is used
+only when the table has no entry. -/
 example : argmaxCell [[], [-1]] = (1, 0) := by decide +kernel
 
 example : argmaxCell [[], [0]] = (1, 0) := by decide +kernel
