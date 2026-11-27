@@ -2,20 +2,15 @@
 
 Groups of matrices over fields and rings: SL2, PGL2 and SU(2) and their conjugacy and subgroups (Dickson's classification), Jordan, Malcev and Selberg theorems, transvections, eigenvalues of elements of prime order, and linearity of specific groups.
 
+- [Subgroups of linear groups](subgroups-of-linear-groups/README.md)
 - [Conjugacy by eigenvalues in SL₂](conjugacy-by-eigenvalues-in-sl/README.md)
 - [Dickson's classification of finite subgroups of PGL₂](dickson-s-classification-of-finite-subgroups-of/README.md)
 - [Double commutators of transvections](double-commutators-of-transvections/README.md)
 - [Eigenvalues of elements of prime order](eigenvalues-of-elements-of-prime-order/README.md)
-- [Frattini subgroups of linear groups](frattini-subgroups-of-linear-groups/README.md)
-- [Free subgroups of linear groups](free-subgroups-of-linear-groups/README.md)
 - [Jordan's theorem on finite linear groups](jordan-s-theorem-on-finite-linear-groups/README.md)
 - [Linear groups inside division rings](linear-groups-inside-division-rings/README.md)
-- [Linear groups that are virtually residually p](linear-groups-that-are-virtually-residually-p/README.md)
 - [Linearity of one-relator groups](linearity-of-one-relator-groups/README.md)
 - [Linearity of Sapir's group](linearity-of-sapir-s-group/README.md)
-- [Maximal periodic subgroups of linear groups](maximal-periodic-subgroups-of-linear-groups/README.md)
-- [Maximal subgroups of linear groups](maximal-subgroups-of-linear-groups/README.md)
-- [Regular subsets of GL(V) together with zero](regular-subsets-of-gl-v-together-with-zero/README.md)
 - [Stable groups of linear automorphisms](stable-groups-of-linear-automorphisms/README.md)
 - [The special unitary group SU(2)](the-special-unitary-group-su-2/README.md)
 - [Exponent of the general linear group over a prime field](general-linear-group-exponent-eq-lcm-eq.md)
