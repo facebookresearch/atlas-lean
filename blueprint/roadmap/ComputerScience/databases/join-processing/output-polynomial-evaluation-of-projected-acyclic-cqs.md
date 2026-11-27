@@ -11,17 +11,16 @@ delay bound.
 
 ## Expansion
 
-This node states a precise result. Its proof composes the pages below; it is not a theorem quoted from
-the cited source.
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Algorithm cost model.
+This page becomes ready once a published source states this prefix enumeration, its prefix invariant and its
+call count; the cited source gives output-polynomial evaluation of acyclic queries by Yannakakis' method, not this
+enumerator.
 
 ## Depends on
 
 - [Projected CQ prefix enumeration and correctness](projected-cq-prefix-enumeration-and-correctness.md)
 - [Characterizations of acyclic database schemas](characterizations-of-acyclic-database-schemas.md)
+- [The word-RAM model](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Proof depends on
 

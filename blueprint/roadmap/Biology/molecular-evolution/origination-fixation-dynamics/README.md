@@ -12,6 +12,8 @@
 - [Stochastic models of viral evolution](stochastic-models-of-viral-evolution/README.md)
 - [Survival of the flattest in the quasispecies model](survival-of-the-flattest-in-the-quasispecies-model/README.md)
 - [Mutation-accumulation rate from allele frequencies](mutation-accumulation-rate-from-allele-frequencies/README.md)
+- [Fitness–distance monotonicity and mutation-rate control](fitness-distance-monotonicity-and-mutation-rate-control/README.md)
+- [Genome size evolution under rearrangements](genome-size-evolution-under-rearrangements/README.md)
 - [Position-specific substitution rates in binding sites](position-specific-substitution-rates-in-binding-sites/README.md)
 - [Biochemical epistasis on combinatorially complete libraries](biochemical-epistasis-on-combinatorially-complete-libraries/README.md)
 - [Germline de novo mutation rates](germline-de-novo-mutation-rates/README.md)
