@@ -42,9 +42,8 @@ example : ∃ (H : Subgroup (ZMod (Nat.fermatNumber 5))ˣ) (u : (ZMod (Nat.ferma
   rw [ZMod.coe_unitOfCoprime]
   norm_num
 
--- The paper's `448911555` is a strong base of `F_5` but lies in no coset of the subgroup:
--- no unit of the returned subgroup equals it. Powers of `2` repeat with period `64`, so the
--- three families of `S_5` have only `3 * 64` residues, all different from `448911555`.
+-- The paper's `448911555` is a strong base of `F_5` outside the returned subgroup. Since `2` has
+-- order `64`, it suffices to check the three expressions for each exponent from `0` through `63`.
 example : ∃ H : Subgroup (ZMod (Nat.fermatNumber 5))ˣ,
     ∀ u ∈ H, (u : ZMod (Nat.fermatNumber 5)) ≠ 448911555 := by
   obtain ⟨H, hmem, _, _⟩ :=
