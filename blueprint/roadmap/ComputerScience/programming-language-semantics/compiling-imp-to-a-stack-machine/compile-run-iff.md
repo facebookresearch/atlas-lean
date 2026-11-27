@@ -1,0 +1,5 @@
+# Characterization of halting runs of compiled IMP code with arbitrary stacks
+
+The stack machine runs a program $P$, a list of instructions, on configurations $(pc, \sigma, s)$ consisting of a program counter $pc \in \mathbb{N}$, a stack $\sigma$ (a list of natural numbers, top first) and an IMP state $s$; a configuration steps by executing the instruction at position $pc$ of $P$ (counted from $0$), and there is no step when $pc \ge |P|$. The machine is deterministic. For an IMP command $c$, $C_0(c)$ is the code compiled from $c$ at base address $0$, and $\ell(c)$ is its instruction count, the length of $C_0(c)$ and its halt address. Write $x \to^{*} y$ for zero or more machine steps of $C_0(c)$. For every command $c$, all states $s, s'$ and all stacks $\sigma, \sigma'$,
+
+$$(0, \sigma, s) \to^{*} (\ell(c), \sigma', s') \iff \big(c \text{ run from } s \text{ terminates in } s'\big) \wedge \sigma' = \sigma.$$
