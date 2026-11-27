@@ -1,6 +1,6 @@
 # Indistinguishability obfuscation plus worst-case hardness of NP yields one-way functions
 
-If there exists an indistinguishability obfuscator for polynomial-size circuits (even with only $1/\mathrm{poly}$ indistinguishability) and $\mathsf{NP}\not\subseteq\mathsf{ioBPP}$, then one-way functions exist. Thus iO by itself is not a "cryptographic" assumption only in the trivial world where NP is easy infinitely often.
+If there exists an indistinguishability obfuscator for polynomial-size circuits (even an imperfect one, which preserves functionality only with overwhelming probability over its randomness) and $\mathsf{NP}\not\subseteq\mathsf{ioBPP}$, then one-way functions exist. Thus iO by itself is not a "cryptographic" assumption only in the trivial world where NP is easy infinitely often.
 
 ## Proof sketch
 
@@ -17,4 +17,4 @@ Consider the function mapping randomness to an obfuscation of the constant-zero 
 
 ## Sources
 
-- Ilan Komargodski, Tal Moran, Moni Naor, Rafael Pass, Alon Rosen, Eylon Yogev, "One-Way Functions and (Im)perfect Obfuscation", FOCS (2014).
+- Ilan Komargodski, Tal Moran, Moni Naor, Rafael Pass, Alon Rosen, Eylon Yogev, "One-Way Functions and (Im)perfect Obfuscation", FOCS (2014), IACR ePrint 2014/347, Theorem 4.1.
