@@ -222,13 +222,19 @@ class DeprecationTests(unittest.TestCase):
 
     def test_tool_output_cannot_command_the_runner(self):
         # A deprecation's text is the author's, and can hold a line that reads as a command.
-        build = ("warning: MathlibExt/D.lean:15:29: `D.old` has been deprecated: see below\n"
-                 "::error file=MathlibExt/Other.lean,line=1::forged\n")
+        build = ("warning: MathlibExt/D.lean:15:29: `D.old` has been deprecated: see "
+                 "##[error file=MathlibExt/Other.lean;line=1]forged and ##[stop-commands]tok\n"
+                 "::error file=MathlibExt/Other.lean,line=1::forged\r::warning::forged\n")
         files = [ChangedFile("MathlibExt/D.lean", "A", frozenset({15}))]
         _, out = run_main("-- No environment linters were run for MathlibExt.LintChanged.\n", 0,
                           files=files, build=build)
-        self.assertNotIn("\n::error file=MathlibExt/Other.lean", out)
+        # The check's own annotation is the only command; the runner reads its message as data.
+        commands = [line for line in out.splitlines() if line.lstrip().startswith("::")]
+        self.assertEqual(len(commands), 1)
+        self.assertTrue(commands[0].startswith("::error file=MathlibExt/D.lean,line=15,"))
+        self.assertFalse(any("##[" in line for line in out.splitlines() if line not in commands))
         self.assertIn(": :error file=MathlibExt/Other.lean", out)
+        self.assertIn("## [stop-commands]tok", out)
 
 
 class MainTests(unittest.TestCase):

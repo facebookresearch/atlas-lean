@@ -161,8 +161,8 @@ def run_checks(base: str, round_: int) -> bool:
                             "--base", base],
                            cwd=ROOT, capture_output=True, text=True, env=child_env())
     if build.returncode != 0:
-        print(f"FAIL lean_changes.py build (round {round_ + 1}): exit {build.returncode}\n"
-              f"{build.stdout}{build.stderr}")
+        print(inert(f"FAIL lean_changes.py build (round {round_ + 1}): exit {build.returncode}\n"
+                    f"{build.stdout}{build.stderr}"))
         return False
     ok = True
     for script, expected in EXPECTED.items():
