@@ -16,11 +16,19 @@ $$\mathrm{Orbits}(x,y) = \tilde Z_G\big(f_X(x), f_X(x^2), \dots;\ f_Y(y), f_Y(y^
 
 $$\mathrm{Orbits}(x,y) = \frac1{2M}\sum_{d\mid M}\varphi(d)f(x^d)^{M/d}f(y^d)^{M/d} + \frac12 f(x)f(y)f(x^2)^{\frac{M-1}2}f(y^2)^{\frac{M-1}2},$$
 
-and for $M$ even the reflection term is replaced by $\frac14 f(x)^2f(x^2)^{\frac{M-2}2}f(y^2)^{\frac M2} + \frac14 f(y)^2f(y^2)^{\frac{M-2}2}f(x^2)^{\frac M2}$. The number of distinct circular chains with $2M$ alternations is the coefficient of $x^{N_{AT}}y^{N_{GC}}$, computable in closed form from $[x^r]f(x^a)^b = \binom{(r - ab)/a - 1 + b}{b-1}$ when $a \mid r$ (and $0$ otherwise); normalizing over $M$ gives the probability distribution of the number of alternations, a measure of sequence heterogeneity relevant to DNA breathing dynamics.
+and for $M$ even the reflection term is replaced by $\frac14 f(x)^2f(x^2)^{\frac{M-2}2}f(y^2)^{\frac M2} + \frac14 f(y)^2f(y^2)^{\frac{M-2}2}f(x^2)^{\frac M2}$. The number of distinct circular chains with $2M$ alternations is the coefficient of $x^{N_{AT}}y^{N_{GC}}$, computable in closed form from
+
+$$[x^r]f(x^a)^b = \begin{cases} 1, & b = r = 0,\\ \binom{r/a - 1}{b - 1}, & b \ge 1,\ a \mid r,\ r \ge ab,\\ 0, & \text{otherwise}\end{cases}$$
+
+(the case $b = 0$ occurs in the reflection terms for $M = 1, 2$); normalizing over $M$ gives the probability distribution of the number of alternations, a measure of sequence heterogeneity relevant to DNA breathing dynamics.
+
+## Depends on
+
+- [Euler's totient function](../../../../NumberTheory/arithmetic-functions/divisor-totient-functions/euler-totient.md)
 
 ## Proof sketch
 
-The proof follows Burnside's lemma: an element $g$ fixes a valid colouring exactly when the colouring is constant on each cycle of $g$, and since cycles do not mix $X$ and $Y$, a $k$-cycle in $X$ contributes $f_X(x^k)$ and a $k$-cycle in $Y$ contributes $f_Y(y^k)$; averaging over $G$ gives the cycle index. For the dihedral action on alternating blocks, rotations by multiples of $2$ preserve the block types (giving the totient sum), and reflections pair blocks either across vertices or across edges, which is why the parity of $M$ matters.
+The proof follows Burnside's lemma: an element $g$ fixes a valid colouring exactly when the colouring is constant on each cycle of $g$, and since cycles do not mix $X$ and $Y$, a $k$-cycle in $X$ contributes $f_X(x^k)$ and a $k$-cycle in $Y$ contributes $f_Y(y^k)$; averaging over $G$ gives the cycle index. For the dihedral action on alternating blocks, rotations by multiples of $2$ preserve the block types (giving the totient sum), and reflections pair blocks either across vertices or across edges, which is why the parity of $M$ matters. The coefficient formula expands $f(x^a)^b = x^{ab}(1 - x^a)^{-b} = \sum_{j\ge0}\binom{j+b-1}{b-1}x^{a(b+j)}$ for $b \ge 1$, while $f(x^a)^0 = 1$.
 
 ## Sources
 

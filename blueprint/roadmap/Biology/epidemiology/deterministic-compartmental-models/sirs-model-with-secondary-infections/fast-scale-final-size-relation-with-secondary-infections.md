@@ -8,7 +8,7 @@ $$
 
 and its equilibria form the critical set $\mathcal{C}_1 = \{I = Y = 0\}$.
 
-**Result.** Every trajectory of the fast system converges to $\mathcal{C}_1$. Starting from $(S_0, I_0, T_0, P_0, Y_0)$ with $S_0 > 0$, the limit $S_\infty$ is the unique solution in $(0, S_0)$ of
+**Result.** Every trajectory of the fast system converges to $\mathcal{C}_1$. Starting from $(S_0, I_0, T_0, P_0, Y_0)$ with $S_0 > 0$ and $I_0 + \alpha Y_0 > 0$, the limit $S_\infty$ is the unique solution in $(0, S_0)$ of
 
 $$
 \log\frac{S_\infty}{S_0} - \beta\left(\frac{S_\infty - S_0}{\gamma_1} + \alpha\,\frac{P_0 (S_\infty / S_0)^{\nu} - P_0}{\gamma_2}\right) = -\beta\left(\frac{I_0}{\gamma_1} + \alpha\,\frac{Y_0}{\gamma_2}\right),
@@ -27,7 +27,7 @@ $$
 
 ## Proof sketch
 
-Both susceptible classes are depleted by the same force of infection $\lambda = \beta(I + \alpha Y)$, so $(\log P)' = \nu (\log S)'$ and $P / P_0 = (S/S_0)^{\nu}$ along orbits. Integrating $I' + Y'$ and using $\int_0^\infty \lambda\,dt = -\log(S_\infty/S_0)$ gives the implicit equation, which reduces to the Kermack–McKendrick final-size equation when $P_0 = Y_0 = 0$. In the full three-scale system this relation is the "entry" map of the slow–fast cycle: it determines where an outbreak lands on $\mathcal{C}_1$, and hence whether the next outbreak starts on the intermediate time scale or only after slow loss of protection.
+Both susceptible classes are depleted by the same force of infection $\lambda = \beta(I + \alpha Y)$, so $(\log P)' = \nu (\log S)'$ and $P / P_0 = (S/S_0)^{\nu}$ along orbits. Integrating $I' + Y'$ and using $\int_0^\infty \lambda\,dt = -\log(S_\infty/S_0)$ gives the implicit equation, which reduces to the Kermack–McKendrick final-size equation when $P_0 = Y_0 = 0$. The hypothesis $I_0+\alpha Y_0>0$ makes the force of infection positive on an initial interval, so $S_\infty<S_0$; with $I_0=Y_0=0$ the initial point is itself an equilibrium and $S_\infty=S_0$. In the full three-scale system this relation is the "entry" map of the slow–fast cycle: it determines where an outbreak lands on $\mathcal{C}_1$, and hence whether the next outbreak starts on the intermediate time scale or only after slow loss of protection.
 
 ## Sources
 

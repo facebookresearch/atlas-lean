@@ -10,7 +10,7 @@ dQ &= \big[d_3 S + d_2 E + d_1 I - (\mu + \tau)Q\big]dt + \sigma_4 Q\,dB_4,\\
 dR &= \big[\eta S + \tau Q + \gamma I - \mu R\big]dt + \sigma_5 R\,dB_5,
 \end{aligned}$$
 
-with positive constants: recruitment $b$, transmission $\beta$, natural death $\mu$, vaccination $\eta$, quarantine rates $d_1, d_2, d_3$, latency exit $\lambda$, disease death $\nu$, recovery $\gamma$ and quarantine release $\tau$. The incidence $h(I)$ is a general increasing function (for instance $h(x) = x/(1 + 0.01x)$). Write $\tilde S_0 = b/(\eta + \mu + d_3)$ and $\sigma_{\max}^2 = \max_i \sigma_i^2$.
+with positive constants: recruitment $b$, transmission $\beta$, natural death $\mu$, vaccination $\eta$, quarantine rates $d_1, d_2, d_3$, latency exit $\lambda$, disease death $\nu$, recovery $\gamma$ and quarantine release $\tau$. The incidence $h$ is nonnegative and $C^2$ on $[0,\infty)$, with $h(0) = 0$, $h'(0) > 0$ and $h(I)/I$ non-increasing on $I > 0$, so that $h(I) \le h'(0)I$ (for instance $h(x) = x/(1 + 0.01x)$; $h(x) = x^2$ is excluded). Write $\tilde S_0 = b/(\eta + \mu + d_3)$ and $\sigma_{\max}^2 = \max_i \sigma_i^2$.
 
 **Theorem.**
 1. *Well-posedness.* For every initial value in $\mathbb{R}_+^5$ there is a unique global solution, which stays in $\mathbb{R}_+^5$ almost surely.
@@ -24,7 +24,7 @@ and the time averages $\langle S\rangle_t \to \tilde S_0$, $\langle Q\rangle_t \
 
 ## Proof sketch
 
-Positivity and global existence follow from a Lyapunov function of the form $\sum (x - 1 - \ln x)$ that cannot explode before an exit time. Permanence uses moment bounds from Young's and Chebyshev's inequalities. For extinction, Itô's formula applied to $\ln(E + I)$ and the comparison $S(t) \lesssim \tilde S_0$ (the disease-free level) give a growth rate bounded by the linearized force of infection $\beta h'(0)\tilde S_0$ minus mortality and a noise correction; the strong law for the martingale terms closes the argument. The source's statement of Theorem 5.1 (arXiv:2412.00405) prints the noise hypothesis as $\sigma_1^2 \wedge \sigma_3^2$; its proof uses $\sigma_2^2 \wedge \sigma_3^2$ throughout, which is the hypothesis that makes the stated rate negative, and is the one stated here. Geometric ergodicity follows from the Meyn–Tweedie criterion: a minorization condition on a compact set together with a drift condition $\mathcal{L}V \le \beta_1 - \beta_2 V$.
+Positivity and global existence follow from a Lyapunov function of the form $\sum (x - 1 - \ln x)$ that cannot explode before an exit time. Permanence uses moment bounds from Young's and Chebyshev's inequalities. For extinction, Itô's formula applied to $\ln(E + I)$ the bound $h(I) \le h'(0)I$, and the comparison $S(t) \lesssim \tilde S_0$ (the disease-free level) give a growth rate bounded by the linearized force of infection $\beta h'(0)\tilde S_0$ minus mortality and a noise correction; the strong law for the martingale terms closes the argument. The source's statement of Theorem 5.1 (arXiv:2412.00405) prints the noise hypothesis as $\sigma_1^2 \wedge \sigma_3^2$; its proof uses $\sigma_2^2 \wedge \sigma_3^2$ throughout, which is the hypothesis that makes the stated rate negative, and is the one stated here. Geometric ergodicity follows from the Meyn–Tweedie criterion: a minorization condition on a compact set together with a drift condition $\mathcal{L}V \le \beta_1 - \beta_2 V$.
 
 ## Sources
 

@@ -30,7 +30,7 @@ $$
 \Phi\bigl(c_{\mathrm{cens}}^{(N)}\bigr) = \mathbb{P}\bigl[-\log_2 C \le c_{\mathrm{cens}} - \log_2 N\bigr],
 $$
 
-so the false-negative risk $1 - \Phi(c^{(N)}_{\mathrm{cens}})$ grows with $N$. Then $\hat p$ estimates $p\,\Phi(c^{(N)}_{\mathrm{cens}})$, and the corrected interval is
+so the false-negative risk $1 - \Phi(c^{(N)}_{\mathrm{cens}})$ grows with $N$. Assume further, as an approximation, that each infected sample in a pool is missed independently with probability $1 - \Phi(c^{(N)}_{\mathrm{cens}})$, so that a pool is positive with probability $1 - (1 - p\,\Phi(c^{(N)}_{\mathrm{cens}}))^N$. (Under the dilution model itself a pool with several infected samples is detected more often, since their loads add.) Then $\hat p$ estimates $p\,\Phi(c^{(N)}_{\mathrm{cens}})$, and the corrected interval is
 
 $$
 \mathrm{CI}_{1-\alpha}(p) = \left[\frac{\hat p}{\Phi(c^{(N)}_{\mathrm{cens}})} \pm \frac{q_\alpha}{\sqrt n}\,\frac{(1 - \bar X_n^{(N)})^{1/N-1}\sqrt{\bar X_n^{(N)}(1 - \bar X_n^{(N)})}}{N\,\Phi(c^{(N)}_{\mathrm{cens}})}\right].

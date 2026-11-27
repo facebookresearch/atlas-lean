@@ -10,7 +10,11 @@ $$P(T = i) = \int_0^\infty \binom{k}{i}\hat p(a)^i\big(1 - \hat p(a)\big)^{k-i}\
 
 $$P(T_{\mathrm{tot}} = i) = \int_0^\infty \Big[p\,P(I_a = 1)\,P(T = i-1 \mid a) + \big(1 - p\,P(I_a = 1)\big)P(T = i \mid a)\Big]\varphi(a)\, da,$$
 
-with $P(T = i \mid a) = \binom{k}{i}\hat p(a)^i(1-\hat p(a))^{k-i}$. For a random degree, average the integrand over $P(K = k)$, summing over $k \ge i$.
+with $P(T = i \mid a) = \binom{k}{i}\hat p(a)^i(1-\hat p(a))^{k-i}$ for $0 \le i \le k$ and $P(T = i \mid a) = 0$ otherwise. For a random degree, write $P_k(T = j \mid a)$ for this binomial probability with degree $k$; then
+
+$$P(T_{\mathrm{tot}} = i) = \sum_{k \ge \max(i-1,0)} P(K = k)\int_0^\infty \Big[p\,P(I_a = 1)\,P_k(T = i-1 \mid a) + \big(1 - p\,P(I_a = 1)\big)P_k(T = i \mid a)\Big]\varphi(a)\, da,$$
+
+where the term $k = i-1$ contributes only through backward tracing, so that the probabilities sum to $1$ over $i \ge 0$.
 
 **Corollary (identifiability).** After rescaling age by $\beta$, $P(T = i)$ and $P(T_{\mathrm{tot}} = i)$ depend on $(\alpha, \beta, \sigma)$ only through $R_0 = \mathbb E[K]\beta/(\alpha+\sigma+\beta)$, besides the degree distribution and $p$. Counts of traced contacts per index case therefore identify $R_0$ and $p$ by maximum likelihood, but not the individual rates.
 

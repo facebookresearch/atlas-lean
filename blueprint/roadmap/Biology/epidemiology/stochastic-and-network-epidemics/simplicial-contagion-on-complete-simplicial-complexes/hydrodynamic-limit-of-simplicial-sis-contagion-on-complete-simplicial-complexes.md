@@ -1,8 +1,8 @@
 # Hydrodynamic limit of simplicial SIS contagion on complete simplicial complexes
 
-**Model.** On $N$ nodes forming a complete simplicial complex of order $M$ (every set of $i+1 \le M+1$ nodes is an $i$-simplex), each node is susceptible or infected. Infected nodes recover at rate $\gamma$. A susceptible node in an $(i+1)$-node simplex whose other $i$ nodes are all infected receives infection pressure $r_i = s_i N^{-i}$ from that simplex ($s_i \ge 0$; $s_1 = \lambda$ is the pairwise rate, $s_2 = \mu$ the triangle rate, $s_3 = \theta$ the tetrahedron rate). Let $m^N(t)$ be the number of infected nodes.
+**Model.** On $N$ nodes forming a complete simplicial complex of order $M$ (every set of $i+1 \le M+1$ nodes is an $i$-simplex), each node is susceptible or infected. Infected nodes recover at rate $\gamma$. A susceptible node in an $(i+1)$-node simplex whose other $i$ nodes are all infected receives infection pressure $r_i = s_i N^{-i}$ from that simplex ($s_i \ge 0$; $s_1 = \lambda$ is the pairwise rate, $s_2 = \mu$ the triangle rate, $s_3 = \theta$ the tetrahedron rate). Let $I^N_t$ be the number of infected nodes, $m^N(t) = \mathbb E(I^N_t)$ its mean, and $\eta^N_t = (I^N_t - m^N(t))/N$ the fluctuation of the infected density about its mean, so that $I^N_t/N = m^N(t)/N + \eta^N_t$.
 
-**Theorem (hydrodynamic limit).** Fix $T > 0$. Assume $m^N(t)/N$ converges uniformly on $[0,T]$ to a deterministic $m_I(t)$ and the martingale remainder $\eta^N_t$ in the semimartingale decomposition of $m^N$ satisfies $\sup_{t\le T}\mathbb E[\eta^N_t] \to 0$. Then
+**Theorem (hydrodynamic limit).** Fix $T > 0$. Assume $m^N(t)/N$ converges uniformly on $[0,T]$ to a deterministic $m_I(t)$, and the fluctuations vanish, $\sup_{t\le T}\mathbb E|\eta^N_t| \to 0$ (the source writes $\mathbb E(\eta^N_t)$, which is $0$ by definition; its discussion uses the vanishing of the moments of $\eta^N_t$). Then $I^N_t/N \to m_I(t)$ in law for every $t \le T$, and
 
 $$\frac{dm_I}{dt} = (s_1 - \gamma)m_I + \sum_{i=1}^{M-1}\Big(\frac{s_{i+1}}{(i+1)!} - \frac{s_i}{i!}\Big)m_I^{i+1} - \frac{s_M}{M!}m_I^{M+1} = (1 - m_I)\sum_{i=1}^M \frac{s_i}{i!}m_I^i - \gamma m_I .$$
 

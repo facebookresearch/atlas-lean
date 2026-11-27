@@ -13,11 +13,11 @@ where each $K_i$ is a probability density and the transit functions $f_i$ may be
 $$x_i(t)=\int_0^\infty f_i\Big(\int_0^\infty x_{i-1}(t-s-\phi)K_i(\phi)\,d\phi\Big)\exp\Big(-\int_{t-s}^t\mu(x_n(u))\,du\Big)ds .$$
 
 Iterating gives $x_i(t)=G_i(x_{n,t})$, a functional of the history segment $x_{n,t}$ of $x_n$ alone.
-2. The system, with initial data $x_i(s)=\xi_i(s)$ for $s\le t_0$, is equivalent to the scalar distributed delay differential equation
+2. Let the initial data $x_i(s)=\xi_i(s)$, $s\le t_0$, be *compatible*: $\xi_i=G_i(\xi_n)$ for $i=1,\dots,n-1$, i.e. the intermediate histories are the ones the cyclic structure produces from the history of $x_n$ (this constrains $\xi_1,\dots,\xi_{n-1}$; arbitrary histories need not be of this form). Then the system is equivalent to the scalar distributed delay differential equation
 
 $$\frac{d}{dt}x_n(t)=f_n\Big(\int_0^\infty G_{n-1}\big(x_n(t-\phi)\big)K_n(\phi)\,d\phi\Big)-\mu(x_n(t))\,x_n(t),$$
 
-with a correspondingly constructed history function $\psi$ such that $\xi_i=G_i(\psi)$.
+with history function $\psi=\xi_n$, so that $\xi_i=G_i(\psi)$.
 3. If $\mu\le\mu_{\max}$, $f_i(0)=0$, $f_i(x)>0$ for $x>0$, and the initial data are positive in the averaged sense, then $x_n(t)\ge0$ for all $t>0$.
 
 ## Proof sketch

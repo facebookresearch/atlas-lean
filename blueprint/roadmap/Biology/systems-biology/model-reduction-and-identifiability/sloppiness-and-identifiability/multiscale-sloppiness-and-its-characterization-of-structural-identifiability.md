@@ -8,7 +8,7 @@ $$
 \mathcal S_{p_0}(\delta)=\frac{\sup\{d(p,p_0):d_P(p,p_0)=\delta\}}{\inf\{d(p,p_0):d_P(p,p_0)=\delta\}}.
 $$
 
-**Theorem.** If $d_P$ is strongly equivalent to the Euclidean metric, the equivalence class of $p_0$ is a single point if and only if
+**Theorem.** If $P$ is closed in $\mathbb R^r$ and $d_P$ is strongly equivalent to the Euclidean metric (so every $d_P$-sphere in $P$ is compact), the equivalence class of $p_0$ is a single point if and only if
 
 $$
 \inf_{p\in P}\{d(p,p_0):d_P(p,p_0)=\delta\}>0\qquad\text{for all }\delta>0.
@@ -20,7 +20,7 @@ In other words, finite $\delta$-sloppiness at every scale is equivalent to struc
 
 ## Proof sketch
 
-If $p\neq p_0$ has the same predictions, then $d(p,p_0)=0$ at scale $\delta=d_P(p,p_0)$, so the infimum vanishes. Conversely, a zero infimum at some scale gives, by compactness of the $d_P$-sphere and continuity, a distinct parameter with identical data distribution, hence identical predictions. For linear Gaussian models the KL divergence is exactly the quadratic form $\tfrac12(p-p_0)^\top J^\top\Sigma^{-1}J(p-p_0)$, which is the Fisher metric. These notions apply to the ODE models of systems biology, where $\phi$ maps rate constants to observed trajectories.
+If $p\neq p_0$ has the same predictions, then $d(p,p_0)=0$ at scale $\delta=d_P(p,p_0)$, so the infimum vanishes. Conversely, a zero infimum at some scale gives, by compactness of the $d_P$-sphere and continuity, a distinct parameter with identical data distribution, hence identical predictions. Closedness of $P$ is needed for that compactness: on the open half-plane $P = \{x > 0\} \subset \mathbb R^2$ with $p_0 = (1,0)$, the map $\phi(x,y) = \big(1 - x(1-x),\ x(x-1)(x-\tfrac12),\ xy\big)$ is injective, yet $\phi(p) \to \phi(p_0)$ as $p \to (0,\sqrt3)$ along the circle $|p - p_0| = 2$, so the infimum at $\delta = 2$ is $0$. For linear Gaussian models the KL divergence is exactly the quadratic form $\tfrac12(p-p_0)^\top J^\top\Sigma^{-1}J(p-p_0)$, which is the Fisher metric. These notions apply to the ODE models of systems biology, where $\phi$ maps rate constants to observed trajectories.
 
 ## Sources
 

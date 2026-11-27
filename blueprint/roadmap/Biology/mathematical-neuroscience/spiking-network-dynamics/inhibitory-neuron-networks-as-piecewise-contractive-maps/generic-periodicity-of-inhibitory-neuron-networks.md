@@ -4,7 +4,17 @@
 
 **Theorem (abstract).** Let $F$ be a locally contractive piecewise continuous map with the separation property. Then, generically (for an open and dense set of such maps), $F$ is eventually periodic with a finite number of persistent limit cycles.
 
-**Neural model.** Consider $n \ge 3$ inhibitory neurons with membrane potentials $V_i \in [0,1]$ that relax between spikes according to a dissipative ODE, fire when $V_i$ reaches threshold $1$ and reset to $0$, and inhibit every other neuron at each spike (synaptic jumps that lower $V_j$), on a complete interaction graph, with dissipation large compared with the inhibitory couplings.
+**Neural model.** Consider $n \ge 3$ inhibitory neurons with state $V = (V_1, \dots, V_n) \in Q = [-1,1]^n$. Between spikes each potential obeys
+
+$$\frac{dV_i}{dt} = \gamma_i(V_i), \qquad \gamma_i \in C^1([-1,1]),\quad \gamma_i > 0,\quad \gamma_i' < 0 \text{ on } [-1,1]\qquad\text{(1)}$$
+
+(pacemaker neurons with dissipative free evolution, e.g. $\gamma_i(V) = \beta_i - \alpha_iV$ with $0 < \alpha_i < \beta_i$). When a single neuron $i$ reaches the threshold $1$, it resets and inhibits all the others instantaneously:
+
+$$V_i \mapsto 0, \qquad V_j \mapsto \max\{-1,\ V_j - H_{ij}\}\quad (j \ne i),\qquad\text{(6)–(7)}$$
+
+with constants $H_{ij} > 0$, so the inhibitory graph is complete, $\epsilon_0 = \min_{i\ne j}H_{ij} > 0$ (8). With $\Gamma = \min_i\min_{V\in[1/4,3/4]}|\gamma_i'(V)|$, assume the relatively large dissipation conditions
+
+$$\max_{i\ne j}H_{ij} < \frac14, \qquad \max_{i,j}|\gamma_i(3/4) - \gamma_j(3/4)| < \frac{\Gamma}{4}, \qquad \frac{\max_{i\ne j}H_{ij}}{\min_{i\ne j}H_{ij}} - 1 < \frac{\Gamma}{4\max_i\gamma_i(3/4)}.\qquad\text{(9)–(11)}$$
 
 **Theorem (network).** Under these hypotheses there is a Poincaré section $B^+ = \bigcup_i B_i^+$, homeomorphic to an $(n-1)$-dimensional compact ball and made of the states in which some neuron has just been reset ($V_i = 0$), reached from every initial state, such that the return map $F : B^+ \to B^+$:
 1. is piecewise continuous, the piece $B_i^+$ being determined by which neuron fires next;

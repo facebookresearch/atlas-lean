@@ -1,6 +1,6 @@
 # Basic reproduction number and global stability of the age-structured SVEAIR model
 
-**Model.** In a closed population of constant size $N_0$ with birth and death rate $\mu$, let $S$ be susceptible, $V$ vaccinated, $R$ removed, and let $e(t,\theta)$, $a(t,\theta)$, $i(t,\theta)$ be densities of exposed, asymptomatic infectious and symptomatic infectious individuals by age $\theta$ since entering their class. With force of infection $\beta(t) = \int_0^\infty \bigl(\beta_A(\theta) a(t,\theta) + \beta_I(\theta) i(t,\theta)\bigr)d\theta$, vaccination rate $p$, vaccine efficacy $\epsilon \in [0,1)$ against infection, and loss rate $\zeta\epsilon$ of vaccinated individuals,
+**Model.** In a closed population of constant size $N_0$ with birth and death rate $\mu$, let $S$ be susceptible, $V$ vaccinated, $R$ removed, and let $e(t,\theta)$, $a(t,\theta)$, $i(t,\theta)$ be densities of exposed, asymptomatic infectious and symptomatic infectious individuals by age $\theta$ since entering their class. With force of infection $\beta(t) = \int_0^\infty \bigl(\beta_A(\theta) a(t,\theta) + \beta_I(\theta) i(t,\theta)\bigr)d\theta$, vaccination rate $p$, vaccine efficacy $\epsilon \in [0,1]$ against infection, and loss rate $\zeta\epsilon$ of vaccinated individuals,
 
 $$
 \begin{aligned}
@@ -11,7 +11,7 @@ S' &= \mu N_0 - (p + \beta + \mu) S, \qquad V' = pS - \bigl(\zeta\epsilon + (1-\
 \end{aligned}
 $$
 
-where the age-dependent rates are: $k$ leaving latency, $q$ the fraction becoming asymptomatic, $\chi$ symptom onset among asymptomatics (a fraction $\xi$ recovers at rate $\gamma_A$ instead), and $\gamma_I$ recovery of symptomatics.
+where the age-dependent rates are: $k$ leaving latency, $q$ the fraction becoming asymptomatic, $\chi$ symptom onset among asymptomatics (a fraction $\xi$ recovers at rate $\gamma_A$ instead), and $\gamma_I$ recovery of symptomatics. Assume $\beta_A, \beta_I, k, \gamma_A, \gamma_I, \chi \in L^\infty(\mathbb R_+; \mathbb R_+)$ and $q, \xi \in L^\infty(\mathbb R_+; [0,1])$, and $\mu, p, \zeta, N_0 > 0$.
 
 **Results.**
 1. *(Well-posedness.)* For nonnegative $S_0, V_0, R_0$ and nonnegative $e_0, a_0, i_0 \in L^1(\mathbb{R}_+)$, the problem is globally well posed, with $S, V \in C^1$ nonnegative and $e, a, i \in C(\mathbb{R}_+; L^1(\mathbb{R}_+))$ nonnegative.

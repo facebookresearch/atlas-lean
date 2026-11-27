@@ -15,7 +15,17 @@ and the **minimal inhibitory concentration** is $\vartheta = \mathrm{MIC} = \min
 **Proposition.** As $x_0 \to \infty$ and $N \to \infty$:
 1. $\widehat\mu_n$ is weakly consistent and $\frac{\sqrt N}{\sigma_\varepsilon}\big(\log_2\widehat\mu_n - \log_2\mu_n\big) \to N(0,1)$, so $\frac{\sqrt N\,(\widehat\mu_n - \mu_n)}{\sigma_\varepsilon\,\mu_n\log 2} \to N(0,1)$;
 2. if $p_1 = 0$, $\widehat m$ is weakly consistent and $\frac{\mu_n'(m)}{\sigma_\varepsilon\,\mu_n(m)\log 2}\sqrt N(\widehat m - m) \to N(0,1)$;
-3. $\widehat\alpha$, $\widehat\beta$ and $\widehat\vartheta$ are weakly consistent, and $\sqrt N(\widehat\alpha - \alpha, \widehat\beta - \beta)$ converges to a centred bivariate normal vector with explicit covariance built from the design $\log c_i$ and the delta-method factors of part 2; the MIC estimator inherits asymptotic normality by the delta method.
+3. $\widehat\alpha$, $\widehat\beta$ and $\widehat\vartheta$ are weakly consistent. With $\ell_i = \log c_i$, $L_1 = \sum_{i=1}^K\ell_i$, $L_2 = \sum_{i=1}^K\ell_i^2$ and
+
+$$k_i = -\frac{2}{m(c_i)\big(2 - m(c_i)\big)}\,\frac{\sigma_\varepsilon\,\mu_n(m(c_i))\log 2}{\mu_n'(m(c_i))},$$
+
+$\sqrt N(\widehat\alpha - \alpha, \widehat\beta - \beta)$ converges to a centred bivariate normal vector with covariance matrix $\begin{pmatrix}\sigma_\alpha^2 & \sigma_{\alpha\beta}\\ \sigma_{\alpha\beta} & \sigma_\beta^2\end{pmatrix}$, where
+
+$$\sigma_\alpha^2 = \frac{\alpha^2}{(KL_2 - L_1^2)^2}\sum_{i=1}^K k_i^2(L_2 - L_1\ell_i)^2,\qquad \sigma_{\alpha\beta} = \frac{\alpha}{(KL_2 - L_1^2)^2}\sum_{i=1}^K k_i^2(K\ell_i - L_1)(L_2 - L_1\ell_i),\qquad \sigma_\beta^2 = \frac{1}{(KL_2 - L_1^2)^2}\sum_{i=1}^K k_i^2(K\ell_i - L_1)^2,$$
+
+and $\sqrt N(\widehat\vartheta - \vartheta) \to N(0, \sigma_\vartheta^2)$ with
+
+$$\sigma_\vartheta^2 = \frac{\vartheta^2(\log\alpha)^2}{\beta^2(KL_2 - L_1^2)^2}\sum_{i=1}^K k_i^2\Big(\frac{L_2 - L_1\ell_i}{\log\alpha} - \frac{K\ell_i - L_1}{\beta}\Big)^2 .$$
 
 ## Proof sketch
 

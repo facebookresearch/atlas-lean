@@ -9,11 +9,18 @@ f_2 = r - x_2 - b_2 x_1 - c_2(j) x_3, \quad
 f_3 = e_1(j) x_1 + e_2(j) x_2 - d,
 $$
 
-where $\xi(t) \in \{1, 2\}$ is an irreducible continuous-time Markov chain (environmental state) and only the predation coefficients $c_i(j)$ and conversion efficiencies $e_i(j)$ depend on the state. In a fixed environment, competition can rule out coexistence of the two prey without the predator, while the predator can mediate three-species coexistence.
+where $\xi(t) \in S = \{1, 2\}$ is an irreducible continuous-time Markov chain (environmental state) with stationary law $\pi$, and only the predation coefficients $c_i(j) > 0$ and conversion efficiencies $e_i(j) > 0$ depend on the state; $r, d, b_1, b_2 > 0$. Assume throughout:
+
+- (i) $b_1 < 1$ and $b_2 < 1$;
+- (ii) $r\sum_{j\in S} e_i(j)\pi_j > d$ for $i = 1, 2$;
+- (iii) $c_1(i)e_1(j) - c_1(j)e_1(i) \ne 0$ for some $i, j \in S$;
+- (iv) $c_2(i)e_2(j) - c_2(j)e_2(i) \ne 0$ for some $i, j \in S$.
+
+By (i) the two prey would coexist without the predator; by (ii) the predator can invade either prey at its carrying capacity $r$. The question is whether, with switching predation, all three species persist or the predator drives one prey extinct.
 
 **Results.**
 1. *(Well-posedness and dissipativity.)* For every initial state there is a unique solution; there is a compact set that every nonnegative solution eventually enters and never leaves, and interior initial conditions remain interior.
-2. *(Boundary invariant measures.)* Under the conditions making each prey–predator pair viable, there are unique invariant probability measures $\mu_{13}$ on $\{x_1, x_3 > 0, x_2 = 0\} \times \{1, 2\}$ and $\mu_{23}$ on $\{x_2, x_3 > 0, x_1 = 0\} \times \{1, 2\}$.
+2. *(Boundary invariant measures.)* There are unique invariant probability measures $\mu_{13}$ on $\{x_1, x_3 > 0, x_2 = 0\} \times \{1, 2\}$ and $\mu_{23}$ on $\{x_2, x_3 > 0, x_1 = 0\} \times \{1, 2\}$.
 3. *(Persistence.)* Define the invasion rates of the missing prey
 
 $$

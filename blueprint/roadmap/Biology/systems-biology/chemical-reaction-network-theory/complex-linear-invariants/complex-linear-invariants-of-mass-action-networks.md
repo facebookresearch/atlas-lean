@@ -14,7 +14,11 @@ where $Y$ is the $n\times m$ stoichiometric matrix of complexes, $\mathcal L(G)$
 $$\Psi(x)_V=B'_V\,(B'_U)^{-1}\,\Psi(x)_U ,$$
 
 and each of the $k-l$ rows of this matrix identity is an independent type 1 complex-linear invariant. The coefficients are rational functions of the rate constants and can be computed by linear algebra alone.
-3. Applied to bifunctional enzymes, namely the EnvZ/OmpR osmoregulator and the PFK-2/F-2,6-BPase glycolytic regulator, whose networks have deficiency up to four, the invariants give explicit steady-state relations. They show that the concentration of the regulated phospho-form is controlled robustly, independently of total amounts and initial conditions.
+3. The method applies to bifunctional enzymes, whose networks have deficiency up to four, with the source's labelling of complexes and rate constants $k_i$. For the EnvZ/OmpR osmoregulator the invariants on four complexes combine, at every positive steady state with $[\text{EnvZ-ATP}] \ne 0$, into
+
+$$[\text{OmpR-P}] = \frac{k_1k_3k_5(k_{11}+k_{12})(k_{14}+k_{15})}{k_1k_3k_{10}k_{12}(k_{14}+k_{15}) + k_2k_{13}k_{15}(k_4+k_5)(k_{11}+k_{12})},$$
+
+so OmpR-P has absolute concentration robustness: its steady-state value does not depend on the amounts of OmpR or EnvZ. For the PFK-2/F-2,6-BPase glycolytic regulator one of the invariants is $k_5x_{C_4} - k_8x_{C_6} - k_{11}x_{C_8} + (k_{18} - k_{19})x_{C_{11}} = 0$; it gives a bound, not a fixed value: if $k_{18} > k_{19}$ the steady-state concentration of F6P is held below a level that depends only on the rate constants, and if $k_{18} < k_{19}$ the same holds for F2,6BP.
 
 ## Proof sketch
 

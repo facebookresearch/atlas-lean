@@ -6,7 +6,7 @@ $$
 dV^i_t=\Big(-\frac{V^i_t}{\tau_\alpha}+I_\alpha(t)+\sum_{\beta=1}^P\frac{J_{\alpha\beta}}{N_\beta}\sum_{j:\,p(j)=\beta}S_\beta(V^j_t)\Big)dt+\lambda_\alpha(t)\,dB^i_t ,
 $$
 
-with $N_\alpha/N\to\delta_\alpha\in(0,1)$ and Lipschitz sigmoids $S_\beta$ valued in $[0,1]$. As $N\to\infty$ (Touboul–Hermann–Faugeras, Theorem 1.1) each neuron converges, uniformly in time at rate $C/\sqrt N$, to the McKean–Vlasov process $d\bar V^\alpha=\big[-\bar V^\alpha/\tau_\alpha+I_\alpha+\sum_\beta J_{\alpha\beta}\mathbb{E}[S_\beta(\bar V^\beta)]\big]dt+\lambda_\alpha dB^\alpha$, and propagation of chaos holds. For Gaussian initial data (Proposition 1.2) the solution stays Gaussian with mean $\mu_\alpha$ and variance $v_\alpha$ solving
+with $N_\alpha/N\to\delta_\alpha\in(0,1)$ and Lipschitz sigmoids $S_\beta$ valued in $[0,1]$. As $N\to\infty$ (Touboul–Hermann–Faugeras, Theorem 1.1) each neuron converges to the McKean–Vlasov process $d\bar V^\alpha=\big[-\bar V^\alpha/\tau_\alpha+I_\alpha+\sum_\beta J_{\alpha\beta}\mathbb{E}[S_\beta(\bar V^\beta)]\big]dt+\lambda_\alpha dB^\alpha$: for every $T>0$ there is $C(T)$ with $\sup_{0\le t\le T}\mathbb E|V^i_t-\bar V^i_t|\le C(T)/\sqrt N$, and propagation of chaos holds. The constant can be taken independent of $T$ when $\tau_M\max_\alpha\sum_\beta|J_{\alpha\beta}|L_\beta<1$, with $\tau_M=\max_\alpha\tau_\alpha$ and $L_\beta$ the Lipschitz constant of $S_\beta$; it cannot in general, since in the pitchfork regime below ($\tau=1$, $L=g/\sqrt{2\pi}$, $gJ/\sqrt{2\pi}>1$) a network started from symmetric stationary data leaves the null mean by times of order $\log N$, while the McKean–Vlasov mean stays at $0$. For Gaussian initial data (Proposition 1.2) the solution stays Gaussian with mean $\mu_\alpha$ and variance $v_\alpha$ solving
 
 $$
 \dot\mu_\alpha=-\frac{\mu_\alpha}{\tau_\alpha}+\sum_\beta J_{\alpha\beta}f_\beta(\mu_\beta,v_\beta)+I_\alpha,\qquad \dot v_\alpha=-\frac{2v_\alpha}{\tau_\alpha}+\lambda_\alpha^2,
@@ -30,7 +30,7 @@ and the null mean state $\mu=0$ is stable if $J<0$, or $J>0$ and $\lambda>J/\sqr
 
 ## Proof sketch
 
-At $\mu=0$ the linearization of the mean equation has slope $Jg/\sqrt{2\pi(1+g^2\lambda^2/2)}$, using the stationary variance $\lambda^2/2$. Setting it equal to $1$ gives $g^2(J^2-\pi\lambda^2)=2\pi$, hence $g^*$; when $\pi\lambda^2\ge J^2$ the slope stays below $1$ for all $g$. Noise therefore stabilizes a state that is unstable without noise even in this effectively one-dimensional equation, and the mean-field prediction is accurate for the finite network because of the uniform-in-time convergence.
+At $\mu=0$ the linearization of the mean equation has slope $Jg/\sqrt{2\pi(1+g^2\lambda^2/2)}$, using the stationary variance $\lambda^2/2$. Setting it equal to $1$ gives $g^2(J^2-\pi\lambda^2)=2\pi$, hence $g^*$; when $\pi\lambda^2\ge J^2$ the slope stays below $1$ for all $g$. Noise therefore stabilizes a state that is unstable without noise even in this effectively one-dimensional equation. The mean-field prediction describes the finite network on bounded time intervals; the Gronwall bound $M_t\le K\int_0^te^{-(t-s)/\tau}M_s\,ds+K'/\sqrt N$ on $M_t=\mathbb E|V^i_t-\bar V^i_t|$ is uniform in $t$ only when $K\tau<1$.
 
 ## Sources
 

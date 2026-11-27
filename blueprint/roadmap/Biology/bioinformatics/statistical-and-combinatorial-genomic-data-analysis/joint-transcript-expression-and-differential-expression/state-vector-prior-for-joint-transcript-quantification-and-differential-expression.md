@@ -8,6 +8,10 @@
 
 **Theorem (collapsed sampler).** Integrating out $(u,v)$, the full conditional of the read allocations $(\xi, z)$ given $c$ is an explicit ratio of Gamma functions of allocation counts, which yields a collapsed Gibbs/Metropolis–Hastings sampler that updates $c$ jointly with allocations; posterior probabilities $P(c_k = 1 \mid \mathbf x, \mathbf y)$ rank transcripts as differentially expressed.
 
+## Depends on
+
+- [Dirichlet distribution](../../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/dirichlet-measure.md)
+
 ## Proof sketch
 
 Independent Dirichlet priors give $\theta_k = w_k$ probability zero, so "not differentially expressed" cannot be expressed; tying the coordinates with $c_k = 0$ and letting the others vary freely puts positive mass on exact equality while the equal-hyperparameter condition keeps each sample's marginal prior the usual symmetric Dirichlet. Estimating expression and differential expression in one model propagates read-assignment uncertainty (reads compatible with several isoforms) into the differential-expression call instead of post-processing point estimates; the model is fitted per cluster of transcripts that share reads.

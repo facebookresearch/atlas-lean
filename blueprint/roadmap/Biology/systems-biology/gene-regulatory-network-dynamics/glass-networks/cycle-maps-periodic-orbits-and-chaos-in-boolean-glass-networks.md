@@ -24,7 +24,7 @@ $$\begin{aligned}
 \dot y_3 &= -y_3 + 2\big((1-\tilde y_1)(1-\tilde y_4) + \tilde y_2\tilde y_4\big) - 1, &\dot y_4 &= -y_4 + 2\big((1-\tilde y_1)(1-\tilde y_3) + \tilde y_1\tilde y_2\big) - 1,
 \end{aligned}$$
 
-the returning cones of two competing cycles and their images under the cycle maps form a Smale horseshoe-like structure, giving chaotic (aperiodic, sensitively dependent) dynamics with no stable fixed point or periodic orbit.
+the returning cones of two competing cycles and their images under the cycle maps form a Smale horseshoe-like structure, which yields an invariant set $\Lambda$ on which the dynamics are aperiodic and sensitively dependent on initial conditions. That orbits in $\Lambda$ attract nearby trajectories is not proved, and the absence of a stable fixed point or periodic orbit is observed numerically only.
 
 ## Proof sketch
 

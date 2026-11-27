@@ -11,14 +11,14 @@ For a parametrised scalar system $\dot x = f(y, x)$ with forcing $y$:
 - it is *reliable* if there is a $C^1$ map $\mathfrak X$ with $x(t) \to \mathfrak X(y)$ from every $x(0) \ge 0$;
 - it has *$q$-polynomial decay* if for each compact set of $y$ there are $M, c > 0$ with $f(y, x) \le -c x^q$ for $x > M$;
 - it is *exponentially feed-forward* if $y(t) \to \hat y$ exponentially fast implies $x(t) \to \hat x$ exponentially fast;
-- it is *exponentially reliable* if it is reliable and $|x(t) - \mathfrak X(y)| \le |x(0) - \mathfrak X(y)|e^{-\lambda(y)t}$ for some $\lambda(y) > 0$;
+- it is *exponentially reliable* if it is reliable and there are $C(y) \ge 1$ and $\lambda(y) > 0$ with $|x(t) - \mathfrak X(y)| \le C(y)\,|x(0) - \mathfrak X(y)|\,e^{-\lambda(y)t}$ for every $x(0) \ge 0$ (for the layered system, with $|\cdot|$ a norm on all coordinates);
 - it *converges from infinity in finite time* if after a time $T(y)$, independent of $x(0)$, all trajectories lie in a fixed compact set.
 
 **Theorem.** Suppose each node equation $\dot x = f^\ell_i(y, x)$ is reliable, has $q$-polynomial decay for some $q > 1$, and is exponentially feed-forward. Then the whole layered system converges from infinity in finite time and is exponentially reliable. In particular, if each node's fixed point is $\mathfrak X^\ell_i(y) = \varphi\big((W^\ell y + \beta^\ell)_i\big)$, the system implements the network.
 
 ## Proof sketch
 
-Argue by induction on the layer. Layer $0$ is constant. If $x^{\ell-1}(t)$ converges exponentially to its limit, the exponential feed-forward property carries exponential convergence to $x^\ell_i$, and reliability fixes the limit as $\mathfrak X^\ell_i$ of the limiting input. Polynomial decay with $q > 1$ gives uniform entry into a compact set in finite time: comparison with $\dot u = -c u^q$ forces $u(t) \le 1$ once $t > ((q-1)c)^{-1}$, whatever $u(0)$. On that compact set the rates are uniform, and Grönwall's inequality propagates them through the finitely many layers.
+Argue by induction on the layer. Layer $0$ is constant. If $x^{\ell-1}(t)$ converges exponentially to its limit, the exponential feed-forward property carries exponential convergence to $x^\ell_i$, and reliability fixes the limit as $\mathfrak X^\ell_i$ of the limiting input. Polynomial decay with $q > 1$ gives uniform entry into a compact set in finite time: comparison with $\dot u = -c u^q$ forces $u(t) \le 1$ once $t > ((q-1)c)^{-1}$, whatever $u(0)$. On that compact set the rates are uniform, and Grönwall's inequality propagates them through the finitely many layers, at the cost of a multiplicative constant at each layer: a layer amplifies the error it receives from the previous one, so the constant $C$ in exponential reliability cannot in general be taken equal to $1$.
 
 ## Sources
 

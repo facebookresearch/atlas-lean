@@ -16,13 +16,13 @@ $$x_s = \frac{\lambda_1}{\sigma_1}\left[1 - \frac{e^{-(s + \tau_D - \tau_R)\sigm
 
 **Proposition (protein mean before replication).** For $s \in [0, \tau_R)$,
 
-$$\mathbb{E}[P_s] = \mathbb{E}[P_0] + \lambda_2\frac{\lambda_1}{\sigma_1}s + \Big(x_0 - \frac{\lambda_1}{\sigma_1}\Big)\frac{1 - e^{-\sigma_1 s}}{\sigma_1},$$
+$$\mathbb{E}[P_s] = \mathbb{E}[P_0] + \lambda_2\Big[\frac{\lambda_1}{\sigma_1}s + \Big(x_0 - \frac{\lambda_1}{\sigma_1}\Big)\frac{1 - e^{-\sigma_1 s}}{\sigma_1}\Big],$$
 
 and $\mathrm{Var}(P_s)$ is an explicit affine function of $\mathrm{Var}(P_0)$, $\mathrm{Cov}(P_0, M_0)$ and $x_0$.
 
 ## Proof sketch
 
-Poisson laws are preserved by every step of the cycle: an immigration–death process started from a Poisson number stays Poisson, with mean solving $\dot x = \lambda(s) - \sigma_1 x$; independent binomial thinning with probability $1/2$ maps $\mathrm{Poisson}(x)$ to $\mathrm{Poisson}(x/2)$. The equilibrium is therefore Poisson with a mean that is periodic in $s$, and the fixed point of the one-cycle map $x_0 \mapsto \frac12 x_{\tau_D^-}$ gives the factor $2 - e^{-\tau_D\sigma_1}$. Protein moments follow by integrating the linear moment equations driven by $M_s$.
+Poisson laws are preserved by every step of the cycle: an immigration–death process started from a Poisson number stays Poisson, with mean solving $\dot x = \lambda(s) - \sigma_1 x$; independent binomial thinning with probability $1/2$ maps $\mathrm{Poisson}(x)$ to $\mathrm{Poisson}(x/2)$. The equilibrium is therefore Poisson with a mean that is periodic in $s$, and the fixed point of the one-cycle map $x_0 \mapsto \frac12 x_{\tau_D^-}$ gives the factor $2 - e^{-\tau_D\sigma_1}$. Protein moments follow by integrating the linear moment equations driven by $M_s$: $\frac{d}{ds}\mathbb E[P_s]=\lambda_2\,\mathbb E[M_s]$ with $\mathbb E[M_s]=\frac{\lambda_1}{\sigma_1}+\big(x_0-\frac{\lambda_1}{\sigma_1}\big)e^{-\sigma_1 s}$ for $s<\tau_R$, so both terms of the protein mean carry the factor $\lambda_2$ (the source's Proposition 4.2 omits it on the second term; its variance formula carries it).
 
 ## Sources
 

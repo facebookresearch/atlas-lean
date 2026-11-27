@@ -10,7 +10,7 @@ dI &= \big[\beta(S,I) S I - \alpha I\big]dt + \sigma_3 I\, dW_3,
 
 with standard incidence $\beta(S,I) = \beta^*/(S + I + k)$. The predator carrying capacity $a_2/(1/(c+x) + h)$ lies between $a_2 c/(1 + hc)$ and $a_2/h$, and recovered predators return to $S$ ($\gamma$ = recovery rate, $\alpha$ = removal rate of infected predators). Note $\beta(S,I)S \le \beta^*$ and $\beta(S,I) I \le \beta^*$.
 
-**Theorem.** For every initial value in $\overline{\mathbb{R}}_+^3$ there is a unique global solution staying in $\overline{\mathbb{R}}_+^3$ (in $\mathbb{R}_+^3$ if the initial value is positive), and $\sup_t \mathbb{E}\,x(t)^\theta < \infty$ for all $\theta \ge 1$. Moreover, for initial values other than the origin:
+**Theorem.** For every initial value in $\overline{\mathbb{R}}_+^3$ there is a unique global solution staying in $\overline{\mathbb{R}}_+^3$ (in $\mathbb{R}_+^3$ if the initial value is positive), and $\sup_t \mathbb{E}\,x(t)^\theta < \infty$ for all $\theta \ge 1$. Moreover, for initial values with $x(0) > 0$ and $S(0) + I(0) > 0$ (on the boundary faces $x \equiv 0$ or $S \equiv I \equiv 0$ the corresponding species stays absent):
 1. *Predator decline.* If $\max\{\beta^* - \alpha,\ a_2\} < \dfrac{1}{2\left(\sigma_2^{-2} + \sigma_3^{-2}\right)}$, then $S(t) \to 0$ and $I(t) \to 0$ a.s.
 2. *Prey decline.* If $a_1 - \tfrac12\sigma_1^2 < 0$, then $x(t) \to 0$ a.s.
 3. *Disease-free sustainability.* If

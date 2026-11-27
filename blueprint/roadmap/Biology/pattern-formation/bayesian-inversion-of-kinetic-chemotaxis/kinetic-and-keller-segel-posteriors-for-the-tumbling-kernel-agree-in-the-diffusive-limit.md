@@ -19,6 +19,7 @@ So in the diffusive regime the cheaper macroscopic model yields asymptotically t
 ## Depends on
 
 - [Parabolic limit of kinetic chemotaxis to the Keller–Segel equation](parabolic-limit-of-kinetic-chemotaxis-to-keller-segel.md)
+- [Hellinger distance](../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
 
 ## Proof sketch
 

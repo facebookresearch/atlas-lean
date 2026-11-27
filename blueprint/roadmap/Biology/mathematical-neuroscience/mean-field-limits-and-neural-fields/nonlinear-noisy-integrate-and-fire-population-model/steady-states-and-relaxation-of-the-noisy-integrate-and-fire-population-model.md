@@ -1,6 +1,6 @@
 # Steady states and relaxation of the noisy integrate-and-fire population model
 
-**Setting.** Take the NNLIF Fokker–Planck model of [finite-time blow-up of excitatory noisy integrate-and-fire networks](finite-time-blow-up-of-excitatory-noisy-integrate-and-fire-networks.md) with drift $h(v,N) = bN - v$, threshold $V_F$ and reset $V_R < V_F$. Steady states are pairs $(p_\infty, N_\infty)$ solving the stationary problem; they correspond to fixed points $N = 1/I(N)$ of an explicit integral $I(N) > 0$ (the normalization of the stationary profile), which satisfies $I(0) \le \sqrt{2\pi}\,\frac{V_F - V_R}{a_0}\exp\!\big(\frac{\max(V_R^2, V_F^2)}{2a_0}\big)$.
+**Setting.** Take the NNLIF Fokker–Planck model of [finite-time blow-up of excitatory noisy integrate-and-fire networks](finite-time-blow-up-of-excitatory-noisy-integrate-and-fire-networks.md) with drift $h(v,N) = bN - v$, threshold $V_F$ and reset $V_R < V_F$. Steady states are pairs $(p_\infty, N_\infty)$ solving the stationary problem; they correspond to fixed points $N = 1/I(N)$ of an explicit integral $I(N) > 0$ (the normalization of the stationary profile), which satisfies $I(0) \le \sqrt{2\pi}\,\frac{V_F - V_R}{\sqrt{a_0}}\exp\!\big(\frac{\max(V_R^2, V_F^2)}{2a_0}\big)$.
 
 **Theorem (constant noise $a(N) = a_0$).**
 1. For $b < 0$, and for $b > 0$ small enough, there is a unique steady state.

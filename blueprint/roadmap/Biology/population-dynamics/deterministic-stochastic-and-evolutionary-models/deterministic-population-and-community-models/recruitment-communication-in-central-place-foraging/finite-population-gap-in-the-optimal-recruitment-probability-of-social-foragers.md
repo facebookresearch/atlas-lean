@@ -15,11 +15,11 @@ The long-term reward rate is $\mu(\rho) = \lim_n r_n$.
 
 $$\lim_{\xi\to\infty}\mu_\xi(1) < \lim_{\rho\to1}\mu(\rho),$$
 
-so for every finite population an intermediate recruitment probability $\rho^* < 1$ is optimal, and $\mu_\xi$ has a boundary layer at $\rho = 1$ that sharpens as $\xi$ grows.
+This strongly suggests, but does not prove, that $\mu_\xi$ has a boundary layer at $\rho = 1$ that sharpens as $\xi$ grows, so that an intermediate recruitment probability $\rho^* < 1$ is optimal for large finite populations; that would follow from $\lim_{\xi\to\infty}\mu_\xi(\rho) = \mu(\rho)$ for $\rho < 1$, which is not proved. Numerically $1 - \rho^* = O(\xi^{-1})$.
 
 ## Proof sketch
 
-In the deterministic map, recruitment with $\rho < 1$ always reinjects a uniform share into every site, which forces a unique interior fixed point; as $\rho \uparrow 1$ the fixed point approaches the allocation that equalizes the marginal success $\phi_i^2$ across sites, which is the reward maximizer. With finitely many foragers and $\rho = 1$, demographic noise eventually empties sites, and an emptied site is never re-discovered because no forager is sent there at random; the chain gets trapped in quasi-stationary edge states with all foragers at one site, whose reward is strictly below the optimum. Any $\rho < 1$ restores exploration, so a small amount of non-communicated search pays off, however large the colony.
+In the deterministic map, recruitment with $\rho < 1$ always reinjects a uniform share into every site, which forces a unique interior fixed point; as $\rho \uparrow 1$ the fixed point approaches the allocation that equalizes the marginal success $\phi_i^2$ across sites, which is the reward maximizer. With finitely many foragers and $\rho = 1$, demographic noise eventually empties sites, and an emptied site is never re-discovered because no forager is sent there at random; the chain gets trapped in quasi-stationary edge states with all foragers at one site, whose reward is strictly below the optimum. Heuristically, any $\rho < 1$ restores exploration, which is why a small amount of non-communicated search is expected to pay off however large the colony; the proved statement is the strict gap between the two limits.
 
 ## Sources
 

@@ -14,7 +14,11 @@ $$
 S_\theta(f)=\sum_{k=1}^K\sum_{x\in\mathcal E}\frac{\partial\lambda_k(x,\theta)}{\partial\theta}\big(g(x+\zeta_k)-g(x)\big)\,\pi_\theta(x).
 $$
 
-Steady-state sensitivities therefore need no long Monte Carlo runs. Both $\pi_\theta$ and $g$ can be approximated on finite truncations $\mathcal E_n\uparrow\mathcal E$ by the stationary finite state projection (sFSP) method, and the resulting estimates converge to $S_\theta(f)$ as $n\to\infty$.
+Steady-state sensitivities therefore need no long Monte Carlo runs. Both $\pi_\theta$ and $g$ can be approximated on finite truncations $\mathcal E_n\uparrow\mathcal E$ by the stationary finite state projection (sFSP) method. Let $\mathrm{Bdry}(\mathcal E_n)=\{x\in\mathcal E_n:\lambda_k(x)>0\text{ and }x+\zeta_k\notin\mathcal E_n\text{ for some }k\}$. If the truncations grow uniformly with respect to $V$, i.e. there is $c\in(0,1)$ with $\min_{x\in\mathrm{Bdry}(\mathcal E_n)}V(x)\ge c\max_{x\in\mathrm{Bdry}(\mathcal E_n)}V(x)$ for all $n$, then the resulting estimates converge to $S_\theta(f)$ as $n\to\infty$.
+
+## Depends on
+
+- [Stationary finite state projection for the chemical master equation](../stationary-finite-state-projection-for-the-chemical-master-equation.md)
 
 ## Proof sketch
 
@@ -26,4 +30,4 @@ Differentiate the stationarity condition $\pi_\theta\mathbb Q_\theta=0$ to get $
 
 ## Sources
 
-- Patrik Dürrenberger, Ankit Gupta and Mustafa Khammash, "A finite state projection method for steady-state sensitivity analysis of stochastic reaction networks", *The Journal of Chemical Physics* 150 (2019), 134101, <https://doi.org/10.1063/1.5085271>. Preprint version: arXiv:1812.04299 (2018), Assumption 2.1, Poisson equation (defn_poiss_eqn1), Theorem 3.1 (formula (exact_sens_formula)), <https://doi.org/10.48550/arXiv.1812.04299>.
+- Patrik Dürrenberger, Ankit Gupta and Mustafa Khammash, "A finite state projection method for steady-state sensitivity analysis of stochastic reaction networks", *The Journal of Chemical Physics* 150 (2019), 134101, <https://doi.org/10.1063/1.5085271>. Preprint version: arXiv:1812.04299 (2018), Assumption 2.1, Poisson equation (defn_poiss_eqn1), Theorem 3.1 (formula (exact_sens_formula)), Proposition 3.3 (convergence of the sFSP estimates under uniform growth of the truncations), <https://doi.org/10.48550/arXiv.1812.04299>.

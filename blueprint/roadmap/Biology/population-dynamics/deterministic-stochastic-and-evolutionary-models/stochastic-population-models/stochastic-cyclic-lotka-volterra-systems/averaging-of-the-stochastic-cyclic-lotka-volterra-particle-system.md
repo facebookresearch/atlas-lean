@@ -14,6 +14,10 @@ whose generator is $\mathcal{L}_{\mathrm{avg}}f = 3(am - z)f' + 3zm f''$. For $0
 
 **Stationary measures.** For $a > 0$ the chain is ergodic with product-form invariant law $\mu_{N,a}(x) = C_{N,a}\prod_i \Gamma(Nx_i + a)/\Gamma(Nx_i + 1)$, which converges weakly to the symmetric Dirichlet law with density $\propto z(x)^{a-1}$ on the simplex; its image under $z$ is the stationary law of the averaged SDE.
 
+## Depends on
+
+- [Dirichlet distribution](../../../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/dirichlet-measure.md)
+
 ## Proof sketch
 
 The generator splits as $N\mathcal{L}_{\mathrm{fast}} + \mathcal{L}_{\mathrm{slow}} + o(1)$, with $\mathcal{L}_{\mathrm{fast}}$ the Lotka–Volterra vector field and $\mathcal{L}_{\mathrm{slow}}$ containing the spontaneous drift $a\sum_i x_i u_i$ and the demographic diffusion $\tfrac12\sum_i x_ix_{i+1}(u_i,u_i)$. Since $z$ is invariant under the fast flow, only $\mathcal{L}_{\mathrm{slow}}(f\circ z)$ survives, and averaging its coefficients over a period of the fast loop yields the one-dimensional operator. Spontaneous switching ($a$) pushes orbits towards the centre, while demographic noise pushes them outwards; $a = 1$ is where the boundary stops being reachable, matching the uniform Dirichlet law.

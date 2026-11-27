@@ -8,14 +8,14 @@ with fitness generating function
 
 $$G(x,\theta) = b(\theta)\,e^{-c_u(\theta)x}, \qquad b(\theta) = b_0\,e^{-\theta^2/(2w^2)}, \qquad c_u(\theta) = c_0\,e^{-\kappa(\theta - u)},$$
 
-where $b_0 > 0$ is the maximal birth rate at the optimum trait $0$, $w > 0$ the width of the birth-rate profile, $c_0 > 0$ the competition coefficient, $\kappa > 0$ the trait sensitivity of competition, $u$ a reference trait and $\sigma^2 > 0$ the speed of evolution. Nontrivial equilibria $(x_*, \theta_*)$, $x_* > 0$, solve $G = 1$ and $\partial_\theta \ln G = 0$.
+where $b_0 > 0$ is the maximal birth rate at the optimum trait $0$, $w > 0$ the width of the birth-rate profile, $c_0 > 0$ the competition coefficient, $\kappa > 0$ the trait sensitivity of competition, $u$ a reference trait and $\sigma^2 > 0$ the speed of evolution. Nontrivial equilibria $(x_*, \theta_*)$, $x_* \ne 0$, solve $G = 1$ and $\partial_\theta \ln G = 0$.
 
 **Proposition (equilibria).** Let $\xi_1 = \frac{1}{\kappa^2} + 2w^2\ln b_0$.
 1. If $\xi_1 < 0$ there is no nontrivial equilibrium.
 2. If $\xi_1 = 0$ there is exactly one, with $\theta_* = -1/\kappa$.
 3. If $\xi_1 > 0$ there are two, with $\theta_{*\pm} = -\frac1\kappa \pm \sqrt{\xi_1}$.
 
-In each case $x_* = \ln b(\theta_*)/c_u(\theta_*) = \big(\ln b_0 - \theta_*^2/(2w^2)\big)\big/\big(c_0 e^{-\kappa(\theta_* - u)}\big)$, which is positive iff $\theta_*^2 < 2w^2\ln b_0$.
+In each case $x_* = \ln b(\theta_*)/c_u(\theta_*) = \theta_*\big/\big(\kappa w^2 c_u(\theta_*)\big)$, which is positive iff $\theta_* > 0$. Hence $\theta_{*-} < 0$ and the equilibrium with $\xi_1 = 0$ have $x_* < 0$, and a biologically meaningful equilibrium with $x_* > 0$ exists iff $b_0 > 1$; it is then unique, with $\theta_* = \theta_{*+}$.
 
 **Theorem (Fisher information).** Treating $G(\cdot,\theta)$ as the trait-indexed density of the population process, the Fisher information about the trait parameter is
 

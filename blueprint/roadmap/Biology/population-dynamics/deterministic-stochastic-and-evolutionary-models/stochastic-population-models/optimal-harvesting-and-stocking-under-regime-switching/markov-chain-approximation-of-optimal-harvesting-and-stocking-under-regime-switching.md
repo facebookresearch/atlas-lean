@@ -20,7 +20,10 @@ which under regime switching has no closed-form solution.
 
 $$V^h(x, \alpha) \to V(x, \alpha) \qquad (h \to 0),$$
 
-so a near-optimal harvesting–stocking policy of the chain is near-optimal for the diffusion. The same convergence holds when the dynamics and prices are also periodic in time (seasonality), and when the population is coupled to an auxiliary environmental process with delay.
+so a near-optimal harvesting–stocking policy of the chain is near-optimal for the diffusion. The same convergence holds in two extensions:
+
+- *Uncertain price.* The per-unit price is $p_0(x, \alpha, u) + \Phi(t)$, where $d\Phi(t) = b_0(\Phi(t), \alpha(t))\,dt + \sigma_0(\Phi(t), \alpha(t))\,dw_0(t)$, $\Phi(0) = \varphi \ge 0$, with $w_0$ a Brownian motion independent of $W$; the revenue rate is $p_0(X, \alpha, U) + \Phi U$. If the assumptions above hold, $b_0(\cdot, \alpha)$ and $\sigma_0(\cdot, \alpha)$ are locally Lipschitz, and the price equation has a unique solution with $\Phi(t) \ge 0$ and $\sup_{t\ge0}E|\Phi(t)| < \infty$, then the value functions of locally consistent chains on $(\Phi, X, \alpha)$ converge to the value function $\hat V(\varphi, x, \alpha)$.
+- *Seasonality.* If $b(t, x, \alpha)$, $\sigma(t, x, \alpha)$ and $p(t, x, \alpha, u)$ are locally Lipschitz (for $b, \sigma$), bounded and continuous (for $p$), periodic in $t$ with period $T > 0$, and the uncontrolled system has a unique global solution from every $(\gamma, x, \alpha) \in [0, T) \times \mathbb R_+ \times \mathcal M$, then the value functions converge for every such initial state.
 
 ## Proof sketch
 
@@ -28,4 +31,4 @@ This is the Kushner–Dupuis Markov chain approximation method. Local consistenc
 
 ## Sources
 
-- Alexandru Hening, Ky Quan Tran and Sergiu C. Ungureanu, "The effects of random and seasonal environmental fluctuations on optimal harvesting and stocking", *Journal of Mathematical Biology* 84 (2022), 41, <https://doi.org/10.1007/s00285-022-01750-2>. Preprint version: arXiv:2109.13169 (2021), standing assumptions, HJB equation, local consistency lemma and convergence theorems for the regime-switching, delayed and seasonal problems, <https://doi.org/10.48550/arXiv.2109.13169>.
+- Alexandru Hening, Ky Quan Tran and Sergiu C. Ungureanu, "The effects of random and seasonal environmental fluctuations on optimal harvesting and stocking", *Journal of Mathematical Biology* 84 (2022), 41, <https://doi.org/10.1007/s00285-022-01750-2>. Preprint version: arXiv:2109.13169 (2021), standing assumptions, HJB equation, local consistency lemma, Theorem 2.4 (regime switching), Theorem 3.1 (uncertain price, Section 3.2) and Theorem 3.2 (seasonality, Section 3.3), <https://doi.org/10.48550/arXiv.2109.13169>.

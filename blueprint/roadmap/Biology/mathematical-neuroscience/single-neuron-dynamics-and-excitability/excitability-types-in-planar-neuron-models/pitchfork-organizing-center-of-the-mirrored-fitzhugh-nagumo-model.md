@@ -8,7 +8,7 @@ with small $\epsilon>0$. The $V$-nullcline is the classical inverted N-shape tog
 
 **Theorem.**
 
-1. Fix $I_{\mathrm{app}}=I^\star$ and $n_0=n_0^\star(V_0)=-n_\infty(-1-V_0)$, and choose $V_0=V_0^\star=-1+\frac15\log(-6+\sqrt{35})$ so that the $n$-nullcline is tangent to the $V$-nullcline at the singularity. This gives a codimension-three degenerate (pitchfork) bifurcation. An affine change of coordinates brings the model to the local normal form
+1. Fix $I_{\mathrm{app}}=I^\star$ and $n_0=n_0^\star(V_0)=-n_\infty(-1-V_0)$, and choose $V_0=V_0^\star=-1+\frac15\ln(4+\sqrt{15})\approx-0.587$ so that the $n$-nullcline is tangent to the $V$-nullcline at the singularity, i.e. $n_\infty'(-1-V_0)=1$ (with $y=e^{5(1+V_0)}$ this reads $10y/(1+y)^2=1$, i.e. $y^2-8y+1=0$). This gives a codimension-three degenerate (pitchfork) bifurcation. An affine change of coordinates brings the model to the local normal form
 
 $$\dot v=\frac{v^2(3-v)}3-\big(k(V_0)(v-u)+\delta_0\big)^2+I_{\mathrm{app}}-I^\star,\qquad \dot u=-\epsilon u+O(v^2,vu,u^2),$$
 

@@ -12,12 +12,12 @@
 
 **HOP rearrangement.** Writing $i$ and $\underline i$ for the first and second occurrence of $i$, a HOP on $i > 1$ moves the first occurrence $i$ to a new position between $v_1 = 1$ and $\underline{i-1}$. Then:
 1. every HOP is a subtree prune-and-regraft (SPR) move;
-2. for a fixed taxon ordering, the graph on tree representations whose edges are single HOPs is connected, and its diameter is $n$;
+2. for a fixed taxon ordering, the graph on tree representations whose edges are single HOPs is connected, and its diameter is at most $n - 2$;
 3. the HOP neighbourhood of any tree has size quadratic in $n$.
 
 ## Proof sketch
 
-Condition 4 forces $\underline{i}$ to come after $\underline{i-1}$, so in a representation of the first $i-1$ taxa the last entry is $\underline{i-1}$, and adding taxon $i$ appends $\underline i$ at the end. Condition 3 then leaves exactly the $2(i-1) - 1 = 2i-3$ gaps strictly between $v_1$ and $\underline{i-1}$ for the first occurrence of $i$. These choices mirror stepwise addition of taxa: a rooted binary tree on $i-1$ taxa (with its root edge) has $2i-3$ edges, and taxon $i$ is attached by subdividing one of them. Matching gap $\leftrightarrow$ edge through the labelling taxon sequences (the clade-size-ordered sequence of node labels on each taxon's root-to-leaf path) gives the encoding and decoding algorithms and the count $\prod_{i=2}^n(2i-3) = (2n-3)!!$. A HOP changes only where one taxon's first occurrence sits, i.e. where its subtree is regrafted, which is why it is an SPR move.
+Condition 4 forces $\underline{i}$ to come after $\underline{i-1}$, so in a representation of the first $i-1$ taxa the last entry is $\underline{i-1}$, and adding taxon $i$ appends $\underline i$ at the end. Condition 3 then leaves exactly the $2(i-1) - 1 = 2i-3$ gaps strictly between $v_1$ and $\underline{i-1}$ for the first occurrence of $i$. These choices mirror stepwise addition of taxa: a rooted binary tree on $i-1$ taxa (with its root edge) has $2i-3$ edges, and taxon $i$ is attached by subdividing one of them. Matching gap $\leftrightarrow$ edge through the labelling taxon sequences (the clade-size-ordered sequence of node labels on each taxon's root-to-leaf path) gives the encoding and decoding algorithms and the count $\prod_{i=2}^n(2i-3) = (2n-3)!!$. A HOP changes only where one taxon's first occurrence sits, i.e. where its subtree is regrafted, which is why it is an SPR move. The HOP distance between two representations is $n$ minus their HOP similarity, and the similarity is at least the length of a longest common subsequence of their first segments (the entries before the second occurrence of $1$), both of which contain the first occurrences of $1$ and $2$; this bounds the diameter by $n - 2$ (attained for $2 \le n \le 6$).
 
 ## Sources
 

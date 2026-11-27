@@ -14,13 +14,17 @@ $$\partial_t \bar p_t(x) = \bar p_t(x)\Big[g^P\Big(\int_0^1 \psi(x,y)\bar a_t(y)
 
 with interaction kernel $\psi = c\,\phi$.
 
-**Proposition (no density stationary states).** Suppose $k$ and $h$ are constant and $\psi(x_0, \cdot)$ and $\psi(\cdot, y_0)$ are continuous and increasing for every $x_0, y_0$. Then the continuum system has no non-null stationary state with densities with respect to Lebesgue measure. Every non-null stationary state is a pair of atomic measures $\bar P^\infty = \bar p_1\delta_{\bar x_1} + \bar p_2\delta_{\bar x_2}$, $\bar A^\infty = \bar a_0\delta_{\bar y_0}$ with $\bar p_1, \bar a_0 > 0$, $\bar p_2 \ge 0$, satisfying
+**Proposition (no density stationary states).** Suppose the growth rates have the forms
+
+$$g^P(R) = \frac{\alpha_PR}{\beta_P + \gamma_PR} - (d_P + \delta_PR), \qquad g^A(R) = \frac{\alpha_AR}{\beta_A + \gamma_AR} - d_A,$$
+
+with all parameters positive (the plant pays a cost for interacting), suppose $k$ and $h$ are constant, and suppose $\psi(x_0, \cdot)$ and $\psi(\cdot, y_0)$ are continuous and increasing for every $x_0, y_0$. Then the continuum system has no non-null stationary state with densities with respect to Lebesgue measure. Every non-null stationary state is a pair of atomic measures $\bar P^\infty = \bar p_1\delta_{\bar x_1} + \bar p_2\delta_{\bar x_2}$, $\bar A^\infty = \bar a_0\delta_{\bar y_0}$ with $\bar p_1, \bar a_0 > 0$, $\bar p_2 \ge 0$, satisfying
 
 $$g^P(\bar a_0\psi(\bar x_1, \bar y_0)) = g^P(\bar a_0\psi(\bar x_2, \bar y_0)) = k(\bar p_1 + \bar p_2), \qquad g^A\big(\bar p_1\psi(\bar x_1,\bar y_0) + \bar p_2\psi(\bar x_2, \bar y_0)\big) = h\bar a_0.$$
 
 ## Proof sketch
 
-Step 1 is a standard law of large numbers for density-dependent jump processes driven by Poisson point measures. In step 2 the sums $\frac1n\sum_{j\sim i}c_{ij}A^j$ are averages over an inhomogeneous random graph, which concentrate on $\int \psi(x^i, y)\bar a(y)\,dy$, a graphon limit. At a stationary state each surviving trait must have zero growth; with constant competition the plant condition reads $g^P(\int\psi(x,y)\,\bar A^\infty(dy)) = k\|\bar P^\infty\|$ on the support of $\bar P^\infty$, and strict monotonicity of $\psi$ in each variable forces the zero set to be finite, so mass concentrates on at most two plant traits and one pollinator trait.
+Step 1 is a standard law of large numbers for density-dependent jump processes driven by Poisson point measures. In step 2 the sums $\frac1n\sum_{j\sim i}c_{ij}A^j$ are averages over an inhomogeneous random graph, which concentrate on $\int \psi(x^i, y)\bar a(y)\,dy$, a graphon limit. At a stationary state each surviving trait must have zero growth; with constant competition the plant condition reads $g^P(\int\psi(x,y)\,\bar A^\infty(dy)) = k\|\bar P^\infty\|$ on the support of $\bar P^\infty$, and strict monotonicity of $\psi$ in each variable, combined with the shape of $g^P$ (increasing, then decreasing) and of $g^A$ (increasing), forces the zero set to be finite, so mass concentrates on at most two plant traits and one pollinator trait. The argument uses only these shapes, but some shape condition is needed: for constant $g^P \equiv g_0$ the plant condition holds for every trait, and stationary states with densities exist.
 
 ## Sources
 

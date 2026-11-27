@@ -14,14 +14,14 @@ and their root versions $f_{\mathbf Y_1}$, $f_{\mathbf Y_3}$, obtained by replac
 
 **Statement.** For the second epidemic on the coloured approximating tree, as in the threshold page:
 
-1. *Probability of a major second outbreak.* Let $\boldsymbol\xi$ be the unique solution in $[0,1)^3$ of $\xi_i = \tilde f_i(\boldsymbol\xi)$, $i = 1,2,3$. If the initial infective is chosen uniformly at random, the forward three-type branching process survives with probability
+1. *Probability of a major second outbreak.* Let $\boldsymbol\xi$ be the minimal solution in $[0,1]^3$ of $\xi_i = \tilde f_i(\boldsymbol\xi)$, $i = 1,2,3$ (the vector of extinction probabilities from one non-root individual of each type; it can have coordinates equal to $1$, for instance under complete cross-immunity, $\pi_{00}=p'$ and all other $\pi_{ij}=0$, where types $1$ and $2$ have no infected offspring). If the initial infective is chosen uniformly at random, the forward three-type branching process survives with probability
 
 $$
 1 - q\,f_1(\boldsymbol\xi) - (1-q)\,f_3(\boldsymbol\xi);
 $$
 
 more precisely $1 - f_1(\boldsymbol\xi)$ if the initial infective was infected in the first epidemic and $1 - f_3(\boldsymbol\xi)$ if not.
-2. *Final size.* Let $\hat{\boldsymbol\xi}$ be the unique solution in $[0,1)^3$ of $\hat\xi_i = \hat f_i(\hat{\boldsymbol\xi})$. The backward (susceptibility-set) three-type branching process from a uniformly chosen root survives with probability
+2. *Final size.* Let $\hat{\boldsymbol\xi}$ be the minimal solution in $[0,1]^3$ of $\hat\xi_i = \hat f_i(\hat{\boldsymbol\xi})$. The backward (susceptibility-set) three-type branching process from a uniformly chosen root survives with probability
 
 $$
 1 - q\,\check f_1(\hat{\boldsymbol\xi}) - (1-q)\,\check f_3(\hat{\boldsymbol\xi}).
@@ -35,7 +35,7 @@ $$
 
 ## Proof sketch
 
-The forward process of the second epidemic on the coloured tree is a three-type Galton–Watson process; its extinction probabilities from non-root types solve the fixed-point system $\boldsymbol\xi = \tilde{\mathbf f}(\boldsymbol\xi)$, whose solution in $[0,1)^3$ is unique when $R_0^{(2)} > 1$, and the root's extinction probability averages $f_1$ and $f_3$ over whether the root was in the first epidemic's giant component (probability $1-q$). For the final size, a vertex escapes a major outbreak iff its susceptibility set (the set of vertices that would infect it, explored backwards) is finite. The backward exploration is again a three-type branching process, with transmission probabilities reversed, $\pi_{ij} \to \pi_{ji}$, which explains the swap of $\pi_{10}$ and $\pi_{01}$ in $\hat t_{ij}$. Its non-extinction probability, averaged over the root's type, gives the final size; the fraction of first-epidemic cases reinfected is $1 - \hat\xi_1$ and of first-epidemic escapees infected is $1 - \hat\xi_3$.
+The forward process of the second epidemic on the coloured tree is a three-type Galton–Watson process; its extinction probabilities from non-root types form the minimal solution in $[0,1]^3$ of the fixed-point system $\boldsymbol\xi = \tilde{\mathbf f}(\boldsymbol\xi)$ (the limit of the iterates from $\mathbf 0$), which lies in $[0,1)^3$ when the mean offspring matrix is irreducible and $R_0^{(2)} > 1$, and the root's extinction probability averages $f_1$ and $f_3$ over whether the root was in the first epidemic's giant component (probability $1-q$). For the final size, a vertex escapes a major outbreak iff its susceptibility set (the set of vertices that would infect it, explored backwards) is finite. The backward exploration is again a three-type branching process, with transmission probabilities reversed, $\pi_{ij} \to \pi_{ji}$, which explains the swap of $\pi_{10}$ and $\pi_{01}$ in $\hat t_{ij}$. Its non-extinction probability, averaged over the root's type, gives the final size; the fraction of first-epidemic cases reinfected is $1 - \hat\xi_1$ and of first-epidemic escapees infected is $1 - \hat\xi_3$.
 
 ## Sources
 

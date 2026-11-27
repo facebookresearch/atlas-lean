@@ -1,6 +1,6 @@
 # Which target the fastest searcher hits
 
-**Setting.** Independent and identically distributed searchers each hit one of $m$ targets (or never hit). For a single searcher let $\tau$ be its hitting time, $\kappa \in \{0, \dots, m-1\}$ the target hit, $F(t) = \mathbb{P}(\tau \le t)$ and $F_k(t) = \mathbb{P}(\tau \le t, \kappa = k)$. With $N$ searchers, let $K_N$ be the target hit by the fastest one ($K_N = \infty$ if no searcher ever hits).
+**Setting.** Independent and identically distributed searchers each hit one of $m$ targets (or never hit). For a single searcher let $\tau$ be its hitting time, $\kappa \in \{0, \dots, m-1\}$ the target hit, $F(t) = \mathbb{P}(\tau \le t)$ and $F_k(t) = \mathbb{P}(\tau \le t, \kappa = k)$. Assume $F$ is continuous with $F(0) = 0$, so that ties between searchers have probability zero (for $\tau \equiv 1$ all searchers tie and the fastest one is undefined). With $N$ searchers, let $K_N$ be the target hit by the fastest one ($K_N = \infty$ if no searcher ever hits).
 
 **Theorem.**
 1. *(Exact formula.)* $\mathbb{P}(K_N = k) = N\int_0^\infty (1 - F(t))^{N-1}\,dF_k(t)$ for $k = 0, \dots, m-1$, and $\mathbb{P}(K_N = \infty) = \mathbb{P}(\tau = \infty)^N$.

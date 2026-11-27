@@ -20,15 +20,15 @@ with eigenline slopes $z_{1,2} = (-q\delta \pm \sqrt\Delta)/(2\beta)$; they coin
 
 **Unbiased inputs ($\delta = 0$): bifurcation at $q^*$.**
 
-- If $q > q^*$ (little crosstalk), $\mu_1 = (2q-1)(v-c)$ with direction $w_2 = -w_1$: the attractors $\pm\sqrt{q - 1/2}\,(1,-1)/\sqrt2$, of norm $\sqrt{q - 1/2}$, are segregated (one input wins); the saddles lie on $w_2 = w_1$ with norm $1$.
-- If $q < q^*$ (strong crosstalk), $\mu_1 = v + c$ with direction $w_2 = w_1$: the attractors $\pm(1,1)/\sqrt2$ have norm $1$ and are unsegregated; the saddles lie on $w_2 = -w_1$ with norm $\sqrt{q - 1/2}$.
+- If $q > q^*$ (little crosstalk), $\mu_1 = (2q-1)(v-c)$ with direction $w_2 = -w_1$: the attractors $\pm\sqrt{2q - 1}\,(1,-1)/\sqrt2$, of norm $\sqrt{2q - 1}$, are segregated (one input wins); the saddles lie on $w_2 = w_1$ with norm $1$.
+- If $q < q^*$ (strong crosstalk), $\mu_1 = v + c$ with direction $w_2 = w_1$: the attractors $\pm(1,1)/\sqrt2$ have norm $1$ and are unsegregated; the saddles lie on $w_2 = -w_1$ with norm $\sqrt{2q - 1}$.
 - If $q = q^*$, every line through the origin is invariant and carries two half-stable equilibria, which together form an ellipse of non-isolated equilibria.
 
 So with unbiased, negatively correlated inputs, crosstalk above the critical level $1 - q^*$ abolishes ocular-dominance-like segregation through an exchange of stability between the two eigendirections. For $\delta \ne 0$ the eigenvalues never cross and no bifurcation occurs.
 
 ## Proof sketch
 
-At an equilibrium $\mathbf{EC}\mathbf w = (\mathbf w^T\mathbf C\mathbf w)\mathbf w$, so $\mathbf w$ is an eigenvector of $\mathbf{EC}$ scaled so that $\mathbf w^T\mathbf C\mathbf w$ equals its eigenvalue. The eigenvalues are the roots of $X^2 - \operatorname{tr}(\mathbf{EC})X + \det(\mathbf{EC})$ with $\det(\mathbf{EC}) = (2q-1)\det\mathbf C > 0$, and the discriminant is a sum of squares, hence real. Linearisation at a normalised eigenvector shows two negative eigenvalues for the top direction and opposite signs for the other. For $\delta = 0$ the slope $z = w_2/w_1$ obeys $\dot z = -\beta(z^2 - 1)$, and $\beta$ changes sign exactly at $q = q^*$. This swaps which of $z = \pm1$ is attracting and makes $\dot z \equiv 0$ at criticality. A planar system whose invariant lines carry all the equilibria has no periodic orbits.
+At an equilibrium $\mathbf{EC}\mathbf w = (\mathbf w^T\mathbf C\mathbf w)\mathbf w$, so $\mathbf w$ is an eigenvector of $\mathbf{EC}$ scaled so that $\mathbf w^T\mathbf C\mathbf w$ equals its eigenvalue. The eigenvalues are the roots of $X^2 - \operatorname{tr}(\mathbf{EC})X + \det(\mathbf{EC})$ with $\det(\mathbf{EC}) = (2q-1)\det\mathbf C > 0$, and the discriminant is a sum of squares, hence real. Linearisation at a normalised eigenvector shows two negative eigenvalues for the top direction and opposite signs for the other. On the line $w_2 = -w_1$, $\mathbf w^T\mathbf C\mathbf w = (v - c)|\mathbf w|^2$ and the eigenvalue is $(2q-1)(v-c)$, so the normalised equilibria have $|\mathbf w|^2 = 2q - 1$ (norm $1$ at $q = 1$, plain Oja); on $w_2 = w_1$ both sides equal $v + c$ and the norm is $1$. For $\delta = 0$ the slope $z = w_2/w_1$ obeys $\dot z = -\beta(z^2 - 1)$, and $\beta$ changes sign exactly at $q = q^*$. This swaps which of $z = \pm1$ is attracting and makes $\dot z \equiv 0$ at criticality. A planar system whose invariant lines carry all the equilibria has no periodic orbits.
 
 ## Sources
 

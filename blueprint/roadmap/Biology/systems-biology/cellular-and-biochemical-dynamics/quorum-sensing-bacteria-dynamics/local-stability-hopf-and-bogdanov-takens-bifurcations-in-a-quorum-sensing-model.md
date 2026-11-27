@@ -17,7 +17,11 @@ The Jacobian has trace $\mathcal{J} - b - 1$ and determinant $b - \Theta$, hence
 
 **Theorem (Hopf).** At a positive equilibrium where the trace of the Jacobian vanishes, its determinant is positive and the first Lyapunov coefficient $l_1 \neq 0$, the system undergoes a codimension-one Hopf bifurcation: supercritical with a stable limit cycle if $l_1 < 0$, subcritical with an unstable one if $l_1 > 0$.
 
-**Theorem (Bogdanov–Takens).** At parameter values $(b^*, K^*)$ where a positive equilibrium has a double zero eigenvalue and the two normal-form coefficients are nonzero, the system undergoes a codimension-two Bogdanov–Takens bifurcation, from which curves of saddle-node, Hopf and homoclinic bifurcations emanate in the $(b, K)$ plane.
+**Theorem (Bogdanov–Takens).** Let $(U, V)$ be a positive equilibrium in
+
+$$\Omega_{BT} = \big\{(u,v) \in \mathbb R_{>0}^2 : -2u^5 + v^3 > 0,\ 2u^3 - v^2 > 0,\ -2u^5 + v^3 - u^3v > 0,\ (u^2 - v)(2u^5 + u^3v - v^3) > 0,\ 4u^5 - u^3v - 6u^2v^2 + 4v^3 \ne 0\big\},$$
+
+and let $(b^*, K^*)$ be the positive parameter values at which the Jacobian at $(U, V)$ is nilpotent (a double zero eigenvalue of geometric multiplicity one). The last condition in $\Omega_{BT}$ makes the map $(u, v, b, K) \mapsto (f, g, \operatorname{tr}, \det)$ regular at $(U, V, b^*, K^*)$ (transversality). If moreover the two normal-form coefficients are nonzero, the system undergoes a codimension-two Bogdanov–Takens bifurcation at $(b^*, K^*)$, from which curves of saddle-node, Hopf and homoclinic bifurcations emanate in the $(b, K)$ plane.
 
 In the full three-component model the corresponding oscillations break up through Shilnikov homoclinic bifurcations, which produce chaotic quorum-sensing dynamics.
 

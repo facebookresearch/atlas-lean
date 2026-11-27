@@ -1,6 +1,6 @@
 # Large-time drug concentration under random nonadherence
 
-**Model.** In a one-compartment model with first-order absorption (rate $k_a$) and elimination (rate $k_e\neq k_a$), a dose $D$ with bioavailability $F$ is prescribed every $\tau$ time units. Let $\xi_n\in\{0,1\}$ record whether the patient remembers the $n$th dose; $(\xi_n)$ is a stationary, ergodic and possibly correlated sequence. A *dosing protocol* takes amount $Df_n$, with $f_n=f(\xi_{n-m},\dots,\xi_n)$, $f_n=0$ when $\xi_n=0$. The concentration is
+**Model.** In a one-compartment model with first-order absorption (rate $k_a$) and elimination (rate $k_e\neq k_a$), a dose $D$ with bioavailability $F$ is prescribed every $\tau$ time units. Let $\xi_n\in\{0,1\}$, $n\in\mathbb Z$, record whether the patient remembers the $n$th dose, fix $m\ge0$, and let $X_n=(\xi_{n-m},\dots,\xi_n)\in\{0,1\}^{m+1}$ be the history window. Assume $(X_n)_{n\in\mathbb Z}$ is a stationary, irreducible, time-homogeneous Markov chain on $\{0,1\}^{m+1}$ with transition matrix $P$ and stationary law $\pi$ ($P^{\top}\pi=\pi$); the $\xi_n$ may be correlated. A *dosing protocol* is a function $f:\{0,1\}^{m+1}\to[0,\infty)$, and the $n$th dose is $Df_n$ with $f_n=f(X_n)$. The concentration is
 
 $$c(t)=\kappa\sum_{n=0}^{\lfloor t/\tau\rfloor}\Big(e^{-k_e(t-n\tau)}-e^{-k_a(t-n\tau)}\Big)f_n,\qquad \kappa=\frac{DF}{V}\frac{k_a}{k_a-k_e}.$$
 
@@ -9,9 +9,23 @@ Write $\alpha=e^{-k_e\tau}$ and $\beta=e^{-k_a\tau}$. Two protocols are compared
 **Theorem.**
 
 1. For each $t\in[0,\tau]$, $c(N\tau+t)\Rightarrow C(t)=\kappa\big(\alpha^{t/\tau}A-\beta^{t/\tau}B\big)$ as $N\to\infty$, where $A$ and $B$ are equal in law to the perpetuities $\sum_{n\ge0}\alpha^nf_{-n}$ and $\sum_{n\ge0}\beta^nf_{-n}$ of the two-sided stationary dose sequence. Time averages of $c^j$ converge almost surely to the corresponding moments of $C$.
-2. $\mathbb E[A]=\frac1{1-\alpha}\sum_xf(x)\pi(x)$ and $\mathbb E[B]=\frac1{1-\beta}\sum_xf(x)\pi(x)$, where $\pi$ is the stationary law of the history window. Second moments are given by explicit finite sums.
-3. For i.i.d. adherence with $\mathbb P(\xi_n=1)=p$, the relative mean concentration is $\mu^{\mathrm{single}}=p<\mu^{\mathrm{double}}=p+p(1-p)$. The relative root-mean-square error decomposes as $\varepsilon=\sqrt{(\varepsilon^{\mathrm{perf}})^2+\eta}$, where $\eta\ge0$ is an explicit quadratic polynomial in $1-p$.
-4. *(Toxicity.)* Under the single-dose protocol, the largest possible concentration over all adherence patterns equals that of perfect adherence, attained at $t^*=\tau\ln\!\big(\frac{(1-\alpha)\ln\beta}{(1-\beta)\ln\alpha}\big)/\ln(\alpha/\beta)$, so missed doses never raise the peak. The double-dose protocol obeys an explicit higher upper bound.
+2. $\mathbb E[A]=\frac1{1-\alpha}\sum_xf(x)\pi(x)$ and $\mathbb E[B]=\frac1{1-\beta}\sum_xf(x)\pi(x)$, sums over $x\in\{0,1\}^{m+1}$. For the second moments let $v(x)=f(x)\pi(x)$ and $u_\gamma=(I-\gamma P^{\top})^{-1}v$ for $\gamma\in\{\alpha,\beta\}$. Then
+
+$$\mathbb E[AB]=\frac1{1-\alpha\beta}\Big(\sum_xf(x)\big(u_\alpha(x)+u_\beta(x)\big)-\sum_xf(x)^2\pi(x)\Big),$$
+
+$\mathbb E[A^2]$ and $\mathbb E[B^2]$ are the same expression with $\beta$ replaced by $\alpha$, respectively $\alpha$ by $\beta$, and $\mathbb E[C(t)^2]=\kappa^2\big(\alpha^{2t/\tau}\mathbb E[A^2]-2\alpha^{t/\tau}\beta^{t/\tau}\mathbb E[AB]+\beta^{2t/\tau}\mathbb E[B^2]\big)$.
+3. For i.i.d. adherence with $\mathbb P(\xi_n=1)=p\in(0,1)$, the relative mean concentration is $\mu^{\mathrm{single}}=p<\mu^{\mathrm{double}}=p+p(1-p)$. Under the single-dose protocol the relative root-mean-square error is $\varepsilon^{\mathrm{single}}=\sqrt{(\varepsilon^{\mathrm{perf}})^2+\eta^{\mathrm{single}}}$, with
+
+$$(\varepsilon^{\mathrm{perf}})^2=\frac{k_ak_e\tau\big(k_a\coth\frac{k_e\tau}2-k_e\coth\frac{k_a\tau}2\big)}{2(k_a^2-k_e^2)}-1,$$
+
+$$\eta^{\mathrm{single}}=(1-p)\,\frac{k_a^2\Big(4-k_e\tau\big(\frac4{e^{k_e\tau}-1}+1\big)\Big)+\frac{k_ak_e^2\tau\,(e^{k_a\tau}+3)}{e^{k_a\tau}-1}-4k_e^2}{2(k_a^2-k_e^2)}+(1-p)^2\,\frac{k_ak_e\tau\big(k_ae^{k_a\tau}-k_a-k_ee^{k_e\tau}+k_e\big)}{(k_a^2-k_e^2)(e^{k_a\tau}-1)(e^{k_e\tau}-1)}.$$
+
+Here $\varepsilon$ is measured relative to the perfect-adherence average $C_0=DF/(Vk_e\tau)$. The correction $\eta^{\mathrm{single}}$ can be negative: as $p\to0$, $\varepsilon^{\mathrm{single}}\to1$, so $\eta^{\mathrm{single}}\to1-(\varepsilon^{\mathrm{perf}})^2$, which is negative when $\varepsilon^{\mathrm{perf}}>1$.
+4. *(Toxicity.)* Under the single-dose protocol, the largest possible concentration over all adherence patterns equals that of perfect adherence, attained at $t^*=\tau\ln\!\big(\frac{(1-\alpha)\ln\beta}{(1-\beta)\ln\alpha}\big)/\ln(\alpha/\beta)$, so missed doses never raise the peak. Under the double-dose protocol,
+
+$$\sup_{t\in[0,\tau],\,N\ge0,\,\xi}c^{\mathrm{double}}(N\tau+t)\le C^{\mathrm{perf}}(t^*)+b(s^*),\qquad b(s)=\kappa\big(\alpha^{s/\tau}-\beta^{s/\tau}\big),\quad s^*=\frac{\ln(k_a/k_e)}{k_a-k_e},$$
+
+where $C^{\mathrm{perf}}(t)=\kappa\big(\alpha^{t/\tau}/(1-\alpha)-\beta^{t/\tau}/(1-\beta)\big)$ and $b(s^*)$ is the peak concentration after one dose.
 
 ## Proof sketch
 

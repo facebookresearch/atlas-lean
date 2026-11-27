@@ -24,11 +24,11 @@ with $A, B$ explicit solutions of Riccati equations (written with $\gamma = \sqr
 
 $$\mathbb P(\tau \le t) \le \inf_{0<\lambda<\lambda_c}\exp\{-\lambda M + A(t,\lambda) + B(t,\lambda)p_0\}.$$
 
-If $M > \mathbb E_{p_0}[H_t]$, the exponent is strictly convex in $\lambda$ with a unique minimizer $\lambda^*(M)$, which increases strictly in $M$ and tends to $\lambda_c$ as $M \to \infty$.
+Write $\Lambda_t(\lambda) = A(t,\lambda) + B(t,\lambda)p_0$ and $\Lambda_t'(\lambda_c-) = \lim_{\lambda\uparrow\lambda_c}\partial_\lambda\Lambda_t(\lambda)$, which is finite for fixed $t$. The exponent $-\lambda M + \Lambda_t(\lambda)$ is strictly convex in $\lambda$, and if $\mathbb E_{p_0}[H_t] < M < \Lambda_t'(\lambda_c-)$ it has a unique minimizer $\lambda^*(M) \in (0,\lambda_c)$, the solution of $\partial_\lambda\Lambda_t(\lambda) = M$, which increases strictly in $M$ on that interval. For $M \ge \Lambda_t'(\lambda_c-)$ the infimum over $(0,\lambda_c)$ is approached as $\lambda \uparrow \lambda_c$ and is not attained.
 
 ## Proof sketch
 
-The SI equation is logistic in the random clock $H_t$, so all long-run questions reduce to whether $H_\infty$ is finite. An integrable intervention with bounded-mean $P$ gives $\mathbb E[H_\infty] < \infty$; without intervention the ergodic theorem gives $H_t/t \to \int x\,\pi(dx) > 0$. The CIR process is affine, so the Laplace transform of its time integral solves Riccati equations, which turns the threshold-crossing probability into a Chernoff bound. The Jacobi process (bounded on an interval) has the same mean formula with its own long-run mean.
+The SI equation is logistic in the random clock $H_t$, so all long-run questions reduce to whether $H_\infty$ is finite. An integrable intervention with bounded-mean $P$ gives $\mathbb E[H_\infty] < \infty$; without intervention the ergodic theorem gives $H_t/t \to \int x\,\pi(dx) > 0$. The CIR process is affine, so the Laplace transform of its time integral solves Riccati equations, which turns the threshold-crossing probability into a Chernoff bound. Since $\partial_\lambda\Lambda_t(0) = \mathbb E_{p_0}[H_t]$ and $\partial_\lambda\Lambda_t$ is strictly increasing, the first-order condition $\partial_\lambda\Lambda_t(\lambda)=M$ has a root in $(0,\lambda_c)$ exactly for $M$ between these two derivatives. The Jacobi process (bounded on an interval) has the same mean formula with its own long-run mean.
 
 ## Sources
 

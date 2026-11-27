@@ -1,11 +1,11 @@
 # Vaccine-reduced reproduction number with prevalence-dependent attitude switching
 
-Split each SIR class into pro-vaccination ($P$) and unprotected ($U$) subclasses. Births, at rate $\mu$, enter $S_U$; all classes die at rate $\mu$. Infection occurs at rate $\beta S_\bullet(I_P+I_U)$ and recovery at rate $\gamma$. Pro-vaccination susceptibles are vaccinated into $R_P$ at rate $\phi$, and unprotected recovereds lose immunity at rate $\theta$. Individuals switch from $P$ to $U$ at rate $\Psi(I)$ and from $U$ to $P$ at rate $\Omega(I)$, where both rates depend on the total prevalence $I=I_P+I_U$:
+Split each SIR class into pro-vaccination ($P$) and unprotected ($U$) subclasses. Births, at rate $\mu$, enter $S_U$; all classes die at rate $\mu$. Infection occurs at rate $\beta S_\bullet(I_P+I_U)$ and recovery at rate $\gamma$. Pro-vaccination susceptibles are vaccinated into $R_P$ at rate $\phi$, and unprotected recovereds lose immunity at rate $\theta$. Susceptible and recovered individuals switch from $P$ to $U$ at rate $\Psi(I)$ and from $U$ to $P$ at rate $\Omega(I)$, where both rates depend on the total prevalence $I=I_P+I_U$; infectious individuals keep their attitude, since they stay in that class only briefly:
 
 $$
 \begin{aligned}
 \dot S_P&=-\beta S_PI-(\phi+\mu+\Psi)S_P+\Omega S_U, & \dot S_U&=\mu-\beta S_UI-(\mu+\Omega)S_U+\Psi S_P+\theta R_U,\\
-\dot I_\bullet&=\beta S_\bullet I-(\gamma+\mu)I_\bullet\mp(\text{attitude switching}), & \dot R_P&=\gamma I_P+\phi S_P-(\mu+\Psi)R_P+\Omega R_U,\\
+\dot I_\bullet&=\beta S_\bullet I-(\gamma+\mu)I_\bullet, & \dot R_P&=\gamma I_P+\phi S_P-(\mu+\Psi)R_P+\Omega R_U,\\
 && \dot R_U&=\gamma I_U-(\theta+\mu+\Omega)R_U+\Psi R_P.
 \end{aligned}
 $$
@@ -16,7 +16,19 @@ $$
 R_v=\frac{\beta}{\gamma+\mu}\,(S_P^0+S_U^0)
 $$
 
-is less than $1$. Equivalently, stability requires the baseline pro-vaccination switching rate $\Omega(0)$ to exceed a critical value $\omega_{\rm cr}$ that is explicit in the scaled parameters. Endemic equilibria are the intersections of the prevalence-dependent switching rate with an explicit decreasing curve $\omega^*(\cdot)$ of the scaled prevalence, with $\omega^*(0)=\omega_{\rm cr}$. If attitudes respond strongly to prevalence, so that the derivatives of the switching rates at equilibrium are large, the stability inequalities for the endemic equilibrium fail. A Hopf bifurcation then produces sustained oscillations in prevalence and vaccine attitude.
+is less than $1$. Scale time by the lifespan and write $R_0=\beta/(\gamma+\mu)$, $\varepsilon=\mu/(\gamma+\mu)$, $v=\phi/\mu$, $h=\theta/\mu$, $\omega=\Omega/\mu$, $\psi=\Psi/\mu$, $\Sigma=\psi+\omega$, a bar for adding $1$ ($\bar h=h+1$, $\bar\Sigma=\Sigma+1$), $r=R_0-1$, $\zeta=\bar\Sigma+v$ and $\rho=\bar\Sigma(v+rh)+R_0hv$. Equivalently, the disease-free equilibrium is stable if and only if the scaled baseline switching rate exceeds a critical value,
+
+$$
+\frac{\Omega(0)}{\mu}>\omega_{\rm cr}:=\frac{r\bar h\,\bar\Sigma(0)\,\zeta(0)}{\rho(0)} .
+$$
+
+For fixed $\Sigma$, endemic equilibria are the solutions of $\omega(Y)=\omega^*(R_0Y)$, where $Y=I/\varepsilon$ is the scaled prevalence and
+
+$$
+\omega^*(y)=(\zeta+y)\,\frac{\bar\Sigma(r\bar h-y)}{\rho+R_0hy},\qquad \omega^*(0)=\omega_{\rm cr},\quad \omega^*(r\bar h)=0 ;
+$$
+
+$\omega^*$ is decreasing whenever $(1-h\zeta)R_0<\bar\Sigma\zeta+1$. If attitudes respond strongly to prevalence, so that the derivatives of the switching rates at equilibrium are large, the stability inequalities for the endemic equilibrium (in the limit $\varepsilon\to0$) fail; numerical simulations then show sustained oscillations in prevalence and vaccine attitude, but a Hopf bifurcation is not proved.
 
 ## Depends on
 

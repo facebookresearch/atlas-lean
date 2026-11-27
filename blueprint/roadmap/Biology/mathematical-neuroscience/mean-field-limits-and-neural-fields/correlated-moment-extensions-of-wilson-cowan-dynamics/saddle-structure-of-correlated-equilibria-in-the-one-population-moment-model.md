@@ -31,7 +31,7 @@ $$
 \begin{pmatrix}\tfrac12 f^{(3)}(s^*)w^3\Delta^* & \tfrac12 f''(s^*)w^2\\ 2f''(s^*)w^2\Delta^* & 0\end{pmatrix}
 $$
 
-has determinant $-f''(s^*)^2w^4\Delta^*<0$ whenever $\Delta^*>0$, so the fixed point is a saddle; if $f''(s^*)=0$ there is a line of non-hyperbolic fixed points with a zero eigenvalue.
+has determinant $-f''(s^*)^2w^4\Delta^*<0$ whenever $\Delta^*>0$, so the fixed point is a saddle; if $f''(s^*)=0$ and also $\alpha\nu^*=f(s^*)$, there is a line of non-hyperbolic fixed points with a zero eigenvalue, while if $f''(s^*)=0$ and $\alpha\nu^*\ne f(s^*)$ there is no fixed point with $\Delta\ne0$ (for logistic $f$, $\alpha=1$, $w=4$, $I=0$: $wf'(0)=1$ and $f''(0)=0$, but $\dot\nu=f(0)=\tfrac12$ on the line $\nu=0$).
 
 **Consequence.** By Poincaré index arguments there are no acceptable limit cycles either (a cycle in $\{\Delta>0\}$ would have to enclose fixed points of total index $+1$, but all such points are saddles of index $-1$). Hence in one population the only stable behaviors are the uncorrelated stable equilibria of the scalar WC equation; genuinely correlation-induced attractors (new cycles with roughly half the WC period, extra bistability) require at least two populations.
 
@@ -41,7 +41,7 @@ has determinant $-f''(s^*)^2w^4\Delta^*<0$ whenever $\Delta^*>0$, so the fixed p
 
 ## Proof sketch
 
-Setting $\dot\Delta=0$ with $\Delta\neq0$ pins $\nu^*$ by $wf'(w\nu^*+I)=\alpha$ independently of $\Delta$, and then the mean equation is linear in $\Delta$. Using $wf'(s^*)=\alpha$ to simplify the linearization kills the $(2,2)$ entry, and the off-diagonal product $f''(s^*)^2w^4\Delta^*$ makes the determinant negative for every positive correlation.
+Setting $\dot\Delta=0$ with $\Delta\neq0$ pins $\nu^*$ by $wf'(w\nu^*+I)=\alpha$ independently of $\Delta$, and then the mean equation is linear in $\Delta$, with coefficient $\tfrac12 f''(s^*)w^2$ and constant term $f(s^*)-\alpha\nu^*$; when $f''(s^*)=0$ it has a solution only if that constant term vanishes, and then every $\Delta$ solves it. Using $wf'(s^*)=\alpha$ to simplify the linearization kills the $(2,2)$ entry, and the off-diagonal product $f''(s^*)^2w^4\Delta^*$ makes the determinant negative for every positive correlation.
 
 ## Sources
 

@@ -22,7 +22,15 @@ $$
 N(t) + \int_{t - \sigma(N(t))}^{t} N(s)\,ds = 1 .
 $$
 
-3. *(Strong coupling: periodic solutions.)* When $\sigma$ jumps (strong coupling, so that the boundary condition admits two values of $N$), there are explicit periodic solutions with discontinuous $N(t)$: for every $\alpha > 0$ a solution of period $\alpha$ with $N(t) = N^+(\alpha)e^{-t}$ on $(0,\alpha)$, and further families with two discontinuities per period, obtained by prescribing $N$ and solving the linear transport equation by characteristics.
+3. *(Strong coupling: periodic solutions.)* For $\alpha > 0$ let
+
+$$N^-(\alpha) = \frac{1}{2e^\alpha - 1} < N^+(\alpha) = \frac{e^\alpha}{2e^\alpha - 1} < 1,$$
+
+and take the Lipschitz continuous threshold
+
+$$\sigma_\alpha(x) = \begin{cases} 2\alpha, & 0 \le x \le N^-(\alpha),\\ 2\alpha - \ln x + \ln N^-(\alpha), & N^-(\alpha) \le x \le N^+(\alpha),\\ \alpha, & x \ge N^+(\alpha),\end{cases}$$
+
+which takes values in $[\alpha, 2\alpha]$ (so it leaves $(0,1)$ when $\alpha > 1/2$) and has $\sup|\sigma_\alpha'| = 2e^\alpha - 1 > 1$ on $[N^-(\alpha), N^+(\alpha)]$, so the weak-coupling hypothesis of item 2 fails. With $\sigma = \sigma_\alpha$, the $\alpha$-periodic function $N(t) = N^+(\alpha)e^{-t}$ on $(0,\alpha)$, which jumps from $N^-(\alpha)$ to $N^+(\alpha)$ once per period, together with the solution of the linear transport equation $\partial_t n + \partial_s n + \mathbf 1_{\{s \ge \sigma_\alpha(N(t))\}}n = 0$, $n(0,t) = N(t)$, obtained by characteristics, solves the model: $\int_{\sigma_\alpha(N(t))}^\infty n(s,t)\,ds = N(t)$ and $\int_0^\infty n(s,t)\,ds = 1$ for all $t$. Further families, with two discontinuities per period, are constructed in the same way.
 
 ## Proof sketch
 

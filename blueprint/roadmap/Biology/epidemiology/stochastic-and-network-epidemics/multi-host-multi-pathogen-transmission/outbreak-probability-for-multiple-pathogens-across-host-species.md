@@ -11,7 +11,7 @@ $$
 \end{aligned}
 $$
 
-The disease-free equilibrium (DFE) has $S_p^0 = b_p/d_p$; $\mathcal{R}_0$ denotes the basic reproduction number of the system.
+The disease-free equilibrium (DFE) has $S_p^0 = b_p/d_p$; $\mathcal{R}_0$ denotes the basic reproduction number of the system. Pathogens do not interact near the DFE, so the next-generation matrix is block diagonal by pathogen and $\mathcal{R}_0 = \max_v \mathcal{R}_{0v}$, where $\mathcal{R}_{0v}$ is the spectral radius of the block of pathogen $v$.
 
 **Results.**
 1. The DFE is locally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$; if $\mathcal{R}_0 < 1$ it is globally asymptotically stable in the feasible region.
@@ -28,7 +28,7 @@ $$
 \mathbb{P}_{\mathrm{ext}} = \prod_{p=1}^{P}\prod_{v=1}^{V}\Bigl(\frac{\varepsilon_{pv} z^{i}_{pv} + d_p}{\varepsilon_{pv} + d_p}\Bigr)^{\ell_{pv0}} (z^{i}_{pv})^{i_{pv0}}, \qquad \mathbb{P}_{\mathrm{outbreak}} = 1 - \mathbb{P}_{\mathrm{ext}},
 $$
 
-where $\mathbf{z}$ is the minimal fixed point of the generating functions in $[0,1]^{2PV}$: $\mathbf{z} = \mathbf{1}$ if $\mathcal{R}_0 \le 1$, while for $\mathcal{R}_0 > 1$ there is a unique fixed point $\mathbf{0} < \mathbf{z} < \mathbf{1}$.
+where $\mathbf{z}$ is the minimal fixed point of the generating functions in $[0,1]^{2PV}$. The generating functions of pathogen $v$ involve only the coordinates $\mathbf z_{\cdot v}$, so $\mathbf z$ splits by pathogen: $\mathbf{z}_{\cdot v} = \mathbf{1}$ if $\mathcal{R}_{0v} \le 1$, and if $\mathcal{R}_{0v} > 1$ and the transmission matrix $(\beta_{pqv})_{p,q}$ is irreducible, every coordinate of $\mathbf{z}_{\cdot v}$ lies in $(0,1)$. In particular $\mathbf z=\mathbf 1$ if $\mathcal R_0\le1$, and $\mathbb P_{\mathrm{outbreak}}>0$ for initial infections of a supercritical pathogen.
 3. *(Two hosts, two pathogens.)* If pathogen 1 has $\mathcal{R}_{01} > 1$ and pathogen 2 has $\mathcal{R}_{02} \le 1$, the DFE is unstable and the system has a mixed equilibrium with pathogen 1 endemic and pathogen 2 absent, globally asymptotically stable with respect to the pathogen-2 subsystem.
 
 ## Depends on
@@ -37,7 +37,7 @@ where $\mathbf{z}$ is the minimal fixed point of the generating functions in $[0
 
 ## Proof sketch
 
-While susceptibles are near $S^0_p$, infected individuals act independently, so the epidemic is a multitype branching process whose types are (latent or infectious) × species × pathogen. A latent individual either progresses (probability $\varepsilon_{pv}/(\varepsilon_{pv} + d_p)$) or dies; an infectious one either infects a susceptible of some species (and remains infectious) or is removed. The extinction probability from one ancestor of each type is the minimal fixed point of the offspring generating functions, and independence of initial ancestors gives the product. The fixed point is below $\mathbf{1}$ exactly in the supercritical case, which coincides with $\mathcal{R}_0 > 1$ because the mean offspring matrix and the next-generation matrix share the same threshold.
+While susceptibles are near $S^0_p$, infected individuals act independently, so the epidemic is a multitype branching process whose types are (latent or infectious) × species × pathogen. A latent individual either progresses (probability $\varepsilon_{pv}/(\varepsilon_{pv} + d_p)$) or dies; an infectious one either infects a susceptible of some species (and remains infectious) or is removed. The extinction probability from one ancestor of each type is the minimal fixed point of the offspring generating functions, and independence of initial ancestors gives the product. Each pathogen's types form a closed subprocess, and its part of the fixed point is below $\mathbf{1}$ exactly in the supercritical case, which coincides with $\mathcal{R}_{0v} > 1$ because the mean offspring matrix and the next-generation matrix share the same threshold; a subcritical pathogen keeps $\mathbf z_{\cdot v}=\mathbf 1$ even when $\mathcal R_0>1$.
 
 ## Related topics
 

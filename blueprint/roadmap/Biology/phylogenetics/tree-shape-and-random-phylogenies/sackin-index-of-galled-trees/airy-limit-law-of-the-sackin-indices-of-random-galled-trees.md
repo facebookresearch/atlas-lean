@@ -1,6 +1,6 @@
 # Airy limit law of the Sackin indices of random galled trees
 
-**Setting.** A galled tree is a rooted phylogenetic network in which every reticulation cycle (gall) is vertex-disjoint from the others; simplex and normal galled trees are the subclasses studied alongside it. For a leaf $x$ of a galled tree $N$, let $h^+(x)$ and $h^-(x)$ be the lengths of a longest and a shortest path from the root to $x$. The two Sackin indices are
+**Setting.** A (rooted, binary) *phylogenetic network* is a directed acyclic graph without multiple edges whose nodes are a unique root (indegree $0$, outdegree $2$), leaves (indegree $1$, outdegree $0$), tree nodes (indegree $1$, outdegree $2$) and reticulation nodes (indegree $2$, outdegree $1$); it is labeled if its leaves carry distinct labels and unlabeled otherwise. A *tree-cycle* (gall) is a pair of edge-disjoint paths from a tree node to a reticulation node whose intermediate nodes are tree nodes. A *galled tree* is a phylogenetic network in which every reticulation node lies in a tree-cycle and any two tree-cycles are node-disjoint. A galled tree is *simplex* if every reticulation node is followed by a leaf, and *normal* if the two parents of each reticulation node are not in an ancestor–descendant relationship. For a leaf $x$ of a galled tree $N$, let $h^+(x)$ and $h^-(x)$ be the lengths of a longest and a shortest path from the root to $x$. The two Sackin indices are
 
 $$S^+(N) = \sum_{x \in L} h^+(x), \qquad S^-(N) = \sum_{x \in L} h^-(x),$$
 
@@ -28,4 +28,4 @@ As for phylogenetic trees, where the Sackin index of uniform trees also has an A
 
 ## Sources
 
-- Michael Fuchs and Bernhard Gittenberger, "Sackin indices for labeled and unlabeled classes of galled trees", *Journal of Mathematical Biology* 90 (2025), 42, <https://doi.org/10.1007/s00285-025-02205-0>. Preprint version: arXiv:2407.13892 (2024), definitions of $h^\pm$ and $S^\pm$, Theorems 1 and 2 with Tables 1 and 2 (Section 1), <https://doi.org/10.48550/arXiv.2407.13892>.
+- Michael Fuchs and Bernhard Gittenberger, "Sackin indices for labeled and unlabeled classes of galled trees", *Journal of Mathematical Biology* 90 (2025), 42, <https://doi.org/10.1007/s00285-025-02205-0>. Preprint version: arXiv:2407.13892 (2024), Definitions 1–5 (networks, galled trees, simplex and normal galled trees, $h^\pm$ and $S^\pm$), Theorems 1 and 2 with Tables 1 and 2 (Section 1), <https://doi.org/10.48550/arXiv.2407.13892>.

@@ -19,6 +19,10 @@ for constants $B(T), C > 0$.
 
 $$\sqrt{N}(\tau_N - \tau) \Rightarrow -\frac{\nabla\phi(X(\tau))\cdot Z(\tau)}{\nabla\phi(X(\tau))\cdot F(X(\tau))}.$$
 
+## Proof depends on
+
+- [Gronwall inequality (integral form)](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+
 ## Proof sketch
 
 Between channel jumps the voltage is deterministic, so the hybrid process is a piecewise-deterministic Markov process whose channel part is a density-dependent family with jump size $1/N$. Kurtz-type martingale estimates and Gronwall's inequality give the LLN; an exponential martingale bound yields the large-deviation-type rate. The CLT follows from convergence of the compensated jump martingales to Brownian integrals with covariance determined by the transition rates, propagated through the linearised flow. The spike-time CLT is a delta method for the hitting time of a smooth surface, giving the jitter of spike timing due to finite channel numbers.

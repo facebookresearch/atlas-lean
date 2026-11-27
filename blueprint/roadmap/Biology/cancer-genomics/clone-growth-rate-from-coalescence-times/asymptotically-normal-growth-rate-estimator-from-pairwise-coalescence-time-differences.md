@@ -4,15 +4,23 @@
 
 $$H_{i,n}=T-\frac1r\big(\log Q_n+U_{i,n}\big),$$
 
-with $U_{i,n}$ i.i.d. standard logistic and $Q_n$ a common random factor. Pairwise differences $H_{i,n}-H_{j,n}=(U_{j,n}-U_{i,n})/r$ therefore do not depend on the unknown $T$ and $Q_n$. Consider estimators of the form
+where $Q_n$ is a common random factor with density $nq^{n-1}/(1+q)^{n+1}$ on $(0,\infty)$ and, given $Q_n=q$, the $U_{i,n}$ are i.i.d. with density
+
+$$f_{U_{i,n}\mid Q_n=q}(u)=\frac{1+q}{q}\cdot\frac{e^u}{(1+e^u)^2},\qquad u\in(-\log q,\infty),$$
+
+a standard logistic law conditioned on $(-\log q,\infty)$. Pairwise differences $H_{i,n}-H_{j,n}=(U_{j,n}-U_{i,n})/r$ therefore do not depend on the unknown $T$, although their law depends on $n$ through $Q_n$. A further limit $n\to\infty$ gives the representation $H_i=T-\frac1r\big(\log(1/W)+\log n+U_i\big)$ with $W$ exponential of mean $1$ and $U_1,\dots,U_{n-1}$ i.i.d. standard logistic, density $e^u/(1+e^u)^2$ on $\mathbb R$. Consider estimators of the form
 
 $$\hat r=\frac{c(n)\,(n-1)(n-2)}{\sum_{i=1}^{n-1}\sum_{j=1}^{n-1}(H_{i,n}-H_{j,n})^+}.$$
 
-Here $c(n)$ is chosen to minimize mean squared error ($\hat r_{MSE}$), to make $\hat r$ unbiased ($\hat r_{Bias}$), or to make $1/\hat r$ unbiased for $1/r$ ($\hat r_{Inv}$).
+Here $c(n)$ is chosen, for the first representation, to minimize mean squared error ($\hat r_{MSE}$), to make $\hat r$ unbiased ($\hat r_{Bias}$), or to make $1/\hat r$ unbiased for $1/r$ ($\hat r_{Inv}$); with $S_n=(n-1)(n-2)/\sum_{i,j}(U_{i,n}-U_{j,n})^+$ these are $c_{MSE}(n)=\mathbb E[S_n]/\mathbb E[S_n^2]$, $c_{Bias}(n)=1/\mathbb E[S_n]$ and
+
+$$c_{Inv}(n)=\mathbb E\Big[\frac1{S_n}\Big]=\frac{n}{n-2}\Big(1-\frac1{n-1}\sum_{k=1}^{n-1}\frac1k\Big),$$
+
+all tending to $1$ as $n\to\infty$.
 
 **Theorem.**
 
-1. In the $T=\infty$ representation,
+1. In the second representation, with i.i.d. standard logistic $U_i$, the estimator with $c(n)=1$, $\hat r=(n-1)(n-2)\big/\sum_{i=1}^{n-1}\sum_{j=1}^{n-1}(H_i-H_j)^+$, satisfies
 
 $$\sqrt n\,(\hat r-r)\Rightarrow\mathcal N\Big(0,\ r^2\Big(4-\frac{\pi^2}{3}\Big)\Big).$$
 

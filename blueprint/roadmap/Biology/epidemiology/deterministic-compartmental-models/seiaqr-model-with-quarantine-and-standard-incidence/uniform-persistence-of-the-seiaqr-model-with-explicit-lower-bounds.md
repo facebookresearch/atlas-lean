@@ -18,7 +18,17 @@ The disease-free equilibrium is $V^0 = (\lambda/d, 0,0,0,0,0)$.
 
 **Local stability.** $V^0$ is locally asymptotically stable if $\mathcal R_c < 1$, linearly stable if $\mathcal R_c = 1$, and unstable if $\mathcal R_c > 1$.
 
-**Theorem (uniform persistence with explicit bound).** Let $\mathcal R_c > 1$ and $m = \max\{a, b, 1\}$. For every $\theta \in (0,1)$ there is an explicit time $T = T(\theta)$, built from the model parameters, such that every solution with positive initial data satisfies
+**Theorem (uniform persistence with explicit bound).** Let $\mathcal R_c > 1$, $m = \max\{a, b, 1\}$, $B = \min\{B_1, B_2\}$, $S^0 = \lambda/d$, and
+
+$$I^* = \frac{pc\lambda(\mathcal R_c - 1)}{B_1(c+d)\mathcal R_c}, \qquad A^* = \frac{(1-p)c\lambda(\mathcal R_c - 1)}{B_2(c+d)\mathcal R_c}.$$
+
+Fix $\theta \in (0,1)$ and $\eta \in (\theta, 1)$, and put $T = \max\{T_1 + T_2,\ \alpha\}$ with
+
+$$T_1 = \max\Big\{-\frac1{B_1}\ln\frac{(\eta-\theta)I^*}{S^0 - \theta I^*},\ -\frac1{B_2}\ln\frac{(\eta-\theta)A^*}{S^0 - \theta A^*}\Big\},\qquad T_2 = -\frac{1}{d[\eta(\mathcal R_c - 1) + 1]}\ln\frac{(1-\eta)(1 - 1/\mathcal R_c)}{1 - d[\eta(\mathcal R_c - 1) + 1]/(\beta m)},$$
+
+$$\alpha = -\frac1B\ln\big[(1-\eta)(1 - 1/\mathcal R_c)\big].$$
+
+Then every solution with positive initial data satisfies
 
 $$\liminf_{t\to\infty} E(t) \ge \nu := \theta E^* e^{(ad/m - c - d)T} = \frac{\theta\lambda(\mathcal R_c - 1)}{(c+d)\mathcal R_c}\, e^{(ad/m - c - d)T},$$
 

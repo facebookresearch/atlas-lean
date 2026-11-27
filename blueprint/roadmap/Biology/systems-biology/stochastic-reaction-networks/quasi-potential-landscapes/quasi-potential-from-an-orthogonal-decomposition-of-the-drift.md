@@ -4,7 +4,7 @@
 
 $$dx = f(x)\,dt + \sigma I_n\,dW_t, \qquad \sigma \to 0,$$
 
-the Freidlin–Wentzell action of a path $\varphi$ on $[0,T]$ is $S(\varphi) = \sigma^{-2}\int_0^T|\dot\varphi - f(\varphi)|^2dt$, and the **quasi-potential** relative to a stable fixed point $a$ is $Q_a(x) = \inf\{S(\varphi) : \varphi(0) = a,\ \varphi(T) = x,\ T > 0\}$, so that the stationary density behaves like $e^{-Q_a}$ in the basin of $a$ (Waddington-type landscapes of cell fate).
+the Freidlin–Wentzell action of a path $\varphi$ on $[0,T]$ is $S(\varphi) = \sigma^{-2}\int_0^T|\dot\varphi - f(\varphi)|^2dt$, and the **quasi-potential** relative to a stable fixed point $a$ is $Q_a(x) = \inf\{S(\varphi) : \varphi(0) = a,\ \varphi(T) = x,\ T > 0\}$, so that the stationary density behaves like $e^{-Q_a/2}$ in the basin of $a$ (with this normalisation of $S$; for $dx = -x\,dt + \sigma\,dW_t$ the stationary law is $\propto e^{-x^2/\sigma^2}$ and $Q_0(x) = 2x^2/\sigma^2$) (Waddington-type landscapes of cell fate).
 
 **Decomposition.** Write $f = -\nabla U + f_U$. The decomposition is **sub-orthogonal** if $\nabla U\cdot f_U \le 0$ and **orthogonal** if $\nabla U\cdot f_U = 0$. A sub-orthogonal decomposition with $U \ge 0$ makes $U$ a Lyapunov function, since $\nabla U\cdot f = -|\nabla U|^2 + \nabla U\cdot f_U \le 0$.
 

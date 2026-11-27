@@ -17,14 +17,13 @@ where the $\delta_j$ are input biases (some inputs more variable than others) an
 **Equilibria.** $\mathbf w$ is an equilibrium iff $\mathbf E\mathbf C\mathbf w = (\mathbf w^\top\mathbf C\mathbf w)\mathbf w$, i.e. $\mathbf w$ is an eigenvector of $\mathbf E\mathbf C$ normalized in the $\mathbf C$-norm $\|\mathbf w\|_{\mathbf C} = \sqrt{\mathbf w^\top\mathbf C\mathbf w}$, with eigenvalue $\lambda_{\mathbf w} = \|\mathbf w\|_{\mathbf C}^2$. Without crosstalk ($q = 1$) these are the principal components of the input, and learning extracts the leading one.
 
 **Propositions.**
-1. In the biased case $\delta_1 > \delta_2 > \dots > \delta_n$, $\mathbf E\mathbf C$ has $n$ real, distinct eigenvalues $\xi_1 > \xi_2 > \dots > \xi_n$, so the learning outcome remains a well-defined (crosstalk-distorted) principal direction.
+1. When all off-diagonal covariances equal a common value $c$ and the biases are distinct, $\delta_1 > \delta_2 > \dots > \delta_n$, $\mathbf E\mathbf C$ has $n$ real, distinct eigenvalues $\xi_1 > \xi_2 > \dots > \xi_n$, so the learning outcome remains a well-defined (crosstalk-distorted) principal direction. Mixed signs can break this: for $n = 3$, $v = 1$, $\mathbf C_{12} = c$, $\mathbf C_{13} = \mathbf C_{23} = -c$ with $c \approx 0.112185$, $\delta \approx (1.7032, 1.0574, 0.9871)$ and $\epsilon \approx 0.0534396$, $\mathbf E\mathbf C$ has a double eigenvalue near $1.76273$.
 2. When all off-diagonal covariances equal a common value $c < 0$ and the biases are distinct, the critical error levels
 
 $$\epsilon_j^* = \frac{-c}{v + \delta_j - c}, \qquad 0 < \epsilon_1^* < \epsilon_2^* < \dots < \epsilon_n^*,$$
 
 are where the auxiliary functions $f_j(\epsilon)$ locating the eigenvalues of $\mathbf E\mathbf C$ change sign ($f_j > 0$ iff $\epsilon > \epsilon_j^*$); as $\epsilon$ increases from $0$ to $1/n$ it crosses them in order, and between consecutive critical values the eigenvalues interlace differently with the diagonal values $(q-\epsilon)(v + \delta_j - c)$.
 3. For $\epsilon < \epsilon_1^*$, a bias loss of order $k$ ($\delta_1 = \dots = \delta_k$) produces a leading eigenvalue of multiplicity $k-1$ for $\mathbf E\mathbf C$, so the learned direction is no longer unique.
-4. With no bias of order two ($\delta_1 = \delta_2 = 0$), the dynamics are classified by the sign pattern of the input covariances (four classes A–D).
 
 ## Proof sketch
 
@@ -32,4 +31,4 @@ Projecting the Oja flow onto the eigenbasis of $\mathbf E\mathbf C$ shows that t
 
 ## Sources
 
-- Anca Rădulescu, "Input Statistics and Hebbian Cross-Talk Effects", *Neural Computation* 26 (2014), 654–692, <https://doi.org/10.1162/neco_a_00565>. Preprint version: arXiv:1208.2100 (2012), inspecific Oja model and error matrix, covariance family, classification theorem and the propositions on eigenvalues of $\mathbf E\mathbf C$ under bias and bias loss, <https://doi.org/10.48550/arXiv.1208.2100>.
+- Anca Rădulescu, "Input Statistics and Hebbian Cross-Talk Effects", *Neural Computation* 26 (2014), 654–692, <https://doi.org/10.1162/neco_a_00565>. Preprint version: arXiv:1208.2100 (2012), inspecific Oja model and error matrix, covariance family, and the propositions on eigenvalues of $\mathbf E\mathbf C$ under bias and bias loss, <https://doi.org/10.48550/arXiv.1208.2100>.

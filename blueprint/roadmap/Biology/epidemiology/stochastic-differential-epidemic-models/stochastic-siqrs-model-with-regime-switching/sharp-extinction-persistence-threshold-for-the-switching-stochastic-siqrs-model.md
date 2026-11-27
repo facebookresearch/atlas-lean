@@ -9,7 +9,7 @@ dQ &= \big[\gamma_2(r)I - (\mu(r) + \gamma_3(r) + \gamma_4(r))Q\big]dt + \sigma_
 dR &= \big[\gamma_3(r)Q - (\mu(r) + \gamma_5(r))R\big]dt + \sigma_4(r)R\,dW_4,
 \end{aligned}$$
 
-with $\sigma_i \ne 0$. Here $A$ is recruitment, $\mu$ natural death, $\gamma_1$ disease death, $\gamma_2$ quarantine, $\gamma_3$ recovery, $\gamma_4$ death in quarantine, $\gamma_5$ loss of immunity, and $F(S,I,k)$ a general per-infective incidence function (bilinear, saturated, Beddington–DeAngelis and similar forms are allowed). Let $c_2(k) = \mu(k) + \gamma_1(k) + \gamma_2(k)$.
+with $\sigma_i \ne 0$. Here $A$ is recruitment, $\mu$ natural death, $\gamma_1$ disease death, $\gamma_2$ quarantine, $\gamma_3$ recovery, $\gamma_4$ death in quarantine, $\gamma_5$ loss of immunity, and $F(S,I,k)$ a per-infective incidence function satisfying: $F(\cdot,\cdot,k)$ is locally Lipschitz on $\mathbb R_+^2$ for each $k$; $F$ is continuous in $i$ at $i = 0$ uniformly in $s$, $\lim_{i\to0}\sup_{s\ge0,\,k\in\mathcal M}|F(s,i,k) - F(s,0,k)| = 0$; $F(s,0,k)$ is non-decreasing in $s$; and $F(s,0,k) \le C_F(s+1)$ for some $C_F > 0$ (bilinear, Holling type II and Beddington–DeAngelis forms satisfy these). Let $c_2(k) = \mu(k) + \gamma_1(k) + \gamma_2(k)$.
 
 **Threshold.** Without infection the pair $(S, r)$ has a unique invariant probability measure $\nu_0$ on $(0,\infty)\times\mathcal M$. Define the invasion rate of the disease
 

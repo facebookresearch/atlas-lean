@@ -1,6 +1,6 @@
 # Iterative median-sign recovery of differential components
 
-Take expected relative abundances $Q_{k,i}$, $k=1,2$, $i\in[d]$, with $Q_{1,i}+Q_{2,i}>0$, and let $I_0$ be a reference set ($Q_{1,i}=bQ_{2,i}$ on $I_0$) with $|I_0|>d/2$; let $I_1=[d]\setminus I_0$. For $I\subseteq[d]$ define the renormalized differences and their median
+Take expected relative abundances $Q_{k,i}$, $k=1,2$, $i\in[d]$, with $Q_{1,i}+Q_{2,i}>0$, and let $I_0$ be the largest reference set ($Q_{1,i}=bQ_{2,i}$ on $I_0$), assumed to satisfy $|I_0|>d/2$; let $I_1=[d]\setminus I_0$. (Any two reference sets with more than $d/2$ elements share the factor $b$, so their union is again one and the largest is unique. The theorem fails for a reference set that is not the largest: for $d=3$ and $Q_1=Q_2$ uniform, $\{1,2\}$ is a reference set, but the procedure returns $\hat I_1=\emptyset\neq\{3\}$.) For $I\subseteq[d]$ define the renormalized differences and their median
 
 $$
 R_i(I)=\frac{Q_{1,i}}{\sum_{j\in I}Q_{1,j}}-\frac{Q_{2,i}}{\sum_{j\in I}Q_{2,j}}\quad(i\in I),\qquad M(I)=\operatorname{Median}\{R_i(I):i\in I\}.

@@ -21,7 +21,11 @@ For $R_0 > 1$ there is exactly one positive root. With
 $$R_c = R_\mu R_\phi\,\frac{1 + R_\phi + 2\sqrt{R_\phi(1 - R_\mu)}}{(R_\phi - 1)^2 + 4R_\mu R_\phi},$$
 
 there is no endemic equilibrium for $R_0 < R_c$ and, when relapse is strong ($R_\phi > 1$), two endemic equilibria for $R_c < R_0 < 1$: a backward bifurcation, in which addiction can persist below $R_0 = 1$.
-3. *With willingness factor* ($\nu > 0$). Endemic $a$ solves a cubic; two positive equilibria require $0 < R_c < R_0 < 1$ and $R_\phi > 1$; three positive equilibria require $1 < R_0 < R_0^*$ and $R_\phi > 1$; and $1 < R_0^* < R_0$ with $R_\phi > 1$ suffices for a unique positive equilibrium, for an explicit threshold $R_0^*$. So a forward–backward bifurcation, with multiple endemic states above $R_0 = 1$, can occur.
+3. *With willingness factor* ($0 < \nu \le 1$). Endemic equilibria are $s^* = \mu D/(\beta\kappa a + \mu D)$ with $D = 1 + \nu\gamma a/(\phi a + \mu)$, $\tilde s^* = \gamma a/(\phi a + \mu)$, with $a > 0$ a root of the cubic
+
+$$f(a) = R_\phi^2R_0\,a^3 + R_\phi\big[R_0(1 - R_\phi) + R_\mu(R_0 + R_\phi) + \nu R_\mu(1 - R_\mu)\big]a^2 + R_\mu\big[\nu(1 - R_\mu) + R_0(1 - R_\phi) + R_\phi(1 - R_0) + R_\mu R_\phi\big]a + R_\mu^2(1 - R_0).$$
+
+   Varying $R_0$ through $\kappa$ with the other parameters fixed, let $R_c(\nu) < R_0^*(\nu)$ be the two values of $R_0$ at which $f$ has a double root. These thresholds depend on $\nu$ and differ from the $\nu = 0$ value $R_c$ above: for $\mu = 0.00015$, $\gamma = 0.0027$, $\beta = 0.009$, $\nu = 0.8$ and $\phi = 0.0044$, two endemic equilibria appear from $R_0 \approx 0.90$ (and three exist up to $R_0^*(\nu) \approx 1.03$), while the $\nu = 0$ formula gives $0.6495$. Then two positive equilibria require $0 < R_c(\nu) < R_0 < 1$ and $R_\phi > 1$; three positive equilibria require $1 < R_0 < R_0^*(\nu)$ and $R_\phi > 1$; and $1 < R_0^*(\nu) < R_0$ with $R_\phi > 1$ suffices for a unique positive equilibrium. So a forward–backward bifurcation, with multiple endemic states above $R_0 = 1$, can occur.
 
 ## Proof sketch
 

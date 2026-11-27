@@ -8,11 +8,11 @@
 
 $$P = \frac{\binom{q^n - t}{q^n - m}}{\binom{q^n}{m}} \quad (t \le m), \qquad P = 0 \quad (t > m).$$
 
-In particular, recovering $f$ requires at least as many data points as $f$ has terms, and $f$ is recovered exactly when its support is contained in the chosen monomials. For fixed $q$ and a fixed fraction of data, $P$ decays to $0$ like $r^{q^n}$ for some $0 < r < 1$ as the number of variables $n$ grows.
+In particular, recovering $f$ requires at least as many data points as $f$ has terms, and $f$ is recovered exactly when its support is contained in the chosen monomials. For $t \le m$, $P = \prod_{j=0}^{t-1}\frac{m-j}{q^n-j} \le r^t$ with $r = m/q^n$ the fraction of all states observed; for a fixed number of terms $t$ and a fixed fraction $r$, $P \to r^t$ as $n \to \infty$ (for $t = 1$, $P = r$ exactly), and for a fixed number $m$ of data points, $P \to 0$ as $n$ grows.
 
 ## Proof sketch
 
-The orthogonal solution equals $f$ iff $f \in \mathrm{span}(u_{s+1}, \dots, u_d)$, i.e. iff every monomial of $f$ is among the $m$ completing monomials. General position guarantees that every $m$-subset of monomials completes the kernel basis, so the completing set is a uniformly random $m$-subset of $q^n$ monomials, and the probability that it contains the $t$ given monomials is $\binom{q^n - t}{m - t}/\binom{q^n}{m}$. Optimal sets can be built as the variety of a subspace in general position satisfying a codimension condition. The exponential decay in $q^n$ shows that, even with optimal data and no term-order bias, exact reverse engineering of networks with many variables from limited data is infeasible without strong prior restrictions on the model class.
+The orthogonal solution equals $f$ iff $f \in \mathrm{span}(u_{s+1}, \dots, u_d)$, i.e. iff every monomial of $f$ is among the $m$ completing monomials. General position guarantees that every $m$-subset of monomials completes the kernel basis, so the completing set is a uniformly random $m$-subset of $q^n$ monomials, and the probability that it contains the $t$ given monomials is $\binom{q^n - t}{m - t}/\binom{q^n}{m}$. Optimal sets can be built as the variety of a subspace in general position satisfying a codimension condition. Cancelling factorials gives the product form. Since $P$ is at most the observed fraction $r$ raised to the number of terms, even with optimal data and no term-order bias, exact reverse engineering from a small fraction of the state space succeeds only for models with very few terms, unless the model class is restricted in advance.
 
 ## Sources
 

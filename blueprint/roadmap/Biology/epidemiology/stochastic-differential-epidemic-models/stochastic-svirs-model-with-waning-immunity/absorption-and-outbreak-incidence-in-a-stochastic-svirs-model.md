@@ -20,14 +20,22 @@ $$p_s = \binom{N}{s}\Big(\frac{1}{1 + \rho/\theta}\Big)^{s}\Big(\frac{\rho/\thet
 so each individual is independently susceptible with probability $\theta/(\theta + \rho)$ in the long run.
 
 **Theorem (incidence of an outbreak).** Partition $\mathcal{S}$ into levels $\mathcal{S}(i)$ of states with $i$ infectious individuals ($c_i = \binom{N-i+2}{2}$ states each); the generator is block tridiagonal with blocks $\mathbf A_{i,i'}$. Let $Z$ be the number of new infections occurring before the outbreak, started from one infectious individual, ends. Then:
-1. the tail probability vectors $\mathbf x_i^k = \big(\mathbb{P}(Z \ge k \mid \text{start in } (i,s,v))\big)_{(i,s,v) \in \mathcal{S}(i)}$ satisfy $\mathbf x_i^0 = \mathbf 1$, $\mathbf x_0^k = \mathbf 0$ for $k \ge 1$, and for $k \ge 1$ are computed recursively from $\mathbf x^{k-1}$ by a forward elimination over levels using only $\mathbf A_{i,i}^{-1}$, $\mathbf A_{i+1,i}$ and $\mathbf A_{i,i+1}$;
-2. the factorial moments $\mathbf m_i^k$ of $Z$ obey an analogous block recursion, $\mathbf m_N^k = -\mathbf B_{N,N}^{-1}\mathbf C_N^k$ and $\mathbf m_i^k = -\mathbf B_{i,i}^{-1}(\mathbf A_{i,i+1}\mathbf m_{i+1}^k + \mathbf C_i^k)$, where $\mathbf B_{i,i}$ and $\mathbf C_i^k$ are built recursively from the generator blocks and the moments of order $k-1$.
+1. the tail probability vectors $\mathbf x_i^k = \big(\mathbb{P}(Z \ge k \mid \text{start in } (i,s,v))\big)_{(i,s,v) \in \mathcal{S}(i)}$ satisfy $\mathbf x_i^0 = \mathbf 1$, $\mathbf x_0^k = \mathbf 0$ for $k \ge 1$, and for $k \ge 1$ and $1 \le i \le N$
+
+$$\mathbf x_i^k = -\mathbf A_{i,i}^{-1}\sum_{m=1}^{i}\Big[\prod_{j=i-1}^{m}\mathbf A_{j+1,j}\big(-\mathbf A_{j,j}^{-1}\big)\Big]\mathbf d_m^k, \qquad \mathbf d_m^k = (1 - \delta_{m,N})\,\mathbf A_{m,m+1}\mathbf x_{m+1}^{k-1},$$
+
+where the product is taken with $j$ decreasing from $i-1$ on the left to $m$ on the right, and the empty product ($m = i$) is the identity;
+2. the factorial moments $\mathbf m_i^k$ of $Z$ satisfy $\mathbf m_i^0 = \mathbf 1$, $\mathbf m_0^k = \mathbf 0$ for $k \ge 1$, and, for $k \ge 1$, $\mathbf m_N^k = -\mathbf B_{N,N}^{-1}\mathbf C_N^k$ and $\mathbf m_i^k = -\mathbf B_{i,i}^{-1}(\mathbf A_{i,i+1}\mathbf m_{i+1}^k + \mathbf C_i^k)$ for $1 \le i \le N-1$, where
+
+$$\mathbf B_{1,1} = \mathbf A_{1,1},\quad \mathbf B_{i,i} = \mathbf A_{i,i} - \mathbf A_{i,i-1}\mathbf B_{i-1,i-1}^{-1}\mathbf A_{i-1,i},\qquad \mathbf C_1^k = \mathbf D_1^k,\quad \mathbf C_i^k = \mathbf D_i^k - \mathbf A_{i,i-1}\mathbf B_{i-1,i-1}^{-1}\mathbf C_{i-1}^k \quad (2 \le i \le N),$$
+
+with $\mathbf D_i^k = (1 - \delta_{i,N})\,k\,\mathbf A_{i,i+1}\mathbf m_{i+1}^{k-1}$.
 
 These give the exact distribution, mean and variance of outbreak incidence, and quantify how vaccination before or during an outbreak lowers it.
 
 ## Proof sketch
 
-The absorbing class consists of the states with $i = 0$ and $R = 0$, where only vaccination and waning of vaccine protection act, each person switching independently between susceptible (rate $\rho$ to vaccinated) and vaccinated (rate $\theta$ back), which explains the binomial law. Incidence counts infection transitions, which move the chain up one level; conditioning on the first jump gives a linear system for $\mathbf x^k$ in terms of $\mathbf x^{k-1}$ (an upward jump uses up one infection), and the block-tridiagonal structure lets it be solved level by level, avoiding the inversion of the full generator of size $\binom{N+3}{3}$.
+The absorbing class consists of the states with $i = 0$ and $R = 0$, where only vaccination and waning of vaccine protection act, each person switching independently between susceptible (rate $\rho$ to vaccinated) and vaccinated (rate $\theta$ back), which explains the binomial law. Incidence counts infection transitions, which move the chain up one level; conditioning on the first jump gives a linear system for $\mathbf x^k$ in terms of $\mathbf x^{k-1}$ (an upward jump uses up one infection), level by level this reads $-\mathbf A_{i,i-1}\mathbf x_{i-1}^k - \mathbf A_{i,i}\mathbf x_i^k = \mathbf d_i^k$, and for the moments (differentiating the generating functions $k$ times at $z = 1$) $-\mathbf A_{i,i-1}\mathbf m_{i-1}^k - \mathbf A_{i,i}\mathbf m_i^k - (1-\delta_{i,N})\mathbf A_{i,i+1}\mathbf m_{i+1}^k = \mathbf D_i^k$. The block-tridiagonal structure lets these be solved by forward elimination and back substitution, avoiding the inversion of the full generator of size $\binom{N+3}{3}$.
 
 ## Sources
 

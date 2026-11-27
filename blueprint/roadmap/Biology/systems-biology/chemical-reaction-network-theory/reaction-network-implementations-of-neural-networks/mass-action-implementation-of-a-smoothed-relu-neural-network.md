@@ -10,7 +10,7 @@ a strictly increasing positive function that tends to $\max(0, y)$ as $\eta \to 
 
 $$x^0_i \equiv d_i, \qquad \frac{d}{dt}x^\ell_i = \eta + \rho^\ell_i(x^{\ell-1})\, x^\ell_i - (x^\ell_i)^2, \qquad \rho^\ell_i(x^{\ell-1}) = \sum_{j=1}^{c_{\ell-1}} W^\ell_{ij}x^{\ell-1}_j + \beta^\ell_i,$$
 
-implements the network with activation $\varphi_\eta$, from any nonnegative initial condition. It also converges from infinity in finite time and is exponentially reliable.
+implements the network with activation $\varphi_\eta$, from any nonnegative initial condition. It also converges from infinity in finite time and is exponentially reliable in the sense of the general theorem: for each input $d$ there are $C(d) \ge 1$ and $\lambda(d) > 0$ with $|x(t) - \mathfrak X(d)| \le C(d)\,|x(0) - \mathfrak X(d)|\,e^{-\lambda(d)t}$. The constant cannot be taken equal to $1$: with one node per layer, $W^2 = 100$, $\beta^2 = -100$ and $x(0) = (1.1, 1)$ near the fixed point, an initial error $0.1$ grows to about $3.67$ before decaying.
 
 **Reaction network.** The system is the mass-action ODE of a network built edge by edge. For an edge from node $X'$ to node $X$, and for the node $X$ itself, use:
 

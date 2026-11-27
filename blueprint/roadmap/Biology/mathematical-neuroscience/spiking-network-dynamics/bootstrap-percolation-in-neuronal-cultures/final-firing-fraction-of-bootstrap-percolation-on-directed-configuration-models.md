@@ -7,7 +7,7 @@
 $$f_\alpha(y) = \lambda y - (1-\alpha)\,E\big[D_{\mathrm{out}}\,\mathbf 1\{\mathrm{Bin}(D_{\mathrm{in}}, 1-y) < \Omega\}\big], \qquad y \in [0,1],$$
 
 and let $y^* = \max\{y \in [0,1] : f_\alpha(y) = 0\}$ (it exists since $f_\alpha(0) \le 0 < \lambda\alpha = f_\alpha(1)$).
-1. If $y^* = 0$, i.e. $f_\alpha > 0$ on $(0,1]$, then $\Phi_n(\alpha) = 1 - o_p(1)$: almost the whole network fires.
+1. If $y^* = 0$, i.e. $f_\alpha > 0$ on $(0,1]$, then $\Phi_n(\alpha) = 1 - (1-\alpha)\,P(D_{\mathrm{in}} < \Omega) + o_p(1)$: every neuron with at least $\Omega$ in-neighbours fires, while unstimulated neurons of in-degree below $\Omega$ never do (for $\Omega = 1$ and $P(0,0) = P(2,2) = \tfrac12$, $y^* = 0$ but $\Phi_n(\alpha) \to 1 - (1-\alpha)/2$).
 2. If $y^* > 0$ and $y^*$ is not a local minimum of $f_\alpha$, then with high probability
 
 $$\Phi_n(\alpha) = 1 - (1-\alpha)\,P\big(\mathrm{Bin}(D_{\mathrm{in}}, 1 - y^*) < \Omega\big) + o_p(1).$$

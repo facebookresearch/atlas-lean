@@ -23,7 +23,7 @@ $$\Big\lceil \frac{N}{4h} \Big\rceil \le k \le \Big\lceil \frac{N}{2h} \Big\rcei
 so the pattern wavelength $N/k$ lies between $2h$ and $4h$ sites.
 2. If $(b,d) \notin \mathcal{P}$, the coexistence equilibrium is linearly stable.
 3. For $h = 1, 2$ the equilibrium is linearly stable for all admissible $(b,d)$; for every $h \ge 3$ and $N$ large enough, some nonzero mode is unstable for some $(b,d)$, and the instability region of mode $k$ is contained in $\mathcal{P}$.
-4. The trivial equilibrium $(1,0)$ is unstable exactly in the modes $k$ with $x_k \ge 1/(b+1)$.
+4. The trivial equilibrium $(1,0)$ is unstable exactly in the modes $k$ with $x_k > 1/(b+1)$; at $x_k = 1/(b+1)$ the mode matrix has eigenvalues $0$ and $-(b+3)$ and the mode is neutral.
 
 ## Proof sketch
 

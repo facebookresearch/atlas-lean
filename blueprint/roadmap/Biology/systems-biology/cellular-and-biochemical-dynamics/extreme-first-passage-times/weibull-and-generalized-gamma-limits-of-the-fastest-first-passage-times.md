@@ -14,7 +14,7 @@ in particular $\mathbb E[T_N] \sim \Gamma(1 + 1/p)(AN)^{-1/p}$.
 
 **Proposition (slow-escape regime).** If instead $\lambda\tau \to \mathrm{Exp}(1)$ as a small parameter $\varepsilon \to 0$ (narrow escape, deep potential well), then for fixed $N$ the order statistics satisfy $\lambda T_{k,N} \to$ the $k$-th order statistic of $N$ independent unit exponentials, so $\mathbb E[T_N] \approx 1/(N\lambda)$.
 
-**Competition.** In the Gaussian short-time case $\mathbb P(\tau_1 \le t) \sim At^pe^{-C/t}$ the fastest time obeys a Gumbel law with $\mathbb E[T_N] \sim C/\ln N$. Which regime describes a given system depends on whether $N$ is large compared to the ratio of the slow mean escape time to the fast diffusive timescale: the fastest searcher ignores the slow exponential escape and instead follows rare direct trajectories.
+**Competition.** In the Gaussian short-time case $\mathbb P(\tau_1 \le t) \sim At^pe^{-C/t}$ the fastest time obeys a Gumbel law, and if $\mathbb E[T_N] < \infty$ for some $N$, then $\mathbb E[T_N] \sim C/\ln N$ (without that hypothesis the mean can be infinite for every $N$, as for escape to a ball in three dimensions, where a searcher never hits with positive probability). Which regime describes a given system depends on whether $N$ is large compared to the ratio of the slow mean escape time to the fast diffusive timescale: the fastest searcher ignores the slow exponential escape and instead follows rare direct trajectories.
 
 ## Proof sketch
 

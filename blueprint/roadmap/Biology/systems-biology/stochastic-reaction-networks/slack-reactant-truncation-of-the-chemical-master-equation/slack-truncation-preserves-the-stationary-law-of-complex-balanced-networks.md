@@ -13,6 +13,7 @@ In particular, by the Anderson–Craciun–Kurtz theorem, $\pi_N$ is the product
 ## Depends on
 
 - [Convergence of slack-network truncations of the chemical master equation](convergence-of-slack-network-truncations.md)
+- [Anderson–Craciun–Kurtz on a finite class](../../stochastic-mass-action-metabolic-control-and-flu/poisson-weight-vec-mul-class-generator.md)
 
 ## Proof sketch
 

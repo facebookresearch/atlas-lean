@@ -9,6 +9,12 @@
 3. *(Kernel.)* For caterpillars, the common-chain and subtree reductions alone give a kernel with at most $7k$ taxa (ignoring additive constants), where $k$ is the size of a maximum agreement forest, $k=d_{TBR}(T,T')+1$, and this bound is tight up to an additive constant.
 4. *(Branching.)* For caterpillars $T,T'$ on $X$ one can decide in $O^*(2.49^k)$ time whether they have an agreement forest with at most $k$ components.
 
+## Depends on
+
+- [Maximum agreement forest number](../../../not-yet-classified/tbragreement-forest/maf-number.md)
+- [TBR distance](../../../not-yet-classified/tbragreement-forest/tbr-dist.md)
+- [TBR distance equals the maximum agreement forest number](../../../not-yet-classified/tbragreement-forest/tbr-dist-eq-maf-number.md)
+
 ## Proof sketch
 
 Agreement forests measure topological discordance: $d_{TBR}$ is the minimum number of tree bisection and reconnection moves turning $T$ into $T'$, and it lower-bounds the reticulation needed to reconcile two gene trees. The hardness reduction shows that the general NP-hardness and APX-hardness do not come from complicated tree shapes. Caterpillars are already as hard as arbitrary trees, so hardness gadgets survive in the simplest topology. For general trees the same two reduction rules give a tight $15k$ kernel, while for caterpillars they already give $7k$, below the $11k$ and $9k$ kernels that need more complex rules for general trees. After the reductions every common chain has bounded length, and each forest component accounts for a bounded number of chains. The branching algorithm uses the linear order of the caterpillar to branch on a small number of conflicting quartets, which beats the $O^*(3^k)$ branching algorithm for general trees.

@@ -6,9 +6,9 @@ $$\mathbf x(n)=\sum_{l\ge1}\mathbf A(l)\mathbf x(n-l)+\mathbf w(n)=\sum_{l\ge0}\
 
 where the innovations $\mathbf w$ have positive definite covariance $\boldsymbol\Sigma_{\mathbf w}=(\sigma_{ij})$. Let $\bar A_{ij}(\omega)=\delta_{ij}-\sum_{l\ge1}a_{ij}(l)e^{-\mathrm j\omega l}$, $\bar{\mathbf a}_j=(\bar A_{1j},\dots,\bar A_{Kj})^{\top}$, $\bar H_{ij}(\omega)=\sum_{l\ge0}h_{ij}(l)e^{-\mathrm j\omega l}$, and $\bar{\mathbf h}_j=(\bar H_{j1},\dots,\bar H_{jK})^{\top}$. Define the *information PDC* and *information DTF* from $j$ to $i$:
 
-$$\iota\pi_{ij}(\omega)=\frac{\bar A_{ij}(\omega)\,\sigma_{ii}^{-1/2}}{\sqrt{\bar{\mathbf a}_j^H(\omega)\boldsymbol\Sigma_{\mathbf w}^{-1}\bar{\mathbf a}_j(\omega)}},\qquad \iota\gamma_{ij}(\omega)=\frac{\bar H_{ij}(\omega)\,\rho_{jj}^{1/2}}{\sqrt{\bar{\mathbf h}_j^H(\omega)\boldsymbol\Sigma_{\mathbf w}\bar{\mathbf h}_j(\omega)}},$$
+$$\iota\pi_{ij}(\omega)=\frac{\bar A_{ij}(\omega)\,\sigma_{ii}^{-1/2}}{\sqrt{\bar{\mathbf a}_j^H(\omega)\boldsymbol\Sigma_{\mathbf w}^{-1}\bar{\mathbf a}_j(\omega)}},\qquad \iota\gamma_{ij}(\omega)=\frac{\bar H_{ij}(\omega)\,\rho_{jj}^{1/2}}{\sqrt{\bar{\mathbf h}_i^H(\omega)\boldsymbol\Sigma_{\mathbf w}\bar{\mathbf h}_i(\omega)}},$$
 
-where $\rho_{jj}$ is the variance of the partialized innovation $\zeta_j(n)=w_j(n)-\mathbf E[w_j(n)\mid w_l(n),\ l\neq j]$. These reduce to the classical partial directed coherence and directed transfer function when $\boldsymbol\Sigma_{\mathbf w}=I$.
+where $\rho_{jj}$ is the variance of the partialized innovation $\zeta_j(n)=w_j(n)-\mathbf E[w_j(n)\mid w_l(n),\ l\neq j]$, and the denominator of $\iota\gamma_{ij}$ is $S_{x_ix_i}(\omega)^{1/2}$, the spectrum of the target channel $x_i$ (normalising by $\bar{\mathbf h}_j$ instead, as the source's definition (13) prints, can give $|\iota\gamma_{ij}|>1$; the source's proof uses $S_{x_ix_i}$). These reduce to the classical partial directed coherence and directed transfer function when $\boldsymbol\Sigma_{\mathbf w}=I$.
 
 **Theorem.** Let $\eta_j(n)=x_j(n)-\mathbf E[x_j(n)\mid x_l(m),\ l\neq j,\ m\in\mathbb Z]$ be the partialized process of $x_j$ given all other channels at all times, and let $C_{uv}(\omega)$ denote the coherence. Then
 

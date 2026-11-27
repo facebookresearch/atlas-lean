@@ -18,7 +18,7 @@ where $r$ is the birth rate, $k$ the carrying capacity, $p$ the fraction of offs
 $$J_{S,1}^* = \frac{I_1^*}{(R_{0,1}-1)(\lambda_1+1)},\quad A_{S,1}^* = \frac{\lambda_1 I_1^*}{(R_{0,1}-1)(\lambda_1+1)},\quad J_{I,1}^* = \frac{I_1^*}{\lambda_1+1},\quad A_{I,1}^* = \frac{\lambda_1 I_1^*}{\lambda_1+1},$$
 
 with adult-to-juvenile ratio $\lambda_1 = R_\alpha/(R_{0,1} + R_s - 1)$ in both classes; in particular the prevalence is $I_1^*/N_1^* = 1 - 1/R_{0,1}$. The value of $I_1^*$ solves an explicit equation that vanishes at $R_{0,1} = 1$ and at $R_{0,1} = 1 + \tfrac{R_\alpha}{2}\big(-1 \pm \sqrt{1 + 4rR_p/R_\alpha}\big) - R_s$.
-When $R_{0,1} > 1$ but this equation has no positive root, the source population is driven to the extinction equilibrium: infection-induced mortality removes the reproducing susceptible adults faster than they are replaced.
+When $R_{0,1} > 1$ but this equation has no positive root, the extinction equilibrium of the source population is locally asymptotically stable: infection-induced mortality removes the reproducing susceptible adults faster than they are replaced. (Convergence of infected trajectories to it is observed numerically only; disease-free initial data stay disease free and go to the disease-free equilibrium.)
 
 The sink patch inherits its dynamics from $A_{S,1}^*$ through recruitment; a healthy source can rescue an otherwise extinct sink when the recruitment fraction $1-p$ is large enough.
 

@@ -1,6 +1,6 @@
 # Steady-state substrate mean under randomly fluctuating catalytic rate
 
-Substrate flows in at rate $k_{\rm in}$ and is converted by an enzyme whose catalytic (degradation) rate fluctuates. This is dynamic disorder. The rate $\gamma(t)$ is a stationary continuous-time Markov chain on states $\gamma_1,\dots,\gamma_n>0$ with generator $Q$ and stationary law $\pi$. Its speed-$c$ version is $\gamma_c(t)=\gamma(ct)$, so $c$ is the speed of enzyme fluctuations relative to substrate kinetics. The substrate obeys $\dot S_c=k_{\rm in}-\gamma_c(t)S_c$, or the analogous birth–death chain for copy numbers. Let $m_{\rm eq}(c)=\lim_{t\to\infty}\mathbb E[S_c(t)]$ and $D=\mathrm{diag}(\gamma_1,\dots,\gamma_n)$.
+Substrate flows in at rate $k_{\rm in}$ and is converted by an enzyme whose catalytic (degradation) rate fluctuates. This is dynamic disorder. The rate $\gamma(t)$ is a stationary continuous-time Markov chain on states $\gamma_1,\dots,\gamma_n>0$ with irreducible generator $Q$ and (unique) stationary law $\pi$. Its speed-$c$ version is $\gamma_c(t)=\gamma(ct)$, so $c$ is the speed of enzyme fluctuations relative to substrate kinetics. The substrate obeys $\dot S_c=k_{\rm in}-\gamma_c(t)S_c$, or the analogous birth–death chain for copy numbers. Let $m_{\rm eq}(c)=\lim_{t\to\infty}\mathbb E[S_c(t)]$ and $D=\mathrm{diag}(\gamma_1,\dots,\gamma_n)$.
 
 **Theorem.** For every $c\ge0$, the matrix $D-cQ$ is invertible and
 
@@ -20,11 +20,11 @@ $$
 \frac{k_{\rm in}}{\mathbb E_\pi[\gamma]}=\lim_{c\to\infty}m_{\rm eq}(c)\ \le\ m_{\rm eq}(c)\ \le\ \lim_{c\to0}m_{\rm eq}(c)=k_{\rm in}\,\mathbb E_\pi\Big[\frac1\gamma\Big].
 $$
 
-So slow conformational fluctuations raise the mean substrate level up to the Jensen gap $\mathbb E_\pi[1/\gamma]-1/\mathbb E_\pi[\gamma]$. This stochastic amplification is set by the relative speed $c$ alone.
+Irreducibility is needed for the fast limit: for $Q = 0$, $\gamma \in \{1, 2\}$ and $\pi = (\tfrac12, \tfrac12)$, $m_{\rm eq}(c) = \tfrac34 k_{\rm in}$ for every $c$, not $k_{\rm in}/\mathbb E_\pi[\gamma] = \tfrac23 k_{\rm in}$. So slow conformational fluctuations raise the mean substrate level up to the Jensen gap $\mathbb E_\pi[1/\gamma]-1/\mathbb E_\pi[\gamma]$. This stochastic amplification is set by the relative speed $c$ alone.
 
 ## Proof sketch
 
-Solving the linear ODE gives $m_{\rm eq}(c)=k_{\rm in}\int_0^\infty\mathbb E\big[e^{-\int_0^s\gamma_c(u)\,du}\big]\,ds$. By the Feynman–Kac formula the integrand is $\pi^\top e^{s(cQ-D)}\mathbf 1$, and integrating over $s$ gives the resolvent $(D-cQ)^{-1}$. As $c\to\infty$ the time average of $\gamma_c$ tends to $\mathbb E_\pi\gamma$. As $c\to0$, $\gamma_c$ is frozen at its initial value, which has law $\pi$. The sandwich follows from the resolvent formula.
+Solving the linear ODE gives $m_{\rm eq}(c)=k_{\rm in}\int_0^\infty\mathbb E\big[e^{-\int_0^s\gamma_c(u)\,du}\big]\,ds$. By the Feynman–Kac formula the integrand is $\pi^\top e^{s(cQ-D)}\mathbf 1$, and integrating over $s$ gives the resolvent $(D-cQ)^{-1}$. As $c\to\infty$ the time average of $\gamma_c$ tends to $\mathbb E_\pi\gamma$, by ergodicity of the irreducible chain. As $c\to0$, $\gamma_c$ is frozen at its initial value, which has law $\pi$. The sandwich follows from the resolvent formula.
 
 ## Related topics
 
