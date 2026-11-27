@@ -62,8 +62,9 @@ Theorem 1.1, with credit to the preprint. erdosproblems.com/621 lists the proble
 (status PROVED (LEAN)); proof: S. Norin and Y. R. Sun, Triangle-independent sets vs. cuts,
 unpublished preprint, arXiv:1602.04370 (2016), https://arxiv.org/abs/1602.04370; restated in
 G. J. Puleo, Graphs with α₁ and τ₁ both large, Graphs Combin. 34 (2018), 639-645, Theorem 1.1,
-https://doi.org/10.1007/s00373-018-1902-z; formal proof plby/lean-proofs,
-src/latest/ErdosProblems/Erdos621.lean (`erdos_conjecture`).
+https://doi.org/10.1007/s00373-018-1902-z; formal proof: plby/lean-proofs at commit
+8822f7ddef30fadbd92e1c6ab4ed897af356af5e, src/latest/ErdosProblems/Erdos621.lean, line 1779
+(`erdos_621`).
 -/
 public theorem_wanted triangleIndependentPlusTransversal_holds : triangleIndependentPlusTransversal
 

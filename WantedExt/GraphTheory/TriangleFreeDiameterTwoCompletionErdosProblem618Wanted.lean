@@ -64,8 +64,9 @@ graph on n vertices with maximum degree at most c √n becomes triangle-free of 
 adding at most 2.5 c n² edges, for n large and 0 < c ≤ 1/10; see also N. Alon, Triangle-free
 graphs of diameter 2, note (Princeton), Theorem 1.2,
 https://web.math.princeton.edu/~nalon/PDFS/remark1901.pdf; erdosproblems.com/618: Alon's note
-solves the problem (essentially identical to Problem 134); formal proof plby/lean-proofs,
-src/latest/ErdosProblems/Erdos618.lean.
+solves the problem (essentially identical to Problem 134); formal proof: plby/lean-proofs at
+commit 8822f7ddef30fadbd92e1c6ab4ed897af356af5e, src/latest/ErdosProblems/Erdos618.lean, line 47
+(`erdos_618`).
 -/
 public theorem_wanted diameterTwoCompletionSubquadratic_holds : diameterTwoCompletionSubquadratic
 

@@ -56,12 +56,13 @@ discussion, Simonovits's 1975 paper (below) does not settle the problem. Source:
 Erdős Problems, Problem #1019, https://www.erdosproblems.com/1019 (status PROVED (LEAN));
 resolution: M. Simonovits, PhD thesis (cited on erdosproblems.com without a bibliographic entry);
 unrefereed proof by S. Cambie in the erdosproblems.com/1019 comments, G contains K_4 or C_l + 2K_1
-for some l ≥ 3, https://www.erdosproblems.com/1019; formal proofs: plby/lean-proofs,
-src/latest/ErdosProblems/Erdos1019.lean (`erdos_1019_sharp`), and C. Y. Ren, Lean formalization
-with topological planarity (`erdos_1019_saturated_planar`), CollinYuanjieRen/awards,
-submissions/jsp-000849-cyr; not settled by: M. Simonovits, On graphs not containing large
-saturated planar graphs, in Infinite and Finite Sets (Keszthely, 1973), Colloq. Math. Soc. János
-Bolyai 10 (1975), 1365-1386.
+for some l ≥ 3, https://www.erdosproblems.com/1019; formal proofs: plby/lean-proofs at commit
+8822f7ddef30fadbd92e1c6ab4ed897af356af5e, src/latest/ErdosProblems/Erdos1019.lean, line 1380
+(`erdos_1019_sharp`), and C. Y. Ren, Lean formalization with topological planarity
+(`erdos_1019_saturated_planar`), CollinYuanjieRen/awards at commit
+be3461dd89a6509c62a96ae201a41b36afa8cfa6, submissions/jsp-000849-cyr; not settled by:
+M. Simonovits, On graphs not containing large saturated planar graphs, in Infinite and Finite
+Sets (Keszthely, 1973), Colloq. Math. Soc. János Bolyai 10 (1975), 1365-1386.
 -/
 public theorem_wanted containsSaturatedPlanarGraph_holds : containsSaturatedPlanarGraph
 
