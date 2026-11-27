@@ -10,6 +10,12 @@ with $\tau$ the absorption time, and $Y_v = \bar x(A^{-1}(v))$ for its right-con
 
 - [Invariance of fixation probabilities under conservative migration](../../../../Biology/population-genetics/selection-migration-and-transmission/geographically-structured-populations/maruyama-fixation-invariance.md)
 - [Kimura–Ohta mean absorption time of a neutral allele](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion/mean-absorption-time.md)
+- [Martingale problem for the Wright–Fisher diffusion](../../diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/is-wright-fisher-solution.md)
+- [Uniqueness in law for the neutral Wright–Fisher martingale problem](../../diffusion-theory/neutral-wright-fisher-martingale-problem/uniqueness-in-law-for-the-neutral-martingale-pro.md)
+
+## Proof depends on
+
+- [Itô's formula for continuous semimartingales with bounded derivatives](../../../../Probability/stochastic-calculus/it-s-formula/ito-formula-for-continuous-semimartingales-bound.md)
 
 ## Expansion
 

@@ -4,7 +4,7 @@ Takahata (1990, Abstract) considers alleles maintained by strong symmetric balan
 
 $$\sqrt{\frac{S}{2M}}\,\Bigl[\ln\frac{S}{16\pi M^2}\Bigr]^{-3/2}$$
 
-relative to the neutral gene genealogy; the factor is large when $\sqrt{S/M} \ge 100$, and simulations support the approximation. Coalescent results for neutral genes therefore apply to allelic lines after this rescaling, which Takahata uses to explain the persistence of allelic lineages across speciation events (trans-species polymorphism) at major histocompatibility complex loci.
+relative to the neutral gene genealogy; the factor is large when $\sqrt{S/M} \ge 100$, and simulations support the approximation. Coalescent results for neutral genes therefore apply to allelic lines after this rescaling. Combined with the trans-species evolution of the major histocompatibility complex polymorphism, for which balancing selection is believed to be responsible, Takahata uses the allelic genealogy to conclude that the number of breeding individuals in the human population could not have been as small as $50$ to $100$ at any time in its evolutionary history.
 
 ## Expansion
 

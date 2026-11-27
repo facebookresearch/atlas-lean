@@ -15,6 +15,8 @@ with $G(p, \xi) = 2\frac{(S(p) - S(a))(S(b) - S(\xi))}{S(b) - S(a)}m(\xi)$ for $
 
 - [Dirichlet Green's function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function.md)
 - [Moment recursion for additive path functionals](../../../Probability/stochastic-calculus/one-dimensional-diffusions/kac-maruyama-kimura-moment-recursion.md)
+- [Scale function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/scale-function.md)
+- [Speed density of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/scale-and-speed-of-one-dimensional-diffusions/speed-density.md)
 
 ## Expansion
 

@@ -10,6 +10,8 @@ which is close to $2sN_e/N$ when $4N_es$ is large and $sN_e/N$ is small, and red
 
 - [Effective population size and the variance in family size](../../../Biology/population-genetics/effective-population-size/effective-size-and-variance-in-family-size.md)
 - [Kimura's fixation probability in terms of 4Ns, for nonzero Ns](../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion/kimura-fixation-two-mul-mul.md)
+- [Dirichlet ratio $S(p)/S(1)$ of the scale function](../diffusion-theory/selection-duality-and-general-one-dimensional-di/fixation-prob.md)
+- [Inbreeding, variance and eigenvalue effective population sizes](effective-population-size-definitions.md)
 
 ## Expansion
 

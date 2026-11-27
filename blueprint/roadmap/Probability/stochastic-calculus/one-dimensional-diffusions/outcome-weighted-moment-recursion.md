@@ -13,6 +13,7 @@ by the same decomposition of $A^n$ and the Markov property at time $t$, since th
 - [A retrospective sampling model for allele age](../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/retrospective-sampling-model.md)
 - [Sojourn density conditioned on fixation](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/conditional-green.md)
 - [Neutral conditional mean time to fixation](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/neutral-fixation-time.md)
+- [Scale function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/scale-function.md)
 
 ## Expansion
 

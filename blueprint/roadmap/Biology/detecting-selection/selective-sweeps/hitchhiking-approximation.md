@@ -20,3 +20,4 @@ When a favoured allele sweeps through a population, a neutral allele linked to i
 
 - J. Felsenstein, *Theoretical Evolutionary Genetics*, University of Washington, free e-book, Ch. VIII.
 - Original result: J. Maynard Smith and J. Haigh, The hitch-hiking effect of a favourable gene, Genet. Res. 23 (1974), 23–35. <https://doi.org/10.1017/S0016672300014634> The model follows Felsenstein, Ch. VIII.
+- G. Thomson, The effect of a selected locus on linked neutral loci, Genetics 85 (1977), 753–788. <https://doi.org/10.1093/genetics/85.4.753>

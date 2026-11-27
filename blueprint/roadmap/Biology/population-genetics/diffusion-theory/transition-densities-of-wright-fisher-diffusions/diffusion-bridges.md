@@ -17,6 +17,9 @@ form a probability mass function on $\mathbb N^4$ (equation (13)); here $B_{m,x}
 ## Depends on
 
 - [Exact simulation of the Wright–Fisher diffusion](../../../../Biology/population-genetics/diffusion-theory/transition-densities-of-wright-fisher-diffusions/exact-simulation-of-the-wright-fisher-diffusion.md)
+- [Jacobi series of the Wright–Fisher transition density with mutation](jacobi-series-of-the-mutation-transition-density.md)
+- [Beta-mixture marginals for every mutation Wright-Fisher solution](line-of-descent-mixture-representation-of-the-tr.md)
+- [Finite and entrance transition probabilities for the mutation line-count process](transition-probabilities-q-theta-n-t-of-the-non.md)
 
 ## Expansion
 

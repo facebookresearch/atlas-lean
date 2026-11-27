@@ -9,7 +9,6 @@ because $a\pi$ behaves like $x^{\theta_1}$ near $0$ and like $(1 - x)^{\theta_2}
 ## Depends on
 
 - [Speed density with selection and mutation](../../../../Biology/population-genetics/diffusion-theory/scale-and-speed-of-one-dimensional-diffusions/selection-mutation-speed-density.md)
-- [Stationary law of the Wright–Fisher diffusion with dominance and mutation](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-selection-and-mutat/dominance-stationary-law.md)
 
 ## Expansion
 

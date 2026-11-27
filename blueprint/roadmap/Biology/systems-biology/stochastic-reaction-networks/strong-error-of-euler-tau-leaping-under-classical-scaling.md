@@ -10,6 +10,10 @@ $$\sup_{t \le T} E\,|X^V(t) - Z^V(t)| \le C\, V^{-\beta} = C\, h_V$$
 
 (their Theorem 3.2).
 
+## Depends on
+
+- [Random time-change representation of density-dependent chains](../../../Probability/markov-chains/density-dependent-markov-chains/random-time-change-representation-of-density-dep.md)
+
 ## Expansion
 
 1. The model: random time-change representation of $X^V$, the Euler tau-leap process $Z^V$ and their coupling through common Poisson processes, with the scaling and the truncation of the intensities.

@@ -5,6 +5,7 @@ A [regular evolutionarily stable strategy](../stability-of-boundary-evolutionari
 ## Depends on
 
 - [A regular ESS is linearly stable](../stability-of-boundary-evolutionarily-stable-stra/re-lt-zero.md)
+- [Is Regular ESS](../stability-of-boundary-evolutionarily-stable-stra/is-regular-ess.md)
 
 ## Expansion
 

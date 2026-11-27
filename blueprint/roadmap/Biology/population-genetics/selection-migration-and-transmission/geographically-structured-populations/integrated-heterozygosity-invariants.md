@@ -13,6 +13,10 @@ Proof. The total frequency is a martingale with quadratic-variation rate $H/K$. 
 - [A random clock for the total allele frequency in a structured population](../../../../Biology/population-genetics/selection-migration-and-transmission/geographically-structured-populations/maruyama-stochastic-clock.md)
 - [Dynkin's formula and optional stopping for diffusions on the unit interval](../../../../Probability/stochastic-calculus/one-dimensional-diffusions/dynkin-formula-and-stopping.md)
 
+## Proof depends on
+
+- [Itô's formula for continuous semimartingales with bounded derivatives](../../../../Probability/stochastic-calculus/it-s-formula/ito-formula-for-continuous-semimartingales-bound.md)
+
 ## Expansion
 
 1. The heterozygosity functional and the quadratic variation $H/K$ of the total frequency.

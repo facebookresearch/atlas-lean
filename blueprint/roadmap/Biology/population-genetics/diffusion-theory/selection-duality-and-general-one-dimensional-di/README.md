@@ -15,7 +15,6 @@
 - [Neutral stationary weights sum to one](has-sum-asg-stationary-zero.md)
 - [Loss probability in Kimura's fixation formula](one-sub-kimura-fixation.md)
 - [Loss probability from the stationary ancestral selection graph](has-sum-asg-stationary-mul-one-sub-pow.md)
-- [Ancestral selection graph and duality for the selected diffusion](asg-duality-for-the-selected-diffusion.md)
 - [Construction of the ancestral selection graph](ancestral-selection-graph-construction.md)
 
 ## General one-dimensional diffusions

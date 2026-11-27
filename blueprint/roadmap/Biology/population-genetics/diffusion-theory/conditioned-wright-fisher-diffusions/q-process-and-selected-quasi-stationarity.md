@@ -9,6 +9,7 @@ that is, with mutation parameters $\theta_1 = \theta_2 = 2$. This is the Q-proce
 ## Depends on
 
 - [Beta density as Wright's stationary density](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/beta-pdfreal-eq-wright-density.md)
+- [Quasi-stationary law of the neutral Wright–Fisher diffusion](neutral-quasi-stationary-distribution.md)
 
 ## Expansion
 

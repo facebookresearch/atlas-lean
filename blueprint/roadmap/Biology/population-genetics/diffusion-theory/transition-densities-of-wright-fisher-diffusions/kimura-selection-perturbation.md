@@ -13,6 +13,7 @@ a bound of order $|\sigma|$ as $\sigma \to 0$. Second, the $\lambda_n$ are simpl
 ## Depends on
 
 - [Transition density of the Wright–Fisher diffusion with diploid selection](../../../../Biology/population-genetics/diffusion-theory/transition-densities-of-wright-fisher-diffusions/transition-density-with-diploid-selection.md)
+- [Jacobi eigenbasis of the Wright–Fisher generator with mutation](../wright-fisher-diffusion-with-mutation/jacobi-eigenbasis-with-mutation.md)
 
 ## Expansion
 

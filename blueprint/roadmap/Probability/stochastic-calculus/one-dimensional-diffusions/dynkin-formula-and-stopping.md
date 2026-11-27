@@ -10,6 +10,10 @@ holds in each of the following cases, by the optional stopping theorem applied t
 
 - [Dynkin's formula at a fixed time](../../../Biology/population-genetics/diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/integral-generator.md)
 
+## Proof depends on
+
+- [Optional stopping for right-continuous martingales](../../martingales/stopping-times-and-martingale-problems/optional-stopping-right-continuous.md)
+
 ## Expansion
 
 1. The formula at bounded stopping times from the martingale property at fixed times.

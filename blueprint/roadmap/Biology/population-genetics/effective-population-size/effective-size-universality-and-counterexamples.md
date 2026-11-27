@@ -11,6 +11,8 @@ $$c_N = \frac{E[\nu_1(\nu_1 - 1)]}{N - 1}$$
 - [Möhle–Sagitov: genealogies converge to Kingman's in finite dimensions](../../../Biology/coalescent-theory/multiple-merger-coalescents/kingman-limit-of-cannings-models/tendsto-chain-fdd.md)
 - [Explicit skew-offspring models and their Λ-coalescent limits](../../../Biology/coalescent-theory/multiple-merger-coalescents/coalescent-limits-of-cannings-models/explicit-skew-offspring-models.md)
 - [Effective population size and the variance in family size](../../../Biology/population-genetics/effective-population-size/effective-size-and-variance-in-family-size.md)
+- [Cannings model of a haploid population](../../coalescent-theory/multiple-merger-coalescents/cannings-models/cannings-model.md)
+- [Pair-coalescence probability of a Cannings model](../../coalescent-theory/multiple-merger-coalescents/kingman-limit-of-cannings-models/pair-coalescence.md)
 
 ## Expansion
 

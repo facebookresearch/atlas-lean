@@ -11,7 +11,7 @@ $$\partial_t w_1 = \partial_x^2 w_1 + f(w_1) - w_2, \qquad \partial_t w_2 = \eps
 
 Both proofs use computer-assisted estimates. This page states the existence results for these parameter values only.
 
-The perturbative existence results for small $\epsilon > 0$, for the fast pulse by Hastings (1976) and Carpenter (1977) and for the slow pulse by Flores, which Arioli and Koch recall in Section 1 without their hypotheses on $a$ and $\gamma$, are not part of this statement; they are separate targets in the Expansion.
+The perturbative existence results for small $\epsilon > 0$, for the fast pulse by Hastings (1976) and Carpenter (1977) and for the slow pulse by Flores (1991), which Arioli and Koch recall in Section 1 without their hypotheses on $a$ and $\gamma$, are not part of this statement; they are separate targets in the Expansion.
 
 ## Expansion
 
@@ -26,3 +26,4 @@ The perturbative existence results for small $\epsilon > 0$, for the fast pulse 
 - G. Arioli and H. Koch, Existence and stability of traveling pulse solutions of the FitzHugh–Nagumo equation, Nonlinear Anal. 113 (2015), 51–70, Section 1 and Theorems 1.1–1.2. <https://doi.org/10.1016/j.na.2014.09.023>
 - Original result: S. P. Hastings, On the existence of homoclinic and periodic orbits for the FitzHugh–Nagumo equations, Quart. J. Math. Oxford (2) 27 (1976), 123–134. <https://doi.org/10.1093/qmath/27.1.123> Existence of the fast pulse for small $\epsilon$ follows Arioli and Koch, Section 1.
 - Original result: G. A. Carpenter, A geometric approach to singular perturbation problems with applications to nerve impulse equations, J. Differential Equations 23 (1977), 335–367. <https://doi.org/10.1016/0022-0396(77)90116-4> Existence of the fast pulse for small $\epsilon$ follows Arioli and Koch, Section 1.
+- Original result: G. Flores, Stability analysis for the slow traveling pulse of the FitzHugh–Nagumo system, SIAM J. Math. Anal. 22 (1991), 392–399. <https://doi.org/10.1137/0522025> Recalled by Arioli and Koch, Section 1, for the existence and instability of the slow pulse for small $\epsilon$.

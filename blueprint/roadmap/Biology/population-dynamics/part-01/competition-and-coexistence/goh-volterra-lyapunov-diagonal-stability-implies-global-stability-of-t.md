@@ -6,6 +6,10 @@ $$\dot V = \tfrac12 (x - x^*)^\top (WA + A^\top W)(x - x^*) < 0 \qquad (x \ne x^
 
 so $x^*$ is globally asymptotically stable in the open positive orthant: it is stable, and every solution starting in the open orthant converges to $x^*$ (Goh 1977). The identity uses $r = -Ax^*$: $\dot V = \sum_i w_i (x_i - x_i^*)(r_i + (Ax)_i) = \sum_i w_i (x_i - x_i^*)(A(x - x^*))_i$.
 
+## Depends on
+
+- [Generalized Lotka–Volterra vector field](../../replicator-and-lotka-volterra-equivalence/lv-field.md)
+
 ## Proof depends on
 
 - [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)

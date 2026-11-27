@@ -10,6 +10,7 @@ With each lineage mutating at rate $\theta/2$ to type $j$ with probability $\pi_
 ## Depends on
 
 - [The Dirichlet law is stationary for parent-independent mutation](../wright-fisher-diffusion-with-selection-and-mutat/dirichlet-stationary-law-for-parent-independent.md)
+- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](../wright-fisher-diffusion-with-selection-and-mutat/k-allele-wright-fisher-generator-on-the-simplex.md)
 
 ## Proof depends on
 

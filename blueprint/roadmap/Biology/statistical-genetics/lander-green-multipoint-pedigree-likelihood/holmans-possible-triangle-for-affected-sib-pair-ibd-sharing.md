@@ -6,6 +6,10 @@ $$z_1 \le \tfrac12, \qquad 2 z_0 \le z_1$$
 
 (Suarez et al.; Holmans 1993; as stated by Dudoit and Speed 1999). The region they cut out of the simplex is the possible triangle with vertices $(1/4, 1/2, 1/4)$, $(0, 1/2, 1/2)$ and $(0, 0, 1)$. Holmans (1993) showed that restricting maximization of the affected-sib-pair likelihood to the possible triangle improves the power of Risch's likelihood-ratio test, and derived the asymptotic distributions of the resulting statistics.
 
+## Depends on
+
+- [Hardy–Weinberg proportions](../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+
 ## Expansion
 
 1. The model: one disease locus with arbitrary penetrances in a randomly mating population in Hardy–Weinberg equilibrium, and the sharing law of affected sib pairs.

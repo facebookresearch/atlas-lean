@@ -12,6 +12,7 @@ and division by $h(p)$ gives the moments of the arrival time conditioned on reac
 - [The scale-function ratio does not depend on the base point](../../../Biology/population-genetics/diffusion-theory/scale-and-speed-of-one-dimensional-diffusions/fixation-prob-eq-ratio-scale-function-fr.md)
 - [Dirichlet Green's function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function.md)
 - [Mean age of an allele at a given frequency](../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/mean-age.md)
+- [Scale function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/scale-function.md)
 
 ## Expansion
 

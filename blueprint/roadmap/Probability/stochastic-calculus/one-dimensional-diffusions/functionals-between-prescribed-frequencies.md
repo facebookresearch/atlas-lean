@@ -13,6 +13,7 @@ and dividing by $h(p)$ gives the mean conditioned on exit at $d$; exit at $c$ us
 - [Dirichlet Green's function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function.md)
 - [Sojourn density conditioned on fixation](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/conditional-green.md)
 - [The scale-function ratio does not depend on the base point](../../../Biology/population-genetics/diffusion-theory/scale-and-speed-of-one-dimensional-diffusions/fixation-prob-eq-ratio-scale-function-fr.md)
+- [Scale function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/scale-function.md)
 
 ## Expansion
 

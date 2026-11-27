@@ -2,6 +2,10 @@
 
 For a reaction network $\mathcal N$ in a continuous-flow stirred-tank reactor, with an outflow reaction for every species, let $p_{\mathcal N}(c, k)$ be the mass-action species-formation rate, a function of positive concentrations $c$ and positive rate constants $k$. The network is injective if $c \mapsto p_{\mathcal N}(c, k)$ is injective on the positive orthant for every $k$. Craciun and Feinberg (2005) prove: $\mathcal N$ is injective if and only if $\det(\partial p_{\mathcal N}/\partial c\,(c, k)) \ne 0$ for all positive $c$ and $k$ (Theorem 3.1). The coefficient test concerns a sign, not only nonvanishing, so it is stated for the map the source uses (Definition 2.7), the feed minus the species-formation rate, whose Jacobian in $c$ is $-\partial p_{\mathcal N}/\partial c$: $\mathcal N$ is injective if and only if all coefficients in the polynomial expansion of $\det(-\partial p_{\mathcal N}/\partial c)$ are nonnegative (Theorem 3.3). For a single species with only an outflow at rate $k$, $p_{\mathcal N}(c, k) = -kc$ is injective and $\det(-\partial p_{\mathcal N}/\partial c) = k$, while $\det(\partial p_{\mathcal N}/\partial c) = -k$ has a negative coefficient. An injective network cannot have two distinct positive equilibria for any rate constants.
 
+## Depends on
+
+- [Mass-action vector field](../../../Dynamics/smooth-dynamics/mass-action-field.md)
+
 ## Expansion
 
 1. The model: CFSTR networks with outflow of every species, mass-action rates, and the species-formation function.

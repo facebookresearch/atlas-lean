@@ -46,6 +46,5 @@
 ## Further stationary laws
 
 - [Stationary law of the multi-allele diffusion with diploid selection](diploid-selection-potential.md)
-- [Stationary law of the Wright–Fisher diffusion with dominance and mutation](dominance-stationary-law.md)
 - [Reversibility and the Dirichlet form of the Wright–Fisher diffusion](reversibility-and-dirichlet-form.md)
 - [Small-mutation limits of stationary laws](small-mutation-limits.md)

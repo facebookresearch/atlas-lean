@@ -8,11 +8,11 @@ where $B_i$ applies $B$ to the $i$-th input and $\Phi_{ij}$ identifies the $i$-t
 
 $$E\bigl[\langle\zeta_0, Z_t^{\otimes n}\rangle\bigr] = E\bigl[\langle\zeta_t, Z_0^{\otimes|R^{(n)}_t|}\rangle\bigr], \qquad t \ge 0,$$
 
-where $(\zeta_t)$ is the function-valued dual started from $\zeta_0 = f$, in which each pair of inputs is identified at rate $1$ and each input is acted on by $B$, and $|R^{(n)}_t|$ is its number of inputs, the block count of a Kingman coalescent started from $n$ blocks (Dawson and Hochberg 1982; Ethier and Kurtz 1993; for the genealogical interpretation, Donnelly and Kurtz 1996). The duality gives uniqueness in law for the martingale problem (Ethier and Kurtz 1993); for a compact type space and a bounded jump-type mutation operator this uniqueness is already [Fleming–Viot uniqueness by moment duality](fleming-viot-uniqueness-by-function-valued-coale.md), so what remains distinct here is the moment duality itself, with its Kingman block-counting dual, and uniqueness for mutation operators and type spaces outside that case. For finitely many types the process is the multi-allele Wright–Fisher diffusion on the simplex (Ethier and Kurtz 1993; Ethier and Kurtz 1986, Chapter 10). The target is the duality and the uniqueness argument as separate statements.
+where $(\zeta_t)$ is the function-valued dual started from $\zeta_0 = f$, in which each pair of inputs is identified at rate $1$ and each input is acted on by $B$, and $|R^{(n)}_t|$ is its number of inputs, the block count of a Kingman coalescent started from $n$ blocks (Dawson and Hochberg 1982; Ethier and Kurtz 1993; for the genealogical interpretation, Donnelly and Kurtz 1996). The duality gives uniqueness in law for the martingale problem (Ethier and Kurtz 1993). For a compact type space and a bounded jump-type mutation operator that uniqueness is [Fleming–Viot uniqueness by moment duality](fleming-viot-uniqueness-by-function-valued-coale.md), and for finitely many types the identification with the multi-allele Wright–Fisher diffusion is the [finite-type correspondence](finite-type-fleming-viot-k-allele-wright-fisher.md); neither is claimed here. The target is the moment duality, with its Kingman block-counting dual, and, as a separate statement, uniqueness for mutation operators and type spaces outside the compact, bounded case.
 
 ## Depends on
 
-- [Fleming–Viot uniqueness by moment duality](fleming-viot-uniqueness-by-function-valued-coale.md)
+- [Generator of Kingman's block-counting process](../../../coalescent-theory/ancestral-lineage-counting-and-tavar-s-formula/block-counting-generator.md)
 
 ## Expansion
 
@@ -27,4 +27,3 @@ where $(\zeta_t)$ is the function-valued dual started from $\zeta_0 = f$, in whi
 - S. N. Ethier and T. G. Kurtz, Fleming–Viot processes in population genetics, SIAM J. Control Optim. 31 (1993), 345–386. <https://doi.org/10.1137/0331019>
 - D. A. Dawson and K. J. Hochberg, Wandering random measures in the Fleming–Viot model, Ann. Probab. 10 (1982), 554–580.
 - P. Donnelly and T. G. Kurtz, A countable representation of the Fleming–Viot measure-valued diffusion, Ann. Probab. 24 (1996), 698–742.
-- S. N. Ethier and T. G. Kurtz, *Markov Processes: Characterization and Convergence*, Wiley (1986), Chapter 10.

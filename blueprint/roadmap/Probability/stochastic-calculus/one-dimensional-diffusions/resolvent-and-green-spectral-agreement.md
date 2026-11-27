@@ -10,6 +10,8 @@ the kernel of the resolvent $(\lambda - L)^{-1}$ of the killed process, and at $
 
 - [Dirichlet Green's function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function.md)
 - [Neutral Wright–Fisher Green's function](../../../Biology/population-genetics/diffusion-theory/sojourn-times-of-the-wright-fisher-diffusion/neutral-green.md)
+- [Scale function of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/scale-function.md)
+- [Speed density of a one-dimensional diffusion](../../../Biology/population-genetics/diffusion-theory/scale-and-speed-of-one-dimensional-diffusions/speed-density.md)
 
 ## Expansion
 

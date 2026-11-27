@@ -5,6 +5,7 @@ Pantea (2012) proves, beyond the [persistence of weakly reversible systems with 
 ## Depends on
 
 - [Persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md)
+- [Stoichiometric subspace](../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
 
 ## Expansion
 

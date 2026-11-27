@@ -2,6 +2,12 @@
 
 For every weakly reversible mass-action system, with any positive rate constants, and every positive stoichiometric compatibility class $\mathcal P$, the set of positive steady states meets $\mathcal P$ (Boros 2019, Theorem 1). This removes the deficiency hypothesis from the existence part of the [deficiency zero theorem](../../../Biology/systems-biology/complex-balancing-and-the-deficiency-zero-theore/exists-unique-equilibrium.md) and of the deficiency one theorem; uniqueness can fail.
 
+## Depends on
+
+- [Stoichiometric subspace](../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
+- [Mass-action vector field](../../../Dynamics/smooth-dynamics/mass-action-field.md)
+- [Weakly reversible reaction network](../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
+
 ## Expansion
 
 1. Definitions: weak reversibility, mass-action systems, the [stoichiometric subspace](../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md) and positive compatibility classes.
@@ -9,10 +15,6 @@ For every weakly reversible mass-action system, with any positive rate constants
 3. The proof for one linkage class (Section 6 of the source) by a degree or fixed-point argument.
 4. The proof for several linkage classes (Sections 7–9).
 5. The deficiency zero case as a corollary with uniqueness, and examples showing that uniqueness fails in general.
-
-## Depends on
-
-- [Stoichiometric subspace](../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
 
 ## Sources
 

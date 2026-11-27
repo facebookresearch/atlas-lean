@@ -2,10 +2,6 @@
 
 The [eigenvalue sensitivity formula](eigenvalue-sensitivity-formula.md) is stated for the dominant eigenvalue of a projection matrix; it holds more generally. (1) A simple eigenvalue $\lambda$ of a real or complex $n \times n$ matrix $A$ is a differentiable function of the entries near $A$, by the implicit function theorem applied to the characteristic polynomial, of which $\lambda$ is a simple root. (2) For any simple eigenvalue, with right eigenvector $w$ ($Aw = \lambda w$) and left eigenvector $v$ ($v^TA = \lambda v^T$), $v^Tw \ne 0$ and $\partial\lambda/\partial a_{ij} = v_iw_j/(v^Tw)$, with the bilinear (not Hermitian) pairing. (3) If $\lambda \ne 0$, the elasticities $e_{ij} = \frac{a_{ij}}{\lambda}\frac{\partial\lambda}{\partial a_{ij}}$ sum to $1$, since $\sum_{i,j}a_{ij}v_iw_j = v^TAw = \lambda v^Tw$.
 
-## Depends on
-
-- [Sensitivity of the population growth rate to matrix entries](eigenvalue-sensitivity-formula.md)
-
 ## Expansion
 
 1. Simple roots of a polynomial depend smoothly on its coefficients, and the coefficients of the characteristic polynomial are polynomials in the entries.

@@ -6,6 +6,13 @@ A different backward process answers a narrower question (the killed ancestral s
 
 The target is the full construction: the branching–coalescing graph, almost-sure finiteness of the time to the ultimate ancestor, the forward type assignment and resolution of branchings, and the pruned genealogy of the sample; and, as a separate statement, the killed process with its representation of the event that the whole sample has type $a$.
 
+## Depends on
+
+- [Generator of the ancestral selection graph line-counting process](asg-generator.md)
+
+## Proof depends on
+
+- [Positive recurrence and convergence of the ancestral selection graph line count](asg-line-count-positive-recurrence-and-convergen.md)
 
 ## Expansion
 

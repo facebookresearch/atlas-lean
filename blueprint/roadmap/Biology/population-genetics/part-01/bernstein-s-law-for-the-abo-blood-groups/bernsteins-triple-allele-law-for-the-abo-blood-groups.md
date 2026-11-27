@@ -2,6 +2,10 @@
 
 This node covers the following result. Under Hardy–Weinberg proportions with alleles $O, A, B$ of frequencies $r, p, q$ ($p + q + r = 1$), $A$ and $B$ codominant and both dominant over $O$, the phenotype frequencies are $f_O = r^2$, $f_A = p^2 + 2pr$, $f_B = q^2 + 2qr$ and $f_{AB} = 2pq$; hence $r = \sqrt{f_O}$, $p = 1 - \sqrt{f_O + f_B}$ and $q = 1 - \sqrt{f_O + f_A}$. Under the rival hypothesis of two independent dominant loci in Hardy–Weinberg proportions and linkage equilibrium, $(f_A + f_{AB})(f_B + f_{AB}) = f_{AB}$, which the three-allele frequencies do not satisfy in general.
 
+## Depends on
+
+- [Hardy–Weinberg proportions](../../hardy-weinberg-law/offspring-apply.md)
+
 ## Expansion
 
 A good expansion replaces this node by planned pages beside it, each citing the source below:

@@ -5,6 +5,11 @@ Under the time-changed neutral Wright–Fisher diffusion $X_t = Y_{A(t)}$ with $
 ## Depends on
 
 - [Effective population size under fluctuating population size](../../../Biology/population-genetics/effective-population-size/effective-size-under-fluctuating-population-size.md)
+- [Time-changed neutral diffusion under deterministic population-size change: construction and fixation](../diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/time-changed-neutral-diffusion-under-determinist.md)
+
+## Proof depends on
+
+- [Mutation generator applied to heterozygosity](../diffusion-theory/wright-fisher-diffusion-with-mutation/mutation-generator-heterozygosity.md)
 
 ## Expansion
 

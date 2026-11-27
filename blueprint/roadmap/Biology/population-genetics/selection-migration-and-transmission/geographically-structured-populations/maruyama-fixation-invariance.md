@@ -17,6 +17,10 @@ so for $\alpha \ne 0$, $e^{-2\alpha K\bar x(t)}$ is a bounded martingale, and op
 - [Neutral fixation probability in a structured population](../../../../Biology/population-genetics/selection-migration-and-transmission/geographically-structured-populations/neutral-fixation-with-reproductive-weights.md)
 - [Closed form of Kimura's fixation probability for nonzero σ](../../../../Biology/population-genetics/diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/kimura-fixation-eq-of-ne-zero.md)
 
+## Proof depends on
+
+- [Multidimensional Itô formula and covariation](../../../../Probability/stochastic-calculus/it-s-formula/multidimensional-ito-formula-and-covariation.md)
+
 ## Expansion
 
 1. The structured diffusion with genic selection, conservative migration and local resampling.

@@ -13,7 +13,6 @@
 - [Deficiency one theorem](feinberg-deficiency-one-theorem.md)
 - [Species–reaction graph criterion for unique equilibria (Craciun–Feinberg)](species-reaction-graph-theorem-craciun-feinberg-ii.md)
 - [Criterion for toric steady states](toric-steady-states-criterion-perez-millan-dickenstein-shiu-conradi.md)
-- [Degree-theory criterion for unique versus multiple equilibria through a positive parametrization](degree-theory-criterion-for-unique-vs-multiple-equilibria-conradi-feli.md)
 - [Relevant minimal siphons via primary decomposition of saturations](minimal-siphons-via-primary-decomposition-shiu-sturmfels.md)
 - [Multisite phosphorylation](multisite-phosphorylation/README.md)
 - [Kinetic proofreading](kinetic-proofreading/README.md)

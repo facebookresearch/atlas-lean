@@ -2,6 +2,11 @@
 
 For a reversible mass-action system with reaction graph $G$ and complex matrix $Y$, the rate constants are formally balanced when they satisfy the Wegscheider (Feinberg circuit) conditions: around every cycle of the reaction graph, the product of forward rate constants equals the product of backward ones. Dickenstein and Pérez Millán (2011, Theorem 1.1) prove that under formal balancing a reversible system is detailed balanced if and only if it is complex balanced: $CB_Y \cap FB_Y = DB_Y$. This generalizes the cases where the reaction graph has no cycles and where the network has deficiency zero.
 
+## Depends on
+
+- [Mass-action vector field](../../../Dynamics/smooth-dynamics/mass-action-field.md)
+- [Complex-balanced concentrations](../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
+
 ## Expansion
 
 1. Definitions: reversible networks, detailed balance, complex balance, formal balancing; the source allows repeated complexes (its labelling convention).

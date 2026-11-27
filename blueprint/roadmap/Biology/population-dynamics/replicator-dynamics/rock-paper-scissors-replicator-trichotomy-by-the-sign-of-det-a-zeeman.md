@@ -9,6 +9,8 @@ there is a unique rest point $z$ in the interior of $S_3$, which is also the uni
 ## Depends on
 
 - [Solution of the replicator equation](../../../Biology/population-dynamics/replicator-dynamics/is-solution.md)
+- [Rest point of the replicator equation](is-rest-point.md)
+- [Symmetric Nash equilibrium of a matrix game](../stability-of-evolutionarily-stable-states/is-nash.md)
 
 ## Expansion
 

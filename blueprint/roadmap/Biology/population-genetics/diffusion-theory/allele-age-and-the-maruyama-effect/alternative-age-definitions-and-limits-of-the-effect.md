@@ -7,6 +7,7 @@ The age of an allele observed at frequency $x$ depends on what is counted. Maruy
 - [The Maruyama effect](../../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/mean-age-lt.md)
 - [Symmetry of the mean age in the selection coefficient](../../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/mean-age-neg.md)
 - [Maruyama–Kimura conditional sojourn density](../../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/age-density.md)
+- [Neutral Wright–Fisher Green's function](../sojourn-times-of-the-wright-fisher-diffusion/neutral-green.md)
 
 ## Expansion
 

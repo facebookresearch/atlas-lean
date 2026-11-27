@@ -11,6 +11,7 @@ The expected age follows by applying the Green's-function formula for occupation
 - [Maruyama–Kimura conditional sojourn density](../../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/age-density.md)
 - [Mean age of an allele at a given frequency](../../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/mean-age.md)
 - [Dirichlet Green's function of a one-dimensional diffusion](../../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/green-function.md)
+- [Scale function of a one-dimensional diffusion](../selection-duality-and-general-one-dimensional-di/scale-function.md)
 
 ## Expansion
 

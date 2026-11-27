@@ -5,6 +5,8 @@ Anderson, Enciso and Johnston (2014, Theorem 2) consider a reaction network that
 ## Depends on
 
 - [Absolute concentration robustness (Shinar–Feinberg)](../../../Biology/systems-biology/chemical-reaction-network-theory/absolute-concentration-robustness-shinar-feinberg.md)
+- [Deficiency of a chemical reaction network](../../../Dynamics/smooth-dynamics/deficiency.md)
+- [Mass-action vector field](../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
 ## Expansion
 

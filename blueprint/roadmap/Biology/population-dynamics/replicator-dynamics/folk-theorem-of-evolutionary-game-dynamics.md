@@ -5,6 +5,8 @@ For a symmetric game with payoff matrix $A$ and the replicator equation $\dot x_
 ## Depends on
 
 - [Rest point of the replicator equation](../../../Biology/population-dynamics/replicator-dynamics/is-rest-point.md)
+- [Symmetric Nash equilibrium of a matrix game](../stability-of-evolutionarily-stable-states/is-nash.md)
+- [Replicator Jacobian](../stability-of-boundary-evolutionarily-stable-stra/replicator-jacobian.md)
 
 ## Expansion
 

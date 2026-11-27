@@ -11,6 +11,8 @@ $$s_{fict}(x) = s\bigl[\coth(2N_esx) - 1\bigr] \qquad (s \ne 0)$$
 - [Sojourn density conditioned on fixation](../../../../Biology/population-genetics/diffusion-theory/selection-duality-and-general-one-dimensional-di/conditional-green.md)
 - [Symmetry of the sojourn density below the current frequency](../../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/maruyama-below-neg.md)
 - [Symmetry of the mean age in the selection coefficient](../../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/mean-age-neg.md)
+- [Kimura's fixation probability](../wright-fisher-diffusion/kimura-fixation.md)
+- [Doob h-transform: the Wright–Fisher diffusion conditioned on fixation](../fixation-and-absorption-in-the-wright-fisher-dif/doob-h-transform-process-conditioned-on-fixation.md)
 
 ## Expansion
 

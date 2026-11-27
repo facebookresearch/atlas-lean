@@ -52,7 +52,6 @@
 - [The coalescent with separate sexes](coalescent-limit-with-separate-sexes.md)
 - [Unlinked loci are not unconditionally independent](unlinked-does-not-mean-universally-independent.md)
 - [Backward migration probabilities from forward migration and deme sizes](backward-versus-forward-migration.md)
-- [Mean coalescence times in the finite island model are expected absorption times](island-pair-means-as-path-expectations.md)
 - [Distribution of the pairwise coalescence time in the island model](island-coalescence-time-distribution.md)
 - [Scattering and collecting phases of the many-demes coalescent](many-demes-scattering-collecting-phases.md)
 - [Isolation with migration: piecewise structured histories and gene-tree likelihoods](isolation-with-migration-and-population-splits.md)

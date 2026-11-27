@@ -1,10 +1,12 @@
 # Poisson construction of the Λ-coalescent
 
-Let $\Lambda$ be a finite measure on $[0, 1]$ with $\Lambda(\{0\}) = 0$, and let $(p_i, t_i)_{i \ge 1}$ be the points of a Poisson point process on $(0, 1] \times \mathbb{R}_+$ with intensity $p^{-2}\Lambda(dp) \otimes dt$. At each time $t_i$ perform a $p_i$-merger: every block present takes part independently with probability $p_i$, and the blocks that take part merge into one. Restricted to $\{1, \dots, n\}$ this is well defined, because only finitely many points change the restriction in a bounded time interval (two given integers merge at total rate $\int p^2 \cdot p^{-2}\Lambda(dp) = \Lambda([0, 1]) < \infty$); the restrictions are consistent, and the resulting process on partitions of $\mathbb{N}$ is the $\Lambda$-coalescent, whose $b$-block, $k$-merger rate is $\lambda_{b,k} = \int_0^1 p^{k-2}(1 - p)^{b-k}\Lambda(dp)$ (Berestycki 2009, Theorem 3.2 and Sec. 3.1). The target is this construction and its equality in law with the coalescent defined by the merger-rate generator.
+Let $\Lambda$ be a finite measure on $[0, 1]$ with $\Lambda(\{0\}) = 0$, and let $(p_i, t_i)_{i \ge 1}$ be the points of a Poisson point process on $(0, 1] \times \mathbb{R}_+$ with intensity $p^{-2}\Lambda(dp) \otimes dt$. At each time $t_i$ perform a $p_i$-merger: every block present takes part independently with probability $p_i$, and the blocks that take part merge into one. Restricted to $\{1, \dots, n\}$ this is well defined, because only finitely many points change the restriction in a bounded time interval (two given integers merge at total rate $\int p^2 \cdot p^{-2}\Lambda(dp) = \Lambda([0, 1]) < \infty$); the restrictions are consistent, and the resulting process on partitions of $\mathbb{N}$ is the [$\Lambda$-coalescent](../multiple-merger-coalescents/speed-of-coming-down-from-infinity/lambda-coalescent-on-n-as-a-time-indexed-cadlag.md), whose $b$-block, $k$-merger rate is $\lambda_{b,k} = \int_0^1 p^{k-2}(1 - p)^{b-k}\Lambda(dp)$ (Berestycki 2009, Theorem 3.2 and Sec. 3.1). The target is this construction and its equality in law with the coalescent defined by the [merger-rate generator](the-coalescent-rate-matrix-on-partitions-of-a-fi.md).
 
 ## Depends on
 
 - [Pitman's merger rate](../../../Biology/coalescent-theory/coalescents/merger-rate.md)
+- [The Λ-coalescent rate matrix on partitions of a finite sample](the-coalescent-rate-matrix-on-partitions-of-a-fi.md)
+- [The Λ-coalescent on the natural numbers](../multiple-merger-coalescents/speed-of-coming-down-from-infinity/lambda-coalescent-on-n-as-a-time-indexed-cadlag.md)
 
 ## Proof depends on
 

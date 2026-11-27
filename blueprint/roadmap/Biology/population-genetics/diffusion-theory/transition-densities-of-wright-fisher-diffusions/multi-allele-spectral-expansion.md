@@ -13,7 +13,8 @@ $$p(t; x, y) = \sum_{n\in\mathbb N_0^{K-1}}\frac{1}{C^\theta_n}e^{-\lambda^\thet
 ## Depends on
 
 - [Transition density of the multi-allelic Wright–Fisher diffusion with selection](../../../../Biology/population-genetics/diffusion-theory/transition-densities-of-wright-fisher-diffusions/multi-allelic-transition-density-with-selection.md)
-- [Dirichlet stationary law under parent-independent mutation](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/dirichlet-stationary-law-under-parent-independent-mutation.md)
+- [Uniqueness and reversibility of the Dirichlet stationary law under parent-independent mutation](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/dirichlet-stationary-law-under-parent-independent-mutation.md)
+- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](../wright-fisher-diffusion-with-selection-and-mutat/k-allele-wright-fisher-generator-on-the-simplex.md)
 
 ## Expansion
 

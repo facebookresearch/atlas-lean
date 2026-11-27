@@ -5,6 +5,7 @@ In the general epidemic in a closed, homogeneously mixing population of $n$ indi
 $$P(T_n \le k_n) \to q^m \qquad (n \to \infty),$$
 
 that is, the probability of a minor outbreak tends to $q^m$. The proof couples the epidemic with a branching process built from the same random variables, with a birth at every contact, which agrees with the epidemic until the first contact with an already infected individual, an event of probability about $1 - e^{-k(k-1+2m)/(2n)}$ among the first $k$ contacts (Britton 2010, Section 3; Ball and Donnelly 1995). For exponential infectious periods with rate $\gamma$ (the general stochastic epidemic) the approximating process is a linear birth–death process with birth rate $\lambda$ and death rate $\gamma$, whose extinction probability from one individual is $1$ when $\lambda \le \gamma$ and $\gamma/\lambda$ when $\lambda > \gamma$, so $q = \min(1, 1/R_0)$ and the limit is $q^m = \min(1, R_0^{-m})$.
+
 ## Depends on
 
 - [Certain extinction in the critical and subcritical cases](../../../../Probability/branching-processes/linear-birth-death-process/tendsto-extinction-prob-of-le.md)

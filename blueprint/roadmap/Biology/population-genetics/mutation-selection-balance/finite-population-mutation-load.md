@@ -8,7 +8,6 @@ $$L(x) = 2shx(1 - x) + sx^2$$
 
 ## Depends on
 
-- [Stationary law of the Wright–Fisher diffusion with dominance and mutation](../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-selection-and-mutat/dominance-stationary-law.md)
 - [Haldane–Muller load](../../../Biology/population-genetics/mutation-selection-balance/load-mult-at-equilibrium.md)
 
 ## Expansion

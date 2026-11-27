@@ -1,6 +1,6 @@
 # Ou-Yang–Helfrich shape equation and the second variation of a spherical vesicle
 
-For a closed lipid vesicle with bending modulus $k_c > 0$, spontaneous curvature $c_0$, surface tension $\lambda$ and pressure difference $p = p_{\text{out}} - p_{\text{in}}$, take the free energy $F = \frac{k_c}{2}\oint (2H + c_0)^2\, dA + \lambda A + p V$, with mean curvature $H$ and Gaussian curvature $K$ in the convention where a sphere of radius $R$ has $H = -1/R$, $K = 1/R^2$. In the shape equation, $\nabla^2$ is the [Laplace–Beltrami operator](../../../Geometry/riemannian-geometry/laplace-beltrami-operator/laplacian.md) of the surface with its induced metric, in the sign convention $\nabla^2 = \operatorname{div} \circ \operatorname{grad}$, the trace of the covariant Hessian (the source's $(\nabla^2 u)\, dA = d \ast du$), so that $-\nabla^2$ is nonnegative and $\nabla^2 Y_{lm} = -l(l+1)R^{-2}\,Y_{lm}$ on a sphere of radius $R$. Equilibrium shapes satisfy the Ou-Yang–Helfrich shape equation
+For a closed lipid vesicle with bending modulus $k_c > 0$, spontaneous curvature $c_0$, surface tension $\lambda$ and pressure difference $p = p_{\text{out}} - p_{\text{in}}$, take the free energy $F = \frac{k_c}{2}\oint (2H + c_0)^2\, dA + \lambda A + p V$, with mean curvature $H$ and Gaussian curvature $K$ in the convention where a sphere of radius $R$ has $H = -1/R$, $K = 1/R^2$. In the shape equation, $\nabla^2$ is the [Laplace–Beltrami operator](../../../Geometry/riemannian-geometry/laplace-beltrami-operator/laplacian.md) of the surface with its induced metric, in the sign convention $\nabla^2 = \operatorname{div} \circ \operatorname{grad}$, the trace of the covariant Hessian (the source's $(\nabla^2 u)\, dA = d \ast du$), so that $-\nabla^2$ is nonnegative and $\nabla^2 Y_{lm} = -l(l+1)R^{-2}\,Y_{lm}$ on a sphere of radius $R$. Equilibrium shapes satisfy the Ou-Yang–Helfrich shape equation, whose left-hand side is the [shape-equation expression](../../not-yet-classified/helfrich-sphere-stability/shape-lhs.md),
 
 $$p - 2\lambda H + k_c (2H + c_0)(2H^2 - c_0 H - 2K) + 2 k_c \nabla^2 H = 0$$
 
@@ -8,7 +8,7 @@ $$p - 2\lambda H + k_c (2H + c_0)(2H^2 - c_0 H - 2K) + 2 k_c \nabla^2 H = 0$$
 
 $$q_l(p) = \frac{R}{2}\bigl[l(l+1) - 2\bigr]\Bigl\{\frac{2k_c\bigl[l(l+1) - c_0 R\bigr]}{R^3} - p\Bigr\}$$
 
-(from the source's Eq. (82)); for $l = 0$ this gives $q_0(p) = Rp + 2k_c c_0/R$. The resulting stability thresholds at $p_c = 2k_c(6 - c_0 R)/R^3$ for perturbations with $a_{00} = 0$ are the [semidefinite](../../not-yet-classified/helfrich-sphere-stability/second-variation-nonneg-iff.md) and [strict](../../not-yet-classified/helfrich-sphere-stability/second-variation-pos-iff.md) stability criteria. Without a constraint fixing the volume or the area, the radial mode is not excluded and "stable for $p < p_c$" fails: $k_c = R = 1$, $c_0 = 0$, $p = -1$, $\lambda = 1/2$ is an equilibrium with $p < p_c = 12$ but $F''(R) = -4\pi$ for radial changes.
+(from the source's Eq. (82)); for $l = 0$ this gives $q_0(p) = Rp + 2k_c c_0/R$. The resulting stability thresholds at the [critical pressure](../../not-yet-classified/helfrich-sphere-stability/critical-pressure.md) $p_c = 2k_c(6 - c_0 R)/R^3$ for perturbations with $a_{00} = 0$ are the [semidefinite](../../not-yet-classified/helfrich-sphere-stability/second-variation-nonneg-iff.md) and [strict](../../not-yet-classified/helfrich-sphere-stability/second-variation-pos-iff.md) stability criteria. Without a constraint fixing the volume or the area, the radial mode is not excluded and "stable for $p < p_c$" fails: $k_c = R = 1$, $c_0 = 0$, $p = -1$, $\lambda = 1/2$ is an equilibrium with $p < p_c = 12$ but $F''(R) = -4\pi$ for radial changes.
 
 ## Depends on
 
@@ -16,6 +16,10 @@ $$q_l(p) = \frac{R}{2}\bigl[l(l+1) - 2\bigr]\Bigl\{\frac{2k_c\bigl[l(l+1) - c_0 
 - [The sphere condition](../../not-yet-classified/helfrich-sphere-stability/shape-lhs-sphere-eq-zero-iff.md)
 - [Second Variation](../../not-yet-classified/helfrich-sphere-stability/second-variation.md)
 - [Mode Coeff](../../not-yet-classified/helfrich-sphere-stability/mode-coeff.md)
+- [Shape LHS](../../not-yet-classified/helfrich-sphere-stability/shape-lhs.md)
+- [Critical Pressure](../../not-yet-classified/helfrich-sphere-stability/critical-pressure.md)
+- [Semidefinite stability criterion](../../not-yet-classified/helfrich-sphere-stability/second-variation-nonneg-iff.md)
+- [Strict stability criterion](../../not-yet-classified/helfrich-sphere-stability/second-variation-pos-iff.md)
 
 ## Expansion
 

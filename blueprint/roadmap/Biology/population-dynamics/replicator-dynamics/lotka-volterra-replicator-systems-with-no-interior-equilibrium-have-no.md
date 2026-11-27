@@ -5,6 +5,10 @@ For the replicator equation $\dot x_i = x_i((Ax)_i - x\cdot Ax)$ on the simplex 
 ## Depends on
 
 - [Solution of the replicator equation](../../../Biology/population-dynamics/replicator-dynamics/is-solution.md)
+- [Rest point of the replicator equation](is-rest-point.md)
+- [Generalized Lotka–Volterra vector field](../replicator-and-lotka-volterra-equivalence/lv-field.md)
+- [Orbital equivalence, replicator to Lotka–Volterra](../replicator-and-lotka-volterra-equivalence/replicator-orbit-equiv-lotka-volterra.md)
+- [Orbital equivalence, Lotka–Volterra to replicator](../replicator-and-lotka-volterra-equivalence/lotka-volterra-orbit-equiv-replicator.md)
 
 ## Expansion
 

@@ -5,6 +5,7 @@ In the Poisson random field model with scaled mutation rate $\theta$ and scaled 
 ## Depends on
 
 - [Probability current of the Poisson random field density](../../../../Biology/population-genetics/diffusion-theory/poisson-random-field-model/current-prf-density.md)
+- [Kimura's fixation probability](../wright-fisher-diffusion/kimura-fixation.md)
 
 ## Expansion
 

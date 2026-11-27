@@ -4,7 +4,7 @@ Wakeley, King, Low and Ramachandran (2012) treat the population pedigree of a di
 
 $$\frac{1}{2^{2g+1}},$$
 
-the product of $2^{-g}$ for each lineage to reach that ancestor and $1/2$ for them to coalesce there (equation (2)); and for samples without sibs or cousins coalescence is impossible in the first three generations. By analysis and simulations on Wright–Fisher pedigrees and on pedigrees built from family data, the differences from the standard coalescent are confined to roughly the most recent $\log_2 N$ generations, and the standard coalescent is often hard to reject statistically.
+the product of $2^{-g}$ for each lineage to reach that ancestor and $1/2$ for them to coalesce there (equation (2)); and for samples that contain no sibs, first cousins or second cousins, coalescence is impossible in the first three generations. By analysis and simulations on Wright–Fisher pedigrees and on pedigrees built from family data, the differences from the standard coalescent are confined to roughly the most recent $\log_2 N$ generations, and the standard coalescent is often hard to reject statistically.
 
 ## Expansion
 

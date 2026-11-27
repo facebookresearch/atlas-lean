@@ -6,7 +6,7 @@ Solutions are taken in the class of the source: a solution $w = (w_1, w_2)$ on $
 
 For these parameter values, Arioli and Koch prove that the periodic pulse on the circle (Theorem 1.1) and the homoclinic pulse on the line (Theorem 1.2) are each exponentially stable in this sense, by computer-assisted estimates. Both proofs reduce stability to excluding eigenvalues of the linearized generator from a closed right half-plane apart from the translation eigenvalue $0$. On the circle the eigenvalue problem is reduced by perturbation theory to estimates on finite matrices; on the line the number of eigenvalues in a small region is counted by estimating the Evans function on its boundary and applying the argument principle. This page states the stability results for these parameter values only.
 
-The stability of the fast pulse for all sufficiently small $\epsilon > 0$ (Jones 1984; Yanagida 1985) and the instability of the slow pulse (Flores), which Arioli and Koch recall in Section 1 without the hypotheses on $a$ and $\gamma$, are separate targets in the Expansion.
+The stability of the fast pulse for all sufficiently small $\epsilon > 0$ (Jones 1984; Yanagida 1985) and the instability of the slow pulse (Flores 1991), which Arioli and Koch recall in Section 1 without the hypotheses on $a$ and $\gamma$, are separate targets in the Expansion.
 
 ## Depends on
 
@@ -23,9 +23,11 @@ The stability of the fast pulse for all sufficiently small $\epsilon > 0$ (Jones
 3. Circle: the reduction of the eigenvalue problem for the periodic pulse to finite matrix estimates, verified by computer.
 4. Line: the Evans function of the homoclinic pulse, its computer-assisted estimates on the boundary of the small region, and the argument principle, showing that $0$ is the only eigenvalue in the closed right half-plane.
 5. From linear stability to exponential stability modulo translation in the sense of Eq. (1.6), on each domain.
-6. Separate targets: the stability of the fast pulse for small $\epsilon > 0$ by the singular-limit Evans-function argument of Jones (and Yanagida), and the instability of the slow pulse (Flores), each with the hypotheses on $a$ and $\gamma$ recovered from the original papers.
+6. Separate targets: the stability of the fast pulse for small $\epsilon > 0$ by the singular-limit Evans-function argument of Jones (and Yanagida), and the instability of the slow pulse (Flores 1991), each with the hypotheses on $a$ and $\gamma$ recovered from the original papers.
 
 ## Sources
 
 - G. Arioli and H. Koch, Existence and stability of traveling pulse solutions of the FitzHugh–Nagumo equation, Nonlinear Anal. 113 (2015), 51–70, Sections 1, 3 and 4, Eq. (1.6) and Theorems 1.1–1.2. <https://doi.org/10.1016/j.na.2014.09.023>
 - Original result: C. K. R. T. Jones, Stability of the travelling wave solution of the FitzHugh–Nagumo system, Trans. Amer. Math. Soc. 286 (1984), 431–469. <https://doi.org/10.1090/s0002-9947-1984-0760971-6> The stability of the fast pulse for small $\epsilon$ follows Arioli and Koch, Section 1.
+- Original result: E. Yanagida, Stability of fast travelling pulse solutions of the FitzHugh–Nagumo equations, J. Math. Biol. 22 (1985), 81–104. <https://doi.org/10.1007/BF00276548> Recalled by Arioli and Koch, Section 1, for the stability of the fast pulse for small $\epsilon$.
+- Original result: G. Flores, Stability analysis for the slow traveling pulse of the FitzHugh–Nagumo system, SIAM J. Math. Anal. 22 (1991), 392–399. <https://doi.org/10.1137/0522025> Recalled by Arioli and Koch, Section 1, for the existence and instability of the slow pulse for small $\epsilon$.

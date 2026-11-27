@@ -6,6 +6,8 @@ A mass-action system with reaction graph $G$ on $n$ complexes and complex matrix
 
 - [Deficiency of a chemical reaction network](../../../Dynamics/smooth-dynamics/deficiency.md)
 - [Binomials of a toric model](../../../RingTheory/ideals-and-constructions/toric-ideals-and-markov-bases/binomials.md)
+- [Mass-action vector field](../../../Dynamics/smooth-dynamics/mass-action-field.md)
+- [Complex-balanced concentrations](../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
 
 ## Expansion
 

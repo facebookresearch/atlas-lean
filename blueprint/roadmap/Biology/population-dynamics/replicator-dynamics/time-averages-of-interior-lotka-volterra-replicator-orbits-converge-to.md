@@ -9,6 +9,9 @@ $$\frac1T\int_0^T x_i(t)\, dt \to z_i \qquad (T \to \infty,\ i = 1, \dots, n)$$
 ## Depends on
 
 - [Rest points in the interior are equalizers](../../../Biology/population-dynamics/replicator-dynamics/is-rest-point-iff.md)
+- [Solution of the replicator equation](is-solution.md)
+- [Rest point of the replicator equation](is-rest-point.md)
+- [Generalized Lotka–Volterra vector field](../replicator-and-lotka-volterra-equivalence/lv-field.md)
 
 ## Expansion
 

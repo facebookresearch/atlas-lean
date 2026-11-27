@@ -8,8 +8,9 @@ $$P(x) = \frac{\Gamma(\alpha_0)\Gamma(n + 1)}{\Gamma(n + \alpha_0)}\prod_{k=1}^K
 
 ## Depends on
 
-- [Dirichlet stationary law under parent-independent mutation](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/dirichlet-stationary-law-under-parent-independent-mutation.md)
+- [Uniqueness and reversibility of the Dirichlet stationary law under parent-independent mutation](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/dirichlet-stationary-law-under-parent-independent-mutation.md)
 - [Infinite-alleles limits of finite-allele diffusions](../../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/infinite-alleles-and-finite-allele-limits.md)
+- [Dirichlet distribution](../../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/dirichlet-measure.md)
 
 ## Expansion
 

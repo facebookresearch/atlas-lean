@@ -8,6 +8,7 @@ Let $Z$ be an allele-sharing score on the inheritance vectors $v$ of a pedigree,
 
 - [Linear Model](../../not-yet-classified/kong-cox-allele-sharing/linear-model.md)
 - [The linear model has total mass one](../../not-yet-classified/kong-cox-allele-sharing/sum-linear-model.md)
+- [Inheritance Vector](inheritance-vector.md)
 
 ## Expansion
 

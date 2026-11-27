@@ -2,7 +2,7 @@
 
 Coalescent likelihoods for serially sampled sequences usually condition on the sampling times, implicitly assuming that they are fixed by the sampling protocol or that their distribution does not depend on the population size. Karcher et al. (2016) model preferential sampling by taking the sampling times as an inhomogeneous Poisson process on a fixed window $[0, s_0]$ with intensity $\lambda(t) = e^{\beta_0}N_\gamma(t)^{\beta_1}$, a power of the effective population size $N_\gamma$, which adds to the coalescent likelihood the sampling log-likelihood
 
-$$\log \Pr(s \mid \gamma, \beta_0, \beta_1) = C + n\beta_0 + \sum_{i=1}^n \beta_1 \log N_\gamma(s_i) - \int_{s_m}^{s_0} e^{\beta_0} N_\gamma(r)^{\beta_1}\, dr;$$
+$$\log \Pr(s \mid \gamma, \beta_0, \beta_1) = C + n\beta_0 + \sum_{i=1}^n \beta_1 \log N_\gamma(s_i) - \int_0^{s_0} e^{\beta_0} N_\gamma(r)^{\beta_1}\, dr;$$
 
 $\beta_1 = 0$ gives sampling times independent of $N_\gamma$ and $\beta_1 = 1$ an intensity proportional to it. Their simulations show that when sampling times depend on the effective population size, methods that condition on them without this term can be systematically biased, and that including it reduces bias and improves precision. The coalescent factor itself is unchanged: the genealogy depends on the sampling times, so it is conditioned on $s$, and $s$ contributes its own Poisson likelihood.
 

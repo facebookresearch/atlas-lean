@@ -6,6 +6,11 @@ $$p\cdot Ab > b\cdot Ab$$
 
 for all rest points $b$ on the boundary of $S_n$. Since the rest points on the boundary form a finite union of convex sets, it suffices to check the inequality at their extreme points, which gives a finite system of linear inequalities for $p$. For monocyclic payoff matrices ($a_{ii} = 0$, $a_{ij} > 0$ if $i = j + 1 \bmod n$, $a_{ij} \le 0$ otherwise) the replicator equation is permanent if and only if there is an interior rest point $z$ with $z\cdot Az > 0$ (their Theorem 6).
 
+## Depends on
+
+- [Solution of the replicator equation](is-solution.md)
+- [Rest point of the replicator equation](is-rest-point.md)
+
 ## Expansion
 
 1. The model and the definition of permanence.

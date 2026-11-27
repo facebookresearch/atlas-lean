@@ -7,6 +7,8 @@ Consider a mass action system whose reaction network has $\ell$ linkage classes,
 - [Deficiency of a chemical reaction network](../../../Dynamics/smooth-dynamics/deficiency.md)
 - [Stoichiometric subspace](../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
 - [Deficiency of a linkage class](../../../Chemistry/chemical-kinetics/deficiency-one-theory-of-reaction-networks/linkage-class-deficiency.md)
+- [Mass-action vector field](../../../Dynamics/smooth-dynamics/mass-action-field.md)
+- [Weakly reversible reaction network](../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
 
 ## Proof depends on
 

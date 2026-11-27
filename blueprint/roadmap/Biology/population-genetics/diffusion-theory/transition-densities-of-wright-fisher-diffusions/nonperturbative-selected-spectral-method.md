@@ -6,6 +6,7 @@ Song and Steinrücken (2012) compute the eigenvalues and eigenfunctions of the W
 
 - [Transition density of the Wright–Fisher diffusion with diploid selection](../../../../Biology/population-genetics/diffusion-theory/transition-densities-of-wright-fisher-diffusions/transition-density-with-diploid-selection.md)
 - [Weak-selection perturbation of the Wright–Fisher spectrum](../../../../Biology/population-genetics/diffusion-theory/transition-densities-of-wright-fisher-diffusions/kimura-selection-perturbation.md)
+- [Jacobi eigenbasis of the Wright–Fisher generator with mutation](../wright-fisher-diffusion-with-mutation/jacobi-eigenbasis-with-mutation.md)
 
 ## Expansion
 
