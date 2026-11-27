@@ -4,7 +4,7 @@
 
 **Statement** (Ogbunugafor, Wylie, Diakite, Weinreich and Hartl 2016, eqs. (1)–(2)). The growth rate of an allele at drug concentration $x$ (on a logarithmic concentration scale) is taken to be the decreasing logistic function of two measured parameters,
 
-$$g(x) = \frac{g_{\mathrm{drugless}}}{1 + e^{(\mathrm{IC}_{50} - x)/c}},$$
+$$g(x) = \frac{g_{\mathrm{drugless}}}{1 + e^{(x - \mathrm{IC}_{50})/c}},$$
 
 where $g_{\mathrm{drugless}}$ is the growth rate without drug, $\mathrm{IC}_{50}$ the concentration halving the growth rate, and $c > 0$ a fitted shape constant; this assigns to every drug concentration a fitness landscape on the $2^L$ alleles. The effect of adding a single mutation $\varepsilon$ to a background allele $j$ is
 

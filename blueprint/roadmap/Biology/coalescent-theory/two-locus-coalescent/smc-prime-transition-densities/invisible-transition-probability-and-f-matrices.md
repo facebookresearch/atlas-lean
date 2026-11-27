@@ -4,7 +4,11 @@ A recombination event in the SMC$'$ is **invisible** when the detached branch co
 
 $$Q_j = \int_{t_{j+1}}^{t_j} \exp\left\{-\int_{u}^{t_j} \frac{A(r)}{N(r)}dr\right\} du, \qquad q_l = \exp\left\{-\int_{t_{l+1}}^{t_l} \frac{A(r)}{N(r)} dr \right\},$$
 
-and $P_{j,k} = Q_j\, q_{j-1} q_{j-2} \cdots q_{k+1} (1 - q_k)$, the probability that the pruning time falls in $(t_{j+1}, t_j)$ and the regrafting time falls in $(t_{k+1}, t_k)$ on the same lineage. Then the marginal probability of an invisible transition is
+and set
+
+$$P_{j,j} = \frac{1}{j} \int_{t_{j+1}}^{t_j} \left(1 - \exp\left\{-\int_{u}^{t_j} \frac{A(r)}{N(r)}\,dr\right\}\right) du, \qquad P_{j,k} = Q_j\, q_{j-1} q_{j-2} \cdots q_{k+1} \frac{1 - q_k}{k} \quad (k < j),$$
+
+so that $P_{j,k}/\ell$ is the probability that a fixed lineage free on $(t_{j+1}, t_k)$ is pruned in $(t_{j+1}, t_j)$ and regrafts back onto itself in $(t_{k+1}, t_k)$ (among the $k$ lineages present there). Then the marginal probability of an invisible transition is
 
 $$\Pr[G_i = g \mid g, N(t)] = \frac{1}{\ell} \sum_{j=2}^{n} \sum_{k=2}^{j} F_{j,k}\, P_{j,k},$$
 

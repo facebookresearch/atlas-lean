@@ -18,9 +18,9 @@ For a two-effect distribution with scaled beneficial effect $\gamma_b$, scaled d
 
 $$\eta\big|_{v = 0} = \frac{\gamma_d e^{-\gamma_d}}{\gamma_b e^{\gamma_b}}, \tag{5}$$
 
-and for exponentially distributed effects with means $\gamma_b$ and $\gamma_d$,
+and for exponentially distributed effects with means $\gamma_b \in (0, 1)$ (required for the beneficial integral to converge) and $\gamma_d > 0$,
 
-$$\eta\big|_{v = 0} = \frac{\gamma_d}{\gamma_b} \frac{1 - \gamma_b}{(1 + \gamma_d)^2}. \tag{6}$$
+$$\eta\big|_{v = 0} = \frac{\gamma_d}{\gamma_b} \frac{(1 - \gamma_b)^2}{(1 + \gamma_d)^2}. \tag{6}$$
 
 ## Depends on
 
