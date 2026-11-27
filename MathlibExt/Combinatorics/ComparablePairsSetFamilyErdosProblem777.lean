@@ -17,6 +17,18 @@ import Mathlib.Data.Fintype.Powerset
 /-!
 # Comparable pairs in set families
 
+For the first question we partition the family according to whether each set has fewer strict
+subsets or strict supersets in the family. At most a quarter of the squared family size consists
+of pairs directed from the first class to the second. Counting three-set chains bounds the
+remaining pairs by $o(2^n)$ when the family has at most $2 \cdot 2^{n/2}$ members.
+
+Source: T. F. Bloom, Erdős Problems, Problem #777, https://www.erdosproblems.com/777 (status
+SOLVED). UnsolvedMath record UM-30007028 (`EP-777`), dataset ulamai/UnsolvedMath v1.8.0.
+
+The edges of `G_F` are the pairs `(A, B)` of members with `A ⊊ B`. Each question is stated as posed:
+(1) for all large `n`; (2) for every `c > 0` some constant `C` bounds `m ≤ C 2^{n/2}` for all `n`;
+(3) for all `n`.
+
 We refute the second question of Erdős Problem 777 using a subfamily of the Alon–Frankl
 construction described in Section 2 of *Comparable pairs in families of sets* (arXiv:1411.4196).
 Lower sets have one exceptional point in the right half and upper sets miss one point in the
@@ -336,5 +348,199 @@ theorem nearlyCompleteComparabilityFamilySmall_holds :
       push_cast
       ring
     _ ≤ _ := pow_le_pow_left₀ (Real.rpow_nonneg hpos.le _) hlarge _
+
+private abbrev betweenSets {n : ℕ} (p : Finset (Fin n) × Finset (Fin n)) (b : Finset (Fin n)) :=
+  p.1 ⊂ b ∧ b ⊂ p.2
+
+-- The union of the lower sets and the union of the middle sets separate the three levels.
+-- Within the resulting three intervals there are at most 2^n choices per tuple position.
+private theorem count_chain_boxes {n : ℕ} (F : Finset (Finset (Fin n))) :
+    (incidences (tuples 6 (F ×ˢ F)) (tuples 6 F)
+      (fun p b ↦ ∀ i j, betweenSets (p i) (b j))).card ≤ (2 ^ n) ^ 8 := by
+  classical
+  let box (uv : Finset (Fin n) × Finset (Fin n)) :=
+    tuples 6 (Iic uv.1 ×ˢ Icc uv.2 univ) ×ˢ tuples 6 (Icc uv.1 uv.2)
+  have hcard (u v : Finset (Fin n)) : (box (u, v)).card ≤ (2 ^ n) ^ 6 := by
+    by_cases huv : u ⊆ v
+    · have hv : v.card ≤ n := by simpa using v.card_le_univ
+      simp only [box, card_product, Fintype.card_piFinset_const, card_Iic_finset,
+        card_Icc_finset (subset_univ _), card_Icc_finset huv, card_univ, Fintype.card_fin]
+      rw [← mul_pow, ← pow_add, ← pow_add]
+      have := card_le_card huv
+      exact le_of_eq (by congr 2; omega)
+    · simp [box, Icc_eq_empty huv]
+  calc
+    _ ≤ (univ.biUnion box).card := by
+      apply card_le_card
+      rintro ⟨p, b⟩ hp
+      have h := (mem_filter.mp hp).2
+      let u := univ.biUnion (fun i ↦ (p i).1)
+      let v := univ.biUnion b
+      refine mem_biUnion.mpr ⟨(u, v), mem_univ _, mem_product.mpr ⟨?_, ?_⟩⟩
+      · refine Fintype.mem_piFinset.mpr fun i ↦ mem_product.mpr
+          ⟨mem_Iic.mpr (subset_biUnion_of_mem (fun i ↦ (p i).1) (mem_univ i)),
+            mem_Icc.mpr ⟨?_, subset_univ _⟩⟩
+        exact biUnion_subset.mpr fun j _ ↦ (h i j).2.le
+      · refine Fintype.mem_piFinset.mpr fun j ↦ mem_Icc.mpr
+          ⟨?_, subset_biUnion_of_mem _ (mem_univ j)⟩
+        exact biUnion_subset.mpr fun i _ ↦ (h i j).1.le
+    _ ≤ ∑ uv, (box uv).card := card_biUnion_le
+    _ ≤ ∑ _ : Finset (Fin n) × Finset (Fin n), (2 ^ n) ^ 6 :=
+      sum_le_sum fun uv _ ↦ hcard uv.1 uv.2
+    _ = _ := by simp; ring
+
+private abbrev chains {n : ℕ} (F : Finset (Finset (Fin n))) :=
+  (incidences (F ×ˢ F) F betweenSets).card
+
+-- Duplicate the middle set six times, then the pair of endpoints six times. At the scale
+-- |F| = 2^(n/2), eighteen independent choices would give 2^(9n), while the boxes cost 2^(8n).
+private theorem chains_moment {n : ℕ} (F : Finset (Finset (Fin n))) :
+    chains F ^ 36 ≤ F.card ^ 90 * (2 ^ n) ^ 8 := by
+  classical
+  let stars := incidences (tuples 6 F) (F ×ˢ F) (fun b p ↦ ∀ j, betweenSets p (b j))
+  have h₁ : chains F ^ 6 ≤ (F.card * F.card) ^ 5 * stars.card := by
+    simpa only [card_product] using count_stars (F ×ˢ F) F betweenSets 5
+  have h₂ : stars.card ^ 6 ≤ (F.card ^ 6) ^ 5 * (2 ^ n) ^ 8 := by
+    apply (count_stars (tuples 6 F) (F ×ˢ F) (fun b p ↦ ∀ j, betweenSets p (b j)) 5).trans
+    rw [Fintype.card_piFinset_const]
+    exact Nat.mul_le_mul_left _ (count_chain_boxes F)
+  calc
+    _ = (chains F ^ 6) ^ 6 := pow_mul ..
+    _ ≤ ((F.card * F.card) ^ 5 * stars.card) ^ 6 := Nat.pow_le_pow_left h₁ _
+    _ ≤ ((F.card * F.card) ^ 5) ^ 6 * ((F.card ^ 6) ^ 5 * (2 ^ n) ^ 8) := by
+      rw [mul_pow]
+      exact Nat.mul_le_mul_left _ h₂
+    _ = _ := by ring
+
+private def lowerDegree {n : ℕ} (F : Finset (Finset (Fin n))) (b : Finset (Fin n)) :=
+  (F.filter (· ⊂ b)).card
+
+private def upperDegree {n : ℕ} (F : Finset (Finset (Fin n))) (b : Finset (Fin n)) :=
+  (F.filter (b ⊂ ·)).card
+
+private def degreeError {n : ℕ} (F : Finset (Finset (Fin n))) :=
+  ∑ b ∈ F, min (lowerDegree F b) (upperDegree F b)
+
+private theorem card_incidences_right {α β : Type*} (s : Finset α) (t : Finset β)
+    (r : α → β → Prop) [DecidableRel r] :
+    (incidences s t r).card = ∑ b ∈ t, (s.filter (r · b)).card := by
+  simp only [incidences, card_eq_sum_ones, sum_filter, sum_product]
+  exact sum_comm
+
+-- Place each set on the side where fewer incident pairs have to be discarded.
+private theorem pairs_le_cut_add_error {n : ℕ} (F : Finset (Finset (Fin n))) :
+    4 * comparablePairs F ≤ F.card ^ 2 + 4 * degreeError F := by
+  classical
+  let small b := lowerDegree F b ≤ upperDegree F b
+  let L := F.filter small
+  let H := F.filter (fun b ↦ ¬ small b)
+  let incoming := incidences F L (· ⊂ ·)
+  let outgoing := incidences H F (· ⊂ ·)
+  have hcover : incidences F F (· ⊂ ·) ⊆ (L ×ˢ H ∪ incoming) ∪ outgoing := by
+    rintro ⟨a, b⟩ hab
+    simp only [incidences, mem_filter, mem_product] at hab
+    simp only [incoming, outgoing, L, H, incidences, mem_union, mem_filter, mem_product]
+    tauto
+  have hsum : incoming.card + outgoing.card = degreeError F := by
+    rw [degreeError, ← sum_filter_add_sum_filter_not F small,
+      card_incidences_right, card_incidences]
+    congr 1
+    · exact sum_congr rfl fun b hb ↦ (min_eq_left (mem_filter.mp hb).2).symm
+    · exact sum_congr rfl fun b hb ↦ (min_eq_right (le_of_not_ge (mem_filter.mp hb).2)).symm
+  have hsize : L.card + H.card = F.card := card_filter_add_card_filter_not small
+  have hcut : 4 * (L.card * H.card) ≤ F.card ^ 2 := by
+    rw [← hsize, ← mul_assoc]
+    exact four_mul_le_sq_add ..
+  have hpairs : comparablePairs F ≤ L.card * H.card + incoming.card + outgoing.card := by
+    calc
+      _ ≤ _ := card_le_card hcover
+      _ ≤ _ := card_union_le _ _
+      _ ≤ _ := Nat.add_le_add_right (card_union_le _ _) _
+      _ = _ := by rw [card_product]
+  omega
+
+private theorem error_sq_le_chains {n : ℕ} (F : Finset (Finset (Fin n))) :
+    degreeError F ^ 2 ≤ F.card * chains F := by
+  classical
+  apply (pow_sum_le_card_mul_sum_pow (fun _ _ ↦ Nat.zero_le _) 1).trans
+  rw [pow_one, chains, card_incidences_right]
+  apply Nat.mul_le_mul_left
+  apply sum_le_sum
+  intro b _
+  rw [show (F ×ˢ F).filter (betweenSets · b) = _ from filter_product (· ⊂ b) (b ⊂ ·),
+    card_product, pow_two]
+  exact Nat.mul_le_mul (min_le_left ..) (min_le_right ..)
+
+-- Here 36 is the power from the two star counts and the extra factor of two comes from
+-- Cauchy–Schwarz on the smaller degrees.
+private theorem error_moment {n : ℕ} (F : Finset (Finset (Fin n))) :
+    degreeError F ^ 72 ≤ F.card ^ 126 * (2 ^ n) ^ 8 := by
+  calc
+    _ = (degreeError F ^ 2) ^ 36 := pow_mul ..
+    _ ≤ (F.card * chains F) ^ 36 := Nat.pow_le_pow_left (error_sq_le_chains F) _
+    _ ≤ F.card ^ 36 * (F.card ^ 90 * (2 ^ n) ^ 8) := by
+      rw [mul_pow]
+      exact Nat.mul_le_mul_left _ (chains_moment F)
+    _ = _ := by ring
+
+/--
+**Affirmative answer to Erdős Problem 777, first question.** For every real $\varepsilon > 0$
+there is $N$ such that for every $n \ge N$, every family $F$ of subsets of $\{0, \dots, n - 1\}$
+with $|F| \le (2 - \varepsilon) 2^{n/2}$ has fewer than $2^n$ comparable pairs, that is, ordered
+pairs $(A, B)$ of members of $F$ with $A \subsetneq B$.
+
+The constant $2$ is sharp. For even $n \ge 4$, fix an $n/2$-element set $H$. The lower cube of
+subsets of $H$ and the upper cube of supersets of $H$ share only $H$, so their union has
+$2^{n/2+1}-1$ members. Of the $2^n$ pairs from the lower cube to the upper cube, only $(H,H)$
+is an equality. For $h \in H$, the pair $(\varnothing,\{h\})$ lies strictly below $H$, giving
+at least $2^n$ strict comparable pairs in total. According to erdosproblems.com/777 the affirmative
+answer follows from the stability theorem (Theorem 1.4) and Corollary 1.5 of Alon, Das, Glebov
+and Sudakov.
+
+Source: T. F. Bloom, Erdős Problems, Problem #777, https://www.erdosproblems.com/777 (status
+SOLVED); resolution: N. Alon and P. Frankl, The maximum number of disjoint pairs in a family of
+subsets, Graphs Combin. 1 (1985), 13-21; N. Alon, S. Das, R. Glebov and B. Sudakov, Comparable
+pairs in families of sets, J. Combin. Theory Ser. B (2015), 164-185, arXiv:1411.4196. The latter
+paper states the Alon–Frankl bound as Theorem 1.1
+(https://arxiv.org/html/1411.4196v1#S1.Thmtheorem1). For every integer k ≥ 1 there is β = β(k) > 0
+such that for δ > 0 and m = 2^{(1/(k+1) + δ)n},
+c(n, m) < (1 - 1/k) C(m, 2) + O(m^{2 - β δ^{k+1}}). Daykin and Erdős conjectured the case k = 1.
+Alon-Frankl Section 6, Example 6.1: the sets meeting the second half of [n] in at most d elements
+or missing at most d elements of the first half form a family of Θ(n^d 2^{n/2}) sets with a
+constant fraction of comparable pairs, disproving a conjecture of Erdős; erdosproblems.com/777:
+Alon and Frankl answer the third question in the affirmative and the second in the negative, and
+an affirmative answer to the first follows from Theorem 1.4 and Corollary 1.5 of Alon, Das,
+Glebov and Sudakov, https://www.erdosproblems.com/777.
+-/
+theorem fewComparablePairsBelowTwoHalfPower_holds :
+    fewComparablePairsBelowTwoHalfPower := by
+  intro ε hε
+  have hlim := tendsto_pow_atTop_atTop_of_one_lt (one_lt_two : (1 : ℝ) < 2)
+  filter_upwards [hlim.eventually_gt_atTop ((2 : ℝ) ^ 126 / (ε / 2) ^ 72)] with n hn
+  intro F hsize
+  let M := (2 : ℝ) ^ ((n : ℝ) / 2)
+  have hM : 0 < M := Real.rpow_pos_of_pos (by norm_num) _
+  have hMsq : M ^ 2 = (2 : ℝ) ^ n := by
+    rw [sq, ← Real.rpow_add (by norm_num : (0 : ℝ) < 2), add_halves, Real.rpow_natCast]
+  change (F.card : ℝ) ≤ (2 - ε) * M at hsize
+  have hm : (F.card : ℝ) ≤ 2 * M := hsize.trans (by nlinarith only [mul_pos hε hM])
+  have herr : (degreeError F : ℝ) < (ε / 2) * M ^ 2 := by
+    apply lt_of_pow_lt_pow_left₀ 72 (by positivity)
+    calc
+      _ ≤ (F.card : ℝ) ^ 126 * ((2 : ℝ) ^ n) ^ 8 := by exact_mod_cast error_moment F
+      _ ≤ (2 * M) ^ 126 * (M ^ 2) ^ 8 := by rw [hMsq]; gcongr
+      _ = (2 : ℝ) ^ 126 * M ^ 142 := by ring
+      _ < ((ε / 2) ^ 72 * M ^ 2) * M ^ 142 := by
+        apply mul_lt_mul_of_pos_right _ (pow_pos hM _)
+        rw [hMsq, mul_comm]
+        exact (div_lt_iff₀ (by positivity)).mp hn
+      _ = _ := by ring
+  have hpairs : 4 * (comparablePairs F : ℝ) ≤ (F.card : ℝ) ^ 2 + 4 * degreeError F := by
+    exact_mod_cast pairs_le_cut_add_error F
+  have hprod := mul_le_mul hm hsize (Nat.cast_nonneg F.card) (by positivity)
+  have hlt : (comparablePairs F : ℝ) < 2 ^ n := by
+    rw [← hMsq]
+    linarith only [hpairs, herr, hprod]
+  exact_mod_cast hlt
 
 end MathlibExt.Combinatorics.ComparablePairsSetFamilyErdosProblem777Wanted
