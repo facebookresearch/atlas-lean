@@ -1,5 +1,6 @@
 # Network calculus: arrival curves, service curves and bounds
 
+- [Network calculus: concatenation of rate-latency nodes](network-calculus-concatenation-of-rate-latency-n/README.md)
 - [Is Cumulative Flow](is-cumulative-flow.md)
 - [Is Flow Pair](is-flow-pair.md)
 - [Backlog](backlog.md)

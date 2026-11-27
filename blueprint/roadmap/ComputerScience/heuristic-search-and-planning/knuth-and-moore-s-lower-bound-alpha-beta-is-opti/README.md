@@ -6,7 +6,7 @@
 - [Instantiating a list of shapes](map-list.md)
 - [Leaf Values](leaf-values.md)
 - [Leaf Values List](leaf-values-list.md)
-- [Map](map-2.md)
+- [Instantiating a uniform shape gives a uniform tree](map-2.md)
 
 ## Sums over the children
 
