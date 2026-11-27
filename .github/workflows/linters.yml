@@ -152,7 +152,9 @@ jobs:
           token="$(python3 -c 'import secrets; print(secrets.token_hex(16))')"
           echo "::stop-commands::$token"
           status=0
-          lake env lean --run scripts/lint_declarations.lean --check-nolints || status=$?
+          # The check prints its error to stderr; send it through stdout, so that it comes
+          # between the two lines that stop and resume the commands.
+          lake env lean --run scripts/lint_declarations.lean --check-nolints 2>&1 || status=$?
           echo "::$token::"
           exit "$status"
 
