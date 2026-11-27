@@ -6,7 +6,7 @@ Use the mechanistic DCJ model of expected breakpoints after random DCJ operation
 
 $$\mathbb E[BCy_k] = \mathbb E[Cy_k] + o(n),$$
 
-for the real and the observed breakpoint graph alike. More precisely $\mathbb E[BCy_k] \le \mathbb E[Cy_k] \le \mathbb E[BCy_k] + O(k/\sqrt n)$ for $k \ge \sqrt n$, and only $k = O(n \log n)$ is informative before saturation, so the error is $o(n)$.
+for the real and the observed breakpoint graph alike. More precisely, for the real breakpoint graph, $\mathbb E[BCy_k] \le \mathbb E[Cy_k] \le \mathbb E[BCy_k] + O(k/\sqrt n)$ for $k \ge \sqrt n$; the observed graph differs from it by $o(n)$ cycles (the coupling bound $BCy_k \le Cy_k$ fails for it: for $k = 1$, a DCJ exchanging the telomeres of two telomeric adjacencies changes no observed adjacency, so the observed graph keeps $n$ cycles while $Cy_1 = n - 1$). Only $k = O(n \log n)$ is informative before saturation, so the error is $o(n)$.
 
 Combined with Berestycki and Durrett's comparison of $\mathbb E[Cy_k]$ with the expected number $\mathbb E[Co_k]$ of components after adding $k$ random edges to $n$ isolated vertices (equal up to a lower-order term), the exact Eriksen–Hultman formula for $\mathbb E[Cy_k]$ and random-graph tree counts both estimate DCJ cycle counts, hence DCJ distances, with error $o(n)$.
 

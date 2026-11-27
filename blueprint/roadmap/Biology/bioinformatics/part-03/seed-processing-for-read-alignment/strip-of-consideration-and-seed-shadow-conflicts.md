@@ -10,7 +10,7 @@ For a seed $(q, r, l)$ let $\delta = r - q$ be its diagonal. Two seeds are **spa
 
 $$\sigma_{II} = [0, r + l] \times [q, |Q|], \qquad \sigma_{IV} = [r, |R|] \times [0, q + l].$$
 
-A seed lying entirely in a shadow of $s$ cannot appear together with $s$ in any alignment, since the two are not in the same order on query and reference. For seeds $s = (q, r, l)$ and $s' = (q', r', l')$:
+A seed lying entirely in a shadow of $s$, other than $s$ and its sub-seeds on the same diagonal, cannot appear together with $s$ in any alignment, since the two either map a shared query position to different reference positions or are not in the same order on query and reference. For seeds $s = (q, r, l)$ and $s' = (q', r', l')$:
 
 - $s'$ lies in $\sigma_{II}(s)$ if and only if $q \le q'$ and $r' + l' \le r + l$;
 - $s'$ lies in $\sigma_{IV}(s)$ if and only if $r \le r'$ and $q' + l' \le q + l$;

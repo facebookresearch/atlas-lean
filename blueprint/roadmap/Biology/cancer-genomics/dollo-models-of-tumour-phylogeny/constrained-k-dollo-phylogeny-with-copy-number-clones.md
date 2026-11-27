@@ -12,7 +12,9 @@ For $p = 1$ this is the infinite-sites model; for $p = n$ it is the unconstraine
 
 A $k$-Dollo completion $B$ of $A$ is **consistent** with $\sigma$ if, for every mutation $j$: at most one clone $\ell$ contains cells $i, i'$ with $b_{i,j} = 0$ and $b_{i',j} = 1$ (the gain happens inside at most one clone), and if some cell of clone $\ell$ has loss state $b_{i,j} = s \in \{2, \dots, k+1\}$ then every cell of $\ell$ has $b_{i',j} = s$; and $b_{i,j} \ge 1$ for every cell $i$ and every SNP column $j$.
 
-**Theorem (characterization).** $A$ is a constrained $k$-Dollo phylogeny matrix for $\sigma$ if and only if it has a $k$-Dollo completion consistent with $\sigma$; given such a completion, a constrained $k$-Dollo phylogeny is constructed in $O(nmk)$ time.
+**Theorem (characterization, SNV columns).** Suppose every column of $A$ is an SNV. Then $A$ is a constrained $k$-Dollo phylogeny matrix for $\sigma$ if and only if it has a $k$-Dollo completion consistent with $\sigma$; given such a completion, a constrained $k$-Dollo phylogeny is constructed in $O(nmk)$ time.
+
+The source states the characterization for SNVs and SNPs together, but its proof treats SNVs only, and with SNP columns the "if" direction fails for $k \ge 1$: for $k = 1$, $p = 1$, one cell and one SNP column with $A = (0)$, the completion $B = (2)$ is consistent with $\sigma$, but every node carries clone 1, so condition 4 forbids any loss and the leaf keeps the root's state 1.
 
 **Theorem (hardness).** Finding $A$ and $T$ that maximize a read-count likelihood $\Pr(Q \mid R, A)$ subject to $T$ being a constrained $k$-Dollo phylogeny for $(A,\sigma)$ is NP-hard, even for $k = 0$.
 

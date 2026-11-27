@@ -4,7 +4,7 @@
 
 **Existence.**
 1. $\mathcal X$ is **order consistent** (has an ancestral gene order from which every synteny arises by losses) iff its precedence graph on gene families is acyclic; then every topological sort is an admissible ancestral synteny.
-2. If a super-reconciliation exists, the synteny trees $\tilde T_1, \dots, \tilde T_t$ are consistent (they agree on every triplet of syntenies they share). If they are consistent, every super-reconciliation extends a supertree of $\{\tilde T_i\}$, and every supertree is the backbone of some super-reconciliation.
+2. If a super-reconciliation exists, the synteny trees $\tilde T_1, \dots, \tilde T_t$ are consistent (they agree on every triplet of syntenies they share). If $\mathcal X$ is order consistent and the synteny trees are consistent, every super-reconciliation extends a supertree of $\{\tilde T_i\}$, and every supertree is the backbone of some super-reconciliation. Order consistency cannot be dropped: with species $A, B$, families $\{a_A, a_B\}$ and $\{b_A, b_B\}$, syntenies $a_A b_A$ and $b_B a_B$, and gene trees $(a_A, a_B)$ and $(b_A, b_B)$, both synteny trees are $(X_A, X_B)$, so they are consistent and $(X_A, X_B)$ is a supertree, but the precedence graph has the cycle $a \to b \to a$ and no super-reconciliation exists.
 
 **Complexity.** Minimizing the number of segmental duplications is NP-hard and cannot be approximated within $n^{1-\epsilon}$ for any $0 < \epsilon < 1$ ($n$ the number of syntenies); minimizing the full Dup + fLoss + pLoss cost is NP-hard.
 
@@ -21,7 +21,7 @@ at a duplication the cost is $1$ plus the better of the two assignments in which
 
 ## Expansion
 
-Gene order can only shrink along a lineage (losses delete substrings; duplications create new syntenies but leave the old one intact), so an ancestral order must be a common supersequence compatible with all observed precedences, hence the acyclicity test. Because every family's tree is displayed by the history, the history's synteny skeleton is a supertree, and conversely losses can always be grafted to make any supertree a valid history. On a fixed supertree the event type of each internal node is forced by the LCA mapping (a node whose children map to non-separated species must be a duplication), which leaves only the synteny labels to optimize and yields the recursion. The approach trades independent per-family duplications for fewer, larger segmental events, which is the realistic explanation when several genomic regions share gene content and order.
+Gene order can only shrink along a lineage (losses delete substrings; duplications create new syntenies but leave the old one intact), so an ancestral order must be a common supersequence compatible with all observed precedences, hence the acyclicity test. Because every family's tree is displayed by the history, the history's synteny skeleton is a supertree, and conversely, when $\mathcal X$ is order consistent, losses can always be grafted to make any supertree a valid history. On a fixed supertree the event type of each internal node is forced by the LCA mapping (a node whose children map to non-separated species must be a duplication), which leaves only the synteny labels to optimize and yields the recursion. The approach trades independent per-family duplications for fewer, larger segmental events, which is the realistic explanation when several genomic regions share gene content and order.
 
 ## Sources
 

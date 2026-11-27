@@ -14,9 +14,13 @@ $\epsilon \le \epsilon_0$ then $p$ lies on an edge $(r, w)$ for some child $w$ o
 **Proposition (unbiased position).** Whenever the global MV lies on an edge adjacent to $r$, the signed
 distance $X$ from $r$ to the global MV along that edge satisfies $\mathbb{E}[X] = 0$.
 
-**Corollary.** Under independent, bounded deviations from the strict molecular clock, MV rooting places
-the root on the correct branch and, in expectation, at zero distance from the true root position on
-that branch.
+**Corollary.** Under independent, bounded deviations from the strict molecular clock with
+$\epsilon \le \epsilon_0$, MV rooting places the root on the correct branch and, in expectation, at zero
+distance from the true root position on that branch. The bound on $\epsilon$ cannot be dropped: for
+$T_0 = ((x,y)a,(z,w)b)r$ of height 1 with $a, b$ at depth $0.1$, $\epsilon = 0.9$, and factors $0.1$ on
+$r$–$a$, $r$–$b$, $a$–$y$, $b$–$z$, $b$–$w$ and $1.9$ on $a$–$x$, the global MV root lies inside $a$–$x$,
+$0.80$ from $a$, and it stays there for nearby factors, which have positive probability under, for
+example, uniform factors on $[0.1, 1.9]$.
 
 ## Depends on
 

@@ -15,7 +15,7 @@ which for stationary series can be rewritten as weighted sums over lags of produ
 1. White but correlated series ($\Sigma_X = \Sigma_Y = I$, $\Sigma_{XY} = \rho I$): $V(\hat\rho) = (1-\rho^2)^2/N$, the classical result.
 2. Autocorrelated but mutually uncorrelated series ($\Sigma_{XY} = 0$): $V(\hat\rho) = N^{-2}\mathrm{tr}(\Sigma_X\Sigma_Y) = N^{-2}\big(N + 2\sum_{k=1}^{N-1}(N-k)\rho_{XX,k}\rho_{YY,k}\big)$, the Bayley–Hammersley variance inflation.
 
-**Effective degrees of freedom.** Writing $V(\hat\rho) = (1 - \rho^2)^2/\hat N$ defines an effective sample size $\hat N$. Under $\rho = 0$ it reduces to Quenouille's $\hat N = N\big(\sum_{k=-\infty}^{\infty}\rho_{XX,k}\rho_{YY,k}\big)^{-1}$, and for two AR(1) series with lag-one coefficients $\phi_X, \phi_Y$ to Bartlett's $\hat N = N\,\frac{1 - \phi_X\phi_Y}{1 + \phi_X\phi_Y}$.
+**Effective degrees of freedom.** Writing $V(\hat\rho) = (1 - \rho^2)^2/\hat N$ defines an effective sample size $\hat N$. Under $\rho = 0$, case 2 gives $\hat N = N\big(1 + 2\sum_{k=1}^{N-1}(1 - k/N)\rho_{XX,k}\rho_{YY,k}\big)^{-1}$. As $N \to \infty$ with $\sum_k |\rho_{XX,k}\rho_{YY,k}| < \infty$, $\hat N/N \to \big(\sum_{k=-\infty}^{\infty}\rho_{XX,k}\rho_{YY,k}\big)^{-1}$ (Quenouille), which for two AR(1) series with lag-one coefficients $\phi_X, \phi_Y$ is $\frac{1 - \phi_X\phi_Y}{1 + \phi_X\phi_Y}$ (Bartlett).
 
 ## Depends on
 
@@ -31,4 +31,4 @@ Substituting case 1 into the trace formula gives $N(\rho^2 + \rho^4 + \rho^2 + 1
 
 ## Sources
 
-- S. Afyouni, S. M. Smith, T. E. Nichols, "Effective degrees of freedom of the Pearson's correlation coefficient under autocorrelation", NeuroImage 199:609–625 (2019), Eqs 1–7 and Appendix A Theorem 1, <https://doi.org/10.1016/j.neuroimage.2019.05.011>, PMCID PMC6693558.
+- S. Afyouni, S. M. Smith, T. E. Nichols, "Effective degrees of freedom of the Pearson's correlation coefficient under autocorrelation", NeuroImage 199:609–625 (2019), Eqs 1–9 and Appendix A Theorem 1, <https://doi.org/10.1016/j.neuroimage.2019.05.011>, PMCID PMC6693558.

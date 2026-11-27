@@ -24,12 +24,12 @@ $\gamma = 1$ is the centroid estimator.
    $\gamma$-centroid estimator with $\gamma = \frac{\alpha_1 + \alpha_4}{\alpha_2 + \alpha_3}$.
 2. $\mathbb{E}[G_\gamma(\theta, y) \mid D] = \sum_{i} \bigl((\gamma + 1) p_i - 1\bigr) y_i + \mathrm{const}$.
    Hence the $\gamma$-centroid estimator maximizes $\sum_{i : y_i = 1} \bigl(p_i - \frac{1}{\gamma + 1}\bigr)$
-   over $y \in \mathcal{Y}$; if $\mathcal{Y}$ is closed under switching any coordinate from 1 to 0, it
-   includes only coordinates with $p_i > \frac{1}{\gamma + 1}$.
+   over $y \in \mathcal{Y}$; if $\mathcal{Y}$ is closed under switching any coordinate from 1 to 0, no
+   $\gamma$-centroid estimator includes a coordinate with $p_i < \frac{1}{\gamma + 1}$.
 3. If moreover $\mathcal{Y}$ is defined by "at most one 1 in each of a family of index sets" (as for
-   alignments and pseudoknot-free or general base pairings) and $0 < \gamma \le 1$, the estimator is the
-   consensus estimator $\hat{y}_i = [p_i > \frac{1}{\gamma + 1}]$, which is then guaranteed to lie in
-   $\mathcal{Y}$.
+   alignments and pseudoknot-free or general base pairings) and $0 < \gamma \le 1$, the consensus
+   estimator $\hat{y}_i = [p_i > \frac{1}{\gamma + 1}]$ lies in $\mathcal{Y}$ and is a $\gamma$-centroid
+   estimator (the only one when no $p_i$ equals $\frac{1}{\gamma + 1}$).
 
 ## Depends on
 

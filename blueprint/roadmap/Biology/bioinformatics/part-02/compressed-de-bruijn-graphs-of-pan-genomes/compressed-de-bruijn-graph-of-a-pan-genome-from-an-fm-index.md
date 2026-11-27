@@ -17,8 +17,9 @@ distinct successors if and only if the length-$k$ suffix of $\omega$ is a **righ
 \mathit{suffix\_lb})$: $[\mathit{lb}..\mathit{lb} + \mathit{size} - 1]$ is the suffix-array interval of $\omega$,
 so its occurrence list is $\{\mathrm{SA}[i] : \mathit{lb} \le i < \mathit{lb} + \mathit{size}\}$, and
 $\mathit{suffix\_lb}$ starts the interval of the length-$k$ suffix of $\omega$. A bit vector $B_r$ marks the
-boundaries of the suffix-array intervals of right-maximal $k$-mers; an interval $[i..j]$ is not inside
-any such interval if and only if $\mathrm{rank}_1(B_r, i)$ is even and $B_r[i] = 0$.
+boundaries of the suffix-array intervals of right-maximal $k$-mers; the suffix-array interval $[i..j]$ of
+a string of length at least $k$ is not inside any such interval if and only if
+$\mathrm{rank}_1(B_r, i)$ is even and $B_r[i] = 0$.
 
 **Theorem.** From the wavelet tree of the Burrows-Wheeler transform of $S$ (an FM-index), the implicit
 compressed de Bruijn graph is constructed in $O(n \log \sigma)$ time, the explicit graph (with

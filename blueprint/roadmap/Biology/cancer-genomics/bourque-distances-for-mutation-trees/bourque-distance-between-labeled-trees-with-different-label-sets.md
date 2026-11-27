@@ -8,9 +8,9 @@ the sum over nontrivial bipartitions $P = \{C', C\setminus C'\}$ of $C$.
 
 **Proposition.** Let $S$, $T$ have $s$ and $t$ edges. (i) If $L(S) = L(T)$ then $B(S,T) = \mathrm{RF}(S,T) \ge |s - t|$. (ii) If $L(S) \cap L(T) = \emptyset$ then $B(S,T) = \mathrm{RF}(S,T) = s + t$. (iii) If $L(S) \ne L(T)$ then $\max(s,t) \le B(S,T) \le s + t$.
 
-**Proposition.** $B$ is a metric on labeled trees and is computable in $O(|L(S)| + |L(T)|)$ time, by adapting Day's linear-time Robinson–Foulds algorithm.
+**Proposition.** $B$ is non-negative, symmetric and satisfies the triangle inequality on labeled trees (a pseudometric: distinct one-node trees, such as a node labelled $\{a, b\}$ and a node labelled $\{a\}$, can be at distance 0), and is computable in $O(|L(S)| + |L(T)|)$ time, by adapting Day's linear-time Robinson–Foulds algorithm.
 
-**$k$-Bourque distances.** For $k \ge 1$, let $BG_k(S,T)$ be the complete bipartite graph between the nodes of $S$ and $T$ (padded with empty nodes) weighted by the Bourque distance between the radius-$k$ neighbourhoods $C_k(u)$, $C_k(v)$. The **$k$-Bourque distance** $B_k(S,T)$ is the minimum weight of a perfect matching in $BG_k$; it is a metric for every $k$, equals $n \cdot B(S,T)$ for 1-labeled trees on $n$ nodes once $k \ge \max(\mathrm{diam}\,S, \mathrm{diam}\,T)$, and is computable in $O(\max(n,n')^3)$ time. Rooted versions use ordered (descendant, rest) bipartitions so that rerooting changes the distance.
+**$k$-Bourque distances.** For $k \ge 1$, let $BG_k(S,T)$ be the complete bipartite graph between the nodes of $S$ and $T$ (padded with empty nodes) weighted by the Bourque distance between the radius-$k$ neighbourhoods $C_k(u)$, $C_k(v)$. The **$k$-Bourque distance** $B_k(S,T)$ is the minimum weight of a perfect matching in $BG_k$; for every $k$ it is non-negative, symmetric and satisfies the triangle inequality (a pseudometric, by the same one-node example), equals $n \cdot B(S,T)$ for 1-labeled trees on $n$ nodes once $k \ge \max(\mathrm{diam}\,S, \mathrm{diam}\,T)$, and is computable in $O(\max(n,n')^3)$ time. Rooted versions use ordered (descendant, rest) bipartitions so that rerooting changes the distance.
 
 ## Depends on
 

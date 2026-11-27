@@ -19,14 +19,15 @@ every vertex subset $X$ with $|X| \ge 2$, the induced graph or its complement is
 
 **Heredity.** $R$ is satisfiable if and only if $R[X]$ is satisfiable for every $X \subseteq V$.
 
-**Theorem (partial constraints).** $R = (V, E, U)$ is satisfiable if and only if at least one holds:
+**Theorem (partial constraints).** Let $R = (V, E, U)$ with $|V| \ge 2$. Then $R$ is satisfiable if and only if at least one holds:
 
 1. $R(\emptyset)$ is disconnected and all its connected components are satisfiable;
 2. $\overline{R(U)}$ is disconnected and all its connected components are satisfiable.
 
 **Algorithm.** Recursively split on the components of $R(\emptyset)$ (creating a $\mathrm{Dup}$ node) or,
-failing that, of $\overline{R(U)}$ (creating a $\mathrm{Spec}$ node), reporting unsatisfiability when
-both are connected. This builds a satisfying DS-tree or certifies none exists in $O(n^3)$ time for
+failing that, of $\overline{R(U)}$ (creating a $\mathrm{Spec}$ node), stopping at single genes (a one-gene
+graph is satisfied by the one-leaf DS-tree) and reporting unsatisfiability when a part with at least two
+genes has both graphs connected. This builds a satisfying DS-tree or certifies none exists in $O(n^3)$ time for
 $n = |\mathcal{G}|$.
 
 ## Expansion
