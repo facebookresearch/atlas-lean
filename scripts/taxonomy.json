@@ -17671,7 +17671,6 @@
   "WantedExt/LinearAlgebra/MatrixCompletionWanted": {"to": "Analysis/approximation-theory", "title": "Low-rank matrix recovery"},
   "WantedExt/LinearAlgebra/MaxMinGeneralizedEigenvalueWanted": {"to": "LinearAlgebra/eigenvalues-and-canonical-forms", "title": "Generalized eigenvalues of max and min matrices"},
   "WantedExt/LinearAlgebra/PowerSumMatrixWanted": {"to": "LinearAlgebra/eigenvalues-and-canonical-forms", "title": "Newton's identities for traces of matrix powers"},
-  "WantedExt/LinearAlgebra/SymplecticDetWanted": {"to": "LinearAlgebra/determinants-and-matrix-identities", "title": "Determinant of a symplectic matrix"},
   "WantedExt/LinearAlgebra/TotallyPositiveInitialMinorsWanted": {"to": "LinearAlgebra/special-matrices", "title": "Total positivity"},
   "WantedExt/Logic/SelfComplementaryGraphsNotBorelAMR150Problem0049Wanted": {"to": "Topology/descriptive-set-theory", "title": "Self-complementary graphs on ω"},
   "WantedExt/MeasureTheory/JKOSchemeWanted": {"to": "MeasureTheory/optimal-transport", "title": "Wasserstein gradient flows and the JKO scheme"},

@@ -66476,7 +66476,6 @@
 "MathlibExt.LinearAlgebra.PowerSumMatrixWanted.sum_pow_isEquivalent": "10c9eb11d235630f",
 "MathlibExt.LinearAlgebra.PowerSumMatrixWanted.trace_pow_two": "17108b4f57e20c33",
 "MathlibExt.LinearAlgebra.SmithNormalFormWanted.smithNormalForm": "66d812c094ea8051",
-"MathlibExt.LinearAlgebra.SymplecticDetWanted.LinearAlgebra.symplectic_matrix_det": "326fd36400a6877a",
 "MathlibExt.LinearAlgebra.ThreeDVar.Cost": "dd6890da1f76bddb",
 "MathlibExt.LinearAlgebra.ThreeDVar.Minimizer": "175a1027b48197bb",
 "MathlibExt.LinearAlgebra.ThreeDVar.minimizer_isMin_unique": "20c6ed9082591646",
