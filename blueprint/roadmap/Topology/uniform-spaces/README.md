@@ -4,3 +4,6 @@ Uniform structures and uniform continuity, Cauchy filters, completeness and Haus
 
 - [Complete uniform space](complete-space.md)
 - [Uniform limits of continuous functions are continuous](uniform-limit-theorem.md)
+- [Equicontinuous set of functions into a uniform space](equicontinuity.md)
+- [Uniform continuity of a function on a subset](uniform-continuity-real.md)
+- [A subset of a uniform space is compact if and only if it is complete and totally bounded](compact-iff-complete-totally-bounded.md)

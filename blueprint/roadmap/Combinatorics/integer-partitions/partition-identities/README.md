@@ -9,4 +9,5 @@ Theorems equating counts of two classes of partitions: Euler, MacMahon, Andrews,
 - [Stanley's and Elder's theorems on parts of partitions](stanley-s-and-elder-s-theorems-on-parts-of-parti/README.md)
 - [Andrews–Lewis identity](card-odd-count-restricted-four-eq-card-m.md)
 - [Partitions with 2-distant parts and polarized partitions](partitions-two-distant-eq-polarized.md)
+- [Truncated first Rogers–Ramanujan identity](rr-trunc-rr.md)
 - [Rogers–Ramanujan identity (first form)](rogers-ramanujan-difference-two-vs-one-f.md)

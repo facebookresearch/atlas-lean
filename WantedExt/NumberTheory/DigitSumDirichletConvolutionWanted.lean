@@ -11,6 +11,8 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Digits.DigitSumDirichletConvolution
 public import MathlibExt.NumberTheory.Digits.TrollopeDelange
+public import MathlibExt.NumberTheory.DigitSumDirichletConvolutionDigitSumAuxiliaryIsBigO
+public import MathlibExt.NumberTheory.Digits.DigitSumArithSqPartialSum
 
 namespace MetaMathlibExt
 
@@ -64,28 +66,6 @@ public theorem_wanted digitSum_reciprocal_sums_eq (q : ℕ) (hq : 2 ≤ q) (x : 
           digitSumFluctuationDoubleIntegral q x + digitSumRemainder q x * log x / x +
           (log x - 1) * digitSumRemainderIntegral q x - digitSumRemainderDoubleIntegral q x
 
-/-- **Size bounds for the Trollope–Delange auxiliary functions.** Let $q \ge 2$ be an integer.
-For base $q$, let $h$ be Delange's series, $F$ the Trollope–Delange fluctuation, $J$ the
-remainder of the Trollope–Delange formula, and
-$G(x) = \int_1^x F(\log u / \log q) \, du/u$,
-$H(x) = \int_1^x \int_1^u F(\log v / \log q) \, dv/v \, du/u$,
-$K(x) = \int_1^x J(u) \, du/u^2$ and $L(x) = \int_1^x \int_1^u J(v) \, dv/v^2 \, du/u$.
-Then $F$ is bounded on $\mathbb{R}$, and as $x \to \infty$ through the reals, $h(x) = O(1)$,
-$J(x) = O(\log x)$, $G(x) = O(\log x)$, $H(x) = O(\log^2 x)$, $K(x) = O(1)$ and
-$L(x) = O(\log x)$.
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Lemma 3 (`integers-2026-A43-lem-3`). -/
-public theorem_wanted digitSum_auxiliary_isBigO (q : ℕ) (hq : 2 ≤ q) :
-    trollopeDelangeSeries q =O[atTop] (fun _ => (1 : ℝ)) ∧
-      (∃ C : ℝ, ∀ x : ℝ, |trollopeDelangeFluctuation q x| ≤ C) ∧
-      digitSumRemainder q =O[atTop] log ∧
-      digitSumFluctuationIntegral q =O[atTop] log ∧
-      digitSumFluctuationDoubleIntegral q =O[atTop] (fun x => log x ^ 2) ∧
-      digitSumRemainderIntegral q =O[atTop] (fun _ => (1 : ℝ)) ∧
-      digitSumRemainderDoubleIntegral q =O[atTop] log
-
 /-- **Reciprocal digit sums weighted by powers of the logarithm.** Let $q \ge 2$ and $j \ge 1$ be
 integers, and let $s_q(n)$ denote the sum of the base-$q$ digits of $n$. As the real number $x$
 tends to infinity,
@@ -100,20 +80,6 @@ public theorem_wanted digitSum_reciprocal_log_pow_sum_isBigO (q : ℕ) (hq : 2 �
     (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, ((Nat.digits q n).sum : ℝ) / n * log n ^ j -
         ((q : ℝ) - 1) * log x ^ (j + 2) / (2 * (j + 2) * log q)) =O[atTop]
       (fun x => log x ^ (j + 1))
-
-/-- **Partial sums of the second digit-sum convolution.** Let $q \ge 2$ be an integer, let
-$s_q(n)$ be the sum of the base-$q$ digits of $n$, and let $s_q^{(2)} = s_q * s_q$ be its
-Dirichlet square, so $s_q^{(2)}(n) = \sum_{de = n} s_q(d) \, s_q(e)$. Then
-$$\sum_{1 \le n \le x} s_q^{(2)}(n) = \frac{(q - 1)^2}{24 \log^2 q} \, x \log^3 x + O(x \log^2 x)$$
-as $x \to \infty$ through the reals.
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Theorem 2 (`integers-2026-A43-thm-2`). -/
-public theorem_wanted digitSumArith_sq_partialSum_isBigO (q : ℕ) (hq : 2 ≤ q) :
-    (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, ((digitSumArith q ^ 2) n : ℝ) -
-        ((q : ℝ) - 1) ^ 2 * x * log x ^ 3 / (24 * log q ^ 2)) =O[atTop]
-      (fun x => x * log x ^ 2)
 
 /-- **Partial sums of the iterated digit-sum convolutions.** Let $q \ge 2$ be an integer, let
 $s_q(n)$ be the sum of the base-$q$ digits of $n$, let $s_q^{(k)}$ be the $k$-fold Dirichlet
