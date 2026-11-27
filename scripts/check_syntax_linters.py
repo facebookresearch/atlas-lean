@@ -28,7 +28,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lean_changes import (ROOT, AggregatorError, add_common_arguments, aggregators, annotation,
-                          changed_files, guarded, in_actions, relative, write_summary)
+                          changed_files, guarded, in_actions, inert, relative, write_summary)
 
 LINTER_SET = "linter.mathlibStandardSet"
 
@@ -101,6 +101,8 @@ def main() -> int:
     print(f"Checking {len(files)} changed Lean file(s) for {LINTER_SET} warnings.")
     try:
         with aggregators(files) as targets:
+            if not targets:
+                return 0
             result = subprocess.run(
                 ["lake", "lint", "--builtin-only", f"--lint-only={LINTER_SET}", *targets],
                 cwd=ROOT, capture_output=True, text=True)
@@ -110,7 +112,7 @@ def main() -> int:
     output = result.stdout + result.stderr
     if result.returncode not in (0, 1) or len(
             [line for line in output.splitlines() if LINTED.match(line)]) < len(targets):
-        print(output, file=sys.stderr)
+        print(inert(output), file=sys.stderr)
         print("The changed files did not build, or `lake lint` did not run.", file=sys.stderr)
         return 2
 
@@ -120,7 +122,7 @@ def main() -> int:
         if in_actions():
             # GitHub counts columns from 1, Lean from 0.
             print(annotation(level, w.path, w.line, w.linter, w.message, w.col + 1))
-        print(f"{w.path}:{w.line}:{w.col}: {w.linter}: {w.message}")
+        print(inert(f"{w.path}:{w.line}:{w.col}: {w.linter}: {w.message}"))
     counts = Counter(w.linter for w in kept)
     if kept:
         rows = "".join(f"| `{linter}` | {count} |\n" for linter, count in counts.most_common())

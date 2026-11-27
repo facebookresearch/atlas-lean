@@ -27,7 +27,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lean_changes import (ROOT, AggregatorError, add_common_arguments, aggregators, annotation,
-                          changed_files, guarded, in_actions, relative, write_summary)
+                          changed_files, guarded, in_actions, inert, lean_unescaped, relative,
+                          write_summary)
 
 LINE_ERROR = re.compile(r"^error: (?P<file>\S.*?\.lean):(?P<line>\d+): (?P<message>.*)$")
 # Module-name errors quote the name in one of two ways, and a name can hold an apostrophe:
@@ -68,13 +69,14 @@ def parse_lint_style(text: str, module_paths: dict[str, str],
                                      match.group("message")))
         elif match := MODULE_ERROR.match(line):
             reported = True
-            path = module_paths.get(match.group("quoted") or match.group("ticked"))
+            path = module_paths.get(
+                lean_unescaped(match.group("quoted") or match.group("ticked")))
             if path is not None:
                 errors.append(StyleError(path, 1, f"Module name {match.group('message')}",
                                          module_name=True))
         elif OTHER_MODULE_ERROR.match(line):
             reported = True
-            print(f"Not understood: {line}", file=sys.stderr)
+            print(f"Not understood: {inert(line)}", file=sys.stderr)
     return list(dict.fromkeys(errors)), reported
 
 
@@ -92,21 +94,39 @@ def main() -> int:
     added = {file.path: file.added_lines for file in files}
     # Renaming a file changes its module name, so the name is new code too.
     new_modules = {file.module: file.path for file in files if file.status in "AR"}
+    # lint-style finds a module's file from its name as Lean prints it, so it cannot read a file
+    # whose name Lean writes with «», such as `New-Name.lean`; that name is reported instead.
+    unreadable = [file for file in files
+                  if file.lean_module is not None and file.lean_module != file.module]
+    errors = [StyleError(file.path, 1, f"Module name `{file.lean_module}` needs «», which "
+                         f"Mathlib's lint-style cannot read; name the file in UpperCamelCase",
+                         module_name=True)
+              for file in unreadable]
+    for file in unreadable:
+        if file.status not in "AR":
+            print(f"{file.path}: lint-style cannot read this file, so its added lines are not "
+                  f"checked.", file=sys.stderr)
+    files = [file for file in files if file not in unreadable]
     print(f"Checking {len(files)} changed Lean file(s) with Mathlib's lint-style.")
     try:
         with aggregators(files) as targets:
-            result = subprocess.run(["lake", "exe", "lint-style", *targets], cwd=ROOT,
-                                    capture_output=True, text=True)
+            result = None
+            if targets:
+                result = subprocess.run(["lake", "exe", "lint-style", *targets], cwd=ROOT,
+                                        capture_output=True, text=True)
     except AggregatorError as error:
         print(error, file=sys.stderr)
         return 2
-    output = result.stdout + result.stderr
-    errors, reported = parse_lint_style(output, new_modules)
-    # `lint-style` exits with its error count, so a failure without errors is a failure to run.
-    if result.returncode != 0 and not reported:
-        print(output, file=sys.stderr)
-        print("`lake exe lint-style` did not run.", file=sys.stderr)
-        return 2
+    if result is not None:
+        output = result.stdout + result.stderr
+        found, reported = parse_lint_style(output, new_modules)
+        errors += found
+        # `lint-style` exits with its error count, so a failure without errors is a failure to
+        # run.
+        if result.returncode != 0 and not reported:
+            print(inert(output), file=sys.stderr)
+            print("`lake exe lint-style` did not run.", file=sys.stderr)
+            return 2
 
     # A line error is new when its line is added; a module-name error when the
     # change adds or renames the file. Line 1 of a renamed file is not added.
@@ -117,7 +137,7 @@ def main() -> int:
     for e in kept:
         if in_actions():
             print(annotation(level, e.path, e.line, "lint-style", e.message))
-        print(f"{e.path}:{e.line}: {e.message}")
+        print(inert(f"{e.path}:{e.line}: {e.message}"))
     if kept:
         rows = "".join(f"- `{e.path}:{e.line}`: {e.message}\n" for e in kept[:50])
         write_summary(f"### Mathlib text-lint errors on added lines\n\n{rows}\n")

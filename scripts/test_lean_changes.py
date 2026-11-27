@@ -152,6 +152,24 @@ class ParseTests(unittest.TestCase):
             "::warning file=MathlibExt/A%2CB.lean,line=3,col=7,title=linter.x%3A y"
             "::50%25 off%0Asecond line")
 
+    def test_lean_name_quotes_the_components_that_are_not_identifiers(self):
+        self.assertEqual(lean_changes.lean_name("MathlibExt.X.Basic'"), "MathlibExt.X.Basic'")
+        self.assertEqual(lean_changes.lean_name("MathlibExt.New-Name"), "MathlibExt.«New-Name»")
+        self.assertEqual(lean_changes.lean_name("MathlibExt.Système"), "MathlibExt.«Système»")
+        self.assertEqual(lean_changes.lean_name("MathlibExt.2D"), "MathlibExt.«2D»")
+        self.assertIsNone(lean_changes.lean_name("MathlibExt.A«B"))
+        self.assertEqual(lean_changes.lean_unescaped("MathlibExt.«New-Name»"),
+                         "MathlibExt.New-Name")
+
+    def test_inert_breaks_up_workflow_commands_in_github_actions(self):
+        text = "fine\n::error file=A.lean::forged\n  ::add-mask::x\nnot :: a command"
+        with patch.dict("os.environ", {"GITHUB_ACTIONS": "true"}):
+            self.assertEqual(lean_changes.inert(text),
+                             "fine\n: :error file=A.lean::forged\n  : :add-mask::x\n"
+                             "not :: a command")
+        with patch.dict("os.environ", {"GITHUB_ACTIONS": "false"}):
+            self.assertEqual(lean_changes.inert(text), text)
+
     def test_relative_accepts_absolute_and_relative_paths(self):
         root = Path("/repo")
         self.assertEqual(lean_changes.relative("/repo/MathlibExt/A.lean", root),
@@ -282,6 +300,20 @@ class AggregatorTests(unittest.TestCase):
                 self.assertEqual((root / "Domains/LintChanged.lean").read_text(),
                                  "import Domains.C\n")
             self.assertEqual(sorted(os.listdir(root / "MathlibExt")), [])
+
+    def test_quotes_module_names_and_leaves_out_files_lean_cannot_name(self):
+        files = [ChangedFile("MathlibExt/X/New-Name.lean", "A", frozenset({1})),
+                 ChangedFile("MathlibExt/B.lean", "A", frozenset({1})),
+                 ChangedFile("MathlibExt/C«D.lean", "A", frozenset({1}))]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "MathlibExt").mkdir()
+            err = io.StringIO()
+            with redirect_stderr(err), lean_changes.aggregators(files, cwd=root) as names:
+                self.assertEqual(names, ["MathlibExt.LintChanged"])
+                self.assertEqual((root / "MathlibExt/LintChanged.lean").read_text(),
+                                 "import MathlibExt.B\nimport MathlibExt.X.«New-Name»\n")
+            self.assertIn("MathlibExt/C«D.lean: Lean cannot name the module", err.getvalue())
 
     def test_refuses_to_overwrite_a_module(self):
         files = [ChangedFile("MathlibExt/B.lean", "A", frozenset({1}))]

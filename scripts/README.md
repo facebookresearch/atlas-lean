@@ -79,7 +79,10 @@ five production libraries once (`scripts/lean_changes.py build --base <ref>`), t
 - `scripts/check_text_linters.py`: Mathlib's `lint-style` errors on added lines, and the module
   names of added or renamed files.
 
-Each takes `--base <ref>` and exits 1 on a finding, 0 with `--report-only` (as CI runs them),
-and 2 when it cannot run. `scripts/linters_self_test.py` runs all three on a probe module;
-CI runs it when a pull request changes them, `lean-toolchain` or `lake-manifest.json`, so that a
-bump that changes what the tools print shows up on the bump itself.
+Each takes `--base <ref>` and exits 1 on a finding, 0 with `--report-only` (as CI runs them), and 2
+when it cannot run. `scripts/linters_self_test.py` runs all three on a probe module; CI runs it
+when a pull request changes them, `lean-toolchain` or `lake-manifest.json`, so that a bump that
+changes what the tools print shows up on the bump itself. A changed file whose module Lean writes
+with «», such as `New-Name.lean`, is built and linted under that name; Mathlib's lint-style cannot
+read such a file, so the text check reports its name instead. In GitHub Actions, the lines of tool
+output that the checks print are kept from reading as workflow commands (`::` becomes `: :`).
