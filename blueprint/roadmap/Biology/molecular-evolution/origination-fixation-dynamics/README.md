@@ -6,4 +6,5 @@
 - [Toroidal diffusions for protein evolution](toroidal-diffusions-for-protein-evolution/README.md)
 - [Fitness landscapes and epistasis](fitness-landscapes-and-epistasis/README.md)
 - [Mutation rates and generation time](mutation-rates-and-generation-time/README.md)
+- [Accessible paths in random fitness landscapes](accessible-paths-in-random-fitness-landscapes/README.md)
 - [Mutation-accumulation rate from allele frequencies](mutation-accumulation-rate-from-allele-frequencies/README.md)

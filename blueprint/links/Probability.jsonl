@@ -5673,7 +5673,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/distributions/continuous/log-normal-distribution/README.md"}], "id": "af_51be6d6d894890d63a3dba4d", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/distributions/continuous/weibull-distribution/README.md"}], "id": "af_2f5f849f23de0a50ca640fb5", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/linear-models-multivariate/ordinary-least-squares/sampling-properties-of-the-ordinary-least-square/README.md"}], "id": "af_5f7283a5e78e1a34003e434f", "extensions": {"org.autoform": {"navigation": "module"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/Probability/queueing-theory/littles-law/area-under-number-in-system.md"}], "id": "af_a5c245235459e333e9d360fb", "extensions": {"org.atlas-wiki": {"kind": "lemma"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Probability/queueing-theory/littles-law/area-under-number-in-system.md"}], "id": "af_a5c245235459e333e9d360fb", "object": [{"location": {"declaration": "MetaMathlibExt.integral_queueOccupancy_eq_and_bounds"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/queueing-theory/littles-law/README.md"}], "id": "af_0a42df0403b0a3e1901a0b20"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/queueing-theory/README.md"}], "id": "af_5ae74fbe40e5f9b4821aef0e"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Probability/queueing-theory/littles-law/littles-law.md"}], "id": "af_ac4b91889b2e9b0db5bb210c", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}

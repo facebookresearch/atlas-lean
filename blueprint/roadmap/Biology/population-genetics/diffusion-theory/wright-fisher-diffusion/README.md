@@ -50,4 +50,6 @@
 
 - [Loss of alleles and invariance of faces in the K-allele diffusion](loss-of-alleles-and-face-invariance-in-the-k-allele-diffusion.md)
 - [Laplace transform of the absorption time of the neutral Wright–Fisher diffusion](laplace-transform-of-the-absorption-time.md)
+- [Replicator dynamics in Aitchison geometry](replicator-dynamics-in-aitchison-geometry/README.md)
+- [Gradient-flow structure of evolutionary models](gradient-flow-structure-of-evolutionary-models/README.md)
 - [Substitutions and frequency-spectrum dynamics](substitutions-and-frequency-spectrum-dynamics/README.md)
