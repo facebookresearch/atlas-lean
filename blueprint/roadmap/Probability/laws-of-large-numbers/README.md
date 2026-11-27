@@ -4,11 +4,15 @@ Almost-sure behaviour of sums of independent variables: strong and weak laws of 
 
 - [Kolmogorov's three-series theorem](kolmogorov-s-three-series-theorem/README.md)
 - [Law of the iterated logarithm](law-of-the-iterated-logarithm/README.md)
+- [Russian-roulette path laws](roulette-path-law/README.md)
+- [Russian-roulette path weights and masses](russian-roulette-path-weights-and-masses/README.md)
+- [Strong law for nonnegative, non-identically distributed variables](ae-tendsto-sum-div-sum-integral.md)
 - [Strong law of large numbers](strong-law-of-large-numbers/README.md)
 - [Kolmogorov's maximal inequality for finitely-valued variables](kolmogorov-maximal-inequality-theorem/README.md)
 - [Deviations of mean-zero sums on the cube](deviations-on-the-cube/README.md)
 - [Variance of the sample mean](variance-of-the-sample-mean/README.md)
 - [L² weak law of large numbers](l2-weak-law-of-large-numbers/README.md)
+- [Longest matching subsequences](longest-matching-subsequences/README.md)
 
 ## Related topics
 

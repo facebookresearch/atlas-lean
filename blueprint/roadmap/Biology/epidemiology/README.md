@@ -2,9 +2,9 @@
 
 Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers, the reporting of incidence, and the accuracy of diagnostic tests.
 
-- [Transmission models and reproduction numbers](transmission-models-and-thresholds/README.md)
-- [Network and stochastic epidemics](network-and-stochastic-epidemics/README.md)
-- [Control, interventions and epidemiological inference](control-and-epidemiological-inference/README.md)
+- [Parasite relatedness and genomic epidemiology](parasite-relatedness-and-genomic-epidemiology/README.md)
+- [Treatment, drug resistance and immune escape](treatment-resistance-and-immune-escape/README.md)
+- [Chronic disease and social contagion](chronic-disease-and-social-contagion/README.md)
 - [Branching-process approximation of early epidemics](branching-process-approximation-of-early-epidemi/README.md)
 - [Contact process on power-law random graphs](contact-process-on-power-law-random-graphs/README.md)
 - [Diffusion approximation of the stochastic SIR epidemic](diffusion-approximation-of-the-stochastic-sir-ep/README.md)
@@ -38,3 +38,6 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
 - [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
 - [Epidemic coalescent models](epidemic-coalescent-models/README.md)
+- [Transmission models and reproduction numbers](transmission-models-and-thresholds/README.md)
+- [Network and stochastic epidemics](network-and-stochastic-epidemics/README.md)
+- [Control, interventions and epidemiological inference](control-and-epidemiological-inference/README.md)

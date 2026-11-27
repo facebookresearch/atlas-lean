@@ -43,6 +43,7 @@
 - [Error-free transformation of a sum (TwoSum, FastTwoSum)](error-free-transformation-of-a-sum.md)
 - [Veltkamp splitting of a floating-point number](veltkamp-splitting.md)
 - [Dekker's error-free product without a fused multiply-add](dekker-two-product.md)
+- [Floating-point expansions](floating-point-expansions/README.md)
 
 ## IEEE arithmetic, double rounding and compilation
 

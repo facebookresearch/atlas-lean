@@ -61,4 +61,20 @@ example {E E' : Set (ℕ →₀ ℕ)} (hE : IsZeckendorfCollection E)
     · obtain rfl : n = 1 := h
       exact ⟨by decide, Finsupp.single 0 1, hE.2.1 0, by simp [hval]⟩
 
+-- The ternary cutoff is 2 and its replacement evaluates to 3 in that system.
+-- With binary weights on the smaller collection, the replacement has value 2.
+example {E E' : Set (ℕ →₀ ℕ)} (hE : IsZeckendorfCollection E)
+    (hE' : IsZeckendorfCollection E') (hsub : E ⊆ E')
+    (hbin : Set.BijOn (zeckendorfEval (2 ^ ·)) E Set.univ)
+    (hter : Set.BijOn (zeckendorfEval (3 ^ ·)) E' Set.univ)
+    (htwo : Finsupp.single 0 2 ∈ E')
+    (hstep : IsImmediateSuccessor E (Finsupp.single 0 1) (Finsupp.single 1 1)) :
+    subcollectionCount E (3 ^ ·) 2 = 2 := by
+  have h := subcollectionCount_eval_eq_eval_bar hE hE' hsub
+    (fun _ _ hlt ↦ Nat.pow_lt_pow_right (by decide : 1 < 2) hlt)
+    (fun _ ↦ Nat.pow_pos (by decide)) hbin
+    (fun _ _ hlt ↦ Nat.pow_lt_pow_right (by decide : 1 < 3) hlt)
+    (fun _ ↦ Nat.pow_pos (by decide)) hter htwo (by simp) (pred_two (hE.2.1 0)) hstep
+  simpa [zeckendorfEval] using h
+
 end MetaMathlibExtTest.ZeckendorfSubcollection

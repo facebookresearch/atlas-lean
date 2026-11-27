@@ -1,0 +1,3 @@
+# Decomposition of an Int object into its components
+
+Let $C$ be a symmetric monoidal category with symmetric trace $T$, let $\mathrm{Int}(T)$ be its [Int construction](README.md), whose objects are pairs $X = (X^+, X^-)$, and let $J : C \to \mathrm{Int}(T)$, $J(A) = (A, \mathbf{1})$, be the embedding; the negative component of $X \otimes Y$ is $Y^- \otimes X^-$. Every object $X = (X^+, X^-)$ of $\mathrm{Int}(T)$ is isomorphic, inside $\mathrm{Int}(T)$, to the tensor product of its two components: $X \cong (X^+, \mathbf{1}) \otimes (\mathbf{1}, X^-)$, by the isomorphism built from the right unitors $X^+ \cong X^+ \otimes \mathbf{1}$ and $X^- \otimes \mathbf{1} \cong X^-$. No duals in $C$ are needed.

@@ -1,6 +1,6 @@
 # Cook–Mertz: the KRW conjecture implies L ⊄ NC^1
 
-If the KRW conjecture holds, then $\mathsf{L}\not\subseteq\mathsf{NC}^1$, i.e. some logspace language requires formulas of super-logarithmic depth. The implication is robust: any form of the conjecture implying that Tree Evaluation requires formula depth $\omega(\log n)$ suffices; the strongest, most studied form implies that $\mathsf{L}$ requires formula depth $\Omega(\log^2 n/\log\log n)$, close to the upper bound $O(\log^2 n)$ from $\mathsf{L}\subseteq\mathsf{NC}^2$. Under KRW this gives a superpolynomial separation between formulas and uniform branching programs.
+If the KRW conjecture holds, then $\mathsf{L}\not\subseteq\mathsf{NC}^1$, i.e. some logspace language requires formulas of super-logarithmic depth. The implication is robust: any form of the conjecture implying that Tree Evaluation requires formula depth $\omega(\log n \cdot \log\log n)$ suffices; the strongest, most studied form implies that $\mathsf{L}$ requires formula depth $\Omega(\log^2 n/\log^3\log n)$, close to the upper bound $O(\log^2 n)$ from $\mathsf{L}\subseteq\mathsf{NC}^2$ (Cook–Mertz, §1.5.1 and Theorem 19). Under KRW this gives a superpolynomial separation between formulas and uniform branching programs.
 
 ## Proof sketch
 
