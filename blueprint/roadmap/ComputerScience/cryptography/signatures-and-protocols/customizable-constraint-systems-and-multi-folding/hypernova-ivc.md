@@ -1,10 +1,10 @@
 # HyperNova: IVC for high-degree constraint systems
 
-Using the multi-folding scheme for CCS in an augmented step circuit (as in Nova, with the verifier made non-interactive in the random oracle model), one obtains an IVC scheme for any step function expressed as CCS of degree $d$, knowledge sound in the random oracle model (with the usual heuristic in-circuit hash instantiation). The prover's cryptographic work per step is one multi-scalar multiplication of size equal to the number of witness variables, independent of $d$, and the recursion overhead consists of one group scalar multiplication plus a logarithmic number of hash and field operations; because the folded relation is linear, multiple instances can be folded at once, yielding PCD.
+Using the multi-folding scheme for CCS in an augmented step circuit (as in Nova), one obtains an IVC scheme for any step function expressed as CCS of degree $d$. The multi-folding scheme is public coin, so it is made non-interactive in the random oracle model by the Fiat–Shamir transform, and the random oracle is then heuristically instantiated with a concrete hash function; the IVC scheme is proven knowledge sound assuming the resulting non-interactive multi-folding scheme in the plain model, not in the random oracle model. The prover's cryptographic work per step is one multi-scalar multiplication of size equal to the number of witness variables, independent of $d$, and the recursion overhead consists of one group scalar multiplication plus a logarithmic number of hash and field operations; because the folded relation is linear, multiple instances can be folded at once, which makes it easier to build generalizations of IVC such as PCD.
 
 ## Proof sketch
 
-Mirror the Nova construction with LCCCS as the running relation and CCCS as the fresh relation. Each step's circuit runs the non-interactive multi-folding verifier, whose cost is dominated by checking a degree-$(d+1)$ sum-check of $\log m$ rounds and one scalar multiplication. Knowledge soundness follows inductively by multi-folding extraction.
+Mirror the Nova construction with LCCCS as the running relation and CCCS as the fresh relation. Each step's circuit runs the non-interactive multi-folding verifier, whose cost is dominated by checking a degree-$(d+1)$ sum-check of $\log m$ rounds and one scalar multiplication. Knowledge soundness follows inductively from the knowledge soundness of the non-interactive multi-folding scheme.
 
 ## Depends on
 
@@ -20,4 +20,4 @@ Mirror the Nova construction with LCCCS as the running relation and CCCS as the 
 
 ## Sources
 
-- Abhiram Kothapalli, Srinath Setty, "HyperNova: Recursive Arguments for Customizable Constraint Systems", CRYPTO (2024), IACR ePrint 2023/573.
+- Abhiram Kothapalli, Srinath Setty, "HyperNova: Recursive Arguments for Customizable Constraint Systems", CRYPTO (2024), IACR ePrint 2023/573, abstract, Section 4 (Assumption 1), Construction 2 and Theorem 3.

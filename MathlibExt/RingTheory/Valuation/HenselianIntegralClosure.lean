@@ -64,7 +64,7 @@ private theorem coeff_poly {n : ℕ} (c : Fin n → T) (j : ℕ) :
   · rw [Finset.sum_eq_single ⟨j, h⟩]
     · simp
     · intro b _ hb
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hj
       apply hb
       ext
@@ -72,12 +72,12 @@ private theorem coeff_poly {n : ℕ} (c : Fin n → T) (j : ℕ) :
     · intro hj; exact absurd (Finset.mem_univ _) hj
   · apply Finset.sum_eq_zero
     intro i _
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hj
     exact h (hj ▸ i.2)
 
 private theorem coeff_poly_fin {n : ℕ} (c : Fin n → T) (i : Fin n) : (poly c).coeff i = c i := by
-  rw [coeff_poly, dif_pos i.2]
+  rw [coeff_poly, dite_eq_left i.2]
 
 private theorem degree_poly_lt {n : ℕ} (c : Fin n → T) : (poly c).degree < n :=
   degree_sum_fin_lt c

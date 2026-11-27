@@ -30,4 +30,5 @@
 ## Ranked tree shapes
 
 - [F-matrix distances between ranked tree shapes](f-matrix-distances-between-ranked-tree-shapes/README.md)
+- [Tajima's genealogies](tajima-genealogies/README.md)
 - [Ranked tree spaces](ranked-tree-spaces/README.md)

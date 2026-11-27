@@ -427,4 +427,75 @@ theorem not_exists_isMinOn_of_separable {n m : ℕ} [Nonempty (Fin n)]
       simpa [log_one_add_exp_sub] using hlog
   exact (not_lt_of_ge (hmin (Set.mem_univ (β + βsep)))) hlt
 
+/-- For `0/1` labels, the logistic negative log-likelihood is the sum of the margin losses
+`log (1 + exp (-(2yᵢ - 1)(xᵢ ⬝ β)))`. The sign `2yᵢ - 1` converts to `±1` labels. -/
+theorem logisticNLL_eq_sum_margin_loss {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ)
+    (y : Fin n → ℝ) (hy : ∀ i, y i = 0 ∨ y i = 1) (β : Fin m → ℝ) :
+    logisticNLL X y β =
+      ∑ i, Real.log (1 + Real.exp (-((2 * y i - 1) * (X.mulVec β) i))) := by
+  unfold logisticNLL
+  refine Finset.sum_congr rfl fun i _ => ?_
+  change Real.log (1 + Real.exp ((X.mulVec β) i)) - y i * (X.mulVec β) i = _
+  rcases hy i with h | h
+  · simp [h, neg_mul]
+  · simpa [h, show (2 : ℝ) - 1 = 1 by norm_num] using log_one_add_exp_sub ((X.mulVec β) i)
+
+section SeparableInfimum
+
+open Filter Set Topology
+
+/-- Along a strictly separating ray, the binary logistic negative log-likelihood tends to zero.
+The scalar multiplying the separator tends to `+∞`; no assumption on an optimization algorithm
+is needed. -/
+theorem tendsto_logisticNLL_smul_of_separable {n m : ℕ}
+    (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n → ℝ) (hy : ∀ i, y i = 0 ∨ y i = 1)
+    {βsep : Fin m → ℝ} (hsep : ∀ i, 0 < (2 * y i - 1) * (X.mulVec βsep) i) :
+    Tendsto (fun c : ℝ => logisticNLL X y (c • βsep)) atTop (𝓝 0) := by
+  have hterm (a : ℝ) (ha : 0 < a) :
+      Tendsto (fun c : ℝ => Real.log (1 + Real.exp (-(c * a)))) atTop (𝓝 0) := by
+    have hneg : Tendsto (fun c : ℝ => -(c * a)) atTop atBot :=
+      tendsto_neg_atTop_atBot.comp (tendsto_id.atTop_mul_const ha)
+    have he : Tendsto (fun c : ℝ => Real.exp (-(c * a))) atTop (𝓝 0) :=
+      Real.tendsto_exp_atBot.comp hneg
+    have hadd : Tendsto (fun c : ℝ => 1 + Real.exp (-(c * a))) atTop (𝓝 1) := by
+      simpa only [add_zero] using he.const_add 1
+    rw [← Real.log_one]
+    exact (Real.continuousAt_log (x := (1 : ℝ)) one_ne_zero).tendsto.comp hadd
+  have heq (i : Fin n) (c : ℝ) :
+      (2 * y i - 1) * (c * (X.mulVec βsep) i) = c * ((2 * y i - 1) * (X.mulVec βsep) i) :=
+    mul_left_comm _ _ _
+  simp_rw [logisticNLL_eq_sum_margin_loss X y hy, Matrix.mulVec_smul, Pi.smul_apply,
+    smul_eq_mul, heq]
+  simpa only [Finset.sum_const_zero] using
+    tendsto_finsetSum Finset.univ (fun i _ => hterm _ (hsep i))
+
+/-- On strictly separable binary data, zero is the greatest lower bound of the logistic loss.
+This also holds for empty data, where the sum is identically zero. -/
+theorem isGLB_logisticNLL_of_separable {n m : ℕ}
+    (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n → ℝ) (hy : ∀ i, y i = 0 ∨ y i = 1)
+    {βsep : Fin m → ℝ} (hsep : ∀ i, 0 < (2 * y i - 1) * (X.mulVec βsep) i) :
+    IsGLB (Set.range (logisticNLL X y)) 0 := by
+  constructor
+  · rintro _ ⟨β, rfl⟩
+    rw [logisticNLL_eq_sum_margin_loss X y hy]
+    exact Finset.sum_nonneg fun i _ => Real.log_nonneg (le_add_of_nonneg_right (Real.exp_nonneg _))
+  · intro b hb
+    exact ge_of_tendsto (tendsto_logisticNLL_smul_of_separable X y hy hsep)
+      (Filter.Eventually.of_forall fun c => hb (Set.mem_range_self (c • βsep)))
+
+/-- **Logistic loss has no minimizer on separable data.** On a nonempty strictly separable
+binary sample, the unregularized logistic loss has infimum zero and does not attain it.
+The label sign in the separation condition is `2yᵢ - 1` for the `0/1` labels `yᵢ`.
+
+Background: Soudry et al., *The implicit bias of gradient descent on separable data*,
+JMLR 19 (2018), §2. The statement here concerns the loss, not the iterates. -/
+lemma logisticNLL_infimum_zero_not_attained_of_separable {n m : ℕ} [Nonempty (Fin n)]
+    (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n → ℝ) (hy : ∀ i, y i = 0 ∨ y i = 1)
+    {βsep : Fin m → ℝ} (hsep : ∀ i, 0 < (2 * y i - 1) * (X.mulVec βsep) i) :
+    sInf (Set.range (logisticNLL X y)) = 0 ∧ ¬ ∃ β, IsMinOn (logisticNLL X y) Set.univ β :=
+  ⟨(isGLB_logisticNLL_of_separable X y hy hsep).csInf_eq (Set.range_nonempty _),
+    not_exists_isMinOn_of_separable X y hy hsep⟩
+
+end SeparableInfimum
+
 end MathlibExt.Probability.Statistics.LogisticRegression
