@@ -17,6 +17,7 @@ public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CotangentLimit
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosineAlternatingIntegralLimit
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosinePowerAreaRecurrence
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosinePowerAreaDoubleFactorial
 
 namespace MetaMathlibExt
 
@@ -77,29 +78,6 @@ public theorem_wanted tendsto_cosPowArea_of_even (n : ℕ) :
     (n % 4 = 0 → Tendsto (fun k => cosPowArea n k) atTop
       (𝓝 (16 / (2 ^ n * π) * ∑ j ∈ Finset.range ((n - 4) / 4 + 1),
         (n.choose (2 * j + 1) : ℝ) / ((n : ℝ) / 2 - (2 * j + 1)) ^ 2)))
-
-/-- **Limiting area between cosine powers via double factorials.** For natural numbers $n$ and
-$k$, let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$. As $k \to \infty$ through the natural
-numbers: if $n$ is odd, then
-$$A_n(k) \to \frac{8 \, n!}{\pi (n!!)^2} \sum_{j=0}^{(n-1)/2} \frac{(2j-1)!!}{(2j)!! (2j+1)},$$
-and if $n \ge 2$ is even, then
-$$A_n(k) \to \frac{16 \, n!}{\pi (n!!)^2} \sum_{j=0}^{(n-2)/2} \frac{(2j)!!}{(2j+1)!! (2j+2)}.$$
-Here $(-1)!! = 1$ and $0!! = 1$.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Theorem 4
-(`jis-2025-25.2.3-thm-4`). -/
-public theorem_wanted tendsto_cosPowArea_doubleFactorial (n : ℕ) :
-    (Odd n → Tendsto (fun k => cosPowArea n k) atTop
-      (𝓝 (8 / π * ((n.factorial : ℝ) / (n.doubleFactorial : ℝ) ^ 2) *
-        ∑ j ∈ Finset.range ((n - 1) / 2 + 1),
-          ((2 * j - 1).doubleFactorial : ℝ) /
-            ((2 * j).doubleFactorial * (2 * j + 1))))) ∧
-    (Even n → 0 < n → Tendsto (fun k => cosPowArea n k) atTop
-      (𝓝 (16 / π * ((n.factorial : ℝ) / (n.doubleFactorial : ℝ) ^ 2) *
-        ∑ j ∈ Finset.range ((n - 2) / 2 + 1),
-          ((2 * j).doubleFactorial : ℝ) /
-            ((2 * j + 1).doubleFactorial * (2 * j + 2)))))
 
 /-- **Integral sums of $\cos qkx - \cos qx$ for odd $q$ and odd $k$.** Let $q$ be an odd natural
 number, and for each natural number $m$ put $k = 2m + 1$. Then, as $m \to \infty$,
