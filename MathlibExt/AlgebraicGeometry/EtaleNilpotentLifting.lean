@@ -143,8 +143,7 @@ private theorem exists_of_forall_exists_nhd {X Y T T₀ : Scheme.{u}} (q : Y ⟶
   refine ⟨𝒰.glueMorphisms sU hcompat, ?_, ?_⟩
   · refine Scheme.Cover.hom_ext 𝒰 _ _ fun i ↦ ?_
     rw [Scheme.Cover.ι_glueMorphisms_assoc, hsUq]
-  ·
-    let 𝒱 : T₀.OpenCover :=
+  · let 𝒱 : T₀.OpenCover :=
       { I₀ := T, X := fun i => (k ⁻¹ᵁ U i), f := fun i => (k ⁻¹ᵁ U i).ι,
         mem₀ := by
           rw [Scheme.presieve₀_mem_precoverage_iff]
@@ -224,8 +223,7 @@ private theorem exists_nhd_lift {X Y T T₀ : Scheme.{u}} (q : Y ⟶ X) [Etale q
   have hψ : κ.comp ψ = σ := Algebra.FormallySmooth.comp_liftOfSurjective σ κ hκs hκn
 
   refine ⟨U, hpU, hU.isoSpec.hom ≫ Spec.map (CommRingCat.ofHom ψ.toRingHom) ≫ hW.fromSpec, ?_, ?_⟩
-  ·
-    have h1 : q.appLE R' W hWR' ≫ CommRingCat.ofHom ψ.toRingHom = t.appLE R' U hUR' := by
+  · have h1 : q.appLE R' W hWR' ≫ CommRingCat.ofHom ψ.toRingHom = t.appLE R' U hUR' := by
       ext r
       change ψ (algebraMap Γ(X, R') Γ(Y, W) r) = algebraMap Γ(X, R') Γ(T, U) r
       exact ψ.commutes r
@@ -233,8 +231,7 @@ private theorem exists_nhd_lift {X Y T T₀ : Scheme.{u}} (q : Y ⟶ X) [Etale q
       ← Spec.map_comp_assoc, h1, IsAffineOpen.SpecMap_appLE_fromSpec t hR' hU hUR',
       ← hU.isoSpec_inv_ι]
     simp only [Category.assoc, Iso.hom_inv_id_assoc]
-  ·
-    have h2 : CommRingCat.ofHom ψ.toRingHom ≫ k.appLE U (k ⁻¹ᵁ U) le_rfl =
+  · have h2 : CommRingCat.ofHom ψ.toRingHom ≫ k.appLE U (k ⁻¹ᵁ U) le_rfl =
         s₀.appLE W (k ⁻¹ᵁ U) hkUW := by
       ext a
       change κ (ψ a) = σ a

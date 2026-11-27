@@ -243,8 +243,7 @@ private theorem length_quotient_eta_le_length_cotangent (π : R →ₐ[𝒪] �
   set e := Pi.basisFun 𝒪 (Fin n)
   obtain ⟨m, snf⟩ := N.smithNormalForm e
   by_cases hmn : m = n
-  ·
-    have h : Module.finrank 𝒪 N = Module.finrank 𝒪 (Fin n → 𝒪) := by
+  · have h : Module.finrank 𝒪 N = Module.finrank 𝒪 (Fin n → 𝒪) := by
       rw [Module.finrank_eq_card_basis snf.bN, Module.finrank_fin_fun, Fintype.card_fin, hmn]
     set c := Submodule.smithNormalFormCoeffs e h
     have hc : ∀ i, c i ≠ 0 := Submodule.smithNormalFormCoeffs_ne_zero e h
@@ -276,8 +275,7 @@ private theorem length_quotient_eta_le_length_cotangent (π : R →ₐ[𝒪] �
     · simpa [Ideal.span_le] using hprod
     · intro y; obtain ⟨y, rfl⟩ := Submodule.Quotient.mk_surjective _ y
       exact ⟨Submodule.Quotient.mk y, rfl⟩
-  ·
-    have hns : ∃ i, i ∉ Set.range snf.f := by
+  · have hns : ∃ i, i ∉ Set.range snf.f := by
       by_contra hcon
       have hsurj : Function.Surjective snf.f := fun i => by
         by_contra h'

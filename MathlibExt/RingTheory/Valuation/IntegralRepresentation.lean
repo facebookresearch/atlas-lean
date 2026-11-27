@@ -120,8 +120,7 @@ public theorem exists_integral_mul_eq_of_liesOverPrime
     obtain ⟨c, hc | hc⟩ :=
       ValuationRing.cond (algebraMap (𝓞 F) (Localization.AtPrime P) n)
         (algebraMap (𝓞 F) (Localization.AtPrime P) d)
-    ·
-      obtain ⟨⟨a, s⟩, rfl⟩ := IsLocalization.mk'_surjective P.primeCompl c
+    · obtain ⟨⟨a, s⟩, rfl⟩ := IsLocalization.mk'_surjective P.primeCompl c
       have hsP : (s : 𝓞 F) ∉ P := s.2
       have hsF : algebraMap (𝓞 F) F (s : 𝓞 F) ≠ 0 := fun h0 =>
         hsP (by rw [show (s : 𝓞 F) = 0 from hφ (by rw [h0, map_zero])]; exact P.zero_mem)
@@ -144,8 +143,7 @@ public theorem exists_integral_mul_eq_of_liesOverPrime
       · exact Or.inr ⟨a, s, haP, hsP, hxinv⟩
       · refine Or.inl ⟨(s : 𝓞 F), a, haP, ?_⟩
         rw [← inv_inv x, hxinv, inv_div]
-    ·
-      obtain ⟨⟨a, s⟩, rfl⟩ := IsLocalization.mk'_surjective P.primeCompl c
+    · obtain ⟨⟨a, s⟩, rfl⟩ := IsLocalization.mk'_surjective P.primeCompl c
       have hsP : (s : 𝓞 F) ∉ P := s.2
       have hsF : algebraMap (𝓞 F) F (s : 𝓞 F) ≠ 0 := fun h0 =>
         hsP (by rw [show (s : 𝓞 F) = 0 from hφ (by rw [h0, map_zero])]; exact P.zero_mem)
@@ -208,8 +206,7 @@ public theorem exists_integral_mul_eq_of_liesOverPrime
       (NumberField.RingOfIntegers.isIntegral_coe b)
   rcases exists_div_rep_or_inv_div_rep_of_ne_bot P hPbot a' ha'0 with
     ⟨b, s, hs, hrep⟩ | ⟨b, s, hb, hs, hrep⟩
-  ·
-    have hsK : algebraMap F (AlgebraicClosure ℚ) (algebraMap (𝓞 F) F s) ≠ 0 := by
+  · have hsK : algebraMap F (AlgebraicClosure ℚ) (algebraMap (𝓞 F) F s) ≠ 0 := by
       intro h0
       have := hval1 s hs
       rw [h0, map_zero] at this
@@ -221,8 +218,7 @@ public theorem exists_integral_mul_eq_of_liesOverPrime
     · change a * algebraMap F (AlgebraicClosure ℚ) (algebraMap (𝓞 F) F s) =
         algebraMap F (AlgebraicClosure ℚ) (algebraMap (𝓞 F) F b)
       rw [← ha', hrep, map_div₀, div_mul_cancel₀ _ hsK]
-  ·
-    exfalso
+  · exfalso
     have hlt : A.valuation a⁻¹ < 1 := by
       have : a⁻¹ = algebraMap F (AlgebraicClosure ℚ) (algebraMap (𝓞 F) F b) /
           algebraMap F (AlgebraicClosure ℚ) (algebraMap (𝓞 F) F s) := by

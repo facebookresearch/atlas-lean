@@ -257,15 +257,13 @@ private theorem coeff_subst_sub_mem (p : R) (i : Fin d) (φi : MvPowerSeries (Fi
 
   simp only [f1, f2, smul_eq_mul]
   rcases Nat.lt_or_ge m.degree 1 with h0 | h1
-  ·
-    have hm : m = 0 := (Finsupp.degree_eq_zero_iff m).mp (by omega)
+  · have hm : m = 0 := (Finsupp.degree_eq_zero_iff m).mp (by omega)
     subst hm
     rw [Finsupp.prod_zero_index, Finsupp.prod_zero_index, sub_self, zero_add,
       if_neg (Ne.symm (Finsupp.single_ne_zero.mpr one_ne_zero))]
     exact Ideal.zero_mem _
   rcases Nat.lt_or_ge m.degree 2 with h2 | h2
-  ·
-    obtain ⟨k, rfl⟩ := eq_single_of_degree_eq_one (show m.degree = 1 by omega)
+  · obtain ⟨k, rfl⟩ := eq_single_of_degree_eq_one (show m.degree = 1 by omega)
     rw [Finsupp.prod_single_index (h := fun j e => (H - E) j ^ e) (pow_zero _),
       Finsupp.prod_single_index (h := fun j e => H j ^ e) (pow_zero _), pow_one, pow_one, hlin,
       Pi.sub_apply, map_sub]
@@ -273,8 +271,7 @@ private theorem coeff_subst_sub_mem (p : R) (i : Fin d) (φi : MvPowerSeries (Fi
     · subst hik; rw [if_pos rfl, if_pos rfl]; ring_nf; exact Ideal.zero_mem _
     · rw [if_neg hik, if_neg (fun h => hik (Finsupp.single_left_injective one_ne_zero h).symm)]
       ring_nf; exact Ideal.zero_mem _
-  ·
-    rw [if_neg (fun h => by rw [h, Finsupp.degree_single] at h2; omega), add_zero, ← mul_sub, ←
+  · rw [if_neg (fun h => by rw [h, Finsupp.degree_single] at h2; omega), add_zero, ← mul_sub, ←
       map_sub]
     have hT := finsuppProd_sub_sub_sum_mem_sq (coefIdeal (Fin d) (p ^ r)) (H - E) H
       (fun j => by rw [Pi.sub_apply, sub_sub_cancel_left]; exact (neg_mem (hE j))) m
@@ -284,8 +281,7 @@ private theorem coeff_subst_sub_mem (p : R) (i : Fin d) (φi : MvPowerSeries (Fi
         T + ((m.prod fun j e => (H - E) j ^ e) - (m.prod fun j e => H j ^ e) - T) := by ring
     rw [hQ, map_add, mul_add]
     refine Ideal.add_mem _ ?_ ?_
-    ·
-      rw [hTdef, map_sum, Finset.mul_sum]
+    · rw [hTdef, map_sum, Finset.mul_sum]
       refine Ideal.sum_mem _ fun j hj => ?_
       have hfac : ((m j : ℕ) : MvPowerSeries (Fin d) R) * H j ^ (m j - 1) *
           (∏ j' ∈ m.support.erase j, H j' ^ m j') * ((H - E) j - H j)
@@ -299,8 +295,7 @@ private theorem coeff_subst_sub_mem (p : R) (i : Fin d) (φi : MvPowerSeries (Fi
           ∈ coefIdeal (Fin d) (p ^ r) :=
         Ideal.mul_mem_left _ _ ((neg_mem (hE j)))
       exact hmem n
-    ·
-      have h2r : Ideal.span {(p ^ r) ^ 2} ≤ Ideal.span {p ^ (r + 1)} := by
+    · have h2r : Ideal.span {(p ^ r) ^ 2} ≤ Ideal.span {p ^ (r + 1)} := by
         rw [Ideal.span_singleton_le_span_singleton, ← pow_mul]
         exact pow_dvd_pow p (by omega)
       have hmem := coefIdeal_mono (σ := Fin d) h2r (coefIdeal_sq_le (σ := Fin d) (p ^ r) hT) n
@@ -367,8 +362,7 @@ private theorem restricted_subst {p : R} {f : MvPowerSeries (Fin d) R} (hf : Res
     rw [smul_eq_mul]
     by_cases hm : coeff m f ∈ Ideal.span {p ^ N}
     · exact Ideal.mul_mem_right _ _ hm
-    ·
-      have hmdeg : m.degree ≤ M₀ := by
+    · have hmdeg : m.degree ≤ M₀ := by
         rw [hM₀]; exact Finset.le_sup (hSf.mem_toFinset.mpr hm)
       refine Ideal.mul_mem_left _ _ ?_
       rw [finsuppProd_pow_eq_prod_sigma, coeff_prod]
@@ -468,8 +462,7 @@ public theorem
       · rw [hGs]
         exact (IHT j).sub ((RestrictedFormalInverseAux.restricted_subst (hφT · j) IHT IH0).sub
           (RestrictedFormalInverseAux.restricted_X _ j))
-      ·
-        have hstep := RestrictedFormalInverseAux.coeff_subst_sub_mem (p : 𝓞) j (φ j) (hlin j) (hJ
+      · have hstep := RestrictedFormalInverseAux.coeff_subst_sub_mem (p : 𝓞) j (φ j) (hlin j) (hJ
           j) (G r)
           (fun k => subst (G r) (φ k) - X k) IH0 hE0 (r + 1) (by omega) hE n
         have hGr1 : G (r + 1) = G r - fun k => subst (G r) (φ k) - X k := by

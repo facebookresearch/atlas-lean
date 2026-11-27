@@ -429,8 +429,7 @@ private theorem exists_isIdempotentElem_of_isArtinianRing {C : Type*} [CommRing 
   have hmem : c ^ N ∈ Ideal.span {c ^ (2 * N)} := hst ▸ Ideal.mem_span_singleton_self _
   obtain ⟨d, hd⟩ := Ideal.mem_span_singleton'.mp hmem
   refine ⟨N, d, by omega, ?_, ?_⟩
-  ·
-    unfold IsIdempotentElem
+  · unfold IsIdempotentElem
     calc d * c ^ N * (d * c ^ N) = d * (d * c ^ (2 * N)) := by ring
       _ = d * c ^ N := by rw [hd]
   · calc c ^ N = d * c ^ (2 * N) := hd.symm
@@ -515,8 +514,7 @@ private theorem existsUnique_isIdempotentElem_mk_eq {S : Type*} [CommRing S] [Al
     rw [← ha, ← hb']
 
   rcases subsingleton_or_nontrivial κ with hκ | hκ
-  ·
-    haveI : Subsingleton (S ⧸ 𝔪S) := by
+  · haveI : Subsingleton (S ⧸ 𝔪S) := by
       have h1 : (1 : S ⧸ 𝔪S) = 0 := by
         rw [← map_one j, Subsingleton.elim (1 : κ) 0, map_zero]
       exact subsingleton_of_zero_eq_one h1.symm
@@ -539,8 +537,7 @@ private theorem existsUnique_isIdempotentElem_mk_eq {S : Type*} [CommRing S] [Al
   obtain ⟨e, -, hediv, hemap⟩ := exists_dvd_and_map_residue_eq hf e₀ hdeg hidem
 
   refine ⟨e.eval₂ (algebraMap R S) s, ⟨?_, ?_⟩, ?_⟩
-  ·
-    obtain ⟨t, ht⟩ := hediv
+  · obtain ⟨t, ht⟩ := hediv
     have := congrArg (fun p => p.eval₂ (algebraMap R S) s) ht
     simp only [Polynomial.eval₂_sub, Polynomial.eval₂_mul, hfs, zero_mul] at this
     exact sub_eq_zero.mp this
@@ -931,8 +928,7 @@ private theorem exists_rep [Algebra.IsAlgebraic E F] (O : ValuationSubring E)
       obtain ⟨m0, hm0r, rfl⟩ := hwmem
       have hm0' : m0 < 2 * n + 1 := Finset.mem_range.mp hm0r
       rcases le_or_gt 0 ((m0 : ℤ) - (n : ℤ)) with hmnn | hmnn
-      ·
-        rw [tail_eq_neg A hx0 hrelA (le_trans hj (Nat.le_succ n)), neg_mul, Finset.sum_mul]
+      · rw [tail_eq_neg A hx0 hrelA (le_trans hj (Nat.le_succ n)), neg_mul, Finset.sum_mul]
         refine Submodule.neg_mem _ (Submodule.sum_mem _ fun i hi => ?_)
         have hi' := Finset.mem_range.mp hi
         have he : algebraMap E F (A i) * x ^ ((i : ℤ) - (j : ℤ)) * x ^ ((m0 : ℤ) - (n : ℤ))
@@ -940,8 +936,7 @@ private theorem exists_rep [Algebra.IsAlgebraic E F] (O : ValuationSubring E)
           rw [mul_assoc, ← zpow_add₀ hx0]
         rw [he, hsmul (A i) (hAmemO i (Finset.mem_range.mpr (by omega))) _]
         refine Submodule.smul_mem _ _ (hgen _ (by omega) (by omega))
-      ·
-        rw [tail, Finset.sum_mul]
+      · rw [tail, Finset.sum_mul]
         refine Submodule.sum_mem _ fun i hi => ?_
         have hi' := Finset.mem_Ico.mp hi
         have he : algebraMap E F (A i) * x ^ ((i : ℤ) - (j : ℤ)) * x ^ ((m0 : ℤ) - (n : ℤ))

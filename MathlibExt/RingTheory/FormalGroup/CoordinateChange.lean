@@ -178,8 +178,7 @@ private theorem coeff_single_one_subst_fin_two {τ : Type} [DecidableEq τ] (i :
     have key : MvPowerSeries.coeff (Finsupp.single i 1) (a 0 ^ d 0 * a 1 ^ d 1) = 0 := by
       rcases Nat.lt_or_ge (d 0) 2 with h0 | h0
       · rcases Nat.lt_or_ge (d 1) 2 with h1 | h1
-        ·
-          have hd01 : ¬ (d 0 = 1 ∧ d 1 = 0) := by
+        · have hd01 : ¬ (d 0 = 1 ∧ d 1 = 0) := by
             rintro ⟨e0, e1⟩; apply hnot.1; ext s; fin_cases s <;> simp [e0, e1]
           have hd10 : ¬ (d 0 = 0 ∧ d 1 = 1) := by
             rintro ⟨e0, e1⟩; apply hnot.2; ext s; fin_cases s <;> simp [e0, e1]

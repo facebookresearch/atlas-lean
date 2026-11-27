@@ -483,8 +483,7 @@ private theorem integrableOn_rpow_mul_one_add_sq_rpow_neg {p σ : ℝ} (hp : -1 
     mul_nonneg (Real.rpow_nonneg ht.le _) (Real.rpow_nonneg (by positivity) _)
   rw [← Ioc_union_Ioi_eq_Ioi zero_le_one, integrableOn_union]
   constructor
-  ·
-    have h1 : IntegrableOn (fun t : ℝ => t ^ p) (Ioc 0 1) :=
+  · have h1 : IntegrableOn (fun t : ℝ => t ^ p) (Ioc 0 1) :=
       (intervalIntegral.intervalIntegrable_rpow' hp).1
     refine h1.mono' hmeas.aestronglyMeasurable ?_
     refine (ae_restrict_mem measurableSet_Ioc).mono (fun t ht => ?_)
@@ -494,8 +493,7 @@ private theorem integrableOn_rpow_mul_one_add_sq_rpow_neg {p σ : ℝ} (hp : -1 
     calc t ^ p * (1 + t ^ 2) ^ (-σ) ≤ t ^ p * 1 :=
           mul_le_mul_of_nonneg_left this (Real.rpow_nonneg ht.1.le _)
       _ = t ^ p := mul_one _
-  ·
-    have h1 : IntegrableOn (fun t : ℝ => t ^ (p - 2 * σ)) (Ioi 1) := integrableOn_Ioi_rpow_of_lt
+  · have h1 : IntegrableOn (fun t : ℝ => t ^ (p - 2 * σ)) (Ioi 1) := integrableOn_Ioi_rpow_of_lt
       hpσ one_pos
     refine h1.mono' hmeas.aestronglyMeasurable ?_
     refine (ae_restrict_mem measurableSet_Ioi).mono (fun t ht => ?_)
@@ -559,8 +557,7 @@ private theorem continuousAt_besselKernel (ν : ℂ) {x₀ : ℝ} (hx₀ : 0 < x
   refine continuousAt_of_dominated (bound := fun t : ℝ => t ^ (ν.re - 1) * Real.exp (-(x₀ / 4 * (t
     + t⁻¹))))
     (Filter.Eventually.of_forall fun x => (hmeasF x).aestronglyMeasurable) ?_ ?_ ?_
-  ·
-    filter_upwards [Ioi_mem_nhds (show x₀ / 2 < x₀ by linarith)] with x hx
+  · filter_upwards [Ioi_mem_nhds (show x₀ / 2 < x₀ by linarith)] with x hx
     have hx : x₀ / 2 < x := hx
     refine (ae_restrict_mem measurableSet_Ioi).mono (fun t ht => ?_)
     have ht : 0 < t := ht

@@ -1379,8 +1379,7 @@ theorem eq_of_exit_eq (hfree : ∀ (η : H) (v : Vertex G), η • v = v → η 
   obtain ⟨g, bx⟩ := x
   obtain ⟨g', by'⟩ := y
   cases bx <;> cases by'
-  ·
-    rw [exitSrc_false, exitSrc_false] at hsrc
+  · rw [exitSrc_false, exitSrc_false] at hsrc
     rw [exitTgt_false, exitTgt_false] at htgt
     have hwit := eq_of_mk_eq_mk (by decide : (1 : Fin 2) ≠ 0) hsrc htgt
     have hconj : ((edgeGen hD (g' : CoprodI G) * (edgeGen hD (g : CoprodI G))⁻¹ : H) :
@@ -1391,16 +1390,13 @@ theorem eq_of_exit_eq (hfree : ∀ (η : H) (v : Vertex G), η • v = v → η 
       eq_of_mk_zero_mem hD hfree g.2.1 g'.2.1 _ hconj
     rw [Prod.mk.injEq]
     exact ⟨Subtype.ext hgg', rfl⟩
-  ·
-    rw [exitSrc_false, exitSrc_true] at hsrc
+  · rw [exitSrc_false, exitSrc_true] at hsrc
     have hcon : (1 : Fin 2) = 0 := congrArg Sigma.fst hsrc
     exact absurd hcon (by decide)
-  ·
-    rw [exitSrc_true, exitSrc_false] at hsrc
+  · rw [exitSrc_true, exitSrc_false] at hsrc
     have hcon : (0 : Fin 2) = 1 := congrArg Sigma.fst hsrc
     exact absurd hcon (by decide)
-  ·
-    rw [exitSrc_true, exitSrc_true] at hsrc
+  · rw [exitSrc_true, exitSrc_true] at hsrc
     rw [exitTgt_true, exitTgt_true] at htgt
     rw [Prod.mk.injEq]
     exact ⟨Subtype.ext (eq_of_mk_eq_mk (by decide : (0 : Fin 2) ≠ 1) hsrc htgt), rfl⟩
@@ -1449,21 +1445,17 @@ theorem letterImage_smul_mem_farSide (hfree : ∀ (η : H) (v : Vertex G), η �
     rw [Walk.edges_append, List.mem_append] at he
     rw [Set.mem_singleton_iff]
     rcases he with he | he
-    ·
-      rintro rfl
+    · rintro rfl
       exact htgtW (W.snd_mem_support_of_mem_edges he)
-    ·
-      rw [Walk.edges_cons, Walk.edges_nil, List.mem_singleton] at he
+    · rw [Walk.edges_cons, Walk.edges_nil, List.mem_singleton] at he
       subst he
       intro hcon
       rcases Sym2.eq_iff.mp hcon with ⟨h1', h2'⟩ | ⟨h1', h2'⟩
-      ·
-        apply hxy
+      · apply hxy
         refine (eq_of_exit_eq hD hfree ?_ ?_).symm
         · exact MulAction.injective γ (hE1.trans h1')
         · exact MulAction.injective γ (hE2.trans h2')
-      ·
-        have hcontra : (1 : H) = letterImage H hD x := by
+      · have hcontra : (1 : H) = letterImage H hD x := by
           rw [← transl_exitSrc hD hfree x, h2', htv]
         exact letterImage_ne_one hD x hcontra.symm
   exact farSide_subset_farSide hsrc hp h1
@@ -1545,8 +1537,7 @@ theorem closure_range_basisFun (hfree : ∀ (η : H) (v : Vertex G), η • v = 
   by_cases hg : edgeGen hD g = 1
   · rw [hg]
     exact Subgroup.one_mem _
-  ·
-    set η : H := (transl hD (Vertex.mk 0 g))⁻¹ with hη
+  · set η : H := (transl hD (Vertex.mk 0 g))⁻¹ with hη
     have hbased : Vertex.mk (G := G) 0 ((η : CoprodI G) * g) ∈ D := by
       refine mem_of_transl_eq_one hD ?_
       rw [transl_mk_mul hD hfree, hη, inv_mul_cancel]
@@ -1669,8 +1660,7 @@ noncomputable def treeRepEquivEdgeSet
     ⟨s((⟨Vertex.mk 0 (g : CoprodI G), g.2.1⟩ : D),
        (⟨Vertex.mk 1 (g : CoprodI G), mk_one_mem_of_mem_treeRep hD hfree g.2⟩ : D)),
      adj_mk (by decide : (0 : Fin 2) ≠ 1) (g : CoprodI G)⟩) ⟨?_, ?_⟩
-  ·
-    intro g g' hgg'
+  · intro g g' hgg'
     have hgg'' := congrArg Subtype.val hgg'
     rw [Sym2.eq_iff] at hgg''
     rcases hgg'' with ⟨h1, h2⟩ | ⟨h1, h2⟩
@@ -1678,8 +1668,7 @@ noncomputable def treeRepEquivEdgeSet
         (congrArg Subtype.val h1) (congrArg Subtype.val h2))
     · have hcon : (0 : Fin 2) = 1 := congrArg (fun v => (Subtype.val v).1) h1
       exact absurd hcon (by decide)
-  ·
-    rintro ⟨e, he⟩
+  · rintro ⟨e, he⟩
     revert he
     induction e using Sym2.ind with
     | _ u w =>

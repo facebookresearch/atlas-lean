@@ -226,8 +226,7 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
     rw [add_zero] at h
     linear_combination -h
   rcases dichotomy (F := F) with ⟨s, hs, hs4⟩ | hB
-  ·
-    have hs2 : s ^ 2 ≠ 1 := fun h => hs4 (by
+  · have hs2 : s ^ 2 ≠ 1 := fun h => hs4 (by
       rw [show (4 : ℕ) = 2 * 2 from rfl, pow_mul, h, one_pow])
 
     have hγlin : ∀ a, γ a = a * γ 1 := fun a => by
@@ -291,8 +290,7 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
       linear_combination hα1 a + (a * α 1) * h3
     · simp [hγ0]
     · simp [hβ0]
-  ·
-    have hneg : (-1 : F) = 1 + 1 := by linear_combination -h3
+  · have hneg : (-1 : F) = 1 + 1 := by linear_combination -h3
     have hγ2 : γ (1 + 1) = γ 1 + γ 1 := E10 1 1
     have hβ2 : β (1 + 1) = β 1 + 1 * γ 1 + β 1 := E00 1 1
     have hα2 : α (1 + 1) = α 1 - 2 * 1 * β 1 - 1 ^ 2 * γ 1 + α 1 := E01 1 1

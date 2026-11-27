@@ -47,8 +47,7 @@ private theorem scaledGammaIntegral {a : ℂ} (ha : 0 < a.re) {r : ℝ} (hr : 0 
     (Filter.tendsto_id.const_mul_atTop hr)
     (fun x _ => by simpa using ((hasDerivAt_id x).const_mul r).hasDerivWithinAt)
     ?_ ?_ ?_
-  ·
-    simp only [Function.comp_def, mul_zero] at hsub
+  · simp only [Function.comp_def, mul_zero] at hsub
     have hΓ : (∫ u in Ioi (0 : ℝ), ((Real.exp (-u) : ℝ) : ℂ) * ((u : ℝ) : ℂ) ^ (a - 1))
         = Complex.Gamma a := (Complex.Gamma_eq_integral ha).symm
     rw [hΓ] at hsub
@@ -74,8 +73,7 @@ private theorem scaledGammaIntegral {a : ℂ} (ha : 0 < a.re) {r : ℝ} (hr : 0 
       _ = (((r : ℝ) : ℂ) ^ a)⁻¹ * Complex.Gamma a := by rw [hsub]
       _ = ((r : ℝ) : ℂ) ^ (-a) * Complex.Gamma a := by
           rw [Complex.cpow_neg]
-  ·
-    have himg : (fun t : ℝ => r * t) '' Ioi 0 ⊆ Ioi (0 : ℝ) := by
+  · have himg : (fun t : ℝ => r * t) '' Ioi 0 ⊆ Ioi (0 : ℝ) := by
       rintro u ⟨t, ht, rfl⟩
       exact mul_pos hr ht
     refine ContinuousOn.mono ?_ himg
@@ -83,16 +81,14 @@ private theorem scaledGammaIntegral {a : ℂ} (ha : 0 < a.re) {r : ℝ} (hr : 0 
       (Real.continuous_exp.comp continuous_neg)).continuousOn.mul
       (ContinuousOn.cpow_const (Complex.continuous_ofReal.continuousOn)
         (fun u hu => Or.inl (by exact_mod_cast hu)))
-  ·
-    have hIci : IntegrableOn
+  · have hIci : IntegrableOn
         (fun u : ℝ => ((Real.exp (-u) : ℝ) : ℂ) * ((u : ℝ) : ℂ) ^ (a - 1)) (Ici 0) := by
       rw [integrableOn_Ici_iff_integrableOn_Ioi]
       exact Complex.GammaIntegral_convergent ha
     refine hIci.mono_set ?_
     rintro u ⟨t, ht, rfl⟩
     exact mul_nonneg hr.le ht
-  ·
-    rw [integrableOn_Ici_iff_integrableOn_Ioi]
+  · rw [integrableOn_Ici_iff_integrableOn_Ioi]
     have hcomp : IntegrableOn
         (fun t : ℝ => ((Real.exp (-(r * t)) : ℝ) : ℂ) * ((r * t : ℝ) : ℂ) ^ (a - 1))
         (Ioi 0) := by
@@ -207,13 +203,11 @@ private theorem integrable_uncurry_kernel {a : ℂ} (ha : 1 / 2 < a.re) :
     · exact (Complex.measurable_ofReal.comp measurable_snd).pow_const _
   rw [MeasureTheory.integrable_prod_iff hmeas]
   constructor
-  ·
-    refine Filter.Eventually.of_forall fun x => ?_
+  · refine Filter.Eventually.of_forall fun x => ?_
     have h__af := integrableOn_scaledGamma ha0 (hpt x)
     simp at h__af ⊢
     exact h__af
-  ·
-    have hnorm : ∀ x : ℝ, (fun t : ℝ => ‖((Real.exp (-((1 + x ^ 2) * t)) : ℝ) : ℂ)
+  · have hnorm : ∀ x : ℝ, (fun t : ℝ => ‖((Real.exp (-((1 + x ^ 2) * t)) : ℝ) : ℂ)
         * ((t : ℝ) : ℂ) ^ (a - 1)‖) =ᵐ[MeasureTheory.volume.restrict (Ioi 0)]
         fun t : ℝ => t ^ (a.re - 1) * Real.exp (-((1 + x ^ 2) * t)) := by
       intro x

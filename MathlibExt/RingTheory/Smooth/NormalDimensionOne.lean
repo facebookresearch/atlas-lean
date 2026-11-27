@@ -280,14 +280,12 @@ public theorem Algebra.Smooth.of_isIntegrallyClosed_of_krullDimLE_one_of_perfect
     inferInstance
   suffices hfs : Algebra.FormallySmooth k B from ⟨hfs, hfp⟩
   by_cases hB : IsField B
-  ·
-    letI : Field B := hB.toField
+  · letI : Field B := hB.toField
     haveI : Module.Finite k B := finite_of_finite_type_of_isJacobsonRing k B
     haveI : Algebra.IsSeparable k B := Algebra.IsAlgebraic.isSeparable_of_perfectField
     haveI : Algebra.FormallyEtale k B := Algebra.FormallyEtale.of_isSeparable k B
     infer_instance
-  ·
-    haveI : Ring.DimensionLEOne B := ⟨fun hp hpp => hpp.isMaximal_of_ne_bot hp⟩
+  · haveI : Ring.DimensionLEOne B := ⟨fun hp hpp => hpp.isMaximal_of_ne_bot hp⟩
     haveI : IsDedekindDomain B := (isDedekindDomain_iff B (FractionRing B)).mpr
       ⟨inferInstance, inferInstance, inferInstance, fun hx => (isIntegrallyClosed_iff (FractionRing
         B)).mp inferInstance hx⟩

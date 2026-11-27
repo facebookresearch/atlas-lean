@@ -177,8 +177,7 @@ private theorem pn_coe_le_pabs {x : ℝ} (hx : 0 ≤ x) (N : ℕ) (c : ℂ[X]) :
   unfold pabs
   rcases le_or_gt N (c.natDegree + 1) with h | h
   · exact pn_mono hx h _
-  ·
-    suffices H : ∀ M, c.natDegree + 1 ≤ M → pn M x (c : ℂ⟦X⟧) = pn (c.natDegree + 1) x (c : ℂ⟦X⟧) by
+  · suffices H : ∀ M, c.natDegree + 1 ≤ M → pn M x (c : ℂ⟦X⟧) = pn (c.natDegree + 1) x (c : ℂ⟦X⟧) by
       exact (H N h.le).le
     intro M hM
     induction M, hM using Nat.le_induction with

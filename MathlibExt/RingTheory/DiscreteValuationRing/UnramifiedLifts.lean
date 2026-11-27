@@ -225,8 +225,7 @@ private theorem surjective_quotient_pow_of_comp_eq {𝒪 Onr : Type*} [CommRing 
     ⟨(r : W), map_natCast f r⟩
   refine surjective_of_comp_eq_of_ker_le f ρ c hc hcomp
     ((r : ℕ) : Onr ⧸ (Ideal.span {algebraMap 𝒪 Onr π}) ^ (N + 1)) ?_ hrange (N + 1) ?_
-  ·
-    intro x hx
+  · intro x hx
     obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective x
     have hy : y ∈ Ideal.span {algebraMap 𝒪 Onr π} := hρ y hx
     obtain ⟨s, hs⟩ := Ideal.mem_span_singleton'.1 hy
@@ -234,8 +233,7 @@ private theorem surjective_quotient_pow_of_comp_eq {𝒪 Onr : Type*} [CommRing 
     refine Ideal.mem_span_singleton'.2 ⟨Ideal.Quotient.mk _ (s * t), ?_⟩
     rw [← map_natCast (Ideal.Quotient.mk ((Ideal.span {algebraMap 𝒪 Onr π}) ^ (N + 1))) r, ←
       map_mul, mul_assoc, ht, hs]
-  ·
-    rw [← map_natCast (Ideal.Quotient.mk ((Ideal.span {algebraMap 𝒪 Onr π}) ^ (N + 1))) r, ←
+  · rw [← map_natCast (Ideal.Quotient.mk ((Ideal.span {algebraMap 𝒪 Onr π}) ^ (N + 1))) r, ←
       map_pow, Ideal.Quotient.eq_zero_iff_mem]
     exact Ideal.pow_mem_pow hrπ (N + 1)
 
@@ -386,8 +384,7 @@ private theorem fN_surjective (hunr : Ideal.span {((r : ℕ) : 𝒪)} = Ideal.sp
     WittVector.constantCoeff
     (WittVector.constantCoeff_surjective r) (rhoBar_comp_fN hker hρ₁ N)
     ((r : ℕ) : Onr ⧸ I π Onr (N + 1)) ?_ ⟨(r : WittVector r k), map_natCast _ r⟩ (N + 1) ?_
-  ·
-    rw [ker_rhoBar hker N, Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe]
+  · rw [ker_rhoBar hker N, Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe]
     refine Ideal.mem_span_singleton'.2 ⟨Ideal.Quotient.mk _ (algebraMap 𝒪 Onr v), ?_⟩
     rw [← map_natCast (Ideal.Quotient.mk (I π Onr (N + 1))) r, ← map_mul, ← map_natCast (algebraMap
       𝒪 Onr) r,

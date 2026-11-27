@@ -943,8 +943,7 @@ private theorem kwFF11_idealTowerTensorFactor_proved : KwFF10IdealTowerTensorFac
         rw [TensorProduct.smul_tmul']; congr 1
         exact Subtype.ext (by simp [toI, Algebra.smul_def]) }
   refine ⟨TensorProduct.lift γbil, ?_, ?_⟩
-  ·
-    intro w
+  · intro w
     induction w using TensorProduct.induction_on with
     | zero => exact ⟨0, map_zero _⟩
     | add w₁ w₂ h₁ h₂ =>
@@ -959,22 +958,17 @@ private theorem kwFF11_idealTowerTensorFactor_proved : KwFF10IdealTowerTensorFac
           (p := fun x hx => ∀ t : S',
             ∃ z, TensorProduct.lift γbil z = (⟨x, hx⟩ : I) ⊗ₜ[S] t)
           ?_ ?_ ?_ ?_ hx
-        ·
-          rintro _ ⟨r, hr, rfl⟩ t
+        · rintro _ ⟨r, hr, rfl⟩ t
           exact ⟨(⟨r, hr⟩ : mR) ⊗ₜ[R] t, by
             simp only [lift.tmul, γbil, LinearMap.coe_mk, AddHom.coe_mk]; rfl⟩
-        ·
-          intro t; exact ⟨0, (map_zero _).trans (TensorProduct.zero_tmul _ t).symm⟩
-        ·
-          intro x y hx hy hpx hpy t
+        · intro t; exact ⟨0, (map_zero _).trans (TensorProduct.zero_tmul _ t).symm⟩
+        · intro x y hx hy hpx hpy t
           obtain ⟨z₁, hz₁⟩ := hpx t; obtain ⟨z₂, hz₂⟩ := hpy t
           exact ⟨z₁ + z₂, by rw [map_add, hz₁, hz₂, ← TensorProduct.add_tmul]; rfl⟩
-        ·
-          intro a x hx hpx t
+        · intro a x hx hpx t
           obtain ⟨z, hz⟩ := hpx (a • t)
           exact ⟨z, by rw [hz, ← TensorProduct.smul_tmul]; rfl⟩
-  ·
-    intro z
+  · intro z
     induction z using TensorProduct.induction_on with
     | zero => simp
     | add z₁ z₂ h₁ h₂ => simp only [map_add, h₁, h₂]
@@ -995,12 +989,10 @@ private theorem kwFF12_residueQuotSES_shortExact {S : Type u} [CommRing S] [IsLo
         simp only [LinearMap.comp_apply, Submodule.coe_subtype, ← hxa]
         exact (Submodule.Quotient.mk_eq_zero _).mpr hx))).ShortExact := by
   refine ModuleCat.shortComplex_shortExact _ ?_ ?_ ?_
-  ·
-    exact LinearMap.exact_iff.mpr ((Submodule.ker_liftQ _ _ _).trans
+  · exact LinearMap.exact_iff.mpr ((Submodule.ker_liftQ _ _ _).trans
       (by simp only [Submodule.ker_mkQ]; exact (Submodule.range_subtype _).symm))
   · exact Submodule.injective_subtype _
-  ·
-    exact LinearMap.range_eq_top.mp
+  · exact LinearMap.range_eq_top.mp
       ((Submodule.range_liftQ _ _ _).trans (Submodule.range_mkQ _))
 
 private abbrev KwFF13Stacks10_99_8Pinned : Prop :=

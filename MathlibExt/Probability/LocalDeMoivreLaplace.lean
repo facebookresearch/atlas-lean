@@ -181,13 +181,11 @@ lemma localDMLIndex_ratio_half (x : ℝ) :
     nlinarith [Real.sq_sqrt hnn, sq_abs x, sq_nonneg (Real.sqrt (n:ℝ) + x)]
 
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le' h_lower_tendsto h_upper_tendsto ?_ ?_
-  ·
-    filter_upwards [eventually_gt_atTop 0] with n hn
+  · filter_upwards [eventually_gt_atTop 0] with n hn
     have hnn : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn
     simp only [localDMLIndex]
     exact (div_le_div_iff_of_pos_right hnn).mpr (by linarith [Nat.sub_one_lt_floor (y n)])
-  ·
-    filter_upwards [eventually_gt_atTop 0, h_y_pos] with n hn hy
+  · filter_upwards [eventually_gt_atTop 0, h_y_pos] with n hn hy
     have hnn : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn
     simp only [localDMLIndex]
     exact (div_le_div_iff_of_pos_right hnn).mpr (by exact_mod_cast Nat.floor_le hy)
@@ -808,8 +806,7 @@ theorem local_deMoivreLaplace_half (x : ℝ) :
   have hequiv := binomProbHalf_isEquivalent_gaussianApproxHalf x
   rw [isEquivalent_iff_tendsto_one] at hequiv
   · exact hequiv
-  ·
-    filter_upwards [Filter.Ioi_mem_atTop 0] with n hn
+  · filter_upwards [Filter.Ioi_mem_atTop 0] with n hn
     simp only [gaussianApproxHalf, Set.mem_Ioi] at hn ⊢
     apply mul_ne_zero
     · exact Real.sqrt_ne_zero'.mpr (div_pos (by norm_num : (0:ℝ) < 2)

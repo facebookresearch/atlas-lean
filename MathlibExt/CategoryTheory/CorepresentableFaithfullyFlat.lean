@@ -798,8 +798,7 @@ private theorem descends_iff
       rw [he₁, h]
   rw [key]
   constructor
-  ·
-    intro h a
+  · intro h a
     have h1 : inlA (gPt e y (a : C₁)) = inrA (gPt e y (a : C₁)) := by
       rw [← hGa a, ← h]; rfl
 
@@ -837,8 +836,7 @@ private theorem descends_iff
       (Algebra.IsEffective.of_faithfullyFlat B (B ⊗[R] S₁) (gPt e y (a : C₁))).mp
         (by rw [Algebra.TensorProduct.includeLeftSubRight_apply, h2, sub_self])
     exact ⟨b₀, hb₀⟩
-  ·
-    intro h
+  · intro h
     apply algHom_ext_of_surjective hsurj
     · intro s
       rw [AlgHom.comp_apply, hgS]

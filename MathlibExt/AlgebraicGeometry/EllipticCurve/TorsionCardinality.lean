@@ -1597,9 +1597,7 @@ lemma nonsingular_smulField : Nonsingular curveField (smulField n) := by
 
 lemma dblXYZ_smulField : dblXYZ curveField (smulField n) = smulField (2 * n) := by
   obtain rfl | hn := eq_or_ne n 0
-  ·
-
-    rw [mul_zero]
+  · rw [mul_zero]
     have h0 : smulField (0 : ℤ) = ![1, 1, 0] := by
       ext i
       fin_cases i <;> simp [smulField, smulPoly, φ_zero, ωe_zero, ψ_zero]
@@ -1949,8 +1947,7 @@ private theorem smul_formula_or_zero [W.IsElliptic] {n : ℕ} (_hn : 0 < n) {x�
   have heq : (W.baseChange K).toAffine.Equation x₀ y₀ := h.left
   have hψsq := (W.baseChange K).evalEval_ψ_sq heq (n : ℤ)
   constructor
-  ·
-    intro hΨ
+  · intro hΨ
     have hψ : ((W.baseChange K).ψ (n : ℤ)).evalEval x₀ y₀ ≠ 0 := by
       intro h0
       exact hΨ (by rw [← hψsq, h0]; exact zero_pow two_ne_zero)
@@ -1978,8 +1975,7 @@ private theorem smul_formula_or_zero [W.IsElliptic] {n : ℕ} (_hn : 0 < n) {x�
           ((W.baseChange K).Φ (n : ℤ)).eval x₀
       rw [← hψsq, div_mul_cancel₀ _ (pow_ne_zero 2 hψ),
         (W.baseChange K).evalEval_φ heq]
-  ·
-    intro hΨ
+  · intro hΨ
     have hψ0 : ((W.baseChange K).ψ (n : ℤ)).evalEval x₀ y₀ = 0 :=
       sq_eq_zero_iff.mp (hψsq.trans hΨ)
     rw [← natCast_zsmul]
@@ -2040,22 +2036,19 @@ private theorem isCoprime_Φ_ΨSq [IsAlgClosed K] [W.IsElliptic] {n : ℕ} (hn :
     linear_combination h1
   rcases mul_eq_zero.mp h0 with h12 | hG
   · rcases mul_eq_zero.mp h12 with hE | hF
-    ·
-      have hb : ((W.baseChange K).ΨSq ((n : ℤ) + 1)).eval x₀ = 0 := by
+    · have hb : ((W.baseChange K).ΨSq ((n : ℤ) + 1)).eval x₀ = 0 := by
         have h2 := ΨSq_eval_eq_zero_of_preΨ W (m := n + 1) (K := K)
           (by rwa [Nat.cast_add, Nat.cast_one])
         rwa [Nat.cast_add, Nat.cast_one] at h2
       exact eval_ne_of_isCoprime (isCoprime_ΨSq_succ W n) hΨ0 hb
-    ·
-      have hb : ((W.baseChange K).ΨSq ((n - 1 : ℕ) : ℤ)).eval x₀ = 0 :=
+    · have hb : ((W.baseChange K).ΨSq ((n - 1 : ℕ) : ℤ)).eval x₀ = 0 :=
         ΨSq_eval_eq_zero_of_preΨ W (m := n - 1) (K := K)
           (by rwa [Nat.cast_sub hn, Nat.cast_one])
       have hA := isCoprime_ΨSq_succ W (K := K) (n - 1)
       have hc : ((n - 1 : ℕ) : ℤ) + 1 = (n : ℤ) := by omega
       rw [hc] at hA
       exact eval_ne_of_isCoprime hA hb hΨ0
-  ·
-    by_cases hev : Even (n : ℤ)
+  · by_cases hev : Even (n : ℤ)
     · rw [if_pos hev] at hG
       exact one_ne_zero hG
     · rw [if_neg hev] at hG
@@ -2659,8 +2652,7 @@ private theorem card_nTorsion_odd_fibers [W.IsElliptic] {n : ℕ} (hodd : Odd n)
   have hn0 : n ≠ 0 := by rintro rfl; simp at hn
   obtain ⟨Q, hQ⟩ := exists_double_fiber_card W hodd hn
   by_cases hQQ : Q = -Q
-  ·
-    exfalso
+  · exfalso
     simp only [← hQQ, or_self] at hQ
     rw [card_smul_fiber W hodd hn Q] at hQ
     have hfin : Finite (nTorsion W (K := K) n) := by
@@ -2679,8 +2671,7 @@ private theorem card_nTorsion_odd_fibers [W.IsElliptic] {n : ℕ} (hodd : Odd n)
     rw [hcoe] at hdvdn
     have hodd' := Nat.odd_iff.mp hodd
     omega
-  ·
-    have hdisj : Disjoint (fun P : W.toAffine⟮K⟯ => n • P = Q)
+  · have hdisj : Disjoint (fun P : W.toAffine⟮K⟯ => n • P = Q)
         (fun P : W.toAffine⟮K⟯ => n • P = -Q) := by
       rw [Pi.disjoint_iff]
       intro P
@@ -3037,8 +3028,7 @@ private theorem card_nTorsion_mul_of_coprime {m n : ℕ} (hmn : Nat.Coprime m n)
         ⟨((m : ℤ) * a) • (P : W.toAffine⟮K⟯), ?_⟩),
       fun x => ⟨(x.1 : W.toAffine⟮K⟯) + (x.2 : W.toAffine⟮K⟯), ?_⟩,
       fun P => ?_, fun x => ?_⟩
-    ·
-      show m • (((n : ℤ) * b) • (P : W.toAffine⟮K⟯)) = 0
+    · show m • (((n : ℤ) * b) • (P : W.toAffine⟮K⟯)) = 0
       have hP : ((m : ℤ) * (n : ℤ)) • (P : W.toAffine⟮K⟯) = 0 := by
         have h := P.2
         show _ = _
@@ -3048,8 +3038,7 @@ private theorem card_nTorsion_mul_of_coprime {m n : ℕ} (hmn : Nat.Coprime m n)
       rw [← natCast_zsmul, smul_smul,
         show (m : ℤ) * ((n : ℤ) * b) = b * ((m : ℤ) * (n : ℤ)) by ring,
         ← smul_smul, hP, smul_zero]
-    ·
-      show n • (((m : ℤ) * a) • (P : W.toAffine⟮K⟯)) = 0
+    · show n • (((m : ℤ) * a) • (P : W.toAffine⟮K⟯)) = 0
       have hP : ((m : ℤ) * (n : ℤ)) • (P : W.toAffine⟮K⟯) = 0 := by
         have h := P.2
         rw [show (m : ℤ) * (n : ℤ) = ((m * n : ℕ) : ℤ) by push_cast; ring,
@@ -3058,8 +3047,7 @@ private theorem card_nTorsion_mul_of_coprime {m n : ℕ} (hmn : Nat.Coprime m n)
       rw [← natCast_zsmul, smul_smul,
         show (n : ℤ) * ((m : ℤ) * a) = a * ((m : ℤ) * (n : ℤ)) by ring,
         ← smul_smul, hP, smul_zero]
-    ·
-      show (m * n) • ((x.1 : W.toAffine⟮K⟯) + (x.2 : W.toAffine⟮K⟯)) = 0
+    · show (m * n) • ((x.1 : W.toAffine⟮K⟯) + (x.2 : W.toAffine⟮K⟯)) = 0
       have hx1 : m • (x.1 : W.toAffine⟮K⟯) = 0 := x.1.2
       have hx2 : n • (x.2 : W.toAffine⟮K⟯) = 0 := x.2.2
       rw [smul_add]
@@ -3068,13 +3056,11 @@ private theorem card_nTorsion_mul_of_coprime {m n : ℕ} (hmn : Nat.Coprime m n)
       have h2 : (m * n) • (x.2 : W.toAffine⟮K⟯) = 0 := by
         rw [← smul_smul, hx2, smul_zero]
       rw [h1, h2, add_zero]
-    ·
-      apply Subtype.ext
+    · apply Subtype.ext
       show ((n : ℤ) * b) • (P : W.toAffine⟮K⟯) + ((m : ℤ) * a) • (P : W.toAffine⟮K⟯) =
         (P : W.toAffine⟮K⟯)
       rw [← add_zsmul, show (n : ℤ) * b + (m : ℤ) * a = 1 by linarith [hBez], one_zsmul]
-    ·
-      have hm1 : (m : ℤ) • (x.1 : W.toAffine⟮K⟯) = 0 := by
+    · have hm1 : (m : ℤ) • (x.1 : W.toAffine⟮K⟯) = 0 := by
         rw [natCast_zsmul]; exact x.1.2
       have hn2 : (n : ℤ) • (x.2 : W.toAffine⟮K⟯) = 0 := by
         rw [natCast_zsmul]; exact x.2.2

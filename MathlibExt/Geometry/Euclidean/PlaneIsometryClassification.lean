@@ -132,8 +132,7 @@ theorem plane_isometry_classification (f : Plane ≃ᵃⁱ[ℝ] Plane) :
         OrthonormalBasis.coe_toBasis, LinearMap.toMatrix_apply, M, A, bas]
     rw [← heq]; exact h
   rcases hdet_or with hdet1 | hdet_neg1
-  ·
-    by_cases hlin : ∀ x : Plane, f.linearIsometryEquiv x = x
+  · by_cases hlin : ∀ x : Plane, f.linearIsometryEquiv x = x
     · left
       exact ⟨f 0, fun x => by
         have h := affine_decomp_aux f x; rw [hlin x] at h
@@ -181,8 +180,7 @@ theorem plane_isometry_classification (f : Plane ≃ᵃⁱ[ℝ] Plane) :
         have h4 : (f x : Plane) = v + x := hv x
         have heq : f.linearIsometryEquiv x + v = v + x := by rw [← h3, h4]
         exact add_right_cancel (heq.trans (add_comm v x))
-  ·
-    have hdetM_neg1 : M.det = -1 := by
+  · have hdetM_neg1 : M.det = -1 := by
       have : linearDet f = M.det := by unfold linearDet; exact (LinearMap.det_toMatrix bas A).symm
       linarith
     have htr : M 0 0 + M 1 1 = 0 := by

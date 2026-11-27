@@ -885,8 +885,7 @@ theorem exists_conj_mul_eq (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N) (hℓℓ' :
       have hc : (ℓ : ℤ) ∣ (γ : SL(2, ℤ)) 1 0 * (ℓ' : ℤ) := (dvd_add_left hd).mp h
       have hℓp : Prime (ℓ : ℤ) := Nat.prime_iff_prime_int.mp hℓ
       rcases hℓp.dvd_or_dvd hc with h1 | h1
-      ·
-        have hdet := Matrix.det_fin_two ((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)
+      · have hdet := Matrix.det_fin_two ((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)
         rw [(γ : SL(2, ℤ)).2] at hdet
         have : (ℓ : ℤ) ∣ 1 := by
           rw [hdet]

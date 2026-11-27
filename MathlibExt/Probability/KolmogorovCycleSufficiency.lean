@@ -420,8 +420,7 @@ theorem cycleWeight_path_independent (P : StochasticMatrix M)
   have hcp_pos := listPathProduct_append_pos P p p3 hne_p hne3 hjoin_p hp_pos hp3_pos
 
   by_cases hcp_len : 2 ≤ cp.length
-  ·
-    have hcp_head : cp.head hne_cp = i₀ := by
+  · have hcp_head : cp.head hne_cp = i₀ := by
       show (p ++ p3.tail).head _ = i₀
       rw [List.head_append_of_ne_nil hne_p]; exact hhead_p
     have hcp_last : cp.getLast hne_cp = i₀ := by
@@ -439,8 +438,7 @@ theorem cycleWeight_path_independent (P : StochasticMatrix M)
     have heq_cp : listRatioProduct P cp = 1 :=
       listRatioProduct_cycle_eq_one P hcycle cp hcp_len hne_cp hcp_loop hcp_bwd
     rw [happ_p] at heq_cp; exact heq_cp
-  ·
-    push Not at hcp_len
+  · push Not at hcp_len
     have hcp_len1 : cp.length = 1 := by
       have : 1 ≤ cp.length := List.length_pos_of_ne_nil hne_cp; omega
 
@@ -595,13 +593,11 @@ theorem cycleWeight_detailed_balance (P : StochasticMatrix M)
     cycleWeight P hirr i₀ i * P.prob i j =
     cycleWeight P hirr i₀ j * P.prob j i := by
   by_cases hPij0 : P.prob i j = 0
-  ·
-    have hPji0 : P.prob j i = 0 := by
+  · have hPji0 : P.prob j i = 0 := by
       by_contra h; push Not at h
       exact absurd (hcycle.symm_support j i (lt_of_le_of_ne (P.nonneg j i) (Ne.symm h))) (by linarith)
     rw [hPij0, hPji0, mul_zero, mul_zero]
-  ·
-    have hPij_pos : 0 < P.prob i j := lt_of_le_of_ne (P.nonneg i j) (Ne.symm hPij0)
+  · have hPij_pos : 0 < P.prob i j := lt_of_le_of_ne (P.nonneg i j) (Ne.symm hPij0)
     have hPji_pos : 0 < P.prob j i := hcycle.symm_support i j hPij_pos
     have hPji_ne : P.prob j i ≠ 0 := ne_of_gt hPji_pos
     have h_ij := cycleWeight_extend P hcycle hirr i₀ i j hPij_pos

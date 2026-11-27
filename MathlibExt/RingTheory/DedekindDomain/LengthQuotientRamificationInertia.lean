@@ -229,8 +229,7 @@ private theorem exists_subalgebra_finite_locallyPrincipal :
       have hj0 : (t₀ : κ) ^ j ≠ 0 := pow_ne_zero _ ht₀κ
       apply mul_right_cancel₀ hj0
       linear_combination hrel
-    ·
-      exfalso
+    · exfalso
       push Not at hij
       obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_lt hij
 

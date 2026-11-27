@@ -265,11 +265,9 @@ theorem exists_forall_valued_sub_le {z : FiniteAdeleRing R K} (hz : z ∈ integr
     exact this.le
   · rw [← map_sub, ← map_sub, valued_algebraMap, valued_algebraMap]
     by_cases hv : v ∈ T
-    ·
-      rw [v.intValuation_if_neg hs, Valuation.map_sub_swap]
+    · rw [v.intValuation_if_neg hs, Valuation.map_sub_swap]
       exact (v.intValuation_le_pow_iff_mem _ _).mpr (hb v hv)
-    ·
-      have hsv : s ∉ v.asIdeal := by
+    · have hsv : s ∉ v.asIdeal := by
         intro h
         apply hv
         rw [hT, Set.Finite.mem_toFinset]
@@ -395,8 +393,7 @@ theorem existsUnique_algebraMap_add_mem_adelicBox (x : AdeleRing (𝓞 K) K) :
     intro v
     rw [map_add, add_assoc, algebraMap_add_apply]
     exact add_mem (algebraMap_mem_adicCompletionIntegers (𝓞 K) K v o) (hk₁ v)
-  ·
-    obtain ⟨hk'1, hk'2⟩ := hk'
+  · obtain ⟨hk'1, hk'2⟩ := hk'
     rw [hsnd] at hk'2
     have hdiff : ∀ v : HeightOneSpectrum (𝓞 K), v.valuation K (k' - k₁) ≤ 1 := fun v => by
       have h1 := hk'2 v

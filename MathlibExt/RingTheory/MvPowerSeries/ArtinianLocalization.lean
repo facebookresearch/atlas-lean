@@ -80,8 +80,7 @@ private theorem mem_span_X_pow_of_coeff_eq_zero_aux (N : ℕ) :
   | succ k ih =>
     intro f hf
     by_cases hk : k < n
-    ·
-      set i₀ : Fin n := ⟨k, hk⟩ with hi₀
+    · set i₀ : Fin n := ⟨k, hk⟩ with hi₀
       let r : MvPowerSeries (Fin n) K := fun mo => if mo i₀ ≤ N then coeff mo f else 0
       have hr : ∀ mo, coeff mo r = if mo i₀ ≤ N then coeff mo f else 0 := fun _ => rfl
       have hdiv : (X i₀ : MvPowerSeries (Fin n) K) ^ (N + 1) ∣ (f - r) := by
@@ -105,8 +104,7 @@ private theorem mem_span_X_pow_of_coeff_eq_zero_aux (N : ℕ) :
       obtain ⟨q, hq⟩ := hdiv
       rw [hq]
       exact Ideal.mul_mem_right _ _ (Ideal.subset_span ⟨i₀, rfl⟩)
-    ·
-      refine ih f fun mo hmo => hf mo fun i hi => hmo i ?_
+    · refine ih f fun mo hmo => hf mo fun i hi => hmo i ?_
       have := i.isLt
       omega
 

@@ -127,8 +127,7 @@ private theorem glueSubmodule_mul_inv (u : (B ⧸ 𝔠)ˣ) :
   apply le_antisymm
   · calc _ ≤ glueSubmodule (A := A) 𝔠 ((u : B ⧸ 𝔠) * ↑u⁻¹) := glueSubmodule_mul_le 𝔠 _ _
       _ = 1 := by rw [Units.mul_inv, glueSubmodule_one h𝔠]
-  ·
-    obtain ⟨x, hx⟩ := Ideal.Quotient.mk_surjective (↑u⁻¹ : B ⧸ 𝔠)
+  · obtain ⟨x, hx⟩ := Ideal.Quotient.mk_surjective (↑u⁻¹ : B ⧸ 𝔠)
     obtain ⟨y, hy⟩ := Ideal.Quotient.mk_surjective (u : B ⧸ 𝔠)
     have hxmem : x ∈ glueSubmodule (A := A) 𝔠 (u : B ⧸ 𝔠) :=
       ⟨1, by rw [hx, Units.mul_inv, map_one, map_one]⟩
@@ -155,8 +154,7 @@ private noncomputable def glueUnits : (B ⧸ 𝔠)ˣ →* (Submodule A B)ˣ wher
     apply Units.ext
     simp only [Units.val_mul]
     apply le_antisymm
-    ·
-      have h1 : glueSubmodule (A := A) 𝔠 (↑v⁻¹ : B ⧸ 𝔠) * glueSubmodule 𝔠 (v : B ⧸ 𝔠) = 1 := by
+    · have h1 : glueSubmodule (A := A) 𝔠 (↑v⁻¹ : B ⧸ 𝔠) * glueSubmodule 𝔠 (v : B ⧸ 𝔠) = 1 := by
         rw [mul_comm]; exact glueSubmodule_mul_inv h𝔠 v
       calc glueSubmodule (A := A) 𝔠 ((u : B ⧸ 𝔠) * v)
           = glueSubmodule 𝔠 ((u : B ⧸ 𝔠) * v) *

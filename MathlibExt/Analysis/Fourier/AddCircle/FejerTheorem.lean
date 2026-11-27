@@ -77,8 +77,7 @@ theorem cesaroMean_uniform_bound (f : C(AddCircle T, ℂ))
         rw [dist_eq_zero]
         exact hinj (Subtype.coe_injective h_val)
       linarith [show δ ≤ dist t_min (0 : AddCircle T) from ht_min_mem]
-    ·
-      exact ⟨1, one_pos, fun t ht => absurd ⟨t, ht⟩ hne⟩
+    · exact ⟨1, one_pos, fun t ht => absurd ⟨t, ht⟩ hne⟩
   obtain ⟨N₀, hN₀⟩ := exists_nat_gt (16 * ‖f‖ / (ε * δ' ^ 2))
   refine ⟨N₀, fun N hN x => ?_⟩
   rw [dist_eq_norm, cesaroMean_eq_fejer_convolution (⇑f) hf_int N x]
@@ -127,8 +126,7 @@ theorem cesaroMean_uniform_bound (f : C(AddCircle T, ℂ))
     intro t
     rw [norm_smul]
     by_cases ht : dist t (0 : AddCircle T) < δ
-    ·
-      have hfx_close : ‖f x - f (x - t)‖ < ε / 2 := by
+    · have hfx_close : ‖f x - f (x - t)‖ < ε / 2 := by
         have hd : dist x (x - t) < δ := by
           rw [dist_eq_norm, sub_sub_cancel]
           rwa [dist_eq_norm, sub_zero] at ht
@@ -139,8 +137,7 @@ theorem cesaroMean_uniform_bound (f : C(AddCircle T, ℂ))
             apply mul_le_mul_of_nonneg_left (le_of_lt hfx_close) (norm_nonneg _)
         _ = ε / 2 * ‖fejerKernel N t‖ := by ring
         _ ≤ ε / 2 * ‖fejerKernel N t‖ + 2 * ‖f‖ * C := le_add_of_nonneg_right (by positivity)
-    ·
-      push Not at ht
+    · push Not at ht
       have h_decay_t : ‖fejerKernel N t‖ ≤ C :=
         hdecay δ' hδ'_pos t (hδ'_bound t ht)
       have hf_bound : ‖f x - f (x - t)‖ ≤ 2 * ‖f‖ :=

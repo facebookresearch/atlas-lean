@@ -90,8 +90,7 @@ private lemma conjugation_pow_four
       omega
     rcases hmod5 with h | h | h | h | h <;> simp_all
   rcases hk_mod with hk1 | hk4
-  ·
-    exfalso; apply hnc
+  · exfalso; apply hnc
     have hyx_eq_x : y * x * y⁻¹ = x := by
       rw [← hk]; conv_lhs => rw [← zpow_mod_orderOf x k]
       rw [hx5]; simp only [Nat.cast_ofNat]
@@ -108,8 +107,7 @@ private lemma conjugation_pow_four
       have := hcomm.orderOf_mul_eq_mul_orderOf_of_coprime (by rw [hx5, hy2]; norm_num)
       rw [hx5, hy2] at this; exact this
     exact isCyclic_of_orderOf_eq_card (x * y) (by rw [hord, Nat.card_eq_fintype_card, hG])
-  ·
-    rw [← hk]; conv_lhs => rw [← zpow_mod_orderOf x k]
+  · rw [← hk]; conv_lhs => rw [← zpow_mod_orderOf x k]
     rw [hx5]; simp only [Nat.cast_ofNat]
     rw [show k % (5 : ℤ) = 4 from hk4]
     norm_num
