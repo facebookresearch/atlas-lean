@@ -18,7 +18,7 @@ zero input, and strict growth of the iterates of `hofL`.
 
 Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
 Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3
-(arXiv:2410.00529; TeX source read for the definitions), Proposition 4.
+(arXiv:2410.00529; TeX source read for the definitions), Proposition 2.3.
 -/
 
 namespace MathlibExtTest.NumberTheory.GeneralizedHofstadterOrderHofLIterateBasic
