@@ -433,4 +433,44 @@ theorem sum_neg_one_pow_sub_choose_catalan (n : ℕ) :
     _ = weightedBinomial 1 evenCatalan n := by rw [weightedBinomial_comp]; norm_num
     _ = _ := by rw [weightedBinomial_evenCatalan]; simp
 
+open Finset
+
+/-- **Even-index binomial sum of weighted central binomial coefficients.** Write
+$C_m = \binom{2m}{m}/(m+1)$ for the $m$-th Catalan number. For every natural number $n$,
+$$\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{1}{(k+1) 2^{2k}} \binom{2k}{k} =
+\frac{2}{2^n (n+2)} (2n+1) C_n.$$
+
+Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
+Sums*, INTEGERS 26 (2026), Article A19, Proposition 4 (`integers-2026-A19-prop-4`). -/
+theorem sum_choose_even_centralBinom_div_succ (n : ℕ) :
+    ∑ k ∈ range (n / 2 + 1),
+        (n.choose (2 * k) : ℚ) / (k + 1) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
+      2 / 2 ^ n / (n + 2) * (2 * n + 1) * catalan n := by
+  have hcentral (k : ℕ) : ((2 * k).choose k : ℚ) = ((k : ℚ) + 1) * catalan k := by
+    exact_mod_cast (succ_mul_catalan_eq_centralBinom k).symm
+  have htouchard : (catalan (n + 1) : ℚ) =
+      ∑ k ∈ range (n / 2 + 1),
+        (catalan k : ℚ) * 2 ^ (n - 2 * k) * (n.choose (2 * k) : ℚ) := by
+    exact_mod_cast touchard_catalan_identity n
+  have hrec : ((n : ℚ) + 2) * catalan (n + 1) =
+      2 * (2 * (n : ℚ) + 1) * catalan n := by
+    exact_mod_cast touchard_catalan_rec n
+  calc
+    _ = (catalan (n + 1) : ℚ) / 2 ^ n := by
+      conv_rhs => rw [htouchard, div_eq_mul_inv, Finset.sum_mul]
+      refine Finset.sum_congr rfl ?_
+      intro k hk
+      have hkn : 2 * k ≤ n := by
+        have hk' := mem_range.mp hk
+        omega
+      have hpow : (2 : ℚ) ^ n = 2 ^ (n - 2 * k) * 2 ^ (2 * k) := by
+        rw [← pow_add, Nat.sub_add_cancel hkn]
+      rw [hcentral, hpow]
+      field_simp
+    _ = _ := by
+      have hcat : (catalan (n + 1) : ℚ) = 2 * (2 * (n : ℚ) + 1) * catalan n / (n + 2) :=
+        (eq_div_iff (by positivity)).2 (by rw [mul_comm]; exact hrec)
+      rw [hcat]
+      ring
+
 end MetaMathlibExt
