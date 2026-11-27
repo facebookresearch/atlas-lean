@@ -8,7 +8,7 @@
 
 The resident $\rho(t)$ is the unique trajectory at height $1$ with slope $0$; type fitnesses are $M_0=0$, $M_i=M_{\rho(T_i)}+A_i$, and the resident fitness is $F(t)=M_{\rho(t)}$.
 
-**Moran prelimit.** In a Moran model of size $N$, new types arise at the jump times of a Poisson process of rate $\lambda/\log N$, in a randomly chosen individual of type $i$, with fitness $M^N_j=M^N_i+A_j$, $A_j\sim\gamma$ i.i.d.; reproduction is neutral plus a selective component at rate proportional to fitness differences. Let $X^N_i(t)$ be the size of type $i$ and $H^N_i(t)=\log(1+X^N_i(t\log N))/\log N$.
+**Moran prelimit.** In a Moran model of size $N$, new types arise at the jump times of a Poisson process of rate $\lambda/\log N$, in a randomly chosen individual of type $i$, with fitness $M^N_j=M^N_i+A_j$, $A_j\sim\gamma$ i.i.d.; an individual of type $j$ replaces an individual of type $\ell$ by its offspring at total rate $X^N_jX^N_\ell\,\big(1+(M^N_j-M^N_\ell)^+\big)/N$ (neutral reproduction at rate $1$ per individual plus a selective bonus equal to the fitness difference). Let $X^N_i(t)$ be the size of type $i$ and $H^N_i(t)=\log(1+X^N_i(t\log N))/\log N$.
 
 **Statements.**
 1. *(Scaling limit.)* As $N\to\infty$, $H^N\to\mathscr{H}$ in distribution in $\mathcal{D}(\mathbb{R}_+,[0,1])^{\mathbb{N}_0}$, the fitness vectors $(M^N_1,\dots,M^N_i)$ converge to $(M_1,\dots,M_i)$, the mean population fitness $\bar F^N$ converges to $F$ in the Skorokhod $M_2$ topology, and the genealogical tree of types restricted to $\{0,\dots,i\}$ converges.
@@ -21,4 +21,4 @@ A surviving mutant with advantage $a$ over the resident grows like a supercritic
 
 ## Sources
 
-- Felix Hermann, Adrián González Casanova, Renato Soares dos Santos, András Tóbiás and Anton Wakolbinger, "From clonal interference to Poissonian interacting trajectories", Ann. Appl. Probab. 35 (2025), 2823–2865, <https://doi.org/10.1214/25-AAP2188>. Numbering follows the arXiv version, arXiv:2407.00793 (2024): Definition 2.4 (PIT dynamics), the definitions of resident type and fitness (Section 2.1), Theorem 2.7 (scaling limit), Theorem 2.8 (speed of adaptation) and Theorem 2.12 (functional central limit theorem), <https://doi.org/10.48550/arXiv.2407.00793>.
+- Felix Hermann, Adrián González Casanova, Renato Soares dos Santos, András Tóbiás and Anton Wakolbinger, "From clonal interference to Poissonian interacting trajectories", Ann. Appl. Probab. 35 (2025), 2823–2865, <https://doi.org/10.1214/25-AAP2188>. Numbering follows the arXiv version, arXiv:2407.00793 (2024): Definition 2.1 (PIT dynamics), Definition 2.4 (resident type, fitness of types, resident fitness), Theorem 2.7 (scaling limit), Theorem 2.8 (speed of adaptation) and Theorem 2.12 (functional central limit theorem), <https://doi.org/10.48550/arXiv.2407.00793>.

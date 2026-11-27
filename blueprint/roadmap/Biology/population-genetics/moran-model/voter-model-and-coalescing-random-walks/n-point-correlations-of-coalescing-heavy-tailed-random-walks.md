@@ -1,8 +1,8 @@
 # $N$-point correlations of coalescing heavy-tailed random walks
 
-**Setting.** Start a coalescing random walk from every site of $\mathbb Z$: walkers jump at rate $1$ with a symmetric kernel in the domain of attraction of an $\alpha$-stable law, $\alpha \in (0, 1]$, with scaling function $B_t$ (so $X_t/B_t$ converges to a stable law with density $g_\alpha$), and two walkers merge when they meet. These are the dual lineages of the voter model with long-range interactions. Let $\xi_t(x) = 1$ if site $x$ is occupied at time $t$, and define
+**Setting.** Start a coalescing random walk from every site of $\mathbb Z$: walkers jump at rate $1$ with a symmetric kernel in the domain of attraction of an $\alpha$-stable law, $\alpha \in (0, 1]$, so that the position $X_t$ of a single walker started at $0$ satisfies: $X_t/b_t$ converges to a stable law with density $g_\alpha$ for some scaling function $b_t$, and two walkers merge when they meet. These are the dual lineages of the voter model with long-range interactions. Let $\xi_t(x) = 1$ if site $x$ is occupied at time $t$, and fix the scaling function as $B_t := g_\alpha(0)/\mathbb P(X_t = 0)$ ((5) of the source; $B_t \sim b_t$), so that
 
-$$l(t) = \int_0^t \frac{ds}{B_s}, \qquad \ell(t) = \frac{B_t\,l(t)}{t}.$$
+$$l(t) = \int_0^t \frac{ds}{B_s} = \frac{1}{g_\alpha(0)}\int_0^t \mathbb P(X_s = 0)\,ds, \qquad \ell(t) = \frac{B_t\,l(t)}{t}.$$
 
 The walk is marginally recurrent when $\alpha = 1$ and $l(\infty) = \infty$, and transient otherwise; in the marginally recurrent case assume $\ell(t)^K \ge l(t)$ for some $K$ and all large $t$.
 

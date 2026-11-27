@@ -1,6 +1,6 @@
 # Poisson limit for fixation times of beneficial mutations in a Moran model with weak clonal interference
 
-**Model.** A population of fixed size $N$ evolves in continuous time. Each individual carries a number $k \ge 0$ of beneficial mutations and has fitness $(1+s_N)^k$. Each individual dies at rate $1$ and is replaced by the offspring of an individual chosen with probability proportional to fitness; each newborn independently acquires one additional beneficial mutation with probability $\mu_N$ (unlimited supply of beneficial mutations). Let $X_{k,N}(t)$ be the number of individuals with exactly $k$ mutations, $T_{0,N} = 0$ and
+**Model.** A population of fixed size $N$ evolves in continuous time. Each individual carries a number $k \ge 0$ of beneficial mutations and has fitness $(1+s_N)^k$. Each individual dies at rate $1$ and is replaced by the offspring of an individual chosen with probability proportional to fitness; independently of reproduction, each individual acquires one additional beneficial mutation at the times of a homogeneous Poisson process of rate $\mu_N$ during its life, and offspring inherit their parent's mutations (unlimited supply of beneficial mutations). Let $X_{k,N}(t)$ be the number of individuals with exactly $k$ mutations, $T_{0,N} = 0$ and
 
 $$T_{k,N} = \inf\Big\{t \ge 0 : X_{k,N}(t) > \frac{\log N}{s_N}\Big\},$$
 

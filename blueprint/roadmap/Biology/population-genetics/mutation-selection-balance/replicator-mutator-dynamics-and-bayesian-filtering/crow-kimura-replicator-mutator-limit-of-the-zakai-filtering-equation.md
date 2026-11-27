@@ -10,15 +10,19 @@ $$\partial_t\mu^d_t(x)=\mathcal{L}^*\mu^d_t(x)-\frac r2\Big\|h(x)-\frac{dZ^d_t}{
 
 where $\|v\|^2_\Xi=v^\top\Xi^{-1}v$: fitness is a Gaussian log-likelihood of the current observation increment ($s=0$), plus a frequency-dependent term ($s\neq0$).
 
-**Statement.** Let $q_t$ solve the modified Zakai equation (Itô form)
+**Statement.** Let $q_t$ solve the modified Zakai equation, in Stratonovich form ((5.4) of the source)
 
-$$dq_t=\mathcal{L}^*q_t\,dt-\frac s2h^\top\Xi^{-1}h\,q_t\,dt+(r-s)\,q_t\,h^\top\Xi^{-1}dZ_t,$$
+$$dq_t=\mathcal{L}^*q_t\,dt-\frac r2h^\top\Xi^{-1}h\,q_t\,dt+(r-s)\,q_t\,h^\top\Xi^{-1}\circ dZ_t,$$
+
+equivalently, since $d\langle Z\rangle_t=\Xi\,dt$, in Itô form
+
+$$dq_t=\mathcal{L}^*q_t\,dt-\tfrac12\big[r-(r-s)^2\big]h^\top\Xi^{-1}h\,q_t\,dt+(r-s)\,q_t\,h^\top\Xi^{-1}dZ_t,$$
 
 with $q_0=\mu^d_0=f$ a bounded smooth probability density. Then for every $T>0$ and $p\ge1$,
 
 $$\lim_{d\to\infty}\mathbb{E}\Big[\sup_{0\le t\le T}|\mu^d_t(x)-q_t(x)|^p\Big]=0\qquad\text{for all }x,$$
 
-provided $r-s$ is below an explicit bound depending on $T$, $p$, the growth constant of $h$ and $\Xi$. For $r=1$, $s=0$ the limit is the standard Zakai equation, whose normalization is the Kushner-Stratonovich equation for the posterior density of $X_t$ given $(Z_u)_{u\le t}$: the normalized replicator-mutator dynamics converge to exact Bayesian filtering. With $s\ne0$ in the linear-Gaussian case the limit corresponds to an ensemble Kalman-Bucy filter with covariance inflation, which helps under model misspecification.
+provided $r-s$ is below an explicit bound depending on $T$, $p$, the growth constant of $h$ and $\Xi$. The Itô form printed in the source's statement of Theorem 3.1, (3.13), has drift $-\frac s2h^\top\Xi^{-1}h\,q_t$; it agrees with the Stratonovich form (5.4) used in the proof only when $(r-s)(r-s-1)=0$, so it is a misprint in general. For $r=1$, $s=0$ the limit is the standard Zakai equation, whose normalization is the Kushner-Stratonovich equation for the posterior density of $X_t$ given $(Z_u)_{u\le t}$: the normalized replicator-mutator dynamics converge to exact Bayesian filtering. With $s\ne0$ in the linear-Gaussian case the limit corresponds to an ensemble Kalman-Bucy filter with covariance inflation, which helps under model misspecification.
 
 ## Expansion
 

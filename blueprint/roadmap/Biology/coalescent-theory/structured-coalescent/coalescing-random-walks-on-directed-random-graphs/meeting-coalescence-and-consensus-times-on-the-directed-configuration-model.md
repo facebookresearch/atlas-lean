@@ -14,9 +14,9 @@ where $d_W$ is the $L^1$-Wasserstein distance; in particular the expected meetin
 
 **Corollary (coalescence and consensus).** With independent $Z_k \sim \mathrm{Exp}\binom k2$,
 
-$$d_W\Big(\frac{\tau_{\mathrm{coal}}}{\tfrac12\vartheta n},\ \sum_{k\ge2}Z_k\Big) \xrightarrow{\mathbb{P}} 0,\qquad d_W\Big(\frac{\tau_{\mathrm{cons}}}{\tfrac12\vartheta n},\ \sum_{k\ge K}Z_k\Big) \xrightarrow{\mathbb{P}} 0$$
+$$d_W\Big(\frac{\tau_{\mathrm{coal}}}{\tfrac12\vartheta n},\ \sum_{k\ge2}Z_k\Big) \xrightarrow{\mathbb{P}} 0,\qquad d_W\Big(\frac{\tau_{\mathrm{cons}}}{\tfrac12\vartheta n},\ \sum_{k>K}Z_k\Big) \xrightarrow{\mathbb{P}} 0$$
 
-for the voter model started from i.i.d. $\mathrm{Bernoulli}(u)$ opinions, where $K \sim U A + (1-U)B$ with $U \sim \mathrm{Bern}(u)$, $A \sim \mathrm{Geom}(1-u)$, $B \sim \mathrm{Geom}(u)$ independent of the $Z_k$. Thus coalescing walks on the DCM behave like a time-changed Kingman coalescent.
+for the voter model started from i.i.d. $\mathrm{Bernoulli}(u)$ opinions, where $K \sim U A + (1-U)B$ with $U \sim \mathrm{Bern}(u)$, $A \sim \mathrm{Geom}(1-u)$, $B \sim \mathrm{Geom}(u)$ geometric laws on $\{1,2,\dots\}$ (so $K\ge1$), independent of the $Z_k$. The source's Corollary 3.2(ii) prints $\sum_{k\ge K}$ in (3.8), a misprint: (3.8) is derived from Theorem 2.2, (2.16), which has $\sum_{k>K}$ (as in Oliveira's theorem), and $Z_1\sim\mathrm{Exp}(0)$ is undefined. Thus coalescing walks on the DCM behave like a time-changed Kingman coalescent.
 
 **Examples.** For $d$-regular in- and out-degrees, $\vartheta = \sqrt{d/(d-1)} \in (1,\sqrt2]$. If all out-degrees equal $d$, $\vartheta = \sqrt{d(d-1)}/(\beta - 1) \le \sqrt{d/(d-1)}$; for Eulerian degree sequences ($d^+_x = d^-_x$), $\vartheta = \big(\beta/\delta - 1 + \sqrt{1 - 1/\delta}\big)^{-1}$.
 

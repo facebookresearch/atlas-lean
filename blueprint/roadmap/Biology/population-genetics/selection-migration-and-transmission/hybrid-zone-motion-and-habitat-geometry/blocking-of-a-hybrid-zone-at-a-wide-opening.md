@@ -6,7 +6,7 @@ $$\partial_tu^\epsilon=\Delta u^\epsilon+\frac1{\epsilon^2}u^\epsilon(1-u^\epsil
 
 with $\nu>0$ the selective advantage of $aa$ over $AA$ and $\Omega\subset\mathbb R^d$ ($d\ge2$) a cylinder-like domain $\Omega=\{(x_1,x'):x'\in\phi(x_1)\}$. The *hybrid zone* is the thin layer where $u^\epsilon\in(\delta,1-\delta)$; as $\epsilon\to0$ it moves by mean curvature plus a constant normal velocity $\nu$, meeting $\partial\Omega$ at right angles. Take first the isthmus domain: cross-section $\{\|x'\|<r_0\}$ for $x_1>0$ (the channel where type $a$ starts) and $\{\|x'\|<R_0\}$ for $x_1<0$, with $r_0<R_0$.
 
-**Theorem (blocking).** If $r_0<\frac{d-1}{\nu}\wedge R_0$, fix $\mathbbm r\in(r_0,R_0)$ and let $\hat d(x)$ be the signed distance to the hemispherical cap $N_{\mathbbm r}=\{x\in\Omega:\|x\|=\mathbbm r,\ x_1<0\}$ (negative towards $x_1=-\infty$). For every $k$ there are $\hat\epsilon(k),M(k)>0$ such that for $\epsilon<\hat\epsilon$ and **all** $t\ge0$: $\hat d(x)\le-M\epsilon|\log\epsilon|\Rightarrow u^\epsilon(x,t)\le\epsilon^k$. The advantageous type never passes the opening.
+**Theorem (blocking).** If $r_0<\frac{d-1}{\nu}\wedge R_0$, fix $\bar r\in(r_0,R_0)$ and let $\hat d(x)$ be the signed distance to the hemispherical cap $N_{\bar r}=\{x\in\Omega:\|x\|=\bar r,\ x_1<0\}$ (negative towards $x_1=-\infty$). For every $k$ there are $\hat\epsilon(k),M(k)>0$ such that for $\epsilon<\hat\epsilon$ and **all** $t\ge0$: $\hat d(x)\le-M\epsilon|\log\epsilon|\Rightarrow u^\epsilon(x,t)\le\epsilon^k$. The advantageous type never passes the opening.
 
 **Theorem (invasion).** If $r_0>\frac{d-1}{\nu}$, then for every $x\in\Omega$ and $\delta>0$ there are $\hat t$ and $\hat\epsilon$ with $u^\epsilon(x,t)\ge1-\delta$ for all $\epsilon<\hat\epsilon$, $t\ge\hat t$.
 

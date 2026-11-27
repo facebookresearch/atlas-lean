@@ -14,7 +14,7 @@ with absorption at the boundary; it is the flow of bridges (in the sense of Bert
 
 **Theorem (pathwise construction).** All $\mathrm{Jacobi}(\delta,\delta')$ flows, simultaneously for all real $\delta, \delta'$, can be built from the local-time flow of a single two-sided perturbed reflecting Brownian motion: its local times form $\mathrm{BESQ}$ flows (of dimension $2/\mu$ forward and $2 - 2/\mu$ backward), and the space-time transformation above turns them into Jacobi flows.
 
-**Proposition (primitive Eve).** For the Jacobi flow obtained in this way, let $\Xi_r = \inf\{v \in [0,1] : Y_{r,x}(v) = 1 \text{ for some } x < r\}$, the "primitive Eve" process (the location of the ancestor of the whole population). Then $\Xi_0 \sim \mathrm{Beta}(\delta/2, 1)$, and conditionally on $\Xi_0$, $(\Xi_{-t})_{t\ge0}$ and $(\Xi_t)_{t\ge0}$ are independent $\mathrm{Jacobi}(\delta,2)$ and $\mathrm{Jacobi}(\delta,0)$ processes.
+**Proposition (primitive Eve).** Fix $\mu>0$ and let $Y$ be the flow built from a two-sided perturbed reflecting Brownian motion with parameter $\mu$ (the flow of Remark 4.8 of the source): its forward flow on the positive time axis is a $\mathrm{Jacobi}(\delta,0)$ flow with $\delta=2/\mu$, and its backward flow on the negative time axis is a killed $\mathrm{Jacobi}(2-\delta,0)$ flow (so here $\delta'=0$). Let $\Xi_r = \inf\{v \in [0,1] : Y_{r,x}(v) = 1 \text{ for some } x < r\}$, the "primitive Eve" process (the location of the ancestor of the whole population). Then $\Xi_0 \sim \mathrm{Beta}(\delta/2, 1)$, and conditionally on $\Xi_0$, $(\Xi_{-t})_{t\ge0}$ and $(\Xi_t)_{t\ge0}$ are independent $\mathrm{Jacobi}(\delta,2)$ and $\mathrm{Jacobi}(\delta,0)$ processes.
 
 ## Expansion
 

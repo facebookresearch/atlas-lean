@@ -2,7 +2,7 @@
 
 **Setting.** Fix $N \in \mathbb N \cup \{\infty\}$, $\kappa > 0$ and positive sequences $(\lambda_i)$, $(\mu_i)$. A *birth–death process with killing* $X$ on $\{0, \dots, N\} \cup \{\Delta\}$ jumps $i \to i+1$ at rate $i\lambda_i$, $i \to i-1$ at rate $i\mu_i$, and $i \to \Delta$ (killing) at rate $i\kappa$; let $b_i = \mathbb P_i(X \text{ is absorbed at } 0)$. The *paired birth–death process with catastrophes* $Z$ on $\{1, \dots, N-1\}$ jumps $i \to i+1$ at rate $i\lambda_{i+1}$, $i \to i-1$ at rate $(i-1)\mu_{i+1} + \kappa$, and $i \to j$ at rate $\kappa$ for every $j \le i-2$ (a catastrophe); let $a_i = \mathbb P(Z_{\mathrm{eq}} > i)$ be its stationary tail probabilities.
 
-**Theorem.** (For $N = \infty$ under growth conditions on $\lambda_i, \mu_i$.) $Z$ has an equilibrium distribution and
+**Theorem.** (For $N = \infty$, assume $\sum_{i\ge1}1/\lambda_i = \infty$ and $\sum_{i\ge1}1/\mu_i = \infty$.) $Z$ has an equilibrium distribution and
 
 $$\frac{b_i}{b_2} = \frac{a_{i-2} - a_{i-1}}{a_0 - a_1}\prod_{j=1}^{i-2}\frac{\mu_{j+2}}{\lambda_{j+1}}, \quad 2 \le i \le N, \qquad a_i = \frac{b_{i+1} - b_{i+2}}{b_1 - b_2}\prod_{j=1}^{i}\frac{\lambda_{j+1}}{\mu_{j+1}}, \quad 0 \le i \le N-2.$$
 
