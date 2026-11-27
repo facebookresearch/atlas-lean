@@ -54,22 +54,28 @@ section Coarsening
 
 variable {Y : Type*} [Fintype Y] [DecidableEq Y]
 
-/-- Π-coarsening: each point gets the average of `D` over its block. -/
+/-- The `P`-coarsening of `D : Y → ℝ` (Definition 1): each point `y` gets
+the average `(∑ z ∈ B, D z) / |B|` of `D` over the block `B` of `P` that
+contains `y`. -/
 noncomputable def coarsen (P : Finpartition (Finset.univ : Finset Y)) (D : Y → ℝ) :
     Y → ℝ :=
   fun y => (∑ z ∈ P.part y, D z) / (P.part y).card
 
-/-- `g` is calibrated to `p` if it is a coarsening of `p`. -/
+/-- `g` is calibrated to `p` (Definition 1) when `g = coarsen P p` for some
+partition `P` of `Y`. -/
 def IsCalibratedTo (g p : Y → ℝ) : Prop :=
   ∃ P : Finpartition (Finset.univ : Finset Y), g = coarsen P p
 
-/-- The level-set partition `B(g)`. -/
+/-- The level-set partition `B(g)` of `Y`: `y` and `z` lie in the same block
+exactly when `g y = g z`. -/
 noncomputable def levelPartition (g : Y → ℝ) :
     Finpartition (Finset.univ : Finset Y) := by
   classical
   exact Finpartition.ofSetoid (Setoid.ker g)
 
-/-- `Mis_∞(g, p) = ‖p^{B(g)} − g‖_TV`. -/
+/-- Eq. (2): `Mis_∞(g, p) = ‖p^{B(g)} − g‖_TV`, the total variation distance
+`(1/2) ∑ y, |p^{B(g)}(y) − g(y)|` between the coarsening of `p` along the
+level sets of `g` and `g` itself. -/
 noncomputable def misInf (g p : Y → ℝ) : ℝ :=
   tvDist (coarsen (levelPartition g) p) g
 
@@ -97,7 +103,8 @@ theorem sum_coarsen (P : Finpartition (Finset.univ : Finset Y)) (D : Y → ℝ) 
     rw [hpart y hy]
   rw [havg, Finset.sum_const, nsmul_eq_mul, mul_comm, div_mul_cancel₀ _ hcard]
 
-/-- `g` is calibrated to `p` exactly when `Mis_∞(g, p) = 0`. -/
+/-- For any real functions `g` and `p` on `Y` (no normalization is needed),
+`g` is calibrated to `p` exactly when `Mis_∞(g, p) = 0`. -/
 theorem isCalibratedTo_iff_misInf_eq_zero {g p : Y → ℝ} :
     IsCalibratedTo g p ↔ misInf g p = 0 := by
   classical
@@ -235,13 +242,21 @@ section AdaptiveBins
 
 variable {Y : Type*} [Fintype Y]
 
-/-- The adaptive-bin threshold `t_i = sup {z ∈ [0,1] | ∑_{g y ≤ z} g y ≤ i / b}`. -/
+/-- The adaptive-bin threshold of Definition 2,
+`t_i = sup {z ∈ [0, 1] | ∑_{y : g y ≤ z} g y ≤ i / b}` (with `i / 0 = 0`).
+It is defined for every `g`, `b` and `i`; the set contains `0` and lies in
+`[0, 1]`, so `0 ≤ t_i ≤ 1`. -/
 noncomputable def binThreshold (g : Y → ℝ) (b i : ℕ) : ℝ :=
   sSup {z : ℝ | z ∈ Set.Icc (0 : ℝ) 1 ∧
     (∑ y ∈ Finset.univ.filter (fun y => g y ≤ z), g y) ≤ (i : ℝ) / b}
 
-/-- The 0-based index of the adaptive bin containing `y`:
-the least `i` with `g y ≤ t_{i+1}`. -/
+/-- `binIndex g b y = sInf {i : ℕ | g y ≤ t_{i+1}}`, defined for every `g`,
+`b` and `y`: when no threshold reaches `g y` the set is empty and the value
+is `0` (for instance when `g y > 1`, as every threshold is at most `1`).
+When `g` is a probability vector and `1 ≤ b`, the set is nonempty, and
+`binIndex g b y` is its least element `i < b`: the 0-based index of the
+adaptive bin containing `y`, which is `B_[0, t_1]` for `i = 0` and
+`B_(t_i, t_{i+1}]` otherwise (`binIndex_spec`). -/
 noncomputable def binIndex (g : Y → ℝ) (b : ℕ) (y : Y) : ℕ :=
   sInf {i : ℕ | g y ≤ binThreshold g b (i + 1)}
 
@@ -336,8 +351,9 @@ theorem binIndex_spec {g : Y → ℝ} (hg : IsProbVec g) {b : ℕ}
   have hle' : binIndex g b y ≤ binIndex g b y - 1 := csInf_le hbelow hmem'
   omega
 
-/-- Eq. (6): `q(U) − g(U) ≤ ‖q − g‖_TV` when the total masses agree.
-Only the two total masses need to be equal; neither needs to be `1`. -/
+/-- Eq. (6): for real functions `q` and `g` on `Y` with equal total masses
+`∑ y, q y = ∑ y, g y`, and every `U ⊆ Y`, `q(U) − g(U) ≤ ‖q − g‖_TV`, where
+`q(U) = ∑ y ∈ U, q y`. Neither mass needs to be `1`. -/
 theorem sub_le_tvDist_of_sum_eq {q g : Y → ℝ} (h : ∑ y, q y = ∑ y, g y)
     (U : Finset Y) :
     ∑ y ∈ U, q y - ∑ y ∈ U, g y ≤ tvDist q g := by
@@ -374,20 +390,28 @@ section MainTheorem
 
 variable {Y : Type*} [Fintype Y] [DecidableEq Y]
 
-/-- The adaptive partition `V_b(g)`. -/
+/-- The partition of `Y` by the value of `binIndex g b`: `y` and `z` share a
+block exactly when `binIndex g b y = binIndex g b z`. It is defined for every
+`g` and `b`. When `g` is a probability vector and `1 ≤ b`, `binIndex g b y`
+is the index of the source's bin containing `y` (`binIndex_spec`), so the
+blocks are the nonempty bins `B_[0, t_1], B_(t_1, t_2], …, B_(t_{b-1}, t_b]`
+of the adaptive partition `V_b(g)` of Definition 2. -/
 noncomputable def adaptivePartition (g : Y → ℝ) (b : ℕ) :
     Finpartition (Finset.univ : Finset Y) := by
   classical
   exact Finpartition.ofSetoid (Setoid.ker (binIndex g b))
 
-/-- `Mis_b(g, p) = ‖p^{V_b(g)} − g‖_TV`. -/
+/-- `‖p^V − g‖_TV` for the partition `V = adaptivePartition g b`, defined for
+every `g`, `p` and `b`. When `g` is a probability vector and `1 ≤ b`, the
+blocks of `V` are the nonempty bins of the source's `V_b(g)`, and this is its
+miscalibration `Mis_b(g, p)` (Definition 2). -/
 noncomputable def mis (b : ℕ) (g p : Y → ℝ) : ℝ :=
   tvDist (coarsen (adaptivePartition g b) p) g
 
-/-- If `Mis_b(g, p) = 0`, then `g` is calibrated to `p`. The converse
-fails: a bin of the adaptive partition can contain points where `g`
-takes different values, and coarsening `p` over such a bin cannot
-return `g`. -/
+/-- For any real functions `g` and `p` on `Y` and any `b`, if
+`mis b g p = 0` then `g` is calibrated to `p`. The converse fails: a bin of
+the adaptive partition can contain points where `g` takes different values,
+and coarsening `p` over such a bin cannot return `g`. -/
 theorem isCalibratedTo_of_mis_eq_zero {b : ℕ} {g p : Y → ℝ}
     (h : mis b g p = 0) : IsCalibratedTo g p := by
   have hsum : ∑ y, |coarsen (adaptivePartition g b) p y - g y| = 0 := by
@@ -435,7 +459,14 @@ theorem mis_one {g p : Y → ℝ} (hp : IsProbVec p) (hg : IsProbVec g) :
   change tvDist (coarsen (adaptivePartition g 1) p) g = _
   rw [hmain]
 
-/-- Lemma 2 for a finite mixture and a fixed partition. -/
+/-- Lemma 2 for a finite mixture. Let `w` be a probability vector on a
+finite type `ι`, each `p i` a probability vector on `Y`, `P` a partition of
+`Y` (the same for every `i`), and `S ⊆ Y` nonempty. Writing
+`q(A) = ∑ y ∈ A, q y` and `p_i^P` for the `P`-coarsening of `p i`,
+`∑ i, w i * max (p_i(S) − p_i^P(S)) 0` is at most
+`|Y \ S| * max_{y ∈ S} ∑ i, w i * p_i(y)`.
+For `ν = ∑ i, w i δ_{p i}` this is the source's bound
+`E_ν[(p(S) − p^Π(S))_+] ≤ |Y \ S| · max_{y ∈ S} E_ν[p(y)]`. -/
 theorem expect_posPart_mass_sub_coarsen_le {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (hw : IsProbVec w) (p : ι → Y → ℝ)
     (hp : ∀ i, IsProbVec (p i)) (P : Finpartition (Finset.univ : Finset Y))
@@ -703,10 +734,18 @@ theorem expect_posPart_mass_sub_coarsen_le {ι : Type*} [Fintype ι]
           (Finset.image_nonempty.mpr hS) := by
         rw [← Finset.sum_mul, hcardU]
 
-/-- Theorem 1 for a finite mixture `∑ i, w i • p i` and a fixed
-partition `P`, with the source's maxima over `U = Y \ O` written as
-`Finset.max'`. Each component `i` has its own fact set `F i`, and the
-source's hypothesis `O ⊆ F` is not needed. -/
+/-- Theorem 1 for a finite mixture. Let `w` be a probability vector on a
+finite type `ι`, each `p i` and `g` probability vectors on `Y`, `P` a
+partition of `Y`, `O ⊆ Y` with `U = Y \ O` nonempty, and `F i ⊆ Y` a fact
+set for each component `i`. Writing `q(A) = ∑ y ∈ A, q y` and `p_i^P` for
+the `P`-coarsening of `p i`,
+`∑ i, w i * max (p_i(U) − ‖p_i^P − g‖_TV − g(Y \ F i)) 0` is at most
+`max_{y ∈ U} ∑_{i : y ∈ F i} w i + |O| * max_{y ∈ U} ∑ i, w i * p_i(y)`.
+For `ν = ∑ i, w i δ_{p i}` this is the source's bound
+`E_{p∼ν}[(p(U) − ‖p^Π − g‖_TV − g(H))_+] ≤`
+`max_{y ∈ U} Pr[y ∈ F] + |O| · max_{y ∈ U} E_ν[p(y)]` with `H = Y \ F`,
+except that the fact set may differ between components and the source's
+hypothesis `O ⊆ F` is not needed. -/
 theorem expect_hallucination_gap_le {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (hw : IsProbVec w) (p : ι → Y → ℝ)
     (hp : ∀ i, IsProbVec (p i))
@@ -891,7 +930,13 @@ theorem expect_hallucination_gap_le {ι : Type*} [Fintype ι]
           (Finset.image_nonempty.mpr hU) := by
         rw [add_comm]
 
-/-- Theorem 1, bound-parameter form. -/
+/-- Theorem 1 with the two maxima replaced by bounds. Let `w` be a
+probability vector on a finite type `ι`, each `p i` and `g` probability
+vectors on `Y`, `P` a partition of `Y`, `O ⊆ Y` with `U = Y \ O` (possibly
+empty), and `F i ⊆ Y` for each `i`. If `0 ≤ α`, `0 ≤ β`, and every `y ∈ U`
+has `∑_{i : y ∈ F i} w i ≤ α` and `∑ i, w i * p_i(y) ≤ β`, then, writing
+`q(A) = ∑ y ∈ A, q y` and `p_i^P` for the `P`-coarsening of `p i`,
+`∑ i, w i * max (p_i(U) − ‖p_i^P − g‖_TV − g(Y \ F i)) 0 ≤ α + |O| * β`. -/
 theorem expect_hallucination_gap_le_of_bounds {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (hw : IsProbVec w) (p : ι → Y → ℝ)
     (hp : ∀ i, IsProbVec (p i))
@@ -962,7 +1007,11 @@ theorem expect_hallucination_gap_le_of_bounds {ι : Type*} [Fintype ι]
     rw [hLHS]
     exact add_nonneg hα0 (mul_nonneg (Nat.cast_nonneg _) hβ0)
 
-/-- Boundary case of Theorem 1: if everything is observed, the gap is 0. -/
+/-- Boundary case of Theorem 1 with everything observed, `O = Y`, so that
+`U = ∅` and `p_i(U) = 0`. For any weights `w`, any functions `p i`, any fact
+sets `F i`, any partition `P` of `Y` and any probability vector `g`,
+`∑ i, w i * max (p_i(U) − ‖p_i^P − g‖_TV − g(Y \ F i)) 0 = 0`, writing
+`q(A) = ∑ y ∈ A, q y` and `p_i^P` for the `P`-coarsening of `p i`. -/
 theorem expect_hallucination_gap_eq_zero_of_eq_univ {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (p : ι → Y → ℝ) (F : ι → Finset Y)
     (g : Y → ℝ) (hg : IsProbVec g) (P : Finpartition (Finset.univ : Finset Y)) :
@@ -1003,40 +1052,53 @@ section WorldModel
 
 variable {Y : Type*} [Fintype Y] [DecidableEq Y] {X : Type*} [Fintype X]
 
-/-- Pushforward of a finite distribution along `f`. -/
+/-- Pushforward of `D : X → ℝ` along `f : X → Y`: `y ↦ ∑_{x : f x = y} D x`.
+For a document distribution `D` this is the source's induced factoid
+distribution `p = f ∘ D_L`. -/
 noncomputable def pushforward (f : X → Y) (D : X → ℝ) : Y → ℝ :=
   fun y => ∑ x ∈ Finset.univ.filter (fun x => f x = y), D x
 
-/-- The probability of a training sample under `D`. -/
+/-- `∏ k, D (x k)`: when `D` is a probability vector on `X`, the probability
+of drawing the sample `x = (x 1, …, x n)` independently from `D`. -/
 noncomputable def trainProb {n : ℕ} (D : X → ℝ) (x : Fin n → X) : ℝ :=
   ∏ k, D (x k)
 
-/-- The facts of a world: `F = supp p ∪ {⊥}`. -/
+/-- The facts of a world with document distribution `D`: `F = supp p ∪ {⊥}`
+for `p = pushforward f D` and `supp p = {y | 0 < p y}`, the source's
+support. -/
 noncomputable def facts (f : X → Y) (bot : Y) (D : X → ℝ) : Finset Y :=
   Finset.univ.filter (fun y => 0 < pushforward f D y) ∪ {bot}
 
-/-- The hallucinations of a world: `H = Y \ F`. -/
+/-- The hallucinations of a world with document distribution `D`:
+`H = Y \ F` for `F = facts f bot D`. -/
 noncomputable def hallucinations (f : X → Y) (bot : Y) (D : X → ℝ) : Finset Y :=
   Finset.univ \ facts f bot D
 
-/-- The observed set `O = {f(x_i)} ∪ {⊥}`. -/
+/-- The observed factoids of a sample `x : Fin n → X` (Eq. (4)):
+`O = {f (x k) | k} ∪ {⊥}`. -/
 def observed (f : X → Y) (bot : Y) {n : ℕ} (x : Fin n → X) : Finset Y :=
   Finset.univ.image (f ∘ x) ∪ {bot}
 
-/-- The monofact rate: the fraction of training points whose fact
-(other than `⊥`) occurs exactly once. -/
+/-- The monofact rate of Eq. (5): the number of factoids `y ≠ ⊥` that occur
+exactly once among `f (x 1), …, f (x n)`, divided by `n` (so `0` when
+`n = 0`). -/
 noncomputable def monofactRate (f : X → Y) (bot : Y) {n : ℕ} (x : Fin n → X) : ℝ :=
   ((Finset.univ.filter
     (fun y => y ≠ bot ∧ (Finset.univ.filter (fun k => f (x k) = y)).card = 1)).card : ℝ) / n
 
-/-- s-sparsity: in every world with positive weight, `|F| ≤ e^{-s} |H|`. -/
+/-- `s`-sparse facts (Assumption 1) for a finite mixture of worlds `D i` with
+weights `w i`: every world with `0 < w i` has `|F| ≤ e^{-s} |H|`, for
+`F = facts f bot (D i)` and `H = hallucinations f bot (D i)`. -/
 def IsSparse (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (s : ℝ) : Prop :=
   ∀ i, 0 < w i → ((facts f bot (D i)).card : ℝ)
     ≤ Real.exp (-s) * (hallucinations f bot (D i)).card
 
-/-- Regular facts (cross-multiplied form of Definition 3): the
-posterior numerators agree on unobserved labels. -/
+/-- Regular facts (Definition 3, cross-multiplied): for every sample
+`x : Fin n → X` with `0 < ∑ i, w i * P_i(x)`, where
+`P_i(x) = trainProb (D i) x`, and all `y, y'` outside `observed f bot x`,
+`∑_{i : y ∈ F_i} w i * P_i(x) = ∑_{i : y' ∈ F_i} w i * P_i(x)` for
+`F_i = facts f bot (D i)`. -/
 def HasRegularFacts (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (n : ℕ) : Prop :=
   ∀ x : Fin n → X, 0 < ∑ i, w i * trainProb (D i) x →
@@ -1046,7 +1108,11 @@ def HasRegularFacts (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
         = ∑ i ∈ Finset.univ.filter (fun i => y' ∈ facts f bot (D i)),
           w i * trainProb (D i) x
 
-/-- Regular probabilities (cross-multiplied form of Definition 4). -/
+/-- Regular probabilities (Definition 4, cross-multiplied): for every sample
+`x : Fin n → X` with `0 < ∑ i, w i * P_i(x)`, where
+`P_i(x) = trainProb (D i) x`, and all `y, y'` outside `observed f bot x`,
+`∑ i, w i * P_i(x) * p_i(y) = ∑ i, w i * P_i(x) * p_i(y')` for
+`p_i = pushforward f (D i)`. -/
 def HasRegularProbabilities (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (n : ℕ) : Prop :=
   ∀ x : Fin n → X, 0 < ∑ i, w i * trainProb (D i) x →
@@ -1054,12 +1120,17 @@ def HasRegularProbabilities (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
       ∑ i, w i * trainProb (D i) x * pushforward f (D i) y
         = ∑ i, w i * trainProb (D i) x * pushforward f (D i) y'
 
-/-- Regularity: both Definition 3 and Definition 4 hold. -/
+/-- Regularity: both `HasRegularFacts` (Definition 3) and
+`HasRegularProbabilities` (Definition 4) hold. -/
 def IsRegular (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (n : ℕ) : Prop :=
   HasRegularFacts f bot w D n ∧ HasRegularProbabilities f bot w D n
 
-/-- Bridge to the divided (conditional) form of Definition 3. -/
+/-- `HasRegularFacts` is equivalent to the conditional form of Definition 3:
+for every sample `x` with `Z = ∑ i, w i * P_i(x) > 0`, where
+`P_i(x) = trainProb (D i) x`, and all `y, y'` outside `observed f bot x`,
+`(∑_{i : y ∈ F_i} w i * P_i(x)) / Z = (∑_{i : y' ∈ F_i} w i * P_i(x)) / Z`,
+that is `Pr[y ∈ F | x] = Pr[y' ∈ F | x]`, for `F_i = facts f bot (D i)`. -/
 theorem hasRegularFacts_iff (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (n : ℕ) :
     HasRegularFacts f bot w D n ↔
@@ -1096,7 +1167,11 @@ section RegularProbabilitiesBridge
 
 variable {Y : Type*} [DecidableEq Y] {X : Type*} [Fintype X]
 
-/-- Bridge to the divided (conditional) form of Definition 4. -/
+/-- `HasRegularProbabilities` is equivalent to the conditional form of
+Definition 4: for every sample `x` with `Z = ∑ i, w i * P_i(x) > 0`, where
+`P_i(x) = trainProb (D i) x`, and all `y, y'` outside `observed f bot x`,
+`(∑ i, w i * P_i(x) * p_i(y)) / Z = (∑ i, w i * P_i(x) * p_i(y')) / Z`,
+that is `E[p(y) | x] = E[p(y') | x]`, for `p_i = pushforward f (D i)`. -/
 theorem hasRegularProbabilities_iff (f : X → Y) (bot : Y) {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (D : ι → X → ℝ) (n : ℕ) :
     HasRegularProbabilities f bot w D n ↔
