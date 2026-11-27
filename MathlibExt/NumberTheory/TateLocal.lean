@@ -30,6 +30,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.MeasureTheory.Measure.Haar.DistribChar
+public import Mathlib.NumberTheory.MulChar.Basic
 public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
@@ -40,6 +41,34 @@ public import Mathlib.Topology.Compactness.Compact
 public import MathlibExt.NumberTheory.NumberField.AdelicFourier
 public import MathlibExt.NumberTheory.NumberField.HeckeCharacter
 public import MathlibExt.NumberTheory.NumberField.HigherUnits
+
+/-!
+# Local Tate theory
+
+For a locally compact field `K`, this file defines the modulus `modulus a` (the factor by which
+multiplication by `a` scales Haar measure), the Schwartz--Bruhat test functions, the local
+Fourier transform `tateFourier`, the multiplicative Haar measure `mulMeasure μ` of an additive
+Haar measure `μ`, and the local zeta integrals `localZeta μ f χ s`, in which a character `χ` of
+`Kˣ` is extended by zero to `K` as Mathlib's `MulChar.ofUnitHom χ`. Local gamma and epsilon
+factors are characterized by Tate's local functional equation under its convergence and
+character conditions (`IsLocalZetaAdmissible`, `IsLocalGammaFactor`,
+`IsLocalEpsilonFactorAt`). At a finite place of a number field it defines conductor exponents
+through the higher unit groups `higherUnitsAt` and the local `L`-factors.
+
+The local functional equation is written `Z(f̂, χ⁻¹, 1 - s) = γ * Z(f, χ, s)`. In the notation
+of Tate's thesis it reads `ζ(f, c) = ρ(c) ζ(f̂, ĉ)`; for `c = χ |·| ^ s` this is the equation
+above with `γ = ρ(c)⁻¹`. The local epsilon factor is normalized as in Tate's Corvallis article:
+`ε = γ * L(χ, s) / L(χ⁻¹, 1 - s)`.
+
+## References
+
+* J. T. Tate, *Fourier analysis in number fields and Hecke's zeta-functions*, Ph.D. thesis,
+  Princeton University, 1950; printed in J. W. S. Cassels and A. Fröhlich (eds.),
+  *Algebraic Number Theory*, Academic Press, London, 1967, pp. 305--347.
+* J. Tate, *Number theoretic background*, in A. Borel and W. Casselman (eds.),
+  *Automorphic Forms, Representations and L-Functions*, Proc. Sympos. Pure Math. 33, Part 2,
+  Amer. Math. Soc., Providence, RI, 1979, pp. 3--26.
+-/
 
 @[expose] public section
 
@@ -197,58 +226,39 @@ section Fourier
 
 variable {K : Type*} [Field K] [MeasurableSpace K]
 
-/-- **Local Fourier transform.** `tateFourier ψ μ f y = ∫ x, f x * ψ (x * y) ∂μ`, in Tate's
-convention: the kernel `ψ (x * y)`, with a plus sign, and no normalizing constant.
-`NumberField.AdelicFourier.fourierIntegral` uses the kernel `ψ (-(x * y))`, so
+/-- **Local Fourier transform.** `tateFourier ψ μ f y = ∫ x, f x * ψ (x * y) ∂μ`
+(`tateFourier_apply`), in Tate's convention: the kernel `ψ (x * y)`, with a plus sign, and no
+normalizing constant. It is `NumberField.AdelicFourier.fourierIntegral`, whose kernel is
+`ψ (-(x * y))`, for the inverse character `ψ⁻¹`; equivalently,
 `tateFourier ψ μ f y = fourierIntegral ψ μ f (-y)` (`tateFourier_eq_fourierIntegral_neg`).
 For any additive character and measure this is a Bochner integral, `0` where the integrand
 is not integrable; it is Tate's Fourier transform for a continuous nontrivial `ψ` and an
 additive Haar measure `μ`. -/
 public def tateFourier (ψ : AddChar K ℂ) (μ : Measure K) (f : K → ℂ) (y : K) :
     ℂ :=
-  ∫ x, f x * ψ (x * y) ∂μ
+  NumberField.AdelicFourier.fourierIntegral ψ⁻¹ μ f y
+
+public theorem tateFourier_apply (ψ : AddChar K ℂ) (μ : Measure K) (f : K → ℂ) (y : K) :
+    tateFourier ψ μ f y = ∫ x, f x * ψ (x * y) ∂μ := by
+  simp only [tateFourier, NumberField.AdelicFourier.fourierIntegral, AddChar.inv_apply,
+    neg_neg]
+  congr 1 with x
+  exact mul_comm _ _
 
 public theorem tateFourier_zero_fun (ψ : AddChar K ℂ) (μ : Measure K) :
     tateFourier ψ μ (0 : K → ℂ) = 0 := by
   funext y
-  simp [tateFourier]
+  exact congrFun (NumberField.AdelicFourier.fourierIntegral_zero ψ⁻¹ μ) y
 
 public theorem tateFourier_eq_fourierIntegral_neg (ψ : AddChar K ℂ) (μ : Measure K)
     (f : K → ℂ) (y : K) :
     tateFourier ψ μ f y = NumberField.AdelicFourier.fourierIntegral ψ μ f (-y) := by
-  simp only [tateFourier, NumberField.AdelicFourier.fourierIntegral, mul_neg, neg_neg]
+  rw [tateFourier_apply]
+  simp only [NumberField.AdelicFourier.fourierIntegral, mul_neg, neg_neg]
   congr 1 with x
   exact mul_comm _ _
 
 end Fourier
-
-section Characters
-
-variable {K : Type*} [Field K]
-
-/-- **Extension by zero of a character.** A multiplicative character of `Kˣ`, extended to `K`
-by `0` at `0`. -/
-public def charExt (χ : Kˣ →* ℂˣ) (x : K) : ℂ := by
-  classical exact if h : x = 0 then 0 else (χ (Units.mk0 x h) : ℂ)
-
-@[simp]
-public theorem charExt_zero (χ : Kˣ →* ℂˣ) : charExt χ (0 : K) = 0 := by
-  simp [charExt]
-
-public theorem charExt_of_ne_zero (χ : Kˣ →* ℂˣ) {x : K} (h : x ≠ 0) :
-    charExt χ x = χ (Units.mk0 x h) := by
-  simp [charExt, h]
-
-@[simp]
-public theorem charExt_coe_units (χ : Kˣ →* ℂˣ) (u : Kˣ) :
-    charExt χ (u : K) = χ u := by
-  rw [charExt_of_ne_zero χ u.ne_zero, Units.mk0_val]
-
-public theorem charExt_one_of_ne_zero {x : K} (h : x ≠ 0) :
-    charExt (1 : Kˣ →* ℂˣ) x = 1 := by
-  rw [charExt_of_ne_zero _ h, MonoidHom.one_apply, Units.val_one]
-
-end Characters
 
 section Zeta
 
@@ -262,12 +272,13 @@ public def mulMeasure [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure] :
   (μ.restrict {0}ᶜ).withDensity fun x => ((modulus x : ℝ≥0∞))⁻¹
 
 /-- **Local zeta integral.** `Z(f, χ, s) = ∫ f(x) χ(x) modulus(x) ^ s d×x` for the
-multiplicative Haar measure of the additive Haar measure `μ`. This is a Bochner integral: it
+multiplicative Haar measure of the additive Haar measure `μ`, where `χ` is extended by zero to
+`K` as the multiplicative character `MulChar.ofUnitHom χ`. This is a Bochner integral: it
 is Tate's zeta integral where the integrand is integrable (see `IsLocalZetaAdmissible`), and
 `0` elsewhere, not the value of Tate's meromorphic continuation. -/
 public def localZeta [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure]
     (f : K → ℂ) (χ : Kˣ →* ℂˣ) (s : ℂ) : ℂ :=
-  ∫ x, f x * charExt χ x * ((modulus x : ℝ) : ℂ) ^ s ∂(mulMeasure μ)
+  ∫ x, f x * MulChar.ofUnitHom χ x * ((modulus x : ℝ) : ℂ) ^ s ∂(mulMeasure μ)
 
 public theorem localZeta_zero_fun [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure]
     (χ : Kˣ →* ℂˣ) (s : ℂ) :
@@ -292,10 +303,12 @@ public structure IsLocalZetaAdmissible [BorelSpace K] [TotallyDisconnectedSpace 
   addChar_ne_one : ψ ≠ 1
   continuous_char : Continuous χ
   integrable_zeta : ∀ f ∈ testSpace K,
-    Integrable (fun x => f x * charExt χ x * ((modulus x : ℝ) : ℂ) ^ s) (mulMeasure μ)
+    Integrable (fun x => f x * MulChar.ofUnitHom χ x * ((modulus x : ℝ) : ℂ) ^ s)
+      (mulMeasure μ)
   integrable_zeta_fourier : ∀ f ∈ testSpace K,
     Integrable
-      (fun x => tateFourier ψ μ f x * charExt χ⁻¹ x * ((modulus x : ℝ) : ℂ) ^ (1 - s))
+      (fun x =>
+        tateFourier ψ μ f x * MulChar.ofUnitHom χ⁻¹ x * ((modulus x : ℝ) : ℂ) ^ (1 - s))
       (mulMeasure μ)
 
 /-- **Local gamma factor.** `γ` is the local gamma factor of `χ` at `s`, for the additive
@@ -351,30 +364,6 @@ end Zeta
 section Place
 
 variable (K : Type) [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K))
-
-public theorem mem_higherUnitsAt_zero_iff {u : (v.adicCompletion K)ˣ} :
-    u ∈ higherUnitsAt K v 0 ↔ Valued.v (u : v.adicCompletion K) = 1 := by
-  simp [mem_higherUnitsAt_iff]
-
-public theorem one_mem_higherUnitsAt (n : ℕ) :
-    (1 : (v.adicCompletion K)ˣ) ∈ higherUnitsAt K v n := by
-  refine ⟨by simp, ?_⟩
-  rcases Nat.eq_zero_or_pos n with h | h
-  · exact Or.inl h
-  · right
-    simp only [Units.val_one, sub_self, map_zero]
-    exact zero_le
-
-public theorem higherUnitsAt_antitone : Antitone (higherUnitsAt K v) := by
-  intro m n hmn u hu
-  obtain ⟨hval, hball⟩ := hu
-  refine ⟨hval, ?_⟩
-  rcases Nat.eq_zero_or_pos m with hm | hm
-  · exact Or.inl hm
-  · right
-    rcases hball with hn0 | hle
-    · omega
-    · exact hle.trans (WithZero.exp_le_exp.mpr (by omega))
 
 /-- **Conductor exponent.** `χ` has conductor exponent `c` at `v` when `c` is the least level
 whose higher unit group lies in the kernel of `χ`. -/

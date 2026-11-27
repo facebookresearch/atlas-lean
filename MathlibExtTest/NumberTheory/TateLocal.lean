@@ -192,7 +192,8 @@ example {K : Type*} [Field K] [TopologicalSpace K] [IsTopologicalRing K]
     [TotallyDisconnectedSpace K] (μ : Measure K) [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ)
     (χ : Kˣ →* ℂˣ) (s γ : ℂ) (h : IsLocalGammaFactor μ ψ χ s γ) (f : K → ℂ)
     (hf : f ∈ testSpace K) :
-    Integrable (fun x => f x * charExt χ x * ((modulus x : ℝ) : ℂ) ^ s) (mulMeasure μ) ∧
+    Integrable (fun x => f x * MulChar.ofUnitHom χ x * ((modulus x : ℝ) : ℂ) ^ s)
+        (mulMeasure μ) ∧
       Continuous χ :=
   ⟨h.integrable_zeta f hf, h.continuous_char⟩
 
