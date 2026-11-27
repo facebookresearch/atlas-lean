@@ -1,4 +1,4 @@
-# k-COLORABLE INDUCED SUBGRAPH is NP-complete for every fixed k ≥ 1
+# k-COLORABLE INDUCED SUBGRAPH is NP-complete
 
 For every natural number $k \ge 1$, the decision problem $k$-COLORABLE INDUCED SUBGRAPH belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 

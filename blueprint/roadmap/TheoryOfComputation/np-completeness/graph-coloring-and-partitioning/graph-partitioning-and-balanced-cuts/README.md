@@ -23,7 +23,7 @@
 - [Instances of GRAPH PARTITIONING WITH UNIT WEIGHTS AND FIXED BLOCK BOUND](fixed-bound-instance.md)
 - [Well-formed instances of GRAPH PARTITIONING WITH UNIT WEIGHTS](well-formed-5.md)
 - [GRAPH PARTITIONING WITH UNIT WEIGHTS as a decision problem](graph-partitioning-unit-weights-dec.md)
-- [NP-completeness of unit-weight graph partitioning with a fixed block-size bound of at least 3](graph-partitioning-unit-weights-fixed-k.md)
+- [NP-completeness of unit-weight graph partitioning with a fixed block-size bound](graph-partitioning-unit-weights-fixed-k.md)
 - [Instances of GRAPH PARTITIONING](graph-partitioning-instance.md)
 - [Well-formed instances of GRAPH PARTITIONING](well-formed-6.md)
 - [Feasible instances of GRAPH PARTITIONING](graph-partitioning-feasible.md)

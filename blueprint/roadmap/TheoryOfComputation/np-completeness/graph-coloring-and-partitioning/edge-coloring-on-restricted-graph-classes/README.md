@@ -18,4 +18,4 @@
 - [STRONG EDGE COLORING is NP-complete](strong-edge-coloring-np-complete.md)
 - [Well-formed instances of CHROMATIC INDEX ON GRAPHS OF THICKNESS AT MOST k](well-formed-5.md)
 - [CHROMATIC INDEX ON GRAPHS OF THICKNESS AT MOST k as a decision problem](thickness-chromatic-index-dec.md)
-- [CHROMATIC INDEX ON GRAPHS OF THICKNESS AT MOST k is NP-complete for every fixed k ≥ 2](thickness-chromatic-index-np-complete.md)
+- [CHROMATIC INDEX ON GRAPHS OF THICKNESS AT MOST k is NP-complete](thickness-chromatic-index-np-complete.md)

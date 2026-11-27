@@ -65,7 +65,7 @@
 - [ORIENTED k-COLORING is NP-complete for every fixed k ≥ 4](oriented-coloring-np-complete.md)
 - [Well-formed instances of TOTAL COLORING OF k-REGULAR BIPARTITE GRAPHS WITH k+1 COLORS](well-formed-12.md)
 - [TOTAL COLORING OF REGULAR BIPARTITE GRAPHS as a decision problem](total-coloring-regular-bipartite-dec.md)
-- [NP-completeness of total coloring nonempty $k$-regular bipartite graphs with $k+1$ colors for every fixed $k \ge 3$](total-coloring-regular-bipartite-np-comp.md)
+- [NP-completeness of total coloring nonempty $k$-regular bipartite graphs with $k+1$ colors](total-coloring-regular-bipartite-np-comp.md)
 - [Instances of TOTAL COLORING](total-coloring-instance.md)
 - [Well-formed instances of TOTAL COLORING](well-formed-13.md)
 - [Feasible instances of TOTAL COLORING](total-coloring-feasible.md)

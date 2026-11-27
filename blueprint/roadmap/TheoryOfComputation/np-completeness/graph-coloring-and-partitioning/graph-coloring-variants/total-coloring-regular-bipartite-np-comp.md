@@ -1,4 +1,4 @@
-# NP-completeness of total coloring nonempty $k$-regular bipartite graphs with $k+1$ colors for every fixed $k \ge 3$
+# NP-completeness of total coloring nonempty $k$-regular bipartite graphs with $k+1$ colors
 
 Fix a natural number $k \ge 3$. Given a nonempty $k$-regular bipartite graph, decide whether its vertices and edges admit a total coloring from a palette of $k+1$ colors. For each such fixed $k$, this decision problem belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 

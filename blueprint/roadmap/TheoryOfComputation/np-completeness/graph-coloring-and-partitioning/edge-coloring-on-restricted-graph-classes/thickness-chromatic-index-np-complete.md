@@ -1,4 +1,4 @@
-# CHROMATIC INDEX ON GRAPHS OF THICKNESS AT MOST k is NP-complete for every fixed k ≥ 2
+# CHROMATIC INDEX ON GRAPHS OF THICKNESS AT MOST k is NP-complete
 
 For every natural number $k \ge 2$, the decision problem CHROMATIC INDEX ON GRAPHS OF THICKNESS AT MOST $k$ belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
