@@ -15593,7 +15593,7 @@
   "PhyslibExt/CondensedMatter/IsingModel/TwoReplicaWeighted": {"to": "StatisticalMechanics/random-currents-and-sharpness", "title": "Random currents and the switching lemma"},
   "PhyslibExt/CondensedMatter/LatticeDynamics/MonatomicChain": {"to": "Physics/elasticity-and-structures", "title": "Vibrations of a monatomic chain"},
   "PhyslibExt/CondensedMatter/Plasticity/DeviatoricReturnMap": {"to": "Physics/elasticity-and-structures", "title": "Plasticity"},
-  "PhyslibExt/CondensedMatter/Transport/FickDiffusion": {"to": "Analysis/partial-differential-equations", "title": "Fick diffusion"},
+  "PhyslibExt/CondensedMatter/Transport/FickDiffusion": {"to": "Analysis/partial-differential-equations", "title": "Heat equation"},
   "PhyslibExt/CondensedMatter/Viscoelasticity/MaxwellBranch": {"to": "Physics/elasticity-and-structures", "title": "Viscoelasticity"},
   "PhyslibExt/EarthScience/AirWaterExchange": {"to": "Chemistry/solutions-and-aqueous-equilibria", "title": "Air–water gas exchange"},
   "PhyslibExt/EarthScience/AiryIsostasy": {"to": "EarthScience/solid-earth-geophysics", "title": "Airy isostasy"},
