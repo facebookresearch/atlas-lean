@@ -8,7 +8,7 @@ $$
 |\tilde r(s, a) - \hat r(s, a)| \le \sqrt{\frac{7\log(2SAt/\delta)}{2\max\{1, N(s, a)\}}}, \qquad \big\lVert \tilde p(\cdot \mid s, a) - \hat p(\cdot \mid s, a)\big\rVert_1 \le \sqrt{\frac{14S\log(2At/\delta)}{\max\{1, N(s, a)\}}},
 $$
 
-where $N(s, a)$ is the number of visits to $(s, a)$ before step $t$ and $\hat r$, $\hat p$ are the empirical estimates. Then for every $t \ge 1$
+where $N(s, a)$ is the number of visits to $(s, a)$ before step $t$ and $\hat r$, $\hat p$ are the empirical estimates. Then for every initial state and every $t \ge 1$, under the law of the run of UCRL2 started there,
 
 $$
 \Pr\big[M \notin \mathcal{M}(t)\big] < \frac{\delta}{15t^6}.

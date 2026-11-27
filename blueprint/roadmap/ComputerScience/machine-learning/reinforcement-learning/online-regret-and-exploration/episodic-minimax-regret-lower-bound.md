@@ -1,6 +1,6 @@
 # Minimax regret lower bound for episodic MDPs with stage-dependent transitions
 
-Every learning algorithm has expected regret at least $\frac{1}{48\sqrt6}\sqrt{H^3SAT}$ after $T \ge HSA$ episodes on some episodic MDP with $S$ states, $A$ actions, horizon $H$, stage-dependent transitions and rewards in $[0,1]$, when $S$ and $A$ fit a full $A$-ary tree and $H$ is at least three times its depth. Here $T$ counts episodes, not steps.
+Every learning algorithm has expected regret at least $\frac{1}{48\sqrt6}\sqrt{H^3SAT}$ after $T \ge HSA$ episodes on some episodic MDP with $S$ states, $A$ actions, horizon $H$, stage-dependent transitions and rewards in $[0,1]$, when $A \ge 2$, $S \ge 6$, $S$ and $A$ fit a full $A$-ary tree and $H$ is at least three times its depth. Here $T$ counts episodes, not steps.
 
 Assume $S \ge 6$, $A \ge 2$, that $S = 3 + (A^d - 1)/(A - 1)$ for an integer $d$, and that $H \ge 3d$. Consider [episodic MDPs](episodic-mdp-with-stage-dependent-transitions.md) with $S$ states, $A$ actions, horizon $H$, stage-dependent kernels $p_h$, rewards $r_h(s, a) \in [0, 1]$ and an initial distribution $\mu$, and the [expected regret](online-episodic-learning-and-regret.md) after $T$ episodes
 
@@ -18,6 +18,7 @@ $$
 
 - [Online episodic learning and regret](online-episodic-learning-and-regret.md)
 - [Episodic Markov decision process with stage-dependent transitions](episodic-mdp-with-stage-dependent-transitions.md)
+- [History-dependent randomized policies and trajectory laws](../../../heuristic-search-and-planning/markov-decision-processes/history-dependent-randomized-policies-and-trajectory-laws.md)
 
 ## Proof depends on
 

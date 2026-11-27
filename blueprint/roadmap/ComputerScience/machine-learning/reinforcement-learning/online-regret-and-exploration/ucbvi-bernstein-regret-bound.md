@@ -1,6 +1,6 @@
 # Regret bound for UCBVI with Bernstein bonuses
 
-In a stationary episodic MDP with known rewards in $[0,1]$, UCBVI with the empirical-Bernstein bonus has regret at most $30HL\sqrt{SAK} + 2500H^2S^2AL^2 + 4H^{3/2}\sqrt{KL}$ after $K$ episodes, with probability at least $1-\delta$, where $L = \ln(5HSAT/\delta)$. For large $T = KH$ this is $\tilde O(\sqrt{HSAT})$.
+In a stationary episodic MDP with known rewards in $[0,1]$, UCBVI with the empirical-Bernstein bonus has regret at most $30HL\sqrt{SAK} + 2500H^2S^2AL^2 + 4H^{3/2}\sqrt{KL}$ after $K$ episodes, with probability at least $1-\delta$, where $L = \ln(5HSAT/\delta)$. For $T = KH \ge H^3S^3A$ and $SA \ge H$ this is $\tilde O(\sqrt{HSAT})$.
 
 Let $M$ be a stationary [episodic MDP](episodic-mdp-with-stage-dependent-transitions.md) with $S$ states, $A$ actions, horizon $H$, one transition distribution $P$ for all stages and a known deterministic reward $R(x, a) \in [0, 1]$, and let the initial states $x_{k,1}$ be arbitrary. Run [UCBVI](upper-confidence-bound-value-iteration.md) with the Bernstein–Freedman bonus (UCBVI-BF) for $K$ episodes. Then for every $\delta \in (0, 1)$, with probability at least $1 - \delta$,
 

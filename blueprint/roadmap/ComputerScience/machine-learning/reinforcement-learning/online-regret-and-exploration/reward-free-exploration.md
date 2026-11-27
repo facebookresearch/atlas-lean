@@ -2,15 +2,15 @@
 
 In reward-free exploration a learner first explores an unknown episodic MDP for $K$ episodes without observing rewards, and afterwards, with no further interaction, must return an $\varepsilon$-optimal policy for every reward function it is then given, however many and however chosen.
 
-Let $M$ be an [episodic MDP](episodic-mdp-with-stage-dependent-transitions.md) with $S$ states, $A$ actions, horizon $H$, stage-dependent transition kernels $P_h$ and an initial distribution $P_1$ of $s_1$, all unknown. Policies $\pi = (\pi_h)_{h \le H}$ may be stochastic, $\pi_h : \mathcal{S} \to \Delta(\mathcal{A})$. The protocol has two phases.
+Let $M$ be an [episodic MDP](episodic-mdp-with-stage-dependent-transitions.md) with $S$ states, $A$ actions, horizon $H$, stage-dependent transition kernels $P_h$ and an initial distribution $\mu$ of $s_1$ (written $P_1$ in the source). The state set, the action set and $H$ are known to the learner; the transition kernels and the initial distribution are unknown. Policies $\pi = (\pi_h)_{h \le H}$ may be non-stationary and stochastic: each component $\pi_h$ is a [stochastic policy](../stochastic-policies-and-discounted-occupancy/stochastic-policy.md), assigning to each state a distribution $\pi_h(\cdot \mid s)$ on $\mathcal{A}$. The protocol has two phases.
 
-1. Exploration phase: for $k = 1, \dots, K$ the learner picks a policy, $s_1 \sim P_1$ is drawn, and for $h = 1, \dots, H$ the learner draws $a_h \sim \pi_h(\cdot \mid s_h)$ and observes $s_{h+1} \sim P_h(\cdot \mid s_h, a_h)$. No reward is revealed. The result is a dataset $\mathcal{D}$ of the visited states and actions.
+1. Exploration phase: for $k = 1, \dots, K$ the learner picks a policy, $s_1 \sim \mu$ is drawn, and for $h = 1, \dots, H$ the learner draws $a_h \sim \pi_h(\cdot \mid s_h)$ and observes $s_{h+1} \sim P_h(\cdot \mid s_h, a_h)$. No reward is revealed. The result is a dataset $\mathcal{D}$ of the visited states and actions.
 2. Planning phase: the learner may no longer interact with $M$. It receives reward functions $r = (r_h)_{h \le H}$ with $r_h : \mathcal{S} \times \mathcal{A} \to [0, 1]$, possibly adversarially and adaptively chosen, and for each returns a policy $\pi$ computed from $\mathcal{D}$ and $r$.
 
 Writing $V_1^\pi(\cdot\,; r)$ and $V_1^\star(\cdot\,; r)$ for the values under reward $r$, the learner succeeds if every returned policy is $\varepsilon$-optimal for its reward,
 
 $$
-\mathbb{E}_{s_1 \sim P_1}\big[V_1^\star(s_1; r) - V_1^\pi(s_1; r)\big] \le \varepsilon,
+\mathbb{E}_{s_1 \sim \mu}\big[V_1^\star(s_1; r) - V_1^\pi(s_1; r)\big] \le \varepsilon,
 $$
 
 and its sample complexity is the number $K$ of exploration episodes needed to succeed with probability at least $1 - p$.
@@ -21,6 +21,7 @@ For $\delta > 0$, a state $s$ is $\delta$-significant at step $h$ if some policy
 
 - [Episodic Markov decision process with stage-dependent transitions](episodic-mdp-with-stage-dependent-transitions.md)
 - [Online episodic learning and regret](online-episodic-learning-and-regret.md)
+- [Stochastic policy](../stochastic-policies-and-discounted-occupancy/stochastic-policy.md)
 
 ## Proof depends on
 

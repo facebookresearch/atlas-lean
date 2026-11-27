@@ -1,6 +1,6 @@
 # Law of total variance for episodic returns
 
-Along an episode played by a fixed policy, the expected sum over stages of the one-step variances of the next-state value equals the variance of the episode's return. With rewards in $[0,1]$ it is therefore at most $H^2$, not the $H^3$ obtained by bounding each of the $H$ one-step variances by $H^2$.
+Along an episode played from a fixed initial state by a deterministic Markov policy, with deterministic rewards, the expected sum over stages of the one-step variances of the next-state value equals the variance of the episode's return. With rewards in $[0,1]$ it is therefore at most $H^2$, not the $H^3$ obtained by bounding each of the $H$ one-step variances by $H^2$.
 
 Let $M$ be an [episodic MDP](episodic-mdp-with-stage-dependent-transitions.md) with deterministic rewards $r_h \in [0, 1]$, let $\pi$ be a deterministic Markov policy, fix an initial state $x_1$ and let $x_1, x_2, \dots, x_{H+1}$ be the states of an episode played by $\pi$, so that $x_{h+1} \sim P_h(\cdot \mid x_h, \pi_h(x_h))$. For $V : \mathcal{S} \to \mathbb{R}$ write the next-state variance
 
