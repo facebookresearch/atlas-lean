@@ -303,6 +303,23 @@ example : (SplayTree.nipkowInsert 0 balanced).numNodes = 8 := by decide
 
 example : (SplayTree.nipkowInsert 4 balanced).numNodes = 7 := by decide
 
+/-- Splay-tree insertion and the book's insert build the same tree: splaying `5` brings `4` to
+the root, and splitting the right subtree at `5` walks its left spine `10, 6` and keeps it
+whole. -/
+example :
+    SplayTree.insert 5
+        (.node 10 (.node 2 (leaf 1) (.node 6 (leaf 4) .nil)) (leaf 12) : BinaryTree Nat) =
+      SplayTree.nipkowInsert 5
+        (.node 10 (.node 2 (leaf 1) (.node 6 (leaf 4) .nil)) (leaf 12)) := by
+  decide
+
+/-- They also agree on a tree that is not a search tree: `9` sits in the left subtree of `2`,
+which the split at `5` never visits. -/
+example :
+    SplayTree.insert 5 (.node 10 (.node 2 (leaf 9) (leaf 6)) .nil : BinaryTree Nat) =
+      SplayTree.nipkowInsert 5 (.node 10 (.node 2 (leaf 9) (leaf 6)) .nil) := by
+  decide
+
 #check SplayTree.splayMax
 #check SplayTree.delete
 #check SplayTree.nipkowInsert

@@ -41,7 +41,8 @@ It also provides `splayMax` (splay the rightmost key to the root; it is the
 maximum key when the tree is `Ordered`), `delete` (splay, then replace a
 present key by the maximum of the left subtree),
 and `nipkowInsert` (the book's insert: splay, then rebuild around the new
-root), with the same functional-correctness guarantees (Nipkow, FDSA §21.1);
+root; it computes the same tree as `insert`, by `insert_eq_nipkowInsert`),
+with the same functional-correctness guarantees (Nipkow, FDSA §21.1);
 their amortized bounds are in
 `CSLibExt.Algorithms.Lean.DataStructures.SplayTree.Amortized`.
 -/
@@ -1591,8 +1592,11 @@ public theorem numNodes_delete_of_not_mem {α : Type u} [LinearOrder α] {x : α
 /--
 Insert a key by splaying (Nipkow's `insert`, FDSA §21.1): splay `x` to the root;
 if it is there the tree is unchanged, otherwise `x` becomes the new root with the
-splayed tree split around it. This is the book's insert, distinct from
-`SplayTree.insert`, which inserts via `split`.
+splayed tree split around it. This is the book's formulation (splay, then rebuild
+around the new root). It computes the same tree as `SplayTree.insert`
+(`insert_eq_nipkowInsert`), which applies `split` to the splayed tree instead;
+`costInsert` in `CSLibExt.Algorithms.Lean.DataStructures.SplayTree.Amortized`
+charges the book's splay-then-rebuild.
 -/
 public def nipkowInsert {α : Type u} [LinearOrder α] (x : α) (t : BinaryTree α) : BinaryTree α :=
   match splay x t with
@@ -1632,6 +1636,149 @@ public theorem nipkowInsert_eq_of_gt {α : Type u} [LinearOrder α] {x a : α}
   unfold nipkowInsert
   rw [hsp]
   simp [ne_of_gt hxa, not_lt.mpr (le_of_lt hxa)]
+
+private theorem split_of_splay_eq_node_aux {α : Type u} [LinearOrder α] {x : α} (n : Nat)
+    (t : BinaryTree α) (h : t.numNodes ≤ n) :
+    ∀ {l : BinaryTree α} {a : α} {r : BinaryTree α}, splay x t = .node a l r →
+      (x < a → split x l = (l, .nil)) ∧ (a < x → split x r = (.nil, r)) := by
+  induction n generalizing t with
+  | zero =>
+      cases t with
+      | nil =>
+        intro l' a' r' hsp
+        simp at hsp
+      | node k l r =>
+        simp only [BinaryTree.numNodes] at h
+        omega
+  | succ n ih =>
+      cases t with
+      | nil =>
+        intro l' a' r' hsp
+        simp at hsp
+      | node k l r =>
+        intro l' a' r' hsp
+        by_cases hxk : x = k
+        · subst hxk
+          rw [splay_node_self rfl] at hsp
+          obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+          exact ⟨fun hx => absurd hx (lt_irrefl _), fun hx => absurd hx (lt_irrefl _)⟩
+        · by_cases hlt : x < k
+          · cases l with
+            | nil =>
+              rw [splay_node_left_nil hxk hlt] at hsp
+              obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+              exact ⟨fun _ => rfl, fun hkx => absurd hlt (lt_asymm hkx)⟩
+            | node lk ll lr =>
+              by_cases hxl : x = lk
+              · subst hxl
+                rw [splay_zig_left hxk hlt rfl] at hsp
+                obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                exact ⟨fun hx => absurd hx (lt_irrefl _), fun hx => absurd hx (lt_irrefl _)⟩
+              · by_cases hllt : x < lk
+                · cases hs : splay x ll with
+                  | nil =>
+                    rw [splay_zigzig_left_nil hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hll : ll = .nil := splay_eq_nil.mp hs
+                    subst hll
+                    exact ⟨fun _ => rfl, fun hkx => absurd hllt (lt_asymm hkx)⟩
+                  | node d lll llr =>
+                    rw [splay_zigzig_left_node hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : ll.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih ll hb hs
+                    exact ⟨h1, fun hdx => by rw [split_node_lt hllt, h2 hdx]⟩
+                · have hgt : lk < x :=
+                    lt_of_le_of_ne (le_of_not_gt hllt) (fun hh => hxl hh.symm)
+                  cases hs : splay x lr with
+                  | nil =>
+                    rw [splay_zigzag_left_nil hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hlr : lr = .nil := splay_eq_nil.mp hs
+                    subst hlr
+                    exact ⟨fun hxl' => absurd hgt (lt_asymm hxl'), fun _ => split_node_lt hlt⟩
+                  | node d lrl lrr =>
+                    rw [splay_zigzag_left_node hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : lr.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih lr hb hs
+                    exact ⟨fun hxd => by rw [split_node_gt hllt hgt, h1 hxd],
+                      fun hdx => by rw [split_node_lt hlt, h2 hdx]⟩
+          · have hgt : k < x :=
+              lt_of_le_of_ne (le_of_not_gt hlt) (fun hh => hxk hh.symm)
+            cases r with
+            | nil =>
+              rw [splay_node_right_nil hxk hlt] at hsp
+              obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+              exact ⟨fun hxk' => absurd hxk' hlt, fun _ => rfl⟩
+            | node rk rl rr =>
+              by_cases hxr : x = rk
+              · subst hxr
+                rw [splay_zig_right hxk hlt rfl] at hsp
+                obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                exact ⟨fun hx => absurd hx (lt_irrefl _), fun hx => absurd hx (lt_irrefl _)⟩
+              · by_cases hrrt : rk < x
+                · cases hs : splay x rr with
+                  | nil =>
+                    rw [splay_zigzig_right_nil hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hrr : rr = .nil := splay_eq_nil.mp hs
+                    subst hrr
+                    exact ⟨fun hxr' => absurd hrrt (lt_asymm hxr'), fun _ => rfl⟩
+                  | node d rrl rrr =>
+                    rw [splay_zigzig_right_node hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : rr.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih rr hb hs
+                    exact ⟨fun hxd => by rw [split_node_gt (lt_asymm hrrt) hrrt, h1 hxd], h2⟩
+                · have hxlt : x < rk := lt_of_le_of_ne (le_of_not_gt hrrt) hxr
+                  cases hs : splay x rl with
+                  | nil =>
+                    rw [splay_zigzag_right_nil hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hrl : rl = .nil := splay_eq_nil.mp hs
+                    subst hrl
+                    exact ⟨fun _ => split_node_gt hlt hgt,
+                      fun hrx => absurd hxlt (lt_asymm hrx)⟩
+                  | node d rll rlr =>
+                    rw [splay_zigzag_right_node hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : rl.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih rl hb hs
+                    exact ⟨fun hxd => by rw [split_node_gt hlt hgt, h1 hxd],
+                      fun hdx => by rw [split_node_lt hxlt, h2 hdx]⟩
+
+/-- **Splay-tree insertion and the book's insertion agree.** For every key $x$ and every binary
+tree $t$ over a linearly ordered type, the splay-tree insertion of $x$ into $t$ (splay, then
+split) and the book's insertion of $x$ into $t$ (splay, then rebuild around the new root; Nipkow,
+FDSA §21.1) are the same tree, whether or not $t$ is a binary search tree. Suppose that splaying
+$x$ in $t$ gives the tree with root key $a$, left subtree $L$ and right subtree $R$. If $x < a$,
+the search for $x$ turned right at every node of the right spine of $L$, so every key on that
+spine is smaller than $x$; splitting the splayed tree at $x$ thus gives $L$ and the tree with
+root key $a$, empty left subtree and right subtree $R$, which are the two subtrees that the book
+puts under the new root $x$. The case $a < x$ is the mirror image, and the cases $x = a$ and $t$
+empty are immediate. -/
+public theorem insert_eq_nipkowInsert {α : Type u} [LinearOrder α] (x : α) (t : BinaryTree α) :
+    insert x t = nipkowInsert x t := by
+  rw [insert_eq]
+  cases hs : splay x t with
+  | nil =>
+    rw [nipkowInsert_eq_of_nil hs]
+    rfl
+  | node a l r =>
+    obtain ⟨hl, hr⟩ := split_of_splay_eq_node_aux t.numNodes t (by omega) hs
+    rcases lt_trichotomy x a with hxa | rfl | hxa
+    · rw [nipkowInsert_eq_of_lt hs hxa, split_node_lt hxa, hl hxa]
+    · rw [nipkowInsert_eq_of_eq hs rfl, split_node_eq (lt_irrefl _) (lt_irrefl _)]
+    · rw [nipkowInsert_eq_of_gt hs hxa, split_node_gt (lt_asymm hxa) hxa, hr hxa]
 
 /-- Inserting a key adds exactly that key to structural membership. -/
 public theorem mem_nipkowInsert {α : Type u} [LinearOrder α] {x y : α} {t : BinaryTree α}
@@ -1703,25 +1850,8 @@ public theorem mem_nipkowInsert {α : Type u} [LinearOrder α] {x y : α} {t : B
 /-- Insertion preserves the strict search-tree invariant. -/
 public theorem ordered_nipkowInsert {α : Type u} [LinearOrder α] {x : α} {t : BinaryTree α}
     (hOrd : Ordered t) : Ordered (nipkowInsert x t) := by
-  cases hs : splay x t with
-  | nil =>
-    have ht : t = .nil := splay_eq_nil.mp hs
-    subst ht
-    rw [nipkowInsert_eq_of_nil hs]
-    exact ⟨trivial, trivial, trivial, trivial⟩
-  | node a l r =>
-    have hsOrd : Ordered (.node a l r) := by
-      rw [← hs]
-      exact ordered_splay hOrd
-    obtain ⟨hOrdL, hOrdR, hAllL, hAllR⟩ := hsOrd
-    obtain ⟨hbl, hbr⟩ := splay_bounds hOrd hs
-    rcases lt_trichotomy x a with hxa | hxa | hxa
-    · rw [nipkowInsert_eq_of_lt hs hxa]
-      exact ⟨hOrdL, ⟨trivial, hOrdR, trivial, hAllR⟩, hbl, ⟨trivial, hxa, hbr⟩⟩
-    · rw [nipkowInsert_eq_of_eq hs hxa]
-      exact ⟨hOrdL, hOrdR, hAllL, hAllR⟩
-    · rw [nipkowInsert_eq_of_gt hs hxa]
-      exact ⟨⟨hOrdL, trivial, hAllL, trivial⟩, hOrdR, ⟨hbl, hxa, trivial⟩, hbr⟩
+  rw [← insert_eq_nipkowInsert]
+  exact ordered_insert hOrd
 
 /-- Inserting a present key leaves the number of nodes unchanged. -/
 public theorem numNodes_nipkowInsert_of_mem {α : Type u} [LinearOrder α] {x : α}

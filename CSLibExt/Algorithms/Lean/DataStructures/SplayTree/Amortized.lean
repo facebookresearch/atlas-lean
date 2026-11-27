@@ -51,7 +51,9 @@ nodes of the subtree (`potential`).
   states `6 log₂ (size1 t) + 2`).
 * `amortized_nipkowInsert_le`: the amortized cost of the book's `nipkowInsert x t`
   is at most `4 log₂ n + 2` in the repo's rotation-based cost model (the FDSA/AFP
-  `A_insert` analogue; AFP states `4 log₂ (size1 t) + 2`).
+  `A_insert` analogue; AFP states `4 log₂ (size1 t) + 2`). The tree is the same as
+  `insert x t` (`insert_eq_nipkowInsert`); `costInsert` charges the book's
+  splay-then-rebuild, not the `split` that `insert` performs instead.
 
 **On the splaying variant.** `SplayTree.splay` is recursive and consumes two levels of the
 search path per step starting from the root, so when the access depth is odd its single
@@ -812,7 +814,9 @@ def costDelete [LinearOrder α] (x : α) (t : BinaryTree α) : ℕ :=
 
 /-- **Cost of the book's insert.** The cost of `SplayTree.nipkowInsert x t`: the cost
 of the splay; the rebuilding of the tree around the new root is free, as in Nipkow's
-time function `Tinsert = Tsplay` (FDSA Appendix B.9). -/
+time function `Tinsert = Tsplay` (FDSA Appendix B.9). It charges the book's
+splay-then-rebuild: `SplayTree.insert x t` is the same tree (`insert_eq_nipkowInsert`),
+but the `split` that `SplayTree.insert` performs instead of the rebuild is not charged. -/
 def costInsert [LinearOrder α] (x : α) (t : BinaryTree α) : ℕ :=
   cost x t
 
