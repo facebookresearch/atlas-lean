@@ -6,9 +6,9 @@ $$\frac{dC}{dt} = \lambda_C C\Big(1 - \frac{C}{C_{\max}}\Big) - \eta T C,$$
 
 $$\frac{dT}{dt} = \frac{a_T + s_T T C}{1 + \rho T(T + \varepsilon_C C)} - r T M - d_T T,$$
 
-$$\frac{dM}{dt} = \frac{s_M C}{q + C} + \alpha C - d_M M.$$
+$$\frac{dM}{dt} = s_M C + \frac{\alpha C}{q + C} - d_M M.$$
 
-Here $\lambda_C$ and $C_{\max}$ are the tumor growth rate and carrying capacity, $\eta$ the kill rate of tumor cells by T cells, $a_T$ the T-cell activation rate, $s_T$ tumor-stimulated T-cell recruitment, $\rho$ the inhibition of T cells by PD-L1–PD-1 complexes, $\varepsilon_C$ the expression of PD-L1 on tumor cells relative to T cells, $r$ the suppression of T cells by MDSCs, $d_T$, $d_M$ death rates, $s_M$, $q$ chemokine-driven MDSC recruitment and $\alpha$ MDSC expansion.
+Here $\lambda_C$ and $C_{\max}$ are the tumor growth rate and carrying capacity, $\eta$ the kill rate of tumor cells by T cells, $a_T$ the T-cell activation rate, $s_T$ tumor-stimulated T-cell recruitment, $\rho$ the inhibition of T cells by PD-L1–PD-1 complexes, $\varepsilon_C$ the expression of PD-L1 on tumor cells relative to T cells, $r$ the suppression of T cells by MDSCs, $d_T$, $d_M$ death rates, $s_M$ chemokine-driven (CCL2/CCL7) MDSC recruitment, and $lpha$, $q$ the rate and steepness coefficient of MDSC expansion.
 
 **Statement.**
 
