@@ -84,7 +84,13 @@ private theorem sq_integral_le {Ω : Type*} [MeasurableSpace Ω]
     Real.sq_sqrt (measureReal_nonneg)] at hs
   simpa only [mul_comm] using hs
 
-/-- Cauchy–Schwarz for the actual time integral, in extended nonnegative real form. -/
+/-- **Squared ordinary-integral bound.** For a continuous real function $H$ on nonnegative time and
+$t \ge 0$,
+$$\left|\int_0^t H_s\,ds\right|^2 \le t \int_{(0,t]} |H_s|^2\,ds,$$
+in extended nonnegative real form. This is the Cauchy–Schwarz inequality
+$$\left(\int_{(0,t]} |H_s| \cdot 1\,ds\right)^2 \le
+  \int_{(0,t]} 1\,ds \cdot \int_{(0,t]} |H_s|^2\,ds$$
+for $H$ and the constant function $1$ on $(0, t]$. -/
 theorem enorm_timeIntegral_sq_le {H : ℝ≥0 → ℝ} (hH : Continuous H) (t : ℝ≥0) :
     ‖∫ s in (0 : ℝ)..t, H s.toNNReal‖ₑ^2 ≤
       (t : ℝ≥0∞) * ∫⁻ s in Ioc (0 : ℝ) t, ‖H s.toNNReal‖ₑ^2 := by
@@ -103,8 +109,12 @@ theorem enorm_timeIntegral_sq_le {H : ℝ≥0 → ℝ} (hH : Continuous H) (t : 
     ENNReal.ofReal_mul t.coe_nonneg,
     ENNReal.ofReal_coe_nnreal] using! h
 
-/-- The squared time-integral moment is bounded by elapsed time times input energy.
-The lower-integral bound does not require measurability in the sample variable. -/
+/-- **Lower-integral bound for an ordinary time integral.** Let $P$ be a measure and $H$ a real
+process indexed by nonnegative time whose paths are continuous for every sample. For $t \ge 0$,
+$$\int_\Omega \left|\int_0^t H_s(\omega)\,ds\right|^2 dP(\omega) \le
+  t \int_\Omega \int_{(0,t]} |H_s(\omega)|^2\,ds\,dP(\omega).$$
+Both sides are lower integrals of nonnegative functions, so no measurability in the sample variable
+is required; the right side is $t$ times the input energy of $H$ up to $t$. -/
 theorem lintegral_timeIntegral_sq_le {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     {H : ℝ≥0 → Ω → ℝ} (hc : ∀ ω, Continuous (H · ω)) (t : ℝ≥0) :
     ∫⁻ ω, ‖∫ s in (0 : ℝ)..t, H s.toNNReal ω‖ₑ^2 ∂P ≤
@@ -115,7 +125,11 @@ theorem lintegral_timeIntegral_sq_le {Ω : Type*} [MeasurableSpace Ω] (P : Meas
     _ = _ := by simp only [lintegral_const_mul' _ _ (by simp : (t : ℝ≥0∞) ≠ ∞),
       integrandDist, sub_zero]
 
-/-- Finite input energy makes each actual time integral square integrable. -/
+/-- **Square integrability of ordinary time integrals.** Let $P$ be a measure and $H$ a real process
+indexed by nonnegative time that is progressively measurable for a filtration on the same space and
+whose paths are continuous for every sample. If $H$ has finite input energy up to time $t$,
+$$\int_\Omega \int_{(0,t]} |H_s(\omega)|^2\,ds\,dP(\omega) < \infty,$$
+then the time integral $\omega \mapsto \int_0^t H_s(\omega)\,ds$ belongs to $L^2(P)$. -/
 theorem memLp_timeIntegral {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
     {F : Filtration ℝ≥0 mΩ} {H : ℝ≥0 → Ω → ℝ} (hH : IsProgressive F H)
     (hc : ∀ ω, Continuous (H · ω)) (t : ℝ≥0)
@@ -129,7 +143,12 @@ theorem memLp_timeIntegral {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure 
     (lintegral_timeIntegral_sq_le P hc t).trans_lt
       (ENNReal.mul_ne_top (by simp) hH2).lt_top
 
-/-- Uniform Cauchy–Schwarz bound for all times in a finite interval. -/
+/-- **Uniform bound for the ordinary primitive.** For a continuous real function $H$ on nonnegative
+time and $T \ge 0$,
+$$\sup_{0 \le t \le T} \left|\int_0^t H_s\,ds\right|^2 \le T \int_{(0,T]} |H_s|^2\,ds,$$
+with the supremum taken in the extended nonnegative reals. It enlarges each fixed-time
+Cauchy–Schwarz bound $\left|\int_0^t H_s\,ds\right|^2 \le t \int_{(0,t]} |H_s|^2\,ds$ to the
+horizon $T$. -/
 theorem iSup_enorm_timeIntegral_sq_le {H : ℝ≥0 → ℝ} (hH : Continuous H) (T : ℝ≥0) :
     (⨆ (t : ℝ≥0) (_ : t ≤ T), ‖∫ s in (0 : ℝ)..t, H s.toNNReal‖ₑ^2) ≤
       (T : ℝ≥0∞) * ∫⁻ s in Ioc (0 : ℝ) T, ‖H s.toNNReal‖ₑ^2 := by
@@ -137,8 +156,13 @@ theorem iSup_enorm_timeIntegral_sq_le {H : ℝ≥0 → ℝ} (hH : Continuous H) 
   exact mul_le_mul' (by exact_mod_cast ht)
     (lintegral_mono_set (Ioc_subset_Ioc_right (by exact_mod_cast ht)))
 
-/-- The squared running maximum of the actual time integral has finite-horizon
-moment bounded by elapsed time times input energy. -/
+/-- **Lower-integral bound for the running maximum of a time integral.** Let $P$ be a measure and
+$H$ a real process indexed by nonnegative time whose paths are continuous for every sample. For
+$T \ge 0$,
+$$\int_\Omega \sup_{0 \le t \le T} \left|\int_0^t H_s(\omega)\,ds\right|^2 dP(\omega) \le
+  T \int_\Omega \int_{(0,T]} |H_s(\omega)|^2\,ds\,dP(\omega).$$
+Both sides are lower integrals of nonnegative functions, so no measurability in the sample variable
+is required. -/
 theorem lintegral_iSup_timeIntegral_sq_le {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) {H : ℝ≥0 → Ω → ℝ} (hc : ∀ ω, Continuous (H · ω)) (T : ℝ≥0) :
     ∫⁻ ω, (⨆ (t : ℝ≥0) (_ : t ≤ T),
@@ -150,8 +174,13 @@ theorem lintegral_iSup_timeIntegral_sq_le {Ω : Type*} [MeasurableSpace Ω]
     _ = _ := by simp only [lintegral_const_mul' _ _ (by simp : (T : ℝ≥0∞) ≠ ∞),
       integrandDist, sub_zero]
 
-/-- The actual time primitive preserves finite integrated second moments, with
-an explicit squared-horizon bound. -/
+/-- **Input energy of the ordinary primitive.** Let $P$ be a measure and $H$ a real process indexed
+by nonnegative time whose paths are continuous for every sample, and write
+$D_t(\omega) = \int_0^t H_s(\omega)\,ds$. For $T \ge 0$,
+$$\int_\Omega \int_{(0,T]} |D_t(\omega)|^2\,dt\,dP(\omega) \le
+  T^2 \int_\Omega \int_{(0,T]} |H_s(\omega)|^2\,ds\,dP(\omega),$$
+where both sides are lower integrals in the extended nonnegative reals: the input energy of the
+primitive up to $T$ is at most $T^2$ times that of $H$. -/
 theorem integrandDist_timeIntegral_zero_le {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) {H : ℝ≥0 → Ω → ℝ} (hc : ∀ ω, Continuous (H · ω)) (T : ℝ≥0) :
     integrandDist P (fun t ω ↦ ∫ s in (0 : ℝ)..t, H s.toNNReal ω) (fun _ _ ↦ 0) T ≤
