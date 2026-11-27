@@ -6,12 +6,7 @@ The *semidominator* of a vertex $w \ne r$ is
 
 $$\mathrm{sdom}(w) = \min\{v \mid \text{there is a path } v = v_0, v_1, \dots, v_k = w \text{ in } G \text{ with } v_i > w \text{ for } 1 \le i \le k - 1\}.$$
 
-It satisfies the following, where $\mathrm{idom}(w)$ is the immediate dominator of $w$:
-- *(paths lemma)* if $v \le w$, every path from $v$ to $w$ contains a common ancestor of $v$ and $w$ in $T$;
-- $\mathrm{idom}(w) \xrightarrow{+} w$ and $\mathrm{sdom}(w) \xrightarrow{+} w$;
-- $\mathrm{idom}(w) \xrightarrow{*} \mathrm{sdom}(w)$.
-
-Replacing the nontree edges of $G$ by the edges $(\mathrm{sdom}(w), w)$, for $w \ne r$, leaves the dominators of all vertices unchanged.
+The tree parent of $w$ is a candidate, so $\mathrm{sdom}(w) < w$. Replacing the nontree edges of $G$ by the edges $(\mathrm{sdom}(w), w)$, for $w \ne r$, leaves the dominators of all vertices unchanged.
 
 ## Depends on
 
@@ -21,4 +16,4 @@ Replacing the nontree edges of $G$ by the edges $(\mathrm{sdom}(w), w)$, for $w 
 
 ## Sources
 
-- T. Lengauer and R. E. Tarjan, "A fast algorithm for finding dominators in a flowgraph", *ACM Transactions on Programming Languages and Systems* 1(1):121–141, 1979: Section 2, the depth-first numbering, Lemma 1 (the paths lemma), the definition (1) of $\mathrm{sdom}$, the remarks that follow it, and Lemmas 2, 3 and 4.
+- T. Lengauer and R. E. Tarjan, "A fast algorithm for finding dominators in a flowgraph", *ACM Transactions on Programming Languages and Systems* 1(1):121–141, 1979, Section 2: the depth-first numbering, the definition (1) of $\mathrm{sdom}$ and the remarks that follow it.

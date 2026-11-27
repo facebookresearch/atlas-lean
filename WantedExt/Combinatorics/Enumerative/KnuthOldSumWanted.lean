@@ -16,6 +16,7 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPolynomial
 public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialConvolution
 public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.AlternatingWeightedCentralBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.CatalanBernstein
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
 public import MathlibExt.Combinatorics.Enumerative.CosinePowerIntegral
@@ -775,20 +776,6 @@ public theorem_wanted two_param_poly_gammaBinom_one_sub_pow (n : ℕ) (u v x : �
             gammaBinom (2 * k + v) ((2 * k + v) / 2) *
             (gammaBinom ((2 * k + u + v) / 2) (u / 2))⁻¹ * x ^ (n - k)
 
-/-- **Reflection symmetry of the central binomial polynomial sum.** For every natural number $n$
-and every complex $x$,
-$$\sum_{k=0}^{n} (-1)^{n-k} \binom{2k}{k} 2^{-2k} \binom{n}{k} (1-x)^{n-k} =
-\sum_{k=0}^{n} (-1)^k \binom{2k}{k} 2^{-2k} \binom{n}{k} x^{n-k}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Corollary 5 (`integers-2026-A19-cor-5`). -/
-public theorem_wanted sum_centralBinom_choose_one_sub_pow_symm (n : ℕ) (x : ℂ) :
-    ∑ k ∈ range (n + 1),
-        (-1) ^ (n - k) * ((2 * k).choose k : ℂ) / 2 ^ (2 * k) * (n.choose k : ℂ) *
-          (1 - x) ^ (n - k) =
-      ∑ k ∈ range (n + 1),
-        (-1) ^ k * ((2 * k).choose k : ℂ) / 2 ^ (2 * k) * (n.choose k : ℂ) * x ^ (n - k)
-
 /-- **Reflection symmetry of the Catalan polynomial sum.** Let $C_m = \binom{2m}{m}/(m+1)$
 denote the $m$-th Catalan number. For every natural number $n$ and every complex $x$,
 $$\sum_{k=0}^{n} (-1)^{n-k} 2^{-2k} \binom{n}{k} C_{k+1} (1-x)^{n-k} =
@@ -897,18 +884,6 @@ public theorem_wanted sum_choose_two_pow_gammaBinom (n : ℕ) (v : ℝ) (hv : -1
         (n.choose (2 * k) : ℂ) * 2 ^ n / 2 ^ (4 * k) * ((2 * k).choose k : ℂ) *
           (gammaBinom ((2 * k + v) / 2) k)⁻¹
 
-/-- **Alternating sum of $\binom{n}{k} 2^{n-2k} \binom{2k}{k}$.** For every natural number $n$,
-the following identity holds in $\mathbb{Q}$:
-$$\sum_{k=0}^{n} (-1)^k \binom{n}{k} \frac{2^n}{2^{2k}} \binom{2k}{k}
-= \sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{1}{2^{2k}} \binom{2k}{k}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 3 (`integers-2026-A19-prop-3`). -/
-public theorem_wanted sum_neg_one_pow_choose_two_pow_centralBinom (n : ℕ) :
-    ∑ k ∈ range (n + 1), (-1 : ℚ) ^ k * (n.choose k : ℚ) * 2 ^ n / 2 ^ (2 * k) *
-        ((2 * k).choose k : ℚ) =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ)
-
 /-- **Alternating binomial sum of Catalan numbers.** For every natural number $n$, in the
 rational numbers
 
@@ -925,18 +900,6 @@ public theorem_wanted sum_neg_one_pow_choose_two_pow_catalan (n : ℕ) :
     ∑ k ∈ range (n + 1), (-1 : ℚ) ^ k * (n.choose k : ℚ) * (2 * k + 1) / (k + 2) *
         2 ^ (n + 1) / 2 ^ (2 * k) * catalan k =
       ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * catalan k
-
-/-- **Even-index binomial sum of weighted central binomial coefficients.** Write
-$C_m = \binom{2m}{m}/(m+1)$ for the $m$-th Catalan number. For every natural number $n$,
-$$\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{1}{(k+1) 2^{2k}} \binom{2k}{k} =
-\frac{2}{2^n (n+2)} (2n+1) C_n.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 4 (`integers-2026-A19-prop-4`). -/
-public theorem_wanted sum_choose_even_centralBinom_div_succ (n : ℕ) :
-    ∑ k ∈ range (n / 2 + 1),
-        (n.choose (2 * k) : ℚ) / (k + 1) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
-      2 / 2 ^ n / (n + 2) * (2 * n + 1) * catalan n
 
 /-- **One-parameter extension of the alternating sum of $\binom{n}{k} \binom{2k}{k}$.**
 Write $\binom{u}{w} = \Gamma(u+1)/(\Gamma(w+1)\,\Gamma(u-w+1))$ for the generalized binomial
