@@ -133,8 +133,9 @@ def Tm.substAt : Tm → ℕ → Tm → Tm
   | .unfold t, j, u => .unfold (t.substAt j u)
 
 /-- `t.subst u` substitutes `u` for variable `0` of `t`, the variable bound
-by an enclosing `lam`, and lowers the other free variables: the result of
-applying `lam t` to `u`. -/
+by an enclosing `lam`, and lowers the other free variables. It is defined for
+every term `u`; when `u` is a value (`Value u`), `app (lam t) u` takes one
+call-by-value step to `t.subst u` (`Step.beta`). -/
 def Tm.subst (t u : Tm) : Tm := t.substAt 0 u
 
 /-- Call-by-value small-step reduction. -/

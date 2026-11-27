@@ -36,8 +36,8 @@ example : schurComplement !![(2 : ℝ)] !![1] !![2] *ᵥ ![(5 / 3 : ℝ)]
     exact Matrix.invertibleOfDetInvertible _
   exact reduced_injection_of_full_solution !![(2 : ℝ)] !![1] !![2]
     ![(5 / 3 : ℝ)] ![(-1 / 3 : ℝ)] ![3] ![1]
-    (by ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> norm_num)
-    (by ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> norm_num)
+    (by ext i; fin_cases i; simp [Matrix.mulVec, dotProduct]; norm_num)
+    (by ext i; fin_cases i; simp [Matrix.mulVec, dotProduct]; norm_num)
 
 /-- Interior reconstruction on the scalar fixture: the interior
 potential `-1 / 3` is recovered from the port potential, through
@@ -51,8 +51,8 @@ example : ![(-1 / 3 : ℝ)]
     exact Matrix.invertibleOfDetInvertible _
   exact ((block_solution_iff_reduced !![(2 : ℝ)] !![1] !![2]
     ![(5 / 3 : ℝ)] ![(-1 / 3 : ℝ)] ![3] ![1]).mp
-    ⟨by ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> norm_num,
-      by ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> norm_num⟩).2
+    ⟨by ext i; fin_cases i; simp [Matrix.mulVec, dotProduct]; norm_num,
+      by ext i; fin_cases i; simp [Matrix.mulVec, dotProduct]; norm_num⟩).2
 
 /-- Reconstruction from the reduced solution on the scalar fixture
 solves the full system, through the public reconstruction lemma. -/
@@ -71,8 +71,8 @@ example : !![(2 : ℝ)] *ᵥ ![(5 / 3 : ℝ)]
     (by
       have h := reduced_injection_of_full_solution !![(2 : ℝ)] !![1] !![2]
         ![(5 / 3 : ℝ)] ![(-1 / 3 : ℝ)] ![3] ![1]
-        (by ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> norm_num)
-        (by ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> norm_num)
+        (by ext i; fin_cases i; simp [Matrix.mulVec, dotProduct]; norm_num)
+        (by ext i; fin_cases i; simp [Matrix.mulVec, dotProduct]; norm_num)
       exact h)
 
 /-- Dissipation split on the scalar fixture, through the canonical
@@ -95,7 +95,7 @@ example : (![(5 / 3 : ℝ)] ⊕ᵥ ![(-1 / 3 : ℝ)]) ⬝ᵥ
       ext i j
       fin_cases i <;> fin_cases j <;> simp [Matrix.fromBlocks, Matrix.transpose_apply])
     ![(5 / 3 : ℝ)] ![(-1 / 3 : ℝ)] ![1]
-    (by ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct] <;> norm_num)
+    (by ext i; fin_cases i; simp [Matrix.mulVec, dotProduct]; norm_num)
 
 /-- The same split evaluated in numbers: the total is `14 / 3`. -/
 example : (![(5 / 3 : ℝ)] ⊕ᵥ ![(-1 / 3 : ℝ)]) ⬝ᵥ

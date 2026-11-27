@@ -215,13 +215,13 @@ theorem adelicAddHaar_nhds_zero_inter_adelicBox_pos
       have hxi := hcoords i
       rw [Set.mem_preimage] at hxi
       by_cases hiT : i ∈ T
-      · rw [if_pos hiT]
+      · rw [ite_eq_left hiT]
         have hneg : b.repr (e x.1) i < 0 := (Finset.mem_filter.mp hiT).2
         refine ⟨sub_nonneg.mpr hxi.1.le, ?_⟩
         rw [sub_neg_eq_add]
         have h := add_lt_add_right hneg ε
         rwa [add_zero, add_comm] at h
-      · rw [if_neg hiT, sub_zero]
+      · rw [ite_eq_right hiT, sub_zero]
         have hnonneg : 0 ≤ b.repr (e x.1) i := not_lt.mp fun hc =>
           hiT (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hc⟩)
         exact ⟨hnonneg, hxi.2⟩

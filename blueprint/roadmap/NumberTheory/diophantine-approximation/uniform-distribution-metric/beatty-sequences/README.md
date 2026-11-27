@@ -17,6 +17,7 @@
 - [Multiplicity $k + 1$ for $\alpha$ is multiplicity $k$ for $\alpha/(1 - \alpha)$](beatty-floor-fiber-card-succ-iff.md)
 - [The values of $\lfloor n\alpha\rfloor$ of each multiplicity form Beatty sets](beatty-floor-fiber-card-sets-is-beatty.md)
 - [Multiplicities of $\lfloor n\alpha\rfloor$ are $k$ plus the indicator of a Beatty set](beatty-floor-fiber-card-eq-add-indicator.md)
+- [Explicit Beatty slope for floor-fiber multiplicities](beatty-floor-fiber-card-eq-add-indicator-2.md)
 - [Increments of the $\beta$-Beatty counts between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$](beatty-card-compl-between-succ-sub.md)
 - [Increments of the $\alpha$-Beatty counts between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$](beatty-card-self-between-succ-sub.md)
 - [Multiplicities of Polanco's skipping sequence](beatty-skipping-card-eq-add-indicator.md)

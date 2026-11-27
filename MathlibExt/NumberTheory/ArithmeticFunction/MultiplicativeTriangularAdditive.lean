@@ -11,12 +11,20 @@ module
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring.Basic
 
 /-!
 # Multiplicative functions additive on sums of two positive triangular numbers
 
-Park's vanishing lemmas for nonzero values at 3 or 5 follow by evaluating small integers
+Park's identity and vanishing lemmas follow by evaluating small integers
 as sums of admissible summands and as products of coprime factors.
+
+## References
+
+* Poo-Sung Park, *Multiplicative Functions Additive on the Sums of Two Positive Triangular
+  Numbers*, Journal of Integer Sequences 28 (2025), Article 25.4.8, pp. 1–6,
+  Lemmas 2–5. <https://cs.uwaterloo.ca/journals/JIS/VOL28/Park/park10.html>
 -/
 
 @[expose] public section
@@ -83,6 +91,26 @@ private theorem small_values_of_two_eq_zero
   · exact (hf.map_mul_of_coprime (show Nat.Coprime 4 5 by decide)).trans (by rw [h4, zero_mul])
   · exact h21
 
+/-- **Park's Lemma 5: vanishing from 2 to 21 when the values at 2, 3 and 5 are zero.** Let $f$
+be a multiplicative arithmetic function with values in $\mathbb{C}$ such that
+$f(a + b) = f(a) + f(b)$ whenever $a$ and $b$ are both sums of two positive triangular numbers.
+If $f(2) = f(3) = f(5) = 0$, then $f(n) = 0$ for every natural number $n$ with $2 \le n \le 21$.
+
+Source: Poo-Sung Park, "Multiplicative Functions Additive on the Sums
+of Two Positive Triangular Numbers", Lemma 5. -/
+theorem multiplicative_additive_on_sum_two_triangular_zero_of_all_zero
+    (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
+    (hadd : ∀ a b : ℕ, IsSumTwoPositiveTriangular a →
+      IsSumTwoPositiveTriangular b → f (a + b) = f a + f b)
+    (hf2 : f 2 = 0) (hf3 : f 3 = 0) (hf5 : f 5 = 0) :
+    ∀ n : ℕ, 2 ≤ n → n ≤ 21 → f n = 0 := by
+  intro n hlo hhi
+  rcases eq_or_ne n 3 with rfl | hn3
+  · exact hf3
+  rcases eq_or_ne n 5 with rfl | hn5
+  · exact hf5
+  exact (small_values_of_two_eq_zero f hf hadd hf2).2 n hlo hhi hn3 hn5
+
 /-- **Park's Lemma 3: vanishing from 4 to 21 when the value at 2 is zero and at 3 is not.** Let
 $f$ be a multiplicative arithmetic function with values in $\mathbb{C}$ such that
 $f(a + b) = f(a) + f(b)$ whenever $a$ and $b$ are both sums of two positive triangular numbers.
@@ -123,5 +151,87 @@ theorem multiplicative_additive_on_sum_two_triangular_zero_of_five_ne_zero
   · subst n
     exact (mul_eq_zero.mp h35).resolve_right hf5
   · exact vanish n hlo hhi hn3 hn5
+
+/-- **Park's Lemma 2: the identity up to 21 when the value at 2 is nonzero.** Let $f$ be a
+multiplicative arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$
+whenever $a$ and $b$ are both sums of two positive triangular numbers. If $f(2) \neq 0$, then
+$f(n) = n$ for every natural number $n \le 21$.
+
+Source: Poo-Sung Park, "Multiplicative Functions Additive on the Sums
+of Two Positive Triangular Numbers", Lemma 2. -/
+theorem multiplicative_additive_on_sum_two_triangular_eq_id_le_21
+    (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
+    (hadd : ∀ a b : ℕ, IsSumTwoPositiveTriangular a →
+      IsSumTwoPositiveTriangular b → f (a + b) = f a + f b)
+    (hf2 : f 2 ≠ 0) :
+    ∀ n : ℕ, n ≤ 21 → f n = (n : ℂ) := by
+  have t2 : IsSumTwoPositiveTriangular 2 := ⟨1, 1, by decide⟩
+  have t4 : IsSumTwoPositiveTriangular 4 := ⟨1, 2, by decide⟩
+  have t6 : IsSumTwoPositiveTriangular 6 := ⟨2, 2, by decide⟩
+  have t7 : IsSumTwoPositiveTriangular 7 := ⟨1, 3, by decide⟩
+  have t9 : IsSumTwoPositiveTriangular 9 := ⟨2, 3, by decide⟩
+  have t12 : IsSumTwoPositiveTriangular 12 := ⟨3, 3, by decide⟩
+  have t13 : IsSumTwoPositiveTriangular 13 := ⟨2, 4, by decide⟩
+  -- Comparing the sum and product at 6 and 14 determines f 3 and f 7.
+  have add4 : f 4 = f 2 + f 2 := hadd 2 2 t2 t2
+  have add6 : f 6 = f 2 + f 4 := hadd 2 4 t2 t4
+  have mul6 : f 6 = f 2 * f 3 := hf.map_mul_of_coprime (show Nat.Coprime 2 3 by decide)
+  have h3 : f 3 = 3 := by
+    apply mul_left_cancel₀ hf2
+    rw [← mul6, add6, add4]
+    ring
+  have mul12 : f 12 = f 3 * f 4 := hf.map_mul_of_coprime (show Nat.Coprime 3 4 by decide)
+  have add14 : f 14 = f 2 + f 12 := hadd 2 12 t2 t12
+  have mul14 : f 14 = f 2 * f 7 := hf.map_mul_of_coprime (show Nat.Coprime 2 7 by decide)
+  have h7 : f 7 = 7 := by
+    apply mul_left_cancel₀ hf2
+    rw [← mul14, add14, mul12, h3, add4]
+    ring
+  -- The alternative decomposition 14 = 7 + 7 allows cancellation of f 7.
+  have h2 : f 2 = 2 := by
+    have h7_ne : f 7 ≠ 0 := by rw [h7]; norm_num
+    apply mul_right_cancel₀ h7_ne
+    rw [← mul14, show f 14 = f 7 + f 7 from hadd 7 7 t7 t7, two_mul]
+  have sum_id {a b : ℕ} (ha : IsSumTwoPositiveTriangular a) (hb : IsSumTwoPositiveTriangular b)
+      (ea : f a = (a : ℂ)) (eb : f b = (b : ℂ)) : f (a + b) = ((a + b : ℕ) : ℂ) := by
+    rw [hadd a b ha hb, ea, eb, Nat.cast_add]
+  have mul_id {a b : ℕ} (hab : Nat.Coprime a b) (ea : f a = (a : ℂ)) (eb : f b = (b : ℂ)) :
+      f (a * b) = ((a * b : ℕ) : ℂ) := by
+    rw [hf.map_mul_of_coprime hab, ea, eb, Nat.cast_mul]
+  have h4 : f 4 = 4 := sum_id t2 t2 h2 h2
+  have h6 : f 6 = 6 := mul_id (by decide) h2 h3
+  have h5 : f 5 = 5 := by
+    have add10 : f 10 = f 4 + f 6 := hadd 4 6 t4 t6
+    have mul10 : f 10 = f 2 * f 5 := hf.map_mul_of_coprime (show Nat.Coprime 2 5 by decide)
+    apply mul_left_cancel₀ hf2
+    rw [← mul10, add10, h4, h6, h2]
+    norm_num
+  have h9 : f 9 = 9 := sum_id t2 t7 h2 h7
+  have h12 : f 12 = 12 := mul_id (by decide) h3 h4
+  have h13 : f 13 = 13 := sum_id t4 t9 h4 h9
+  intro n hn
+  interval_cases n
+  · simpa only [Nat.cast_zero] using f.map_zero
+  · simpa only [Nat.cast_one] using hf.map_one
+  · exact h2
+  · exact h3
+  · exact h4
+  · exact h5
+  · exact h6
+  · exact h7
+  · exact sum_id t4 t4 h4 h4
+  · exact h9
+  · exact mul_id (by decide) h2 h5
+  · exact sum_id t4 t7 h4 h7
+  · exact h12
+  · exact h13
+  · exact mul_id (by decide) h2 h7
+  · exact mul_id (by decide) h3 h5
+  · exact sum_id t7 t9 h7 h9
+  · exact sum_id t4 t13 h4 h13
+  · exact mul_id (by decide) h2 h9
+  · exact sum_id t7 t12 h7 h12
+  · exact mul_id (by decide) h4 h5
+  · exact mul_id (by decide) h3 h7
 
 end MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditiveWanted

@@ -44,6 +44,7 @@ public import Mathlib.Algebra.Category.Ring.Basic
 public import Mathlib.CategoryTheory.Limits.Constructions.Over.Basic
 public import Mathlib.RingTheory.RingHom.Flat
 public import Mathlib.RingTheory.Spectrum.Prime.Topology
+import Mathlib.RingTheory.TensorProduct.IncludeLeftSubRight
 import MathlibExt.RingTheory.Flat.FaithfullyFlat.AlgebraDescent
 
 universe u v
@@ -448,62 +449,6 @@ private theorem
     exact DatumFromFunctor.intertwine F S₁ C₁ e he _ _ x
 
 
-namespace AmitsurDegreeZero
-
-variable {A : Type u} {B : Type v} [CommRing A] [CommRing B] [Algebra A B]
-
-private noncomputable def amitsurDelta (A : Type u) (B : Type v) [CommRing A] [CommRing B]
-    [Algebra A B] : B →ₗ[A] B ⊗[A] B :=
-  (TensorProduct.mk A B B).flip 1 - TensorProduct.mk A B B 1
-
-private theorem amitsurDelta_apply (b : B) :
-    amitsurDelta A B b = b ⊗ₜ[A] (1 : B) - (1 : B) ⊗ₜ[A] b := rfl
-
-private theorem amitsurDelta_comp_linearMap : amitsurDelta A B ∘ₗ Algebra.linearMap A B = 0 := by
-  ext
-  simp [amitsurDelta_apply, Algebra.algebraMap_eq_smul_one]
-
-private noncomputable def amitsurContraction (A : Type u) (B : Type v) [CommRing A] [CommRing B]
-    [Algebra A B] : B ⊗[A] (B ⊗[A] B) →ₗ[A] B ⊗[A] B :=
-  (LinearMap.mul' A B).rTensor B ∘ₗ (TensorProduct.assoc A B B B).symm.toLinearMap
-
-private theorem amitsurContraction_lTensor_amitsurDelta (x : B ⊗[A] B) :
-    amitsurContraction A B ((amitsurDelta A B).lTensor B x) =
-      (LinearMap.mul' A B x) ⊗ₜ[A] (1 : B) - x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | tmul b c =>
-      simp [amitsurContraction, amitsurDelta_apply, LinearMap.lTensor_tmul,
-        TensorProduct.tmul_sub, TensorProduct.assoc_symm_tmul, LinearMap.rTensor_tmul,
-        LinearMap.mul'_apply]
-  | add x y hx hy =>
-      simp only [map_add, hx, hy, TensorProduct.add_tmul]
-      abel
-
-private theorem exact_lTensor_linearMap_lTensor_amitsurDelta :
-    Function.Exact ((Algebra.linearMap A B).lTensor B) ((amitsurDelta A B).lTensor B) := by
-  intro x
-  constructor
-  · intro hx
-    refine ⟨(LinearMap.mul' A B x) ⊗ₜ[A] (1 : A), ?_⟩
-    have h := amitsurContraction_lTensor_amitsurDelta x
-    rw [hx, map_zero, eq_comm, sub_eq_zero] at h
-    rw [LinearMap.lTensor_tmul, Algebra.linearMap_apply, map_one, h]
-  · rintro ⟨y, rfl⟩
-    rw [← LinearMap.comp_apply, ← LinearMap.lTensor_comp, amitsurDelta_comp_linearMap,
-      LinearMap.lTensor_zero, LinearMap.zero_apply]
-
-private theorem exists_algebraMap_eq_of_tmul_one_eq_one_tmul [Module.FaithfullyFlat A B]
-    {b : B} (hb : b ⊗ₜ[A] (1 : B) = (1 : B) ⊗ₜ[A] b) : ∃ a : A, algebraMap A B a = b := by
-  have hex : Function.Exact (Algebra.linearMap A B) (amitsurDelta A B) :=
-    (Module.FaithfullyFlat.lTensor_exact_iff_exact A B _ _).mp
-      exact_lTensor_linearMap_lTensor_amitsurDelta
-  obtain ⟨a, ha⟩ := (hex b).mp (by rw [amitsurDelta_apply, hb, sub_self])
-  exact ⟨a, ha⟩
-
-end AmitsurDegreeZero
-
-
 open CategoryTheory CategoryTheory.Limits TensorProduct
 
 
@@ -888,7 +833,9 @@ private theorem descends_iff
       have := e1 (gPt e y (a : C₁))
       rw [h1, e2] at this
       exact this.symm
-    obtain ⟨b₀, hb₀⟩ := AmitsurDegreeZero.exists_algebraMap_eq_of_tmul_one_eq_one_tmul h2
+    obtain ⟨b₀, hb₀⟩ :=
+      (Algebra.IsEffective.of_faithfullyFlat B (B ⊗[R] S₁) (gPt e y (a : C₁))).mp
+        (by rw [Algebra.TensorProduct.includeLeftSubRight_apply, h2, sub_self])
     exact ⟨b₀, hb₀⟩
   ·
     intro h

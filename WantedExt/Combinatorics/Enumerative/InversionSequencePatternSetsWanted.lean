@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.InversionSequenceWilf201210
+public import MathlibExt.Combinatorics.Enumerative.InversionSequenceAvoid011102120
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 
 /-!
@@ -50,20 +51,6 @@ public theorem_wanted invSeq_wilf_000_010_120_five_class :
         : Set (Fin 3 → ℕ)) =
       invSeqAvoidCount ({![0, 0, 0], ![0, 1, 0], ![1, 1, 0], ![1, 2, 0], ![2, 1, 0]}
           : Set (Fin 3 → ℕ))
-
-/-- **Inversion sequences avoiding $\{011, 102, 120\}$.** Let $B = \{011, 102, 120\}$, where a
-pattern is written as a digit string ($101$ is the triple $(1, 0, 1)$), and let
-$F_B(x) = \sum_{n \ge 1} |I_n(B)| x^n \in \mathbb{Q}[[x]]$ be the generating function of the
-inversion sequences avoiding every pattern in $B$. Then
-$$(1 - 2x)^2 F_B(x) = x(1 - x)^2.$$
-
-Since $(1 - 2x)^2$ is a unit in $\mathbb{Q}[[x]]$, this says $F_B(x) = x(1 - x)^2/(1 - 2x)^2$.
-
-Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
-(2024), Article A76, Theorem 6 (`integers-2024-A76-thm-6`). -/
-public theorem_wanted invSeqAvoidGF_011_102_120 :
-    (1 - 2 * X) ^ 2 * invSeqAvoidGF ({![0, 1, 1], ![1, 0, 2], ![1, 2, 0]} : Set (Fin 3 → ℕ)) =
-      X * (1 - X) ^ 2
 
 /-- **Three I-Wilf-equivalent sets of five patterns containing $000$, $102$ and $120$.** Write
 length-3 patterns as digit strings ($101$ is the pattern $(1, 0, 1)$) and let $|I_n(B)|$ be the
@@ -434,24 +421,6 @@ public theorem_wanted invSeq_wilf_010_120_201_210_101_110 :
     invSeqAvoidCount ({![0, 1, 0], ![1, 0, 1], ![1, 2, 0], ![2, 0, 1], ![2, 1, 0]}
         : Set (Fin 3 → ℕ)) =
       invSeqAvoidCount ({![0, 1, 0], ![1, 1, 0], ![1, 2, 0], ![2, 0, 1], ![2, 1, 0]}
-          : Set (Fin 3 → ℕ))
-
-/-- **Exchanging $201$ and $210$ in $\{010, 100, 101, 102, 120, 201\}$.** Write length-3
-patterns as digit strings ($101$ is the pattern $(1, 0, 1)$) and let $|I_n(B)|$ be the number of
-inversion sequences of length $n$ that avoid every pattern in the set $B$. For a pattern $\tau$
-let $A_\tau = \{010, 100, 101, 102, 120, \tau\}$. Then for every $n \ge 0$,
-$|I_n(A_{201})| = |I_n(A_{210})|$.
-
-The source further claims $|I_n(A_{210})| = |I_n(B)| = |I_n(C)|$ for all $n$, with
-$B = \{010, 100, 110, 102, 120, 201\}$ and $C = \{010, 101, 110, 102, 120, 210\}$; these claims are
-false as printed ($|I_7| = 538, 537, 539$ for $A_{210}$, $B$, $C$) and are omitted.
-
-Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
-(2024), Article A76, Theorem 15 (`integers-2024-A76-thm-15`). -/
-public theorem_wanted invSeq_wilf_010_100_101_102_120_201_210 :
-    invSeqAvoidCount ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 0, 2], ![1, 2, 0], ![2, 0, 1]}
-        : Set (Fin 3 → ℕ)) =
-      invSeqAvoidCount ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 0, 2], ![1, 2, 0], ![2, 1, 0]}
           : Set (Fin 3 → ℕ))
 
 end
