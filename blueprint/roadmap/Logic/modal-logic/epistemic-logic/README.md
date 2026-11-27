@@ -35,3 +35,6 @@
 
 - [Common knowledge as a greatest fixed point](common-knowledge-as-a-greatest-fixed-point.md)
 - [Knowledge in runs of a distributed system](knowledge-in-runs-of-a-distributed-system.md)
+- [Arbitrary, group and coalition announcement logics](quantified-public-announcement-logics.md)
+- [Model checking probabilistic knowledge under synchronous perfect recall is undecidable](probabilistic-knowledge-under-perfect-recall.md)
+- [Satisfiability of quantified announcement logics is undecidable](satisfiability-of-quantified-announcement-logics.md)

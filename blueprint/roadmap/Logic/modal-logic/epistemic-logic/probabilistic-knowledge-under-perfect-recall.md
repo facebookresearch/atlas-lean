@@ -1,0 +1,32 @@
+# Model checking probabilistic knowledge under synchronous perfect recall is undecidable
+
+No algorithm decides, given a finite partially observed Markov chain, an atomic proposition $p$ and a rational threshold $c$, whether at some time agent $i$, remembering all its observations, assigns probability greater than $c$ to $p$.
+
+**Setting (van der Meyden and Patra).** A finite *partially observed discrete-time Markov chain* (PO-DTMC) for agents $1, \dots, n$ is $M = (S, PI, PT, O_1, \dots, O_n, \pi)$: a finite [discrete-time Markov chain](../../temporal-logic/probabilistic-model-checking/discrete-time-markov-chains.md) with states $S$, initial distribution $PI$ and transition probabilities $PT$, observation functions $O_i : S \to \mathcal{O}$ and a valuation $\pi : S \to 2^{\mathit{Prop}}$. Its infinite paths, with the usual measure, are the runs of a synchronous probabilistic interpreted system; under the *synchronous perfect recall* semantics the local state of agent $i$ at time $m$ is its sequence of observations $O_i(s_0) \cdots O_i(s_m)$, so two points are indistinguishable to $i$ exactly when they have the same time and the same observation history ([knowledge in runs of a distributed system](knowledge-in-runs-of-a-distributed-system.md)). The probability $\Pr_i(\varphi)$ that agent $i$ assigns at a point is the conditional probability of $\varphi$ given the agent's indistinguishability class, and $M \models^{\mathrm{spr}} \mathrm{EF}\,(\Pr_i(p) > c)$ holds when some point reachable from the start satisfies $\Pr_i(p) > c$.
+
+**Theorem (van der Meyden and Patra).**
+
+1. It is undecidable, given a PO-DTMC $M$, an atomic proposition $p$ and a rational $c$, whether $M \models^{\mathrm{spr}} \mathrm{EF}\,(\Pr_i(p) > c)$ (Theorem 10 of arXiv:1511.03003v1).
+2. In the weak monadic logic of order with probability and knowledge, model checking a PO-DTMC is undecidable for formulas with linear combinations of probability terms and second-order quantification into the scope of probability operators (Theorem 11 of arXiv:1511.03003v1).
+3. There is a fixed PO-DTMC $M$ with $4$ states such that it is undecidable, given a mixed-time polynomial atomic probability formula $\psi = \exists t_1 \cdots t_n\, \bigl(f(\Pr(p_1(t_{j_1})), \dots, \Pr(p_m(t_{j_m}))) = 0\bigr)$ with $f$ a rational polynomial, whether $M \models \psi$ (Theorem 12 of arXiv:1511.03003v1).
+
+Clause 1 contrasts with decidable cases for temporal operators of finite reach under perfect recall; clauses 2 and 3 concern two extensions of the probabilistic monadic logic of order of Beauquier, Rabinovich and Slissenko, which is decidable except for a set of parameters of arbitrarily small measure, and which is close to the clock semantics.
+
+## Depends on
+
+- [Discrete-time Markov chains](../../temporal-logic/probabilistic-model-checking/discrete-time-markov-chains.md)
+- [Knowledge in runs of a distributed system](knowledge-in-runs-of-a-distributed-system.md)
+
+## Proof depends on
+
+- [The emptiness problem for probabilistic automata is undecidable](../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/emptiness-problem-for-probabilistic-automata.md)
+- [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+
+## Expansion
+
+Clause 1 reduces from the emptiness problem for probabilistic finite automata with a cutpoint (Paz): from an automaton with cutpoint $\lambda$ one builds a single-agent PO-DTMC whose observation sequences correspond to input words and in which the agent's posterior probability of an accepting-state proposition after a word equals the acceptance probability of that word, so some word is accepted with probability above $\lambda$ exactly when $\mathrm{EF}(\Pr_i(p) > \lambda)$ holds. Clause 2 follows because second-order quantification into probability operators expresses perfect recall. Clause 3 reduces from Hilbert's tenth problem: a fixed four-state chain realizes $t \cdot 2^{-t}$ and $2^{-t}$ as probabilities of propositions at time $t$, so a polynomial combination of such probabilities at existentially quantified times vanishes exactly when a corresponding integer polynomial has a zero in the natural numbers.
+
+## Sources
+
+- R. van der Meyden and M. K. Patra, "Undecidable Cases of Model Checking Probabilistic Temporal-Epistemic Logic", *ACM Transactions on Computational Logic* 21(4):1–26, 2020, doi:[10.1145/3409250](https://doi.org/10.1145/3409250); read as arXiv:1511.03003v1 ([arXiv](https://arxiv.org/abs/1511.03003v1)), the extended version with full proofs, whose numbering is used: the definitions of Section 2 (probabilistic interpreted systems, the logic and mixed-time polynomial atomic probability formulas, PO-DTMCs and the perfect recall and clock semantics) and Theorems 10, 11 and 12 of Section 4.
+- R. van der Meyden and M. K. Patra, "Undecidable Cases of Model Checking Probabilistic Temporal-Epistemic Logic (Extended Abstract)", in *Proceedings of the Fifteenth Conference on Theoretical Aspects of Rationality and Knowledge (TARK 2015)*, Electronic Proceedings in Theoretical Computer Science 215, 2016, pp. 264–282, doi:[10.4204/EPTCS.215.19](https://doi.org/10.4204/EPTCS.215.19), the conference version.
