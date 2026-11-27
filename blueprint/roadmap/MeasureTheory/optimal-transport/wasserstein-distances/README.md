@@ -9,6 +9,7 @@ controls the integrals of Lipschitz functions.
 
 - [Wasserstein distance](wasserstein-distance/README.md)
 - [Kantorovich–Rubinstein formula](kantorovich-rubinstein-formula/README.md)
+- [Earthmover distance as a minimum-cost flow](earthmover-distance-as-a-minimum-cost-flow.md)
 - [Wasserstein distance controlled by total variation](wasserstein-distance-and-total-variation/README.md)
 - [Convergence in W_p is weak convergence with convergence of p-th moments](wasserstein-convergence/README.md)
 
