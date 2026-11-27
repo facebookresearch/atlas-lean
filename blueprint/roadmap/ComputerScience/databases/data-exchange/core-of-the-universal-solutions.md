@@ -14,12 +14,12 @@ universal solution; in particular it has the fewest facts among universal soluti
 
 ## Depends on
 
-- [Data exchange: universal solutions and certain answers of UCQs](data-exchange-universal-solutions-and-certain-answers-of-ucq.md)
-- [Tuple- and equality-generating dependencies and the chase](tuple-and-equality-generating-dependencies-and-the-chase.md)
+- [Data exchange: universal solutions and certain answers of UCQs](../dependencies-and-the-chase/data-exchange-universal-solutions-and-certain-answers-of-ucq.md)
+- [Tuple- and equality-generating dependencies and the chase](../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
 
 ## Proof depends on
 
-- [Successful terminating chases yield universal models](successful-terminating-chases-yield-universal-models.md)
+- [Successful terminating chases yield universal models](../dependencies-and-the-chase/successful-terminating-chases-yield-universal-models.md)
 
 ## Sources
 

@@ -18,7 +18,7 @@ that move only a bounded set of nulls).
 
 ## Proof depends on
 
-- [Data exchange: universal solutions and certain answers of UCQs](data-exchange-universal-solutions-and-certain-answers-of-ucq.md)
+- [Data exchange: universal solutions and certain answers of UCQs](../dependencies-and-the-chase/data-exchange-universal-solutions-and-certain-answers-of-ucq.md)
 
 ## Sources
 

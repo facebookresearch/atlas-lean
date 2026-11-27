@@ -9,12 +9,12 @@ $\bowtie[AB, BC, CD]$, whose join of projections also contains $0001$.
 
 ## Depends on
 
-- [Join dependencies and multivalued dependencies](multivalued-and-join-dependencies/join-dependencies-and-multivalued-dependencies.md)
+- [Join dependencies and multivalued dependencies](../dependencies-and-the-chase/multivalued-and-join-dependencies/join-dependencies-and-multivalued-dependencies.md)
 - [Characterizations of acyclic database schemas](../join-processing/characterizations-of-acyclic-database-schemas.md)
 
 ## Proof depends on
 
-- [Chasing tableau queries with functional and join dependencies](chasing-tableau-queries-with-functional-and-join-dependencie.md)
+- [Chasing tableau queries with functional and join dependencies](../dependencies-and-the-chase/chasing-tableau-queries-with-functional-and-join-dependencie.md)
 
 ## Sources
 

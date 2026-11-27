@@ -11,7 +11,7 @@ and $\pi_{(i_1, \dots, i_k)}(\bar x_1) = \pi_{(j_1, \dots, j_k)}(\bar x_n)$.
 **Lemma.** $\mathrm{Chase}(S_\sigma, \Sigma) \models \sigma$ if and only if there is a witness of $\sigma$ relative to $\Sigma$. A
 witness uses at most $\mathrm{ar}(R) + 1$ variables, so its existence can be searched for nondeterministically in polynomial
 space, which gives the upper bound of
-[the PSPACE-completeness of implication](../implication-of-inclusion-dependencies-is-pspace-complete.md).
+[the PSPACE-completeness of implication](../../dependency-reasoning/implication-of-inclusion-dependencies-is-pspace-complete.md).
 
 ## Depends on
 

@@ -9,7 +9,7 @@ be assigned to columns so that each occurs only in its column and equalities rel
 A set $\Sigma$ of dependencies *implies* a dependency $\tau$ without restriction, $\Sigma \models_{\mathrm{unr}} \tau$, when every
 instance over a countably infinite value domain, with possibly infinite relations, that satisfies every dependency of
 $\Sigma$ satisfies $\tau$; it *finitely implies* $\tau$, $\Sigma \models_{\mathrm{fin}} \tau$, when this holds for every instance
-with finite relations. These are the two quantifiers of [unrestricted](implies.md) and [finite](finitely-implies.md)
+with finite relations. These are the two quantifiers of [unrestricted](../dependencies-and-the-chase/implies.md) and [finite](../dependencies-and-the-chase/finitely-implies.md)
 implication, there defined for functional and inclusion dependencies, applied to the dependencies above.
 
 For typed dependencies, and already for embedded multivalued dependencies, finite and unrestricted implication do not
@@ -24,15 +24,15 @@ multivalued dependencies). A good expansion checks those original proofs and cit
 
 ## Depends on
 
-- [Tuple- and equality-generating dependencies and the chase](tuple-and-equality-generating-dependencies-and-the-chase.md)
+- [Tuple- and equality-generating dependencies and the chase](../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
 - [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 - [Co-recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
-- [Unrestricted implication of dependencies](implies.md)
-- [Finite implication of dependencies](finitely-implies.md)
+- [Unrestricted implication of dependencies](../dependencies-and-the-chase/implies.md)
+- [Finite implication of dependencies](../dependencies-and-the-chase/finitely-implies.md)
 
 ## Informally uses
 
-- [Finite and unrestricted implication of functional and inclusion dependencies](finite-and-unrestricted-implication-of-functional-and-inclusion.md)
+- [Finite and unrestricted implication of functional and inclusion dependencies](../dependencies-and-the-chase/finite-and-unrestricted-implication-of-functional-and-inclusion.md)
 
 ## Sources
 

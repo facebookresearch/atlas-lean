@@ -17,7 +17,7 @@ possibly infinite chase of $q$ by $\Sigma$, explored one atom at a time.
 ## Proof depends on
 
 - [Finite controllability of conjunctive-query containment under inclusion dependencies](finite-controllability-of-cq-containment-under-inds.md)
-- [Implication of inclusion dependencies is PSPACE-complete](../dependencies-and-the-chase/implication-of-inclusion-dependencies-is-pspace-complete.md)
+- [Implication of inclusion dependencies is PSPACE-complete](../dependency-reasoning/implication-of-inclusion-dependencies-is-pspace-complete.md)
 
 ## Sources
 
