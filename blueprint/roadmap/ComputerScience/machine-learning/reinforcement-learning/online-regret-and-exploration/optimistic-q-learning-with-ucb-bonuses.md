@@ -4,7 +4,7 @@ Optimistic Q-learning keeps one table of Q-values per stage, initialized at $H$,
 
 The setting is the [online episodic protocol](online-episodic-learning-and-regret.md) for an [episodic MDP](episodic-mdp-with-stage-dependent-transitions.md) with stage-dependent kernels $P_h$ and deterministic rewards $r_h \in [0, 1]$; the initial state of each episode may be chosen by an adversary. Let $T = KH$, $p \in (0, 1)$ and $\iota = \log(SAT/p)$.
 
-The algorithm maintains $Q_h(x, a)$, $V_h(x)$ and visit counts $N_h(x, a)$ for every $(x, a, h)$, initialized by $Q_h \equiv H$, $N_h \equiv 0$, and keeps $V_{H+1} \equiv 0$. In each episode, at each step $h = 1, \dots, H$ it observes $x_h$, takes $a_h \in \arg\max_{a'} Q_h(x_h, a')$, observes $x_{h+1}$, and updates
+The algorithm maintains $Q_h(x, a)$, $V_h(x)$ and visit counts $N_h(x, a)$ for every $(x, a, h)$, initialized by $Q_h \equiv H$, $V_h \equiv H$ and $N_h \equiv 0$ for $h \le H$, and keeps $V_{H+1} \equiv 0$; thus $V_h(x) = \min\{H, \max_{a'} Q_h(x, a')\}$ holds at every state $x$ at all times, an unvisited state keeping the optimistic value $H$. In each episode, at each step $h = 1, \dots, H$ it observes $x_h$, takes $a_h \in \arg\max_{a'} Q_h(x_h, a')$, observes $x_{h+1}$, and updates
 
 $$
 t = N_h(x_h, a_h) \leftarrow N_h(x_h, a_h) + 1, \qquad Q_h(x_h, a_h) \leftarrow (1 - \alpha_t)\, Q_h(x_h, a_h) + \alpha_t \big[r_h(x_h, a_h) + V_{h+1}(x_{h+1}) + b_t\big],

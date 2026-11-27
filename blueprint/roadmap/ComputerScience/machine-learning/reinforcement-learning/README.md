@@ -12,6 +12,7 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 - [Linear quadratic regulator](linear-quadratic-regulator/README.md)
 
 - [Multi-armed bandits](multi-armed-bandits/README.md)
+- [Online regret and exploration](online-regret-and-exploration/README.md)
 - [Asynchronous stochastic approximation: convergence by box shrinking](asynchronous-stochastic-approximation-convergence-by-box-shr.md)
 - [Generative-model sample bound (restricted, non-minimax)](generative-model-sample-bound.md)
 - [Policy gradient theorem](policy-gradient-theorem.md)
@@ -28,4 +29,3 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 - [Value iteration](../../heuristic-search-and-planning/value-iteration/README.md)
 - [Policy iteration](../../heuristic-search-and-planning/policy-iteration/README.md)
 - [Hedge algorithm](../online-learning-and-boosting/hedge-algorithm/README.md)
-- [Online regret and exploration](online-regret-and-exploration/README.md)
