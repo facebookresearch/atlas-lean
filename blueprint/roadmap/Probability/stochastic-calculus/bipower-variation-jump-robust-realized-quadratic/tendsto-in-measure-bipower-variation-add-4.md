@@ -1,0 +1,3 @@
+# Brownian increments with jumps
+
+On a probability space, on the grid of mesh $1/n$ of $[0, 1]$, let the continuous increments be $\sigma Z_{n,i}/\sqrt n$, where each row $(Z_{n,i})_i$ is an independent family of measurable standard Gaussian variables; for a Brownian motion $W$ and $Z_{n,i} = \sqrt n\,(W_{(i+1)/n} - W_{i/n})$ these are the increments of $\sigma W$. Add the increments of finitely many random jumps (a measurable number $K$ of jumps with measurable sizes $\xi_k$ at measurable, almost surely distinct times $\tau_k$, which may depend on $W$). Then the bipower variation over the $n$ increments tends to $\frac{2}{\pi} \sigma^2$ in probability, so $\frac{\pi}{2}$ times the bipower variation estimates the integrated variance $\sigma^2$ and ignores the jumps.
