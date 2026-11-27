@@ -34,7 +34,7 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
 public import Mathlib.Algebra.Module.Torsion.Basic
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 
-import MathlibExt.AlgebraicGeometry.EllipticCurve.DivisionPolynomialZSMul
+public import MathlibExt.AlgebraicGeometry.EllipticCurve.DivisionPolynomialZSMul
 import Mathlib.Algebra.GroupWithZero.NonZeroDivisors
 import Mathlib.Algebra.MvPolynomial.CommRing
 import Mathlib.Algebra.Polynomial.Bivariate
@@ -63,6 +63,20 @@ import MathlibExt.AlgebraicGeometry.EllipticCurve.DivisionPolynomialMulFormula
 open scoped WeierstrassCurve.Affine
 
 end
+
+section PortEllSequenceAffineBridge
+
+namespace WeierstrassCurve
+
+variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F)
+
+theorem smul_eq_zero_iff_evalEval_ψ {x y : F} (h : W.toAffine.Nonsingular x y) (n : ℤ) :
+    n • (Affine.Point.some x y h) = 0 ↔ (W.ψ n).evalEval x y = 0 :=
+  Affine.Point.smul_some_eq_zero_iff W h n
+
+end WeierstrassCurve
+
+end PortEllSequenceAffineBridge
 
 @[expose] public section
 
@@ -1241,11 +1255,3 @@ public theorem WeierstrassCurve.card_torsion_of_isAlgClosed
   change P ∈ Submodule.torsionBy ℤ (W⁄K).Point (n : ℤ) ↔ P ∈ Deep.Gen.nTorsion W (K := K) n
   rw [Submodule.mem_torsionBy_iff, natCast_zsmul]
   rfl
-
-/-- A nonsingular affine point is `n`-torsion exactly when the `n`-th division polynomial `ψ n`
-vanishes at it. -/
-public theorem WeierstrassCurve.Affine.Point.smul_some_eq_zero_iff {F : Type*} [Field F]
-    [DecidableEq F] (W : WeierstrassCurve F) {x y : F} (h : W.toAffine.Nonsingular x y)
-    (n : ℤ) :
-    n • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ (W.ψ n).evalEval x y = 0 :=
-  WeierstrassCurve.smul_eq_zero_iff_evalEval_ψ W h n

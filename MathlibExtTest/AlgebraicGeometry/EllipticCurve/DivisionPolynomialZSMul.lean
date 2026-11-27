@@ -33,14 +33,14 @@ private theorem exactSourceCoprime {F K : Type*} [Field F] [Field K] [Algebra F 
 `1`. -/
 example {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F) {x y : F}
     (h : W.toAffine.Nonsingular x y) : (1 : ℤ) • Affine.Point.some x y h ≠ 0 := by
-  rw [Ne, W.smul_eq_zero_iff_evalEval_ψ h, ψ_one, evalEval_one]
+  rw [Ne, Affine.Point.smul_some_eq_zero_iff W h, ψ_one, evalEval_one]
   exact one_ne_zero
 
 /-- The case `n = 2` of the torsion criterion: points of order two are the zeros of `ψ₂`. -/
 example {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F) {x y : F}
     (h : W.toAffine.Nonsingular x y) :
     (2 : ℤ) • Affine.Point.some x y h = 0 ↔ W.ψ₂.evalEval x y = 0 := by
-  rw [W.smul_eq_zero_iff_evalEval_ψ h, ψ_two]
+  rw [Affine.Point.smul_some_eq_zero_iff W h, ψ_two]
 
 /-- The case `n = 2` of `evalEval_ψ_sq_of_commRing`, over a commutative ring:
 `ψ₂(x, y) ^ 2 = Ψ₂Sq(x)`. -/

@@ -1662,7 +1662,7 @@ private theorem zsmul_some_eq_some_of_eval_ΨSq_ne_zero {x y : F} (h : W.toAffin
 
 private theorem zsmul_some_eq_zero_iff_eval_ΨSq {x y : F} (h : W.toAffine.Nonsingular x y) (n : ℤ) :
     n • Point.some x y h = 0 ↔ (W.ΨSq n).eval x = 0 := by
-  rw [W.smul_eq_zero_iff_evalEval_ψ h n, ← W.evalEval_ψ_sq h.left n]
+  rw [Point.smul_some_eq_zero_iff W h n, ← W.evalEval_ψ_sq h.left n]
   exact ⟨fun h0 => by rw [h0]; exact zero_pow two_ne_zero, fun h0 => (sq_eq_zero_iff).mp h0⟩
 
 private theorem zsmul_some_eq_some_div {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
@@ -2149,7 +2149,7 @@ private theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [Decida
     rw [← hf]; exact W.baseChange_Ψ₂Sq f
   have hγn : n • genericPoint W K ≠ 0 := hgood.1
   have hψ : ((W⁄L).ψ n).evalEval gX gY ≠ 0 := fun h0 =>
-    hγn ((WeierstrassCurve.smul_eq_zero_iff_evalEval_ψ (W⁄L) (generic_nonsingular W K) n).mpr h0)
+    hγn ((Point.smul_some_eq_zero_iff (W⁄L) (generic_nonsingular W K) n).mpr h0)
   have hΨX : ((W⁄L).ΨSq n).eval gX ≠ 0 := by
     rw [← WeierstrassCurve.evalEval_ψ_sq (W⁄L) (generic_equation W K) n]
     exact pow_ne_zero _ hψ

@@ -68,7 +68,8 @@ the theory of elliptic divisibility sequences; that machinery is private to this
 
 * `WeierstrassCurve.zsmul_eq_smulEval`: for a nonsingular point `(x, y)` over a field, `n • (x, y)`
   is the class of the triple `smulEval W x y n`.
-* `WeierstrassCurve.smul_eq_zero_iff_evalEval_ψ`: `n • (x, y) = 0` exactly when `ψₙ(x, y) = 0`.
+* `WeierstrassCurve.Affine.Point.smul_some_eq_zero_iff`: for a nonsingular point `(x, y)` over a
+  field, `n • (x, y) = 0` exactly when `ψₙ(x, y) = 0`.
 * `WeierstrassCurve.evalEval_ψ_sq_of_commRing` and `WeierstrassCurve.evalEval_φ_of_commRing`: over
   a commutative ring, at any pair `(x, y)` that satisfies the curve equation, `ψₙ ^ 2` and `φₙ`
   agree with the univariate polynomials `ΨSqₙ` and `Φₙ`. `WeierstrassCurve.evalEval_ψ_sq` and
@@ -1810,10 +1811,11 @@ public theorem evalEval_φ {x y : F} (h : W.toAffine.Equation x y) (n : ℤ) :
     (W.φ n).evalEval x y = (W.Φ n).eval x :=
   evalEval_φ_of_commRing W h n
 
-/-- **`n`-torsion through `ψₙ`.** A nonsingular point `(x, y)` of a Weierstrass curve `W` over a
-field satisfies `n • (x, y) = 0` exactly when `ψₙ(x, y) = 0`. -/
-public theorem smul_eq_zero_iff_evalEval_ψ {x y : F} (h : W.toAffine.Nonsingular x y) (n : ℤ) :
-    n • (Affine.Point.some x y h) = 0 ↔ (W.ψ n).evalEval x y = 0 := by
+/-- A nonsingular affine point is `n`-torsion exactly when the `n`-th division polynomial `ψ n`
+vanishes at it. -/
+public theorem Affine.Point.smul_some_eq_zero_iff {x y : F} (h : W.toAffine.Nonsingular x y)
+    (n : ℤ) :
+    n • Affine.Point.some x y h = 0 ↔ (W.ψ n).evalEval x y = 0 := by
   have key := zsmul_eq_smulEval (W := W) h n
   have hQns := (n • Jacobian.Point.fromAffine (Affine.Point.some x y h)).nonsingular
   rw [key] at hQns
@@ -1821,7 +1823,7 @@ public theorem smul_eq_zero_iff_evalEval_ψ {x y : F} (h : W.toAffine.Nonsingula
       ↔ (Jacobian.Point.toAffineAddEquiv W).symm (n • Affine.Point.some x y h) =
         (Jacobian.Point.toAffineAddEquiv W).symm 0 := (AddEquiv.injective _).eq_iff.symm
     _ ↔ n • Jacobian.Point.fromAffine (Affine.Point.some x y h) = 0 := by
-        rw [map_zsmul, map_zero, Jacobian.Point.toAffineAddEquiv_symm_apply]
+        rw [map_zsmul, _root_.map_zero, Jacobian.Point.toAffineAddEquiv_symm_apply]
     _ ↔ (⟦smulEval W x y n⟧ : Jacobian.PointClass F) = ⟦![1, 1, 0]⟧ := by
         rw [Jacobian.Point.ext_iff, key, Jacobian.Point.zero_point]
     _ ↔ (W.ψ n).evalEval x y = 0 := by
@@ -1894,9 +1896,9 @@ private theorem isCoprime_ΨSq_succ [DecidableEq K] [W.IsElliptic] (n : ℕ) :
     rw [hn1] at h2
     exact (pow_eq_zero_iff two_ne_zero).mp h2
   have h0 : (n : ℤ) • (Affine.Point.some x₀ y₀ hns) = 0 :=
-    (smul_eq_zero_iff_evalEval_ψ (W.baseChange K) hns (n : ℤ)).mpr hψ0
+    (Affine.Point.smul_some_eq_zero_iff (W.baseChange K) hns (n : ℤ)).mpr hψ0
   have h1 : ((n : ℤ) + 1) • (Affine.Point.some x₀ y₀ hns) = 0 :=
-    (smul_eq_zero_iff_evalEval_ψ (W.baseChange K) hns ((n : ℤ) + 1)).mpr hψ1
+    (Affine.Point.smul_some_eq_zero_iff (W.baseChange K) hns ((n : ℤ) + 1)).mpr hψ1
   have hP : (Affine.Point.some x₀ y₀ hns : (W.baseChange K).toAffine.Point) = 0 := by
     have hsub := sub_smul ((n : ℤ) + 1) (n : ℤ) (Affine.Point.some x₀ y₀ hns)
     rw [h1, h0, sub_zero, add_sub_cancel_left, one_smul] at hsub
