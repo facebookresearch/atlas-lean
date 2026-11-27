@@ -23,7 +23,6 @@
 - [The decision problem MINIMUM CUT LINEAR ARRANGEMENT (CUTWIDTH) on unit disk graphs](minimum-cut-linear-arrangement-unit-disk-3.md)
 - [MINIMUM CUT LINEAR ARRANGEMENT (CUTWIDTH) on unit disk graphs is NP-complete](minimum-cut-linear-arrangement-unit-disk-4.md)
 - [Instances of MINIMUM CUT LINEAR ARRANGEMENT](minimum-cut-linear-arrangement-instance.md)
-- [Well-formed MINIMUM CUT LINEAR ARRANGEMENT instances](well-formed-6.md)
 - [Feasible MINIMUM CUT LINEAR ARRANGEMENT instances](minimum-cut-linear-arrangement-feasible.md)
 - [The decision problem MINIMUM CUT LINEAR ARRANGEMENT](minimum-cut-linear-arrangement-dec.md)
 - [MINIMUM CUT LINEAR ARRANGEMENT is NP-complete](minimum-cut-linear-arrangement-np-comple.md)
