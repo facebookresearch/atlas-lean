@@ -20,6 +20,12 @@ For an admissible sequence, `morphIterate_getElem_eq_substitutionAutomaton_tail`
 the letter at its weighted position with the final state of the substitution automaton.
 The theorem `substitutionAutomaton_admissibleSequence` identifies the state after each digit
 with the corresponding letter of the sequence.
+
+## References
+
+* Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for ℤ*,
+  INTEGERS 24 (2024), Article A112, pp. 1–27. Neutral padding follows Lemma 7.1 (p. 19),
+  using the automaton identities (7) and (8) of Section 6.
 -/
 
 namespace MetaMathlibExt
@@ -286,6 +292,72 @@ public theorem admissibleSequence_weightedLength_lt {A : Type*} (η : A → List
     List.length_append]
   omega
 
+/-- **Admissible sequences are determined by their weighted length.** Let $\eta$ be a
+substitution on an alphabet $A$, let $b \in A$ and $k \in \mathbb{N}$, and let
+$(m_i, a_i)_{i = 0, \dots, k}$ and $(m'_i, a'_i)_{i = 0, \dots, k}$ be two $b$-admissible
+sequences with $\sum_{j=0}^{k} |\eta^j(m_j)| = \sum_{j=0}^{k} |\eta^j(m'_j)|$. Then
+$(m_i, a_i) = (m'_i, a'_i)$ for every $i \le k$.
+
+Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
+ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.4 (Dumont and Thomas, Lemma 1.3). -/
+public theorem letterAdmissibleSequence_eq_of_weightedLength_eq {A : Type*}
+    (η : A → List A) (hη : IsSubstitution η) (k : ℕ) (b : A) (s s' : ℕ → List A × A)
+    (hs : IsLetterAdmissibleSequence η b s k) (hs' : IsLetterAdmissibleSequence η b s' k)
+    (hsum : ∑ j ∈ Finset.range (k + 1), (morphIterate η j (s j).1).length =
+      ∑ j ∈ Finset.range (k + 1), (morphIterate η j (s' j).1).length) :
+    ∀ i ≤ k, s i = s' i := by
+  have top (n : ℕ) (x : A) (hu : IsLetterAdmissibleSequence η x s n)
+      (hv : IsLetterAdmissibleSequence η x s' n)
+      (hw : ∑ j ∈ Finset.range (n + 1), (morphIterate η j (s j).1).length =
+        ∑ j ∈ Finset.range (n + 1), (morphIterate η j (s' j).1).length) : s n = s' n := by
+    -- The common weight lies in the half-open interval for either top pair.
+    have notShorter {u v : ℕ → List A × A}
+        (hu : IsLetterAdmissibleSequence η x u n) (hv : IsLetterAdmissibleSequence η x v n)
+        (hw : ∑ j ∈ Finset.range (n + 1), (morphIterate η j (u j).1).length =
+          ∑ j ∈ Finset.range (n + 1), (morphIterate η j (v j).1).length) :
+        ¬ (u n).1.length < (v n).1.length := by
+      intro hlt
+      have hvPrefix : (v n).1 <+: η x :=
+        List.IsPrefix.trans ⟨[(v n).2], rfl⟩ hv.2
+      have hPrefix : (u n).1 ++ [(u n).2] <+: (v n).1 :=
+        List.prefix_of_prefix_length_le hu.2 hvPrefix (by
+          simpa only [List.length_append, List.length_singleton] using Nat.succ_le_of_lt hlt)
+      obtain ⟨rest, hrest⟩ := hPrefix
+      have himage : morphIterate η n ((u n).1 ++ [(u n).2]) <+:
+          morphIterate η n (v n).1 := by
+        refine ⟨morphIterate η n rest, ?_⟩
+        rw [← morphIterate_getElem_eq_substitutionAutomaton_tail.iterate_append, hrest]
+      have hbound := admissibleSequence_weightedLength_lt η hη u n hu.1
+      rw [hw, Finset.sum_range_succ] at hbound
+      have hlen := himage.length_le
+      omega
+    have hlen : (s n).1.length = (s' n).1.length :=
+      le_antisymm (Nat.le_of_not_gt (notShorter hv hu hw.symm))
+        (Nat.le_of_not_gt (notShorter hu hv hw))
+    have hlen' : ((s n).1 ++ [(s n).2]).length = ((s' n).1 ++ [(s' n).2]).length := by
+      simp [hlen]
+    have heq := (List.prefix_of_prefix_length_le hu.2 hv.2 hlen'.le).eq_of_length hlen'
+    obtain ⟨hm, ha⟩ := List.append_inj heq hlen
+    exact Prod.ext hm (by simpa using ha)
+  induction k generalizing b with
+  | zero =>
+    intro i hi
+    obtain rfl : i = 0 := Nat.eq_zero_of_le_zero hi
+    exact top 0 b hs hs' hsum
+  | succ k ih =>
+    have htop := top (k + 1) b hs hs' hsum
+    have hshort : IsLetterAdmissibleSequence η (s (k + 1)).2 s k :=
+      ⟨fun i hi => hs.1 i (Nat.lt_succ_of_lt hi), hs.1 k k.lt_succ_self⟩
+    have hshort' : IsLetterAdmissibleSequence η (s (k + 1)).2 s' k := by
+      rw [htop]
+      exact ⟨fun i hi => hs'.1 i (Nat.lt_succ_of_lt hi), hs'.1 k k.lt_succ_self⟩
+    simp only [Finset.sum_range_succ (n := k + 1), htop] at hsum
+    intro i hi
+    rcases Nat.eq_or_lt_of_le hi with rfl | hi
+    · exact htop
+    · exact ih (s (k + 1)).2 hshort hshort' (Nat.add_right_cancel hsum) i
+        (Nat.le_of_lt_succ hi)
+
 /-- **Two-sided periodic points.** Let $\eta$ map each letter of an alphabet $A$ to a finite
 word over $A$, extended to finite words by concatenation, with iterates $\eta^j$; let
 $u = (u_i)_{i \in \mathbb{Z}}$ be a two-sided word over $A$ and let $p$ be a natural number.
@@ -514,6 +586,106 @@ Source: Labbé and Lepšová, *Dumont-Thomas Complement Numeration Systems for �
 public theorem lastLetterDigits_fibonacci :
     lastLetterDigits (fun a : Fin 2 => if a = 0 then [0, 1] else [0]) 2 1 = [0, 1] := by
   decide
+
+namespace seedAutomaton_neutral_padding
+
+private theorem iterate_singleton_ne_nil {A : Type*} {η : A → List A} (hη : IsNonErasing η)
+    (n : ℕ) (a : A) : morphIterate η n [a] ≠ [] := by
+  induction n with
+  | zero => simp [morphIterate]
+  | succ n ih =>
+    obtain ⟨b, rest, hrest⟩ := List.exists_cons_of_ne_nil ih
+    rw [morphIterate, hrest]
+    change η b ++ morphExtend η rest ≠ []
+    simp [hη b]
+
+-- The first block in the iterated image is obtained by taking digit zero first.
+private theorem run_replicate_zero {A : Type*} {η : A → List A} (hη : IsNonErasing η)
+    (n : ℕ) (a : A) :
+    substitutionAutomaton η a (List.replicate n 0) = (morphIterate η n [a])[0]? := by
+  induction n generalizing a with
+  | zero => rfl
+  | succ n ih =>
+    obtain ⟨b, rest, ha⟩ := List.exists_cons_of_ne_nil (hη a)
+    have hsplit : morphExtend η [a] = [b] ++ rest := by simp [morphExtend, ha]
+    rw [List.replicate_succ, substitutionAutomaton_cons, ha, List.getElem?_cons_zero,
+      Option.bind_some, ih, morphIterate_getElem_eq_substitutionAutomaton_tail.iterate_split η
+        hsplit]
+    exact (List.getElem?_append_left (List.length_pos_iff.mpr
+      (iterate_singleton_ne_nil hη n b))).symm
+
+-- The last block is obtained by reading the last index of the current image before recursing.
+private theorem run_lastLetterDigits {A : Type*} {η : A → List A} (hη : IsNonErasing η)
+    (n : ℕ) (a : A) :
+    substitutionAutomaton η a (lastLetterDigits η n a) = (morphIterate η n [a]).getLast? := by
+  induction n generalizing a with
+  | zero => rfl
+  | succ n ih =>
+    let b := (η a).getLast (hη a)
+    have hb : (η a).getLast? = some b := List.getLast?_eq_some_getLast (hη a)
+    obtain ⟨pre, hpre⟩ := List.getLast?_eq_some_iff.mp hb
+    have hsplit : morphExtend η [a] = pre ++ [b] := by simpa [morphExtend] using hpre
+    simp only [lastLetterDigits_succ_of_getLast? η n a b hb, substitutionAutomaton_cons,
+      ← List.getLast?_eq_getElem?, hb, Option.bind_some, ih,
+      morphIterate_getElem_eq_substitutionAutomaton_tail.iterate_split η hsplit,
+      List.getLast?_append, List.getLast?_eq_some_getLast (iterate_singleton_ne_nil hη n b),
+      Option.some_or]
+
+end seedAutomaton_neutral_padding
+
+/-- **Neutral words of the seed automaton.** Let $\eta$ be a substitution on an alphabet $A$,
+and let $u : \mathbb{Z} \to A$ be a two-sided periodic point of $\eta$ whose least period is
+$p$ and whose seed letters $u_{-1}$ and $u_0$ are growing ($|\eta^k(u_{-1})| \to \infty$ and
+$|\eta^k(u_0)| \to \infty$ as $k \to \infty$). Let $\mathcal{A}_{\eta,s}$ be the automaton of
+the seed $s = u_{-1}|u_0$, let $W_{\min} = 0^p$, and let
+$W_{\max} = \mathrm{last}_{\eta,p}(u_{-1})$ be the digit word along last letters with $p$ steps
+starting from $u_{-1}$. Then for every word $v$ of natural numbers and every $i \in \mathbb{N}$:
+if $\mathcal{A}_{\eta,s}$ accepts $0v$, then it accepts $0\,W_{\min}^i\,v$ with the same output;
+and if $\mathcal{A}_{\eta,s}$ accepts $1v$, then it accepts $1\,W_{\max}^i\,v$ with the same
+output.
+
+Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
+ℤ*, INTEGERS 24 (2024), Article A112, Lemma 7.1. -/
+public theorem seedAutomaton_neutral_padding {A : Type*} (η : A → List A) (u : ℤ → A)
+    (p : ℕ) (hu : IsPeriodicPointWithGrowingSeed η u p) (v : List ℕ) (i : ℕ) :
+    ((seedAutomaton η (u (-1)) (u 0) (0 :: v)).isSome →
+        seedAutomaton η (u (-1)) (u 0) (0 :: (List.replicate (i * p) 0 ++ v)) =
+          seedAutomaton η (u (-1)) (u 0) (0 :: v)) ∧
+      ((seedAutomaton η (u (-1)) (u 0) (1 :: v)).isSome →
+        seedAutomaton η (u (-1)) (u 0)
+            (1 :: ((List.replicate i (lastLetterDigits η p (u (-1)))).flatten ++ v)) =
+          seedAutomaton η (u (-1)) (u 0) (1 :: v)) := by
+  have hη := hu.1.isNonErasing
+  have hper := hu.isTwoSidedPeriodicPoint
+  have hzero : substitutionAutomaton η (u 0) (List.replicate p 0) = some (u 0) := by
+    have hlen := List.length_pos_iff.mpr
+      (seedAutomaton_neutral_padding.iterate_singleton_ne_nil hη p (u 0))
+    rw [seedAutomaton_neutral_padding.run_replicate_zero hη, List.getElem?_eq_getElem hlen]
+    congr 1
+    simpa using hper.2.1 1 0 (by simpa using hlen)
+  have hone : substitutionAutomaton η (u (-1)) (lastLetterDigits η p (u (-1))) =
+      some (u (-1)) := by
+    have hlen := List.length_pos_iff.mpr
+      (seedAutomaton_neutral_padding.iterate_singleton_ne_nil hη p (u (-1)))
+    have hlast : (morphIterate η p [u (-1)]).length - 1 <
+        (morphIterate η p [u (-1)]).length := by omega
+    rw [seedAutomaton_neutral_padding.run_lastLetterDigits hη, List.getLast?_eq_getElem?,
+      List.getElem?_eq_getElem hlast]
+    congr 1
+    simpa using hper.2.2 1 0 (by simpa using hlen)
+  have repeat_loop (a : A) (w : List ℕ) (h : substitutionAutomaton η a w = some a) (j : ℕ) :
+      substitutionAutomaton η a ((List.replicate j w).flatten ++ v) =
+        substitutionAutomaton η a v := by
+    induction j with
+    | zero => simp
+    | succ j ih =>
+      rw [List.replicate_succ, List.flatten_cons, List.append_assoc,
+        substitutionAutomaton_admissibleSequence.run_append, h, Option.bind_some, ih]
+  refine ⟨fun _ => ?_, fun _ => ?_⟩
+  · simpa only [seedAutomaton_zero_cons, List.flatten_replicate_replicate] using
+      repeat_loop (u 0) (List.replicate p 0) hzero i
+  · simpa only [seedAutomaton_one_cons] using
+      repeat_loop (u (-1)) (lastLetterDigits η p (u (-1))) hone i
 
 /-- **The complement radix order.** For finite words $w$ and $w'$ over $\mathbb{N}$, write
 $|w|$ for the length of $w$. Then $w \prec w'$ holds exactly in the following three cases:

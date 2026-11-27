@@ -17,6 +17,18 @@ import Mathlib.Tactic.NormNum
 
 open MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
 
+-- Six distinct entries, including a negative summand, at (p, q, r, s) = (5, 3, 2, 1).
+example : PairwiseSumsSquares ![-165, 315, 0] ![361, 169, (841 : ℤ)] := by
+  have h := pairwiseSumsSquares_triple_family32 5 3 2 1
+  norm_num at h
+  exact h
+
+-- With p = q and r = s, four of the six entries vanish.
+example : PairwiseSumsSquares ![0, 64, 0] ![0, 0, (36 : ℤ)] := by
+  have h := pairwiseSumsSquares_triple_family32 2 2 1 1
+  norm_num at h
+  exact h
+
 -- Choudhry's numerical example for (3.3), in the order of the parametrization.
 example : PairwiseSumsSquares ![4, 484, 169] ![192, 0, (672 : ℤ)] :=
   pairwiseSumsSquares_triple_family33 5 3 2 1
@@ -49,6 +61,23 @@ example : PairwiseSumsSquares
 -- At m = 0 only the last entry of each quadruple survives, and their sum is 17².
 example : PairwiseSumsSquares ![0, 0, 0, 225] ![0, 0, 0, (64 : ℚ)] := by
   have h := pairwiseSumsSquares_quadruple_family58 0 1 2
+  norm_num at h
+  exact h
+
+-- At (m, q, r) = (2, 1, 3) the entries of each quadruple of (5.9) are distinct, and the three
+-- nonzero offsets are negative.
+example : PairwiseSumsSquares
+    ![5625000000, 5270760000, 5002025625, 8649000000]
+    ![0, -4964510000, -4829760000, (-3024000000 : ℚ)] := by
+  have h := pairwiseSumsSquares_quadruple_family59 2 1 3
+  norm_num at h
+  exact h
+
+-- A non-integral m gives rational entries; at q = r the third offset vanishes.
+example : PairwiseSumsSquares
+    ![2117025 / 262144, 99225 / 262144, 4149369 / 16777216, 11025 / 262144]
+    ![0, 64141 / 1048576, 0, (131625 / 16384 : ℚ)] := by
+  have h := pairwiseSumsSquares_quadruple_family59 (1 / 2) 1 1
   norm_num at h
   exact h
 
