@@ -25,11 +25,12 @@ classification-calibrated (Bartlett, Jordan and McAuliffe, Examples 1 and 4). Th
 risk is reflected by `η ↦ 1 - η`.
 
 The characterization `isClassificationCalibrated_iff_differentiableAt_and_deriv_neg` shows that
-the logistic loss is classification-calibrated and that `α ^ 2` (slope `0` at `0`) and
-`max 0 (-α)` (not differentiable at `0`) are not. Two witnesses show that its hypotheses are
-needed: the convex loss `-α` with slope `-1` at `0` is not classification-calibrated, since `H`
-and `H⁻` are infima in `ℝ` and nonnegativity keeps them genuine, and the nonconvex 0-1 loss is
-classification-calibrated but not differentiable at `0`.
+the logistic loss is classification-calibrated and that `α ^ 2` (slope `0` at `0`), `max 0 (-α)`
+(right slope `0` at `0`) and `max 0 (max (1 - 2α) (1 - α))` (one-sided slopes `-2` and `-1` at
+`0`, both negative) are not; for the last, `H(2/3) = H⁻(2/3) = 1`. Two witnesses show that its
+hypotheses are needed: the convex loss `-α` with slope `-1` at `0` is not
+classification-calibrated, since `H` and `H⁻` are infima in `ℝ` and nonnegativity keeps them
+genuine, and the nonconvex 0-1 loss is classification-calibrated but not differentiable at `0`.
 -/
 
 namespace Cslib.MachineLearning.ClassificationCalibration
@@ -97,6 +98,59 @@ example : ¬IsClassificationCalibrated fun x : ℝ => max 0 (-x) := by
     · simp [abs_of_nonneg hx, hx]
     · rw [abs_of_nonpos hx, max_eq_right (neg_nonneg.2 hx)]; ring
   exact not_differentiableAt_abs_zero (habs ▸ (hd.const_mul 2).add differentiableAt_id)
+
+/-- The convex loss `max 0 (max (1 - 2α) (1 - α))` has slope `-2` to the left of `0` and `-1` to
+its right. Both one-sided slopes are negative but they differ, so it is not differentiable at `0`
+and not classification-calibrated. -/
+example : ConvexOn ℝ Set.univ (fun x : ℝ => max 0 (max (1 - 2 * x) (1 - x))) ∧
+    HasDerivWithinAt (fun x : ℝ => max 0 (max (1 - 2 * x) (1 - x))) (-2) (Set.Iic 0) 0 ∧
+    HasDerivWithinAt (fun x : ℝ => max 0 (max (1 - 2 * x) (1 - x))) (-1) (Set.Ici 0) 0 ∧
+    ¬IsClassificationCalibrated fun x : ℝ => max 0 (max (1 - 2 * x) (1 - x)) := by
+  set φ : ℝ → ℝ := fun x => max 0 (max (1 - 2 * x) (1 - x)) with hφ
+  have hconv : ConvexOn ℝ Set.univ φ := by
+    have hlin : ∀ c : ℝ, ConvexOn ℝ Set.univ fun x : ℝ => 1 - c * x := fun c =>
+      ((c • (-LinearMap.id : ℝ →ₗ[ℝ] ℝ)).convexOn convex_univ).add_const 1 |>.congr
+        fun x _ => by simp; ring
+    exact (convexOn_const 0 convex_univ).sup ((hlin 2).sup (by simpa using hlin 1))
+  have hl : HasDerivWithinAt φ (-2) (Set.Iic 0) 0 := by
+    have h : HasDerivWithinAt (fun x : ℝ => 1 - 2 * x) (-2) (Set.Iic 0) 0 := by
+      simpa using (((hasDerivAt_id (0 : ℝ)).const_mul 2).const_sub 1).hasDerivWithinAt
+    refine h.congr_of_mem (fun x (hx : x ≤ 0) => ?_) (Set.mem_Iic.2 le_rfl)
+    change max 0 (max (1 - 2 * x) (1 - x)) = 1 - 2 * x
+    rw [max_eq_left (show 1 - x ≤ 1 - 2 * x by linarith), max_eq_right (by linarith)]
+  have hr : HasDerivWithinAt φ (-1) (Set.Ici 0) 0 := by
+    have h : HasDerivWithinAt (fun x : ℝ => 1 - x) (-1) (Set.Ici 0) 0 := by
+      simpa using ((hasDerivAt_id (0 : ℝ)).const_sub 1).hasDerivWithinAt
+    refine h.congr_of_eventuallyEq ?_ (by simp [hφ])
+    filter_upwards [self_mem_nhdsWithin,
+      nhdsWithin_le_nhds (Iio_mem_nhds (show (0 : ℝ) < 1 by norm_num))] with x hx hx1
+    simp only [Set.mem_Ici, Set.mem_Iio] at hx hx1
+    change max 0 (max (1 - 2 * x) (1 - x)) = 1 - x
+    rw [max_eq_right (show 1 - 2 * x ≤ 1 - x by linarith), max_eq_right (by linarith)]
+  refine ⟨hconv, hl, hr, fun h => ?_⟩
+  have hd := (differentiableAt_and_deriv_neg_of_isClassificationCalibrated hconv h).1.hasDerivAt
+  have h2 := (uniqueDiffWithinAt_Iic 0).eq_deriv _ hd.hasDerivWithinAt hl
+  have h1 := (uniqueDiffWithinAt_Ici 0).eq_deriv _ hd.hasDerivWithinAt hr
+  linarith
+
+/-- For the same loss, at `η = φ'₋(0) / (φ'₋(0) + φ'₊(0)) = 2/3`, where the right derivative
+`η φ'₊(0) - (1 - η) φ'₋(0)` of `C_η` at `0` vanishes, `C_η(α) ≥ (2/3) (1 - α) + (1/3) (1 + 2α) = 1`
+for every `α`, with equality at `α = 0`: `H(2/3) = H⁻(2/3) = 1`. -/
+example : optRisk (fun x : ℝ => max 0 (max (1 - 2 * x) (1 - x))) (2 / 3) = 1 ∧
+    wrongSignRisk (fun x : ℝ => max 0 (max (1 - 2 * x) (1 - x))) (2 / 3) = 1 := by
+  set φ : ℝ → ℝ := fun x => max 0 (max (1 - 2 * x) (1 - x)) with hφ
+  have hge : ∀ α, 1 ≤ condRisk φ (2 / 3) α := by
+    intro α
+    have h1 : 1 - α ≤ φ α := le_max_of_le_right (le_max_right _ _)
+    have h2 : 1 + 2 * α ≤ φ (-α) := le_max_of_le_right (le_max_of_le_left (by ring_nf; rfl))
+    simp only [condRisk]
+    linarith
+  have h0 : condRisk φ (2 / 3) 0 = 1 := by norm_num [condRisk, hφ]
+  have : Nonempty {α : ℝ // α * (2 * (2 / 3) - 1) ≤ 0} := ⟨⟨0, by simp⟩⟩
+  refine ⟨le_antisymm ?_ (le_ciInf hge), le_antisymm ?_ (le_ciInf fun α => hge α)⟩
+  · exact h0 ▸ ciInf_le ⟨1, by rintro _ ⟨α, rfl⟩; exact hge α⟩ 0
+  · exact h0 ▸ ciInf_le ⟨1, by rintro _ ⟨α, rfl⟩; exact hge α⟩
+      (⟨0, by simp⟩ : {α : ℝ // α * (2 * (2 / 3) - 1) ≤ 0})
 
 /-- Nonnegativity cannot be dropped from the characterization as `H` and `H⁻` are defined here,
 as infima in `ℝ`: the loss `-α` is convex and differentiable at `0` with slope `-1`, but

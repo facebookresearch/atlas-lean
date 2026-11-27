@@ -198,7 +198,8 @@ theorem isClassificationCalibrated_of_hasDerivAt (h0 : ∀ x, 0 ≤ φ x)
 
 /-- The key case of the necessity direction: for a convex `φ` and `1/2 ≤ η ≤ 1`, if the right
 derivative `η φ'₊(0) - (1 - η) φ'₋(0)` of `C_η` at `0` is nonnegative, then `C_η` is at least
-`C_η(0)` on `(0, ∞)`, so a prediction of the wrong sign does as well as any: `H⁻(η) ≤ H(η)`. -/
+`C_η(0)` on `(0, ∞)`, so restricting to wrong-sign predictions does not increase the infimum:
+`H⁻(η) ≤ H(η)`. -/
 private lemma wrongSignRisk_le_optRisk_of_rightDeriv_nonneg (hconv : ConvexOn ℝ Set.univ φ)
     {η : ℝ} (hη : 1 / 2 ≤ η) (hη1 : η ≤ 1)
     (h : (1 - η) * derivWithin φ (Set.Iio 0) 0 ≤ η * derivWithin φ (Set.Ioi 0) 0) :

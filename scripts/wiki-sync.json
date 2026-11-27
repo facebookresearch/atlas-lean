@@ -27612,8 +27612,6 @@
 "Cslib.MachineLearning.ClassificationCalibration.IsClassificationCalibrated": "43b8881c30ef8c99",
 "Cslib.MachineLearning.ClassificationCalibration.condRisk": "e653c9605624683e",
 "Cslib.MachineLearning.ClassificationCalibration.condRisk_one_sub": "61271d33bc6f7632",
-"Cslib.MachineLearning.ClassificationCalibration.differentiableAt_and_deriv_neg_of_isClassificationCalibrated": "e2d5a85851d3f979",
-"Cslib.MachineLearning.ClassificationCalibration.isClassificationCalibrated_iff_differentiableAt_and_deriv_neg": "282bf718bcf21f78",
 "Cslib.MachineLearning.ClassificationCalibration.isClassificationCalibrated_of_hasDerivAt": "093053d5516b12cf",
 "Cslib.MachineLearning.ClassificationCalibration.optRisk": "098b413719ae2785",
 "Cslib.MachineLearning.ClassificationCalibration.optRisk_lt_wrongSignRisk_of_half_lt": "34764ecf7b29f055",
