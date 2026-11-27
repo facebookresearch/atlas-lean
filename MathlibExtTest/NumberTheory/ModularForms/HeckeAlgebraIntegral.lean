@@ -1,9 +1,29 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
+-/
 
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+/-
+The source statements restated in this file are copied from
+`Theorems/Thm_CuspForm_HasIntegralStructure_eq_zero_of_forall_mem_intLattice.lean`,
+`Theorems/Thm_CuspForm_HasIntegralStructure_exists_ne_zero_forall_apply_eq_smul.lean`,
+`Theorems/Thm_CuspForm_HasIntegralStructure_moduleFinite_heckeAlgebra.lean`,
+`Theorems/Thm_CuspForm_HasIntegralStructure_moduleFree_heckeAlgebra.lean`,
+`Theorems/Thm_CuspForm_exists_coe_eq_heckeT.lean`,
+`Theorems/Thm_CuspForm_exists_coe_eq_heckeU.lean`,
+`Theorems/Thm_CuspForm_linearIndependent_of_mem_intLattice.lean`,
+`Theorems/Thm_IsIntegral_of_mem_span_of_apply_eq_smul.lean`,
+`Theorems/Thm_Module_End_exists_ne_zero_forall_apply_eq_smul_of_ringHom.lean`, and
+`Theorems/Thm_exists_integralClosure_coe_eq_of_isIntegral.lean`
+in https://github.com/anthropics/fermats-last-theorem, compared with the source files at
+commit `6e837e75355538c7f80bab5b956861e86c4eacc2`.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module

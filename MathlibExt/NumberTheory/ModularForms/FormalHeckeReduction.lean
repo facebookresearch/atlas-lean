@@ -1,9 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 -/
 
 /-
@@ -26,16 +28,11 @@ Portions of this file are adapted from:
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The upstream NOTICE also credits:
-Mathlib — https://github.com/leanprover-community/mathlib4
-Copyright (c) the respective Mathlib authors, as recorded in the headers of the
-Mathlib source files.
-Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -47,6 +44,7 @@ public import MathlibExt.NumberTheory.ModularForms.HeckeAlgebra
 import Mathlib.Algebra.Module.Torsion.Basic
 import Mathlib.LinearAlgebra.Quotient.Basic
 import Mathlib.Tactic.LinearCombination
+import MathlibExt.NumberTheory.ModularForms.HeckeLocal
 import MathlibExt.NumberTheory.ModularForms.NormalizedEigenform
 import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 
@@ -56,11 +54,14 @@ import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 This file sets up the formal side of a Deligne–Serre style lifting argument in weight two
 on `Γ₀(N)`. A candidate system of eigenvalues `a : ℕ → ℤ` is turned into the power series
 `bridgeProduct a = (∑ aₙ Xⁿ) · E₁,χ₋₃`, where `E₁,χ₋₃ ≡ 1 (mod 3)` is the weight-one Eisenstein
-series of the character `χ₋₃`. When this product is congruent modulo `3` to the
-`q`-expansion of an integral cusp form, the reductions modulo `3` of integral cusp forms give a
-module over the Hecke algebra on which `T_ℓ - a ℓ` acts as the formal Hecke operator does on
-power series, and this produces a maximal ideal of the Hecke algebra above `3` containing every
-`T_ℓ - a ℓ`.
+series of the character `χ₋₃`. When `a 1 = 1` and this product is congruent modulo `3` to the
+`q`-expansion of an integral cusp form, the integral lattice modulo `3` gives a module over the
+Hecke algebra, with a reduction map from integral power series, on which `T_ℓ - a ℓ` acts on the
+reduction of `bridgeProduct a` as the formal Hecke operator does on power series. If moreover
+`bridgeProduct a` satisfies the formal `T_ℓ` eigenvalue equation with eigenvalue `a ℓ` modulo `3`
+for every prime `ℓ ∤ N`, the reduction of `bridgeProduct a` is nonzero (its first coefficient is
+`1` modulo `3`) and killed by `3` and by every `T_ℓ - a ℓ`, so some maximal ideal of the Hecke
+algebra contains `3` and every `T_ℓ - a ℓ`.
 
 ## Main definitions
 
@@ -78,13 +79,17 @@ power series, and this produces a maximal ideal of the Hecke algebra above `3` c
 
 * `EisensteinWeightOne.three_dvd_coeff_mul_e1Chi3_sub`: multiplying by `E₁,χ₋₃` does not change
   coefficients modulo `3`.
-* `CuspForm.exists_isMaximal_three_mem_heckeT_sub_mem`: a nonzero reduction on which the
-  `T_ℓ - a ℓ` act as the formal operators gives a maximal ideal above `3`.
-* `CuspForm.exists_reductionModule_of_isLatticeRealized`: a lattice realization gives such a
-  reduction module.
-* `FormalHecke.IsEigensystem.three_dvd_coeff_heckeT_bridgeProduct_sub_smul`: a formal
-  eigensystem with nebentypus values `χ₋₃(ℓ)` at the primes `ℓ ∤ N` and `0` at the primes
-  `ℓ ∣ N` makes `bridgeProduct a` a formal `T_ℓ`-eigenvector modulo `3` for every prime `ℓ ∤ N`.
+* `CuspForm.exists_isMaximal_three_mem_heckeT_sub_mem`: if `a 1 = 1`, `bridgeProduct a`
+  satisfies the formal `T_ℓ` eigenvalue equation modulo `3` for every prime `ℓ ∤ N`, and a
+  reduction map to a module over the Hecke algebra detects `3`-divisibility of the first
+  coefficient and intertwines `T_ℓ - a ℓ` with the formal operator, then some maximal ideal of the
+  Hecke algebra contains `3` and every `T_ℓ - a ℓ`.
+* `CuspForm.exists_reductionModule_of_isLatticeRealized`: a lattice realization with `a 1 = 1`
+  gives such a reduction map and module (in the proof, the integral lattice modulo `3`).
+* `FormalHecke.IsEigensystem.three_dvd_coeff_heckeT_bridgeProduct_sub_smul`: over any commutative
+  ring, a formal eigensystem with nebentypus values `χ₋₃(ℓ)` at the primes `ℓ ∤ N` and `0` at the
+  primes `ℓ ∣ N` makes `bridgeProduct a` satisfy the formal `T_ℓ` eigenvalue equation modulo `3`,
+  coefficientwise, for every prime `ℓ ∤ N`.
 -/
 
 @[expose] public section
@@ -436,80 +441,60 @@ variable [NeZero N]
 
 private abbrev HA (N : ℕ) [NeZero N] := CuspForm.heckeAlgebra N 2 {ℓ | ℓ ∣ N}
 
-/-- An element of the Hecke algebra, restricted to the integral lattice. -/
-private def latticeAction (T : HA N) : Lat N →ₗ[ℤ] Lat N :=
-  ((T : Module.End ℂ (CuspForm Γ₀(N) 2)).restrictScalars ℤ).restrict
-    fun _ hf => CuspForm.mem_intLattice_of_mem_heckeAlgebra (by norm_num) T.2 hf
+/-- The action of the Hecke algebra on the integral lattice: `main`'s
+`CuspForm.latticeActionHom` at the primes dividing the level. -/
+private abbrev latticeHom (N : ℕ) [NeZero N] : HA N →+* Module.End ℤ (Lat N) :=
+  CuspForm.latticeActionHom N {ℓ | ℓ ∣ N}
 
-private theorem latticeAction_apply_coe (T : HA N) (f : Lat N) :
-    ((latticeAction T f : Lat N) : CuspForm Γ₀(N) 2)
+private theorem latticeHom_apply_coe (T : HA N) (f : Lat N) :
+    ((latticeHom N T f : Lat N) : CuspForm Γ₀(N) 2)
       = (T : Module.End ℂ (CuspForm Γ₀(N) 2)) (f : CuspForm Γ₀(N) 2) :=
   rfl
 
-private theorem latticeAction_one : latticeAction (1 : HA N) = LinearMap.id :=
-  LinearMap.ext fun _ => Subtype.ext rfl
-
-private theorem latticeAction_mul (T S : HA N) :
-    latticeAction (T * S) = latticeAction T ∘ₗ latticeAction S :=
-  LinearMap.ext fun _ => Subtype.ext rfl
-
-private theorem latticeAction_add (T S : HA N) :
-    latticeAction (T + S) = latticeAction T + latticeAction S :=
-  LinearMap.ext fun _ => Subtype.ext rfl
-
-private theorem latticeAction_zero : latticeAction (0 : HA N) = 0 :=
-  LinearMap.ext fun _ => Subtype.ext rfl
-
-private theorem threeMultiples_le_comap_latticeAction (T : HA N) :
-    threeMultiples N ≤ (threeMultiples N).comap (latticeAction T) := by
+private theorem threeMultiples_le_comap_latticeHom (T : HA N) :
+    threeMultiples N ≤ (threeMultiples N).comap (latticeHom N T) := by
   rintro f hf
   obtain ⟨g, rfl⟩ := mem_threeMultiples_iff.mp hf
-  exact mem_threeMultiples_iff.mpr ⟨latticeAction T g, (map_smul (latticeAction T) _ _).symm⟩
+  exact mem_threeMultiples_iff.mpr ⟨latticeHom N T g, (map_smul (latticeHom N T) _ _).symm⟩
 
 /-- An element of the Hecke algebra, acting on the integral lattice modulo `3`. -/
 private def heckeSMulAux (T : HA N) : LatticeMod3 N →ₗ[ℤ] LatticeMod3 N :=
-  Submodule.mapQ (threeMultiples N) (threeMultiples N) (latticeAction T)
-    (threeMultiples_le_comap_latticeAction T)
+  Submodule.mapQ (threeMultiples N) (threeMultiples N) (latticeHom N T)
+    (threeMultiples_le_comap_latticeHom T)
 
 private instance : SMul (HA N) (LatticeMod3 N) := ⟨fun T m => heckeSMulAux T m⟩
 
 private theorem heckeSMul_mk (T : HA N) (f : Lat N) :
-    T • latticeMk f = latticeMk (latticeAction T f) :=
+    T • latticeMk f = latticeMk (latticeHom N T f) :=
   rfl
 
 private instance : Module (HA N) (LatticeMod3 N) where
   one_smul m := by
     obtain ⟨f, rfl⟩ := Submodule.Quotient.mk_surjective _ m
     change (1 : HA N) • latticeMk f = latticeMk f
-    rw [heckeSMul_mk, latticeAction_one]
+    rw [heckeSMul_mk, map_one]
     rfl
   mul_smul T S m := by
     obtain ⟨f, rfl⟩ := Submodule.Quotient.mk_surjective _ m
     change (T * S) • latticeMk f = T • S • latticeMk f
-    rw [heckeSMul_mk, heckeSMul_mk, heckeSMul_mk, latticeAction_mul]
+    rw [heckeSMul_mk, heckeSMul_mk, heckeSMul_mk, map_mul]
     rfl
   smul_zero T := map_zero (heckeSMulAux T)
   smul_add T m m' := map_add (heckeSMulAux T) m m'
   add_smul T S m := by
     obtain ⟨f, rfl⟩ := Submodule.Quotient.mk_surjective _ m
     change (T + S) • latticeMk f = T • latticeMk f + S • latticeMk f
-    rw [heckeSMul_mk, heckeSMul_mk, heckeSMul_mk, latticeAction_add]
+    rw [heckeSMul_mk, heckeSMul_mk, heckeSMul_mk, (latticeHom N).map_add]
     rfl
   zero_smul m := by
     obtain ⟨f, rfl⟩ := Submodule.Quotient.mk_surjective _ m
     change (0 : HA N) • latticeMk f = 0
-    rw [heckeSMul_mk, latticeAction_zero]
+    rw [heckeSMul_mk, map_zero]
     rfl
-
-private theorem latticeAction_intCast (z : ℤ) (f : Lat N) :
-    latticeAction (z : HA N) f = z • f := by
-  apply Subtype.ext
-  simp only [latticeAction_apply_coe, SubringClass.coe_intCast, intCast_apply_eq_smul,
-    Submodule.coe_smul]
 
 private theorem intCast_heckeSMul_mk (z : ℤ) (f : Lat N) :
     ((z : HA N)) • latticeMk f = latticeMk (z • f) := by
-  rw [heckeSMul_mk, latticeAction_intCast]
+  rw [heckeSMul_mk, map_intCast, intCast_apply_eq_smul]
 
 end Action
 
@@ -592,16 +577,16 @@ section Clauses
 
 variable [NeZero N]
 
-private theorem intQExpansion_latticeAction_T {ℓ : ℕ} (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N)
+private theorem intQExpansion_latticeHom_T {ℓ : ℕ} (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N)
     (f : Lat N) :
-    intQExpansion (latticeAction (CuspForm.heckeAlgebra.T hℓ hℓN hℓN) f)
+    intQExpansion (latticeHom N (CuspForm.heckeAlgebra.T hℓ hℓN hℓN) f)
       = PowerSeries.heckeT ℓ 2 (intQExpansion f) := by
   ext n
   have hcast :
       ((PowerSeries.coeff n
-          (intQExpansion (latticeAction (CuspForm.heckeAlgebra.T hℓ hℓN hℓN) f)) : ℤ) : ℂ)
+          (intQExpansion (latticeHom N (CuspForm.heckeAlgebra.T hℓ hℓN hℓN) f)) : ℤ) : ℂ)
         = ((PowerSeries.coeff n (PowerSeries.heckeT ℓ 2 (intQExpansion f)) : ℤ) : ℂ) := by
-    rw [intQExpansion_cast, latticeAction_apply_coe, CuspForm.heckeAlgebra.coe_T,
+    rw [intQExpansion_cast, latticeHom_apply_coe, CuspForm.heckeAlgebra.coe_T,
       CuspForm.coe_heckeTLin_apply,
       ModularFormClass.qCoeff_heckeT _ (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
         hℓ.ne_zero,
@@ -627,7 +612,7 @@ private theorem heckeSMul_latticeReduction {a : ℕ → ℤ} {f : Lat N}
     ← Submodule.Quotient.mk_sub]
   symm
   refine latticeReduction_eq_mk m₀ fun n => ?_
-  rw [intQExpansion_sub, map_sub, intQExpansion_latticeAction_T, coeff_intQExpansion_zsmul,
+  rw [intQExpansion_sub, map_sub, intQExpansion_latticeHom_T, coeff_intQExpansion_zsmul,
     map_sub]
   have hsm : PowerSeries.coeff n (a ℓ • bridgeProduct a)
       = a ℓ * PowerSeries.coeff n (bridgeProduct a) := by
@@ -741,10 +726,11 @@ private theorem three_dvd_coeff_heckeT_two_sub_residual {R : Type*} [CommRing R]
   rw [hkey]
   exact dvd_sub (dvd_add (hA (ℓ * n)) (hD.mul_left (ℓ : R))) ((hA n).mul_left (a ℓ))
 
-/-- Let `a` be a formal Hecke eigensystem with nebentypus values `χ₋₃(ℓ)` at the primes `ℓ ∤ N`
-and `0` at the primes `ℓ ∣ N`, where the recursion reads `a (ℓ n) = a ℓ · a n`. Then for every
-prime `ℓ ∤ N` the series `bridgeProduct a` is a formal `T_ℓ`-eigenvector of weight two with
-eigenvalue `a ℓ` modulo `3`. -/
+/-- Let `a` be a formal Hecke eigensystem over a commutative ring `R`, with nebentypus values
+`χ₋₃(ℓ)` at the primes `ℓ ∤ N` and `0` at the primes `ℓ ∣ N`, where the recursion reads
+`a (ℓ n) = a ℓ · a n`. Then for every prime `ℓ ∤ N` the series `bridgeProduct a` satisfies the
+formal weight-two `T_ℓ` eigenvalue equation with eigenvalue `a ℓ` modulo `3`: every coefficient of
+`T_ℓ (bridgeProduct a) - a ℓ • bridgeProduct a` is divisible by `3`. -/
 theorem three_dvd_coeff_heckeT_bridgeProduct_sub_smul
     {R : Type*} [CommRing R] {N : ℕ} {a : ℕ → R}
     (heig : FormalHecke.IsEigensystem

@@ -1,9 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 -/
 
 /-
@@ -34,16 +36,11 @@ Portions of this file are adapted from:
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The upstream NOTICE also credits:
-Mathlib — https://github.com/leanprover-community/mathlib4
-Copyright (c) the respective Mathlib authors, as recorded in the headers of the
-Mathlib source files.
-Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -61,18 +58,19 @@ import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 /-!
 # Normalized Hecke eigenforms of weight two on `Γ₀(N)`
 
-This file characterizes Hecke eigenvectors through their `q`-coefficients and normalized Hecke
-eigenforms of weight two through the Hecke operators, and shows that a nonzero weight-two cusp
-form that is an eigenvector of the Hecke operators `T_ℓ` for almost all primes `ℓ ∤ N` gives rise
-to a normalized eigenform with the same eigenvalues. It builds on
-`MathlibExt.NumberTheory.ModularForms.NormalizedEigenform`, which gives the finite-dimensionality
-of cusp forms on `Γ₀(N)`, the coefficient criterion `CuspForm.isNormalizedEigenform_iff_coeffHecke`
-and the eigenvalue lemmas for coefficient sequences.
+This file characterizes the Hecke eigenvalue equations `T_p f = c • f` and `U_p f = c • f`
+through `q`-coefficients and normalized Hecke eigenforms of weight two through the Hecke
+operators, and shows that a nonzero weight-two cusp form that is an eigenvector of the Hecke
+operators `T_ℓ` for almost all primes `ℓ ∤ N` gives rise to a normalized eigenform with the same
+eigenvalues. It builds on `MathlibExt.NumberTheory.ModularForms.NormalizedEigenform`, which gives
+the finite-dimensionality of cusp forms on `Γ₀(N)`, the coefficient criterion
+`CuspForm.isNormalizedEigenform_iff_coeffHecke` and the eigenvalue lemmas for coefficient
+sequences.
 
 ## Main statements
 
-* `ModularFormClass.heckeT_eq_smul_iff`, `ModularFormClass.heckeU_eq_smul_iff`: being a Hecke
-  eigenvector is a condition on `q`-coefficients.
+* `ModularFormClass.heckeT_eq_smul_iff`, `ModularFormClass.heckeU_eq_smul_iff`: the Hecke
+  eigenvalue equations are conditions on `q`-coefficients.
 * `CuspForm.isNormalizedEigenform_iff_heckeT`, `CuspForm.isNormalizedEigenform_iff_heckeTLin`:
   normalized eigenforms are the cusp forms with first coefficient `1` that are eigenvectors of
   every `T_p` and `U_p`, with eigenvalue `a_p`.
@@ -87,7 +85,7 @@ noncomputable section
 open UpperHalfPlane Function
 open scoped MatrixGroups ModularForm Manifold
 
-/-! ### Hecke eigenvectors through `q`-coefficients -/
+/-! ### Hecke eigenvalue equations through `q`-coefficients -/
 
 namespace ModularFormClass
 

@@ -1,9 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 -/
 
 /-
@@ -32,16 +34,11 @@ Portions of this file are adapted from:
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The upstream NOTICE also credits:
-Mathlib — https://github.com/leanprover-community/mathlib4
-Copyright (c) the respective Mathlib authors, as recorded in the headers of the
-Mathlib source files.
-Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -62,6 +59,7 @@ import Mathlib.RingTheory.Ideal.MinimalPrime.Localization
 import Mathlib.RingTheory.Noetherian.Basic
 import Mathlib.RingTheory.TensorProduct.Free
 import Mathlib.RingTheory.TensorProduct.Maps
+import MathlibExt.NumberTheory.ModularForms.NormalizedEigenform
 import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 import MathlibExt.NumberTheory.ModularForms.SturmBoundGamma0
 
@@ -158,23 +156,12 @@ private theorem coeff_add_aux {N : ℕ} {k : ℤ} (f g : CuspForm (CongruenceSub
   rw [ModularForm.qExpansion_add one_pos
     (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) f g, map_add]
 
-private theorem coeff_smul_aux {N : ℕ} {k : ℤ} (c : ℂ)
-    (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) (n : ℕ) :
-    (qExpansion 1 ((c • f : CuspForm (CongruenceSubgroup.Gamma0 N) k) : ℍ → ℂ)).coeff n
-      = c * (qExpansion 1 (f : ℍ → ℂ)).coeff n := by
-  have h1 : ((c • f : CuspForm (CongruenceSubgroup.Gamma0 N) k) : ℍ → ℂ) = c • (f : ℍ → ℂ) := by
-    ext z
-    simp
-  rw [h1, ModularForm.qExpansion_smul one_pos
-    (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) c f]
-  simp
-
 /-- The first `B` `q`-expansion coefficients, as a `ℂ`-linear map. -/
 private def truncC (N : ℕ) (k : ℤ) (B : ℕ) :
     CuspForm (CongruenceSubgroup.Gamma0 N) k →ₗ[ℂ] (Fin B → ℂ) where
   toFun f i := (qExpansion 1 (f : ℍ → ℂ)).coeff i
   map_add' f g := by funext i; exact coeff_add_aux f g i
-  map_smul' c f := by funext i; exact coeff_smul_aux c f i
+  map_smul' c f := by funext i; exact CuspForm.qCoeff_smul c f i
 
 private def sturmBC (N : ℕ) (k : ℤ) : ℕ := (k * (CongruenceSubgroup.Gamma0 N).index).toNat / 12 + 1
 

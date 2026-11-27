@@ -1,9 +1,25 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
+-/
 
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+/-
+The source statements restated in this file are copied from
+`Definitions/Def_CuspForm_IntegralLattice.lean`,
+`Theorems/Thm_CuspForm_exists_isMaximal_three_mem_heckeT_sub_mem.lean`,
+`Theorems/Thm_CuspForm_exists_reductionModule_of_isLatticeRealized.lean`,
+`Theorems/Thm_CuspForm_hasIntegralBasis_iff_hasIntegralStructure_two.lean`,
+`Theorems/Thm_EisensteinWeightOne_three_dvd_coeff_mul_e1Chi3_sub.lean`, and
+`Theorems/Thm_FLT_OccurrenceStatement_three_dvd_coeff_heckeT_two_sub_smul_of_not_dvd.lean`
+in https://github.com/anthropics/fermats-last-theorem, compared with the source files at
+commit `6e837e75355538c7f80bab5b956861e86c4eacc2`.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
