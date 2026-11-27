@@ -20,3 +20,8 @@ Word-hyperbolic groups (Gromov, *Hyperbolic groups*, 1987, §2): examples, and t
 
 - [Power quotients of hyperbolic groups](../power-quotients-of-hyperbolic-groups/README.md): infinite periodic quotients of hyperbolic groups.
 - [Equationally Noetherian groups](../../varieties-and-equations/equationally-noetherian-groups/README.md): hyperbolic groups are equationally Noetherian.
+- [A torsion-free word-hyperbolic group that is not residually finite](torsion-free-hyperbolic-not-residually-finite.md)
+
+- [Cannon’s spherical-boundary geometric action conclusion](cannon-geometric-action.md)
+
+- [A word-hyperbolic group with no geometric CAT(0) action](hyperbolic-group-without-geometric-cat-zero-action.md)

@@ -26,3 +26,5 @@ Infinite groups defined by torsion and finiteness conditions: Burnside problems 
 - [Sylow bases of locally finite groups](sylow-bases-of-locally-finite-groups/README.md)
 - [Tarski monsters](tarski-monsters/README.md)
 - [Weak chain conditions on subgroups](weak-chain-conditions-on-subgroups/README.md)
+- [An infinite finitely presented periodic Steinberg group](characteristic-two-periodic-steinberg-group.md)
+- [An infinite finitely presented periodic group](infinite-finitely-presented-periodic-group.md)

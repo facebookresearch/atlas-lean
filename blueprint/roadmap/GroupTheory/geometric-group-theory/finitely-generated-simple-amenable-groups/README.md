@@ -2,5 +2,6 @@
 
 - [Kourovka Problem 15.5 (statement): infinite finitely generated simple amenable groups](infinite-fgsimple-amenable-group.md)
 - [Juschenko–Monod theorem (Kourovka Problem 15.5)](infinite-fgsimple-amenable-group-holds.md)
+- [An infinite finitely presented simple amenable group](infinite-finitely-presented-simple-amenable-group.md)
 - [AimPL amenability Problem 4.65 (2-generated infinite simple amenable groups)](exists-two-generated-infinite-simple-ame.md)
 - [Two-generated infinite simple amenable groups](exists-two-generated-infinite-simple-ame-2.md)

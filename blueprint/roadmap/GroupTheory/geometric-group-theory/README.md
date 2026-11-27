@@ -20,3 +20,6 @@ Large-scale and analytic properties of finitely generated groups: growth, word-h
 - [Sofic groups](sofic-groups/README.md)
 - [Surface subgroups of Kleinian groups](surface-subgroups-of-kleinian-groups/README.md)
 - [Word metrics and quasi-isometries](word-metrics-and-quasi-isometries/README.md)
+- [Coarse recognition of virtually polycyclic groups](quasi-isometric-recognition-virtually-polycyclic.md)
+- [Uniform bounded height for self quasi-isometries of solvable Lie models](uniform-bounded-height-solvable-lie-group.md)
+- [Coarse recognition of finite-covolume solvable lattices](coarse-recognition-solvable-lattices.md)
