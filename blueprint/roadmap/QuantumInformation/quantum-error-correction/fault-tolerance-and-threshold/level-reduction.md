@@ -21,6 +21,7 @@ singletons and $1/3 \le (2/3)^2$ on pairs), but that ExRec is bad on every draw.
 - [Fault-tolerant simulation of a circuit and extended rectangles](fault-tolerant-simulation-and-extended-rectangles.md)
 - [Local stochastic error model](local-stochastic-error-model.md)
 - [$[[n, k, d]]$ quantum code](../distance-of-a-quantum-code/n-k-d-quantum-code.md)
+- [Bad extended rectangles simulate faulty locations](bad-extended-rectangles-simulate-faulty-locations.md)
 
 ## Proof depends on
 

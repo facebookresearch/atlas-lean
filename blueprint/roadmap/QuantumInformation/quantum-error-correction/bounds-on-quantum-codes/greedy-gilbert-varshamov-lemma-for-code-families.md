@@ -26,6 +26,10 @@ at least $\lceil \delta n \rceil$, for all large $n$, since $\sum_{j < \lceil \d
 
 - [Volume of a Hamming ball, entropy upper bound](../../../InformationTheory/error-correcting-codes/bounds-on-code-size/sum-choose-mul-pow-le-exp.md)
 
+## Related topics
+
+- [Counting weakly self-dual codes](counting-weakly-self-dual-codes.md): the uniform family used for good CSS codes
+
 ## Sources
 
 - A. R. Calderbank and P. W. Shor, *Good quantum error-correcting codes exist*, Phys. Rev. A 54 (1996), 1098–1105, arXiv:quant-ph/9512032, Section V, Lemma 3 and its proof, equations (23)–(26) (attributed there to MacWilliams and Sloane, Chapter 17), and the application to weakly self-dual codes that follows, where uniformity holds only for even-weight vectors.

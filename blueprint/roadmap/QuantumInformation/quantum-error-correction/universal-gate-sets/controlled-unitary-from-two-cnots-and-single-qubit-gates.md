@@ -14,6 +14,7 @@ with the other single-qubit gates gives the count.
 ## Depends on
 
 - [Unitary evolution and elementary gates](../../quantum-foundations/unitary-evolution-and-elementary-gates.md)
+- [The $ABC$ decomposition of a special unitary matrix](abc-decomposition-of-special-unitary-matrices.md)
 
 ## Proof depends on
 

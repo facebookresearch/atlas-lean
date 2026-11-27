@@ -10,6 +10,10 @@ $\langle A, B \rangle = \operatorname{Tr}(A^{*} B)$; together with the
 [Pauli expansion](pauli-expansion-of-a-matrix.md) they form an orthogonal basis of the $2^k \times 2^k$ complex matrices.
 This is why correcting the Pauli errors of weight at most $t$ corrects every error supported on at most $t$ qubits.
 
+## Related topics
+
+- [Every matrix is a combination of Pauli operators](pauli-expansion-of-a-matrix.md): the expansion in this basis
+
 ## Sources
 
 - A. Ketkar, A. Klappenecker, S. Kumar and P. K. Sarvepalli, *Nonbinary stabilizer codes over finite fields*, IEEE Trans. Inform. Theory 52 (2006), 4892–4914, arXiv:quant-ph/0508070, Section II (the nice error basis: $\operatorname{Tr}(A^\dagger B) = 0$ for distinct elements), Lemma 1 and Corollary 4.

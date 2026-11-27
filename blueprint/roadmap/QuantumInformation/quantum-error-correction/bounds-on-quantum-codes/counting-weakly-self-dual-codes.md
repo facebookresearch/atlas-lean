@@ -19,6 +19,10 @@ $\sigma_{n,k+1,2}$ (Section V).
 
 - [Dual code](../../../InformationTheory/error-correcting-codes/linear-codes/dual.md)
 
+## Related topics
+
+- [The greedy Gilbert–Varshamov lemma for code families](greedy-gilbert-varshamov-lemma-for-code-families.md): applies this uniformity to the codes $C^{\perp}$
+
 ## Sources
 
 - A. R. Calderbank and P. W. Shor, *Good quantum error-correcting codes exist*, Phys. Rev. A 54 (1996), 1098–1105, arXiv:quant-ph/9512032, Section V, equations (27)–(28), the statement on $\sigma_{n,k,s}$ and the count that follows.

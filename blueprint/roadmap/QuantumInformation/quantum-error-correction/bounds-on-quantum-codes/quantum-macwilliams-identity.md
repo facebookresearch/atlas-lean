@@ -25,6 +25,10 @@ codes over $\mathrm{GF}(4)$.
 - [Pauli operators are orthogonal for the trace inner product](../stabilizer-formalism/pauli-operators-form-an-orthogonal-basis.md)
 - [Every matrix is a combination of Pauli operators](../stabilizer-formalism/pauli-expansion-of-a-matrix.md)
 
+## Related topics
+
+- [MacWilliams identity](../../../InformationTheory/error-correcting-codes/macwilliams-identity.md): the classical identity
+
 ## Sources
 
 - P. Shor and R. Laflamme, *Quantum analog of the MacWilliams identities for classical coding theory*, Phys. Rev. Lett. 78 (1997), 1600–1602, arXiv:quant-ph/9610040, equations (1)–(6) and the examples that follow.

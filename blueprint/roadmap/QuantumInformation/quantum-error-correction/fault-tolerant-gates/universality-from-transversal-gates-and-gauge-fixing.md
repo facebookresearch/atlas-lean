@@ -25,6 +25,10 @@ tolerance. Each needs its statement checked against the paper.
 - [Subsystem code](../subsystem-codes/subsystem-code.md)
 - [Transversal gate](transversal-gate.md)
 
+## Related topics
+
+- [The Eastin–Knill theorem](eastin-knill-theorem.md): the no-go theorem that gauge fixing escapes
+
 ## Sources
 
 - A. Paetznick and B. W. Reichardt, *Universal fault-tolerant quantum computation with only transversal gates and error correction*, Phys. Rev. Lett. 111 (2013), 090505, arXiv:1304.3709, abstract and the main text (the paragraphs on triorthogonal codes and the transversal CCZ claim, and on the universal gate set from transversal CCZ, transversal Hadamard and error correction).
