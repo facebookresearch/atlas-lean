@@ -3,7 +3,7 @@
 In the secretary problem with $n \ge 1$ candidates in uniformly random order, where the employer sees only relative ranks and wins by hiring the overall best, let
 
 $$
-p_n^* = \max_{1 \le r \le n} \frac{r-1}{n} \sum_{k=r}^{n} \frac{1}{k-1},
+p_n^* = \max_{1 \le r \le n} \frac{1}{n} \sum_{k = r}^{n} \frac{r - 1}{k - 1},
 $$
 
 where the summand $(r-1)/(k-1)$ is read as $1$ when $r = k = 1$; this is the win probability of the best rule that rejects the first $r - 1$ candidates and then hires the first candidate better than all previous ones. Then:
