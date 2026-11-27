@@ -84,3 +84,4 @@
 - [Multiple sequentially markovian coalescent](multiple-sequentially-markovian-coalescent/README.md)
 - [Tree-sequence inference by ancestral haplotype copying](tree-sequence-inference-by-ancestral-haplotype-copying/README.md)
 - [Wright–Fisher versus coalescent genealogies of long genomes](wright-fisher-versus-coalescent-genealogies-of-long-genomes/README.md)
+- [IBD segments on coalescent trees](ibd-segments-on-coalescent-trees/README.md)

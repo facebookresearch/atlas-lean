@@ -109,7 +109,9 @@ def graph {X Y : MonRelCat.{u}} (f : X →o Y) : X ⟶ Y where
   · intro h
     exact ⟨f x, le_rfl, h⟩
 
-/-- An order isomorphism induces an isomorphism of monotone relations. -/
+/-- An order isomorphism `e : X ≃o Y` induces an isomorphism of monotone relations: the
+forward relation relates `x` to `y` when `e x ≤ y`, and the inverse relation relates `y` to
+`x` when `e.symm y ≤ x` (the upward-closed graphs of `e` and `e.symm`). -/
 def isoOfOrderIso {X Y : MonRelCat.{u}} (e : X ≃o Y) : X ≅ Y where
   hom := graph (e : X →o Y)
   inv := graph (e.symm : Y →o X)
