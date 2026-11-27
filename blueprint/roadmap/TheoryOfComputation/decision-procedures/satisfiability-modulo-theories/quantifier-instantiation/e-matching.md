@@ -12,6 +12,10 @@ The procedure is sound and complete up to congruence: every $\beta \in \mathrm{m
 
 - [Congruence closure decides conjunctions of ground equalities](../congruence-closure-decides-conjunctions-of.md)
 
+## Expansion
+
+This page becomes ready once a published source states the soundness and completeness of the matching procedure started from $\{\emptyset\}$. The cited paper states the claim with the start $\emptyset$, from which the procedure returns no substitution, and refers its justification to a technical report.
+
 ## Sources
 
 - L. de Moura and N. Bjørner, "Efficient E-matching for SMT solvers", in *Automated Deduction (CADE-21)*, LNCS 4603, Springer, 2007, pp. 183–198, <https://leodemoura.github.io/files/ematching.pdf>, Section 2 (patterns, substitutions, congruence closure and E-graphs) and Section 2.1 (E-matching for quantifier instantiation, the abstract algorithm of Figure 1 and its soundness and completeness claim, justified in the work cited there; the source starts the procedure from $\emptyset$, and the start from $\{\emptyset\}$ is written out here), and Section 1 (NP-hardness and the number of matches).
