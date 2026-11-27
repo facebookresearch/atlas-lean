@@ -4,6 +4,8 @@ Linear relations and inequalities between the face numbers $f_0, f_1, \dots$ of 
 
 - [Euler–Poincaré relation](euler-poincare.md)
 - [Steinitz's lemma: the f-vectors of 3-polytopes](steinitz-lemma.md)
+- [Boundary complex of a simplicial polytope](boundary-complex.md)
+- [Realization of the boundary complex](boundary-space.md)
 - [The boundary complex of a simplicial polytope is a simplicial sphere](exists-simplicial-sphere-face-count-eq.md)
 - [Upper bound theorem (McMullen)](upper-bound-theorem.md)
 
