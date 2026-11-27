@@ -13331,7 +13331,6 @@
   "MathlibExt/NumberTheory/JacobiTwoSquareCount": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Jacobi's two-square theorem"},
   "MathlibExt/NumberTheory/JacobsthalLucasNumber": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Jacobsthal and Jacobsthal–Lucas numbers"},
   "MathlibExt/NumberTheory/JakobczykFermatNotPowPowModEqOneOfLt": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
-  "MathlibExt/NumberTheory/JosephusBaseThreeHalvesJosephusThreeFixedPointDigitsOfGapAtLeastTwo": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/JosephusExtremalTwoMulSub": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/JosephusFixedPointInterval": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/JosephusFixedPointRecurrence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
