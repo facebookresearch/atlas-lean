@@ -22,7 +22,7 @@ Then $\mathbb P(\hat\psi_n>-\delta)\to0$ as $n\to\infty$: the misspecified GREML
 
 $$f(t)=\frac{1+\varphi_0t}{1-\alpha+\alpha(1-\varphi_0)t+\alpha\varphi_0t^2},\qquad f'(t)=\frac{\varphi_0-\alpha(1+\varphi_0t)^2}{\bigl(1-\alpha+\alpha(1-\varphi_0)t+\alpha\varphi_0t^2\bigr)^2}$$
 
-(up to the constant factor $\theta_0^{-1}$). When $\varphi_0<\alpha$, $f'(t)<0$ for all $t\ge0$, so GREML targets a negative heritability even though the additive genetic variance $\varphi_0\ge0$. With $\theta_0 = 1$, the Haseman–Elston estimate $\hat\sigma_g^2 = n^{-1}y^\top(A_n - I_n)y \,/\, (n^{-1}\operatorname{tr}(A_n^2) - 1)$, which uses the diagonal entries of $A_n$ as well as the off-diagonal ones, likewise converges in probability to a value below $-C_1C_2/C_3$.
+(up to the constant factor $\theta_0^{-1}$). When $\varphi_0<\alpha$, $f'(t)<0$ for all $t\ge0$, so GREML targets a negative heritability even though the additive genetic variance $\varphi_0\ge0$. With $\theta_0 = 1$, the Haseman–Elston estimate $\hat\sigma_g^2 = n^{-1}y^\top(A_n - I_n)y \,/\, (n^{-1}\operatorname{tr}(A_n^2) - 1)$, which uses the diagonal entries of $A_n$ as well as the off-diagonal ones, satisfies $\mathbb{P}(\hat\sigma_g^2 < -C_1 C_2/C_3) \to 1$ as $n \to \infty$.
 
 ## Depends on
 

@@ -17,9 +17,9 @@ variables with one degree of freedom. If $\Sigma$ is invertible and $A = \Sigma^
 
 $$T_{\mathrm{mBAT}} = z^\top R^- z = \sum_{i=1}^p \lambda_i^{-1} (U_i^\top z)^2 \sim \chi^2_p \quad \text{under the null.}$$
 
-**Interpretation.** With standardized genotypes $X \in \mathbb{R}^{n\times m}$, true joint effects $\beta$ and unit phenotypic variance,
+**Interpretation.** With standardized genotypes $X \in \mathbb{R}^{n\times m}$, true joint effects $\beta$ unit phenotypic variance, and each individual SNP explaining a negligible proportion of variance,
 the variance explained by the set is $V_g = \beta^\top R \beta$, and the marginal estimates satisfy $b = R\beta + e$ with
-$\operatorname{Var}(e) = R/n$. Substituting $\beta \approx R^{-1} b$ gives $V_g \approx b^\top R^{-1} b$ and, since $z = \sqrt n\, b$,
+$\operatorname{Var}(e) \approx R/n$. Substituting $\beta \approx R^{-1} b$ gives $V_g \approx b^\top R^{-1} b$ and, since $z = \sqrt n\, b$,
 
 $$T_{\mathrm{mBAT}} = n\, b^\top R^{-1} b \approx n V_g,$$
 
