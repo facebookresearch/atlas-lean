@@ -12,6 +12,7 @@ A **diluted network** keeps only reactions with a single reactant of stoichiomet
 ## Proof depends on
 
 - [Perron–Frobenius theorem for irreducible nonnegative matrices](../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius.md)
+- [Perron–Frobenius theorem for primitive nonnegative matrices](../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius-for-primitive-nonnegative-matri.md)
 
 ## Expansion
 

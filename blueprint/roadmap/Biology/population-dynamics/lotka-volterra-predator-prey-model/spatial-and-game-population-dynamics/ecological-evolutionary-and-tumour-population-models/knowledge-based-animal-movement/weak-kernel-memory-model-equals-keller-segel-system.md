@@ -24,7 +24,7 @@ Its proof consists of the steps listed under Expansion.
 
 ## Expansion
 
-Differentiate $v$ in $t$. The upper limit contributes $G(d_3,x,y,0)G_w(0)u=\tau^{-1}u(x,t)$, since the heat kernel at time $0$ is the Dirac mass. Differentiating the heat kernel gives $d_3\Delta_xG$, hence $d_3\Delta v$, and differentiating $G_w$ gives $-\tau^{-1}G_w$, hence $-\tau^{-1}v$. This is the linear chain trick applied to a space-time kernel. The strong kernel $G_s(t)=t\tau^{-2}e^{-t/\tau}$ leads in the same way to an equivalent three-equation system, so delay models with gamma-distributed memory inherit results from chemotaxis theory. In one space dimension the cell flux $d_1u_x+d_2uv_x$ of the resulting system is the [Keller–Segel flux](../../../pattern-formation/turing-instability-with-cross-diffusion/keller-segel-flux.md) with $\chi=-d_2$.
+Differentiate $v$ in $t$. The upper limit contributes $G(d_3,x,y,0)G_w(0)u=\tau^{-1}u(x,t)$, since the heat kernel at time $0$ is the Dirac mass. Differentiating the heat kernel gives $d_3\Delta_xG$, hence $d_3\Delta v$, and differentiating $G_w$ gives $-\tau^{-1}G_w$, hence $-\tau^{-1}v$. This is the linear chain trick applied to a space-time kernel. The strong kernel $G_s(t)=t\tau^{-2}e^{-t/\tau}$ leads in the same way to an equivalent three-equation system, so delay models with gamma-distributed memory inherit results from chemotaxis theory. In one space dimension the cell flux $d_1u_x+d_2uv_x$ of the resulting system is the [Keller–Segel flux](../../../../../pattern-formation/turing-instability-with-cross-diffusion/keller-segel-flux.md) with $\chi=-d_2$.
 
 ## Sources
 
