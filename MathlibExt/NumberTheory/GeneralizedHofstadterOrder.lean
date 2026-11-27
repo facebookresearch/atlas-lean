@@ -13,6 +13,7 @@ public import Mathlib.Data.Finset.Range
 import Mathlib.Data.Nat.Find
 public import Mathlib.Logic.Function.Iterate
 import Mathlib.Order.Iterate
+import Mathlib.Order.WellFounded
 
 /-!
 # Prefix counts of generalized Hofstadter words
@@ -477,7 +478,11 @@ theorem hofWord_small_values :
 
 namespace hofCount_one_succ_le
 
-private theorem iterate_append (k j : ℕ) (u v : List ℕ) :
+/-- **Iterated substitution distributes over concatenation.** Let $\tau_k$ be the substitution of
+finite words over $\mathbb{N}$ that replaces the letter $k$ by $k\,1$ and every other letter $i$ by
+$i + 1$, and let $\tau_k^j$ be its $j$-fold iterate. For all natural numbers $k$ and $j$ and all
+finite words $u$ and $v$, $\tau_k^j(u\,v) = \tau_k^j(u)\,\tau_k^j(v)$. -/
+theorem iterate_append (k j : ℕ) (u v : List ℕ) :
     (hofTauList k)^[j] (u ++ v) = (hofTauList k)^[j] u ++ (hofTauList k)^[j] v := by
   induction j with
   | zero => rfl
@@ -501,7 +506,12 @@ private theorem iterate_top {k : ℕ} (j : ℕ) (hj : j ≤ k) :
       iterate_append, ih (by omega), iterate_before_top j (by omega), List.range'_concat]
     simp
 
-private theorem iterate_letter {k a j : ℕ} (ha : a ≤ k) (hj : j ≤ k) (h : k ≤ a + j) :
+/-- **Iterated substitution of a letter that reaches $k$.** Let $\tau_k$ be the substitution of
+finite words over $\mathbb{N}$ that replaces the letter $k$ by $k\,1$ and every other letter $i$ by
+$i + 1$, and let $\tau_k^j$ be its $j$-fold iterate. For natural numbers $a \le k$ and $j \le k$
+with $k \le a + j$, the word $\tau_k^j(a)$ is the letter $k$ followed by
+$1, 2, \dots, a + j - k$. -/
+theorem iterate_letter {k a j : ℕ} (ha : a ≤ k) (hj : j ≤ k) (h : k ≤ a + j) :
     (hofTauList k)^[j] [a] = k :: List.range' 1 (a + j - k) := by
   have e : a + (k - a) = k := by omega
   calc
@@ -516,7 +526,10 @@ private theorem block_length {k a j : ℕ} (ha : a ≤ k) (hj : j ≤ k) :
     simp [Nat.sub_eq_zero_of_le h]
   · simp [iterate_letter ha hj h, Nat.add_comm]
 
-private theorem letter_bounds {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
+/-- **Letters of the Hofstadter word lie between $1$ and $k$.** Let $k \ge 1$ and let $x_k$ be
+the fixed point, starting with $k$, of the substitution sending the letter $k$ to $k\,1$ and every
+other letter $i$ to $i + 1$. For every natural number $n$, $1 \le x_k[n] \le k$. -/
+theorem letter_bounds {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
     1 ≤ hofWord k n ∧ hofWord k n ≤ k := by
   have bounds (j : ℕ) : ∀ a ∈ (hofTauList k)^[j] [k], 1 ≤ a ∧ a ≤ k := by
     induction j with
@@ -534,36 +547,73 @@ private theorem letter_bounds {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
   rw [hofWord_eq_getElem_self]
   exact bounds _ _ (List.getElem_mem ..)
 
-private theorem prefix_succ (k n : ℕ) :
+/-- **A prefix of the Hofstadter word grows by one letter.** Let $x_k$ be the fixed point,
+starting with $k$, of the substitution sending the letter $k$ to $k\,1$ and every other letter
+$i$ to $i + 1$. For all natural numbers $k$ and $n$, the prefix $x_k[0] \cdots x_k[n]$ of length
+$n + 1$ is the prefix $x_k[0] \cdots x_k[n-1]$ of length $n$ followed by the letter $x_k[n]$. -/
+theorem prefix_succ (k n : ℕ) :
     hofPrefix k (n + 1) = hofPrefix k n ++ [hofWord k n] := by
   simp [hofPrefix_eq_map, List.range_succ]
 
-private theorem prefix_length (k n : ℕ) : (hofPrefix k n).length = n := by
+/-- **Length of a prefix of the Hofstadter word.** Let $x_k$ be the fixed point, starting with
+$k$, of the substitution sending the letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$.
+For all natural numbers $k$ and $n$, the prefix $x_k[0] \cdots x_k[n-1]$ has length $n$. -/
+theorem prefix_length (k n : ℕ) : (hofPrefix k n).length = n := by
   simp [hofPrefix_eq_map]
 
-/-- The length of the image of the first `n` letters under `j` substitutions. -/
-private def imageLength (k j n : ℕ) := ((hofTauList k)^[j] (hofPrefix k n)).length
+/-- **Image length of a prefix under iterated substitution.** Let $\tau_k$ be the substitution
+of finite words over $\mathbb{N}$ that replaces the letter $k$ by $k\,1$ and every other letter $i$
+by $i + 1$, let $\tau_k^j$ be its $j$-fold iterate, and let $x_k$ be its fixed point starting
+with $k$. For natural numbers $k$, $j$ and $n$, `imageLength k j n` is
+$|\tau_k^j(x_k[0] \cdots x_k[n-1])|$, the length of the word obtained by applying $\tau_k$ $j$
+times to the prefix of $x_k$ of length $n$. -/
+def imageLength (k j n : ℕ) := ((hofTauList k)^[j] (hofPrefix k n)).length
 
-private theorem image_succ (k j n : ℕ) :
+/-- **Image length of a prefix one letter longer.** Let $\tau_k$ be the substitution sending the
+letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $\tau_k^j$ be its $j$-fold
+iterate, let $x_k$ be its fixed point starting with $k$, and let
+$L_k^{(j)}(n) = |\tau_k^j(x_k[0] \cdots x_k[n-1])|$. For all natural numbers $k$, $j$ and $n$,
+$L_k^{(j)}(n + 1) = L_k^{(j)}(n) + |\tau_k^j(x_k[n])|$. -/
+theorem image_succ (k j n : ℕ) :
     imageLength k j (n + 1) = imageLength k j n + ((hofTauList k)^[j] [hofWord k n]).length := by
   simp only [imageLength, prefix_succ, iterate_append, List.length_append]
 
-private theorem image_zero (k j : ℕ) : imageLength k j 0 = 0 := by
+/-- **Image length of the empty prefix.** Let $\tau_k$ be the substitution sending the letter
+$k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $\tau_k^j$ be its $j$-fold iterate, let
+$x_k$ be its fixed point starting with $k$, and let
+$L_k^{(j)}(n) = |\tau_k^j(x_k[0] \cdots x_k[n-1])|$. For all natural numbers $k$ and $j$,
+$L_k^{(j)}(0) = 0$. -/
+theorem image_zero (k j : ℕ) : imageLength k j 0 = 0 := by
   have h : (hofTauList k)^[j] [] = [] := Function.iterate_fixed (show hofTauList k [] = [] by rfl) j
   simpa [imageLength, hofPrefix_eq_map] using congrArg List.length h
 
-private theorem image_one {k j : ℕ} (hj : j ≤ k) : imageLength k j 1 = j + 1 := by
+/-- **Image length of the one-letter prefix.** Let $\tau_k$ be the substitution sending the
+letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $\tau_k^j$ be its $j$-fold
+iterate, let $x_k$ be its fixed point starting with $k$, and let
+$L_k^{(j)}(n) = |\tau_k^j(x_k[0] \cdots x_k[n-1])|$. For natural numbers $j \le k$,
+$L_k^{(j)}(1) = j + 1$. -/
+theorem image_one {k j : ℕ} (hj : j ≤ k) : imageLength k j 1 = j + 1 := by
   have h : hofPrefix k 1 = [k] := by simp [hofPrefix_eq_map, hofWord, hofGrow, hofGrowAux]
   rw [imageLength, h, iterate_top _ hj, List.length_cons, List.length_range']
 
-private theorem image_strictMono {k j : ℕ} (hk : 1 ≤ k) (hj : j ≤ k) :
+/-- **Image lengths of prefixes increase strictly.** Let $\tau_k$ be the substitution sending
+the letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $\tau_k^j$ be its $j$-fold
+iterate, let $x_k$ be its fixed point starting with $k$, and let
+$L_k^{(j)}(n) = |\tau_k^j(x_k[0] \cdots x_k[n-1])|$. For natural numbers $k \ge 1$ and
+$j \le k$, the function $n \mapsto L_k^{(j)}(n)$ is strictly increasing. -/
+theorem image_strictMono {k j : ℕ} (hk : 1 ≤ k) (hj : j ≤ k) :
     StrictMono (imageLength k j) := by
   apply strictMono_nat_of_lt_succ
   intro n
   rw [image_succ, block_length (letter_bounds hk n).2 hj]
   omega
 
-private theorem iterate_prefix {k j n : ℕ} :
+/-- **The image of a prefix is a prefix.** Let $\tau_k$ be the substitution sending the letter
+$k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $\tau_k^j$ be its $j$-fold iterate, let
+$x_k$ be its fixed point starting with $k$, and let
+$L_k^{(j)}(n) = |\tau_k^j(x_k[0] \cdots x_k[n-1])|$. For all natural numbers $k$, $j$ and $n$,
+$\tau_k^j(x_k[0] \cdots x_k[n-1])$ is the prefix of $x_k$ of length $L_k^{(j)}(n)$. -/
+theorem iterate_prefix {k j n : ℕ} :
     (hofTauList k)^[j] (hofPrefix k n) = hofPrefix k (imageLength k j n) := by
   obtain ⟨r, hr, _⟩ := exists_hofGrow_eq k n
   have h : hofPrefix k n <+: (hofTauList k)^[r] [k] := by
@@ -588,12 +638,23 @@ private theorem image_comp (k j n : ℕ) :
   rw [← iterate_prefix]
   rfl
 
-private theorem prefix_image_succ (k j n : ℕ) :
+/-- **The prefix at the next image length.** Let $\tau_k$ be the substitution sending the
+letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $\tau_k^j$ be its $j$-fold
+iterate, let $x_k$ be its fixed point starting with $k$, and let
+$L_k^{(j)}(n) = |\tau_k^j(x_k[0] \cdots x_k[n-1])|$. For all natural numbers $k$, $j$ and $n$,
+the prefix of $x_k$ of length $L_k^{(j)}(n + 1)$ is the prefix of length $L_k^{(j)}(n)$
+followed by the word $\tau_k^j(x_k[n])$. -/
+theorem prefix_image_succ (k j n : ℕ) :
     hofPrefix k (imageLength k j (n + 1)) =
       hofPrefix k (imageLength k j n) ++ (hofTauList k)^[j] [hofWord k n] := by
   rw [← iterate_prefix, prefix_succ, iterate_append, iterate_prefix (n := n)]
 
-private theorem word_at_image {k j n a : ℕ} {t : List ℕ}
+/-- **The letter at an image length.** Let $\tau_k$ be the substitution sending the letter $k$
+to $k\,1$ and every other letter $i$ to $i + 1$, let $\tau_k^j$ be its $j$-fold iterate, let
+$x_k$ be its fixed point starting with $k$, and let
+$L_k^{(j)}(n) = |\tau_k^j(x_k[0] \cdots x_k[n-1])|$. For natural numbers $k$, $j$, $n$ and $a$
+and a finite word $t$, if $\tau_k^j(x_k[n]) = a\,t$, then $x_k[L_k^{(j)}(n)] = a$. -/
+theorem word_at_image {k j n a : ℕ} {t : List ℕ}
     (h : (hofTauList k)^[j] [hofWord k n] = a :: t) : hofWord k (imageLength k j n) = a := by
   have he := prefix_image_succ k j n
   rw [h] at he
@@ -603,7 +664,11 @@ private theorem word_at_image {k j n a : ℕ} {t : List ℕ}
   simpa [hofPrefix_eq_map, List.getElem?_append_right, show
     imageLength k j n < imageLength k j (n + 1) by omega] using he'
 
-private theorem count_mono (k : ℕ) (P : ℕ → Prop) [DecidablePred P] :
+/-- **Letter counts are monotone.** Let $x_k$ be the fixed point, starting with $k$, of the
+substitution sending the letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$. For every
+natural number $k$ and every decidable predicate $P$ on letters, the count
+$C_k^{(P)}(n) = \#\{0 \le i < n : P(x_k[i])\}$ is a monotone function of $n$. -/
+theorem count_mono (k : ℕ) (P : ℕ → Prop) [DecidablePred P] :
     Monotone (hofCount k P) := by
   apply monotone_nat_of_le_succ
   intro n
@@ -625,7 +690,13 @@ private theorem count_boundary {k j : ℕ} (P : ℕ → Prop) [DecidablePred P]
   obtain ⟨a, t, ht, ha, _⟩ := h n
   exact ⟨count n, by simpa [hofCount, prefix_succ, word_at_image ht, ha] using count n⟩
 
-private theorem count_covers {k j : ℕ} (P : ℕ → Prop) [DecidablePred P]
+/-- **An image length at the count bounds the position.** Let $\tau_k$ be the substitution
+sending the letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $\tau_k^j$ be its
+$j$-fold iterate, let $x_k$ be its fixed point starting with $k$, let
+$L_k^{(j)}(n) = |\tau_k^j(x_k[0] \cdots x_k[n-1])|$, and for a decidable predicate $P$ on letters
+let $C_k^{(P)}(n) = \#\{0 \le i < n : P(x_k[i])\}$. If $C_k^{(P)}(L_k^{(j)}(c) + 1) = c + 1$ for
+every natural number $c$, then $n \le L_k^{(j)}(C_k^{(P)}(n))$ for every natural number $n$. -/
+theorem count_covers {k j : ℕ} (P : ℕ → Prop) [DecidablePred P]
     (h : ∀ c, hofCount k P (imageLength k j c + 1) = c + 1) (n : ℕ) :
     n ≤ imageLength k j (hofCount k P n) := by
   by_contra! hlt
@@ -633,7 +704,13 @@ private theorem count_covers {k j : ℕ} (P : ℕ → Prop) [DecidablePred P]
   rw [h] at this
   omega
 
-private theorem top_boundary {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
+/-- **Counts of the letter $k$ at the image lengths of $\tau_k^{k-1}$.** Let $k \ge 1$, let
+$\tau_k$ be the substitution sending the letter $k$ to $k\,1$ and every other letter $i$ to
+$i + 1$, let $\tau_k^{k-1}$ be its $(k-1)$-fold iterate, let $x_k$ be its fixed point starting
+with $k$, let $M(n) = |\tau_k^{k-1}(x_k[0] \cdots x_k[n-1])|$, and let $C_k^{(=k)}(m)$ be the
+number of indices $0 \le i < m$ with $x_k[i] = k$. For every natural number $n$,
+$C_k^{(=k)}(M(n)) = n$ and $C_k^{(=k)}(M(n) + 1) = n + 1$. -/
+theorem top_boundary {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
     hofCount k (· = k) (imageLength k (k - 1) n) = n ∧
       hofCount k (· = k) (imageLength k (k - 1) n + 1) = n + 1 := by
   apply count_boundary
@@ -654,7 +731,12 @@ private theorem nonone_boundary {k : ℕ} (hk : 2 ≤ k) (n : ℕ) :
   · exact ⟨k, [1], by simp [hofTauList, hofTau, h], by omega, by simp⟩
   · exact ⟨hofWord k m + 1, [], by simp [hofTauList, hofTau, h], by omega, by simp⟩
 
-private theorem image_eq_add_count (k n : ℕ) :
+/-- **The image length under $\tau_k$ counts the letters $k$.** Let $\tau_k$ be the substitution
+sending the letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $x_k$ be its fixed
+point starting with $k$, and let $C_k^{(=k)}(n)$ be the number of indices $0 \le i < n$ with
+$x_k[i] = k$. For all natural numbers $k$ and $n$,
+$|\tau_k(x_k[0] \cdots x_k[n-1])| = n + C_k^{(=k)}(n)$. -/
+theorem image_eq_add_count (k n : ℕ) :
     imageLength k 1 n = n + hofCount k (· = k) n := by
   induction n with
   | zero => simp [image_zero, hofCount, hofPrefix_eq_map]
@@ -773,6 +855,65 @@ private theorem count_partition (k n : ℕ) :
     by_cases h : hofWord k n = 1 <;> simp [hofCount, prefix_succ, h] at ih ⊢ <;> omega
 
 end hofCount_one_succ_le
+
+open hofCount_one_succ_le in
+/-- **Bracketing by the iterates of $L_k$.** For $k \ge 1$, let $\tau_k$ be the substitution
+sending the letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $x_k$ be its fixed
+point starting with $k$, and let $L_k(n)$ be the length of the image under $\tau_k$ of the first
+$n$ letters of $x_k$; write $L_k^j$ for the $j$-fold iterate of $L_k$. For all $j \ge 0$ and
+$m \ge 1$ there is a unique $n \ge 1$ with $L_k^j(n - 1) < m \le L_k^j(n)$.
+
+Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
+Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
+Proposition 2.4 (`jis-2026-26.3.3-prop-5`). -/
+theorem existsUnique_hofL_iterate_bracket {k m : ℕ} (hk : 1 ≤ k) (hm : 1 ≤ m)
+    (j : ℕ) :
+    ∃! n, 1 ≤ n ∧ (hofL k)^[j] (n - 1) < m ∧ m ≤ (hofL k)^[j] n := by
+  let f := (hofL k)^[j]
+  have hL : StrictMono (hofL k) := image_strictMono (j := 1) hk hk
+  have hmono : StrictMono f := hL.iterate j
+  have hzero : f 0 = 0 := Function.iterate_fixed (show hofL k 0 = 0 from image_zero k 1) j
+  have hex : ∃ n, m ≤ f n := ⟨m, hmono.le_apply⟩
+  let n := Nat.find hex
+  have hn : m ≤ f n := Nat.find_spec hex
+  have hnpos : 1 ≤ n := by
+    by_contra! h
+    rw [show n = 0 by omega, hzero] at hn
+    omega
+  have hlo : f (n - 1) < m := lt_of_not_ge (Nat.find_min hex (by omega : n - 1 < n))
+  refine ⟨n, ⟨hnpos, hlo, hn⟩, ?_⟩
+  intro a ha
+  have hna : n ≤ a := Nat.find_min' hex ha.2.2
+  refine le_antisymm ?_ hna
+  by_contra! h
+  exact (not_lt_of_ge (hn.trans (hmono.monotone (by omega : n ≤ a - 1)))) ha.2.1
+
+open hofCount_one_succ_le in
+/-- **Iterates of the Hofstadter substitution on the letter $k$.** Let $k \ge 1$, let $\tau_k$ be
+the morphism of finite words over $\mathbb{N}$ that replaces the letter $k$ by the word $k\,1$ and
+every other letter $i$ by $i + 1$, and write $\tau_k^j(k)$ for the word obtained by applying
+$\tau_k$ $j$ times to the one-letter word $k$. For every natural number $j$: if $j \le k$, then
+$\tau_k^j(k) = k\,1\,2 \cdots j$, the letter $k$ followed by $1, 2, \dots, j$; and if $j \ge k$,
+then $\tau_k^j(k)$ is the concatenation $\tau_k^{j-1}(k)\,\tau_k^{j-k}(k)$.
+
+Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
+Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
+Proposition 2.2 (`jis-2026-26.3.3-prop-3`). -/
+theorem hofTauList_iterate_self {k : ℕ} (hk : 1 ≤ k) (j : ℕ) :
+    (j ≤ k → (hofTauList k)^[j] [k] = k :: List.range' 1 j) ∧
+      (k ≤ j → (hofTauList k)^[j] [k] =
+        (hofTauList k)^[j - 1] [k] ++ (hofTauList k)^[j - k] [k]) := by
+  refine ⟨iterate_top j, fun hj => ?_⟩
+  have h₁ : 1 + (k - 1) = k := by omega
+  calc
+    _ = (hofTauList k)^[j - 1] (hofTauList k [k]) := by
+      rw [← Function.iterate_succ_apply, show (j - 1).succ = j by omega]
+    _ = (hofTauList k)^[j - 1] [k] ++ (hofTauList k)^[j - 1] [1] := by
+      rw [show hofTauList k [k] = [k] ++ [1] by simp [hofTauList, hofTau], iterate_append]
+    _ = _ := by
+      congr 1
+      rw [show j - 1 = (j - k) + (k - 1) by omega, Function.iterate_add_apply,
+        iterate_before_top _ h₁.le, h₁]
 
 open hofCount_one_succ_le in
 /-- **Prefixes of $x_{k+1}$ contain no more letters $1$ than those of $x_k$.** Let $x_k$ be the

@@ -29,8 +29,10 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Cotangent
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.Analysis.CatalanDigammaSeries
 public import MathlibExt.Analysis.CatalanSeriesSpecialValues
 public import MathlibExt.Analysis.CentralBinomDigammaSeries
+public import MathlibExt.Analysis.HalfIntegerHarmonic
 public import MathlibExt.Analysis.OddWeightedCatalanSeries
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.HalfIntegerShifts
 
@@ -62,46 +64,6 @@ public theorem_wanted tsum_two_pow_prod_eq_neg_pi_mul_tan {z : ℂ} (hz₁ : -1 
     ∑' n : ℕ, (2 : ℂ) ^ (n + 1) / ((n : ℂ) + 1) *
         ∏ j ∈ Finset.range (n + 1), (2 * z - j) / (2 * z - (2 * j + 1)) =
       -(Real.pi : ℂ) * Complex.tan (Real.pi * z)
-
-/-- **Harmonic numbers of half-integer index.** Let $k$ be a natural number. For each integer
-$r \ge 1$ let $O^{(r)}_k = \sum_{j=1}^{k} \frac{1}{(2j - 1)^r}$, and let $O_k = O^{(1)}_k$.
-Let $\psi$ be the digamma function, $\gamma$ the Euler–Mascheroni constant and $\zeta$ the
-Riemann zeta function. Then
-$$\psi\bigl(k + \tfrac12\bigr) + \gamma = 2 O_k - 2 \log 2,$$
-$$\sum_{j=0}^{\infty} \Bigl(\frac{1}{(j + 1)^2} - \frac{1}{(j + k + \frac12)^2}\Bigr) =
--2 \zeta(2) + 4 O^{(2)}_k,$$
-$$\sum_{j=0}^{\infty} \Bigl(\frac{1}{(j + 1)^3} - \frac{1}{(j + \frac12)^3}\Bigr) = -6 \zeta(3),$$
-and for every natural number $m$,
-$$\sum_{j=0}^{\infty} \Bigl(\frac{1}{(j+\frac12)^{m+1}} - \frac{1}{(j+k+\frac12)^{m+1}}\Bigr) =
-2^{m+1} O^{(m+1)}_k.$$
-
-With $H_\alpha = \psi(\alpha + 1) + \gamma$ and
-$H^{(r)}_\alpha = \sum_{j \ge 1} (j^{-r} - (j + \alpha)^{-r})$, these read
-$H_{k-1/2} = 2O_k - 2\log 2$, $H^{(2)}_{k-1/2} = -2\zeta(2) + 4O^{(2)}_k$,
-$H^{(3)}_{-1/2} = -6\zeta(3)$ and $H^{(m+1)}_{k-1/2} - H^{(m+1)}_{-1/2} = 2^{m+1} O^{(m+1)}_k$.
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Lemma 1 (`integers-2025-A18-lem-1`). -/
-public theorem_wanted harmonic_nat_sub_half_values (k : ℕ) :
-    Complex.digamma (k + 1 / 2) + Real.eulerMascheroniConstant =
-        2 * ∑ j ∈ Finset.range k, 1 / (2 * (j : ℂ) + 1) - 2 * Complex.log 2 ∧
-      ∑' j : ℕ, (1 / ((j : ℂ) + 1) ^ 2 - 1 / ((j : ℂ) + k + 1 / 2) ^ 2) =
-        -2 * riemannZeta 2 + 4 * ∑ j ∈ Finset.range k, 1 / (2 * (j : ℂ) + 1) ^ 2 ∧
-      ∑' j : ℕ, (1 / ((j : ℂ) + 1) ^ 3 - 1 / ((j : ℂ) + 1 / 2) ^ 3) = -6 * riemannZeta 3 ∧
-      ∀ m : ℕ, ∑' j : ℕ, (1 / ((j : ℂ) + 1 / 2) ^ (m + 1) - 1 / ((j : ℂ) + k + 1 / 2) ^ (m + 1)) =
-        2 ^ (m + 1) * ∑ j ∈ Finset.range k, 1 / (2 * (j : ℂ) + 1) ^ (m + 1)
-
-/-- **A Catalan series in terms of the digamma function.** Let $z$ be a complex number with
-$\operatorname{Re} z > 0$, let $\binom{n+z}{n} = \prod_{j=1}^{n} \frac{z + j}{j}$, let $C_n$ be the
-$n$th Catalan number and $\psi$ the digamma function. Then
-$$\sum_{n=0}^{\infty} \frac{C_n}{4^n \binom{n+z}{n}} =
--2z \bigl(\psi(z) - \psi(z + \tfrac12)\bigr).$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 3, identity (7) (`integers-2025-A18-thm-3`). -/
-public theorem_wanted tsum_catalan_div_four_pow_mul_binom {z : ℂ} (hz : 0 < z.re) :
-    ∑' n : ℕ, (catalan n : ℂ) / (4 ^ n * ∏ j ∈ Finset.Icc 1 n, (z + j) / j) =
-      -2 * z * (Complex.digamma z - Complex.digamma (z + 1 / 2))
 
 /-- **An odd harmonic series for $\pi^2/6$ and a Catalan–harmonic series for $8 - 2\pi^2/3$.**
 Let $O_k = \sum_{j=1}^{k} 1/(2j-1)$ be the $k$-th odd harmonic number, $C_n$ the $n$-th Catalan
@@ -139,20 +101,6 @@ public theorem_wanted tsum_catalan_mul_harmonic_div_four_pow_mul_binom {z : ℂ}
       2 * (Complex.digamma z - Complex.digamma (z + 1 / 2)) *
           (1 - z * (Complex.digamma (z + 1) + Real.eulerMascheroniConstant)) +
         2 * z * ∑' j : ℕ, (1 / ((j : ℂ) + z) ^ 2 - 1 / ((j : ℂ) + z + 1 / 2) ^ 2)
-
-/-- **Catalan series over powers of $4$ equal to $4\ln 2$ and $4\ln 2 - 2$.** Let $C_n$ be the
-$n$-th Catalan number. Then
-$$\sum_{n=0}^{\infty} \frac{2n+1}{n+1} \cdot \frac{C_n}{4^n} = 4\ln 2$$
-and
-$$\sum_{n=0}^{\infty} \frac{2n+1}{(n+1)(n+2)} \cdot \frac{C_n}{4^n} = 4\ln 2 - 2.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 5, first two identities
-(`integers-2025-A18-thm-5`). -/
-public theorem_wanted tsum_odd_mul_catalan_div_four_pow_special :
-    ∑' n : ℕ, (2 * (n : ℝ) + 1) / ((n : ℝ) + 1) * catalan n / 4 ^ n = 4 * Real.log 2 ∧
-      ∑' n : ℕ, (2 * (n : ℝ) + 1) / (((n : ℝ) + 1) * ((n : ℝ) + 2)) * catalan n / 4 ^ n =
-        4 * Real.log 2 - 2
 
 /-- **Digamma evaluation of the $n$-weighted Catalan series with binomial denominators.** Let
 $C_n$ be the $n$-th Catalan number and $\psi$ the digamma function, and for complex $z$ write

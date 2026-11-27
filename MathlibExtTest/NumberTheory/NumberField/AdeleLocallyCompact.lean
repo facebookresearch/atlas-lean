@@ -16,6 +16,7 @@ public import MathlibExt.RingTheory.DedekindDomain.AdicCompletionResidueField
 noncomputable section
 
 open NumberField IsDedekindDomain
+open scoped Valued
 
 namespace HeightOneSpectrumTest
 
@@ -54,6 +55,34 @@ example : ProperSpace (v.adicCompletion ℚ) := inferInstance
 /-- Compactness bridge for the adic completion integers. -/
 example : IsCompact (↑(v.adicCompletionIntegers ℚ) : Set (v.adicCompletion ℚ)) :=
   HeightOneSpectrum.isCompact_adicCompletionIntegers ℚ v
+
+/-- The finiteness results are available to instance search. -/
+example : Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers ℚ)) := inferInstance
+
+/-- Finiteness in valued-field notation, by instance search. -/
+example : Finite 𝓀[v.adicCompletion ℚ] := inferInstance
+
+/-- Openness of the adic completion integers. -/
+example : IsOpen (↑(v.adicCompletionIntegers ℚ) : Set (v.adicCompletion ℚ)) :=
+  Valued.isOpen_valuationSubring _
+
+/-- Local compactness of the completion over `ℚ`, by instance search. -/
+example : LocallyCompactSpace (v.adicCompletion ℚ) := inferInstance
+
+/-- Weak local compactness of the completion over `ℚ`, by instance search. -/
+example : WeaklyLocallyCompactSpace (v.adicCompletion ℚ) := inferInstance
+
+/-- Second countability of the completion over `ℚ`, by instance search. -/
+example : SecondCountableTopology (v.adicCompletion ℚ) := inferInstance
+
+/-- Nontrivial instance over `ℚ`: finiteness, compactness, openness and
+properness hold together at every finite place, with all hypotheses
+(`Field ℚ`, `NumberField ℚ` and the place `v`) instantiated. -/
+example : Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers ℚ)) ∧
+    CompactSpace (Valued.integer (v.adicCompletion ℚ)) ∧
+    IsOpen (↑(v.adicCompletionIntegers ℚ) : Set (v.adicCompletion ℚ)) ∧
+    ProperSpace (v.adicCompletion ℚ) :=
+  ⟨inferInstance, inferInstance, Valued.isOpen_valuationSubring _, inferInstance⟩
 
 end HeightOneSpectrumTest
 

@@ -73,3 +73,4 @@
 - [Extension of the stochastic integral against a continuous square-integrable martingale to $L^2(d\langle M\rangle\otimes d\mathbb P)$](l2-d-m-x-dp-extension-of-the-stochastic-integral.md)
 - [Localized Itô integral and integrals up to stopping times](localized-ito-integral-and-integrals-up-to-stopp.md)
 - [Stochastic integral against a continuous local martingale](stochastic-integral-against-continuous-local-mar.md)
+- [A fraction of a nonnegative real is at most the whole](mul-nat-cast-div-le-self.md)
