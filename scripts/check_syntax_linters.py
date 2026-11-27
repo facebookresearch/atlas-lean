@@ -31,7 +31,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lean_changes import (ROOT, AggregatorError, add_common_arguments, aggregators, annotation,
-                          changed_files, in_actions, relative, write_summary)
+                          changed_files, guarded, in_actions, relative, write_summary)
 
 ENTRY = re.compile(r"^(?P<file>\S.*?\.lean):(?P<line>\d+):(?P<col>\d+): "
                    r"(?P<severity>warning|error|information): (?P<text>.*)$")
@@ -108,6 +108,7 @@ def parse_deprecations(text: str, cwd: Path = ROOT) -> list[LintWarning]:
     return list(dict.fromkeys(warnings))
 
 
+@guarded
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)

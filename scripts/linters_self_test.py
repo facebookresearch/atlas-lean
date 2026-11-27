@@ -92,12 +92,19 @@ def commit(text: str, message: str) -> str:
     return git("rev-parse", "HEAD")
 
 
+def child_env() -> dict[str, str]:
+    """The checks' environment: as outside GitHub Actions, so that the probe's findings annotate
+    nothing and never reach the job's summary."""
+    env = {key: value for key, value in os.environ.items() if key != "GITHUB_STEP_SUMMARY"}
+    env["GITHUB_ACTIONS"] = "false"
+    return env
+
+
 def run_checks(base: str, round_: int) -> bool:
     ok = True
     for script, expected in EXPECTED.items():
         result = subprocess.run([sys.executable, str(SCRIPTS / script), "--base", base],
-                                cwd=ROOT, capture_output=True, text=True,
-                                env={**os.environ, "GITHUB_ACTIONS": "false"})
+                                cwd=ROOT, capture_output=True, text=True, env=child_env())
         output = result.stdout + result.stderr
         want_code = EXIT_CODES[round_]
         missing = [pattern for pattern in expected[round_] if not re.search(pattern, output)]
