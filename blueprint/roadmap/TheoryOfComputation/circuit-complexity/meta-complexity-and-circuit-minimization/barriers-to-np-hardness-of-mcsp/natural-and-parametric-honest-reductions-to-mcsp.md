@@ -16,6 +16,7 @@ The reductions from SAT to 3-SAT and from 3-SAT to Vertex Cover are natural, and
 
 - [The Minimum Circuit Size Problem MCSP and Gap-MCSP](../../minimum-circuit-size-problem/minimum-circuit-size-problem.md)
 - [The minimum Kt problem MKtP](../../../kolmogorov-complexity/time-bounded-kolmogorov-complexity/the-minimum-kt-problem.md)
+- [Polynomial-time Turing (Cook) reduction](../../../randomized-and-quantum-complexity/interactive-proofs/closure-of-ip-under-reductions/polynomial-time-turing-reduction.md)
 
 ## Proof depends on
 

@@ -2,7 +2,7 @@
 
 Majority is computed by polynomial-size non-uniform $\mathrm{AC}^0$ circuits with MCSP oracle gates, and so is all of $\mathrm{NC}^1$. Hence either $\mathrm{NEXP}\not\subseteq\mathrm{P/poly}$ or MCSP is not in $\mathrm{ACC}^0$.
 
-**Theorem (Golovnev–Ilango–Impagliazzo–Kabanets–Kolokolova–Tal).** All circuit classes below are non-uniform.
+**Theorem (Golovnev–Ilango–Impagliazzo–Kabanets–Kolokolova–Tal).** All circuit classes below are non-uniform. In particular $\mathrm{NC}^1$ is the class of functions computed by polynomial-size formulas, with no uniformity condition; the levels of the linked NC page are log-space uniform, so that page gives the notation only, not the class used here.
 
 1. $\mathrm{MAJ}\in(\mathrm{AC}^0)^{\mathrm{MCSP}}$.
 2. $\mathrm{NC}^1\subseteq(\mathrm{AC}^0)^{\mathrm{MCSP}}$.
@@ -22,6 +22,7 @@ The proof of the $\mathrm{AC}^0[p]$ lower bound shows that MCSP with a fixed thr
 - [Majority](../../../complexity-classes/time-and-space-complexity-classes/majority-dec.md)
 - [NC](../../../complexity-classes/time-and-space-complexity-classes/nc.md)
 - [The complexity class NEXP](../../../complexity-classes/time-and-space-complexity-classes/nexp.md)
+- [The class EXP](../../../complexity-classes/time-and-space-complexity-classes/exp.md)
 - [Polynomial time with polynomial advice](../../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
 
 ## Proof depends on

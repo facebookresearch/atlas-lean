@@ -1,6 +1,6 @@
 # Dense KT-random oracles invert polynomial-time functions
 
-Any dense oracle that contains only strings of high KT complexity lets a randomized polynomial-time machine invert every polynomial-time computable function on a noticeable fraction of inputs. Oracles for MCSP and MKTP decide such sets, so both invert one-way functions.
+Any dense oracle that contains only strings of high KT complexity lets a randomized polynomial-time machine invert every polynomial-time computable function on a noticeable fraction of inputs. Inversion also works with an MKTP or an MCSP oracle, so both invert one-way functions.
 
 **Theorem.** Let $L$ be a language containing at least $2^n/n^k$ strings of each length $n$, for some $k$, such that for some $\varepsilon>0$ every $x\in L$ has $\mathrm{KT}(x)\ge|x|^{\varepsilon}$. Let $f(y,x)$ be computable uniformly in time polynomial in $|x|$. Then there are a polynomial-time probabilistic oracle Turing machine $N$ and a polynomial $q$ such that for every $n$ and every $y$
 
@@ -8,7 +8,7 @@ $$\Pr_{|x|=n,\ s}\left[f\bigl(y,N^{L}(y,f(y,x),s)\bigr)=f(y,x)\right]\ge\frac{1}
 
 where $x$ is uniform on $\{0,1\}^n$ and $s$ denotes the internal coins of $N$.
 
-Such a set $L$ is decidable in deterministic polynomial time with an MCSP oracle (for instance the truth tables of $n$-variable functions without circuits of size $2^{n/2}$) or an MKTP oracle, and $R_{\mathrm{KT}}$ itself qualifies. In circuit form: there is a polynomial-time probabilistic machine $M$ with an MKTP oracle such that for every circuit $C$ on $n$ input bits, $\Pr_{\sigma}[C(M(C,C(\sigma)))=C(\sigma)]\ge 1/\mathrm{poly}(n)$.
+The set $R_{\mathrm{KT}}$ of KT-random strings is such a set $L$ and is decidable in polynomial time with an MKTP oracle; Allender and Das note that the theorem can likewise be used with an MCSP oracle. In circuit form: there is a polynomial-time probabilistic machine $M$ with an MKTP oracle such that for every circuit $C$ on $n$ input bits, $\Pr_{\sigma}[C(M(C,C(\sigma)))=C(\sigma)]\ge 1/\mathrm{poly}(n)$.
 
 ## Expansion
 

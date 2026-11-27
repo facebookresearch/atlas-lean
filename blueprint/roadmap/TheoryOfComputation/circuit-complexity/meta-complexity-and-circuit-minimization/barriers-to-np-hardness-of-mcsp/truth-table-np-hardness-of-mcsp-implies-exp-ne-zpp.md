@@ -25,6 +25,7 @@ Split on Hypothesis H. If it fails, NP contains no hard tally language while EXP
 - [ZPP](../../../complexity-classes/time-and-space-complexity-classes/zpp.md)
 - [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
 - [The class E](../../../complexity-classes/time-and-space-complexity-classes/e.md)
+- [Polynomial-time Turing (Cook) reduction](../../../randomized-and-quantum-complexity/interactive-proofs/closure-of-ip-under-reductions/polynomial-time-turing-reduction.md)
 
 ## Proof depends on
 

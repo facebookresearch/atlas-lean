@@ -18,6 +18,7 @@ A pseudorandom generator whose outputs are truth tables of circuit size at most 
 ## Depends on
 
 - [The Minimum Circuit Size Problem MCSP and Gap-MCSP](../../minimum-circuit-size-problem/minimum-circuit-size-problem.md)
+- [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Proof depends on
 

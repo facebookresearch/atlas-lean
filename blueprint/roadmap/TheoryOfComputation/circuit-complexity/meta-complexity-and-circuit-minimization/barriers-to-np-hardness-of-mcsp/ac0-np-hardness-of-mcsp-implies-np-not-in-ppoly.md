@@ -9,7 +9,7 @@ The two conclusions come from two separate statements:
 - if MCSP is NP-hard under logtime-uniform $\mathrm{AC}^0$ reductions, then $\mathrm{NP}\subseteq\mathrm{P/poly}$ implies $\mathrm{NEXP}\subseteq\mathrm{P/poly}$;
 - if MCSP is NP-hard under P-uniform $\mathrm{AC}^0$ reductions, then there is $\delta>0$ with $\mathrm{E}\not\subseteq\text{i.o.-}\mathrm{SIZE}(2^{\delta n})$, and then $\mathrm{P}=\mathrm{BPP}$ by Impagliazzo and Wigderson.
 
-Here $\text{i.o.-}\mathrm{SIZE}(s)$ is the class of languages that have circuits of size $s(n)$ for infinitely many $n$.
+Here $\text{i.o.-}\mathrm{SIZE}(s)$ is the class of languages that have circuits of size $s(n)$ for infinitely many $n$. A reduction is *P-uniform* $\mathrm{AC}^0$ if a polynomial-time algorithm produces its $n$-input circuit from $1^n$, and *logtime-uniform* $\mathrm{AC}^0$ if, in the standard sense, the connections and gate types of its circuits are decidable in time logarithmic in the circuit size. Neither is the log-space uniformity of the linked uniform-family page, which supplies only the notion of a uniform circuit family.
 
 ## Expansion
 

@@ -4,7 +4,7 @@ The Minimum Oracle Circuit Size Problem MOCSP takes a truth table $T$, a thresho
 
 **Definition (Ilango).** An *oracle circuit* consists of NOT gates, fan-in-two AND and OR gates, and oracle gates $g_1,\dots,g_t$ for some $t\ge0$. Given an oracle function $O$, $C^O(x)$ is the value of $C$ on $x$ when every oracle gate computes $O$. The size $|C|$ of an oracle circuit is its number of wires, and $\mathrm{CC}^O(f)$ is the least size of an $O$-oracle circuit computing $f$. MOCSP takes as input a truth table $T$, a threshold $s\in\mathbb{N}$ and an oracle truth table $O$, and outputs whether $\mathrm{CC}^O(T)\le s$; this output is written $\mathrm{MOCSP}(T,s;O)$.
 
-MOCSP is in NP, and MCSP reduces to it trivially by giving no oracle, so MOCSP is at least as hard as MCSP and serves as a testing ground for hardness results conjectured for MCSP.
+MOCSP is in NP. Its instances with an empty oracle (circuits with no oracle gates) form the *wire-count* version of MCSP, which asks for a circuit with at most $s$ wires; this is not the gate-count MCSP of the linked page, since the two measures give different thresholds (one AND gate computes $x_1\wedge x_2$, but no circuit with one wire does). In this sense Ilango calls MOCSP at least as hard as MCSP and uses it as a testing ground for hardness results conjectured for MCSP.
 
 ## Expansion
 
@@ -21,4 +21,4 @@ None.
 
 ## Sources
 
-- Rahul Ilango, "Approaching MCSP from Above and Below: Hardness for a Conditional Variant and AC0[p]", *Innovations in Theoretical Computer Science Conference (ITCS)*, 2020, https://doi.org/10.4230/LIPIcs.ITCS.2020.34 (Definition 2.4, Section 1).
+- Rahul Ilango, "Approaching MCSP from Above and Below: Hardness for a Conditional Variant and AC0[p]", *Innovations in Theoretical Computer Science Conference (ITCS)*, 2020, https://doi.org/10.4230/LIPIcs.ITCS.2020.34 (Section 1, Section 2 before Definition 2.4, Definition 2.4).

@@ -4,6 +4,8 @@ Every nondeterministic, co-nondeterministic or parity branching program computin
 
 **Theorem (Cheraghchi–Hirahara–Myrisiotis–Yoshida).** The size of any nondeterministic, co-nondeterministic, or parity branching program computing MCSP is at least $N^{1.5-o(1)}$, where $N=2^n$ is the truth-table length.
 
+Here size is the number of labeled edges. A nondeterministic program may have vertices of any outdegree, edges leaving one vertex that query different variables, and unlabeled edges; a computation that reaches a vertex with no edge consistent with the input rejects. Such a program accepts if some computation consistent with the input reaches the accepting sink; a co-nondeterministic program accepts if every computation consistent with the input does; a parity program accepts if the number of source-to-accepting-sink paths consistent with the input is odd.
+
 Nečiporuk's method, which gives the corresponding bound for MKTP, does not apply directly to MCSP because the relation between circuit size and KT complexity is too loose; the proof instead uses pseudorandomness.
 
 ## Expansion
@@ -20,4 +22,4 @@ The pseudorandom generator of Impagliazzo, Meka and Zuckerman, analyzed for thes
 
 ## Sources
 
-- Mahdi Cheraghchi, Shuichi Hirahara, Dimitrios Myrisiotis, Yuichi Yoshida, "One-Tape Turing Machine and Branching Program Lower Bounds for MCSP", *Theory of Computing Systems*, 2022, https://doi.org/10.1007/s00224-022-10113-9; theorem numbers from the conference version, *Symposium on Theoretical Aspects of Computer Science (STACS)*, 2021, https://doi.org/10.4230/LIPIcs.STACS.2021.23 (Theorem 5, Section 1.1.2).
+- Mahdi Cheraghchi, Shuichi Hirahara, Dimitrios Myrisiotis, Yuichi Yoshida, "One-Tape Turing Machine and Branching Program Lower Bounds for MCSP", *Theory of Computing Systems*, 2022, https://doi.org/10.1007/s00224-022-10113-9; theorem numbers from the conference version, *Symposium on Theoretical Aspects of Computer Science (STACS)*, 2021, https://doi.org/10.4230/LIPIcs.STACS.2021.23 (Section 2.4, Theorem 5, Section 1.1.2).

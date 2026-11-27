@@ -2,7 +2,7 @@
 
 Sets of resource-bounded random strings are powerful oracles: $\mathrm{EXP}=\mathrm{NP}^{R_{\mathrm{Kt}}}$, $\mathrm{PSPACE}=\mathrm{ZPP}^{R_{\mathrm{KS}}}\subseteq\mathrm{P}^{R_K}$, and $R_{\mathrm{Kt}}$ and $R_{\mathrm{KS}}$ are complete for EXP and PSPACE under P/poly truth-table reductions.
 
-Let $\mathrm{KS}(x)=\min\{|d|+s : U(d)=x \text{ in space at most } s\}$ for a fixed universal machine $U$, and for a measure $\mu\in\{K,\mathrm{Kt},\mathrm{KS},\mathrm{KT}\}$ let $R_\mu=\{x : \mu(x)\ge|x|/2\}$ (any threshold $|x|^{\varepsilon}$, $0<\varepsilon<1$, works). A language $A$ is *PSPACE-robust* if $\mathrm{PSPACE}^A=\mathrm{P}^A$.
+Let $\mathrm{KS}(x)=\min\{|d|+s : U(d)=x \text{ in space at most } s\}$, where $U$, here and in $\mathrm{KT}^A$, is the fixed efficient universal machine of the [KT page](kt-complexity-and-mktp.md), which simulates with logarithmic time and linear space overhead. For a measure $\mu\in\{K,\mathrm{Kt},\mathrm{KS},\mathrm{KT}\}$ let $R_\mu=\{x : \mu(x)\ge|x|/2\}$ (any threshold $|x|^{\varepsilon}$, $0<\varepsilon<1$, works). A language $A$ is *PSPACE-robust* if $\mathrm{PSPACE}^A=\mathrm{P}^A$.
 
 **Theorem (Allender–Buhrman–Koucký–van Melkebeek–Ronneburger).**
 
@@ -35,4 +35,4 @@ The proofs use relativizing hardness-versus-randomness constructions in the cont
 
 ## Sources
 
-- Eric Allender, Harry Buhrman, Michal Koucký, Dieter van Melkebeek, Detlef Ronneburger, "Power from Random Strings", *SIAM Journal on Computing* 35(6), 2006, https://doi.org/10.1137/050628994 (Definitions 3 and 6, Theorems 7, 8 and 10 to 13, Corollary 9, numbering of the ECCC TR02-028 revision 1 edition).
+- Eric Allender, Harry Buhrman, Michal Koucký, Dieter van Melkebeek, Detlef Ronneburger, "Power from Random Strings", *SIAM Journal on Computing* 35(6), 2006, https://doi.org/10.1137/050628994 (Definitions 3 and 6, Theorems 7, 8 and 10 to 13, Corollary 9, numbering of the ECCC TR02-028 revision 1 edition; Proposition 5 of the journal version for the universal machine).
