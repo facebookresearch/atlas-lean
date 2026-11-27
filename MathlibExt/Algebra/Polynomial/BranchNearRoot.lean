@@ -76,7 +76,7 @@ private theorem norm_eval_ge (q : ℂ[X]) {w : ℕ} (hq : q.natDegree ≤ w) {t 
       rw [hq', coeff_sub, coeff_C_mul, coeff_X_pow]
       have hwi : w ≤ i := by lia
       rcases hwi.lt_or_eq with hlt | heq
-      · rw [if_neg hlt.ne', mul_zero, sub_zero]
+      · rw [ite_eq_right hlt.ne', mul_zero, sub_zero]
         exact coeff_eq_zero_of_natDegree_lt (lt_of_le_of_lt hq hlt)
       · subst heq; simp
   have hdecomp : q.eval t = q.coeff w * t ^ w + q'.eval t := by

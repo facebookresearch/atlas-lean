@@ -34,6 +34,7 @@ A sum of $n$ rounded products is accurate to $\gamma_n = nu/(1 - nu)$ relative t
 - [Vector as a sequence](vec-seq.md)
 - [Splitting a sum at its last nonzero term](sum-fin-eq-sum-range-add.md)
 - [Backward stability of Gaussian elimination, $\gamma_{3n}$ form](exists-add-mul-vec-eq-of-is-fl-lu-gamma.md)
+- [Element growth in Gaussian elimination with partial pivoting](growth-in-gaussian-elimination-with-partial-pivoting.md)
 - [$3\gamma_n + \gamma_n^2 \le \gamma_{3n}$](three-mul-gamma-add-sq-le-gamma.md)
 - [Certified enclosure for a rounded recursive log-likelihood sum](abs-rsum-sub-sum-le.md)
 
@@ -48,6 +49,10 @@ A sum of $n$ rounded products is accurate to $\gamma_n = nu/(1 - nu)$ relative t
 - [Accurate summation and dot product (Sum2 / Dot2 / DotK)](accurate-summation-and-dot-product.md)
 - [Kahan compensated summation error bound](kahan-compensated-summation-error-bound.md)
 - [Pairwise (tree) summation and reduction-order contracts](pairwise-summation-and-reduction-order-contracts.md)
+
+## Probabilistic error analysis
+
+- [Probabilistic rounding error analysis](probabilistic-rounding-error-analysis/README.md)
 
 ## Related topics
 
