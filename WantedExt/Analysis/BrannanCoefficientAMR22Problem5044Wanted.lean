@@ -41,8 +41,10 @@ Edition (2019), arXiv:1809.07200, Problem 5.44 (D. A. Brannan). UnsolvedMath rec
 noncomputable def brannanCoeff (α : ℝ) (x : ℂ) (n : ℕ) : ℂ :=
   ∑ j ∈ Finset.range (n + 1), (((descPochhammer ℝ j).eval α / j.factorial : ℝ) : ℂ) * x ^ j
 
-/-- Brannan's conjecture for `β = 1` (Hayman–Lingham Problem 5.44): for `0 < α < 1`, `|x| = 1`
-and every `n ≥ 1`, `|A_{2n+1}(x)| ≤ |A_{2n+1}(1)|`. -/
+/-- Brannan's conjecture for `β = 1`: for `0 < α < 1`, `|x| = 1` and every `n ≥ 1`,
+`|A_{2n+1}(x)| ≤ |A_{2n+1}(1)|`. Hayman–Lingham Problem 5.44 asks this for `n ≥ 2`, the case
+`n = 1` being already known; the statement covers every odd index `2n + 1 ≥ 3`, that known case
+included. -/
 def brannanOddCoefficientBound : Prop :=
   ∀ α : ℝ, 0 < α → α < 1 → ∀ x : ℂ, ‖x‖ = 1 → ∀ n : ℕ, 1 ≤ n →
     ‖brannanCoeff α x (2 * n + 1)‖ ≤ ‖brannanCoeff α 1 (2 * n + 1)‖

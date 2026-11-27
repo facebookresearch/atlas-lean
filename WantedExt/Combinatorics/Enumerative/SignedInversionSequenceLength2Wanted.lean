@@ -20,6 +20,7 @@ public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2FirstBars
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2Harmonic
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2LastBars
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2SuffixBars
 
 /-!
 # Signed inversion sequences avoiding sets of length-2 signed patterns
@@ -157,18 +158,6 @@ public theorem_wanted signedInvAvoidCount_eq_factorial_succ :
     signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, false, true⟩} n = (n + 1)! ∧
     signedInvAvoidCount {⟨.gt, true, false⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩} n = (n + 1)! ∧
     signedInvAvoidCount {⟨.gt, true, false⟩, ⟨.eq, false, true⟩, ⟨.lt, false, true⟩} n = (n + 1)!
-
-/-- **Mansour–Safadi Lemma 9: a Wilf-equivalence of three-pattern sets.** Length-2 signed
-patterns are written as in the paper, a bar marking a barred letter, and $B \sim C$ means that
-for every $n \ge 0$ the number $|\bar I_n(B)|$ of signed inversion sequences of length $n$
-avoiding every pattern of $B$ equals $|\bar I_n(C)|$. Then
-$\{\bar1\bar0, \bar10, \bar0\bar0\} \sim \{\bar1\bar0, \bar10, \bar00\}$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Lemma 9 (`integers-2026-A74-lem-9`). -/
-public theorem_wanted signedInvSeq_wilf_b1b0_b10_b0b0 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.eq, true, true⟩} =
-      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.eq, true, false⟩}
 
 /-- **Mansour–Safadi Lemma 10.** Write $\bar{I}_n(B)$ for the set of signed inversion
 sequences of length $n$ that avoid every length-2 signed pattern in $B$, where a pattern is
