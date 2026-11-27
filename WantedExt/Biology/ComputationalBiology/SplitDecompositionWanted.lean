@@ -28,7 +28,9 @@ is tree-like the residue `d₀` vanishes. Tree-like is expressed by Buneman's fo
 `MathlibExt.Biology.Phylogenetics.Buneman.FourPointCondition`, equivalent to being a tree metric
 (`isTreeMetric_iff_fourPointCondition`).
 
-Here the coherence condition includes the requirement `f = f₁ + ⋯ + f_k`, which the survey's
+In `IsCoherent` (defined in
+`MathlibExt.Combinatorics.SimpleGraph.SplitDecompositionCanonicalDecompResidueEqZeroOfTreeLike`) the
+coherence condition includes the requirement `f = f₁ + ⋯ + f_k`, which the survey's
 paraphrase omits but which the original definition (`P(d) = ∑ P(dᵢ)`) requires.
 Not recorded here: the characterization of the split summands as the split metrics `d'` with
 `d - d'` a metric coherent with `d'`, and the isolation-index formula for their weights.
@@ -52,6 +54,7 @@ public import Mathlib.Data.Fintype.Card
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.Combinatorics.SimpleGraph.TreeMetric
+public import MathlibExt.Combinatorics.SimpleGraph.SplitDecompositionCanonicalDecompResidueEqZeroOfTreeLike
 
 @[expose] public section
 
@@ -60,52 +63,6 @@ namespace WantedExt.Biology.ComputationalBiology.SplitDecompositionWanted
 open MathlibExt.Biology.Phylogenetics.Buneman
 
 variable {X : Type*} [Fintype X] [DecidableEq X]
-
-/-- `d` is a **metric** (pseudometric): zero diagonal, symmetric, triangle inequality. -/
-def IsMetric (d : X → X → ℝ) : Prop :=
-  (∀ x, d x x = 0) ∧ (∀ x y, d x y = d y x) ∧ ∀ x y z, d x z ≤ d x y + d y z
-
-/-- The split metric `δ_A`: `1` across the split `A | X \ A`, `0` within each side. -/
-def splitMetric (A : Finset X) (x y : X) : ℝ :=
-  if (x ∈ A ∧ y ∉ A) ∨ (x ∉ A ∧ y ∈ A) then 1 else 0
-
-/-- `d` is a **split metric**: `d = c · δ_A` for a proper nonempty `A` and `c > 0` (a metric with
-exactly two zero-distance classes). -/
-def IsSplitMetric (d : X → X → ℝ) : Prop :=
-  ∃ A : Finset X, ∃ c : ℝ, A.Nonempty ∧ A ≠ Finset.univ ∧ 0 < c ∧
-    ∀ x y, d x y = c * splitMetric A x y
-
-/-- `f` **dominates** `d`: `d(x, y) ≤ f(x) + f(y)` for all `x, y`. -/
-def Dominates (f : X → ℝ) (d : X → X → ℝ) : Prop :=
-  ∀ x y, d x y ≤ f x + f y
-
-/-- The family `ds` of `k` summands together with `r` is **coherent**: every function dominating
-`∑ ds i + r` is a sum `∑ fs i + f₀` of functions dominating the respective summands. -/
-def IsCoherent {k : ℕ} (ds : Fin k → X → X → ℝ) (r : X → X → ℝ) : Prop :=
-  ∀ f : X → ℝ, Dominates f (fun x y => ∑ i, ds i x y + r x y) →
-    ∃ (fs : Fin k → X → ℝ) (f₀ : X → ℝ), (∀ x, f x = ∑ i, fs i x + f₀ x) ∧
-      (∀ i, Dominates (fs i) (ds i)) ∧ Dominates f₀ r
-
-/-- `s + r` is a **coherent pair**: every function dominating `s + r` is `f₁ + f₂` with `f₁`
-dominating `s` and `f₂` dominating `r`. -/
-def IsCoherentPair (s r : X → X → ℝ) : Prop :=
-  ∀ f : X → ℝ, Dominates f (fun x y => s x y + r x y) →
-    ∃ f₁ f₂ : X → ℝ, (∀ x, f x = f₁ x + f₂ x) ∧ Dominates f₁ s ∧ Dominates f₂ r
-
-/-- `d` is **split-prime**: it is not a coherent sum `s + r` of a split metric `s` and a metric
-`r`. -/
-def IsSplitPrime (d : X → X → ℝ) : Prop :=
-  ¬ ∃ s r : X → X → ℝ, IsSplitMetric s ∧ IsMetric r ∧ IsCoherentPair s r ∧
-    ∀ x y, d x y = s x y + r x y
-
-/-- `(ds, r)` is a **canonical split decomposition** of `d`: the `ds i` are split metrics, `r` is a
-split-prime metric, `d = ∑ ds i + r`, the decomposition is coherent, and the `ds i` are linearly
-independent. -/
-def IsCanonicalDecomp (d : X → X → ℝ) (k : ℕ) (ds : Fin k → X → X → ℝ) (r : X → X → ℝ) :
-    Prop :=
-  (∀ i, IsSplitMetric (ds i)) ∧ IsMetric r ∧ IsSplitPrime r ∧
-    (∀ x y, d x y = ∑ i, ds i x y + r x y) ∧ IsCoherent ds r ∧
-    ∀ c : Fin k → ℝ, (∀ x y, ∑ i, c i * ds i x y = 0) → ∀ i, c i = 0
 
 /-- **Bandelt–Dress canonical split decomposition** (Bandelt and Dress 1992, via Dress, Huber and
 Moulton 2001): for every metric `d` (zero diagonal, symmetric, triangle inequality) on a finite set
@@ -119,16 +76,5 @@ public theorem_wanted exists_unique_canonicalDecomp (d : X → X → ℝ) (hd : 
       k ≤ (Fintype.card X).choose 2 ∧
       ∀ (k' : ℕ) (ds' : Fin k' → X → X → ℝ) (r' : X → X → ℝ), IsCanonicalDecomp d k' ds' r' →
         r' = r ∧ ∃ σ : Fin k' ≃ Fin k, ∀ j, ds' j = ds (σ j)
-
-/-- **Tree-like metrics are totally split-decomposable** (Bandelt and Dress 1992, via Dress, Huber
-and Moulton 2001): for every metric `d` (zero diagonal, symmetric, triangle inequality) on a finite
-set `X` satisfying the four-point condition, and every canonical split decomposition `(ds, r)` of
-`d`, the split-prime residue `r` vanishes.
-
-Source: Bandelt and Dress (1992), via Dress, Huber and Moulton (2001), p. 134. -/
-public theorem_wanted canonicalDecomp_residue_eq_zero_of_treeLike (d : X → X → ℝ)
-    (hd : IsMetric d) (htree : FourPointCondition d) (k : ℕ) (ds : Fin k → X → X → ℝ)
-    (r : X → X → ℝ) (hcanon : IsCanonicalDecomp d k ds r) :
-    ∀ x y, r x y = 0
 
 end WantedExt.Biology.ComputationalBiology.SplitDecompositionWanted

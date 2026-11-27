@@ -21,15 +21,18 @@ public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
 public import MathlibExt.Combinatorics.InfiniteWord.ThueMorse
 public import MathlibExt.Combinatorics.Words.AntitoneRelativePosition
 public import MathlibExt.Combinatorics.Words.BoundedRunPositions
+public import MathlibExt.Combinatorics.Words.ClonedWordPositions
 public import MathlibExt.Combinatorics.Words.EquilibriousWord
 public import MathlibExt.Combinatorics.Words.FibonacciIccanobiF
 public import MathlibExt.Combinatorics.Words.GoldenEigenvector
 public import MathlibExt.Combinatorics.Words.LetterPositionReconstruction
 public import MathlibExt.Combinatorics.Words.MonotoneRelativePosition
+public import MathlibExt.Combinatorics.Words.PeriodicRelativePosition
 public import MathlibExt.Combinatorics.Words.PisaEigenvector
 public import MathlibExt.Combinatorics.Words.PisaRelativePosition
 public import MathlibExt.Combinatorics.Words.RelativePositionBinaryWords
 public import MathlibExt.Combinatorics.Words.RelativePositionFrequency
+public import MathlibExt.Combinatorics.Words.RelativePositionIncrements
 public import MathlibExt.Combinatorics.Words.RelativePositionInjective
 
 /-!
@@ -101,26 +104,6 @@ public theorem_wanted relativePosition_monotonicity_runs {w : ℕ → Bool}
       (∀ k, (∃ i, ∀ j < k, w (i + j) = true) →
         ∃ n, ∀ j, 1 ≤ j → j ≤ k - 1 → 0 ≤ r (n + j + 1) - r (n + j))
 
-/-- **Relative position increments without long runs of b.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$
-be an infinite word over the letters $a$ and $b$ in which both letters occur infinitely often and
-whose first letter $\ell_0$ is $a$. Let $p_b$ be its position function for the letter $b$, let $r$
-be its relative position function, and write $\Delta s(n) = s(n+1) - s(n)$. Let $k$ be a natural
-number such that $w$ contains no $k$ consecutive letters $b$, that is, there is no $i$ with
-$\ell_{i+j} = b$ for all $j < k$. Then $|\Delta r(n) - \Delta p_b(n)| \le k$ for every $n \ge 1$.
-Moreover, $|\Delta r(n)|$ is bounded over $n \ge 1$ if and only if $\Delta p_b(n)$ is bounded over
-$n \ge 1$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 15
-(`jis-2025-25.1.5-lem-15`). -/
-public theorem_wanted abs_relativePosition_diff_sub_le {w : ℕ → Bool}
-    (hw : BothLettersInfinite w) (h₀ : w 0 = true) {k : ℕ}
-    (hk : ¬ ∃ i, ∀ j < k, w (i + j) = false) :
-    (∀ n, 1 ≤ n → |(relativePosition w (n + 1) - relativePosition w n) -
-        ((letterPosition w false (n + 1) : ℤ) - letterPosition w false n)| ≤ k) ∧
-      ((∃ C : ℤ, ∀ n, 1 ≤ n → |relativePosition w (n + 1) - relativePosition w n| ≤ C) ↔
-        ∃ C : ℕ, ∀ n, 1 ≤ n → letterPosition w false (n + 1) - letterPosition w false n ≤ C)
-
 /-- **Periodicity of a word and of the gaps between occurrences of its letters.** Let
 $w = w_0 w_1 w_2 \cdots$ be an infinite binary word over $\{a, b\}$ that starts with $a$ and in
 which both letters occur infinitely often. Let $p_\alpha(n)$ be the position (counted from $0$)
@@ -144,41 +127,6 @@ public theorem_wanted periodic_iff_letterPosition_diff_periodic {w : ℕ → Boo
       ∀ u : List Bool, 0 < u.length → (∀ i, w i = u.getD (i % u.length) false) →
         (∀ n, 1 ≤ n → dpa (n + u.count true) = dpa n) ∧
           ∀ n, 1 ≤ n → dpb (n + u.count false) = dpb n
-
-/-- **Periodicity of the relative position differences.** Let $w = w_0 w_1 w_2 \cdots$ be an
-infinite word over $\{a, b\}$ in which both letters occur infinitely often, let $p_a(n)$ and
-$p_b(n)$ be the positions of the $n$-th $a$ and the $n$-th $b$ in $w$, let
-$r(n) = p_b(n) - p_a(n)$, and let $\Delta r(n) = r(n + 1) - r(n)$. If $w$ is purely periodic
-(there is $q > 0$ with $w_{i + q} = w_i$ for all $i \ge 0$), then there is $q > 0$ with
-$\Delta r(n + q) = \Delta r(n)$ for all $n \ge 1$. Moreover, if $w = uuu\cdots$ for a nonempty
-finite word $u$ containing $k$ letters $a$ and $j$ letters $b$, then
-$\Delta r(n + \operatorname{lcm}(k, j)) = \Delta r(n)$ for all $n \ge 1$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 17
-(`jis-2025-25.1.5-cor-17`). -/
-public theorem_wanted relativePosition_diff_periodic_of_periodic {w : ℕ → Bool}
-    (hw : BothLettersInfinite w) :
-    let dr := fun n => relativePosition w (n + 1) - relativePosition w n
-    ((∃ q, 0 < q ∧ ∀ i, w (i + q) = w i) → ∃ q, 0 < q ∧ ∀ n, 1 ≤ n → dr (n + q) = dr n) ∧
-      ∀ u : List Bool, 0 < u.length → (∀ i, w i = u.getD (i % u.length) false) →
-        ∀ n, 1 ≤ n → dr (n + Nat.lcm (u.count true) (u.count false)) = dr n
-
-/-- **Linear bounds for words with bounded runs.** Let $w$ be an infinite binary word over the
-letters $a$ and $b$ in which both letters occur infinitely often, and let $c$ be a natural number
-such that every block of consecutive equal letters of $w$ has length at most $c$. Let $p_a(n)$
-and $p_b(n)$ be the positions (counting from $0$) of the $n$-th $a$ and the $n$-th $b$ in $w$, and
-let $r(n) = p_b(n) - p_a(n)$. Then for every $n \ge 1$, $p_a(n) \le (c+1)n - 1$,
-$p_b(n) \le (c+1)n - 1$ and $-cn \le r(n) \le cn$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 27
-(`jis-2025-25.1.5-cor-27`). -/
-public theorem_wanted letterPosition_le_of_run_le' {w : ℕ → Bool} (hw : BothLettersInfinite w)
-    {c : ℕ} (hc : ∀ i k, (∀ j < k, w (i + j) = w i) → k ≤ c) (n : ℕ) (hn : 1 ≤ n) :
-    (letterPosition w true n : ℤ) ≤ (c + 1) * n - 1 ∧
-      (letterPosition w false n : ℤ) ≤ (c + 1) * n - 1 ∧
-      -((c : ℤ) * n) ≤ relativePosition w n ∧ relativePosition w n ≤ c * n
 
 /-- **Reflection of binary words and relative position.** Let $\mathcal{W}$ be the set of
 infinite words over $\{a, b\}$ in which both letters occur infinitely often, and let
@@ -252,31 +200,6 @@ public theorem_wanted letterPosition_prepend_equilibrious (u : List Bool) {k : �
     letterPosition (u ++ₛ w) true (n + k) = letterPosition w true n + 2 * k ∧
       letterPosition (u ++ₛ w) false (n + k) = letterPosition w false n + 2 * k ∧
       relativePosition (u ++ₛ w) (n + k) = relativePosition w n
-
-/-- **Position functions of a cloned word.** Let $w$ be an infinite binary word over the
-letters $a$ and $b$ in which both letters occur infinitely often, let $k$ be a natural number,
-and let $\varphi_k(w)$ be the word whose letter at position $i$ is the letter of $w$ at position
-$\lfloor i/k \rfloor$ (for $k \ge 1$, the word obtained from $w$ by repeating each letter $k$
-times). For a word $v$ and a letter $\alpha$, let $p_{\alpha,v}(n)$ be the position (counting
-from $0$) of the $n$-th occurrence of $\alpha$ in $v$, and let $r_v(n) = p_{b,v}(n) - p_{a,v}(n)$.
-Then for all natural numbers $m$ and $j$ with $1 \le j \le k$,
-$p_{a,\varphi_k(w)}(mk+j) = k\,p_{a,w}(m+1) + j - 1$,
-$p_{b,\varphi_k(w)}(mk+j) = k\,p_{b,w}(m+1) + j - 1$ and
-$r_{\varphi_k(w)}(mk+j) = k\,r_w(m+1)$.
-
-The paper takes $k \ge 2$; the identities hold for $k = 1$ ($\varphi_1$ is the identity) and are
-vacuous for $k = 0$, so no bound on $k$ is assumed.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 24
-(`jis-2025-25.1.5-lem-24`). -/
-public theorem_wanted letterPosition_clone {w : ℕ → Bool} (hw : BothLettersInfinite w)
-    (k m j : ℕ) (hj : 1 ≤ j) (hjk : j ≤ k) :
-    letterPosition (fun i => w (i / k)) true (m * k + j) =
-        k * letterPosition w true (m + 1) + j - 1 ∧
-      letterPosition (fun i => w (i / k)) false (m * k + j) =
-        k * letterPosition w false (m + 1) + j - 1 ∧
-      relativePosition (fun i => w (i / k)) (m * k + j) = k * relativePosition w (m + 1)
 
 open Filter Topology in
 /-- **Letter frequency and growth of letter positions.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$ be

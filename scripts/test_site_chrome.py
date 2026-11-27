@@ -224,34 +224,11 @@ class NavigationParser(HTMLParser):
             self._link[0] += data.strip()
 
 
-class NavigationTests(unittest.TestCase):
+class BuiltSite(unittest.TestCase):
     """Build a small site with the repository's configuration and theme, and read each page's navigation."""
 
-    SUMMARY = (
-        "- [Home](index.md)\n"
-        "- Mathematics\n"
-        "    - [ATLAS roadmap](roadmap/README.md)\n"
-        "        - [Subject A](roadmap/A/README.md)\n"
-        "            - [Field F](roadmap/A/f/README.md)\n"
-        "                - [Topic T1](roadmap/A/f/t1/README.md)\n"
-        "                - [Topic T2](roadmap/A/f/t2/README.md)\n"
-        "                    - [Leaf](roadmap/A/f/t2/leaf.md)\n"
-        "            - [Field G](roadmap/A/g/README.md)\n"
-        "        - [Subject B](roadmap/B/README.md)\n"
-        "        - [ATLAS coverage](coverage/README.md)\n"
-    )
-    PAGES = {
-        "index.md": "# Home\n",
-        "roadmap/README.md": "# ATLAS roadmap\n",
-        "roadmap/A/README.md": "# Subject A\n",
-        "roadmap/A/f/README.md": "# Field F\n\n## Overview\n",
-        "roadmap/A/f/t1/README.md": "# Topic T1\n\n## Heading\n",
-        "roadmap/A/f/t2/README.md": "# Topic T2\n",
-        "roadmap/A/f/t2/leaf.md": "# Leaf\n\n## Part\n",
-        "roadmap/A/g/README.md": "# Field G\n",
-        "roadmap/B/README.md": "# Subject B\n",
-        "coverage/README.md": "# ATLAS coverage\n",
-    }
+    SUMMARY = ""
+    PAGES: dict[str, str] = {}
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -284,6 +261,34 @@ class NavigationTests(unittest.TestCase):
             ]
 
         return resolve(self.navigation(page).entries)
+
+
+class NavigationTests(BuiltSite):
+    SUMMARY = (
+        "- [Home](index.md)\n"
+        "- Mathematics\n"
+        "    - [ATLAS roadmap](roadmap/README.md)\n"
+        "        - [Subject A](roadmap/A/README.md)\n"
+        "            - [Field F](roadmap/A/f/README.md)\n"
+        "                - [Topic T1](roadmap/A/f/t1/README.md)\n"
+        "                - [Topic T2](roadmap/A/f/t2/README.md)\n"
+        "                    - [Leaf](roadmap/A/f/t2/leaf.md)\n"
+        "            - [Field G](roadmap/A/g/README.md)\n"
+        "        - [Subject B](roadmap/B/README.md)\n"
+        "        - [ATLAS coverage](coverage/README.md)\n"
+    )
+    PAGES = {
+        "index.md": "# Home\n",
+        "roadmap/README.md": "# ATLAS roadmap\n",
+        "roadmap/A/README.md": "# Subject A\n",
+        "roadmap/A/f/README.md": "# Field F\n\n## Overview\n",
+        "roadmap/A/f/t1/README.md": "# Topic T1\n\n## Heading\n",
+        "roadmap/A/f/t2/README.md": "# Topic T2\n",
+        "roadmap/A/f/t2/leaf.md": "# Leaf\n\n## Part\n",
+        "roadmap/A/g/README.md": "# Field G\n",
+        "roadmap/B/README.md": "# Subject B\n",
+        "coverage/README.md": "# ATLAS coverage\n",
+    }
 
     def test_a_topic_page_lists_its_ancestors_siblings_and_table_of_contents(self) -> None:
         page = "roadmap/A/f/t1/index.html"
@@ -356,6 +361,123 @@ class NavigationTests(unittest.TestCase):
                 ("ATLAS coverage", "coverage/index.html", "current", []),
             ]),
         ])
+
+
+# The most entries a page lists of its folder, as theme/partials/nav.html sets it.
+CAP = 50
+# A folder of more than CAP entries, one of them a folder of its own, a folder of CAP entries and one of CAP + 1.
+LARGE, FULL, OVER = 2 * CAP + 20, CAP, CAP + 1
+
+
+def topic(folder: str, number: int) -> str:
+    return f"roadmap/A/{folder}/t{number:03d}/index.html"
+
+
+class LargeFolderNavigationTests(BuiltSite):
+    """In a folder of more than CAP entries, a page lists the CAP entries around it and the folder page, whose own
+    entries list them all."""
+
+    SUMMARY = "".join([
+        "- [Home](index.md)\n",
+        "- Mathematics\n",
+        "    - [ATLAS roadmap](roadmap/README.md)\n",
+        "        - [Subject A](roadmap/A/README.md)\n",
+        "            - [Not yet classified](roadmap/A/large/README.md)\n",
+        *(f"                - [Topic {n}](roadmap/A/large/t{n:03d}/README.md)\n"
+          + ("                    - [Leaf](roadmap/A/large/t060/leaf.md)\n" if n == 60 else "")
+          for n in range(LARGE)),
+        "            - [Full](roadmap/A/full/README.md)\n",
+        *(f"                - [Topic {n}](roadmap/A/full/t{n:03d}/README.md)\n" for n in range(FULL)),
+        "            - [Over](roadmap/A/over/README.md)\n",
+        *(f"                - [Topic {n}](roadmap/A/over/t{n:03d}/README.md)\n" for n in range(OVER)),
+    ])
+    PAGES = {
+        "index.md": "# Home\n",
+        "roadmap/README.md": "# ATLAS roadmap\n",
+        "roadmap/A/README.md": "# Subject A\n",
+        "roadmap/A/large/README.md": "# Not yet classified\n",
+        "roadmap/A/large/t060/leaf.md": "# Leaf\n",
+        "roadmap/A/full/README.md": "# Full\n",
+        "roadmap/A/over/README.md": "# Over\n",
+        **{f"roadmap/A/large/t{n:03d}/README.md": f"# Topic {n}\n\n## Heading\n" for n in range(LARGE)},
+        **{f"roadmap/A/full/t{n:03d}/README.md": f"# Topic {n}\n" for n in range(FULL)},
+        **{f"roadmap/A/over/t{n:03d}/README.md": f"# Topic {n}\n" for n in range(OVER)},
+    }
+    FOLDER = "roadmap/A/large/index.html"
+
+    def folder(self, page: str, entries: list) -> list:
+        """The outline of a page in the folder `large`, whose entries in its navigation are `entries`."""
+        return [
+            ("Home", "index.html", "", []),
+            ("ATLAS roadmap", "roadmap/index.html", "open", [
+                ("Subject A", "roadmap/A/index.html", "open", [
+                    ("Not yet classified", self.FOLDER, "open", entries),
+                ]),
+            ]),
+        ]
+
+    def entries(self, page: str, numbers: range) -> list:
+        listed = []
+        for number in numbers:
+            state = "current" if topic("large", number) == page else ""
+            listed.append((f"Topic {number}", topic("large", number), state, []))
+        return listed + [(f"All {LARGE:,} entries of Not yet classified", self.FOLDER, "", [])]
+
+    def test_the_theme_sets_the_cap_these_tests_use(self) -> None:
+        self.assertIn(f"{{%- set cap = {CAP} -%}}", (ROOT / "theme/partials/nav.html").read_text(encoding="utf-8"))
+
+    def test_a_page_lists_the_entries_around_it_then_its_folder_page(self) -> None:
+        page = topic("large", CAP + 20)
+        start = CAP + 20 - CAP // 2
+        self.assertEqual(self.outline(page), self.folder(page, self.entries(page, range(start, start + CAP))))
+        self.assertEqual(self.navigation(page).toc_links, ["#heading"])
+
+    def test_the_first_and_last_pages_list_the_first_and_last_entries(self) -> None:
+        for number, numbers in ((0, range(CAP)), (CAP // 2, range(CAP)), (LARGE - 1, range(LARGE - CAP, LARGE))):
+            with self.subTest(number=number):
+                page = topic("large", number)
+                self.assertEqual(self.outline(page), self.folder(page, self.entries(page, numbers)))
+
+    def test_a_folder_among_the_entries_lists_its_own_entries(self) -> None:
+        page = topic("large", 60)
+        entries = self.entries(page, range(60 - CAP // 2, 60 + CAP // 2))
+        at = entries.index(("Topic 60", page, "current", []))
+        entries[at] = ("Topic 60", page, "current", [("Leaf", "roadmap/A/large/t060/leaf.html", "", [])])
+        self.assertEqual(self.outline(page), self.folder(page, entries))
+        # A page inside it lists the folder chain and its own siblings.
+        leaf = "roadmap/A/large/t060/leaf.html"
+        self.assertEqual(self.outline(leaf),
+                         self.folder(leaf, [("Topic 60", page, "open", [("Leaf", leaf, "current", [])])]))
+
+    def test_the_folder_page_lists_every_entry(self) -> None:
+        outline = self.outline(self.FOLDER)
+        current = outline[1][3][0][3][0]
+        self.assertEqual(current[:3], ("Not yet classified", self.FOLDER, "current"))
+        self.assertEqual([entry[1] for entry in current[3]], [topic("large", number) for number in range(LARGE)])
+        self.assertEqual(outline[1][3][0][3][1][:2], ("Full", "roadmap/A/full/index.html"))
+
+    def test_every_page_links_to_its_folder_page_which_links_to_every_page(self) -> None:
+        listed = {entry[1] for entry in self.outline(self.FOLDER)[1][3][0][3][0][3]}
+        for number in range(LARGE):
+            page = topic("large", number)
+            self.assertIn(page, listed)
+            entries = self.outline(page)[1][3][0][3][0][3]
+            self.assertEqual(len(entries), CAP + 1)
+            self.assertEqual(entries[-1][1], self.FOLDER)
+
+    def test_a_folder_of_cap_entries_is_listed_whole(self) -> None:
+        for number in (0, FULL - 1):
+            page = topic("full", number)
+            entries = self.outline(page)[1][3][0][3][0][3]
+            self.assertEqual([entry[1] for entry in entries], [topic("full", n) for n in range(FULL)])
+
+    def test_a_folder_of_one_entry_more_than_cap_lists_cap_of_them_then_its_folder_page(self) -> None:
+        for number, first in ((0, 0), (OVER - 1, OVER - CAP)):
+            page = topic("over", number)
+            entries = self.outline(page)[1][3][0][3][0][3]
+            self.assertEqual([entry[1] for entry in entries],
+                             [topic("over", n) for n in range(first, first + CAP)] + ["roadmap/A/over/index.html"])
+            self.assertEqual(entries[-1][0], f"All {OVER:,} entries of Over")
 
 
 if __name__ == "__main__":

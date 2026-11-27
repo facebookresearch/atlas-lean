@@ -11,6 +11,8 @@ module
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Order.BigOperators.Group.Multiset
 
 /-!
 # Counting Schreier sparse sets
@@ -23,6 +25,12 @@ For `k ≥ 2`, the sparse `ℓ`-strong Schreier sets with maximum `n + 1` and `k
 two largest gaps are equal are as many as the partitions of `n` into exactly `k` parts, all at
 least `ℓ + 1`. The bijection of Beanland and Chu adds `ℓ` to every gap, then adds the excess of
 the minimum over `ℓ k + 1` to one of the two largest parts.
+When `n ≥ ℓ + 1`, summing over `k ≥ 2` and adding the one-part partition gives the total count.
+
+## References
+
+* Kevin Beanland and Hùng Việt Chu, *On Schreier-Type Sets, Partitions, and Compositions*,
+  Journal of Integer Sequences 27 (2024), Article 24.4.4, pp. 1–13, Corollaries 3, 12 and 13.
 -/
 
 set_option autoImplicit false
@@ -723,5 +731,92 @@ theorem partitionMinPartExactCount_eq_refined (n l k : ℕ)
   exact Fintype.card_congr
     ((Equiv.ofBijective _ (RefinedData.toPartition_bijective n l k hk)).symm.trans
       (Equiv.ofBijective _ (RefinedData.toSet_bijective n l k hk)))
+
+/-! ### Total counts -/
+
+/-- **Partitions with all parts at least a given size.** For natural numbers $n$ and $\ell$,
+$|E_{n,\ell}|$ is the number of partitions of $n$ all of whose parts are at least $\ell$. -/
+def partitionMinPartCount (n l : ℕ) : ℕ :=
+  (Nat.Partition.restricted n (fun x => l ≤ x)).card
+
+/-- **Refined Schreier count.** For natural numbers $n$ and $\ell$, $|F_{n,\ell}|$ is the number of
+finite sets $A$ of natural numbers such that $n + 1 \in A$, every element of $A$ is at most
+$n + 1$, $A$ has at least three elements, $A$ is sparse and $\ell$-strong Schreier, and the two
+largest elements $a < b$ of $A$ below $n + 1$ satisfy $n + 1 + a = 2b$. Every such set is
+contained in $\{0, \dots, n + 1\}$. -/
+def refinedSchreierCount (n l : ℕ) : ℕ :=
+  ((Finset.Icc 0 (n + 1)).powerset.filter
+    (IsRefinedSchreier n l)).card
+
+private theorem partitionMinPartExactCount_one (n l : ℕ) (hn : l + 1 ≤ n) :
+    partitionMinPartExactCount n (l + 1) 1 = 1 := by
+  have hp := Nat.Partition.indiscrete_parts (n := n) (by omega)
+  have hf : partFamily n l 1 = {Nat.Partition.indiscrete n} := by
+    ext P
+    simp only [partFamily, Nat.Partition.restricted, Finset.mem_filter, Finset.mem_univ,
+      true_and, Finset.mem_singleton]
+    constructor
+    · rintro ⟨-, hcard⟩
+      obtain ⟨a, ha⟩ := Multiset.card_eq_one.mp hcard
+      have hsum := P.parts_sum
+      rw [ha, Multiset.sum_singleton] at hsum
+      exact Nat.Partition.ext (by rw [hp, ha, hsum])
+    · rintro rfl
+      simp [hp, hn]
+  change (partFamily n l 1).card = 1
+  rw [hf, Finset.card_singleton]
+
+/-- **Partitions into large parts and the refined Schreier family.** Let $n$ and $\ell$ be
+natural numbers with $n \ge \ell + 1$. Let $F_{n,\ell}$ be the family of finite sets $A$ of
+natural numbers such that $A$ has largest element $n + 1$ and at least three elements, $A$ is
+sparse (the differences of consecutive elements, in increasing order, are non-decreasing) and
+$\ell$-strong Schreier ($\ell|A| + 1 \le a + \ell$ for every $a \in A$), and the second and
+third largest elements $b > a$ of $A$ satisfy $n + 1 + a = 2b$. Then the number
+$|E_{n,\ell+1}|$ of partitions of $n$ into parts that are all at least $\ell + 1$ equals
+$|F_{n,\ell}| + 1$.
+
+Source: Kevin Beanland and Hùng Việt Chu, "On Schreier-Type
+Sets, Partitions, and Compositions", Corollary 13. -/
+theorem partitionMinPartCount_eq_refined_add_one (n l : ℕ)
+    (hn : l + 1 ≤ n) :
+    partitionMinPartCount n (l + 1) = refinedSchreierCount n l + 1 := by
+  have hp : partitionMinPartCount n (l + 1) =
+      ∑ k ∈ insert 1 (Finset.Icc 2 (n + 1)), partitionMinPartExactCount n (l + 1) k := by
+    unfold partitionMinPartCount
+    refine Finset.card_eq_sum_card_fiberwise (f := fun P : Nat.Partition n => P.parts.card) ?_
+    intro P _
+    have hpos : 0 < P.parts.card := by
+      apply Nat.pos_of_ne_zero
+      intro hzero
+      have hz := Multiset.card_eq_zero.mp hzero
+      have hn0 : n ≠ 0 := by omega
+      exact hn0 (by simpa [hz] using P.parts_sum.symm)
+    have hle : P.parts.card ≤ n := by
+      simpa [P.parts_sum] using Multiset.card_nsmul_le_sum (a := 1) (fun _ hx => P.parts_pos hx)
+    simp only [Finset.mem_coe, Finset.mem_insert, Finset.mem_Icc]
+    omega
+  have hf : refinedSchreierCount n l =
+      ∑ j ∈ Finset.Icc 3 (n + 2), refinedSchreierCardCount n l j := by
+    unfold refinedSchreierCount
+    rw [Finset.card_eq_sum_card_fiberwise (f := Finset.card) (t := Finset.Icc 3 (n + 2))]
+    · simp only [refinedSchreierCardCount, Finset.filter_filter, and_comm]
+    · intro A hA
+      obtain ⟨hsub, href⟩ := Finset.mem_filter.mp hA
+      refine Finset.mem_Icc.mpr ⟨href.2.2.1, ?_⟩
+      simpa using Finset.card_le_card (Finset.mem_powerset.mp hsub)
+  have hsum : (∑ k ∈ Finset.Icc 2 (n + 1), partitionMinPartExactCount n (l + 1) k) =
+      ∑ j ∈ Finset.Icc 3 (n + 2), refinedSchreierCardCount n l j := by
+    refine Finset.sum_bij (fun k _ => k + 1) ?_ ?_ ?_ ?_
+    · intro k hk
+      simp only [Finset.mem_Icc] at hk ⊢
+      omega
+    · intro a _ b _ h
+      exact Nat.add_right_cancel h
+    · intro j hj
+      rw [Finset.mem_Icc] at hj
+      exact ⟨j - 1, Finset.mem_Icc.mpr (by omega), by omega⟩
+    · intro k hk
+      exact partitionMinPartExactCount_eq_refined n l k hn (Finset.mem_Icc.mp hk).1
+  rw [hp, Finset.sum_insert (by simp), partitionMinPartExactCount_one n l hn, hsum, hf, add_comm]
 
 end MathlibExt.Combinatorics.Enumerative.SchreierTypeSetsWanted
