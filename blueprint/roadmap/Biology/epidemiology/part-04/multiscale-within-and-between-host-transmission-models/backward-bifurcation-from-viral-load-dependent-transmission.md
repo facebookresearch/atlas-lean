@@ -14,7 +14,7 @@ $$\phi(I)=S_0-mI,\qquad \psi(I)=\frac{\mu m}{g(I)},\qquad m=\frac{(\alpha+\mu)(\
 
 where $g(I)=\beta_E(f(\theta_ZI),\theta_EI)\theta_E+\beta_I(f(\theta_ZI),I)+\beta_Z(\theta_ZI)\theta_Z$. Under the standing assumptions $g$ is strictly concave, so $\psi$ is strictly convex, and $\phi(0)>\psi(0)$ iff $\mathcal R_0^b>1$.
 
-1. **Bifurcation type.** With $S_0=\Lambda/\mu$ as the bifurcation parameter, the slow system has a transcritical bifurcation at $\mathcal R_0^b=1$. It is backward if $\psi'(0)<-m$ and forward if $\psi'(0)\ge-m$. In the backward case there is $\mathcal R_0^{b,c}\in(0,1)$ such that for $\mathcal R_0^b\in(\mathcal R_0^{b,c},1)$ two endemic equilibria coexist with the disease-free one, and the model is bistable.
+1. **Bifurcation type.** With $S_0=\Lambda/\mu$ as the bifurcation parameter, the slow system has a transcritical bifurcation at $\mathcal R_0^b=1$. It is backward if $\psi'(0)<-m$ and forward if $\psi'(0)\ge-m$. In the backward case there is $\mathcal R_0^{b,c}\in(0,1)$ such that for $\mathcal R_0^b\in(\mathcal R_0^{b,c},1)$ two endemic equilibria coexist with the disease-free one.
 2. **Forward case, global dynamics.** Suppose $\psi'(0)\ge-m$ and either $\eta'(0)=0$ or $\partial_V\beta_E(0,0)=\partial_V\beta_I(0,0)=0$. On $\Omega_s=\{S+E+I+R\le S_0,\ 0\le Z\le(\xi_E+\xi_I)S_0/\delta\}$, if $\mathcal R_0^b<1$ the disease-free equilibrium is globally asymptotically stable, and if $\mathcal R_0^b>1$ the disease is uniformly persistent in the interior.
 
 ## Depends on

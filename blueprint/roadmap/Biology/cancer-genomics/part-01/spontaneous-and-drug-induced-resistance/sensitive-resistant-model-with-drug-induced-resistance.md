@@ -13,7 +13,7 @@ Resistance thus arises spontaneously at rate $\epsilon$ and is induced by the dr
 
 **Theorem (well-posedness and invariance).** For every such $u$ and initial condition in $\mathcal{T} = \{(S,R) : S, R \ge 0,\ S + R \le 1\}$, there is a unique solution defined for all $t \ge 0$, and $\mathcal{T}$ is forward invariant.
 
-**Theorem (eventual resistance).** For every such $u$ and initial condition in $\mathcal{T}$, $(S(t), R(t)) \to (0, 1)$ as $t \to \infty$.
+**Theorem (eventual resistance).** For every such $u$ and initial condition in $\mathcal{T} \setminus \{(0,0)\}$, $(S(t), R(t)) \to (0, 1)$ as $t \to \infty$. The origin $(0,0)$ is an equilibrium for every $u$.
 
 **Identifiability.** If only the tumour volume $V = S + R$ and its time derivatives near $t = 0$ are observed, all parameters, including the induction rate $\alpha$, are structurally identifiable using a small set of designed controls $u$.
 

@@ -16,11 +16,13 @@ $$
 {}^{FFM}J^{\alpha_1,\alpha_2}_{0,t}g(t)=\frac{\alpha_1\alpha_2}{AB(\alpha_1)\Gamma(\alpha_1)}\int_0^t s^{\alpha_2-1}g(s)(t-s)^{\alpha_1-1}ds+\frac{\alpha_2(1-\alpha_1)}{AB(\alpha_1)}t^{\alpha_2-1}g(t).
 $$
 
-**Integral form of the epidemic Cauchy problem.** A compartmental model ${}^{FFM}D^{\alpha_1,\alpha_2}_{0,t}x(t)=g(t,x(t))$, $x(0)=x_0$, is equivalent to the integral equation
+**Integral form of the epidemic Cauchy problem.** A compartmental model ${}^{FFM}D^{\alpha_1,\alpha_2}_{0,t}x(t)=g(t,x(t))$, $x(0)=x_0$, is turned into an integral equation by integrating: every solution of the Cauchy problem satisfies
 
 $$
 x(t)=x_0+\frac{1-\alpha_1}{AB(\alpha_1)}\,\alpha_2 t^{\alpha_2-1}g(t,x(t))+\frac{\alpha_1\alpha_2}{AB(\alpha_1)\Gamma(\alpha_1)}\int_0^t \tau^{\alpha_2-1}g(\tau,x(\tau))(t-\tau)^{\alpha_1-1}d\tau .
 $$
+
+The converse is not claimed: for $\alpha_2=1$ the ABC derivative of a $W^{1,2}$ function tends to $0$ as $t\to0$, so a solution of the Cauchy problem needs $g(0,x_0)=0$, while the integral equation has continuous solutions with $g(0,x(0))\ne0$.
 
 The source applies this to an eight-compartment COVID-19 model $(S,E,I,A,Q,H,R,M)$ with force of infection $\lambda=\eta_1(I+\psi A)/N+\eta_2 M$, in which each integer-order derivative is replaced by ${}^{FFM}D^{\alpha_1,\alpha_2}_{0,t}$; at $\alpha_1=\alpha_2=1$ the integral form reduces to the classical $x(t)=x_0+\int_0^t g(\tau,x(\tau))\,d\tau$.
 

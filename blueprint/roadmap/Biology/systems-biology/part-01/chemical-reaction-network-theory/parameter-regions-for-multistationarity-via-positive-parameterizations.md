@@ -1,7 +1,7 @@
 # Parameter regions for multistationarity via positive parameterizations
 
 **Positive parameterization.** For a reaction network $\dot x = N v(x)$ with rank $s$ and conservation
-matrix $W \in \mathbb{R}^{d \times n}$ (as in the determinant criterion), a positive parameterization of
+matrix $W \in \mathbb{R}^{d \times n}$ (as in the [uniqueness criterion](../../../not-yet-classified/multistationarity-degree-criterion/exists-unique-equilibrium.md)), a positive parameterization of
 the positive equilibria is a surjective map
 
 $$\Phi : \mathbb{R}^m_{>0} \to \{ f = 0 \} \cap \mathbb{R}^n_{>0}, \qquad \hat x \mapsto \Phi(\hat x),$$
@@ -35,7 +35,9 @@ boundary equilibria, and (iii) a positive parameterization exists. Then:
 
 ## Depends on
 
-- [Determinant criterion for unique and multiple equilibria in reaction networks](determinant-criterion-for-unique-and-multiple-equilibria.md)
+- [Global determinant criterion for a unique positive equilibrium in every class](determinant-criterion-for-unique-and-multiple-equilibria.md)
+- [Uniqueness criterion](../../../not-yet-classified/multistationarity-degree-criterion/exists-unique-equilibrium.md)
+- [Multistationarity criterion](../../../not-yet-classified/multistationarity-degree-criterion/multiple-equilibria.md)
 - [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
 ## Expansion

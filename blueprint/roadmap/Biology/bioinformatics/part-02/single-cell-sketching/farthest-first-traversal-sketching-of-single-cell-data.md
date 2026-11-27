@@ -20,13 +20,22 @@ farthest-first traversal satisfy
 $$d_H(X, S_k) \le 2\, d_H^{\mathrm{opt}}(X, k).$$
 
 **Theorem (hardness).** For any $\alpha < 2$, unless $\mathrm{P} = \mathrm{NP}$ no polynomial-time
-algorithm guarantees $d_H(X, S) \le \alpha\, d_H^{\mathrm{opt}}(X, k)$.
+algorithm guarantees, on all finite metric spaces, $d_H(X, S) \le \alpha\, d_H^{\mathrm{opt}}(X, k)$.
 
 **Pruning by the triangle inequality.** When a new point $p$ is added at distance $r$ from its
 nearest previous representative:
 
 1. a point $x$ can switch its nearest representative from $s$ to $p$ only if $d(s, x) \ge r/2$;
 2. if $d(s, p) \ge 2r$, no point currently assigned to $s$ needs updating.
+
+## Depends on
+
+- [The k-center objective](../../../../ComputerScience/approximation-algorithms/metric-k-center-steiner-tree-and-tsp/k-center-objective.md)
+
+## Proof depends on
+
+- [Gonzalez's farthest-first traversal is a 2-approximation for metric k-center](../../../../ComputerScience/approximation-algorithms/metric-k-center-steiner-tree-and-tsp/gonzalez-farthest-first-two-approximation.md)
+- [Approximating metric k-center within a factor below 2 is NP-hard](../../../../ComputerScience/approximation-algorithms/metric-k-center-steiner-tree-and-tsp/k-center-hardness-below-two.md)
 
 ## Expansion
 

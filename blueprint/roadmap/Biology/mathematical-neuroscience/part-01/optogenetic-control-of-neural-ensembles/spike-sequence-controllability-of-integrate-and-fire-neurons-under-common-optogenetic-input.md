@@ -23,13 +23,17 @@ $$\frac{\alpha_1 - \alpha_2}{\beta_1 - \beta_2} > 0, \qquad\text{that is,}\qquad
 
 $$\frac{\alpha_1}{\beta_1} > \frac{\alpha_2}{\beta_2}.$$
 
-**Synchronizing conductance.** If the two neurons share a voltage $v_1 = v_2 = v^* \in [0, E)$, the
-constant conductance
+**Synchronizing conductance.** If the two neurons share a voltage $v_1 = v_2 = v^* \in (0, E)$, the
+conductance
 
-$$g^* = \frac{\alpha_2 - \alpha_1}{\beta_2 - \beta_1}\cdot\frac{v^*}{E - v^*} > 0$$
+$$g^* = \frac{\alpha_2 - \alpha_1}{\beta_2 - \beta_1}\cdot\frac{v^*}{E - v^*}$$
 
-makes the voltage difference $v_2 - v_1$ stationary, so both neurons can be carried together to
-threshold.
+makes the voltage difference $v_2 - v_1$ stationary at that voltage, and $g^* > 0$ by the necessary
+condition ($\alpha_1 > \alpha_2$ and $\beta_1 > \beta_2$). At $g_C = g^*$ the common voltage changes at
+rate $v^*(\alpha_1\beta_2 - \alpha_2\beta_1)/(\beta_1 - \beta_2)$, so it rises exactly when the
+sufficient condition holds; then applying $g_C(t) = g^*(v(t))$ along the common trajectory keeps
+$v_1 = v_2$ and carries both neurons together to threshold. At $v^* = 0$ the formula gives $g^* = 0$
+and the origin is an equilibrium, so a pair at rest needs a pre-pulse to leave it.
 
 ## Expansion
 

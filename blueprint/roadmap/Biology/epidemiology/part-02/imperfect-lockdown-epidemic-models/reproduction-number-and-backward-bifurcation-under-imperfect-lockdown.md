@@ -31,11 +31,11 @@ with $k_2 = \mu + \psi$, $k_3 = \gamma + \mu$, $k_4 = \eta + \tau_1 + \mu$, $k_5
 ## Depends on
 
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+- [Castillo-Chavez–Song centre-manifold bifurcation theorem](../../part-01/backward-bifurcation/castillo-chavez-song-centre-manifold-bifurcation-theorem.md)
 
 ## Proof depends on
 
 - [Quadratic endemic-equilibrium condition for backward bifurcation](../../part-01/backward-bifurcation/quadratic-endemic-equilibrium-condition-for-backward-bifurcation.md)
-- [Castillo-Chavez–Song centre-manifold bifurcation theorem](../../part-01/backward-bifurcation/castillo-chavez-song-centre-manifold-bifurcation-theorem.md)
 
 ## Expansion
 

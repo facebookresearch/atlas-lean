@@ -8,7 +8,7 @@ and define the map $\mathcal F_k$ on laws of continuous Gaussian processes by
 
 $$\mathcal F_k(X)_t = \Phi_L(t, t_0)\, Z_0 + \int_{t_0}^{t} \Phi_L(t,s)\bigl(\tilde U^X_s + \tilde I(s)\bigr)\, ds + \int_{t_0}^{t} \Phi_L(t,s)\, F(s)\, dW_s,$$
 
-where $\Phi_L$ is the fundamental matrix of $-L$. Assume the rate functions $S_\beta$ are bounded with bounded derivatives, the inputs are bounded ($\sup_t |I_\alpha(t)| \le I_{\max}$), and the singular values of the noise matrix $F(u)$ are bounded below by $\lambda^{\Gamma}_{\min} > 0$.
+where $\Phi_L$ is the fundamental matrix of $-L$. Assume (Assumption 1 (a)-(b) of the source) that $\|L(t)\| \le k_L$ for all $t \in [t_0, T]$ and that the singular values of the noise matrix $F(u)$ lie in $[\lambda^{\Gamma}_{\min}, \lambda^{\Gamma}_{\max}]$ for all $u$, with $0 < \lambda^{\Gamma}_{\min} \le \lambda^{\Gamma}_{\max} < \infty$; assume further that the rate functions $S_\beta$ are bounded with bounded derivatives and the inputs are bounded ($\sup_t |I_\alpha(t)| \le I_{\max}$).
 
 **Theorem.** For every nondegenerate $kP$-dimensional Gaussian initial condition $Z_0$, independent of the Brownian motion, and every initial Gaussian process $X$ with $X(t_0) = Z_0$, the map $\mathcal F_k$ has a unique fixed point in the space of laws on $C([t_0, T], \mathbb R^{kP})$, and the iterates $\mathcal F_k^{(n)}(X)$ converge in law to it. The fixed point is the unique solution of the mean-field equations, and the proof is constructive (Picard iteration on mean and covariance functions).
 

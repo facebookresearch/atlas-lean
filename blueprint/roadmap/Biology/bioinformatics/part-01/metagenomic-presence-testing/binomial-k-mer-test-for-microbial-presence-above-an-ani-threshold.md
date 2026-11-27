@@ -24,7 +24,8 @@ replaces $K$ by $\lfloor C K \rfloor$. For $N \ge 1$ references, the test is app
 genome's **exclusive** $k$-mers $\tilde G_i = G_i \setminus \bigcup_{j \neq i} G_j$ and to
 $S_i = \tilde G_i \cap S$, so that no shared $k$-mer supports two organisms.
 
-**Power proxy.** The alternative significance ANI $a_i^{\alpha}$ is the unique solution of
+**Power proxy.** Let $1/2 \le \alpha < 1$ and $q(|\tilde G_i|, k, A, \alpha) \ge 1$. The alternative
+significance ANI $a_i^{\alpha}$ is the unique solution in $(0, 1)$ of
 
 $$\Pr\bigl(|S_i| \ge q(|\tilde G_i|, k, A, \alpha) \bigm| a_i = a_i^{\alpha}\bigr) = 1 - \alpha ;$$
 

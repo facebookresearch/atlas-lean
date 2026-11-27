@@ -19,7 +19,7 @@ and the maximum likelihood estimates are
 
 $$\hat\gamma = \frac{1}{N}\sum_{k \ge 1} c_k, \qquad \hat\delta = \frac{\sum_{k \ge 1} (k-1)\, c_k}{(n-1)\sum_{k \ge 1} c_k}.$$
 
-With errors, parameters are identifiable for sufficiently large patterns and are estimated by an EM algorithm initialized at the error-free estimates.
+With errors, the parameters are identifiable for patterns of $n \ge 3$ genes (Proposition 1) and are estimated by an EM algorithm initialized at the error-free estimates.
 
 **Independence model.** Gene $j$ is altered independently with probability $q_j$, estimated by its alteration frequency $\hat q_j = N_j/N$.
 

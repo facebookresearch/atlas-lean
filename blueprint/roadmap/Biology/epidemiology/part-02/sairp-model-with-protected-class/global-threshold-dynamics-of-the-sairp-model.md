@@ -27,7 +27,7 @@ $$
 
 3. (Global stability) If $R_0 < 1$, $\Sigma_0$ is globally asymptotically stable in $\Omega$. If $R_0 > 1$, $\Sigma_+$ is globally asymptotically stable on the invariant set $\Gamma = \{x \in \mathbb{R}^5_{\ge 0} : N = \Lambda/\mu\}$ (away from the disease-free boundary).
 
-4. (Waves under switching) Let $\alpha_0, \alpha_+$ be parameter vectors with $R_0(\alpha_0) < 1 < R_0(\alpha_+)$, and alternate them on successive time intervals $[T_i, T_{i+1})$, switching once the state has entered the basin of the next target equilibrium. Then the piecewise-defined solution alternates between neighbourhoods of $\Sigma_0$ and $\Sigma_+$; by item 3 the switching times can always be chosen.
+4. (Waves under switching) Let $\alpha_0, \alpha_+$ be parameter vectors with $R_0(\alpha_0) < 1 < R_0(\alpha_+)$, and alternate them on successive time intervals $[T_i, T_{i+1})$, and assume that each switch is made once the state has entered the basin of the next target equilibrium. Then the piecewise-defined solution alternates between neighbourhoods of $\Sigma_0$ and $\Sigma_+$. The switches back to $\alpha_0$ can always be made, since for $R_0(\alpha_0) < 1$ the equilibrium $\Sigma_0$ attracts all of $\Omega$ (item 3); for the switches to $\alpha_+$ the assumption is not removed, since item 3 gives attraction to $\Sigma_+$ only on $\Gamma$.
 
 ## Depends on
 

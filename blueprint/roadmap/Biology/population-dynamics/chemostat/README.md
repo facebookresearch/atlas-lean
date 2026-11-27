@@ -12,3 +12,5 @@
 - [Forward invariance and global existence for the chemostat](chemostat-invariance-and-global-existence.md)
 - [Unconditional exponential stability of chemostat washout](unconditional-exponential-stability-of-chemostat-washout.md)
 - [Global convergence of the chemostat](global-convergence-of-the-chemostat.md)
+
+- [Gut transit compartment models](gut-transit-compartment-models/README.md)

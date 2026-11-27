@@ -4,7 +4,7 @@
 
 **Theorem.** For $S_0 \in (S_{\mathrm{herd}}, 1)$ and $I_0 > 0$ define
 
-$$\bar\alpha = \frac{S_{\mathrm{herd}}}{S_0 + I_0 - S_{\mathrm{herd}}\big(\ln S_0 - \ln S_{\mathrm{herd}}\big)} .$$
+$$\bar\alpha = \frac{S_{\mathrm{herd}}\big(\ln S_0 - \ln S_{\mathrm{herd}}\big)}{S_0 + I_0 - S_{\mathrm{herd}}} .$$
 
 Then $\bar\alpha \in (0, 1)$ and
 
@@ -18,7 +18,7 @@ Then $\bar\alpha \in (0, 1)$ and
 
 ## Expansion
 
-Positivity of $\bar\alpha$ uses $S_0 > S_{\mathrm{herd}}$, and $\bar\alpha < (S_0/S_{\mathrm{herd}} - 1)^{-1}\ln(S_0/S_{\mathrm{herd}}) < 1$ since $\ln x < x - 1$ for $x > 1$. The proof rests on an earlier result for lockdowns starting at time $0$ (Bliman, Duprez, Privat and Vauchelet, 2020, Theorem 1): for $\alpha \le \bar\alpha$ and every $\varepsilon > 0$ some duration $D$ and some $u \in \mathcal{U}_{\alpha, 0, D}$ give $S_\infty(u) \in [S_{\mathrm{herd}} - \varepsilon, S_{\mathrm{herd}}]$, while for $\alpha > \bar\alpha$ every such input gives $S_\infty(u) \le S_\infty(\alpha\mathbf{1})$. The constant $\bar\alpha$ comes from the conserved quantity $S + I - S_{\mathrm{herd}} \ln S$ of the uncontrolled flow. Combined with monotonicity of the optimal value in $D$ and $S^*_\infty \le S_{\mathrm{herd}}$, this gives both limits.
+Positivity of $\bar\alpha$ uses $S_0 > S_{\mathrm{herd}}$, and $\bar\alpha < S_{\mathrm{herd}}\ln(S_0/S_{\mathrm{herd}})/(S_0 - S_{\mathrm{herd}}) = (S_0/S_{\mathrm{herd}} - 1)^{-1}\ln(S_0/S_{\mathrm{herd}}) < 1$ since $\ln x < x - 1$ for $x > 1$. The proof rests on an earlier result for lockdowns starting at time $0$ (Bliman, Duprez, Privat and Vauchelet, 2020, Theorem 1): for $\alpha \le \bar\alpha$ and every $\varepsilon > 0$ some duration $D$ and some $u \in \mathcal{U}_{\alpha, 0, D}$ give $S_\infty(u) \in [S_{\mathrm{herd}} - \varepsilon, S_{\mathrm{herd}}]$, while for $\alpha > \bar\alpha$ every such input gives $S_\infty(u) \le S_\infty(\alpha\mathbf{1})$. The constant $\bar\alpha$ comes from the quantity $S + I - (S_{\mathrm{herd}}/\alpha) \ln S$, which is conserved under the constant input $u \equiv \alpha$: the epidemic run at $u \equiv \alpha$ from $(S_0, I_0)$ ends exactly at $S_{\mathrm{herd}}$ when $\alpha = \bar\alpha$. Combined with monotonicity of the optimal value in $D$ and $S^*_\infty \le S_{\mathrm{herd}}$, this gives both limits.
 
 ## Sources
 

@@ -4,7 +4,7 @@
 
 $$\operatorname{card}_{\mathcal{J}}(v) = \sum_{i \in \mathcal{J}} \theta(v_i), \qquad \theta(x) = \begin{cases} 1, & x > 0,\\ 0, & x = 0, \end{cases}$$
 
-which is quasiconcave but not concave on $\mathbb{R}^{\mathcal{J}}_{\ge 0}$.
+which is quasiconcave on $\mathbb{R}^{\mathcal{J}}_{\ge 0}$ and nonconvex in general.
 
 **Surrogate.** Replace $\theta$ on $x \ge 0$ by the concave minorant-type approximation
 

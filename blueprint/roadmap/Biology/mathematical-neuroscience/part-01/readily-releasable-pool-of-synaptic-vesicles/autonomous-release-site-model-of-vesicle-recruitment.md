@@ -12,7 +12,7 @@ where $\hat\alpha_t$ is the mean recruitment rate over empty sites and $\hat\bet
 
     $$\int_0^t \hat\beta_s RRP_s\, ds = \big(RRP_0^{\mathrm{init}} - RRP_t\big) + \int_0^t \hat\alpha_s (RRP_0 - RRP_s)\, ds,$$
 
-    the depletion of the pool plus the cumulative recruitment; starting from rest ($RRP = RRP_0$), cumulative release overestimates the pool capacity by exactly the cumulative recruitment.
+    the depletion of the pool plus the cumulative recruitment; starting from rest ($RRP = RRP_0$), cumulative release exceeds $RRP_0$ by the cumulative recruitment minus $RRP_t$, that is, by exactly the cumulative recruitment once the pool is empty ($RRP_t = 0$).
 
 2. *(Steady state.)* If stimulation at frequency $\nu$ reaches a steady state with release $R_{ss}$ per action potential and constant $\hat\alpha = \hat\alpha_{\mathrm{fixed}}$, then $R_{ss}\,\nu = \hat\alpha_{\mathrm{fixed}}(RRP_0 - RRP_{ss})$, so
 

@@ -5,7 +5,7 @@ A reaction network is a pair $(\mathcal M, \mathcal R)$ of a finite set of speci
 - $A$ is *closed* if $\mathrm{prod}(\rho) \subseteq A$ for every $\rho \in \mathcal R_A$.
 - $A$ is *semi-self-maintaining* if every species consumed by some reaction in $\mathcal R_A$ is produced by some reaction in $\mathcal R_A$.
 - $A$ is *self-maintaining* if there is a flux vector $v$ with $v_\rho > 0$ for all $\rho \in \mathcal R_A$ and $\mathbf S v \ge 0$. A closed self-maintaining set is an *organization*; every organization is semi-self-maintaining.
-- $A$ is *reactive* if every species of $A$ occurs in the support of some reaction of $\mathcal R_A$.
+- $A$ is *reactive* if every species of $A$ occurs in $\mathrm{supp}(\rho) \cup \mathrm{prod}(\rho)$ for some reaction $\rho \in \mathcal R_A$.
 - Species $a$ is *directly causally connected* to $b$, written $a \to b$, if some reaction has $a$ in its support and $b$ in its product. A *cycle* is a set $\{a_1, \dots, a_n\}$ with $a_1 \to a_2 \to \cdots \to a_n \to a_1$ ($n = 1$ allowed).
 
 1. **Cycles are necessary.** If $B$ is a reactive semi-self-maintaining set that strictly contains a closed set $A$, then $B \setminus A$ contains a cycle.

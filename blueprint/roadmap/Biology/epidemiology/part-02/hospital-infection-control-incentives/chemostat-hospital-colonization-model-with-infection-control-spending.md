@@ -2,7 +2,7 @@
 
 **Model.** Let $X(t) \in [0, 1]$ be the fraction of a hospital's patients colonized by a pathogen. Patients are discharged at rate $\sigma$ (mean stay $1/\sigma$), a fraction $\kappa \in [0, 1)$ of admissions is already colonized, colonization clears at rate $\lambda$, and transmission occurs at rate $\beta(c)$, where $c \ge 0$ is the total investment in infection control:
 
-$$\frac{dX}{dt} = \sigma(\kappa - X) + \beta(c)\, X (1 - X) - \lambda X, \qquad \beta(c) = \frac{a}{1 + b c}\quad (a, b > 0).$$
+$$\frac{dX}{dt} = \sigma(\kappa - X) + \beta(c)\, X (1 - X) - \lambda X, \qquad \beta(c) = \frac{a}{1 + b \sqrt{c}}\quad (a, b > 0).$$
 
 **Equilibria.** With $\mathcal{R}_0(c) = \beta(c)/(\sigma + \lambda)$:
 
