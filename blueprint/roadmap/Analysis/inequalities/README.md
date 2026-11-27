@@ -10,6 +10,7 @@ Classical inequalities for sums, sequences, means and integrals of real or compl
 - [Landau–Kolmogorov inequality](landau-kolmogorov-inequality/README.md)
 - [Power sum inequalities for monotone sequences](power-sum-inequalities-for-monotone-sequences/README.md)
 - [A bound on a difference of reciprocals](one-div-one-add-sub-one-div-one-add-mul.md)
+- [An elementary inequality for $x \le u(v + \log x)$](le-two-mul-mul-log-add-of-le-mul-add-log.md)
 - [Hardy's inequality](hardy-inequality.md)
 - [Hermite–Hadamard inequality](hermite-hadamard.md)
 - [Inequality for square-summable complex sequences](conjecture-holds.md)

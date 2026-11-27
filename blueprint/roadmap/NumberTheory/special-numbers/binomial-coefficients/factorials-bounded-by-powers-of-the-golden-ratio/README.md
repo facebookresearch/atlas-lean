@@ -10,6 +10,8 @@
 - [Recurrence of the alternating-sign Fibonacci sequence](alternating-sign-fibonacci-add-two.md)
 - [First values of the alternating-sign Fibonacci sequence](alternating-sign-fibonacci-small-values.md)
 - [Kurepa's partial integral](kurepa-partial-integral.md)
+- [Kurepa's partial integral stays below the left factorial](kurepa-partial-integral-lt-sum-factorial.md)
+- [The remainder of Kurepa's partial integral, explicitly](sum-factorial-sub-kurepa-partial-integra.md)
 - [Kurepa's partial integral vanishes at zero](kurepa-partial-integral-zero.md)
 - [Increment bounds for the golden factorial exponent](golden-factorial-exponent-succ-bounds.md)
 - [Counting integers by their golden-ratio logarithm](ncard-floor-logb-golden-ratio-eq-alterna.md)
