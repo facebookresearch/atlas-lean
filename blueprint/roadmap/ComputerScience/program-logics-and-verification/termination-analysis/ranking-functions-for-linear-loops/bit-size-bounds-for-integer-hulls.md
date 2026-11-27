@@ -12,7 +12,7 @@ and its integer hull $P_I$ satisfies
 
 $$\|P_I\|_v \le 6n^3 \|P\|_f, \qquad \|P_I\|_f \le 24 n^5 \|P\|_f .$$
 
-The empty polyhedron needs the exception: it has the empty generator representation, so $\|\emptyset\|_v = n$, whereas a system describing it needs an inconsistent inequality, the cheapest being $0 \cdot x \le -1$, so $\|\emptyset\|_f = 2n + 3$, and for $n = 1$ the facet-from-vertex bound would read $5 \le 4$. The other three bounds hold for $P = \emptyset$ and for an empty $P_I$, since every facet size is at least $n \ge 1$ and $2n + 3 \le 24 n^6$. These bounds keep the integer points needed as witnesses for or against an integer ranking function polynomially sized.
+The empty polyhedron needs the exception: it has the empty generator representation, so $\|\emptyset\|_v = n$, whereas $\|\emptyset\|_f = 2n + 3$: the single row $0 \cdot x \le -1$ describes $\emptyset$ in $2n + 3$ bits, while a row of at most $2n + 2$ bits has all coefficients and its right-hand side equal to $0$ (zero being the only scalar of size $1$), so any system of such rows contains the origin. Thus for $n = 1$ the facet-from-vertex bound would read $5 \le 4$. The other three bounds hold for $P = \emptyset$ and for an empty $P_I$, since every facet size is at least $n \ge 1$ and $2n + 3 \le 24 n^6$. These bounds keep the integer points needed as witnesses for or against an integer ranking function polynomially sized.
 
 ## Depends on
 
