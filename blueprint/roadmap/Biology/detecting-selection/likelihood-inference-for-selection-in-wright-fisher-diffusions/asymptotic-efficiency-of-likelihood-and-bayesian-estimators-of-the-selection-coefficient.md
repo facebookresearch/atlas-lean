@@ -8,14 +8,14 @@ where the mutation parameters $\theta_1,\theta_2>0$ are known and the selection 
 
 $$\frac{d\mathbb P^{(s')}_\nu}{d\mathbb P^{(s)}_\nu}(X^T)=\frac{\nu(s',X_0)}{\nu(s,X_0)}\exp\Bigl\{(s'-s)\int_0^T\tfrac12\sqrt{X_t(1-X_t)}\,dW_t-\tfrac18(s'-s)^2\int_0^TX_t(1-X_t)\,dt\Bigr\}.$$
 
-The maximum likelihood estimator is $\hat s_T=\arg\sup_{s\in\mathcal S}d\mathbb P^{(s)}_\nu/d\mathbb P^{(s_0)}_\nu$. The Bayesian estimator $\tilde s_T$ minimizes the integrated risk $\int_{\mathcal S}\mathbb E^{(s)}_\nu[\ell(\sqrt T(\bar s_T-s))]\,p(s)\,ds$. Here $p$ is a continuous prior with a polynomial majorant, and $\ell$ is an even, nonnegative loss with convex sublevel sets, continuous at $0$, $\ell(0)=0$, and with a polynomial majorant.
+The maximum likelihood estimator is $\hat s_T=\arg\sup_{s\in\mathcal S}d\mathbb P^{(s)}_\nu/d\mathbb P^{(s_0)}_\nu$. The Bayesian estimator $\tilde s_T$ minimizes the integrated risk $\int_{\mathcal S}\mathbb E^{(s)}_\nu[\ell(\sqrt T(\bar s_T-s))]\,p(s)\,ds$. Here $p$ is a continuous prior with a polynomial majorant, and $\ell$ is an even, nonnegative loss with convex sublevel sets, continuous at $0$, $\ell(0)=0$, not identically zero, and with a polynomial majorant.
 
 **Theorem.** Assume the initial densities $\nu(s,\cdot)$, with respect to a common dominating measure $\lambda$ on $[0,1]$, satisfy, for some constants $C_1,C_2>0$:
 
 - $\lim_{\varepsilon\to0}\nu(s+\varepsilon,x)/\nu(s,x)=1$ for all $x\in[0,1]$;
 - for every $M\ge2$ and every $u$ with $s+u/\sqrt T\in\mathcal S$,
 
-$$\mathbb P^{(s)}_\nu\Bigl[\Bigl|\log\frac{\nu(s+u/\sqrt T,X_0)}{\nu(s,X_0)}\Bigr|>\tfrac1{48}\,\mathbb E^{(s)}[\xi(1-\xi)]\,|u|^2\Bigr]\le\frac{C_1}{|u|^M};$$
+$$\mathbb P^{(s)}_\nu\Bigl[\log\frac{\nu(s+u/\sqrt T,X_0)}{\nu(s,X_0)}>\tfrac1{48}\,\mathbb E^{(s)}[\xi(1-\xi)]\,|u|^2\Bigr]\le\frac{C_1}{|u|^M};$$
 
 - for every $R>0$ and all $u,v$ with $s+u/\sqrt T,\ s+v/\sqrt T\in\mathcal S$ and $|u|,|v|<R$,
 

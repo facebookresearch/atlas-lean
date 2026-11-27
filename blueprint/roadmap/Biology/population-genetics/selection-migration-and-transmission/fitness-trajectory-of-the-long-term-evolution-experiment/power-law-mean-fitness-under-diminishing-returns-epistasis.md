@@ -20,6 +20,10 @@ $$f(\tau) = \big(1 + 2(1+q)\,\tau\big)^{\frac{1}{2(1+q)}},$$
 
 the solution of $f'(\tau) = f(\tau)^{-(2q+1)}$, $f(0) = 1$. The mean fitness curve is therefore a concave power law.
 
+## Proof depends on
+
+- [Fixation probability of a beneficial mutation under serial transfer](../../haldane-s-survival-probability-of-a-beneficial-m/serial-transfer-model-of-the-lenski-experiment/fixation-probability-of-a-beneficial-mutation-under-serial-transfer.md)
+
 ## Expansion
 
 The expected daily fitness gain in a population at fitness $F$ is $\mathbb{E}(\Delta F \mid F) \approx \mu\, \pi(F)\, \delta(F) \sim \Gamma/F^{2q+1}$: the increment $\varphi/F^q$ appears twice (in the gain and in the fixation probability), and one extra factor $1/F$ comes from the shorter growth period of fitter populations (the runtime effect). Since $a > 3b$, mutations are rare enough that each one fixes or is lost before the next arrives, so with high probability at most two fitness classes coexist, and the law of large numbers replaces the expectation in the recursion by the ODE. Even with $q = 0$ (additive fitness) the runtime effect makes the curve concave, $f(\tau) = \sqrt{1 + 2\tau}$. The model was built to explain the decelerating fitness trajectory observed in Lenski's *E. coli* long-term evolution experiment.

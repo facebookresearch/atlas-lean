@@ -25,6 +25,7 @@ The variance formula vanishes on the deterministic diagonal and subdiagonal. For
 
 - [Kingman's coalescent](../../coalescents/merger-rate-dirac-zero.md)
 - [Ranked labeled history](../ranked-history.md)
+- [F-matrix encoding and metrics on ranked tree shapes](../f-matrix-distances-between-ranked-tree-shapes/f-matrix-encoding-and-metrics-on-ranked-tree-shapes.md)
 
 ## Proof depends on
 
