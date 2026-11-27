@@ -14,7 +14,7 @@ Normalizing by the average copy number of the sample, $2n + (1 - n)\phi$ with $\
 
 $$\mu_c = \log \frac{2n + 2s(1 - n) + (1 - s)(1 - n) c}{\,2n + (1 - n)\phi\,}.$$
 
-For fixed $c \ne 2$ and $n < 1$ the map $s \mapsto \mu^{\text{sub}}(c, s)$ is affine and moves strictly monotonically from the clonal value toward the diploid value $2$, so subclonality and low tumour fraction shift the observed ratio in the same direction: a clonal event in a sample of tumour fraction $1 - n$ and a fully clonal event present in only a fraction $1 - s$ of tumour cells are indistinguishable from the ratio alone. Identifiability of $(n, s)$ from copy ratios therefore requires either several states observed jointly or additional allelic information.
+For fixed $c \ne 2$ and $n < 1$ the map $s \mapsto \mu^{\text{sub}}(c, s)$ is affine and moves strictly monotonically from the clonal value toward the diploid value $2$, so subclonality and low tumour fraction shift the observed ratio in the same direction: a clonal event in a sample of tumour fraction $(1-n)(1-s)$ and an event of cellular prevalence $1-s$ in a sample of tumour fraction $1-n$ have the same mixture copy number $\mu^{\text{sub}}(c, s)$, so the copy number of a single state cannot separate them. Identifiability of $(n, s)$ from copy ratios therefore requires either several states observed jointly or additional allelic information.
 
 ## Depends on
 

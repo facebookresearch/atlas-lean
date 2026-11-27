@@ -17,3 +17,5 @@ $\Phi$ is a sum of squared entrywise differences, so it decouples over matrix en
 ## Sources
 
 - E. Pierson, D. Koller, A. Battle, S. Mostafavi et al. (GTEx Consortium), "Sharing and specificity of co-expression networks across 35 human tissues", PLoS Computational Biology 11 (2015), e1004220, <https://doi.org/10.1371/journal.pcbi.1004220> (PMC4430528). Results (Algorithm) and Materials and Methods.
+- D. A. Spielman, *Spectral and Algebraic Graph Theory*, Chapter 11, Lemma 11.5.3 and Theorem 11.6.1 (existence and uniqueness of the harmonic minimizer).
+- R. Lyons and Y. Peres, *Probability on Trees and Networks* (Cambridge University Press, 2016), Section 2.1 (convex-combination representation of harmonic functions via hitting probabilities).

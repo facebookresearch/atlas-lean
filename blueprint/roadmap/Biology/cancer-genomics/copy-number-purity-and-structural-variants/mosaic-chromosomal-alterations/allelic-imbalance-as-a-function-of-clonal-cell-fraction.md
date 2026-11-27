@@ -17,3 +17,4 @@ The table follows by counting allele copies in the mixture: normal cells contrib
 ## Sources
 
 - P.-R. Loh, G. Genovese, R. E. Handsaker, et al., "Insights into clonal haematopoiesis from 8,342 mosaic chromosomal alterations", Nature 559 (2018), Methods ("Detection of mCAs using long-range haplotype phase", copy-number calling and cell-fraction estimation) and Fig. 2a, <https://doi.org/10.1038/s41586-018-0321-x> (PMC6054542).
+- K. B. Jacobs et al., "Detectable clonal mosaicism and its relationship to aging and cancer", *Nature Genetics* 44 (2012), 651–658, Supplementary Note, Table 1 (<https://doi.org/10.1038/ng.2270>).

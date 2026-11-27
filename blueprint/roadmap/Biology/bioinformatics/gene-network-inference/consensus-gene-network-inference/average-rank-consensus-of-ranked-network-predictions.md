@@ -1,6 +1,6 @@
 # Average-rank consensus of ranked network predictions
 
-Let $E$ be the set of candidate regulatory edges (transcription factor, target gene) and let methods $j = 1, \dots, M$ each submit a ranked list of edges. Write $P_{i,j} \in \{1, 2, \dots\}$ for the rank that method $j$ assigns to edge $i$; edges absent from a method's list are treated as randomly ordered after its last listed edge. The **community score** of edge $i$ is its average rank
+Let $E$ be the set of candidate regulatory edges (transcription factor, target gene) and let methods $j = 1, \dots, M$ each submit a ranked list of edges. Write $P_{i,j} \in \{1, 2, \dots\}$ for the rank that method $j$ assigns to edge $i$; each method submits its top $100{,}000$ edges, and an edge absent from method $j$'s list receives the common rank $P_{i,j} = 100{,}001$ (one past the list length). The **community score** of edge $i$ is its average rank
 
 $$\bar r_i = \frac{1}{M}\sum_{j=1}^{M} P_{i,j},$$
 
