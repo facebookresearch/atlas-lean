@@ -8,10 +8,10 @@ comparison of Hecke operators with Hecke endomorphisms, the Hecke algebra $\math
 the homomorphism $\rho$ attached to an eigenform, the abelian subvariety $C$ and the quotient $(A, \nu, \theta)$ of $J$
 by it, its nontriviality, multiplicity one with the dimension $[K : \mathbb{Q}]$, and uniqueness.
 
-- [Holomorphic $1$-forms and tangent space of a complex abelian variety](holomorphic-one-forms-and-tangent-space.md)
-- [Tangent space of the kernel of a quotient of abelian varieties](tangent-space-of-the-kernel-of-a-quotient.md)
-- [Weight-two cusp forms as holomorphic $1$-forms on the modular Jacobian](cusp-forms-as-one-forms-on-the-modular-jacobian.md)
-- [Hecke operators on cusp forms and Hecke endomorphisms of the Jacobian](hecke-operators-and-hecke-endomorphisms-under-mu.md)
+- [Holomorphic $1$-forms and tangent space of a complex abelian variety: statement and steps](holomorphic-one-forms-steps/README.md)
+- [Tangent space of the kernel of a quotient of abelian varieties: statement and steps](tangent-space-of-the-kernel-steps/README.md)
+- [Weight-two cusp forms as holomorphic $1$-forms on the modular Jacobian: statement and steps](cusp-forms-as-one-forms-steps/README.md)
+- [Hecke operators on cusp forms and Hecke endomorphisms of the Jacobian: statement and steps](hecke-operators-under-mu-steps/README.md)
 - [Hecke algebra of the Jacobian of a modular curve](hecke-algebra-of-the-modular-jacobian.md)
 - [Decomposition of the Hecke algebra of the modular Jacobian](decomposition-of-the-hecke-algebra.md)
 - [Homomorphism of the Hecke algebra onto the field of an eigenform](homomorphism-of-the-hecke-algebra-onto-the-coefficient-field.md)
@@ -19,6 +19,6 @@ by it, its nontriviality, multiplicity one with the dimension $[K : \mathbb{Q}]$
 - [Shimura's abelian subvariety $C$ and the quotient $(A, \nu, \theta)$](abelian-subvariety-c-and-the-quotient.md)
 - [Weight-two cusp forms are free of rank one over the Hecke algebra](cusp-forms-free-of-rank-one-over-the-hecke-algebra.md)
 - [Nontriviality of Shimura's quotient](nontriviality-of-the-quotient.md)
-- [Holomorphic $1$-forms of an abelian variety over $\mathbb{Q}$ with an action of a number field](number-field-action-on-holomorphic-one-forms.md)
+- [Holomorphic $1$-forms of an abelian variety over $\mathbb{Q}$ with an action of a number field: statement and steps](number-field-action-on-one-forms-steps/README.md)
 - [Multiplicity one and the dimension of Shimura's quotient](multiplicity-one-and-the-dimension.md)
 - [Uniqueness of Shimura's quotient](uniqueness-of-the-quotient.md)

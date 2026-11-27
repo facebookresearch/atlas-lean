@@ -3,7 +3,7 @@
 Let $N$ be a positive integer, $\Gamma$ a group of level $N$, $\mathfrak{T}$ the
 [Hecke algebra](hecke-algebra-of-the-modular-jacobian.md) of the Jacobian $J$ of its modular curve, and
 $\mu \colon S_2(\Gamma) \to D_J$ the isomorphism of
-[weight-two cusp forms with holomorphic $1$-forms](cusp-forms-as-one-forms-on-the-modular-jacobian.md). Let
+[weight-two cusp forms with holomorphic $1$-forms](cusp-forms-as-one-forms-steps/cusp-forms-as-one-forms-on-the-modular-jacobian.md). Let
 $f(z) = \sum_{n \ge 1} a_n e^{2 \pi i n z}$, with $a_1 = 1$, be an element of $S_2(\Gamma)$ with $f \mid T_n = a_n f$ for
 all $n \ge 1$, for the [Hecke operators $T_n$](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md), and $K$ the subfield of
 $\mathbb{C}$ generated over $\mathbb{Q}$ by the $a_n$.
@@ -15,14 +15,14 @@ Hecke algebra page. In particular $K = \mathbb{Q}[a_n : n \ge 1]$ is a finite ex
 ## Depends on
 
 - [Hecke algebra of the Jacobian of a modular curve](hecke-algebra-of-the-modular-jacobian.md)
-- [Weight-two cusp forms as holomorphic $1$-forms on the modular Jacobian](cusp-forms-as-one-forms-on-the-modular-jacobian.md)
+- [Weight-two cusp forms as holomorphic $1$-forms on the modular Jacobian](cusp-forms-as-one-forms-steps/cusp-forms-as-one-forms-on-the-modular-jacobian.md)
 - [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md), for the $T_n$ and normalized common eigenfunctions
 - [Cusp form](../../../NumberTheory/modular-forms-q-series/modular-forms/cusp-form.md), for $S_2(\Gamma)$
 
 ## Proof depends on
 
-- [Hecke operators on cusp forms and Hecke endomorphisms of the Jacobian](hecke-operators-and-hecke-endomorphisms-under-mu.md), for $\delta\xi_n(\mu(f)) = a_n \mu(f)$
-- [Holomorphic $1$-forms and tangent space of a complex abelian variety](holomorphic-one-forms-and-tangent-space.md), for the reversal of products by $\delta$
+- [Hecke operators on cusp forms and Hecke endomorphisms of the Jacobian](hecke-operators-under-mu-steps/hecke-operators-and-hecke-endomorphisms-under-mu.md), for $\delta\xi_n(\mu(f)) = a_n \mu(f)$
+- [Holomorphic $1$-forms and tangent space of a complex abelian variety](holomorphic-one-forms-steps/holomorphic-one-forms-and-tangent-space.md), for the reversal of products by $\delta$
 - [Decomposition of the Hecke algebra of the modular Jacobian](decomposition-of-the-hecke-algebra.md), for the finite-dimensional algebra $\mathfrak{T}$
 
 ## Expansion
