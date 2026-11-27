@@ -20,3 +20,5 @@ The topics follow the order of Preskill's lecture notes (Chapter 7): the Knillâ€
 - [Fault-tolerant gates](fault-tolerant-gates/README.md)
 - [Universal gate sets](universal-gate-sets/README.md)
 - [Stabilizer codes: correctability criterion and distance](stabilizer-codes-correctability-criterion-and-distance.md)
+- [Asymptotically Good Quantum LDPC Codes and Quantum Tanner Codes](asymptotically-good-quantum-ldpc-codes/README.md)
+- [Homological Quantum LDPC Codes and the Square-Root Distance Barrier](homological-quantum-ldpc-codes/README.md)
