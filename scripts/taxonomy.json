@@ -13107,6 +13107,7 @@
   "MathlibExt/NumberTheory/DiophantineApproximation/BakerDavenportAbsolute": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Baker–Davenport reduction"},
   "MathlibExt/NumberTheory/DiophantineApproximation/BakerDavenportNearestIntegerCore": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Baker–Davenport reduction"},
   "MathlibExt/NumberTheory/DiophantineApproximation/BakerDavenportOneSided": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Baker–Davenport reduction"},
+  "MathlibExt/NumberTheory/DiophantineApproximation/DistRoundPowFourierExpansion": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Fourier expansion of a power of the distance to the nearest integer"},
   "MathlibExt/NumberTheory/DiophantineApproximation/ScottishBook152": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Lattice points in translated discs"},
   "MathlibExt/NumberTheory/DiophantineApproximation/SquarePyramidalEquidistribution": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Square roots of cubic polynomials modulo one"},
   "MathlibExt/NumberTheory/DiophantineApproximation/ThreeGap": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Three-gap theorem"},
