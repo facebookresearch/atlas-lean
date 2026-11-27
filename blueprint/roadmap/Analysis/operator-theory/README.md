@@ -14,3 +14,4 @@ Bounded linear operators on Banach and Hilbert spaces: spectra, compact and Fred
 - [Integral identities for a strongly continuous semigroup and its generator](integral-identities-for-semigroup-generators.md)
 
 - [Sharp scalar Lieb–Thirring bound on the line](sharp-one-dimensional-scalar-lieb-thirring.md)
+- [Free hypergraph C*-algebras](free-hypergraph-c-star-algebras/README.md)
