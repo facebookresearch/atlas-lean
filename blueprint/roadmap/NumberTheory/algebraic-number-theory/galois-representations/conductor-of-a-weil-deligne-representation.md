@@ -2,7 +2,7 @@
 
 Let $K$ be a finite extension of $\mathbb{Q}_p$ with Weil group $W_K$, inertia group $I_K$, wild inertia group
 $P_K$ and ramification groups $G_K^u \subseteq G_K$ ($u \ge -1$) in the
-[upper numbering](../discriminants-ramification/upper-numbering-of-ramification-groups.md), so that
+[upper numbering](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md), so that
 $G_K^u = I_K$ for $-1 < u \le 0$ and $G_K^u \subseteq P_K$ for $u > 0$. Let $\Omega$ be an algebraically closed
 field of characteristic $0$ and $r \colon W_K \to \operatorname{GL}(V)$ a homomorphism on a finite-dimensional
 $\Omega$-vector space whose kernel is open, so that $r(I_K)$ is finite. For a subgroup $H$ of $W_K$ write $V^H$ for
@@ -34,12 +34,12 @@ embedding $\Omega \to \Omega'$, since the fixed subspaces and kernels involved c
 
 - [Weil–Deligne representations](weil-deligne-representations/weil-deligne-representations.md), for Weil–Deligne representations $(V, r, N)$
 - [Weil group of a p-adic field](weil-deligne-representations/weil-group-of-a-p-adic-field.md), for $W_K$ and $I_K \subseteq W_K$
-- [Upper numbering of ramification groups](../discriminants-ramification/upper-numbering-of-ramification-groups.md), for the groups $G_K^u$
+- [Upper numbering of ramification groups](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md), for the groups $G_K^u$
 - [Inertia and tame inertia of a p-adic field](weil-deligne-representations/inertia-and-tame-inertia-of-a-p-adic-field.md), for the wild inertia group $P_K$
 
 ## Proof depends on
 
-- [Upper numbering of ramification groups](../discriminants-ramification/upper-numbering-of-ramification-groups.md), for $G_K^u = I_K$ when $-1 < u \le 0$, for $G_K^u \subseteq P_K$ when $u > 0$, and for the $G_K^u$ being closed, decreasing, with trivial intersection, which makes the integrals finite
+- [Upper numbering of ramification groups](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md), for $G_K^u = I_K$ when $-1 < u \le 0$, for $G_K^u \subseteq P_K$ when $u > 0$, and for the $G_K^u$ being closed, decreasing, with trivial intersection, which makes the integrals finite
 - [Herbrand's functions](../discriminants-ramification/upper-numbering-of-ramification-groups-results/herbrand-functions.md), for the derivative $1/(G_0 : G_t)$ of $\varphi_{L/K}$ at non-integers, through which the substitution $u = \varphi_{L/K}(t)$ turns the integral into Artin's sum
 
 ## Sources

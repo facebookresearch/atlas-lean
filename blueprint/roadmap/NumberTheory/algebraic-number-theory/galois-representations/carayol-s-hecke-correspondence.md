@@ -25,8 +25,11 @@ $$\sigma(\pi) \cong \bigl(\mathrm{rec}_2(\pi) \otimes \omega^{1/2}\bigr)^{\vee}.
 
 It satisfies:
 
-1. for an irreducible principal series $\pi = \mathrm{Ind}(\xi_1, \xi_2)$ (unitary induction),
-   $\sigma(\pi) = \xi_1^{-1}\omega^{-1/2} \oplus \xi_2^{-1}\omega^{-1/2}$, with $N = 0$;
+1. for an irreducible principal series $\pi = \mathrm{Ind}(\xi_1, \xi_2)$,
+   $\sigma(\pi) = \xi_1^{-1}\omega^{-1/2} \oplus \xi_2^{-1}\omega^{-1/2}$, with $N = 0$; here $\mathrm{Ind}(\xi_1, \xi_2)$, Carayol's
+   unitary induction, is the [normalized parabolic induction](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md)
+   from the upper triangular Borel subgroup of the character
+   $\left(\begin{smallmatrix} a & 0 \\ 0 & b \end{smallmatrix}\right) \mapsto \xi_1(a)\xi_2(b)$ of the diagonal torus;
 2. $\det \sigma(\pi) = \chi_\pi^{-1} \omega^{-1}$;
 3. $\sigma(\chi.\pi) = \chi^{-1}.\sigma(\pi)$ for every character $\chi$ of $F^\times$.
 
@@ -73,6 +76,7 @@ This node is still to be broken down. A good expansion states and links:
 - [Weil–Deligne representations](weil-deligne-representations/weil-deligne-representations.md), for Frobenius-semisimple Weil–Deligne representations, twists, contragredients and determinants
 - [Weil group of a p-adic field](weil-deligne-representations/weil-group-of-a-p-adic-field.md), for $W_F$, $I_F$, the geometric Frobenius and $\mathrm{Art}_F$
 - [Smooth and admissible representations of p-adic groups](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for irreducible admissible representations of $\mathrm{GL}_2(F)$, their twists and central characters
+- [Parabolic induction and Jacquet functors](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md), for the normalized induction $\mathrm{Ind}(\xi_1, \xi_2)$ from the upper triangular Borel subgroup of $\mathrm{GL}_2(F)$
 
 ## Proof depends on
 

@@ -7,7 +7,7 @@ $\mathrm{WD}(V, \rho) = (V, r, N)$, defined through a lift $\varphi \in W_K$ of 
 continuous surjective homomorphism $t \colon I_K \to \mathbb{Z}_\ell$ by
 $\rho(\varphi^n \sigma) = r(\varphi^n \sigma) \exp(t(\sigma) N)$ for $n \in \mathbb{Z}$ and $\sigma \in I_K$. Let
 $G_K^u$ be the ramification groups in the
-[upper numbering](../discriminants-ramification/upper-numbering-of-ramification-groups.md) and $a(V, r, N)$
+[upper numbering](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md) and $a(V, r, N)$
 the [conductor of a Weil–Deligne representation](conductor-of-a-weil-deligne-representation.md). Then:
 
 1. $\rho$ and $r$ agree on the wild inertia group $P_K$;
@@ -35,7 +35,7 @@ $u > 0$ it is $\operatorname{codim} V^{r(G_K^u)}$ by item 1, as $G_K^u \subseteq
 
 - [Weil–Deligne representation of an ℓ-adic representation](weil-deligne-representations/weil-deligne-representation-of-an-l-adic-representation.md), for $\mathrm{WD}(V, \rho)$
 - [Conductor of a Weil–Deligne representation](conductor-of-a-weil-deligne-representation.md), for $a(V, r, N)$
-- [Upper numbering of ramification groups](../discriminants-ramification/upper-numbering-of-ramification-groups.md), for the groups $G_K^u$
+- [Upper numbering of ramification groups](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md), for the groups $G_K^u$
 - [Conductor of an ℓ-adic representation](conductor-of-an-l-adic-representation.md), for $m_p(\rho)$ in the global form
 
 ## Proof depends on
@@ -43,7 +43,7 @@ $u > 0$ it is $\operatorname{codim} V^{r(G_K^u)}$ by item 1, as $G_K^u \subseteq
 - [Weil–Deligne representation of an ℓ-adic representation](weil-deligne-representations/weil-deligne-representation-of-an-l-adic-representation.md), for the formula $\rho(\varphi^n \sigma) = r(\varphi^n \sigma) \exp(t(\sigma) N)$ and the openness of $\ker r$
 - [Weil–Deligne representations](weil-deligne-representations/weil-deligne-representations.md), for the nilpotence of $N$
 - [Inertia and tame inertia of a p-adic field](weil-deligne-representations/inertia-and-tame-inertia-of-a-p-adic-field.md), for $P_K$ being a pro-$p$ group
-- [Upper numbering of ramification groups](../discriminants-ramification/upper-numbering-of-ramification-groups.md), for $G_K^u = I_K$ when $-1 < u \le 0$ and $G_K^u \subseteq P_K$ when $u > 0$
+- [Upper numbering of ramification groups](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md), for $G_K^u = I_K$ when $-1 < u \le 0$ and $G_K^u \subseteq P_K$ when $u > 0$
 
 ## Sources
 

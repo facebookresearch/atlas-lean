@@ -21,8 +21,7 @@ with $c(\psi)$ the largest integer $r$ such that $\psi$ is trivial on $\mathfrak
 
 $$\varepsilon(\varrho, \psi, s) = \varepsilon(\varrho, \psi, 0)\, q^{-s(\delta(\varrho) + 2c(\psi))},$$
 
-so that $\delta(\varrho)$ is the exponent $f(\varrho)$ of
-[Conductors under Carayol's Hecke correspondence](conductors-under-the-hecke-correspondence.md).
+so that $\delta(\varrho)$ is the exponent of the $\varepsilon$-factor of $\varrho$.
 
 ## Expansion
 
@@ -47,7 +46,6 @@ This node is still to be broken down. A good expansion states and links:
 
 - [Smooth and admissible representations of p-adic groups](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for irreducible admissible representations and central characters
 - [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-gl-n/l-and-epsilon-factors-of-pairs.md), for $\varepsilon(\varrho, \psi, s)$
-- [Conductors under Carayol's Hecke correspondence](conductors-under-the-hecke-correspondence.md), for the exponent $f(\varrho)$
 
 ## Proof depends on
 

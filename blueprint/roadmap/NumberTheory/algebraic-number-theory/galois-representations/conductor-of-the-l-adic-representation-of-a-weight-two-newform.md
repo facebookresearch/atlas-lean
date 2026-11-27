@@ -90,15 +90,16 @@ The proof follows Carayol. Fix a prime $p \neq \ell$.
    over $E$, so it is that model with scalars extended to $\overline{\mathbb{Q}}_\ell$, by the uniqueness of the
    [Weil–Deligne representation of an ℓ-adic representation](weil-deligne-representations/weil-deligne-representation-of-an-l-adic-representation.md);
    its [conductor](conductor-of-a-weil-deligne-representation.md) is $a(\sigma(\pi_p))$.
-5. Finally $a(\sigma(\pi_p)) = f(\pi_p)$ by
-   [the behaviour of conductors under the Hecke correspondence](conductors-under-the-hecke-correspondence.md),
-   $f(\pi_p)$ is the exponent of $\mathfrak{c}(\pi_p)$ by [Casselman's theorem](local-newforms-for-gl-2.md), and that
-   exponent is $v_p(N)$ by step 2. So $m_p(\rho) = v_p(N)$.
+5. Finally $a(\sigma(\pi_p)) = f(\pi_p)$, the exponent of the $\varepsilon$-factor of $\pi_p$, by
+   [the behaviour of conductors under the Hecke correspondence](conductors-under-the-hecke-correspondence.md);
+   by [Casselman's theorem](local-newforms-for-gl-2.md) that exponent is the exponent of $\mathfrak{c}(\pi_p)$, which is
+   $v_p(N)$ by step 2. So $m_p(\rho) = v_p(N)$.
 
 ## Depends on
 
 - [Galois representations attached to normalized eigenforms](../../not-yet-classified/exists-galois-rep-charpoly-frob.md), for the conventions in which the properties of $\rho$ are stated (continuity for the Krull topology, irreducibility, unramifiedness and arithmetic Frobenius elements at the primes of $\overline{\mathbb{Z}}$, the nebentypus), at weight $k = 2$, and for the existence of such a $\rho$
 - [Conductor of an ℓ-adic representation](conductor-of-an-l-adic-representation.md), for $m_p(\rho)$ and $N(\rho)$
+- [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md), for Shimura's operators $T_p$ ($p \nmid N$) and $T_q$ ($q \mid N$) on $S_2(\Gamma_1(N))$, which are the operators $T_p$ and $U_q$ above
 
 ## Proof depends on
 

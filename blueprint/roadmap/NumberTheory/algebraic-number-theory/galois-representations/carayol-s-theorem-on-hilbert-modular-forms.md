@@ -28,7 +28,7 @@ $\sigma^\lambda$ to the local Weil group $W_{F_\mathfrak{p}}$ is equivalent to $
 The restriction to $W_{F_\mathfrak{p}}$ is taken through a decomposition group at $\mathfrak{p}$. Carayol notes that the
 existence of a system with this property at almost every finite place was known before, and that the new result is
 the determination of $\sigma^\lambda_\mathfrak{p}$ at every finite place. The case $F = \mathbb{Q}$, $k_1 = 2$ is the one
-used for the [conductor of the ℓ-adic representation of a newform](conductor-of-the-l-adic-representation-of-a-newform.md).
+used for the [conductor of the ℓ-adic representation of a newform](conductor-of-the-l-adic-representation-of-a-weight-two-newform.md).
 
 ## Expansion
 

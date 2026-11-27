@@ -37,6 +37,7 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Depends on
 
+- [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md), for the Hecke operators on $S_2(\Gamma_1(N))$ of which a newform is an eigenvector
 - [Galois representations attached to normalized eigenforms](../../not-yet-classified/exists-galois-rep-charpoly-frob.md), for the conventions on continuity, unramified primes and arithmetic Frobenius elements, and the character of an eigenform
 
 ## Proof depends on

@@ -2,7 +2,7 @@
 
 Let $L/K$ be a finite Galois extension of complete discretely valued fields whose residue fields are perfect
 of characteristic $p > 0$, whose group $G$ is **abelian**, with ramification groups $G_i$ in the lower numbering
-and $G^v$ in the [upper numbering](../upper-numbering-of-ramification-groups.md). A real number $v$ is a
+and $G^v$ in the [upper numbering](../ramification-groups-in-the-upper-numbering.md). A real number $v$ is a
 **jump** of the filtration $(G^v)$ if $G^{v + \varepsilon} \neq G^v$ for every $\varepsilon > 0$. The
 **Hasse–Arf theorem** says that every jump of $(G^v)$ is an integer. In terms of the lower numbering and
 Herbrand's function $\varphi_{L/K}$ of [Herbrand's functions](herbrand-functions.md): if $i$ is an integer with
@@ -35,13 +35,13 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Depends on
 
-- [Upper numbering of ramification groups](../upper-numbering-of-ramification-groups.md), for the filtration $(G^v)$
+- [Upper numbering of ramification groups](../ramification-groups-in-the-upper-numbering.md), for the filtration $(G^v)$
 - [Herbrand's functions](herbrand-functions.md), for $\varphi_{L/K}$ and the groups $G_i$, in the second form
 
 ## Proof depends on
 
 - [Herbrand's theorem](herbrand-s-theorem.md), for the reduction to cyclic quotients (expansion item 1)
-- [Upper numbering of ramification groups](../upper-numbering-of-ramification-groups.md), for the compatibility $(G/H)^v = G^v H/H$ of the upper numbering with quotients and $G^{\varphi_{L/K}(u)} = G_u$, which translates the first form into the second
+- [Upper numbering of ramification groups](../ramification-groups-in-the-upper-numbering.md), for the compatibility $(G/H)^v = G^v H/H$ of the upper numbering with quotients and $G^{\varphi_{L/K}(u)} = G_u$, which translates the first form into the second
 
 ## Sources
 
