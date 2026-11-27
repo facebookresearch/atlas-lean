@@ -195,7 +195,8 @@
     {"slug": "population-structure", "title": "Population structure and admixture", "description": "f-statistics, admixture graphs, ancestry models and linkage-disequilibrium methods for inferring the relationships and mixture histories of populations.", "msc": ["92D10", "62P10"], "subfields": []},
     {"slug": "conservation-genetics", "title": "Conservation genetics", "description": "Models coupling the genetics and demography of small or fragmented populations: kinship-minimizing management, genetic diversity summaries, effective-size requirements, genetic rescue and the separate risks of extinction and genetic loss.", "msc": ["92D10", "92D25"], "subfields": []},
     {"slug": "phylogenetics", "title": "Phylogenetics", "description": "Reconstruction of evolutionary trees from sequence data: substitution models, likelihood and parsimony, distance methods, tree metrics, splits and the enumeration of phylogenetic trees.", "msc": ["92D15", "92B10", "05C05"], "subfields": [
-     {"slug": "inference-and-comparison", "title": "Phylogenetic inference and comparison", "description": "Statistical guarantees and identifiability for evolutionary trees, networks and recorded cell lineages, together with agreement-subtree models for comparing trees. Each article retains its own observation, sampling and evolutionary model."}
+     {"slug": "inference-and-comparison", "title": "Phylogenetic inference and comparison", "description": "Statistical guarantees and identifiability for evolutionary trees, networks and recorded cell lineages, together with agreement-subtree models for comparing trees. Each article retains its own observation, sampling and evolutionary model."},
+     {"slug": "gtr-identifiability-and-estimation", "title": "Identifiability and estimation of the GTR model", "description": "The general time-reversible (GTR) substitution model as a statistical model: identifiability of its parameters from the rate matrix, and log-det estimation of the rate matrix from aligned sequence pairs under an i.i.d. sampling model."}
     ]},
     {"slug": "molecular-evolution", "title": "Molecular evolution", "description": "Models of genome evolution at the molecular level: mutational bias in the introduction of variation, the mutational-hazard view of genome complexity and constructive neutral evolution.", "msc": ["92D15", "92D10"], "subfields": []},
     {"slug": "quantitative-genetics", "title": "Quantitative genetics", "description": "The genetics of continuously varying traits: decomposition of genetic variance, resemblance between relatives, kinship, mixed models and the response to selection.", "msc": ["92D10", "62P10"], "subfields": []},
@@ -10425,11 +10426,11 @@
   "Domains/Biology/Epidemiology/Superspreading": {"to": "Biology/epidemiology", "title": "Superspreading and negative-binomial offspring"},
   "Domains/Biology/Phylogenetics/BalancedMinimumEvolution": {"to": "Biology/phylogenetics", "title": "Pauplin's formula and balanced minimum evolution"},
   "Domains/Biology/Phylogenetics/CodonOmega": {"to": "Biology/phylogenetics", "title": "Codon substitution models and dN/dS"},
-  "Domains/Biology/Phylogenetics/GTRIdentifiability": {"to": "Biology/phylogenetics", "title": "Identifiability of the GTR model"},
+  "Domains/Biology/Phylogenetics/GTRIdentifiability": {"to": "Biology/phylogenetics/gtr-identifiability-and-estimation", "title": "Identifiability of the GTR model"},
   "Domains/Biology/Phylogenetics/GTRInference": {"to": "Biology/phylogenetics", "title": "Consistency of minimum-distance GTR estimators"},
-  "Domains/Biology/Phylogenetics/GTRLogDetRecovery": {"to": "Biology/phylogenetics", "title": "Log-det estimation of the GTR rate matrix"},
+  "Domains/Biology/Phylogenetics/GTRLogDetRecovery": {"to": "Biology/phylogenetics/gtr-identifiability-and-estimation", "title": "Log-det estimation of the GTR rate matrix"},
   "Domains/Biology/Phylogenetics/GTRMLE": {"to": "Biology/phylogenetics", "title": "Consistency of the GTR maximum-likelihood estimator"},
-  "Domains/Biology/Phylogenetics/GTRTwoStateSampling": {"to": "Biology/phylogenetics", "title": "Sampling model for log-det estimation of the GTR rate matrix"},
+  "Domains/Biology/Phylogenetics/GTRTwoStateSampling": {"to": "Biology/phylogenetics/gtr-identifiability-and-estimation", "title": "Sampling model for log-det estimation of the GTR rate matrix"},
   "Domains/Biology/Phylogenetics/JukesCantor": {"to": "Biology/phylogenetics", "title": "Jukes–Cantor model"},
   "Domains/Biology/Phylogenetics/Kimura": {"to": "Biology/phylogenetics", "title": "Kimura two-parameter model"},
   "Domains/Biology/Phylogenetics/MotifConservation": {"to": "Biology/phylogenetics", "title": "Evolutionary conservation scores"},
