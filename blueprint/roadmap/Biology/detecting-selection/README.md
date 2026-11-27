@@ -27,4 +27,3 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Excess synonymous constraint](excess-synonymous-constraint/README.md)
 - [Site-specific conservation scores from rate scaling](site-specific-conservation-scores-from-rate-scaling/README.md)
 - [Genealogy-based inference of selection](genealogy-based-inference-of-selection/README.md)
-- [Rate of adaptive substitution from sweep scans](rate-of-adaptive-substitution-from-sweep-scans/README.md)
