@@ -11431,6 +11431,7 @@
   "MathlibExt/Combinatorics/Enumerative/RationalDyckPaths": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Rational Dyck paths"},
   "MathlibExt/Combinatorics/Enumerative/RationallyWeightedBinomialSums": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Rationally weighted binomial sums"},
   "MathlibExt/Combinatorics/Enumerative/ReducedUnicellularHypermonopoles": {"to": "Combinatorics/set-partitions", "title": "Reduced unicellular hypermonopoles"},
+  "MathlibExt/Combinatorics/Enumerative/ReducedUnicellularHypermonopolesGenusBounds": {"to": "Combinatorics/set-partitions", "title": "Reduced unicellular hypermonopoles"},
   "MathlibExt/Combinatorics/Enumerative/ReducedUnicellularHypermonopolesVanishing": {"to": "Combinatorics/set-partitions", "title": "Reduced unicellular hypermonopoles"},
   "MathlibExt/Combinatorics/Enumerative/RectangleCapacityNondecreasingWords": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Rectangles in nondecreasing words"},
   "MathlibExt/Combinatorics/Enumerative/RefinedEulerianMarginals": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Refined Eulerian polynomials"},
