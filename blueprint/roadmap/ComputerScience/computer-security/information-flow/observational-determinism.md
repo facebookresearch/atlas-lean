@@ -17,4 +17,4 @@ condition is preserved by refinement of the scheduler. The relation $\approx_\ze
 
 ## Sources
 
-- S. Zdancewic and A. C. Myers, "Observational determinism for concurrent program security", *Proceedings of the 16th IEEE Computer Security Foundations Workshop (CSFW 2003)*, pp. 29–43, copy at <https://www.cis.upenn.edu/~stevez/papers/ZM03.pdf>: Section 2.1 (condition (1) and event traces), Section 2.3 (the per-location trace relation up to stuttering and prefixing and its intransitivity) and condition (3) (low-security observational determinism).
+- S. Zdancewic and A. C. Myers, "Observational determinism for concurrent program security", *Proceedings of the 16th IEEE Computer Security Foundations Workshop (CSFW 2003)*, pp. 29–43, copy at <https://www.cis.upenn.edu/~stevez/papers/ZM03.pdf>: Section 2.1 (condition (1) and event traces), Section 2.3 (condition (3), low-security observational determinism) and Section 2.4 (the per-location comparison of traces up to stuttering and prefixing, and the example showing it is not transitive).

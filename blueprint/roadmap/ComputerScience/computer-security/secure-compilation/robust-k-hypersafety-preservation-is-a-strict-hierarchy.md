@@ -3,8 +3,6 @@
 **Theorem (Abate, Blanco, Garg, Hriţcu, Patrignani and Thibault).** For every $K \ge 1$ there is a compilation chain that satisfies robust $K$-hypersafety preservation but not
 robust $(K+1)$-hypersafety preservation, in the sense of [robust hypersafety preservation](robust-hypersafety-preservation.md).
 
-The counterexample uses a system of $K$ linear equations.
-
 ## Depends on
 
 - [Robust hypersafety preservation](robust-hypersafety-preservation.md)

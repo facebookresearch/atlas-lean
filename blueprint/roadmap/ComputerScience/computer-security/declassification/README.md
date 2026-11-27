@@ -18,4 +18,3 @@
 - [Attacks cannot change high-integrity results](attacks-preserve-high-integrity-data.md)
 - [Typable contexts are robust against attacks that change low-integrity data](typable-contexts-resist-attacks-on-low-integrity-data.md)
 - [Qualified robustness](qualified-robustness.md)
-- [A security type system enforces qualified robustness](security-typing-enforces-qualified-robustness.md)

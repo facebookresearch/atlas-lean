@@ -1,8 +1,11 @@
 # Instrumentation for control-flow integrity with software memory access control
 
-In the *permissive semantics* of the [machine under attack](machine-code-under-attack.md), normal steps may write to code memory and execute anywhere, dropping the assumptions
-that code is not writable and data not executable; attack steps still cannot change code memory, the distinguished registers or the program counter. For code memory
-$M_c$ and data memory $M_d$ with known bounds, the predicate $I_s(M_c, G)$ holds of $M_c$ and a [control-flow graph](control-flow-graphs-of-machine-code.md) $G$ when
+The SMAC variant of the [machine under attack](machine-code-under-attack.md) has a bounded memory: for some $n > 0$ and $B \ge n$, the memory has domain $\{0, \dots, B\}$,
+with code memory $M_c$ on $\{0, \dots, n - 1\}$ and nonempty data memory $M_d$ on $\{n, \dots, B\}$, so that $\min(M_c) = 0$, $\max(M_c) = n - 1$, $\min(M_d) = n$ and $\max(M_d) = B$
+are known when the code is instrumented. In its *permissive semantics*, normal steps execute the instruction at any address of $\{0, \dots, B\}$ and may store to any address of
+$\{0, \dots, B\}$, dropping the assumptions that code is not writable and data not executable, and are defined only when the next program counter and the store or load address
+lie in $\{0, \dots, B\}$; attack steps replace the data memory and the registers $r_3, \dots, r_{31}$ as before and still cannot change code memory, the distinguished registers or the
+program counter. The predicate $I_s(M_c, G)$ holds of $M_c$ and a [control-flow graph](control-flow-graphs-of-machine-code.md) $G$ when
 
 1. the last instruction of $M_c$ is $\mathtt{illegal}$, at address $\mathit{HALT}$;
 2. the destinations of $G$ are exactly the addresses holding $\mathtt{label}$ instructions, each labelled with its destination's identifier;
@@ -22,4 +25,4 @@ $M_c$ and data memory $M_d$ with known bounds, the predicate $I_s(M_c, G)$ holds
 
 ## Sources
 
-- M. Abadi, M. Budiu, Ú. Erlingsson and J. Ligatti, "Control-flow integrity: principles, implementations, and applications", *ACM Transactions on Information and System Security* 13(1), 2009; numbering of the author version of February 2007, <https://cseweb.ucsd.edu/~dstefan/cse127-winter19/papers/abadi:cfi.pdf>: Section 6.2.4 (the permissive semantics, Figure 15) and Section 6.5.1 (conditions (1)–(5) and the predicate $I_s$).
+- M. Abadi, M. Budiu, Ú. Erlingsson and J. Ligatti, "Control-flow integrity: principles, implementations, and applications", *ACM Transactions on Information and System Security* 13(1), 2009; numbering of the author version of February 2007, <https://cseweb.ucsd.edu/~dstefan/cse127-winter19/papers/abadi:cfi.pdf>: Section 6.2.4 (the permissive semantics, Figure 15) and Section 6.5.1 (conditions (1)–(5), the predicate $I_s$, and the minimum and maximum code and data addresses known at instrumentation time). The source's memory is total on all words; the bounded domain $\{0, \dots, B\}$ above makes those maxima exist.

@@ -3,7 +3,7 @@
 Let $I$ be a countably infinite set of *block identifiers*. *Values* are integers, booleans, the invalid pointer $\mathrm{nil}$ and pointers $(i, n) \in I \times \mathbb Z$ (a block and an
 offset). A *state* $s = (l, m)$ is a local store $l$, a finite partial map from variables to values, and a heap $m$, a finite partial map from $I \times \mathbb Z$ to values;
 outcomes are states and $\mathrm{error}$. Expressions are variables, constants, $\mathrm{nil}$, arithmetic, comparisons, boolean connectives and $\mathrm{offset}(e)$, and
-evaluate totally: a variable not in $\mathrm{dom}(l)$ and an ill-typed operation give $\mathrm{nil}$, adding or subtracting an integer to a pointer changes only its offset,
+evaluate totally: a variable not in $\mathrm{dom}(l)$ and an operation on invalid operands give $\mathrm{nil}$, while equality is defined on all values (so $\mathrm{nil} = 0$ is false), adding or subtracting an integer to a pointer changes only its offset,
 equality of pointers compares block and offset, and $\mathrm{offset}((i, n)) = n$. Commands are
 
 $$c ::= x \leftarrow e \mid x \leftarrow [e] \mid [e_1] \leftarrow e_2 \mid x \leftarrow \mathrm{alloc}(e) \mid \mathrm{free}(e) \mid \mathrm{skip} \mid \mathbf{if}\ e\ \mathbf{then}\ c_1\ \mathbf{else}\ c_2 \mid \mathbf{while}\ e\ \mathbf{do}\ c\ \mathbf{end} \mid c_1; c_2,$$

@@ -3,8 +3,8 @@
 For [channels](information-theoretic-channels.md) $C_1$ from $\mathcal X$ to $\mathcal Z$ and $C_2$ from $\mathcal X$ to $\mathcal Y$, a vector $v \in \mathbb R^{\mathcal X}$ is a *cat-vector* for $C_1$ and $C_2$ if
 its inner product with every column of $C_2$ is nonnegative and its inner product with some column of $C_1$ is negative.
 
-**Lemma.** If there is a cat-vector for $C_1$ and $C_2$, then there is a [2-block gain function](binary-partition-and-k-tries-gain-functions.md) $g$ with $C_1 \not\le_g C_2$, in the order of
-[composition refinement of channels](composition-refinement-of-channels.md).
+**Lemma.** If there is a cat-vector for $C_1$ and $C_2$, then there is a [2-block gain function](binary-partition-and-k-tries-gain-functions.md) $g$ with $C_1 \not\le_g C_2$: for some prior, the
+$g$-leakage of $C_1$ exceeds that of $C_2$, in the single-gain leakage order $\le_g$ of [composition refinement of channels](composition-refinement-of-channels.md).
 
 ## Depends on
 

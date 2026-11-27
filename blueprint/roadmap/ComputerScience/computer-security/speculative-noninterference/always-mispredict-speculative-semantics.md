@@ -13,7 +13,7 @@ only, leaving the enclosing ones unchanged (and $\mathrm{enabled}'(\varepsilon)$
 
 When the last transaction has expired, $s \cdot \langle \sigma_0, \mathit{id}, 0, \ell\rangle$, it always rolls back: with $\sigma_0 \to \sigma''$ one non-speculative step from its snapshot, the configuration
 becomes $\sigma''$, the stack becomes $s$ and $\mathbf{rollback}\ \mathit{id} \cdot \mathit{pc}\ \sigma''(\mathit{pc})$ is emitted; only that transaction is popped, and the enclosing one continues
-as if the nested branch had been predicted correctly. $\{\!|p|\!\}_w(\sigma)$ is the trace of the run from an initial configuration $\sigma$ to a final one with empty stack.
+as if the nested branch had been predicted correctly. $\{\!|p|\!\}_w(\sigma)$ is the trace of the run from an initial configuration $\sigma$ to a final one with empty stack, when there is one.
 
 ## Depends on
 

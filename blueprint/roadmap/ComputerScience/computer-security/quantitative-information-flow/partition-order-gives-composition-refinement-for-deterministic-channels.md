@@ -11,6 +11,10 @@ $\le_{\mathcal G}$ for the gain functions of [binary, partition and k-tries gain
 - [Binary, partition and k-tries gain functions](binary-partition-and-k-tries-gain-functions.md)
 - [Information-theoretic channels](information-theoretic-channels.md)
 
+## Proof depends on
+
+- [Partition refinement of deterministic channels is factorization](partition-refinement-is-deterministic-composition-refinement.md)
+
 ## Sources
 
 - M. S. Alvim, K. Chatzikokolakis, C. Palamidessi and G. Smith, "Measuring information leakage using generalized gain functions", *Proceedings of the 25th IEEE Computer Security Foundations Symposium (CSF 2012)*, copy at <https://www.chatzi.org/papers/csf12_gleakage.pdf>: Section VI-D, Theorem 6.7 and its proof (Appendix).

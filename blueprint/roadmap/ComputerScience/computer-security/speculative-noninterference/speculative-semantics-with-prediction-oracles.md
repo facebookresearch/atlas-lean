@@ -18,8 +18,11 @@ semantics from its snapshot, $\sigma_0 \to \langle m, a\rangle$, with $\langle \
 $s \cdot s'$, the configuration is unchanged, and $\mathbf{commit}\ \mathit{id}$ is emitted. Otherwise it *rolls back*: the configuration becomes $\langle m, a\rangle$, resuming at the corrected
 $\mathit{pc}$, the stack becomes $s$ (nested transactions are discarded), and $\mathbf{rollback}\ \mathit{id} \cdot \mathit{pc}\ a(\mathit{pc})$ is emitted. A run starts from
 $\langle 0, \sigma, \varepsilon, \varepsilon\rangle$ with $\sigma$ initial and ends at $\langle \mathit{ctr}, \sigma', \varepsilon, h\rangle$ with $\sigma'$ final; $[\![p]\!]_O(\sigma)$ is its trace. The *non-speculative
-projection* $\tau{\upharpoonright_{\mathrm{nse}}}$ deletes every rolled-back segment $\mathbf{start}\ \mathit{id} \cdots \mathbf{rollback}\ \mathit{id}$ and every start, commit and rollback observation; then
-$(\!|p|\!) = [\![p]\!]_O{\upharpoonright_{\mathrm{nse}}}$ for every oracle $O$, as sets of runs from initial to final configurations.
+projection* $\tau{\upharpoonright_{\mathrm{nse}}}$ deletes every rolled-back segment $\mathbf{start}\ \mathit{id} \cdots \mathbf{rollback}\ \mathit{id}$ and every start, commit and rollback observation. For every oracle $O$, the projection of
+a completed speculative run is the non-speculative run from the same initial configuration: $[\![p]\!]_O(\sigma){\upharpoonright_{\mathrm{nse}}} = (\!|p|\!)(\sigma)$ whenever the left side is defined. The
+converse needs speculative execution to keep stepping until every transaction resolves, which the rules do not guarantee: a mispredicted path can reach a
+configuration with a positive remaining length at which no rule applies. The source's Proposition 1 states the equality
+$(\!|p|\!) = [\![p]\!]_O{\upharpoonright_{\mathrm{nse}}}$ of the sets of runs; its completeness direction assumes this progress.
 
 ## Depends on
 

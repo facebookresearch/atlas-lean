@@ -24,4 +24,4 @@ This node names a family of definitions. A good expansion adds a page for each o
 
 ## Sources
 
-- A. Azevedo de Amorim, C. Hriţcu and B. C. Pierce, "The meaning of memory safety", *Principles of Security and Trust (POST 2018)*, arXiv:1705.07354v3, <https://arxiv.org/abs/1705.07354v3>: Section 2 and Figure 1 (the language, values, states, errors, block identifiers as capabilities, freshness and initialization of allocated memory) and Section 3.1, Figure 2 (notation, including the left-biased union of partial functions).
+- A. Azevedo de Amorim, C. Hriţcu and B. C. Pierce, "The meaning of memory safety", *Principles of Security and Trust (POST 2018)*, arXiv:1705.07354v3, <https://arxiv.org/abs/1705.07354v3>: Section 2 and Figure 1 (the language, values, states, errors, block identifiers as capabilities, freshness and initialization of allocated memory) Section 3.1, Figure 2 (notation, including the left-biased union of partial functions), and Appendix Figure 6 (the rule for $\mathrm{free}(e)$ on a sparse live block).

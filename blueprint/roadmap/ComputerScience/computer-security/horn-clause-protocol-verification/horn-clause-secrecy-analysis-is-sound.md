@@ -16,4 +16,5 @@ selection function is basic, $F$ is ground and $\mathcal R$ contains the fact $\
 
 ## Sources
 
+- B. Blanchet, "Using Horn clauses for analyzing security protocols", in V. Cortier and S. Kremer (eds.), *Formal Models and Techniques for Analyzing Security Protocols*, Cryptology and Information Security Series 5, IOS Press, 2011, author copy at <https://bblanche.gitlabpages.inria.fr/publications/BlanchetBook09.pdf>: Section 2.1, Theorem 1 (correctness) and its proof, which uses the name $a[\,]$ known to the attacker.
 - V. Cortier and S. Kremer, "Formal models and techniques for analyzing security protocols: a tutorial", *Foundations and Trends in Programming Languages* 1(3), 2014, doi:10.1561/2500000001, copy at <https://inria.hal.science/hal-01090874>: Section 8.2.2 (the assumption that the attacker knows a name $a[]$, with the clause $\mathrm{att}(a[])$) and Section 8.2.6, the argument after Lemma 8.2 combining Lemmas 8.1 and 8.2, which uses $\mathrm{att}(a[])$ to derive the remaining hypotheses $\mathrm{att}(x)$.
