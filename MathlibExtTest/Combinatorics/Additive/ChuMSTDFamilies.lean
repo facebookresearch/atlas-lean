@@ -68,3 +68,20 @@ example : (chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1).card = 33 :=
 example : (chuFamilyKLT 1 1 1 - chuFamilyKLT 1 1 1).card = 33 := by
   rw [chuFamilyKLT_one_one_one]
   decide +kernel
+
+-- The public theorem applies at the smallest positive parameter.
+example :
+    let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock 1 ++ chuBlock 2 ++ [1, 1])
+    (A + A).card = (A - A).card :=
+  chu_family_balanced (k := 1) (by decide)
+
+-- Check both counts independently, not just their equality.
+set_option maxRecDepth 2048 in
+example :
+    let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock 1 ++ chuBlock 2 ++ [1, 1])
+    (A + A).card = 49 ∧ (A - A).card = 49 := by decide
+
+set_option maxRecDepth 2048 in
+example :
+    let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock 2 ++ chuBlock 3 ++ [1, 1])
+    (A + A).card = 61 ∧ (A - A).card = 61 := by decide

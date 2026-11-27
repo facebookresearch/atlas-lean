@@ -17,6 +17,7 @@ public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Combinatorics.Enumerative.ExtendedTrinomialAlternating
 public import MathlibExt.Combinatorics.Enumerative.GouldTrinomialIdentities
 public import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
+public import MathlibExt.Combinatorics.Enumerative.SprugnoliBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.TrinomialAlternatingColumn
 public import MathlibExt.Combinatorics.Enumerative.TrinomialBinomialTransform
 public import MathlibExt.Combinatorics.Enumerative.TrinomialConvolution
@@ -235,34 +236,6 @@ public theorem_wanted implicit_riordan_sum_inverse {K : Type*} [Field K]
       coeff (n - k) ((ψ - X * derivative ψ) * derivative h * (f * ψ ^ (k + 1))⁻¹ *
         g⁻¹ ^ (n + 1)) * a k
 
-
-/-- **Sprugnoli's binomial sum theorem.** Write $[t^j]F$ for the coefficient of $t^j$ in a power
-series $F$ over $\mathbb{C}$, $\binom{u}{j}$ for the generalized binomial coefficient, and
-$(1 + t)^u = \sum_{j \ge 0} \binom{u}{j} t^j$ for the binomial series of a complex number $u$.
-Let $f$ be a power series over $\mathbb{C}$. For natural numbers $n$, $x$, $a$, $b$ with
-$a < b$,
-
-$$\sum_{k=0}^{n} \binom{n + ak}{x + bk} [t^k]\,f =
-[t^n]\,\frac{t^x}{(1 - t)^{x+1}}\, f\!\left(\frac{t^{b-a}}{(1 - t)^b}\right),$$
-
-and for natural numbers $m$, $c$ with $c > 0$, every complex $y$ and every integer $a'$,
-
-$$\sum_{k=0}^{\lfloor m/c \rfloor} \binom{y + a'k}{m - ck} [t^k]\,f =
-[t^m]\,(1 + t)^y f\!\left(t^c (1 + t)^{a'}\right).$$
-
-In the first sum the terms with $k > n$ would vanish, and the second stops where the lower
-index $m - ck$ would become negative. The paper allows integer $x$ and $a$ in the first
-identity and writes the second with $b = -c < 0$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 2 (`jis-2025-25.3.5-thm-2`). -/
-public theorem_wanted sum_choose_mul_coeff_eq_coeff_subst (n x a b m c : ℕ) (hab : a < b)
-    (hc : 0 < c) (y : ℂ) (a' : ℤ) (f : PowerSeries ℂ) :
-    ∑ k ∈ Finset.range (n + 1), ((n + a * k).choose (x + b * k) : ℂ) * coeff k f =
-        coeff n (X ^ x * ((1 - X) ^ (x + 1))⁻¹ * f.subst (X ^ (b - a) * ((1 - X) ^ b)⁻¹)) ∧
-      ∑ k ∈ Finset.range (m / c + 1), Ring.choose (y + a' * k) (m - c * k) * coeff k f =
-        coeff m (PowerSeries.binomialSeries ℂ y *
-          f.subst (X ^ c * PowerSeries.binomialSeries ℂ (a' : ℂ)))
 
 /-- **Trinomial coefficients from an algebraic Riordan array.** Write $\binom{n}{k}_2$ for the
 trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$, and $[t^m]\,F$ for the
