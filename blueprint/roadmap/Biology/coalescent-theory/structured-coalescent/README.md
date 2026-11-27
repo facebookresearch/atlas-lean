@@ -42,3 +42,11 @@
 - [Coalescing random walks dual to the voter model on a finite graph](coalescing-random-walks-dual-to-the-voter-moran.md)
 - [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
 - [Isolation by distance](isolation-by-distance.md)
+- [Structured coalescent at a neutral site linked to a cyclically fluctuating balanced polymorphism](structured-coalescent-linked-to-cyclic-balanced-polymorphism.md)
+- [Pairwise coalescence time in the spatial Λ-Fleming–Viot process as a Cox process](pairwise-coalescence-time-in-the-slfv-as-a-cox-process.md)
+## Further topics
+- [Coalescing Brownian motion genealogies](coalescing-brownian-motion-genealogies/README.md)
+- [Autotetraploid coalescent](autotetraploid-coalescent/README.md)
+- [IBD sharing under migration](ibd-sharing-under-migration/README.md)
+- [Semelparous age-structured coalescent](semelparous-age-structured-coalescent/README.md)
+- [Branch lengths of the seed-bank coalescent](branch-lengths-of-the-seed-bank-coalescent/README.md)

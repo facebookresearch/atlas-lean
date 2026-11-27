@@ -1,0 +1,16 @@
+# Isomorphic spanning tree
+
+- [Is Full Binary](is-full-binary.md)
+- [Well-formed ISOMORPHIC SPANNING TREE for full binary trees instances](well-formed.md)
+- [The decision problem ISOMORPHIC SPANNING TREE for full binary trees](isomorphic-spanning-tree-full-binary-dec.md)
+- [ISOMORPHIC SPANNING TREE for full binary trees is NP-complete](isomorphic-spanning-tree-full-binary-np.md)
+- [Three Star Edges](three-star-edges.md)
+- [Three Star](three-star.md)
+- [Well-formed ISOMORPHIC SPANNING TREE for 3-stars instances](well-formed-2.md)
+- [The decision problem ISOMORPHIC SPANNING TREE for 3-stars](isomorphic-spanning-tree-three-star-dec.md)
+- [ISOMORPHIC SPANNING TREE for 3-stars is NP-complete](isomorphic-spanning-tree-three-star-np-c.md)
+- [Instances of ISOMORPHIC SPANNING TREE](isomorphic-spanning-tree-instance.md)
+- [Well-formed ISOMORPHIC SPANNING TREE instances](well-formed-3.md)
+- [Feasible ISOMORPHIC SPANNING TREE instances](isomorphic-spanning-tree-feasible.md)
+- [The decision problem ISOMORPHIC SPANNING TREE](isomorphic-spanning-tree-dec.md)
+- [ISOMORPHIC SPANNING TREE is NP-complete](isomorphic-spanning-tree-np-complete.md)

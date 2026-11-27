@@ -37,12 +37,17 @@ condition. `B⁻¹({w})` is taken inside `𝔻`. The question asks whether every
 
 open Metric
 
-/-- The Blaschke factor with zero `a`: `b_a(z) = (|a| / a) (a - z) / (1 - ā z)`. -/
+/-- The Blaschke factor with zero `a`: `b_a(z) = (|a| / a) (a - z) / (1 - ā z)`, computed with
+`x / 0 = 0`. For `0 < |a| < 1` it is the classical factor, of modulus `1` on the unit circle, with
+a single zero in the disc at `a` and `b_a(0) = |a|`; at `a = 0` the formula gives the zero
+function, since `|0| / 0 = 0` (zeros at the origin are the factor `zᵐ` of `blaschkeProduct`). -/
 noncomputable def blaschkeFactor (a z : ℂ) : ℂ :=
   (‖a‖ / a) * ((a - z) / (1 - (starRingEnd ℂ) a * z))
 
 /-- The Blaschke product `B(z) = c zᵐ ∏ₙ b_{aₙ}(z)` with zeros `aₙ` (and a zero of order `m` at the
-origin). -/
+origin), the product being Mathlib's unconditional `tprod` (`1` where it is not multipliable). It
+is a Blaschke product in the classical sense for the data of `IsInfiniteBlaschkeData`; otherwise it
+need not be one: `c = 0` gives the zero function, and a zero `aₙ = 0` gives a zero factor. -/
 noncomputable def blaschkeProduct (c : ℂ) (m : ℕ) (a : ℕ → ℂ) (z : ℂ) : ℂ :=
   c * z ^ m * ∏' n, blaschkeFactor (a n) z
 
@@ -62,8 +67,12 @@ def blaschkeFibersInfiniteNearZero : Prop :=
 /--
 Resolved false (an unpublished, unrefereed construction; the list's Update 5.66 records it as the
 answer): Stephenson's inner function `f` has finite fibers `f⁻¹(w)` for a dense set of `|w| < 1`,
-and its Frostman shifts `f_α = (f - α)/(1 - ᾱ f)` are Blaschke products for almost all `α`; such an
-`f_α` is an infinite Blaschke product with finite fibers over a dense set of `w`. Source: W. K.
+and its Frostman shifts `f_α = (f - α)/(1 - ᾱ f)` are Blaschke products for almost all `α`; each
+such `f_α` has finite fibers over a dense set of `w` (the image of that set under the disc
+automorphism `w ↦ (w - α)/(1 - ᾱ w)`). Finite fibers on a dense set do not by themselves make
+`f_α` infinite: a finite Blaschke product has finite fibers everywhere. The answer needs `f` not
+to be a finite Blaschke product; then neither is `f_α`, so `f_α` is an infinite Blaschke product
+with finite fibers over a dense set of `w`. Source: W. K.
 Hayman and E. F. Lingham, Research Problems in Function Theory, Fiftieth Anniversary Edition (2019),
 arXiv:1809.07200, Problem 5.66 (K. Stephenson); resolution: W. K. Hayman and E. F. Lingham, Research
 Problems in Function Theory, Fiftieth Anniversary Edition (2019), arXiv:1809.07200, Update 5.66 (K.

@@ -12,11 +12,12 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Data.Int.ModEq
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSum
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEqRoundInvRemainderAdd
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEventuallyPseudoGreedyGapEqZero
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumExistsTailEqPseudoGreedyExpansion
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumSylvester
 public import MathlibExt.NumberTheory.GeneralizedSylvester
 public import MathlibExt.NumberTheory.MillinSeries
-public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumExistsTailEqPseudoGreedyExpansion
-public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEventuallyPseudoGreedyGapEqZero
-public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumSylvester
 
 /-!
 # Reciprocal sums of doubly exponential sequences
@@ -34,24 +35,6 @@ open Filter Topology
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Recovering a doubly exponential sequence from its reciprocal sum.** Let $\beta \ge 0$ and
-$r$ be real numbers, and let $(a_n)_{n \ge 0}$ be a sequence of positive integers with
-$|a_n^2 / a_{n+1} - \beta| \le 1/3$ for all $n$ and $\sum_n 1 / a_n = r$. Write
-$x_n = r - \sum_{k<n} 1 / a_k$. Then for every $n$ with $a_n \ge 8 (\beta + 1/3)^2$ we have
-$a_n = \lfloor x_n^{-1} + \beta + 1/2 \rfloor$, that is, $a_n$ is the integer nearest to
-$x_n^{-1} + \beta$, with halves rounded up. Moreover, if $a_n^2 / a_{n+1} \to \beta$, then
-$|x_n^{-1} + \beta - a_n| \to 0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Theorem 1 (`integers-2026-A28-thm-1`). -/
-public theorem_wanted eq_round_inv_remainder_add {β r : ℝ} (hβ : 0 ≤ β) {a : ℕ → ℕ}
-    (hpos : ∀ n, 0 < a n) (hratio : ∀ n, |(a n : ℝ) ^ 2 / a (n + 1) - β| ≤ 1 / 3)
-    (hsum : HasSum (fun n => 1 / (a n : ℝ)) r) :
-    (∀ n, 8 * (β + 1 / 3) ^ 2 ≤ (a n : ℝ) →
-      (a n : ℤ) = ⌊(r - ∑ k ∈ Finset.range n, 1 / (a k : ℝ))⁻¹ + β + 1 / 2⌋) ∧
-    (Tendsto (fun n => (a n : ℝ) ^ 2 / a (n + 1)) atTop (𝓝 β) →
-      Tendsto (fun n => |(r - ∑ k ∈ Finset.range n, 1 / (a k : ℝ))⁻¹ + β - a n|) atTop (𝓝 0))
 
 /-- **Doubly exponential floors are Type 2 irrationality sequences for all but countably many
 bases.** For all real numbers $\alpha > 1$ outside a countable set, the sequence
