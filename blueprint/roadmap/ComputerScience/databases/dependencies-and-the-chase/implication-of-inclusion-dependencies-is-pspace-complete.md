@@ -1,17 +1,19 @@
 # Implication of inclusion dependencies is PSPACE-complete
 
-For [inclusion dependencies](ind.md) on a finite schema, with [satisfaction](inclusion-dependencies-and-finite-implication.md)
-and [finite implication](finitely-implies.md) as defined there, the problem of deciding, for a finite set $\Sigma$ of
-inclusion dependencies and an inclusion dependency $\sigma$, whether $\Sigma$ finitely implies $\sigma$ is PSPACE-complete;
-for inclusion dependencies alone finite and unrestricted implication coincide, so the same holds for unrestricted
-implication. Completeness means that the problem is in PSPACE and that every problem in PSPACE has a
+Fix a countably infinite set of values. The problem whose input is a finite schema, a finite set $\Sigma$ of
+[inclusion dependencies](ind.md) on it and an inclusion dependency $\sigma$ on it, and which asks whether $\Sigma$
+[finitely implies](finitely-implies.md) $\sigma$ over that value domain, with [satisfaction](inclusion-dependencies-and-finite-implication.md)
+as defined there, is PSPACE-complete. Finiteness restricts the relation extents, not the supply of values, and the
+value domain matters: over a one-element domain, $R[A] \subseteq R[B]$ holds in every instance, while over the
+countably infinite domain the one-row relation $\{(0, 1)\}$ refutes it. For inclusion dependencies alone finite and
+[unrestricted](implies.md) implication coincide over this domain, so the same holds for unrestricted implication. Completeness means that the problem is in PSPACE and that every problem in PSPACE has a
 polynomial-time many-one reduction to it.
 
 ## Expansion
 
 This node states a precise result. Finite controllability relates the finite and unrestricted implication tests; the
 PSPACE lower bound is a separate reduction from acceptance of an input word by a two-tape Turing machine that runs in
-linear space (the cited textbook's Exercise 1.17). A good expansion adds a page for the PSPACE-completeness of that
+linear space (the cited textbook's Exercise 1.17). A good expansion adds a page for the PSPACE-hardness of that
 acceptance problem and for the reduction, and links them under `## Proof depends on`.
 
 ## Depends on
@@ -21,6 +23,7 @@ acceptance problem and for the reduction, and links them under `## Proof depends
 - [Polynomial-time many-one reduction](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
 - [Syntax of an inclusion dependency](ind.md)
 - [Finite implication of dependencies](finitely-implies.md)
+- [Unrestricted implication of dependencies](implies.md)
 
 ## Proof depends on
 
@@ -30,4 +33,4 @@ acceptance problem and for the reduction, and links them under `## Proof depends
 
 ## Sources
 
-- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Theorem 11.9 (p. 82), Lemma 11.10 (p. 82), Theorem 11.11 and Corollary 11.12 (p. 83), and Exercise 1.17 (p. 88).
+- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, the countably infinite set of values (p. 9), Theorem 11.9 (p. 82), Lemma 11.10 (p. 82), Theorem 11.11 and Corollary 11.12 (p. 83), and Exercise 1.17 (p. 88).
