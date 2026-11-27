@@ -18,9 +18,9 @@ If the data at time $t_{i-1}$ are generated i.i.d. from a fixed composition $x^*
 
 ## Depends on
 
-- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](../wright-fisher-diffusion-with-selection-and-mutat/k-allele-wright-fisher-generator-on-the-simplex.md)
-- [The Dirichlet law is stationary for parent-independent mutation](../wright-fisher-diffusion-with-selection-and-mutat/dirichlet-stationary-law-for-parent-independent.md)
-- [Generator of Kingman's block-counting process](../../../coalescent-theory/ancestral-lineage-counting-and-tavar-s-formula/block-counting-generator.md)
+- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](../../wright-fisher-diffusion-with-selection-and-mutat/k-allele-wright-fisher-generator-on-the-simplex.md)
+- [The Dirichlet law is stationary for parent-independent mutation](../../wright-fisher-diffusion-with-selection-and-mutat/dirichlet-stationary-law-for-parent-independent.md)
+- [Generator of Kingman's block-counting process](../../../../coalescent-theory/ancestral-lineage-counting-and-tavar-s-formula/block-counting-generator.md)
 
 ## Proof idea
 

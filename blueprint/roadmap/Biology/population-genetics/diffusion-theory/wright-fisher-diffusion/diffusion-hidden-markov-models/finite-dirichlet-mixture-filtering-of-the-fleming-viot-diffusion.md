@@ -13,8 +13,8 @@ where $L(\mathbf M) = \{\mathbf n : \mathbf n \le \mathbf m \text{ for some } \m
 
 ## Depends on
 
-- [Fleming–Viot diffusion with parent-independent mutation](../fleming-viot-processes/fleming-viot-diffusion-with-parent-independent-m.md)
-- [Dirichlet-process stationary law of the Fleming–Viot process](../fleming-viot-processes/dirichlet-process-stationary-law.md)
+- [Fleming–Viot diffusion with parent-independent mutation](../../fleming-viot-processes/fleming-viot-diffusion-with-parent-independent-m.md)
+- [Dirichlet-process stationary law of the Fleming–Viot process](../../fleming-viot-processes/dirichlet-process-stationary-law.md)
 
 ## Proof idea
 

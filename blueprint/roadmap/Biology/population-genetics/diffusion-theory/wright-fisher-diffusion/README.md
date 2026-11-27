@@ -51,3 +51,4 @@
 - [Loss of alleles and invariance of faces in the K-allele diffusion](loss-of-alleles-and-face-invariance-in-the-k-allele-diffusion.md)
 - [Laplace transform of the absorption time of the neutral Wright–Fisher diffusion](laplace-transform-of-the-absorption-time.md)
 - [Two-size Wright–Fisher model](two-size-wright-fisher-model/README.md)
+- [Diffusion hidden Markov models and filtering](diffusion-hidden-markov-models/README.md)
