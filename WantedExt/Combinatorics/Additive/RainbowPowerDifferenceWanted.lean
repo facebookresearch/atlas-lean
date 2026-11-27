@@ -9,12 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.ZMod.Basic
-public import MathlibExt.Combinatorics.Additive.RainbowPowerDifference
+public import Mathlib.Basic.Real.Basic
 public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceComponents
-public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceCycles
 public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceNegation
+public import MathlibExt.Combinatorics.Additive.RainbowPowerDifference
+public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceCycles
 
 /-! # Rainbow-free colorings for `x - y = z ^ k`
 
