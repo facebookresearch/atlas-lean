@@ -31,6 +31,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.Independence.Basic
+public import MathlibExt.Probability.Statistics.NeymanScott
 
 @[expose] public section
 
@@ -38,12 +39,6 @@ namespace WantedExt.Probability.Statistics.NeymanScottWanted
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped NNReal
-
-/-- **Gaussian log-likelihood of the pairs.** The Gaussian log-likelihood of `n` pairs
-`y i 0, y i 1` with pair means `α i` and variance `s > 0`:
-`∑_i ∑_t (-(1/2) log (2 π s) - (y_{it} - α_i)² / (2 s))`. -/
-noncomputable def logLik {n : ℕ} (y : Fin n → Fin 2 → ℝ) (α : Fin n → ℝ) (s : ℝ) : ℝ :=
-  ∑ i, ∑ t, (-(1 / 2) * Real.log (2 * Real.pi * s) - (y i t - α i) ^ 2 / (2 * s))
 
 /-- **Maximum-likelihood variance estimate.** The estimate
 `σ̂² = (1 / (4n)) ∑_i (y_{i1} - y_{i2})²`. -/
@@ -68,16 +63,6 @@ public theorem_wanted logLik_max {n : ℕ} (y : Fin n → Fin 2 → ℝ)
     logLik y α s ≤ logLik y (fun i => (y i 0 + y i 1) / 2) (mleVariance y) ∧
       (logLik y α s = logLik y (fun i => (y i 0 + y i 1) / 2) (mleVariance y) ↔
         α = (fun i => (y i 0 + y i 1) / 2) ∧ s = mleVariance y)
-
-/-- **No maximum when all pairs agree.** For `n ≥ 1` real pairs with
-`y i 0 = y i 1` for every `i`, the log-likelihood at `α_i = y i 0` is unbounded above over `s > 0`:
-for every `M` there is `s > 0` with log-likelihood greater than `M`.
-
-Sources: J. Neyman and E. L. Scott, "Consistent estimates based on partially consistent
-observations", Econometrica 16 (1948) 1–32; derived. -/
-public theorem_wanted logLik_unbounded {n : ℕ} (hn : 0 < n) (y : Fin n → Fin 2 → ℝ)
-    (heq : ∀ i, y i 0 = y i 1) (M : ℝ) :
-    ∃ s : ℝ, 0 < s ∧ M < logLik y (fun i => y i 0) s
 
 /-- **Inconsistency of the maximum-likelihood variance.** Let `μ` be a
 probability measure and `y i t`, `i ∈ ℕ`, `t ∈ {0, 1}`, independent real random variables with

@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.LucasnomialSum
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.LucasTetrahedralRecurrence
 public import MathlibExt.NumberTheory.PellNumberSequence
+public import MathlibExt.NumberTheory.LucasPolytopicNumberHasSumInvLucasBracketMulSucc
 
 /-!
 # Simplicial `d`-polytopic numbers on Lucas sequences
@@ -29,8 +30,10 @@ The bracket `{n}_{s,t}` is `lucasBracket P n` and the fibonomial `[n, k]_{s,t}` 
 `lucasnomial P n k` from `MathlibExt.NumberTheory.LucasPolytopicNumber`. The constants
 `φ_{s,t}`, `φ'_{s,t}` are the two roots of `x ^ 2 - s x - t`; in the polynomial identities
 they are any real pair with `φ + φ' = s` and `φ φ' = -t` (each identity was checked for both
-orderings), and in the series identities they are the paper's
-`φ = (s + √(s ^ 2 + 4 t)) / 2`, `φ' = (s - √(s ^ 2 + 4 t)) / 2`. The paper's `q` is
+orderings), and in the series identity they are the paper's
+`φ = (s + √(s ^ 2 + 4 t)) / 2`, `φ' = (s - √(s ^ 2 + 4 t)) / 2`. The series identity
+`hasSum_inv_lucasBracket_mul_succ` is proved in
+`MathlibExt.NumberTheory.LucasPolytopicNumberHasSumInvLucasBracketMulSucc`. The paper's `q` is
 `φ' / φ` (stated in the proof of Theorem 13), so
 `(φ^d x; q)_{d+1} = ∏_{k ≤ d} (1 - φ^{d-k} φ'^k x)`.
 -/
@@ -265,29 +268,6 @@ public theorem_wanted hasSum_pow_div_lucasBracket_two_mul (P : LucasParameters) 
             (1 - (((P.s - Real.sqrt (P.s ^ 2 + 4 * P.t)) / 2) ^ 2 / P.t) ^ (n + 1))) -
           ∑' n : ℕ, (((P.s - Real.sqrt (P.s ^ 2 + 4 * P.t)) / 2) ^ 4 / P.t ^ 2) ^ (n + 1) /
             (1 - (((P.s - Real.sqrt (P.s ^ 2 + 4 * P.t)) / 2) ^ 4 / P.t ^ 2) ^ (n + 1))))
-
-/-- **Sum of reciprocals of products of consecutive Lucas brackets.** Let $(s, t)$ be
-nondegenerate Lucas parameters with $s > 0$, $s^2 + 4t > 0$ and $|t| > 1$, write $\{n\}_{s,t}$
-for the Lucas brackets and let $\varphi = (s + \sqrt{s^2 + 4t})/2$. Then the series
-$\sum_{n \ge 1} 1/(\{n\}_{s,t}\{n+1\}_{s,t})$ converges absolutely, and its sum is
-$\varphi - (1 + t)\ln_{s,t}(1 + \varphi/t)$, where
-$\ln_{s,t}(1 + \varphi/t) = -\sum_{n \ge 1} (-\varphi/t)^n/\{n\}_{s,t}$ is the Lucas logarithm.
-
-The hypotheses $s > 0$ and $s^2 + 4t > 0$ make $\varphi$ real with $0 < |q| < 1$, where
-$q = \varphi'/\varphi$ and $\varphi' = (s - \sqrt{s^2 + 4t})/2$; and $|t| > 1$ puts $-\varphi/t$ in
-the paper's convergence range $(-|\varphi|, |\varphi|)$ of the Lucas logarithm. Without
-$|t| > 1$ the logarithm series diverges: for $s = t = 1$ its terms $(-\varphi)^n/F_n$, with $F_n$
-the Fibonacci numbers, do not tend to $0$.
-
-Source: Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.6, Theorem 13
-(`jis-2025-25.5.6-thm-13`). -/
-public theorem_wanted hasSum_inv_lucasBracket_mul_succ (P : LucasParameters) (hs : 0 < P.s)
-    (hdisc : 0 < P.s ^ 2 + 4 * P.t) (ht : 1 < |P.t|) :
-    HasSum (fun n : ℕ => 1 / (lucasBracket P (n + 1) * lucasBracket P (n + 2)))
-      ((P.s + Real.sqrt (P.s ^ 2 + 4 * P.t)) / 2 -
-        (1 + P.t) * -∑' n : ℕ, (-((P.s + Real.sqrt (P.s ^ 2 + 4 * P.t)) / 2) / P.t) ^ (n + 1) /
-          lucasBracket P (n + 1))
 
 end
 
