@@ -9,7 +9,6 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 1 of 17](part-01/README.md)
 
-- [Aldous D](part-01/aldous-d/README.md)
 - [Bernoulli MLE](part-01/bernoulli-mle/README.md)
 
 ## [Part 2 of 17](part-02/README.md)
@@ -26,7 +25,6 @@ Topics added since this subject's fields were last revised.
 
 - [Confidence Sequence](part-03/confidence-sequence/README.md)
 - [Confidence Set](part-03/confidence-set/README.md)
-- [Contagion](part-03/contagion/README.md)
 - [Continuous Tightness](part-03/continuous-tightness/README.md)
 
 ## [Part 4 of 17](part-04/README.md)
@@ -55,11 +53,9 @@ Topics added since this subject's fields were last revised.
 - [Finite Prefix](part-06/finite-prefix/README.md)
 - [Finite Prefix Geometric](part-06/finite-prefix-geometric/README.md)
 - [Finite Prefix Stopping](part-06/finite-prefix-stopping/README.md)
-- [Finite Probability](part-06/finite-probability/README.md)
 - [Finite Risk](part-06/finite-risk/README.md)
 - [Fisher Randomization](part-06/fisher-randomization/README.md)
 - [Fixed Grid Intervals](part-06/fixed-grid-intervals/README.md)
-- [Functional CLT](part-06/functional-clt/README.md)
 - [Gaussian Affine Failure](part-06/gaussian-affine-failure/README.md)
 - [Gaussian Selection](part-06/gaussian-selection/README.md)
 
@@ -68,7 +64,6 @@ Topics added since this subject's fields were last revised.
 - [Generalizability](part-07/generalizability/README.md)
 - [Generalizability Coefficients](part-07/generalizability-coefficients/README.md)
 - [Godambe Inequality](part-07/godambe-inequality/README.md)
-- [Graph Sampling](part-07/graph-sampling/README.md)
 - [Identifiability](part-07/identifiability/README.md)
 
 ## [Part 8 of 17](part-08/README.md)
@@ -76,7 +71,6 @@ Topics added since this subject's fields were last revised.
 - [Identification](part-08/identification/README.md)
 - [Information Inequality Identification](part-08/information-inequality-identification/README.md)
 - [Item Information](part-08/item-information/README.md)
-- [Item Response](part-08/item-response/README.md)
 - [Item Score](part-08/item-score/README.md)
 
 ## [Part 9 of 17](part-09/README.md)
@@ -86,12 +80,10 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 10 of 17](part-10/README.md)
 
-- [Mc Leish CLT](part-10/mc-leish-clt/README.md)
 - [Misspecified MLE](part-10/misspecified-mle/README.md)
 - [MLEConsistency](part-10/mleconsistency/README.md)
 - [MNARCounterexample](part-10/mnarcounterexample/README.md)
 - [Multinomial Totals](part-10/multinomial-totals/README.md)
-- [No Regret Equilibrium](part-10/no-regret-equilibrium/README.md)
 
 ## [Part 11 of 17](part-11/README.md)
 
@@ -106,7 +98,6 @@ Topics added since this subject's fields were last revised.
 ## [Part 12 of 17](part-12/README.md)
 
 - [Product Moments](part-12/product-moments/README.md)
-- [Random Graph](part-12/random-graph/README.md)
 
 ## [Part 13 of 17](part-13/README.md)
 
@@ -114,7 +105,6 @@ Topics added since this subject's fields were last revised.
 - [Sample Mean Squared Deviation](part-13/sample-mean-squared-deviation/README.md)
 - [Sample Moments](part-13/sample-moments/README.md)
 - [Saturated Two By Two Regression](part-13/saturated-two-by-two-regression/README.md)
-- [Scales](part-13/scales/README.md)
 - [Selection Bias](part-13/selection-bias/README.md)
 
 ## [Part 14 of 17](part-14/README.md)

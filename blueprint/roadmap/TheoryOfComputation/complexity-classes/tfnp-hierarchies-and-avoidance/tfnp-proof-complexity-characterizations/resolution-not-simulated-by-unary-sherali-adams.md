@@ -1,6 +1,6 @@
 # Resolution is not simulated by unary Sherali–Adams: low-degree simulations need exponentially large coefficients
 
-There are $n$-variate CNF formulas $F_n$ refutable by constant-width Resolution such that every Sherali–Adams refutation of $F_n$ of degree $n^{o(1)}$ uses coefficients of magnitude $\exp(n^{\Omega(1)})$. This is tight up to the exponent: a degree-$d$ SA refutation can always be chosen with integer coefficients of magnitude $\exp(n^{O(d)})$. With lifting, every SA refutation must use exponentially many monomials or exponentially large coefficients, so Resolution is not $p$-simulated by unary Sherali–Adams, although it is $p$-simulated by Sherali–Adams with arbitrary coefficients (width $w$ gives degree $w+1$).
+There are $n$-variate CNF formulas $F_n$ refutable by constant-width Resolution such that every Sherali–Adams refutation of $F_n$ of degree $n^{o(1)}$ uses coefficients of magnitude $\exp(n^{\Omega(1)})$. This is tight up to the exponent: a degree-$d$ SA refutation can always be chosen with integer coefficients of magnitude $\exp(n^{O(d)})$. With lifting, every SA refutation must use exponentially many monomials or exponentially large coefficients, so Resolution is not $p$-simulated by unary Sherali–Adams, although Sherali–Adams with arbitrary coefficients simulates width-$w$ Resolution in degree $w+1$ and, when twin variables are allowed, $p$-simulates Resolution.
 
 ## Proof sketch
 
