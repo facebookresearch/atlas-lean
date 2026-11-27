@@ -8,11 +8,12 @@ $0$ for $x = 0$. The rounding of $x$ in mode $r$ is $R_r(x / 2^e) \cdot 2^e$, wh
 to an integer in mode $r$: scale $x$ so that the last place of its $p$-bit significand, but no
 place below $2^{q_{\min}}$, is the units digit, round to an integer in the mode, and scale back.
 
-Capping $e$ below at $q_{\min}$ gives gradual underflow: below the smallest normal number
-$2^{q_{\min} + p - 1}$ the result is rounded to a multiple of $2^{q_{\min}}$, which is zero, a
-subnormal number, or $\pm 2^{q_{\min} + p - 1}$ itself. The exponent is not bounded above, so the
-result can exceed the largest finite number; in the mode to nearest and from the smallest normal
-number on, this is $\mathrm{fl}_p(x)$.
+Capping $e$ below at $q_{\min}$ gives gradual underflow. For $p \ge 1$ and
+$|x| < 2^{q_{\min} + p - 1}$, the smallest normal number, the result is a multiple of $2^{q_{\min}}$
+of absolute value at most $2^{q_{\min} + p - 1}$: zero, a subnormal number, or
+$\pm 2^{q_{\min} + p - 1}$ itself. The exponent is not bounded above, so the result can exceed the
+largest finite number; in the mode to nearest and for $|x| \ge 2^{q_{\min} + p - 1}$, this is
+$\mathrm{fl}_p(x)$.
 
 ## Sources
 

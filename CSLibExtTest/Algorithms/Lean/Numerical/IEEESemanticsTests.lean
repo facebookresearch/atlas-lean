@@ -25,7 +25,10 @@ public import Mathlib.Data.Rat.Floor
   `√-0`, products); overflow of `M + M` and `-M + -M` in each mode, `M` the largest finite
   number; and gradual underflow: half the smallest positive number of the format, `2^qmin`,
   rounds to `+0` to nearest and to `2^qmin` toward `+∞`, raising underflow and inexact, while the
-  exact tiny result `2^qmin` raises no flag.
+  exact result `2^qmin`, tiny when `p > 1`, raises no flag.
+* Below the smallest normal number `2^(qmin + p - 1)`, every mode rounds, for `p ≥ 1`, to a
+  multiple `k · 2^qmin` with `|k| ≤ 2^(p - 1)`; with `p = 0` this fails, as `1/4` rounds up to
+  `1` at `qmin = 0`.
 * With `p = 3`, `qmin = -4` and `qmax = 0`, the tiny product `(1/2) × (7/16) = 7/32` rounds to
   `1/4`, the smallest normal number, to nearest and toward `+∞`, and raises underflow and inexact,
   as tininess is detected before rounding.
@@ -63,6 +66,33 @@ example : RoundingMode.towardPositive.round 3 (-4) (3 / 16 : ℚ) = 3 / 16 := by
 -- in the normal range, rounding to nearest is `fl`
 example : RoundingMode.nearestEven.round 3 (-4) (11 / 8 : ℚ) = fl 3 (11 / 8 : ℚ) := by
   decide +kernel
+
+-- below the smallest normal number `2^(qmin + p - 1)`, for `p ≥ 1`, every mode rounds to a multiple
+-- `k · 2^qmin` with `|k| ≤ 2^(p - 1)`: zero, a subnormal number or `±2^(qmin + p - 1)`
+example {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] [FloorRing K]
+    (r : RoundingMode) {p : ℕ} (hp : 1 ≤ p) (qmin : ℤ) {x : K}
+    (hx : |x| < 2 ^ (qmin + ((p : ℤ) - 1))) :
+    ∃ k : ℤ, |k| ≤ 2 ^ (p - 1) ∧ r.round p qmin x = k * 2 ^ qmin := by
+  rcases eq_or_ne x 0 with rfl | hx0
+  · exact ⟨0, by simp, by simp [RoundingMode.round_zero]⟩
+  have hpos := two_zpow_pos (K := K) qmin
+  have hlog : Int.log 2 |x| < qmin + ((p : ℤ) - 1) :=
+    (Int.lt_zpow_iff_log_lt (b := 2) (by norm_num) (abs_pos.2 hx0)).1 (by simpa using hx)
+  have he : max (ulpExp p x) qmin = qmin := max_eq_right (by unfold ulpExp; omega)
+  refine ⟨r.roundInt (x / 2 ^ qmin), r.abs_roundInt_le ?_, by rw [RoundingMode.round, he]⟩
+  rw [abs_div, abs_of_pos hpos, div_le_iff₀ hpos]
+  have h2 : (2 : K) ^ (qmin + ((p : ℤ) - 1)) = 2 ^ (p - 1) * 2 ^ qmin := by
+    rw [← zpow_natCast, ← zpow_add₀ two_ne_zero]
+    congr 1
+    push_cast [Nat.cast_sub hp]
+    ring
+  push_cast
+  rw [← h2]
+  exact hx.le
+
+-- the hypothesis `p ≥ 1` is needed: with `p = 0` and `qmin = 0`, `1/4` is below `2^(qmin + p - 1)`
+-- but rounds up to `1`
+example : RoundingMode.towardPositive.round 0 0 (1 / 4 : ℚ) = 1 := by decide +kernel
 example (x : ℝ) (h : (-4 : ℤ) ≤ ulpExp 3 x) :
     RoundingMode.nearestEven.round 3 (-4) x = fl 3 x :=
   RoundingMode.round_nearestEven_eq_fl h
@@ -311,7 +341,8 @@ example (z : Bool) : roundResult F .towardPositive ((2 : ℝ) ^ (F.qmin - 1)) z 
     simp [hne]
     omega
 
--- the smallest positive number of the format itself is exact: no flag, although it is tiny
+-- the smallest positive number of the format itself is exact, so it raises no flag; it is tiny
+-- when `p > 1` and the smallest normal number when `p = 1`
 example (r : RoundingMode) (z : Bool) : roundResult F r ((2 : ℝ) ^ F.qmin) z =
     (.finite false _ (two_zpow_pos F.qmin).le (isFloatIn_min F), {}) := by
   have hr : r.round F.prec F.qmin ((2 : ℝ) ^ F.qmin) = 2 ^ F.qmin := by
