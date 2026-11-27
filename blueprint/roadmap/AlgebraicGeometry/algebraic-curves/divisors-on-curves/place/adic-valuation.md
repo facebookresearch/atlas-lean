@@ -1,0 +1,3 @@
+# Valuation attached to a place
+
+Let $K \subseteq F$ be fields, more precisely a field $F$ with a $K$-algebra structure, and let $v$ be a place of $F$ over $K$, with valuation ring $\mathcal{O}_v \subseteq F$: a discrete valuation ring containing the image of $K$ and different from $F$. The valuation of $v$ is the adic valuation on $F$ of the maximal ideal $\mathfrak{m}_v$ of $\mathcal{O}_v$, with values in $\{0\} \cup \{e^n : n \in \mathbb{Z}\}$ written multiplicatively: a nonzero $f$ is sent to $e^{-n}$, where $n$ is the exponent of $\mathfrak{m}_v$ in $f$, so a uniformizer has value $e^{-1}$, units of $\mathcal{O}_v$ have value $1$, and $0$ is sent to $0$.
