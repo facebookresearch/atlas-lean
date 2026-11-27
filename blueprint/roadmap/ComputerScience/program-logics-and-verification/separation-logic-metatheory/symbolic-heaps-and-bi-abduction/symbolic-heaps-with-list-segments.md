@@ -1,0 +1,7 @@
+# Symbolic heaps with list segments
+
+Expressions are $E ::= \mathit{nil} \mid x$. Pure formulas $\Pi$ are conjunctions of equations $E = E'$ and disequations $E \ne E'$; spatial formulas $\Sigma$ are separating conjunctions of simple spatial formulas $E \mapsto E'$ and $\mathrm{ls}(E, E')$, with $\mathrm{emp}$ the empty one; a *symbolic heap* is a pair $\Pi \mid \Sigma$. States are pairs of a stack $s$, mapping variables to values, and a heap $h$, a finite partial function from l-values to values, where $\mathit{nil}$ is a value that is not an l-value. $E \mapsto E'$ holds when $h$ is the single cell at $E$ holding $E'$; $\mathrm{emp}$ holds when $h$ is empty; $\ast$ splits the heap into disjoint parts; and $\mathrm{ls}(E_1, E_2)$ holds when $\mathrm{ls}^n(E_1, E_2)$ holds for some $n$, where $\mathrm{ls}^0(E_1, E_2)$ holds when $E_1$ and $E_2$ denote the same value and the heap is empty, and $\mathrm{ls}^{n+1}(E_1, E_2)$ holds when $E_1 \ne E_2$ and $E_1 \mapsto x \ast \mathrm{ls}^n(x, E_2)$ holds for some value of a fresh $x$. Thus a list segment is acyclic and its end $E_2$ is dangling. An *entailment* $\Pi \mid \Sigma \vdash \Pi' \mid \Sigma'$ is *valid* if every state satisfying the antecedent satisfies the consequent.
+
+## Sources
+
+- J. Berdine, C. Calcagno and P. W. O'Hearn, "A decidable fragment of separation logic", *FSTTCS 2004*, LNCS 3328, Springer, 2004, pp. 97–109; extended version <https://jberdine.github.io/pub/2004_fsttcs.pdf>, Section 2 and Table 1.
