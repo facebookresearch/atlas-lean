@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.InfiniteRieselRepintegers
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 public import MathlibExt.NumberTheory.RieselRepdigit101
 public import MathlibExt.NumberTheory.SierpinskiRepinteger18107
+public import MathlibExt.NumberTheory.SierpinskiRieselRepdigitsInfiniteSierpinskiRepdigits
 
 /-!
 # Further results on Sierpiński and Riesel repdigits, repintegers and repstrings
@@ -54,18 +55,6 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.6
 (`integers-2026-A12-thm-3-6`). -/
 public theorem_wanted isRieselNumber_repstring_18107 {t : ℕ} (ht : t ≡ 31 [MOD 56]) :
     IsRieselNumber (repstring 2 18107 0 t)
-
-/-- **Infinitely many Sierpiński repdigits in every base $b > 78557$.** Let $b > 78557$ be a
-natural number. Then there are infinitely many Sierpiński numbers of the form $k(b^t - 1)/(b - 1)$
-with $1 \le k < b$ and $t \ge 1$, that is, $b$-repdigits: the digit $k$ written $t$ times in
-base $b$.
-
-Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
-Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Corollary 3.7
-(`integers-2026-A12-cor-3-7`). -/
-public theorem_wanted infinite_sierpinski_repdigits {b : ℕ} (hb : 78557 < b) :
-    {N : ℕ | ∃ k t : ℕ, 1 ≤ k ∧ k < b ∧ 1 ≤ t ∧ N = repstring b k 0 t ∧
-      IsSierpinskiNumber N}.Infinite
 
 /-- **Repdigits with digit 41 that are Sierpiński numbers.** Let $b$ and $t$ be natural numbers
 with $b \equiv 87 \pmod{11184810}$ and $t \equiv 59 \pmod{120}$. Then the base-$b$ repdigit

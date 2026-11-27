@@ -37,7 +37,9 @@ inductive Behavior (Label : Type v) where
   | reacts (trace : Cslib.ωSequence Label)
   | goesWrong (trace : List Label)
 
-/-- The behavior set of a configuration; final and stuck configurations stay existential. -/
+/-- The behaviors of `c`: `terminates μs` when an execution from `c` with trace `μs` reaches a
+final configuration, `reacts μs` when an infinite execution from `c` has labels `μs`, and
+`goesWrong μs` when an execution from `c` with trace `μs` reaches a stuck configuration. -/
 def Beh {Config : Type u} {Label : Type v} (S : OpSem Config Label) (c : Config) :
     Set (Behavior Label) :=
   {b | match b with
