@@ -44,7 +44,9 @@ set_option autoImplicit false
 /-- q_l = ⌊2^t π_l⌋/2^t -/
 noncomputable def dyadicTrunc {L : Type*} (π : L → ℝ) (t : ℕ) (l : L) : ℝ := (⌊(2 : ℝ) ^ t * π l⌋₊ : ℝ) / 2 ^ t
 
-/-- leftover mass routed to reject -/
+/-- The leftover `1 - ∑ l, dyadicTrunc π t l`. For a probability vector `π` (nonnegative entries
+summing to `1`) it is the mass that truncation routes to reject; for other `π` it is only this
+difference. -/
 noncomputable def dyadicLeftover {L : Type*} [Fintype L] (π : L → ℝ) (t : ℕ) : ℝ := 1 - ∑ l, dyadicTrunc π t l
 
 /-- The leftover mass equals the sum of the per-label truncation errors. -/
