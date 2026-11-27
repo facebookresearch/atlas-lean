@@ -1,12 +1,12 @@
 # Leftover hashing from concentrated conditional entropy
 
-For bit strings $a, x$ of length $N$ let $ax$ be their product in $\mathrm{GF}(2^N)$ (in a fixed representation), let $z|_\lambda$ be the first $\lfloor \lambda \rfloor$ bits of a string $z$, let $\|$ be concatenation, and let $\mathrm{Ext}_\lambda(x, a) = (ax)|_\lambda \,\|\, a$. Let $P_{XY}$ be a joint law on finite sets $\mathcal{X} \times \mathcal{Y}$ with $\mathcal{X} \subseteq \{0,1\}^n$, let $(X_1, Y_1), \dots, (X_k, Y_k)$ be i.i.d. according to $P_{XY}$, and let $A$ be uniform on $\{0,1\}^{kn}$ and independent of them (so $N = kn$ in $\mathrm{Ext}$). Let $\varepsilon \in (0, 1)$ with $k > \log_2(1/\varepsilon)$, and put
+For bit strings $a, x$ of length $N$ let $ax$ be their product in $\mathrm{GF}(2^N)$ (in a fixed representation), let $z|_\lambda$ be the first $\max(\lfloor \lambda \rfloor, 0)$ bits of a string $z$, let $\|$ be concatenation, and let $\mathrm{Ext}_\lambda(x, a) = (ax)|_\lambda \,\|\, a$. Let $P_{XY}$ be a joint law on finite sets $\mathcal{X} \times \mathcal{Y}$ with $\mathcal{X} \subseteq \{0,1\}^n$, let $(X_1, Y_1), \dots, (X_k, Y_k)$ be i.i.d. according to $P_{XY}$, and let $A$ be uniform on $\{0,1\}^{kn}$ and independent of them (so $N = kn$ in $\mathrm{Ext}$). Let $\varepsilon \in (0, 1)$ with $k > \log_2(1/\varepsilon)$, and put
 
 $$
 \lambda = k\,H(X \mid Y) - 8 \log_2|\mathcal{X}|\,\sqrt{k \log_2(1/\varepsilon)}.
 $$
 
-Then the joint law of $\big(\mathrm{Ext}_\lambda(X_1 \| \cdots \| X_k,\ A),\ Y_1 \| \cdots \| Y_k\big)$ is within statistical distance $\varepsilon$ of $U \times P_Y^{k}$, where $U$ is an independent uniform bit string of length $\lfloor \lambda \rfloor + kn$.
+Then the joint law of $\big(\mathrm{Ext}_\lambda(X_1 \| \cdots \| X_k,\ A),\ Y_1 \| \cdots \| Y_k\big)$ is within statistical distance $\varepsilon$ of $U \times P_Y^{k}$, where $U$ is an independent uniform bit string of length $\max(\lfloor \lambda \rfloor, 0) + kn$.
 
 ## Proof sketch
 

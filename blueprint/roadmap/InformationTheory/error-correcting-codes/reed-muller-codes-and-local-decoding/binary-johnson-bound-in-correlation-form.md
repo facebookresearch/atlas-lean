@@ -1,6 +1,6 @@
 # Binary Johnson bound in sign-correlation form
 
-Read binary words of length $n$ as $\pm 1$ vectors, with sign correlation $\langle f, g \rangle = \sum_{i=1}^{n} (-1)^{f_i}(-1)^{g_i}$, so that $\langle f, g\rangle = n - 2\Delta(f, g)$ for the Hamming distance $\Delta$. Let $w$ be a word and $c_1, \dots, c_s$ distinct words with $\langle c_i, c_j \rangle \le \beta n$ for all $i \ne j$ and $\langle c_i, w \rangle \ge \alpha n$ for all $i$, where $\alpha^2 > \beta$. Then
+Read binary words of length $n$ as $\pm 1$ vectors, with sign correlation $\langle f, g \rangle = \sum_{i=1}^{n} (-1)^{f_i}(-1)^{g_i}$, so that $\langle f, g\rangle = n - 2\Delta(f, g)$ for the Hamming distance $\Delta$. Let $w$ be a word and $c_1, \dots, c_s$ distinct words with $\langle c_i, c_j \rangle \le \beta n$ for all $i \ne j$ and $\langle c_i, w \rangle \ge \alpha n$ for all $i$, where $\alpha \ge 0$ and $\alpha^2 > \beta$. Then
 
 $$s \le \frac{1 - \beta}{\alpha^2 - \beta}.$$
 
