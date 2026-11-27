@@ -76,7 +76,7 @@ the observed nodes of `Y` take their values in `v` after the intervention `do(X 
 observed nodes of `X`, all other nodes, latent or observed, summed out (`x` and `y` are the values
 of `v` on `X` and `Y`). The intervention is the surgery `BayesNet.mutilateSet`, which replaces the
 table of each node of `X` by the point mass at its value in `v`: the submodel `M_x` of Shpitser
-and Pearl (AAAI 2006, Definition 2). -/
+and Pearl (AAAI 2006, pp. 1220–1221). -/
 noncomputable def BayesNet.doMarginal (b : BayesNet α n) (L : Finset (Fin n))
     (X Y : Finset {i : Fin n // i ∉ L}) (v : {i : Fin n // i ∉ L} → α) : ℝ :=
   MetaMathlibExt.FiniteWeight.marginal

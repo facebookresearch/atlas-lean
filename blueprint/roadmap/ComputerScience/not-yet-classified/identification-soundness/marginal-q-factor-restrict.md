@@ -6,6 +6,6 @@ such that every parent in `H` of a node of `A`, in the latent projection, lies i
 `H ∩ Y ⊆ A`. Then at every observed assignment `v`, the sum of the Q-factor `Q[H]` over the
 values of the nodes of `H ∖ Y` equals the sum of `Q[A]` over the values of the nodes of
 `A ∖ Y`, the other nodes fixed at their values in `v`. This justifies lines 2 and 3 of ID
-(Shpitser and Pearl, AAAI 2006, Lemmas 4 and 5) through Lemma 3 of Tian and Pearl's technical
+(Shpitser and Pearl, AAAI 2006, Lemmas 5 and 6) through Lemma 3 of Tian and Pearl's technical
 report R-290-L, with no semi-Markovian hypothesis; the source proves line 3 by rule 3 of the
 do-calculus instead.

@@ -34,7 +34,7 @@ import Mathlib.Tactic.FinCases
   `P_{X = 1}(Y = 1) = 17 / 32`, the value computed from the network's tables by the surgery
   definition alone (`fd_doMarginal_true`, `fd_ID_eval_true`).
 * The bow graph `X → Y`, `X ↔ Y` with a latent common cause (the bow arc graph of Shpitser and
-  Pearl, AAAI 2006, Theorem 1): `ADMG.ID` fails at line 5 with the pair `(O, O ∖ {X})`, so
+  Pearl, AAAI 2006, Theorem 2): `ADMG.ID` fails at line 5 with the pair `(O, O ∖ {X})`, so
   `BayesNet.ID_sound` has no instance there. Nothing is claimed about failure outputs; the
   non-identification of this one query is the separate test
   `LatentConfounding.not_identifiedOn_bow`.
@@ -797,7 +797,7 @@ private theorem ids_aux_obs_cases (u : Obs) : u = xNode ∨ u = yNode := by
 /-! ### Failure on the bow graph -/
 
 /-- On the bow graph `X → Y`, `X ↔ Y` (`U = 0` latent; the bow arc graph of Shpitser and Pearl,
-AAAI 2006, Theorem 1), `ID` for `P_x(y)` passes lines 1–4 (none of their guards holds) and fails
+AAAI 2006, Theorem 2), `ID` for `P_x(y)` passes lines 1–4 (none of their guards holds) and fails
 at line 5 with the pair `(O, O ∖ {X})`. -/
 theorem bow_ID_eq_error :
     bow.ID (BayesNet.obsOrder ({0} : Finset (Fin 3))) {yNode} {xNode} =

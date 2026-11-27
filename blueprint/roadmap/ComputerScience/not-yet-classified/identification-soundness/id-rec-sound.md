@@ -9,4 +9,4 @@ against the observed law, to the Q-factor `Q[D]` at every observed assignment. I
 assignment `v`, `e` evaluates to the sum of `Q[D ∖ X]` over the values of the nodes of
 `(D ∖ X) ∖ Y`: the effect of `do(X)` on `Y` in the sub-model on `D`. Nothing is claimed when
 `idRec` fails. This is the induction behind Theorem 5 of Shpitser and Pearl (AAAI 2006), with
-their Lemmas 3–6 for the recursive calls.
+their Lemmas 4, 5, 6 and 8 for the recursive calls.

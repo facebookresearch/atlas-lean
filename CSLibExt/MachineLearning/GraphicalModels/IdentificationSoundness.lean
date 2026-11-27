@@ -55,24 +55,27 @@ assignment.
 ## Hypotheses and scope
 
 * `σ` is a topological order of the latent projection (the source's `π`), `X` and `Y` are
-  disjoint (part of the source's definition of the effect, Definition 3), and the observed law is
-  strictly positive at every assignment. The source asks only that every conditioning event it
-  uses have positive probability, so the hypothesis here is stronger. Without positivity, or
-  without a topological order, the conclusion fails. For the chain `X → Y` in which `X` is
-  constant, `ADMG.ID` returns `P(y | x)`, which evaluates to `0` (real division by `0`) at the
-  other value of `X`, while `P_x(y)` is the table entry of `Y` at `x`, which need not be `0`. For
-  the chain `X → Y` with a fair `X` and `σ` listing `Y` before `X`, line 6 returns `P(y)` in place
-  of `P(y | x)`, which differs from `P_x(y)` whenever `Y` depends on `X`.
+  disjoint (part of the source's definition of the effect, Definition 2), and the observed law is
+  strictly positive at every assignment. The source (p. 1220) does not assume a positive law; it
+  asks for two conditions instead: every conditioning event it uses has positive probability, and
+  `P(x | Pa(X) ∖ X) > 0` for every action `do(x)` it considers, without which `P_x` is not well
+  defined. Strict positivity of the observed law implies both, so the hypothesis here is
+  stronger. Without positivity, or without a topological order, the conclusion fails. For the
+  chain `X → Y` in which `X` is constant, `ADMG.ID` returns `P(y | x)`, which evaluates to `0`
+  (real division by `0`) at the other value of `X`, while `P_x(y)` is the table entry of `Y` at
+  `x`, which need not be `0`. For the chain `X → Y` with a fair `X` and `σ` listing `Y` before
+  `X`, line 6 returns `P(y)` in place of `P(y | x)`, which differs from `P_x(y)` whenever `Y`
+  depends on `X`.
 * All variables, latent or observed, take values in one finite type `α`; the source allows a
   finite domain for each variable.
 * `BayesNet.ID_sound` holds for every finite network with latent set `L` whose latent projection
   is the input graph, with no semi-Markovian hypothesis. `BayesNet.ID_sound_of_mem_tianClass`
   specializes it to `tianClass`, whose extra condition (no latent node a descendant of an
   observed node) is Tian and Pearl's 2002 semi-Markovian hypothesis (AAAI-02, p. 568). The
-  models of the AAAI 2006 source satisfy it, since their background variables are exogenous
-  (Definition 1). The stronger normal form in which each latent node is a root with exactly two
-  observed children is the convention of Tian and Pearl's technical report R-290-L (p. 6), not
-  of the AAAI 2006 source.
+  models of the AAAI 2006 source satisfy it, since their unobservable variables, distributed by
+  `P(U)`, are not determined by any other variable (p. 1220). The stronger normal form in which
+  each latent node is a root with exactly two observed children is the convention of Tian and
+  Pearl's technical report R-290-L (p. 6), not of the AAAI 2006 source.
 * Failure outputs carry no claim. When `ADMG.ID` returns `.error (F, F')` (line 5), nothing is
   stated: neither that `(F, F')` is a hedge nor that `P_x(y)` is not identified. Completeness
   (Theorem 6 and Corollary 2 of the source) is not formalized; the test file shows a run that
@@ -82,7 +85,7 @@ assignment.
 
 Every line is justified by c-component (Q-factor) factorization alone, through the identities of
 `CComponentFactorization` (Tian and Pearl 2002, and Lemmas 3 and 4 of its companion technical
-report R-290-L); no rule of the do-calculus is used. The source proves line 3 (Lemma 5) by rule 3
+report R-290-L); no rule of the do-calculus is used. The source proves line 3 (Lemma 6) by rule 3
 of the do-calculus; here line 3 is the ancestral marginalization
 `BayesNet.marginal_qFactor_of_ancestral` inside `D ∖ X`.
 
@@ -90,12 +93,17 @@ of the do-calculus; here line 3 is the ancestral marginalization
 
 * I. Shpitser and J. Pearl, *Identification of Joint Interventional Distributions in Recursive
   Semi-Markovian Causal Models*, Proceedings of the Twenty-First National Conference on
-  Artificial Intelligence (AAAI-06), AAAI Press (2006), 1219–1226; UCLA Cognitive Systems
-  Laboratory technical report R-327. The result is Theorem 5 with Lemmas 2–6 (pp. 5–6 of the
-  report): Lemma 2 (termination), Lemma 3 (line 4), Lemma 4 (line 2), Lemma 5 (line 3), Lemma 6
-  (line 7), and the base cases of lines 1 and 6 in the proof of Theorem 5. Definition 1 and the
-  paragraph after it (p. 2) fix finite domains and the positivity convention; Definition 3
-  (p. 3) defines the identifiability of an effect.
+  Artificial Intelligence (AAAI-06), AAAI Press (2006), 1219–1226. Locators in this file use the
+  numbering of these proceedings. The result is Theorem 5 (p. 1225) with Lemmas 3–8 (p. 1224):
+  Lemma 3 (termination), Lemma 4 (line 4), Lemma 5 (line 2), Lemma 6 (line 3), Lemma 7 (line 6)
+  and Lemma 8 (line 7); the proof of Theorem 5 adds the base case of line 1. The causal model,
+  finite domains, the positivity convention and the submodel `M_x` are set out in prose on
+  pp. 1220–1221; Definition 2 (p. 1221) defines the identifiability of an effect, and Theorem 2
+  (p. 1221) is the bow arc graph. The UCLA Cognitive Systems Laboratory technical report R-327
+  of the same paper numbers differently: its Definitions 1–3 are the causal model, the submodel
+  and identifiability, its Theorem 1 is the bow arc graph, and its Lemmas 2–6 (pp. 5–6) cover
+  termination and lines 4, 2, 3 and 7, with line 6 in the proof of Theorem 5. Fig. 3 and
+  Theorem 5 agree in both.
 * I. Shpitser and J. Pearl, *Identification of Conditional Interventional Distributions*,
   Proceedings of the Twenty-Second Conference on Uncertainty in Artificial Intelligence
   (UAI-06), AUAI Press (2006), 437–444; technical report R-329. Section 4 (pp. 3–4) restates the
@@ -198,7 +206,7 @@ private theorem ancCut_closed {D X Y : Finset V} {u w : V} (huw : G.dir u w) (hu
 
 omit [Fintype V] in
 /-- No bidirected edge joins a c-component of `G[H]` (Shpitser and Pearl, AAAI 2006,
-Definition 4) to the rest of `H`. -/
+Definition 3) to the rest of `H`. -/
 private theorem not_adj_of_mem_cComponentsIn {H S : Finset V} (hS : S ∈ G.cComponentsIn H)
     {u w : V} (hu : u ∈ S) (hw : w ∈ H \ S) : ¬ G.bidir.Adj u w := by
   classical
@@ -252,7 +260,7 @@ such that every parent in `H` of a node of `A`, in the latent projection, lies i
 `H ∩ Y ⊆ A`. Then at every observed assignment `v`, the sum of the Q-factor `Q[H]` over the
 values of the nodes of `H ∖ Y` equals the sum of `Q[A]` over the values of the nodes of
 `A ∖ Y`, the other nodes fixed at their values in `v`. This justifies lines 2 and 3 of ID
-(Shpitser and Pearl, AAAI 2006, Lemmas 4 and 5) through Lemma 3 of Tian and Pearl's technical
+(Shpitser and Pearl, AAAI 2006, Lemmas 5 and 6) through Lemma 3 of Tian and Pearl's technical
 report R-290-L, with no semi-Markovian hypothesis; the source proves line 3 by rule 3 of the
 do-calculus instead. -/
 theorem marginal_qFactor_restrict {H A Y : Finset {i : Fin n // i ∉ L}} (hAH : A ⊆ H)
@@ -304,7 +312,7 @@ theorem marginal_qFactor_restrict {H A Y : Finset {i : Fin n // i ∉ L}} (hAH :
 values in a finite nonempty type, with latent node set `L`, a set `H` of observed nodes and an
 observed assignment `v`, the Q-factor `Q[H](v)` is the product of the Q-factors `Q[S](v)` over
 the c-components `S` of the subgraph of the latent projection induced on `H`. This is line 4 of
-ID (Shpitser and Pearl, AAAI 2006, Lemma 3), with no semi-Markovian hypothesis. -/
+ID (Shpitser and Pearl, AAAI 2006, Lemma 4), with no semi-Markovian hypothesis. -/
 theorem qFactor_eq_prod_cComponentsIn (H : Finset {i : Fin n // i ∉ L})
     (v : {i : Fin n // i ∉ L} → α) :
     b.qFactor L H v = ∏ S ∈ (b.latentProjection L).cComponentsIn H, b.qFactor L S v := by
@@ -327,8 +335,8 @@ projection, let `S` be a c-component of the subgraph of the projection induced o
 observed nodes, and let `P` be an expression that evaluates, against the observed law, to the
 Q-factor `Q[D]` at every observed assignment. Then at every observed assignment `v` of positive
 observed probability, the conditional chain of `P` over `S` along `σ` inside `D` (lines 6 and 7
-of ID) evaluates to `Q[S](v)`. This is Lemma 6 and the base case of Theorem 5 of Shpitser and
-Pearl (AAAI 2006), through Lemma 1 of Tian and Pearl (2002) applied in the subgraph on `D`. -/
+of ID) evaluates to `Q[S](v)`. This covers Lemmas 7 and 8 of Shpitser and Pearl (AAAI 2006),
+through Lemma 1 of Tian and Pearl (2002) applied in the subgraph on `D`. -/
 theorem condChain_eval_qFactor
     {σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L})}
     (hσ : ∀ ⦃u w⦄, (b.latentProjection L).dir u w → σ u < σ w)
@@ -430,7 +438,7 @@ against the observed law, to the Q-factor `Q[D]` at every observed assignment. I
 assignment `v`, `e` evaluates to the sum of `Q[D ∖ X]` over the values of the nodes of
 `(D ∖ X) ∖ Y`: the effect of `do(X)` on `Y` in the sub-model on `D`. Nothing is claimed when
 `idRec` fails. This is the induction behind Theorem 5 of Shpitser and Pearl (AAAI 2006), with
-their Lemmas 3–6 for the recursive calls. -/
+their Lemmas 4, 5, 6 and 8 for the recursive calls. -/
 theorem idRec_sound
     {σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L})}
     (hσ : ∀ ⦃u w⦄, (b.latentProjection L).dir u w → σ u < σ w)
@@ -922,7 +930,7 @@ the observed nodes of a latent set `L`, with a topological order `σ`, and let `
 disjoint sets of observed nodes. If the ID algorithm, run on `G` with the order `σ`, returns an
 expression, then the effect `P_x(y)` is identified from the observed law on `tianClass L G`: any
 two networks of that class with the same observed law have the same effect at every observed
-assignment (the identifiability of Shpitser and Pearl, AAAI 2006, Definition 3). -/
+assignment (the identifiability of Shpitser and Pearl, AAAI 2006, Definition 2). -/
 theorem identifiedOn_doMarginal_of_ID_eq_ok {G : ADMG {i : Fin n // i ∉ L}}
     {σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L})}
     (hσ : ∀ ⦃u w⦄, G.dir u w → σ u < σ w)
