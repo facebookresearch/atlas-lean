@@ -16,6 +16,8 @@ Single-source and all-pairs shortest paths: Dijkstra, Bellman-Ford, DAG relaxati
 - [Total float of an activity](total-float.md)
 - [Slack and the critical path of a project network](slack-and-the-critical-path.md)
 - [Zero slack at both endpoints does not make an activity critical](slack-eq-zero-total-float-eq-one.md)
+- [Dijkstra's Algorithm and Priority-Queue Costs](dijkstra-priority-queue-costs/README.md)
+- [Negative Triangles and the (min,+) Product](negative-triangle-reductions/README.md)
 
 ## Related topics
 
