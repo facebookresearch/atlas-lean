@@ -7,12 +7,14 @@ $$dX_t = -\int \mathbb{N}\, \hat w(X_{t-}; z)\, \mu(dt \times dz),$$
 which is the pathwise version of the chemical master equation; write $F(x) = -\mathbb{N} w(x)$ for the drift of the reaction-rate ODE $\dot x = F(x)$. Fix a weight vector $l > 0$ with $\min_i l_i = 1$ and $\|x\|_l = l^{\mathsf T} x$.
 
 **Assumptions.** For $x, y \in \mathbb{Z}_+^D$, with $A, B, \beta_1, L > 0$, $\beta_2 \ge 0$ and $\alpha, M, \mu$ of any sign:
+
 1. *(bounded growth)* $-l^{\mathsf T}\mathbb{N} w(x) \le A + \alpha \|x\|_l$;
 2. *(absolutely bounded growth)* $(-l^{\mathsf T}\mathbb{N})^2 w(x)/2 \le B + \beta_1 \|x\|_l + \beta_2\|x\|_l^2$ (square taken entrywise);
 3. *(local Lipschitz)* $(\mathbf{1}^{\mathsf T}\mathbb{N}^2)\,|w(x) - w(y)| \le L(1 + \|x + y\|_1)\|x - y\|$;
 4. *(one-sided Lipschitz)* $(x - y, F(x) - F(y)) \le (M + \mu\|x+y\|_1)\|x - y\|^2$.
 
 **Theorem.**
+
 1. *(Moments.)* Under 1–2, for every integer $p \ge 1$, $\mathbb{E}\|X_t\|_l^p \le (\|X_0\|_l^p + 1)e^{Ct} - 1$ with $C$ depending on the constants and $p$; under 1 alone, $\mathbb{E}\|X_t\|_l \le \|X_0\|_l e^{\alpha_+ t} + A(e^{\alpha_+ t} - 1)/\alpha_+$ with $\alpha_+ = \alpha \vee 0$.
 2. *(Existence.)* Under 1–2 with $\beta_2 = 0$, if $\|X_0\|_l^p$ is integrable then the solution has $p$ finite moments on bounded time intervals; if $\beta_2 > 0$ the same holds when $\|X_0\|_l^{p+1}$ is integrable.
 3. *(Uniqueness.)* Under 1–4, two coupled paths with the same initial state coincide.

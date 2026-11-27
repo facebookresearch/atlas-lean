@@ -13,10 +13,11 @@ $$f_d(t) = \frac{1}{2\pi}\Big[\frac1t\frac{d}{dt}\Big(t\frac{d}{dt}\log M_d(t)\B
 $f_d$ is decreasing, $f_d(1/t) = t^2 f_d(t)$, and $E(2,d) = 2\int_0^1 f_d$. In the frequency variable the density $g_d(y) = f_d\big(\frac{y}{1-y}\big)(1-y)^{-2}$ is symmetric, $g_d(y) = g_d(1-y)$.
 
 **Theorem.**
+
 1. $f_d(t) \le \min\Big\{\dfrac{\sqrt{d-1}}{2\pi t},\ \dfrac{d-1}{\pi}\Big\}$ for $t \ge 0$.
 2. $\sqrt{d-1} \lesssim E(2,d) \lesssim \sqrt{d-1}\,\ln(d-1)$, and
 
-$$\lim_{d\to\infty}\frac{\ln E(2,d)}{\ln(d-1)} = \frac12.$$
+    $$\lim_{d\to\infty}\frac{\ln E(2,d)}{\ln(d-1)} = \frac12.$$
 
 For $d \ge 3$ the explicit bounds $\frac{d-1}{\pi\sqrt{2d-3}} = 2f_d(1) \le E(2,d) \le \frac{\sqrt{d-1}}{\pi}\big(1 + \ln 2 + \tfrac12\ln(d-1)\big)$ are the case $\alpha = 0$, $n = d-1$ of [Expected number of real roots of random polynomials from multiplayer games](expected-number-of-real-roots-of-random-polynomials-from-multiplayer-games.md), since $E(2,d)$ is half the expected number of real roots of $\sum_k \beta_k\binom{d-1}{k}t^k$; the stability count $SE(2,d) = E(2,d)/2$ is on [Expected number of internal equilibria in random multi-player multi-strategy games](expected-number-of-internal-equilibria-in-random-multi-player-multi-strategy-games.md).
 

@@ -10,9 +10,9 @@ $$\sum_{i=1}^k\operatorname{cost}(\mathcal B_i)\le 2nk-C_1k\sqrt n\quad\text{(no
 
 **Lower bound.** Let $M\ge10n^2\log n$ and $k\le\frac1{10}\sqrt{\log M/\log\log M}$. For strands without homopolymers there is an absolute constant $c_1<\infty$ such that, with probability at least $1-c_1/M$, every partition into $k$ equal batches has total cost at least $2nk-c_1k\sqrt{n\log k}$. For unconstrained strands with $M\le e^n$ there is an absolute constant $c_2>0$ such that, with probability at least $1-c_2^{-1}/M$, every such partition has total cost at least $2.5nk+c_2\sqrt{n\log M}$.
 
-**Consequence.** For unconstrained strands $\operatorname{cost}(\mathcal S)=2.5nk+\Theta(\sqrt{n\log M})$, so batching only removes a factor $k$ from the deviation term of a random partition; without homopolymers $2nk-c_1k\sqrt{n\log k}\le\operatorname{cost}(\mathcal S)\le2nk-C_1k\sqrt n$, so the cost falls *below* the main term by a deviation of order $k\sqrt n$ up to $\sqrt{\log k}$.
+**Consequence.** For $k$ and $M$ in the ranges of both bounds ($3\le k\le\frac1{10}\sqrt{\log M/\log\log M}$ and $M\ge10n^2\log n$, with $M\le e^n$ for unconstrained strands), with probability $1-O(1/M)$: for unconstrained strands $\operatorname{cost}(\mathcal S)=2.5nk+\Theta(\sqrt{n\log M})$, so batching only removes a factor $k$ from the deviation term of a random partition; without homopolymers $2nk-c_1k\sqrt{n\log k}\le\operatorname{cost}(\mathcal S)\le2nk-C_1k\sqrt n$, so the cost falls *below* the main term by a deviation of order $k\sqrt n$ up to $\sqrt{\log k}$.
 
-## Depends on
+## Proof depends on
 
 - [Reverse reference strand symmetry of DNA synthesis cost](reverse-reference-strand-symmetry-of-synthesis-cost.md)
 
@@ -22,4 +22,4 @@ For a single batch the periodic reference $(ACGT)^*$ prints a random strand at a
 
 ## Sources
 
-- Konstantin Makarychev, Miklos Z. Racz, Cyrus Rashtchian and Sergey Yekhanin, "Batch Optimization for DNA Synthesis", IEEE Transactions on Information Theory 68 (2022), 7454–7470, <https://doi.org/10.1109/tit.2022.3184903>; numbering as in arXiv:2011.14532: Theorem 1.2 (upper bounds), Theorem 1.3 (lower bounds), Appendix D (single-batch bounds) and Appendix F (multi-batch upper bounds).
+- Konstantin Makarychev, Miklos Z. Racz, Cyrus Rashtchian and Sergey Yekhanin, "Batch Optimization for DNA Synthesis", IEEE Transactions on Information Theory 68 (2022), 7454–7470, <https://doi.org/10.1109/tit.2022.3184903>; numbering as in arXiv:2011.14532: Theorem 1.2 (upper bounds), Theorem 1.3 (lower bounds), Section 3 (single-batch bounds, Theorems 3.1–3.6) and Section 5 (multi-batch upper bound, Lemma 5.1).

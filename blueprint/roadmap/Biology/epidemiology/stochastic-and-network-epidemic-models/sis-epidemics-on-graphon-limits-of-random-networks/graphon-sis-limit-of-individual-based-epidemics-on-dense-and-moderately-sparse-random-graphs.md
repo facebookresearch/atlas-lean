@@ -22,10 +22,6 @@ $$\partial_tu(t,x)=(1-u(t,x))\int_{\mathbb{X}}u(t,y)\,w(x,y)\,\mu(dy)-\gamma(x)u
 
 Moreover, there is a coupling with an epidemic on the complete graph with infection rate $w^{(n)}_Iw^{(n)}_E$ such that $\mathbb{E}\sup_{t\le T}\|\eta^{(n)}_t-\tilde\eta^{(n)}_t\|_{TV}\le C_T\,\mathcal{I}_n(w^{(n)}_I\wedge1)$.
 
-## Depends on
-
-- [Functional law of large numbers for infection-age SIR on heterogeneous random graphs](../infection-age-sir-on-heterogeneous-random-graphs/functional-law-of-large-numbers-for-infection-age-sir-on-heterogeneous-random-graphs.md)
-
 ## Expansion
 
 On the complete graph with infection rate $w^{(n)}_Ew^{(n)}_I$ per pair, the infection pressure on node $i$ is $\frac1n\sum_jw^{(n)}(x_i,x_j)\mathbf{1}_{E_j=I}$, which converges to the integral term, and standard martingale and tightness arguments give the integro-differential limit. The random graph replaces the deterministic rate $w_Ew_I$ by the random rate $\mathbf{1}_{\{i\sim j\}}w_I$ with the same mean; the coupling thins or adds infection events edge by edge, and the probability that the two epidemics differ at a given infection attempt is bounded by $w_I\wedge1$, giving the total-variation bound. When degrees stay bounded this error does not vanish, which is why very sparse graphs need a different (local, not mean-field) limit.

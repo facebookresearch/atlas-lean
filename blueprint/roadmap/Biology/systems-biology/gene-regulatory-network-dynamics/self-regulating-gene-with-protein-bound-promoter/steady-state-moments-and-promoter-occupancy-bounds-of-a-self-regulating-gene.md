@@ -9,12 +9,13 @@ with $\lambda, \psi, \theta, \mu > 0$ and $\tilde\lambda \ge 0$ ($\lambda > \til
 1. **Flux balance.** For $n \ge 1$, $\mu n\,\mathbb{P}(X=(n,1)) + \mu(n-1)\,\mathbb{P}(X=(n,0)) = \lambda\,\mathbb{P}(X=(n-1,1)) + \tilde\lambda\,\mathbb{P}(X=(n-1,0))$, and promoter switching balances: $\theta\,\mathbb{P}(A=0) = \psi\,\mathbb{E}[N\mathbf{1}_{A=1}]$.
 2. **First moments.**
 
-$$\mathbb{E}[N] = \mathbb{P}(A=0)\Bigl(1 + \frac{\tilde\lambda}{\mu}\Bigr) + \mathbb{P}(A=1)\frac{\lambda}{\mu}, \qquad \mathbb{E}[N\mathbf{1}_{A=1}] = \mathbb{P}(A=0)\frac{\theta}{\psi},$$
+    $$\mathbb{E}[N] = \mathbb{P}(A=0)\Bigl(1 + \frac{\tilde\lambda}{\mu}\Bigr) + \mathbb{P}(A=1)\frac{\lambda}{\mu}, \qquad \mathbb{E}[N\mathbf{1}_{A=1}] = \mathbb{P}(A=0)\frac{\theta}{\psi},$$
 
-so that $\min(\lambda, \tilde\lambda + \mu)/\mu \le \mathbb{E}[N] \le \max(\lambda, \tilde\lambda+\mu)/\mu$.
+    so that $\min(\lambda, \tilde\lambda + \mu)/\mu \le \mathbb{E}[N] \le \max(\lambda, \tilde\lambda+\mu)/\mu$.
+
 3. **Promoter occupancy.** If $\tilde\lambda = \lambda$, the protein number is Poisson in both states and $\mathbb{P}(A=1) = \mu\theta/(\mu\theta + \lambda\psi)$. In general
 
-$$\frac{\mu\theta}{\mu\theta + \max(\lambda,\tilde\lambda)\,\psi} \le \mathbb{P}(A=1) \le \frac{\mu\theta}{\mu\theta + \min(\lambda,\tilde\lambda)\,\psi} .$$
+    $$\frac{\mu\theta}{\mu\theta + \max(\lambda,\tilde\lambda)\,\psi} \le \mathbb{P}(A=1) \le \frac{\mu\theta}{\mu\theta + \min(\lambda,\tilde\lambda)\,\psi} .$$
 
 All higher moments of $N$ and $N\mathbf{1}_{A=1}$ are affine functions of $\mathbb{P}(A=1)$, given by explicit recursions in the moment order.
 

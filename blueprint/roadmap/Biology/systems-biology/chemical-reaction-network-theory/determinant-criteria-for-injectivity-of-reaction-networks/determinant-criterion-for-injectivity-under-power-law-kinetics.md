@@ -13,6 +13,7 @@ $$\tilde{f}_K(c) = \big(\omega^1\cdot c,\dots,\omega^d\cdot c,\ (AK(c))_{d+1},\d
 A steady state $c$ is degenerate iff $\ker J_c(AK) \cap \operatorname{im}(A) \ne \{0\}$, iff $\det J_c(\tilde{f}_K) = 0$.
 
 **Theorem (Jacobian criterion).** For fixed kinetic order $V$, the following are equivalent:
+
 1. $A$ is injective over all power-law kinetics $(\kappa, V)$ with $\kappa \in \mathbb{R}^m_{>0}$;
 2. $\det J_c(\tilde{f}_{\kappa,V}) \ne 0$ for all $c \in \mathbb{R}^n_{>0}$ and $\kappa \in \mathbb{R}^m_{>0}$.
 

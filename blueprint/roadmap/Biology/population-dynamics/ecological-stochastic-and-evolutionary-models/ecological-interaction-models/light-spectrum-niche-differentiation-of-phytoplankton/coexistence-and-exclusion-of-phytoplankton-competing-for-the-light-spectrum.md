@@ -13,6 +13,7 @@ $$I(\lambda,x,t) = I_{\rm in}(\lambda)\exp\Big[-K_{BG}(\lambda)x - \sum_j k_j(\l
 **Coexistence.** Let $\mu_u = \mu\big(D_2,\alpha_2,f_2(x,\int_0^x\tilde{u}_1,0)\big)$ and $\mu_v = \mu\big(D_1,\alpha_1,f_1(x,0,\int_0^x\tilde{u}_2)\big)$ be the invasion eigenvalues. If $\mu_u < 0$ and $\mu_v < 0$, the system is uniformly persistent ($\liminf_{t\to\infty}\min_i\int_0^L u_i \ge \delta_0 > 0$ independently of initial data) and has a locally asymptotically stable coexistence equilibrium.
 
 **Niche differentiation index.** Define $\mathcal{I}_S(k_1,k_2) = \|k_1 - k_2\|_{L^1}/(\|k_1\|_{L^1} + \|k_2\|_{L^1}) \in [0,1]$.
+
 - If $\mathcal{I}_S = 1$ (disjoint absorption spectra), condition (P) alone implies the coexistence conclusions, since each species is then invisible to the other's light.
 - If $\mathcal{I}_S = 0$ (identical spectra), with $f_1 = f_2$ and $d_1 = d_2$: for $D_1 = D_2$ and $\alpha_1 < \alpha_2$ species 1 excludes species 2; for $D_1 < D_2$ and $\alpha_1 = \alpha_2 \ge [f_1(L,0,0) - d_1]L$ (strong sinking) the faster diffuser wins; in each case exclusion holds from all initial data, and other advection regimes can favor the slower diffuser instead.
 

@@ -9,6 +9,7 @@ which is exactly the condition under which an NNI preserves the $A_k$-alignment.
 **Theorem.** $A_k(T) = A_k(\widetilde T)$ if and only if $\widetilde T$ can be obtained from $T$ (up to isomorphism) by a finite series of $k$-problematic moves.
 
 **Corollaries.**
+
 - If $n \ge 2k+1$ and $A_k(T) = A_k(\widetilde T)$, then $T$ and $\widetilde T$ have exactly the same cherries.
 - Problematic moves exist only when $n \le 2k+2$, so for $n \ge 2k+3$ the $A_k$-alignment determines the tree; for $n < 2k$ all trees share the empty alignment.
 

@@ -5,6 +5,7 @@
 An *internal subtree* of $T$ is a subtree all of whose edges are internal (non-pendant). The **snowflake** is the 6-leaf tree with a central vertex whose three neighbors each have two further neighbors; the **3-star** is the tree with one center and three leaves.
 
 **Theorem.** Let $T$ be a binary phylogenetic tree.
+
 1. $T$ is defined by a set of at most three characters if and only if $T$ has no internal subtree isomorphic to the snowflake.
 2. $T$ is defined by a set of at most two characters if and only if $T$ has no internal subtree isomorphic to the 3-star, i.e. if and only if $T$ is a caterpillar.
 

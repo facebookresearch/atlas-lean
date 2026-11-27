@@ -11,6 +11,7 @@ $$\alpha^* = \sup_n \frac{\beta_n}{\gamma_n}, \qquad \mathcal{R}_0 = \frac{\Lamb
 Assume that $\alpha^*$ is approached by initially present variants ($I^0_{n_k} > 0$ with $\beta_{n_k}/\gamma_{n_k} \to \alpha^*$) and that the sequences $(\gamma_n)$ and $(\beta_n/\gamma_n)$ have finite $\omega$-limit sets.
 
 **Theorem.**
+
 1. *(Well-posedness.)* The system has a unique global classical solution in $C^1([0,\infty); \mathbb{R}\times\ell^1_+)$ depending continuously on the initial data.
 2. *(Extinction.)* If $\mathcal{R}_0 < 1$, or $\mathcal{R}_0 = 1$ (under the finite-$\omega$-limit assumption), then $\sum_n I_n(t) \to 0$.
 3. *(Persistence.)* If $\mathcal{R}_0 > 1$, then $S(t) \to 1/\alpha^*$ and:
@@ -18,9 +19,9 @@ Assume that $\alpha^*$ is approached by initially present variants ($I^0_{n_k} >
    - if no variant attains $\alpha^*$, then every $I_n(t) \to 0$ while $\liminf_t \sum_n I_n(t) > 0$: the infection persists by escaping to ever-fitter variants, and any family of variants with fitness bounded away from $\alpha^*$ dies out.
 4. *(Selection of the recovery rate.)* Let $\gamma^*$ be the largest limit of $\gamma_{n_k}$ along subsequences with $\beta_{n_k}/\gamma_{n_k} \to \alpha^*$. If every variant has $\beta_n/\gamma_n < \alpha^*$ and the initial mass near fitness $\alpha^*$ puts a uniformly positive fraction on $\gamma_n \ge \gamma^* - \varepsilon$, then
 
-$$\lim_{t\to\infty}\sum_n I_n(t) = \frac{\theta}{\alpha^*\gamma^*}(\mathcal{R}_0 - 1),$$
+    $$\lim_{t\to\infty}\sum_n I_n(t) = \frac{\theta}{\alpha^*\gamma^*}(\mathcal{R}_0 - 1),$$
 
-and variants with $\sup_k \gamma_{n_k} < \gamma^*$ vanish: among near-optimal variants, the fastest-recovering ones win.
+    and variants with $\sup_k \gamma_{n_k} < \gamma^*$ vanish: among near-optimal variants, the fastest-recovering ones win.
 
 ## Expansion
 

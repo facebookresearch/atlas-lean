@@ -15,6 +15,15 @@ $$\mathfrak R_0 = \left(\frac{\alpha\gamma + \sigma}{\delta + \sigma}\right)\fra
 
 If $\mathfrak R_0 < 1$, the disease-free equilibrium $(n,0,0,0)$ is locally asymptotically stable and no endemic equilibrium exists in the feasible region. If $\mathfrak R_0 > 1$, the disease-free equilibrium is unstable and the unique endemic equilibrium is locally asymptotically stable.
 
+## Depends on
+
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+
+## Proof depends on
+
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+- [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+
 ## Expansion
 
 With the infected compartments $(E, I)$, the next-generation matrices at the disease-free state are $F = \begin{pmatrix}\alpha\beta & \beta\\ 0 & 0\end{pmatrix}$ and $V = \begin{pmatrix}\sigma + \delta & 0\\ -\sigma & \gamma\end{pmatrix}$, and $\mathfrak R_0 = \rho(FV^{-1})$. Reading the formula: an exposed individual spends mean time $1/(\sigma+\delta)$ in $E$, infecting at rate $\alpha\beta$, and with probability $\sigma/(\sigma+\delta)$ becomes infectious and then infects at rate $\beta$ for mean time $1/\gamma$; the sum is $\frac{\beta}{\sigma+\delta}\big(\alpha + \frac{\sigma}{\gamma}\big)$. Waning immunity makes the endemic state an equilibrium rather than a transient, so herd immunity in this model means a stable endemic level, not eradication. Local stability of the endemic equilibrium follows from the Routh–Hurwitz conditions on the reduced three-dimensional system.

@@ -12,15 +12,19 @@ With $|\xi_0| = 1$ and $I_\infty^{(N)}$ the set of vertices ever infected, the f
 1. If $\lambda\beta < 0.21$ or $(2\beta - 1)\lambda < \kappa$, then $(|I_\infty^{(N)}|)_N$ is tight; in particular the process is subcritical.
 2. If
 
-$$
-\frac{\lambda\beta}{1 + 2\kappa + \lambda} > \sqrt{1 - \frac{\kappa(\lambda + \kappa)\bigl(1 - e^{-\beta\lambda/(\kappa + \lambda)}\bigr)}{(1+\kappa)(1 + 2\kappa + \lambda)}},
-$$
+    $$
+    \frac{\lambda\beta}{1 + 2\kappa + \lambda} > \sqrt{1 - \frac{\kappa(\lambda + \kappa)\bigl(1 - e^{-\beta\lambda/(\kappa + \lambda)}\bigr)}{(1+\kappa)(1 + 2\kappa + \lambda)}},
+    $$
 
-the process is supercritical; in particular $\lambda\beta > 1 + 2\kappa + \lambda$ suffices.
+    the process is supercritical; in particular $\lambda\beta > 1 + 2\kappa + \lambda$ suffices.
 
 **Statement (non-adaptive).** For $\kappa$ large enough, the process is subcritical (with tight $|I_\infty^{(N)}|$) if $\lambda\beta < 1$ and supercritical if $\lambda\beta > 1$.
 
-So adaptation moves the phase transition: in the non-adaptive model the threshold for fast rewiring is the mean-field value $\lambda\beta \approx 1$, independent of $\kappa$, while in the adaptive model the critical value of $\lambda\beta$ grows linearly in $\kappa$, with slope between $1/2$ and $2$ by the bounds above.
+So adaptation moves the phase transition: in the non-adaptive model the threshold for fast rewiring is the mean-field value $\lambda\beta \approx 1$, independent of $\kappa$, while in the adaptive model the bounds above place any critical value of $\lambda\beta$ between about $(\kappa+\lambda)/2$ and $1 + 2\kappa + \lambda$, which suggests (but does not prove) that it grows linearly in $\kappa$.
+
+## Proof depends on
+
+- [Galton–Watson extinction criterion](../../../../Probability/branching-processes/galton-watson-process/extinction-prob-eq-one-iff.md)
 
 ## Expansion
 

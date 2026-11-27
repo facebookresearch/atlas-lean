@@ -3,6 +3,7 @@
 **Setting.** A semi-directed phylogenetic network on leaf set $X$ is a partially directed graph obtained from a rooted network by suppressing the root and the orientation of tree edges; directed edges point into reticulation (hybridization) vertices. It is *level-1* if every blob (2-edge-connected component) contains at most one reticulation, i.e. cycles are vertex-disjoint. A *quarnet* is the semi-directed network induced on four leaves; a *quarnet-split* $a_1a_2 \mid b_1b_2$ records a split of the quarnet's tree-of-blobs. A bipartition $A \mid B$ of $X$ is a *split* of the network if it is induced by a cut-edge.
 
 **Theorem.**
+
 1. *(Splits from quarnet-splits.)* For a non-trivial partition $A \mid B$ and any $a_1 \in A$, $b_1 \in B$: $A \mid B$ is a split of the network iff $a_1a_2 \mid b_1b_2$ is a quarnet-split for all $a_2 \in A \setminus \{a_1\}$, $b_2 \in B \setminus \{b_1\}$.
 2. *(Tree of blobs.)* From quarnet-splits, the tree-of-blobs of any semi-directed network on $n$ leaves can be reconstructed in $O(n^3)$ time using $O(n^3)$ quarnet-splits.
 3. *(Level-1 networks.)* For a binary semi-directed level-1 network on $n \ge 4$ leaves:

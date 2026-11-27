@@ -11,10 +11,11 @@ and
 $$\frac{(A_n, C_n) - n(\nu,\mu)}{\sqrt n} \xrightarrow{d} \mathcal{N}\big((0,0), S\big), \qquad S = \frac{1-\alpha}{(3-2\alpha)^2(5-4\alpha)}\begin{pmatrix} \dfrac{-24\alpha^3 + 96\alpha^2 - 135\alpha + 69}{4(7-4\alpha)} & -\dfrac{(2-\alpha)(1-2\alpha)}{2} \\[1ex] -\dfrac{(2-\alpha)(1-2\alpha)}{2} & 2-\alpha \end{pmatrix}.$$
 
 **Corollary.**
+
 1. For $0 \le \alpha < 1$, $A_n / C_n \to 1/2$ almost surely.
 2. $A_n/n \to (1-\alpha)/(2(3-2\alpha))$, which decreases strictly from $1/6$ (Yule) to $0$ (comb) as $\alpha$ goes from $0$ to $1$.
 3. The limiting variance $\tau^2$ of $A_n/\sqrt n$ decreases strictly from $23/420$ to $0$ on $[0,1]$.
-4. The limiting covariance of $(A_n,C_n)/\sqrt n$ is negative for $\alpha < 1/2$, zero at $\alpha = 1/2$ (asymptotic independence under the uniform model) and positive for $\alpha > 1/2$.
+4. The limiting covariance of $(A_n,C_n)/\sqrt n$ is negative for $\alpha < 1/2$, zero at $\alpha = 1/2$ (asymptotic independence under the uniform model), positive for $1/2 < \alpha < 1$, and zero at $\alpha = 1$, where $S = 0$.
 
 ## Expansion
 

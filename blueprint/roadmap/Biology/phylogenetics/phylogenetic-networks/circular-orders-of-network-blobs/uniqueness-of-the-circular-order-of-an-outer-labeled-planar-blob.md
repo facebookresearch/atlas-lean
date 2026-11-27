@@ -1,6 +1,6 @@
 # Uniqueness of the circular order of an outer-labeled planar blob
 
-**Setting.** A *blob* of a phylogenetic network is a maximal 2-edge-connected (biconnected) subgraph with at least one cycle; its *articulation nodes* are the nodes where the rest of the network (pendant subnetworks carrying taxa) attaches. A graph $G$ is *outer-labeled planar* for a vertex subset $V_0$ if it has a planar embedding with every vertex of $V_0$ on the outer face (the frontier). The frontier of such an embedding visits the vertices of $V_0$ in a cyclic sequence, the induced *circular order* of $V_0$.
+**Setting.** A *blob* of a phylogenetic network is a maximal biconnected subgraph (one with no cut node) containing at least one cycle; its *articulation nodes* are the nodes where the rest of the network (pendant subnetworks carrying taxa) attaches. A graph $G$ is *outer-labeled planar* for a vertex subset $V_0$ if it has a planar embedding with every vertex of $V_0$ on the outer face (the frontier). The frontier of such an embedding visits the vertices of $V_0$ in a cyclic sequence, the induced *circular order* of $V_0$.
 
 **Theorem.** Let $G$ be an undirected biconnected graph that is outer-labeled planar for $V_0 \subseteq V(G)$. Then the frontiers of all planar embeddings of $G$ with $V_0$ on the frontier induce the same circular order of $V_0$ (up to reversal). Consequently, every outer-labeled planar blob of a phylogenetic network has a unique circular order of its articulation nodes, the one induced by any outer-labeled planar embedding of the blob.
 

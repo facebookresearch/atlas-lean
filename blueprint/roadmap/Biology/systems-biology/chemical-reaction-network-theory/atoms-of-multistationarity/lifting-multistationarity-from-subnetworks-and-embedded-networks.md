@@ -5,10 +5,16 @@
 **Theorem (subnetworks).** Let $N$ be a subnetwork of $G$ with the same stoichiometric subspace, $\bar S_N = \bar S_G$, and fix a parametrized family of kinetics (e.g. mass action). If $N$ admits multiple nondegenerate positive steady states, so does $G$, and at least as many when $N$ has finitely many; the same holds for multiple exponentially stable positive steady states. In particular multistationarity lifts when irreversible reactions are made reversible, and from a sub-CFSTR to a fully open CFSTR.
 
 **Theorem (embedded networks).** Let $N$ be an embedded network of $G$ such that
+
 1. $\bar S_N = \mathbb{R}^{|\mathscr{S}_N|}$ (full-dimensional), and
 2. every species of $G$ not in $N$ has a mass-action flow-type subnetwork in $G$.
 
 If $N$ admits multiple nondegenerate positive mass-action steady states (resp. multiple exponentially stable ones), so does $G$, and at least as many when finitely many. In particular, if $N$ is an embedded CFSTR of a fully open CFSTR $G$ (a network containing all inflow and outflow reactions $0 \rightleftarrows X_i$), multistationarity of $N$ lifts to $G$.
+
+## Depends on
+
+- [Stoichiometric subspace](../../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
 ## Expansion
 

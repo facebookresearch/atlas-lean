@@ -9,15 +9,17 @@ recorded on leaf pairs.
 **Background (Kalmanson).** A metric $\delta$ on a finite set is the distance of some weighted circular split system if and only if, for some circular ordering, every $i < j < k < l$ satisfies $\delta(i,j) + \delta(k,l) \le \delta(i,k) + \delta(j,l)$ and $\delta(i,l) + \delta(j,k) \le \delta(i,k) + \delta(j,l)$.
 
 **Theorem.**
+
 1. *(Facets.)* With $[i,j] = \{i, \dots, j\}$, the facets of $EDC_{KN_n}$ are given by
 
-$$\delta(1,i) \le \delta(1,i+1),\qquad \delta(i,n) \le \delta(i-1,n) \qquad (i \in [2, n-1]),$$
+    $$\delta(1,i) \le \delta(1,i+1),\qquad \delta(i,n) \le \delta(i-1,n) \qquad (i \in [2, n-1]),$$
 
-$$\delta(i-1, i+1) \le \delta(i-1,i) + \delta(i, i+1) \qquad (i \in [2, n-1]),$$
+    $$\delta(i-1, i+1) \le \delta(i-1,i) + \delta(i, i+1) \qquad (i \in [2, n-1]),$$
 
-$$\delta(i,j) + \delta(i-1, j+1) \le \delta(i, j+1) + \delta(i-1, j) \qquad (i < j \in [2, n-1]),$$
+    $$\delta(i,j) + \delta(i-1, j+1) \le \delta(i, j+1) + \delta(i-1, j) \qquad (i < j \in [2, n-1]),$$
 
-the left, right, triangle and covering inequalities.
+    the left, right, triangle and covering inequalities.
+
 2. *(Faces.)* For every rooted circular split system $N$ on these leaves, $EDC_N$ is a face of $EDC_{KN_n}$, and every face of $EDC_{KN_n}$ is of this form.
 3. *(Ehrhart theory.)* The polytope $PEDC_n = EDC_{KN_n} \cap \{\delta : \delta(1,n) \le 1\}$ is affinely isomorphic, preserving the vertex lattice, to the Chan–Robbins–Yuen polytope $CRY_n$ (a face of the Birkhoff polytope); hence the two have the same Ehrhart series and normalized volume, $\mathrm{Vol}(CRY_n) = \prod_{i=1}^{n-2} \mathrm{Cat}(i)$.
 

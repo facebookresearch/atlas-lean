@@ -14,6 +14,7 @@ where $f,h\ge0$ are Lipschitz incidence functions covering bilinear, Beddington-
 $$\lambda:=-c_2+\int_0^\infty\!\!\int_0^1 f(x,y,0)\,\mu^*(dx)\,\hat\mu(dy)+\int_0^\infty\!\!\int_0^1 x\,h(x,y,0)\,\mu^*(dx)\,\hat\mu(dy).$$
 
 **Statements.**
+
 1. The filter $(\Pi_t)$ is a Markov-Feller process on probability measures on $[0,1]$ with a unique invariant measure $\Phi^*$ whose barycenter is $\mu^*$; $(S,I,\Pi)$ is a strong Markov Feller process with $S,I>0$ for all time when $I(0)>0$.
 2. *(Extinction.)* If $\lambda<0$, then for all positive initial data $\limsup_{t\to\infty}\frac{\ln I(t)}{t}=\lambda$ almost surely, and $S(t)$ converges weakly to the disease-free process $\varphi$.
 3. *(Permanence.)* If $\lambda>0$, the system is permanent in mean.
@@ -25,4 +26,4 @@ By Itô's formula, $\frac{\ln I(t)}{t}=\frac{\ln I(0)}{t}+\frac{\sigma_2B_2(t)}{
 
 ## Sources
 
-- Nguyen Du, Alexandru Hening, Nhu Nguyen and George Yin, "Hybrid stochastic epidemic SIR models with hidden states", Nonlinear Analysis: Hybrid Systems 49 (2023), 101368, <https://doi.org/10.1016/j.nahs.2023.101368>; numbering as in arXiv:2201.06708: Section 2 (Propositions 2.1-2.2 and threshold (eq-lambda)), Theorems 3.1-3.6, Propositions 4.1-4.3.
+- Nguyen Du, Alexandru Hening, Nhu Nguyen and George Yin, "Hybrid stochastic epidemic SIR models with hidden states", Nonlinear Analysis: Hybrid Systems 49 (2023), 101368, <https://doi.org/10.1016/j.nahs.2023.101368>; numbering as in arXiv:2201.06708: Section 3 (Propositions 3.1–3.2 and the threshold (3.6)), Theorems 4.1–4.6, Propositions 5.1–5.3.

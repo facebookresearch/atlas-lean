@@ -23,7 +23,6 @@ so the stationary distributions concentrate, in the limit $n \to \infty$ followe
 ## Depends on
 
 - [Lyapunov concentration of stationary distributions of pairwise interaction network models](lyapunov-concentration-of-stationary-distributions-on-totally-mixing-networks.md)
-- [Endemic limit of every SIS solution](../../sis-epidemic-model/tendsto-infected-endemic.md)
 
 ## Expansion
 

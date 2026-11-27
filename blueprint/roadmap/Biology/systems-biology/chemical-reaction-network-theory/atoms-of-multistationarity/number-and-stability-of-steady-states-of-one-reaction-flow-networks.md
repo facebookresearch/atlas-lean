@@ -11,11 +11,13 @@ $$a_+ = \sum_{\operatorname{sgn}(i) = 1} a_i, \qquad a_- = \sum_{\operatorname{s
 After rescaling, the positive steady states correspond, with multiplicity, to the roots in an interval $(0,k_-)$ of the one-variable Gale dual equation $g(y) = h(y) - \kappa y$, where $h(y) = \prod_i (\operatorname{sgn}(i)\,y + k_i)^{a_i}$ for positive parameters $k_i, \kappa$.
 
 **Theorem (number of steady states, irreversible case).** For all positive rate constants:
+
 1. if $a_+ = 0$, there is exactly one positive steady state, and it is nondegenerate;
 2. if $a_- = 0$ and $a_+ > 0$, there are at most two positive nondegenerate steady states if $a_+ > 1$ and at most one if $a_+ = 1$;
 3. if $a_+ > 0$ and $a_- > 0$, there are at most three positive steady states if $a_+ > 1$ and exactly one otherwise; three occur exactly when $h'$ has a root $\xi \in (0,k_-)$, $h''$ has a root $y^* \in (0,\xi)$, and the tangent line to $h$ at $y^*$ is non-positive at $0$.
 
 **Theorem (stability).**
+
 1. Some rate constants give at least one asymptotically stable positive steady state.
 2. If $a_+ > 1$ and $a_- = 0$, some rate constants give one asymptotically stable and one unstable positive steady state.
 3. If $a_+ > 1$ and $a_- > 0$, some rate constants give two asymptotically stable and one unstable positive steady state (bistability).
@@ -25,6 +27,7 @@ After rescaling, the positive steady states correspond, with multiplicity, to th
 ## Depends on
 
 - [Multistationarity of fully open networks with one non-flow reaction](../multistationarity-of-fully-open-networks/multistationarity-of-fully-open-networks-with-one-non-flow-reaction.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
 ## Expansion
 
@@ -32,4 +35,4 @@ The steady-state system has $n$ equations in $n$ unknowns but only $n+2$ distinc
 
 ## Sources
 
-- Elisenda Feliu and Martin Helmer, "Multistationarity and Bistability for Fewnomial Chemical Reaction Networks", Bulletin of Mathematical Biology 81 (2018), 1089–1121, <https://doi.org/10.1007/s11538-018-00555-z>; numbering as in arXiv:1807.02991: Proposition 2.3, Theorems 3.4–3.6 and 3.13, Propositions 3.8–3.10 (Section 3), Propositions 4.4–4.6 and Theorem 4.9 (Section 4).
+- Elisenda Feliu and Martin Helmer, "Multistationarity and Bistability for Fewnomial Chemical Reaction Networks", Bulletin of Mathematical Biology 81 (2019), 1089–1121, <https://doi.org/10.1007/s11538-018-00555-z>; numbering as in arXiv:1807.02991: Proposition 2.3, Theorems 3.4–3.6 and 3.13, Propositions 3.8–3.10 (Section 3), Propositions 4.4–4.6 and Theorem 4.9 (Section 4).

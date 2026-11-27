@@ -1,6 +1,7 @@
 # Unique LCAs in DAGs and pre-k-ary clustering systems
 
 **Setting.** Let $G$ be a directed acyclic graph (a model of a phylogenetic network) with leaf set $X$ (vertices of out-degree $0$), ancestor order $x \preceq y$ ($y$ is an ancestor of $x$), and cluster $\mathcal C(v) = \{x \in X : x \preceq v\}$ of each vertex; $\mathscr C_G = \{\mathcal C(v)\}$ is its clustering system. A **least common ancestor** of $Y \subseteq V(G)$ is a $\preceq$-minimal common ancestor of $Y$; write $\mathrm{lca}(Y)$ when there is exactly one. For $k \ge 2$ let $X^{(k)}$ be the nonempty subsets of $X$ of size at most $k$. $G$ has the
+
 - **$\mathrm{lca}$-property** if $\mathrm{lca}(A)$ is defined for every nonempty $A \subseteq X$;
 - **$k$-$\mathrm{lca}$-property** if $\mathrm{lca}(U)$ is defined for every $U \in X^{(k)}$;
 - **strong $k$-$\mathrm{lca}$-property** if it has the $\mathrm{lca}$-property and every $\mathrm{lca}(A)$ equals $\mathrm{lca}(U)$ for some $U \in X^{(k)}$.
@@ -8,10 +9,11 @@
 For a set system $\mathscr C$ on $X$, the closure is $\mathrm{cl}(A) = \bigcap\{C \in \mathscr C : A \subseteq C\}$; $\mathscr C$ is **pre-$k$-ary** if $\mathrm{cl}(U) \in \mathscr C$ for all $U \in X^{(k)}$, and a **$k$-weak hierarchy** if any $k+1$ members $A_1, \dots, A_{k+1}$ have $\bigcap_i A_i = \bigcap_{i \ne j} A_i$ for some $j$ (for $k = 2$, the weak hierarchies of Bandelt–Dress). A $k$-ary transit function $R$ is **monotone** if $W \subseteq R(U)$ implies $R(W) \subseteq R(U)$.
 
 **Theorem.**
+
 1. If $G$ has the $k$-$\mathrm{lca}$-property, then $R_G(U) = \mathcal C(\mathrm{lca}(U))$ is a monotone $k$-ary transit function equal to the canonical function $R_{\mathscr C_G}(U) = \mathrm{cl}(U)$, and $\mathscr C_G$ is pre-$k$-ary.
 2. A clustering system $\mathscr C$ is pre-$k$-ary if and only if $\mathscr C = \mathscr C_G$ for some DAG $G$ with the $k$-$\mathrm{lca}$-property (e.g. its Hasse diagram).
 3. A $k$-ary transit function $R$ is monotone if and only if there is a DAG $G$ with the $k$-$\mathrm{lca}$-property, $\mathscr C_G = \mathscr C_R$ and $R_{\mathscr C_G} = R$.
-4. $G$ has the strong $k$-$\mathrm{lca}$-property if and only if $G$ has the $\mathrm{lca}$-property and $\mathscr C_G$ is a $k$-weak hierarchy. A refinement (the strict $k$-$\mathrm{lca}$-property: every vertex is the LCA of some $U \in X^{(k)}$ and clusters determine vertices) corresponds exactly to $\mathscr C_G$ being a $k$-ary $\mathscr T$-system, the set systems identified by $k$-ary transit functions.
+4. $G$ has the strong $k$-$\mathrm{lca}$-property if and only if $G$ has the $\mathrm{lca}$-property and $\mathscr C_G$ is a $k$-weak hierarchy. For $G$ with the $k$-$\mathrm{lca}$-property, the *strict $k$-$\mathrm{lca}$-property* requires (CL), that $\mathrm{lca}(\mathcal C(v))$ is defined for every vertex $v$, and that for every vertex $w$ there is $U \in X^{(k)}$ with $\mathrm{lca}(\mathcal C(w)) = \mathrm{lca}(U)$; it holds exactly when $\mathscr C_G$ is a $k$-ary $\mathscr T$-system, the set systems identified by $k$-ary transit functions.
 
 For $k = 2$ this recovers the characterization of strong lca-networks by weak hierarchies; general $k$ allows LCAs spanned by up to $k$ leaves.
 

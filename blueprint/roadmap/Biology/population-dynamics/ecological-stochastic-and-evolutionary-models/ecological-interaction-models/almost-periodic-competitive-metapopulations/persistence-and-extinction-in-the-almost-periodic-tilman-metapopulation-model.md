@@ -17,6 +17,7 @@ is the unique positive almost periodic solution of the first equation. The inter
 **Theorem (one species).** If $\mathcal{R}_0 < h$, then $p_1$ is strongly persistent and $|p_1(t) - p^*_{1,1}(t)| \to 0$ exponentially fast; if $\mathcal{R}_0 > h$ the species goes extinct exponentially fast.
 
 **Theorem (two species, $\mathcal{M}[c_1] < \mathcal{M}[c_2]$).** Every positive solution converges exponentially to one of four almost periodic regimes:
+
 1. (Coexistence.) If $\max\{\mathcal{R}_0, \mathcal{R}^*_{1,1}\} < h$, there is a unique positive almost periodic solution $(p^*_{1,1}, p^*_{2,1})$, globally exponentially attractive.
 2. (Best competitor persists.) If $\mathcal{R}_0 < h < \mathcal{R}^*_{1,1}$, solutions converge to $(p^*_{1,1}, 0)$.
 3. (Fugitive species persists.) If $\mathcal{R}_1 < h < \mathcal{R}_0$, solutions converge to $(0, p^*_{2,3})$, the almost periodic Levins equilibrium of species $2$ alone.

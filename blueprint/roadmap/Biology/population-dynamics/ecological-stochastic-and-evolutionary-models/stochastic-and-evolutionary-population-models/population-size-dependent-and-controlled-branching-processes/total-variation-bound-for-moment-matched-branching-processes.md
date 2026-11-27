@@ -7,9 +7,10 @@ $$z\,m(z)=\widetilde m\,\phi(z),\qquad z\,\sigma^2(z)=\widetilde\sigma^2\,\phi(z
 A PSDBP matching a given DCBP exists if and only if $\widetilde\sigma^2\phi(z)/z\ge d(z)(1-d(z))$ for all $z\ge1$, where $d(z)$ is the fractional part of $\widetilde m\,\phi(z)/z$ (an integer-valued law with mean $\mu$ has variance at least $\{\mu\}(1-\{\mu\})$).
 
 Assume, with $\widetilde\rho=\mathbb E|\widetilde\xi-\widetilde m|^3$ and $\rho(x)=\mathbb E|\xi(x)-m(x)|^3$:
+
 - (C1) $\phi(x)\ge hx$ for all $x\ge1$, for some $h>0$;
 - (C2) $\widetilde\rho\vee\rho(x)\le R$ for all $x\ge1$;
-- (C3) for some $\eta>0$, each $\xi(x)$ puts mass at least $2\eta$ on two consecutive integers, and so does $\widetilde\xi$.
+- (C3) for some $\eta>0$, every $x\ge1$ has an $n_x\ge1$ with $\mathbb P(\xi(x)=n_x)\wedge\mathbb P(\xi(x)=n_x-1)\ge2\eta$, and some $n\ge1$ has $\mathbb P(\widetilde\xi=n)\wedge\mathbb P(\widetilde\xi=n-1)\ge2\eta$ (each of the two consecutive integers carries mass at least $2\eta$).
 
 **Statement.** Under matching moments and (C1)–(C3), for all $z\ge1$,
 

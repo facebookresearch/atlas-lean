@@ -6,7 +6,7 @@ $$R^d = N \ \ (d \ge 5), \qquad R^d = N \log N \ \ (d = 4).$$
 
 Rescale time by $N$ and space by $\sqrt{N}$, and let $X^N_t = \frac{1}{N}\sum_{x \text{ infected at time } t} \delta_x$, a finite measure on $\mathbb{R}^d$.
 
-**Theorem.** If $X^N_0 \to X_0$ in the space $M_F(\mathbb{R}^d)$ of finite measures, where $X_0$ has no atoms, then $(X^N_t)_{t \ge 0}$ converges weakly (in the Skorokhod space of measure-valued paths) to a super-Brownian motion $X$ started at $X_0$ with branching rate $\gamma_0 = 2$, diffusion coefficient $\sigma_0^2 = 1/3$ and drift $\theta_0 = \theta - b_d$; that is, for all $\phi \in C_b^2(\mathbb{R}^d)$,
+**Theorem.** Suppose no site is recovered at time $0$. If $X^N_0 \to X_0$ in the space $M_F(\mathbb{R}^d)$ of finite measures, where $X_0$ has no atoms, then $(X^N_t)_{t \ge 0}$ converges weakly (in the Skorokhod space of measure-valued paths) to a super-Brownian motion $X$ started at $X_0$ with branching rate $\gamma_0 = 2$, diffusion coefficient $\sigma_0^2 = 1/3$ and drift $\theta_0 = \theta - b_d$; that is, for all $\phi \in C_b^2(\mathbb{R}^d)$,
 
 $$X_t(\phi) - X_0(\phi) - \int_0^t X_s\!\left(\tfrac{\sigma_0^2}{2}\Delta\phi + \theta_0\,\phi\right) ds$$
 

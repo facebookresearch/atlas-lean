@@ -5,7 +5,7 @@ A **binary semi-directed network** $N_s$ on $X$ is obtained from a rooted binary
 1. **Rooting invariance.** For every rooted partner $N_r$ of $N_s$, $PS_{\mathrm{sw}}(A,N_s) = PS_{\mathrm{sw}}(A,N_r)$.
 2. **Level bound.** If $N_s$ has level $k$ (some rooted partner is level-$k$), then for every displayed unrooted tree $T_u$,
 
-$$PS(A,T_u) \le (k+1)\, PS_{\mathrm{sw}}(A,N_s).$$
+    $$PS(A,T_u) \le (k+1)\, PS_{\mathrm{sw}}(A,N_s).$$
 
 3. **Failure for unrooted networks.** For fully unrooted networks rooting invariance fails. There is an unrooted level-$1$ network $U$ on five leaves, a binary character $f$ and two orientations $N, N'$ of $U$ with $PS_{\mathrm{sw}}(f,U) = 1$, $PS_{\mathrm{sw}}(f,N) = 2$ and $PS_{\mathrm{sw}}(f,N') = 1$.
 

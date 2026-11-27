@@ -10,6 +10,10 @@ For trees $\mathcal T, \mathcal T'$ with $d_{\mathrm{rSPR}} = 1$, a *moving subt
 
 **Theorem (reconstruction).** An algorithm decides whether $\mathcal P$ is the display set of a level-1 network and, if so, builds one, in time $O(|\mathcal P|^2|X|^2)$. With $n_i$ the number of pairs that can label $E_i$ consistently, there are exactly $\prod_{i=1}^k n_i$ level-1 networks without trivial reticulations whose display set is $\mathcal P$; for adjacent trees the number of moving subtrees is $1$ or $3$, and it is $3$ iff the trees are also one rNNI move apart.
 
+## Depends on
+
+- [Rspr Dist](../../../not-yet-classified/rooted-spragreement-forest/rspr-dist.md)
+
 ## Expansion
 
 Each reticulation $v_i$ is a binary switch; flipping one switch prunes the cluster $C(v_i)$ below the reticulation and regrafts it on the other side of its cycle, which is a single rSPR move with moving subtree $X_i = C(v_i)$ and $Y_i = C(u_i)$ the cluster at the top of the cycle. In a level-1 network cycles are disjoint, so switches act independently and their clusters are either disjoint (I), nested inside a reticulation's subtree (II), or nested inside the cycle but off the reticulation path (III); this is exactly the nested subtree property, and conversely the property lets one rebuild the cycles one coordinate at a time. The hypercube structure reflects that a level-1 network displays no trees beyond those required by its input.

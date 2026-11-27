@@ -13,6 +13,7 @@ with arbitrary positive $x^1_i = x^2_i$ where $\alpha_i = 0$, and a rate vector 
 ## Depends on
 
 - [Binomial steady-state ideals and monomial parametrization of positive steady states](binomial-steady-state-ideals-and-toric-parametrization.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
 ## Expansion
 

@@ -5,14 +5,11 @@ In a homogeneously mixing population of size $n$, a Markovian SIR epidemic has c
 1. **Branching limit.** Started from one infective, the epidemic converges on finite time intervals, as $n \to \infty$, to a limit process. The limit is not a branching process in individuals, but it is a two-type branching process in macro-individuals: type 1 is an app-using component (a maximal transmission chain of app-users) and type 2 is a non-app-user.
 2. **Reproduction number.** The limit is supercritical if and only if $R_D > 1$, where $R_D$ is the largest eigenvalue of the two-type next-generation matrix,
 
-$$R_D = \frac{R_0(1-\pi)}{2} + \sqrt{\frac{(R_0(1-\pi))^2}{4} + f(\pi)\,R_0\,\pi}, \qquad f(\pi) = \frac{1-\pi}{2\pi\delta}\Bigl(\beta\pi - \gamma - \delta + \sqrt{(\beta\pi+\gamma+\delta)^2 - 4\beta\pi\gamma}\Bigr).$$
+    $$R_D = \frac{R_0(1-\pi)}{2} + \sqrt{\frac{(R_0(1-\pi))^2}{4} + f(\pi)\,R_0\,\pi}, \qquad f(\pi) = \frac{1-\pi}{2\pi\delta}\Bigl(\beta\pi - \gamma - \delta + \sqrt{(\beta\pi+\gamma+\delta)^2 - 4\beta\pi\gamma}\Bigr).$$
 
-If $R_D > 1$, the final number infected tends to infinity with positive probability; if $R_D \le 1$, the final fraction infected tends to $0$ in probability.
+    If $R_D > 1$, the final number infected tends to infinity with positive probability; if $R_D \le 1$, the final fraction infected tends to $0$ in probability.
+
 3. **Combined tracing.** The same branching description and threshold dichotomy hold when, in addition, every contact of any diagnosed individual is manually traced independently with probability $p$.
-
-## Depends on
-
-- [When R₀ > 1, major outbreaks have positive probability](../../branching-process-approximation-of-early-epidemi/one-sub-extinction-prob-pos.md)
 
 ## Expansion
 

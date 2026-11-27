@@ -7,6 +7,7 @@ $$\mathcal M^{i,i} = M^{i,i} \oplus Q^i, \qquad \mathcal M^{i,j} = M^{i,j} \otim
 so that within a mode both levels evolve independently, and on switching from mode $i$ to mode $j$ the gating chain restarts from $p^j$. Initial laws are pure tensors $v^i \otimes w^i$ on each mode block.
 
 **Theorem.**
+
 1. *(Spectrum.)* Every eigenvalue of $M$ is an eigenvalue of the full generator $\mathcal M$, and so is every $\mu + \lambda$ with $\mu$ an eigenvalue of $M^{i,i}$ and $\lambda \ne 0$ an eigenvalue of $Q^i$. Under detailed balance, if $v$ is a right eigenvector of $M$ for $\mu$, then $v \otimes \mathbf 1$ is a right eigenvector of $\mathcal M$ for $\mu$.
 2. *(Modal sojourn times.)* The sojourn-time density in mode $i$ of the full model equals that of the top-level model $M$ in its aggregate $i$.
 3. *(Stationary law.)* If each entry distribution is the stationary law of its mode, $p^i = \bar q^i$, then from an initial law $v^0 \otimes \bar q$ the solution stays a product, $p(t) = (v^1(t)\otimes\bar q^1;\dots;v^{n_M}(t)\otimes\bar q^{n_M})$, and the full model has stationary distribution $(\bar m^1 \otimes \bar q^1;\dots;\bar m^{n_M}\otimes\bar q^{n_M})$, where $\bar m$ is stationary for $M$; this limit is reached from any initial law.

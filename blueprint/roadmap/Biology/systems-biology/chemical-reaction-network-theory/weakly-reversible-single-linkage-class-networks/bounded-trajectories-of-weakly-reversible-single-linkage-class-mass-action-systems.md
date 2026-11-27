@@ -7,6 +7,7 @@ $$\dot\phi(t)=\sum_{y\to y'\in\mathscr{R}}\kappa_{y\to y'}(t)\,\phi(t)^{y}\,(y'-
 It is *weakly reversible* if every reaction lies on a directed cycle of the reaction graph, has a *single linkage class* if the reaction graph is connected, and has *bounded kinetics* if there is $\eta>0$ with $\eta<\kappa_{y\to y'}(t)<1/\eta$ for all reactions and all $t$ (the non-autonomous case includes constant rates).
 
 **Statements.**
+
 1. *(Boundedness.)* For a single-linkage-class, weakly reversible, non-autonomous mass action system with bounded kinetics, $\limsup_{t\to\infty}|\phi(t,x_0)|<\infty$ for every $x_0\in\mathbb{R}^N_{>0}$.
 2. *(Persistence upgrades to permanence.)* If moreover, on a positive stoichiometric compatibility class $P$, there is $\delta>0$ with $\liminf_t\phi_i(t,x_0)>\delta$ for all $i$ and all $x_0\in P$, then there is $\rho>0$ with $\rho<\liminf_t\phi_i(t,x_0)\le\limsup_t\phi_i(t,x_0)<1/\rho$ for all $i$ and $x_0\in P$.
 3. *(Tier lemma.)* Let $x_n\in\mathbb{R}^N_{>0}$ be a partially monotonic sequence with some coordinate tending to $0$ or $\infty$, let $U$ and $V$ be the sets of coordinates tending to $0$ and to $\infty$, and partition the complexes into tiers $T_1,\dots,T_P$ by the asymptotic size of $x_n^{y}$ (complexes in the same tier are comparable within a constant factor, higher tiers dominate lower ones). Then there is a conservation relation $w\in\mathbb{R}^N$ that respects $(U,V,\{T_i\})$: the positive support of $w$ is exactly $U$, its negative support is exactly $V$, and $w\cdot(y-y')=0$ whenever $y,y'$ lie in the same tier (proved via a Stiemke-type alternative).
@@ -14,6 +15,7 @@ It is *weakly reversible* if every reaction lies on a directed cycle of the reac
 ## Depends on
 
 - [Weak reversibility is equivalent to strongly connected linkage classes](../../complex-balancing-and-the-deficiency-zero-theore/is-weakly-reversible-iff-reachable.md)
+- [Weakly reversible reaction network](../../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
 
 ## Expansion
 

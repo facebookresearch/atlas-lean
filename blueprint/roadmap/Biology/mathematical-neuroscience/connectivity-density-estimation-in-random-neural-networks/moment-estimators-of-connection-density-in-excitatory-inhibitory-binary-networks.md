@@ -18,7 +18,7 @@ where, with $D=1-p(1-\lambda)(r_+-r_-)$,
 
 $$m=\frac{\mu+(1-\lambda)pr_-}{D},\qquad v=(1-\lambda)^2p(1-p)\big((m-r_-)^2+r_+r_-\big),\qquad w=m(1-m)\frac{1+4(1-\lambda)^2p^2r_+r_-}{D^2}.$$
 
-The map $(\mu,\lambda,p)\mapsto(m,v,w)$ has an explicit inverse branch $\Phi^{(-)}$ that recovers the parameters whenever $r_+\ge1/2$ (or a further explicit inequality holds), so $\Phi^{(-)}(\hat m,\hat v,\hat w)$ estimates $(\mu,\lambda,p)$ with error probability at most $\frac K\varepsilon\big(\frac{\sqrt N}{T}+\frac1{\sqrt N}+\frac{(1-\lambda)^\Delta}{\Delta}+\sqrt{\Delta/T}\big)$; choosing $\Delta\asymp\log T$ gives the rate $N^{-1/2}+N^{1/2}/T+(\log T/T)^{1/2}$.
+The map $(\mu,\lambda,p)\mapsto(m,v,w)$ has an explicit inverse branch $\Phi^{(-)}$ that recovers the parameters whenever $r_+\ge1/2$, or $\kappa(m,w)=(r_+-r_-)^2w/(m(1-m))\ge4r_+r_-$, so $\Phi^{(-)}(\hat m,\hat v,\hat w)$ estimates $(\mu,\lambda,p)$ with error probability at most $\frac K\varepsilon\big(\frac{\sqrt N}{T}+\frac1{\sqrt N}+\frac{(1-\lambda)^\Delta}{\Delta}+\sqrt{\Delta/T}\big)$; choosing $\Delta\asymp\log T$ gives the rate $N^{-1/2}+N^{1/2}/T+(\log T/T)^{1/2}$.
 
 ## Expansion
 

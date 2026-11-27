@@ -3,6 +3,7 @@
 **Definitions.** A *continuous-flow stirred-tank reactor* (CFSTR) is a reaction network containing every outflow reaction $X_i \to 0$; it is *fully open* if it also contains every inflow $0 \to X_i$. A fully open CFSTR is a *CFSTR atom of multistationarity* if it admits multiple nondegenerate positive mass-action steady states and is minimal with respect to the embedded-network relation among fully open CFSTRs with this property.
 
 **Theorem.**
+
 1. *(Atoms characterize multistationarity.)* A fully open CFSTR possesses a CFSTR atom of multistationarity (as an embedded network) if and only if it admits multiple nondegenerate positive mass-action steady states.
 2. *(Bimolecular two-reaction atoms.)* Of the $386$ reversible, bimolecular, two-reaction fully open CFSTRs, exactly $35$ admit multiple positive mass-action steady states; each of these admits multiple nondegenerate ones and contains a unique minimal multistationary subnetwork, and under the embedded-network relation these $35$ subnetworks have $11$ minimal elements, which are the bimolecular two-reaction CFSTR atoms of multistationarity.
 3. *(Classification.)* A bimolecular, two-reaction fully open CFSTR admits multiple nondegenerate positive mass-action steady states if and only if it contains one of the $35$ minimal subnetworks as a sub-CFSTR, if and only if it contains one of the $11$ atoms as an embedded network. A fully open CFSTR with any number of reactions, not necessarily bimolecular, that contains one of the $35$ as a sub-CFSTR or one of the $11$ atoms as an embedded network admits multiple nondegenerate positive mass-action steady states.
@@ -13,6 +14,7 @@ The one-reaction atoms, and the arithmetic criterion for multistationarity of a 
 
 - [Lifting multistationarity from subnetworks and embedded networks](lifting-multistationarity-from-subnetworks-and-embedded-networks.md)
 - [Multistationarity of fully open networks with one non-flow reaction](../multistationarity-of-fully-open-networks/multistationarity-of-fully-open-networks-with-one-non-flow-reaction.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
 ## Expansion
 

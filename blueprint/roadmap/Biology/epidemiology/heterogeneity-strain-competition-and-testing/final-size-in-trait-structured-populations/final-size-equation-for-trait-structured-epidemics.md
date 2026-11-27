@@ -15,14 +15,15 @@ $F$ is order preserving, and every solution $y \ge 0$ satisfies $y < 1$ pointwis
 **Hypotheses.** (H1) For every $\epsilon > 0$ there is $\delta > 0$ with $\int_\Omega|k_0(x_1, \xi) - k_0(x_2, \xi)|\,\Phi(d\xi) < \epsilon$ whenever $|x_1 - x_2| < \delta$. (H2) Some iterated kernel is uniformly positive: $\inf_{x,\xi}k^n(x, \xi) > 0$ for all $n \ge m$, where $k^1 = k_0$ and $k^{n+1}(x, \xi) = \int_\Omega k_0(x, \eta)k^n(\eta, \xi)\,\Phi(d\eta)$.
 
 **Theorem.**
+
 1. If $R_0 < 1$, the final size equation has only the trivial solution $y = 0$.
 2. Under (H2), every nontrivial solution is strictly positive on $\Omega$.
 3. If $\Omega$ is compact and (H1), (H2) hold, there is at most one nontrivial solution.
 4. If $\Omega$ is compact, (H1), (H2) hold and $R_0 > 1$, there is exactly one nontrivial solution, and its values are bounded away from $0$ and $1$.
 
-## Depends on
+## Proof depends on
 
-- [Final-size equation (Kermack–McKendrick 1927)](../../kermack-mckendrick-sir-model/final-size-eq.md)
+- [Krein–Rutman theorem for $C(K)$](../../../../Analysis/operator-theory/spectral-theory/krein-rutman.md)
 
 ## Expansion
 
@@ -30,4 +31,4 @@ For $R_0 < 1$: since $1 - e^{-z} \le z$, a solution satisfies $y \le \mathcal K_
 
 ## Sources
 
-- Martin Bootsma, Danny Chan, Odo Diekmann and Hisashi Inaba, "The effect of host population heterogeneity on epidemic outbreaks", Mathematics in Applied Sciences and Engineering 5 (2024), 1–35, <https://doi.org/10.5206/mase/16718>; numbering as in arXiv:2308.06593: Section 2 (renewal equation), Section 3 (next-generation operator and $R_0$), Section 6, Lemma 6.1, Theorem 6.2, Lemma 6.3, Theorems 6.4 and 6.5.
+- Martin Bootsma, Danny Chan, Odo Diekmann and Hisashi Inaba, "The effect of host population heterogeneity on epidemic outbreaks", Mathematics in Applied Sciences and Engineering 5 (2024), 1–35, <https://doi.org/10.5206/mase/16718>; numbering as in arXiv:2308.06593v2: Section 2 (renewal equation), Section 3 (next-generation operator and $R_0$), Section 5, Lemma 5.1, Theorem 5.2, Lemma 5.3, Theorems 5.4 and 5.5 (Lemma 4.1 to Theorem 4.5 in v1).

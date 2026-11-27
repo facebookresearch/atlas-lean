@@ -10,7 +10,11 @@ $$\lambda_{S + y \to S' + y'}(S, Z(t)) = p_{y\to y'}(S, S')\, y_{\sigma(S)}\,\fr
 
 1. $\lim_{V\to\infty}\sup_{t \le T}\mathbb{P}(Y^V(t) \ne Y(t)) = 0$ under the natural coupling, with explicit non-asymptotic error bounds.
 2. $Y^V \to Y$ in probability as processes in $D_{\mathcal{T}}[0, T]$.
-3. *(Reconstruction from independent molecules.)* If the status transitions conserve molecule counts appropriately (each reaction maps tracked statuses to product statuses consistently with the stoichiometry), then the empirical aggregate $\widetilde X^V(t)$ built from $\lfloor Vz^*\rfloor$ independent copies of $Y$, started from the initial composition, satisfies $\lim_V \mathbb{E}\big[\sup_{s \le t}\|X^V(s)/V - \widetilde X^V(s)/V\|\big] = 0$ for the tracked species.
+3. *(Reconstruction from independent molecules.)* If for every reaction $y\to y'$ and every status $\tau'\ne\Delta$, $\sum_{\tau\ne\Delta}y_{\sigma(\tau)}\,p_{y\to y'}(\tau,\tau')=y'_{\sigma(\tau')}$ (Assumption 5.1 of the source), and the initial number of molecules of the tracked species has finite mean, then the empirical aggregate $\widetilde X^V(t)$ (the source's (5.6)) built from $\lfloor Vz^*\rfloor$ independent copies of $Y$, started from the initial composition, satisfies $\lim_V \mathbb{E}\big[\sup_{s \le t}\|X^V(s)/V - \widetilde X^V(s)/V\|\big] = 0$ for the tracked species.
+
+## Depends on
+
+- [Kurtz's law of large numbers for density-dependent reaction networks](../../../../Chemistry/chemical-kinetics/kurtz-s-law-of-large-numbers-for-reaction-networ/tendsto-measure-deviation.md)
 
 ## Expansion
 

@@ -9,6 +9,7 @@ is generically a smooth surface, and $\chi:\mathcal{M}\to\mathbb{R}^2$, $(x,\the
 **Bundles.** At a fold point the one-dimensional centre manifold carries a definite flow direction, giving an orientation of its tangent line $\ell(\mathbf{x})$; along a closed curve $\Gamma\subset\mathcal{M}$ consisting of index-$1$ saddles or pseudo-hyperbolic attractors, the centre tangent lines form a line bundle $E^c_\Gamma\to\Gamma$, which is either a cylinder or a Möbius band. For a fold circle this is the *fold circle bundle* $\mathcal{C}_C$, and $C$ is called a *Möbius fold circle* if $\mathcal{C}_C$ is a Möbius band.
 
 **Statements (generic families).**
+
 1. On a fold curve whose endpoints are not cusps, the number of cusps equals the number of switches of the fold orientation.
 2. $\mathcal{C}_C$ is a Möbius band if and only if $C$ contains an odd number of cusps.
 3. For a fold circle $C$, the following are equivalent: (i) $C$ is Möbius; (ii) $C$ contains an odd number of cusps; (iii) there is a simple closed pseudo-hyperbolic curve $\Gamma\subset\mathcal{M}$ enclosing $C$ (and no other fold circle exterior to $C$) such that $\chi|_\Gamma$ double covers a curve in parameter space and $E^c_\Gamma$ is Möbius. Each of these implies (iv): $C$ lies in an open disk of $\mathcal{M}$ on which $\chi$ has degree $2$. In particular, no Möbius fold circle lies inside another fold circle.

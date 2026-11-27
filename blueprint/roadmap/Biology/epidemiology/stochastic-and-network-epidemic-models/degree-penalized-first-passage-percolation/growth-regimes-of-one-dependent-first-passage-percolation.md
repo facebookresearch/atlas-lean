@@ -23,20 +23,21 @@ $$
 
 1. *Polylogarithmic regime.* If $\alpha \in (1,2)$ or $\mu \in (\mu_{\mathrm{expl}}, \mu_{\log})$, then
 
-$$
-\lim_{|x|\to\infty} P\bigl(d_{\mathcal{C}}(0,x) \le (\log|x|)^{\Delta_0 + \varepsilon} \,\big|\, 0,x \in \mathcal{C}_\infty\bigr) = 1.
-$$
+    $$
+    \lim_{|x|\to\infty} P\bigl(d_{\mathcal{C}}(0,x) \le (\log|x|)^{\Delta_0 + \varepsilon} \,\big|\, 0,x \in \mathcal{C}_\infty\bigr) = 1.
+    $$
 
 2. *Polynomial regime.* If $\alpha > 2$ and $\mu > \mu_{\log}$, then
 
-$$
-\lim_{|x|\to\infty} P\bigl(d_{\mathcal{C}}(0,x) \le |x|^{\eta_0 + \varepsilon} \,\big|\, 0,x \in \mathcal{C}_\infty\bigr) = 1,
-$$
+    $$
+    \lim_{|x|\to\infty} P\bigl(d_{\mathcal{C}}(0,x) \le |x|^{\eta_0 + \varepsilon} \,\big|\, 0,x \in \mathcal{C}_\infty\bigr) = 1,
+    $$
 
-and, together with the companion lower bound, $|x|^{\eta_0 - \varepsilon} \le d_{\mathcal{C}}(0,x)$ with probability tending to one. Hence for $\mu \in (\mu_{\log}, \mu_{\mathrm{pol}})$ transmission times grow polynomially but strictly sublinearly ($\eta_0 < 1$), and for $\mu > \mu_{\mathrm{pol}}$ linearly.
+    and, together with the companion lower bound, $|x|^{\eta_0 - \varepsilon} \le d_{\mathcal{C}}(0,x)$ with probability tending to one. Hence for $\mu \in (\mu_{\log}, \mu_{\mathrm{pol}})$ transmission times grow polynomially but strictly sublinearly ($\eta_0 < 1$), and for $\mu > \mu_{\mathrm{pol}}$ as $|x|^{1+o(1)}$ (the bounds give $|x|^{1\pm\varepsilon}$ for every $\varepsilon>0$).
+
 3. The same upper bounds hold on the finite graph in a box of volume $n$, for two uniform vertices of the largest component, as $n \to \infty$.
 
-So, as the degree penalty $\mu$ grows, the epidemic passes through four universal phases: explosive, polylogarithmic, strictly polynomial, and linear in Euclidean distance. This gives one mechanism under which an epidemic on a fixed network can show either exponential-type or polynomial growth, depending only on how strongly high-degree individuals reduce their per-contact transmission.
+So, as the degree penalty $\mu$ grows, the epidemic passes through four universal phases: explosive, polylogarithmic, strictly polynomial, and essentially linear ($|x|^{1+o(1)}$) in Euclidean distance. This gives one mechanism under which an epidemic on a fixed network can show either exponential-type or polynomial growth, depending only on how strongly high-degree individuals reduce their per-contact transmission.
 
 ## Expansion
 

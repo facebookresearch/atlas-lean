@@ -22,7 +22,7 @@ $$\mathfrak{m}=\Lambda'(0+)=g-\sigma^2+2r\,\mathbb{E}[\ln\Theta],\qquad \hat\tau
 
 Consequently $\mathbb{E}_{\delta_x}[\mathfrak{C}_t]\to0$ if $q\ge r$ or ($\mathfrak{m}>0$ and $\kappa_{r,q}\le0$), and $\mathbb{E}_{\delta_x}[\mathfrak{C}_t]\to\infty$ if ($\mathfrak{m}\le0$ and $r>q$) or ($\mathfrak{m}>0$ and $\kappa_{r,q}>0$). Thus $r>q$, which suffices without parasites (survival probability $1-q/r$), no longer ensures survival. Each of $q,r,g,\sigma$ has a threshold value at which the limit switches between $0$ and $\infty$, with fewer survivors for larger $g$ or $q$ and more for larger $r$ or $\sigma$.
 
-The sufficient condition for $\mathbb{E}[\mathfrak{C}_t]\to\infty$ extends to load-dependent dynamics: drift $g(x)\le gx$, variance $\sigma^2(x)=\mathfrak{s}^2(x)x+\sigma^2x^2$, compensated jumps at rate $p(x)=x$, $q(x)\le q<r$, and $\Theta(x)$ stochastically dominated by a $\Theta$ with $\mathbb{E}|\ln\Theta|<\infty$. Since $\mathbb{E}[\ln\Theta]$ can be made arbitrarily negative, a sufficiently asymmetric kernel ensures $\mathfrak{m}\le0$ for any $(g,\sigma,r)$.
+The sufficient condition for $\mathbb{E}[\mathfrak{C}_t]\to\infty$ extends to load-dependent dynamics: drift $g(x)\le gx$, variance $\sigma^2(x)=\mathfrak{s}^2(x)x+\sigma^2x^2$ with $\mathfrak s$ $\tfrac12$-Hölder on compacts and $\mathfrak s(x)\sqrt x\le c\vee cx$ for some $c>0$, compensated jumps at rate $p(x)=x$, $q(x)\le q<r$, and $\Theta(x)$ stochastically dominated by a $\Theta$ with $\mathbb{E}|\ln\Theta|<\infty$. Since $\mathbb{E}[\ln\Theta]$ can be made arbitrarily negative, a sufficiently asymmetric kernel ensures $\mathfrak{m}\le0$ for any $(g,\sigma,r)$.
 
 ## Expansion
 

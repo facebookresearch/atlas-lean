@@ -21,9 +21,9 @@ $$\begin{aligned}
 
 with $\bar\lambda=\mathbb{E}\lambda$, $\bar\lambda_0=\mathbb{E}\lambda_0$. With constant susceptibility $\gamma\equiv0$ after infection and $\gamma_0\equiv1$ for initially susceptible individuals this reduces to the varying-infectivity SIR model.
 
-## Depends on
+## Proof depends on
 
-- [Law of large numbers for the SI model with varying infectivity on a refining grid](../../stochastic-and-network-epidemic-models/epidemics-on-refining-spatial-grids/law-of-large-numbers-for-the-si-model-with-varying-infectivity-on-a-refining-grid.md)
+- [Gronwall inequality in integral form](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
 
 ## Expansion
 
@@ -31,4 +31,4 @@ The rate $\bar{\mathfrak{S}}(s)\bar{\mathfrak{F}}(s)$ is the density of new infe
 
 ## Sources
 
-- Raphaël Forien and Étienne Pardoux, "Stochastic epidemic model with varying infectivity and waning immunity: The law of large numbers with unbounded infectivity", Electronic Communications in Probability 31 (2026), 1–13, <https://doi.org/10.1214/26-ecp833>; numbering as in arXiv:2606.11845: Section 2 (model, assumptions (disjoint_support) and (assumption_1st_moment), Theorem 1).
+- Raphaël Forien and Étienne Pardoux, "Stochastic epidemic model with varying infectivity and waning immunity: The law of large numbers with unbounded infectivity", Electronic Communications in Probability 31 (2026), 1–13, <https://doi.org/10.1214/26-ecp833>; numbering as in arXiv:2606.11845: Section 2 (model, assumptions (2) and (3), Theorem 1).

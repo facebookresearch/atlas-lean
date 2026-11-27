@@ -7,8 +7,9 @@ $$\frac{dx}{dt} = bx(1 - x - cy), \qquad \frac{dy}{dt} = y\Big(\frac{1}{1+kx} - 
 where $c$ and $a$ are interspecific competition coefficients, $k$ the fear level and $m$ the toxin release rate. Boundary equilibria are $E_0 = (0,0)$, $E_1 = (1,0)$ and $E_2 = (0,1)$. Let $k^* = 1/a - 1$ (so $y$ can invade $E_1$ iff $k < k^*$, i.e. $\frac{1}{1+k} > a$) and note $x$ can invade $E_2$ iff $c < 1$.
 
 **Theorem.**
+
 1. Solutions with positive initial data stay positive and bounded; the system is permanent if $0 < k < k^*$ and $0 < c < 1$.
-2. $E_0$ is a source. $E_1$ is a hyperbolic stable node for $k > k^*$ and a saddle for $0 < k < k^*$; $E_2$ is a stable node for $c > 1$ and a saddle for $c < 1$; at $k = k^*$ (resp. $c = 1$) they are nonhyperbolic (saddle-nodes or nonhyperbolic saddles depending on $m$).
+2. $E_0$ is a source. $E_1$ is a hyperbolic stable node for $k > k^*$ and a saddle for $0 < k < k^*$; $E_2$ is a stable node for $c > 1$ and a saddle for $c < 1$; at $k = k^*$ (resp. $c = 1$) they are nonhyperbolic: saddle-nodes or nonhyperbolic saddles depending on $m$, except that at $c = 1$ and the critical value $m = m^{**}$ of the source $E_2$ is a degenerate stable node.
 3. Depending on $m$ relative to thresholds $m_1 = 1 - ac - k$ and $m_2$, the system has zero, one or two positive equilibria; e.g. for $0 < c < 1$ and $0 < k < k^*$ there is a unique positive equilibrium $E_{2*}$, while for $c > 1$ and $m > m_2$ there can be two ($E_{1*}$ a saddle, $E_{2*}$ a stable node) that merge into a saddle-node $E_{3*}$.
 4. There are no limit cycles in the open positive quadrant (Bendixson–Dulac with $B = 1/(xy)$), and the positive equilibrium $E_{2*}$ is globally asymptotically stable when $0 < c < 1$ and $0 < k < k^*$.
 5. (Bifurcations.) A transcritical bifurcation occurs at $E_1$ as $k$ crosses $k^*$ and at $E_2$ as $c$ crosses $1$ (under nondegeneracy conditions on $m$); the toxin rate $m$ can turn the boundary transcritical bifurcation into a pitchfork, and a saddle-node bifurcation of interior equilibria occurs at $m = m_{SN}$ when $c > 1$, $0 < k < k^*$.

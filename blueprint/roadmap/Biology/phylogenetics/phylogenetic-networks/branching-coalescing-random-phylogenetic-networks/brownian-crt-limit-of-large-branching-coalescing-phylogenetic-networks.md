@@ -22,4 +22,4 @@ The color tree $\mathscr T$ is a Galton–Watson tree with offspring law $M$; co
 
 ## Sources
 
-- François Bienvenu and Jean-Jil Duchamps, "A branching process with coalescence to model random phylogenetic networks", Electronic Journal of Probability 29 (2024), 1–48, <https://doi.org/10.1214/24-ejp1088>; numbering as in arXiv:2211.02407: Section 3 (Theorem 3.7 and Proposition 3.2) and Section 4 (local weak limit).
+- François Bienvenu and Jean-Jil Duchamps, "A branching process with coalescence to model random phylogenetic networks", Electronic Journal of Probability 29 (2024), 1–48, <https://doi.org/10.1214/24-ejp1088>; numbering as in arXiv:2211.02407: Section 3 (Theorem 3.12 and Lemma 3.2) and Section 4 (Theorem 4.1, local weak limit).

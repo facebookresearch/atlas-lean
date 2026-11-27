@@ -22,6 +22,10 @@ Thus washout is decided by the $2\times2$ linearization $M = \begin{pmatrix} A &
 
 - [Chemostat equilibria and the washout threshold](../../../chemostat/chemostat-equilibria-and-washout.md)
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 At $E_0$ the Jacobian is block triangular with eigenvalue $-1$ and the eigenvalues of the cooperative matrix $M$, whose principal eigenvalue $\lambda_2$ has a positive left eigenvector $(U, W)$. Because $f(S) \le f(1)$, $g(S) \le g(1)$ and $D(w) \ge 1$, the function $L = Uu + Ww$ satisfies $\dot L \le \lambda_2(1 - w/w_0)L$; with $\lambda_2 < 0$, LaSalle's principle and the saddle structure of $E_w$ (when $B < 0$) force convergence to $E_0$. At $E_w$ the normal eigenvalue is $-(g(1) - \beta)$. Near a stable $E_w$, $(w_0 - w)/w_0$ decays like $e^{-\nu\tau}$ with $\nu = g(1) - \beta$ in rescaled time, and since $dt/d\tau = (w_0 - w)/w_0$ is integrable, the original time to clog is finite. Global attraction for small $\beta$ uses the increasing auxiliary function $G(b) = g^{-1}(b) + b w_0 f(g^{-1}(b))/(4(1 + \alpha - f(1))) + b w_0/4$ and its root $b^*$ of $G(b^*) = 1$: for $\beta < b^*$, the nutrient eventually stays where wall growth outpaces sloughing.

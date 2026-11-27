@@ -4,14 +4,16 @@
 
 $$\Pr(d=0)=\tfrac12,\qquad \Pr(d=i)=c_\alpha\, i^{-\alpha}\quad(i\ge1),$$
 
-so that $\Pr(d\ge i)=\Theta(i^{1-\alpha})$. It then picks a node $v$ uniformly among the nodes at $\ell_1$-distance $d$ from $u$, and travels to $v$ in $d$ unit steps along a uniformly random monotone (direct) lattice path. If $d=0$ it stays put for one step. Unlike a Lévy flight, which jumps directly to $v$, the walk visits every node on its path. For a target $z\in\mathbb{Z}^2$ with $\ell=\|z\|_1$, let $\tau_\alpha(z)$ be the hitting time of one walk started at the origin. For $k$ independent walks started together at the origin, let $\tau^k_\alpha(z)$ be the first step at which some walk visits $z$. This models central-place foraging by $k$ animals around a nest, motivated by the Lévy foraging hypothesis.
+so that $\Pr(d\ge i)=\Theta(i^{1-\alpha})$. It then picks a node $v$ uniformly among the nodes at $\ell_1$-distance $d$ from $u$, and travels to $v$ in $d$ unit steps along a *direct-path* chosen uniformly among all direct-paths from $u$ to $v$: a shortest lattice path $u,u_1,\dots,u_d=v$ whose node $u_i$, for each $1\le i<d$, is a node at $\ell_1$-distance $i$ from $u$ that is $\ell_2$-closest to the point $w_i$ of the real segment $uv$ with $\|u-w_i\|_1=i$. If $d=0$ it stays put for one step. Unlike a Lévy flight, which jumps directly to $v$, the walk visits every node on its path. For a target $z\in\mathbb{Z}^2$ with $\ell=\|z\|_1$, let $\tau_\alpha(z)$ be the hitting time of one walk started at the origin. For $k$ independent walks started together at the origin, let $\tau^k_\alpha(z)$ be the first step at which some walk visits $z$. This models central-place foraging by $k$ animals around a nest, motivated by the Lévy foraging hypothesis.
 
 **Theorem (single walk, constant $\alpha$, $\ell\to\infty$).**
+
 - *Super-diffusive*, $\alpha\in(2,3)$: $\Pr(\tau_\alpha(z)=O(\ell^{\alpha-1}))=\Omega(1/(\ell^{3-\alpha}\log^2\ell))$; $\Pr(\tau_\alpha(z)\le t)=O(t^2/\ell^{\alpha+1})$ for $\ell\le t=O(\ell^{\alpha-1})$; and $\Pr(\tau_\alpha(z)<\infty)=O(\log\ell/\ell^{3-\alpha})$.
 - *Diffusive*, $\alpha\ge3$: $\Pr(\tau_\alpha(z)=O(\ell^2\log^2\ell))=\Omega(1/\log^4\ell)$, and $\Pr(\tau_\alpha(z)\le t)=O(t^2\log\ell/\ell^4)$ for $\ell\le t=O(\ell^2)$.
 - *Ballistic*, $\alpha\in(1,2]$: $\Pr(\tau_\alpha(z)=O(\ell))=\Omega(1/(\ell\log\ell))$, and $\Pr(\tau_\alpha(z)<\infty)=O(\log^2\ell/\ell)$.
 
 **Theorem (parallel walks, tuned exponent).**
+
 - If $\log^6\ell\le k\le\ell\log^4\ell$ and $\alpha=3-\frac{\log k}{\log\ell}+5\frac{\log\log\ell}{\log\ell}$, then $\tau^k_\alpha(z)=O(\ell^2\log^6\ell/k)$ with probability $1-e^{-\omega(\log\ell)}$.
 - If $k=\omega(\log^5\ell)$, then $\tau^k_3(z)=O(\ell^2)$ with probability $1-e^{-\omega(\log\ell)}$.
 - If $k=\omega(\ell\log^2\ell)$, then $\tau^k_2(z)=O(\ell)$ with probability $1-e^{-\omega(\log\ell)}$.

@@ -14,4 +14,4 @@ Split the cost into per-character waiting times: $X_1$ is the position of $s_1$ 
 
 ## Sources
 
-- Konstantin Makarychev, Miklos Z. Racz, Cyrus Rashtchian and Sergey Yekhanin, "Batch Optimization for DNA Synthesis", IEEE Transactions on Information Theory 68 (2022), 7454–7470, <https://doi.org/10.1109/tit.2022.3184903>; numbering as in arXiv:2011.14532: Section 1.2 and Lemma F.1 (the lemma's display names the reverse reference with a transposed letter pair; the reverse of $ACGT$ used in Section 1.2 is $TGCA$).
+- Konstantin Makarychev, Miklos Z. Racz, Cyrus Rashtchian and Sergey Yekhanin, "Batch Optimization for DNA Synthesis", IEEE Transactions on Information Theory 68 (2022), 7454–7470, <https://doi.org/10.1109/tit.2022.3184903>; numbering as in arXiv:2011.14532: Section 1.2 and Lemma 5.1 (the lemma's display names the reverse reference with a transposed letter pair; the reverse of $ACGT$ used in Section 1.2 is $TGCA$).

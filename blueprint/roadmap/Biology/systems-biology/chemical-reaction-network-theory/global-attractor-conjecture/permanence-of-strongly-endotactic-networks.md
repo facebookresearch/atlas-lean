@@ -9,6 +9,15 @@
 - [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
 - [Horn–Jackson: one equilibrium per compatibility class](../../complex-balancing-and-the-deficiency-zero-theore/exists-unique-equilibrium-of-is-complex.md)
 - [Global attractor conjecture for single linkage class networks](global-attractor-conjecture-for-single-linkage-class-networks.md)
+- [Stoichiometric subspace](../../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
+- [Weakly reversible reaction network](../../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
+
+## Proof depends on
+
+- [The pseudo-Helmholtz function does not increase along solutions](../../complex-balancing-and-the-deficiency-zero-theore/antitone-on-pseudo-helmholtz.md)
+- [Equality in the Horn–Jackson inequality](../../complex-balancing-and-the-deficiency-zero-theore/helmholtz-rate-eq-zero-iff.md)
+- [Birch's theorem, existence](../../complex-balancing-and-the-deficiency-zero-theore/exists-pos-sub-mem-log-orthogonal.md)
+- [Birch's theorem, uniqueness](../../complex-balancing-and-the-deficiency-zero-theore/eq-of-sub-mem-log-orthogonal.md)
 
 ## Expansion
 

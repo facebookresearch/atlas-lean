@@ -24,6 +24,10 @@ The gain condition of Theorem 6 involves only the protein degradation rate, so a
 
 - [Exponential perfect adaptation of the integral-feedback loop](../../integral-feedback-and-perfect-adaptation/exponential-perfect-adaptation-of-the-integral-feedback-loop.md)
 
+## Proof depends on
+
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+
 ## Expansion
 
 Near the equilibrium $u^* > 0$, so $\varphi$ is inactive and the augmented linear system in $(x_1, x_2, I)$ has state matrix $\begin{pmatrix}-\gamma_r & -k_1 & k_2\\ k_p & -\gamma_p & 0\\ 0 & -1 & 0\end{pmatrix}$; the Routh–Hurwitz criterion on its characteristic polynomial gives Lemma 4, and since the lower bound on $k_1$ is increasing in $k_p$ and decreasing in $\gamma_p, \gamma_r$, its worst case over the parameter box gives Lemma 5. Globally, $\varphi$ is a sector-$[0,1]$ nonlinearity around a marginally stable (integrating) loop, and an extension of the Popov criterion for marginally stable systems reduces stability to positivity of a quadratic polynomial in $\omega^2$; Descartes' rule of signs shows positivity when $k_1 > k_2/\gamma_p$ for a suitable multiplier, and $u^* > 0$ keeps the equilibrium off the dead zone of $\varphi$.

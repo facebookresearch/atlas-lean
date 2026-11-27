@@ -7,11 +7,13 @@ $$d^2_{MP}(T, T') = \max_{f \text{ two-state}} |l_f(T) - l_f(T')|.$$
 A character is *convex* on $T$ if the minimal subtrees spanning its states are vertex-disjoint; it is *covering* if these subtrees together cover all vertices of $T$ (the *natural covering extension*). The *core tree* $T_c$ is $T$ with all leaves removed; a matching $M$ in $T_c$ is *legal* if $T_c - M$ has no component consisting of a single edge joined to two edges of $M$.
 
 **Theorem.**
+
 1. *(Reduction to convex characters.)* There is a covering convex character $f_c$ on one of the two trees, say $T$, such that each state of $f_c$ contains at least two taxa, and its states can be recolored red and blue in polynomial time to give a two-state character $f_2$ with
 
-$$d^2_{MP}(T, T') = |l_{f_2}(T) - l_{f_2}(T')| = l_{f_2}(T') - l_{f_2}(T).$$
+    $$d^2_{MP}(T, T') = |l_{f_2}(T) - l_{f_2}(T')| = l_{f_2}(T') - l_{f_2}(T).$$
 
-Moreover $f_c$ has a unique optimal extension to $T$, its natural covering extension.
+    Moreover $f_c$ has a unique optimal extension to $T$, its natural covering extension.
+
 2. *(Matching correspondence.)* Covering convex characters of $T$ with at least two taxa per state are in bijection with matchings of $T_c$, and it suffices to consider legal matchings.
 3. *(Counting bound.)* The maximum number of legal matchings in a tree with $m$ nodes is $O(\alpha^m)$ with $\alpha = (13384 + 8\sqrt{2793745})^{1/22} \approx 1.5895$.
 4. *(Algorithm.)* $d^2_{MP}(T, T')$ can be computed in $O(\alpha^{n} \cdot \mathrm{poly}(n))$ time, improving the $O^*(\phi^n)$ bound ($\phi$ the golden ratio) that follows from item 1 alone and the trivial $O^*(2^n)$.

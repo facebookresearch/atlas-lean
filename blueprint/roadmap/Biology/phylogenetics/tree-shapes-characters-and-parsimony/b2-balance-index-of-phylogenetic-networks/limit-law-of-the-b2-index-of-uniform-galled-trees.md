@@ -1,8 +1,9 @@
 # Limit law of the B2 index of uniform random galled trees
 
-**Setting.** Let $G_n$ be a uniformly random galled tree (a phylogenetic network in which every reticulation vertex lies in a vertex-disjoint cycle, or gall) with $n$ labeled leaves, and let $B_2$ be the entropy balance index of the exit distribution of the directed random walk.
+**Setting.** Let $G_n$ be a uniformly random galled tree (a binary phylogenetic network without multiple edges in which every reticulation vertex lies in a vertex-disjoint cycle, or gall; there are finitely many on $n$ leaves, so the uniform law is defined) with $n$ labeled leaves, and let $B_2$ be the entropy balance index of the exit distribution of the directed random walk.
 
 **Theorem.** As $n \to \infty$,
+
 1. $\mathbb{E}[B_2(G_n)] \to 2.707911858984\ldots$;
 2. $\operatorname{Var}(B_2(G_n)) \to 0.632774946963\ldots$;
 3. $B_2(G_n)$ converges in distribution, and in all moments, to a random variable $B$ with finite moments of all orders.

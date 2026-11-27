@@ -10,9 +10,9 @@ New infections are always asymptomatic. The process goes **extinct** if, from an
 
 By contrast, the mean-field model $u_1' = (\lambda_1 u_1 + \lambda_2 u_2)(1-u_1-u_2) - (\gamma+1)u_1$, $u_2' = \gamma u_1 - u_2$ has an epidemic if and only if $\lambda_1 + \gamma\lambda_2 > 1 + \gamma$, so for every $\gamma > 0$ it predicts an epidemic once $\lambda_2$ is large. The spatial model does not: local interactions cap how many times one symptomatic site can infect its neighbours.
 
-## Depends on
+## Proof depends on
 
-- [Branching-process size of an early epidemic](../../branching-process-approximation-of-early-epidemi/bp-size.md)
+- [Generation sizes of the branching process](../../branching-process-approximation-of-early-epidemi/bp-size.md)
 
 ## Expansion
 

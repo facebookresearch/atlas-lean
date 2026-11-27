@@ -7,12 +7,14 @@ $$\sum_{\substack{k_1+\dots+k_{n-1}\le d-1}}\beta^i_{k_1,\dots,k_{n-1}}\binom{d-
 where $\beta^i$ are differences between the payoffs of strategy $i$ and strategy $n$ against each composition of co-players. Let the coefficient vectors $A^i=(\beta^i_{k_1,\dots,k_{n-1}})$, $i=1,\dots,n-1$, be independent centred Gaussian vectors (for the explicit two-strategy and two-player results, with independent standard normal entries), and let $E(n,d)$ be the expected number of internal equilibria.
 
 **Theorem.**
+
 1. $E(n,d)$ is given by the Edelman–Kostlan formula: for coefficients that are i.i.d. Gaussian vectors with covariance $C$ and monomial vector $v(y)$, the expected number of roots in $U\subseteq\mathbb R^{n-1}$ is $\pi^{-n/2}\Gamma(n/2)\int_U\big(\det[\partial_{x_i}\partial_{y_j}\log v(x)^TCv(y)]_{x=y=t}\big)^{1/2}dt$.
 2. *Two strategies.* $E(2,d)=\int_0^\infty f(t)\,dt$ with an explicit density $f$, and for $d \ge 2$
 
-$$E(2,d)\le\frac1\pi\sqrt{d-1}\sqrt{1+\frac\pi2\sqrt{d-1}};$$
+    $$E(2,d)\le\frac1\pi\sqrt{d-1}\sqrt{1+\frac\pi2\sqrt{d-1}};$$
 
-hence the probability that a random $d$-player two-strategy game has the maximal number $d-1$ of internal equilibria is at most $\frac1\pi\sqrt{1+\frac\pi2\sqrt{d-1}}/\sqrt{d-1}\to0$. The expected number of stable internal equilibria is $E(2,d)/2$. (The lower bound $E(2,d)\ge\frac{d-1}{\pi\sqrt{2d-3}}$, so that $E(2,d)\to\infty$, is the case $\alpha=0$, $n=d-1$ of [Expected number of real roots of random polynomials from multiplayer games](expected-number-of-real-roots-of-random-polynomials-from-multiplayer-games.md).)
+    hence the probability that a random $d$-player two-strategy game has the maximal number $d-1$ of internal equilibria is at most $\frac1\pi\sqrt{1+\frac\pi2\sqrt{d-1}}/\sqrt{d-1}\to0$. The expected number of stable internal equilibria is $E(2,d)/2$. (The lower bound $E(2,d)\ge\frac{d-1}{\pi\sqrt{2d-3}}$, so that $E(2,d)\to\infty$, is the case $\alpha=0$, $n=d-1$ of [Expected number of real roots of random polynomials from multiplayer games](expected-number-of-real-roots-of-random-polynomials-from-multiplayer-games.md).)
+
 3. *Two players.* $E(n,2)=2^{1-n}$, so the probability of the maximal number of internal equilibria tends to $0$ as $n\to\infty$.
 
 ## Depends on
@@ -25,4 +27,4 @@ For two strategies the equilibrium condition is a single random polynomial in $y
 
 ## Sources
 
-- Manh Hong Duong and The Anh Han, "On the Expected Number of Equilibria in a Multi-player Multi-strategy Evolutionary Game", Dynamic Games and Applications 6 (2015), 324–346, <https://doi.org/10.1007/s13235-015-0148-0>; numbering as in arXiv:1408.3850: Section 2 (replicator dynamics and random polynomial theory, Edelman–Kostlan theorem) and Section 3 (results: formula for $f$, estimate for $E(2,d)$ and its corollaries, formula for $E(n,2)$).
+- Manh Hong Duong and The Anh Han, "On the Expected Number of Equilibria in a Multi-player Multi-strategy Evolutionary Game", Dynamic Games and Applications 6 (2016), 324–346, <https://doi.org/10.1007/s13235-015-0148-0>; numbering as in arXiv:1408.3850: Section 2 (replicator dynamics and random polynomial theory, Edelman–Kostlan theorem) and Section 3 (results: formula for $f$, estimate for $E(2,d)$ and its corollaries, formula for $E(n,2)$).

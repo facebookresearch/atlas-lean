@@ -15,9 +15,10 @@ $$\mathscr{R}_{21}=\frac{\mathscr{R}_2}{\mathscr{R}_1}\cdot\frac{\beta_1+\sigma_
 the expected secondary cases of strain 2 (resp. 1) introduced into a population at the endemic equilibrium of strain 1 (resp. 2) alone.
 
 **Statements.**
+
 1. *(Coexistence.)* The model has a steady state with $I_1>0$ and $I_2>0$ if and only if $\min\{\mathscr{R}_1,\mathscr{R}_2,\mathscr{R}_{12},\mathscr{R}_{21}\}>1$, and this coexistence state is unique whenever it exists.
 2. *(Quasi-steady-state reduction.)* Assume strain 1 relaxes instantly to its endemic level given $(I_2,R_2)$, $I_1=\omega(I_2,R_2)$. The reduced planar system for $(I_2,R_2)$ leaves $\Lambda=\{I_2,R_2\ge0,\ I_2+R_2\le N\}$ invariant. If $\mathscr{R}_1,\mathscr{R}_2,\mathscr{R}_{21}>1$ and $\epsilon\in\{0,1\}$, its nullclines intersect exactly once in the interior of $\Lambda$, at a locally exponentially stable state that attracts every interior trajectory. At that state the original strain persists ($\bar I_1>0$, with $\bar I_2+\epsilon\bar R_2<N(1-1/\mathscr{R}_1)$) if $\mathscr{R}_{12}>1$, and is excluded ($\bar I_1=0$) if $\mathscr{R}_{12}<1$.
-3. *(Interpretation.)* Even with $\mathscr{R}_1=\mathscr{R}_2$, a shorter immunity period of the resident strain (large $\sigma_1$) makes $\mathscr{R}_{21}$ large, and strong cross-protection from the invader ($\epsilon\to1$) lowers $\mathscr{R}_{12}$; asymmetry in immunity periods alone can therefore decide competitive outcomes.
+3. *(Interpretation.)* Even with $\mathscr{R}_1=\mathscr{R}_2$, a longer immunity period of the resident strain (small $\sigma_1$) makes $\mathscr{R}_{21}$ large (when $\mathscr{R}_1>1$, $\mathscr{R}_{21}$ decreases in $\sigma_1$ from $\mathscr{R}_2$ as $\sigma_1\to0$ to $\mathscr{R}_2/\mathscr{R}_1$ as $\sigma_1\to\infty$), and strong cross-protection from the invader ($\epsilon\to1$) lowers $\mathscr{R}_{12}$; asymmetry in immunity periods alone can therefore decide competitive outcomes.
 
 ## Expansion
 
@@ -25,4 +26,4 @@ At the strain-1-only equilibrium the susceptible pool available to strain 2 is $
 
 ## Sources
 
-- Matthew D. Johnston, Bruce Pell and David A. Rubel, "A two-strain model of infectious disease spread with asymmetric temporary immunity periods and partial cross-immunity", Mathematical Biosciences and Engineering 20 (2023), 16083–16113, <https://doi.org/10.3934/mbe.2023718>; numbering as in arXiv:2306.15011: model (SIR-partial), reproduction numbers (r), Theorems 1-3, Lemmas 5-6 and Appendix A.
+- Matthew D. Johnston, Bruce Pell and David A. Rubel, "A two-strain model of infectious disease spread with asymmetric temporary immunity periods and partial cross-immunity", Mathematical Biosciences and Engineering 20 (2023), 16083–16113, <https://doi.org/10.3934/mbe.2023718>; numbering as in arXiv:2306.15011: model (Eqs (8)–(9)), reproduction numbers (Eq. (10)), Theorems 1-3, Lemmas 5-6 and Appendix A.

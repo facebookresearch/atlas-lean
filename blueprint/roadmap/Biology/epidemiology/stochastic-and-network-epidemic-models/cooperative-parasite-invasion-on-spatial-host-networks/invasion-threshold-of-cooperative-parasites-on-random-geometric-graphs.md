@@ -5,14 +5,18 @@
 A *discrete-time branching process with cooperation* has $Z_g=\sum_{i\le Z_{g-1}}X_{g,i}+\sum_{1\le j<i\le Z_{g-1}}Y_{g,i,j}$ with i.i.d. offspring $X\sim\mathcal L_o$ and pairwise cooperation offspring $Y\sim\mathcal L_c$. Let $\pi(a)>0$ be the survival probability of the one with $\mathcal L_o=\mathrm{Poi}(a^2/2)$ and $\mathcal L_c=\mathrm{Poi}(a^2)$.
 
 **Theorem.**
+
 1. *Invasion probability.* If $v_N=o(\sqrt{d_N})$ then $\mathbb P(E_u)\to0$. If $v_N\sim a\sqrt{d_N}$ with $0<a<\infty$ then
 
-$$\pi\big(a/\sqrt{2^n}\big)\le\liminf_{N}\mathbb P(E_u)\le\limsup_N\mathbb P(E_u)\le\pi(a).$$
+    $$\pi\big(a/\sqrt{2^n}\big)\le\liminf_{N}\mathbb P(E_u)\le\limsup_N\mathbb P(E_u)\le\pi(a).$$
 
-If $\sqrt{d_N}=o(v_N)$ then $\mathbb P(E_u)\to1$.
+    If $\sqrt{d_N}=o(v_N)$ then $\mathbb P(E_u)\to1$.
+
 2. *Invasion time.* If $v_N\sim a\sqrt{d_N}$ and $T=\inf\{g:\bar I_g=\#\text{hosts}\}$, then conditionally on $T<\infty$, with probability tending to one,
 
-$$\Big\lfloor\frac1{2r_N}\Big\rfloor\le T\le\Big\lceil\frac1{2r_N}\Big\rceil+O\big(\max(\log\log N,\ \varepsilon_N/r_N^2)\big),\qquad \varepsilon_N=N^{\frac{\beta/2-1}{n}+\delta}.$$
+    $$\Big\lfloor\frac1{2r_N}\Big\rfloor\le T\le\Big\lceil\frac1{2r_N}\Big\rceil+O\big(\max(\log\log N,\ \varepsilon_N/r_N^2)\big),\qquad \varepsilon_N=N^{\frac{\beta/2-1}{n}+\delta},$$
+
+    for any fixed $\delta>0$.
 
 ## Expansion
 

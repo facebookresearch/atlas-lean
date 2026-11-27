@@ -3,11 +3,13 @@
 **Setting.** Let $T$ be a rooted gene tree with leaf set $L$ and $H \subseteq E(T)$ a set of horizontal-transfer edges. The connected components of $T - H$ induce a partition $\mathcal{P}(T,H)$ of $L$ into transfer-free classes. The (directed) *Fitch graph* $\mathbb{F}(T,H)$ on $L$ has an arc $(x,y)$ if and only if the path from $\mathrm{lca}_T(x,y)$ to $y$ contains an edge of $H$; its symmetrization is complete multipartite with parts $\mathcal{P}(T,H)$. A partition $\mathcal{P}$ of $L$ is *compatible* with $T$ if $\mathcal{P} = \mathcal{P}(T,H)$ for some *separating set* $H$.
 
 For compatible $(T,\mathcal{P})$:
+
 - an edge $h \in E(T)$ is *essential* if $h \in H$ for every separating set $H$, *forbidden* if $h \notin H$ for every separating set, and *ambiguous* otherwise;
 - a pair $(A,B)$ of distinct classes is *essential*, *forbidden* or *ambiguous* according as $(A,B)$ is an arc of the quotient Fitch graph $\mathbb{F}(T,H)/\mathcal{P}$ for all, for no, or for some but not all separating sets $H$ (all arcs between $A$ and $B$ have the same status).
 - the coloring $\varpi : V(T) \to \mathcal{P} \cup \{\emptyset\}$ sets $\varpi(v) = A$ if $v$ lies on the path between two leaves $x, y \in A$, and $\varpi(v) = \emptyset$ otherwise; $v$ is *colored* if $\varpi(v) \neq \emptyset$.
 
 **Theorem.** Let $T$ and $\mathcal{P}$ be compatible.
+
 1. (Tree edges.) An edge $vw \in E(T)$ is essential iff $\emptyset \neq \varpi(v) \neq \varpi(w) \neq \emptyset$, forbidden iff $\emptyset \neq \varpi(v) = \varpi(w)$, and ambiguous otherwise. There is a unique inclusion-maximal separating set $H^*$, and $vw \notin H^*$ iff $vw$ is forbidden.
 2. (Fitch arcs.) For distinct $A, B \in \mathcal{P}$, writing $\preceq$ for the descendant order of $T$ and $V^0(T)$ for its inner vertices:
    - $(A,B)$ is essential iff some colored $v \in V^0(T)$ satisfies $\mathrm{lca}(B) \prec v \preceq \mathrm{lca}(A \cup B)$;

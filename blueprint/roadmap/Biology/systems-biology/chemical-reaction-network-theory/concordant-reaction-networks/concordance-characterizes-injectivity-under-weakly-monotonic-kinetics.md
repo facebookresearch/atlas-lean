@@ -3,18 +3,20 @@
 **Setting.** A reaction network $\{\mathscr{S},\mathscr{C},\mathscr{R}\}$ has species $\mathscr{S}$, complexes $y \in \mathbb{R}^{\mathscr{S}}_{\ge 0}$ and reactions $y \to y'$; its stoichiometric subspace is $S = \operatorname{span}\{y'-y\}$. Let $L : \mathbb{R}^{\mathscr{R}} \to S$, $L\alpha = \sum_{y \to y'} \alpha_{y \to y'}(y'-y)$.
 
 **Definition (concordance).** The network is *concordant* if there do **not** exist $\alpha \in \ker L$ and a nonzero $\sigma \in S$ such that
+
 1. for each reaction $y \to y'$ with $\alpha_{y\to y'} \neq 0$, $\operatorname{supp} y$ contains a species $s$ with $\operatorname{sgn}\sigma_s = \operatorname{sgn}\alpha_{y\to y'}$;
 2. for each reaction $y \to y'$ with $\alpha_{y\to y'} = 0$, either $\sigma_s = 0$ for all $s \in \operatorname{supp} y$, or $\operatorname{supp} y$ contains species $s, s'$ with $\operatorname{sgn}\sigma_s = -\operatorname{sgn}\sigma_{s'} \neq 0$.
 
 Otherwise it is *discordant*.
 
-**Kinetics.** A kinetics assigns to each reaction a rate function $\mathscr{K}_{y\to y'} : \mathbb{R}^{\mathscr{S}}_{\ge 0} \to \mathbb{R}_{\ge 0}$, positive exactly when all reactant species are present; the species formation rate is $f(c) = \sum \mathscr{K}_{y\to y'}(c)(y'-y)$. The kinetics is *weakly monotonic* if for every reaction and compositions $c, c^*$: $\mathscr{K}_{y\to y'}(c^*) > \mathscr{K}_{y\to y'}(c)$ implies $c^*_s > c_s$ for some $s \in \operatorname{supp} y$; and $\mathscr{K}_{y\to y'}(c^*) = \mathscr{K}_{y\to y'}(c)$ implies either $c^*_s = c_s$ for all $s \in \operatorname{supp} y$ or there are $s, s' \in \operatorname{supp} y$ with $c^*_s > c_s$ and $c^*_{s'} < c_{s'}$. Mass-action kinetics is weakly monotonic. The kinetic system is *injective* if $f(c^*) \neq f(c)$ for distinct stoichiometrically compatible $c, c^*$ ($c^* - c \in S$) with at least one of them positive.
+**Kinetics.** A kinetics assigns to each reaction a rate function $\mathscr{K}_{y\to y'} : \mathbb{R}^{\mathscr{S}}_{\ge 0} \to \mathbb{R}_{\ge 0}$, positive exactly when all reactant species are present; the species formation rate is $f(c) = \sum \mathscr{K}_{y\to y'}(c)(y'-y)$. The kinetics is *weakly monotonic* if for compositions $c, c^*$ and every reaction $y \to y'$ with $\operatorname{supp} y \subseteq \operatorname{supp} c \cap \operatorname{supp} c^*$: $\mathscr{K}_{y\to y'}(c^*) > \mathscr{K}_{y\to y'}(c)$ implies $c^*_s > c_s$ for some $s \in \operatorname{supp} y$; and $\mathscr{K}_{y\to y'}(c^*) = \mathscr{K}_{y\to y'}(c)$ implies either $c^*_s = c_s$ for all $s \in \operatorname{supp} y$ or there are $s, s' \in \operatorname{supp} y$ with $c^*_s > c_s$ and $c^*_{s'} < c_{s'}$. Mass-action kinetics is weakly monotonic. The kinetic system is *injective* if $f(c^*) \neq f(c)$ for distinct stoichiometrically compatible $c, c^*$ ($c^* - c \in S$) with at least one of them positive.
 
 **Theorem.**
+
 1. If the network is concordant, every weakly monotonic kinetic system on it is injective; in particular it cannot admit two distinct stoichiometrically compatible equilibria at least one of which is positive.
 2. If the network is discordant, some weakly monotonic kinetics makes it non-injective.
 
-Hence a network has injectivity under all weakly monotonic kinetics if and only if it is concordant. The analogous statement holds for *strong concordance* and the broader class of two-way weakly monotonic kinetics.
+Hence a network has injectivity under all weakly monotonic kinetics if and only if it is concordant.
 
 ## Expansion
 

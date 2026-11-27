@@ -6,7 +6,7 @@
 
 1. (MCA drift) If $\int_0^1\alpha_t\ne0$ and $\mathrm{MCA}(\alpha_t)=\tfrac12$, then $\frac{d}{dt}\mathrm{MCA}(\alpha_t)=0$. If $0<\mathrm{MCA}(\alpha_t)<\tfrac12$ and $\alpha_t>0$, then $\mathrm{MCA}(\alpha_t)$ is increasing, with
 
-$$\frac{d}{dt}\mathrm{MCA}(\alpha_t)>2\Big(\tfrac12-\mathrm{MCA}(\alpha_t)\Big)^2 .$$
+    $$\frac{d}{dt}\mathrm{MCA}(\alpha_t)>2\Big(\tfrac12-\mathrm{MCA}(\alpha_t)\Big)^2 .$$
 
 2. (Invasion of non-constant residents) If $f_0$ is nonnegative, bounded, measurable and not constant, then for all sufficiently small $t>0$, $E[\alpha_t,f_0]>0$: the evolved strategy defeats the initial one.
 3. (Consequence) If moreover $f_0\ge K>0$, the evolved strategy is still an admissible strategy for small $t$, so adaptive dynamics produces an admissible strategy that defeats any non-constant positive $f_0$. Only the constant (equilibrium) strategies are not displaced this way, and a non-constant initial condition with $\mathrm{MCA}(f_0)=\tfrac12$ never reaches a constant function in finite time.

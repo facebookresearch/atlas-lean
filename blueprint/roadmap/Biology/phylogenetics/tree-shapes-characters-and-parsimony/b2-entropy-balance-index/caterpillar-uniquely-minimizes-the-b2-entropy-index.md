@@ -32,5 +32,5 @@ by induction on $n$. Binary minimality follows from the grafting identity: repla
 
 ## Sources
 
-- Mareike Fischer, Lina Herbst, Sophie Kersting, Luise Kühn and Kristina Wicke, "Tree Balance Indices",  (2023), <https://doi.org/10.1007/978-3-031-39800-1>; numbering as in arXiv:2109.12281: $B_2$ index fact sheet and appendix: Proposition 17 (grafting identity), Theorems 5 and 6, Corollaries 6–7, Lemma 2.
+- Mareike Fischer, Lina Herbst, Sophie Kersting, Luise Kühn and Kristina Wicke, "Tree Balance Indices: A Comprehensive Survey", Springer (2023), <https://doi.org/10.1007/978-3-031-39800-1>; numbering as in arXiv:2109.12281: $B_2$ index fact sheet and appendix: Proposition 17 (grafting identity), Theorems 5 and 6, Corollaries 6–7, Lemma 2.
 - F. Bienvenu, G. Cardona, C. Scornavacca, "Revisiting Shao and Sokal's $B_2$ index of phylogenetic balance", Journal of Mathematical Biology (2021), Theorem 2.3 and Proposition 1.10.

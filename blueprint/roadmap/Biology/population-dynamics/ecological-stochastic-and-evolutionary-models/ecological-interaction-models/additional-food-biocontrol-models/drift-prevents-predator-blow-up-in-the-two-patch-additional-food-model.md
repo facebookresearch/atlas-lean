@@ -10,12 +10,13 @@ $$\begin{aligned}
 where AF of quantity $\xi$ and quality $1/\alpha$ is supplied only in $\Omega_1$, and $\epsilon_i > \delta_i$.
 
 **Theorem.** Let $\xi_{\mathrm{critical}} = \delta_1/(\epsilon_1 - \alpha\delta_1)$.
+
 1. Without drift ($q_1 = q_2 = 0$) and with $\xi > \xi_{\mathrm{critical}}$, the predator population $y_1$ blows up in infinite time.
 2. With drift, if $q_1 > 0$ satisfies
 
-$$\max\left(1, \frac{\epsilon_1\xi}{1 + \alpha\xi}\right) < \delta_1 + q_1,$$
+    $$\max\left(1, \frac{\epsilon_1\xi}{1 + \alpha\xi}\right) < \delta_1 + q_1,$$
 
-then for every $q_2 > 0$ the predator populations remain bounded for all time.
+    then for every $q_2 > 0$ the predator populations remain bounded for all time.
 
 A companion result for symmetric dispersal between the patches gives boundedness whenever $\delta_1 + \delta_2 > \xi/(1 + \alpha\xi) > \delta_1$.
 

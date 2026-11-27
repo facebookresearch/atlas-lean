@@ -7,6 +7,7 @@ $$\dot{\mathbf{u}}=\gamma\,\mathbf{f}(\mathbf{u},\mathbf{v})+\frac{1}{h^2}D\math
 where $(\mathbf{f})_i=f(u_i,v_i)$ and $(\mathbf{g})_i=g(u_i,v_i)$, and $D$ is the tridiagonal second-difference matrix with homogeneous Neumann ends (rows $(-1,1)$, $(1,-2,1)$, $(1,-1)$). The constants are $\gamma,d>0$, the functions $f,g$ are $C^1$, $f(0,v)\ge0$ and $g(u,0)\ge0$, and the initial data are nonnegative. Write $\|(u,v)\|=u+v$ for the total concentration.
 
 **Lyapunov-like function (LLF).** A $C^2$ function $W:\mathbb{R}_{\ge0}^2\to\mathbb{R}_{\ge0}$ is an LLF for the reactions if:
+
 - (P1) there is $\underline{K}>0$ with $\nabla W(u,v)\cdot(f(u,v),g(u,v))\le0$ whenever $\|(u,v)\|\ge\underline{K}$;
 - (P2) $\partial_{uu}W>0$, $\partial_{vv}W>0$ and $\partial_{uv}W\ge0$ on $\mathbb{R}_{\ge0}^2$;
 - (P3) $W(u,v)\to\infty$ as $\|(u,v)\|\to\infty$;
@@ -16,10 +17,12 @@ where $(\mathbf{f})_i=f(u_i,v_i)$ and $(\mathbf{g})_i=g(u_i,v_i)$, and $D$ is th
 **Theorem (boundedness).** If the reactions admit an LLF, then there is $B>0$ such that $\|(u_i(t),v_i(t))\|\le B$ for every compartment $i$ and all $t\ge0$. In particular, solutions exist globally.
 
 **Corollaries.**
+
 - If $W$ is a Lyapunov function for the reactions and is additively separable, $W=w_1(u)+w_2(v)$, with (P2), then $W$ is an LLF. An example is $\alpha u^m+\beta v^p$ with $\alpha,\beta>0$ and $m,p\ge2$.
 - No LLF exists if, for some $v\ge0$, $\liminf_{u\to\infty}f(u,v)>0$ and $|f(u,v)/g(u,v)|\to\infty$ as $u\to\infty$, or if the symmetric condition holds with $u$ and $v$ exchanged.
 
 **Examples.**
+
 - The Schnakenberg kinetics $f=a-u+u^2v$, $g=b-u^2v$ show diffusion-driven (Turing) instability, but they have the LLF $W=u+2v+c/(u+1)+1/(v+1)$ for a suitable $c>0$. The discretized system is therefore bounded.
 - The strongly mutualistic Lotka–Volterra system $f=u(a_1-b_1u+c_1v)$, $g=v(a_2+b_2u-c_2v)$ with $b_2c_1>b_1c_2$ has no LLF.
 - The reactions $f=uv(u-v)(u+1)-\delta u$, $g=uv(v-u)(v+1)-\delta v$ have a globally stable origin, yet no LLF exists. With two compartments and small $\delta$ the discretized system is unbounded, so diffusion-driven blow-up occurs.

@@ -7,9 +7,10 @@ $$\dot x_1=(u(t)-\varepsilon)x_1+m(x_2-x_1),\qquad \dot x_2=(-u(t)-\varepsilon)x
 with $0\le\varepsilon\le1$ and $u$ of period $2T$, equal to $+1$ on $[0,T)$ and $-1$ on $[T,2T)$. Each patch alternates between growth rate $1-\varepsilon>0$ and $-(1+\varepsilon)<0$, out of phase with the other, so each patch alone is a sink (mean rate $-\varepsilon$). For $m>0$ both patches share a growth rate $\Delta(\varepsilon,m,T)=\lim_t\frac1t\ln x_i(t)$; *inflation* means $\Delta>0$.
 
 **Statements.**
+
 1. *(Closed form.)* With $b=e^{T\sqrt{1+m^2}}$ and $C=m^2b^4+2m^2b^2+4b^2+m^2$,
 
-$$\Delta(\varepsilon,m,T)=\frac{1}{2T}\ln\frac{m^2b^4+2b^2+m^2+m(b^2-1)\sqrt C}{2(1+m^2)b^2}-(m+\varepsilon).$$
+    $$\Delta(\varepsilon,m,T)=\frac{1}{2T}\ln\frac{m^2b^4+2b^2+m^2+m(b^2-1)\sqrt C}{2(1+m^2)b^2}-(m+\varepsilon).$$
 
 2. *(Limits.)* $\lim_{T\to\infty}\Delta=\sqrt{1+m^2}-(m+\varepsilon)$ and $\lim_{T\to0}\Delta=-\varepsilon$; for fixed $T$, $\Delta\to-\varepsilon$ as $m\to0$ or $m\to\infty$, so inflation can only occur at intermediate dispersal.
 3. *(Threshold in the period.)* For $m<\frac{1-\varepsilon^2}{2\varepsilon}$ there is $T^*(\varepsilon,m)$ with no inflation for $T<T^*$ and inflation for $T>T^*$, and $\inf_mT^*(\varepsilon,m)>0$: very fast switching never produces inflation.

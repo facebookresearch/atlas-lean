@@ -1,14 +1,15 @@
 # Cover characterizations of tree-based, tree-child and tree-sibling networks
 
-**Setting.** A rooted phylogenetic network on leaves $[n]$ is *labellable* if no two non-leaf vertices have the same set of children; labelling parents in a canonical order by $n+1,\dots,m$ turns it into its *cover* $\mathcal C$, the collection of children-label sets of all non-root parents, a family of subsets of $[m]$ whose union is $[m]$. Labellable networks are in bijection with *expanding covers*: covers of $[m]$ in which, with $n=m-|\mathcal C|+1$, no element of $[n]$ appears twice and, for each $i=1,\dots,|\mathcal C|$, at least $i$ sets lie in $[n+i-1]$. An integer appearing in two or more sets is a reticulation. A partition $\pi$ of $[m]$ *embeds* in $\mathcal C$ if some injective map sends each block $A\in\pi$ to a set $A'\in\mathcal C$ with $A\subseteq A'$, and *fully embeds* if moreover $|\pi|=|\mathcal C|$.
+**Setting.** A rooted phylogenetic network on leaves $[n]$ is *labellable* if no two non-leaf vertices have the same set of children; labelling parents in a canonical order by $n+1,\dots,m$ turns it into its *cover* $\mathcal C$, the collection of children-label sets of all non-leaf vertices, the root included, a family of subsets of $[m]$ whose union is $[m]$. Labellable networks are in bijection with *expanding covers*: covers of $[m]$ in which, with $n=m-|\mathcal C|+1$, no element of $[n]$ appears twice and, for each $i=1,\dots,|\mathcal C|$, at least $i$ sets lie in $[n+i-1]$. An integer appearing in two or more sets is a reticulation. A partition $\pi$ of $[m]$ *embeds* in $\mathcal C$ if some injective map sends each block $A\in\pi$ to a set $A'\in\mathcal C$ with $A\subseteq A'$, and *fully embeds* if moreover $|\pi|=|\mathcal C|$.
 
 **Theorem.** Let $\mathcal C$ be an expanding cover and $N$ its network.
+
 1. *Tree-based.* $N$ is tree-based (obtained from a spanning tree with the same leaves by adding arcs) iff $\mathcal C$ has a fully embedded partition; full embeddings are in bijection with support trees of $N$.
 2. *Counting support trees.* If $N$ is binary and tree-based, the number of support trees equals $2^c\prod_{f\in\mathcal F}(r(f)+1)$ (and $2^c$ if $\mathcal F=\emptyset$), where $c$ is the number of crowns (cyclic zig-zag trails) and $\mathcal F$ the set of fences, $r(f)$ the number of repeated integers in fence $f$.
 3. *Tree-child.* $N$ is tree-child (every non-leaf vertex has a non-reticulate child) iff each set of $\mathcal C$ contains an integer appearing exactly once in $\mathcal C$; equivalently, every set containing a repeated integer also contains a once-appearing integer.
 4. *Tree-sibling.* $N$ is tree-sibling (every reticulation is a sibling of a tree vertex) iff every repeated integer lies in at least one set that also contains a once-appearing integer.
 5. *Normal.* For a tree-child cover in labelling order, $N$ is normal (tree-child without shortcuts) iff no *backtrack* for any $x$ (a chain of sets following labels from a set containing $x$ back towards the root) contains a set containing $x$.
-6. *Spinal.* $N$ is spinal iff $\mathcal C$ has exactly $i$ subsets of $[n+i-1]$ for each $i$.
+6. *Spinal.* $N$ is *spinal* if it has a spine, a path from a leaf to the root through every non-leaf vertex; this holds iff $\mathcal C$ has exactly $i$ subsets of $[n+i-1]$ for each $i$.
 
 Orchard networks are recognized from the cover by a cherry-reduction algorithm acting directly on its sets.
 

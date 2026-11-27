@@ -7,11 +7,13 @@ For distinct genes $x, y \in L(T)$ compare the gene divergence time $\tau_T(\mat
 For an abstract colored 3-partition $\mathscr{G} = (G_<, G_=, G_>, \sigma)$ on $L$, the *informative species triples* $\mathscr{R}_S(\mathscr{G})$ contain $XY|Z$ whenever there are $x,y,z \in L$ of pairwise distinct colors $X,Y,Z$ with either $xz, yz \in E(G_<)$ and $xy \notin E(G_<)$, or $xy \in E(G_>)$ and $xz, yz \notin E(G_>)$. The *forbidden species triples* $\mathscr{F}_S(\mathscr{G})$ contain $XZ|Y$ and $YZ|X$ whenever such $x,y,z$ satisfy $xz, yz \in E(G_=)$ and $xy \notin E(G_=)$. The pair $(\mathscr{R}, \mathscr{F})$ is *consistent* if some tree displays every triple of $\mathscr{R}$ and no triple of $\mathscr{F}$.
 
 **Theorem.** A colored graph 3-partition $\mathscr{G} = (G_<, G_=, G_>, \sigma)$ is explained by a relaxed scenario if and only if
+
 1. $G_<$ and $G_=$ are properly colored,
 2. $G_<$ and $G_>$ are cographs, and
 3. $(\mathscr{R}_S(\mathscr{G}), \mathscr{F}_S(\mathscr{G}))$ is consistent.
 
 Consequently:
+
 - explainability is hereditary: $\mathscr{G}$ is explainable if and only if its restriction to every subset $L' \subseteq L$ is;
 - it can be decided in $O(|L|^4 \log |L|)$ time whether $\mathscr{G}$ is explainable, and a scenario is constructed when it is;
 - $\mathscr{G}$ is explained by a relaxed scenario if and only if it is explained by a *restricted* scenario, one with no unobservable transfers.

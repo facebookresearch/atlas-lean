@@ -28,4 +28,4 @@ In the coordinates $p_{ij} = -k_{ij}$ ($i,j>0$) and $p_{0i} = \sum_j k_{ij}$, th
 
 ## Sources
 
-- Jane Ivy Coons, Shelby Cox, Aida Maraj and Ikenna Nometa, "ML degrees of Brownian motion tree models: Star trees and root invariance", Journal of Symbolic Computation 132 (2026), 102482, <https://doi.org/10.1016/j.jsc.2025.102482>; numbering as in arXiv:2402.10322: main theorems stated in Section 1 (star-tree ML degree; root invariance), determinant formula and score equations (Section "Score Equations").
+- Jane Ivy Coons, Shelby Cox, Aida Maraj and Ikenna Nometa, "ML degrees of Brownian motion tree models: Star trees and root invariance", Journal of Symbolic Computation 132 (2026), 102482, <https://doi.org/10.1016/j.jsc.2025.102482>; numbering as in arXiv:2402.10322: Theorems 1.2 and 1.3 (star-tree ML degree; root invariance), Theorem 3.5 and Corollary 3.6, and Proposition 5.2 (star-tree score equations, Section 5).

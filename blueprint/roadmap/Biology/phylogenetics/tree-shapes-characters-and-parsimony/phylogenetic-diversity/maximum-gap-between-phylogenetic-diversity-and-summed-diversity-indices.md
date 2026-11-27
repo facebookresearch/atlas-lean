@@ -11,6 +11,7 @@ $$\Delta_\varphi(Y) = PD(Y) - \sum_{x \in Y} \varphi(x), \qquad \varphi \in \{FP
 is generally positive.
 
 **Theorem.** Let $1 \le k \le n - 1$ and $m > 0$. Over all trees with $L(\mathcal T, \ell) = m$ and all $Y$ with $|Y| = k$:
+
 1. $\max \Delta_{FP}(Y) = m\left(1 - \dfrac{1}{n - k + 1}\right)$, attained exactly when some edge $e = (u, v)$ carries all the length $m$, $X \setminus Y$ lies below $v$, and exactly one leaf of $Y$ lies below $v$.
 2. $\max \Delta_{ES}(Y) = m\left(1 - \dfrac{1}{2^{n-k}}\right)$, attained exactly when some edge $e = (u, v)$ carries all the length $m$, $X \setminus Y$ forms a chain (caterpillar spine) whose first parent is $v$, and $Y$ has a leaf below $v$.
 

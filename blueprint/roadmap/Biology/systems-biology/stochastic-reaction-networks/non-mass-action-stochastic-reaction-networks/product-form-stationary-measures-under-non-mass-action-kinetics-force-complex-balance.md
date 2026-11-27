@@ -16,6 +16,7 @@ $$\pi(x) = \prod_{i=1}^m \frac{c_i^{x_i}}{\theta_i(1)\cdots\theta_i(x_i)}, \qqua
 
 - [Non-explosivity of complex-balanced stochastic reaction networks](../non-explosivity-of-complex-balanced-stochastic-reaction-networks.md)
 - [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
 ## Expansion
 

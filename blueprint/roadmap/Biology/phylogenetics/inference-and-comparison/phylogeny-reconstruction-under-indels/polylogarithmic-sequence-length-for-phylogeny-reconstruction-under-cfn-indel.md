@@ -1,6 +1,7 @@
 # Polylogarithmic sequence length for phylogeny reconstruction under the CFN-indel model
 
 **Model (CFN-Indel).** A rooted binary model tree $T$ with $n$ leaves carries a uniformly random bitstring of length $k$ at the root. Along each edge $e$, independently for every bit and simultaneously:
+
 - the bit is flipped with probability $p_S(e)$ (substitution);
 - the bit is deleted with probability $p_D(e)$;
 - a uniformly random new bit is inserted to its right with probability $p_I(e)$.

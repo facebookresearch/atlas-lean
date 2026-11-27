@@ -18,7 +18,11 @@ $$\frac{P_1-S_1}{T_1-R_1} > \frac{S_0-P_0}{R_0-T_0}\quad\text{and}\quad \Delta(S
 
 then the system has a periodic orbit; it is a stable limit cycle (unstable interior equilibrium, repelling heteroclinic cycle on the boundary of the square). If both inequalities are reversed, there is an unstable limit cycle surrounding a stable interior equilibrium inside an attracting heteroclinic cycle.
 
-For linear $g$ (the replicator time scale) the second inequality reduces to the first, and limit cycles cannot arise; non-linear imitation breaks this degeneracy.
+For linear $g$ (the replicator time scale) $\Delta(u) \propto u$ and the second inequality becomes $\frac{S_0-P_0}{R_0-T_0} > \frac{P_1-S_1}{T_1-R_1}$, the reverse of the first, so both cannot hold and these limit cycles cannot arise; non-linear imitation breaks this degeneracy.
+
+## Proof depends on
+
+- [Poincaré–Bendixson theorem](../../../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)
 
 ## Expansion
 

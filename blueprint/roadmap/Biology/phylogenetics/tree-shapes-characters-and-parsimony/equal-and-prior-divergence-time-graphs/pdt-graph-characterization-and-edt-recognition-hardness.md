@@ -3,6 +3,7 @@
 **Setting.** Let $\mathscr{S} = (T, S, \sigma, \mu, \tau_T, \tau_S)$ be a relaxed scenario (dated gene tree, dated species tree, leaf coloring $\sigma : L(T) \to L(S)$ and time-consistent reconciliation map, with horizontal transfers allowed). The *prior-divergence-time* (PDT) graph has an edge $xy$ when $\tau_T(\mathrm{lca}_T(x,y)) > \tau_S(\mathrm{lca}_S(\sigma(x),\sigma(y)))$, and the *equal-divergence-time* (EDT) graph has an edge $xy$ when the two times are equal. A vertex-colored graph $(G,\sigma)$ is a PDT (resp. EDT) graph if some relaxed scenario has it as its PDT (resp. EDT) graph. A set $\mathscr{R}$ of rooted triples is consistent if some tree displays all of them.
 
 **Theorem (PDT graphs).** $(G,\sigma)$ is a PDT graph if and only if
+
 1. $G$ is a cograph,
 2. the complement $(\overline{G},\sigma)$ is properly colored, and
 3. the triple set $R(G) = \{\sigma(x)\sigma(y)|\sigma(z) : xy \in E(G),\ xz, yz \notin E(G),\ \sigma(x),\sigma(y),\sigma(z) \text{ pairwise distinct}\}$ is consistent.

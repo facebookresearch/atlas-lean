@@ -6,22 +6,26 @@
 
 1. (Explicit thresholds) Let $g_{\lim}$ be the parasite growth rate above which $\mathbb{E}[\mathfrak{C}_t]\to0$ and below which $\mathbb{E}[\mathfrak{C}_t]\to\infty$. For uniform sharing $\kappa(d\theta)=d\theta$,
 
-$$g_{\lim}=3r-q+2\sqrt{2r(r-q)} .$$
+    $$g_{\lim}=3r-q+2\sqrt{2r(r-q)} .$$
 
-For equal sharing $\kappa=\delta_{1/2}$, $g_{\lim}=r\,x_0(q/r)\ln2$, where $x_0(q/r)>2$ is the unique solution of
+    For equal sharing $\kappa=\delta_{1/2}$, $g_{\lim}=r\,x_0(q/r)\ln2$, where $x_0(q/r)>2$ is the unique solution of
 
-$$x_0=\Big(1+\frac qr\Big)\big(1+\ln2-\ln x_0\big)^{-1}.$$
+    $$x_0=\Big(1+\frac qr\Big)\big(1+\ln2-\ln x_0\big)^{-1}.$$
 
 2. (Equal sharing is worst) For every partitioning kernel $\kappa$, if $g/r<x_0(q/r)\ln2$ then $\mathbb{E}_{\delta_x}[\mathfrak{C}_t]\to\infty$ for all $x\ge0$: any population that survives (in mean) under equal sharing also survives under any other strategy.
 3. (Deterministic is worst at fixed asymmetry) For any symmetric $\kappa$ with $\mathbb{E}[\min(\Theta,1-\Theta)]=\vartheta\in(0,1/2]$, and the deterministic kernel $\kappa_\vartheta=\tfrac12(\delta_\vartheta+\delta_{1-\vartheta})$,
 
-$$\lim_{t\to\infty}\mathbb{E}^{(\kappa)}_{\delta_x}[\mathfrak{C}_t]\ \ge\ \lim_{t\to\infty}\mathbb{E}^{(\kappa_\vartheta)}_{\delta_x}[\mathfrak{C}_t].$$
+    $$\lim_{t\to\infty}\mathbb{E}^{(\kappa)}_{\delta_x}[\mathfrak{C}_t]\ \ge\ \lim_{t\to\infty}\mathbb{E}^{(\kappa_\vartheta)}_{\delta_x}[\mathfrak{C}_t].$$
 
 4. (No upper bound) For any $g,r,q$ with $q<r$ and any $\vartheta\in(0,1/2)$, there is a four-atom kernel $\kappa_2=\sum_{i=1}^2p_i(\delta_{z_i}+\delta_{1-z_i})$, $2(p_1+p_2)=1$, with $\mathbb{E}[\min(\Theta,1-\Theta)]=\vartheta$ and $\mathbb{E}_{\delta_x}[\mathfrak{C}_t]\to\infty$ for all $x>0$; it suffices to make the smallest atom $z_1$ very small.
 
 ## Depends on
 
 - [Survival regimes of a parasite-infected dividing cell population](survival-regimes-of-a-parasite-infected-cell-population.md)
+
+## Proof depends on
+
+- [Jensen's inequality](../../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
 
 ## Expansion
 

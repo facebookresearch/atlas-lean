@@ -14,6 +14,15 @@ and trajectories stay in the positive stoichiometric compatibility class $(x_0+S
 
 - [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
 - [Horn–Jackson: one equilibrium per compatibility class](../../complex-balancing-and-the-deficiency-zero-theore/exists-unique-equilibrium-of-is-complex.md)
+- [Horn–Jackson](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced-of-mass-action-field.md)
+- [Weakly reversible reaction network](../../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
+- [Stoichiometric subspace](../../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
+
+## Proof depends on
+
+- [The pseudo-Helmholtz function does not increase along solutions](../../complex-balancing-and-the-deficiency-zero-theore/antitone-on-pseudo-helmholtz.md)
+- [Equality in the Horn–Jackson inequality](../../complex-balancing-and-the-deficiency-zero-theore/helmholtz-rate-eq-zero-iff.md)
 
 ## Expansion
 

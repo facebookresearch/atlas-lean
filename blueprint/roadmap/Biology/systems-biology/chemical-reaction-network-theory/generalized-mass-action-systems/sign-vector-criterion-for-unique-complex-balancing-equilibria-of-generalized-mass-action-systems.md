@@ -7,6 +7,7 @@ $$\dot c=\sum_{y\to y'\in\mathscr{R}}k_{y\to y'}\,c^{\tilde y}\,(y'-y),\qquad c\
 with $c^{\tilde y}=\prod_ic_i^{\tilde y_i}$; classical mass action is $\tilde y=y$. The *stoichiometric subspace* is $S=\mathrm{span}\{y'-y\}$ and the *kinetic-order subspace* is $\tilde S=\mathrm{span}\{\tilde y'-\tilde y\}$ (over reactions within linkage classes). A *complex balancing equilibrium* $c$ balances inflow and outflow at every complex. For a subspace $U$, $\sigma(U)=\{\mathrm{sign}(u):u\in U\}\subseteq\{-,0,+\}^n$ is its set of sign vectors.
 
 **Statements.**
+
 1. If some generalized mass action system on the network has a complex balancing equilibrium, the network is weakly reversible. For weakly reversible networks the two deficiencies are $\delta=m-l-s$ and $\tilde\delta=m-l-\tilde s$ ($m$ complexes, $l$ linkage classes, $s=\dim S$, $\tilde s=\dim\tilde S$), and if $\tilde\delta=0$ every choice of rate constants admits a complex balancing equilibrium.
 2. If the set $\tilde Z$ of complex balancing equilibria is nonempty, then $\tilde Z=\{c\in\mathbb{R}^n_{>0}:\ln c-\ln c^*\in\tilde S^{\perp}\}=\{c^*\circ e^{\tilde v}:\tilde v\in\tilde S^\perp\}$ for any $c^*\in\tilde Z$.
 3. *(Uniqueness.)* For subspaces $S,\tilde S$, every positive coset $(c'+S)_{\ge}$ meets $\{c^*\circ e^{\tilde v}:\tilde v\in\tilde S^\perp\}$ in at most one point for all $c^*,c'>0$ if and only if $\sigma(S)\cap\sigma(\tilde S^\perp)=\{0\}$. Conversely, for a weakly reversible network with $\sigma(S)\cap\sigma(\tilde S^\perp)\neq\{0\}$, some rate constants give more than one complex balancing equilibrium in some stoichiometric compatibility class.
@@ -15,6 +16,7 @@ with $c^{\tilde y}=\prod_ic_i^{\tilde y_i}$; classical mass action is $\tilde y=
 ## Depends on
 
 - [Horn–Jackson: one equilibrium per compatibility class](../../complex-balancing-and-the-deficiency-zero-theore/exists-unique-equilibrium-of-is-complex.md)
+- [Weakly reversible reaction network](../../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
 
 ## Expansion
 

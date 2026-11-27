@@ -1,6 +1,7 @@
 # Species-Reaction Graph criteria for concordant reaction networks
 
 **Concordance.** For a reaction network with species $\mathscr{S}$, reactions $y \to y'$ and stoichiometric subspace $S = \mathrm{span}\{y' - y\}$, let $L \colon \mathbb{R}^{\mathscr{R}} \to S$, $L\alpha = \sum_{y \to y'} \alpha_{y \to y'}(y' - y)$. The network is *concordant* if there do not exist $\alpha \in \ker L$ and a nonzero $\sigma \in S$ such that
+
 1. for each reaction with $\alpha_{y \to y'} \ne 0$, $\mathrm{supp}\, y$ contains a species $s$ with $\mathrm{sgn}\,\sigma_s = \mathrm{sgn}\,\alpha_{y \to y'}$;
 2. for each reaction with $\alpha_{y \to y'} = 0$, either $\sigma_s = 0$ for all $s \in \mathrm{supp}\,y$, or $\mathrm{supp}\,y$ contains $s, s'$ with $\mathrm{sgn}\,\sigma_s = -\mathrm{sgn}\,\sigma_{s'} \ne 0$.
 
@@ -13,6 +14,7 @@ $$\frac{f_{R_1 \to s_2} f_{R_2 \to s_3} \cdots f_{R_n \to s_1}}{e_{s_1 \to R_1} 
 Two cycles have a *species-to-reaction intersection* if their intersection is nonempty and every connected component of it is a path with a species at one end and a reaction at the other.
 
 **Theorem.** If in the SR Graph of a fully open network (i) every even cycle is an s-cycle and (ii) no two even cycles have a species-to-reaction intersection, then the network is concordant, and in fact strongly concordant. The conclusion extends to every *nondegenerate* network with these SR Graph properties (all weakly reversible networks included), and then:
+
 1. for every weakly monotonic kinetics, each positive equilibrium is the only equilibrium, positive or boundary, in its stoichiometric compatibility class;
 2. if the network is weakly reversible, then for any kinetics no nontrivial compatibility class has a boundary equilibrium; if it is also conservative, every continuous weakly monotonic kinetics has exactly one equilibrium in each nontrivial class, and it is positive;
 3. for differentiably monotonic kinetics every positive equilibrium is nondegenerate and every real eigenvalue of its Jacobian (restricted to $S$) is negative.

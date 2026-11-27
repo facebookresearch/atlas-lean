@@ -4,13 +4,14 @@ In the Markovian SIR epidemic with contact rate $\beta$, recovery rate $\gamma$,
 
 1. **Critical fractions.**
 
-$$\pi_c > p_c = \frac{\beta - (\gamma+\delta)}{\beta - \gamma} .$$
+    $$\pi_c > p_c = \frac{\beta - (\gamma+\delta)}{\beta - \gamma} .$$
 
 2. **Individual reproduction number.** With $f(\pi)$ as in the digital-tracing reproduction number, set
 
-$$R^{(\mathrm{ind})}_D = \frac{\pi f(\pi)}{1 - \pi + \pi f(\pi)} + (1-\pi)\frac{\beta}{\gamma+\delta} .$$
+    $$R^{(\mathrm{ind})}_D = \frac{\pi f(\pi)}{1 - \pi + \pi f(\pi)} + (1-\pi)\frac{\beta}{\gamma+\delta} .$$
 
-Unlike $R_D$, which can increase with $\pi$, $R^{(\mathrm{ind})}_D$ is strictly decreasing in $\pi \in [0,1]$.
+    Unlike $R_D$, which can increase with $\pi$, $R^{(\mathrm{ind})}_D$ is strictly decreasing in $\pi \in [0,1]$.
+
 3. **Common threshold.** $R_D = R^{(\mathrm{ind})}_D = 1$ at $\pi = \pi_c$; both exceed $1$ for $\pi < \pi_c$ and both are below $1$ for $\pi > \pi_c$.
 
 ## Depends on

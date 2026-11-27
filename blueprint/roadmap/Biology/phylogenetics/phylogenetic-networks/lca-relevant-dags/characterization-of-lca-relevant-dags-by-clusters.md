@@ -3,11 +3,13 @@
 **Setting.** Let $G$ be a directed acyclic graph whose set of leaves (out-degree-$0$ vertices) is $X$. Write $u\preceq_G v$ if $v$ is an ancestor of $u$ (there is a directed path from $v$ to $u$, possibly of length $0$), and $C_G(v)=\{x\in X: x\preceq_G v\}$ for the cluster of $v$. For nonempty $A\subseteq X$, $\mathrm{LCA}_G(A)$ is the set of $\preceq_G$-minimal common ancestors of $A$; if it has exactly one element, that element is $\mathrm{lca}_G(A)$.
 
 **Definitions.**
+
 - $v$ is an *LCA vertex* if $v\in\mathrm{LCA}_G(A)$ for some $A\subseteq X$, and an *lca vertex* if $v=\mathrm{lca}_G(A)$ for some $A$. $G$ is *LCA-relevant* (resp. *lca-relevant*) if all its vertices are LCA (resp. lca) vertices.
 - $G$ has *(PCC)* if $u,v$ are $\preceq_G$-comparable exactly when $C_G(u)\subseteq C_G(v)$ or $C_G(v)\subseteq C_G(u)$; it has *strong (CL)* if $v=\mathrm{lca}_G(C_G(v))$ for all $v$.
 - $G$ is *regular* if $v\mapsto C_G(v)$ is an isomorphism onto the Hasse diagram of its cluster set $\mathfrak{C}_G$.
 
 **Statements.**
+
 1. A vertex $v$ is an LCA (resp. lca) vertex if and only if $v\in\mathrm{LCA}_G(C_G(v))$ (resp. $v=\mathrm{lca}_G(C_G(v))$), and the witnessing set can be taken of size at most $|C_G(v)|$.
 2. $G$ is LCA-relevant if and only if no two adjacent vertices have the same cluster.
 3. The following are equivalent: (a) $G$ is lca-relevant; (b) $G$ has strong (CL); (c) $G$ satisfies (PCC) and is LCA-relevant; (d) $G$ satisfies (PCC) and distinct vertices have distinct clusters; (e) $C_G(u)\subseteq C_G(v)\iff u\preceq_G v$ for all $u,v$.

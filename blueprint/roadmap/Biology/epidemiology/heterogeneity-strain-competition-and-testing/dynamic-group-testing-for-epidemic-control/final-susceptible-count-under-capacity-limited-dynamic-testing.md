@@ -1,10 +1,11 @@
 # Final susceptible count under capacity-limited dynamic testing of a discrete SIR spread
 
 **Model.** A population of $n$ individuals evolves in discrete time $t = 0, 1, 2, \dots$; each individual is susceptible ($U_i = 0$), infected ($U_i = 1$) or detected and isolated ($U_i = 2$, permanently). At $t = 0$ each individual is infected independently with probability $p$. At each step $t \ge 1$:
+
 - *spread:* each non-isolated infected individual infects each susceptible one independently with probability $q$;
 - *testing:* at most $T$ tests are run (individual or pooled; a pooled test is positive iff it contains an infected individual) and every detected infected individual is isolated before the next spread phase.
 
-Let $\alpha(t)$ be the number of susceptible individuals at time $t$, and $p'(t)$ the probability that an infected individual escapes detection at time $t$. A testing policy is *symmetric* if the marginal state law is the same for all individuals and *converging* if $\mathbb{P}(U_i(t) = 1) = o(1/n)$ as $t \to \infty$.
+Let $\alpha(t)$, $\lambda(t)$ and $\gamma(t)$ be the numbers of susceptible, infected non-isolated and isolated individuals at time $t$, and $p'(t)$ the probability that an infected individual escapes detection at time $t$; as a standing assumption, $p'(t)$ depends only on $T$, $\alpha(t)$, $\lambda(t)$ and $\gamma(t)$. A testing policy is *symmetric* if the marginal state law is the same for all individuals and *converging* if $\mathbb{P}(U_i(t) = 1) = o(1/n)$ as $t \to \infty$.
 
 **Theorem (general approximation).** For a symmetric converging policy, under vanishing-covariance conditions on the infection indicators,
 
@@ -14,7 +15,7 @@ $$\mathbb{E}[\alpha(t)] \approx n(1-p)\,(1-q)^{\,np\sum_{i=0}^{t-1}\left((1 + nq
 
 $$\lim_{t\to\infty}\mathbb{E}[\alpha_{\mathrm{weak}}(t)] \approx n(1-p)\,(1-q)^{\frac{np}{1 - (1 - T/n)(1 + nq(1-p))}},$$
 
-a lower bound for the final expected number of never-infected individuals under the original individual-testing algorithm. For dynamic Dorfman-type pooling (pairs tested together, positives retested) the same holds with $T/n$ replaced by $T/(2n)$ under $(1 - \frac{T}{2n})(1 + nq(1-p)) < 1$.
+a lower bound for the final expected number of never-infected individuals under the original individual-testing algorithm. The dynamic Dorfman-type algorithm randomly partitions the non-isolated individuals into $T/2$ groups, runs the $T/2$ group tests, and individually tests $T/2$ individuals drawn from positive groups. Its weak version discards the group results, partitions all $n$ individuals, and so amounts to testing $T/2$ uniformly chosen individuals; for it the same holds with $T/n$ replaced by $T/(2n)$ under $(1 - \frac{T}{2n})(1 + nq(1-p)) < 1$, a lower bound for the original Dorfman-type algorithm.
 
 The stability conditions say that testing must remove infected individuals faster than the per-step reproduction factor $1 + nq(1-p)$ creates them; otherwise the epidemic is not brought under control.
 

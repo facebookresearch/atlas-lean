@@ -7,6 +7,7 @@ $$\mathscr{R}(G,\sigma) = \{ab|b' : \sigma(a) \ne \sigma(b) = \sigma(b'),\ ab \i
 $$\mathscr{F}(G,\sigma) = \{ab|b' : \sigma(a) \ne \sigma(b) = \sigma(b'),\ b \ne b',\ ab, ab' \in E(G)\}.$$
 
 **Theorem.**
+
 1. $(G, \sigma)$ is a qBMG if and only if there is a BMG $(\tilde G, \sigma)$ on the same vertex set such that for every $x$ and color $s$, either $N_G(x, s) = N_{\tilde G}(x, s)$ or $N_G(x, s) = \emptyset$. Hence qBMGs form a hereditary class.
 2. A properly colored digraph $(G, \sigma)$ is a qBMG if and only if the pair $(\mathscr{R}(G,\sigma), \mathscr{F}(G,\sigma))$ is consistent, i.e. some tree displays every triple in $\mathscr{R}$ and none in $\mathscr{F}$. Every such tree explains $(G, \sigma)$ with a suitable truncation map, and recognition takes $O(|E|\,|L|^2 \log |L|)$ time.
 3. $(G, \sigma)$ is a BMG if and only if it is a qBMG that is *color-sink-free*: $N(x, s) \ne \emptyset$ for every $x$ and every color $s \ne \sigma(x)$.

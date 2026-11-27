@@ -4,7 +4,7 @@
 
 $$G(\xi,s)=C(\xi)(sI-A(\xi))^{-1}B(\xi)=\frac{k(\xi)q(\xi,s)}{r(\xi,s)}.$$
 
-A *critical frequency* is $\omega_c\in\mathbb R$ with $G(\xi,j\omega_c)\in\mathbb R$; let $\Omega_c(\xi)$ be their set. Assume (A1): $G(\xi,\cdot)$ has no poles or zeros on the imaginary axis for $\xi\in\mathcal M$. With $p_\pm$ ($z_\pm$) the numbers of poles (zeros) of $G$ in the right/left half-plane, $\alpha=|p_+-p_-+z_--z_+|$ is constant on $\mathcal M$.
+A *critical frequency* is $\omega_c\in\mathbb R$ with $G(\xi,j\omega_c)\in\mathbb R$; let $\Omega_c(\xi)$ be their set. Assume (A1): for $\xi\in\mathcal M$, $G(\xi,\cdot)$ has no poles or zeros on the imaginary axis, and the degrees of $q(\xi,s)$ and $r(\xi,s)$ in $s$ are constant on $\mathcal M$. With $p_\pm$ ($z_\pm$) the numbers of poles (zeros) of $G$ in the right/left half-plane, $\alpha=|p_+-p_-+z_--z_+|$ is constant on $\mathcal M$.
 
 **Propositions.** A point $s_0$ that is not an open-loop eigenvalue is a closed-loop eigenvalue iff $G(\xi,s_0)=1$. Under (A1), $0\in\Omega_c(\xi)$, $\Omega_c$ is symmetric, and if $j\omega_c$ is a closed-loop eigenvalue then $\omega_c\in\Omega_c(\xi)$; moreover $\Omega_c(\xi)$ has at least $\tilde\alpha$ elements, $\tilde\alpha=\alpha$ if $\alpha$ is odd and $\alpha-1$ if even (it is *minimal* if it has exactly $\tilde\alpha$).
 

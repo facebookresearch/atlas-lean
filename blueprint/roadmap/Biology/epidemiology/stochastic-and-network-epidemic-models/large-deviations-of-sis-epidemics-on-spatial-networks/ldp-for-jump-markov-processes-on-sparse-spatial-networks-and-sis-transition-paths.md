@@ -2,6 +2,8 @@
 
 **Setting.** $N$ nodes have positions $x^j_N$ on a compact Riemannian manifold $\mathcal{E}$, with empirical position measure converging weakly to $\kappa$. Node $j$ has a state $\sigma^j(t)$ in a finite set $\Gamma$. Connections $J^{jk} \in \{-1,0,1\}$ are sampled independently (or symmetrically) with $\mathbb{P}(J^{jk} = \pm 1) = \phi_N p_\pm(x^j_N, x^k_N)$ for Lipschitz $p_\pm$, where the sparsity $\phi_N \to 0$ satisfies $N e^{-cN\phi_N}$ bounded for every $c > 0$; set $\mathcal{J} = p_+ - p_-$. Node $j$ jumps from its current state to $\alpha$ at rate $f_\alpha(x^j_N, \sigma^j(t), w^j(t))$, where $w^j_\beta(t) = (N\phi_N)^{-1}\sum_k J^{jk}\mathbf{1}\{\sigma^k(t) = \beta\}$ is the local field. Initial empirical laws $\hat\nu^N_0$ of (state, position) converge to some $\nu_0$ with densities $q_0(\alpha,\cdot)$.
 
+Assume moreover that the rates are bounded above and below on allowed transitions, $0 < c_f \le f_\alpha \le C_f$ for $(\beta,\alpha)\in\Xi$, and globally Lipschitz (Assumption 4 of the source; the results below use it).
+
 **Theorem (law of large numbers).** The empirical process converges to the unique solution of
 
 $$\frac{d}{dt}q_t(\alpha,\theta) = \sum_{\beta:(\beta,\alpha)\in\Xi} f_\alpha(\theta,\beta,w_t(\theta))\,q_t(\beta,\theta) - \sum_{\beta:(\alpha,\beta)\in\Xi} f_\beta(\theta,\alpha,w_t(\theta))\,q_t(\alpha,\theta),\qquad w_{t,\beta}(\theta) = \int_{\mathcal{E}}\mathcal{J}(\theta,y)\,q_t(\beta,y)\,\kappa(dy),$$

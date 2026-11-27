@@ -5,13 +5,15 @@
 $$\dot V = \alpha(1-\omega)Vp\Omega - \varepsilon V,\quad \dot S = \beta S p\Omega - \varepsilon S,\quad \dot D = (\omega\alpha V + \gamma D)p\Omega - \varepsilon D,\quad \dot p = \kappa V(1-p) - \varepsilon_p p .$$
 
 **Results.**
+
 1. There are no periodic orbits in the biologically relevant region.
 2. *Satellite-free equilibria* $Q_1 = (V_1, 0, D_1, p_1)$ require $\alpha(1-\omega) > \max\{\gamma,\varepsilon\}$; at such an equilibrium $p_1\Omega(x_1) = \varepsilon/(\alpha(1-\omega))$.
 3. *Coexistence equilibria* ($S \neq 0$) exist only if
 
-$$\alpha(1-\omega) = \beta \quad\text{and}\quad \beta > \gamma ;$$
+    $$\alpha(1-\omega) = \beta \quad\text{and}\quad \beta > \gamma ;$$
 
-then they form a curve $\Gamma$ (a piece of a hyperbola in the $(V,S)$ coordinates) inside the plane $D = \frac{\beta\omega}{(\beta-\gamma)(1-\omega)}V$, with $p = 1 - \varepsilon_p/(\kappa V + \varepsilon_p)$. In this case the plane is invariant and $S/V$ is a first integral, so $\Gamma$ is a quasi-neutral curve of non-isolated equilibria.
+    then they form a curve $\Gamma$ (a piece of a hyperbola in the $(V,S)$ coordinates) inside the plane $D = \frac{\beta\omega}{(\beta-\gamma)(1-\omega)}V$, with $p = 1 - \varepsilon_p/(\kappa V + \varepsilon_p)$. In this case the plane is invariant and $S/V$ is a first integral, so $\Gamma$ is a quasi-neutral curve of non-isolated equilibria.
+
 4. Let $\mu = \alpha - \alpha^*$ with $\alpha^* = \beta/(1-\omega)$. For $\mu < 0$, every interior orbit tends to the origin (extinction of all three RNAs) when no other attractor is present, and orbits passing near the former location of $\Gamma$ spend a time bounded below by $\frac{\tilde K\alpha}{\varepsilon}\,|\mu|^{-1}$ there: transients obey the scaling law $\tau \sim |\mu|^{-1}$.
 
 ## Expansion

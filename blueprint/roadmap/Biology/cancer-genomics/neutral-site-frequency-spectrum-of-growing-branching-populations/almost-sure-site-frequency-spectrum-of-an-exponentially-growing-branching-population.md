@@ -3,6 +3,7 @@
 **Model.** Let $(Z(t))_{t\ge0}$ be a continuous-time Galton–Watson process with $Z(0) = 1$: each individual lives an $\mathrm{Exp}(a)$ time and then produces $k$ offspring with probability $u_k$, where $m = \sum_k k u_k > 1$ (supercritical) and $\sum_k k^3 u_k < \infty$. The net growth rate is $\lambda = a(m-1)$, $p$ is the extinction probability, $q = 1-p$, and $\Omega_\infty$ is the event of survival. Each individual accumulates neutral mutations at rate $\nu > 0$ under the infinite-sites model. The site frequency spectrum $S_j(t)$ is the number of mutations carried by exactly $j$ individuals alive at time $t$; $M(t)$ is the total number of mutations present; $\tau_N = \inf\{t : Z(t) \ge N\}$; $p_j(s) = \mathbb{P}(Z(s) = j \mid Z(0) = 1)$; and $Y = \lim_t e^{-\lambda t}Z(t)$.
 
 **Theorem.** Conditionally on $\Omega_\infty$, almost surely, for every $j \ge 1$:
+
 1. *(Fixed time)* $\displaystyle \lim_{t\to\infty} e^{-\lambda t} S_j(t) = \nu\, Y \int_0^\infty e^{-\lambda s} p_j(s)\, ds$;
 2. *(Fixed size)* $\displaystyle \lim_{N\to\infty} N^{-1} S_j(\tau_N) = \nu \int_0^\infty e^{-\lambda s} p_j(s)\, ds$;
 3. the same holds for $M$ with $p_j(s)$ replaced by $1 - p_0(s)$.

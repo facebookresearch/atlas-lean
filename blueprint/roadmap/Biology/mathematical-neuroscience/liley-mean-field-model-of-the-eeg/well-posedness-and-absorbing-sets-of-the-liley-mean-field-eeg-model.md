@@ -11,6 +11,7 @@ $$\partial_t^2 w + 2\nu\Lambda\partial_t w - \tfrac32\nu^2\Delta w + \nu^2\Lambd
 where $f$ is the sigmoidal firing-rate function, $g$ the subcortical input, the $J_k$ are constant selection matrices, and the remaining symbols are diagonal matrices of positive biophysical constants (membrane time constants, synaptic rate constants, conduction speed $\nu$, axonal decay $\Lambda$). The first equation is an ODE with bilinear (reversal-potential) coupling, the second a damped linear oscillator, and the third a damped telegraph-type wave equation.
 
 **Theorem.**
+
 1. *(Weak solutions.)* For $g \in L^2(0, T; L^2)$ and initial data $v_0, i_0, i_0' \in L^2$, $w_0 \in H^1$, $w_0' \in L^2$, there is a unique $\Omega$-periodic weak solution, depending continuously on the data, so the weak solution operators form a continuous semigroup.
 2. *(Strong solutions.)* If moreover $w_0 \in H^2$ and $w_0' \in H^1$, the solution is a unique strong solution with the corresponding additional regularity.
 3. *(Biophysical invariance.)* For bounded data in suitable phase spaces, $w$ stays nonnegative and the synaptic activities remain in a positively invariant region, as their interpretation requires.

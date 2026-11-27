@@ -11,6 +11,7 @@ and $p(N) = p(\rho_N)$ at the root. On phylogenetic trees this is the Liu polyno
 A node $v$ is a *strong descendant* of $u$ if some directed path from $u$ to $v$ passes only through reticulation or elementary nodes. A tree node $u$ with children $v^{(1)}, v^{(2)}$ is *separable* if both children are tree nodes, or some tree node $u_1 \neq u$ is a strong ancestor of $v^{(1)}$ (or $v^{(2)}$) and either of no other strong descendant of $u$ or of one of the strong descendants of that child. The network is *separable* if all its tree nodes are separable.
 
 **Theorem.**
+
 1. For IMLNs $N_1, N_2$ and a label permutation $\sigma$ fixing $X$ setwise, $p(N_1) = {}^{\sigma}p(N_2)$ if and only if $N_1$ and $N_2$ are equivalent modulo strong paths.
 2. For any IMLN, $p(u)$ is irreducible exactly when $u$ is a tree node.
 3. If $N_1, N_2$ are internally labelled separable phylogenetic networks and $p(N_1) = {}^{\sigma}p(N_2)$, then $N_1 \cong N_2$. Thus $p$ is a complete invariant of internally labelled separable networks up to isomorphism.

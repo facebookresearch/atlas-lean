@@ -7,6 +7,7 @@ $$\overline N[x] = \{y \in L : (x,y) \notin E(G)\}$$
 (so $x \in \overline N[x]$), and $\overline{\mathcal N}(G) = \{\overline N[y] : y \in L\}$.
 
 **Theorem.** A directed graph $G$ is a Fitch graph if and only if
+
 1. $\overline{\mathcal N}(G)$ is hierarchy-like: for all $\overline N_1, \overline N_2 \in \overline{\mathcal N}(G)$, $\overline N_1 \cap \overline N_2 \in \{\overline N_1, \overline N_2, \emptyset\}$; and
 2. for every $\overline N \in \overline{\mathcal N}(G)$ and every $y \in \overline N$, $|\overline N[y]| \le |\overline N|$.
 

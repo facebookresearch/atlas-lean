@@ -3,6 +3,7 @@
 **Setting.** A *network* $N$ on a finite taxon set $X$ is a rooted directed acyclic graph whose leaf set is $X$. For a vertex $v$, its *cluster* $C(v)\subseteq X$ is the set of leaves reachable from $v$, and $\mathscr{C}_N=\{C(v): v\in V(N)\}$ is the set of (hardwired) clusters. A *clustering system* on $X$ is a family $\mathscr{C}\subseteq 2^X$ with $\emptyset\notin\mathscr{C}$, $X\in\mathscr{C}$ and $\{x\}\in\mathscr{C}$ for all $x\in X$; every $\mathscr{C}_N$ is one.
 
 **Definitions.**
+
 - $N$ is *regular* if the map $v\mapsto C(v)$ is an isomorphism from $N$ onto the Hasse diagram $\mathscr{H}[\mathscr{C}_N]$ of $(\mathscr{C}_N,\subseteq)$ (arcs from a cluster to the clusters it covers).
 - $N$ satisfies *path-cluster comparability* (PCC) if, for all vertices $u,v$, $u$ and $v$ are comparable in the ancestor order of $N$ exactly when $C(u)\subseteq C(v)$ or $C(v)\subseteq C(u)$.
 - $N$ is *semi-regular* if it satisfies (PCC) and has no shortcut (an arc $(u,w)$ together with a longer directed $u$-$w$ path).
@@ -10,6 +11,7 @@
 - $N$ is a *cluster network* if it satisfies (PCC), distinct vertices share a cluster only when one is a hybrid vertex and the other its child, no cluster lies strictly between the clusters of a parent and its child, and every hybrid vertex has exactly one child, which is a tree vertex.
 
 **Statements.**
+
 1. For every clustering system $\mathscr{C}$ there is a unique regular network $N$ with $\mathscr{C}_N=\mathscr{C}$, namely $\mathscr{H}[\mathscr{C}]$.
 2. A network is regular if and only if it is semi-regular and has no vertex of out-degree $1$; equivalently, if and only if it is least-resolved and satisfies (PCC).
 3. A network is a cluster network if and only if it is semi-regular, *separated* (every hybrid vertex has out-degree $1$ and its child is a tree vertex) and phylogenetic (no vertex of in-degree and out-degree $1$).

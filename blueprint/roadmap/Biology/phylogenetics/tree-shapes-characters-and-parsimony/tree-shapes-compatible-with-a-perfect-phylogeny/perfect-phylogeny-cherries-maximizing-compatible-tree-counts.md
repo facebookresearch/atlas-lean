@@ -6,7 +6,7 @@
 
 1. Among the sequences $b_1(n),b_2(n),b_3(n),\dots$, the sequence $b_2(n)$ has the fastest asymptotic growth as $n\to\infty$, and
 
-$$b_2(n)\sim 2\Bigl(\frac{2}{\pi}\Bigr)^{n-2}(n-2)!.$$
+    $$b_2(n)\sim 2\Bigl(\frac{2}{\pi}\Bigr)^{n-2}(n-2)!.$$
 
 2. For fixed $n\ge2$, $b'_x(n)=\binom{n-2}{x-1}L_xL_{n-x}=\dfrac{n!\,(n-2)!}{2^{n-2}}\binom{n}{x}^{-1}$, so $b'_1(n)$ is the largest among $b'_1(n),\dots,b'_{\lfloor n/2\rfloor}(n)$.
 3. For fixed $n\ge2$, $b''_x(n)=X_xX_{n-x}$ with $b''_{x+1}(n)/b''_x(n)=\dfrac{2x-1}{2n-2x-3}\le1$ for $1\le x\le\frac{n-1}{2}$, so $b''_1(n)$ is the largest among $b''_1(n),\dots,b''_{\lfloor n/2\rfloor}(n)$.

@@ -11,16 +11,18 @@ $$P_n^{(\gamma)}(x) = \sum_{i=0}^n \xi_i\binom{n}{i}^{\gamma}x^i, \qquad P_n^{(\
 with $\gamma > 0$, $\alpha,\beta > -1$; the game polynomial is $\gamma = 1$, or $\alpha = \beta = 0$.
 
 **Theorem.**
+
 1. As $n \to \infty$,
 
-$$\mathbb E N_n^{(\gamma)} \sim \sqrt{2\gamma n}, \qquad \mathbb E N_n^{(\alpha,\beta)} \sim \sqrt{2n}.$$
+    $$\mathbb E N_n^{(\gamma)} \sim \sqrt{2\gamma n}, \qquad \mathbb E N_n^{(\alpha,\beta)} \sim \sqrt{2n}.$$
 
-In particular a random $(n+1)$-player two-strategy game has on average $\sim\sqrt{n/2}$ internal equilibria, and there is a discontinuity at $\gamma = 0$, where the Kac polynomial gives $\mathbb E N_n \sim \frac{2}{\pi}\ln n$.
+    In particular a random $(n+1)$-player two-strategy game has on average $\sim\sqrt{n/2}$ internal equilibria, and there is a discontinuity at $\gamma = 0$, where the Kac polynomial gives $\mathbb E N_n \sim \frac{2}{\pi}\ln n$.
+
 2. For $n = 1$, $P_1^{(\alpha,\beta)}$ is almost surely a nonconstant linear polynomial, so $\mathbb E N_1^{(\alpha,\beta)} = 1$. For every $n \ge 2$ and $\alpha > -1$,
 
-$$\frac{2}{\pi}\sqrt{\frac{n(n+2\alpha)}{2n+2\alpha-1}} \le \mathbb E N_n^{(\alpha,\alpha)} \le \frac{2\sqrt n}{\pi}\left(1 + \ln 2 + \frac12\ln\frac{n+\alpha}{1+\alpha}\right),$$
+    $$\frac{2}{\pi}\sqrt{\frac{n(n+2\alpha)}{2n+2\alpha-1}} \le \mathbb E N_n^{(\alpha,\alpha)} \le \frac{2\sqrt n}{\pi}\left(1 + \ln 2 + \frac12\ln\frac{n+\alpha}{1+\alpha}\right),$$
 
-and $\sqrt n\,\frac{1 - s_{n}}{1 + s_{n}} \le \mathbb E N_n^{(\alpha,\alpha)} \le \sqrt n\,\frac{1+s_{n}}{1-s_{n}}$, where $s_n \in (0,1)$ is the largest root of the degree-$n$ Jacobi polynomial $J_n^{(\alpha,\alpha)}(x) = \sum_{i=0}^n \binom{n+\alpha}{n-i}\binom{n+\alpha}{i}\big(\frac{x-1}{2}\big)^i\big(\frac{x+1}{2}\big)^{n-i}$. For $\alpha = \beta$ the zeros of $J_n^{(\alpha,\alpha)}$ are symmetric about $0$, which the bound uses; without this symmetry the largest zero need not be positive (for $n = 1$, $\alpha = 2$, $\beta = 0$ it is $-1/2$), and no bound of this form is claimed for $\alpha \ne \beta$.
+    and $\sqrt n\,\frac{1 - s_{n}}{1 + s_{n}} \le \mathbb E N_n^{(\alpha,\alpha)} \le \sqrt n\,\frac{1+s_{n}}{1-s_{n}}$, where $s_n \in (0,1)$ is the largest root of the degree-$n$ Jacobi polynomial $J_n^{(\alpha,\alpha)}(x) = \sum_{i=0}^n \binom{n+\alpha}{n-i}\binom{n+\alpha}{i}\big(\frac{x-1}{2}\big)^i\big(\frac{x+1}{2}\big)^{n-i}$. For $\alpha = \beta$ the zeros of $J_n^{(\alpha,\alpha)}$ are symmetric about $0$, which the bound uses; without this symmetry the largest zero need not be positive (for $n = 1$, $\alpha = 2$, $\beta = 0$ it is $-1/2$), and no bound of this form is claimed for $\alpha \ne \beta$.
 
 ## Expansion
 

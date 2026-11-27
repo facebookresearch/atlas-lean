@@ -20,6 +20,15 @@ $$\mathcal R_0=\max\{\mathcal R_{0P},\mathcal R_{0H}\},$$
 
 and the disease-free equilibrium is locally asymptotically stable when $\mathcal R_0<1$.
 
+## Depends on
+
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+- [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+
 ## Expansion
 
 In the HIV sub-model an infected individual spends mean time $1/q_1$ in $I_H$, infecting at rate $\eta k$, and with probability $\lambda_1/q_1$ progresses to AIDS, where it spends mean time $1/q_2$ infecting at rate $\eta ka_2$; summing gives $\mathcal R_{0H}=\frac{\eta k}{q_1}+\frac{\lambda_1}{q_1}\frac{\eta ka_2}{q_2}$. In the PCP sub-model a new infection is a carrier with probability $\xi$, transmitting at rate $\rho c\omega$ for mean time $1/k_1$ and becoming symptomatic with probability $\beta/k_1$, after which it transmits at rate $\rho c$ for mean time $1/k_2$; otherwise it is symptomatic from the start. HIV treatment rates $\tau_1,\tau_2$ enter $q_1,q_2$ and lower $\mathcal R_{0H}$, while the co-infection classes do not change the threshold at the disease-free state because the two infections interact there only through higher-order terms; the model is used to quantify how PCP treatment of each contagious stage reduces the co-infection burden among people on antiretroviral therapy.

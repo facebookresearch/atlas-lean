@@ -36,5 +36,5 @@ where $\mathcal P_k(n)$ is the set of partitions $n=\sum_i a_i\tilde n_i$ into $
 
 ## Sources
 
-- Mareike Fischer, Lina Herbst, Sophie Kersting, Luise Kühn and Kristina Wicke, "Tree Balance Indices",  (2023), <https://doi.org/10.1007/978-3-031-39800-1>; numbering as in arXiv:2109.12281: appendix on the average leaf depth and Sackin index: Theorem 1, Proposition 7, Corollary 1 (maximum), Lemma 1, Theorem 2, Corollaries 2–3 (minimum).
+- Mareike Fischer, Lina Herbst, Sophie Kersting, Luise Kühn and Kristina Wicke, "Tree Balance Indices: A Comprehensive Survey", Springer (2023), <https://doi.org/10.1007/978-3-031-39800-1>; numbering as in arXiv:2109.12281: appendix on the average leaf depth and Sackin index: Theorem 1, Proposition 7, Corollary 1 (maximum), Lemma 1, Theorem 2, Corollaries 2–3 (minimum).
 - M. Fischer, "Extremal values of the Sackin tree balance index", Annals of Combinatorics (2021), Theorem 2 (binary case).

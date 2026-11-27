@@ -22,4 +22,4 @@ For $\rho \ge 1$ and $0 < z < 1$ one has $\rho z + (1 - z)\ln(1 - z) > 0$, and $
 
 ## Sources
 
-- Martin Bootsma, Danny Chan, Odo Diekmann and Hisashi Inaba, "The effect of host population heterogeneity on epidemic outbreaks", Mathematics in Applied Sciences and Engineering 5 (2024), 1–35, <https://doi.org/10.5206/mase/16718>; numbering as in arXiv:2308.06593: Section 6, Theorem 6.6.
+- Martin Bootsma, Danny Chan, Odo Diekmann and Hisashi Inaba, "The effect of host population heterogeneity on epidemic outbreaks", Mathematics in Applied Sciences and Engineering 5 (2024), 1–35, <https://doi.org/10.5206/mase/16718>; numbering as in arXiv:2308.06593v2: Section 5, Theorem 5.6 (Theorem 4.6 in v1).

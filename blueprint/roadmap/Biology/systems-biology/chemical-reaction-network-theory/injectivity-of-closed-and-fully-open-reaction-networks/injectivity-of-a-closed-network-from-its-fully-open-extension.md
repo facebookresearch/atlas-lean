@@ -16,6 +16,8 @@ When these hold, all steady states of $\mathcal{N}$ are non-degenerate.
 ## Depends on
 
 - [Mass-action reaction rate](../../complex-balancing-and-the-deficiency-zero-theore/rate.md)
+- [Stoichiometric subspace](../../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
 ## Expansion
 

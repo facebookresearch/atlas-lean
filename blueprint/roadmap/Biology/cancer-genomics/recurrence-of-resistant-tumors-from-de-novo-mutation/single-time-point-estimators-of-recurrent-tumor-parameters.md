@@ -24,6 +24,10 @@ The condition $\alpha < -\lambda_1/\lambda_0$ ensures that sensitive cells are s
 
 - [Clone number and Simpson index at tumor recurrence](clone-number-and-simpson-index-at-tumor-recurrence.md)
 
+## Proof depends on
+
+- [Delta method](../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/delta-method.md)
+
 ## Expansion
 
 The sensitive population is $Z_0^n(\gamma_n) \approx n e^{\lambda_0\gamma_n}$, which gives $\hat\lambda_0$. Multiplying the limits of $I_n/n^{1-\alpha}$ and $n^{1-\alpha}R_n$ eliminates $n^{1-\alpha}$ and $r_1$: $I_n R_n \to 2(\lambda_1-\lambda_0)^2/(-\lambda_0(2\lambda_1 - \lambda_0))$, a function of $\lambda_1/\lambda_0$ alone, which inverts to $U_n \to -\lambda_0/\lambda_1$. The size relation $n = \mathbb{E}[Z_1^n(\zeta_n)]$ then yields $r_1$ via the clone count, and the clone-count limit $I_n \approx -\lambda_1 n^{1-\alpha}/(\lambda_0 r_1)$ is solved for $\alpha$ on the $\log_n$ scale. Consistency and the rates follow from the delta method applied to Theorems 1–3.

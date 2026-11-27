@@ -8,11 +8,11 @@ with relative growth rate $r>0$ and relative carrying capacity $k>0$ of patch 2.
 
 **Theorem (global dynamics).** There are no periodic orbits, and a coexistence equilibrium $P_3=(\bar x_1(D),\bar x_2(D))$ in the open first quadrant is globally asymptotically stable there. If $D<r/(1+r)$ the origin is a repeller and infinitely many heteroclinic orbits join it to $P_3$; if $D>r/(1+r)$ the origin is a saddle and there is a unique heteroclinic connection (its unstable manifold) from the origin to $P_3$.
 
-**Theorem (optimal dispersal).** The total equilibrium population $\Omega(D)=\bar x_1(D)+\bar x_2(D)$ satisfies the sharp bound
+**Theorem (optimal dispersal).** Assume $k\ne1$ (for $k=1$, $(1,1)$ is an equilibrium for every $D$, so $\Omega\equiv1+k$). The total equilibrium population $\Omega(D)=\bar x_1(D)+\bar x_2(D)$ satisfies the bound
 
 $$\Omega(D)\le\Omega^*=\frac12\Big(\sqrt{1+\tfrac{r^2+1}{r}k+k^2}+(1+k)\Big),$$
 
-attained at some $D^*$. With $k^*(r)=\dfrac{r(3+r)}{1+3r}$, the maximum $\Omega^*$ is attained at a positive dispersal rate $D^*$ if $r>1$ and $k>k^*(r)$, or $r<1$ and $k<k^*(r)$; if $r<1$ and $k^*(r)<k<1$ then $\Omega'(D)>0$ for all $D>0$; in all other cases dispersal reduces the total population, $\Omega(D)<1+k$ for $D>0$.
+where $\Omega^*$ is the maximum of $\bar x_1+\bar x_2$ along the curve of equilibria continued to all real $D$; it is attained at some $D^*\in\mathbb R$, which may be negative, so $\Omega^*$ need not be a value of $\Omega$ on $D\ge0$ (for $r=2$, $k=1/2$, $\Omega$ decreases from $\Omega(0)=1.5$ while $\Omega^*\approx1.541$). With $k^*(r)=\dfrac{r(3+r)}{1+3r}$, the maximizer satisfies $D^*>0$, so that $\Omega^*$ is attained at a positive dispersal rate, exactly if $r>1$ and $k>k^*(r)$, or $r<1$ and $k<k^*(r)$; if $r<1$ and $k^*(r)<k<1$ then $\Omega'(D)>0$ for all $D>0$; in all other cases dispersal reduces the total population, $\Omega(D)<1+k$ for $D>0$.
 
 ## Expansion
 

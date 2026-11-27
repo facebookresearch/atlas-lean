@@ -13,7 +13,8 @@ $$\Phi^*(N) = \sum_{v \in \mathring V_N \setminus \{\rho_N\}} \phi(v) \binom{|L_
 where $L_N(v)$ is the set of leaves below $v$. On trees $\Phi^{**}(T) - \binom{n}{2}$ is the classical total cophenetic index.
 
 **Properties.**
-1. *Block weights.* For a block $B$ with $m$ vertices, $m - 2 \le \omega(B) \le \binom{m}{3}$; the lower bound is attained exactly by lanterns and the upper exactly by crescents (a Hamiltonian path from $\rho_B$ to the hybrid plus a shortcut). In binary level-1 networks $\omega(B) \ge \binom{\lceil m/2\rceil + 1}{3} + \binom{\lfloor m/2 \rfloor + 1}{3}$, attained exactly by full-moon blocks (two internally disjoint paths of balanced length).
+
+1. *Block weights.* For a block $B$ with $m$ vertices of a level-1 network, $m - 2 \le \omega(B) \le \binom{m}{3}$; the lower bound is attained exactly by lanterns and the upper exactly by crescents (a Hamiltonian path from $\rho_B$ to the hybrid plus a shortcut). In binary level-1 networks $\omega(B) \ge \binom{\lceil m/2\rceil + 1}{3} + \binom{\lfloor m/2 \rfloor + 1}{3}$, attained exactly by full-moon blocks (two internally disjoint paths of balanced length).
 2. *Locality and recursion.* On level-1 networks $\Phi^{**}$ is local: replacing the relevant part below a vertex changes $\Phi^{**}$ only through that part and the vertex weight. If $v_1, \dots, v_k$ are the relevant neighbours of the root, then $\Phi^{**}(N) = \sum_i \Phi^{**}(\partial N(v_i)) + \phi(\rho_N)\binom{n}{2}$.
 3. *Complexity.* $\Phi^{**}$ is computable in linear time on level-1 networks and in $O(|V|^2 + |V||E|)$ time in general.
 
@@ -23,4 +24,4 @@ The block weight is the classical total cophenetic index of the block with one p
 
 ## Sources
 
-- Linda Knüver, Mareike Fischer, Marc Hellmuth and Kristina Wicke, "The weighted total cophenetic index: A novel balance index for phylogenetic networks", Discrete Applied Mathematics 359 (2024), 89–142, <https://doi.org/10.1016/j.dam.2024.07.037>; numbering as in arXiv:2307.08654: Definition of $\Phi^*$, $\Phi^{**}$ (Section 3), Proposition 9.9, Theorems 10.3–10.4, Propositions 11.3 and 11.5.
+- Linda Knüver, Mareike Fischer, Marc Hellmuth and Kristina Wicke, "The weighted total cophenetic index: A novel balance index for phylogenetic networks", Discrete Applied Mathematics 359 (2024), 89–142, <https://doi.org/10.1016/j.dam.2024.07.037>; numbering as in arXiv:2307.08654v2: Definition B.5 ($\Phi^*$, $\Phi^{**}$), Proposition B.9, Theorems C.3–C.4, Propositions D.3 (level-1 networks) and D.5 (binary level-1 networks).

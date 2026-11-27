@@ -11,14 +11,16 @@ $$\mathcal A f(x) = -rx f'(x) + c(x)\int_0^\infty \big[f(x+y) - f(x)\big]\lambda
 deterministic exponential decay interrupted by exponentially distributed concentration jumps.
 
 **Theorem.**
-1. *(Functional limit.)* If $X_V(0) \Rightarrow X(0)$, then $X_V \Rightarrow X$ in $D(\mathbb{R}_+, \mathbb{R}_+)$ as $V \to \infty$; the same holds for multi-gene networks with regulated burst rates and general jump kernels, and both processes are the unique nonexplosive solutions of their martingale problems.
+
+1. *(Functional limit.)* If $X_V(0) \Rightarrow X(0)$, then $X_V \Rightarrow X$ in $D(\mathbb{R}_+, \mathbb{R}_+)$ as $V \to \infty$; the same holds for multi-gene networks with regulated burst rates and general jump kernels whose burst-size laws $p_i(V,\cdot)$ have finite first moments, put asymptotically all their mass on nonzero bursts and, rescaled by $V$, converge locally uniformly to the limiting kernels $\mu_i$ (conditions (4) of the source); both processes are the unique nonexplosive solutions of their martingale problems.
 2. *(Stationary laws.)* If $r > L_c/\lambda$ and $c(0) > 0$, then $X_V$ has the unique stationary distribution
 
-$$\pi_V\big(\tfrac nV\big) = A_V\,\frac{p_V^n}{n!}\prod_{k=0}^{n-1}\Big(\frac{c(k/V)}{r} + k\Big), \qquad n \ge 0,$$
+    $$\pi_V\big(\tfrac nV\big) = A_V\,\frac{p_V^n}{n!}\prod_{k=0}^{n-1}\Big(\frac{c(k/V)}{r} + k\Big), \qquad n \ge 0,$$
 
-and $X$ has the unique stationary density $p(x) = A\,x^{-1}\exp\!\big(-\lambda x + \frac1r\int_1^x \frac{c(y)}{y}dy\big)$, $x > 0$, with normalizing constants $A_V, A$. Moreover $\pi_V \Rightarrow \pi$.
+    and $X$ has the unique stationary density $p(x) = A\,x^{-1}\exp\!\big(-\lambda x + \frac1r\int_1^x \frac{c(y)}{y}dy\big)$, $x > 0$, with normalizing constants $A_V, A$. Moreover $\pi_V \Rightarrow \pi$.
+
 3. *(Constant burst rate.)* If $c \equiv c > 0$, $\pi_V$ is negative binomial, $\pi_V(n/V) = \frac{(c/r)_n}{n!}p_V^n(1-p_V)^{c/r}$, and $p$ is the Gamma density $\frac{\lambda^{c/r}}{\Gamma(c/r)}x^{c/r-1}e^{-\lambda x}$.
-4. *(Exponential ergodicity.)* For a $d$-dimensional PDMP with drift $F$ and burst kernels $\mu_i$ at rates $c_i(x)$, if $\langle F(x) - F(y), x - y\rangle \le -r|x-y|^2$ with $r > \sum_i L_{c_i}\int|x|\mu_i(dx)$, there is a unique stationary law $\pi$ and $W(\pi_t, \pi) \le W(\pi_0,\pi)\,e^{-\tilde r t}$ in Wasserstein distance, $\tilde r = r - \sum_i L_{c_i}\int x\,\mu_i(dx) > 0$.
+4. *(Exponential ergodicity.)* For a $d$-dimensional PDMP with drift $F$ and burst kernels $\mu_i$ at rates $c_i(x)$, if $\langle F(x) - F(y), x - y\rangle \le -r|x-y|^2$ with $r > \sum_i L_{c_i}\int|x|\mu_i(dx)$, there is a unique stationary law $\pi$ with finite mean, and $W(\pi_t, \pi) \le W(\pi_0,\pi)\,e^{-\tilde r t}$ in Wasserstein distance, $\tilde r = r - \sum_i L_{c_i}\int x\,\mu_i(dx) > 0$.
 
 ## Expansion
 
@@ -26,4 +28,4 @@ With burst sizes of order $V$, a geometric number of copies with mean $V/\lambda
 
 ## Sources
 
-- Xian Chen and Chen Jia, "Limit theorems for generalized density-dependent Markov chains and bursty stochastic gene regulatory networks", Journal of Mathematical Biology 80 (2019), 959–994, <https://doi.org/10.1007/s00285-019-01445-1>; numbering as in arXiv:1909.00038: Theorems 3.2–3.5, Section 4 (generators of the single-gene model), Theorems 4.1, 4.2, 4.5, Corollary 4.4 and Theorem 5.1.
+- Xian Chen and Chen Jia, "Limit theorems for generalized density-dependent Markov chains and bursty stochastic gene regulatory networks", Journal of Mathematical Biology 80 (2020), 959–994, <https://doi.org/10.1007/s00285-019-01445-1>; numbering as in arXiv:1909.00038: Theorems 3.2–3.5, Section 4 (generators of the single-gene model), Theorems 4.1, 4.2, 4.5, Corollary 4.4 and Theorem 5.1.

@@ -18,10 +18,6 @@ $$t_N = \frac{1}{2J}\log N$$
 
 with a window of constant size.
 
-## Depends on
-
-- [Extinction time of the stochastic logistic SIS epidemic](../../sis-epidemic-model/extinction-time-of-the-stochastic-logistic-epidemic.md)
-
 ## Expansion
 
 Near $x^\star$ the fluid limit contracts at exponential rate $|f'(x^\star)| = J$, while stationary fluctuations of $X_N/N$ are of order $N^{-1/2}$. A chain started at distance of order $1$ from $x^\star$ therefore needs time $\frac{1}{J}\log\sqrt N = \frac{1}{2J}\log N$ for its deterministic error to shrink to the size of the noise, which gives the lower bound. For the upper bound, two copies are coupled: both follow the ODE into an $N^{-1/2}$-neighbourhood of $x^\star$ by time $(1-h)\frac{1}{2J}\log N$, and from there their difference behaves like a contracting random walk with jump rates of order $N$, which coalesces in constant time. Unlike the classical SIS model ($\varepsilon=0$), all transition rates stay of order $N$ near equilibrium, which is what makes the window constant.

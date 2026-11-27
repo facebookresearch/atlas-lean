@@ -3,11 +3,13 @@
 **Setting.** Let $X$ be a finite set and $\mathscr{C}$ a clustering system on $X$ (no empty set, contains $X$ and all singletons). Two sets *overlap* if their intersection is nonempty and neither contains the other. A rooted network $N$ on $X$ is *level-1* if every block (maximal biconnected subgraph) of $N$ contains at most one hybrid vertex other than its own root; a *galled tree* is a level-1 network in which every vertex has in-degree at most $2$. $\mathscr{C}_N$ denotes the set of hardwired clusters of $N$.
 
 **Axioms on $\mathscr{C}$.**
+
 - *Closed:* $A,B\in\mathscr{C}$ and $A\cap B\neq\emptyset$ imply $A\cap B\in\mathscr{C}$.
 - *Property (L):* $C_1\cap C_2=C_1\cap C_3$ whenever $C_1\in\mathscr{C}$ overlaps both $C_2\in\mathscr{C}$ and $C_3\in\mathscr{C}$.
 - *(N3O):* $\mathscr{C}$ contains no three distinct pairwise overlapping clusters.
 
 **Statements.**
+
 1. The clustering system of every level-1 network satisfies (L), and every clustering system with (L) is a weak hierarchy ($C_1\cap C_2\cap C_3\in\{C_1\cap C_2,C_1\cap C_3,C_2\cap C_3,\emptyset\}$).
 2. There is a level-1 network $N$ with $\mathscr{C}_N=\mathscr{C}$ if and only if $\mathscr{C}$ is closed and satisfies (L). In that case the Hasse diagram of $(\mathscr{C},\subseteq)$ is itself a phylogenetic level-1 network whose leaves are the singletons.
 3. $\mathscr{C}$ is the clustering system of a galled tree if and only if it is closed and satisfies (L) and (N3O); the Hasse diagram is then a phylogenetic galled tree.

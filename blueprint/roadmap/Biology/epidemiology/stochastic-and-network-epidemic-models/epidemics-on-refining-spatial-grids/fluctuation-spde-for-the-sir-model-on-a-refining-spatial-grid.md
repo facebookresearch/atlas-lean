@@ -5,20 +5,17 @@
 $$\partial_t\mathbf{s}=\mu_S\Delta\mathbf{s}-\frac{\beta\,\mathbf{s}\mathbf{i}}{\mathbf{a}},\quad \partial_t\mathbf{i}=\mu_I\Delta\mathbf{i}+\frac{\beta\,\mathbf{s}\mathbf{i}}{\mathbf{a}}-\alpha\mathbf{i},\quad \partial_t\mathbf{r}=\mu_R\Delta\mathbf{r}+\alpha\mathbf{i},\qquad \mathbf{a}=\mathbf{s}+\mathbf{i}+\mathbf{r}.$$
 
 **Statements.**
+
 1. *(CLT at fixed mesh.)* If $\sqrt{\mathbf{N}}\,(Z_{\mathbf{N},\varepsilon}(0)-Z_\varepsilon(0))\to 0$, then $\Psi_{\mathbf{N},\varepsilon}=\sqrt{\mathbf{N}}\,(Z_{\mathbf{N},\varepsilon}-Z_\varepsilon)$ converges locally uniformly in law, as $\mathbf{N}\to\infty$, to the Gaussian diffusion $\Psi_\varepsilon(t)=\int_0^t\nabla_z b_\varepsilon(Z_\varepsilon(r))\Psi_\varepsilon(r)\,dr+\mathcal{M}_\varepsilon(t)$, with $\mathcal{M}_\varepsilon$ a Gaussian martingale whose covariance is $\sum_j h_jh_j^{\top}\beta_j(Z_\varepsilon)$ over the jump directions $h_j$.
 2. *(Functional CLT as $\varepsilon\to0$.)* Embed $\Psi_\varepsilon$ as a step-function-valued process $\mathscr{Y}_\varepsilon=(u_\varepsilon,v_\varepsilon,w_\varepsilon)$. For every $\gamma>3/2$ it is tight in $C([0,T];(H^{-\gamma})^3)$, and for $3/2<\gamma<2$ it converges in law, in $C([0,T];(H^{-\gamma})^3)\cap L^2(0,T;(H^{-1})^3)$, to the solution $\mathscr{Y}=(u,v,w)$ of the linear SPDE system obtained by linearizing the reaction-diffusion system around $(\mathbf{s},\mathbf{i},\mathbf{r})$ (with infection-term partial derivatives $\beta\,\mathbf{i}(\mathbf{i}+\mathbf{r})/\mathbf{a}^2$ and $\beta\,\mathbf{s}(\mathbf{s}+\mathbf{r})/\mathbf{a}^2$), driven by the Gaussian martingales
 
-$$\begin{aligned}
-\langle\mathscr{M}^S(t),\varphi\rangle&=-\!\int_0^t\!\!\int\varphi\sqrt{\tfrac{\beta\mathbf{s}\mathbf{i}}{\mathbf{a}}}\,\dot W_1-\sqrt{2\mu_S}\!\int_0^t\!\!\int\varphi'\sqrt{\mathbf{s}}\,\dot W_2,\\
-\langle\mathscr{M}^I(t),\varphi\rangle&=\int_0^t\!\!\int\varphi\sqrt{\tfrac{\beta\mathbf{s}\mathbf{i}}{\mathbf{a}}}\,\dot W_1+\int_0^t\!\!\int\varphi\sqrt{\alpha\mathbf{i}}\,\dot W_3-\sqrt{2\mu_I}\!\int_0^t\!\!\int\varphi'\sqrt{\mathbf{i}}\,\dot W_4,\\
-\langle\mathscr{M}^R(t),\varphi\rangle&=-\!\int_0^t\!\!\int\varphi\sqrt{\alpha\mathbf{i}}\,\dot W_3-\sqrt{2\mu_R}\!\int_0^t\!\!\int\varphi'\sqrt{\mathbf{r}}\,\dot W_5,
-\end{aligned}$$
+    $$\begin{aligned}
+    \langle\mathscr{M}^S(t),\varphi\rangle&=-\!\int_0^t\!\!\int\varphi\sqrt{\tfrac{\beta\mathbf{s}\mathbf{i}}{\mathbf{a}}}\,\dot W_1-\sqrt{2\mu_S}\!\int_0^t\!\!\int\varphi'\sqrt{\mathbf{s}}\,\dot W_2,\\
+    \langle\mathscr{M}^I(t),\varphi\rangle&=\int_0^t\!\!\int\varphi\sqrt{\tfrac{\beta\mathbf{s}\mathbf{i}}{\mathbf{a}}}\,\dot W_1+\int_0^t\!\!\int\varphi\sqrt{\alpha\mathbf{i}}\,\dot W_3-\sqrt{2\mu_I}\!\int_0^t\!\!\int\varphi'\sqrt{\mathbf{i}}\,\dot W_4,\\
+    \langle\mathscr{M}^R(t),\varphi\rangle&=-\!\int_0^t\!\!\int\varphi\sqrt{\alpha\mathbf{i}}\,\dot W_3-\sqrt{2\mu_R}\!\int_0^t\!\!\int\varphi'\sqrt{\mathbf{r}}\,\dot W_5,
+    \end{aligned}$$
 
-with $\dot W_1,\dots,\dot W_5$ independent space-time white noises.
-
-## Depends on
-
-- [Law of large numbers for the SI model with varying infectivity on a refining grid](law-of-large-numbers-for-the-si-model-with-varying-infectivity-on-a-refining-grid.md)
+    with $\dot W_1,\dots,\dot W_5$ independent space-time white noises.
 
 ## Expansion
 

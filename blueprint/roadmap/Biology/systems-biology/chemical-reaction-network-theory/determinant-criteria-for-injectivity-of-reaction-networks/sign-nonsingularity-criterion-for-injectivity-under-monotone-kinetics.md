@@ -11,6 +11,7 @@ $$p_Z(X) = \det(\widetilde{AZ_X}) = \sum_{|I| = |J| = s}\det(A_{I,J})\det\big((Z
 is nonzero and all its monomials have coefficients of one sign.
 
 **Theorem.** The following are equivalent:
+
 1. $A$ is $Z$-injective over all strictly monotonic kinetics $\mathcal{K}(Z)$, i.e. $AK(a) \ne AK(b)$ for every $K \in \mathcal{K}(Z)$ and every pair of distinct stoichiometrically compatible concentration vectors that are non-overlapping with respect to $Z$;
 2. $A$ is $Z$-injective over $\mathcal{K}^d(Z)$;
 3. $A$ is injective over the power-law kinetics $\mathcal{K}^g(Z)$;

@@ -4,7 +4,7 @@
 
 $$\epsilon\dot x = y - x^2, \qquad \dot y = -(\mu+1)x - z, \qquad \dot z = \tfrac{\mu}{2},$$
 
-with eigenvalue ratio $\mu \in (0,1)$. Deterministically (Wechselberger, Benoît, Brøns–Krupa–Wechselberger), the strong and weak singular canards perturb to maximal *primary canards*; if $2k+1 < \mu^{-1} < 2k+3$ there are $k$ *secondary canards*, the $j$-th twisting $2j+1$ times around the weak canard within an $O(\sqrt\epsilon)$ neighborhood of the fold, and these canards organize the SAO patterns. In the rescaled variables the distance of the $k$-th secondary canard to the weak canard is $O(e^{-c_0(2k+1)^2\mu})$ as $\mu \to 0$.
+with eigenvalue ratio $\mu \in (0,1)$. Deterministically (Wechselberger, Benoît, Brøns–Krupa–Wechselberger), the strong and weak singular canards perturb to maximal *primary canards*; assuming $\mu^{-1} \notin \mathbb Z$ and $\epsilon$ small, if $2k+1 < \mu^{-1} < 2k+3$ and $\mu^{-1} \ne 2(k+1)$ there are $k$ *secondary canards*, the $j$-th twisting $2j+1$ times around the weak canard within an $O(\sqrt\epsilon)$ neighborhood of the fold, and these canards organize the SAO patterns. In the rescaled variables the distance of the $k$-th secondary canard to the weak canard is $O(e^{-c_0(2k+1)^2\mu})$ as $\mu \to 0$.
 
 The stochastic system adds independent Gaussian white noise of intensity $\sigma$ to the fast variable and $\sigma' = \rho\sigma$ to the slow variables.
 

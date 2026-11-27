@@ -15,11 +15,12 @@ in which only the activator $U$ is observed. Eliminating $V$ by variation of con
 $$\hat\theta^N_0=\frac{-\int_0^T\langle(-\Delta)^{1+2\alpha}X^N_t,\mathrm dX^N_t\rangle+\int_0^T\langle(-\Delta)^{1+2\alpha}X^N_t,P_NF_{\hat\theta^N_{1:K}}(X)\rangle\,\mathrm dt}{\int_0^T|(-\Delta)^{1+\alpha}X^N_t|_H^2\,\mathrm dt}.$$
 
 **Statement.** Suppose the likelihood equations are solvable for large $N$, the reaction estimates $\hat\theta^N_{1:K}$ are bounded in probability, $\alpha>\gamma-d/4-1/2$, and for some $\eta,s_0>0$ and all $s_0\le s<2\gamma+1-d/2$ the solution has all moments of $\sup_t|X_t|_{H^s}$ and the nonlinearity gains $\eta$ derivatives: $|(-\Delta)^{(s-2+\eta+\epsilon)/2}F(Y)|_{C(0,T;H)}\le c\,(1+|(-\Delta)^{s/2}Y|_{C(0,T;H)})^b$. Then, as $N\to\infty$ with $T$ fixed:
+
 1. $\hat\theta^N_0\to\theta_0$ in probability;
 2. if $\eta\le1+d/2$, then $N^r(\hat\theta^N_0-\theta_0)\to0$ in probability for every $r<\eta/d$;
 3. if $\eta>1+d/2$, then $N^{1/2+1/d}(\hat\theta^N_0-\theta_0)\Rightarrow\mathcal N(0,V)$ with
 
-$$V=\frac{2\theta_0\,(4\alpha-4\gamma+d+2)^2}{T\,d\,\Lambda^{2\alpha-2\gamma+1}\,(8\alpha-8\gamma+d+2)}.$$
+    $$V=\frac{2\theta_0\,(4\alpha-4\gamma+d+2)^2}{T\,d\,\Lambda^{2\alpha-2\gamma+1}\,(8\alpha-8\gamma+d+2)}.$$
 
 For the activator–inhibitor model, the reaction estimates are bounded in probability and: in $d=1$ with $\gamma-3/4<\alpha\le\gamma$, $\hat\theta^N_0$ is consistent and asymptotically normal as in 3; in $d=2$ with $\gamma-1<\alpha<\gamma$, it is consistent with $N^r(\hat\theta^N_0-\theta_0)\to0$ for every $r<1$. So the diffusivity of the activator is identifiable in finite time from high spatial resolution alone, while the reaction parameters in general are not.
 

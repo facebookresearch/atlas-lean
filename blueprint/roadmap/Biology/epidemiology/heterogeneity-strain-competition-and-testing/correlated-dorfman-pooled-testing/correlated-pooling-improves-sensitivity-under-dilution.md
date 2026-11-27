@@ -19,10 +19,6 @@ for $\mathrm{P} \in \{\mathrm{NP},\mathrm{CP}\}$; under a sublinear-association 
 
 Since the classical efficiency (people screened per test) equals $\gamma_{\mathrm{P},\alpha}/\bigl((1-\beta_{\mathrm{P},\alpha})\alpha\bigr)$, correlated pooling can have *lower* classical efficiency once dilution is modelled, even though it finds more positives per test.
 
-## Depends on
-
-- [Positive predictive value of a diagnostic test](../../sensitivity-specificity-and-predictive-values/ppv.md)
-
 ## Expansion
 
 The false negative rate is $\beta_{\mathrm{P},\alpha} = 1 - \mathbb{E}_{\mathrm{P},\alpha}[p(h(\mathbf{V}))\,p(V_1) \mid V_1 > 0]$. Under NP, as $\alpha \to 0$ a positive pool almost surely holds a single positive, so the limit is $1 - \mathbb{E}[p(h(V_1,0,\dots,0))p(V_1) \mid V_1 > 0]$. Under CP, decompose on $S = \ell$: for $\ell \ge 2$ some other $V_i > 0$, so monotonicity gives $h(\mathbf{V}) \ge h(V_1,0,\dots,0)$ and the detection probability is at least the $\ell = 1$ value; since $P(S > 1 \mid S > 0)$ stays positive, the mixture has a smaller false negative rate. Extra positives in a pool raise the pooled concentration and counteract dilution, which is the mechanism behind both results.

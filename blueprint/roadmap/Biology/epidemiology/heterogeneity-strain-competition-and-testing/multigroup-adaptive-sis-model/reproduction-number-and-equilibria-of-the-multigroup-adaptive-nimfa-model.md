@@ -14,9 +14,14 @@ $$F = \left(\frac{\beta_{ij}}{\delta_i}\,z^{\mathrm{DFE}}_{ij}\right)_{i,j=1}^n,
 - If no links are broken at zero prevalence ($f^{br}_{ij}(\mathbf{0}) = 0$), then $z^{\mathrm{DFE}}_{ij} = 1$ and $R_0 = \rho\big((\beta_{ij}/\delta_i)\big)$, the reproduction number of NIMFA on the static network: adaptivity does not change the epidemic threshold.
 
 **Theorem.**
+
 1. If each $f^{br}_{ij}$ is non-decreasing and each $f^{cr}_{ij}$ non-increasing in all arguments, the DFE is globally stable when $R_0 < 1$.
 2. The DFE is unstable when $R_0 > 1$.
 3. If the minimum row sum or minimum column sum of $F$ exceeds $1$, the system has at least one endemic equilibrium.
+
+## Depends on
+
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Expansion
 

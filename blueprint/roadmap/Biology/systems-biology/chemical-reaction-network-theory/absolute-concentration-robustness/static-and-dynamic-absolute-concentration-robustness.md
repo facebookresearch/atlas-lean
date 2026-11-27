@@ -3,11 +3,13 @@
 **Setting.** Let $\dot x=f(x)$ be a smooth dynamical system on $\mathbb{R}^n_{\ge0}$, with the orthant forward invariant; mass-action reaction networks are the main example. The *kinetic subspace* is $\mathrm{span}(\mathrm{Im}\,f)$. Two points $x,y$ are *compatible* if $y-x$ lies in this subspace, and two sets are compatible if some pair of their points is.
 
 **Definitions.**
+
 - **Static ACR** (Shinar–Feinberg). The system has a positive steady state, and for some species index $i$ and value $a_i^*>0$, every positive steady state lies in the hyperplane $\{x_i=a_i^*\}$.
 - **Dynamic ACR.** For some $i$ with $f_i\not\equiv0$ and some $a_i^*>0$, every positive initial condition compatible with $\{x\in\mathbb{R}^n_{>0}:x_i=a_i^*\}$ has a unique solution on a maximal interval $[0,T_0)$, and $x_i(t)\to a_i^*$ as $t\to T_0$.
 - **Basin types.** Let $N_{i,a_i^*}$ be the set of $i$-th coordinates of positive points that are *not* compatible with $\{x_i=a_i^*\}$. A dynamic ACR variable is *full basin* if $N_{i,a_i^*}=\varnothing$, *wide basin* if $N_{i,a_i^*}$ is bounded above, and *narrow basin* otherwise.
 
 **Theorem.**
+
 1. Each static or dynamic ACR variable has a unique ACR value.
 2. The system has a unique positive steady state iff every variable is a static ACR variable.
 3. A globally attracting positive steady state makes every variable a full basin dynamic ACR variable. Conversely, if every variable is dynamic ACR, the system has a globally attracting positive steady state, so every variable is full basin dynamic ACR.

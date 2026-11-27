@@ -10,11 +10,12 @@ $$PS(A,T) \le (k+1)\, PS_{\mathrm{sw}}(A,N) \qquad\text{and}\qquad PS(A,T) \le (
 
 and the factor $k+1$ is sharp.
 
-**Approximation.** For fixed $k$, computing any displayed tree of a level-$k$ network and running Fitch's algorithm on it is a polynomial-time $(k+1)$-approximation of both softwired parsimony scores, even though computing them exactly is NP-hard already for level-$1$ networks and two binary characters.
+**Approximation.** For fixed $k$, computing any displayed tree of a level-$k$ network and running Fitch's algorithm on it is a polynomial-time $(k+1)$-approximation of both softwired parsimony scores, even though computing $PS_{\mathrm{sw}'}$ exactly is NP-hard already for level-$1$ networks and two binary characters ($PS_{\mathrm{sw}}$ is a sum of single-character scores, each fixed-parameter tractable in the level).
 
 ## Depends on
 
 - [Fitch's algorithm computes the small-parsimony score](../../small-parsimony-problem/fitch-score-eq.md)
+- [Softwired parsimony score of a phylogenetic network](../../displayed-tree-measures-on-phylogenetic-networks/softwired-parsimony-score-of-a-phylogenetic-network.md)
 
 ## Expansion
 

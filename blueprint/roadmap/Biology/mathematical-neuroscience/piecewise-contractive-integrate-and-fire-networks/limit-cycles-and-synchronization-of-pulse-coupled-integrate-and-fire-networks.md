@@ -5,14 +5,15 @@
 The dynamics are equivalent to a piecewise continuous return map $\rho$ on the Poincaré section $\Sigma$ of states just after a firing, defined on the atoms $\Sigma_J$ (indexed by the set $J$ of firing neurons) by $\rho_i(\mathbf{V}) = 0$ for $i \in J$ and $\rho_i(\mathbf{V}) = \max\{\alpha, \phi_i^{\bar t(\mathbf{V})}(\mathbf{V}) + \sum_{j\in J}H_{ji}\}$ otherwise, with $\phi^t$ the subthreshold flow and $\bar t$ the next firing time.
 
 **Theorem.**
+
 1. (Not globally contractive.) Under (H1)–(H2) there is an open region of interaction values for which $\Sigma$ is not a contractive zone for $\rho$ with respect to the natural partition, in any norm.
 2. (Piecewise contraction.) Under (H1)–(H4), if at least one neuron is inhibitory, there is an adapted metric and partition of $\Sigma$ for which $\rho$ is piecewise contractive; the set $\Sigma^* = \overline{\rho(\mathcal{C}_{\bar c})}$, with $\mathcal{C}_c = \{\alpha \le V_i \le c\}$, is a forward-invariant contractive zone that absorbs every orbit after at most $p+1$ steps, where $\alpha + p\min_{j\neq i}|H_{ji}| \ge \theta$.
 3. (Limit cycles.) Consequently, with an inhibitory neuron and strong enough interactions, the stable asymptotic dynamics are supported on at most countably many limit cycles attracting all orbits that eventually avoid the discontinuity set.
 4. (Synchronization.) Under (H1), if all neurons are excitatory and
 
-$$n \ge \Big\lceil \frac{\theta}{\min_{j\neq i}H_{ji}} \Big\rceil^2,$$
+    $$n \ge \Big\lceil \frac{\theta}{\min_{j\neq i}H_{ji}} \Big\rceil^2,$$
 
-the network globally synchronizes (all neurons fire together after a transient of explicit bounded length); a purely excitatory network whose orbit enters $\Sigma^*$ synchronizes regardless of its size. For two neurons with $H_{12} = H_{21} \in (0,\theta)$ there are non-synchronized period-two orbits, so a size condition is needed.
+    the network globally synchronizes (all neurons fire together after a transient of explicit bounded length); under (H1) and (H3), a purely excitatory network whose orbit enters $\Sigma^*$ synchronizes regardless of its size. For two neurons with $H_{12} = H_{21} \in (0,\theta)$ there are non-synchronized period-two orbits, so a size condition is needed.
 
 ## Expansion
 

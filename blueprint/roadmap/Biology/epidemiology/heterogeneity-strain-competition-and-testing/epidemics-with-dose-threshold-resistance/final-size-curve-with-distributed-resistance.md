@@ -13,15 +13,16 @@ $F$ is increasing, $F(0) = F'(0) = 0$, $F(y) \to \mathcal{R}_\diamond$ as $y \to
 1. *Small initial dose.* $(z(x) - x)/x^2 \to \mathcal{R}_\diamond\sigma(0)/2$ as $x \to 0$.
 2. *Smooth final size.* If $\mathcal{R}_\diamond \int_0^y \sigma(m)e^{m-y}\,dm < 1$ for all $y \ge 0$, then $z$ is uniquely determined by $x$, is $C^2$, and
 
-$$
-z'(x) = \Bigl(1 - \mathcal{R}_\diamond\int_0^{z(x)} \sigma(m)e^{m - z(x)}\,dm\Bigr)^{-1},
-$$
+    $$
+    z'(x) = \Bigl(1 - \mathcal{R}_\diamond\int_0^{z(x)} \sigma(m)e^{m - z(x)}\,dm\Bigr)^{-1},
+    $$
 
-with $z'(0) = 1$, $z'(x) \to 1$ as $x \to \infty$ and $z''(0) = \mathcal{R}_\diamond\sigma(0)$.
+    with $z'(0) = 1$, $z'(x) \to 1$ as $x \to \infty$ and $z''(0) = \mathcal{R}_\diamond\sigma(0)$.
+
 3. *Jump.* If $\mathcal{R}_\diamond \int_0^{z_2} \sigma(m)e^{m - z_2}\,dm > 1$ for some $z_2 \ge 0$, then the final size curve $x \mapsto z(x)$ has a discontinuity.
 4. *Shape.* $z$ is convex on $[0,m_1]$ if $\sigma$ increases on $[0, z(m_1)]$ (in particular on $[0, m_1 + \mathcal{R}_\diamond]$), and concave on $[m_2,\infty)$ if $\sigma$ vanishes on $[m_2,\infty)$.
 
-So with spread-out resistance the final size depends on the initial dose through an S-shaped curve, which jumps exactly when the slope of $F$ can exceed one.
+So with spread-out resistance the final size depends on the initial dose through a curve that is S-shaped under the conditions of item 4, and that jumps when the slope of $F$ exceeds one somewhere; the borderline case $\max F' = 1$ is left open by the source.
 
 ## Depends on
 

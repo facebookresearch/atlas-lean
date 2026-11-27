@@ -11,11 +11,13 @@ $$x^*_i \ge 0, \qquad r_i - x^*_i + (\Gamma\boldsymbol x^*)_i \le 0, \qquad x^*_
 **Background (Takeuchi–Adachi).** If there is a positive diagonal $\Delta$ with $\Delta(I - \Gamma) + (I - \Gamma)^{\mathsf T}\Delta$ positive definite, the LCP has a unique solution $\boldsymbol x^*$ and every trajectory started in $(0,\infty)^N$ converges to it.
 
 **Theorem.**
+
 1. *(Unique globally stable equilibrium.)* Let $\alpha_N = \alpha$ be fixed. If $\Gamma$ is i.i.d. with $\alpha > \sqrt2$, or elliptic with
 
-$$\alpha > \sqrt{2(1 + \xi)} \quad\text{and}\quad \mu < \tfrac12 + \tfrac12\sqrt{1 - \tfrac{2(1+\xi)}{\alpha^2}},$$
+    $$\alpha > \sqrt{2(1 + \xi)} \quad\text{and}\quad \mu < \tfrac12 + \tfrac12\sqrt{1 - \tfrac{2(1+\xi)}{\alpha^2}},$$
 
-then almost surely, for all large $N$, the LCP has a unique solution $\boldsymbol x^* \ge 0$, and it is globally stable: $\boldsymbol x(t) \to \boldsymbol x^*$ for every $\boldsymbol x(0) \in (0, \infty)^N$.
+    then almost surely, for all large $N$, the LCP has a unique solution $\boldsymbol x^* \ge 0$, and it is globally stable: $\boldsymbol x(t) \to \boldsymbol x^*$ for every $\boldsymbol x(0) \in (0, \infty)^N$.
+
 2. *(Feasibility threshold.)* Let $\boldsymbol r = \mathbf 1$, $\alpha_N \to \infty$, $\alpha^*_N = \sqrt{2\log N}$, and in the elliptic case $\mu < 1$; let $\boldsymbol x^* = (I - \Gamma)^{-1}\mathbf 1$. If $\alpha_N \le (1-\varepsilon)\alpha^*_N$ for some $\varepsilon > 0$ then $\mathbb{P}(\min_i x^*_i > 0) \to 0$; if $\alpha_N \ge (1+\varepsilon)\alpha^*_N$ then $\mathbb{P}(\min_i x^*_i > 0) \to 1$.
 
 So with interaction strength of order $1/\sqrt N$ the community has a unique stable equilibrium in which some species go extinct, and full coexistence of all $N$ species requires the interactions to be weaker by a factor $\sqrt{2\log N}$.

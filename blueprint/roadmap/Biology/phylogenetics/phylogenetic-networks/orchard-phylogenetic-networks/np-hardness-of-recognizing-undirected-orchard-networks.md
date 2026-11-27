@@ -3,6 +3,7 @@
 **Definitions.** In a rooted binary phylogenetic network a *cherry* is an ordered pair of leaves $(x,y)$ with a common parent, and a *reticulated cherry* is a pair $(x,y)$ in which the parent $p$ of $x$ is a reticulation and $p$ and $y$ have a common parent. *Reducing* by a cherry deletes $x$; reducing by a reticulated cherry deletes the arc from $y$'s parent to $x$'s parent; degree-$2$ vertices are then suppressed. A network is an *orchard* if some sequence of such reductions brings it down to a single arc (rooted case) or a single vertex (undirected case, with the analogous undirected reductions). Orchards model tree-like evolution with horizontal gene transfer. An *orientation* of an undirected network subdivides one edge, attaches a root there and directs all edges; an *orchard orientation* is an orientation that is a rooted orchard.
 
 **Theorem.**
+
 1. An undirected binary network is an orchard if and only if it has an orchard orientation.
 2. **Orchard Recognition** (is a given undirected binary network an orchard?) and **Orchard Orientation** (does it have an orchard orientation?) are NP-hard.
 

@@ -21,6 +21,8 @@ and $\mathcal V$ is a Lyapunov function for the ODE above at $\tilde c$. With $d
 ## Depends on
 
 - [Product-form stationary measures under non-mass-action kinetics force complex balance](product-form-stationary-measures-under-non-mass-action-kinetics-force-complex-balance.md)
+- [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
 ## Expansion
 

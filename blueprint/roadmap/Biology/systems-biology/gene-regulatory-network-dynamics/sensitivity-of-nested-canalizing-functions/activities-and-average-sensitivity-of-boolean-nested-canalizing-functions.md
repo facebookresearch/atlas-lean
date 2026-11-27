@@ -22,11 +22,11 @@ $$s^f = \sum_{l=1}^r k_l A^f_l = \frac{1}{2^{n-1}}\sum_{l=1}^r k_l\sum_{j=1}^{r-
 
 $$\frac{n}{2^{n-1}} \le s^f < 2 - \frac{1}{2^{n-2}} .$$
 
-In particular every NCF has average sensitivity below $2$, independently of $n$: networks built from nested canalizing rules are dynamically stable (ordered regime) in the Derrida-annealed sense.
+In particular every NCF has average sensitivity below $2$, independently of $n$. (This does not place NCFs in the ordered regime of the annealed approximation, whose threshold is average sensitivity $1$: for $n=3$ with layers of sizes $(1,2)$, $s^f=5/4$.)
 
 ## Expansion
 
-Flipping a variable in layer $l$ changes $f$ only if all literals of layers $1,\ldots,l-1$ equal $1$ (otherwise an earlier layer canalizes) and the remaining literals of layer $l$ equal $1$; the probability of the latter event is $2^{-(k_1+\cdots+k_l-1)}$, and conditioned on it the flip changes the output exactly when the inner function $M_{l+1}(\cdots)\oplus1$ takes the value making the product sensitive, whose probability is computed from the Hamming-weight formula by inclusion–exclusion over deeper layers. The alternating sums decrease in $l$, giving the strict ordering. The lower bound $n/2^{n-1}$ is attained by a single layer ($r=1$, an extended monomial), and the upper bound is approached by alternating layers of size one.
+Flipping a variable in layer $l$ changes $f$ only if all literals of layers $1,\ldots,l-1$ equal $1$ (otherwise an earlier layer canalizes) and the remaining literals of layer $l$ equal $1$; the probability of the latter event is $2^{-(k_1+\cdots+k_l-1)}$, and conditioned on it the flip changes the output exactly when the inner function $M_{l+1}(\cdots)\oplus1$ takes the value making the product sensitive, whose probability is computed from the Hamming-weight formula by inclusion–exclusion over deeper layers. The alternating sums decrease in $l$, giving the strict ordering. The lower bound $n/2^{n-1}$ is attained by a single layer ($r=1$, an extended monomial), while alternating layers of size one give $s^f\to4/3$ (Lemma 5.3(1) of the source), so they do not approach the upper bound.
 
 ## Sources
 

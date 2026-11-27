@@ -24,6 +24,10 @@ In the regime of Theorem 6.3 the clogged state is also stable, giving bistabilit
 
 - [Washout and clogging in a chemostat with biofilm-driven dilution](washout-and-clogging-in-the-biofilm-chemostat.md)
 
+## Proof depends on
+
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+
 ## Expansion
 
 Persistence uses the Smith–Thieme theory: instability of $E_0$ gives uniform weak, then strong, persistence of $\rho = u + w$ (the Butler–McGehee lemma excludes approach to $E_0$); a modified system in $r = w_0 - w$ gives persistence away from the clogged plane when $E_w$ is unstable; combining the two lower bounds in the $u$ and $w$ equations gives explicit positive $\liminf$ bounds. For equilibria, writing $F(S) = 0$ as $D(w(S)) = \phi(S) := f(S) + \alpha g(S)/(\beta - g(S))$ and solving for the capacity gives $w_0 = \Phi(S) := w(S)\phi(S)/(\phi(S) - 1)$. If $\beta > m_2/a_2 > g(1) \ge g(S)$ for all $S$, $\Phi$ is monotone on the relevant interval and the root is unique; if $\beta < g(1)$, $\Phi$ blows up at both ends of $(S_1, S_2)$ with $S_2 = g^{-1}(\beta)$, so large $w_0$ crosses it twice. Local stability is read from the Routh–Hurwitz conditions of the cubic characteristic polynomial, whose constant term carries the sign of $F'(S)$; at a root of $F$ the sign of $F'$ is tied to the slope of $\Phi$, so in Theorem 6.3 the root with $\Phi' < 0$ is stable and the one with $\Phi' > 0$ unstable.

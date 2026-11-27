@@ -12,21 +12,22 @@ The square $\Omega = [0,1]\times[-1,1]$ is positively invariant. Assume $u_0 < 1
 **Statement.**
 
 1. *Threshold.* $(0,0)$ (indifferent infection-free) and $(1 - \delta/\bar\beta, 0)$ (indifferent endemic) are equilibria. The infection-free one is locally exponentially stable for $\bar\beta < \delta$ and unstable for $\bar\beta > \delta$; the indifferent endemic one is locally exponentially stable for $\delta < \bar\beta < \bar\beta^*$ and unstable for $\bar\beta > \bar\beta^*$. At $\bar\beta = \delta$ they exchange stability in a transcritical bifurcation, as in the standard SIS model.
-2. *SIS equivalence.* For weak peer pressure $k_x < 1/3$ and sufficiently small $u_0$, these are the only equilibria, so steady states coincide with those of the SIS model.
+2. *SIS equivalence.* If $k_p, k_x, u_0 \in [0,1]$ (in particular $k_p \le 1$), with weak peer pressure $k_x < 1/3$, and $u_0$ is sufficiently small, these are the only equilibria, so steady states coincide with those of the SIS model.
 3. *Opinionated equilibria.* Opinionated endemic equilibria $(p^*,x^*)$, $x^* \ne 0$, are the roots of
 
-$$
-f_2(x) = \frac{1}{k_p}\Bigl(\frac{\operatorname{arctanh}(x)}{x} - k_x x^2 - u_0\Bigr) + \frac{\delta}{\bar\beta(1+x)} - 1, \qquad p^* = 1 - \frac{\delta}{\bar\beta(1+x^*)}.
-$$
+    $$
+    f_2(x) = \frac{1}{k_p}\Bigl(\frac{\operatorname{arctanh}(x)}{x} - k_x x^2 - u_0\Bigr) + \frac{\delta}{\bar\beta(1+x)} - 1, \qquad p^* = 1 - \frac{\delta}{\bar\beta(1+x^*)}.
+    $$
 
-If $f_2$ has exactly two roots $x^*_- \le x^*_+$ and $\bar\beta^* < 1$, a second transcritical bifurcation occurs at $\bar\beta = \bar\beta^*$, where the indifferent endemic equilibrium passes its stability to the risk-averse equilibrium $\mathrm{OEE}^- = (p^*_-, x^*_-)$.
+    If $f_2$ has exactly two roots $x^*_- \le x^*_+$ and $\bar\beta^* < 1$, a second transcritical bifurcation occurs at $\bar\beta = \bar\beta^*$, where the indifferent endemic equilibrium passes its stability to the risk-averse equilibrium $\mathrm{OEE}^- = (p^*_-, x^*_-)$.
+
 4. *Bistability.* Under the same conditions and $\bar\beta > \bar\beta^*$, there are exactly four equilibria; the sign of the opinion is preserved, and every trajectory starting in the interior of $\{x > 0\}$ converges to the risk-seeking equilibrium $\mathrm{OEE}^+$. Moreover
 
-$$
-p^*_- \le 1 - \frac{\delta}{\bar\beta} \le p^*_+ ,
-$$
+    $$
+    p^*_- \le 1 - \frac{\delta}{\bar\beta} \le p^*_+ ,
+    $$
 
-so risk seeking raises and risk aversion lowers endemic prevalence relative to the SIS endemic level.
+    so risk seeking raises and risk aversion lowers endemic prevalence relative to the SIS endemic level.
 
 ## Depends on
 

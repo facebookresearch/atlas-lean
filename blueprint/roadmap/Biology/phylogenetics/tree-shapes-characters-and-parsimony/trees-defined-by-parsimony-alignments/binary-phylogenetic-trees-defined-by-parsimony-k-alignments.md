@@ -7,6 +7,7 @@ $$A_k(T) = \{f \colon X \to \{a,b\} : l(f, T) = k\},$$
 the set of all binary characters requiring exactly $k$ state changes on $T$. $A_k(T)$ *defines* $T$ if $A_k(T) = A_k(\widetilde T)$ forces $T \cong \widetilde T$ for every binary phylogenetic $X$-tree $\widetilde T$.
 
 **Theorem.**
+
 1. *(Global bound.)* For every $k \ge 1$ and $n \ge 4k$, $A_k(T)$ defines $T$: $T \cong \widetilde T$ if and only if $A_k(T) = A_k(\widetilde T)$. This lowers the previously known threshold $n \ge 20k$; for $k \in \{1, 2\}$ it holds for all $n$.
 2. *(NNI neighborhood.)* For $k \ge 1$ and $n > 2k + 2$, if $\widetilde T$ is obtained from $T$ by one nearest neighbor interchange, then $A_k(T) = A_k(\widetilde T)$ only if $T \cong \widetilde T$.
 3. *(Sharpness.)* For every $k > 2$ there are non-isomorphic binary phylogenetic $X$-trees $T, \widetilde T$ with $|X| \in \{2k+1, 2k+2\}$ and $A_k(T) = A_k(\widetilde T)$.

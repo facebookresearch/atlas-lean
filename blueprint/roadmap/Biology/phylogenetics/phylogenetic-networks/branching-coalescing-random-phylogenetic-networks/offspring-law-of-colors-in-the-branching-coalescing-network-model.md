@@ -18,4 +18,4 @@ Each color evolves independently once created, so colors form a Crump–Mode–J
 
 ## Sources
 
-- François Bienvenu and Jean-Jil Duchamps, "A branching process with coalescence to model random phylogenetic networks", Electronic Journal of Probability 29 (2024), 1–48, <https://doi.org/10.1214/24-ejp1088>; numbering as in arXiv:2211.02407: Section 1.2 (model), Propositions 2.1, 2.6–2.8, Theorem 2.3 and Corollary 2.5.
+- François Bienvenu and Jean-Jil Duchamps, "A branching process with coalescence to model random phylogenetic networks", Electronic Journal of Probability 29 (2024), 1–48, <https://doi.org/10.1214/24-ejp1088>; numbering as in arXiv:2211.02407: Section 1.2 (model), Propositions 2.1, 2.8 and 2.9, Theorem 2.5 and Corollary 2.7.

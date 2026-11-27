@@ -17,11 +17,12 @@ $$0 < f(t) < \frac{f_0}{\beta^* f_0 + (1-\beta^* f_0)e^{-\tilde\beta t}},\qquad 
 so it is bounded (by about $1/\beta^*$ for large $t$); if $\lim_{t\to\infty} f(t)$ exists it equals $1$.
 
 **Theorem (characteristic roots).** Linearizing at $f = 1$ gives the characteristic function $h(s) = s + b\,[1 + \rho e^{-s}]$ with $b = \tilde\beta\beta^*$ and $\rho = \gamma/\beta$; let $B = \rho b e^{b}$. Then:
+
 1. all zeros of $h$ are simple;
 2. all zeros lie to the left of some vertical line $\operatorname{Re} s = p$;
 3. if $B > 1$ there is a decreasing unbounded sequence of real parts $x_n$ with complex zeros $s_n = x_n \pm i\,k(x_n)$, which produce oscillatory (undulating) modes; the real part $x_M$ of the turning point of the root curve is positive iff $\rho > 1$, i.e. $\gamma > \beta$.
 
-**Decay.** If the rightmost real part $x_0$ is negative and $c = \rho b e^{b}$ in the source's notation satisfies $c < \pi$, solutions of the linearized equation decay to $0$ uniformly and exponentially, and for the forced linear equation $f(t) - f_{[0]} \to 0$ whenever the forcing has a limit. When the dominant roots cross into the right half-plane, the nonlinear equation can instead show sustained oscillations (limit cycles).
+**Decay.** If the rightmost real part $x_0$ is negative and $c = \rho b$ ($= \tilde\beta\gamma^*$, so that $B = c\,e^{b}$) satisfies $c < \pi$, solutions of the linearized equation decay to $0$ uniformly and exponentially, and for the forced linear equation $f(t) - f_{[0]} \to 0$ whenever the forcing has a limit. When the dominant roots cross into the right half-plane, numerical solutions of the nonlinear equation show sustained oscillations (limit cycles); this is observed numerically in the source, not proved.
 
 ## Expansion
 
@@ -29,4 +30,4 @@ Writing $g = 1/f$ turns the equation into a Bernoulli-type linear delay equation
 
 ## Sources
 
-- Niko Sauer, "Epidemics: towards understanding undulation and decay", Afrika Matematika 36 (2025), 100, <https://doi.org/10.1007/s13370-025-01318-5>; numbering as in arXiv:2206.03133: equations (Normal) and (expr1), Theorems 4.1, 4.2, 6.1, 8.1, 8.2 and 9.1, Corollary 8.1.
+- Niko Sauer, "Epidemics: towards understanding undulation and decay", Afrika Matematika 36 (2025), 100, <https://doi.org/10.1007/s13370-025-01318-5>; numbering as in arXiv:2206.03133: equations (3.1)–(3.4), Theorems 4.1, 4.2, 6.1, 8.1, 8.2 and 9.1, Corollary 8.1.
