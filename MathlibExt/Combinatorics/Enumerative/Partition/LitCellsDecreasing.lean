@@ -241,6 +241,101 @@ public theorem litCellsDecreasing_firstColumn_generatingFunction :
   intro n
   simpa only [coeff_mk] using hasSum_firstColumn n
 
+private theorem part_add_index_le_sum (l : List ℕ) (hpos : ∀ a ∈ l, 0 < a)
+    {i : ℕ} (hi : i < l.length) : l[i] + i ≤ l.sum := by
+  induction l generalizing i with
+  | nil => simp at hi
+  | cons a l ih =>
+    cases i with
+    | zero => simp
+    | succ i =>
+      have h := ih (fun b hb => hpos b (List.mem_cons_of_mem _ hb))
+        (i := i) (by simpa using hi)
+      have ha := hpos a (List.mem_cons_self ..)
+      simp only [List.getElem_cons_succ, List.sum_cons]
+      omega
+
+-- Positive parts before a column account for its index as well as its height.
+private theorem litCellsDecreasing_le_size {n : ℕ} (p : Nat.Partition n) :
+    litCellsDecreasing p ≤ n := by
+  apply (litCellsDecreasing_le_iff p).mpr
+  intro i hi
+  have hi' : i < (decreasingParts p).length := by rwa [length_decreasingParts]
+  rw [List.getD_eq_getElem _ _ hi']
+  have hs : (decreasingParts p).sum = n := by
+    rw [← Multiset.sum_coe, decreasingParts, Multiset.sort_eq, p.parts_sum]
+  exact (part_add_index_le_sum _ (fun a ha => p.parts_pos ((Multiset.mem_sort _).mp ha))
+    hi').trans_eq hs
+
+private noncomputable def litCellsTail (k : ℕ) : ℤ⟦X⟧ :=
+  (mk fun n => (Fintype.card (Nat.Partition n) : ℤ)) - trianglePartitionSeries k
+
+-- The coefficient is the number of partitions whose lit-cell count exceeds the threshold.
+private theorem coeff_litCellsTail (n k : ℕ) :
+    coeff n (litCellsTail k) =
+      ∑ p : Nat.Partition n, if k < litCellsDecreasing p then 1 else 0 := by
+  rw [litCellsTail, map_sub, coeff_mk, coeff_trianglePartitionSeries]
+  have hfilter : (Finset.univ.filter (FitsStaircase k : Nat.Partition n → Prop)) =
+      Finset.univ.filter (fun p : Nat.Partition n => litCellsDecreasing p ≤ k) := by
+    ext p
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    exact (litCellsDecreasing_le_iff p).symm
+  rw [hfilter, ← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul, mul_one]
+  have hcard := Finset.card_filter_add_card_filter_not
+    (s := (Finset.univ : Finset (Nat.Partition n))) (p := fun p => litCellsDecreasing p ≤ k)
+  simp only [not_le, Finset.card_univ] at hcard
+  have hcardZ : ((Finset.univ.filter (fun p : Nat.Partition n =>
+      litCellsDecreasing p ≤ k)).card : ℤ) +
+      ((Finset.univ.filter (fun p : Nat.Partition n =>
+        k < litCellsDecreasing p)).card : ℤ) = Fintype.card (Nat.Partition n) := by
+    exact_mod_cast hcard
+  omega
+
+private theorem hasSum_litCellsTail (n : ℕ) :
+    HasSum (fun k => coeff n (litCellsTail k))
+      (∑ p : Nat.Partition n, (litCellsDecreasing p : ℤ)) := by
+  have hsum : HasSum (fun k => coeff n (litCellsTail k))
+      (∑ k ∈ Finset.range n, coeff n (litCellsTail k)) := by
+    apply hasSum_sum_of_ne_finset_zero
+    intro k hk
+    have hnk : n ≤ k := Nat.le_of_not_lt (fun h => hk (Finset.mem_range.mpr h))
+    rw [coeff_litCellsTail]
+    exact Finset.sum_eq_zero fun p _ =>
+      ite_eq_right (not_lt_of_ge ((litCellsDecreasing_le_size p).trans hnk))
+  convert hsum using 1
+  simp_rw [coeff_litCellsTail]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun p _ => ?_
+  rw [← Finset.sum_filter]
+  have hf : (Finset.range n).filter (fun k => k < litCellsDecreasing p) =
+      Finset.range (litCellsDecreasing p) := by
+    ext k
+    simp only [Finset.mem_filter, Finset.mem_range]
+    exact ⟨And.right, fun h => ⟨h.trans_le (litCellsDecreasing_le_size p), h⟩⟩
+  simp [hf]
+
+/-- **Generating function for lit cells of weakly decreasing bargraphs.** Let
+$P(q) = \sum_{n \ge 0} p(n) q^n$ be the partition generating function, for $k \ge 0$ let $T_q(k)$
+be the generating function of partitions contained in the triangle with column heights
+$k, k - 1, \ldots, 1$ (so $T_q(0) = 1$), and let $L(q) \in \mathbb{Z}[[q]]$ be the power series
+whose coefficient of $q^n$ is the total number of lit cells over all partitions of $n$ drawn as
+weakly decreasing bargraphs. Then
+$$L(q) = \sum_{k \ge 0} \bigl(P(q) - T_q(k)\bigr),$$
+where the sum converges coefficientwise.
+
+Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
+Partitions*, INTEGERS 24 (2024), Article A56, Theorem 1, eq. (16)
+(`integers-2024-A56-thm-1`). -/
+public theorem litCellsDecreasing_generatingFunction :
+    mk (fun n => ∑ p : Nat.Partition n, (litCellsDecreasing p : ℤ)) =
+      ∑' k : ℕ, ((mk fun n => (Fintype.card (Nat.Partition n) : ℤ)) -
+        trianglePartitionSeries k) := by
+  symm
+  apply HasSum.tsum_eq
+  apply (hasSum_iff_hasSum_coeff ℤ).mpr
+  intro n
+  simpa only [coeff_mk, litCellsTail] using hasSum_litCellsTail n
+
 end
 
 end MetaMathlibExt

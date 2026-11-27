@@ -14,6 +14,16 @@ import MathlibExt.Combinatorics.WeightedProjectiveSimplexReflexive
 
 open MetaMathlibExt
 
+-- Both weights divide `1 + 1 + 2 = 4`.
+example : IsReflexive (weightedSimplex ![1, 2]) :=
+  (reflexive_iff_weight_dvd ![1, 2] (by decide)).2 (by decide)
+
+-- The weight `3` does not divide `1 + 1 + 3 = 5`.
+example : ¬ IsReflexive (weightedSimplex ![1, 3]) := by
+  intro h
+  have hdiv := (reflexive_iff_weight_dvd ![1, 3] (by decide)).1 h 1
+  exact (by decide : ¬ (3 : ℕ) ∣ 5) hdiv
+
 -- The vertex `-q` of `Δ_(1,q)` is a lattice point, and doubling it gives a lattice point of `2Δ`.
 example : IsLatticePoint (weightedSimplex ![3, 10, 15]) ![-3, -10, -15] := by
   apply subset_convexHull
