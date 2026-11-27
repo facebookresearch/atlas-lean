@@ -60,6 +60,29 @@ private theorem weighted_at_X :
   · intro f hf
     simp [weight, hf]
 
+-- The shift by X excludes every summand at cutoff zero.
+example (α β : (ZMod 2)[X] → ℂ) : monicConvShiftedSum α β X 0 = 0 := by
+  apply monicConvShiftedSum_of_lt
+  simp
+
+-- At the exact cutoff only the quotient 1 contributes.
+example {F : Type*} [Field F] (α β : F[X] → ℂ) (f : F[X]) :
+    monicConvShiftedSum α β f f.natDegree = monicDirichletConv α β f := by
+  have hset : {g : F[X] | g.Monic ∧ f.natDegree + g.natDegree ≤ f.natDegree} = {1} := by
+    ext g
+    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
+    rw [← monic_natDegree_le_zero_iff]
+    exact and_congr_right fun _ => by omega
+  rw [monicConvShiftedSum, hset, finsum_mem_singleton, mul_one]
+
+-- Reweighting the shifted sums by the Möbius convolution preserves the value at X.
+example :
+    (∑ᶠ f ∈ {f : (ZMod 2)[X] | f.Monic ∧ f.natDegree ≤ 1},
+      monicDirichletConv weight (fun g => (moebius g : ℂ)) f *
+        monicConvShiftedSum (fun _ => 1) (fun _ => 1) f 1) = 2 :=
+  (weightedMonicConvSum_eq_sum_shifted weight (fun _ => 1) (fun _ => 1) 1).symm.trans
+    weighted_at_X
+
 -- For f = d = ℓ = X the inner cutoff is -1, so that term is dropped.
 example :
     (∑ᶠ f ∈ {f : (ZMod 2)[X] | f.Monic ∧ f.natDegree ≤ 1},

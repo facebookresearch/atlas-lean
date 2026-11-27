@@ -33,6 +33,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Probability.Moments.Covariance
 public import MathlibExt.Probability.Statistics.CochranQ
+public import MathlibExt.Probability.Statistics.DerSimonianLaird
 
 @[expose] public section
 
@@ -41,26 +42,6 @@ namespace WantedExt.Probability.Statistics.DerSimonianLairdWanted
 open MeasureTheory ProbabilityTheory MathlibExt.Probability.Statistics.MetaAnalysis
 
 variable {k : ℕ}
-
-/-- **Scaling of the moment estimator.** The scaling `S₁ - S₂ / S₁` with `S_r = ∑ w_i^r` for the
-fixed-effect weights `w_i = v_i⁻¹`. -/
-noncomputable def weightScale (v : Fin k → ℝ) : ℝ :=
-  (∑ i, (v i)⁻¹) - (∑ i, ((v i)⁻¹) ^ 2) / ∑ i, (v i)⁻¹
-
-/-- **Untruncated moment estimator.** The estimator `(Q - (k - 1)) / (S₁ - S₂ / S₁)` of `Δ²`, with
-Cochran's `Q` for sampling variances `v`. -/
-noncomputable def momentEstimator (v y : Fin k → ℝ) : ℝ :=
-  (cochranQ v y - (k - 1)) / weightScale v
-
-/-- **DerSimonian–Laird estimator.** The truncated moment estimator
-`Δ̂² = max {0, (Q - (k - 1)) / (S₁ - S₂ / S₁)}`. -/
-noncomputable def dlEstimator (v y : Fin k → ℝ) : ℝ :=
-  max 0 (momentEstimator v y)
-
-/-- **Random-effects pooled estimate.** The estimate `∑ᵢ ωᵢ yᵢ`, where `ω` are the inverse-variance
-weights of the total variances `v_i + Δ²`. -/
-noncomputable def pooledEstimate (v : Fin k → ℝ) (Δsq : ℝ) (y : Fin k → ℝ) : ℝ :=
-  ∑ i, inverseVarianceWeights (fun j => v j + Δsq) i * y i
 
 /-- **Random-effects model.** The assumptions on study effects `δ`, sampling errors `e`, known
 sampling variances `v` and between-study variance `Δ²`: all `2k` deviations are square integrable
@@ -124,19 +105,5 @@ public theorem_wanted pooledEstimate_optimal {Ω : Type*} [MeasurableSpace Ω] (
       Var[fun ω => pooledEstimate v Δsq (fun i => m + δ i ω + e i ω); μ] =
         (∑ i, (v i + Δsq)⁻¹)⁻¹ ∧
       (∑ i, (v i + Δsq)⁻¹)⁻¹ ≤ Var[fun ω => ∑ i, c i * (m + δ i ω + e i ω); μ]
-
-/-- **Equal sampling variances.** Let `k ≥ 2` and let every
-sampling variance equal `s² > 0`. For real study estimates `y`, with `ȳ = ∑ y_i / k`: the
-DerSimonian–Laird estimator is `max {0, ∑ (y_i - ȳ)² / (k - 1) - s²}`, and for every `Δ² ≥ 0`
-the random-effects pooled estimate is `ȳ` with `(∑ᵢ (s² + Δ²)⁻¹)⁻¹ = (s² + Δ²) / k`.
-
-Sources: R. DerSimonian and N. Laird, "Meta-analysis in clinical trials", Control. Clin. Trials 7
-(1986) 177–188, p. 183. -/
-public theorem_wanted equal_variances (hk : 2 ≤ k) (s2 : ℝ) (hs2 : 0 < s2) (y : Fin k → ℝ)
-    (Δsq : ℝ) (hΔ : 0 ≤ Δsq) :
-    dlEstimator (fun _ : Fin k => s2) y =
-        max 0 ((∑ i, (y i - (∑ j, y j) / k) ^ 2) / (k - 1) - s2) ∧
-      pooledEstimate (fun _ : Fin k => s2) Δsq y = (∑ j, y j) / k ∧
-      (∑ _i : Fin k, (s2 + Δsq)⁻¹)⁻¹ = (s2 + Δsq) / k
 
 end WantedExt.Probability.Statistics.DerSimonianLairdWanted
