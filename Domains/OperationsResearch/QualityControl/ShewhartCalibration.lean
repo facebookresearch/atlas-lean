@@ -20,13 +20,14 @@ import Mathlib.Tactic.Ring
 
 namespace OperationsResearch.QualityControl
 
-/-- **Shewhart signal from a calibrated reading.** A true value signals when its distance
-from the center line `μ` exceeds the control radius `h * σ`. A reading within `ε` of the true
-value certifies a signal if its distance from `μ` exceeds `h * σ + ε`, and certifies no
-signal if that distance is at most `h * σ - ε`. In the remaining band both a signal
-and a nonsignal are consistent with the reading and the same error bound. This is a
-pointwise statement on readings for which the calibration bound holds. The control-limit
-convention is from the NIST/SEMATECH *e-Handbook of Statistical Methods*, §6.3.2. -/
+/-- **Shewhart signal from a calibrated reading.** Let `μ` be the center line, `h > 0`
+the control multiplier, `σ > 0` the standard deviation, and `ε ≥ 0` the calibration
+error bound. A true value signals when its distance from `μ` exceeds `h * σ`. A reading
+within `ε` of the true value certifies a signal if its distance from `μ` exceeds
+`h * σ + ε`, and certifies no signal if that distance is at most `h * σ - ε`. In the
+remaining band both a signal and a nonsignal are consistent with the reading and the same
+error bound. The control-limit convention is from the NIST/SEMATECH *e-Handbook of
+Statistical Methods*, §6.3.2. -/
 theorem shewhart_signal_of_calibrated_reading (μ reading : ℝ) {h σ ε : ℝ}
     (hh : 0 < h) (hσ : 0 < σ) (hε : 0 ≤ ε) :
     (∀ x : ℝ, |reading - x| ≤ ε →
