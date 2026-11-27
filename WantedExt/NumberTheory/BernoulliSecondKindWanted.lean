@@ -44,6 +44,7 @@ public import Mathlib.RingTheory.PowerSeries.Log
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
 public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirling
 public import MathlibExt.NumberTheory.Bernoulli.BernoulliStirlingSum
+public import MathlibExt.NumberTheory.Bernoulli.StirlingInversion
 public import MathlibExt.NumberTheory.Bernoulli.WeightedStirlingSum
 
 set_option autoImplicit false
@@ -67,21 +68,6 @@ theorem_wanted bernoulli_poly_eq (n : ℕ) :
         ∑ k ∈ Finset.Icc 1 n, Polynomial.C
           ((n : ℚ) / k * (Nat.stirlingSecond (n - 1) (k - 1) : ℚ)) *
           descPochhammer ℚ k
-
-/-- **Stirling inversion.** Let $s(m, j)$ be the signed Stirling numbers of the first kind and
-$S(m, j)$ the Stirling numbers of the second kind. For all sequences $(u_n)_{n \ge 0}$ and
-$(v_n)_{n \ge 0}$ of rational numbers, $u_n = \sum_{k=0}^{n} s(n, k) \, v_k$ for every natural
-number $n$ if and only if $v_n = \sum_{k=0}^{n} S(n, k) \, u_k$ for every natural number $n$.
-
-The paper states this for sequences of complex numbers.
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Lemma 3. -/
-theorem_wanted stirling_inversion_iff (u v : ℕ → ℚ) :
-    (∀ n, u n = ∑ k ∈ Finset.range (n + 1),
-      (MetaMathlibExt.signedStirlingFirst n k : ℚ) * v k) ↔
-    (∀ n, v n = ∑ k ∈ Finset.range (n + 1),
-      (Nat.stirlingSecond n k : ℚ) * u k)
 
 /-- **Bernoulli numbers of the second kind in terms of Bernoulli numbers.** Let $B_m$ be the
 Bernoulli numbers (with $B_1 = -1/2$), $B_m^*$ the Bernoulli numbers of the second kind and

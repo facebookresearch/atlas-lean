@@ -14,7 +14,7 @@ public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Analysis.SpecialFunctions.DickmanDeBruijn
 public import MathlibExt.NumberTheory.ArithmeticFunction.CompletelyMultiplicative
 public import MathlibExt.NumberTheory.PrimeCounting.PrimeZetaTailBound
-public import WantedExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumWanted
+public import MathlibExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumDefs
 
 /-!
 # Explicit prime-sum and mean-value estimates from Bordignon--Francis

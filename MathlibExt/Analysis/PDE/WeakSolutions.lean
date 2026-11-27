@@ -24,8 +24,8 @@ for every bounded linear functional `L` (for `-Δ u = f`, `L v = ∫_U f v`), wi
 For a symmetric nonnegative form, Dirichlet's principle identifies weak solutions with the
 minimizers of the energy `B[w, w] / 2 - L w`.
 
-The concrete Sobolev-space statement on a bounded open `U ⊆ ℝⁿ` is recorded as wanted in
-`WantedExt.Analysis.PDE.EllipticRegularityWanted`, since Mathlib has no `H¹₀(U)` on domains.
+The concrete Sobolev-space statement on a bounded open `U ⊆ ℝⁿ` is proved in
+`MathlibExt.Analysis.PDE.PoissonDirichlet`.
 
 ## Main results
 
