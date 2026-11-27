@@ -13682,6 +13682,7 @@
   "MathlibExt/NumberTheory/MobiusFermatThreeSeven": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Möbius–Fermat function"},
   "MathlibExt/NumberTheory/ModInverseSwitching": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Modular inverses from the Euclidean algorithm"},
   "MathlibExt/NumberTheory/ModifiedDegenerateBernoulli": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Degenerate Bernoulli polynomials"},
+  "MathlibExt/NumberTheory/ModifiedDegenerateBernoulliConvolution": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Degenerate Bernoulli polynomials"},
   "MathlibExt/NumberTheory/ModifiedDegenerateBernoulliMiki": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Degenerate Bernoulli polynomials"},
   "MathlibExt/NumberTheory/ModifiedDegenerateBernoulliThreeTerm": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Degenerate Bernoulli polynomials"},
   "MathlibExt/NumberTheory/ModularForms/CongruenceSubgroupReduction": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Modular group and congruence subgroups"},
