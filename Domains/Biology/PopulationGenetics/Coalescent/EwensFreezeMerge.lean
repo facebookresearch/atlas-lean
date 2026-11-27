@@ -338,10 +338,10 @@ theorem applyEvent_injective (n : ℕ) (s : State n) :
 
 /-- **Neutral jump weights.** The raw weight of an event at active count `k`: `θ / [k(θ+k-1)]`
 for each freeze and `2 / [k(θ+k-1)]` for each specified unordered merger, matching pair rate one
-and mutation rate `θ/2`. They are probabilities only for `θ > 0` and `k ≥ 1`, where they sum to
-one (`sum_eventWeight`) and are the embedded jump probabilities of Donnelly and Tavaré (1986),
-p. 5, cases (a′) and (b′). Otherwise they are raw values: at `θ = 0` and `k = 1` the only event,
-a freeze, has weight `0 / 0 = 0`. -/
+and mutation rate `θ/2`. For `θ > 0` and `k ≥ 1` they are probabilities: they sum to one
+(`sum_eventWeight`) and are the embedded jump probabilities of Donnelly and Tavaré (1986), p. 5,
+cases (a′) and (b′). In general they are raw values: at `θ = 0` and `k = 1` the only event, a
+freeze, has weight `0 / 0 = 0`. -/
 def eventWeight (θ : ℝ) (n : ℕ) (s : State n) : Event n s → ℝ
   | Sum.inl _ => θ / denominator θ s.active.card
   | Sum.inr _ => 2 / denominator θ s.active.card
