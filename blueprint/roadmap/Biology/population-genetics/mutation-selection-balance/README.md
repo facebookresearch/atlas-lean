@@ -49,6 +49,7 @@
 - [Almost-sure repeated clicking of a finite mutation ratchet](muller-s-ratchet-model-and-almost-sure-clicking.md)
 
 - [Fates of a duplicated gene in a finite duplication–degeneration–complementation model](gene-duplicate-fates-in-a-finite-ddc-style-model.md)
+- [Background selection with recombination and a distribution of selection strengths](background-selection-with-recombination-and-a-distribution-of-effects.md)
 
 ## Burden, purging and sheltered load
 

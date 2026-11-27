@@ -6,5 +6,7 @@
 - [Fitness landscapes as mathematical objects](fitness-landscapes-as-explicit-mathematical-obje.md)
 - [Fitness-valley crossing and stochastic tunneling](fitness-valley-crossing-and-stochastic-tunneling.md)
 - [Shifting-balance theory](shifting-balance-theory.md)
+- [Boltzmann-averaged free energy of a conformational ensemble](boltzmann-averaged-free-energy-of-a-conformational-ensemble.md)
+- [Ensemble epistasis between mutations that are additive within each conformation](ensemble-epistasis-from-conformational-reweighting.md)
 - [Greedy adaptation versus valley crossing in the sequential-fixation regime](greedy-adaptation-versus-valley-crossing-in-the-sequential-fixation-regime.md)
 - [Valley-crossing probability against a sweeping uphill mutation](valley-crossing-probability-against-a-sweeping-uphill-mutation.md)
