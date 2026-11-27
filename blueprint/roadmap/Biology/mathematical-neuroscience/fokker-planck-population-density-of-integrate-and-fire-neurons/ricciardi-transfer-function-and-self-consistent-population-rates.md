@@ -4,7 +4,7 @@ Under the hypotheses of the Fokker–Planck description of a population of leaky
 
 $$Q = \phi(\mu, \sigma) = \Big[t_{\mathrm{ref}} + \tau \sqrt{\pi} \int_{(V_r - V_L - \mu)/\sigma}^{(\theta - V_L - \mu)/\sigma} e^{u^2} \big(1 + \operatorname{erf}(u)\big)\, du\Big]^{-1}.$$
 
-The function $\phi$ is the population transfer function of Ricciardi; $1/\phi - t_{\mathrm{ref}}$ is the mean first-passage time of the Ornstein–Uhlenbeck process from $V_r$ to $\theta$. It is positive, bounded above by $1/t_{\mathrm{ref}}$ when $t_{\mathrm{ref}} > 0$, and strictly increasing in the mean drive $\mu$.
+The function $\phi$ is the population transfer function of Ricciardi; $1/\phi - t_{\mathrm{ref}}$ is the mean first-passage time of the Ornstein–Uhlenbeck process from $V_r$ to $\theta$ given by Siegert's formula. It is positive, bounded above by $1/t_{\mathrm{ref}}$ when $t_{\mathrm{ref}} > 0$, and strictly increasing in the mean drive $\mu$.
 
 For a network partitioned into populations $i = 1, \dots, P$ whose neurons share input statistics and fire independently, with drift $\mu_i(Q_1, \dots, Q_P)$ and noise $\sigma_i(Q_1, \dots, Q_P)$ determined by the rates of the presynaptic populations, the stationary rates are the solutions of the self-consistency equations
 
@@ -16,7 +16,7 @@ which are exactly the fixed points of the relaxation dynamics $\tau_i \dot Q_i =
 
 - [Fokker–Planck equation for a population of leaky integrate-and-fire neurons](fokker-planck-equation-for-a-population-of-leaky-integrate-and-fire-neurons.md)
 
-## Expansion
+## Proof sketch
 
 Insert the stationary density into the normalization $\int_{-\infty}^\theta p\, dV + Q t_{\mathrm{ref}} = 1$. Exchanging the order of integration in $\int p\, dV$ and using $\int_{-\infty}^{u} e^{-x^2} dx = \frac{\sqrt{\pi}}{2}(1 + \operatorname{erf} u)$ turns the double integral into $Q\tau\sqrt{\pi} \int e^{u^2}(1 + \operatorname{erf} u)\, du$ over $[(V_r - V_L - \mu)/\sigma, (\theta - V_L - \mu)/\sigma]$, and solving the linear equation for $Q$ gives $\phi$. Increasing $\mu$ shifts both integration limits down while leaving their difference fixed, and the integrand is positive and increasing, so the integral decreases and $\phi$ increases. Fixed points of $\tau_i \dot Q_i = -Q_i + \phi_i$ are precisely the solutions of $Q_i = \phi_i$. Stability of a fixed point of the rate dynamics is a heuristic for stability of the corresponding asynchronous state; the full spiking network is then simulated at the selected parameters to confirm the dynamics.
 

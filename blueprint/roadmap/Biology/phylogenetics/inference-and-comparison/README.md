@@ -18,3 +18,9 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Maximum agreement subtree of two random binary trees](maximum-agreement-subtree-of-random-trees.md)
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
+
+## Bayesian, partitioned and recombination-aware inference
+
+- [Bayesian phylodynamic inference](bayesian-phylodynamic-inference/README.md)
+- [Phylogenetic terraces and induced partition trees](phylogenetic-terraces-and-induced-partition-trees/README.md)
+- [Recombination detection by substitution density](recombination-detection-by-substitution-density/README.md)

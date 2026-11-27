@@ -20,7 +20,7 @@ subclones can be. At the end, glands are sampled from the simulated tumour exact
 experiment (5 glands from each of two opposite sides), keeping each alteration's pattern of presence
 across the sampled glands.
 
-## Expansion
+## Remarks
 
 The model formalizes the Big Bang picture: the tumour grows as one expansion in which many
 subclones arise early and intermix, rather than by successive clonal sweeps. Early alterations are

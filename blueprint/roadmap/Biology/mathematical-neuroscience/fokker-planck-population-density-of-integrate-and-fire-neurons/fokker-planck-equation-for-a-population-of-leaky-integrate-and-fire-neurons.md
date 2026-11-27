@@ -25,7 +25,7 @@ with $H$ the Heaviside function.
 
 - [Period of the leaky integrate-and-fire neuron](../leaky-integrate-and-fire-neuron/lif-period.md)
 
-## Expansion
+## Proof sketch
 
 The population density evolves by the Chapman–Kolmogorov equation for the jump process of membrane potentials; a Taylor expansion of it is the Kramers–Moyal series, whose coefficients are the moments of the depolarization $dV$ in a short interval. The mean-field approximation replaces each neuron's input by the population rate $Q(t)$, so the first two moments are the drift and diffusion coefficients and all higher moments are of order $J^k N$, negligible in the diffusion limit; truncating at second order gives the Fokker–Planck equation of an Ornstein–Uhlenbeck process. Neurons leave through the threshold at rate $Q$ and are reinserted at $V_r$ after $t_{\mathrm{ref}}$, which produces the source term and the conservation law. In the stationary state the flux is $0$ below $V_r$ and $Q$ between $V_r$ and $\theta$; integrating the first-order equation $\mathcal{F} = Q\, H(V - V_r)$ with $p(\theta) = 0$ gives the stated solution. When $\sigma \to 0$ with $V_L + \mu > \theta$, the dynamics become deterministic and every neuron fires periodically with the deterministic integrate-and-fire period plus $t_{\mathrm{ref}}$.
 

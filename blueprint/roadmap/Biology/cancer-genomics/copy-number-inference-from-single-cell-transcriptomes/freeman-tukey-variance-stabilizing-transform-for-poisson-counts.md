@@ -10,7 +10,7 @@ $$\operatorname{Var}\bigl(\mathrm{FT}(X)\bigr) \to 1 \quad (\lambda \to \infty),
 
 whereas $\operatorname{Var}(X) = \lambda$ grows with the mean. In single-cell copy-number inference the transformed counts are further log-transformed, $\log\bigl(\sqrt{X} + \sqrt{X+1}\bigr)$, before smoothing along the genome.
 
-## Expansion
+## Remarks
 
 By the delta method, $\sqrt{X}$ has variance about $1/4$ for large $\lambda$; $\sqrt{X+1}$ is almost perfectly correlated with it, so the sum has variance about $4 \cdot 1/4 = 1$. Compared with the plain square root, the second term improves the approximation at small means and maps $X = 0$ to $1$ rather than $0$, which matters for sparse single-cell UMI counts where most entries are zero. Equalizing variance across highly and lowly expressed genes lets a single smoothing model (a polynomial dynamic linear model in the source) and a single segmentation cutoff serve the whole genome.
 

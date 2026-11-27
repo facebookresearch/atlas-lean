@@ -21,7 +21,7 @@ That is, the zero interaction potency reference coincides with Bliss independenc
 - [Loewe additivity and the combination index](loewe-additivity-and-the-combination-index.md)
 - [Baseline-plus-increment Hill response](../pharmacodynamic-response-models/response.md)
 
-## Expansion
+## Proof sketch
 
 Write $y_1(x_1) = A/(1+A)$ and $y_2(x_2) = B/(1+B)$. Then
 

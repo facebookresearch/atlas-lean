@@ -30,7 +30,3 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Phylogenetic invariants](phylogenetic-invariants/README.md)
-- [Bayesian discrete phylogeography](bayesian-discrete-phylogeography/README.md)
-- [Bayesian phylodynamic inference](bayesian-phylodynamic-inference/README.md)
-- [Phylogenetic terraces and induced partition trees](phylogenetic-terraces-and-induced-partition-trees/README.md)
-- [Recombination detection by substitution density](recombination-detection-by-substitution-density/README.md)

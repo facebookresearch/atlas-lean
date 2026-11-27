@@ -32,7 +32,7 @@ the single-agent response at the pooled dose $x_1 + x_2$.
 - [Concentration giving a prescribed response](../pharmacodynamic-response-models/inverse-concentration.md)
 - [Interaction references are not interchangeable](../pharmacodynamic-response-models/interact-references-disagree.md)
 
-## Expansion
+## Remarks
 
 The equivalence of the three combination-index cases follows from monotonicity of each single-agent curve: $y \mapsto X^{(j)}(y)$ is increasing, so $y_c > y_{\mathrm{LOEWE}}$ gives $X^{(j)}(y_c) > X^{(j)}(y_{\mathrm{LOEWE}})$ for both $j$ and hence a sum strictly below $1$; the two other cases are identical with the inequalities reversed. The upper bound on $y_{\mathrm{LOEWE}}$ holds because $X^{(j)}(y) \to \infty$ as $y \uparrow E^{(j)}_{\max}$ and is undefined above it, so the defining equation has no solution there; this is the structural limitation that motivates references not built on dose equivalence. The sham identity is obtained by substituting the common curve into the defining equation, where the two terms combine into $\bigl((x_1 + x_2)/m\bigr)\bigl((y - E_{\min})/(E_{\max} - y)\bigr)^{-1/\lambda} = 1$ and the displayed Hill form is the unique solution. Dose addition is thus self-consistent for a drug combined with itself, the classical argument in its favour.
 

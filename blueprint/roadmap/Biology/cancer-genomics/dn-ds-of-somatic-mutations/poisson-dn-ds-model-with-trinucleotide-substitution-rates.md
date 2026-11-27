@@ -27,7 +27,7 @@ with $2$ degrees of freedom.
 
 - [The ratio dN/dS equals ω](../../phylogenetics/codon-substitution-models-and-dn-ds/d-n-div-d-s.md)
 
-## Expansion
+## Remarks
 
 Somatic mutation densities are tiny (typically below $10^{-5}$ per site), so multiple hits per
 site are negligible and counts can be modelled directly as Poisson rather than through a codon

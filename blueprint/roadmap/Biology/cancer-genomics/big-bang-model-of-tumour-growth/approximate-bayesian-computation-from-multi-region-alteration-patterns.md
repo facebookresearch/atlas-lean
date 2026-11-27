@@ -27,7 +27,7 @@ each class of alteration occurred.
 
 - [Gland-fission cellular automaton with Gaussian fitness changes](gland-fission-cellular-automaton-with-gaussian-fitness-changes.md)
 
-## Expansion
+## Remarks
 
 The likelihood of the spatial presence patterns under a three-dimensional growth model is intractable,
 but simulating the model is easy, so ABC replaces likelihood evaluation with the comparison of summary

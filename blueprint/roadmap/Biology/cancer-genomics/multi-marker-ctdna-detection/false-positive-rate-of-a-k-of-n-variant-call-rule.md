@@ -1,6 +1,6 @@
 # False-positive rate of a k-of-n variant call rule
 
-At a given time point, $n$ patient-specific single-nucleotide variant assays are run on cell-free DNA. Under the null hypothesis that no tumour DNA is present, model the assays as independent, each called positive with probability $p \in (0,1)$, the per-assay false-positive rate fixed by a confidence threshold calibrated against negative control samples and against samples not expected to carry that variant. The sample is called positive for circulating tumour DNA when at least $k$ assays are positive. Its false-positive rate is the binomial upper tail
+At a given time point, $n$ patient-specific single-nucleotide variant assays are run on cell-free DNA. Under the null hypothesis that no tumour DNA is present, model the assays as independent, each called positive with probability $p \in (0,1)$, the per-assay false-positive rate fixed by a confidence threshold calibrated against negative control samples and against samples not expected to carry that variant. The sample is called positive for circulating tumour DNA when at least $k$ assays are positive. Its false-positive rate, the probability that the sample is called positive given that no tumour DNA is present, is the binomial upper tail
 
 $$\mathrm{FPR}(k, n, p) \;=\; \sum_{i=k}^{n} \binom{n}{i} p^{i} (1-p)^{n-i} .$$
 
@@ -10,13 +10,13 @@ Worked values from a panel of $n = 103$ assays with per-assay rate $p = 0.0011$:
 
 $$\mathrm{FPR}(1) = 1 - (1-p)^{n} = 0.1072, \qquad \mathrm{FPR}(2) = 1 - (1-p)^{n} - np(1-p)^{n-1} = 0.0059 .$$
 
-So a single positive assay carries about a $10.7\%$ chance of being spurious at each time point, while the two-variant rule is below $1\%$; a lone subclonal call therefore cannot be distinguished from type I error, whereas two or more concordant calls can.
+So, for a sample with no tumour DNA, at least one assay of the panel is positive with probability about $10.7\%$ at each time point, and at least two with probability below $1\%$. These are panel-level rates under the null hypothesis. They are not the probability that an observed positive call is spurious, which also depends on the prevalence of residual disease and on the sensitivity of the assays.
 
 ## Depends on
 
 - [Binomial upper tail probability](../detection-power-for-somatic-mutations/upper-tail.md)
 
-## Expansion
+## Proof sketch
 
 Independence across assays is the modelling assumption that makes the tail exact; it is reasonable when the dominant error source is position-specific sequencing and amplification noise, calibrated separately at each locus, rather than a shared contamination event, which would correlate the calls and inflate the true tail above the binomial value.
 

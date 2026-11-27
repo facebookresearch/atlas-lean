@@ -14,13 +14,13 @@ $$D_{ij} = \sup_{x} \bigl| F_i(x) - F_j(x) \bigr|,$$
 
 and declare a copy-number breakpoint between them when $D_{ij}$ exceeds a cutoff; otherwise the windows are joined. If fewer than $25$ breakpoints are found, the cutoff is halved, at most twice. Breakpoints found in each cell cluster are pooled into consensus breakpoints, the posterior mean of every resulting segment is computed in every cell, and the log-transformed, centered segment means give each cell's relative copy-number profile.
 
-## Expansion
-
-The gamma prior shrinks window means toward a common level, which damps the noise of sparse single-cell counts, and conjugacy makes the posterior exact and cheap. Comparing whole posterior distributions rather than point estimates lets the Kolmogorov-Smirnov distance account for the uncertainty of each window. Adaptive halving of the cutoff guards against under-segmentation in cells with few detected genes. With a median gene spacing of about $24.5$ kb and roughly $12.5\%$ of genes detected, a $25$-gene window corresponds to a resolution of about $5$ Mb.
-
 ## Depends on
 
 - [Freeman-Tukey variance-stabilizing transform for Poisson counts](freeman-tukey-variance-stabilizing-transform-for-poisson-counts.md)
+
+## Remarks
+
+The gamma prior shrinks window means toward a common level, which damps the noise of sparse single-cell counts, and conjugacy makes the posterior exact and cheap. Comparing whole posterior distributions rather than point estimates lets the Kolmogorov-Smirnov distance account for the uncertainty of each window. Adaptive halving of the cutoff guards against under-segmentation in cells with few detected genes. With a median gene spacing of about $24.5$ kb and roughly $12.5\%$ of genes detected, a $25$-gene window corresponds to a resolution of about $5$ Mb.
 
 ## Sources
 

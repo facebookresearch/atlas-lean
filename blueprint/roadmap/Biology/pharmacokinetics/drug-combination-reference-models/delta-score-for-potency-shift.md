@@ -16,7 +16,7 @@ where $y_{\mathrm{ZIP}}$ is the [zero interaction potency reference](zip-referen
 
 - [The zero interaction potency reference is Bliss independence of the fitted Hill curves](zip-reference-equals-bliss-of-hill-curves.md)
 
-## Expansion
+## Remarks
 
 The score measures a shift in potency rather than a gap between two effect levels: if the companion drug only raises the baseline, the fitted $m_{1 \leftarrow 2}, \lambda_{1 \leftarrow 2}$ reproduce $m_1, \lambda_1$ and both bracketed differences vanish. For the sham case, substituting the common parameters makes $y_c^{1 \leftarrow 2}$ the same function of $(x_1, x_2)$ as $y_{\mathrm{ZIP}}$, since with $A = (x_1/m)^{\lambda}$ and $B = (x_2/m)^{\lambda}$ both equal $(A + B + AB)/\bigl((1+A)(1+B)\bigr)$, and likewise for the drug-2-centric term; hence each difference, and so $\delta$, is zero. Dose addition has the same self-consistency property, so the potency-shift score inherits the main argument for the dose-addition reference while remaining defined, through its Bliss-type closed form, on dose pairs where the dose-addition reference does not exist.
 

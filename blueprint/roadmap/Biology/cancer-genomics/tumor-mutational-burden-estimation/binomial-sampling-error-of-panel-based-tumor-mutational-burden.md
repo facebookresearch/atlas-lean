@@ -6,13 +6,13 @@ $$\mathbb{E}[\hat{\tau}] = \tau, \qquad \operatorname{Var}(\hat{\tau}) = \frac{\
 
 So the relative error is governed by the expected number of mutations $\tau m$ in the examined territory: it falls as the inverse square root of panel size and of TMB itself, and it grows quickly once the panel covers less than about half a megabase.
 
-## Expansion
-
-Unbiasedness and the variance follow from $\mathbb{E}[M] = np$ and $\operatorname{Var}(M) = np(1-p)$, divided by $m$ and $m^2$. The source simulated exactly this binomial downsampling, $1000$ replicates at whole-exome TMB of $100$, $20$ and $10$ mutations/Mb over $0$ to $10$ Mb sequenced, and found that the variance rises sharply below $0.5$ Mb, while a panel of about $1.1$ Mb tracked whole-exome TMB closely. Counting synonymous mutations enlarges $M$ and therefore reduces sampling noise, which is why they were included even though synonymous changes create no neoantigens. Real panels also deviate from the model through local mutation-rate heterogeneity, which adds overdispersion, and through the exclusion of known driver hotspots, which the source removes because panel genes are enriched for them.
-
 ## Depends on
 
 - [Binomial probability mass function](../detection-power-for-somatic-mutations/binom-pmf.md)
+
+## Proof sketch
+
+Unbiasedness and the variance follow from $\mathbb{E}[M] = np$ and $\operatorname{Var}(M) = np(1-p)$, divided by $m$ and $m^2$. The source simulated exactly this binomial downsampling, $1000$ replicates at whole-exome TMB of $100$, $20$ and $10$ mutations/Mb over $0$ to $10$ Mb sequenced, and found that the variance rises sharply below $0.5$ Mb, while a panel of about $1.1$ Mb tracked whole-exome TMB closely. Counting synonymous mutations enlarges $M$ and therefore reduces sampling noise, which is why they were included even though synonymous changes create no neoantigens. Real panels also deviate from the model through local mutation-rate heterogeneity, which adds overdispersion, and through the exclusion of known driver hotspots, which the source removes because panel genes are enriched for them.
 
 ## Sources
 

@@ -19,7 +19,7 @@ $$\omega_{\mathrm{global}} \;=\; \frac{\sum_j b_j\, \omega_j}{\sum_j b_j}.$$
 
 - [Poisson dN/dS model with trinucleotide substitution rates](poisson-dn-ds-model-with-trinucleotide-substitution-rates.md)
 
-## Expansion
+## Proof sketch
 
 The neutral expectation of non-synonymous mutations is $n_k / \omega_k$, so the excess
 $n_k - n_k/\omega_k = n_k(\omega_k - 1)/\omega_k$ is attributed to positive selection; passengers

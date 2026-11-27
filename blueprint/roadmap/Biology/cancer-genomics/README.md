@@ -24,5 +24,4 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Localized hypermutation (kataegis)](localized-hypermutation-kataegis/README.md)
 - [Multi-marker circulating tumour DNA detection](multi-marker-ctdna-detection/README.md)
 - [Mutational signature extraction by Frobenius-norm NMF](mutational-signature-extraction-by-frobenius-nmf/README.md)
-- [Regional hypermutation and intermutation distance](regional-hypermutation-and-intermutation-distance/README.md)
 - [Tumor mutational burden estimation](tumor-mutational-burden-estimation/README.md)
