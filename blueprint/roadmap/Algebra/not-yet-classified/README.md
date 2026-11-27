@@ -75,7 +75,6 @@ Topics added since this subject's fields were last revised.
 - [Relative Cyclic Gluing](relative-cyclic-gluing/README.md)
 - [Represented Five Lemma](represented-five-lemma/README.md)
 - [Restriction Homology](restriction-homology/README.md)
-- [Separable Sum](separable-sum/README.md)
 - [Shifted Tensor Units](shifted-tensor-units/README.md)
 - [Short Exact Sequences](short-exact-sequences/README.md)
 - [Single Quasi Iso](single-quasi-iso/README.md)

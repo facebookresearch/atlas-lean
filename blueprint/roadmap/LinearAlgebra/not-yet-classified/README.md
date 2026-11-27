@@ -6,7 +6,6 @@ Topics added since this subject's fields were last revised.
 - [Block Diagonal](block-diagonal/README.md)
 - [Cyclic Graded Linear Map](cyclic-graded-linear-map/README.md)
 - [Cyclic Locally Nilpotent](cyclic-locally-nilpotent/README.md)
-- [Det Fin Small](det-fin-small/README.md)
 - [Exterior Power Semilinear](exterior-power-semilinear/README.md)
 - [Finite Support](finite-support/README.md)
 - [Finite Trace Determination](finite-trace-determination/README.md)

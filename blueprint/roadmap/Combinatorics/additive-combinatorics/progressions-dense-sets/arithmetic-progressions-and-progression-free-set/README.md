@@ -4,8 +4,6 @@
 - [Sets that are arithmetic progressions](is-apof-length.md)
 - [Cardinality of a set arithmetic progression](card.md)
 - [First term and difference of a set arithmetic progression](eq.md)
-- [Zero](zero.md)
-- [One](one.md)
 - [List arithmetic progressions with given start and difference](is-apof-length-with-2.md)
 - [Arithmetic progressions of lists](is-apof-length-2.md)
 - [Monotone arithmetic progressions in a function](has-monotone-ap.md)
@@ -17,4 +15,3 @@
 - [Trivial upper bound for the largest progression-free subset](max-card-le.md)
 - [A largest progression-free subset is attained](max-card-spec.md)
 - [Progression-free subsets are bounded by the extremal size](card-le-max-card.md)
-- [Contains Mono APof Length](contains-mono-apof-length.md)

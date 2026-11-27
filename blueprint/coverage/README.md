@@ -21,7 +21,8 @@ counts cover only the decomposed rows below; they are not repository-wide covera
 | v2 / WantedExt | DECOMPOSED | [28584 documented public non-instance declarations](../roadmap/README.md) across 27 subjects; 165 instances and 113 undocumented public non-instance declarations are not articles. |
 | v2 tests (MathlibExtTest, CSLibExtTest, PhyslibExtTest) | OUT | Tests and diagnostics rather than mathematical results. |
 | Atlas/StatisticalMechanics | MAPPED | Standalone Lean files; no roadmap articles yet. |
-| Atlas/CDISProbability | OUT | Standalone Lake project with its own course roadmap in Atlas/CDISProbability/roadmap. |
+| Atlas/FC | MAPPED | Standalone Lean files; no roadmap articles yet. |
+| Atlas/CPythonListsort | OUT | Maintained as its own Autoform blueprint inside Atlas/CPythonListsort. |
 
 ## Library navigation
 

@@ -5,7 +5,6 @@
 - [Asymptotic additive basis](is-asymptotic-add-basis.md)
 - [Weak additive basis of order $n$](is-weak-add-basis-of-order.md)
 - [Weak additive basis](is-weak-add-basis.md)
-- [Is Asymptotic Add Basis Of Order iff sum](is-asymptotic-add-basis-of-order-iff-sum.md)
 - [Sumset of a set of naturals](add-sumset.md)
 - [Additive basis of order 2](is-additive-basis-order2.md)
 - [Minimal additive basis of order 2](is-minimal-additive-basis-order2.md)

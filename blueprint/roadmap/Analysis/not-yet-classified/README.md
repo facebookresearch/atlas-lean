@@ -4,7 +4,6 @@ Topics added since this subject's fields were last revised.
 
 - [Idempotent Range](idempotent-range/README.md)
 - [Interval Expressions](interval-expressions/README.md)
-- [ZMod Add Char Sum](zmod-add-char-sum/README.md)
 - [Ideal unicycle has no lateral velocity](unicycle-no-lateral-velocity.md)
 - [Linear-programming optimality certificate](feasible-pair-equal-objectives-optimal.md)
 - [Linear programming integrality](exists-int-vec-of-basic-feasible.md)
