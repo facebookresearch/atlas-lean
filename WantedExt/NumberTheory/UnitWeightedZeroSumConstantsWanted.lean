@@ -16,6 +16,7 @@ public import MathlibExt.Combinatorics.Additive.DavenportModuleProd
 public import MathlibExt.NumberTheory.EvenIntersectionSubset
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfDivPrime
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfEvenUnits
+public import MathlibExt.NumberTheory.UnitWeightedZeroSumPrimePowerParity
 public import MathlibExt.NumberTheory.WeightedZeroSumCosets
 public import Mathlib.Data.Rat.Floor
 public import Mathlib.Data.ZMod.Basic
@@ -115,19 +116,6 @@ public theorem_wanted consecutive_prod_ge {R M N : Type*} [Ring R] [AddCommGroup
     (hM : IsLeast (consecutiveSet R M A) cM) (hN : IsLeast (consecutiveSet R N A) cN)
     (h : IsLeast (consecutiveSet R (M × N) A) c) :
     cM * cN ≤ c
-
-/-- **Griffiths' criterion for unit-weighted zero sums modulo a prime power.** Let $p$ be a prime,
-let $r$ and $k$ be natural numbers, put $n = p^r$, and let
-$x_1, \dots, x_k \in \mathbb{Z}/n\mathbb{Z}$. Suppose that for each $i \in [1, r]$ the set
-$X_i = \{j : x_j \not\equiv 0 \pmod{p^i}\}$ has an even number of elements. Then there are units
-$a_1, \dots, a_k$ of $\mathbb{Z}/n\mathbb{Z}$ with $a_1 x_1 + \dots + a_k x_k = 0$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 3.5 (`integers-2024-A38-lem-3-5`). -/
-public theorem_wanted unitWeightedZeroSum_of_even_nonDivisible {p r k : ℕ} (hp : p.Prime)
-    (x : Fin k → ZMod (p ^ r))
-    (h : ∀ i ∈ Finset.Icc 1 r, Even (Finset.univ.filter fun j => ¬ p ^ i ∣ (x j).val).card) :
-    IsUnitWeightedZeroSum (p ^ r) x
 
 /-- **Zero-sum subsequences of length $m$ in $\mathbb{Z}_2^a$.** Let $a$ and $m$ be natural numbers
 with $m$ even and $2^a \le m$, and write $\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$. Every sequence
