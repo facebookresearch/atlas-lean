@@ -1,6 +1,6 @@
 # Lipton–Markakis–Mehta small-support approximate equilibria
 
-Let $(A, B)$ be an $n \times n$ bimatrix game with all payoffs in $[0, 1]$, let $(x^*, y^*)$ be a Nash equilibrium of it, and let $\varepsilon > 0$. For every integer
+Let $(A, B)$ be an $n \times n$ bimatrix game with all payoffs in $[0, 1]$, let $(x^*, y^*)$ be a Nash equilibrium of it, and let $\varepsilon > 0$. For every positive integer
 
 $$
 k \ge \frac{12 \ln n}{\varepsilon^2}

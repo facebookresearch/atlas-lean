@@ -24,5 +24,5 @@ Group privacy (in the form $(k\varepsilon, k e^{k\varepsilon}\delta)$ for datase
 
 ## Sources
 
-- Salil Vadhan, "The Complexity of Differential Privacy", in Tutorials on the Foundations of Cryptography, Springer, 2017, Lemma 2.2 and Theorem 5.13 (the inequality above is the one established in the proof of Theorem 5.13; the theorem's display in the 2016 manuscript prints $\delta$ for $m\delta$).
+- Salil Vadhan, "The Complexity of Differential Privacy", in Tutorials on the Foundations of Cryptography, Springer, 2017, Chapter 7, Lemma 7.2.2 (group privacy, p. 360) and Theorem 7.5.13 with its proof (packing lower bound, p. 391); these are Lemma 2.2 and Theorem 5.13 of the 2016 manuscript. The inequality above is the one established in the proof of Theorem 7.5.13; the theorem's display prints $\delta$ for $m\delta$ in both versions.
 - Cynthia Dwork and Aaron Roth, "The Algorithmic Foundations of Differential Privacy", Foundations and Trends in Theoretical Computer Science, 2014, Theorem 2.2 and Lemma 8.4.

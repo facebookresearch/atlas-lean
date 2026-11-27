@@ -1,6 +1,6 @@
 # Mixed price of anarchy O(log m / log log m) on identical machines
 
-For $m \ge 3$ identical machines, every mixed Nash equilibrium has expected load less than $2\, \mathrm{OPT}$ on every machine and expected makespan $O(\log m / \log\log m) \cdot \mathrm{OPT}$.
+For $m \ge 3$ identical machines, every mixed Nash equilibrium has expected load at most $2\,\mathrm{OPT}$ on every machine and expected makespan $O(\log m / \log\log m) \cdot \mathrm{OPT}$.
 
 ## Proof sketch
 
