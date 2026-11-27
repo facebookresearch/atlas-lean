@@ -13,6 +13,8 @@ The test needs only the utilizations, as the [rate-monotonic utilization bound](
 ## Depends on
 
 - [The Liu–Layland periodic task model](../the-liu-layland-periodic-task-model.md)
+- [Preemptive priority-driven schedules](../produce-schedule.md)
+- [Fixed-priority rules](../is-fixed-priority.md)
 
 ## Proof depends on
 
