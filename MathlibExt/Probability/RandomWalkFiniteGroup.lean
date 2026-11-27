@@ -11,6 +11,7 @@ module
 public import MathlibExt.Analysis.Fourier.FiniteAbelianDFT
 public import MathlibExt.Analysis.Fourier.FiniteGroupYoung
 public import MathlibExt.Probability.MarkovMixing
+public import Mathlib.Algebra.Order.BigOperators.Expect
 public import Mathlib.GroupTheory.Perm.Support
 public import MathlibExt.RepresentationTheory.FourierTransformFiniteGroup
 public import MathlibExt.RepresentationTheory.FourierPlancherel
@@ -397,7 +398,7 @@ theorem sum_randomTransposition (n : ℕ) [NeZero n] :
     ring
 
 /-- The random-transposition measure is invariant under inversion. -/
-private theorem randomTransposition_inv (n : ℕ) [NeZero n] (σ : Equiv.Perm (Fin n)) :
+theorem randomTransposition_inv (n : ℕ) [NeZero n] (σ : Equiv.Perm (Fin n)) :
     randomTransposition n σ⁻¹ = randomTransposition n σ := by
   have h2 : σ⁻¹.IsSwap ↔ σ.IsSwap := by
     rw [← Equiv.Perm.card_support_eq_two, ← Equiv.Perm.card_support_eq_two,
@@ -405,6 +406,76 @@ private theorem randomTransposition_inv (n : ℕ) [NeZero n] (σ : Equiv.Perm (F
   unfold randomTransposition
   simp only [inv_eq_one]
   by_cases h : σ.IsSwap <;> simp [h, h2]
+
+section EndpointLaw
+
+open Equiv
+open MathlibExt.RepresentationTheory.FourierTransformFiniteGroup (sum_conv)
+
+variable {n : ℕ} [NeZero n]
+
+omit [NeZero n] in
+private theorem swap_eq_swap_iff {a b i j : Fin n} (hab : a ≠ b) :
+    swap i j = swap a b ↔ (i = a ∧ j = b) ∨ (i = b ∧ j = a) := by
+  constructor
+  · intro h
+    have ha := DFunLike.congr_fun h a
+    have hb := DFunLike.congr_fun h b
+    simp only [swap_apply_def] at ha hb
+    grind
+  · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+    · rfl
+    · exact swap_comm _ _
+
+/-- Sampling two independent uniform endpoints and interchanging them gives the
+random-transposition measure, including the identity step when the endpoints agree. -/
+theorem randomTransposition_eq_expect (σ : Equiv.Perm (Fin n)) :
+    randomTransposition n σ =
+      𝔼 i : Fin n, 𝔼 j : Fin n, if swap i j = σ then (1 : ℝ) else 0 := by
+  classical
+  by_cases h : σ = 1
+  · subst σ
+    simp [randomTransposition, swap_eq_one_iff]
+  by_cases hs : σ.IsSwap
+  · obtain ⟨a, b, hab, rfl⟩ := hs
+    have hsplit (i j : Fin n) :
+        (if swap i j = swap a b then (1 : ℝ) else 0) =
+          (if i = a then (if j = b then 1 else 0) else 0) +
+          (if i = b then (if j = a then 1 else 0) else 0) := by
+      simp only [swap_eq_swap_iff hab]
+      split_ifs <;> grind
+    simp_rw [hsplit, Fintype.expect_eq_sum_div_card, Finset.sum_add_distrib,
+      Finset.sum_ite_irrel, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.sum_const_zero]
+    simp [randomTransposition, h, Perm.swap_isSwap_iff, hab, add_div, ite_div,
+      Finset.sum_add_distrib]
+    ring
+  · have hne (i j : Fin n) : swap i j ≠ σ := by
+      rintro rfl
+      by_cases hij : i = j
+      · exact h (swap_eq_one_iff.mpr hij)
+      · exact hs (Perm.swap_isSwap_iff.mpr hij)
+    simp [randomTransposition, h, hs, hne]
+
+/-- Every convolution power of the random-transposition measure is nonnegative. -/
+theorem randomTransposition_convPow_nonneg (k : ℕ) (σ : Equiv.Perm (Fin n)) :
+    0 ≤ convPow (randomTransposition n) k σ := by
+  induction k generalizing σ with
+  | zero => simp [convPow]; split <;> norm_num
+  | succ k ih =>
+    apply Finset.sum_nonneg
+    intro τ _
+    apply mul_nonneg _ (ih τ)
+    unfold randomTransposition
+    split_ifs <;> positivity
+
+/-- Every convolution power of the random-transposition measure has total mass one. -/
+theorem sum_randomTransposition_convPow (k : ℕ) :
+    ∑ σ, convPow (randomTransposition n) k σ = 1 := by
+  induction k with
+  | zero => simp [convPow]
+  | succ k ih => rw [convPow, sum_conv, sum_randomTransposition, one_mul]; exact ih
+
+end EndpointLaw
 
 open Classical in
 /-- **Upper bound for random transpositions.** Let `V : ι → FDRep ℂ Sₙ` be a complete set of
@@ -430,13 +501,7 @@ theorem four_mul_tvDist_randomTransposition_sq_le {n : ℕ} [NeZero n] {ι : Typ
     have := Finset.card_le_univ τ.support
     simp only [Fintype.card_fin] at this
     omega
-  have hsum : ∀ k, ∑ σ, convPow (randomTransposition n) k σ = 1 := fun k => by
-    induction k with
-    | zero => simp [convPow]
-    | succ k ih =>
-      rw [convPow, MathlibExt.RepresentationTheory.FourierTransformFiniteGroup.sum_conv, ih,
-        sum_randomTransposition n, one_mul]
-  refine (upper_bound_lemma V hinj hsurj _ (hsum k)).trans (le_of_eq ?_)
+  refine (upper_bound_lemma V hinj hsurj _ (sum_randomTransposition_convPow k)).trans (le_of_eq ?_)
   refine Finset.sum_congr rfl fun i _ => ?_
   have := BurnsidePaqb.irreducible_of_simple_fdrep (Equiv.Perm (Fin n)) (V i)
   set c : ℂ := (1 : ℂ) / n + ((n : ℂ) - 1) / n *
