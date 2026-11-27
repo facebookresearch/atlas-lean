@@ -23,14 +23,15 @@ occurrences are reported, never filled with `0`.
 
 The raw outputs are path weights: `ES v` is the longest `s`-to-`v` path weight, so the makespan
 `ES t` is the longest source-to-sink path weight, and `LT v` is the longest `v`-to-`t` path
-weight. On covered projects with nonnegative durations, `ES` is pointwise earliest on model
-events among feasible schedules, and the latest starts `LS = T - LT` are pointwise latest on
-model events among feasible schedules finishing by the makespan `T`
-(`earliestSchedule_feasible`, `latestSchedule_feasible`). Feasibility constrains no vertex
-outside the model events, so when such a vertex exists no schedule is earliest or latest on every
-vertex. Without coverage `ES` and the makespan are still lower bounds on every feasible schedule
-(`feasible_dominates_earliest`, `makespan_le_completion`), but an occurrence off every
-source-to-sink path can force a later sink.
+weight. When the runs succeed, `t` is reachable from `s`, the project is covered and durations
+are nonnegative, `ES` is pointwise earliest on model events among feasible schedules, and the
+latest starts `LS = T - LT` are pointwise latest on model events among feasible schedules
+finishing by the makespan `T` (`earliestSchedule_feasible`, `latestSchedule_feasible`).
+Coverage alone does not give reachability: it holds vacuously when there are no activities.
+Feasibility constrains no vertex outside the model events, so when such a vertex exists no
+schedule is earliest or latest on every vertex. Without coverage `ES` and the makespan are still
+lower bounds on every feasible schedule (`feasible_dominates_earliest`, `makespan_le_completion`),
+but an occurrence off every source-to-sink path can force a later sink.
 
 The declarations live in the namespace `Cslib.Algorithms.Lean.Scheduling.CriticalPath`, so
 they load together with the list-scheduling API of
@@ -99,9 +100,10 @@ open BellmanFord
 
 /-- Raw output of the forward run at `v`, negated back to durations: the longest `s`-to-`v`
 path weight (`earliestStart_spec`), `none` off the forward reachable set. Every feasible
-schedule puts `v` no earlier (`feasible_dominates_earliest`); it is the earliest time of `v` over
-feasible schedules only on covered projects with nonnegative durations
-(`earliestSchedule_feasible`). (`C3`) -/
+schedule puts `v` no earlier (`feasible_dominates_earliest`). When the forward run succeeds, `t` is
+reachable from `s`, the project is covered and durations are nonnegative, it is the earliest time
+of `v` over feasible schedules (`earliestSchedule_feasible`); these hypotheses are sufficient, not
+necessary. (`C3`) -/
 @[expose] public def earliestStart {n : Nat} (result : Distances n) (v : Fin n) :
     Option Int :=
   (result.distance.get v).map Neg.neg
@@ -113,10 +115,12 @@ feasible schedules only on covered projects with nonnegative durations
 
 /-- Project makespan read from the forward run at the sink: the longest source-to-sink path
 weight (`makespan_exists`), `none` when the sink is unreachable. It lower-bounds the sink time of
-every feasible schedule (`makespan_le_completion`) and is the earliest feasible sink time only on
-covered projects with nonnegative durations (`earliestSchedule_feasible`): an occurrence off
-every source-to-sink path can force a later sink. It is not the largest machine load that the
-list-scheduling `Cslib.Algorithms.Lean.Scheduling.makespan` measures. (`C5`) -/
+every feasible schedule (`makespan_le_completion`). When the forward run succeeds, `t` is
+reachable from `s`, the project is covered and durations are nonnegative, it is the earliest
+feasible sink time (`earliestSchedule_feasible`); these hypotheses are sufficient, not necessary.
+Without coverage an occurrence off every source-to-sink path can force a later sink. It is not the
+largest machine load that the list-scheduling `Cslib.Algorithms.Lean.Scheduling.makespan`
+measures. (`C5`) -/
 @[expose] public def makespan {n : Nat} (result : Distances n) (t : Fin n) : Option Int :=
   earliestStart result t
 
@@ -140,7 +144,8 @@ list-scheduling `Cslib.Algorithms.Lean.Scheduling.makespan` measures. (`C5`) -/
 
 /-- Latest-start time `T - LT v` of a vertex from a makespan `T` and the reversed run. With `T`
 the makespan and `v` a model event, it is the latest time of `v` over feasible schedules finishing
-by `T`, only on covered projects with nonnegative durations (`latestSchedule_feasible`); off the
+by `T` when both runs succeed, `t` is reachable from `s`, the project is covered and durations are
+nonnegative (`latestSchedule_feasible`); these hypotheses are sufficient, not necessary. Off the
 model events feasibility gives no latest time. (`C6`) -/
 @[expose] public def latestStartAt {n : Nat} (T : Option Int) (reverse : Distances n)
     (v : Fin n) : Option Int :=
@@ -858,7 +863,8 @@ public theorem longestToSink_eq_none_iff {n : Nat} {edges : List (Edge n)}
   rw [DAGShortestPaths.dagShortestPaths_distance_eq_none_iff _ _ _ hr _]
   rw [reachable_revNegEdges_iff]
 
-/-- Makespan: the attained maximum source-to-sink duration, read at both ends. (`C5`) -/
+/-- Makespan: when both runs succeed and `t` is reachable from `s`, the makespan is defined, equals
+the longest time to sink at `s`, and is the attained maximum source-to-sink path weight. (`C5`) -/
 public theorem makespan_exists {n : Nat} {edges : List (Edge n)} {s t : Fin n}
     {forward reverse : Distances n}
     (hf : (DAGShortestPaths.dagShortestPaths (negEdges edges) s).ret = .ok forward)
@@ -1406,7 +1412,8 @@ public theorem floatAt_spec {n : Nat} {edges : List (Edge n)} {s t : Fin n}
     have hle2 := hmax2 _ hq2
     omega
 
-/-- Model events are forward-reachable from the source on covered projects. (`C9`, private) -/
+/-- Model events are forward-reachable from the source on covered projects in which `t` is
+reachable from `s`. (`C9`, private) -/
 private theorem modelEvent_reachable_src {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} (hcover : IsCovered edges s t)
     (hst : (toDirectedAdjacency edges).Reachable s t) (v : Fin n)
@@ -1420,7 +1427,8 @@ private theorem modelEvent_reachable_src {n : Nat} {edges : List (Edge n)}
   · exact (hcover e hem).1
   · exact reachable_trans_middle (hcover e hem).1 (reachable_of_mem_edge hem)
 
-/-- Model events reach the sink on covered projects. (`C9`, private) -/
+/-- Model events reach the sink on covered projects in which `t` is reachable from `s`. (`C9`,
+private) -/
 private theorem modelEvent_reachable_tgt {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} (hcover : IsCovered edges s t)
     (hst : (toDirectedAdjacency edges).Reachable s t) (v : Fin n)
@@ -1522,7 +1530,10 @@ private theorem longestToSink_at_sink {n : Nat} {edges : List (Edge n)}
   rw [hb0] at hb
   exact hb
 
-/-- On covered projects both raw outputs are defined on every model event. (`C9`) -/
+/-- When both runs succeed, `t` is reachable from `s` and the project is covered, both raw outputs
+are defined on every model event. Coverage alone does not suffice: it holds vacuously when there
+are no activities, and then `earliestStart` is undefined at the model event `t` when `s ≠ t`.
+(`C9`) -/
 public theorem raw_defined_on_modelEvents {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} {forward reverse : Distances n}
     (hcover : IsCovered edges s t)
@@ -1538,9 +1549,10 @@ public theorem raw_defined_on_modelEvents {n : Nat} {edges : List (Edge n)}
   · exact (longestToSink_defined_iff hr v).mpr
       (modelEvent_reachable_tgt hcover hst v hv)
 
-/-- On covered projects with nonnegative durations, the earliest-start schedule is feasible,
-starts at zero, completes at `T`, and agrees with `earliestStart` on model events, where it is
-pointwise earliest among feasible schedules (`feasible_dominates_earliest`). (`C9`) -/
+/-- When the forward run succeeds, `t` is reachable from `s`, the project is covered and durations
+are nonnegative, the earliest-start schedule is feasible, starts at zero, completes at `T`, and
+agrees with `earliestStart` on model events, where it is pointwise earliest among feasible
+schedules (`feasible_dominates_earliest`). (`C9`) -/
 public theorem earliestSchedule_feasible {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} {forward : Distances n} {T : Int}
     (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
@@ -1648,11 +1660,11 @@ public theorem feasible_activity_finishes_by_sink {n : Nat}
   have hnn_p := pathWeight_nonneg hnn p hp.1
   omega
 
-/-- On covered projects with nonnegative durations, the latest-start schedule is feasible,
-finishes at `T`, and is pointwise latest on model events among the feasible schedules finishing
-by `T`: each of them puts every model event no later. Feasibility constrains no vertex outside the
-model events (an isolated vertex can take any time), so when such a vertex exists no schedule is
-latest on every vertex. (`C9`) -/
+/-- When both runs succeed, `t` is reachable from `s`, the project is covered and durations are
+nonnegative, the latest-start schedule is feasible, finishes at `T`, and is pointwise latest on
+model events among the feasible schedules finishing by `T`: each of them puts every model event no
+later. Feasibility constrains no vertex outside the model events (an isolated vertex can take any
+time), so when such a vertex exists no schedule is latest on every vertex. (`C9`) -/
 public theorem latestSchedule_feasible {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} {forward reverse : Distances n} {T : Int}
     (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
