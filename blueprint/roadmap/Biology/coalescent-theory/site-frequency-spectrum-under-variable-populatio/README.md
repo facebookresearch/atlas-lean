@@ -57,3 +57,4 @@
 - [Information limits of coalescent demographic inference](information-limits-of-coalescent-demographic-inference/README.md)
 - [Minimax limits of SFS-based demographic inference](minimax-limits-of-sfs-based-demographic-inference/README.md)
 - [Sign-change complexity and demographic identifiability](sign-change-complexity-and-demographic-identifiability/README.md)
+- [Site frequency spectrum of sampled birth–death processes](site-frequency-spectrum-of-sampled-birth-death-processes/README.md)
