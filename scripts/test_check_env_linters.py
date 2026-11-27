@@ -259,6 +259,43 @@ end ReviewCases
 """
 
 
+DOTTED = """\
+module
+
+public section Outer.Inner
+
+end Inner
+
+/-- Still in the public section `Outer`. -/
+def afterInner (y z : Nat) : Nat := y
+
+end Outer
+
+public section Shelf
+
+section Level
+
+end Shelf.Level
+
+def afterBoth (y z : Nat) : Nat := y
+
+namespace N.M
+
+@[expose] public section
+
+/-- Public. -/
+def inside : Nat := 0
+
+end
+
+end M
+
+def outside : Nat := 0
+
+end N
+"""
+
+
 class IndexTests(unittest.TestCase):
     def test_names_declarations_in_their_namespaces(self):
         index = check.index_source(SOURCE)
@@ -323,6 +360,15 @@ class IndexTests(unittest.TestCase):
         # Outside a `module` file, only `private` makes a declaration private.
         plain = check.index_source(VISIBILITY.replace("module\n", "", 1))
         self.assertEqual(plain.private_names, {"ReviewCases.hiddenAgain"})
+
+    def test_dotted_sections_open_and_close_one_scope_per_component(self):
+        # `end Inner` closes only the inner of `section Outer.Inner`, so `Outer` stays public;
+        # `end Shelf.Level` closes both `section Shelf` and `section Level`.
+        index = check.index_source(DOTTED)
+        self.assertIn("afterInner", index.public_names)
+        self.assertIn("afterBoth", index.private_names)
+        self.assertIn("N.M.inside", index.public_names)
+        self.assertIn("N.outside", index.private_names)
 
     def test_unlexable_sources_fall_back_to_the_reported_line(self):
         index = check.index_source('def s := "unterminated\n')
@@ -468,13 +514,33 @@ class PlaceTests(unittest.TestCase):
         a_head = VISIBILITY.replace(
             "/-- Moves to another file. -/\npublic def moved (y z : Nat) : Nat := y\n\n", "")
         base = base_names(MathlibExt__A=VISIBILITY, MathlibExt__B=b_base)
-        head = {"MathlibExt/A.lean": (a_head, set()), "MathlibExt/B.lean": (b_head, {5, 6, 7, 8})}
+        # Every line of B's two declarations is added, so `moved` passes only by the move.
+        head = {"MathlibExt/A.lean": (a_head, set()),
+                "MathlibExt/B.lean": (b_head, set(range(5, 11)))}
         new = Finding("ReviewCases.helper", "unusedArguments", "", "MathlibExt.B",
                       "MathlibExt/B.lean", 5, 1)
         self.assertTrue(self.place_in(new, head, base).added)
         moved = Finding("ReviewCases.moved", "unusedArguments", "", "MathlibExt.B",
                         "MathlibExt/B.lean", 8, 1)
         self.assertFalse(self.place_in(moved, head, base).added)
+
+    def test_dotted_sections_decide_what_a_move_or_a_new_declaration_is(self):
+        # `afterInner` is public, so moving it to B is not new; `afterBoth` is private, so a new
+        # public `afterBoth` in B is new.
+        a_head = DOTTED.replace(
+            "/-- Still in the public section `Outer`. -/\ndef afterInner (y z : Nat) : Nat := y\n\n",
+            "")
+        b_head = ("module\n\n/-- Moved. -/\npublic def afterInner (y z : Nat) : Nat := y\n\n"
+                  "/-- New. -/\npublic def afterBoth (y z : Nat) : Nat := y\n")
+        base = base_names(MathlibExt__A=DOTTED, MathlibExt__B="module\n")
+        head = {"MathlibExt/A.lean": (a_head, set()),
+                "MathlibExt/B.lean": (b_head, set(range(1, 8)))}
+        moved = Finding("afterInner", "unusedArguments", "", "MathlibExt.B", "MathlibExt/B.lean",
+                        3, 1)
+        self.assertFalse(self.place_in(moved, head, base).added)
+        new = Finding("afterBoth", "unusedArguments", "", "MathlibExt.B", "MathlibExt/B.lean",
+                      6, 1)
+        self.assertTrue(self.place_in(new, head, base).added)
 
     def test_an_undecorated_wanted_statement_moved_between_module_files_is_kept(self):
         a_head = VISIBILITY.replace("theorem_wanted stillWanted : True\n\n", "")
