@@ -12,6 +12,8 @@ import MathlibExt.NumberTheory.GcdArithmeticTerm
 
 /-!
 # Boundary cases for the gcd-term sequence and the double-remainder formula
+
+The last examples apply both directions of the gcd terms in bases 2, 3 and 4.
 -/
 
 open MetaMathlibExt
@@ -57,3 +59,103 @@ example (a : ℕ) (ha : 1 ≤ a) :
   rw [Nat.gcd_self] at h
   ring_nf at h ⊢
   omega
+
+-- On a non-degenerate pair both identities hold in base 2.
+example : (Nat.gcd 2 4 : ℤ) =
+    (2 : ℤ) ^ (2 * 4 * (2 * 4 + 2 + 4)) /
+      (((2 : ℤ) ^ (2 ^ 2 * 4) - 1) * ((2 : ℤ) ^ (2 * 4 ^ 2) - 1)) %
+        (2 : ℤ) ^ (2 * 4) - 1 := by
+  have h := (gcd_arithmetic_terms_small_bases 2 (Or.inl rfl) 2 4 (by decide) (by decide)).1
+  exact h.mpr (by decide)
+
+example : (Nat.gcd 2 4 : ℤ) =
+    (-(2 : ℤ) ^ (2 * 4 * (2 * 4 + 2 + 4))) %
+      (((2 : ℤ) ^ (2 ^ 2 * 4) - 1) * ((2 : ℤ) ^ (2 * 4 ^ 2) - 1)) %
+        (2 : ℤ) ^ (2 * 4) - 2 := by
+  have h := (gcd_arithmetic_terms_small_bases 2 (Or.inl rfl) 2 4 (by decide) (by decide)).2
+  exact h.mpr (by decide)
+
+-- On a non-degenerate pair both identities hold in base 3.
+example : (Nat.gcd 2 4 : ℤ) =
+    (3 : ℤ) ^ (2 * 4 * (2 * 4 + 2 + 4)) /
+      (((3 : ℤ) ^ (2 ^ 2 * 4) - 1) * ((3 : ℤ) ^ (2 * 4 ^ 2) - 1)) %
+        (3 : ℤ) ^ (2 * 4) - 1 := by
+  have h :=
+    (gcd_arithmetic_terms_small_bases 3 (Or.inr (Or.inl rfl)) 2 4 (by decide) (by decide)).1
+  exact h.mpr (by decide)
+
+example : (Nat.gcd 2 4 : ℤ) =
+    (-(3 : ℤ) ^ (2 * 4 * (2 * 4 + 2 + 4))) %
+      (((3 : ℤ) ^ (2 ^ 2 * 4) - 1) * ((3 : ℤ) ^ (2 * 4 ^ 2) - 1)) %
+        (3 : ℤ) ^ (2 * 4) - 2 := by
+  have h :=
+    (gcd_arithmetic_terms_small_bases 3 (Or.inr (Or.inl rfl)) 2 4 (by decide) (by decide)).2
+  exact h.mpr (by decide)
+
+-- On a non-degenerate pair both identities hold in base 4.
+example : (Nat.gcd 2 4 : ℤ) =
+    (4 : ℤ) ^ (2 * 4 * (2 * 4 + 2 + 4)) /
+      (((4 : ℤ) ^ (2 ^ 2 * 4) - 1) * ((4 : ℤ) ^ (2 * 4 ^ 2) - 1)) %
+        (4 : ℤ) ^ (2 * 4) - 1 := by
+  have h :=
+    (gcd_arithmetic_terms_small_bases 4 (Or.inr (Or.inr rfl)) 2 4 (by decide) (by decide)).1
+  exact h.mpr (by decide)
+
+example : (Nat.gcd 2 4 : ℤ) =
+    (-(4 : ℤ) ^ (2 * 4 * (2 * 4 + 2 + 4))) %
+      (((4 : ℤ) ^ (2 ^ 2 * 4) - 1) * ((4 : ℤ) ^ (2 * 4 ^ 2) - 1)) %
+        (4 : ℤ) ^ (2 * 4) - 2 := by
+  have h :=
+    (gcd_arithmetic_terms_small_bases 4 (Or.inr (Or.inr rfl)) 2 4 (by decide) (by decide)).2
+  exact h.mpr (by decide)
+
+-- At (1, 1) both identities fail in base 2.
+example : ¬ ((Nat.gcd 1 1 : ℤ) =
+    (2 : ℤ) ^ (1 * 1 * (1 * 1 + 1 + 1)) /
+      (((2 : ℤ) ^ (1 ^ 2 * 1) - 1) * ((2 : ℤ) ^ (1 * 1 ^ 2) - 1)) %
+        (2 : ℤ) ^ (1 * 1) - 1) := by
+  have h := (gcd_arithmetic_terms_small_bases 2 (Or.inl rfl) 1 1 le_rfl le_rfl).1
+  intro hEq
+  exact h.mp hEq rfl
+
+example : ¬ ((Nat.gcd 1 1 : ℤ) =
+    (-(2 : ℤ) ^ (1 * 1 * (1 * 1 + 1 + 1))) %
+      (((2 : ℤ) ^ (1 ^ 2 * 1) - 1) * ((2 : ℤ) ^ (1 * 1 ^ 2) - 1)) %
+        (2 : ℤ) ^ (1 * 1) - 2) := by
+  have h := (gcd_arithmetic_terms_small_bases 2 (Or.inl rfl) 1 1 le_rfl le_rfl).2
+  intro hEq
+  exact h.mp hEq rfl
+
+-- At (1, 1) both identities fail in base 3.
+example : ¬ ((Nat.gcd 1 1 : ℤ) =
+    (3 : ℤ) ^ (1 * 1 * (1 * 1 + 1 + 1)) /
+      (((3 : ℤ) ^ (1 ^ 2 * 1) - 1) * ((3 : ℤ) ^ (1 * 1 ^ 2) - 1)) %
+        (3 : ℤ) ^ (1 * 1) - 1) := by
+  have h := (gcd_arithmetic_terms_small_bases 3 (Or.inr (Or.inl rfl)) 1 1 le_rfl le_rfl).1
+  intro hEq
+  exact h.mp hEq rfl
+
+example : ¬ ((Nat.gcd 1 1 : ℤ) =
+    (-(3 : ℤ) ^ (1 * 1 * (1 * 1 + 1 + 1))) %
+      (((3 : ℤ) ^ (1 ^ 2 * 1) - 1) * ((3 : ℤ) ^ (1 * 1 ^ 2) - 1)) %
+        (3 : ℤ) ^ (1 * 1) - 2) := by
+  have h := (gcd_arithmetic_terms_small_bases 3 (Or.inr (Or.inl rfl)) 1 1 le_rfl le_rfl).2
+  intro hEq
+  exact h.mp hEq rfl
+
+-- At (1, 1) both identities fail in base 4.
+example : ¬ ((Nat.gcd 1 1 : ℤ) =
+    (4 : ℤ) ^ (1 * 1 * (1 * 1 + 1 + 1)) /
+      (((4 : ℤ) ^ (1 ^ 2 * 1) - 1) * ((4 : ℤ) ^ (1 * 1 ^ 2) - 1)) %
+        (4 : ℤ) ^ (1 * 1) - 1) := by
+  have h := (gcd_arithmetic_terms_small_bases 4 (Or.inr (Or.inr rfl)) 1 1 le_rfl le_rfl).1
+  intro hEq
+  exact h.mp hEq rfl
+
+example : ¬ ((Nat.gcd 1 1 : ℤ) =
+    (-(4 : ℤ) ^ (1 * 1 * (1 * 1 + 1 + 1))) %
+      (((4 : ℤ) ^ (1 ^ 2 * 1) - 1) * ((4 : ℤ) ^ (1 * 1 ^ 2) - 1)) %
+        (4 : ℤ) ^ (1 * 1) - 2) := by
+  have h := (gcd_arithmetic_terms_small_bases 4 (Or.inr (Or.inr rfl)) 1 1 le_rfl le_rfl).2
+  intro hEq
+  exact h.mp hEq rfl
