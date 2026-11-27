@@ -1,6 +1,6 @@
 # Relative spectrum membership is undecidable in a direct product of two free groups
 
-For $n \ge 2$ and each prime $p$, no algorithm decides, for a finitely generated subgroup $H$ of $F_n \times F_n$, whether some element of $F_n \times F_n$ has order exactly $p$ relative to $H$; in free groups the relative spectrum is computable.
+For $n \ge 2$ and each prime $p$, no algorithm decides, for a finitely generated subgroup $H$ of $F_n \times F_n$, whether some element of $F_n \times F_n$ has order exactly $p$ relative to $H$.
 
 For a group $G$, a subgroup $H \le G$ and $g \in G$, the order $\mathrm{Ord}_H(g)$ of $g$ in $H$ is the least $k \ge 1$ with $g^k \in H$, and $0$ if there is none; the relative spectrum $\mathrm{Ord}_H(G)$ is the set of values $\mathrm{Ord}_H(g)$ for $g \in G$. The spectrum membership problem $\mathrm{SMP}(G)$ asks, given a finitely generated $H \le G$ and $k \in \mathbb{N}$, whether $k \in \mathrm{Ord}_H(G)$. Fix $n \ge 2$ and a prime $p$. There is no algorithm that, on input a finitely generated subgroup $H \le F_n \times F_n$, decides whether $p \in \mathrm{Ord}_H(F_n \times F_n)$; in particular $\mathrm{SMP}(F_n \times F_n)$ is undecidable (Proposition 5.1 of the source).
 
