@@ -38,6 +38,7 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.NoAtoms
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Topology.ContinuousMap.Bounded.Basic
 public import MathlibExt.Probability.Distributions.ChiSquare
+public import MathlibExt.Probability.Statistics.KruskalWallis
 public import MathlibExt.Probability.Statistics.Measurement.Scales
 
 @[expose] public section
@@ -49,36 +50,10 @@ open MathlibExt.Probability.Statistics.Measurement (sampleRank)
 
 variable {C N : ℕ}
 
-/-- **Sample size.** The size `n_i` of sample `i` under the assignment `g` of positions to
-samples. -/
-def sampleSize (g : Fin N → Fin C) (i : Fin C) : ℕ :=
-  (Finset.univ.filter fun k => g k = i).card
-
-/-- **Rank sum.** The rank sum `R_i = ∑_{k : g k = i} (σ k + 1)` of sample `i` under the
-ranking `σ`. -/
-def rankSum (g : Fin N → Fin C) (σ : Equiv.Perm (Fin N)) (i : Fin C) : ℕ :=
-  ∑ k ∈ Finset.univ.filter (fun k => g k = i), ((σ k : ℕ) + 1)
-
-/-- **Kruskal–Wallis statistic.** The statistic
-`H = 12 / (N (N + 1)) ∑_i R_i² / n_i - 3 (N + 1)`. -/
-noncomputable def kruskalWallis (g : Fin N → Fin C) (σ : Equiv.Perm (Fin N)) : ℝ :=
-  12 / (N * (N + 1)) * ∑ i, (rankSum g σ i : ℝ) ^ 2 / sampleSize g i - 3 * (N + 1)
-
 /-- **Average over rankings.** The average of `f` over all `N!` rankings (the null
 distribution). -/
 noncomputable def permAverage (f : Equiv.Perm (Fin N) → ℝ) : ℝ :=
   (∑ σ, f σ) / (N.factorial : ℝ)
-
-/-- **The two forms of `H`.** For an assignment `g` of `N ≥ 1` positions to
-`C` samples, each of size `n_i ≥ 1`, and every ranking `σ`,
-`H = 12 / (N (N + 1)) ∑_i n_i (R_i / n_i - (N + 1)/2)²`.
-
-Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
-23 (1952) 525–540, p. 526. -/
-public theorem_wanted kruskalWallis_eq_sum_sq (g : Fin N → Fin C) (hN : 0 < N)
-    (hn : ∀ i, 0 < sampleSize g i) (σ : Equiv.Perm (Fin N)) :
-    kruskalWallis g σ = 12 / (N * (N + 1)) *
-      ∑ i, (sampleSize g i : ℝ) * ((rankSum g σ i : ℝ) / sampleSize g i - (N + 1) / 2) ^ 2
 
 /-- **Null moments of the rank sums.**
 For an assignment `g` of `N ≥ 2` positions to `C` samples of sizes `n_i ≥ 1`, under the uniform

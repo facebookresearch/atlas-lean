@@ -9,7 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Words.DumontThomasAcceptedWords
 public import MathlibExt.Combinatorics.Words.DumontThomasNumeration
+public import MathlibExt.Combinatorics.Words.DumontThomasProperPrefix
 
 namespace MetaMathlibExt
 
@@ -42,35 +44,6 @@ public theorem_wanted dumontThomas_numeration {A : Type*} (η : A → List A)
         (List.range n).map u =
           ((List.range (k' + 1)).reverse.map fun j => morphIterate η j (s' j).1).flatten) →
         k' = k ∧ ∀ i ≤ k, s' i = s i
-
-/-- **Decomposition of a proper prefix of an iterated image.** Let $\eta$ be a substitution on
-an alphabet $A$, let $\ell \ge 1$ and $a \in A$, and let $m$ be a proper prefix of
-$\eta^\ell(a)$, that is, a prefix of strictly smaller length. Then there are words $m'$ and
-$m''$ over $A$ and a letter $a' \in A$ such that $m'a'$ is a prefix of $\eta(a)$, $m''$ is a
-proper prefix of $\eta^{\ell-1}(a')$, and $m = \eta^{\ell-1}(m')\,m''$.
-
-Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
-ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.5 (Dumont and Thomas, Lemma 1.4). -/
-public theorem_wanted properPrefix_morphIterate_decomposition {A : Type*} (η : A → List A)
-    (hη : IsSubstitution η) (ℓ : ℕ) (hℓ : 1 ≤ ℓ) (a : A) (m : List A)
-    (hm : m <+: morphIterate η ℓ [a]) (hlt : m.length < (morphIterate η ℓ [a]).length) :
-    ∃ (m' : List A) (a' : A) (m'' : List A), m' ++ [a'] <+: η a ∧
-      m'' <+: morphIterate η (ℓ - 1) [a'] ∧
-      m''.length < (morphIterate η (ℓ - 1) [a']).length ∧
-      m = morphIterate η (ℓ - 1) m' ++ m''
-
-/-- **Accepted digit words come from admissible sequences.** Let $\eta$ be a substitution on an
-alphabet $A$, let $x \in A$, let $k \ge 1$, and let $v_0, v_1, \dots, v_{k-1}$ be natural
-numbers. If the digit word $v_{k-1} v_{k-2} \cdots v_0$ is accepted by the automaton
-$\mathcal{A}_{\eta,x}$ (that is, its run from $x$ is defined), then there is an $x$-admissible
-sequence $(m_i, a_i)_{0 \le i \le k-1}$ with $|m_i| = v_i$ for every $i < k$.
-
-Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
-ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.8. -/
-public theorem_wanted exists_letterAdmissibleSequence_of_accepted {A : Type*}
-    (η : A → List A) (hη : IsSubstitution η) (k : ℕ) (hk : 1 ≤ k) (x : A) (v : ℕ → ℕ)
-    (hv : (substitutionAutomaton η x ((List.range k).map fun t => v (k - 1 - t))).isSome) :
-    ∃ s, IsLetterAdmissibleSequence η x s (k - 1) ∧ ∀ i < k, (s i).1.length = v i
 
 /-- **Proper prefixes of iterated images have unique admissible expansions.** Let $\eta$ be a
 substitution on an alphabet $A$, let $x \in A$, let $p \ge 1$, and let $m$ be a proper prefix
