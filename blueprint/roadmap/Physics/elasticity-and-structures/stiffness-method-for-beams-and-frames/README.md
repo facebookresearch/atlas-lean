@@ -67,3 +67,7 @@
 - [The global frame stiffness matrix is symmetric](frame-stiffness-global-transpose.md)
 - [The global frame stiffness matrix is positive semidefinite](frame-stiffness-global-pos-semidef.md)
 - [Kernel of the global frame stiffness matrix](frame-stiffness-global-mul-vec-eq-zero-i.md)
+
+## Galerkin error of a two-cell bar
+
+- [Galerkin error of a two-cell bar](galerkin-error-of-a-two-cell-bar/README.md)
