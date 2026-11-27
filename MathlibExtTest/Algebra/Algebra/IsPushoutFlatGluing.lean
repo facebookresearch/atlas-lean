@@ -1,9 +1,33 @@
 /-
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
+-/
+
+/-
 Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Adapted from:
+
+`Theorems/Thm_Algebra_IsPushout_exists_algEquiv_slice_eq_of_flat.lean`
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source file at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
+The signatures of `exactSource` and of the independent-universe example restate
+that file's theorem statement; the theorem applications, the injective-map
+instance and the `ℤ → ℚ` example are original test code.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
