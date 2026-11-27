@@ -30,10 +30,12 @@ The statements already proved, such as the oddness of every positive `n` with
 `IsCompatibleSemiprimePair.mod_five`, which lives in
 `MathlibExt/NumberTheory/CollatzArithmeticDerivativeModFive.lean`,
 `IsCompatibleSemiprimePair.bounds`, which lives in
-`MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds.lean`, and
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds.lean`,
 `arithmeticDerivative_bounds`, which lives in
-`MathlibExt/NumberTheory/CollatzArithmeticDerivativeArithmeticDerivativeBounds.lean`; this
-module imports all four publicly.
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeArithmeticDerivativeBounds.lean`, and
+`arithmeticDerivative_collatz_comm_prime_tetration_iff`, which lives in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativePrimeTetration.lean`; this module imports
+all five publicly.
 -/
 module
 
