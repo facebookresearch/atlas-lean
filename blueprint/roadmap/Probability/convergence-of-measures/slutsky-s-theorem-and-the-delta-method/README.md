@@ -13,3 +13,4 @@ Convergence in probability implies convergence in distribution, but not converse
 - [Delta method in one dimension](delta-method-real.md): the delta method for real random variables
 - [Studentization with a consistent covariance estimator](studentization-for-an-explicitly-supplied-depend.md): an application of Slutsky's theorem, normalizing an asymptotically normal vector by a consistent covariance estimator
 - [Slutsky's theorem for a random matrix times a random vector](slutsky-s-theorem-for-a-random-matrix-times-a-random-vector.md)
+- [Convergence in distribution depends on the limit only through its law](congr-has-law.md)

@@ -107,7 +107,7 @@ public theorem pderiv_subst {σ : Type*} {R : Type*} [CommRing R] (i : σ)
       coeff_subst_eq_sum a ha h (d + Finsupp.single i 1) (K + 1)
         (by rw [hdeg1, hK]; omega),
       Finset.sum_mul, Finset.sum_range_succ']
-    simp only [pow_zero, MvPowerSeries.coeff_one, if_neg hne, smul_zero, zero_mul,
+    simp only [pow_zero, MvPowerSeries.coeff_one, ite_eq_right hne, smul_zero, zero_mul,
       add_zero]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [smul_mul_assoc, e1, smul_eq_mul, smul_eq_mul]

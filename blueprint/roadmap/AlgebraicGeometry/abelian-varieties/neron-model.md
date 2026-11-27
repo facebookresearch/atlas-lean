@@ -35,7 +35,7 @@ A good expansion follows Bosch, Lütkebohmert and Raynaud and has pages for:
   curve $X$ over $R$ with smooth generic fibre is a separated scheme (Conrad, Theorem 7.13), the
   semi-abelian special fibre (Proposition 7.14) and the open immersion criterion of Theorem 4.4;
 - the ingredients of the proof of the
-  [potential good reduction of abelian varieties with complex multiplication](good-reduction-of-cm-abelian-varieties.md),
+  [potential good reduction of abelian varieties with complex multiplication](complex-multiplication/good-reduction-of-cm-abelian-varieties.md),
   following Serre and Tate: the Néron–Ogg–Shafarevich criterion for abelian varieties (good reduction
   if and only if inertia acts trivially on a Tate module $T_\ell A$, $\ell$ prime to the residue
   characteristic; Milne, Theorem IV.3.5, over number fields), its form for potential good reduction,
