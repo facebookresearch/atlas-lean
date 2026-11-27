@@ -20,3 +20,8 @@
 - [Local solutions of the incompressible Euler equations](is-local-euler-equation-solution.md)
 - [Odd vector fields in three dimensions](is-odd.md)
 - [Elgindi's theorem: finite-time singularity of $C^{1,\alpha}$ Euler flows](theorem-1.md)
+
+- [Whole-space smooth Euler energy class](whole-space-smooth-euler-energy-class.md)
+- [All-orders Sobolev Euler solutions on a time interval](local-euler-sobolev-class.md)
+- [Breakdown in the global smooth Euler energy class](breakdown-in-the-global-smooth-energy-class.md)
+- [Compact smooth Euler data with a finite singular lifespan](compact-smooth-euler-singularity.md)

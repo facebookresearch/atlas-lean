@@ -18,6 +18,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.WeightedDirichletConvolution
 public import MathlibExt.NumberTheory.WeightedDirichletConvolutionBFreeCoprimeIndicatorMulMoebius
+public import MathlibExt.NumberTheory.WeightedDirichletBFreeMoebius
 
 namespace MetaMathlibExt
 
@@ -79,49 +80,6 @@ public theorem_wanted dirichletConvolution_mul_eq_sum_gcd {u v : ArithmeticFunct
     (hu : u.IsCompletelyMultiplicative) (hv : v.IsCompletelyMultiplicative) (r s : ℕ) :
     (u * v) (r * s) = ∑ m ∈ (Nat.gcd r s).divisors,
       (μ m : ℂ) * u m * v m * (u * v) (r / m) * (u * v) (s / m)
-
-/-- **Sums of a Dirichlet convolution over multiples of $r$.** Let $u$ and $v$ be completely
-multiplicative arithmetic functions with complex values, let $u * v$ be their Dirichlet
-convolution, let $\mu$ be the Möbius function, and for real $y$ put
-$D(y) = \sum_{1 \le j \le y} (u * v)(j)$. Then for every natural number $r$ and every real $x$,
-$$
-\sum_{1 \le j \le x/r} (u * v)(rj) =
-\sum_{d \mid r} u(d)\, v(r/d) \sum_{m \mid d} \mu(m)\, v(m)\, D\left(\frac{x}{mr}\right),
-$$
-where $d$ and $m$ run over positive divisors and $x/0 = 0$, so both sides vanish for $r = 0$.
-
-Both sides also vanish for $x < 1$; the source assumes $r \ge 1$ and $x \ge 1$.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Lemma 3, Equation (20) (`integers-2024-A75-lem-3`). -/
-public theorem_wanted sum_dirichletConvolution_mul_eq {u v : ArithmeticFunction ℂ}
-    (hu : u.IsCompletelyMultiplicative) (hv : v.IsCompletelyMultiplicative) (r : ℕ) (x : ℝ) :
-    ∑ j ∈ Finset.Icc 1 ⌊x / r⌋₊, (u * v) (r * j) =
-      ∑ d ∈ r.divisors, u d * v (r / d) * ∑ m ∈ d.divisors, (μ m : ℂ) * v m *
-        ∑ j ∈ Finset.Icc 1 ⌊x / (m * r)⌋₊, (u * v) j
-
-open scoped Classical in
-/-- **The $B_\kappa$-free indicator convolved with the Möbius function.** Let $\kappa$ be a
-function from the natural numbers to the natural numbers with $\kappa(p) \ge 1$ for every prime
-$p$, let $q_{B_\kappa}$ be the indicator of $B_\kappa$-free integers, let $\mu$ be the Möbius
-function and let $*$ denote Dirichlet convolution. Let $n \ge 1$ be a natural number with prime
-factorization $n = \prod_p p^{e_p}$. If $\kappa(p)$ divides $e_p$ for every prime $p$, then
-$(q_{B_\kappa} * \mu)(n) = \mu(n^{1/\kappa})$, where $n^{1/\kappa} = \prod_p p^{e_p/\kappa(p)}$;
-otherwise $(q_{B_\kappa} * \mu)(n) = 0$.
-
-The source indexes the exponents by the position of the prime ($\kappa_i$ for the $i$-th prime
-$p_i$) and requires $b_i = p_i^{\kappa_i} > 1$, which is the hypothesis $\kappa(p) \ge 1$.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Lemma 5, Equation (22) (`integers-2024-A75-lem-5`). -/
-public theorem_wanted bFreeIndicator_mul_moebius_apply {κ : ℕ → ℕ}
-    (hκ : ∀ p : ℕ, p.Prime → 1 ≤ κ p) {n : ℕ} (hn : 1 ≤ n) :
-    (bFreeIndicator κ * μ) n =
-      if ∀ p : ℕ, κ p ∣ n.factorization p then
-        μ (n.factorization.prod fun p e => p ^ (e / κ p))
-      else 0
 
 /-- **Asymptotic for the divisor function summed over $k$-free integers.** Let $k \ge 2$ be a
 natural number, let $q_k$ be the indicator of $k$-free integers (the indicator of

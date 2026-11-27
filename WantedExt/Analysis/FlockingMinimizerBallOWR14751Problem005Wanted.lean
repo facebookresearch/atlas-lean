@@ -27,8 +27,8 @@ namespace MathlibExt.Analysis.FlockingMinimizerBallOWR14751Problem005Wanted
 
 /-!
 Source: R. L. Frank (with E. H. Lieb), in Many-Body Quantum Systems and Effective Theories,
-Oberwolfach Reports 13 (2016), no. 43, p. 2506, DOI 10.4171/OWR/2016/43. UnsolvedMath record
-UM-30003221 (`OWR-14751-005`), dataset ulamai/UnsolvedMath v1.8.0.
+Oberwolfach Reports 13 (2016), no. 3 (Report 43/2016), p. 2506, DOI 10.4171/OWR/2016/43.
+UnsolvedMath record UM-30003221 (`OWR-14751-005`), dataset ulamai/UnsolvedMath v1.8.0.
 
 The energy is a lower Lebesgue integral in `[0, ∞]` (the integrand is nonnegative; the diagonal is a
 null set), so every admissible density has a well-defined energy. A ball of volume `m` is written as
@@ -39,15 +39,21 @@ open MeasureTheory
 open scoped ENNReal
 
 /-- The energy `E_α[ρ] = ½ ∬ ρ(x) (|x - y|⁻¹ + |x - y|^α) ρ(y) dx dy ∈ [0, ∞]` of a density `ρ ≥ 0`
-on `ℝ³`, as a lower Lebesgue integral (the diagonal `x = y` is a null set). -/
+on `ℝ³`, as a lower Lebesgue integral (the diagonal `x = y` is a null set). For a signed `ρ` the
+definition integrates the positive part of the integrand (`ENNReal.ofReal`), not the signed
+integrand. -/
 noncomputable def energy (α : ℝ) (ρ : EuclideanSpace ℝ (Fin 3) → ℝ) : ℝ≥0∞ :=
   2⁻¹ * ∫⁻ x, ∫⁻ y, ENNReal.ofReal (ρ x * (‖x - y‖⁻¹ + ‖x - y‖ ^ α) * ρ y)
 
-/-- An admissible density of mass `m`: measurable, `0 ≤ ρ ≤ 1` and `∫ ρ = m`. -/
+/-- An admissible density of mass `m`: measurable, `0 ≤ ρ ≤ 1` everywhere and `∫ ρ = m`, the mass
+compared as `ENNReal.ofReal m`. For `m < 0` the condition reads `∫ ρ = 0`, so the admissible
+densities are the measurable `ρ` with values in `[0, 1]` that vanish almost everywhere. -/
 def IsAdmissible (m : ℝ) (ρ : EuclideanSpace ℝ (Fin 3) → ℝ) : Prop :=
   Measurable ρ ∧ (∀ x, 0 ≤ ρ x ∧ ρ x ≤ 1) ∧ ∫⁻ x, ENNReal.ofReal (ρ x) = ENNReal.ofReal m
 
-/-- `ρ` minimizes `E_α` among the admissible densities of mass `m`. -/
+/-- `ρ` minimizes `E_α` among the admissible densities of mass `m`. For `m < 0` (as for `m = 0`) the
+admissible densities vanish almost everywhere and have energy `0`, so the minimizers are exactly the
+admissible densities. -/
 def IsMinimizer (α m : ℝ) (ρ : EuclideanSpace ℝ (Fin 3) → ℝ) : Prop :=
   IsAdmissible m ρ ∧ ∀ σ, IsAdmissible m σ → energy α ρ ≤ energy α σ
 
@@ -59,13 +65,14 @@ def largeMassMinimizersAreBalls : Prop :=
     ∃ (c : EuclideanSpace ℝ (Fin 3)) (r : ℝ), ρ =ᵐ[volume] (Metric.ball c r).indicator 1
 
 /--
-Resolved true: Frank and Lieb proved (Theorem 1) that for `0 < λ < N - 1` and `α > 0`, for all large
-masses `m` the only minimizers of `½ ∬ ρ(x)(|x - y|^α + |x - y|^{-λ}) ρ(y) dx dy` under `0 ≤ ρ ≤ 1`,
-`∫ ρ = m` on `ℝ^N` are characteristic functions of balls, up to null sets; here `N = 3`, `λ = 1`.
-Before, only `α = 2` and `2 < α ≤ 4` were known. Source: R. L. Frank (with E. H. Lieb), in Many-Body
-Quantum Systems and Effective Theories, Oberwolfach Reports 13 (2016), no. 43, p. 2506, DOI
+Resolved true: Frank and Lieb proved (Theorem 1.1 of the published paper, Theorem 1 of
+arXiv:1909.04595) that for `0 < λ < N - 1` and `α > 0`, for all large masses `m` the only minimizers
+of `½ ∬ ρ(x)(|x - y|^α + |x - y|^{-λ}) ρ(y) dx dy` under `0 ≤ ρ ≤ 1`, `∫ ρ = m` on `ℝ^N` are
+characteristic functions of balls, up to null sets; here `N = 3`, `λ = 1`. Before, only `α = 2` and
+`2 < α ≤ 4` were known. Source: R. L. Frank (with E. H. Lieb), in Many-Body Quantum Systems and
+Effective Theories, Oberwolfach Reports 13 (2016), no. 3 (Report 43/2016), p. 2506, DOI
 10.4171/OWR/2016/43; resolution: R. L. Frank and E. H. Lieb, Proof of spherical flocking based on
-quantitative rearrangement inequalities, Ann. Sc. Norm. Super. Pisa Cl. Sci. (2021),
+quantitative rearrangement inequalities, Ann. Sc. Norm. Super. Pisa Cl. Sci. (2021), Theorem 1.1;
 arXiv:1909.04595, Theorem 1: for 0 < λ < N - 1 and α > 0 there is m_{N,α,λ} < ∞ such that for all m
 > m_{N,α,λ} the only minimizers for E_{α,λ}(m) are characteristic functions of balls (up to sets of
 measure zero); here N = 3, λ = 1, https://arxiv.org/abs/1909.04595.

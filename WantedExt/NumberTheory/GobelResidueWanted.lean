@@ -11,13 +11,15 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.GobelResidueExponentPeriod
 public import WantedExt.NumberTheory.GobelSequenceWanted
+public import MathlibExt.NumberTheory.GobelResidue
 
 /-!
 # Residues of `k`-Göbel sequences modulo prime powers (statements)
 
 The residue sequence `g_{k,p,r}(n)` and its exponent periodicity are re-exported here.
-The remaining target is Lemma 2 of Yuh Kobayashi and Shin-ichiro Seki, *On the Length over Which
-k-Göbel Sequences Remain Integers*. The `k`-Göbel sequence `g_{k,n}` is `gobelSequence k 2 n`.
+Lemma 2 of Yuh Kobayashi and Shin-ichiro Seki, *On the Length over Which k-Göbel Sequences Remain
+Integers*, is proved as `gobelResidue_eq_none_iff` in `MathlibExt.NumberTheory.GobelResidue`. The
+`k`-Göbel sequence `g_{k,n}` is `gobelSequence k 2 n`.
 -/
 
 namespace MetaMathlibExt
@@ -52,20 +54,6 @@ Source: Yuh Kobayashi and Shin-ichiro Seki, *On the Length over Which k-Göbel S
 Integers*, INTEGERS 26 (2026), Article A23, Section 2 (definition of `g_{k,p,r}`). -/
 public theorem gobelResidue_two_three_one_two : gobelResidue 2 3 1 2 = some 0 := by
   decide +kernel
-
-/-- **Failure of the residue sequence detects non-integrality.** Let $k \ge 2$ and $r \ge 1$ be
-integers, let $p$ be a prime, write $\nu_p$ for the $p$-adic valuation, and let $n \ge 1$ be an
-integer with $\nu_p(n!) \le r$. Then the residue sequence $g_{k,p,r}$ takes the failure value $F$
-at $n$, that is $g_{k,p,r}(n) = F$, if and only if the value $g_{k,2}(n)$ of the $(k, 2)$-Göbel
-sequence has negative $p$-adic valuation, that is $g_{k,2}(n) \notin \mathbb{Z}_{(p)}$.
-
-This is Lemma 10 of Matsuhira, Matsusaka, and Tsuchida.
-
-Source: Yuh Kobayashi and Shin-ichiro Seki, *On the Length over Which k-Göbel Sequences Remain
-Integers*, INTEGERS 26 (2026), Article A23, Lemma 2 (`integers-2026-A23-lem-2`). -/
-public theorem_wanted gobelResidue_eq_none_iff (k p r n : ℕ) (hk : 2 ≤ k) (hr : 1 ≤ r)
-    (hp : p.Prime) (hn : 1 ≤ n) (hnr : padicValNat p n.factorial ≤ r) :
-    gobelResidue k p r n = none ↔ padicValRat p (gobelSequence k 2 n) < 0
 
 end
 
