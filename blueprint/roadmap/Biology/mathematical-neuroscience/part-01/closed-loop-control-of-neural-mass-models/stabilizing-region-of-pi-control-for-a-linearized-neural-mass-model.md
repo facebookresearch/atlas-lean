@@ -15,7 +15,7 @@ $$\Delta(s) = s + (K_p s + K_i)\, G(s) = 0 \quad (\text{after clearing denominat
 1. the line $K_i = 0$ (root at $s = 0$, whenever $G(0) \ne 0$ is finite); for the neural mass model the constant term of $\Delta$ is proportional to $K_i H_e \tau_e$, so by the sign condition of the Routh criterion stability requires $K_i > 0$;
 2. the curve, with $G(j\omega) = R(\omega) + j I(\omega)$,
 
-$$K_p(\omega) = -\frac{R(\omega)}{R(\omega)^2 + I(\omega)^2}, \qquad K_i(\omega) = -\frac{\omega\, I(\omega)}{R(\omega)^2 + I(\omega)^2}, \qquad \omega > 0 .$$
+    $$K_p(\omega) = -\frac{R(\omega)}{R(\omega)^2 + I(\omega)^2}, \qquad K_i(\omega) = -\frac{\omega\, I(\omega)}{R(\omega)^2 + I(\omega)^2}, \qquad \omega > 0 .$$
 
 Following the curve in the direction of increasing $\omega$, the stabilizing side is the one on which the Jacobian of $(\mathrm{Re}\,\Delta(j\omega), \mathrm{Im}\,\Delta(j\omega))$ with respect to $(K_p, K_i)$ has negative determinant; for the neural mass model this is the right side. The exact stabilizing region is the set above $K_i = 0$ and to the right of the curve. It shrinks as $H_e$ increases (hyper-excitation) or $H_i$ decreases (weak inhibition). Inside it, the integral action drives the error to zero for any constant reference $r(t) = a$.
 

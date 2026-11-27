@@ -4,9 +4,9 @@
 
 - The *$n$-order H-index* is defined by $h_i^{(0)} = k_i$ and, for $n \ge 1$,
 
-$$h_i^{(n)} = \mathcal H\big(h_{j}^{(n-1)} : j \in N(i)\big).$$
+    $$h_i^{(n)} = \mathcal H\big(h_{j}^{(n-1)} : j \in N(i)\big).$$
 
-The (ordinary) H-index of node $i$ is $h_i^{(1)}$: the largest $h$ such that $i$ has at least $h$ neighbors of degree $\ge h$.
+    The (ordinary) H-index of node $i$ is $h_i^{(1)}$: the largest $h$ such that $i$ has at least $h$ neighbors of degree $\ge h$.
 - The *coreness* $c_i$ is the largest $k$ such that $i$ belongs to the $k$-core of $G$, the maximal induced subgraph in which every node has degree $\ge k$ (equivalently, the shell index assigned by repeatedly pruning nodes of degree $\le k$).
 
 **Theorem.** For every node $i \in V$, the sequence $h_i^{(0)}, h_i^{(1)}, h_i^{(2)}, \dots$ is nonincreasing and converges (it is eventually constant) to the coreness:

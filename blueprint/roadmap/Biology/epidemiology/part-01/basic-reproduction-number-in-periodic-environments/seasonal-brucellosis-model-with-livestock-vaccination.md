@@ -15,11 +15,11 @@ with livestock recruitment $A$, vaccination rate $\nu$, vaccine waning $\delta$,
 
 1. The livestock subsystem $(S, E, I, V)$ is autonomous of the human equations and has the disease-free equilibrium $P_0 = (S^*, 0, 0, V^*)$ with
 
-$$S^* = \frac{A(\mu + \delta)}{\mu(\mu + \nu + \delta)}, \qquad V^* = \frac{A\nu}{\mu(\mu + \nu + \delta)},$$
+    $$S^* = \frac{A(\mu + \delta)}{\mu(\mu + \nu + \delta)}, \qquad V^* = \frac{A\nu}{\mu(\mu + \nu + \delta)},$$
 
-which is globally asymptotically stable for the infection-free linear system (eigenvalues $-\mu$ and $-(\mu + \nu + \delta)$).
-2. With $F(t) = \beta(t)(S^* + \epsilon V^*)\begin{pmatrix}1 & 1\\ 0 & 0\end{pmatrix}$ and $V = \begin{pmatrix}\lambda + \mu & 0\\ -\lambda & \mu + f\end{pmatrix}$ on $(E, I)$, the basic reproduction number is $\mathcal{R}_0 = \rho(L)$ for the periodic next-generation operator $L$.
-3. $P_0$ is globally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$.
+    which is globally asymptotically stable for the infection-free linear system (eigenvalues $-\mu$ and $-(\mu + \nu + \delta)$).
+    2. With $F(t) = \beta(t)(S^* + \epsilon V^*)\begin{pmatrix}1 & 1\\ 0 & 0\end{pmatrix}$ and $V = \begin{pmatrix}\lambda + \mu & 0\\ -\lambda & \mu + f\end{pmatrix}$ on $(E, I)$, the basic reproduction number is $\mathcal{R}_0 = \rho(L)$ for the periodic next-generation operator $L$.
+    3. $P_0$ is globally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$.
 
 ## Depends on
 

@@ -23,8 +23,8 @@ y' = \gamma y(1 - x - y) + \frac{\beta x y}{x + y} - \delta y .$$
    $\Omega$ iff $\gamma > \delta$, a stable node if $\delta < \beta\gamma$ and a saddle if
    $\delta > \beta\gamma$; and
 
-$$A_3 = \bigl(k(\beta\gamma - \delta),\ k(\delta - \beta)\bigr), \qquad
-k = \frac{\beta - 1 + \gamma - \delta}{\beta(\gamma - 1)^2}.$$
+    $$A_3 = \bigl(k(\beta\gamma - \delta),\ k(\delta - \beta)\bigr), \qquad
+    k = \frac{\beta - 1 + \gamma - \delta}{\beta(\gamma - 1)^2}.$$
 
 4. When $A_3 \in \Omega$ it is an asymptotically stable node if $\beta > \delta$ and a saddle if
    $\beta < \delta$; in the first case it is globally asymptotically stable in the open positive

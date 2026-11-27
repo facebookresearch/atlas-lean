@@ -18,7 +18,7 @@ i.e. all phenotypes have the same net growth rate; then $Q = A - kI$.
 
 $$\big(P_1(t), \dots, P_n(t)\big) \to \vec u \qquad (t \to \infty).$$
 
-Moreover $u_i > 0$ exactly for the phenotypes reachable from the dominant communicating class, and $u_j > 0$, $a_{ij} > 0$ imply $u_i > 0$.
+Moreover $u_i > 0$ exactly for the phenotypes reachable from the dominant communicating class, and $u_i > 0$, $a_{ij} > 0$ imply $u_j > 0$.
 
 ## Expansion
 

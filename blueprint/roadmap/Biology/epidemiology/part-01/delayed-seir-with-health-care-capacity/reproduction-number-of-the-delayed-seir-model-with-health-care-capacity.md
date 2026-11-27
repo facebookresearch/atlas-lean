@@ -17,7 +17,7 @@ $$R_0 = \frac{b \beta \gamma e^{-d\tau}}{d\, K(c)} .$$
 1. The disease-free equilibrium $P_0 = (b/d, 0)$ always exists; it is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$.
 2. A positive (endemic) equilibrium exists if and only if $R_0 > 1$; it is unique and equals
 
-$$P^* = (S^*, I^*) = \Big(\frac{b}{d R_0},\ \frac{d}{\beta}(R_0 - 1)\Big).$$
+    $$P^* = (S^*, I^*) = \Big(\frac{b}{d R_0},\ \frac{d}{\beta}(R_0 - 1)\Big).$$
 
 3. $R_0$ is a decreasing function of the capacity level $c$ exactly when $\alpha_2 > \mu_2$, that is, when access to care raises the recovery rate by more than it lowers the death rate.
 

@@ -6,11 +6,11 @@
 
 - *Absolute robustness* (Kitano's definition with the satisfaction degree as evaluation function):
 
-$$R_{\phi, P} = \int_{P} sd(T_p, \phi)\, \mathrm{prob}(p)\, dp \qquad \Big(= \sum_{p \in P} sd(T_p, \phi)\, \mathrm{prob}(p) \text{ for discrete } P\Big).$$
+    $$R_{\phi, P} = \int_{P} sd(T_p, \phi)\, \mathrm{prob}(p)\, dp \qquad \Big(= \sum_{p \in P} sd(T_p, \phi)\, \mathrm{prob}(p) \text{ for discrete } P\Big).$$
 
 - *Relative robustness* with respect to the nominal behaviour:
 
-$$R_{\phi, P}^{\mathrm{rel}} = \frac{R_{\phi, P}}{sd(T_{p^*}, \phi)} .$$
+    $$R_{\phi, P}^{\mathrm{rel}} = \frac{R_{\phi, P}}{sd(T_{p^*}, \phi)} .$$
 
 - *Distance from robust satisfaction:* $\mathrm{dist}\big(\bigcap_{p} \mathcal D_{T_p, \phi(y)},\ y^\phi\big)$, the smallest change of the constants of $\phi$ after which it holds under every perturbation.
 

@@ -4,20 +4,20 @@
 
 1. *Stage-weighted, locally scaled Gaussian kernel:*
 
-$$S(x, y) = \exp\!\big(-\gamma_{xy} \|T_x - T_y\|^2\big), \qquad \gamma_{xy} = \frac{\omega_{xy}}{\varepsilon_x^2 + \varepsilon_y^2}, \qquad \omega_{xy} = 1 + |G_x - G_y|,$$
+    $$S(x, y) = \exp\!\big(-\gamma_{xy} \|T_x - T_y\|^2\big), \qquad \gamma_{xy} = \frac{\omega_{xy}}{\varepsilon_x^2 + \varepsilon_y^2}, \qquad \omega_{xy} = 1 + |G_x - G_y|,$$
 
-with $\varepsilon_x$ the distance from $x$ to its $\kappa$-th nearest neighbor.
-2. *Density normalization:* $D(x) = \sum_{y} S(x, y)$ and $H_{xy} = S(x,y)/\big(D(x)D(y)\big)$.
-3. *Symmetric transition matrix:* $E(x) = \sum_y H_{xy}$ and $P_{xy} = E(x)^{-1/2} H_{xy} E(y)^{-1/2}$.
-4. *Accumulated transitions:* with $\psi_0$ the unit eigenvector of $P$ for eigenvalue $1$ and $\tilde P = P - \psi_0\psi_0^{\mathsf T}$,
+    with $\varepsilon_x$ the distance from $x$ to its $\kappa$-th nearest neighbor.
+    2. *Density normalization:* $D(x) = \sum_{y} S(x, y)$ and $H_{xy} = S(x,y)/\big(D(x)D(y)\big)$.
+    3. *Symmetric transition matrix:* $E(x) = \sum_y H_{xy}$ and $P_{xy} = E(x)^{-1/2} H_{xy} E(y)^{-1/2}$.
+    4. *Accumulated transitions:* with $\psi_0$ the unit eigenvector of $P$ for eigenvalue $1$ and $\tilde P = P - \psi_0\psi_0^{\mathsf T}$,
 
-$$Q = \sum_{t=1}^{\infty} \tilde P^{\,t} = (I - \tilde P)^{\dagger} - I .$$
+    $$Q = \sum_{t=1}^{\infty} \tilde P^{\,t} = (I - \tilde P)^{\dagger} - I .$$
 
 5. *Temporal progression distance (TPD)* and progression score:
 
-$$\mathrm{TPD}(x, y) = \big\| Q(x, \cdot) - Q(y, \cdot) \big\|_{2}, \qquad s(x) = \mathrm{TPD}(x_0, x),$$
+    $$\mathrm{TPD}(x, y) = \big\| Q(x, \cdot) - Q(y, \cdot) \big\|_{2}, \qquad s(x) = \mathrm{TPD}(x_0, x),$$
 
-with root $x_0 = \arg\max_{x \in \{x_{\min}\}} \mathrm{TPD}(x, x_{\mathrm{ref}})$ chosen among lowest-stage samples as farthest from a reference sample $x_{\mathrm{ref}}$ of maximal stage.
+    with root $x_0 = \arg\max_{x \in \{x_{\min}\}} \mathrm{TPD}(x, x_{\mathrm{ref}})$ chosen among lowest-stage samples as farthest from a reference sample $x_{\mathrm{ref}}$ of maximal stage.
 
 **Statement.** Because every $S(x, y) > 0$, the matrix $P$ is symmetric with strictly positive entries, its largest eigenvalue is $1$ and simple with eigenvector $\psi_0 \propto (E(x)^{1/2})_x$, and all other eigenvalues lie in $(-1, 1)$. Consequently $\tilde P$ has spectral radius $< 1$, the series defining $Q$ converges, $I - \tilde P$ is invertible, and
 

@@ -12,14 +12,14 @@ The minimizer Jaccard estimator is $\hat J(A,B;w) = J\bigl(\mathrm{MS}(A;w), \ma
 
 1. **Bias formula.** There is a deterministic quantity $\mathcal B(A,B;w)$, a function of $w$, $L$ and the matching of shared $k$-mers between positions of $A$ and $B$, and some $\varepsilon \in [0, 15 w^2 / L^{1/3}]$, such that
 
-$$\mathcal B(A,B;w) - \varepsilon \le \mathbb E[\hat J(A,B;w)] - J(A,B) \le \mathcal B(A,B;w) + \varepsilon .$$
+    $$\mathcal B(A,B;w) - \varepsilon \le \mathbb E[\hat J(A,B;w)] - J(A,B) \le \mathcal B(A,B;w) + \varepsilon .$$
 
 2. **Sign.** For padded $A, B$: $\mathcal B(A,B;w) < 0$ unless $J(A,B) = 0$, in which case $\mathcal B = 0$.
 3. **Sparse matches.** For sparsely matched $A, B$:
 
-$$\mathcal B(A,B;w) \le -J(A,B)\,\frac{3w^2 - 3w}{8w^2 - 2}, \qquad\text{hence}\qquad \frac{\mathbb E[\hat J]}{J} \le \frac{5w^2 - 3w - 2}{8w^2 - 2} + \frac{\varepsilon}{J}\ \ (J > 0).$$
+    $$\mathcal B(A,B;w) \le -J(A,B)\,\frac{3w^2 - 3w}{8w^2 - 2}, \qquad\text{hence}\qquad \frac{\mathbb E[\hat J]}{J} \le \frac{5w^2 + 3w - 2}{8w^2 - 2} + \frac{\varepsilon}{J}\ \ (J > 0).$$
 
-So $\hat J$ is biased downward, and for a fixed true $J > 0$ the ratio $\mathbb E[\hat J]/J$ stays at most about $5/8$ as $L \to \infty$: the estimator is inconsistent. At $w = 2$ the bound is $0.4$ and at $w = 20$ about $0.61$.
+So $\hat J$ is biased downward, and for a fixed true $J > 0$ the ratio $\mathbb E[\hat J]/J$ stays at most $(5w^2 + 3w - 2)/(8w^2 - 2) < 1$ as $L \to \infty$ (this bound decreases to $5/8$ as $w$ grows): the estimator is inconsistent. At $w = 2$ the bound is $0.8$ and at $w = 20$ about $0.64$. The source's corollary prints the numerator as $5w^2 - 3w - 2$, which does not follow from its bias bound.
 
 ## Depends on
 

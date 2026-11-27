@@ -6,10 +6,10 @@
 
 - Edges with the same label appear in the same relative order in $L$ and $F$; edges with different labels are ordered in $F$ by label. Hence the edge at position $p$ of $L$ is at position
 
-$$\big|\{ d \in E : \mathrm{label}(d) \prec \mathrm{label}(e) \}\big| + \big|\{ h \le p : \mathrm{label}(L[h]) = \mathrm{label}(e) \}\big| - 1$$
+    $$\big|\{ d \in E : \mathrm{label}(d) \prec \mathrm{label}(e) \}\big| + \big|\{ h \le p : \mathrm{label}(L[h]) = \mathrm{label}(e) \}\big| - 1$$
 
-of $F$ (positions from $0$), an LF-mapping computable with rank queries.
-- Storing only the label sequence $\mathrm{EdgeBWT}(G) = (\mathrm{label}(L[h]))_h$ and two bit vectors $B_L$, $B_F$ marking the last outgoing (resp. incoming) edge of each node supports forward and backward traversal, and a node's $(k-1)$-mer is recovered by $k-1$ backward steps. Dummy nodes and edges guarantee that every original node has an incoming path of length at least $k-1$.
+    of $F$ (positions from $0$), an LF-mapping computable with rank queries.
+    - Storing only the label sequence $\mathrm{EdgeBWT}(G) = (\mathrm{label}(L[h]))_h$ and two bit vectors $B_L$, $B_F$ marking the last outgoing (resp. incoming) edge of each node supports forward and backward traversal, and a node's $(k-1)$-mer is recovered by $k-1$ backward steps. Dummy nodes and edges guarantee that every original node has an incoming path of length at least $k-1$.
 
 **Theorem (merging).** Let $G_1 = (V_1, E_1)$ and $G_2 = (V_2, E_2)$ be colored de Bruijn graphs for the same $k$ in this representation, with $|E_1| \ge |E_2|$, and let $t$ be the number of colours of the merged graph. The merged colored de Bruijn graph $G_M$ (whose $k$-mer set is the union and whose colour matrix is the concatenation of colour columns) can be constructed in
 

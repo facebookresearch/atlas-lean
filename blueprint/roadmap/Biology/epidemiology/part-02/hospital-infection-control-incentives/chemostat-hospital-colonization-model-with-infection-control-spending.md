@@ -8,10 +8,10 @@ $$\frac{dX}{dt} = \sigma(\kappa - X) + \beta(c)\, X (1 - X) - \lambda X, \qquad 
 
 - if $\kappa > 0$, the right-hand side is a downward quadratic in $X$ that is positive at $X = 0$, so there is exactly one equilibrium in $(0, 1)$,
 
-$$\bar X = \frac{(\beta - \sigma - \lambda) + \sqrt{(\beta - \sigma - \lambda)^2 + 4\beta\sigma\kappa}}{2\beta},$$
+    $$\bar X = \frac{(\beta - \sigma - \lambda) + \sqrt{(\beta - \sigma - \lambda)^2 + 4\beta\sigma\kappa}}{2\beta},$$
 
-and it is globally attracting on $[0, 1]$;
-- if $\kappa = 0$, the equilibria are $X = 0$ and $\bar X = 1 - 1/\mathcal{R}_0$; for $\mathcal{R}_0 > 1$ the positive one is stable and $X = 0$ unstable, for $\mathcal{R}_0 < 1$ only $X = 0$ is feasible, and the system has a transcritical bifurcation at $\mathcal{R}_0 = 1$.
+    and it is globally attracting on $[0, 1]$;
+    - if $\kappa = 0$, the equilibria are $X = 0$ and $\bar X = 1 - 1/\mathcal{R}_0$; for $\mathcal{R}_0 > 1$ the positive one is stable and $X = 0$ unstable, for $\mathcal{R}_0 < 1$ only $X = 0$ is feasible, and the system has a transcritical bifurcation at $\mathcal{R}_0 = 1$.
 
 In both cases $\bar X$ is non-increasing in $c$, so infection-control spending lowers equilibrium colonization with diminishing returns.
 

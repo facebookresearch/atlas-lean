@@ -8,12 +8,12 @@ where $G_{ab}$ is the mean number of contacts an individual of group $a$ has wit
 
 1. **Reproduction number.** By the next-generation matrix method,
 
-$$\mathcal R_0 = \frac{\Phi}{\Gamma}\, \rho(\tilde G), \qquad \tilde G_{ab} = G_{ab}\, \frac{N_a}{N_b}, \quad\text{i.e.}\quad \tilde G = R_G N_G^{-1},$$
+    $$\mathcal R_0 = \frac{\Phi}{\Gamma}\, \rho(\tilde G), \qquad \tilde G_{ab} = G_{ab}\, \frac{N_a}{N_b}, \quad\text{i.e.}\quad \tilde G = R_G N_G^{-1},$$
 
-and likewise $\mathcal R_0 = (\Phi/\Gamma)\rho(\tilde C)$ with $\tilde C = R N^{-1}$ for an age-only matrix.
-2. **Monotonicity under stratification.** Let $\tilde C = R N^{-1} \in \mathbb R^{K \times K}$ with $R$ symmetric nonnegative and $N$ positive diagonal, and let $\tilde G = R_G N_G^{-1} \in \mathbb R^{K V_1 \times K V_1}$ with $R_G$ symmetric nonnegative and $N_G$ positive diagonal be a refinement by one more attribute, i.e.
+    and likewise $\mathcal R_0 = (\Phi/\Gamma)\rho(\tilde C)$ with $\tilde C = R N^{-1}$ for an age-only matrix.
+    2. **Monotonicity under stratification.** Let $\tilde C = R N^{-1} \in \mathbb R^{K \times K}$ with $R$ symmetric nonnegative and $N$ positive diagonal, and let $\tilde G = R_G N_G^{-1} \in \mathbb R^{K V_1 \times K V_1}$ with $R_G$ symmetric nonnegative and $N_G$ positive diagonal be a refinement by one more attribute, i.e.
 
-$$\sum_{\alpha, \beta = 1}^{V_1} (R_G)_{i\alpha, j\beta} = R_{ij}, \qquad \sum_{\alpha, \beta = 1}^{V_1} (N_G)_{i\alpha, j\beta} = N_{ij}.$$
+    $$\sum_{\alpha, \beta = 1}^{V_1} (R_G)_{i\alpha, j\beta} = R_{ij}, \qquad \sum_{\alpha, \beta = 1}^{V_1} (N_G)_{i\alpha, j\beta} = N_{ij}.$$
 
 Then $\rho(\tilde G) \ge \rho(\tilde C)$. Iterating, adding attributes never decreases $\mathcal R_0$. Equality holds under random mixing across the added attribute, i.e. when contacts are proportional to the product of subgroup sizes.
 

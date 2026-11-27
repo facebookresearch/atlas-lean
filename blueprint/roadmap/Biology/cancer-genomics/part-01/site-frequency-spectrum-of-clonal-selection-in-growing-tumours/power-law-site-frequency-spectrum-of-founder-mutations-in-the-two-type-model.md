@@ -6,9 +6,9 @@
 2. **Neutral mutations inside type 1.** The number of neutral mutations arising in type-1 cells that reach frequency at least $f$ within the type-1 population is asymptotically $\nu/(\lambda_1f)$, a $1/f$ law; the same $1/f$ law holds for neutral mutations of a single exponentially growing type.
 3. **Founder (type 1A) mutations.** Since the Poisson points divided by their sum have the Poisson–Dirichlet law $\mathrm{PD}(\alpha,0)$, the expected number of advantageous founder mutations with frequency at least $f$ in the type-1 population is
 
-$$\mathrm{SFS}_{1A}(f)=\frac{\sin(\pi\alpha)}{\pi\alpha}\Big(\frac1f-1\Big)^{\alpha},\qquad 0<f<1,$$
+    $$\mathrm{SFS}_{1A}(f)=\frac{\sin(\pi\alpha)}{\pi\alpha}\Big(\frac1f-1\Big)^{\alpha},\qquad 0<f<1,$$
 
-which equals $(2/\pi)(1/f-1)^{1/2}$ for $\alpha=1/2$. Neutral type-0 mutations carried by the founders do not change this $f^{-\alpha}$ shape.
+    which equals $(2/\pi)(1/f-1)^{1/2}$ for $\alpha=1/2$. Neutral type-0 mutations carried by the founders do not change this $f^{-\alpha}$ shape.
 
 Hence under clonal selection the high-frequency part of the spectrum decays like $f^{-\lambda_0/\lambda_1}$ rather than $f^{-1}$, so a neutral exponentially growing tumour is distinguishable from the two-type model by the shape of its site frequency spectrum.
 

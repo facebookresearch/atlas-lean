@@ -14,9 +14,9 @@ $$E_2:\quad T^\ast = \frac{K}{R_0}, \qquad I^\ast = \frac{r(1 - 1/R_0)}{r/K + \b
 2. $E_1$ is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$.
 3. If $R_0 > 1$, the Jacobian at $E_2$ has eigenvalue $-d_S$ and three others solving $\lambda^3 + A_1\lambda^2 + A_2\lambda + A_3 = 0$ with $A_1 = c + \delta + r/R_0 > 0$, $A_2 > 0$ and $A_3 = c\,\delta\, r\,(R_0 - 1)/R_0 > 0$; hence $E_2$ is locally asymptotically stable exactly when $A_1A_2 - A_3 > 0$, which is equivalent to
 
-$$\big(\delta^2 + (3c + r)\delta + c^2\big)(\delta R_0 + r)R_0 + c\big(r^2 - R_0^3\delta^2\big) > 0,$$
+    $$\big(\delta^2 + (3c + r)\delta + c^2\big)(\delta R_0 + r)R_0 + c\big(r^2 - R_0^3\delta^2\big) > 0,$$
 
-and loses stability (with oscillations around $E_2$) when the inequality is reversed.
+    and loses stability (with oscillations around $E_2$) when the inequality is reversed.
 
 ## Depends on
 

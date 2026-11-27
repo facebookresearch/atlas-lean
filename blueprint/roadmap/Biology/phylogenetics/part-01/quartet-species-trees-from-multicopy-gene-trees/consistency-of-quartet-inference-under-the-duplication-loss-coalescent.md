@@ -4,7 +4,7 @@ In the duplication–loss–coalescent (DLCoal) model a *locus tree* first evolv
 
 1. **Quartet dominance.** Let $S$ have four leaves and display the quartet $AB|CD$, let $G$ evolve in $S$ under DLCoal, and pick genes $a,b,c,d$ of species $A,B,C,D$ uniformly at random from $G$ (conditioning on their existence). Then
 
-$$\mathbb P[ab|cd \in G] > \mathbb P[ac|bd \in G] = \mathbb P[ad|bc \in G].$$
+    $$\mathbb P[ab|cd \in G] > \mathbb P[ac|bd \in G] = \mathbb P[ad|bc \in G].$$
 
 2. **Consistency.** For any fixed species tree $S$ and gene trees evolving independently in $S$ under DLCoal, the probability that the ASTRAL-one estimate equals the unrooted topology of $T_S$ tends to $1$ as $|\mathcal G| \to \infty$.
 

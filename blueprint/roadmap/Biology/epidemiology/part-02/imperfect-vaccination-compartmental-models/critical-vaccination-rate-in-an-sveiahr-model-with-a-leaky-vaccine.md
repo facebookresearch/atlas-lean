@@ -20,12 +20,12 @@ where $G_1 = \lambda(1-\phi)(1-\psi) + g_5\psi$, $G_2 = g_6\omega_I + \gamma(1-\
 **Results.**
 
 1. If $\mathcal{R}_0(v) < 1$, the disease-free equilibrium is globally asymptotically stable (by the [Castillo-Chavez–Feng–Huang criterion](../../part-01/global-stability-of-disease-free-equilibria/castillo-chavez-feng-huang-global-stability-criterion.md)); if $\mathcal{R}_0(v) > 1$ there is a unique endemic equilibrium, the positive root of a quadratic in the force of infection whose constant term is proportional to $\mathcal{R}_0(v) - 1$.
-2. $\mathcal{R}_0(v)$ is strictly decreasing in $v$ when $\varepsilon p < 1$ and $\varepsilon > 0$, with $\lim_{v \to \infty}\mathcal{R}_0(v) = (1-\varepsilon)\mathcal{R}_0$. Hence elimination by vaccination is possible only if $\varepsilon > \varepsilon^* = 1 - 1/\mathcal{R}_0$.
+2. $\mathcal{R}_0(v)$ is strictly decreasing in $v$ when $\varepsilon > 0$ and $p < 1$ (constant when $\varepsilon = 0$ or $p = 1$), with $\lim_{v \to \infty}\mathcal{R}_0(v) = (1-\varepsilon)\mathcal{R}_0$. Hence elimination by vaccination is possible only if $\varepsilon > \varepsilon^* = 1 - 1/\mathcal{R}_0$.
 3. If $\mathcal{R}_0 > 1$, $\mathcal{R}_0(1 - \varepsilon p) > 1$ and $\varepsilon > \varepsilon^*$, the critical vaccination rate
 
-$$v^* = \frac{\mu\,[(1 - \varepsilon p)\mathcal{R}_0 - 1]}{(\varepsilon - \varepsilon^*)\,\mathcal{R}_0} > 0$$
+    $$v^* = \frac{\mu\,[(1 - \varepsilon p)\mathcal{R}_0 - 1]}{(\varepsilon - \varepsilon^*)\,\mathcal{R}_0} > 0$$
 
-satisfies $\mathcal{R}_0(v^*) = 1$, and $\mathcal{R}_0(v) \gtrless 1$ according as $v \lessgtr v^*$.
+    satisfies $\mathcal{R}_0(v^*) = 1$, and $\mathcal{R}_0(v) \gtrless 1$ according as $v \lessgtr v^*$.
 
 ## Proof depends on
 

@@ -10,7 +10,7 @@ $$\mu\!\left(\frac{\partial f}{\partial x}(t,x)\right) \le -c \qquad \text{for a
 
 1. **Global contraction.** If $C$ is convex and the system is infinitesimally contracting with rate $c$, then any two solutions $x, z$ with $x(t_0) = \xi$, $z(t_0) = \zeta$ in $C$ satisfy
 
-$$|x(t) - z(t)| \le e^{-c(t-t_0)}\, |\xi - \zeta| \qquad (t \ge t_0).$$
+    $$|x(t) - z(t)| \le e^{-c(t-t_0)}\, |\xi - \zeta| \qquad (t \ge t_0).$$
 
 2. **Entrainment.** If moreover $C$ is closed and $f$ is $T$-periodic in $t$, i.e. $f(t+T,x) = f(t,x)$, then there is a unique periodic solution $\alpha$ of period $T$ in $C$, and every solution in $C$ satisfies $|x(t) - \alpha(t)| \to 0$ exponentially as $t \to \infty$.
 

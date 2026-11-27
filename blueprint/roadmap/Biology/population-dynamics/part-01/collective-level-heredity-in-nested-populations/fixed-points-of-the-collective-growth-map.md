@@ -18,7 +18,7 @@ where $\theta = (r_0, r_1, A)$. Ignoring dilution noise, the colour of successiv
 2. *Quasi-exponential growth.* If $T$ is close to $0$ and $B\,a_{\max} \ll 1$ with $a_{\max} = \max_{i,j} a_{ij}$, then $0$ and $1$ are the only fixed points, $\phi = 1$ (all fast-growing red) is stable and $\phi = 0$ unstable.
 3. *Saturating growth.* As $T \to \infty$, the fixed points of $G_\theta$ and their stability are those of the colour at the Lotka–Volterra equilibria: red alone ($x^* = 1$) is stable iff $a_{00} < a_{10}$; blue alone ($x^* = 0$) is stable iff $a_{11} < a_{01}$; and if $a_{11} > a_{01}$ and $a_{00} > a_{10}$ there is a stable coexistence colour
 
-$$x^* = \frac{a_{11} - a_{01}}{\operatorname{Tr}(A) - \operatorname{CoTr}(A)}, \qquad \operatorname{Tr}(A) = a_{00} + a_{11},\ \operatorname{CoTr}(A) = a_{10} + a_{01}.$$
+    $$x^* = \frac{a_{11} - a_{01}}{\operatorname{Tr}(A) - \operatorname{CoTr}(A)}, \qquad \operatorname{Tr}(A) = a_{00} + a_{11},\ \operatorname{CoTr}(A) = a_{10} + a_{01}.$$
 
 4. *Bifurcations.* Between these limits the monochromatic fixed points change stability through transcritical bifurcations along curves in the $(T, B)$ plane that can be computed exactly by linearising $G_\theta$ at $\phi = 0$ and $\phi = 1$.
 

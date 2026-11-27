@@ -8,17 +8,17 @@ posed for initial histories on $[-h, 0]$, $h = \max \tau$, in a space of Lipschi
 
 1. **Kernel expansion.** If $g$ is Hölder continuous on $[-1,1]$ with exponent $\alpha \in (1/2,1]$ and $G(r,r') = g(r \cdot r')$, then with $P_n$ the Legendre polynomials and $Y_n^m$ the orthonormal spherical harmonics,
 
-$$G(r,r') = \sum_{n=0}^{\infty} G_n \sum_{m=-n}^{n} Y_n^m(r)\, \overline{Y_n^m(r')}, \qquad G_n = 2\pi \int_{-1}^{1} g(s)\, P_n(s)\, ds, \tag{11}$$
+    $$G(r,r') = \sum_{n=0}^{\infty} G_n \sum_{m=-n}^{n} Y_n^m(r)\, \overline{Y_n^m(r')}, \qquad G_n = 2\pi \int_{-1}^{1} g(s)\, P_n(s)\, ds, \tag{11}$$
 
-with uniform convergence on $\Omega \times \Omega$.
-2. **Spectrum.** Let $\hat u$ be a homogeneous steady state, $\hat u = w_0 f(\hat u)$ with $w_0 = \int_\Omega w(r \cdot r')\,dr'$, and $\kappa = f'(\hat u)$. Let $G_n(\lambda)$ be the coefficients (11) of $g(s) = w(s)\, e^{-\lambda \tau(s)}$. The point spectrum of the linearization is
+    with uniform convergence on $\Omega \times \Omega$.
+    2. **Spectrum.** Let $\hat u$ be a homogeneous steady state, $\hat u = w_0 f(\hat u)$ with $w_0 = \int_\Omega w(r \cdot r')\,dr'$, and $\kappa = f'(\hat u)$. Let $G_n(\lambda)$ be the coefficients (11) of $g(s) = w(s)\, e^{-\lambda \tau(s)}$. The point spectrum of the linearization is
 
-$$\sigma_p = \{\lambda \in \mathbb C : E_n(\lambda) = 0 \text{ for some } n \ge 0\}, \qquad E_n(\lambda) = \lambda + 1 - \kappa\, G_n(\lambda), \tag{21}$$
+    $$\sigma_p = \{\lambda \in \mathbb C : E_n(\lambda) = 0 \text{ for some } n \ge 0\}, \qquad E_n(\lambda) = \lambda + 1 - \kappa\, G_n(\lambda), \tag{21}$$
 
-each root of $E_n$ having the $2n+1$ eigenfunctions $e^{\lambda t} Y_n^m(r)$, $m = -n, \dots, n$, with equal algebraic and geometric multiplicity. The essential spectrum is $\{-1\}$.
-3. **Resolvent.** For $\mu \notin \sigma_p \cup \{-1\}$ and $y \in V$, the equation $(\mu+1)q(r) - \kappa \int_\Omega w(r \cdot r') e^{-\mu \tau(r \cdot r')} q(r')\, dr' = y(r)$ has a unique solution, with spherical-harmonic coefficients
+    each root of $E_n$ having the $2n+1$ eigenfunctions $e^{\lambda t} Y_n^m(r)$, $m = -n, \dots, n$, with equal algebraic and geometric multiplicity. The essential spectrum is $\{-1\}$.
+    3. **Resolvent.** For $\mu \notin \sigma_p \cup \{-1\}$ and $y \in V$, the equation $(\mu+1)q(r) - \kappa \int_\Omega w(r \cdot r') e^{-\mu \tau(r \cdot r')} q(r')\, dr' = y(r)$ has a unique solution, with spherical-harmonic coefficients
 
-$$q_{nm} = \frac{y_{nm}}{\mu + 1 - \kappa\, G_n(\mu)} .$$
+    $$q_{nm} = \frac{y_{nm}}{\mu + 1 - \kappa\, G_n(\mu)} .$$
 
 Without delays ($\tau \equiv 0$) the eigenvalues are real, $\lambda_n = -1 + \kappa w_n$ with $w_n$ the coefficients of $w$, so oscillatory (Hopf) instabilities need delays.
 

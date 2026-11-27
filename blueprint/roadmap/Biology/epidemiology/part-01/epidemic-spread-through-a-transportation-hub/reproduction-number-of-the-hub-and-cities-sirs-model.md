@@ -26,9 +26,9 @@ for the reproduction number of an isolated city.
 3. (no infected travellers) as $\alpha \to 0^+$, $R_0 \to \max\big\{R^{*},\ \beta_T A N \phi / (\mu p(\gamma_T + p))\big\}$, so transmission in transit alone can sustain spread even when $R^{*} < 1$;
 4. (clean transit) as $\beta_T \to 0$,
 
-$$R_0 \to \frac{\beta A}{\mu}\cdot \frac{1}{\mu + \gamma + \alpha\phi\,\gamma_T/(\gamma_T + p)} < R^{*},$$
+    $$R_0 \to \frac{\beta A}{\mu}\cdot \frac{1}{\mu + \gamma + \alpha\phi\,\gamma_T/(\gamma_T + p)} < R^{*},$$
 
-so a transportation system with little internal transmission lowers the reproduction number below its isolated-city value.
+    so a transportation system with little internal transmission lowers the reproduction number below its isolated-city value.
 
 ## Depends on
 

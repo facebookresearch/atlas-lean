@@ -15,15 +15,15 @@ where $c^\top x$ weights the burden of infected classes and $b_k u_k^2/2$ the in
 1. *(Existence.)* If the solutions are bounded on $[0, t_f]$ uniformly over admissible controls and the right-hand side is bounded by a linear function of state and control, then an optimal control $u^\ast$ exists: the control set is closed, convex and bounded, and the integrand is convex in $u$ and bounded below by $\underline{b}\,|u|^2$ with $\underline{b} = \min_k b_k / 2 > 0$ (Fleming–Rishel conditions).
 2. *(Necessary conditions.)* With the Hamiltonian
 
-$$H(x, u, \lambda) = c^\top x + \sum_k \frac{b_k}{2} u_k^2 + \lambda^\top\Big(f(x) + \sum_k u_k g_k(x)\Big),$$
+    $$H(x, u, \lambda) = c^\top x + \sum_k \frac{b_k}{2} u_k^2 + \lambda^\top\Big(f(x) + \sum_k u_k g_k(x)\Big),$$
 
-an optimal pair $(x^\ast, u^\ast)$ admits an absolutely continuous adjoint $\lambda(t) \in \mathbb{R}^n$ with
+    an optimal pair $(x^\ast, u^\ast)$ admits an absolutely continuous adjoint $\lambda(t) \in \mathbb{R}^n$ with
 
-$$\dot \lambda = -\frac{\partial H}{\partial x}(x^\ast, u^\ast, \lambda), \qquad \lambda(t_f) = 0,$$
+    $$\dot \lambda = -\frac{\partial H}{\partial x}(x^\ast, u^\ast, \lambda), \qquad \lambda(t_f) = 0,$$
 
-and $u^\ast(t)$ minimizes $H(x^\ast(t), \cdot, \lambda(t))$ over the control box for almost every $t$. Because $H$ is strictly convex and separable in the $u_k$, this gives the componentwise projection
+    and $u^\ast(t)$ minimizes $H(x^\ast(t), \cdot, \lambda(t))$ over the control box for almost every $t$. Because $H$ is strictly convex and separable in the $u_k$, this gives the componentwise projection
 
-$$u_k^\ast(t) = \min\Big\{ u_k^{\max},\ \max\Big\{ 0,\ -\frac{\lambda(t)^\top g_k(x^\ast(t))}{b_k} \Big\} \Big\}.$$
+    $$u_k^\ast(t) = \min\Big\{ u_k^{\max},\ \max\Big\{ 0,\ -\frac{\lambda(t)^\top g_k(x^\ast(t))}{b_k} \Big\} \Big\}.$$
 
 3. The state equation with $u = u^\ast$, the adjoint equation and this projection formula form the **optimality system**, a two-point boundary value problem (initial condition on $x$, terminal condition on $\lambda$).
 

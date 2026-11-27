@@ -4,7 +4,7 @@ Work over the DNA alphabet $\{A,C,G,T\}$ with complement $A \leftrightarrow T$, 
 
 1. **Lower bound.** For odd $k$ there are no palindromic $k$-mers, and for even $k$ there are exactly $4^{k/2}$. Hence
 
-$$L(k) \ge \begin{cases} \dfrac{4^k}{2}, & k \text{ odd}, \\[2mm] \dfrac{4^k + 4^{k/2}}{2}, & k \text{ even}. \end{cases}$$
+    $$L(k) \ge \begin{cases} \dfrac{4^k}{2}, & k \text{ odd}, \\[2mm] \dfrac{4^k + 4^{k/2}}{2}, & k \text{ even}. \end{cases}$$
 
 2. **Odd $k$: characterization.** An RC complete sequence $s$ attains the bound if and only if $s$ and $\mathrm{RC}(s)$ correspond to two edge-disjoint paths without repeated edges in the de Bruijn graph of order $k-1$ that together cover all its edges.
 3. **Odd $k$: construction.** An Euler-tour traversal that, whenever it appends an edge $e$ to the forward path, prepends $\mathrm{RC}(e)$ to a reverse path and marks both, outputs such a pair. It runs in time linear in the size of the graph, so the bound $4^k/2$ is attained.

@@ -21,10 +21,10 @@ and by the van den Driessche–Watmough theorem the disease-free equilibrium is 
 1. *Dengue–COVID-19 with vectors:* $\mathcal{R}_0^{CD} = \max\{\mathcal{R}_0^{HC}, \mathcal{R}_0^{HD}\}$, where the dengue number is computed from the host–vector submodel.
 2. *HIV/AIDS–pneumonia with pneumonia vaccination:* with recruitment $\Lambda$, natural death $d$, vaccinated fraction $\pi$ at entry, vaccine waning $\tau_1$, vaccine leakiness $\epsilon \in [0,1)$, pneumonia transmission $\beta_2$ (mass action), treatment $\kappa$ and disease death $d_P$,
 
-$$\mathcal{R}_2 = \frac{\beta_2 \big(Y_1^0 + \epsilon Y_2^0\big)}{d + \kappa + d_P}, \qquad Y_1^0 = \frac{\Lambda(d + \tau_1 - \pi d)}{d(d+\tau_1)},\quad Y_2^0 = \frac{\Lambda \pi}{d + \tau_1},$$
+    $$\mathcal{R}_2 = \frac{\beta_2 \big(Y_1^0 + \epsilon Y_2^0\big)}{d + \kappa + d_P}, \qquad Y_1^0 = \frac{\Lambda(d + \tau_1 - \pi d)}{d(d+\tau_1)},\quad Y_2^0 = \frac{\Lambda \pi}{d + \tau_1},$$
 
-and the threshold of the full model is $\mathcal{R}_3 = \max\{\mathcal{R}_1, \mathcal{R}_2\}$ with $\mathcal{R}_1$ the HIV/AIDS submodel number.
-3. *COVID-19–influenza with vaccination against each pathogen* and *HBV–COVID-19:* the reproduction number of the full model is the larger of the two single-pathogen numbers, $\mathcal{R}_{HC} = \max\{\mathcal{R}_{CM}, \mathcal{R}_{HM}\}$ in the HBV–COVID-19 case.
+    and the threshold of the full model is $\mathcal{R}_3 = \max\{\mathcal{R}_1, \mathcal{R}_2\}$ with $\mathcal{R}_1$ the HIV/AIDS submodel number.
+    3. *COVID-19–influenza with vaccination against each pathogen* and *HBV–COVID-19:* the reproduction number of the full model is the larger of the two single-pathogen numbers, $\mathcal{R}_{HC} = \max\{\mathcal{R}_{CM}, \mathcal{R}_{HM}\}$ in the HBV–COVID-19 case.
 
 ## Depends on
 

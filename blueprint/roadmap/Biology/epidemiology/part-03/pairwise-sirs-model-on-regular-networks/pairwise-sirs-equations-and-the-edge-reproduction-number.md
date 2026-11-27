@@ -9,7 +9,7 @@ Using the degree constraints $[SS] + [SI] + [SR] = n[S]$, $[SI] + [II] + [IR] = 
 $$\begin{aligned}
 [S]' &= -\beta[SI] + \epsilon(1 - [S] - [I]), \qquad [I]' = \beta[SI] - \gamma[I],\\
 [SS]' &= 2\epsilon(n[S] - [SS] - [SI]) - 2\beta\tfrac{n-1}{n}\tfrac{[SS][SI]}{[S]},\\
-[SI]' &= -(\gamma + \beta)[SI] + \epsilon(n[I] - [SI] - [II]) + \beta\tfrac{n-1}{n}\tfrac{SI}{[S]},\\
+[SI]' &= -(\gamma + \beta)[SI] + \epsilon(n[I] - [SI] - [II]) + \beta\tfrac{n-1}{n}\tfrac{[SS][SI] - [SI]^2}{[S]},\\
 [II]' &= 2\beta[SI] - 2\gamma[II] + 2\beta\tfrac{n-1}{n}\tfrac{[SI]^2}{[S]} .
 \end{aligned}$$
 

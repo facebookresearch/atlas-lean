@@ -5,9 +5,9 @@
 - An **inhibition assignment** is $I \subseteq X \times \mathcal R$. A subset $\mathcal R'$ is an **$I$-viable RAF** if it is a closed RAF and no reaction of $\mathcal R'$ is inhibited by a molecule of $\mathrm{cl}_{\mathcal R'}(F)$.
 - A **kinetic CRS** adds fixed reaction rates $v(r) > 0$ and a diffusion rate $\delta \ge 0$. For $\mathcal R' \subseteq \mathcal R$ let $S_{\mathcal R'}$ be the stoichiometric matrix with rows indexed by the non-food molecules of $\mathrm{supp}(\mathcal R')$ and columns by $\mathcal R'$ (net production of molecule $i$ by reaction $j$), and $v_{\mathcal R'}$ the rate vector. $\mathcal R'$ is a **kinetic RAF** (kRAF) if it is a closed RAF and
 
-$$S_{\mathcal R'}\, v_{\mathcal R'} \ \ge\ \delta\, \mathbf 1 \quad \text{(componentwise)},$$
+    $$S_{\mathcal R'}\, v_{\mathcal R'} \ \ge\ \delta\, \mathbf 1 \quad \text{(componentwise)},$$
 
-i.e. every non-food molecule of the set is produced at least as fast as it is lost to consumption and diffusion. In particular $S_{\mathcal R'} v_{\mathcal R'} \ge 0$ is necessary.
+    i.e. every non-food molecule of the set is produced at least as fast as it is lost to consumption and diffusion. In particular $S_{\mathcal R'} v_{\mathcal R'} \ge 0$ is necessary.
 
 **Theorem (complexity).**
 (a) Deciding whether a CRS with an inhibition assignment has an $I$-viable RAF is NP-complete (the closedness requirement does not change this, since the standard reduction builds closed RAFs).

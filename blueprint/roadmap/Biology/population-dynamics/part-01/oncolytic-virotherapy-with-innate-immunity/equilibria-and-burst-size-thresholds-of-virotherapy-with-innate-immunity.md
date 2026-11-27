@@ -15,9 +15,9 @@ The set $D = \{x, y, v, z \ge 0,\ x + y \le 1\}$ is positively invariant. Write 
 2. $E_1 = (1, 0, 0, 0)$ (tumour only) is always an equilibrium; it is locally asymptotically stable if $b < b_{s1}$ and unstable if $b > b_{s1}$.
 3. An immune-free equilibrium with virus present exists in the interior of $D$ (first three coordinates positive) if and only if $b > b_{s1}$, and then it is unique:
 
-$$E_2 = \Big( \frac{e}{a(b-1)},\ \frac{r e (ab - a - e)}{a(b-1)(ab - a + re)},\ \frac{r(ab - a - e)}{a(ab - a + re)},\ 0 \Big).$$
+    $$E_2 = \Big( \frac{e}{a(b-1)},\ \frac{r e (ab - a - e)}{a(b-1)(ab - a + re)},\ \frac{r(ab - a - e)}{a(ab - a + re)},\ 0 \Big).$$
 
-At $b = b_{s1}$, $E_2$ coalesces with $E_1$ (transcritical bifurcation).
+    At $b = b_{s1}$, $E_2$ coalesces with $E_1$ (transcritical bifurcation).
 4. The Jacobian at $E_2$ has the eigenvalue $m\bar y - n$ in the immune direction and three further eigenvalues, the roots of a cubic $q(\lambda) = \lambda^3 + A_1\lambda^2 + A_2\lambda + A_3$ with $A_1, A_3 > 0$ for $b > b_{s1}$. Hence $E_2$ is locally asymptotically stable whenever $\bar y < N$ (the infected-cell level is too low to sustain immune cells) and the Routh–Hurwitz condition $A_1 A_2 - A_3 > 0$ holds. The latter holds on an interval $(b_{s1}, b_{s2})$, where $b_{s2}$ is the smallest root above $b_{s1}$ of $A_1 A_2 - A_3$ as a function of $b$; the loss of this condition at a root $b_0 \ge b_{s2}$ where it changes sign transversally is a Hopf bifurcation of $E_2$.
 5. Every equilibrium with $z > 0$ has $y = N$, $x = 1 - N - a v / r$ and $z = \big((b-1)N - e v\big)/(cN + dv)$, where $v > 0$ is a root of a cubic $f(v) = v^3 + a_2 v^2 + a_1 v + a_0$ with $a_0 > 0$. Since $f$ always has a negative root, there are at most two equilibria with active immunity in $D$; they exist only when the burst size is below a critical value $\bar b$ (depending on $N$ and on the relative immune killing rate $c/d$) and coalesce at $b = \bar b$. When $a_1, a_2 > 0$ there are none, and the only equilibria are $E_0, E_1, E_2$.
 

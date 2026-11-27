@@ -4,9 +4,9 @@
 
 1. The linear system ${}^{C}D_t^{\alpha}y=Jy$ is asymptotically stable if and only if every eigenvalue $\lambda$ of $J$ satisfies
 
-$$
-|\arg\lambda|>\frac{\alpha\pi}{2}.
-$$
+    $$
+    |\arg\lambda|>\frac{\alpha\pi}{2}.
+    $$
 
 2. If every eigenvalue of $J$ satisfies this sector condition, then $x^*$ is locally asymptotically stable; if some eigenvalue satisfies $|\arg\lambda|<\alpha\pi/2$, then $x^*$ is unstable.
 3. For $0<\alpha<1$ the decay in item 1 is algebraic: solutions of the linear system are $O(t^{-\alpha})$, not exponentially small in general. For $\alpha=1$ the condition is the Hurwitz condition $\operatorname{Re}\lambda<0$, and the decay is exponential.

@@ -12,13 +12,13 @@ $$u_j^* = \frac{\rho^G_j}{\rho^G_1 + \cdots + \rho^G_n}.$$
 
 1. *At thermodynamic equilibrium (detailed balance).* Every edge $i \xrightarrow{a} j$ has a reverse edge $j \xrightarrow{b} i$, and each such pair is separately balanced at steady state. Choosing any path of reversible edges $1 = i_1 \rightleftharpoons i_2 \rightleftharpoons \cdots \rightleftharpoons i_{p+1} = j$ with forward labels $a_k$ and reverse labels $b_k$,
 
-$$\rho^G_j = \prod_{k=1}^{p} \frac{a_k}{b_k},$$
+    $$\rho^G_j = \prod_{k=1}^{p} \frac{a_k}{b_k},$$
 
-independent of the path by the cycle condition. Via $a/b = \exp(-\Delta G / RT)$ this recovers the Boltzmann weights of the equilibrium thermodynamic formalism, and the denominator is the partition function.
+    independent of the path by the cycle condition. Via $a/b = \exp(-\Delta G / RT)$ this recovers the Boltzmann weights of the equilibrium thermodynamic formalism, and the denominator is the partition function.
 
 2. *Away from equilibrium (matrix-tree theorem).* For general strongly connected $G$, with $\Theta_j(G)$ the set of spanning trees of $G$ rooted at $j$ (every vertex has a directed path to $j$ in the tree, and $j$ has no outgoing tree edge),
 
-$$\rho^G_j = \sum_{T \in \Theta_j(G)} \ \prod_{(k \xrightarrow{a} l) \in T} a .$$
+    $$\rho^G_j = \sum_{T \in \Theta_j(G)} \ \prod_{(k \xrightarrow{a} l) \in T} a .$$
 
 A graph is strongly connected iff it has a spanning tree rooted at every vertex, so every microstate has positive steady-state probability, and the denominator is a non-equilibrium partition function.
 

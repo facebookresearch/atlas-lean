@@ -8,11 +8,11 @@ $$I(z, t) = I_0\, e^{((\beta + \alpha z) S_0 - \gamma)\, t}.$$
 
 1. The expected prevalence is the deterministic exponential corrected by the moment generating function of $z$:
 
-$$\mathbb{E}[I(\cdot, t)] = I_0\, e^{(\beta S_0 - \gamma)t}\, W(t), \qquad W(t) = \mathbb{E}\big[e^{\alpha z S_0 t}\big].$$
+    $$\mathbb{E}[I(\cdot, t)] = I_0\, e^{(\beta S_0 - \gamma)t}\, W(t), \qquad W(t) = \mathbb{E}\big[e^{\alpha z S_0 t}\big].$$
 
 2. If $\mathbb{E}[z] = 0$ and $z$ is not almost surely constant, then $W(t) > 1$ for all $t > 0$: uncertainty in the contact rate amplifies expected early growth beyond that of the mean model. For $z$ uniform on $[-1, 1]$,
 
-$$W(t) = \frac{\sinh(\alpha S_0 t)}{\alpha S_0 t}.$$
+    $$W(t) = \frac{\sinh(\alpha S_0 t)}{\alpha S_0 t}.$$
 
 3. Uncertainty in the initial data alone, $I(z, 0) = I_0 + \mu z$ with $\beta$ deterministic, has no such effect: $\mathbb{E}[I(\cdot, t)] = (I_0 + \mu\bar z) e^{(\beta S_0 - \gamma)t}$ with $\bar z = \mathbb{E}[z]$.
 4. For a discrete random input taking values $z_k$ with probabilities $p_k$, the expected SIR trajectory $\bar S, \bar I = \sum_k p_k I_k, \bar R$ satisfies a multi-compartment system with infected subclasses $p_k I_k$, transmission rates $\tilde\beta_k = S_k\beta_k/\bar S$ and recovery rates $\gamma_k$; with two values it has the form of a detected/undetected infection model.

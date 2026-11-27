@@ -20,9 +20,9 @@ The adherence equation is the two-strategy replicator equation for the fitnesses
 2. Endemic equilibria with no or full adherence: $x = 0$, $S^* = 1/\mathcal{R}_0$, $I^* = \frac{\mu + \delta}{\mu + \delta + \gamma}\big(1 - \frac{1}{\mathcal{R}_0}\big)$; and $x = 1$, $S^* = 1/(p\mathcal{R}_0)$, $I^* = \frac{\mu + \delta}{\mu + \delta + \gamma}\big(1 - \frac{1}{p\mathcal{R}_0}\big)$, the latter existing only if $p\mathcal{R}_0 > 1$.
 3. A partial-adherence endemic equilibrium with
 
-$$I^*_m = \frac{\mu + \delta}{(1-p)(\gamma + \mu)(\mu + \delta)\,\xi/c + \gamma + \mu + \delta}, \qquad S^*_m = \frac{(1-p)(\gamma+\mu)\,\xi}{c}\, I^*_m, \qquad x^*_m = \frac{1}{1-p}\Big(1 - \frac{\gamma + \mu}{\beta S^*_m}\Big),$$
+    $$I^*_m = \frac{\mu + \delta}{(1-p)(\gamma + \mu)(\mu + \delta)\,\xi/c + \gamma + \mu + \delta}, \qquad S^*_m = \frac{(1-p)(\gamma+\mu)\,\xi}{c}\, I^*_m, \qquad x^*_m = \frac{1}{1-p}\Big(1 - \frac{\gamma + \mu}{\beta S^*_m}\Big),$$
 
-which exists iff $0 < x^*_m < 1$. All three quantities depend on $c$ and $\xi$ only through the cost-to-risk ratio $c/\xi$. Whenever it exists it is locally stable, and the no- and full-adherence endemic equilibria are then unstable. In particular, if $\mathcal{R}_0 > 1$, no adherence is stable exactly when $c/\xi \ge (\mathcal{R}_0 - 1)(1-p)(\gamma+\mu)(\mu+\delta)/(\gamma+\mu+\delta)$, i.e. when $x^*_m \le 0$.
+    which exists iff $0 < x^*_m < 1$. All three quantities depend on $c$ and $\xi$ only through the cost-to-risk ratio $c/\xi$. Whenever it exists it is locally stable, and the no- and full-adherence endemic equilibria are then unstable. In particular, if $\mathcal{R}_0 > 1$, no adherence is stable exactly when $c/\xi \ge (\mathcal{R}_0 - 1)(1-p)(\gamma+\mu)(\mu+\delta)/(\gamma+\mu+\delta)$, i.e. when $x^*_m \le 0$.
 
 **With vaccination** (fraction $q$ of births vaccinated, susceptibles vaccinated at rate $\nu$), the disease-free susceptible fraction becomes $S^0 = \frac{\mu(1-q) + \delta}{\mu + \nu + \delta}$ and the reproduction number $\mathcal{R}_0(\nu) = \mathcal{R}_0 S^0$, with analogous endemic equilibria in which $\mu + \delta$ is replaced by $\mu(1-q) + \delta$ in the infected fractions.
 

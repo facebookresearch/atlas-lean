@@ -10,13 +10,13 @@ For a raster prefix $[\tilde\omega]_t$, let $M_{[\tilde\omega]_t}$ be the set of
 
 1. $F^{t+1}_{\tilde\omega}$ is affine with diagonal Jacobian whose eigenvalues are
 
-$$\sigma_k(t, \tilde\omega) = \prod_{s=0}^{t} \gamma_k(s, [\tilde\omega]_s)\,\bigl(1 - \omega_k(s)\bigr) < 1, \qquad k = 1, \dots, N,$$
+    $$\sigma_k(t, \tilde\omega) = \prod_{s=0}^{t} \gamma_k(s, [\tilde\omega]_s)\,\bigl(1 - \omega_k(s)\bigr) < 1, \qquad k = 1, \dots, N,$$
 
-so it is a contraction, and the domains $M_{[\tilde\omega]_t}$ are convex. The global flow is piecewise affine with at most $2^{N(t+1)}$ branches.
-2. If every neuron fires at least once by time $t$, then $F^{t+1}_{\tilde\omega}\bigl(M_{[\tilde\omega]_t}\bigr)$ is a single point: all orbits with that raster prefix merge in finite time.
-3. If neuron $k$ never fires along $\tilde\omega$, the map contracts in direction $k$ with Lyapunov exponent
+    so it is a contraction, and the domains $M_{[\tilde\omega]_t}$ are convex. The global flow is piecewise affine with at most $2^{N(t+1)}$ branches.
+    2. If every neuron fires at least once by time $t$, then $F^{t+1}_{\tilde\omega}\bigl(M_{[\tilde\omega]_t}\bigr)$ is a single point: all orbits with that raster prefix merge in finite time.
+    3. If neuron $k$ never fires along $\tilde\omega$, the map contracts in direction $k$ with Lyapunov exponent
 
-$$\liminf_{t \to \infty} \frac{1}{t+1}\sum_{s=0}^t \log \gamma_k(s, [\tilde\omega]_s) \le \lambda_k(\tilde\omega) \le \limsup_{t \to \infty} \frac{1}{t+1}\sum_{s=0}^t \log \gamma_k(s, [\tilde\omega]_s) < 0 .$$
+    $$\liminf_{t \to \infty} \frac{1}{t+1}\sum_{s=0}^t \log \gamma_k(s, [\tilde\omega]_s) \le \lambda_k(\tilde\omega) \le \limsup_{t \to \infty} \frac{1}{t+1}\sum_{s=0}^t \log \gamma_k(s, [\tilde\omega]_s) < 0 .$$
 
 ## Expansion
 

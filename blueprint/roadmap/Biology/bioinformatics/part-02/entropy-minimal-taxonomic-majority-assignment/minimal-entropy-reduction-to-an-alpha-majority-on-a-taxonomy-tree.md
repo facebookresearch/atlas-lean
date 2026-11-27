@@ -8,7 +8,7 @@
 - A reduction replaces entries by ancestors: $A' \preceq_r A$ if $a_k' \preceq a_k$ for every $k$. A consistent reduction collapses whole subtrees, so that no entry of the result is a strict ancestor of another; collapsing everything to the root always yields a $1$-majority.
 - The entropy of $A$ is the Shannon entropy of its empirical distribution $p_A(z) = r_A(z)/N$:
 
-$$H(A) = -\sum_{z} p_A(z) \log p_A(z) = \log N - \frac1N \sum_{z} r_A(z) \log r_A(z).$$
+    $$H(A) = -\sum_{z} p_A(z) \log p_A(z) = \log N - \frac1N \sum_{z} r_A(z) \log r_A(z).$$
 
 **Minimal-entropy reduction.** Find a reduction $A \to^\ast A'$ such that $A'$ has an $\alpha$-majority and $|H(A) - H(A')|$ is minimal, and assign the contig to the majority taxon of $A'$.
 

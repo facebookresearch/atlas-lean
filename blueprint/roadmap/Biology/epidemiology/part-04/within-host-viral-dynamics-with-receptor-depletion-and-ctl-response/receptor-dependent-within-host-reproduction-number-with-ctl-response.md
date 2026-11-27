@@ -19,10 +19,10 @@ $$R_0 = \frac{m \beta \lambda_1 \lambda_2}{d_T d_E d_V} = \frac{m\beta T_0 E_0}{
 1. The infection-free equilibrium $(T_0, 0, 0, E_0, 0)$ is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$.
 2. A CTL-free infected equilibrium $(\bar T, \bar I, \bar V, \bar E, 0)$ with all components positive exists if and only if $R_0 > 1$. Its receptor level is the positive root
 
-$$\bar E = \frac{(\lambda_2 - \theta\lambda_1) + \sqrt{(\lambda_2 - \theta\lambda_1)^2 + 4 d_E \theta d_T d_V/(\beta m)}}{2 d_E},$$
+    $$\bar E = \frac{(\lambda_2 - \theta\lambda_1) + \sqrt{(\lambda_2 - \theta\lambda_1)^2 + 4 d_E \theta d_T d_V/(\beta m)}}{2 d_E},$$
 
-and $\bar T = d_V/(\beta m \bar E)$, $\bar I = (\lambda_1 - d_T \bar T)/d_I$, $\bar V = m d_I \bar I / d_V$.
-3. At this equilibrium the CTL direction has eigenvalue $\alpha \bar I - d_c$, so a CTL response can invade exactly when $\bar I > d_c/\alpha$.
+    and $\bar T = d_V/(\beta m \bar E)$, $\bar I = (\lambda_1 - d_T \bar T)/d_I$, $\bar V = m d_I \bar I / d_V$.
+    3. At this equilibrium the CTL direction has eigenvalue $\alpha \bar I - d_c$, so a CTL response can invade exactly when $\bar I > d_c/\alpha$.
 
 ## Depends on
 

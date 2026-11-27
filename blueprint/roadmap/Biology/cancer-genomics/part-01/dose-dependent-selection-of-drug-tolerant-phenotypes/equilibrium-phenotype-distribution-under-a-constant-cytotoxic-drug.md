@@ -11,9 +11,9 @@ $$\gamma_C=\gamma-\frac{\eta C}{\eta+C},\qquad \eta_C=\eta+C,\qquad \bar x_C=\fr
 1. If $\gamma_C\le(\beta\eta_C)^{1/2}$, then $\rho(t)\to 0$ as $t\to\infty$ (extinction).
 2. If $\gamma_C>(\beta\eta_C)^{1/2}$, then $\rho(t)\to\bar\rho_C=\big(\gamma_C-(\beta\eta_C)^{1/2}\big)/d$, the unique nontrivial non-negative equilibrium is the Gaussian
 
-$$\bar n_C(x)=\bar\rho_C\,\frac{(\eta_C/\beta)^{1/4}}{(2\pi)^{1/2}}\exp\!\Big(-\tfrac12\Big(\frac{\eta_C}{\beta}\Big)^{1/2}(x-\bar x_C)^2\Big),$$
+    $$\bar n_C(x)=\bar\rho_C\,\frac{(\eta_C/\beta)^{1/4}}{(2\pi)^{1/2}}\exp\!\Big(-\tfrac12\Big(\frac{\eta_C}{\beta}\Big)^{1/2}(x-\bar x_C)^2\Big),$$
 
-and $\mu(t)\to\bar x_C$, $\sigma^2(t)\to(\beta/\eta_C)^{1/2}$.
+    and $\mu(t)\to\bar x_C$, $\sigma^2(t)\to(\beta/\eta_C)^{1/2}$.
 
 Hence the selected phenotype $\bar x_C$ increases from $0$ to $1$ as the dose $C$ increases, so intermediate doses select intermediate resistance; the equilibrium heterogeneity $(\beta/\eta_C)^{1/2}$ decreases with $C$; and $\bar\rho_C$ decreases with $C$ because $d\gamma_C/dC=-\eta^2/(\eta+C)^2<0$ and $\eta_C$ increases. Setting $C=0$ gives the drug-free case $\bar x_0=0$, $\bar\rho_0=(\gamma-(\beta\eta)^{1/2})/d$, and the extinction condition $\beta\eta\ge\gamma^2$.
 

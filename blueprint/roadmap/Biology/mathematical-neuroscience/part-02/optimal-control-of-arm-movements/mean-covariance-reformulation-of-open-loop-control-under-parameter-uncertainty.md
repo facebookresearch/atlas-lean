@@ -6,14 +6,14 @@ $$J(u) = \varphi\bigl(m_x(T), P_x(T), T\bigr) + \int_0^T \ell\bigl(m_x(t), P_x(t
 
 1. **Affine dynamics: exact reduction.** If $\dot x = A(u,t)\,x + b(u,t) + C(u,t)\,\xi$, then $m_x, P_x$ are the first two components of the solution of
 
-$$\dot m = A m + b + C\mu, \qquad \dot P = AP + PA^{\mathsf T} + CD^{\mathsf T} + DC^{\mathsf T}, \qquad \dot D = AD + C\Sigma,$$
+    $$\dot m = A m + b + C\mu, \qquad \dot P = AP + PA^{\mathsf T} + CD^{\mathsf T} + DC^{\mathsf T}, \qquad \dot D = AD + C\Sigma,$$
 
-with $m(0) = m_0$, $P(0) = P_0$, $D(0) = 0$, where $D = \mathbb E[(x - m)(\xi - \mu)^{\mathsf T}]$. Minimizing (15) is therefore exactly a deterministic optimal control problem in the augmented state $(m, P, D)$. It depends on the law of $\xi$ only through $\mu$ and $\Sigma$. If $x_0$ is deterministic, $P(t) = D(t)\Sigma^{-1}D(t)^{\mathsf T}$, and the state reduces to $(m, D)$ of dimension $n(p+1)$.
-2. **Nonlinear dynamics: statistical linearization.** For $\dot x = f(x, u, t; \xi)$, replace the exact moments by the solution of
+    with $m(0) = m_0$, $P(0) = P_0$, $D(0) = 0$, where $D = \mathbb E[(x - m)(\xi - \mu)^{\mathsf T}]$. Minimizing (15) is therefore exactly a deterministic optimal control problem in the augmented state $(m, P, D)$. It depends on the law of $\xi$ only through $\mu$ and $\Sigma$. If $x_0$ is deterministic, $P(t) = D(t)\Sigma^{-1}D(t)^{\mathsf T}$, and the state reduces to $(m, D)$ of dimension $n(p+1)$.
+    2. **Nonlinear dynamics: statistical linearization.** For $\dot x = f(x, u, t; \xi)$, replace the exact moments by the solution of
 
-$$\dot m = f(m, u, t; \mu), \qquad \dot P = \mathcal A P + P\mathcal A^{\mathsf T} + \mathcal C D^{\mathsf T} + D \mathcal C^{\mathsf T}, \qquad \dot D = \mathcal A D + \mathcal C \Sigma,$$
+    $$\dot m = f(m, u, t; \mu), \qquad \dot P = \mathcal A P + P\mathcal A^{\mathsf T} + \mathcal C D^{\mathsf T} + D \mathcal C^{\mathsf T}, \qquad \dot D = \mathcal A D + \mathcal C \Sigma,$$
 
-with $\mathcal A = \partial_x f(m, u, t; \mu)$ and $\mathcal C = \partial_\xi f(m, u, t; \mu)$. If $f$ is smooth, $U$ is compact, $\xi$ takes values in a compact set and all vector fields $x \mapsto f(x,u;\xi)$ share a compact support, then on $[0,T]$ the pair $(m, P)$ converges uniformly to $(m_x, P_x)$ as $(P, D, \Sigma) \to 0$ uniformly. When $f$ is affine in $\xi$ it suffices that $(P, D) \to 0$.
+    with $\mathcal A = \partial_x f(m, u, t; \mu)$ and $\mathcal C = \partial_\xi f(m, u, t; \mu)$. If $f$ is smooth, $U$ is compact, $\xi$ takes values in a compact set and all vector fields $x \mapsto f(x,u;\xi)$ share a compact support, then on $[0,T]$ the pair $(m, P)$ converges uniformly to $(m_x, P_x)$ as $(P, D, \Sigma) \to 0$ uniformly. When $f$ is affine in $\xi$ it suffices that $(P, D) \to 0$.
 
 ## Expansion
 

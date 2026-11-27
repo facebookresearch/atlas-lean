@@ -7,9 +7,9 @@ $$q=\frac{At}{s^{\mathsf T}t}\quad\Longleftrightarrow\quad (A-q\,s^{\mathsf T})\
 - If $A$ is square and invertible (for example single or double gains such as $3{:}1$, $2{:}0$, $4{:}1$, $3{:}0$), the timing is identified: $t=c\,A^{-1}q$ with $c=s^{\mathsf T}t$ fixed by $\mathbf 1\cdot t=1$.
 - If $A$ is singular or the history is not unique (for example $5{:}1$ reached by three gains along different orderings), $t$ is not identified, but for each candidate history $A$ the linear programs
 
-$$\max_t\ t_K\quad\text{or}\quad\max_t\ t_0\qquad\text{s.t.}\quad (A-q\,s^{\mathsf T})\,t=0,\ \ \mathbf 1\cdot t=1,\ \ t\ge0$$
+    $$\max_t\ t_K\quad\text{or}\quad\max_t\ t_0\qquad\text{s.t.}\quad (A-q\,s^{\mathsf T})\,t=0,\ \ \mathbf 1\cdot t=1,\ \ t\ge0$$
 
-give upper bounds on the lead time and on the initiation time; maximising over all histories compatible with $(N_t,N_b)$ bounds them over histories.
+    give upper bounds on the lead time and on the initiation time; maximising over all histories compatible with $(N_t,N_b)$ bounds them over histories.
 
 The vector $q$ is estimated from read counts by EM: for $M$ clonal mutations with $m_i$ mutant reads out of depth $d_i$, the log-likelihood conditioned on detection is
 

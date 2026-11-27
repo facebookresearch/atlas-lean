@@ -4,7 +4,7 @@
 
 $$V(\theta) = \Big\langle \int_0^\infty e^{-\tau/\tau_e}\, r(\tau)\, d\tau \Big\rangle_{p(r \mid \theta)} > 0,$$
 
-where the expectation is over reward sequences produced by stochastic inputs, neuronal responses and reward delivery. Introduce a binary "goal reached" variable $v_b$ with likelihood $p_N(v_b = 1 \mid \theta) = V(\theta)/Z_V$, a structural prior $p_S(\theta)$, and the posterior $p^\ast(\theta \mid v_b = 1) \propto p_S(\theta)\, V(\theta)$. For temperature $T > 0$ the **tempered posterior** is
+where the expectation is over reward sequences produced by stochastic inputs, neuronal responses and reward delivery. Introduce a binary "goal reached" variable $v_b$ with likelihood $p_N(v_b = 1 \mid \theta) = V(\theta)/Z_V$, a structural prior $p_S(\theta)$, and the posterior $p^\ast(\theta \mid v_b = 1) \propto p_S(\theta)\, V(\theta)$. For temperature $T > 0$ with $Z = \int p^\ast(\theta \mid v_b = 1)^{1/T}\, d\theta < \infty$ the **tempered posterior** is
 
 $$p_T^\ast(\theta) = \frac{1}{Z}\, p^\ast(\theta \mid v_b = 1)^{1/T}.$$
 
@@ -14,7 +14,7 @@ $$d\theta_i = \beta\Big( \frac{\partial}{\partial \theta_i} \log p_S(\theta) + \
 
 with learning rate $\beta > 0$ and independent Wiener processes $W_i$.
 
-**Theorem.** Synaptic sampling is the [Langevin synaptic sampling](langevin-synaptic-sampling-and-its-posterior-stationary-distribution.md) dynamics with constant sampling speed $b \equiv \beta$ and the reward likelihood $p_N(v_b = 1 \mid \theta)$ in place of the input likelihood. Hence, if $p_S(\theta)\, V(\theta)$ is a strictly positive, integrable function that is twice continuously differentiable in $\theta$, then $p_T^\ast$ is invariant under synaptic sampling and is its unique stationary distribution.
+**Theorem.** Synaptic sampling is the [Langevin synaptic sampling](langevin-synaptic-sampling-and-its-posterior-stationary-distribution.md) dynamics with constant sampling speed $b \equiv \beta$ and the reward likelihood $p_N(v_b = 1 \mid \theta)$ in place of the input likelihood. Hence, if $p_S(\theta)\, V(\theta)$ is a strictly positive, integrable function that is twice continuously differentiable in $\theta$ and $Z < \infty$ (automatic for $T = 1$), then $p_T^\ast$ is invariant under synaptic sampling and is its unique stationary distribution.
 
 ## Depends on
 

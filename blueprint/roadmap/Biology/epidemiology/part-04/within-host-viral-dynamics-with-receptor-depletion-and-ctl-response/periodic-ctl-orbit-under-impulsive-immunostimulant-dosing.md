@@ -8,15 +8,15 @@ $$C'(t) = -d_c C(t) \quad (t \ne t_k), \qquad C(t_k^+) = C(t_k^-) + \omega .$$
 
 1. This impulsive system has a unique positive $\tau$-periodic solution
 
-$$\tilde C(t) = \frac{\omega\, e^{-d_c (t - t_k)}}{1 - e^{-d_c \tau}}, \qquad t_k < t \le t_{k+1},$$
+    $$\tilde C(t) = \frac{\omega\, e^{-d_c (t - t_k)}}{1 - e^{-d_c \tau}}, \qquad t_k < t \le t_{k+1},$$
 
-oscillating between $C_{\min} = \omega e^{-d_c\tau}/(1 - e^{-d_c\tau})$ just before a dose and $C_{\max} = \omega/(1 - e^{-d_c\tau})$ just after, with period average $\omega/(d_c \tau)$.
-2. Every solution converges to it: $C(t) - \tilde C(t) = \big(C(0^+) - \tilde C(0^+)\big) e^{-d_c t}$. Starting from no CTLs, the post-dose levels are $C(t_k^+) = \omega (1 - e^{-k d_c \tau})/(1 - e^{-d_c \tau})$ for the $k$-th dose.
-3. The infection-free periodic orbit $(\lambda_1/d_T, 0, 0, \lambda_2/d_E, \tilde C)$ is locally asymptotically stable if and only if the monodromy matrix of the $\tau$-periodic linear system
+    oscillating between $C_{\min} = \omega e^{-d_c\tau}/(1 - e^{-d_c\tau})$ just before a dose and $C_{\max} = \omega/(1 - e^{-d_c\tau})$ just after, with period average $\omega/(d_c \tau)$.
+    2. Every solution converges to it: $C(t) - \tilde C(t) = \big(C(0^+) - \tilde C(0^+)\big) e^{-d_c t}$. Starting from no CTLs, the post-dose levels are $C(t_k^+) = \omega (1 - e^{-k d_c \tau})/(1 - e^{-d_c \tau})$ for the $k$-th dose.
+    3. The infection-free periodic orbit $(\lambda_1/d_T, 0, 0, \lambda_2/d_E, \tilde C)$ is locally asymptotically stable if and only if the monodromy matrix of the $\tau$-periodic linear system
 
-$$I' = \beta T_0 E_0 V - \big(d_I + p\tilde C(t)\big) I, \qquad V' = m d_I I - d_V V$$
+    $$I' = \beta T_0 E_0 V - \big(d_I + p\tilde C(t)\big) I, \qquad V' = m d_I I - d_V V$$
 
-has spectral radius below $1$. By comparison, with $R_0 = m\beta T_0 E_0/d_V$, it is stable if $R_0\, d_I/(d_I + p C_{\min}) < 1$ and unstable if $R_0\, d_I/(d_I + p C_{\max}) > 1$.
+    has spectral radius below $1$. By comparison, with $R_0 = m\beta T_0 E_0/d_V$, it is stable if $R_0\, d_I/(d_I + p C_{\min}) < 1$ and unstable if $R_0\, d_I/(d_I + p C_{\max}) > 1$.
 
 ## Depends on
 

@@ -13,13 +13,13 @@ with mixing weights $\pi$ on the $(k+1)$-simplex, Pareto density $g(x \mid x_*, 
 1. The Pareto scale is fixed at the cutoff $x_* = \min X$, the smallest observed frequency, before the iterations. For the endpoint-inclusive density above, this is the maximum likelihood estimate of the scale for a sample drawn from the Pareto component alone; in the mixture it is a fixed choice of the procedure, not a claim that it maximizes the likelihood jointly with the other parameters.
 2. Given $x_*$, the weighted MLE of the Pareto shape is
 
-$$\hat\alpha = \frac{\sum_i z_{i,1}}{\sum_i z_{i,1} \log(x_i / x_*)} .$$
+    $$\hat\alpha = \frac{\sum_i z_{i,1}}{\sum_i z_{i,1} \log(x_i / x_*)} .$$
 
 3. Each Beta component is updated by weighted moment matching: $\hat\mu_j = \sum_i z_{i,j} x_i / (n\pi_j)$, $\hat\sigma_j^2 = \sum_i z_{i,j}(x_i - \hat\mu_j)^2/(n\pi_j)$, and, using mean $a/(a+b)$ and variance $ab/((a+b)^2(a+b+1))$,
 
-$$\hat a_j = \hat\mu_j\, c_j, \quad \hat b_j = (1 - \hat\mu_j)\, c_j, \qquad c_j = \frac{\hat\mu_j(1-\hat\mu_j)}{\hat\sigma_j^2} - 1,$$
+    $$\hat a_j = \hat\mu_j\, c_j, \quad \hat b_j = (1 - \hat\mu_j)\, c_j, \qquad c_j = \frac{\hat\mu_j(1-\hat\mu_j)}{\hat\sigma_j^2} - 1,$$
 
-valid when $\hat\sigma_j^2 < \hat\mu_j(1-\hat\mu_j)$.
+    valid when $\hat\sigma_j^2 < \hat\mu_j(1-\hat\mu_j)$.
 
 **Model selection.** With negative log-likelihood $\mathrm{NLL}$ and $|\Theta| = 3k+2$ free parameters with a tail ($3k-1$ without), $\mathrm{BIC} = 2\,\mathrm{NLL} + |\Theta| \log n$. The integrated classification likelihood adds the assignment entropy, $\mathrm{ICL} = \mathrm{BIC} + H(z)$, with $H(z) = -\sum_{j}\sum_i z_{i,j}\log z_{i,j}$. The reduced-entropy criterion $\mathrm{reICL} = \mathrm{BIC} + H(\hat z)$ computes the entropy only over mutations whose hard assignment is not the tail, renormalized over the Beta components. Fits with and without a tail, for $1 \le k \le K$, compete under the chosen score.
 

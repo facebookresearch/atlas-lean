@@ -10,9 +10,9 @@ with $S(0) = N - I_0$ (approximately $N$), $I(0) = I_0 > 0$, $R(0) = D(0) = 0$ a
 2. **SIR limit.** If $r(s) = r_0$ and $d(s) = d_0$ for $0 \le s < \tau$ and $0$ afterwards (disease duration $\tau$), then $dI/dt = \beta S I/N - (r_0+d_0) I - (r_0+d_0)^2 \int_{t-\tau}^t \int_{s-\tau}^s J\, d\eta\, ds$. Neglecting the $O((r_0+d_0)^2)$ term gives the SIR model with deaths, $dI/dt = \beta SI/N - (r_0+d_0)I$, $dR/dt = r_0 I$, $dD/dt = d_0 I$.
 3. **Transmission-rate inversion.** For a time-dependent transmission rate,
 
-$$\beta(t) = \frac{N\, J(t)}{I(t)\,\bigl(N - \int_0^t J(\eta)\, d\eta\bigr)}, \tag{12}$$
+    $$\beta(t) = \frac{N\, J(t)}{I(t)\,\bigl(N - \int_0^t J(\eta)\, d\eta\bigr)}, \tag{12}$$
 
-so $\beta$ is determined by incidence, prevalence and cumulative incidence alone, whatever the kernels $r, d$.
+    so $\beta$ is determined by incidence, prevalence and cumulative incidence alone, whatever the kernels $r, d$.
 
 ## Expansion
 

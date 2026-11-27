@@ -15,7 +15,7 @@ Then $C^* = \max_{P} \max_{Q} J(P, Q)$, and each partial maximum is explicit:
 - for fixed $P$, $J$ is maximized by the posterior $Q^*(x_i \mid y) = P(x_i) P(y \mid x_i) / \sum_{r} P(x_r) P(y \mid x_r)$, where $J(P, Q^*) = I(X; Y)$;
 - for fixed $Q$, $J$ is maximized by
 
-$$P^*(x_i) = \frac{e^{D_i(Q)}}{\sum_{r=1}^{m} e^{D_r(Q)}}, \qquad D_i(Q) = \int_{\mathbb R^d} P(y \mid x_i) \ln Q(x_i \mid y)\, dy .$$
+    $$P^*(x_i) = \frac{e^{D_i(Q)}}{\sum_{r=1}^{m} e^{D_r(Q)}}, \qquad D_i(Q) = \int_{\mathbb R^d} P(y \mid x_i) \ln Q(x_i \mid y)\, dy .$$
 
 **Algorithm and convergence.** Alternate $Q^{(k)} = Q^*(\,\cdot\,; P^{(k)})$ and $P^{(k+1)} = P^*(\,\cdot\,; Q^{(k)})$, with capacity estimate $C^{(k)} = \sum_i P^{(k)}(x_i)\bigl(D_i(Q^{(k)}) - \ln P^{(k)}(x_i)\bigr)$. Then $P^{(k)} \to P^*$ and $C^{(k)} \to C^*$. In practice $D_i$ is estimated by averaging $\ln Q(x_i \mid y)$ over cells measured at dose $x_i$, and $Q$ by a multinomial logistic regression of the dose on the response vector; when $P(X)$ changes from $P^{(k-1)}$ to $P^{(k)}$ only the intercepts change,
 

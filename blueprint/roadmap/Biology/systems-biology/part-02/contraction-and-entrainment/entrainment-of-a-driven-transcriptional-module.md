@@ -8,10 +8,10 @@ on the invariant set $\mathcal X = \{(x,y) : x \ge 0,\ 0 \le y \le e_T\}$.
 
 1. **Contraction.** For all positive constants $\delta, k_1, k_2, e_T$, system (12) is infinitesimally contracting on $\mathcal X$ in the weighted norm $|(x,y)|_{1,P} = p_1|x| + p_2|y|$ for any weights with
 
-$$1 < \frac{p_2}{p_1} < 1 + \frac{\delta}{k_2 e_T},$$
+    $$1 < \frac{p_2}{p_1} < 1 + \frac{\delta}{k_2 e_T},$$
 
-with contraction rate $c = \min\bigl\{\delta - (p_2/p_1 - 1)k_2 e_T,\ (1 - p_1/p_2)\,k_1\bigr\} > 0$, uniformly in the input $u$.
-2. **Entrainment.** For every nonnegative $T$-periodic input $u$, all solutions of (12) in $\mathcal X$ converge exponentially to a unique periodic solution of period $T$.
+    with contraction rate $c = \min\bigl\{\delta - (p_2/p_1 - 1)k_2 e_T,\ (1 - p_1/p_2)\,k_1\bigr\} > 0$, uniformly in the input $u$.
+    2. **Entrainment.** For every nonnegative $T$-periodic input $u$, all solutions of (12) in $\mathcal X$ converge exponentially to a unique periodic solution of period $T$.
 
 ## Depends on
 

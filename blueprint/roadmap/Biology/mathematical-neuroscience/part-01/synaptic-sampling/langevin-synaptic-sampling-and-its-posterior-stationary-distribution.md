@@ -8,7 +8,7 @@ $$d\theta_i = \Bigl( b(\theta_i)\, \frac{\partial}{\partial \theta_i} \log p_{\m
 
 with independent standard Wiener processes $W_i$.
 
-**Theorem.** Let $p(\mathbf x, \theta)$ be a strictly positive, continuous probability distribution, twice continuously differentiable in $\theta$, and let $b$ be strictly positive and twice continuously differentiable. Then the dynamics above leaves invariant the tempered posterior
+**Theorem.** Let $p(\mathbf x, \theta)$ be a strictly positive, continuous probability distribution, twice continuously differentiable in $\theta$, let $b$ be strictly positive and twice continuously differentiable, and assume $\mathcal Z = \int p(\theta \mid \mathbf x)^{1/T}\, d\theta < \infty$ (automatic for $T = 1$). Then the dynamics above leaves invariant the tempered posterior
 
 $$p^*(\theta) = \frac{1}{\mathcal Z}\, p(\theta \mid \mathbf x)^{1/T}, \qquad \mathcal Z = \int p(\theta \mid \mathbf x)^{1/T}\, d\theta,$$
 

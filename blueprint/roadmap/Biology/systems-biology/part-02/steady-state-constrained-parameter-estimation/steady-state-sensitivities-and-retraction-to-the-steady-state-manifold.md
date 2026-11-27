@@ -6,18 +6,18 @@ $$\min_{\theta,\, x_s^1, \dots, x_s^E} J(\theta, x_s^1, \dots, x_s^E) \quad \tex
 
 1. **Steady-state sensitivity.** If $x_s$ is a locally exponentially stable steady state for $(\theta, u)$, then $\partial f/\partial x$ is invertible there, the steady state is locally a smooth function $x_s(\theta, u)$, and its sensitivity is
 
-$$S(\theta, x_s, u) = \frac{\partial x_s}{\partial \theta} = -\left(\frac{\partial f}{\partial x}\right)^{-1} \frac{\partial f}{\partial \theta}. \tag{12}$$
+    $$S(\theta, x_s, u) = \frac{\partial x_s}{\partial \theta} = -\left(\frac{\partial f}{\partial x}\right)^{-1} \frac{\partial f}{\partial \theta}. \tag{12}$$
 
-Hence $x_s(\theta + r\Delta\theta, u) = x_s(\theta, u) + S\, r\Delta\theta + O(r^2)$, and the ODE $dx_s/dr = S(\theta + r\Delta\theta, x_s, u)\,\Delta\theta$ moves along the steady-state manifold.
+    Hence $x_s(\theta + r\Delta\theta, u) = x_s(\theta, u) + S\, r\Delta\theta + O(r^2)$, and the ODE $dx_s/dr = S(\theta + r\Delta\theta, x_s, u)\,\Delta\theta$ moves along the steady-state manifold.
 2. **Reduced gradient.** Eliminating the constraint by solving for the steady states gives the objective $\theta \mapsto J(\theta, x_s^1(\theta), \dots)$, with gradient
 
-$$\frac{dJ}{d\theta} = \frac{\partial J}{\partial \theta} + \sum_{e=1}^{E} \frac{\partial J}{\partial x_s^e}\, S(\theta, x_s^e, u_c^e). \tag{15}$$
+    $$\frac{dJ}{d\theta} = \frac{\partial J}{\partial \theta} + \sum_{e=1}^{E} \frac{\partial J}{\partial x_s^e}\, S(\theta, x_s^e, u_c^e). \tag{15}$$
 
 3. **Continuous analogue with retraction.** For a descent direction $g$ (for example $g = (dJ/d\theta)^{\mathsf T}$, or the Fisher-information Newton direction $(F + \mu I)^{-1}(dJ/d\theta)^{\mathsf T}$) and a retraction factor $\lambda > 0$, consider
 
-$$\frac{d\theta}{dr} = -g(\theta, x_s^1, \dots, x_s^E), \qquad \frac{dx_s^e}{dr} = \hat S(\theta, x_s^e, u_c^e)\,\frac{d\theta}{dr} + \lambda f(x_s^e, \theta, u_c^e), \tag{17}$$
+    $$\frac{d\theta}{dr} = -g(\theta, x_s^1, \dots, x_s^E), \qquad \frac{dx_s^e}{dr} = \hat S(\theta, x_s^e, u_c^e)\,\frac{d\theta}{dr} + \lambda f(x_s^e, \theta, u_c^e), \tag{17}$$
 
-with $\hat S = -(\partial f/\partial x)^{+}\, \partial f/\partial \theta$ (Moore–Penrose pseudoinverse), which equals $S$ on the manifold. Along trajectories on the manifold $J$ decreases. For the gradient direction and suitable $\lambda$, local optima of the constrained problem are locally exponentially stable equilibria of (17), so the problem can be solved with adaptive stiff ODE solvers. Initial points need not satisfy the steady-state constraint.
+    with $\hat S = -(\partial f/\partial x)^{+}\, \partial f/\partial \theta$ (Moore–Penrose pseudoinverse), which equals $S$ on the manifold. Along trajectories on the manifold $J$ decreases. For the gradient direction and suitable $\lambda$, local optima of the constrained problem are locally exponentially stable equilibria of (17), so the problem can be solved with adaptive stiff ODE solvers. Initial points need not satisfy the steady-state constraint.
 
 ## Proof depends on
 
