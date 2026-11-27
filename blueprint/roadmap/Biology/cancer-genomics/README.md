@@ -15,6 +15,7 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
+- [Post-selection inference for changepoints](post-selection-inference-for-changepoints/README.md)
 - [Phenotype-structured models of tumour evolution](phenotype-structured-models-of-tumour-evolution/README.md)
 - [Phenotypic switching in tumours](phenotypic-switching-in-tumours/README.md)
 - [Random segregation of extrachromosomal DNA](random-segregation-of-extrachromosomal-dna/README.md)

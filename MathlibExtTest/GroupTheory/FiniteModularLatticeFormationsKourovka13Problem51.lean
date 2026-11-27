@@ -40,3 +40,8 @@ example (embed : ∀ (L : Type) [Lattice L] [IsModularLattice L] [Finite L],
   intro L _ _ _
   obtain ⟨f, hform, hmeet, hjoin⟩ := embed L
   exact ⟨f, hform, f.injective, hmeet, hjoin⟩
+
+-- Each class of finite groups is included in its formation join with another class.
+example (X Y : FiniteGroupClass) :
+    MathlibExt.GroupTheory.FiniteGroupFormationShared.ClassLE X (formationJoin X Y) :=
+  fun G _ _ hG _ _ hinc => hinc G (Or.inl hG)

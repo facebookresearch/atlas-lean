@@ -20,3 +20,4 @@
 - [Finite Hilbert inequality](hilbert-inequality-finite.md)
 - [Summability of the Hilbert double series](summable-hilbert-terms.md)
 - [Hilbert's inequality](hilbert-inequality.md)
+- [Montgomery–Vaughan weighted Hilbert inequality](montgomery-vaughan-weighted-hilbert-inequality.md)

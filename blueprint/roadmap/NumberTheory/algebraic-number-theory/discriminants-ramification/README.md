@@ -23,3 +23,4 @@ Discriminants and their bounds, ramification and inertia, orders, units, ideal c
 - [Dirichlet's S-unit theorem](s-unit-theorem.md)
 - [An algebraic integer of a number field is a unit if and only if its norm is ±1](unit-iff-norm-plus-minus-one.md)
 - [Kummer–Dedekind theorem](kummer-dedekind-theorem.md)
+- [Lenstra's bound for the different](lenstra-s-bound-for-the-different.md)
