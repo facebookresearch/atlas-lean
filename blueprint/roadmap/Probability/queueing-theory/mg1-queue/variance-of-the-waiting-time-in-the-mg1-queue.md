@@ -14,11 +14,10 @@ with $E[W] = \rho E[R]/(1 - \rho)$. Both follow by differentiating the transform
 - [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Pollaczek–Khinchine formula for the waiting time](pollaczek-khinchine-formula-for-the-waiting-time.md)
 
-## Expansion
+## Proof depends on
 
-This page becomes ready once this prerequisite is stated:
-
-- moments of a nonnegative random variable as derivatives of its Laplace–Stieltjes transform at $0$, when the moments are finite.
+- [Moments from generating functions and Laplace–Stieltjes transforms](moments-from-generating-functions-and-laplace-stieltjes-transforms.md)
+- [Residual service time seen by a random arrival](residual-service-time-seen-by-a-random-arrival.md): the first and second moments of $R$.
 
 ## Sources
 

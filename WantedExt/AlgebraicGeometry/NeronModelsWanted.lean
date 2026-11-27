@@ -9,6 +9,8 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.NeronModels
+public import MathlibExt.AlgebraicGeometry.NeronModelGroupLaw
+public import MathlibExt.AlgebraicGeometry.NeronModelUniqueness
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 
 /-!
@@ -27,6 +29,14 @@ group extension and the mapping property of an abelian scheme over the base.
 https://math.stanford.edu/~conrad/BSDseminar/Notes/L3.pdf
 Bosch–Lütkebohmert–Raynaud, *Néron Models*, §§1.1–1.3 and §4.4.
 https://doi.org/10.1007/978-3-642-51438-8
+
+Étale base change is proved, for every Néron model and every smooth base change whose
+generic square is a pullback, as
+`MathlibExt.AlgebraicGeometry.NeronModels.NeronModel.isIso_baseChangeMap` in
+`MathlibExt/AlgebraicGeometry/NeronModelUniqueness.lean`, and the commutative group law of a
+Néron model of a commutative group object as
+`MathlibExt.AlgebraicGeometry.NeronModels.NeronModel.groupStructure` in
+`MathlibExt/AlgebraicGeometry/NeronModelGroupLaw.lean`; both modules are publicly imported here.
 
 The class permits lft Néron models used for other groups; this packet does
 not claim existence for arbitrary algebraic groups or compatibility with
@@ -50,25 +60,9 @@ def_wanted abelian_neron_model (R : Type u) [CommRing R] [IsDomain R]
     [IsFractionRing R K] (A : AbelianScheme (Spec (.of K))) :
     FiniteTypeNeronModel R K A.model
 
-def_wanted neron_group_structure (R : Type u) [CommRing R] [IsDomain R]
-    [IsDiscreteValuationRing R] (K : Type u) [Field K] [Algebra R K]
-    [IsFractionRing R K] (A : AbelianScheme (Spec (.of K)))
-    (N : NeronModel R K A.model) : N.GroupStructure
-
 theorem_wanted good_reduction_mapping_property (R : Type u) [CommRing R]
     [IsDomain R] [IsDiscreteValuationRing R] (K : Type u) [Field K]
     [Algebra R K] [IsFractionRing R K] (A : AbelianScheme (trait R)) :
     HasMappingProperty R K A.model
-
-theorem_wanted etale_base_change (R : Type u) [CommRing R] [IsDomain R]
-    [IsDiscreteValuationRing R] (K : Type u) [Field K] [Algebra R K]
-    [IsFractionRing R K] (R' : Type u) [CommRing R'] [IsDomain R']
-    [IsDiscreteValuationRing R'] (K' : Type u) [Field K'] [Algebra R' K']
-    [IsFractionRing R' K'] (φ : trait R' ⟶ trait R) [Etale φ]
-    (ψ : Spec (.of K') ⟶ Spec (.of K))
-    (h : IsPullback ψ (genericInclusion R' K') (genericInclusion R K) φ)
-    (A : AbelianScheme (Spec (.of K))) (M : NeronModel R K A.model)
-    (N : NeronModel R' K' ((Over.pullback ψ).obj A.model)) :
-    IsIso (baseChangeMap R K R' K' φ ψ h.w M N)
 
 end WantedExt.AlgebraicGeometry.NeronModelsWanted

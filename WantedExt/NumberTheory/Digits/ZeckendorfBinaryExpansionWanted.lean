@@ -24,6 +24,7 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Order.LiminfLimsup
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.Digits.BinaryFundamentalSequence
+public import MathlibExt.NumberTheory.Digits.ZeckendorfBinaryRank
 public import MathlibExt.NumberTheory.Digits.ZeckendorfBlockCountRecurrence
 public import MathlibExt.NumberTheory.Digits.ZeckendorfFundamentalSequence
 public import MathlibExt.NumberTheory.Digits.ZeckendorfMaxBlockScaling
@@ -54,21 +55,6 @@ note before `IsPeriodicZeckendorfPair`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Duality formula for binary expansions without adjacent ones.** For $x \in \mathbb{N}$ let
-$z(x)$ be the number of $n < x$ whose binary expansion has no two adjacent digits equal to $1$.
-For a finite set $A \subseteq \mathbb{N}$, put $\bar A = A$ if there is no $j$ with
-$j, j + 1 \in A$, and otherwise $\bar A = \{k \in A : k \ge j\}$, where $j$ is the largest index
-with $j, j + 1 \in A$. Then $z\bigl(\sum_{k \in A} 2^k\bigr) = \sum_{k \in \bar A} F_{k+2}$,
-where $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = F_{n+1} + F_n$ are the Fibonacci numbers.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 2 (`integers-2025-A25-lem-2`). -/
-public theorem_wanted card_zeckendorfBinary_lt_sum_two_pow (A : Finset ℕ) :
-    let J := A.filter (fun j => j + 1 ∈ A)
-    let Abar := if h : J.Nonempty then A.filter (fun k => J.max' h ≤ k) else A
-    ((Finset.range (∑ k ∈ A, 2 ^ k)).filter (fun n => n &&& (n >>> 1) = 0)).card =
-      ∑ k ∈ Abar, Nat.fib (k + 2)
 
 /-- **Example of the ascending lexicographic order.** Write $(a_0, a_1, a_2, a_3, a_4)$ for the
 coefficient function with finite support whose entry at index $i \le 4$ is $a_i$ and whose other
@@ -213,16 +199,6 @@ public theorem_wanted zeckendorfCollection_subset_iff {E E' : Set (ℕ →₀ �
     (hθ : ∀ m, 1 ≤ m → IsImmediatePredecessor E (Finsupp.single m 1) (θ m)) :
     E ⊆ E' ↔ ∀ m, 1 ≤ m → θ m ∈ E'
 
-/-- **Counting function of a subcollection.** For a set $E$ of finitely supported coefficient
-functions $\mu : \mathbb{N} \to \mathbb{N}$, a sequence $H : \mathbb{N} \to \mathbb{N}$ and a
-real number $x$, $z(x)$ is the number of natural numbers $n < x$ of the form
-$n = \sum_k \mu_k H_k$ for some $\mu \in E$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Theorem 1 and Section 3 (arXiv:2308.12872v1, Sections 1 and 3.2). -/
-public noncomputable def subcollectionCount (E : Set (ℕ →₀ ℕ)) (H : ℕ → ℕ) (x : ℝ) : ℕ :=
-  {n : ℕ | (n : ℝ) < x ∧ ∃ μ ∈ E, zeckendorfEval H μ = n}.ncard
-
 /-- **The counting function $z$ vanishes for $x \le 0$.** Let $E$ be a set of finitely supported
 coefficient functions and $H$ a sequence of natural numbers, and for real $x$ let $z(x)$ be the
 number of natural numbers $n < x$ of the form $n = \sum_k \mu_k H_k$ with $\mu \in E$. Then
@@ -337,27 +313,6 @@ public theorem_wanted fundamentalSequence_div_rpow_tendsto (L L' : List ℕ) (hL
         (fun n : ℕ => φ' ^ ((n : ℝ) * r)) ∧
       Filter.Tendsto (fun n : ℕ => (H n : ℝ) / (H' n : ℝ) ^ Real.logb φ' φ) Filter.atTop
         (nhds (α / α' ^ Real.logb φ' φ))
-
-/-- **Duality formula.** Let $E \subseteq \tilde E$ be Zeckendorf collections. Let $H$ and
-$\tilde H$ be strictly increasing sequences of positive integers such that
-$\mu \mapsto \sum_k \mu_k H_k$ is a bijection from $E$ onto $\mathbb N$ and
-$\mu \mapsto \sum_k \mu_k \tilde H_k$ is a bijection from $\tilde E$ onto $\mathbb N$. For real
-$x$, let $z(x)$ be the number of natural numbers $n < x$ of the form $n = \sum_k \nu_k \tilde H_k$
-with $\nu \in E$. Let $\mu \in \tilde E$ be nonzero, let $\check\mu$ be the immediate predecessor
-of $\mu$ in $E$ (the largest element of $E$ below $\mu$ in the ascending lexicographic order), and
-let $\bar\mu$ be the immediate successor of $\check\mu$ in $E$. Then
-$z\left(\sum_k \mu_k \tilde H_k\right) = \sum_k \bar\mu_k H_k$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Theorem 8 (`integers-2025-A25-thm-8`; arXiv:2308.12872v1, Section 3.2). -/
-public theorem_wanted subcollectionCount_eval_eq_eval_bar {E E' : Set (ℕ →₀ ℕ)}
-    (hE : IsZeckendorfCollection E) (hE' : IsZeckendorfCollection E') (hsub : E ⊆ E')
-    {H H' : ℕ → ℕ} (hmono : StrictMono H) (hpos : ∀ k, 0 < H k)
-    (hbij : Set.BijOn (zeckendorfEval H) E Set.univ) (hmono' : StrictMono H')
-    (hpos' : ∀ k, 0 < H' k) (hbij' : Set.BijOn (zeckendorfEval H') E' Set.univ)
-    {μ μc μb : ℕ →₀ ℕ} (hμ : μ ∈ E') (hμ0 : μ ≠ 0) (hc : IsImmediatePredecessor E μ μc)
-    (hb : IsImmediateSuccessor E μc μb) :
-    subcollectionCount E H' (zeckendorfEval H' μ) = zeckendorfEval H μb
 
 /-- **The maximal block $\bar\beta^2$ for $L = (2, 3, 0)$.** For $L = (2, 3, 0)$, the maximal
 $L^*$-block starting at index $1$ (indices start at $0$; the paper's $\bar\beta^2$) has entries

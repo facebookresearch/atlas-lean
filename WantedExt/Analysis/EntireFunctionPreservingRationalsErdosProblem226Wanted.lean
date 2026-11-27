@@ -41,12 +41,16 @@ def nonlinearEntireRationalIff : Prop :=
 
 /--
 Resolved true: Barth and Schneider proved that for countable dense sets `A, B ⊆ ℝ` there is a
-transcendental entire function `f` with `f(z) ∈ B` exactly when `z ∈ A`; `A = B = ℚ` answers the
-question. erdosproblems.com/226 lists the problem as proved. Source: T. F. Bloom, Erdős Problems,
+transcendental entire function `f` whose restriction to `ℝ` is a monotone homeomorphism of `ℝ` onto
+itself taking `A` onto `B`; so for real `x`, `f(x) ∈ B` exactly when `x ∈ A`, and `A = B = ℚ`
+answers the question. The condition concerns real points only: by the great Picard theorem a
+transcendental entire function also takes values in `B` at non-real points.
+erdosproblems.com/226 lists the problem as proved. Source: T. F. Bloom, Erdős Problems,
 Problem #226, https://www.erdosproblems.com/226 (status PROVED (LEAN)); resolution: K. F. Barth and
 W. J. Schneider, Entire functions mapping countable dense subsets of the reals onto each other
 monotonically, J. London Math. Soc. (2) 2 (1970), 620-626, erdosproblems.com/226: for countable
-dense A, B ⊆ ℝ there is a transcendental entire f with f(z) ∈ B if and only if z ∈ A,
+dense A, B ⊆ ℝ there is a transcendental entire f such that, for real z, f(z) ∈ B if and only if
+z ∈ A,
 https://doi.org/10.1112/jlms/2.part_4.620.
 -/
 public theorem_wanted nonlinearEntireRationalIff_holds : nonlinearEntireRationalIff

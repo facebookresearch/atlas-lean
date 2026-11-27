@@ -90,14 +90,14 @@ public theorem MvPowerSeries.mem_pow_span_X_of_coeff_eq_zero
       have hdiv : (X i : MvPowerSeries σ R) ∣ ψ - dropVar i ψ := by
         rw [X_dvd_iff]
         intro m hm
-        rw [map_sub, coeff_dropVar, if_pos hm, sub_self]
+        rw [map_sub, coeff_dropVar, ite_eq_left hm, sub_self]
       obtain ⟨q, hq⟩ := hdiv
       have hqk : ∀ m : σ →₀ ℕ, m.degree < k → coeff m q = 0 := by
         intro m hm
         have h1 : coeff (Finsupp.single i 1 + m) (X i * q) = coeff m q := by
           rw [X, coeff_add_monomial_mul, one_mul]
         have h2 : coeff (Finsupp.single i 1 + m) (ψ - dropVar i ψ) = 0 := by
-          rw [map_sub, coeff_dropVar, if_neg (by simp), sub_zero]
+          rw [map_sub, coeff_dropVar, ite_eq_right (by simp), sub_zero]
           exact h0 _ (by rw [map_add, Finsupp.degree_single]; omega)
         rw [← h1, ← hq, h2]
       have hrest : dropVar i ψ ∈ J ^ (k + 1) := by
