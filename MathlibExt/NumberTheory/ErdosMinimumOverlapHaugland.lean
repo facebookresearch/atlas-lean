@@ -16,6 +16,8 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 We prove `upperBound_H1996_holds` using the 15-step example in Jan Kristian Haugland,
 *The minimum overlap problem revisited* (2016), https://arxiv.org/abs/1609.08000.
+The example and its complement form an admissible pair (`HauglandFifteenStep.admissible`), and
+`HauglandFifteenStep.overlap_grid` computes their overlap at whole-cell translations.
 Between consecutive grid translations the overlap interpolates linearly, so the bound
 reduces to a finite calculation on the integer numerators of the step heights.
 -/
@@ -41,10 +43,17 @@ $C_{1b} \le 0.382002$.
 Source: Haugland 1996; Optimization Problems, Constant 1b. -/
 def upperBound_H1996 : Prop := C₁ᵦ ≤ (382002 : ℝ) / 1000000
 
-namespace Haugland
+namespace HauglandFifteenStep
 
--- The paper specifies eight decimal places and reflects the heights about the midpoint.
-private def weight : ℕ → ℕ
+/-- **Heights of Haugland's 15-step function.** Cut $[-1, 1)$ into the fifteen cells
+$[2i/15 - 1, 2(i + 1)/15 - 1)$ for $i < 15$. Haugland's 15-step function takes the value
+`weight i / 10⁸` on cell $i$. The heights, given to eight decimal places, are symmetric
+(`weight (14 - i) = weight i` for $i \le 14$) and vanish on cells $0$ and $14$, and
+`weight i = 0` for $i \ge 15$.
+
+Source: Jan Kristian Haugland, *The minimum overlap problem revisited* (2016),
+arXiv:1609.08000, the step function with 15 steps, there on $[0, 2]$. -/
+def weight : ℕ → ℕ
   | 1 | 13 => 9938602
   | 2 | 12 => 64299877
   | 3 | 11 => 36104582
@@ -60,7 +69,12 @@ private theorem weight_le (i : ℕ) : weight i ≤ denom := by
   unfold weight
   split <;> decide
 
-private def complement (i : ℕ) : ℕ := denom - weight i
+/-- **Heights of the complement of Haugland's 15-step function.** `complement i` is
+`10⁸ - weight i`, so `profile complement` is `1 - profile weight` on $[-1, 1]$.
+
+Source: the factor $1 - f(x + k)$ of the integral (1) in Jan Kristian Haugland,
+*The minimum overlap problem revisited* (2016), arXiv:1609.08000. -/
+@[no_expose] def complement (i : ℕ) : ℕ := denom - weight i
 
 private def extend (w : ℕ → ℕ) (i : ℤ) : ℕ :=
   if 0 ≤ i ∧ i < 15 then w i.toNat else 0
@@ -76,7 +90,14 @@ private theorem score_le (k : ℤ) (hk : -15 ≤ k) (hk' : k ≤ 16) :
 
 private noncomputable def edge (i : ℝ) : ℝ := 2 * i / 15 - 1
 
-private noncomputable def profile (w : ℕ → ℕ) : ℝ → ℝ :=
+/-- **Fifteen-step functions on $[-1, 1]$.** For heights `w : ℕ → ℕ` in units of $10^{-8}$,
+`profile w` vanishes outside $[-1, 1]$, takes the value `w i / 10⁸` on the cell
+$[2i/15 - 1, 2(i + 1)/15 - 1)$ for $i < 15$, and takes the value `w 15 / 10⁸` at $1$.
+Haugland's 15-step function is `profile weight`.
+
+Source: the step functions with $n$ steps in Jan Kristian Haugland, *The minimum overlap problem
+revisited* (2016), arXiv:1609.08000, moved from $[0, 2]$ to $[-1, 1]$. -/
+@[no_expose] noncomputable def profile (w : ℕ → ℕ) : ℝ → ℝ :=
   continuousSupportInterval.indicator fun t => (w ⌊(t + 1) * 15 / 2⌋.toNat : ℝ) / denom
 
 private theorem profile_measurable (w : ℕ → ℕ) : Measurable (profile w) := by
@@ -140,7 +161,13 @@ private theorem weight_cell {i : ℕ} (hi : i < 15) {t : ℝ}
   simpa [extend, hi] using profile_cell weight (j := (i : ℤ)) (t := t)
     (by simpa using h₁) (by simpa using h₂)
 
-private theorem admissible : ContinuousAdmissible (profile weight) (profile complement) := by
+/-- **Haugland's 15-step pair is admissible.** Haugland's 15-step function `profile weight` and
+its complement `profile complement` form an admissible pair for the continuous minimum-overlap
+problem; in particular `profile weight` has integral $1$.
+
+Source: Jan Kristian Haugland, *The minimum overlap problem revisited* (2016),
+arXiv:1609.08000. -/
+theorem admissible : ContinuousAdmissible (profile weight) (profile complement) := by
   have hr := profile_range weight_le
   refine ⟨(profile_measurable _).aemeasurable, (profile_measurable _).aemeasurable, hr,
     profile_range (fun i => Nat.sub_le denom (weight i)), profile_outside _, profile_outside _,
@@ -207,6 +234,50 @@ private theorem cell_integral (i : ℕ) (hi : i < 15) (k : ℤ) (q x : ℝ)
     push_cast
     constructor <;> linarith
 
+-- At a whole-cell translation each cell contributes a single constant piece.
+private theorem overlap_cells (k : ℤ) :
+    continuousOverlap (profile weight) (profile complement) (2 * k / 15) =
+      (2 / 15 / denom ^ 2) * (score k : ℝ) := by
+  calc
+    _ = ∑ i ∈ Finset.range 15, ∫ t in edge i..edge (i + 1), integrand (2 * k / 15) t :=
+      integral_grid (integrand_intervalIntegrable _)
+    _ = _ := by
+      simp only [score, Nat.cast_sum, Finset.mul_sum]
+      refine Finset.sum_congr rfl fun i hi => ?_
+      rw [cell_integral i (Finset.mem_range.mp hi) k 0 _ le_rfl zero_le_one (by ring)]
+      ring
+
+-- For a nonnegative shift only the cells `i < 15 - k` meet the support of the complement.
+private theorem score_natCast (k : ℕ) :
+    score k = ∑ i ∈ Finset.range (15 - k), weight i * complement (i + k) := by
+  rw [score, ← Finset.sum_range_add_sum_Ico _ (Nat.sub_le 15 k),
+    Finset.sum_eq_zero (s := Finset.Ico (15 - k) 15), add_zero]
+  · refine Finset.sum_congr rfl fun i hi => ?_
+    have hi := Finset.mem_range.mp hi
+    rw [coeff, extend, ite_eq_left (by omega), ← Nat.cast_add, Int.toNat_natCast]
+  · intro i hi
+    have hi := Finset.mem_Ico.mp hi
+    rw [coeff, extend, ite_eq_right (by omega), mul_zero]
+
+/-- **Overlaps of Haugland's 15-step pair at whole-cell translations.** Write $h_i$ for
+`weight i / 10⁸`. For a natural number $k$, the overlap of Haugland's 15-step function and its
+complement at the translation $x = 2k/15$ by $k$ cells is
+$\frac{2}{15} \sum_{i < 15 - k} h_i (1 - h_{i + k})$.
+
+Source: the integral (1) in Jan Kristian Haugland, *The minimum overlap problem revisited*
+(2016), arXiv:1609.08000, computed cell by cell. -/
+theorem overlap_grid (k : ℕ) :
+    continuousOverlap (profile weight) (profile complement) (2 * k / 15) =
+      2 / 15 * ∑ i ∈ Finset.range (15 - k),
+        (weight i : ℝ) / 10 ^ 8 * (1 - (weight (i + k) : ℝ) / 10 ^ 8) := by
+  have h := overlap_cells k
+  rw [Int.cast_natCast] at h
+  rw [h, score_natCast, Nat.cast_sum, Finset.mul_sum, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [Nat.cast_mul, complement, Nat.cast_sub (weight_le _)]
+  simp only [denom, Nat.cast_ofNat]
+  ring
+
 private theorem overlap_le {x : ℝ} (hx : x ∈ continuousTranslationInterval) :
     continuousOverlap (profile weight) (profile complement) x ≤ (382002 : ℝ) / 1000000 := by
   let k := ⌊x * 15 / 2⌋
@@ -239,16 +310,17 @@ private theorem overlap_le {x : ℝ} (hx : x ∈ continuousTranslationInterval) 
         _ = _ := by ring
     _ ≤ _ := by norm_num [denom]
 
-end Haugland
+end HauglandFifteenStep
 
 /-- **Haugland's 1996 upper bound for the minimum-overlap constant.** The continuous Erdős
 minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.382002$.
 
 Source: Haugland 1996 and Optimization Problems 1b. -/
 theorem upperBound_H1996_holds : upperBound_H1996 := by
-  refine (continuousMinimumOverlapConstant_isUniversalLowerBound _ _ Haugland.admissible).trans ?_
+  refine (continuousMinimumOverlapConstant_isUniversalLowerBound _ _
+    HauglandFifteenStep.admissible).trans ?_
   apply csSup_le (continuousOverlapValues_nonempty _ _)
   rintro _ ⟨x, hx, rfl⟩
-  exact Haugland.overlap_le hx
+  exact HauglandFifteenStep.overlap_le hx
 
 end MathlibExt.NumberTheory.ErdosMinimumOverlapConstantWanted
