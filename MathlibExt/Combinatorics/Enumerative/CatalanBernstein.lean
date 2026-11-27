@@ -8,10 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Algebra.Polynomial.Expand
+import Mathlib.Algebra.Ring.CharZero
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
@@ -138,5 +143,54 @@ public theorem sum_choose_catalan_succ_one_sub_pow_mul_pow (n : ℕ) (x : ℂ) :
         simp only [dvd_mul_right, ite_true, Nat.mul_div_cancel_left _ (by decide : 0 < 2),
           coeff_catalan, a, div_pow]
         ring
+
+private theorem catalan_succ_ratio (k : ℕ) :
+    (catalan (k + 1) : ℂ) = (2 * (k : ℂ) + 1) / (k + 2) * 2 * catalan k := by
+  have h := Nat.succ_mul_centralBinom_succ k
+  rw [← succ_mul_catalan_eq_centralBinom (k + 1), ← succ_mul_catalan_eq_centralBinom k] at h
+  have hnat : (k + 2) * catalan (k + 1) = 2 * (2 * k + 1) * catalan k := by
+    apply mul_left_cancel₀ (by omega : k + 1 ≠ 0)
+    simpa only [Nat.succ_eq_add_one, mul_assoc, mul_left_comm, mul_comm] using h
+  have hc : ((k : ℂ) + 2) * (catalan (k + 1) : ℂ) = 2 * (2 * (k : ℂ) + 1) * catalan k := by
+    exact_mod_cast hnat
+  have hk : (k : ℂ) + 2 ≠ 0 := by exact_mod_cast (show k + 2 ≠ 0 by omega)
+  field_simp [hk]
+  linear_combination hc
+
+/-- **Alternating binomial sum of Catalan numbers.** For every natural number $n$, in the
+rational numbers
+
+$$
+\sum_{k=0}^{n} (-1)^k \binom{n}{k} \frac{2k+1}{k+2} \cdot \frac{2^{n+1}}{2^{2k}} C_k
+= \sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{C_k}{2^{2k}},
+$$
+
+where $C_k = \binom{2k}{k}/(k+1)$ is the $k$-th Catalan number.
+
+Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
+Sums*, INTEGERS 26 (2026), Article A19, Proposition 3 (`integers-2026-A19-prop-3`). -/
+public theorem sum_neg_one_pow_choose_two_pow_catalan (n : ℕ) :
+    ∑ k ∈ range (n + 1), (-1 : ℚ) ^ k * (n.choose k : ℚ) * (2 * k + 1) / (k + 2) *
+        2 ^ (n + 1) / 2 ^ (2 * k) * catalan k =
+      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * catalan k := by
+  apply (Rat.cast_injective (α := ℂ))
+  change (Rat.castHom ℂ) _ = (Rat.castHom ℂ) _
+  simp only [map_sum, map_add, map_mul, map_div₀, map_pow, map_natCast, map_ofNat, map_neg, map_one]
+  have heven (k : ℕ) : (-1 : ℂ) ^ (2 * k) = 1 := by
+    rw [pow_mul, neg_one_sq, one_pow]
+  have h := sum_choose_catalan_succ_one_sub_pow_mul_pow n 2
+  simp only [show 1 - (2 : ℂ) = -1 by norm_num, heven, mul_one] at h
+  refine Eq.trans ?_ h
+  apply sum_congr rfl
+  intro k hk
+  have hkn := Nat.le_of_lt_succ (mem_range.mp hk)
+  have hn : (2 : ℂ) ^ n = 2 ^ (n - k) * 2 ^ k := by
+    rw [← pow_add, Nat.sub_add_cancel hkn]
+  have hpow : (2 : ℂ) ^ n / 2 ^ (2 * k) = 2 ^ (n - k) / 2 ^ k := by
+    rw [hn, two_mul, pow_add, mul_div_mul_right _ _ (pow_ne_zero k (two_ne_zero : (2 : ℂ) ≠ 0))]
+  calc
+    _ = (-1 : ℂ) ^ k * (n.choose k : ℂ) * (2 ^ n / 2 ^ (2 * k)) *
+          ((2 * (k : ℂ) + 1) / (k + 2) * 2 * catalan k) := by rw [pow_succ]; ring
+    _ = _ := by rw [hpow, ← catalan_succ_ratio]; ring
 
 end MetaMathlibExt
