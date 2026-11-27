@@ -18,9 +18,12 @@ public import Mathlib.Order.WithBot
 Jobs of a finite type `J`, all available at time `0`, are processed on one machine in the order
 of a list, one after another without preemption or idle time
 (`CSLibExt.Scheduling.SingleMachine.CompletionTime`). Job `j` has a due date `d j`, and its
-lateness is its completion time minus `d j`, negative when the job finishes early. The maximum
-lateness `maxLateness` of the objective `1 ‖ L_max` is the largest lateness over the jobs. It is
-taken in `WithBot`, so that the maximum over no jobs is `⊥`, standing for `-∞`.
+lateness is its completion time minus `d j`. When the order is compatible with addition, as in
+`ℤ` or `ℝ`, a job that finishes before its due date has negative lateness. The maximum lateness
+`maxLateness` of the objective `1 ‖ L_max` is the largest lateness over all jobs. It is taken in
+`WithBot`, so that the maximum over no jobs is `⊥`, standing for `-∞`. The list need not be a
+schedule: as for `completionTime`, a repeated job completes at its first occurrence, and a job
+missing from the list is given the list's total processing time as its completion time.
 
 Processing times and due dates take values in any additive commutative group with a linear
 order, so that integer, rational and real data are all covered.
@@ -41,9 +44,13 @@ variable {J R : Type*} [Fintype J] [DecidableEq J] [AddCommGroup R] [LinearOrder
 $p_j$ and due dates $d_j$ in an additive commutative group with a linear order, such as
 $\mathbb{Z}$ or $\mathbb{R}$. The maximum lateness of a list $\sigma$ of jobs is
 $L_{\max} = \max_j (C_j - d_j)$ over all jobs $j$, where $C_j$ is the completion time of job $j$
-when the machine processes the jobs of $\sigma$ one after another from time $0$. The lateness
-$C_j - d_j$ is negative when job $j$ completes before its due date. The maximum is taken in
-`WithBot`, so that it is `⊥`, standing for $-\infty$, when there are no jobs. -/
+when the machine processes the jobs of $\sigma$ one after another from time $0$. The list need
+not be a schedule: a repeated job completes at its first occurrence in $\sigma$, and a job that
+does not occur in $\sigma$ is given the total processing time of $\sigma$ as its completion time
+and still counts in the maximum. When the order is compatible with addition, as in $\mathbb{Z}$
+or $\mathbb{R}$, a job that completes before its due date has negative lateness $C_j - d_j$. The
+maximum is taken in `WithBot`, so that it is `⊥`, standing for $-\infty$, when there are no
+jobs. -/
 def maxLateness (p d : J → R) (σ : List J) : WithBot R :=
   Finset.univ.sup fun j => ((completionTime p σ j - d j : R) : WithBot R)
 

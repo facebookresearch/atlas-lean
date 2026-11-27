@@ -19,8 +19,8 @@ import Mathlib.Tactic.NormNum
 # Maximum-lateness checks
 
 Concrete consumers of `CSLibExt.Scheduling.SingleMachine.Lateness`: the maximum lateness of three
-integer jobs in two orders, negative lateness, the empty job type, and real data. Elaboration
-checks, not results.
+integer jobs in two orders, a job missing from the list, a repeated job, negative lateness, the
+empty job type, and real data. Elaboration checks, not results.
 -/
 
 namespace CSLibExtTest.Scheduling.SingleMachine.Lateness
@@ -40,9 +40,16 @@ example : maxLateness p d [0, 2, 1] = ((2 : ℤ) : WithBot ℤ) := by decide
 -- In the order `1, 0, 2` the latenesses are `1 - 6`, `4 - 2` and `6 - 3`: the maximum is `3`.
 example : maxLateness p d [1, 0, 2] = ((3 : ℤ) : WithBot ℤ) := by decide
 
--- A job missing from the list counts too, completing at the total processing time `5`: here its
--- lateness is `5 - 6`, and the maximum is still `2`.
-example : maxLateness p d [0, 2] = ((2 : ℤ) : WithBot ℤ) := by decide
+-- A job missing from the list counts too, completing at the list's total processing time `5`.
+-- With due dates `2, 0, 3` its lateness `5 - 0` is the maximum, while the listed jobs alone would
+-- give `2`.
+example : maxLateness p ![2, 0, 3] [0, 2] = ((5 : ℤ) : WithBot ℤ) := by decide
+
+-- A repeated job completes at its first occurrence: in the list `0, 0, 2` job `0` completes at `3`
+-- and job `2` at `3 + 3 + 2 = 8`, as does the missing job `1`. With due dates `0, 9, 4` the
+-- latenesses are `3`, `-1` and `4`, so the maximum is `4`; completing job `0` at its last
+-- occurrence, `6`, would give `6`.
+example : maxLateness p ![0, 9, 4] [0, 0, 2] = ((4 : ℤ) : WithBot ℤ) := by decide
 
 -- With late due dates every job is early, and the maximum lateness is negative.
 example : maxLateness p (fun _ => 10) [0, 2, 1] = ((-4 : ℤ) : WithBot ℤ) := by decide
