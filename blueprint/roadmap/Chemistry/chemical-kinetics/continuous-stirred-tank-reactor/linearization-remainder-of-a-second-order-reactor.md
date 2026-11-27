@@ -5,23 +5,20 @@ equilibrium of the constant-density stirred tank with second-order reaction
 
 $$c' = D(c_{\mathrm{in}} - c) - k c^2 .$$
 
-Put $\delta = c - c^*$ and $\lambda = D + 2 k c^*$. Then $\delta' = -\lambda\delta - k\delta^2$ exactly. If
-$\lvert\delta(0)\rvert < \lambda/k$, the solution
+Put $\delta = c - c^*$, $d = \delta(0)$, and $\lambda = D + 2 k c^*$. Then $\delta' = -\lambda\delta - k\delta^2$ exactly. If
+$d > -\lambda/k$, the profile
 
-$$\delta(t) = \frac{\delta(0)\,e^{-\lambda t}}{1 + (k\delta(0)/\lambda)\,(1 - e^{-\lambda t})}$$
+$$\delta(t) = \frac{d\,e^{-\lambda t}}{1 + (kd/\lambda)\,(1 - e^{-\lambda t})}$$
 
-exists for all $t \ge 0$, its denominator is at least $1 - k\lvert\delta(0)\rvert/\lambda > 0$, and
-$\lvert\delta(t)\rvert \le \lvert\delta(0)\rvert\,e^{-\lambda t}/(1 - k\lvert\delta(0)\rvert/\lambda)$. The margin
-$\lvert\delta(0)\rvert < \lambda/k$ is sufficient, not necessary: every $\delta(0) > 0$ also decays.
+has a positive denominator for all $t \ge 0$, starts at $d$, solves the deviation equation there, and tends to zero as
+$t \to +\infty$. If additionally $|d| < \lambda/k$, its denominator is at least $1 - k|d|/\lambda > 0$, and
+$|\delta(t)| \le |d|\,e^{-\lambda t}/(1 - k|d|/\lambda)$ for $t \ge 0$. This absolute-value margin is sufficient, not
+necessary: every $d > 0$ also decays.
 
-Physical states also need $c(0) = c^* + \delta(0) \ge 0$. Since $\lambda/k = D/k + 2c^* > c^*$, every physical initial
-state has $\delta(0) > -\lambda/k$, so the denominator never vanishes for physical data; it vanishes in finite time only
-when $\delta(0) < -\lambda/k$, a negative initial concentration. That blow-up is a boundary of the mathematical model,
+Physical states also need $c(0) = c^* + d \ge 0$. Since $\lambda/k = D/k + 2c^* > c^*$, every physical initial
+state has $d > -\lambda/k$. The denominator vanishes at a finite nonnegative time exactly when
+$d < -\lambda/k$, outside the physical initial states. This singularity is a boundary of the mathematical model,
 not a predicted failure of a reactor.
-
-## Depends on
-
-## Proof depends on
 
 ## Sources
 

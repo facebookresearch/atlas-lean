@@ -379,6 +379,37 @@ public theorem nthNonValue_triangular_eq_round (n : ℕ) (hn : 1 ≤ n) :
   · rw [show (s + 1) * (s + 1 + 1) = s * s + 3 * s + 2 by ring]
     omega
 
+/-- **Formula for the non-square numbers.** For every integer $n \ge 1$, the $n$-th positive
+integer that is not a perfect square is $n + \lfloor \sqrt{n} + 1/2 \rfloor$.
+
+Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
+Article A95, Corollary 3. -/
+public theorem nthNonValue_sq_eq_round (n : ℕ) (hn : 1 ≤ n) :
+    nthNonValue (fun j => j ^ 2) n = n + ⌊Real.sqrt n + 1 / 2⌋₊ := by
+  let j := ⌊Real.sqrt n + 1 / 2⌋₊
+  have hnReal : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  have hsqrt : 1 ≤ Real.sqrt n := (Real.le_sqrt' one_pos).mpr (by simpa using hnReal)
+  have hj : 1 ≤ j := Nat.le_floor (by push_cast; linarith)
+  have hjReal : (1 : ℝ) ≤ j := by exact_mod_cast hj
+  have hfloor : (j : ℝ) ≤ Real.sqrt n + 1 / 2 := Nat.floor_le (by positivity)
+  have hfloorSucc : Real.sqrt n + 1 / 2 < (j : ℝ) + 1 := Nat.lt_floor_add_one _
+  have hlo : ((j : ℝ) - 1 / 2) ^ 2 ≤ (n : ℝ) :=
+    (Real.le_sqrt (by linarith) (by positivity)).mp (by linarith)
+  have hhi : (n : ℝ) < ((j : ℝ) + 1 / 2) ^ 2 :=
+    (Real.sqrt_lt' (by positivity)).mp (by linarith)
+  -- The quarter terms give strict bounds between integers, hence j² - j < n ≤ j² + j.
+  have hleft : j ^ 2 < n + j := by
+    exact_mod_cast (show (j : ℝ) ^ 2 < (n : ℝ) + j by nlinarith only [hlo])
+  have hright : n < j ^ 2 + j + 1 := by
+    exact_mod_cast (show (n : ℝ) < (j : ℝ) ^ 2 + j + 1 by nlinarith only [hhi])
+  have hmono : StrictMono (fun k : ℕ => k ^ 2) := by
+    intro a b hab
+    exact Nat.pow_lt_pow_left hab (by decide)
+  refine nthNonValue_of_gap hmono (by simp) hleft ?_
+  change n + j < (j + 1) ^ 2
+  rw [show (j + 1) ^ 2 = j ^ 2 + 2 * j + 1 by ring]
+  omega
+
 end
 
 end MetaMathlibExt
