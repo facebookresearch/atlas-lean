@@ -18,6 +18,7 @@ The source warns that intuition is a poor guide when comparing $\mathrm{MCSP}^A$
 
 - [The Minimum Circuit Size Problem MCSP and Gap-MCSP](../../minimum-circuit-size-problem/minimum-circuit-size-problem.md)
 - [KT complexity and the minimum KT problem MKTP](../reductions-to-mcsp-and-mktp/kt-complexity-and-mktp.md)
+- [Oracle circuits and local circuit classes](../../hardness-magnification/oracle-circuits-and-local-circuit-classes.md)
 
 ## Proof depends on
 

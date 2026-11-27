@@ -10,7 +10,7 @@ The *Minimum Discrete Complexity Problem* MDCP takes $n$ in unary (so $V=[n]$), 
 
 ## Expansion
 
-The reduction is from $r$-bounded Set Cover, which is NP-hard to approximate. A random critical target set $A$ is built from the sets of the instance so that a cover of size $\ell$ gives $D(A\mid\mathcal{B}_S)\le\ell$, while any construction with $\ell$ operations uses at most $2\ell$ generators and so yields a cover of size at most $2\ell$. These bounds give a gap-preserving randomized reduction. The same technique, with new ideas, proves NP-hardness of multi-output MCSP ([Multi-output MCSP is NP-hard](../../minimum-circuit-size-problem/multi-output-mcsp-np-hard.md)) and of partial-function MCSP.
+The reduction is from $r$-bounded Set Cover, which is NP-hard to approximate. A random critical target set $A$ is built from the sets of the instance so that a cover of size $\ell$ gives $D(A\mid\mathcal{B}_S)\le\ell$, while any construction with $\ell$ operations uses at most $2\ell$ generators and so yields a cover of size at most $2\ell$. These bounds give a gap-preserving randomized reduction. NP-hardness of Partial-MCSP with the partial function given as a list of points and their values follows almost immediately, by converting circuit minimization over arbitrary generators into a problem about partial functions; this list form is [Succinct MCSP](../../minimum-circuit-size-problem/succinct-mcsp.md), not the partial-truth-table problem. The technique combined with several new ideas proves NP-hardness of multi-output MCSP ([Multi-output MCSP is NP-hard](../../minimum-circuit-size-problem/multi-output-mcsp-np-hard.md)).
 
 ## Depends on
 
@@ -24,4 +24,4 @@ None.
 
 ## Sources
 
-- Rahul Ilango, Bruno Loff, Igor Carboni Oliveira, "NP-Hardness of Circuit Minimization for Multi-Output Functions", *Computational Complexity Conference (CCC)*, 2020, https://doi.org/10.4230/LIPIcs.CCC.2020.22 (Definitions 3 and 7, Theorem 8, Lemmas 9 to 11, Section 3.2).
+- Rahul Ilango, Bruno Loff, Igor Carboni Oliveira, "NP-Hardness of Circuit Minimization for Multi-Output Functions", *Computational Complexity Conference (CCC)*, 2020, https://doi.org/10.4230/LIPIcs.CCC.2020.22 (Definitions 2, 3 and 7, Theorem 8, Lemmas 9 to 11, Sections 1, 3.2 and 3.3).

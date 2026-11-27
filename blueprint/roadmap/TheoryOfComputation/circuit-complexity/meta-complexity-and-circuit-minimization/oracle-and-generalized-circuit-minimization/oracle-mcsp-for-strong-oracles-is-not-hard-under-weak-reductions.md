@@ -11,7 +11,7 @@ $\mathrm{MCSP}^{\mathrm{QBF}}$, although PSPACE-complete under ZPP reductions, i
 
 ## Expansion
 
-The proofs pass to succinct versions. The B-succinct version of $\mathrm{MCSP}^A$, whose instances are given by B-oracle circuits for the truth table, lies in $(\Sigma^p_2)^A$ when $B\le^p_T A$. A reduction from SAT whose output bits are computable within the oracle's class becomes a reduction from succinct SAT, which is NEXP-complete, to succinct $\mathrm{MCSP}^A$: for item 1 this puts NEXP in $(\Sigma^p_2)^{\mathrm{EXP}}=\mathrm{EXP}$, and for item 2 in PSPACE. Repeating the argument with PSPACE in place of NP would give $\mathrm{EXPSPACE}=\mathrm{PSPACE}$, contradicting the space hierarchy theorem, which is item 3. For item 4, a uniform $\mathrm{AC}^0$ reduction yields a language in PH that requires $A$-oracle circuits of size $2^{\Omega(n)}$ almost everywhere, which contradicts PH-hardness of $A$ under P/poly reductions.
+The proofs pass to succinct versions. The B-succinct version of $\mathrm{MCSP}^A$, whose instances are given by B-oracle circuits for the truth table, lies in $(\Sigma^p_2)^A$ when $B\le^p_T A$. A reduction from SAT whose output bits are computable within the oracle's class becomes a reduction from succinct SAT, which is NEXP-complete, to succinct $\mathrm{MCSP}^A$: for item 1 this puts NEXP in $(\Sigma^p_2)^{\mathrm{EXP}}=\mathrm{EXP}$, and for item 2 in PSPACE. Repeating the argument with PSPACE in place of NP would give $\mathrm{EXPSPACE}=\mathrm{PSPACE}$, contradicting the space hierarchy theorem, which is item 3. For item 4, a uniform $\mathrm{AC}^0$ reduction yields a language in PH that requires $A$-oracle circuits of size $2^{\Omega(n)}$ almost everywhere, which contradicts PH-hardness of $A$ under P/poly reductions; the step uses Håstad's bound that depth-three circuits for PARITY on $m$ bits need size $2^{\Omega(\sqrt{m})}$.
 
 ## Depends on
 
@@ -27,6 +27,7 @@ The proofs pass to succinct versions. The B-succinct version of $\mathrm{MCSP}^A
 ## Proof depends on
 
 - [Space hierarchy theorem](../../../hierarchy-theorems-and-barriers/space-hierarchy-theorem/space-hierarchy.md)
+- [Depth-d circuit size of parity](../../lower-bounds-for-ac0-circuits/depth-d-circuit-size-of-parity.md)
 
 ## Sources
 

@@ -22,8 +22,9 @@ If $f$ and $g$ differ on one input $a$, then $|\mathrm{size}(f)-\mathrm{size}(g)
 
 ## Proof depends on
 
-None.
+- [McDiarmid's inequality, upper tail](../../../../Probability/concentration-inequalities/mcdiarmid-s-inequality/measure-real-sub-integral-ge-le-of-bound.md)
+- [McDiarmid's inequality, lower tail](../../../../Probability/concentration-inequalities/mcdiarmid-s-inequality/measure-real-integral-sub-ge-le-of-bound.md)
 
 ## Sources
 
-- Alexander Golovnev, Rahul Ilango, Russell Impagliazzo, Valentine Kabanets, Antonina Kolokolova, Avishay Tal, "AC^0[p] Lower Bounds Against MCSP via the Coin Problem", *International Colloquium on Automata, Languages, and Programming (ICALP)*, 2019, https://doi.org/10.4230/LIPIcs.ICALP.2019.66 (Theorem 3.1).
+- Alexander Golovnev, Rahul Ilango, Russell Impagliazzo, Valentine Kabanets, Antonina Kolokolova, Avishay Tal, "AC^0[p] Lower Bounds Against MCSP via the Coin Problem", *International Colloquium on Automata, Languages, and Programming (ICALP)*, 2019, https://doi.org/10.4230/LIPIcs.ICALP.2019.66 (Theorems 2.3 and 3.1).

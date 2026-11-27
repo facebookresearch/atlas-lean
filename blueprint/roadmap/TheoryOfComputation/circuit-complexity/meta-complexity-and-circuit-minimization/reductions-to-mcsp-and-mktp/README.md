@@ -3,7 +3,7 @@
 Problems believed hard, from discrete logarithm and Graph Isomorphism to all of SZK, reduce to MCSP and to KT-complexity minimization by randomized oracle algorithms.
 
 - [BPP is contained in ZPP relative to MCSP](bpp-in-zpp-with-an-mcsp-oracle.md)
-- [Discrete logarithm and factoring reduce to MCSP](discrete-logarithm-and-factoring-reduce-to-mcsp.md)
+- [Discrete logarithm reduces to MCSP, and easy MCSP rules out strong pseudorandom generators](discrete-logarithm-and-factoring-reduce-to-mcsp.md)
 - [Graph Isomorphism is in RP relative to MCSP](graph-isomorphism-in-rp-with-an-mcsp-oracle.md)
 - [Isomorphism problems are in ZPP relative to MKTP](isomorphism-problems-in-zpp-with-an-mktp-oracle.md)
 - [KT complexity and the minimum KT problem MKTP](kt-complexity-and-mktp.md)

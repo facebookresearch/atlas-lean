@@ -13,7 +13,7 @@ By contrast, SAT, Vertex Cover, Independent Set, Hamiltonian Path and 3-Coloring
 
 ## Expansion
 
-MCSP instances list whole truth tables, and a local reduction prints each bit of its output from little information, so the output truth tables have small circuits, and the size parameter is small too or the instance is trivially yes. First make the reduction natural: answer "no" to every bit query made while computing the size parameter, and pad the PARITY instance with zeros placed to agree with those answers. Then the produced instances can be solved by searching small circuits, and this search, combined with the reduction, would compute PARITY too cheaply, contradicting known lower bounds for parity.
+MCSP instances list whole truth tables, and a local reduction prints each bit of its output from little information, so the output truth tables have small circuits, and the size parameter is small too or the instance is trivially yes. First make the reduction natural: answer "no" to every bit query made while computing the size parameter, and pad the PARITY instance with zeros placed to agree with those answers. Then the produced instances can be solved by searching small circuits, and this search, combined with the reduction, would give depth-three circuits of size $2^{\tilde O(n^{\delta})}$ for PARITY (depth five in the randomized case), contradicting Håstad's bound that depth-$d$ circuits for PARITY need size $2^{\Omega(n^{1/(d-1)})}$; this is where $\delta<1/2$ and $\delta<1/5$ come from.
 
 ## Depends on
 
@@ -23,7 +23,7 @@ MCSP instances list whole truth tables, and a local reduction prints each bit of
 
 ## Proof depends on
 
-- [Parity is not in AC0](../../lower-bounds-for-ac0-circuits/parity-not-in-ac0.md)
+- [Depth-d circuit size of parity](../../lower-bounds-for-ac0-circuits/depth-d-circuit-size-of-parity.md)
 
 ## Sources
 

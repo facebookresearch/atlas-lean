@@ -26,6 +26,7 @@ The proofs use relativizing hardness-versus-randomness constructions in the cont
 - [PSPACE](../../../complexity-classes/time-and-space-complexity-classes/pspace.md)
 - [ZPP](../../../complexity-classes/time-and-space-complexity-classes/zpp.md)
 - [Polynomial time with polynomial advice](../../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
+- [The complexity class P](../../../complexity-classes/the-classes-p-np-and-conp/p.md)
 
 ## Proof depends on
 

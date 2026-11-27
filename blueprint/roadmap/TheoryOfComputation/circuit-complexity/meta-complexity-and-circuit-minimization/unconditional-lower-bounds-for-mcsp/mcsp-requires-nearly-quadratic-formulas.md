@@ -1,10 +1,10 @@
 # MCSP requires nearly quadratic De Morgan formulas
 
-For a suitable small size threshold, every De Morgan formula computing MCSP on truth tables of length $n$ has size $n^{2-O(1/\sqrt{\log n})}$, nearly matching the best formula lower bounds known for any explicit function.
+For the size threshold $s(n)=2^{\sqrt{\log n}/2}$, every De Morgan formula computing MCSP on truth tables of length $n$ has size $n^{2-O(1/\sqrt{\log n})}$, nearly matching the best formula lower bounds known for any explicit function.
 
 Let $L(f)$ denote the minimum leaf size of a De Morgan formula computing $f$, and let $\mathrm{MCSP}[s]$ on inputs of length $n$ ask whether the truth table has circuit size at most $s(n)$.
 
-**Theorem (Hirahara–Santhanam).** For the threshold $s(n)=2^{O(\sqrt{\log n})}$ fixed in the theorem, $\mathrm{MCSP}[s]$ requires De Morgan formulas of size $n^{2-O(1/\sqrt{\log n})}$; that is, $L(\mathrm{MCSP}[s])\ge n^{2-O(1/\sqrt{\log n})}$, where $n$ is the input length.
+**Theorem (Hirahara–Santhanam).** For $s(n)=n^{1/(2\sqrt{\log n})}=2^{\sqrt{\log n}/2}$, $\mathrm{MCSP}[s]$ requires De Morgan formulas of size $n^{2-O(1/\sqrt{\log n})}$; that is, $L(\mathrm{MCSP}[s])\ge n^{2-O(1/\sqrt{\log n})}$, where $n$ is the input length.
 
 **Key lemma.** If a restriction $\rho:[n]\to\{0,1,*\}$ is computable by a circuit of size $s$ and $V=\rho^{-1}(*)$, then for $f=\mathrm{MCSP}[s]$ one has $L(f|_{\rho})\ge|V|-O(s\log s)$.
 

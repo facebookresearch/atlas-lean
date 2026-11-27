@@ -28,6 +28,7 @@ The proof of the $\mathrm{AC}^0[p]$ lower bound shows that MCSP with a fixed thr
 
 - [MCSP is not in AC0(p)](mcsp-is-not-in-ac0-p.md)
 - [Williams: NEXP is not in ACC0](../../williams-nexp-not-in-acc0.md)
+- [Impagliazzo–Kabanets–Wigderson easy witness lemma for NEXP](../../algorithmic-method-nqp-and-almost-everywhere-bounds/easy-witness-ikw.md)
 
 ## Sources
 

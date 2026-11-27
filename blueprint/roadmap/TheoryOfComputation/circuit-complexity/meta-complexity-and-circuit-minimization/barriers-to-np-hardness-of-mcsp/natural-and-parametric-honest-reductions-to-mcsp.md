@@ -1,6 +1,6 @@
 # Natural and parametric honest reductions to MCSP
 
-Two restrictions on reductions to MCSP: a reduction is *natural* when the size parameter of every produced instance depends only on the input length, and *parametric honest* when every size parameter is at least $|x|^{\varepsilon}$. Textbook NP-completeness reductions have both forms.
+Two restrictions on reductions to MCSP: a reduction is *natural* when the size parameter of every produced instance depends only on the input length, and *parametric honest* when every size parameter is at least $|x|^{\varepsilon}$. Textbook NP-completeness reductions, such as those from SAT to 3-SAT and from 3-SAT to Vertex Cover, are natural.
 
 **Natural many-one reductions (Kabanets–Cai).** A Karp reduction $R$ from $A$ to $B$ is *natural* if for every instance $I$ of $A$ the size of $R(I)$, and every numerical parameter of $R(I)$, depends only on $|I|$, and $|I|$ and $|R(I)|$ are polynomially related. For a reduction to MCSP, the produced instance $(T,s)$ then has $|T|$ and $s$ determined by $|I|$.
 
@@ -23,6 +23,6 @@ None.
 
 ## Sources
 
-- Valentine Kabanets, Jin-Yi Cai, "Circuit Minimization Problem", *Proceedings of the 32nd Annual ACM Symposium on Theory of Computing (STOC)*, 2000, https://doi.org/10.1145/335305.335314 (Section 3.1 of the full version read).
+- Valentine Kabanets, Jin-Yi Cai, "Circuit Minimization Problem", *Proceedings of the 32nd Annual ACM Symposium on Theory of Computing (STOC)*, 2000, https://doi.org/10.1145/335305.335314 (Section 3.1, numbering of the full version dated 15 November 1999, ECCC TR99-045).
 - John Matthew Hitchcock, A. Pavan, "On the NP-Completeness of the Minimum Circuit Size Problem", *Foundations of Software Technology and Theoretical Computer Science (FSTTCS)*, 2015, https://doi.org/10.4230/LIPIcs.FSTTCS.2015.236 (Definitions 2.2, 2.6 and 2.7).
 - Michael Saks, Rahul Santhanam, "Circuit Lower Bounds from NP-Hardness of MCSP Under Turing Reductions", *Computational Complexity Conference (CCC)*, 2020, https://doi.org/10.4230/LIPIcs.CCC.2020.26 (Definitions 5 and 6).
