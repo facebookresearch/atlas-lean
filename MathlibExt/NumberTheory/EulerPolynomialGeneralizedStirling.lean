@@ -26,7 +26,7 @@ an expansion of `2^n E_n(x)`.
   *Generalizations of Several Explicit Formulas for Euler Polynomials*, INTEGERS 25 (2025),
   Article A65, pp. 1–15, Theorem 4.2, equations (28)–(29). We use the half-argument expansion
   in their proof of Theorem 4.2, before expanding the coefficients from Lemma 2.2.
-* Chun-Feng Wei and Feng Qi, *Several closed expressions for the Euler numbers*, Journal of
+* Chun-Fu Wei and Feng Qi, *Several closed expressions for the Euler numbers*, Journal of
   Inequalities and Applications 2015 (2015), Article 219, Theorem 1.3, equation (1.5),
   the Euler-number formula that Theorem 4.2 generalizes.
 -/
