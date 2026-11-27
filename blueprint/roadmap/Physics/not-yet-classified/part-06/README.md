@@ -13,4 +13,3 @@
 - [Phasor Element Laws](phasor-element-laws/README.md)
 - [Physical Error Budgets](physical-error-budgets/README.md)
 - [Physical Failure Events](physical-failure-events/README.md)
-- [Physical Galerkin Error](physical-galerkin-error/README.md)

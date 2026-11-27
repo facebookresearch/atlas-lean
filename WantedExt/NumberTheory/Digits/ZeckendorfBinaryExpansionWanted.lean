@@ -24,10 +24,12 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Order.LiminfLimsup
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.Digits.BinaryFundamentalSequence
+public import MathlibExt.NumberTheory.Digits.ZeckendorfBinaryRank
 public import MathlibExt.NumberTheory.Digits.ZeckendorfBlockCountRecurrence
 public import MathlibExt.NumberTheory.Digits.ZeckendorfFundamentalSequence
 public import MathlibExt.NumberTheory.Digits.ZeckendorfMaxBlockScaling
 public import MathlibExt.NumberTheory.Digits.ZeckendorfProperBlockCount
+public import MathlibExt.NumberTheory.Digits.ZeckendorfProperBlockLex
 public import MathlibExt.NumberTheory.Digits.ZeckendorfSubcollection
 
 /-!
@@ -53,21 +55,6 @@ note before `IsPeriodicZeckendorfPair`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Duality formula for binary expansions without adjacent ones.** For $x \in \mathbb{N}$ let
-$z(x)$ be the number of $n < x$ whose binary expansion has no two adjacent digits equal to $1$.
-For a finite set $A \subseteq \mathbb{N}$, put $\bar A = A$ if there is no $j$ with
-$j, j + 1 \in A$, and otherwise $\bar A = \{k \in A : k \ge j\}$, where $j$ is the largest index
-with $j, j + 1 \in A$. Then $z\bigl(\sum_{k \in A} 2^k\bigr) = \sum_{k \in \bar A} F_{k+2}$,
-where $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = F_{n+1} + F_n$ are the Fibonacci numbers.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 2 (`integers-2025-A25-lem-2`). -/
-public theorem_wanted card_zeckendorfBinary_lt_sum_two_pow (A : Finset ℕ) :
-    let J := A.filter (fun j => j + 1 ∈ A)
-    let Abar := if h : J.Nonempty then A.filter (fun k => J.max' h ≤ k) else A
-    ((Finset.range (∑ k ∈ A, 2 ^ k)).filter (fun n => n &&& (n >>> 1) = 0)).card =
-      ∑ k ∈ Abar, Nat.fib (k + 2)
 
 /-- **Example of the ascending lexicographic order.** Write $(a_0, a_1, a_2, a_3, a_4)$ for the
 coefficient function with finite support whose entry at index $i \le 4$ is $a_i$ and whose other
@@ -358,17 +345,6 @@ public theorem_wanted subcollectionCount_eval_eq_eval_bar {E E' : Set (ℕ →�
     (hb : IsImmediateSuccessor E μc μb) :
     subcollectionCount E H' (zeckendorfEval H' μ) = zeckendorfEval H μb
 
-/-- **Descending lexicographic order.** For coefficient functions
-$\varepsilon, \varepsilon' \colon \mathbb{N} \to \mathbb{N}$, $\varepsilon <_d \varepsilon'$
-means that there is an index $k$ with $\varepsilon_k < \varepsilon'_k$ and
-$\varepsilon_j = \varepsilon'_j$ for all $j < k$: at the smallest index where they differ,
-$\varepsilon$ is smaller.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.3). -/
-public def DescLexLT (ε ε' : ℕ → ℕ) : Prop :=
-  ∃ k, ε k < ε' k ∧ ∀ j, j < k → ε j = ε' j
-
 /-- **The maximal block $\bar\beta^2$ for $L = (2, 3, 0)$.** For $L = (2, 3, 0)$, the maximal
 $L^*$-block starting at index $1$ (indices start at $0$; the paper's $\bar\beta^2$) has entries
 $0, 2, 3, 0, 2$ at the indices $0, 1, 2, 3, 4$.
@@ -498,20 +474,6 @@ public theorem_wanted exists_prefix_eq_of_lStar_near (L : List ℕ) (hL : 2 ≤ 
         ∑' k, (ε' k : ℝ) * Q k < ∑' k, (ε k : ℝ) * Q k + δ → ∀ i ≤ n, ε' i = ε i) ∧
       (∀ ε' ∈ lStarCollection L, ∑' k, (ε k : ℝ) * Q k - δ < ∑' k, (ε' k : ℝ) * Q k →
         ∑' k, (ε' k : ℝ) * Q k < ∑' k, (ε k : ℝ) * Q k → ∀ i ≤ n, ε' i = lStarInf L ε i)
-
-/-- **Proper blocks below a maximal block.** Let $L = (e_1, \dots, e_N)$ with $N \ge 2$ and
-$e_1 \ne 0$, let $\varepsilon \colon \mathbb{N} \to \mathbb{N}$ and $b \in \mathbb{N}$ with
-$\varepsilon_i = 0$ for all $i < b$, and let $\bar\beta$ be the maximal $L^*$-block starting at
-index $b$. Then $\varepsilon <_d \bar\beta$ in the descending lexicographic order if and only if
-there is $k \ge b$ such that the function equal to $\varepsilon_i$ for $i \le k$ and to $0$ for
-$i > k$ is a proper $L^*$-block with support interval $[b, k]$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 8 (`integers-2025-A25-lem-8`; arXiv:2308.12872v1, Section 3.3). -/
-public theorem_wanted descLexLT_maxLStarBlock_iff (L : List ℕ) (hL : 2 ≤ L.length)
-    (he : L.getD 0 0 ≠ 0) {ε : ℕ → ℕ} {b : ℕ} (hε : ∀ i, i < b → ε i = 0) :
-    DescLexLT ε (maxLStarBlock L b) ↔
-      ∃ k, b ≤ k ∧ IsProperLStarBlock L (fun i => if i ≤ k then ε i else 0) b k
 
 /-- **Decomposing $L^*$-blocks into $\tilde L^*$-blocks.** Let $L$ and $\tilde L$ be lists of
 natural numbers of length at least $2$ with nonzero first entries whose periodic Zeckendorf

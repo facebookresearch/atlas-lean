@@ -29,3 +29,20 @@ example : fixedTilingCount (cellR2F 3 4) (Equiv.swap (0 : Fin 2) 1) = 64 := by
 example : fixedTilingCount (cellR2F 1 2) (1 : Equiv.Perm (Fin 0)) = 0 := by
   rw [rectangularGrid_r2f_even 1 2 _ (by simp) (by decide)]
   decide
+
+-- Only the second coordinate changes.
+example : cellR2F 2 3 (1, 0) = (1, 2) := by decide
+
+-- Independently enumerate the tilings: the middle cell has no fixed design.
+example : fixedTilingCount (cellR2F 1 3) (Equiv.swap (0 : Fin 2) 1) = 0 := by decide
+
+-- On a 2 × 3 grid there are two reflected pairs and two fixed cells.
+-- With four designs and one swap, each pair has four choices and each fixed cell has two.
+example : fixedTilingCount (cellR2F 2 3) (Equiv.swap (0 : Fin 4) 1) = 64 := by
+  rw [rectangularGrid_r2f_odd 2 3 _ (by simp [sq]) (by decide)]
+  decide
+
+-- For second side one, both cells lie on the reflection axis.
+example : fixedTilingCount (cellR2F 2 1) (Equiv.swap (0 : Fin 4) 1) = 4 := by
+  rw [rectangularGrid_r2f_odd 2 1 _ (by simp [sq]) (by decide)]
+  decide
