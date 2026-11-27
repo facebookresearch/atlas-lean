@@ -429,7 +429,7 @@ theorem ati_aeTail_of_approxFarOut {window : ℕ → Set E}
   refine ⟨⋃ N, ⋂ i, A (i + N), atiTailEvent_liminf hwindow A hAmeas, ?_⟩
   have hsumm : ∑' n, mu (s ∆ A n) ≠ ⊤ := by
     refine ne_top_of_le_ne_top ?_
-      (ENNReal.tsum_le_tsum fun n => (hAlt n).le)
+      (tsum_le_tsum fun n => (hAlt n).le)
     rw [ENNReal.tsum_geometric]
     simp
   have hfin : ∀ᵐ x ∂mu, {n | x ∈ s ∆ A n}.Finite :=

@@ -1,0 +1,3 @@
+# Edge factor of a block-model labeling
+
+For a finite linearly ordered vertex set $V$, a finite set of classes $K$, real affinities $W \in \mathbb{R}^{K \times K}$, a labeling $z : V \to K$ and a simple graph $G$ on $V$, the edge factor of $z$ at $G$ is $\prod_{u < v} \bigl(W_{z(u)z(v)} \text{ if } uv \in G, \text{ else } 1 - W_{z(u)z(v)}\bigr)$, the product over unordered pairs of distinct vertices. When every affinity lies in $[0, 1]$ it is the probability of $G$ under independent Bernoulli edges given the classes; for other real affinities it is only this product (an affinity of $2$ gives a non-edge factor of $-1$).
