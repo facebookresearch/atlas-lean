@@ -77,16 +77,6 @@ section FiniteDividedPowers
 
 variable {p} {w : WittVector p (PreTilt 𝓞_ℂ_[p] p)}
 
-variable (p) in
-/-- The action of `σ ∈ Gal(ℚ̄_p/ℚ_p)` on `W(𝓞_ℂ_[p]♭)[1/p]`, induced by `integralGalois p σ`. -/
-private abbrev galoisLocalization (σ : Gal(PadicAlgCl p/ℚ_[p])) : 𝔸ₚ →+* 𝔸ₚ :=
-  Localization.awayMapNatCast (WittVector.map (PreTilt.map p (integralGalois p σ).toRingHom)) p
-
-/-- The action on `W(𝓞_ℂ_[p]♭)[1/p]` preserves the kernel of `θ`. -/
-private theorem galoisLocalization_mem_ker (σ : Gal(PadicAlgCl p/ℚ_[p])) {y : 𝔸ₚ} (hy : y ∈ 𝕀) :
-    galoisLocalization p σ y ∈ 𝕀 :=
-  ker_fontaineThetaInvertP_le_comap p (integralGalois p σ).toRingHom hy
-
 /-- For a generator `w` of the kernel of `θ`, `σ(w) = w c` for some `c ∈ W(𝓞_ℂ_[p]♭)`, since
 `σ(w) ∈ ker θ = (w)`. -/
 private theorem exists_map_eq_mul (hgen : RingHom.ker (fontaineTheta 𝓞_ℂ_[p] p) = span {w})
@@ -180,31 +170,6 @@ theorem galoisCrystallineCompletion_algebraMap
         (galoisFiniteDividedPowers p hgen σ x) :=
   AdicCompletion.mapRingHom_of _ _ _ _ x
 
-/-- Membership in `restrictedPowerSeries p`, unfolded. -/
-private theorem mem_restrictedPowerSeries {f : 𝔸⟦X⟧} :
-    f ∈ restrictedPowerSeries p ↔
-      ∀ k : ℕ, ∃ N : ℕ, ∀ n ≥ N, (p : 𝔸) ^ k ∣ PowerSeries.coeff n f :=
-  Iff.rfl
-
-/-- The coefficientwise image of a restricted power series under a ring map is restricted. -/
-private theorem map_mem_restrictedPowerSeries (g : 𝔸 →+* 𝔸) {f : 𝔸⟦X⟧}
-    (hf : f ∈ restrictedPowerSeries p) : PowerSeries.map g f ∈ restrictedPowerSeries p := by
-  refine mem_restrictedPowerSeries.2 fun k => ?_
-  obtain ⟨N, hN⟩ := mem_restrictedPowerSeries.1 hf k
-  refine ⟨N, fun n hn => ?_⟩
-  rw [PowerSeries.coeff_map]
-  have := map_dvd g (hN n hn)
-  rwa [map_pow, map_natCast] at this
-
-/-- `Σ cⁿ aₙ Xⁿ` is restricted if `Σ aₙ Xⁿ` is. -/
-private theorem rescale_mem_restrictedPowerSeries (c : 𝔸) {f : 𝔸⟦X⟧}
-    (hf : f ∈ restrictedPowerSeries p) : rescale c f ∈ restrictedPowerSeries p := by
-  refine mem_restrictedPowerSeries.2 fun k => ?_
-  obtain ⟨N, hN⟩ := mem_restrictedPowerSeries.1 hf k
-  refine ⟨N, fun n hn => ?_⟩
-  rw [PowerSeries.coeff_rescale]
-  exact Dvd.dvd.mul_left (hN n hn) _
-
 /-- If `σ(w) = w c`, then `σ(Σ_{n<N} aₙ w^n/n!) = Σ_{n<N} σ(aₙ) cⁿ w^n/n!`. -/
 private theorem galoisLocalization_dividedPowerSum (σ : Gal(PadicAlgCl p/ℚ_[p])) {c : 𝔸}
     (hc : WittVector.map (PreTilt.map p (integralGalois p σ).toRingHom) w = w * c) (f : 𝔸⟦X⟧)
@@ -258,16 +223,6 @@ private theorem galoisLocalization_coeff_mul_pow (σ : Gal(PadicAlgCl p/ℚ_[p])
   rw [← map_pow, ← map_mul, coeff_dividedPowerSeries_mul_pow, map_mul,
     Localization.awayMapNatCast_algebraMap, galoisLocalization_dividedPower]
 
-/-- `σ(Σ aₖ xᵏ) = Σ σ(aₖ) σ(x)ᵏ` in `B_dR^+`. -/
-private theorem galoisBDeRhamPlus_evalBDeRhamPlus (σ : Gal(PadicAlgCl p/ℚ_[p])) {x : 𝔸ₚ}
-    (hx : x ∈ 𝕀) (f : 𝔸ₚ⟦X⟧) :
-    galoisBDeRhamPlus p σ (evalBDeRhamPlus p hx f) =
-      evalBDeRhamPlus p (galoisLocalization_mem_ker σ hx)
-        (PowerSeries.map (galoisLocalization p σ) f) := by
-  change (galoisBDeRhamPlus p σ : 𝔹⁺ →+* 𝔹⁺) (evalBDeRhamPlus p hx f) = _
-  rw [galoisBDeRhamPlus_toRingHom]
-  exact AdicCompletion.mapRingHom_evalPowerSeries _ _ _ _ hx f
-
 /-- **The map `A_cris → B_dR^+` is Galois equivariant**: `j(σ x) = σ(j x)`. -/
 theorem toBDeRhamPlus_galoisCrystallineCompletion
     (hgen : RingHom.ker (fontaineTheta 𝓞_ℂ_[p] p) = span {w}) (σ : Gal(PadicAlgCl p/ℚ_[p]))
@@ -281,13 +236,13 @@ theorem toBDeRhamPlus_galoisCrystallineCompletion
   obtain ⟨f, hf, rfl⟩ := hx
   obtain ⟨c, hc⟩ := hσ
   have hw := algebraMap_mem_ker_fontaineThetaInvertP p (fontaineTheta_eq_zero_of_ker_eq_span hgen)
-  have hf' := rescale_mem_restrictedPowerSeries c (map_mem_restrictedPowerSeries
+  have hf' := rescale_mem_restrictedPowerSeries p c (map_mem_restrictedPowerSeries p
     (WittVector.map (PreTilt.map p (integralGalois p σ).toRingHom)) hf)
   refine (congrArg (toBDeRhamPlus hgen)
     (galoisCrystallineCompletion_ofRestricted hgen σ hc hf hf')).trans <|
     (toBDeRhamPlus_ofRestricted hgen hw hf').trans <|
     Eq.trans ?_ ((congrArg (galoisBDeRhamPlus p σ) (toBDeRhamPlus_ofRestricted hgen hw hf)).trans
-      (galoisBDeRhamPlus_evalBDeRhamPlus σ hw _)).symm
+      (galoisBDeRhamPlus_evalBDeRhamPlus p σ hw _)).symm
   refine AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq _ _ _ _ _ fun k => ?_
   rw [coeff_dividedPowerSeries_mul_pow, PowerSeries.coeff_map, galoisLocalization_coeff_mul_pow, hc,
     dividedPower_mul_right, PowerSeries.coeff_rescale, PowerSeries.coeff_map, map_mul]
@@ -348,10 +303,10 @@ theorem range_toBDeRhamPlus_eq_aCris {w : 𝔸}
   ext y
   constructor
   · rintro ⟨f, hf, rfl⟩
-    exact ⟨rescale (u : 𝔸) f, rescale_mem_restrictedPowerSeries _ hf,
+    exact ⟨rescale (u : 𝔸) f, rescale_mem_restrictedPowerSeries p _ hf,
       evalBDeRhamPlus_dividedPowerSeries_eq p hw hξ hu f⟩
   · rintro ⟨f, hf, rfl⟩
-    exact ⟨rescale (↑u⁻¹ : 𝔸) f, rescale_mem_restrictedPowerSeries _ hf,
+    exact ⟨rescale (↑u⁻¹ : 𝔸) f, rescale_mem_restrictedPowerSeries p _ hf,
       evalBDeRhamPlus_dividedPowerSeries_eq p hξ hw
         (by rw [hu, mul_assoc, Units.mul_inv, mul_one]) f⟩
 
@@ -407,7 +362,7 @@ theorem logTeichmuller_mem_aCris {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 
   rw [mem_aCris_iff]
   refine ⟨PowerSeries.mk fun n =>
     if n = 0 then 0 else (-1) ^ (n + 1) * (((n - 1).factorial : ℕ) : 𝔸) * c ^ n,
-    mem_restrictedPowerSeries.2 fun k => ⟨p * k + 1, fun n hn => ?_⟩, ?_⟩
+    (mem_restrictedPowerSeries p).2 fun k => ⟨p * k + 1, fun n hn => ?_⟩, ?_⟩
   · rw [PowerSeries.coeff_mk, ite_eq_right (by omega)]
     obtain ⟨d, hd⟩ := (pow_dvd_factorial_mul p k).trans
       (Nat.factorial_dvd_factorial (show p * k ≤ n - 1 by omega))
@@ -477,8 +432,8 @@ theorem aCris_le_aMax : aCris p ≤ aMax p := by
   obtain ⟨f, hf, rfl⟩ := (mem_aCris_iff p).1 hy
   choose e he using exists_mul_factorial_eq_pow p
   refine Subring.mem_map.2 ⟨PowerSeries.mk fun n => PowerSeries.coeff n f * padicIntToAinf p (e n),
-    mem_restrictedPowerSeries.2 fun k => ?_, ?_⟩
-  · obtain ⟨N, hN⟩ := mem_restrictedPowerSeries.1 hf k
+    (mem_restrictedPowerSeries p).2 fun k => ?_, ?_⟩
+  · obtain ⟨N, hN⟩ := (mem_restrictedPowerSeries p).1 hf k
     exact ⟨N, fun n hn => by rw [PowerSeries.coeff_mk]; exact Dvd.dvd.mul_right (hN n hn) _⟩
   rw [RingHom.comp_apply]
   refine AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq _ _ _ _ _ fun n => ?_
