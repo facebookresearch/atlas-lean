@@ -1,6 +1,6 @@
 # A leaky bucket controller enforces an affine arrival curve
 
-A *leaky bucket controller* with leak rate $r$ and bucket size $b$ analyzes a flow $R$ as follows: a bucket of fluid of size $b$, initially empty, leaks at rate $r$ while it is not empty; each piece of data pours into the bucket an amount of fluid equal to its amount of data, and data that would make the bucket overflow is declared non-conformant and adds no fluid, the rest being conformant. Then:
+A *leaky bucket controller* with leak rate $r$ and bucket size $b$ analyzes a left-continuous flow $R$ (the convention of the source, under which the bucket content below is computed) as follows: a bucket of fluid of size $b$, initially empty, leaks at rate $r$ while it is not empty; each piece of data pours into the bucket an amount of fluid equal to its amount of data, and data that would make the bucket overflow is declared non-conformant and adds no fluid, the rest being conformant. Then:
 
 1. the flow of conformant data has the [affine arrival curve](arrival-curves.md) $\gamma_{r,b}$;
 2. if the input already has $\gamma_{r,b}$ as an arrival curve, all data is conformant.
