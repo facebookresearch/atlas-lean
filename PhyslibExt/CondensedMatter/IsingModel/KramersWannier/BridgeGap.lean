@@ -11,6 +11,7 @@ module
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import MathlibExt.Combinatorics.SimpleGraph.Lattice.FaceRegion
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanEnclosureDuality
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.OrbitWindingWitness
 public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkToPrimalWalk
@@ -27,8 +28,10 @@ For a closed lattice walk `Vc`, every boundary edge of the inside region `jec_le
 touches `Vc` (the easy half, `StatMech.Lattice.jec_leftRegion_bdEdge_support` in MathlibExt). The
 converse direction, that every edge of `Vc` is a
 boundary edge of the inside (`jbw_hard_gap Vc`), fails in general: `ceo_shiftSquare` is a
-counterexample. The boundary of a single site has odd degree at a neighbour
-(`jbw_vertexCut_not_even`), so a vertex cut is not an even edge set.
+counterexample. The boundary `StatMech.Lattice.bdEdgeSet2 S` of a site set `S` is the set of all
+unordered pairs, not necessarily lattice edges, with exactly one endpoint in `S`. The boundary of a
+single site has odd degree at a neighbour (`jbw_vertexCut_not_even`), so a vertex cut is not an
+even edge set.
 
 Headline fidelity:
 - `jbw_vertexCut_not_even` is unconditional. The reachability and easy-half facts used here are the
@@ -39,9 +42,8 @@ Headline fidelity:
 
 ## ii. Key results
 
-- `StatMech.Walls.jbw_bdEdgeSet` : boundary edges of a set of sites
 - `StatMech.Walls.jbw_vertexCut_not_even` : the boundary of a site is not even
-- `StatMech.Walls.jbw_hard_gap` : every edge of a loop is a boundary edge of its inside
+- `StatMech.Walls.jbw_hard_gap` : the proposition that every edge of a loop bounds its inside
 - `StatMech.Walls.jbw_jed_insufficient` : summary of the two facts
 
 ## iii. Table of contents
@@ -68,28 +70,21 @@ attribute [local instance] Classical.propDecidable
 
 /-! ## A. Boundary edges of a site -/
 
-/-- The set of lattice edges with exactly one endpoint in `S`. -/
-def jbw_bdEdgeSet (S : Set (Site 2)) : Set (Sym2 (Site 2)) := {e | bdEdge S e}
-
-@[simp] lemma jbw_mem_bdEdgeSet (S : Set (Site 2)) (e : Sym2 (Site 2)) :
-    e ∈ jbw_bdEdgeSet S ↔ bdEdge S e := Iff.rfl
-
 /-- The one-site set `{0}`. -/
 def jbw_singleton : Set (Site 2) := {origin 2}
 
 /-- The boundary of the site `0` meets `(1, 0)` in exactly one edge, so it is not even there. -/
 lemma jbw_vertexCut_not_even :
-    ¬ Even (jce_degree (jbw_bdEdgeSet jbw_singleton) ![(1 : ℤ), 0]) := by
+    ¬ Even (jce_degree (bdEdgeSet2 jbw_singleton) ![(1 : ℤ), 0]) := by
   classical
-  have hdeg : jce_degree (jbw_bdEdgeSet jbw_singleton) ![(1 : ℤ), 0] = 1 := by
+  have hdeg : jce_degree (bdEdgeSet2 jbw_singleton) ![(1 : ℤ), 0] = 1 := by
     rw [jce_degree]
     have hset : (Finset.univ.filter
         (fun i : Fin 4 => s(![(1 : ℤ), 0], jce_nbr ![(1 : ℤ), 0] i)
-          ∈ jbw_bdEdgeSet jbw_singleton)) = {1} := by
+          ∈ bdEdgeSet2 jbw_singleton)) = {1} := by
       ext i
       simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton,
-        jbw_mem_bdEdgeSet, bdEdge_mk, jbw_singleton, Set.mem_singleton_iff, jce_nbr,
-        origin_eq_zerozero]
+        mem_bdEdgeSet2, jbw_singleton, Set.mem_singleton_iff, jce_nbr, origin_eq_zerozero]
       fin_cases i <;>
         simp only [Matrix.cons_val_zero, Matrix.cons_val_one, site2_eq, Fin.isValue,
           Fin.ext_iff, Fin.val_one] <;> first | omega | tauto
@@ -98,7 +93,8 @@ lemma jbw_vertexCut_not_even :
 
 /-! ## B. The two halves of the inside-boundary matching -/
 
-/-- Every edge of the closed walk `Vc` is a boundary edge of its inside region. -/
+/-- The proposition that every edge of the closed walk `Vc` is a boundary edge of its inside
+region. -/
 def jbw_hard_gap {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) : Prop :=
   ∀ {u v : Site 2}, (hypercubicLattice 2).Adj u v →
     s(u, v) ∈ Vc.edges.toFinset → bdEdge (jec_leftRegion Vc) s(u, v)
@@ -119,7 +115,7 @@ lemma jbw_hardGap_iff_windingBody {a : Site 2} (Vc : (hypercubicLattice 2).Walk 
 
 /-- Summary: a vertex cut is not even, and face-region separation gives reachability. -/
 lemma jbw_jed_insufficient :
-    (¬ Even (jce_degree (jbw_bdEdgeSet jbw_singleton) ![(1 : ℤ), 0])) ∧
+    (¬ Even (jce_degree (bdEdgeSet2 jbw_singleton) ![(1 : ℤ), 0])) ∧
     (∀ (H : SimpleGraph (Site 2)), H.edgeSet.Finite → ∀ (p q f0 g0 : Site 2),
         (hypercubicLattice 2).Adj p q → s(p, q) ∉ H.edgeSet →
         (hypercubicLattice 2).Adj f0 g0 → sharedPrimalEdge f0 g0 = s(p, q) →
