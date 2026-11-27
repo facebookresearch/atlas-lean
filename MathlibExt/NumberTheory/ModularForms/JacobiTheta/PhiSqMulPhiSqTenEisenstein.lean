@@ -1409,7 +1409,9 @@ $$
 $$
 
 Source: K. R. Vasuki and P. Nagendra, *On Certain Quaternary Quadratic Forms*, INTEGERS 25
-(2025), Article A24, Lemma 3.3, Equation (3.13). -/
+(2025), Article A24, Lemma 3.3, Equation (3.13). The printed (3.13) has $4q^2$ in the last term (as
+do (3.14)–(3.16)); the exponent must be $3$, as stated here, since the $q$-expansions agree only
+with $q^3$. -/
 public theorem phi_sq_mul_phi_sq_ten_eisenstein (q : ℂ) (hq : ‖q‖ < 1) :
     (φ q) ^ 2 * (φ (q ^ 10)) ^ 2 =
       -(1 / 36) * (𝐏 q - 𝐏 (q ^ 2) + 2 * 𝐏 (q ^ 4) + 5 * 𝐏 (q ^ 5) - 8 * 𝐏 (q ^ 8)

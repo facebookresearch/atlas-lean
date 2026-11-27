@@ -13243,7 +13243,6 @@
   "MathlibExt/NumberTheory/ModularForms/CuspFormGamma0Two": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Weight-two cusp forms on Γ₀(2)"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/JacobiCubeEulerProduct": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Jacobi's identity for the cube of Euler's function"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/NonicProduct": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Rogers–Ramanujan–Slater functions of order eighteen"},
-  "MathlibExt/NumberTheory/ModularForms/JacobiTheta/PhiSqMulPhiSqTenEisenstein": {"to": "NumberTheory/quadratic-forms-sums-of-squares/binary-quaternary-forms", "title": "Representation numbers of quaternary quadratic forms"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/Ramanujan": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Ramanujan's theta function"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanEntry30": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Ramanujan's continued fractions of order sixteen"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanOneTwo": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Rogers–Ramanujan–Slater functions of order eighteen"},
