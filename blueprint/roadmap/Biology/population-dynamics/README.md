@@ -19,7 +19,6 @@ Differential-equation and matrix models of population growth, structure, species
 - [Replicator dynamics](replicator-dynamics/README.md)
 - [Stability of boundary evolutionarily stable strategies](stability-of-boundary-evolutionarily-stable-stra/README.md)
 
-- [Stability and competition](stability-and-competition/README.md)
 - [Chemostat dynamics](chemostat/README.md)
 
 - [Matrix population models](matrix-population-models/README.md)
