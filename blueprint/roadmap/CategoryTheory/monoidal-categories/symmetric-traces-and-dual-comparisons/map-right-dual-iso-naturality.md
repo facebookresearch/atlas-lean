@@ -4,4 +4,4 @@ Let $C$ and $D$ be monoidal categories and $F : C \to D$ a strong monoidal funct
 
 $$F(f^\vee) ; c_X.\mathrm{hom} = c_Y.\mathrm{hom} ; (Ff)^\vee.$$
 
-This is the image-pairing construction of Etingof–Gelaki–Nikshych–Ostrik, *Tensor Categories*, Example 2.10.6 (the book calls this evaluation order a left dual).
+This is the image-pairing construction of Etingof–Gelaki–Nikshych–Ostrik, *Tensor Categories*, Exercise 2.10.6 (the book calls this evaluation order a left dual).

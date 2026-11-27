@@ -23,8 +23,8 @@
 
 ## Int recovers symmetric rigid categories
 
-- [Formal negatives are embedded source duals](negative-iso.md)
-- [Every Int object is the embedding of a source object](representative-iso.md)
+- [Formal negatives are isomorphic to embedded duals over a right-rigid source](negative-iso.md)
+- [Representing an Int object up to isomorphism over a right-rigid source](representative-iso.md)
 - [Rigid Equivalence](rigid-equivalence.md)
 - [The inverse of the Int embedding for a rigid source](rigid-inverse-obj-iso.md)
 - [Rigid Inverse preserves trace](rigid-inverse-preserves-trace.md)
