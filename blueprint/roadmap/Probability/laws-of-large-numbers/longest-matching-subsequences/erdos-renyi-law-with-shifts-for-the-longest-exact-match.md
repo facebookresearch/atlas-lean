@@ -10,6 +10,12 @@ in particular $P(\lim_n M_n/\log_{1/p} n = 2) = 1$, twice the Erdős–Rényi gr
 
 - [Finite-state Markov chain with a given transition matrix](../../../Probability/markov-chains/finite-markov-chains/is-finite-markov-chain.md)
 
+## Proof depends on
+
+- [First moment method](../../../Combinatorics/probabilistic-combinatorics/first-and-second-moment-methods/measure-real-one-le-le-integral.md)
+- [Second moment method](../../../Combinatorics/probabilistic-combinatorics/first-and-second-moment-methods/measure-real-eq-zero-le-variance-div-sq.md)
+- [First Borel–Cantelli lemma for outer measures](../../../Probability/foundations/borel-cantelli-lemmas/first-borel-cantelli-lemma/measure-limsup-at-top-eq-zero.md)
+
 ## Expansion
 
 1. The model, the definition of $M_n$, and the heuristic that $n^2$ starting pairs balance the probability $p^m$ of a match of length $m$.

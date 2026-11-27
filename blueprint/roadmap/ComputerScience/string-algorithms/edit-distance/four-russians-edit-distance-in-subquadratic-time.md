@@ -5,6 +5,11 @@ Masek and Paterson (1980) show that the edit distance between strings $A$ and $B
 ## Depends on
 
 - [Edit distance algorithm](../../../ComputerScience/string-algorithms/edit-distance/edit-distance.md)
+- [Edit distance under general letter costs](../../../ComputerScience/string-algorithms/edit-distance-with-general-costs/general-cost-edit-distance.md)
+
+## Proof depends on
+
+- [The Wagner-Fischer recurrence for general costs](../../../ComputerScience/string-algorithms/edit-distance-with-general-costs/wagner-fischer-general-costs.md)
 
 ## Expansion
 
