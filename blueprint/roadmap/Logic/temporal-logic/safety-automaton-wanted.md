@@ -11,3 +11,4 @@ Since all states are accepting, $L_\omega(A)$ is the set of words on which $A$ h
 ## Sources
 
 - O. Kupferman and M. Y. Vardi, "Model checking of safety properties", *Formal Methods in System Design* 19 (2001), 291-314.
+- S. Zhu, L. M. Tabajara, J. Li, G. Pu and M. Y. Vardi, "A Symbolic Approach to Safety LTL Synthesis", HVC 2017, [arXiv:1709.07495](https://arxiv.org/abs/1709.07495), Definitions 3 and 6 and Theorem 5 of the arXiv version.

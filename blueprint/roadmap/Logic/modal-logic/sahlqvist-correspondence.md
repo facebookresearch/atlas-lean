@@ -11,3 +11,4 @@ When $W$ is empty the right-hand side holds vacuously, so $\psi$ must also hold 
 ## Sources
 
 - H. Sahlqvist, "Completeness and Correspondence in the First and Second Order Semantics for Modal Logic", in Proceedings of the Third Scandinavian Logic Symposium, North-Holland, 1975, 110-143; see also P. Blackburn, M. de Rijke, Y. Venema, Modal Logic, Cambridge University Press, 2001, §3.6.
+- M. de Rijke and H. Wansing, "Proofs and Expressiveness in Alethic Modal Logic", in *A Companion to Philosophical Logic*, Blackwell, ch. 28, Theorem 2 (Sahlqvist Correspondence Theorem).

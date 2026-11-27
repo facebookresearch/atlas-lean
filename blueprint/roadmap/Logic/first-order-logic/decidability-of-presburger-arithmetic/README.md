@@ -33,4 +33,3 @@
 - [Gödel number of the Presburger relation symbol](code-rel.md)
 - [Gödel numbers of Presburger formulas](code-formula.md)
 - [Provability in Presburger arithmetic](presburger-provable.md)
-- [Decidability of Presburger arithmetic](presburger-decidable.md)
