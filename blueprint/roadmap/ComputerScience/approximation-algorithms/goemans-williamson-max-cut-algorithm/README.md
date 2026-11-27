@@ -64,6 +64,10 @@ MAX DICUT (§7).
 - [The Goemans–Williamson guarantee](gw-constant-mul-cut-weight-le-integral.md)
 - [The Goemans–Williamson guarantee for nearly optimal vectors](gw-constant-mul-cut-weight-sub-le-integr.md)
 
+## Simpler MAX-CUT guarantees
+
+- [MAX-CUT: the random cut and local search](max-cut-the-random-cut-and-local-search/README.md): in an unweighted graph a uniformly random cut cuts half of the edges in expectation and a locally optimal cut cuts at least half, the guarantees the semidefinite rounding improves on
+
 ## Related topics
 
 - [Theta function of a graph](../../../GraphTheory/graph-invariants-and-labelings/theta-function-of-a-graph/README.md): the

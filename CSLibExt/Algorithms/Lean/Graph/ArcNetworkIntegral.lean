@@ -178,8 +178,9 @@ private theorem flowValue_pushforward {V : Type*} [Fintype V] [DecidableEq V] {n
     e.symm.sum_comp (fun u => G u s)
   rw [hl, hr]
 
-/-- Integral class split: a natural dense flow bounded pointwise by aggregated
-natural capacities is the aggregate of a natural arc flow within the capacities. -/
+/-- Integral class split: on finite vertex and arc types, a natural dense flow bounded pointwise
+by the natural capacities summed over each ordered endpoint class is the aggregate of a natural
+arc flow within the capacities. -/
 theorem exists_nat_split {V : Type*} [Fintype V] [DecidableEq V] {E : Type*} [Fintype E]
     [DecidableEq E] (tail head : E → V) (u : E → ℕ) (F : V → V → ℕ)
     (hle : ∀ p q, (F p q : ℝ) ≤
@@ -254,10 +255,9 @@ theorem exists_nat_arc_lift {V : Type*} [Fintype V] [DecidableEq V] {E : Type*} 
     rw [hagg] at h
     exact h.symm
 
-/-- Integral arc max-flow min-cut: under natural arc capacities with `s ≠ t`, a
-natural arc flow is arc-feasible, maximizes the signed source value over all real
-arc-feasible flows, is bounded by every `s`-`t` out-cut, and attains some `s`-`t`
-out-cut. -/
+/-- Integral arc max-flow min-cut: on finite vertex and arc types, under natural arc capacities
+with `s ≠ t`, a natural arc flow is arc-feasible, maximizes the signed source value over all
+real arc-feasible flows, is bounded by every `s`-`t` out-cut, and attains some `s`-`t` out-cut. -/
 theorem exists_nat_arc_max_flow_min_cut {V : Type*} [Fintype V] [DecidableEq V] {E : Type*}
     [Fintype E] [DecidableEq E] (tail head : E → V) (u : E → ℕ) (s t : V) (hst : s ≠ t) :
     ∃ g : E → ℕ,

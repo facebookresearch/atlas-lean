@@ -1,0 +1,3 @@
+# Inv
+
+The inductive invariant of a state, for each process $i$ against its peer: the `choosing` flag of $i$ is raised exactly when $i$ is at `read`, `write` or `doorway`; the ticket of $i$ is nonzero exactly when $i$ is at `doorway`, `waitChoosing`, `waitNumber`, `critical` or `exit`; if $i$ is at `waitNumber` or `critical` and its peer is at `write`, then the ticket of $i$ is at most the temporary register of the peer (a snapshot test: $i$ is not overtaken by the peer's pending ticket); and if $i$ is critical and its peer holds a ticket and is not at `exit`, then $i$ comes first in the lexicographic order of (ticket, process index), with process $0$ before process $1$ on ties.

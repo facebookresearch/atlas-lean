@@ -1,0 +1,3 @@
+# The tree-CSP algorithm returns only solutions
+
+Let $P$ be a symmetric binary constraint problem whose arcs all join a variable and its parent, for a parent map with a rooted order listing every variable once, root first. Let the selection function be a selector: a value it returns belongs to the candidate set, and it returns a value for every nonempty candidate set. Then, for all domains, any assignment returned by the tree-CSP algorithm (a directional arc consistency pass followed by greedy assignment) is a solution. The selector laws matter: a function that returns a value on the empty set can make a problem with an empty domain succeed with a nonsolution.

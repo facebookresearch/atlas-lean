@@ -1,0 +1,3 @@
+# Exists nat arc lift
+
+Let $V$ and $E$ be finite types of vertices and arcs, each arc $e$ with a tail, a head and a natural capacity $u(e)$, and let $s, t \in V$. Let $F$ be a natural-valued dense flow on ordered pairs of vertices that is feasible for the capacities summed over each ordered pair of endpoints. Then there is a natural arc flow $g$ that is feasible for the arc capacities, aggregates back to $F$ (its sum over the arcs from $p$ to $q$ is $F(p, q)$), and has the same signed source value as $F$. The source and sink need not be distinct. Natural capacities matter: two parallel arcs of capacity $1/2$ admit the dense flow $1$ but no natural arc flow.

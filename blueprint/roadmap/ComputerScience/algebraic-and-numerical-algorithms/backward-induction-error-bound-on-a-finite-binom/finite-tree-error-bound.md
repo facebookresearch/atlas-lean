@@ -1,0 +1,7 @@
+# Backward-induction error bound on a finite binomial tree
+
+Let $0 \le p \le 1$, $\mathrm{disc} > 0$ and $\varepsilon \ge 0$, and let $g$ be an exercise payoff on the nodes $s$ (paths of up and down moves). Let $E(k, s)$ follow the exact Snell update, $E(0, \cdot) = g$ and $E(k+1, s) = \max\bigl(g(s),\ \mathrm{disc} \cdot [\,p\, E(k, \mathrm{true} :: s) + (1 - p)\, E(k, \mathrm{false} :: s)\,]\bigr)$; these equations determine $E$, the Snell envelope. Let $V(k, s)$ be a computed recursion with the same terminal values $V(0, \cdot) = g$ such that at every $k$ and $s$
+
+$$\bigl| V(k+1, s) - \max\bigl(g(s),\ \mathrm{disc} \cdot [\,p\, V(k, \mathrm{true} :: s) + (1 - p)\, V(k, \mathrm{false} :: s)\,]\bigr) \bigr| \le \varepsilon,$$
+
+where the children are $V$'s own values at step $k$, not exact envelope values. Then after $N$ steps, $|E(N, s) - V(N, s)| \le \varepsilon \sum_{j < N} \mathrm{disc}^j$ at every node, in particular at the root. The statement with $E$ the Snell envelope itself is the same result.

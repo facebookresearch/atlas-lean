@@ -51,7 +51,7 @@ open Finset Filter Topology
 noncomputable def total {n : ℕ} (x : Fin n → ℝ) : ℝ :=
   ∑ i, x i
 
-/-- Jain's fairness index `F(x) = (∑ i, x i)^2 / (n * ∑ i, (x i)^2)`
+/-- Jain's fairness index `F(x) = (∑ i, x i)^2 / (n * ∑ i, (x i)^2)`, with `x / 0 = 0`
 (Chiu--Jain Section 1.4, fairness display). -/
 noncomputable def fairness {n : ℕ} (x : Fin n → ℝ) : ℝ :=
   (∑ i, x i) ^ 2 / ((n : ℝ) * ∑ i, (x i) ^ 2)

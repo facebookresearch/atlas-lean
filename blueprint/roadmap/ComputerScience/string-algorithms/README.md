@@ -10,6 +10,7 @@ Exact pattern matching (naive, finite automaton, Knuth-Morris-Pratt, Boyer-Moore
 - [Rabin–Karp algorithm](rabin-karp-algorithm/README.md)
 - [String matching with finite automata](string-matching-with-finite-automata/README.md)
 - [Z algorithm](z-algorithm/README.md)
+- [Aho–Corasick: semantic specification of the state and the reports](aho-corasick-semantic-specification-of-the-state/README.md)
 - [Boyer–Moore string-search algorithm](boyer-moore-string-search-algorithm/README.md)
 - [String matching specifications](string-matching-specifications/README.md)
 - [Edit Distance with General Costs](edit-distance-with-general-costs/README.md)

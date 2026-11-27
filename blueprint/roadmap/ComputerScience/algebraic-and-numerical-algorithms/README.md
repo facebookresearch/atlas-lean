@@ -24,3 +24,5 @@ Algorithms on numbers, polynomials and matrices: integer and polynomial multipli
 - [Reductions for 3SUM](three-sum-reductions/README.md)
 - [Simplex Dictionaries and Pivot Rules](simplex-dictionaries-and-pivot-rules/README.md)
 - [The AKS Primality Test on the Word RAM](aks-primality-on-the-word-ram/README.md)
+- [Backward-induction error bound on a finite binomial tree](backward-induction-error-bound-on-a-finite-binom/README.md)
+- [Exact rational loss laws and tree values](exact-rational-loss-laws-and-tree-values/README.md)

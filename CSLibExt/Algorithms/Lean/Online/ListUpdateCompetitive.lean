@@ -23,9 +23,10 @@ namespace Cslib.Algorithms.Lean.Online.CompetitiveFramework
 open ListUpdate
 open ListUpdate.OnlineListUpdate
 
-/-- Cost of one list-update step: access cost plus the cheapest paid
-rearrangement to the next list after one free forward move of the accessed
-item (minimum over free-move targets). -/
+/-- Cost of one list-update step: the access cost plus the least inversion count (comparing
+first occurrences) between the next list and a free forward move of the accessed item, minimized
+over free-move targets. For a list without repeated items this is the number of paid exchanges;
+with repeats it can be smaller. -/
 def stepCost {α : Type*} [DecidableEq α] (L : List α) (x : α) (L' : List α) :
     ℕ :=
   accessCost L x
@@ -39,10 +40,10 @@ def traceCost {α : Type*} [DecidableEq α] (M : List α) :
   | [] => 0
   | (x, L') :: τ => stepCost M x L' + traceCost L' τ
 
-/-- List update as an online problem over a fixed duplicate-free item
-list `M`: legal requests are items of `M`; answers are the list after
-serving and rearranging, always a permutation of `M`; cost is access plus
-paid exchanges with free forward moves of the accessed item. -/
+/-- List update as an online problem over a fixed item list `M` (any list; the lower bound
+assumes it nonempty and duplicate-free): legal requests are items of `M`; answers are the list
+after serving and rearranging, always a permutation of `M`; the cost of a step is `stepCost`,
+which counts paid exchanges when `M` has no repeated items. -/
 def listUpdateProblem {α : Type*} [DecidableEq α] (M : List α) :
     OnlineProblem α (List α) where
   legal := fun σ => ∀ x ∈ σ, x ∈ M

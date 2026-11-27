@@ -1,0 +1,3 @@
+# Marking step
+
+Serve a request $p$ with cache capacity $k$; the cache is a list of distinct pages. A hit marks $p$ and leaves the cache unchanged. A miss with room prepends $p$, giving the cache $p :: \mathrm{cache}$, and marks it. A miss with capacity $k = 0$ leaves the state unchanged. A miss on a full cache with $k > 0$ first starts a new phase, erasing every mark, if every cached page is marked; it then removes the victim chosen by the eviction rule among the unmarked cached pages and prepends $p$, giving $p :: (\mathrm{cache}$ with the victim erased$)$, and marks $p$. The order matters: an eviction rule may depend on the position of a page in the list.

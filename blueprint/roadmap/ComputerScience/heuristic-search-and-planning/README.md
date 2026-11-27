@@ -4,11 +4,16 @@ Search and decision procedures from artificial intelligence: A* search, game-tre
 
 - [A* search algorithm](a-search-algorithm/README.md)
 - [AC-3 algorithm](ac-3-algorithm/README.md)
+- [Alpha-beta on a perfectly ordered uniform tree (Knuth and Moore)](alpha-beta-on-a-perfectly-ordered-uniform-tree-k/README.md)
 - [Alpha–beta pruning](alpha-beta-pruning/README.md)
+- [Backtracking search with forward checking: soundness and completeness](backtracking-search-with-forward-checking-soundn/README.md)
+- [Expectimax and the finite-horizon MDP value](expectimax-and-the-finite-horizon-mdp-value/README.md)
+- [Knuth and Moore's lower bound: alpha-beta is optimal on perfectly ordered uniform trees](knuth-and-moore-s-lower-bound-alpha-beta-is-opti/README.md)
 - [Value iteration](value-iteration/README.md)
 - [Policy iteration](policy-iteration/README.md)
 - [Optimality of stationary policies](optimality-of-stationary-policies/README.md)
 - [Stochastic shortest path problems](stochastic-shortest-path-problems/README.md)
+- [Tree CSPs: directional arc consistency makes greedy assignment backtrack-free](tree-csps-directional-arc-consistency-makes-gree/README.md)
 
 - [Markov decision processes](markov-decision-processes/README.md)
 - [Partially observable planning](partially-observable-planning/README.md)

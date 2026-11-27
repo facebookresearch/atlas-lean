@@ -234,7 +234,8 @@ theorem minPlusConv_le {f g : ℝ≥0 → ℝ≥0} {t s : ℝ≥0} (h : s ≤ t)
     minPlusConv f g t ≤ ((f (t - s) + g s : ℝ≥0) : ℝ≥0∞) :=
   iInf_le _ (⟨s, h⟩ : { s : ℝ≥0 // s ≤ t })
 
-/-- Strict lower-bound direction: below the convolution sits a term. -/
+/-- Strict lower-bound direction: if the convolution at `t` is below `c`, some term with
+`s ≤ t` is below `c` (no attainment is claimed). -/
 theorem exists_lt_of_minPlusConv_lt {f g : ℝ≥0 → ℝ≥0} {t : ℝ≥0} {c : ℝ≥0∞}
     (h : minPlusConv f g t < c) :
     ∃ (s : ℝ≥0) (_ : s ≤ t), ((f (t - s) + g s : ℝ≥0) : ℝ≥0∞) < c := by

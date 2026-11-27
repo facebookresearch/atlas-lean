@@ -27,6 +27,7 @@ tests mutual reachability of pairs of vertices directly, with two depth-first se
 - [Acyclic condensation](condensation-acyclic.md)
 - [The condensation of the computed components is acyclic](components-condensation-acyclic.md)
 - [Ancestor in a depth-first spanning forest](tree-ancestor.md)
+- [Reversing the parent list preserves tree ancestry](tree-ancestor-reverse.md)
 - [Numbering properties of depth-first search](is-dfsnumbering.md)
 - [First vertex of a strongly connected component](is-first-in-component.md)
 - [$\mathrm{LOWLINK}(v) = v$](lowlink-eq-self.md)

@@ -1,0 +1,3 @@
+# Exact rational finite-tree evaluator
+
+Exact rational backward evaluator on a finite binomial tree, for an up weight $q$, a gross return $R$ and an exercise payoff $g$ on paths: with no period left the value at a path $s$ is $g(s)$; with $k + 1$ periods left it is the larger of $g(s)$ and $(q\, u + (1 - q)\, d) / R$, where $u$ and $d$ are the values with $k$ periods left at the extended paths `true :: s` (an up move) and `false :: s` (a down move). The parameters $q$ and $R$ are arbitrary rationals, with division by zero read as $0$: for $R = 0$ the continuation is $0$ and a node with periods left has value $\max(g(s), 0)$. The numerator $q\, u + (1 - q)\, d$ is the one-step expected value only when $0 \le q \le 1$, with $q$ the up probability.

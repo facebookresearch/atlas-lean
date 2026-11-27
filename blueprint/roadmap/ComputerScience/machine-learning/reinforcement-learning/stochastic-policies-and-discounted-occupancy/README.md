@@ -53,10 +53,20 @@ Stationary stochastic policies on finite discounted Markov decision processes, M
 
 ## Row-stochastic policies, occupancy and the performance difference lemma
 
+- [Is Row Stochastic](is-row-stochastic.md)
+- [Of PMF](of-pmf.md)
+- [State Kernel](state-kernel.md)
 - [Expected reward under a row-stochastic policy](policy-reward-2.md)
+- [Indicator Reward](indicator-reward.md)
+- [Action-weighted sum of action values](sum-mul-q-value.md)
+- [Chain Value eq sum](chain-value-eq-sum.md)
+- [Chain Occupancy](chain-occupancy.md)
+- [Sum mul chain Value](sum-mul-chain-value.md)
+- [Sum chain Occupancy](sum-chain-occupancy.md)
 - [Advantage function of a row-stochastic policy](advantage.md)
 - [Discounted state-action occupancy of a row-stochastic policy](occupancy.md)
 - [Total mass of the state-action occupancy of a row-stochastic policy](sum-occupancy.md)
+- [Sum mul stoch Policy Value](sum-mul-stoch-policy-value.md)
 - [Performance difference lemma for row-stochastic policies](performance-difference.md)
 
 ## Related topics

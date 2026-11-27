@@ -134,9 +134,9 @@ theorem victim_mem_unmarked (R : EvictionRule α) (s : MarkState α k)
 
 /-! ## One step -/
 
-/-- Serve a request. A hit marks the page. A miss with room loads and marks the page. A miss
+/-- Serve a request. A hit marks the page. A miss with room prepends and marks the page. A miss
 with zero capacity caches nothing. A miss on a full cache starts a new phase if every cached page
-is marked, evicts `victim R s`, then loads and marks the page. -/
+is marked, erases `victim R s`, then prepends and marks the page. -/
 def markStep (R : EvictionRule α) (s : MarkState α k) (p : α) : MarkState α k :=
   if hp : p ∈ s.cache.1 then
     ⟨s.cache, insert p s.marked, fun q hq => by
