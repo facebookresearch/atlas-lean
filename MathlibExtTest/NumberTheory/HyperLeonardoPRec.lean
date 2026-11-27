@@ -36,3 +36,9 @@ example : hyperLeonardoP 2 4 0 =
 -- Concrete values, including the order-zero value above.
 example : hyperLeonardoP 2 3 1 = 7 ∧ hyperLeonardoP 1 4 0 = 9 := by
   norm_num [hyperLeonardoP, Finset.sum_range_succ, Nat.choose]
+
+-- At k = m, the last summand uses the order-zero sequence.
+example : hyperLeonardoP 2 3 2 =
+    hyperLeonardoP 2 1 2 + 2 * hyperLeonardoP 2 2 1 + hyperLeonardoP 2 3 0 := by
+  simpa [Finset.sum_range_succ, Nat.choose, add_assoc] using
+    hyperLeonardoP_add 2 1 2 2 (by decide) (by decide) (by decide) (by decide)

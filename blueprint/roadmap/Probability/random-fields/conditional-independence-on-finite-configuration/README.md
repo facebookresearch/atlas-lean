@@ -10,6 +10,7 @@
 - [Agreement classes of configurations have equal size](card-filter-agree.md)
 - [Marginalizing in two steps](marginal-marginal.md)
 - [Conditional independence can be read off a marginal](cond-indep-marginal-iff.md)
+- [Semigraphoid lemmas for finite conditional independence](semigraphoid-lemmas-for-finite-conditional-indep/README.md)
 
 ## Related topics
 

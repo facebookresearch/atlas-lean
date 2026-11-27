@@ -56,8 +56,8 @@ private theorem branch_false {c : ℝ} (hc : c < 2) {N : ℕ}
     (_P : (Fin 2 → Fin (2 * N) → ℝ) → Fin 2 → ℝ)
     (hW : IsWeaklyMonotone A) (hAp : IsApproximate c A)
     (i j : Fin 2) (hij : j ≠ i)
-    (hle : (Finset.univ.filter (fun t => A (fun _ _ => (1:ℝ)) t = i)).card ≤
-      (Finset.univ.filter (fun t => A (fun _ _ => (1:ℝ)) t = j)).card) :
+    (hle : (Finset.univ.filter (fun t => A (fun _ _ => (1 : ℝ)) t = i)).card ≤
+      (Finset.univ.filter (fun t => A (fun _ _ => (1 : ℝ)) t = j)).card) :
     False := by
   have hne_ji : j ≠ i := hij
   have hne_ij : i ≠ j := hij.symm

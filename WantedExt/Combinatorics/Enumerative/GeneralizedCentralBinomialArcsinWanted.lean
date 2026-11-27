@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Choose.Central
 public import MathlibExt.Combinatorics.Enumerative.GeneralizedCentralBinomialArcsin
+public import MathlibExt.Combinatorics.Enumerative.GeneralizedCentralBinomialArcsinSeries
 
 /-!
 # Power series with reciprocals of central binomial coefficients via `arcsin`
@@ -24,31 +25,6 @@ open Finset
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Zurita's series $\sum_{k > n} 4^k x^k / ((k - n)\binom{2k}{k})$.** Let $n \ge 1$, let
-$S_n(x) = \sum_{k=0}^n s_k x^k$ and $T_{n-2}$ be Zurita's polynomials (with $T_{-1} = 0$), and
-let $x$ be real with $0 < x < 1$. Then
-$$
-\sum_{k > n} \frac{4^k x^k}{(k - n)\binom{2k}{k}} = x\, T_{n-2}(x) +
-\sqrt{\frac{x}{1 - x}}\, \arcsin(\sqrt{x})\, S_n(x) +
-\sum_{k=0}^{n-1} \Bigl(1 - \frac{4^k}{\binom{2k}{k}}\Bigr) \frac{x^k}{k - n} -
-\Bigl(\frac12 \sum_{k=1}^{n} \frac{4^k s_{n-k}}{k \binom{2k}{k}}\Bigr) x^n.
-$$
-
-The source prints the range $|x| < 4$. The statement here is restricted to $0 < x < 1$, inside
-the range $|x| < 1$ that the source's Theorem 1 gives in this case; since
-$\binom{2k}{k} \le 4^k$, the series diverges for $x \ge 1$.
-
-Source: Rimer Zurita, *Power Series Associated with Reciprocals of Generalized Central Binomial
-Coefficients*, INTEGERS 26 (2026), Article A2, Corollary 1 (`integers-2026-A2-cor-1`). -/
-public theorem_wanted tsum_four_pow_div_sub_mul_centralBinom {n : ℕ} (hn : 1 ≤ n) {x : ℝ}
-    (hx0 : 0 < x) (hx1 : x < 1) :
-    ∑' k : ℕ, (4 : ℝ) ^ (k + n + 1) * x ^ (k + n + 1) /
-        (((k : ℝ) + 1) * Nat.centralBinom (k + n + 1)) =
-      x * zuritaT n x + Real.sqrt (x / (1 - x)) * Real.arcsin (Real.sqrt x) * zuritaS n x +
-        ∑ k ∈ range n, (1 - (4 : ℝ) ^ k / Nat.centralBinom k) * x ^ k / ((k : ℝ) - n) -
-        (1 / 2 * ∑ k ∈ Icc 1 n, (4 : ℝ) ^ k * (zuritaSCoeff n (n - k) : ℝ) /
-          ((k : ℝ) * Nat.centralBinom k)) * x ^ n
 
 /-- **Zurita's series $\sum_{k > n} 4^k x^k / ((k - n)^2\binom{2k}{k})$.** For $j \ge 1$ write
 Zurita's polynomials as $S_j(x) = \sum_{k=0}^{j} s^{(j)}_k x^k$,
