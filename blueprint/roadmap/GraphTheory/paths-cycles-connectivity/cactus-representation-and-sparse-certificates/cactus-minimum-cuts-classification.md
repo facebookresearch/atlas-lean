@@ -15,7 +15,7 @@ Contract every cycle to a node: the result is a tree whose edges are the tree ed
 ## Depends on
 
 - [Weighted cactus graphs with tree edges and cycle edges](weighted-cactus-graph.md)
-- [Steiner minimum cuts of a terminal set](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
+- [Steiner minimum cuts of a terminal set](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
 
 ## Sources
 

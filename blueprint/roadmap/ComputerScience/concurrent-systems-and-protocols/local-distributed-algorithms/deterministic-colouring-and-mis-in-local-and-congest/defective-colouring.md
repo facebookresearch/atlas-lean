@@ -4,7 +4,7 @@ Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degre
 
 ## Depends on
 
-- [The (deg + 1)-list-coloring problem (D1LC)](../../../randomized-algorithms/palette-sparsification-and-sublinear-coloring/degree-plus-one-list-coloring.md)
+- [The (deg + 1)-list-coloring problem (D1LC)](../../../randomized-algorithms/sketching-streaming-and-sublinear-algorithms/palette-sparsification-and-sublinear-coloring/degree-plus-one-list-coloring.md)
 
 ## Sources
 

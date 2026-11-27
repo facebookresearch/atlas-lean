@@ -19,7 +19,7 @@ For the cut function $f(X) = w(\partial X)$ one has the identity $f(S \cap T) + 
 ## Depends on
 
 - [Crossing pairs of vertex bipartitions](crossing-vertex-bipartitions.md)
-- [Steiner minimum cuts of a terminal set](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
+- [Steiner minimum cuts of a terminal set](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
 
 ## Proof depends on
 

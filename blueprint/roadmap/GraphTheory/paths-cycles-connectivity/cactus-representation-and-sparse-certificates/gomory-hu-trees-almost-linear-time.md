@@ -9,14 +9,14 @@ The algorithm reduces the construction to $\mathrm{polylog}(n)$ single-source mi
 ## Depends on
 
 - [Flow-equivalent and cut-equivalent trees of weighted graphs](flow-equivalent-and-cut-equivalent-trees.md)
-- [Maximum-flow oracles and the max-flow call model for cut problems](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/max-flow-oracle-call-model.md)
+- [Maximum-flow oracles and the max-flow call model for cut problems](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/max-flow-oracle-call-model.md)
 
 ## Proof depends on
 
 - [Gomory-Hu trees of weighted graphs in nearly quadratic time](gomory-hu-weighted-nearly-quadratic.md)
-- [Isolating cut lemma with logarithmically many max-flow calls](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/isolating-cut-lemma.md)
-- [Terminal subsampling isolates one side of a Steiner minimum cut](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/terminal-subsampling-isolates-steiner-cut.md)
-- [Single-source minimum cut values](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/single-source-minimum-cut-values.md)
+- [Isolating cut lemma with logarithmically many max-flow calls](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/isolating-cut-lemma.md)
+- [Terminal subsampling isolates one side of a Steiner minimum cut](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/terminal-subsampling-isolates-steiner-cut.md)
+- [Single-source minimum cut values](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/single-source-minimum-cut-values.md)
 
 ## Sources
 

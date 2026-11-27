@@ -11,7 +11,7 @@ More generally, for a terminal set $R \subseteq V$, a *Steiner cactus* represent
 ## Depends on
 
 - [Weighted cactus graphs with tree edges and cycle edges](weighted-cactus-graph.md)
-- [Steiner minimum cuts of a terminal set](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
+- [Steiner minimum cuts of a terminal set](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
 
 ## Sources
 

@@ -15,7 +15,7 @@ Private query release reduces to online learning of the dual class through the p
 
 - [Smoothed regret bounds depending on VC dimension and bracketing numbers](smoothed-online-regret-bounds.md)
 - [Private multiplicative weights answers exponentially many counting queries](../../../cryptography/privacy-accounting-lower-bounds-and-private-learning/fingerprinting-lower-bounds-and-adaptive-data-analysis/private-multiplicative-weights.md)
-- [Private learning requires log-star of the Littlestone dimension samples](../../pac-learning/replicability-and-private-learning/private-learning-and-littlestone-classes/private-learning-requires-log-star-littlestone.md)
+- [Private learning requires log-star of the Littlestone dimension samples](../../pac-learning/replicable-private-and-universal-learning/replicability-and-private-learning/private-learning-and-littlestone-classes/private-learning-requires-log-star-littlestone.md)
 
 ## Sources
 

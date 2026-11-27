@@ -12,4 +12,5 @@ Sequential containers and their amortized costs: linked lists (singly, doubly, s
 - [Singly linked list](singly-linked-list/README.md)
 - [Stack with multipop](stack-with-multipop/README.md)
 - [Two-list queue](two-list-queue/README.md)
+- [Ropes](ropes/README.md)
 - [Online List Labeling](online-list-labeling/README.md)

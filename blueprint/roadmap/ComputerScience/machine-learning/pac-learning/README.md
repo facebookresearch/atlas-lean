@@ -8,10 +8,8 @@ Valiant's model of learning from random examples (error, learners, version space
 - [The fundamental theorem of PAC learning](is-paclearnable-realizable-family-iff-ha.md)
 - [Risk of the 0-1 loss](risk-of-the-0-1-loss/README.md)
 - [Weak learnability](weak-learnability/README.md)
-
 - [Sample compression conjecture](sample-compression-conjecture.md)
 - [Distribution-free PAC learning of DNF formulas](distribution-free-learning-of-dnf-formulas.md)
-
 - [Angluin's observation-table theorem](angluin-s-observation-table-theorem.md)
 - [Minimum description length bound](minimum-description-length-bound.md)
 - [Finite-sample bound for the 1-nearest-neighbor rule](finite-sample-bound-for-the-1-nearest-neighbor-rule.md)
@@ -23,5 +21,8 @@ Valiant's model of learning from random examples (error, learners, version space
 - [Computational complexity of PAC learning](computational-complexity-of-learning/README.md)
 - [DS dimension characterizes multiclass PAC learnability](ds-dimension-characterizes-multiclass-pac-learnability.md)
 - [Exact learning from queries](exact-learning-from-queries/README.md)
-- [Replicability and private learning](replicability-and-private-learning/README.md)
-- [Universal, multiclass and partial-concept learning](universal-multiclass-and-partial-learning/README.md)
+- [Sample complexity and combinatorial dimensions](sample-complexity-and-combinatorial-dimensions/README.md)
+- [Replicable Learning](replicable-learning/README.md)
+- [Sample Compression Schemes](sample-compression-schemes/README.md)
+- [Statistical Query Learning and SQ Dimension](statistical-query-dimension/README.md)
+- [Replicable, Private and Universal Learning](replicable-private-and-universal-learning/README.md)

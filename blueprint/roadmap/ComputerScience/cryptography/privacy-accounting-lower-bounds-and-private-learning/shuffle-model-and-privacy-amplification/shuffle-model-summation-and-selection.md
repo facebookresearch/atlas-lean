@@ -12,7 +12,7 @@ After shuffling, the analyzer sees only the number of ones, which is the true co
 
 ## Proof depends on
 
-- [Local differential privacy is equivalent to statistical query learning](../../../machine-learning/pac-learning/replicability-and-private-learning/private-learning-and-littlestone-classes/local-privacy-equals-statistical-queries.md)
+- [Local differential privacy is equivalent to statistical query learning](../../../machine-learning/pac-learning/replicable-private-and-universal-learning/replicability-and-private-learning/private-learning-and-littlestone-classes/local-privacy-equals-statistical-queries.md)
 
 ## Sources
 

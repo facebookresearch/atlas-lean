@@ -15,7 +15,7 @@ Bubeck, Cohen, J. R. Lee and Y. T. Lee run continuous-time mirror descent on the
 - [Competitive ratios transfer through dominating tree embeddings](embedding-transfer.md)
 - [Hierarchically separated trees](hierarchically-separated-tree.md)
 - [Continuous-time mirror descent for online covering](../randomized-k-server-by-mirror-descent/continuous-mirror-descent-dynamics.md)
-- [Fakcharoenphol-Rao-Talwar O(log n) expected-stretch tree embeddings](../../randomized-algorithms/johnson-lindenstrauss-optimality-and-metric-embeddings/frt-logarithmic-stretch-tree-embedding.md)
+- [Fakcharoenphol-Rao-Talwar O(log n) expected-stretch tree embeddings](../../randomized-algorithms/sketching-streaming-and-sublinear-algorithms/johnson-lindenstrauss-optimality-and-metric-embeddings/frt-logarithmic-stretch-tree-embedding.md)
 
 ## Sources
 

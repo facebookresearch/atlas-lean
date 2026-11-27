@@ -14,7 +14,7 @@ The first bound combines the HST algorithm with the static embedding of $n$-poin
 
 - [Randomized $O(\log^2 k)$-competitive k-server on HSTs](k-server-on-hst-log-squared.md)
 - [Competitive ratios transfer through dominating tree embeddings](../metrical-task-systems-and-hst-embeddings/embedding-transfer.md)
-- [Fakcharoenphol-Rao-Talwar O(log n) expected-stretch tree embeddings](../../randomized-algorithms/johnson-lindenstrauss-optimality-and-metric-embeddings/frt-logarithmic-stretch-tree-embedding.md)
+- [Fakcharoenphol-Rao-Talwar O(log n) expected-stretch tree embeddings](../../randomized-algorithms/sketching-streaming-and-sublinear-algorithms/johnson-lindenstrauss-optimality-and-metric-embeddings/frt-logarithmic-stretch-tree-embedding.md)
 
 ## Sources
 

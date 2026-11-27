@@ -16,6 +16,8 @@ Ordered dictionaries: binary search trees and their balanced variants (AVL, red-
 - [Weight-balanced tree](weight-balanced-tree/README.md)
 - [Dynamic optimality](dynamic-optimality/README.md)
 - [Randomized search trees](randomized-search-trees/README.md)
+- [Locality Theorems for Splay Trees](splay-tree-locality-theorems/README.md)
+- [Search Trees on the Pointer Machine](pointer-machine-search-trees/README.md)
 - [Distribution-Sensitive Bounds for Self-Adjusting BSTs](distribution-sensitive-bst-bounds/README.md)
 - [Pattern-Avoiding Access in Binary Search Trees](pattern-avoiding-bst-access/README.md)
 - [Tango Trees and O(log log n)-Competitive BSTs](tango-trees-and-loglog-competitive-bsts/README.md)

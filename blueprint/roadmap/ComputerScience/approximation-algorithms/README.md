@@ -15,9 +15,12 @@ Polynomial-time algorithms with proved approximation ratios for NP-hard optimiza
 - [Resource-constrained scheduling](resource-constrained-scheduling/README.md)
 - [Lp based approximation](lp-based-approximation/README.md)
 - [Approximation algorithms and approximation ratios](approximation-algorithms-and-approximation-ratios.md)
-
 - [Approximation ratio of the greedy superstring algorithm](approximation-ratio-of-the-greedy-superstring-algorithm.md)
 - [A fully polynomial-time approximation scheme for knapsack](fptas-for-the-knapsack-problem.md)
+- [Extended Formulations and Extension Complexity](extended-formulations-and-extension-complexity/README.md)
+- [Metric k-Center, Steiner Tree and TSP Approximation](metric-k-center-steiner-tree-and-tsp/README.md)
+- [Moser-Tardos Algorithmic Local Lemma](moser-tardos-algorithmic-local-lemma/README.md)
+- [Semidefinite Rounding for MAX-2SAT and MAX-DICUT](semidefinite-rounding-for-two-variable-csps/README.md)
 - [Extension Complexity of the Matching Polytope](matching-polytope-extension-complexity/README.md)
 - [Maximum-Entropy Rounding for Metric TSP](max-entropy-metric-tsp/README.md)
 - [Tree and Connectivity Augmentation](tree-and-connectivity-augmentation/README.md)

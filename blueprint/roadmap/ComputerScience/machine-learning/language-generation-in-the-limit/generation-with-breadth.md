@@ -5,7 +5,7 @@ Let $U$ be a countable set of strings and $\mathcal{C} = \{L_1, L_2, \dots\}$ a 
 ## Depends on
 
 - [Generation in the limit](generation-in-the-limit.md)
-- [Realizable distributions, learning curves and universal rates](../pac-learning/universal-multiclass-and-partial-learning/universal-learning-curves-and-littlestone-trees/universal-rate.md)
+- [Realizable distributions, learning curves and universal rates](../pac-learning/replicable-private-and-universal-learning/universal-multiclass-and-partial-learning/universal-learning-curves-and-littlestone-trees/universal-rate.md)
 
 ## Sources
 

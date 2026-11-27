@@ -13,8 +13,8 @@ The randomized ingredients of the almost-linear algorithm are terminal sampling 
 ## Proof depends on
 
 - [Gomory-Hu trees in almost-linear time: all-pairs max-flow reduces to single-pair max-flow](gomory-hu-trees-almost-linear-time.md)
-- [Deterministic Steiner minimum cut in maximum-flow time (Ding-Li)](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/ding-li-steiner-cut-in-max-flow-time.md)
-- [Isolating cut lemma with logarithmically many max-flow calls](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/isolating-cut-lemma.md)
+- [Deterministic Steiner minimum cut in maximum-flow time (Ding-Li)](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/ding-li-steiner-cut-in-max-flow-time.md)
+- [Isolating cut lemma with logarithmically many max-flow calls](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/isolating-cut-lemma.md)
 
 ## Sources
 

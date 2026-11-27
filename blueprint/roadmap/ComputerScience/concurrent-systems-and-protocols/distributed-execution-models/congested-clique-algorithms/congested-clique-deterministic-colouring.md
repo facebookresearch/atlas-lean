@@ -9,7 +9,7 @@ Randomly partition (then derandomize via limited-independence hash families and 
 ## Depends on
 
 - [The congested clique model](the-congested-clique-model.md)
-- [The (deg + 1)-list-coloring problem (D1LC)](../../../randomized-algorithms/palette-sparsification-and-sublinear-coloring/degree-plus-one-list-coloring.md)
+- [The (deg + 1)-list-coloring problem (D1LC)](../../../randomized-algorithms/sketching-streaming-and-sublinear-algorithms/palette-sparsification-and-sublinear-coloring/degree-plus-one-list-coloring.md)
 
 ## Proof depends on
 

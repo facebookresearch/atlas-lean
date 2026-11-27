@@ -8,7 +8,7 @@ Decompose the graph by local sparsity into sparse vertices and dense almost-cliq
 
 ## Depends on
 
-- [The (deg + 1)-list-coloring problem (D1LC)](../../../randomized-algorithms/palette-sparsification-and-sublinear-coloring/degree-plus-one-list-coloring.md)
+- [The (deg + 1)-list-coloring problem (D1LC)](../../../randomized-algorithms/sketching-streaming-and-sublinear-algorithms/palette-sparsification-and-sublinear-coloring/degree-plus-one-list-coloring.md)
 - [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Proof depends on

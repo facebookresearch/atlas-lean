@@ -10,4 +10,5 @@ Directed graphs, orientations of undirected graphs, digraph colorings and tourna
 - [Robbins' theorem](robbins-theorem/README.md)
 - [Tournaments and score sequences](tournaments-and-score-sequences/README.md)
 - [Transitive subtournaments](transitive-subtournaments/README.md)
+- [Functional graphs](functional-graphs/README.md)
 - [Directed Expander Decompositions and Hierarchies](directed-expander-decompositions/README.md)
