@@ -1,0 +1,16 @@
+# Exterior powers as module functors
+
+- [The exterior-power functor for an independently sized module category](exterior-power-functor-at.md)
+- [The exterior-power functor in a joint scalar-module universe](exterior-power-functor.md)
+- [Exterior Power Functor At map ιMulti](exterior-power-functor-at-map-multi.md)
+- [The scalar coordinate of an exterior-degree-zero map](exterior-power-functor-at-map-zero.md)
+- [The natural comparison in exterior degree one](exterior-power-one-nat-iso.md)
+- [The tensor description of extension of scalars](scalar-extension-to-tensor-equiv.md)
+- [The pure-tensor formula for scalar extension](scalar-extension-to-tensor-equiv-tmul.md)
+- [The inverse pure-tensor formula for scalar extension](scalar-extension-to-tensor-equiv-symm-tm.md)
+- [The module component of exterior base change](exterior-power-base-change-component.md)
+- [The component formula for exterior base change](exterior-power-base-change-component-hom.md)
+- [The inverse component formula for exterior base change](exterior-power-base-change-component-inv.md)
+- [The natural isomorphism of exterior powers and scalar extension](exterior-power-base-change-nat-iso.md)
+- [Exterior Power Base Change Nat Iso hom tmul ιMulti](exterior-power-base-change-nat-iso-hom-t.md)
+- [Exterior Power Base Change Nat Iso inv word](exterior-power-base-change-nat-iso-inv-w.md)

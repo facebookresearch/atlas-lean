@@ -1,0 +1,15 @@
+# Tensor degrees of the exterior grading
+
+- [The exterior algebra graded by exterior degree](graded-exterior.md)
+- [Total degree of the tensor of exterior gradings](tensor-degree.md)
+- [Include a homogeneous tensor summand in total degree](tensor-degree-2.md)
+- [Descend a family of homogeneous tensor maps](tensor-degree-desc.md)
+- [Realize a graded tensor degree in the whole exterior tensor module](tensor-degree-realize.md)
+- [Finite bidegree projection into a fixed tensor degree](tensor-degree-lift.md)
+- [Realizing the degree lift gives total-degree reconstruction](tensor-degree-lift-realize.md)
+- [Realization followed by degree projection is the identity](tensor-degree-realize-lift.md)
+- [A graded tensor degree embeds as a split submodule](tensor-degree-realize-injective.md)
+- [Degree projection reconstructs a tensor of that total degree](tensor-degree-realize-lift-of-mem.md)
+- [Convolution grading of the exterior tensor square](graded-tensor-square.md)
+- [Exterior coproduct with its graded target](graded-coproduct.md)
+- [Realizing the graded coproduct recovers the exterior coproduct](graded-coproduct-realize.md)

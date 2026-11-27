@@ -1,0 +1,8 @@
+# Rationally normalized higher exterior maps preserve algebra naturality
+
+Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. Assume k is a ℚ-algebra. Let B : Type w be another
+k-algebra ring and f : A →ₙₐ[k] B a nonunital k-algebra map. Use the common height H = max u v
+w z and let Cλ_H(f) be the induced map between the two quotient complexes. For n : ℕ,
+Cλ_H(f)_n ∘ cyclicExteriorAtHeight_A(n) = cyclicExteriorAtHeight_B(n) ∘ ⋀^(n+1) f.

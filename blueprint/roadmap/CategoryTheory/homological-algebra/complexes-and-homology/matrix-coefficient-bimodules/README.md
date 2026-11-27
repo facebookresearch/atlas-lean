@@ -1,0 +1,16 @@
+# Matrix coefficient bimodules
+
+- [The left matrix action on coefficient matrices](left-module.md)
+- [The right matrix action on coefficient matrices](right-module.md)
+- [The left action on regular matrix coefficients](left-module-self-eq.md)
+- [The right action on regular matrix coefficients](right-module-self-eq.md)
+- [Commuting left and right matrix coefficient actions](commute.md)
+- [The ground-scalar tower for left matrix coefficients](left-tower.md)
+- [The ground-scalar tower for right matrix coefficients](right-tower.md)
+- [The matrix coefficient simplicial bar](bar.md)
+- [The matrix coefficient Hochschild chain complex](complex.md)
+- [The tensor coordinates of a matrix coefficient bar term](obj-iso.md)
+- [The faces of the matrix coefficient complex](face.md)
+- [The right matrix product in the first face](face-first-tprod.md)
+- [The ordered matrix product in an interior face](face-inner-tprod.md)
+- [The left matrix product in the last face](face-last-tprod.md)

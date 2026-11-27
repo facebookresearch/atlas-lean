@@ -1,0 +1,18 @@
+# Polynomial free/forget adjunction for commutative algebras
+
+- [Polynomial free commutative algebra functor](free.md)
+- [Carrier of the free polynomial algebra](free-obj-carrier.md)
+- [Polynomial renaming map induced by a function of variables](free-map-hom.md)
+- [Variables under the polynomial free-functor map](free-map-x.md)
+- [Polynomial renaming fixes base coefficients](free-map-c.md)
+- [Generator inclusion as the polynomial adjunction unit](free-unit.md)
+- [Value of the polynomial adjunction unit on a variable](free-unit-app-apply.md)
+- [Evaluation as the polynomial adjunction counit](free-counit.md)
+- [Algebra evaluation map of the polynomial counit](free-counit-app-hom.md)
+- [Value of the polynomial counit on an algebra-labelled variable](free-counit-app-x.md)
+- [Coefficient value of the polynomial adjunction counit](free-counit-app-c.md)
+- [Polynomial free algebra is left adjoint to carrier forgetting](free-forget-adjunction.md)
+- [Unit of the polynomial free/forget adjunction](free-forget-adjunction-unit.md)
+- [Counit of the polynomial free/forget adjunction](free-forget-adjunction-counit.md)
+- [Polynomial adjunction correspondence reads the variable images](free-forget-adjunction-hom-equiv-apply.md)
+- [Inverse polynomial adjunction correspondence is evaluation](free-forget-adjunction-hom-equiv-symm-ho.md)

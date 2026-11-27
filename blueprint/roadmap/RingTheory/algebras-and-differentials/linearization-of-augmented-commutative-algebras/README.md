@@ -1,0 +1,17 @@
+# Linearization of augmented commutative algebras
+
+- [The scalar algebra determined by an augmentation](cotangent-algebra.md)
+- [The scalar tower of an augmented algebra](cotangent-scalar-tower.md)
+- [The cotangent module of an augmented algebra](cotangent.md)
+- [A differential generator of an augmented cotangent module](cotangent-tensor.md)
+- [Compatibility of an algebra map with its augmentations](cotangent-augmentation-compat.md)
+- [The cotangent map induced by an augmented algebra map](cotangent-map.md)
+- [Cotangent Map tensor](cotangent-map-tensor.md)
+- [The cotangent map of an identity augmentation map](cotangent-map-id.md)
+- [Composition of augmented cotangent maps](cotangent-map-comp.md)
+- [The cotangent functor on algebras over a fixed target](cotangent-functor.md)
+- [Extensionality on differential cotangent generators](cotangent-hom-ext.md)
+- [Derivations with coefficients along an augmentation](cotangent-derivations.md)
+- [The universal correspondence for augmented cotangent modules](cotangent-hom-equiv-derivation.md)
+- [Evaluation of an augmented coefficient derivation](cotangent-derivation-value.md)
+- [Cotangent Hom Equiv Derivation apply](cotangent-hom-equiv-derivation-apply.md)

@@ -1,0 +1,17 @@
+# Unitization maps and its reduced ground module
+
+- [The scalar augmentation of a unitization](unitization-augmentation.md)
+- [The scalar section of a unitization augmentation](unitization-scalar-section.md)
+- [The scalar projector of a unitization](unitization-scalar-projector.md)
+- [Unitization Scalar Projector apply](unitization-scalar-projector-apply.md)
+- [Unitization Scalar Projector idempotent](unitization-scalar-projector-idempotent.md)
+- [The unitization of a nonunital algebra homomorphism](unitization-map.md)
+- [Unitization Map inr](unitization-map-inr.md)
+- [Unitization Map inl](unitization-map-inl.md)
+- [The full coordinate formula for a unitization homomorphism](unitization-map-apply.md)
+- [The unit span in the kernel of unitization's second projection](unit-submodule-le-ker-unitization-snd.md)
+- [The reduced unitization map to its nonunital summand](unitization-quotient-to-original.md)
+- [The inclusion into the reduced unitization ground module](original-to-unitization-quotient.md)
+- [Unitization Quotient To Original mk Q](unitization-quotient-to-original-mk-q.md)
+- [Removal of the scalar coordinate in the unitization quotient](unitization-quotient-mk-q-eq-inr.md)
+- [The reduced unitization ground-module equivalence](unitization-quotient-equiv.md)

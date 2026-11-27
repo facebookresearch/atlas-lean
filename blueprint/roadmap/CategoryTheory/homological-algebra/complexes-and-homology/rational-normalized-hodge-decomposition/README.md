@@ -1,0 +1,17 @@
+# Rational normalized Hodge decomposition
+
+- [The normalized Eulerian projector in degree zero](normalized-eulerian-operator-degree-zero.md)
+- [Vanishing of normalized weight zero in positive degrees](normalized-eulerian-operator-zero-weight.md)
+- [The component formula for a normalized Eulerian chain projector](normalized-eulerian-chain-map-f.md)
+- [Orthogonality of normalized Eulerian chain projectors](normalized-eulerian-chain-map-comp.md)
+- [The degree support of a normalized Eulerian chain projector](normalized-eulerian-chain-map-support.md)
+- [The degreewise completeness of normalized Eulerian chain maps](normalized-eulerian-chain-map-sum.md)
+- [The normalized Eulerian image complex of one weight](normalized-eulerian-image-complex.md)
+- [The coproduct decomposition of normalized Hochschild chains by weight](normalized-hodge-complex-iso.md)
+- [The image-inclusion map of the normalized Hodge decomposition](normalized-hodge-complex-iso-hom.md)
+- [The normalized Hodge coproduct decomposition on homology](normalized-hodge-homology-iso.md)
+- [The homology-inclusion map of the normalized Hodge decomposition](normalized-hodge-homology-iso-hom.md)
+- [The normalized Eulerian projector on a homology degree](normalized-eulerian-homology-projector.md)
+- [Orthogonality of normalized Eulerian homology projectors](normalized-eulerian-homology-projector-c.md)
+- [The chain-level Eulerian naturality of normalization](normalization-projection-eulerian.md)
+- [The homology-level Eulerian naturality of normalization](normalization-homology-eulerian.md)

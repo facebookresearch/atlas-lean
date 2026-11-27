@@ -1,0 +1,18 @@
+# Lie and coefficient variance of enveloping Chevalley–Eilenberg chains
+
+- [Ground-linearity of a semilinear right coefficient map](right-coefficient-ground-map.md)
+- [Lie compatibility of a semilinear right coefficient map](right-coefficient-lie-map.md)
+- [The joint Lie-and-right-coefficient chain map](right-enveloping-coefficient-lie-complex.md)
+- [Right Enveloping Coefficient Lie Complex Map f tmul](right-enveloping-coefficient-lie-complex-2.md)
+- [The regular coefficient Lie map induced by a Lie homomorphism](enveloping-regular-lie-map.md)
+- [The left enveloping action on an exterior-first chain tensor](enveloping-smul-tmul.md)
+- [The semilinear enveloping chain-term map of a Lie homomorphism](enveloping-lie-term-map.md)
+- [Enveloping Lie Term Map tmul](enveloping-lie-term-map-tmul.md)
+- [Differential compatibility of semilinear enveloping Lie maps](enveloping-lie-term-map-d-apply.md)
+- [The lifted semilinear map between enveloping resolution terms](lifted-enveloping-lie-term-map.md)
+- [Lifted Enveloping Lie Term Map up](lifted-enveloping-lie-term-map-up.md)
+- [The Lie-induced map into a scalar-restricted target resolution](lifted-enveloping-lie-complex-map.md)
+- [The scalar-preserving map of lifted trivial enveloping modules](lifted-enveloping-trivial-lie-map.md)
+- [The scalar coordinate of a Lie-induced exterior-degree-zero map](exterior-zero-coordinates-map.md)
+- [The tensor formula for a lifted enveloping augmentation](lifted-enveloping-augmentation-tmul.md)
+- [The augmentation square for lifted enveloping Lie maps](lifted-enveloping-lie-complex-map-augmen.md)

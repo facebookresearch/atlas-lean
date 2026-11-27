@@ -1,0 +1,16 @@
+# The two original word coordinates in reduced unitization normalization
+
+- [The regular Hochschild inclusion into a unitization](unitization-regular-inclusion.md)
+- [The ideal-leading word in normalized unitization chains](unitization-even-word.md)
+- [The external-unit-leading word in normalized unitization chains](unitization-odd-word.md)
+- [The tensor formula for an ideal-leading normalized word](unitization-even-word-tprod.md)
+- [The tensor formula for an external-unit-leading normalized word](unitization-odd-word-tprod.md)
+- [The zero scalar-projector map on the reduced unitization tail](unitization-scalar-projector-quotient-ze.md)
+- [Vanishing of the normalized scalar projector in positive degrees](unitization-normalized-scalar-projector.md)
+- [The ideal-leading word lies in the reduced normalized kernel](unitization-even-word-projector.md)
+- [The external-unit-leading word lies in the reduced normalized kernel](unitization-odd-word-projector.md)
+- [The Hochschild boundary of an ideal-leading word](unitization-even-word-d.md)
+- [The cyclic sign of the last face after unit insertion](unitization-insertion-signed-last.md)
+- [The full boundary formula after external-unit insertion](unitization-insertion-full-d-succ.md)
+- [The signed differential of an external-unit-leading word](unitization-odd-word-d-succ.md)
+- [The zero bottom boundary of an external-unit-leading word](unitization-odd-word-d-zero.md)

@@ -1,0 +1,15 @@
+# Coalgebra structure on the Chevalley–Eilenberg chain complex
+
+- [The tensor square of the exterior chain complex](native-tensor-complex.md)
+- [Realizing the chain tensor differential in the exterior tensor](native-tensor-differential-realize.md)
+- [The exterior coproduct as a chain map](native-complex-comul.md)
+- [The tensor unit of the coefficient chain category](native-unit-complex.md)
+- [Identifying the graded and chain tensor units](unit-grading-iso.md)
+- [The chain counit of the exterior coproduct](native-complex-counit.md)
+- [The chain coaugmentation by exterior scalars](native-complex-coaug.md)
+- [The comonoid structure on exterior chains](native-comon-obj.md)
+- [The counit of the exterior coaugmentation](native-complex-coaug-counit.md)
+- [The coproduct of the exterior coaugmentation](native-complex-coaug-comul.md)
+- [The comonoid morphism given by coaugmentation](native-complex-coaug-is-comon-hom.md)
+- [Cocommutativity for the Koszul chain braiding](native-complex-comul-cocommutative.md)
+- [The bundled exterior Chevalley–Eilenberg coalgebra](native-coalgebra.md)

@@ -1,0 +1,17 @@
+# Higher-form linearization of augmented algebras
+
+- [The module of higher augmented cotangent forms](cotangent-higher-level.md)
+- [Exterior base change for augmented cotangent forms](cotangent-higher-exterior-iso.md)
+- [The map on higher cotangent forms](cotangent-higher-map.md)
+- [Cotangent Higher Map id](cotangent-higher-map-id.md)
+- [Cotangent Higher Map comp](cotangent-higher-map-comp.md)
+- [The functor of higher cotangent forms in a fixed weight](cotangent-higher-functor.md)
+- [Naturality of exterior base change for cotangent forms](cotangent-higher-exterior-nat-iso.md)
+- [A decomposable higher cotangent differential](cotangent-higher-tensor.md)
+- [Exterior base change on differential wedges](cotangent-higher-exterior-iso-tensor.md)
+- [The coordinate formula on higher differential forms](cotangent-higher-map-tensor.md)
+- [The weight-zero higher cotangent map](cotangent-higher-map-zero-eq-weight-zero.md)
+- [The regular tensor formula in cotangent weight zero](cotangent-higher-map-zero-tmul.md)
+- [The weight-one cotangent comparison](cotangent-higher-one-nat-iso.md)
+- [The coordinate formula for the weight-one comparison](cotangent-higher-one-nat-iso-tensor.md)
+- [Extensionality on decomposable higher cotangent tensors](cotangent-higher-hom-ext-succ.md)

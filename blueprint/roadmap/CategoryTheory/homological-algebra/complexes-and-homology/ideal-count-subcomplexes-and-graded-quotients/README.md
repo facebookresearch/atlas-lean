@@ -1,0 +1,17 @@
+# Ideal-count subcomplexes and graded quotients
+
+- [The naive predecessor is contained in the current word stage](naive-lower-word-filtration-le.md)
+- [The naive predecessor stages are preserved by the relative boundary](naive-lower-word-filtration-d.md)
+- [The relative b boundary restricts to each word-count stage](naive-stage-d.md)
+- [The relative b boundary restricts to the predecessor stages](naive-lower-stage-d.md)
+- [Each naive word-count stage defines a chain subcomplex](naive-filtered-word-complex.md)
+- [The predecessor word stages define their own chain complex](naive-lower-word-complex.md)
+- [The restricted stage differential retains the relative boundary value](naive-filtered-word-complex-d-val.md)
+- [Subtype inclusions define a map from a filtered stage to the relative complex](naive-filtered-word-inclusion.md)
+- [The predecessor-to-stage inclusions form a chain map](naive-lower-word-inclusion.md)
+- [Increasing the count index gives a filtered chain inclusion](naive-filtered-word-map.md)
+- [The restricted boundary descends to adjacent-stage quotients](naive-layer-d.md)
+- [The naive associated complex has the adjacent-stage quotient modules](naive-associated-word-complex.md)
+- [The stage quotient projections form a chain map](naive-associated-word-projection.md)
+- [The associated differential is projection after the restricted boundary](naive-associated-word-complex-d-projecti.md)
+- [The associated projection kills the predecessor chain map](naive-lower-word-inclusion-projection.md)

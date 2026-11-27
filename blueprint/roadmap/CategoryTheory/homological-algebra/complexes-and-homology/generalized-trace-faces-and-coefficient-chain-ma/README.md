@@ -1,0 +1,16 @@
+# Generalized trace faces and coefficient chain maps
+
+- [Scalar matrix tensors determine a linear map](matrix-tensor-ext.md)
+- [Adjacent contraction preserves an ordered monoid product](product-mul-adjacent.md)
+- [The first Hochschild face commutes with generalized trace](trace-face-first.md)
+- [Interior Hochschild faces commute with generalized trace](trace-face-inner.md)
+- [The last Hochschild face commutes with generalized trace](trace-face-last.md)
+- [Every Hochschild face commutes with generalized trace](trace-face-comm.md)
+- [The alternating Hochschild boundary commutes with generalized trace](trace-boundary-comm.md)
+- [The degree trace with coefficients in a common universe](trace-linear-lift.md)
+- [Removing lifts recovers the degree trace](trace-linear-lift-down.md)
+- [The lifted degree trace commutes with the Hochschild boundary](trace-linear-lift-boundary-comm.md)
+- [The generalized trace as a coefficient Hochschild chain map](trace-chain-map.md)
+- [The components of the generalized trace chain map](trace-chain-map-f.md)
+- [The closed-cycle formula for a lifted trace component](trace-chain-map-f-tprod.md)
+- [Generalized trace retracts the diagonal corner chain map](corner-chain-map-comp-trace.md)

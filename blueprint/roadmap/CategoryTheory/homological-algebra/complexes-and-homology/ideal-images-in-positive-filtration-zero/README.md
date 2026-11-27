@@ -1,0 +1,15 @@
+# Ideal images in positive filtration zero
+
+- [The ideal bar inclusion extends to positive word-length grading](positive-bar-ideal-map.md)
+- [The positive ideal inclusion has zero quotient composite](positive-bar-ideal-quotient-zero.md)
+- [The positive ideal bar maps to the relative quotient kernel](ideal-to-relative-positive-bar-complex.md)
+- [The lifted ideal component recovers the positive ideal inclusion](ideal-to-relative-positive-bar-complex-f.md)
+- [A positive ideal component is the transported base bar inclusion](positive-bar-ideal-map-f.md)
+- [The relative positive ideal lift has zero degree-zero component](ideal-to-relative-positive-bar-complex-f-2.md)
+- [Positive ideal word coordinates apply inclusion to every algebra factor](positive-bar-ideal-map-word.md)
+- [The all-ideal coefficient span is the range of tensorized ideal inclusion](coefficient-ideal-word-span-all-eq-range.md)
+- [The relative positive kernel is injective in word coordinates](relative-positive-bar-word-map-injective.md)
+- [The relative ideal lift has the coefficientwise tensor inclusion as word map](relative-positive-bar-word-map-ideal-to.md)
+- [Every ideal-complex vector has the expected included word value](relative-positive-bar-word-map-ideal-to-2.md)
+- [An ideal tensor lift fixes its coefficient and includes all entries in order](relative-positive-bar-word-map-ideal-to-3.md)
+- [The bottom positive bar stage is the range of the ideal lift](bar-word-filtration-zero-eq-range.md)

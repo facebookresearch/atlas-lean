@@ -1,0 +1,18 @@
+# Finite generalized matrix trace
+
+- [The single-entry coefficient corner](corner-linear.md)
+- [The tensor description of a finite matrix module](matrix-tensor-equiv.md)
+- [The entries of the matrix tensor equivalence](matrix-tensor-equiv-tmul.md)
+- [The generalized coefficient matrix trace](generalized-trace.md)
+- [The closed-index-cycle tensor formula](generalized-trace-tmul-tprod.md)
+- [The corner inclusion of a whole coefficient tensor](corner-tensor.md)
+- [The generalized trace of a corner tensor](generalized-trace-corner-tprod.md)
+- [The corner tensor map is a section of generalized trace](generalized-trace-comp-corner-tensor.md)
+- [The degree-zero generalized trace](generalized-trace-zero.md)
+- [Generalized trace on an empty matrix index](generalized-trace-of-is-empty.md)
+- [Naturality under entrywise coefficient and tail maps](generalized-trace-naturality.md)
+- [The ground-scalar weight of a closed matrix cycle](trace-weight.md)
+- [Extracting the scalar weight from a matrix tensor trace](generalized-trace-scaled-weight.md)
+- [The ordered path expansion of a matrix-word entry](matrix-word-entry.md)
+- [The closed-cycle weight is a matrix-product trace](trace-weight-eq-trace-product.md)
+- [The scalar-matrix factorization of generalized trace](generalized-trace-scaled.md)

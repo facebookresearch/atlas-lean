@@ -38,3 +38,8 @@ The simplex category, simplicial and cosimplicial objects, simplicial sets with 
 - [Totals of alternating-face diagrams of single-zero complexes](totals-of-alternating-face-diagrams-of-single-ze/README.md)
 - [Unit insertion along ordinal maps](unit-insertion-along-ordinal-maps/README.md)
 - [Signed shuffles pair the two alternating-face complexes](alternating-pairing.md)
+- [Additive functors and the actual normalization quotient](additive-functors-and-the-actual-normalization-q/README.md)
+- [Natural total augmentations of augmented simplicial chain diagrams](natural-total-augmentations-of-augmented-simplic/README.md)
+- [Quasi-isomorphisms from simplicial extra degeneracies](quasi-isomorphisms-from-simplicial-extra-degener/README.md)
+- [Terminal-face extra degeneracies and the original alternating complex](terminal-face-extra-degeneracies-and-the-origina/README.md)
+- [The canonical normalization isomorphism for an arbitrary additive functor](the-canonical-normalization-isomorphism-for-an-a/README.md)

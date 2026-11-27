@@ -1,0 +1,16 @@
+# Linear tensor normalization and the actual contextual Lie relations
+
+- [The tensor-algebra value of a Lie basis word](tensor-word.md)
+- [Tensor Word nil](tensor-word-nil.md)
+- [Tensor Word cons](tensor-word-cons.md)
+- [Tensor Word append](tensor-word-append.md)
+- [The tensor basis element indexed by a list](tensor-basis-of-list.md)
+- [Tensor Basis apply](tensor-basis-apply.md)
+- [The linear tensor-algebra extension of ordered-word normalization](tensor-normalizer.md)
+- [Tensor Normalizer tensor Word](tensor-normalizer-tensor-word.md)
+- [The tensor insertion of a Lie vector in a basis-word context](tensor-insertion.md)
+- [Tensor Insertion apply](tensor-insertion-apply.md)
+- [The normalized value of a one-vector tensor insertion](tensor-normalizer-tensor-insertion.md)
+- [The normalized value of an adjacent tensor-vector pair](tensor-normalizer-tensor-pair.md)
+- [Annihilation of a Lie relation in basis-word tensor contexts](tensor-normalizer-word-relation-error.md)
+- [Annihilation of every contextual tensor Lie relation](tensor-normalizer-relation-error.md)

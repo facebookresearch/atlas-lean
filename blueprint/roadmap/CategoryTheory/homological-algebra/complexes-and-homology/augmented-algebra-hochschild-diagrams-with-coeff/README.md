@@ -1,0 +1,15 @@
+# Augmented-algebra Hochschild diagrams with coefficients
+
+- [The Hochschild complex with coefficients along an algebra augmentation](complex.md)
+- [The augmented Hochschild map with a fixed module coefficient](map.md)
+- [The augmented Hochschild functor with module coefficients](functor.md)
+- [The integral tensor formula for an augmented coefficient map](map-tprod.md)
+- [The terminal algebra for an augmented module-coefficient diagram](terminal-algebra.md)
+- [The Hochschild coefficient complex at the terminal algebra](terminal-complex.md)
+- [The terminal map of an algebra with fixed module coefficients](to-terminal.md)
+- [The terminal naturality equation for augmented coefficients](to-terminal-naturality.md)
+- [The natural Hochschild augmentation with arbitrary module coefficients](augmentation-nat.md)
+- [The augmented simplicial Hochschild diagram with module coefficients](simplicial-diagram.md)
+- [The simplicial Hochschild augmentation with module coefficients](simplicial-augmentation.md)
+- [The integral tensor formula for a module-coefficient simplicial operator](simplicial-diagram-map-tprod.md)
+- [The integral tensor formula for a module-coefficient simplicial augmentation](simplicial-augmentation-tprod.md)

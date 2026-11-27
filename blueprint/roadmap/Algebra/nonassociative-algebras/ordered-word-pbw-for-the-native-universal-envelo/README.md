@@ -1,0 +1,17 @@
+# Ordered-word PBW for the native universal enveloping algebra
+
+- [Contextual equality of tensor normal forms is a ring congruence](normalization-ring-con.md)
+- [The tensor Lie relation has equal contextual normal forms](normalization-ring-con-lie-compat.md)
+- [The ring quotient by contextual normal-form equality](normalization-quotient.md)
+- [The tensor algebra maps to its contextual normalization quotient](normalization-quotient-map.md)
+- [Normal-form coordinates on the contextual quotient](normalization-quotient-coordinates.md)
+- [The Lie-generator map into the normalization quotient](normalization-quotient-2.md)
+- [PBW coordinates on the universal enveloping algebra](pbw-coordinates.md)
+- [PBW coordinates of an arbitrary basis word are its normal form](pbw-coordinates-basis-word.md)
+- [PBW coordinates retract ordered-word evaluation](pbw-coordinates-comp-ordered-word-linear.md)
+- [Ordered-word evaluation is an R-linear equivalence](ordered-word-equiv.md)
+- [The weakly increasing word basis of the enveloping algebra](ordered-basis.md)
+- [A Lie-module basis gives a free enveloping module](free-of-basis.md)
+- [A free Lie module has a free enveloping module](free-of-free.md)
+- [The length-one component of ordered PBW coordinates](degree-one-projection.md)
+- [A Lie-module basis makes the enveloping generator map injective](injective-of-basis.md)

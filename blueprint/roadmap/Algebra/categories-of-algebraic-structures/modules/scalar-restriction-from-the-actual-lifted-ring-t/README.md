@@ -1,0 +1,15 @@
+# Scalar restriction from the actual lifted ring to the original ring
+
+- [The scalar ring lifted to the coefficient universe](lifted-ring.md)
+- [The scalar-module category with a lifted tensor unit](modules.md)
+- [The ring equivalence from scalars to lifted scalars](scalar-equiv.md)
+- [Restriction from lifted scalars to the ground ring](to-original.md)
+- [The unit comparison for lifted-scalar restriction](unit-iso.md)
+- [Unit Iso hom value](unit-iso-hom-value.md)
+- [Unit Iso inv value](unit-iso-inv-value.md)
+- [The tensor comparison for lifted-scalar restriction](tensor-iso.md)
+- [Tensor Iso hom tmul](tensor-iso-hom-tmul.md)
+- [Tensor Iso inv tmul](tensor-iso-inv-tmul.md)
+- [Tensor Iso naturality](tensor-iso-naturality.md)
+- [The strong monoidal structure on lifted-scalar restriction](monoidal.md)
+- [Compatibility of lifted-scalar restriction with tensor interchange](tensor-iso-braiding.md)

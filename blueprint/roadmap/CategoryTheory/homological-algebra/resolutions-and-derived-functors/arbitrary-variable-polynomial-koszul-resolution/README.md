@@ -1,0 +1,18 @@
+# Arbitrary-variable polynomial Koszul resolution
+
+- [Every positive-degree polynomial Koszul cycle is a boundary](polynomial-variables-exact-cycles.md)
+- [The Koszul complex of all polynomial variables](polynomial-complex.md)
+- [Every polynomial Koszul term is projective](polynomial-complex-projective.md)
+- [Every polynomial Koszul term is free](polynomial-complex-free.md)
+- [The variable Koszul complex is exact in every positive degree](polynomial-complex-exact-at.md)
+- [The variable-ideal quotient augmentation is a quasi-isomorphism](polynomial-quotient-augmentation-quasi-i.md)
+- [The polynomial Koszul resolution of the variable-ideal quotient](polynomial-quotient-projective-resolutio.md)
+- [The variable ideal is the kernel of constant-coefficient evaluation](polynomial-ideal-eq-ker-constant-coeff.md)
+- [The coefficient ring as a polynomial module](polynomial-constants.md)
+- [The coefficient target in the Koszul complex universe](polynomial-target.md)
+- [The polynomial quotient by all variables is the coefficient ring](polynomial-quotient-ring-equiv.md)
+- [The variable quotient equivalence is polynomial-linear](polynomial-quotient-equiv.md)
+- [The lifted quotient and coefficient targets are isomorphic](polynomial-quotient-target-iso.md)
+- [The polynomial Koszul augmentation to the coefficient module](polynomial-augmentation.md)
+- [The degree-zero augmentation evaluates the scalar at zero](polynomial-augmentation-apply.md)
+- [The polynomial Koszul projective resolution of coefficients](polynomial-projective-resolution.md)

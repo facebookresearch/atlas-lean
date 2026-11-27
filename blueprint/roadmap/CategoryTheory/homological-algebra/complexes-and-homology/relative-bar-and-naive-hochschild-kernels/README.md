@@ -1,0 +1,17 @@
+# Relative bar and naive Hochschild kernels
+
+- [A zero map gives a zero first-factor tensor map](original-cons-word-map-zero.md)
+- [The zero nonunital algebra map gives the zero naive chain map](cyclic-bcomplex-hom-zero-original.md)
+- [Nonunital bar maps preserve algebra-map composition](bar-algebra-complex-map-comp-original.md)
+- [The zero algebra map gives the zero bar-algebra chain map](bar-algebra-complex-map-zero-original.md)
+- [The relative naive complex is the kernel of the quotient chain map](relative-naive-complex.md)
+- [The ideal inclusion lifts to the relative naive kernel](ideal-to-relative-naive-complex.md)
+- [The relative bar complex retains an arbitrary ground coefficient](relative-bar-complex.md)
+- [The coefficient bar ideal map has zero quotient composite](bar-ideal-quotient-zero.md)
+- [The coefficient ideal bar maps to the relative bar kernel](ideal-to-relative-bar-complex.md)
+- [Positive bar placement puts word length in its chain degree](positive-bar-complex.md)
+- [A positive bar degree has coefficient and algebra-word coordinates](positive-bar-word-iso.md)
+- [The positive bar complex has a zero augmentation degree](positive-bar-complex-is-zero-zero.md)
+- [The algebra quotient induces a map of positive bar complexes](positive-bar-quotient-map.md)
+- [The relative positive bar is the quotient-map kernel](relative-positive-bar-complex.md)
+- [The relative positive bar word map is its kernel inclusion in tensor coordinates](relative-positive-bar-word-map.md)

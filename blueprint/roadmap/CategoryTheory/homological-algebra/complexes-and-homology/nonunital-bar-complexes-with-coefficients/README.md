@@ -1,0 +1,16 @@
+# Nonunital bar complexes with coefficients
+
+- [The coefficient bar of a nonunital algebra](bar-complex.md)
+- [The tensor module in each coefficient-bar degree](bar-complex-x.md)
+- [The coefficient-bar differential fixes the coefficient](bar-complex-d.md)
+- [A left unit contracts every coefficient bar](bar-contraction-of-left-unit.md)
+- [The value of the left-unit bar contraction](bar-contraction-of-left-unit-hom.md)
+- [A left unit makes the coefficient bar acyclic](bar-complex-acyclic-of-left-unit.md)
+- [H-unitality in a specified coefficient universe](is-hunital.md)
+- [A left unit implies H-unitality](is-hunital-of-left-unit.md)
+- [A nonunital algebra map acts on the bar word](bar-algebra-complex-map.md)
+- [A linear map acts on coefficient-bar coefficients](bar-coefficient-map.md)
+- [A nonunital algebra map acts on a coefficient bar](bar-algebra-map.md)
+- [The joint coefficient and algebra map on a bar](bar-joint-map.md)
+- [The tensor components of a joint bar map](bar-joint-map-f.md)
+- [The value of a joint bar map on a tensor word](bar-joint-map-tprod.md)

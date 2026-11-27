@@ -1,0 +1,17 @@
+# Hochschild chains over a coefficient algebra
+
+- [The Hochschild complex of an algebra augmented to its coefficient algebra](complex.md)
+- [Compatibility of fixed coefficients for a map of augmented algebras](coefficient-compatibility.md)
+- [The Hochschild chain map of a map over fixed coefficients](map.md)
+- [The tensor-coordinate formula for a map over fixed coefficients](map-tprod.md)
+- [The Hochschild chain functor on algebras over a coefficient algebra](functor.md)
+- [The terminal augmented algebra over a coefficient algebra](terminal-algebra.md)
+- [The regular Hochschild complex at the terminal augmentation](regular-complex.md)
+- [The terminal augmented complex as the regular symmetric Hochschild complex](regular-complex-eq.md)
+- [The map of an augmented algebra to the terminal augmentation](to-terminal.md)
+- [Naturality of maps to the terminal augmented algebra](to-terminal-naturality.md)
+- [The natural Hochschild augmentation to the coefficient algebra](augmentation-nat.md)
+- [The Hochschild diagram of an augmented simplicial algebra](simplicial-diagram.md)
+- [The Hochschild simplicial augmentation to fixed coefficients](simplicial-augmentation.md)
+- [The tensor formula for a simplicial Hochschild operator](simplicial-diagram-map-tprod.md)
+- [The tensor formula for a simplicial Hochschild augmentation](simplicial-augmentation-tprod.md)

@@ -1,0 +1,16 @@
+# Filtered polynomial coordinates of the native UEA
+
+- [The enveloping span of bounded-length ordered PBW words](ordered-degree-span.md)
+- [Ordered Degree Span mono](ordered-degree-span-mono.md)
+- [Ordered Word Linear mem degree Span](ordered-word-linear-mem-degree-span.md)
+- [Basis Word mem ordered Degree Span](basis-word-mem-ordered-degree-span.md)
+- [The enveloping degree filtration as an ordered PBW span](degree-filtration-eq-ordered-degree-span.md)
+- [Polynomial Coordinates mem total Degree](polynomial-coordinates-mem-total-degree.md)
+- [Polynomial Coordinates symm mem degree Span](polynomial-coordinates-symm-mem-degree-s.md)
+- [The degree criterion under polynomial PBW coordinates](polynomial-coordinates-mem-degree-iff.md)
+- [The polynomial evaluation map on ordered normal forms](normalized-polynomial-map.md)
+- [Normalized Polynomial Map single](normalized-polynomial-map-single.md)
+- [Normalized Polynomial Map normalize](normalized-polynomial-map-normalize.md)
+- [The leading monomial of a basis word in PBW coordinates](polynomial-coordinates-word-leading.md)
+- [The polynomial defect of right multiplication by a Lie basis generator](right-multiplication-defect.md)
+- [The degree bound for a right-generator multiplication defect](right-multiplication-defect-mem-degree.md)

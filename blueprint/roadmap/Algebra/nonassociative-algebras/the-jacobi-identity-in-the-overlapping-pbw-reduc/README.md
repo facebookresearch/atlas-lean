@@ -1,0 +1,17 @@
+# The Jacobi identity in the overlapping PBW reductions
+
+- [The defining enveloping relation error in the tensor algebra](relation-error.md)
+- [Relation Error self](relation-error-self.md)
+- [Relation Error swap](relation-error-swap.md)
+- [The relation error as a linear map in its second argument](relation-error-linear.md)
+- [Relation Error Linear apply](relation-error-linear-apply.md)
+- [The bilinear tensor relation map](relation-error-bilinear.md)
+- [The basis expansion of a tensor relation error](relation-error-basis-expand.md)
+- [The left-first expansion of a three-letter enveloping reduction](overlap-left.md)
+- [The right-first expansion of a three-letter enveloping reduction](overlap-right.md)
+- [The Jacobi relation among overlapping reduction paths](overlap-difference-eq-relation-errors.md)
+- [The linear tensor map given by fixed left and right factors](tensor-context.md)
+- [Generation of contextual relation errors by basis pairs](tensor-context-relation-error-mem-span.md)
+- [Generation of an overlap difference by contextual basis relations](tensor-context-overlap-difference-mem-sp.md)
+- [Commutation of disjoint additive tensor reductions](disjoint-reductions-commute.md)
+- [The defining relation error in the enveloping quotient](mk-alg-hom-relation-error.md)

@@ -1,0 +1,17 @@
+# Alternating exterior-to-Connes maps
+
+- [Ordered tensor generators project to a cyclic multilinear map](cyclic-multilinear.md)
+- [Full permutation alternation gives an integral cyclic alternating map](cyclic-full-alternating.md)
+- [The integral full alternating sum descends to the exterior power](cyclic-full-exterior.md)
+- [A pure exterior word maps to the full signed permutation sum](cyclic-full-exterior-pure.md)
+- [The cyclic tail sum fixes the first input and alternates the rest](cyclic-tail-sum.md)
+- [The integral full sum is the input count times the tail sum](cyclic-full-exterior-eq-factor-tail.md)
+- [Full and tail alternation agree on a one-factor word](cyclic-full-exterior-zero-pure.md)
+- [Integral full exterior maps are natural for nonunital algebra maps](cyclic-full-exterior-natural.md)
+- [Dividing full alternation by the input count gives the normalized exterior map](cyclic-exterior.md)
+- [The rational normalization uses the factor one over n plus one](cyclic-exterior-full.md)
+- [The normalized exterior map has exactly the fixed-first tail formula](cyclic-exterior-pure.md)
+- [Normalized cyclic exterior maps are natural for nonunital algebra maps](cyclic-exterior-natural.md)
+- [A degree sign modifies the normalized cyclic exterior map](cyclic-exterior-weibel.md)
+- [The degree-signed exterior map is the signed tail sum](cyclic-exterior-weibel-pure.md)
+- [The degree-signed cyclic exterior map preserves algebra naturality](cyclic-exterior-weibel-natural.md)

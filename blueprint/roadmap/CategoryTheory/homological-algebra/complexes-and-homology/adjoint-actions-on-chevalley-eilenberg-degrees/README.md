@@ -1,0 +1,15 @@
+# Adjoint actions on Chevalley–Eilenberg degrees
+
+- [Adjoint derivations restrict to Lie representations on exterior powers](degree-adjoint-action.md)
+- [The left adjoint action replaces each wedge entry by its left bracket](degree-adjoint-action-pure.md)
+- [The exterior degree-zero adjoint representation is trivial](degree-adjoint-action-zero.md)
+- [The degreewise adjoint action commutes with the CE differential](differential-degree-adjoint-action.md)
+- [An exterior power carries its degree adjoint Lie-module structure](degree-adjoint-module.md)
+- [The adjoint degree actions assemble into a CE chain endomorphism](degree-adjoint-chain-map.md)
+- [Negating a restricted adjoint representation gives the right action](right-degree-adjoint-action.md)
+- [The right adjoint action replaces wedge entries by right brackets](right-degree-adjoint-action-pure.md)
+- [Right adjoint operators satisfy the reversed commutator equation](right-degree-adjoint-action-anti-lie.md)
+- [The right action is a Lie homomorphism into the opposite endomorphism ring](right-degree-adjoint-lie-hom.md)
+- [Lie maps intertwine the adjoint actions on exterior degrees](degree-adjoint-action-naturality.md)
+- [The CE adjoint chain action is a coproduct coderivation](degree-adjoint-chain-map-comul.md)
+- [The CE adjoint chain action has zero counit](degree-adjoint-chain-map-counit.md)
