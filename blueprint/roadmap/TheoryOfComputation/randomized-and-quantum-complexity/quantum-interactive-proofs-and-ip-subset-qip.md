@@ -14,16 +14,13 @@ A sound expansion has separate pages for:
 3. **Consequence.** With $\mathsf{IP} = \mathsf{PSPACE}$, $\mathsf{PSPACE} \subseteq \mathsf{QIP}$. The equality
    $\mathsf{QIP} = \mathsf{PSPACE}$ is a separate theorem with its own source, not an ingredient proved here.
 
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Quantum channels (CPTP maps).
-
 ## Depends on
 
 - [BQP](../complexity-classes/time-and-space-complexity-classes/bqp.md)
 - [Quantum interaction semantics](quantum-interaction-semantics.md)
 - [The class IP](../complexity-classes/time-and-space-complexity-classes/ip.md)
 - [Polynomial space for decision problems](../complexity-classes/time-and-space-complexity-classes/pspace.md)
+- [Quantum channel](../../QuantumInformation/quantum-operations/quantum-channel.md)
 
 ## Proof depends on
 
