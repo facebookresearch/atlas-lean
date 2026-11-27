@@ -28,6 +28,7 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.DyckPeakDescents
+public import MathlibExt.Combinatorics.Enumerative.EvenNoncrossingDyckDescents
 public import MathlibExt.Combinatorics.Enumerative.ToeplitzHessenbergDetFussCatalan
 public import MathlibExt.Combinatorics.Enumerative.ToeplitzHessenbergDetFussCatalanSpecial
 public import MathlibExt.Combinatorics.Enumerative.ToeplitzHessenbergDetGenFun
@@ -117,20 +118,6 @@ public theorem_wanted toeplitzHessenbergDet_ternary :
       toeplitzHessenbergDet
           (fun i => if i = 0 then -1 else (generalizedFussCatalanNumber 3 (i - 1) 2 : ℚ)) n =
         (generalizedFussCatalanNumber 3 n 1 : ℚ)
-
-/-- **Even noncrossing partitions and Dyck paths with even descents.** For every natural number
-$n$, there is a bijection between the noncrossing partitions of $\{0, \dots, 2n - 1\}$ all of
-whose blocks have even size and the Dyck paths of semilength $2n$ all of whose descents have even
-length. Here the descents of a Dyck path are the lengths of its maximal runs of down steps, one
-for each peak $UD$: the run of down steps starting at the $D$ of that peak.
-
-Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
-Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Lemma 10
-(`jis-2026-26.1.2-lem-10`). -/
-public theorem_wanted nonempty_equiv_evenNoncrossing_evenDescentDyck (n : ℕ) :
-    Nonempty
-      ({P : _root_.NoncrossingPartition (2 * n) // ∀ B ∈ P.val.parts, Even B.card} ≃
-        {p : DyckWord // p.semilength = 2 * n ∧ ∀ j ∈ dyckPeakDescents p.toList, Even j})
 
 end
 

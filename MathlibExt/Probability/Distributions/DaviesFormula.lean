@@ -35,10 +35,16 @@ With all weights zero `Q ≡ 0`, and at `q = 0` the limit is the mid-p value `½
 ## Source contract
 
 R. B. Davies, *Algorithm AS 155: The distribution of a linear combination of χ² random
-variables*, J. R. Stat. Soc. C 29 (1980), 323–333, eq. (1):
-`P(Q < c) = ½ - π⁻¹ ∫₀^∞ Im[φ(u) e^{-i u c}] / u du`, stated here as the equivalent upper tail,
-in the central case without the extra normal term. Davies' numerical algorithm (discretization
-and error bounds) is not formalized.
+variables*, J. R. Stat. Soc. C 29 (1980), 323–333. Davies' eq. (1) defines the model
+`Q = ∑ⱼ λⱼ Xⱼ + σ X₀`, with independent noncentral χ² variables `Xⱼ` whose degrees of freedom may
+differ and an independent standard normal `X₀`. The law `weightedChiSq lam` here is its central,
+one-degree-of-freedom, `σ = 0` special case `∑ⱼ λⱼ χ²₁`. The limits here are Gil-Pelaez's
+inversion theorem, not Davies' eq. (1). Davies' algorithm evaluates
+`P(Q < c) = ½ - π⁻¹ ∫₀^∞ Im[φ(u) e^{-i u c}] / u du` by discretizing that integral. This
+equality needs `P(Q = c) = 0`; in general the right side is `P(Q < c) + ½ P(Q = c)`. With
+all weights zero and `c = 0`, for instance, it is `½` while `P(Q < 0) = 0`. The limits are
+stated here as the mid-p and upper-tail values. Davies' numerical algorithm (discretization and
+error bounds) is not formalized.
 
 ## Attribution
 
@@ -79,8 +85,10 @@ theorem integrable_id_weightedChiSq {k : Type*} [Fintype k] (lam : k → ℝ) :
     (by fun_prop : Measurable fun ξ : k → ℝ => ∑ j, lam j * ξ j ^ 2).aemeasurable]
   exact integrable_finsetSum _ fun j _ => (hint j).const_mul _
 
-/-- **Davies' p-value formula** (Davies 1980, eq. (1), from Gil-Pelaez's inversion theorem).
-For `Q ~ ∑ⱼ λⱼ χ²₁` and every `q`,
+/-- **Davies' p-value formula**: Gil-Pelaez's inversion theorem for `Q ~ ∑ⱼ λⱼ χ²₁`, the
+central, one-degree-of-freedom, `σ = 0` special case of the model `Q = ∑ⱼ λⱼ Xⱼ + σ X₀` of
+Davies (1980), eq. (1); that equation defines the model, and the limit is Gil-Pelaez's. For
+every `q`,
 `½ + π⁻¹ ∫₀^T Im(e^{-i t q} φ(t)) / t dt → ½ (P(Q > q) + P(Q ≥ q))` as `T → ∞`, with
 `φ = daviesCharFun λ`. The improper integral is the one Davies' algorithm discretizes. -/
 theorem tendsto_davies {k : Type*} [Fintype k] (lam : k → ℝ) (q : ℝ) :
@@ -144,8 +152,8 @@ theorem weightedChiSq_singleton {k : Type*} [Fintype k] {lam : k → ℝ} {j : k
     (measurableSet_eq_fun (by fun_prop : Measurable fun x : ℝ => lam j * x ^ 2)
       measurable_const).nullMeasurableSet).trans (hpt _)
 
-/-- **Davies' formula, nondegenerate case**: when some weight is nonzero, the limit is the exact
-upper tail `P(Q > q)` for every `q`. -/
+/-- **Davies' formula, nondegenerate case**: when some weight is nonzero, the Gil-Pelaez limit
+of `tendsto_davies` is the exact upper tail `P(Q > q)` for every `q`. -/
 theorem tendsto_davies_of_ne_zero {k : Type*} [Fintype k] {lam : k → ℝ} {j : k} (hj : lam j ≠ 0)
     (q : ℝ) :
     Tendsto (fun T => 1 / 2 + π⁻¹ * ∫ t in (0 : ℝ)..T,
