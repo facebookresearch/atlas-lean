@@ -23,3 +23,7 @@
 - [Loss probability of an allele in the finite Wright–Fisher chain](measure-real-markov-chain-measure-exists-2.md)
 
 - [Fixation probability with selection in the finite Wright–Fisher model](fixation-probability-with-selection-in-the-finite-chain.md)
+
+## Gaussian approximation of multi-locus time series
+
+- [Gaussian-process approximation of multi-locus Wright–Fisher time series](gaussian-process-approximation-of-multi-locus-wright-fisher-time-series/README.md)

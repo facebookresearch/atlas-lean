@@ -15,3 +15,5 @@ Galton–Watson processes, extinction probabilities, total progeny and the hitti
   (Le Gall, *Random trees and applications*, Sections 1–2).
 
 - [Superprocesses](superprocesses/README.md)
+
+- [Three-state broadcasting on trees](three-state-tree-broadcast/README.md)

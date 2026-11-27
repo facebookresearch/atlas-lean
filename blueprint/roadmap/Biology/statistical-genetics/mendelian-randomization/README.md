@@ -64,4 +64,7 @@ See [potential outcomes and the local average treatment effect](../../../Probabi
 - [Winner's-curse-free Mendelian randomization](winner-s-curse-free-mendelian-randomization/README.md)
 ## Correlated cis-instruments
 - [Cis-Mendelian randomization with correlated instruments](cis-mendelian-randomization-with-correlated-instruments/README.md)
+- [Median-initialized adaptive Lasso for some invalid instruments](median-initialized-adaptive-lasso-for-some-invalid-instruments.md)
+- [MR-SPLIT cross-fitted exposures for one-sample Mendelian randomization](mr-split-cross-fitted-exposures-for-one-sample-mendelian-randomization.md)
+- [Bidirectional Mendelian randomization with correlated pleiotropy](bidirectional-mendelian-randomization-with-correlated-pleiotropy/README.md)
 - [Point identification under a budget of invalid instruments](point-identification-under-a-budget-of-invalid-instruments.md)

@@ -1,6 +1,6 @@
 # Quantum subexponential attacks on commutative isogeny group actions
 
-For any free and transitive action of an abelian group $G$ on a set $X$ whose action is efficiently computable (in particular the CSIDH action), recovering $[\mathfrak{a}]$ from $(E,[\mathfrak{a}]\star E)$ reduces to an abelian hidden shift problem, which Kuperberg's algorithm solves in quantum time $2^{O(\sqrt{\log|G|})}$ (subexponential), using that many group-action evaluations. Consequently CSIDH parameters must account for subexponential quantum attacks, unlike lattice or hash-based schemes where only polynomial (Grover-type) quantum speedups are known.
+For any free and transitive action of an abelian group $G$ on a set $X$ that is efficiently computable on arbitrary group elements, recovering $[\mathfrak{a}]$ from $(E,[\mathfrak{a}]\star E)$ reduces to an abelian hidden shift problem, which Kuperberg's algorithm solves in quantum time $2^{O(\sqrt{\log|G|})}$ (subexponential), using that many group-action evaluations and superpolynomial quantum space. The CSIDH action is not known to be efficiently computable on the arbitrary ideal classes these queries need; Childs–Jao–Soukharev evaluate it on any class in subexponential time and space (assuming GRH), so for CSIDH each of the $2^{O(\sqrt{\log|G|})}$ queries has subexponential cost and the attack runs in time $L_p[1/2]$ overall. Consequently CSIDH parameters must account for subexponential quantum attacks, unlike lattice or hash-based schemes where only polynomial (Grover-type) quantum speedups are known.
 
 ## Proof sketch
 
