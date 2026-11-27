@@ -32,24 +32,36 @@ The filter keeps a Gaussian belief `N(m, P)` about the state (`Belief`) and alte
 Main results, all exact statements about Mathlib's `multivariateGaussian` and `condDistrib`:
 
 * `map_predict`: **the predict step is exact**: the law of `F x + w` is `predict F Q b`;
-* `condDistrib_update`: **the update step is the exact posterior** of the state given `y`;
+* `condDistrib_update`: **the update step is the exact posterior** of the state given `y`, when the
+  innovation covariance `H P Hᵀ + R` is invertible;
 * `condDistrib_step`: **one filter step is the exact posterior** of `x'` given `y`, from a Gaussian
-  prior on `x`.
+  prior on `x`, when the innovation covariance is invertible.
 
 They are corollaries of the linear-Gaussian Bayes theorem
 `MetaMathlibExt.condDistrib_linear_add_of_indepFun`.
 
-Over a whole observation history (Anderson and Moore, *Optimal Filtering*, Section 3.1), for the
-time-varying signal model `x_{k+1} = F_k x_k + G_k w_k`, `z_k = H_kᵀ x_k + v_k` with mutually
-independent Gaussian `x_0`, `w_k`, `v_k`:
+Over a whole observation history (Anderson and Moore, *Optimal Filtering*, Section 3.1), the
+time-varying signal model with horizon `N` is `x_{k+1} = F_k x_k + G_k w_k` for `k < N` and
+`z_k = H_kᵀ x_k + v_k` for `k ≤ N`, with mutually independent `x_0 ~ N(x̄_0, P_0)`,
+`w_k ~ N(0, Q_k)` and `v_k ~ N(0, R_k)`, `P_0` and `Q_k` positive semidefinite and `R_k` positive
+definite:
 
-* `predictedBelief`, `filteredBelief`: the filter run on observations `z_0, …, z_k`, giving
-  `(x̂_{k|k-1}, Σ_{k|k-1})` and `(x̂_{k|k}, Σ_{k|k})`;
+* `predictedBelief`, `filteredBelief`: the filter run on observations `z_0, …, z_{k-1}` and
+  `z_0, …, z_k`, giving `(x̂_{k|k-1}, Σ_{k|k-1})` and `(x̂_{k|k}, Σ_{k|k})`; the gain inverts the
+  innovation covariance `H_kᵀ Σ_{k|k-1} H_k + R_k`, with the inverse taken to be `0` when it is
+  singular;
 * `condDistrib_observationHistory`: **the Kalman filter gives the conditional law given the whole
-  observation history**: `x_k` given `z_0, …, z_{k-1}` is `N(x̂_{k|k-1}, Σ_{k|k-1})` and given
-  `z_0, …, z_k` is `N(x̂_{k|k}, Σ_{k|k})`; `Σ_{k|k}` does not depend on the observations, and
-  `x̂_{k|k}` is the conditional expectation and the almost surely unique minimizer of the mean
-  squared error.
+  observation history**: for every `k ≤ N`, `x_k` given `z_0, …, z_{k-1}` is
+  `N(x̂_{k|k-1}, Σ_{k|k-1})` for almost every history under its law, and `x_k` given
+  `z_0, …, z_k` is `N(x̂_{k|k}, Σ_{k|k})` for almost every history under its law; `Σ_{k|k}` does
+  not depend on the observations; and `x̂_{k|k}` is almost surely the conditional expectation of
+  `x_k` given `z_0, …, z_k` and, among measurable functions of `z_0, …, z_k`, the minimizer of the
+  mean squared error, unique up to almost sure equality.
+
+The theorem assumes `R_k` positive definite. When an innovation covariance is singular, the zero
+inverse is only a convention, and the beliefs need not be the conditional laws: for
+`x_0 ~ N(0, 1)` observed without noise as `z_0 = (x_0, 0)`, the innovation covariance is singular
+and the filtered variance stays `1`, while `x_0` given `z_0` is a point mass.
 
 The proof conditions step by step: given the past, the current noise is independent of the past
 and of the state, so each predict and update step is the one-step result applied fibrewise.
@@ -496,7 +508,15 @@ observation matrix $H_k^\top$, noise covariance $R_k$ and observation $z_k$:
 $\hat x_{k|k} = \hat x_{k|k-1} + K_k (z_k - H_k^\top \hat x_{k|k-1})$ and
 $\Sigma_{k|k} = (I - K_k H_k^\top) \Sigma_{k|k-1}$ with the gain
 $K_k = \Sigma_{k|k-1} H_k (H_k^\top \Sigma_{k|k-1} H_k + R_k)^{-1}$, where the inverse is taken to
-be $0$ when the matrix is singular. -/
+be $0$ when the matrix is singular.
+
+In the linear Gaussian signal model with horizon $N \ge k$, $x_{j+1} = F_j x_j + G_j w_j$ for
+$j < N$ and $z_j = H_j^\top x_j + v_j$ for $j \le N$, with mutually independent
+$x_0 \sim N(\bar x_0, P_0)$, $w_j \sim N(0, Q_j)$ and $v_j \sim N(0, R_j)$, $P_0$ and $Q_j$
+positive semidefinite and $R_j$ positive definite, $N(\hat x_{k|k-1}, \Sigma_{k|k-1})$ is the
+conditional law of $x_k$ given $z_0, \dots, z_{k-1}$ for almost every history under its law
+(`condDistrib_observationHistory`). When one of the inverted matrices is singular, the zero
+inverse is only a convention, and the predicted belief need not be that conditional law. -/
 noncomputable def predictedBelief (F : ℕ → Matrix n n ℝ) (G : ℕ → Matrix n r ℝ)
     (Q : ℕ → Matrix r r ℝ) (H : ℕ → Matrix n p ℝ) (R : ℕ → Matrix p p ℝ) (b₀ : Belief n) :
     (k : ℕ) → (Fin k → EuclideanSpace ℝ p) → Belief n
@@ -514,7 +534,15 @@ $$\hat x_{k|k} = \hat x_{k|k-1} + K_k (z_k - H_k^\top \hat x_{k|k-1}), \qquad
 with the gain $K_k = \Sigma_{k|k-1} H_k (H_k^\top \Sigma_{k|k-1} H_k + R_k)^{-1}$, where
 $(\hat x_{k|k-1}, \Sigma_{k|k-1})$ is the predicted belief of the Kalman filter with these matrices
 and $b_0$ after $z_0, \dots, z_{k-1}$, and the inverse is taken to be $0$ when the matrix is
-singular. -/
+singular.
+
+In the linear Gaussian signal model with horizon $N \ge k$, $x_{j+1} = F_j x_j + G_j w_j$ for
+$j < N$ and $z_j = H_j^\top x_j + v_j$ for $j \le N$, with mutually independent
+$x_0 \sim N(\bar x_0, P_0)$, $w_j \sim N(0, Q_j)$ and $v_j \sim N(0, R_j)$, $P_0$ and $Q_j$
+positive semidefinite and $R_j$ positive definite, $N(\hat x_{k|k}, \Sigma_{k|k})$ is the
+conditional law of $x_k$ given $z_0, \dots, z_k$ for almost every history under its law
+(`condDistrib_observationHistory`). When one of the inverted matrices is singular, the zero
+inverse is only a convention, and the filtered belief need not be that conditional law. -/
 noncomputable def filteredBelief (F : ℕ → Matrix n n ℝ) (G : ℕ → Matrix n r ℝ)
     (Q : ℕ → Matrix r r ℝ) (H : ℕ → Matrix n p ℝ) (R : ℕ → Matrix p p ℝ) (b₀ : Belief n)
     (k : ℕ) (ζ : Fin (k + 1) → EuclideanSpace ℝ p) : Belief n :=
