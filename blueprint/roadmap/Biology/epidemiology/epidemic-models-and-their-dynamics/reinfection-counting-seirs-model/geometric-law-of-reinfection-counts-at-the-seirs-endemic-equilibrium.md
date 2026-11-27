@@ -25,10 +25,6 @@ $$ \phi = \frac{\gamma\omega(\mathcal R_0 - 1)}{\beta(\omega+b) - \gamma\omega},
 
 so the mean rank $1/(1-\phi) = (\beta(\omega+b) - \gamma\omega)/(\beta(\omega+b) - \gamma\omega\mathcal R_0)$.
 
-## Depends on
-
-- [SEIR epidemic model](../../seir-epidemic-model/README.md)
-
 ## Expansion
 
 Existence follows by truncating the infinite system and passing to the limit, using that the totals obey the finite SEIRS system; uniqueness comes from a Grönwall estimate in $\ell^1$. Normalizing by $N$ removes $\mu$. At the endemic equilibrium the indexed equations are linear with the known force of infection $\beta \bar I^*$, so they form a first-order recursion in $i$: each recovered class $\bar R_{i-1}$ feeds $\bar S_i$ with the same gain at every step, and that gain is $\phi$. A geometric profile in $i$ means that the number of past infections is geometrically distributed, and the means follow from $\sum_i i \phi^{i-1} = (1-\phi)^{-2}$. The paper (Theorems 1, 2 and 4, Corollaries 1 and 2) also describes the growth or decay of $N$ according to the signs of $b - \mu$ and $b - \mu - \nu \bar I^*$ (Theorem 3).

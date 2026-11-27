@@ -18,10 +18,6 @@ $$ \mathcal R_0 = \frac{1}{1 - I^*}, \qquad \beta = \frac{\mu \mathcal R_0}{\mat
 
 so both rates are recovered from the two prevalences, while $I^*$ alone determines only $\mathcal R_0$. The share $\theta$ is also the fraction of never-infected individuals among susceptibles.
 
-## Depends on
-
-- [SIS epidemic model](../../sis-epidemic-model/README.md)
-
 ## Proof depends on
 
 - [Geometric law of reinfection counts at the SEIRS endemic equilibrium](geometric-law-of-reinfection-counts-at-the-seirs-endemic-equilibrium.md)

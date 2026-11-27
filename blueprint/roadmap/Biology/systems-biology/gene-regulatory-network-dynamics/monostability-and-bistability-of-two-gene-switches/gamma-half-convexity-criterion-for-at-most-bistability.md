@@ -15,7 +15,7 @@ where $f, g \in C^3(\mathbb{R}_+, \mathbb{R}_+)$ are both increasing (cooperativ
 1. If $f$ and $g$ are $\gamma^{1/2}$-convex and at least one is strictly $\gamma^{1/2}$-convex, then for every $\alpha, \beta > 0$ the system has at most three equilibria and is either monostable (one stable equilibrium) or bistable (exactly two stable equilibria).
 2. If $f$ and $g$ are $\gamma^{1/2}$-concave and at least one is strictly $\gamma^{1/2}$-concave, then for every $\alpha, \beta > 0$ the system is monostable.
 
-The same conclusions hold for cyclic $n$-dimensional systems $\dot x_i = f_i(x_{i+1}) - x_i$ (indices mod $n$) with monotone $f_i$, an even number of them decreasing, all $\gamma^{1/2}$-convex (resp. concave) and one strictly so.
+For cyclic $n$-dimensional systems $\dot x_1 = f_1(x_n) - x_1$, $\dot x_i = f_i(x_{i-1}) - x_i$ ($2 \le i \le n$), with $f_1,\dots,f_n \in C^3(\mathbb R_+,\mathbb R_+)$ monotone, $|f_i'| > 0$ on $\mathbb R_+$ and an even number of them decreasing: if all $f_i$ are $\gamma^{1/2}$-convex (resp. $\gamma^{1/2}$-concave) and at least one is strictly so, the system has at most three (resp. at most one) equilibria; if moreover $(f_n \circ \dots \circ f_1)'(x) \ne 1$ at every fixed point $x$ of $f_n \circ \dots \circ f_1$, the system is at most bistable (Proposition 8).
 
 ## Depends on
 
@@ -27,4 +27,4 @@ Write $F = \alpha f \circ \beta g$. A counting lemma says that if a $C^1$ map ha
 
 ## Sources
 
-- J. Guilberteau, C. Pouchol, N. Pouradier Duteil, "Monostability and bistability of biological switches", arXiv:2104.04227 (2021): Section 1 (model and main theorem), Section 2 (fixed-point counting propositions, definition of $\gamma^{1/2}$-convex functions, composition, non-local and inverse characterizations), Section 3 (criterion ensuring at most bistability and its extension to cyclic $n$-dimensional ODEs), Appendix (ordering of stable points, basins of attraction, further $\gamma^{1/2}$-convex sigmoid functions). <https://doi.org/10.48550/arXiv.2104.04227> Published version: Journal of Mathematical Biology 83 (2021) 65, <https://doi.org/10.1007/s00285-021-01687-y>.
+- J. Guilberteau, C. Pouchol, N. Pouradier Duteil, "Monostability and bistability of biological switches", arXiv:2104.04227 (2021): Section 1 (model and main theorem), Section 2 (fixed-point counting propositions, definition of $\gamma^{1/2}$-convex functions, composition, non-local and inverse characterizations), Section 3 (criterion ensuring at most bistability and its extension to cyclic $n$-dimensional ODEs, Proposition 8), Appendix (ordering of stable points, basins of attraction, further $\gamma^{1/2}$-convex sigmoid functions). <https://doi.org/10.48550/arXiv.2104.04227> Published version: Journal of Mathematical Biology 83 (2021) 65, <https://doi.org/10.1007/s00285-021-01687-y>.

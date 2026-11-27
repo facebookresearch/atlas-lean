@@ -8,16 +8,14 @@ $$|N^k_{RF}(T)|=\frac{2^k n^k}{k!}\Big(1+C_{T,k}\,n^{-1}+O(n^{-2})\Big),\qquad -
 
 $$|N^k_{NNI}(T)|=\frac{2^k n^k}{k!}\Big(1+D_{T,k}\,n^{-1}+O(n^{-2})\Big),\qquad -\frac{3k(k+1)}{2}\le D_{T,k}\le 3k(k-2).$$
 
-So to first order both neighbourhood sizes depend only on $n$ and $k$, and shape enters at relative order $1/n$. For the third NNI neighbourhood the count is exact: for $T\in UB(n,c)$,
+So to first order both neighbourhood sizes depend only on $n$ and $k$, and shape enters at relative order $1/n$.
 
-$$|N^3_{NNI}(T)|=\frac43 n^3-8n^2-\frac{70}{3}n+8cn+12\,p_3(T)+164,$$
-
-where $p_3(T)$ is the number of paths of length three between internal edges; $p_1(T)=n-3$, $p_2(T)=n+c-6$, and $p_k=4p_{k-2}-h_k-m_k$ for $k\ge3$, with $m_k$ and $h_k$ the numbers of length-$k$ paths with two, respectively exactly one, leaf endpoints.
+The source's Appendix (Theorem A.1) also prints an exact formula for the third NNI neighbourhood, $|N^3_{NNI}(T)|=\frac43 n^3-8n^2-\frac{70}{3}n+8cn+12\,p_3(T)+164$ for $T\in UB(n,c)$, with $p_3(T)$ the number of distinct internal paths of length three; this page does not state it, because it is false as printed: for $n=5$ ($c=2$, $p_3=0$) it gives $94$, more than the $15$ trees in $UB(5)$, and a brute-force count for $n=4,\dots,9$ differs from it by exactly $46c$ in every class.
 
 ## Expansion
 
-A tree has $n-3$ internal edges and each admits two NNI moves (or two RF-unit resolutions), so choosing $k$ distinct, pairwise non-adjacent internal edges and one of two moves on each produces $\binom{n-3}{k}2^k\sim (2n)^k/k!$ trees, which is the leading term. The work is bounding the corrections: sequences of NNI moves on distinct non-adjacent edges commute, moves on edges that are later undone collapse to shorter sequences, and sets of moves that differ in which edges they touch yield disjoint sets of trees because they change different splits. Adjacent-edge configurations, of which there are $O(n^{k-1})$, account for the $1/n$ term, and counting them in the extreme shapes gives the bounds on $C_{T,k}$ and $D_{T,k}$. The third neighbourhood is computed exactly by enumerating the possible configurations of three edges along paths in $T$.
+A tree has $n-3$ internal edges and each admits two NNI moves (or two RF-unit resolutions), so choosing $k$ distinct, pairwise non-adjacent internal edges and one of two moves on each produces $\binom{n-3}{k}2^k\sim (2n)^k/k!$ trees, which is the leading term. The work is bounding the corrections: sequences of NNI moves on distinct non-adjacent edges commute, moves on edges that are later undone collapse to shorter sequences, and sets of moves that differ in which edges they touch yield disjoint sets of trees because they change different splits. Adjacent-edge configurations, of which there are $O(n^{k-1})$, account for the $1/n$ term, and counting them in the extreme shapes gives the bounds on $C_{T,k}$ and $D_{T,k}$.
 
 ## Sources
 
-- Jamie V. de Jong, Jeanette C. McLeod, Mike Steel, "Neighbourhoods of phylogenetic trees: exact and asymptotic counts", arXiv:1508.03774 (2015); SIAM Journal on Discrete Mathematics 30 (2016): Section 3 (main Robinson–Foulds theorem), Section 4 (main NNI theorem and its corollaries on disjoint and commuting move sequences), Appendix "Third NNI Neighbourhood" (exact third neighbourhood and the path-count recursion). <https://doi.org/10.48550/arXiv.1508.03774> Published version: SIAM Journal on Discrete Mathematics 30 (2016) 2265–2287, <https://doi.org/10.1137/15m1035070>.
+- Jamie V. de Jong, Jeanette C. McLeod, Mike Steel, "Neighbourhoods of phylogenetic trees: exact and asymptotic counts", arXiv:1508.03774 (2015); SIAM Journal on Discrete Mathematics 30 (2016): Section 3 (main Robinson–Foulds theorem), Section 4 (main NNI theorem and its corollaries on disjoint and commuting move sequences). <https://doi.org/10.48550/arXiv.1508.03774> Published version: SIAM Journal on Discrete Mathematics 30 (2016) 2265–2287, <https://doi.org/10.1137/15m1035070>.

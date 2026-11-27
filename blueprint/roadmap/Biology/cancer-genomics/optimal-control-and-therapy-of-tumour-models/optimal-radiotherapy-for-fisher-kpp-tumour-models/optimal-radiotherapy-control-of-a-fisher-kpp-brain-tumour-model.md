@@ -16,7 +16,7 @@ with heterogeneous diffusivity $D\in L^\infty(\Omega)$, $D\ge d_0>0$ (grey versu
 
 $$\mathcal{U}=\Bigl\{R\in L^\infty(\Omega_T): 0\le R\le M,\ \int_0^T\!\!\int_\Omega R\,dx\,dt=\Gamma\Bigr\},\qquad J(R)=\int_0^T\!\!\int_\Omega u_R\,dx\,dt,$$
 
-the cumulative tumour burden. Under the assumptions of item 2 an optimal dose distribution $R^*\in\mathcal{U}$ minimizing $J$ exists. If $u^*$ is the optimal state and $\Phi\ge0$ the bounded weak solution of the backward adjoint problem
+the cumulative tumour burden. Assume the hypotheses of item 2, with $T\le T^{**}$ of item 2 unless $M\le\rho$ or $u_0$ satisfies $0\le u_0\le1$ and $\int_\Omega(|\ln u_0|+|\ln(1-u_0)|)\,dx<\infty$ (the source's (3.3)), in which case any $T>0$ is allowed. Then an optimal dose distribution $R^*\in\mathcal{U}$ minimizing $J$ exists. If $u^*$ is the optimal state and $\Phi\ge0$ the bounded weak solution of the backward adjoint problem
 
 $$\Phi_t+\nabla\cdot(D\nabla\Phi)+(\rho-R^*)(1-2u^*)\Phi=-1,\qquad \nabla\Phi\cdot\mathbf{n}=0,\qquad \Phi(\cdot,T)=0,$$
 

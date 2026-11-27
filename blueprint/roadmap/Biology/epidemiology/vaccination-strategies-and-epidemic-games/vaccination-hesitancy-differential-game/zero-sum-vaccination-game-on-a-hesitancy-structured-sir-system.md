@@ -18,7 +18,15 @@ $H^1$ regularity propagates, and solutions depend Lipschitz-continuously (in $L^
 
 $$\theta W + \mathcal{H}(Y,\nabla W) = 0, \qquad Y = (S,I) \in H^1((0,1)) \times \mathbb{R},$$
 
-with the lower Hamiltonian $\underline{\mathcal{H}}$, resp. upper Hamiltonian $\overline{\mathcal{H}}$, obtained by min–max, resp. max–min, of $\langle p, \text{dynamics}\rangle + \ell$ over the control sets. There exist initial states at which the lower and upper values coincide, i.e. the game has a value there.
+with the lower Hamiltonian $\underline{\mathcal{H}}$, resp. upper Hamiltonian $\overline{\mathcal{H}}$, defined for $Y=(S,I)\in H^1((0,1))\times\mathbb R$ and $P=(p,q)\in L^2((0,1))\times\mathbb R$ from the pre-Hamiltonian
+
+$$\mathcal H(Y,P,u_1,u_2)=\Big\langle \partial_\xi(gS)+\big(f+\alpha(I)\big)S,\ p\Big\rangle_{L^2}+\Big(\beta I-\alpha(I)\int_0^1S(\xi)\,d\xi\Big)q-\ell(I,u_1,u_2),\qquad \ell(I,u_1,u_2)=\kappa(I+u_1)-u_2-\int_0^1g(\xi,u_1,u_2)\,d\xi,$$
+
+by
+
+$$\underline{\mathcal H}(Y,P)=\min_{u_2\in[0,M_2]}\ \max_{u_1\in[0,M_1]}\mathcal H(Y,P,u_1,u_2),\qquad \overline{\mathcal H}(Y,P)=\max_{u_1\in[0,M_1]}\ \min_{u_2\in[0,M_2]}\mathcal H(Y,P,u_1,u_2)$$
+
+(the source's (2.22)–(2.24)). Note the sign convention: $\mathcal H$ is minus the pairing of $P$ with the dynamics, minus the running cost.
 
 ## Expansion
 
@@ -26,4 +34,4 @@ The PDE is a linear transport equation in the leaning variable with a non-local 
 
 ## Sources
 
-- Mauro Garavello, Elena Rossi and Abraham Sylla, "Differential Games for a Mixed ODE-PDE System", arXiv:2412.12712 (2024), hypotheses (alpha), (F), (G), Theorems 2.3, 2.4, 2.5, 2.9, 2.11 and 2.12, <https://doi.org/10.48550/arXiv.2412.12712>. Published version: SIAM Journal on Control and Optimization 63 (2025) 3557–3587, <https://doi.org/10.1137/24m1699760>.
+- Mauro Garavello, Elena Rossi and Abraham Sylla, "Differential Games for a Mixed ODE-PDE System", arXiv:2412.12712 (2024), hypotheses (alpha), (F), (G), Theorems 2.3, 2.4, 2.5, 2.9 and 2.11, equations (2.22)–(2.24), <https://doi.org/10.48550/arXiv.2412.12712>. Published version: SIAM Journal on Control and Optimization 63 (2025) 3557–3587, <https://doi.org/10.1137/24m1699760>.

@@ -6,7 +6,7 @@ A *cherry cover* of $B(N)$ is a set $P$ of cherry shapes and reticulated cherry 
 
 **Counting lemma.** In a binary network with $n$ leaves and $r$ reticulations, every cherry decomposition has exactly $n-1$ cherry shapes and $r$ reticulated cherry shapes. A network has a cherry cover using only cherry shapes iff it is a tree.
 
-**Theorem (tree-based networks).** A network $N$ is tree-based (obtainable from a base tree by subdividing edges and adding linking arcs between subdivision points) if and only if $B(N)$ has a cherry cover.
+**Theorem (tree-based networks).** A network $N$ is tree-based with base tree $T$ if it is obtained from $T$ by (1) replacing some edges of $T$ by paths whose internal vertices (*attachment points*) have in-degree and out-degree $1$, (2) adding *linking arcs* between pairs of attachment points and from tree vertices to attachment points, so that $N$ stays acyclic, every attachment point has in-degree $1$ or out-degree $1$, and $N$ has no parallel arcs, and (3) suppressing every attachment point not incident to a linking arc (the source's Definition 7). $N$ is tree-based if and only if $B(N)$ has a cherry cover.
 
 **Theorem (orchard networks).** A network $N$ is orchard (reducible to a single leaf by a sequence of cherry and reticulated-cherry reductions) if and only if $B(N)$ has an acyclic cherry cover.
 
@@ -18,4 +18,4 @@ Given a base tree, each tree edge pair at a split gives a cherry shape and each 
 
 ## Sources
 
-- Leo van Iersel, Remie Janssen, Mark Jones, Yukihiro Murakami and Norbert Zeh, "A Unifying Characterization of Tree-based Networks and Orchard Networks using Cherry Covers", arXiv:2004.07677: Definitions 1–5, Lemmas 1, 2 and 4 (counting), Theorem 1 and Corollary 1 (tree-based), Lemma 6 and Theorem 2 (orchard), Lemmas 5 and 7 and Corollary 2 (resolutions, orchard implies tree-based). <https://doi.org/10.48550/arXiv.2004.07677> Published version: Advances in Applied Mathematics 129 (2021) 102222, <https://doi.org/10.1016/j.aam.2021.102222>.
+- Leo van Iersel, Remie Janssen, Mark Jones, Yukihiro Murakami and Norbert Zeh, "A Unifying Characterization of Tree-based Networks and Orchard Networks using Cherry Covers", arXiv:2004.07677: Definitions 1–5 and 7, Lemmas 1, 2 and 4 (counting), Theorem 1 and Corollary 1 (tree-based), Lemma 6 and Theorem 2 (orchard), Lemmas 5 and 7 and Corollary 2 (resolutions, orchard implies tree-based). <https://doi.org/10.48550/arXiv.2004.07677> Published version: Advances in Applied Mathematics 129 (2021) 102222, <https://doi.org/10.1016/j.aam.2021.102222>.

@@ -25,10 +25,6 @@ $$1 - q = 1 - \frac{R_{0,1}}{R_{0,2}} - \varepsilon \Bigl(1 - \frac{R_{0,1}}{R_{
 
 for an explicit constant $K$ depending on $\beta_1, \beta_2, \alpha_1, \delta, R_{0,1}$ and $\Lambda$. Thus, at equal $R_0$ advantage, perturbations that make the pathogen population grow (more susceptibles, fewer resident infections) favour fast, transmissible strains, and saturated hosts favour slow ones.
 
-## Depends on
-
-- [Branching-process approximation of early epidemics](../../branching-process-approximation-of-early-epidemi/README.md)
-
 ## Expansion
 
 Near the resident equilibrium, $S/N \approx 1/R_{0,1}$, so each strain-2 host transmits at rate $\beta_2/R_{0,1}$ and is removed at rate $\delta + \alpha_2 + \gamma_2$: a supercritical linear birth–death process whose extinction probability from $k$ ancestors is $(R_{0,1}/R_{0,2})^k$. Once strain 2 reaches $\varepsilon n$ hosts the law of large numbers takes over and carries the system to the strain-2 equilibrium, where strain 1 is in turn a subcritical birth–death process and dies out, so invasion implies replacement. Away from equilibrium the mutant is a time-inhomogeneous birth–death process in the environment set by the resident, and Kendall's formula for its extinction probability gives $q = J/(1+J)$; expanding the resident trajectory to first order around equilibrium yields the near-equilibrium correction.

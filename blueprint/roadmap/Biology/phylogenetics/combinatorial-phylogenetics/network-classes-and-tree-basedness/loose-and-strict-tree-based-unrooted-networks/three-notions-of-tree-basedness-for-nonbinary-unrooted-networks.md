@@ -3,7 +3,7 @@
 **Setting.** An unrooted phylogenetic network on a finite leaf set $X$ is a connected graph with no degree-$2$ vertices whose degree-$1$ vertices are exactly $X$; a phylogenetic tree is a network that is a tree. *Subdividing* an edge inserts a new degree-$2$ vertex (an *attachment point*). A *blob* is a maximal connected subgraph without cut-edges. In the nonbinary setting, edges added to a base tree may join two attachment points, an attachment point and an original tree vertex, or two original vertices, which leads to three notions. A network $N$ on $X$ is
 
 1. *loosely tree-based* if it has a spanning tree whose leaf set is exactly $X$;
-2. *tree-based* if it has a spanning tree $T$ that contains every edge between two vertices of degree at least $4$ and whose degree-$2$ vertices all had degree $3$ in $N$;
+2. *tree-based* if it has a spanning tree $T$ with leaf set $X$ that contains every edge between two vertices of degree at least $4$ and whose degree-$2$ vertices all had degree $3$ in $N$;
 3. *strictly tree-based* if it has a spanning tree with leaf set $X$ that contains every edge incident to a vertex of degree at least $4$.
 
 Strictly tree-based implies tree-based, which implies loosely tree-based.

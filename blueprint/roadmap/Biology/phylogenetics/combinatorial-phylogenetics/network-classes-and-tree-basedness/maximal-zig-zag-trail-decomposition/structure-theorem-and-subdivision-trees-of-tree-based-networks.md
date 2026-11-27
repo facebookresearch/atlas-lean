@@ -20,7 +20,7 @@ $$\alpha(N) = \prod_{i=1}^{\ell}\alpha(Z_i), \qquad \alpha(Z_i) = \begin{cases} 
 
 3. The minimum number $\delta(N)$ of leaves that must be attached to $N$ to make it tree-based equals the number of W-fences in $\mathcal{Z}$.
 
-Consequently, recognizing tree-based networks, counting subdivision trees, listing them, and computing $\delta(N)$ all take linear time in $|A(N)|$.
+Consequently, recognizing tree-based networks, counting subdivision trees and computing $\delta(N)$ take linear time in $|A(N)|$, and the subdivision trees can be listed with $O(|A(N)|)$ delay (the number of subdivision trees can be exponential: $k$ crowns give $2^k$).
 
 ## Expansion
 
@@ -28,4 +28,4 @@ An arc set $S \subseteq A(N)$ induces a subdivision tree exactly when it is *adm
 
 ## Sources
 
-- Momoko Hayamizu, "A structure theorem for rooted binary phylogenetic networks and its implications for tree-based networks", arXiv:1811.05849 (2018), Theorem 4.2, Corollary 4.6, Theorem 4.8, Proposition 5.1, Corollaries 5.4 and 5.7, <https://doi.org/10.48550/arXiv.1811.05849>. Published version: SIAM Journal on Discrete Mathematics 35 (2021) 2490–2516, <https://doi.org/10.1137/19m1297403>.
+- Momoko Hayamizu, "A structure theorem for rooted binary phylogenetic networks and its implications for tree-based networks", arXiv:1811.05849 (2018), Theorem 4.2, Corollary 4.6, Theorem 4.8, Proposition 5.1, Corollaries 5.4, 5.7 and 5.11, <https://doi.org/10.48550/arXiv.1811.05849>. Published version: SIAM Journal on Discrete Mathematics 35 (2021) 2490–2516, <https://doi.org/10.1137/19m1297403>.

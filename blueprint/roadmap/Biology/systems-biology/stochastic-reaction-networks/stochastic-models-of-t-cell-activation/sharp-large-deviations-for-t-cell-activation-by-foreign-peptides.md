@@ -14,15 +14,13 @@ $$\mathbb{P}\big(G_n(z_f)\ge an\big)=\frac{e^{-nI_n(a,z_f)}}{\vartheta_n\sigma_n
 
 $$I_n(a,z_f)=a\vartheta_n-\frac{n_c}{n}\ln M_c(q_n\vartheta_n)-\frac{n_v}{n}\ln M_v(q_n\vartheta_n)-\frac1n\ln M(z_f\vartheta_n).$$
 
-2. (Quenched in the T-cell.) Conditioning on the T-cell's stimulation rates, the same sharp asymptotics hold almost surely with a random rate function
+2. (Quenched in the T-cell.) Condition on the T-cell's stimulation rates, and assume in addition that $an>\mathbb E^R[G_n(z_f)]$ and $a<\sup_\vartheta\frac{d}{d\vartheta}\Psi^R_n(\vartheta)$ for all $n$, where $\mathbb E^R$ and $\Psi^R_n$ are the conditional expectation and the conditional scaled log moment generating function, and that the quenched moment generating functions $M^R_{c,j}$, $M^R_{v,j}$, $M^R$ are finite on $\mathbb R$ (Theorem 6). Then the same sharp asymptotics hold almost surely. If moreover $g_n''(q_n\vartheta^n_0(a,z_f))>C>0$ for a constant $C$, where $g_n$ is the averaged log of the quenched self-peptide moment generating functions (the source's (2.11)) and $\vartheta^n_0(a,z_f)$ solves the source's (2.12) (Theorem 7), the random rate function is
 
 $$I^{R}_n(a,z_f)=I^n_0(a,z_f)-\frac{1}{\sqrt n}\,Z_n-\frac{z_f}{n}\,\vartheta^n_0\,W_f+O(1/n),$$
 
-where $Z_n$ converges weakly to a centred Gaussian process. Activation probabilities thus fluctuate between T-cell clones by factors of order $e^{\sqrt n\,Z}$, and they increase exponentially with $z_f$ only for clones whose foreign stimulation rate $W_f$ is large enough, which gives specificity.
+where $Z_n=Z_n(q_n\vartheta^n_0(a,z_f))$ converges weakly to a centred Gaussian process. Activation probabilities thus fluctuate between T-cell clones by factors of order $e^{\sqrt n\,Z}$.
 
-3. The overall activation probability increases with the number $z_f$ of presented foreign peptides, in the annealed case and in both quenched cases (fixing the T-cell or fixing the APC).
-
-These results hold without the specific distributional assumptions of earlier treatments, so the activation-curve separation between self and foreign presentation is robust.
+These results hold without the specific distributional assumptions of earlier treatments. Whether the activation probability increases with $z_f$ is not part of the theorem: the source's Section 2 derives the increase from the approximations (2.9) and (2.15) only for $a$ small enough (annealed) or $W_f$ large enough (quenched), and its Remark 3 notes that for $a$ too large the activation probability drops as $z_f$ increases.
 
 ## Expansion
 
@@ -30,4 +28,4 @@ Activation must be rare, so its probability is a large deviation event; Cramér'
 
 ## Sources
 
-- Hannah Mayer, Anton Bovier, "Stochastic Modelling of T-Cell-Activation", arXiv:1304.3786 (2013): Section 1.2 (model assumptions, stimulation rates and total stimulation rate definition), Section 2 (moments and large deviations of the total stimulation rate, activation curves and specificity discussion), Section 3 (Chaganty–Sethuraman theorem, annealed and quenched applicability theorems with rate functions, random rate function theorem, Lindeberg–Feller theorem). <https://doi.org/10.48550/arXiv.1304.3786> Published version: Journal of Mathematical Biology 70 (2014) 99–132, <https://doi.org/10.1007/s00285-014-0759-x>.
+- Hannah Mayer, Anton Bovier, "Stochastic Modelling of T-Cell-Activation", arXiv:1304.3786 (2013): Section 1.2 (model assumptions, stimulation rates and total stimulation rate definition), Section 2 (moments and large deviations of the total stimulation rate, activation curves and specificity discussion), Section 3 (Chaganty–Sethuraman theorem, annealed and quenched applicability theorems with rate functions, Theorems 5–7, Lindeberg–Feller theorem). <https://doi.org/10.48550/arXiv.1304.3786> Published version: Journal of Mathematical Biology 70 (2014) 99–132, <https://doi.org/10.1007/s00285-014-0759-x>.

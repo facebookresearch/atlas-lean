@@ -14,7 +14,7 @@ The system is ultrasensitive (of order $N$) when $\eta_H$ near the half-maximal 
 
 $$\eta_H(v) = N\,\frac{\operatorname{Cov}_\pi\big(a(|n|/N),\,|n|/N\big)\,a(k^*/N)}{f(v)\,\big(a(k^*/N) - f(v)\big)},$$
 
-and $\eta_H(v) \to 1$ as $v \to 0$ and as $v \to \infty$. Large Hill coefficients therefore require the fraction of bound sites to have non-vanishing variance at large $N$.
+Large Hill coefficients therefore require the fraction of bound sites to have non-vanishing variance at large $N$.
 
 **Theorem (multistability and ultrasensitivity).** Let the number of bound sites be a density-dependent birth–death process on $\{0,\dots,N\}$ with rates $Nb^{(N)}(k/N)$ and $Nd^{(N)}(k/N)$, $b^{(N)}$ linear in $v$, $b^{(N)} - d^{(N)} \to F$ and $\ln(d^{(N)}/b^{(N)}) \to \ln r$, so that $X_N = Y_N/N$ follows $\dot x = F(x)$ in the limit and its stationary law $\bar\pi_N$ (of the above form) satisfies a large deviation principle with rate $I(x) = \int_0^x \ln r(u)\,du - \min_{[0,1]}\int_0^{\cdot}\ln r$. Assume the equilibria of $\dot x = F(x)$ are finitely many nondegenerate zeros of $I'$, $\int_0^1|\ln r| < \infty$, and the rates have positive linear limits at the boundary. For continuous, bounded, strictly increasing $a$:
 

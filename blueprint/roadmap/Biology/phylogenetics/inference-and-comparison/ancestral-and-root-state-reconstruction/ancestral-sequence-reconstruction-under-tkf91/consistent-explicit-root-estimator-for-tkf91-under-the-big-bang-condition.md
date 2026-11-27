@@ -6,7 +6,7 @@
 2. *Bounded height:* $h^* := \sup_k \max_{x \in \partial T^k} \ell_x < \infty$, where $\ell_x$ is the distance from $\rho$ to $x$.
 3. *Big bang:* for every $s > 0$, the truncation $T^k(s) = \{\gamma : \ell_\gamma \le s\}$ satisfies $|\partial T^k(s)| \to \infty$ as $k \to \infty$.
 
-Run the TKF91 insertion–deletion–substitution process on $T^k$ (rates $\nu$, $\lambda < \mu$, nucleotide law $\pi$), started from its stationary law $\Pi$ at the root, and observe the leaf sequences $\vec{X}_{\partial T^k}$.
+Run the TKF91 insertion–deletion–substitution process on $T^k$ (rates $\nu$, $\lambda < \mu$, nucleotide law $\pi$), started from its stationary law $\Pi$ at the root, and observe the leaf sequences $\vec{X}_{\partial T^k}$. Assume all leaves are at height $h^*$, i.e. $\ell_x=h^*$ for every $x\in\partial T^k$ and every $k$ (otherwise first run the TKF91 process from each leaf sequence $\vec X_x$ for time $h^*-\ell_x$ and use the outputs as the leaf sequences; the source's "Important simplification" of Section 2.2).
 
 **Estimator $F_{k,s}$.** Fix $s \in (0,h^*)$ and let $m = |\partial T^k(s)|$.
 
@@ -21,9 +21,13 @@ Run the TKF91 insertion–deletion–substitution process on $T^k$ (rates $\nu$,
 
 $$ \mathbb{P}^{\Pi}\bigl[F_{k,s}(\vec{X}_{\partial T^k}) \ne \vec{X}_\rho\bigr] \le \epsilon + C_1 \exp\bigl(-C_2 |\partial T^k(s)|\bigr) + C_3 s. $$
 
-Started from a fixed root sequence $\vec{x}$ of length $M$, the error is at most $\exp(-|\partial T^k(s)|/\hat C_1^M) + \hat C_2^M(1 + \max_\sigma \pi_\sigma^2)\, s$ (Theorem 3).
+Started from a fixed root sequence $\vec{x}$ of length $M$, there are constants $C_1,C_2,C_3\in(0,\infty)$ depending only on $h^*$, $\mu$ and $\lambda$ such that, for all $s\in(0,h^*/2]$ and $k\ge1$,
 
-## Proof depends on
+$$ \mathbb{P}^{\vec x}\bigl[F_{k,s}(\vec{X}_{\partial T^k}) \ne \vec{x}\bigr] \le 2\exp\bigl(-C_1|\partial T^k(s)|\bigr) + C_2 M s + 8M\exp\Bigl(-\frac{|\partial T^k(s)|}{8\hat C}\Bigr) + C_3 M^2 \hat C s, $$
+
+with $\hat C=\|V^{-1}\Psi^{-1}\|_{\infty\to\infty}^2$ (display (50) in the proof of Theorem 2).
+
+## Depends on
 
 - [Constructive initial-state identifiability of the TKF91 process](constructive-initial-state-identifiability-of-the-tkf91-process.md)
 
@@ -35,4 +39,4 @@ Proposition 1 bounds the length error by $2e^{-C_1 m} + C_2(M+1)s$. Proposition 
 
 ## Sources
 
-- W.-T. L. Fan and S. Roch, "Statistically consistent and computationally efficient inference of ancestral DNA sequences in the TKF91 model under dense taxon sampling", arXiv:1707.05711 (2017), <https://doi.org/10.48550/arXiv.1707.05711>. Assumption 1 (taxon-rich setting), Section 2 (root reconstruction algorithm), Theorem 1 (consistency), Theorem 2 (error bound), Theorem 3 (pointwise error bound), Propositions 1–2. Published version: Bulletin of Mathematical Biology 82 (2020) 21, <https://doi.org/10.1007/s11538-020-00693-3>.
+- W.-T. L. Fan and S. Roch, "Statistically consistent and computationally efficient inference of ancestral DNA sequences in the TKF91 model under dense taxon sampling", arXiv:1707.05711 (2017), <https://doi.org/10.48550/arXiv.1707.05711>. Assumption 1 (taxon-rich setting), Section 2 (root reconstruction algorithm), Theorem 1 (consistency), Section 2.2 ("Important simplification": leaves at height $h^*$), Theorem 2 (error bound) and display (50) in its proof (pointwise error bound), Propositions 1–2. Published version: Bulletin of Mathematical Biology 82 (2020) 21, <https://doi.org/10.1007/s11538-020-00693-3>.

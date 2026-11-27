@@ -1,6 +1,6 @@
 # Polynomial-time equality of display sets for a normal and a tree-child network
 
-A rooted phylogenetic network $\mathcal{N}$ on a leaf set $X$ is a rooted acyclic digraph whose leaves are labelled by $X$, whose root has out-degree at least $1$, and whose other non-leaf vertices are tree vertices (in-degree $1$) or reticulations (in-degree $2$, out-degree $1$). It is **tree-child** if every non-leaf vertex has a child that is a tree vertex or a leaf, and **normal** if it is tree-child and has no shortcut (no arc $(u,v)$ for which another directed path from $u$ to $v$ exists). The *display set* $T(\mathcal{N})$ is the set of rooted binary phylogenetic $X$-trees displayed by $\mathcal{N}$, i.e. obtained by deleting one incoming arc at each reticulation and suppressing degree-two vertices.
+A (binary) rooted phylogenetic network $\mathcal{N}$ on a leaf set $X$ is a rooted acyclic digraph with no parallel arcs in which the unique root has out-degree $2$, the vertices of out-degree $0$ have in-degree $1$ and form the leaf set $X$, and every other vertex is a tree vertex (in-degree $1$, out-degree $2$) or a reticulation (in-degree $2$, out-degree $1$); if $|X|=1$, the single vertex labelled by $X$ also counts. It is **tree-child** if every non-leaf vertex has a child that is a tree vertex or a leaf, and **normal** if it is tree-child and has no shortcut (no arc $(u,v)$ for which another directed path from $u$ to $v$ exists). The *display set* $T(\mathcal{N})$ is the set of rooted binary phylogenetic $X$-trees displayed by $\mathcal{N}$, i.e. obtained by deleting one incoming arc at each reticulation and suppressing degree-two vertices.
 
 Deciding whether two arbitrary networks have the same display set is $\Pi_2^P$-complete.
 
@@ -21,4 +21,4 @@ Repeatedly identifying such a pair, checking the forced configuration and reduci
 
 ## Sources
 
-- J. Doecker, S. Linz, C. Semple, *Display sets of normal and tree-child networks*, arXiv:1901.06725 (Theorem 1.1, Propositions 3.1, 3.3 and 3.4, Theorem 5.1). <https://doi.org/10.48550/arXiv.1901.06725> Published version: The Electronic Journal of Combinatorics, 28, Paper 1.8, 2021, <https://doi.org/10.37236/9128>.
+- J. Doecker, S. Linz, C. Semple, *Display sets of normal and tree-child networks*, arXiv:1901.06725 (Section 1 definition of phylogenetic network, Theorem 1.1, Propositions 3.1, 3.3 and 3.4, Theorem 5.1). <https://doi.org/10.48550/arXiv.1901.06725> Published version: The Electronic Journal of Combinatorics, 28, Paper 1.8, 2021, <https://doi.org/10.37236/9128>.

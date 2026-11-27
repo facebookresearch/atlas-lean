@@ -10,7 +10,7 @@ $$
 
 **Proposition 2.4.** For $n\in\mathbb N$, $R_{2n+1}=R_{2n}+R_{2n-1}$ and $R_{2n}=R_{2n-1}+R_{2n-2}-S_{n-1}$.
 
-**Motzkin-type diagrams.** If nonnesting arcs may share an endpoint (noncrossing partitions of $[n]$ with no block containing consecutive integers), let $M_n$ denote the number of these diagrams on $n$ nodes ($M_1=M_2=1, M_3=2, M_4=4, M_5=9, M_6=21,\dots$, i.e. the shifted Motzkin number usually indexed $M_{n-1}$) and correspond bijectively, preserving symmetry, to Motzkin paths with $n-1$ steps. The number $L_n$ of symmetric such diagrams satisfies, with $L_0=L_1=L_2=1$ and $L_3=L_4=2$,
+**Motzkin-type diagrams.** If nonnesting arcs may share an endpoint (noncrossing partitions of $[n]$ with no block containing consecutive integers), let $M_n$ denote the number of these diagrams on $n$ nodes ($M_1=M_2=1, M_3=2, M_4=4, M_5=9, M_6=21,\dots$, i.e. the shifted Motzkin number usually indexed $M_{n-1}$); these diagrams correspond bijectively, preserving symmetry, to Motzkin paths with $n-1$ steps. The number $L_n$ of symmetric such diagrams satisfies, with $L_0=L_1=L_2=1$ and $L_3=L_4=2$,
 
 $$
 L_n=2L_{n-2}+\sum_{j=3}^{\lfloor(n+1)/2\rfloor}M_{j-2}L_{n+2-2j}\qquad(n>4)\quad\text{(Theorem 4.2)}.
@@ -18,7 +18,7 @@ $$
 
 With $a_0=1$ and $a_n=L_{2n-1}$, one has $a_n=\sum_{j=0}^{n-1}M_{j+1}a_{n-1-j}$ and $a_{n+1}=3a_n-M_n$ for $n\ge 1$ (Theorem 4.4), and $L_{2n-1}$ equals the number of base-$3$ numbers with $n$ digits and digit sum $n$ (Theorem 4.6).
 
-**Rarity of symmetry.** With $\varphi=(1+\sqrt5)/2$, the known asymptotics $S_n\sim c_1(1+\varphi)^n n^{-3/2}$ and $R_n\sim c_2\varphi^nn^{-1/2}$ ($c_1\approx1.104$, $c_2\approx0.863$) give $R_n/S_n\sim(c_2/c_1)\,n\,\varphi^{-n}$, and $L_n/M_n\le(\sqrt{8/3}+o(1))\,n\,3^{-n/2}$, with equality in the limit along odd $n$: a random structure of length $n$ is symmetric with exponentially small probability.
+**Rarity of symmetry.** With $\varphi=(1+\sqrt5)/2$, the known asymptotics $S_n\sim c_1(1+\varphi)^n n^{-3/2}$ and $R_n\sim c_2\varphi^nn^{-1/2}$ ($c_1\approx1.104$, $c_2\approx0.863$) give $R_n/S_n\sim(c_2/c_1)\,n\,\varphi^{-n}$, and $L_n/M_n\le(\sqrt{8/3}+o(1))\,n\,3^{-n/2}$: a random structure of length $n$ is symmetric with exponentially small probability.
 
 ## Depends on
 

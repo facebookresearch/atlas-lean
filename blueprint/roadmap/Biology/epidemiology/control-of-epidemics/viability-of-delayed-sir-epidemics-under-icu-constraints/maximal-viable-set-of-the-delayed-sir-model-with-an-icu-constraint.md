@@ -18,7 +18,7 @@ $$B = \bigl([0,\tfrac{\gamma}{\beta_\star}]\times[0,i_M]\cap T\bigr) \cup \{(s,i
 2. The set of histories with $\phi(0)\in B$ and past in $C$ is viable (some control keeps the ICU constraint forever), and $B$ is the maximal such set.
 3. For every such history with $\phi(0)\in B$, the greedy feedback that applies $b=\beta$ in the interior and, on the boundary pieces $\{i=i_M\}$ and $\{i=\Gamma_{\beta_\star}(s)\}$, the largest rate keeping the velocity tangent to $B$, namely $\min\{\beta, \gamma i_M/(s(0)\,i(-h))\}$ and $\min\{\beta, \beta_\star\, i(0)/i(-h)\}$ respectively, produces closed-loop solutions remaining in $B$.
 
-The curves $\Gamma_b$ use the worst-case past value $i(t-h)=i_M$, so as $h\to0$ these sets contain the delay-free viability kernels, and the delay shrinks the region from which the ICU cap can be guaranteed.
+These sets do not depend on $h$; since $\Gamma_b$ uses the worst-case past value $i(t-h)=i_M$, they lie inside the delay-free viable sets and do not converge to them as $h\to0$ (Remark 4.10).
 
 ## Expansion
 
@@ -29,4 +29,4 @@ The curves $\Gamma_b$ use the worst-case past value $i(t-h)=i_M$, so as $h\to0$ 
 
 ## Sources
 
-- D. Breda, M. Della Rossa, L. Freddi, *Viability and control of a delayed SIR epidemic with an ICU state constraint*, arXiv:2401.12907 (Section 4.1, Theorem 4.2 and Theorem 4.7). <https://doi.org/10.48550/arXiv.2401.12907> Published version: ESAIM: Control, Optimisation and Calculus of Variations 31 (2025) 9, <https://doi.org/10.1051/cocv/2024083>.
+- D. Breda, M. Della Rossa, L. Freddi, *Viability and control of a delayed SIR epidemic with an ICU state constraint*, arXiv:2401.12907 (Section 4.1, Theorem 4.2, Theorem 4.7 and Remark 4.10). <https://doi.org/10.48550/arXiv.2401.12907> Published version: ESAIM: Control, Optimisation and Calculus of Variations 31 (2025) 9, <https://doi.org/10.1051/cocv/2024083>.

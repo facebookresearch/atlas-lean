@@ -15,11 +15,14 @@ summed over most parsimonious labelings $\varphi'$ of all vertices extending $\v
 1. Computing $Z(B, x!)$ is #P-complete. Hence counting most parsimonious scenarios on a star tree is #P-complete for the substitution model and for SCJ.
 2. Computing $Z_{T,\varphi}(B, x!)$ for an arbitrary binary tree (#BINARY) is #P-complete, so #SPS (small parsimony counting under substitutions) and #SPSCJ (under single cut-or-join) are #P-complete on binary trees.
 
-**Theorem (general weights).** Let $f$ be computable in polynomial time with $\log f$ strictly concave (up or down), and let
+**Theorem (general weights).** Let $f : \mathbb Z_{\ge0} \to [0,\infty)$ be computable in polynomial time, and let
 
-$$R(n) = \frac{f(n-2)\,f(n+1)^3 f(n+2)^3 f(n+5)}{f(n-1)\,f(n)^3 f(n+3)^3 f(n+4)}$$
+$$R(n) = \frac{f(n-2)\,f(n+1)^3 f(n+2)^3 f(n+5)}{f(n-1)\,f(n)^3 f(n+3)^3 f(n+4)}.$$
 
-be eventually bounded away from $1$ (consistently $> 1$ or $< 1$). Then counting the medians $\mu$ with $\prod_i f(H(\nu_i,\mu)) \le D$ is #P-complete, and deciding whether some median achieves $\prod_i f(H(\nu_i,\mu)) \le D$ (for the appropriate direction of the optimum) is NP-complete. For $\log f$ strictly concave down and $R(n)$ eventually $\le 1-\epsilon$ or $\ge 1+\epsilon$, an FPRAS for $Z(B,f)$, or a rapidly mixing Markov chain on medians with stationary distribution proportional to $\prod_i f(H(\nu_i,\mu))$, would imply $\mathrm{RP} = \mathrm{NP}$.
+1. If $\log f$ is strictly concave up and either $R(n) > 1$ for all but finitely many $n \ge 2$ (Theorem 6.5, Corollary 6.11) or $R(n) < 1$ for all but finitely many $n \ge 2$ (Theorem 6.12, Corollary 6.13), then counting the medians $\mu$ with $\prod_i f(H(\nu_i,\mu)) \le D$ is #P-complete, and deciding whether $\min_{\mu \in \mathcal M(B)} \prod_i f(H(\nu_i,\mu)) \le D$ is NP-complete.
+2. If $\log f$ is strictly concave down and $R(n) \ne 1$ for all but finitely many $n \ge 2$, then counting the medians $\mu$ with $\prod_i f(H(\nu_i,\mu)) \ge D$ is #P-complete, and deciding whether $\min_{\mu \in \mathcal M(B)} \prod_i f(H(\nu_i,\mu)) \ge D$ is NP-complete (Corollaries 6.14–6.15).
+
+For $\log f$ strictly concave down and $R(n)$ eventually $\le 1-\epsilon$ or $\ge 1+\epsilon$, an FPRAS for $Z(B,f)$, or a rapidly mixing Markov chain on medians with stationary distribution proportional to $\prod_i f(H(\nu_i,\mu))$, would imply $\mathrm{RP} = \mathrm{NP}$.
 
 ## Expansion
 

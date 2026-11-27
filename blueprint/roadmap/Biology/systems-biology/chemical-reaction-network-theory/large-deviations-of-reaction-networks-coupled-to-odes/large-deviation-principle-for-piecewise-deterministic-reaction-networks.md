@@ -16,7 +16,7 @@ $$\mathcal J(z,x,u)=\sum_{\alpha\in\mathscr R}\int_0^\infty \ell\!\Big(\frac{\do
 
 for absolutely continuous $z$ (and $\mathcal J=\infty$ otherwise, or if some $z_\alpha$ increases on a set of positive measure where $\lambda_\alpha=0$).
 
-**Two-state channels.** For $N$ channels switching closed$\to$open at rate $\lambda_1(x,u)$ and open$\to$closed at rate $\lambda_2(x,u)$, with $x$ the open fraction, the reduced Lagrangian in terms of $(\dot x,x,u)$ is
+**Two-state channels.** For $N$ channels switching open$\to$closed at rate $\lambda_1(x,u)$ and closed$\to$open at rate $\lambda_2(x,u)$ (reaction 1 is $1\to0$, reaction 2 is $0\to1$), with $x$ the open fraction, the reduced Lagrangian in terms of $(\dot x,x,u)$ is
 
 $$\hat L(\dot x,x,u)=\ell\Big(\frac{\dot z_1}{\lambda_1}\Big)\lambda_1+\ell\Big(\frac{\dot x+\dot z_1}{\lambda_2}\Big)\lambda_2,\qquad \dot z_1(\dot x+\dot z_1)=\lambda_1\lambda_2,$$
 

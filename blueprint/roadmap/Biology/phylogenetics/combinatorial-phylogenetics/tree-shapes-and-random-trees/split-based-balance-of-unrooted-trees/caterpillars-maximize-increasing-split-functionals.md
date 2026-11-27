@@ -4,13 +4,13 @@
 
 $$\Phi_f(\tau) = \sum_{\sigma \in \Sigma^*(\tau)} f(\lVert \sigma \rVert).$$
 
-For binary $\tau$, the **split size sequence** $s(\tau) \in \mathbb{N}^{n-3}$ lists the sizes of the $n-3$ non-trivial splits in increasing order; write $\tau \prec \tau'$ ("$\tau$ is more balanced") if $s(\tau)_i \le s(\tau')_i$ for all $i$. A tree is **semi-regular** if at most one non-leaf vertex is not of maximum degree and such a vertex is adjacent to at most one non-leaf vertex.
+For binary $\tau$, the **split size sequence** $s(\tau) \in \mathbb{N}^{n-3}$ lists the sizes of the $n-3$ non-trivial splits in increasing order; write $\tau \prec \tau'$ ("$\tau$ is more balanced") if $s(\tau)_i \le s(\tau')_i$ for all $i$. Every path $v_1,\dots,v_{k+2}$ of inner vertices of a binary tree $\tau$ gives a representation of $\tau$ in which two subtrees $X_1,X_2$ hang at $v_1$, two subtrees $X_3,X_4$ hang at $v_{k+2}$ and one subtree $Y_i$ hangs at each interior vertex $v_{i+1}$; write $x_i=|X_i|$ (leaf counts) and order so that $x_1\le x_2$ and $x_3\le x_4$. A binary tree is **semi-regular** if for every such representation also $x_2\le x_3$ or $x_4\le x_1$ (the source's definition before Theorem 4).
 
 **Theorem.**
 1. (Theorem 1) If $f$ is non-decreasing, every caterpillar $\tau_c$ satisfies $\Phi_f(\tau_c) \ge \Phi_f(\tau)$ for all $\tau \in \mathcal T_n$; if $f$ is strictly increasing, every maximizer is a caterpillar.
 2. (Theorem 2) For $\tau,\tau' \in \mathcal T_n^2$: $\tau \prec \tau'$ if and only if $\Phi_f(\tau) \le \Phi_f(\tau')$ for every non-decreasing $f$.
 3. (Theorem 3) The unique maximum of the split size sequences under $\prec$ is the caterpillar sequence $s(\tau)_i = \lfloor (i+3)/2 \rfloor$.
-4. (Theorem 4) If $f$ is strictly increasing and strictly concave, every minimizer of $\Phi_f$ is semi-regular.
+4. (Theorem 4) If $f$ is strictly increasing and strictly concave, every minimizer of $\Phi_f$ over $\mathcal T_n^2$ is semi-regular.
 5. (Lemma 5) For $\tau \in \mathcal T_n^2$, $n \ge 4$, the largest split size satisfies $\lceil n/3 \rceil \le s(\tau)_{n-3} \le \lfloor n/2 \rfloor$.
 
 ## Expansion

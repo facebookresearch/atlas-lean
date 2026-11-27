@@ -4,9 +4,9 @@
 
 **Theorem.** For $t \ge \max\{T_1, T_2\}$, $\{B(t)\}$ is a Markov chain. For each susceptible, the probabilities of infection and of vaccination in the step ending at time $t$ are
 
-$$P_I(t) = 1 - \Bigl(1 - \frac{p\, I(t-1)}{n-1}\Bigr)^{N}, \qquad P_V(t) = \phi \Bigl(1 - \frac{p\, I(t-1)}{n-1}\Bigr)^{N},$$
+$$P_I(t) = 1 - \Bigl(1 - \frac{p\, I(t-1)}{n-1}\Bigr)^{N}, \qquad P_V(t) = \phi \Bigl[\Bigl(1 - \frac{p\, I(t-1)}{n-1}\Bigr)^{N} - \Bigl(1 - \frac{I(t-1)}{n-1}\Bigr)^{N}\Bigr],$$
 
-and $P_S(t) = 1 - P_I(t) - P_V(t)$. Given $S(t) = x_t$, the numbers $y$ newly vaccinated and $z$ newly infected at time $t+1$ (with $x_{t+1} = x_t - y - z$ remaining susceptible) have the trinomial law
+and $P_S(t) = 1 - P_I(t) - P_V(t)$. The source's (4.6) prints $P_V(t)=\phi(1-pI(t-1)/(n-1))^N$; this page differs because that expression drops the $j=0$ term of the source's own sum (4.5), which runs over $j\ge1$ infectious contacts: with $q=I(t-1)/(n-1)$, $\sum_{j\ge1}\binom Nj q^j(1-q)^{N-j}(1-p)^j=(1-pq)^N-(1-q)^N$. Given $S(t) = x_t$, the numbers $y$ newly vaccinated and $z$ newly infected at time $t+1$ (with $x_{t+1} = x_t - y - z$ remaining susceptible) have the trinomial law
 
 $$\mathbb{P}\bigl(V_0(t+1) = y,\ I_0(t+1) = z \mid B(t)\bigr) = \binom{x_t}{y} \binom{x_t - y}{z} P_V^{\,y}\, P_I^{\,z}\, P_S^{\,x_t - y - z},$$
 
@@ -22,7 +22,7 @@ $$P_I(t) = 1 - \exp\Bigl(-\frac{p \lambda\, I(t-1)}{n-1}\Bigr), \qquad P_V(t) = 
 
 ## Expansion
 
-The infection probability comes from conditioning on the number $j$ of infectious contacts, which is binomial with parameters $N$ and $I(t-1)/(n-1)$, and using $1 - (1-p)^j$ for the chance that at least one of them transmits; the binomial theorem collapses the sum to $1 - (1 - p I/(n-1))^N$. A susceptible who escapes infection after at least one infectious contact is vaccinated with probability $\phi$; the vaccine is assumed to reverse any infection acquired within the same step. Because susceptibles act independently and each has three possible outcomes, the joint law of the outcomes is trinomial, and its margins are binomial. Fixed sojourn times make the age-stratified state Markov. The model reduces to a Reed–Frost chain binomial when $\phi = 0$ and each susceptible contacts everyone.
+The infection probability comes from conditioning on the number $j$ of infectious contacts, which is binomial with parameters $N$ and $I(t-1)/(n-1)$, and using $1 - (1-p)^j$ for the chance that at least one of them transmits; the binomial theorem collapses the sum to $1 - (1 - p I/(n-1))^N$. A susceptible who escapes infection after at least one infectious contact is vaccinated with probability $\phi$, and the probability of at least one infectious contact without infection is $\sum_{j\ge1}\binom Nj q^j(1-q)^{N-j}(1-p)^j=(1-pq)^N-(1-q)^N$ with $q=I(t-1)/(n-1)$; the vaccine is assumed to reverse any infection acquired within the same step. Because susceptibles act independently and each has three possible outcomes, the joint law of the outcomes is trinomial, and its margins are binomial. Fixed sojourn times make the age-stratified state Markov. The model reduces to a Reed–Frost chain binomial when $\phi = 0$ and each susceptible contacts everyone.
 
 ## Sources
 

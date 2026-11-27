@@ -2,9 +2,10 @@
 
 **Setting.** A **binet** is a rooted phylogenetic network with exactly two leaves. On $\{x,y\}$ there are exactly three binary level-1 binets: the tree $T(x,y)$, and the two reticulate binets $R(x;y)$ and $R(y;x)$, where in $R(x;y)$ the leaf $y$ lies below the reticulation of the single cycle and $x$ does not. A network $N$ on $X$ **displays** the binet $N|_{\{x,y\}}$ obtained by restricting to the two leaves, and $\mathfrak B(N)$ is the set of all binets it displays. A collection $\mathfrak B$ of binary level-1 binets on $X$ is **thin** if it has at most one binet per pair. Let $D(\mathfrak B)$ be the digraph on $X$ with an arc $(x,y)$ whenever $T(x,y) \in \mathfrak B$ or $R(x;y) \in \mathfrak B$ (so tree binets give arcs in both directions). A split $A|B$ of $X$ is **typed** for $D(\mathfrak B)$ if it is of Type I (no arcs between $A$ and $B$), Type II (exactly one of $A$, $B$ has no outgoing arcs), or Type III (every arc between $A$ and $B$ is bidirected).
 
-**Theorem.**
+**Theorem.** In items 1 and 2, let $\mathfrak B$ be a thin collection of binary level-1 binets on $X$.
+
 1. (Decomposition) If $D(\mathfrak B)$ has a typed split $A|B$ such that $\mathfrak B|_A$ and $\mathfrak B|_B$ are displayed by binary level-1 networks, then $\mathfrak B$ is displayed by a binary level-1 network. Conversely, if $\mathfrak B$ is displayed by a binary level-1 network, then $D(\mathfrak B)$ has a typed split, and for every typed split both restrictions are displayed by binary level-1 networks.
-2. (Reduction to level 1) A thin collection $\mathfrak B$ is displayed by some binary network if and only if it is displayed by a binary level-1 network.
+2. (Reduction to level 1) $\mathfrak B$ is displayed by some binary network if and only if it is displayed by a binary level-1 network.
 3. (Reticulation number) If $N_1, N_2$ are binary level-1 networks on $X$ with $\mathfrak B(N_1) = \mathfrak B(N_2)$, then they have the same number of reticulations.
 4. (Complexity) Deciding whether some network displays a given thin set of binets is GI-hard; finding a binary level-1 network displaying the maximum number of binets from a given set (MBC) is NP-complete even for dense sets, while some binary level-1 network always displays at least $|\mathfrak B|/3$ of them.
 

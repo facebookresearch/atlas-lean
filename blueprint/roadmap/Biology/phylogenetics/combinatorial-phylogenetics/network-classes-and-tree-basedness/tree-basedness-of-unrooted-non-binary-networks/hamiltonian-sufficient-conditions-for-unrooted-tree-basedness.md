@@ -15,7 +15,7 @@
 
 None of the sufficient conditions is necessary.
 
-## Proof depends on
+## Depends on
 
 - [Edgebased networks and generalized series-parallel graphs](edgebased-networks-and-generalized-series-parallel-graphs.md)
 

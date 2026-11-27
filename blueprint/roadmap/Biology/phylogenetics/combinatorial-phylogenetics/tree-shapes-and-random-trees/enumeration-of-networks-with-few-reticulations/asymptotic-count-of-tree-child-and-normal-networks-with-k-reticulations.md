@@ -1,6 +1,6 @@
 # Asymptotic count of tree-child and normal networks with a fixed number of reticulations
 
-A *phylogenetic network* here is a rooted binary phylogenetic network: a rooted directed acyclic graph whose non-root, non-leaf vertices are tree vertices (in-degree $1$, out-degree $2$) or reticulation vertices (in-degree $2$, out-degree $1$), with leaves of in-degree $1$. It is *tree-child* if every non-leaf vertex has a child that is not a reticulation, and *normal* if it is tree-child and has no arc $(u,v)$ for which another directed path from $u$ to $v$ exists. Let $N_{k,n}$ and $T_{k,n}$ count vertex-labelled normal and tree-child networks with $n$ vertices and $k$ reticulations, and $\tilde N_{k,\ell}$, $\tilde T_{k,\ell}$ the leaf-labelled ones with $\ell$ leaves.
+A *phylogenetic network* here is a rooted binary phylogenetic network: a connected rooted directed acyclic graph whose root has in-degree $0$ and out-degree $2$ (except for the network consisting of a single vertex), whose other non-leaf vertices are tree vertices (in-degree $1$, out-degree $2$) or reticulation vertices (in-degree $2$, out-degree $1$), with leaves of in-degree $1$. It is *tree-child* if every non-leaf vertex has a child that is not a reticulation, and *normal* if it is tree-child and has no arc $(u,v)$ for which another directed path from $u$ to $v$ exists. Let $N_{k,n}$ and $T_{k,n}$ count vertex-labelled normal and tree-child networks with $n$ vertices and $k$ reticulations, and $\tilde N_{k,\ell}$, $\tilde T_{k,\ell}$ the leaf-labelled ones with $\ell$ leaves.
 
 **Theorem.** Fix $k \ge 1$. There is $c_k > 0$ such that
 
@@ -22,4 +22,4 @@ Removing one incoming arc of each reticulation decomposes a network into a fores
 
 ## Sources
 
-- Michael Fuchs, Bernhard Gittenberger and Marefatollah Mansouri, *Counting Phylogenetic Networks with Few Reticulation Vertices: Tree-Child and Normal Networks*, arXiv:1803.11325, Theorems 1 and 2 (Section 1), Theorem 3 (Section 5) and Corollaries 1–9. <https://doi.org/10.48550/arXiv.1803.11325> Published version: Australasian Journal of Combinatorics 73 (2019) 385–423.
+- Michael Fuchs, Bernhard Gittenberger and Marefatollah Mansouri, *Counting Phylogenetic Networks with Few Reticulation Vertices: Tree-Child and Normal Networks*, arXiv:1803.11325, Section 1 (definition (i)–(iii) of phylogenetic networks), Theorems 1 and 2 (Section 1), Theorem 3 (Section 5) and Corollaries 1–9. <https://doi.org/10.48550/arXiv.1803.11325> Published version: Australasian Journal of Combinatorics 73 (2019) 385–423.

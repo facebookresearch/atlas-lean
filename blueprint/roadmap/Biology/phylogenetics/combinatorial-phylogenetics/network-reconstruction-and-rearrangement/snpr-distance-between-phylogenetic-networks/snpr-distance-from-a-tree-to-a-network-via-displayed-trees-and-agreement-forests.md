@@ -12,6 +12,14 @@
 
 **Non-isometric subclasses.** For $n \ge 4$, none of the classes of tree-child, reticulation-visible, or tree-based networks embeds isometrically into $\mathcal{N}_n$ under SNPR: some pairs in the class are strictly farther apart when SNPR-sequences must stay inside the class (also for tree-based networks without parallel edges). For $n \ge 4$ and $r \ge 1$ the class of networks with exactly $r$ reticulations does not embed isometrically into $\mathcal{N}_n$, and for $n \ge 2$ and $r \ge 3$ it does not embed isometrically into the networks with at most $r$ reticulations.
 
+## Depends on
+
+- [rSPR distance](../../../../not-yet-classified/rooted-spragreement-forest/rspr-dist.md)
+
+## Proof depends on
+
+- [rSPR distance equals the maximum agreement forest number](../../../../not-yet-classified/rooted-spragreement-forest/rspr-dist-eq-rooted-maf-number.md)
+
 ## Expansion
 
 The upper bound in item 1 is the triangle inequality through the best displayed tree $T'$, since a network is at SNPR distance $r$ from each tree it displays. For the lower bound, follow a shortest sequence $T = N_0, \dots, N_k = N$ and track displayed trees: an SNPR$^+$ step only enlarges the set of displayed trees, and after any step every displayed tree of $N_{i-1}$ is within one SNPR of a displayed tree of $N_i$. This produces a sequence of trees from $T$ to some $T' \in D(N)$ that moves at most at the $k - r$ steps that are not forced SNPR$^+$ moves, so $d_{SNPR}(T, T') \le k - r$. Item 2 follows by combining item 1 with the tree case: a maximum agreement forest for $T$ and the best displayed tree $T'$, together with the $r$ edges deleted to obtain $T'$ from $N$, is an agreement forest for $T$ and $N$, and conversely. Item 3 follows from item 1 because $r \le d_{SNPR}(T, N)$, so $|D(N)| \le 2^r$ is bounded by a function of the parameter and each $d_{rSPR}(T, T')$ is FPT.
