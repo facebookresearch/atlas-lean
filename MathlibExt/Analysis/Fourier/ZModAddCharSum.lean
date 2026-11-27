@@ -25,9 +25,10 @@ Extracted from the absolutely-maximally-entangled-state development now in
 
 namespace MetaMathlibExt
 
-/-- Orthogonality for the standard additive character of `ZMod N`: summing
-`stdAddChar (∑ i, c i * z i)` over all `z : ι → ZMod N` gives `N ^ card ι` when the
-coefficient vector `c` vanishes and `0` otherwise. -/
+/-- Orthogonality for the standard additive character of `ZMod N`, for a positive modulus
+`N` and a finite index type `ι`: summing `stdAddChar (∑ i, c i * z i)` over all
+`z : ι → ZMod N` gives `N ^ card ι` when the coefficient vector `c` vanishes and `0`
+otherwise. -/
 lemma sum_stdAddChar_dot {N : ℕ} [NeZero N] {ι : Type*}
     [Fintype ι] [DecidableEq ι] (c : ι → ZMod N) :
     (∑ z : ι → ZMod N, ZMod.stdAddChar (∑ i, c i * z i)) =
@@ -76,8 +77,10 @@ lemma norm_stdAddChar {N : ℕ} [NeZero N] (a : ZMod N) :
   rw [ZMod.stdAddChar_apply]
   exact Circle.norm_coe _
 
-/-- The character sum of an affine form: the constant term factors out of
-`sum_stdAddChar_dot`. -/
+/-- The character sum of an affine form, for a positive modulus `N` and a finite index type
+`ι`: summing `stdAddChar (b + ∑ i, c i * z i)` over all `z : ι → ZMod N` gives
+`stdAddChar b * N ^ card ι` when the coefficient vector `c` vanishes and `0` otherwise;
+the constant term factors out of `sum_stdAddChar_dot`. -/
 lemma sum_stdAddChar_affine {N : ℕ} [NeZero N] {ι : Type*}
     [Fintype ι] [DecidableEq ι] (b : ZMod N) (c : ι → ZMod N) :
     (∑ z : ι → ZMod N, ZMod.stdAddChar (b + ∑ i, c i * z i)) =

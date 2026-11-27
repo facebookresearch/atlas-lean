@@ -46,18 +46,21 @@ public import MathlibExt.Combinatorics.Additive.RestrictedSumset
 /-!
 # Partitions of `[N]` with small union of restricted sumsets
 
-`Green25.Property25 k N` says that every partition of `{1, ..., N}` into `k` parts
-has `10 * |⋃ᵢ (Aᵢ +̂ Aᵢ)| ≥ N`, where `S +̂ S` is the restricted sumset. Green's
-open problem 25 asks for which `k` this holds; the best known upper bound for the
-range where it fails is `k ≍ N / log N`. This file lowers that bound: it builds,
+`Green25.Property25 k N` says that `1 ≤ k ≤ N` and that every partition of
+`{1, ..., N}` into exactly `k` parts has `10 * |⋃ᵢ (Aᵢ +̂ Aᵢ)| ≥ N`, where `S +̂ S`
+is the restricted sumset. Green's open problem 25 asks for which `k` this holds;
+the best known upper bound for the range where it fails is `k ≍ N / log N`. This
+file lowers that bound: it builds,
 for all large `N`, a partition into `k(N) = o(N / log N)` parts whose restricted
 sumsets cover less than `N / 10` points.
 
 ## Source and provenance
 
-`Property25` and `bestUpper` are copied verbatim from
+The definitions of `Property25` and `bestUpper` are copied verbatim from
 `FormalConjectures/GreensOpenProblems/25.lean` of
 [google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures).
+The docstring of `Property25` is restated as a definition that names its range
+condition `1 ≤ k ≤ N`; the upstream docstring poses the question without it.
 
 The statement `green_25.upper` is **not** a verbatim copy. Upstream states it as a
 value question, with an opaque `green_25.upper.answer : ℕ → ℕ` left as `sorry`:
@@ -102,9 +105,10 @@ namespace Green25
 
 
 /--
-For which values of $k$ is the following true: whenever we partition
-$[N] = A_1 \cup \dots \cup A_k$,
-$\left|\bigcup^k_{i=1} (A_i \hat{+} A_i)\right| \geq \frac{1}{10} N$?
+`Property25 k N` holds when $1 \le k \le N$ and, whenever we partition
+$[N] = \{1, \dots, N\}$ into exactly $k$ parts $A_1, \dots, A_k$,
+$\left|\bigcup^k_{i=1} (A_i \hat{+} A_i)\right| \geq \frac{1}{10} N$.
+Green's open problem 25 asks for which values of $k$ this holds.
 -/
 def Property25 (k N : ℕ) : Prop :=
   1 ≤ k ∧ k ≤ N ∧
