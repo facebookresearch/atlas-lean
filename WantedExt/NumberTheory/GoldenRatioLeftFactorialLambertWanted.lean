@@ -19,6 +19,7 @@ public import MathlibExt.Analysis.SpecialFunctions.LambertWFunction
 public import MathlibExt.NumberTheory.GoldenFactorialExponent
 public import MathlibExt.NumberTheory.GoldenRatioLambertSequence
 public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds
+public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds
 
 /-!
 # The golden ratio, factorials, and the Lambert `W` function
@@ -29,6 +30,8 @@ the left factorial `!n = ∑_{k<n} k!` (OEIS A003422) by Kurepa's partial integr
 The statement `kurepaPartialIntegral_goldenFactorialExponent_bounds` is proved, and
 `kurepaPartialIntegral` is defined, in
 `MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds`.
+The statement `kurepaPartialIntegral_lambertSequence_bounds` is proved in
+`MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds`.
 
 The paper's real sequence `a n = -(n - 1) W₋₁(-(1/(n-1)) (4/7)^(1/(n-1)))` uses the
 lower real branch `W₋₁` of the Lambert `W` function. That branch is not defined in the
@@ -179,28 +182,6 @@ public theorem_wanted sum_pow_div_factorial_lt_lambertSequence (n k : ℕ) (hn :
       -(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1))) :
     ∑ t ∈ Finset.range (k + 1), a ^ t / (t.factorial : ℝ) <
       a ^ (k + 1) / ((k + 1).factorial : ℝ)
-
-/-- **Lambert bounds for the left factorial.** Let $n \ge 5$ be an integer, let
-$!n = \sum_{k=0}^{n-1} k!$ be the left factorial, let
-$K_n(x) = \int_0^x e^{-t} \sum_{k=0}^{n-1} t^k \, dt$ be Kurepa's partial integral, let
-$h(y) = y e^y$ be the Lambert map, and let $a$ be a real number with $a \ge n - 1$ and
-$$h\left(-\frac{a}{n-1}\right) = -\frac{1}{n-1}\left(\frac{4}{7}\right)^{1/(n-1)}.$$
-Then $K_n(a) < {!n} < K_n(a) + 1$.
-
-The two conditions on $a$ say exactly that
-$a = -(n-1)\, W_{-1}\left(-\frac{1}{n-1}\left(\frac{4}{7}\right)^{1/(n-1)}\right)$, where $W_{-1}$
-is the lower real branch of the Lambert $W$ function; this is the paper's $a(n)$, and $K_n(a)$
-is its $b(n)$.
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Theorem 10 (`jis-2024-24.5.7-thm-10`). -/
-public theorem_wanted kurepaPartialIntegral_lambertSequence_bounds (n : ℕ) (hn : 5 ≤ n)
-    (a : ℝ) (ha : (n : ℝ) - 1 ≤ a)
-    (hW : lambertMap (-a / ((n : ℝ) - 1)) =
-      -(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1))) :
-    kurepaPartialIntegral n a < ∑ k ∈ Finset.range n, (k.factorial : ℝ) ∧
-      ∑ k ∈ Finset.range n, (k.factorial : ℝ) < kurepaPartialIntegral n a + 1
 
 /-- **Two-parameter Lambert bounds for the left factorial.** Let $n \ge 5$ and $m \ge 1$ be
 integers, let $!n = \sum_{k=0}^{n-1} k!$ be the left factorial, let
