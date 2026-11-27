@@ -1,6 +1,6 @@
 # Tumour growth models
 
-Continuum and phase-field models of tumour growth and treatment: multiphase and swelling media, acid-mediated invasion, subdiffusive growth and optimal treatment timing.
+Continuum and phase-field models of tumour growth and treatment: multiphase and swelling media, subdiffusive growth and optimal treatment timing.
 
 - [Incompressible swelling media](incompressible-swelling-media/README.md)
 - [Multiphase models of tumor cords](multiphase-models-of-tumor-cords/README.md)

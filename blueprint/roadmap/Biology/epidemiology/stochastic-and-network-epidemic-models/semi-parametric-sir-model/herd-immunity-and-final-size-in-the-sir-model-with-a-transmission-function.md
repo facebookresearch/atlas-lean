@@ -4,7 +4,7 @@
 
 $$\dot x=-a(x)\,y,\qquad \dot y=a(x)\,y-cy,\qquad \dot z=cy,$$
 
-where $x,y,z$ are the susceptible, infected and recovered proportions ($x+y+z=1$) and $c>0$ is the recovery rate. The classical SIR model is $a(x)=\beta x$. A decreasing $a(x)/x$ captures heterogeneous "mover–stayer" populations, in which the most exposed are infected first.
+where $x,y,z$ are the susceptible, infected and recovered proportions ($x+y+z=1$) and $c>0$ is the recovery rate. The classical SIR model is $a(x)=\beta x$. An $a(x)/x$ increasing in $x$ (so decreasing as $x$ falls during the epidemic) captures heterogeneous "mover–stayer" populations, in which the most exposed are infected first.
 
 **Theorem.** Let $x(0),y(0)>0$.
 

@@ -8,7 +8,7 @@ where
 
 $$m(x)=1+b+cx,\qquad M(x)=b\beta+(\beta-1)cx,\qquad\beta=(1+b)^\tau,$$
 
-and the initial data $(z_0,\dots,z_{\tau-1})$ are nonnegative. (Remark: the undelayed case $\tau=0$ is excluded from the theorem below because $\beta=1$ makes the recurrence implicit and the denominator $2c(\beta-1)$ vanishes.) The **critical delay** is
+and the initial data $(z_0,\dots,z_{\tau-1})$ are nonnegative. (Remark: the undelayed case $\tau=0$ is excluded from the theorem below because $z_{t-\tau+1}=z_{t+1}$ makes the recurrence implicit, and $\beta=1$ makes the denominator $2c(\beta-1)$ vanish.) The **critical delay** is
 
 $$\tau_c=\frac{\log(a/b)}{\log(1+b)}.$$
 
