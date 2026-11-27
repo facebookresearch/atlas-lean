@@ -79,4 +79,5 @@
 - [Linked coalescence times under partial selfing](linked-coalescence-times-under-partial-selfing/README.md)
 - [Minimal descriptors of ancestral recombination graphs](minimal-descriptors-of-ancestral-recombination-graphs/README.md)
 - [SMC$'$ transition densities](smc-prime-transition-densities/README.md)
+- [Genealogy of genetic material under recombination](genealogy-of-genetic-material-under-recombination/README.md)
 - [IBD segments on coalescent trees](ibd-segments-on-coalescent-trees/README.md)
