@@ -14,6 +14,7 @@ Run a phased elimination algorithm with geometrically growing batches; at the en
 ## Proof depends on
 
 - [Replicable bounded-mean and coin-bias estimation](../../../replicable-learning/replicable-mean-estimation.md)
+- [Replicability costs a quadratic factor in the replicability parameter](replicable-coin-problem-lower-bound.md)
 
 ## Sources
 

@@ -12,6 +12,7 @@ For part 1, view the sampled lists as a list-coloring instance and use the c-deg
 ## Depends on
 
 - [Palette sparsification experiment, sampled lists and the conflict graph](palette-sparsification-experiment.md)
+- [Assadi-Chen-Khanna palette sparsification theorem for (Delta + 1)-coloring](palette-sparsification-theorem-delta-plus-one.md)
 
 ## Sources
 

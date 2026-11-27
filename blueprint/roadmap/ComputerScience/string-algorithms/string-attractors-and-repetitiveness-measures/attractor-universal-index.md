@@ -1,6 +1,6 @@
 # Universal compressed representations from string attractors
 
-Given a string attractor of size $\gamma'$ for $T[1..n]$ over an alphabet of size $\sigma$, there is a data structure of $O(\gamma' \log(n/\gamma'))$ words of $w$ bits that extracts any substring of length $\ell$ in $O(\log(n/\gamma') + \ell\log\sigma/w)$ time; more generally, for every integer $\tau \ge 2$, $O(\gamma'\tau\log_\tau(n/\gamma'))$ words give $O(\log_\tau(n/\gamma') + \ell\log\sigma/w)$ time. Since every dictionary compressor induces an attractor of size at most its output, this gives a single representation whose size is within an $O(\log(n/\gamma))$ factor of the outputs of LZ77, SLPs, macro schemes and run-length BWT.
+Given a string attractor of size $\gamma'$ for $T[1..n]$ over an alphabet of size $\sigma$, write $\Lambda_\tau = \max\{1, \log_\tau(n/\gamma')\}$, the number of levels saturated below by $1$ so that the terminal level is counted. For every integer $\tau \ge 2$ there is a data structure of $O(\gamma'\tau\Lambda_\tau)$ words of $w$ bits that extracts any substring of length $\ell$ in $O(\Lambda_\tau + \ell\log\sigma/w)$ time; for $\tau = 2$ this is $O(\gamma'\max\{1, \log(n/\gamma')\})$ words and $O(\max\{1, \log(n/\gamma')\} + \ell\log\sigma/w)$ time. Without the saturation the bound would be wrong: the set of all $n$ positions is an attractor, and $\gamma' = n$ would give zero words for every binary string of length $n$. Since every dictionary compressor induces an attractor of size at most its output, this gives a single representation whose size is within an $O(\max\{1, \log(n/\gamma)\})$ factor of the outputs of LZ77, SLPs, macro schemes and run-length BWT.
 
 ## Proof sketch
 
@@ -19,4 +19,4 @@ Build a hierarchy of blocks: at level $i$ the text is cut into blocks of length 
 
 ## Sources
 
-- Dominik Kempa, Nicola Prezza, "At the Roots of Dictionary Compression: String Attractors", STOC (2018), arXiv:1710.10964.
+- Dominik Kempa, Nicola Prezza, "At the Roots of Dictionary Compression: String Attractors", STOC (2018), arXiv:1710.10964, Theorem 5.3.

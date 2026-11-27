@@ -11,6 +11,11 @@ Configurations of $k$ distinct points among $k+1$ points correspond bijectively 
 - [Metrical task systems](../metrical-task-systems-and-hst-embeddings/metrical-task-system.md)
 - [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
 
+## Proof depends on
+
+- [Lazy normalization of k-server algorithms](../k-server-on-the-line/lazy-normalization-of-k-server-algorithms.md)
+- [Matching distance between server configurations](../k-server-on-the-line/matching-distance-between-configurations.md)
+
 ## Sources
 
 - Sébastien Bubeck, Christian Coester, Yuval Rabani, "The Randomized k-Server Conjecture Is False!", STOC (2023), arXiv:2211.05753, Proposition 8.

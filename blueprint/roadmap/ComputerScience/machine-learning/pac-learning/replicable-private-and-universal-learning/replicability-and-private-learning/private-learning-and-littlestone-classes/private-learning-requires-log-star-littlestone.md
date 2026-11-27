@@ -1,6 +1,6 @@
 # Private learning requires log-star of the Littlestone dimension samples
 
-Every $(1/16, 1/16)$-accurate $(0.1, O(1/(n^2 \log n)))$-differentially private learner for a class $H$ of Littlestone dimension $d$, proper or improper, uses $n = \Omega(\log^* d)$ examples. In particular, the class of thresholds over $\mathbb{N}$ (VC dimension one, infinite Littlestone dimension) is not privately learnable, and every privately learnable class has finite Littlestone dimension.
+Every $(1/16, 1/16)$-accurate $(0.1, O(1/(n^2 \log n)))$-differentially private learner for a class $H$ of Littlestone dimension $d$, proper or improper, uses $n = \Omega(\log^* d)$ examples. In particular, the class of thresholds over $\mathbb{N}$ (VC dimension one, infinite Littlestone dimension) has no such learner at any sample size $n$, and every class that is privately learnable, in the sense of a family of learners with privacy $\varepsilon(n) = o(1)$ and negligible $\delta(n) = n^{-\omega(1)}$ at their own sample size $n$, has finite Littlestone dimension: for all large $n$ these learners are $(1/16, 1/16)$-accurate and $(0.1, 1/(n^2 \log n))$-differentially private, so the bound applies with $n$ fixed and gives $\log^* d = O(n)$. A $\delta$ that merely tends to zero is not enough for this conclusion (see the linked definition).
 
 ## Proof sketch
 
@@ -17,4 +17,4 @@ By the threshold lemma it suffices to show that privately learning thresholds on
 
 ## Sources
 
-- N. Alon, R. Livni, M. Malliaris, S. Moran, "Private PAC Learning Implies Finite Littlestone Dimension", STOC (2019), arXiv:1806.00949, Theorem 1, Corollary 2, Lemmas 9 and 10.
+- N. Alon, R. Livni, M. Malliaris, S. Moran, "Private PAC Learning Implies Finite Littlestone Dimension", STOC (2019), arXiv:1806.00949, Section 3 (definition of private learnability), Theorem 1, Corollary 2, Lemmas 9 and 10.

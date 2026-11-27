@@ -1,6 +1,6 @@
 # Gomory-Hu trees of unweighted graphs with polylogarithmically many max-flows
 
-Let $G$ be an undirected unweighted multigraph with $n$ vertices and $m$ edges.
+Let $G$ be a connected undirected unweighted multigraph with $n$ vertices and $m$ edges. Connectivity is needed for the output to be a cut-equivalent tree in the positive-weight sense: two vertices in different components have minimum cut value $0$, which no path of a tree with positive edge weights realizes as a minimum edge weight. For a disconnected $G$ one runs the algorithms on each connected component (found in $O(n + m)$ time) and joins the component trees by $c - 1$ edges of weight $0$ between $c$ components, an $O(n)$ overhead; the result represents all pairwise minimum cut values but has zero-weight edges.
 
 1. (Abboud-Krauthgamer-Trabelsi) If $G$ is simple, a cut-equivalent tree of $G$ can be computed by a randomized (Monte Carlo) algorithm in $n^{2+o(1)}$ time, correct with probability $1 - n^{-c}$; deterministically in $\tilde O(n^{8/3})$ time.
 2. (Abboud-Krauthgamer-Li-Panigrahi-Saranurak-Trabelsi) A cut-equivalent tree of $G$ can be computed by a randomized (Monte Carlo) algorithm in the time of $\mathrm{polylog}(n)$ max-flow calls on unweighted graphs; with the almost-linear maximum-flow algorithm this takes $m^{1+o(1)}$ time.

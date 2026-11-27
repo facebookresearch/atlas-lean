@@ -14,6 +14,7 @@ Replicability to privacy: draw $k_1 = O(\log(1/\beta))$ random seeds and, for ea
 
 ## Depends on
 
+- [Replicable algorithms with shared randomness](../../../replicable-learning/replicable-algorithms-with-shared-seed.md)
 - [Differential privacy](../../../../../cryptography/differential-privacy/differentially-private.md)
 - [Public-key encryption scheme](../../../../../cryptography/security-games/generic-security-games/pkescheme.md)
 - [One-way function families](../../../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)

@@ -1,6 +1,6 @@
 # Answering many statistical queries under zCDP with the Gaussian mechanism
 
-Let $q_1, \dots, q_k$ be (adaptively chosen) statistical queries $q_j(S) = \frac1n\sum_i \psi_j(z_i)$ with $\psi_j \in [0,1]$. Answering each with independent Gaussian noise of standard deviation
+Fix $\rho > 0$ and positive integers $n$ and $k$ (the scale below is undefined for $\rho = 0$, which the zCDP definition allows). Let $q_1, \dots, q_k$ be (adaptively chosen) statistical queries $q_j(S) = \frac1n\sum_i \psi_j(z_i)$ with $\psi_j \in [0,1]$. Answering each with independent Gaussian noise of standard deviation
 
 $$
 \sigma = \frac{1}{n}\sqrt{\frac{k}{2\rho}}

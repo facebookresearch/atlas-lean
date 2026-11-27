@@ -1,6 +1,6 @@
 # Max-entropy spanning tree distributions are lambda-uniform and approximately computable
 
-Let $G=(V,E)$ be connected with $n$ vertices.
+Let $G=(V,E)$ be connected with $n \ge 2$ vertices, the domain of the spanning tree polytope $P_{\mathrm{ST}}(G)$. (For $n=1$ the only spanning tree is empty, so every $z \in P_{\mathrm{ST}}(G)$ has empty positive support and the minimum $\min_{e \in E_+} z_e$ in (iii) does not exist.)
 
 (i) For every $z$ in the relative interior of $P_{\mathrm{ST}}(G)$ the maximum-entropy distribution with marginals $z$ is unique and equals $\mu_\lambda$ for some $\lambda \in \mathbb{R}_{> 0}^{E}$.
 

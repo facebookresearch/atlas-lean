@@ -15,11 +15,12 @@ Each step is a subsampled Gaussian mechanism: the average of clipped gradients h
 ## Depends on
 
 - [Gaussian differential privacy](gaussian-differential-privacy.md)
+- [Subsampling theorem for f-differential privacy](f-dp-subsampling-theorem.md)
+- [Tensor product of trade-off functions](tensor-product-of-trade-off-functions.md)
 
 ## Proof depends on
 
 - [Central limit theorem for the composition of trade-off functions](f-dp-composition-central-limit-theorem.md)
-- [Subsampling theorem for f-differential privacy](f-dp-subsampling-theorem.md)
 - [The Gaussian mechanism is exactly Gaussian differentially private](gaussian-mechanism-gdp.md)
 
 ## Sources

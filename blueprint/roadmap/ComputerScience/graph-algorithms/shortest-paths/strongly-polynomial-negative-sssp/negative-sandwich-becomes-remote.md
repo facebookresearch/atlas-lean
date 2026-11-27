@@ -21,7 +21,7 @@ Validity is a case analysis with the triangle inequality: each of $0$, $d^\beta(
 
 ## Proof depends on
 
-- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
+- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O((h + 1)(m + n log n)) time](hop-limited-distances-hybrid.md)
 - [Reweighting by a price function shifts every distance by the endpoint prices and preserves cycle weights](../near-linear-negative-weight-sssp/price-function-distance-shift.md)
 
 ## Sources

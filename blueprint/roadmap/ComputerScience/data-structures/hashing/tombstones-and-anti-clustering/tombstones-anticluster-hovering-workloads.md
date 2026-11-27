@@ -2,8 +2,8 @@
 
 Consider ordered linear probing with tombstones and uniformly random hashing, with operations oblivious to the hash function.
 
-1. With the classical rebuild window $R = n/(2x)$ insertions and a hovering workload at load factor $1 - 1/x$, the expected amortized time per insertion is $\tilde{O}(x^{1.5})$; if all insertions and deletions are on distinct keys it is $\Omega(x^{1.5}\sqrt{\lg\lg x})$; queries take expected time $O(x)$ (Theorem 1).
-2. With rebuild window $R = n/\lg^{c} x$ insertions for a sufficiently large constant $c$, and any sequence of operations that never brings the load factor above $1 - 1/x$, the expected amortized cost of each insertion is $\tilde{O}(x)$ and the expected cost of each query or deletion is $O(x)$ (Theorem 2). For every choice of $R$ some sequence of operations takes amortized time $\omega(x)$ per operation.
+1. With the classical rebuild window $R = n/(2x)$ insertions and a hovering workload at load factor $1 - 1/x$, the expected amortized time per insertion is $\tilde{O}(x^{1.5})$; if, in addition, all insertions and deletions in each rebuild window are on distinct keys and the table size $n$ is sufficiently large as a function of $x$, it is $\Omega(x^{1.5}\sqrt{\lg\lg x})$; queries take expected time $\Theta(x)$ (Theorem 1 and Corollary 4; the lower bound rests on Proposition 4, which assumes $n$ sufficiently large). Without the table-size hypothesis the lower bound fails: at $n = 2x$ the rebuild window is a single insertion, and scanning, shifting and rebuilding cost $O(n) = O(x)$ per insertion even on distinct keys.
+2. With rebuild window $R = n/\lg^{c} x$ insertions for a sufficiently large constant $c$, and any sequence of operations that never brings the load factor above $1 - 1/x$, the expected amortized cost of each insertion is $\tilde{O}(x)$ and the expected cost of each query or deletion is $O(x)$ (Theorem 2). For every choice of $R$ some sequence of operations has expected amortized insertion time $\omega(x)$ or expected query time $\omega(x)$ (Corollary 6).
 
 Both beat insertion-only linear probing at the same load factor $\alpha = 1 - 1/x$, whose expected insertion (unsuccessful-search) cost tends to $\frac12(1 + x^2) = \Theta(x^2)$, while its expected successful-search cost tends to $\frac12(1 + x)$.
 
@@ -23,4 +23,4 @@ Deletions leave tombstones at hash-random positions that later insertions reuse.
 
 ## Sources
 
-- Michael A. Bender, Bradley C. Kuszmaul, William Kuszmaul, "Linear Probing Revisited: Tombstones Mark the Demise of Primary Clustering", FOCS (2021), arXiv:2107.01250.
+- Michael A. Bender, Bradley C. Kuszmaul, William Kuszmaul, "Linear Probing Revisited: Tombstones Mark the Demise of Primary Clustering", FOCS (2021), arXiv:2107.01250, Proposition 4, Theorems 1 and 2 and Corollaries 4 and 6.

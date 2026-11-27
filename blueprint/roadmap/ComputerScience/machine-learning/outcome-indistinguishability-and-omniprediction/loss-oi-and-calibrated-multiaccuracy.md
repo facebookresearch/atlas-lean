@@ -6,6 +6,7 @@ Let $D$ be a distribution over $X \times \{0,1\}$ with Bayes predictor $p^*(x) =
 
 - [Omnipredictors](omnipredictor.md)
 - [Multiaccurate predictors](../multicalibration-and-multiaccuracy/multiaccurate-predictor.md)
+- [Multicalibrated predictors](../multicalibration-and-multiaccuracy/multicalibrated-predictor.md)
 
 ## Sources
 

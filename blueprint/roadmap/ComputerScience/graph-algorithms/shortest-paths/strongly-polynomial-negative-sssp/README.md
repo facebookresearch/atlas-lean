@@ -5,7 +5,7 @@
 - [beta-betweenness of vertex pairs and negative sandwiches of negative vertices](beta-betweenness-and-negative-sandwiches.md)
 - [r-hop reductions and the layered hop-reducing auxiliary graph](r-hop-reduction-auxiliary-graph.md)
 - [r-remote sets and 1-hop independent sets of negative vertices](remote-and-independent-negative-sets.md)
-- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
+- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O((h + 1)(m + n log n)) time](hop-limited-distances-hybrid.md)
 - [Betweenness reduction: one reweighting makes every pair have beta-betweenness at most n/tau](betweenness-reduction-by-sampling.md)
 - [Eliminating r-remote negative edges by hop reduction in O~((k/r)m + rm) time](remote-edge-elimination.md)
 - [A negative sandwich with low-betweenness endpoints becomes r-remote after one valid reweighting](negative-sandwich-becomes-remote.md)

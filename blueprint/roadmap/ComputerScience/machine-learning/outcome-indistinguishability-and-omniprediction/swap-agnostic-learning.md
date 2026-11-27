@@ -12,6 +12,7 @@ Conditional expectations given $p(x) = v$ below are regular conditional expectat
 
 - [Omnipredictors](omnipredictor.md)
 - [Swap regret](../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
+- [Multicalibrated predictors](../multicalibration-and-multiaccuracy/multicalibrated-predictor.md)
 
 ## Sources
 

@@ -12,7 +12,7 @@ Store a strongly weight-balanced search tree in the van Emde Boas layout inside 
 
 ## Proof depends on
 
-- [Root-to-leaf paths in the recursive layout touch $O(\log_L N)$ lines](recursive-layout-search-cost.md)
+- [Root-to-leaf paths in the recursive layout touch $O(1 + \log_L N)$ lines](recursive-layout-search-cost.md)
 - [Amortized cost of packed memory arrays](packed-memory-array-cost.md)
 - [Packed memory arrays](packed-memory-array.md)
 - [Prokop's recursive layout of a complete binary tree](recursive-tree-layout.md)

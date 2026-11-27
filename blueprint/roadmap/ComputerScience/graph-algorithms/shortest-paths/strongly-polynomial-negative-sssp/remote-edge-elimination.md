@@ -13,7 +13,7 @@ Vertices outside the negative $r$-hop reach have $\delta_i(u)=0$ for all $i\le r
 
 ## Proof depends on
 
-- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
+- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O((h + 1)(m + n log n)) time](hop-limited-distances-hybrid.md)
 - [r-hop reductions and the layered hop-reducing auxiliary graph](r-hop-reduction-auxiliary-graph.md)
 
 ## Sources

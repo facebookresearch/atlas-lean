@@ -15,7 +15,7 @@ A one-sided primitive, run with $\rho=\lceil k^{1/3}\rceil$, either finds a $1$-
 
 ## Proof depends on
 
-- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
+- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O((h + 1)(m + n log n)) time](hop-limited-distances-hybrid.md)
 
 ## Sources
 

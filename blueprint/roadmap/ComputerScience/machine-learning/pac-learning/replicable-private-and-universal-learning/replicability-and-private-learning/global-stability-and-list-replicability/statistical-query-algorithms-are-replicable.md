@@ -14,6 +14,7 @@ Answer the $j$-th query $\psi_j : X \to [0,1]$ by replicable bounded-mean estima
 ## Proof depends on
 
 - [Replicable bounded-mean and coin-bias estimation](../../../replicable-learning/replicable-mean-estimation.md)
+- [Composition of replicable algorithms](../../../replicable-learning/composition-of-replicable-algorithms.md)
 
 ## Sources
 

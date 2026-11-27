@@ -1,6 +1,6 @@
 # Littlestone dimension characterizes online learnability of partial classes
 
-For every partial concept class $H$, the following are equivalent: $\mathrm{LD}(H) < \infty$; $H$ is online learnable in the realizable mistake-bound model (with mistake bound exactly $\mathrm{LD}(H)$, attained by the Standard Optimal Algorithm restricted to realizable sequences); and $H$ is agnostically online learnable. There is also a partial class with threshold dimension at most $2$ and infinite Littlestone dimension, where the threshold dimension $\mathrm{TD}(H)$ is the largest $d$ with points $x_1, \dots, x_d$ and concepts $h_1, \dots, h_d \in H$ such that $h_i(x_j) = \mathbb{1}[i \le j]$ for all $i, j$. So small threshold dimension does not imply online learnability for partial classes, unlike for total classes, where $\mathrm{TD}(H) \ge \lfloor \log \mathrm{LD}(H) \rfloor$.
+For every partial concept class $H$, the following are equivalent: $\mathrm{LD}(H) < \infty$; $H$ is online learnable in the realizable mistake-bound model (with mistake bound exactly $\mathrm{LD}(H)$, attained by the Standard Optimal Algorithm restricted to realizable sequences); and $H$ is agnostically online learnable. There is also a partial class with threshold dimension at most $2$ and infinite Littlestone dimension, where the threshold dimension $\mathrm{TD}(H)$ is the largest $d$ with points $x_1, \dots, x_d$ and concepts $h_1, \dots, h_d \in H$ such that $h_i(x_j) = \mathbb{1}[i \le j]$ for all $i, j$. So small threshold dimension does not imply online learnability for partial classes, unlike for total classes, where $\mathrm{TD}(H) \ge \lfloor \log_2 \mathrm{LD}(H) \rfloor$.
 
 ## Proof sketch
 
@@ -15,6 +15,7 @@ The Standard Optimal Algorithm predicts the label whose version space has larger
 
 - [The Littlestone dimension is the optimal mistake bound](../../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
 - [Agnostic online learnability is characterized by the Littlestone dimension](../../../../online-learning-and-boosting/agnostic-online-learnability-is-characterized-by-the-littlestone-dimension.md)
+- [Large Littlestone dimension forces large threshold subclasses](../../replicability-and-private-learning/private-learning-and-littlestone-classes/littlestone-dimension-contains-thresholds.md)
 
 ## Sources
 

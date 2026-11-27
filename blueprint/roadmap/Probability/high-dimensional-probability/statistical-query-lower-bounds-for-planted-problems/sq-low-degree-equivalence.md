@@ -6,7 +6,13 @@ $$
 \mathrm{SDA}(S, m) = \max\Bigl\{q \in \mathbb{N} : \mathbb{E}_{u, v \sim \mu}\bigl[\langle \bar D_u, \bar D_v\rangle - 1 \bigm| A\bigr] \le \tfrac{1}{m} \text{ for every event } A \text{ with } \Pr_{u, v \sim \mu}(A) \ge \tfrac{1}{q^2}\Bigr\},
 $$
 
-where $u, v$ are independent and $A$ ranges over all events on pairs $(u, v)$, not only squares $\mathcal{H}' \times \mathcal{H}'$ of subfamilies. The problem is *$(\delta, k)$-nice* if no function of $k$ samples that is orthogonal under $D_\emptyset^{\otimes k}$ to every function of degree at most $k$ in one of the samples distinguishes with advantage $\delta$; when $D_\emptyset$ is a product distribution, adding a small amount of coordinate-resampling noise makes a problem nice when it has no $k$-sample distinguisher. For an even $k > 0$ and an $(m^{-k/2}/4, k)$-nice problem:
+where $u, v$ are independent and $A$ ranges over all events on pairs $(u, v)$, not only squares $\mathcal{H}' \times \mathcal{H}'$ of subfamilies. For $\beta > 0$, a function $p$ of $m$ samples is an *$m$-sample $\beta$-distinguisher* (Brennan et al., Definition 1.1) if
+
+$$
+\mathbb{E}_{x \sim D_\emptyset^{\otimes m}} p(x) - \mathbb{E}_{u \sim \mu}\,\mathbb{E}_{x \sim D_u^{\otimes m}} p(x) > \beta \sqrt{\mathrm{Var}_{x \sim D_\emptyset^{\otimes m}} p(x)},
+$$
+
+and it is *good* if it is a $\beta$-distinguisher for some $\beta > 1$. The problem is *$(\delta, k)$-nice* (Definition 1.4) if no function of $k$ samples that is orthogonal under $D_\emptyset^{\otimes k}$ to every function of degree at most $k$ in one of the samples is a $k$-sample $\delta$-distinguisher; when $D_\emptyset$ is a product distribution and the problem has no $k$-sample $C$-distinguisher, resampling each coordinate independently with a small probability makes it nice (Fact 1.5). For an even $k > 0$ and an $(m^{-k/2}/4, k)$-nice problem:
 
 1. if $\mathrm{SDA}(S, m') \le (2m/m')^{k/2}$ for some $m' \le m$, in particular if some statistical query algorithm makes $o(2^{k/2})$ queries to VSTAT$(m/3)$, then there is a good $4mk$-sample distinguisher of degree at most $k^2$;
 2. if a degree-$k$ function is a good $m$-sample distinguisher, then $\mathrm{SDA}(S, m') \le (2m/m')^{O(k)}$ for some $m' \le m$, for example $\mathrm{SDA}(S, m) \le 2^{O(k)}$.
@@ -29,4 +35,4 @@ Both directions go through the moments of the pairwise correlations $\langle D_u
 
 ## Sources
 
-- M. Brennan, G. Bresler, S. B. Hopkins, J. Li, T. Schramm, "Statistical Query Algorithms and Low-Degree Tests Are Almost Equivalent", COLT (2021), arXiv:2009.06107.
+- M. Brennan, G. Bresler, S. B. Hopkins, J. Li, T. Schramm, "Statistical Query Algorithms and Low-Degree Tests Are Almost Equivalent", COLT (2021), arXiv:2009.06107, Definitions 1.1, 1.2 and 1.4, Fact 1.5 and Theorems 1.6 and 1.7.

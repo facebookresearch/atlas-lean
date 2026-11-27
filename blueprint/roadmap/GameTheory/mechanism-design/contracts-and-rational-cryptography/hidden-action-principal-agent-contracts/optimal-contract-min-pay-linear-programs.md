@@ -16,6 +16,10 @@ Any contract induces some best-response action $i$ and satisfies that action's i
 
 - [Hidden-action principal-agent instance and contract](hidden-action-principal-agent-instance.md)
 
+## Proof depends on
+
+- [Linear programs are solvable in polynomial time](../../../../Geometry/convex-geometry/polynomial-time-linear-programming/linear-programs-are-solvable-in-polynomial-time.md)
+
 ## Sources
 
 - S. J. Grossman, O. D. Hart, "An Analysis of the Principal-Agent Problem", Econometrica 51(1) (1983).

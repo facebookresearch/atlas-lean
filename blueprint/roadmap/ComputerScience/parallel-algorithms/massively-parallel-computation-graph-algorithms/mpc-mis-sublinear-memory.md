@@ -1,6 +1,6 @@
 # MIS in O(sqrt(log Delta) log log Delta + sqrt(log log n)) MPC rounds with sublinear memory
 
-In the MPC model with strongly sublinear local memory $S = n^{\alpha}$ for any constant $\alpha \in (0, 1)$ and total memory $\tilde O(m)$, a maximal independent set of an $n$-vertex graph with maximum degree $\Delta$ can be computed by a randomized algorithm in $\tilde O(\sqrt{\log \Delta}) + O(\sqrt{\log\log n})$ rounds with high probability.
+In the MPC model with strongly sublinear local memory $S = n^{\alpha}$ for any constant $\alpha \in (0, 1)$ and total memory $\tilde O(m + n)$ (enough to store every vertex, isolated ones included, and its output, as well as every edge), a maximal independent set of an $n$-vertex graph with maximum degree $\Delta$ can be computed by a randomized algorithm in $\tilde O(\sqrt{\log \Delta}) + O(\sqrt{\log\log n})$ rounds with high probability.
 
 ## Proof sketch
 

@@ -1,12 +1,12 @@
 # Moments accountant privacy bound for DP-SGD
 
-There are absolute constants $c_1, c_2$ such that, for DP-SGD (add/remove adjacency, clipping norm $C$, noise standard deviation $\sigma C$) with Poisson sampling rate $q$ and $T$ steps, in the parameter range $\sigma \ge 1$ and $q < 1/(16\sigma)$ used by the analysis, for every $\varepsilon < c_1 q^2 T$ and $\delta > 0$, the algorithm is $(\varepsilon, \delta)$-differentially private whenever
+There are absolute constants $c_1, c_2$ such that, for DP-SGD (add/remove adjacency, clipping norm $C$, noise standard deviation $\sigma C$) with Poisson sampling rate $q$ and $T$ steps, in the parameter range $\sigma \ge 1$ and $q < 1/(16\sigma)$ used by the analysis, for every $0 < \varepsilon < c_1 q^2 T$ and $0 < \delta < 1$, the algorithm is $(\varepsilon, \delta)$-differentially private whenever
 
 $$
 \sigma \ge c_2\, \frac{q\sqrt{T\log(1/\delta)}}{\varepsilon}.
 $$
 
-Compared with applying the strong composition theorem to the subsampled Gaussian mechanism, this saves a factor $\sqrt{\log(T/\delta)}$ in $\varepsilon$ and a factor $Tq$ in $\delta$. The same bound follows from Rényi or zCDP-style accounting of the subsampled Gaussian mechanism.
+The positivity of $\varepsilon$ and $\delta < 1$ make the right-hand side a finite real number; for $\delta \ge 1$ every mechanism is trivially $(\varepsilon,\delta)$-differentially private, and $\varepsilon = 0$ is not covered. Compared with applying the strong composition theorem to the subsampled Gaussian mechanism, this saves a factor $\sqrt{\log(T/\delta)}$ in $\varepsilon$ and a factor $Tq$ in $\delta$. The same bound follows from Rényi or zCDP-style accounting of the subsampled Gaussian mechanism.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Quasipolynomial Sauer–Shelah–Perles lemma for partial classes
 
-Let $H$ be a partial concept class on a finite domain $X$ with $\mathrm{VC}(H) = d$. Then $H$ has a disambiguation $\bar H$ of size $|\bar H| = |X|^{O(d \log |X|)}$. On the countable domain $X = \mathbb{N}$, every partial class of VC dimension $d$ has a strong disambiguation $\bar H$ whose projection to $[m]$ has size at most $(m+1)^{(d+1) \log_2 m + 2}$ for every $m$. There are partial classes of VC dimension $1$ on $m$ points all of whose disambiguations have size $m^{(\log m)^{1-o(1)}}$, so the factor $\log |X|$ in the exponent cannot be replaced by a constant.
+Let $H$ be a partial concept class on a finite domain $X$ with $\mathrm{VC}(H) = d$. Then $H$ has a disambiguation $\bar H$ of size $|\bar H| = |X|^{O(d \log |X|)}$. On the countable domain $X = \mathbb{N}$, every partial class of VC dimension $d$ has a strong disambiguation $\bar H$ whose projection to $[m]$ has size at most $(m+1)^{(d+1) \log_2 m + 2}$ for every $m$. There are partial classes of VC dimension $1$ on $m$ points all of whose disambiguations have size at least $m^{(\log m)^{1-o(1)}}$ (larger disambiguations always exist, such as all $2^m$ binary vectors), so the factor $\log |X|$ in the exponent cannot be replaced by a constant.
 
 ## Proof sketch
 

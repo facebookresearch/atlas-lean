@@ -16,6 +16,7 @@ The booster runs Hedge over the sample, calling the weak learner with the curren
 ## Proof depends on
 
 - [Weak learnability implies PAC learnability via boosting](../../../../generalization-bounds-and-concentration/weak-learnability-implies-pac-learnability-via-boosting.md)
+- [Generalization bound for sample compression schemes](../../../../generalization-bounds-and-concentration/generalization-bound-for-sample-compression-schemes.md)
 
 ## Sources
 

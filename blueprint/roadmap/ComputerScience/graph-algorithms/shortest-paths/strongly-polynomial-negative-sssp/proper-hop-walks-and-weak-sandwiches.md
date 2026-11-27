@@ -8,7 +8,7 @@ In split form, a *proper $h$-hop walk* is a walk with exactly $h$ negative edges
 
 ## Proof sketch
 
-For item 1 compute $d^{h-1}(S,\cdot)$ and $d^h(S,\cdot)$; if they agree on $S$ the distances are final, and otherwise the walk attaining $d^h(S,t)<d^{h-1}(S,t)$ has exactly $h$ hops and either repeats a negative vertex, exposing a negative cycle, or is a proper negative $h$-hop walk. For item 2 sample each negative vertex with probability $1/q$, $q=2\sqrt{k/h}$; a sampled pair with $\hat d^h(s,t)<0$ forces at least $h-1$ sampled vertices of $B_{s,t}=\{u:d^h(s,u)+d^h(u,t)<0\}$, which by a multiplicative Chernoff bound is unlikely unless $|B_{s,t}|>\sqrt{kh}$, and $(s,B_{s,t},t)$ is returned. The restriction $h\le k$ is needed since $U,S\subseteq N$ have at most $k$ elements, while $\sqrt{hk}>k$ for $h>k$. Item 3 is the sandwich-to-remote argument with $\phi(v)=\max\{d^{r+h}(s,v),-d^{r+h}(v,t)\}$ on the vertices reachable from $s$, where it is finite, extended to the other vertices by the largest of these finite values.
+For item 1 compute $d^{h-1}(S,\cdot)$ and $d^h(S,\cdot)$; if they agree on $S$ the distances are final, and otherwise the walk attaining $d^h(S,t)<d^{h-1}(S,t)$ has exactly $h$ hops and either repeats a negative vertex, exposing a negative cycle, or is a proper negative $h$-hop walk. For item 2 sample each negative vertex with probability $1/q$, $q=2\sqrt{k/h}$; a sampled pair with $\hat d^h(s,t)<0$ forces at least $h-1$ sampled vertices of $B_{s,t}=\{u:d^h(s,u)+d^h(u,t)<0\}$, which by a multiplicative Chernoff bound is unlikely unless $|B_{s,t}|>\sqrt{kh}$, and $(s,B_{s,t},t)$ is returned. The restriction $h\le k$ is needed since $U,S\subseteq N$ have at most $k$ elements, while $\sqrt{hk}>k$ for $h>k$. Item 3 is the sandwich-to-remote argument with $\phi(v)=\max\{d^{r+h}(s,v),-d^{r+h}(v,t)\}$ on the vertices $v$ with $d^{r+h}(s,v)<\infty$, where it is finite, extended to the other vertices by the largest of these finite values.
 
 ## Depends on
 
@@ -20,7 +20,8 @@ For item 1 compute $d^{h-1}(S,\cdot)$ and $d^h(S,\cdot)$; if they agree on $S$ t
 ## Proof depends on
 
 - [A negative sandwich with low-betweenness endpoints becomes r-remote after one valid reweighting](negative-sandwich-becomes-remote.md)
-- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
+- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O((h + 1)(m + n log n)) time](hop-limited-distances-hybrid.md)
+- [Multiplicative Chernoff bounds for independent [0,1]-valued scores](../../../../Probability/concentration-inequalities/chernoff-and-bernoulli-comparison-bounds/multiplicative-chernoff-bounds.md)
 
 ## Sources
 

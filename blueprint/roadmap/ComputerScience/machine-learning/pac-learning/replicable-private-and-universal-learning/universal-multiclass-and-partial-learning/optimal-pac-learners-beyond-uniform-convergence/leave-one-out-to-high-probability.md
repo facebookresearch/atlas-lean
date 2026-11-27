@@ -23,6 +23,7 @@ View the predictors trained on growing prefixes as an online learner: on an i.i.
 - [Permutation-invariant learners and leave-one-out error](permutation-invariant-learner-leave-one-out.md)
 - [One-inclusion hypergraphs, orientations and out-degree](../list-learning-and-multiclass-pseudo-cubes/one-inclusion-hypergraph.md)
 - [The realizable distribution family](../../../occam-bound-for-consistent-learners/realizable-family.md)
+- [Partial concept classes and their VC and Littlestone dimensions](../partial-concept-classes-and-disambiguation/partial-concept-class.md)
 
 ## Proof depends on
 

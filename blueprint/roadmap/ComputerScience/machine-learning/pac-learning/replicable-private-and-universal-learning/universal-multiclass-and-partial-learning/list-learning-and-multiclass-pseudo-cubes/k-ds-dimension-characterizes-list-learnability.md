@@ -1,6 +1,6 @@
 # The k-DS dimension characterizes k-list learnability
 
-For every $k \ge 1$ and every $H \subseteq Y^X$, $H$ is $k$-list PAC learnable if and only if its $k$-DS dimension is finite. When $d_{k\text{-DS}}(H) = d < \infty$, the realizable sample complexity is polynomial in $d$, $k$, $1/\varepsilon$ and $\log(1/\delta)$ up to logarithmic factors.
+For every $k \ge 1$ and every nonempty $H \subseteq Y^X$ (the $k$-DS dimension is defined only for nonempty classes), $H$ is $k$-list PAC learnable if and only if its $k$-DS dimension is finite. When $d_{k\text{-DS}}(H) = d < \infty$, the realizable sample complexity is polynomial in $d$, $k$, $1/\varepsilon$ and $\log(1/\delta)$ up to logarithmic factors.
 
 ## Proof sketch
 

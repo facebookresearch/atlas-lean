@@ -12,6 +12,10 @@ Serving $r$ requires a configuration containing $r$, which is exactly finite ser
 - [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
 - [Matching distance between server configurations](../k-server-on-the-line/matching-distance-between-configurations.md)
 
+## Proof depends on
+
+- [Lazy normalization of k-server algorithms](../k-server-on-the-line/lazy-normalization-of-k-server-algorithms.md)
+
 ## Sources
 
 - Allan Borodin, Nathan Linial, Michael E. Saks, "An Optimal On-Line Algorithm for Metrical Task System", Journal of the ACM 39(4) (1992).
