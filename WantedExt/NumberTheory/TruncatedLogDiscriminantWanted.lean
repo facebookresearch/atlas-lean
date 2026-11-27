@@ -11,10 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
-public import MathlibExt.NumberTheory.TruncatedLogDiscriminantFinitePrimesIsSquareDiscrTruncatedLog
 public import MathlibExt.NumberTheory.TruncatedLogDiscriminantPrimePower
 public import MathlibExt.NumberTheory.TruncatedLogResultantPos
 public import MathlibExt.NumberTheory.TruncatedLogResultantPrimePower
+public import MathlibExt.NumberTheory.TruncatedLogDiscriminantFinitePrimesIsSquareDiscrTruncatedLog
 
 /-!
 # Discriminants of truncated logarithmic polynomials
