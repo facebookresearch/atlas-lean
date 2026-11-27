@@ -89,3 +89,21 @@
 - [Cutting an edge separates its endpoints](not-connected-cut-edge.md)
 - [An edge cut keeps every other edge](adjacent-cut-edge.md)
 - [Link-cut trees take logarithmic amortized time](link-cut-trees-take-logarithmic-amortized-time.md)
+
+## A costed pointer model of rooted link-cut trees
+
+- [Link-cut vertex record](cell.md)
+- [Link-cut pointer state](heap.md)
+- [Bottom-up handle splay](splay.md)
+- [Preferred-child switch at an auxiliary root](splice.md)
+- [A preferred-child switch is local](splice-frame.md)
+- [Physical access in a link-cut forest](expose.md)
+- [Rooted link-cut operations](call.md)
+- [Link-cut operation answers](answer.md)
+- [Costed link-cut operation on handles](step.md)
+- [Reference state of a weighted dynamic forest](spec.md)
+- [Legal weighted link-cut operation](spec-step.md)
+- [Execution of a link-cut history](replay.md)
+- [Materializing an auxiliary tree](stores.md)
+- [Representation by ordered auxiliary trees](represents.md)
+- [Locally maintained caches give the inorder product](root-product.md)
