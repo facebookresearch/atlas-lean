@@ -22,7 +22,7 @@ The diagonal uniqueness theorem and Ramanujan's binomial sine series are proved 
 `MathlibExt.NumberTheory.RamanujanBinomialSine`, respectively.
 The first shifted convolution (published Corollary 2) is proved in
 `MathlibExt.NumberTheory.RamanujanShiftedHarmonicConvolution`.
-The identity `sum_choose_sub_choose_mul_harmonic_eq_add` is proved in
+The second shifted convolution (published Corollary 3) is proved in
 `MathlibExt.NumberTheory.RamanujanHarmonicIdentitySumChooseSubChooseMulHarmonicEqAdd`.
 Three other records from this paper are already proved in MathlibExt and
 are not restated here: Theorem 1 is

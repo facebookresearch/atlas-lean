@@ -13834,7 +13834,6 @@
   "MathlibExt/NumberTheory/RamanujanBinomialSine": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Ramanujan's binomial–harmonic identity"},
   "MathlibExt/NumberTheory/RamanujanFiveDissection": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Overpartitions with even parts distinct"},
   "MathlibExt/NumberTheory/RamanujanHarmonicIdentity": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Ramanujan's binomial–harmonic identity"},
-  "MathlibExt/NumberTheory/RamanujanHarmonicIdentitySumChooseSubChooseMulHarmonicEqAdd": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Ramanujan's binomial–harmonic identity"},
   "MathlibExt/NumberTheory/RamanujanSum": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Ramanujan sums"},
   "MathlibExt/NumberTheory/RamanujanTauModNineteen": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Regular partitions and a generalized tau function"},
   "MathlibExt/NumberTheory/RamanujanTauModSeventeen": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Regular partitions and a generalized tau function"},

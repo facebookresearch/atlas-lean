@@ -14,7 +14,7 @@ import Mathlib.Tactic.NormNum
 /-!
 # Tests for the shifted binomial–harmonic convolution
 
-We specialize the convolution to an endpoint case and an interior case.
+We specialize the convolution to an endpoint case and two interior cases, one with $k = 2$.
 
 Source: Horst Alzer and Man Kam Kwong,
 "Ramanujan and a Combinatorial Identity Involving Harmonic Numbers",
@@ -37,6 +37,13 @@ example :
       ((Nat.choose (5 - ν - 1) 2 : ℚ) - (Nat.choose (5 - ν - 1) 1 : ℚ)) * harmonic ν =
       -10 / 3 := by
   convert sum_choose_sub_choose_mul_harmonic_eq_add 1 4 (by decide) (by decide) using 1
+  norm_num [Nat.choose, harmonic, Finset.sum_range_succ]
+
+example :
+    ∑ ν ∈ Finset.Icc 1 5,
+      ((Nat.choose (7 - ν - 1) 3 : ℚ) - (Nat.choose (7 - ν - 1) 2 : ℚ)) * harmonic ν =
+      -35 / 4 := by
+  convert sum_choose_sub_choose_mul_harmonic_eq_add 2 5 (by decide) (by decide) using 1
   norm_num [Nat.choose, harmonic, Finset.sum_range_succ]
 
 end MathlibExtTest.NumberTheory.RamanujanHarmonicIdentitySumChooseSubChooseMulHarmonicEqAdd
