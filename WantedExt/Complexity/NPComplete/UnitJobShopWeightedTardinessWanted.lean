@@ -22,7 +22,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -41,7 +41,7 @@ QUESTION: is there a feasible schedule with the total weighted tardiness `Σⱼ 
 most `K`, where `Cⱼ` is the completion time
 of job `j` (of its last operation)?
 
-This is JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingWanted`) with `m = 2` processors, every
+This is JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingDefs`) with `m = 2` processors, every
 task of length `1`, and the deadline replaced by a bound on the total weighted tardiness `Σⱼ wⱼ
 max(0, Cⱼ - dⱼ)`. The instance pairs the
 parent's instance `(m, tasks per job as (l(t), p(t)), K)` (its last component is the bound `K`)
