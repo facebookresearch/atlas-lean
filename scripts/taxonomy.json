@@ -10550,6 +10550,7 @@
   "Domains/Biology/PopulationGenetics/FStatisticsBasis": {"to": "Biology/population-structure", "title": "Basis theorem for f-statistics"},
   "Domains/Biology/PopulationGenetics/FStatisticsCovariance": {"to": "Biology/population-structure", "title": "Centred population covariance and f-statistics"},
   "Domains/Biology/PopulationGenetics/FStatisticsExamples": {"to": "Biology/population-structure", "title": "Gaussian surrogate of the drift model"},
+  "Domains/Biology/PopulationGenetics/FluctuatingSize": {"to": "Biology/population-genetics", "title": "Effective population size"},
   "Domains/Biology/PopulationGenetics/FounderSampling": {"to": "Biology/population-genetics", "title": "Founder sampling and allelic richness"},
   "Domains/Biology/PopulationGenetics/GlobalAncestryBridge": {"to": "Biology/population-structure", "title": "Rank of the f4 matrix of left and right populations"},
   "Domains/Biology/PopulationGenetics/Haldane": {"to": "Biology/population-genetics", "title": "Haldane's survival probability of a beneficial mutation"},
