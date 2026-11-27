@@ -12,7 +12,7 @@ $$\widetilde{\mathrm{DCJ}}(G_1, G_2) = \frac{\log\!\Big(1 - \dfrac{B\,(2n-1)}{a\
 
 from the observed number $B$ of breakpoints.
 
-**Proposition (binary-sequence coding).** Coding adjacencies as sites of a binary sequence evolving by single-site flips, $\mathbb E[D_{k_s}] = \tfrac N2\big(1 - (1 - \tfrac2N)^{k_s}\big)$ differences after $k_s$ flips. This equals twice the DCJ breakpoint expectation exactly when the sequence length is $N = 4a\frac{2n-2}{2n-1} \approx 4a$ and $k_s \approx 4ka/n$; coding all absent adjacencies as sites, or none, biases the distance.
+**Proposition (binary-sequence coding).** Coding adjacencies as sites of a binary sequence evolving by single-site flips, $\mathbb E[D_{k_s}] = \tfrac N2\big(1 - (1 - \tfrac2N)^{k_s}\big)$ differences after $k_s$ flips. This equals twice the DCJ breakpoint expectation if the sequence length is $N = 4a\frac{2n-2}{2n-1}$ ($\approx 4a$) and $k_s = k\,\dfrac{\log(1 - 1/n - 1/(n-1))}{\log(1 - 2/N)}$ ($\approx 4ka/n$); coding all absent adjacencies as sites, or none, biases the distance.
 
 ## Depends on
 

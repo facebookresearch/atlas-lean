@@ -6,7 +6,7 @@ A labeled tree with two labels is **mixed** if every internal edge joins differe
 
 $$\varphi(T) = \left\lceil \frac{\mathrm{diam}(T)}{2} \right\rceil - 1,$$
 
-and the number of contractions is the number of internal edges of $T$. A greedy procedure (Contract-Tree) that repeatedly flips the centre of the tree, the midpoint of a longest chain, and contracts its now monochromatic edges attains this optimum. If $\mathrm{diam}(T)$ is even there are two centres, so the label of the final star can be chosen.
+and the number of contractions is the number of internal edges of $T$. A greedy procedure (Contract-Tree) that repeatedly flips the centre of the tree, the midpoint of a longest chain, and contracts its now monochromatic edges attains this optimum. If $\mathrm{diam}(T)$ is odd there are two centres, so the label of the final star can be chosen.
 
 **Theorem (2-approximation).** Contract every pair of maximal bad subtrees $S \subseteq T$, $S' \subseteq T'$ to stars with Contract-Tree, flip once if the two star labels differ, and extend back to $T'$. The number $d$ of operations used satisfies $d \le 2\,\delta(T,T')$, where $\delta$ is the labeled edit distance.
 

@@ -8,7 +8,7 @@
 
 $$p^{-1/2}\sum_{i=1}^p\int_0^{T_{\max}}|\hat\lambda_i(u) - \lambda_i(u)|\,du \xrightarrow{P} 0.$$
 
-Rescale trial $i$ by $\hat\Lambda_i(t) = \int_0^t\hat\lambda_i$ and concatenate the rescaled trials end to end into a process $\hat N^{c,p}$. Then for every $\theta$ with $E\,\Lambda_1(T_{\max}) > \theta$,
+Rescale trial $i$ by $\hat\Lambda_i(t) = \int_0^t\hat\lambda_i$ and concatenate the rescaled trials end to end into a process $\hat N^{c,p}$. Then for every $\theta > 0$ with $E\,\Lambda_1(T_{\max}) > \theta$,
 
 $$\sqrt{\hat N^{c,p}([0,p\theta])}\;\sup_{u\in[0,1]}\Big|\frac{1}{\hat N^{c,p}([0,p\theta])}\sum_{X\in\hat N^{c,p},\,X\le p\theta}\mathbf 1\{X/(p\theta) \le u\} - u\Big| \xrightarrow{L} K.$$
 

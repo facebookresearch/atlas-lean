@@ -8,7 +8,7 @@ $$t^c_u \le t_{\{u,w\}} < t^d_u \quad\text{and}\quad t^c_w \le t_{\{u,w\}} < t^d
 
 i.e. each interaction event happens while both endpoints exist.
 
-**Blocking loops.** A *$k$-blocking loop* is a set of flip edges $\{u_i, v_i\}$, $0 \le i < k$, such that $u_{i+1}$ is an ancestor of $v_i$ in the forest for every $i$ (indices modulo $k$).
+**Blocking loops.** A *$k$-blocking loop* is a set of flip edges $\{u_i, v_i\}$, $0 \le i < k$, such that $u_{i+1}$ is a proper ancestor of $v_i$ in the forest for every $i$ (indices modulo $k$).
 
 **Proposition.** A network history is valid if and only if it contains no blocking loop of any length $k \ge 1$.
 
@@ -16,7 +16,7 @@ i.e. each interaction event happens while both endpoints exist.
 
 ## Expansion
 
-*Necessity.* Along a $k$-blocking loop the constraints chain as $t^d_{u_0} > t_{\{u_0,v_0\}} \ge t^c_{v_0} \ge t^d_{u_1} > t_{\{u_1,v_1\}} \ge \dots \ge t^c_{v_{k-1}} \ge t^d_{u_0}$, because the creation time of $v_i$ is at least the duplication time of its ancestor $u_{i+1}$; this is a contradiction. *Sufficiency.* Assign times by depth-first search along tree edges: the root gets $t^c = 0$, and before recursing into the children of $u$ set $t^d_u = \max\{\max_v t_{\{u,v\}} + 1,\ t^c_u + 1\}$ and give both children creation time $t^d_u$. A node with a flip edge to a not-yet-timed partner is deferred to a queue $Q$ and processed in a later round. If some round made no progress, every $u \in Q$ would have a flip edge to an untimed $v$ whose untimed ancestor lies in $Q$; following these links must revisit a node of the finite set $Q$, producing a blocking loop. Hence without blocking loops the procedure terminates with times satisfying all constraints.
+*Necessity.* Along a $k$-blocking loop the constraints chain as $t^d_{u_0} > t_{\{u_0,v_0\}} \ge t^c_{v_0} \ge t^d_{u_1} > t_{\{u_1,v_1\}} \ge \dots \ge t^c_{v_{k-1}} \ge t^d_{u_0}$, because the creation time of $v_i$ is at least the duplication time of its proper ancestor $u_{i+1}$; this is a contradiction. *Sufficiency.* Assign times by depth-first search along tree edges: the root gets $t^c = 0$, and before recursing into the children of $u$ set $t^d_u = \max\{\max_v t_{\{u,v\}} + 1,\ t^c_u + 1\}$ and give both children creation time $t^d_u$. A node with a flip edge to a not-yet-timed partner is deferred to a queue $Q$ and processed in a later round. If some round made no progress, every $u \in Q$ would have a flip edge to an untimed $v$ whose untimed ancestor lies in $Q$; following these links must revisit a node of the finite set $Q$, producing a blocking loop. Hence without blocking loops the procedure terminates with times satisfying all constraints.
 
 ## Sources
 

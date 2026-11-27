@@ -4,9 +4,9 @@
 
 $$P_1(\hat\lambda) = \min_{T \in \mathcal T(N)} \sum_{e \in E(T)} w_e(\hat\lambda), \qquad P_2(\hat\lambda) = \sum_{e \in E(N)} w_e(\hat\lambda),$$
 
-where $\mathcal T(N)$ is the set of trees displayed by $N$. The edge-sum (hardwired) score is $\min_{\hat\lambda} P_2(\hat\lambda)$. If $N$ has $r$ reticulations and no two reticulate vertices are siblings, deleting one incoming edge per reticulation and suppressing degree-two vertices yields exactly $2^r$ displayed trees on the full leaf set.
+where $\mathcal T(N)$ is the set of trees displayed by $N$. The edge-sum (hardwired) score is $\min_{\hat\lambda} P_2(\hat\lambda)$. If $N$ has $r$ reticulations, the root has out-degree two, every tree vertex has out-degree two and every reticulate vertex out-degree one, every edge has an endpoint that is a tree vertex, and every tree vertex has a child that is not reticulate, then deleting one incoming edge per reticulation and suppressing degree-two vertices yields exactly $2^r$ displayed trees on the full leaf set.
 
-**Lower bound.** Run Sankoff's recursion in post-order over $N$ but let each reticulate vertex take two possibly different states, one for each incoming edge: the cost $S_v(i)$ at a vertex is the minimum over children of $c_{ij} + S_{\text{child}}(j)$, summed over children, and each reticulate edge is charged with its own optimal choice. Then
+**Lower bound.** Run Sankoff's recursion in post-order over $N$, letting each reticulate vertex take two possibly different states, one for each incoming edge, and counting its subtree once: for each reticulate vertex $w$ designate one incoming edge. Then $S_v(i) = \sum_{w} \min_j \big(c_{ij} + S_w(j)\big) + \sum_{w'} \min_j c_{ij}$, where $w$ ranges over the children of $v$ that are not reticulate or are reached by their designated edge, and $w'$ over the reticulate children reached by their other incoming edge. Then
 
 $$\min_i S_{\mathrm{root}}(i) \le \min_{\hat\lambda} P_2(\hat\lambda),$$
 

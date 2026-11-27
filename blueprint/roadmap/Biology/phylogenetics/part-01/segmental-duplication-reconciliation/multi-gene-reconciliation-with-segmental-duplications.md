@@ -10,7 +10,7 @@ The problem MPRST-SD asks for a reconciliation minimizing this cost.
 
 **Theorem.**
 1. If $\lambda \ge \delta$, the LCA mapping $\mu$ is an optimal reconciliation; if $\lambda > \delta$ it is the unique optimum.
-2. If $\delta > \lambda$, MPRST-SD is NP-hard, already for $\lambda = 0$ and even when $\mathcal G$ is a single gene tree.
+2. MPRST-SD is NP-hard for $\lambda = 0$ (any $\delta > 0$) and, by the same reduction, for $\lambda$ small enough compared with $\delta$, even when $\mathcal G$ is a single gene tree; its complexity for fixed costs with $\delta/\lambda$ close to $1$ (e.g. $\delta = 1 + \varepsilon$, $\lambda = 1$) is open.
 3. (Fixed-parameter tractability.) For $\lambda > 0$, an optimal reconciliation with at most $d$ segmental duplications can be found in time $O\big(\lceil \delta/\lambda\rceil^{d} \cdot n \cdot \delta/\lambda\big)$, where $n$ is the input size.
 
 ## Depends on
@@ -20,7 +20,7 @@ The problem MPRST-SD asks for a reconciliation minimizing this cost.
 
 ## Expansion
 
-Changing a feasible duplication into a speciation never increases cost, so optimal reconciliations take speciations wherever allowed. The **shift-down lemma** quantifies the trade-off: remapping a node one level lower along its path saves at least one loss per level, so if a minimal unresolved node were placed more than $\lceil \delta/\lambda\rceil$ ancestors above its lowest possible image $\mu_\alpha(v)$, moving it down would save more than $\delta$ in losses while adding at most one segmental duplication. This bounds the branching factor of a bottom-up search by $\lceil\delta/\lambda\rceil$, and each branch either adds a segmental duplication or is forced, giving the FPT bound. When losses are at least as expensive as duplications, pushing anything above its LCA image only adds losses, which is part 1. Hardness for $\delta > \lambda$ comes from a reduction in which grouping duplications into few antichains encodes a combinatorial covering problem; joining the trees of the forest under long speciation paths transfers it to a single tree.
+Changing a feasible duplication into a speciation never increases cost, so optimal reconciliations take speciations wherever allowed. The **shift-down lemma** quantifies the trade-off: remapping a node one level lower along its path saves at least one loss per level, so if a minimal unresolved node were placed more than $\lceil \delta/\lambda\rceil$ ancestors above its lowest possible image $\mu_\alpha(v)$, moving it down would save more than $\delta$ in losses while adding at most one segmental duplication. This bounds the branching factor of a bottom-up search by $\lceil\delta/\lambda\rceil$, and each branch either adds a segmental duplication or is forced, giving the FPT bound. When losses are at least as expensive as duplications, pushing anything above its LCA image only adds losses, which is part 1. Hardness for $\lambda = 0$ (and for $\lambda$ small compared with $\delta$) comes from a reduction in which grouping duplications into few antichains encodes a combinatorial covering problem; joining the trees of the forest under long speciation paths transfers it to a single tree.
 
 ## Sources
 

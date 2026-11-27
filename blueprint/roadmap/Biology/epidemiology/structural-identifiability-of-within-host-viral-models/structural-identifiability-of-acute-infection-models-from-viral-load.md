@@ -5,7 +5,7 @@ Consider within-host models of acute infection with target cells $T$, infected c
 - **Model 1 (target-cell limited):** $\dot T = -\beta T V$, $\dot I = \beta T V - \delta I$, $\dot V = \pi I - cV$.
 - **Model 2 (density-dependent killing):** as Model 1 with infected-cell loss $\delta I/(K_\delta + I)$.
 - **Model 3 (eclipse phase):** $\dot I_1 = \beta TV - kI_1$, $\dot I_2 = kI_1 - \delta I_2/(K_\delta + I_2)$, $\dot V = \pi I_2 - cV$.
-- **Model 4 (delayed effector response):** Model 3 with $\dot I_2 = kI_1 - \delta I_2 - \delta_E E I_2/(K_\delta + I_2)$ and $\dot E = \lambda E I_2/(K_E + E) + \eta E I_2(t - \tau_I) - d_E E$, the delay replaced by a linear chain of three compartments with rates $3/\tau_I$.
+- **Model 4 (delayed effector response):** Model 3 with $\dot I_2 = kI_1 - \delta I_2 - \delta_E E I_2/(K_\delta + I_2)$ and $\dot E = \lambda I_2/(K_E + E) + \eta E I_2(t - \tau_I) - d_E E$, the delay replaced by a linear chain of three compartments with rates $3/\tau_I$.
 
 A model $\dot x = f(x,p)$, $y = g(x,p)$ is **globally structurally identifiable** if $g(x,p) = g(x,\hat p)$ for all $t$ implies $p = \hat p$, and locally so if this holds in a neighbourhood of $\hat p$. In the differential-algebra approach, eliminating unobserved states yields input–output equations whose coefficient vector $c(p)$ must determine $p$.
 

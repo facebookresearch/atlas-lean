@@ -12,13 +12,13 @@ $$\mathbb E[s(a,b) - s(b,c)] \ \ge\ k\,\lambda\ell^*\,\delta(d),\qquad \delta(d)
 
 $$k \ \ge\ \max\left(\frac{(96\log n + 32\log(1/\zeta))\,q}{\ell^{*2}\,\delta^{*2}},\ \frac{(96\log n + 32\log(1/\zeta))\,(\ell^* + (1 - e^{-\lambda})q)}{0.6\,\lambda\,\ell^{*2}\,\delta^*\,(1 - q + q e^{-2\lambda})}\right),$$
 
-then with probability at least $1 - \zeta$ the oracle never returns a wrong outgroup for triplets rooted at depth at most $d^*$ and returns the correct one whenever the triplet is $\ell^*$-separated; triplet-based (Aho-type) reconstruction then recovers $\mathcal T$ up to depth $d^*$ in polynomial time. With missing data the same holds with $t$ scaled by $(1-p_d)^3$ and the two terms of the bound divided by $(1-p_d)^5$ and $(1-p_d)^3$.
+then with probability at least $1 - \zeta$ the oracle never returns a wrong outgroup for triplets rooted at depth at most $d^*$ and returns the correct one for every $\ell^*$-separated triplet rooted at depth at most $d^*$; if moreover every edge at depth at most $d^*$ has length at least $\ell^*$, triplet-based (Aho-type) reconstruction then recovers $\mathcal T$ up to depth $d^*$ in polynomial time. With missing data the same holds with $t$ scaled by $(1-p_d)^3$ and the two terms of the bound divided by $(1-p_d)^5$ and $(1-p_d)^3$.
 
 **Corollaries.** For constant $\lambda$ and state distribution, with $\mathcal T$ of minimum edge length $\ell$ and $\lambda\ell \le 1$, exact recovery of the whole tree with high probability needs
 
 $$k = O\Big(\frac{\log n}{\ell^2}\Big)\ \text{characters, and } k = O\Big(\frac{\log n}{\ell^2(1-p_d)^3}\Big) \text{ with missing data};$$
 
-without a minimum edge length, all $\ell^*$-separated triplets are resolved with $k = O(\log n/\ell^{*2})$; and if all edge lengths lie between $\ell$ and $O(\ell)$, a bottom-up algorithm with a sufficiently low mutation rate needs only $k = O(\log n/\ell)$.
+without a minimum edge length, all $\ell^*$-separated triplets are resolved with $k = O(\log n/\ell^{*2})$; and if all edge lengths lie between $\ell$ and $O(\sqrt\ell)$, a bottom-up algorithm with a sufficiently low mutation rate needs only $k = O(\log n/\ell)$.
 
 ## Depends on
 

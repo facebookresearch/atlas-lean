@@ -19,11 +19,11 @@ with net hepatic production $p_6$, glucose effectiveness $p_7$, insulin sensitiv
 
     for glucose $G_t < \hat G$ apoptosis exceeds entry into $S$ and the functioning β-cell mass declines, while for $G_t > \hat G$ it grows.
 
-3. *(Steady states.)* The full system has exactly two equilibria with non-negative cell numbers: the trivial state $F_1^* = (0,0,0,\,p_6/p_7,\,0,0,0,\,P_\infty(p_6/p_7))$ without β-cells, which is unstable, and a non-trivial state $F_2^*$ with
+3. *(Steady states.)* If $p_4 > p_1$ and $p_7\hat G < p_6$, the full system has exactly two equilibria with non-negative cell numbers: the trivial state $F_1^* = (0,0,0,\,p_6/p_7,\,0,0,0,\,P_\infty(p_6/p_7))$ without β-cells, which is unstable because $p_6/p_7 > \hat G$, and a non-trivial state $F_2^*$ with
 
     $$G^* = \hat G, \qquad I^* = \frac{p_6 - p_7G^*}{p_8G^*}, \qquad X_1^* = \frac{bv\,p_{10}I^*}{p_9}, \qquad S^* = \frac{p_4}{p_2}G_1^*, \qquad G_2M^* = \frac{p_4}{p_3}G_1^*,$$
 
-    which is stable for the physiological parameter set (requiring $p_7\hat G < p_6$ so that $I^* > 0$).
+    which is stable for the parameter values of the source's Table 1 ($p_7\hat G < p_6$ makes $I^* > 0$). If instead $p_7\hat G > p_6$, then $F_2^*$ has $I^* < 0$, the cell-cycle block of the Jacobian at $F_1^*$ is Hurwitz, and $F_1^*$ is the only equilibrium with non-negative cell numbers.
 
 ## Expansion
 

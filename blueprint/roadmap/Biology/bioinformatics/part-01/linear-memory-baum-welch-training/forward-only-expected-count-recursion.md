@@ -14,7 +14,7 @@ $$t_{i,j}(X_{k+1}, m) = \sum_{n=1}^M t_{i,j}(X_k, n)\, T_{n,m}\, E_m(x_{k+1}) + 
 
 finishing with $P(X) = \sum_n f(X_L, n) T_{n,\mathrm{End}}$ and $t_{i,j}(X) = \sum_n t_{i,j}(X_L, n)\, T_{n,\mathrm{End}} + [j = \mathrm{End}]\, f(X_L, i)\, T_{i,\mathrm{End}}$. This computes $t_{i,j}(X)$ in $O(M)$ memory and $O(L M T_{\max})$ time, where $T_{\max}$ is the maximum number of states any state connects to.
 
-**Corollary.** Running the recursion for all $T$ free transition and $E$ free emission parameters gives one Baum–Welch iteration in $O(M)$ memory and $O(LMT_{\max}(T+E))$ time, versus $O(M \log L)$ memory for checkpointing. For an $n$-dimensional HMM (e.g. a pair HMM, $n=2$) on sequences of length $L$, memory drops from $O(\log(L) L^{n-1} M)$ to $O(L^{n-1}M)$, and running $c$ parameters' recursions in parallel trades time $L^n M T_{\max} c$ against memory $L^{n-1} M (T + E - c)$.
+**Corollary.** Running the recursion for all $T$ free transition and $E$ free emission parameters gives one Baum–Welch iteration in $O(M)$ memory and $O(LMT_{\max}(T+E))$ time, versus $O(M \log L)$ memory for checkpointing. For an $n$-dimensional HMM (e.g. a pair HMM, $n=2$) on sequences of length $L$, memory drops from $O(\log(L) L^{n-1} M)$ to $O(L^{n-1}M)$, and running $c$ of the $T + E$ recursions in parallel uses $O(L^{n-1} M c)$ memory and $O(L^n M T_{\max} \lceil (T+E)/c \rceil)$ time.
 
 ## Depends on
 

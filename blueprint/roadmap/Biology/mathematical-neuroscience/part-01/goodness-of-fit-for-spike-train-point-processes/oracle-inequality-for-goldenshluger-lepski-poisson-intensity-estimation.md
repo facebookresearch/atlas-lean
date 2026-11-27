@@ -10,7 +10,7 @@ $$A(h) = \sup_{h'\in\mathcal H}\big\{\|\hat\lambda^{h,h'}_n - \hat\lambda^{K_{h'
 
 $$E\|\hat\lambda^{GL}_n - \lambda\|_2^2 \le C_1\inf_{h\in\mathcal H}\Big\{\|K_h\star\lambda - \lambda\|_2^2 + \frac{\|\lambda\|_1}{nh}\|K\|_2^2\Big\} + C_2\,n^{-1},$$
 
-with $C_1$ depending on $\|K\|_1, \eta$ and $C_2$ on $\delta, \eta, \|K\|_1, \|K\|_2, \|\lambda\|_1, \|\lambda\|_\infty$. In particular, if the $r$-th derivative of $\lambda$ is in $L^2$, the estimator attains the rate $n^{-2r/(2r+1)}$ without knowing $r$.
+with $C_1$ depending on $\|K\|_1, \eta$ and $C_2$ on $\delta, \eta, \|K\|_1, \|K\|_2, \|\lambda\|_1, \|\lambda\|_\infty$. In particular, for $\mathcal H = \{1/D : 1 \le D \le \lfloor \delta n \rfloor\}$ and a kernel $K$ of order at least $r$, if the $r$-th derivative of $\lambda$ is in $L^2$, the estimator attains the rate $n^{-2r/(2r+1)}$ without knowing $r$.
 
 ## Depends on
 

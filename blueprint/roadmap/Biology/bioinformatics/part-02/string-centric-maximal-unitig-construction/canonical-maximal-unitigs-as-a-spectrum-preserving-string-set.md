@@ -9,7 +9,7 @@
 2. (no spanning of branching nodes) for every $q \in \Sigma^{k-1}$, if $\mathrm{occ}_{cn}(q, U) > 1$ then $q$ and $q^{-1}$ appear only as a prefix or suffix of strings of $U$;
 3. (maximality) for every $q \in \mathrm{ends}_{k-1}(U)$,
 
-$$\sum_{c \in \Sigma} \mathrm{app}_{cn}(q \cdot c, U) \ne 1 \quad \text{or} \quad \sum_{c \in \Sigma} \mathrm{app}_{cn}(c \cdot q, U) \ne 1.$$
+    $$\sum_{c \in \Sigma} \mathrm{app}_{cn}(q \cdot c, U) \ne 1 \quad \text{or} \quad \sum_{c \in \Sigma} \mathrm{app}_{cn}(c \cdot q, U) \ne 1.$$
 
 Without reverse complements and with $a = 1$ these conditions describe exactly the maximal unitigs of the edge-centric de Bruijn graph of $R$ (nodes are $(k-1)$-mers, edges are the $k$-mers of $R$): unitigs are paths whose internal nodes have in- and out-degree one, and the maximal ones partition the $k$-mers of $R$.
 

@@ -1,6 +1,6 @@
 # Counting solutions of the perfect phylogeny mixture problem
 
-Let $F = (f_{p,c}) \in [0,1]^{m \times n}$ give the frequency of mutation $c \in [n]$ in bulk sample $p \in [m]$. A solution of the **perfect phylogeny mixture (PPM) problem** is a pair $(U, B)$ with $F = UB$, where $B$ is a complete perfect phylogeny matrix (one row per vertex of a rooted tree whose edges are labelled by the non-founder mutations) and $U$ a nonnegative mixture matrix with rows summing to one. The **ancestry graph** $G_F$ on $[n]$ has an edge $(c,d)$ iff $f_{p,c} \ge f_{p,d}$ for all samples $p$; solutions correspond to spanning arborescences of $G_F$ satisfying the sum condition.
+Let $F = (f_{p,c}) \in [0,1]^{m \times n}$ give the frequency of mutation $c \in [n]$ in bulk sample $p \in [m]$. A solution of the **perfect phylogeny mixture (PPM) problem** is a pair $(U, B)$ with $F = UB$, where $B$ is a complete perfect phylogeny matrix (one row per vertex of a rooted tree whose edges are labelled by the non-founder mutations) and $U$ a nonnegative mixture matrix with rows summing to at most one (the normal clone is omitted). The **ancestry graph** $G_F$ on $[n]$ has an edge $(c,d)$ iff $f_{p,c} \ge f_{p,d}$ for all samples $p$; solutions correspond to spanning arborescences of $G_F$ satisfying the sum condition.
 
 **Facts.**
 

@@ -18,7 +18,7 @@ an adaptive lasso with weights $\omega_{kj} \propto |\tilde\gamma_{kj}|^{-\delta
 
 **Theorem (GCV tuning).** If the entries of $\pi_j$ are i.i.d. with mean zero and variance $\sigma_\pi^2$, the minimizers over $\tau > 0$ of the expected GCV criterion and of the expected loss $\|Z_j - P_\tau Y_j\|^2$ coincide and equal $\sigma_{\xi_j}^2/\sigma_\pi^2$.
 
-**Theorem (oracle property, fixed $p, q$).** Let $\mathcal{A}_k = \{j \ne k : \gamma_{kj} \ne 0\}$ and $M_k = \pi_{-k}^\top\big(C - C_{\cdot \mathcal{S}_k} C_{\mathcal{S}_k \mathcal{S}_k}^{-1} C_{\mathcal{S}_k \cdot}\big)\pi_{-k}$. Under (A), (B), $\tau_j/n \to 0$, $\lambda_k/\sqrt n \to 0$ and $\lambda_k n^{(\delta - 1)/2} \to \infty$,
+**Theorem (oracle property, fixed $p, q$).** Let $\mathcal{A}_k = \{j \ne k : \gamma_{kj} \ne 0\}$ and $M_k = \pi_{-k}^\top\big(C - C_{\cdot \mathcal{S}_k} C_{\mathcal{S}_k \mathcal{S}_k}^{-1} C_{\mathcal{S}_k \cdot}\big)\pi_{-k}$. Under (A), (B), $\tau_j/\sqrt n \to 0$, $\lambda_k/\sqrt n \to 0$ and $\lambda_k n^{(\delta - 1)/2} \to \infty$,
 
 $$\Pr(\hat{\mathcal{A}}_k = \mathcal{A}_k) \to 1, \qquad \sqrt n\,(\hat\gamma_{k,\mathcal{A}_k} - \gamma_{k,\mathcal{A}_k}) \xrightarrow{d} N\big(0,\ \sigma_k^2 M_{k,\mathcal{A}_k}^{-1}\big).$$
 

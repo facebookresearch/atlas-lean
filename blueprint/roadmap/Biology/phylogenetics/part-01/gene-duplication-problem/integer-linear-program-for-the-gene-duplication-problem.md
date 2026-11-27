@@ -8,7 +8,7 @@ $$T(a,b,c,011) \ge -M(a,p) + M(b,p) + M(c,p) - 1,$$
 
 the two analogous inequalities, and $T(a,b,c,011) + T(a,b,c,101) + T(a,b,c,110) = 1$. For each internal gene-tree node $g$, a binary $D(g)$ satisfies $D(g) \ge 1 - T(a,b,c,xyz)$ for each triple of $\mathrm{Trip}_G(g)$.
 
-**Theorem (formulation).** Minimizing $\sum_g D(g)$ subject to these constraints returns $\mathrm{Tin}(\mathcal G) = \mathrm{Dup}(\mathcal G)$, and the optimal $M$ encodes an optimal species tree. With $k$ gene trees, $n$ taxa and $m$ distinct triples, the program has $O(m)$ triple variables with $O(nm)$ constraints and $O(kn)$ duplication variables; since for $u$ with children $v,w$ and fixed $a \in L(G(u))$, $b \in L(G(v))$ a triple $xy|z$ lies in $\mathrm{Trip}_G(u)$ iff $ax|b$, $ay|b$ and $bz|a$ do, $O(n)$ triples per node suffice, giving $O(kn^2)$ duplication constraints.
+**Theorem (formulation).** Minimizing $\sum_g D(g)$ subject to these constraints returns $\mathrm{Tin}(\mathcal G) = \mathrm{Dup}(\mathcal G)$, and the optimal $M$ encodes an optimal species tree. With $k$ gene trees, $n$ taxa and $m$ distinct triples, the program has $O(m)$ triple variables with $O(nm)$ constraints and $O(kn)$ duplication variables; since for $u$ with children $v,w$ and fixed $a \in L(G(w))$, $b \in L(G(v))$, $u$ is triple-inconsistent iff $S$ fails to display $xb|a$ for some $x \in L(G(v)) \setminus \{b\}$ or $za|b$ for some $z \in L(G(w)) \setminus \{a\}$, $O(n)$ triples per node suffice, giving $O(kn^2)$ duplication constraints.
 
 ## Depends on
 

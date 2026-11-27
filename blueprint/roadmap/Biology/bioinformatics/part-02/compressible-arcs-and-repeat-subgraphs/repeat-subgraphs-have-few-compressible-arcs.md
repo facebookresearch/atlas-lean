@@ -4,7 +4,7 @@
 
 **Repeat model.** Choose $s_0 \in \Sigma^n$ uniformly; for $i = 1, \dots, m$ create $s_i$ by keeping each position $s_0[j]$ with probability $1 - \alpha$ and otherwise replacing it by a uniformly chosen different letter. The set $S(m,n,\alpha) = \{s_1,\dots,s_m\}$ models $m$ copies of a repeat at expected Hamming distance $\alpha n$ from the ancestor.
 
-**Theorem 1.** For integers $k < n$, $m$ and $0 \le \alpha \le 3/4$, the de Bruijn graph $G_k(S(m,n,\alpha))$ has $o(nm)$ expected compressible arcs.
+**Theorem 1.** For fixed integers $k < n$ and fixed $0 \le \alpha \le 3/4$, the expected number of compressible arcs of the de Bruijn graph $G_k(S(m,n,\alpha))$ is $o(nm)$ as $m \to \infty$.
 
 **Theorem 2.** The **repeat subgraph problem** (given a directed graph and integers $m$, $t$, decide whether there is a connected subgraph with at least $m$ vertices and at most $t$ compressible arcs) is NP-complete, even for directed graphs of total degree bounded by $d$ for any $d \ge 3$.
 

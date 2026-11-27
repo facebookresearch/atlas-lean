@@ -12,7 +12,7 @@ and let $\hat{X}_i(k)$ be the length of the longest gap-free extension starting 
 $S_1$ and $j^* + X_i + 1$ in $S_2$ with Hamming distance exactly $k$ (it ends just before the
 $(k+1)$-st mismatch).
 
-**Theorem.** For $m \ge k$,
+**Theorem.** Ignore edge effects (the sequences are long enough that no extension reaches their ends) and assume $j^* \ne i$ whenever the longest exact match starting at $i$ also occurs at a position other than $i$ (ties are resolved against the homologous position). Then for $m \ge k$,
 
 $$P\bigl(\hat{X}_i(k) = m\bigr) = P(j^* = i) \binom{m}{k} p^{m-k} (1-p)^{k+1} + P(j^* \ne i) \binom{m}{k} q^{m-k} (1-q)^{k+1},$$
 

@@ -4,7 +4,7 @@ Let $R$ be a reference sequence. An **insertion** of a nonempty string $d$ at po
 
 **Theorem.** All indels equivalent to a given one lie within a single contiguous **region of equivalence**, and their indel strings are cyclic permutations (conjugates) of one another: if $d_1$ placed at the left of the region and $d_2$ placed at the right are equivalent, then $d_1 = uv$ and $d_2 = vu$ for some strings $u, v$, and every intermediate placement spells a rotation of $d_1$.
 
-**UPS coordinate.** Starting from a reported indel, extending the region of equivalence as far as possible to the left and right (while the shifted indel remains equivalent) yields a canonical interval, the **Universal Positioning System coordinate**; two indel calls describe the same variant if and only if they have the same type, the same length, the same UPS coordinate and indel strings that are rotations of each other, so the comparison is independent of the left- or right-alignment convention used by a caller.
+**UPS coordinate.** Starting from a reported indel, extending the region of equivalence as far as possible to the left and right (while the shifted indel remains equivalent) yields a canonical interval, the **Universal Positioning System coordinate**; two indel calls describe the same variant if and only if they have the same type, the same UPS interval and the same indel string when placed at the left end of that interval (the UPS coordinate records this pattern with the interval), so the comparison is independent of the left- or right-alignment convention used by a caller.
 
 ## Depends on
 
@@ -12,7 +12,7 @@ Let $R$ be a reference sequence. An **insertion** of a nonempty string $d$ at po
 
 ## Expansion
 
-If $d_1$ and $d_2$ are inserted at the two ends of a stretch $S$ of the reference and give the same result, then $d_1 S = S d_2$. By the Lyndon–Schützenberger theorem on the equation $xz = zy$ in a free monoid, $d_1 = uv$, $d_2 = vu$ and $S = (uv)^j u$ for some $j \ge 0$; so $S$ is periodic with period $|d_1|$ and sliding the insertion one position at a time through $S$ rotates the inserted string by one character. Deletions are handled the same way, with the deleted string read from the reference. This is why left-normalization alone is not enough to compare calls made by different pipelines on repeats.
+If $d_1$ and $d_2$ are inserted at the two ends of a stretch $S$ of the reference and give the same result, then $d_1 S = S d_2$. By the Lyndon–Schützenberger theorem on the equation $xz = zy$ in a free monoid, $d_1 = uv$, $d_2 = vu$ and $S = (uv)^j u$ for some $j \ge 0$; so $S$ is periodic with period $|d_1|$ and sliding the insertion one position at a time through $S$ rotates the inserted string by one character. Deletions are handled the same way, with the deleted string read from the reference. This is why calls made by different pipelines on repeats can be compared only after moving them to a common end of the region of equivalence.
 
 ## Sources
 

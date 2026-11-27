@@ -15,9 +15,9 @@ which requires the compatibility $t_i - t_j \le \delta(x_i,x_j)$ for all pairs. 
 2. *(Monotonicity in $N$.)* $m_N$ is non-increasing in $N$; for $N \le N_{\max}$ the overall minimum is attained.
 3. *(Gradient.)* Where geodesics are unique and smooth, with $w = \mathrm{Log}_x(y)$ the initial velocity of the geodesic from $x$ to $y$,
 
-$$\nabla_x\delta(x,y) = -\frac{D^{-1}(x)\,w}{\|w\|_{D^{-1}(x)}},$$
+    $$\nabla_x\delta(x,y) = -\frac{D^{-1}(x)\,w}{\|w\|_{D^{-1}(x)}},$$
 
-so in the interior of the region of influence $R_i = \{x : \phi_E(x) = t_i + \delta(x,x_i)\}$ one has $\nabla_{x_i}\phi_E(x) = \nabla_{x_i}\delta(x_i,x)$ and $\partial_{t_i}\phi_E(x) = 1$.
+    so in the interior of the region of influence $R_i = \{x : \phi_E(x) = t_i + \delta(x,x_i)\}$ one has $\nabla_{x_i}\phi_E(x) = \nabla_{x_i}\delta(x_i,x)$ and $\partial_{t_i}\phi_E(x) = 1$.
 
 ## Depends on
 

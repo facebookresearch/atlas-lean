@@ -13,15 +13,15 @@ $$c_1(k) = (d_1+d_2)k^2 - a_{11} - a_{22} - f_{11} - f_{22},$$
 $$c_0(k) = d_1d_2k^4 - [d_1(a_{22}+f_{22}) + d_2(a_{11}+f_{11})]k^2 + (a_{11}+f_{11})(a_{22}+f_{22}) - (a_{21}+f_{21})(a_{12}+f_{12}).$$
 
 **Theorem.**
-1. The Hopf bifurcation of $u \equiv 0$ occurs at the same parameter values with and without the coordinator if and only if $f_{11} + f_{22} = 0$.
+1. Assume that the systems with and without the coordinator both undergo a Hopf bifurcation of $u \equiv 0$ from the $k_0$ mode. Then the critical value is the same for both if and only if $f_{11} + f_{22} = 0$.
 2. If at $\epsilon = \epsilon^*$ the operator $L$ has a unique pair of purely imaginary eigenvalues and all others lie in the open left half-plane, then $c_0(k_i) > 0$ for all $i$, the imaginary pair comes from the lowest mode $k_0$, and $\epsilon^*$ is determined by $c_1(k_0) = 0$ (so a stable bifurcating oscillation can only arise from the $k_0$ mode).
 3. With $f_{11} + f_{22} = 0$, near $\epsilon^*$ the critical eigenvalues are $\mu(\epsilon) \pm i\omega(\epsilon)$ with
 
-$$\mu = \tfrac12\big(a_{11} + a_{22} - k_0^2(d_1+d_2)\big),\qquad \omega^2 = -(a_{12}+f_{12})(a_{21}+f_{21}) - \xi^2,$$
+    $$\mu = \tfrac12\big(a_{11} + a_{22} - k_0^2(d_1+d_2)\big),\qquad \omega^2 = -(a_{12}+f_{12})(a_{21}+f_{21}) - \xi^2,$$
 
-$$\xi = f_{11} + \tfrac12\big(a_{11} - a_{22} + k_0^2(d_2 - d_1)\big),$$
+    $$\xi = f_{11} + \tfrac12\big(a_{11} - a_{22} + k_0^2(d_2 - d_1)\big),$$
 
-so the oscillation frequency near onset is tuned by the coordinator intensities $f_{11}$, $f_{12}$, $f_{21}$, while the amplitude follows from the first Lyapunov coefficient of the Poincaré normal form.
+    so the oscillation frequency near onset is tuned by the coordinator intensities $f_{11}$, $f_{12}$, $f_{21}$, while the amplitude follows from the first Lyapunov coefficient of the Poincaré normal form.
 
 ## Depends on
 

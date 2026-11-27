@@ -20,8 +20,9 @@ A **2m-matching** of $G$ is a spanning subgraph in which every vertex $v$ has de
 linearizations are exactly maximum weight 2m-matchings of $G_M$, and they can be computed in polynomial
 time by reduction to maximum weight matching: replace each vertex $x$ by $f(x)$ copies and each edge
 $e = \{x, y\}$ by a path $x_i - e_x - e_y - y_j$ through two new vertices, all edges carrying weight
-$w(e)$; then $G$ has an $f$-matching of weight $w$ if and only if the new graph has a matching of weight
-$w + \sum_{e} w(e)$.
+$w(e)$; then, for non-negative weights, the maximum weight of a matching of the new graph is
+$W = \sum_{e} w(e)$ plus the maximum weight of an $f$-matching of $G$, and a maximum $f$-matching is read
+off a maximum matching.
 
 In contrast, requiring a single circular chromosome (MAX-ROW-Ci1P) or only linear chromosomes
 without multiplicities (MAX-ROW-C1P) is NP-complete already for degree-2 matrices, since these contain

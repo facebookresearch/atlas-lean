@@ -1,6 +1,6 @@
 # Unique algebraic tree of an RNA secondary structure
 
-**Setting.** An RNA secondary structure $S$ is a sequence over $\{A, C, G, U\}$ together with a set of weak interactions (base pairs) in which each nucleotide takes part in at most one pair; pairs may cross (pseudoknots). A *hairpin* is a stretch closed by a pair whose interior contains no pair crossing it; a *pseudoloop* $(a_1^\bullet, a_N^\bullet)\langle a_2 \cdots a_{N-1}\rangle$ is a structure segment delimited by two paired nucleotides, with the state $\bullet$ (paired) or $\circ$ (unpaired) recorded for each interior nucleotide. Three operators combine pseudoloops:
+**Setting.** An RNA secondary structure $S$ is a sequence over $\{A, C, G, U\}$ together with a non-empty set of weak interactions (base pairs) in which each nucleotide takes part in at most one pair; pairs may cross (pseudoknots). A *hairpin* is a single base pair closing a run of unpaired nucleotides; a *pseudoloop* $(a_1^\bullet, a_N^\bullet)\langle a_2 \cdots a_{N-1}\rangle$ is a structure segment delimited by two paired nucleotides, with the state $\bullet$ (paired) or $\circ$ (unpaired) recorded for each interior nucleotide. Three operators combine pseudoloops:
 
 - *concatenation* $P_1 \odot_\eta P_2$: join $P_1$ and $P_2$ by a possibly empty run $\eta$ of unpaired nucleotides;
 - *nesting*: place a pseudoloop inside an enclosing pair;

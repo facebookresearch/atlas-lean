@@ -12,7 +12,7 @@ where the maximum runs over all windows of $L$ consecutive probes. If, under the
 
 ## Proof depends on
 
-- [Validity of the Fisher randomization test](../../../Probability/not-yet-classified/part-06/fisher-randomization/is-valid-pvalue-fisher-randomization.md)
+- [Validity of Monte Carlo permutation p-values](../../../Probability/hypothesis-testing/permutation-tests/is-valid-pvalue-monte-carlo-permutation.md)
 
 ## Expansion
 

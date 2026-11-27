@@ -17,9 +17,13 @@ A tree is *fully symmetric* if at every internal node all child subtrees have th
 3. On bifurcating trees these indices reduce to the classical Colless index $C(T) = \sum_v |\kappa(v_1) - \kappa(v_2)|$ (with $\kappa$ the number of descendant leaves): $C_{\mathrm{MDM},f} = \frac{f(0)+f(2)}{2}\, C$, $C_{\mathrm{sd},f} = \frac{f(0)+f(2)}{\sqrt 2}\, C$ and $C_{\mathrm{var},f} = \frac{(f(0)+f(2))^2}{2}\, C^{(2)}$, where $C^{(2)}$ sums squared differences.
 4. If $D$ costs $O(k)$ on $k$ values and each $f(k)$ costs $O(k)$, then $C_{D,f}(T)$ is computable in $O(n)$ time for $T$ with $n$ leaves.
 
+## Proof depends on
+
+- [Hermite–Lindemann theorem](../../../../NumberTheory/diophantine-approximation/transcendence-irrationality/hermite-lindemann.md)
+
 ## Expansion
 
-If two different fully symmetric trees had equal $f$-size, joining them under a common root gives a non-symmetric tree with balance value $0$ at the root and $0$ elsewhere; conversely, if all fully symmetric trees have distinct $f$-sizes, induction from the leaves shows that a zero index forces equal child shapes at each node. Naive choices fail: with the leaf count as size, a node whose children are a cherry and a two-leaf tree of different shape can have zero dissimilarity. For $e^n$ and $\ln(n+e)$ the $f$-size of a fully symmetric tree $FS_{n_1,\dots,n_k}$ (root degree $n_1$, then $n_2$, ...) determines the sequence $(n_1, \dots, n_k)$ by a number-theoretic argument.
+If two different fully symmetric trees had equal $f$-size, joining them under a common root gives a non-symmetric tree with balance value $0$ at the root and $0$ elsewhere; conversely, if all fully symmetric trees have distinct $f$-sizes, induction from the leaves shows that a zero index forces equal child shapes at each node. Naive choices fail: with the leaf count as size, a node whose children are a cherry and a two-leaf tree of different shape can have zero dissimilarity. For $e^n$ and $\ln(n+e)$ the $f$-size of a fully symmetric tree $FS_{n_1,\dots,n_k}$ (root degree $n_1$, then $n_2$, ...) determines the sequence $(n_1, \dots, n_k)$, because $e$ is transcendental (Hermite–Lindemann): for $f(n) = e^n$ the $f$-size is $P(e)$ for a polynomial $P$ with non-negative integer coefficients that determines the sequence, and for $f(n) = \ln(n+e)$ it is $\ln Q(e)$ for a product $Q$ of linear factors $x + n$ that determines the sequence by unique factorization in $\mathbb Z[x]$; distinct polynomials take distinct values at a transcendental number.
 
 ## Sources
 

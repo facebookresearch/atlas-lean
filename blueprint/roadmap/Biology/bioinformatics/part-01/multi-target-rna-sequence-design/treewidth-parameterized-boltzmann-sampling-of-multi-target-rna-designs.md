@@ -12,7 +12,7 @@ $$O\big(n\,k\,4^{w+1} + t\,n\,k\big)$$
 
 time (precomputation improvable to $O(n k\, 2^{w+1} 2^{c})$, where $c \le w+1$ bounds the number of base-pair-connected components in a bag). Sampling is therefore fixed-parameter tractable in the treewidth.
 
-Weights achieving prescribed expected energies $\mathbb{E}(F_\ell \mid \pi) = E_\ell^\star$ exist on a convex optimization landscape ($\mathbb{E}(F_\ell \mid \pi)$ decreases in $\pi_\ell$), giving multidimensional Boltzmann sampling with a final rejection step to energies within tolerance.
+Weights with $\mathbb{E}(F_\ell \mid \pi) = E_\ell^\star$, when they exist (targets inside the achievable range), are found by a convex optimization ($\mathbb{E}(F_\ell \mid \pi)$ decreases in $\pi_\ell$), giving multidimensional Boltzmann sampling with a final rejection step to energies within tolerance.
 
 ## Depends on
 

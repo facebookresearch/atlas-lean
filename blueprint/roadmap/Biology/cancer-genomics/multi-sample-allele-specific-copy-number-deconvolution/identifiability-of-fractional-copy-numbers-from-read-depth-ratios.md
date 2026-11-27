@@ -10,7 +10,7 @@ The read-depth ratio (RDR) $r_{s,p}$ against a matched normal is proportional to
 1. a clonal diploid segment $s'$ with $c_{s',i} = 2$ for every clone $i$; or
 2. two clonal segments $s', z'$ with $c_{s',i} = \omega_{s'}$ and $c_{z',i} = \omega_{z'}$ for all tumour clones $i$, such that
 
-$$r_{s',p}(\omega_{z'} - 2) \ne r_{z',p}(\omega_{s'} - 2) \quad \text{for every sample } p.$$
+    $$r_{s',p}(\omega_{z'} - 2) \ne r_{z',p}(\omega_{s'} - 2) \quad \text{for every sample } p.$$
 
 The scaling does not depend on the remaining entries of the copy-number matrices or on the clone proportions.
 

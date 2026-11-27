@@ -19,7 +19,7 @@ $$A = \frac{\beta_S - \sum_i (\alpha_i + d_i)}{\beta_S + \eta},\qquad B = \frac{
 
 $$E_3 = \Big(\frac{A(A-B)}{A - B + C},\ \frac{AC}{A-B+C},\ A,\ 1,\dots,1\Big).$$
 
-**Stability.** $E_0$ and $E_1$ are unstable. If $A < B$, $E_2$ is locally asymptotically stable, and in fact globally asymptotically stable in $\Omega$. If $A > B$, $E_3$ is locally asymptotically stable, and $E_2$ is unstable; the stability regions of $E_2$ and $E_3$ are disjoint.
+**Stability.** $E_0$ and $E_1$ are unstable. If $A < B$, $E_2$ is locally asymptotically stable, and for the planar reduction $s = 0$, $a_i = 1$ it is globally asymptotically stable on $0 < b(0) \le r(0) \le 1$ ($E_0$ and $E_1$ lie in $\Omega$ and the face $\{b = 0\}$ is invariant, so $E_2$ does not attract all of $\Omega$). If $A > B$, $E_3$ is locally asymptotically stable, and $E_2$ is unstable; the stability regions of $E_2$ and $E_3$ are disjoint.
 
 ## Depends on
 

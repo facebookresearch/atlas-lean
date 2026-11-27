@@ -15,9 +15,9 @@ $$s(M) = \sum_{(i,j)\in M} \sigma(i,j) + \sum_{\{(i,j),(k,l)\} \subseteq M,\ (i,
 2. Network alignments correspond one-to-one to matchings in $A$, by $a \mapsto M_a = \{(i,a(i)) : i \in D(a)\}$, and $s(a) = s(M_a)$. So the problem is the maximum structural matching problem.
 3. Let $P$ be the set of unordered pairs of distinct alignment edges. With binary variables $x_{ij}$ for alignment edges and $y_{ijkl}$ for $\{(i,j),(k,l)\} \in P$, the maximum score equals the optimal value of the integer linear program
 
-$$\max \sum_{(i,j)} \sigma(i,j)\,x_{ij} + \sum_{\{(i,j),(k,l)\} \in P} \tau(i,j,k,l)\,y_{ijkl}$$
+    $$\max \sum_{(i,j)} \sigma(i,j)\,x_{ij} + \sum_{\{(i,j),(k,l)\} \in P} \tau(i,j,k,l)\,y_{ijkl}$$
 
-subject to $\sum_{(i,j)\in\delta(v)} x_{ij} \le 1$ for all $v \in V_1 \cup V_2$, $y_{ijkl} \le x_{ij}$, $y_{ijkl} \le x_{kl}$, and $x, y \in \{0,1\}$. A feasible point has objective at most $s(M)$ for the matching $M$ with characteristic vector $x$, with equality when $y_{ijkl} = x_{ij}x_{kl}$ for every pair.
+    subject to $\sum_{(i,j)\in\delta(v)} x_{ij} \le 1$ for all $v \in V_1 \cup V_2$, $y_{ijkl} \le x_{ij}$, $y_{ijkl} \le x_{kl}$, and $x, y \in \{0,1\}$. A feasible point has objective at most $s(M)$ for the matching $M$ with characteristic vector $x$, with equality when $y_{ijkl} = x_{ij}x_{kl}$ for every pair.
 
 ## Proof depends on
 

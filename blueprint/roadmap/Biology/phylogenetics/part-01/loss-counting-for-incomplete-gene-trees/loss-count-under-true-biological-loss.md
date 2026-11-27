@@ -16,6 +16,10 @@ In general $L_{bd} \ne L_{std}$: for $gt = ((a,b),c)$ and $ST = ((a,(b,d)),c)$ o
 
 - [Standard loss count of an incomplete gene tree under taxon sampling](standard-loss-count-under-taxon-sampling.md)
 
+## Proof depends on
+
+- [Optimality of the LCA reconciliation](../../../not-yet-classified/lcareconciliation/lca-optimal.md)
+
 ## Expansion
 
 Gene birth happens once, so the loss-minimizing birth point is on the edge above $M(r(gt))$ (or above $r(ST)$ if $M(r(gt)) = r(ST)$). Evaluating $F$ on the unsuppressed tree $ST$ counts every species-tree branch below the birth point along which the gene lineage must be lost, including branches to missing species that the suppression in $ST(gt)$ hides. If the gene is forced to be present at the root, it must additionally be lost on each edge leaving the path from $r(ST)$ to $M(r(gt))$, one per upper maximal missing clade. Linear time follows from linear-time LCA mapping. Summing over gene trees gives species-tree objectives that the paper optimizes exactly by a minimum-weight clique formulation over subtree bipartitions (Theorem 11).

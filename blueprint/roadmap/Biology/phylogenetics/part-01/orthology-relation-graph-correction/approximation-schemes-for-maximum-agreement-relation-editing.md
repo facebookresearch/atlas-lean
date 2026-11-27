@@ -6,7 +6,7 @@ $$A(R', R) = |E_R \cap E_{R'}| + |\bar E_R \cap \bar E_{R'}| .$$
 
 **MaxES** asks for a satisfiable $R'$ maximizing $A(R', R)$; **MaxEC** asks for an $S$-consistent $R'$ maximizing it.
 
-**Lemma 6.** For both problems the optimum agreement is at least $n^2/8$.
+**Lemma 6.** For both problems and $n \ge 2$, the optimum agreement is at least $n^2/8$.
 
 **Theorem.** MaxES and MaxEC admit polynomial-time approximation schemes: for every $\varepsilon > 0$ there is a polynomial algorithm returning a satisfiable (respectively $S$-consistent) relation graph with agreement at least $(1 - \varepsilon)\,\mathrm{OPT}$.
 

@@ -9,7 +9,7 @@ so that minimizing $\sum_i s(Pa_i)$ is equivalent to maximizing the MIT score (P
 **Theorem (Theorems 1 and 2 of the source).**
 
 1. Applied to every variable, the search returns a globally optimal $d$-th order DBN under the MIT score.
-2. Let $p^* = \min\{ p : u(p) \ge 2 N_e \log k \}$, which depends only on $\alpha$, $k$ and $N_e$. The search scores at most the $O\big((nd)^{p^*}\big)$ parent sets of size below $p^*$, so its worst-case running time is polynomial in the number of genes $n$ and the order $d$. Under-estimating each quantile by the mean $l$ of the $\chi^2(l)$ law gives $p^* \le \log_k \frac{2 N_e \log k}{k - 1} + 1$, that is, a bound of order $(nd)^{\log_k N_e}$.
+2. Let $p^* = \min\{ p : u(p) \ge 2 N_e \log k \}$, which depends only on $\alpha$, $k$ and $N_e$. The search scores at most the $O\big((nd)^{p^*}\big)$ parent sets of size below $p^*$, so its worst-case running time is polynomial in the number of genes $n$ and the order $d$. For $\alpha \ge 0.6827$, where $\chi_{\alpha,l} \ge l$ for every $l$, under-estimating each quantile by the mean $l$ of the $\chi^2(l)$ law gives $p^* \le \log_k \frac{2 N_e \log k}{k - 1} + 1$, that is, a bound of order $(nd)^{\log_k N_e}$.
 
 ## Expansion
 

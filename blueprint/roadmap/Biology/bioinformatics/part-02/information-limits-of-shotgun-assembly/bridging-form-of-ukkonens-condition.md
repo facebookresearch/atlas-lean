@@ -6,9 +6,9 @@ Let $s$ be a DNA sequence of length $G$ and let $s_t^\ell$ be its length-$\ell$ 
 
 $$L > L_{\mathrm{crit}} := \max\{\ell_{\mathrm{interleaved}}, \ell_{\mathrm{triple}}\} + 1 .$$
 
-**Coverage consequence.** With $N$ reads whose start points form a Poisson process of rate $N/G$, a given length-$\ell$ copy is unbridged with probability $p_\ell^{\mathrm{unbridged}} = e^{-\frac NG (L - \ell - 1)^+}$. Requiring error probability at most $\varepsilon$ on the longest interleaved pair gives
+**Coverage consequence.** With $N$ reads whose start points form a Poisson process of rate $N/G$, a given length-$\ell$ copy is unbridged with probability $p_\ell^{\mathrm{unbridged}} = e^{-\frac NG (L - \ell - 1)^+}$. Let $\ell'$ be the length of the longer repeat of the longest interleaved pair. If $\ell_{\mathrm{interleaved}} + 1 < L \le \ell' + 1$, the pair is unbridged with probability $\big(p_{\ell_{\mathrm{interleaved}}}^{\mathrm{unbridged}}\big)^2$, the error probability is then at least $1/2$, and so $P_{\mathrm{error}} \le \varepsilon$ requires
 
-$$N \ge \frac{G}{L - \ell_{\mathrm{interleaved}} - 1}\,\ln\frac{1}{2\varepsilon}.$$
+$$N \ge \frac{G}{2\,(L - \ell_{\mathrm{interleaved}} - 1)}\,\ln\frac{1}{2\varepsilon}.$$
 
 ## Depends on
 

@@ -16,9 +16,9 @@ where each row of $U \in \{0,1\}^{n \times k}$ is a standard basis vector assign
 
 **Recovery guarantee.** Let $\bar M = U\bar V^\top$ be $\mu$-incoherent with condition number $\kappa$, fibres observed independently with probability $p$, $C_{\mathrm{snp}} = mp$, $C_{\mathrm{seq}} = np$ and read error rate $p_e$. There are constants $C_0, C_1$ such that if
 
-$$C_{\mathrm{snp}} > \max\Big\{C_0\,\mu^4 k^{14}\kappa^{12} C_{\mathrm{seq}}^{3},\ \big(p_e k^2 \kappa^6\big)^2 C_1\Big\},$$
+$$C_{\mathrm{snp}} > \max\Big\{C_0\,\big(\mu^4 k^{14}\kappa^{12} C_{\mathrm{seq}}\big)^{1/3},\ \frac{p_e k^2 \kappa^6}{2C_1}\Big\},$$
 
-then with probability at least $1 - m^{-3}$ the alternating solution satisfies $\|\bar M - U^*\bar V^{*\top}\|_F^2 \le C_1\kappa^4 p_e k m^2 / C_{\mathrm{snp}}$, and $\mathbb E\{\mathrm{MEC}\} \le 2p_e C_{\mathrm{seq}} m + \kappa^4 C_1 k$.
+then with probability at least $1 - m^{-3}$ the alternating solution satisfies $\|\bar M - U^*\bar V^{*\top}\|_F^2 \le C_1\kappa^4 p_e k m / (2C_{\mathrm{snp}})$, and $\mathbb E\{\mathrm{MEC}\} \le 2p_e\big(C_{\mathrm{seq}} m + \kappa^4 C_1 k\big)$.
 
 ## Expansion
 

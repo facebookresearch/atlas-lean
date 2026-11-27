@@ -1,6 +1,6 @@
 # Uniform competitive-ability distributions are the equilibrium strategies
 
-**Game.** There are $n$ competing species. In the discrete model the possible competitive abilities are $x_j = j/M$, $j = 0,\dots,M$, and a strategy is a map $B : \{x_j\} \to [0,\infty)$ with abundance $|B| = \sum_j B(x_j) > 0$ and mean competitive ability
+**Game.** There are $n \ge 2$ competing species. In the discrete model the possible competitive abilities are $x_j = j/M$, $j = 0,\dots,M$, and a strategy is a map $B : \{x_j\} \to [0,\infty)$ with abundance $|B| = \sum_j B(x_j) > 0$ and mean competitive ability
 
 $$\mathrm{MCA}(B) = \frac{1}{|B|}\sum_{j=0}^M x_j B(x_j) \le \frac12;$$
 

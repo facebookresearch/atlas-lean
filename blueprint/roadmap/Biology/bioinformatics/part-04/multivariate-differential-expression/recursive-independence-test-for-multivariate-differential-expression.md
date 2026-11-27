@@ -14,7 +14,7 @@ A distribution is **PCWT** if it is strictly positive and its independence relat
 
 **Theorem 3.** If $X'$ is PCWT and $S, T$ are disjoint subsets of its components, then with probability $1$ the distribution of $X' \setminus (S \cup T)$ conditional on $T = t$ is PCWT.
 
-**Recursive independence test (RIT).** Test $X_i \perp Y$ for all genes, keep the significant set $S_1$; for each newly added gene $X_i$ test $X_i \perp X_j$ against all genes not yet selected and add the significant ones; recurse until no gene is added. By Theorem 1, RIT is consistent for $M$ whenever the marginal tests are consistent; it performs on the order of $|\hat M|\, n$ tests, and multiplicity is controlled at level $\alpha$ by applying a false-discovery-rate correction within each round.
+**Recursive independence test (RIT).** Test $X_i \perp Y$ for all genes, keep the significant set $S_1$; for each newly added gene $X_i$ test $X_i \perp X_j$ against all genes not yet selected and add the significant ones; recurse until no gene is added. By Theorem 1, RIT is consistent for $M$ whenever the marginal tests are consistent; it performs on the order of $|\hat M|\, n$ tests, and the false discovery rate is controlled at level $\alpha$ by the following procedure: Benjamini–Hochberg on the first-round p-values; for a gene $X_j$ reached later, the intersection–union p-value $p_j = |S| \min_{i \in S} \max\{\tilde p_i, p_{ij}\}$, where $S$ is the set of genes already selected, $\tilde p_i$ the p-value assigned to $X_i$ and $p_{ij}$ the p-value of the test of $X_i \perp X_j$; and a final Benjamini–Hochberg step on all assigned p-values.
 
 ## Depends on
 

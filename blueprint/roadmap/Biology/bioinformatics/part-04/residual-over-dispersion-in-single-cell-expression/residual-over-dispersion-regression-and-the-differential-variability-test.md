@@ -24,6 +24,7 @@ $$\log_2\frac{\delta_i^A}{\delta_i^B} = \log_2(e)\Big[\underbrace{f^A(\mu_i^A) -
 
 - [The marginal law of the hierarchy is negative binomial](../../../../Probability/bayesian-statistics/gamma-poisson-counts-and-empirical-bayes-shrinka/marginal-lik-eq-neg-binomial-real.md)
 - [Log-normal distribution](../../../../Probability/distributions/continuous/log-normal-distribution/log-normal-measure.md)
+- [Student's $t$ law](../../../../Probability/linear-models-multivariate/student-s-t-and-snedecor-s-f-distributions/student-tmeasure.md)
 
 ## Expansion
 

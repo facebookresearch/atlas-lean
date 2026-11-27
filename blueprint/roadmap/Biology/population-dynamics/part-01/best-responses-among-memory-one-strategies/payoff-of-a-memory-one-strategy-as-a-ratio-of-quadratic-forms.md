@@ -12,7 +12,7 @@ $$u_q(p) = \frac{\tfrac12\,p\,Q\,p^{\top} + c\,p + a}{\tfrac12\,p\,\bar Q\,p^{\t
 
 with $a = -Pq_2 + P + Tq_4$ and $\bar a = -q_2 + q_4 + 1$. Against opponents $q^{(1)}, \dots, q^{(N)}$ (a tournament), the average payoff $\frac1N\sum_i u_{q^{(i)}}(p)$ is the corresponding sum of such ratios.
 
-**Theorem 2 (best responses).** A best response $p^* = \arg\max_{p \in [0,1]^4}\sum_{i} u_{q^{(i)}}(p)$ lies in the finite candidate set $S_q$ of points $p$ obtained, for each partition $J \cup K = \{1,2,3,4\}$, by fixing $p_j \in \{0, 1\}$ for $j \in J$ and solving $\partial_{p_k}\sum_i u_{q^{(i)}}(p) = 0$ for $k \in K$, together with the vertices $\{0,1\}^4$.
+**Theorem 2 (best responses).** A best response $p^* = \arg\max_{p \in [0,1]^4}\sum_{i} u_{q^{(i)}}(p)$ lies in the candidate set $S_q$ of points $p$ obtained, for each partition $J \cup K = \{1,2,3,4\}$, by fixing $p_j \in \{0, 1\}$ for $j \in J$ and solving $\partial_{p_k}\sum_i u_{q^{(i)}}(p) = 0$ for $k \in K$, together with the vertices $\{0,1\}^4$.
 
 ## Depends on
 

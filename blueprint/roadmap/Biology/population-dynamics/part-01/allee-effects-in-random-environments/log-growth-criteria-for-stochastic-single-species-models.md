@@ -16,7 +16,7 @@ where $(\xi_t)$ is an i.i.d. sequence in a separable metric space $E$ and the fi
 
 - if $\mathbb E[\log f(\infty,\xi)] < 0$: $X_t \to 0$ for every $X_0 \ge 0$;
 - if $\mathbb E[\log f(0,\xi)] > 0$: $X_t \to \infty$ for every $X_0 > 0$;
-- if $\mathbb E[\log f(0,\xi)] < 0 < \mathbb E[\log f(\infty,\xi)]$: *conditional persistence*: for any $0 < \delta < 1$ there are $m, M > 0$ with $\Pr(X_t \to 0 \mid X_0 = y) \ge 1 - \delta$ for $y \in (0, m]$ and $\Pr(X_t \to \infty \mid X_0 = x) \ge 1 - \delta$ for $x \ge M$; if moreover extinction is accessible, $X_t$ converges to $0$ or $\infty$ almost surely.
+- if $\mathbb E[\log f(0,\xi)] < 0 < \mathbb E[\log f(\infty,\xi)]$: *conditional persistence*: for any $0 < \delta < 1$ there are $m, M > 0$ with $\Pr(X_t \to 0 \mid X_0 = y) \ge 1 - \delta$ for $y \in (0, m]$ and $\Pr(X_t \to \infty \mid X_0 = x) \ge 1 - \delta$ for $x \ge M$; if moreover $\{0, \infty\}$ is accessible from $(0, \infty)$, $X_t$ converges to $0$ or $\infty$ almost surely.
 
 Examples: stochastic Ricker and Beverton–Holt models fall under the first theorem; mate limitation and predator saturation under the second.
 

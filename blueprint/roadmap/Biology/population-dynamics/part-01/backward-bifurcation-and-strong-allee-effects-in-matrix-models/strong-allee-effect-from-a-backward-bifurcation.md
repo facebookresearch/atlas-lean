@@ -4,7 +4,7 @@
 
 **Setting.** The nonlinear matrix model $x' = rP(x)x$ with $\rho[P(0)] = 1$ under assumption A1 of the fundamental bifurcation theorem, with direction coefficient $\kappa$ and unbounded continuum $\mathcal C^+$ of positive equilibrium pairs from $(1,0)$. Further assume
 - (A2) $\kappa < 0$ (backward bifurcation);
-- (A3) (a) $\mathcal C^+$ contains a positive equilibrium $x^*$ at $r = 1$, and (b) $x^*$ is locally asymptotically stable by linearization, $\rho[J(x^*)] < 1$.
+- (A3) (a) there is a positive equilibrium $x^* = P(x^*)x^*$ at $r = 1$, and (b) $x^*$ is locally asymptotically stable by linearization, $\rho[J(x^*)] < 1$.
 
 **Theorem.** Under A1–A3 the model has a strong Allee effect for all $r$ in an interval $(1-\delta, 1)$: the extinction equilibrium is stable (because $r < 1$) and a stable positive equilibrium near $x^*$ coexists with it, separated by the unstable positive equilibria of the backward branch.
 

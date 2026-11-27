@@ -18,7 +18,7 @@ greedy merging of reads by decreasing overlap under the repeat-aware overlap rul
 
 $$N > \max\left(\frac{G \ln(3/\epsilon)}{L - \tilde\ell_{crit} - 2\ell_{iid}},\; \frac{G \ln(3N/\epsilon)}{L - 2\ell_{iid}}\right),$$
 
-the X-phased Multibridging algorithm is $\epsilon$-feasible. Thus noisy reads need only about $2\ell_{iid}$ extra bases of read length beyond the noiseless requirement that every triple repeat and one repeat of each interleaved pair be bridged, while the coverage term matches Lander–Waterman coverage up to the same shift.
+the Multibridging algorithm (Alg. 2) is $\epsilon$-feasible. When all long flanked repeats are flanked exact repeats, noisy reads therefore need only about $2\ell_{iid}$ extra bases of read length beyond the noiseless requirement that every triple repeat and one repeat of each interleaved pair be bridged, while the coverage term matches Lander–Waterman coverage up to the same shift; for approximate repeats the required read length increases significantly.
 
 ## Depends on
 

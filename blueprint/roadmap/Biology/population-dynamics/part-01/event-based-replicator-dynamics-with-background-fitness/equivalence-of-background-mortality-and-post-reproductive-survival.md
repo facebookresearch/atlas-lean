@@ -9,7 +9,7 @@
 2. the payoff-based dynamics run at the rate of the dynamics-based ones divided by $1+\Psi$ (multiplied by $s_b$);
 3. the stationary juvenile survival probabilities $J = 1 - \tilde n/K$ differ, with $J_{\mathrm{dyn}} = J_{\mathrm{pf}}/s_b$, so that
 
-$$\tilde n_{\mathrm{dyn}} = \Big(1 - \frac{1 - s_b\bar s}{s_b\bar V}\Big)K.$$
+    $$\tilde n_{\mathrm{dyn}} = \Big(1 - \frac{1 - s_b\bar s}{s_b\bar V}\Big)K.$$
 
 ## Depends on
 

@@ -6,7 +6,7 @@ Use the mechanistic DCJ model of expected breakpoints after random DCJ operation
 
 $$\mathbb E[BCy_k] = \mathbb E[Cy_k] + o(n),$$
 
-for the real and the observed breakpoint graph alike. More precisely $\mathbb E[BCy_k] \le \mathbb E[Cy_k] \le \mathbb E[BCy_k] + O(k/n)$ in the relevant range, and only $k = O(n \log n)$ is informative before saturation, so the error is $o(n)$.
+for the real and the observed breakpoint graph alike. More precisely $\mathbb E[BCy_k] \le \mathbb E[Cy_k] \le \mathbb E[BCy_k] + O(k/\sqrt n)$ for $k \ge \sqrt n$, and only $k = O(n \log n)$ is informative before saturation, so the error is $o(n)$.
 
 Combined with Berestycki and Durrett's comparison of $\mathbb E[Cy_k]$ with the expected number $\mathbb E[Co_k]$ of components after adding $k$ random edges to $n$ isolated vertices (equal up to a lower-order term), the exact Eriksen–Hultman formula for $\mathbb E[Cy_k]$ and random-graph tree counts both estimate DCJ cycle counts, hence DCJ distances, with error $o(n)$.
 
@@ -17,7 +17,7 @@ Combined with Berestycki and Durrett's comparison of $\mathbb E[Cy_k]$ with the 
 
 ## Expansion
 
-Couple the processes by identifying adjacencies with permutation elements and applying the transposition $(a\,b)$ whenever the DCJ cuts adjacencies $a, b$. If $a, b$ lie in different breakpoint cycles both processes fuse two cycles. If they lie in one cycle, the transposition always splits it, while the DCJ splits it with probability $1/2$ and otherwise only reorders it; hence breakpoint cycles never outnumber permutation cycles. The discrepancy comes only from the non-splitting DCJ moves; a cycle of a given small size is created by such a move with probability of order $1/n$ per step, while large cycles are few, which bounds the expected gap after $k$ steps by $O(k/n)$. DCJ is thus a coagulation–fragmentation–nothing process sandwiched between random transpositions (coagulation–fragmentation) and random graphs (coagulation–nothing).
+Couple the processes by identifying adjacencies with permutation elements and applying the transposition $(a\,b)$ whenever the DCJ cuts adjacencies $a, b$. If $a, b$ lie in different breakpoint cycles both processes fuse two cycles. If they lie in one cycle, the transposition always splits it, while the DCJ splits it with probability $1/2$ and otherwise only reorders it; hence breakpoint cycles never outnumber permutation cycles. The discrepancy comes only from the non-splitting DCJ moves; a cycle of any size at most $\sqrt n$ is created by such a move with probability less than $1/\sqrt n$ per step, while at most $\sqrt n$ cycles have size at least $\sqrt n$, which bounds the expected gap after $k \ge \sqrt n$ steps by $O(k/\sqrt n)$. DCJ is thus a coagulation–fragmentation–nothing process sandwiched between random transpositions (coagulation–fragmentation) and random graphs (coagulation–nothing).
 
 ## Sources
 

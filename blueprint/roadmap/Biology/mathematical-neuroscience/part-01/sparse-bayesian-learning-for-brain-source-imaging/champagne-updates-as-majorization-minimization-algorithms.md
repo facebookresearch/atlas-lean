@@ -18,7 +18,7 @@ with $C_y$ the sample covariance; it is non-convex in $\gamma$.
 - *Convex-bounding Champagne* (Proposition 2), $z_n^k = L_n^{\mathsf T}(\Sigma_y^k)^{-1}L_n$ and $\gamma_n^{k+1} = \sqrt{\frac1T\sum_t \bar x_n^k(t)^2 / z_n^k}$, majorizes the concave term $\log|\Sigma_y|$ by its tangent plane at $\gamma^k$ and satisfies [A1]–[A4].
 - *MacKay-update Champagne* (Proposition 3) minimizes the same tangent-plane surrogate by a fixed-point iteration and satisfies [A1]–[A4].
 
-**Low-SNR surrogate (Proposition 4).** With $\sigma^2$ normalized to 1, $\mathcal{L}^{\text{Low-SNR}}_{\text{conv}}(\gamma \mid \gamma^k) = \operatorname{tr}(L\Gamma L^{\mathsf T}) + \frac1T\sum_t y(t)^{\mathsf T}\Sigma_y^{-1}y(t)$ majorizes $\mathcal{L}_{II}$, yields an MM algorithm satisfying Theorem 1, and $\mathcal{L}_{II}(\gamma) = \mathcal{L}^{\text{Low-SNR}}_{\text{conv}}(\gamma\mid\gamma^k) + O(\mathrm{SNR})$ as the signal-to-noise ratio tends to zero.
+**Low-SNR surrogate (Proposition 4).** With $\sigma^2$ normalized to 1, $\mathcal{L}^{\text{Low-SNR}}_{\text{conv}}(\gamma \mid \gamma^k) = \operatorname{tr}(L\Gamma L^{\mathsf T}) + \frac1T\sum_t y(t)^{\mathsf T}\Sigma_y^{-1}y(t)$ majorizes $\mathcal{L}_{II}$ ([A2]) but is not tangent to it at $\gamma^k$, so [A1] and [A4] fail and its minimization need not decrease $\mathcal{L}_{II}$ or converge to a stationary point; $\mathcal{L}_{II}(\gamma) = \mathcal{L}^{\text{Low-SNR}}_{\text{conv}}(\gamma\mid\gamma^k) + O(\mathrm{SNR})$ as the signal-to-noise ratio tends to zero.
 
 ## Depends on
 

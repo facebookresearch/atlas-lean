@@ -3,7 +3,7 @@
 **Setting.** The negative-binomial mixture model with expression-dependent dropout (parameters $\Theta = \{\alpha,\beta,\nu,\phi,\Delta,\Gamma,\pi\}$) on $B$ batches and $K$ cell types. Let $C_b = \{k : \pi_{bk} > 0\}$ be the cell types present in batch $b$, with $\bigcup_b C_b = \{1,\dots,K\}$. Assume
 - (I) $\gamma_{b1} < 0$ for every batch (dropout decreases with expression);
 - (II) every pair of cell types $k_1 \ne k_2$ has at least two differentially expressed genes $g_1, g_2$: $\beta_{g_1k_1} \ne \beta_{g_1k_2}$ and $\beta_{g_2k_1}\ne\beta_{g_2k_2}$;
-- (III) distinct ordered pairs $(k_1,k_2) \ne (k_3,k_4)$ have distinct effect differences, $\beta_{\cdot k_1} - \beta_{\cdot k_2} \ne \beta_{\cdot k_3} - \beta_{\cdot k_4}$.
+- (III) ordered pairs of distinct cell types, $k_1 \ne k_2$ and $k_3 \ne k_4$, with $(k_1,k_2) \ne (k_3,k_4)$ have distinct effect differences, $\beta_{\cdot k_1} - \beta_{\cdot k_2} \ne \beta_{\cdot k_3} - \beta_{\cdot k_4}$.
 
 **Identifiability** means: $L_o(\Theta \mid y) = L_o(\Theta^* \mid y)$ for all $y$ implies, for a permutation $\rho$ of cell-type labels, $\pi_{bk} = \pi^*_{b\rho(k)}$, $(\gamma_{b0},\gamma_{b1}) = (\gamma^*_{b0},\gamma^*_{b1})$, $\alpha_g + \beta_{gk} = \alpha^*_g + \beta^*_{g\rho(k)}$, $\nu_{bg} = \nu^*_{bg}$, $\delta_{bi} = \delta^*_{bi}$ and $\phi_{bg} = \phi^*_{bg}$.
 

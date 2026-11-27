@@ -4,7 +4,7 @@
 
 **Definition 1 (S-consistency).** A speciation node $v$ of $G$ is $S$-consistent if for any two distinct children $v_1,v_2$ of $v$, the species $s_G(v_1)$ and $s_G(v_2)$ are separated in $S$ (neither is an ancestor of the other). $G$ is $S$-consistent if all its speciation nodes are.
 
-**Relation graphs.** A relation graph $R$ on vertex set $\Gamma$ has an edge $xy$ for each orthologous pair and a non-edge for each paralogous pair. $R$ is *satisfiable* if $R = R(G)$ for some DS-tree $G$, and *$S$-consistent* if it is satisfied by some $S$-consistent DS-tree. Define the set of species triplets induced by paths on three vertices
+**Relation graphs.** A relation graph $R$ on vertex set $\Gamma$ has an edge $xy$ for each orthologous pair and a non-edge for each paralogous pair; genes of the same species are never adjacent ($s(x) = s(y)$ implies $xy \notin E(R)$). $R$ is *satisfiable* if $R = R(G)$ for some DS-tree $G$, and *$S$-consistent* if it is satisfied by some $S$-consistent DS-tree. Define the set of species triplets induced by paths on three vertices
 
 $$P_3(R) = \{\, s(x)s(y)|s(z) \;:\; zx, zy \in E(R),\ xy \notin E(R),\ s(x) \ne s(y) \,\}.$$
 

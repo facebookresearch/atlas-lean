@@ -1,6 +1,6 @@
 # Gene duplications as rooted-triple inconsistencies
 
-**Setting.** Let $S$ be a rooted binary species tree and $G$ a rooted binary gene tree with a leaf-labelling $L_{G,S} : L(G) \to L(S)$. The **LCA mapping** $M_{G,S} : V(G) \to V(S)$ sends a node $u$ to $\mathrm{LCA}_S\big(L_{G,S}(L(G(u)))\big)$, the least common ancestor in $S$ of the species below $u$. An internal node $g$ is a **duplication** if $M_{G,S}(g) = M_{G,S}(c)$ for some child $c$ of $g$. The duplication cost of a collection $\mathcal G$ of gene trees is
+**Setting.** Let $S$ be a rooted binary species tree and $G$ a rooted binary gene tree with an injective leaf-labelling $L_{G,S} : L(G) \to L(S)$ (at most one gene per species). The **LCA mapping** $M_{G,S} : V(G) \to V(S)$ sends a node $u$ to $\mathrm{LCA}_S\big(L_{G,S}(L(G(u)))\big)$, the least common ancestor in $S$ of the species below $u$. An internal node $g$ is a **duplication** if $M_{G,S}(g) = M_{G,S}(c)$ for some child $c$ of $g$. The duplication cost of a collection $\mathcal G$ of gene trees is
 
 $$\mathrm{Dup}(\mathcal G, S) = \sum_{G \in \mathcal G} \big|\{g \in V(G) : g \text{ is a duplication}\}\big|,$$
 

@@ -13,7 +13,7 @@ and $G$ is consistent with $S$ if and only if $S$ displays every triplet of $\ma
 **consistent with** $S$ if some realization of $R$ is satisfied by a DS-tree consistent with $S$, and
 **consistent** if it is consistent with some species tree.
 
-**Theorem (given species tree).** $R$ is consistent with $S$ if and only if
+**Theorem (given species tree).** If $|V| = 1$, $R$ is consistent with every $S$ (its DS-tree is a single leaf). If $|V| \ge 2$, $R$ is consistent with $S$ if and only if
 
 1. $R(\emptyset)$ is disconnected and each connected component is consistent with $S$; or
 2. $\overline{R(U)}$ is disconnected, its components admit a **speciation partition** (a partition into
@@ -39,6 +39,10 @@ is consistent (with the star species tree).
 - [Satisfiability of partial orthology and paralogy constraints](satisfiability-of-partial-orthology-and-paralogy-constraints.md)
 - [Rooted triplet](../../splits-compatibility-ultrametrics-and-upgma/triplet.md)
 - [Cluster system displaying a triplet](../../splits-compatibility-ultrametrics-and-upgma/displays-triplet.md)
+
+## Proof depends on
+
+- [Correctness of BUILD](../../splits-compatibility-ultrametrics-and-upgma/build-spec.md)
 
 ## Expansion
 

@@ -10,7 +10,7 @@ Let $A \in \{0,1\}^{n\times m}$ be a cell-by-mutation matrix over somatic SNVs a
 
 For $p = 1$ this is the infinite-sites model; for $p = n$ it is the unconstrained $k$-Dollo model.
 
-A $k$-Dollo completion $B$ of $A$ is **consistent** with $\sigma$ if, for every mutation $j$: at most one clone $\ell$ contains cells $i, i'$ with $b_{i,j} = 0$ and $b_{i',j} = 1$ (the gain happens inside at most one clone), and if some cell of clone $\ell$ has loss state $b_{i,j} = s \in \{2, \dots, k+1\}$ then every cell of $\ell$ has $b_{i',j} = s$.
+A $k$-Dollo completion $B$ of $A$ is **consistent** with $\sigma$ if, for every mutation $j$: at most one clone $\ell$ contains cells $i, i'$ with $b_{i,j} = 0$ and $b_{i',j} = 1$ (the gain happens inside at most one clone), and if some cell of clone $\ell$ has loss state $b_{i,j} = s \in \{2, \dots, k+1\}$ then every cell of $\ell$ has $b_{i',j} = s$; and $b_{i,j} \ge 1$ for every cell $i$ and every SNP column $j$.
 
 **Theorem (characterization).** $A$ is a constrained $k$-Dollo phylogeny matrix for $\sigma$ if and only if it has a $k$-Dollo completion consistent with $\sigma$; given such a completion, a constrained $k$-Dollo phylogeny is constructed in $O(nmk)$ time.
 
