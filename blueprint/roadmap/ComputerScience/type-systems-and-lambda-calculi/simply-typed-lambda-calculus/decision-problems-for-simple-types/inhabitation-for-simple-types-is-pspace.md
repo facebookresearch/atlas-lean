@@ -11,13 +11,13 @@ quantified Boolean formulas.
 ## Depends on
 
 - [Simple type assignment à la Curry](simple-type-assignment-a-la-curry.md)
-- [Polynomial space for decision problems](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/pspace.md)
-- [Polynomial-time many-one reduction](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
-- [Curry–Howard correspondence for implicational logic](../curry-howard-correspondence-for-implicational-logic.md)
+- [Polynomial space for decision problems](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/pspace.md)
+- [Polynomial-time many-one reduction](../../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
+- [Curry–Howard correspondence for implicational logic](../../curry-howard-correspondence-for-implicational-logic.md)
 
 ## Proof depends on
 
-- [TQBF is PSPACE-complete](../../../TheoryOfComputation/completeness-other-classes/true-quantified-boolean-formulas/tqbf-pspace-complete.md)
+- [TQBF is PSPACE-complete](../../../../TheoryOfComputation/completeness-other-classes/true-quantified-boolean-formulas/tqbf-pspace-complete.md)
 
 ## Sources
 

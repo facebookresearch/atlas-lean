@@ -19,7 +19,6 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [Syntax with binders](syntax-with-binders/README.md)
 
 - [Gödel's System T](system-t/README.md)
-- [Decision problems for simple types](decision-problems-for-simple-types/README.md)
 - [Type soundness](type-soundness/README.md)
 - [Normalization and logical relations](normalization-and-logical-relations/README.md)
 - [Untyped lambda calculus](untyped-lambda-calculus/README.md)

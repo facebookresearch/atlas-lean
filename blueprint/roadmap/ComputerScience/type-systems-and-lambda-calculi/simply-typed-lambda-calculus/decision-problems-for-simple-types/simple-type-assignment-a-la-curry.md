@@ -18,8 +18,8 @@ of $M$, is obtained from it by a substitution of types for type variables.
 
 ## Depends on
 
-- [Named, de Bruijn and locally nameless lambda terms](../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
-- [Simple types](../simply-typed-lambda-calculus/ty.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
+- [Simple types](../ty.md)
 
 ## Sources
 

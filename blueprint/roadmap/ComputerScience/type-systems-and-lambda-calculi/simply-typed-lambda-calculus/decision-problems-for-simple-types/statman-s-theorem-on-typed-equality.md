@@ -9,7 +9,7 @@ Comparing normal forms decides the problem, since simply typed terms normalize; 
 
 ## Depends on
 
-- [Intrinsically typed terms of the simply typed lambda calculus](../simply-typed-lambda-calculus/tm.md)
+- [Intrinsically typed terms of the simply typed lambda calculus](../tm.md)
 
 ## Expansion
 
