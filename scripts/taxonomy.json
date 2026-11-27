@@ -18005,6 +18005,7 @@
   "Domains/Biology/Ecology/LevinsNetwork": {"to": "Biology/population-dynamics", "title": "Levins metapopulation on a patch network"},
   "Domains/Biology/Ecology/SingularStrategyClassificationBranchingPoint": {"to": "Biology/population-dynamics", "title": "Classification of adaptive-dynamics singular strategies"},
   "Domains/Biology/Ecology/ZeroDeterminantStrategyDotProductEqDivPdDet": {"to": "Biology/population-dynamics", "title": "Zero-determinant strategies in iterated games"},
+  "Domains/Biology/Ecology/ZeroDeterminantStrategyExistsStrategyFixingScore": {"to": "Biology/population-dynamics", "title": "Zero-determinant strategies in iterated games"},
   "Domains/Biology/Epidemiology/EarlyEpidemicBranching": {"to": "Biology/epidemiology", "title": "Branching-process approximation of early epidemics"},
   "Domains/Biology/Epidemiology/EarlyEpidemicFinalSize": {"to": "Biology/epidemiology", "title": "Final size of a stochastic epidemic in a large population"},
   "Domains/Biology/Epidemiology/IncidenceObservation/Intensity": {"to": "Biology/epidemiology", "title": "Poisson reporting of epidemic incidence"},
