@@ -14,6 +14,8 @@ Every $k$-regular sequence over $\mathbb A$ is $O(n^\sigma)$ for some $\sigma\ge
 ## Depends on
 
 - [$k$-regular sequence](is-kregular-sequence.md)
+- [Bounded sequences](../../../../Analysis/sequences-and-series/summability/permanent-summability-methods/is-bounded.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

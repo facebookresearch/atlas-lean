@@ -20,6 +20,7 @@ Many results of additive combinatorics, such as consequences of Kneser's theorem
 ## Depends on
 
 - [Abelian group](../../../GroupTheory/group-basics/abelian-group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -27,7 +28,7 @@ Many results of additive combinatorics, such as consequences of Kneser's theorem
 
 ## Expansion
 
-The proof adapts the method of Hatami and Norine. For clause 1 the source starts from their result that nonnegativity of an integer polynomial on the region $R^k$ is undecidable, where $R = \{(x, y) \in [0, 1]^2 : y \ge h(x)\}$ is the region above Bollobás's lower bound $h$ for the triangle density in terms of the edge density (Lemma 3 of arXiv:2505.07378v1, a consequence of Lemmas 5.1 and 5.4 of Hatami and Norine), and constructs systems of linear forms in groups $\mathbb{Z}_{(k+1)^2}$ and their products whose densities realize the needed points of $R$ (Lemma 4). For clause 2 it uses that nonnegativity of an integer polynomial on $S^k$, with $S = \{1/n : n \in \mathbb{N}\}$, is undecidable by Matiyasevich's theorem (Lemma 6), together with the Fourier-analytic upper bound $E(A) \le \alpha^3 - \alpha^4 \{1/\alpha\}(1 - \{1/\alpha\})$ for the normalized energy, attained when $|A|$ divides $|G|$ (Lemma 5). A good expansion links the Hatami–Norine undecidability of polynomial inequalities on $R^k$, which has no page on main or in this subject's run.
+The proof adapts the method of Hatami and Norine. For clause 1 the source starts from their result that nonnegativity of an integer polynomial on the region $R^k$ is undecidable, where $R = \{(x, y) \in [0, 1]^2 : y \ge h(x)\}$ is the region above Bollobás's lower bound $h$ for the triangle density in terms of the edge density (Lemma 3 of arXiv:2505.07378v1, a consequence of Lemmas 5.1 and 5.4 of Hatami and Norine), and constructs systems of linear forms in groups $\mathbb{Z}_{(k+1)^2}$ and their products whose densities realize the needed points of $R$ (Lemma 4). For clause 2 it uses that nonnegativity of an integer polynomial on $S^k$, with $S = \{1/n : n \in \mathbb{N}\}$, is undecidable by Matiyasevich's theorem (Lemma 6), together with the Fourier-analytic upper bound $E(A) \le \alpha^3 - \alpha^4 \{1/\alpha\}(1 - \{1/\alpha\})$ for the normalized energy (Lemma 5), which becomes $E(A) \le \alpha^3$ when $|A|$ divides $|G|$ and is attained by $A = \{0\} \subseteq \mathbb{Z}_n$. A good expansion links the Hatami–Norine undecidability of polynomial inequalities on $R^k$, which has no page on main or in this subject's run.
 
 ## Sources
 

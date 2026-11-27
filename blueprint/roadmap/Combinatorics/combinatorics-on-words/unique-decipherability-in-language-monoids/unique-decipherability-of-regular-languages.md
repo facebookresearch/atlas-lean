@@ -10,7 +10,7 @@ Conventions: the regular languages are given effectively, for example by finite 
 
 ## Depends on
 
-- [Kleene's theorem](../../../TheoryOfComputation/regular-languages/automata-and-expressions/kleene-s-theorem/is-regular-iff-exists-regex.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -2,17 +2,19 @@
 
 No algorithm decides, given a Fractran program, whether the canonical collection built from it is an additive system for the integers; completeness of that collection is equivalent to the program halting on every input.
 
-Let $F=(F_1,\dots,F_m)$ be a Fractran program, a finite list of positive rationals, and let $f_F:\mathbb N_0\to\mathbb N_0$ apply one Fractran step (multiply by the first $F_j$ that gives an integer), with $f_F(n)=0$ when no $F_j$ applies, so that the program halts on $n$. Set $b=1+\lceil\max_jF_j\rceil$ and $b_i=b^{i+1}$. The *Fractran-type* [canonical collection](canonical-collections-and-additive-systems.md) $\mathcal A_F$ has bases $(b_i)$ and the canonical system with $f_i(r)=f_F(r)$ for $0\le r<b_i-1$ and $f_i(b_i-1)=1$; it is determined by the finite data $F$.
+Let $F=(F_1,\dots,F_m)$ be a Fractran program, a finite list of positive rationals, and let $f_F:\mathbb N_0\to\mathbb N_0$ apply one Fractran step (multiply by the first $F_j$ that gives an integer), with $f_F(n)=0$ when no $F_j$ applies, so that the program halts on $n$. Set $b=1+\lceil\max_jF_j\rceil$ and $b_i=b^{i+1}$. The *Fractran-type* [canonical collection](canonical-collections-for-the-integers.md) $\mathcal A_F$ has bases $(b_i)$ and the canonical system with $f_i(r)=f_F(r)$ for $0\le r<b_i-1$ and $f_i(b_i-1)=1$; it is determined by the finite data $F$.
 
 **Theorem (Zabolotskii).**
-1. A Fractran program $F$ halts on every input iff $\mathcal A_F$ is complete, that is, an additive system for $\mathbb Z$.
+1. A Fractran program $F$ halts on every input iff $\mathcal A_F$ is complete, that is, an [additive system](additive-systems-for-a-commutative-monoid.md) for $\mathbb Z$.
 2. Consequently it is undecidable, given a Fractran program $F$, whether $\mathcal A_F$ is complete.
 
 The source also gives a canonical collection whose completeness is equivalent to the Collatz conjecture (Theorem 1). For additive systems for $\mathbb N_0$, in contrast, de Bruijn's theorem describes all of them as contractions of mixed-radix number systems.
 
 ## Depends on
 
-- [Additive systems and canonical collections for the integers](canonical-collections-and-additive-systems.md)
+- [Canonical collections for the integers](canonical-collections-for-the-integers.md)
+- [Additive systems for a commutative monoid](additive-systems-for-a-commutative-monoid.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

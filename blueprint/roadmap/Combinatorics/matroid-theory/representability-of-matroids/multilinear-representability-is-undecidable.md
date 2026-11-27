@@ -2,7 +2,7 @@
 
 For every field $F$, no algorithm decides whether a given finite matroid can be represented by an arrangement of equidimensional subspaces over $F$; the problem stays undecidable when the field is left unspecified.
 
-Let $M$ range over finite matroids, given by their rank functions, and use the notion of a matroid [multilinear over a field](matroid-representations.md), that is, representable as a $c$-arrangement for some $c \ge 1$.
+Let $M$ range over finite matroids, given by their rank functions, and use the notion of a matroid [multilinear over a field](multilinear-matroids.md), that is, representable as a $c$-arrangement for some $c \ge 1$.
 
 **Theorem (Kühne and Yashfe).** Fix a field $F$. The *multilinear representability problem over $F$*, which asks, given a matroid $M$, whether there is $c \ge 1$ such that $M$ is representable as a $c$-arrangement over $F$, is undecidable. This holds for every field $F$, and the problem remains undecidable when the field is unspecified (is $M$ multilinear over some field?) or is allowed to range over a given set of fields (Theorem 1.3 of arXiv:1912.06123v2).
 
@@ -10,7 +10,9 @@ Only the matroid is the input; the field is fixed in advance. By contrast, over 
 
 ## Depends on
 
-- [Matroids and their representations over division rings, by subspaces and by random variables](matroid-representations.md)
+- [Matroids given by rank functions](matroids-given-by-rank-functions.md)
+- [Multilinear matroids](multilinear-matroids.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Field](../../../Algebra/rings-and-fields/field.md)
 
 ## Proof depends on

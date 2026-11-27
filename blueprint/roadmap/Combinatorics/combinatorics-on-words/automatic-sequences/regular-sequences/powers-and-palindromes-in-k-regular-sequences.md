@@ -8,12 +8,12 @@ Here $k\ge2$ is fixed, $\mathbb A$ is the set of real algebraic numbers, and a s
 1. It is undecidable whether a given $k$-regular sequence contains an $\alpha$-power.
 2. It is undecidable whether a given $k$-regular sequence contains a nontrivial palindrome.
 
-For $k$-automatic sequences, which take finitely many values, the existence of squares, higher powers and nontrivial palindromes is decidable.
+For [$k$-automatic sequences](../automatic-sequences/is-kautomatic.md), which take finitely many values, the existence of squares, higher powers and nontrivial palindromes is decidable.
 
 ## Depends on
 
 - [$k$-regular sequence](is-kregular-sequence.md)
-- [$k$-automatic sequence (finite-kernel definition)](../automatic-sequences/is-kautomatic.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

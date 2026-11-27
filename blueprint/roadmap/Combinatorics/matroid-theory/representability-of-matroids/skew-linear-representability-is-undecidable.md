@@ -2,7 +2,7 @@
 
 No algorithm decides whether a given finite matroid is representable over some division ring, or over some division ring of a fixed characteristic, even for connected matroids of rank three; and there is a single division ring over which representability is undecidable.
 
-Let $M$ range over finite matroids, given by their rank functions, with representations over division rings and skew-linear matroids as in [matroids and their representations](matroid-representations.md).
+Let $M$ range over finite matroids, given by their rank functions, with representations over division rings and skew-linear matroids as in [representations of matroids over division rings](representations-of-matroids-over-division-rings.md).
 
 **Theorem (Kühne, Pendavingh and Yashfe).** The following problems are undecidable (Theorem 4.1 of arXiv:2012.07361v1):
 
@@ -15,7 +15,9 @@ Problems 1 and 2 remain undecidable when the input is restricted to connected ma
 
 ## Depends on
 
-- [Matroids and their representations over division rings, by subspaces and by random variables](matroid-representations.md)
+- [Matroids given by rank functions](matroids-given-by-rank-functions.md)
+- [Representations of matroids over division rings](representations-of-matroids-over-division-rings.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

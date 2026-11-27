@@ -2,7 +2,7 @@
 
 No algorithm decides whether a given finite matroid is entropic, that is, whether its rank function is a positive multiple of the joint entropy function of some discrete random variables; nor whether it is almost multilinear, approximately representable by subspace arrangements.
 
-Let $M$ range over finite matroids, given by their rank functions, and let entropic and almost multilinear matroids be as in [matroids and their representations](matroid-representations.md).
+Let $M$ range over finite matroids, given by their rank functions, with [entropic matroids](entropic-matroids.md) and [almost multilinear matroids](almost-multilinear-matroids.md) as defined on their pages; undecidable means not [decidable](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md) on these finite encodings.
 
 **Theorem (Kühne and Yashfe).**
 
@@ -13,7 +13,10 @@ Entropic matroids are exactly the secret sharing matroids of Brickell and Davenp
 
 ## Depends on
 
-- [Matroids and their representations over division rings, by subspaces and by random variables](matroid-representations.md)
+- [Matroids given by rank functions](matroids-given-by-rank-functions.md)
+- [Entropic matroids](entropic-matroids.md)
+- [Almost multilinear matroids](almost-multilinear-matroids.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
