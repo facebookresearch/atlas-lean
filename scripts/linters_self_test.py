@@ -24,6 +24,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+from lean_changes import inert
+
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = Path(__file__).resolve().parent
 PROBE = Path("MathlibExt/LintersSelfTestProbe.lean")
@@ -227,8 +229,8 @@ def run_checks(base: str, round_: int) -> bool:
                       if re.search(pattern, output)]
         if result.returncode != want_code or missing or unexpected:
             ok = False
-            print(f"FAIL {script} (round {round_ + 1}): exit {result.returncode}, wanted "
-                  f"{want_code}; missing {missing}; unexpected {unexpected}\n{output}")
+            print(inert(f"FAIL {script} (round {round_ + 1}): exit {result.returncode}, wanted "
+                        f"{want_code}; missing {missing}; unexpected {unexpected}\n{output}"))
         else:
             print(f"ok {script} (round {round_ + 1}): exit {result.returncode}")
     return ok

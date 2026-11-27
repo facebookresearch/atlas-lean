@@ -691,6 +691,20 @@ class PlaceTests(unittest.TestCase):
                               line, 1)
             self.assertTrue(self.place_in(finding, head, base).added, name)
 
+    def test_a_new_helper_on_its_parent_s_line_is_new(self):
+        # `retainedDef` stays; the change adds `where go` on its line, and `go` is new.
+        base = base_names(MathlibExt__A="namespace R\n\ndef retainedDef (n : Nat) : Nat := n\n\n"
+                                        "end R\n")
+        head = ("namespace R\n\ndef retainedDef (n : Nat) : Nat := go n where go (k unused : "
+                "Nat) : Nat := k\n\nend R\n")
+        files = {"MathlibExt/A.lean": (head, {3})}
+        helper = Finding("R.retainedDef.go", "unusedArguments", "", "MathlibExt.A",
+                         "MathlibExt/A.lean", 3, 1)
+        self.assertTrue(self.place_in(helper, files, base).added)
+        parent = Finding("R.retainedDef", "unusedArguments", "", "MathlibExt.A",
+                         "MathlibExt/A.lean", 3, 1)
+        self.assertFalse(self.place_in(parent, files, base).added)
+
     def test_an_undecorated_wanted_statement_moved_between_module_files_is_kept(self):
         a_head = VISIBILITY.replace("theorem_wanted stillWanted : True\n\n", "")
         b_head = ("module\n\nnamespace ReviewCases\n\n"
