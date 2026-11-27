@@ -106,16 +106,21 @@ section Definitions
 
 variable {Ω 𝒳 : Type*}
 
-/-- **Hahn's variance bound** for the average treatment effect at centering `τ`:
-`E[s₁(X) / e(X) + s₀(X) / (1 - e(X)) + (m₁(X) - m₀(X) - τ)²]`, where `s_a` is the conditional
-variance of `Y_a` given `X`. -/
+/-- **Hahn's expression** at centering `τ`: the integral
+`E[s₁(X) / e(X) + s₀(X) / (1 - e(X)) + (m₁(X) - m₀(X) - τ)²]` against `μ`, defined for any
+inputs. It is Hahn's variance bound for the average treatment effect only at the true center
+`τ = E[Y₁ - Y₀]` under Hahn's hypotheses, with `e` the propensity score and `m_a`, `s_a` the
+conditional mean and variance of `Y_a` given `X` (`HahnSetup.variance_aipwScore`,
+`HahnSetup.hahnBound_le_variance_augmentedIPWScore`). -/
 noncomputable def hahnBound [MeasurableSpace Ω] (μ : Measure Ω) (X : Ω → 𝒳)
     (e m₀ m₁ s₀ s₁ : 𝒳 → ℝ) (τ : ℝ) : ℝ :=
   ∫ ω, (s₁ (X ω) / e (X ω) + s₀ (X ω) / (1 - e (X ω)) + (m₁ (X ω) - m₀ (X ω) - τ) ^ 2) ∂μ
 
 /-- The **augmented IPW score** with augmentation function `h`:
 `1_T Y / e(X) - 1_{Tᶜ} Y / (1 - e(X)) - (1_T - e(X)) h(X)`. With `h = 0` it is the IPW
-contrast; with `h = efficientAugmentation e m₀ m₁` it is the AIPW score. -/
+contrast; with `h = efficientAugmentation e m₀ m₁` it is the AIPW score where `e(X) ∉ {0, 1}`
+(`aipwScore_eq_augmentedIPWScore`, under overlap). Elsewhere the two can differ, since division
+by zero gives `0`. -/
 noncomputable def augmentedIPWScore (T : Set Ω) (X : Ω → 𝒳) (Y : Ω → ℝ) (e h : 𝒳 → ℝ) :
     Ω → ℝ := fun ω =>
   T.indicator (fun ω => Y ω / e (X ω)) ω - Tᶜ.indicator (fun ω => Y ω / (1 - e (X ω))) ω -

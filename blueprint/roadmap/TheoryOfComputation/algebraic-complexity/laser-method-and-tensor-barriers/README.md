@@ -1,0 +1,15 @@
+# Laser Method and Tensor Barriers
+
+- [Strassen's asymptotic spectrum of tensors and asymptotic rank](asymptotic-spectrum.md)
+- [Schönhage's asymptotic sum inequality](asymptotic-sum-inequality.md)
+- [The Coppersmith–Winograd tensor](cw-tensor.md)
+- [Blasiak et al.: slice rank obstructs the group-theoretic approach over bounded-exponent abelian groups](bccgnsu-group-barrier.md)
+- [Strassen's spectral characterization of asymptotic rank and subrank](strassen-spectral-duality.md)
+- [The value of a tensor in the laser method](tensor-value.md)
+- [The Coppersmith–Winograd tensor has border rank q+2](cw-border-rank.md)
+- [Christandl–Vrana–Zuiddam irreversibility barrier for the laser method](cvz-irreversibility-barrier.md)
+- [Coppersmith–Winograd hashing with progression-free sets](salem-spencer-hashing.md)
+- [The laser method bound on omega from tensor values](laser-method-bound.md)
+- [Ambainis–Filmus–Le Gall: limitations of the Coppersmith–Winograd analysis](aflg-barrier.md)
+- [Alman–Vassilevska Williams: refined laser method and omega < 2.37286](avw-refined-laser.md)
+- [Duan–Wu–Zhou asymmetric hashing and the combination loss](dwz-asymmetric-hashing.md)

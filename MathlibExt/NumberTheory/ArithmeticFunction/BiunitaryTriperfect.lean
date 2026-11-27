@@ -45,6 +45,10 @@ import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowAddOne
   biunitary divisor sum is multiplicative, and its value at an odd prime power is even.
 * `four_le_factorization_two_of_biunitaryTriperfect`: a positive integer `N` with `σ**(N) = 3N`
   and `3 ≤ N.factorization 3` satisfies `4 ≤ N.factorization 2`.
+* `eq_2160_of_factorization_two_eq_four`: a positive integer `N` with `σ**(N) = 3N`, exact
+  exponent four at two and exponent three or four at three equals `2160` (Lemma 14). After
+  removing the factor `2 ^ 4`, the multiplicativity of `σ**` and the parity of `σ**` at odd
+  prime powers leave only `N = 2 ^ 4 * 3 ^ 3 * 5`.
 
 Here `σ**` is the biunitary divisor sum.
 
@@ -1450,5 +1454,114 @@ public theorem four_le_factorization_two_of_biunitaryTriperfect (N : ℕ) (hN : 
   · exact aux_e1 hN hσ hf h1
   · exact aux_e2 hN hσ hf h2
   · exact aux_e3 hN hσ hf h3
+
+
+-- Lemma 3 at `p = 5`: for `g ≥ 3`, `σ**(5 ^ g) / 5 ^ g ≥ (1 + 1/5)(1 + 1/125) > 6/5`.
+private theorem five_mul_sigmaBiunitary_five_pow_gt {g : ℕ} (hg : 3 ≤ g) :
+    6 * 5 ^ g < 5 * sigmaBiunitary (5 ^ g) := by
+  have hb := (sigmaBiunitary_prime_pow_div_ge 5 g (by decide) (by omega)).2.2 hg
+  have hpos : (0 : ℚ) < (5 : ℚ) ^ g := by positivity
+  push_cast at hb
+  rw [le_div_iff₀ hpos] at hb
+  have hlt : (6 : ℚ) * 5 ^ g < 5 * sigmaBiunitary (5 ^ g) := by linarith
+  exact_mod_cast hlt
+
+-- An odd `m` with `σ**(m) / m = 6/5` is `5`.
+private theorem eq_five_of_sigmaBiunitary_ratio {m : ℕ} (hm : Odd m)
+    (hs : 5 * sigmaBiunitary m = 6 * m) : m = 5 := by
+  have hm0 : m ≠ 0 := fun h => Nat.not_odd_zero (h ▸ hm)
+  have h5 : 5 ∣ m := (by decide : Nat.Coprime 5 6).dvd_of_dvd_mul_left
+    (hs ▸ Nat.dvd_mul_right 5 (sigmaBiunitary m))
+  let g := m.factorization 5
+  let r := ordCompl[5] m
+  have hg : 0 < g := (by decide : Nat.Prime 5).factorization_pos_of_dvd hm0 h5
+  have hr0 : r ≠ 0 := (Nat.ordCompl_pos 5 hm0).ne'
+  have hmr : 5 ^ g * r = m := Nat.ordProj_mul_ordCompl_eq_self m 5
+  have hpr : (5 ^ g).Coprime r :=
+    (Nat.coprime_ordCompl (by decide : Nat.Prime 5) hm0).pow_left g
+  have hmul := sigmaBiunitary_mul_of_coprime hpr
+  have hro : Odd r := Nat.Odd.of_mul_right (hmr ▸ hm)
+  have hpo : Odd ((5 : ℕ) ^ g) := (by decide : Odd (5 : ℕ)).pow
+  have hpe : Even (sigmaBiunitary (5 ^ g)) :=
+    even_sigmaBiunitary_of_odd_pos hpo (Nat.one_lt_pow hg.ne' (by decide : 1 < (5 : ℕ)))
+  have hr1 : r = 1 := by
+    by_contra hr1
+    have hre : Even (sigmaBiunitary r) := even_sigmaBiunitary_of_odd_pos hro
+      (Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨hr0, hr1⟩)
+    obtain ⟨a, ha⟩ := hpe
+    obtain ⟨b, hb⟩ := hre
+    have hmul' : sigmaBiunitary m = sigmaBiunitary (5 ^ g) * sigmaBiunitary r := by
+      simpa only [hmr] using hmul
+    have hme : Even (3 * m) := ⟨5 * a * b, by nlinarith [hmul']⟩
+    exact (Nat.not_odd_iff_even.mpr
+      ((Nat.even_mul.mp hme).resolve_left (by decide : ¬ Even (3 : ℕ)))) hm
+  have hmp : m = 5 ^ g := by simpa only [hr1, mul_one] using hmr.symm
+  have hsg : 5 * sigmaBiunitary (5 ^ g) = 6 * 5 ^ g := by simpa only [hmp] using hs
+  have hgle : g ≤ 2 := by
+    by_contra h
+    have := five_mul_sigmaBiunitary_five_pow_gt (by omega : 3 ≤ g)
+    omega
+  have hg2 : g ≠ 2 := by
+    intro h
+    have h25 : 5 * sigmaBiunitary 25 = 6 * 25 := by
+      simpa only [h, show (5 : ℕ) ^ 2 = 25 by decide] using hsg
+    rw [sigmaBiunitary_twentyFive] at h25
+    omega
+  have hg1 : g = 1 := by omega
+  simpa only [hg1, pow_one] using hmp
+
+/-- **Biunitary triperfect numbers exactly divisible by $2^4$ and by $3^3$ or $3^4$.** Let $N$ be
+a biunitary triperfect number, that is, a positive integer with $\sigma^{**}(N) = 3N$, where
+$\sigma^{**}$ is the biunitary divisor sum. If the exact power of $2$ dividing $N$ is $2^4$ and the
+exact power of $3$ dividing $N$ is $3^3$ or $3^4$, then $N = 2160$.
+
+Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
+Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 14 (`jis-2025-25.4.5-lem-14`). -/
+public theorem eq_2160_of_factorization_two_eq_four (N : ℕ) (hN : 0 < N)
+    (hσ : sigmaBiunitary N = 3 * N) (hf : 3 ≤ N.factorization 3)
+    (he : N.factorization 2 = 4) (hf4 : N.factorization 3 ≤ 4) : N = 2160 := by
+  let a := ordCompl[2] N
+  have ha0 : a ≠ 0 := (Nat.ordCompl_pos 2 hN.ne').ne'
+  have hna : 16 * a = N := by
+    simpa only [a, he, show (2 : ℕ) ^ 4 = 16 by decide] using
+      Nat.ordProj_mul_ordCompl_eq_self N 2
+  have ha2 : Nat.Coprime 16 a := by
+    simpa only [show (2 : ℕ) ^ 4 = 16 by decide] using
+      (Nat.coprime_ordCompl Nat.prime_two hN.ne').pow_left 4
+  have hao : Odd a := Nat.not_even_iff_odd.mp
+    (mt even_iff_two_dvd.mp (Nat.not_dvd_ordCompl Nat.prime_two hN.ne'))
+  have ha3 : a.factorization 3 = N.factorization 3 := by
+    dsimp only [a]
+    rw [Nat.factorization_ordCompl, Finsupp.erase_ne (by decide : (3 : ℕ) ≠ 2)]
+  have hsa := sigmaBiunitary_mul_of_coprime ha2
+  rw [hna, sigmaBiunitary_sixteen, hσ] at hsa
+  have hsa' : 27 * sigmaBiunitary a = 48 * a := by omega
+  let m := ordCompl[3] a
+  have hm0 : m ≠ 0 := (Nat.ordCompl_pos 3 ha0).ne'
+  have ham : 3 ^ N.factorization 3 * m = a := by
+    simpa only [m, ha3] using Nat.ordProj_mul_ordCompl_eq_self a 3
+  have hmo : Odd m := Nat.Odd.of_mul_right (ham ▸ hao)
+  have hm3 : (3 ^ N.factorization 3).Coprime m :=
+    (Nat.coprime_ordCompl (by decide : Nat.Prime 3) ha0).pow_left _
+  have hsm := sigmaBiunitary_mul_of_coprime hm3
+  rw [ham] at hsm
+  rw [hsm, ← ham] at hsa'
+  have hcases : N.factorization 3 = 3 ∨ N.factorization 3 = 4 := by omega
+  rcases hcases with h3 | h4
+  · rw [h3, show (3 : ℕ) ^ 3 = 27 by decide, sigmaBiunitary_twentySeven] at hsa'
+    have hm5 : m = 5 := eq_five_of_sigmaBiunitary_ratio hmo (by omega)
+    rw [← hna, ← ham, h3, hm5]
+    decide
+  · rw [h4, show (3 : ℕ) ^ 4 = 81 by decide,
+      show sigmaBiunitary 81 = 112 by decide] at hsa'
+    have hratio : 7 * sigmaBiunitary m = 9 * m := by omega
+    have hso : Odd (sigmaBiunitary m) := Nat.Odd.of_mul_right (by
+      rw [hratio]
+      exact (by decide : Odd (9 : ℕ)).mul hmo)
+    have hm1 : m = 1 := by
+      by_contra hm1
+      exact Nat.not_even_iff_odd.mpr hso (even_sigmaBiunitary_of_odd_pos hmo (by omega))
+    rw [hm1, sigmaBiunitary_one] at hratio
+    omega
 
 end MetaMathlibExt
