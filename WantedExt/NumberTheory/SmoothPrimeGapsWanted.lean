@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.SmoothPrimeGaps
 public import WantedExt.NumberTheory.PrimeGapBoundsHypotheses
+public import MathlibExt.NumberTheory.SmoothPrimeGapsInfinitePrimeTuplesSmoothGaps
 
 /-!
 # Smooth gaps between primes
@@ -51,23 +52,6 @@ J. Maynard, *Small gaps between primes*, Ann. of Math. 181 (2015). -/
 public theorem_wanted maynard_tao_admissible_tuples (m : ℕ) (hm : 2 ≤ m) :
     ∃ k : ℕ, ∀ H : Finset ℤ, IsAdmissibleFinset H → k ≤ H.card →
       {n : ℤ | m ≤ (H.filter (fun h => (n + h).toNat.Prime)).card}.Infinite
-
-/-- **Prime $m$-tuples with smooth gaps.** Let $m \ge 2$ and $k$ be natural numbers such that
-every admissible finite set $H$ of at least $k$ integers has infinitely many integers $n$ for
-which $n + h$ is a (positive) prime for at least $m$ elements $h \in H$. Then there are
-infinitely many $m$-tuples of primes $p_1 < p_2 < \dots < p_m$ such that for all $j < i$ every
-prime factor of $p_i - p_j$ is at most $k$.
-
-Equivalently, every gap is $y$-smooth for $y$ the largest prime at most $k$; the paper applies
-this with the admissible values $k_m$ of the Maynard–Tao theorem listed in its Table 1.
-
-Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
-INTEGERS 25 (2025), Article A44, Theorem 3 (`integers-2025-A44-thm-3`). -/
-public theorem_wanted infinite_prime_tuples_smooth_gaps (m k : ℕ) (hm : 2 ≤ m)
-    (hk : ∀ H : Finset ℤ, IsAdmissibleFinset H → k ≤ H.card →
-      {n : ℤ | m ≤ (H.filter (fun h => (n + h).toNat.Prime)).card}.Infinite) :
-    {P : Fin m → ℕ | (∀ i, (P i).Prime) ∧
-      ∀ i j, j < i → P j < P i ∧ P i - P j ∈ Nat.smoothNumbers (k + 1)}.Infinite
 
 /-- **Prime pairs with $5$-smooth difference under Elliott–Halberstam.** If the
 Elliott–Halberstam conjecture holds, then there are infinitely many pairs of primes $p > q$ such

@@ -220,7 +220,7 @@ variable [(NativeRestrictionCohomologyMaps.restrictY (AnalyticAbsoluteDeRhamSour
   [ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (AnalyticAbsoluteDeRhamSources.constantK p K B X PX) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (ax (E := E) (Q := Q) (H := H)))]
   [ExactCochainUnit (NativeTensorProjectionMaps.tensorX Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.regular) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY))]
 
-variable  (PC : PositiveConnectionSource p K SX.regular SX.positive SX.untilting SX.scalars
+variable (PC : PositiveConnectionSource p K SX.regular SX.positive SX.untilting SX.scalars
     (ProEtaleDeRhamSources.forms p K B X Y f PX SX Ω) FS.differential)
   (FC : FullConnectionSource p K SX.regular SX.positive SX.untilting SX.scalars
     (ProEtaleDeRhamSources.forms p K B X Y f PX SX Ω) FS.differential PC)

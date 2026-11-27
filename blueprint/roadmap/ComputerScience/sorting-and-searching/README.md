@@ -26,3 +26,4 @@ Comparison and distribution sorting algorithms (including their expected-cost an
 - [Quicksort](quicksort/README.md)
 - [Algorithm analysis models](algorithm-analysis-models/README.md)
 - [Selection bounds](selection-bounds/README.md)
+- [Word-RAM Integer Algorithms](word-ram-integer-algorithms/README.md)
