@@ -3,12 +3,14 @@
 Fix a strict total order on constants and variables in which every constant precedes every variable and which is
 decidable in polynomial time on the encodings of the terms (for example, constants before variables, and lexicographic
 order on encodings within each kind). Let $S$ be a finite set
-of atoms over a schema, with constants and variables, and $\Sigma$ a set of functional dependencies $R : U \to V$ over it,
-where $U, V$ are sets of positions of $R$. A dependency $R : U \to V$ is *applicable* to $S$ with atoms $R(\bar u), R(\bar v) \in S$
-and a position $i \in V$ when $\pi_U(\bar u) = \pi_U(\bar v)$ and $u_i \ne v_i$. Applying it fails, with result $\bot$, if $u_i$
+of atoms over a schema, with constants and variables, and $\Sigma$ a set of functional dependencies $R : U \to \{i\}$ over it,
+where $U$ is a set of positions of $R$ and $i$ a position; every functional dependency $R : U \to V$ is equivalent to the set
+of the dependencies $R : U \to \{i\}$ for $i \in V$, and the chase of a set with arbitrary right-hand sides is the chase with
+that equivalent set. A dependency $R : U \to \{i\}$ is *applicable* to $S$ with atoms $R(\bar u), R(\bar v) \in S$
+when $\pi_U(\bar u) = \pi_U(\bar v)$ and $u_i \ne v_i$. Applying it fails, with result $\bot$, if $u_i$
 and $v_i$ are distinct constants; otherwise it replaces every occurrence in $S$ of the larger of $u_i, v_i$ by the smaller
-one. Applying $R : U \to V$ one position at a time is applying the functional dependencies $R : U \to \{i\}$, $i \in V$,
-which together are equivalent to it; a step on several positions at once need not be a function: for
+one. With singleton right-hand sides the step is the source's step for $R : U \to \{i\}$; a step on several positions at once
+need not be a function: for
 $R(k, a, b), R(k, x, x)$ and $\{1\} \to \{2, 3\}$ it would send $x$ to both $a$ and $b$, whereas position by position it
 maps $x$ to $a$ and then fails on $a, b$.
 

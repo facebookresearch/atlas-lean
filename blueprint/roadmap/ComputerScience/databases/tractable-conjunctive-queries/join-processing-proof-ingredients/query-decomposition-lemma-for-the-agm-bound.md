@@ -5,13 +5,12 @@ Let $q = R_1 \bowtie \dots \bowtie R_n$ be a join query over attribute set $X$ w
 database in which every relation $R_i^D$ is nonempty. For $Y \subseteq X$ let $\mathcal R(Y)$ be the set of relations that
 mention an attribute of $Y$, and let $q_Y$ be the join of the projections $\pi_{Y \cap S(R_i)}(R_i)$ over $R_i \in \mathcal R(Y)$.
 For a tuple $\bar a$ write $R_i^D \ltimes \{\bar a\}$ for the set of tuples of $R_i^D$ that agree with $\bar a$ on their shared
-attributes. Then for all $Y, Z \subseteq X$ with $Y \cup Z = X$ and $Y \cap Z = \emptyset$, either possibly empty,
+attributes. Then for every partition $\{Y, Z\}$ of $X$,
 
 $$\sum_{\bar a \in q_Y(D)} \ \prod_{R_i \in \mathcal R(Z)} \bigl|R_i^D \ltimes \{\bar a\}\bigr|^{f(S(R_i))} \le \prod_{i=1}^n \bigl|R_i^D\bigr|^{f(S(R_i))}.$$
 
-For $Y = \emptyset$ the join $q_\emptyset$ is $\{()\}$, and for $Z = \emptyset$ the product is empty and equals $1$.
-The proof moves one attribute at a time from $Y$ to $Z$ and applies Hölder's inequality; with $Y = X$ it gives the
-[AGM bound](../../join-processing/agm-output-size-bound-for-join-queries.md).
+The proof moves one attribute at a time from $Y$ to $Z$ and applies Hölder's inequality; the proof of the [AGM bound](../../join-processing/agm-output-size-bound-for-join-queries.md) applies it inductively, with $Z$ a single attribute
+(proof of Theorem 25.12).
 
 ## Depends on
 

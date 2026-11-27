@@ -1,8 +1,8 @@
 # Semijoin recurrence along a join tree for Boolean acyclic queries
 
 Let $q$ be a Boolean acyclic conjunctive query with atoms $R_1(\bar u_1), \dots, R_n(\bar u_n)$, let $T$ be a rooted
-[join tree](../../join-processing/characterizations-of-acyclic-database-schemas.md) of its hypergraph, whose nodes are the atoms, each labeled by its
-variable set $X_i$ (two atoms with the same variables are distinct nodes), and let $D$ be a database. For a node $s$ let $q_s$ be the conjunctive query with the single atom $s$, whose output
+[join tree](../../join-processing/characterizations-of-acyclic-database-schemas.md) of its hypergraph, whose nodes are the variable sets $X_i$ of the
+atoms, and let $D$ be a database. For a node $s = X_i$ let $q_s$ be the conjunctive query whose atoms are all atoms $R_j(\bar u_j)$ with $X_j = X_i$ and whose output
 tuple lists its variables, and let $Q_s$ be the conjunctive query with all atoms in the subtree of $T$ rooted at $s$ and output
 the variables of $s$. Then
 
@@ -10,9 +10,6 @@ the variables of $s$. Then
 - if $s$ has children $s_1, \dots, s_p$, then $Q_s(D) = q_s(D) \ltimes Q_{s_1}(D) \ltimes \dots \ltimes Q_{s_p}(D)$, iterating semijoins.
 
 Hence $q(D)$ is true if and only if $Q_r(D) \ne \emptyset$ for the root $r$, which a bottom-up pass of semijoins computes.
-The source indexes the tree by distinct variable sets and groups the atoms of each set; replacing a group by a path of
-its atoms gives an atom-indexed join tree with the same recurrence, since atoms with equal variable sets semijoin as
-intersections.
 
 ## Depends on
 

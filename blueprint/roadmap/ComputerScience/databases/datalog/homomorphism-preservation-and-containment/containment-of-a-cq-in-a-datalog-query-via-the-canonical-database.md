@@ -23,3 +23,6 @@ evaluation of $P$ on the frozen body of $q$.
 
 - S. Chaudhuri and M. Y. Vardi, "On the equivalence of recursive and nonrecursive Datalog programs", *J. Comput. System Sci.* 54(1) (1997) 61–78; conference version PODS 1992; author copy <https://www.cs.rice.edu/~vardi/papers/pods92rj.pdf>, Section 1 (p. 2 of the author copy): containment of a conjunctive query in a recursive program is decidable, citing earlier work.
 - M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Corollary 36.6 (homomorphism preservation, which gives the "if" direction) and Corollary 15.6 (the same freezing argument for conjunctive queries).
+- M. Krötzsch, *Database Theory*, lecture notes, TU Dresden, Lecture 13, "Datalog Expressivity and Containment" (2 June 2025),
+  slides 14–15 (a conjunctive query as the rule $\mathrm{Ans}(\bar x) \leftarrow Q$, and the containment test by freezing each
+  variable to a fresh constant), <https://iccl.inf.tu-dresden.de/w/images/4/42/DBT2025-Lecture-13-print.pdf>.

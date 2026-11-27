@@ -2,7 +2,7 @@
 
 For a set $\Sigma$ of integrity constraints and conjunctive queries $q, q'$, write $q \subseteq_\Sigma q'$ when
 $q(D) \subseteq q'(D)$ for every (finite) database $D$ that satisfies $\Sigma$. The problem of deciding, for conjunctive queries $q, q'$ and a set $\Sigma$ of
-functional dependencies, whether $q \subseteq_\Sigma q'$ is NP-complete. Chasing $q$ with $\Sigma$ identifies terms as the
+functional dependencies, whether $q \subseteq_\Sigma q'$ is NP-complete. Chasing $q$ with $\Sigma$, replaced by the equivalent set of functional dependencies with singleton right-hand sides, identifies terms as the
 dependencies dictate, computes in polynomial time and either fails (then $q \subseteq_\Sigma q'$ holds trivially) or
 yields a set of atoms that satisfies $\Sigma$ together with the head tuple of $q$ as rewritten by the chase, which may
 contain constants, so the pair is a tableau rather than a query of the linked syntax; in that case a witness is a map
