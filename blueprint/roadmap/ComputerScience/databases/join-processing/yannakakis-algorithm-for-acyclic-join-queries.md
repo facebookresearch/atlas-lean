@@ -12,6 +12,7 @@ whether $q$ holds on a database $D$ in time $O(\|D\| \log \|D\| \cdot \|q\|)$.
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [One semijoin command](semijoin-step.md)
 - [Running a semijoin program](run-semijoins.md)
+- [Characterizations of acyclic database schemas](characterizations-of-acyclic-database-schemas.md)
 
 ## Proof depends on
 
