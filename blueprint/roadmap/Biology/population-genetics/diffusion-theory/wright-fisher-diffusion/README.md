@@ -52,4 +52,6 @@
 - [Laplace transform of the absorption time of the neutral Wright–Fisher diffusion](laplace-transform-of-the-absorption-time.md)
 - [Replicator dynamics in Aitchison geometry](replicator-dynamics-in-aitchison-geometry/README.md)
 - [Gradient-flow structure of evolutionary models](gradient-flow-structure-of-evolutionary-models/README.md)
+- [Generalized Kimura diffusion operators](generalized-kimura-diffusion-operators/README.md)
+- [Generalized Kimura diffusions on manifolds with corners](generalized-kimura-diffusions-on-manifolds-with-corners/README.md)
 - [Weak frequency-dependent selection in diffusions](weak-frequency-dependent-selection-in-diffusions/README.md)
