@@ -1,6 +1,6 @@
 # GMW: oblivious transfer is complete for semi-honest multiparty computation
 
-For every $m$-party deterministic functionality given by a Boolean circuit $C$, the GMW circuit-evaluation protocol in the $\mathrm{OT}^4_1$-hybrid model computes $C$ with perfect semi-honest privacy against every static coalition: each party additively shares each of its input bits among all parties using its private coins; XOR and NOT gates are evaluated locally on shares; each AND gate is evaluated by one invocation of the $m$-party shared multiplication; finally the output shares are sent to their owners. The simulators run in polynomial time, so for circuit families of polynomial size the protocol family is semi-honest secure; composing with any semi-honest secure protocol for $\mathrm{OT}^4_1$ (for example from DDH) gives a semi-honest secure protocol in the plain model for every polynomial-time functionality.
+For every $m$-party deterministic functionality given by a Boolean circuit $C$, the GMW circuit-evaluation protocol in the $\mathrm{OT}^4_1$-hybrid model computes $C$ with perfect semi-honest privacy against every static coalition: each party additively shares each of its input bits among all parties using its private coins; XOR and NOT gates are evaluated locally on shares; each AND gate is evaluated by one invocation of the $m$-party shared multiplication; finally the output shares are sent to their owners. The simulators run in polynomial time, so for circuit families of polynomial size the protocol family is semi-honest secure; composing with any semi-honest secure protocol for $\mathrm{OT}^4_1$ (for example from enhanced trapdoor permutations, Goldreich, Proposition 7.3.6) gives a semi-honest secure protocol in the plain model for every polynomial-time functionality.
 
 ## Proof sketch
 
@@ -19,4 +19,4 @@ Each wire is shared so that every proper coalition's shares are uniform and inde
 
 ## Sources
 
-- Oded Goldreich, "Foundations of Cryptography, Volume 2: Basic Applications", Cambridge University Press, 2004.
+- Oded Goldreich, "Foundations of Cryptography, Volume 2: Basic Applications", Cambridge University Press, 2004, Proposition 7.3.6 (oblivious transfer from enhanced trapdoor permutations), Proposition 7.3.8, Proposition 7.5.9, Construction 7.5.10, Proposition 7.5.11 and Theorem 7.5.12.
