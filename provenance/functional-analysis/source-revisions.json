@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "directory": "provenance/functional-analysis/residual-analysis",
+      "source_revision": "f386092a56f2b7b2f57a83548b841f93c6addd31",
+      "file_count": 40,
+      "source_content_binding": "40 whole active original source rows in active-source-snapshot-v2; current source/import/proof/documentation adaptations are recorded, and full original/history custody is retained separately."
+    },
+    {
+      "directory": "provenance/functional-analysis/kernel-spectral-tensor-apis",
+      "source_revision": "632b19d0721122e67fcdd66ab75bd37a9f89de86",
+      "documentation_revision": "bd599a2704f61645eea9650a5caa8da7f27b9c44",
+      "file_count": 5,
+      "source_content_binding": "Five whole original active kernel/spectral snapshots and exact currentexport records."
+    }
+  ]
+}

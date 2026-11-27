@@ -257,4 +257,28 @@ theorem exists_auerbach_basis [FiniteDimensional 𝕜 E] :
       rw [hbi]
       exact hnorm1 i) (hcoord i)
 
+/- Biorthogonal formulation: @toskua, Avocado. -/
+/-- **An Auerbach basis with biorthogonal coordinate functionals.** Let `𝕜` be a real or
+complex scalar field and `E` a finite-dimensional normed `𝕜`-space. There are a basis
+`b : Basis (Fin (finrank 𝕜 E)) 𝕜 E` and continuous linear functionals `φᵢ : E →L[𝕜] 𝕜`
+with `‖bᵢ‖ = ‖φᵢ‖ = 1` and `φᵢ(bⱼ) = 1` for `i = j`, zero otherwise. The zero-dimensional
+space is included: its index type is empty. The functionals can be chosen as the coordinates
+of the same Auerbach basis. -/
+theorem exists_auerbach_basis_biorthogonal [FiniteDimensional 𝕜 E] :
+    ∃ (b : Module.Basis (Fin (Module.finrank 𝕜 E)) 𝕜 E)
+      (φ : Fin (Module.finrank 𝕜 E) → E →L[𝕜] 𝕜),
+      (∀ i, ‖b i‖ = 1) ∧ (∀ i, ‖φ i‖ = 1) ∧
+        ∀ i j, φ i (b j) = if i = j then 1 else 0 := by
+  classical
+  obtain ⟨b, hb⟩ := exists_auerbach_basis (𝕜 := 𝕜) (E := E)
+  refine ⟨b, fun i => coordCLM b i, hb.1, hb.2, ?_⟩
+  intro i j
+  change (b.repr (b j)) i = if i = j then 1 else 0
+  rw [Module.Basis.repr_self, Finsupp.single_apply]
+  by_cases h : i = j
+  · subst j
+    rfl
+  · have hji : j ≠ i := fun hij => h (Eq.symm hij)
+    rw [ite_eq_right h, ite_eq_right hji]
+
 end MathlibExt.Analysis.FunctionalAnalysis.AuerbachBasis

@@ -1,0 +1,65 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.MeasureTheory.Function.BoundedMeasurable
+
+/-!
+# Bounded measurable reciprocal cuts
+
+Cutting a measurable complex function at a positive real-part threshold
+gives a bounded reciprocal function with the actual supremum-norm bound.
+-/
+
+@[expose] public section
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+noncomputable section
+open MeasureTheory
+namespace MathlibExt.MeasureTheory.Function.BoundedMeasurableFunction
+universe uX
+variable {X : Type uX} [MeasurableSpace X]
+
+/-- Let `X` be a measurable space, let `f : X → ℂ` be measurable, and let `delta : ℝ` be positive.
+This bounded measurable complex function on the same space `X` has value `(f x)⁻¹` where
+`delta ≤ (f x).re`, and value zero at the other points, with the ordinary complex norm. -/
+def reciprocalReCut (f : X → ℂ) (hf : Measurable f) (delta : ℝ) (hdelta : 0 < delta) :
+    BoundedMeasurableFunction X := by
+  classical
+  refine ofBound (fun x => if delta ≤ (f x).re then (f x)⁻¹ else 0) ?_ delta⁻¹ ?_
+  · exact Measurable.ite (measurableSet_le measurable_const (Complex.continuous_re.measurable.comp hf))
+      hf.inv measurable_const
+  · intro x
+    by_cases hx : delta ≤ (f x).re
+    · rw [ite_eq_left hx, norm_inv]
+      exact inv_anti₀ hdelta (hx.trans (Complex.re_le_norm (f x)))
+    · rw [ite_eq_right hx, norm_zero]
+      exact inv_nonneg.mpr hdelta.le
+
+/-- Let `X` be a measurable space, let `f : X → ℂ` be measurable, and let `delta : ℝ` be positive.
+For every `x : X`, evaluating the bounded reciprocal real-part cut gives exactly
+`if delta ≤ (f x).re then (f x)⁻¹ else 0`. -/
+theorem reciprocalReCut_apply (f : X → ℂ) (hf : Measurable f) (delta : ℝ) (hdelta : 0 < delta)
+    (x : X) : reciprocalReCut f hf delta hdelta x = if delta ≤ (f x).re then (f x)⁻¹ else 0 := rfl
+
+/-- Let `X` be a measurable space, let `f : X → ℂ` be measurable, and let `delta : ℝ` be positive.
+The actual supremum norm of the bounded measurable function `reciprocalReCut f hf delta hdelta`
+is at most `delta⁻¹`. -/
+theorem norm_reciprocalReCut_le (f : X → ℂ) (hf : Measurable f) (delta : ℝ) (hdelta : 0 < delta) :
+    ‖reciprocalReCut f hf delta hdelta‖ ≤ delta⁻¹ := by
+  unfold reciprocalReCut
+  apply norm_ofBound_le
+  exact inv_nonneg.mpr hdelta.le
+
+end MathlibExt.MeasureTheory.Function.BoundedMeasurableFunction
+
+end

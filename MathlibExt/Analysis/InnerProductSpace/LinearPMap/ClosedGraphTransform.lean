@@ -1,0 +1,262 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Topology.Algebra.Module.LinearPMap
+public import Mathlib.Analysis.InnerProductSpace.ProdL2
+public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
+public import Mathlib.Analysis.InnerProductSpace.Positive
+
+/-!
+# Literal closed-graph transforms
+
+The canonical l2 product carries the actual graph of a partial linear map.
+For a closed graph between complete Hilbert spaces, its orthogonal projection
+computes the first and second graph coordinates. Their original domain,
+inner-product and norm characteristics follow from that projection.
+
+## References
+
+J. B. Conway, *A Course in Functional Analysis*, second edition, Graduate Texts in Mathematics
+96, Springer, 1990, Chapter X §4, Proposition 4.2(a)–(c), treats the graph-coordinate
+construction for a closed densely defined operator: the first coordinate is `B=(I+A* A)⁻¹` and
+the second is `C=AB`. The orthogonal graph projection here defines both coordinates for any
+closed partial linear map between complete real or complex Hilbert spaces; density is needed for
+the adjoint/inverse characterization, not for the coordinate definitions.
+-/
+
+@[expose] public section
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+noncomputable section
+open Set
+open scoped ENNReal InnerProductSpace
+namespace LinearPMap
+universe uScalar uSource uTarget
+
+section Normed
+variable {𝕜 : Type uScalar} [NormedField 𝕜]
+variable {H : Type uSource} {K : Type uTarget}
+variable [NormedAddCommGroup H] [NormedSpace 𝕜 H]
+variable [NormedAddCommGroup K] [NormedSpace 𝕜 K]
+
+/-- Let `𝕜` be a normed field, let `H` and `K` be normed spaces over `𝕜`, and let
+`A : H →ₗ.[𝕜] K` be a partial linear map. This is the submodule of `WithLp 2 (H × K)` obtained
+by pulling the actual graph of `A` back through the canonical l2 product equivalence. -/
+def closedGraphSubmodule (A : H →ₗ.[𝕜] K) : Submodule 𝕜 (WithLp 2 (H × K)) :=
+  A.graph.comap (WithLp.prodContinuousLinearEquiv 2 𝕜 H K).toLinearMap
+
+/-- Let `𝕜` be a normed field, let `H` and `K` be normed spaces over `𝕜`, and let
+`A : H →ₗ.[𝕜] K` have closed graph. Its graph pullback `closedGraphSubmodule A` is closed
+in the canonical l2 normed product `WithLp 2 (H × K)`. -/
+theorem closedGraphSubmodule_isClosed (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) :
+    _root_.IsClosed (closedGraphSubmodule A : Set (WithLp 2 (H × K))) := by
+  change _root_.IsClosed ((WithLp.prodContinuousLinearEquiv 2 𝕜 H K) ⁻¹' (A.graph : Set (H × K)))
+  exact hA.preimage (WithLp.prodContinuousLinearEquiv 2 𝕜 H K).continuous
+
+end Normed
+
+section Hilbert
+variable {𝕜 : Type uScalar} [RCLike 𝕜]
+variable {H : Type uSource} {K : Type uTarget}
+variable [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
+variable [NormedAddCommGroup K] [InnerProductSpace 𝕜 K] [CompleteSpace K]
+
+/-- Let `𝕜` be an `RCLike` field and let `H` and `K` be complete inner product spaces
+over `𝕜`. For a partial linear map `A : H →ₗ.[𝕜] K` with closed graph, this continuous linear
+endomorphism of `WithLp 2 (H × K)` is the orthogonal projection onto `closedGraphSubmodule A`. -/
+def closedGraphProjection (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) :
+    WithLp 2 (H × K) →L[𝕜] WithLp 2 (H × K) := by
+  let G := closedGraphSubmodule A
+  letI : CompleteSpace G := (closedGraphSubmodule_isClosed A hA).isComplete.completeSpace_coe
+  letI := Submodule.HasOrthogonalProjection.ofCompleteSpace G
+  exact G.starProjection
+
+/-- Let `𝕜` be an `RCLike` field and let `H` and `K` be complete inner product spaces
+over `𝕜`. For a partial linear map `A : H →ₗ.[𝕜] K` with closed graph, this continuous linear
+map sends `x : H` to the orthogonal projection of `(x,0)` onto the actual graph in
+`WithLp 2 (H × K)`, using the canonical inherited Hilbert product norm. -/
+def closedGraphTransform (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) :
+    H →L[𝕜] WithLp 2 (H × K) :=
+  (closedGraphProjection A hA).comp
+    ((WithLp.prodContinuousLinearEquiv 2 𝕜 H K).symm.toContinuousLinearMap.comp
+      (ContinuousLinearMap.inl 𝕜 H K))
+
+/-- Let `𝕜` be an `RCLike` field and let `H` and `K` be complete inner product spaces
+over `𝕜`. For a partial linear map `A : H →ₗ.[𝕜] K` with closed graph, this continuous linear
+endomorphism of `H` is the first coordinate of the orthogonal projection of `(x,0)`
+onto the actual graph in `WithLp 2 (H × K)`. -/
+def closedGraphFirstTransform (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) : H →L[𝕜] H :=
+  (WithLp.fstL 2 𝕜 H K).comp (closedGraphTransform A hA)
+
+/-- Let `𝕜` be an `RCLike` field and let `H` and `K` be complete inner product spaces
+over `𝕜`. For a partial linear map `A : H →ₗ.[𝕜] K` with closed graph, this continuous linear
+map from `H` to `K` is the second coordinate of the orthogonal projection of `(x,0)`
+onto the actual graph in `WithLp 2 (H × K)`. -/
+def closedGraphSecondTransform (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) : H →L[𝕜] K :=
+  (WithLp.sndL 2 𝕜 H K).comp (closedGraphTransform A hA)
+
+/-- Let `𝕜` be an `RCLike` field, let `H` and `K` be complete inner product spaces
+over `𝕜`, and let `A : H →ₗ.[𝕜] K` have closed graph. For every `x : H`, its computed
+graph transform belongs to the actual graph pullback `closedGraphSubmodule A`. -/
+theorem closedGraphTransform_mem (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) (x : H) :
+    closedGraphTransform A hA x ∈ closedGraphSubmodule A := by
+  let G := closedGraphSubmodule A
+  have : CompleteSpace G := (closedGraphSubmodule_isClosed A hA).isComplete.completeSpace_coe
+  have := Submodule.HasOrthogonalProjection.ofCompleteSpace G
+  change G.starProjection (WithLp.toLp 2 (x, (0 : K))) ∈ G
+  exact Submodule.starProjection_apply_mem G _
+
+/-- Let `𝕜` be an `RCLike` field, let `H` and `K` be complete inner product spaces
+over `𝕜`, and let `A : H →ₗ.[𝕜] K` have closed graph. For every `x : H`, the first coordinate
+of the graph projection of `(x,0)` lies in `A.domain`, and applying the actual partial map
+`A` to that domain vector gives the second graph coordinate. -/
+theorem closedGraphTransforms_domain_value (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) (x : H) :
+    ∃ hx : closedGraphFirstTransform A hA x ∈ A.domain,
+      A ⟨closedGraphFirstTransform A hA x, hx⟩ = closedGraphSecondTransform A hA x := by
+  have hp := closedGraphTransform_mem A hA x
+  have hpair : (closedGraphFirstTransform A hA x, closedGraphSecondTransform A hA x) ∈ A.graph := hp
+  obtain ⟨y, hy, hvalue⟩ := (LinearPMap.mem_graph_iff A).mp hpair
+  change (y : H) = closedGraphFirstTransform A hA x at hy
+  have hx : closedGraphFirstTransform A hA x ∈ A.domain := by
+    rw [← hy]
+    exact y.property
+  have hyx : y = (⟨closedGraphFirstTransform A hA x, hx⟩ : A.domain) := Subtype.ext hy
+  exact ⟨hx, hyx ▸ hvalue⟩
+
+/-- Let `𝕜` be an `RCLike` field, let `H` and `K` be complete inner product spaces
+over `𝕜`, and let `A : H →ₗ.[𝕜] K` have closed graph. For `x : H` and `y : A.domain`,
+the inner product of `x` minus its first graph coordinate with `y` equals the inner product
+of its second graph coordinate with `A y`, using the inherited inner products on `H` and `K`. -/
+theorem closedGraphTransform_inner_difference
+    (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) (x : H) (y : A.domain) :
+    ⟪x - closedGraphFirstTransform A hA x, (y : H)⟫_𝕜 =
+      ⟪closedGraphSecondTransform A hA x, A y⟫_𝕜 := by
+  let G := closedGraphSubmodule A
+  have : CompleteSpace G := (closedGraphSubmodule_isClosed A hA).isComplete.completeSpace_coe
+  have := Submodule.HasOrthogonalProjection.ofCompleteSpace G
+  have hy : WithLp.toLp 2 ((y : H), A y) ∈ G := by
+    change ((y : H), A y) ∈ A.graph
+    exact LinearPMap.mem_graph A y
+  have horth := Submodule.starProjection_inner_eq_zero
+    (K := G) (WithLp.toLp 2 (x, (0 : K))) (WithLp.toLp 2 ((y : H), A y)) hy
+  change ⟪x - closedGraphFirstTransform A hA x, (y : H)⟫_𝕜 +
+      ⟪(0 : K) - closedGraphSecondTransform A hA x, A y⟫_𝕜 = 0 at horth
+  rw [zero_sub, inner_neg_left] at horth
+  exact sub_eq_zero.mp (by simpa only [sub_eq_add_neg] using horth)
+
+/-- Let `𝕜` be an `RCLike` field, let `H` and `K` be complete inner product spaces
+over `𝕜`, and let `A : H →ₗ.[𝕜] K` have closed graph. Write `B` and `C` for its first and second
+graph transforms. For all `x y : H`, the actual graph coordinates satisfy
+`inner 𝕜 x (B y) = inner 𝕜 (C x) (C y) + inner 𝕜 (B x) (B y)`. -/
+theorem closedGraphTransforms_inner_gram
+    (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) (x y : H) :
+    ⟪x, closedGraphFirstTransform A hA y⟫_𝕜 =
+      ⟪closedGraphSecondTransform A hA x, closedGraphSecondTransform A hA y⟫_𝕜 +
+      ⟪closedGraphFirstTransform A hA x, closedGraphFirstTransform A hA y⟫_𝕜 := by
+  obtain ⟨hy, hvalue⟩ := closedGraphTransforms_domain_value A hA y
+  have hinner := closedGraphTransform_inner_difference A hA x
+    ⟨closedGraphFirstTransform A hA y, hy⟩
+  rw [hvalue, inner_sub_left] at hinner
+  exact (sub_eq_iff_eq_add).mp hinner
+
+/-- Let `𝕜` be an `RCLike` field, let `H` and `K` be complete inner product spaces
+over `𝕜`, and let `A : H →ₗ.[𝕜] K` have closed graph. For every `x : H`, the first coordinate
+of the graph projection of `(x,0)` has norm at most `‖x‖` in the inherited norm of `H`. -/
+theorem closedGraphFirstTransform_norm_apply_le
+    (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) (x : H) :
+    ‖closedGraphFirstTransform A hA x‖ ≤ ‖x‖ := by
+  let G := closedGraphSubmodule A
+  let : CompleteSpace G :=
+    (closedGraphSubmodule_isClosed A hA).isComplete.completeSpace_coe
+  let := Submodule.HasOrthogonalProjection.ofCompleteSpace G
+  change ‖(G.starProjection (WithLp.toLp 2 (x, (0 : K)))).fst‖ ≤ ‖x‖
+  calc
+    _ ≤ ‖G.starProjection (WithLp.toLp 2 (x, (0 : K)))‖ :=
+      WithLp.norm_fst_le H (p := (2 : ENNReal)) (β := K)
+        (G.starProjection (WithLp.toLp 2 (x, (0 : K))))
+    _ ≤ ‖WithLp.toLp 2 (x, (0 : K))‖ := G.norm_starProjection_apply_le _
+    _ = ‖x‖ := by simp only [WithLp.norm_toLp_fst]
+
+/-- Let `𝕜` be an `RCLike` field, let `H` and `K` be complete inner product spaces over `𝕜`,
+and let `A : H →ₗ.[𝕜] K` have closed graph. The first coordinate of its graph projection transform
+is a self-adjoint continuous linear endomorphism of `H` with its given inner product. -/
+theorem closedGraphFirstTransform_isSelfAdjoint
+    (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) : IsSelfAdjoint (closedGraphFirstTransform A hA) := by
+  change (closedGraphFirstTransform A hA).adjoint = closedGraphFirstTransform A hA
+  symm
+  apply (ContinuousLinearMap.eq_adjoint_iff _ _).mpr
+  intro x y
+  have hxy := closedGraphTransforms_inner_gram A hA x y
+  have hyx := closedGraphTransforms_inner_gram A hA y x
+  have hconj := congrArg (fun z : 𝕜 => star z) hyx
+  simp only [star_add, RCLike.star_def, inner_conj_symm] at hconj
+  exact hconj.trans hxy.symm
+
+/-- Let `𝕜` be an `RCLike` field, let `H` and `K` be complete inner product spaces over `𝕜`,
+and let `A : H →ₗ.[𝕜] K` have closed graph. Its first graph coordinate is nonnegative in the
+Loewner order on continuous linear endomorphisms of the original Hilbert space `H`. -/
+theorem closedGraphFirstTransform_nonneg
+    (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) : 0 ≤ closedGraphFirstTransform A hA := by
+  apply ContinuousLinearMap.nonneg_iff_isPositive.mpr
+  apply ContinuousLinearMap.isPositive_def'.mpr
+  refine ⟨closedGraphFirstTransform_isSelfAdjoint A hA, fun x => ?_⟩
+  change 0 ≤ RCLike.re ⟪closedGraphFirstTransform A hA x, x⟫_𝕜
+  rw [inner_re_symm, closedGraphTransforms_inner_gram A hA x x,
+    _root_.map_add (RCLike.re : 𝕜 →+ ℝ)]
+  exact add_nonneg inner_self_nonneg inner_self_nonneg
+
+/-- Let `𝕜` be an `RCLike` field and let `H` and `K` be complete inner product spaces over `𝕜`.
+For a partial linear map `A : H →ₗ.[𝕜] K` with closed graph and dense domain in `H`, the first
+coordinate of its graph projection transform is injective on the original space `H`. -/
+theorem closedGraphFirstTransform_injective
+    (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) (hDense : Dense (A.domain : Set H)) :
+    Function.Injective (closedGraphFirstTransform A hA) := by
+  have hZero : ∀ x : H, closedGraphFirstTransform A hA x = 0 → x = 0 := by
+    intro x hBx
+    obtain ⟨hx, hValue⟩ := closedGraphTransforms_domain_value A hA x
+    have hCx : closedGraphSecondTransform A hA x = 0 := by
+      have hInput : (⟨closedGraphFirstTransform A hA x, hx⟩ : A.domain) = 0 :=
+        Subtype.ext hBx
+      rw [← hValue, hInput, A.map_zero]
+    have hOrth : x ∈ A.domainᗮ := by
+      apply (Submodule.mem_orthogonal' A.domain x).mpr
+      intro y hy
+      have hInner := closedGraphTransform_inner_difference A hA x ⟨y, hy⟩
+      simpa only [hBx, hCx, sub_zero, inner_zero_left] using hInner
+    have hClosure : A.domain.topologicalClosure = ⊤ :=
+      Submodule.dense_iff_topologicalClosure_eq_top.mp hDense
+    have hOrthBot : A.domainᗮ = ⊥ :=
+      (Submodule.topologicalClosure_eq_top_iff (K := A.domain)).mp hClosure
+    simpa only [hOrthBot, Submodule.mem_bot] using hOrth
+  intro x y hxy
+  apply sub_eq_zero.mp
+  apply hZero (x - y)
+  rw [ContinuousLinearMap.map_sub (closedGraphFirstTransform A hA) x y, hxy, sub_self]
+
+/-- Let `𝕜` be an `RCLike` field and let `H` and `K` be complete inner product spaces over `𝕜`.
+For a partial linear map `A : H →ₗ.[𝕜] K` with closed graph and dense domain in `H`, the first
+coordinate of its graph projection transform has dense range in the same Hilbert space `H`. -/
+theorem closedGraphFirstTransform_denseRange
+    (A : H →ₗ.[𝕜] K) (hA : A.IsClosed) (hDense : Dense (A.domain : Set H)) :
+    DenseRange (closedGraphFirstTransform A hA) := by
+  have hNormal : IsStarNormal (closedGraphFirstTransform A hA) := by
+    rw [isStarNormal_iff, (closedGraphFirstTransform_isSelfAdjoint A hA).star_eq]
+  change Dense ((closedGraphFirstTransform A hA).range : Set H)
+  rw [Submodule.dense_iff_topologicalClosure_eq_top, Submodule.topologicalClosure_eq_top_iff,
+    ContinuousLinearMap.IsStarNormal.orthogonal_range hNormal]
+  exact LinearMap.ker_eq_bot.mpr (closedGraphFirstTransform_injective A hA hDense)
+
+end Hilbert
+end LinearPMap
+
+end

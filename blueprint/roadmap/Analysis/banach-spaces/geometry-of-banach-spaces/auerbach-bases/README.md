@@ -5,3 +5,4 @@
 - [Coordinate functional of a unit basis vector has operator norm 1](norm-coord-clm-eq-one.md)
 - [Auerbach basis](is-auerbach-basis.md)
 - [Auerbach's theorem](exists-auerbach-basis.md)
+- [An Auerbach basis with biorthogonal coordinate functionals](exists-auerbach-basis-biorthogonal.md)
