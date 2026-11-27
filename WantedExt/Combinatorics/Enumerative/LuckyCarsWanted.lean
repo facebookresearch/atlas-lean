@@ -61,20 +61,6 @@ namespace MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
 
 open MetaMathlibExt Polynomial
 
-/-- **Generating polynomial of lucky cars.** For $n \in \mathbb{N}$ and $0 \le k \le n$, let $c_k$
-be the number of parking functions of length $n$ with exactly $k$ lucky cars. Then in
-$\mathbb{Q}[x]$,
-$$\frac{1}{n+1} \prod_{i=0}^{n-1} \bigl((n+1-i)x + i\bigr) = \sum_{k=0}^{n} c_k x^k.$$
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Corollary 5. -/
-theorem_wanted luckyGenPoly_eq_sum (n : ℕ) :
-    luckyGenPoly n =
-      ∑ k ∈ Finset.range (n + 1),
-        C ((Nat.card { f : Fin n → Fin n //
-          IsParkingFunction n f ∧ luckyCount f = k } : ℕ) : ℚ) *
-          X ^ k
-
 /-- **Boundary values of lucky-car counts (Lemma 9).** Let $n \ge 1$, number the cars and spots
 $0, \dots, n-1$, and let $q_n(i, j)$ be the number of parking functions of length $n$ in which
 car $i$ prefers spot $j$ and is lucky. Then for all $i, j \in \{0, \dots, n-1\}$, with powers

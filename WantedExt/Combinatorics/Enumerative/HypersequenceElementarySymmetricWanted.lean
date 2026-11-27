@@ -78,31 +78,6 @@ public theorem_wanted hyperseqB_inv_eq_hyperseqC_div_factorial (n j m : ℕ) :
       ∑ k ∈ Finset.range (j + 1), alternatingBinomialPowerSum j k 1 (n + 1) / k.factorial *
         (hyperseqB n k m : ℂ) = if j = m then 1 else 0
 
-/-- **Recurrence, closed form and row sums of Parisse's $b_{j,k}(n)$.** Let $n \in \mathbb{N}$ and
-let $b_{j,k}(n)$ be the entries of Parisse's matrix $B(n)$. Write $[j, \ell]$ for the unsigned
-Stirling numbers of the first kind and $x^{\overline{j}} = x (x + 1) \cdots (x + j - 1)$ for the
-rising factorial. Then $b_{0,k}(n) = \delta_{0,k}$ for all $k$; for all $j, k \in \mathbb{N}$,
-$b_{j+1,0}(n) = (n + j + 1) \, b_{j,0}(n)$ and
-$b_{j+1,k+1}(n) = (n + j + 1) \, b_{j,k+1}(n) - b_{j,k}(n)$;
-$b_{j,k}(n) = (-1)^k \sum_{\ell=k}^{j} \binom{\ell}{k} [j, \ell] \, (n + 1)^{\ell-k}$ for all
-$j, k$ (an empty sum for $k > j$); and for all $j$,
-$\sum_{k=0}^{j} b_{j,k}(n) = n^{\overline{j}}$ and
-$\sum_{k=0}^{j} (-1)^k b_{j,k}(n) = (n + 2)^{\overline{j}}$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
-Sums II*, INTEGERS 26 (2026), Article A36,
-Proposition 2 (`integers-2026-A36-prop-2`). -/
-public theorem_wanted hyperseqB_recurrence_closed_form_row_sums (n : ℕ) :
-    (∀ k : ℕ, hyperseqB n 0 k = if k = 0 then 1 else 0) ∧
-    (∀ j : ℕ, hyperseqB n (j + 1) 0 = (n + (j + 1)) * hyperseqB n j 0) ∧
-    (∀ j k : ℕ, hyperseqB n (j + 1) (k + 1) =
-      (n + (j + 1)) * hyperseqB n j (k + 1) - hyperseqB n j k) ∧
-    (∀ j k : ℕ, hyperseqB n j k = (-1) ^ k * ∑ ℓ ∈ Finset.Icc k j,
-      (ℓ.choose k * Nat.stirlingFirst j ℓ : ℤ) * ((n : ℤ) + 1) ^ (ℓ - k)) ∧
-    (∀ j : ℕ, ∑ k ∈ Finset.range (j + 1), hyperseqB n j k = (n.ascFactorial j : ℤ)) ∧
-    ∀ j : ℕ, ∑ k ∈ Finset.range (j + 1), (-1) ^ k * hyperseqB n j k =
-      ((n + 2).ascFactorial j : ℤ)
-
 /-- **Parisse's coefficients at $n$ from their values at $-1$.** Let $n \in \mathbb{Z}$. For
 $j, k \in \mathbb{N}$ let $e_{j,k}(n)$ be the elementary symmetric polynomial of degree $k$ in
 $n + 1, \dots, n + j$, let $b_{j,k}(n) = (-1)^k e_{j,j-k}(n)$ for $k \le j$ and $b_{j,k}(n) = 0$

@@ -59,17 +59,6 @@ public theorem_wanted brocardRamanujan_sevenFree_subset :
       ((p.2 - 1).IsPowerFree 7 ∨ (p.2 + 1).IsPowerFree 7)} ⊆
       {(4, 5), (5, 11), (7, 71)}
 
-/-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ a prime power.** If natural numbers
-$n$ and $x$ satisfy $n! + 1 = x^2$ and $x - 1$ or $x + 1$ is a prime power, then
-$(n, x) = (4, 5)$.
-
-Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
-Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(ii),
-second sentence (`integers-2025-A71-thm-1`). -/
-public theorem_wanted brocardRamanujan_primePow_subset :
-    {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧ (IsPrimePow (p.2 - 1) ∨ IsPrimePow (p.2 + 1))} ⊆
-      {(4, 5)}
-
 /-- **Finitely many Brocard–Ramanujan solutions of polynomial shape.** Let $k \ge 2$, $l \ge 2$
 and $m \ge 1$ be natural numbers and let $P \in \mathbb{Z}[X_1, \ldots, X_m]$. Write
 $F_k P_l$ for the set of products $y z$ of a $k$-free number $y$ and a positive integer $z$
