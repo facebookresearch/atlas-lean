@@ -8,14 +8,18 @@ where $B_i$ applies $B$ to the $i$-th input and $\Phi_{ij}$ identifies the $i$-t
 
 $$E\bigl[\langle\zeta_0, Z_t^{\otimes n}\rangle\bigr] = E\bigl[\langle\zeta_t, Z_0^{\otimes|R^{(n)}_t|}\rangle\bigr], \qquad t \ge 0,$$
 
-where $(\zeta_t)$ is the function-valued dual started from $\zeta_0 = f$, in which each pair of inputs is identified at rate $1$ and each input is acted on by $B$, and $|R^{(n)}_t|$ is its number of inputs, the block count of a Kingman coalescent started from $n$ blocks (Dawson and Hochberg 1982; Ethier and Kurtz 1993; for the genealogical interpretation, Donnelly and Kurtz 1996). The duality gives uniqueness in law for the martingale problem (Ethier and Kurtz 1993). For finitely many types the process is the multi-allele Wright–Fisher diffusion on the simplex (Ethier and Kurtz 1993; Ethier and Kurtz 1986, Chapter 10). The target is the duality and the uniqueness argument as separate statements.
+where $(\zeta_t)$ is the function-valued dual started from $\zeta_0 = f$, in which each pair of inputs is identified at rate $1$ and each input is acted on by $B$, and $|R^{(n)}_t|$ is its number of inputs, the block count of a Kingman coalescent started from $n$ blocks (Dawson and Hochberg 1982; Ethier and Kurtz 1993; for the genealogical interpretation, Donnelly and Kurtz 1996). The duality gives uniqueness in law for the martingale problem (Ethier and Kurtz 1993); for a compact type space and a bounded jump-type mutation operator this uniqueness is already [Fleming–Viot uniqueness by moment duality](fleming-viot-uniqueness-by-function-valued-coale.md), so what remains distinct here is the moment duality itself, with its Kingman block-counting dual, and uniqueness for mutation operators and type spaces outside that case. For finitely many types the process is the multi-allele Wright–Fisher diffusion on the simplex (Ethier and Kurtz 1993; Ethier and Kurtz 1986, Chapter 10). The target is the duality and the uniqueness argument as separate statements.
+
+## Depends on
+
+- [Fleming–Viot uniqueness by moment duality](fleming-viot-uniqueness-by-function-valued-coale.md)
 
 ## Expansion
 
 1. The generator on functions $\mu \mapsto \langle f, \mu^{\otimes n}\rangle$ and the operators $B_i$ and $\Phi_{ij}$.
 2. The function-valued dual process and the identity $\mathcal{A}F_f(\mu) = \langle Af, \mu^{\otimes n}\rangle$.
 3. The moment duality, by the generator identity and a duality argument.
-4. Uniqueness of the martingale problem by duality.
+4. Uniqueness of the martingale problem by duality, beyond the compact type space with bounded mutation operator treated on the linked uniqueness page.
 5. The analogous duality between $\Lambda$-Fleming–Viot processes and $\Lambda$-coalescents, as a separate statement.
 
 ## Sources

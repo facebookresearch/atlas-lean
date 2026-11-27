@@ -9,6 +9,7 @@ with a separate equation for $f_0$ that carries the drift term in $1/N$. The dec
 ## Depends on
 
 - [Identity-by-descent recursion in Wright's island model](../../../../Biology/population-genetics/wright-s-island-model/island-step.md)
+- [Isolation by distance](../../../../Biology/coalescent-theory/structured-coalescent/isolation-by-distance.md)
 
 ## Expansion
 

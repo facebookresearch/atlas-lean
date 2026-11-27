@@ -15,5 +15,5 @@ and $e_0(\delta)/e_0 = 1 - \delta H + o(\delta)$ as $\delta \downarrow 0$: $H$ i
 
 ## Sources
 
-- J. M. Aburto, J.-A. Alvarez, F. Villavicencio and J. W. Vaupel, The threshold age of Keyfitz' entropy, 2019, Sections 1 and 2.1, eq. (4). <https://arxiv.org/abs/1901.07963>
+- J. M. Aburto, J.-A. Alvarez, F. Villavicencio and J. W. Vaupel, The threshold age of the lifetable entropy, Demographic Research 41 (2019), article 4, 83–102, Sections 1 and 2.1, eq. (4). <https://doi.org/10.4054/DemRes.2019.41.4>
 - Original result: N. Keyfitz, What difference would it make if cancer were eradicated? An examination of the Taeuber paradox, Demography 14 (1977), 411–418. <https://doi.org/10.2307/2060587> The elasticity interpretation of $H$ follows Aburto et al. (2019).

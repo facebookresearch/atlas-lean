@@ -55,9 +55,6 @@
 - [Linearized SIS threshold, stable side](is-hurwitz-iff.md)
 - [Linearized SIS threshold, unstable side](exists-re-pos-iff.md)
 
-## The stochastic SIS epidemic
-
-
 ## Global stability of the SIS endemic equilibrium via a Lyapunov function
 
 - [Goh–Volterra Lyapunov function of the SIS endemic equilibrium](lyapunov.md)

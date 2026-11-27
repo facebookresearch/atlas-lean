@@ -9,6 +9,7 @@ In a two-type Cannings model with population size $N \ge 2$ and exchangeable off
 - [Möhle–Sagitov conditions for a Kingman genealogy limit](../../../../Biology/coalescent-theory/multiple-merger-coalescents/kingman-limit-of-cannings-models/mohle-sagitov.md)
 - [Wright–Fisher diffusion limit, generator form](../../../../Biology/population-genetics/diffusion-theory/diffusion-limit-of-the-wright-fisher-model/tendsto-wf-generator.md)
 - [Diffusion limit of the Moran fixation probability](../../../../Biology/population-genetics/moran-model/tendsto-moran-fixation-diffusion.md)
+- [Moran and Cannings models: generator limits and effective size](../../../../Biology/population-genetics/moran-model/moran-and-cannings-models-generator-limits-and-e.md)
 
 ## Expansion
 

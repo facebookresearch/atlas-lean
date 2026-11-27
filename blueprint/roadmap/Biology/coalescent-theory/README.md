@@ -38,3 +38,4 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Identifiability of demographic histories](part-01/identifiability-of-demographic-histories/README.md)
 - [Coalescent likelihoods and sampling recursions](part-01/coalescent-likelihood-and-computation/README.md)
 - [Genealogies under selection](part-01/genealogies-under-selection/README.md)
+- [Species-tree inference](part-01/species-tree-inference/README.md)

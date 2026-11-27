@@ -69,5 +69,3 @@
 - [Generalized kinship boundary values for inbred founders](generalized-kinship-boundary-values-for-inbred-founders.md)
 - [Every kinship coefficient is realized by half cousins with an inbred founder](half-cousin-kinship-with-inbred-founder.md)
 - [Subdivision of the admissible IBD region by double-half-cousin separations](ibd-triangle-subdivision-by-half-cousin-separations.md)
-
-## The inverse relationship matrix

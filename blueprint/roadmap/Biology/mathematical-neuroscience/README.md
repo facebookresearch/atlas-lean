@@ -22,4 +22,3 @@ Models of excitable membranes and neurons: the Nernst potential and passive cabl
 - [First-passage times of neuron models](neuronal-first-passage-times/README.md)
 - [Neural field models](neural-field-models/README.md)
 - [Neural coding](neural-coding/README.md)
-- [Oja's rule extracts the principal component](ojas-rule-extracts-the-principal-component-oja-1982-oja-karhunen-1985.md)
