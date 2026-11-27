@@ -8,11 +8,27 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.NormNum
 import MathlibExt.Combinatorics.Enumerative.FenceTilingSum
 
 namespace MetaMathlibExt
 
 open Finset
+
+-- Check the public field-valued equality at the empty board.
+example {K : Type*} [Field K] {a b : K} (ha : a ≠ 0) (hb : b ≠ 0) :
+    fenceTilingSum a b 0 = 1 := by
+  rw [fenceTilingSum_eq_biPeriodicFibonacciSq ha hb, biPeriodicFibonacciSq_one]
+
+-- Unequal weights detect a swapped coefficient; board sizes 3 and 4 exercise both branches.
+example : fenceTilingSum (2 : ℚ) 3 3 = 256 := by
+  rw [fenceTilingSum_eq_biPeriodicFibonacciSq (by norm_num) (by norm_num)]
+  norm_num [biPeriodicFibonacciSq, Nat.even_iff]
+
+example : fenceTilingSum (2 : ℚ) 3 4 = 3025 := by
+  rw [fenceTilingSum_eq_biPeriodicFibonacciSq (by norm_num) (by norm_num)]
+  norm_num [biPeriodicFibonacciSq, Nat.even_iff]
 
 -- Direct enumeration with distinct weights, including the empty and one-cell boards.
 example : fenceTilingSum (2 : ℕ) 3 0 = 1 := by decide
