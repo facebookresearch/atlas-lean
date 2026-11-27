@@ -63,8 +63,8 @@ namespace PhiNModule
 variable {σ p} {D : Type*} [AddCommGroup D] [Module K₀ D] (M : PhiNModule σ p D)
 
 /-- The `(φ, N)`-module with monodromy `N = 0` attached to a bijective `σ`-semilinear map
-`φ : D → D`; the `(φ, N)`-modules with `N = 0` are the `φ`-modules of Fontaine–Ouyang,
-Definition 8.14. -/
+`φ : D → D`; the finite-dimensional `(φ, N)`-modules with `N = 0` are the `φ`-modules of
+Fontaine–Ouyang, Definition 8.14. -/
 def ofPhi (φ : D ≃ₛₗ[σ] D) : PhiNModule σ p D where
   φ := φ
   N := 0

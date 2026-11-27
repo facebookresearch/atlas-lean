@@ -1,6 +1,6 @@
 # Abelian varieties and abelian schemes
 
-Abelian varieties over fields and abelian schemes over general bases: duals and polarizations, Zarhin's trick, Néron models and semistable reduction, complex multiplication, p-divisible groups and deformations (Serre–Tate, Grothendieck–Messing), and moduli of polarized abelian varieties, including toroidal and minimal compactifications in the principally polarized case, and degenerations through semi-abelian schemes. Jacobians of curves are under algebraic curves, and abelian varieties of dimension one under elliptic curves.
+Abelian varieties over fields: duals and polarizations, Zarhin's trick, the Néron model of an abelian variety and semistable reduction, complex multiplication, fake elliptic curves with their canonical polarizations and special formal O_D-modules, the p-divisible groups of abelian schemes and their deformations (Serre–Tate, Grothendieck–Messing), and moduli of polarized abelian varieties, including toroidal and minimal compactifications in the principally polarized case, and degenerations through semi-abelian schemes, with a subfield for abelian schemes over a general base. Jacobians of curves are under algebraic curves, and abelian varieties of dimension one under elliptic curves.
 
 - [Abelian scheme](abelian-scheme.md)
 - [Rigidity lemma](rigidity-lemma.md)
@@ -20,9 +20,9 @@ Abelian varieties over fields and abelian schemes over general bases: duals and 
 - [Néron model of an abelian variety](neron-model.md)
 - [Semistable reduction](semistable-reduction/README.md)
 - [Homomorphisms and Lie algebras of semi-abelian schemes](homomorphisms-and-lie-algebras-of-semi-abelian-schemes.md)
-- [Potential good reduction of abelian varieties with complex multiplication](good-reduction-of-cm-abelian-varieties.md)
 - [Deformations and p-divisible groups](deformations-and-p-divisible-groups/README.md)
 - [Moduli of abelian varieties and their compactifications](moduli-and-compactifications/README.md)
 - [Stable Faltings height](stable-faltings-height/README.md)
 - [Gaudron–Rémond isogeny estimate](gaudron-r-mond-isogeny-estimate/README.md)
 - [Theta height](theta-height/README.md)
+- [Complex multiplication of abelian varieties](complex-multiplication/README.md)
