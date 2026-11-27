@@ -74,7 +74,7 @@ public theorem realize_eq_div (N : ℕ) {k : ℤ}
           ((qExpansion 1 (p.2.1 : ℍ → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ) :=
     ⟨⟨k, g, h⟩, hτ, hx⟩
   have hval : ModularCurve.realize N x τ = (H.choose.2.1 : ℍ → ℂ) τ / (H.choose.2.2 : ℍ → ℂ) τ := by
-    simp only [ModularCurve.realize, dif_pos H]
+    simp only [ModularCurve.realize, dite_eq_left H]
   rw [hval]
   obtain ⟨hτ', hx'⟩ := H.choose_spec
   set p := H.choose with hp

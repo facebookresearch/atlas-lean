@@ -15,6 +15,7 @@ public import Mathlib.Algebra.LinearRecurrence
 public import Mathlib.Algebra.Polynomial.Roots
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinCompanion
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinExpansion
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinFundamentalSpan
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModel
 public import MathlibExt.NumberTheory.PadovanPerrinFundamentalProduct
 public import MathlibExt.NumberTheory.PadovanPerrinShiftWindow
@@ -242,22 +243,6 @@ Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machad
 (2024), Article A49, equation (14) and Table 1. -/
 theorem padovanPerrinRho_one_one_one_two_twelve : padovanPerrinRho (1 : ℤ) 1 1 2 12 = 5 := by
   decide
-
-/-- **The Fibonacci fundamental system spans the solutions.** Let $R$ be a commutative ring, let
-$k_1, k_2 \in R$ and let $p, s$ be natural numbers. For $1 \le j \le s + p$ let $v^{(j)}$ be the
-solution of the Padovan–Perrin recurrence with parameters $k_1, k_2, p, s$ whose initial values
-are $v^{(j)}(n) = 1$ if $n + 1 = j$ and $v^{(j)}(n) = 0$ otherwise, for $n < s + p$. Then the
-submodule of $R^{\mathbb{N}}$ formed by all solutions of this recurrence is the submodule spanned
-by $v^{(1)}, \dots, v^{(s+p)}$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Corollary 1 (`integers-2024-A49-cor-1`). -/
-public theorem_wanted padovanPerrin_solSpace_eq_span_fundamental [CommRing R] (k₁ k₂ : R)
-    (p s : ℕ) :
-    (padovanPerrinRecurrence k₁ k₂ p s).solSpace =
-      Submodule.span R
-        (Set.range fun j : Fin (s + p) => padovanPerrinFundamental k₁ k₂ p s ((j : ℕ) + 1))
 
 /-- **Combinatorial expression of the Padovan–Perrin sequences.** Let $R$ be a commutative ring,
 let $k_1, k_2 \in R$, let $p, s$ be positive integers, and let $v \colon \mathbb{N} \to R$ satisfy

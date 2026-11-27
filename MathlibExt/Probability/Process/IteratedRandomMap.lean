@@ -102,8 +102,9 @@ theorem measurable_piFinset_of_dependsOn [Nonempty D] {E : Type*} [MeasurableSpa
   rw [hfac, Filtration.piFinset_eq_comap_restrict]
   exact (hΦ.comp measurable_updateFinset).comp (comap_measurable _)
 
-/-- For a probability law `law`, the law of the input path consists of independent
-inputs, each distributed as `law`. -/
+/-- The infinite product of `law` on input paths: for a probability law `law`, the law of an
+input path with independent inputs, each distributed as `law`; the zero measure otherwise, as
+`Measure.infinitePi` is. -/
 noncomputable def pathMeasure (law : Measure D) : Measure (ℕ → D) :=
   Measure.infinitePi (fun _ : ℕ => law)
 

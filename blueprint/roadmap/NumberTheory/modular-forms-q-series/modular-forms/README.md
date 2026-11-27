@@ -38,3 +38,4 @@ Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruenc
 - [p-integrality of Eisenstein series coefficients](eisenstein-q-coeff-p-integral-dvd.md)
 - [Exponential of the logarithm series of the Dedekind eta function](exp-log-eta.md)
 - [Sturm bound for Γ₀(N)](sturm-bound-gamma0.md)
+- [Modular parametrization of an elliptic curve over $\mathbb{Q}$](modular-parametrization-of-an-elliptic-curve.md)

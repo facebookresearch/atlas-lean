@@ -1,6 +1,6 @@
 # Zhuk's four-types theorem: binary absorption, center, polynomially complete quotient or affine quotient
 
-Let $\mathbf{A}=(A;w)$ be a finite idempotent algebra with $|A|\ge 2$ whose operation $w$ is a WNU of arity $m$. Then at least one of the following holds:
+Let $\mathbf{A}=(A;w)$ be a finite algebra with $|A|\ge 2$ whose operation $w$ is a **special WNU** of arity $m$ (an idempotent WNU satisfying $x\circ(x\circ y)=x\circ y$, where $x\circ y := w(x,\dots,x,y)$). Then at least one of the following holds (Zhuk, Theorem 5.1):
 
 1. $\mathbf{A}$ has a proper binary absorbing subuniverse $B\subsetneq A$;
 2. $\mathbf{A}$ has a proper center $C\subsetneq A$;

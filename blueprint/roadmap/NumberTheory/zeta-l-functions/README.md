@@ -9,3 +9,5 @@ Riemann zeta and xi, Dirichlet characters and L-functions, Dedekind and Artin L-
 - [Formal Dirichlet series and Euler products](formal-dirichlet-series-and-euler-products/README.md)
 - [The Dedekind zeta function does not vanish for Re s > 1](dedekind-zeta-ne-zero-of-one-lt-re.md)
 - [Tate's local functional equation](tate-local-functional-equation.md)
+- [Analytic continuation and functional equation of the $L$-function of an elliptic curve over $\mathbb{Q}$](functional-equation-of-the-l-function-of-an-elliptic-curve.md)
+- [Quadratic twists with nonvanishing central value](nonvanishing-of-quadratic-twists-at-the-central-point.md)

@@ -16,3 +16,5 @@ Thue equations, generalized Fermat equations, sums of cubes, x^y = y^x, abc conj
 - [Sophie Germain's theorem](sophie-germain.md)
 - [The abc conjecture](abc-conjecture.md)
 - [No solutions of x⁴ + y⁴ = z² in integers with x and y nonzero](fermat-quartic-no-solutions.md)
+- [Fermat's Last Theorem](fermat-last-theorem.md)
+- [Prime exponents of the Fermat equation](fermat-prime-exponents/README.md)
