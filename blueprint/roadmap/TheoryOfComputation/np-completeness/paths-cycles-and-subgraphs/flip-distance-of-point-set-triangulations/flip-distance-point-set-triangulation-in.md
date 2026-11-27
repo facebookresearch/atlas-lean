@@ -1,5 +1,3 @@
 # Instances of FLIP DISTANCE OF POINT-SET TRIANGULATIONS
 
-An instance of FLIP DISTANCE OF POINT-SET TRIANGULATIONS consists of the number `n` of points
-(vertices $0, \dots, n-1$), the coordinates of the points in order (each integer coordinate `p - q`
-given as the pair `(p, q)`), the edge lists of `T₁` and `T₂`, and the bound `k`.
+An instance of FLIP DISTANCE OF POINT-SET TRIANGULATIONS consists of a declared natural number $n$ of points, stored separately from a list of coordinate pairs (each a pair of natural pairs, every coordinate $p - q$ given as $(p, q)$), the edge lists of $T_1$ and $T_2$ (lists of natural pairs) and a natural bound $k$. The count is not inferred from the points: $n = 2$ with no coordinates is representable. Agreement of $n$ with the points belongs to [validation](well-formed.md).

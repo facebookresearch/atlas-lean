@@ -1,7 +1,6 @@
 # Generalized 0-1 assignment
 
 - [Instances of GENERALIZED 0-1 ASSIGNMENT](generalized-zero-one-assignment-instance.md)
-- [Int Of](int-of.md)
 - [Entries of the matrix A](entry-a.md)
 - [Entries of the vector b](entry-b.md)
 - [Entries of the cost matrix C](entry-c.md)

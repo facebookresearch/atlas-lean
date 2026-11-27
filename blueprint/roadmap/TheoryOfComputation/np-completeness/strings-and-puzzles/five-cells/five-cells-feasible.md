@@ -1,3 +1,3 @@
 # Feasible FIVE CELLS instances
 
-A FIVE CELLS instance is feasible when the grid can be divided into connected blocks of exactly five cells so that every numbered cell, showing the number $k$ (cell content $k + 1$, see [the cell contents](cell.md)), has exactly $4 - k$ orthogonal neighbors in its own block, that is, exactly $k$ of its four sides lie on block boundaries or on the outer frame.
+A FIVE CELLS instance is feasible when every position of the [grid](grid.md) rectangle, (number of rows) × (length of the first row), can be put into connected blocks of exactly five cells so that every numbered cell, showing the number $k$ (cell content $k + 1$, see [the cell contents](cell.md)), satisfies: its number of orthogonal neighbours in its own block **plus $k$ equals $4$**. Missing entries are blank, and entries outside the rectangle are not tested.

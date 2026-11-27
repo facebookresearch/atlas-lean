@@ -74,10 +74,10 @@ positions `p` and `p + 1` when both exist. At the last position a missing entry 
 def applySwitch (V : List (List ℕ)) (s : ℕ × ℕ) : List (List ℕ) :=
   V.set s.1 (switchAt (V.getD s.1 []) s.2)
 
-/-- The lists `V` are the orders of a profile `R` over `m` candidates (voter `v` strictly
-prefers `a` to `b` exactly when `a` comes before `b` in `v`'s list), and in `R` every candidate
-with value `c` beats every other candidate by pairwise majority. For `c ≥ m` the majority tests
-are vacuous. -/
+/-- There is a profile `R` over `m` candidates whose strict comparisons for voter `v` are exactly
+the comparisons of ranks in `v`'s list, the rank of a candidate being its first occurrence, or
+the list length if it is absent; and in `R` every candidate with value `c` beats every other
+candidate by pairwise majority. For `c ≥ m` the majority tests are vacuous. -/
 def IsCondorcetWinner (m : ℕ) (V : List (List ℕ)) (c : ℕ) : Prop :=
   ∃ R : Profile (Fin m) (Fin V.length),
     (∀ v a b, (R v).lt a b ↔ (V.get v).idxOf a.1 < (V.get v).idxOf b.1) ∧

@@ -62,8 +62,9 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number of vertices `n` (vertices `Fin n`) and the hyperedges, each a list
-of vertices; hyperedges are identified by their position in the list. -/
+/-- An instance: a natural number `n` and the hyperedges, each a list of natural labels that need
+not be below `n` (validation checks the range); hyperedges are identified by their position in
+the list. -/
 abbrev GeneralizedHypertreeWidthThreeInstance := ℕ × List (List ℕ)
 
 /-- The vertex set of hyperedge `e`. -/

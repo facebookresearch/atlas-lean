@@ -3,7 +3,6 @@
 - [Graph Property](graph-property.md)
 - [Is Hereditary](is-hereditary.md)
 - [Is Nontrivial](is-nontrivial.md)
-- [Simple Edge List](simple-edge-list.md)
 - [Recognizing a graph property](property-dec.md)
 - [Instances of INDUCED SUBGRAPH WITH PROPERTY Π](induced-subgraph-with-property-pi-instan.md)
 - [Graph of a INDUCED SUBGRAPH WITH PROPERTY Π instance](graph.md)

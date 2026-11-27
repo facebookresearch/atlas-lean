@@ -1,4 +1,3 @@
 # Arm
 
-The arm of the loop with edges `E` from `x` in direction `d`: the number of consecutive edges
-going straight from `x` that way (at most `b`).
+For **any** list $E$ of edges, the arm from $x$ in direction $d$ with bound $b$ is the number of initial consecutive offsets $t = 0, 1, \dots, b-1$ at which the [straight-edge](straight-edge.md) test holds. Neither a loop nor a bounded grid is required: even one leftward edge can give a nonzero arm for $d = 4$.

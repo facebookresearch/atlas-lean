@@ -1,6 +1,3 @@
 # Feasible FIXED-VERTEX DIRECTED SUBGRAPH HOMEOMORPHISM instances
 
-`G` contains a subdivision of the pattern with arc list `AH` and branch vertices `m`: the `j`-th
-path is a directed path from `m u` to `m v` for the `j`-th arc `(u, v)` of `AH`, every
-prescribed vertex on it is one of its two ends, and two different paths share only prescribed
-vertices. A branch-vertex index beyond the end of the list `m` reads as vertex $0$; this cannot happen for a well-formed instance with a well-formed pattern.
+An instance $(n, A, m)$ is feasible for a list $A_H$ of pattern arcs when, for the $j$-th arc $(u, v)$ of $A_H$, there is a nonempty list of distinct natural labels that starts at the image of $u$ and ends at the image of $v$ (the $u$-th and $v$-th entries of $m$, zero for a missing entry), with every consecutive pair in the host arc list $A$; every prescribed vertex on such a path is one of its two ends, and two different paths share only prescribed vertices. Raw feasibility never reads the host vertex count $n$: at $n = 0$, the host list $[(1, 2)]$ and the images $[1, 2]$, the path $[1, 2]$ works for the single pattern arc $(0, 1)$. Only on validated input is this a subdivision of the pattern in the host graph.

@@ -98,7 +98,9 @@ def Completes (g g' : List ℕ) : Prop :=
 
 /-- Some completion `c` of the genotypes has an expansion `H` (two haplotypes `H (j, false)` and
 `H (j, true)` explaining each completed genotype `c j`) that admits an unrooted binary perfect
-phylogeny on the indexed haplotypes. -/
+phylogeny whose leaves are the indexed haplotypes `(j, b)`, two per genotype: every nonconstant
+site changes on exactly one edge, constant sites impose nothing, and an edge need not carry a
+site, so equal haplotypes may sit at distinct leaves. -/
 def IncompletePerfectPhylogenyHaplotypingFeasible
     (i : IncompletePerfectPhylogenyHaplotypingInstance) : Prop :=
   ∃ c : Fin i.2.length → List ℕ, ∃ H : Fin i.2.length × Bool → Fin i.1 → Bool,

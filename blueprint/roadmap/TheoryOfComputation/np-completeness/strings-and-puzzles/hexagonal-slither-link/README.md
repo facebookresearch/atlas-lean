@@ -6,7 +6,6 @@
 - [Hexagon clues](clue.md)
 - [Sides](sides.md)
 - [Graph](graph.md)
-- [Well-formed HEXAGONAL SLITHER LINK instances](well-formed.md)
 - [Feasible HEXAGONAL SLITHER LINK instances](hexagonal-slither-link-feasible.md)
 - [HEXAGONAL SLITHER LINK as a decision problem](hexagonal-slither-link-dec.md)
 - [HEXAGONAL SLITHER LINK is NP-complete](hexagonal-slither-link-np-complete.md)

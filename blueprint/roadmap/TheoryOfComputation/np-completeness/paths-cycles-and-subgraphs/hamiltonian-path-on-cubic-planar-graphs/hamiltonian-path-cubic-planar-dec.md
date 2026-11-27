@@ -2,6 +2,6 @@
 
 The decision problem HAMILTONIAN PATH on cubic planar graphs accepts a bitstring $x$ exactly
 when $x$ decodes, under the canonical bitstring encoding of its instances, to an instance that
-is [well-formed](cubic-planar-well-formed.md) and
+is [well-formed](../hamiltonian-circuit-on-restricted-graph-classes/well-formed-4.md) and
 [feasible](../undirected-hamiltonian-path/hamiltonian-path-undirected-feasible.md). It rejects
 every bitstring that does not decode to an instance.

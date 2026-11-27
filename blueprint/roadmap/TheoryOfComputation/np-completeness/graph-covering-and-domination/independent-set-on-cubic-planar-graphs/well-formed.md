@@ -1,3 +1,0 @@
-# Well-formed INDEPENDENT SET on cubic planar graphs instances
-
-A INDEPENDENT SET on cubic planar graphs instance is well-formed when the edge list describes a simple graph on the vertices $0, \dots, n-1$, the graph is cubic and planar, and $0 < K \le n$. The edge-list encoding checks are those of a [simple edge list](../../graph-coloring-and-partitioning/partition-into-triangles/well-formed.md): no repeated entries, every pair $(u, v)$ has $u < n$, $v < n$ and $u \ne v$, and no pair is listed together with its reversal. These checks concern the encoding: adding the reversed copy of a listed edge makes the instance malformed although it does not change the simple graph.

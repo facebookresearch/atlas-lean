@@ -1,7 +1,3 @@
 # Blocked By Couple And Hospital
 
-Definition 1, case 2: a couple `(rᵢ, rⱼ)` and a hospital `hₖ` block `M`: either (a) the couple
-prefers `(hₖ, M(rⱼ))` to `(M(rᵢ), M(rⱼ))` and `hₖ` is under-subscribed or prefers `rᵢ` to some
-member of `M(hₖ) \ {rⱼ}`, or (b) the couple prefers `(M(rᵢ), hₖ)` to `(M(rᵢ), M(rⱼ))` and `hₖ`
-is under-subscribed or prefers `rⱼ` to some member of `M(hₖ) \ {rᵢ}`. The pairs `(hₖ, M(rⱼ))`
-and `(M(rᵢ), hₖ)` range over the couple's list.
+Definition 1, case 2: a couple $(r_i, r_j)$ and a hospital $h_k$ block $M$. The witness needs **both** residents assigned, to $a$ and $b$; a couple with exactly one assigned partner cannot supply it, even if it prefers a listed pair and a post is free. Then either (a) some listed pair $(h_k, b)$ comes strictly before $(a, b)$ in the couple's list and $h_k$ is [under-subscribed](undersubscribed.md) or prefers $r_i$ to some resident [assigned](assigned.md) to $h_k$ other than $r_j$; or (b) some listed pair $(a, h_k)$ comes strictly before $(a, b)$ and $h_k$ is under-subscribed or prefers $r_j$ to some resident assigned to $h_k$ other than $r_i$. This differs from [couple-prefers](couple-prefers.md), which accepts any listed pair when a resident is unassigned.

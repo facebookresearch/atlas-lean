@@ -1,4 +1,3 @@
 # Entries of the vector b
 
-The entry $b_r$ is the integer encoded by the $r$-th listed pair of the vector $b$, and $0$ when
-the list is shorter.
+For $r < m$, the entry $b_r$ is the integer encoded by the $r$-th stored pair of $b$, and $0$ when the list is shorter. Stored entries beyond the declared $m$ are not legal indices.

@@ -1,4 +1,3 @@
 # Entries of the matrix A
 
-The entry $A_{r,c}$ is the integer encoded by the pair in row $r$ and column $c$ of the listed
-matrix $A$, and $0$ for positions outside the listed rows and columns.
+For $r < m$ and $c < n$, the entry $A_{r,c}$ is the integer encoded by the pair in row $r$ and column $c$ of the stored matrix $A$, and $0$ when that entry is missing. The domain is given by the declared dimensions: stored entries beyond them are not legal indices, and for $m = n = 1$ even $A = [\,]$ gives the defined coefficient $0$.
