@@ -1,18 +1,18 @@
 # Standardized index of association
 
-Let $n$ haploid isolates be typed at $l \ge 2$ loci, let $p_{ij}$ be the sample frequency of allele $i$ at locus $j$, and let
+Let $n \ge 2$ haploid isolates be typed at $l \ge 2$ loci, let $p_{ij}$ be the sample frequency of allele $i$ at locus $j$, and let
 
 $$h_j = \frac{n}{n-1}\Bigl(1 - \sum_i p_{ij}^2\Bigr)$$
 
-be the unbiased gene diversity at locus $j$. For a pair of isolates let $D$ be the number of loci at which they carry different alleles, and let $V_D$ be the variance of $D$ over all $\binom{n}{2}$ pairs. Under linkage equilibrium the expected variance is
+be the unbiased gene diversity at locus $j$. For a pair of isolates let $D$ be the number of loci at which they carry different alleles, and let $V_D$ be the variance of $D$ over all $M = \binom{n}{2}$ pairs (population variance with divisor $M$, corresponding to a uniformly sampled pair; LIAN v3.7 uses the sample-variance divisor $M - 1$ for $V_D$ while leaving $V_e$ unchanged). Under linkage equilibrium the expected variance is
 
-$$V_e = \sum_{j=1}^{l} h_j (1 - h_j),$$
+$$V_e = \sum_{j=1}^{l} h_j (1 - h_j).$$
 
-and the standardized index of association is
+When $V_e > 0$ (i.e. at least one locus is polymorphic with $0 < h_j < 1$), the standardized index of association is defined as
 
-$$I_A^S = \frac{1}{l - 1}\Bigl(\frac{V_D}{V_e} - 1\Bigr).$$
+$$I_A^S = \frac{1}{l - 1}\Bigl(\frac{V_D}{V_e} - 1\Bigr),$$
 
-$I_A^S \approx 0$ under random association of alleles across loci, and $I_A^S > 0$ indicates multilocus linkage disequilibrium, as produced by clonal propagation or population structure. Significance is assessed by comparing $V_D$ with its distribution when alleles are permuted independently among isolates at each locus.
+and is undefined when $V_e = 0$. When defined, $I_A^S \approx 0$ under random association of alleles across loci, and $I_A^S > 0$ indicates multilocus linkage disequilibrium, as produced by clonal propagation or population structure. Significance is assessed by comparing $V_D$ with its distribution when alleles are permuted independently among isolates at each locus.
 
 ## Expansion
 
