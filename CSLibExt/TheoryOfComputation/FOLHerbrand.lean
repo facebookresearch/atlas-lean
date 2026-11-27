@@ -23,9 +23,10 @@ with a finite disjunction of ground instances.
 
 Source: J. Herbrand, "Recherches sur la théorie de la démonstration", Travaux de la
 Société des Sciences et des Lettres de Varsovie, Classe III, Sciences Mathématiques et
-Physiques 33, 1930, 1-128; see also H. Enderton, A Mathematical Introduction to Logic,
-2nd ed., Academic Press, 2001, §2.5, and S. Buss, "An Introduction to Proof Theory",
-in Handbook of Proof Theory, Elsevier, 1998, §2.
+Physiques 33, 1930, 1-128. This form of the theorem is in S. Buss, "An Introduction to Proof
+Theory", in Handbook of Proof Theory, Elsevier, 1998, ch. I, §2.5.1. Background: H. Enderton,
+A Mathematical Introduction to Logic, 2nd ed., Academic Press, 2001, §2.5 (soundness and
+completeness).
 -/
 
 @[expose] public section
@@ -243,14 +244,17 @@ impossible exactly in the case where Herbrand's theorem normally adjoins a fresh
 constant. The hypothesis `(hground : Nonempty (L.Term Empty))` rules that case out by
 requiring a ground term of the language; with it, the disjunction is over genuine
 ground instances, and it is non-vacuous (the empty disjunction `⊥` is not valid over
-nonempty models). The dual universal form (a set of universal sentences is
-unsatisfiable iff some finite set of its ground instances is propositionally
-unsatisfiable) follows by negation.
+nonempty models). The dual universal form follows by negation: if the language has a ground
+term, `ψ` is quantifier-free and `∀x ψ(x)` has no nonempty model, then finitely many ground
+instances of `ψ` have no common nonempty first-order model. Propositional unsatisfiability of
+the ground instances alone does not follow when the language has equality: `∀x ¬(x = x)` over
+one constant has no nonempty model, but its only ground instance is propositionally satisfiable.
 Source: J. Herbrand, "Recherches sur la théorie de la démonstration", Travaux de la
 Société des Sciences et des Lettres de Varsovie, Classe III, Sciences Mathématiques et
-Physiques 33, 1930, 1-128; see also H. Enderton, A Mathematical Introduction to Logic,
-2nd ed., Academic Press, 2001, §2.5, and S. Buss, "An Introduction to Proof Theory",
-in Handbook of Proof Theory, Elsevier, 1998, §2. -/
+Physiques 33, 1930, 1-128. This form of the theorem is in S. Buss, "An Introduction to Proof
+Theory", in Handbook of Proof Theory, Elsevier, 1998, ch. I, §2.5.1. Background: H. Enderton,
+A Mathematical Introduction to Logic, 2nd ed., Academic Press, 2001, §2.5 (soundness and
+completeness). -/
 public theorem fol_herbrand {L : FirstOrder.Language}
     {φ : L.BoundedFormula Empty 1} (hqf : IsQuantifierFree φ)
     (hground : Nonempty (L.Term Empty))

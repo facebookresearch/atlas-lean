@@ -1,5 +1,5 @@
 {
   "rows": [
-    {"path": "CSLibExt/TheoryOfComputation/FOLHerbrand.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b4df4e5803b6e88b85debaf16160a8a6ffcc282a00b965b25021ce68e34d2341", "rationale": "Moved `IsQuantifierFree` from WantedExt/TheoryOfComputation/FOLHerbrandWanted.lean when `fol_herbrand` was proved, preserving their names, definitions and statements."}
+    {"path": "CSLibExt/TheoryOfComputation/FOLHerbrand.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "9b2d28371ed873eadea67447015397bdc581f33d130d4e2a5b1a90a7491dddc8", "rationale": "Moved `IsQuantifierFree` from WantedExt/TheoryOfComputation/FOLHerbrandWanted.lean when `fol_herbrand` was proved, preserving their names, definitions and statements. Also: State the dual universal form with first-order, not propositional, unsatisfiability of the ground instances, and cite Buss, ch. I, §2.5.1, for this form of the theorem."}
   ]
 }
