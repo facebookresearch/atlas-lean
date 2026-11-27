@@ -11,7 +11,7 @@ $[-1]^* L \cong L$, and defines a principal [polarization](../polarization.md): 
 $r$ of the base change of $(A, L)$ to $\overline{\mathbb{Q}}$ along an embedding $K \to
 \overline{\mathbb{Q}}$; it does not depend on the embedding, as Galois conjugation preserves the
 $\ell^2$-height. Let $h_F(A)$ be the
-[stable Faltings height](../../not-yet-classified/faltings-height/faltings-height.md) of $A$, in
+[stable Faltings height](../stable-faltings-height/faltings-height.md) of $A$, in
 Faltings' normalization. Pazuki's Definition 2.1 gives $\omega$ the metrics
 $\|\alpha\|_\sigma^2 = \frac{i^{g^2}}{(2\pi)^g} \int_{A_\sigma(\mathbb{C})} \alpha \wedge
 \bar\alpha$ of Deligne's normalization, with $(2\pi)^g$ in place of $2^g$, so his stable Faltings
@@ -52,7 +52,7 @@ item (1) into item (2).
 ## Depends on
 
 - [Theta height](theta-height.md), for $h_\Theta(A, L)$
-- [Stable Faltings height](../../not-yet-classified/faltings-height/faltings-height.md), for
+- [Stable Faltings height](../stable-faltings-height/faltings-height.md), for
   $h_F(A)$
 - [Is Symmetric](../../not-yet-classified/canonical-polarization-data/is-symmetric.md), for
   symmetric line bundles
@@ -61,7 +61,7 @@ item (1) into item (2).
 
 ## Proof depends on
 
-- [The stable Faltings height is invariant under finite extension](../../not-yet-classified/faltings-height/faltings-height-field-base-change.md),
+- [The stable Faltings height is invariant under finite extension](../stable-faltings-height/faltings-height-field-base-change.md),
   for the passage to a number field over which $A$ has a Moret-Bailly model
 - [Semistable reduction theorem for abelian varieties](../semistable-reduction-theorem.md), for the
   existence of such fields (the remark after Definition 3.2)
