@@ -983,7 +983,7 @@
   "CSLibExt/Computability/Circuit/AnnotatedArrival": {"to": "TheoryOfComputation/circuit-complexity", "title": "Arrival times of a circuit with gate delays"},
   "CSLibExt/Computability/Circuit/ContaminationDelay": {"to": "TheoryOfComputation/circuit-complexity", "title": "Contamination delays and hold-time certificates"},
   "CSLibExt/Computability/Circuit/StaticMuxHazard": {"to": "TheoryOfComputation/circuit-complexity", "title": "Static mux hazard under transport delay"},
-  "CSLibExt/Computability/Circuit/UniformArrival": {"to": "TheoryOfComputation/circuit-complexity", "title": "Exact arrival times under uniform gate delays"},
+  "CSLibExt/Computability/Circuit/UniformArrival": {"to": "TheoryOfComputation/circuit-complexity", "title": "Arrival times of a circuit with gate delays"},
   "CSLibExt/Computability/Complexity/Basic": {"to": "TheoryOfComputation/complexity-classes", "title": "The classes P, NP and coNP"},
   "CSLibExt/Computability/Complexity/BoolClosure": {"to": "TheoryOfComputation/complexity-classes", "title": "The classes P, NP and coNP"},
   "CSLibExt/Computability/Complexity/Consequences": {"to": "TheoryOfComputation/complexity-classes", "title": "The classes P, NP and coNP"},

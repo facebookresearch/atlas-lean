@@ -26,5 +26,4 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Learning under the uniform distribution](learning-under-the-uniform-distribution/README.md)
 - [Arrival times of a circuit with gate delays](arrival-times-of-a-circuit-with-gate-delays/README.md)
 - [Contamination delays and hold-time certificates](contamination-delays-and-hold-time-certificates/README.md)
-- [Exact arrival times under uniform gate delays](exact-arrival-times-under-uniform-gate-delays/README.md)
 - [Static mux hazard under transport delay](static-mux-hazard-under-transport-delay/README.md)
