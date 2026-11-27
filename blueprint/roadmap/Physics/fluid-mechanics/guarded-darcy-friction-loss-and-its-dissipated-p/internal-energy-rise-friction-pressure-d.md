@@ -1,0 +1,3 @@
+# Internal-energy rise from a friction loss
+
+Consider a duct segment whose inlet and outlet faces have area $A$, density $\rho$, the same port velocity vector $v$ and a scalar speed $V$ (outward normal velocity $V$ at the outlet and $-V$ at the inlet), where $V$ and $v$ are independent inputs (in the physical case $V$ is the axial component of $v$, but this is not assumed), the same elevation $z$ and gravity $g$, with specific internal energies $e_{in}$, $e_{out}$ and pressures $p_{in}$, $p_{out}$. The outward energy rate of a face with outward normal velocity $v_n$ is $A\,v_n\big(\rho(e + |v|^2/2 + g z) + p\big)$. If the outward energy rates sum to zero, $p_{in} - p_{out} = c\,Q\,|Q|$ at $Q = A V$, and $c \ge 0$, then $\rho A V (e_{out} - e_{in}) = c\,Q^2|Q| \ge 0$.

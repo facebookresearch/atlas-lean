@@ -3,6 +3,7 @@
 Mistake and regret bounds for sequential prediction: perceptron, weighted majority, Hedge (multiplicative weights) and AdaBoost.
 
 - [Hedge algorithm](hedge-algorithm/README.md)
+- [No-regret dynamics give approximate saddle points of matrix games](no-regret-dynamics-give-approximate-saddle-point/README.md)
 - [Perceptron](perceptron/README.md)
 - [AdaBoost](adaboost/README.md)
 - [Boosting and the minimax theorem](boosting-and-the-minimax-theorem/README.md)
@@ -17,6 +18,11 @@ Mistake and regret bounds for sequential prediction: perceptron, weighted majori
 - [Online Newton Step for exp-concave losses](online-newton-step-for-exp-concave-losses.md)
 - [Quadratic lower bound for exp-concave functions](quadratic-lower-bound-for-exp-concave-functions.md)
 - [Log-determinant potential of Online Newton Step](log-determinant-potential-of-online-newton-step.md)
+- [Games, approachability and calibration](games-approachability-and-calibration/README.md)
+- [Mistake bounds and the Littlestone dimension](mistake-bounds-and-littlestone-dimension/README.md)
+- [Online convex optimization algorithms](online-convex-optimization-algorithms/README.md)
+- [Regret in the experts setting](regret-in-the-experts-setting/README.md)
+- [Swap and internal regret](swap-and-internal-regret/README.md)
 
 ## Related topics
 

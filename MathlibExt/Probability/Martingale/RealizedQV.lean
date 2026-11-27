@@ -24,7 +24,7 @@ the row. This is the array setting of `MathlibExt.Probability.Martingale.Marting
 
 ## Main results
 
-* `tendstoInMeasure_sup_abs_sum_sq_sub_condExp` (**Hall–Heyde, Theorem 2.23**): Lindeberg plus
+* `tendstoInMeasure_sup_abs_sum_sq_sub_condExp` (**Hall–Heyde, Chapter 2**): Lindeberg plus
   tightness of `∑_{j < k n} E[ξ n j² | 𝓕 n j]` (`k n ≤ n`) imply
   `max_{i ≤ k n} |∑_{j < i} (ξ n j² - E[ξ n j² | 𝓕 n j])| → 0` in probability.
 * `tendstoInMeasure_sup_abs_sum_sq_sub_condExp_of_qv`: the same along the whole row
@@ -59,10 +59,10 @@ predictable variation exceeds `C`, the stopping never triggers.
 ## Source
 
 P. Hall and C. C. Heyde, *Martingale Limit Theory and Its Application*, Academic Press (1980),
-Theorem 2.23: under the conditional Lindeberg condition and tightness of
+Chapter 2: under the conditional Lindeberg condition and tightness of
 `V²_{n k_n} = ∑_{i ≤ k_n} E[X_{ni}² | 𝓕_{n,i-1}]`,
 `max_{i ≤ k_n} |U²_{ni} - V²_{ni}| → 0` in probability, where `U²_{ni} = ∑_{j ≤ i} X_{nj}²`.
-(Statement paraphrased; theorem number from the task spec, not checked against the text.)
+(Statement paraphrased.)
 -/
 
 @[expose] public section
@@ -115,7 +115,7 @@ private lemma sup'_abs_sq_le (g : ℕ → ℝ) (K : ℕ) :
 
 /-! ### One row: truncation, predictable stopping, and Doob's inequality -/
 
-/-- **One-row estimate behind Hall–Heyde Theorem 2.23.** Let `x 0, x 1, …` be square-integrable
+/-- **One-row estimate behind Hall–Heyde Chapter 2.** Let `x 0, x 1, …` be square-integrable
 with `x i` measurable for `F (i+1)`, write `c j = E[x j² | F j]` and let
 `D = max_{k ≤ K} |∑_{j < k} (x j² - c j)|`. For `ε, δ > 0` and `C ≥ 0`,
 `P(D ≥ 3δ) ≤ P(∑_{j<K} c j > C) + 4 ε² C / δ² + 2 L / δ`, where
@@ -384,7 +384,7 @@ private lemma measure_three_mul_le {m : MeasurableSpace Ω} {μ : Measure Ω}
 
 /-! ### Realized versus predictable quadratic variation -/
 
-/-- **Hall–Heyde, Theorem 2.23 (realized and predictable quadratic variation agree).**
+/-- **Hall–Heyde, Chapter 2 (realized and predictable quadratic variation agree).**
 Let row `n` of `ξ` be square-integrable, with `ξ n i` measurable for `𝓕 n (i+1)`, satisfying
 the Lindeberg condition `LindebergConditionTriangular ξ μ`, and let `k n ≤ n`. If the
 predictable quadratic variations `V n = ∑_{j < k n} E[ξ n j² | 𝓕 n j]` are bounded in
@@ -395,8 +395,8 @@ The martingale property `E[ξ n i | 𝓕 n i] = 0` is not needed. Hall–Heyde a
 Lindeberg condition; the unconditional one used here (as in T82) implies it.
 
 Source: P. Hall and C. C. Heyde, *Martingale Limit Theory and Its Application*, Academic Press
-(1980), Theorem 2.23 (statement paraphrased; theorem number from the task spec, not checked
-against the text). -/
+(1980), Chapter 2, on comparing the sums of squares of martingale array increments with their
+conditional variances. -/
 theorem tendstoInMeasure_sup_abs_sum_sq_sub_condExp {m : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ] {𝓕 : ℕ → Filtration ℕ m} {ξ : ℕ → ℕ → Ω → ℝ}
     (hξ : ∀ n i, StronglyMeasurable[𝓕 n (i + 1)] (ξ n i)) (hL2 : ∀ n i, MemLp (ξ n i) 2 μ)
@@ -490,7 +490,7 @@ private lemma floor_mul_le_self (n : ℕ) {t : ℝ} (ht : t ∈ Set.Icc (0 : ℝ
     ⌊(n : ℝ) * t⌋₊ ≤ n :=
   Nat.floor_le_of_le (by nlinarith [ht.2, (Nat.cast_nonneg n : (0 : ℝ) ≤ n)])
 
-/-- **Hall–Heyde Theorem 2.23 under T82's hypotheses.** For the martingale-difference arrays of
+/-- **Hall–Heyde Chapter 2 under T82's hypotheses.** For the martingale-difference arrays of
 `tendstoInDistribution_arrayStepProcess` (`MartingaleTightness`, roadmap task T82): if row `n`
 of `ξ` is square-integrable with `ξ n i` measurable for `𝓕 n (i+1)`, the predictable quadratic
 variation `∑_{j < ⌊n t⌋} E[ξ n j² | 𝓕 n j]` tends to `t` in probability for every
@@ -516,7 +516,7 @@ theorem tendstoInMeasure_sup_abs_sum_sq_sub_condExp_of_qv {m : MeasurableSpace �
     (exists_eventually_measure_lt_le h1)
 
 /-- **Realized quadratic variation from predictable quadratic variation** (Hall–Heyde,
-Theorem 2.23, for T82's arrays). Under the hypotheses of T82's functional CLT
+Chapter 2, for T82's arrays). Under the hypotheses of T82's functional CLT
 `tendstoInDistribution_arrayStepProcess` (square integrability, `ξ n i` measurable for
 `𝓕 n (i+1)`, predictable quadratic variation `→ t`, Lindeberg), the realized quadratic
 variation converges to the same limit: for every `t ∈ [0,1]`,

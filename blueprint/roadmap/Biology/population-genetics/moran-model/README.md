@@ -26,7 +26,18 @@
 
 - [Fixation probability in a frequency-dependent Moran process](frequency-dependent-moran-fixation-product-formu.md)
 - [The one-third rule for weak selection in the Moran process](one-third-rule-under-weak-selection.md)
+- [Weak-selection fixation probabilities in structured populations](weak-selection-fixation-probabilities/README.md)
 - [Neutral Moran genealogy as a relabeled Cannings model](moran-model-genealogy-per-step-c-2-n-2-and-time.md)
 - [Finite neutral Moran sampling duality on the pair-coalescence clock](finite-moran-forward-backward-sampling-duality.md)
 
 - [Moran and Cannings models: generator limits and effective size](moran-and-cannings-models-generator-limits-and-e.md)
+- [Punctuated evolution in the weak-mutation limit](punctuated-evolution-in-the-weak-mutation-limit/README.md)
+- [Copy number dynamics of genetic elements](copy-number-dynamics-of-genetic-elements/README.md)
+- [Moran models with heterogeneous resampling rates](moran-models-with-heterogeneous-resampling-rates/README.md)
+- [Stein's method approximations in population genetics](stein-method-approximations-in-population-genetics/README.md)
+- [Moran process in heterogeneous environments](moran-process-in-heterogeneous-environments/README.md)
+- [Algebraic dualities of Wright–Fisher and Moran models](algebraic-dualities-of-wright-fisher-and-moran-models/README.md)
+- [Common ancestor type process](common-ancestor-type-process/README.md)
+- [Entropy rates of evolutionary Markov chains](entropy-rates-of-evolutionary-markov-chains/README.md)
+- [Infinitely many genes model with horizontal transfer](infinitely-many-genes-model-with-horizontal-transfer/README.md)
+- [Labelled Moran model with selection](labelled-moran-model-with-selection/README.md)
