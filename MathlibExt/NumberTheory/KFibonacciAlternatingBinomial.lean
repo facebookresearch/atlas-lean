@@ -19,7 +19,17 @@ import Mathlib.Tactic.Ring
 We prove Farhi's finite alternating sum for each k-Fibonacci number by first expanding
 the prefix sums of the sequence and then taking their first differences. The prefix sums
 `S m = ∑ i < m, F i` satisfy `S (m + k + 1) = 2 * S (m + k) - S m`. Pascal's identity
-gives the same recurrence for their binomial expansion.
+gives the same recurrence for their binomial expansion. The generalized binomial sum follows by
+reversing the coefficient transformation from the generalized sum to the alternating sum.
+
+## References
+
+- Bakir Farhi, *Some Applications of the Lagrange Inversion Formula for the k-Fibonacci Numbers*,
+  Journal of Integer Sequences 27 (2024), Article 24.1.1, pp. 1–15, Corollaries 12 and 14,
+  and Remark 15(2).
+- F. T. Howard and Curtis Cooper, *Some Identities for r-Fibonacci Numbers*, The Fibonacci
+  Quarterly 49 (2011), no. 3, pp. 231–243, Theorem 2.1 (the order-`k + 1` recurrence) and
+  Theorem 2.4 (the earlier alternating formula, with the summation bound corrected by Farhi).
 -/
 
 namespace MetaMathlibExt
@@ -222,5 +232,62 @@ public theorem kFibonacci_eq_alternating_binomial_sum (k n : ℕ) (hk : 2 ≤ k)
       linarith
     rw [term_difference hj hx]
     congr 2 <;> ring_nf
+
+private theorem choose_neg_sub_choose (x : ℤ) (j : ℕ) :
+    Ring.choose ((j : ℤ) - x - 1) (j + 1) - Ring.choose ((j : ℤ) - x - 1) j =
+      (-1) ^ (j + 1) * (Ring.choose (x + 2) (j + 1) -
+        (if j + 1 = 1 then 0 else Ring.choose x (j + 1 - 2))) := by
+  rw [show (j : ℤ) - x - 1 = -(x + 1 - j) by ring, Ring.choose_neg, Ring.choose_neg]
+  simp only [Units.smul_def, Int.coe_negOnePow_natCast, zsmul_eq_mul, Int.cast_id]
+  rw [show x + 1 - (j : ℤ) + (↑(j + 1) : ℤ) - 1 = x + 1 by push_cast; ring,
+    show x + 1 - (j : ℤ) + j - 1 = x by ring]
+  calc
+    _ = (-1) ^ (j + 1) * (Ring.choose (x + 1) (j + 1) + Ring.choose x j) := by
+      rw [pow_succ]
+      ring
+    _ = _ := by
+      rw [← choose_difference x (Nat.succ_pos j), Ring.choose_succ_succ x j]
+      ring
+
+/-- **Binomial-sum formula for the $k$-Fibonacci numbers.** Let $k \ge 2$ and let
+$(F_n)_{n \ge 0}$ be the $k$-Fibonacci sequence, given by $F_0 = \dots = F_{k-2} = 0$,
+$F_{k-1} = 1$ and $F_{m+k} = F_m + F_{m+1} + \dots + F_{m+k-1}$ for all $m \ge 0$. For integers
+$a$ and $j \ge 0$ write $\binom{a}{j} = a(a-1)\cdots(a-j+1)/j!$, and put $\binom{a}{-1} = 0$.
+Then for every $n \ge k$,
+$$F_n = 2^{n-k} \sum_{\ell=0}^{\lfloor (n-k+1)/(k+1) \rfloor} \left(\binom{(k+1)\ell+k-n-2}{\ell} -
+\binom{(k+1)\ell+k-n-2}{\ell-1}\right) 2^{-(k+1)\ell}.$$
+
+Source: Bakir Farhi, *Some Applications of the Lagrange Inversion Formula for the
+k-Fibonacci Numbers*, Journal of Integer Sequences 27 (2024), Article 24.1.1,
+Corollary 12 (`jis-2024-24.1.1-cor-12`). -/
+public theorem kFibonacci_eq_binomial_sum (k n : ℕ) (hk : 2 ≤ k) (hkn : k ≤ n)
+    (F : ℕ → ℤ) (hF0 : ∀ i < k - 1, F i = 0) (hF1 : F (k - 1) = 1)
+    (hrec : ∀ m, F (m + k) = ∑ i ∈ Finset.range k, F (m + i)) :
+    (F n : ℚ) = 2 ^ (n - k) * ∑ ℓ ∈ Finset.range ((n - k + 1) / (k + 1) + 1),
+      ((Ring.choose (((k + 1) * ℓ + k : ℕ) - (n : ℤ) - 2) ℓ -
+        (if ℓ = 0 then 0 else Ring.choose (((k + 1) * ℓ + k : ℕ) - (n : ℤ) - 2) (ℓ - 1)) :
+          ℤ) : ℚ) / 2 ^ ((k + 1) * ℓ) := by
+  rw [kFibonacci_eq_alternating_binomial_sum k n hk hkn F hF0 hF1 hrec, mul_sum,
+    sum_range_eq_add_Ico _ (Nat.succ_pos _)]
+  simp only [Nat.succ_eq_add_one, Ico_add_one_right_eq_Icc, mul_zero, zero_add,
+    Ring.choose_zero_right, ite_true, sub_zero, Int.cast_one, pow_zero, div_one, mul_one]
+  congr 1
+  apply sum_congr rfl
+  intro ℓ hℓ
+  have hℓpos : 0 < ℓ := (mem_Icc.mp hℓ).1
+  obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hℓpos)
+  have htop : (((k + 1) * j.succ + k : ℕ) : ℤ) - n - 2 =
+      (j : ℤ) - ((n : ℤ) - ((j.succ : ℤ) + 1) * k) - 1 := by
+    push_cast
+    ring
+  have hpow : (2 : ℚ) ^ (n - k) / 2 ^ ((k + 1) * j.succ) =
+      2 ^ ((n : ℤ) - (k + 1) * j.succ - k) := by
+    rw [← zpow_natCast, ← zpow_natCast, ← zpow_sub₀ (by norm_num : (2 : ℚ) ≠ 0)]
+    congr 1
+    push_cast [Nat.cast_sub hkn]
+    ring
+  rw [ite_eq_right (Nat.succ_ne_zero j), Nat.succ_sub_one, htop, choose_neg_sub_choose,
+    ← mul_div_assoc, mul_comm ((2 : ℚ) ^ (n - k)), mul_div_assoc, hpow]
+  simp only [Int.cast_mul, Int.cast_pow, Int.cast_neg, Int.cast_one]
 
 end MetaMathlibExt
