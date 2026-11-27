@@ -1,6 +1,6 @@
 # Van Emde Boas operations use O(log log u) recursive calls
 
-In the recursive van Emde Boas tree over a universe of size $u = 2^{2^d}$, the operations membership, insertion, deletion, minimum and strict successor are correct with respect to the represented finite set, and each performs at most $d + 1 = \log_2 \log_2 u + 1$ active recursive calls. In particular these ordered-set operations take $O(\log \log u)$ time, provided each call does $O(1)$ local work.
+In the recursive van Emde Boas tree over a universe of size $u = 2^{2^d}$, the operations membership, insertion of an element not in the represented set, deletion of an element of the represented set, minimum and strict successor are correct with respect to the represented finite set, and each performs at most $d + 1 = \log_2 \log_2 u + 1$ active recursive calls. In particular these ordered-set operations take $O(\log \log u)$ time, provided each call does $O(1)$ local work.
 
 ## Proof sketch
 

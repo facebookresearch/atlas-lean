@@ -6,7 +6,11 @@ $$
 \sum_{a} \mathrm{cnt}_a(K_1) \cdot \mathrm{cnt}_a(K_2),
 $$
 
-where $K_1$, $K_2$ are the lists of non-null key values of the two results and $\mathrm{cnt}_a$ counts occurrences of $a$. $\mathsf{NULL}$ keys match nothing, since $\mathsf{NULL} = \mathsf{NULL}$ is $\mathsf{unknown}$; counting with structural equality of data gives the same result when one input has no $\mathsf{NULL}$ key. This is the join size estimated by second-moment sketches in streaming.
+where $K_1$, $K_2$ are the lists of non-null key values of the two results and $\mathrm{cnt}_a$ counts occurrences of $a$. $\mathsf{NULL}$ keys match nothing, since $\mathsf{NULL} = \mathsf{NULL}$ is $\mathsf{unknown}$. This is the multiplicity count of Guagliardo and Libkin's bag semantics: a product multiplies the multiplicities of its factors, $\mathsf{WHERE}$ keeps the tuples whose condition is true (Figure 5), and a comparison with a $\mathsf{NULL}$ argument is $\mathsf{unknown}$ (Figure 6). For $q_1 = q_2$ and $i = j$ it is the second frequency moment $F_2$ of the non-null keys.
+
+## Proof sketch
+
+Each pair of rows contributes one output row exactly when both keys are non-null and equal, and the pairs with common key $a$ number $\mathrm{cnt}_a(K_1)\,\mathrm{cnt}_a(K_2)$. Counting with structural equality of data instead, under which $\mathsf{NULL}$ equals $\mathsf{NULL}$, gives the same result when one input has no $\mathsf{NULL}$ key.
 
 ## Depends on
 

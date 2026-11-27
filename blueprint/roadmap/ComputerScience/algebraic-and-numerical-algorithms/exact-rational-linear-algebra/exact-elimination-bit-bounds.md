@@ -1,10 +1,10 @@
 # Polynomial bit-length bounds for exact rational elimination
 
-For an $m \times n$ rational matrix whose entries have numerators and denominators of absolute value at most $2^{\beta}$, fraction-free elimination computes its reduced row echelon form, rank, and (for a consistent system $Ax = b$) a rational solution, such that every intermediate integer has absolute value at most $(n!) \, 2^{n\beta'}$ for $\beta' = O(\beta + \log(mn))$; in particular all intermediate numbers have bit length polynomial in the input size, and Gaussian elimination over $\mathbb{Q}$ runs in polynomial time (Schrijver, Chapter 3).
+For an $m \times n$ rational matrix $A$ and a rational vector $b$ whose entries have numerators and denominators of absolute value at most $2^{\beta}$, multiply each row of $[A \mid b]$ by the product of the denominators of its $n + 1$ entries, giving an integer matrix with entries of absolute value at most $2^{(n+1)\beta}$. Fraction-free elimination on this matrix computes the reduced row echelon form and rank of $A$ and (for a consistent system $Ax = b$) a rational solution, and every entry it produces is, up to sign, a minor of order at most $n + 1$ of the cleared matrix, so it has absolute value at most $(n+1)! \, 2^{(n+1)^2\beta}$, a bit length of $O(n^2\beta + n\log n)$; each numerator before an exact division is a pivot times such a minor. In particular all intermediate numbers have bit length polynomial in the input size, and Gaussian elimination over $\mathbb{Q}$ runs in polynomial time (Schrijver, Chapter 3).
 
 ## Proof sketch
 
-Clear denominators row by row; Sylvester's identity identifies each intermediate value with a minor, and Hadamard's inequality bounds minors.
+Clear denominators row by row: each cleared entry is a numerator times at most $n$ denominators. Sylvester's identity identifies each intermediate entry with a minor of order $k \le n + 1$ of the cleared matrix, and expanding the determinant bounds such a minor by $k! \, (2^{(n+1)\beta})^k$.
 
 ## Depends on
 

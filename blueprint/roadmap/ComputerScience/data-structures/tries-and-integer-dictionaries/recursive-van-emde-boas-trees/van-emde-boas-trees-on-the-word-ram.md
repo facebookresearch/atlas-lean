@@ -1,15 +1,14 @@
 # Van Emde Boas trees on the Word RAM
 
-There is one fixed word-RAM program with 32 registers that, for every depth $d$, initializes an empty van Emde Boas tree over $[2^{2^d}]$ in at most $8\, \mathrm{span}(d) + 20 d + 24$ instructions using at most $10 \cdot 2^{2^d} + 4(d + 1)$ words, and another fixed program that performs insertion, membership and strict successor on it, each in at most $65 (d + 1) + 30$ instructions including dispatch and result conversion, without depth-dependent code. Hence a dynamic ordered set over a universe of size $u$ supports these operations in $O(\log \log u)$ worst-case time with $O(u)$ space and $O(u)$ initialization.
+There is one word-RAM program that, for every depth $d$, initializes an empty van Emde Boas tree over $[u]$ with $u = 2^{2^d}$ using $O(u)$ words, and performs membership, insertion of an element not in the represented set, and strict successor on it, each in $O(1 + \log \log u)$ worst-case time. Hence a dynamic ordered set over a universe of size $u$ supports these operations in $O(\log \log u)$ worst-case time with $O(u)$ space (Demaine, 6.046J Lecture 4: $T(u) = T(\sqrt{u}) + O(1)$ for Insert and Successor, and $\Theta(u)$ space).
 
 ## Proof sketch
 
-The initializer computes the universe sizes and spans by the layout recurrence, tabulates split sizes and child spans per depth, and writes all headers by a depth-first traversal with per-depth counters. Each operation descends at most $d + 1$ records, using the tabulated offsets to locate the summary and the required cluster in $O(1)$ instructions per level.
+The initializer computes the universe sizes and spans by the layout recurrence, tabulates split sizes and child spans per depth, and writes all headers by a depth-first traversal with per-depth counters, in $O(u)$ instructions. Each operation descends at most $d + 1$ records, using the tabulated offsets to locate the summary and the required cluster in $O(1)$ instructions per level, so a fixed register count and no depth-dependent code suffice.
 
 ## Depends on
 
 - [Recursive van Emde Boas tree with excluded minimum](recursive-van-emde-boas-tree.md)
-- [Contiguous layout of a fully allocated van Emde Boas tree](contiguous-van-emde-boas-layout.md)
 - [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 
 ## Proof depends on
