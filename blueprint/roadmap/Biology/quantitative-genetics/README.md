@@ -20,4 +20,4 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Homozygosity-by-descent hidden Markov models](homozygosity-by-descent-hidden-markov-models/README.md)
 - [Predicting cross means and variances](predicting-cross-means-and-variances/README.md)
 - [Interval mapping of quantitative trait loci (Lander–Botstein)](lander-botstein-interval-mapping-of-quantitative-trait-loci.md)
-- [Pearson–Aitken selection formulas](pearson-aitken-lawley-selection-formulas.md)
+- [Pearson–Aitken selection formulas under linear homoscedastic regression](pearson-aitken-lawley-selection-formulas.md)

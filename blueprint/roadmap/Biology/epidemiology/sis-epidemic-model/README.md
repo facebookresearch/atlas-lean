@@ -57,7 +57,6 @@
 
 ## The stochastic SIS epidemic
 
-- [Gumbel limit for extinction times in the subcritical SIS logistic epidemic](brightwell-house-luczak-gumbel-limit-for-extinction-times-in-the-subcr.md)
 
 ## Global stability of the SIS endemic equilibrium via a Lyapunov function
 

@@ -1,20 +1,21 @@
-# Kong–Cox allele-sharing LOD scores
+# Negative range of the Kong–Cox linear allele-sharing parameter
 
-Kong and Cox (1997) start from an allele-sharing test statistic for linkage and propose an associated one-parameter model which, under general missing-data patterns, allows exact calculation of likelihood ratios and LOD scores and hence accurate linkage tests; they also suggest an alternative model that requires additional computation. Under the no-linkage hypothesis the parameter, written $\delta$, is $0$, and larger $\delta$ means more allele sharing among affected relatives (Margaritte-Jeannin et al. 2007, who use the exponential form).
+Kong and Cox (1997) start from an allele-sharing test statistic for linkage and propose an associated one-parameter model which, under general missing-data patterns, allows exact calculation of likelihood ratios and LOD scores; under the no-linkage hypothesis the parameter, written $\delta$, is $0$ (Margaritte-Jeannin et al. 2007). For the [linear model](../../not-yet-classified/kong-cox-allele-sharing/linear-model.md), [its total mass](../../not-yet-classified/kong-cox-allele-sharing/sum-linear-model.md), its [admissible range for $\delta \ge 0$](../../not-yet-classified/kong-cox-allele-sharing/linear-model-nonneg.md) and [the sharpness of that bound](../../not-yet-classified/kong-cox-allele-sharing/linear-model-neg-of-gt.md), and [the exact likelihood under missing data](../../not-yet-classified/kong-cox-allele-sharing/likelihood-eq.md), see those pages; this page states the range of negative $\delta$.
 
-A linear one-parameter family shows why the likelihood ratios are exact. Let $Z$ be an allele-sharing score on the inheritance vectors $v$ of a pedigree, normalized to have mean $0$ and variance $1$ under the no-linkage law $P_0$ of $v$, and set $P_\delta(v) = P_0(v)(1 + \delta Z(v))$. This is a probability law exactly when $1 + \delta Z \ge 0$ on the support, that is for $\delta \in [-1/\max Z, -1/\min Z]$. With marker data $x$, the likelihood is
+Let $Z$ be an allele-sharing score on the inheritance vectors $v$ of a pedigree, normalized to have mean $0$ and variance $1$ under the no-linkage law $P_0$ of $v$, and set $P_\delta(v) = P_0(v)(1 + \delta Z(v))$. For $\delta \le 0$, $P_\delta$ is a probability law (nonnegative with total mass $1$) if and only if $\delta \ge -1/\max Z$, the maximum taken over the support of $P_0$; for $\delta < -1/\max Z$ it is negative at every inheritance vector of the support where $Z$ attains its maximum.
 
-$$L(\delta) = \sum_v P(x \mid v) P_\delta(v) = L(0)\,\bigl(1 + \delta\, E_0[Z \mid x]\bigr),$$
+## Depends on
 
-so the likelihood ratio against $\delta = 0$ is the explicit function $1 + \delta E_0[Z \mid x]$ of the conditional expected score, whatever the pattern of missing marker information, and its derivative at $\delta = 0$ is $E_0[Z \mid x]$.
+- [Linear Model](../../not-yet-classified/kong-cox-allele-sharing/linear-model.md)
+- [The linear model has total mass one](../../not-yet-classified/kong-cox-allele-sharing/sum-linear-model.md)
 
 ## Expansion
 
-1. The model: inheritance vectors, the no-linkage law, and normalized sharing scores.
-2. Validity of the linear family on the stated interval, and the linear form of the likelihood.
-3. The LOD score $\log_{10}(1 + \hat\delta\, E_0[Z \mid x])$ for one pedigree and its sum over independent pedigrees.
-4. The exponential family $P_\delta(v) \propto P_0(v) e^{\delta Z(v)}$, its normalizing constant, and its behaviour when the linear family's interval is too narrow.
-5. The score test at $\delta = 0$ and its relation to the normalized nonparametric linkage statistic.
+1. The model: inheritance vectors, the no-linkage law, and normalized sharing scores; $\max Z > 0$ on the support because $Z$ has mean $0$ and variance $1$.
+2. Nonnegativity of $1 + \delta Z$ on the support for $-1/\max Z \le \delta \le 0$.
+3. Negativity of $P_\delta$ at a maximizer of $Z$ for $\delta < -1/\max Z$.
+4. The exponential family $P_\delta(v) \propto P_0(v) e^{\delta Z(v)}$, its normalizing constant, and its behaviour when the linear family's interval is too narrow, as a separate statement.
+5. The relation of the score test at $\delta = 0$ to the normalized nonparametric linkage statistic, as a separate statement.
 
 ## Sources
 
