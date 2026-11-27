@@ -14,8 +14,8 @@ where $f$ is the sigmoidal firing-rate function, $g$ the subcortical input, the 
 
 1. *(Weak solutions.)* For $g \in L^2(0, T; L^2)$ and initial data $v_0, i_0, i_0' \in L^2$, $w_0 \in H^1$, $w_0' \in L^2$, there is a unique $\Omega$-periodic weak solution, depending continuously on the data, so the weak solution operators form a continuous semigroup.
 2. *(Strong solutions.)* If moreover $w_0 \in H^2$ and $w_0' \in H^1$, the solution is a unique strong solution with the corresponding additional regularity.
-3. *(Biophysical invariance.)* For bounded data in suitable phase spaces, $w$ stays nonnegative and the synaptic activities remain in a positively invariant region, as their interpretation requires.
-4. *(Dissipativity.)* For bounded input $g$ the weak and strong semigroups possess bounded absorbing sets, under explicit inequalities on the parameters that hold over the whole biophysical range.
+3. *(Biophysical invariance.)* For bounded data in the biophysical phase sets $D_w$ (weak solutions) and $D_s$ (strong solutions), $w$ stays nonnegative and the synaptic activities remain in a positively invariant region, as their interpretation requires.
+4. *(Dissipativity.)* For bounded nonnegative input, $g \in L^\infty(0,\infty;D_g)$ with $D_g = \{g \ge 0\}$, the weak and strong semigroups restricted to the biophysical phase sets $D_w$ and $D_s$ of item 3 possess bounded absorbing sets in those phase sets, under explicit inequalities on the parameters that hold over the whole biophysical range.
 5. *(No compact global attractor in general.)* For time-independent bounded $g$, there are parameter values for which the set of equilibria is noncompact, so the semidynamical system lacks asymptotic compactness and has no compact global attractor.
 
 ## Expansion

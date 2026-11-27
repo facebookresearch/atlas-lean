@@ -2,9 +2,9 @@
 
 **Model.** Traits are the vertices $V$ of a finite directed graph $(V,E)$ with wild type $0$. A cell of trait $v$ divides at rate $\alpha(v)$ and dies at rate $\beta(v)$, with net growth rate $\lambda(v) = \alpha(v) - \beta(v)$ and $\lambda(0) > 0$; at each division, each daughter independently mutates along an edge $(v,u)$ with probability $\mu^{(n)}(v,u)$. Edges carry labels $\ell(v,u) > 0$ and the *power-law mutation regime* is
 
-$$n^{\ell(v,u)}\,\mu^{(n)}(v,u) \longrightarrow \mu(v,u) \in [0,\infty).$$
+$$n^{\ell(v,u)}\,\mu^{(n)}(v,u) \longrightarrow \mu(v,u) \in (0,\infty).$$
 
-Start from one wild-type cell, let $Z^{(n)}_v(t)$ be the number of trait-$v$ cells, $W$ the random variable of the source's construction (its (4.6)): the almost-sure limit of the natural positive martingale of an auxiliary birth–death process with rates $\alpha(0)$, $\beta(0)$ that does not depend on $n$, with law $\mathrm{Ber}(\lambda(0)/\alpha(0))\otimes\mathrm{Exp}(\lambda(0)/\alpha(0))$ (the event $\{W>0\}$ is the long-time survival of the wild-type lineage), and use the time scale $\mathfrak{t}^{(n)}_t = t\log n/\lambda(0)$, at which the wild type reaches size $n^t$. For $v \in V$ let $t(v)$ be the minimal total label along walks from $0$ to $v$, and $\theta(v)$ the maximal number of neutral traits ($\lambda = \lambda(0)$) on such minimal walks.
+Start from one wild-type cell, let $Z^{(n)}_v(t)$ be the number of trait-$v$ cells, $W$ the random variable of the source's construction (its (4.6)): the almost-sure limit of the natural positive martingale of an auxiliary birth–death process with rates $\alpha(0)$, $\beta(0)$ that does not depend on $n$, with law $\mathrm{Ber}(\lambda(0)/\alpha(0))\otimes\mathrm{Exp}(\lambda(0)/\alpha(0))$ (the event $\{W>0\}$ is the long-time survival of the wild-type lineage), and use the time scale $\mathfrak{t}^{(n)}_t = t\log n/\lambda(0)$, at which the wild type reaches size $n^t$. For $v \in V$ let $t(v)$ be the minimal total label along walks from $0$ to $v$, and $\theta(v)$ the maximal number of neutral traits ($\lambda = \lambda(0)$) among the heads $v(1),\dots,v(k)$ of such a minimal walk $(0=v(0),v(1),\dots,v(k)=v)$ (the wild type $v(0)=0$ is not counted).
 
 **Theorem (stochastic exponents).** For $0 < T_1 < T_2$, the exponents $X^{(n)}_v(t) = \lambda(0)\log^+ Z^{(n)}_v(\mathfrak{t}^{(n)}_t)/\log n$ satisfy
 

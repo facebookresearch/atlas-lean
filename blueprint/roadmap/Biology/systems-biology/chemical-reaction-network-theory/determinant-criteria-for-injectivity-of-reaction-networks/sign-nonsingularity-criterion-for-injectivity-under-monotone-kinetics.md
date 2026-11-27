@@ -17,7 +17,7 @@ is nonzero and all its monomials have coefficients of one sign.
 3. $A$ is injective over the power-law kinetics $\mathcal{K}^g(Z)$;
 4. $Z$ is A-SNS.
 
-Consequently, if $Z$ is A-SNS the network cannot have two distinct positive steady states in one stoichiometric class, nor a degenerate positive steady state, for any rates respecting $Z$, independently of their functional form.
+Consequently, if $Z$ is A-SNS the network cannot have two distinct positive steady states in one stoichiometric class for any rates in $\mathcal{K}(Z)$, independently of their functional form, nor, for kinetics in $\mathcal{K}^d(Z)$, a degenerate positive steady state.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Species-Reaction Graph criteria for concordant reaction networks
 
-**Concordance.** For a reaction network with species $\mathscr{S}$, reactions $y \to y'$ and stoichiometric subspace $S = \mathrm{span}\{y' - y\}$, let $L \colon \mathbb{R}^{\mathscr{R}} \to S$, $L\alpha = \sum_{y \to y'} \alpha_{y \to y'}(y' - y)$. The network is *concordant* if there do not exist $\alpha \in \ker L$ and a nonzero $\sigma \in S$ such that
+**Concordance.** Throughout, a species appears on at most one side of each reaction. For a reaction network with species $\mathscr{S}$, reactions $y \to y'$ and stoichiometric subspace $S = \mathrm{span}\{y' - y\}$, let $L \colon \mathbb{R}^{\mathscr{R}} \to S$, $L\alpha = \sum_{y \to y'} \alpha_{y \to y'}(y' - y)$. The network is *concordant* if there do not exist $\alpha \in \ker L$ and a nonzero $\sigma \in S$ such that
 
 1. for each reaction with $\alpha_{y \to y'} \ne 0$, $\mathrm{supp}\, y$ contains a species $s$ with $\mathrm{sgn}\,\sigma_s = \mathrm{sgn}\,\alpha_{y \to y'}$;
 2. for each reaction with $\alpha_{y \to y'} = 0$, either $\sigma_s = 0$ for all $s \in \mathrm{supp}\,y$, or $\mathrm{supp}\,y$ contains $s, s'$ with $\mathrm{sgn}\,\sigma_s = -\mathrm{sgn}\,\sigma_{s'} \ne 0$.

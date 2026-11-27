@@ -13,6 +13,10 @@
 
 The $O(n\log n)$ query count is asymptotically optimal, since there are $2^{\Omega(n\log n)}$ such networks and each quarnet carries $O(1)$ bits.
 
+## Depends on
+
+- [Blobs and the reduced unrooted tree of blobs of a phylogenetic network](../../../coalescent-theory/multispecies-coalescent/tree-of-blobs-identifiability/blob-and-tree-of-blobs-of-a-phylogenetic-network.md)
+
 ## Expansion
 
 Leaves are inserted one at a time into a growing canonical form. To place a new leaf $x$, the algorithm walks a balanced decomposition of the current network: at each cut-edge $uv$ with split $A \mid B$, a constant number of quarnet-splits $a_1x \mid b_1b_2$ (with $a_1, b_1$ and a distinguishing set of the blob containing $v$) decides on which side $x$ belongs, so each insertion costs $O(\log n)$ queries, in the spirit of binary search for trees. Within a cycle, four-cycle quarnets locate the attachment point and the reticulation. Quarnets are the natural input because they are identifiable from sequence data under standard network models, whereas the full network is not inferred directly.

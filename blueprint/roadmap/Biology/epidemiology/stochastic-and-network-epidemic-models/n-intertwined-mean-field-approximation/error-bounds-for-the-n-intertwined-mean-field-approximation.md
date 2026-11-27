@@ -8,7 +8,7 @@ $$\frac{d}{dt}z_{i,s}=\sum_{m=0}^M\frac1{m!}\sum_{\underline j,\underline{\tilde
 
 $$\max_{i\in V,s\in\mathcal S}|y_{i,s}(t)-z_{i,s}(t)|\le2Mt\,e^{2M\delta_{\max}t}\,\tilde r_{\max}.$$
 
-This is sharp in $\tilde r_{\max}$: for the SI process on a graph with $\bar r_{ij}=a_{ij}/\bar d$ (average degree $\bar d$) there is a vertex with $|y_{i,I}(1)-z_{i,I}(1)|\ge\frac1{32\bar d}$.
+This is sharp in $\tilde r_{\max}$: take the SI process on an unweighted graph with symmetric adjacency matrix $(a_{ij})$, $\bar r_{ij}=a_{ij}/\bar d$ and average degree $\bar d\ge1$, pick a vertex $i$ with degree $d_i\ge\bar d$, and start with $i$ infected with probability $1/2$ and every other vertex susceptible; then $|y_{i,I}(1)-z_{i,I}(1)|\ge\frac1{32\bar d}$.
 
 **Theorem (average error, $M=1$, $R=R^\top$).**
 

@@ -16,7 +16,7 @@ $$\liminf_{t\to\infty}\frac{H_t\log t}{t} \ge m-1, \qquad \liminf_{t\to\infty}\f
 
 and $\liminf_t H_t \log\log(\#A_t)/\log(\#A_t) \ge 1$. Moreover, almost surely $M_t e^{-(m-1+\delta)t} \to 0$ for every $\delta > 0$, and $\limsup_t H_t/t \le \bar c$ for a constant $\bar c > 1$.
 
-**Proposition (bounded degree).** If $G$ has bounded degree, then for every $\varepsilon > 0$ there is $\gamma_c > 0$ such that for all $\gamma > \gamma_c$, almost surely $\limsup_t M_t/t \le \varepsilon$.
+**Proposition (bounded degree).** If $G$ is a supercritical Galton–Watson tree as in the previous theorem that has bounded degree (its offspring law is bounded), then for every $\varepsilon > 0$ there is $\gamma_c > 0$ such that for all $\gamma > \gamma_c$, almost surely $\limsup_t M_t/t \le \varepsilon$.
 
 So although the reached set always grows, on the line the infected region is only of logarithmic length infinitely often and empty infinitely often, while on trees with exponential growth the infected set itself grows at least linearly.
 

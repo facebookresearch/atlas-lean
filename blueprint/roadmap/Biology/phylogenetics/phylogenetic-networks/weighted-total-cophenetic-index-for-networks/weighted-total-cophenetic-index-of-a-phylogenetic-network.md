@@ -1,6 +1,6 @@
 # Weighted total cophenetic index of a phylogenetic network
 
-**Setting.** Let $N$ be a rooted phylogenetic network on $n$ leaves with root $\rho_N$. A vertex is *relevant* if it has more than one child after contracting the non-trivial blocks hanging below it, and $\mathring V_N$ is the set of relevant vertices. For a non-trivial block $B$ (a biconnected component with a cycle) with root $\rho_B$, let $\kappa_v$ be the number of vertices of $B$ below or equal to $v$ and define the block weight
+**Setting.** Let $N$ be a rooted phylogenetic network on $n$ leaves with root $\rho_N$. For a vertex $v$, let $\mathrm{child}^*_N(v)$ be the set of children of $v$ that do not lie in a non-trivial block $B$ (a biconnected component with a cycle) containing $v$ as a non-root vertex, $v \in V(B) \setminus \{\rho_B\}$. A vertex $v$ is *relevant* if $|\mathrm{child}^*_N(v)| > 1$, and $\mathring V_N$ is the set of relevant vertices. For a non-trivial block $B$ with root $\rho_B$, let $\kappa_v$ be the number of vertices of $B$ below or equal to $v$ and define the block weight
 
 $$\omega(B) = \sum_{v \in V(B) \setminus \{\rho_B\}} \binom{\kappa_v}{2}.$$
 

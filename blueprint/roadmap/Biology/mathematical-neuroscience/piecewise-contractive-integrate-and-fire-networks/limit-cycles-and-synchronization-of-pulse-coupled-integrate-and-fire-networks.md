@@ -8,7 +8,7 @@ The dynamics are equivalent to a piecewise continuous return map $\rho$ on the P
 
 1. (Not globally contractive.) Under (H1)–(H2) there is an open region of interaction values for which $\Sigma$ is not a contractive zone for $\rho$ with respect to the natural partition, in any norm.
 2. (Piecewise contraction.) Under (H1)–(H4), if at least one neuron is inhibitory, there is an adapted metric and partition of $\Sigma$ for which $\rho$ is piecewise contractive; the set $\Sigma^* = \overline{\rho(\mathcal{C}_{\bar c})}$, with $\mathcal{C}_c = \{\alpha \le V_i \le c\}$, is a forward-invariant contractive zone that absorbs every orbit after at most $p+1$ steps, where $\alpha + p\min_{j\neq i}|H_{ji}| \ge \theta$.
-3. (Limit cycles.) Consequently, with an inhibitory neuron and strong enough interactions, the stable asymptotic dynamics are supported on at most countably many limit cycles attracting all orbits that eventually avoid the discontinuity set.
+3. (Limit cycles.) Consequently, with an inhibitory neuron and strong enough interactions, the stable asymptotic dynamics are supported on at most countably many limit cycles attracting all orbits that stay at a positive distance from the discontinuity set $\partial\mathcal{P}^*$ of the adapted partition.
 4. (Synchronization.) Under (H1), if all neurons are excitatory and
 
     $$n \ge \Big\lceil \frac{\theta}{\min_{j\neq i}H_{ji}} \Big\rceil^2,$$

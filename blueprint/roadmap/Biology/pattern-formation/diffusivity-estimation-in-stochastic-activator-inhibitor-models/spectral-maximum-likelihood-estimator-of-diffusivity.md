@@ -8,7 +8,7 @@ with $W$ a cylindrical Wiener process (space–time white noise), diffusivity $\
 
 $$\mathrm dU=\bigl(D_U\Delta U+k_1U(u_0-U)(U-a(|U|_{L^2})u_0)-k_2V\bigr)\mathrm dt+B\,\mathrm dW,\qquad \partial_tV=D_V\Delta V+\epsilon(bU-V),$$
 
-in which only the activator $U$ is observed. Eliminating $V$ by variation of constants turns it into the form above with $\theta_0=D_U$, linear dependence on $(\theta_1,\theta_2,\theta_3)$, and a history-dependent (non-Markovian) term $-\int_0^te^{(t-r)(D_V\Delta-\epsilon)}U_r\,\mathrm dr$.
+where $a\in C^1_b(\mathbb R,\mathbb R)$ is bounded and continuously differentiable with bounded derivative, the inhibitor starts from $V_0=0$, and only the activator $U$ is observed. Eliminating $V$ by variation of constants (which uses $V_0=0$; a nonzero $V_0$ adds the term $e^{t(D_V\Delta-\epsilon)}V_0$) turns it into the form above with $\theta_0=D_U$, linear dependence on $(\theta_1,\theta_2,\theta_3)$, and a history-dependent (non-Markovian) term $-\int_0^te^{(t-r)(D_V\Delta-\epsilon)}U_r\,\mathrm dr$.
 
 **Estimator.** Let $(\lambda_k,\Phi_k)$ be the eigenpairs of $-\Delta$, so that $\lambda_k\sim\Lambda k^{2/d}$, and let $X^N$ be the projection of $X$ onto the first $N$ eigenfunctions. With a free contrast parameter $\alpha$, the maximum likelihood equations for continuous observation of $X^N$ on $[0,T]$ give
 

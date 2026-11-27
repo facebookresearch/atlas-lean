@@ -9,11 +9,11 @@ with $s = b + \alpha\eta A$ and positive parameters, $r > d$. Here fear of preda
 **Theorem.**
 
 1. *(Well-posedness.)* Solutions starting in $\mathbb{R}^2_+$ stay nonnegative and are uniformly bounded; in particular $\limsup_{t\to\infty} u(t) \le (r - d)/p$.
-2. *(Equilibria.)* The extinction state $E_0$ is unstable. The predator-free state $E_1 = (\bar u, 0)$, $\bar u = (r - d)/p$, is locally asymptotically stable iff $(ca - \mu_1)(1-m)\bar u < \mu_1 s - ca\eta A$, and loses stability through a transcritical bifurcation at
+2. *(Equilibria.)* The extinction state $E_0$ is unstable. The predator-free state $E_1 = (\bar u, 0)$, $\bar u = (r - d)/p$, is locally asymptotically stable if $(ca - \mu_1)(1-m)\bar u < \mu_1 s - ca\eta A$ (and unstable under the reverse strict inequality), and loses stability through a transcritical bifurcation at
 
     $$a_{TC_1} = \frac{\mu_1\{s + (1-m)\bar u\}}{c\{\eta A + (1-m)\bar u\}}.$$
 
-    A prey-free state $E_2 = (0, \tilde v)$, sustained by the additional food, exists when $ca\eta A > \mu_1 s$ and is stable iff $\omega\{dl + a(1-m)\}\tilde v^2 + \{ds\omega + a(1-m) - (r-d)l\}\tilde v - (r - d)s > 0$, with a transcritical bifurcation where this expression vanishes.
+    A prey-free state $E_2 = (0, \tilde v)$, sustained by the additional food, exists when $ca\eta A > \mu_1 s$ and is locally asymptotically stable if $\omega\{dl + a(1-m)\}\tilde v^2 + \{ds\omega + a(1-m) - (r-d)l\}\tilde v - (r - d)s > 0$ (and unstable under the reverse strict inequality), with a transcritical bifurcation where this expression vanishes.
 
 3. *(Hopf.)* When the coexistence equilibrium $E^*$ is feasible and $\det J(E^*) > 0$, a simple Hopf bifurcation occurs at $\omega = \omega_H$, the unique positive root of $\operatorname{tr} J(E^*) = 0$, so increasing fear can switch the coexistence state between stable equilibrium and oscillation.
 4. *(Turing instability, local model.)* If $E^* = (u^*, v^*)$ is stable for the ODE and the Jacobian $J = (a_{ij})$ at $E^*$ satisfies $d_2 a_{11} + d_1 a_{22} > 0$ and $(d_2 a_{11} + d_1 a_{22})^2 > 4d_1d_2\det J$, with $d_1 < d_2$, then $E^*$ is Turing unstable for every wavenumber $k^2$ in the interval between the roots of $d_1d_2k^4 - (d_2a_{11} + d_1a_{22})k^2 + \det J = 0$.

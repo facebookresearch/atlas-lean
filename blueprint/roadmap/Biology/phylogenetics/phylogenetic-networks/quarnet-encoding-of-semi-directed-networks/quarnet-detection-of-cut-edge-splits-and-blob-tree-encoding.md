@@ -8,6 +8,10 @@ $$\{a_1,a_2\}\,|\,\{b_1,b_2\}\ \text{ is a CE-split of } N|_{\{a_1,a_2,b_1,b_2\}
 
 **Corollary (blob-tree encoding).** If $N$ and $N'$ are semi-directed phylogenetic networks on $X$ with the same set of quarnets (up to isomorphism), then $B(N)\cong B(N')$.
 
+## Depends on
+
+- [Blobs and the reduced unrooted tree of blobs of a phylogenetic network](../../../coalescent-theory/multispecies-coalescent/tree-of-blobs-identifiability/blob-and-tree-of-blobs-of-a-phylogenetic-network.md)
+
 ## Expansion
 
 The CE-splits of $N$ are exactly the splits of its blob tree, and an unrooted phylogenetic tree is determined by its splits, so the corollary follows from the theorem. The "only if" direction holds because restriction preserves a cut-edge separating $a_1,a_2$ from $b_1,b_2$. The main work is the converse when $N$ is simple: then every non-trivial split fails to be a CE-split, and one must exhibit $a_1,a_2\in A$, $b_1,b_2\in B$ whose quarnet keeps a blob separating neither pair. This is done on a rooting of $N$, using that in a simple network every non-root, non-leaf vertex has an arc entering its descendant set from outside, and that every arc lies on one of two arc-disjoint directed paths ending at a leaf-reticulation; these paths survive restriction to suitably chosen leaves. The general case reduces to the simple one by restricting to a blob. The result places no restriction on the level, which is why the coarse tree-like structure of a network is identifiable from four-taxon information even when the full network is not; it underlies consistency proofs for quarnet-based network reconstruction.

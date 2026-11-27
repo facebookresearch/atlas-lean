@@ -11,7 +11,7 @@ In the extended model, paused particles are deposited into the membrane, $(P_i, 
 **Theorem.**
 
 1. *(Pure transport.)* If $k_1 = k_2 = 0$, then $X_t/\delta \sim \mathrm{Poisson}(rt)$, so $\mathbb{E}X_t = vt$; as $\delta \to 0$, $X_t/t \to v$ almost surely and $\delta^{-1/2}(X_t - vt) \Rightarrow \sqrt v\, B_t$ for a standard Brownian motion $B$.
-2. *(On/off transport.)* If $k_1, k_2 > 0$, the mean velocity tends to $\frac{k_2}{k_1 + k_2} v$, and in the limit $\delta \to 0$,
+2. *(On/off transport.)* If $k_1, k_2 > 0$, the mean velocity $\mathbb{E}X_t/t$ tends to $\frac{k_2}{k_1 + k_2} v$ as $t \to \infty$, and in the limit $\delta \to 0$, as $t \to \infty$,
 
     $$\frac{X_t}{t} \to \frac{k_2}{k_1+k_2}v \ \text{a.s.}, \qquad \sqrt t\Big(\frac{X_t}{t} - \frac{k_2}{k_1+k_2}v\Big) \Rightarrow \sqrt{\frac{2k_1k_2}{(k_1+k_2)^3}}\; v\, Z, \quad Z \sim N(0,1),$$
 

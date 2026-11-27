@@ -1,6 +1,6 @@
 # Moment estimators of connection density in excitatory-inhibitory binary networks
 
-**Model.** Let $\theta_{ij}\sim\mathrm{Ber}(p)$, $1\le i,j\le N$, be i.i.d. (a directed Erdős–Rényi graph of synaptic connections). The neurons are split into excitatory and inhibitory sets $\mathcal P_+\sqcup\mathcal P_-=\{1,\dots,N\}$ with fractions $|\mathcal P_\pm|/N\to r_\pm\in(0,1)$, $r_++r_-=1$. Given $\theta$, the spike indicators $X_t=(X_{1,t},\dots,X_{N,t})\in\{0,1\}^N$ form a stationary Markov chain in which, given $X_{t-1}=x$, the $X_{i,t}$ are independent Bernoulli with
+**Model.** Let $\theta_{ij}\sim\mathrm{Ber}(p)$, $1\le i,j\le N$, be i.i.d. (a directed Erdős–Rényi graph of synaptic connections). The neurons are split into excitatory and inhibitory sets $\mathcal P_+\sqcup\mathcal P_-=\{1,\dots,N\}$ with fractions $r^N_\pm=|\mathcal P_\pm|/N$ satisfying $|r^N_+-r_+|\vee|r^N_--r_-|\le K_0N^{-1}$ for some constants $r_\pm\in(0,1)$, $r_++r_-=1$, and a universal constant $K_0$ (for instance $|\mathcal P_+|=\lceil r_+N\rceil$ with $K_0=1$). Given $\theta$, the spike indicators $X_t=(X_{1,t},\dots,X_{N,t})\in\{0,1\}^N$ form a stationary Markov chain in which, given $X_{t-1}=x$, the $X_{i,t}$ are independent Bernoulli with
 
 $$p_{\theta,i}(x)=\mu+(1-\lambda)\Big(\frac1N\sum_{j\in\mathcal P_+}\theta_{ij}x_j+\frac1N\sum_{j\in\mathcal P_-}\theta_{ij}(1-x_j)\Big),\qquad 0<\mu<\lambda<1 .$$
 
