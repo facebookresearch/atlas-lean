@@ -30,11 +30,20 @@ example : ∃ a : 𝔸, WittVector.frobenius (xi p) = xi p ^ p + (p : 𝔸) * a 
 example : WittVector.frobenius (xi p) = (p : 𝔸) - WittVector.teichmuller p (pFlat p ^ p) :=
   frobenius_xi p
 
--- `φ(ξ)` is not in the kernel of `θ`, so `φ` does not preserve `ker θ`.
+-- `θ(φ(ξ)) = p - p^p`: unlike `ξ`, `φ(ξ)` is not sent to `0` by `θ` (as `p^p ≠ p`).
 example :
     fontaineTheta 𝓞_ℂ_[p] p (WittVector.frobenius (xi p)) = (p : 𝓞_ℂ_[p]) - (p : 𝓞_ℂ_[p]) ^ p := by
   rw [frobenius_xi, map_sub, map_natCast, WittVector.fontaineTheta_teichmuller, map_pow,
     untilt_pFlat]
+
+example : fontaineTheta 𝓞_ℂ_[p] p (WittVector.frobenius (xi p)) ≠ 0 := by
+  rw [frobenius_xi, map_sub, map_natCast, WittVector.fontaineTheta_teichmuller, map_pow,
+    untilt_pFlat, sub_ne_zero, ← Nat.cast_pow, Ne, Nat.cast_inj]
+  intro h
+  have hp1 := (Fact.out : p.Prime).one_lt
+  have h1 : p ^ 1 < p ^ p := Nat.pow_lt_pow_right hp1 hp1
+  rw [pow_one, ← h] at h1
+  exact lt_irrefl _ h1
 
 -- The Witt vector Frobenius is natural, hence commutes with the Galois action on `A_inf`.
 example (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) (x : 𝔸) :
