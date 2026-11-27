@@ -32,8 +32,8 @@ open Cslib.Languages.LambdaCalculus
 
 namespace Cslib.Languages.OperationalSemantics
 
-/-- Anchor record bundling an LTS with a value/final predicate. `Final` is the
-language's value/final predicate and is not defined as terminality; the
+/-- An operational semantics: a labelled transition system with a value/final predicate.
+`Final` is the language's value/final predicate and is not defined as terminality; the
 `final_terminal` field records that every final configuration is terminal. -/
 structure OpSem (Config : Type u) (Label : Type v) where
   /-- Underlying labelled transition system. -/
@@ -50,7 +50,8 @@ def Step {Config : Type u} {Label : Type v}
     (S : OpSem Config Label) : Config → Config → Prop :=
   S.lts.UnlabelledTr
 
-/-- Finite reachability via some label trace. Body uses `∃ μs, MTr`. -/
+/-- Finite reachability: some finite label trace `μs` leads from `x` to `y`
+(`S.lts.MTr x μs y`). -/
 def Steps {Config : Type u} {Label : Type v}
     (S : OpSem Config Label) (x y : Config) : Prop :=
   ∃ μs, S.lts.MTr x μs y
@@ -202,8 +203,9 @@ theorem imp_safe (c : Cslib.IMP.Config) : OpSem.Safe imp c := by
   obtain ⟨next, hstep⟩ := Cslib.IMP.Step.exists_step hne
   exact hterm () next hstep
 
-/-- STLC adapter on the closed fibre with unit labels; steps are exactly the
-existing call-by-value `Stlc.Step` on that fibre. -/
+/-- Closed simply typed terms of type `A` as an operational semantics with unit labels: its
+steps are exactly the call-by-value steps `Stlc.Step`, and its final configurations are the
+values `Stlc.Value`. -/
 def stlc {Base : Type u} {A : Stlc.Ty Base} :
     OpSem (Stlc.Tm ([] : List (Stlc.Ty Base)) A) Unit where
   lts := { Tr := fun x _ y => Stlc.Step x y }
