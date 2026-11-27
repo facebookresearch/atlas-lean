@@ -90,3 +90,4 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 ## Contents
 
 - [Euclidean Steinitz–Bergström bound with one constant](euclidean-signed-and-reordered-prefix-bound.md)
+- [Fair partitions of convex polygons](fair-partitions-of-convex-polygons/README.md)

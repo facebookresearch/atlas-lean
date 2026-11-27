@@ -20,3 +20,4 @@
 - [Hanner polytopes contain the origin in their interior](zero-mem-interior.md)
 
 - [Hanner equality characterization for the symmetric Mahler product](symmetric-mahler-hanner-equality.md)
+- [Projectively unique polytopes](projectively-unique-polytopes/README.md)

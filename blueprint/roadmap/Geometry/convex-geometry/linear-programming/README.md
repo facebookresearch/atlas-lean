@@ -30,3 +30,4 @@
 - [Lagrange duality](../../../Analysis/convex-analysis-and-variations/lagrange-duality/README.md)
 - [Robust linear programming](../robust-linear-programming/README.md): linear programs whose data lie in uncertainty sets; under ellipsoidal uncertainty the robust counterpart is a conic quadratic program.
 - [Ellipsoid method](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/README.md): the first polynomial-time algorithm for linear programming (Khachiyan, 1979).
+- [Extension complexity of convex polygons](extension-complexity-of-convex-polygons/README.md)
