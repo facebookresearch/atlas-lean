@@ -348,7 +348,9 @@ When the hook shows neither, or has nothing to show, as on a commit with no card
 is byte for byte the page of a build without it. None of this fails the build, and none of it is silent: the build
 log says what is not shown and why, at INFO since `mkdocs build --strict` fails on a warning, and under GitHub
 Actions so do a workflow annotation (a warning for card data, an error for moved addresses) and a line of the job
-summary.
+summary. Blueprint Pages nonetheless publishes nothing when the moved addresses
+are not kept: a later step then fails `build the wiki`, on a pull request too,
+before the site is kept or uploaded, so the last published site stays.
 
 A card's folder page shows, before its first section, a block with:
 
