@@ -15,3 +15,4 @@ Determinant expansions and identities, determinants of special products and expo
 - [Symplectic matrices have determinant one](determinant-of-symplectic-matrices/README.md)
 - [Idempotent 2 × 2 matrices of trace one have determinant zero](det-eq-zero-of-is-idempotent-elem-of-tra.md)
 - [Determinant-one elements of GL₂(ℤ/3ℤ) are the identity or commutators](eq-one-or-eq-commutator-of-det-eq-one.md)
+- [Cross products under a real `3 × 3` matrix](cross-products-under-a-real-3-3-matrix/README.md)
