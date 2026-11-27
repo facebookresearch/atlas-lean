@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Run the linter checks end to end on a probe module, with Lean.
 
-.github/workflows/linters.yml runs this when a pull request changes the checks.
-It needs a checkout with the Mathlib cache fetched, and for the unused-imports
-check a built agitate in $AGITATE_DIR (without one, that check is skipped,
-and the script says so). It commits a probe module
-with known findings on top of HEAD, runs each check against HEAD, then commits
-a second change that only documents an existing probe declaration and runs the
-checks against the first commit. It then moves HEAD back and deletes the probe,
-leaving the working tree as it was.
+.github/workflows/linters.yml runs this when a pull request changes the checks
+or the toolchain pins. It needs a checkout with the Mathlib cache fetched, and
+for the unused-imports check a built agitate in $AGITATE_DIR (without one, that
+check is skipped, and the script says so). It commits a probe module with known
+findings on top of HEAD, runs each check against HEAD, then commits a second
+change that only documents an existing probe declaration and runs the checks
+against the first commit. It then moves HEAD back and deletes the probe, leaving
+the working tree as it was.
 
     python3 scripts/linters_self_test.py      # in GitHub Actions, or with --local
 
