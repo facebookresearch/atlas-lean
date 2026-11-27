@@ -10,7 +10,7 @@ Over dense time, timeline-based planning in general was already known to be unde
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +22,4 @@ The proof gives a polynomial-time construction that, from a two-counter Minsky m
 
 ## Sources
 
-- Laura Bozzelli, Alberto Molinari, Angelo Montanari and Adriano Peron, *Undecidability of Future Timeline-based Planning over Dense Temporal Domains*, Proceedings of the 21st Italian Conference on Theoretical Computer Science (ICTCS 2020), CEUR Workshop Proceedings 2756, 2020, pp. 155–166, https://ceur-ws.org/Vol-2756/paper_15.pdf; Definitions 1–6, Theorem 1 and Proposition 1, read in that open-access copy and in arXiv:1904.09184v1.
+- Laura Bozzelli, Alberto Molinari, Angelo Montanari and Adriano Peron, *Undecidability of Future Timeline-based Planning over Dense Temporal Domains*, Proceedings of the 21st Italian Conference on Theoretical Computer Science (ICTCS 2020), CEUR Workshop Proceedings 2756, 2020, pp. 155–166, https://ceur-ws.org/Vol-2756/paper_15.pdf; Definitions 1–6, Theorem 1 and Proposition 1 of that open-access copy, whose numbering is used here; also read in arXiv:1904.09184v1, where the same results are Theorem 7 and Proposition 8.

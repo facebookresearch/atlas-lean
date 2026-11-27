@@ -7,6 +7,7 @@ It is undecidable whether a union of conjunctive queries over a target schema, t
 ## Depends on
 
 - [Disjunctive mappings and UCQ rewritings over the source](disjunctive-mappings-and-source-rewritings.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

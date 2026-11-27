@@ -19,6 +19,7 @@ The proof shows that, for POMDPs with integer costs (already with a single obser
 ## Depends on
 
 - [Finite POMDPs](finite-pomdps.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

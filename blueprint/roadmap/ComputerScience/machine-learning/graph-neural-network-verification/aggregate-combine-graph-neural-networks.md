@@ -26,4 +26,4 @@ Traditional GNNs act on undirected graphs with one neighbor aggregation per laye
 
 ## Sources
 
-- Michael Benedikt, Chia-Hsuan Lu and Tony Tan, "Decidability of Graph Neural Networks via Logical Characterizations", 51st International Colloquium on Automata, Languages, and Programming (ICALP 2024), LIPIcs 297, Article 127, 2024, <https://doi.org/10.4230/LIPIcs.ICALP.2024.127>, and ACM Transactions on Computational Logic 27(2):1–65, 2026, <https://doi.org/10.1145/3800944>; Section 3 (graphs, GNNs, flavors, acceptance, satisfiability) of arXiv:2404.18151v4, <https://arxiv.org/abs/2404.18151v4>.
+- Michael Benedikt, Chia-Hsuan Lu and Tony Tan, "Decidability of Graph Neural Networks via Logical Characterizations", 51st International Colloquium on Automata, Languages, and Programming (ICALP 2024), LIPIcs 297, Article 127, 2024, <https://doi.org/10.4230/LIPIcs.ICALP.2024.127>, and ACM Transactions on Computational Logic 27(2):1–65, 2026, <https://doi.org/10.1145/3800944>; read in arXiv:2404.18151v4, <https://arxiv.org/abs/2404.18151v4>: Section 3 ("Preliminaries": graphs, GNNs, flavors, acceptance, satisfiability), in the numbering of that version.

@@ -7,6 +7,7 @@ Epistemic planning is undecidable for two agents and finite S5 initial states ov
 ## Depends on
 
 - [The epistemic planning problem](epistemic-planning-problem.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

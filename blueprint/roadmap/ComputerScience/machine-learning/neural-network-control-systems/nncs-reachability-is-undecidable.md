@@ -9,6 +9,7 @@ The paper sharpens this in two corollaries, both with the plant $f(\vec{x}, \vec
 ## Depends on
 
 - [Neural-network control systems](neural-network-control-systems.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

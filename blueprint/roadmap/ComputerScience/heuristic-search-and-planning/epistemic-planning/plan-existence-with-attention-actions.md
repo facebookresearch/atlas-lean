@@ -9,6 +9,7 @@ The agent set $I$ and the attention bound $N$ are fixed throughout the source; t
 ## Depends on
 
 - [Attention models and attention planning tasks](attention-models-and-attention-planning-tasks.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

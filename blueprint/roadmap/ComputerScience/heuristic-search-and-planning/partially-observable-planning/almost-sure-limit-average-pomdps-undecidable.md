@@ -20,6 +20,7 @@ In contrast, the existence of a finite-memory almost-sure winning strategy for $
 ## Depends on
 
 - [Finite POMDPs](finite-pomdps.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -32,4 +33,4 @@ Both proofs reduce from problems on probabilistic finite automata (PFA), which a
 
 ## Sources
 
-- Krishnendu Chatterjee and Martin Chmelík, "POMDPs under Probabilistic Semantics", Artificial Intelligence 221, pp. 46–72, 2015, <https://doi.org/10.1016/j.artint.2014.12.009>; the definitions of Section 2, the undecidability theorem of Section 4 (finite-memory strategies with quantitative constraint), the undecidability theorem of Section 5 (infinite-memory strategies with qualitative constraint), and the abstract, of arXiv:1308.4846v1 (the copy read), <https://arxiv.org/abs/1308.4846v1>.
+- Krishnendu Chatterjee and Martin Chmelík, "POMDPs under Probabilistic Semantics", Artificial Intelligence 221, pp. 46–72, 2015, <https://doi.org/10.1016/j.artint.2014.12.009>; the definitions of Section 2, Theorem 3 of Section 3 (EXPTIME-completeness for finite-memory strategies and $\mathrm{LimAvg}_{=1}$), Theorem 4 of Section 4 (finite-memory strategies with quantitative constraint) and Theorem 5 of Section 5 (infinite-memory strategies with qualitative constraint), of arXiv:1308.4846v1 (the copy read), <https://arxiv.org/abs/1308.4846v1>.

@@ -8,7 +8,7 @@ $$
 V(y) \leftarrow R_1(u_1), \dots, R_k(u_k)
 $$
 
-with $R_i \in \sigma$, free tuples $u_i$ of matching arity, and head variable $y$ among the variables of the body; on a $\sigma$-structure $\mathbf{A}$ it defines the set of elements $a$ such that $\exists \bar{x}\, (R_1(u_1) \wedge \dots \wedge R_k(u_k))$ holds with $y \mapsto a$, the other variables $\bar{x}$ being existentially quantified. Unless stated otherwise the body contains neither equality nor negation.
+with $R_i \in \sigma$, free tuples $u_i$ of matching arity, and head variable $y$ among the variables of the body; on a $\sigma$-structure $\mathbf{A}$ it defines the set of elements $a$ such that $\exists \bar{x}\, (R_1(u_1) \wedge \dots \wedge R_k(u_k))$ is true with $y \mapsto a$, the other variables $\bar{x}$ being existentially quantified. Unless stated otherwise the body contains neither equality nor negation.
 
 **Definition (Bailey, Dong and To).** For a finite set $\mathcal{V}$ of unary conjunctive views over $\sigma$, the set $\mathrm{UCV}(\sigma, \mathcal{V})$ is the least set of formulas such that $V(x) \in \mathrm{UCV}(\sigma, \mathcal{V})$ for every $V \in \mathcal{V}$ and variable $x$, and that is closed under $\neg$, $\wedge$ and $\exists x$. A formula is *satisfiable* if some $\sigma$-structure, finite or infinite, makes it true for some assignment, and *finitely satisfiable* if some finite structure does.
 

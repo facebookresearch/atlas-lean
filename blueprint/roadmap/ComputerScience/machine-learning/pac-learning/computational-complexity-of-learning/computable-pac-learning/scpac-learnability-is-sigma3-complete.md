@@ -15,6 +15,7 @@ In particular, for that family no algorithm decides SCPAC learnability of $\math
 
 - [SCPAC learnability](scpac-learnability.md)
 - [The arithmetical class Σₙ](../../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

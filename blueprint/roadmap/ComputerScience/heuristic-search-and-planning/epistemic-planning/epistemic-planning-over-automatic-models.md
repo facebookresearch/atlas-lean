@@ -7,6 +7,7 @@ When the initial state may be an infinite S5 model given by an automatic present
 ## Depends on
 
 - [The epistemic planning problem](epistemic-planning-problem.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

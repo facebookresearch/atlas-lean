@@ -16,7 +16,7 @@ The same paper shows that bounding the context length or the bit-width makes the
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

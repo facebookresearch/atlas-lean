@@ -11,6 +11,7 @@ The vocabulary and the views are part of the input. The paper states the same un
 - [First-order queries over unary conjunctive views](first-order-unary-conjunctive-view-queries.md)
 - [Conjunctive queries with inequalities](../conjunctive-queries/conjunctive-queries-with-inequalities.md)
 - [Datalog programs and the immediate consequence operator](../datalog/datalog-programs-and-the-immediate-consequence-operator.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

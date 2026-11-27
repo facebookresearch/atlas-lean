@@ -12,6 +12,7 @@ The same paper shows that the problem is NP-complete when strategies are restric
 
 - [Finite POMDPs](finite-pomdps.md)
 - [Markov decision processes and adversaries](../../../Logic/temporal-logic/probabilistic-model-checking/markov-decision-processes-and-adversaries.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,4 +24,4 @@ The proof reduces from the policy-existence problem for POMDPs: given a POMDP an
 
 ## Sources
 
-- Alyzia-Maria Konsta, Alberto Lluch Lafuente and Christoph Matheja, "What Should Be Observed for Optimal Reward in POMDPs?", Computer Aided Verification (CAV 2024), Lecture Notes in Computer Science, pp. 373–394, 2024, <https://doi.org/10.1007/978-3-031-65633-0_17>; Section 2 (MDPs, strategies, expected rewards and POMDPs), Definition of the optimal observability problem and the undecidability theorem of Section 3, and the positional results of Section 4, of arXiv:2405.10768v2, read at <https://arxiv.org/abs/2405.10768v2>.
+- Alyzia-Maria Konsta, Alberto Lluch Lafuente and Christoph Matheja, "What Should Be Observed for Optimal Reward in POMDPs?", Computer Aided Verification (CAV 2024), Lecture Notes in Computer Science, pp. 373–394, 2024, <https://doi.org/10.1007/978-3-031-65633-0_17>; Section 2 (Definitions 1 to 5: MDPs, strategies, expected rewards, POMDPs and observation-based strategies), Definition 6 (the optimal observability problem), Theorem 1 and Proposition 1 (policy existence, after Madani et al.) of Section 3, and Theorem 2 (NP-completeness) and Theorem 4 (positional randomized strategies, decidable in ETR and hence in PSPACE) of Section 4, of arXiv:2405.10768v2, read at <https://arxiv.org/abs/2405.10768v2>.

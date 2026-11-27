@@ -12,6 +12,7 @@ Both remain undecidable over undirected graphs. The underlying logical result is
 ## Depends on
 
 - [Aggregate-combine graph neural networks](aggregate-combine-graph-neural-networks.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,4 +24,4 @@ The reduction is from Hilbert's tenth problem in the form of *simple equation sy
 
 ## Sources
 
-- Michael Benedikt, Chia-Hsuan Lu and Tony Tan, "Decidability of Graph Neural Networks via Logical Characterizations", 51st International Colloquium on Automata, Languages, and Programming (ICALP 2024), LIPIcs 297, Article 127, 2024, <https://doi.org/10.4230/LIPIcs.ICALP.2024.127>, and ACM Transactions on Computational Logic 27(2):1–65, 2026, <https://doi.org/10.1145/3800944>; the theorems of Section 4.2 (finite satisfiability of $\mathrm{MP}^2$; satisfiability and universal satisfiability of truncated-ReLU GNNs with global readout), their undirected versions in the appendix, and the summary tables of Section 3.1 of arXiv:2404.18151v4, <https://arxiv.org/abs/2404.18151v4>.
+- Michael Benedikt, Chia-Hsuan Lu and Tony Tan, "Decidability of Graph Neural Networks via Logical Characterizations", 51st International Colloquium on Automata, Languages, and Programming (ICALP 2024), LIPIcs 297, Article 127, 2024, <https://doi.org/10.4230/LIPIcs.ICALP.2024.127>, and ACM Transactions on Computational Logic 27(2):1–65, 2026, <https://doi.org/10.1145/3800944>; read in arXiv:2404.18151v4, <https://arxiv.org/abs/2404.18151v4>: Theorems 4.16 (finite satisfiability of $\mathrm{MP}^2$), 4.19 and 4.20 (satisfiability and universal satisfiability of truncated-ReLU GNNs with global readout) in Section 4.2, their undirected versions in Appendix A, and the summary tables of Section 3.1, in the numbering of that version.

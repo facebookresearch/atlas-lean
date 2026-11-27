@@ -9,6 +9,7 @@ The proof adapts the reduction of Aucher and Bolander (IJCAI 2013), as the sourc
 ## Depends on
 
 - [Epistemic planning under b-commutativity](epistemic-planning-under-b-commutativity.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ The same source shows that plan existence is decidable for $\mathrm C$-$\mathrm{
 
 ## Sources
 
-- Alessandro Burigana, Paolo Felli, Marco Montali and Nicolas Troquard, "A Semantic Approach to Decidability in Epistemic Planning", in *ECAI 2023*, Frontiers in Artificial Intelligence and Applications 372, IOS Press, 2023, <https://doi.org/10.3233/FAIA230286>; read as the extended version arXiv:2307.15485v1, <https://arxiv.org/abs/2307.15485v1>: the undecidability theorem for $\mathrm C^b$-$\mathrm{S5}_n$ with $n > 2$ in the paragraph on $b$-commutativity, its proof sketch, and the appendix detailing the meta-chain construction, of that version.
+- Alessandro Burigana, Paolo Felli, Marco Montali and Nicolas Troquard, "A Semantic Approach to Decidability in Epistemic Planning", in *ECAI 2023*, Frontiers in Artificial Intelligence and Applications 372, IOS Press, 2023, <https://doi.org/10.3233/FAIA230286>; read as the extended version arXiv:2307.15485v1, <https://arxiv.org/abs/2307.15485v1>: Theorem 5 (undecidability for $n > 2$) and Theorem 4 (decidability for $n = 2$) in Section 4.1, Theorem 3 (decidability under full commutativity) in Section 4, the proof sketch of Theorem 5 there, and its full proof in the appendix, in the numbering of that version.

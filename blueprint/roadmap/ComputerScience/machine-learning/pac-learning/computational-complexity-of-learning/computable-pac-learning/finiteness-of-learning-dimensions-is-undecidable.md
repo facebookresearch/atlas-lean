@@ -16,7 +16,7 @@ By the characterizations of PAC learnability for binary classification by finite
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
