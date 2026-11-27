@@ -1,6 +1,6 @@
 # Mixed price of anarchy O(log m / log log m) on identical machines
 
-For $m \ge 3$ identical machines, every mixed Nash equilibrium has expected load at most $2\, \mathrm{OPT}$ on every machine and expected makespan $O(\log m / \log\log m) \cdot \mathrm{OPT}$. If moreover every job weighs at most $\mathrm{OPT} / \log m$, the expected makespan is at most $7\, \mathrm{OPT}$.
+For $m \ge 3$ identical machines, every mixed Nash equilibrium has expected load at most $2\,\mathrm{OPT}$ on every machine and expected makespan $O(\log m / \log\log m) \cdot \mathrm{OPT}$.
 
 ## Proof sketch
 
@@ -19,4 +19,4 @@ The equilibrium condition bounds every expected load by $2\,\mathrm{OPT}$; the w
 
 - Elias Koutsoupias and Christos H. Papadimitriou, "Worst-Case Equilibria", STACS 99: 16th Annual Symposium on Theoretical Aspects of Computer Science, 1999.
 - Artur Czumaj and Berthold Vocking, "Tight Bounds for Worst-Case Equilibria", Proceedings of the Thirteenth Annual ACM-SIAM Symposium on Discrete Algorithms, 2002.
-- Berthold Vocking, "Selfish Load Balancing", Algorithmic Game Theory, Cambridge University Press, 2007.
+- Berthold Vocking, "Selfish Load Balancing", Algorithmic Game Theory, Cambridge University Press, 2007, Theorem 20.13 (every Nash equilibrium on $m$ identical machines has cost $O(\log m/\log\log m) \cdot \mathrm{opt}$) and its proof (the maximum expected load is less than $2\,\mathrm{opt}$).
