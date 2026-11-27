@@ -20,6 +20,7 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Human-in-the-loop controller model](human-in-the-loop-controller-model.md)
 - [Conditional correctness of prescient advisories (safety case)](conditional-correctness-of-prescient-advisories.md)
 - [Optimal, robust and adaptive control](optimal-robust-and-adaptive-control/README.md)
+- [Finite-horizon model predictive control](finite-horizon-model-predictive-control/README.md)
 - [Intersample displacement enclosure](intersample-displacement-le.md)
 - [Energy derivative for scalar model-reference adaptive control](scalar-mracenergy-has-deriv-at.md)
 - [Band-limited signals and sampling](band-limited-signals-and-sampling/README.md)
