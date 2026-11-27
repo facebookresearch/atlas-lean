@@ -24,11 +24,19 @@ import Mathlib.Tactic.Ring
 # Integral representation of the companion k-Jacobsthal numbers
 
 We prove the integral representation of the companion `k`-Jacobsthal numbers at multiples:
-`companionKJacobsthal_mul_eq_integral`.
+`companionKJacobsthal_mul_eq_integral`, and Theorem 9, `two_mul_companionKJacobsthal`, which the
+integral proof uses.
 
 Statements from Weerayuth Nilsrakoo and Achariya Nilsrakoo, "An Integral Representation of
 k-Jacobsthal and k-Jacobsthal-Lucas Numbers", *INTEGERS* 25 (2025), Article A74
 (<https://math.colgate.edu/~integers/z74/z74.pdf>).
+
+The Lean proof adapts two existing ones. `integral_kernel` follows
+`jacobsthal_mul_add_eq_integral.integral_kernel` in
+`MathlibExt/NumberTheory/Recurrences/JacobsthalOffsetIntegral.lean`, with `3` replaced by a nonzero
+`δ` (its single exceptional point and the local derivative proof of the successor case). The
+characteristic roots `α` and `β` and the Binet formulas in the main proof follow the setup of
+`tendsto_lucasU_kJacobsthal_ratio` in `MathlibExt/NumberTheory/Recurrences/KJacobsthal.lean`.
 -/
 
 namespace MetaMathlibExt
@@ -39,8 +47,18 @@ local notation "J[" k ", " n "]" => (lucasU (kJacobsthalParams k) n : ℝ)
 local notation "jL[" k ", " n "]" => (lucasV (kJacobsthalParams k) n : ℝ)
 local notation "Δ[" k "]" => Real.sqrt ((k : ℝ) ^ 2 + 8)
 
--- Twice the companion numbers via the Lucas sequences.
-private theorem companionKJacobsthal_mul_eq_integral.two_mul (k : ℕ) (a b : ℤ) (n : ℕ) :
+/-- **Companion $k$-Jacobsthal numbers via Lucas sequences.** For a natural number $k$ and
+integers $a, b$, let $\mathcal{J}_{k,n}(a, b)$ be the companion $k$-Jacobsthal numbers, and let
+$J_{k,n} = U_n(k, -2)$ and $j_{k,n} = V_n(k, -2)$ be the $k$-Jacobsthal and $k$-Jacobsthal–Lucas
+numbers, the Lucas sequences $U$ and $V$ with parameters $(P, Q) = (k, -2)$. Then for every
+natural number $n$, $2\,\mathcal{J}_{k,n}(a, b) = a\,j_{k,n} + (2b - ak)\,J_{k,n}$.
+
+The source states this as $\mathcal{J}_{k,n} = \tfrac{a}{2} j_{k,n} + \tfrac{2b - ak}{2} J_{k,n}$.
+
+Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
+k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
+Theorem 9 (`integers-2025-A74-thm-9`). -/
+public theorem two_mul_companionKJacobsthal (k : ℕ) (a b : ℤ) (n : ℕ) :
     2 * companionKJacobsthal k a b n =
       a * lucasV (kJacobsthalParams k) n + (2 * b - a * k) * lucasU (kJacobsthalParams k) n := by
   induction n using Nat.twoStepInduction with
@@ -134,7 +152,7 @@ public theorem companionKJacobsthal_mul_eq_integral (k ℓ n : ℕ) (a b : ℤ) 
     rw [(hbinet m).1, (hbinet m).2, hsub]; field_simp; ring
   have hpos : 0 < 2 * α ^ ℓ := by positivity
   have h_nonzero : jL[k, ℓ] + Δ[k] * J[k, ℓ] ≠ 0 := by rw [hplus ℓ]; exact ne_of_gt hpos
-  have h_comp := companionKJacobsthal_mul_eq_integral.two_mul k a b (ℓ * n)
+  have h_comp := two_mul_companionKJacobsthal k a b (ℓ * n)
   have h_comp_real : 2 * ((companionKJacobsthal k a b (ℓ * n) : ℤ) : ℝ) =
       (a : ℝ) * jL[k, ℓ * n] + (((2 * b - a * k : ℤ)) : ℝ) * J[k, ℓ * n] := by
     exact_mod_cast h_comp
