@@ -9,7 +9,7 @@
 - [Triangle inequality for total variation distance](tv-dist-triangle.md)
 - [Event masses differ by at most the total variation distance](abs-event-sub-le-tv-dist.md)
 - [Total variation distance between probability vectors is at most `1`](tv-dist-le-one.md)
-- [Independent coupling](exists-coupling.md)
+- [Independent coupling](is-coupling-mul.md)
 - [Couplings of probability distributions exist](nonempty-coupling-subtype.md)
 - [Lower bounds for the earthmover value](le-earthmover.md)
 - [The earthmover value is at most the cost of any coupling](earthmover-le-transport-cost.md)

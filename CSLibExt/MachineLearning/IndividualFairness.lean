@@ -61,11 +61,13 @@ Correspondence with the paper:
   here.
 
 The auxiliary `bias S T f`
-(`MathlibExt.Probability.FiniteTransport.bias`) is the expectation gap of a single
-real-valued score `f` between two weight vectors (two populations, when
-they are probability distributions), and `bias_le_earthmover`
-bounds that score gap by the earthmover value for `1`-Lipschitz
-scores. It is neither the fixed-classifier statistical-parity gap of
+(`MathlibExt.Probability.FiniteTransport.bias`) is the absolute
+difference of the weighted sums of a single real-valued score `f` under
+two weight vectors; it is an expectation gap between two populations
+when both weight vectors are nonnegative and sum to one. For
+`1`-Lipschitz scores and probability distributions `S` and `T`,
+`bias_le_earthmover` bounds that gap by the earthmover value. It is
+neither the fixed-classifier statistical-parity gap of
 Definition 3.1 (a total variation distance between induced outcome
 distributions, bounded in `tvDist_vecMul_le_earthmover`) nor the
 worst-case `bias_{D, d}` of Definition 3.2.

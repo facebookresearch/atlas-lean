@@ -30,13 +30,15 @@ value between two probability distributions, together with the basic
 total-variation lemmas, the probability-vector property of the
 vector-matrix product `S ᵥ* Matrix.of M` (Mathlib's `Matrix.vecMul`:
 the pushforward of `S` along the kernel `M`), and the transport bound
-for the expectation gap of a `1`-Lipschitz score.
+for the gap between the weighted sums of a `1`-Lipschitz score.
 
 `earthmover` takes its marginals in the subtype `{p // IsDist p}` of
 probability vectors, so its defining infimum ranges over a nonempty set
-of couplings (`exists_coupling`). The auxiliary `bias S T f` is the
-expectation gap of a single real-valued score between two weight
-vectors `S` and `T`.
+of couplings, which contains the independent coupling
+(`isCoupling_mul`). The auxiliary `bias S T f` is the absolute
+difference of the weighted sums of a single real-valued score under two
+weight vectors `S` and `T`; it is an expectation gap when both weight
+vectors are nonnegative and sum to one.
 
 The ground cost `d` is unconstrained throughout, so for signed costs
 the earthmover value can be negative and is not a distance; it is the
@@ -109,7 +111,7 @@ def transportCost {V : Type*} [Fintype V] (d : V → V → ℝ) (π : V → V �
 (nonnegative entries summing to `1`) and a ground cost `d : V → V → ℝ`, the earthmover
 (optimal-transport) value is the infimum of `transportCost d π` over all couplings `π` of
 `S` and `T`. The marginals range over the subtype of probability vectors, so a coupling
-always exists (`exists_coupling`) and the infimum is over a nonempty index set. The ground
+always exists (`isCoupling_mul`) and the infimum is over a nonempty index set. The ground
 cost is unconstrained, so for signed costs the value can be negative and is not in general
 a distance; it is the earthmover distance when `d` is a metric. -/
 noncomputable def earthmover {V : Type*} [Fintype V] (d : V → V → ℝ)
@@ -259,15 +261,16 @@ theorem tvDist_le_one {α : Type*} [Fintype α] {p q : α → ℝ}
   rw [Finset.sum_add_distrib, hp_sum, hq_sum] at hsum
   linarith [hsum]
 
-/-- **Independent coupling.** Two probability distributions `S` and `T` on a finite type
-(nonnegative entries summing to `1`) admit a coupling, namely the independent coupling
-with entries `S x * T y`. -/
-theorem exists_coupling {V : Type*} [Fintype V] {S T : V → ℝ}
+/-- **Independent coupling.** For probability distributions `S` and `T` on a finite type
+(nonnegative entries summing to `1`), the product matrix with entries `S x * T y` is a
+coupling of `S` and `T`: its entries are nonnegative, its row sums are `S` and its column
+sums are `T`. -/
+theorem isCoupling_mul {V : Type*} [Fintype V] {S T : V → ℝ}
     (hS : IsDist S) (hT : IsDist T) :
-    ∃ π : V → V → ℝ, IsCoupling S T π := by
+    IsCoupling S T (fun x y => S x * T y) := by
   obtain ⟨hS_nonneg, hS_sum⟩ := hS
   obtain ⟨hT_nonneg, hT_sum⟩ := hT
-  refine ⟨fun x y => S x * T y, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_⟩
   · intro x y
     exact mul_nonneg (hS_nonneg x) (hT_nonneg y)
   · intro x
@@ -282,9 +285,8 @@ and `T` on a finite type (nonnegative entries summing to `1`), the type of coupl
 `S` and `T`, the index set of `earthmover`, is nonempty. -/
 theorem nonempty_couplingSubtype {V : Type*} [Fintype V]
     (S T : {p : V → ℝ // IsDist p}) :
-    Nonempty {π // IsCoupling S.1 T.1 π} := by
-  obtain ⟨π, hπ⟩ := exists_coupling S.2 T.2
-  exact ⟨⟨π, hπ⟩⟩
+    Nonempty {π // IsCoupling S.1 T.1 π} :=
+  ⟨⟨_, isCoupling_mul S.2 T.2⟩⟩
 
 /-- **Lower bounds for the earthmover value.** Let `S` and `T` be probability
 distributions on a finite type (nonnegative entries summing to `1`) and `d` a ground cost.

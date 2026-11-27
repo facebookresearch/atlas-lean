@@ -142,6 +142,24 @@ theorem g5_earthmover_le_transportCost_example :
     earthmover_le_transportCost g2_coupling_cost.1
   rwa [g2_coupling_cost.2] at h
 
+/-- The uniform distribution on `Fin 2`, as a probability-distribution subtype element. -/
+noncomputable def uniformD : {p : Fin 2 → ℝ // IsDist p} :=
+  ⟨fun _ => 1 / 2, by
+    refine ⟨fun _ => by norm_num, ?_⟩
+    norm_num [Fin.sum_univ_two]⟩
+
+/-- G5b: `isCoupling_mul` names its witness. For the `0` point mass and the uniform
+distribution, the independent coupling is the matrix with entries `δ₀ x * (1 / 2)`, its
+transport cost under the discrete cost is `1 / 2`, and so the earthmover value is at most
+`1 / 2`. -/
+theorem g5b_independent_coupling_cost :
+    transportCost d2 (fun x y => delta0D.1 x * uniformD.1 y) = 1 / 2
+    ∧ earthmover d2 delta0D uniformD ≤ 1 / 2 := by
+  have hcost : transportCost d2 (fun x y => delta0D.1 x * uniformD.1 y) = 1 / 2 := by
+    norm_num [transportCost, d2, delta0D, uniformD, Fin.sum_univ_two]
+  exact ⟨hcost,
+    (earthmover_le_transportCost (isCoupling_mul delta0D.2 uniformD.2)).trans_eq hcost⟩
+
 /-- A signed ground cost on `Fin 2`: `-2` on the diagonal and `-1` off
 the diagonal. -/
 def dSigned : Fin 2 → Fin 2 → ℝ := fun x y => if x = y then -2 else -1
