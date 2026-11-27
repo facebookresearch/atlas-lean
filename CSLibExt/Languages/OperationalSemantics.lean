@@ -108,9 +108,9 @@ theorem steps_iff_reflTransGen {Config : Type u} {Label : Type v}
       obtain ⟨μ, htr⟩ := hstep
       exact ⟨μs ++ [μ], Cslib.LTS.MTr.comp S.lts hm (Cslib.LTS.MTr.single S.lts htr)⟩
 
-/-- Infinite bridge: divergence is an unlabelled infinite step sequence. The
-recovered label stream is not a claim about any particular action or fairness
-trace. -/
+/-- Infinite bridge: `c` diverges iff some `f : ℕ → Config` has `f 0 = c` and an unlabelled
+step from each `f i` to `f (i + 1)`. The recovered label stream is not a claim about any
+particular action or fairness trace. -/
 theorem diverges_iff {Config : Type u} {Label : Type v}
     (S : OpSem Config Label) {c : Config} :
     S.Diverges c ↔

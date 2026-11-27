@@ -45,7 +45,8 @@ after a raise. There are no equations on this signature. -/
 inductive ExceptF (E : Type u) : Type u → Type u where
   | raise (e : E) : ExceptF E (PEmpty : Type u)
 
-/-- The free carrier for exceptions: programs that may raise `E`. -/
+/-- The free carrier for exceptions: programs that return a value of `α` or raise some
+`e : E`, after which no continuation runs. -/
 abbrev FreeExcept (E : Type u) (α : Type v) := FreeM (ExceptF E) α
 
 /-- Raw explicit-nondeterminism signature: failure `fail : 0` and
@@ -233,7 +234,8 @@ theorem run_get_set_pure {σ : Type u} (s0 : σ) :
   rw [FreeM.FreeState.run_set]
 
 /-- Put-get equation after running, with an arbitrary continuation:
-a read right after writing `s` hands `s` to the continuation. Stated
+a read right after writing `s` hands `s` to the continuation, which also
+runs in state `s`: the write is kept and only the read is removed. Stated
 only for `run`, proved from the pinned run lemmas; not an equality of
 raw `FreeM` syntax. -/
 theorem run_set_get {σ : Type u} {α : Type v} (s : σ)

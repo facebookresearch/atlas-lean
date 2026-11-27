@@ -31,7 +31,8 @@ namespace Cslib.Languages.ProgramBehaviors
 
 open Cslib.Languages.OperationalSemantics
 
-/-- Observable program behaviors over label traces: termination, reaction, or going wrong. -/
+/-- Observable program behaviors over label traces: termination with a finite trace, reaction
+with an infinite trace, or going wrong with a finite trace. -/
 inductive Behavior (Label : Type v) where
   | terminates (trace : List Label)
   | reacts (trace : Cslib.ωSequence Label)

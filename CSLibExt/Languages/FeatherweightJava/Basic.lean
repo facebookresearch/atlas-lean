@@ -85,7 +85,8 @@ mutual
     | .cons head tail => Expr.classRefs head ++ Expr.Args.classRefs tail
 end
 
-/-- Method declaration: return, params, body (Lecture #30). -/
+/-- Method declaration: the return class, the parameters as an ordered list of (parameter class,
+variable name) pairs, and the body expression; the class pairs it with a name (Lecture #30). -/
 structure MethodDecl where
   ret : CName
   params : List (CName × VName)
@@ -136,7 +137,8 @@ def supersAux (ct : ClassTable) : Nat → CName → List CName :=
     | some cd => C :: supersAux ct fuel cd.super
 
 /-- Superclass chain from `C`, at most `ct.length + 1` names: it stops at Object, at an
-undeclared class, or at the fuel bound (helper). -/
+undeclared class, or at the fuel bound; a name declared twice follows its first declaration
+(helper). -/
 def supers (ct : ClassTable) (C : CName) : List CName :=
   supersAux ct (ct.length + 1) C
 
@@ -156,7 +158,8 @@ def fields (ct : ClassTable) (C : CName) : Option (List (CName × FName)) :=
     (supers ct C).foldl step (some [])
 
 /-- The first method declaration named `m` found walking the superclass chain of `C` upward,
-skipping `Object` and undeclared classes; it returns the declaration, not the class declaring it
+skipping `Object` and undeclared classes and searching at each name only the method list of its
+first declaration in the table; it returns the declaration, not the class declaring it
 (MB-CLASS/MB-SUPER). -/
 def lookupMethod (ct : ClassTable) (m : MName) (C : CName) :
     Option MethodDecl :=
@@ -298,7 +301,7 @@ def contextOf (C : CName) (params : List (CName × VName)) : Ctx :=
     else (params.find? (fun p => p.2 == x)).map Prod.fst
 
 /-- Method well-formedness for an arbitrary class declaration and named method: body typing and
-override (METHOD-OK); membership of the method in the class is checked by `ClassOk`. -/
+override (METHOD-OK); `ClassOk` requires `MethodOk` for every method listed in the class. -/
 def MethodOk (ct : ClassTable) (cd : ClassDecl) (p : MName × MethodDecl) :
     Prop :=
   (∃ A, Typing ct (contextOf cd.name p.2.params) p.2.body A ∧

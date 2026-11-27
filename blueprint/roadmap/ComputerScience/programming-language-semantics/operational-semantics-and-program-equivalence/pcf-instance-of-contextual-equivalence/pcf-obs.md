@@ -1,3 +1,3 @@
 # Observations for PCF
 
-Observations for PCF: closed ground programs with numeral outcomes.
+The observation structure over the [PCF context algebra](pcf-algebra.md) has the single program judgment $([\,], \mathrm{nat})$, closed terms of ground type; the natural numbers as outcomes; the unit type as labels at every judgment; the PCF small-step semantics `pcfSem` on programs; and the outcome relation that relates a closed ground term $q$ to $n$ exactly when $q$ is syntactically the numeral `Tm.numeral n`, and is false at every other judgment. The outcome relation tests $q$ as written and does not evaluate it; it is [yielding](../generic-contextual-equivalence/yields.md) that first runs a program to a final term.

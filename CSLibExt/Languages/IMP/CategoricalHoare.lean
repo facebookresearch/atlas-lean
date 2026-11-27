@@ -78,7 +78,9 @@ theorem commandRel_seq (c d : Cmd) : commandRel (.seq c d) = commandRel c ≫ co
 /-- Forget whether a state entered externally or through the feedback wire. -/
 def controlState : Sum State State → State := Sum.elim id id
 
-/-- A guarded loop body: exit on false, execute and return to feedback on true. -/
+/-- A guarded loop body: from either input wire carrying `s`, it puts `s` on the exit wire when
+the guard is false, and on the feedback wire each `t` that `c` reaches from `s` by a terminating
+execution when the guard is true. -/
 def loopBody (b : BExp) (c : Cmd) : states ⊗ states ⟶ states ⊗ states :=
   .ofRel {p | match p.2 with
     | .inl t => b.eval (controlState p.1) = false ∧ t = controlState p.1
