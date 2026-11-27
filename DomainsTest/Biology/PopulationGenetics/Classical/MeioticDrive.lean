@@ -72,8 +72,8 @@ example : driveStep (3 / 4) (1 / 2) - 1 / 2 = 1 / 8 := by
   rw [hsub]
   norm_num
 
--- Complete drive against `a` (`k = 0`) squares the frequency; complete drive for `A` (`k = 1`)
--- squares the frequency of `a`.
+-- Complete drive against `A` (`k = 0`) squares the frequency of `A`; complete drive for `A`
+-- (`k = 1`) squares the frequency of `a`.
 example (p : ℝ) : driveStep 0 p = p ^ 2 := by simp [driveStep]
 
 example (p : ℝ) : 1 - driveStep 1 p = (1 - p) ^ 2 := by unfold driveStep; ring
