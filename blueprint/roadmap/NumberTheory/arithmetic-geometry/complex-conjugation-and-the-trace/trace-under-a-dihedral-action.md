@@ -2,15 +2,12 @@
 
 Let $M$ be an abelian group on which a group $G$ acts by automorphisms, let $H \le G$ be a finite subgroup, and let
 $\tau \in G$ satisfy $\tau h = h^{-1} \tau$ for every $h \in H$. Let $y \in M$, $\sigma' \in H$, $\varepsilon \in \{1, -1\}$
-and $t \in M$ a torsion element with
+(a unit of $\mathbb{Z}$) and $t \in M$ a torsion element with
 
 $$\tau y = \varepsilon \, \sigma' y + t.$$
 
-Then $Y = \sum_{h \in H} h y$ satisfies $\tau Y = \varepsilon Y + t'$ with $t' = \sum_{h \in H} h^{-1} t$, a torsion element
-of $M$.
-
-Proof (worked out here): $\tau Y = \sum_h \tau h y = \sum_h h^{-1} \tau y = \varepsilon \sum_h h^{-1} \sigma' y + \sum_h h^{-1} t$,
-and $h \mapsto h^{-1} \sigma'$ is a bijection of $H$.
+Then $Y = \sum_{h \in H} h y$ satisfies $\tau Y = \varepsilon Y + t'$ with $t' = \sum_{h \in H} h^{-1} t$, and $t'$ is a
+torsion element of $M$.
 
 It is applied with $M = E(K_1)$ for the Hilbert class field $K_1$ of an imaginary quadratic field $K$, $H = \operatorname{Gal}(K_1/K)$,
 $G = \operatorname{Gal}(K_1/\mathbb{Q})$ and $\tau$ complex conjugation, which satisfies $\tau \sigma = \sigma^{-1} \tau$ for

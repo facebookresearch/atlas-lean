@@ -1,18 +1,16 @@
 # The Heegner isogeny is cyclic of degree $N$
 
-Let $K \subset \mathbb{C}$ be an imaginary quadratic field with ring of integers $\mathcal{O}_K$, and let
-$\mathcal{N}$ be a nonzero ideal of $\mathcal{O}_K$ such that $\mathcal{O}_K/\mathcal{N}$ is cyclic of order $N$, as
-given by [the Heegner hypothesis](ideal-of-index-n-under-the-heegner-hypothesis.md). Let
-$\mathcal{N}^{-1} = \{x \in K : x\mathcal{N} \subseteq \mathcal{O}_K\}$. Then $\mathcal{O}_K$ and
-$\mathcal{N}^{-1}$ are lattices in $\mathbb{C}$ with $\mathcal{O}_K \subseteq \mathcal{N}^{-1}$, and the quotient
-$\mathcal{N}^{-1}/\mathcal{O}_K$ is cyclic of order $N$. Hence the map
-$\mathbb{C}/\mathcal{O}_K \to \mathbb{C}/\mathcal{N}^{-1}$ induced by the identity of $\mathbb{C}$ is an isogeny of
-complex tori whose kernel $\mathcal{N}^{-1}/\mathcal{O}_K$ is cyclic of order $N$.
+Let $K$ be an imaginary quadratic field, embedded in $\mathbb{C}$ by $\sigma \colon K \to \mathbb{C}$, with ring of
+integers $\mathcal{O}_K$, and let $\mathcal{N}$ be a nonzero ideal of $\mathcal{O}_K$ such that
+$\mathcal{O}_K/\mathcal{N}$ is cyclic of order $N$. Let $\mathcal{N}^{-1} = \{x \in K : x\mathcal{N} \subseteq \mathcal{O}_K\}$.
+Then $\sigma(\mathcal{O}_K)$ and $\sigma(\mathcal{N}^{-1})$ are lattices in $\mathbb{C}$ (discrete subgroups spanning
+$\mathbb{C}$ over $\mathbb{R}$) with $\sigma(\mathcal{O}_K) \subseteq \sigma(\mathcal{N}^{-1})$, the quotient
+$\sigma(\mathcal{N}^{-1})/\sigma(\mathcal{O}_K)$ is cyclic of order $N$, and the map
+$\mathbb{C}/\sigma(\mathcal{O}_K) \to \mathbb{C}/\sigma(\mathcal{N}^{-1})$ induced by the identity of $\mathbb{C}$ is
+surjective with kernel $\sigma(\mathcal{N}^{-1})/\sigma(\mathcal{O}_K)$, cyclic of order $N$.
 
-Miller and Gross assert that this isogeny is cyclic of degree $N$. The argument (worked out here): for fractional
-ideals $J \subseteq I$ of the Dedekind domain $\mathcal{O}_K$ there is an isomorphism of $\mathcal{O}_K$-modules
-$I/J \cong \mathcal{O}_K/JI^{-1}$, as both sides are locally isomorphic; with $I = \mathcal{N}^{-1}$ and
-$J = \mathcal{O}_K$ it gives $\mathcal{N}^{-1}/\mathcal{O}_K \cong \mathcal{O}_K/\mathcal{N}$, which is cyclic of order $N$.
+The isogeny $\mathbb{C}/\mathcal{O}_K \to \mathbb{C}/\mathcal{N}^{-1}$ of the sources is stated here as this surjective
+homomorphism of quotient groups with finite cyclic kernel; the complex structure of the tori is not part of the statement.
 
 ## Sources
 

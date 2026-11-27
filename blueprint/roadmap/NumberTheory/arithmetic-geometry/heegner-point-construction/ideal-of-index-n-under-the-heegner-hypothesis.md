@@ -1,16 +1,12 @@
 # An ideal of index $N$ under the Heegner hypothesis
 
 Let $K$ be an imaginary quadratic field with ring of integers $\mathcal{O}_K$ and let $N \ge 1$ be an integer such that
-every prime factor of $N$ splits in $K$. Then there is an ideal $\mathcal{N}$ of $\mathcal{O}_K$ such that the
-additive group $\mathcal{O}_K / \mathcal{N}$ is cyclic of order $N$.
+every prime factor $p$ of $N$ splits in $K$: $p\mathcal{O}_K = PQ$ with $P \ne Q$ prime ideals. Then there is an ideal
+$\mathcal{N}$ of $\mathcal{O}_K$ such that the additive group $\mathcal{O}_K / \mathcal{N}$ is cyclic of order $N$.
 
-Miller and Gross assert this without proof. An argument (worked out here, not in the sources): write
-$N = \prod_p p^{e_p}$ and $p \mathcal{O}_K = \mathfrak{p} \bar{\mathfrak{p}}$ with $\mathfrak{p} \ne \bar{\mathfrak{p}}$ for
-each $p \mid N$, and take $\mathcal{N} = \prod_p \mathfrak{p}^{e_p}$. As $\mathfrak{p}^{e_p} \cap \mathbb{Z} = p^{e_p}\mathbb{Z}$
-(an element of $p^{k}\mathbb{Z} \setminus p^{k+1}\mathbb{Z}$ has $\mathfrak{p}$-adic valuation $k$), the map
-$\mathbb{Z}/p^{e_p} \to \mathcal{O}_K/\mathfrak{p}^{e_p}$ is injective, and it is onto because both groups have
-order $p^{e_p}$, the norm of $\mathfrak{p}^{e_p}$; the Chinese remainder theorem then gives
-$\mathcal{O}_K/\mathcal{N} \cong \mathbb{Z}/N\mathbb{Z}$.
+The ideal $\mathcal{N} = \prod_{p \mid N} P_p^{v_p(N)}$ does this, and the imaginary hypothesis is not needed: in every
+quadratic field in which the prime factors of $N$ split, it gives a ring isomorphism
+$\mathcal{O}_K / \mathcal{N} \cong \mathbb{Z}/N\mathbb{Z}$.
 
 ## Sources
 
