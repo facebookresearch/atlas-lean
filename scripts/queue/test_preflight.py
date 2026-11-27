@@ -1670,6 +1670,35 @@ class GitTests(unittest.TestCase):
         self.assertLessEqual(len(self.git.listings), 2)  # whole listings: the last two only
         self.assertEqual(set(self.git.signatures[heads[0]]), {"docs/h0.md", "glob:docs/*.md"})  # watched entries only
 
+    @NEEDS_GIT_245
+    def test_a_file_over_the_blob_limit_is_an_input_not_followed(self):
+        r = self.remote
+        big = "#" * 300
+        r.write({"scripts/g.py": "open('scripts/map.json')\n", "scripts/map.json": '["scripts/named.py"]' + " " * 300,
+                 "scripts/named.py": "pass\n", "scripts/h.py": "run('scripts/big.py')\nopen('scripts/same.txt')\n",
+                 "scripts/big.py": big, "scripts/same.txt": big,  # one blob under two names
+                 ".github/actions/a/action.yml": "runs:\n  using: composite\n" + "#" * 300})
+        main = r.commit("Merge pull request #380 from x")
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main"])
+        sizes = lambda oids: {o: int(git(r.path, "cat-file", "-s", o)) for o in oids}  # noqa: E731  as GitHub reports
+        self.git.size_oracle = sizes
+        self.assertIn("scripts/named.py", preflight._code_closure(self.git, main, {"scripts/g.py"}))
+        cold = preflight.Git(Path(self.tmp.name) / "cold" / "repo.git", self.git.url)  # nothing downloaded yet
+        cold.ensure()
+        cold.fetch(["+refs/heads/main:refs/preflight/main"])
+        cold.size_oracle = sizes
+        with mock.patch.object(preflight, "MAX_BLOB_BYTES", 200):  # the map has grown past what preflight reads
+            code = preflight._code_closure(cold, main, {"scripts/g.py"})
+            self.assertIn("scripts/map.json", code)  # still an input: its changes count
+            self.assertNotIn("scripts/named.py", code)  # but it is not opened
+            self.assertNotIn("?incomplete", code)
+            unread = git(r.path, "rev-parse", f"{main}:scripts/map.json")
+            self.assertFalse(cold.present(unread))  # nor downloaded
+            for start in ({"scripts/h.py"}, {".github/actions/a/action.yml"}):
+                with self.assertRaises(preflight.Failure):  # a script, or an action that large, is not skipped
+                    preflight._code_closure(self.git, main, start)
+
     def test_the_repositorys_own_checks_can_be_followed(self):
         """The code and inputs of this repository's required workflows, at its own HEAD, stay within the
         limit: an incomplete closure would make every pull request NOT READY."""
