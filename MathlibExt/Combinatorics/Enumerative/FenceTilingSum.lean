@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Algebra.Field.Basic
 public import Mathlib.Algebra.Group.Nat.Even
+public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Finset.Powerset
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Finset.Prod
@@ -23,13 +24,14 @@ import Mathlib.Tactic.Ring
 The half-cells of an $n$-board split into two paths: fences only join half-cells of the same
 parity. Each path has the same alternating half-square weights. The weighted count of fence
 tilings is therefore the square of the weighted count of path matchings, whose two-term recurrence
-gives the even-board recurrence of Belaggoun and Belbachir.
+gives the even- and odd-board recurrences of Belaggoun and Belbachir.
 
 ## References
 
 * Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic Fibonacci
   Numbers Squared*, The Fibonacci Quarterly 62(2) (2024), 136–146, Definition 1.1, Lemma 2.1,
   and Theorem 2.2.
+  Equation (2.1) of Lemma 2.1 gives both the even- and odd-board recurrences.
 * Kenneth Edwards and Michael A. Allen, *A new combinatorial interpretation of the Fibonacci
   numbers squared*, The Fibonacci Quarterly 57(5) (2019), 48–53, Theorem 3.2 (the unweighted case).
 * Marcia Edson and Omer Yayenie, *A New Generalization of Fibonacci Sequence and Extended Binet’s
@@ -535,6 +537,84 @@ private theorem sum_reverse_interval {M : Type*} [AddCommMonoid M] (f : ℕ → 
   · intro i hi
     rw [mem_range] at hi
     exact ⟨m - i, mem_Icc.mpr (by omega), by omega⟩
+
+private theorem pathSum_odd_step {R : Type*} [CommSemiring R] (a b : R) (k : ℕ) :
+    pathSum a b (2 * k + 3) = a * pathSum a b (2 * k + 2) + pathSum a b (2 * k + 1) := by
+  simpa only [Nat.add_assoc, cellWeight, ite_eq_left (show (2 * k + 2) % 2 = 0 by omega)] using
+    pathSum_rec a b (2 * k + 1)
+
+-- As in `evenCross`, two positive expansions reduce the cross term to the previous one.
+private theorem oddCross {R : Type*} [CommSemiring R] (a b : R) (k : ℕ) :
+    a * pathSum a b (2 * k + 2) * pathSum a b (2 * k + 1) =
+      a * b * ∑ i ∈ range (k + 1), pathSum a b (2 * i + 1) ^ 2 +
+        a ^ 2 * ∑ i ∈ range (k + 1), pathSum a b (2 * i) ^ 2 := by
+  induction k with
+  | zero =>
+    simp [pathSum_rec a b 0, pathSum_zero, pathSum_one, cellWeight]
+    ring
+  | succ k ih =>
+    have he : pathSum a b (2 * (k + 1) + 2) =
+        b * pathSum a b (2 * (k + 1) + 1) + pathSum a b (2 * k + 2) := by
+      simpa only [show 2 * (k + 1) = 2 * k + 2 by omega, cellWeight,
+        ite_eq_right (show (2 * k + 2 + 1) % 2 ≠ 0 by omega)] using
+        pathSum_rec a b (2 * (k + 1))
+    rw [he, sum_range_succ (fun i => pathSum a b (2 * i + 1) ^ 2) (k + 1),
+      sum_range_succ (fun i => pathSum a b (2 * i) ^ 2) (k + 1)]
+    calc
+      _ = a * b * pathSum a b (2 * (k + 1) + 1) ^ 2 +
+          a * pathSum a b (2 * k + 2) * pathSum a b (2 * (k + 1) + 1) := by ring
+      _ = a * b * pathSum a b (2 * (k + 1) + 1) ^ 2 +
+          (a ^ 2 * pathSum a b (2 * k + 2) ^ 2 +
+            a * pathSum a b (2 * k + 2) * pathSum a b (2 * k + 1)) := by
+        congr 1
+        rw [show 2 * (k + 1) + 1 = 2 * k + 3 by omega, pathSum_odd_step]
+        ring
+      _ = _ := by rw [ih, show 2 * (k + 1) = 2 * k + 2 by omega]; ring
+
+/-- **Recurrence for weighted fence tilings of odd boards.** Let $a$ and $b$ be elements of a
+commutative semiring $R$, and let $S_m$ be the weighted number of tilings of an $m$-board, with
+cells numbered $1, \dots, m$, by half-squares and $(1/2, 1/2)$-fences, a half-square weighing $a$
+in an odd cell and $b$ in an even cell. Then for every odd $n \ge 3$,
+$$
+S_n = a^2 S_{n-1} + (2ab+1) S_{n-2} +
+2ab \sum_{j=2}^{(n-1)/2} S_{n-2j} + 2a^2 \sum_{j=1}^{(n-1)/2} S_{n-2j-1}.
+$$
+
+Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
+Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
+Lemma 2.1, (2.1) (`fq-2024-belaggoun01132024-lem-2.1`). -/
+public theorem fenceTilingSum_odd {R : Type*} [CommSemiring R] (a b : R) {n : ℕ}
+    (hn : 2 ≤ n) (ho : Odd n) :
+    fenceTilingSum a b n =
+      a ^ 2 * fenceTilingSum a b (n - 1) + (2 * a * b + 1) * fenceTilingSum a b (n - 2) +
+        2 * a * b * ∑ j ∈ Icc 2 ((n - 1) / 2), fenceTilingSum a b (n - 2 * j) +
+        2 * a ^ 2 * ∑ j ∈ Icc 1 ((n - 1) / 2), fenceTilingSum a b (n - 2 * j - 1) := by
+  obtain ⟨m, hm⟩ := ho
+  obtain ⟨k, rfl⟩ : ∃ k, m = k + 1 := ⟨m - 1, by omega⟩
+  have h : n = 2 * k + 3 := by omega
+  rw [h]
+  simp only [fenceTilingSum_eq_pathSum_sq, show 2 * k + 3 - 1 = 2 * k + 2 by omega,
+    show (2 * k + 2) / 2 = k + 1 by omega, show 2 * k + 3 - 2 = 2 * k + 1 by omega]
+  have hOdd : (∑ j ∈ Icc 2 (k + 1), pathSum a b (2 * k + 3 - 2 * j) ^ 2) =
+      ∑ i ∈ range k, pathSum a b (2 * i + 1) ^ 2 := by
+    calc
+      _ = ∑ j ∈ Icc 2 (k + 1), pathSum a b (2 * (k + 1 - j) + 1) ^ 2 := by
+        refine sum_congr rfl fun j hj => ?_
+        have := (mem_Icc.mp hj).2
+        rw [show 2 * k + 3 - 2 * j = 2 * (k + 1 - j) + 1 by omega]
+      _ = _ := by
+        simpa only [show k + 1 + 1 - 2 = k by omega] using
+          sum_reverse_interval (fun i => pathSum a b (2 * i + 1) ^ 2) 2 (k + 1)
+  have hEven : (∑ j ∈ Icc 1 (k + 1), pathSum a b (2 * k + 3 - 2 * j - 1) ^ 2) =
+      ∑ i ∈ range (k + 1), pathSum a b (2 * i) ^ 2 := by
+    simp_rw [show ∀ j : ℕ, 2 * k + 3 - 2 * j - 1 = 2 * (k + 1 - j) from fun j => by omega]
+    simpa only [Nat.add_sub_cancel] using
+      sum_reverse_interval (fun i => pathSum a b (2 * i) ^ 2) 1 (k + 1)
+  rw [hOdd, hEven, pathSum_odd_step]
+  calc
+    _ = a ^ 2 * pathSum a b (2 * k + 2) ^ 2 + pathSum a b (2 * k + 1) ^ 2 +
+        2 * (a * pathSum a b (2 * k + 2) * pathSum a b (2 * k + 1)) := by ring
+    _ = _ := by rw [oddCross, sum_range_succ (fun i => pathSum a b (2 * i + 1) ^ 2) k]; ring
 
 /-- **Recurrence for weighted fence tilings of even boards.** Let $a$ and $b$ be elements of a
 commutative semiring $R$, and let $S_m$ be the weighted number of tilings of an $m$-board, with

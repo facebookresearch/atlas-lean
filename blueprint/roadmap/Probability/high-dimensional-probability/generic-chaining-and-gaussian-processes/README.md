@@ -49,6 +49,8 @@ Source: M. Talagrand, *Upper and Lower Bounds for Stochastic Processes: Decompos
 - [Canonical distance of a process](canonical-dist.md)
 - [Majorizing measure theorem](majorizing-measure.md)
 - [Sudakov minoration](sudakov-minoration.md)
+- [The canonical distance of square-integrable increments](canonical-dist-eq-of-real-sqrt.md)
+- [Increments of a Gaussian process are square integrable](mem-lp-sub-of-is-gaussian.md)
 
 ## Related topics
 
