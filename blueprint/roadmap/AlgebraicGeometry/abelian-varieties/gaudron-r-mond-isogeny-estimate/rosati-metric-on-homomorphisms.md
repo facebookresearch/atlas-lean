@@ -28,10 +28,13 @@ function of degree $2 \dim X$ on $\operatorname{End}_K(X) \otimes \mathbb{R}$.
    the Euclidean norm $|\varphi| = \operatorname{Tr}(\varphi \circ \varphi^\dagger)^{1/2}$; it makes
    $\operatorname{Hom}_K(A, B)$ a lattice in the Euclidean space $\operatorname{Hom}_K(A, B) \otimes
    \mathbb{R}$. It depends on $A$, $B$ and the two polarizations.
-4. **Minima and covolume.** For a lattice $\Gamma$ of rank $n$ in a Euclidean space, $\lambda(\Gamma)$
-   is the least norm of a nonzero element of $\Gamma$, $\Lambda(\Gamma)$ is the least real number
-   $\lambda > 0$ such that $\Gamma$ contains $n$ linearly independent elements of norm at most
-   $\lambda$ (its last successive minimum), and $\operatorname{vol}(\Gamma)$ is its covolume. With
+4. **Minima and covolume.** For a lattice $\Gamma$ of rank $n$ in a Euclidean space,
+   $\Lambda(\Gamma)$ is the least real number $\lambda \ge 0$ such that $\Gamma$ contains $n$
+   linearly independent elements of norm at most $\lambda$ (its last successive minimum), and
+   $\operatorname{vol}(\Gamma)$ is its covolume. For $n \ge 1$, $\lambda(\Gamma)$ is the least norm
+   of a nonzero element of $\Gamma$, and $\Lambda(\Gamma) > 0$ agrees with Gaudron and Rémond's
+   definition (§3, p. 2069). For the zero lattice, $n = 0$ and $\Lambda(0) = 0$; this case occurs,
+   for instance $\operatorname{Hom}_K(A, B) = 0$ for non-isogenous elliptic curves $A$ and $B$. With
    the Rosati metric, $\Lambda(\operatorname{Hom}_K(A, B))$ is the last minimum of the lattice of
    homomorphisms.
 

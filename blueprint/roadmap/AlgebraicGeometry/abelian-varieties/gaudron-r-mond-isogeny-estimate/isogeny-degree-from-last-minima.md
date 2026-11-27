@@ -32,8 +32,12 @@ Item 2 is Gaudron and Rémond's Proposition 6.3 (3). Item 1 is their Proposition
 \to A''$ of degree at most $(16g)^{2g} \Lambda^{4g} \prod_i V_i^{g_i n_i \min(2n_i, 4)}
 \widehat{W}_i^{\,2 g_i n_i / d_i}$, combined with their Lemme 6.1, $V_i^a W_i^b \widehat{W}_i^{\,c}
 \le \Lambda_i^{4 d_i \max(a/2, b, c)}$, for $a = g_i n_i \min(2n_i, 4)$, $b = 0$ and $c = 2 g_i n_i /
-d_i$: then $\max(a/2, c) \le 2 g_i n_i^2$. Here $V_i$, $W_i$ and $\widehat W_i$ are the covolumes of
-§6 (p. 2084), which no longer appear in the bound. They use item 1 for the height of $A''$ in the
+d_i$: then $\max(a/2, c) \le 2 g_i n_i^2$. Here (p. 2084) $V_i = \operatorname{vol}(\operatorname{End}_K
+A_i)$ is an ordinary covolume, while $W_i = (h^0(A_i, L_i) / h^0(\widehat A_i,
+\widehat L_i))^{d_i/2g_i} \operatorname{vol}(\operatorname{Hom}_K(A_i, \widehat A_i))$ and
+$\widehat W_i$, obtained by exchanging $A_i$ and $\widehat A_i$, are covolumes multiplied by ratios
+of the dimensions $h^0$ for auxiliary polarizations $L_i$ of $A_i$ and $\widehat L_i$ of $\widehat
+A_i$; none of them appears in the bound. They use item 1 for the height of $A''$ in the
 last step of the isogeny estimate (Lemme 9.4, p. 2100), noting that Proposition 6.2 gives a bound
 smaller than the final bound of their §6, $(10g)^{5g} (\Lambda \Lambda')^{4g} \prod_i
 \Lambda_i^{8 n_i^2 g_i d_i}$.
@@ -42,8 +46,12 @@ smaller than the final bound of their §6, $(10g)^{5g} (\Lambda \Lambda')^{4g} \
 
 This node is still to be broken down. A good expansion states and links:
 
-- the volumes $\operatorname{vol}(\operatorname{Hom}_K(A, B))$ and their independence of the
-  polarizations (Proposition 2.9 and Corollaire 2.10, pp. 2067–2068);
+- the product $v(A, B) = \operatorname{vol}(\operatorname{Hom}_K(A, B))\,
+  \operatorname{vol}(\operatorname{Hom}_K(B, A))$, an integer $\ge 1$ that does not depend on the
+  polarizations, and in particular $\operatorname{vol}(\operatorname{End}_K(A)) \ge 1$, which does
+  not depend on the polarization of $A$ (Proposition 2.9, p. 2067), with the volumes of Corollaire
+  2.10 (p. 2068); a single covolume $\operatorname{vol}(\operatorname{Hom}_K(A, B))$ does depend on
+  the polarizations;
 - the bound $\deg \varphi \le \frac{|\varphi|^{2g}}{(2g)^g} \frac{h^0(A, L)}{h^0(B, M)}$
   (Proposition 2.11, pp. 2068–2069, after Masser and Wüstholz);
 - Minkowski's first and second theorems in the weak form of Lemme 3.1 (pp. 2069–2070, after

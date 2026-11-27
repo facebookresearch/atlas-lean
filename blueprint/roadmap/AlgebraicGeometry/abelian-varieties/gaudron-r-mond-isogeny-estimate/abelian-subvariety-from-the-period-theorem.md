@@ -63,6 +63,8 @@ isogénies*, pp. 2095–2097).
 - [Dual abelian variety](../dual-abelian-variety.md), for $\widehat C$
 - [Polarization](../polarization.md), for principal and product polarizations
 - [Abelian scheme](../abelian-scheme.md), for abelian varieties over $k$
+- [Poincaré's complete reducibility theorem](poincare-reducibility.md), for the decomposition of
+  $B$, up to isogeny over $\bar k$, into powers of simple abelian varieties
 
 ## Proof depends on
 
