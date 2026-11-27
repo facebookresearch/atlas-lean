@@ -1,16 +1,16 @@
 # Core-tail decomposition of the optimal revenue
 
-For a single additive buyer with independent values and any thresholds $t_1, \dots, t_n \ge 0$, write $v_j = v_j \mathbf{1}[v_j \le t_j] + v_j \mathbf{1}[v_j > t_j]$. Then
+For a single additive buyer with independent values and any thresholds $t_1, \dots, t_n \ge 0$, call item $j$ in the tail when $v_j > t_j$ and in the core otherwise, and let $p_j = \Pr[v_j > t_j]$. Then
 
 $$
 \mathrm{REV}(D) \le \sum_{A \subseteq [n]} \Pr[\text{exactly the items in } A \text{ have } v_j > t_j]\, \mathrm{REV}(D_A^{\mathrm{tail}}) + \mathrm{VAL}(D^{\mathrm{core}}),
 $$
 
-where $D_A^{\mathrm{tail}}$ is the conditional distribution of the items in $A$ given that they exceed their thresholds and $\mathrm{VAL}(D^{\mathrm{core}}) = \mathbb{E}\bigl[\sum_j v_j \mathbf{1}[v_j \le t_j]\bigr]$ is the expected welfare of the core. Choosing $t_j$ so that $\sum_j \Pr[v_j > t_j] \le 1$ yields $\mathrm{REV} \le 2\, \mathrm{SREV} + \mathrm{VAL}(D^{\mathrm{core}})$.
+where $D_A^{\mathrm{tail}}$ is the product of the conditional distributions of the items $j \in A$ given $v_j > t_j$, and $\mathrm{VAL}(D^{\mathrm{core}}) = \sum_j \mathbb{E}[v_j \mid v_j \le t_j]$ is the expected welfare of the core $D^{\mathrm{core}}$, the product of the conditional distributions of all items given $v_j \le t_j$. Choosing $t_j$ so that $\sum_j p_j \le 1$ (for instance $t_j = \mathrm{SREV}(D)$ for every $j$) yields $\mathrm{REV} \le 2\, \mathrm{SREV} + \mathrm{VAL}(D^{\mathrm{core}})$.
 
 ## Proof sketch
 
-Revenue is subadditive across the partition of the type space according to which items exceed their thresholds, after conditioning; on each part, revenue is at most the revenue from the tail items plus the welfare of the core items (giving the core items away costs at most their value). With $\sum_j \Pr[v_j > t_j] \le 1$, the tail term is bounded via a single-item-at-a-time argument by twice the separate-selling revenue.
+Partitioning the type space by the set $A$ of tail items gives $\mathrm{REV}(D) \le \sum_A p_A \mathrm{REV}(D_A)$, where $D_A$ is the product of the core of the items outside $A$ and the tail of those in $A$, and $\mathrm{REV}(D' \times D'') \le \mathrm{VAL}(D') + \mathrm{REV}(D'')$ for independent $D', D''$ bounds each term by the core welfare plus the tail revenue; the core welfare of the items outside $A$ is at most $\mathrm{VAL}(D^{\mathrm{core}})$. For the tail, $\mathrm{REV}(D_A^{\mathrm{tail}}) \le |A|\, \mathrm{SREV}(D_A^{\mathrm{tail}}) \le |A| \sum_{j \in A} r_j / p_j$ with $r_j$ the optimal revenue of item $j$, and summing over $A$ gives $\sum_j r_j\, \mathbb{E}[\,|A| \mid j \in A\,] = \sum_j r_j (1 + \sum_{k \ne j} p_k) \le 2\, \mathrm{SREV}$.
 
 ## Depends on
 
@@ -18,5 +18,5 @@ Revenue is subadditive across the partition of the type space according to which
 
 ## Sources
 
-- M. Babaioff, N. Immorlica, B. Lucier, S. M. Weinberg, "A Simple and Approximately Optimal Mechanism for an Additive Buyer", FOCS 2014; Journal of the ACM 67(4) (2020), arXiv:1405.6146.
+- M. Babaioff, N. Immorlica, B. Lucier, S. M. Weinberg, "A Simple and Approximately Optimal Mechanism for an Additive Buyer", FOCS 2014; Journal of the ACM 67(4) (2020), arXiv:1405.6146, Lemma 6 and Proposition 3.
 - X. Li, A. C.-C. Yao, "On revenue maximization for selling multiple independently distributed items", Proceedings of the National Academy of Sciences 110(28) (2013).

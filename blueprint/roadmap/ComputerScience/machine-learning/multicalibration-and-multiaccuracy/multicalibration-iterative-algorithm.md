@@ -17,4 +17,5 @@ By the potential lemma the update decreases $\mathbb{E}[(p - p^*)^2] \le 1$ by a
 
 ## Sources
 
-- U. Hebert-Johnson, M. P. Kim, O. Reingold, G. N. Rothblum, "Multicalibration: Calibration for the (Computationally-Identifiable) Masses", ICML (2018), arXiv:1711.08513.
+- U. Hebert-Johnson, M. P. Kim, O. Reingold, G. N. Rothblum, "Multicalibration: Calibration for the (Computationally-Identifiable) Masses", ICML (2018), arXiv:1711.08513, Algorithm 3.2, Lemma 3.6 and Theorem 3.7 (for sets of measure at least $\gamma$ and relative errors on level sets; the version above uses the summed $\ell_1$ form of the condition).
+- P. Gopalan, A. T. Kalai, O. Reingold, V. Sharan, U. Wieder, "Omnipredictors", ITCS (2022), arXiv:2109.05389, Definition 5.3 and Theorem 9.2.

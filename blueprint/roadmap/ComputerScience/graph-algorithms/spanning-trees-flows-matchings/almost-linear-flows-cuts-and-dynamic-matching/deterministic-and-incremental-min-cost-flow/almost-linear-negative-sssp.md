@@ -4,7 +4,7 @@ There is a deterministic algorithm that, given a directed graph with $m$ edges, 
 
 ## Proof sketch
 
-For shortest paths, set lower capacities $0$, upper capacities $n$, costs equal to the weights, demand $n - 1$ leaving $s$ and $1$ arriving at every other vertex, and solve by *Deterministic minimum-cost flow in almost-linear time*; when no negative cycle exists, an optimal flow decomposes into shortest paths from $s$ and its support contains a shortest-path tree, from which the distances follow. For negative cycles, use upper capacities $1$ and zero demands: the optimal circulation is nonzero exactly when a negative cycle exists, and a cycle is extracted from its support with dynamic trees. This matches the classical characterization by Bellman-Ford.
+For shortest paths, first restrict to the vertices reachable from $s$ (the others have distance $+\infty$); then set lower capacities $0$, upper capacities $n$, costs equal to the weights, demand $n - 1$ leaving $s$ and $1$ arriving at every other vertex, and solve by *Deterministic minimum-cost flow in almost-linear time*; when no negative cycle exists, an optimal flow decomposes into shortest paths from $s$ and its support contains a shortest-path tree, from which the distances follow. For negative cycles, use upper capacities $1$ and zero demands: the optimal circulation is nonzero exactly when a negative cycle exists, and a cycle is extracted from its support with dynamic trees. This matches the classical characterization by Bellman-Ford.
 
 ## Depends on
 

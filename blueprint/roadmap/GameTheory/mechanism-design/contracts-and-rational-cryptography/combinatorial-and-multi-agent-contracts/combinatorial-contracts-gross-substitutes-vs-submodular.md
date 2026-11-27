@@ -1,10 +1,10 @@
 # Optimal combinatorial contracts: polynomial for gross substitutes, NP-hard for submodular
 
-For combinatorial contract instances with binary outcome and additive costs: if the success function $f$ is gross substitutes, an optimal contract can be computed with polynomially many value queries and polynomial running time; if $f$ is submodular (even explicitly given coverage-type functions), computing an optimal contract is NP-hard. The positive result extends to linear contracts for higher-dimensional outcome spaces, which are robustly optimal given first-moment constraints.
+For combinatorial contract instances with binary outcome and additive costs: if the success function $f$ is gross substitutes, an optimal contract can be computed with polynomially many value queries and polynomial running time; if $f$ is submodular, computing an optimal contract is NP-hard, already for budget-additive $f(S) = \min\{B, \sum_{i \in S} f(\{i\})\}$ given explicitly by integer values $f(\{1\}), \dots, f(\{n\})$ and $B$ (after scaling into $[0, 1]$). The positive result extends to linear contracts for higher-dimensional outcome spaces, which are robustly optimal given first-moment constraints.
 
 ## Proof sketch
 
-For gross substitutes, enumerate the polynomially many critical values, compute the demanded set at each with a greedy demand oracle, and evaluate the principal's utility, taking the best. For submodular $f$, reduce from a partition-type problem: build a coverage function whose critical values encode subset sums, so that achieving a target principal utility requires the agent's demand at some $\alpha$ to correspond to an exact solution.
+For gross substitutes, the optimal contract is one of the critical values; enumerate them one after another (each next critical value is computable from a greedy demand computation), evaluate the principal's utility at each, and take the best; there are polynomially many. For submodular $f$, reduce from Subset Sum with numbers $x_1, \dots, x_n < Z$: set $f(S) = \min\{Z, \sum_{i \in S} x_i\}$ and $c(i) = x_i / Z^2$. If some subset sums to exactly $Z$, the contract $\alpha = 1/Z^2$ induces it and gives the principal $(1 - 1/Z^2) Z$; otherwise there are exactly two critical values, and both give the principal strictly less, so the optimal principal utility decides the Subset Sum instance.
 
 ## Depends on
 
@@ -20,5 +20,5 @@ For gross substitutes, enumerate the polynomially many critical values, compute 
 
 ## Sources
 
-- P. Dütting, T. Ezra, M. Feldman, T. Kesselheim, "Combinatorial Contracts", FOCS 2021, arXiv:2109.14260.
+- P. Dütting, T. Ezra, M. Feldman, T. Kesselheim, "Combinatorial Contracts", FOCS 2021; SIAM Journal on Computing 54(6) (2025), arXiv:2109.14260.
 - T. Ezra, M. Feldman, M. Schlesinger, "On the (In)approximability of Combinatorial Contracts", ITCS 2024.

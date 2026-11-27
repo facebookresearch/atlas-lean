@@ -1,6 +1,6 @@
 # Suffix-tree functionality in LZ77-bounded space
 
-Every text $T$ of length $n$ has a fully functional suffix tree representation in $O(z \log^3 n)$ words with $O(\log n)$-time navigation operations, and an index of $O(z\log^2 n)$ words that locates the $\mathit{occ}$ occurrences of a pattern of length $m$ in $O((m + \mathit{occ})\log\log n)$ time; thus results proved for BWT-runs bounded indexes automatically apply in LZ77-bounded space.
+Every text $T$ of length $n$ has a fully functional suffix tree representation in $O(z \log^3 n)$ words supporting most navigation operations in $O(\log n)$ time (child by a letter and level ancestor in $O(\log^2 n)$), and an index of $O(z\log^2 n)$ words that locates the $\mathit{occ}$ occurrences of a pattern of length $m$ in $O((m + \mathit{occ})\log\log n)$ time; thus results proved for BWT-runs bounded indexes automatically apply in LZ77-bounded space.
 
 ## Proof sketch
 

@@ -1,12 +1,12 @@
 # Approximate differential privacy as f-differential privacy
 
-For $\varepsilon \ge 0$ and $\delta \in [0,1]$ define
+For $\varepsilon \ge 0$ and $\delta \in [0,1]$ consider the function $f_{\varepsilon,\delta}$ (defined, for all real parameters, as the tradeoff lower bound of approximate differential privacy):
 
 $$
 f_{\varepsilon, \delta}(\alpha) = \max\big\{0,\; 1 - \delta - e^{\varepsilon}\alpha,\; e^{-\varepsilon}(1 - \delta - \alpha)\big\}.
 $$
 
-Then a mechanism is $(\varepsilon,\delta)$-differentially private if and only if it is $f_{\varepsilon,\delta}$-DP. In particular $(\varepsilon,0)$-DP corresponds to the piecewise linear trade-off function with slopes $-e^{\varepsilon}$ and $-e^{-\varepsilon}$, and $f_{\varepsilon,\delta}$ is the trade-off function of a pair of distributions on a four-point space.
+Then, for output distributions on an arbitrary measurable space, a mechanism is $(\varepsilon,\delta)$-differentially private if and only if it is $f_{\varepsilon,\delta}$-DP; this measurable-space equivalence is broader than the corresponding results for finitely supported output distributions. In particular $(\varepsilon,0)$-DP corresponds to the piecewise linear trade-off function with slopes $-e^{\varepsilon}$ and $-e^{-\varepsilon}$, and $f_{\varepsilon,\delta}$ is the trade-off function of a pair of distributions on a four-point space.
 
 ## Proof sketch
 
@@ -15,6 +15,7 @@ $(\varepsilon,\delta)$-DP says $\mathbb{E}_{M(S)}[\phi] \le e^{\varepsilon}\math
 ## Depends on
 
 - [f-differential privacy](f-differential-privacy.md)
+- [Tradeoff lower bound of approximate differential privacy](../../hypothesis-testing-characterization-of-different/f-eps-delta.md)
 
 ## Sources
 

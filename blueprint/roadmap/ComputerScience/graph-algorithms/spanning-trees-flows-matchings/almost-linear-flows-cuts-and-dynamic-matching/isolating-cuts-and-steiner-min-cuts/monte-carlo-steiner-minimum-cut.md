@@ -1,6 +1,6 @@
 # Monte Carlo Steiner minimum cut with polylogarithmically many max-flow calls
 
-There is a randomized algorithm that, given an undirected graph $G = (V, E, w)$ with $n$ vertices, $m$ edges and integer weights in $\{1, \dots, W\}$ with $W \le n^{O(1)}$, and terminals $R \subseteq V$ with $|R| \ge 2$, uses $O(\log^3 n)$ max-flow calls and $O(m \log^3 n)$ additional time and outputs an $R$-Steiner cut that is a Steiner minimum cut with probability at least $1 - n^{-c}$, for any fixed constant $c > 0$ (Monte Carlo; the output is always a valid Steiner cut). In particular the global minimum cut ($R = V$) and the Steiner minimum cut can be computed in $m^{1+o(1)}$ randomized time using the almost-linear maximum-flow algorithm.
+There is a randomized algorithm that, given an undirected graph $G = (V, E, w)$ with $n$ vertices, $m$ edges and integer weights in $\{1, \dots, W\}$ with $W \le n^{O(1)}$, and terminals $R \subseteq V$ with $|R| \ge 2$, uses $O(\log^3 n)$ max-flow calls and $O(m \log^2 n)$ additional time and outputs an $R$-Steiner cut that is a Steiner minimum cut with probability at least $1 - n^{-c}$, for any fixed constant $c > 0$ (Monte Carlo; the output is always a valid Steiner cut). In particular the global minimum cut ($R = V$) and the Steiner minimum cut can be computed in $m^{1+o(1)}$ randomized time using the almost-linear maximum-flow algorithm.
 
 ## Proof sketch
 

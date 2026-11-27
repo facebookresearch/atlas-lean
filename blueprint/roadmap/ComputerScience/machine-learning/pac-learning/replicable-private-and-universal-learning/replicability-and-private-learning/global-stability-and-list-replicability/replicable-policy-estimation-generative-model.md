@@ -26,5 +26,5 @@ Estimate each transition and reward to accuracy $\varepsilon(1-\gamma)^2$ with r
 
 ## Sources
 
-- A. Karbasi, G. Velegkas, L. F. Yang, F. Zhou, "Replicability in Reinforcement Learning", NeurIPS (2023), arXiv:2305.19562.
+- A. Karbasi, G. Velegkas, L. F. Yang, F. Zhou, "Replicability in Reinforcement Learning", NeurIPS (2023), arXiv:2305.19562, Definitions 2.8 and 2.10, Theorem 3.1, Corollary 3.2 and the lower bound and TV-indistinguishability results summarized in the abstract.
 - E. Eaton, M. Hussing, M. Kearns, J. Sorrell, "Replicable Reinforcement Learning", NeurIPS (2023), arXiv:2305.15284.

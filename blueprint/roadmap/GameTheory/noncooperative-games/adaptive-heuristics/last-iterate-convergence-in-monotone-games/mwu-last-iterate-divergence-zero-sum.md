@@ -1,10 +1,10 @@
 # Multiplicative weights diverge from interior equilibria in zero-sum games
 
-Let $A$ be a two-player zero-sum matrix game with a unique fully mixed Nash equilibrium $(x^\star, y^\star)$. If both players run multiplicative weights (Hedge) with any constant step size from any interior starting point other than the equilibrium, the Kullback–Leibler divergence $\mathrm{KL}(x^\star \Vert x^t) + \mathrm{KL}(y^\star \Vert y^t)$ is strictly increasing in $t$, and the iterates approach the boundary of the simplices; hence the last iterate does not converge to equilibrium even though time-averages do. In contrast, Daskalakis and Panageas prove that optimistic multiplicative weights with a sufficiently small constant step size converge in the last iterate to the equilibrium.
+Let $A$ be a two-player zero-sum (more generally constant-sum) matrix game with a fully mixed Nash equilibrium $(x^\star, y^\star)$. If both players run multiplicative weights (Hedge) with a constant step size, the Kullback–Leibler divergence $\mathrm{KL}(x^\star \Vert x^t) + \mathrm{KL}(y^\star \Vert y^t)$ is non-decreasing in $t$, and from every interior starting point other than an equilibrium the iterates converge to the boundary of the simplices; hence the last iterate does not converge to equilibrium even though time-averages do. In contrast, Daskalakis and Panageas prove that when the game has a unique equilibrium (not necessarily fully mixed), optimistic multiplicative weights started from the uniform strategies with a sufficiently small constant step size (which may be changed once, between a first and a second phase) converge in the last iterate to the equilibrium.
 
 ## Proof sketch
 
-Compute the change of the divergence in one step: it equals a first-order term that vanishes by the zero-sum structure and the equilibrium condition, plus a strictly positive second-order term from the convexity of the exponential. For the optimistic variant, the correction term cancels the second-order growth and an energy argument shows decrease of a modified divergence.
+Compute the change of the divergence in one step: it equals a first-order term that vanishes by the zero-sum structure and the equilibrium condition, plus a strictly positive second-order term from the convexity of the exponential. For the optimistic variant, the correction term cancels the second-order growth, so the divergence to the unique equilibrium decreases until the iterates are $O(\eta^{1/3})$-close to it; from there, a spectral analysis of the Jacobian of the update map shows that the equilibrium is locally asymptotically stable.
 
 ## Depends on
 
@@ -18,5 +18,5 @@ Compute the change of the divergence in one step: it equals a first-order term t
 
 ## Sources
 
-- J. P. Bailey, G. Piliouras, "Multiplicative Weights Update in Zero-Sum Games", EC 2018.
-- C. Daskalakis, I. Panageas, "Last-Iterate Convergence: Zero-Sum Games and Constrained Min-Max Optimization", ITCS 2019, arXiv:1807.04252.
+- J. P. Bailey, G. Piliouras, "Multiplicative Weights Update in Zero-Sum Games", EC 2018, Theorems 3.1 and 3.3.
+- C. Daskalakis, I. Panageas, "Last-Iterate Convergence: Zero-Sum Games and Constrained Min-Max Optimization", ITCS 2019, arXiv:1807.04252, Theorem 2.7.

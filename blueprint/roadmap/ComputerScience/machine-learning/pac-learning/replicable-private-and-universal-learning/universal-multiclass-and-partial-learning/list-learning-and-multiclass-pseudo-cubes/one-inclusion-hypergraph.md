@@ -8,5 +8,5 @@ Let $H \subseteq Y^n$ be a class on $n$ coordinates. Its **one-inclusion hypergr
 
 ## Sources
 
-- N. Brukhim, D. Carmon, I. Dinur, S. Moran, A. Yehudayoff, "A Characterization of Multiclass Learnability", FOCS (2022), arXiv:2203.01550.
-- A. Daniely, S. Shalev-Shwartz, "Optimal Learners for Multiclass Problems", COLT (2014).
+- N. Brukhim, D. Carmon, I. Dinur, S. Moran, A. Yehudayoff, "A Characterization of Multiclass Learnability", FOCS (2022), arXiv:2203.01550, Definitions 9 and 11, Algorithm 1 and Proposition 15.
+- A. Daniely, S. Shalev-Shwartz, "Optimal Learners for Multiclass Problems", COLT (2014), PMLR 35.

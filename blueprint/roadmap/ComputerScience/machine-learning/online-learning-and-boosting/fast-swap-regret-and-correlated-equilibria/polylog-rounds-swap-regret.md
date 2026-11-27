@@ -12,11 +12,11 @@ $$
 T \ge \big(\log(N)/\varepsilon^2\big)^{O(1/\varepsilon)},
 $$
 
-with amortized per-round running time $O(N)$ and space $O(N/\varepsilon)$ (TreeSwap with multiplicative weights, $d = \lceil 2/\varepsilon\rceil$ and $M = O(\log N/\varepsilon^2)$). Independently, a multi-scale multiplicative-weights algorithm achieves $\varepsilon$-swap regret after $(\log(N)/\varepsilon)^{O(1/\varepsilon)}$ rounds. For constant $\varepsilon$ this is an exponential improvement over the $\Theta(N\log N/\varepsilon^2)$ rounds of the Blum–Mansour reduction, which are necessary in the non-distributional setting, and resolves the main open problem of Blum and Mansour.
+with amortized per-round running time $O(N)$ and space $O(N/\varepsilon)$ (TreeSwap with multiplicative weights, $M = O(\log N/\varepsilon^2)$ and $d = O(1/\varepsilon)$). Independently, a multi-scale multiplicative-weights algorithm achieves $\varepsilon$-swap regret after $(\log(N)/\varepsilon)^{O(1/\varepsilon)}$ rounds. For constant $\varepsilon$ this is an exponential improvement in $N$ over the $O(N\log N/\varepsilon^2)$ rounds of the Blum–Mansour reduction; $\Omega(N/\varepsilon^2)$ rounds are necessary in the non-distributional setting, so the improvement requires playing distributions. This resolves the main open problem of Blum and Mansour.
 
 ## Proof sketch
 
-Multiplicative weights has average external regret at most $\varepsilon/2$ after $M = O(\log N/\varepsilon^2)$ rounds; the tree lemma with $d = 2/\varepsilon$ levels gives swap regret $\varepsilon/2 + \varepsilon/2$ after $M^d$ rounds. The multi-scale algorithm runs $2^S$ threads of multiplicative weights with $S = \log_2(1/\varepsilon) + 1$ and block size $H = \Theta(\log N/\varepsilon^2)$, thread $k$ treating $H^{k-1}$ days as one meta-day, and plays a uniform mixture of the threads, with an analogous telescoping analysis.
+Multiplicative weights has average external regret at most $\varepsilon/2$ after $M = O(\log N/\varepsilon^2)$ rounds; the tree lemma with $d = \lceil 6/\varepsilon\rceil$ levels gives swap regret at most $\varepsilon/2 + 3/d \le \varepsilon$ once $T \ge M^{d-1}$. The multi-scale algorithm runs $2^S$ threads of multiplicative weights with $S = \log_2(1/\varepsilon) + 1$ and block size $H = \Theta(\log N/\varepsilon^2)$, thread $k$ treating $H^{k-1}$ days as one meta-day, and plays a uniform mixture of the threads, with an analogous telescoping analysis.
 
 ## Depends on
 
@@ -31,6 +31,6 @@ Multiplicative weights has average external regret at most $\varepsilon/2$ after
 
 ## Sources
 
-- Y. Dagan, C. Daskalakis, M. Fishelson, N. Golowich, "From External to Swap Regret 2.0: An Efficient Reduction for Large Action Spaces", STOC (2024), arXiv:2310.19786.
-- B. Peng, A. Rubinstein, "Fast Swap Regret Minimization and Applications to Approximate Correlated Equilibria", STOC (2024), arXiv:2310.19647.
+- Y. Dagan, C. Daskalakis, M. Fishelson, N. Golowich, "From External to Swap Regret 2.0: An Efficient Reduction for Large Action Spaces", STOC (2024), arXiv:2310.19786, Corollary 3.2.
+- B. Peng, A. Rubinstein, "Fast Swap Regret Minimization and Applications to Approximate Correlated Equilibria", STOC (2024), arXiv:2310.19647, Theorem 1.1 and Algorithm 2.
 - A. Blum, Y. Mansour, "From External to Internal Regret", Journal of Machine Learning Research 8 (2007).

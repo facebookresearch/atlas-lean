@@ -2,10 +2,6 @@
 
 A *straight-line program* (SLP) for $T$ is a context-free grammar with rules of the form $X \to a$ or $X \to Y Z$ that generates exactly $T$; $g(T)$ denotes the size (number of rules) of a smallest SLP for $T$. A *bidirectional macro scheme* (Storer–Szymanski) factorizes $T$ into phrases, each a single letter or a copy of another occurrence in $T$ (to the left or to the right), such that following the copy pointers from every position terminates at a letter phrase; $b(T)$ denotes the minimum number of phrases.
 
-## Depends on
-
-- [Size $z$ of the greedy LZ77 factorization](lz77-factorization-size.md)
-
 ## Sources
 
 - James A. Storer, Thomas G. Szymanski, "Data Compression via Textual Substitution", Journal of the ACM 29(4) (1982).

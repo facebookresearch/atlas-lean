@@ -6,7 +6,6 @@
 - [Pure private learning needs at least the Littlestone dimension many samples](pure-private-learning-littlestone-lower-bound.md)
 - [Private learning requires log-star of the Littlestone dimension samples](private-learning-requires-log-star-littlestone.md)
 - [Globally stable learners yield private learners via stable histograms](global-stability-to-private-learning.md)
-- [Halfspaces over infinite domains are not privately learnable](halfspaces-not-privately-learnable.md)
 - [Private learning of thresholds with nearly log-star sample complexity](private-thresholds-log-star-upper-bound.md)
 - [Finite Littlestone dimension implies private learnability](littlestone-classes-are-privately-learnable.md)
 - [Local differential privacy is equivalent to statistical query learning](local-privacy-equals-statistical-queries.md)

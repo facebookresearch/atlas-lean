@@ -10,7 +10,7 @@ and for every $n$ there are instances with a maximum Nash welfare allocation att
 
 ## Proof sketch
 
-Fix $i$ and a partition witnessing $\mu_i$. Using the local swap inequality for each $j \ne i$ bounds how much value (for $i$) any other bundle can hold relative to $v_i(X_i)$ and the largest good; a counting argument over the $n$ parts of $i$'s maximin partition then yields a quadratic inequality in $\mu_i / v_i(X_i)$ whose root is $(1 + \sqrt{4n-3})/2$. The matching family places one agent against $n - 1$ agents with concentrated valuations.
+Assume first that every agent has positive value, fix $i$, and for each $j \ne i$ let $g^*_j$ be the good of $X_j$ most valuable to $i$. EF1 gives $v_i(X_j \setminus \{g^*_j\}) \le v_i(X_i)$, and comparing the Nash product with the allocations obtained by moving $g^*_j$ to $i$, and by moving all of $X_j \setminus \{g^*_j\}$ to $i$, gives $v_i(X_j \setminus \{g^*_j\}) \le v_i(X_i)^2 / v_i(g^*_j)$. A counting argument over the $n$ parts of $i$'s maximin partition, separating the parts that contain one of the goods $g^*_j$, then yields a quadratic inequality in $\mu_i / v_i(X_i)$ whose root is $(1 + \sqrt{4n-3})/2$. Instances with zero Nash welfare are handled separately. The matching family places one agent against $n - 1$ agents with concentrated valuations.
 
 ## Depends on
 
@@ -20,6 +20,7 @@ Fix $i$ and a partition witnessing $\mu_i$. Using the local swap inequality for 
 ## Proof depends on
 
 - [Local swap inequality at a maximum Nash welfare allocation](mnw-local-swap-inequality.md)
+- [Maximum Nash welfare implies EF1](../../../not-yet-classified/part-01/max-nash-welfare-ef1/is-ef1-of-is-max-nash-welfare.md)
 
 ## Sources
 

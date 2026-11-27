@@ -6,11 +6,11 @@ $$
 O\big(n \log n \cdot \mathrm{poly}(1/\varepsilon)\big)
 $$
 
-bits of space.
+words of $O(\log n)$ bits.
 
 ## Proof sketch
 
-Phase I reads an initial portion of the stream and maintains a subgraph $H$ of bounded edge-degree $\beta = \mathrm{poly}(1/\varepsilon)$, inserting underfull edges and deleting overfull ones, until a whole stage passes with few changes; random order makes the processed prefix a uniform sample, so $H$ is then close to an EDCS of the full graph. Phase II stores every remaining edge that is underfull with respect to $H$; a random-order concentration argument bounds their number by $O(n \log n \cdot \mathrm{poly}(1/\varepsilon))$. A variant of the EDCS matching lemma shows $\mu(H \cup X) \ge (2/3 - \varepsilon)\mu(G)$ for the stored set $X$, and the algorithm outputs a maximum matching of $H \cup X$.
+Phase I reads an initial portion of the stream and maintains a subgraph $H$ of bounded edge-degree $\beta = \mathrm{poly}(1/\varepsilon)$, inserting underfull edges and deleting overfull ones, until a whole stage passes with few changes; random order makes the processed prefix a uniform sample, so $H$ is then close to an EDCS of the full graph. Phase II stores every remaining edge that is underfull with respect to $H$; a random-order concentration argument bounds their number by $O(n \log n)$, so the total space is $O(n\log n + n\,\mathrm{poly}(1/\varepsilon))$ words. A variant of the EDCS matching lemma shows $\mu(H \cup X) \ge (2/3 - \varepsilon)\mu(G)$ for the stored set $X$, and the algorithm outputs a maximum matching of $H \cup X$.
 
 ## Depends on
 

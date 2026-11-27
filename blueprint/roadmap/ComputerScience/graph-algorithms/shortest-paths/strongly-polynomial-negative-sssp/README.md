@@ -14,4 +14,3 @@
 - [Fineman's randomized O~(m n^{8/9}) algorithm for real-weighted single-source shortest paths](fineman-mn-eight-ninths.md)
 - [Real-weighted SSSP in O(m n^{4/5} log^{2/5} n + n^{9/5} log^{7/5} n) randomized time via proper hop distances](hjq-mn-four-fifths.md)
 - [Bootstrapped hop reducers: real-weighted SSSP in O~(m n^{3/4} + m^{4/5} n) randomized time](bootstrapped-hop-reducers.md)
-- [Open problem: near-linear strongly polynomial negative-weight SSSP (hypothesis)](near-linear-strongly-polynomial-sssp-hypothesis.md)

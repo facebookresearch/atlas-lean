@@ -4,7 +4,7 @@ Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degre
 
 ## Proof sketch
 
-The cluster of $v$ is determined by the maximum of $\delta_u - \mathrm{dist}(u, v)$; by memorylessness of the exponential distribution, conditioned on the identity of the maximizer, the gap to the second maximum is again exponentially distributed with rate $\beta$. An edge $\{v, w\}$ is cut only if this gap at $v$ is below $1$, which happens with probability $1 - e^{-\beta} \le \beta$. Shifts exceed $O(\log n / \beta)$ with probability $1/\mathrm{poly}(n)$, bounding radii, and clusters are connected since shortest paths to the centre stay in the cluster.
+Subdivide an edge $\{v, w\}$ by its midpoint $m$, at distance $1/2$ from both endpoints. If $v$ and $w$ lie in different clusters, then the two cluster centres both have shifted distance $\mathrm{dist}(\cdot, m) - \delta$ to the midpoint within $1$ of the minimum over all vertices: otherwise the minimizer at $m$ would also be strictly closer, in shifted distance, to the endpoint assigned elsewhere. So the edge is cut only if the smallest and second smallest of the values $\mathrm{dist}(u, m) - \delta_u$ are within $1$ of each other. For arbitrary fixed values $d_u$ and independent $\delta_u \sim \mathrm{Exp}(\beta)$, the memorylessness of the exponential distribution shows that the gap between the smallest and second smallest of $d_u - \delta_u$ exceeds $c$ with probability at least $e^{-\beta c}$, so it is at most $1$ with probability at most $1 - e^{-\beta} \le \beta$; no exact conditional distribution of the gap is needed. A gap of $1$ measured at an endpoint instead of the midpoint would not suffice: on a single edge with $\delta_v = 0.6$ and $\delta_w = 0.1$, $v$ wins at $v$ by $1.5$, yet $w$ wins at $w$. Shifts exceed $O(\log n / \beta)$ with probability $1/\mathrm{poly}(n)$, bounding radii, and clusters are connected since the vertex before $v$ on a shortest path from its centre lies in the same cluster.
 
 ## Depends on
 
@@ -13,4 +13,4 @@ The cluster of $v$ is determined by the maximum of $\delta_u - \mathrm{dist}(u, 
 
 ## Sources
 
-- G. L. Miller, R. Peng, S. C. Xu, "Parallel graph decompositions using random shifts", SPAA 2013, arXiv:1307.3692.
+- G. L. Miller, R. Peng, S. C. Xu, "Parallel graph decompositions using random shifts", SPAA 2013, arXiv:1307.3692, Algorithm 2 and Lemmas 4.1–4.4.

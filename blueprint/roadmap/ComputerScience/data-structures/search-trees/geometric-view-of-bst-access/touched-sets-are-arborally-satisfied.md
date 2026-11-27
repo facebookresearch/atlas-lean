@@ -4,7 +4,7 @@ For every BST algorithm and every access sequence $X$, the touched set of its ex
 
 ## Proof sketch
 
-Take touched points $(a, s)$ and $(b, t)$ with $a < b$ and $s < t$. If no key in $[a, b]$ is touched at a time in $(s, t]$ other than $b$ at time $t$, then the lowest common ancestor of $a$ and $b$ after time $s$ is some key $c \in [a, b]$, and touching $b$ at time $t$ requires touching $c$ because the touched subtree contains the root. Either $c$ gives the required third point at time $t$, or $c = a$ and $(a,t)$ is touched, which is again inside the rectangle; the case $s = t$ does not arise because the points differ in both coordinates.
+The touched set contains $P(X)$ because each access touches its key. Take touched points $(a, s)$ and $(b, t)$ with $a \ne b$ and $s < t$, and suppose for contradiction that the closed rectangle they span contains no other touched point. Let $c$ be the lowest common ancestor of $a$ and $b$ in the tree at time $s$; its key lies between $a$ and $b$, possibly equal to $b$. If $c \ne a$, then $c$ is touched at time $s$ on the way to $a$, so $(c, s)$ is another touched point in the rectangle. If $c = a$, then $a$ is an ancestor of $b$ at time $s$. By assumption $a$ is not touched at any time in $(s, t]$; since every rearranged subtree contains the root, the subtree of $a$, which contains $b$, is never rearranged before time $t$, so $a$ is still an ancestor of $b$ at time $t$ and is touched on the way to $b$, again a contradiction.
 
 ## Depends on
 

@@ -1,16 +1,16 @@
 # EFX with bounded charity: fewer than n goods left unallocated
 
-Let $n$ agents have monotone valuations on a finite set of goods $M$. There is a partial allocation $X$ with pool $P$ such that
+Let $n$ agents have monotone valuations with $v_i(\emptyset) = 0$ on a finite set of goods $M$. There is a partial allocation $X$ with pool $P$ such that
 
 1. $X$ is EFX;
 2. no agent envies the pool: $v_i(X_i) \ge v_i(P)$ for every agent $i$;
 3. $\lvert P \rvert < n$.
 
-For additive valuations one can additionally guarantee that the Nash welfare of $X$ is at least half of the maximum Nash welfare over complete allocations.
+For additive valuations one can additionally guarantee $v_i(X_i) \ge \tfrac12 v_i(X^*_i)$ for every agent $i$, where $X^*$ is a maximum Nash welfare allocation of $M$; in particular the Nash welfare of $X$ is at least half of the maximum.
 
 ## Proof sketch
 
-Start from the empty allocation and repeatedly apply two update rules while maintaining EFX: rotate envy cycles, and, when some agent envies a subset of $P \cup X_j$ for a source-type configuration, give a most envious agent a minimal envied subset and return the rest to the pool. A potential function (the valuation vector compared lexicographically along a fixed ordering, together with the pool size) strictly improves at each step, so the process terminates. At termination every pool good is championed in a way that rules out $n$ or more goods remaining, because each agent can be the most envious agent of at most one pool good without an applicable update.
+Start from the empty allocation and apply three update rules while keeping EFX and an acyclic envy graph: give a pool good to a source of the envy graph when this keeps EFX (the pool shrinks and no value drops); give an agent who envies the pool a minimal envied subset of it, returning her bundle to the pool; and, when there are distinct pool goods $g_0, \dots, g_{\ell-1}$, distinct sources $s_0, \dots, s_{\ell-1}$ and distinct agents $t_1, \dots, t_\ell$ with $t_i$ a most envious agent of $X_{s_{i-1}} \cup \{g_{i-1}\}$ and reachable from $s_i$, give each $t_i$ a minimal envied subset of $X_{s_{i-1}} \cup \{g_{i-1}\}$ and shift bundles along the envy paths. The last two rules strictly increase the social welfare $\sum_i v_i(X_i)$ and the first shrinks the pool without lowering it, so the process terminates. If the first rule does not apply and $\lvert P \rvert \ge n$, a chain of such triples can always be built, so at termination $\lvert P \rvert < n$ and nobody envies the pool. For the Nash welfare bound, start from an allocation derived from a maximum Nash welfare allocation instead of the empty one.
 
 ## Depends on
 

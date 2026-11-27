@@ -4,7 +4,7 @@ For every integer $d \ge 2$, the class of thresholds over $2^d$ points has Littl
 
 ## Proof sketch
 
-For thresholds, estimate the threshold location by an empirical quantile and round it to one of two interleaved random grids chosen so that, for every distribution, at most two grid points are likely outputs; the linear order makes the two candidate outputs consistent with the same accuracy guarantee. The hollow star lower bound uses the topological mechanism (a coloring of distributions over a hollow star configuration forced by the Poincaré–Miranda or local Borsuk–Ulam theorem).
+For the $t$ thresholds $\tau_1, \dots, \tau_t$, a deterministic proper rule outputs $\tau_{\hat i}$ for the smallest $i$ whose empirical error is below $\sigma_i = \varepsilon/(2(t-i+1))$, a tolerance increasing in $i$. Under a realizable distribution the true errors decrease along $i$ until they reach $0$, so with high probability $\hat i$ is one of the two indices around the first $i$ whose true error is at most $\sigma_i$; both have error at most $\varepsilon$. The lower bound $\mathrm{LR} \ge 2$ follows from the intermediate value theorem. The hollow star lower bound uses the topological mechanism (a coloring of distributions over a hollow star configuration forced by the Poincaré–Miranda or local Borsuk–Ulam theorem).
 
 ## Depends on
 
@@ -14,8 +14,8 @@ For thresholds, estimate the threshold location by an empirical quantile and rou
 ## Proof depends on
 
 - [The list replicability number of the d-dimensional cube is d and dominates the VC dimension](list-replicability-of-cube-and-vc-lower-bound.md)
-- [Large Littlestone dimension forces large threshold subclasses](../private-learning-and-littlestone-classes/littlestone-dimension-contains-thresholds.md)
+- [Thresholds: VC dimension one but Littlestone dimension $\lfloor \log_2(N+1) \rfloor$, infinite on infinite orders](../../../../online-learning-and-boosting/mistake-bounds-and-littlestone-dimension/thresholds-littlestone-dimension.md)
 
 ## Sources
 
-- Z. Chase, S. Moran, A. Yehudayoff, "Replicability and Stability in Learning", FOCS (2023), arXiv:2304.03757.
+- Z. Chase, S. Moran, A. Yehudayoff, "Replicability and Stability in Learning", FOCS (2023), arXiv:2304.03757, Theorems 5, 6 and 13 and Section 6.3.

@@ -4,7 +4,7 @@ Fix $\delta > 0$. In every bounded-error randomized protocol for $\mathrm{LSD}_{
 
 ## Proof sketch
 
-Pătraşcu proves the randomized bound by a direct-sum style information argument over the $N$ blocks combined with a richness-type rectangle bound per block under a product distribution where Bob's set has density $B^{-\delta}$: a protocol in which Alice reveals $o(\log_2 B)$ bits per block leaves her element in each block nearly uniform among $B^{1-O(\delta)}$ candidates, and Bob must then reveal his membership bits on most of them.
+The deterministic version follows from the richness lemma (Miltersen et al.). For bounded-error protocols, Pătraşcu uses a hard distribution on blocked instances: Alice's set has one element per block and Bob's set contains exactly one element of each pair $\{(i, 2j), (i, 2j+1)\}$ of every block $i$, so Bob holds half of each block. Conditioned on auxiliary variables recording, block by block, which side was sampled first, the two inputs are independent, so the transcript reveals at most $a$ bits about Alice's set and $b$ bits about Bob's; a direct-sum argument then yields a protocol for a single block in which Alice reveals $O(a/N)$ and Bob $O(b/N)$ bits of information. A rectangle-style lemma for one block shows that if Alice reveals at most $\delta\log_2 B$ bits, Bob must reveal $B^{1 - O(\delta)}$ bits for the error to stay small, which gives the tradeoff.
 
 ## Depends on
 

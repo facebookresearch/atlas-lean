@@ -6,20 +6,20 @@ $$
 O\Big(\frac{\log(1/\delta)}{\varepsilon^{2}} + \log n\Big)
 $$
 
-bits of space. Combined with the matching lower bound, this settles the space complexity of distinct elements in all of $n$, $\varepsilon$ and $\delta$. The same work also treats *strong tracking*, where the estimate must be a $(1 \pm \varepsilon)$-approximation of the number of distinct elements seen so far simultaneously at every time of the stream.
+bits of space. Combined with the matching lower bound, this settles the space complexity of distinct elements in all of $n$, $\varepsilon$ and $\delta$. The same work solves *strong tracking*, where the estimate must be a $(1 \pm \varepsilon)$-approximation of the number of distinct elements seen so far simultaneously at every time of the stream, in $O\big(\varepsilon^{-2}(\log\log n + \log(1/\delta)) + \log n\big)$ bits, which is also optimal.
 
 ## Proof sketch
 
-Instead of taking the median of $\log(1/\delta)$ independent copies, which multiplies the $\log n$ term, a single subsampled bucket structure of size $\Theta(\varepsilon^{-2}\log(1/\delta))$ is used, with hash functions drawn from expander-walk based families so that the bucket occupancy obeys a Chernoff-type tail with failure $\delta$. The level choice and the high-order bits of the hashes are stored once and shared, and a careful encoding keeps the bucket contents at $O(1)$ amortized bits each.
+Taking the median of $\log(1/\delta)$ independent copies multiplies the $\log n$ term, so the seeds are generated pseudorandomly instead. First, a constant-factor estimate valid at all times with probability $1 - \delta$ is obtained in $O(\log n + \log(1/\delta))$ bits from $\Theta(\log n + \log(1/\delta))$ Flajolet–Martin-type estimators built on pairwise independent hash functions whose seeds come from short random walks on expander graphs combined with averaging samplers; the estimators are split into groups, and each group is stored as its median plus small deviations, $O(1)$ bits per estimator on average. Second, $O(\log(1/\delta))$ copies of the Kane–Nelson–Woodruff algorithm share this constant-factor estimate, each using $O(\varepsilon^{-2})$ bits of state, with their $O(\log n)$-bit random seeds chosen along a walk on a constant-degree expander, so that a Chernoff bound for expander walks keeps the failure probability of the median at $\delta$; when $\varepsilon > (\log n)^{-1/4}$ the same pseudorandom grouping as in the first step is used instead, with $\Theta(\log n + \log(1/\delta))$ copies.
 
 ## Depends on
 
 - [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
+- [Omega(eps^-2 log(1/delta)) lower bounds for distinct elements and Johnson-Lindenstrauss with failure probability delta](distinct-elements-lower-bound-with-failure-probability.md)
 
 ## Proof depends on
 
 - [Kane-Nelson-Woodruff distinct-elements algorithm with O(1/eps^2 + log n) bits](optimal-space-distinct-elements-algorithm.md)
-- [Omega(eps^-2 log(1/delta)) lower bounds for distinct elements and Johnson-Lindenstrauss with failure probability delta](distinct-elements-lower-bound-with-failure-probability.md)
 
 ## Sources
 

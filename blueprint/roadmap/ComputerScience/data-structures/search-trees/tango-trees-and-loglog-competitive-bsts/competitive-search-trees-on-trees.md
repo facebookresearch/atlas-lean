@@ -1,18 +1,14 @@
 # $O(\log\log n)$-competitive search trees on trees
 
-For every tree $G$ on $n$ vertices there is an online dynamic search tree on $G$ whose cost on every access sequence is $O(\log\log n)$ times the cost of the optimal offline dynamic search tree on $G$ for that sequence, plus $O(n)$. This extends the tango-tree guarantee from paths to arbitrary trees.
+For every tree $G$ on $n$ vertices there is an online dynamic search tree on $G$, the *Tango search tree*, whose cost on every search sequence of length $m = \Omega(n)$ is $O(\log\log n)$ times the cost of the optimal offline dynamic search tree on $G$ for that sequence. This matches the best competitive ratio known for binary search trees, the case where $G$ is a path.
 
 ## Proof sketch
 
-Decompose $G$ by a heavy-path style centroid decomposition into a structure of depth $O(\log n)$ playing the role of the reference tree, prove a Wilber-type interleave lower bound for search trees on trees with respect to this decomposition, and maintain preferred paths with auxiliary structures whose operations cost $O(\log\log n)$.
+Bose, Cardinal, Iacono, Koumoutsos and Langerman first generalize the interleave lower bound to search trees on trees, with respect to a fixed reference search tree on $G$, and then follow the Tango paradigm of paying $O(\log\log n)$ per unit increase of that bound. Since a preferred path of vertices of $G$ cannot simply be stored in a red-black tree, they introduce *Steiner-closed* search trees, in which the vertices on every root path form a Steiner-closed set of $G$, and use a two-level decomposition, first from $G$ into Steiner-closed trees and then from these into paths, maintained with link-cut trees.
 
 ## Depends on
 
 - [Search trees on trees](search-trees-on-trees.md)
-
-## Proof depends on
-
-- [Tango trees are $O(\log\log n)$-competitive](tango-competitiveness.md)
 
 ## Sources
 

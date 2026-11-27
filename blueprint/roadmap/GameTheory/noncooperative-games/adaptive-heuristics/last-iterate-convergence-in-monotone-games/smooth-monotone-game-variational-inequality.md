@@ -8,5 +8,5 @@ A continuous game has players $i = 1, \dots, m$ with nonempty compact convex act
 
 ## Sources
 
-- Y. Cai, A. Oikonomou, W. Zheng, "Tight Last-Iterate Convergence of the Extragradient and the Optimistic Gradient Descent-Ascent Algorithm for Constrained Monotone Variational Inequalities", arXiv:2204.09228 (2022).
+- Y. Cai, A. Oikonomou, W. Zheng, "Finite-Time Last-Iterate Convergence for Learning in Multi-Player Games", NeurIPS 2022; full version "Tight Last-Iterate Convergence of the Extragradient and the Optimistic Gradient Descent-Ascent Algorithm for Constrained Monotone Variational Inequalities", arXiv:2204.09228.
 - A. Nemirovski, "Prox-Method with Rate of Convergence O(1/t) for Variational Inequalities with Lipschitz Continuous Monotone Operators and Smooth Convex-Concave Saddle Point Problems", SIAM Journal on Optimization 15(1) (2004).

@@ -1,10 +1,16 @@
 # Privacy blanket amplification and single-message summation in the shuffle model
 
-Every $\varepsilon_0$-local randomizer can be written as a mixture $R(x) = (1 - \gamma) R'(x) + \gamma\,\omega$ with a data-independent **privacy blanket** distribution $\omega$ and $\gamma$ determined by $R$ (the total variation mass shared by all output distributions). After shuffling, the blanket samples, whose number is Binomial$(n, \gamma)$ and so concentrates around $\gamma n$, mask the differing user's report, which gives an amplification bound of the form $\varepsilon = O\big(\sqrt{\log(1/\delta)/(\gamma n)}\big)$ (when $\gamma n$ is at least a constant multiple of $\log(1/\delta)$) that extends earlier shuffle amplification to a wider parameter range. As an application, real summation in the single-message shuffle model admits a protocol with mean squared error $O_{\varepsilon,\delta}(n^{1/3})$, whereas local protocols have mean squared error $\Theta(n)$, and a matching lower bound shows that mean squared error $\Omega(n^{1/3})$ is necessary for single-message protocols.
+Every local randomizer $R$ can be written as a mixture $R(x) = (1 - \gamma) R'(x) + \gamma\,\omega$ with a data-independent **privacy blanket** distribution $\omega$, where $\gamma$, the total variation similarity of $R$, is the mass shared by all output distributions; for an $\varepsilon_0$-local randomizer $\gamma \ge e^{-\varepsilon_0}$. Blanket mass alone does not bound the amplification: a randomizer that reports its input with probability $1/2$ and a uniform symbol of $[k]$ otherwise has $\gamma = 1/2$, yet a changed symbol appears with probability at least $1/2$ on one dataset and at most about $n/(2k)$ on the other, so for $k \gg n$ no small privacy bound holds for small fixed $\delta$; the local privacy parameter enters as well. For an $\varepsilon_0$-local randomizer with $\varepsilon_0 \le \log\bigl(n/\log(1/\delta)\bigr)/2$, the shuffled mechanism is $(\varepsilon, \delta)$-differentially private with
+
+$$
+\varepsilon = O\!\left((1 \wedge \varepsilon_0)\, e^{\varepsilon_0} \sqrt{\frac{\log(1/\delta)}{n}}\right),
+$$
+
+which extends earlier shuffle amplification to a wider range of $\varepsilon_0$; a more general mechanism-dependent bound in terms of the privacy amplification random variables of $R$ and the blanket count $\mathrm{Bin}(n, \gamma)$ gives sharper numbers for specific randomizers. As an application, real summation in the single-message shuffle model admits a protocol with mean squared error $O_{\varepsilon,\delta}(n^{1/3})$, whereas local protocols have mean squared error $\Theta(n)$, and a matching lower bound shows that mean squared error $\Omega(n^{1/3})$ is necessary for single-message protocols.
 
 ## Proof sketch
 
-Decompose the output law as a common part plus a data-dependent remainder; conditioned on which users drew from the blanket, the shuffled output depends on the differing user only through its non-blanket report, hidden among a binomial number of blanket samples. A Chernoff bound on the number of blanket samples and a likelihood-ratio bound for multinomial counts give the amplification. The summation protocol randomizes discretized values with a blanket that is uniform over the message space; the lower bound analyzes the counts any single-message protocol must reveal.
+Decompose the output law as a common part plus a data-dependent remainder; conditioned on which users drew from the blanket, the shuffled output depends on the differing user only through its non-blanket report, hidden among a binomial number of blanket samples. Via hockey-stick divergences, the privacy loss is bounded by an expectation over the number $M \sim \mathrm{Bin}(n, \gamma)$ of blanket samples of the positive part of a sum of $M$ i.i.d. bounded privacy amplification random variables, whose range and mean depend on $\varepsilon_0$; a Hoeffding-type bound for this sum and concentration of $M$ give the corollary. The summation protocol randomizes discretized values with a blanket that is uniform over the message space; the lower bound analyzes the counts any single-message protocol must reveal.
 
 ## Depends on
 
@@ -16,4 +22,4 @@ Decompose the output law as a common part plus a data-dependent remainder; condi
 
 ## Sources
 
-- B. Balle, J. Bell, A. Gascon, K. Nissim, "The Privacy Blanket of the Shuffle Model", CRYPTO (2019), arXiv:1903.02837.
+- B. Balle, J. Bell, A. Gascon, K. Nissim, "The Privacy Blanket of the Shuffle Model", CRYPTO (2019), arXiv:1903.02837, Lemmas 5.1–5.3, Theorem 5.3, Corollary 5.3.1 and Section 4.

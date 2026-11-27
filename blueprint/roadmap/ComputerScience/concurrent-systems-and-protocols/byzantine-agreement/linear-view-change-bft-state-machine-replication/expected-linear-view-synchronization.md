@@ -1,10 +1,10 @@
 # Expected linear communication for Byzantine view synchronization
 
-In the partial synchrony model with $n \ge 3f + 1$ replicas, there is a view synchronization protocol (bringing all correct replicas into a common view with a correct leader for long enough) whose expected communication complexity after GST is $O(n)$ words per synchronized view and whose expected latency is constant, assuming the adversary chooses the faulty set statically and leaders are chosen randomly. Combined with HotStuff, this gives Byzantine state machine replication with expected $O(n)$ communication per decision after GST.
+In the partial synchrony model with $n \ge 3f + 1$ replicas, a PKI and threshold signatures, there is a round (view) synchronization protocol, bringing all correct replicas into a common round with a correct leader for long enough, whose relays and leaders are chosen by a random function of the round. Against a static oblivious adversary, which fixes the faulty set in advance and has no knowledge of this randomness, the expected latency and the expected communication until the next synchronization after GST are constant and $O(n)$ words, respectively, in the worst case over all reachable states and adversary behaviours. Against a strong static adversary, which may know the randomness, the same bounds hold only on average over the synchronization events of an infinite run. Combined with HotStuff, this gives Byzantine state machine replication with expected $O(n)$ communication per decision after GST, with the same quantifier over adversaries.
 
 ## Proof sketch
 
-Rather than broadcasting at every view advance, replicas send view-advance messages only to a small set of relays (the next leaders), which aggregate $f + 1$ messages into a threshold certificate and broadcast it once. Since faulty relays occur with probability at most $1/3$ per view under random leader selection, an expected constant number of relay attempts suffices, each costing $O(n)$.
+Rather than broadcasting at every round advance, replicas send their wish to advance only to the current relay of the round. The relay aggregates $f + 1$ such messages into a threshold signature and broadcasts a pre-commit message, $f + 1$ wishes ensuring that at least one correct replica wants to advance; once $2f + 1$ replicas commit to the round, the relay broadcasts a commit certificate, so that at least $f + 1$ correct replicas know of the intent, and after $2f + 1$ finalize messages the round is entered and lagging replicas are helped. A replica that sees no progress moves on to the next of the round's $f + 1$ relays. Since relays are chosen at random, independently of the oblivious adversary's static choice of faulty replicas, an expected constant number of relay attempts suffices, each costing $O(n)$ words.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ Rather than broadcasting at every view advance, replicas send view-advance messa
 
 ## Sources
 
-- O. Naor, I. Keidar, "Expected Linear Round Synchronization: The Missing Link for Linear Byzantine SMR", DISC 2020, arXiv:2002.07539.
+- O. Naor, I. Keidar, "Expected Linear Round Synchronization: The Missing Link for Linear Byzantine SMR", DISC 2020, arXiv:2002.07539, Sections 2, 3 and 5 (Section 5.5 for the strong adversary).

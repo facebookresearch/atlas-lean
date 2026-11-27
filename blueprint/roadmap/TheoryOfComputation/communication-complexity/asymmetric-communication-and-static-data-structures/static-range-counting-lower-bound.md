@@ -4,7 +4,7 @@ Every static cell-probe structure for two-dimensional orthogonal range counting 
 
 ## Proof sketch
 
-Reduce lopsided set disjointness, through reachability oracles in butterfly graphs, to answering $k = \Theta(n/\lg n)$ parallel range counting queries on a point set encoding Bob's input. By the direct-sum simulation, a structure with query time $t$ gives Alice $O(k t \lg(Sw/n))$ bits and Bob $O(ktw)$ bits; the LSD tradeoff with $N = k$ and $B = n^{\Omega(1)}$ forces Alice to send $\Omega(k \lg n)$ bits, so $t \lg(Sw/n) = \Omega(\lg n)$.
+Pătraşcu reduces lopsided set disjointness (in a doubly blocked form) on $N$ elements to $k = N/d$ parallel reachability queries in a subgraph of a butterfly graph of depth $d$, then reachability to two-dimensional rectangle stabbing, and stabbing to dominance range counting modulo $2$, with each rectangle replaced by its four corners. By the direct-sum simulation, a range-counting structure with space $S$ and query time $t$ gives a protocol in which Alice sends $O((N/d)\,t\lg(Sd/N))$ bits and Bob $O((N/d)\,t\,w)$ bits. Comparing with the LSD tradeoff and choosing the butterfly degree and depth appropriately forces $t = \Omega(\lg n/\lg(Sw/n))$.
 
 ## Depends on
 

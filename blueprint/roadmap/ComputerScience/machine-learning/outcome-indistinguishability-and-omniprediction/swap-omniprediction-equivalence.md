@@ -1,10 +1,10 @@
 # Swap omniprediction, swap multicalibration and swap agnostic learning are equivalent
 
-For every class $\mathcal{C}$ and the family of convex Lipschitz losses, the following are equivalent up to polynomial changes of the error parameter: swap omniprediction, swap multicalibration with respect to $\mathcal{C}$, and swap agnostic learning for every convex loss. Moreover swap multicalibration is essentially equivalent to standard multicalibration, so existing multicalibration algorithms achieve all three. In particular multigroup fairness in the form of multicalibration is necessary, not merely sufficient, for the swap variant of omniprediction, and a single notion of outcome indistinguishability captures all existing notions of omniprediction and multicalibration.
+For every bounded class $\mathcal{C}$ the following are equivalent up to polynomial changes of the error parameter: $(\mathcal{C}, \alpha)$-swap multicalibration; being a swap omnipredictor for the $B$-nice convex losses (convex, $1$-Lipschitz on an interval containing their optimal actions, with $|\ell(t,1) - \ell(t,0)| \le B$ there) against linear combinations $\mathrm{Lin}(\mathcal{C}, W)$, with error $O((W + B)\alpha)$, for all $W \ge 1$, $B \ge 0$; and swap agnostic learning for the squared loss alone against $\mathrm{Lin}(\mathcal{C}, 2)$. In particular swap agnostic learning for every nice convex loss follows. Moreover swap multicalibration is essentially equivalent to standard multicalibration: known multicalibration algorithms already output swap multicalibrated predictors, and discretizing a multicalibrated predictor gives a nearby swap multicalibrated one; so existing algorithms achieve all three notions. Swap loss OI for a family of nice losses containing the squared loss is equivalent to swap multicalibration for $\partial\mathcal{L} \circ \mathcal{C}$, while loss OI and swap omniprediction are incomparable. In particular multigroup fairness in the form of multicalibration is necessary, not merely sufficient, for the swap variant of omniprediction, and a single notion of outcome indistinguishability captures all existing notions of omniprediction and multicalibration.
 
 ## Proof sketch
 
-Swap multicalibration implies swap omniprediction by applying the omniprediction argument separately on each level set with its own $c_v$. Conversely, a violation of multicalibration on a level set yields, for the squared loss, a better hypothesis on that level set, contradicting swap omniprediction; this shows necessity. Swap multicalibration follows from multicalibration because the adversary's per-level choice can be absorbed into the level-set sum in the definition.
+Swap multicalibration implies swap omniprediction by applying the omniprediction argument separately on each level set with its own $c_v$. Swap omniprediction gives swap agnostic learning for the squared loss by fixing the loss. Conversely, if on a level set $\{p = v\}$ some $c$ has correlation $\beta$ with $y - v$, then the hypothesis $v + \beta c \in \mathrm{Lin}(\mathcal{C}, 2)$ (assuming constants in the span) improves the squared loss there by about $\beta^2$; summed over level sets this contradicts swap agnostic learning for the squared loss, which shows necessity.
 
 ## Depends on
 
@@ -19,4 +19,4 @@ Swap multicalibration implies swap omniprediction by applying the omniprediction
 
 ## Sources
 
-- P. Gopalan, M. P. Kim, O. Reingold, "Swap Agnostic Learning, or Characterizing Omniprediction via Multicalibration", arXiv:2302.06726 (2023).
+- P. Gopalan, M. P. Kim, O. Reingold, "Swap Agnostic Learning, or Characterizing Omniprediction via Multicalibration", NeurIPS (2023), arXiv:2302.06726, Theorems 4.3 and 5.1, Theorem 3 (incomparability), Section 3.

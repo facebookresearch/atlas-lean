@@ -10,5 +10,6 @@ summed over injective embeddings $\sigma$ of the vertices of $\alpha$ into $[n]$
 
 ## Sources
 
-- K. Ahn, D. Medarametla, A. Potechin, "Graph matrices: norm bounds and applications", arXiv:1604.03423 (2016).
+- C. Jones, A. Potechin, G. Rajendran, M. Tulsiani, J. Xu, "Sum-of-Squares Lower Bounds for Sparse Independent Set", FOCS (2021), arXiv:2111.09250, Corollary 6.64 (from Theorem 6.60 and Theorem A.7): the norm bound for graph matrices of $G(n, p)$, proved by the trace method, which at $p = 1/2$ is the bound stated here.
+- K. Ahn, D. Medarametla, A. Potechin, "Graph matrices: norm bounds and applications", arXiv:1604.03423 (2016), Theorem 2.24.
 - B. Barak, S. B. Hopkins, J. Kelner, P. K. Kothari, A. Moitra, A. Potechin, "A nearly tight sum-of-squares lower bound for the planted clique problem", FOCS (2016); SIAM Journal on Computing 48 (2019), arXiv:1604.03084.

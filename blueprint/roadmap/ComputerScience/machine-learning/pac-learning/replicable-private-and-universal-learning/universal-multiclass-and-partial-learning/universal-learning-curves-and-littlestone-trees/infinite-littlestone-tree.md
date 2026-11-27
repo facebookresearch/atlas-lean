@@ -10,4 +10,4 @@ The class has an **infinite Littlestone tree** if such a family exists with $d =
 
 ## Sources
 
-- O. Bousquet, S. Hanneke, S. Moran, R. van Handel, A. Yehudayoff, "A Theory of Universal Learning", STOC (2021), arXiv:2011.04483.
+- O. Bousquet, S. Hanneke, S. Moran, R. van Handel, A. Yehudayoff, "A Theory of Universal Learning", STOC (2021), arXiv:2011.04483, Definition 1.7 and Section 1.4.

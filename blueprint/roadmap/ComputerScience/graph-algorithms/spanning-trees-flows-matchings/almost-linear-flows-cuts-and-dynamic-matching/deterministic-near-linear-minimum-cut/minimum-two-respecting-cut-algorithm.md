@@ -1,6 +1,6 @@
 # Minimum 2-respecting cut of a spanning tree in O(m log n) deterministic time
 
-Given a connected undirected graph $G = (V, E, w)$ with $n$ vertices, $m$ edges and positive weights, and a spanning tree $T$ of $G$, a minimum $2$-respecting cut of $T$ (with its value) can be computed deterministically in $O(m \log n)$ time on the word RAM (Gawrychowski-Mozes-Weimann). Karger's original dynamic program achieves $O(m \log^2 n)$ time, and the approach of Mukhopadhyay-Nanongkai evaluates only $\tilde O(n)$ candidate pairs of tree edges.
+Given a connected undirected graph $G = (V, E, w)$ with $n$ vertices, $m$ edges and positive weights, and a spanning tree $T$ of $G$, a minimum $2$-respecting cut of $T$ (with its value) can be computed deterministically in $O(m \log n)$ time on the word RAM (Gawrychowski-Mozes-Weimann). Karger's original dynamic program achieves $O(m \log^2 n)$ time, and the different approach of Mukhopadhyay-Nanongkai also yields a randomized minimum cut algorithm using only $\tilde O(n)$ cut queries.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Deterministic (1 + eps)-approximate matching in poly(1/eps) semi-streaming passes
 
-For every $0 < \varepsilon < 1$ there is a *deterministic* multi-pass streaming algorithm that, on an insertion-only edge stream (in adversarial order) of any $n$-vertex graph $G$, makes $\mathrm{poly}(1/\varepsilon)$ passes, uses $n \cdot \mathrm{poly}(1/\varepsilon) \cdot \log^{O(1)} n$ bits of memory and outputs a matching $M$ with
+For every $0 < \varepsilon < 1$ there is a *deterministic* multi-pass streaming algorithm that, on an insertion-only edge stream (in adversarial order) of any $n$-vertex graph $G$, makes $\mathrm{poly}(1/\varepsilon)$ passes, uses $n \cdot \mathrm{poly}(1/\varepsilon)$ words of memory, a word being the space needed to store one edge, and outputs a matching $M$ with
 
 $$
 |M| \ge \frac{\mu(G)}{1 + \varepsilon}.

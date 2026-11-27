@@ -2,7 +2,7 @@
 
 Let $H$ be a binary class of VC dimension $d$ and $\sigma \in (0,1]$.
 
-- Against a non-adaptive sequence of $\sigma$-smooth distributions there is an algorithm with expected regret $O\big(\sqrt{d\, T \log(T/\sigma)}\big)$.
+- Against a non-adaptive sequence of $\sigma$-smooth distributions (with respect to the uniform measure $U$ on $X$) there is an algorithm with expected regret $O\big(\sqrt{d\, T \log(T/\sigma)}\big)$.
 - Against an adaptive sequence of $\sigma$-smooth distributions with respect to the uniform measure $U$ on $X$, there is an algorithm with expected regret $O\Big(\sqrt{T \log N_{[\,]}\big(H, U, \tfrac{\sigma}{4\sqrt{T}}\big)}\Big)$, where $N_{[\,]}(H, U, \epsilon)$ is the $\epsilon$-bracketing number of $H$.
 
 For halfspaces in $\mathbb{R}^d$, $N_{[\,]}(H,\mu,\epsilon) \le (d/\epsilon)^{O(d)}$ for every measure $\mu$, giving regret $\tilde O(\sqrt{dT\log(T/\sigma)})$ even though halfspaces have infinite Littlestone dimension. Analogous bounds hold for the error of differentially private query release under smoothed data.
@@ -22,4 +22,4 @@ Run multiplicative weights over a finite cover of $H$. Against non-adaptive smoo
 
 ## Sources
 
-- N. Haghtalab, T. Roughgarden, A. Shetty, "Smoothed Analysis of Online and Differentially Private Learning", NeurIPS (2020), arXiv:2006.10129.
+- N. Haghtalab, T. Roughgarden, A. Shetty, "Smoothed Analysis of Online and Differentially Private Learning", NeurIPS (2020), arXiv:2006.10129, Theorems 3.1, 3.3 and 3.4.

@@ -1,6 +1,6 @@
 # Edmonds' blossom shrinking lemma
 
-Let $M$ be a matching of a finite simple graph $G = (V, E)$ and let $B$ be a blossom of $M$ that is part of a flower. Then $M$ is a maximum matching of $G$ if and only if $M / B$ is a maximum matching of $G / B$. Moreover, every $(M / B)$-augmenting path in $G / B$ can be turned into an augmenting path of $G$ for the matching obtained from $M$ by exchanging along the stem, in $O(|V| + |E|)$ time, by replacing the vertex $\beta$ with the even-length alternating path around $B$ from the vertex where the path enters $B$ to the base.
+Let $M$ be a matching of a finite simple graph $G = (V, E)$ and let $B$ be a blossom of $M$ that is part of a flower. Then $M$ is a maximum matching of $G$ if and only if $M / B$ is a maximum matching of $G / B$. Moreover, every $(M / B)$-augmenting path in $G / B$ can be turned in $O(|V| + |E|)$ time into an $M$-augmenting path of $G$: a path avoiding $\beta$ is kept, and a path through $\beta$ is expanded by replacing $\beta$ with the even-length $M$-alternating path around $B$ from the vertex $x \in B$ that is the endpoint in $G$ of the path's non-matching edge at $\beta$ to the base $b$ (empty when $x = b$); the path's matching edge at $\beta$, if any, is the stem edge at $b$.
 
 ## Proof sketch
 

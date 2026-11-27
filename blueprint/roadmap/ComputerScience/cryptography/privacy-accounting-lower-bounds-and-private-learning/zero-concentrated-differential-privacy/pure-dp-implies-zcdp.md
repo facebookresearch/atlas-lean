@@ -17,4 +17,4 @@ For an $\varepsilon$-DP pair the privacy loss $L$ takes values in $[-\varepsilon
 
 ## Sources
 
-- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065.
+- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065, Propositions 1.4 and 3.3.

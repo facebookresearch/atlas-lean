@@ -10,7 +10,7 @@ This resolves a question of Vapnik and Chervonenkis (1974) and gives the first p
 
 ## Proof sketch
 
-The support vector machine is a stable compression scheme: its output is determined by at most $n$ support vectors and does not change when non-support examples are removed. Stable compression schemes of size $k$ satisfy a leave-one-out bound of order $k/n$ uniformly over samples, and a refined argument exploiting that removing a non-support vector leaves the output unchanged gives the high-probability bound without the extra logarithmic factor. The matching lower bound is the standard PAC lower bound for VC dimension $n$.
+The support vector machine is a stable compression scheme: its output is determined by at most $n$ support vectors and does not change when non-support examples are removed. Stable compression schemes of size $k$ have risk below $\tfrac{2}{n-2k}(k\ln 4 + \ln(1/\delta))$ with probability at least $1-\delta$, which gives the upper bound without the extra logarithmic factor. The matching lower bound is the standard PAC lower bound for VC dimension $n$.
 
 ## Depends on
 
@@ -18,10 +18,9 @@ The support vector machine is a stable compression scheme: its output is determi
 
 ## Proof depends on
 
-- [Proper learners attain the optimal PAC rate exactly when the dual Helly number is bounded](proper-learning-dual-helly-characterization.md)
-- [Generalization bound for sample compression schemes](../../../../generalization-bounds-and-concentration/generalization-bound-for-sample-compression-schemes.md)
-- [Leave-one-out bounds give optimal high-probability risk bounds for aggregated learners](leave-one-out-to-high-probability.md)
+- [Stable compression schemes are optimal PAC learners](stable-compression-optimal-pac-bound.md)
+- [Shattering lower bound for PAC learning](../../../../generalization-bounds-and-concentration/shattering-lower-bound-for-pac-learning.md)
 
 ## Sources
 
-- O. Bousquet, S. Hanneke, S. Moran, N. Zhivotovskiy, "Proper Learning, Helly Number, and an Optimal SVM Bound", COLT (2020), arXiv:2005.11818.
+- O. Bousquet, S. Hanneke, S. Moran, N. Zhivotovskiy, "Proper Learning, Helly Number, and an Optimal SVM Bound", COLT (2020), arXiv:2005.11818, Theorem 12 and Section 5.

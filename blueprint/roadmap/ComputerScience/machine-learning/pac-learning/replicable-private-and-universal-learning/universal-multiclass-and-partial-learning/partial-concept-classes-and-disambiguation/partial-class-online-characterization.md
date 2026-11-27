@@ -18,5 +18,5 @@ The Standard Optimal Algorithm predicts the label whose version space has larger
 
 ## Sources
 
-- N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444.
-- S. Ben-David, D. Pal, S. Shalev-Shwartz, "Agnostic Online Learning", COLT (2009).
+- N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444, Theorems 8 and 15 and Section E.
+- S. Ben-David, D. Pal, S. Shalev-Shwartz, "Agnostic Online Learning", COLT (2009), Sections 3 and 4.

@@ -1,10 +1,10 @@
 # Fully functional suffix trees in BWT-runs space
 
-Every text $T$ of length $n$ with $r$ BWT runs has a representation of its suffix tree in $O(r \log\frac{n}{r})$ words that supports the standard navigation operations of compressed suffix trees (parent, child, string depth, suffix link, lowest common ancestor and suffix-array access) in $O(\log\frac{n}{r})$ time each.
+Every text $T$ of length $n$ with $r$ BWT runs has a representation of its suffix tree in $O(r \log\frac{n}{r})$ words that supports most navigation operations of compressed suffix trees (among them parent, first child, next sibling, string depth, suffix link, lowest common ancestor and suffix-array access) in $O(\log\frac{n}{r})$ time each; going to a child by a given letter and level-ancestor queries may cost $O(\log\frac{n}{r}\log n)$.
 
 ## Proof sketch
 
-Gagie, Navarro and Prezza show that the differential suffix array $\mathrm{SA}[j] - \mathrm{SA}[j-1]$, the inverse suffix array and the LCP array all have $O(r)$ runs of repeated substrings in the sense of bidirectional copying, so they can be represented by grammar-like structures of size $O(r\log(n/r))$ with $O(\log(n/r))$-time access; suffix tree navigation reduces to these arrays and range-minimum queries over LCP.
+Gagie, Navarro and Prezza use the $O(r)$ text phrases induced by the BWT runs: inside a BWT run, LF maps consecutive rows to consecutive rows, so the differential suffix array $\mathrm{SA}[j] - \mathrm{SA}[j-1]$, the differential inverse suffix array and the differential LCP array repeat across phrases. A block-tree analogue over these phrases gives $O(\log(n/r))$-time access to $\mathrm{SA}$, $\mathrm{ISA}$ and $\mathrm{LCP}$ in $O(r\log(n/r))$ words, and a run-length context-free grammar of size $O(r\log(n/r))$ on the differential LCP array supports the range-minimum and previous/next-smaller-value queries to which suffix tree navigation reduces.
 
 ## Depends on
 

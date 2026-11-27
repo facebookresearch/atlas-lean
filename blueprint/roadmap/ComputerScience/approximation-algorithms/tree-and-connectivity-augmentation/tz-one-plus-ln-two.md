@@ -4,7 +4,7 @@ For every fixed $\varepsilon > 0$ there is a polynomial-time $(1+\ln 2+\varepsil
 
 ## Proof sketch
 
-Run the relative greedy algorithm with components $\mathcal{K}_\varepsilon$, starting from an optimal up-link solution of weight at most $2\,\mathrm{OPT}$. By the decomposition lemma, while up-links of total weight $W$ remain there is a component of ratio at most $(1+\varepsilon)\mathrm{OPT}/W$. Integrating the resulting differential inequality from $W=\mathrm{OPT}_{\mathrm{up}}$ down to $W=\mathrm{OPT}$, and keeping the remaining up-links, of weight at most $\mathrm{OPT}$, bounds the total weight by $(1+\varepsilon)\mathrm{OPT}\ln(\mathrm{OPT}_{\mathrm{up}}/\mathrm{OPT})+\mathrm{OPT} \le (1+\ln 2+\varepsilon)\mathrm{OPT}$.
+An optimal solution need not consist of non-overlapping up-links, so the algorithm does not start from it. Following Cohen and Nutov (Traub–Zenklusen, Lemma 2), replacing each link of an optimum $\mathrm{OPT}$ by the two up-link shadows towards its apex shows that an up-link solution of weight at most $2\,w(\mathrm{OPT})$ exists; shortening up-links to strict shadows makes their paths pairwise edge-disjoint without increasing the weight, and a cheapest such non-overlapping up-link solution $U_0$ is computable in polynomial time (its LP has a totally unimodular constraint matrix). Run the relative greedy algorithm from $U_0$ with $\lceil 2/\varepsilon\rceil$-thin components, and apply the decomposition theorem to $\mathrm{OPT}$ and $U_0$ with parameter $\varepsilon/2$: it gives an exceptional set $R \subseteq U_0$ with $w(R) \le \tfrac{\varepsilon}{2} w(U_0) \le \varepsilon\, w(\mathrm{OPT})$ and a partition of $\mathrm{OPT}$ into $\lceil 2/\varepsilon\rceil$-thin parts, each of which is a candidate. If $U_{i-1}$ is the current up-link set, these parts drop all of $U_{i-1} \setminus R$, so the chosen component $C_i$ satisfies $w(C_i) \le \min\{w(\mathrm{OPT})/(w(U_{i-1})-w(R)),\,1\}\cdot w(U_{i-1} \setminus U_i)$, the bound $1$ coming from singleton up-links. Summing and comparing with an integral gives $w(F) \le w(\mathrm{OPT}) + w(R) + \ln\big((w(U_0)-w(R))/w(\mathrm{OPT})\big)\,w(\mathrm{OPT}) \le (1+\ln 2+\varepsilon)\,w(\mathrm{OPT})$.
 
 ## Depends on
 
@@ -19,4 +19,5 @@ Run the relative greedy algorithm with components $\mathcal{K}_\varepsilon$, sta
 
 ## Sources
 
-- Vera Traub, Rico Zenklusen, "A Better-Than-2 Approximation for Weighted Tree Augmentation", FOCS (2021), arXiv:2104.07114.
+- Vera Traub, Rico Zenklusen, "A Better-Than-2 Approximation for Weighted Tree Augmentation", FOCS (2021), arXiv:2104.07114, Theorems 1, 5 and 6, Lemma 2 and Algorithm 1.
+- Nachshon Cohen, Zeev Nutov, "A (1+ln 2)-Approximation Algorithm for Minimum-Cost 2-Edge-Connectivity Augmentation of Trees with Constant Radius", Theoretical Computer Science (2013).

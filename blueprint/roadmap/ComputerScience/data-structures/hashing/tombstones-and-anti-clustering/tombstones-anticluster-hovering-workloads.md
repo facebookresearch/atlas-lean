@@ -1,10 +1,15 @@
 # Tombstones defeat primary clustering under hovering workloads
 
-Consider ordered linear probing with tombstones under a hovering workload at load factor $1 - 1/x$, with uniformly random hashing, where insertions and deletions are oblivious to the hash function and the table is rebuilt every $R = \Theta(n/x)$ operations. Then the amortized expected cost of an insertion is $x \cdot (\log x)^{O(1)}$, rather than the $\Theta(x^2)$ cost of insertion-only linear probing at the same load factor.
+Consider ordered linear probing with tombstones and uniformly random hashing, with operations oblivious to the hash function.
+
+1. With the classical rebuild window $R = n/(2x)$ insertions and a hovering workload at load factor $1 - 1/x$, the expected amortized time per insertion is $\tilde{O}(x^{1.5})$; if all insertions and deletions are on distinct keys it is $\Omega(x^{1.5}\sqrt{\lg\lg x})$; queries take expected time $O(x)$ (Theorem 1).
+2. With rebuild window $R = n/\lg^{c} x$ insertions for a sufficiently large constant $c$, and any sequence of operations that never brings the load factor above $1 - 1/x$, the expected amortized cost of each insertion is $\tilde{O}(x)$ and the expected cost of each query or deletion is $O(x)$ (Theorem 2). For every choice of $R$ some sequence of operations takes amortized time $\omega(x)$ per operation.
+
+Both beat the $\Theta(x^2)$ insertion cost of insertion-only linear probing at the same load factor.
 
 ## Proof sketch
 
-Deletions leave tombstones at hash-random positions, so between rebuilds the tombstones form an approximately uniformly spread set of reusable slots. An insertion that lands in a long run is likely to meet a tombstone after scanning $\tilde{O}(x)$ slots, and the analysis tracks the run lengths through a sequence of phases showing that the anti-clustering effect of tombstones dominates the clustering effect of insertions when insertions and deletions are one-for-one. Rebuilding every $\Theta(n/x)$ operations amortizes to $O(x)$ per operation.
+Deletions leave tombstones at hash-random positions that later insertions reuse. The cost of an insertion $u$ is governed by its displacement $d_u$, and $\sum_u d_u = \sum_j c_j$, where the *crossing number* $c_j$ counts the insertions of the rebuild window with hash below $j$ whose run reaches past $j$; for a window of $R$ insertions this gives $\mathbb{E}[d_u] = \Theta((n/R)\,\mathbb{E}[c_j])$. Bounding $c_j$ reduces to the largest deviation between the numbers of insertions and deletions along monotone paths in a grid; with $R = n/(2x)$ this deviation is $\tilde{O}(\sqrt{x})$, giving $\tilde{O}(x^{1.5})$, and with $R = n/\mathrm{polylog}(x)$ it gives $\mathbb{E}[c_j] = O(x)$, hence $O(x)$ queries and $\tilde{O}(x)$ insertions. Rebuilds cost $\Theta(n)$ each.
 
 ## Depends on
 

@@ -1,16 +1,16 @@
 # An l1 oblivious routing yields an approximate minimum-ratio circulation edge by edge
 
-Let $G$ have lengths $\boldsymbol{\ell} > 0$ and gradients $\mathbf{g}$, with $\mathbf{L} = \mathrm{diag}(\boldsymbol{\ell})$ and edge demand vectors $\mathbf{b}_e = \mathbf{B}^{\top}\mathbf{1}_e$. An $\ell_1$-oblivious routing is a linear map $\mathbf{A} \in \mathbb{R}^{E \times V}$ such that $\mathbf{B}^{\top}\mathbf{A}\mathbf{d} = \mathbf{d}$ for every $\mathbf{d} \perp \mathbf{1}$; its quality is $\|\mathbf{L}\mathbf{A}\mathbf{L}^{-1}\|_{1 \to 1}$ in the sense of the induced operator norm on edge vectors through $\mathbf{d} = \mathbf{B}^{\top}\mathbf{x}$. For every edge $e$ the vector $\mathbf{1}_e - \mathbf{A}\mathbf{b}_e$ is a circulation, and
+Let $G$ have lengths $\boldsymbol{\ell} > 0$ and gradients $\mathbf{g}$, with $\mathbf{L} = \mathrm{diag}(\boldsymbol{\ell})$ and edge demand vectors $\mathbf{b}_e = \mathbf{B}^{\top}\mathbf{1}_e$. An $\ell_1$-oblivious routing is a linear map $\mathbf{A} \in \mathbb{R}^{E \times V}$ such that $\mathbf{B}^{\top}\mathbf{A}\mathbf{d} = \mathbf{d}$ for every $\mathbf{d} \perp \mathbf{1}$; its quality is $\gamma = \|\mathbf{L}\mathbf{A}\mathbf{B}^{\top}\mathbf{L}^{-1}\|_{1 \to 1}$, the induced $\ell_1$ operator norm on $\mathbb{R}^E$. For every edge $e$ the vector $\mathbf{1}_e - \mathbf{A}\mathbf{b}_e$ is a circulation, and
 
 $$
-\min_{e \in E,\ \sigma \in \{\pm 1\}}\frac{\mathbf{g}^{\top}\sigma(\mathbf{1}_e - \mathbf{A}\mathbf{b}_e)}{\|\mathbf{L}(\mathbf{1}_e - \mathbf{A}\mathbf{b}_e)\|_1} \le \frac{1}{1 + \|\mathbf{L}\mathbf{A}\mathbf{L}^{-1}\|_{1 \to 1}}\cdot\min_{\mathbf{B}^{\top}\mathbf{\Delta} = \mathbf{0}}\frac{\mathbf{g}^{\top}\mathbf{\Delta}}{\|\mathbf{L}\mathbf{\Delta}\|_1}.
+\min_{e \in E,\ \sigma \in \{\pm 1\}}\frac{\mathbf{g}^{\top}\sigma(\mathbf{1}_e - \mathbf{A}\mathbf{b}_e)}{\|\mathbf{L}(\mathbf{1}_e - \mathbf{A}\mathbf{b}_e)\|_1} \le \frac{1}{1 + \gamma}\cdot\min_{\mathbf{B}^{\top}\mathbf{\Delta} = \mathbf{0}}\frac{\mathbf{g}^{\top}\mathbf{\Delta}}{\|\mathbf{L}\mathbf{\Delta}\|_1}.
 $$
 
-A spanning tree routing gives the fundamental tree cycles, and low-stretch trees give quality equal to their stretch.
+A spanning tree routing gives the fundamental tree cycles, and its quality is the maximum stretch of an edge of $G$ in the tree.
 
 ## Proof sketch
 
-Let $\mathbf{\Delta}^*$ be an optimal circulation; since $\sum_e\mathbf{\Delta}^*_e\mathbf{b}_e = \mathbf{B}^{\top}\mathbf{\Delta}^* = \mathbf{0}$, linearity gives $\mathbf{\Delta}^* = \sum_e\mathbf{\Delta}^*_e(\mathbf{1}_e - \mathbf{A}\mathbf{b}_e)$. By the triangle inequality and the quality bound, $\sum_e|\mathbf{\Delta}^*_e|\,\|\mathbf{L}(\mathbf{1}_e - \mathbf{A}\mathbf{b}_e)\|_1 \le (1 + \|\mathbf{L}\mathbf{A}\mathbf{L}^{-1}\|_{1\to 1})\|\mathbf{L}\mathbf{\Delta}^*\|_1$. Averaging, as for tree cycles, some single term attains the stated ratio.
+Let $\mathbf{\Delta}^*$ be an optimal circulation; since $\sum_e\mathbf{\Delta}^*_e\mathbf{b}_e = \mathbf{B}^{\top}\mathbf{\Delta}^* = \mathbf{0}$, linearity gives $\mathbf{\Delta}^* = \sum_e\mathbf{\Delta}^*_e(\mathbf{1}_e - \mathbf{A}\mathbf{b}_e)$. By the triangle inequality and $\|\mathbf{L}\mathbf{A}\mathbf{b}_e\|_1 \le \gamma\boldsymbol{\ell}_e$, $\sum_e|\mathbf{\Delta}^*_e|\,\|\mathbf{L}(\mathbf{1}_e - \mathbf{A}\mathbf{b}_e)\|_1 \le (1 + \gamma)\|\mathbf{L}\mathbf{\Delta}^*\|_1$. Averaging, as for tree cycles, some single term attains the stated ratio.
 
 ## Depends on
 

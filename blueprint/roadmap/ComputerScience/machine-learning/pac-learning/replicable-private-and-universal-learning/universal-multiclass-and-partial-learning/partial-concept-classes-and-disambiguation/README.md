@@ -2,7 +2,7 @@
 
 - [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
 - [Disambiguations of partial concept classes](disambiguation.md)
-- [Margin and low-dimensional data assumptions as partial classes of bounded VC dimension](margin-partial-class-vc-bound.md)
+- [Margin-separable data as a partial class with VC and Littlestone dimension of order $R^2/\gamma^2$](margin-partial-class-vc-bound.md)
 - [Littlestone dimension characterizes online learnability of partial classes](partial-class-online-characterization.md)
 - [VC dimension characterizes PAC learnability of partial concept classes](partial-class-pac-characterization.md)
 - [A partial class of VC dimension one with no finite-VC disambiguation](vc-one-partial-class-without-disambiguation.md)

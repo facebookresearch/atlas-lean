@@ -4,7 +4,7 @@ There is a partial concept class $H$ with $\mathrm{VC}(H) = 1$ such that for eve
 
 ## Proof sketch
 
-The class is built from the disambiguation lower bound: if some total class of finite VC dimension made ERM succeed, its hypotheses would induce a disambiguation of finite VC dimension, contradicting the existence of partial VC-one classes that cannot be disambiguated. The image statement follows similarly, since the image of a successful learner restricted to realizable samples must contain consistent total extensions of all sufficiently large realizable samples.
+Take the partial class of VC dimension one all of whose disambiguations have infinite VC dimension. If a total class $\bar H$ does not disambiguate $H$, some finite sample realizable by $H$ is not realizable by $\bar H$, and an ERM for $\bar H$ errs on a distribution uniform over that sample. If $\bar H$ disambiguates $H$, then $\mathrm{VC}(\bar H) = \infty$, and the shattering lower bound gives, for each sample size, a realizable distribution on which a suitable ERM for $\bar H$ (choosing among consistent hypotheses adversarially) fails. For the image statement, the image of a learner that PAC learns $H$ with total outputs must be rich enough to fit, up to small error, every realizable sample, which forces infinite VC dimension by the same disambiguation lower bound.
 
 ## Depends on
 
@@ -12,10 +12,9 @@ The class is built from the disambiguation lower bound: if some total class of f
 
 ## Proof depends on
 
-- [VC dimension characterizes PAC learnability of partial concept classes](partial-class-pac-characterization.md)
 - [A partial class of VC dimension one with no finite-VC disambiguation](vc-one-partial-class-without-disambiguation.md)
-- [Uniform convergence implies ERM is an agnostic PAC learner](../../../agnostic-pac-learning-and-uniform-convergence/uniform-convergence-implies-erm-is-an-agnostic-pac-learner.md)
+- [Shattering lower bound for PAC learning](../../../../generalization-bounds-and-concentration/shattering-lower-bound-for-pac-learning.md)
 
 ## Sources
 
-- N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444.
+- N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444, Theorems 5 and 6.

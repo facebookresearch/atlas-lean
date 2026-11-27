@@ -4,7 +4,7 @@ Every protocol in the Robertson–Webb query model that always outputs an envy-f
 
 ## Proof sketch
 
-For the envy-free bound, an adversary answers queries so that each agent's valuation is uniform except on small hidden intervals; an envy-free allocation must, for each pair of agents, separate information about the other's hidden structure, forcing $\Omega(n)$ queries per agent on average for $\Omega(n)$ agents. The proportional lower bound is a separate adversary argument building a balanced decision tree over the agents' thresholds.
+For the envy-free bound, an adversary answers every query of an agent in a way that refines a partition of $[0, 1]$ associated with that agent by at most two intervals, giving away no further information about how that agent's value is spread inside the current intervals. An envy-free allocation must certify, for many pairs of agents, that a piece is not worth more than the agent's own piece; the adversary shows that this forces each of $\Omega(n)$ agents to have a partition with $\Omega(n)$ intervals, hence $\Omega(n)$ queries per agent. The proportional lower bound is a separate adversary argument.
 
 ## Depends on
 

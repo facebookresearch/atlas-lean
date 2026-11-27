@@ -12,11 +12,11 @@ $$
 T \le c\cdot\min\Big\{ \exp\big(c'\varepsilon^{-1/6}\big),\; \frac{N}{\log^{12}(N)\,\varepsilon^2} \Big\},
 $$
 
-there is an oblivious adversary with losses in $\{f \in [0,1]^N : \|f\|_1 \le 1\}$ forcing expected distributional swap regret at least $\varepsilon$; equivalently, swap regret $\tilde\Omega\big(\min(1, \sqrt{N/T})\big)$ is unavoidable in that range. (ii) There is an oblivious adversary such that every algorithm has expected (unnormalized) swap regret $\Omega\big(\min\{T/\log T,\; \sqrt{N^{1-o(1)}T}\}\big)$ over $T$ rounds. Hence the number of rounds must be exponential in a power of $1/\varepsilon$, at least $\exp(\Omega(\varepsilon^{-1/6}))$ (unless it is nearly linear in $N$), qualitatively matching the $(\log(N)/\varepsilon^2)^{O(1/\varepsilon)}$ upper bounds.
+there is an oblivious adversary, drawing reward vectors $u$ from $\{u \in [0,1]^N : \|u\|_1 \le 1\}$ (equivalently losses $\ell = \mathbf{1} - u$, which have the same swap regret), forcing expected distributional swap regret at least $\varepsilon$; equivalently, swap regret $\tilde\Omega\big(\min(1, \sqrt{N/T})\big)$ is unavoidable in that range. (ii) There is an oblivious adversary such that every algorithm has expected (unnormalized) swap regret $\Omega\big(\min\{T/\log T,\; \sqrt{N^{1-o(1)}T}\}\big)$ over $T$ rounds. Hence the number of rounds must be exponential in a power of $1/\varepsilon$, at least $\exp(\Omega(\varepsilon^{-1/6}))$ (unless it is nearly linear in $N$), qualitatively matching the $(\log(N)/\varepsilon^2)^{O(1/\varepsilon)}$ upper bounds.
 
 ## Proof sketch
 
-The adversary builds a hierarchical loss sequence: at each scale it hides a good action among blocks of rounds in a way that any distribution with low external regret at that scale must place mass on actions that become bad at the next scale. Swap regret accumulates across scales because a swap function can redirect each scale's mass separately, and a number of scales polynomial in $1/\varepsilon$ fits within $T$ rounds only if $T$ is exponential in a power of $1/\varepsilon$; the $\ell_1$-bounded losses keep the adversary oblivious.
+For (i), the adversary uses a complete binary tree of depth $D$ with two actions $a_v, \dot a_v$ at every node and splits time into $2^D$ batches, one per leaf in depth-first order. During the batch of a leaf, only the actions on its root-to-leaf path are rewarded: an internal node at depth $d$ gives reward $d/(2D)$ to $a_v$ while the leaf lies to its left and, once the leaf lies to its right, to $a_v$ or $\dot a_v$ according to a fair coin drawn in advance, and the leaf rewards one of its two actions by a fresh fair coin each round. All coins are drawn before play, so the adversary is oblivious; every reward vector has the same $\ell_1$ norm, and rescaling makes it at most $1$. With $D = \log_2\min\{T, (N+2)/4\}$ and batches of size $T/2^D$, the analysis shows that every learner incurs expected swap regret $\tilde\Omega(\min\{1, \sqrt{N/T}\})$ on this distribution; the coins hide which action of each node will carry the reward later, and the swap function exploits the resulting misallocation separately at each depth. Part (ii) is a separate construction of Peng and Rubinstein.
 
 ## Depends on
 
@@ -24,5 +24,5 @@ The adversary builds a hierarchical loss sequence: at each scale it hides a good
 
 ## Sources
 
-- Y. Dagan, C. Daskalakis, M. Fishelson, N. Golowich, "From External to Swap Regret 2.0: An Efficient Reduction for Large Action Spaces", STOC (2024), arXiv:2310.19786.
-- B. Peng, A. Rubinstein, "Fast Swap Regret Minimization and Applications to Approximate Correlated Equilibria", STOC (2024), arXiv:2310.19647.
+- Y. Dagan, C. Daskalakis, M. Fishelson, N. Golowich, "From External to Swap Regret 2.0: An Efficient Reduction for Large Action Spaces", STOC (2024), arXiv:2310.19786, Corollary 4.2 and Theorem 1.7.
+- B. Peng, A. Rubinstein, "Fast Swap Regret Minimization and Applications to Approximate Correlated Equilibria", STOC (2024), arXiv:2310.19647, Theorem 1.2.

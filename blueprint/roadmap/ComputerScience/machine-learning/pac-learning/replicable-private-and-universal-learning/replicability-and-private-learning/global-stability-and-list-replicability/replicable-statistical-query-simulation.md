@@ -12,11 +12,16 @@ i.i.d. samples, outputs $v$ with $|v - \mathbb{E}_{x \sim D}[\psi(x)]| \le \tau$
 
 Estimate $\mathbb{E}[\psi]$ empirically to accuracy $\tau' \approx \tau\rho$, then round to the nearest point of a grid of spacing $\Theta(\tau)$ whose offset is drawn from the shared randomness $r$. Two runs on independent samples produce empirical means within $2\tau'$ of each other, and they round to different grid points only if a grid boundary falls between them, which happens with probability $O(\tau'/\tau) = O(\rho)$ over the random offset.
 
+## Depends on
+
+- [Replicable algorithms with shared randomness](../../../replicable-learning/replicable-algorithms-with-shared-seed.md)
+- [Statistical query model with tolerance and the SQ dimension](../../../statistical-query-dimension/statistical-query-dimension.md)
+
 ## Proof depends on
 
-- [Statistical-query learning implies noise-tolerant PAC learning](../../../statistical-query-learning-implies-noise-tolerant-pac-learni.md)
+- [Randomized-threshold and random-grid rounding lemmas](../../../replicable-learning/randomized-rounding-disagreement.md)
 - [Hoeffding's inequality for averages of bounded variables](../../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 
 ## Sources
 
-- R. Impagliazzo, R. Lei, T. Pitassi, J. Sorrell, "Reproducibility in Learning", STOC (2022), arXiv:2201.08430.
+- R. Impagliazzo, R. Lei, T. Pitassi, J. Sorrell, "Reproducibility in Learning", STOC (2022), arXiv:2201.08430, Definitions 1.1, 2.1 and 2.2, Theorem 1.2 and Theorem 2.3.

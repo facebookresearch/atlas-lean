@@ -7,10 +7,6 @@ For an integer $d \ge 1$, the rainbow cycle number $R(d)$ is the largest integer
 
 (If such graphs exist for arbitrarily large $k$ the number would be infinite; it is a theorem that $R(d)$ is finite.)
 
-## Depends on
-
-- [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
-
 ## Sources
 
 - B. R. Chaudhury, J. Garg, K. Mehlhorn, R. Mehta, P. Misra, "Improving EFX Guarantees through Rainbow Cycle Number", EC 2021, arXiv:2103.01628.

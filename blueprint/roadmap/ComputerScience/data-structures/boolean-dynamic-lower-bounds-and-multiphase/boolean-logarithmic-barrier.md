@@ -1,6 +1,6 @@
 # The logarithmic barrier for Boolean dynamic problems
 
-Before 2018 the strongest cell-probe lower bound for any explicit dynamic Boolean problem with $w = \Theta(\lg n)$ and polylogarithmic updates was $\max\{t_u, t_q\} = \Omega(\lg n)$, from information transfer applied to Boolean problems such as dynamic connectivity, while non-Boolean problems admitted $\Omega((\lg n/\lg\lg n)^2)$ via cell sampling. Proving an $\omega(\lg n)$ lower bound for range parity was posed as one of the main open problems of the area. A lower bound *crosses the logarithmic barrier* if it is $\omega(\lg n)$ for a Boolean problem.
+Before 2018 the strongest cell-probe lower bound for any explicit dynamic Boolean problem was $\Omega(\lg n)$, the Pătraşcu–Demaine information-transfer bound for dynamic connectivity, while problems whose queries return $\Theta(\lg n)$-bit answers admitted Larsen's bound $t_q = \Omega((\lg n/\lg(t_u w))^2)$ for two-dimensional weighted range counting, that is $\Omega((\lg n/\lg\lg n)^2)$ for $w = \Theta(\lg n)$ and polylogarithmic $t_u$, via cell sampling. Measured per output bit, both stay at $O(\lg n)$. Proving an $\omega(\lg n)$ lower bound for range parity was posed as one of five important open problems in Pătraşcu's obituary (Thorup 2013). A lower bound *crosses the logarithmic barrier* if it is $\omega(\lg n)$ for a Boolean problem.
 
 ## Depends on
 

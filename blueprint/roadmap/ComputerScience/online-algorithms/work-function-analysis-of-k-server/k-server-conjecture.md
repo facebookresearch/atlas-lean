@@ -5,6 +5,7 @@ The *$k$-server conjecture* (Manasse, McGeoch and Sleator 1990) asserts that for
 ## Depends on
 
 - [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
+- [No deterministic k-server algorithm beats ratio k](../k-server-on-the-line/deterministic-k-server-lower-bound.md)
 
 ## Sources
 

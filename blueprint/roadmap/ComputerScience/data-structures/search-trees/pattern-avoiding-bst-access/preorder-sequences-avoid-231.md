@@ -1,10 +1,10 @@
 # Preorder sequences of BSTs are exactly the 231-avoiding permutations
 
-A permutation $X$ of $[n]$ is the preorder sequence of some binary search tree on $[n]$ if and only if $X$ avoids the pattern $231$. Consequently the traversal conjecture concerns a subclass of $231$-avoiding access sequences, namely accessing such a sequence starting from an arbitrary initial tree.
+A permutation $X$ of $[n]$ is the preorder sequence of some binary search tree on $[n]$ if and only if $X$ avoids the pattern $231$. Consequently the traversal conjecture is equivalent to the statement that, from any initial tree on $[n]$, splay trees access every $231$-avoiding permutation of $[n]$ at total cost $O(n)$.
 
 ## Proof sketch
 
-If $X$ is a preorder sequence with root $x_1$, all keys smaller than $x_1$ precede all larger keys, so an occurrence of $231$ (a key $a$, then a larger key $b$, then a key $c$ smaller than $a$) is impossible: at the root of the smallest recursive block containing all three, $c$ lies in the left part and $b$ in the right part, yet $c$ comes after $b$. Conversely, if $X$ avoids $231$, then after $x_1$ the keys smaller than $x_1$ must all precede the larger ones (else a larger key, then a smaller one, then relative to $x_1$ gives $231$), so $X$ splits into two $231$-avoiding blocks that are preorders of the left and right subtrees.
+In a preorder sequence with root $x_1$, all keys smaller than $x_1$ precede all larger keys. An occurrence of $231$ is a key $a$, then a larger key $b$, then a key $c$ smaller than $a$; at the root of the smallest subtree containing all three, $c$ lies in the left part (or is the root) and $b$ in the right part, yet $c$ comes after $b$, which is impossible. Conversely, if $X$ avoids $231$, then after $x_1$ every key smaller than $x_1$ precedes every larger key, since otherwise $x_1$, a larger key and a later smaller key would form a $231$; so $X$ splits into two $231$-avoiding blocks, which by induction are preorders of the left and right subtrees.
 
 ## Depends on
 

@@ -4,7 +4,7 @@ For $n \ge 3$ agents with nonatomic valuations on $[0, 1]$, there is no finite (
 
 ## Proof sketch
 
-Assume a finite protocol exists. An adversary maintains a family of valuations consistent with the answers so far and, since the protocol eventually outputs finitely many cut points determined by finitely many query answers, it can perturb the valuations near the cut points without changing any answer so that some agent strictly prefers an adjacent interval. The perturbation keeps valuations nonatomic and consistent with all queries, contradicting envy-freeness.
+For three agents, construct rigid measure systems: families of valuations for which every envy-free division into intervals must cut at two specific points determined by hidden parameters. One agent's measure, together with the answers to any finite set of queries, does not determine these parameters, so for any finite protocol there are valuations in the family consistent with all answers for which the protocol's output cuts at the wrong points and is therefore not envy-free. The construction extends to every $n \ge 3$.
 
 ## Depends on
 

@@ -1,12 +1,12 @@
 # Patrascu-Demaine logarithmic cell-probe lower bound for dynamic connectivity
 
-In the cell-probe model with cells of $w = \Theta(\log n)$ bits, let $t_u$ and $t_q$ be the amortized expected update and query times of any randomized data structure for fully dynamic connectivity on $n$ vertices (already for graphs that are disjoint unions of paths). Then
+In the cell-probe model with cells of $w = \Theta(\log n)$ bits, let $t_u$ and $t_q$ be the amortized expected update and query times of any data structure for fully dynamic connectivity on $n$ vertices that may use amortization, nondeterministic queries and Las Vegas randomization, or Monte Carlo randomization with error probability $n^{-\Omega(1)}$ (already for graphs that are always disjoint unions of paths). Then
 
 $$
 t_q \lg\Bigl(\frac{t_u}{t_q}\Bigr) = \Omega(\lg n) \quad \text{and} \quad t_u \lg\Bigl(\frac{t_q}{t_u}\Bigr) = \Omega(\lg n),
 $$
 
-with the convention that $\lg x = \max\{1, \log_2 x\}$. In particular $\max\{t_u, t_q\} = \Omega(\log n)$.
+where $\lg x$ denotes $\log_2(2 + x)$, which is positive for all $x \ge 0$ (Theorem 2.4). In particular $\max\{t_u, t_q\} = \Omega(\log n)$.
 
 ## Proof sketch
 

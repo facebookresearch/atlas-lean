@@ -1,10 +1,10 @@
 # Arborally satisfied supersets are realized by offline BST executions
 
-For every arborally satisfied superset $Y$ of an access sequence $X$, there is an offline BST algorithm whose execution on $X$, starting from a suitable initial tree, touches exactly the keys $\{a : (a, t) \in Y\}$ at each time $t$; its cost is $|Y|$.
+For every arborally satisfied superset $Y$ of an access sequence $X$, there is an offline BST execution on $X$, starting from a suitable initial tree, that touches exactly the keys $\{a : (a, t) \in Y\}$ at each time $t$; its cost in the touched-node model is $|Y|$.
 
 ## Proof sketch
 
-At time $t$, maintain the tree as a treap keyed by the keys with priority equal to the next time at which each key appears in $Y$ (earlier means higher). The keys of row $t$ of $Y$ have the highest priority and, by arborally satisfaction, form a connected subtree containing the root; rearranging that subtree into the treap order for the updated priorities is a legal BST operation on the touched nodes only.
+Let $N(a, t)$ be the smallest time $s \ge t$ with $(a, s) \in Y$ (or $\infty$), and let $T_t$ be a treap on the keys with priority $N(a, t)$, earlier times nearer the root. The keys of row $t$ of $Y$ have the minimum possible priority value $t$, so by the treap property they form a connected subtree of $T_t$ containing the root, and the execution rearranges exactly this subtree into treap order for the priorities $N(\cdot, t+1)$. The result is $T_{t+1}$: the heap property can fail only between a touched parent $q$ and an untouched child $r$, and then the rectangle spanned by $(q, t)$ and $(r, N(r, t))$ would have no point of $Y$ on its sides incident to $(q,t)$, contradicting arboral satisfaction.
 
 ## Depends on
 

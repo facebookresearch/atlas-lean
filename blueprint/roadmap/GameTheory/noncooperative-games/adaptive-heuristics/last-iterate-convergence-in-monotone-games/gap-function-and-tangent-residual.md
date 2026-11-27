@@ -8,4 +8,4 @@ For a monotone operator $F$ on a compact convex set $\mathcal{Z}$ of diameter $D
 
 ## Sources
 
-- Y. Cai, A. Oikonomou, W. Zheng, "Tight Last-Iterate Convergence of the Extragradient and the Optimistic Gradient Descent-Ascent Algorithm for Constrained Monotone Variational Inequalities", arXiv:2204.09228 (2022).
+- Y. Cai, A. Oikonomou, W. Zheng, "Finite-Time Last-Iterate Convergence for Learning in Multi-Player Games", NeurIPS 2022; full version "Tight Last-Iterate Convergence of the Extragradient and the Optimistic Gradient Descent-Ascent Algorithm for Constrained Monotone Variational Inequalities", arXiv:2204.09228.

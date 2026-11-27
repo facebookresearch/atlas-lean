@@ -4,6 +4,6 @@ Let $k \ge 1$ and $d \ge 1$. A set $B \subseteq Y^d$ is a **$k$-pseudo-cube of d
 
 ## Sources
 
-- M. Charikar, C. Pabbaraju, "A Characterization of List Learnability", STOC (2023), arXiv:2211.04956.
+- M. Charikar, C. Pabbaraju, "A Characterization of List Learnability", STOC (2023), arXiv:2211.04956, Definition 4.
 - N. Brukhim, D. Carmon, I. Dinur, S. Moran, A. Yehudayoff, "A Characterization of Multiclass Learnability", FOCS (2022), arXiv:2203.01550.
-- A. Daniely, S. Shalev-Shwartz, "Optimal Learners for Multiclass Problems", COLT (2014).
+- A. Daniely, S. Shalev-Shwartz, "Optimal Learners for Multiclass Problems", COLT (2014), PMLR 35.

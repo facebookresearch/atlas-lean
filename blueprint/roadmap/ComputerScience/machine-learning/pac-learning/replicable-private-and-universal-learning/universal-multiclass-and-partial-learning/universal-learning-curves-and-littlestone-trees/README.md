@@ -6,7 +6,7 @@
 - [VCL trees and the VCL dimension](vcl-tree.md)
 - [No class with three concepts is learnable faster than exponentially](exponential-rate-lower-bound.md)
 - [An infinite Littlestone tree forbids rates faster than linear](infinite-littlestone-tree-linear-lower-bound.md)
-- [Open Gale–Stewart games are determined](gale-stewart-determinacy.md)
+- [The learning game is determined, and the adversary wins exactly on an infinite Littlestone tree](gale-stewart-determinacy.md)
 - [An infinite VCL tree forces arbitrarily slow universal rates](infinite-vcl-tree-arbitrarily-slow.md)
 - [Pseudo-cube trees for multiclass universal rates](dsl-tree.md)
 - [No infinite Littlestone tree gives an online learner with finitely many mistakes](eventually-correct-online-learner.md)

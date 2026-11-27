@@ -14,6 +14,7 @@ Replicability implies TV indistinguishability because for fixed samples the prob
 
 ## Depends on
 
+- [Replicable algorithms with shared randomness](../../../replicable-learning/replicable-algorithms-with-shared-seed.md)
 - [Total-variation indistinguishable learning rules](tv-indistinguishable-learning-rule.md)
 - [Private PAC learners and their sample complexity](../private-learning-and-littlestone-classes/private-pac-learner.md)
 - [The Littlestone dimension is the optimal mistake bound](../../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
@@ -27,5 +28,5 @@ Replicability implies TV indistinguishability because for fixed samples the prob
 
 ## Sources
 
-- A. Kalavasis, A. Karbasi, S. Moran, G. Velegkas, "Statistical Indistinguishability of Learning Algorithms", ICML (2023), arXiv:2305.14311.
+- A. Kalavasis, A. Karbasi, S. Moran, G. Velegkas, "Statistical Indistinguishability of Learning Algorithms", ICML (2023), arXiv:2305.14311, Theorems 1–5 and Corollary 1.
 - M. Bun, M. Gaboardi, M. Hopkins, R. Impagliazzo, R. Lei, T. Pitassi, S. Sivakumar, J. Sorrell, "Stability is Stable: Connections between Replicability, Privacy, and Adaptive Generalization", STOC (2023), arXiv:2303.12921.

@@ -14,4 +14,4 @@ where $S_{-i}$ deletes $z_i$. For i.i.d. $S \sim D^{n+1}$, $\mathbb{E}[\mathrm{L
 
 ## Sources
 
-- I. Aden-Ali, Y. Cherapanamjeri, A. Shetty, N. Zhivotovskiy, "Optimal PAC Bounds without Uniform Convergence", FOCS (2023), arXiv:2304.09167.
+- I. Aden-Ali, Y. Cherapanamjeri, A. Shetty, N. Zhivotovskiy, "Optimal PAC Bounds without Uniform Convergence", FOCS (2023), arXiv:2304.09167, Section 2.2 (Assumptions 2.1 and 2.3, Remark 2.2).

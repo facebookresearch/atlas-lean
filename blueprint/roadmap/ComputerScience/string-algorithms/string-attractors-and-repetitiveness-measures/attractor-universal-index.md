@@ -1,6 +1,6 @@
 # Universal compressed representations from string attractors
 
-Given a string attractor of size $\gamma'$ for $T[1..n]$ over an alphabet of size $\sigma$, there is a data structure of $O(\gamma' \log(n/\gamma'))$ machine words that extracts any substring of length $\ell$ in $O(\log(n/\gamma') + \ell/\log_\sigma n)$ time. Since every dictionary compressor induces an attractor of size at most its output, this gives a single representation whose size is within an $O(\log(n/\gamma))$ factor of the outputs of LZ77, SLPs, macro schemes and run-length BWT.
+Given a string attractor of size $\gamma'$ for $T[1..n]$ over an alphabet of size $\sigma$, there is a data structure of $O(\gamma' \log(n/\gamma'))$ words of $w$ bits that extracts any substring of length $\ell$ in $O(\log(n/\gamma') + \ell\log\sigma/w)$ time; more generally, for every integer $\tau \ge 2$, $O(\gamma'\tau\log_\tau(n/\gamma'))$ words give $O(\log_\tau(n/\gamma') + \ell\log\sigma/w)$ time. Since every dictionary compressor induces an attractor of size at most its output, this gives a single representation whose size is within an $O(\log(n/\gamma))$ factor of the outputs of LZ77, SLPs, macro schemes and run-length BWT.
 
 ## Proof sketch
 

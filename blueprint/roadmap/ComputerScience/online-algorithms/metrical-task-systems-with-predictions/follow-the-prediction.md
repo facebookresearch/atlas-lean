@@ -1,10 +1,10 @@
-# Following the predictions costs $\mathrm{OPT} + O(\eta)$
+# Following the predictions costs $\mathrm{OPT} + 4\eta$
 
-For metrical task systems with predicted states, the algorithm *Follow-the-Prediction*, which at each time moves to the state $x_t$ minimizing $\ell_t(x) + 2\,d(x, p_t)$ (with ties broken by proximity to $p_t$), has cost at most $\mathrm{OPT} + O(\eta)$; in particular it is $1$-consistent.
+For metrical task systems with predicted states, the algorithm *Follow-the-Prediction* (FtP), which at each time $t$, after receiving the cost function $\ell_t$ and the prediction $p_t$, moves to a state $x_t$ minimizing $\ell_t(x) + 2\,d(x, p_t)$, satisfies $\mathrm{cost}(\mathrm{FtP}) \le \mathrm{cost}(\mathrm{Off}) + 4\eta$ for every offline algorithm $\mathrm{Off}$, where $\eta$ is the prediction error with respect to $\mathrm{Off}$; it is therefore $(1 + 4\eta/\mathrm{Off})$-competitive against $\mathrm{Off}$, and in particular $1$-consistent.
 
 ## Proof sketch
 
-Compare with the optimal solution $o_t$: by the choice of $x_t$, $\ell_t(x_t) + 2d(x_t, p_t) \le \ell_t(o_t) + 2d(o_t, p_t)$. The movement $d(x_{t-1}, x_t)$ is at most $d(x_{t-1}, p_{t-1}) + d(p_{t-1}, o_{t-1}) + d(o_{t-1}, o_t) + d(o_t, p_t) + d(p_t, x_t)$ by the triangle inequality; summing over $t$ and using the previous inequality to absorb the terms $d(x_t, p_t)$ bounds the total by $\mathrm{OPT} + O(\sum_t d(p_t, o_t))$.
+Let $o_1, o_2, \dots$ be the states of $\mathrm{Off}$, starting from the common initial state, and let $\mathcal{A}_t$ be the hybrid that follows FtP up to time $t$ and $\mathrm{Off}$ afterwards, so that $\mathcal{A}_0 = \mathrm{Off}$ and $\mathcal{A}_T = \mathrm{FtP}$. The hybrids $\mathcal{A}_t$ and $\mathcal{A}_{t-1}$ differ only at time $t$, so by the triangle inequality $\mathrm{cost}(\mathcal{A}_t) \le \mathrm{cost}(\mathcal{A}_{t-1}) + 2d(o_t, x_t) + \ell_t(x_t) - \ell_t(o_t) \le \mathrm{cost}(\mathcal{A}_{t-1}) + 2d(o_t, p_t) + 2d(p_t, x_t) + \ell_t(x_t) - \ell_t(o_t)$, and the choice of $x_t$ gives $2d(p_t, x_t) + \ell_t(x_t) \le 2d(p_t, o_t) + \ell_t(o_t)$. Hence each step adds at most $4d(o_t, p_t)$, and summing over $t$ gives $\mathrm{Off} + 4\eta$.
 
 ## Depends on
 
@@ -13,4 +13,4 @@ Compare with the optimal solution $o_t$: by the choice of $x_t$, $\ell_t(x_t) + 
 
 ## Sources
 
-- Antonios Antoniadis, Christian Coester, Marek Eliáš, Adam Polak, Bertrand Simon, "Online Metric Algorithms with Untrusted Predictions", ICML (2020); ACM Transactions on Algorithms 19(2) (2023), arXiv:2003.02144.
+- Antonios Antoniadis, Christian Coester, Marek Eliáš, Adam Polak, Bertrand Simon, "Online Metric Algorithms with Untrusted Predictions", ICML (2020); ACM Transactions on Algorithms 19(2) (2023), arXiv:2003.02144, Section 4.1, Lemma 17.

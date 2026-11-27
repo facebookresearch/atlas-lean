@@ -4,7 +4,7 @@ There is a deterministic algorithm that, given a feasible fractional flow $\math
 
 ## Proof sketch
 
-Consider the fractional parts of $\mathbf{f}$; they form a circulation plus integral corrections, and the edges with nonintegral flow support cycles. Repeatedly find such a cycle using dynamic trees and push flow around it in the direction that does not increase cost until some edge becomes integral; bit-scaling over the binary expansion of the fractional parts lets each phase be implemented in near-linear total time. The last claim follows since an integral feasible flow has integral cost at least $F^*$ and at most $\mathbf{c}^{\top}\mathbf{f} < F^* + 1/2$.
+Since the demands and capacities are integral, the reduction to a circulation keeps them integral, and in a circulation every edge with fractional flow lies on a cycle of fractional edges. Repeatedly cancel such a cycle: push flow around it in the direction that does not increase the cost until some edge becomes integral, which also keeps every edge within its integral bounds. Maintaining the fractional edges in a forest with dynamic trees finds and cancels the cycles in $O(m\log n)$ total time, and Kang and Payor refine this to $O(m\log(n^2/m))$. The last claim follows since an integral feasible flow has integral cost at least $F^*$ and at most $\mathbf{c}^{\top}\mathbf{f} < F^* + 1/2$.
 
 ## Depends on
 

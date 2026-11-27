@@ -1,10 +1,16 @@
 # Lower bound for caching with next-arrival predictions
 
-For paging with cache size $k$ and next-arrival predictions, every (randomized) online algorithm has competitive ratio $\Omega\!\left(\log \min\!\left\{\frac{\eta}{k\,\mathrm{OPT}},\; k\right\}\right)$ on suitable instances, where $\eta$ is the $\ell_1$ prediction error.
+For paging with cache size $k$ and next-arrival predictions, and for every bound $\epsilon$ on the relative error, every randomized online algorithm restricted to inputs with $\eta/\mathrm{OPT} \le \epsilon$ has competitive ratio
+
+$$
+\Omega\!\left(\log \min\left\{\frac{\epsilon}{k \log k},\; k\right\}\right),
+$$
+
+where $\eta$ is the $\ell_1$ prediction error.
 
 ## Proof sketch
 
-Rohatgi embeds the classical randomized paging lower bound on $k+1$ pages into instances where the predictions are correct except for a budget of errors spread to hide which page will be requested next in each phase; the algorithm can be confused on only about $\eta/(k\,\mathrm{OPT})$ pages per phase, and Yao's principle with the harmonic lower bound on those pages gives the logarithm.
+Rohatgi fixes a parameter $1 \le t \le k$ and a universe of $k + t$ pages, and builds random inputs made of phases: each phase has $t$ clean pages, not requested in the previous phase, and $k - t$ stale pages chosen uniformly at random from the previous phase's pages; it consists of $3k \log k$ independent uniform requests to these $k$ pages followed by one copy of them in increasing order. Predictions point to the next time step inside a phase and to the end of the next phase on the final copy, so a prefix of the input determines the predictions, the total error is $O(nk^2 \log k)$ over $n$ phases, and $\mathrm{OPT} = \Theta(nt)$. Every deterministic algorithm misses $\Omega(t \log(k/t))$ times per phase in expectation, since it cannot tell which unseen pages are stale. Choosing $t = k^2 \log k/\epsilon$ for $k \log k \le \epsilon \le k^2 \log k$ and applying Yao's principle gives the bound.
 
 ## Depends on
 
@@ -13,8 +19,7 @@ Rohatgi embeds the classical randomized paging lower bound on $k+1$ pages into i
 ## Proof depends on
 
 - [Yao's minimax principle](../../../TheoryOfComputation/randomized-and-quantum-complexity/yao-s-minimax-principle/yao-minimax.md)
-- [The randomized marking algorithm and the harmonic lower bound for paging](../competitive-paging/randomized-marking-algorithm-and-the-harmonic-lower-bound.md)
 
 ## Sources
 
-- Dhruv Rohatgi, "Near-Optimal Bounds for Online Caching with Machine Learned Advice", SODA (2020), arXiv:1910.12172.
+- Dhruv Rohatgi, "Near-Optimal Bounds for Online Caching with Machine Learned Advice", SODA (2020), arXiv:1910.12172, Theorem 3 and Section 6 (Theorem 28).

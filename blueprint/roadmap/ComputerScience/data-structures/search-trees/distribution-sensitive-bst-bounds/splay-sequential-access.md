@@ -4,7 +4,7 @@ For every initial splay tree on $n$ keys, accessing all keys in increasing order
 
 ## Proof sketch
 
-Tarjan bounds the number of rotations by tracking the right spine of the tree: each zig-zig step at the left end of the tree removes nodes from the left path permanently, and a careful counting of zig-zag and zig-zig steps shows that every node participates in $O(1)$ amortized rotations over the whole sweep.
+The potential-function analysis of splaying gives only $O(n \log n)$ for this sequence. Tarjan instead bounds the total number of rotations by a direct combinatorial counting argument over the rotations performed during the sweep.
 
 ## Depends on
 

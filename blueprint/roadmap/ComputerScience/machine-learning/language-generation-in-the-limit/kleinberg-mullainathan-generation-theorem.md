@@ -4,7 +4,7 @@ Let $U$ be a countable set of strings and $\mathcal{C} = \{L_1, L_2, \dots\}$ a 
 
 ## Proof sketch
 
-At step $t$, compute the critical languages among $L_1, \dots, L_t$ and output an unseen string of the critical language with the largest index (searching $U$ in a fixed order and using membership queries). By the nesting lemma that language is contained in every other critical language, in particular, once the target $L_z$ is critical forever and $t \ge z$, the chosen language is a subset of $K$. Hence every output after $t^+$ lies in $K \setminus S_t$. Implementing criticality with membership queries only requires testing inclusions on a growing finite prefix of $U$, which is done by a refined version that checks inclusions up to a slowly growing horizon.
+At step $t$, compute the critical languages among $L_1, \dots, L_t$ and output an unseen string of the critical language with the largest index (searching $U$ in a fixed order and using membership queries). By the nesting lemma that language is contained in every other critical language, in particular, once the target $L_z$ is critical forever and $t \ge z$, the chosen language is a subset of $K$. Hence every output at a step $t \ge \max(z, t^+)$ lies in $K \setminus S_t$. Implementing criticality with membership queries only requires testing inclusions on a growing finite prefix of $U$, which is done by a refined version that checks inclusions up to a slowly growing horizon.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ At step $t$, compute the critical languages among $L_1, \dots, L_t$ and output a
 
 ## Sources
 
-- J. Kleinberg, S. Mullainathan, "Language Generation in the Limit", NeurIPS (2024), arXiv:2404.06757.
+- J. Kleinberg, S. Mullainathan, "Language Generation in the Limit", NeurIPS (2024), arXiv:2404.06757, results (2.1), (4.1)–(4.6) and Section 5.

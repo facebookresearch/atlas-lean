@@ -1,10 +1,10 @@
 # Proper private learning of Littlestone classes with polynomial sample complexity
 
-Every class of Littlestone dimension $d$ is properly PAC learnable under approximate differential privacy with sample complexity $\tilde O(d^6)$, ignoring the polynomial dependence on the privacy and accuracy parameters. Moreover, the sample complexity of privately sanitizing (releasing accurate answers to all counting queries in) a binary class is polynomial in its Littlestone dimension and dual Littlestone dimension, so a class is privately sanitizable if and only if it has finite Littlestone dimension.
+Every class of Littlestone dimension $d$ is properly PAC learnable under $(\varepsilon, \delta)$-differential privacy from $n = \tilde O\big(d^6/(\varepsilon\alpha^2)\big)$ samples (with logarithmic factors in $1/\delta$ and the confidence suppressed), outputting with high probability a hypothesis of the class with error at most $\alpha$ on every realizable distribution; a generic reduction gives essentially the same bound in the agnostic setting. Moreover, the sample complexity of privately sanitizing (releasing accurate answers to all counting queries in) a binary class is polynomial in its Littlestone dimension and dual Littlestone dimension, so a class is privately sanitizable if and only if it has finite Littlestone dimension.
 
 ## Proof sketch
 
-A class is **irreducible** if every restriction by a single labelled example that is consistent with many sample points does not lower its Littlestone dimension. Greedily restricting the class by examples that lower the Littlestone dimension yields, after at most $d$ steps, an irreducible subclass; for irreducible classes, the SOA output on a sample is globally stable with probability polynomial in $1/d$, and private selection over the at most $d$ reduction steps (sparse vector technique) keeps the learner proper. Sanitization follows from private learning of the dual class.
+A class $G$ is **irreducible** if for every point $x$ some label $b$ keeps the Littlestone dimension, $\mathrm{Ldim}(G|_{(x,b)}) = \mathrm{Ldim}(G)$ (and $k$-irreducible if the same holds along every depth-$k$ tree). Restricting the class by labelled examples that lower the Littlestone dimension reaches, after at most $d$ steps, an irreducible subclass, whose SOA classifier is determined by the class; the learner produces such candidates from many subsamples, releases the frequent ones with a private stable histogram, and selects a good one with the exponential mechanism on fresh samples, so its output lies in the class. Sanitization follows from private learning of the dual class.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ A class is **irreducible** if every restriction by a single labelled example tha
 
 ## Sources
 
-- B. Ghazi, N. Golowich, R. Kumar, P. Manurangsi, "Sample-efficient Proper PAC Learning with Approximate Differential Privacy", STOC (2021), arXiv:2012.03893.
+- B. Ghazi, N. Golowich, R. Kumar, P. Manurangsi, "Sample-efficient Proper PAC Learning with Approximate Differential Privacy", STOC (2021), arXiv:2012.03893, Theorem 1.1 (Theorem 6.4), Corollaries 1.2 and 1.3, Definition 4.1.

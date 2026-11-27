@@ -10,7 +10,7 @@ records (up to lower-order logarithmic factors). The mechanism maintains a multi
 
 ## Proof sketch
 
-Each update decreases the relative entropy between the true data distribution and the synthetic distribution by $\Omega(\alpha^2)$, so at most $O(\log|\mathcal{X}|/\alpha^2)$ updates occur. Privacy is paid only for the updates, via the sparse vector technique for the threshold tests and advanced composition over the updates, giving the $\sqrt{\log|\mathcal{X}|\log(1/\delta)}/\alpha$ factor; the $\log k$ factor pays for the error tests over $k$ queries.
+Each update decreases the relative entropy between the true data distribution and the synthetic distribution by $\Omega(\alpha^2)$, so at most $O(\log|\mathcal{X}|/\alpha^2)$ updates occur. Privacy is paid only for the updates: between two updates the threshold tests form one run of the sparse vector technique (AboveThreshold), whose privacy cost does not grow with the number of below-threshold answers, so the $k$ tests are not composed one by one (that would scale with $k$). For queries with sensitivity $1$ on the integer counts (the fractions multiplied by $n$) and discrete Laplace noise of the scales in the linked lemma, each run is $\varepsilon_0$-differentially private; advanced composition over the $O(\log\lvert\mathcal{X}\rvert/\alpha^2)$ runs and the noisy answers used in updates then gives the total privacy cost and the $\sqrt{\log|\mathcal{X}|\log(1/\delta)}/\alpha$ factor; the $\log k$ factor pays for the error tests over $k$ queries.
 
 ## Depends on
 
@@ -18,6 +18,7 @@ Each update decreases the relative entropy between the true data distribution an
 
 ## Proof depends on
 
+- [Privacy of AboveThreshold with discrete Laplace noise](../../discrete-privacy-mechanisms/above-threshold-privacy.md)
 - [Advanced composition](../../differential-privacy/differentially-private-pi-advanced.md)
 - [The Laplace mechanism is differentially private](../../laplace-and-exponential-mechanisms/laplace-mechanism-differentially-private.md)
 

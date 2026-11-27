@@ -4,7 +4,7 @@ For every $n$ there is a partial concept class $H_n \subseteq \{0,1,\star\}^{[n]
 
 ## Proof sketch
 
-Encode a graph $G$ on $n$ vertices by the partial class whose concepts are the cliques (labelled $1$) against the independent sets (labelled $0$) of $G$, with $\star$ elsewhere; since a clique and an independent set share at most one vertex, the VC dimension is one. A disambiguation of small size corresponds to a small nondeterministic communication protocol separating cliques from independent sets of $G$, so the Göös graphs and the resolution of the Alon–Saks–Seymour problem by Balodis, Ben-David, Göös, Jain and Kothari, which give superpolynomial lower bounds for clique versus independent set, force every disambiguation to have size $n^{(\log n)^{1-o(1)}}$. By the Sauer–Shelah–Perles lemma, size $N$ on $n$ points forces VC dimension at least $\log N / \log n$.
+The class is extracted from graphs that witness the superpolynomial separation for the clique versus independent set problem in communication complexity, obtained by Göös and by Ben-David, Hatami and Tal, and sharpened by Balodis, Ben-David, Göös, Jain and Kothari (which also resolves the Alon–Saks–Seymour problem): the structure of a clique meeting an independent set in at most one vertex keeps the VC dimension at one, while a small disambiguation would give a small covering that the separation rules out. By the Sauer–Shelah–Perles lemma, a total class of size $N$ on $n$ points has VC dimension at least of order $\log N / \log n$, which gives the VC bound; a disjoint union over $n$ gives $H_\infty$.
 
 ## Depends on
 
@@ -17,4 +17,4 @@ Encode a graph $G$ on $n$ vertices by the partial class whose concepts are the c
 
 ## Sources
 
-- N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444.
+- N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444, Theorem 11 and its discussion in Section 2.4.3.

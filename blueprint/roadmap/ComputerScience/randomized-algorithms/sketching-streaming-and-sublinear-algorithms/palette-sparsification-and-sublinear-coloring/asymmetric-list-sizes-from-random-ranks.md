@@ -18,4 +18,4 @@ Since $\pi$ is a bijection, $\sum_v \ell(v) \le n + \sum_{i=1}^{n} 40 n\ln n / i
 
 ## Sources
 
-- Sepehr Assadi, Helia Yazdanyar, "Simple Sublinear Algorithms for (Delta+1) Vertex Coloring via Asymmetric Palette Sparsification", SOSA (2025), arXiv:2502.17629.
+- Sepehr Assadi, Helia Yazdanyar, "Simple Sublinear Algorithms for (Delta+1) Vertex Coloring via Asymmetric Palette Sparsification", SOSA (2025); TheoretiCS 5 (2026), Article 3, arXiv:2502.17629.

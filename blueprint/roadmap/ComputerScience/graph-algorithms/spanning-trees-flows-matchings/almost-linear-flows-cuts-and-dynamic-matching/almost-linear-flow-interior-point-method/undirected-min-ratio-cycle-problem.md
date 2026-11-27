@@ -6,7 +6,7 @@ $$
 \frac{\mathbf{g}^{\top}\mathbf{\Delta}}{\|\mathbf{L}\mathbf{\Delta}\|_1}.
 $$
 
-The problem is undirected: coordinates of $\mathbf{\Delta}$ may have either sign, so the optimum is at most $0$ (replace $\mathbf{\Delta}$ by $-\mathbf{\Delta}$). For $\kappa \in (0, 1]$, a circulation $\mathbf{\Delta}$ is a $\kappa$-approximate minimum-ratio cycle if its ratio is at most $\kappa$ times the optimum. Minimizing a ratio of a linear objective over cycles generalizes the minimum cycle mean, which is the case of unit lengths restricted to directed cycles.
+The problem is undirected: coordinates of $\mathbf{\Delta}$ may have either sign, so the optimum is at most $0$ (replace $\mathbf{\Delta}$ by $-\mathbf{\Delta}$). For $\kappa \in (0, 1]$, a circulation $\mathbf{\Delta}$ is a $\kappa$-approximate minimum-ratio cycle if its ratio is at most $\kappa$ times the optimum. It is an undirected analogue of the minimum cycle mean problem, which minimizes the average cost of a directed cycle.
 
 ## Depends on
 

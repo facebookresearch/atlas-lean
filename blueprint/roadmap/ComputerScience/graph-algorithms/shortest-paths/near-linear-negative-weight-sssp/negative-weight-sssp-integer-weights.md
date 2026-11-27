@@ -7,7 +7,7 @@ The *negative-weight single-source shortest paths problem* (negative-weight SSSP
 1. a shortest-path tree $T$ rooted at $s$ that spans all vertices reachable from $s$, so that the tree path to each such $v$ has weight $\mathrm{dist}_G(s,v)$, or
 2. a directed cycle $C$ of $G$ with $w(C)<0$.
 
-Algorithms are analysed on the word RAM with words of $\Theta(\log(nW))$ bits. Both outputs are certificates checkable in $O(m)$ time. The classical baselines are the Bellman-Ford algorithm, running in $O(mn)$ time, and the scaling algorithms of Gabow-Tarjan and Goldberg, running in $O(m\sqrt{n}\log W)$ time.
+Algorithms are analysed on the word RAM with words of $\Theta(\log(nW))$ bits. Both outputs are certificates checkable in $O(m)$ time. The classical baselines are the Bellman-Ford algorithm, running in $O(mn)$ time, and the scaling algorithms of Gabow-Tarjan, running in $O(m\sqrt{n}\log(nW))$ time, and Goldberg, running in $O(m\sqrt{n}\log W)$ time.
 
 ## Depends on
 

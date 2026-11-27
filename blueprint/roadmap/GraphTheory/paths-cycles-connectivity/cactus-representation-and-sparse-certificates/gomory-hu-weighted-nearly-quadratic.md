@@ -4,7 +4,7 @@ There is a randomized (Monte Carlo) algorithm that, given an undirected graph wi
 
 ## Proof sketch
 
-First replace $G$ by a cut sparsifier-type reduction that does not change minimum cuts between relevant pairs and has $\tilde O(n)$-size instances per recursive level. The core step computes, for a random pivot, single-source minimum cuts to many vertices using isolating cuts on terminal sets sampled at geometric rates, together with a guide-tree mechanism based on $2$-respecting cuts of a tree packing to handle weighted graphs. The resulting Gomory-Hu splits reduce the instance by a constant fraction with high probability, and the total work over $O(\log n)$ levels is $\tilde O(n^2)$.
+Following Gomory and Hu and the single-source reduction of Abboud, Krauthgamer and Trabelsi, the construction reduces, via max-flow calls on contracted graphs of total size $\tilde O(m)$, to single-source terminal mincuts: for a terminal set $U$ and source $s \in U$ whose values $\lambda(s,t)$, $t \in U \setminus \{s\}$, are within a factor $1.1$ of the Steiner connectivity $\lambda(U)$, compute all these values. The new ingredient is a set of $O(\log n)$ guide trees: $U$-Steiner trees such that each $t$ has an $(s,t)$-mincut $4$-respected by one of them. They exist because a graph packs $\lambda(U)/2$ edge-disjoint $U$-Steiner trees (Mader splitting-off with Nash-Williams-Tutte), and are found by packing Steiner trees with multiplicative weights and Mehlhorn's $2$-approximation on a $(1+\epsilon)$-cut sparsifier, in $\tilde O(n^2)$ time; isolating cuts along the guide trees then give the single-source values with polylogarithmically many max-flow calls.
 
 ## Depends on
 
@@ -14,7 +14,6 @@ First replace $G$ by a cut sparsifier-type reduction that does not change minimu
 
 - [Isolating cut lemma with logarithmically many max-flow calls](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/isolating-cut-lemma.md)
 - [Gomory-Hu trees of unweighted graphs with polylogarithmically many max-flows](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/unweighted-gomory-hu-polylog-max-flows.md)
-- [A near-maximum tree packing has many trees that 2-respect a minimum cut](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/deterministic-near-linear-minimum-cut/tree-packing-two-respects-minimum-cut.md)
 - [Single-source minimum cut values](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/almost-linear-flows-cuts-and-dynamic-matching/isolating-cuts-and-steiner-min-cuts/single-source-minimum-cut-values.md)
 
 ## Sources

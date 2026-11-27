@@ -8,4 +8,4 @@ A node-edge-checkable problem on $\Delta$-regular graphs (or bipartite $(\Delta,
 
 ## Sources
 
-- S. Brandt, "An Automatic Speedup Theorem for Distributed Problems", PODC 2019.
+- S. Brandt, "An Automatic Speedup Theorem for Distributed Problems", PODC 2019, arXiv:1902.09958.

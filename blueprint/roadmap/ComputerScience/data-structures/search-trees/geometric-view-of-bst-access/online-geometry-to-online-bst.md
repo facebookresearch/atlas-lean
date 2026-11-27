@@ -1,20 +1,16 @@
 # Online arborally satisfying algorithms yield online BSTs
 
-Every online arborally satisfying algorithm $\mathcal{G}$ can be converted into an online BST algorithm whose cost on every access sequence $X$ is $O(\mathrm{cost}_{\mathcal{G}}(X) + m)$. In particular Greedy is, up to a constant factor, an online BST algorithm.
+For every online arborally satisfying algorithm $\mathcal{G}$ there is an online BST algorithm whose cost on every access sequence $X$ of length $m$ is $O(\mathrm{cost}_{\mathcal{G}}(X) + m)$. In particular Greedy is, up to a constant factor, an online BST algorithm.
 
 ## Proof sketch
 
-Maintain a split tree, a BST variant that supports the operations needed to realize a row of the geometric output when only the current row is known, by encoding the treap order of future touch times implicitly through a sequence of split operations; each split tree operation is simulated by $O(1)$ amortized BST rotations per output point.
+The online algorithm cannot order keys by their unknown next access times, so it keeps keys whose relative order is still undetermined in a *split tree*, a BST supporting $\mathrm{MakeTree}$ on a set of keys and $\mathrm{Split}(x)$, which moves $x$ to the root and deletes it, leaving two split trees; split trees are implemented with $O(n)$ total cost for a $\mathrm{MakeTree}$ and $n$ splits. The BST is a general treap keyed by previous access time whose nodes with tied times are split trees; arboral satisfaction of the output guarantees that the keys of row $t$ can be moved to the root in one root-to-leaf traversal by splitting, at amortized cost $O(1)$ per point of row $t$.
 
 ## Depends on
 
 - [Geometric Greedy (Greedy Future)](geometric-greedy.md)
 - [Online arborally satisfying algorithms](online-geometric-algorithm.md)
 - [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
-
-## Proof depends on
-
-- [Geometric characterization of the optimal offline BST cost](geometric-characterization-of-opt.md)
 
 ## Sources
 

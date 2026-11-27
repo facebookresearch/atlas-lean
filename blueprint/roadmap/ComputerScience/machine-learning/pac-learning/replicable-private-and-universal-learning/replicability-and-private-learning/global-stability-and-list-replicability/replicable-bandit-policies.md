@@ -17,4 +17,4 @@ Run a phased elimination algorithm with geometrically growing batches; at the en
 
 ## Sources
 
-- H. Esfandiari, A. Kalavasis, A. Karbasi, A. Krause, V. Mirrokni, G. Velegkas, "Replicable Bandits", ICLR (2023), arXiv:2210.01898.
+- H. Esfandiari, A. Kalavasis, A. Karbasi, A. Krause, V. Mirrokni, G. Velegkas, "Replicable Bandits", ICLR (2023), arXiv:2210.01898, Definition 1, Theorems 3, 4 and 6, Corollary 12.

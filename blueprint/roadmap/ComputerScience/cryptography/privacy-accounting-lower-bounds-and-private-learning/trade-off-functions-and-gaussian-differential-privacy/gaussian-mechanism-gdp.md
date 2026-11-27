@@ -10,10 +10,6 @@ For neighbours $S, S'$ the outputs are $\mathcal{N}(q(S), \sigma^2 I)$ and $\mat
 
 - [Gaussian differential privacy](gaussian-differential-privacy.md)
 
-## Proof depends on
-
-- [The Gaussian mechanism](../../differential-privacy/gaussian-mechanism-differentially-privat.md)
-
 ## Sources
 
 - J. Dong, A. Roth, W. J. Su, "Gaussian Differential Privacy", Journal of the Royal Statistical Society Series B 84 (2022), arXiv:1905.02383.

@@ -4,7 +4,7 @@ Let $F$ be a spanning forest of an undirected graph $G = (V, E)$ and let $e = \{
 
 1. for $f \in E \setminus F$, the forest $F - e + f$ is a spanning forest of $G - e$ if and only if $f \in E_G(T_u, T_v)$;
 2. if $E_G(T_u, T_v) \setminus \{e\} = \emptyset$, then $F - e$ is a spanning forest of $G - e$, and the component of $G$ containing $e$ splits into $T_u$ and $T_v$;
-3. deleting an edge of $E \setminus F$ leaves $F$ a spanning forest of $G - e$.
+3. for every $e' \in E \setminus F$, the forest $F$ is a spanning forest of $G - e'$.
 
 Hence connectivity queries reduce to tree queries in $F$, answered by Euler-tour trees or link-cut trees in $O(\log n)$ time per link, cut and query, and the whole difficulty of fully dynamic connectivity is to find a replacement edge in the cut $E_G(T_u, T_v)$.
 

@@ -1,16 +1,16 @@
 # High-accuracy l_p isotonic regression on DAGs in almost-linear time
 
-Fix a constant $p \in [1, \infty)$ and a constant $C > 0$. There is an algorithm that, given a directed acyclic graph $G = (V, E)$ with $m$ edges, observations $\mathbf{y} \in \mathbb{R}^V$ and weights $\mathbf{W} \ge 0$ with entries bounded by $\exp(\log^{O(1)} m)$, computes in $m^{1+o(1)}$ time a vector $\mathbf{x}$ with $\mathbf{x}_u \le \mathbf{x}_v$ for every arc $(u, v) \in E$ and
+Fix $p \in [1, \infty]$ and a constant $C > 0$. There is an algorithm that, given a directed acyclic graph $G = (V, E)$ with $m$ edges and observations $\mathbf{y} \in \mathbb{R}^V$ with entries bounded by $\exp(\log^{O(1)} m)$ in absolute value, computes in $m^{1+o(1)}$ time, with high probability, a vector $\mathbf{x}$ with $\mathbf{x}_u \le \mathbf{x}_v$ for every arc $(u, v) \in E$ and
 
 $$
-\|\mathbf{W}(\mathbf{x} - \mathbf{y})\|_p \le \min_{\mathbf{x}' :\ \mathbf{x}'_u \le \mathbf{x}'_v\ \forall (u,v) \in E}\|\mathbf{W}(\mathbf{x}' - \mathbf{y})\|_p + \exp(-\log^{C} m).
+\|\mathbf{x} - \mathbf{y}\|_p \le \min_{\mathbf{x}' :\ \mathbf{x}'_u \le \mathbf{x}'_v\ \forall (u,v) \in E}\|\mathbf{x}' - \mathbf{y}\|_p + \exp(-\log^{C} m).
 $$
 
 The bound depends on the number of arcs of $G$, not of its transitive closure.
 
 ## Proof sketch
 
-By minimax duality, $\min_{\mathbf{B}\mathbf{x} \ge 0}\|\mathbf{W}(\mathbf{x} - \mathbf{y})\|_p$ equals $\max\{-\mathbf{f}^{\top}\mathbf{B}\mathbf{y} : \mathbf{f} \ge 0,\ \|\mathbf{W}^{-1}\mathbf{B}^{\top}\mathbf{f}\|_q \le 1\}$ with $1/p + 1/q = 1$, which after rescaling is a flow problem with separable convex costs: linear costs on arcs and $q$-th power costs on demand edges attached to the vertices. Each term has a $4$-self-concordant barrier, so *Almost-linear time high-accuracy flows for separable convex costs* solves it to accuracy $\exp(-\log^{C'} m)$, and a primal solution is recovered from the near-optimal dual flow through the optimality conditions.
+By minimax duality, $\min_{\mathbf{B}\mathbf{x} \ge 0}\|\mathbf{x} - \mathbf{y}\|_p$ equals $\max\{-\mathbf{f}^{\top}\mathbf{B}\mathbf{y} : \mathbf{f} \ge 0,\ \|\mathbf{B}^{\top}\mathbf{f}\|_q \le 1\}$ with $1/p + 1/q = 1$, which after rescaling is a flow problem with separable convex costs: linear costs and nonnegativity on arcs and a $q$-norm cost on edges from the vertices to one new vertex. Each term has a $4$-self-concordant barrier, so *Almost-linear time high-accuracy flows for separable convex costs* solves it to accuracy $\exp(-\log^{C'} m)$, and a primal solution is recovered from the near-optimal dual flow through the optimality conditions.
 
 ## Depends on
 

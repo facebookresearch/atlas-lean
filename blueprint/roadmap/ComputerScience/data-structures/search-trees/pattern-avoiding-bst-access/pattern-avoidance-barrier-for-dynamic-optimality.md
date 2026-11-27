@@ -1,6 +1,6 @@
 # Pattern avoidance as a barrier for dynamic optimality
 
-If an online BST algorithm $\mathcal{A}$ is dynamically optimal, then for every fixed $\pi$ there is a constant $c'_\pi$ with $\mathrm{cost}_{\mathcal{A}}(X) \le c'_\pi\, n$ for every $\pi$-avoiding permutation access sequence $X \in S_n$. In particular a proof that splay trees or Greedy are dynamically optimal must in passing establish $O(1)$ amortized cost on all pattern-avoiding inputs, which current analyses achieve only up to superconstant inverse-Ackermann factors.
+If an online BST algorithm $\mathcal{A}$ is dynamically optimal, then for every fixed $\pi$ there is a constant $c'_\pi$ with $\mathrm{cost}_{\mathcal{A}}(X) \le c'_\pi\, n$ for every $\pi$-avoiding permutation access sequence $X \in S_n$. In particular a proof that splay trees or Greedy are dynamically optimal must in passing establish $O(1)$ amortized cost on all pattern-avoiding inputs, which current analyses do not reach: for Greedy the best bounds carry superconstant inverse-Ackermann-type factors, and for splay trees nothing better than the trivial $O(n \log n)$ is known apart from special cases such as sequential access.
 
 ## Proof sketch
 

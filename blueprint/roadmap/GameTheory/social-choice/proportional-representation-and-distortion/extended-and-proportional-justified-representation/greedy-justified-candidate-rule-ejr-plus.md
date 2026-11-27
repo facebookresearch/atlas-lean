@@ -4,7 +4,7 @@ An approval election consists of a finite set $N$ of $n$ voters, a finite set $C
 
 ## Proof sketch
 
-When the rule stops at level $\ell$, no witness for an EJR+ violation at level $\ell$ remains, and adding candidates later only increases $\lvert A_i \cap W\rvert$, so EJR+ holds at the end for all $\ell$. To bound the number of selected candidates, charge each candidate added at level $\ell$ to its witnessing group of at least $\ell n/k$ voters, all of whom then had fewer than $\ell$ representatives; a counting argument over levels, comparing the sizes of witnessing groups with the representation they receive, shows that at most $k$ candidates are added before the filling step.
+When the rule stops at level $\ell$, no witness for an EJR+ violation at level $\ell$ remains, and adding candidates later only increases $\lvert A_i \cap W\rvert$, so EJR+ holds at the end for all $\ell$. To bound the number of selected candidates, build a price system: give every voter a budget $k/n$ and, when a candidate is added at level $\ell$ because of a group $N'$ with $\lvert N' \rvert \ge \ell n/k$, split its price $1$ equally among $N'$. Each voter of $N'$ pays at most $k/(\ell n)$ for this candidate and has paid for fewer than $\ell$ earlier candidates, each at most as much, since earlier levels used groups at least as large; so no voter overspends. The total budget is $k$, hence at most $k$ candidates are selected before the filling step.
 
 ## Depends on
 

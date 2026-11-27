@@ -1,10 +1,10 @@
 # Last-iterate convergence of optimistic gradient in unconstrained smooth monotone games
 
-In an unconstrained ($\mathcal{Z} = \mathbb{R}^d$) $L$-smooth monotone game whose operator is additionally Lipschitz in its Jacobian, if all players run optimistic gradient descent with a suitable constant step size, then $\lVert F(z_T) \rVert = O(1/\sqrt T)$, so the last iterate is an $O(1/\sqrt T)$-approximate Nash equilibrium in terms of the total gradient norm and the gap restricted to bounded neighbourhoods; this rate is tight for optimistic gradient.
+In an unconstrained ($\mathcal{Z} = \mathbb{R}^d$) monotone game whose operator $F$ is $L$-Lipschitz and has a $\Lambda$-Lipschitz Jacobian, with a zero $z^\star$ of $F$ within distance $D$ of both initial points, if all players run optimistic gradient descent with a constant step size $\eta \le \min\{1/(150 L), 1/(1711 D \Lambda)\}$, then $\lVert F(z_T) \rVert \le 60 D / (\eta \sqrt T)$. Hence the last iterate is an $O(1/\sqrt T)$-approximate Nash equilibrium in terms of the total gradient norm and of the total gap function over balls of radius $3D$ around the initial points ($O(m D^2/(\eta \sqrt T))$ for $m$ players); this rate is tight for optimistic gradient.
 
 ## Proof sketch
 
-Track the potential $\lVert F(z_t)\rVert^2$ plus a correction involving the difference of consecutive operator values, and show it is non-increasing using monotonicity and the second-order smoothness assumption. Combined with the summability of squared operator norms along the trajectory, which follows from the standard energy inequality, this yields the $O(1/\sqrt T)$ rate; the lower bound follows from the linear-iterative-method lower bound.
+Some iterate among the first $T$ already has $\lVert F(z_t) \rVert = O(1/\sqrt T)$ (best-iterate convergence). From that time on, track an adaptively chosen potential built from the current and previous operator values and show, using monotonicity and the Lipschitz Jacobian, that it grows by at most a constant factor overall, so the last iterate stays within a constant factor of the best one. The lower bound follows from the $p$-SCLI lower bound, since optimistic gradient is a $2$-SCLI.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ Track the potential $\lVert F(z_t)\rVert^2$ plus a correction involving the diff
 
 ## Sources
 
-- N. Golowich, S. Pattathil, C. Daskalakis, "Tight last-iterate convergence rates for no-regret learning in multi-player games", NeurIPS 2020, arXiv:2010.13724.
+- N. Golowich, S. Pattathil, C. Daskalakis, "Tight last-iterate convergence rates for no-regret learning in multi-player games", NeurIPS 2020, arXiv:2010.13724, Theorem 5, Corollary 6 and Theorem 7.

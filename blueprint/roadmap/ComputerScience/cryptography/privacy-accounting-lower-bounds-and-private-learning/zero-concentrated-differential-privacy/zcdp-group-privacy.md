@@ -16,4 +16,4 @@ Use the weak triangle inequality for Rényi divergence: for $P, Q, R$ and conjug
 
 ## Sources
 
-- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065.
+- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065, Proposition 1.9, Lemma 5.2 and Proposition 5.3.

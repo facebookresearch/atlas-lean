@@ -4,7 +4,7 @@ Iceberg hashing is a dynamic hash table that, for keys of $\Theta(\log n)$ bits 
 
 ## Proof sketch
 
-The front yard uses bins of size $h = \Theta(\log n)$ whose contents are stored with quotienting, so each key costs $\log_2(|U|/n) + O(1)$ bits plus $O(\log \log n)$ bits of in-bin addressing metadata, giving $O(n\log\log n)$ total redundancy. The overflow lemma keeps the back yard at $o(n)$ keys, where a conventional constant-time table can afford more space. Stability holds because keys never move within the front yard, and *waterfall addressing* performs resizes without an indirection layer; high-probability guarantees come from concentration of bin loads with limited-independence hashing.
+The front yard uses bins of size $h = \Theta(\log n)$ whose contents are stored with quotienting, so each key costs $\log_2(|U|/n) + O(1)$ bits plus $O(\log \log n)$ bits of in-bin addressing metadata, giving $O(n\log\log n)$ total redundancy. The overflow lemma keeps the back yard at $o(n)$ keys, where a conventional constant-time table can afford more space. Stability holds because keys never move: a key that overflows to the back yard stays there, and the Iceberg Lemma shows that such an unmanaged back yard still holds at most $n/\mathrm{poly}(h)$ keys at every time, with probability $1 - 2^{-n/\mathrm{polylog}\, n}$, against an oblivious sequence of operations. *Waterfall addressing* performs resizes without an indirection layer.
 
 ## Depends on
 

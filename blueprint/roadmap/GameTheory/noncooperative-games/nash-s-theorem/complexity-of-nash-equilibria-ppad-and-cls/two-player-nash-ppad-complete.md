@@ -16,8 +16,10 @@ For three or more players, Daskalakis, Goldberg and Papadimitriou reduce End-of-
 ## Proof depends on
 
 - [Nash's theorem](../exists-is-mixed-nash.md)
+- [Two-player Nash equilibrium is in PPAD](../../bimatrix-games-and-the-lemke-howson-algorithm/bimatrix-polyhedral-theory/two-player-nash-equilibrium-is-in-ppad.md)
 
 ## Sources
 
 - C. Daskalakis, P. W. Goldberg, C. H. Papadimitriou, "The Complexity of Computing a Nash Equilibrium", SIAM Journal on Computing 39(1) (2009); STOC 2006.
 - X. Chen, X. Deng, S.-H. Teng, "Settling the Complexity of Computing Two-Player Nash Equilibria", Journal of the ACM 56(3) (2009); FOCS 2006.
+- K. Etessami, M. Yannakakis, "On the Complexity of Nash Equilibria and Other Fixed Points", SIAM Journal on Computing 39(6) (2010); FOCS 2007 (FIXP-completeness of exact equilibria for three or more players).

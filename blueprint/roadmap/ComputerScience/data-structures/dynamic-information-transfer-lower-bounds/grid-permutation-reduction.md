@@ -1,10 +1,10 @@
 # Partial sums over permutation groups reduce to connectivity of disjoint paths
 
-Let $k = \sqrt{n}$. Dynamic partial sums over the symmetric group $S_k$ on an array of length $k$ reduces to dynamic connectivity on an $n$-vertex graph that is always a disjoint union of paths: vertices form a $k \times k$ grid of columns $0, \dots, k$, the edges between columns $i-1$ and $i$ form the perfect matching given by $A[i] \in S_k$, an $\mathrm{update}(i, \pi)$ is realized by $O(k)$ edge deletions and insertions, and the value of $\mathrm{sum}(i)$ at a point $a$ equals the unique $b$ in column $i$ connected to $(0, a)$, which can be identified by connectivity queries.
+Let $k = \sqrt{n}$. Dynamic partial sums over the symmetric group $S_k$ on an array of length $k$, with *verify-sum* queries (given $i$ and $\pi \in S_k$, decide whether $A[1] A[2] \cdots A[i] = \pi$), reduces to dynamic connectivity on a graph with $\Theta(n)$ vertices that is always a disjoint union of $k$ paths. The vertices $(x, y)$ form a grid with columns $x = 0, \dots, k$ and rows $y \in [k]$; the edges between columns $i - 1$ and $i$ form the perfect matching given by $A[i]$. An $\mathrm{update}(i, \pi)$ is realized by $k$ edge deletions and $k$ edge insertions, and $\mathrm{verify\text{-}sum}(i, \pi)$ by the $k$ connectivity queries asking whether $(0, y)$ is connected to $(i, \pi(y))$ for all $y \in [k]$.
 
 ## Proof sketch
 
-The graph is a union of $k$ vertex-disjoint paths through the columns, and following the path from $(0, a)$ through columns $1, \dots, i$ applies $A[1], \dots, A[i]$ in turn. Replacing one matching changes $2k$ edges. Since each element of $S_k$ carries $\Theta(k\lg k)$ bits, the partial-sums lower bound with $\delta = \Theta(k \lg k)$ bits per element transfers to connectivity after dividing by the $O(k)$ edge operations per update.
+The graph is a union of $k$ vertex-disjoint paths through the columns, and following the path from $(0, a)$ through columns $1, \dots, i$ applies $A[1], \dots, A[i]$ in turn. Replacing one matching changes $2k$ edges. Each element of $S_k$ carries $\delta = \Theta(k \lg k) = \Theta(\sqrt{n}\lg n)$ bits, so with $w = \Theta(\lg n)$ the Pătraşcu–Demaine lower bound of $\Omega((\delta/w) \lg n)$ per macro-operation, proved for verify-sum queries via their treatment of low-entropy (nondeterministic) queries, is $\Omega(\sqrt{n}\lg n)$; dividing by the $O(\sqrt{n})$ elementary operations per macro-operation gives $\Omega(\lg n)$ per connectivity operation.
 
 ## Depends on
 

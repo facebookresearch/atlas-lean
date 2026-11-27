@@ -33,4 +33,3 @@ For the lower bound, fix $\mu \in \Delta(\mathcal{M} \times \Pi)$ and let $M_{\p
 ## Sources
 
 - D. J. Foster, A. Rakhlin, A. Sekhari, K. Sridharan, "On the Complexity of Adversarial Decision Making", NeurIPS (2022), arXiv:2206.13063, Section 3 (Eq. (20), Definition 3.1, Theorem 3.1, Proposition 3.1) and Appendix C (Proposition C.1, Theorem C.1).
-- D. Russo, B. Van Roy, "Learning to Optimize via Posterior Sampling", Mathematics of Operations Research 39 (2014), arXiv:1301.2609.

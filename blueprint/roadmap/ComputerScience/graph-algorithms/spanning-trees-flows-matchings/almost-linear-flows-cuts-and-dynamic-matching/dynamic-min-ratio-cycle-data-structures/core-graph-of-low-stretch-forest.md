@@ -6,12 +6,13 @@ $$
 \boldsymbol{\ell}^{\mathcal{C}(G,F)}_{\hat{e}} = \widetilde{\mathrm{str}}_e\,\boldsymbol{\ell}_e, \qquad \mathbf{g}^{\mathcal{C}(G,F)}_{\hat{e}} = \mathbf{g}_e + \langle\mathbf{g}, \mathbf{p}(T[v, u])\rangle,
 $$
 
-with the convention that the tree term is $0$ when $u, v$ are disconnected in $T$. Since $\mathcal{C}(G, F)$ has $O(m/k)$ vertices initially, it reduces the vertex count while keeping all edges; lengths and gradients of core edges do not change when edges of $F$ are deleted.
+with the convention that the tree term is $0$ when $u, v$ are disconnected in $T$. When $F$ comes from *Dynamic low-stretch forests with stable stretch overestimates*, $\mathcal{C}(G, F)$ has $O(m/k)$ vertices initially, so it reduces the vertex count while keeping all edges; lengths and gradients of core edges do not change when edges of $F$ are deleted.
 
 ## Depends on
 
 - [Stretch of an edge with respect to a rooted spanning forest](rooted-forest-edge-stretch.md)
 - [Fundamental tree cycles as circulations](fundamental-tree-cycle-circulation.md)
+- [Dynamic low-stretch forests with stable stretch overestimates](dynamic-low-stretch-forest.md)
 
 ## Sources
 

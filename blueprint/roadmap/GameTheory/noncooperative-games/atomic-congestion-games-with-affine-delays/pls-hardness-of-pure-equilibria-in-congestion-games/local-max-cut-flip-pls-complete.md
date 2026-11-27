@@ -4,7 +4,7 @@ The local search problem Local Max-Cut asks, given an undirected graph with inte
 
 ## Proof sketch
 
-Reduce from a PLS-complete circuit local search problem (Flip for Boolean circuits) through a chain of tight reductions: first to weighted satisfiability problems with the flip neighbourhood (positive not-all-equal 2-SAT), whose clauses directly translate into weighted edges between vertices representing variables. Tightness of each step preserves exponential improving paths and the PSPACE-completeness of the standard algorithm problem.
+Reduce from a PLS-complete circuit local search problem (Flip for Boolean circuits) through a chain of tight reductions via weighted satisfiability problems with the flip neighbourhood, ending at positive not-all-equal satisfiability with weighted clauses; with two-literal clauses this is exactly Local Max-Cut, the clause $x \ne y$ of weight $w$ being an edge of weight $w$ between the vertices of $x$ and $y$. Tightness of each step preserves exponential improving paths and the PSPACE-completeness of the standard algorithm problem.
 
 ## Depends on
 

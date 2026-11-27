@@ -1,10 +1,10 @@
 # Optimal consistency-robustness tradeoff for ski rental
 
-As $b \to \infty$: every deterministic ski-rental algorithm using a prediction that is $(1 + \lambda)$-consistent, for $\lambda \in (0, 1)$, has robustness at least $1 + 1/\lambda$, so the deterministic algorithm of Purohit, Svitkina and Kumar is Pareto-optimal; and for randomized algorithms the tradeoff curve $\left(\frac{\lambda}{1 - e^{-\lambda}}, \frac{1}{1 - e^{-\lambda}}\right)$ is optimal up to lower-order terms.
+Every deterministic ski-rental algorithm using a prediction that is $(1 + \lambda)$-consistent, for $\lambda \in (0, 1)$, has robustness at least $1 + \frac{b - 1}{\lambda b + 1}$, which tends to $1 + 1/\lambda$ as $b \to \infty$, so the deterministic algorithm of Purohit, Svitkina and Kumar is asymptotically Pareto-optimal. Every randomized algorithm with robustness $\gamma$ has consistency at least $\gamma \log\left(1 + \frac{1}{\gamma - 1}\right)$; with $\gamma = \frac{1}{1 - e^{-\lambda}}$ this is $\frac{\lambda}{1 - e^{-\lambda}}$, so the randomized tradeoff curve $\left(\frac{\lambda}{1 - e^{-\lambda}}, \frac{1}{1 - e^{-\lambda}}\right)$ of Purohit, Svitkina and Kumar is optimal up to lower-order terms in $b$.
 
 ## Proof sketch
 
-For the deterministic bound, consider the prediction $y = \infty$: consistency forces buying no later than about day $\lambda b$ when $x$ is large, and then the instance $x$ equal to the buying day gives ratio $(\lambda b + b)/(\lambda b)$. For randomized algorithms, Wei and Zhang write consistency and robustness constraints on the buying-day distribution as a linear program and exhibit a dual solution, an adversary distribution over $x$, matching the exponential construction.
+For the deterministic bound, fix a prediction $y > (1 + \lambda)b$ and let $t$ be the buying day: consistency on $x = y$ forces $t \le \lambda b + 1$, and then the instance $x = t$ gives ratio $(t + b - 1)/t \ge 1 + \frac{b-1}{\lambda b + 1}$. For randomized algorithms, Wei and Zhang write the buying-day distribution as variables of an infinite linear program in which consistency and robustness are linear constraints, and determine analytically when this program is feasible.
 
 ## Depends on
 
@@ -18,5 +18,5 @@ For the deterministic bound, consider the prediction $y = \infty$: consistency f
 
 ## Sources
 
-- Alexander Wei, Fred Zhang, "Optimal Robustness-Consistency Trade-offs for Learning-Augmented Online Algorithms", NeurIPS (2020), arXiv:2010.11443.
+- Alexander Wei, Fred Zhang, "Optimal Robustness-Consistency Trade-offs for Learning-Augmented Online Algorithms", NeurIPS (2020), arXiv:2010.11443, Theorems 1.1 and 1.2.
 - Manish Purohit, Zoya Svitkina, Ravi Kumar, "Improving Online Algorithms via ML Predictions", NeurIPS (2018).

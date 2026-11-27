@@ -1,6 +1,6 @@
 # Undirected vertex connectivity with polylogarithmically many max-flows
 
-Let $\kappa(G)$ be the vertex connectivity of an undirected graph $G$ with $n$ vertices and $m$ edges: the least number of vertices whose removal disconnects $G$ or leaves a single vertex. If a maximum flow in graphs with $m$ edges can be computed in $O(m^{\alpha})$ time for some $\alpha \ge 1$, then $\kappa(G)$ can be computed by a randomized algorithm in $\tilde O(m^{\alpha})$ time with success probability $1 - n^{-c}$. With an $m^{4/3+o(1)}$-time maximum-flow algorithm this gives $m^{4/3+o(1)}$ time; for directed graphs the corresponding reduction gives $m n^{1 - 1/12 + o(1)}$ time.
+Let $\kappa(G)$ be the vertex connectivity of an undirected graph $G$ with $n$ vertices and $m$ edges: the least number of vertices whose removal disconnects $G$ or leaves a single vertex. If a maximum flow in unit-capacity graphs with $m$ edges can be computed in $O(m^{\alpha})$ time for some $\alpha \ge 1$, then $\kappa(G)$ can be computed by a randomized (Monte Carlo) algorithm in $\tilde O(m^{\alpha})$ time with success probability $1 - n^{-c}$; the algorithm makes $s$-$t$ maximum-flow calls on unit-capacity graphs with $\tilde O(m)$ vertices and $\tilde O(m)$ edges in total and spends $\tilde O(m)$ time outside them. With an $m^{4/3+o(1)}$-time maximum-flow algorithm this gives $m^{4/3+o(1)}$ time; for directed graphs a randomized Monte Carlo algorithm runs in $m n^{1 - 1/12 + o(1)}$ time.
 
 ## Proof sketch
 

@@ -8,5 +8,5 @@ Fix a base probability measure $\mu$ on the instance space $X$ and $\sigma \in (
 
 ## Sources
 
-- N. Haghtalab, T. Roughgarden, A. Shetty, "Smoothed Analysis of Online and Differentially Private Learning", NeurIPS (2020), arXiv:2006.10129.
+- N. Haghtalab, T. Roughgarden, A. Shetty, "Smoothed Analysis of Online and Differentially Private Learning", NeurIPS (2020), arXiv:2006.10129, Section 2 (with $\mu$ uniform).
 - A. Block, Y. Dagan, N. Golowich, A. Rakhlin, "Smoothed Online Learning is as Easy as Statistical Learning", COLT (2022), arXiv:2202.04690.

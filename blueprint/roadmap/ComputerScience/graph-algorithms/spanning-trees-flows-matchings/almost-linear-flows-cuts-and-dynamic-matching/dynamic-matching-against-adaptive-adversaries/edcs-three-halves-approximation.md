@@ -2,7 +2,7 @@
 
 Let $\varepsilon < 1/2$.
 
-1. If $G$ is bipartite, $\lambda \le \varepsilon/4$, $\beta \ge 2\lambda^{-3}$ and $\beta^{-} \ge (1 - \lambda)\beta$, then every $H = \mathrm{EDCS}(G, \beta, \beta^{-})$ satisfies $\mu(G) \le (3/2 + \varepsilon)\,\mu(H)$.
+1. If $G$ is bipartite, $\lambda \le \varepsilon/4$, $\beta \ge 2\lambda^{-1}$ and $\beta^{-} \ge (1 - \lambda)\beta$, then every $H = \mathrm{EDCS}(G, \beta, \beta^{-})$ satisfies $\mu(G) \le (3/2 + \varepsilon)\,\mu(H)$.
 2. For general $G$, if $\lambda \le \varepsilon/32$, $\beta \ge 8\lambda^{-2}\log(1/\lambda)$ and $\beta^{-} \ge (1 - \lambda)\beta$, then every $H = \mathrm{EDCS}(G, \beta, \beta^{-})$ satisfies $\mu(G) \le (3/2 + \varepsilon)\,\mu(H)$.
 
 In both cases $H$ has $O(n\beta) = O_{\varepsilon}(n)$ edges, so an EDCS is a sparse, update-robust matching sparsifier.

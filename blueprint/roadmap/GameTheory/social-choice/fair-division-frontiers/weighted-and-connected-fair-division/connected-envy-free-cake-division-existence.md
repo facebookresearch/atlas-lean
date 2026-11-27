@@ -9,9 +9,6 @@ Parametrize divisions into $n$ intervals by the standard $(n-1)$-simplex of cut 
 ## Depends on
 
 - [Cake cutting in the Robertson-Webb query model](../../cake-cutting-in-the-robertson-webb-query-model.md)
-
-## Proof depends on
-
 - [No finite protocol finds contiguous envy-free divisions for three or more agents](../envy-free-cake-cutting-query-complexity/no-finite-protocol-contiguous-envy-free.md)
 
 ## Sources

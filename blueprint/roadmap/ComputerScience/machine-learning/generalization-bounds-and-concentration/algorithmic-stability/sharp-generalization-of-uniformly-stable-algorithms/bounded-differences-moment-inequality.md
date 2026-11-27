@@ -1,6 +1,6 @@
 # Moment form of the bounded differences inequality
 
-Let $f$ be a function of independent random variables $X_1, \dots, X_n$ such that changing any single coordinate changes $f$ by at most $\beta$. Then for every $p \ge 2$,
+Let $f$ be a measurable function of independent random variables $X_1, \dots, X_n$, with values in a common space $\mathcal{X}$, such that changing any single coordinate of the argument changes $f$ by at most $\beta$. Then for every $p \ge 2$,
 
 $$
 \big\| f(X_1, \dots, X_n) - \mathbb{E} f(X_1, \dots, X_n) \big\|_p \le 2\sqrt{np}\,\beta .
@@ -12,8 +12,9 @@ By McDiarmid's inequality, $f - \mathbb{E}f$ is sub-Gaussian with variance proxy
 
 ## Proof depends on
 
-- [McDiarmid's bounded-differences inequality, finite i.i.d. case](../../../../../Probability/concentration-inequalities/mcdiarmid-s-inequality/mcdiarmid-one-sided-finite-iid.md)
+- [McDiarmid's inequality, upper tail](../../../../../Probability/concentration-inequalities/mcdiarmid-s-inequality/measure-real-sub-integral-ge-le-of-bound.md)
+- [McDiarmid's inequality, lower tail](../../../../../Probability/concentration-inequalities/mcdiarmid-s-inequality/measure-real-integral-sub-ge-le-of-bound.md)
 
 ## Sources
 
-- O. Bousquet, Y. Klochkov, N. Zhivotovskiy, "Sharper Bounds for Uniformly Stable Algorithms", COLT (2020), arXiv:1910.07833.
+- O. Bousquet, Y. Klochkov, N. Zhivotovskiy, "Sharper Bounds for Uniformly Stable Algorithms", COLT (2020), arXiv:1910.07833, Lemma 2.

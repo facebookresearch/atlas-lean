@@ -1,10 +1,10 @@
 # Upper bounds on the rainbow cycle number
 
-For every $d \ge 1$ the rainbow cycle number satisfies $R(d) \le d^4$. Moreover $R(d) = O(d \log d)$, and this is tight up to the logarithmic factor since $R(d) \ge d$.
+For every $d \ge 1$ the rainbow cycle number satisfies $R(d) \le d^4 + d$, and in a $k$-partite digraph as in its definition with $k > d^4 + d$ parts a rainbow cycle can be found in time polynomial in $k$. Moreover $R(d) \le (1 + o(1))\, d \log d$, and this is tight up to the logarithmic factor since $R(d) \ge d$.
 
 ## Proof sketch
 
-Assign to each vertex a random-like signature from the parts it receives arcs from and show that a long rainbow-cycle-free configuration forces a combinatorial structure (an injective selection of in-neighbours) whose size is bounded by a polynomial in $d$. The sharper $O(d \log d)$ bound follows from a probabilistic argument: sample one vertex per part uniformly at random; with positive probability the induced selection contains a rainbow cycle once $k \gg d \log d$, because each selected vertex has a selected in-neighbour in many parts.
+For the polynomial bound, fix a part $V$ and trace a path backwards that alternates between $V$ and the other parts, using that every vertex has an in-arc from every part; since $V$ has at most $d$ vertices, the pigeonhole principle closes a cycle that visits every part other than $V$ at most once. With more than $d^4 + d$ parts, each two-step connection through $V$ can be rerouted through a distinct bypass part, which yields a cycle visiting every part at most once. For the $d \log d$ bound, choose one vertex from each part independently and uniformly at random. A fixed chosen vertex lacks a chosen in-neighbour with probability at most $(1 - 1/d)^{k-1}$, so by the union bound, if $k(1 - 1/d)^{k-1} < 1$, with positive probability every chosen vertex has a chosen in-neighbour; the induced subgraph then contains a cycle, which is rainbow since it uses one vertex per part.
 
 ## Depends on
 

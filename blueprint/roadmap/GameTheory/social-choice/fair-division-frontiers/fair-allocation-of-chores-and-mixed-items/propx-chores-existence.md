@@ -1,10 +1,10 @@
 # Proportional up to any chore allocations always exist
 
-Let $n$ agents have additive costs $c_i(e) \ge 0$ on a finite set of chores $M$. A complete allocation $X$ is PROPX if for every agent $i$ and every chore $e \in X_i$, $c_i(X_i \setminus \{e\}) \le c_i(M)/n$. For every such instance a PROPX allocation exists and can be computed in polynomial time. In contrast, for goods with additive values $v_i$ the corresponding notion, $v_i(X_i \cup \{g\}) \ge v_i(M)/n$ for every agent $i$ and every good $g \notin X_i$, can fail to be satisfiable.
+Let $n$ agents have additive costs $c_i(e) \ge 0$ on a finite set of chores $M$. A complete allocation $X$ is PROPX if for every agent $i$ and every chore $e \in X_i$, $c_i(X_i \setminus \{e\}) \le c_i(M)/n$. For every such instance a PROPX allocation exists and can be computed in polynomial time; the same holds for weighted proportionality with arbitrary entitlements. In contrast, for goods with additive values $v_i$ the corresponding notion, $v_i(X_i \cup \{g\}) \ge v_i(M)/n$ for every agent $i$ and every good $g \notin X_i$, can fail to be satisfiable.
 
 ## Proof sketch
 
-Reduce to ordered instances, then allocate chores from the largest to the smallest by a bid-and-take procedure in which an agent accepts a chore as long as her cost stays within her proportional share after removing her smallest assigned chore. Ordering ensures the removed chore is the smallest one assigned, which is exactly what PROPX needs; a counting argument shows all chores are assigned. A three-agent example with one large good and small goods shows PROPX can fail for goods.
+First treat identical-ordering instances, in which all agents rank the chores in the same order of cost. Allocate the chores from the most to the least costly, each to a sink of the envy graph, resolving top-trading envy cycles when there is no sink. Because the chore just assigned is the smallest in its holder's bundle, the result is EFX for chores, and EFX implies PROPX. A general reduction converts any algorithm for identical-ordering instances into one for arbitrary instances while preserving PROPX. A separate bid-and-take algorithm handles the weighted case.
 
 ## Depends on
 
@@ -12,7 +12,7 @@ Reduce to ordered instances, then allocate chores from the largest to the smalle
 
 ## Proof depends on
 
-- [Reduction to ordered instances for maximin share approximation](../approximate-maximin-share-allocations/ordered-instance-reduction-mms.md)
+- [Top-trading envy-cycle elimination gives EF1 for monotone chores](top-trading-envy-cycle-ef1-chores.md)
 
 ## Sources
 

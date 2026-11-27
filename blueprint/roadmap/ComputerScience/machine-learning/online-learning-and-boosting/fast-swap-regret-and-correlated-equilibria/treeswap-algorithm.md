@@ -6,7 +6,7 @@ $$
 \mathrm{SwapReg}_T = \frac{1}{T}\max_{\phi : [N] \to [N]} \sum_{t=1}^T \sum_{a} p_t(a)\big(\ell_t(a) - \ell_t(\phi(a))\big),
 $$
 
-and the learner achieves **$\varepsilon$-swap regret** after $T$ rounds if $\mathbb{E}[\mathrm{SwapReg}_T] \le \varepsilon$ against every adaptive adversary. In the non-distributional variant the learner must play a sampled action rather than a distribution. Given an external-regret algorithm $\mathcal{A}$ and parameters $M, d \in \mathbb{N}$, **TreeSwap** runs for $T = M^d$ rounds, indexes round $t$ by its base-$M$ expansion $(t_1, \dots, t_d)$, and maintains for each level $k \le d$ an instance of $\mathcal{A}$ that is restarted every $M^{d-k+1}$ rounds and advanced once every $M^{d-k}$ rounds, being fed the average loss of the corresponding block of rounds. At round $t$ the learner plays the uniform mixture $p_t = \frac{1}{d}\sum_{k=1}^d q^{(k)}_t$ of the current outputs $q^{(k)}_t$ of the $d$ active instances along the root-to-leaf path of $t$ in the $M$-ary tree of depth $d$.
+and the learner achieves **$\varepsilon$-swap regret** after $T$ rounds if $\mathbb{E}[\mathrm{SwapReg}_T] \le \varepsilon$ against every adaptive adversary. In the non-distributional variant the learner must play a sampled action rather than a distribution. Given an external-regret algorithm $\mathcal{A}$ for a loss class closed under convex combinations and parameters $M, d \in \mathbb{N}$, **TreeSwap** runs for $T \le M^d$ rounds, indexes round $t$ by its base-$M$ expansion $(t_1, \dots, t_d)$, and maintains for each level $k \le d$ an instance of $\mathcal{A}$ that is restarted every $M^{d-k+1}$ rounds and advanced once every $M^{d-k}$ rounds, being fed the average loss of the corresponding block of rounds. At round $t$ the learner plays the uniform mixture $p_t = \frac{1}{d}\sum_{k=1}^d q^{(k)}_t$ of the current outputs $q^{(k)}_t$ of the $d$ active instances along the root-to-leaf path of $t$ in the $M$-ary tree of depth $d$.
 
 ## Depends on
 
@@ -15,5 +15,5 @@ and the learner achieves **$\varepsilon$-swap regret** after $T$ rounds if $\mat
 
 ## Sources
 
-- Y. Dagan, C. Daskalakis, M. Fishelson, N. Golowich, "From External to Swap Regret 2.0: An Efficient Reduction for Large Action Spaces", STOC (2024), arXiv:2310.19786.
+- Y. Dagan, C. Daskalakis, M. Fishelson, N. Golowich, "From External to Swap Regret 2.0: An Efficient Reduction for Large Action Spaces", STOC (2024), arXiv:2310.19786, Algorithm 1.
 - B. Peng, A. Rubinstein, "Fast Swap Regret Minimization and Applications to Approximate Correlated Equilibria", STOC (2024), arXiv:2310.19647.

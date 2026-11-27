@@ -4,7 +4,7 @@ On every $n$-point metric space there is a randomized online algorithm for metri
 
 ## Proof sketch
 
-Bubeck, Cohen, J. R. Lee and Y. T. Lee run continuous-time mirror descent on the polytope of probability measures over the leaves of a weighted tree, with a regularizer that sums entropies of the conditional distributions at internal nodes weighted by edge lengths; on HSTs this is $O(\text{depth} \cdot \log n)$-competitive. An *unfair gluing* step combines solutions on subtrees of very different sizes so that the overhead depends on $\log n$ rather than on the depth, giving $O(\log n)$ on suitable trees, and the remaining $O(\log n)$ factor comes from the tree embedding.
+Bubeck, Cohen, J. R. Lee and Y. T. Lee run continuous-time mirror descent on the polytope of probability measures over the leaves of a weighted tree, with a multiscale entropy regularizer that weights the entropies of the conditional distributions at internal nodes by edge lengths; on an $n$-point tree metric of combinatorial depth $D$ this is $O(D \log n)$-competitive. For HSTs, mirror descent refines the standard approach of gluing *unfair* metrical task systems on subtrees, which removes the dependence on the depth and gives an $O(\log n)$-competitive algorithm; the remaining $O(\log n)$ factor comes from embedding an arbitrary $n$-point metric into HSTs with $O(\log n)$ expected distortion.
 
 ## Depends on
 
@@ -19,4 +19,4 @@ Bubeck, Cohen, J. R. Lee and Y. T. Lee run continuous-time mirror descent on the
 
 ## Sources
 
-- Sébastien Bubeck, Michael B. Cohen, James R. Lee, Yin Tat Lee, "Metrical Task Systems on Trees via Mirror Descent and Unfair Gluing", SIAM Journal on Computing 50(3) (2021); SODA (2019), arXiv:1807.04404.
+- Sébastien Bubeck, Michael B. Cohen, James R. Lee, Yin Tat Lee, "Metrical Task Systems on Trees via Mirror Descent and Unfair Gluing", SIAM Journal on Computing 50(3) (2021); SODA (2019), arXiv:1807.04404, Theorem 1.1 and abstract.

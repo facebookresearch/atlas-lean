@@ -16,4 +16,4 @@ Rényi divergence satisfies the chain rule $D_\alpha(P_{Y_1Y_2} \| Q_{Y_1Y_2}) \
 
 ## Sources
 
-- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065.
+- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065, Lemmas 1.7, 1.8 and 2.3.

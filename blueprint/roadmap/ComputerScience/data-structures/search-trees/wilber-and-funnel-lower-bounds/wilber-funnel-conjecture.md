@@ -1,11 +1,12 @@
 # Wilber's conjecture that the funnel bound is tight
 
-*Wilber's conjecture* (1989) asserts that $\mathrm{OPT}(X) = \Theta(\mathrm{W2}(X) + m)$ for every access sequence $X$ of length $m$, with absolute constants; equivalently, that the funnel bound is a dynamically optimal lower bound. The conjecture is open; it is implied by the Greedy conjecture together with an upper bound of Greedy in terms of the funnel bound.
+*Wilber's conjecture* (FOCS 1986; SIAM Journal on Computing 1989) asserts that $\mathrm{OPT}(X) = \Theta(\mathrm{W2}(X) + m)$ for every access sequence $X$ of length $m$, with absolute constants; equivalently, that the funnel bound is a dynamically optimal lower bound. The conjecture is open. Since $\mathrm{OPT}(X) = \Omega(\mathrm{W2}(X) - n)$ and $\mathrm{OPT}(X) \ge m$, for $m \ge n$ it is equivalent to the existence, for every $X$, of a BST execution of cost $O(\mathrm{W2}(X) + m)$.
 
 ## Depends on
 
 - [Dynamic optimality](../dynamic-optimality/dynamic-optimality.md)
 - [Wilber's funnel bound](funnel-bound.md)
+- [Wilber's second lower bound](wilber-second-bound.md)
 
 ## Sources
 

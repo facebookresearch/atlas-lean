@@ -6,13 +6,15 @@ Conversely, fix $a > 1$ and let $3 \le c \le N$. If a fingerprinting code for $N
 
 ## Proof sketch
 
-Under the marking assumption the pirate's word agrees with the coalition wherever all coalition members agree. Soundness and tracing are separate tail bounds. For an innocent user $i$, the weights $U_{ij}$ are independent of $y$ and have mean zero given $p_j$, so an exponential-moment bound shows that $S_i$ exceeds $Z$ with probability at most $\xi/N$, and a union bound covers all innocent users. For tracing, Tardos bounds the lower tail of the coalition's total score $\sum_{i \in C} S_i$: against any pirate strategy obeying the marking assumption, it is below $cZ = 20c^2\lceil \log(N/\xi) \rceil$ only with probability at most $\xi^{c/4}$, using the bias distribution to make every column with $y_j = 1$ contribute positively in expectation. When the total is at least $cZ$, the coalition has at most $c$ members, so some member has score at least $Z$ and is accused. The lower bound uses a symmetric strategy for the coalition and an information-theoretic argument.
+Under the marking assumption the pirate's word agrees with the coalition wherever all coalition members agree. Soundness and tracing are separate tail bounds. For an innocent user $i$, the weights $U_{ij}$ are independent of $y$ and have mean zero given $p_j$, so an exponential-moment bound shows that $S_i$ exceeds $Z$ with probability at most $\xi/N$, and a union bound covers all innocent users. For tracing, Tardos bounds the lower tail of the coalition's total score $\sum_{i \in C} S_i$: against any pirate strategy obeying the marking assumption, it is at most $cZ = 20c^2\lceil \log(N/\xi) \rceil$ only with probability at most $\xi^{c/4}$, using the bias distribution to make every column with $y_j = 1$ contribute positively in expectation (Tardos, Section 2.1). On the complementary event the total exceeds $cZ$; since the coalition has at most $c$ members, some member has score strictly greater than $Z$, and the strict accusation rule accuses it. A score equal to $Z$ is not an accusation, which is why the lower-tail event is taken with $\le cZ$. The lower bound uses a symmetric strategy for the coalition and an information-theoretic argument.
 
 ## Depends on
 
 - [Fingerprinting codes](../../differential-privacy/fingerprinting-codes.md)
+- [Tardos score](../../differential-privacy/tardos-score.md)
+- [Tardos accusation](../../differential-privacy/tardos-accuses.md)
 
 ## Sources
 
-- G. Tardos, "Optimal Probabilistic Fingerprint Codes", STOC (2003); Journal of the ACM 55 (2008).
+- G. Tardos, "Optimal Probabilistic Fingerprint Codes", STOC (2003); Journal of the ACM 55 (2008), Section 2.1.
 - D. Boneh, J. Shaw, "Collusion-Secure Fingerprinting for Digital Data", CRYPTO (1995); IEEE Transactions on Information Theory 44 (1998).

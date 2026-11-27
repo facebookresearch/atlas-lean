@@ -16,10 +16,6 @@ Let $S^{(i)}$ replace $z_i$ by a fresh $z_i' \sim D$. Then $(S^{(i)}, z_i)$ has 
 
 - [Differential privacy](../../differential-privacy/differentially-private.md)
 
-## Proof depends on
-
-- [Transfer theorem for adaptive data analysis](../../differential-privacy/differentially-private-transfer.md)
-
 ## Sources
 
 - C. Dwork, V. Feldman, M. Hardt, T. Pitassi, O. Reingold, A. Roth, "Preserving Statistical Validity in Adaptive Data Analysis", STOC (2015), arXiv:1411.2664.

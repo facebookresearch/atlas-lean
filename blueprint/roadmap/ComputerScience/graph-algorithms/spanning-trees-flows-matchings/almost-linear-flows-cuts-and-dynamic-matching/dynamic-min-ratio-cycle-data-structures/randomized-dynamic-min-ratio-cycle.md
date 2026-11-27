@@ -1,12 +1,12 @@
 # Randomized dynamic min-ratio cycle data structure under hidden stable flow chasing
 
-There is a randomized data structure that, on a dynamic graph $G^{(t)}$ with at most $m$ edges whose updates, gradients and lengths satisfy the hidden stable $\alpha$-flow chasing property, maintains $s = O(\log n)^d$ spanning trees $T_1, \ldots, T_s$ for $d = O(\log^{1/8} m)$ and after each update returns, for some $i \in [s]$, a circulation $\mathbf{\Delta}$ represented by $m^{o(1)}$ paths of $T_i$ (given by endpoints and the tree index) and $m^{o(1)}$ explicit off-tree edges such that
+There is a randomized data structure that, on a dynamic graph $G^{(t)}$ with at most $m$ edges whose update batches $U^{(t)}$ consist only of edge insertions and deletions and whose updates, gradients and lengths satisfy the hidden stable $\alpha$-flow chasing property, maintains $s = O(\log n)^d$ spanning trees $T_1, \ldots, T_s \subseteq G^{(t)}$ for $d = O(\log^{1/8} m)$ and after each update returns, for some $i \in [s]$, a circulation $\mathbf{\Delta}$ represented by $m^{o(1)}$ paths of $T_i$ (given by endpoints and the tree index) and $m^{o(1)}$ explicit off-tree edges such that
 
 $$
-\frac{\langle\mathbf{g}^{(t)}, \mathbf{\Delta}\rangle}{\|\mathbf{L}^{(t)}\mathbf{\Delta}\|_1} \le -\kappa\alpha, \qquad \kappa = m^{-o(1)}.
+\frac{\langle\mathbf{g}^{(t)}, \mathbf{\Delta}\rangle}{\|\mathbf{L}^{(t)}\mathbf{\Delta}\|_1} \le -\kappa\alpha, \qquad \kappa = \exp\bigl(-O(\log^{7/8} m\cdot\log\log m)\bigr).
 $$
 
-It supports updating gradients and lengths of the edges returned by the flow-maintenance routine in amortized $m^{o(1)}$ time, and over $m^{1+o(1)}$ updates it runs in $m^{1+o(1)}$ total time, succeeding with high probability.
+Over $\tau$ stages it succeeds with high probability and runs in total time $m^{o(1)}(m + Q)$, where $Q = \sum_{t \le \tau}|U^{(t)}|$.
 
 ## Proof sketch
 

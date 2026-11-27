@@ -1,10 +1,10 @@
 # Simple mechanisms are constant-factor optimal for a subadditive buyer over independent items
 
-For a single buyer whose valuation is subadditive over independent items, i.e. $v(S) = V(\{x_j\}_{j \in S})$ with independent item types $x_j$ and $V$ monotone subadditive in the set of items, the better of selling separately and grand bundling achieves a constant fraction of the optimal revenue.
+For a single buyer whose valuation distribution is subadditive over independent items, i.e. $v(S) = V_S(\langle x_j \rangle_{j \in S})$ with independent private item types $x_j$ (no externalities) and every realized $v$ monotone and subadditive, the better of selling separately and grand bundling achieves a constant fraction of the optimal revenue.
 
 ## Proof sketch
 
-Generalize the core-tail decomposition: subadditivity allows splitting the value of the core and the tail, and independence across items gives concentration of the core value via Talagrand-type inequalities for subadditive functions of independent variables. The tail is again handled by selling items separately, and grand bundling extracts the concentrated core value.
+Generalize the core-tail decomposition: subadditivity allows splitting the value of the core and the tail, and independence across items gives concentration of the core value via Schechtman's concentration inequality for subadditive (Lipschitz) functions of independent variables. The tail is again handled by selling items separately, and grand bundling extracts the concentrated core value.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Online rounding of fractional k-server on HSTs
 
-On every $\tau$-HST with $\tau$ larger than a suitable constant, every online fractional $k$-server algorithm (maintaining a nonnegative mass at each leaf with total mass $k$ and mass at most one per leaf, charged by transportation cost along the tree) can be converted online into a randomized integral $k$-server algorithm whose expected cost is at most $O(1)$ times the fractional cost.
+On every $\tau$-HST with $\tau > 5$, every online fractional $k$-server algorithm (maintaining a nonnegative mass at each leaf with total mass $k$ and mass at most one per leaf, charged by transportation cost along the tree) can be converted online into a randomized integral $k$-server algorithm whose expected cost is at most $O(1)$ times the fractional cost.
 
 ## Proof sketch
 
@@ -13,5 +13,5 @@ Maintain a distribution over integral configurations whose marginals at each sub
 
 ## Sources
 
-- Nikhil Bansal, Niv Buchbinder, Aleksander Mądry, Joseph Naor, "A Polylogarithmic-Competitive Algorithm for the k-Server Problem", Journal of the ACM 62(5) (2015); FOCS (2011).
-- Sébastien Bubeck, Michael B. Cohen, Yin Tat Lee, James R. Lee, Aleksander Mądry, "k-Server via Multiscale Entropic Regularization", STOC (2018), arXiv:1711.01085.
+- Nikhil Bansal, Niv Buchbinder, Aleksander Mądry, Joseph Naor, "A Polylogarithmic-Competitive Algorithm for the k-Server Problem", Journal of the ACM 62(5) (2015); FOCS (2011), arXiv:1110.1580, Section 5.2.
+- Sébastien Bubeck, Michael B. Cohen, Yin Tat Lee, James R. Lee, Aleksander Mądry, "k-Server via Multiscale Entropic Regularization", STOC (2018), arXiv:1711.01085, Lemma 3.2.

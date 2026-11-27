@@ -4,7 +4,7 @@ Throughout, $N = \{1, \dots, n\}$ is a finite set of agents and $M$ a finite set
 
 ## Proof sketch
 
-Normalize so that $v_i(M) = n$ (which gives $\mu_i \le 1$), and apply the valid reductions for single goods, pairs $\{g_n, g_{n+1}\}$ and triples while some agent values them at least $3/4$. In the reduced instance every good after the first $2n$ is worth less than $1/4$ to every agent and every pair $\{g_n, g_{n+1}\}$ less than $3/4$; initialize $n$ bags with $\{g_k, g_{2n+1-k}\}$ and fill them greedily with small goods. A counting argument shows every agent eventually takes a bag worth at least $3/4$.
+Normalize so that $v_i(M) = n$ (which gives $\mu_i \le 1$), and apply the valid reductions for single goods, pairs $\{g_n, g_{n+1}\}$ and triples $\{g_{2n-1}, g_{2n}, g_{2n+1}\}$ while some agent values them at least $3/4$ (the pair $\{g_1, g_{2n+1}\}$ is also used, where it is a valid reduction). In the reduced instance every good after the first $2n$ is worth less than $1/4$ to every agent and every pair $\{g_n, g_{n+1}\}$ less than $3/4$; initialize $n$ bags with $\{g_k, g_{2n+1-k}\}$ and fill them greedily with small goods. A counting argument shows every agent eventually takes a bag worth at least $3/4$.
 
 ## Depends on
 

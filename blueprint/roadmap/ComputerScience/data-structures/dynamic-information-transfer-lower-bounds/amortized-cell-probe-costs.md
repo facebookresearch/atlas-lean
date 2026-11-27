@@ -1,6 +1,6 @@
 # Amortized update and query cost of a dynamic cell-probe structure
 
-A dynamic cell-probe structure with $w$-bit cells has *amortized update cost* $t_u$ and *amortized query cost* $t_q$ if every sequence of $m_u$ updates and $m_q$ queries, starting from the initial state, is served with at most $m_u t_u + m_q t_q$ cell probes in total (reads and writes, with computation free). For randomized structures the bound is on the expected number of probes and queries must be correct with probability at least $2/3$ (Monte Carlo) or always (Las Vegas). Logarithms in tradeoffs are clamped: $\lg x$ denotes $\max\{1, \log_2 x\}$.
+A dynamic cell-probe structure with $w$-bit cells has *amortized update cost* $t_u$ and *amortized query cost* $t_q$ if every sequence of $m_u$ updates and $m_q$ queries, starting from the initial state, is served with at most $m_u t_u + m_q t_q$ cell probes in total (reads and writes, with computation free). For randomized structures the bound is on the expected number of probes, and queries must be correct always (Las Vegas) or with probability at least $1 - n^{-\Omega(1)}$ (Monte Carlo, as in Pătraşcu–Demaine). In Pătraşcu–Demaine tradeoffs, $\lg x$ denotes $\log_2(2 + x)$, which is positive for all $x \ge 0$.
 
 ## Depends on
 

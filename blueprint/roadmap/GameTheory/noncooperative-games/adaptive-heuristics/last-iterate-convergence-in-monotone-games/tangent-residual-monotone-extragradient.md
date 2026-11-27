@@ -1,6 +1,6 @@
 # Monotonicity of the tangent residual along extragradient iterates
 
-Let $F$ be monotone and $L$-Lipschitz on a compact convex set $\mathcal{Z}$, and run the extragradient method with step size $\eta \in (0, 1/(2L))$. Then the tangent residual of the iterates is non-increasing, $r^{\tan}(z_{t+1}) \le r^{\tan}(z_t)$ for every $t$, and $\sum_{t \le T} \lVert z_{t+1/2} - z_t \rVert^2 \le \lVert z_1 - z^\star \rVert^2 /(1 - \eta^2 L^2)$ for any solution $z^\star$.
+Let $F$ be monotone and $L$-Lipschitz on a compact convex set $\mathcal{Z}$, and run the extragradient method with step size $\eta \in (0, 1/L)$. Then the tangent residual of the iterates is non-increasing, $r^{\tan}(z_{t+1}) \le r^{\tan}(z_t)$ for every $t$, and $\sum_{t \le T} \lVert z_{t+1/2} - z_t \rVert^2 \le \lVert z_1 - z^\star \rVert^2 /(1 - \eta^2 L^2)$ for any solution $z^\star$.
 
 ## Proof sketch
 
@@ -18,4 +18,4 @@ The summability bound follows from the standard extragradient energy inequality 
 
 ## Sources
 
-- Y. Cai, A. Oikonomou, W. Zheng, "Tight Last-Iterate Convergence of the Extragradient and the Optimistic Gradient Descent-Ascent Algorithm for Constrained Monotone Variational Inequalities", arXiv:2204.09228 (2022).
+- Y. Cai, A. Oikonomou, W. Zheng, "Finite-Time Last-Iterate Convergence for Learning in Multi-Player Games", NeurIPS 2022; full version "Tight Last-Iterate Convergence of the Extragradient and the Optimistic Gradient Descent-Ascent Algorithm for Constrained Monotone Variational Inequalities", arXiv:2204.09228.

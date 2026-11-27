@@ -1,14 +1,16 @@
 # Deterministic (c, d, 0)-kernels preserve maximum matching within 2c(1+1/d)
 
-If $H$ is a deterministic $(c, d, 0)$-kernel of $G$, then
+Let $d \ge 1$ be an integer. If $H$ is a deterministic $(c, d, 0)$-kernel of $G$, then
 
 $$
 \mu(G) \le 2c\Bigl(1 + \frac{1}{d}\Bigr) \mu(H).
 $$
 
+More generally, if $H$ is a randomized $(c, d, \varepsilon)$-kernel of $G$ with $c \ge 1/(1 - \varepsilon)$, then $\mathbb{E}[\mu(H)] \ge \mu(G)/(2c(1 + 1/d))$.
+
 ## Proof sketch
 
-Fix a maximum matching $M^\ast$ of $G$ and build a fractional matching of $H$: give every edge of $H$ value $1/d$, and additionally route $M^\ast$-edges missing from $H$ to the high-degree endpoint guaranteed by the kernel property. Degree bounds keep the vector feasible up to a $(1 + 1/d)$ factor, and its value is at least $\mu(G)/(2c)$ because each missing $M^\ast$-edge has an endpoint of $H$-degree at least $d/c$. Rounding within $H$ costs at most the fractional integrality factor, which an edge-colouring argument controls, giving the stated ratio.
+Fix a maximum matching $M^\ast$ of $G$ and, for each realization of $H$, define $f_e = 1/d$ for $e \in H \setminus M^\ast$ and $f_{uv} = \max\{1 - (\deg_H(u) + \deg_H(v) - 2)/d, 0\}$ for $uv \in H \cap M^\ast$; the degree bound makes $f$ a fractional matching. With $y_v = \sum_{e \ni v} f_e$, every $uv \in M^\ast \cap H$ has $y_u + y_v \ge 1$, and every $uv \in M^\ast \setminus H$ has $y_u + y_v \ge \max_{v \in e}\deg_H(v)/d$, whose conditional expectation is at least $1/c$ by the kernel property; so the expected value of $f$ is at least $\mu(G)/(2c)$. Replacing each edge $e$ by $d f_e$ parallel copies gives a multigraph of maximum degree at most $d$ that, by Vizing's theorem and a recolouring of the copies of $M^\ast$-edges, is $(d+1)$-edge-colourable, so some colour class is a matching of $H$ of size at least $\sum_e f_e/(1 + 1/d)$.
 
 ## Depends on
 

@@ -4,16 +4,12 @@ If a mechanism is $\mu$-GDP with respect to datasets differing in one record, th
 
 ## Proof sketch
 
-Connect two datasets at distance $k$ by a chain of $k$ neighbouring steps. Testing the endpoints is at least as hard as the chained testing problem, whose trade-off function is obtained by composing the single-step bounds as functions: a type I error $\alpha$ propagates to type II error at most $1 - f(\dots)$ at each step. For Gaussians, $1 - G_\mu(1 - \cdot)$ composes as a shift of the mean, and $k$ shifts by $\mu$ give $G_{k\mu}$.
+Connect two datasets $S_0, S_k$ at distance $k$ by a chain $S_0, S_1, \dots, S_k$ of neighbouring steps and fix a rejection rule $\phi$ with type I error $\alpha$ on $S_0$. Since $T(M(S_{j-1}), M(S_j)) \ge f$, the rejection probability on the next dataset satisfies $\mathbb{E}_{M(S_j)}[\phi] \le (1 - f)\bigl(\mathbb{E}_{M(S_{j-1})}[\phi]\bigr)$, and $1 - f$ is nondecreasing. By induction the rejection probability on $S_k$ is at most $(1 - f)^{\circ k}(\alpha)$, so the type II error at the endpoint is at least $1 - (1 - f)^{\circ k}(\alpha)$. The induction propagates the bound on the rejection probability, not iterates of $1 - G_\mu(1 - \cdot)$. For Gaussians, $(1 - G_\mu)(\alpha) = \Phi\bigl(\Phi^{-1}(\alpha) + \mu\bigr)$ is a shift by $\mu$ in the probit scale, so its $k$-fold composition is $\Phi\bigl(\Phi^{-1}(\alpha) + k\mu\bigr) = 1 - G_{k\mu}(\alpha)$.
 
 ## Depends on
 
 - [Gaussian differential privacy](gaussian-differential-privacy.md)
 
-## Proof depends on
-
-- [Group privacy, approximate case](../../differential-privacy/group-approx.md)
-
 ## Sources
 
-- J. Dong, A. Roth, W. J. Su, "Gaussian Differential Privacy", Journal of the Royal Statistical Society Series B 84 (2022), arXiv:1905.02383.
+- J. Dong, A. Roth, W. J. Su, "Gaussian Differential Privacy", Journal of the Royal Statistical Society Series B 84 (2022), arXiv:1905.02383v3, Theorem 2.14.

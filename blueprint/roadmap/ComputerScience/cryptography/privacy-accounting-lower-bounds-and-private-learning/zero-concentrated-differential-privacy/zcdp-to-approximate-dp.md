@@ -24,4 +24,4 @@ For neighbours, the privacy loss $L$ satisfies $\mathbb{E}_P[e^{(\alpha - 1)L}] 
 
 ## Sources
 
-- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065.
+- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065, Proposition 1.3 and Lemma 3.5.

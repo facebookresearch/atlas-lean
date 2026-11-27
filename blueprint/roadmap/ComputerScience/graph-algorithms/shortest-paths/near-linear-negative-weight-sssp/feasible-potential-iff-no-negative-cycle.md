@@ -6,7 +6,7 @@ $$
 \phi(v)=\mathrm{dist}_{G_s}(s,v)=\min_{u\in V}\mathrm{dist}_G(u,v)\le 0
 $$
 
-is a feasible price function. Given any feasible $\phi$, single-source distances from any $x\in V$ in $G$ are obtained from one run of Dijkstra's algorithm on $G_\phi$ followed by the correction $\mathrm{dist}_G(x,v)=\mathrm{dist}_{G_\phi}(x,v)-\phi(x)+\phi(v)$, in $O(m+n\log n)$ total time.
+is a feasible price function. Given any feasible $\phi$, single-source distances from any $x\in V$ in $G$ are obtained from one run of Dijkstra's algorithm on $G_\phi$ followed by the correction $\mathrm{dist}_G(x,v)=\mathrm{dist}_{G_\phi}(x,v)-\phi(x)+\phi(v)$, in $O((m+n)\log n)$ total time with a binary heap.
 
 ## Proof sketch
 

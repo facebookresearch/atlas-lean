@@ -12,7 +12,7 @@ $$
 \mathrm{rk}_+(S) \ge \frac{\langle W,S\rangle}{\|S\|_\infty\cdot\alpha}.
 $$
 
-Combined with the factorization lemma, the same quantity lower-bounds $\mathrm{xc}(P)$ when $S$ is a submatrix of a slack matrix of $P$.
+Combined with the factorization lemma, the same quantity minus $1$ lower-bounds $\mathrm{xc}(K)$ (extension complexity over $\mathbb{R}$) for every polytope $K$ with $P \subseteq K \subseteq Q$ whenever $S$ is a submatrix of the slack matrix $S(P,Q)$, in particular for $K = P$ when $S$ is a submatrix of a slack matrix of $P$, since deleting rows and columns does not increase nonnegative rank.
 
 ## Proof sketch
 
@@ -21,7 +21,7 @@ Write $S=\sum_{t=1}^{r}R_t$ with nonnegative rank-one $R_t$, so $\|R_t\|_\infty 
 ## Depends on
 
 - [Nonnegative rank of a matrix](../../machine-learning/unsupervised-learning/non-negative-matrix-factorization/nonneg-rank.md)
-- [Linear extensions of a polytope and their inequality count](linear-extension-size.md)
+- [Extended formulations and extension complexity](../extended-formulations-and-extension-complexity/extended-formulation.md)
 - [Slack matrix of a nested pair of polytopes](slack-matrix-nested-pair.md)
 
 ## Proof depends on

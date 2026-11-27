@@ -15,7 +15,7 @@ For (i), each vertex $v_j$ lifts to $(v_j,V^{j})$, and any $x$ violating a row $
 ## Depends on
 
 - [Slack matrix of a nested pair of polytopes](slack-matrix-nested-pair.md)
-- [Linear extensions of a polytope and their inequality count](linear-extension-size.md)
+- [Extended formulations and extension complexity](../extended-formulations-and-extension-complexity/extended-formulation.md)
 - [Nonnegative rank of a matrix](../../machine-learning/unsupervised-learning/non-negative-matrix-factorization/nonneg-rank.md)
 
 ## Proof depends on

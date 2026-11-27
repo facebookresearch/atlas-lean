@@ -1,10 +1,10 @@
 # Proportional approval voting is the only Thiele method satisfying EJR
 
-An approval election consists of a finite set $N$ of $n$ voters, a finite set $C$ of candidates, approval ballots $A_i \subseteq C$ for $i \in N$, and a committee size $k$ with $1 \le k \le \lvert C \rvert$; a committee is a set $W \subseteq C$ with $\lvert W \rvert = k$. Among all Thiele methods, the one with weights $w_j = 1/j$ (proportional approval voting) is the only one whose every optimal committee provides extended justified representation in all elections; for every other weight sequence there is an election in which some optimal committee violates even proportional justified representation or EJR.
+An approval election consists of a finite set $N$ of $n$ voters, a finite set $C$ of candidates, approval ballots $A_i \subseteq C$ for $i \in N$, and a committee size $k$ with $1 \le k \le \lvert C \rvert$; a committee is a set $W \subseteq C$ with $\lvert W \rvert = k$. Among all Thiele methods, the one with weights $w_j = 1/j$ (proportional approval voting) is the only one whose every optimal committee provides extended justified representation in all elections; for every other weight sequence $w$ with $w_1 = 1$ the Thiele method with weights $w$ fails EJR, and in fact fails PJR; if $w_j > 1/j$ for some $j$ it even fails justified representation.
 
 ## Proof sketch
 
-PAV satisfies EJR by the swap argument. Conversely, if $w_j \ne 1/j$ for some smallest $j$, construct a party-list profile with two groups whose sizes are chosen so that the Thiele objective trades off the $j$-th representative of one group against a first representative of another at the wrong ratio: if $w_j > 1/j$ a large group is over-represented at the expense of an $\ell$-cohesive smaller group, and if $w_j < 1/j$ the reverse happens, violating EJR in either case.
+PAV satisfies EJR by the swap argument. Conversely, suppose $w_j \ne 1/j$ for some $j$. If $w_j > 1/j$, take one group of $k$ voters approving a single candidate $c$ and $k/j$ groups of $j(k-1)$ voters, each approving its own $j$ candidates; the Thiele objective prefers giving every large group all of its $j$ candidates to electing $c$, although the first group is $1$-cohesive, so justified representation fails. If $w_j < 1/j$, a party-list profile in which an $\ell$-cohesive group is under-represented in favour of first representatives of other groups gives an EJR violation, and a similar construction violates PJR.
 
 ## Depends on
 
@@ -19,3 +19,4 @@ PAV satisfies EJR by the swap argument. Conversely, if $w_j \ne 1/j$ for some sm
 ## Sources
 
 - H. Aziz, M. Brill, V. Conitzer, E. Elkind, R. Freeman, T. Walsh, "Justified Representation in Approval-Based Committee Voting", Social Choice and Welfare 48(2) (2017), arXiv:1407.8269.
+- L. Sánchez-Fernández, E. Elkind, M. Lackner, N. Fernández, J. A. Fisteus, P. Basanta Val, P. Skowron, "Proportional Justified Representation", AAAI 2017, arXiv:1611.09928.

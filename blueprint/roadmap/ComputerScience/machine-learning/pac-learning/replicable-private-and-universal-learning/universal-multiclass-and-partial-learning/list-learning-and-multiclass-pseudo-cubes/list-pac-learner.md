@@ -10,4 +10,4 @@ Let $H \subseteq Y^X$ and $k \ge 1$. A **$k$-list predictor** (a $k$-menu) is a 
 ## Sources
 
 - N. Brukhim, D. Carmon, I. Dinur, S. Moran, A. Yehudayoff, "A Characterization of Multiclass Learnability", FOCS (2022), arXiv:2203.01550.
-- M. Charikar, C. Pabbaraju, "A Characterization of List Learnability", STOC (2023), arXiv:2211.04956.
+- M. Charikar, C. Pabbaraju, "A Characterization of List Learnability", STOC (2023), arXiv:2211.04956, Definition 2.

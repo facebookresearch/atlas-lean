@@ -12,10 +12,14 @@ samples, independent of $|X|$. In contrast, every statistical query algorithm fo
 
 A first batch of samples contains every $(v-\varepsilon)$-heavy hitter with high probability; for each candidate, estimate its mass replicably and keep it if the estimate exceeds the random threshold $v'$. Choosing $v'$ uniformly in $[v - \varepsilon, v + \varepsilon]$ makes it unlikely that any true mass is within the estimation error of $v'$, so both runs keep the same candidates. The statistical query lower bound uses the family of point masses $D_x$: each query distinguishes few of them, and $|X|$ alternatives require $\log|X|/\log(1/\tau)$ queries.
 
+## Depends on
+
+- [Replicable algorithms with shared randomness](../../../replicable-learning/replicable-algorithms-with-shared-seed.md)
+
 ## Proof depends on
 
 - [Replicable simulation of a statistical query by randomized rounding](replicable-statistical-query-simulation.md)
 
 ## Sources
 
-- R. Impagliazzo, R. Lei, T. Pitassi, J. Sorrell, "Reproducibility in Learning", STOC (2022), arXiv:2201.08430.
+- R. Impagliazzo, R. Lei, T. Pitassi, J. Sorrell, "Reproducibility in Learning", STOC (2022), arXiv:2201.08430, Definitions 3.1 and 3.2, Lemma 3.3 and Claim 3.5.

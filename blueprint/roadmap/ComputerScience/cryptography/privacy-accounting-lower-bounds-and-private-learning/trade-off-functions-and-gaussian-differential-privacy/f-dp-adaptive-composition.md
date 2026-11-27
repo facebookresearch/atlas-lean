@@ -1,6 +1,6 @@
 # Lossless adaptive composition of f-differential privacy
 
-Let $M_1, \dots, M_k$ be mechanisms applied adaptively to the same dataset, where $M_i$ may depend on the outputs of $M_1, \dots, M_{i-1}$ and is $f_i$-DP for every fixed value of those outputs. Then the joint mechanism $(M_1, \dots, M_k)$ is $f_1 \otimes \cdots \otimes f_k$-DP, and this bound is tight in general. In particular the $k$-fold adaptive composition of $\mu$-GDP mechanisms is $\sqrt{k}\,\mu$-GDP, and the composition of $\mu_i$-GDP mechanisms is $\sqrt{\sum_i \mu_i^2}$-GDP.
+Let $M_1, \dots, M_k$ be mechanisms applied adaptively to the same dataset, where $M_i$ may depend on the outputs of $M_1, \dots, M_{i-1}$ and is $f_i$-DP for every fixed value of those outputs. Then the joint mechanism $(M_1, \dots, M_k)$ is $f_1 \otimes \cdots \otimes f_k$-DP. For symmetric trade-off functions $f_i$ (as assumed throughout by Dong, Roth and Su) this bound is tight in general: if the mechanisms ignore each other's outputs and each $f_i$ is attained by a neighbouring pair, the composition has exactly the trade-off function $f_1 \otimes \cdots \otimes f_k$ on that pair. Without symmetry the tightness claim fails already for $k = 1$: since the neighbouring relation is symmetric, an $f$-DP mechanism is also $f^{-1}$-DP, so $f$ can be strengthened to $\max\{f, f^{-1}\}$; asymmetric inputs should first be symmetrized. In particular the $k$-fold adaptive composition of $\mu$-GDP mechanisms is $\sqrt{k}\,\mu$-GDP, and the composition of $\mu_i$-GDP mechanisms is $\sqrt{\sum_i \mu_i^2}$-GDP.
 
 ## Proof sketch
 
@@ -9,6 +9,7 @@ For two mechanisms, fix a neighbouring pair; conditionally on the first output $
 ## Depends on
 
 - [Tensor product of trade-off functions](tensor-product-of-trade-off-functions.md)
+- [f-differential privacy](f-differential-privacy.md)
 
 ## Proof depends on
 
@@ -16,4 +17,4 @@ For two mechanisms, fix a neighbouring pair; conditionally on the first output $
 
 ## Sources
 
-- J. Dong, A. Roth, W. J. Su, "Gaussian Differential Privacy", Journal of the Royal Statistical Society Series B 84 (2022), arXiv:1905.02383.
+- J. Dong, A. Roth, W. J. Su, "Gaussian Differential Privacy", Journal of the Royal Statistical Society Series B 84 (2022), arXiv:1905.02383v3, Proposition 2.4, Theorem 3.2 and Corollary 3.3.

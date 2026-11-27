@@ -15,4 +15,4 @@ Let $\mathcal{A}$ be a randomized dynamic algorithm processing an online sequenc
 ## Sources
 
 - Danupon Nanongkai, Thatchaphol Saranurak, "Dynamic Spanning Forest with Worst-Case Update Time: Adaptive, Las Vegas, and O(n^{1/2-epsilon})-Time", STOC (2017), arXiv:1611.03745.
-- Shang-En Huang, Dawei Huang, Tsvi Kopelowitz, Seth Pettie, Mikkel Thorup, "Fully Dynamic Connectivity in O(log n (log log n)^2) Amortized Expected Time", SODA (2017); TheoretiCS (2023), arXiv:1609.05867.
+- Shang-En Huang, Dawei Huang, Tsvi Kopelowitz, Seth Pettie, Mikkel Thorup, "Fully Dynamic Connectivity in O(log n (log log n)^2) Amortized Expected Time", TheoretiCS (2023), arXiv:1609.05867; full version of the extended abstracts by Thorup (STOC 2000) and by Huang, Huang, Kopelowitz and Pettie (SODA 2017).

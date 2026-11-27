@@ -4,16 +4,12 @@ There is a deterministic algorithm that computes the edge connectivity and a glo
 
 ## Proof sketch
 
-Compute a $(\phi, \epsilon)$-expander decomposition with $\phi = m^{-o(1)}$-scale conductance in $m^{1+o(1)}$ deterministic time. In each cluster repeatedly trim vertices having less than a constant fraction of their degree inside the cluster, then shave vertices having at most about half of their neighbors inside; a counting argument using that sides of non-trivial low cuts have volume at least $\delta^2$ shows that no non-trivial minimum cut separates vertices of a shaved core. Contracting the cores leaves $m^{1+o(1)}/\delta$ edges, on which Gabow's algorithm runs in $m^{1+o(1)}$ time; trivial cuts are handled by the minimum degree.
+Compute deterministically, in $m^{1+o(1)}$ time, an expander decomposition with conductance $\phi = 40/\delta$ and $m^{1+o(1)}/\delta$ inter-cluster edges. In each cluster repeatedly trim vertices with fewer than $2\deg(v)/5$ neighbors inside the cluster, then shave, once, every vertex with at most $\deg(v)/2 + 1$ neighbors inside. Using the expansion of the cluster and simplicity of $G$, no non-trivial minimum cut separates two vertices of a shaved core. Contracting the cores leaves $m^{1+o(1)}/\delta$ edges, so Gabow's $O(\lambda m)$-time algorithm with $\lambda \le \delta$ runs on the contracted graph in $m^{1+o(1)}$ time; returning the minimum of its answer and $\delta$ accounts for the trivial cuts.
 
 ## Depends on
 
-- [Weighted expander decompositions with volumes measured in the host graph](expander-decomposition.md)
+- [(phi, epsilon)-expander decompositions of an undirected graph](../../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/phi-epsilon-expander-decomposition.md)
 - [Contractions preserving all non-trivial minimum cuts of a simple graph](nontrivial-mincut-preserving-contraction.md)
-
-## Proof depends on
-
-- [Kawarabayashi-Thorup contraction to O(m/delta) edges preserving non-trivial minimum cuts](kawarabayashi-thorup-contraction.md)
 
 ## Sources
 

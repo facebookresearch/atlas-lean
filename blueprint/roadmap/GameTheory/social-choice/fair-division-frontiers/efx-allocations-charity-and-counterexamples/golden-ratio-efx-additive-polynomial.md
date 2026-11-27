@@ -4,7 +4,7 @@ Throughout, $N = \{1, \dots, n\}$ is a finite set of agents and $M$ a finite set
 
 ## Proof sketch
 
-Start by letting agents pick goods in a round-robin fashion for a preprocessing phase that assigns each agent one high-value good, then allocate the remaining goods by envy-cycle elimination in decreasing order of value. The golden ratio arises from balancing two cases: an envied bundle consisting of one large good, controlled by the preprocessing, and a bundle of several smaller goods, controlled by the order in which goods are added.
+A preprocessing step fixes an ordering $\ell$ of the agents by letting each agent in turn tentatively claim her most valuable good, switching to an already claimed good if it is worth more than $\varphi$ times her own choice to her. Then two rounds of round-robin are run, one in the order $\ell$ and one in the reverse order restricted to a subset of the agents, and the remaining goods are allocated one at a time, in arbitrary order, by envy-cycle elimination. The golden ratio arises from balancing two cases: an envied bundle whose value comes from one large good, controlled by the draft rounds, and a bundle built from several smaller goods by envy-cycle elimination.
 
 ## Depends on
 

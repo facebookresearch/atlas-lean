@@ -1,6 +1,6 @@
 # Juhász / Feige–Krauthgamer: degree-2 SoS fails for cliques of size o(sqrt n)
 
-For $G \sim G(n, 1/2)$, with high probability the Lovász theta function of the complement satisfies $\vartheta(\overline{G}) = \Theta(\sqrt{n})$; equivalently the degree-$2$ SoS clique relaxation has value $\Theta(\sqrt{n})$. Hence degree-$2$ SoS distinguishes planted cliques of size $k \ge C\sqrt{n}$ but not of size $o(\sqrt{n})$; the same $\Theta(\sqrt{n})$ behaviour persists for a constant number of rounds of the Lovász-Schrijver hierarchy.
+For $G \sim G(n, 1/2)$, with high probability the Lovász theta function of the complement satisfies $\vartheta(\overline{G}) = \Theta(\sqrt{n})$; equivalently the degree-$2$ SoS clique relaxation has value $\Theta(\sqrt{n})$. Hence degree-$2$ SoS distinguishes planted cliques of size $k \ge C\sqrt{n}$ but not of size $o(\sqrt{n})$; the same $\Theta(\sqrt{n})$ behaviour persists for a constant number of rounds of the semidefinite Lovász-Schrijver hierarchy $\mathrm{LS}_+$, whose $r$-th round has value $\Theta(\sqrt{n/2^r})$ with high probability.
 
 ## Proof sketch
 

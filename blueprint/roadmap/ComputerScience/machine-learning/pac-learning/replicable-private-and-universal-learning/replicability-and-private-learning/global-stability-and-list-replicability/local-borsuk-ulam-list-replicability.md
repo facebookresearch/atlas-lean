@@ -4,7 +4,7 @@
 
 (ii) **Realizable bounds.** For every class, $\mathrm{LR}(H) \ge \max\{\mathrm{VC}(H),\, 1 + \lfloor \mathrm{VC}^*(H)/2 \rfloor\}$, where $\mathrm{VC}^*$ is the dual VC dimension, and both terms are sharp. There are classes of Littlestone dimension $d$ with $\mathrm{LR}(H) \ge 2^{d-1}$, an exponential separation from the Littlestone dimension.
 
-(iii) **Local Borsuk–Ulam theorem.** For every open antipodal-free cover of the $d$-sphere $S^d$ some point lies in at least $\lceil (d+3)/2 \rceil$ sets of the cover, and every coloring of the nonempty subsets of $[n]$ in which disjoint sets get different colors has a chain receiving at least $1 + \lfloor n/2 \rfloor$ colors; both bounds are sharp.
+(iii) **Local Borsuk–Ulam theorem.** For every finite open (or finite closed) antipodal-free cover of the $d$-sphere $S^d$ some point lies in at least $\lceil (d+3)/2 \rceil$ sets of the cover, and every coloring of the nonempty subsets of $[n]$ in which disjoint sets get different colors has a chain receiving at least $1 + \lfloor n/2 \rfloor$ colors; both bounds are sharp.
 
 ## Proof sketch
 
@@ -23,4 +23,4 @@ Map distributions to points of a sphere so that complementary labelings of the s
 
 ## Sources
 
-- Z. Chase, B. Chornomaz, S. Moran, A. Yehudayoff, "Local Borsuk-Ulam, Stability, and Replicability", STOC (2024), arXiv:2311.01599.
+- Z. Chase, B. Chornomaz, S. Moran, A. Yehudayoff, "Local Borsuk-Ulam, Stability, and Replicability", STOC (2024), arXiv:2311.01599, Theorems A–E, Corollaries 9 and 10.

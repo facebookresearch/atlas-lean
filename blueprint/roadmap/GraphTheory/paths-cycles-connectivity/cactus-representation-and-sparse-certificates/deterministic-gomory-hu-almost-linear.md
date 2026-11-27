@@ -4,7 +4,7 @@ There is a deterministic algorithm that, given an undirected graph with $n$ vert
 
 ## Proof sketch
 
-The randomized ingredients of the almost-linear algorithm are terminal sampling for isolating cuts and random pivot selection. Both are replaced by deterministic tools: a deterministic decomposition of terminal sets generalizing the Steiner minimum cut decompositions, and a deterministic pivot procedure that guarantees progress in the Gomory-Hu recursion. Deterministic almost-linear minimum-cost flow supplies the max-flow oracle.
+The randomized almost-linear algorithms sample a pivot vertex, which yields Gomory-Hu recursion of polylogarithmic depth, and sample guide trees from a packing of Steiner trees. Both are replaced by deterministic components: a deterministic reduction from all-pairs mincuts to single-source mincuts with only subpolynomial overhead, and a deterministic almost-linear-time algorithm for single-source mincuts. Deterministic almost-linear maximum flow supplies the max-flow oracle.
 
 ## Depends on
 

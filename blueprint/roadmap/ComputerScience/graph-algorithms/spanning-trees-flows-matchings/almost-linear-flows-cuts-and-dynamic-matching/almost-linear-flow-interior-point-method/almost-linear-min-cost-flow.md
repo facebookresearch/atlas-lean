@@ -10,7 +10,7 @@ with high probability, that is with probability at least $1 - n^{-c}$ for any fi
 
 ## Proof sketch
 
-By capacity and cost scaling it suffices to treat $U, C \le \mathrm{poly}(m)$, at the price of the $\log U\log C$ factor. Combine the reduction *The l1 IPM reduces min-cost flow to an approximate dynamic min-ratio cycle problem* with $\kappa = m^{-o(1)}$ and the randomized data structure *Randomized dynamic min-ratio cycle data structure under hidden stable flow chasing*, whose total time over $m^{1+o(1)}$ updates is $m^{1+o(1)}$, to obtain a flow of cost within $(mU)^{-10}$ of optimal on a randomly perturbed instance. Rounding by *Random cost perturbation makes a near-optimal flow round to an optimal integral flow* yields an exact optimum with probability at least $1/2$, and repetition plus verification of optimality by reduced-cost certificates boosts this to high probability.
+By capacity and cost scaling it suffices to treat $U, C \le \mathrm{poly}(m)$, at the price of the $\log U\log C$ factor. Combine the reduction *The l1 IPM reduces min-cost flow to an approximate dynamic min-ratio cycle problem* with $\kappa = m^{-o(1)}$ and the randomized data structure *Randomized dynamic min-ratio cycle data structure under hidden stable flow chasing*, whose total time over $m^{1+o(1)}$ updates is $m^{1+o(1)}$, started from *An initial IPM point with polynomially bounded potential* (which also detects infeasibility), to obtain a flow of cost within $(mU)^{-10}$ of optimal on a randomly perturbed instance. Rounding by *Random cost perturbation makes a near-optimal flow round to an optimal integral flow* yields an exact optimum with probability at least $1/2$; running $O(\log n)$ independent repetitions and returning the cheapest feasible rounded flow fails only with probability $n^{-c}$.
 
 ## Depends on
 
@@ -21,7 +21,7 @@ By capacity and cost scaling it suffices to treat $U, C \le \mathrm{poly}(m)$, a
 - [The l1 IPM reduces min-cost flow to an approximate dynamic min-ratio cycle problem](ipm-reduces-to-dynamic-min-ratio-cycle.md)
 - [Randomized dynamic min-ratio cycle data structure under hidden stable flow chasing](../dynamic-min-ratio-cycle-data-structures/randomized-dynamic-min-ratio-cycle.md)
 - [Random cost perturbation makes a near-optimal flow round to an optimal integral flow](isolation-perturbation-rounding.md)
-- [Reduced-cost optimality certificate for minimum-cost flow](../../potential-certificate-for-minimum-cost-flow.md)
+- [An initial IPM point with polynomially bounded potential](ipm-initial-point-construction.md)
 
 ## Sources
 

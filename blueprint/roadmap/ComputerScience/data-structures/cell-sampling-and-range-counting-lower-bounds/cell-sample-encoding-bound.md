@@ -1,10 +1,10 @@
 # Encoding bound for cell samples
 
-Suppose that for a random input $D$ with entropy $H(D)$, and for every set $C$ of $\Delta$ cells, the answers to the queries resolved by $C$ determine $D$ up to a remaining entropy of at most $H(D) - k$. Then $\Delta(w + \lceil \log_2 S \rceil) \ge k$. Combined with the cell-sampling lemma, a lower bound $t$ follows whenever resolving $|\mathcal{Q}|(\Delta/2S)^t$ queries would reveal more than $\Delta(w + \log_2 S)$ bits about $D$.
+Let a static cell-probe structure store a random input $D$ in $S$ cells of $w$ bits, let $C = C(D)$ be a set of $\Delta$ of its cells chosen as a function of $D$, and let $A$ be the answers, on $D$, of the queries resolved by $C$. If $H(D \mid A) \le H(D) - k$, then $\Delta(w + \lceil \log_2 S \rceil) \ge k$. Combined with the cell-sampling lemma, a lower bound $t$ follows whenever resolving $|\mathcal{Q}|(\Delta/2S)^t$ queries would reveal more than $\Delta(w + \log_2 S)$ bits about $D$.
 
 ## Proof sketch
 
-Encode $D$ by the addresses and contents of the cells of $C$, using $\Delta(w + \lceil\log_2 S\rceil)$ bits, followed by an optimal code for $D$ given the resolved answers, of expected length at most $H(D) - k + 1$. Since no prefix code beats the entropy, $\Delta(w + \lceil \log_2 S \rceil) + H(D) - k + 1 \ge H(D)$; integrality and averaging remove the additive one.
+Let $Y$ be the list of addresses and contents of the cells of $C$, a string of exactly $\Delta(w + \lceil\log_2 S\rceil)$ bits. Simulating every query on $Y$ and discarding those that request a cell outside $C$ recovers $A$ from $Y$, so $H(D \mid Y) \le H(D \mid A) \le H(D) - k$. Hence $k \le H(D) - H(D \mid Y) = I(D; Y) \le H(Y) \le \Delta(w + \lceil\log_2 S\rceil)$. Larsen phrases the same count as an encoding of $D$ by $Y$ followed by an optimal code for $D$ given $Y$, compared with $H(D)$ via Shannon's source coding theorem.
 
 ## Depends on
 

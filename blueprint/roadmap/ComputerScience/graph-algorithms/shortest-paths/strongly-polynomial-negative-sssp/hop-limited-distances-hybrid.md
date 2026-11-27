@@ -16,7 +16,7 @@ The recurrence for $d^{h+1}$ is evaluated by one Dijkstra computation on an auxi
 
 ## Proof depends on
 
-- [Dijkstra's algorithm with a binary heap](../../graph-algorithm-bounds/dijkstra-s-algorithm-with-a-binary-heap.md)
+- [Dijkstra's algorithm with a Fibonacci heap in O(m + n log n) word-RAM time](../dijkstra-priority-queue-costs/dijkstra-fibonacci-heap-word-ram.md)
 
 ## Sources
 

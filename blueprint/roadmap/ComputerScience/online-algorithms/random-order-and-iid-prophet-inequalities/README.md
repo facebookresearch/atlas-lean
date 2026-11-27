@@ -2,7 +2,7 @@
 
 - [Gambler-to-prophet ratios under different arrival models](prophet-ratio-by-arrival-model.md)
 - [The Hill–Kertz constant $\beta \approx 0.745$](hill-kertz-constant.md)
-- [Prophet secretary: adaptive thresholds achieve $1 - 1/e$](prophet-secretary-one-minus-inverse-e.md)
+- [Prophet secretary: step-dependent thresholds approach $1 - 1/e$](prophet-secretary-one-minus-inverse-e.md)
 - [Quantile threshold rules for i.i.d. prophets](quantile-threshold-rules.md)
 - [Nonadaptive random-order prophet inequality: $1 - 1/e$ is tight](random-order-nonadaptive-bound.md)
 - [No stopping rule beats $\beta$ for i.i.d. values](iid-prophet-upper-bound.md)

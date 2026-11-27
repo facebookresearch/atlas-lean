@@ -9,11 +9,11 @@ $$
 \sum_{v \in R} |V(G_v)| \le 2n, \qquad \sum_{v \in R} |E(G_v)| \le 2m,
 $$
 
-plus $O(m \log |R|)$ additional time. Under the superadditivity assumption on $\mathrm{MF}$, the total running time is $O(\log |R| \cdot \mathrm{MF}(n, m) + m \log |R|)$.
+plus $O(m \log n)$ additional time. Under the assumptions on $\mathrm{MF}$ of the max-flow call model, the total running time is $O(\log |R| \cdot \mathrm{MF}(n, m) + m \log n)$.
 
 ## Proof sketch
 
-Compute the cuts $X_i$ of the bit-cut construction with one oracle call each and form the disjoint regions $U_v$. Because $S_v^{*} \subseteq U_v$, a minimum $v$-$t_v$ cut in $G_v$ that is inclusion-wise minimal on the side of $v$ is exactly $S_v^{*}$, and its value in $G_v$ equals its value in $G$ since contraction of $V \setminus U_v$ preserves every cut contained in $U_v$. Every edge of $G_v$ has an endpoint in $U_v$ and the regions are disjoint, so each edge of $G$ appears in at most two graphs $G_v$, which gives the size bounds; superadditivity then bounds the cost of the second batch by $\mathrm{MF}(2n, 2m)$.
+Compute the cuts $X_i$ of the bit-cut construction with one oracle call each and form the disjoint regions $U_v$. Because $S_v^{*} \subseteq U_v$, a minimum $v$-$t_v$ cut in $G_v$ that is inclusion-wise minimal on the side of $v$ is exactly $S_v^{*}$, and its value in $G_v$ equals its value in $G$ since contraction of $V \setminus U_v$ preserves every cut contained in $U_v$. Every edge of $G_v$ has an endpoint in $U_v$ and the regions are disjoint, so each edge of $G$ appears in at most two graphs $G_v$, which gives the size bounds; superadditivity then bounds the cost of the second batch by $\mathrm{MF}(2n, 2m) = O(\mathrm{MF}(n, m))$.
 
 ## Depends on
 
@@ -29,4 +29,4 @@ Compute the cuts $X_i$ of the bit-cut construction with one oracle call each and
 ## Sources
 
 - Jason Li, Debmalya Panigrahi, "Deterministic Min-cut in Poly-logarithmic Max-flows", FOCS (2020), arXiv:2111.02008.
-- Chandra Chekuri, Kent Quanrud, "Isolating Cuts, (Bi-)Submodularity, and Faster Algorithms for Connectivity", ICALP (2021), arXiv:2103.12908.
+- Chandra Chekuri, Kent Quanrud, "Isolating Cuts, (Bi-)Submodularity, and Faster Algorithms for Global Connectivity Problems", ICALP (2021), arXiv:2103.12908.

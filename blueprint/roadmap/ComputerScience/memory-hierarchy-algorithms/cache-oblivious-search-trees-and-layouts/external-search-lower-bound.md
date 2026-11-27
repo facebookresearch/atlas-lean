@@ -12,5 +12,5 @@ Before any I/O, all $N + 1$ predecessor answers are possible. Reading a block of
 
 ## Sources
 
-- Alok Aggarwal, Jeffrey Scott Vitter, "The Input/Output Complexity of Sorting and Related Problems", Communications of the ACM 31(9) (1988).
+- Michael A. Bender, Erik D. Demaine, Martín Farach-Colton, "Cache-Oblivious B-Trees", SIAM Journal on Computing 35(2) (2005); FOCS (2000).
 - Erik D. Demaine, "Cache-Oblivious Algorithms and Data Structures", Lecture Notes from the EEF Summer School on Massive Data Sets (2002).

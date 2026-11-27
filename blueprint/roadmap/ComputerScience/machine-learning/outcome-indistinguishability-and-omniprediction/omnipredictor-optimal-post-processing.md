@@ -13,4 +13,4 @@ Properness is exactly the statement that reporting the true probability minimize
 
 ## Sources
 
-- P. Gopalan, A. T. Kalai, O. Reingold, V. Sharan, U. Wieder, "Omnipredictors", ITCS (2022), arXiv:2109.05389.
+- P. Gopalan, A. T. Kalai, O. Reingold, V. Sharan, U. Wieder, "Omnipredictors", ITCS (2022), arXiv:2109.05389, Lemma 4.2 and the discussion after it ($k_\ell(v) = v$ for squared loss, $\mathbf{1}[v \ge 1/2]$ for absolute loss); the cost-sensitive and monotonicity statements are elementary.

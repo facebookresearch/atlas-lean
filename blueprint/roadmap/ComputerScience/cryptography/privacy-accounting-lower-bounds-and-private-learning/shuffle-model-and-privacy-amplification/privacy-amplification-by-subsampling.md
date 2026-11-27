@@ -10,16 +10,12 @@ $$
 
 ## Proof sketch
 
-Express the subsampled output distribution on each of two neighbouring datasets as a mixture over subsamples, and couple the subsamples so that they coincide except, with probability $q$, in the differing record. Advanced joint convexity of the hockey-stick divergence, $D_{e^{\varepsilon'}}\big((1-q)\mu + q\nu \,\|\, (1-q)\mu + q\nu'\big) \le q D_{e^{\varepsilon}}(\nu \| (1-\beta)\mu + \beta\nu')$ with $e^{\varepsilon'} = 1 + q(e^{\varepsilon}-1)$, then reduces to the privacy of $M$ on the coupled pair. Tightness uses randomized response on the subsampled record.
+Express the subsampled output distribution on each of two neighbouring datasets as a mixture over subsamples, and couple the subsamples so that they coincide except, with probability $q$, in the differing record. Advanced joint convexity of the hockey-stick divergence, $D_{e^{\varepsilon'}}\big((1-q)\mu + q\nu \,\|\, (1-q)\mu + q\nu'\big) = q D_{e^{\varepsilon}}(\nu \| (1-\beta)\mu + \beta\nu')$ with $e^{\varepsilon'} = 1 + q(e^{\varepsilon}-1)$ and $\beta = e^{\varepsilon'}/e^{\varepsilon}$, then reduces to the privacy of $M$ on the coupled pair. Tightness uses randomized response on the subsampled record.
 
 ## Depends on
 
 - [Differential privacy](../../differential-privacy/differentially-private.md)
 
-## Proof depends on
-
-- [Subsampling theorem for f-differential privacy](../trade-off-functions-and-gaussian-differential-privacy/f-dp-subsampling-theorem.md)
-
 ## Sources
 
-- B. Balle, G. Barthe, M. Gaboardi, "Privacy Amplification by Subsampling: Tight Analyses via Couplings and Divergences", NeurIPS (2018), arXiv:1807.01647.
+- B. Balle, G. Barthe, M. Gaboardi, "Privacy Amplification by Subsampling: Tight Analyses via Couplings and Divergences", NeurIPS (2018), arXiv:1807.01647, Theorem 2.

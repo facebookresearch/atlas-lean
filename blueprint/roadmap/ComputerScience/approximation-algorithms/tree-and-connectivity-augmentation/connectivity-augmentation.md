@@ -3,10 +3,12 @@
 Let $k \ge 1$ and let $G=(V,E)$ be a $k$-edge-connected undirected multigraph, so that by Menger's theorem every pair of vertices is joined by $k$ edge-disjoint paths. Given links $L \subseteq \binom{V}{2}$ with weights $w:L \to \mathbb{R}_{> 0}$, the weighted connectivity augmentation problem asks for
 
 $$
-\min\{w(F) : F \subseteq L,\ (V,E \cup F)\ \text{is}\ (k+1)\text{-edge-connected}\}.
+\min\{w(F) : F \subseteq L,\ (V,E \uplus F)\ \text{is}\ (k+1)\text{-edge-connected}\},
 $$
 
-Equivalently $F$ must contain a link crossing every minimum cut $\delta_G(S)$ with $|\delta_G(S)|=k$. The case $w \equiv 1$ is the connectivity augmentation problem (CAP); the case $k=1$ is WTAP after contracting 2-edge-connected components.
+where edges of $G$ and links keep distinct identities and $E \uplus F$ is the disjoint union, a multigraph in which a link parallel to an edge of $G$ adds a new parallel edge.
+
+Equivalently $F$ must contain a link crossing every minimum cut $\delta_G(S)$ with $|\delta_G(S)|=k$: in the disjoint union every cut $\delta(S)$ gains one edge per link of $F$ crossing it. The case $w \equiv 1$ is the connectivity augmentation problem (CAP); the case $k=1$ is WTAP after contracting 2-edge-connected components.
 
 ## Depends on
 

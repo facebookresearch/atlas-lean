@@ -5,6 +5,7 @@ A multi-agent contract instance has a set $[n]$ of agents, each choosing to exer
 ## Depends on
 
 - [Combinatorial-actions contract with a binary outcome](combinatorial-actions-binary-outcome-contract.md)
+- [Combinatorial agency and the price of unaccountability](../combinatorial-agency-and-the-price-of-unaccountability.md)
 - [Submodular set function](../../../../ComputerScience/approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
 
 ## Sources

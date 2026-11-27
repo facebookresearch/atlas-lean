@@ -34,5 +34,5 @@ The lower bound first proves the analogous bound with proper reference models $\
 
 ## Sources
 
-- D. J. Foster, N. Golowich, Y. Han, "Tight Guarantees for Interactive Decision Making with the Decision-Estimation Coefficient", COLT (2023), PMLR 195, Eqs. (7)–(9), Appendix C.1 (Theorem C.1, Eqs. (15)–(16)) and Appendix C.2 (Theorem C.2, Assumptions C.1 and C.2).
+- D. J. Foster, N. Golowich, Y. Han, "Tight Guarantees for Interactive Decision Making with the Decision-Estimation Coefficient", COLT (2023), PMLR 195, Eqs. (7)–(9), Appendix C.1 (Theorem C.1, Eqs. (15)–(16)) and Appendix C.2 (Theorem C.2, Assumptions C.1 and C.2); in the arXiv version arXiv:2301.08215, Theorem 2.2 (Eqs. (15)–(16)), Assumption 3.3 and Theorem 3.2.
 - D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes, revised edition (September 2026), arXiv:2312.16730v2, Section 7.5 (Proposition 7.2).

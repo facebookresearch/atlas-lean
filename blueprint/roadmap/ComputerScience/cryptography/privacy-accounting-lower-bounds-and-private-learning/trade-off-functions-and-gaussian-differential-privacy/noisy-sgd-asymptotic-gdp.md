@@ -1,21 +1,20 @@
 # Noisy stochastic gradient descent is asymptotically Gaussian differentially private
 
-Consider noisy stochastic gradient descent that, for $T$ iterations, selects a uniformly random mini-batch with sampling probability $p$, clips per-example gradients to norm at most $1$, and adds Gaussian noise $\sigma \cdot \mathcal{N}(0, I)$ to the mini-batch gradient sum. If $T \to \infty$ and $p\sqrt{T} \to \nu > 0$ with $\sigma$ fixed, then the algorithm is asymptotically $\mu$-GDP with
+Consider NoisySGD (Dong–Roth–Su, Algorithm 1) on a dataset of $n$ records: for $T$ iterations it takes a uniformly random subsample of exactly $m$ records without replacement (sampling ratio $p = m/n$), clips each per-example gradient to $\ell_2$ norm at most $C$, adds $\mathcal{N}(0, 4\sigma^2C^2/m^2 \cdot I)$ to the average of the clipped gradients (equivalently, noise of standard deviation $2C\sigma$ per coordinate to their sum, matching the replace-one sensitivity $2C$ of the sum), and takes a gradient step; it releases the iterates but not the subsampled indices. Each step is then $1/\sigma$-GDP on the subsample, and NoisySGD is $C_{m/n}(G_{1/\sigma})^{\otimes T}$-DP, where $C_p$ is the subsampling operator. If $T \to \infty$ and $m\sqrt{T}/n \to c > 0$ with $\sigma$ fixed, this composed privacy bound converges uniformly to $G_\mu$ with
 
 $$
-\mu = \nu\sqrt{e^{1/\sigma^2} - 1},
+\mu = \sqrt{2}\,c\,\sqrt{e^{\sigma^{-2}}\,\Phi\bigl(1.5\,\sigma^{-1}\bigr) + 3\,\Phi\bigl(-0.5\,\sigma^{-1}\bigr) - 2},
 $$
 
-in the sense that its trade-off function converges uniformly to $G_\mu$. This gives tighter privacy accounting than the moments accountant for deep learning with differential privacy.
+so NoisySGD is asymptotically $\mu$-GDP. The statement concerns the privacy bound, not the exact trade-off function of the mechanism, which can be strictly larger (for constant gradients the output reveals nothing about the data). A Poisson-sampling variant has a different limit and needs its own theorem. This gives tighter privacy accounting than the moments accountant for deep learning with differential privacy.
 
 ## Proof sketch
 
-Each iteration is a subsampled Gaussian mechanism with sensitivity one and noise $\sigma$, so it is $C_p(G_{1/\sigma})$-DP by the subsampling theorem, and the whole run is the $T$-fold composition. Computing $\mathrm{kl}$, $\kappa_2$ and $\kappa_3$ of $C_p(G_{1/\sigma})$ to leading order in $p$ gives $\sum \mathrm{kl} \to \tfrac{\nu^2}{2}(e^{1/\sigma^2} - 1)$ and $\sum \kappa_2 \to \nu^2(e^{1/\sigma^2} - 1)$ with vanishing third moments, and the central limit theorem yields $G_{2K/s}$ with $2K/s = \nu\sqrt{e^{1/\sigma^2}-1}$.
+Each step is a subsampled Gaussian mechanism: the average of clipped gradients has sensitivity $2C/m$ under replacement, so the step is $1/\sigma$-GDP on the subsample, $C_{m/n}(G_{1/\sigma})$-DP by the subsampling theorem, and the run is $C_{m/n}(G_{1/\sigma})^{\otimes T}$-DP by composition. For a symmetric trade-off function $f$ with $f(0) = 1$ and $\int_0^1 (f'(x) + 1)^4\,dx < \infty$, the central limit theorem for composition gives $C_p(f)^{\otimes T} \to G_{p_0\sqrt{2\chi^2_+(f)}}$ when $p\sqrt T \to p_0$, where $\chi^2_+(f) = \int_0^1 (|f'(x)| - 1)_+^2\,dx$; for $f = G_{1/\sigma}$ one computes $\chi^2_+(G_\mu) = e^{\mu^2}\Phi(3\mu/2) + 3\Phi(-\mu/2) - 2$, which gives the formula.
 
 ## Depends on
 
 - [Gaussian differential privacy](gaussian-differential-privacy.md)
-- [Differentially private stochastic gradient descent](../private-convex-optimization-and-noisy-sgd/dp-sgd.md)
 
 ## Proof depends on
 
@@ -25,5 +24,5 @@ Each iteration is a subsampled Gaussian mechanism with sensitivity one and noise
 
 ## Sources
 
-- J. Dong, A. Roth, W. J. Su, "Gaussian Differential Privacy", Journal of the Royal Statistical Society Series B 84 (2022), arXiv:1905.02383.
+- J. Dong, A. Roth, W. J. Su, "Gaussian Differential Privacy", Journal of the Royal Statistical Society Series B 84 (2022), arXiv:1905.02383v3, Algorithm 1, Theorems 5.1 and 5.2, Lemma 5.3 and Corollary 5.4.
 - M. Abadi, A. Chu, I. Goodfellow, H. B. McMahan, I. Mironov, K. Talwar, L. Zhang, "Deep Learning with Differential Privacy", ACM CCS (2016), arXiv:1607.00133.

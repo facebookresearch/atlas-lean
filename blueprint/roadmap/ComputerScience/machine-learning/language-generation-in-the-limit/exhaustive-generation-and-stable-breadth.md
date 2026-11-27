@@ -1,24 +1,28 @@
 # Exhaustive generation and stable generators with breadth
 
-(i) **Exhaustive generation.** Call a generator exhaustive for $K$ if, beyond some finite number of mistakes, the set of strings it outputs, together with the samples, is all of $K$. There are collections, already with two languages, that are generatable in the limit but admit no exhaustive generator, so a trade-off between validity and breadth is inherent in generation in the limit; the collections admitting exhaustive generation are characterized exactly by a combinatorial condition.
+Let $\mathcal{C} = \{L_1, L_2, \dots\}$ be a countable collection of infinite languages over a countable set $U$, with target $K \in \mathcal{C}$ enumerated by an adversary and $S_t$ the set of strings seen up to step $t$.
 
-(ii) **Stable generators.** A generating algorithm is stable if, on every enumeration, its generator eventually stops changing. For many notions of approximate breadth, generation with breadth by stable algorithms is impossible for every collection that is not identifiable in the limit, unconditionally (without assuming decidability of the membership oracle problem), whereas unstable algorithms can achieve approximate breadth for some such collections; in general it is also impossible to train generators that achieve lower hallucination rate or higher likelihood on the target than on competing languages.
+(i) **Exhaustive generation.** At each step $t$ a generating algorithm outputs a generator $G_t$ that, if the input stopped at step $t$, would go on to output a sequence $Z_{\ge t}$ of strings; let $Z_{<t}$ be the strings output before step $t$. The algorithm exhaustively generates from $\mathcal{C}$ if for every $K \in \mathcal{C}$ and every enumeration of $K$ there is $t^*$ such that for all $t \ge t^*$ both $|Z_{\ge t} \setminus K| < \infty$ and $S_t \cup Z_{<t} \cup Z_{\ge t} \supseteq K$. There is a countable collection of regular languages that is generatable in the limit but cannot be exhaustively generated, so a trade-off between validity and breadth is inherent in generation in the limit. A countable collection can be exhaustively generated if and only if it satisfies the weak Angluin condition with existence: every $L \in \mathcal{C}$ has a finite $T \subseteq L$ such that every $L' \in \mathcal{C}$ with $T \subseteq L' \subsetneq L$ satisfies $|L \setminus L'| < \infty$.
+
+(ii) **Stable generators.** A generating algorithm is stable if, for every target and every enumeration, its generator eventually stops changing. A generator has exact breadth for $K$ given $S$ if its support is $K \setminus S$, and approximate breadth if its support is contained in $K$ and misses only finitely many strings of $K$. For a countable collection, the following are equivalent: $\mathcal{C}$ satisfies Angluin's tell-tale condition (equivalently, is identifiable in the limit); some stable algorithm generates with exact breadth in the limit; some stable algorithm generates with approximate breadth in the limit. No computability or decidability assumption on the generators is needed. Without stability, approximate breadth is achievable exactly for the collections satisfying a weak Angluin condition, which is strictly weaker than Angluin's condition, so stability separates the two. More generally, any property of a generator that no generator can have for two different languages of $\mathcal{C}$, for instance a strictly lower hallucination rate or perplexity on the target than on every other language, is achievable in the limit only when $\mathcal{C}$ satisfies Angluin's condition.
 
 ## Proof sketch
 
-For (i), choose two nested languages $L_1 \supsetneq L_2$ with infinite difference: an exhaustive generator for $L_1$ must keep producing elements of $L_1 \setminus L_2$, which are invalid when the target is $L_2$, and an adversary alternates between the two enumerations to force infinitely many errors. For (ii), a stable generator with breadth determines, in the limit, a fixed support equal to the target minus finitely many strings, from which an identifier can be read off without solving the membership problem, because stability makes the generator a finite object that changes only finitely often.
+For (i), take $L_\infty = \mathbb{Z}$ and $L_i = \{-i, -i+1, -i+2, \dots\}$ for $i \in \mathbb{Z}$, all regular in binary notation. An adversary enumerates $L_0$ until the generate-only output has only finitely many strings outside $L_0$, then inserts $-1$ and continues as an enumeration of $L_1$ until the same holds for $L_1$, and so on. The resulting sequence enumerates $\mathbb{Z}$, but at infinitely many steps the generate-only output misses infinitely many negative integers, so the algorithm never exhaustively generates $\mathbb{Z}$. The characterization shows that a language violating the weak condition with existence admits such a diagonalization, and conversely builds an exhaustive generator from the finite sets $T$.
+
+For (ii), sufficiency identifies the target and then outputs all of its unseen strings. Necessity is a diagonalization over a language $L_\infty$ violating Angluin's condition, indexing the languages $L_T \subsetneq L_\infty$ by finite sets $T \subseteq L_\infty$. Since stability cannot be verified at any finite step, the adversary waits until the generator has exhausted its possibilities in each phase, and shows that the generator must either change its support infinitely often or lack approximate breadth infinitely often.
 
 ## Depends on
 
 - [Generation in the limit](generation-in-the-limit.md)
-- [Generation with breadth and the membership oracle problem](generation-with-breadth.md)
 - [Identification in the limit from positive examples](identification-in-the-limit.md)
+- [Angluin's tell-tale characterization of identifiability in the limit](angluin-tell-tale-characterization.md)
 
 ## Proof depends on
 
-- [Consistent generation with breadth requires identifiability](breadth-requires-identifiability.md)
+- [Every countable collection of languages is generatable in the limit](kleinberg-mullainathan-generation-theorem.md)
 
 ## Sources
 
-- M. Charikar, C. Pabbaraju, "Exploring Facets of Language Generation in the Limit", COLT (2025), arXiv:2411.15364.
-- A. Kalavasis, A. Mehrotra, G. Velegkas, "On Characterizations for Language Generation: Interplay of Hallucinations, Breadth, and Stability", ALT (2026), arXiv:2412.18530.
+- M. Charikar, C. Pabbaraju, "Exploring Facets of Language Generation in the Limit", COLT (2025), arXiv:2411.15364, Definition 5, Theorems 3 and 4.
+- A. Kalavasis, A. Mehrotra, G. Velegkas, "On Characterizations for Language Generation: Interplay of Hallucinations, Breadth, and Stability", ALT (2026), arXiv:2412.18530, Definitions 3.1, 3.2 and 3.14, Theorems 3.5, 3.8 and 3.15, Remarks 3.6 and 3.13.

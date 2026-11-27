@@ -4,7 +4,7 @@ Every string $T$ of length $n$ over an alphabet of size $\sigma$ with substring 
 
 ## Proof sketch
 
-Kempa and Kociumaka combine string synchronizing sets, which select $O(n/\tau)$ positions consistently across equal contexts of length $\Theta(\tau)$, with $\delta$-bounded representations at each of $O(\log n)$ scales $\tau = 2^i$: at each scale, the sorted order of synchronizing positions is determined by a structure of size $O(\delta)$ times a logarithmic factor matched to the space bound, and suffix-array queries are resolved by descending through the scales, using random access and longest-common-extension queries, each costing polylogarithmic time.
+Kempa and Kociumaka combine deterministic restricted recompression with $\delta$-compressed string synchronizing sets, which select $O(n/\tau)$ positions consistently across equal contexts of length $\Theta(\tau)$, with $\delta$-bounded representations at each of $O(\log n)$ scales $\tau = 2^i$: at each scale, the sorted order of synchronizing positions is determined by a structure of size $O(\delta)$ times a logarithmic factor matched to the space bound, and suffix-array queries are resolved by descending through the scales, using random access and longest-common-extension queries, each costing polylogarithmic time.
 
 ## Depends on
 
@@ -14,7 +14,6 @@ Kempa and Kociumaka combine string synchronizing sets, which select $O(n/\tau)$ 
 ## Proof depends on
 
 - [Random access in $\delta$-optimal compressed space](delta-optimal-random-access.md)
-- [Resolution of the BWT-runs conjecture](r-bounded-by-z.md)
 
 ## Sources
 

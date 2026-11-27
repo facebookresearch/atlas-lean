@@ -1,19 +1,19 @@
 # Time optimality of succinct dynamic rank/select
 
-For $U = n^{O(1)}$ and $w = \Theta(\log U)$, the $O(1 + \log n/\log\log U) = O(\log n / \log \log n)$ operation time of the succinct dynamic rank/select dictionary is optimal among cell-probe structures with polylogarithmic update time, regardless of space.
+For $U = n^{O(1)}$ and $w = \Theta(\log U)$, the $O(1 + \log n/\log\log U) = O(\log n / \log \log n)$ operation time of the succinct dynamic rank/select dictionary with sub-linear redundancy is optimal, regardless of space, among cell-probe structures whose updates take $(\log n)^{O(1)}$ amortized probes.
 
 ## Proof sketch
 
-Combine the upper bound with the Fredman–Saks bound $\Omega(\log n / \log(t_u w))$, which equals $\Omega(\log n/\log\log n)$ when $t_u w = (\log n)^{O(1)}$, and note $\log\log U = \Theta(\log\log n)$ for polynomial universes.
+For $n \le U/2$, the Fredman–Saks bound $t_q = \Omega(\log n / \log(t_u w))$ applies, and it equals $\Omega(\log n/\log\log n)$ when $t_u w = (\log n)^{O(1)}$; moreover $\log\log U = \Theta(\log\log n)$ for polynomial universes.
 
 ## Depends on
 
+- [Succinct dynamic rank/select with sub-linear redundancy](succinct-dynamic-rank-select.md)
 - [Dynamic ordered dictionary with rank and select](dynamic-ordered-dictionary-with-rank.md)
 - [The cell-probe model](../advanced-data-structures/the-cell-probe-model.md)
 
 ## Proof depends on
 
-- [Succinct dynamic rank/select with sub-linear redundancy](succinct-dynamic-rank-select.md)
 - [Fredman–Saks lower bound for dynamic rank](dynamic-rank-time-lower-bound.md)
 
 ## Sources

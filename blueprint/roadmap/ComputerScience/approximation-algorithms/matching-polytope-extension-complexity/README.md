@@ -1,7 +1,6 @@
 # Extension Complexity of the Matching Polytope
 
 - [Fiorini's hyperplane separation lower bound on nonnegative rank](hyperplane-separation-bound.md)
-- [Linear extensions of a polytope and their inequality count](linear-extension-size.md)
 - [Slack matrix of a nested pair of polytopes](slack-matrix-nested-pair.md)
 - [Multiplicatively approximate relaxations of the matching polytope](approximate-polytope-relaxation.md)
 - [Nonnegative factorizations of nested-pair slack matrices and sandwiched extensions](nested-pair-factorization.md)

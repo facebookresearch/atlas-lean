@@ -1,10 +1,10 @@
 # Pattern-avoiding inputs have linear optimal BST cost
 
-For every fixed permutation $\pi$ there is a constant $c_\pi$ such that every $\pi$-avoiding permutation access sequence $X \in S_n$ has $\mathrm{OPT}(X) \le c_\pi\, n$. This resolves the pattern-avoidance conjecture of Chalermsook, Goswami, Kozma, Mehlhorn and Saranurak with a tight $O(1)$ amortized bound.
+For every fixed permutation $\pi$ of size $k$ there is a constant $c_\pi = 2^{O(k)}$ such that every $\pi$-avoiding permutation access sequence $X \in S_n$ has $\mathrm{OPT}(X) \le c_\pi\, n$; more generally, every access sequence of length $m$ avoiding $\pi$ can be served with total cost $2^{O(k)} m$. This resolves the pattern-avoidance conjecture of Chalermsook, Goswami, Kozma, Mehlhorn and Saranurak with a tight $O(1)$ amortized bound.
 
 ## Proof sketch
 
-Berendsohn, Kozma and Opler construct an explicit offline arborally satisfied superset of size $O(n)$: they recursively decompose a $\pi$-avoiding permutation into a bounded number of blocks with simpler structure using the Marcus–Tardos theorem and the bounded grid-width of pattern-avoiding permutations, and serve each block by a tree whose shape follows the decomposition, so that each level of the recursion costs $O(n)$ in total and the number of levels is bounded in terms of $\pi$ only.
+Berendsohn, Kozma and Opler construct an offline solution, in the arborally satisfied superset view, from the merge-sequence decomposition of permutations of Guillemot and Marx that underlies twin-width. Following a merge sequence of width $d$, they serve the access sequence with cost $O(n d^2)$. A permutation avoiding a pattern of size $k$ has twin-width $2^{O(k)}$ by the Guillemot–Marx theorem with Fox's improvement, which rests on the Marcus–Tardos theorem, and this gives the bound.
 
 ## Depends on
 

@@ -4,7 +4,7 @@ In the MPC model with strongly sublinear local memory $S = n^{\alpha}$ for any c
 
 ## Proof sketch
 
-Sparsify the LOCAL desire-level MIS algorithm: run it in phases of $R = O(\sqrt{\log \Delta})$ rounds, and show that the randomness relevant to each phase can be determined by a sparse subgraph in which each vertex's $R$-hop neighbourhood has size $\Delta^{O(\sqrt{\log\Delta})}$, small enough to gather on one machine by graph exponentiation in $O(\log R)$ rounds. Simulating each phase in $O(\log R)$ MPC rounds yields $O(\sqrt{\log\Delta} \cdot \log\log\Delta)$ rounds, followed by shattering and a deterministic finish.
+Sparsify the LOCAL desire-level MIS algorithm: run it in phases of $R = O(\sqrt{\log \Delta})$ rounds, and show that each phase can be simulated on a sparse subgraph of degree $2^{O(\sqrt{\log\Delta})}$, in which each vertex's behaviour during the phase depends on only $\Delta^{O(1)}$ vertices and edges (its locality volume), small enough to gather on one machine by graph exponentiation in $O(\log R) = O(\log\log\Delta)$ rounds. Simulating each phase in $O(\log R)$ MPC rounds yields $O(\sqrt{\log\Delta} \cdot \log\log\Delta)$ rounds, followed by shattering and a deterministic finish.
 
 ## Depends on
 

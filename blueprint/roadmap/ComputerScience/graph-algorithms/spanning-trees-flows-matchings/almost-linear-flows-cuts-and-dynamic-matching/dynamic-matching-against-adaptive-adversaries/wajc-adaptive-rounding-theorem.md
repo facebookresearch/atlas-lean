@@ -10,7 +10,7 @@ Previously all randomized algorithms with these trade-offs required an oblivious
 
 ## Proof sketch
 
-Maintain a fractional matching $x$ deterministically, so its evolution does not depend on random bits, and sample a kernel $H$ from the colour classes of $x$. The sampled $H$ has $\tilde O(\mu(G))$ edges and $\mathbb{E}[\mu(H)] \ge \|x\|_1/(2 + O(\varepsilon))$ by the kernel lemma and negative association. Resampling after a geometric number of updates and recomputing a near-maximum matching in $H$ costs little amortized or, with periodic background rebuilding, worst-case time, and since fresh randomness is used each time, the adversary learns nothing that biases future samples.
+Maintain a fractional matching $x$ deterministically, so its evolution does not depend on random bits, and sample a kernel $H$ from the colour classes of $x$. The sampled $H$ has $\tilde O(\mu(G))$ edges; when $x$ is approximately maximal, negative association shows that $H$ contains a randomized kernel, so $\mathbb{E}[\mu(H)] \ge \mu(G)/(2 + O(\varepsilon))$ by the kernel lemma (for item 3, a bipartite fractional matching algorithm with better-than-2 approximation is rounded the same way). Resampling after a geometric number of updates and recomputing a near-maximum matching in $H$ costs little amortized or, with periodic background rebuilding, worst-case time, and since fresh randomness is used each time, the adversary learns nothing that biases future samples.
 
 ## Depends on
 

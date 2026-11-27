@@ -7,7 +7,7 @@ Let $G=(V,E,w)$ have integer weights, let $B\ge 1$ with $w(e)\ge -2B$ for all $e
 
 ## Proof sketch
 
-Item 1 holds because $w\le \max\{0,w^B\}$ edgewise, so distances in $G$ are at most those in $G^B_{\ge 0}$, which are at most $\Delta B/2$ inside a component by the weak-diameter guarantee. For item 2, the path $P=P_{G^B}(v)$ starts at the dummy source with a weight-$0$ edge and has $w^B(P)\le 0$; raising each of its at most $\eta_{G^B}(v)\le\Delta$ negative edges by at most $B$ gives $\sum_{e\in P}\max\{0,w^B(e)\}\le \Delta B$. Summing the hitting probabilities $O(w(e)\log^2 n/(\Delta B/2)+n^{-10})$ over the at most $n$ edges of $P$ gives $O(\log^2 n)$.
+Item 1 holds because $w\le \max\{0,w^B\}$ edgewise, so distances in $G$ are at most those in $G^B_{\ge 0}$, which are at most $\Delta B/2$ inside a component by the weak-diameter guarantee. For item 2, the path $P=P_{G^B}(v)$ starts at the dummy source with a weight-$0$ edge and has $w^B(P)\le 0$; raising each of its at most $\eta_{G^B}(v)\le\Delta$ negative edges by at most $B$ gives $\sum_{e\in P}\max\{0,w^B(e)\}\le \Delta B$. Summing the hitting probabilities $O(\max\{0,w^B(e)\}\log^2 n/(\Delta B/2)+n^{-10})$ over the at most $n$ edges of $P$ gives $O(\log^2 n)$.
 
 ## Depends on
 

@@ -6,11 +6,7 @@ The **sign-preservation game with reuse** (SPR) with parameters $n, s \in \mathb
 2. Knowing $j$, Player-L may remove any of the minus signs in cells to the left of $j$ and any of the plus signs in cells to the right of $j$.
 3. Player-L places a sign, $+$ or $-$, into cell $j$.
 
-Player-P maximizes, and Player-L minimizes, the number of signs remaining at the end; both may randomize, and $\mathrm{opt}(n, s)$ is the optimal expected number of remaining signs. The **sign-preservation game** of Qiao and Valiant is the special case in which Player-P points at each cell at most once and Player-L removes every sign it is allowed to remove. Upper bounds on the game value translate into forecasters with small $\ell_1$ calibration error, and lower bounds into lower bounds on the minimax $\ell_1$ calibration error.
-
-## Depends on
-
-- [Distance to calibration and its upper and lower variants](distance-to-calibration.md)
+Player-P maximizes, and Player-L minimizes, the number of signs remaining at the end; both may randomize, and $\mathrm{opt}(n, s)$ is the optimal expected number of remaining signs. The **sign-preservation game** of Qiao and Valiant is the special case in which Player-P points at each cell at most once and Player-L removes every sign it is allowed to remove. In the sign-preservation game a $+$ sign is preserved exactly when every later sign is placed in a cell with a larger number, and a $-$ sign exactly when every later sign is placed in a cell with a smaller number. Upper bounds on $\mathrm{opt}(n,n)$ translate into forecasters with small $\ell_1$ calibration error, and lower bounds on $\mathrm{opt}(n, n^\alpha)$ into lower bounds on the minimax $\ell_1$ calibration error.
 
 ## Sources
 

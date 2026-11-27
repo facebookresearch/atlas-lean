@@ -13,7 +13,7 @@ Suppose block $B$ is committed via a three-chain with QCs in views $v, v+1, v+2$
 
 ## Proof depends on
 
-- [Quorums of size n - f intersect in a correct replica when n is at least 3f + 1](byzantine-quorum-intersection.md)
+- [Cardinality conditions for threshold Byzantine quorum systems and masking-register safety](../byzantine-broadcast-and-quorum-systems/cardinality-conditions-for-threshold-byzantine-quorum-systems-and-masking-regist.md)
 
 ## Sources
 

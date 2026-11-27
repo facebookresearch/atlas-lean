@@ -4,7 +4,7 @@ Let $G=(V,E,w)$ have integer weights with $w(e)\ge -2B$ and no negative cycle, l
 
 ## Proof sketch
 
-Suppose a shortest path from the dummy source in $H^B_s$ to $v\in V_i$ attaining $\eta_{H^B}(v)$ uses $k>\Delta/2$ negative edges, and let $Q$ be its part inside $V_i$, from $u$ to $v$. Since $w^B(Q)\le 0$ and each negative edge was raised by exactly $B$, one gets $w(Q)=w^B(Q)-kB<-\Delta B/2$. Closing $Q$ with a $v$-$u$ walk of weight $\mathrm{dist}_G(v,u)\le\Delta B/2$ yields a negative cycle in $G$, a contradiction; the price-function invariance of cycle weights lets the same argument run after any reweighting.
+Suppose a shortest path from the dummy source in $H^B_s$ to $v\in V_i$ attaining $\eta_{H^B}(v)$ uses $k>\Delta/2$ negative edges, and let $Q$ be its part inside $V_i$, from $u$ to $v$. Since $w^B(Q)\le 0$ and each of the $k$ edges negative in $H^B$ was raised by exactly $B$ (other edges by $B$ or $0$), one gets $w(Q)\le w^B(Q)-kB<-\Delta B/2$. Closing $Q$ with a $v$-$u$ walk of weight $\mathrm{dist}_G(v,u)\le\Delta B/2$ yields a negative cycle in $G$, a contradiction; the price-function invariance of cycle weights lets the same argument run after any reweighting.
 
 ## Depends on
 

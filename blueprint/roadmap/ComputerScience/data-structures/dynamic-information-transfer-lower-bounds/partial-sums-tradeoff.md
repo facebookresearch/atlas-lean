@@ -1,10 +1,10 @@
 # Pătraşcu–Demaine tradeoff for dynamic partial sums
 
-For dynamic partial sums over $\mathbb{Z}/2^{\delta}\mathbb{Z}$ with $\delta = w = \Theta(\lg n)$, every randomized cell-probe structure with amortized costs $t_u, t_q$ satisfies $t_q \lg(t_u/t_q) = \Omega(\lg n)$ and $t_u \lg(t_q/t_u) = \Omega(\lg n)$. In particular $\max\{t_u, t_q\} = \Omega(\lg n)$, which is matched by balanced aggregation trees and breaks the $\Omega(\lg n/\lg\lg n)$ barrier of the chronogram method for problems with $\Theta(\lg n)$-bit answers.
+For dynamic partial sums over $\mathbb{Z}/2^{\delta}\mathbb{Z}$ with $\delta = w = \Theta(\lg n)$, every cell-probe structure, possibly Las Vegas randomized, with amortized expected costs $t_u, t_q$ satisfies $t_q \lg(t_u/t_q) = \Omega(\lg n)$ and $t_u \lg(t_q/t_u) = \Omega(\lg n)$. In particular $\max\{t_u, t_q\} = \Omega(\lg n)$, which is matched by balanced aggregation trees and breaks the $\Omega(\lg n/\lg\lg n)$ barrier of the chronogram method for problems with $\Theta(\lg n)$-bit answers.
 
 ## Proof sketch
 
-By the entropy lemma, a node at depth $d$ whose left interval contains $k = \Theta(m/2^{d})$ updates has $|\mathrm{IT}(v)| = \Omega(k)$, whereas the reads available in $R_v$ number $O(k t_q)$. Summing over the $\Theta(\lg n)$ levels and charging each read once gives $\Omega(m \lg n)$ total probes, which yields $\max(t_u,t_q) = \Omega(\lg n)$; the tradeoff form comes from grouping $\lg(t_u/t_q)$ consecutive levels into one, so that queries pay for transfer across several levels at once while updates pay for the rest.
+By the entropy lemma with $\delta = w$, a node at depth $d$ whose intervals contain $k = \Theta(m/2^{d})$ updates and queries has $\mathbb{E}|\mathrm{IT}(v)| = \Omega(k)$. Summing over the $\Theta(\lg n)$ levels and charging each read to one node gives $\Omega(m \lg n)$ total probes, so $\max(t_u,t_q) = \Omega(\lg n)$. For the tradeoff, the hard instance consists of blocks of $t_u + t_q$ operations, each with $t_q$ updates and $t_u$ queries, so updates and queries cost the same per block, and the analysis uses a tree of branching factor $B = 2\max\{t_u/t_q, t_q/t_u\}$. Each block then costs $\Omega(\max\{t_u, t_q\}\log_B n)$ in expectation and at most $2 t_u t_q$, which rearranges to the two branches.
 
 ## Depends on
 

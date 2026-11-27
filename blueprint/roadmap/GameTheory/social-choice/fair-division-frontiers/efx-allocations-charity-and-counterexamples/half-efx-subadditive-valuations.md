@@ -4,7 +4,7 @@ Let every agent have a monotone subadditive valuation ($v_i(S \cup T) \le v_i(S)
 
 ## Proof sketch
 
-Run envy-cycle elimination, but whenever an unallocated good is added to the bundle of a source of the envy graph, first discard from that bundle any good whose removal still leaves an envied set, keeping bundles minimal with respect to envy. Subadditivity bounds the value of a minimal envied bundle by twice the owner's valuation of the envied part, which yields the factor one half.
+Process the goods one at a time, keeping a partial $\tfrac12$-EFX allocation with an acyclic envy graph. Give the next good $g$ to an unenvied agent $j$. If some agent $i$ now violates $\tfrac12$-EFX towards $j$, return $i$'s bundle to the pool and give $i$ the single good $g$ instead. Since $i$ did not violate $\tfrac12$-EFX before, adding $g$ must have at least doubled $i$'s value for a subset of $X_j$, so subadditivity gives $v_i(\{g\}) > v_i(X_i)$; any envy towards $i$ is then fully EFX because $i$ holds one good. Envy cycles are eliminated by rotation. Each round either shrinks the pool or strictly increases $\sum_i v_i(X_i)$, so the process terminates with a complete $\tfrac12$-EFX allocation.
 
 ## Depends on
 

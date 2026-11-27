@@ -6,6 +6,7 @@ Let a learner choose distributions $x^t \in \Delta_n$ against losses $\ell^t \in
 
 - [Swap regret](../../../not-yet-classified/part-02/regret/swap-regret.md)
 - [External regret](../../../not-yet-classified/part-02/regret/external-regret.md)
+- [Existence of a stationary play](../../../not-yet-classified/part-02/regret-blum-mansour/exists-is-stationary-play.md)
 
 ## Sources
 

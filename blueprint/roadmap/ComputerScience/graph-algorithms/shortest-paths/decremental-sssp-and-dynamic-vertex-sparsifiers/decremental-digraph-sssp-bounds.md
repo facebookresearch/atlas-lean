@@ -2,8 +2,8 @@
 
 Let $G$ be a directed graph with $n$ vertices, $m$ edges and aspect ratio $W$, undergoing edge deletions, with source $s$ and $\varepsilon > 0$.
 
-1. (Probst Gutenberg-Wulff-Nilsen) There is a Las Vegas $(1+\varepsilon)$-approximate decremental SSSP data structure, robust to adversaries that adapt to the returned distance estimates, with total expected update time $\tilde O(m^{2/3}n^{4/3})$ on unweighted graphs and $\tilde O(m^{3/4}n^{5/4}\log W)$ on weighted graphs; assuming an oblivious adversary, $\tilde O(\sqrt{m}\,n^{3/2})$ and $\tilde O(m^{2/3}n^{4/3}\log W)$ respectively.
-2. (Bernstein-Probst Gutenberg-Wulff-Nilsen) There is a randomized $(1+\varepsilon)$-approximate decremental SSSP data structure against an oblivious adversary with total expected update time $\tilde O(n^2\log^4 W/\varepsilon)$, near-optimal for dense graphs with polynomial weights, and $\tilde O(m n^{2/3}\log^3 W)$ for sparse graphs, with $O(1)$ distance queries and path queries in time $O(|P|)$.
+1. (Probst Gutenberg-Wulff-Nilsen) There is a Las Vegas $(1+\varepsilon)$-approximate decremental SSSP data structure, robust to adversaries that adapt to the returned distance estimates (but not to returned paths), with total expected update time $\tilde O(m^{2/3}n^{4/3})$ on unweighted graphs and $\tilde O(m^{3/4}n^{5/4}\log W)$ on weighted graphs; assuming an oblivious adversary, $\tilde O(\sqrt{m}\,n^{3/2})$ and $\tilde O(m^{2/3}n^{4/3}\log W)$ respectively.
+2. (Bernstein-Probst Gutenberg-Wulff-Nilsen) There is a randomized $(1+\varepsilon)$-approximate decremental SSSP data structure against an oblivious adversary whose estimates are correct with high probability at every stage, with total expected update time $\tilde O(n^2\log^4 W/\varepsilon)$, near-optimal for dense graphs with polynomial weights, and $\tilde O(m n^{2/3}\log^3 W/\varepsilon)$ for sparse graphs, with $O(1)$ distance queries and path queries in time $O(|P|)$.
 
 ## Proof sketch
 

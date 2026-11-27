@@ -4,7 +4,7 @@ For every $d \ge 3$ and every fixed load factor $c < c_d^{\Delta}$, let $n = cm$
 
 ## Proof sketch
 
-Below the peeling threshold the hashing hypergraph, with slots as vertices and keys as hyperedges, peels completely; fix a peeling $F$, which orients each key $e$ to a slot $F(e)$. Key $e$ *directly depends* on key $e'$ when $F(e) \in e'$, and $D_F(e)$ is the multiset of such $e'$, each counted with the multiplicity with which $e'$ contains $F(e)$. Walzer's peeling number (Section 3, equation (2)) is defined recursively by
+Below the peeling threshold the hashing hypergraph, with slots as vertices and keys as hyperedges, peels completely; fix a peeling $F$, which orients each key $e$ to a slot $F(e)$. Key $e$ *directly depends* on a key $e' \neq e$ when $F(e) \in e'$, and $D_F(e)$ is the multiset of such $e' \neq e$, each counted with the multiplicity with which $e'$ contains $F(e)$; the key $e$ itself, which always contains $F(e)$, is excluded, and the transitive closure of direct dependence is acyclic because $e$ is peeled after every $e' \in D_F(e)$. Walzer's peeling number (Section 3, equation (2)) is defined recursively by
 
 $$
 \mathrm{peel}_F(e) = \sum_{e' \in D_F(e)} \bigl(1 + \mathrm{peel}_F(e')\bigr),

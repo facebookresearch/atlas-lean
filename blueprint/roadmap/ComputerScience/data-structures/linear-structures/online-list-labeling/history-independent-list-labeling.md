@@ -1,6 +1,6 @@
 # History-independent list labeling
 
-A randomized list-labeling algorithm is *history independent* if, for every set $S$ of stored elements, the distribution of the array state depends only on $S$ and not on the sequence of insertions and deletions that produced $S$. A deterministic algorithm is history independent only if it stores each set $S$ in a fixed canonical layout, so efficient history-independent algorithms are randomized; history independence also implies that an adversary learns nothing about past operations from the memory layout.
+A randomized list-labeling algorithm is *history independent* if, for every set $S$ of stored elements, the distribution of the array state depends only on $S$ and not on the sequence of insertions and deletions that produced $S$. Since a list-labeling algorithm sees the stored elements only through their relative order, this says that whenever $n'$ elements are stored, the *array configuration* (the vector in $\{0,1\}^m$ marking the occupied slots) is distributed according to a fixed distribution $\mathcal{C}_{n',m}$ that depends only on $n'$ and $m$. An adversary who inspects the array therefore learns nothing about past operations beyond the current number of elements. A deterministic algorithm is history independent only if each configuration is a fixed function of $n'$.
 
 ## Depends on
 

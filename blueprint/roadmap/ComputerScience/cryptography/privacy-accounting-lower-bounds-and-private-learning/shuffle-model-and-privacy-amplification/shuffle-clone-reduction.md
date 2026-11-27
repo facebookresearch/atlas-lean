@@ -1,6 +1,6 @@
 # Shuffled local reports reduce to a binomial clone-counting problem
 
-Let $R^{(1)}, \dots, R^{(n)}$ be local randomizers, where $R^{(i)}(z_{1:i-1}, \cdot)$ is $\varepsilon_0$-DP for all auxiliary inputs, and let $A_s(x_{1:n})$ sample a uniformly random permutation $\pi$ and output $z_i = R^{(i)}(z_{1:i-1}, x_{\pi(i)})$ for $i = 1, \dots, n$. Let $X_0, X_1$ be neighbouring datasets. Let $C \sim \mathrm{Bin}(n-1, e^{-\varepsilon_0})$, $A \sim \mathrm{Bin}(C, 1/2)$ and $\Delta \sim \mathrm{Bern}\big(e^{\varepsilon_0}/(e^{\varepsilon_0}+1)\big)$ be independent. Then there is a randomized post-processing $\Phi$ such that
+Let $R^{(1)}, \dots, R^{(n)}$ be local randomizers, where $R^{(i)}(z_{1:i-1}, \cdot)$ is $\varepsilon_0$-DP for all auxiliary inputs, and let $A_s(x_{1:n})$ sample a uniformly random permutation $\pi$ and output $z_i = R^{(i)}(z_{1:i-1}, x_{\pi(i)})$ for $i = 1, \dots, n$. Let $X_0, X_1$ be neighbouring datasets. Let $C \sim \mathrm{Bin}(n-1, e^{-\varepsilon_0})$, let $A$ given $C$ be distributed as $\mathrm{Bin}(C, 1/2)$ (so $A$ depends on $C$), and let $\Delta \sim \mathrm{Bern}\big(e^{\varepsilon_0}/(e^{\varepsilon_0}+1)\big)$ be independent of $(C, A)$. Then there is a randomized post-processing $\Phi$ such that
 
 $$
 A_s(X_0) \stackrel{d}{=} \Phi(A + \Delta,\; C - A + 1 - \Delta), \qquad A_s(X_1) \stackrel{d}{=} \Phi(A + 1 - \Delta,\; C - A + \Delta).
@@ -22,4 +22,4 @@ By the mixture decomposition, each of the other $n-1$ users independently, with 
 
 ## Sources
 
-- V. Feldman, A. McMillan, K. Talwar, "Hiding Among the Clones: A Simple and Nearly Optimal Analysis of Privacy Amplification by Shuffling", FOCS (2021), arXiv:2012.12803.
+- V. Feldman, A. McMillan, K. Talwar, "Hiding Among the Clones: A Simple and Nearly Optimal Analysis of Privacy Amplification by Shuffling", FOCS (2021), arXiv:2012.12803, Theorem 3.2.

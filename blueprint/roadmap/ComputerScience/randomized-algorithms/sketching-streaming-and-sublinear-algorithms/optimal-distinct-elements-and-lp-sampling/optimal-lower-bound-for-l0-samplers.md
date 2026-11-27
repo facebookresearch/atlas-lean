@@ -1,6 +1,6 @@
 # Optimal Omega(log(1/delta) log^2(n/log(1/delta))) lower bound for L0 samplers
 
-In the one-way public-coin communication problem *universal relation*, Alice and Bob receive $x \ne y \in \{0,1\}^n$ and Bob must output an index $i$ with $x_i \ne y_i$; its randomized one-way communication complexity with failure probability $\delta$ is exactly
+In the one-way public-coin communication problem *universal relation*, Alice and Bob receive $x \ne y \in \{0,1\}^n$ and Bob must output an index $i$ with $x_i \ne y_i$; its randomized public-coin one-way communication complexity with failure probability $\delta$, for every $\delta$ bounded away from $1$, is
 
 $$
 \Theta\Big(\min\Big\{n, \; \log(1/\delta)\log^2\frac{n}{\log(1/\delta)}\Big\}\Big),
@@ -10,16 +10,12 @@ even under the promise $\mathrm{support}(y) \subset \mathrm{support}(x)$. Conseq
 
 ## Proof sketch
 
-A sampler with small memory solves universal relation: Alice inserts $x$, sends the memory, Bob deletes $y$, and a sample from the support of $x - y$ is a differing index. One proof turns a low-memory sampler into an adaptive encoder for subsets of $[n]$ of prescribed sizes: repeatedly querying samples and deleting recovered elements reveals the set with fewer bits than its entropy, a contradiction. The second proof reduces from augmented indexing over $\log(n/\log(1/\delta))$ scales, each contributing a $\log$ factor.
+A sampler with small memory solves universal relation: Alice inserts $x$, sends the memory, Bob deletes $y$, and a sample from the support of $x - y$ is a differing index. One proof turns a low-memory protocol into an encoder for subsets of $[n]$ of a fixed size: the encoder plays Alice on the set and simulates Bob on adaptively chosen subsets, revealing elements one batch at a time, and random noise injected into these adaptive queries keeps the protocol correct, so the set is encoded with fewer bits than the information-theoretic minimum, a contradiction. The second proof is a randomized reduction from augmented indexing that also interacts with the protocol adaptively, with a union bound over the likely interaction patterns. The matching upper bound follows by minor modifications of the Jowhari–Sağlam–Tardos sampler.
 
 ## Depends on
 
 - [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
 - [Approximate and perfect Lp samplers for turnstile streams](lp-samplers-in-turnstile-streams.md)
-
-## Proof depends on
-
-- [Yao's minimax principle for communication complexity](../../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/rand-complexity-eq-i-sup-dist-complexity.md)
 - [Jowhari-Sağlam-Tardos samplers: zero-relative-error L0 sampling in O(log^2 n) bits](l0-sampler-with-log-squared-bits.md)
 
 ## Sources

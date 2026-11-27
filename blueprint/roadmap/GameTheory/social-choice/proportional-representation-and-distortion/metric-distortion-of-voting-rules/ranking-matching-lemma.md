@@ -4,7 +4,7 @@ For every ranking profile $\sigma$ there exists a candidate $a$ whose domination
 
 ## Proof sketch
 
-By Hall's theorem it suffices to find $a$ such that for every set $S$ of candidates, the voters ranking $a$ above some member of $S$ (or equal to it) have total weight at least $q(S)$. Argue by induction on the number of candidates: remove a candidate whose violation of Hall's condition is witnessed by a minimal deficient set, redistribute its weight, and use the induction hypothesis on the smaller election; a careful choice of the removed candidate ensures the resulting candidate satisfies Hall's condition in the original election.
+By a weighted version of Hall's theorem, a fractional perfect matching exists exactly when every set of voters has total weight at most the weight of the candidates it may be matched to. Suppose the lemma fails and take a counterexample election with the smallest number of voters. For each candidate $a$ fix a minimal set of voters violating Hall's condition for $a$, and study how these violating sets for different candidates intersect. Removing a suitable violating set of voters together with the candidates they dominate, and renormalizing the weights, gives a smaller election; by minimality it has a candidate with a fractional perfect matching, and combining that matching with the removed part contradicts the choice of the counterexample. A suitable candidate can be found in strongly polynomial time by testing each candidate.
 
 ## Depends on
 

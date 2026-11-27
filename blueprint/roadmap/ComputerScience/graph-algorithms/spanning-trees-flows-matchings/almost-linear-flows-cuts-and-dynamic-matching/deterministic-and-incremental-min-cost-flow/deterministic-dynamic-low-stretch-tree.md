@@ -4,7 +4,7 @@ There is a deterministic data structure that, given a dynamic $n$-vertex graph u
 
 ## Proof sketch
 
-Use one tree chain built from dynamic low-stretch forests and the deterministic dynamic spanner, with gradients ignored: the stretch of an edge in the induced tree is the product of the per-level stretch overestimates and spanner path lengths, which is $\widetilde{O}(1)^d\gamma_s^d = n^{o(1)}$ on average. Edge insertions are given stretch $1$ by making their endpoints roots, length classes are handled by bucketing into $\log^{O(1)} n$ scales, and rebuilds of level $i$ every $m/k^i$ updates are deamortized by maintaining two copies.
+Use a hierarchy of $d = \log^{1/18} m$ levels with $k = m^{1/d}$: at each level maintain a dynamic low-stretch forest with unit weights, contract it, split the contracted edges into $\widetilde{O}(1)$ buckets by stretch overestimate and length, and replace each bucket by a deterministic spanner with a low-congestion embedding. The union of the forests is the tree. Charging stretch through the forest routing and the spanner embeddings loses a factor $O(k\gamma_c)$ per level with $\gamma_c = \exp(O(\log^{8/9} m\log\log m))$, so the total stretch is $m^{1+o(1)}$. Edge insertions are given stretch $1$ by making their endpoints roots, levels $i, \ldots, d-1$ are rebuilt once level $i$ has received $m/k^{i+1}$ updates, and the amortized bounds are deamortized by standard batching.
 
 ## Depends on
 

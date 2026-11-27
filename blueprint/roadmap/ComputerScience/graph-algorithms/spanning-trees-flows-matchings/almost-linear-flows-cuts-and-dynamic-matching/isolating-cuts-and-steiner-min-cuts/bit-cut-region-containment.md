@@ -25,4 +25,4 @@ Parts (a) and (b) hold because distinct labels differ in some coordinate $i$, wh
 ## Sources
 
 - Jason Li, Debmalya Panigrahi, "Deterministic Min-cut in Poly-logarithmic Max-flows", FOCS (2020), arXiv:2111.02008.
-- Chandra Chekuri, Kent Quanrud, "Isolating Cuts, (Bi-)Submodularity, and Faster Algorithms for Connectivity", ICALP (2021), arXiv:2103.12908.
+- Chandra Chekuri, Kent Quanrud, "Isolating Cuts, (Bi-)Submodularity, and Faster Algorithms for Global Connectivity Problems", ICALP (2021), arXiv:2103.12908.

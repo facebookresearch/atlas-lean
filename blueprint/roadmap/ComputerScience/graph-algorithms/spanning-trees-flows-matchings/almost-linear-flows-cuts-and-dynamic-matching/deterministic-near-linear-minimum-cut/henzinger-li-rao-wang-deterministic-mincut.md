@@ -4,7 +4,7 @@ There is a deterministic algorithm that computes a global minimum cut of a conne
 
 ## Proof sketch
 
-The main structural result is that every weighted graph has a sparse clustering whose contraction preserves all minimum cuts up to a $1 + o(1/\log n)$ factor, constructed deterministically in near-linear time by extending the Kawarabayashi-Thorup and Henzinger-Rao-Wang local-flow trimming to weighted graphs with polylogarithmic error and then sharpening the error using tree packings to locate sources for local flow computations. Applied recursively over $O(\log n)$ levels as in Li's framework, the clusterings produce polylogarithmically many spanning trees one of which $2$-respects the minimum cut, and the deterministic $2$-respecting algorithm finishes.
+The main structural result is that every weighted graph has a sparse clustering whose contraction preserves all minimum cuts up to a $1 + o(1)$ factor. Deterministically, extending the Kawarabayashi-Thorup and Henzinger-Rao-Wang local-flow trimming to weighted graphs gives such clusterings with polylogarithmic error in near-linear time, and tree packings, used to locate sources for local flow computations, sharpen the error to $1 + o(1/\log n)$. Applied recursively over $O(\log n)$ levels as in Li's framework, the clusterings produce polylogarithmically many spanning trees one of which $2$-respects the minimum cut, and the deterministic $2$-respecting algorithm finishes.
 
 ## Depends on
 

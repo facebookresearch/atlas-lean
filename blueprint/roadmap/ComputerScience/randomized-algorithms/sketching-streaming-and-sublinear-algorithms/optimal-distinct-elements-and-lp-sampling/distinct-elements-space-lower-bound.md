@@ -15,12 +15,11 @@ The $\Omega(\log n)$ term holds already for constant-factor approximation and fo
 ## Depends on
 
 - [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
+- [Kane-Nelson-Woodruff distinct-elements algorithm with O(1/eps^2 + log n) bits](optimal-space-distinct-elements-algorithm.md)
 
 ## Proof depends on
 
 - [Yao's minimax principle for communication complexity](../../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/rand-complexity-eq-i-sup-dist-complexity.md)
-- [Polynomial space for approximating $F_k$, $k \ge 6$](../../frequency-moments-of-data-streams/space-lower-bound-freq-moment.md)
-- [Kane-Nelson-Woodruff distinct-elements algorithm with O(1/eps^2 + log n) bits](optimal-space-distinct-elements-algorithm.md)
 
 ## Sources
 

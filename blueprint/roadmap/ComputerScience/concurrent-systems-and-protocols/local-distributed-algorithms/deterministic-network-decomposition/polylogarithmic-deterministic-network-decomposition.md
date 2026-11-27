@@ -10,7 +10,7 @@ for problems whose solutions can be checked deterministically in polylogarithmic
 
 ## Proof sketch
 
-Construct each colour class in $O(\log n)$ phases indexed by the bits of the identifiers. In phase $i$, clusters are labelled red or blue according to bit $i$ of their label; blue vertices adjacent to red clusters repeatedly propose to join a red cluster, and a red cluster accepts all proposals if they amount to at least a $1/(2\log n)$ fraction of its size, otherwise it rejects them and those blue vertices are deleted (killed) from this colour class. Each phase separates red and blue clusters, the growth condition bounds cluster radii by $O(\log^2 n)$ per phase, and only an $O(1/\log n)$ fraction of vertices is killed per phase, so each colour class covers half of the remaining vertices.
+Construct each colour class in $b = O(\log n)$ phases indexed by the bits of the identifiers, starting with every remaining vertex as its own cluster. In phase $i$, clusters are labelled red or blue according to bit $i$ of their identifier. Step by step, each red vertex adjacent to a blue cluster requests to join one; a blue cluster accepts all requests if they amount to at least a $1/(2b)$ fraction of its size, growing by one hop, and otherwise rejects them, and those red vertices are deleted (killed) from this colour class while the cluster stops growing for the phase. A cluster can accept only $O(b \log n)$ times before exceeding $n$ vertices, so radii grow by $O(\log^2 n)$ per phase; at most a $1/(2b)$ fraction of the vertices dies per phase; and at the end of the phase no red cluster is adjacent to a blue one. After $b$ phases adjacent surviving clusters agree on all identifier bits, so they coincide, and at least half of the remaining vertices are clustered.
 
 ## Depends on
 
@@ -24,4 +24,4 @@ Construct each colour class in $O(\log n)$ phases indexed by the bits of the ide
 
 ## Sources
 
-- V. Rozhoň, M. Ghaffari, "Polylogarithmic-Time Deterministic Network Decomposition and Distributed Derandomization", STOC 2020, arXiv:1907.10937.
+- V. Rozhoň, M. Ghaffari, "Polylogarithmic-Time Deterministic Network Decomposition and Distributed Derandomization", STOC 2020, arXiv:1907.10937, Section 1.3 and Section 2.

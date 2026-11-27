@@ -1,10 +1,10 @@
 # Logarithmic-base-B lower bound for dynamic problems in external memory
 
-In the external-memory model with blocks of $B$ words of $\Theta(\lg n)$ bits, viewed as a cell-probe model with cells of $B \cdot \Theta(\lg n)$ bits, every structure for dynamic partial sums or dynamic connectivity has $\max\{t_u, t_q\} = \Omega(\log_B n)$ amortized I/Os, without any assumption on how the structure manipulates data. This matches B-trees.
+In the external-memory model with blocks of $B$ words of $\Theta(\lg n)$ bits, viewed as a cell-probe model with cells of $B \cdot \Theta(\lg n)$ bits, every structure for dynamic connectivity, even on graphs that are always disjoint unions of paths, has $\max\{t_u, t_q\} = \Omega(\log_B n)$ amortized I/Os (Theorem 2.5, allowing amortization, Las Vegas randomization and nondeterminism), without any assumption on how the structure manipulates data. The same $\Omega(\log_B n)$ holds for partial sums with $\delta = \Theta(\lg n)$-bit updates and $b = B \lg n$-bit cells (Theorem 2.2). For forests, Euler-tour trees combined with buffer trees give a matching $O(\log_B n)$.
 
 ## Proof sketch
 
-Run the information-transfer argument with cell size $w' = B w$: the encoding of a node's transfer now costs $|\mathrm{IT}(v)| \cdot (Bw + \lg m)$ bits while the entropy to be transferred is unchanged, so the bound per tree level shrinks by a factor $B$; grouping $\lg B$ levels of the information-transfer tree into one superlevel restores constant transfer per superlevel, and there are $\Theta(\log_B n)$ superlevels.
+With $b$-bit cells, the basic information-transfer argument shows only that $\Omega(\delta \lg n / b)$ bits' worth of reads, that is $\Omega(\lg n / B)$ cell reads, are needed. Pătraşcu and Demaine (Section 7) instead use random query indices and compare each right interval containing $L$ queries with $BL$ random queries that could be asked at a random time $t$ in it; their answers carry $\Omega(BL\delta) = \Omega(Lb)$ bits about the left interval. If few reads of the right interval hit cells written in the left one, most of these simulated queries read no such cell, so the information must already be in the few cells read, each of $b$ bits. An encoding that lists those cells and a succinct separator between the cells read and the cells written shows that $\Omega(L) - O(s)$ such reads occur, for a lower-order term $s$, and summing over a tree whose nodes span $\Theta(\log_B n)$ levels gives the bound.
 
 ## Depends on
 

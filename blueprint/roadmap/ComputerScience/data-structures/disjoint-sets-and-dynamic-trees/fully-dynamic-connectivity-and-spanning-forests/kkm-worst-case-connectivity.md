@@ -4,7 +4,7 @@ There is a randomized fully dynamic connectivity data structure on $n$ vertices 
 
 ## Proof sketch
 
-Maintain a spanning forest in Euler-tour trees together with, for each of $O(\log n)$ sampling levels and $O(\log n)$ independent repetitions, the XOR sketches of incident non-tree edges summed over each tree. After a tree-edge deletion, the XOR over the smaller tree at the right level returns a replacement edge with constant probability, and repetitions amplify this; a returned name is verified in $O(1)$ time. A hierarchy of $O(\log n)$ Boruvka-like levels handles cascading splits, giving polylogarithmic worst-case time; the forest reveals information about the random sampling, which is why the adversary must be oblivious.
+Maintain a spanning forest in Euler-tour trees together with, for each of $O(\log n)$ sampling levels and $O(\log n)$ independent repetitions, the XOR sketches of incident non-tree edges summed over each tree. After a tree-edge deletion, the XOR of the sketches over one of the two resulting trees, at a sampling level where exactly one cut edge survives, returns the name of a replacement edge with constant probability, and repetitions amplify this; each candidate name is tested against the graph in $O(\log n/\log\log n)$ time, so a wrong name is never used. A hierarchy of $O(\log n)$ Boruvka-like levels handles cascading splits, giving polylogarithmic worst-case time; the forest reveals information about the random sampling, which is why the adversary must be oblivious.
 
 ## Depends on
 

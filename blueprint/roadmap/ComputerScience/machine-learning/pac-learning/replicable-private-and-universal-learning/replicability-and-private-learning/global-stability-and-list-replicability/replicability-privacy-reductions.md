@@ -20,9 +20,8 @@ Replicability to privacy: run the replicable algorithm on many disjoint subsampl
 
 ## Proof depends on
 
-- [TV indistinguishability, replicability and approximate privacy are equivalent for PAC learning](tv-indistinguishability-replicability-privacy-equivalence.md)
 - [Transfer theorem for adaptive data analysis](../../../../../cryptography/differential-privacy/differentially-private-transfer.md)
 
 ## Sources
 
-- M. Bun, M. Gaboardi, M. Hopkins, R. Impagliazzo, R. Lei, T. Pitassi, S. Sivakumar, J. Sorrell, "Stability is Stable: Connections between Replicability, Privacy, and Adaptive Generalization", STOC (2023), arXiv:2303.12921.
+- M. Bun, M. Gaboardi, M. Hopkins, R. Impagliazzo, R. Lei, T. Pitassi, S. Sivakumar, J. Sorrell, "Stability is Stable: Connections between Replicability, Privacy, and Adaptive Generalization", STOC (2023), arXiv:2303.12921, Theorem 3.1, Corollary 3.18, Sections 1.1.1, 1.1.2, 4 and 6.

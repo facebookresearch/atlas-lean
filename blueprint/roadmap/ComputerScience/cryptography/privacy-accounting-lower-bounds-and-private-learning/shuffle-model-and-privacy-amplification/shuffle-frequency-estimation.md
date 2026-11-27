@@ -10,7 +10,7 @@ Shuffling the reports and applying the clone amplification bound with $\varepsil
 
 ## Proof sketch
 
-Use a local randomizer with large $\varepsilon_0$ (such as $k$-ary randomized response or a hashing-based variant) whose variance per coordinate is $O(e^{\varepsilon_0}/(n(e^{\varepsilon_0}-1)^2))$ after debiasing. The clone bound shows the shuffled output is $(\varepsilon,\delta)$-DP with $\varepsilon \approx \sqrt{e^{\varepsilon_0}\log(1/\delta)/n}$, so choosing $\varepsilon_0$ to make this equal to the target $\varepsilon$ and substituting gives the error bound.
+Use the optimal local protocol of Acharya–Sun–Zhang and Chen–Kairouz–Özgür (a single message of $\log k + 2$ bits per user, with the stated error, asymptotically optimal among local protocols for $\varepsilon_0 \le \log k$), so that the coordinate variances sum to $O\bigl(1/n + k e^{\varepsilon_0}/(n(e^{\varepsilon_0}-1)^2)\bigr)$. Plain $k$-ary randomized response does not attain this for every $k$ and $\varepsilon_0$: on data with no copies of value $j$ it reports $j$ with probability $1/(e^{\varepsilon_0} + k - 1)$, and debiasing gives coordinate variance $(e^{\varepsilon_0} + k - 2)/(n(e^{\varepsilon_0} - 1)^2)$, larger by a factor of order $k e^{-\varepsilon_0}$ when $k$ grows. The clone bound shows the shuffled output is $(\varepsilon,\delta)$-DP with $\varepsilon \approx \sqrt{e^{\varepsilon_0}\log(1/\delta)/n}$, so choosing $\varepsilon_0$ to make this equal to the target $\varepsilon$ and substituting gives the error bound.
 
 ## Depends on
 
@@ -22,4 +22,4 @@ Use a local randomizer with large $\varepsilon_0$ (such as $k$-ary randomized re
 
 ## Sources
 
-- V. Feldman, A. McMillan, K. Talwar, "Hiding Among the Clones: A Simple and Nearly Optimal Analysis of Privacy Amplification by Shuffling", FOCS (2021), arXiv:2012.12803.
+- V. Feldman, A. McMillan, K. Talwar, "Hiding Among the Clones: A Simple and Nearly Optimal Analysis of Privacy Amplification by Shuffling", FOCS (2021), arXiv:2012.12803, Theorem 5.1 and Section 5.

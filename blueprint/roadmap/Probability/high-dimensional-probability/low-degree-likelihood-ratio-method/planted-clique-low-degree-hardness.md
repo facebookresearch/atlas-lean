@@ -1,6 +1,6 @@
 # Low-degree hardness of planted clique below the square root
 
-Let $\mathbb{Q}_n = G(n, 1/2)$ and $\mathbb{P}_n$ be $G(n,1/2)$ with a clique planted on a uniformly random set of $k$ vertices. If $k \le n^{1/2 - \epsilon}$ for a constant $\epsilon > 0$, then $\|L_n^{\le D}\| = O(1)$ for all degrees $D \le c_\epsilon \log^2 n$, whereas for $k \ge C\sqrt{n\log n}$ simple degree-one statistics (the edge count) and for $k \ge c\sqrt{n}$ spectral methods succeed.
+Let $\mathbb{Q}_n = G(n, 1/2)$ and $\mathbb{P}_n$ be $G(n,1/2)$ with a clique planted on a uniformly random set of $k$ vertices. If $k \le n^{1/2 - \epsilon}$ for a constant $\epsilon > 0$, then $\|L_n^{\le D}\| = O(1)$ for all degrees $D \le c_\epsilon \log^2 n$, whereas the edge count, a degree-one statistic, succeeds once $k/\sqrt{n} \to \infty$, and spectral methods succeed for $k \ge C\sqrt{n}$ with $C$ a large enough constant.
 
 ## Proof sketch
 

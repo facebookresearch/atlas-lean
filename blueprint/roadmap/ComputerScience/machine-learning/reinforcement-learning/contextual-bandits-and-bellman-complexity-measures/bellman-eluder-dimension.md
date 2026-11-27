@@ -15,4 +15,4 @@ taken with $\Pi_h$ either the roll-in distributions of greedy policies of $\math
 
 ## Sources
 
-- C. Jin, Q. Liu, S. Miryoosefi, "Bellman Eluder Dimension: New Rich Classes of RL Problems, and Sample-Efficient Algorithms", NeurIPS (2021), arXiv:2102.00815.
+- C. Jin, Q. Liu, S. Miryoosefi, "Bellman Eluder Dimension: New Rich Classes of RL Problems, and Sample-Efficient Algorithms", NeurIPS (2021), arXiv:2102.00815, Definitions 6, 7 and 8.

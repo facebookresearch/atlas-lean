@@ -20,9 +20,9 @@ Necessity follows from the usual shattering lower bound applied to a shattered s
 ## Proof depends on
 
 - [Shattering lower bound for PAC learning](../../../../generalization-bounds-and-concentration/shattering-lower-bound-for-pac-learning.md)
-- [Optimal sample complexity of realizable PAC learning](../../../optimal-sample-complexity-of-realizable-pac-learning.md)
+- [Haussler-Littlestone-Warmuth expected error bound for the one-inclusion predictor](../../../sample-complexity-and-combinatorial-dimensions/packing-and-one-inclusion-graphs/one-inclusion-predictor-error-bound.md)
 
 ## Sources
 
-- N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444.
+- N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444, Definition 2 and Theorem 3.
 - I. Aden-Ali, Y. Cherapanamjeri, A. Shetty, N. Zhivotovskiy, "Optimal PAC Bounds without Uniform Convergence", FOCS (2023), arXiv:2304.09167.

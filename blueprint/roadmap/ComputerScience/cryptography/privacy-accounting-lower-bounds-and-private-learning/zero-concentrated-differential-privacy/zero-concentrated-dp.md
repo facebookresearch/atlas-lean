@@ -6,7 +6,7 @@ $$
 D_\alpha\big(M(S) \,\|\, M(S')\big) \le \rho\,\alpha \quad \text{for all neighbouring } S, S' \text{ and all } \alpha \in (1, \infty).
 $$
 
-Equivalently, the privacy loss random variable is sub-Gaussian with mean at most $\rho$ in the sense of its moment generating function. Unlike approximate differential privacy, zCDP has no additive failure probability; it lies strictly between pure and approximate differential privacy.
+Equivalently, the privacy loss random variable $Z = \log\frac{dM(S)}{dM(S')}(Y)$, $Y \sim M(S)$, satisfies $\mathbb{E}[e^{(\alpha - 1)Z}] \le e^{(\alpha - 1)\alpha\rho}$ for all $\alpha > 1$, the moment bound of a Gaussian with mean $\rho$ and variance $2\rho$ on that one-sided range (a sub-Gaussian-type condition, not a full two-sided sub-Gaussian bound). Unlike approximate differential privacy, zCDP has no additive failure probability; it lies strictly between pure and approximate differential privacy.
 
 ## Depends on
 
@@ -14,4 +14,4 @@ Equivalently, the privacy loss random variable is sub-Gaussian with mean at most
 
 ## Sources
 
-- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065.
+- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065, Definitions 1.1, 1.2 and 2.1.

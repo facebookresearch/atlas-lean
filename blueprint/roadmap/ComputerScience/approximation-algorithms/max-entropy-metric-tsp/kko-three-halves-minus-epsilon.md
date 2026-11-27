@@ -10,7 +10,7 @@ Thus metric TSP has a randomized $(\tfrac32-10^{-36})$-approximation algorithm i
 
 ## Proof sketch
 
-Write the cost of the parity correction as the cost of a fractional point $y$ in the $O$-join dominant and construct $y=\tfrac{x}{2}-$ (reductions on good edges) $+$ (payments on near minimum cuts that become even in $T$). Near minimum cuts are organized into a laminar hierarchy of degree cuts and polygon cuts using the one-sided polygon structure. For strongly Rayleigh $\mu_\lambda$, each good edge has its two endpoint cuts simultaneously even with constant probability by the joint count bound and negative dependence, so the expected reduction exceeds the expected payment by $\epsilon\,\mathrm{OPT}$. Wolsey's bound handles the tree part.
+By the Edmonds–Johnson theorem the parity correction costs at most $c(y)$ for every point $y$ of the $O$-join dominant, where $O$ is the set of odd-degree vertices of the sampled tree $T$. Let $x^*$ be the incidence vector of an optimal tour and $z=(x+x^*)/2$. The proof builds random slack vectors $s$ on LP edges and $s^* \ge 0$ on tour edges and takes $y=x/4+s$ on LP edges plus $x^*/4+s^*$ on tour edges, so that $y(\delta(S)) = z(\delta(S))/2 + s(\delta(S)) + s^*(\delta(S))$. A cut needs payment only when it is odd for the correction set, that is, when $|\delta(S) \cap T|$ is odd: for every $\eta$-near minimum cut $S$ of $z$ with $|\delta(S) \cap T|$ odd the slacks satisfy $s(\delta(S))+s^*(\delta(S)) \ge 0$, while $s_e \ge -\beta x_e$ with $\beta=\eta/4.1$ keeps all other cuts satisfied. Near minimum cuts are organized into a laminar hierarchy of degree cuts and polygon cuts using the one-sided polygon structure, and for the strongly Rayleigh measure $\mu_\lambda$ good edges have their relevant cuts simultaneously even with constant probability by the joint count bound and negative dependence. This gives $\mathbb{E}[s_e] \le -\tfrac13\epsilon_P\beta x_e$ and $\mathbb{E}[s^*_{e^*}] \le 218\eta\beta$, hence $\mathbb{E}[c(y)] \le \mathrm{OPT}/4 + c(x)/4 + 218\eta\beta\,\mathrm{OPT} - \tfrac13\epsilon_P\beta\,c(x) \le (\tfrac12-\tfrac16\epsilon_P\beta)\mathrm{OPT}$ for a suitable $\eta$, using $c(x) \le \mathrm{OPT}$. The tree costs $c(x)$ in expectation up to the error from approximate marginals. Charging only the LP point $x$, rather than both $x/4$ and $x^*/4$, is the different argument of the integrality-gap result.
 
 ## Depends on
 
@@ -25,9 +25,10 @@ Write the cost of the parity correction as the cost of a fractional point $y$ in
 - [Joint count probabilities for strongly Rayleigh measures (Karlin-Klein-Oveis Gharan)](sr-joint-count-bound.md)
 - [Polygons of near-minimum cuts crossed on one side (Karlin-Klein-Oveis Gharan)](one-sided-polygon-structure.md)
 - [T-joins and the T-join dominant polyhedron](t-join-dominant.md)
+- [Edmonds-Johnson theorem: a minimum T-join costs the minimum of the T-join dominant](edmonds-johnson-t-join-dominant.md)
 - [Near-minimum cuts, atoms and polygon representations of a Held-Karp point](near-min-cuts-polygon.md)
 - [Strongly Rayleigh probability measures on subsets of a ground set](strongly-rayleigh-measure.md)
 
 ## Sources
 
-- Anna R. Karlin, Nathan Klein, Shayan Oveis Gharan, "A (Slightly) Improved Approximation Algorithm for Metric TSP", STOC (2021), arXiv:2007.01409.
+- Anna R. Karlin, Nathan Klein, Shayan Oveis Gharan, "A (Slightly) Improved Approximation Algorithm for Metric TSP", STOC (2021), arXiv:2007.01409, Theorems 1.1, 1.2 and 3.1 and the proof of Theorem 1.1 in Section 3.

@@ -1,18 +1,15 @@
 # Pătraşcu–Viola lower bound for succinct rank
 
-If a data structure answers $\mathrm{Rank}(k)$ queries on an $n$-bit array by probing $t$ cells of $w$ bits, then its space is at least $n + n / w^{O(t)}$ bits. The same tradeoff holds for $\mathrm{Select}$ and extends to sparse arrays. Together with the succincter upper bound, the redundancy/probe tradeoff for rank is $r = n / w^{\Theta(t)}$ for $w = \Theta(\log n)$.
+In the cell-probe model with cells of $w \ge \log_2 n$ bits, every data structure that answers $\mathrm{Rank}$ queries, or $\mathrm{Select}$ queries, on an array of $n$ bits by probing at most $t$ cells uses at least $n + n / w^{O(t)}$ bits of space. The lower bound extends to sparse arrays. For $w = \Theta(\log n)$ it matches Pătraşcu's succincter upper bound $n + n/((\log n)/t)^t$ up to the difference between $(\log n)^t$ and $((\log n)/t)^t$, which is immaterial for $t \le (\log n)^{1-\varepsilon}$.
 
 ## Proof sketch
 
-Choose the input uniformly at random; a structure with tiny redundancy must store almost all of its bits as an almost-uniform string, so the cells probed by a query carry almost no information about bits outside them. Pătraşcu and Viola show, by a round-elimination style argument on the query's probe tree, that answering $\mathrm{Rank}$ at a random position then requires knowledge of too many independent block sums unless the redundancy is at least $n / w^{O(t)}$.
+Take the input uniformly at random and augment the cell-probe model with a small number of *published bits* that queries read for free. The main lemma shows that, while fewer than about $n$ bits are published and the redundancy is small, there is a small set of cells that a constant fraction of queries probe; publishing those cells lowers the probe complexity of these queries by one. Iterating $t$ times drives the probe complexity to zero with fewer than $n$ published bits, which cannot determine a random $n$-bit array, unless the redundancy is at least $n / w^{O(t)}$.
 
 ## Depends on
 
 - [Succinct rank with a probe budget](succinct-rank-tradeoff-problem.md)
 - [The cell-probe model](../advanced-data-structures/the-cell-probe-model.md)
-
-## Proof depends on
-
 - [Pătraşcu's succincter rank and select](succincter-rank-upper-bound.md)
 
 ## Sources

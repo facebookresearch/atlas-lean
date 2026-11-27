@@ -1,16 +1,20 @@
 # Sparse-dense decomposition of graphs of maximum degree Delta into sparse vertices and almost-cliques
 
-For $\varepsilon > 0$, a vertex $v$ of a graph $G$ with maximum degree $\Delta$ is *$\varepsilon$-sparse* if the subgraph induced by its neighborhood $N(v)$ has at most $(1 - \varepsilon)\binom{\Delta}{2}$ edges. There are absolute constants $\varepsilon_0, C > 0$ such that for every $0 < \varepsilon < \varepsilon_0$ every graph of maximum degree $\Delta$ admits a partition
+Let $G = (V, E)$ be a graph with maximum degree $\Delta$ and let $\varepsilon \in [0, 1)$. An edge $\{u, v\}$ is an *$\varepsilon$-friend edge* if $|N(u) \cap N(v)| \ge (1 - \varepsilon)\Delta$; a vertex is *$\varepsilon$-dense* if it is incident to at least $(1 - \varepsilon)\Delta$ $\varepsilon$-friend edges, and *$\varepsilon$-sparse* otherwise. The neighborhood of every $\varepsilon$-sparse vertex spans at most $(1 - \varepsilon^2)\binom{\Delta}{2}$ edges. Every graph of maximum degree $\Delta$ admits a partition
 
 $$
-V = V^{\mathrm{sparse}} \sqcup K_1 \sqcup \dots \sqcup K_k
+V = V^{\mathrm{sparse}}_{\star} \sqcup K_1 \sqcup \dots \sqcup K_k
 $$
 
-such that every vertex of $V^{\mathrm{sparse}}$ is $\varepsilon$-sparse, and every *almost-clique* $K_i$ satisfies $(1 - C\varepsilon)\Delta \le |K_i| \le (1 + C\varepsilon)\Delta$, while every $v \in K_i$ has at most $C\varepsilon\Delta$ neighbors outside $K_i$ and at least $(1 - C\varepsilon)\Delta$ neighbors inside $K_i$.
+such that every vertex of $V^{\mathrm{sparse}}_{\star}$ is $\varepsilon$-sparse, every $2\varepsilon$-sparse vertex lies in $V^{\mathrm{sparse}}_{\star}$, and every *almost-clique* $K_i$ satisfies
+
+1. $(1 - \varepsilon)\Delta \le |K_i| \le (1 + 6\varepsilon)\Delta$;
+2. every $v \in K_i$ has at most $7\varepsilon\Delta$ neighbors outside $K_i$;
+3. every $v \in K_i$ has at most $6\varepsilon\Delta$ non-neighbors inside $K_i$.
 
 ## Proof sketch
 
-Call an edge $\{u, v\}$ a *friend edge* if $|N(u) \cap N(v)| \ge (1 - \varepsilon)\Delta$, and a vertex *dense* if it has at least $(1 - \varepsilon)\Delta$ friends; a vertex that is not dense is $\Omega(\varepsilon)$-sparse by counting missing edges among its neighbors. The almost-cliques are the connected components of the friend graph on dense vertices; a transitivity-type estimate shows that friends of friends share most of their neighborhoods, which gives the size and boundary bounds after rescaling $\varepsilon$ by a constant.
+A vertex that is not $\varepsilon$-dense has at least $\varepsilon\Delta$ neighbors sharing at most $(1 - \varepsilon)\Delta$ neighbors with it, each missing $\varepsilon\Delta$ edges inside the neighborhood, which gives the edge bound after padding the neighborhood to $\Delta$ vertices. For the partition, take the connected components of the graph of $2\varepsilon$-friend edges on the $2\varepsilon$-dense vertices; by the Harris–Schneider–Su analysis every vertex of such a component has at most $6\varepsilon\Delta$ non-neighbors inside it. Keep as almost-cliques the components containing an $\varepsilon$-dense vertex $v$ and put all other vertices into $V^{\mathrm{sparse}}_{\star}$. The at least $(1 - \varepsilon)\Delta$ $\varepsilon$-friends of $v$ pairwise share $(1 - 2\varepsilon)\Delta$ neighbors, so they are $2\varepsilon$-dense and lie in the component of $v$, which gives the lower size bound; the upper size bound follows from the non-neighbor bound, and the outside-degree bound from the non-neighbor bound together with the lower size bound.
 
 ## Sources
 

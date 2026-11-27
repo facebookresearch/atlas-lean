@@ -2,14 +2,14 @@
 
 Let an integral minimum-cost flow instance be given with optimal flow $\mathbf{f}^*$, let $\kappa \in (0, 1)$, and let $\mathbf{f}^{(0)}$ be feasible with $\Phi(\mathbf{f}^{(0)}) \le 200m\log(mU)$. Consider the method that, for $t = 0, 1, \ldots$, receives approximations $\widetilde{\mathbf{g}}, \widetilde{\boldsymbol{\ell}}$ satisfying $\|\mathbf{L}(\mathbf{f}^{(t)})^{-1}(\widetilde{\mathbf{g}} - \mathbf{g}(\mathbf{f}^{(t)}))\|_\infty \le \kappa/8$ and $\widetilde{\boldsymbol{\ell}} \approx_2 \boldsymbol{\ell}(\mathbf{f}^{(t)})$, receives any circulation $\mathbf{\Delta}$ with $\widetilde{\mathbf{g}}^{\top}\mathbf{\Delta}/\|\widetilde{\mathbf{L}}\mathbf{\Delta}\|_1 \le -\kappa$, and sets $\mathbf{f}^{(t+1)} = \mathbf{f}^{(t)} + \eta\mathbf{\Delta}$ with $\eta = \kappa^2/(50|\widetilde{\mathbf{g}}^{\top}\mathbf{\Delta}|)$. Then:
 
-1. at every iteration the circulation $\mathbf{f}^* - \mathbf{f}^{(t)}$ witnesses minimum ratio at most $-\alpha/4$, so a $\Theta(\kappa/\alpha)$-approximate minimum-ratio cycle oracle supplies a valid $\mathbf{\Delta}$;
+1. if $\kappa < 4\alpha$, then at every iteration with $\mathbf{c}^{\top}\mathbf{f}^{(t)} - F^* \ge (mU)^{-10}$ the circulation $\mathbf{f}^* - \mathbf{f}^{(t)}$ witnesses minimum ratio at most $-\alpha/4$, so a $4\kappa/\alpha$-approximate minimum-ratio cycle oracle supplies a valid $\mathbf{\Delta}$;
 2. after $\widetilde{O}(m\kappa^{-2})$ iterations, $\mathbf{c}^{\top}\mathbf{f}^{(t)} \le F^* + (mU)^{-10}$.
 
 With $\kappa = m^{-o(1)}$ the method uses $m^{1+o(1)}$ iterations, in contrast to the $\widetilde{O}(\sqrt{m})$ or $\widetilde{O}(\sqrt{n})$ iterations of path-following methods that solve a Laplacian system per iteration.
 
 ## Proof sketch
 
-Item 1 is *The direction to an optimal flow is a good minimum-ratio witness*. By *One approximate minimum-ratio step decreases the IPM potential by a constant times kappa squared* each iteration lowers $\Phi$ by at least $\kappa^2/500$ while keeping the iterate strictly feasible. Starting from $\Phi \le 200m\log(mU)$, after $\widetilde{O}(m\kappa^{-2})$ iterations the potential is at most $-200m\log(mU)$, and *A very negative IPM potential certifies a near-optimal flow* converts this into the stated cost bound.
+Item 1 is *The direction to an optimal flow is a good minimum-ratio witness* with $\varepsilon = \kappa/8 < \alpha/2$, using that the potential never increases. By *One approximate minimum-ratio step decreases the IPM potential by a constant times kappa squared* each iteration lowers $\Phi$ by at least $\kappa^2/500$ while keeping the iterate strictly feasible. Starting from $\Phi \le 200m\log(mU)$, after $\widetilde{O}(m\kappa^{-2})$ iterations the potential is at most $-200m\log(mU)$, and *A very negative IPM potential certifies a near-optimal flow* converts this into the stated cost bound.
 
 ## Depends on
 

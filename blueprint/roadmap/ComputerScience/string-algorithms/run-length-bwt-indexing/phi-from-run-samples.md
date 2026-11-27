@@ -1,6 +1,6 @@
 # $\varphi$ is determined by $O(r)$ samples
 
-Let $J$ be the set of BWT rows that are run starts other than row $1$, and let $Q = \{\mathrm{SA}[j] - 1 : j \in J,\ \mathrm{SA}[j] \ge 2\}$, a set of at most $r$ text positions. For every text position $i$ in the domain of $\varphi$, let $q$ be the smallest element of $Q$ with $q \ge i$; if it exists, then $\varphi(i) = \varphi(q) - (q - i)$. Hence storing $\varphi$ on $Q$ and a successor structure over $Q$, in $O(r)$ words, computes $\varphi$ in $O(\log\log_w(n/r))$ time.
+Assume $T[n] = \$$ is a unique smallest end marker, so $\mathrm{SA}[1] = n$. Let $J$ be the set of BWT rows that are run starts other than row $1$, and let $Q = \{\mathrm{SA}[j] - 1 : j \in J,\ \mathrm{SA}[j] \ge 2\}$, a set of at most $r$ text positions. For every text position $i$ in the domain of $\varphi$, let $q$ be the smallest element of $Q$ with $q \ge i$; if it exists, then $\varphi(i) = \varphi(q) - (q - i)$. Hence storing $\varphi$ on $Q$ and a successor structure over $Q$, in $O(r)$ words, computes $\varphi$ in $O(\log\log_w(n/r))$ time.
 
 ## Proof sketch
 

@@ -4,7 +4,7 @@ For every $d \in \mathbb{N}$ the class $\{\pm1\}^d$ of all functions on a $d$-po
 
 ## Proof sketch
 
-The lower bound is topological: identify distributions on the $d$ points labelled by $\pm 1$ with points of a simplex and color each distribution by the hypothesis the learner most likely outputs. List size $L < d$ would give a coloring of the boundary of the cube $[-1,1]^d$ in which opposite faces receive disjoint colors; the Poincaré–Miranda theorem then produces a distribution at which at least $d$ hypotheses are each output with non-negligible probability. The upper bound $\mathrm{LR} \le d$ is an explicit rounding algorithm on the empirical label frequencies.
+The lower bound is topological: identify distributions on the $d$ points labelled by $\pm 1$ with points of a simplex and color each distribution by the hypothesis the learner most likely outputs. List size $L < d$ would give a coloring of the boundary of the cube $[-1,1]^d$ in which opposite faces receive disjoint colors; the Poincaré–Miranda theorem then produces a distribution at which at least $d$ hypotheses are each output with non-negligible probability. The upper bound $\mathrm{LR} \le d$ is an explicit algorithm. The bound $\mathrm{LR}(H) \ge \mathrm{VC}(H)$ follows by restricting to a shattered set of size $d$, where $H$ contains the whole cube, and $0 < \rho(H) = 1/d$ for the cube with $d > 1/\rho_0$.
 
 ## Depends on
 
@@ -13,8 +13,7 @@ The lower bound is topological: identify distributions on the $d$ points labelle
 ## Proof depends on
 
 - [Global stability parameter equals the reciprocal list replicability number](global-stability-equals-reciprocal-list-replicability.md)
-- [Shattering lower bound for PAC learning](../../../../generalization-bounds-and-concentration/shattering-lower-bound-for-pac-learning.md)
 
 ## Sources
 
-- Z. Chase, S. Moran, A. Yehudayoff, "Replicability and Stability in Learning", FOCS (2023), arXiv:2304.03757.
+- Z. Chase, S. Moran, A. Yehudayoff, "Replicability and Stability in Learning", FOCS (2023), arXiv:2304.03757, Theorems 1 and 3, Lemma 4, the discussion after Theorem 1, and Sections 4 and 6.1.

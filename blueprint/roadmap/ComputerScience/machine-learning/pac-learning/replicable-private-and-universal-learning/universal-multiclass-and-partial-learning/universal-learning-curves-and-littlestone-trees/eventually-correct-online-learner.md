@@ -13,9 +13,9 @@ By Gale–Stewart determinacy the learner has a winning strategy in the learning
 
 ## Proof depends on
 
-- [Open Gale–Stewart games are determined](gale-stewart-determinacy.md)
+- [The learning game is determined, and the adversary wins exactly on an infinite Littlestone tree](gale-stewart-determinacy.md)
 - [Gale–Stewart games for learning](gale-stewart-games.md)
 
 ## Sources
 
-- O. Bousquet, S. Hanneke, S. Moran, R. van Handel, A. Yehudayoff, "A Theory of Universal Learning", STOC (2021), arXiv:2011.04483.
+- O. Bousquet, S. Hanneke, S. Moran, R. van Handel, A. Yehudayoff, "A Theory of Universal Learning", STOC (2021), arXiv:2011.04483, Section 3.1 (Theorem 3.1) and Section 3.2.

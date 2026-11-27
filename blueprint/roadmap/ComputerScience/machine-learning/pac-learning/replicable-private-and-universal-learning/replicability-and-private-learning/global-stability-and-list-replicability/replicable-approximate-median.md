@@ -6,11 +6,15 @@ $$
 \tilde O\!\left(\frac{1}{\tau^2 \rho^2} \cdot \Big(\frac{3}{\tau^2}\Big)^{\log^* |X|}\right)
 $$
 
-samples. Replicable approximate medians are the key subroutine for replicable learning of halfspaces with margin.
+samples. Applied to the output distribution of a mildly accurate algorithm whose correct answers form an interval, a replicable approximate median yields an accurate replicable algorithm.
 
 ## Proof sketch
 
 Recursively reduce the domain: replicably locate the median of the distribution of the leading bits of samples using a domain of size $\log |X|$, then recurse inside the identified prefix; the recursion depth is $\log^* |X|$, and each level loses a factor $O(1/\tau^2)$ in samples and a constant factor in accuracy. Replicability of each level comes from randomized rounding of empirical quantiles with shared offsets.
+
+## Depends on
+
+- [Replicable algorithms with shared randomness](../../../replicable-learning/replicable-algorithms-with-shared-seed.md)
 
 ## Proof depends on
 
@@ -18,4 +22,4 @@ Recursively reduce the domain: replicably locate the median of the distribution 
 
 ## Sources
 
-- R. Impagliazzo, R. Lei, T. Pitassi, J. Sorrell, "Reproducibility in Learning", STOC (2022), arXiv:2201.08430.
+- R. Impagliazzo, R. Lei, T. Pitassi, J. Sorrell, "Reproducibility in Learning", STOC (2022), arXiv:2201.08430, Definition 4.1 and Theorems 4.2 and 4.8.

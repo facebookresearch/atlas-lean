@@ -2,7 +2,7 @@
 
 Let $G = (V, E, w)$ be an undirected graph with $n = |V|$, $m = |E| \ge n - 1$ and integer edge weights $w : E \to \{1, \dots, W\}$, where $W \le n^{O(1)}$. For $S \subseteq V$ write $\partial S$ for the set of edges with exactly one endpoint in $S$ and $w(\partial S) = \sum_{e \in \partial S} w(e)$.
 
-A *maximum-flow oracle* receives an undirected weighted graph $H$ and two disjoint nonempty vertex sets $A, B \subseteq V(H)$ and returns a set $X$ with $A \subseteq X \subseteq V(H) \setminus B$ minimizing $w(\partial_H X)$ (a minimum $(A,B)$-cut, obtained from a maximum flow between the contracted sets $A$ and $B$ by the max-flow min-cut theorem). Let $\mathrm{MF}(n, m)$ denote the running time of the oracle on graphs with $n$ vertices and $m$ edges; it is assumed that $\mathrm{MF}(n,m) \ge m$ and that $\mathrm{MF}$ is superadditive:
+A *maximum-flow oracle* receives an undirected weighted graph $H$ and two disjoint nonempty vertex sets $A, B \subseteq V(H)$ and returns a set $X$ with $A \subseteq X \subseteq V(H) \setminus B$ minimizing $w(\partial_H X)$ (a minimum $(A,B)$-cut, obtained from a maximum flow between the contracted sets $A$ and $B$ by the max-flow min-cut theorem). Let $\mathrm{MF}(n, m)$ denote the running time of the oracle on graphs with $n$ vertices and $m$ edges; it is assumed that $\mathrm{MF}(n,m) \ge m$, that $\mathrm{MF}(cn, cm) = O(\mathrm{MF}(n, m))$ for every constant $c \ge 1$, and that $\mathrm{MF}$ is superadditive:
 
 $$
 \mathrm{MF}(n_1, m_1) + \mathrm{MF}(n_2, m_2) \le \mathrm{MF}(n_1 + n_2, m_1 + m_2).

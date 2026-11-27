@@ -12,5 +12,5 @@ Compute $\int \big(\frac{dP}{dQ}\big)^{\alpha}dQ$ for two Gaussians with equal c
 
 ## Sources
 
-- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065.
+- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065, Proposition 1.6 and Lemma 2.5.
 - I. Mironov, "Renyi Differential Privacy", IEEE CSF (2017), arXiv:1702.07476.

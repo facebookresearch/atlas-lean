@@ -4,7 +4,7 @@ There is a randomized simplex algorithm that solves every linear program $\max\{
 
 ## Proof sketch
 
-The program is reduced to a related program whose boundedness and optimal vertex determine the original answer, and the right-hand sides of that program are randomly perturbed while the constraint matrix is kept fixed. The key estimate bounds the expected shadow size under right-hand side perturbations in terms of quantities controlled by $L$, again through an edge-length argument on a two-dimensional section, so the shadow vertex rule takes polynomially many steps; perturbations of magnitude $2^{-\mathrm{poly}(L)}$ preserve the optimal basis, which yields an exact optimum.
+Solving the program is reduced to finding a point satisfying the primal constraints, the dual constraints and equality of the two objective values; by standard techniques, and after the Megiddo–Chandrasekaran perturbation that makes the system nondegenerate, this feasibility question becomes the question whether an auxiliary system $A_1 w \le b_1$, which is nonempty, is bounded. Boundedness of a nonempty polyhedron does not depend on its right-hand side, so the algorithm certifies boundedness or unboundedness of $A_1 w \le b_1'$ for a randomly perturbed right-hand side $b_1'$ while keeping $A_1$ fixed, and that certificate answers the question for the original system; no optimal basis has to survive the perturbation. The key estimate bounds the expected shadow size under right-hand side perturbations of a polytope in near-isotropic position, again through an edge-length argument on a two-dimensional section; the algorithm adds constraints creating an artificial starting vertex and, when a round fails, uses the failure to adjust the distributions and repeats, with polynomially many expected steps in $n$, $d$ and $L$.
 
 ## Depends on
 
@@ -17,5 +17,5 @@ The program is reduced to a related program whose boundedness and optimal vertex
 
 ## Sources
 
-- J. A. Kelner, D. A. Spielman, "A Randomized Polynomial-Time Simplex Algorithm for Linear Programming", STOC (2006).
+- J. A. Kelner, D. A. Spielman, "A Randomized Polynomial-Time Simplex Algorithm for Linear Programming", STOC (2006), Sections 5 and 6.
 - D. Dadush, S. Huiberts, "A Friendly Smoothed Analysis of the Simplex Method", SIAM Journal on Computing 49 (2020), STOC (2018), arXiv:1711.05667.

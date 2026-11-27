@@ -11,7 +11,7 @@ A randomized analogue with slightly better parameters underlies the original alm
 
 ## Proof sketch
 
-The static core is a deterministic sparsifier: decompose the graph into $\phi$-expanders with $\phi = \exp(-O(\log^{2/3} m))$, replace each expander by a constant-degree expander on its vertices whose edges are routed by short paths, and re-embed through deterministic expander pruning and path queries. A dynamic hierarchy of $L = \log^{1/9} m$ levels with geometrically sized batches rebuilds level $i$ after $n^{i/L}$ updates, so recourse per update is $n^{1/L}$ times the per-level loss. Taking $L = \log^{1/9} m$ balances $n^{1/L}$ against $(\gamma_c\gamma_\ell)^{O(L^2)}$, giving $\gamma_s$.
+The static core is a deterministic sparsifier: decompose the graph into $\phi$-expanders with $\phi = \exp(-O(\log^{2/3} m))$, replace each expander by a constant-degree expander on its vertices whose edges are routed by short paths, and re-embed through deterministic expander pruning and path queries. A dynamic hierarchy of $L$ levels with geometrically sized batches rebuilds level $i$ every $n^{1-i/L}$ updates, so recourse per update is $n^{1/L}$ times the per-level loss. Taking $L = \log^{1/9} m$ balances $n^{1/L}$ against $(\gamma_c\gamma_\ell)^{O(L^2)}$, giving $\gamma_s$.
 
 ## Depends on
 

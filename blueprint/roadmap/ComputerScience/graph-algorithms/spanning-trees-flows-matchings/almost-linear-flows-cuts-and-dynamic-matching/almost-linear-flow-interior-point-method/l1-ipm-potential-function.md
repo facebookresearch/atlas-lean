@@ -6,7 +6,7 @@ $$
 \Phi(\mathbf{f}) = 20m \log\bigl(\mathbf{c}^{\top}\mathbf{f} - F^*\bigr) + \sum_{e \in E}\Bigl((\mathbf{u}^+_e - \mathbf{f}_e)^{-\alpha} + (\mathbf{f}_e - \mathbf{u}^-_e)^{-\alpha}\Bigr).
 $$
 
-The first term rewards progress in cost and the second is a barrier for the box constraints whose exponent $\alpha$ makes it far weaker than the logarithmic barrier. The value $F^*$ is unknown to the algorithm; it is handled by binary search over candidate values, since a wrong guess is detected by the potential failing to decrease.
+The first term rewards progress in cost and the second is a barrier for the box constraints whose exponent $\alpha$ makes it far weaker than the logarithmic barrier. The algorithm is analysed as if $F^*$ were known; running it with candidate values allows a binary search for $F^*$.
 
 ## Depends on
 

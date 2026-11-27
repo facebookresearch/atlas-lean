@@ -1,15 +1,15 @@
 # Palette sparsification for (deg + 1)-list coloring
 
-Let $G$ be an $n$-vertex graph.
+Let $G$ be an $n$-vertex graph, and let every vertex $v$ sample a set $L(v)$ of $\ell$ colors uniformly at random from its list $S(v)$, independently of the other vertices.
 
-1. For every $\varepsilon > 0$, if $G$ has no isolated vertices and each vertex $v$ (so $\deg(v) \ge 1$) has an arbitrary list of $\lceil (1 + \varepsilon)\deg(v)\rceil$ colors and samples $O_\varepsilon(\log n)$ of them uniformly and independently, then with high probability $G$ is colorable from the samples (an isolated vertex can instead be given a single color and removed before sampling); the same holds, for every graph, with lists $\{1, \dots, \deg(v) + 1\}$ and $O(\log n)$ samples.
-2. For arbitrary D1LC lists $S(v)$, sampling $O(\log^2 n)$ colors uniformly and independently from each $S(v)$ makes $G$ colorable from the samples with high probability.
+1. For every $\varepsilon > 0$ (not necessarily constant), if $G$ has no isolated vertices and each $S(v)$ is an arbitrary set of $(1 + \varepsilon)\deg(v)$ colors, then $\ell = \Theta(\varepsilon^{-1}\log n)$ samples make $G$ colorable from the lists $L(v)$ with high probability (an isolated vertex can instead be given a single color and removed before sampling); the same holds, for every graph, with $S(v) = \{1, \dots, \deg(v) + 1\}$ and $\ell = \Theta(\log n)$.
+2. If each $S(v)$ is an arbitrary set of exactly $\deg(v) + 1$ colors, then $\ell = \Theta(\log^2 n)$ samples make $G$ colorable from the lists $L(v)$ with high probability.
 
-As in the $(\Delta + 1)$ case, this yields a single-pass semi-streaming algorithm for D1LC in dynamic streams, an $O(1)$-round algorithm in the massively parallel computation model with $\widetilde{O}(n)$ memory per machine, and an $\widetilde{O}(n\sqrt{n})$-time algorithm in the query model.
+As in the $(\Delta + 1)$ case, part 2 yields, with high probability, a single-pass semi-streaming algorithm for D1LC in dynamic streams, an $O(1)$-round algorithm in the massively parallel computation model with $\widetilde{O}(n)$ memory per machine, and a non-adaptive $\widetilde{O}(n\sqrt{n})$-time algorithm in the query model.
 
 ## Proof sketch
 
-The obstacle for D1LC is that low-degree vertices have small lists, so there is no uniform slack. A slack-generation step (a random partial coloring with a constant probability of trying a color) creates, for vertices whose neighborhoods are sparse or whose lists differ from their neighbors' lists, slack proportional to their degree; the remaining vertices form almost-cliques with nearly identical lists. Plugged into the sparse-dense framework of the $(\Delta + 1)$ theorem, these give list-colorability from the samples, with the additional logarithmic factor in part 2 paying for the arbitrary lists.
+The first case of part 1 is a direct greedy argument: in any vertex order, at most $\deg(v)$ colors of $S(v)$ are blocked when $v$ is processed, so each sample is unblocked with probability at least $\varepsilon/(1 + \varepsilon)$, and $\Theta(\varepsilon^{-1}\log n)$ samples all miss with probability $n^{-\Omega(1)}$. For the other cases low-degree vertices have small lists and no uniform slack, so the proof follows the sparse-dense approach of the $(\Delta + 1)$ theorem with a weaker decomposition adapted to unequal degrees: vertices with sparse neighborhoods, or with lists that differ from their neighbors' lists, obtain slack from a random partial coloring, and the remaining vertices form almost-cliques colored through matchings in their palette graphs. For part 2 the slack-generation step needs degrees of order $\log^2 n$ to hold with high probability, which is where the larger sample size comes from; vertices of smaller degree are colored last.
 
 ## Depends on
 
@@ -27,4 +27,3 @@ The obstacle for D1LC is that low-degree vertices have small lists, so there is 
 
 - Noga Alon, Sepehr Assadi, "Palette Sparsification Beyond (Delta+1) Vertex Coloring", APPROX/RANDOM (2020), arXiv:2006.10456.
 - Magnús M. Halldórsson, Fabian Kuhn, Alexandre Nolin, Tigran Tonoyan, "Near-Optimal Distributed Degree+1 Coloring", STOC (2022), arXiv:2112.00604.
-- Maxime Flin, Mohsen Ghaffari, Magnús M. Halldórsson, Fabian Kuhn, Alexandre Nolin, "A Distributed Palette Sparsification Theorem", arXiv:2301.06457 (2023).

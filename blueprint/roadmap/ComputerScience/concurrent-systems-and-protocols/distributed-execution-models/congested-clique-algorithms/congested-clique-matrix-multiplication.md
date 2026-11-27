@@ -1,6 +1,6 @@
 # Matrix multiplication in O(n^(1 - 2/omega + eta)) rounds of the congested clique
 
-Let $\omega$ be the exponent of matrix multiplication. Over any ring, if processor $i$ holds row $i$ of two $n \times n$ matrices $S$ and $T$ with entries of $O(\log n)$ bits, the product $ST$ (row $i$ delivered to processor $i$) can be computed in $O(n^{1 - 2/\omega + \eta})$ rounds of the congested clique for every fixed $\eta > 0$, the constant depending on $\eta$ (the exponent $\omega$ is an infimum that need not be attained); with $\omega < 2.3729$ this is $O(n^{0.158})$; over semirings (such as the min-plus semiring) the bound is $O(n^{1/3})$ rounds. Consequences include triangle counting and $4$-cycle counting in $O(n^{0.158})$ rounds, and exact unweighted all-pairs shortest paths in $\tilde O(n^{0.158})$ rounds.
+Let $\omega$ be the exponent of matrix multiplication. Over any ring, if processor $i$ holds row $i$ of two $n \times n$ matrices $S$ and $T$ with entries of $O(\log n)$ bits, the product $ST$ (row $i$ delivered to processor $i$) can be computed in $O(n^{1 - 2/\omega + \eta})$ rounds of the congested clique for every fixed $\eta > 0$, the constant depending on $\eta$ (the exponent $\omega$ is an infimum that need not be attained); with $\omega < 2.3729$ this is $O(n^{0.158})$; over semirings (such as the min-plus semiring) the bound is $O(n^{1/3})$ rounds. Consequences include triangle counting and $4$-cycle counting in directed and undirected graphs in $O(n^{0.158})$ rounds, and exact all-pairs shortest paths in unweighted undirected graphs in $\tilde O(n^{0.158})$ rounds.
 
 ## Proof sketch
 
@@ -17,4 +17,4 @@ Fix $\eta > 0$ and a bilinear algorithm multiplying $q \times q$ matrices with $
 
 ## Sources
 
-- K. Censor-Hillel, P. Kaski, J. H. Korhonen, C. Lenzen, A. Paz, J. Suomela, "Algebraic Methods in the Congested Clique", PODC 2015; Distributed Computing 32 (2019), arXiv:1503.04963.
+- K. Censor-Hillel, P. Kaski, J. H. Korhonen, C. Lenzen, A. Paz, J. Suomela, "Algebraic Methods in the Congested Clique", PODC 2015; Distributed Computing 32 (2019), arXiv:1503.04963, Theorem 1 and Corollaries 2 and 7.

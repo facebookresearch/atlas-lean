@@ -1,12 +1,12 @@
 # Low-degree multicalibration
 
-Let $D$ be a distribution over $X \times \{0,1\}$ with Bayes predictor $p^*(x) = \mathbb{E}[y \mid x]$, let $p : X \to [0,1]$ be a predictor, and let $\mathcal{C}$ be a collection of functions $c : X \to [-1,1]$ (indicators of subpopulations being the main example). For $k \in \mathbb{N}$, the predictor $p$ is **degree-$k$ $\alpha$-multicalibrated** with respect to $\mathcal{C}$ if
+Let $D$ be a distribution over $X \times \{0,1\}$ with Bayes predictor $p^*(x) = \mathbb{E}[y \mid x]$, let $p : X \to [0,1]$ be a predictor, and let $\mathcal{C}$ be a collection of functions $c : X \to [0,1]$ (indicators of subpopulations being the main example). For a class $W$ of weight functions $w : [0,1] \to [0,1]$, the predictor $p$ is **$(\mathcal{C}, W, \alpha)$-multicalibrated** if
 
 $$
-\big| \mathbb{E}\big[c(x)\, w(p(x))\, (y - p(x))\big] \big| \le \alpha \quad \text{for all } c \in \mathcal{C} \text{ and all polynomials } w \text{ of degree at most } k \text{ with } \sup_{[0,1]} |w| \le 1 .
+\big| \mathbb{E}\big[c(x)\, w(p(x))\, (y - p(x))\big] \big| \le \alpha \quad \text{for all } c \in \mathcal{C} \text{ and } w \in W .
 $$
 
-Degree $0$ is multiaccuracy (note that Gopalan, Kim, Singhal and Zhao index one higher, calling weights of degree $k - 1$ degree-$k$ multicalibration so multiaccuracy is their degree $1$), and letting the weight class range over all bounded functions $w$ of $p(x)$ recovers (an $\ell_\infty$-weighted form of) full multicalibration, so the degrees interpolate between the two notions; for $\ell$ classes the definition uses vector-valued predictions and multivariate polynomials.
+For $k \ge 1$, $p$ is **degree-$k$ $\alpha$-multicalibrated** if this holds for the class $W_k$ of polynomials $w(z) = \sum_{j < k} q_j z^j$ of degree at most $k - 1$ with $w(z) \in [0,1]$ for all $z \in [0,1]$ and $\sum_j |q_j| \le 1$. Degree $1$ is multiaccuracy (the constant weight $w = 1$), and degree $2$ adds the constraints $|\mathbb{E}[c(x)\,p(x)\,(y - p(x))]| \le \alpha$. The notions get stronger with $k$, and they are relaxations of smooth multicalibration (all $1$-Lipschitz weights) and of full multicalibration (indicators of the intervals $[(j-1)\delta, j\delta)$ of a $\delta$-grid): every $\alpha$-smoothly multicalibrated predictor is degree-$k$ $k\alpha$-multicalibrated. For $\ell$ classes, predictions lie in the simplex $\Delta_\ell$, the weights are vectors of such polynomials in $\ell$ variables, and the constraint is $|\mathbb{E}[c(x)\langle w(p(x)), y - p(x)\rangle]| \le \alpha$ with $y$ the one-hot label.
 
 ## Depends on
 
@@ -14,4 +14,4 @@ Degree $0$ is multiaccuracy (note that Gopalan, Kim, Singhal and Zhao index one 
 
 ## Sources
 
-- P. Gopalan, M. P. Kim, M. Singhal, S. Zhao, "Low-Degree Multicalibration", COLT (2022), arXiv:2203.01255.
+- P. Gopalan, M. P. Kim, M. Singhal, S. Zhao, "Low-Degree Multicalibration", COLT (2022), arXiv:2203.01255, Definitions 3.1, 3.2, 3.4 and 3.6, Proposition 1.

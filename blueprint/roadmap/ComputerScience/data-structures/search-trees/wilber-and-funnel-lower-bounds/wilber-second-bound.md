@@ -1,19 +1,15 @@
 # Wilber's second lower bound
 
-For every access sequence $X$, $\mathrm{OPT}(X) = \Omega(\mathrm{W2}(X) - n)$, with an absolute constant.
+For every access sequence $X$ on $[n]$, $\mathrm{OPT}(X) = \Omega(\mathrm{W2}(X) - n)$, with an absolute constant.
 
 ## Proof sketch
 
-The funnel keys of $x_t$ are exactly the keys whose last-access points are visible from $(x_t, t)$ in the geometric view, and each alternation between the two sides of the funnel identifies an unsatisfied rectangle; these rectangles over all $t$ form an independent family, so the bound follows from the independent rectangle bound (Wilber's original proof is a direct charging argument on rotations).
+Wilber's original proof is a direct amortized charging argument against an arbitrary BST execution, with an additive $O(n)$ accounting for the initial tree. Geometrically, the funnel of $x_t$ consists of the keys whose last accesses are visible from $(x_t, t)$, and each alternation between keys below and above $x_t$ in this time-ordered list identifies an unsatisfied rectangle of $P(X)$; Demaine, Harmon, Iacono, Kane and Pătraşcu describe an independent family of such rectangles corresponding to the funnel bound, which places it among the independent rectangle lower bounds, though they do not formally prove the equivalence.
 
 ## Depends on
 
 - [Wilber's funnel bound](funnel-bound.md)
 - [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
-
-## Proof depends on
-
-- [The independent rectangle bound lower-bounds OPT](../geometric-view-of-bst-access/independent-rectangle-lower-bound.md)
 
 ## Sources
 

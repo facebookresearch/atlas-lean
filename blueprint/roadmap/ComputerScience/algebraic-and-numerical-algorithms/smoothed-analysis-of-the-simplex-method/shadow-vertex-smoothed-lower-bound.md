@@ -6,7 +6,7 @@ $$
 \mathrm{edges}\big(\mathrm{conv}(a_1, \dots, a_n) \cap W\big) \ge \Omega\!\left(\min\left(\frac{1}{\sqrt{d\sigma\sqrt{\log n}}},\; 2^d\right)\right).
 $$
 
-Consequently, for $d > 5$ and $\sigma \le 1/(360\,d\sqrt{\log(4d)})$ the smoothed shadow size satisfies $S(4d - 13, d, \sigma) = \Omega\big(\min(\sigma^{-1/2} d^{-1/2} \log^{-1/4} d,\, 2^d)\big)$, and since the smoothed complexity of the shadow vertex simplex algorithm is at least $S(n, d, \sigma)/4$, with the two objectives spanning $W$ chosen adversarially, it is at least of this order. This is the first nontrivial lower bound on the smoothed complexity of a simplex method.
+Consequently, for $d > 5$ and $\sigma \le 1/(360\,d\sqrt{\log(4d)})$ the polar-section smoothed shadow size of Huiberts–Lee–Zhang, equation (1), satisfies $S_{\mathrm{e}}(4d - 13, d, \sigma) = \Omega\big(\min(\sigma^{-1/2} d^{-1/2} \log^{-1/4} d,\, 2^d)\big)$, and since the smoothed complexity of the shadow vertex simplex algorithm is at least $S_{\mathrm{e}}(n, d, \sigma)/4$ (Huiberts–Lee–Zhang, Theorem 1.1), with the two objectives spanning $W$ chosen adversarially, it is at least of this order. This is the first nontrivial lower bound on the smoothed complexity of a simplex method.
 
 ## Proof sketch
 
@@ -19,6 +19,7 @@ The instances come from a variation of the extended formulation of the regular p
 
 ## Proof depends on
 
+- [Huiberts-Lee-Zhang smoothed shadow bound O(sigma^{-3/2} d^{13/4} log^{5/4} n)](huiberts-lee-zhang-upper-bound.md)
 - [Shadow vertices are bounded by edges of the polar section](shadow-vertices-and-polar-section.md)
 
 ## Sources

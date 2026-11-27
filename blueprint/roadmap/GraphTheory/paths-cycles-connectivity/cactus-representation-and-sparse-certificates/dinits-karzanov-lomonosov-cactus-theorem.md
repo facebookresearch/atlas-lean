@@ -1,6 +1,6 @@
 # Dinits-Karzanov-Lomonosov theorem: every graph has a linear-size cactus of its minimum cuts
 
-Every connected undirected graph $G$ with $n \ge 2$ vertices and positive edge weights has a cactus representation $(H, \varphi)$ in which $H$ has $O(n)$ nodes and $O(n)$ edges. As a consequence, $G$ has at most $\binom{n}{2}$ global minimum cuts, and the cycle $C_n$ with unit weights shows that this bound is attained: its minimum cuts are exactly the $\binom{n}{2}$ pairs of edges.
+Every connected undirected graph $G$ with $n \ge 2$ vertices and positive edge weights has a cactus representation $(H, \varphi)$ in which $H$ has $O(n)$ nodes and $O(n)$ edges. As a consequence, $G$ has at most $\binom{n}{2}$ global minimum cuts, and for $n \ge 3$ the cycle $C_n$ with unit weights shows that this bound is attained: its minimum cuts are exactly the $\binom{n}{2}$ pairs of edges.
 
 ## Proof sketch
 

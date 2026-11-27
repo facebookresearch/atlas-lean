@@ -4,7 +4,7 @@ In the high-load regime $1/n \le \delta \le 1/2$ with $\delta n$ an integer, eve
 
 ## Proof sketch
 
-Consider the last $\Theta(\delta n)$ insertions, made when only $O(\delta n)$ slots remain free. A key whose probe complexity is at most $t$ must find a free slot among its first $t$ probes, and the positions touched by first-$t$ probes of all keys can cover the free region only if $t$ grows with the ratio between occupied and free slots at the various stages of the fill. An averaging argument over the dyadic stages of free space, from free fraction $1/2$ down to $\delta$, forces some key's expected probe index to be $\Omega(\log \delta^{-1})$.
+Let $c$ bound every key's expected probe complexity, so by Markov's inequality each key is placed within its first $2c$ probes with probability at least $1/2$. Consider the checkpoints $a_i = n(1 - 2^{-3i})$ for $i \le \alpha = \lfloor (\log_2 \delta^{-1})/3 \rfloor$, at which the free sets have geometrically decreasing sizes $n/8^i$. Farach-Colton, Krapivin and Kuszmaul build from them disjoint groups of slots $v_1, \dots, v_\alpha$ such that the first $2c$ probes of a key hit each $v_i$ $\Omega(1)$ times in expectation, because keys inserted near checkpoint $a_i$ must often land in the slots still free then. Hence $2c \ge \mathbb{E}[|\mathcal{H}_{2c}|] = \Omega(\alpha) = \Omega(\log \delta^{-1})$, where $\mathcal{H}_{2c}$ is the set of a key's first $2c$ probe positions (Theorem 5).
 
 ## Depends on
 

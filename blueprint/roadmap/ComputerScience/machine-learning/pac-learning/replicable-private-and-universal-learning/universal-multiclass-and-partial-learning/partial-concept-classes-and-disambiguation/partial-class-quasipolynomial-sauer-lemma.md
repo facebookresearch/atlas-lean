@@ -4,7 +4,7 @@ Let $H$ be a partial concept class on a finite domain $X$ with $\mathrm{VC}(H) =
 
 ## Proof sketch
 
-Run the realizable one-inclusion-graph learner as a compression procedure: every realizable labelling of a finite set is recovered from a subsample of size $O(d \log |X|)$, since repeatedly the out-degree bound allows halving the number of uncovered points with $O(d)$ retained examples. The total class of all reconstructions has at most $|X|^{O(d \log |X|)}$ members and realizes every realizable sample. For $\mathbb{N}$, apply the construction consistently along the initial segments $[m]$.
+Consider the online game on $X = [n]$ in which the learner predicts the labels of $1, \dots, n$ in order and is corrected only at points of the target's support where it errs. A deterministic learner that makes at most $k$ mistakes against every $h \in H$ defines a disambiguation of size at most $\binom{n}{\le k}$: each total concept is the learner's prediction sequence for one set of mistake positions. A majority vote over the family of sets shattered by the current version space (which the Sauer–Shelah–Pajor bound keeps small) makes at most $O(d \log n)$ mistakes, which gives the bound $|X|^{O(d \log |X|)}$. For $\mathbb{N}$ the same learner run along $1, 2, 3, \dots$ gives one strong disambiguation whose projections to the initial segments $[m]$ obey the stated bound.
 
 ## Depends on
 
@@ -13,9 +13,9 @@ Run the realizable one-inclusion-graph learner as a compression procedure: every
 
 ## Proof depends on
 
-- [VC dimension characterizes PAC learnability of partial concept classes](partial-class-pac-characterization.md)
+- [A partial class of VC dimension one with no finite-VC disambiguation](vc-one-partial-class-without-disambiguation.md)
 - [Sauer bound for the growth function](../../../../../not-yet-classified/growth-function/growth-function-le-sum.md)
 
 ## Sources
 
-- N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444.
+- N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444, Theorems 11, 12 and 13 and the paragraph "Disambiguating by Majority-Votes".

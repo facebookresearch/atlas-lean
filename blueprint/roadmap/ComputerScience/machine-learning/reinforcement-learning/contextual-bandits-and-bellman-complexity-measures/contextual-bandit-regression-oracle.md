@@ -9,4 +9,4 @@ In a **contextual bandit** with $K$ actions, at each round $t$ the environment r
 
 ## Sources
 
-- D. J. Foster, A. Rakhlin, "Beyond UCB: Optimal and Efficient Contextual Bandits with Regression Oracles", ICML (2020), arXiv:2002.04926.
+- D. J. Foster, A. Rakhlin, "Beyond UCB: Optimal and Efficient Contextual Bandits with Regression Oracles", ICML (2020), arXiv:2002.04926, Section 2 (Assumptions 1 and 2a).

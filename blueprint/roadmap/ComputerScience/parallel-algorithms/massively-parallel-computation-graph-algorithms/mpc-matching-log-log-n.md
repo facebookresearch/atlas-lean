@@ -1,6 +1,6 @@
 # Approximate maximum matching in O(log log n) MPC rounds with near-linear memory
 
-In the MPC model with near-linear local memory $S = \tilde O(n)$, a $(2 + \varepsilon)$-approximate maximum matching of an $n$-vertex graph can be computed in $O((\log\log n)^2)$ rounds, and this was improved to $O(\log\log n)$ rounds, together with a $(1 + \varepsilon)$-approximate maximum matching and a $(2 + \varepsilon)$-approximate minimum vertex cover, for any constant $\varepsilon > 0$. Before these results, $O(\log n)$ rounds were needed in this regime.
+In the MPC model with near-linear local memory $S = \tilde O(n)$, a $(2 + \varepsilon)$-approximate maximum matching of an $n$-vertex graph can be computed in $O((\log\log n)^2)$ rounds, and this was improved to $O(\log\log n)$ rounds with $\tilde O(n)$ memory per machine: an integral $(2 + \varepsilon)$-approximate maximum matching and a $(2 + \varepsilon)$-approximate minimum vertex cover in $O(\log\log n)$ rounds, and a $(1 + \varepsilon)$-approximate maximum matching in $O(\log\log n)\cdot(1/\varepsilon)^{O(1/\varepsilon)}$ rounds, for any constant $\varepsilon > 0$. Before these results, $O(\log n)$ rounds were needed in this regime.
 
 ## Proof sketch
 

@@ -1,10 +1,10 @@
 # Boolean dynamic lower bounds reach the weighted $\log^2$ bound
 
-There is an explicit dynamic Boolean data structure problem, obtained by running the inner-product multiphase problem as a dynamic problem (inserting the $x_i$, then the bits of $y$, then querying an index), for which every cell-probe structure with $w = \Theta(\lg n)$ and polylogarithmic update time has query time $\Omega((\lg n/\lg\lg n)^2)$. This matches, for one-bit answers, Larsen's bound for weighted range counting and improves the $\tilde{\Omega}(\lg^{1.5} n)$ bound of Larsen, Weinstein and Yu.
+There is an explicit dynamic Boolean data structure problem, the multiphase problem for inner product over $\mathbb{F}_2$ with $k = n^{1 + \Omega(1)}$ (preprocess $x_1, \dots, x_k$, then apply the bits of $y$ as $n$ single-bit updates, then query an index), for which every cell-probe structure with $w = \Theta(\lg n)$ and polylogarithmic update time has query time $\Omega((\lg n/\lg\lg n)^2)$. This matches, for one-bit answers, Larsen's bound for weighted range counting and improves the $\tilde{\Omega}(\lg^{1.5} n)$ bound of Larsen, Weinstein and Yu.
 
 ## Proof sketch
 
-Each phase of the multiphase problem is a batch of operations of a dynamic problem whose queries return one bit; with $t_u$ polylogarithmic, the hypothesis $t_u = n^{o(1)}$ of the multiphase bound holds and $\log(t_u w) = O(\log\log n)$.
+Each phase of the multiphase problem is a batch of operations of a dynamic problem whose queries return one bit. With $t_u$ polylogarithmic and $w = \Theta(\lg n)$, the hypothesis $t_u = n^{o(1)}$ of Ko's bound holds and $\log(t_u w) = O(\log\log n)$, so $t_{tot} = \Omega((\log n/\log(t_u w))^2) = \Omega((\log n/\log\log n)^2)$.
 
 ## Depends on
 

@@ -22,4 +22,4 @@ By group privacy, $D_\alpha(M(S_i) \| M(S_j)) \le \ell^2\rho\alpha$ for all pair
 
 ## Sources
 
-- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065.
+- M. Bun, T. Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", TCC (2016), arXiv:1605.02065, Theorem 1.10 and Section 6.

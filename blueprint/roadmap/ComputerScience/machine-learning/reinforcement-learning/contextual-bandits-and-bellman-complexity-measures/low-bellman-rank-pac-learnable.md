@@ -1,6 +1,6 @@
 # Contextual decision processes with low Bellman rank are PAC learnable
 
-If $\mathcal{F}$ contains the optimal value function (realizability) and the contextual decision process has Bellman rank $M$, then the **OLIVE** algorithm (optimism-led iterative value-function elimination) outputs an $\varepsilon$-optimal policy with probability at least $1-\delta$ using a number of episodes polynomial in $M$, $K$, $H$, $1/\varepsilon$ and $\log(|\mathcal{F}|/\delta)$, namely $\tilde O\big(M^2 H^3 K\log(|\mathcal{F}|/\delta)/\varepsilon^2\big)$, independent of the number of distinct observations.
+If a contextual decision process and a finite class $\mathcal{F}$ admit a Bellman factorization with Bellman rank $M$ and norm parameter $\zeta$, then the **OLIVE** algorithm (optimism-led iterative value-function elimination) returns, with probability at least $1-\delta$, a policy $\hat\pi$ with $V^{\hat\pi} \ge V^*_{\mathcal{F}} - \varepsilon$, where $V^*_{\mathcal{F}}$ is the value of the best greedy policy of a function in $\mathcal{F}$ satisfying all average Bellman equations, using $\tilde O\big(M^2 H^3 K\log(|\mathcal{F}|\zeta/\delta)/\varepsilon^2\big)$ episodes, independent of the number of distinct observations. When the MDP's optimal $Q$-function lies in $\mathcal{F}$ (realizability), $V^*_{\mathcal{F}}$ is the optimal value.
 
 ## Proof sketch
 
@@ -12,4 +12,4 @@ OLIVE maintains a version space of value functions consistent with all average B
 
 ## Sources
 
-- N. Jiang, A. Krishnamurthy, A. Agarwal, J. Langford, R. E. Schapire, "Contextual Decision Processes with Low Bellman Rank are PAC-Learnable", ICML (2017), arXiv:1610.09512.
+- N. Jiang, A. Krishnamurthy, A. Agarwal, J. Langford, R. E. Schapire, "Contextual Decision Processes with Low Bellman Rank are PAC-Learnable", ICML (2017), arXiv:1610.09512, Definitions 3 and 4, Facts 1 and 2, Theorem 1 and Lemma 3.

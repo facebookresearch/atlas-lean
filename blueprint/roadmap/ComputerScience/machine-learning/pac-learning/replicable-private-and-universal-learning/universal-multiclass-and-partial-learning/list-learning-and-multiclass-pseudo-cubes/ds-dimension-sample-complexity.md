@@ -10,7 +10,7 @@ with probability at least $1-\delta$, and an agnostic learner with excess error 
 
 ## Proof sketch
 
-The list learner of the previous lemma is boosted to a list learner with small error and list size depending only on $d$; on the support of a realizable menu of size $p$ the class has Natarajan dimension that controls an orientation of out-degree $O(d_N \log p)$ via shifting. Combining the two stages gives a sample compression scheme of size $\tilde O(d^{3/2})$, and the compression generalization bound yields the realizable rate; the agnostic rate follows from the standard realizable-to-agnostic reduction for compression schemes.
+The list learner from one-inclusion orientations, with $t$ of order $\sqrt d$, is applied repeatedly to subsamples, each round covering a constant fraction of the remaining examples, which gives a list sample compression scheme whose menus have size depending only on $d$ and $n$ through $\log n$. Given a menu of size $p$, a class of Natarajan dimension $d_N \le d$ has, by shifting, one-inclusion orientations of out-degree $O(d_N \log p)$, which give a sample compression scheme relative to the menu. Composing the two stages gives an $n \to r$ sample compression scheme with $r = \tilde O(d^{3/2})$, and the compression generalization bound yields the realizable rate; the agnostic rate follows from the agnostic version of that bound.
 
 ## Depends on
 
@@ -21,8 +21,7 @@ The list learner of the previous lemma is boosted to a list learner with small e
 
 - [Finite DS dimension gives a list PAC learner from one-inclusion orientations](finite-ds-dimension-list-learner.md)
 - [Generalization bound for sample compression schemes](../../../../generalization-bounds-and-concentration/generalization-bound-for-sample-compression-schemes.md)
-- [DS dimension characterizes multiclass PAC learnability](../../../ds-dimension-characterizes-multiclass-pac-learnability.md)
 
 ## Sources
 
-- N. Brukhim, D. Carmon, I. Dinur, S. Moran, A. Yehudayoff, "A Characterization of Multiclass Learnability", FOCS (2022), arXiv:2203.01550.
+- N. Brukhim, D. Carmon, I. Dinur, S. Moran, A. Yehudayoff, "A Characterization of Multiclass Learnability", FOCS (2022), arXiv:2203.01550, Theorem 1, Theorem 36, Lemmas 17, 39 and 40, Proposition 34.

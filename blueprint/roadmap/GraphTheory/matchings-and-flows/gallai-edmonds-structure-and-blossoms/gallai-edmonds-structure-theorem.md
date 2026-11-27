@@ -10,7 +10,7 @@ Let $G = (V, E)$ be a finite simple graph with Gallai-Edmonds partition $D = D(G
 
 ## Proof sketch
 
-The stability lemma shows that deleting a vertex $a \in A$ lowers $\nu$ by exactly one and leaves $D$ unchanged, $A$ replaced by $A \setminus \{a\}$ and $C$ unchanged; deleting all of $A$ therefore leaves a graph in which every vertex of $D$ is inessential. Each component of $G[D]$ is then a connected graph without essential vertices, hence factor-critical by Gallai's lemma, and $G[C]$ is matched perfectly because its vertices are covered by every maximum matching and have no neighbours in $D$. Counting shows that $X = A$ attains equality in the odd-component bound, which gives (5); equality forces the shape (4) of every maximum matching, and (3) follows by applying (5) to $A \setminus S$.
+The stability lemma shows that deleting a vertex $a \in A$ lowers $\nu$ by exactly one and leaves $D$ unchanged, $A$ replaced by $A \setminus \{a\}$ and $C$ unchanged; deleting all of $A$ therefore leaves a graph in which every vertex of $D$ is inessential. Each component of $G[D]$ is then a connected graph without essential vertices, hence factor-critical by Gallai's lemma, and $G[C]$ is matched perfectly because its vertices are covered by every maximum matching and have no neighbours in $D$. Counting shows that $X = A$ attains equality in the odd-component bound, which gives (5); equality forces the shape (4) of every maximum matching. Property (3), the positive surplus of $A$ towards the components of $G[D]$, is then derived from (4) together with the stability lemma (Lovász–Plummer, Theorem 3.2.1).
 
 ## Depends on
 

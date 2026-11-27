@@ -1,6 +1,6 @@
 # Uncoupled dynamics with logarithmic swap regret
 
-There are uncoupled learning dynamics for finite $m$-player normal-form games in which, when all players adopt them, every player's swap regret after $T$ rounds is $O\bigl(\mathrm{poly}(m, n) \cdot \log T\bigr)$. The dynamics use the Blum–Mansour construction with external-regret learners given by optimistic follow-the-regularized-leader with a logarithmic barrier regularizer.
+There are uncoupled learning dynamics for finite $m$-player normal-form games in which, when all players adopt them, every player's swap regret after $T$ rounds is $O\bigl(\mathrm{poly}(m, n) \cdot \log T\bigr)$, with a time-invariant learning rate, while each player's swap regret against adversarial utilities stays $O(\sqrt T)$. The dynamics use the Blum–Mansour construction with external-regret learners given by optimistic follow-the-regularized-leader with a logarithmic barrier regularizer, and the average correlated distribution of play is an $O(\log T / T)$-approximate correlated equilibrium.
 
 ## Proof sketch
 

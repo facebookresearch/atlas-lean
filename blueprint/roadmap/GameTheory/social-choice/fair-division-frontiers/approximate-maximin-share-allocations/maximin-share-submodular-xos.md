@@ -1,10 +1,10 @@
 # Constant-factor maximin share guarantees beyond additive valuations
 
-For agents with monotone valuations $v_i : 2^M \to \mathbb{R}_{\ge 0}$, define $\mu_i = \max \min_k v_i(P_k)$ over partitions of $M$ into $n$ bundles. For submodular valuations a complete $\tfrac13$-MMS allocation always exists, and for XOS (fractionally subadditive) valuations a complete $\tfrac15$-MMS allocation always exists; for subadditive valuations an $\Omega(1/\log m)$-MMS allocation exists. Polynomial-time algorithms achieve constant-factor guarantees for submodular and XOS valuations given suitable oracle access.
+For agents with monotone valuations $v_i : 2^M \to \mathbb{R}_{\ge 0}$ with $v_i(\emptyset) = 0$, define $\mu_i = \max \min_k v_i(P_k)$ over partitions of $M$ into $n$ bundles. For submodular valuations a complete $\tfrac13$-MMS allocation always exists, and for XOS (fractionally subadditive) valuations a complete $\tfrac15$-MMS allocation always exists; for subadditive valuations a $\tfrac{1}{10 \lceil \log m \rceil}$-MMS allocation exists. A $\tfrac13$-MMS allocation for submodular valuations can be found in polynomial time with value queries, and a $\tfrac18$-MMS allocation for XOS valuations with demand and XOS oracles.
 
 ## Proof sketch
 
-Reduce to instances in which no single good is worth a large fraction of any agent's maximin share by allocating such goods individually (valid reductions remain valid for monotone valuations). For the remaining small goods, bag-filling with each agent's valuation, together with a property of submodular and XOS functions that a random subset of a partition bundle retains a constant fraction of its value, ensures every agent accepts some bag before goods run out. For subadditive valuations, a hierarchical bucketing of goods by value scale loses a logarithmic factor.
+Normalize $\mu_i = 1$ and first allocate any single good worth at least the target factor to some agent (valid reductions remain valid for monotone valuations), so the instance is irreducible. For submodular valuations, take an allocation maximizing the bounded welfare $\sum_i \min\{2/3, v_i(A_i)\}$; if some agent had less than $1/3$, a uniformly random good outside her bundle adds, in expectation, more to her value than it removes from the bounded welfare, contradicting maximality. The XOS case runs the same exchange argument with a different threshold. Subadditive valuations are approximated by XOS valuations within a factor $O(\log m)$, which gives the logarithmic bound.
 
 ## Depends on
 

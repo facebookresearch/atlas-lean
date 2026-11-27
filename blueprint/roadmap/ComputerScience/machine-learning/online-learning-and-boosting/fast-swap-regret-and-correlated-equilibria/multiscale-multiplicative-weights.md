@@ -8,4 +8,4 @@ Fix $n$ actions, a target $\varepsilon$, $S = \log_2(1/\varepsilon) + 1$ and blo
 
 ## Sources
 
-- B. Peng, A. Rubinstein, "Fast Swap Regret Minimization and Applications to Approximate Correlated Equilibria", STOC (2024), arXiv:2310.19647.
+- B. Peng, A. Rubinstein, "Fast Swap Regret Minimization and Applications to Approximate Correlated Equilibria", STOC (2024), arXiv:2310.19647, Algorithm 2.

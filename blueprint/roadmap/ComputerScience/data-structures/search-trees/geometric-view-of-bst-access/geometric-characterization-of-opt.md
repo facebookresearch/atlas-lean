@@ -1,10 +1,10 @@
 # Geometric characterization of the optimal offline BST cost
 
-For every access sequence $X$, the optimal offline BST cost satisfies $\mathrm{OPT}(X) = \Theta\big(\min\{|Y| : Y \text{ is an arborally satisfied superset of } X\}\big)$; that is, offline binary search tree optimization is equivalent, up to a constant factor, to the purely combinatorial problem of finding a smallest arborally satisfied superset of $P(X)$.
+For every access sequence $X$, the optimal offline BST cost, with the offline algorithm free to choose its initial tree, satisfies $\mathrm{OPT}(X) = \Theta\big(\min\{|Y| : Y \text{ is an arborally satisfied superset of } X\}\big)$; in the touched-node cost model the two sides are equal. Thus offline binary search tree optimization is equivalent, up to a constant factor, to the purely combinatorial problem of finding a smallest arborally satisfied superset of $P(X)$.
 
 ## Proof sketch
 
-The touched set of an optimal execution is an arborally satisfied superset by the first lemma, giving $\min |Y| \le \mathrm{OPT}(X)$. Conversely, a minimum superset is realized by an execution of cost $|Y|$ by the second lemma, and the rotations of the treap rearrangement cost $O(|Y|)$.
+The touched set of any execution on $X$, an optimal one in particular, is an arborally satisfied superset of $X$ whose size is at most the cost of the execution, which gives $\min |Y| \le \mathrm{OPT}(X)$. Conversely, a minimum superset $Y$ is the touched set of an offline execution that touches $|Y|$ nodes in total; rearranging a touched subtree of $k$ nodes takes $O(k)$ rotations and pointer moves, so this execution costs $O(|Y|)$ in the pointer-and-rotation model.
 
 ## Depends on
 

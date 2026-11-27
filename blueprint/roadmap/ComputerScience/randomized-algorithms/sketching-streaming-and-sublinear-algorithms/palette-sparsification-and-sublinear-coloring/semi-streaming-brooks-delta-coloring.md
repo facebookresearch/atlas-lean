@@ -4,7 +4,7 @@ There is a randomized single-pass semi-streaming algorithm that, given an insert
 
 ## Proof sketch
 
-Brooks' theorem guarantees existence. The algorithm samples small palettes as in palette sparsification and, alongside, collects a sparse set of helper edges and structures of almost-cliques computed from sketches. Sparse vertices and almost-cliques with spare structure are colored as in the $(\Delta + 1)$ proof; for the hard almost-cliques, which have exactly $\Delta$ colors available, the algorithm must create one color of slack, in the spirit of Lovász's proof of Brooks' theorem, by coloring suitable non-adjacent vertices identically using the extra stored information.
+Brooks' theorem guarantees existence. The algorithm samples small palettes as in palette sparsification and, alongside, uses sparse recovery guided by a sparse-dense decomposition to store the almost-cliques that palette sparsification cannot handle, or for the less dense ones small helper structures. Sparse vertices and almost-cliques with enough non-edges are colored from the sampled palettes as in the $(\Delta + 1)$ proof. In a $(\Delta + 1)$-clique minus an edge $\{u, v\}$, the two endpoints get a common color not used outside, and greedy coloring that leaves a common neighbor of $u$ and $v$ for last succeeds. A $\Delta$-clique whose few outside neighbors all received the same color is handled by a recoloring step that changes the colors of some outside vertices, analyzed by splitting the sampling randomness into phases. No local exploration, such as the search for augmenting paths, is needed.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ Brooks' theorem guarantees existence. The algorithm samples small palettes as in
 
 ## Sources
 
-- Sepehr Assadi, Pankaj Kumar, Parth Mittal, "Brooks' Theorem in Graph Streams: A Single-Pass Semi-Streaming Algorithm for Delta-Coloring", STOC (2022), arXiv:2203.10984.
+- Sepehr Assadi, Pankaj Kumar, Parth Mittal, "Brooks' Theorem in Graph Streams: A Single-Pass Semi-Streaming Algorithm for Delta-Coloring", STOC (2022); TheoretiCS 2 (2023), Article 9, arXiv:2203.10984.

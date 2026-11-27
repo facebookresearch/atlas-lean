@@ -27,3 +27,4 @@ Write $\|\Pi x\|_2^2 - \|x\|_2^2 = \frac{1}{s}\sum_{r}\sum_{i \ne j} \eta_{r,i}\
 
 - Daniel M. Kane, Jelani Nelson, "Sparser Johnson-Lindenstrauss Transforms", J. ACM 61 (2014), arXiv:1012.1577.
 - Michael B. Cohen, T. S. Jayram, Jelani Nelson, "Simple Analyses of the Sparse Johnson-Lindenstrauss Transform", SOSA (2018).
+- T. S. Jayram, David P. Woodruff, "Optimal Bounds for Johnson-Lindenstrauss Transforms and Streaming Problems with Sub-Constant Error", SODA (2011); ACM Trans. Algorithms (2013).

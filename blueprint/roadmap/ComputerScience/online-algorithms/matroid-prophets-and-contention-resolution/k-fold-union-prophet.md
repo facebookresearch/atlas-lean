@@ -1,10 +1,10 @@
 # Prophet inequalities approaching 1 for k-fold matroid unions
 
-For every matroid $\mathcal{M}$ and every $k \ge 2$, the $k$-fold union $\mathcal{M}^{(k)}$ admits a prophet inequality with competitive ratio $1 - O\!\left(\sqrt{\frac{\log k}{k}}\right)$, obtained from an online contention resolution scheme with the same selectability.
+For every matroid $\mathcal{M}$ and every $k \ge 2$, the $k$-fold union $\mathcal{M}^{(k)}$ admits a $\left(1 - O\!\left(\sqrt{\frac{\log k}{k}}\right)\right)$-selectable online contention resolution scheme, even against the almighty adversary, and hence a prophet inequality with competitive ratio $1 - O\!\left(\sqrt{\frac{\log k}{k}}\right)$.
 
 ## Proof sketch
 
-The OCRS selects an active element if it can be added while every element of the $k$-fold union stays coverable with slack; the key ingredient is a bicriterion concentration inequality for monotone $1$-Lipschitz functions of independent items, applied to the rank of the active set restricted to the remaining elements, which yields Chernoff-strength concentration even though the rank function is not self-bounding. Concentration at scale $\sqrt{k \log k}$ relative to capacity $k$ gives the loss $O(\sqrt{\log k / k})$.
+Following the framework of Feldman, Svensson and Zenklusen, the scheme accepts an active element, when accepting it keeps the selection independent, with a fixed probability $b = 1 - \Theta(\sqrt{\log k / k})$; for $k$-uniform matroids a Chernoff bound then shows that each element remains feasible with probability $1 - O(1/k)$. For general $k$-fold unions a decomposition reduces feasibility to an upper tail bound for a monotone $1$-Lipschitz function of the independent activity indicators, and the new bicriterion concentration inequality supplies it: for monotone $1$-Lipschitz $f$, $s \in (0, 1]$ and $t > 0$, $\Pr[f(X^{(s)}) \ge \mathbb{E}[f(X)] + t] \le e^{-st}$, where $X^{(s)}$ scales every activation probability by $e^{-s}$. This gives Chernoff-strength concentration even though the relevant function is not self-bounding.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ The OCRS selects an active element if it can be added while every element of the
 
 ## Sources
 
-- Noga Alon, Nick Gravin, Tristan Pollner, Aviad Rubinstein, Hongao Wang, S. Matthew Weinberg, Qianfan Zhang, "A Bicriterion Concentration Inequality and Prophet Inequalities for k-Fold Matroid Unions", ITCS (2025).
+- Noga Alon, Nick Gravin, Tristan Pollner, Aviad Rubinstein, Hongao Wang, S. Matthew Weinberg, Qianfan Zhang, "A Bicriterion Concentration Inequality and Prophet Inequalities for k-Fold Matroid Unions", ITCS (2025), arXiv:2411.11741, Theorems 2 and 3.

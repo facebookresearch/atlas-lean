@@ -11,10 +11,6 @@ By the Nash-Williams-Tutte theorem (and its fractional form via matroid base pac
 - [Fractional spanning tree packings and the packing value](fractional-spanning-tree-packing.md)
 - [Steiner minimum cuts of a terminal set](../isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
 
-## Proof depends on
-
-- [Nash–Williams arboricity theorem](../../../../../GraphTheory/graph-invariants-and-labelings/nash-williams-arboricity-theorem/nash-williams-arboricity.md)
-
 ## Sources
 
 - Crispin St. J. A. Nash-Williams, "Edge-Disjoint Spanning Trees of Finite Graphs", Journal of the London Mathematical Society (1961).

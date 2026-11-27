@@ -1,6 +1,6 @@
 # Multiphase conjecture
 
-The *multiphase conjecture* (Pătraşcu 2010) asserts that there are constants $\gamma > 1$ and $\delta > 0$ such that for $k = \Theta(n^{\gamma})$, every word-RAM solution of the multiphase problem for set disjointness that spends $O(nk\tau)$ time in Phase I, $O(n\tau)$ in Phase II and $O(\tau)$ in Phase III must have $\tau \ge n^{\delta}$. A cell-probe version replaces word-RAM time by cell probes in Phases II and III.
+The *multiphase conjecture* (Pătraşcu 2010) asserts that there are constants $\gamma > 1$ and $\delta > 0$ such that for $k = \Theta(n^{\gamma})$, every word-RAM solution of the multiphase problem for set disjointness that spends $O(nk\tau)$ time in Phase I, $O(n\tau)$ in Phase II and $O(\tau)$ in Phase III must have $\tau = \Omega(n^{\delta})$ (Conjecture 1). Pătraşcu also states a three-party number-on-forehead communication conjecture (Conjecture 7) that implies the multiphase conjecture even in the cell-probe model and even when Phase I has unbounded time (Observation 8).
 
 ## Depends on
 

@@ -1,10 +1,10 @@
 # Preferred-child changes are counted by the interleave bound
 
-For every access sequence $X$, the total number of preferred-child changes in the reference tree $P$ while serving $X$ is at least $\mathrm{IB}_P(X) - n$ and at most $\mathrm{IB}_P(X) + n$.
+For every access sequence $X$, the number of preferred-child changes from left to right or from right to left in the reference tree $P$ while serving $X$ equals $\mathrm{IB}_P(X)$; counting also the first setting of each preferred child, the total number of preferred-child changes is at least $\mathrm{IB}_P(X)$ and at most $\mathrm{IB}_P(X) + n$.
 
 ## Proof sketch
 
-The preferred child of $v$ switches exactly when two consecutive accesses within the subtree of $v$ fall on different sides of $v$, which is an alternation counted by $\mathrm{alt}_v(X)$; the first access within each subtree sets a preferred child without an alternation, contributing at most $n$.
+The preferred child of $v$ switches between left and right exactly when two consecutive accesses within the subtree of $v$ fall in different regions of $v$, which is an alternation counted by $\mathrm{alt}_v(X)$. The remaining changes are the first settings, from no preferred child to left or right, at most one per node.
 
 ## Depends on
 

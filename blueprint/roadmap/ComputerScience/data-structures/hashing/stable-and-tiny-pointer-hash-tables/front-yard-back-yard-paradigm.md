@@ -1,6 +1,6 @@
 # Front-yard and back-yard hash table design
 
-In the *front-yard/back-yard* paradigm, a hash table for up to $n$ keys consists of a *front yard*: an array of $n/h$ bins of capacity $(1+\varepsilon)h$, with each key hashed to one bin by a single hash function, and a *back yard*: a separate dynamic dictionary that stores the keys whose front-yard bin is full. Queries look in the key's bin and then in the back yard; the back yard is designed to hold only $o(n)$ keys.
+In the *front-yard/back-yard* paradigm, a hash table for up to $n$ keys consists of a *front yard*: an array of $n/h$ bins, each with capacity somewhat above the mean load $h$, with each key hashed to one bin by a single hash function, and a *back yard*: a separate dynamic dictionary that stores the keys whose front-yard bin is full. Queries look in the key's bin and then in the back yard; the back yard is designed to hold only $o(n)$ keys, so it may use a less space-efficient structure. Iceberg hashing uses bins of capacity $h + \tau_h$ with $\tau_h = k\sqrt{h \log h}$ for a large constant $k$, and leaves the back yard *unmanaged*: a key placed there stays there even after space frees up in its bin.
 
 ## Depends on
 

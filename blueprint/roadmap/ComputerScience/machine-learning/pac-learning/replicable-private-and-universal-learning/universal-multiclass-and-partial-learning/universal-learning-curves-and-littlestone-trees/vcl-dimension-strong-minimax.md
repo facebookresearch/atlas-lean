@@ -1,6 +1,6 @@
 # The VCL dimension characterizes strong minimax lower bounds
 
-Let $H$ have VC dimension $d < \infty$ and VCL dimension $d_{\mathrm{VCL}}$. Say that $d'/n$ is a **strong minimax lower bound** for $H$ if for every learner there are a single realizable $P$ and $c > 0$ such that $\mathbb{E}[\mathrm{er}_P(\hat h_n)] \ge c\, d'/n$ for infinitely many $n$. Then $d'/n$ is a strong minimax lower bound (up to absolute constants) if and only if $d' \lesssim d_{\mathrm{VCL}}$. Moreover, for classes with finite VCL dimension the optimal learning curve decomposes as a linear term $d_{\mathrm{VCL}}/n$, determined by the class alone, plus an exponentially decaying term whose constants depend on the target distribution. In particular halfspaces in $\mathbb{R}^d$ satisfy a strong minimax lower bound of order $d/n$, recovering the Antos–Lugosi lower bound.
+Let $H \subseteq \{0,1\}^X$ satisfy the measurability assumptions of Bousquet, Hanneke, Moran, van Handel and Yehudayoff, with VC dimension $d < \infty$ and VCL dimension $d_{\mathrm{VCL}} \le d$. Say that $d'/n$ is a **strong minimax lower bound** for $H$ if for every learner there is a single realizable $P$ such that $\mathbb{E}[\mathrm{er}_P(\hat h_n)] \ge d'/n$ for infinitely many $n$. Then there are universal constants $\alpha, \beta > 0$ such that the largest $d'$ for which $d'/n$ is a strong minimax lower bound satisfies $\alpha\, d_{\mathrm{VCL}} \le d' \le \beta\, d_{\mathrm{VCL}}$. More generally, for every class with $d_{\mathrm{VCL}} < \infty$ (finite VC dimension not assumed) the optimal expected error satisfies $\Omega(d_{\mathrm{VCL}})/n \le \mathrm{Opt} \le O(d_{\mathrm{VCL}})/n + C e^{-cn}$, where the lower bound holds, for every learner, for one distribution and infinitely many $n$, the upper bound holds for one learner, every realizable distribution and all $n$, $C, c$ depend on the class and the distribution, and the $\Omega, O$ constants are universal. In particular halfspaces in $\mathbb{R}^d$ satisfy a strong minimax lower bound of order $d/n$, recovering the Antos–Lugosi lower bound.
 
 ## Proof sketch
 
@@ -18,4 +18,4 @@ The lower bound embeds the random-branch construction of the linear lower bound 
 
 ## Sources
 
-- O. Bousquet, S. Hanneke, S. Moran, J. Shafer, I. Tolstikhin, "Fine-Grained Distribution-Dependent Learning Curves", COLT (2023), arXiv:2208.14615.
+- O. Bousquet, S. Hanneke, S. Moran, J. Shafer, I. Tolstikhin, "Fine-Grained Distribution-Dependent Learning Curves", COLT (2023), arXiv:2208.14615, Section 1.1 (items 1, 2 and 6), Definitions 2.14–2.16, Theorems 3.1 and 3.3.

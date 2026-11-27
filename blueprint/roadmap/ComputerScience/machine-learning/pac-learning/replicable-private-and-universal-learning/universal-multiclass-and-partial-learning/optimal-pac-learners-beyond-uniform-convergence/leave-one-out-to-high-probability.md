@@ -1,16 +1,22 @@
 # Leave-one-out bounds give optimal high-probability risk bounds for aggregated learners
 
-Let $A$ be a permutation-invariant learner such that, for some $M \ge 1$, $\mathrm{LOO}_A(S) \le M/(n+1)$ holds for every realizable sample $S$ of size $n+1$ (worst case over samples). Then a simple aggregation of $A$ (a majority vote over $A$ run on a constant number of disjoint parts of the sample) satisfies, for every realizable $D$ and every $\delta \in (0,1)$,
+Let $\hat f$ be a predictor that is symmetric in its training sample and has bounded leave-one-out error on realizable samples: for every realizable sample $S = ((x_i, y_i))_{i \le n}$ and a loss $\ell$ with values in $[0,1]$,
 
 $$
-\mathrm{er}_D(\hat h) \le C\, \frac{M + \log(1/\delta)}{n}
+\sum_{i=1}^{n} \ell\big(\hat f(x_i; S^{-i}), y_i\big) \le M_n,
 $$
 
-with probability at least $1-\delta$, for an absolute constant $C$. Applied to the one-inclusion-graph predictor of a binary class of VC dimension $d$ this gives the optimal bound $O((d + \log(1/\delta))/n)$ without uniform convergence; applied to multiclass classes it gives an optimal bound in terms of the one-inclusion hypergraph density; and it determines the optimal sample complexity of partial concept classes.
+with $M_n$ nondecreasing in $n$. Then for every realizable distribution $P$ and $\delta \in (0,1)$, with probability at least $1 - \delta$ over $S \sim P^n$ (with $n/4$ an integer), the predictors trained on the prefixes $S_{\le t}$ satisfy
+
+$$
+\frac{4}{3n} \sum_{t = n/4}^{n-1} R_P\big(\hat f(\cdot; S_{\le t})\big) \le 4.82\Big(\frac{M_n}{n} + \frac{1}{n}\log\frac{2}{\delta}\Big).
+$$
+
+For classification, a majority vote over these prefix predictors therefore has error at most $9.64\big(M_n/n + \log(2/\delta)/n\big)$. Applied to the one-inclusion graph predictor of a binary class of VC dimension $d$ (where $M_n \le d$) this gives the optimal bound $9.64\big(d/n + \log(2/\delta)/n\big)$ without uniform convergence; the same holds for multiclass classes in terms of the one-inclusion hypergraph density and for partial concept classes in terms of their VC dimension, which determines the optimal sample complexity of partial classes.
 
 ## Proof sketch
 
-The worst-case leave-one-out bound controls not only the mean of the risk but the probability that the risk exceeds $t$: if the risk were large with probability $\delta$, then on fresh test points the leave-one-out count would exceed $M$ on a large set of samples, contradicting the worst-case bound via a symmetrization and a binomial tail estimate. A majority vote over three or a constant number of independent runs converts the resulting weak-tail bound into the exponential tail $\log(1/\delta)/n$.
+View the predictors trained on growing prefixes as an online learner: on an i.i.d. sample its expected number of mistakes is controlled through the leave-one-out bound, and online-to-batch conversion turns this into a risk bound, the key point being that the conversion still works when the mistake count is a random quantity depending on the sample. Martingale tail bounds in forward and reverse time give the exponential tail, and averaging only over the last three quarters of the prefixes avoids the $\log n$ loss that summing $M_t/t$ over all $t$ would cause. A majority vote has error at most twice the average risk of the voters.
 
 ## Depends on
 
@@ -20,8 +26,9 @@ The worst-case leave-one-out bound controls not only the mean of the risk but th
 
 ## Proof depends on
 
-- [Optimal sample complexity of realizable PAC learning](../../../optimal-sample-complexity-of-realizable-pac-learning.md)
+- [Online-to-batch conversion](../../../../online-learning-and-boosting/online-to-batch-conversion.md)
+- [Haussler-Littlestone-Warmuth expected error bound for the one-inclusion predictor](../../../sample-complexity-and-combinatorial-dimensions/packing-and-one-inclusion-graphs/one-inclusion-predictor-error-bound.md)
 
 ## Sources
 
-- I. Aden-Ali, Y. Cherapanamjeri, A. Shetty, N. Zhivotovskiy, "Optimal PAC Bounds without Uniform Convergence", FOCS (2023), arXiv:2304.09167.
+- I. Aden-Ali, Y. Cherapanamjeri, A. Shetty, N. Zhivotovskiy, "Optimal PAC Bounds without Uniform Convergence", FOCS (2023), arXiv:2304.09167, Assumptions 2.1 and 2.3, Theorems 2.1 and 2.2, Corollaries 2.9 and 2.10, Lemmas 4.2 and 4.3.

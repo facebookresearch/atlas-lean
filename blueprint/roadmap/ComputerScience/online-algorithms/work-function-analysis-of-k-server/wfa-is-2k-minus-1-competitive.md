@@ -4,7 +4,7 @@ For every metric space and every $k \ge 1$, the work function algorithm for the 
 
 ## Proof sketch
 
-Combine the two lemmas: $\mathrm{cost}_{\mathrm{WFA}} \le \sum_t \mathrm{ext}_t - \mathrm{OPT}_T + c_0 \le 2k\,\mathrm{OPT}_T - \mathrm{OPT}_T + c_0 + c_1$.
+Combine the two lemmas: $\mathrm{cost}_{\mathrm{WFA}} \le \sum_t \mathrm{ext}_t - \mathrm{OPT}_T \le 2k\,\mathrm{OPT}_T - \mathrm{OPT}_T + c_1$.
 
 ## Depends on
 

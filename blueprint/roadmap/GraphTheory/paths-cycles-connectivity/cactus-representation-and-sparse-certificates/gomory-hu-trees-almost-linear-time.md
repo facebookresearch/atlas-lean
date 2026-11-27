@@ -4,7 +4,7 @@ There is a randomized (Monte Carlo) algorithm that, given an undirected graph $G
 
 ## Proof sketch
 
-The algorithm reduces the construction to $\mathrm{polylog}(n)$ single-source minimum cut instances, each solved with polylogarithmically many max-flow calls on graphs of total size $m^{1+o(1)}$. Single-source minimum cuts in weighted graphs are found by combining isolating cuts on terminal sets sampled at geometric rates with guide trees obtained from $2$-respecting tree packings, so that each pivot splits off a constant fraction of the remaining terminals. Plugging in the almost-linear maximum-flow algorithm gives $m^{1+o(1)}$ time; the query data structure stores the tree with a minimum-on-path structure.
+The algorithm reduces the construction to $\mathrm{polylog}(n)$ single-source minimum cut instances, each solved with polylogarithmically many max-flow calls on graphs of total size $m^{1+o(1)}$. Single-source minimum cuts in weighted graphs are found by combining isolating cuts on terminal sets sampled at geometric rates with guide trees sampled from a packing of Steiner trees, each of which $4$-respects a single-source minimum cut, and a randomly sampled pivot splits off a constant fraction of the remaining terminals. Plugging in the almost-linear maximum-flow algorithm gives $m^{1+o(1)}$ time; the query data structure stores the tree with a minimum-on-path structure.
 
 ## Depends on
 

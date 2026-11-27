@@ -1,6 +1,6 @@
 # Validated asynchronous Byzantine agreement with optimal expected quadratic communication
 
-In validated asynchronous Byzantine agreement (VABA), processes propose values from an arbitrary domain together with an externally checkable validity predicate, and must decide a common value satisfying the predicate (external validity). Assuming a trusted setup for threshold signatures and $n \ge 3t + 1$, there is a VABA protocol with expected $O(1)$ rounds (asynchronous time) and expected $O(n^2)$ words of communication, which is asymptotically optimal in resilience, time and word complexity.
+In validated asynchronous Byzantine agreement (VABA, Abraham–Malkhi–Spiegelman Definition 4), processes propose values from a finite domain together with an externally checkable validity predicate, and, except with negligible probability: every value an honest process decides satisfies the predicate (validity); all honest processes that terminate decide the same value (agreement); the decided value was proposed by an honest process with probability at least $1/2$ (quality); if all honest processes start with externally valid values and all messages among honest processes are delivered, then all honest processes decide (termination); and the number of messages of honest processes is probabilistically uniformly bounded (efficiency). Quality excludes trivial protocols that always decide one fixed valid value. A word contains a constant number of signatures and domain values. Assuming a trusted setup for threshold signatures and $n \ge 3t + 1$, there is a VABA protocol secure against an adaptive adversary controlling up to $t$ processes, with expected $O(1)$ running time and expected $O(n^2)$ words of communication, which is asymptotically optimal in resilience, time and word complexity against adaptive adversaries.
 
 ## Proof sketch
 
@@ -13,10 +13,10 @@ Each process runs, in parallel, a leader-based "promotion" procedure that drives
 
 ## Proof depends on
 
-- [Quorums of size n - f intersect in a correct replica when n is at least 3f + 1](../linear-view-change-bft-state-machine-replication/byzantine-quorum-intersection.md)
+- [Cardinality conditions for threshold Byzantine quorum systems and masking-register safety](../byzantine-broadcast-and-quorum-systems/cardinality-conditions-for-threshold-byzantine-quorum-systems-and-masking-regist.md)
 - [Signature-free asynchronous binary Byzantine agreement with O(n^2) messages per round](signature-free-asynchronous-binary-agreement.md)
 
 ## Sources
 
-- I. Abraham, D. Malkhi, A. Spiegelman, "Asymptotically Optimal Validated Asynchronous Byzantine Agreement", PODC 2019.
+- I. Abraham, D. Malkhi, A. Spiegelman, "Asymptotically Optimal Validated Asynchronous Byzantine Agreement", PODC 2019, arXiv:1811.01332, Theorem 1, Section 2 and Definition 4.
 - C. Cachin, K. Kursawe, F. Petzold, V. Shoup, "Secure and Efficient Asynchronous Broadcast Protocols", CRYPTO 2001.

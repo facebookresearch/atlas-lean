@@ -1,10 +1,6 @@
 # Dynamic ordered dictionary with rank and select
 
-A *dynamic rank/select dictionary* maintains a set $S \subseteq [U] = \{0, \dots, U-1\}$ with $|S| \le n$ under $\mathrm{insert}(x)$, $\mathrm{delete}(x)$, $\mathrm{rank}(x) = |\{y \in S : y < x\}|$ and $\mathrm{select}(i)$, which returns the $i$-th smallest element of $S$. Its space is compared with $\log_2 \binom{U}{|S|}$.
-
-## Depends on
-
-- [Succinct rank with a probe budget](succinct-rank-tradeoff-problem.md)
+A *dynamic rank/select dictionary* (dynamic fully indexable dictionary) maintains a set $S \subseteq [U] = \{0, \dots, U-1\}$ under $\mathrm{insert}(x)$ for $x \in [U] \setminus S$, $\mathrm{delete}(x)$ for $x \in S$, $\mathrm{rank}(x) = |\{y \in S : y < x\}|$ and $\mathrm{select}(i)$, which returns the $i$-th smallest element of $S$ if it exists. With $n = |S|$ the current size, any such structure needs at least $\lceil \log_2 \binom{U}{n} \rceil$ bits, and a structure using $\log_2 \binom{U}{n} + R$ bits has *redundancy* $R$.
 
 ## Sources
 

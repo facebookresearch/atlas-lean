@@ -1,10 +1,10 @@
 # Space-efficient value stores from tiny pointers
 
-Suppose a user stores, alongside each of $n$ keys, a tiny pointer of expected size $O(1)$ bits. Then a data structure storing a $v$-bit value for each of the $n$ keys with constant-factor time overhead for modifications and queries can be implemented in $n v + O(n \log^{(r)} n)$ bits of space, for any constant $r \ge 1$, where $\log^{(r)}$ denotes the $r$-th iterated logarithm.
+Suppose a user stores, alongside each of up to $n$ keys, a tiny pointer (a *tiny retriever*) of expected size $O(1)$ bits. Then for any $r \in [\log^* n]$ there is a data structure storing a $v$-bit value for each key that, with high probability, answers queries in constant time, performs insertions and deletions in $O(r)$ time, and uses $n v + O(n \log^{(r)} n)$ bits of space, where $\log^{(r)}$ denotes the $r$-th iterated logarithm (Theorem 6). For constant $r$ all operations take constant time; if moreover $\log^{(r)} n = \omega(1)$ and $v \le \log n/\log^{(r)} n$, the space is $nv + O(n)$ bits.
 
 ## Proof sketch
 
-Allocate the values in a dereference table at load factor $1 - \delta$ with $\delta = 1/\log^{(r)} n$, so the wasted space is $O(\delta n v)$ plus the metadata of the construction; recursive application of the fixed-size tiny-pointer construction to its own metadata reduces the overhead per level by one iterated logarithm.
+Build a variable-size dereference table on $2n$ slots without allocating its store: $\mathrm{Allocate}(x)$ returns the tiny retriever $p$, and $s_x = \mathrm{Dereference}(x, p) \in [2n]$ is distinct for distinct stored keys. Store the pairs $(s_x, y)$ in a succinct hash table that uses $\log_2\binom{|U|}{n} + nv + O(n\log^{(r)} n)$ bits with constant-time queries and $O(r)$-time updates; since its keys come from the universe $[2n]$, $\log_2\binom{2n}{n} = O(n)$. The dereference table's own metadata takes $O(n)$ bits.
 
 ## Depends on
 

@@ -14,9 +14,8 @@ Assume $n = 2^k$ and consider the dyadic partitions $B_0, \dots, B_k$ of $[n]$. 
 
 ## Proof depends on
 
-- [McDiarmid's bounded-differences inequality, finite i.i.d. case](../../../../../Probability/concentration-inequalities/mcdiarmid-s-inequality/mcdiarmid-one-sided-finite-iid.md)
 - [Moment form of the bounded differences inequality](bounded-differences-moment-inequality.md)
 
 ## Sources
 
-- O. Bousquet, Y. Klochkov, N. Zhivotovskiy, "Sharper Bounds for Uniformly Stable Algorithms", COLT (2020), arXiv:1910.07833.
+- O. Bousquet, Y. Klochkov, N. Zhivotovskiy, "Sharper Bounds for Uniformly Stable Algorithms", COLT (2020), arXiv:1910.07833, Theorem 4.

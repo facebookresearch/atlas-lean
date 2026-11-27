@@ -1,6 +1,18 @@
 # Multiscale entropy regularizer
 
-For a fractional $k$-server state on an HST, the *multiscale entropy* is a regularizer of the form $\Phi(z) = \sum_{u} \frac{w_u}{\eta_u}\, (\bar{z}_u + \delta_u) \log (\bar{z}_u + \delta_u)$, where the sum runs over the non-root nodes, $\bar{z}_u = |L_u| - z_u$ is the anti-server mass in the subtree of $u$, $\delta_u > 0$ are shift parameters and $\eta_u > 0$ are scale parameters, chosen as functions of $k$ and of the number of leaves below $u$ so that each node's term behaves like a relative entropy of the conditional anti-server distribution among the children of its parent.
+Let $T = (V, E)$ be an HST in the vertex-weighted form, with root $r$, vertex weights $w_u$ nonincreasing along root-leaf paths and leaf metric $d(\ell, \ell') = w_{\mathrm{lca}(\ell, \ell')}$, leaf set $L$, and $N_u$ leaves below each vertex $u$; write $\chi(u) = \{(v, j) : (u, v) \in E,\ j \in [N_v]\}$. Bubeck, Cohen, Lee, Lee and Mądry represent fractional $k$-server states by points of the *assignment polytope*
+
+$$
+A = \Big\{x \in [0, 1]^{\Lambda} : \sum_{i \le |S|} x_{u,i} \le \sum_{(v, j) \in S} x_{v,j} \text{ for all } u \in V,\ S \subseteq \chi(u);\quad x_{r,i} = \mathbf{1}\{i > k\} \text{ for all } i\Big\},
+$$
+
+with coordinates $x_{u,i}$ for $u \in V$ and $i \in [N_u]$; for a shift $\delta > 0$ the associated server mass below $u$ is $z_u = \frac{1}{1-\delta}\sum_{i} (1 - x_{u,i})$. The *shifted multiscale entropy* is
+
+$$
+\Phi(x) = \sum_{u \in V} w_u \sum_{i \ge 1} (x_{u,i} + \delta) \log (x_{u,i} + \delta).
+$$
+
+Each vertex contributes an entropy of its coordinates weighted by its scale $w_u$, and the shift keeps the gradient bounded: $\sup_{x \in A} \|\nabla \Phi(x)\|_{\ell_\infty(1/w)} = O(\log(1/\delta))$. The $k$-server algorithm takes $\delta = \frac{1}{2k}$.
 
 ## Depends on
 
@@ -9,4 +21,4 @@ For a fractional $k$-server state on an HST, the *multiscale entropy* is a regul
 
 ## Sources
 
-- Sébastien Bubeck, Michael B. Cohen, Yin Tat Lee, James R. Lee, Aleksander Mądry, "k-Server via Multiscale Entropic Regularization", STOC (2018), arXiv:1711.01085.
+- Sébastien Bubeck, Michael B. Cohen, Yin Tat Lee, James R. Lee, Aleksander Mądry, "k-Server via Multiscale Entropic Regularization", STOC (2018), arXiv:1711.01085, Section 3.2.

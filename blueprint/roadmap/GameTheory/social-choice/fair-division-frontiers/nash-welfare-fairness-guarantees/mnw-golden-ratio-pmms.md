@@ -10,7 +10,7 @@ Every maximum Nash welfare allocation $X$ satisfies $v_i(X_i) \ge \frac{2}{1 + \
 
 ## Proof sketch
 
-Fix $i, j$ and restrict attention to the two-agent subinstance on $X_i \cup X_j$; the restriction of a maximum Nash welfare allocation is again maximum Nash welfare there. Apply the local swap inequality in its undivided form $v_i(g)\,(v_j(X_j) - v_j(g)) \le v_i(X_i)\, v_j(g)$ to every good $g$ of $X_j$ and sum over $g$, dividing by no residual value: this bounds $v_i(X_j)$, weighted by how $v_j$ is spread over $X_j$, by a multiple of $v_i(X_i)$. The weight $v_j(X_j) - v_j(g)$ vanishes only when $g$ is the single good of $X_j$ that $j$ values positively; that case is split off: the other goods of $X_j$ are then worthless to $j$, so moving one of them to $i$ shows it is worthless to $i$ as well, and every partition of $X_i \cup X_j$ has a part avoiding $g$, worth at most $v_i(X_i)$ to $i$. Otherwise the EF1 property controls the most valuable good. Any partition of $X_i \cup X_j$ into two parts must give one part at most $v_i(X_i)$ plus a share of $v_i(X_j)$, and optimizing the worst case over the spread of values leads to the equation $r^2 = 1 - r$ whose positive root is $\varphi - 1$. A two-agent, three-good instance attains the bound.
+Fix $i \ne j$ and restrict attention to the two-agent subinstance on $X_i \cup X_j$. The restriction of a maximum Nash welfare allocation is again a maximum Nash welfare allocation there: this is immediate when both agents have positive value or both have value $0$, and if only $j$ has positive value then no allocation of $X_i \cup X_j$ gives both agents positive value, since otherwise the number of positive agents in the original instance could be increased. In a two-agent instance the pairwise maximin share of $i$ is her maximin share, so the maximin share guarantee of maximum Nash welfare with $n = 2$ gives $v_i(X_i) \ge \frac{2}{1 + \sqrt 5}\,\mathrm{PMMS}_{i,j}(X)$. Tightness follows from the instances showing tightness of the maximin share guarantee, with the ratio for two agents in place of the one for $n$ agents.
 
 ## Depends on
 
@@ -18,8 +18,7 @@ Fix $i, j$ and restrict attention to the two-agent subinstance on $X_i \cup X_j$
 
 ## Proof depends on
 
-- [Local swap inequality at a maximum Nash welfare allocation](mnw-local-swap-inequality.md)
-- [Maximum Nash welfare implies EF1](../../../not-yet-classified/part-01/max-nash-welfare-ef1/is-ef1-of-is-max-nash-welfare.md)
+- [Maximum Nash welfare gives a tight Theta(1/sqrt(n)) maximin share guarantee](mnw-maximin-share-guarantee.md)
 
 ## Sources
 

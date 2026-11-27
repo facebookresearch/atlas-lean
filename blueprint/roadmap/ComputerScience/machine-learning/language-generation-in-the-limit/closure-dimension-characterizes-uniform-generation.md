@@ -1,6 +1,6 @@
 # The closure dimension characterizes uniform generatability
 
-Let $U$ be countable and $H \subseteq \{0,1\}^U$ a class all of whose supports are infinite. Then $H$ is uniformly generatable if and only if $\mathrm{C}(H) < \infty$; in that case $\mathrm{C}(H) + 1$ distinct examples suffice. Moreover $H$ is non-uniformly generatable if and only if $H = \bigcup_{n} H_n$ for a nondecreasing sequence of classes with $\mathrm{C}(H_n) < \infty$ for every $n$, and every finite union of classes of finite closure dimension is generatable in the limit. Generatability and predictability are incomparable: there are classes that are uniformly generatable but not PAC or online learnable, and classes that are learnable but not generatable.
+Let $U$ be countable and $H \subseteq \{0,1\}^U$ a class all of whose supports are infinite. Then $H$ is uniformly generatable if and only if $\mathrm{C}(H) < \infty$; in that case $\mathrm{C}(H) + 1$ distinct examples suffice. Moreover $H$ is non-uniformly generatable if and only if $H = \bigcup_{n} H_n$ for a nondecreasing sequence of classes with $\mathrm{C}(H_n) < \infty$ for every $n$, and every finite union of classes of finite closure dimension is generatable in the limit. Uniform generatability and learnability are incomparable: there are countable classes that are uniformly generatable but neither PAC nor online learnable, and countable classes that are online (hence PAC) learnable but not uniformly generatable. Every countable class is generatable in the limit, so the separation concerns uniform generation.
 
 ## Proof sketch
 
@@ -15,4 +15,4 @@ If $\mathrm{C}(H) = d$, after $d+1$ distinct examples the closure of the seen se
 
 ## Sources
 
-- J. Li, V. Raman, A. Tewari, "Generation through the Lens of Learning Theory", COLT (2025), arXiv:2410.13714.
+- J. Li, V. Raman, A. Tewari, "Generation through the Lens of Learning Theory", COLT (2025), arXiv:2410.13714, Lemma 3.2, Theorems 3.3, 3.5, 3.10 and 4.1.

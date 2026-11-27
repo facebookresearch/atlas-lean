@@ -1,14 +1,16 @@
 # Approximate decomposition of WTAP solutions into thin components (Traub-Zenklusen)
 
-For every $\varepsilon > 0$ there is a family $\mathcal{K}_\varepsilon$ of link sets of a shadow-complete WTAP instance, of super-constant size in general, with the following two properties.
+Let $(G=(V,E),L,w)$ be a WTAP instance rooted at $r$, and call a link set $C$ $k$-thin if every vertex lies on the paths $P_\ell$ of at most $k$ links $\ell \in C$.
 
-(i) For every current up-link set $U$, a component $C \in \mathcal{K}_\varepsilon$ minimizing $w(C)/w(\mathrm{Drop}_U(C))$ can be found in polynomial time for fixed $\varepsilon$, by dynamic programming over the tree.
+(i) (Decomposition theorem.) Let $F \subseteq L$ be a WTAP solution and let $U$ be a set of up-links whose paths $P_u$, $u \in U$, are pairwise edge-disjoint. For every $\varepsilon > 0$ there are a partition $\mathcal{C}$ of $F$ into $\lceil 1/\varepsilon \rceil$-thin sets and an exceptional set $R \subseteq U$ with $w(R) \le \varepsilon\, w(U)$ such that every $u \in U \setminus R$ satisfies $P_u \subseteq \bigcup_{\ell \in C}P_\ell$ for some $C \in \mathcal{C}$, that is, $u \in \mathrm{Drop}_U(C)$.
 
-(ii) For every WTAP solution $F$ there are components $C_1,\dots,C_q \in \mathcal{K}_\varepsilon$ with $\sum_{j}w(C_j) \le (1+\varepsilon)\,w(F)$ and $\bigcup_j\mathrm{Drop}_U(C_j)=U$.
+(ii) (Computability.) For every constant $k$ and every such $U$, a $k$-thin link set $C$ minimizing $w(C)/w(\mathrm{Drop}_U(C))$ can be computed in polynomial time, by dynamic programming over the tree.
+
+The exceptional set cannot be avoided: there are instances in which covering every up-link of $U$ by one part forces all links of $F$ into a single part that is not $m$-thin, for arbitrarily large $m$ (Traub–Zenklusen, Figure 2).
 
 ## Proof sketch
 
-Thin components are link sets whose induced structure along the tree is covered by boundedly many root paths, which makes the best ratio computable by a dynamic program that guesses the boundary at each vertex. For (ii), split an optimal solution by cutting the tree at a sparse set of vertices chosen by a random shift, duplicating the few links that cross the cut points; the expected duplication costs an $\varepsilon$ fraction of $w(F)$, and each piece is thin.
+For each $u \in U$ choose, carefully, a minimal set $F_u \subseteq F$ of links whose paths cover $P_u$, ordered along $P_u$; each $F_u$ is $2$-thin. These choices define a dependency graph on $F$, a union of directed paths $(F_u, A_u)$, whose connected components are arborescences, and two links of a component sharing a vertex are in an ancestor relation. Label each $A_u$ by the number of distinct sets $A_{u'}$ met on the path from its component's root, put $k=\lceil 1/\varepsilon \rceil$, and for the residue class $i \bmod k$ of minimum weight let $R$ be the up-links whose label is $\equiv i \pmod k$. Removing their arcs leaves components in which every path meets at most $k-1$ sets $A_u$, which are $k$-thin, and averaging over the $k$ residue classes gives $w(R) \le w(U)/k \le \varepsilon\, w(U)$. Part (ii) is a dynamic program over the rooted tree that tracks, at each vertex, the boundedly many links of the candidate component passing through it.
 
 ## Depends on
 
@@ -17,4 +19,4 @@ Thin components are link sets whose induced structure along the tree is covered 
 
 ## Sources
 
-- Vera Traub, Rico Zenklusen, "A Better-Than-2 Approximation for Weighted Tree Augmentation", FOCS (2021), arXiv:2104.07114.
+- Vera Traub, Rico Zenklusen, "A Better-Than-2 Approximation for Weighted Tree Augmentation", FOCS (2021), arXiv:2104.07114, Theorem 5, Lemma 4, Figures 2 and 4, Sections 4 and 5.

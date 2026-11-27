@@ -1,12 +1,12 @@
 # Optimal excess empirical risk for private convex empirical risk minimization
 
-Let $\mathcal{W} \subseteq \mathbb{R}^d$ be convex with diameter $D$, let $\ell(w, z)$ be convex and $L$-Lipschitz in $w$ for every data point $z$, let $\hat F_S(w) = \frac1n\sum_i \ell(w, z_i)$ be the empirical risk of a dataset $S$ and $F(w) = \mathbb{E}_{z \sim \mathcal{D}}[\ell(w,z)]$ the population risk. The optimal excess empirical risk achievable by differentially private algorithms is, up to logarithmic factors:
+Let $\mathcal{W} \subseteq \mathbb{R}^d$ be a nonempty, closed, convex set of finite diameter $D$, let $\ell(w, z)$ be convex and $L$-Lipschitz in $w$ for every data point $z$, let $\hat F_S(w) = \frac1n\sum_i \ell(w, z_i)$ be the empirical risk of a dataset $S$ and $F(w) = \mathbb{E}_{z \sim \mathcal{D}}[\ell(w,z)]$ the population risk, assumed finite (finiteness at one point implies it everywhere, by Lipschitzness). Since $\mathcal{W}$ is compact and both risks are continuous, their minima over $\mathcal{W}$ exist, and the Euclidean projection $\Pi_{\mathcal{W}}$ onto $\mathcal{W}$ is well defined. The minimax excess empirical risk of differentially private algorithms, the best worst case over datasets, is, up to logarithmic factors and with $\delta = o(1/n)$ for approximate privacy:
 
 - for $(\varepsilon,\delta)$-DP and convex losses: $\Theta\!\left(LD\,\min\Big\{1, \dfrac{\sqrt{d\log(1/\delta)}}{\varepsilon n}\Big\}\right)$;
 - for $\varepsilon$-DP and convex losses: $\Theta\!\left(LD\,\min\Big\{1, \dfrac{d}{\varepsilon n}\Big\}\right)$;
 - for $(\varepsilon,\delta)$-DP and $\lambda$-strongly convex losses: $\Theta\!\left(\min\Big\{LD, \dfrac{L^2 d\log(1/\delta)}{\lambda\varepsilon^2 n^2}\Big\}\right)$.
 
-The upper bounds are achieved in polynomial time (noisy gradient descent or SGD for approximate privacy; the exponential mechanism over $\mathcal{W}$, sampled via log-concave sampling, for pure privacy), and the lower bounds hold even for linear and quadratic losses.
+Here the lower bounds say that for every private algorithm there is a dataset (with linear losses over a ball in the first two cases and quadratic losses in the third) on which the excess empirical risk is at least the stated amount with constant probability, hence also in expectation; they say nothing about a given instance, on which a private algorithm may do better. The small-$\delta$ regime is necessary: for $\delta$ close to $1$, releasing an empirical minimizer with probability $\delta$ and a fixed point otherwise is $(0, \delta)$-differentially private and has excess risk at most $(1 - \delta)LD$, which can be below the square-root bound. The upper bounds are achieved in polynomial time (noisy gradient descent or SGD for approximate privacy; the exponential mechanism over $\mathcal{W}$, sampled via log-concave sampling, for pure privacy), and assume $\delta < 1/n$.
 
 ## Proof sketch
 
@@ -24,4 +24,4 @@ For $(\varepsilon,\delta)$-DP, noisy (stochastic) gradient descent with Gaussian
 
 ## Sources
 
-- R. Bassily, A. Smith, A. Thakurta, "Differentially Private Empirical Risk Minimization: Efficient Algorithms and Tight Error Bounds", FOCS (2014), arXiv:1405.7085.
+- R. Bassily, A. Smith, A. Thakurta, "Differentially Private Empirical Risk Minimization: Efficient Algorithms and Tight Error Bounds", FOCS (2014), arXiv:1405.7085, Table 1 and Theorems 5.2–5.5.

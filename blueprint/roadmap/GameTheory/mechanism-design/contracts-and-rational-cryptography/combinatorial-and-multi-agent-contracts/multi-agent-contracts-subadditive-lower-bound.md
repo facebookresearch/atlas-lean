@@ -4,7 +4,7 @@ For multi-agent contract instances with $n$ agents and subadditive reward functi
 
 ## Proof sketch
 
-Hide a special set of about $\sqrt n$ agents whose joint reward is high, while every other set of comparable size has reward close to that of a symmetric submodular function. Queries reveal information about the special set only with negligible probability, so the algorithm must essentially choose a set without knowing it; the principal's utility from any set not aligned with the special set is smaller by a factor $\Omega(\sqrt n)$ because the required shares $c_i / f(i \mid S - i)$ exhaust the reward.
+Give all agents the same cost and start from a symmetric subadditive reward function under which every set of fewer than $\sqrt n$ agents gives the principal $O(1)$ and every larger set gives at most $0$, because the required shares $c_i / f(i \mid S \setminus \{i\})$ exhaust the reward. Raise the value of one hidden random set $T$ of $n/2 + 1$ agents, keeping the function monotone and subadditive (and within a constant factor of submodular), so that $T$ gives the principal $\Omega(\sqrt n)$ while every other set still gives $O(1)$. Each value or demand query reveals information about only polynomially many candidate sets, so polynomially many queries find $T$ only with negligible probability (Yao's principle handles randomized algorithms).
 
 ## Depends on
 
@@ -18,4 +18,4 @@ Hide a special set of about $\sqrt n$ agents whose joint reward is high, while e
 
 ## Sources
 
-- P. Dütting, T. Ezra, M. Feldman, T. Kesselheim, "Multi-Agent Contracts", STOC 2023, arXiv:2211.05434.
+- P. Dütting, T. Ezra, M. Feldman, T. Kesselheim, "Multi-Agent Contracts", STOC 2023, arXiv:2211.05434, Theorem 4.4.

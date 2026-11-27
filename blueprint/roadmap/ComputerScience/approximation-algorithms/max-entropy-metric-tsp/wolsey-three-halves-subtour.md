@@ -4,7 +4,7 @@ Let $(V,c)$ be a metric TSP instance on $n \ge 3$ vertices and let $x$ be an opt
 
 (i) $z=(1-\tfrac{1}{n})x \in P_{\mathrm{ST}}(K_V)$, so a minimum spanning tree $S^*$ satisfies $c(S^*) \le (1-\tfrac1n)\,c^{\top}x$.
 
-(ii) For every $T \subseteq V$ with $|T|$ even, $\tfrac12 x \in P_T^{\uparrow}(K_V)$; by the Edmonds-Johnson theorem ($\min_J c(J)=\min\{c^{\top}y : y \in P_T^{\uparrow}\}$ for $c \ge 0$) a minimum-cost $T$-join $J$ has $c(J) \le \tfrac12 c^{\top}x$.
+(ii) For every $T \subseteq V$ with $|T|$ even, $\tfrac12 x \in P_T^{\uparrow}(K_V)$; by the Edmonds-Johnson theorem, which says that for $c \ge 0$ the minimum cost of a $T$-join equals $\min\{c^{\top}y : y \in P_T^{\uparrow}\}$, so that every point of the dominant upper-bounds the cost of an integral minimum $T$-join, a minimum-cost $T$-join $J$ has $c(J) \le \tfrac12 c^{\top}x$.
 
 (iii) For every spanning tree $S$ with odd-degree set $T$ and every $T$-join $J$, the multigraph $S \uplus J$ is connected with all degrees even, hence Eulerian, and shortcutting an Euler tour gives a Hamiltonian cycle of cost at most $c(S)+c(J)$.
 
@@ -22,6 +22,7 @@ For (i), $x(E(S))=\tfrac12(2|S|-x(\delta(S))) \le |S|-1$ for every proper nonemp
 
 ## Proof depends on
 
+- [Edmonds-Johnson theorem: a minimum T-join costs the minimum of the T-join dominant](edmonds-johnson-t-join-dominant.md)
 - [Characterization of Eulerian indexed walks](../../../GraphTheory/paths-cycles-connectivity/eulerian-circuits/is-eulerian-iff.md)
 - [APPROX-TSP-TOUR on a given minimum spanning tree costs at most twice any tour](../double-tree-approximation-for-metric-tsp/approx-tsptour-two-approx.md)
 - [Handshake lemma for edge-indexed multigraphs](../../../GraphTheory/paths-cycles-connectivity/eulerian-circuits/even-sum-degree.md)

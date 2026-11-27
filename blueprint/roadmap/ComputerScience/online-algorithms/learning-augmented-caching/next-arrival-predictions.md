@@ -1,6 +1,6 @@
 # Next-arrival predictions for paging
 
-In *paging with next-arrival predictions*, when page $\sigma_t$ is requested at time $t$, the oracle outputs a predicted time $h_t$ of the next request to $\sigma_t$; let $y_t$ be the true next request time ($+\infty$ if none). The *prediction error* is $\eta = \sum_t |h_t - y_t|$ (the $\ell_1$ error). With perfect predictions, evicting the page whose predicted next request is furthest in the future is Belady's optimal offline rule.
+In *paging with next-arrival predictions*, a request sequence $\sigma_1, \dots, \sigma_n$ arrives online, and when page $\sigma_t$ is requested at time $t$, the oracle outputs a predicted time $h_t$ of the next request to $\sigma_t$; let $y_t$ be the true next request time, with $y_t = n + 1$ if $\sigma_t$ is not requested again. The *prediction error* is $\eta = \sum_{t=1}^{n} |h_t - y_t|$ (the $\ell_1$ error). With perfect predictions, evicting the page whose predicted next request is furthest in the future is Belady's optimal offline rule.
 
 ## Depends on
 

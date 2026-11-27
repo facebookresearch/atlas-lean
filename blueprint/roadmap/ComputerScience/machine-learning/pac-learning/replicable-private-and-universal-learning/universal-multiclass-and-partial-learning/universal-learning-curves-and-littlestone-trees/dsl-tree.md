@@ -10,5 +10,5 @@ Let $H \subseteq Y^X$ with $Y$ countable. A **Daniely–Shalev-Shwartz–Littles
 
 ## Sources
 
-- S. Hanneke, S. Moran, Q. Zhang, "Universal Rates for Multiclass Learning", COLT (2023), arXiv:2307.02066.
+- S. Hanneke, S. Moran, Q. Zhang, "Universal Rates for Multiclass Learning", COLT (2023), arXiv:2307.02066, Definitions 5, 6, 7, 16 and 17.
 - N. Brukhim, D. Carmon, I. Dinur, S. Moran, A. Yehudayoff, "A Characterization of Multiclass Learnability", FOCS (2022), arXiv:2203.01550.

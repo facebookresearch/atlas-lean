@@ -15,4 +15,4 @@ where $S$ and $S'$ are independent and $d_{\mathrm{TV}}$ is the total variation 
 
 ## Sources
 
-- A. Kalavasis, A. Karbasi, S. Moran, G. Velegkas, "Statistical Indistinguishability of Learning Algorithms", ICML (2023), arXiv:2305.14311.
+- A. Kalavasis, A. Karbasi, S. Moran, G. Velegkas, "Statistical Indistinguishability of Learning Algorithms", ICML (2023), arXiv:2305.14311, Definition 4.

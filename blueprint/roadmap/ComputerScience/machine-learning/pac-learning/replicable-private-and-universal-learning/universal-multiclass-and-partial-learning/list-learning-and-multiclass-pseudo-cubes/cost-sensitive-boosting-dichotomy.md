@@ -23,4 +23,4 @@ A random guess predicting $+1$ with probability $q$ has loss at most $\max(w_+ (
 
 ## Sources
 
-- M. Bressan, N. Brukhim, N. Cesa-Bianchi, E. Esposito, Y. Mansour, S. Moran, M. Thiessen, "Of Dice and Games: A Theory of Generalized Boosting", COLT (2025), arXiv:2412.08012.
+- M. Bressan, N. Brukhim, N. Cesa-Bianchi, E. Esposito, Y. Mansour, S. Moran, M. Thiessen, "Of Dice and Games: A Theory of Generalized Boosting", COLT (2025), arXiv:2412.08012, Definitions 1 and 2 and Theorem A.

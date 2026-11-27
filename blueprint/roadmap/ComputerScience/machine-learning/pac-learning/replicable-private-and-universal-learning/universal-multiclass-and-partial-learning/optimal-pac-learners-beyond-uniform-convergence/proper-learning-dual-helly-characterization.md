@@ -1,10 +1,10 @@
 # Proper learners attain the optimal PAC rate exactly when the dual Helly number is bounded
 
-If the dual Helly number of $H$ is finite, there exists a proper learner for $H$ (one that always outputs a concept of $H$) with sample complexity $O\big((d + \log(1/\delta))/\varepsilon\big)$ for VC dimension $d$, the constant depending on the dual Helly number. Conversely, if $H$ is closed, that is, every set of labelled examples consistent with no concept of $H$ has a finite subset consistent with no concept of $H$, and its dual Helly number is infinite, then every proper learner for $H$ needs an extra $\log(1/\varepsilon)$ factor in the joint dependence on $\varepsilon$ and $\delta$. So for closed classes a proper learner attains the optimal rate if and only if the dual Helly number is finite.
+If the dual Helly number $k_w$ of $H$ is finite, there exists a proper learner for $H$ (one that always outputs a concept of $H$) with sample complexity $O\big(\tfrac{k^2}{\varepsilon}\,(d \log k + \log(1/\delta))\big)$ for VC dimension $d$, where $k \le k_w$ is the projection number of $H$; for fixed $k_w$ this is $O\big((d + \log(1/\delta))/\varepsilon\big)$. Conversely, if the hollow star number of $H$ is infinite, then the proper sample complexity is not $o\big(\tfrac{1}{\varepsilon}\log\tfrac{1}{\varepsilon}\big)$: there are $\varepsilon_i \to 0$ with proper sample complexity at least $\tfrac{c}{\varepsilon_i}\log\tfrac{1}{\varepsilon_i}$ at fixed $\delta$. For a closed class (every set of labelled examples consistent with no concept of $H$ has a finite subset consistent with no concept of $H$) the hollow star, projection and dual Helly numbers coincide, so an infinite dual Helly number forces this extra logarithmic factor. So for closed classes a proper learner attains the optimal rate if and only if the dual Helly number is finite.
 
 ## Proof sketch
 
-When the dual Helly number is $k$, a proper learner can output a concept consistent with a majority-like aggregate: the realizable region of the aggregate of $O(\log(1/\delta))$ ERM outputs is consistent on every $k$-subsample with high probability, hence globally consistent by the Helly property, and the improper majority vote analysis transfers to this proper hypothesis. Conversely, minimal non-realizable samples of growing size can be planted in distributions so that every proper learner pays the logarithmic factor.
+The projection number $k_p \le k_w$ is the least $k$ such that for every finite multiset $C' \subseteq H$ some concept of $H$ agrees with the majority vote of $C'$ on all points where that vote is backed in the required sense by $k$-subsets. The proper learner takes Hanneke's majority vote of ERMs on recursively constructed subsamples and projects it to such a concept; the improper analysis transfers at the cost of the factor $k_p^2$. Conversely, large hollow star sets can be planted in distributions, in the manner of Daniely and Shalev-Shwartz, so that every proper learner pays the logarithmic factor.
 
 ## Depends on
 
@@ -13,9 +13,8 @@ When the dual Helly number is $k$, a proper learner can output a concept consist
 ## Proof depends on
 
 - [Optimal sample complexity of realizable PAC learning](../../../optimal-sample-complexity-of-realizable-pac-learning.md)
-- [Bagging with logarithmically many bootstrap samples is an optimal PAC learner](bagging-optimal-pac-learner.md)
 
 ## Sources
 
-- O. Bousquet, S. Hanneke, S. Moran, N. Zhivotovskiy, "Proper Learning, Helly Number, and an Optimal SVM Bound", COLT (2020), arXiv:2005.11818.
+- O. Bousquet, S. Hanneke, S. Moran, N. Zhivotovskiy, "Proper Learning, Helly Number, and an Optimal SVM Bound", COLT (2020), arXiv:2005.11818, Definitions 2–4, Lemma 5, Theorems 8 and 10.
 - S. Hanneke, "The Optimal Sample Complexity of PAC Learning", Journal of Machine Learning Research 17 (2016), arXiv:1507.00473.

@@ -6,4 +6,4 @@ Let $X_1, \dots, X_n$ be independent nonnegative random variables with known dis
 
 - José Correa, Patricio Foncea, Ruben Hoeksma, Tim Oosterwijk, Tjark Vredeveld, "Posted Price Mechanisms and Optimal Threshold Strategies for Random Arrivals", Mathematics of Operations Research 46(4) (2021); EC (2017).
 - Hossein Esfandiari, MohammadTaghi Hajiaghayi, Vahid Liaghat, Morteza Monemizadeh, "Prophet Secretary", SIAM Journal on Discrete Mathematics 31(3) (2017); ESA (2015).
-- Bo Peng, Zhihao Gavin Tang, "Order Selection Prophet Inequality: From Threshold Optimization to Arrival Time Design", FOCS (2022); SIAM Journal on Computing (2025), arXiv:2204.01425.
+- Bo Peng, Zhihao Gavin Tang, "Order Selection Prophet Inequality: From Threshold Optimization to Arrival Time Design", FOCS (2022); SIAM Journal on Computing, arXiv:2204.01425.

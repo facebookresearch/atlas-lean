@@ -4,7 +4,13 @@ For every fixed $\varepsilon > 0$ there is a polynomial-time $(1.5+\varepsilon)$
 
 ## Proof sketch
 
-Maintain a solution consisting of chosen components together with the up-links they have not dropped, and measure progress by a potential that weights each up-link according to how many components cover it, rather than by the solution weight itself. A local move adds one component of $\mathcal{K}_\varepsilon$ and removes the links it makes redundant; when no move improves the potential by a $1+\varepsilon/\mathrm{poly}(n)$ factor, applying the decomposition lemma to an optimum shows the potential, and hence the weight, is at most $(1.5+\varepsilon)\mathrm{OPT}$. For Steiner tree, full components play the role of link sets and the potential is compared against the hypergraphic LP.
+The algorithm maintains a WTAP solution $F$ and, for every link $\ell=ab \in F$, a nonempty witness set $W_\ell$ of at most two up-link shadows of $\ell$, initially $\{a\,\mathrm{apex}(\ell),\ b\,\mathrm{apex}(\ell)\}$; the disjoint union $U$ of the witness sets is a WTAP solution, and shortening keeps the paths $P_u$, $u \in U$, pairwise edge-disjoint. Progress is measured by the potential
+
+$$
+\Phi(F)=\sum_{\ell \in F}H_{|W_\ell|}\,w(\ell)=\sum_{\ell \in F:\,|W_\ell|=1}w(\ell)+\sum_{\ell \in F:\,|W_\ell|=2}\tfrac32\,w(\ell),
+$$
+
+which weights each original link by the harmonic number of the number of its surviving witnesses. A step computes a $\lceil 4/\varepsilon\rceil$-thin link set $C$ maximizing $w(\mathrm{Drop}_U(C))-1.5\,w(C)$, removes $\mathrm{Drop}_U(C)$ from all witness sets, adds $C$ with fresh witness sets, shortens up-links, and deletes links whose witness sets became empty; it is repeated while $\Phi$ decreases by a factor of at least $1-\varepsilon/(6|V|)$. The potential decreases by at least $w(\mathrm{Drop}_U(C))$ when the dropped witnesses are removed and increases by at most $1.5\,w(C)$ when $C$ is added; applying the decomposition theorem to an optimum and to $U$ shows that, at termination, the solution weight satisfies $w(F) \le (1.5+\varepsilon)\,\mathrm{OPT}$, the guarantee being on $w(F)$, not on $\Phi(F)$. For Steiner tree, full components play the role of link sets and the potential is compared against the hypergraphic LP.
 
 ## Depends on
 
@@ -21,5 +27,5 @@ Maintain a solution consisting of chosen components together with the up-links t
 
 ## Sources
 
-- Vera Traub, Rico Zenklusen, "Local Search for Weighted Tree Augmentation and Steiner Tree", SODA (2022), arXiv:2107.07403.
+- Vera Traub, Rico Zenklusen, "Local Search for Weighted Tree Augmentation and Steiner Tree", SODA (2022), arXiv:2107.07403, Theorem 1.1, Sections 2.3–2.5 (Algorithm 1).
 - Jaroslaw Byrka, Fabrizio Grandoni, Thomas Rothvoss, Laura Sanita, "Steiner Tree Approximation via Iterative Randomized Rounding", Journal of the ACM (2013).

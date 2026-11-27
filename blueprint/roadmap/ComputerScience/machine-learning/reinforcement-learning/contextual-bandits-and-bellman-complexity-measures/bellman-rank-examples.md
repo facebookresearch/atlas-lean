@@ -13,4 +13,4 @@ In each case the average Bellman error $\mathcal{E}_h(f', f)$ is an expectation,
 
 ## Sources
 
-- N. Jiang, A. Krishnamurthy, A. Agarwal, J. Langford, R. E. Schapire, "Contextual Decision Processes with Low Bellman Rank are PAC-Learnable", ICML (2017), arXiv:1610.09512.
+- N. Jiang, A. Krishnamurthy, A. Agarwal, J. Langford, R. E. Schapire, "Contextual Decision Processes with Low Bellman Rank are PAC-Learnable", ICML (2017), arXiv:1610.09512, Propositions 1, 2 and 3 and Appendix B.

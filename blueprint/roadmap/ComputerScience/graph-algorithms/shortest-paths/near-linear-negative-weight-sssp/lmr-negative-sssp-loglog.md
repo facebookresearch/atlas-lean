@@ -1,6 +1,6 @@
 # Negative-weight SSSP in O((m + n log log n) log(nW) log n log log n) time
 
-There is a randomized algorithm that, given a directed graph with $n$ vertices, $m$ edges, integer weights $w(e)\ge -W$ and a source $s$, either computes a shortest-path tree from $s$ or finds a negative cycle, in time
+There is a randomized algorithm that, given a directed graph with $n$ vertices, $m$ edges, integer weights $w(e)\ge -W$, where $W$ is the largest absolute value of a negative weight, and a source $s$, succeeds with high probability and either computes a shortest-path tree from $s$ or, if a negative cycle exists, outputs one, in time
 
 $$
 O\big((m+n\log\log n)\log(nW)\log n\log\log n\big).
@@ -10,7 +10,7 @@ This improves the Bringmann-Cassis-Fischer bound by a factor of nearly $\log n$.
 
 ## Proof sketch
 
-Plug the faster loss-$O(\log n\log\log n)$ directed LDD into the recursive scaling framework: each scaling phase decomposes the graph, recursively fixes the strongly connected components, repairs inter-component edges by the acyclic-condensation step, and repairs the cut edges with the Dijkstra-Bellman-Ford hybrid, whose cost is proportional to the expected number of cut edges on shortest paths. With loss $O(\log n\log\log n)$ the per-phase cost becomes $O((m+n\log\log n)\log n\log\log n)$, and $O(\log(nW))$ scaling phases complete the bound.
+Follow the Bringmann-Cassis-Fischer framework with the recursion parameter $\kappa$ replaced by weak diameter, and decompose with the specialized loss-$O(\log n\log\log n)$ directed LDD, which merges the per-level and recursion-depth logarithmic losses into one factor: each scaling phase halves the most negative weight, decomposes the graph, recursively fixes the strongly connected components, repairs inter-component edges by the acyclic-condensation step, and repairs the cut edges with the Dijkstra-Bellman-Ford hybrid, whose cost is proportional to the expected number of cut edges on shortest paths. With loss $O(\log n\log\log n)$ the per-phase cost becomes $O((m+n\log\log n)\log n\log\log n)$, and $O(\log(nW))$ scaling phases complete the bound.
 
 ## Depends on
 

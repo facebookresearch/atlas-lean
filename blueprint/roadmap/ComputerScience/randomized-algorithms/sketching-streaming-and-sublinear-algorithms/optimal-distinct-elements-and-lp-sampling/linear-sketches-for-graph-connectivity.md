@@ -4,7 +4,7 @@ There is a distribution over linear sketches of the edge-indicator vector of an 
 
 ## Proof sketch
 
-For each vertex $v$ keep $O(\log n)$ independent $L_0$-sampler sketches of $a_v$, each of $O(\log^2 n)$ bits. Run Borůvka's algorithm on the sketches: in each round, for every current component $S$, add the sketches of its vertices to obtain a sketch of $\sum_{v \in S} a_v$, whose support is the cut $\delta(S)$, and sample one cut edge, merging components as in union-find. Each round at least halves the number of non-isolated components with constant probability, so $O(\log n)$ rounds suffice, each using a fresh sketch to keep samples independent of earlier rounds.
+For each vertex $v$ keep $O(\log n)$ independent $L_0$-sampler sketches of $a_v$, each of $O(\log^2 n)$ bits. Run Borůvka's algorithm on the sketches: in each round, for every current component $S$, add the sketches of its vertices to obtain a sketch of $\sum_{v \in S} a_v$, whose support is the cut $\delta(S)$, and sample one cut edge, merging components as in union-find. Each round decreases the difference between the number of current components and the number of connected components of the final graph by at least a third in expectation, so $O(\log n)$ rounds suffice, each using a fresh sketch, since reusing a sketch would make the queries depend on its own earlier answers.
 
 ## Depends on
 

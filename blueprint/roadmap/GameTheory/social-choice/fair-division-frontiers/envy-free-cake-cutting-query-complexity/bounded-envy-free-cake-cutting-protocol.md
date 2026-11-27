@@ -1,6 +1,6 @@
 # A discrete and bounded envy-free cake cutting protocol for any number of agents
 
-In the Robertson–Webb query model, with $n$ agents having nonatomic additive valuations (probability measures absolutely continuous with respect to length) on the cake $[0, 1]$, there is a deterministic discrete protocol that always outputs an envy-free allocation of the whole cake (pieces being finite unions of intervals) and whose number of queries is bounded by a function of $n$ alone, namely at most $n^{n^{n^{n^{n^{n}}}}}$. For four agents there is such a protocol using a bounded number of queries independent of the valuations.
+In the Robertson–Webb query model, with $n$ agents having valuations on the cake $[0, 1]$ that are non-negative, additive over disjoint pieces and divisible (every interval contains a subinterval of any prescribed fraction of its value), there is a deterministic discrete protocol that always outputs an envy-free allocation of the whole cake (pieces being finite unions of intervals) and whose number of queries is bounded by a function of $n$ alone, namely at most $n^{n^{n^{n^{n^{n}}}}}$. For four agents there is such a protocol using a bounded number of queries independent of the valuations.
 
 ## Proof sketch
 

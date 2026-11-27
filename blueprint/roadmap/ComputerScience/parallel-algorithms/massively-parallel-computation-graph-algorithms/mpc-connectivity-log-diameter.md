@@ -1,6 +1,6 @@
 # Graph connectivity in O(log D + log log n) MPC rounds with sublinear memory
 
-In the MPC model with strongly sublinear local memory $S = n^{\alpha}$ for any constant $\alpha \in (0, 1)$ and total memory $\tilde O(m + n)$, the connected components of an $n$-vertex, $m$-edge graph whose components have diameter at most $D$ can be computed by a randomized algorithm in $O(\log D + \log\log_{m/n} n)$ rounds with high probability, without prior knowledge of $D$.
+In the MPC model with strongly sublinear local memory $S = n^{\alpha}$ for any constant $\alpha \in (0, 1)$, the connected components of an $n$-vertex, $m$-edge graph whose components have diameter at most $D$ can be computed by a randomized algorithm with $O(m)$ total memory in $O(\log D + \log\log_{m/n} n)$ rounds with high probability, without prior knowledge of $D$: $O(\log D)$ rounds when $D \ge \log^{\varepsilon} n$ for a constant $\varepsilon > 0$, and $O(\log\log_{m/n} n)$ rounds otherwise (Behnezhad-Dhulipala-Esfandiari-Łącki-Mirrokni). This improves the earlier $O(\log D \cdot \log\log_{m/n} n)$ rounds with $\Theta(m)$ total memory of Andoni-Song-Stein-Wang-Zhong.
 
 ## Proof sketch
 

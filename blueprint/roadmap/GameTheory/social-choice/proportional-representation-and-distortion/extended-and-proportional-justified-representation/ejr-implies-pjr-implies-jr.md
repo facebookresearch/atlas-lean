@@ -4,7 +4,7 @@ An approval election consists of a finite set $N$ of $n$ voters, a finite set $C
 
 ## Proof sketch
 
-If some $i \in N'$ has $\lvert A_i \cap W\rvert \ge \ell$ then $\lvert W \cap \bigcup_{j \in N'} A_j \rvert \ge \ell$; and PJR at $\ell = 1$ says some member of a $1$-cohesive group approves a committee member. For strictness, take two disjoint groups with a common candidate set and choose $W$ to cover the group's union with candidates each approved by different members, which satisfies PJR but leaves every individual with fewer than $\ell$ approved members.
+If some $i \in N'$ has $\lvert A_i \cap W\rvert \ge \ell$ then $\lvert W \cap \bigcup_{j \in N'} A_j \rvert \ge \ell$; and PJR at $\ell = 1$ says some member of a $1$-cohesive group approves a committee member. For strictness, take $k = 2$ and two voters who both approve $a$ and $b$, where voter $1$ also approves $c$ and voter $2$ also approves $d$. The two voters form a $2$-cohesive group, and $W = \{c, d\}$ provides PJR (the union of their ballots contains both members) but not EJR (each voter has one approved member). With the ballots $\{a, b\}$ for both voters and a candidate $e$ approved by nobody, $W = \{a, e\}$ provides justified representation but not PJR.
 
 ## Depends on
 

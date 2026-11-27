@@ -16,7 +16,7 @@ and this family of guarantees is exactly optimal: for each $i$ there are $(\vare
 
 ## Proof sketch
 
-Every $(\varepsilon,\delta)$-DP mechanism is a post-processing of the canonical four-point pair representing $f_{\varepsilon,\delta}$ (a randomized-response mechanism that reveals the input with probability $\delta$), so by the data processing inequality composition is dominated by the $k$-fold product of this pair. The trade-off function of the product is computed exactly by a binomial count of the number of coordinates that point to each hypothesis, which yields the stated piecewise linear envelope; the canonical pair itself attains it.
+The argument is pairwise. Fix a pair of neighbouring datasets $D_0, D_1$. For each step $j$ and each past transcript, the two conditional output laws of the $j$-th mechanism on $D_0$ and $D_1$ form an $(\varepsilon,\delta)$-indistinguishable pair, so they are obtained from the canonical four-point pair representing $f_{\varepsilon,\delta}$ (randomized response that reveals the hypothesis with probability $\delta$) by a Markov kernel that depends on this pair of datasets and on the past transcript; one binary-input primitive does not simulate a whole arbitrary-input mechanism with a single kernel. Running these kernels step by step on independent copies of the canonical pair reproduces the joint output laws on $D_0$ and $D_1$, so by the data processing inequality the composition on this pair is dominated by the $k$-fold product of the canonical pair. The trade-off function of the product is computed exactly by a binomial count of the number of coordinates that point to each hypothesis, which yields the stated piecewise linear envelope; the canonical pair itself attains it.
 
 ## Depends on
 
@@ -31,4 +31,4 @@ Every $(\varepsilon,\delta)$-DP mechanism is a post-processing of the canonical 
 
 ## Sources
 
-- P. Kairouz, S. Oh, P. Viswanath, "The Composition Theorem for Differential Privacy", ICML (2015); IEEE Transactions on Information Theory 63 (2017), arXiv:1311.0776.
+- P. Kairouz, S. Oh, P. Viswanath, "The Composition Theorem for Differential Privacy", ICML (2015); IEEE Transactions on Information Theory 63 (2017), arXiv:1311.0776, Theorems 2.4, 2.5 and 3.3.

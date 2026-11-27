@@ -1,12 +1,12 @@
 # Finite Littlestone dimension implies private learnability
 
-Every class $H$ of Littlestone dimension $d < \infty$ has a $2^{-2^{O(d)}}$-globally stable realizable learner with sample size depending only on $d$ and the accuracy, and hence an $(\varepsilon,\delta)$-differentially private PAC learner with sample complexity
+Every class $H$ of Littlestone dimension $d < \infty$ has, for every $\alpha > 0$, a realizable learner on $m = 2^{2^{d+2}+1} 4^{d+1} \lceil 2^{d+2}/\alpha \rceil$ samples that outputs some hypothesis of error at most $\alpha$ with probability at least $\big((d+1) 2^{2^d+1}\big)^{-1}$, and hence, for all $\varepsilon, \delta \in (0,1)$ and $\alpha, \beta \in (0, 1/2)$, an $(\varepsilon,\delta)$-differentially private PAC learner with sample complexity
 
 $$
-2^{2^{O(d)}} \cdot \mathrm{poly}\big(1/\alpha, 1/\varepsilon, \log(1/\beta), \log(1/\delta)\big).
+O\!\left(\frac{2^{\tilde O(2^d)} + \log(1/(\beta\delta))}{\alpha\, \varepsilon}\right).
 $$
 
-Together with the $\Omega(\log^* d)$ lower bound, a class is privately PAC learnable if and only if it is online learnable, if and only if it has finite Littlestone dimension. The same holds for replicable learnability.
+Together with the $\Omega(\log^* d)$ lower bound, a class is approximately differentially privately PAC learnable if and only if it is online learnable, if and only if it has finite Littlestone dimension.
 
 ## Proof sketch
 
@@ -26,5 +26,5 @@ Run the Standard Optimal Algorithm on samples augmented with fictitious mistakes
 
 ## Sources
 
-- M. Bun, R. Livni, S. Moran, "An Equivalence Between Private Classification and Online Prediction", FOCS (2020), arXiv:2003.00563.
-- N. Alon, R. Livni, M. Malliaris, S. Moran, "Private PAC Learning Implies Finite Littlestone Dimension", STOC (2019), arXiv:1806.00949.
+- M. Bun, R. Livni, S. Moran, "An Equivalence Between Private Classification and Online Prediction", FOCS (2020), arXiv:2003.00563, Theorems 1, 3 and 10.
+- N. Alon, R. Livni, M. Malliaris, S. Moran, "Private PAC Learning Implies Finite Littlestone Dimension", STOC (2019), arXiv:1806.00949, Corollary 2.

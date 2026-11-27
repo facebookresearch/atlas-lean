@@ -2,7 +2,6 @@
 
 - [Byzantine fault-tolerant state machine replication under partial synchrony](byzantine-state-machine-replication.md)
 - [Byzantine agreement requires quadratic communication](dolev-reischuk-quadratic-lower-bound.md)
-- [Quorums of size n - f intersect in a correct replica when n is at least 3f + 1](byzantine-quorum-intersection.md)
 - [Quorum certificate from threshold signatures](quorum-certificate-threshold-signatures.md)
 - [Randomized Byzantine agreement against adaptive adversaries needs quadratic messages](adaptive-adversary-byzantine-agreement-quadratic-messages.md)
 - [Byzantine agreement with subquadratic total communication against an adaptive adversary](scalable-byzantine-agreement-adaptive-adversary.md)

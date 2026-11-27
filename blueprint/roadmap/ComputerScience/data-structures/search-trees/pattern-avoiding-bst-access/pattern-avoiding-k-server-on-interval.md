@@ -1,18 +1,15 @@
 # Offline k-server on pattern-avoiding requests in the unit interval
 
-For every fixed pattern $\pi$ there is a polynomial-time algorithm that, given $n$ requests $r_1, \dots, r_n \in [0, 1]$ whose sequence avoids $\pi$ (as a sequence of distinct reals), computes a $k$-server solution serving them in order with total movement $n^{O(1/\log k)}$, where the constant in the exponent depends on $\pi$. In contrast, for arbitrary request sequences in $[0,1]$ the optimal offline cost can be $\Theta(n/k)$.
+Let $\pi$ be a fixed permutation with Füredi–Hajnal limit $c_\pi$. For every sequence of requests $X = (r_1, \dots, r_n) \in [0, 1]^n$ that avoids $\pi$ (as a sequence of reals), the optimal offline cost of serving $X$ in order with $k$ servers on the line is $\mathrm{OPT}_k(X) = O\big(k^{1 + \log_{5c_\pi} 120} \cdot n^{1/(\lfloor \log_{5c_\pi} k \rfloor + 1)}\big)$, that is $k^{O(1)} n^{O_\pi(1/\log k)}$, and such a solution can be computed efficiently without knowing $\pi$. In contrast, for arbitrary request sequences in $[0,1]$ the optimal offline cost can be $\Theta(n/k)$.
 
 ## Proof sketch
 
-The pattern-avoidance structure theorem decomposes the request sequence into a bounded number of monotone-like pieces at each of $O(\log k)$ scales; the servers are allotted to the pieces so that each server sweeps a piece monotonically, and the movement at each scale shrinks by a constant factor while the number of pieces grows by a constant factor, giving total cost $n^{O(1/\log k)}$.
+The proof uses a *distance-balanced* merge sequence, a variant of the Guillemot–Marx twin-width decomposition of pattern-avoiding point sets whose width is bounded in terms of $c_\pi$. Following the decomposition, the request sequence is split into a bounded number of parts at each level, and the servers are allotted to the parts according to their sizes, so that the movement at each level of the recursion is controlled; the number of levels is about $\log_{5c_\pi} k$, which yields the exponent of $n$.
 
 ## Depends on
 
 - [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
 - [The k-server problem](../../../online-algorithms/paging-and-k-server/the-k-server-problem.md)
-
-## Proof depends on
-
 - [Marcus–Tardos theorem on excluded permutation matrices](marcus-tardos-theorem.md)
 
 ## Sources

@@ -1,10 +1,10 @@
 # Cache-oblivious B-trees
 
-There is a cache-oblivious dynamic search tree on $N$ keys that supports searches in $O(\log_L N)$ cache misses and insertions and deletions in $O\!\left(\log_L N + \frac{\log^2 N}{L}\right)$ amortized cache misses, for every line length $L$ simultaneously, and range queries reporting $K$ keys in $O(\log_L N + K/L)$ misses. This matches the search bound of B-trees without knowing $L$.
+There is a cache-oblivious dynamic search tree on $N$ keys that supports searches in $O(1 + \log_{L+1} N)$ cache misses and insertions and deletions in $O\!\left(1 + \log_{L+1} N + \frac{\log^2 N}{L}\right)$ amortized cache misses, for every line length $L$ simultaneously, and scans of $K$ consecutive keys in $O(1 + K/L)$ misses after the search, so range queries cost $O(1 + \log_{L+1} N + K/L)$. This matches the search bound of B-trees without knowing $L$, and their update bound when $L = \Omega(\log N\log\log N)$. Without the scan operation, a variant supports updates in $O(1 + \log_{L+1} N)$ amortized cache misses.
 
 ## Proof sketch
 
-Store the keys in a packed memory array and build over its segments a static complete binary search tree in the van Emde Boas layout whose leaves point to the segments. Searches use the recursive-layout lemma; an update modifies the packed memory array and then recomputes the tree nodes above the redistributed window in a postorder that touches the window's ancestors in $O(\log_L N + |W|/L)$ misses, which amortizes via the packed-memory-array analysis. Global rebuilding handles changes of $N$.
+Store a strongly weight-balanced search tree in the van Emde Boas layout inside a packed memory array, so searches cost $O(1+\log_{L+1} N)$ by the recursive-layout lemma. Splitting or merging a node of height $h$ moves its recursive subtrees by a constant number of scans, $O(1 + d^h/L)$ misses for branching parameter $d$, which weight balance amortizes to $O(1 + \log_{L} N)$ per update. Updating pointers to the $O(\log^2 N)$ amortized elements a packed-memory rebalance moves could cost $O(\log^2 N)$ misses, so two layers of indirection group the elements into blocks of $\Theta(\log N)$ and keep only representatives in the tree, leaving the $O(\log^2 N / L)$ term of the packed memory array at the bottom layer.
 
 ## Depends on
 

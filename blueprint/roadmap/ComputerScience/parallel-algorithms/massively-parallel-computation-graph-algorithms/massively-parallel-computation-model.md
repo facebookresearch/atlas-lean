@@ -5,3 +5,5 @@ In the massively parallel computation (MPC) model with input size $N$ and local 
 ## Sources
 
 - H. Karloff, S. Suri, S. Vassilvitskii, "A Model of Computation for MapReduce", SODA 2010.
+- P. Beame, P. Koutris, D. Suciu, "Communication Steps for Parallel Query Processing", PODS 2013; Journal of the ACM 64(6) (2017).
+- M. Ghaffari, F. Kuhn, J. Uitto, "Conditional Hardness Results for Massively Parallel Computation from Distributed Lower Bounds", FOCS 2019.

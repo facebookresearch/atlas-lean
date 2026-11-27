@@ -1,6 +1,6 @@
 # Large Littlestone dimension forces large threshold subclasses
 
-Let $H \subseteq \{0,1\}^X$ have Littlestone dimension at least $d$. Then $H$ contains thresholds of size $\lfloor \log_2 d \rfloor$: there are points $x_1, \dots, x_k \in X$ and concepts $h_1, \dots, h_k \in H$, $k = \lfloor \log_2 d \rfloor$, with $h_i(x_j) = \mathbf{1}[j \ge i]$ for all $i, j$ (or the reversed pattern). Conversely, a class containing thresholds of size $k$ has Littlestone dimension at least $\lfloor \log_2 k \rfloor$. Thus finite Littlestone dimension is equivalent to a uniform bound on the size of embedded thresholds (Shelah's stability theory).
+Let $H \subseteq \{0,1\}^X$ have Littlestone dimension at least $d$. Then $H$ contains thresholds of size $\lfloor \log_2 d \rfloor$: there are points $x_1, \dots, x_k \in X$ and concepts $h_1, \dots, h_k \in H$, $k = \lfloor \log_2 d \rfloor$, with $h_i(x_j) = \mathbf{1}[j \ge i]$ for all $i, j$. Conversely, a class containing thresholds of size $k$ has Littlestone dimension at least $\lfloor \log_2 k \rfloor$. Thus finite Littlestone dimension is equivalent to a uniform bound on the size of embedded thresholds (Shelah's stability theory).
 
 ## Proof sketch
 
@@ -12,5 +12,5 @@ Given a Littlestone tree of depth $d$, follow a branch and use a Ramsey-type hal
 
 ## Sources
 
-- N. Alon, R. Livni, M. Malliaris, S. Moran, "Private PAC Learning Implies Finite Littlestone Dimension", STOC (2019), arXiv:1806.00949.
-- S. Shelah, "Classification Theory and the Number of Non-Isomorphic Models", North-Holland (1978; revised 1990).
+- N. Alon, R. Livni, M. Malliaris, S. Moran, "Private PAC Learning Implies Finite Littlestone Dimension", STOC (2019), arXiv:1806.00949, Theorem 3 and Appendix B (after Shelah and Hodges).
+- S. Shelah, "Classification Theory and the Number of Non-Isomorphic Models", North-Holland (1978; revised edition 1990), Chapter II.

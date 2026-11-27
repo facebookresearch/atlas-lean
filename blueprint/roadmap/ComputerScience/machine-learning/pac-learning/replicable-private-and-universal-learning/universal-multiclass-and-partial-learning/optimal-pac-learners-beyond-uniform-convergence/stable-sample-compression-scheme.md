@@ -4,4 +4,4 @@ A sample compression scheme of size $k$ for a class $H \subseteq \{0,1\}^X$ cons
 
 ## Sources
 
-- O. Bousquet, S. Hanneke, S. Moran, N. Zhivotovskiy, "Proper Learning, Helly Number, and an Optimal SVM Bound", COLT (2020), arXiv:2005.11818.
+- O. Bousquet, S. Hanneke, S. Moran, N. Zhivotovskiy, "Proper Learning, Helly Number, and an Optimal SVM Bound", COLT (2020), arXiv:2005.11818, Definitions 13 and 14.

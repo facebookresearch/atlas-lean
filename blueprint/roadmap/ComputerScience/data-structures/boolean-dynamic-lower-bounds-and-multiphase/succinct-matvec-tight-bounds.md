@@ -1,18 +1,14 @@
 # Tight cell-probe bounds for succinct Boolean matrix-vector multiplication
 
-There is a succinct structure for Boolean matrix-vector multiplication that stores $\tilde{O}(n^{3/2})$ extra bits and answers queries in $\tilde{O}(n^{3/2})$ probes. Conversely, every structure storing $r$ extra bits with $n < r < n^2$ has query time $t$ satisfying $t \cdot r = \tilde{\Omega}(n^3)$, and every structure with $r \le n$ has $t = \tilde{\Omega}(n^2)$. These bounds carry over to word-RAM structures.
+There is a systematic structure for Boolean matrix-vector multiplication that stores $O(n^{3/2}(\sqrt{w} + \lg n/\sqrt{w}))$ extra bits and, for every $v$, computes $Mv$ with probability at least $1 - 1/n$ by probing $O(n^{3/2}\sqrt{w \lg n})$ cells, that is $\tilde{O}(n^{3/2})$ bits and probes for $w = \Theta(\lg n)$ (Theorem 1.1). Conversely, if every $M$ has an $r$-bit side structure and a randomized query algorithm that computes $Mv$ with probability at least $1 - 1/n$ while probing at most $t$ entries of $M$, then $t \cdot r = \Omega(n^3)$ for $n \le r \le n^2/4$, and $t = \Omega(n^2)$ for $r < n$ (Theorem 1.2). The lower bounds hold in the cell-probe model and so also for word-RAM structures.
 
 ## Proof sketch
 
-For the upper bound, precompute products of $M$ with a random family of vectors so that every query vector differs from a stored combination on few coordinates, which are then handled by reading $\tilde{O}(n^{1/2})$ columns. For the lower bound, pick $M$ uniformly at random; if $tr = o(n^3)$, a cell-sampling argument over the read-only matrix shows that for a random query most probes are into matrix cells that carry information unrelated to the answer, and an encoding of $M$ using the extra bits and the answers to many queries would compress a uniformly random matrix.
+For the upper bound, preprocessing greedily lists at most $n^{1/2}\sqrt{w}$ rectangles $I \times J$, each with at least $n^{3/2}/\sqrt{w}$ entries not yet covered and at most a $1/\sqrt{nw}$ fraction of ones per row among them, and stores the ones inside covered entries explicitly. A query with column set $J$ first settles rows through the stored ones, then samples $O(\sqrt{nw}\lg n)$ uncovered entries in each remaining row, and finally reads all remaining uncovered entries, of which there are few with high probability. For the lower bound, take $M$ uniformly from the matrices whose rows split into $r/n$ blocks of $n^2/r$ entries with exactly one $1$ per block, so $H(M) = r \lg(n^2/r)$. The answers to a fixed family of $4r/n$ queries carry much information about $M$, and the side structure together with a short encoding of the entries those queries probe (at most $4tr/n$ of them, of which the encoding records only the positions of the ones) lets a decoder replay the queries; comparing the encoding length with the entropy gives $tr = \Omega(n^3)$.
 
 ## Depends on
 
 - [Succinct Boolean matrix-vector multiplication](succinct-boolean-matvec-problem.md)
-
-## Proof depends on
-
-- [Cell-sampling lemma](../cell-sampling-and-range-counting-lower-bounds/cell-sampling-lemma.md)
 
 ## Sources
 

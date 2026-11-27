@@ -10,7 +10,7 @@ colors. More generally, a $k$-colorable graph is colored with $\min\{ O(\Delta^{
 
 ## Proof sketch
 
-Solve the semidefinite program for a vector $(k + \varepsilon)$-coloring. Pick a standard Gaussian vector $r$ and keep the vertices $v$ with $\langle u_v, r \rangle \ge c$ for a threshold $c$ chosen from Gaussian tail estimates; since adjacent vectors are far apart, the expected number of edges inside the kept set is a small fraction of its expected size, and deleting one endpoint of each such edge leaves an independent set of size $\Omega(n / (\Delta^{1 - 2/k} \sqrt{\log \Delta}))$. Repeating on the remaining graph colors everything with the degree-based bound times $O(\log n)$ colors; the $n$-based bound follows by first using Wigderson's trick of coloring the $2$-colorable neighbourhoods of high-degree vertices.
+Solve the semidefinite program for a vector $(k + \varepsilon)$-coloring. Pick a standard Gaussian vector $r$ and keep the vertices $v$ with $\langle u_v, r \rangle \ge c$ for a threshold $c$ chosen from Gaussian tail estimates; since adjacent vectors are far apart, the expected number of edges inside the kept set is a small fraction of its expected size, and deleting one endpoint of each such edge leaves an independent set of size $\Omega(n / (\Delta^{1 - 2/k} \sqrt{\log \Delta}))$. Repeating on the remaining graph colors everything with the degree-based bound times $O(\log n)$ colors; the $n$-based bound follows from Wigderson's trick: the neighbourhood of a vertex of degree above $n^{k/(k+1)}$ is vector $(k-1)$-colorable ($2$-colorable when $k = 3$), so it yields a large independent set by induction on $k$, and otherwise the degree bound applies.
 
 ## Depends on
 

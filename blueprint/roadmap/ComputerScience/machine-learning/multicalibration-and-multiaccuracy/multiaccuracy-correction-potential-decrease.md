@@ -18,5 +18,5 @@ Since $\mathbb{E}[c(x)(y - p(x))] = \mathbb{E}[c(x)(p^*(x) - p(x))]$, expanding 
 
 ## Sources
 
-- U. Hebert-Johnson, M. P. Kim, O. Reingold, G. N. Rothblum, "Multicalibration: Calibration for the (Computationally-Identifiable) Masses", ICML (2018), arXiv:1711.08513.
+- U. Hebert-Johnson, M. P. Kim, O. Reingold, G. N. Rothblum, "Multicalibration: Calibration for the (Computationally-Identifiable) Masses", ICML (2018), arXiv:1711.08513, Lemma 3.2.
 - M. P. Kim, A. Ghorbani, J. Zou, "Multiaccuracy: Black-Box Post-Processing for Fairness in Classification", AIES (2019), arXiv:1805.12317.

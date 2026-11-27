@@ -10,7 +10,7 @@ So distances from the terminals $X$ to every point of space are preserved with t
 
 ## Proof sketch
 
-Start from a Johnson–Lindenstrauss map $\Pi$ of dimension $O(\varepsilon^{-2}\log n)$ that, in addition to preserving the norms of the differences $x - x'$, preserves inner products between normalized differences up to an additive $O(\varepsilon)$, a property of Gaussian matrices that holds with the same dimension by a sharper chaining analysis. For a non-terminal point $y$, let $x$ be its nearest terminal and set $f(y) = (\Pi x + u, \, c)$ with one extra coordinate $c$, where $u$ solves a small convex program enforcing the inner-product constraints with all terminals; feasibility of the program is shown by a von Neumann minimax argument together with the inner-product preservation of $\Pi$.
+Start from a random matrix $\Pi$ with subgaussian entries and $O(\varepsilon^{-2}\log n)$ rows that provides *$\varepsilon$-convex hull distortion* for the set $T$ of normalized differences $(x - x')/\|x - x'\|_2$ of terminals: $|\|\Pi z\|_2 - \|z\|_2| \le \varepsilon$ for every $z$ in the convex hull of $T$, which holds with high probability by a chaining (Gaussian width) argument. For a non-terminal point $y$, let $x$ be its nearest terminal and set $f(y) = (\Pi x + u, \, c)$ with one extra coordinate $c$, where $u$ solves a small convex program enforcing the inner-product constraints with all terminals; feasibility of the program is shown by a von Neumann minimax argument together with the convex hull distortion of $\Pi$. This is a sharper analysis of an outer-extension construction of Mahabadi, Makarychev, Makarychev and Razenshteyn, whose earlier analysis needed dimension $O(\varepsilon^{-4}\log n)$.
 
 ## Proof depends on
 

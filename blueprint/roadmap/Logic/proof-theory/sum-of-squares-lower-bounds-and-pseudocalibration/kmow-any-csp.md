@@ -6,7 +6,7 @@ $$
 d = \widetilde{\Omega}\Bigl(\frac{n}{\Delta^{2/(t-2)}}\Bigr)
 $$
 
-fails to strongly refute the instance: it has a degree-$d$ pseudo-expectation that satisfies every constraint. In particular, for $m \le n^{t/2 - \delta}$ polynomial-degree SoS cannot refute, which matches the refutation threshold up to the degree trade-off.
+fails to refute the instance even weakly: it has a degree-$d$ pseudo-expectation that satisfies every constraint. In particular, for $m \le n^{t/2 - \delta}$ SoS of degree $n^{\Omega(\delta)}$ cannot refute, so polynomial-time SoS needs $\tilde\Omega(n^{t/2})$ constraints, matching the refutation algorithms of Allen-O'Donnell-Witmer and Raghavendra-Rao-Schramm up to lower-order factors.
 
 ## Proof sketch
 

@@ -4,7 +4,7 @@ An approval election consists of a finite set $N$ of $n$ voters, a finite set $C
 
 ## Proof sketch
 
-Membership in coNP: a violating $\ell$-cohesive group is a short certificate. Hardness reduces from a clique-type problem (balanced biclique): cohesive groups of the right size and common approvals correspond to bicliques of the bipartite voter-candidate graph, and the committee is chosen so that only such a group can violate the axiom. For local-search PAV, the threshold $n/k^2$ bounds the number of improving swaps by $O(k^2 \log k)$ and the proof of the PAV theorem shows that the local optimum still satisfies EJR.
+Membership in coNP: a violating $\ell$-cohesive group is a short certificate. Hardness, for EJR and for PJR, reduces from balanced biclique: cohesive groups of the right size and common approvals correspond to bicliques of the bipartite voter-candidate graph, and the committee is chosen so that only such a group can violate the axiom. For local-search PAV, the threshold $n/k^2$ bounds the number of improving swaps by $O(k^2 \log k)$ and the proof of the PAV theorem shows that the local optimum still satisfies EJR.
 
 ## Depends on
 
@@ -19,4 +19,5 @@ Membership in coNP: a violating $\ell$-cohesive group is a short certificate. Ha
 
 ## Sources
 
+- H. Aziz, M. Brill, V. Conitzer, E. Elkind, R. Freeman, T. Walsh, "Justified Representation in Approval-Based Committee Voting", Social Choice and Welfare 48(2) (2017), arXiv:1407.8269.
 - H. Aziz, E. Elkind, S. Huang, M. Lackner, L. Sánchez-Fernández, P. Skowron, "On the Complexity of Extended and Proportional Justified Representation", AAAI 2018.

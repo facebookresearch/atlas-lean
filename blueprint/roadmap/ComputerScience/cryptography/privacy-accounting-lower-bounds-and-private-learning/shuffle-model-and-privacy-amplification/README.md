@@ -2,7 +2,7 @@
 
 - [Local randomizers and the shuffle model](shuffle-model.md)
 - [Every local randomizer is a mixture of a common component and two clones](local-randomizer-mixture-decomposition.md)
-- [Shuffled protocols attain central accuracy for sums but not for selection](shuffle-model-summation-and-selection.md)
+- [Shuffled protocols attain central accuracy for sums but not, with one message per user, for selection](shuffle-model-summation-and-selection.md)
 - [Shuffled local reports reduce to a binomial clone-counting problem](shuffle-clone-reduction.md)
 - [Binary randomized response: privacy and variance of the debiased sum](binary-randomized-response-debiased-sum.md)
 - [Hiding among the clones: nearly optimal amplification by shuffling](amplification-by-shuffling-clones-bound.md)

@@ -1,6 +1,6 @@
 # Fineman's randomized O~(m n^{8/9}) algorithm for real-weighted single-source shortest paths
 
-There is a randomized algorithm in the real RAM that, given a directed graph with $n$ vertices, $m$ edges, real edge lengths and a source $s$, either reports a negative cycle or computes all distances from $s$, and terminates in $\tilde O(mn^{8/9})$ time with high probability. Its core step, on a graph with $k$ remaining negative edges and parameter $r=\Theta(k^{1/9})$, computes in $\tilde O(k^{2/9}m)$ time a valid price function neutralizing $\Theta(k^{1/3})$ negative edges (or finds a negative cycle). This is the first asymptotic improvement over the $O(mn)$ bound of Bellman-Ford-Moore-Shimbel for real weights.
+There is a Las Vegas randomized algorithm in the real RAM that, given a directed graph with $n$ vertices, $m$ edges, real edge lengths and a source $s$, either reports a negative cycle or computes all distances from $s$, and terminates in $\tilde O(mn^{8/9})$ time with high probability. Its core step, on a graph with $k$ remaining negative edges and parameter $r=\Theta(k^{1/9})$, computes in $\tilde O(k^{2/9}m)$ time a valid price function neutralizing $\Theta(k^{1/3})$ negative edges (or finds a negative cycle). This is the first asymptotic improvement over the $O(mn)$ bound of Bellman-Ford-Moore-Shimbel for real weights.
 
 ## Proof sketch
 

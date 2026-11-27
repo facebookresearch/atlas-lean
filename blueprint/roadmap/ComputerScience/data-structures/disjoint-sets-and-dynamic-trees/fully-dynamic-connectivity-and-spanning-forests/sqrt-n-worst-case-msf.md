@@ -1,10 +1,10 @@
 # Deterministic O(sqrt n) worst-case dynamic minimum spanning forest via sparsification
 
-Fully dynamic minimum spanning forest on an $n$-vertex graph with $m$ edges admits a deterministic data structure with $O(\sqrt{m})$ worst-case update time (Frederickson, using topology trees), and, by the sparsification technique of Eppstein, Galil, Italiano and Nissenzweig, a deterministic data structure with $O(\sqrt{n})$ worst-case update time. For about 25 years, until 2017, these were the best worst-case bounds for dynamic connectivity and MSF that hold against adaptive adversaries.
+Fully dynamic minimum spanning forest on an $n$-vertex graph with $m$ edges admits a deterministic data structure with $O(\sqrt{m})$ worst-case update time (Frederickson, using topology trees), and, by the sparsification technique of Eppstein, Galil, Italiano and Nissenzweig, a deterministic data structure with $O(\sqrt{n})$ worst-case update time. Until 2016 these were the best worst-case bounds for dynamic connectivity and MSF that hold against adaptive adversaries; the first improvement, by Kejlberg-Rasmussen, Kopelowitz, Pettie and Thorup (ESA 2016), to $O(\sqrt{n (\log\log n)^2/\log n})$ for connectivity, was subpolynomial, and the first polynomial improvements came in 2017.
 
 ## Proof sketch
 
-Frederickson partitions a spanning tree into $\Theta(\sqrt{m})$ clusters of size $\Theta(\sqrt{m})$ and stores, for each pair of clusters, the lightest non-tree edge between them in a topology tree, so a replacement edge is found by scanning $O(\sqrt{m})$ cluster pairs. Sparsification builds a balanced binary tree over a partition of the edges into groups of $n$ edges, maintains a sparse certificate (a spanning forest) at each node, and observes that an update changes $O(1)$ certificate edges per level, so the bound for $m = O(n)$ applies at each of $O(\log(m/n))$ levels with geometrically decreasing costs.
+Frederickson partitions a spanning tree into clusters of $\Theta(\sqrt{m})$ vertices and maintains, in two-dimensional topology trees, the lightest non-tree edge between every pair of clusters, so that after an update a replacement edge is found and the clusters are repaired in $O(\sqrt{m})$ time. Sparsification builds a balanced binary tree over a partition of the edges into groups of $n$ edges, maintains a sparse certificate (a spanning forest) at each node, and observes that an update changes $O(1)$ certificate edges per level, so the bound for $m = O(n)$ applies at each of $O(\log(m/n))$ levels with geometrically decreasing costs.
 
 ## Depends on
 

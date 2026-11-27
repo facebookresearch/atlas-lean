@@ -2,7 +2,7 @@
 
 - [Gaussian-smoothed linear programs and smoothed pivot complexity](gaussian-smoothed-linear-programs.md)
 - [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
-- [Exponential worst case of shadow vertex rules for every choice of projection](shadow-vertex-exponential-worst-case.md)
+- [Exponential worst case of shadow vertex rules with fixed start and objective](shadow-vertex-exponential-worst-case.md)
 - [Shadow vertices are bounded by edges of the polar section](shadow-vertices-and-polar-section.md)
 - [Dadush-Huiberts shadow bound for smoothed unit linear programs](dadush-huiberts-shadow-bound.md)
 - [Kelner-Spielman randomized polynomial-time simplex algorithm](kelner-spielman-polynomial-simplex.md)

@@ -27,4 +27,4 @@ For item 1, it is NP-hard to distinguish a normalized unweighted coverage functi
 
 - P. Dütting, M. Feldman, Y. Gal-Tzur, A. Rubinstein, "When Contracts Get Complex: Information-Theoretic Barriers", SODA 2026, arXiv:2403.09794, Table 1, Main Results 1 and 2 (Theorems 2, 4, 5, 6, 8, 10 and 11) and Appendix A.
 - T. Ezra, M. Feldman, M. Schlesinger, "On the (In)approximability of Combinatorial Contracts", ITCS 2024, LIPIcs, doi:10.4230/LIPIcs.ITCS.2024.44, Section 1.1 (multi-action model, submodular success probability).
-- P. Dütting, T. Ezra, M. Feldman, T. Kesselheim, "Combinatorial Contracts", FOCS 2021, arXiv:2109.14260.
+- P. Dütting, T. Ezra, M. Feldman, T. Kesselheim, "Combinatorial Contracts", FOCS 2021; SIAM Journal on Computing 54(6) (2025), arXiv:2109.14260.

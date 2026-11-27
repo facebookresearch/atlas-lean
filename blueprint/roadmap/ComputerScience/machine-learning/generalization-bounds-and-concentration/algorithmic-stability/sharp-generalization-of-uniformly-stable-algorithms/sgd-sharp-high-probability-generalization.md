@@ -1,6 +1,6 @@
 # Sharp high-probability generalization of stochastic gradient descent on smooth convex losses
 
-Let the loss $\ell(w, z)$ be convex, $\beta$-smooth and $L$-Lipschitz in $w$ and bounded by $B$. Run projected stochastic gradient descent for $T$ steps with step sizes $\eta_t \le 2/\beta$, choosing the example of each step uniformly at random, and write $w_T$ for its output on the sample $S$ of $n$ examples. Hardt, Recht and Singer (Definition 2.1 and Theorem 3.8) show that SGD is uniformly stable *in expectation over its internal randomness*: the deterministic averaged loss
+Let the loss $\ell(w, z)$ be convex, $\beta$-smooth and $L$-Lipschitz in $w$ and bounded by $B$. Run stochastic gradient descent, optionally followed in each step by Euclidean projection onto a closed convex set (which does not increase distances), for $T$ steps with step sizes $\eta_t \le 2/\beta$, choosing the example of each step uniformly at random, and write $w_T$ for its output on the sample $S$ of $n$ examples. Hardt, Recht and Singer (Definition 2.1 and Theorem 3.8) show that SGD is uniformly stable *in expectation over its internal randomness*: the deterministic averaged loss
 
 $$
 g_S(z) = \mathbb{E}_{\mathrm{SGD}}\big[\ell(w_T, z) \mid S\big]

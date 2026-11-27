@@ -4,7 +4,7 @@ Let $f$ be inner product over $\mathbb{F}_2$ and let $k = n^{1 + \Omega(1)}$. Ev
 
 ## Proof sketch
 
-Ko introduces a $2.5$-round *multiphase communication game* that augments the usual one-way simulation of a data structure with a verification round in which Bob checks that Alice's claimed simulation of the query's probes is consistent with the actual memory. Verification removes the need for the peak-to-average machinery that limited earlier one-way arguments to $\lg^{1.5} n$, and a lifting-style simulation theorem then converts the small discrepancy of inner product into a lower bound that loses a $\log(t_u w)$ factor per epoch, over $\Theta(\log n/\log(t_u w))$ epochs.
+Ko introduces a $2.5$-round *multiphase communication game* that augments the usual one-way simulation of a data structure with a verification round in which Bob checks that Alice's claimed simulation of the query's probes is consistent with the actual memory. Verification removes the need for the peak-to-average machinery that limited earlier one-way arguments to $\lg^{1.5} n$, The bits of $y$ are split into $\ell = \Theta(\log n/\log(t_u w))$ geometrically shrinking epochs (Fredman–Saks chronogram), and a simulation theorem converts the small discrepancy of inner product into the bound that a random query probes $\Omega(\log n/\log(t_u w))$ cells last written in some epoch; summing over the epochs gives the square.
 
 ## Depends on
 

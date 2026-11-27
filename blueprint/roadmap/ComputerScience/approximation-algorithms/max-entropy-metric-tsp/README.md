@@ -4,6 +4,7 @@
 - [Strongly Rayleigh probability measures on subsets of a ground set](strongly-rayleigh-measure.md)
 - [Subtour elimination LP of a metric TSP instance](subtour-elimination-lp.md)
 - [T-joins and the T-join dominant polyhedron](t-join-dominant.md)
+- [Edmonds-Johnson theorem: a minimum T-join costs the minimum of the T-join dominant](edmonds-johnson-t-join-dominant.md)
 - [Maximum-entropy and lambda-uniform distributions over spanning trees](max-entropy-spanning-tree-distribution.md)
 - [Negative dependence and Poisson-binomial counts under strongly Rayleigh measures](strongly-rayleigh-negative-dependence.md)
 - [Near-minimum cuts, atoms and polygon representations of a Held-Karp point](near-min-cuts-polygon.md)

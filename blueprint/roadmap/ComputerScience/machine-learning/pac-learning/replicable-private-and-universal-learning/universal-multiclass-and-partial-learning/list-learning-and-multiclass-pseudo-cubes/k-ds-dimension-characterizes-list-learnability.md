@@ -17,4 +17,4 @@ Necessity: a $k$-pseudo-cube of dimension $d$ forces every $k$-list orientation 
 
 ## Sources
 
-- M. Charikar, C. Pabbaraju, "A Characterization of List Learnability", STOC (2023), arXiv:2211.04956.
+- M. Charikar, C. Pabbaraju, "A Characterization of List Learnability", STOC (2023), arXiv:2211.04956, Definitions 2 and 4, Theorems 1 and 2.

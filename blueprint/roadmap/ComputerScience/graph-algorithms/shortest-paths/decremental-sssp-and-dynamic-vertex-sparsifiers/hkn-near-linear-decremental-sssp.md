@@ -1,6 +1,6 @@
 # Henzinger-Krinninger-Nanongkai: decremental SSSP in m^{1+o(1)} total update time via hopsets
 
-For undirected graphs with integer edge weights in $[1, W]$ and constant $\varepsilon > 0$ there is a randomized decremental $(1+\varepsilon)$-approximate SSSP data structure with total update time $m^{1 + o(1)}\log W$, against an oblivious adversary. The algorithm maintains a sparse $(h, \varepsilon)$-hopset $F$, a set of weighted edges such that for all $u, v$,
+For undirected graphs with integer edge weights in $[1, W]$ and $0 < \varepsilon \le 1$ with $1/\varepsilon = \mathrm{polylog}(n)$ (constant $\varepsilon$ included), there is a randomized decremental $(1+\varepsilon)$-approximate SSSP data structure with constant query time and expected total update time $O(m^{1 + o(1)}\log W + n)$, against an oblivious adversary. The algorithm maintains a sparse $(h, \varepsilon)$-hopset $F$, a set of weighted edges such that for all $u, v$,
 
 $$
 \mathrm{dist}_G(u, v) \le \mathrm{dist}^{(h)}_{G \cup F}(u, v) \le (1 + \varepsilon)\,\mathrm{dist}_G(u, v),

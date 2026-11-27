@@ -4,7 +4,7 @@ For every length $n$ and every value $\delta \ge 2$ there is a string $T$ of len
 
 ## Proof sketch
 
-Take a string that combines $\delta$ independent blocks, each built from a Fibonacci-like or doubling construction with $\Theta(\log(n/\delta))$ distinct square-free-like extensions, so that the number of length-$k$ substrings stays $O(k\delta)$ while each block forces its own attractor positions at $\Theta(\log(n/\delta))$ different scales, since substrings of each scale have a unique occurrence region.
+Let $S_\infty$ have $\mathtt{b}$ at the positions $2^j$ ($j \ge 0$) and $\mathtt{a}$ elsewhere, and let $S_n$ be its length-$n$ prefix. Beyond position $2^{j-1}$ consecutive $\mathtt{b}$'s are at distance at least $2^j$, so $d_k(S_n) \le 2^{\lceil\log k\rceil - 1} + k + 1 \le 2k$ and $\delta(S_n) \le 2$; each $\mathtt{b}\mathtt{a}^{2^j-1}\mathtt{b}$ occurs only at $[2^j, 2^{j+1}]$, and these regions are disjoint for even $j$, so $\gamma(S_n) \ge \frac12\lfloor\log n\rfloor$. Concatenating $m = \Theta(\delta)$ such strings of length $\Theta(n/m)$ over disjoint alphabets, separated by distinct delimiters, gives $\delta = O(m)$ and $\gamma = \Omega(m\log(n/m))$.
 
 ## Depends on
 

@@ -13,10 +13,9 @@ The approximate-privacy transformation runs the item-level algorithm on many ran
 
 ## Proof depends on
 
-- [Sample-efficient reductions between replicability and approximate differential privacy](../global-stability-and-list-replicability/replicability-privacy-reductions.md)
 - [The exponential mechanism is differentially private](../../../../../cryptography/laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
 
 ## Sources
 
-- B. Ghazi, P. Kamath, R. Kumar, P. Manurangsi, R. Meka, C. Zhang, "User-Level Differential Privacy With Few Examples Per User", NeurIPS (2023), arXiv:2309.12500.
+- B. Ghazi, P. Kamath, R. Kumar, P. Manurangsi, R. Meka, C. Zhang, "User-Level Differential Privacy With Few Examples Per User", NeurIPS (2023), arXiv:2309.12500, abstract and Section 1.
 - M. Bun, M. Gaboardi, M. Hopkins, R. Impagliazzo, R. Lei, T. Pitassi, S. Sivakumar, J. Sorrell, "Stability is Stable: Connections between Replicability, Privacy, and Adaptive Generalization", STOC (2023), arXiv:2303.12921.

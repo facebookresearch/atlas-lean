@@ -1,10 +1,10 @@
 # Thirty-two-approximately stable committees always exist
 
-For every instance of committee selection with monotone preferences over committees and every budget $K$, a $32$-approximately stable committee exists. For approval-additive utilities, a constant-approximately stable committee can be computed in polynomial time.
+For every instance of committee selection with monotone preferences over committees, arbitrary positive candidate weights and every weight limit $K$, a $32$-approximately stable committee of weight at most $K$ exists. Some monotone preferences admit no $c$-approximately stable committee for any $c < 2$. Efficient computation is known only in special settings; for approval preferences and participatory budgeting it is open.
 
 ## Proof sketch
 
-First consider a fractional relaxation: Lindahl-type equilibria give a fractional committee that is stable in a fractional sense (shown via a fixed-point argument). Then round it with a dependent-rounding scheme that is robust to every possible deviating coalition simultaneously; analysing the rounding requires a strong concentration bound together with a careful grouping of candidates by weight scale, and the losses combine to the constant $32$.
+First show that a $2$-approximately stable lottery exists: a distribution over committees of weight at most $K$ such that for every committee $W'$ the expected number of voters preferring $W'$ is less than $2 \cdot \frac{s(W')}{K} \cdot n$; this follows from a minimax (LP duality) argument. Then round the lottery to a single committee by an iterative dependent rounding that is robust to every possible deviating committee simultaneously; the analysis groups candidates by weight scale and uses a concentration bound, and the losses combine to the constant $32$.
 
 ## Depends on
 
