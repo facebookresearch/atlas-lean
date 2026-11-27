@@ -8,7 +8,7 @@ and has constant birth, death and competition rates $b^i_v,d^i_v,c^i_{v,w}$; the
 
 $$\mathcal{L}^K_t\phi(N)=\sum_v[\phi(N+\delta_v)-\phi(N)]\Big(N_vb^K_v(t)(1-\mu_K)+\sum_wN_wb^K_w(t)\mu_Km_{w,v}\Big)+\sum_v[\phi(N-\delta_v)-\phi(N)]N_v\Big(d^K_v(t)+\sum_w\tfrac{c^K_{v,w}(t)}{K}N_w\Big),$$
 
-with mutation kernel $m$ supported on edges and mutation probability $\mu_K=K^{-1/\alpha}$, $\alpha\in(0,\infty)\setminus\mathbb{N}$.
+with mutation kernel $m$ satisfying $m_{v,v}=0$ and $m_{v,w}>0$ if and only if $(v,w)\in E$, competition rates with $c^i_{v,v}>0$ for all $v$ and $i$ (Assumption 1 of the source), and mutation probability $\mu_K=K^{-1/\alpha}$, $\alpha\in(0,\infty)\setminus\mathbb{N}$.
 
 **Fitness.** If trait $v$ alone has equilibrium $\bar n^i_v=(b^i_v-d^i_v)/c^i_{v,v}>0$ in phase $i$, the invasion fitness of $w$ against $v$ is $f^i_{w,v}=b^i_w-d^i_w-c^i_{w,v}\bar n^i_v$, and its time average is
 

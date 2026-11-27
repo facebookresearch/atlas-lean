@@ -15,7 +15,7 @@ where $W_1$ is the Wasserstein-1 distance.
 
 $$W_1\big(\mu P_{\delta,p}^n, \beta_{\delta,p}\big) \le \left(1 - \tfrac{\delta}{2}\right)^n W_1(\mu, \beta_{\delta,p}).$$
 
-2. If $s$ is $(L_1,L_2)$-Lipschitz with $L_1 + L_2 < 1$, the non-linear chain has a unique invariant law $\eta$ and
+2. For every $\delta \in (0,1)$, if $s$ is $(L_1,L_2)$-Lipschitz with $L_1 + L_2 < 1$, the non-linear chain has a unique invariant law $\eta$ and
 
 $$W_1\big(\mathrm{Law}(Z_n), \eta\big) \le \left(1 - \tfrac{\delta(1 - L_1 - L_2)}{2}\right)^n W_1\big(\mathrm{Law}(Z_0), \eta\big).$$
 

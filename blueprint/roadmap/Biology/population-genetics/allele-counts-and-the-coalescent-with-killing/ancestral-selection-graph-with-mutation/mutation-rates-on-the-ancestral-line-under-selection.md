@@ -5,7 +5,7 @@
 $$p = \frac12\left(\frac{u + s}{u\nu_1} - \sqrt{\Bigl(\frac{u + s}{u\nu_1}\Bigr)^2 - \frac{4s}{u\nu_1}}\right) \ (\nu_1 > 0), \qquad p = \frac{s}{u + s} \ (\nu_1 = 0).$$
 
 **Theorem.**
-1. *(Deterministic limit.)* The type process on the ancestral line at stationarity is a two-state Markov chain with beneficial ($1 \to 0$) and deleterious ($0 \to 1$) mutation rates
+1. *(Deterministic limit.)* The type process $A^N$ on the ancestral line at stationarity is not Markov; its stationary marginal transition rates are defined as $q_{A^N}(z,z') = f_{A^N}(z,z')/\mathbb P(A^N_t = z)$, where $f_{A^N}(z,z') = \lim_{\epsilon \to 0}\epsilon^{-1}\mathbb P(A^N_t = z, A^N_{t+\epsilon} = z')$ is the stationary probability flux, and $q_A := \lim_{N\to\infty} q_{A^N}$. These beneficial ($1 \to 0$) and deleterious ($0 \to 1$) mutation rates are
 
 $$q_A(1, 0) = \frac{u\nu_0}{1 - p}, \qquad q_A(0, 1) = u\nu_1(1 - p),$$
 
