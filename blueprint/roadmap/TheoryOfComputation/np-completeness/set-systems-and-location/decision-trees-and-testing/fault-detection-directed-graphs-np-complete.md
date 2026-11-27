@@ -5,4 +5,4 @@ The decision problem FAULT DETECTION IN DIRECTED GRAPHS belongs to NP, and every
 ## Sources
 
 - M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of NP-Completeness*, W. H. Freeman (1979), problem [MS18] FAULT DETECTION IN DIRECTED GRAPHS, p. 283, crediting T. Ibaraki, T. Kameda and S. Toida (transformation from X3C).
-- T. Ibaraki, T. Kameda and S. Toida, "NP-complete diagnosis problems on system graphs", *Transactions of the IECE of Japan* E62 (1979), 81–88.
+- T. Ibaraki, T. Kameda and S. Toida, "Some NP-complete diagnosis problems on system graphs", *Transactions of the IECE of Japan* E62 (1979), 81–88.
