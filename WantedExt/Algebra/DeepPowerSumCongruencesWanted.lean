@@ -19,13 +19,13 @@ public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Algebra.DeepPowerSumCongruences
-public import MathlibExt.Algebra.DeepPowerSumCongruences.DVRMaximalIdeal
-public import MathlibExt.Algebra.DeepPowerSumCongruences.DVRMaximalIdealPow
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerIdeal
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerSpan
+public import MathlibExt.Algebra.DeepPowerSumCongruences.DVRMaximalIdeal
+public import MathlibExt.Algebra.DeepPowerSumCongruences.DVRMaximalIdealPow
 public import MathlibExt.Algebra.DeepPowerSumCongruences.Moebius
-public import MathlibExt.Algebra.DeepPowerSumCongruences.PEquivClass
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PadicInt
+public import MathlibExt.Algebra.DeepPowerSumCongruences.PEquivClass
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PartitionProduct
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PowerSumExp
 
