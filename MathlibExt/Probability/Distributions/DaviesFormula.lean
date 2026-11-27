@@ -39,10 +39,12 @@ variables*, J. R. Stat. Soc. C 29 (1980), 323–333. Davies' eq. (1) defines the
 `Q = ∑ⱼ λⱼ Xⱼ + σ X₀`, with independent noncentral χ² variables `Xⱼ` whose degrees of freedom may
 differ and an independent standard normal `X₀`. The law `weightedChiSq lam` here is its central,
 one-degree-of-freedom, `σ = 0` special case `∑ⱼ λⱼ χ²₁`. The limits here are Gil-Pelaez's
-inversion theorem, not Davies' eq. (1); Davies' algorithm evaluates
-`P(Q < c) = ½ - π⁻¹ ∫₀^∞ Im[φ(u) e^{-i u c}] / u du` by discretizing that integral, and the
-limits are stated here as the mid-p and upper-tail values. Davies' numerical algorithm
-(discretization and error bounds) is not formalized.
+inversion theorem, not Davies' eq. (1). Davies' algorithm evaluates
+`P(Q < c) = ½ - π⁻¹ ∫₀^∞ Im[φ(u) e^{-i u c}] / u du` by discretizing that integral. This
+equality needs `P(Q = c) = 0`; in general the right side is `P(Q < c) + ½ P(Q = c)`. With
+all weights zero and `c = 0`, for instance, it is `½` while `P(Q < 0) = 0`. The limits are
+stated here as the mid-p and upper-tail values. Davies' numerical algorithm (discretization and
+error bounds) is not formalized.
 
 ## Attribution
 
