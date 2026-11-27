@@ -16,10 +16,6 @@ where $N_i$ is the set of nodes with a link towards $i$. Hence the triple closur
 
 More generally, $\langle\psi_W^A\rangle\langle\psi_X^B\rangle=\langle\psi_Y^C\rangle\langle\psi_Z^D\rangle$ for every "compatible" pair of subsystem-state pairs on a tree, the identities above being the special cases used for closure. The result extends to mixed initial conditions in which individuals' initial states are independent, but not to correlated initial conditions. It also extends beyond trees: if every independent segment of the **reduced representation** (the network with all routes that cannot carry infection, given the initial state, removed) is a tree, the pair system on the reduced representation is exact.
 
-## Depends on
-
-- [Epidemics on networks](../README.md)
-
 ## Expansion
 
 The probability of any subsystem state obeys a linear forward equation (Theorem 2.1 of the source) in which, besides the subsystem's own transitions, infection enters from outside neighbors through generated larger subsystems. On a tree, a susceptible node $j$ separates the network: conditioning on $j$ being susceptible at time $t$ means no infection has passed through $j$, so the histories of the two branches meeting at $j$ are driven by disjoint sets of independent Poisson clocks and initial states, and are conditionally independent given $S_j$. This conditional independence is exactly the closure identity. The proof makes it rigorous by showing that both sides of each compatible-pair identity satisfy the same linear differential equations with the same initial values (equal at $t=0$ because the initial state is pure), so their difference vanishes for all time. For non-tree graphs the closure fails because a cycle lets the two branches at $j$ interact through other paths.

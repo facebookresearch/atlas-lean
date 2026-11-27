@@ -24,10 +24,6 @@ makes the closed loop globally asymptotically stable, with a Lyapunov function $
 2. In general (non-trivial internal dynamics), under an additional assumption on the data the system is globally asymptotically stabilizable by a uniformly bounded control that stays positive for all $t>0$ whenever the initial condition lies in the largest level set of the combined Lyapunov function $V(\eta_I,\psi_I)$ inside the admissible region.
 3. (Tracking) A feedforward-plus-feedback controller $P=P_{FF}+P_{FB}$ with values in a prescribed interval $(P_{\min},P_{\max})$ makes the emergent aquatic density track any positive reference trajectory $y_d$ below an explicit bound.
 
-## Depends on
-
-- [Leslie matrix model](../../../leslie-matrix-model/README.md)
-
 ## Expansion
 
 Integrating along characteristics shows that the aquatic density at age $a$ is its birth density at time $t-a$ times a survival factor and the logistic net growth accumulated since then, which motivates the multiplicative decomposition into an equilibrium age profile, a renewal-driven shape perturbation $\psi$ and a common amplitude $e^{\eta_I}$. The amplitude obeys a scalar equation in which $P(t)$ appears additively, so the control can cancel the time variation of the logistic coefficients and inject damping proportional to $k_I$; $V_I$ is then a strict Lyapunov function for $\eta_I$. The shape perturbations satisfy linear renewal equations with kernels $g_F,g_I$ of total mass one, which converge to zero by the renewal theorem under aperiodicity, and a small-gain combination of $V_I$ with a functional of $\psi_I$ handles the coupled case while keeping $P$ positive and bounded on suitable level sets.

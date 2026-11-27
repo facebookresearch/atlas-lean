@@ -29,7 +29,8 @@ If $f_1 = f_2$ (neutral mutants) the second equilibrium disappears. Transitions 
 
 ## Depends on
 
-- [Eigen's quasispecies error threshold](../../population-dynamics/eigen-s-quasispecies-error-threshold/README.md)
+- [Master-sequence vector field of the single-peak quasispecies](../../population-dynamics/eigen-s-quasispecies-error-threshold/master-field.md)
+- [Error threshold](../../population-dynamics/eigen-s-quasispecies-error-threshold/master-equilibrium-pos-iff.md)
 
 ## Expansion
 

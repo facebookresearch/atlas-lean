@@ -32,10 +32,6 @@ $$
 
 Item 3 shows that a large basic reproduction number does not by itself sustain transmission: if the vector and host are unlikely to survive the two incubation periods, the infection still dies out.
 
-## Depends on
-
-- [SEIR epidemic model](../../seir-epidemic-model/README.md)
-
 ## Expansion
 
 For item 2 take the Lyapunov functional $\tilde V(t) = \log I(t) + \beta W(t)$, where $W$ collects the double delay integrals $\int\int f_{T_2}(u)f_{T_1}(s)e^{-(\mu_v s + \mu u)}\int_{t-u}^t S(\theta)G(I(\theta-s))/I(t)\,d\theta\,ds\,du$ and its companion with window $[t-s, t]$. Differentiating along solutions, the delayed incidence terms cancel against the derivatives of $W$, and the bounds $S \le B/\mu$ and $G(I) \le I$ leave $\dot{\tilde V} \le \beta(B/\mu)\mathbb{E}(e^{-(\mu_v T_1+\mu T_2)}) - (\mu+d+\alpha)$; integrating and dividing by $t$ gives the bound. Both conditions in item 3 make the right side negative. Item 4 then follows from integrating the $S$ equation once $I \to 0$ exponentially. Item 5 uses a contradiction argument: if $I$ stays below a fraction of $I_1^*$ on an interval longer than the total delay $h$, the delayed incidence forces $I$ back up, which gives the explicit lower bound.

@@ -28,10 +28,6 @@ $$
 
 $C$ is irreducible but $\begin{pmatrix} 0 & C \\ C & 0\end{pmatrix}$ is reducible (it splits into two disjoint host–vector cycles), while $D$ is reducible but $\begin{pmatrix} 0 & D^{t} \\ D & 0\end{pmatrix}$ is irreducible. So for an indirectly transmitted infection, a strongly connected movement pattern does not guarantee a strongly connected transmission structure.
 
-## Depends on
-
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
-
 ## Expansion
 
 Since $\mathcal{M}^2 = \mathrm{diag}(LM, ML)$, a path of even length in the bipartite graph between two host nodes is a path in the graph of $LM$, and similarly for vector nodes. If $\mathcal{M}$ is irreducible, every host node reaches every other host node through an even-length path, so $LM$ is irreducible, and likewise $ML$. No node can be a sink, so $L$ and $M$ have no zero rows. Conversely, conditions 1 and 2 let every host node reach some vector node and every vector node reach some host node; combined with the strong connectivity of $LM$ and $ML$ this connects all $2n$ nodes. The spectral identity holds because the eigenvalues of $\mathcal{M}$ are the square roots of those of $LM$ and $ML$. The Perron–Frobenius theorem applied to the irreducible products gives the positive eigenvectors.

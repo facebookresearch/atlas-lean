@@ -16,10 +16,6 @@ $$r_{\mathrm{crit}} = \delta\,(\delta - 1)^{\frac1\delta - 1}.$$
 
 For the rescaled map $u_{t+1} = r u_t^\delta/(a + u_t^\delta)$ the same trichotomy holds with threshold $r^a_{\mathrm{crit}} = a^{1/\delta}\,\delta(\delta-1)^{\frac1\delta-1}$.
 
-## Depends on
-
-- [Logistic growth equation](../../../logistic-growth-equation/README.md)
-
 ## Expansion
 
 Positive fixed points solve $h(u) = 1$, i.e. $r u^{\delta-1} = 1 + u^\delta$. For $\delta > 1$ the function $\phi(u) = u^{\delta-1}/(1+u^\delta)$ vanishes at $0$ and $\infty$ and has a single maximum at $u^\ast = (\delta-1)^{1/\delta}$, with $\phi(u^\ast) = (\delta-1)^{1-1/\delta}/\delta = 1/r_{\mathrm{crit}}$. Hence there are no positive fixed points if $r < r_{\mathrm{crit}}$ and two, $A < u^\ast < K$, if $r > r_{\mathrm{crit}}$. Because $H$ is increasing, orbits are monotone and converge to fixed points; $H(u) < u$ on $(0,A)$ and $(K,\infty)$ and $H(u) > u$ on $(A,K)$, which gives the basins.

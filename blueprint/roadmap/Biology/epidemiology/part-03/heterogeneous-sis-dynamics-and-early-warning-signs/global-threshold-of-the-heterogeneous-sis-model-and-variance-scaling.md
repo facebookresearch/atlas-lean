@@ -21,10 +21,6 @@ $$\mathrm{Var}(\mathcal I) = \frac{\sigma^2}{2(\gamma - \beta)} = \frac{\sigma^2
 
 diverges as $R_0 = \beta/\gamma\nearrow1$; this power law with exponent $-1$ is an early warning sign of the transcritical (outbreak) bifurcation, valid outside an $O(\epsilon^{1/2})$ neighborhood of the bifurcation point.
 
-## Depends on
-
-- [SIS epidemic model](../../sis-epidemic-model/README.md)
-
 ## Expansion
 
 For fixed $J(t)$ the equation for each $\omega$ is linear and relaxes towards $f(\beta J + \eta)/(\beta J + \eta + \gamma)$, which is increasing in $J$; integrating against $q$ gives a scalar monotone feedback for $J$, from which $J(t)$ converges and the sign of $\partial_tI$ is determined pointwise. Steady states correspond to fixed points of $J\mapsto\int\frac{qf(\beta J + \eta)}{\beta J + \eta + \gamma}$, a concave increasing map: with $\eta > 0$ it has a unique positive fixed point, and with $\eta = 0$ its slope at $0$ is $R_0$, so a positive fixed point exists iff $R_0 > 1$. Thus heterogeneity changes the threshold only through the weighted average defining $R_0$, not the qualitative global dynamics. Near threshold the linear decay rate $\gamma - \beta$ of perturbations vanishes, so fluctuations driven by noise are damped ever more weakly.

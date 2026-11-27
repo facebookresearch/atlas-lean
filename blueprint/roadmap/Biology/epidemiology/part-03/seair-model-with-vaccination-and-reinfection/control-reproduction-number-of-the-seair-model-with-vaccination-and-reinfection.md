@@ -24,8 +24,7 @@ $$\mathcal R_c = \frac{N_1}{N_0}\,\frac{\beta\gamma}{k_3}\Big(\frac{p}{k_4} + \f
 
 ## Depends on
 
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
-- [SEIR epidemic model](../../seir-epidemic-model/README.md)
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Expansion
 

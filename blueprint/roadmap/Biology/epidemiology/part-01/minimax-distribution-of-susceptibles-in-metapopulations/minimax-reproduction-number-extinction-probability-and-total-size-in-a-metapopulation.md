@@ -37,7 +37,6 @@ Unlike the growth-rate saddle point, no condition on the rates is needed. The sa
 ## Depends on
 
 - [Minimax growth rate of a metapopulation epidemic under adversarial migration of infectives](minimax-growth-rate-of-a-metapopulation-epidemic-under-adversarial-migration-of-infectives.md)
-- [Branching-process approximation of early epidemics](../../branching-process-approximation-of-early-epidemi/README.md)
 
 ## Expansion
 

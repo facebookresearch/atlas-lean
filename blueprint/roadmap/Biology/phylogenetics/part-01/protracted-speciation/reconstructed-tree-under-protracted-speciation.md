@@ -23,7 +23,7 @@ The same holds for the tree of *representative* species (one extant descendant p
 
 ## Depends on
 
-- [Splits, compatibility, ultrametrics and UPGMA](../../splits-compatibility-ultrametrics-and-upgma/README.md)
+- [Ultrametric on taxa](../../splits-compatibility-ultrametrics-and-upgma/is-ultrametric.md)
 
 ## Expansion
 

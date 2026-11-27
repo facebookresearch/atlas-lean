@@ -14,10 +14,6 @@ which equals the **Fair Proportion index** $FP_{T^r}(a)=\sum_{e}\lambda_e/D_e$ (
 
 In general the three versions differ, and the differences can be made arbitrarily large or arbitrarily small by choosing edge lengths: on a four-taxon tree with a parameter $\varepsilon$, $|SV-\widetilde{SV}|=\frac1{4\varepsilon}+\frac\varepsilon4\to\infty$ as $\varepsilon\to0$ while $|\widehat{SV}-\widetilde{SV}|=\frac\varepsilon2\to0$. In simulations, the probability that two versions give exactly the same ranking decreases with the number of taxa, while a normalized distance between the rankings tends to zero.
 
-## Depends on
-
-- [Phylogenetic diversity](../phylogenetic-diversity/README.md)
-
 ## Expansion
 
 The only coalition counted in $SV$ but not in $\widetilde{SV}$ is $S=\{a\}$, which carries weight $0!\,(n-1)!/n!=1/n$ and marginal contribution $PD^r(\{a\})-PD^r(\emptyset)=PD^r(\{a\})$. Hence

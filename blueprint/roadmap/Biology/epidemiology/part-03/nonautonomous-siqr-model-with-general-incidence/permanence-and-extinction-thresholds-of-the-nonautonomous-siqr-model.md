@@ -42,10 +42,6 @@ $R_p^{\mathrm{AUT}} = \liminf_{\delta\to0}\frac{\varphi_0(\Lambda/d,0,0,\delta)}
 - *Asymptotically autonomous rates.* If the rates converge to constants, the autonomous thresholds of the limit system decide permanence and extinction.
 - *Periodic rates.* If $\Lambda$ and $d$ are constant and the other rates and $\varphi$ are $T$-periodic in $t$, write $\bar f = \frac1T\int_0^Tf$. Then permanence holds if $\frac1T\int_0^T\liminf_{\delta\to0}\frac{\varphi(s,\Lambda/d,0,0,\delta)}{\delta}\,ds > \bar\gamma + \bar\sigma + d + \bar\alpha_1$, and extinction holds if the same inequality with $\limsup$ is reversed.
 
-## Depends on
-
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
-
 ## Expansion
 
 The total-population equation has a globally uniformly attracting bounded solution, uniformly bounded away from zero, and perturbing it by a bounded forcing moves it by at most a constant times the forcing. When $I$ is small, $Q$ and $R$ are small too, so $S$ stays close to $x(t)$ and, by (H2)–(H4), $I'/I$ is within a small error of $b_\delta(t, x(t))$. For extinction, $\int_t^{t+\lambda}I'/I < r_e(\lambda) + \text{error} < 0$ over consecutive windows of length $\lambda$, so $I$ decays geometrically. For permanence, a positive average growth rate over every window pushes $I$ away from zero, and comparing the windows gives a lower bound independent of the solution. Independence of $x(t)$ comes from the Lipschitz estimate (H2) together with the fact that all solutions of the total-population equation converge to one another exponentially.

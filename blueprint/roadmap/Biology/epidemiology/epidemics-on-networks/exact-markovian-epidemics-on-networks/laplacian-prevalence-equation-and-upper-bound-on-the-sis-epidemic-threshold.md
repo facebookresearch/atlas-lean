@@ -41,7 +41,6 @@ Together with the general lower bound $\tau_c \ge 1/\lambda_1$, where $\lambda_1
 ## Depends on
 
 - [Spectral radius and die-out of SIS epidemics on graphs](../../sis-extinction-times-on-finite-graphs/prob-ne-empty-le.md)
-- [SIS epidemic model](../../sis-epidemic-model/README.md)
 
 ## Expansion
 

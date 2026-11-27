@@ -15,10 +15,6 @@ Without noise, the disease-free state $(1,0)$ is globally stable iff $\beta\le\m
 
 Positive quarantine jumps thus effectively add to the recovery rate, lowering the transmission rate at which the disease can persist.
 
-## Depends on
-
-- [SIS epidemic model](../../sis-epidemic-model/README.md)
-
 ## Expansion
 
 Since $S+I=1$, the model reduces to a one-dimensional jump-diffusion for $S$ on $(0,1)$ with drift $\alpha(S)$, diffusion coefficient $\sigma S(1-S)$ and multiplicative jumps $h(y)S(1-S)$. Invariance of the simplex follows because the coefficients vanish at the boundary and jumps of relative size $|h|<1$ cannot leave $[0,1]$. The hitting time of $[1-\epsilon,1]$ has finite expectation, and a stability criterion of Gihman–Skorohod type for jump-diffusions (stated for compensated Poisson measures, applicable here since $\nu$ is finite so the compensator can be absorbed into the drift) shows that $1-S=I$ tends to zero when the averaged growth rate of $\ln I$, namely $\beta-\mu-\lambda$ corrected by the jump term, is negative.

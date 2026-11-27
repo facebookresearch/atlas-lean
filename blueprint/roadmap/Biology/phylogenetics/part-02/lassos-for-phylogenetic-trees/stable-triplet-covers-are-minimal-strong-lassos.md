@@ -16,10 +16,6 @@ a **stable triplet cover**. (A general triplet cover is $\mathcal L_{(T,f)}$ wit
 
 Moreover, if $\mathcal L$ contains a shellable lasso for $T$ and $d = d_{(T,w)}$, the closure of $\mathcal L$ under the four-point extension rule (whenever all cords of a quartet $\{x,y,u,z\}$ but $xz$ are known and $d(x,y) + d(u,z) < d(x,u) + d(y,z)$, set $d(x,z) = d(x,u) + d(y,z) - d(y,u)$) is all of $\binom X2$, so $T$ and $w$ are reconstructed from $d|_{\mathcal L}$ in polynomial time.
 
-## Depends on
-
-- [Quartet support and determination of trees by quartets](../../quartet-support-and-determination-of-trees-by-qu/README.md)
-
 ## Expansion
 
 Induct on $n$ by removing a cherry: if $y$ is a leaf of a cherry $\{x,y\}$ not chosen by $f$ on the larger clusters, then deleting $y$ gives a fully resolved tree $T'$ and the restriction of $f$ is a stable transversal for $\mathrm{clus}(T')$ whose stable triplet cover is $\mathcal L$ minus the two cords at $y$. Stability guarantees that $y$ appears in exactly two cords, which gives the $2d$-tree ordering and the count $|\mathcal L| = |\mathcal L'| + 2$, starting from $3$ cords at $n = 3$. The two cords at $y$ together with the known distances in $T'$ provide, for each missing cord through $y$, a pair of pivots forming a quartet whose other five distances are already known; this is a shellable ordering, and shellable lassos are strong lassos. Minimality holds because a strong lasso on $n$ leaves must determine the $2n-3$ edge weights.

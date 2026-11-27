@@ -16,10 +16,6 @@ $$\mathcal R_0=\frac{\beta\varphi\rho\pi}{\lambda}\sum_{j=1}^mP(r_j)\,\frac{r_j^
 
 With a constant vaccination rate $\theta(r)\equiv\theta$, $\mathcal R_0=\dfrac{\beta\varphi\rho\pi}{\lambda(\varphi+\theta)}\langle r^2\rangle$ is proportional to the second moment of the interaction radius, so at fixed mean radius greater heterogeneity of contact ranges increases $\mathcal R_0$; targeting vaccination at individuals with large radii lowers $\mathcal R_0$ most.
 
-## Depends on
-
-- [SIS epidemic model](../../sis-epidemic-model/README.md)
-
 ## Expansion
 
 At an equilibrium, solving the $i$-equation for $s$ and substituting into the $s$-equation expresses each $i^\ast_r$ through the single scalar $I^\ast=\sum_jP(r_j)i^\ast_{r_j}$, giving an equation $F(I^\ast)=0$ with $F(I)=\sum_jP(r_j)\frac{\beta\varphi\rho\pi r_j^2I}{\lambda(\varphi+\theta(r_j))+\beta\varphi\rho\pi r_j^2I}-I$ strictly concave on $[0,1]$, $F(0)=0$ and $F(1)<0$; a positive root exists, and is unique, iff $F'(0)>0$, which is exactly $\mathcal R_0>1$. Linearizing at the disease-free equilibrium gives a rank-one perturbation of a diagonal matrix, whose leading eigenvalue changes sign exactly when $\mathcal R_0$ crosses $1$. Global stability for $\mathcal R_0<1$ uses a comparison argument in which the condition $\lambda\le\varphi$ keeps each susceptible fraction asymptotically below its disease-free value, so the infected fractions are dominated by a linear system with spectral bound of the sign of $\mathcal R_0-1$; persistence for $\mathcal R_0>1$ follows from uniform persistence theory with the disease-free set as a repeller.

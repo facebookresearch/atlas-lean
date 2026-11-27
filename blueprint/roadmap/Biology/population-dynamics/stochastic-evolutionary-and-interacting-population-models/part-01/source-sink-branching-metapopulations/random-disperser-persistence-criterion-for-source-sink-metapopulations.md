@@ -19,10 +19,6 @@ $$M_1M_2(1-p)^2 + (M_1m_2 + m_1M_2)\,pq + m_1m_2(1-q)^2 > \min\big(2,\ 1 + M_1M_
 
 In particular both patches can be sinks in the absence of dispersal ($M_1M_2 \le 1$, $m_1m_2\le1$) while the dispersing metapopulation persists: with $p = q = \tfrac12$ and $m_1 = m_2 = m$ it suffices that $m(M_1 + M_2) > 4$.
 
-## Depends on
-
-- [Matrix population models](../../../matrix-population-models/README.md)
-
 ## Expansion
 
 For item 1, consider the descendants of an ancestor in patch $1$ who are the first in their lineage to be back in patch $1$. They form a stopping line, and by the branching property their own such descendants are i.i.d. copies, so the population of patch-$1$ "returners" is a single-type Galton–Watson process whose mean is $\mathbb E[Y] = \sum_n m_1\,\mathbb E[\mathbf 1_{T=n}\,m_{X_1}\cdots m_{X_{n-1}}]$, a many-to-one formula along the random disperser. Survival of the whole population is equivalent to survival of this embedded process, i.e. to $\mathbb E[Y] > 1$. Item 2 splits the excursion from the source into staying put (probability $1-p$, factor $M$) or leaving and spending $S$ generations in sinks (factor $Mp\,m^S$). Item 3 applies the Perron root criterion to the mean matrix of the two-generation process $(Z_{2n})$: the largest eigenvalue of a $2\times2$ matrix exceeds $1$ iff the trace exceeds $\min(2, 1 + \det)$.

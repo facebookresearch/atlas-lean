@@ -27,7 +27,7 @@ So incidence in mosquitoes increases, is flat, or decreases at time $t$ exactly 
 ## Depends on
 
 - [Basic effective reproduction number of the age-structured dengue model via the Lotka equation](basic-effective-reproduction-number-of-the-age-structured-dengue-model-via-the-lotka-equation.md)
-- [Euler–Lotka equation and the reproduction number](../../euler-lotka-equation-and-the-reproduction-number/README.md)
+- [Euler–Lotka equation for the reproductive number](../../euler-lotka-equation-and-the-reproduction-number/renewal-exp-iff-reproduction-number.md)
 
 ## Expansion
 

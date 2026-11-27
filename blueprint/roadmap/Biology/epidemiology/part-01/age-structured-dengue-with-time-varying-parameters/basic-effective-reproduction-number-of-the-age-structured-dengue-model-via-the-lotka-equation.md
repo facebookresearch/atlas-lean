@@ -40,8 +40,8 @@ The factors are the mean mosquito lifetime $\mathcal{N}_m^0/\Lambda_m(t^0)$, the
 
 ## Depends on
 
-- [Euler–Lotka equation and the reproduction number](../../euler-lotka-equation-and-the-reproduction-number/README.md)
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
+- [Euler–Lotka equation for the reproductive number](../../euler-lotka-equation-and-the-reproduction-number/renewal-exp-iff-reproduction-number.md)
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Expansion
 

@@ -22,10 +22,6 @@ $$\Lambda(t,x) = \begin{cases}0, & x - ct\le0,\\ Ae^{-\eta(x-ct)}, & x - ct > 0,
 
 gives $\lim_{t\to\infty}\sup_{x > ct}\max(E,F,M)(t,x) = 0$. The total number released per unit time is the finite amount $A/\eta$, and the mosquito front is pushed towards $-\infty$ at speed $|c|$.
 
-## Depends on
-
-- [Fisher–KPP travelling waves](../../../pattern-formation/fisher-kpp-travelling-waves/README.md)
-
 ## Expansion
 
 Without releases the system is monostable and cooperative on $\{E\le K\}$, so fronts exist for all speeds above a minimal one by the theory of monostable systems; this is the hair-trigger effect. The sterile males make the female recruitment term decreasing in $M_s$, which breaks cooperativity, but monotonicity in the control is enough for a comparison principle. In the moving frame $z = x - ct$, a scalar toy model with an Allee-type term created by the sterile-male fraction admits an exponential super-solution equal to the equilibrium for $z < 0$ and decaying like $e^{r z}$ for $z\ge0$; choosing $A$ large and $\eta$ small makes the release dense enough ahead of the front to dominate, and the comparison principle transfers the construction to the full system, forcing extinction on $\{x > ct\}$.

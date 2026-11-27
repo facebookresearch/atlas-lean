@@ -21,10 +21,6 @@ The **forward branching process** $\mathcal Z^f$ has the infectious period as ty
 
 When $R_\ast>1$, $\rho^b=1-f_{C^b}(\xi)$ where $\xi\in[0,1)$ solves $f_{\tilde C^b}(s)=s$, with $f_{C^b}(s)=\phi_A\bigl(1-\mathbb E_{\check Y}[f_{S(\check Y)\mid\check Y}(s)]\bigr)$ and $f_{\tilde C^b}(s)=\phi_{\tilde A}\bigl(1-\mathbb E_{\check Y}[f_{S(\check Y)\mid\check Y}(s)]\bigr)$, $\phi_A(\theta)=\mathbb E e^{-\theta A}$. If $\mathcal I$ is constant, $T(m)\overset d=S(m)$ and $\rho=\rho^b$; otherwise the probability of a major outbreak and its size generally differ.
 
-## Depends on
-
-- [Final size of a stochastic epidemic in a large population](../../final-size-of-a-stochastic-epidemic-in-a-large-p/README.md)
-
 ## Expansion
 
 Explore the graph from the initial infective: as long as the cliques used are disjoint (true with probability tending to one until the exploration reaches size $o(\sqrt n)$), each infective spawns independent local epidemics in its new cliques, giving the coupling with $\mathcal Z^f$; the size biasing reflects that a newly reached individual or clique is reached with probability proportional to its weight. Individuals in a litter share the infective's infectious period, so for non-constant $\mathcal I$ the process is multitype with type space $(0,\infty]$, and survival is analyzed through a monotone functional $\tilde\Phi$ on test functions. For the final size, the susceptibility set of a uniformly chosen individual is explored backwards for $\lceil\log\log n\rceil$ generations and coupled to $\mathcal Z^b$; if it survives it has polylogarithmic size, and a major outbreak, which infects $\Theta(n)$ individuals, then hits it with probability tending to one. Asymptotic independence of the susceptibility sets of two individuals yields the law of large numbers for $|\mathcal R^{(n)}|/n$.

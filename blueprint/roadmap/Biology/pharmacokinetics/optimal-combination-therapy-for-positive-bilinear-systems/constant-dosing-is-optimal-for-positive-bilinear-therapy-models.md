@@ -22,10 +22,6 @@ $$\partial J(\bar u) = \Big\{2\bar\sigma_{\mathrm{cl}}\sum_i\alpha_iD_u^{T}\,\ma
 over unit pairs $(w_i,v_i)$ attaining the top singular value and convex weights $\alpha$, so $u^\star$ can be computed by a subgradient method.
 3. (Robust design.) If $-D(u)$ has nonnegative diagonal for $u\ge0$ and the entries of $A$ and of the drug efficacies are uncertain within element-wise bounds, then, provided $(A + \tilde A - D(\beta)) + D(\bar u)$ is Hurwitz for some $\bar u$ (with $\tilde A$ and $\beta$ the element-wise uncertainty bounds), the minimax problem $\min_u\max_{\Delta}J(u;\Delta)$ is solved by the nominal problem for the worst-case system matrix $A + \tilde A - D(\beta)$, so robust dosing is no harder than nominal dosing.
 
-## Depends on
-
-- [Pharmacodynamic response models](../pharmacodynamic-response-models/README.md)
-
 ## Expansion
 
 For a positive system each state component is a convex function of the input, and $x^{T}Qx$ is nondecreasing in each component when $Q$ has nonnegative entries, so $\|z_{u,\bar d}\|^2_{\mathrm{pow}}$ is convex in $u$ for constant $\bar d$. Its directional derivative at a constant stabilizing $\bar u$ vanishes along every zero-mean variation $\tilde u$, so among inputs with the same mean the constant one minimizes; since the worst disturbance for constant inputs is constant, $J(u)\ge\|z_{u,\bar d}\|^2\ge J(\bar u)$ for the optimal constant $\bar u$. For constant data the steady state is $x = -A_{\mathrm{cl}}^{-1}B\bar d$, giving the singular-value formula, and positivity makes $-A_{\mathrm{cl}}^{-1}$ entrywise nonnegative and monotone in the data, which yields the worst-case reduction of item 3.

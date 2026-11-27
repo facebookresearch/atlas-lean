@@ -20,10 +20,6 @@ then $\mathbf z^\ast$ is globally asymptotically stable for positive initial con
 
 Every asymptotically stable equilibrium contains at least as many prey types as predator types (competitive exclusion), so predator diversity is bounded by prey diversity.
 
-## Depends on
-
-- [Lotka–Volterra predator–prey model](../../../lotka-volterra-predator-prey-model/README.md)
-
 ## Expansion
 
 The Lyapunov function $V(\mathbf z) = \sum_i (n_i - n^\ast_i\log n_i) + r^{-1}\sum_l (h_l - h^\ast_l\log h_l)$ (Goh's function, adapted) has derivative $-(n - n^\ast)^{T}C(n - n^\ast)$ plus negative terms from absent types: the prey–predator interaction terms cancel because the interaction matrix is $\begin{pmatrix}C & B\\ -rB^{T} & 0\end{pmatrix}$, skew in the off-diagonal blocks. Positive definiteness of $C + C^{T}$ and LaSalle's principle give global convergence. Equilibria with sign conditions on invasion fitnesses are exactly solutions of a linear complementarity problem, whose solvability for this block structure gives existence. The quantitative Lyapunov estimate combined with large deviations for the birth–death process gives the exponential exit time.

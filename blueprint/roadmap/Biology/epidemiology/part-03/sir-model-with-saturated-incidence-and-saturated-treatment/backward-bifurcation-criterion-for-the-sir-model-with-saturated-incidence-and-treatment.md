@@ -39,8 +39,7 @@ Item 3 shows that a large treatment-saturation parameter $b$, meaning scarce tre
 
 ## Depends on
 
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
-- [Global behaviour of the SIR model](../../global-behaviour-of-the-sir-model/README.md)
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Expansion
 

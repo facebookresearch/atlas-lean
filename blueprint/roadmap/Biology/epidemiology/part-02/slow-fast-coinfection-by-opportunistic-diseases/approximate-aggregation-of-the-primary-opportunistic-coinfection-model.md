@@ -33,7 +33,7 @@ The change of variables $(S,U,V)\mapsto(S,I,V)$ makes $S$ and $I$ slow (their ri
 
 ## Depends on
 
-- [SIS epidemic model](../../sis-epidemic-model/README.md)
+- [Solution of the SIS system](../../sis-epidemic-model/is-solution.md)
 
 ## Sources
 

@@ -31,10 +31,6 @@ So $(\pi^*, Q^*)$ is a saddle point, and distributing susceptibles by $\pi^*$ ca
 
 The condition in item 1 holds automatically when recovery rates are equal across groups, in which case $\chi = (\sum_j\beta_j^{-1})^{-1} - \gamma$. The optimal $\pi^*$ can be imposed by admission controls at group borders that satisfy detailed balance, without identifying who is infected.
 
-## Depends on
-
-- [Branching-process approximation of early epidemics](../../branching-process-approximation-of-early-epidemi/README.md)
-
 ## Expansion
 
 With $\pi = \pi^*$, every row of $\mathrm{diag}(\beta)\mathrm{diag}(\pi^*) - \mathrm{diag}(\gamma)$ equals $\chi$. Hence $A(\pi^*, Q)\mathbf{1} = \chi\mathbf{1}$ for every $Q$, and since $\mathbf{1}$ is a positive eigenvector, $\tau(\pi^*, Q) = \chi$. For fixed $Q$, $\tau(\cdot, Q)$ is strictly convex on $\mathcal{S}$ (Friedland's convexity theorem for the dominant eigenvalue in the diagonal), with partial derivatives $\partial\tau/\partial\pi_i = \beta_iw_iv_i/(w^{T}v)$, where $w$ and $v$ are the left and right Perron vectors. At $\pi^*$ the right vector is $\mathbf{1}$. Choosing $Q^*$ with left Perron vector $w_i \propto \beta_i^{-1}$ makes the directional derivative $\sum_i\beta_iw_i(\pi_i - \pi_i^*) \propto \sum_i(\pi_i - \pi_i^*) = 0$, so $\pi^*$ minimises $\tau(\cdot, Q^*)$. For item 2 use $\tilde\pi_i \propto \gamma_i/\beta_i$: each row of $A(\tilde\pi, Q)\mathbf{1}$ is $\gamma_i\big((\sum_j\gamma_j/\beta_j)^{-1} - 1\big) < 0$, so the Perron eigenvalue is negative.

@@ -16,7 +16,7 @@ Earlier hardness results needed multifurcating input trees; binary trees are the
 
 ## Depends on
 
-- [Small parsimony problem](../../../small-parsimony-problem/README.md)
+- [Fitch's algorithm computes the small-parsimony score](../../../small-parsimony-problem/fitch-score-eq.md)
 
 ## Expansion
 

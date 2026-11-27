@@ -10,7 +10,7 @@ Let $\mathcal S = \{X_1,\dots,X_m\}$ be a set of taxon sets with union $\mathcal
 
 ## Depends on
 
-- [Splits, compatibility, ultrametrics and UPGMA](../../splits-compatibility-ultrametrics-and-upgma/README.md)
+- [Cluster system displaying a triplet](../../splits-compatibility-ultrametrics-and-upgma/displays-triplet.md)
 
 ## Expansion
 

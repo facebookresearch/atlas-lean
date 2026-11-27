@@ -17,7 +17,7 @@ the product of the vector-to-host ratio, the mosquito-to-human transmission and 
 
 ## Depends on
 
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
+- [Spectral bound and reproduction number for infinite-dimensional population structure](../../next-generation-matrix-and-the-basic-reproductio/spectral-bound-and-reproduction-number-for-infinite-dimensional-structure.md)
 
 ## Expansion
 

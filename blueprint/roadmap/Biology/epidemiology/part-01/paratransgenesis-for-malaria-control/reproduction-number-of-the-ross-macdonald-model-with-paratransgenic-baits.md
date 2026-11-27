@@ -18,10 +18,6 @@ where $i_m^\ast$ is the endemic proportion of infected mosquitoes (bait removal 
 2. (Heterogeneous attractiveness.) If humans in class $i$ have attractiveness $k_i$ (first and second moments $\bar k$, $\hat k$), the disease-free state is stable iff the corresponding $R_0 = \frac{a^2bcm\,p^2\hat k(1 - r_{df})e^{-\zeta\tau}}{\delta\mu(\bar kp + qx)^2}\le1$, where here $r_{df} = \frac{a\gamma qx}{(p\bar k + qx)(\delta + \theta) + a\gamma qx}$ and $\zeta = \delta + a\gamma qx/(p\bar k + qx)$ is the incubation-period hazard; any other equilibrium has $i_h, i_m > 0$.
 3. (Targeted baits.) If $B_i\le C_i$ baits placed near class $i$ inherit attractiveness $k_i$ and $\sum_iB_i = Nx < \sum_iC_i$, then $R_0$ is strictly decreasing in $y = \sum_ik_iB_i/N$, and the unique allocation minimizing $R_0$ fills the classes greedily in decreasing order of $k_i$ up to their caps.
 
-## Depends on
-
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
-
 ## Expansion
 
 Baits act on transmission twice: they divert bites ($p^2/(p+qx)^2$, one factor for each direction of transmission), and they remove mosquitoes both before infection (the factor $1 - r_{df}$) and during incubation (the extra hazard in $\Lambda$). Because removed mosquitoes slow the growth of infectious ones, $\partial\dot I_m/\partial R_m\le0$ and the delay system is not cooperative, so the delay cannot be dropped in the linear analysis; instead the characteristic equation $F(\lambda,\tau) = 0$ at the disease-free state is shown to have only roots with negative real part when $R_0 < 1$ (and a zero root with the others stable at $R_0 = 1$), and a positive real root when $R_0 > 1$. For targeted baits, $R_0$ depends on the allocation only through $y$, so minimizing $R_0$ is a linear program in $B_i$ maximizing $\sum_ik_iB_i$ under box and budget constraints, solved by the greedy rule.

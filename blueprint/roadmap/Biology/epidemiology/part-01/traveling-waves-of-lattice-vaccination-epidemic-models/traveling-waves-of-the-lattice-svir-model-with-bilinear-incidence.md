@@ -36,10 +36,6 @@ and $0 < S < S_0$, $0 < V < V_0$, $0 < I$ is bounded with $\liminf_{\varsigma\to
 
 The critical speed increases with the infective motility $d$ and with $\beta_1$, $\beta_2$, and decreases with the vaccine-completion rate $\gamma_1$. A more effective vaccine slows the invasion front as well as lowering $\mathcal{R}_0$.
 
-## Depends on
-
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
-
 ## Expansion
 
 Since $\Delta$ is strictly convex in $r$, equals $\mu_3(\mathcal{R}_0 - 1) > 0$ at $r = 0$, has slope $-c$ there and decreases in $c$, the tangency point $(r^*, c^*)$ exists and separates the speeds. For $c > c^*$, the functions $S^+ = S_0$, $V^+ = V_0$, $I^+ = e^{r_1\varsigma}$ and $S^- = \max\{S_0(1 - M_1e^{\varepsilon_1\varsigma}), 0\}$, $V^-$, $I^- = \max\{e^{r_1\varsigma}(1 - M_3e^{\varepsilon_3\varsigma}), 0\}$ are super- and sub-solutions of the wave-profile equations. A Schauder fixed-point argument on truncated intervals $[-B, B]$, followed by $B \to \infty$ with uniform $C^{1,1}$ bounds, produces a profile trapped between them, which gives the behaviour at $-\infty$. Boundedness of $I$ and persistence $\liminf I > 0$ at $+\infty$ are shown directly. Convergence to $E^*$ at $+\infty$ uses a Lyapunov functional made of $cS^*g(S/S^*) + cV^*g(V/V^*) + cI^*g(I/I^*)$, with $g(x) = x - 1 - \log x$, plus nonlocal terms $\int_0^1 g(\cdot(\varsigma-\sigma))\,d\sigma - \int_{-1}^0 g(\cdot(\varsigma-\sigma))\,d\sigma$ that absorb the discrete diffusion. The functional is nonincreasing along the profile and bounded below thanks to persistence.

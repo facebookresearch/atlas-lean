@@ -22,7 +22,7 @@ where $\widehat R_0=\beta b/(\mu(\mu+\gamma))$ is the reproduction number withou
 
 ## Depends on
 
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
+- [Threshold dynamics of compartmental epidemic models in periodic environments](../../next-generation-matrix-and-the-basic-reproductio/threshold-dynamics-in-periodic-environments.md)
 
 ## Expansion
 

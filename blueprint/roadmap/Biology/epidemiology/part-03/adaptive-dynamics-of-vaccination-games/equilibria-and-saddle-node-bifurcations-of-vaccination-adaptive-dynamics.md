@@ -24,7 +24,7 @@ As $r\to0$ the equilibrium uptake tends to $p^\ast$ and as $r\to1$ it tends to $
 
 ## Depends on
 
-- [Classification of adaptive-dynamics singular strategies](../../../population-dynamics/classification-of-adaptive-dynamics-singular-str/README.md)
+- [Fitness Gradient](../../../population-dynamics/classification-of-adaptive-dynamics-singular-str/fitness-gradient.md)
 
 ## Expansion
 

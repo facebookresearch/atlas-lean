@@ -39,7 +39,7 @@ Equilibria are therefore exactly the disease-free state and, above threshold, on
 ## Depends on
 
 - [Irreducibility of the bipartite host–vector contact network](irreducibility-of-the-bipartite-host-vector-contact-network.md)
-- [Next-generation matrix and the basic reproduction number](../../next-generation-matrix-and-the-basic-reproductio/README.md)
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Expansion
 

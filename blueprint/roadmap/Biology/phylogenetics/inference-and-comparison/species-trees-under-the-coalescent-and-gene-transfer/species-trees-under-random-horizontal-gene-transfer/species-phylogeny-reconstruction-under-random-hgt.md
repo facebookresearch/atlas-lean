@@ -11,10 +11,6 @@
 
 So, up to a constant in the transfer rate, $\Theta(\log n)$ gene trees are what a constant rate of transfer per branch allows.
 
-## Depends on
-
-- [Quartet support and determination of trees by quartets](../../../quartet-support-and-determination-of-trees-by-qu/README.md)
-
 ## Expansion
 
 At low constant HGT rate each gene tree is a few SPR moves away from $T_s$ near any given node, so for a pair of nodes $u, v$ of $T_s$ a typical gene tree contains, with probability close to $1$, real subtrees that are copies of "diluted" versions of the species subtrees below $u$ and $v$ (some leaves transferred away), and the graph distance between their roots estimates the species-tree distance. The algorithm reconstructs the species tree bottom-up from cherries, at each level identifying diluted subtrees in polynomial time and taking a majority over the $\Omega(\log n)$ genes, which gives the high-probability guarantee by a union bound over pairs; the bound $\epsilon<\underline\tau\mu/2$ lets single-linkage clustering of the distorted distances recover the bottom levels. The impossibility result couples two complete binary phylogenies that differ by swapping two subtrees of size $n^{1/3}$ at depth $\frac23\log_2 n$: with transfers only inside those subtrees at a large constant rate, each gene tree is identical under the two phylogenies with probability $1 - O(n^{-1/6})$, so $O(\log n)$ genes coincide simultaneously with probability at least $1/2$.

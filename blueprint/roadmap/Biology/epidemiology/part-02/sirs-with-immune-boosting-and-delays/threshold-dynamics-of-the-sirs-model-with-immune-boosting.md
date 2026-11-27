@@ -20,10 +20,6 @@ $$\mathcal R_0 = \frac{\beta}{d + \gamma}.$$
 
 Numerically, with boosting the endemic equilibrium undergoes multiple stability switches (Hopf bifurcations giving sustained oscillations, and restabilizations) as $\tau$ increases, a phenomenon absent without boosting.
 
-## Depends on
-
-- [SIS epidemic model](../../sis-epidemic-model/README.md)
-
 ## Expansion
 
 Equilibria satisfy $\beta S^\ast = \gamma + d$, so $S^\ast = 1/\mathcal R_0$, and substituting into the $S$-equation gives a scalar equation for $I^\ast$ whose two sides (a line and a convex curve in $I^\ast$) meet exactly once in $(0,1]$ when $\mathcal R_0 > 1$. For $\mathcal R_0\le1$, $I' \le (\beta - \gamma - d)I \le 0$ since $S\le1$, and a LaSalle-type argument for the delay system yields global convergence. Persistence follows from the general theory of uniform persistence for semiflows, using that the disease-free set repels when $\mathcal R_0 > 1$. Local stability of the endemic equilibrium is decided by a transcendental characteristic equation in $\lambda$ and $\tau$; the root bound confines unstable roots to a compact region, where roots crossing the imaginary axis are tracked numerically.
