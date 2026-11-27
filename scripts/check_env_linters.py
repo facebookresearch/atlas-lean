@@ -9,22 +9,23 @@ library), runs `lake exe runLinter` on each aggregator, and keeps the findings
 on the declarations that the change adds.
 
 A declaration counts as added when the change adds the line that declares it
-(the line with its keyword and name, below any docstring, attribute or
-modifier; for a structure field, a constructor or a `where` or `let rec`
-helper, its own line), and no declaration of that name is in the files the
-change modifies, renames or deletes, as they are at the base. A private
-declaration is the same only as one of its own file: another file's private
-declaration of that name is another declaration. An anonymous instance, whose
-name Lean generates, is known by its namespace and header. A wanted statement
-(`theorem_wanted`, `def_wanted`, `proof_wanted`, `instance_wanted`) elaborates
-to a private placeholder, so it is not the declaration that proves it later. So
-a change that only documents, tags or edits an existing declaration does not
-report it, nor does one that moves a public declaration between those files,
-but one that proves a wanted statement reports the proof. A finding that
+(the line with its keyword and name, below any docstring, attribute or modifier;
+for a structure field, a constructor or a `where` or `let rec` helper, its own
+line), and no declaration of that name is in the files the change modifies,
+renames or deletes, as they are at the base. A private declaration (one marked
+`private`, or in a `module` file one that is neither marked `public` nor in a
+`public section`) is the same only as one of its own file: another file's
+private declaration of that name is another declaration. An anonymous instance,
+whose name Lean generates, is known by its namespace and header. A wanted
+statement (`theorem_wanted`, `def_wanted`, `proof_wanted`, `instance_wanted`)
+elaborates to a private placeholder, so it is not the declaration that proves it
+later. So a change that only documents, tags or edits an existing declaration
+does not report it, nor does one that moves a public declaration between those
+files, but one that proves a wanted statement reports the proof. A finding that
 `runLinter` prints without a position (a declaration without a source range,
-such as a structure's `mk.injEq`) is placed on the nearest enclosing
-declaration of the changed files that has one, under the same rule. `runLinter`
-imports the modules with their private declarations, so it lints those as well.
+such as a structure's `mk.injEq`) is placed on the nearest enclosing declaration
+of the changed files that has one, under the same rule. `runLinter` imports the
+modules with their private declarations, so it lints those as well.
 
     python3 scripts/check_env_linters.py --base origin/main [--report-only]
 
@@ -143,6 +144,8 @@ def parse_run_linter(text: str, cwd: Path = ROOT) -> list[Finding]:
 COMPONENT = r"(?:«[^«»\n]+»|[^\W\d][\w'!?]*)"
 NAME = rf"{COMPONENT}(?:\.{COMPONENT})*"
 MODIFIERS = r"(?:private|protected|public|noncomputable|nonrec|partial|unsafe|scoped|local|meta)"
+# A `module` file starts with this keyword (comments are blanked by then).
+MODULE_HEADER = re.compile(r"\s*module\b")
 # Batteries' wanted statements, each a private placeholder `def` of its name.
 WANTED_KINDS = ("theorem_wanted", "def_wanted", "proof_wanted", "instance_wanted")
 # How the index keys a wanted statement, apart from the declaration that proves it later.
@@ -298,7 +301,10 @@ def index_source(text: str) -> SourceIndex:
     if code is None:
         return index
     index.line_starts = [0] + [i + 1 for i, char in enumerate(code) if char == "\n"]
-    scopes: list[list[str]] = []
+    is_module = MODULE_HEADER.match(code) is not None
+    # Each scope's namespace components, and whether it is public: a `public section`, or a
+    # scope inside one, as Lean's scopes inherit `isPublic`.
+    scopes: list[tuple[list[str], bool]] = []
     commands = list(COMMAND.finditer(code))
     for number, command in enumerate(commands):
         kind = command.group("kind")
@@ -306,19 +312,26 @@ def index_source(text: str) -> SourceIndex:
         stop = commands[number + 1].start() if number + 1 < len(commands) else len(code)
         name_match = NAME_AT.match(code, rest, stop)
         name = name_match.group("name") if name_match else None
+        modifiers = command.group("modifiers").split()
+        public_scope = bool(scopes) and scopes[-1][1]
         if kind == "namespace":
-            scopes.append([unquote_name(part) for part in name.split(".")] if name else [])
+            scopes.append(([unquote_name(part) for part in name.split(".")] if name else [],
+                           public_scope))
             continue
         if kind in ("section", "mutual"):
-            scopes.append([])
+            scopes.append(([], public_scope or "public" in modifiers))
             continue
         if kind == "end":
             if scopes:
                 scopes.pop()
             continue
-        prefix = [part for scope in scopes for part in scope]
+        prefix = [part for components, _ in scopes for part in components]
         line = index.line_at(command.start("kind"))
-        private = "private" in command.group("modifiers").split()
+        # As Lean decides (`Visibility.isInferredPublic`): a declaration marked `private` is
+        # private; in a `module` file, so is one that is neither marked `public` nor in a
+        # `public section`.
+        private = "private" in modifiers or (
+            is_module and "public" not in modifiers and not public_scope)
 
         def full(declared: str) -> str:
             declared = unquote_name(declared)
@@ -352,8 +365,9 @@ def index_source(text: str) -> SourceIndex:
         declared = full(name)
         if kind in WANTED_KINDS:
             # A wanted statement matches only a wanted statement: the theorem that proves it,
-            # under the same name, is new code.
-            index.add(f"{WANTED}{declared}", line, private)
+            # under the same name, is new code. Each is a private placeholder, but moving one
+            # to another changed file adds nothing, so it matches across those files.
+            index.add(f"{WANTED}{declared}", line)
             continue
         index.add(declared, line, private)
         body = code[name_match.end():stop] if name_match else ""
