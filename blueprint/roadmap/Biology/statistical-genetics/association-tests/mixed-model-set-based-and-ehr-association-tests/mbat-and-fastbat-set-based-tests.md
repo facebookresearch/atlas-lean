@@ -28,7 +28,7 @@ causal effects have the same sign while their LD correlation is negative, or opp
 
 ## Depends on
 
-- [SKAT variance-component test](skat-variance-component-test/README.md)
+- [SKAT variance-component test](../skat-variance-component-test/README.md)
 
 ## Expansion
 

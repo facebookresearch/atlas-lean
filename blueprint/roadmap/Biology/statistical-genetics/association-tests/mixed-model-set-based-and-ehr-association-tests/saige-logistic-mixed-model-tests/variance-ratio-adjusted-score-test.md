@@ -16,7 +16,7 @@ which has mean $0$ and variance approximately $1$ under $H_0$ and costs $O(N)$ p
 
 ## Depends on
 
-- [Mixed-model association chi-squared statistic](../../proximal-contamination-in-mixed-model-associatio/mm-chi-sq.md)
+- [Mixed-model association chi-squared statistic](../../../proximal-contamination-in-mixed-model-associatio/mm-chi-sq.md)
 
 ## Expansion
 
