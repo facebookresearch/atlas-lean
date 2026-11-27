@@ -15,10 +15,12 @@ public import MathlibExt.Probability.HoeffdingBounded
 # Selecting the best of finitely many simulated alternatives
 
 A finite nonempty set `X` of alternatives has unknown costs `C(x)`. Each cost is estimated by
-the average `Ĉ(x) = (1/n) ∑ᵢ Yₓᵢ` of `n` replications `Yₓ₁, …, Yₓₙ` that are independent, take
-values in `[a, b]` almost surely and have mean `C(x)`; the replications of different alternatives
-may be dependent, as when they share common random numbers. The alternative selected is one with the
-smallest estimate.
+the average `Ĉ(x) = (1/n) ∑ᵢ Yₓᵢ` of `n` replications `Yₓ₁, …, Yₓₙ`: almost-everywhere measurable
+real functions on a probability space that are independent, take values in `[a, b]` almost surely
+and have mean `C(x)`. The replications of different alternatives may be dependent, as when they
+share common random numbers. The alternative selected is one with the smallest estimate.
+Probabilities of deviation events are `μ.real`: such an event is null-measurable, and `μ.real` of
+it is its probability in the completion of `μ`.
 
 ## Main result
 
@@ -26,8 +28,15 @@ smallest estimate.
   `P(maxₓ |Ĉ(x) - C(x)| ≥ ε) ≤ 2 |X| exp (-2 n ε² / (b - a)²)`, and when
   `maxₓ |Ĉ(x) - C(x)| < ε`, every minimizer `x̂` of `Ĉ` satisfies `C(x̂) - minₓ C(x) < 2 ε`.
 
-Source: S. Asmussen and P. W. Glynn, *Stochastic Simulation: Algorithms and Analysis*,
-Springer, 2007.
+## References
+
+- S. Asmussen and P. W. Glynn, *Stochastic Simulation: Algorithms and Analysis*, Springer, 2007:
+  background on estimating costs by simulation, not a source for this statement.
+- F. Bach, *Learning Theory from First Principles*, MIT Press (2024), author edition of
+  26 May 2025: Section 1.2.1, Corollary 1.1 and the first remark after it (two-sided Hoeffding
+  inequality on `[a, b]`); Section 4.4.3 (union bound over a finite class); Section 4.4,
+  equation (4.10) and the sentence after it (twice the largest deviation). These are the
+  ingredients of the proof, not a source for the whole statement.
 
 ## Proof outline
 
@@ -51,19 +60,25 @@ open scoped BigOperators
 namespace Cslib.Algorithms.Simulation.SelectBest
 
 /-- **Uniform error and regret for selecting the best simulated alternative.** Let `X` be a
-finite nonempty set of alternatives and, for each `x ∈ X`, let `Yₓ₁, …, Yₓₙ` be independent real
-random variables with values in `[a, b]` almost surely and mean `C(x)`; the replications of
-different alternatives may be dependent. Write `Ĉ(x) = (1/n) ∑ᵢ Yₓᵢ`. Then for every `ε ≥ 0`,
+finite nonempty set of alternatives and, for each `x ∈ X`, let `Yₓ₁, …, Yₓₙ` be independent
+almost-everywhere measurable real functions on a probability space, with values in `[a, b]`
+almost surely and mean `C(x)`; the replications of different alternatives may be dependent.
+Write `Ĉ(x) = (1/n) ∑ᵢ Yₓᵢ`. Then for every `ε ≥ 0`,
 `P(maxₓ |Ĉ(x) - C(x)| ≥ ε) ≤ 2 |X| exp (-2 n ε² / (b - a)²)`, and at every outcome where
 `maxₓ |Ĉ(x) - C(x)| < ε`, every minimizer `x̂` of `Ĉ` satisfies `C(x̂) - minₓ C(x) < 2 ε`.
 
 The bound needs neither `n ≥ 1` nor `a < b`: an average of no replications is `0` and a quotient
 by `0` is `0` (Lean's convention), so the right-hand side is `2 |X| ≥ 1` when `n = 0` or `a = b`;
-when `a > b`, no random variable takes values in `[a, b]` almost surely. For `ε = 0` the second
-claim is vacuous.
+when `a > b`, no replication takes values in `[a, b]` almost surely. For `ε = 0` the second
+claim is vacuous. The replications need not be measurable, so neither need the deviation event;
+it is null-measurable, and `P` of it is `μ.real`, its probability in the completion of `μ`. The
+claim about minimizers holds outcome by outcome.
 
-Source: S. Asmussen and P. W. Glynn, *Stochastic Simulation: Algorithms and Analysis*,
-Springer, 2007.
+Background: S. Asmussen and P. W. Glynn, *Stochastic Simulation: Algorithms and Analysis*,
+Springer, 2007 (estimating costs by simulation; not a source for this statement). Ingredients:
+F. Bach, *Learning Theory from First Principles*, MIT Press (2024), author edition of
+26 May 2025, Corollary 1.1 and the first remark after it, Section 4.4.3 and equation (4.10);
+they are not a source for the whole statement.
 Proof: the two-sided Hoeffding inequality for each alternative and a union bound over `X`; then
 `C(x̂) ≤ Ĉ(x̂) + s ≤ Ĉ(x) + s ≤ C(x) + 2 s` for the largest deviation `s < ε`. -/
 theorem measureReal_sup'_abs_avg_sub_ge_le_and_sub_inf'_lt {Ω X : Type*} [MeasurableSpace Ω]

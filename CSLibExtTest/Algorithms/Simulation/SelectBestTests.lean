@@ -130,6 +130,26 @@ example {Ω X : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeas
   (measureReal_sup'_abs_avg_sub_ge_le_and_sub_inf'_lt (fun _ => iIndepFun.of_subsingleton)
     (fun _ i => i.elim0) (fun _ i => i.elim0) (fun _ i => i.elim0) hε).1
 
+/-! The replications are only almost-everywhere measurable, so the deviation event need not be
+measurable; it is null-measurable, so its `μ.real` is its probability in the completion of `μ`. -/
+
+example {Ω X : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [Fintype X] [Nonempty X] {n : ℕ}
+    {Y : X → Fin n → Ω → ℝ} (hmeas : ∀ x i, AEMeasurable (Y x i) μ) (C : X → ℝ) (ε : ℝ) :
+    NullMeasurableSet {ω | ε ≤ Finset.univ.sup' Finset.univ_nonempty
+      fun x => |(1 / n : ℝ) * ∑ i, Y x i ω - C x|} μ := by
+  have hdev : ∀ x, AEMeasurable (fun ω => |(1 / n : ℝ) * ∑ i, Y x i ω - C x|) μ := by
+    intro x
+    have := hmeas x
+    fun_prop
+  have hsup : AEMeasurable (Finset.univ.sup' Finset.univ_nonempty
+      fun x ω => |(1 / n : ℝ) * ∑ i, Y x i ω - C x|) μ :=
+    Finset.sup'_induction (p := fun f => AEMeasurable f μ) _ _ (fun _ hf _ hg => hf.sup hg)
+      fun x _ => hdev x
+  refine nullMeasurableSet_le aemeasurable_const ?_
+  convert hsup using 1
+  ext ω
+  simp only [Finset.sup'_apply]
+
 /-! The set of alternatives is nonempty: the maximum and the minimum over it must exist. The
 theorem applies with a `Nonempty X` instance and fails to apply without one; only the failure is
 checked, not Lean's message. -/
