@@ -1,18 +1,4 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`Definitions/Def_AlgebraicCurve_TwoChartIntegralModel.lean`
-(https://github.com/anthropics/fermats-last-theorem):
-Compared with the source files at commit
-`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The upstream NOTICE also credits:
@@ -20,15 +6,27 @@ Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
+-/
+
+/-
+Adapted from:
+
+`Definitions/Def_AlgebraicCurve_TwoChartIntegralModel.lean`
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source files at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
 
 public import Mathlib.AlgebraicGeometry.Limits
 public import Mathlib.RingTheory.Localization.Integral
+public import MathlibExt.AlgebraicGeometry.Curve.GluedCharts
 
 @[expose] public section
 
@@ -154,11 +152,11 @@ variable (R F j)
 
 omit [Fact (j ≠ 0)] in
 public theorem sFin_subset : ({j} : Set F) ⊆ {j, j⁻¹} :=
-  Set.singleton_subset_iff.mpr (Set.mem_insert _ _)
+  CurveModel.singleton_subset_pair j
 
 omit [Fact (j ≠ 0)] in
 public theorem sInf_subset : ({j⁻¹} : Set F) ⊆ {j, j⁻¹} :=
-  Set.singleton_subset_iff.mpr (Set.mem_insert_of_mem _ rfl)
+  CurveModel.singleton_inv_subset_pair j
 
 public abbrev chartAlgFin : Subalgebra R F := chartAlg R F {j}
 
@@ -226,7 +224,10 @@ instance isOpenImmersion_fInf : IsOpenImmersion (fInf R F j) := by
 /-- The scheme glued from chart rings inside `F` at `j ≠ 0`: `Spec` of the integral closures of
 `R[j]` and `R[j⁻¹]` in `F`, glued along `Spec` of the integral closure of `R[j, j⁻¹]`, which is an
 open subscheme of both. These hypotheses do not make its function field `F`: for `R = ℚ`,
-`F = ℚ(t)` and `j = 1` all three chart rings are `ℚ`, so the glued scheme is `Spec ℚ`. -/
+`F = ℚ(t)` and `j = 1` all three chart rings are `ℚ`, so the glued scheme is `Spec ℚ`. Over a field
+`K`, it is `AlgebraicCurve.CurveModel.glued K j` (`twoChartIntegralModel_eq_glued`), whose
+function field is `F` when `F` is finite and separable over `K(j)`
+(`AlgebraicCurve.CurveModel.gluedFunctionFieldEquiv`). -/
 public def _root_.AlgebraicCurve.TwoChartIntegralModel : Scheme.{u} :=
   pushout (fFin R F j) (fInf R F j)
 
@@ -390,6 +391,30 @@ public theorem chartCoeffIncl_algebraMap (S : Set F) (r : R) :
   Subtype.ext (IsScalarTower.algebraMap_apply R R' F r)
 
 end CoefficientExtension
+
+section FieldCase
+
+variable (K : Type u) [Field K] (L : Type u) [Field L] [Algebra K L]
+
+public theorem chartAlg_eq_chartRing (S : Set L) : chartAlg K L S = CurveModel.chartRing K S :=
+  rfl
+
+variable (t : L) [Fact (t ≠ 0)]
+
+public theorem twoChartIntegralModel_eq_glued :
+    AlgebraicCurve.TwoChartIntegralModel K L t = CurveModel.glued K t :=
+  rfl
+
+public theorem ιFin_eq_ι₀ : ιFin K L t = CurveModel.ι₀ K t :=
+  rfl
+
+public theorem ιInf_eq_curveModel_ιInf : ιInf K L t = CurveModel.ιInf K t :=
+  rfl
+
+public theorem toBase_eq_gluedToBase : toBase K L t = CurveModel.gluedToBase K t :=
+  rfl
+
+end FieldCase
 
 end TwoChartIntegralModel
 
