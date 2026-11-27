@@ -6,7 +6,7 @@ $$c_m = \mathbb{E}\bigl[T_{m,m}\bigr] = \int_0^\infty \widetilde\eta(\tau)\,e^{-
 
 **Lemma 1.** The expected sample frequency spectrum of a sample of size $n$ determines $c_2,\dots,c_n$ up to a common positive factor.
 
-**Sign changes.** For a piecewise-continuous $g$ on an interval, $\sigma(g)$ counts the points where $g$ changes sign, ignoring intervals where $g$ vanishes. The **sign-change complexity** of a family $\mathcal F$ of positive continuous size functions is
+For a right-continuous function $g : [0, \infty) \to \mathbb{R}$, let $\sigma(g)$ denote its sign-variation count, defined as the supremum of $k \ge 0$ for which there exist $0 \le t_0 < t_1 < \dots < t_k$ with $g(t_{i-1}) g(t_i) < 0$ for all $1 \le i \le k$ (matching the Laplace sign-variation bound page linked below).
 
 $$\mathcal S(\mathcal F) = \sup\bigl\{\sigma\bigl(\widetilde f_1(\cdot)-\widetilde f_2(\cdot-a)\bigr) : f_1,f_2\in\mathcal F,\ a\ge 0\bigr\},$$
 
@@ -26,7 +26,7 @@ The Myers–Fefferman–Patterson non-identifiable pair has a difference $\widet
 
 ## Expansion
 
-If two size functions give the same $c_2,\dots,c_n$, the Laplace transform $G$ of $f=\widetilde\eta_1-\widetilde\eta_2$ vanishes at the $n-1$ distinct points $x=\binom{m}{2}$, $2\le m\le n$. Theorem 4, adapted from Jameson's Laplace-transform version of Descartes' rule, allows at most $\sigma(f)\le\mathcal S$ roots, so $n-1>\mathcal S$ forces $f\equiv 0$; since $\eta$ is recovered from $\widetilde\eta$ through $S(t)=\int_0^t\widetilde\eta$, $\eta_1=\eta_2$. For piecewise families, two $K$-piece histories have at most $2K-1$ joint pieces in the $\tau$ scale, and the difference can change sign inside each joint piece at most $\mathcal S(\mathcal F)$ times and at each of the at most $2K-2$ joint breakpoints, which is Lemma 2. Theorem 4 and its proof are adapted from Jameson's Laplace-transform analogue of Descartes' rule (Lemma 4.5 there).
+If two size functions give the same $c_2,\dots,c_n$, the Laplace transform $G$ of $f=\widetilde\eta_1-\widetilde\eta_2$ vanishes at the $n-1$ distinct points $x=\binom{m}{2}$, $2\le m\le n$. the Laplace sign-variation bound, adapted from Jameson's Laplace-transform version of Descartes' rule, allows at most $\sigma(f)\le\mathcal S$ roots, so $n-1>\mathcal S$ forces $f\equiv 0$; since $\eta$ is recovered from $\widetilde\eta$ through $S(t)=\int_0^t\widetilde\eta$, $\eta_1=\eta_2$. For piecewise families, two $K$-piece histories have at most $2K-1$ joint pieces in the $\tau$ scale, and the difference can change sign inside each joint piece at most $\mathcal S(\mathcal F)$ times and at each of the at most $2K-2$ joint breakpoints, which is Lemma 2. the Laplace sign-variation bound and its proof are adapted from Jameson's Laplace-transform analogue of Descartes' rule (Lemma 4.5 there).
 
 ## Depends on
 
