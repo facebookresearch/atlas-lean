@@ -2087,6 +2087,8 @@
   "CSLibExt/Privacy/PrivacyLoss": {"to": "ComputerScience/cryptography", "title": "Privacy-loss random variable and KL bound"},
   "CSLibExt/Privacy/RenyiDifferentialPrivacy": {"to": "ComputerScience/cryptography", "title": "Renyi differential privacy"},
   "CSLibExt/Scheduling/ProjectNetwork/Slack": {"to": "ComputerScience/graph-algorithms/shortest-paths", "title": "Shortest paths"},
+  "CSLibExt/Scheduling/SingleMachine/CompletionTime": {"to": "ComputerScience/greedy-algorithms-and-matroids", "title": "Single-machine scheduling"},
+  "CSLibExt/Scheduling/SingleMachine/SmithRule": {"to": "ComputerScience/greedy-algorithms-and-matroids", "title": "Smith's rule for weighted completion time"},
   "CSLibExt/Security/AccessControl/HRU/Basic": {"to": "ComputerScience/computer-security", "title": "Access control"},
   "CSLibExt/Security/InformationFlow/LowEquivalence": {"to": "ComputerScience/computer-security", "title": "Information flow"},
   "CSLibExt/Security/Unwinding": {"to": "ComputerScience/computer-security", "title": "Information flow"},
