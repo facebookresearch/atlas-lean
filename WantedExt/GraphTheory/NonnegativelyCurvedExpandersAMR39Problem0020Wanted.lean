@@ -40,8 +40,10 @@ every laziness variant of `κ`.
 
 variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
-/-- The transition matrix of the lazy simple random walk on `G`: stay with probability `1/2`,
-otherwise move to a uniform random neighbour. -/
+/-- The kernel of the lazy simple random walk on `G`: `1/2` on the diagonal and `1 / (2 deg x)`
+from `x` to each neighbour, so the walk stays with probability `1/2` and otherwise moves to a
+uniform random neighbour. It is a transition matrix (every row sums to `1`) exactly when `G` has no
+isolated vertex: at an isolated vertex the row is `1/2` on the diagonal and `0` elsewhere. -/
 noncomputable def lazyWalk (x y : V) : ℝ :=
   if x = y then 1 / 2 else if G.Adj x y then 1 / (2 * G.degree x) else 0
 
