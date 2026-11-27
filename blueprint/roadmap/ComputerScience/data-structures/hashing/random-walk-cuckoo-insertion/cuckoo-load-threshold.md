@@ -4,7 +4,7 @@ For each $d \ge 3$ let $\xi_d > 0$ be the unique solution of $d = \frac{\xi(e^{\
 
 ## Proof sketch
 
-By Hall's condition, validity is the orientability of a random $d$-uniform hypergraph whose vertices are slots and whose hyperedges are keys. Its threshold is determined by the $2$-core: after peeling vertices of degree at most one, an assignment exists iff the core has at most as many hyperedges as vertices, and the core's size is computed from the fixed point $\xi_d$ of a Poisson branching recursion, which yields the stated formula.
+Validity is the orientability of a random $d$-uniform hypergraph whose vertices are slots and whose hyperedges are keys. Peeling a vertex of degree at most one together with its hyperedge preserves orientability in both directions, so an assignment exists if and only if the $2$-core satisfies Hall's condition: every set $F$ of hyperedges of the core spans at least $|F|$ vertices. The core's numbers of vertices and hyperedges are computed from the fixed point $\xi_d$ of a Poisson branching recursion. Above $c_d^*$ the whole core has more hyperedges than vertices, so Hall's condition fails. Below $c_d^*$ the whole core has fewer hyperedges than vertices, but this alone does not control its subsets: a hypergraph can have as many vertices as hyperedges and still contain a set of hyperedges spanning fewer vertices. Fountoulakis and Panagiotou add a probabilistic step showing that, with probability $1 - o(1)$, no set of hyperedges of the core spans fewer vertices than its size, which yields the stated threshold.
 
 ## Depends on
 

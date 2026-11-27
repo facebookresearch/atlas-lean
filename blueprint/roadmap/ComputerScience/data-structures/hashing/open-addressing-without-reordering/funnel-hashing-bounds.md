@@ -1,6 +1,6 @@
 # Funnel hashing: squared-logarithmic worst-case probes for a greedy table
 
-Let $n \in \mathbb{N}$ and $\delta \in (0, 1)$ with $\delta \ge n^{-o(1)}$. Funnel hashing is a greedy open-addressing strategy that supports $n - \lfloor \delta n \rfloor$ insertions into an array of $n$ slots with worst-case expected probe complexity and insertion time $O(\log^2 \delta^{-1})$. Moreover, with probability $1 - 1/\mathrm{poly}(n)$, every key in the table has probe complexity $O(\log^2 \delta^{-1} + \log\log n)$.
+Let $n \in \mathbb{N}$ and $\delta \in (0, 1/2]$ with $\delta n$ an integer and $\delta \ge n^{-o(1)}$. Funnel hashing is a greedy open-addressing strategy that supports $n - \delta n$ insertions into an array of $n$ slots with worst-case expected probe complexity and insertion time $O(\log^2 \delta^{-1})$. Moreover, with probability $1 - 1/\mathrm{poly}(n)$, every key in the table has probe complexity $O(\log^2 \delta^{-1} + \log\log n)$.
 
 ## Proof sketch
 

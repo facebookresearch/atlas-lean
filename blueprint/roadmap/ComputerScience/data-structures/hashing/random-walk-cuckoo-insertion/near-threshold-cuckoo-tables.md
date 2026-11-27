@@ -1,10 +1,10 @@
 # Constant-time d-ary cuckoo tables at load $(1-\varepsilon)c_d^*$
 
-For every $d \ge 3$ and $\varepsilon \in (0,1)$, with $c_d^* = \xi_d / \big(d\,(1 - e^{-\xi_d})^{d-1}\big)$, where $\xi_d > 0$ is the unique solution of $d = \frac{\xi(e^{\xi} - 1)}{e^{\xi} - 1 - \xi}$, a $d$-ary cuckoo table with random-walk insertion at load factor $(1 - \varepsilon)c_d^*$ supports queries and deletions in at most $d$ probes in the worst case and insertions in $O_{d,\varepsilon}(1)$ expected time, with probability $1 - o(1)$ over the hash functions. For $d = 3$ this exceeds both the peeling threshold $c_3^{\Delta} \approx 0.818$ and the binary threshold $1/2$ once $\varepsilon < 0.1$.
+For every $d \ge 4$ and $\varepsilon \in (0,1)$, with $c_d^* = \xi_d / \big(d\,(1 - e^{-\xi_d})^{d-1}\big)$, where $\xi_d > 0$ is the unique solution of $d = \frac{\xi(e^{\xi} - 1)}{e^{\xi} - 1 - \xi}$, a $d$-ary cuckoo table with random-walk insertion at load factor $(1 - \varepsilon)c_d^*$ supports queries and deletions in at most $d$ probes in the worst case and insertions in $O_{d,\varepsilon}(1)$ expected time, with probability $1 - o(1)$ over the hash functions. The case $d = 3$ is not covered here: the cited refereed random-walk bounds for three hashes stop at the peeling threshold $c_3^{\Delta} \approx 0.818$, below the existence threshold $c_3^* \approx 0.918$.
 
 ## Proof sketch
 
-Apply the random-walk bound at $c = (1-\varepsilon)c_d^* < c_d^*$; queries inspect the $d$ candidate slots. The numerical comparison uses $c_3^* \approx 0.918$.
+Apply the random-walk bound for $d \ge 4$ at $c = (1-\varepsilon)c_d^* < c_d^*$; queries inspect the $d$ candidate slots. For three hashes, Walzer's bound applies only at loads $c < c_3^{\Delta}$.
 
 ## Depends on
 

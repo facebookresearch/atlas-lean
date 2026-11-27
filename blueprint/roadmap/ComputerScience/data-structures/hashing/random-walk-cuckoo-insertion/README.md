@@ -7,5 +7,5 @@
 - [A geometric tail bound gives constant expected walk length](geometric-tail-gives-constant-mean.md)
 - [Peeling threshold of random hypergraphs](peeling-threshold.md)
 - [Random-walk cuckoo insertion takes constant expected time up to the load threshold](bell-frieze-random-walk-bound.md)
-- [Constant random-walk insertion time below the peeling threshold](random-walk-below-peeling-threshold.md)
+- [Constant amortized random-walk insertion time below the peeling threshold](random-walk-below-peeling-threshold.md)
 - [Constant-time d-ary cuckoo tables at load $(1-\varepsilon)c_d^*$](near-threshold-cuckoo-tables.md)

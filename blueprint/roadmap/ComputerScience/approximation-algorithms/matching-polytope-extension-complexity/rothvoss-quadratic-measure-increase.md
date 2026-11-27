@@ -1,6 +1,6 @@
 # Rothvoss' quadratic measure increase for cut-matching rectangles
 
-Let $k \ge 3$ and $m$ be odd integers, $n=3m(k-3)+2k$, $t=\tfrac{m+1}{2}(k-3)+3$, and let $\mathcal{U}_{\mathrm{all}}$ be the $t$-element vertex subsets and $\mathcal{M}_{\mathrm{all}}$ the perfect matchings of $K_n$. For $\ell \ge 0$ let $Q_\ell=\{(U,M) : |\delta(U) \cap M|=\ell\}$ and let $\mu_\ell$ be the uniform probability measure on $Q_\ell$. There is $\delta=\delta(k) > 0$ such that every rectangle $\mathcal{R}=\mathcal{U} \times \mathcal{M}$ with $\mathcal{U} \subseteq \mathcal{U}_{\mathrm{all}}$, $\mathcal{M} \subseteq \mathcal{M}_{\mathrm{all}}$ and $\mu_1(\mathcal{R})=0$ satisfies
+Let $k \ge 3$ and $m$ be odd integers, $n=3m(k-3)+2k$, $t=\tfrac{m+1}{2}(k-3)+3$, and let $\mathcal{U}_{\mathrm{all}}$ be the $t$-element vertex subsets and $\mathcal{M}_{\mathrm{all}}$ the perfect matchings of $K_n$. For $\ell \ge 0$ let $Q_\ell=\{(U,M) : |\delta(U) \cap M|=\ell\}$. Since $t$ is odd and $|\delta(U) \cap M| = t-2|M \cap E(U)|$, the layer $Q_\ell$ is empty for even $\ell$; for $\ell \in \{1,3,k\}$ it is nonempty, and $\mu_\ell$ denotes the uniform probability measure on $Q_\ell$. There is $\delta=\delta(k) > 0$ such that every rectangle $\mathcal{R}=\mathcal{U} \times \mathcal{M}$ with $\mathcal{U} \subseteq \mathcal{U}_{\mathrm{all}}$, $\mathcal{M} \subseteq \mathcal{M}_{\mathrm{all}}$ and $\mu_1(\mathcal{R})=0$ satisfies
 
 $$
 \mu_3(\mathcal{R}) \le \frac{400}{k^2}\,\mu_k(\mathcal{R})+2^{-\delta m}.

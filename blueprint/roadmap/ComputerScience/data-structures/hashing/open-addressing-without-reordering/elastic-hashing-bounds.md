@@ -1,6 +1,6 @@
 # Elastic hashing: constant amortized and logarithmic worst-case probe complexity
 
-Let $n \in \mathbb{N}$ and $\delta \in (0, 1)$ with $\delta \ge C/n$ for a suitable constant $C$ and $\delta^{-1}$ a power of two. Elastic hashing supports $n - \lfloor \delta n \rfloor$ insertions into an array of $n$ slots without reordering, with amortized expected probe complexity $O(1)$, worst-case expected probe complexity $O(\log \delta^{-1})$, and worst-case expected insertion time $O(\log \delta^{-1})$.
+Let $n \in \mathbb{N}$ and $\delta \in (0, 1)$ with $\delta \ge C/n$ for a suitable constant $C$ and $\delta^{-1}$ a power of two. Elastic hashing supports $n - \delta n$ insertions into an array of $n$ slots without reordering, with amortized expected probe complexity $O(1)$, worst-case expected probe complexity $O(\log \delta^{-1})$, and worst-case expected insertion time $O(\log \delta^{-1})$.
 
 ## Proof sketch
 

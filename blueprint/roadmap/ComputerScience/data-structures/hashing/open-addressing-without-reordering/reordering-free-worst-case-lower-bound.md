@@ -1,6 +1,6 @@
 # Logarithmic lower bound for worst-case probes without reordering
 
-Every open-addressed hash table without reordering (greedy or not) that performs $n - \lfloor \delta n \rfloor$ insertions into an array of $n$ slots has worst-case expected probe complexity $\Omega(\log \delta^{-1})$. Hence elastic hashing is optimal for both amortized and worst-case expected probe complexity.
+In the high-load regime $1/n \le \delta \le 1/2$ with $\delta n$ an integer, every open-addressed hash table without reordering (greedy or not) that performs $n - \delta n$ insertions into an array of $n$ slots has worst-case expected probe complexity $\Omega(\log \delta^{-1})$. Hence elastic hashing is optimal for both amortized and worst-case expected probe complexity.
 
 ## Proof sketch
 

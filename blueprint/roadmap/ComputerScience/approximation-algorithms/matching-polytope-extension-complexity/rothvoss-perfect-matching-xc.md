@@ -1,6 +1,6 @@
 # Rothvoss: the perfect matching polytope of K_n has extension complexity 2^Omega(n)
 
-There is an absolute constant $c > 0$ such that for every even $n$,
+There are absolute constants $c > 0$ and $n_0$ such that for every even $n \ge n_0$,
 
 $$
 \mathrm{xc}(P_{\mathrm{PM}}(n)) \ge 2^{cn},
@@ -10,7 +10,7 @@ where $P_{\mathrm{PM}}(n)$ is the perfect matching polytope of $K_n$. The same b
 
 ## Proof sketch
 
-Fix $k=501$ and the parameters of the measure-increase lemma, and choose $W_{U,M}=-\infty$ on $Q_1$, $1/|Q_3|$ on $Q_3$, $-\tfrac{1}{k-1}\cdot\tfrac{1}{|Q_k|}$ on $Q_k$ and $0$ elsewhere. Then $\langle W,S\rangle=2-1=1$, and the lemma gives $\langle W,\mathbf{1}_{\mathcal{R}}\rangle=\mu_3(\mathcal{R})-\tfrac{1}{k-1}\mu_k(\mathcal{R}) \le 2^{-\delta m}$ for every rectangle with $\mu_1(\mathcal{R})=0$. The hyperplane separation bound with $\|S\|_\infty \le n$ yields $\mathrm{rk}_+ \ge 2^{\delta m}/n=2^{\Omega(n)}$, which transfers to $\mathrm{xc}$ by the factorization lemma; intermediate $n$ follow because $P_{\mathrm{PM}}(n)$ is a face of $P_{\mathrm{PM}}(n')$ for $n \le n'$.
+Fix $k=501$ and the parameters of the measure-increase lemma, and choose $W_{U,M}=-\infty$ on $Q_1$, $1/|Q_3|$ on $Q_3$, $-\tfrac{1}{k-1}\cdot\tfrac{1}{|Q_k|}$ on $Q_k$ and $0$ elsewhere. Then $\langle W,S\rangle=2-1=1$, and the lemma gives $\langle W,\mathbf{1}_{\mathcal{R}}\rangle=\mu_3(\mathcal{R})-\tfrac{1}{k-1}\mu_k(\mathcal{R}) \le 2^{-\delta m}$ for every rectangle with $\mu_1(\mathcal{R})=0$. The hyperplane separation bound with $\|S\|_\infty \le n$ yields $\mathrm{rk}_+ \ge 2^{\delta m}/n=2^{\Omega(n)}$, which transfers to $\mathrm{xc}$ by the factorization lemma; intermediate even $n \ge n_0$ follow, after shrinking $c$, because $P_{\mathrm{PM}}(n)$ is a face of $P_{\mathrm{PM}}(n')$ for $n \le n'$.
 
 ## Depends on
 
