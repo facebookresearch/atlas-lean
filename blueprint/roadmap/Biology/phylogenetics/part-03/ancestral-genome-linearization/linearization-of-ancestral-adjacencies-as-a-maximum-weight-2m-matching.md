@@ -31,6 +31,7 @@ the traveling salesman and vertex-disjoint path cover problems.
 
 - [General matching is in P (Edmonds' blossom algorithm)](../../../../TheoryOfComputation/polynomial-time-problems/matching-in-general-graphs/matching-in-p.md)
 - [Euler circuits in connected even graphs](../../../../GraphTheory/paths-cycles-connectivity/eulerian-circuits/exists-is-eulerian.md)
+- [TRAVELING SALESPERSON (SYMMETRIC) is NP-complete](../../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/traveling-salesperson-problem/tsp-np-complete.md)
 
 ## Expansion
 

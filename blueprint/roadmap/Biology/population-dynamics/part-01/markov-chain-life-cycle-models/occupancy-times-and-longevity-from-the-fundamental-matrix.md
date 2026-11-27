@@ -7,12 +7,13 @@
 1. The *fundamental matrix* $N = (I - U)^{-1}$ exists, and $N_{ij}$ is the expected number of time steps spent in stage $i$ by an individual starting in stage $j$.
 2. The variances of these occupancy times are the entries of
 
-$$V = \bigl(2 N_{\mathrm{dg}} - I\bigr) N - N \circ N,$$
+    $$V = \bigl(2 N_{\mathrm{dg}} - I\bigr) N - N \circ N,$$
 
-where $N_{\mathrm{dg}}$ is the diagonal matrix with the diagonal of $N$.
+    where $N_{\mathrm{dg}}$ is the diagonal matrix with the diagonal of $N$.
+
 3. The longevity $\eta$ (time to absorption) of an individual starting in each stage has mean vector and variance vector
 
-$$\bar\eta^{\mathsf T} = \mathbf 1^{\mathsf T} N, \qquad V(\eta^{\mathsf T}) = \mathbf 1^{\mathsf T} N (2N - I) - \bar\eta^{\mathsf T} \circ \bar\eta^{\mathsf T}.$$
+    $$\bar\eta^{\mathsf T} = \mathbf 1^{\mathsf T} N, \qquad V(\eta^{\mathsf T}) = \mathbf 1^{\mathsf T} N (2N - I) - \bar\eta^{\mathsf T} \circ \bar\eta^{\mathsf T}.$$
 
 ## Proof depends on
 

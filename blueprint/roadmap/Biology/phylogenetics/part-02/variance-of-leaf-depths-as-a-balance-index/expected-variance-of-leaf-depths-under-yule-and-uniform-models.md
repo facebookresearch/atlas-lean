@@ -3,17 +3,18 @@
 **Setting.** $V_n$ is the variance of the leaves' depths, $V(T) = S^{(2)}(T)/n - S(T)^2/n^2$, of a random bifurcating phylogenetic tree with $n$ labelled leaves, either under the **Yule** (pure-birth) model or the **uniform** model (all $(2n-3)!!$ rooted binary trees equally likely). Write $H_n = \sum_{i\le n}1/i$, $H^{(2)}_n = \sum_{i\le n}1/i^2$ and $\varrho_n = \frac{(2n-2)!!}{(2n-3)!!}$.
 
 **Theorem.**
+
 1. *(Yule.)* $E_Y\big(S^{(2)}_n\big) = 2n\big(2H_n^2 - 3H_n - 2H^{(2)}_n + 3\big)$ and
 
-$$E_Y(V_n) = \frac{2(n+1)}{n}H_n + \frac1n - 5 \sim 2\ln n.$$
+    $$E_Y(V_n) = \frac{2(n+1)}{n}H_n + \frac1n - 5 \sim 2\ln n.$$
 
 2. *(Uniform.)* $E_U\big(S^{(2)}_n\big) = 4n^2 - n - 3n\varrho_n$, $E_U\big(S_n^2\big) = \frac{10n^3 - n}{3} - \frac{5n^2 + n}{2}\varrho_n$, and
 
-$$E_U(V_n) = \frac{(2n-1)(n-1)}{3n} - \frac{n-1}{2n}\varrho_n \sim \frac23 n.$$
+    $$E_U(V_n) = \frac{(2n-1)(n-1)}{3n} - \frac{n-1}{2n}\varrho_n \sim \frac23 n.$$
 
 3. *(Variance of the Sackin index, uniform.)* With $E_U(S_n) = n(\varrho_n - 1)$,
 
-$$\sigma^2_U(S_n) = \frac{n(10n^2 - 3n - 1)}{3} - \frac{n(n+1)}{2}\varrho_n - n^2\varrho_n^2.$$
+    $$\sigma^2_U(S_n) = \frac{n(10n^2 - 3n - 1)}{3} - \frac{n(n+1)}{2}\varrho_n - n^2\varrho_n^2.$$
 
 Under the Yule model the mean depth $E_Y(S_n)/n = 2H_n - 2$ and the depth variance both grow like $2\ln n$; under the uniform model the mean depth grows like $\sqrt{\pi n}$ (since $\varrho_n \sim \sqrt{\pi n}$) while the variance grows linearly.
 

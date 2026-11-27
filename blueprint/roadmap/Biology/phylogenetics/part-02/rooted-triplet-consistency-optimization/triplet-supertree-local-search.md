@@ -19,6 +19,7 @@ The same difference governs the comparison of regrafting $v$ above a node $b$ wi
 ## Depends on
 
 - [Rooted triplet](../../splits-compatibility-ultrametrics-and-upgma/triplet.md)
+- [Cluster system displaying a triplet](../../splits-compatibility-ultrametrics-and-upgma/displays-triplet.md)
 
 ## Expansion
 

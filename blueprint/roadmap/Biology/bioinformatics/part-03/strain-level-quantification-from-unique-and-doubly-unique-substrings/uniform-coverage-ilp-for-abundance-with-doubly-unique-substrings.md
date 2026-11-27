@@ -16,6 +16,10 @@ Dropping the coverage terms and asking only for the smallest set of genomes that
 
 - [Sample-size bound for unique-$L$-mer abundance estimation](sample-size-bound-for-unique-l-mer-abundance-estimation.md)
 
+## Proof depends on
+
+- [VERTEX-COVER (exact size $k$) is NP-hard](../../../../TheoryOfComputation/np-completeness/graph-covering-and-domination/clique-independent-set-and-vertex-cover/part-08/vertex-cover-dec-np-hard.md)
+
 ## Expansion
 
 A read from genome $s_i$ contains a fixed length-$\ell$ substring of $s_i$ when its start lies in a window of $L-\ell+1$ positions, which gives the coverage factor. Doubly-unique substrings let a genome without any unique substrings be detected, because its share of a shared substring's coverage must make the coverage of both partner genomes uniform at the same time. The paper also chooses the maximum indexed length $L/2$ by maximizing the product of substring length fraction $1 - 1/\Delta$ and coverage fraction $1/\Delta$, which peaks at $\Delta = 2$.

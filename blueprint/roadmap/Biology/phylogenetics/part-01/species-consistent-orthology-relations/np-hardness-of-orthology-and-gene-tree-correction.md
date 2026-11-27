@@ -21,6 +21,11 @@ Use the definitions of DS-trees, $S$-consistency, relation graphs and $P_3(R)$ f
 - [Triplet characterization of species-consistent relation graphs](triplet-characterization-of-species-consistent-relation-graphs.md)
 - [Robinson–Foulds distance](../../splits-compatibility-ultrametrics-and-upgma/rf-dist.md)
 
+## Proof depends on
+
+- [EXACT COVER BY 3-SETS is NP-complete](../../../../TheoryOfComputation/np-completeness/set-systems-and-location/exact-cover-by-3-sets/exact-cover-by3-sets-np-complete.md)
+- [INDEPENDENT-SET is NP-hard](../../../../TheoryOfComputation/np-completeness/graph-covering-and-domination/clique-independent-set-and-vertex-cover/part-08/ind-set-dec-np-hard.md)
+
 ## Expansion
 
 Membership in NP uses Theorem 2 of the dependency: $S$-consistency of a candidate graph is checked by listing $P_3(R')$ and testing each triplet against $S$. Theorem 3 is a reduction from exact cover by 3-sets, in which the components of an optimal edge-reduced graph correspond to the chosen disjoint 3-sets. Theorem 4 is a gap-preserving reduction from Maximum Independent Set on an $m$-vertex graph to an instance with $n = m^2$ vertices, in which two large retained blocks may not be joined by an edge without inducing a forbidden triplet (Lemma 3). Theorem 5 reduces from Minimum Edge-Removal Consistency with one gene per genome (Theorem 3), and Theorem 6 from Maximum Node Consistency (Corollary 1), using that a gene can always be grafted onto an $S$-consistent tree as an ortholog of a chosen gene in another species while keeping all existing relations and $S$-consistency (Lemma 5). Hence exact correction of either the relations or the tree must rely on exponential algorithms or heuristics.

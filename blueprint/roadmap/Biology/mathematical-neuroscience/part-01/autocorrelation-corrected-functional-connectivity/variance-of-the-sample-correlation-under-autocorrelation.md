@@ -11,10 +11,15 @@ $$V(\hat\rho) = N^{-2}\Big[\tfrac{\rho^2}{2}\mathrm{tr}(\Sigma_X^2) + \tfrac{\rh
 which for stationary series can be rewritten as weighted sums over lags of products of auto- and cross-correlations.
 
 **Special cases.**
+
 1. White but correlated series ($\Sigma_X = \Sigma_Y = I$, $\Sigma_{XY} = \rho I$): $V(\hat\rho) = (1-\rho^2)^2/N$, the classical result.
 2. Autocorrelated but mutually uncorrelated series ($\Sigma_{XY} = 0$): $V(\hat\rho) = N^{-2}\mathrm{tr}(\Sigma_X\Sigma_Y) = N^{-2}\big(N + 2\sum_{k=1}^{N-1}(N-k)\rho_{XX,k}\rho_{YY,k}\big)$, the Bayley–Hammersley variance inflation.
 
 **Effective degrees of freedom.** Writing $V(\hat\rho) = (1 - \rho^2)^2/\hat N$ defines an effective sample size $\hat N$. Under $\rho = 0$ it reduces to Quenouille's $\hat N = N\big(\sum_{k=-\infty}^{\infty}\rho_{XX,k}\rho_{YY,k}\big)^{-1}$, and for two AR(1) series with lag-one coefficients $\phi_X, \phi_Y$ to Bartlett's $\hat N = N\,\frac{1 - \phi_X\phi_Y}{1 + \phi_X\phi_Y}$.
+
+## Depends on
+
+- [Autocovariance of the causal AR(1) process](../../../../Probability/markov-chains/autoregressive-processes/autocovariance-of-a-causal-ar1-process.md)
 
 ## Proof depends on
 

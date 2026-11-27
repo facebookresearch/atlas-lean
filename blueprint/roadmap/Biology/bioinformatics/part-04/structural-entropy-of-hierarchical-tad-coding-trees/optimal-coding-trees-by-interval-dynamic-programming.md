@@ -13,11 +13,13 @@ and the entropy of the tree is $S_T(X) = \sum_{u\in T} S_T(X;u) + \sum_{i=1}^n S
 $$S_{T_a}(X) - S_{T_b}(X) = \frac{g(u) - \sum_{i\ge 2} g(c_i)}{2m}\,\log_2\frac{V(u)}{V(v)} \ \ge 0.$$
 
 **Theorem.**
+
 1. Let $S(i{:}j,k)$ be the minimum entropy of a binary coding tree on bins $b_i,\dots,b_j$ with $k$ leaves, and $H_l(i_l{:}i_r,j)$, $H_r(i_l{:}i_r,j)$ the entropies of the left child $b_{i_l..j}$ and right child $b_{j+1..i_r}$ of a node coding $b_{i_l..i_r}$. Then
 
-$$S(1{:}n,k) = \min_{1\le i<n,\ 1\le k_1<k}\Big[S(1{:}i,k_1) + S(i+1{:}n,k-k_1) + H_l(1{:}n,i) + H_r(1{:}n,i)\Big],$$
+    $$S(1{:}n,k) = \min_{1\le i<n,\ 1\le k_1<k}\Big[S(1{:}i,k_1) + S(i+1{:}n,k-k_1) + H_l(1{:}n,i) + H_r(1{:}n,i)\Big],$$
 
-and an optimal coding tree with $k$ leaves is computed in $O(k^2 n^3)$ time.
+    and an optimal coding tree with $k$ leaves is computed in $O(k^2 n^3)$ time.
+
 2. Restricting to (not necessarily binary) coding trees of height at most $h$ with at most $k$ leaves, an optimal tree is computed exactly by an analogous interval recurrence in $O(n^4 k^2 h)$ time.
 
 ## Expansion

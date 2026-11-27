@@ -24,6 +24,10 @@ The criterion is symmetric in $a$ and $b$. It couples the orientation of the map
 
 - [Characteristic firing-rate mean and variance under dual homeostasis](characteristic-firing-rate-mean-and-variance-under-dual-homeostasis.md)
 
+## Proof depends on
+
+- [Routh–Hurwitz: a real 2 × 2 matrix is Hurwitz iff tr M < 0 < det M](../../../../Analysis/ordinary-differential-equations/linear-systems-and-fundamental-matrices/is-hurwitz-iff-trace-neg-and-det-pos.md)
+
 ## Sources
 
 - J. Cannon and P. Miller, *Stable control of firing rate mean and variance by dual homeostatic mechanisms*, Journal of Mathematical Neuroscience 7 (2017), 1. DOI: <https://doi.org/10.1186/s13408-017-0043-7>. PMCID: PMC5264207.

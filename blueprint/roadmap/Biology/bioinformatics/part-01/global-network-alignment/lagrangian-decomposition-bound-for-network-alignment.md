@@ -14,12 +14,14 @@ subject to
 The partner degree constraints are valid for the original problem: when $\vec y_{ijkl} = x_{ij}x_{kl}$ and $x$ is a matching, at most one partner $(k,l)$ meets each vertex $v$.
 
 **Theorem.**
+
 1. The optimal value of the split program is the maximum structural score. Every feasible point has objective at most the structural score of the matching with characteristic vector $x$, with equality when $\vec y_{ijkl} = x_{ij}x_{kl}$ for all ordered pairs.
 2. Relaxing the coupling constraints with multipliers satisfying $\lambda_{ijkl} = -\lambda_{klij}$ gives the relaxed problem
 
-$$L(\lambda) = \max \sum_{(i,j)} \sigma(i,j)\,x_{ij} + \sum_{(i,j)}\ \sum_{(k,l) \neq (i,j)} \big(\vec\tau(i,j,k,l) + \lambda_{ijkl}\big)\,\vec y_{ijkl}$$
+    $$L(\lambda) = \max \sum_{(i,j)} \sigma(i,j)\,x_{ij} + \sum_{(i,j)}\ \sum_{(k,l) \neq (i,j)} \big(\vec\tau(i,j,k,l) + \lambda_{ijkl}\big)\,\vec y_{ijkl}$$
 
-over the remaining constraints, including the partner degree constraints. For every $\lambda$, $L(\lambda)$ is an upper bound on the optimal alignment score.
+    over the remaining constraints, including the partner degree constraints. For every $\lambda$, $L(\lambda)$ is an upper bound on the optimal alignment score.
+
 3. $L(\lambda)$ can be computed in polynomial time by bipartite matchings. For each alignment edge $(i,j)$, let $p_{ij} = \sigma(i,j) + m_{ij}$, where $m_{ij}$ is the value of a maximum-weight bipartite matching on the alignment edges $(k,l) \neq (i,j)$ with weights $\vec\tau(i,j,k,l) + \lambda_{ijkl}$, using only positive weights. Then $L(\lambda)$ is the value of a maximum-weight bipartite matching with weights $p_{ij}$, using only positive weights.
 
 Without the partner degree constraints, the relaxed program is a different and weaker bound: once the coupling equalities are dropped, $x_{ij} = 1$ allows every partner with positive coefficient, including two partners that share a vertex, so its value is $\sigma(i,j)$ plus the sum of all positive coefficients $\vec\tau(i,j,k,l) + \lambda_{ijkl}$, which can strictly exceed $p_{ij}$.

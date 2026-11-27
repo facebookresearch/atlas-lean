@@ -5,14 +5,15 @@
 1. choose $\nu(k) \in I_{\min}(x_k)$; stop if $\nabla f_{\nu(k)}(x_k) = 0$;
 2. choose a direction $d_k$ with the angle and length conditions
 
-$$\nabla f_{\nu(k)}(x_k)^T d_k \le -\theta \, \|d_k\| \, \|\nabla f_{\nu(k)}(x_k)\|, \qquad \|d_k\| \ge \beta \, \|\nabla f_{\nu(k)}(x_k)\|$$
+    $$\nabla f_{\nu(k)}(x_k)^T d_k \le -\theta \, \|d_k\| \, \|\nabla f_{\nu(k)}(x_k)\|, \qquad \|d_k\| \ge \beta \, \|\nabla f_{\nu(k)}(x_k)\|$$
 
-(for instance a regularized Newton direction $d = -(\nabla^2 f_{\nu(k)}(x_k) + \lambda I)^{-1} \nabla f_{\nu(k)}(x_k)$);
+    (for instance a regularized Newton direction $d = -(\nabla^2 f_{\nu(k)}(x_k) + \lambda I)^{-1} \nabla f_{\nu(k)}(x_k)$);
+
 3. find $t_k > 0$ by backtracking with safeguarded quadratic interpolation such that the Armijo condition
 
-$$f_{\min}(x_k + t_k d_k) \le f_{\min}(x_k) + \alpha\, t_k\, \nabla f_{\nu(k)}(x_k)^T d_k$$
+    $$f_{\min}(x_k + t_k d_k) \le f_{\min}(x_k) + \alpha\, t_k\, \nabla f_{\nu(k)}(x_k)^T d_k$$
 
-holds, and set $x_{k+1} = x_k + t_k d_k$.
+    holds, and set $x_{k+1} = x_k + t_k d_k$.
 
 **Theorem 1.** Algorithm A1 is well defined, and it terminates at $x_k$ only if $x_k$ is critical.
 

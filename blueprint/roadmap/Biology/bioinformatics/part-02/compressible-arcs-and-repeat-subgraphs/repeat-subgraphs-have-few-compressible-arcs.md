@@ -12,6 +12,10 @@
 
 - [De Bruijn multigraph of a string](../../de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
 
+## Proof depends on
+
+- [STEINER TREE is NP-complete](../../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/steiner-tree/steiner-tree-np-complete.md)
+
 ## Expansion
 
 A $(k-1)$-mer is boundary rigid only if all $m$ copies agree on the letters flanking every one of its occurrences; mutations at independent columns make such agreement increasingly unlikely as $m$ grows, so by linearity of expectation the count of rigid positions is a vanishing fraction of the $m(n-k+2)$ candidates. A repeat therefore looks like a dense tangle with almost no compressible arcs, while a transcript without repeats is a chain of them. Hardness comes from a reduction from Steiner tree with weights 1 and 2: each vertex becomes a degree-3 gadget with no compressible arcs, and each weighted edge a path of one or two compressible arcs, so a large connected subgraph with few compressible arcs is exactly a cheap Steiner tree. In local assembly of alternative-splicing bubbles, restricting the search to bubbles with enough compressible arcs avoids repeat-associated subgraphs without having to identify them.

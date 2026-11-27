@@ -12,7 +12,7 @@ The case $k = 2$ (only triangles must satisfy the triangle inequality) is ConsT;
 
 ## Proof depends on
 
-- [Greedy set cover is a logarithmic approximation](../../../../ComputerScience/approximation-algorithms/greedy-set-cover/greedy-set-cover-approx-log.md)
+- [INDEPENDENT-SET is NP-hard](../../../../TheoryOfComputation/np-completeness/graph-covering-and-domination/clique-independent-set-and-vertex-cover/part-08/ind-set-dec-np-hard.md)
 
 ## Expansion
 

@@ -13,6 +13,9 @@ the two analogous inequalities, and $T(a,b,c,011) + T(a,b,c,101) + T(a,b,c,110) 
 ## Depends on
 
 - [Gene duplications as rooted-triple inconsistencies](gene-duplications-as-rooted-triple-inconsistencies.md)
+- [Binary hierarchy on a finite set](../../../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/is-binary-hierarchy.md)
+- [Cluster system displaying a triplet](../../splits-compatibility-ultrametrics-and-upgma/displays-triplet.md)
+- [Number of members of a binary hierarchy](../../splits-compatibility-ultrametrics-and-upgma/card-add-one.md)
 
 ## Expansion
 

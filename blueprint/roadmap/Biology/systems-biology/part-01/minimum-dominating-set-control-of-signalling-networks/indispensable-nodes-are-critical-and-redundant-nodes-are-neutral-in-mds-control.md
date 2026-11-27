@@ -19,6 +19,7 @@ The converses fail: a node can be critical but neutral.
 ## Depends on
 
 - [One-step controllability of a nonlinear network from a minimum dominating set](one-step-controllability-from-a-minimum-dominating-set.md)
+- [Domination number](../../../../GraphTheory/independence-and-domination/dominating-sets/domination-number.md)
 
 ## Sources
 

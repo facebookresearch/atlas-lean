@@ -20,6 +20,8 @@ In particular all three problems are fixed-parameter tractable in $t + c$ (hardw
 
 - [Treewidth as the minimum width of an agreeing rooted tree](treewidth-as-the-minimum-width-of-an-agreeing-rooted-tree.md)
 - [Sankoff's algorithm](../../small-parsimony-problem/sankoff.md)
+- [Tree-decomposition](../../../../GraphTheory/planar-graphs-and-minors/tree-width/tree-decomposition.md)
+- [Tree-width at most $k$](../../../../GraphTheory/planar-graphs-and-minors/tree-width/has-treewidth-at-most.md)
 
 ## Expansion
 

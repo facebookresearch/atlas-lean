@@ -7,11 +7,13 @@ $$V(T) = \frac1n S^{(2)}(T) - \frac{1}{n^2}S(T)^2.$$
 The comb $K_n$ (caterpillar) has depths $1,2,\dots,n-1,n-1$. A bifurcating tree is **maximally balanced** ($B_n$) if at every internal node the descendant leaves split into two sets whose sizes differ by at most $1$.
 
 **Theorem.**
+
 1. Over all rooted trees with $n$ leaves (multifurcations allowed), the maximum of $V$ is attained exactly at the comb, with
 
-$$V(K_n) = \frac{(n-1)(n-2)(n^2 + 3n - 6)}{12n^2};$$
+    $$V(K_n) = \frac{(n-1)(n-2)(n^2 + 3n - 6)}{12n^2};$$
 
-the comb is bifurcating, so this is also the maximum among bifurcating trees.
+    the comb is bifurcating, so this is also the maximum among bifurcating trees.
+
 2. The minimum over all rooted trees is $0$, attained exactly by trees whose leaves all have the same depth (e.g. the rooted star).
 3. Among bifurcating trees, $B_n$ minimizes $V$ for every $n \le 183$, but not for $n = 184$: a tree with $174$ leaves of depth $8$, $9$ of depth $7$ and $1$ of depth $2$ has $V \approx 0.2379 < V(B_{184}) \approx 0.2382$.
 4. As $m\to\infty$, the fraction of $n \in [2, 2^m]$ for which $V(B_n)$ is minimal among bifurcating trees with $n$ leaves tends to $0$. Minimizers belong to explicit families of trees, which yields an $O(n\log n)$ algorithm for the minimum.

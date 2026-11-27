@@ -18,6 +18,7 @@ $$P_3(R) = \{\, s(x)s(y)|s(z) \;:\; zx, zy \in E(R),\ xy \notin E(R),\ s(x) \ne 
 
 - [Rooted triplet](../../splits-compatibility-ultrametrics-and-upgma/triplet.md)
 - [Is LCAReconciliation](../../../not-yet-classified/lcareconciliation/is-lcareconciliation.md)
+- [Cluster system displaying a triplet](../../splits-compatibility-ultrametrics-and-upgma/displays-triplet.md)
 
 ## Expansion
 

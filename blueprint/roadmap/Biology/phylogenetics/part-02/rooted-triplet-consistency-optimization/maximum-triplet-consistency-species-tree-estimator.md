@@ -3,13 +3,14 @@
 **Problem.** Given rooted binary gene trees $\mathcal G = \{g_1, \dots, g_k\}$ on taxon set $X$ with $|X| = n$, let $w_{\mathcal G}(t)$ be the number of gene trees agreeing with rooted triplet $t$. The **maximum triplet consistency (CTC)** problem seeks a rooted binary species tree $T$ maximizing $\sum_{r} w_{\mathcal G}(T|_r)$ over all three-taxon subsets $r$, i.e. the total number of (gene tree, triplet) agreements. In the constrained version, only species trees whose every subtree-bipartition occurs in some gene tree are searched.
 
 **Counting lemmas.** Each internal node of a rooted binary tree defines a subtree-bipartition $x = (X_1 | X_2)$ of the taxa below it, and every triplet maps to the unique node at which it splits two-versus-one.
+
 1. With $|X_1| = n_1$, $|X_2| = n_2$, the number of triplets mapped to $x$ is
 
-$$N_T(n_1, n_2) = \binom{n_1}{2} n_2 + \binom{n_2}{2} n_1 = \frac{n_1 n_2 (n_1 + n_2 - 2)}{2}.$$
+    $$N_T(n_1, n_2) = \binom{n_1}{2} n_2 + \binom{n_2}{2} n_1 = \frac{n_1 n_2 (n_1 + n_2 - 2)}{2}.$$
 
 2. For subtree-bipartitions $x = (X_1|X_2)$ and $y = (Y_1|Y_2)$, the number of triplets mapped to both is
 
-$$\mathcal M(x, y) = N_T(|X_1\cap Y_1|, |X_2 \cap Y_2|) + N_T(|X_1 \cap Y_2|, |X_2 \cap Y_1|).$$
+    $$\mathcal M(x, y) = N_T(|X_1\cap Y_1|, |X_2 \cap Y_2|) + N_T(|X_1 \cap Y_2|, |X_2 \cap Y_1|).$$
 
 The triplet consistency score of $x$ is $TC_{\mathcal G}(x) = \sum_y \mathcal M(x,y)$ over all subtree-bipartitions $y$ of the gene trees, computable in $O(n^2 k)$ time.
 

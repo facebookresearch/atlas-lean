@@ -10,16 +10,17 @@ on the region $\beta S > \mu$. Put $g = -\beta S I + \mu I = -(\beta S - \mu) I$
 
 1. The system is Hamiltonian for two compatible Poisson structures: $\{\cdot,\cdot\}_1$ with $\{S, I\}_1 = 0$, $\{S, R\}_1 = g$, $\{I, R\}_1 = \beta S I - (\alpha + \mu) I$ and Hamiltonian $H_1 = S + I + R$; and $\{\cdot,\cdot\}_2$ with $\{S, I\}_2 = g$, $\{S, R\}_2 = -g$, $\{I, R\}_2 = g$, Hamiltonian
 
-$$H_2 = -R - \frac{\alpha}{\beta} \log(\beta S - \mu),$$
+    $$H_2 = -R - \frac{\alpha}{\beta} \log(\beta S - \mu),$$
 
-and Casimir $H_1$. The sum $\{\cdot,\cdot\}_1 + \{\cdot,\cdot\}_2$ is again a Poisson structure.
+    and Casimir $H_1$. The sum $\{\cdot,\cdot\}_1 + \{\cdot,\cdot\}_2$ is again a Poisson structure.
+
 2. Consequently $C = R + \frac{\alpha}{\beta} \log(\beta S - \mu)$ is a first integral. For $S(0) = S_0$ with $\beta S_0 > \mu$, $I(0) = 1 - S_0$, $R(0) = 0$, the solution is
 
-$$R = \frac{\alpha}{\beta} \log \frac{\beta S_0 - \mu}{\beta S - \mu}, \qquad I = 1 - S - R,$$
+    $$R = \frac{\alpha}{\beta} \log \frac{\beta S_0 - \mu}{\beta S - \mu}, \qquad I = 1 - S - R,$$
 
-where $S(t)$ is the inverse of the quadrature
+    where $S(t)$ is the inverse of the quadrature
 
-$$t = \int_{S_0}^{S(t)} \frac{d\zeta}{-(\beta \zeta - \mu) \Big( 1 - \zeta - \frac{\alpha}{\beta} \log \frac{\beta S_0 - \mu}{\beta \zeta - \mu} \Big)}.$$
+    $$t = \int_{S_0}^{S(t)} \frac{d\zeta}{-(\beta \zeta - \mu) \Big( 1 - \zeta - \frac{\alpha}{\beta} \log \frac{\beta S_0 - \mu}{\beta \zeta - \mu} \Big)}.$$
 
 As $\mu \to 0$ this recovers the exact solution of the Kermack-McKendrick SIR model.
 
