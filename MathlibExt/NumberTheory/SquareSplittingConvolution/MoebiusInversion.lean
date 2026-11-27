@@ -24,11 +24,7 @@ of the constant-one function with the inverse of the divisor-sum operator.
 namespace MetaMathlibExt
 namespace squareSplit_moebius_inversion
 
-/-- **Square-splitting coordinates of $a b^2$.** For natural numbers $a$ and $b$ with $a$ squarefree
-and $b \ne 0$, we have $u(a b^2) = a$ and $v(a b^2) = b$, where $u(N) = \prod_p p^{e_p \bmod 2}$ and
-$v(N) = \prod_p p^{\lfloor e_p/2 \rfloor}$ are the squarefree part and the square-root part of
-$N = \prod_p p^{e_p} \ge 1$, and $u(0) = v(0) = 1$. -/
-public theorem split_coords {u v : ℕ} (hu : Squarefree u) (hv : v ≠ 0) :
+private theorem split_coords {u v : ℕ} (hu : Squarefree u) (hv : v ≠ 0) :
     squareSplitU (u * v ^ 2) = u ∧ squareSplitV (u * v ^ 2) = v := by
   have hn := mul_ne_zero hu.ne_zero (pow_ne_zero 2 hv)
   have hroot : Nat.floorRoot 2 (u * v ^ 2) = v := by

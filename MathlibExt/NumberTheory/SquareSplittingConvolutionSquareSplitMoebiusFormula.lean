@@ -54,20 +54,14 @@ private theorem squarefree_U {n : ℕ} (hn : n ≠ 0) : Squarefree (squareSplitU
   rw [← h, (split_coords ha hb.ne').1]
   exact ha
 
-/-- **Square-splitting coordinates of a prime power.** For every prime $p$ and every natural number
-$k$, we have $u(p^k) = p^{k \bmod 2}$ and $v(p^k) = p^{\lfloor k/2 \rfloor}$, where
-$u(N) = \prod_p p^{e_p \bmod 2}$ and $v(N) = \prod_p p^{\lfloor e_p/2 \rfloor}$ are the squarefree
-part and the square-root part of $N = \prod_p p^{e_p} \ge 1$, and $u(0) = v(0) = 1$. -/
-public theorem UV_prime_pow {p k : ℕ} (hp : p.Prime) :
+/-- The square-splitting coordinates of a prime power. -/
+private theorem UV_prime_pow {p k : ℕ} (hp : p.Prime) :
     squareSplitU (p ^ k) = p ^ (k % 2) ∧ squareSplitV (p ^ k) = p ^ (k / 2) := by
   simp only [squareSplitU, squareSplitV, hp.factorization_pow]
   exact ⟨Finsupp.prod_single_index (by simp), Finsupp.prod_single_index (by simp)⟩
 
-/-- **Multiplicativity of the square-splitting coordinates.** For coprime natural numbers $m$ and
-$n$, we have $u(mn) = u(m)\,u(n)$ and $v(mn) = v(m)\,v(n)$, where $u(N) = \prod_p p^{e_p \bmod 2}$
-and $v(N) = \prod_p p^{\lfloor e_p/2 \rfloor}$ are the squarefree part and the square-root part of
-$N = \prod_p p^{e_p} \ge 1$, and $u(0) = v(0) = 1$. -/
-public theorem UV_mul {m n : ℕ} (h : m.Coprime n) :
+/-- The square-splitting coordinates multiply across coprime inputs. -/
+private theorem UV_mul {m n : ℕ} (h : m.Coprime n) :
     squareSplitU (m * n) = squareSplitU m * squareSplitU n ∧
       squareSplitV (m * n) = squareSplitV m * squareSplitV n := by
   have prod_mul (F : ℕ → ℕ → ℕ) :
@@ -77,11 +71,8 @@ public theorem UV_mul {m n : ℕ} (h : m.Coprime n) :
   simp only [squareSplitU, squareSplitV]
   exact ⟨prod_mul _, prod_mul _⟩
 
-/-- **The square-splitting coordinates divide their argument.** For every natural number $n$, we
-have $u(n) \mid n$ and $v(n) \mid n$, where $u(N) = \prod_p p^{e_p \bmod 2}$ and
-$v(N) = \prod_p p^{\lfloor e_p/2 \rfloor}$ are the squarefree part and the square-root part of
-$N = \prod_p p^{e_p} \ge 1$, and $u(0) = v(0) = 1$. -/
-public theorem UV_dvd (n : ℕ) : squareSplitU n ∣ n ∧ squareSplitV n ∣ n := by
+/-- The square-splitting coordinates divide the input. -/
+private theorem UV_dvd (n : ℕ) : squareSplitU n ∣ n ∧ squareSplitV n ∣ n := by
   rcases eq_or_ne n 0 with rfl | hn
   · simp only [squareSplitU, squareSplitV, Nat.factorization_zero, Finsupp.prod_zero_index]
     exact ⟨dvd_zero _, dvd_zero _⟩

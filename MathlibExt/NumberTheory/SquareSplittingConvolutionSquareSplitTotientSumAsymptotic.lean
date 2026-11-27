@@ -12,13 +12,8 @@ public import MathlibExt.NumberTheory.SquareSplittingConvolution
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
-import MathlibExt.NumberTheory.SquareSplittingConvolution.DivisorProperties
-import MathlibExt.NumberTheory.SquareSplittingConvolution.MoebiusInversion
-import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
-import MathlibExt.NumberTheory.ArithmeticFunction.JordanTotient
+import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitTotientFormula
 import Mathlib.NumberTheory.ArithmeticFunction.Moebius
-import Mathlib.Data.Nat.Factorization.Root
-import Mathlib.Data.Nat.Totient
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.SpecialFunctions.Log.Summable
@@ -38,10 +33,6 @@ and the average order from Champak Talukdar and Helen K. Saikia,
 namespace MetaMathlibExt
 
 open Asymptotics Filter Topology
-open ArithmeticFunction (jordanTotient jordanTotient_apply_one jordanTotient_eq_sum_moebius
-  jordanTotient_prime_pow isMultiplicative_jordanTotient)
-open squareSplit_moebius_inversion (split_coords)
-open squareSplitMoebius_proof (UV_mul UV_dvd UV_prime_pow)
 
 private lemma primeCorrection_le (p : Nat.Primes) :
     |-(1 / ((p : ℕ) : ℝ) ^ 2) + (((p : ℕ) : ℝ) - 1) ^ 2 /
@@ -73,104 +64,6 @@ private lemma primeCorrection_summable :
   exact ((Real.summable_one_div_nat_pow.mpr (by decide : 1 < 2)).subtype
     Nat.Prime).of_nonneg_of_le (fun _ => abs_nonneg _) primeCorrection_le
 
-private lemma jordanTotient_two_eq :
-    ((jordanTotient 2 : ArithmeticFunction ℕ) : ArithmeticFunction ℤ) =
-      (ArithmeticFunction.pow 2 : ArithmeticFunction ℤ) * ArithmeticFunction.moebius := by
-  ext n
-  rcases eq_or_ne n 0 with rfl | hn
-  · simp
-  rw [ArithmeticFunction.natCoe_apply, jordanTotient_eq_sum_moebius hn,
-    ArithmeticFunction.mul_apply, Nat.sum_divisorsAntidiagonal
-      (fun a b => (ArithmeticFunction.pow 2 : ArithmeticFunction ℤ) a *
-        ArithmeticFunction.moebius b)]
-  refine Finset.sum_congr rfl fun d hd => ?_
-  simp [ArithmeticFunction.pow_apply, mul_comm]
-
-private lemma jordanTotient_two_sum (n : ℕ) :
-    ∑ d ∈ n.divisors, (jordanTotient 2 d : ℤ) = (n : ℤ) ^ 2 := by
-  have h := ArithmeticFunction.coe_zeta_mul_apply
-    (f := ((jordanTotient 2 : ArithmeticFunction ℕ) : ArithmeticFunction ℤ)) (x := n)
-  simp only [ArithmeticFunction.natCoe_apply] at h
-  rw [← h, jordanTotient_two_eq, ← mul_assoc,
-    mul_comm (ArithmeticFunction.zeta : ArithmeticFunction ℤ), mul_assoc,
-    ArithmeticFunction.coe_zeta_mul_moebius, mul_one]
-  simp
-
-private noncomputable def candidate : ArithmeticFunction ℤ :=
-  ⟨fun n => if n = 0 then 0 else (Nat.totient (squareSplitU n) : ℤ) *
-    (jordanTotient 2 (squareSplitV n) : ℤ), by simp⟩
-
-private lemma candidate_sum (n : ℕ) (hn : n ≠ 0) :
-    ∑ d ∈ squareSplitDivisors n, candidate d = (n : ℤ) := by
-  obtain ⟨v, u, h, hu⟩ := exists_sq_mul_squarefree n
-  have huv : u * v ^ 2 = n := by simpa [mul_comm] using h
-  have hv : v ≠ 0 := by intro hv; simp [hv] at huv; exact hn huv.symm
-  obtain ⟨hU, hV⟩ := split_coords hu hv
-  rw [← huv, squareSplitDivisors, hU, hV]
-  have hinj : Set.InjOn (fun x : ℕ × ℕ => x.1 * x.2 ^ 2) ↑(u.divisors ×ˢ v.divisors) := by
-    rintro ⟨a, b⟩ hab ⟨c, d⟩ hcd he
-    obtain ⟨ha, hb⟩ := Finset.mem_product.mp hab
-    obtain ⟨hc, hd⟩ := Finset.mem_product.mp hcd
-    have h₁ := split_coords (hu.squarefree_of_dvd (Nat.dvd_of_mem_divisors ha))
-      (Nat.pos_of_mem_divisors hb).ne'
-    have h₂ := split_coords (hu.squarefree_of_dvd (Nat.dvd_of_mem_divisors hc))
-      (Nat.pos_of_mem_divisors hd).ne'
-    change a * b ^ 2 = c * d ^ 2 at he
-    rw [he] at h₁
-    exact Prod.ext (h₁.1.symm.trans h₂.1) (h₁.2.symm.trans h₂.2)
-  rw [Finset.sum_image hinj, Finset.sum_product]
-  have he (a : ℕ) (ha : a ∈ u.divisors) (b : ℕ) (hb : b ∈ v.divisors) :
-      candidate (a * b ^ 2) = (a.totient : ℤ) * jordanTotient 2 b := by
-    obtain ⟨hUa, hVb⟩ := split_coords (hu.squarefree_of_dvd (Nat.dvd_of_mem_divisors ha))
-      (Nat.pos_of_mem_divisors hb).ne'
-    simp [candidate, hUa, hVb, mul_ne_zero (Nat.pos_of_mem_divisors ha).ne'
-      (pow_ne_zero 2 (Nat.pos_of_mem_divisors hb).ne')]
-  simp_rw [Finset.sum_congr rfl (fun a ha => Finset.sum_congr rfl (fun b hb => he a ha b hb))]
-  simp_rw [← Finset.mul_sum, jordanTotient_two_sum, ← Finset.sum_mul, ← Nat.cast_sum,
-    Nat.sum_totient]
-  simp
-
-private lemma determined_by_sum (φ ψ : ArithmeticFunction ℤ)
-    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n)
-    (hψ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, ψ d = n) : φ = ψ := by
-  ext n
-  induction n using Nat.strong_induction_on with
-  | ind n ih =>
-    rcases eq_or_ne n 0 with rfl | hn
-    · simp
-    obtain ⟨_, hmem, hdvd⟩ := squareSplitDivisors_properties.1 n hn
-    have he : ∑ d ∈ (squareSplitDivisors n).erase n, φ d =
-        ∑ d ∈ (squareSplitDivisors n).erase n, ψ d := by
-      apply Finset.sum_congr rfl
-      intro d hd
-      obtain ⟨hdn, hd⟩ := Finset.mem_erase.mp hd
-      exact ih d (lt_of_le_of_ne (Nat.le_of_dvd (Nat.pos_of_ne_zero hn) (hdvd d hd)) hdn)
-    have h₁ := hφ n hn
-    have h₂ := hψ n hn
-    rw [← Finset.sum_erase_add _ _ hmem] at h₁ h₂
-    omega
-
-
-private lemma candidate_multiplicative : candidate.IsMultiplicative := by
-  apply ArithmeticFunction.IsMultiplicative.iff_ne_zero.mpr
-  constructor
-  · simp [candidate, squareSplitU_one, squareSplitV_one, jordanTotient_apply_one]
-  intro m n hm hn h
-  obtain ⟨hu, hv⟩ := UV_mul h
-  obtain ⟨hUm, hVm⟩ := UV_dvd m
-  obtain ⟨hUn, hVn⟩ := UV_dvd n
-  simp only [candidate, ArithmeticFunction.coe_mk, ite_eq_right hm, ite_eq_right hn,
-    ite_eq_right (mul_ne_zero hm hn), hu, hv, Nat.totient_mul (h.of_dvd hUm hUn), Nat.cast_mul,
-    (isMultiplicative_jordanTotient 2).map_mul_of_coprime (h.of_dvd hVm hVn)]
-  ring
-
-private lemma jordanTotient_two_prime_pow_succ (p b : ℕ) (hp : p.Prime) :
-    (jordanTotient 2 (p ^ (b + 1)) : ℤ) = (p : ℤ) ^ (2 * b) * ((p : ℤ) ^ 2 - 1) := by
-  rw [jordanTotient_prime_pow hp (Nat.add_one_pos b), Nat.add_sub_cancel, Nat.cast_mul,
-    Nat.cast_sub (Nat.one_le_pow _ _ hp.pos)]
-  push_cast
-  ring
-
 private noncomputable def inverseId : ArithmeticFunction ℤ :=
   ArithmeticFunction.pmul ArithmeticFunction.moebius ArithmeticFunction.id
 
@@ -197,59 +90,46 @@ private lemma inverseId_mul_id :
   rw [hsum]
   by_cases hn : n = 1 <;> simp [hn]
 
-private noncomputable def correction : ArithmeticFunction ℤ := candidate * inverseId
+private lemma phi_prime_pow (φ : ArithmeticFunction ℤ)
+    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) (p : ℕ) (hp : p.Prime) :
+    φ p = (p : ℤ) - 1 ∧ φ (p ^ 2) = (p : ℤ) ^ 2 - 1 ∧
+      φ (p ^ 3) = ((p : ℤ) - 1) * ((p : ℤ) ^ 2 - 1) ∧
+      ∀ k, φ (p ^ (k + 4)) = (p : ℤ) ^ 2 * φ (p ^ (k + 2)) := by
+  obtain ⟨_, _, hpp, _⟩ := squareSplitTotient_formula φ hφ
+  obtain ⟨h₁, hb⟩ := hpp p hp
+  refine ⟨h₁, by simpa using (hb 1 le_rfl).1, by simpa using (hb 1 le_rfl).2, fun k => ?_⟩
+  rcases Nat.even_or_odd k with ⟨m, rfl⟩ | ⟨m, rfl⟩
+  · rw [show m + m + 4 = 2 * (m + 2) by omega, show m + m + 2 = 2 * (m + 1) by omega,
+      (hb (m + 2) (by omega)).1, (hb (m + 1) (by omega)).1,
+      show 2 * (m + 2) - 2 = 2 * m + 2 by omega, show 2 * (m + 1) - 2 = 2 * m by omega]
+    ring
+  · rw [show 2 * m + 1 + 4 = 2 * (m + 2) + 1 by omega,
+      show 2 * m + 1 + 2 = 2 * (m + 1) + 1 by omega,
+      (hb (m + 2) (by omega)).2, (hb (m + 1) (by omega)).2,
+      show 2 * (m + 2) - 2 = 2 * m + 2 by omega, show 2 * (m + 1) - 2 = 2 * m by omega]
+    ring
 
-private lemma correction_multiplicative : correction.IsMultiplicative :=
-  candidate_multiplicative.mul inverseId_multiplicative
+private noncomputable def correction (φ : ArithmeticFunction ℤ) : ArithmeticFunction ℤ :=
+  φ * inverseId
 
-private lemma candidate_eq_id_mul_correction :
-    candidate = (ArithmeticFunction.id : ArithmeticFunction ℤ) * correction := by
+private lemma correction_multiplicative (φ : ArithmeticFunction ℤ)
+    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) : (correction φ).IsMultiplicative :=
+  (squareSplitTotient_formula φ hφ).1.mul inverseId_multiplicative
+
+private lemma eq_id_mul_correction (φ : ArithmeticFunction ℤ) :
+    φ = (ArithmeticFunction.id : ArithmeticFunction ℤ) * correction φ := by
   rw [correction, mul_left_comm, mul_comm (ArithmeticFunction.id : ArithmeticFunction ℤ),
     inverseId_mul_id, mul_one]
 
-
-private lemma candidate_even (p b : ℕ) (hp : p.Prime) :
-    candidate (p ^ (2 * b)) = (jordanTotient 2 (p ^ b) : ℤ) := by
-  obtain ⟨hu, hv⟩ := UV_prime_pow (k := 2 * b) hp
-  have hu' : 2 * b % 2 = 0 := by omega
-  have hv' : 2 * b / 2 = b := by omega
-  simp [candidate, hp.ne_zero, hu, hv, hu', hv']
-
-private lemma candidate_odd (p b : ℕ) (hp : p.Prime) :
-    candidate (p ^ (2 * b + 1)) = ((p : ℤ) - 1) * (jordanTotient 2 (p ^ b) : ℤ) := by
-  obtain ⟨hu, hv⟩ := UV_prime_pow (k := 2 * b + 1) hp
-  have hu' : (2 * b + 1) % 2 = 1 := by omega
-  have hv' : (2 * b + 1) / 2 = b := by omega
-  simp [candidate, hp.ne_zero, hu, hv, hu', hv', Nat.totient_prime hp,
-    Nat.cast_sub hp.one_le]
-
-private lemma candidate_prime_pow_step (p k : ℕ) (hp : p.Prime) :
-    candidate (p ^ (k + 4)) = (p : ℤ) ^ 2 * candidate (p ^ (k + 2)) := by
-  have hj (b : ℕ) : (jordanTotient 2 (p ^ (b + 2)) : ℤ) =
-      (p : ℤ) ^ 2 * (jordanTotient 2 (p ^ (b + 1)) : ℤ) := by
-    rw [show b + 2 = (b + 1) + 1 by omega, jordanTotient_two_prime_pow_succ p (b + 1) hp,
-      jordanTotient_two_prime_pow_succ p b hp, show 2 * (b + 1) = 2 + 2 * b by omega, pow_add]
-    ring
-  rcases Nat.even_or_odd k with hk | hk
-  · obtain ⟨b, rfl⟩ := hk
-    rw [show b + b + 4 = 2 * (b + 2) by omega,
-      show b + b + 2 = 2 * (b + 1) by omega,
-      candidate_even p (b + 2) hp, candidate_even p (b + 1) hp, hj b]
-  · obtain ⟨b, rfl⟩ := hk
-    rw [show 2 * b + 1 + 4 = 2 * (b + 2) + 1 by omega,
-      show 2 * b + 1 + 2 = 2 * (b + 1) + 1 by omega,
-      candidate_odd p (b + 2) hp, candidate_odd p (b + 1) hp, hj b]
-    ring
-
-private lemma correction_prime_pow_succ (p k : ℕ) (hp : p.Prime) :
-    correction (p ^ (k + 1)) = candidate (p ^ (k + 1)) - (p : ℤ) * candidate (p ^ k) := by
-  rw [correction, mul_comm candidate inverseId, ArithmeticFunction.mul_apply,
-    Nat.sum_divisorsAntidiagonal (fun a b => inverseId a * candidate b),
+private lemma correction_prime_pow_succ (φ : ArithmeticFunction ℤ) (p k : ℕ) (hp : p.Prime) :
+    correction φ (p ^ (k + 1)) = φ (p ^ (k + 1)) - (p : ℤ) * φ (p ^ k) := by
+  rw [correction, mul_comm φ inverseId, ArithmeticFunction.mul_apply,
+    Nat.sum_divisorsAntidiagonal (fun a b => inverseId a * φ b),
     Nat.sum_divisors_prime_pow hp, Finset.sum_range_succ', Finset.sum_range_succ']
   have hz (i : ℕ) : inverseId (p ^ (i + 2)) = 0 := by
     simp [inverseId, ArithmeticFunction.moebius_apply_prime_pow hp (by omega : i + 2 ≠ 0)]
   have ht : ∑ i ∈ Finset.range k,
-      inverseId (p ^ (i + 1 + 1)) * candidate (p ^ (k + 1) / p ^ (i + 1 + 1)) = 0 := by
+      inverseId (p ^ (i + 1 + 1)) * φ (p ^ (k + 1) / p ^ (i + 1 + 1)) = 0 := by
     apply Finset.sum_eq_zero
     intro i _
     rw [show i + 1 + 1 = i + 2 by omega, hz, zero_mul]
@@ -258,58 +138,60 @@ private lemma correction_prime_pow_succ (p k : ℕ) (hp : p.Prime) :
   rw [ht]
   simp [inverseId, ArithmeticFunction.moebius_apply_prime hp, hdiv, sub_eq_add_neg, add_comm]
 
+private lemma correction_prime (φ : ArithmeticFunction ℤ)
+    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) (p : ℕ) (hp : p.Prime) :
+    correction φ p = -1 := by
+  obtain ⟨_, hone, _, _⟩ := squareSplitTotient_formula φ hφ
+  have h := correction_prime_pow_succ φ p 0 hp
+  simp only [zero_add, pow_one, pow_zero] at h
+  rw [h, (phi_prime_pow φ hφ p hp).1, hone]
+  ring
 
-private lemma correction_prime_pow_tail (p k : ℕ) (hp : p.Prime) :
-    correction (p ^ (k + 3)) = (-(p : ℤ)) ^ k * (1 - (p : ℤ) ^ 2) := by
+private lemma correction_square (φ : ArithmeticFunction ℤ)
+    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) (p : ℕ) (hp : p.Prime) :
+    correction φ (p ^ 2) = (p : ℤ) - 1 := by
+  obtain ⟨h₁, h₂, _, _⟩ := phi_prime_pow φ hφ p hp
+  have h := correction_prime_pow_succ φ p 1 hp
+  simp only [Nat.reduceAdd, pow_one] at h
+  rw [h, h₂, h₁]
+  ring
+
+private lemma correction_prime_pow_tail (φ : ArithmeticFunction ℤ)
+    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) (p k : ℕ) (hp : p.Prime) :
+    correction φ (p ^ (k + 3)) = (-(p : ℤ)) ^ k * (1 - (p : ℤ) ^ 2) := by
+  obtain ⟨_, h₂, h₃, hstep⟩ := phi_prime_pow φ hφ p hp
   induction k with
   | zero =>
-    rw [show 0 + 3 = 2 + 1 by rfl, correction_prime_pow_succ p 2 hp]
-    change candidate (p ^ 3) - (p : ℤ) * candidate (p ^ 2) =
-      (-(p : ℤ)) ^ 0 * (1 - (p : ℤ) ^ 2)
-    have he₃ : 3 = 2 * 1 + 1 := rfl
-    have he₂ : 2 = 2 * 1 := rfl
-    rw [he₃, he₂, candidate_odd p 1 hp, candidate_even p 1 hp,
-      show 1 = 0 + 1 by rfl, jordanTotient_two_prime_pow_succ p 0 hp]
+    rw [show 0 + 3 = 2 + 1 by rfl, correction_prime_pow_succ φ p 2 hp]
+    change φ (p ^ 3) - (p : ℤ) * φ (p ^ 2) = (-(p : ℤ)) ^ 0 * (1 - (p : ℤ) ^ 2)
+    rw [h₃, h₂]
     ring
   | succ k ih =>
-    rw [show k + 1 + 3 = (k + 3) + 1 by omega, correction_prime_pow_succ p (k + 3) hp,
-      show k + 3 + 1 = k + 4 by omega, candidate_prime_pow_step p k hp,
-      show k + 3 = (k + 2) + 1 by omega]
-    have hh := correction_prime_pow_succ p (k + 2) hp
+    rw [show k + 1 + 3 = (k + 3) + 1 by omega, correction_prime_pow_succ φ p (k + 3) hp,
+      show k + 3 + 1 = k + 4 by omega, hstep k, show k + 3 = (k + 2) + 1 by omega]
+    have hh := correction_prime_pow_succ φ p (k + 2) hp
     rw [show k + 2 + 1 = k + 3 by omega, ih] at hh
     rw [pow_succ (-(p : ℤ)) k]
-    change (p : ℤ) ^ 2 * candidate (p ^ (k + 2)) - (p : ℤ) *
-      candidate (p ^ (k + 3)) = (-(p : ℤ)) ^ k * -(p : ℤ) * (1 - (p : ℤ) ^ 2)
+    change (p : ℤ) ^ 2 * φ (p ^ (k + 2)) - (p : ℤ) *
+      φ (p ^ (k + 3)) = (-(p : ℤ)) ^ k * -(p : ℤ) * (1 - (p : ℤ) ^ 2)
     linear_combination (p : ℤ) * hh
 
-private lemma correction_prime_pow_bound (p k : ℕ) (hp : p.Prime) (hk : k ≠ 0) :
-    |(correction (p ^ k) : ℝ)| ≤ (p : ℝ) ^ (k - 1) := by
+private lemma correction_prime_pow_bound (φ : ArithmeticFunction ℤ)
+    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) (p k : ℕ) (hp : p.Prime)
+    (hk : k ≠ 0) : |(correction φ (p ^ k) : ℝ)| ≤ (p : ℝ) ^ (k - 1) := by
   have hp₁ : (1 : ℝ) ≤ p := by exact_mod_cast hp.one_le
   have hp₀ : (0 : ℝ) ≤ p := by positivity
   rcases k with _ | _ | _ | k
   · exact (hk rfl).elim
-  · change |(correction (p ^ 1) : ℝ)| ≤ (p : ℝ) ^ 0
-    rw [show 1 = 0 + 1 by rfl, correction_prime_pow_succ p 0 hp]
-    have he₁ : 1 = 2 * 0 + 1 := rfl
-    rw [he₁, candidate_odd p 0 hp]
-    simp [candidate, squareSplitU_one, squareSplitV_one, jordanTotient_apply_one]
-  · change |(correction (p ^ 2) : ℝ)| ≤ (p : ℝ) ^ 1
-    rw [show 2 = 1 + 1 by rfl, correction_prime_pow_succ p 1 hp]
-    change |((candidate (p ^ 2) - (p : ℤ) * candidate (p ^ 1) : ℤ) : ℝ)| ≤ (p : ℝ) ^ 1
-    have he₂ : 2 = 2 * 1 := rfl
-    have he₁ : 1 = 2 * 0 + 1 := rfl
-    rw [he₂, candidate_even p 1 hp, show 1 = 0 + 1 by rfl,
-      jordanTotient_two_prime_pow_succ p 0 hp, he₁, candidate_odd p 0 hp]
-    simp only [Nat.pow_zero]
-    have hj : (jordanTotient 2 1 : ℤ) = 1 := by rw [jordanTotient_apply_one, Nat.cast_one]
-    rw [hj]
-    simp only [Int.cast_sub, Int.cast_mul, Int.cast_pow, Int.cast_natCast,
-      Int.cast_one]
-    norm_num only [Nat.mul_zero, Nat.zero_add, pow_zero, one_mul, mul_one, pow_one]
-    have he : (p : ℝ) ^ 2 - 1 - (p : ℝ) * ((p : ℝ) - 1) = p - 1 := by ring
-    rw [he, abs_of_nonneg (by linarith)]
+  · change |(correction φ (p ^ 1) : ℝ)| ≤ (p : ℝ) ^ 0
+    rw [pow_one, correction_prime φ hφ p hp]
+    norm_num
+  · change |(correction φ (p ^ 2) : ℝ)| ≤ (p : ℝ) ^ 1
+    rw [correction_square φ hφ p hp]
+    simp only [Int.cast_sub, Int.cast_natCast, Int.cast_one, pow_one]
+    rw [abs_of_nonneg (by linarith)]
     linarith
-  · rw [correction_prime_pow_tail p k hp]
+  · rw [correction_prime_pow_tail φ hφ p k hp]
     simp only [Int.cast_mul, Int.cast_pow, Int.cast_neg, Int.cast_natCast, Int.cast_sub,
       Int.cast_one, abs_mul, abs_pow, abs_neg, abs_of_nonneg hp₀,
       show k + 3 - 1 = k + 2 by omega, pow_add]
@@ -318,9 +200,11 @@ private lemma correction_prime_pow_bound (p k : ℕ) (hp : p.Prime) (hk : k ≠ 
     exact mul_le_mul_of_nonneg_left (by linarith) (by positivity)
 
 
-private lemma correction_weighted_summable (s : ℝ) (hs : 1 < s) :
-    Summable (fun n : ℕ => |(correction n : ℝ)| / (n : ℝ) ^ s) := by
-  let f (n : ℕ) : ℝ := |(correction n : ℝ)| / (n : ℝ) ^ s
+private lemma correction_weighted_summable (φ : ArithmeticFunction ℤ)
+    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) (s : ℝ)
+    (hs : 1 < s) :
+    Summable (fun n : ℕ => |(correction φ n : ℝ)| / (n : ℝ) ^ s) := by
+  let f (n : ℕ) : ℝ := |(correction φ n : ℝ)| / (n : ℝ) ^ s
   let A (p : ℕ) : ℝ := (p : ℝ) ^ (-s)
   let r : ℝ := 2 ^ (1 - s)
   let B (k : ℕ) : ℝ := r ^ (k - 1)
@@ -343,10 +227,10 @@ private lemma correction_weighted_summable (s : ℝ) (hs : 1 < s) :
     exact Nat.succ.inj he
   have hmul (m n : ℕ) (h : m.Coprime n) : f (m * n) = f m * f n := by
     dsimp [f]
-    rw [correction_multiplicative.map_mul_of_coprime h, Int.cast_mul, abs_mul,
+    rw [(correction_multiplicative φ hφ).map_mul_of_coprime h, Int.cast_mul, abs_mul,
       Nat.cast_mul, Real.mul_rpow (by positivity) (by positivity)]
     exact mul_div_mul_comm _ _ _ _
-  have hone : f 1 = 1 := by simp [f, correction_multiplicative.1]
+  have hone : f 1 = 1 := by simp [f, (correction_multiplicative φ hφ).1]
   have hlocal (p k : ℕ) (hp : p.Prime) (hk : k ≠ 0) : f (p ^ k) ≤ A p * B k := by
     have hp₀ : (0 : ℝ) < p := by exact_mod_cast hp.pos
     have hp₂ : (2 : ℝ) ≤ p := by exact_mod_cast hp.two_le
@@ -362,7 +246,7 @@ private lemma correction_weighted_summable (s : ℝ) (hs : 1 < s) :
       f (p ^ k) ≤ (p : ℝ) ^ (k - 1) / ((p : ℝ) ^ k) ^ s := by
         dsimp [f]
         rw [Nat.cast_pow]
-        exact div_le_div_of_nonneg_right (correction_prime_pow_bound p k hp hk) (by positivity)
+        exact div_le_div_of_nonneg_right (correction_prime_pow_bound φ hφ p k hp hk) (by positivity)
       _ = (p : ℝ) ^ (-s) * ((p : ℝ) ^ (1 - s)) ^ (k - 1) := he
       _ ≤ A p * B k := by
         dsimp [A, B, r]
@@ -382,36 +266,20 @@ private lemma correction_weighted_summable (s : ℝ) (hs : 1 < s) :
     (Finsupp.mem_support_iff.mp hp)
 
 
-private lemma correction_prime (p : ℕ) (hp : p.Prime) : correction p = -1 := by
-  have h := correction_prime_pow_succ p 0 hp
-  rw [show 0 + 1 = 2 * 0 + 1 by rfl, candidate_odd p 0 hp] at h
-  simpa [candidate, squareSplitU_one, squareSplitV_one, jordanTotient_apply_one] using h
-
-private lemma correction_square (p : ℕ) (hp : p.Prime) :
-    correction (p ^ 2) = (p : ℤ) - 1 := by
-  have h := correction_prime_pow_succ p 1 hp
-  norm_num only [Nat.reduceAdd] at h
-  have hc₂ : candidate (p ^ 2) = (p : ℤ) ^ 2 - 1 := by
-    simpa using (candidate_even p 1 hp).trans (jordanTotient_two_prime_pow_succ p 0 hp)
-  have hc₁ : candidate p = (p : ℤ) - 1 := by
-    simpa [candidate, squareSplitU_one, squareSplitV_one, jordanTotient_apply_one] using
-      candidate_odd p 0 hp
-  rw [pow_one, hc₂, hc₁] at h
-  linarith
-
-private lemma correction_euler_product :
-    (∑' n : ℕ, (correction n : ℝ) / (n : ℝ) ^ 2) =
+private lemma correction_euler_product (φ : ArithmeticFunction ℤ)
+    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) :
+    (∑' n : ℕ, (correction φ n : ℝ) / (n : ℝ) ^ 2) =
       ∏' p : Nat.Primes,
         (1 - 1 / ((p : ℕ) : ℝ) ^ 2 + (((p : ℕ) : ℝ) - 1) ^ 2 /
           ((p : ℕ) : ℝ) ^ 5) := by
-  let f (n : ℕ) : ℝ := (correction n : ℝ) / (n : ℝ) ^ 2
+  let f (n : ℕ) : ℝ := (correction φ n : ℝ) / (n : ℝ) ^ 2
   have hnorm : Summable (fun n => ‖f n‖) := by
     simpa only [f, norm_div, norm_pow, Real.norm_natCast, Real.norm_eq_abs, Nat.abs_cast,
-      Real.rpow_two] using correction_weighted_summable 2 (by norm_num)
-  have hone : f 1 = 1 := by simp [f, correction_multiplicative.1]
+      Real.rpow_two] using correction_weighted_summable φ hφ 2 (by norm_num)
+  have hone : f 1 = 1 := by simp [f, (correction_multiplicative φ hφ).1]
   have hzero : f 0 = 0 := by simp [f]
   have hmul {m n : ℕ} (h : m.Coprime n) : f (m * n) = f m * f n := by
-    simp only [f, correction_multiplicative.map_mul_of_coprime h, Int.cast_mul,
+    simp only [f, (correction_multiplicative φ hφ).map_mul_of_coprime h, Int.cast_mul,
       Nat.cast_mul, mul_pow]
     exact mul_div_mul_comm _ _ _ _
   rw [← EulerProduct.eulerProduct_tprod hone hmul hnorm hzero]
@@ -429,7 +297,7 @@ private lemma correction_euler_product :
       (1 - (p : ℝ) ^ 2) / (p : ℝ) ^ 6 *
         (-(1 / (p : ℝ))) ^ k := by
     dsimp only [f]
-    rw [correction_prime_pow_tail _ k hp]
+    rw [correction_prime_pow_tail φ hφ _ k hp]
     simp only [Int.cast_mul, Int.cast_pow,
       Int.cast_neg, Int.cast_natCast, Int.cast_sub, Int.cast_one, Nat.cast_pow, Nat.cast_mul,
       pow_add,
@@ -443,7 +311,7 @@ private lemma correction_euler_product :
     exact (div_lt_one hp₀).mpr (by linarith)
   rw [tsum_mul_left, tsum_geometric_of_norm_lt_one hr]
   simp only [Finset.sum_range_succ, Finset.sum_range_zero, f, Nat.pow_zero, Nat.pow_one,
-    correction_multiplicative.1, correction_prime _ hp, correction_square _ hp,
+    (correction_multiplicative φ hφ).1, correction_prime φ hφ _ hp, correction_square φ hφ _ hp,
     Int.cast_one, Int.cast_neg, Int.cast_sub, Int.cast_natCast, zero_add,
     Nat.cast_pow]
   field_simp
@@ -459,13 +327,13 @@ private lemma sum_id (N : ℕ) :
     simp only [Nat.cast_add, Nat.cast_one]
     ring
 
-private lemma candidate_partial_sum (N : ℕ) :
-    (∑ n ∈ Finset.Ioc 0 N, (candidate n : ℝ)) =
-      ∑ d ∈ Finset.Ioc 0 N, (correction d : ℝ) *
+private lemma phi_partial_sum (φ : ArithmeticFunction ℤ) (N : ℕ) :
+    (∑ n ∈ Finset.Ioc 0 N, (φ n : ℝ)) =
+      ∑ d ∈ Finset.Ioc 0 N, (correction φ d : ℝ) *
         ((N / d : ℕ) : ℝ) * (((N / d : ℕ) : ℝ) + 1) / 2 := by
-  have h := ArithmeticFunction.sum_Ioc_mul_eq_sum_sum correction
+  have h := ArithmeticFunction.sum_Ioc_mul_eq_sum_sum (correction φ)
     (ArithmeticFunction.id : ArithmeticFunction ℤ) N
-  rw [mul_comm correction, ← candidate_eq_id_mul_correction] at h
+  rw [mul_comm (correction φ), ← eq_id_mul_correction φ] at h
   have hcast := congrArg (fun z : ℤ => (z : ℝ)) h
   simp only [Int.cast_sum, Int.cast_mul, ArithmeticFunction.natCoe_apply,
     ArithmeticFunction.id_apply, Int.cast_natCast, sum_id] at hcast
@@ -484,25 +352,27 @@ private lemma sum_id_floor_error (y : ℝ) (hy : 1 ≤ y) :
   constructor <;> nlinarith
 
 
-private lemma candidate_sum_bound (ε : ℝ) (hε : 0 < ε) (hε₁ : ε < 1) :
-    (fun x : ℝ => (∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, (candidate n : ℝ)) -
-      (∑' n : ℕ, (correction n : ℝ) / (n : ℝ) ^ 2) / 2 * x ^ 2)
+private lemma phi_sum_bound (φ : ArithmeticFunction ℤ)
+    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) (ε : ℝ)
+    (hε : 0 < ε) (hε₁ : ε < 1) :
+    (fun x : ℝ => (∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, (φ n : ℝ)) -
+      (∑' n : ℕ, (correction φ n : ℝ) / (n : ℝ) ^ 2) / 2 * x ^ 2)
       =O[Filter.atTop] fun x => x ^ (1 + ε) := by
-  let a (n : ℕ) : ℝ := |(correction n : ℝ)| / (n : ℝ) ^ (1 + ε)
-  let w (n : ℕ) : ℝ := (correction n : ℝ) / (n : ℝ) ^ 2
+  let a (n : ℕ) : ℝ := |(correction φ n : ℝ)| / (n : ℝ) ^ (1 + ε)
+  let w (n : ℕ) : ℝ := (correction φ n : ℝ) / (n : ℝ) ^ 2
   let C : ℝ := ∑' n, a n
-  have ha : Summable a := correction_weighted_summable (1 + ε) (by linarith)
+  have ha : Summable a := correction_weighted_summable φ hφ (1 + ε) (by linarith)
   have ha₀ (n : ℕ) : 0 ≤ a n := by dsimp [a]; positivity
   have hC : 0 ≤ C := tsum_nonneg ha₀
   have hw : Summable (fun n => ‖w n‖) := by
     simpa only [w, norm_div, norm_pow, Real.norm_natCast, Real.norm_eq_abs, Nat.abs_cast,
-      Real.rpow_two] using correction_weighted_summable 2 (by norm_num)
+      Real.rpow_two] using correction_weighted_summable φ hφ 2 (by norm_num)
   apply Asymptotics.IsBigO.of_bound (3 * C)
   filter_upwards [Filter.eventually_ge_atTop (1 : ℝ)] with x hx
   have hx₀ : 0 < x := by linarith
   let S := Finset.Ioc 0 ⌊x⌋₊
   let q (d : ℕ) : ℝ := ((⌊x⌋₊ / d : ℕ) : ℝ)
-  let e (d : ℕ) : ℝ := (correction d : ℝ) *
+  let e (d : ℕ) : ℝ := (correction φ d : ℝ) *
     (q d * (q d + 1) / 2 - (x / (d : ℝ)) ^ 2 / 2)
   have hxpow : x * x ^ ε = x ^ (1 + ε) := by
     rw [Real.rpow_add hx₀, Real.rpow_one]
@@ -520,17 +390,17 @@ private lemma candidate_sum_bound (ε : ℝ) (hε : 0 < ε) (hε₁ : ε < 1) :
       dsimp only [q]
       rw [← Nat.floor_div_natCast x d]
     have hpow : (d : ℝ) ^ ε ≤ x ^ ε := Real.rpow_le_rpow hd'.le hdx hε.le
-    have he : |(correction d : ℝ)| * (2 * (x / (d : ℝ))) =
+    have he : |(correction φ d : ℝ)| * (2 * (x / (d : ℝ))) =
         2 * x * (d : ℝ) ^ ε * a d := by
       dsimp [a]
       rw [Real.rpow_add hd', Real.rpow_one]
       field_simp
     calc
-      ‖e d‖ = |(correction d : ℝ)| *
+      ‖e d‖ = |(correction φ d : ℝ)| *
           |q d * (q d + 1) / 2 - (x / (d : ℝ)) ^ 2 / 2| := by
         dsimp only [e]
         rw [norm_mul, Real.norm_eq_abs, Real.norm_eq_abs]
-      _ ≤ |(correction d : ℝ)| * (2 * (x / (d : ℝ))) :=
+      _ ≤ |(correction φ d : ℝ)| * (2 * (x / (d : ℝ))) :=
         mul_le_mul_of_nonneg_left (by rw [hq]; exact sum_id_floor_error _ hxy) (abs_nonneg _)
       _ = 2 * x * (d : ℝ) ^ ε * a d := he
       _ ≤ 2 * x * x ^ ε * a d := by gcongr
@@ -555,7 +425,7 @@ private lemma candidate_sum_bound (ε : ℝ) (hε : 0 < ε) (hε₁ : ε < 1) :
       Real.rpow_le_rpow_of_nonpos hx₀ hxd (by linarith)
     have he : ‖w d‖ = ((d : ℕ) : ℝ) ^ (ε - 1) * a d := by
       dsimp only [w, a]
-      change |(correction d : ℝ) / ((d : ℕ) : ℝ) ^ 2| = _
+      change |(correction φ d : ℝ) / ((d : ℕ) : ℝ) ^ 2| = _
       rw [abs_div, abs_pow, abs_of_pos hd₀]
       rw [show 1 + ε = (ε - 1) + 2 by ring, Real.rpow_add hd₀, Real.rpow_two]
       field_simp
@@ -575,15 +445,15 @@ private lemma candidate_sum_bound (ε : ℝ) (hε : 0 < ε) (hε₁ : ε < 1) :
         (hw.subtype (fun d => d ∉ S)).tsum_le_tsum houtside (haTail.mul_left _)
       _ = x ^ (ε - 1) * ∑' d : {d : ℕ // d ∉ S}, a d := tsum_mul_left
       _ ≤ x ^ (ε - 1) * C := mul_le_mul_of_nonneg_left htailC (by positivity)
-  have hsplit : (∑ n ∈ S, (candidate n : ℝ)) - (∑' n, w n) / 2 * x ^ 2 =
+  have hsplit : (∑ n ∈ S, (φ n : ℝ)) - (∑' n, w n) / 2 * x ^ 2 =
       (∑ d ∈ S, e d) - x ^ 2 / 2 * ∑' d : {d : ℕ // d ∉ S}, w d := by
     rw [hw.of_norm.sum_add_tsum_subtype_compl S |>.symm]
     dsimp [S]
-    rw [candidate_partial_sum]
+    rw [phi_partial_sum φ]
     dsimp [e, q, w]
     simp only [mul_sub, Finset.sum_sub_distrib, ← mul_div_assoc, ← mul_assoc]
-    have heq : ∑ d ∈ Finset.Ioc 0 ⌊x⌋₊, (correction d : ℝ) * (x / (d : ℝ)) ^ 2 / 2 =
-        (∑ d ∈ Finset.Ioc 0 ⌊x⌋₊, (correction d : ℝ) / (d : ℝ) ^ 2) * x ^ 2 / 2 := by
+    have heq : ∑ d ∈ Finset.Ioc 0 ⌊x⌋₊, (correction φ d : ℝ) * (x / (d : ℝ)) ^ 2 / 2 =
+        (∑ d ∈ Finset.Ioc 0 ⌊x⌋₊, (correction φ d : ℝ) / (d : ℝ) ^ 2) * x ^ 2 / 2 := by
       rw [Finset.sum_mul, Finset.sum_div]
       apply Finset.sum_congr rfl
       intro d _
@@ -591,7 +461,7 @@ private lemma candidate_sum_bound (ε : ℝ) (hε : 0 < ε) (hε₁ : ε < 1) :
       ring
     rw [heq]
     ring
-  change ‖(∑ n ∈ S, (candidate n : ℝ)) - (∑' n, w n) / 2 * x ^ 2‖ ≤
+  change ‖(∑ n ∈ S, (φ n : ℝ)) - (∑' n, w n) / 2 * x ^ 2‖ ≤
     3 * C * ‖x ^ (1 + ε)‖
   rw [hsplit]
   calc
@@ -628,11 +498,10 @@ public theorem squareSplitTotient_sum_asymptotic (φ : ArithmeticFunction ℤ)
         =O[atTop] fun x => x ^ (1 + ε) := by
   refine ⟨primeCorrection_summable, ?_⟩
   intro ε hε hε₁
-  have hfun : φ = candidate := determined_by_sum φ candidate hφ candidate_sum
-  have h := candidate_sum_bound ε hε (by linarith)
+  have h := phi_sum_bound φ hφ ε hε (by linarith)
   have hsets (N : ℕ) : Finset.Ioc 0 N = Finset.Icc 1 N :=
     (Finset.Icc_succ_left_eq_Ioc (0 : ℕ) N).symm
-  simpa only [hfun, hsets, correction_euler_product] using h
+  simpa only [hsets, correction_euler_product φ hφ] using h
 
 
 end MetaMathlibExt
