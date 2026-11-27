@@ -74,12 +74,18 @@ variable {σ : Type*} [DecidableEq σ]
 noncomputable def totalRate (q : σ → σ → ℝ) (x : σ) : ℝ :=
   ∑' y, if y = x then 0 else q x y
 
-/-- The holding rate: the total rate, or `1` at an absorbing state (a fictitious self-loop). -/
+/-- The holding rate: the total rate, or `1` when the total rate is `0`. When the off-diagonal row
+`y ↦ q x y` is nonnegative and summable, a zero total means that `x` is absorbing, and the `1` is
+a fictitious self-loop. In general a zero total need not mean that: a row that is not summable has
+total `0`, and real entries such as `1` and `-1` cancel. -/
 noncomputable def holdRate (q : σ → σ → ℝ) (x : σ) : ℝ :=
   if totalRate q x = 0 then 1 else totalRate q x
 
-/-- The transition probabilities of the jump chain: `q(x, y)/q(x)` for `y ≠ x`, and staying put
-at an absorbing state. -/
+/-- The jump quotients of the rates: `q(x, y)/q(x)` for `y ≠ x`, and staying put (`1` at `y = x`,
+`0` elsewhere) when the total rate `q(x)` is `0`. When the off-diagonal row `y ↦ q x y` is
+nonnegative and summable, they are the transition probabilities of the jump chain. In general they
+are raw quotients: for a row with off-diagonal entries `2` and `-1` the total is `1` and one
+quotient is `-1`. -/
 noncomputable def jumpProb (q : σ → σ → ℝ) (x y : σ) : ℝ :=
   if totalRate q x = 0 then (if y = x then 1 else 0)
   else (if y = x then 0 else q x y / totalRate q x)
