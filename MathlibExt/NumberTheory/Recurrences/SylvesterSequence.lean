@@ -20,6 +20,9 @@ The recurrence preserves the residue of `Sₖ` modulo `(Sₖ - 1)²` for every t
 from index `k` onward. In particular, the terms from `S₂ = 7` onward have
 residue `7` modulo `36`.
 
+Starting from `S₃ = 43`, the recurrence preserves the residue `43` modulo `1764`
+because `43² - 43 + 1 = 1807 = 1764 + 43` (congruence (7) in the reference below).
+
 ## References
 
 * Abderrahim Makki Naciri, *A Note on Sylvester's Sequence*, INTEGERS 24
@@ -84,5 +87,17 @@ theorem sylvester_sub_dvd
       exact (ih.add ((ih.sub_right 1).pow 2)).trans
         (Int.add_modEq_left_iff.mpr (dvd_refl _))
   exact ((hres m hm).trans (hres n hn).symm).dvd
+
+/-- **Sylvester numbers modulo 1764.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
+$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 3$, $S_n \equiv 43 \pmod{1764}$.
+
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (7). -/
+theorem sylvester_modEq_forty_three_mod_1764
+    (n : ℕ) (hn : 3 ≤ n) :
+    sylvesterNumber n % 1764 = 43 := by
+  have hmod : (43 : ℤ) ≡ (sylvesterNumber n : ℤ) [ZMOD 1764] :=
+    Int.modEq_iff_dvd.mpr (sylvester_sub_dvd 3 3 n (by decide) (by decide) hn)
+  have hnat : 43 ≡ sylvesterNumber n [MOD 1764] := Int.natCast_modEq_iff.mp hmod
+  exact hnat.symm
 
 end MathlibExt.NumberTheory.Recurrences.SylvesterSequenceWanted

@@ -13,6 +13,7 @@ public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.GroupTheory.Finiteness
 public import MathlibExt.NumberTheory.LexMinimalExtensionMonoid
 public import WantedExt.NumberTheory.BinomidIndexWanted
+public import MathlibExt.NumberTheory.LexMinimalExtensionMonoidBinomidAverageLe
 
 namespace MetaMathlibExt
 
@@ -75,19 +76,6 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_knapsack {η : ℕ → ℕ}
       ∀ n' : ℕ → ℕ, ∑ i ∈ Finset.Icc 1 m, n' i * i ≤ c →
         ∑ i ∈ Finset.Icc 1 m, n' i * ∑ l ∈ Finset.range i, η l
           ≤ ∑ i ∈ Finset.Icc 1 m, n i * ∑ l ∈ Finset.range i, η l
-
-/-- **The largest of the first $m$ averages is the largest average.** Let $m \ge 0$ and let
-$\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $m$ entries, with averages
-$A_i = (e_1 + \dots + e_i)/i$ for $i \ge 1$. If $1 \le j \le m$ and
-$A_j = \max \{A_i \mid 1 \le i \le m\}$, then $A_i \le A_j$ for every $i \ge 1$.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Lemma 1 (`integers-2026-A113-lem-1`). -/
-public theorem_wanted IsLexMinimalExtensionOf.binomidAverage_le {η : ℕ → ℕ} {m : ℕ}
-    (hη : IsLexMinimalExtensionOf η m) {i : ℕ} (hi : 1 ≤ i) {j : ℕ}
-    (hj : j ∈ maxAverageIndices η m) :
-    binomidAverage η i ≤ binomidAverage η j
 
 /-- **The gcd of the maximizing indices divides the minimal period.** Let $m \ge 1$, let
 $\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $m$ entries, with averages
