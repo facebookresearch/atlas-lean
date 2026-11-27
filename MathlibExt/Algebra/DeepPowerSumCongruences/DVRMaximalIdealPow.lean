@@ -11,9 +11,8 @@ module
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerIdeal
 
-import Mathlib.Algebra.CharP.Invertible
+import Mathlib.RingTheory.Coprime.Lemmas
 import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerSpan
-import MathlibExt.RingTheory.LocalRing.CharP
 
 /-!
 # The divided-power criterion for powers of a DVR maximal ideal
@@ -23,8 +22,7 @@ import MathlibExt.RingTheory.LocalRing.CharP
 - Samuele Anni, Alexandru Ghitza and Anna Medvedovsky, *Elementary Symmetric Functions and Deep
   Power-Sum Congruences*, INTEGERS 24 (2024), Article A46, pp. 1–26, Lemma 7. We use their
   generator test (Proposition 5) and compare the valuations of the two principal ideals.
-  Membership requires a weak inequality, in agreement with Corollary 8 for `k = 1`, rather than
-  the strict inequality printed in Lemma 7.
+  The bound includes equality, as in Corollary 8 when `k = 1`.
 - Pierre Berthelot and Arthur Ogus, *Notes on Crystalline Cohomology*, Mathematical Notes 21,
   Princeton University Press and University of Tokyo Press, 1978, §3, cited in §2.2 for the
   divided-power structure in the torsion-free setting.
@@ -55,10 +53,15 @@ public theorem isDividedPowerIdeal_maximalIdeal_pow_iff {p : ℕ} [Fact p.Prime]
     apply Ideal.pow_le_self he0
     rw [← he]
     exact Ideal.mem_span_singleton_self _
-  let : CharP (ResidueField O) p := charP_residueField_of_natCast_mem_maximalIdeal O p hpMem
-  have hUnit (n : ℕ) : ¬ p ∣ n → IsUnit (n : O) := by
-    rw [← residue_ne_zero_iff_isUnit, map_natCast, ← isUnit_iff_ne_zero]
-    exact (CharP.isUnit_natCast_iff (Fact.out : p.Prime)).mpr
+  have hUnit (n : ℕ) (hn : ¬ p ∣ n) : IsUnit (n : O) := by
+    have hcop : IsCoprime (p : O) (n : O) :=
+      ((Fact.out : p.Prime).coprime_iff_not_dvd.mpr hn).cast
+    obtain ⟨a, b, hab⟩ := hcop
+    have hsum : IsUnit (a * (p : O) + b * (n : O)) := hab.symm ▸ isUnit_one
+    have hpNonunit : ¬ IsUnit (p : O) := mem_nonunits_iff.mp ((mem_maximalIdeal _).mp hpMem)
+    rcases isUnit_or_isUnit_of_isUnit_add hsum with h | h
+    · exact (hpNonunit (isUnit_of_mul_isUnit_right h)).elim
+    · exact isUnit_of_mul_isUnit_right h
   let I := maximalIdeal O ^ k
   let a := Submodule.IsPrincipal.generator I
   have hI : Ideal.span {a} = I := Ideal.span_singleton_generator I
