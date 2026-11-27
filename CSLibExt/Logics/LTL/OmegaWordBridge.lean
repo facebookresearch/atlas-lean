@@ -54,7 +54,10 @@ theorem satisfies_iff_word_satisfies (valuation : State → Atom → Prop) :
       simp only [SatisfiesAt, Word.SatisfiesAt, satisfies_iff_word_satisfies valuation φ,
         satisfies_iff_word_satisfies valuation ψ, Semantics.LTS.shiftSeq_eq_drop]
 
-/-- Positional form of `satisfies_iff_word_satisfies`. -/
+/-- Positional form of `satisfies_iff_word_satisfies`: for every valuation, run, position `k`
+and formula, the formula holds at position `k` of the run under the run semantics iff it holds
+at position `k` of the ω-word of the run's states under the word semantics with the same
+valuation. -/
 theorem satisfiesAt_iff_word_satisfiesAt (valuation : State → Atom → Prop) (run : ℕ → State)
     (k : ℕ) (φ : Formula Atom) :
     SatisfiesAt valuation run k φ ↔ Word.SatisfiesAt valuation ⟨run⟩ k φ := by

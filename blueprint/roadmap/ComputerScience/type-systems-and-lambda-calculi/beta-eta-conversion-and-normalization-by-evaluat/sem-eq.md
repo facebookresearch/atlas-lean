@@ -1,0 +1,9 @@
+# Beta-eta conversion is sound in every set-theoretic model
+
+Work in the intrinsically typed simply typed lambda calculus over a type of base types, with de Bruijn variables: the terms of type $A$ in a context $\Gamma$ (a list of simple types) are the variables of type $A$, the applications $f\,a$ of a term $f$ of type $D \Rightarrow A$ to a term $a$ of type $D$, both in $\Gamma$, and, when $A = D \Rightarrow E$, the abstractions $\lambda t$ whose body $t$ is a term of type $E$ in $D :: \Gamma$, the context $\Gamma$ extended by a newest variable $0$ of type $D$.
+
+For a term $t$ in $A :: \Gamma$ and a term $a$ of type $A$ in $\Gamma$, the instantiation $t[a]$ substitutes $a$ for the newest variable and replaces each older variable $x+1$ by $x$; for a term $f$ in $\Gamma$, the weakening $f^{\uparrow}$ is $f$ with every variable renamed to its successor. Beta-eta conversion $\simeq$ is the least relation between terms of the same type in the same context that is reflexive, symmetric and transitive, is closed under application ($f \simeq g$ and $a \simeq b$ give $f\,a \simeq g\,b$) and abstraction ($t \simeq t'$ gives $\lambda t \simeq \lambda t'$), and contains every beta instance $(\lambda t)\,a \simeq t[a]$ and every eta instance $\lambda(f^{\uparrow}\,0) \simeq f$.
+
+Fix an interpretation $I$ of each base type as a type, in an arbitrary universe. In the set-theoretic model, function types denote full function spaces and $[\![t]\!]_\eta$ is the denotation of a term $t$ in context $\Gamma$ at an environment $\eta$ assigning to each variable of $\Gamma$ an element of the denotation of its type; terms $t$ and $u$ are semantically equal in $I$ when $[\![t]\!]_\eta = [\![u]\!]_\eta$ for every environment $\eta$.
+
+For every interpretation $I$ and terms $t, u$ of the same type in the same context, $t \simeq u$ implies that $t$ and $u$ are semantically equal in $I$.

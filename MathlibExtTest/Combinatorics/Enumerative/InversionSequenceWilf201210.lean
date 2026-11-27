@@ -25,11 +25,12 @@ private theorem avoids_of_triples {n : ℕ} (e : Fin n → ℕ) (p : Fin 3 → �
     fin_cases a <;> rfl
   simpa only [hv] using hf
 
--- The decreasing tail avoids the first set and witnesses 210 in the second.
+-- The decreasing tail avoids the six patterns including 201, but contains 210.
 example :
     let e : Fin 6 → ℕ := ![0, 0, 0, 3, 2, 1]
     (∀ i, e i ≤ i) ∧
-      (∀ p ∈ ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 2, 0], ![2, 0, 1]} : Set (Fin 3 → ℕ)),
+      (∀ p ∈ ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 0, 2], ![1, 2, 0], ![2, 0, 1]}
+          : Set (Fin 3 → ℕ)),
         ¬ InvSeqContainsPattern e p) ∧ InvSeqContainsPattern e ![2, 1, 0] := by
   dsimp only
   refine ⟨by decide, ?_, ?_⟩
@@ -39,11 +40,12 @@ example :
   · let f : Fin 3 → Fin 6 := ![3, 4, 5]
     exact ⟨OrderEmbedding.ofStrictMono f (by decide), by decide⟩
 
--- Reversing the same tail gives an avoider of the second set with a 201 occurrence.
+-- Reversing the same tail gives an avoider of the six patterns including 210.
 example :
     let e : Fin 6 → ℕ := ![0, 0, 0, 3, 1, 2]
     (∀ i, e i ≤ i) ∧
-      (∀ p ∈ ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 2, 0], ![2, 1, 0]} : Set (Fin 3 → ℕ)),
+      (∀ p ∈ ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 0, 2], ![1, 2, 0], ![2, 1, 0]}
+          : Set (Fin 3 → ℕ)),
         ¬ InvSeqContainsPattern e p) ∧ InvSeqContainsPattern e ![2, 0, 1] := by
   dsimp only
   refine ⟨by decide, ?_, ?_⟩
@@ -52,5 +54,25 @@ example :
     all_goals apply avoids_of_triples; decide
   · let f : Fin 3 → Fin 6 := ![3, 4, 5]
     exact ⟨OrderEmbedding.ofStrictMono f (by decide), by decide⟩
+
+-- The additional restriction matters: the three entries 2, 1, 3 form 102.
+example :
+    let e : Fin 5 → ℕ := ![0, 0, 2, 1, 3]
+    (∀ i, e i ≤ i) ∧
+      (∀ p ∈ ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 2, 0], ![2, 0, 1]} : Set (Fin 3 → ℕ)),
+        ¬ InvSeqContainsPattern e p) ∧ InvSeqContainsPattern e ![1, 0, 2] := by
+  dsimp only
+  refine ⟨by decide, ?_, ?_⟩
+  · simp only [Set.forall_mem_insert, Set.forall_mem_singleton]
+    repeat' constructor
+    all_goals apply avoids_of_triples; decide
+  · let f : Fin 3 → Fin 5 := ![2, 3, 4]
+    exact ⟨OrderEmbedding.ofStrictMono f (by decide), by decide⟩
+
+-- Specialize the public equality of counting functions at the first nonempty size.
+example :
+    invSeqAvoidCount ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 0, 2], ![1, 2, 0], ![2, 0, 1]}
+      : Set (Fin 3 → ℕ)) 1 = 1 := by
+  rw [invSeq_wilf_010_100_101_102_120_201_210, invSeqAvoidCount_one]
 
 end MetaMathlibExt.invSeq_wilf_010_100_101_120_201_210

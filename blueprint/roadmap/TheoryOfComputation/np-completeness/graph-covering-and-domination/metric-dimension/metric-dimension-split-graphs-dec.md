@@ -1,0 +1,3 @@
+# The decision problem METRIC DIMENSION for split graphs
+
+METRIC DIMENSION for split graphs as a decision problem on bitstrings: a bitstring is accepted exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well-formed for METRIC DIMENSION for split graphs](well-formed-2.md) (a well-formed METRIC DIMENSION instance whose graph is a split graph) and feasible for METRIC DIMENSION. The feasibility test is the unrestricted problem's; the restriction to METRIC DIMENSION for split graphs comes from the well-formedness test alone. A bitstring that does not decode to an instance is rejected.

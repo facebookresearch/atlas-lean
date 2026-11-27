@@ -16,8 +16,10 @@ public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowSubOne
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryFortyOne
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisorParity
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfect
+public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectFactorizationTwoNeSixOfBiunitaryTriperfect
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectNotFiveDvdOfFactorizationTwoEqFour
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectExistsPrimeGeFiveDvdSigmaBiunitaryPrimePow
+public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectEq2160OfFactorizationTwoEqFour
 
 /-!
 # Biunitary triperfect numbers divisible by `27`
@@ -141,17 +143,6 @@ public theorem_wanted factorization_two_ne_five_of_biunitaryTriperfect (N : ℕ)
     (hσ : sigmaBiunitary N = 3 * N) (hf : 3 ≤ N.factorization 3) :
     N.factorization 2 ≠ 5
 
-/-- **No biunitary triperfect number divisible by $27$ is exactly divisible by $2^6$.** Let $N$
-be a biunitary triperfect number, that is, a positive integer with $\sigma^{**}(N) = 3N$, where
-$\sigma^{**}$ is the biunitary divisor sum. If $3^3$ divides $N$, then the exact power of $2$
-dividing $N$ is not $2^6$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 11 (`jis-2025-25.4.5-lem-11`). -/
-public theorem_wanted factorization_two_ne_six_of_biunitaryTriperfect (N : ℕ) (hN : 0 < N)
-    (hσ : sigmaBiunitary N = 3 * N) (hf : 3 ≤ N.factorization 3) :
-    N.factorization 2 ≠ 6
-
 /-- **No biunitary triperfect number has $3$-exponent $3$ and $2$-exponent at least $7$.** Let
 $N$ be a positive integer with $\sigma^{**}(N) = 3N$, where $\sigma^{**}$ is the biunitary divisor
 sum, and let $e$ and $f$ be the exponents of $2$ and $3$ in the prime factorization of $N$. If
@@ -173,17 +164,6 @@ Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 13 (`jis-2025-25.4
 public theorem_wanted not_seven_le_and_factorization_three_eq_four (N : ℕ) (hN : 0 < N)
     (hσ : sigmaBiunitary N = 3 * N) (hf : 3 ≤ N.factorization 3) :
     ¬ (7 ≤ N.factorization 2 ∧ N.factorization 3 = 4)
-
-/-- **Biunitary triperfect numbers exactly divisible by $2^4$ and by $3^3$ or $3^4$.** Let $N$ be
-a biunitary triperfect number, that is, a positive integer with $\sigma^{**}(N) = 3N$, where
-$\sigma^{**}$ is the biunitary divisor sum. If the exact power of $2$ dividing $N$ is $2^4$ and the
-exact power of $3$ dividing $N$ is $3^3$ or $3^4$, then $N = 2160$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 14 (`jis-2025-25.4.5-lem-14`). -/
-public theorem_wanted eq_2160_of_factorization_two_eq_four (N : ℕ) (hN : 0 < N)
-    (hσ : sigmaBiunitary N = 3 * N) (hf : 3 ≤ N.factorization 3)
-    (he : N.factorization 2 = 4) (hf4 : N.factorization 3 ≤ 4) : N = 2160
 
 end
 
