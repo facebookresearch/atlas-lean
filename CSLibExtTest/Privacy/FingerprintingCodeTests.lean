@@ -13,12 +13,12 @@ public import CSLibExt.Privacy.FingerprintingCode
 /-!
 # Tests for fingerprinting codes
 
-A one-user code that always accuses its user meets every security predicate with error `0`, and
-accuses an innocent user with probability `1` against the empty coalition, which the predicates
-leave out. A code that never accuses, and one that always accuses an innocent user, show that the
-completeness and soundness clauses can fail. Concrete codebooks pin feasibility and β-feasibility,
-the Bernoulli and codebook masses, independent draws, the keys of the generators, and Tardos's
-weights, scores and accusation rule.
+A one-user code that always accuses its user meets the security predicates for nonempty coalitions
+with error `0`. It falsely accuses with probability `1` against the empty coalition, so its
+Bun, Ullman and Vadhan security holds only at `ξ = 1`. A code that never accuses, and one that
+always accuses an innocent user, show that the completeness and soundness clauses can fail.
+Concrete codebooks pin feasibility and β-feasibility, the Bernoulli and codebook masses,
+independent draws, the keys of the generators, and Tardos's weights, scores and accusation rule.
 -/
 
 namespace CSLibExtTest.Privacy.FingerprintingCodeTests
@@ -96,13 +96,41 @@ theorem trivialCode_isFingerprintingSecureCombined :
     (trivialCode_prob_eq_zero P (combinedFailureEvent S) fun t ht h0 => ?_).le⟩
   exact ht.2 ⟨0, zero_mem_of_nonempty hS, h0⟩
 
-/-- Against the empty coalition, which the security predicates leave out, `trivialCode` accuses an
-innocent user with probability `1`. -/
+/-- Against the empty coalition, which the nonempty-coalition predicates leave out, `trivialCode`
+accuses an innocent user with probability `1`. -/
 theorem trivialCode_empty_coalition_soundness (P : Pirate 1 1 ∅) :
     soundnessErrorProb trivialCode ∅ P = 1 := by
   rw [soundnessErrorProb, (PMF.toOuterMeasure_apply_eq_one_iff _ _).mpr, ENNReal.toReal_one]
   intro t ht
   exact ⟨0, Finset.notMem_empty 0, trivialCode_accuses P ht⟩
+
+/-- Although `trivialCode` meets the nonempty-coalition predicate with zero errors, its
+soundness error against the empty coalition rules out security below `1`. -/
+theorem trivialCode_not_isBUVFingerprintingSecure {ξ : ℝ} (hξ : ξ < 1) :
+    ¬ IsBUVFingerprintingSecure trivialCode ξ := by
+  intro h
+  let P : Pirate 1 1 ∅ := fun _ => PMF.pure fun _ => false
+  have hs := (h.2.2 ∅ P).2
+  rw [trivialCode_empty_coalition_soundness P] at hs
+  exact hξ.not_ge hs
+
+/-- The upper endpoint `1` is allowed, even for `trivialCode`. -/
+theorem trivialCode_isBUVFingerprintingSecure_one : IsBUVFingerprintingSecure trivialCode 1 := by
+  refine ⟨zero_lt_one, le_rfl, fun S P => ?_⟩
+  have event_le_one (E : Set (Codebook 1 1 × Word 1 × Option (Fin 1))) :
+      ((tracingGame trivialCode S P).toOuterMeasure E).toReal ≤ 1 := by
+    let _ : MeasurableSpace (Codebook 1 1 × Word 1 × Option (Fin 1)) := ⊤
+    rw [← PMF.toMeasure_apply_eq_toOuterMeasure_apply _ MeasurableSpace.measurableSet_top]
+    exact MeasureTheory.measureReal_le_one
+  exact ⟨event_le_one (completenessFailureEvent S), event_le_one (soundnessFailureEvent S)⟩
+
+theorem trivialCode_isFingerprintingSecure_one : IsFingerprintingSecure trivialCode 1 1 1 :=
+  trivialCode_isBUVFingerprintingSecure_one.isFingerprintingSecure
+
+/-- The lower endpoint `0` is excluded by the security parameter range alone. -/
+theorem not_isBUVFingerprintingSecure_zero {n d : ℕ} {Key : Type*}
+    (FC : FingerprintingCode n d Key) : ¬ IsBUVFingerprintingSecure FC 0 :=
+  fun h => (lt_irrefl (0 : ℝ)) h.1
 
 /-! ### Codes that fail completeness or soundness -/
 
@@ -440,6 +468,12 @@ example : TardosAccuses skewed 2 C₃ w₃ 1 ∧ ¬ TardosAccuses skewed 2 C₃ 
 #print axioms trivialCode_isFingerprintingSecure
 #print axioms trivialCode_isFingerprintingSecureCombined
 #print axioms trivialCode_empty_coalition_soundness
+#print axioms CSLibExt.Privacy.Fingerprinting.IsBUVFingerprintingSecure
+#print axioms CSLibExt.Privacy.Fingerprinting.IsBUVFingerprintingSecure.isFingerprintingSecure
+#print axioms trivialCode_not_isBUVFingerprintingSecure
+#print axioms trivialCode_isBUVFingerprintingSecure_one
+#print axioms trivialCode_isFingerprintingSecure_one
+#print axioms not_isBUVFingerprintingSecure_zero
 #print axioms pmfIID_apply_eq_prod
 #print axioms toMeasure_bernoulliPMF
 

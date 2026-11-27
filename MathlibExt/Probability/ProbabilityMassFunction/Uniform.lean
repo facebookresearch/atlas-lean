@@ -64,7 +64,7 @@ open scoped Classical in
 @[simp] theorem uniformFinset_apply_of_mem {s : Finset α} (hs : s.Nonempty)
     {a : α} (ha : a ∈ s) : uniformFinset s hs a = (s.card : ℝ≥0∞)⁻¹ := by
   classical
-  rw [uniformFinset_apply, if_pos ha]
+  rw [uniformFinset_apply, ite_eq_left ha]
 
 /-- **Uniform distribution on a finite type.** For a nonempty finite type $\alpha$, the uniform
 distribution on $\alpha$ is the probability mass function on $\alpha$ that gives mass $1/|\alpha|$
