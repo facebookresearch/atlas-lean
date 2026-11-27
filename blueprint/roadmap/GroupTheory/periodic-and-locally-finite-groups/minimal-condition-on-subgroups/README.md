@@ -12,3 +12,4 @@
 - [An F*-group with the minimal condition without a radicable part](f-star-minimal-has-radicable-part-refute.md)
 - [Kourovka Problem 9.79 (countability of groups with the minimum condition)](min-condition-countable.md)
 - [Uncountable groups with the minimum condition on subgroups](min-condition-countable-refuted.md)
+- [Minimal conditions on normal subgroups](minimal-conditions-on-normal-subgroups/README.md)
