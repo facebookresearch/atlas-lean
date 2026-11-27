@@ -1828,6 +1828,7 @@
   "CSLibExt/Languages/LambdaCalculus/HindleyMilner/Typing": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Hindley–Milner type inference"},
   "CSLibExt/Languages/LambdaCalculus/IsoRecursive": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Iso-recursive types"},
   "CSLibExt/Languages/LambdaCalculus/LocallyNameless/Untyped/GraphModel": {"to": "ComputerScience/programming-language-semantics", "title": "Models of the untyped lambda calculus"},
+  "CSLibExt/Languages/LambdaCalculus/LocallyNameless/Untyped/OmegaExamples": {"to": "ComputerScience/programming-language-semantics", "title": "Omega and normalization examples"},
   "CSLibExt/Languages/LambdaCalculus/Named/Untyped/LocallyNamelessBridge": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Named and locally nameless terms"},
   "CSLibExt/Languages/LambdaCalculus/PCF/Adequacy": {"to": "ComputerScience/programming-language-semantics", "title": "PCF and computational adequacy"},
   "CSLibExt/Languages/LambdaCalculus/PCF/BigStep": {"to": "ComputerScience/programming-language-semantics", "title": "PCF and computational adequacy"},
