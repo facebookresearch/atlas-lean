@@ -44,6 +44,7 @@
    "title": "Algebraic Geometry",
    "description": "Algebraic geometry studies spaces cut out by polynomial equations and translates between their geometric and algebraic invariants.",
    "fields": [
+    {"slug": "real-algebraic-geometry", "title": "Real algebraic geometry", "description": "Real polynomial equations and inequalities, semialgebraic sets, sums-of-squares representations and sufficient polynomial identity criteria for nonnegativity and infeasibility.", "msc": ["14P10", "14P99"], "subfields": []},
     {"slug": "schemes-and-morphisms", "title": "Schemes and morphisms", "description": "The scheme-theoretic foundations of algebraic geometry: points, immersions, smooth morphisms, varieties over a field and properties that persist under base change.", "msc": ["14A15", "14A10", "14B25"], "subfields": []},
     {"slug": "grothendieck-topologies", "title": "Grothendieck topologies on schemes", "description": "Sites attached to schemes: the Zariski, étale, pro-étale, fpqc and quasi-compact topologies, their points and sheaves, representability of sheaves by schemes, and ℓ-adic cohomology. Grothendieck topologies and sheaves on general sites are under category theory.", "msc": ["14F20", "14A15", "14F05"], "subfields": []},
     {"slug": "varieties-and-projective-geometry", "title": "Varieties and projective geometry", "description": "Classical algebraic geometry of affine and projective varieties: hypersurfaces and their singularities, tangent spaces, plane configurations, intersection multiplicities, counts of solutions of sparse polynomial systems, tropical varieties, linear systems and birational maps.", "msc": ["14N05", "14J70", "14C17", "14C20", "14E07"], "subfields": []},
@@ -9473,6 +9474,7 @@
   "MathlibExt/Algebra/RealZerosParityChangeBound": {"to": "Algebra/zeros-of-polynomials", "title": "Parity-change bound on real zeros"},
   "MathlibExt/Algebra/Ring/CandidoIdentity": {"to": "Algebra/algebraic-identities", "title": "Candido's identity"},
   "MathlibExt/Algebra/Ring/JacobsonCommutativity": {"to": "Algebra/associative-algebras", "title": "Jacobson's commutativity theorem"},
+  "MathlibExt/Algebra/Ring/SumsOfSquares": {"to": "Algebra/rings-and-fields", "title": "Mapping sums of squares"},
   "MathlibExt/Algebra/ScottishBook171": {"to": "Algebra/algebraic-identities", "title": "Associative operations on self-maps"},
   "MathlibExt/Algebra/Smooth/Localization": {"to": "RingTheory/algebras-and-differentials", "title": "Localizations of smooth and étale algebras"},
   "MathlibExt/Algebra/StandardSmooth/DVR": {"to": "RingTheory/algebras-and-differentials", "title": "Localizations of smooth and étale algebras"},
@@ -9509,6 +9511,7 @@
   "MathlibExt/AlgebraicGeometry/Immersions": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Closed and open immersions"},
   "MathlibExt/AlgebraicGeometry/LineArrangement": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Line arrangements in the projective plane"},
   "MathlibExt/AlgebraicGeometry/PointMultiplicity": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Multiplicity of a hypersurface at a point"},
+  "MathlibExt/AlgebraicGeometry/PolynomialInequalities": {"to": "AlgebraicGeometry/real-algebraic-geometry", "title": "Polynomial identity soundness on basic closed sets"},
   "MathlibExt/AlgebraicGeometry/PullbackPoints": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Points and sections of schemes"},
   "MathlibExt/AlgebraicGeometry/Sections": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Points and sections of schemes"},
   "MathlibExt/AlgebraicGeometry/SeshadriConstant": {"to": "AlgebraicGeometry/birational-geometry", "title": "Seshadri constants of points in the plane"},

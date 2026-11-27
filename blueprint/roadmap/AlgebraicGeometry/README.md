@@ -15,6 +15,7 @@ uniform bound of Dimitrov, Gao and Habegger on the rational points of curves of 
 [arithmetic geometry](arithmetic-geometry/README.md) has
 [Faltings's theorem](arithmetic-geometry/faltings-s-theorem/README.md) and the Weil conjectures over finite fields.
 
+- [Real algebraic geometry](real-algebraic-geometry/README.md)
 - [Schemes and morphisms](schemes-and-morphisms/README.md)
 - [Grothendieck topologies on schemes](grothendieck-topologies/README.md)
 - [Varieties and projective geometry](varieties-and-projective-geometry/README.md)
