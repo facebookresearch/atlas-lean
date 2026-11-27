@@ -213,6 +213,41 @@ end ScopeProbe
 """
 
 
+# In a `module` file, a declaration is private unless it is marked `public` or is in a
+# `public section` (and not marked `private`); scopes inside a public section are public too.
+VISIBILITY = """\
+module
+
+namespace ReviewCases
+
+def helper (y z : Nat) : Nat := y
+
+/-- Moves to another file. -/
+public def moved (y z : Nat) : Nat := y
+
+structure Hidden where
+  x : Nat
+
+@[expose] public section
+
+/-- Exposed. -/
+def exposed (y z : Nat) : Nat := y
+
+private def hiddenAgain (y z : Nat) : Nat := y
+
+namespace Nested
+
+/-- Inner. -/
+def inner : Nat := 0
+
+end Nested
+
+end
+
+end ReviewCases
+"""
+
+
 class IndexTests(unittest.TestCase):
     def test_names_declarations_in_their_namespaces(self):
         index = check.index_source(SOURCE)
@@ -264,6 +299,17 @@ class IndexTests(unittest.TestCase):
             "theorem t : True := trivial\n\nend N\n")
         self.assertEqual(index.names, {"wanted:N.w", "wanted:N.v", "wanted:N.d", "wanted:N.i",
                                        "N.t"})
+
+    def test_module_files_make_declarations_private_outside_public_sections(self):
+        index = check.index_source(VISIBILITY)
+        self.assertEqual(index.private_names, {
+            "ReviewCases.helper", "ReviewCases.hiddenAgain", "ReviewCases.Hidden",
+            "ReviewCases.Hidden.mk", "ReviewCases.Hidden.x"})
+        self.assertEqual(index.public_names, {
+            "ReviewCases.moved", "ReviewCases.exposed", "ReviewCases.Nested.inner"})
+        # Outside a `module` file, only `private` makes a declaration private.
+        plain = check.index_source(VISIBILITY.replace("module\n", "", 1))
+        self.assertEqual(plain.private_names, {"ReviewCases.hiddenAgain"})
 
     def test_unlexable_sources_fall_back_to_the_reported_line(self):
         index = check.index_source('def s := "unterminated\n')
@@ -397,6 +443,25 @@ class PlaceTests(unittest.TestCase):
         finding = Finding("ScopeProbe.later", "unusedArguments", "", "WantedExt.Other",
                           "WantedExt/Other.lean", 5, 1, private=True)
         self.assertFalse(self.place_in(finding, head, base).added)
+
+    def test_a_module_private_declaration_does_not_hide_a_new_public_one(self):
+        # File A declares `helper` with no visibility, so in a `module` file it is private; the
+        # change adds a public `helper` of the same name to file B, and moves `moved` there.
+        b_base = "module\n\nnamespace ReviewCases\n\nend ReviewCases\n"
+        b_head = ("module\n\nnamespace ReviewCases\n\n"
+                  "/-- New. -/\npublic def helper (y z : Nat) : Nat := y\n\n"
+                  "/-- Moves to another file. -/\npublic def moved (y z : Nat) : Nat := y\n\n"
+                  "end ReviewCases\n")
+        a_head = VISIBILITY.replace(
+            "/-- Moves to another file. -/\npublic def moved (y z : Nat) : Nat := y\n\n", "")
+        base = base_names(MathlibExt__A=VISIBILITY, MathlibExt__B=b_base)
+        head = {"MathlibExt/A.lean": (a_head, set()), "MathlibExt/B.lean": (b_head, {5, 6, 7, 8})}
+        new = Finding("ReviewCases.helper", "unusedArguments", "", "MathlibExt.B",
+                      "MathlibExt/B.lean", 5, 1)
+        self.assertTrue(self.place_in(new, head, base).added)
+        moved = Finding("ReviewCases.moved", "unusedArguments", "", "MathlibExt.B",
+                        "MathlibExt/B.lean", 8, 1)
+        self.assertFalse(self.place_in(moved, head, base).added)
 
     def test_an_anonymous_instance_is_known_by_its_header(self):
         base = "namespace ScopeProbe\n\ninstance : Inhabited (Fin 3) := ⟨0⟩\n\nend ScopeProbe\n"
