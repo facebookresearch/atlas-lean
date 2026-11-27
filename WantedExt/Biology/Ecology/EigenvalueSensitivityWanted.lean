@@ -72,19 +72,19 @@ public theorem_wanted eigenvalue_sensitivity (a : Fin n → Fin n → ℝ) (lam 
         (∀ᶠ b in 𝓝 a, (Matrix.of b).charpoly.eval (Λ b) = 0) ∧
         ∀ i j, fderiv ℝ Λ a (Pi.single i (Pi.single j (1 : ℝ))) = v i * w j / (v ⬝ᵥ w)
 
-/-- **Elasticities sum to one** (de Kroon et al. 1986; Jones 2023, §1.9). Let `A = (a_ij)` be a
-nonnegative primitive matrix (some power of `A` has all entries positive) and let `lam` be its
-dominant eigenvalue, given by a right eigenvector `w` (`A w = lam w`) and a left eigenvector `v`
-(`vᵀ A = lam vᵀ`) whose entries are all positive; by the Perron–Frobenius theorem no other
-eigenvalue has such an eigenvector. Then the elasticities
+/-- **Elasticities sum to one** (de Kroon et al. 1986; Jones 2023, §1.9). Let `n ≥ 1` and let
+`A = (a_ij)` be a nonnegative primitive `n × n` matrix (some positive power of `A` has all
+entries positive), and let `lam` be its dominant eigenvalue, given by a right eigenvector `w`
+(`A w = lam w`) and a left eigenvector `v` (`vᵀ A = lam vᵀ`) whose entries are all positive; by
+the Perron–Frobenius theorem no other eigenvalue has such an eigenvector. Then the elasticities
 `e_ij = (a_ij / lam) · v_i w_j / ⟨v, w⟩` satisfy `∑_{i,j} e_ij = 1`.
 
 Sources: Jones, "Notes on Fitness Sensitivities" (2023), §§1.3, 1.4, 1.5.1, 1.8 and 1.9;
 de Kroon, Plaisier, van Groenendael and Caswell (1986). -/
-public theorem_wanted sum_elasticities (a : Fin n → Fin n → ℝ) (ha : ∀ i j, 0 ≤ a i j)
-    (hprim : ∃ k : ℕ, ∀ i j, 0 < (Matrix.of a ^ k) i j) (lam : ℝ) (w v : Fin n → ℝ)
-    (hw : ∀ i, 0 < w i) (hv : ∀ i, 0 < v i) (hAw : Matrix.of a *ᵥ w = lam • w)
-    (hvA : v ᵥ* Matrix.of a = lam • v) :
+public theorem_wanted sum_elasticities (hn : 0 < n) (a : Fin n → Fin n → ℝ)
+    (ha : ∀ i j, 0 ≤ a i j) (hprim : ∃ k : ℕ, 0 < k ∧ ∀ i j, 0 < (Matrix.of a ^ k) i j)
+    (lam : ℝ) (w v : Fin n → ℝ) (hw : ∀ i, 0 < w i) (hv : ∀ i, 0 < v i)
+    (hAw : Matrix.of a *ᵥ w = lam • w) (hvA : v ᵥ* Matrix.of a = lam • v) :
     ∑ i, ∑ j, a i j / lam * (v i * w j / (v ⬝ᵥ w)) = 1
 
 end WantedExt.Biology.Ecology.EigenvalueSensitivityWanted
