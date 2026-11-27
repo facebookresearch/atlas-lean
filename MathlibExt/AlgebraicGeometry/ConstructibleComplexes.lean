@@ -40,6 +40,9 @@ of constructibility are requested in
 `MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemCokernel`, and
 `localSystem_kernel`, which is proved in
 `MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemKernel`.
+The preservation of constructibility under scalar extension
+(`constructible_scalarExtension`) is also proved, in
+`MathlibExt.AlgebraicGeometry.ConstructibleComplexesConstructibleScalarExtension`.
 
 ## References
 
