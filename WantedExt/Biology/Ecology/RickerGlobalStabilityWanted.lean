@@ -28,7 +28,9 @@ Sources: W. E. Ricker, "Stock and recruitment", J. Fish. Res. Board Can. 11 (195
 doi:10.1139/f54-039; P. Cull, "Global stability of population models", Bull. Math. Biol. 43
 (1981) 47–58, doi:10.1007/BF02460938; R. Luís and E. Rodrigues, "Global stability in some
 one-dimensional non-autonomous discrete periodic population models", arXiv:1603.02723 (2016),
-Theorem 1.4 and §4.1.
+Theorem 1.4 and §4.1, published as "A survey on the enveloping method of some one-dimensional
+non-autonomous discrete periodic population models", J. Math. Sci. Adv. Appl. 39 (2016) 63–87,
+doi:10.18642/jmsaa_7100121662, with the same Theorem 1.4 and §4.1.
 -/
 module
 
