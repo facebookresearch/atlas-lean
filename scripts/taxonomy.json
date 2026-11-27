@@ -14008,7 +14008,6 @@
   "MathlibExt/NumberTheory/Recurrences/SuperLeonardoPFibonacciSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/Recurrences/SuryIdentityExtensions": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Sury's identity and its extensions"},
   "MathlibExt/NumberTheory/Recurrences/FibonacciStepSuryIdentity": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Sury's identity and its extensions"},
-  "MathlibExt/NumberTheory/Recurrences/SylvesterSequenceMersenneSylvesterValuesEq": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Sylvester's sequence"},
   "MathlibExt/NumberTheory/Recurrences/TetranacciSumOfProducts": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Sums of squares of Tribonacci and Tetranacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/TetranacciSumOfSquares": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Sums of squares of Tribonacci and Tetranacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/ThreeTermHofstadter": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Three-term Hofstadter-like sequences"},
