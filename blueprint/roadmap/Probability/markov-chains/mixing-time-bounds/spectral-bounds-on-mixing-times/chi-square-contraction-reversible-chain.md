@@ -14,6 +14,7 @@ The following extension is derived here and is not stated in the cited source: i
 
 ## Depends on
 
+- [Irreducible stochastic matrix](../../kolmogorov-s-criterion-for-reversibility/is-irreducible.md)
 - [Absolute spectral gap and l2 contraction factor of a reversible chain](absolute-spectral-gap.md)
 - [Distance to stationarity and total-variation mixing time](../coupling-and-total-variation-mixing/distance-to-stationarity-and-mixing-time.md)
 

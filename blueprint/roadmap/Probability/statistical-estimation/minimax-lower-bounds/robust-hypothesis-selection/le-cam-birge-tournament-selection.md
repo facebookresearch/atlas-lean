@@ -17,6 +17,10 @@ By the radius form of the Le Cam-Birgé test and a union bound over the $M-1$ co
 - [Hellinger distance](../../../convergence-of-measures/hellinger-distance/hellinger-dist.md)
 - [Robust Le Cam-Birgé test with clipped likelihood-ratio weights](le-cam-birge-pairwise-test.md)
 
+## Proof depends on
+
+- [Robust Le Cam-Birgé test with clipped likelihood-ratio weights](le-cam-birge-pairwise-test.md)
+
 ## Sources
 
 - Lucien Le Cam, "Convergence of Estimates Under Dimensionality Restrictions", The Annals of Statistics 1(1), 1973.

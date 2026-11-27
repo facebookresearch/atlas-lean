@@ -23,4 +23,4 @@ The following extension is derived here and is not stated in the cited sources: 
 ## Sources
 
 - Y. Arbitman, M. Naor and G. Segev, "Backyard Cuckoo Hashing: Constant Worst-Case Operations with a Succinct Representation", Proceedings of the 51st Annual IEEE Symposium on Foundations of Computer Science (FOCS), 2010; full version arXiv:0912.5424v3, Section 5.3, Theorem 5.6.
-- E. Kaplan, M. Naor and O. Reingold, "Derandomized constructions of k-wise (almost) independent permutations", Algorithmica 55(1):113-133, 2009.
+- E. Kaplan, M. Naor and O. Reingold, "Derandomized constructions of k-wise (almost) independent permutations", Algorithmica 55(1):113-133, 2009; ECCC TR06-002, Theorem 3.8.

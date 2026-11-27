@@ -10,6 +10,7 @@ the largest modulus of an eigenvalue of $P$ on the subspace of $\pi$-mean-zero f
 
 ## Depends on
 
+- [Irreducible stochastic matrix](../../kolmogorov-s-criterion-for-reversibility/is-irreducible.md)
 - [Spectral gap of a finite Markov kernel, in Dirichlet-form terms](../../dirichlet-forms/spectral-gap.md)
 - [The Dirichlet form of a Markov kernel](../../dirichlet-forms/form-sub-one.md)
 - [Reversible stochastic matrix](../../kolmogorov-s-criterion-for-reversibility/is-reversible.md)
