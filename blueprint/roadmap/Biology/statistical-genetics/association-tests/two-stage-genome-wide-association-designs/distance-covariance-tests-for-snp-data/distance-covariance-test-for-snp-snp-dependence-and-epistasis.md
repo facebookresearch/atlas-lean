@@ -13,7 +13,7 @@ with the following eigenvalues:
 - discrete metric: $\lambda_{1,2} = \dfrac{1 - \sum_j p_j^2}{2} \pm \sqrt{\dfrac{(1 - \sum_j p_j^2)^2}{4} - 3\,p_0p_1p_2}$, and $\mu_{1,2}$ the same expression in $q$;
 - Euclidean metric: $\lambda_{1,2} = s_p \pm \sqrt{s_p^2 - 4\,p_0p_1p_2}$ with $s_p = p_0(1-p_0) + p_2(1-p_2)$, and $\mu_{1,2}$ the same expression in $q$.
 
-The general fact behind this is that, for finitely supported $X$ and $Y$, the null limit is the quadratic form with coefficients $\lambda^X_a\lambda^Y_b$, the products of the nonzero eigenvalues of $L^X_{rs} = p_s\big(\delta_{rs} - p_r - p_s + \sum_i p_i^2\big)$ and of its analogue for $Y$. Because only four $\chi^2$ terms are nonzero, p-values come from an explicit weighted-$\chi^2$ law instead of permutations, which makes genome-wide pairwise scans feasible. The source applies the test to a case–control study of schizophrenia.
+The general fact behind this is that, for finitely supported $X$ and $Y$, each support carrying the discrete metric (Lemma B.1, after Edelmann and Goeman), the null limit is the quadratic form with coefficients $\lambda^X_a\lambda^Y_b$, the products of the nonzero eigenvalues of $L^X_{rs} = p_s\big(\delta_{rs} - p_r - p_s + \sum_i p_i^2\big)$ and of its analogue for $Y$. Because only four $\chi^2$ terms are nonzero, p-values come from an explicit weighted-$\chi^2$ law instead of permutations, which makes genome-wide pairwise scans feasible. The source applies the test to a case–control study of schizophrenia.
 
 ## Depends on
 

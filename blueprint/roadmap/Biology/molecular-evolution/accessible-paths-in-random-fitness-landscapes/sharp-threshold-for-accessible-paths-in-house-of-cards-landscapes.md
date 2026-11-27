@@ -1,8 +1,8 @@
 # Sharp threshold for accessible paths in house-of-cards landscapes
 
 **Setting.** Genotypes are the vertices of the hypercube $\mathbb{Q}_n = \{0,1\}^n$; a mutation flips one bit. A path from $\mathbf{v}^0 = 0^n$ to $\mathbf{v}^1 = 1^n$ of length $n$ (each bit flipped once) is **accessible** if fitness strictly increases along it. Models:
-- *House of cards (HoC):* fitnesses are i.i.d. $\mathrm{Uniform}[0,1]$.
-- *$\alpha$-HoC:* as HoC, but $f(\mathbf{v}^0) := \alpha \in [0,1]$ and $f(\mathbf{v}^1) := 1$; $\alpha = 0$ is the constrained HoC (CHoC).
+- *House of cards (HoC):* $f(\mathbf v^1) := 1$, and all other fitnesses ($f(\mathbf v^0)$ included) are i.i.d. $\mathrm{Uniform}[0,1]$.
+- *$\alpha$-HoC:* as HoC, except $f(\mathbf v^0) := \alpha \in [0,1]$.
 - *Rough Mount Fuji (RMF):* $f(v) = \theta_n\, d(v,\mathbf{v}^0) + \eta(v)$, with $d$ the Hamming distance, drift $\theta_n > 0$ and i.i.d. noise $\eta(v)$.
 
 Let $P(n,\alpha)$ be the probability that the $\alpha$-HoC landscape has at least one accessible path, and $X$ the number of accessible paths.

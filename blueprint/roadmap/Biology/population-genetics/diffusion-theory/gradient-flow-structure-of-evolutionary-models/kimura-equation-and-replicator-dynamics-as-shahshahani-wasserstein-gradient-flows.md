@@ -18,7 +18,7 @@ $$ X^{n+1} \in \operatorname*{arg\,min}_{X \in [0,1]}\Big\{ \frac{1}{2h}\mathsf{
 
 has piecewise-constant interpolants $X_h$ that converge uniformly on every $[0,T]$, as $h \to 0$, to the unique solution of $\dot X = -\Theta(X)V'(X)$, $X(0) = X^I$. The replicator equation is thus the gradient flow of $V$ for the Shahshahani metric.
 
-The paper also gives conditions under which these structures fit together: the discrete Wasserstein gradient structure of the Moran Q-process Γ-converges to that of the Kimura equation as $N \to \infty$, and the Kimura structure Γ-converges to the Shahshahani gradient flow of the replicator equation as $\kappa \to 0$.
+Section 6 argues, without a complete proof, that these structures are compatible in the limits $N\to\infty$ and $\kappa\to0$: it proves $\Gamma$-convergence of the driving entropies, $H(\cdot\mid\pi_N)\to H(\cdot\mid\pi)$ when $\pi_N\rightharpoonup\pi$ (Lemma 11), and $\frac{\kappa}{2}\int q\log(q/\pi_\kappa)\to\int V\,dq$ (up to $\min V$) when $\pi_\kappa$ satisfies a large deviation principle with rate $V$ (Proposition 3).
 
 ## Depends on
 
