@@ -4,7 +4,9 @@ For every field $K$ and every nonempty set $A$, no algorithm decides whether a p
 
 **Setting (Kharlampovich and Myasnikov).** Let $K$ be a field, $A$ a nonempty set and $K\langle A\rangle$ the free associative unital $K$-algebra with basis $A$, the noncommutative polynomials in the letters of $A$. An *equation* in variables $X = \{x_1, \dots, x_n\}$ with constants from $K\langle A\rangle$ is $P(X, A) = 0$ with $P \in K\langle A \cup X\rangle$, and a solution is a substitution $x_i \mapsto u_i \in K\langle A\rangle$ making $P$ vanish. The *Diophantine problem* asks, given an equation, whether it has a solution. For the input to be finite, the coefficients are taken from $K_0\langle A\rangle$, where $K_0$ is the prime subfield of $K$ ($\mathbb{Q}$ or $\mathbb{F}_p$).
 
-**Theorem (Kharlampovich and Myasnikov).** For every field $K$ and every nonempty set $A$, the Diophantine problem in $K\langle A\rangle$ with coefficients in $K_0\langle A\rangle$ is undecidable (Theorem 5 and the introduction of arXiv:1606.03617v2). More precisely, the ring $\mathbb{Z}$ is interpretable by equations in $K\langle A\rangle$ when $\operatorname{char} K = 0$, and Denef's structure $\langle \mathbb{Z}; +, \mid_p\rangle$ (the integers with addition and a divisibility-by-powers-of-$p$ relation) is interpretable by equations when $\operatorname{char} K = p > 0$ (Theorem 6 of the same version).
+**Theorem (Kharlampovich and Myasnikov).** For every field $K$ and every nonempty set $A$, the Diophantine problem in $K\langle A\rangle$ with coefficients in $K_0\langle A\rangle$ is undecidable (Theorem 5 and the introduction of arXiv:1606.03617v2).
+
+The proof rests on Theorem 6 of the same version: the ring $\mathbb{Z}$ is interpretable by equations in $K\langle A\rangle$ when $\operatorname{char} K = 0$, and Denef's structure $\langle \mathbb{Z}; +, \mid_p\rangle$ (the integers with addition and a divisibility-by-powers-of-$p$ relation) is interpretable by equations when $\operatorname{char} K = p > 0$.
 
 The undecidability does not come from the coefficients alone: when $K$ is finite or algebraically closed, the Diophantine problem in $K$ is decidable, and by Makanin's theorem equations in a free monoid are decidable. The same paper shows that the Diophantine problem in the group algebra $K(G)$ is undecidable for many torsion-free groups $G$, including torsion-free hyperbolic groups and right-angled Artin groups.
 
@@ -12,6 +14,7 @@ The undecidability does not come from the coefficients alone: when $K$ is finite
 
 - [Field](../../../Algebra/rings-and-fields/field.md)
 - [Ring with identity](../../../Algebra/rings-and-fields/ring-with-identity.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

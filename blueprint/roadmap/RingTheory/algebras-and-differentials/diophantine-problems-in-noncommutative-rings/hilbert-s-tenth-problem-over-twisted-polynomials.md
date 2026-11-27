@@ -17,6 +17,7 @@ The same paper shows that for $K = \mathbb{F}_{q^n}$ the recursively enumerable 
 
 - [Field](../../../Algebra/rings-and-fields/field.md)
 - [Ring with identity](../../../Algebra/rings-and-fields/ring-with-identity.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
