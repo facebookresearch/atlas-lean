@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.GobelSequence
 public import MathlibExt.NumberTheory.GobelSequenceError
+public import MathlibExt.NumberTheory.GobelSequenceRootLimit
 public import MathlibExt.NumberTheory.GobelSequenceRoots
 public import MathlibExt.NumberTheory.GobelSequenceSomosBound
 public import MathlibExt.NumberTheory.SomosLikeRoots
@@ -143,19 +144,6 @@ public theorem_wanted gobelSequence_seven_iff_padic_claims :
         0 ≤ padicValRat 5 (gobelSequence k l 7)) ∧
       (∀ k ∈ Finset.Icc 1 6, ∀ l ∈ Finset.Icc 1 7,
         (padicValRat 7 (gobelSequence k l 7) < 0 ↔ k = 2 ∧ l = 3)))
-
-/-- **The normalized Göbel roots converge to a limit greater than 1.** Let $k, l \ge 2$ be natural
-numbers and let $g_{k,l}$ be the $(k, l)$-Göbel sequence. There is a real number $C > 1$ such
-that the real numbers $g_{k,l}(n)^{1/k^n}$ tend to $C$ as $n \to \infty$.
-
-The paper defines $C_{k,l}$ as this limit.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Proposition 10 (`jis-2024-24.8.1-prop-10`). -/
-public theorem_wanted gobelSequence_root_tendsto_gt_one (k l : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) :
-    ∃ C : ℝ, 1 < C ∧
-      Tendsto (fun n : ℕ => (gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n)) atTop (𝓝 C)
 
 /-- **Sondow–Hadjicostas asymptotic expansion.** Let $k \ge 2$ be a natural number. For $j \ge 1$
 put $S_j = \sum_{i \ge 1} i^j / k^i$ and $b_j = (-1)^{j-1} S_j / j$, and for $r \ge 0$ let

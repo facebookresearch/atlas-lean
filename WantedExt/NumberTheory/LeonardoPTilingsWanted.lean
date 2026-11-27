@@ -66,17 +66,6 @@ public theorem_wanted leonardoPK_self_homogeneous (p : ℕ) (hp : 1 ≤ p) :
     (∀ i, i ≤ p → leonardoPK p p i = 1) ∧
     (∀ j, 1 ≤ j → j ≤ p → leonardoPK p p (p + j) = (j : ℤ) + 1 + j * p)
 
-/-- **Binomial addition formula for hyper Leonardo $p$-numbers.** For natural numbers $p \ge 1$,
-$n \ge 1$, $m \ge 1$ and $k \ge m$, the hyper Leonardo $p$-numbers satisfy
-$$\mathcal{L}^{(k)}_{p,n+m} = \sum_{i=0}^{m} \binom{m}{i} \mathcal{L}^{(k-i)}_{p,n+i}.$$
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 9. -/
-public theorem_wanted hyperLeonardoP_add (p n m k : ℕ) (hp : 1 ≤ p) (hn : 1 ≤ n)
-    (hm : 1 ≤ m) (hmk : m ≤ k) :
-    hyperLeonardoP p (n + m) k =
-      ∑ i ∈ Finset.range (m + 1), (m.choose i : ℤ) * hyperLeonardoP p (n + i) (k - i)
-
 /-- **Leonardo p-numbers split into incomplete and hyper parts.** For natural numbers $p \ge 1$,
 $n > p$ and $k \ge 1$, let $N = n + (p + 1)k$. Then
 $$
