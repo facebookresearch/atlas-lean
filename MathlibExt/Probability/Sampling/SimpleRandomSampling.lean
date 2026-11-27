@@ -28,6 +28,9 @@ is the expectation under this design: the uniform average over all `n`-subsets.
 * `randExp_sampleMean`: the sample mean is unbiased for the population mean.
 * `randExp_sq_sampleMean_sub_popMean`: the variance of the sample mean is
   `((N - n) / N) * S ^ 2 / n` with the finite population correction.
+* `randExp_sampleMean_vec` and `randExp_sum_sq_sampleMean_sub_popMean`: vector
+  unbiasedness and mean-square error, obtained by applying the scalar results
+  coordinatewise. The vector population variance uses divisor `N`.
 
 ## Implementation notes
 
@@ -161,5 +164,54 @@ theorem randExp_sq_sampleMean_sub_popMean {ι : Type*} [Fintype ι] (y : ι → 
     rw [← hfun, hNeyman, hz, hsub]
     simp only [zero_div, add_zero]
     field_simp
+
+/-- The vector sample mean is unbiased under uniform sampling of `n` distinct labels.
+Vector values at different labels need not be distinct. Expectations and means are
+calculated coordinatewise. This is Mishchenko–Khaled–Richtárik, arXiv:2006.05988v3,
+§7, Lemma 1, equation (22), first identity. -/
+theorem randExp_sampleMean_vec {ι : Type*} [Fintype ι] {d : ℕ} (x : ι → Fin d → ℝ)
+    {n : ℕ} (hn₁ : 1 ≤ n) (hnN : n ≤ Fintype.card ι) :
+    (fun r => randExp n (sampleMean fun i => x i r)) =
+      fun r => popMean (fun i => x i r) :=
+  funext fun r => randExp_sampleMean (fun i => x i r) hn₁ hnN
+
+private lemma randExp_sum_coords {ι κ : Type*} [Fintype ι] [Fintype κ]
+    (n : ℕ) (f : Finset ι → κ → ℝ) :
+    randExp n (fun S => ∑ r, f S r) = ∑ r, randExp n (fun S => f S r) := by
+  simp only [randExp, ← sum_div]
+  rw [sum_comm]
+
+/-- The mean-square error of the vector sample mean under uniform sampling of `n` distinct
+labels, with possibly repeated vector values. The sum of squared coordinate errors is the
+squared Euclidean norm. With `N` labels, the population variance uses divisor `N`, and the
+factor multiplying it is `(N - n) / (n * (N - 1))`, the finite population correction
+`(N - n) / (N - 1)` divided by `n`. The census, including `N = n = 1`, has zero error. This is
+Mishchenko–Khaled–Richtárik, arXiv:2006.05988v3, §7, Lemma 1, equation (22), second identity,
+with the census stated separately. -/
+theorem randExp_sum_sq_sampleMean_sub_popMean {ι : Type*} [Fintype ι] {d : ℕ}
+    (x : ι → Fin d → ℝ) {n : ℕ} (hn₁ : 1 ≤ n) (hnN : n ≤ Fintype.card ι) :
+    randExp n (fun S => ∑ r, (sampleMean (fun i => x i r) S - popMean (fun i => x i r)) ^ 2) =
+      if n = Fintype.card ι then 0
+      else ((Fintype.card ι : ℝ) - n) / ((n : ℝ) * ((Fintype.card ι : ℝ) - 1)) *
+        ((∑ i, ∑ r, (x i r - popMean (fun j => x j r)) ^ 2) / Fintype.card ι) := by
+  rw [randExp_sum_coords]
+  simp_rw [randExp_sq_sampleMean_sub_popMean _ hn₁ hnN]
+  have hN0 : (Fintype.card ι : ℝ) ≠ 0 := by
+    exact_mod_cast (show Fintype.card ι ≠ 0 by omega)
+  split_ifs with h
+  · subst n
+    simp [div_self hN0]
+  · have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (show n ≠ 0 by omega)
+    have hN1 : (Fintype.card ι : ℝ) - 1 ≠ 0 := by
+      have hN : (1 : ℝ) < Fintype.card ι := by
+        exact_mod_cast (show 1 < Fintype.card ι by omega)
+      exact (sub_pos.mpr hN).ne'
+    have hscale (a : ℝ) :
+        (1 - (n : ℝ) / Fintype.card ι) * (a / ((Fintype.card ι : ℝ) - 1)) / n =
+          ((Fintype.card ι : ℝ) - n) / ((n : ℝ) * ((Fintype.card ι : ℝ) - 1)) *
+            (a / Fintype.card ι) := by
+      field_simp
+    simp_rw [popVar, hscale]
+    rw [← mul_sum, ← sum_div, sum_comm]
 
 end MathlibExt.Probability.Sampling

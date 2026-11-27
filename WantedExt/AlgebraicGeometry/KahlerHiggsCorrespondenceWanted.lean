@@ -12,6 +12,7 @@ public import MathlibExt.AlgebraicGeometry.HiggsSmoothRealizationModels
 public import MathlibExt.AlgebraicGeometry.HiggsKernelComparisonModels
 public import MathlibExt.AlgebraicGeometry.HiggsReconstructionIsomorphisms
 public import MathlibExt.AlgebraicGeometry.ManifoldRationalChernModels
+public import MathlibExt.AlgebraicGeometry.KahlerHiggsCorrespondenceNativeSmoothBundleSectionMultiplication
 
 /-!
 # Wanted normalized compact Kähler Higgs correspondence
@@ -71,10 +72,6 @@ def_wanted native_holomorphic_cotangent_wedge : CotangentWedgeSource (n := n) (M
 /-- Actual native smooth coefficient multiplication preserves the same bundle sections. -/
 theorem_wanted native_smooth_bundle_section_calculus {r : ℕ} (B : SmoothComplexBundle n M r)
     (A : OneFormValue B) : SectionCalculus B A
-
-/-- Actual native smooth coefficient multiplication preserves the same bundle sections. -/
-theorem_wanted native_smooth_bundle_section_multiplication {r : ℕ} (B : SmoothComplexBundle n M r) :
-  SmoothSectionMultiplication B
 
 /-- Native smooth bundle section kernels have their ordinary local sheaf condition. -/
 theorem_wanted native_smooth_bundle_section_gluing {r : ℕ} (B : SmoothComplexBundle n M r)

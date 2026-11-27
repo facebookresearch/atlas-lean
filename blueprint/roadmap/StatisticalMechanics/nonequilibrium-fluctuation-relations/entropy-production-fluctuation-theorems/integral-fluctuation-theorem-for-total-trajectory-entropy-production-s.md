@@ -1,0 +1,26 @@
+# Integral fluctuation theorem for total entropy production
+
+Consider a master equation on a finite state space with time-dependent rates $r_{\lambda(\tau)}(n, m)$, $0 \le \tau \le t$, such that $r_\lambda(m, n) > 0$ whenever $r_\lambda(n, m) > 0$, and let $p(n, \tau)$ be its solution from the initial law $p_0$. Along a trajectory $n(\tau)$ let $\Delta s = -\ln p(n(t), t) + \ln p_0(n(0))$ be the change of system entropy and $\Delta s_m = \sum_{\text{jumps } n \to m} \ln\frac{r(n, m)}{r(m, n)}$ the medium entropy (equal to the heat dissipated divided by $T$, in units $k_B = 1$, under local detailed balance), and $\Delta s_{\mathrm{tot}} = \Delta s + \Delta s_m$. Let $P$ be the forward path law on the space $\Omega$ of trajectories on $[0, t]$, and let $\tilde P$ be the law of the process with reversed protocol $\tilde\lambda(\tau) = \lambda(t - \tau)$, started from $p(\cdot, t)$, carried to $\Omega$ by time reflection $\tilde n(\tau) = n(t - \tau)$. By the [Lebesgue decomposition](../../../MeasureTheory/signed-vector-measures/absolute-continuity-and-decomposition-of-vector/radon-nikodym-theorem-for-signed-measures/lebesgue-decomposition-of-a-measure.md), $\tilde P = \tilde P_{\mathrm{ac}} + \tilde P_{\mathrm{s}}$ with $\tilde P_{\mathrm{ac}} \ll P$ and $\tilde P_{\mathrm{s}} \perp P$. For $P$-almost every trajectory, $p_0(n(0)) > 0$ and every jump has positive rate, so $\Delta s_{\mathrm{tot}}$ is finite and $e^{-\Delta s_{\mathrm{tot}}} = d\tilde P_{\mathrm{ac}}/dP$ $P$-almost surely (the path-probability ratio). Hence, for every driving over a finite time interval,
+
+$$E_P\bigl[e^{-\Delta s_{\mathrm{tot}}}\bigr] = \int_\Omega \frac{d\tilde P_{\mathrm{ac}}}{dP}\, dP = \tilde P_{\mathrm{ac}}(\Omega) = 1 - \tilde P_{\mathrm{s}}(\Omega) \le 1,$$
+
+the singular-mass correction of Murashita, Funo and Ueda (2014, Eqs. (8), (12) and (13), and Eq. (21) for the total entropy production), with $\lambda_S = \tilde P_{\mathrm{s}}(\Omega)$ the probability of the absolutely irreversible part. Equality, Seifert's (2005) integral fluctuation theorem $E[e^{-\Delta s_{\mathrm{tot}}}] = 1$, holds exactly when $\tilde P \ll P$, for example when $p_0$ charges every state. No reciprocal derivative $dP/d\tilde P$ is needed. The defect can be positive: for two states $0$ and $1$ with rate $1$ in each direction, $p_0 = (1, 0)$ (all mass on state $0$) and $t = (\ln 2)/2$, one gets $p(\cdot, t) = (3/4, 1/4)$ and $\Delta s_m = 0$; the reflected reverse paths that start in state $1$ are excluded by $P$, and $E[e^{-\Delta s_{\mathrm{tot}}}] = \tilde P_{\mathrm{ac}}(\Omega) = 5/8$.
+
+## Proof depends on
+
+- [Lebesgue decomposition of a measure](../../../MeasureTheory/signed-vector-measures/absolute-continuity-and-decomposition-of-vector/radon-nikodym-theorem-for-signed-measures/lebesgue-decomposition-of-a-measure.md)
+- [Radon–Nikodym theorem](../../../MeasureTheory/signed-vector-measures/absolute-continuity-and-decomposition-of-vector/radon-nikodym-theorem-for-signed-measures/with-density-rn-deriv-eq.md)
+- [Mutually singular measures](../../../MeasureTheory/signed-vector-measures/absolute-continuity-and-decomposition-of-vector/mutually-singular-measures/mutually-singular.md)
+
+## Expansion
+
+1. The model: driven master equations with reversible transition graphs, path probabilities, and the system and medium entropies; the identification of $\Delta s_m$ with heat over temperature under local detailed balance.
+2. The Lebesgue decomposition of the reflected reverse path law $\tilde P$ with respect to $P$, and the path-probability ratio $d\tilde P_{\mathrm{ac}}/dP = e^{-\Delta s_{\mathrm{tot}}}$ $P$-almost surely, with the reversed process started from $p(\cdot, t)$.
+3. The case $\tilde P \ll P$, in which the expectation is $1$, and the two-state example with a positive singular part.
+4. The overdamped Langevin case of the source, with the Einstein relation between mobility and noise, the Stratonovich convention for the heat, and the regularity of $p$ as hypotheses.
+5. Corollaries: $E[\Delta s_{\mathrm{tot}}] \ge -\ln \tilde P_{\mathrm{ac}}(\Omega) \ge 0$ (Murashita, Funo and Ueda 2014, Eq. (14)), in particular $E[\Delta s_{\mathrm{tot}}] \ge 0$, by [Jensen's inequality](../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md); and, for energies $E_\lambda$ on the state space, replacing the actual final law $p(\cdot, t)$ by the equilibrium law $\propto e^{-\beta E_{\lambda(t)}}$ of the final energy (a different functional, as the source notes), the Jarzynski relation $E[e^{-\beta W}] = e^{-\beta\Delta F}$ for the stochastic dynamics (Seifert 2005, Eq. (19), there for the Langevin case). This corollary requires that the rates $r_\lambda$ satisfy detailed balance with respect to $e^{-\beta E_\lambda}$ at each $\lambda$ and that $p_0$ be the equilibrium law at $\lambda(0)$.
+
+## Sources
+
+- U. Seifert, Entropy production along a stochastic trajectory and an integral fluctuation theorem, Phys. Rev. Lett. 95 (2005), 040602, Eq. (19). <https://arxiv.org/abs/cond-mat/0503686>
+- Y. Murashita, K. Funo and M. Ueda, Nonequilibrium equalities in absolutely irreversible processes, Phys. Rev. E 90 (2014), 042110, Eqs. (8), (12)–(14) and (21). <https://arxiv.org/abs/1401.4494>

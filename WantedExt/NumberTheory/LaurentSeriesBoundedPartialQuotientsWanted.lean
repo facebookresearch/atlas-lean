@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.LaurentSeriesConvergentProperties
 public import Mathlib.Algebra.Polynomial.FieldDivision
+public import MathlibExt.NumberTheory.LaurentSeriesBoundedPartialQuotientsLaurentSubConvergentOrder
 
 namespace MetaMathlibExt
 
@@ -111,25 +112,6 @@ public theorem_wanted laurent_eq_convergent_of_order (α : LaurentSeries K)
             HahnSeries.C c * laurentConvNum α (n + 1) + HahnSeries.C d * laurentConvNum α n ∧
           polyToLaurentInv Q =
             HahnSeries.C c * laurentConvDen α (n + 1) + HahnSeries.C d * laurentConvDen α n)
-
-/-- **Distance from an irrational Laurent series to its convergents.** Let $K$ be a field, let
-$\alpha \in K((x^{-1}))$ be irrational with convergents $P_n/Q_n$ ($n \ge 0$), and for nonzero
-$y \in K((x^{-1}))$ let $|y| = |x|^{\deg y}$, where $\deg y$ is the largest exponent of $x$
-occurring in $y$ and $|x| > 1$ is fixed. (i) If $|\alpha| \ge 1$, then
-$|\alpha - P_n/Q_n| < |\alpha|$ for all $n \ge 0$. (ii) If $|\alpha| < 1$, then
-$|\alpha - P_0/Q_0| = |\alpha|$ and $|\alpha - P_n/Q_n| < |\alpha|$ for all $n \ge 1$.
-
-Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
-Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
-Lemma 4 (`integers-2026-A57-lem-4`). -/
-public theorem_wanted laurent_sub_convergent_order (α : LaurentSeries K)
-    (hα : LaurentIsIrrational α) :
-    (α.order ≤ 0 → ∀ n : ℕ,
-        α.order < (α - laurentConvNum α (n + 1) / laurentConvDen α (n + 1)).order) ∧
-      (0 < α.order →
-        (α - laurentConvNum α 1 / laurentConvDen α 1).order = α.order ∧
-          ∀ n : ℕ, 1 ≤ n →
-            α.order < (α - laurentConvNum α (n + 1) / laurentConvDen α (n + 1)).order)
 
 /-- **Lasjaunias's bound on the next partial quotient.** Let $\mathbb{F}_q$ be a finite field, let
 $A, B, C, D \in \mathbb{F}_q[x]$ with $\Delta = AD - BC \ne 0$ and $C \ne 0$, and let
