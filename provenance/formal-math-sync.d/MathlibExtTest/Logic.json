@@ -1,0 +1,8 @@
+{
+  "rows": [
+    {"path": "MathlibExtTest/Logic/Diophantine.lean", "disposition": "identical", "published_sha256": "3030960bf5aeca886ab31b19fd5e95d923178dbe14e213091a9f2d69df7f21ef", "upstream_sha256": "0f12b76b97c9b991a6d5524b55553af7a3ab3b9a46470981fa91877b86ee0d4e"},
+    {"path": "MathlibExtTest/Logic/GodelRosserAbstractSchema.lean", "disposition": "identical", "published_sha256": "817174aaea647f82abf431992cc411940fa078d820e07e4995c5f1e84008cce3", "upstream_sha256": "e5594ad7060af38a84bc9e5d55fe130152eb2518d85d6a90cfcd037c719b01d2"},
+    {"path": "MathlibExtTest/Logic/HilbertBernaysLob.lean", "disposition": "identical", "published_sha256": "35da3d5f1be9918858a31eba920c17459d99f7b3a80360c28b39a86f5d066aa1", "upstream_sha256": "dd53f578507add8cb82b7bb89542e5d57a76d31ba8cb56ed016b7a91ff80df05"},
+    {"path": "MathlibExtTest/Logic/Relation/FiniteReachabilityTests.lean", "disposition": "identical", "published_sha256": "6cbb046fb16f2d51bab2515aa2f14e94a7dbc3b7c476a572c2f6e4d44857eea0", "upstream_sha256": "cb6f74ec84f6449d0da5e7a37962acf9591879a9fde9f8c5e6a7f88bad4bfa88"}
+  ]
+}

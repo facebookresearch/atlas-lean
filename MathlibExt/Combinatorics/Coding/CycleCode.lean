@@ -30,38 +30,57 @@ GREEN-080 source formulation. Known numerical and construction bounds are not as
 
 namespace MathlibExt.Combinatorics.Coding.CycleGraphCode
 
-/-- Positive block lengths. -/
+/-- **Positive block lengths.** The type of positive integers, that is, of natural numbers $n$
+with $1 \le n$, used as the block lengths of codes. -/
 abbrev PositiveNat := {n : ℕ // 1 ≤ n}
 
-/-- The actual independent-code condition for a modular cycle. The source uses odd `q ≥ 7`. -/
+/-- **Independent codes for the modular cycle.** Let $q$ and $n$ be natural numbers. A finite set
+$A$ of words of length $n$ over $\mathbb{Z}/q\mathbb{Z}$ is an independent code for the $q$-cycle
+when every difference $x = a_1 - a_2$ with $a_1, a_2 \in A$ whose coordinates all lie in
+$\{-1, 0, 1\}$ is the zero word. For $q \ge 3$ this says exactly that $A$ is an independent set
+in the $n$-th strong power of the cycle graph $C_q$.
+
+The source uses odd $q \ge 7$; the definition is stated for every $q$. -/
 def IsCycleCode (q : ℕ) {n : ℕ} (A : Finset (Fin n → ZMod q)) : Prop :=
   ∀ (x : Fin n → ZMod q),
     (∃ a₁ ∈ A, ∃ a₂ ∈ A, a₁ - a₂ = x) →
     (∀ i : Fin n, x i = -1 ∨ x i = 0 ∨ x i = 1) →
     x = 0
 
-/-- A finite independent code in the modular strong-power model. -/
+/-- **Cycle codes.** For natural numbers $q$ and $n$, a cycle code of length $n$ modulo $q$ is a
+finite set of words of length $n$ over $\mathbb{Z}/q\mathbb{Z}$ that is an independent code for
+the $q$-cycle. -/
 abbrev CycleCode (q n : ℕ) := {A : Finset (Fin n → ZMod q) // IsCycleCode q A}
 
-/-- For a nonzero modulus, the code type at each fixed length is finite. -/
+/-- **Finitely many cycle codes of each length.** For every nonzero natural number $q$ and every
+natural number $n$, there are only finitely many cycle codes of length $n$ modulo $q$. -/
 theorem cycleCode_finite (q n : ℕ) [NeZero q] : Finite (CycleCode q n) := by
   infer_instance
 
-/-- The rate supplied by a concrete independent code. -/
+/-- **Rate of a cycle code.** For a natural number $q$, a positive integer $n$ and a cycle code
+$A$ of length $n$ modulo $q$, the rate of $A$ is $|A|^{1/n}$, the $n$-th root of the number of
+codewords of $A$, taken in the extended nonnegative reals $[0, \infty]$. -/
 noncomputable def cycleCodeRate (q : ℕ) (n : PositiveNat) (A : CycleCode q n.1) : ENNReal :=
   ENNReal.rpow (A.1.card : ENNReal) ((n.1 : ℝ)⁻¹)
 
-/-- The supremum over all concrete positive-length independent-code rates. -/
+/-- **Shannon capacity of the modular cycle.** For a natural number $q$, the Shannon capacity of
+the $q$-cycle is the supremum, in $[0, \infty]$, of the rates $|A|^{1/n}$ over all positive
+integers $n$ and all cycle codes $A$ of length $n$ modulo $q$. -/
 noncomputable def shannonCapacityCycle (q : ℕ) : ENNReal :=
   ⨆ (n : PositiveNat) (A : CycleCode q n.1), cycleCodeRate q n A
 
-/-- Every concrete code rate is at most its modular cycle capacity. -/
+/-- **Code rates are at most the cycle capacity.** For every natural number $q$, every positive
+integer $n$ and every cycle code $A$ of length $n$ modulo $q$, the rate of $A$ is at most the
+Shannon capacity of the $q$-cycle. -/
 theorem cycleCodeRate_le_shannonCapacity (q : ℕ) (n : PositiveNat)
     (A : CycleCode q n.1) :
     cycleCodeRate q n A ≤ shannonCapacityCycle q :=
   le_iSup_of_le n (le_iSup (cycleCodeRate q n) A)
 
-/-- An actual finite construction yields its corresponding root-rate lower bound. -/
+/-- **Codes give lower bounds on the cycle capacity.** Let $q$, $n$ and $M$ be natural numbers
+with $n \ge 1$. If some finite set of words of length $n$ over $\mathbb{Z}/q\mathbb{Z}$ is an
+independent code for the $q$-cycle and has exactly $M$ elements, then $M^{1/n}$ is at most the
+Shannon capacity of the $q$-cycle, as an inequality in $[0, \infty]$. -/
 theorem cycleConstruction_implies_lowerBound (q n M : ℕ) (hn : 1 ≤ n) :
     (∃ A : Finset (Fin n → ZMod q), IsCycleCode q A ∧ A.card = M) →
       ENNReal.rpow (M : ENNReal) ((n : ℝ)⁻¹) ≤ shannonCapacityCycle q := by

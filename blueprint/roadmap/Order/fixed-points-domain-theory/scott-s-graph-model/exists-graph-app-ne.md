@@ -7,7 +7,7 @@ So the retraction of $P(\omega)$ onto the continuous functions is not a bijectio
 ## Background
 
 - [Scott's graph theorem, part (ii)](subset-graph-app.md): the inclusion that is strict here.
-- The η-rule is not sound in the graph model: the same fact for λ-terms.
+- [The η-rule is not sound in the graph model](../../../ComputerScience/programming-language-semantics/models-of-the-untyped-lambda-calculus/exists-denote-eta-ne.md): the same fact for λ-terms.
 
 ## Sources
 

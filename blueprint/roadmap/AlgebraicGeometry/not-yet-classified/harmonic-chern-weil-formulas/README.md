@@ -1,0 +1,16 @@
+# Harmonic Chern Weil Formulas
+
+- [Curvature Minor Value](curvature-minor-value.md)
+- [Chern Weil Value](chern-weil-value.md)
+- [Chern Weil Sum](chern-weil-sum.md)
+- [Chern Weil Polynomial](chern-weil-polynomial.md)
+- [Chern Weil Value eq chern Weil Polynomial](chern-weil-value-eq-chern-weil-polynomia.md)
+- [Map chern Weil Sum](map-chern-weil-sum.md)
+- [Curvature Minor Value of flat](curvature-minor-value-of-flat.md)
+- [Chern Weil Value of flat](chern-weil-value-of-flat.md)
+- [Even De Rham](even-de-rham.md)
+- [Even Vectors](even-vectors.md)
+- [Chern Weil Form Source](chern-weil-form-source.md)
+- [Chern Weil Class](chern-weil-class.md)
+- [All Positive De Rham Chern Zero](all-positive-de-rham-chern-zero.md)
+- [All Positive De Rham Chern Zero of flat](all-positive-de-rham-chern-zero-of-flat.md)

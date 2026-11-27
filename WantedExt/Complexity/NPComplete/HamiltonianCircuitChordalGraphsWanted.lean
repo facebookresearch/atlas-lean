@@ -23,12 +23,12 @@ doi:10.1016/j.dam.2021.05.021, Table 1.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -53,7 +53,7 @@ de Melo, Sasaki and Silva (Table 1, row CHORDAL, column HAM CIR) list the proble
 NP-complete, citing Müller (1996).
 
 The instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple graph on
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` ([GT37]: a simple graph on
 `Fin n`, `n > 0`, given by an edge list; `HamiltonianCycleUndirectedFeasible` asks for at least
 three vertices and Mathlib's `SimpleGraph.IsHamiltonian`). The restriction adds that the graph is
 chordal, stated as in `PathwidthChordalGraphsWanted` and `DominatingSetChordalGraphsWanted`: no

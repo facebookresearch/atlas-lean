@@ -34,12 +34,17 @@ set_option autoImplicit false
 
 namespace HilbertSymbol
 
-/-- Inclusion of p-adic integer units into p-adic field units. -/
+/-- **Inclusion of $p$-adic integer units.** For a prime $p$, this is the map from the units of
+$\mathbb{Z}_p$ to the units of $\mathbb{Q}_p$ induced by the inclusion
+$\mathbb{Z}_p \subseteq \mathbb{Q}_p$. -/
 noncomputable def unitZpToQp {p : ℕ} [Fact (Nat.Prime p)]
     (u : ℤ_[p]ˣ) : ℚ_[p]ˣ :=
   Units.map (PadicInt.Coe.ringHom (p := p)).toMonoidHom u
 
-/-- Image of `unitZpToQp u` agrees with inclusion of `u`. -/
+/-- **Value of the inclusion of $p$-adic integer units.** For a prime $p$ and a unit $u$ of
+$\mathbb{Z}_p$, the image of $u$ under the inclusion of the units of $\mathbb{Z}_p$ into the units
+of $\mathbb{Q}_p$, viewed as an element of $\mathbb{Q}_p$, equals $u$ viewed as an element of
+$\mathbb{Q}_p$. -/
 lemma unitZpToQp_coe {p : ℕ} [Fact (Nat.Prime p)] (u : ℤ_[p]ˣ) :
     (unitZpToQp u : ℚ_[p]) = ((u : ℤ_[p]) : ℚ_[p]) := by
   rw [unitZpToQp, Units.coe_map]
@@ -47,8 +52,11 @@ lemma unitZpToQp_coe {p : ℕ} [Fact (Nat.Prime p)] (u : ℤ_[p]ˣ) :
 
 open scoped Classical in
 set_option maxHeartbeats 800000 in
-/-- Key step of Lemma 10.5: for odd prime p and units u v, there are
-x₀ y₀ and unit z₀ with z₀ ^ 2 = u * x₀ ^ 2 + v * y₀ ^ 2. -/
+/-- **For odd $p$, a binary unit form over $\mathbb{Z}_p$ represents a unit square.** Let $p$ be an
+odd prime and let $u, v$ be units of $\mathbb{Z}_p$. Then there are $x_0, y_0 \in \mathbb{Z}_p$ and
+a unit $z_0$ of $\mathbb{Z}_p$ with $z_0^2 = u x_0^2 + v y_0^2$.
+
+Source: Lemma 10.5, key step. -/
 theorem chevalley_warning_hensel_lift (p : ℕ) [Fact p.Prime]
     (hp_odd : p ≠ 2) (u v : ℤ_[p]ˣ) :
     ∃ (x₀ y₀ : ℤ_[p]) (z₀ : ℤ_[p]ˣ),
@@ -147,7 +155,11 @@ theorem chevalley_warning_hensel_lift (p : ℕ) [Fact p.Prime]
   refine ⟨a_lift, b_lift, hz₀_unit.unit, ?_⟩
   rw [IsUnit.unit_spec, hz₀_sq]
 
-/-- Lemma 10.5: for odd prime p and units u v, (u, v)_p = 1. -/
+/-- **The Hilbert symbol of two $p$-adic units is trivial for odd $p$.** Let $p$ be an odd prime
+and let $u, v$ be units of $\mathbb{Z}_p$. Then the $p$-adic Hilbert symbol of $u$ and $v$, viewed
+as units of $\mathbb{Q}_p$, equals $1$.
+
+Source: Lemma 10.5. -/
 theorem hilbert_symbol_units_eq_one_of_odd (p : ℕ) [Fact p.Prime]
     (hp_odd : p ≠ 2) (u v : ℤ_[p]ˣ) :
     padicHilbertSymbol p (unitZpToQp u) (unitZpToQp v) = 1 := by

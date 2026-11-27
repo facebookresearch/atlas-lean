@@ -35,4 +35,4 @@ needs.
 ## Related topics
 
 - [Gröbner bases](../gr-bner-bases/README.md): Markov bases are computed as generating sets of the toric ideal, in practice as Gröbner bases.
-- Fisher's exact test: the conditional law of a table given its margins, the target distribution of the Metropolis chains that Markov bases make connected.
+- [Fisher's exact test](../../../Probability/hypothesis-testing/fisher-s-exact-test/README.md): the conditional law of a table given its margins, the target distribution of the Metropolis chains that Markov bases make connected.

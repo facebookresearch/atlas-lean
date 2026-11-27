@@ -35,17 +35,23 @@ order, and `AB` is the pointwise product of the underlying sets; `G` may be infi
 
 open Pointwise
 
-/-- Kourovka 16.38 (F. de Giovanni): if `A` and `B` are periodic subgroups of a soluble group `G`,
-then every subgroup of `G` contained in the set `AB = {a b | a ∈ A, b ∈ B}` is periodic. -/
+/-- **Kourovka Problem 16.38 (subgroups inside a product of periodic subgroups).** The statement,
+posed by F. de Giovanni, that for every soluble group $G$ and all subgroups $A$ and $B$ of $G$ in
+which every element has finite order, every subgroup $H$ of $G$ contained in the set $AB$ of all
+products $ab$ with $a \in A$ and $b \in B$ has every element of finite order. -/
 def subgroupInPeriodicProductIsPeriodic : Prop :=
   ∀ (G : Type) [Group G], Group.IsSolvable G → ∀ A B : Subgroup G,
     (∀ a ∈ A, IsOfFinOrder a) → (∀ b ∈ B, IsOfFinOrder b) →
     ∀ H : Subgroup G, (H : Set G) ⊆ (A : Set G) * (B : Set G) → ∀ h ∈ H, IsOfFinOrder h
 
 /--
-Resolved true: Kinyon and Urban (Proposition 3.8) prove that if `G` is soluble and `A, B ≤ G` are
-periodic, every subgroup contained in the set `AB` is periodic; the Kourovka Notebook (21st issue)
-answers 16.38 "Yes, it is true", with the AI-generated solution confirmed by B. Amberg. Source: E.
+**Subgroups inside a product of two periodic subgroups of a soluble group are periodic.** Let $G$
+be a soluble group and let $A$ and $B$ be subgroups of $G$ in which every element has finite order.
+Then every subgroup $H$ of $G$ contained in the set $AB$ of all products $ab$ with $a \in A$ and
+$b \in B$ is periodic: every element of $H$ has finite order. This answers Kourovka Problem 16.38
+(F. de Giovanni) in the affirmative; the proof is due to Kinyon and Urban (Proposition 3.8).
+
+Source: E.
 I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
 issue, arXiv:1401.0300v49 (2026), Problem 16.38 (F. de Giovanni); resolution: M. Kinyon and J. Urban
 (with Codex gpt-6-astra), Results on problems from the Kourovka Notebook, preprint, version 4 (19

@@ -40,7 +40,7 @@ machines and NP membership are separate components.
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 /-- **Bit-string encoding of a graph.** The graph encoding of a number $n$ and a list $E$ of pairs
 of natural numbers is the bit string that writes $n$ in unary and then, for each pair $(u, v)$

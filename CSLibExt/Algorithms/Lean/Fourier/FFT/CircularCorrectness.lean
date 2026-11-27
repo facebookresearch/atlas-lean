@@ -27,14 +27,27 @@ universe u
 
 namespace Cslib.Algorithms.Lean.TimeM
 
-/-- The executed return uses precisely the two stored transforms and their stored product. -/
+/-- **Output of FFT circular convolution.** Let $R$ be a field with a star-ring conjugation, let
+$n = 2^d$, $\omega \in R$ and $x, y \in R^n$. The vector returned by FFT circular convolution of
+$x$ and $y$ with root $\omega$ equals the vector returned by the inverse FFT with root $\omega$
+applied to the vector returned by pointwise multiplication of $\hat{x}$ and $\hat{y}$, where
+$\hat{x}$ and $\hat{y}$ are the vectors returned by the radix-two FFT of $x$ and of $y$ with
+root $\omega$.
+
+Only returned values are compared; operation counts are not. -/
 theorem fftCircular_ret {R : Type u} [Field R] [StarRing R] (d : Nat)
     (omega : R) (xs ys : Vector R (2 ^ d)) :
     (fftCircular d omega xs ys).ret =
       (ifft d omega (fftPointwise (fft d omega xs).ret (fft d omega ys).ret).ret).ret := by
   rfl
 
-/-- The executed linear return calls circular convolution on both actual padded arrays. -/
+/-- **Output of FFT linear convolution.** Let $R$ be a field with a star-ring conjugation, let
+$\omega \in R$ and $x, y \in R^{2^d}$. The vector returned by FFT linear convolution of $x$ and
+$y$ with root $\omega$ equals the vector returned by FFT circular convolution, at length
+$2^{d+1}$ with root $\omega$, of the vectors returned by zero-padding $x$ and $y$ to length
+$2^{d+1}$.
+
+Only returned values are compared; operation counts are not. -/
 theorem fftLinear_ret {R : Type u} [Field R] [StarRing R] (d : Nat)
     (omega : R) (xs ys : Vector R (2 ^ d)) :
     (fftLinear d omega xs ys).ret =
@@ -100,7 +113,13 @@ private theorem fftProduct_pos_samples (d : Nat) (xs ys : Vector ℂ (2 ^ d)) :
   funext j
   rw [fftPointwise_getD, fft_positive_getD, fft_positive_getD]
 
-/-- Every actual Princeton-sign circular output is its cyclic convolution coefficient. -/
+/-- **FFT circular convolution with root $e^{-2\pi i/n}$ computes the cyclic convolution.** Let
+$n = 2^d$ and $x, y \in \mathbb{C}^n$. Run FFT circular convolution of $x$ and $y$ with root
+$\omega = e^{-2\pi i/n}$, the value at $-1$ of the standard additive character of
+$\mathbb{Z}/n\mathbb{Z}$. Then for every $k < n$, entry $k$ of the returned vector equals
+$\sum_{j \in \mathbb{Z}/n\mathbb{Z}} x_j \, y_{k - j}$, with indices taken modulo $n$.
+
+This root is the sign convention of the Princeton (Sedgewick–Wayne) source. -/
 theorem fftCircular_stdAddChar_neg_one (d : Nat) (xs ys : Vector ℂ (2 ^ d))
     (k : Fin (2 ^ d)) :
     (fftCircular d (ZMod.stdAddChar (-1 : ZMod (2 ^ d))) xs ys).ret[k.val] =
@@ -109,7 +128,13 @@ theorem fftCircular_stdAddChar_neg_one (d : Nat) (xs ys : Vector ℂ (2 ^ d))
   rw [fftCircular_ret, ifft_stdAddChar_neg_one d _ k, fftProduct_neg_samples]
   exact ZMod.invDFT_mul_dft _ _ _
 
-/-- Every actual MIT/CLRS-sign circular output is its cyclic convolution coefficient. -/
+/-- **FFT circular convolution with root $e^{2\pi i/n}$ computes the cyclic convolution.** Let
+$n = 2^d$ and $x, y \in \mathbb{C}^n$. Run FFT circular convolution of $x$ and $y$ with root
+$\omega = e^{2\pi i/n}$, the value at $1$ of the standard additive character of
+$\mathbb{Z}/n\mathbb{Z}$. Then for every $k < n$, entry $k$ of the returned vector equals
+$\sum_{j \in \mathbb{Z}/n\mathbb{Z}} x_j \, y_{k - j}$, with indices taken modulo $n$.
+
+This root is the sign convention of the MIT and CLRS sources. -/
 theorem fftCircular_stdAddChar_one (d : Nat) (xs ys : Vector ℂ (2 ^ d))
     (k : Fin (2 ^ d)) :
     (fftCircular d (ZMod.stdAddChar (1 : ZMod (2 ^ d))) xs ys).ret[k.val] =

@@ -23,37 +23,56 @@ determinant.
 
 namespace Fourier
 
-/-- A chosen primitive `M`-th root of unity, with the source condition `M ≥ 2`. -/
+/-- **Primitive root of unity data.** For a natural number $M$ and a commutative ring $R$, root
+data of order $M$ in $R$ consists of an element $\zeta \in R$ that is a primitive $M$-th root of
+unity, together with the condition $M \ge 2$. -/
 structure RootData (M : ℕ) (R : Type*) [CommRing R] where
   zeta : R
   order_ge : 2 ≤ M
   isPrimitiveRoot : IsPrimitiveRoot zeta M
 
-/-- The principal Fourier minor indexed by `S`, with `(i,j)` entry `ζ ^ (i*j)`. -/
+/-- **Principal Fourier minor.** Let $M \ge 2$, let $R$ be a commutative ring, let $\zeta \in R$
+be a primitive $M$-th root of unity, and let $S$ be a finite subset of $\mathbb{Z}/M\mathbb{Z}$.
+The principal Fourier minor indexed by $S$ is the $S \times S$ matrix over $R$ whose $(i, j)$
+entry is $\zeta^{n}$, where $n \in \{0, \dots, M-1\}$ is the representative of the product $ij$
+in $\mathbb{Z}/M\mathbb{Z}$. -/
 noncomputable def principalMinorMatrix (M : ℕ) {R : Type*} [CommRing R]
     (root : RootData M R) (S : Finset (ZMod M)) : Matrix S S R := by
   letI : NeZero M := ⟨by have := root.order_ge; omega⟩
   exact fun i j ↦ root.zeta ^ (i.val * j.val).val
 
-/-- The determinant of the principal Fourier minor indexed by `S`. -/
+/-- **Determinant of a principal Fourier minor.** Let $M \ge 2$, let $R$ be a commutative ring,
+let $\zeta \in R$ be a primitive $M$-th root of unity, and let $S$ be a finite subset of
+$\mathbb{Z}/M\mathbb{Z}$. The principal Fourier minor determinant of $S$ is the determinant in $R$
+of the principal Fourier minor indexed by $S$. -/
 noncomputable def principalMinorDet (M : ℕ) {R : Type*} [CommRing R]
     (root : RootData M R) (S : Finset (ZMod M)) : R :=
   (principalMinorMatrix M root S).det
 
-/-- Entry formula for a principal Fourier minor. -/
+/-- **Entries of a principal Fourier minor.** Let $M \ge 2$, let $R$ be a commutative ring, let
+$\zeta \in R$ be a primitive $M$-th root of unity, and let $S$ be a finite subset of
+$\mathbb{Z}/M\mathbb{Z}$. For all $i, j \in S$, the $(i, j)$ entry of the principal Fourier minor
+indexed by $S$ equals $\zeta^{n}$, where $n \in \{0, \dots, M-1\}$ is the representative of $ij$
+in $\mathbb{Z}/M\mathbb{Z}$. -/
 @[simp]
 theorem principalMinorMatrix_apply (M : ℕ) {R : Type*} [CommRing R]
     (root : RootData M R) (S : Finset (ZMod M)) (i j : S) :
     principalMinorMatrix M root S i j = root.zeta ^ (i.val * j.val).val := by
   simp [principalMinorMatrix]
 
-/-- The determinant of the empty principal minor is one. -/
+/-- **Determinant of the empty principal Fourier minor.** Let $M \ge 2$, let $R$ be a commutative
+ring and let $\zeta \in R$ be a primitive $M$-th root of unity. The determinant of the principal
+Fourier minor indexed by the empty subset of $\mathbb{Z}/M\mathbb{Z}$ equals $1$. -/
 @[simp]
 theorem principalMinorDet_empty (M : ℕ) {R : Type*} [CommRing R]
     (root : RootData M R) : principalMinorDet M root ∅ = 1 := by
   simp [principalMinorDet]
 
-/-- Formula for the determinant of a singleton principal minor. -/
+/-- **Determinant of a singleton principal Fourier minor.** Let $M \ge 2$, let $R$ be a
+commutative ring, let $\zeta \in R$ be a primitive $M$-th root of unity, and let
+$a \in \mathbb{Z}/M\mathbb{Z}$. The determinant of the principal Fourier minor indexed by $\{a\}$
+equals $\zeta^{n}$, where $n \in \{0, \dots, M-1\}$ is the representative of $a^2$ in
+$\mathbb{Z}/M\mathbb{Z}$. -/
 @[simp]
 theorem principalMinorDet_singleton (M : ℕ) {R : Type*} [CommRing R]
     (root : RootData M R) (a : ZMod M) :

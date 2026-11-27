@@ -1,0 +1,18 @@
+# Randomized algorithms and probabilistic analysis
+
+Algorithms whose identity is their use of randomness or whose analysis averages over random inputs: expected running time under input distributions, Fisher-Yates shuffling, the hiring problem, Karger's minimum cut, Freivalds' matrix-product check and MinHash similarity sketches.
+
+- [Average-case running time](average-case-running-time/README.md)
+- [Fisher–Yates shuffle](fisher-yates-shuffle/README.md)
+- [Freivalds' algorithm](freivalds-algorithm/README.md)
+- [Frequency moments of data streams](frequency-moments-of-data-streams/README.md)
+- [Hiring problem](hiring-problem/README.md)
+- [Karger's algorithm](karger-s-algorithm/README.md)
+- [MinHash and Jaccard similarity](minhash-and-jaccard-similarity/README.md)
+- [Maximum load of balls into bins](maximum-load-of-balls-into-bins.md)
+- [Locality-sensitive hashing](locality-sensitive-hashing/README.md)
+- [Streaming and memory hierarchy models](streaming-and-memory-hierarchy-models/README.md)
+- [Monte Carlo estimation and variance reduction](monte-carlo-estimation/README.md)
+- [Probabilistic analysis tools](probabilistic-analysis-tools/README.md)
+- [Property Testing of Graphs and Boolean Functions](property-testing-of-graphs-and-functions/README.md)
+- [Sampling from Fair Coins and Stability of Oracle Programs](sampling-from-fair-coins-and-oracle-stability/README.md)

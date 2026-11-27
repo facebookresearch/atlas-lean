@@ -142,19 +142,22 @@ private theorem triangularization_exists_basis_fin
           simpa only [LinearMap.toMatrix_apply] using hbQ hji'
 
 /--
-An endomorphism whose characteristic polynomial splits is triangularizable: there is a basis
-in which its matrix is upper triangular.
+**Triangularization of an endomorphism with split characteristic polynomial.** Let $V$ be a
+finite-dimensional vector space over a field $K$, let $f$ be an endomorphism of $V$ whose
+characteristic polynomial splits over $K$, and let $\iota$ be a finite linearly ordered set with
+exactly $\dim_K V$ elements. Then there is a basis $(b_i)_{i \in \iota}$ of $V$ in which the matrix
+of $f$ is upper triangular: its $(i, j)$ entry is $0$ whenever $j < i$.
 
-Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of endomorphisms /
-triangularization; S. Axler, Linear Algebra Done Right, 4th ed., Springer (2024), Theorem 5.41.
+Proof: induction on dimension. An eigenvector spans an invariant line, the induced map on the
+quotient has split minimal polynomial (it divides that of $f$), and a triangularizing basis of the
+quotient lifts, together with the eigenvector, to one of $V$. This is the eigenvector-deflation
+induction of the proof of Schur's theorem in R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd
+ed., Cambridge University Press (2013), Theorem 2.3.1, without unitarity.
 
 Proves `Wanted` entry `exists_basis_upperTriangular_toMatrix`.
 
-Proof: induction on dimension. An eigenvector spans an invariant line, the induced map on the
-quotient has split minimal polynomial (it divides that of `f`), and a triangularizing basis of the
-quotient lifts, together with the eigenvector, to one of `V` (`Module.Basis.sumQuot`). This is the
-eigenvector-deflation induction of the proof of Schur's theorem in R. A. Horn and C. R. Johnson,
-Matrix Analysis, 2nd ed., Cambridge University Press (2013), Theorem 2.3.1, without unitarity.
+Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of endomorphisms /
+triangularization; S. Axler, Linear Algebra Done Right, 4th ed., Springer (2024), Theorem 5.41.
 -/
 theorem exists_basis_upperTriangular_toMatrix
     {ι : Type*} [Fintype ι] [DecidableEq ι] [LinearOrder ι]
@@ -173,17 +176,20 @@ theorem exists_basis_upperTriangular_toMatrix
   exact hb (e.symm.lt_iff_lt.mpr hji)
 
 /--
-A square matrix whose characteristic polynomial splits is similar to an upper-triangular
-matrix.
+**Triangularization of a matrix with split characteristic polynomial.** Let $K$ be a field, let
+$n$ be a finite linearly ordered index set, and let $A$ be a square matrix over $K$ with rows and
+columns indexed by $n$ whose characteristic polynomial splits over $K$. Then there are an
+invertible matrix $P$ and a matrix $T$, both over $K$ and indexed by $n$, such that $T$ is upper
+triangular ($T_{ij} = 0$ whenever $j < i$) and $A = P T P^{-1}$.
+
+Proof: triangularize the endomorphism of $K^n$ given by $A$ in the standard basis, and conjugate
+by the change-of-basis matrix from the standard basis to the triangularizing basis.
+
+Proves `Wanted` entry `exists_upperTriangular_similar_of_splits`.
 
 Sources: Mathlib `docs/undergrad.yaml`, Linear algebra / Structure theory of endomorphisms /
 triangularization; R. A. Horn and C. R. Johnson, Matrix Analysis, 2nd ed., Cambridge University
 Press (2013), Theorem 2.3.1.
-
-Proves `Wanted` entry `exists_upperTriangular_similar_of_splits`.
-
-Proof: apply `exists_basis_upperTriangular_toMatrix` to `Matrix.toLin` of the matrix and
-conjugate by the change-of-basis matrix from the standard basis.
 -/
 theorem exists_upperTriangular_similar_of_splits
     {n : Type*} [Fintype n] [DecidableEq n] [LinearOrder n]

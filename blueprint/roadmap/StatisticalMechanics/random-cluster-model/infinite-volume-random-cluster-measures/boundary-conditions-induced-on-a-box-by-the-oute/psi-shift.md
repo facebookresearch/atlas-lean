@@ -1,0 +1,3 @@
+# Outer weight factor of an outer configuration
+
+Let $d, n \in \mathbb{N}$, let $\Lambda_m = \{-m, \dots, m\}^d$ carry its nearest-neighbour edges (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$ (the outer configuration), and let $p, q \in \mathbb{R}$. The outer weight factor is $\pi^{\mathrm{out}}(\psi)\, q^{N_{\mathrm{out}}(\psi)}$, the product of the [outer edge factor](psi-edge-factor.md) and $q$ raised to the [number of components of the outer graph containing no vertex of $\Lambda_n$](outside-shift.md).

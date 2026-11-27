@@ -35,7 +35,9 @@ variable {K : Type u} [Field K]
 private local instance : DecidableEq K := Classical.decEq K
 private local instance : DecidableEq K[X] := Classical.decEq K[X]
 
-/-- Three homogeneous coordinates are primitive when they generate the unit ideal. -/
+/-- **Primitive triple of polynomials.** Let $K$ be a field. Polynomials $a, b, c \in K[X]$
+form a primitive triple when they generate the unit ideal of $K[X]$, that is, when there are
+$u, v, w \in K[X]$ with $ua + vb + wc = 1$. -/
 def PrimitiveTriple (a b c : K[X]) : Prop :=
   ∃ u v w : K[X], u * a + v * b + w * c = 1
 
@@ -65,7 +67,10 @@ private lemma gcd_three_isUnit_of_no_common_irreducible {a b c : K[X]}
   · exact hpg.trans ((EuclideanDomain.gcd_dvd_right _ _).trans
       (EuclideanDomain.gcd_dvd_right _ _))
 
-/-- Three polynomials are primitive if no irreducible polynomial divides all three. -/
+/-- **Polynomials with no common irreducible factor form a primitive triple.** Let $K$ be a
+field and let $a, b, c \in K[X]$ with $c \neq 0$. If no irreducible polynomial in $K[X]$
+divides all of $a$, $b$ and $c$, then $a, b, c$ form a primitive triple: there are
+$u, v, w \in K[X]$ with $ua + vb + wc = 1$. -/
 theorem primitiveTriple_of_no_common_irreducible {a b c : K[X]}
     (hc : c ≠ 0)
     (h : ∀ p : K[X], Irreducible p → p ∣ a → p ∣ b → p ∣ c → False) :
@@ -150,8 +155,11 @@ private lemma ratFunc_num_denom_add (x y : RatFunc K) :
     _ = x + y := by
       rw [RatFunc.num_div_denom, RatFunc.num_div_denom]
 
-/-- A primitive projective presentation of the product and sum of two nonzero rational
-functions has first-coordinate degree equal to the sum of their numerator degrees. -/
+/-- **Numerator degrees from a primitive presentation of product and sum.** Let $K$ be a field,
+let $u, v, h \in K[X]$ form a primitive triple with $h \neq 0$, and let $x, y \in K(X)$ be
+nonzero rational functions with $u/h = xy$ and $v/h = x + y$ in $K(X)$. Then
+$\deg u = \deg \operatorname{num}(x) + \deg \operatorname{num}(y)$, where $\operatorname{num}$
+denotes the numerator of a rational function written in lowest terms. -/
 theorem projective_first_natDegree {u v h : K[X]}
     (hprimitive : PrimitiveTriple u v h)
     (hh : h ≠ 0) {x y : RatFunc K} (hx : x ≠ 0) (hy : y ≠ 0)

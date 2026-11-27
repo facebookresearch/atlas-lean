@@ -99,7 +99,8 @@ theorem Module.End.exists_linearIndependent_eigenvectors :
     intro μ
     exact μ.2.1.exists_hasEigenvector
   choose xs hxs using hex
-  refine ⟨xs, Module.End.eigenvectors_linearIndependent T _ xs hxs, (fun μ ↦ ?_), hxs⟩
+  refine ⟨xs, Module.End.eigenvectors_linearIndependent' T Subtype.val Subtype.val_injective xs hxs,
+    (fun μ ↦ ?_), hxs⟩
   exact Module.End.eigenvector_mem_range_of_hasEigenvector (hxs μ) μ.2.2
 
 /-- **Eigenvalue finiteness for finite-rank operators.** A finite-rank
@@ -148,7 +149,7 @@ theorem Module.End.ncard_nonzero_hasEigenvalue_le_finrank_range
     exact hli
   calc ({μ | Module.End.HasEigenvalue T μ ∧ μ ≠ 0} : Set 𝕜).ncard
       = Fintype.card {μ // Module.End.HasEigenvalue T μ ∧ μ ≠ 0} :=
-        (@Set.fintypeCard_eq_ncard 𝕜 _ hFintypeSub).symm
+        (@Set.fintypeCard_eq_ncard 𝕜 {μ | Module.End.HasEigenvalue T μ ∧ μ ≠ 0} hFintypeSub).symm
     _ ≤ Module.finrank 𝕜 (LinearMap.range T) := hli_w.fintype_card_le_finrank
 
 end LinearAlgebra

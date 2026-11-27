@@ -7,3 +7,4 @@ Hermite–Lindemann, Lindemann–Weierstrass, Gelfond–Schneider, Mahler functi
 - [Reciprocal sums of doubly exponential sequences](reciprocal-sums-of-doubly-exponential-sequences/README.md)
 - [Calegari–Dimitrov–Tang linear independence theorems](cdt-linear-independent.md)
 - [Hermite–Lindemann theorem](hermite-lindemann.md)
+- [The square root of 2 is irrational](sqrt-two-irrational.md)

@@ -30,12 +30,19 @@ into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.Analysis.WignerSemicircleWanted` namespace. Mathematical
-statements are unchanged. Source: E. Wigner, 'Characteristic vectors of bordered matrices with infinite dimensions', Ann. of Math. (2) 62 (1955) 548–564 (Gaussian case). Pastur's universality extending to all variances with finite second moments: L. Pastur, 'On the spectrum of random matrices', Teor. Mat. Fiz. 10 (1972) 102–112. Listed as §102 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf).
+statements are unchanged. ATLAS changes: the Wigner 1955 source note now says what that paper
+proves, Tao's statement of this almost-sure form is cited, and the proved bridge
+`semicircleLaw_eq_semicircleReal` to `ProbabilityTheory.semicircleReal` and the resulting
+`IsProbabilityMeasure` instance are added; the empirical spectral measure is defined for `n ≥ 1`
+only (for `n = 0` it would be the zero measure), with its `IsProbabilityMeasure` instance, so the
+sequence of matrices in the theorem is indexed by `n + 1`. Source: E. Wigner, 'Characteristic vectors of bordered matrices with infinite dimensions', Ann. of Math. (2) 62 (1955) 548–564 (the expected moments of the eigenvalue distribution of random-sign real symmetric matrices, with zero diagonal and off-diagonal entries ±v, converge to the semicircle moments; extended to a wider class in Ann. of Math. 67 (1958)). Pastur's universality extending to all variances with finite second moments: L. Pastur, 'On the spectrum of random matrices', Teor. Mat. Fiz. 10 (1972) 102–112. Listed as §102 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf).
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib
+public import MathlibExt.Probability.Distributions.Semicircle
+public import MathlibExt.Probability.WignerMatrix
 
 @[expose] public section
 
@@ -50,10 +57,12 @@ For an iid family `X i j : Ω → ℝ` (`i ≤ j`) of mean-`0`, variance-`1`
 random variables, the empirical spectral measure of the rescaled
 real-symmetric matrix `W_n / √n` (with `W_n(i, j) = X (min i j) (max i j)`)
 converges weakly, almost surely as `n → ∞`, to the **semicircle measure**
-on `[−2, 2]` with density `√(4 − x²) / (2π)`. Wigner 1955 for the
-Gaussian case; Pastur 1972 extended it to all variances under finite
+on `[−2, 2]` with density `√(4 − x²) / (2π)`. Wigner 1955 proved
+convergence of the expected moments for random-sign symmetric
+matrices; Pastur 1972 extended it to all variances under finite
 second moments. §102 in Knill's *Some Fundamental Theorems in
 Mathematics*.
+Tao, *Topics in Random Matrix Theory*, Theorem 2.4.2, states this almost-sure form.
 
 Weak convergence is encoded against bounded continuous test functions:
 almost surely `∫ f dμ_n → ∫ f dμ_∞` for every bounded continuous `f`.
@@ -66,37 +75,71 @@ vacuously without them).
 open scoped ENNReal NNReal Topology
 open MeasureTheory ProbabilityTheory Filter
 
-/-- Empirical spectral measure of a Hermitian matrix `W` on the real
-eigenvalues: `(1/n) · ∑_j δ_{λ_j}`. -/
-noncomputable def empiricalSpectralMeasureHerm {n : ℕ}
+/-- **Empirical spectral measure of a Hermitian matrix.** Let $n \ge 1$ and let $W$ be a Hermitian
+$n \times n$ complex matrix with real eigenvalues $\lambda_1, \dots, \lambda_n$, listed with
+multiplicity. The empirical spectral measure of $W$ is the probability measure
+$\frac{1}{n} \sum_{j=1}^{n} \delta_{\lambda_j}$ on $\mathbb{R}$, where $\delta_\lambda$ is the
+Dirac measure at $\lambda$. -/
+noncomputable def empiricalSpectralMeasureHerm {n : ℕ} [NeZero n]
     {W : Matrix (Fin n) (Fin n) ℂ} (hW : W.IsHermitian) : Measure ℝ :=
   (n : ℝ≥0∞)⁻¹ • ∑ j : Fin n, Measure.dirac (hW.eigenvalues j)
 
-/-- The **Wigner semicircle measure** on `ℝ`: probability measure with
-density `√(4 − x²) / (2π)` supported on `[−2, 2]`. -/
+set_option linter.dupNamespace false in
+/-- The empirical spectral measure of a nonempty Hermitian matrix is a probability measure. -/
+instance isProbabilityMeasure_empiricalSpectralMeasureHerm {n : ℕ} [NeZero n]
+    {W : Matrix (Fin n) (Fin n) ℂ} (hW : W.IsHermitian) :
+    IsProbabilityMeasure (empiricalSpectralMeasureHerm hW) := by
+  constructor
+  simp [empiricalSpectralMeasureHerm, ENNReal.inv_mul_cancel, NeZero.ne]
+
+/-- **Semicircle distribution.** The semicircle distribution is the measure $\sigma$ on
+$\mathbb{R}$ given by $\sigma(A) = \int_{A \cap [-2, 2]} \frac{\sqrt{4 - x^2}}{2\pi} \, dx$ for
+every measurable set $A \subseteq \mathbb{R}$.
+
+Since $\int_{-2}^{2} \sqrt{4 - x^2} \, dx = 2\pi$, it is a probability measure. -/
 noncomputable def semicircleLaw : Measure ℝ :=
   (volume.restrict (Set.Icc (-2 : ℝ) 2)).withDensity
     (fun x => ENNReal.ofReal (Real.sqrt (4 - x ^ 2) / (2 * Real.pi)))
 
-/-- `n × n` real-symmetric random matrix built from the upper-
-triangular half of `X : ℕ → ℕ → Ω → ℝ`. -/
-noncomputable def wignerMatrix {Ω : Type*} (X : ℕ → ℕ → Ω → ℝ) (n : ℕ)
-    (ω : Ω) : Matrix (Fin n) (Fin n) ℂ :=
-  fun i j => ((X (min (i : ℕ) j) (max (i : ℕ) j) ω : ℝ) : ℂ)
+set_option linter.dupNamespace false in
+/-- The semicircle measure of this problem is the semicircle distribution
+`ProbabilityTheory.semicircleReal`, whose moments are the Catalan numbers. -/
+theorem semicircleLaw_eq_semicircleReal : semicircleLaw = ProbabilityTheory.semicircleReal :=
+  rfl
 
-/-- The Wigner matrix is Hermitian (in fact real symmetric: `min`/`max`
-are symmetric in their arguments, and the entries are real). -/
-lemma wignerMatrix_isHermitian {Ω : Type*} (X : ℕ → ℕ → Ω → ℝ) (n : ℕ)
-    (ω : Ω) : (wignerMatrix X n ω).IsHermitian := by
-  ext i j
-  simp [wignerMatrix, Matrix.conjTranspose_apply, Complex.conj_ofReal,
-    min_comm (i : ℕ) j, max_comm (i : ℕ) j]
+set_option linter.dupNamespace false in
+/-- The semicircle measure is a probability measure. -/
+instance isProbabilityMeasure_semicircleLaw : IsProbabilityMeasure semicircleLaw := by
+  rw [semicircleLaw_eq_semicircleReal]; infer_instance
 
 /- **Wigner's semicircle law** (Wigner 1955). For an iid family of
 mean-`0`, variance-`1` real random variables, the empirical spectral
 measure of the rescaled real-symmetric matrix `W_n / √n` converges
-weakly, almost surely, to the semicircle measure on `[−2, 2]`. -/
-/-- Source: E. Wigner, 'Characteristic vectors of bordered matrices with infinite dimensions', Ann. of Math. (2) 62 (1955) 548–564 (Gaussian case). Pastur's universality extending to all variances with finite second moments: L. Pastur, 'On the spectrum of random matrices', Teor. Mat. Fiz. 10 (1972) 102–112. Listed as §102 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `wigner_semicircle`. -/
+weakly, almost surely, to the semicircle measure on `[−2, 2]`; the
+sequence is indexed by `n + 1`, the size of the matrix. -/
+/-- **Wigner's semicircle law.** Let $(\Omega, \mu)$ be a probability space and let
+$X_{ij} : \Omega \to \mathbb{R}$, for $i, j \in \mathbb{N}$, be measurable functions. Suppose that
+the family $(X_{ij})_{i \le j}$ is mutually independent, that all $X_{ij}$ with $i \le j$ have the
+same distribution, and that for $i \le j$ both $X_{ij}$ and $X_{ij}^2$ are integrable with
+$\mathbb{E}[X_{ij}] = 0$ and $\mathbb{E}[X_{ij}^2] = 1$. For $n \ge 1$ and $\omega \in \Omega$,
+let $W_n(\omega)$ be the $n \times n$ Wigner matrix of $X$, with entries
+$X_{\min(i,j)\,\max(i,j)}(\omega)$, and let $L_n(\omega)$ be the empirical spectral measure of
+$W_n(\omega) / \sqrt{n}$, that is, the image of the empirical spectral measure of $W_n(\omega)$
+under $x \mapsto x / \sqrt{n}$. Then for $\mu$-almost every $\omega$, every bounded continuous
+function $f : \mathbb{R} \to \mathbb{R}$ satisfies
+$$\int f \, dL_n(\omega) \to \int f \, d\sigma \quad (n \to \infty),$$
+where $\sigma$ is the semicircle distribution.
+
+Source: E. Wigner, 'Characteristic vectors of bordered matrices with infinite dimensions', Ann. of
+Math. (2) 62 (1955) 548–564 (the expected moments of the eigenvalue distribution of random-sign real
+symmetric matrices, with zero diagonal and off-diagonal entries ±v, converge to the semicircle
+moments; extended to a wider class in Ann. of Math. 67 (1958)). Pastur's universality extending to
+all variances with finite second moments: L. Pastur, 'On the spectrum of random matrices', Teor.
+Mat. Fiz. 10 (1972) 102–112. Listed as §102 in O. Knill, *Some Fundamental Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). This almost-sure
+form, for i.i.d. upper-triangular entries of mean 0 and variance 1, is T. Tao, *Topics in Random
+Matrix Theory*, AMS GSM 132 (2012), Theorem 2.4.2, which allows the diagonal entries a different
+law. Via leanprover/lean-eval@38361be, problem `wigner_semicircle`. -/
 public theorem_wanted wigner_semicircle
     {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
@@ -115,8 +158,8 @@ public theorem_wanted wigner_semicircle
         Tendsto
           (fun n : ℕ =>
             ∫ x, f x ∂ (empiricalSpectralMeasureHerm
-              (wignerMatrix_isHermitian X n ω)).map
-                (fun x : ℝ => x / Real.sqrt n))
+              (wignerMatrix_isHermitian X (n + 1) ω)).map
+                (fun x : ℝ => x / Real.sqrt (n + 1 : ℕ)))
           atTop (𝓝 (∫ x, f x ∂semicircleLaw))
 
 end WignerSemicircleProblem

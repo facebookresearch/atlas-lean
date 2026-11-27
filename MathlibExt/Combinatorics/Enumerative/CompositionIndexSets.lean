@@ -16,9 +16,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The index set `S(m, n, q)`: the naturals `k` with
-`2k ≡ n - q (mod m)` and `k ≤ ⌊(n - 1) / 2⌋`. The bound is written
-`2 * k < n`, which is equivalent for naturals (and empty at `n = 0`).
+/-- **The index set $S(m, n, q)$.** For natural numbers $m$, $n$ and $q$, the set $S(m, n, q)$
+consists of the natural numbers $k$ such that $2k \equiv n - q \pmod{m}$, where the difference
+$n - q$ is taken in the integers, and $2k < n$.
+
+For natural numbers the bound $2k < n$ is equivalent to $k \le \lfloor (n - 1)/2 \rfloor$; in
+particular the set is empty when $n = 0$.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,
@@ -26,7 +29,9 @@ Theorem 13 (`jis-2024-24.3.6-thm-13`). -/
 public def compositionHalfIndexSet (m n q : ℕ) : Set ℕ :=
   {k | 2 * (k : ℤ) ≡ (n : ℤ) - (q : ℤ) [ZMOD (m : ℤ)] ∧ 2 * k < n}
 
-/-- Membership in `S(m, n, q)` unfolded.
+/-- **Membership in $S(m, n, q)$.** For natural numbers $m$, $n$, $q$ and $k$, the number $k$
+lies in the index set $S(m, n, q)$ if and only if $2k \equiv n - q \pmod{m}$, with the difference
+taken in the integers, and $2k < n$.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,
@@ -36,7 +41,8 @@ public theorem mem_compositionHalfIndexSet {m n q k : ℕ} :
       2 * (k : ℤ) ≡ (n : ℤ) - (q : ℤ) [ZMOD (m : ℤ)] ∧ 2 * k < n :=
   Iff.rfl
 
-/-- Boundary characteristic: `S(m, 0, q)` is empty.
+/-- **The index set $S(m, 0, q)$ is empty.** For all natural numbers $m$ and $q$, the index set
+$S(m, 0, q)$ is empty.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,
@@ -48,9 +54,9 @@ public theorem compositionHalfIndexSet_zero (m q : ℕ) :
   rintro ⟨-, h⟩
   omega
 
-/-- The index set `T(m, n, q)`: the naturals `k` with
-`k ≡ n - q (mod m)` and `0 ≤ k ≤ n - 1`. The bound is written
-`k < n`.
+/-- **The index set $T(m, n, q)$.** For natural numbers $m$, $n$ and $q$, the set $T(m, n, q)$
+consists of the natural numbers $k$ such that $k \equiv n - q \pmod{m}$, where the difference
+$n - q$ is taken in the integers, and $k < n$.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,
@@ -58,7 +64,9 @@ Theorem 17 (`jis-2024-24.3.6-thm-17`). -/
 public def compositionIndexSet (m n q : ℕ) : Set ℕ :=
   {k | (k : ℤ) ≡ (n : ℤ) - (q : ℤ) [ZMOD (m : ℤ)] ∧ k < n}
 
-/-- Membership in `T(m, n, q)` unfolded.
+/-- **Membership in $T(m, n, q)$.** For natural numbers $m$, $n$, $q$ and $k$, the number $k$
+lies in the index set $T(m, n, q)$ if and only if $k \equiv n - q \pmod{m}$, with the difference
+taken in the integers, and $k < n$.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,
@@ -68,7 +76,8 @@ public theorem mem_compositionIndexSet {m n q k : ℕ} :
       (k : ℤ) ≡ (n : ℤ) - (q : ℤ) [ZMOD (m : ℤ)] ∧ k < n :=
   Iff.rfl
 
-/-- Boundary characteristic: `T(m, 0, q)` is empty.
+/-- **The index set $T(m, 0, q)$ is empty.** For all natural numbers $m$ and $q$, the index set
+$T(m, 0, q)$ is empty.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,
@@ -80,7 +89,11 @@ public theorem compositionIndexSet_zero (m q : ℕ) :
   rintro ⟨-, h⟩
   omega
 
-/-- The doubling identity `S(2m, 2n, 2q) = T(m, n, q)`.
+/-- **Doubling identity for the composition index sets.** For natural numbers $m$, $n$ and $q$,
+let $S(m, n, q)$ be the set of natural numbers $k$ with $2k \equiv n - q \pmod{m}$ and $2k < n$,
+and let $T(m, n, q)$ be the set of natural numbers $k$ with $k \equiv n - q \pmod{m}$ and
+$k < n$, where the difference $n - q$ is taken in the integers. Then for all natural numbers
+$m$, $n$ and $q$ the sets satisfy $S(2m, 2n, 2q) = T(m, n, q)$.
 
 Source: Bowman, *Compositions with an Odd Number of Parts, and Other
 Congruences*, Journal of Integer Sequences 27 (2024), Article 24.3.6,

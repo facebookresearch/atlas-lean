@@ -47,7 +47,10 @@ variable {Γ Δ Ξ Ω : List (Ty Base)}
 
 namespace Sub
 
-/-- Extend a substitution by an image for the newest variable. -/
+/-- **Extension of a simply typed substitution.** Given a term $a$ of type $A$ in a context
+$\Delta$ and a substitution $\sigma$ from $\Gamma$ to $\Delta$, the extension of $\sigma$ by $a$ is
+the substitution from the context $\Gamma$ extended by a newest variable of type $A$ to $\Delta$
+that sends the newest variable to $a$ and each older variable $x$ of $\Gamma$ to $\sigma(x)$. -/
 def cons (a : Tm Δ A) (σ : Sub Γ Δ) : Sub (A :: Γ) Δ
   | _, .zero => a
   | _, .succ x => σ x
@@ -57,7 +60,10 @@ def cons (a : Tm Δ A) (σ : Sub Γ Δ) : Sub (A :: Γ) Δ
 @[simp] theorem cons_succ (a : Tm Δ A) (σ : Sub Γ Δ) (x : Var Γ B) :
     cons a σ (.succ x) = σ x := rfl
 
-/-- Compose simultaneous substitutions by substituting into every image. -/
+/-- **Composition of simply typed substitutions.** For substitutions $\sigma$ from a context
+$\Gamma$ to $\Delta$ and $\tau$ from $\Delta$ to $\Xi$, the composite of $\sigma$ followed by
+$\tau$ is the substitution from $\Gamma$ to $\Xi$ that sends each variable $x$ of $\Gamma$ to the
+term obtained by applying $\tau$ to $\sigma(x)$. -/
 def comp (σ : Sub Γ Δ) (τ : Sub Δ Ξ) : Sub Γ Ξ := fun x ↦ Tm.subst τ (σ x)
 
 @[simp] theorem comp_apply (σ : Sub Γ Δ) (τ : Sub Δ Ξ) (x : Var Γ A) :
@@ -75,7 +81,11 @@ namespace Tm
 
 /-! ## Fusion of renaming and substitution -/
 
-/-- Renaming commutes with weakening under a correspondingly lifted renaming. -/
+/-- **Renaming commutes with weakening for intrinsically typed STLC terms.** Let $\rho$ be a
+renaming from the typing context $\Gamma$ to the typing context $\Delta$, $t$ a term of type $A$
+in context $\Gamma$, and $B$ a type. Weakening $t$ by a new newest variable of type $B$ and then
+renaming by the lift of $\rho$ under that variable gives the same term as renaming $t$ by $\rho$
+and then weakening by a new newest variable of type $B$. -/
 theorem rename_weaken (ρ : Ren Γ Δ) (t : Tm Γ A) :
     rename (Var.lift (A := B) ρ) (weaken (B := B) t) = weaken (B := B) (rename ρ t) := by
   rw [weaken, rename_comp, weaken, rename_comp]
@@ -83,7 +93,11 @@ theorem rename_weaken (ρ : Ren Γ Δ) (t : Tm Γ A) :
   intro C x
   rfl
 
-/-- Renaming after substitution can be fused into the substitution images. -/
+/-- **Renaming after substitution in the simply typed calculus.** Let $\sigma$ be a substitution
+from $\Gamma$ to $\Delta$, $\rho$ a renaming from $\Delta$ to $\Xi$ and $t$ a term of type $A$ in
+$\Gamma$. Renaming by $\rho$ the result of applying $\sigma$ to $t$ gives the result of applying
+to $t$ the substitution that sends each variable $x$ of $\Gamma$ to $\sigma(x)$ renamed by
+$\rho$. -/
 theorem rename_subst (ρ : Ren Δ Ξ) (σ : Sub Γ Δ) (t : Tm Γ A) :
     rename ρ (subst σ t) = subst (fun x ↦ rename ρ (σ x)) t := by
   induction t generalizing Δ Ξ with
@@ -99,7 +113,11 @@ theorem rename_subst (ρ : Ren Δ Ξ) (σ : Sub Γ Δ) (t : Tm Γ A) :
       | zero => rfl
       | succ x => exact rename_weaken ρ (σ x)
 
-/-- Substitution after renaming is substitution through the renamed variables. -/
+/-- **Renaming then substituting an intrinsically typed STLC term.** Let $\rho$ be a renaming from
+the typing context $\Gamma$ to the typing context $\Delta$, $\sigma$ a substitution from $\Delta$
+to the typing context $\Xi$, and $t$ a term of type $A$ in context $\Gamma$. Renaming $t$ by
+$\rho$ and then applying $\sigma$ gives the same term as applying to $t$ the substitution that
+sends each variable $x$ of $\Gamma$ to $\sigma(\rho(x))$. -/
 theorem subst_rename (σ : Sub Δ Ξ) (ρ : Ren Γ Δ) (t : Tm Γ A) :
     subst σ (rename ρ t) = subst (fun x ↦ σ (ρ x)) t := by
   induction t generalizing Δ Ξ with
@@ -113,7 +131,11 @@ theorem subst_rename (σ : Sub Δ Ξ) (ρ : Ren Γ Δ) (t : Tm Γ A) :
       intro C x
       cases x <;> rfl
 
-/-- Substitution by a lifted environment commutes with weakening. -/
+/-- **Lifted substitution commutes with weakening for intrinsically typed STLC terms.** Let
+$\sigma$ be a substitution from the typing context $\Gamma$ to the typing context $\Delta$, $t$ a
+term of type $A$ in context $\Gamma$, and $B$ a type. Weakening $t$ by a new newest variable of
+type $B$ and then applying the lift of $\sigma$ under that variable gives the same term as
+applying $\sigma$ to $t$ and then weakening by a new newest variable of type $B$. -/
 theorem subst_lift_weaken (σ : Sub Γ Δ) (t : Tm Γ A) :
     subst (Sub.lift (A := B) σ) (weaken (B := B) t) = weaken (B := B) (subst σ t) := by
   rw [weaken, subst_rename, weaken]
@@ -122,7 +144,12 @@ theorem subst_lift_weaken (σ : Sub Γ Δ) (t : Tm Γ A) :
   intro C x
   rfl
 
-/-- Two successive substitutions fuse into pointwise substitution of images. -/
+/-- **Composition of substitutions for intrinsically typed STLC terms.** Let $\sigma$ be a
+substitution from the typing context $\Gamma$ to the typing context $\Delta$, $\tau$ a
+substitution from $\Delta$ to the typing context $\Xi$, and $t$ a term of type $A$ in context
+$\Gamma$. Applying $\sigma$ to $t$ and then applying $\tau$ gives the same term as applying to $t$
+the composite substitution, which sends each variable $x$ of $\Gamma$ to the result of applying
+$\tau$ to $\sigma(x)$. -/
 theorem subst_subst (σ : Sub Γ Δ) (τ : Sub Δ Ξ) (t : Tm Γ A) :
     subst τ (subst σ t) = subst (Sub.comp σ τ) t := by
   induction t generalizing Δ Ξ with
@@ -144,6 +171,10 @@ namespace Sub
 
 /-! ## The category of typing contexts and substitutions -/
 
+/-- **Right identity law for composition of substitutions.** For every simultaneous substitution
+$\sigma$ from a context $\Gamma$ to a context $\Delta$ and every variable $x$ of type $A$ in
+$\Gamma$, the composite of $\sigma$ followed by the identity substitution on $\Delta$ sends $x$ to
+$\sigma(x)$. -/
 @[simp] theorem comp_id_apply (σ : Sub Γ Δ) (x : Var Γ A) :
     comp σ (id : Sub Δ Δ) x = σ x := Tm.subst_id (σ x)
 
@@ -182,7 +213,10 @@ theorem lift_ofRen_apply (ρ : Ren Γ Δ) (x : Var (A :: Γ) B) :
 
 /-! ## Renaming substitution images -/
 
-/-- Postcompose every image of a substitution with a renaming. -/
+/-- **Renaming the images of a substitution.** Given a substitution $\sigma$ from the typing
+context $\Gamma$ to the typing context $\Delta$ and a renaming $\rho$ from $\Delta$ to the typing
+context $\Xi$, the substitution from $\Gamma$ to $\Xi$ obtained by renaming images sends each
+variable $x$ of $\Gamma$ to the renaming of the term $\sigma(x)$ by $\rho$. -/
 def rename (σ : Sub Γ Δ) (ρ : Ren Δ Ξ) : Sub Γ Ξ := fun x ↦ Tm.rename ρ (σ x)
 
 @[simp] theorem rename_apply (σ : Sub Γ Δ) (ρ : Ren Δ Ξ) (x : Var Γ A) :
@@ -202,7 +236,12 @@ theorem rename_cons_apply (a : Tm Δ A) (σ : Sub Γ Δ) (ρ : Ren Δ Ξ)
 theorem rename_eq_comp_ofRen_apply (σ : Sub Γ Δ) (ρ : Ren Δ Ξ) (x : Var Γ A) :
     rename σ ρ x = comp σ (ofRen ρ) x := (comp_ofRen_apply σ ρ x).symm
 
-/-- Renaming lifted substitution images is compatible with lifting the renaming. -/
+/-- **Lifting commutes with renaming substitution images.** Let $\sigma$ be a substitution from
+$\Gamma$ to $\Delta$ and $\rho$ a renaming from $\Delta$ to $\Xi$. Lift $\sigma$ under a binder
+of type $A$ and rename each of its images by the lift of $\rho$ under the same binder. At every
+variable $x$ of the context $\Gamma$ extended by a newest variable of type $A$, this gives the
+same term as the lift under that binder of the substitution that renames each image of $\sigma$
+by $\rho$. -/
 theorem rename_lift_apply (σ : Sub Γ Δ) (ρ : Ren Δ Ξ) (x : Var (A :: Γ) B) :
     rename (lift σ) (Var.lift ρ) x = lift (rename σ ρ) x := by
   cases x with
@@ -211,11 +250,21 @@ theorem rename_lift_apply (σ : Sub Γ Δ) (ρ : Ren Δ Ξ) (x : Var (A :: Γ) B
 
 /-! ## Cancellation laws at a binder -/
 
-/-- Composing a singleton substitution substitutes into its distinguished image. -/
+/-- **Composing a single substitution with a substitution.** Let $a$ be a term of type $A$ in a
+context $\Gamma$ and $\sigma$ a substitution from $\Gamma$ to $\Delta$, and write $a[\sigma]$ for
+the result of applying $\sigma$ to $a$. The composite of the single substitution of $a$ for the
+newest variable followed by $\sigma$ agrees, at every variable $x$ of the context $\Gamma$
+extended by a newest variable of type $A$, with the extension of $\sigma$ that sends the newest
+variable to $a[\sigma]$. -/
 theorem comp_single_apply (a : Tm Γ A) (σ : Sub Γ Δ) (x : Var (A :: Γ) B) :
     comp (single a) σ x = cons (Tm.subst σ a) σ x := by cases x <;> rfl
 
-/-- Lifting and then replacing the new variable recovers context extension. -/
+/-- **Lifting followed by single substitution.** Let $\sigma$ be a substitution from $\Gamma$ to
+$\Delta$ and $a$ a term of type $A$ in $\Delta$. The composite of the lift of $\sigma$ under a
+binder of type $A$ followed by the single substitution of $a$ for the newest variable agrees, at
+every variable $x$ of the context $\Gamma$ extended by a newest variable of type $A$, with the
+extension of $\sigma$ that sends the newest variable to $a$ and each older variable $y$ to
+$\sigma(y)$. -/
 theorem lift_single_apply (σ : Sub Γ Δ) (a : Tm Δ A) (x : Var (A :: Γ) B) :
     comp (lift σ) (single a) x = cons a σ x := by
   cases x with
@@ -236,7 +285,10 @@ namespace Tm
 
 /-! ## Naturality of single substitution -/
 
-/-- Substituting the newest variable after weakening recovers the original term. -/
+/-- **Single substitution cancels weakening.** Let $t$ be a term of type $A$ in the typing context
+$\Gamma$ and $a$ a term of type $B$ in context $\Gamma$. Weakening $t$ by a new newest variable of
+type $B$ and then applying the substitution that replaces the newest variable by $a$ and leaves
+every older variable unchanged gives back $t$. -/
 @[simp] theorem subst_single_weaken (a : Tm Γ B) (t : Tm Γ A) :
     subst (Sub.single a) (weaken (B := B) t) = t := by
   rw [weaken, subst_rename]
@@ -247,11 +299,17 @@ namespace Tm
       rfl
     _ = t := subst_id t
 
-/-- Instantiating a weakened term has no effect. -/
+/-- **Instantiating a weakened term.** For terms $b$ of type $B$ and $a$ of type $A$ in a context
+$\Gamma$, weakening $b$ to the context $\Gamma$ extended by a newest variable of type $A$ and then
+instantiating that newest variable by $a$ gives back $b$. -/
 @[simp] theorem instantiate_weaken (body : Tm Γ B) (a : Tm Γ A) :
     instantiate (weaken (B := A) body) a = body := subst_single_weaken a body
 
-/-- Renaming commutes with replacement of the newest variable. -/
+/-- **Renaming commutes with instantiation.** Let $\rho$ be a renaming from $\Gamma$ to $\Delta$,
+$b$ a term of type $B$ in the context $\Gamma$ extended by a newest variable of type $A$, and $a$
+a term of type $A$ in $\Gamma$. Renaming by $\rho$ the instantiation of the newest variable of $b$
+by $a$ gives the instantiation of the newest variable of $b'$ by $a'$, where $b'$ is $b$ renamed
+by the lift of $\rho$ under the binder and $a'$ is $a$ renamed by $\rho$. -/
 theorem rename_instantiate (ρ : Ren Γ Δ) (body : Tm (A :: Γ) B) (a : Tm Γ A) :
     rename ρ (instantiate body a) =
       instantiate (rename (Var.lift ρ) body) (rename ρ a) := by
@@ -260,7 +318,12 @@ theorem rename_instantiate (ρ : Ren Γ Δ) (body : Tm (A :: Γ) B) (a : Tm Γ A
   intro C x
   cases x <;> rfl
 
-/-- Simultaneous substitution commutes with replacement of the newest variable. -/
+/-- **Substitution commutes with instantiation for intrinsically typed STLC terms.** Let $\sigma$
+be a substitution from the typing context $\Gamma$ to the typing context $\Delta$, $s$ a term of
+type $B$ in the context $\Gamma$ extended by a newest variable of type $A$, and $a$ a term of type
+$A$ in context $\Gamma$. Replacing the newest variable of $s$ by $a$ and then applying $\sigma$
+gives the same term as applying the lift of $\sigma$ to $s$ and then replacing the newest variable
+of the result by the term obtained by applying $\sigma$ to $a$. -/
 theorem subst_instantiate (σ : Sub Γ Δ) (body : Tm (A :: Γ) B) (a : Tm Γ A) :
     subst σ (instantiate body a) =
       instantiate (subst (Sub.lift σ) body) (subst σ a) := by
@@ -271,7 +334,12 @@ theorem subst_instantiate (σ : Sub Γ Δ) (body : Tm (A :: Γ) B) (a : Tm Γ A)
   | zero => rfl
   | succ x => exact (subst_single_weaken (subst σ a) (σ x)).symm
 
-/-- Extending an environment is equivalent to lifting it and then instantiating. -/
+/-- **Substituting by an extended substitution, via lifting.** Let $\sigma$ be a substitution from
+the typing context $\Gamma$ to the typing context $\Delta$, $s$ a term of type $B$ in the context
+$\Gamma$ extended by a newest variable of type $A$, and $a$ a term of type $A$ in context
+$\Delta$. Applying to $s$ the extension of $\sigma$ that sends the newest variable to $a$ gives the
+same term as applying the lift of $\sigma$ to $s$ and then replacing the newest variable of the
+result by $a$. -/
 theorem subst_cons (σ : Sub Γ Δ) (body : Tm (A :: Γ) B) (a : Tm Δ A) :
     subst (Sub.cons a σ) body = instantiate (subst (Sub.lift σ) body) a := by
   rw [instantiate, subst_subst]
@@ -279,7 +347,11 @@ theorem subst_cons (σ : Sub Γ Δ) (body : Tm (A :: Γ) B) (a : Tm Δ A) :
   intro C x
   exact (Sub.lift_single_apply σ a x).symm
 
-/-- The single-substitution operation is the special case of environment extension by identity. -/
+/-- **Instantiation is substitution by an extended identity.** Let $b$ be a term of type $B$ in
+the context $\Gamma$ extended by a newest variable of type $A$, and $a$ a term of type $A$ in
+$\Gamma$. Instantiating the newest variable of $b$ by $a$ gives the same term as applying to $b$
+the substitution that sends the newest variable to $a$ and each older variable to itself, that
+is, the extension of the identity substitution on $\Gamma$ by $a$. -/
 theorem instantiate_eq_subst_cons (body : Tm (A :: Γ) B) (a : Tm Γ A) :
     instantiate body a = subst (Sub.cons a Sub.id) body := by
   apply subst_congr

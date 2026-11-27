@@ -36,11 +36,13 @@ construction); it splits when `π` has a homomorphic section. The resolution is 
 solutions confirmed by B. A. F. Wehrfritz.
 -/
 
-/-- Kourovka 18.76 (E. A. Palyutin): let `A` be a division ring and `G` a subgroup of `Aˣ`. Every
-extension `E` of the additive group of `A` by `G` in which `G` acts by multiplication splits. The
-extension is an injective `i : A → E` (on the additive group of `A`, written multiplicatively) and a
-surjective `π : E → G` with `range i = ker π` and `e · i(a) · e⁻¹ = i(π(e) a)`; it splits when `π`
-has a homomorphic section. -/
+/-- **Palyutin's splitting problem for division rings (Kourovka 18.76).** The statement that for
+every division ring $A$, every subgroup $G$ of its unit group $A^\times$ and every group $E$, if
+$i$ is an injective homomorphism from the additive group of $A$ to $E$ and $\pi : E \to G$ is a
+surjective homomorphism whose kernel is the image of $i$, such that
+$e \, i(a) \, e^{-1} = i(\pi(e) a)$ for all $e \in E$ and $a \in A$ (so $G$ acts on the kernel by
+left multiplication), then the extension splits: there is a homomorphism $s : G \to E$ with
+$\pi(s(g)) = g$ for every $g \in G$. -/
 def divisionRingMultiplicationExtensionsSplit : Prop :=
   ∀ (A : Type) [DivisionRing A] (G : Subgroup Aˣ) (E : Type) [Group E]
     (i : Multiplicative A →* E) (π : E →* G), Function.Injective i → Function.Surjective π →
@@ -50,10 +52,13 @@ def divisionRingMultiplicationExtensionsSplit : Prop :=
     ∃ s : G →* E, ∀ g : G, π (s g) = g
 
 /--
-Resolved false: the Kourovka Notebook (21st issue) answers 18.76 "No, not always", by AI-generated
-solutions confirmed by B. A. F. Wehrfritz (Jayadevan; Kinyon-Urban, 2026). In Kinyon-Urban, `G = F ×
-L` is a product of two free groups of rank `2` inside a division ring `D` (Mal'cev-Neumann), and an
-extension of `(D, +)` by `G` with conjugation acting by left multiplication has no splitting.
+**Extensions of a division ring's additive group by units need not split (Kourovka 18.76).**
+There exist a division ring $A$, a subgroup $G$ of its unit group $A^\times$, a group $E$, an
+injective homomorphism $i$ from the additive group of $A$ to $E$ and a surjective homomorphism
+$\pi : E \to G$ whose kernel is the image of $i$, with $e \, i(a) \, e^{-1} = i(\pi(e) a)$ for all
+$e \in E$ and $a \in A$, such that no homomorphism $s : G \to E$ satisfies $\pi(s(g)) = g$ for all
+$g \in G$. That is, the splitting statement of Kourovka Problem 18.76 is false.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 18.76 (E. A. Palyutin); resolution: M.
 Kinyon and J. Urban, Results on problems from the Kourovka Notebook, preprint, version 4, 19

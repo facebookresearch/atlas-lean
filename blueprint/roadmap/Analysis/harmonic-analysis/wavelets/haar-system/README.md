@@ -14,5 +14,5 @@ The [Haar function](haar-function.md) $H = \mathbf{1}_{[0,1/2)} - \mathbf{1}_{[1
 
 - [Conjugate mirror filters](../conjugate-mirror-filters/README.md): the Haar filters $h = (\delta_0 + \delta_1)/\sqrt2$ and $g = (\delta_0 - \delta_1)/\sqrt2$ are the simplest conjugate mirror filters; one level of the fast Haar transform maps $(x[2n], x[2n+1])$ to their normalized sum and difference.
 - [Fourier analysis on the Boolean cube](../../discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/README.md): the Walsh functions, characters of $(\mathbb{Z}/2)^m$, and the first $m$ levels of the Haar basis are two orthonormal bases of the same space of step functions on the dyadic intervals of length $2^{-m}$; Walsh functions are localized in frequency, Haar functions in space.
-- Best M-term approximation: keeping the largest Haar coefficients is the best $M$-term approximation in the Haar basis, studied in DeVore's Section 3.6.
+- [Best M-term approximation](../../../approximation-theory/best-m-term-approximation/README.md): keeping the largest Haar coefficients is the best $M$-term approximation in the Haar basis, studied in DeVore's Section 3.6.
 - [Multiresolution approximations](../multiresolution-approximations/README.md): the general framework of which the Haar system is the first example.

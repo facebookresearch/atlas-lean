@@ -1,0 +1,70 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.Unitary.Connected
+
+import Mathlib.Tactic.Abel
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+
+/-!
+# Paths from the identity to self-adjoint unitaries
+
+The imaginary scalar unitary provides a common short-path bridge. The proof uses
+only the zero-safe bound on the norm of the unit, not a nontriviality assumption.
+-/
+
+@[expose] public section
+
+open scoped CStarAlgebra
+
+namespace Unitary
+
+universe u
+
+/-- A self-adjoint unitary in a complex C-star algebra is joined to the identity.
+This includes the zero algebra and uses the original norm topology. -/
+theorem joined_one_of_isSelfAdjoint
+    {A : Type u} [CStarAlgebra A] (u : unitary A)
+    (hu : IsSelfAdjoint (u : A)) : Joined (1 : unitary A) u := by
+  have hI : Complex.I ∈ unitary ℂ := by
+    simp only [Unitary.mem_iff, RCLike.star_def, Complex.conj_I]
+    constructor <;> norm_num [Complex.I_mul_I]
+  let v : unitary A :=
+    ⟨Complex.I • (1 : A),
+      Unitary.smul_mem_of_mem (R := ℂ) hI (unitary A).one_mem⟩
+  have hn1 : ‖(1 : A)‖ ≤ 1 :=
+    IsStarProjection.norm_le (1 : A) (IsStarProjection.one A)
+  have close (w : unitary A) (hw : IsSelfAdjoint (w : A)) :
+      ‖(w : A) - Complex.I • (1 : A)‖ < 2 := by
+    have hw2 : (w : A) * (w : A) = 1 := by
+      simpa only [Unitary.coe_star, hw.star_eq] using
+        Unitary.coe_star_mul_self w
+    have hp : star ((w : A) - Complex.I • (1 : A)) *
+        ((w : A) - Complex.I • (1 : A)) = (2 : ℂ) • (1 : A) := by
+      simp only [star_sub, star_smul, star_one, hw.star_eq,
+        RCLike.star_def, Complex.conj_I, sub_mul, mul_sub,
+        smul_mul_assoc, mul_smul_comm, hw2,
+        one_mul, mul_one, neg_mul, neg_smul, two_smul]
+      abel
+      simp only [smul_add, smul_smul, Complex.I_mul_I,
+        neg_smul, one_smul, two_smul]
+      abel
+    have he : ‖(w : A) - Complex.I • (1 : A)‖ *
+        ‖(w : A) - Complex.I • (1 : A)‖ = 2 * ‖(1 : A)‖ := by
+      rw [← CStarRing.norm_star_mul_self
+        (x := (w : A) - Complex.I • (1 : A)), hp, norm_smul,
+        Complex.norm_two]
+    nlinarith [norm_nonneg ((w : A) - Complex.I • (1 : A))]
+  have h1v : ‖(v : A) - (1 : A)‖ < 2 := by
+    rw [norm_sub_rev]
+    exact close (1 : unitary A) (by
+      change star (1 : A) = 1
+      exact star_one A)
+  have hvu : ‖(u : A) - (v : A)‖ < 2 := close u hu
+  exact (Unitary.joined (1 : unitary A) v h1v).trans
+    (Unitary.joined v u hvu)
+
+end Unitary

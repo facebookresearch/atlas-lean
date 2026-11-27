@@ -1,0 +1,4 @@
+# Bottom morphism applied to an index word
+
+Let $\alpha$ be an alphabet. A domino over an alphabet $\alpha$ is a pair $d = (d^{\uparrow}, d^{\downarrow})$ of words over $\alpha$ (its top and bottom words). The block alphabet $\hat\alpha$ is the disjoint union of the set of all dominoes over $\alpha$ (whose elements, written $[d]$, are called domino letters) and $\alpha$ (plain letters). The top morphism $\tau$ and the bottom morphism $\beta$ are the monoid morphisms $\hat\alpha^* \to \hat\alpha^*$ given on letters by $\tau([d]) = d^{\uparrow}$ and $\beta([d]) = d^{\downarrow}$ (as words of plain letters) and $\tau(a) = \beta(a) = \varepsilon$ for plain letters $a$. If $w = [d_1] \cdots [d_k]$ for dominoes $d_1, \dots, d_k$, then
+$\beta(w) = d_1^{\downarrow} \cdots d_k^{\downarrow}$, written with plain letters.

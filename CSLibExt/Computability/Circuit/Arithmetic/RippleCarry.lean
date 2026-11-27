@@ -47,19 +47,23 @@ are free, as in CSLib's circuit model.
 
 namespace Cslib.Circuits
 
-/-- Binary gates for arithmetic circuits: XOR, AND and OR. -/
+/-- **Arithmetic gate symbols.** The gate symbols of arithmetic circuits are exactly three:
+XOR, AND and OR. -/
 inductive ArithGate where
   | xor
   | and
   | or
   deriving Repr, DecidableEq
 
-/-- The arithmetic basis: three binary gates. -/
+/-- **Arithmetic basis.** The circuit signature whose operation symbols are the three arithmetic
+gate symbols XOR, AND and OR, each of arity $2$. -/
 def arithSignature : Signature where
   Op := ArithGate
   Arity _ := 2
 
-/-- The Boolean meaning of the arithmetic gates. -/
+/-- **Boolean interpretation of the arithmetic gates.** The interpretation of the arithmetic
+basis in the Booleans: on a first argument $a$ and a second argument $b$, the XOR gate computes
+$a \oplus b$, the AND gate computes $a \wedge b$, and the OR gate computes $a \vee b$. -/
 def arithInterpretation : Interpretation arithSignature Bool
   | .xor, f => f ⟨0, by decide⟩ ^^ f ⟨1, by decide⟩
   | .and, f => f ⟨0, by decide⟩ && f ⟨1, by decide⟩
@@ -74,7 +78,9 @@ def arithInterpretation : Interpretation arithSignature Bool
 @[simp] theorem arithInterpretation_or (f : Fin 2 → Bool) :
     arithInterpretation .or f = (f 0 || f 1) := rfl
 
-/-- A binary gate reading the wires `u` and `v`. -/
+/-- **Binary gate line.** For an arithmetic gate symbol $\mathrm{op}$ and wires $u$ and $v$ of a
+circuit with $m$ inputs (each wire is an input or one of the $g$ preceding gates), the gate that
+applies $\mathrm{op}$ to $u$ as its first argument and $v$ as its second. -/
 def binLine {m g : ℕ} (op : ArithGate) (u v : Wire m g) : Line arithSignature m g :=
   ⟨op, fun k => if k.val = 0 then u else v⟩
 
@@ -91,12 +97,22 @@ theorem binLine_eval {m g : ℕ} (op : ArithGate) (u v : Wire m g) (x : Fin m �
 
 namespace RippleCarry
 
-/-- The carry into bit `i`, as a wire at gate count `g ≥ 5 i`: the carry-in input for bit `0`,
-otherwise the carry-out gate `5 i - 1` of bit `i - 1`. -/
+/-- **Carry wire.** For natural numbers $n$, $g$ and $i$ with $5i \le g$, the wire carrying the
+carry into bit $i$ of the $n$-bit adder, in a circuit with $2n + 1$ inputs and $g$ gates: for
+$i = 0$ it is the carry-in input (input $2n$), and for $i \ne 0$ it is gate $5i - 1$, the
+carry-out gate of bit $i - 1$. -/
 def carryWire (n g i : ℕ) (hi : 5 * i ≤ g) : Wire (2 * n + 1) g :=
   if h : i = 0 then Wire.input ⟨2 * n, by omega⟩ else Wire.gate ⟨5 * i - 1, by omega⟩
 
-/-- Gate `g` of the adder: role `g % 5` of the full adder for bit `g / 5`. -/
+/-- **Gates of the ripple-carry adder.** For natural numbers $n$ and $g$ with $g < 5n$, gate $g$ of
+the $n$-bit ripple-carry adder is the following binary gate of the arithmetic basis, whose
+arguments are among the $2n + 1$ inputs and the $g$ gates before it. Write $g = 5i + r$ with
+$0 \le r < 5$, let $a$ be input $i$ and $b$ input $n + i$, and let $c$ be the carry into bit $i$:
+input $2n$ if $i = 0$ and gate $5i - 1$ otherwise. Gate $g$ is the XOR gate with first argument
+$a$ and second argument $b$ if $r = 0$, the XOR gate with first argument gate $g - 1$ and second
+argument $c$ if $r = 1$, the AND gate with first argument $a$ and second argument $b$ if $r = 2$,
+the AND gate with first argument gate $g - 3$ and second argument $c$ if $r = 3$, and the OR gate
+with first argument gate $g - 2$ and second argument gate $g - 1$ if $r = 4$. -/
 def line (n g : ℕ) (hg : g < 5 * n) : Line arithSignature (2 * n + 1) g :=
   let a : Wire (2 * n + 1) g := Wire.input ⟨g / 5, by omega⟩
   let b : Wire (2 * n + 1) g := Wire.input ⟨n + g / 5, by omega⟩
@@ -111,24 +127,42 @@ end RippleCarry
 
 open RippleCarry
 
-/-- The first `g` gates of the `n`-bit adder. -/
+/-- **Gate program of the ripple-carry adder.** For $g \le 5n$, the straight-line program over the
+arithmetic basis with $2n + 1$ inputs whose gates are, in order, gates $0, 1, \dots, g - 1$ of
+the $n$-bit ripple-carry adder; for $g = 0$ it is the empty program. -/
 def rcaProgram (n : ℕ) : (g : ℕ) → g ≤ 5 * n → Program arithSignature (2 * n + 1) g
   | 0, _ => .empty
   | g + 1, h => (rcaProgram n g (by omega)).gate (line n g (by omega))
 
-/-- The `n`-bit ripple-carry adder: `2 n + 1` inputs, `5 n` gates, outputs the `n` sum bits and
-the carry out. -/
+/-- **Ripple-carry adder.** The $n$-bit ripple-carry adder is the circuit with $2n + 1$ inputs,
+$5n$ binary gates, each an XOR, AND or OR gate, and $n + 1$ outputs, built as follows. Write $a_i$
+for input $i$, $b_i$ for input $n + i$ and $c_0$ for input $2n$, where $i < n$. For each $i < n$,
+gates $g_{5i}, \dots, g_{5i+4}$ form a full adder for position $i$: $g_{5i} = a_i \oplus b_i$,
+$g_{5i+1} = g_{5i} \oplus c_i$, $g_{5i+2} = a_i \wedge b_i$, $g_{5i+3} = g_{5i} \wedge c_i$ and
+$g_{5i+4} = g_{5i+2} \vee g_{5i+3}$, where the carry $c_i$ is input $2n$ when $i = 0$ and gate
+$g_{5i-1}$ otherwise. For $i < n$, output $i$ is gate $g_{5i+1}$, and output $n$ is the carry out
+$c_n$: input $2n$ when $n = 0$, otherwise gate $g_{5n-1}$. -/
 def rippleCarryAdder (n : ℕ) : Circuit arithSignature (2 * n + 1) (n + 1) where
   size := 5 * n
   program := rcaProgram n (5 * n) (Nat.le_refl _)
   outputs o := if h : o.val < n then Wire.gate ⟨5 * o.val + 1, by omega⟩
     else carryWire n (5 * n) n (Nat.le_refl _)
 
-/-- The adder's input: the bits of `x`, the bits of `y`, then the carry in. -/
+/-- **Input of the ripple-carry adder.** For $n$-bit vectors $x$ and $y$ and a bit $c$, the
+assignment to the $2n + 1$ inputs of the $n$-bit adder: for $j < n$, input $j$ is bit $j$ of
+$x$; for $n \le j < 2n$, input $j$ is bit $j - n$ of $y$; and input $2n$ is $c$. Bit $0$ is the
+least significant bit. -/
 def rcaInput {n : ℕ} (x y : BitVec n) (c : Bool) : Fin (2 * n + 1) → Bool := fun j =>
   if j.val < n then x.getLsbD j.val else if j.val < 2 * n then y.getLsbD (j.val - n) else c
 
-/-- The value of gate `j`: role `j % 5` of the full adder for bit `i = j / 5`. -/
+/-- **Gate-value specification of the ripple-carry adder.** Let $x, y$ be $n$-bit vectors, $c$ a
+bit and $j$ a natural number, and write $j = 5i + r$ with $0 \le r < 5$. Let $x_i$ and $y_i$ be
+bit $i$ of $x$ and $y$ (bit $0$ is the least significant, and bits at positions $i \ge n$ are $0$),
+and let $c_i$ be the carry into position $i$ when $x$, $y$ and $c$ are added: reading $x$ and $y$
+as natural numbers, $c_i = 1$ exactly when $(x \bmod 2^i) + (y \bmod 2^i) + c \ge 2^i$. The
+specification assigns to $j$ the bit $x_i \oplus y_i$ if $r = 0$, $(x_i \oplus y_i) \oplus c_i$
+if $r = 1$, $x_i \wedge y_i$ if $r = 2$, $(x_i \oplus y_i) \wedge c_i$ if $r = 3$, and $c_{i+1}$
+if $r = 4$. -/
 def rcaSpec {n : ℕ} (x y : BitVec n) (c : Bool) (j : ℕ) : Bool :=
   let i := j / 5
   if j % 5 = 0 then x.getLsbD i ^^ y.getLsbD i
@@ -162,7 +196,12 @@ theorem rcaInput_c (h : 2 * n < 2 * n + 1) : rcaInput x y c ⟨2 * n, h⟩ = c :
   have h2 : ¬ 2 * n < 2 * n := Nat.lt_irrefl _
   simp only [rcaInput, h1, h2, ↓reduceIte]
 
-/-- The carry wire carries the carry. -/
+/-- **Value of the carry wire.** Let $x$ and $y$ be $n$-bit vectors, $c$ a bit, and $i$ and $g$
+natural numbers with $5i \le g$. Suppose the first $g$ gates are given values $v_0, \dots, v_{g-1}$
+with each $v_j$ equal to the specified value of gate $j$ of the adder on $x$, $y$, $c$. Then, on
+the adder input for $x$, $y$, $c$ and with these gate values, the carry wire into bit $i$ carries
+the carry into bit $i$ of $x + y + c$: it is true exactly when
+$(x \bmod 2^i) + (y \bmod 2^i) + c \ge 2^i$, reading $x$, $y$ and $c$ as natural numbers. -/
 theorem carryWire_value {g i : ℕ} (hi : 5 * i ≤ g) (gates : Fin g → Bool)
     (hgates : ∀ j (hj : j < g), gates ⟨j, hj⟩ = rcaSpec x y c j) :
     Wire.elim (rcaInput x y c) gates (carryWire n g i hi) = BitVec.carry i x y c := by
@@ -174,7 +213,10 @@ theorem carryWire_value {g i : ℕ} (hi : 5 * i ≤ g) (gates : Fin g → Bool)
   · simp only [Wire.elim_gate]
     rw [hgates, rcaSpec_carry x y c h]
 
-/-- **Every gate's value**: gate `j` of the adder computes `rcaSpec x y c j`. -/
+/-- **Gate values of the ripple-carry adder.** Let $x$ and $y$ be $n$-bit vectors and $c$ a bit.
+For every $g \le 5n$ and every $j < g$, evaluating the first $g$ gates of the $n$-bit adder with
+the Boolean interpretation of the arithmetic gates on the adder input for $x$, $y$, $c$ gives
+gate $j$ its specified value on $x$, $y$, $c$. -/
 theorem rcaProgram_eval : ∀ (g : ℕ) (hg : g ≤ 5 * n) (j : ℕ) (hj : j < g),
     (rcaProgram n g hg).eval arithInterpretation (rcaInput x y c) ⟨j, hj⟩ = rcaSpec x y c j
   | 0, _, _, hj => absurd hj (Nat.not_lt_zero _)
@@ -224,7 +266,12 @@ theorem rcaProgram_eval : ∀ (g : ℕ) (hg : g ≤ 5 * n) (j : ℕ) (hj : j < g
           cases x.getLsbD (j / 5) <;> cases y.getLsbD (j / 5) <;>
             cases BitVec.carry (j / 5) x y c <;> rfl
 
-/-- **Sum bits**: output `i < n` is bit `i` of `(BitVec.adc x y c).2 = x + y + c`. -/
+/-- **Sum bits of the ripple-carry adder.** Let $x, y$ be $n$-bit vectors, $c$ a bit and $i < n$,
+and evaluate the $n$-bit ripple-carry adder, with its gates read as Boolean XOR, AND and OR, on the
+input whose entry $j$ is bit $j$ of $x$ and entry $n + j$ is bit $j$ of $y$ for $j < n$ (bit $0$
+being the least significant), and whose entry $2n$ is $c$. Its output number $i$ (outputs being
+numbered from $0$) is bit $i$ of the $n$-bit sum $(x + y + c) \bmod 2^n$, reading $x$ and $y$ as
+natural numbers below $2^n$. -/
 theorem rippleCarryAdder_sum (i : ℕ) (hi : i < n) :
     (rippleCarryAdder n).eval arithInterpretation (rcaInput x y c) ⟨i, by omega⟩ =
       (BitVec.adc x y c).2.getLsbD i := by
@@ -236,7 +283,12 @@ theorem rippleCarryAdder_sum (i : ℕ) (hi : i < n) :
   simp only [rcaSpec, e1, e2]
   simp
 
-/-- **Carry out**: output `n` is the carry `(BitVec.adc x y c).1`. -/
+/-- **Carry out of the ripple-carry adder.** Let $x, y$ be $n$-bit vectors and $c$ a bit, and
+evaluate the $n$-bit ripple-carry adder, with its gates read as Boolean XOR, AND and OR, on the
+input whose entry $j$ is bit $j$ of $x$ and entry $n + j$ is bit $j$ of $y$ for $j < n$ (bit $0$
+being the least significant), and whose entry $2n$ is $c$. Its output number $n$ (the last,
+outputs being numbered from $0$) is the carry out of $x + y + c$: reading $x$ and $y$ as natural
+numbers below $2^n$, it is $1$ exactly when $x + y + c \ge 2^n$. -/
 theorem rippleCarryAdder_carry :
     (rippleCarryAdder n).eval arithInterpretation (rcaInput x y c) ⟨n, by omega⟩ =
       (BitVec.adc x y c).1 := by
@@ -246,7 +298,7 @@ theorem rippleCarryAdder_carry :
   rw [carryWire_value x y c (Nat.le_refl _) _ (rcaProgram_eval x y c (5 * n) (Nat.le_refl _)),
     BitVec.adc_spec]
 
-/-- The `n`-bit adder has `5 n` gates. -/
+/-- **Size of the ripple-carry adder.** The $n$-bit ripple-carry adder has exactly $5n$ gates. -/
 theorem rippleCarryAdder_size : (rippleCarryAdder n).size = 5 * n := rfl
 
 end Cslib.Circuits

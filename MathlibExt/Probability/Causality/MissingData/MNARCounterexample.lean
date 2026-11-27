@@ -81,7 +81,7 @@ set_option quotPrecheck false in
 local notation "obsRY" => fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ))
 
 lemma measurable_obsRY : Measurable obsRY :=
-  measurable_fst.prodMk (Measurable.ite (p := {z : Bool × ℝ | z.1 = true})
+  measurable_fst.prodMk (Measurable.ite (p := fun z : Bool × ℝ => z.1 = true)
     (measurable_fst (measurableSet_singleton true)) measurable_snd measurable_const)
 
 /-! ### The δ-shift of nonrespondents -/
@@ -357,7 +357,7 @@ local notation "obsXRY" => fun z : _ × Bool × ℝ => (z.1, z.2.1, if z.2.1 the
 omit [MeasurableSingletonClass 𝒳] in
 lemma measurable_obsXRY : Measurable (obsXRY : 𝒳 × Bool × ℝ → 𝒳 × Bool × ℝ) :=
   measurable_fst.prodMk (measurable_snd.fst.prodMk
-    (Measurable.ite (p := {z : 𝒳 × Bool × ℝ | z.2.1 = true})
+    (Measurable.ite (p := fun z : 𝒳 × Bool × ℝ => z.2.1 = true)
       (measurable_snd.fst (measurableSet_singleton true)) measurable_snd.snd measurable_const))
 
 lemma measurableSet_stratum_nonresponse (x₀ : 𝒳) :

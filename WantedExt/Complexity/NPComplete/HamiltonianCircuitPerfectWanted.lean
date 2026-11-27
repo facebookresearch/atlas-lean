@@ -23,11 +23,11 @@ doi:10.1016/j.dam.2021.05.021, Table 1.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.PerfectGraph
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -43,7 +43,7 @@ open MathlibExt.Combinatorics.SimpleGraph.PerfectGraphWanted (IsPerfect)
 INSTANCE: a perfect graph `G = (V, E)`.
 QUESTION: does `G` contain a Hamiltonian circuit?
 
-This is HAMILTONIAN CIRCUIT ([GT37], `HamiltonianCycleUndirectedWanted`) restricted to perfect
+This is HAMILTONIAN CIRCUIT ([GT37], `HamiltonianCycleUndirectedDefs`) restricted to perfect
 graphs. Johnson's 1985 table and its 2022 revision by de Figueiredo, de Melo, Sasaki and Silva list
 the entry as NP-complete. Akiyama, Nishizeki and Saito prove HAMILTONIAN CIRCUIT NP-complete for
 bipartite graphs (planar, of maximum degree 3: `HamiltonianCircuitPlanarBipartiteSubcubicWanted`).

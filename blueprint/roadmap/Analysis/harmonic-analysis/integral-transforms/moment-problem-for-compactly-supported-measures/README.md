@@ -12,4 +12,4 @@ theory is the motivating example.
 
 - [Hausdorff moment problem](../hausdorff-moment-problem/README.md)
 - [Stieltjes moment problem](../stieltjes-moment-problem/README.md)
-- Wigner's semicircle law
+- [Wigner's semicircle law](../../../../Probability/high-dimensional-probability/wigner-s-semicircle-law/README.md)

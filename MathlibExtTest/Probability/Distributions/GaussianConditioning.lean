@@ -125,3 +125,54 @@ end LinearModel
 #print axioms condDistrib_add_of_indepFun
 #print axioms map_sumEquivProd_symm_of_indepFun
 #print axioms condDistrib_linear_add_of_indepFun
+
+/-- A rectangular design of rank one. -/
+private def rankOneDesign : Matrix (Fin 3) (Fin 2) ℝ := !![1, 2; 2, 4; 0, 0]
+
+/-- A non-isotropic prior precision. -/
+private def priorPrecision : Matrix (Fin 2) (Fin 2) ℝ := diagonal ![1, 2]
+
+-- Precision form of the linear-Gaussian posterior: a rectangular, rank-deficient design
+-- (`3 × 2`, rank 1) under a non-isotropic proper prior precision; no rank hypothesis is needed.
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
+    {x : Ω → EuclideanSpace ℝ (Fin 2)} {v : Ω → EuclideanSpace ℝ (Fin 3)} (hx : Measurable x)
+    (hv : Measurable v) (hind : IndepFun x v P) {m : EuclideanSpace ℝ (Fin 2)}
+    (hxl : P.map x = multivariateGaussian m priorPrecision⁻¹)
+    (hvl : P.map v = multivariateGaussian 0 ((3 : ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ))) :
+    ∀ᵐ y ∂P.map (fun ω => toEuclideanLin rankOneDesign (x ω) + v ω),
+      condDistrib x (fun ω => toEuclideanLin rankOneDesign (x ω) + v ω) P y =
+        multivariateGaussian
+          (toEuclideanLin (priorPrecision + (3 : ℝ)⁻¹ • (rankOneDesignᵀ * rankOneDesign))⁻¹
+            (toEuclideanLin priorPrecision m + (3 : ℝ)⁻¹ • toEuclideanLin rankOneDesignᵀ y))
+          (priorPrecision + (3 : ℝ)⁻¹ • (rankOneDesignᵀ * rankOneDesign))⁻¹ := by
+  have hΛ : priorPrecision.PosDef := by
+    rw [priorPrecision, posDef_diagonal_iff]
+    intro i
+    fin_cases i <;> norm_num
+  exact condDistrib_linear_add_of_indepFun_precision hx hv hind hΛ (by norm_num) hxl hvl _
+
+-- The design has rank one: its second column is twice its first.
+example : ∀ i, rankOneDesign i 1 = 2 * rankOneDesign i 0 := by
+  intro i
+  fin_cases i <;> norm_num [rankOneDesign]
+
+-- With the zero design the observation carries no information: the posterior is the prior.
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
+    {x : Ω → EuclideanSpace ℝ (Fin 2)} {v : Ω → EuclideanSpace ℝ (Fin 3)} (hx : Measurable x)
+    (hv : Measurable v) (hind : IndepFun x v P) {m : EuclideanSpace ℝ (Fin 2)}
+    {Λ : Matrix (Fin 2) (Fin 2) ℝ} (hΛ : Λ.PosDef) {σ2 : ℝ} (hσ : 0 < σ2)
+    (hxl : P.map x = multivariateGaussian m Λ⁻¹)
+    (hvl : P.map v = multivariateGaussian 0 (σ2 • (1 : Matrix (Fin 3) (Fin 3) ℝ))) :
+    ∀ᵐ y ∂P.map (fun ω => toEuclideanLin (0 : Matrix (Fin 3) (Fin 2) ℝ) (x ω) + v ω),
+      condDistrib x (fun ω => toEuclideanLin (0 : Matrix (Fin 3) (Fin 2) ℝ) (x ω) + v ω) P y =
+        multivariateGaussian m Λ⁻¹ := by
+  filter_upwards [condDistrib_linear_add_of_indepFun_precision hx hv hind hΛ hσ hxl hvl 0]
+    with y hy
+  rw [hy]
+  have hΛu : IsUnit Λ.det := (isUnit_iff_isUnit_det _).mp hΛ.isUnit
+  congr 1
+  · apply WithLp.ofLp_injective
+    simp [Matrix.ofLp_toLpLin, Matrix.toLin'_apply, mulVec_mulVec, nonsing_inv_mul _ hΛu]
+  · simp
+
+#print axioms condDistrib_linear_add_of_indepFun_precision

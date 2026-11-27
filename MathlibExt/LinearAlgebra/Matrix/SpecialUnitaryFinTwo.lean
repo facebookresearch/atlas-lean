@@ -65,7 +65,10 @@ private theorem normSq_row_eq_one_of_mem_specialUnitaryGroup_fin_two
   rw [Complex.mul_conj, Complex.mul_conj] at h
   simpa using congrArg Complex.re h
 
-/-- A complex special unitary matrix of size two has the standard conjugate-entry form. -/
+/-- **Matrix form of $\mathrm{SU}(2)$.** Let $M$ be a complex $2 \times 2$ matrix in the special
+unitary group $\mathrm{SU}(2)$, that is, $M$ is unitary with determinant $1$. Then there are
+complex numbers $a, b$ with $|a|^2 + |b|^2 = 1$ such that the first row of $M$ is $(a, b)$ and the
+second row of $M$ is $(-\bar b, \bar a)$. -/
 theorem exists_eq_of_mem_specialUnitaryGroup_fin_two
     (M : Matrix (Fin 2) (Fin 2) ℂ) (hM : M ∈ specialUnitaryGroup (Fin 2) ℂ) :
     ∃ a b : ℂ, M = !![a, b; -starRingEnd ℂ b, starRingEnd ℂ a] ∧
@@ -77,7 +80,8 @@ theorem exists_eq_of_mem_specialUnitaryGroup_fin_two
   ext i j
   fin_cases i <;> fin_cases j <;> simp [h10, h11]
 
-/-- The trace of a complex special unitary matrix of size two is real. -/
+/-- **The trace of an $\mathrm{SU}(2)$ matrix is real.** For every complex $2 \times 2$ matrix
+$M$ in the special unitary group $\mathrm{SU}(2)$, the imaginary part of the trace of $M$ is $0$. -/
 theorem trace_im_eq_zero_of_mem_specialUnitaryGroup_fin_two
     (M : Matrix (Fin 2) (Fin 2) ℂ) (hM : M ∈ specialUnitaryGroup (Fin 2) ℂ) :
     (Matrix.trace M).im = 0 := by
@@ -85,7 +89,9 @@ theorem trace_im_eq_zero_of_mem_specialUnitaryGroup_fin_two
   rw [hform, Matrix.trace_fin_two]
   simp
 
-/-- The complex trace of a special unitary matrix of size two has norm at most two. -/
+/-- **The trace of an $\mathrm{SU}(2)$ matrix has absolute value at most two.** For every complex
+$2 \times 2$ matrix $M$ in the special unitary group $\mathrm{SU}(2)$, the trace of $M$ satisfies
+$|\operatorname{tr} M| \le 2$. -/
 theorem norm_trace_le_two_of_mem_specialUnitaryGroup_fin_two
     (M : Matrix (Fin 2) (Fin 2) ℂ) (hM : M ∈ specialUnitaryGroup (Fin 2) ℂ) :
     ‖Matrix.trace M‖ ≤ 2 := by
@@ -117,7 +123,9 @@ private theorem skew_mem_specialUnitaryGroup_fin_two :
       simp [Matrix.mul_apply, Fin.sum_univ_two]
   · simp [Matrix.det_fin_two]
 
-/-- The center of the complex special unitary group of size two consists of the two scalar signs. -/
+/-- **The center of $\mathrm{SU}(2)$.** An element $M$ of the special unitary group
+$\mathrm{SU}(2)$ of complex $2 \times 2$ matrices lies in the center of $\mathrm{SU}(2)$ if and
+only if $M$ is the identity matrix $I$ or $M = -I$. -/
 theorem mem_center_specialUnitaryGroup_fin_two_iff
     (M : specialUnitaryGroup (Fin 2) ℂ) :
     M ∈ Subgroup.center (specialUnitaryGroup (Fin 2) ℂ) ↔
@@ -171,9 +179,10 @@ end Matrix
 
 namespace Matrix
 
-/-- A complex `2 × 2` matrix is special unitary exactly when it has the standard
-conjugate-entry form with normalized parameters. The forward direction is the
-existing matrix-form theorem; the converse verifies unitarity and determinant one. -/
+/-- **Characterization of $\mathrm{SU}(2)$.** A complex $2 \times 2$ matrix $M$ lies in the
+special unitary group $\mathrm{SU}(2)$, that is, $M$ is unitary with determinant $1$, if and
+only if there are complex numbers $\alpha, \beta$ with $|\alpha|^2 + |\beta|^2 = 1$ such that
+the first row of $M$ is $(\alpha, \beta)$ and the second row is $(-\bar\beta, \bar\alpha)$. -/
 theorem mem_specialUnitaryGroup_fin_two_iff {M : Matrix (Fin 2) (Fin 2) ℂ} :
     M ∈ Matrix.specialUnitaryGroup (Fin 2) ℂ ↔
       ∃ α β : ℂ, M = !![α, β; -starRingEnd ℂ β, starRingEnd ℂ α] ∧

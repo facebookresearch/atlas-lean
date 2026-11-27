@@ -1,0 +1,204 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.Algebra.NonUnitalHom
+public import Mathlib.Data.Matrix.Mul
+public import Mathlib.LinearAlgebra.Matrix.Defs
+public import Mathlib.Order.DirectedInverseSystem
+
+/-!
+# Finite square matrices under top-left zero extension
+
+The transition from size `n` to size `m`, for `n ≤ m`, keeps the first `n`
+rows and columns and makes all other entries zero. It is a native ground-linear
+nonunital algebra homomorphism. In particular it does not send the identity
+matrix to the identity matrix when the sizes differ.
+-/
+
+@[expose] public section
+
+open scoped BigOperators
+
+namespace Matrix
+
+universe u v
+
+section Entries
+
+variable {A : Type v} [Zero A]
+
+/-- Let `A` be a type with zero and let `n ≤ m` be natural numbers. Zero extension sends an `n × n`
+matrix into the leading corner of an `m × m` matrix and makes every other entry zero. The size `n`
+may be zero.
+-/
+def zeroExtend {n m : ℕ} (_h : n ≤ m) (B : Matrix (Fin n) (Fin n) A) :
+    Matrix (Fin m) (Fin m) A :=
+  Matrix.of fun i j => if hi : i.val < n then
+    if hj : j.val < n then B ⟨i.val, hi⟩ ⟨j.val, hj⟩ else 0 else 0
+
+theorem zeroExtend_apply {n m : ℕ} (h : n ≤ m) (B : Matrix (Fin n) (Fin n) A)
+    (i j : Fin m) :
+    zeroExtend h B i j = if hi : i.val < n then
+      if hj : j.val < n then B ⟨i.val, hi⟩ ⟨j.val, hj⟩ else 0 else 0 := rfl
+
+@[simp]
+theorem zeroExtend_castLE {n m : ℕ} (h : n ≤ m) (B : Matrix (Fin n) (Fin n) A)
+    (i j : Fin n) : zeroExtend h B (i.castLE h) (j.castLE h) = B i j := by
+  simp only [zeroExtend_apply, Fin.val_castLE, dite_eq_left i.is_lt, dite_eq_left j.is_lt]
+
+theorem zeroExtend_of_row {n m : ℕ} (h : n ≤ m) (B : Matrix (Fin n) (Fin n) A)
+    (i j : Fin m) (hi : n ≤ i.val) : zeroExtend h B i j = 0 := by
+  rw [zeroExtend_apply, dite_eq_right (Nat.not_lt.mpr hi)]
+
+theorem zeroExtend_of_col {n m : ℕ} (h : n ≤ m) (B : Matrix (Fin n) (Fin n) A)
+    (i j : Fin m) (hj : n ≤ j.val) : zeroExtend h B i j = 0 := by
+  by_cases hi : i.val < n <;> simp only [zeroExtend_apply, hi, ↓reduceDIte,
+    dite_eq_right (Nat.not_lt.mpr hj)]
+
+@[simp]
+theorem zeroExtend_self {n : ℕ} (B : Matrix (Fin n) (Fin n) A) : zeroExtend le_rfl B = B := by
+  ext i j
+  simpa using zeroExtend_castLE le_rfl B i j
+
+theorem zeroExtend_comp {n m p : ℕ} (h : n ≤ m) (h' : m ≤ p)
+    (B : Matrix (Fin n) (Fin n) A) :
+    zeroExtend h' (zeroExtend h B) = zeroExtend (h.trans h') B := by
+  ext i j
+  by_cases hi : i.val < n
+  · have him : i.val < m := hi.trans_le h
+    by_cases hj : j.val < n
+    · have hjm : j.val < m := hj.trans_le h
+      simp only [zeroExtend_apply, hi, hj, him, hjm, ↓reduceDIte]
+    · by_cases hjm : j.val < m <;>
+        simp only [zeroExtend_apply, hi, hj, him, hjm, ↓reduceDIte]
+  · by_cases him : i.val < m <;> by_cases hjm : j.val < m <;>
+      simp only [zeroExtend_apply, hi, him, hjm, ↓reduceDIte]
+
+theorem zeroExtend_injective {n m : ℕ} (h : n ≤ m) :
+    Function.Injective (zeroExtend h : Matrix (Fin n) (Fin n) A → Matrix (Fin m) (Fin m) A) := by
+  intro B C he
+  ext i j
+  simpa only [zeroExtend_castLE] using congrArg (fun D => D (i.castLE h) (j.castLE h)) he
+
+end Entries
+
+section GroundLinear
+
+variable {k : Type u} [Semiring k] {A : Type v} [AddCommMonoid A] [Module k A]
+
+/-- Let `k` be a semiring and `A` an additive commutative monoid with a `k`-module structure. For
+natural numbers `n ≤ m`, zero extension from `n × n` to `m × m` matrices is `k`-linear.
+-/
+def zeroExtendLinear {n m : ℕ} (h : n ≤ m) :
+    Matrix (Fin n) (Fin n) A →ₗ[k] Matrix (Fin m) (Fin m) A where
+  toFun := zeroExtend h
+  map_add' B C := by
+    ext i j
+    by_cases hi : i.val < n <;> by_cases hj : j.val < n <;>
+      simp only [zeroExtend_apply, hi, hj, ↓reduceDIte, Matrix.add_apply, zero_add]
+  map_smul' c B := by
+    ext i j
+    by_cases hi : i.val < n <;> by_cases hj : j.val < n <;>
+      simp only [zeroExtend_apply, hi, hj, ↓reduceDIte, Matrix.smul_apply, smul_zero,
+        RingHom.id_apply]
+
+@[simp]
+theorem zeroExtendLinear_apply {n m : ℕ} (h : n ≤ m) (B : Matrix (Fin n) (Fin n) A) :
+    zeroExtendLinear (k := k) h B = zeroExtend h B := rfl
+
+/-- The actual finite module-corner inclusions form a native directed system. -/
+instance zeroExtendLinear_directedSystem : DirectedSystem
+    (fun n : ℕ => Matrix (Fin n) (Fin n) A)
+    (fun _ _ h => zeroExtendLinear (k := k) h) where
+  map_self := fun {_} B => zeroExtend_self B
+  map_map := fun {_ _ _} h h' B => zeroExtend_comp h h' B
+
+end GroundLinear
+
+section Multiplication
+
+variable {A : Type v} [NonUnitalRing A]
+
+private theorem sum_truncate {n m : ℕ} (h : n ≤ m) (f : Fin n → A) :
+    (∑ i : Fin m, if hi : i.val < n then f ⟨i.val, hi⟩ else 0) = ∑ i : Fin n, f i := by
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
+  rw [Fin.sum_trunc _ (by
+    intro i
+    simp only [Fin.val_natAdd, dite_eq_right (by omega : ¬ n + i.val < n)])]
+  apply Finset.sum_congr rfl
+  intro i _
+  simp only [Fin.val_castAdd, dite_eq_left i.is_lt]
+
+/-- Let `A` be a possibly nonunital ring. For natural numbers `n ≤ m` and `n × n` matrices `B`, `C`,
+zero extension preserves multiplication: extending `B*C` equals the product of their extensions.
+-/
+theorem zeroExtend_mul {n m : ℕ} (h : n ≤ m)
+    (B C : Matrix (Fin n) (Fin n) A) :
+    zeroExtend h (B * C) = zeroExtend h B * zeroExtend h C := by
+  ext i j
+  by_cases hi : i.val < n
+  · by_cases hj : j.val < n
+    · rw [zeroExtend_apply, dite_eq_left hi, dite_eq_left hj, Matrix.mul_apply, Matrix.mul_apply]
+      calc
+        _ = ∑ p : Fin m, if hp : p.val < n then
+              B ⟨i.val, hi⟩ ⟨p.val, hp⟩ * C ⟨p.val, hp⟩ ⟨j.val, hj⟩ else 0 :=
+          (sum_truncate h (fun p => B ⟨i.val, hi⟩ p * C p ⟨j.val, hj⟩)).symm
+        _ = _ := by
+          apply Finset.sum_congr rfl
+          intro p _
+          by_cases hp : p.val < n <;>
+            simp only [zeroExtend_apply, hi, hj, hp, ↓reduceDIte, mul_zero]
+    · rw [zeroExtend_of_col h _ i j (Nat.le_of_not_gt hj), Matrix.mul_apply]
+      symm
+      apply Finset.sum_eq_zero
+      intro p _
+      rw [zeroExtend_of_col h C p j (Nat.le_of_not_gt hj), mul_zero]
+  · rw [zeroExtend_of_row h _ i j (Nat.le_of_not_gt hi), Matrix.mul_apply]
+    symm
+    apply Finset.sum_eq_zero
+    intro p _
+    rw [zeroExtend_of_row h B i p (Nat.le_of_not_gt hi), zero_mul]
+
+end Multiplication
+
+section Algebra
+
+variable {k : Type u} [CommRing k] {A : Type v} [NonUnitalRing A] [Module k A]
+
+/-- Let `k` be a commutative ring and `A` a possibly nonunital ring with a `k`-module structure. For
+natural numbers `n ≤ m`, zero extension defines a multiplicative `k`-linear map between the two
+matrix sizes.
+-/
+def zeroExtendAlgHom {n m : ℕ} (h : n ≤ m) :
+    Matrix (Fin n) (Fin n) A →ₙₐ[k] Matrix (Fin m) (Fin m) A where
+  toFun := zeroExtend h
+  map_zero' := (zeroExtendLinear (k := k) h).map_zero
+  map_add' := (zeroExtendLinear (k := k) h).map_add
+  map_smul' := (zeroExtendLinear (k := k) h).map_smul
+  map_mul' := zeroExtend_mul h
+
+@[simp]
+theorem zeroExtendAlgHom_apply {n m : ℕ} (h : n ≤ m) (B : Matrix (Fin n) (Fin n) A) :
+    zeroExtendAlgHom (k := k) h B = zeroExtend h B := rfl
+
+/-- The actual finite-corner maps are a directed system. -/
+instance zeroExtend_directedSystem : DirectedSystem
+    (fun n : ℕ => Matrix (Fin n) (Fin n) A)
+    (fun _ _ h => zeroExtendAlgHom (k := k) h) where
+  map_self := fun {_} B => zeroExtend_self B
+  map_map := fun {_ _ _} h h' B => zeroExtend_comp h h' B
+
+end Algebra
+
+end Matrix

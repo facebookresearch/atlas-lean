@@ -1,0 +1,3 @@
+# Well-formed instances of INDEPENDENT SET ON K_{1,4}-FREE GRAPHS
+
+An instance $(n, E, K)$ is well-formed for INDEPENDENT SET ON $K_{1,4}$-FREE GRAPHS when its edge list $E$ has no repeated entries and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$, the star $K_{1,4}$ (one vertex joined to four pairwise non-adjacent vertices) is not an induced subgraph of the graph of the instance (on the vertices $0, \dots, n-1$, with $u$ and $v$ adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$), and $0 < K \le n$. Here a graph $F$ is an induced subgraph of a graph $G$ when some injective map from the vertices of $F$ to those of $G$ preserves both adjacency and non-adjacency.

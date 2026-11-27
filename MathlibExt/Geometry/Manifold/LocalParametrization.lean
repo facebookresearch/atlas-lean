@@ -88,7 +88,10 @@ private theorem levelParam_isImmersion_equiv_graph
     (e.symm (e (y, h y))).2 - h (e.symm (e (y, h y))).1) = e (y, 0)
   simp
 
-/-- The graph of a `C^n` map between real normed spaces is a `C^n` immersion. -/
+/-- **Graph maps are immersions.** Let $E$ and $F$ be real normed spaces, let
+$n \in \mathbb{N} \cup \{\infty, \omega\}$ and let $h \colon E \to F$ be a $C^n$ map. Then the
+graph map $x \mapsto (x, h(x))$ from $E$ to $E \times F$ is a $C^n$ immersion, where $E$ and
+$E \times F$ are regarded as manifolds modelled on themselves. -/
 theorem _root_.ContDiff.isImmersion_graph
     {E F : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -188,15 +191,22 @@ private theorem levelParam_image_eq
     exact hxW
 
 /--
-Local parametrization theorem: near a point where the differential is surjective, a level
-set of a `C¹` map is the image of a `C¹` immersion. Sources: undergrad.yaml
-`Submanifolds of R^n / local parameterization` (missing); J. Lee, Introduction to Smooth
-Manifolds, 2nd ed., Ch. 4 (rank theorem).
+**Regular level sets are locally parametrized by immersions.** Let
+$f \colon \mathbb{R}^{k+m} \to \mathbb{R}^m$ be a $C^1$ map and let $x_0 \in \mathbb{R}^{k+m}$ be a
+point at which the derivative $Df(x_0)$ is surjective. Then there exist an open set
+$U \subseteq \mathbb{R}^k$, a point $u_0 \in U$, a map $\varphi \colon \mathbb{R}^k \to
+\mathbb{R}^{k+m}$ that is $C^1$ and a $C^1$ immersion on all of $\mathbb{R}^k$, and a
+neighbourhood $V$ of $x_0$ such that $\varphi(u_0) = x_0$ and
+$\varphi(U \cap \varphi^{-1}(V)) = V \cap f^{-1}(f(x_0))$.
 
 Proves `Wanted` entry `regularLevelSet_localParametrization`.
 
 Proof: Apply the implicit function theorem in adapted linear coordinates, then use a smooth bump
 to extend the local graphing function globally. A shear chart makes its graph map an immersion.
+
+Sources: undergrad.yaml
+`Submanifolds of R^n / local parameterization` (missing); J. Lee, Introduction to Smooth
+Manifolds, 2nd ed., Ch. 4 (rank theorem).
 -/
 theorem regularLevelSet_localParametrization
     {k m : ℕ}

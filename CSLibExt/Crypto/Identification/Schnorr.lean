@@ -45,27 +45,46 @@ open Cslib.Crypto.PublicKey
 
 variable {G : Type*} [CommGroup G] {q : ℕ} (g y : G)
 
-/-- The verifier's check on a transcript `(I, r, s)`: `g ^ s * (y ^ r)⁻¹ = I`. -/
+/-- **Schnorr verifier's acceptance condition.** Let $G$ be a commutative group, $q$ a natural
+number and $g, y \in G$ (the base and the public key); for $h \in G$ and $a \in \mathbb{Z}/q$
+write $h^a$ for $h^{\bar a}$, where $\bar a$ is the representative of $a$ in
+$\{0, \dots, q - 1\}$ (and $\bar a = |a|$ when $q = 0$, so that $\mathbb{Z}/q = \mathbb{Z}$).
+The verifier accepts a transcript $(I, r, s)$ with $I \in G$ and $r, s \in \mathbb{Z}/q$ when
+$g^s (y^r)^{-1} = I$. -/
 def Accepts (I : G) (r s : ZMod q) : Prop := gpow g s * (gpow y r)⁻¹ = I
 
-/-- The prover's answer `s = r x + k`. -/
+/-- **Schnorr prover's response.** Let $q$ be a natural number. For a secret key $x$, prover
+randomness $k$ and challenge $r$, all in $\mathbb{Z}/q$, the prover's answer is
+$s = rx + k \in \mathbb{Z}/q$. -/
 def respond (x k r : ZMod q) : ZMod q := r * x + k
 
 private theorem gpow_sub [NeZero q] {g : G} (hg : g ^ q = 1) (a b : ZMod q) :
     gpow g (a - b) = gpow g a * (gpow g b)⁻¹ := by
   rw [eq_mul_inv_iff_mul_eq, ← gpow_add hg, sub_add_cancel]
 
-/-- **Completeness**: the honest transcript `(g ^ k, r, r x + k)` is accepted. -/
+/-- **Completeness of the Schnorr identification scheme.** Let $G$ be a commutative group,
+$q \ge 1$ a natural number and $g \in G$ with $g^q = 1$; for $h \in G$ and $a \in \mathbb{Z}/q$
+write $h^a$ for $h^{\bar a}$, where $\bar a \in \{0, \dots, q - 1\}$ is the representative
+of $a$. For all $x, k, r \in \mathbb{Z}/q$, with public key $y = g^x$, the honest transcript
+$(g^k, r, rx + k)$ is accepted, that is, $g^{rx + k} (y^r)^{-1} = g^k$. -/
 theorem accepts_honest [NeZero q] {g : G} (hg : g ^ q = 1) (x k r : ZMod q) :
     Accepts g (gpow g x) (gpow g k) r (respond x k r) := by
   rw [Accepts, respond, gpow_add hg, mul_comm r x, gpow_mul hg, mul_comm, ← mul_assoc,
     inv_mul_cancel, one_mul]
 
-/-- The knowledge extractor: `(s - s') / (r - r')`. -/
+/-- **Schnorr knowledge extractor.** Let $q$ be a natural number. For
+$r, s, r', s' \in \mathbb{Z}/q$ (the challenges and answers of two transcripts), the extracted
+exponent is $(s - s')(r - r')^{-1} \in \mathbb{Z}/q$, where $u^{-1}$ is the inverse of $u$ in
+$\mathbb{Z}/q$ when $u$ is a unit (and, otherwise, a conventional element of $\mathbb{Z}/q$
+depending on $u$). For $q$ prime and $r \ne r'$ it is $(s - s')/(r - r')$. -/
 def extract (r s r' s' : ZMod q) : ZMod q := (s - s') * (r - r')⁻¹
 
-/-- **Special soundness**: for `q` prime, `g ^ q = 1` and `y ^ q = 1`, two accepting transcripts
-with the same commitment and different challenges reveal a discrete logarithm of `y`. -/
+/-- **Special soundness.** Let $G$ be a commutative group, $q$ a prime and $g, y \in G$ with
+$g^q = 1$ and $y^q = 1$; for $h \in G$ and $a \in \mathbb{Z}/q$ write $h^a$ for $h^{\bar a}$,
+where $\bar a \in \{0, \dots, q - 1\}$ is the representative of $a$. Let $I \in G$ and
+$r, s, r', s' \in \mathbb{Z}/q$ with $r \ne r'$, and suppose both transcripts $(I, r, s)$ and
+$(I, r', s')$ are accepted, that is, $g^s (y^r)^{-1} = I$ and $g^{s'} (y^{r'})^{-1} = I$. Then
+the extracted exponent $e = (s - s')(r - r')^{-1}$ is a discrete logarithm of $y$: $g^e = y$. -/
 theorem extract_spec [Fact q.Prime] {g y : G} (hg : g ^ q = 1) (hy : y ^ q = 1) {I : G}
     {r s r' s' : ZMod q} (hrr : r ≠ r') (h₁ : Accepts g y I r s) (h₂ : Accepts g y I r' s') :
     gpow g (extract r s r' s') = y := by
@@ -85,24 +104,45 @@ section ZeroKnowledge
 
 variable [NeZero q]
 
-/-- The honest transcript for secret key `x`, prover randomness `k` and challenge `r`. -/
+/-- **Honest Schnorr transcript.** Let $G$ be a commutative group, $q \ge 1$ and $g \in G$; for
+$a \in \mathbb{Z}/q$ write $g^a$ for $g^{\bar a}$, where $\bar a \in \{0, \dots, q - 1\}$ is the
+representative of $a$. For a secret key $x$, prover randomness $k$ and challenge $r$, all in
+$\mathbb{Z}/q$, the honest transcript is the element $(g^k, r, rx + k)$ of
+$G \times \mathbb{Z}/q \times \mathbb{Z}/q$. -/
 def honestTranscript (x : ZMod q) (kr : ZMod q × ZMod q) : G × ZMod q × ZMod q :=
   (gpow g kr.1, kr.2, respond x kr.1 kr.2)
 
-/-- The simulated transcript for challenge `r` and answer `s`: `(g ^ s * (y ^ r)⁻¹, r, s)`. -/
+/-- **Simulated Schnorr transcript.** Let $G$ be a commutative group, $q \ge 1$ and $g, y \in G$;
+for $h \in G$ and $a \in \mathbb{Z}/q$ write $h^a$ for $h^{\bar a}$, where
+$\bar a \in \{0, \dots, q - 1\}$ is the representative of $a$. For a challenge $r$ and an answer
+$s$ in $\mathbb{Z}/q$, the simulated transcript is the element $(g^s (y^r)^{-1}, r, s)$ of
+$G \times \mathbb{Z}/q \times \mathbb{Z}/q$. -/
 def simTranscript (rs : ZMod q × ZMod q) : G × ZMod q × ZMod q :=
   (gpow g rs.2 * (gpow y rs.1)⁻¹, rs.1, rs.2)
 
-/-- The distribution of honest transcripts with uniform `k` and `r`. -/
+/-- **Distribution of honest Schnorr transcripts.** Let $G$ be a commutative group, $q \ge 1$ and
+$g \in G$; for $a \in \mathbb{Z}/q$ write $g^a$ for $g^{\bar a}$, where
+$\bar a \in \{0, \dots, q - 1\}$ is the representative of $a$. For a secret key
+$x \in \mathbb{Z}/q$, this is the law of the honest transcript $(g^k, r, rx + k)$ when $(k, r)$ is
+uniform on $\mathbb{Z}/q \times \mathbb{Z}/q$. -/
 noncomputable def transcript (x : ZMod q) : PMF (G × ZMod q × ZMod q) :=
   (Cslib.Probability.PMF.uniformOfFintype (ZMod q × ZMod q)).map (honestTranscript g x)
 
-/-- The simulator's distribution, with uniform `r` and `s`; it uses only the public key `y`. -/
+/-- **Schnorr simulator.** Let $G$ be a commutative group, $q \ge 1$ and $g, y \in G$; for
+$h \in G$ and $a \in \mathbb{Z}/q$ write $h^a$ for $h^{\bar a}$, where
+$\bar a \in \{0, \dots, q - 1\}$ is the representative of $a$. The simulator's distribution is
+the law of the simulated transcript $(g^s (y^r)^{-1}, r, s)$ when $(r, s)$ is uniform on
+$\mathbb{Z}/q \times \mathbb{Z}/q$; it uses only $g$ and the public key $y$. -/
 noncomputable def simulate : PMF (G × ZMod q × ZMod q) :=
   (Cslib.Probability.PMF.uniformOfFintype (ZMod q × ZMod q)).map (simTranscript g y)
 
-/-- **Perfect honest-verifier zero knowledge**: when `g ^ q = 1`, honest transcripts and simulated
-transcripts have the same distribution. -/
+/-- **Perfect honest-verifier zero knowledge.** Let $G$ be a commutative group, $q \ge 1$ and
+$g \in G$ with $g^q = 1$; for $h \in G$ and $a \in \mathbb{Z}/q$ write $h^a$ for $h^{\bar a}$,
+where $\bar a \in \{0, \dots, q - 1\}$ is the representative of $a$. For every secret key
+$x \in \mathbb{Z}/q$, with public key $y = g^x$, the honest transcript $(g^k, r, rx + k)$ with
+$(k, r)$ uniform on $\mathbb{Z}/q \times \mathbb{Z}/q$ has the same distribution as the
+simulated transcript $(g^s (y^r)^{-1}, r, s)$ with $(r, s)$ uniform on
+$\mathbb{Z}/q \times \mathbb{Z}/q$. -/
 theorem transcript_eq_simulate {g : G} (hg : g ^ q = 1) (x : ZMod q) :
     transcript g x = simulate g (gpow g x) := by
   let e : ZMod q × ZMod q ≃ ZMod q × ZMod q :=

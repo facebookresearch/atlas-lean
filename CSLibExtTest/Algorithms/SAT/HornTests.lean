@@ -28,7 +28,7 @@ set_option autoImplicit false
 
 namespace CSLibExtTest.Algorithms.SAT.Horn
 
-open Cslib.Logic.PL Cslib.Algorithms.SAT.Horn Cslib.Algorithms.SAT.DPLL
+open Cslib.Logic.LegacyPL Cslib.Algorithms.SAT.Horn Cslib.Algorithms.SAT.DPLL
 
 /-- Facts `x₀`, rules `x₀ → x₁`, `x₁ ∧ x₀ → x₂`, and the goal clause `¬x₃`. -/
 private def program : CNF :=

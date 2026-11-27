@@ -42,13 +42,20 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
   [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
   [IsContMDiffRiemannianBundle I ∞ E (fun x : M ↦ TangentSpace I x)]
 
-/-- A gradient Ricci soliton on `(M, g)`: a smooth potential `f` and constant `c` with
-`Ric + Hess f = c • g`, where `Ric` is `Manifold.ricci` and `Hess` is `Manifold.hessian`.
-This follows Oberwolfach Report 27/2012 (Geometrie): T. Yokota, p. 1651, defines a
-gradient shrinking Ricci soliton by `Ric(g) + Hess f = g / (2 * λ)` with `λ > 0` and
-`f` smooth, and R. Haslhofer (with R. Müller), p. 1669, eq. (1), uses `Rc + Hess f`
-equal to `g / 2`. Completeness and connectedness of `M` are not part of this predicate;
-they are separate hypotheses on `M`. -/
+/-- **Gradient Ricci soliton.** Let $M$ be a smooth manifold (possibly with boundary or corners)
+modelled on a finite-dimensional real normed space, with a smooth Riemannian metric $g$. A
+function $f : M \to \mathbb{R}$ and a constant $c \in \mathbb{R}$ form a gradient Ricci soliton
+if $f$ is smooth and, for every point $x \in M$ and all tangent vectors $u, v \in T_x M$,
+$\operatorname{Ric}_x(u, v) + (\operatorname{Hess} f)_x(u, v) = c \, g_x(u, v)$, where
+$\operatorname{Ric}$ is the Ricci curvature of $g$ and $\operatorname{Hess} f$ is the covariant
+Hessian of $f$.
+
+Completeness and connectedness of $M$ are not part of this predicate; they are separate
+hypotheses on $M$.
+
+Source: Oberwolfach Report 27/2012 (Geometrie): T. Yokota, p. 1651, defines a gradient
+shrinking Ricci soliton by `Ric(g) + Hess f = g / (2 * λ)` with `λ > 0` and `f` smooth, and
+R. Haslhofer (with R. Müller), p. 1669, eq. (1), uses `Rc + Hess f` equal to `g / 2`. -/
 structure IsGradientRicciSoliton (f : M → ℝ) (c : ℝ) : Prop where
   /-- The potential is smooth. -/
   contMDiff : ContMDiff I 𝓘(ℝ, ℝ) ∞ f
@@ -56,10 +63,14 @@ structure IsGradientRicciSoliton (f : M → ℝ) (c : ℝ) : Prop where
   ricci_add_hessian : ∀ (x : M) (u v : TangentSpace I x),
     ricci I x u v + hessian I f x u v = c * inner ℝ u v
 
-/-- A gradient shrinking Ricci soliton: a gradient Ricci soliton with `0 < c`. In
-Yokota's notation (Oberwolfach Report 27/2012, p. 1651) this is `c = 1 / (2 * λ)` with
-`λ > 0`; Haslhofer's normalization (p. 1669, eq. (1)) is `c = 1 / 2`. Completeness
-and connectedness of `M` are not part of this predicate. -/
+/-- **Gradient shrinking Ricci soliton.** On a Riemannian manifold $(M, g)$, a function
+$f : M \to \mathbb{R}$ and a constant $c \in \mathbb{R}$ form a gradient shrinking Ricci soliton
+if they form a gradient Ricci soliton and $c > 0$.
+
+Completeness and connectedness of $M$ are not part of this predicate.
+
+Source: Oberwolfach Report 27/2012 (Geometrie). In Yokota's notation (p. 1651) this is
+`c = 1 / (2 * λ)` with `λ > 0`; Haslhofer's normalization (p. 1669, eq. (1)) is `c = 1 / 2`. -/
 structure IsGradientShrinkingRicciSoliton (f : M → ℝ) (c : ℝ) : Prop
     extends IsGradientRicciSoliton I f c where
   /-- The constant is positive (shrinking). -/
@@ -118,8 +129,12 @@ private theorem hessian_gaussian {F : Type*} [NormedAddCommGroup F]
   simp only [smul_apply, smul_eq_mul, fderiv_fderiv_norm_sq_apply, ← h_inner_eq]
   ring
 
-/-- The Gaussian soliton on `F` with potential `(a / 2) * ‖x‖ ^ 2` and constant `a`.
-For `a < 0` this is the expanding Gaussian. -/
+/-- **The Gaussian gradient Ricci soliton.** Let $F$ be a finite-dimensional real inner product
+space, viewed as a Riemannian manifold with the metric given by its inner product, and let
+$a \in \mathbb{R}$. The function $f(x) = \frac{a}{2} \|x\|^2$ on $F$ is a gradient Ricci soliton
+with constant $a$.
+
+For $a < 0$ this is the expanding Gaussian soliton. -/
 theorem isGradientRicciSoliton_gaussian {F : Type*} [NormedAddCommGroup F]
     [InnerProductSpace ℝ F] [FiniteDimensional ℝ F] (a : ℝ) :
     IsGradientRicciSoliton 𝓘(ℝ, F) (fun x : F => (a / 2) * ‖x‖ ^ 2) a := by
@@ -130,17 +145,23 @@ theorem isGradientRicciSoliton_gaussian {F : Type*} [NormedAddCommGroup F]
     have h_hess := hessian_gaussian a x u v
     rw [h_ricci, h_hess, zero_add]
 
-/-- The Gaussian shrinking soliton for `0 < a`, with constant `a`. For `a = 1 / 2`
-this is the Gaussian shrinker `(ℝⁿ, g_E, ‖x‖ ^ 2 / 4)` of the cited report (Yokota,
-p. 1652). -/
+/-- **The Gaussian shrinking soliton.** Let $F$ be a finite-dimensional real inner product space,
+viewed as a Riemannian manifold with the metric given by its inner product, and let $a > 0$. The
+function $f(x) = \frac{a}{2} \|x\|^2$ on $F$ is a gradient shrinking Ricci soliton with
+constant $a$.
+
+Source: Oberwolfach Report 27/2012 (Geometrie), T. Yokota, p. 1652; for `a = 1 / 2` this is
+the Gaussian shrinker `(ℝⁿ, g_E, ‖x‖ ^ 2 / 4)`. -/
 theorem isGradientShrinkingRicciSoliton_gaussian {F : Type*} [NormedAddCommGroup F]
     [InnerProductSpace ℝ F] [FiniteDimensional ℝ F] (a : ℝ) (ha : 0 < a) :
     IsGradientShrinkingRicciSoliton 𝓘(ℝ, F)
       (fun x : F => (a / 2) * ‖x‖ ^ 2) a :=
   { toIsGradientRicciSoliton := isGradientRicciSoliton_gaussian a, pos := ha }
 
-/-- For positive-dimensional `F`, the Gaussian potential is a gradient Ricci soliton
-with constant `c` if and only if `a = c`. -/
+/-- **Gaussian potentials that are gradient Ricci solitons.** Let $F$ be a real inner product
+space of positive finite dimension, viewed as a Riemannian manifold with the metric given by its
+inner product, and let $a, c \in \mathbb{R}$. The function $f(x) = \frac{a}{2} \|x\|^2$ on $F$ is
+a gradient Ricci soliton with constant $c$ if and only if $a = c$. -/
 theorem isGradientRicciSoliton_gaussian_iff {F : Type*} [NormedAddCommGroup F]
     [InnerProductSpace ℝ F] [FiniteDimensional ℝ F] [Nontrivial F] (a c : ℝ) :
     IsGradientRicciSoliton 𝓘(ℝ, F) (fun x : F => (a / 2) * ‖x‖ ^ 2) c ↔
@@ -167,8 +188,10 @@ theorem isGradientRicciSoliton_gaussian_iff {F : Type*} [NormedAddCommGroup F]
     subst h
     exact isGradientRicciSoliton_gaussian a
 
-/-- For positive-dimensional `F`, the Gaussian potential is a gradient shrinking Ricci
-soliton with constant `c` if and only if `a = c` and `0 < c`. -/
+/-- **Gaussian potentials that are gradient shrinking Ricci solitons.** Let $F$ be a real inner
+product space of positive finite dimension, viewed as a Riemannian manifold with the metric given
+by its inner product, and let $a, c \in \mathbb{R}$. The function $f(x) = \frac{a}{2} \|x\|^2$ on
+$F$ is a gradient shrinking Ricci soliton with constant $c$ if and only if $a = c$ and $c > 0$. -/
 theorem isGradientShrinkingRicciSoliton_gaussian_iff {F : Type*}
     [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
     [Nontrivial F] (a c : ℝ) :

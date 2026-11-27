@@ -91,11 +91,11 @@ private theorem kummer_digit_le {q k n : ℕ} (hq : Nat.Prime q) (hkn : k ≤ n)
     (hdiv : ¬ q ∣ n.choose k) : (q.digits k).sum ≤ (q.digits n).sum := by
   have : Fact (Nat.Prime q) := ⟨hq⟩
   have hpos : 0 < n.choose k := Nat.choose_pos hkn
-  have hval : padicValNat q (n.choose k) = 0 := by
-    rw [padicValNat.eq_zero_iff]
+  have hval : multiplicity q (n.choose k) = 0 := by
+    rw [Nat.multiplicity_eq_zero_iff]
     right; right
     exact hdiv
-  have hkum := sub_one_mul_padicValNat_choose_eq_sub_sum_digits hkn (p := q)
+  have hkum := sub_one_mul_multiplicity_choose_eq_sub_sum_digits hkn (p := q)
   rw [hval, mul_zero] at hkum
   omega
 
@@ -150,11 +150,11 @@ private theorem digit_sum_n_ge_of_mem {q k n : ℕ} (hq : Nat.Prime q) (hkn : k 
   have h2 : (q.digits k).sum ≤ (q.digits n).sum := by
     have : Fact (Nat.Prime q) := ⟨hq⟩
     have hpos : 0 < n.choose k := Nat.choose_pos hkn
-    have hval : padicValNat q (n.choose k) = 0 := by
-      rw [padicValNat.eq_zero_iff]
+    have hval : multiplicity q (n.choose k) = 0 := by
+      rw [Nat.multiplicity_eq_zero_iff]
       right; right
       exact hdiv
-    have hkum := sub_one_mul_padicValNat_choose_eq_sub_sum_digits hkn (p := q)
+    have hkum := sub_one_mul_multiplicity_choose_eq_sub_sum_digits hkn (p := q)
     rw [hval, mul_zero] at hkum
     omega
   omega
@@ -589,15 +589,15 @@ private theorem lower_mem_S {n p : ℕ}
   have hnc : ¬ p ∣ n.choose k := by
     have : Fact (Nat.Prime p) := ⟨hprime⟩
     have hpos : 0 < n.choose k := Nat.choose_pos hkn
-    have hkum := sub_one_mul_padicValNat_choose_eq_sub_sum_digits hkn (p := p)
+    have hkum := sub_one_mul_multiplicity_choose_eq_sub_sum_digits hkn (p := p)
     have hrhs : (p.digits k).sum + (p.digits (n - k)).sum - (p.digits n).sum = 0 := by
       omega
     rw [hrhs] at hkum
-    have hv0 : padicValNat p (n.choose k) = 0 := by
+    have hv0 : multiplicity p (n.choose k) = 0 := by
       rcases Nat.mul_eq_zero.mp hkum with h | h
       · omega
       · exact h
-    rw [padicValNat.eq_zero_iff] at hv0
+    rw [Nat.multiplicity_eq_zero_iff] at hv0
     rcases hv0 with h | h | h
     · exact absurd h hprime.ne_one
     · omega
@@ -694,15 +694,24 @@ private theorem lower_mem_S {n p : ℕ}
   rw [hcoeff_j] at hmem2
   exact dvd_trans hp_den hmem2
 
-/-- Triple-product splitting of the Bernoulli polynomial denominator into digit-sum prime factors.
+/-- **Kellner–Sondow factorization of the denominators of Bernoulli polynomials.** Let $B_k$
+denote the $k$-th Bernoulli number, with $B_1 = -1/2$, let
+$B_n(x) = \sum_{k=0}^{n} \binom{n}{k} B_k x^{n-k}$ be the $n$-th Bernoulli polynomial, and let
+$D_n$ be the least common multiple of the denominators of its nonzero coefficients. For a prime
+$p$, let $s_p(N)$ denote the sum of the base-$p$ digits of a natural number $N$. Then for every
+$n \ge 1$, $D_n$ is the product of three factors: the product of the primes $p \le n + 1$ with
+$p \nmid n + 1$ and $s_p(n+1) \ge p$; the product of the primes $p \le n + 1$ with $p \mid n + 1$
+and $s_p(n+1) \ge p$; and the product of the primes $p \le n + 1$ with $p \mid n + 1$ and
+$s_p(n+1) < p$.
+
+Proves `Wanted` entry `kellner_sondow_bernoulli_denom`.
+
 Source: Bernd C. Kellner, "On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
 Integral Coefficients," Journal of Integer Sequences 27 (2024), Article 24.2.8, Theorem
 `thm:triple`, lines 351–358, <https://cs.uwaterloo.ca/journals/JIS/VOL27/Kellner/kell2.tex>,
 restating B. C. Kellner and J. Sondow, "On Carmichael and polygonal numbers, Bernoulli polynomials,
 and sums of base-p digits," Integers 21 (2021), Theorem 3.1. Factor definitions `eq:ddprod2` at
 lines 341–346.
-
-Proves `Wanted` entry `kellner_sondow_bernoulli_denom`.
 -/
 theorem kellner_sondow_bernoulli_denom : ∀ (n : ℕ), 1 ≤ n →
   (Polynomial.bernoulli n).support.lcm (fun i => ((Polynomial.bernoulli n).coeff i).den) =

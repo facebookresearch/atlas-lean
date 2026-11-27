@@ -298,6 +298,64 @@ example (h : ∃ i, (![-1, 1] : Fin 2 → ℝ) i < 0) :
   have h1 := h0.2 1
   norm_num at h1
 
+/-- Water inventory for `H2 + 1/2 O2 → H2O`, `ν = (-1, -1/2, 1)` on the species `(H2, O2, H2O)`.
+From one mole of water, `n₀ = (0, 0, 1)`, the positive reverse extent `1/2` is forward-feasible for
+the reversed vector `-ν` and leaves `(1/2, 1/4, 1/2)`; the same change passed as the negative
+extent `-1/2` to the forward-only statement for `ν` is rejected, and the reverse statement accepts
+it; the reverse extent `2` would need more water than there is. With hydrogen and oxygen but no
+water, `n₀ = (1, 1/2, 0)`, the fuel-cell orientation admits the extent `1/2` and the reversed
+vector does not: the inventory is checked for the reverse reaction. -/
+example :
+    (1 / 2 : ℝ) ∈ forwardFeasibleExtents (-![-1, -1 / 2, 1]) ![0, 0, 1] ∧
+      (![0, 0, 1] : Fin 3 → ℝ) + (1 / 2 : ℝ) • -![-1, -1 / 2, 1] = ![1 / 2, 1 / 4, 1 / 2] ∧
+      (-1 / 2 : ℝ) ∉ forwardFeasibleExtents ![-1, -1 / 2, 1] ![0, 0, 1] ∧
+      (-1 / 2 : ℝ) ∈ reverseFeasibleExtents ![-1, -1 / 2, 1] ![0, 0, 1] ∧
+      (2 : ℝ) ∉ forwardFeasibleExtents (-![-1, -1 / 2, 1]) ![0, 0, 1] ∧
+      (1 / 2 : ℝ) ∈ forwardFeasibleExtents ![-1, -1 / 2, 1] ![1, 1 / 2, 0] ∧
+      (1 / 2 : ℝ) ∉ forwardFeasibleExtents (-![-1, -1 / 2, 1]) ![1, 1 / 2, 0] := by
+  refine ⟨⟨by norm_num, ?_⟩, ?_, notMem_forwardFeasibleExtents_of_neg (by norm_num),
+    ⟨by norm_num, ?_⟩, ?_, ⟨by norm_num, ?_⟩, ?_⟩
+  · norm_num [Fin.forall_fin_succ]
+  · funext i
+    revert i
+    norm_num [Fin.forall_fin_succ]
+  · norm_num [Fin.forall_fin_succ]
+  · rintro ⟨-, h⟩
+    have h2 := h 2
+    norm_num at h2
+  · norm_num [Fin.forall_fin_succ]
+  · rintro ⟨-, h⟩
+    have h2 := h 2
+    norm_num at h2
+
+/-- `notMem_forwardFeasibleExtents_of_neg`: the forward-only statement rejects a negative extent
+even with every species in stock. -/
+example : (-1 : ℝ) ∉ forwardFeasibleExtents ![-1, -1 / 2, 1] ![1, 1, 1] :=
+  notMem_forwardFeasibleExtents_of_neg (by norm_num)
+
+/-- `mem_forwardFeasibleExtents_neg_iff` moves feasibility between the reversed vector and the
+reverse statement: from one mole of water the extent `1/2` of `-ν` gives the reverse-feasible extent
+`-1/2` of `ν`, and the infeasible extent `2` of `-ν` rules out `-2` for `ν`. -/
+example : -(1 / 2 : ℝ) ∈ reverseFeasibleExtents ![-1, -1 / 2, 1] ![0, 0, 1] ∧
+    -(2 : ℝ) ∉ reverseFeasibleExtents ![-1, -1 / 2, 1] ![0, 0, 1] := by
+  refine ⟨mem_forwardFeasibleExtents_neg_iff.mp ⟨by norm_num, ?_⟩, fun h => ?_⟩
+  · norm_num [Fin.forall_fin_succ]
+  · obtain ⟨-, h2⟩ := mem_forwardFeasibleExtents_neg_iff.mpr h
+    have h22 := h2 2
+    norm_num at h22
+
+/-- `forwardFeasibleExtents_neg_eq_Icc`: from one mole of water, `(0, 0, 1)`, the feasible extents
+of the reversed vector are `[0, 1]`, set by the water inventory. -/
+example : forwardFeasibleExtents (-![-1, -1 / 2, 1]) ![0, 0, 1] = Set.Icc 0 1 := by
+  have h : ∃ i, 0 < (![-1, -1 / 2, 1] : Fin 3 → ℝ) i := ⟨2, by norm_num⟩
+  rw [forwardFeasibleExtents_neg_eq_Icc (by norm_num [Fin.forall_fin_succ]) h]
+  have h1 : minExtent ![-1, -1 / 2, 1] ![0, 0, 1] h ≤ -1 := by
+    rw [minExtent_le_iff]
+    norm_num [Fin.forall_fin_succ]
+  have h2 := neg_div_le_minExtent (ν := ![-1, -1 / 2, 1]) ![0, 0, 1] h (i := 2) (by norm_num)
+  norm_num at h2
+  rw [show -minExtent ![-1, -1 / 2, 1] ![0, 0, 1] h = 1 by linarith]
+
 end PhyslibExtTest.Chemistry.Stoichiometry
 
 #print axioms Chemistry.Stoichiometry.mem_consumedSpecies
@@ -331,3 +389,6 @@ end PhyslibExtTest.Chemistry.Stoichiometry
 #print axioms Chemistry.Stoichiometry.le_sum_mul_div_of_mem_reachableSlice
 #print axioms Chemistry.Stoichiometry.le_sum_mul_div_inf'_of_mem_reachableSlice
 #print axioms Chemistry.Stoichiometry.isBounded_reachableSlice_inter_nonneg
+#print axioms Chemistry.Stoichiometry.notMem_forwardFeasibleExtents_of_neg
+#print axioms Chemistry.Stoichiometry.mem_forwardFeasibleExtents_neg_iff
+#print axioms Chemistry.Stoichiometry.forwardFeasibleExtents_neg_eq_Icc

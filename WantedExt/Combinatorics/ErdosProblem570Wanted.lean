@@ -34,7 +34,10 @@ wrapper is elaborated to a direct proposition. Status: resolved true (even
 by Goddard–Kleitman, Sidorenko, Jayawardene, and Cambie–Freschi–Morawski–
 Petrova–Pokrovskiy). -/
 
-/-- `R(Cₖ,H) ≤ 2m + ⌊(k-1)/2⌋` for large `m` and all `k ≥ 3`. -/
+/-- **Erdős Problem 570 (cycle versus graph Ramsey bound).** The statement that for every natural
+number $k \ge 3$ there is an $M$ such that for every $m \ge M$ and every finite simple graph $H$
+with exactly $m$ edges and no isolated vertices, the Ramsey number $R(C_k, H)$ of the cycle $C_k$
+on $k$ vertices and $H$ is at most $2m + \lfloor (k-1)/2 \rfloor$. -/
 def conjecture : Prop :=
   ∀ (k : ℕ) (_ : 3 ≤ k),
     ∀ᶠ (m : ℕ) in atTop,
@@ -44,8 +47,12 @@ def conjecture : Prop :=
         graphPairRamsey (cycleGraph k) H ≤ 2 * m + (k - 1) / 2
 
 /--
-Resolved true: Resolved true: R(C_k,H) <= 2m + (k-1)/2 for large m (EFRS93, GoKl94, Si91, Ja99,
-CFMPP26). Source: S. Cambie, A. Freschi, P. Morawski, K. Petrova, A. Pokrovskiy, Ramsey number
+**Resolution of Erdős Problem 570.** For every natural number $k \ge 3$ there is an $M$ such that
+for every $m \ge M$ and every finite simple graph $H$ with exactly $m$ edges and no isolated
+vertices, the Ramsey number $R(C_k, H)$ of the cycle $C_k$ on $k$ vertices and $H$ is at most
+$2m + \lfloor (k-1)/2 \rfloor$.
+
+Source: S. Cambie, A. Freschi, P. Morawski, K. Petrova, A. Pokrovskiy, Ramsey number
 of a cycle versus a graph of a given size, arXiv:2601.10238 (2026),
 https://arxiv.org/abs/2601.10238. Moved from `OpenConjectures/Combinatorics/ErdosProblem570`.
 -/

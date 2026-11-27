@@ -25,7 +25,7 @@ open Cslib.Logic.FOL.Proposition (embed boolStructure realize_embed_iff_evalBool
 
 namespace CSLibExtTest.Logics.FirstOrder.PropositionalBridge
 
-private def realizes (A : Cslib.Logic.PL.Proposition Bool) : Prop :=
+private def realizes (A : Cslib.Logic.LegacyPL.Proposition Bool) : Prop :=
   @FirstOrder.Language.Formula.Realize (propLanguage Bool) Bool (boolStructure id)
     Empty (embed A) Empty.elim
 

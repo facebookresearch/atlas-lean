@@ -410,7 +410,9 @@ private theorem btSieveWeight_eq (z q : ℕ) (hz : 0 < z) :
   field_simp
 
 /--
-The weighted explicit lower bound for the squarefree-totient sum.
+**Weighted lower bound for the squarefree totient sum.** For every natural number $z \ge 100$,
+$\log z + 36/100 < \sum_{q=1}^{z} (1 + q/z)^{-1} \, \mu(q)^2 / \varphi(q)$, where $\mu$ is the
+Möbius function and $\varphi$ is Euler's totient function.
 
 Source: Montgomery–Vaughan, *The large sieve* (1973), Lemma 8, lines
 658–714. The proof uses Abel summation, `moebiusSq_div_totient_sum_gt_log`,

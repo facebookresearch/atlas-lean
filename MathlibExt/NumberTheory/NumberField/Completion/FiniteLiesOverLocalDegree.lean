@@ -59,8 +59,12 @@ source equality itself, not merely the unramified special case `e = f = 1`.
 Parts (1)--(3), (5), and (6) of Theorem 11.23 are outside this theorem's scope.
 -/
 
-/-- The degree of a finite-place completion equals the product of the corresponding
-ramification index and inertia degree. -/
+/-- **The local degree is the product of ramification index and inertia degree.** Let $L/K$ be an
+extension of number fields, let $v$ be a nonzero prime ideal of $\mathcal{O}_K$ (a finite place of
+$K$) and $w$ a nonzero prime ideal of $\mathcal{O}_L$ lying over $v$. Regard the completion $L_w$
+as an algebra over $K_v$ via the canonical map $K_v \to L_w$. Then the dimension of $L_w$ over
+$K_v$ equals $e(w \mid v) \, f(w \mid v)$, the ramification index of $w$ over $v$ times the
+inertia degree of $w$ over $v$. -/
 theorem finrank_adicCompletion_eq_ramificationIdx_mul_inertiaDeg :
     Module.finrank (v.adicCompletion K) (w.adicCompletion L) =
       w.asIdeal.ramificationIdx (𝓞 K) * w.asIdeal.inertiaDeg (𝓞 K) := by

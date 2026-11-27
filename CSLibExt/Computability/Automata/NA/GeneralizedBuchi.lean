@@ -50,8 +50,10 @@ open Filter ωSequence ωAcceptor
 
 variable {State Symbol : Type*}
 
-/-- A generalized Büchi automaton: a nondeterministic automaton with `k` acceptance
-sets, indexed by `Fin k`. A run is accepting when it visits every acceptance set
+/-- **Generalized Büchi automaton.** A generalized Büchi automaton with states $S$ and symbols
+$\Sigma$ is a nondeterministic automaton (a labelled transition relation on $S$ together with a
+set of start states) equipped with a natural number $k$ and $k$ acceptance sets
+$F_0, \dots, F_{k-1} \subseteq S$. A run is accepting when it visits every acceptance set
 infinitely often. -/
 structure GenBuchi (State Symbol : Type*) extends NA State Symbol where
   /-- The number of acceptance sets. -/
@@ -67,7 +69,11 @@ instance : ωAcceptor (GenBuchi State Symbol) Symbol where
   Accepts (g : GenBuchi State Symbol) (xs : ωSequence Symbol) :=
     ∃ ss, g.Run xs ss ∧ ∀ j, ∃ᶠ k in atTop, ss k ∈ g.accept j
 
-/-- Membership in the language of a generalized Büchi automaton, unfolded. -/
+/-- **Language of a generalized Büchi automaton.** An infinite word $x$ belongs to the language of
+a generalized Büchi automaton $g$ with acceptance sets $F_0, \dots, F_{k-1}$ iff there is a run
+$s$ of $g$ on $x$ such that for every $j < k$ there are infinitely many times $t$ with
+$s_t \in F_j$. Here a run of $g$ on $x$ is an infinite sequence of states $s_0, s_1, \dots$ with
+$s_0$ a start state and a transition from $s_i$ to $s_{i+1}$ labelled $x_i$ for every $i$. -/
 theorem mem_language_iff {g : GenBuchi State Symbol} {xs : ωSequence Symbol} :
     xs ∈ language g ↔
       ∃ ss, g.Run xs ss ∧ ∀ j, ∃ᶠ k in atTop, ss k ∈ g.accept j :=
@@ -76,48 +82,67 @@ theorem mem_language_iff {g : GenBuchi State Symbol} {xs : ωSequence Symbol} :
 /-! ## The counter -/
 
 open Classical in
-/-- The counter update for degeneralization: from counter `i`, awaiting the `i`-th
-acceptance set, move to `i + 1` on landing in that set, stay at `i` otherwise, and
-reset to `0` from the top value `k`. -/
+/-- **Counter update for degeneralization.** Let $g$ be a generalized Büchi automaton with
+acceptance sets $F_0, \dots, F_{k-1}$. The counter update takes a counter value
+$i \in \{0, \dots, k\}$ and a state $t$ of $g$ and returns a counter value in $\{0, \dots, k\}$:
+if $i < k$, it returns $i + 1$ when $t \in F_i$ and $i$ when $t \notin F_i$; if $i = k$, it
+returns $0$. -/
 noncomputable def nextCount (g : GenBuchi State Symbol) (i : Fin (g.k + 1)) (t : State) :
     Fin (g.k + 1) :=
   if h : i.val < g.k then
     if t ∈ g.accept ⟨i.val, h⟩ then ⟨i.val + 1, by have := i.isLt; omega⟩ else i
   else ⟨0, Nat.zero_lt_succ _⟩
 
-/-- The counter stays put when the awaited acceptance set is missed. -/
+/-- **The degeneralization counter stays when the awaited set is missed.** Let $g$ be a
+generalized Büchi automaton with acceptance sets $F_0, \dots, F_{k-1}$ and counter update
+$\mathrm{next}$. If $i \in \{0, \dots, k\}$ satisfies $i < k$ and the state $t$ is not in $F_i$,
+then $\mathrm{next}(i, t) = i$. -/
 theorem nextCount_eq_self {g : GenBuchi State Symbol} {i : Fin (g.k + 1)} {t : State}
     (h : i.val < g.k) (ht : t ∉ g.accept ⟨i.val, h⟩) : g.nextCount i t = i := by
   simp [nextCount, h, ht]
 
-/-- The counter advances when the awaited acceptance set is hit. -/
+/-- **The degeneralization counter advances on a hit.** Let $g$ be a generalized Büchi automaton
+with acceptance sets $F_0, \dots, F_{k-1}$, let $i \in \{0, \dots, k\}$ be a counter value and let
+$t$ be a state of $g$. If $i < k$ and $t \in F_i$, then the counter update of $i$ at $t$ is
+$i + 1$. -/
 theorem nextCount_eq_succ {g : GenBuchi State Symbol} {i : Fin (g.k + 1)} {t : State}
     (h : i.val < g.k) (ht : t ∈ g.accept ⟨i.val, h⟩) :
     g.nextCount i t = ⟨i.val + 1, by have := i.isLt; omega⟩ := by
   simp [nextCount, h, ht]
 
-/-- The counter resets to `0` from the top value `k`. -/
+/-- **The degeneralization counter resets at the top.** Let $g$ be a generalized Büchi automaton
+with $k$ acceptance sets and let $i \in \{0, \dots, k\}$ be a counter value. If $i = k$, then for
+every state $t$ of $g$ the counter update of $i$ at $t$ is $0$. -/
 theorem nextCount_eq_zero {g : GenBuchi State Symbol} {i : Fin (g.k + 1)} {t : State}
     (h : i.val = g.k) : g.nextCount i t = ⟨0, Nat.zero_lt_succ _⟩ := by
   simp [nextCount, show ¬ i.val < g.k by omega]
 
-/-- The counter sequence along a run: `countSeq g ss n` is the counter after the first
-`n` states of `ss`. -/
+/-- **Counter sequence of a state sequence.** Let $g$ be a generalized Büchi automaton with $k$
+acceptance sets and let $s = (s_0, s_1, \dots)$ be an infinite sequence of states. The counter
+sequence $c_0, c_1, \dots$ of $s$, with values in $\{0, \dots, k\}$, is defined by $c_0 = 0$ and
+$c_{n+1} = \mathrm{next}(c_n, s_{n+1})$, where $\mathrm{next}$ is the counter update of $g$. So
+$c_n$ is the counter after reading the states $s_1, \dots, s_n$; the state $s_0$ is not read. -/
 noncomputable def countSeq (g : GenBuchi State Symbol) (ss : ωSequence State) : ℕ → Fin (g.k + 1)
   | 0 => ⟨0, Nat.zero_lt_succ _⟩
   | n + 1 => g.nextCount (countSeq g ss n) (ss (n + 1))
 
-/-- The counter at time `0` is `0`. -/
+/-- **The counter sequence starts at zero.** For every generalized Büchi automaton $g$ and every
+infinite sequence of states $s$, the counter sequence of $s$ has value $0$ at time $0$. -/
 theorem countSeq_zero (g : GenBuchi State Symbol) (ss : ωSequence State) :
     g.countSeq ss 0 = ⟨0, Nat.zero_lt_succ _⟩ :=
   rfl
 
-/-- The counter at time `n + 1` is the update of the counter at time `n`. -/
+/-- **Recursion step of the counter sequence.** Let $g$ be a generalized Büchi automaton, $s$ an
+infinite sequence of states, and $c_0, c_1, \dots$ the counter sequence of $s$. For every $n$,
+$c_{n+1} = \mathrm{next}(c_n, s_{n+1})$, where $\mathrm{next}$ is the counter update of $g$. -/
 theorem countSeq_succ (g : GenBuchi State Symbol) (ss : ωSequence State) (n : ℕ) :
     g.countSeq ss (n + 1) = g.nextCount (g.countSeq ss n) (ss (n + 1)) :=
   rfl
 
-/-- The counter stays at `i` while the awaited acceptance set is missed. -/
+/-- **The degeneralization counter waits for the awaited set.** Let $g$ be a generalized Büchi
+automaton with acceptance sets $F_0, \dots, F_{k-1}$, let $s$ be an infinite sequence of states
+with counter sequence $c_0, c_1, \dots$, and let $i < k$ and $n$ satisfy $c_n = i$. If $m \ge n$
+and $s_{j+1} \notin F_i$ for every $j$ with $n \le j < m$, then $c_m = i$. -/
 theorem countSeq_stay {g : GenBuchi State Symbol} {ss : ωSequence State}
     {i : Fin (g.k + 1)} {n : ℕ} (hi : i.val < g.k) (hc : g.countSeq ss n = i) :
     ∀ {m}, n ≤ m → (∀ j, n ≤ j → j < m → ss (j + 1) ∉ g.accept ⟨i.val, hi⟩) →
@@ -131,10 +156,14 @@ theorem countSeq_stay {g : GenBuchi State Symbol} {ss : ωSequence State}
     rw [countSeq_succ, hcm]
     exact nextCount_eq_self hi (hstay m hmn (by omega))
 
-/-- From any time, the counter eventually reaches any value at least its current one
-(up to `k`), provided every acceptance set is visited infinitely often. The proof is
-by induction on the distance to the target: the first visit to the awaited set after
-the current time advances the counter by one (the counter stays put until then). -/
+/-- **The degeneralization counter reaches every higher value.** Let $g$ be a generalized Büchi
+automaton with acceptance sets $F_0, \dots, F_{k-1}$, and let $s$ be an infinite sequence of
+states that visits every $F_j$ infinitely often, with counter sequence $c_0, c_1, \dots$. Then
+for every time $n$ and every $j$ with $c_n \le j \le k$ there is a time $m \ge n$ with $c_m = j$.
+
+The distance $d = j - c_n$ appears in the statement as a separate variable, and the proof is by
+induction on $d$: the first visit to the awaited set after time $n$ advances the counter by one
+(the counter stays put until then). -/
 theorem countSeq_reach {g : GenBuchi State Symbol} {ss : ωSequence State}
     (hacc : ∀ j, ∃ᶠ t in atTop, ss t ∈ g.accept j) :
     ∀ d n j, j - (g.countSeq ss n).val = d → (g.countSeq ss n).val ≤ j → j ≤ g.k →
@@ -167,11 +196,16 @@ theorem countSeq_reach {g : GenBuchi State Symbol} {ss : ωSequence State}
     obtain ⟨m, hm1, hm2⟩ := ih (t1 + 1) j (by omega) (by omega) hjk
     exact ⟨m, by omega, hm2⟩
 
-/-- The counter crosses every value below its target: from `0` to `d`, with no
-intermediate visit to `k`, some step advances the counter from `j` to `j + 1`,
-and the destination state then lies in the `j`-th acceptance set. The proof is by
-induction on the right endpoint, case-splitting the last counter step into
-stay, advance, or (impossible) reset. -/
+/-- **The degeneralization counter crosses every value below its target.** Let $g$ be a
+generalized Büchi automaton with acceptance sets $F_0, \dots, F_{k-1}$ and counter update
+$\mathrm{next}$, let $s$ be an infinite sequence of states, and let $c_0, c_1, \dots$ be any
+sequence in $\{0, \dots, k\}$ with $c_{n+1} = \mathrm{next}(c_n, s_{n+1})$ for every $n$. Let
+$a \le b$ be times with $c_a = 0$ and $c_b = d \le k$, and suppose $c_t \ne k$ for every $t$ with
+$a < t < b$. Then for every $j < d$ there is a time $t$ with $a \le t < b$ such that $c_t = j$,
+$c_{t+1} = j + 1$ and $s_{t+1} \in F_j$.
+
+The proof is by induction on $b$, case-splitting the last counter step into stay, advance, or
+the impossible reset. -/
 theorem counter_cross {g : GenBuchi State Symbol} {cc : ℕ → Fin (g.k + 1)}
     {ss : ωSequence State}
     (hstep : ∀ n, cc (n + 1) = g.nextCount (cc n) (ss (n + 1))) :
@@ -222,9 +256,13 @@ theorem counter_cross {g : GenBuchi State Symbol} {cc : ℕ → Fin (g.k + 1)}
               (fun s hs1 hs2 => hnok s hs1 (by omega)) j hj
           exact ⟨s, hs1, by omega, hs3, hs4, hs5⟩
 
-/-- The degeneralized Büchi automaton: states are pairs of a state of `g` with a
-counter in `Fin (k + 1)`; the counter updates by `nextCount`, the start states
-have counter `0`, and the accepting states have counter `k`. -/
+/-- **Degeneralization of a generalized Büchi automaton.** Let $g$ be a generalized Büchi
+automaton with $k$ acceptance sets. Its degeneralization is the Büchi automaton over the same
+alphabet whose states are the pairs $(s, i)$ of a state $s$ of $g$ and a counter value
+$i \in \{0, \dots, k\}$. On a symbol $x$ there is a transition from $(s, i)$ to $(s', i')$ iff $g$
+has a transition from $s$ to $s'$ on $x$ and $i'$ is the counter update of $i$ at the state $s'$.
+The start states are the pairs $(s, 0)$ with $s$ a start state of $g$, and the accepting states
+are the pairs $(s, k)$. -/
 def toBuchi (g : GenBuchi State Symbol) : Buchi (State × Fin (g.k + 1)) Symbol where
   Tr p x q := g.Tr p.1 x q.1 ∧ q.2 = g.nextCount p.2 q.1
   start := {p | p.1 ∈ g.start ∧ p.2 = ⟨0, Nat.zero_lt_succ _⟩}

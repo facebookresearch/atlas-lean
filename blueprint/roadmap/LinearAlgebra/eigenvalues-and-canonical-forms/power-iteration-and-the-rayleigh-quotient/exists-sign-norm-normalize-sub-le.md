@@ -11,7 +11,7 @@ $s_k = \pm 1$.
 
 ## Background
 
-- Principal component analysis: power iteration on a sample covariance matrix computes the first principal component.
+- [Principal component analysis](../../../Probability/linear-models-multivariate/principal-component-analysis/README.md): power iteration on a sample covariance matrix computes the first principal component.
 
 ## Sources
 

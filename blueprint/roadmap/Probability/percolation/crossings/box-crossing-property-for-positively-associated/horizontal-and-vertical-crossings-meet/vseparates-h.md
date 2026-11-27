@@ -1,0 +1,3 @@
+# Every overlap cluster meets every horizontal crossing
+
+Let $\omega$ be a bond configuration on $\mathbb{Z}^2$, $\alpha, \beta, m, m', c, d \in \mathbb{Z}$, $R = [\alpha, \beta] \times [c, d]$ and $O = [m, m'] \times [c, d]$. The condition is: if $\alpha \le m \le m' \le \beta$, then for every site $x_B \in O$, every open path inside $R$ from a site with first coordinate $\alpha$ to a site with first coordinate $\beta$ visits a site of the [open cluster $C_O(x_B)$](overlap-comp.md). For $c < d$ this fails for some $\omega$; the [version for bottom sites $x_B$ joined to the top](../vertical-crossings-separate-the-sides-of-a-recta/crossing-separates-h.md) only concerns such $x_B$.

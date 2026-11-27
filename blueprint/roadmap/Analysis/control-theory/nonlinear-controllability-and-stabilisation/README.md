@@ -21,12 +21,17 @@ The pages below give the definitions, the Lie algebra rank condition and the fai
 - [The bracket of the nonholonomic integrator](lie-bracket-nonholonomic-fields.md)
 - [The nonholonomic integrator satisfies the Lie algebra rank condition](accessibility-space-nonholonomic-fields.md)
 - [The nonholonomic integrator violates Brockett's condition](not-brockett-condition-nonholonomic-inte.md)
+- [Control barrier functions keep the safe set forward invariant](control-barrier-functions-keep-the-safe-set-forward-invariant.md)
+- [The unicycle satisfies the Lie algebra rank condition and is controllable](the-unicycle-satisfies-the-lie-algebra-rank-condition-and-is-controllable.md)
+- [Feedback linearization of single-input systems](feedback-linearization-of-single-input-systems.md)
+- [Kinematics, turning radius and controllability of a car-like robot](kinematics-turning-radius-and-controllability-of-a-car-like-robot.md)
+- [The endpoint map of a control system is differentiable, with the linearization as derivative](the-endpoint-map-of-a-control-system-is-differentiable-with-the-linearization-as-derivative.md)
 
 ## Related topics
 
 - [Controllability of linear systems](../controllability-of-linear-systems/README.md): the Kalman rank condition is the linear case of the Lie algebra rank condition, and the basis of the linear test and of the return method.
 - [Pole placement](../pole-placement/README.md): stabilisation of controllable linear systems, and through linearisation of nonlinear systems with controllable linearisation.
-- LaSalle's invariance principle: the standard tool to prove asymptotic stability of closed-loop systems from a Lyapunov function whose derivative is only nonpositive; Coron uses it for feedback design (Sections 12.2 and 13.1).
+- [LaSalle's invariance principle](../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/README.md): the standard tool to prove asymptotic stability of closed-loop systems from a Lyapunov function whose derivative is only nonpositive; Coron uses it for feedback design (Sections 12.2 and 13.1).
 - [Lyapunov's indirect method](../../ordinary-differential-equations/lyapunov-s-indirect-method/README.md): local asymptotic stability from the linearisation, as used for linear feedback of nonlinear systems.
 - [Maximal solutions and global existence](../../ordinary-differential-equations/maximal-solutions-and-global-existence/README.md) and [Cauchy–Peano existence theorem](../../ordinary-differential-equations/cauchy-peano-exists.md): a continuous feedback gives a closed loop with solutions that need not be unique, which is why stability is imposed on every solution.
 - [Picard iteration](../../ordinary-differential-equations/picard-iteration/README.md): for a Lipschitz closed-loop vector field, solutions are unique and given by successive approximation; continuous feedback laws only guarantee existence.

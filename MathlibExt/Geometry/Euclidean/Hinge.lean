@@ -43,11 +43,13 @@ private theorem hinge_norm_lt_of_sq_lt {V : Type*} [NormedAddCommGroup V]
     (h : ‖x‖ ^ 2 < ‖y‖ ^ 2) : ‖x‖ < ‖y‖ :=
   (sq_lt_sq₀ (norm_nonneg x) (norm_nonneg y)).mp h
 
-/-- Hinge theorem for a real inner product space: if two pairs of adjacent sides have equal
-lengths and the first included inner product is smaller, then its opposite side is longer.
-Source: Euclid's *Elements*, Book I, Proposition 24.
+/-- **Hinge theorem in inner product spaces.** Let $V$ be a real inner product space and let
+$A, B, C, D, E, F \in V$. If $\|B - A\| = \|E - D\|$, $\|C - A\| = \|F - D\|$ and
+$\langle B - A, C - A \rangle < \langle E - D, F - D \rangle$, then $\|F - E\| < \|C - B\|$.
 
-Proof: Apply the law of cosines via `norm_sub_sq_real` and compare the squared side lengths.
+Proof: Expand both squared opposite sides by the law of cosines and compare them.
+
+Source: Euclid's *Elements*, Book I, Proposition 24.
 -/
 theorem hinge_theorem_of_inner_lt {V : Type*} [NormedAddCommGroup V]
     [InnerProductSpace ℝ V] (A B C D E F : V)
@@ -56,18 +58,21 @@ theorem hinge_theorem_of_inner_lt {V : Type*} [NormedAddCommGroup V]
     ‖F - E‖ < ‖C - B‖ :=
   hinge_norm_lt_of_sq_lt (hinge_sq_lt A B C D E F hAB hAC hinner)
 
-/-- Hinge theorem: two nondegenerate (noncollinear) triangles with two pairs of
-equal sides (`AB = DE`, `AC = DF`); if the included angle at `A` exceeds the
-included angle at `D` (compared via inner products), then the opposite side
-`BC` exceeds `EF`.
-Source: Euclid's Elements, Book I, Proposition 24
-(https://mathcs.clarku.edu/~djoyce/elements/bookI/propI24.html); see also
-https://en.wikipedia.org/wiki/Hinge_theorem.
+/-- **Hinge theorem.** Let $A, B, C$ and $D, E, F$ be two triples of pairwise distinct points of
+the Euclidean plane $\mathbb{R}^2$ forming nondegenerate triangles: $C - A$ is not a real
+multiple of $B - A$, and $F - D$ is not a real multiple of $E - D$. Write $XY$ for the distance
+between points $X$ and $Y$. If $AB = DE$, $AC = DF$ and
+$\langle B - A, C - A \rangle < \langle E - D, F - D \rangle$, that is, the angle at $A$ is
+larger than the angle at $D$, then $EF < BC$.
+
+Proof: The vector law of cosines compares the squared opposite sides, following Euclid's
+*Elements*, Book I, Proposition 24.
 
 Proves `Wanted` entry `hinge_theorem`.
 
-Proof: Mathlib's vector law of cosines, `norm_sub_sq_real`, compares the squared opposite-side
-lengths, following Euclid's *Elements*, Book I, Proposition 24.
+Source: Euclid's Elements, Book I, Proposition 24
+(https://mathcs.clarku.edu/~djoyce/elements/bookI/propI24.html); see also
+https://en.wikipedia.org/wiki/Hinge_theorem.
 -/
 theorem hinge_theorem : ∀ (A B C D E F : EuclideanSpace ℝ (Fin 2)),
   B ≠ A → C ≠ A → C ≠ B → E ≠ D → F ≠ D → F ≠ E →

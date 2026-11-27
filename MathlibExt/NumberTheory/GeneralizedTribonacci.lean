@@ -32,7 +32,10 @@ data. The bridge theorems below show it is a genuine generalization of both.
 
 namespace MetaMathlibExt
 
-/-- The integer-valued generalized Tribonacci sequence `T_n^(s₀,s₁,s₂)`.
+/-- **Generalized Tribonacci sequence.** For integers $s_0, s_1, s_2$, the generalized Tribonacci
+sequence $(T_n)_{n \ge 0}$ with initial values $s_0, s_1, s_2$ is the sequence of integers
+defined by $T_0 = s_0$, $T_1 = s_1$, $T_2 = s_2$ and $T_{n+3} = T_{n+2} + T_{n+1} + T_n$ for
+every $n \ge 0$.
 
 Source: Gessel–Kar (2024), JIS 27, Article 24.1.3, lines 700–719:
 `T_0 = s₀`, `T_1 = s₁`, `T_2 = s₂`, and `T_{n+3} = T_{n+2} + T_{n+1} + T_n`. -/
@@ -44,26 +47,37 @@ def generalizedTribonacci (s₀ s₁ s₂ : ℤ) : ℕ → ℤ
       generalizedTribonacci s₀ s₁ s₂ (n + 2) +
         generalizedTribonacci s₀ s₁ s₂ (n + 1) + generalizedTribonacci s₀ s₁ s₂ n
 
-/-- Source equation `T_0 = s₀`. -/
+/-- **Initial value $T_0 = s_0$ of the generalized Tribonacci sequence.** For all integers
+$s_0, s_1, s_2$, the generalized Tribonacci sequence $(T_n)_{n \ge 0}$ with initial values
+$s_0, s_1, s_2$ satisfies $T_0 = s_0$. -/
 @[simp] theorem generalizedTribonacci_zero (s₀ s₁ s₂ : ℤ) :
     generalizedTribonacci s₀ s₁ s₂ 0 = s₀ := rfl
 
-/-- Source equation `T_1 = s₁`. -/
+/-- **Initial value $T_1 = s_1$ of the generalized Tribonacci sequence.** For all integers
+$s_0, s_1, s_2$, the generalized Tribonacci sequence $(T_n)_{n \ge 0}$ with initial values
+$s_0, s_1, s_2$ satisfies $T_1 = s_1$. -/
 @[simp] theorem generalizedTribonacci_one (s₀ s₁ s₂ : ℤ) :
     generalizedTribonacci s₀ s₁ s₂ 1 = s₁ := rfl
 
-/-- Source equation `T_2 = s₂`. -/
+/-- **Initial value $T_2 = s_2$ of the generalized Tribonacci sequence.** For all integers
+$s_0, s_1, s_2$, the generalized Tribonacci sequence $(T_n)_{n \ge 0}$ with initial values
+$s_0, s_1, s_2$ satisfies $T_2 = s_2$. -/
 @[simp] theorem generalizedTribonacci_two (s₀ s₁ s₂ : ℤ) :
     generalizedTribonacci s₀ s₁ s₂ 2 = s₂ := rfl
 
-/-- Source recurrence `T_{n+3} = T_{n+2} + T_{n+1} + T_n`. -/
+/-- **Recurrence of the generalized Tribonacci sequence.** For all integers $s_0, s_1, s_2$ and
+every $n \ge 0$, the generalized Tribonacci sequence $(T_n)_{n \ge 0}$ with initial values
+$s_0, s_1, s_2$ satisfies $T_{n+3} = T_{n+2} + T_{n+1} + T_n$. -/
 @[simp] theorem generalizedTribonacci_add_three (s₀ s₁ s₂ : ℤ) (n : ℕ) :
     generalizedTribonacci s₀ s₁ s₂ (n + 3) =
       generalizedTribonacci s₀ s₁ s₂ (n + 2) +
         generalizedTribonacci s₀ s₁ s₂ (n + 1) + generalizedTribonacci s₀ s₁ s₂ n :=
   rfl
 
-/-- Initial values `0, 0, 1` recover `MetaMathlibExt.tribonacci`. -/
+/-- **The generalized Tribonacci sequence with initial values $0, 0, 1$ is the Tribonacci
+sequence.** For every $n \ge 0$, the $n$-th term of the generalized Tribonacci sequence with
+initial values $0, 0, 1$ equals the $n$-th Tribonacci number $t_n$ (where $t_0 = t_1 = 0$ and
+$t_2 = 1$), viewed as an integer. -/
 theorem generalizedTribonacci_zero_zero_one_eq_tribonacci (n : ℕ) :
     generalizedTribonacci 0 0 1 n = (tribonacci n : ℤ) := by
   have h : ∀ m : ℕ, generalizedTribonacci 0 0 1 m = (tribonacci m : ℤ) ∧
@@ -93,8 +107,10 @@ theorem generalizedTribonacci_zero_zero_one_eq_tribonacci (n : ℕ) :
         rw [e3, Int.natCast_add, Int.natCast_add, ih2, ih1, ih0]
   exact (h n).1
 
-/-- Initial values `1, 1, 1` recover
-`MetaMathlibExt.tribonacciWithInitialValues111`. -/
+/-- **Integer and natural Tribonacci sequences with initial values $1, 1, 1$ agree.** For every
+$n \ge 0$, the $n$-th term of the generalized Tribonacci sequence with initial values $1, 1, 1$
+equals the $n$-th term of the Tribonacci sequence of natural numbers with initial values
+$1, 1, 1$, viewed as an integer. -/
 theorem generalizedTribonacci_one_one_one_eq_tribonacciWithInitialValues111 (n : ℕ) :
     generalizedTribonacci 1 1 1 n = (tribonacciWithInitialValues111 n : ℤ) := by
   have h : ∀ m : ℕ, generalizedTribonacci 1 1 1 m =
@@ -129,10 +145,13 @@ theorem generalizedTribonacci_one_one_one_eq_tribonacciWithInitialValues111 (n :
         rw [e3, Int.natCast_add, Int.natCast_add, ih2, ih1, ih0]
   exact (h n).1
 
-/-- Initial values `0, 1, 1` recover `MetaMathlibExt.tribonacci` shifted by one.
+/-- **The generalized Tribonacci sequence with initial values $0, 1, 1$ is the shifted Tribonacci
+sequence.** For every $n \ge 0$, the $n$-th term of the generalized Tribonacci sequence with
+initial values $0, 1, 1$ equals the Tribonacci number $t_{n+1}$, viewed as an integer, where
+$t_0 = t_1 = 0$ and $t_2 = 1$.
 
-This is the ordinary Tribonacci convention stated by Gessel–Kar; since the
-repository's `tribonacci` starts `0, 0, 1`, the index shift is essential. -/
+The initial values $0, 1, 1$ are the usual Tribonacci convention used by Gessel–Kar; since the
+Tribonacci sequence $t$ starts $0, 0, 1$, the index shift by one is needed. -/
 theorem generalizedTribonacci_zero_one_one_eq_tribonacci_succ (n : ℕ) :
     generalizedTribonacci 0 1 1 n = (tribonacci (n + 1) : ℤ) := by
   have h : ∀ m : ℕ, generalizedTribonacci 0 1 1 m = (tribonacci (m + 1) : ℤ) ∧

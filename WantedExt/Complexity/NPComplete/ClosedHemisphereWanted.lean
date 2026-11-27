@@ -20,7 +20,7 @@ Computer Science 6 (1978), 93-107, doi:10.1016/0304-3975(78)90006-3.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.OpenHemisphereWanted

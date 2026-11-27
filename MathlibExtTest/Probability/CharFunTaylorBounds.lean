@@ -18,12 +18,12 @@ open MathlibExt.Probability.CharFunTaylorBounds
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
 
 /-- Signature restatement: second-order pointwise bound. -/
-theorem norm_exp_ofReal_mul_I_sub_one_sub_le_test (u : ℝ) :
+private theorem norm_exp_ofReal_mul_I_sub_one_sub_le_test (u : ℝ) :
     ‖Complex.exp (↑u * Complex.I) - 1 - ↑u * Complex.I‖ ≤ u ^ 2 :=
   norm_exp_ofReal_mul_I_sub_one_sub_le u
 
 /-- Signature restatement: second-order characteristic-function bound. -/
-theorem norm_charFun_sub_one_sub_le_test (X : Ω → ℝ) (hmeas : Measurable X)
+private theorem norm_charFun_sub_one_sub_le_test (X : Ω → ℝ) (hmeas : Measurable X)
     (hX_sq_int : Integrable (fun ω => (X ω) ^ 2) μ)
     (t : ℝ) :
     ‖charFun (μ.map X) t - 1 - ↑t * Complex.I * ↑(∫ ω, X ω ∂μ)‖
@@ -31,13 +31,13 @@ theorem norm_charFun_sub_one_sub_le_test (X : Ω → ℝ) (hmeas : Measurable X)
   norm_charFun_sub_one_sub_le X hmeas hX_sq_int t
 
 /-- Signature restatement: first-order characteristic-function bound. -/
-theorem norm_charFun_sub_one_le_test (X : Ω → ℝ) (hmeas : Measurable X)
+private theorem norm_charFun_sub_one_le_test (X : Ω → ℝ) (hmeas : Measurable X)
     (hX_int : Integrable (fun ω => |X ω|) μ) (t : ℝ) :
     ‖charFun (μ.map X) t - 1‖ ≤ |t| * ∫ ω, |X ω| ∂μ :=
   norm_charFun_sub_one_le X hmeas hX_int t
 
 /-- Signature restatement: mean-zero characteristic-function bound. -/
-theorem norm_charFun_sub_one_le_sq_mul_variance_test (X : Ω → ℝ)
+private theorem norm_charFun_sub_one_le_sq_mul_variance_test (X : Ω → ℝ)
     (hmeas : Measurable X) (hmean : ∫ ω, X ω ∂μ = 0)
     (hint2 : Integrable (fun ω => (X ω) ^ 2) μ) (t : ℝ) :
     ‖charFun (μ.map X) t - 1‖ ≤ t ^ 2 * ∫ ω, (X ω) ^ 2 ∂μ :=

@@ -21,7 +21,7 @@ Theoretical Computer Science 626 (2016), 134-143, doi:10.1016/j.tcs.2016.02.011,
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Computability.BinaryNatEncoding

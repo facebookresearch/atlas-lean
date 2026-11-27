@@ -55,15 +55,18 @@ open scoped unitInterval Topology
 
 noncomputable section
 
-/-- The identity function on `[0, 1]`, as a continuous map. -/
+/-- **The identity test function.** The function $x \mapsto x$ on $[0, 1]$, as an element
+of $C([0, 1], \mathbb{R})$. -/
 def korovkinId : C(I, ℝ) :=
   ⟨fun x => (x : ℝ), continuous_subtype_val⟩
 
-/-- The square function on `[0, 1]`, as a continuous map. -/
+/-- **The square test function.** The function $x \mapsto x^2$ on $[0, 1]$, as an element
+of $C([0, 1], \mathbb{R})$. -/
 def korovkinIdSq : C(I, ℝ) :=
   ⟨fun x => (x : ℝ) ^ 2, by fun_prop⟩
 
-/-- The shifted square `y ↦ (y - x)²` on `[0, 1]`, as a continuous map. -/
+/-- **The shifted square.** For $x \in [0, 1]$, the function $y \mapsto (y - x)^2$
+on $[0, 1]$, as an element of $C([0, 1], \mathbb{R})$. -/
 def korovkinShiftSq (x : I) : C(I, ℝ) :=
   ⟨fun y => ((y : ℝ) - (x : ℝ)) ^ 2, by fun_prop⟩
 
@@ -80,7 +83,10 @@ theorem korovkinShiftSq_apply (x y : I) :
     korovkinShiftSq x y = ((y : ℝ) - (x : ℝ)) ^ 2 :=
   rfl
 
-/-- The shifted square is a linear combination of the three test functions. -/
+/-- **Expansion of the shifted square.** Write $e(y) = y$ and $q(y) = y^2$ for the identity
+and square functions and $1$ for the constant function one, as elements of
+$C([0, 1], \mathbb{R})$. For every $x \in [0, 1]$, the function $y \mapsto (y - x)^2$ in
+$C([0, 1], \mathbb{R})$ equals $q - 2x \cdot e + x^2 \cdot 1$. -/
 theorem korovkinShiftSq_eq (x : I) :
     korovkinShiftSq x =
       korovkinIdSq - (2 * (x : ℝ)) • korovkinId + (x : ℝ) ^ 2 • (1 : C(I, ℝ)) := by
@@ -90,7 +96,9 @@ theorem korovkinShiftSq_eq (x : I) :
     ContinuousMap.one_apply, smul_eq_mul]
   ring
 
-/-- Pointwise convergence follows from convergence in the sup norm. -/
+/-- **Uniform convergence implies pointwise convergence.** If a sequence $(u_n)$ in
+$C([0, 1], \mathbb{R})$ converges to $e$ in the sup norm, then $u_n(x) \to e(x)$ for every
+$x \in [0, 1]$. -/
 theorem tendsto_apply_of_tendsto {u : ℕ → C(I, ℝ)} {e : C(I, ℝ)}
     (h : Tendsto u atTop (𝓝 e)) (x : I) :
     Tendsto (fun n => u n x) atTop (𝓝 (e x)) := by
@@ -105,7 +113,11 @@ theorem tendsto_apply_of_tendsto {u : ℕ → C(I, ℝ)} {e : C(I, ℝ)}
     _ ≤ ‖u n - e‖ := by rw [← Real.norm_eq_abs]; exact ContinuousMap.norm_coe_le_norm _ _
     _ < ε := hdist
 
-/-- A positive linear operator is monotone for the pointwise order. -/
+/-- **Positive linear operators are monotone.** Let $L$ be a real-linear operator on
+$C([0, 1], \mathbb{R})$ that is positive: $(L f)(x) \ge 0$ for all $x \in [0, 1]$ whenever
+$f(x) \ge 0$ for all $x \in [0, 1]$. If $g, h \in C([0, 1], \mathbb{R})$ satisfy
+$g(x) \le h(x)$ for all $x \in [0, 1]$, then $(L g)(x) \le (L h)(x)$
+for every $x \in [0, 1]$. -/
 theorem le_apply_of_le {L : C(I, ℝ) →ₗ[ℝ] C(I, ℝ)}
     (hpos : ∀ f : C(I, ℝ), (∀ x, 0 ≤ f x) → ∀ x, 0 ≤ L f x)
     {g h : C(I, ℝ)} (hgh : ∀ x, g x ≤ h x) (x : I) : L g x ≤ L h x := by
@@ -114,8 +126,11 @@ theorem le_apply_of_le {L : C(I, ℝ) →ₗ[ℝ] C(I, ℝ)}
   simp only [map_sub, ContinuousMap.sub_apply] at h1
   linarith
 
-/-- A positive linear operator is dominated by its value on a pointwise
-absolute bound. -/
+/-- **Positive linear operators bound absolute values.** Let $L$ be a real-linear
+operator on $C([0, 1], \mathbb{R})$ that is positive: $(L f)(x) \ge 0$ for all
+$x \in [0, 1]$ whenever $f(x) \ge 0$ for all $x \in [0, 1]$. If
+$g, h \in C([0, 1], \mathbb{R})$ satisfy $|g(y)| \le h(y)$ for all $y \in [0, 1]$, then
+$|(L g)(x)| \le (L h)(x)$ for every $x \in [0, 1]$. -/
 theorem abs_apply_le {L : C(I, ℝ) →ₗ[ℝ] C(I, ℝ)}
     (hpos : ∀ f : C(I, ℝ), (∀ x, 0 ≤ f x) → ∀ x, 0 ≤ L f x)
     {g h : C(I, ℝ)} (hg : ∀ y, |g y| ≤ h y) (x : I) : |L g x| ≤ L h x := by
@@ -130,8 +145,13 @@ theorem abs_apply_le {L : C(I, ℝ) →ₗ[ℝ] C(I, ℝ)}
   simp only [map_neg, ContinuousMap.neg_apply] at hle2
   exact abs_le.mpr ⟨by linarith, hle1⟩
 
-/-- The key pointwise estimate: uniform continuity plus a bound on `‖f‖`
-gives `|f(y) - f(x)| ≤ ε + C * (y - x)²` with `C = 2‖f‖ / δ²`. -/
+/-- **Quadratic bound from a modulus of continuity.** Let $f \in C([0, 1], \mathbb{R})$
+have sup norm $\|f\|$, let $x \in [0, 1]$, and let $\delta > 0$, $\varepsilon \ge 0$
+and $C \ge 0$ be real numbers with $2\|f\| \le C \delta^2$. If
+$|f(y) - f(x)| < \varepsilon$ for every $y \in [0, 1]$ with $|y - x| < \delta$, then
+$|f(y) - f(x)| \le \varepsilon + C (y - x)^2$ for every $y \in [0, 1]$.
+
+Korovkin's theorem applies this with $C = 2\|f\| / \delta^2$. -/
 theorem abs_sub_le_add_sq {f : C(I, ℝ)} {x : I} {δ ε C : ℝ} (hδ : 0 < δ)
     (hε : 0 ≤ ε) (hC : 2 * ‖f‖ ≤ C * δ ^ 2) (hC0 : 0 ≤ C)
     (huni : ∀ y : I, dist y x < δ → |f y - f x| < ε) (y : I) :
@@ -156,9 +176,12 @@ theorem abs_sub_le_add_sq {f : C(I, ℝ)} {x : I} {δ ε C : ℝ} (hδ : 0 < δ)
       exact mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (le_of_lt hδ) hlt 2) hC0
     linarith
 
-/-- **Korovkin's theorem.** If `Lₙ` are positive linear operators on
-`C([0, 1], ℝ)` converging to the identity on the test functions `1`, `x`,
-`x²`, then `Lₙ f → f` in norm for every continuous `f`. -/
+/-- **Korovkin's theorem.** Write $e_0$, $e_1$ and $e_2$ for the functions $x \mapsto 1$,
+$x \mapsto x$ and $x \mapsto x^2$ in $C([0, 1], \mathbb{R})$.
+Let $(L_n)_{n \in \mathbb{N}}$ be real-linear operators on $C([0, 1], \mathbb{R})$, each
+positive: $(L_n f)(x) \ge 0$ for all $x \in [0, 1]$ whenever $f(x) \ge 0$ for all
+$x \in [0, 1]$. If $L_n e_i \to e_i$ in the sup norm for $i = 0, 1, 2$, then
+$L_n f \to f$ in the sup norm for every $f \in C([0, 1], \mathbb{R})$. -/
 theorem korovkin {L : ℕ → C(I, ℝ) →ₗ[ℝ] C(I, ℝ)}
     (hpos : ∀ (n : ℕ) (f : C(I, ℝ)), (∀ x, 0 ≤ f x) → ∀ x, 0 ≤ L n f x)
     (h1 : Tendsto (fun n => L n 1) atTop (𝓝 (1 : C(I, ℝ))))

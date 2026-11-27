@@ -20,7 +20,7 @@ ISGCI, class "balanced 2-interval" (gc_876), problem Recognition, NP-complete.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Set.Defs

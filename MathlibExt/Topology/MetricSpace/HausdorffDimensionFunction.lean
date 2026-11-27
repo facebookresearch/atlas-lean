@@ -29,10 +29,12 @@ We extend the source gauge to `ℝ≥0 → ℝ≥0` via `ContinuousOrderHom`,
 preserving the source codomain on positive radii and the zero limit.
 -/
 
-/-- A Hausdorff dimension function (gauge) extending the source
-`ψ : (0,∞) → (0,∞)` to `ℝ≥0 → ℝ≥0`. Continuous and (weakly) monotone
-via `ContinuousOrderHom`, zero at zero, strictly positive at positive
-radii; hence `lim_{r→0⁺} ψ r = 0`. -/
+/-- **Hausdorff dimension function.** A Hausdorff dimension function (gauge) is a continuous,
+non-decreasing function $\psi : [0,\infty) \to [0,\infty)$ with $\psi(0) = 0$ and $\psi(r) > 0$
+for every $r > 0$. In particular $\psi(r) \to 0$ as $r \to 0^+$.
+
+Source: Das and Simmons, arXiv:2305.11829v1, line 211; the source gauge on $(0,\infty)$ is
+extended by $\psi(0) = 0$, and "increasing" is read as non-decreasing. -/
 structure HausdorffDimensionFunction : Type extends (ℝ≥0 →Co ℝ≥0) where
   map_zero' : toFun 0 = 0
   map_pos' : ∀ {r : ℝ≥0}, 0 < r → 0 < toFun r
@@ -55,24 +57,29 @@ namespace HausdorffDimensionFunction
 theorem ext {ψ₁ ψ₂ : HausdorffDimensionFunction} (h : ∀ x, ψ₁ x = ψ₂ x) : ψ₁ = ψ₂ :=
   DFunLike.ext ψ₁ ψ₂ h
 
-/-- Continuity as a function `ℝ≥0 → ℝ≥0`. -/
+/-- **Continuity of a Hausdorff dimension function.** Every Hausdorff dimension function
+$\psi : [0,\infty) \to [0,\infty)$ is continuous. -/
 theorem continuous (ψ : HausdorffDimensionFunction) : Continuous (ψ : ℝ≥0 → ℝ≥0) :=
   ψ.toContinuousOrderHom.continuous_toFun
 
-/-- Weak monotonicity inherited from `ContinuousOrderHom`. -/
+/-- **Monotonicity of a Hausdorff dimension function.** Every Hausdorff dimension function
+$\psi : [0,\infty) \to [0,\infty)$ is non-decreasing: if $r \le s$ then $\psi(r) \le \psi(s)$. -/
 theorem monotone (ψ : HausdorffDimensionFunction) : Monotone (ψ : ℝ≥0 → ℝ≥0) :=
   ψ.toContinuousOrderHom.monotone
 
-/-- Value at zero. -/
+/-- **A Hausdorff dimension function vanishes at zero.** Every Hausdorff dimension function
+$\psi$ satisfies $\psi(0) = 0$. -/
 @[simp]
 theorem map_zero (ψ : HausdorffDimensionFunction) : ψ (0 : ℝ≥0) = 0 :=
   ψ.map_zero'
 
-/-- Strict positivity at positive radii, preserving source codomain `(0,∞)`. -/
+/-- **A Hausdorff dimension function is positive at positive radii.** If $\psi$ is a Hausdorff
+dimension function and $r > 0$ is a real number, then $\psi(r) > 0$. -/
 theorem map_pos (ψ : HausdorffDimensionFunction) {r : ℝ≥0} (hr : 0 < r) : 0 < ψ r :=
   ψ.map_pos' hr
 
-/-- Vanishing exactly at zero: `ψ r = 0 ↔ r = 0`. -/
+/-- **A Hausdorff dimension function vanishes only at zero.** If $\psi$ is a Hausdorff dimension
+function and $r \ge 0$, then $\psi(r) = 0$ if and only if $r = 0$. -/
 theorem map_eq_zero_iff (ψ : HausdorffDimensionFunction) {r : ℝ≥0} : ψ r = 0 ↔ r = 0 := by
   constructor
   · intro h
@@ -83,7 +90,9 @@ theorem map_eq_zero_iff (ψ : HausdorffDimensionFunction) {r : ℝ≥0} : ψ r =
   · rintro rfl
     exact ψ.map_zero
 
-/-- Source limit `lim_{r→0} ψ r = 0`, realized as `Tendsto ψ (𝓝[>] 0) (𝓝 0)`. -/
+/-- **A Hausdorff dimension function tends to zero at zero.** Every Hausdorff dimension function
+$\psi$ satisfies $\psi(r) \to 0$ as $r \to 0^+$, that is, as $r$ tends to $0$ through positive
+values. -/
 theorem tendsto_zero (ψ : HausdorffDimensionFunction) :
     Tendsto (ψ : ℝ≥0 → ℝ≥0) (𝓝[>] (0 : ℝ≥0)) (𝓝 0) := by
   have h : Tendsto (ψ : ℝ≥0 → ℝ≥0) (𝓝 (0 : ℝ≥0)) (𝓝 (ψ (0 : ℝ≥0))) :=

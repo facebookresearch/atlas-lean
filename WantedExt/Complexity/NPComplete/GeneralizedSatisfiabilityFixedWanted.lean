@@ -21,7 +21,7 @@ doi:10.1145/800133.804350.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
@@ -33,7 +33,7 @@ public import WantedExt.Complexity.NPComplete.GeneralizedSatisfiabilityWanted
 
 namespace MetaMathlibExt.Complexity.NPComplete.GeneralizedSatisfiabilityFixed
 
-open Cslib.Logic.PL Matrix
+open Cslib.Logic.LegacyPL Matrix
 
 /-!
 # GENERALIZED SATISFIABILITY, FIXED NON-SCHAEFER RELATIONS is NP-complete
@@ -56,14 +56,13 @@ most 2 literals per clause, or (6) each `Rᵢ` is the "solution set" for some sy
 equations over `GF[2]`. This module states the NP-complete half: for every fixed `S` for
 which none of (1)-(6) holds, the problem is NP-complete.
 
-A relation is given as in GENERALIZED SATISFIABILITY, by its arity `k` and the list of its
-tuples (`true` for `T`). Its coordinates are the variables `0, ..., k - 1`: a CNF expression
-(CSLib's `Cslib.Logic.PL.CNF`, literals `(variable, polarity)`, polarity `false` for a negated
-literal) or a linear system is equivalent to the relation when it uses only these variables
-and its models are exactly the tuples of the relation. The instance carries the number `n` of
-variables and the collections `C₁, ..., Cₘ`; it is turned into a GENERALIZED SATISFIABILITY
-instance by pairing `Cᵢ` with `Rᵢ`, and the well-formedness and question of that module are
-reused unchanged.
+A relation is given as in GENERALIZED SATISFIABILITY, by its arity `k` and the list of its tuples
+(`true` for `T`). Its coordinates are the variables `0, ..., k - 1`: a CNF expression (ATLAS's CNF
+encoding `Cslib.Logic.LegacyPL.CNF`, literals `(variable, polarity)`, polarity `false` for a negated
+literal) or a linear system is equivalent to the relation when it uses only these variables and its
+models are exactly the tuples of the relation. The instance carries the number `n` of variables and
+the collections `C₁, ..., Cₘ`; it is turned into a GENERALIZED SATISFIABILITY instance by pairing
+`Cᵢ` with `Rᵢ`, and the well-formedness and question of that module are reused unchanged.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and

@@ -21,10 +21,11 @@ specification for its continuous extension to the p-adic integers.
 
 namespace MetaMathlibExt
 
-/-- The finite value interpolated by Morita's p-adic gamma function.
-
-For positive `n`, this is `(-1) ^ n` times the product of the positive integers below `n` that are
-not divisible by `p`. The same formula gives `1` at zero. -/
+/-- **Morita's p-adic gamma values at natural numbers.** For a prime $p$ and a natural number
+$n$, this is the $p$-adic integer $(-1)^n \prod_{0 < j < n,\ p \nmid j} j$: $(-1)^n$ times the
+product of the positive integers below $n$ that are not divisible by $p$. At $n = 0$ the product is
+empty and the value is $1$. These are the finite values that Morita's $p$-adic gamma function
+interpolates. -/
 noncomputable def moritaGammaNat (p n : ℕ) [Fact p.Prime] : PadicInt p :=
   (-1 : PadicInt p) ^ n *
     ∏ k ∈ (Finset.range n).filter (fun k => ¬p ∣ k), (k : PadicInt p)
@@ -34,7 +35,10 @@ theorem moritaGammaNat_zero (p : ℕ) [Fact p.Prime] :
     moritaGammaNat p 0 = 1 := by
   simp [moritaGammaNat]
 
-/-- A continuous, unit-valued extension of Morita's finite p-adic gamma values. -/
+/-- **Morita's p-adic gamma function.** For a prime $p$, a continuous function
+$\Gamma : \mathbb{Z}_p \to \mathbb{Z}_p$ is a Morita $p$-adic gamma function when $\Gamma(0) = 1$,
+$\Gamma(n)$ equals Morita's finite value $(-1)^n \prod_{0 < j < n,\ p \nmid j} j$ for every
+positive integer $n$, and $\Gamma(x)$ is a unit of $\mathbb{Z}_p$ for every $x \in \mathbb{Z}_p$. -/
 def IsMoritaPadicGamma (p : ℕ) [Fact p.Prime]
     (Γ : C(PadicInt p, PadicInt p)) : Prop :=
   Γ 0 = 1 ∧

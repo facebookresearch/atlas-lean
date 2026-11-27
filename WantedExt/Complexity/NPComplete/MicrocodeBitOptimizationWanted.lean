@@ -18,7 +18,7 @@ C-28 (1979), 316-319, doi:10.1109/TC.1979.1675353.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Nat.Log

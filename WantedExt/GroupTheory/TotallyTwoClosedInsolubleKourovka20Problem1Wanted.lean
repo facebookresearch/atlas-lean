@@ -39,31 +39,41 @@ finite sets implies it on arbitrary sets, as the resolving preprint notes). A no
 subgroup is a nontrivial nilpotent normal subgroup.
 -/
 
-/-- The action of `G` on `Ω` is `2`-closed: every permutation `σ` of `Ω` that preserves each
-`G`-orbit on ordered pairs (for all `α, β` some `g ∈ G` agrees with `σ` at `α` and at `β`) is
-induced by an element of `G`. -/
+/-- **2-closed actions.** An action of a group $G$ on a set $\Omega$ is $2$-closed when every
+permutation $\sigma$ of $\Omega$ that preserves each $G$-orbit on ordered pairs (that is, for all
+$\alpha, \beta \in \Omega$ some $g \in G$ satisfies $\sigma(\alpha) = g \alpha$ and
+$\sigma(\beta) = g \beta$) is induced by an element of $G$: there is $g \in G$ with
+$\sigma(\omega) = g \omega$ for all $\omega \in \Omega$. -/
 def IsTwoClosedAction (G Ω : Type) [Group G] [MulAction G Ω] : Prop :=
   ∀ σ : Equiv.Perm Ω, (∀ α β : Ω, ∃ g : G, σ α = g • α ∧ σ β = g • β) →
     ∃ g : G, ∀ ω : Ω, σ ω = g • ω
 
-/-- `G` is totally `2`-closed: in each faithful permutation representation of `G`, on any set
-`Ω`, `G` is the largest subgroup of `Sym(Ω)` preserving each of its orbits on `Ω²`. -/
+/-- **Totally 2-closed groups.** A group $G$ is totally $2$-closed when every faithful action of
+$G$ on a set $\Omega$ is $2$-closed; equivalently, in each faithful permutation representation of
+$G$ on a set $\Omega$, $G$ is the largest subgroup of $\mathrm{Sym}(\Omega)$ preserving each of
+its orbits on $\Omega^2$. -/
 def IsTotallyTwoClosed (G : Type) [Group G] : Prop :=
   ∀ (Ω : Type) [MulAction G Ω], FaithfulSMul G Ω → IsTwoClosedAction G Ω
 
-/-- Kourovka 20.1 (M. Arezoomand, M. A. Iranmanesh, C. E. Praeger, G. Tracey): there is a finite
-insoluble totally `2`-closed group with nontrivial Fitting subgroup (equivalently, with a
-nontrivial nilpotent normal subgroup). -/
+/-- **Kourovka Problem 20.1 (insoluble totally 2-closed groups).** The statement, asked by
+M. Arezoomand, M. A. Iranmanesh, C. E. Praeger and G. Tracey, that there exists a finite group $G$
+that is not soluble, is totally $2$-closed, and has a nontrivial nilpotent normal subgroup
+(equivalently, a nontrivial Fitting subgroup). -/
 def insolubleTotallyTwoClosedWithNontrivialFitting : Prop :=
   ∃ (G : Type) (_ : Group G), Finite G ∧ ¬ Group.IsSolvable G ∧ IsTotallyTwoClosed G ∧
     ∃ N : Subgroup G, N.Normal ∧ Group.IsNilpotent N ∧ N ≠ ⊥
 
 /--
-Resolved true: the Kourovka Notebook (21st issue) answers 20.1 "Yes, there are". Kinyon and Urban
-(an AI-generated solution confirmed by G. Tracey) prove that `J₁ × C₁₃` is totally `2`-closed
-(Section 3.34, Lemma 3.11), insoluble and has Fitting subgroup `C₁₃`; the Notebook also obtains `J₁
-× C_p` for primes `p ∈ {13, 17}` or `p > 19` from Theorem 1.1 of
+**A finite insoluble totally 2-closed group with nontrivial Fitting subgroup.** There exists a
+finite group $G$ that is not soluble, is totally $2$-closed, and has a nontrivial nilpotent normal
+subgroup (equivalently, a nontrivial Fitting subgroup).
+
+The Kourovka Notebook (21st issue) answers Problem 20.1 "Yes, there are". Kinyon and Urban (an
+AI-generated solution confirmed by G. Tracey) prove that $J_1 \times C_{13}$ is totally $2$-closed
+(Section 3.34, Lemma 3.11), insoluble and has Fitting subgroup $C_{13}$; the Notebook also obtains
+$J_1 \times C_p$ for primes $p \in \lbrace 13, 17 \rbrace$ or $p > 19$ from Theorem 1.1 of
 Arezoomand-Iranmanesh-Praeger-Tracey and Theorem 2 and Proposition 2 of Abdollahi-Arezoomand.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 20.1 (M. Arezoomand, M. A. Iranmanesh, C.
 E. Praeger, G. Tracey); resolution: M. Kinyon and J. Urban, Results on problems from the Kourovka

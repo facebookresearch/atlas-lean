@@ -236,7 +236,7 @@ private theorem run_cases (c : Cmd) {prog : List Instr}
         omega
   | «while» b body ihBody =>
       induction n using Nat.strong_induction_on generalizing pc before after stack s with
-      | h n ihLoop =>
+      | ind n ihLoop =>
           let bodyPC := pc + blen b + 1
           let endPC := bodyPC + codeLength body + 1
           let preBody := before ++ compileB b ++ [Instr.jumpIfZero endPC]

@@ -1,0 +1,3 @@
+# Free box measure of an all-open event equals its box mass
+
+Let $d, m \in \mathbb{N}$, $0 < p < 1$, and $t$ a finite set of unordered pairs of vertices of the box $\Lambda_m = \{-m, \dots, m\}^d$. Then the [free box measure](../finite-and-infinite-volume-fk-measures-on-d/free-finite-measure.md) $\phi^0_m$ at $(p, 2)$ of the event that all pairs of $t$ (as pairs of sites of $\mathbb{Z}^d$) are open equals $\phi_{\Lambda_m,p,2}[t]$, where $\phi_{G,p,2}$ is the [random-cluster probability](../../random-cluster-measures-on-finite-graphs/fk-prob.md) on $G$ at $q = 2$ and $\mu[t]$ denotes the [mass of the all-open event](med-multi-mass-prob.md) $\sum_\omega \mathbf{1}[\text{all pairs of } t \text{ open in } \omega]\, \mu(\omega)$.

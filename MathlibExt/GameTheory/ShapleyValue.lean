@@ -48,7 +48,9 @@ theorem.
 
 namespace MathlibExt.GameTheory.ShapleyValue
 
-/-- A cooperative TU-game: real-valued characteristic function normalized at `∅`. -/
+/-- **Cooperative game with transferable utility.** Given a set $N$ of players, a cooperative
+game on $N$ is a function $v$ that assigns to every coalition $S \subseteq N$ a real number
+$v(S)$, the worth of $S$, such that $v(\emptyset) = 0$. -/
 @[ext]
 structure CoopGame (Player : Type*) where
   /-- The characteristic function, giving the worth of each coalition. -/
@@ -112,21 +114,33 @@ end CoopGame
 
 variable {Player : Type*} [DecidableEq Player] [Fintype Player]
 
-/-- `i` is null/dummy in `v` if it never changes worth of a coalition not containing it. -/
+/-- **Null player.** Let $v$ be a cooperative game on a finite set $N$ of players. A player
+$i \in N$ is a null player of $v$ if $v(S \cup \{i\}) = v(S)$ for every coalition
+$S \subseteq N$ with $i \notin S$. -/
 def IsNullPlayer (v : CoopGame Player) (i : Player) : Prop :=
   ∀ S : Set Player, i ∉ S → v.charFun (insert i S) = v.charFun S
 
-/-- Efficiency: total allocated equals worth of grand coalition. -/
+/-- **Efficient value.** Let $N$ be a finite set of players and $\varphi$ an $\mathbb{R}$-linear
+map from cooperative games on $N$ (added and scaled pointwise) to payoff vectors in
+$\mathbb{R}^N$. Then $\varphi$ is efficient if for every game $v$ the payoffs add up to the worth
+of the grand coalition: $\sum_{i \in N} \varphi(v)_i = v(N)$. -/
 def IsEfficient (φ : CoopGame Player →ₗ[ℝ] (Player → ℝ)) : Prop :=
   ∀ v : CoopGame Player, ∑ i : Player, φ v i = v.charFun Set.univ
 
-/-- Symmetry under permutations preserving the game via `σ '' S`. -/
+/-- **Symmetric value.** Let $N$ be a finite set of players and $\varphi$ an $\mathbb{R}$-linear
+map from cooperative games on $N$ (added and scaled pointwise) to payoff vectors in
+$\mathbb{R}^N$. Then $\varphi$ is symmetric if for every game $v$ and every permutation $\sigma$
+of $N$ with $v(\sigma(S)) = v(S)$ for all coalitions $S \subseteq N$, every player $i$ satisfies
+$\varphi(v)_{\sigma(i)} = \varphi(v)_i$. -/
 def IsSymmetric (φ : CoopGame Player →ₗ[ℝ] (Player → ℝ)) : Prop :=
   ∀ (σ : Equiv.Perm Player) (v : CoopGame Player),
     (∀ S : Set Player, v.charFun (σ '' S) = v.charFun S) →
     ∀ i : Player, φ v (σ i) = φ v i
 
-/-- Null/dummy player axiom: a null player receives zero. -/
+/-- **Null player axiom.** Let $N$ be a finite set of players and $\varphi$ an $\mathbb{R}$-linear
+map from cooperative games on $N$ (added and scaled pointwise) to payoff vectors in
+$\mathbb{R}^N$. Then $\varphi$ satisfies the null player axiom if $\varphi(v)_i = 0$ for every
+game $v$ and every null player $i$ of $v$. -/
 def SatisfiesNullPlayerAxiom (φ : CoopGame Player →ₗ[ℝ] (Player → ℝ)) : Prop :=
   ∀ (v : CoopGame Player) (i : Player), IsNullPlayer v i → φ v i = 0
 
@@ -778,6 +792,18 @@ private theorem shapley_symmetric : IsSymmetric
     rw [ite_eq_right hσnmem, ite_eq_right hi]
 
 omit [DecidableEq Player] in
+/-- **Existence and uniqueness of the Shapley value.** On a fixed finite set of players there is
+exactly one linear map `φ` from TU games (`CoopGame`) to payoff vectors that is efficient
+(`IsEfficient`), symmetric (`IsSymmetric`) and gives nothing to null players
+(`SatisfiesNullPlayerAxiom`). The map constructed in the proof assigns to player `i` the sum,
+over the coalitions `T` containing `i`, of `c_T(v) / |T|`, where the `c_T(v)` are the
+coefficients of `v` in the basis of unanimity games (Möbius inversion).
+
+This is an adapted, fixed-player-set form of Shapley's theorem (L. S. Shapley, "A value for
+n-person games", Contributions to the Theory of Games II, Ann. of Math. Stud. 28, Princeton
+Univ. Press, 1953, 307–317), with linearity in place of additivity and the null-player axiom
+made explicit; see the source-fidelity note at the top of this file. Axioms as summarised in
+Encyclopedia of Mathematics, "Shapley value" (secondary source). -/
 public theorem shapley_characterization : ∃! φ : CoopGame Player →ₗ[ℝ] (Player → ℝ),
     IsEfficient φ ∧ IsSymmetric φ ∧ SatisfiesNullPlayerAxiom φ := by
   refine ExistsUnique.intro shapleyLM

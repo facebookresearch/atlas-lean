@@ -57,14 +57,21 @@ variable {α : Type*} [DecidableEq α]
 
 /-! ## The LRU policy -/
 
-/-- One LRU step with capacity `k`: the requested page moves to the front (most recent first),
-and the cache is cut to `k` pages, evicting the least recently used one. -/
+/-- **One LRU step.** For a capacity $k$, a cache $c$ (a list of pages, most recently used first)
+and a requested page $p$, the LRU step removes the first occurrence of $p$ from $c$ (if any), puts
+$p$ at the front, and keeps the first $k$ pages of the result. On a miss with a cache of exactly
+$k \ge 1$ pages, this evicts the last page, the least recently used one. -/
 def lruStep (k : ℕ) (c : List α) (p : α) : List α := (p :: c.erase p).take k
 
-/-- The cache after serving a request sequence. -/
+/-- **Cache after LRU serves a request sequence.** For a capacity $k$, a cache $c$ (a list of
+pages, most recently used first) and a request sequence $\sigma$, this is the cache obtained from
+$c$ by applying one LRU step with capacity $k$ for each request of $\sigma$, in order. -/
 def lruCache (k : ℕ) (c : List α) (σ : List α) : List α := σ.foldl (lruStep k) c
 
-/-- The number of misses (faults) of LRU on a request sequence. -/
+/-- **Number of LRU misses.** For a capacity $k$, a cache $c$ and a request sequence $\sigma$, this
+is the number of requests of $\sigma$ that are not in the current cache when they are served,
+where the cache starts at $c$ and after each request is updated by one LRU step with capacity
+$k$. -/
 def lruMisses (k : ℕ) : List α → List α → ℕ
   | _, [] => 0
   | c, p :: σ => (if p ∈ c then 0 else 1) + lruMisses k (lruStep k c p) σ
@@ -112,8 +119,10 @@ private theorem take_erase_of_not_mem {p : α} : ∀ {l : List α} {n : ℕ}, p 
       rw [List.erase_cons_tail hb, List.take_succ_cons, List.take_succ_cons,
         take_erase_of_not_mem hp]
 
-/-- **The recency invariant**: if the `|S|` most recent pages of the cache are `S` (most recent
-first), serving `p` makes them `p :: S.erase p` when `p ∈ S`. -/
+/-- **The recency invariant for a repeated page.** Let $k$ be a capacity, $c$ a cache (most
+recently used first) and $S$ a list of at most $k$ pages equal to the first $|S|$ pages of $c$.
+If $p \in S$, then after one LRU step with capacity $k$ serving $p$, the first $|S|$ pages of the
+cache are $p$ followed by $S$ with the first occurrence of $p$ removed. -/
 theorem lruStep_take_of_mem {k : ℕ} {c S : List α} {p : α} (hS : c.take S.length = S)
     (hk : S.length ≤ k) (hp : p ∈ S) :
     (lruStep k c p).take S.length = p :: S.erase p := by
@@ -125,8 +134,10 @@ theorem lruStep_take_of_mem {k : ℕ} {c S : List α} {p : α} (hS : c.take S.le
   rw [hn, Nat.add_sub_cancel] at this
   rw [this, ← hn, hS]
 
-/-- **The recency invariant**, new page: serving `p ∉ S` makes the `|S| + 1` most recent pages
-`p :: S`. -/
+/-- **The recency invariant for a new page.** Let $k$ be a capacity, $c$ a cache (most recently
+used first) and $S$ a list with $|S| + 1 \le k$ equal to the first $|S|$ pages of $c$. If
+$p \notin S$, then after one LRU step with capacity $k$ serving $p$, the first $|S| + 1$ pages of
+the cache are $p$ followed by $S$. -/
 theorem lruStep_take_of_not_mem {k : ℕ} {c S : List α} {p : α} (hS : c.take S.length = S)
     (hk : S.length + 1 ≤ k) (hp : p ∉ S) :
     (lruStep k c p).take (S.length + 1) = p :: S := by
@@ -136,8 +147,16 @@ theorem lruStep_take_of_not_mem {k : ℕ} {c S : List α} {p : α} (hS : c.take 
 
 /-! ## Phases -/
 
-/-- Split off a phase: the longest prefix whose distinct pages, together with `seen` (the pages
-already in the phase, most recent first), number at most `k`. -/
+/-- **Splitting off a phase.** Given a capacity $k$ and a list $s$ of pages (the pages already in
+the current phase, most recent first), a request sequence $\sigma$ is split into a phase and a
+remainder as follows. The empty sequence splits into two empty parts. For a sequence $p$
+followed by $\sigma'$: if $p$ is in $s$, then $p$ joins the phase and $\sigma'$ is split with $s$
+replaced by $p$ followed by $s$ with its first occurrence of $p$ removed; if $p$ is not in $s$
+and $s$ has fewer than $k$ entries, then $p$ joins the phase and $\sigma'$ is split with $p$
+added at the front of $s$; otherwise the phase is empty and the remainder is the whole sequence.
+
+When $s$ has no repetitions and at most $k$ pages, the phase is the longest prefix of $\sigma$
+whose distinct pages, together with those of $s$, number at most $k$. -/
 def phaseSplit (k : ℕ) : List α → List α → List α × List α
   | _, [] => ([], [])
   | seen, p :: rest =>
@@ -159,7 +178,12 @@ theorem phaseSplit_append (k : ℕ) : ∀ (seen σ : List α),
       · simp only [List.cons_append, phaseSplit_append k _ rest]
       · rfl
 
-/-- **LRU misses at most `k - |seen|` times in the rest of a phase.** -/
+/-- **LRU misses at most $k - |S|$ times in the rest of a phase.** Let $k$ be a capacity, $c$ a
+cache (most recently used first) and $S$ a duplicate-free list of at most $k$ pages equal to the
+first $|S|$ pages of $c$. For every request sequence $\sigma$, let $\pi$ be the phase that the
+phase split cuts from $\sigma$ with $S$ as the pages already in the phase: the longest prefix of
+$\sigma$ whose distinct pages, together with those of $S$, number at most $k$. Then the number of
+LRU misses with capacity $k$ serving $\pi$ from $c$, plus $|S|$, is at most $k$. -/
 theorem lruMisses_phase (k : ℕ) : ∀ (seen c σ : List α), c.take seen.length = seen →
     seen.Nodup → seen.length ≤ k →
     lruMisses k c (phaseSplit k seen σ).1 + seen.length ≤ k
@@ -196,8 +220,11 @@ theorem phaseSplit_ne_nil {k : ℕ} (hk : 1 ≤ k) {σ : List α} (hσ : σ ≠ 
   simp only [phaseSplit, List.not_mem_nil, ↓reduceIte, List.length_nil,
     show 0 < k by omega, ne_eq, reduceCtorEq, not_false_eq_true]
 
-/-- **A phase ends only on a `(k + 1)`-st distinct page**: if a phase is followed by `q`, then
-`q` and `k` distinct pages of the phase (or of `seen`) are pairwise distinct. -/
+/-- **A phase ends only on a $(k + 1)$-st distinct page.** Let $k$ be a capacity, let $s$ be a
+list of pages without repetitions with at most $k$ pages (the pages already in the current
+phase), and let $\sigma$ be a request sequence. If the remainder left after splitting off a phase
+from $\sigma$ given $s$ starts with a page $q$, then there is a list $S$ of exactly $k$ pairwise
+distinct pages, none equal to $q$, each of which lies in $s$ or in that phase. -/
 theorem phaseSplit_snd_cons (k : ℕ) : ∀ (seen σ : List α) (q : α) (rest : List α),
     seen.Nodup → seen.length ≤ k → (phaseSplit k seen σ).2 = q :: rest →
     ∃ S : List α, S.Nodup ∧ S.length = k ∧ q ∉ S ∧
@@ -234,14 +261,19 @@ theorem phaseSplit_snd_cons (k : ℕ) : ∀ (seen σ : List α) (q : α) (rest :
 
 /-! ## LRU as a legal cache manager -/
 
-/-- The event LRU emits when serving `p` from cache `c`: a hit, a miss without eviction (spare
-room, or no room at all), or a miss evicting the least recently used page, the last one. -/
+/-- **The event of an LRU step.** For a capacity $k$, a cache $c$ (a list of pages, most recently
+used first) and a requested page $p$, the LRU event is a hit on $p$ if $p \in c$. Otherwise it is
+a miss on $p$ that evicts the last page of $c$ (the least recently used one) if $c$ is nonempty,
+$k > 0$ and $c$ has at least $k$ pages, and a miss on $p$ without eviction in all other cases. -/
 def lruEvent (k : ℕ) (c : List α) (p : α) : CacheEvent α :=
   if p ∈ c then .hit p
   else if h : c ≠ [] ∧ k ≤ c.length ∧ 0 < k then .miss p (some (c.getLast h.1))
   else .miss p none
 
-/-- The events LRU emits on a request sequence. -/
+/-- **The LRU trace.** Given a capacity $k$, a cache $c$ and a request sequence $\sigma$, the
+events LRU emits on $\sigma$ from $c$: nothing on the empty sequence, and on a sequence $p$
+followed by $\sigma'$, the event LRU emits when serving $p$ from $c$, followed by the events LRU
+emits on $\sigma'$ from the cache after one LRU step with capacity $k$ serving $p$ from $c$. -/
 def lruTrace (k : ℕ) : List α → List α → List (CacheEvent α)
   | _, [] => []
   | c, p :: σ => lruEvent k c p :: lruTrace k (lruStep k c p) σ
@@ -260,7 +292,10 @@ private theorem erase_getLast {c : List α} (hnd : c.Nodup) (h : c ≠ []) :
   have hal : a ∉ l := fun hm => (List.nodup_append.1 hnd).2.2 _ hm _ (List.mem_singleton_self a) rfl
   rw [List.erase_append_right _ hal, List.erase_cons_head, List.append_nil]
 
-/-- **Each LRU step is a legal transition** of the cache system. -/
+/-- **Each LRU step is a legal transition.** Let $k$ be a capacity and $c$ a duplicate-free cache
+with at most $k$ pages. For every page $p$, the cache system with capacity $k$ has a transition
+from $c$, labelled by the LRU event for $p$ at $c$, to the cache produced by one LRU step with
+capacity $k$ serving $p$. -/
 theorem lru_tr {k : ℕ} {c : List α} (p : α) (hnd : c.Nodup) (hck : c.length ≤ k) :
     (cacheLTS k).Tr c (lruEvent k c p) (lruStep k c p) := by
   unfold lruEvent lruStep
@@ -295,8 +330,12 @@ theorem lru_tr {k : ℕ} {c : List α} (p : α) (hnd : c.Nodup) (hck : c.length 
         refine ⟨hlt, ?_⟩
         rw [List.take_of_length_le (by simp only [List.length_cons]; omega)]
 
-/-- **LRU is a legal cache manager**: its events form a trace of the cache system, serve exactly
-the requests, and miss exactly `lruMisses` times. -/
+/-- **LRU is a legal cache manager.** Let $k$ be a capacity, $c$ a cache given as a list of pages
+without repetitions with at most $k$ pages, and $\sigma$ a request sequence. Then the sequence of
+events that LRU emits when serving $\sigma$ from $c$ is a run of the cache system with capacity
+$k$ from $c$ to the cache LRU holds after serving $\sigma$; the pages requested by these events are
+exactly $\sigma$, in order; and the number of misses among these events equals the number of
+misses of LRU on $\sigma$ from $c$. -/
 theorem lruTrace_spec {k : ℕ} : ∀ (c σ : List α), c.Nodup → c.length ≤ k →
     (cacheLTS k).MTr c (lruTrace k c σ) (lruCache k c σ) ∧
       (lruTrace k c σ).map CacheEvent.request = σ ∧
@@ -422,9 +461,13 @@ private theorem lruMisses_le_of_list {k : ℕ} (hk : 1 ≤ k) (c : List α) {c0 
     have := Nat.mul_le_mul_left k this
     omega
 
-/-- **LRU is `k`-competitive** (Sleator and Tarjan): from any legal cache `c`, LRU with capacity
-`k` serves every request sequence with a legal trace (`lruTrace_spec`) that misses at most `k`
-times as often as any legal trace with the same capacity from any legal cache, plus `k`. -/
+/-- **LRU is $k$-competitive.** Let $k \ge 1$ and let $c$ be a duplicate-free cache with at most
+$k$ pages. Let $e$ be a legal trace of the cache system with capacity $k$ that starts from a
+duplicate-free cache with at most $k$ pages, and let $m$ be its number of misses. Then the trace
+that LRU with capacity $k$ emits when serving, from $c$, the requests of $e$ in order has at most
+$k m + k$ misses.
+
+This is the bound of Sleator and Tarjan for an online and an offline cache of the same size. -/
 theorem lruMisses_le {k : ℕ} (hk : 1 ≤ k) {c : List α} (hc : c.Nodup) (hcl : c.length ≤ k)
     {c0 cf : List α} {es : List (CacheEvent α)} (hes : (cacheLTS k).MTr c0 es cf)
     (hnd : c0.Nodup) (hck : c0.length ≤ k) :
@@ -432,8 +475,14 @@ theorem lruMisses_le {k : ℕ} (hk : 1 ≤ k) {c : List α} (hc : c.Nodup) (hcl 
   rw [(lruTrace_spec c _ hc hcl).2.2]
   exact lruMisses_le_of_list hk c hes hnd hck
 
-/-- **LRU is `k`-competitive against the offline optimum**: furthest-in-future
-(`furthestInFuture_misses_le`) is optimal, and LRU misses at most `k` times as often, plus `k`. -/
+/-- **LRU is $k$-competitive against the offline optimum.** Let $k \ge 1$, and let $c$ and $c_0$
+be duplicate-free caches with at most $k$ pages each. For every request sequence $\sigma$, the
+trace that LRU with capacity $k$ emits when serving $\sigma$ from $c$ has at most $k m + k$
+misses, where $m$ is the number of misses of the furthest-in-future manager with capacity $k$
+serving $\sigma$ from $c_0$.
+
+Furthest-in-future misses no more often than any legal trace serving the same requests from the
+same cache, so it is the offline optimum. -/
 theorem lruMisses_le_furthestInFuture {k : ℕ} (hk : 1 ≤ k) {c : List α} (hc : c.Nodup)
     (hcl : c.length ≤ k) (requests : List α) {c0 : List α} (hnd : c0.Nodup)
     (hck : c0.length ≤ k) :

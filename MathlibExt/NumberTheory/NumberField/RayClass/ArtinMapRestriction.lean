@@ -55,8 +55,12 @@ variable {K L M : Type*} [Field K] [Field L] [Field M]
   [Algebra K L] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
   [IsAbelianGalois K L] [IsAbelianGalois K M]
 
-/-- Restriction of the `M`-Artin map at a prime generator agrees with the
-`L`-Artin map at the same generator. -/
+/-- **Restriction of the Artin map at a prime.** Let $K \subseteq L \subseteq M$ be a tower of
+number fields with $L/K$ and $M/K$ abelian Galois, and let $\mathfrak m$ be a modulus of $K$ with
+finite part $\mathfrak m_0$ such that every prime of $\mathcal O_K$ not dividing $\mathfrak m_0$
+is unramified in $L$ and in $M$. For every prime $\mathfrak p$ of $\mathcal O_K$ not dividing
+$\mathfrak m_0$, restricting to $L$ the image of $\mathfrak p$ under the Artin map of $M/K$ gives
+the image of $\mathfrak p$ under the Artin map of $L/K$. -/
 theorem restrictNormalHom_artinMap_primeCoprimeUnit
     (m : Modulus K) (hL : m.IsUnramifiedOutside L)
     (hM : m.IsUnramifiedOutside M)
@@ -70,8 +74,13 @@ theorem restrictNormalHom_artinMap_primeCoprimeUnit
   exact m.restrictNormalHom_frobeniusAtCoprimePrime
     (L := L) (M := M) hL hM ⟨v, hvm⟩
 
-/-- Restriction of the `M`-Artin map agrees with the `L`-Artin map as bundled
-homomorphisms. -/
+/-- **The Artin map commutes with restriction.** Let $K \subseteq L \subseteq M$ be a tower of
+number fields with $L/K$ and $M/K$ abelian Galois, and let $\mathfrak m$ be a modulus of $K$
+with finite part $\mathfrak m_0$ such that every prime of $\mathcal O_K$ not dividing
+$\mathfrak m_0$ is unramified in $L$ and in $M$. Then the Artin map of $M/K$ followed by
+restriction $\mathrm{Gal}(M/K) \to \mathrm{Gal}(L/K)$ equals the Artin map of $L/K$, as
+homomorphisms from the group of fractional ideals of $K$ coprime to $\mathfrak m_0$ to
+$\mathrm{Gal}(L/K)$. -/
 theorem restrictNormalHom_comp_artinMap
     (m : Modulus K) (hL : m.IsUnramifiedOutside L)
     (hM : m.IsUnramifiedOutside M) :

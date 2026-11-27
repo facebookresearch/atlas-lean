@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.Dynamics.IntegralFeedback
+public import MathlibExt.ControlTheory.StateSpace.SISO
 public import MathlibExt.ControlTheory.StateSpace.Coefficients
 
 /-!

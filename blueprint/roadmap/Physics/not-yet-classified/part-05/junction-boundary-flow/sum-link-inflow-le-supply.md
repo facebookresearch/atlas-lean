@@ -1,0 +1,3 @@
+# Receiving supply bound at a junction
+
+Consider a network with links $e$ from tail node to head node, finitely many links and commodities, turning flows $q_c(e, e')$ of commodity $c$ from link $e$ to link $e'$ with $q_c(e, e') = 0$ whenever $e$ does not end where $e'$ starts, and for each link free-flow speed $v_f$, wave speed $w$, jam density $k_j$ and first-cell density $k$. Suppose that for every link $e'$ the turning flows into $e'$ from links ending at its tail, summed over commodities, are at most the receiving supply $\min\bigl(w(k_j - k), v_f w k_j/(v_f + w)\bigr)$ of the first cell of $e'$. Then for every link $e'$, the total upstream boundary flow $\sum_c \sum_e q_c(e, e')$ into $e'$ is at most that receiving supply.

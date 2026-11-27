@@ -9,8 +9,13 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Theorems/Thm_Algebra_Smooth_isDomain_and_isIntegrallyClosed_of_isLocalization_atPrime.lean` and
-`P2M/Sol/S_Algebra_Smooth_isDomain_and_isIntegrallyClosed_of_isLocalization_atPrime.lean`
+`Theorems/Thm_Algebra_Smooth_isDomain_and_isIntegrallyClosed_of_isLocalization_atPrime.lean`,
+`P2M/Sol/S_Algebra_Smooth_isDomain_and_isIntegrallyClosed_of_isLocalization_atPrime.lean`,
+`Theorems/Thm_Algebra_Smooth_isDomain_and_isIntegrallyClosed_of_isIntegrallyClosed_
+of_isLocalization_atPrime.lean`
+and
+`P2M/Sol/S_Algebra_Smooth_isDomain_and_isIntegrallyClosed_of_isIntegrallyClosed_
+of_isLocalization_atPrime.lean`
 in https://github.com/anthropics/fermats-last-theorem
 at commit 6e837e75355538c7f80bab5b956861e86c4eacc2:
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
@@ -43,10 +48,20 @@ and using an étale presentation over a polynomial ring.
 
 universe u
 
-/-- The localization of a smooth algebra at a prime is a domain and
-integrally closed. -/
-theorem Algebra.Smooth.isDomain_and_isIntegrallyClosed_of_isLocalization_atPrime
-    (R : Type u) [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R]
+private theorem isIntegrallyClosed_mvPolynomial_fin (R : Type u) [CommRing R]
+    [IsDomain R] [IsIntegrallyClosed R] :
+    ∀ n : ℕ, IsIntegrallyClosed (MvPolynomial (Fin n) R)
+  | 0 => IsIntegrallyClosed.of_equiv (MvPolynomial.isEmptyAlgEquiv R (Fin 0)).symm.toRingEquiv
+  | n + 1 => by
+      have := isIntegrallyClosed_mvPolynomial_fin R n
+      exact IsIntegrallyClosed.of_equiv (MvPolynomial.finSuccEquiv R n).symm.toRingEquiv
+
+namespace Algebra.Smooth
+
+/-- The localization of a smooth algebra over an integrally closed domain at
+a prime is a domain and integrally closed. -/
+theorem isDomain_and_isIntegrallyClosed_of_isIntegrallyClosed_of_isLocalization_atPrime
+    (R : Type u) [CommRing R] [IsDomain R] [IsIntegrallyClosed R]
     (S : Type u) [CommRing S] [Algebra R S] [Algebra.Smooth R S]
     (p : Ideal S) [p.IsPrime] (Sₚ : Type u) [CommRing Sₚ] [Algebra S Sₚ]
     [IsLocalization.AtPrime Sₚ p] :
@@ -101,5 +116,20 @@ theorem Algebra.Smooth.isDomain_and_isIntegrallyClosed_of_isLocalization_atPrime
         · exact absurd (show (m : S) ∈ p by rw [← hcomap]; exact h) hm
       exact ⟨algebraMap S Sf s, ⟨s, hs, rfl⟩, algebraMap S Sf m,
         (IsLocalization.mk'_spec Sf s m).symm⟩
+  have : IsIntegrallyClosed (MvPolynomial (Fin Pr.dimension) R) :=
+    isIntegrallyClosed_mvPolynomial_fin R Pr.dimension
   exact Algebra.Etale.isDomain_and_isIntegrallyClosed_of_isLocalization_atPrime
     (MvPolynomial (Fin Pr.dimension) R) Sf q Sₚ
+
+end Algebra.Smooth
+
+/-- The localization of a smooth algebra at a prime is a domain and
+integrally closed. -/
+theorem Algebra.Smooth.isDomain_and_isIntegrallyClosed_of_isLocalization_atPrime
+    (R : Type u) [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R]
+    (S : Type u) [CommRing S] [Algebra R S] [Algebra.Smooth R S]
+    (p : Ideal S) [p.IsPrime] (Sₚ : Type u) [CommRing Sₚ] [Algebra S Sₚ]
+    [IsLocalization.AtPrime Sₚ p] :
+    IsDomain Sₚ ∧ IsIntegrallyClosed Sₚ :=
+  Algebra.Smooth.isDomain_and_isIntegrallyClosed_of_isIntegrallyClosed_of_isLocalization_atPrime
+    R S p Sₚ

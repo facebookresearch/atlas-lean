@@ -20,7 +20,7 @@ NP-complete", SIAM Journal on Computing 5 (1976), 704-714, doi:10.1137/0205049.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted

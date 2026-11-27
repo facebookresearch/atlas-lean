@@ -35,6 +35,8 @@ face has degree exactly two.
 - `faceBoundaryGraph_degree_eq_two_of_connected_complement` : every contour face has degree two.
 - `phb_planarBoundary_isCycles_of_connected_complement` : the contour is a disjoint union of
   cycles, here a single one.
+- `exists_isCycle_faceBoundaryGraph_of_connected_complement` : the contour is traced by a single
+  simple cycle, based at any of its faces.
 
 ## iii. Table of contents
 
@@ -409,6 +411,60 @@ lemma phb_planarBoundary_isCycles_of_connected_complement
     _ = (faceBoundaryGraph K).degree v.val := hdeg
     _ = 2 := faceBoundaryGraph_degree_eq_two_of_connected_complement
       K hK hx hy hin hout v.property
+
+/-- A set of vertices closed under adjacency contains the end of every walk that starts in it. -/
+private lemma phb_mem_of_walk {V : Type*} {G : SimpleGraph V} {S : Set V}
+    (hS : ∀ v w, v ∈ S → G.Adj v w → w ∈ S) : ∀ {x y : V}, G.Walk x y → x ∈ S → y ∈ S
+  | _, _, .nil, hx => hx
+  | _, _, .cons h p, hx => phb_mem_of_walk hS p (hS _ _ hx h)
+
+/-- **Contour of a hole-free set as a single simple cycle.** Let `K ⊆ ℤ²` be finite, with a site in
+`K` and a site outside it, such that any two sites of `K`, and any two sites outside `K`, are joined
+in the lattice with the bonds between `K` and its complement removed. Then through every face of
+the face-boundary graph of `K` that lies on one of its edges there is a simple cycle of that graph
+passing through all of its edges. -/
+lemma exists_isCycle_faceBoundaryGraph_of_connected_complement
+    (K : Set (Site 2)) (hK : K.Finite) {x y : Site 2} (hx : x ∈ K) (hy : y ∉ K)
+    (hin : ∀ a b : Site 2, a ∈ K → b ∈ K → (latticeMinusBarrier K).Reachable a b)
+    (hout : ∀ a b : Site 2, a ∉ K → b ∉ K → (latticeMinusBarrier K).Reachable a b)
+    {f₀ : Site 2} (hf₀ : f₀ ∈ (faceBoundaryGraph K).support) :
+    ∃ c : (faceBoundaryGraph K).Walk f₀ f₀,
+      c.IsCycle ∧ ∀ e ∈ (faceBoundaryGraph K).edgeSet, e ∈ c.edges := by
+  classical
+  set T := phb_boundarySupport K hK
+  have hsupp : (faceBoundaryGraph K).support ⊆ (T : Set (Site 2)) := fun f hf => by
+    simpa [T] using hf
+  have hconn : FaceBoundaryConnected K T :=
+    faceBoundaryConnected_of_connected_complement K hK hx hy hin hout
+  -- An Euler circuit of the contour, based at `f₀`.
+  obtain ⟨c, htrail, hcov⟩ := faceBoundaryGraph_single_dualCircuit hsupp hconn (hsupp hf₀)
+  have hne : c ≠ .nil := by
+    obtain ⟨g, hg⟩ := hf₀
+    intro h
+    have hmem := hcov s(f₀, g) hg
+    rw [h] at hmem
+    simp at hmem
+  -- Its cycle bypass is a simple cycle.
+  have hcyc := htrail.isCycle_cycleBypass hne
+  set c' := c.cycleBypass
+  -- Every face of the contour has two neighbours.
+  have hcycles : (faceBoundaryGraph K).IsCycles := by
+    intro v hv
+    rw [Set.ncard_eq_toFinset_card']
+    exact faceBoundaryGraph_degree_eq_two_of_connected_complement K hK hx hy hin hout hv
+  -- So the cycle bypass meets every face of the connected contour.
+  have hverts : ∀ f ∈ (faceBoundaryGraph K).support, f ∈ c'.toSubgraph.verts := by
+    intro f hf
+    obtain ⟨p⟩ := (hconn.preconnected ⟨f₀, hsupp hf₀⟩ ⟨f, hsupp hf⟩).map
+      (SimpleGraph.Embedding.induce (T : Set (Site 2))).toHom
+    refine phb_mem_of_walk (fun v w hv hvw => ?_) p c'.start_mem_verts_toSubgraph
+    exact ((hcyc.adj_toSubgraph_iff_of_isCycles hcycles hv w).mpr hvw).snd_mem
+  refine ⟨c', hcyc, fun e he => ?_⟩
+  induction e using Sym2.ind with
+  | _ a b =>
+    have hadj := (hcyc.adj_toSubgraph_iff_of_isCycles hcycles (hverts a ⟨b, he⟩) b).mpr he
+    rw [← Walk.mem_edges_toSubgraph, Subgraph.mem_edgeSet]
+    exact hadj
 
 end Lattice
 

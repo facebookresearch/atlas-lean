@@ -58,17 +58,29 @@ open Manifold Complex Real
 
 open scoped ContDiff
 
-/-- A rectangle `R` in the complex plane with opposite corners `z` and `w` and rotated by an angle
-`θ`. -/
+/-- **Rotated rectangle with given opposite corners.** For $z, w \in \mathbb{C}$ and an angle
+$\theta$, $R(z, w, \theta)$ is the list of four points $z e^{i\theta}$,
+$(\operatorname{Re} w + i \operatorname{Im} z) e^{i\theta}$, $w e^{i\theta}$,
+$(\operatorname{Re} z + i \operatorname{Im} w) e^{i\theta}$: the vertices, in order, of the
+axis-parallel rectangle with opposite corners $z$ and $w$, rotated about the origin by $\theta$.
+The rectangle is degenerate when $z$ and $w$ have the same real part or the same imaginary
+part. -/
 noncomputable def R (z w : ℂ) (θ : Angle) : Fin 4 → ℂ :=
   ![z * θ.toCircle, (w.re + z.im * I) * θ.toCircle, w * θ.toCircle, (z.re + w.im * I) * θ.toCircle]
 
 /--
-Statement of Theorem:
+**Rectangular peg theorem (Greene–Lobb).** Let $\gamma : S^1 \to \mathbb{C}$ be a $C^\infty$
+embedding of the unit circle (a smooth Jordan curve in the plane). For $z, w \in \mathbb{C}$ and
+an angle $\theta$, write $R(z, w, \theta)$ for the list of the four points $z e^{i\theta}$,
+$(\operatorname{Re} w + i \operatorname{Im} z) e^{i\theta}$, $w e^{i\theta}$,
+$(\operatorname{Re} z + i \operatorname{Im} w) e^{i\theta}$, in this order: the vertices of the
+(possibly degenerate) axis-parallel rectangle with opposite corners $z$ and $w$, rotated about
+the origin by $\theta$. Then for all $z$, $w$, $\theta$ there exist $z'$, $w'$, $\theta'$ such
+that $R(z, w, \theta)$ is similar to $R(z', w', \theta')$, meaning that for some real $r > 0$
+the distance between the $i$-th and $j$-th vertices of $R(z, w, \theta)$ is $r$ times the
+distance between the $i$-th and $j$-th vertices of $R(z', w', \theta')$ for all $i, j$, and all
+four vertices of $R(z', w', \theta')$ lie on $\gamma$.
 
-For every smooth Jordan curve `γ` and rectangle `R` in the Euclidean plane,
-there exists a rectangle similar to `R` whose vertices lie on `γ`.
-Note: The paper models the Euclidean plane as the complex plane.
 Source: J. E. Greene and A. Lobb, `The rectangular peg problem`, Annals of Math, 194 (2) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-2-RectangularPegProblem.lean Via leanprover/lean-eval@38361be, problem `annals_rectangular_peg_problem`.
 -/
 public theorem_wanted theorem_1 (γ : Circle → ℂ) (z w : ℂ) (θ : Real.Angle)

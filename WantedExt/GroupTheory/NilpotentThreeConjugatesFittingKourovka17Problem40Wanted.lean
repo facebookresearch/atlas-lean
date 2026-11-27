@@ -39,21 +39,26 @@ the largest nilpotent normal subgroup). -/
 def fittingSubgroup (G : Type*) [Group G] : Subgroup G :=
   ⨆ (N : Subgroup G) (_ : N.Normal) (_ : Group.IsNilpotent N), N
 
-/-- Kourovka 17.40 (E. P. Vdovin): for every nilpotent subgroup `N` of a finite group `G` there are
-`x, y ∈ G` with `N ∩ N^x ∩ N^y ≤ F(G)`. -/
+/-- **Kourovka Problem 17.40.** The assertion that for every finite group $G$ and every nilpotent
+subgroup $N$ of $G$ there are $x, y \in G$ with $N \cap x N x^{-1} \cap y N y^{-1} \le F(G)$, where
+$F(G)$ is the Fitting subgroup of $G$. -/
 def nilpotentThreeConjugatesInFitting : Prop :=
   ∀ (G : Type) [Group G] [Finite G] (N : Subgroup G), Group.IsNilpotent N →
     ∃ x y : G, N ⊓ N.map (MulAut.conj x).toMonoidHom ⊓ N.map (MulAut.conj y).toMonoidHom ≤
       fittingSubgroup G
 
 /--
-Resolved true: the Kourovka Archive answers 17.40 "Yes, such elements always exist, mod CFSG",
-citing Zenkov (2021): for every nilpotent subgroup `N` of a finite group `G` there are `x, y ∈ G`
-with `N ∩ N^x ∩ N^y ≤ F(G)`. The proof uses the classification of finite simple groups. Source: E.
-I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
-issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 17.40 (E. P. Vdovin);
-resolution: V. I. Zenkov, Siberian Math. J. 62 (2021), 621-637, Kourovka Archive, Problem 17.40
-(Yes, such elements always exist, mod CFSG).
+**Three conjugates of a nilpotent subgroup meet inside the Fitting subgroup.** For every finite
+group $G$ and every nilpotent subgroup $N$ of $G$ there are $x, y \in G$ with
+$N \cap x N x^{-1} \cap y N y^{-1} \le F(G)$, where $F(G)$ is the Fitting subgroup of $G$.
+
+This answers Kourovka Problem 17.40 positively; it is due to Zenkov (2021) and uses the
+classification of finite simple groups.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 17.40 (E. P.
+Vdovin); resolution: V. I. Zenkov, Siberian Math. J. 62 (2021), 621-637, Kourovka Archive,
+Problem 17.40 (Yes, such elements always exist, mod CFSG).
 -/
 public theorem_wanted nilpotentThreeConjugatesInFitting_holds : nilpotentThreeConjugatesInFitting
 

@@ -1,0 +1,3 @@
+# Free infinite-volume mass function on a box for $q \ge 1$
+
+For $d, N \in \mathbb{N}$, $q \ge 1$ and $s \in \mathbb{R}$, the free mass function assigns to a configuration $\omega$ of $\Lambda_N = \{-N, \dots, N\}^d$ the probability, under the [free infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/free-infinite-volume.md) $\phi^0_{\sigma(s),q}$ on $\mathbb{Z}^d$, that the restriction to the pairs of vertices of $\Lambda_N$ equals $\omega$; here $\sigma(t) = e^t/(1 + e^t)$ is the [logistic function](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md).

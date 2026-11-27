@@ -56,39 +56,47 @@ namespace AlgebraicIntegers
 
 open ComplexOrder
 
-/-- The trace of an algebraic integer `α ∈ ℂ` is the sum `α₁ + ... + αₙ`, where
-`αᵢ` are the complex roots of the minimal polynomial of `α` over `ℚ`. -/
+/-- **Sum of the conjugates of a complex number.** For a complex number $\alpha$, the trace
+$\operatorname{tr}(\alpha) \in \mathbb{C}$ is the sum, counted with multiplicity, of the complex
+roots of the minimal polynomial of $\alpha$ over $\mathbb{Q}$. When $\alpha$ is algebraic these
+roots are the conjugates $\alpha_1, \dots, \alpha_n$ of $\alpha$, so
+$\operatorname{tr}(\alpha) = \alpha_1 + \dots + \alpha_n$; when $\alpha$ is transcendental its
+minimal polynomial is $0$ by convention and $\operatorname{tr}(\alpha) = 0$. -/
 noncomputable def trace (α : ℂ) : ℂ := ((minpoly ℚ α).aroots ℂ).sum
 
-/-- The degree of an algebraic integer is the degree of the minimal polynomial
-of `α` over `ℚ`. -/
+/-- **Degree of a complex number over the rationals.** For a complex number $\alpha$, the degree
+$\deg(\alpha)$ is the natural number given by the degree of the minimal polynomial of $\alpha$ over
+$\mathbb{Q}$. When $\alpha$ is transcendental its minimal polynomial is $0$ by convention, so
+$\deg(\alpha) = 0$. -/
 noncomputable def degree (α : ℂ) : ℕ := (minpoly ℚ α).natDegree
 
-/-- We call an algebraic number `α` totally positive if its conjugates `α₁, ..., αₙ` are all
-positive real numbers.
-
-Note that `open ComplexOrder` gives the complex numbers a partial ordering, with `x < y` defined to
-mean that `y - x` is a positive real number. -/
+/-- **Totally positive algebraic numbers.** A complex number $\alpha$ is totally positive if it is
+algebraic over $\mathbb{Q}$ and every complex root of its minimal polynomial over $\mathbb{Q}$,
+that is, every conjugate of $\alpha$, is a positive real number. -/
 def IsTotallyPositive (α : ℂ) : Prop :=
   IsAlgebraic ℚ α ∧ ∀ β ∈ (minpoly ℚ α).aroots ℂ, 0 < β
 
-/-- Take `λ_SSS` to be the greatest real number `λ` such that, for any `ε > 0`,
-there are only finitely many totally positive algebraic integers α satisfying
-`tr(α) < (λ − ε) * deg(α)`. Note that the paper said "least real number",
-but this is clearly a typo, as this set does not have a lower bound. Defining
-it as the greatest real number is consistent with how this constant is defined in
-another paper by the same author, namely in Orloski, Sardari and Smith: "New
-lower bounds for the Schur-Siegel-Smyth trace problem" (arXiv:2401.03252).
-There, `λ_SSS` is defined as the limit inferior of `tr(α)/deg(α)` over all
-totally positive `α`, which is exactly the *greatest* real number `λ` such that
-for all `ε > 0`, only finitely many `α` have `tr(α)/deg(α) < λ - ε`. -/
+/-- **The Schur–Siegel–Smyth constant $\lambda_{\mathrm{SSS}}$.** Let $\lambda_{\mathrm{SSS}}$ be
+the supremum in $\mathbb{R}$ of the set of real numbers $\lambda$ such that, for every
+$\varepsilon > 0$, only finitely many complex numbers $\alpha$ are totally positive algebraic
+integers with $\operatorname{tr}(\alpha) < (\lambda - \varepsilon) \deg(\alpha)$, where
+$\operatorname{tr}(\alpha)$ and $\deg(\alpha)$ are the trace and the degree of $\alpha$ over
+$\mathbb{Q}$ (the trace of a totally positive $\alpha$ is real). By the convention for suprema in
+$\mathbb{R}$, $\lambda_{\mathrm{SSS}} = 0$ if this set is empty or unbounded above.
+
+The set is closed downwards and contains its supremum when it is nonempty and bounded above, so
+$\lambda_{\mathrm{SSS}}$ is then the greatest such $\lambda$. The source says "least real number",
+but this is a typo, as the set has no lower bound. The greatest real number agrees with Orloski,
+Sardari and Smith, "New lower bounds for the Schur-Siegel-Smyth trace problem"
+(arXiv:2401.03252), where $\lambda_{\mathrm{SSS}}$ is the limit inferior of
+$\operatorname{tr}(\alpha)/\deg(\alpha)$ over all totally positive algebraic integers $\alpha$. -/
 noncomputable def lambda_SSS : ℝ := sSup { lam : ℝ | ∀ ε > (0 : ℝ),
   { α : ℂ | IsIntegral ℤ α ∧ IsTotallyPositive α ∧ trace α < (lam - ε) * degree α }.Finite }
 
 /--
-Statement of Theorem 1.1:
+**Smith's theorem on the Schur–Siegel–Smyth trace problem.** The Schur–Siegel–Smyth constant
+satisfies $\lambda_{\mathrm{SSS}} < 1.89831$; this is Theorem 1.1 of the source.
 
-We have `λ_SSS < 1.89831`.
 Source: A. Smith, `Algebraic integers with conjugates in a prescribed distribution`, Annals of Math, 200 (1) 2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-200-1-AlgebraicIntegers.lean Via leanprover/lean-eval@38361be, problem `annals_algebraic_integers`.
 -/
 public theorem_wanted theorem_1_1 : lambda_SSS < 1.89831

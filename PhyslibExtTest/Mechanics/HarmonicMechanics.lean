@@ -23,7 +23,9 @@ import Mathlib.Tactic.Ring
 Exact compiling checks for `PhyslibExt.Mechanics.HarmonicMechanics`:
 oscillator frequency, energy derivative and conservation along the explicit
 solution, force/moment balance and work examples (including
-`isEquilibrated_iff`, `moment2D_add`, `totalWork_add`), the fixed-end two-mass
+`isEquilibrated_iff`, `moment2D_add`, `totalWork_add`), axial-member endpoint
+tables with parallel, nonparallel, noncentral, and axial-force bridge checks,
+the fixed-end two-mass
 chain with normal modes and every spring-network theorem applied to it, a
 reciprocal spring against a directed-weight countermodel for `springEnergy`,
 the empty node type (the kernel identity is trivial there and positive
@@ -183,6 +185,139 @@ example : ((![![(1 : ℝ), 0], ![0, 1]] : Fin 2 → (Fin 2 → ℝ)) 0 -
 /-- One central pair (stiffness scalar `c = 2`) about `o = ![1, 1]` has
 zero moment; the inferred type is the zero-moment equation. -/
 example := central_pair_moment_eq_zero (![0, 0] : Fin 2 → ℝ) ![3, 4] ![1, 1] 2
+
+/-- Single loaded two-force member `0 → 1` with coefficient `2`: endpoint
+forces on the joints are `(8, 0)` and `(-8, 0)`. -/
+example : memberEndpointForce
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0] : Fin 1 → Fin 3) ![1] ![2] (0, false) = ![8, 0] := by
+  ext i
+  fin_cases i <;> simp [memberEndpointForce]
+  norm_num
+
+example : memberEndpointForce
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0] : Fin 1 → Fin 3) ![1] ![2] (0, true) = ![-8, 0] := by
+  ext i
+  fin_cases i <;> simp [memberEndpointForce]
+  norm_num
+
+/-- The single-member table has zero resultant and zero moment about
+`(5, -7)`. -/
+example : resultantForce (memberEndpointForce
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0] : Fin 1 → Fin 3) ![1] ![2]) = 0 :=
+  memberEndpoint_resultantForce_eq_zero _ _ _ _
+
+example : moment2D
+    (fun p => memberEndpointPosition
+      (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+      (![0] : Fin 1 → Fin 3) ![1] p - ![5, -7])
+    (memberEndpointForce
+      (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+      (![0] : Fin 1 → Fin 3) ![1] ![2]) = 0 :=
+  memberEndpoint_moment2D_eq_zero _ _ _ _ _
+
+/-- Parallel members retain distinct identities: the two first-endpoint
+entries over the same joints carry forces `(4, 0)` and `(8, 0)`. -/
+example : memberEndpointForce
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0, 0] : Fin 2 → Fin 3) ![1, 1] ![1, 2] (0, false) = ![4, 0] := by
+  ext i
+  fin_cases i <;> simp [memberEndpointForce]
+
+example : memberEndpointForce
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0, 0] : Fin 2 → Fin 3) ![1, 1] ![1, 2] (1, false) = ![8, 0] := by
+  ext i
+  fin_cases i <;> simp [memberEndpointForce]
+  norm_num
+
+/-- Two-member nonparallel table: the second member's first-endpoint force
+is `(3 / 2, -3 / 2)`, and the whole table has zero wrench. -/
+example : memberEndpointForce
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0, 1] : Fin 2 → Fin 3) ![1, 2] ![2, -1 / 2] (1, false)
+    = ![3 / 2, -3 / 2] := by
+  ext i
+  fin_cases i <;> simp [memberEndpointForce] <;> norm_num
+
+example : resultantForce (memberEndpointForce
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0, 1] : Fin 2 → Fin 3) ![1, 2] ![2, -1 / 2]) = 0 :=
+  memberEndpoint_resultantForce_eq_zero _ _ _ _
+
+example : moment2D
+    (fun p => memberEndpointPosition
+      (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+      (![0, 1] : Fin 2 → Fin 3) ![1, 2] p - ![5, -7])
+    (memberEndpointForce
+      (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+      (![0, 1] : Fin 2 → Fin 3) ![1, 2] ![2, -1 / 2]) = 0 :=
+  memberEndpoint_moment2D_eq_zero _ _ _ _ _
+
+/-- Noncentral control: an equal-and-opposite but noncentral pair has
+nonzero moment `-4`. Centrality is the premise the moment law needs. -/
+example : moment2D (![![0, 0], ![4, 0]] : Fin 2 → (Fin 2 → ℝ))
+    (![![0, 1], ![0, -1]] : Fin 2 → (Fin 2 → ℝ)) = -4 := by
+  simp only [moment2D, Fin.sum_univ_two]
+  norm_num
+
+/-- Non-opposite control: the same force at both ends has resultant
+`(16, 0)`. -/
+example : resultantForce (![![8, 0], ![8, 0]] : Fin 2 → (Fin 2 → ℝ))
+    = ![16, 0] := by
+  ext i
+  fin_cases i <;> simp [resultantForce, Fin.sum_univ_two]
+  norm_num
+
+/-- Length and axial-force bridge for the member `0 → 1`: length `4`, and
+axial force `N = 8` gives endpoint force `(8, 0)` at the first joint. -/
+example : memberLength
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0] : Fin 1 → Fin 3) ![1] 0 = 4 := by
+  simp only [memberLength]
+  norm_num
+  rw [show (16 : ℝ) = (4 : ℝ) ^ 2 by norm_num]
+  exact Real.sqrt_sq (by norm_num)
+
+example : 0 < memberLength
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0] : Fin 1 → Fin 3) ![1] 0 := by
+  apply memberLength_pos_of_ne
+  intro h
+  have h0 := congrFun h 0
+  simp at h0
+
+example : axialEndpointForce
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0] : Fin 1 → Fin 3) ![1] ![8] (0, false) = ![8, 0] := by
+  have h := congrFun (axialEndpointForce_eq_memberEndpointForce
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0] : Fin 1 → Fin 3) ![1] ![8]) (0, false)
+  rw [h]
+  ext i
+  fin_cases i <;> simp [memberEndpointForce, memberLength]
+
+/-- Main-result form on the two-member nonparallel table: zero resultant
+and zero moment in axial-force form. -/
+example : resultantForce (axialEndpointForce
+    (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+    (![0, 1] : Fin 2 → Fin 3) ![1, 2] ![8, -3]) = 0 := by
+  apply axialEndpoint_resultantForce_eq_zero_of_ne
+  intro e h
+  fin_cases e <;> have h0 := congrFun h 0 <;> simp at h0
+
+example : moment2D
+    (fun p => memberEndpointPosition
+      (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+      (![0, 1] : Fin 2 → Fin 3) ![1, 2] p - ![5, -7])
+    (axialEndpointForce
+      (![![0, 0], ![4, 0], ![1, 3]] : Fin 3 → (Fin 2 → ℝ))
+      (![0, 1] : Fin 2 → Fin 3) ![1, 2] ![8, -3]) = 0 := by
+  apply axialEndpoint_moment2D_eq_zero_of_ne
+  · intro e h
+    fin_cases e <;> have h0 := congrFun h 0 <;> simp at h0
 
 /-- Non-equilibrium example: the resultant is `![1, 1]`. -/
 example : resultantForce (![![(1 : ℝ), 0], ![0, 1]] :
@@ -524,6 +659,12 @@ example (k : Fin 0 → Fin 0 → ℝ) : (stiffnessMatrix k 0).PosDef :=
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.sum_pairwise_antisymmetric_eq_zero
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.moment2D_add
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.central_pair_moment_eq_zero
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.memberEndpoint_resultantForce_eq_zero
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.memberEndpoint_moment2D_eq_zero
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.memberLength_pos_of_ne
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.axialEndpointForce_eq_memberEndpointForce
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.axialEndpoint_resultantForce_eq_zero_of_ne
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.axialEndpoint_moment2D_eq_zero_of_ne
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.totalWork_add
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.stiffnessMatrix_apply_diag
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.stiffnessMatrix_apply_offdiag
@@ -537,5 +678,25 @@ example (k : Fin 0 → Fin 0 → ℝ) : (stiffnessMatrix k 0).PosDef :=
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.stiffnessMatrix_fixedEnds_rowNonzero
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.innerProductM_eq_zero_of_ne
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.rayleigh_nonneg
+
+/-- Balanced couple: moment is the same about the origin and
+about a shifted point. -/
+example : moment2D (fun i => (![![0, 0], ![4, 0]] : Fin 2 → Fin 2 → ℝ) i
+      - ![3, -2]) ![![0, 1], ![0, -1]]
+    = moment2D ![![0, 0], ![4, 0]] ![![0, 1], ![0, -1]] :=
+  moment2D_shift_eq_of_isEquilibrated _ _ _
+    (by simp [IsEquilibrated, resultantForce, Fin.sum_univ_two])
+
+/-- Unbalanced single force: the shift changes the moment by
+the resultant term (sign control). -/
+example : moment2D (fun _ : Fin 1 => (![0, 0] : Fin 2 → ℝ) - ![1, 0])
+      (fun _ => ![0, 1]) = -1
+    ∧ moment2D (fun _ : Fin 1 => (![0, 0] : Fin 2 → ℝ))
+      (fun _ => ![0, 1]) = 0 := by
+  constructor <;> simp [moment2D]
+
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.moment2D_shift
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.moment2D_shift_eq_of_isEquilibrated
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.resultantForce_eq_zero_of_moment2D_shift_eq
 
 end PhyslibExtTest.Mechanics.HarmonicMechanics

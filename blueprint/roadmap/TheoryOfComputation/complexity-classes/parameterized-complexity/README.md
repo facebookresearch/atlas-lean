@@ -1,0 +1,18 @@
+# Parameterized complexity
+
+- [Parameterized problems](param-problem.md)
+- [FPT time](fpttime.md)
+- [Fixed-parameter tractable problems](fpt.md)
+- [FPT-reductions](fptreduces.md)
+- [Encoded gates for weighted circuit satisfiability](wcgate.md)
+- [Gate values of an encoded circuit](wc-circuit-eval.md)
+- [Predecessors of an encoded gate](wc-gate-preds.md)
+- [Weft of an encoded gate](wc-gate-weft.md)
+- [Depth of one encoded gate](wc-gate-depth.md)
+- [Wefts of the gates of an encoded circuit](wc-circuit-wefts.md)
+- [Depths of the gates of an encoded circuit](wc-circuit-depths.md)
+- [Well-formed encoded circuits](wcwell-formed.md)
+- [Weighted circuit satisfiability with bounded weft and depth](weighted-circuit-sat.md)
+- [Parameterized Clique](clique-param.md)
+- [The level $\mathrm{W}(t)$ of the W-hierarchy](wlevel.md)
+- [Parameterized complexity: FPT and W(1)-completeness of Clique](parameterized-clique-w1-complete.md)

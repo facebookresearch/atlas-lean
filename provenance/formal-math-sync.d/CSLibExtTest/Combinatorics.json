@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "CSLibExtTest/Combinatorics/RandomThreeSat.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "bcc2280be8616716fef2d0ddc66adaa7acda1bdc7a95158f9758bc224e7c5096", "rationale": "ATLAS-side edit for the v4.36.0 toolchain bump: it now refers to the declarations formerly in the namespace `Cslib.Logic.PL` by their names in `Cslib.Logic.LegacyPL`, because CSLib v4.36.0 declares its new `Proposition` as `Cslib.Logic.PL.Proposition`; formal-math needs the same renaming when it moves to v4.36.0.", "upstream_commit": "dae8b8c6b1c233ae74a7b8a97171be1da306fc23", "upstream_sha256": "33f409d411cec3fa5d92c5dcca4f79bdac5b1d7041909cfdfe8df22a41d3b360"}
+  ]
+}

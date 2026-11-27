@@ -1,0 +1,3 @@
+# Expectimax
+
+The expectimax value of a chance tree is defined recursively: a leaf with value $u$ has value $u$; a max node has the maximum of its children's values and a min node the minimum, with value $0$ when the node has no children; a chance node with branches $(p_1, t_1), \dots, (p_r, t_r)$ has the weighted sum $\sum_i p_i\, v(t_i)$ of its children's values $v(t_i)$, with value $0$ for no branches; an affine edge with constants $c, \gamma$ above a tree of value $v$ has value $c + \gamma v$. The weights $p_i$ are arbitrary reals; the chance-node value is an expectation when they are nonnegative and sum to $1$.

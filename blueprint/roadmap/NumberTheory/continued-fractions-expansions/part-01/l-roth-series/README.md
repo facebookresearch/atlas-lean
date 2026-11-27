@@ -10,6 +10,7 @@
 - [The Lüroth map fixes 0](luroth-map-zero.md)
 - [The Lüroth map shifts the digits](luroth-digit-seq-succ.md)
 - [Measure of Lüroth cylinders](volume-luroth-cylinder.md)
+- [Joint distribution of Lüroth digits](measure-preserving-digit-seq.md)
 - [Borel–Bernstein theorem for Lüroth digits](volume-luroth-digit-ge-zero-one.md)
 - [Zero-one law for weighted products of consecutive Lüroth digits](volume-luroth-weighted-product-ge-zero-o.md)
 - [Zero-one law for functions of consecutive Lüroth digits](volume-luroth-consecutive-digits-zero-on.md)

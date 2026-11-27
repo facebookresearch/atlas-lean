@@ -19,11 +19,11 @@ machine problems), entry `1|p_i=p;r_i|Σw_iT_i` (listed as open).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -52,7 +52,7 @@ every feasible schedule can be replaced by one with integral start times and no 
 start times here are natural numbers. Since `p > 0`, pairwise disjoint intervals
 `[s_j, s_j + p)` are Garey and Johnson's one-processor schedule ([SS1]: `σ` one-to-one, and
 `σ(t) > σ(t')` implies `σ(t) ≥ σ(t') + l(t')`) with every length `l(t) = p`; the predicate
-`IsOneProcessorSchedule` is reused from `SequencingToMinimizeWeightedTardinessWanted`.
+`IsOneProcessorSchedule` is reused from `SequencingToMinimizeWeightedTardinessDefs`.
 Natural-number subtraction truncates at `0`, so `s_j + p - d_j` is the tardiness
 `max{0, C_j - d_j}`. The jobs are `Fin N`, one per listed triple `(r_j, d_j, w_j)`. Binary
 encoding of all numbers (the problem is NP-complete in the strong sense).

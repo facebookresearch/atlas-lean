@@ -1,0 +1,16 @@
+# Local distributed algorithms
+
+- [Self-stabilization](self-stabilization.md)
+- [Self-stabilization and eventual legitimacy](self-stabilizing-iff-eventually-always.md)
+- [Message complexity of Hirschberg–Sinclair leader election](message-complexity-of-hirschbergsinclair-leader.md)
+- [Cole–Vishkin coloring in O(log* n) rounds](colevishkin-coloring-in-o-log-n-rounds.md)
+- [Linial's lower bound for coloring a ring](linial-s-lower-bound-for-coloring-a-ring.md)
+- [Piecewise Legal](piecewise-legal.md)
+- [Legit iff two blocks](legit-iff-two-blocks.md)
+- [Piecewise Legal iff](piecewise-legal-iff.md)
+- [Bounded reachability of the legal form](exists-piecewise-legal-of-steps.md)
+- [Closure of the consecutive-color legal form](piecewise-legal-closed.md)
+- [Self-stabilization of Dijkstra's token ring](self-stabilization-of-dijkstra-s-k-state-token.md)
+- [Legit at quadratic bound](legit-at-quadratic-bound.md)
+- [Luby's maximal independent set algorithm](luby-s-maximal-independent-set-algorithm.md)
+- [The LOCAL Model: Symmetry Breaking and LCL Problems](local-model-symmetry-and-lcl/README.md)

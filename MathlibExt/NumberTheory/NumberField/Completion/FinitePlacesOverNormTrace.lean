@@ -254,8 +254,15 @@ private lemma finite_completion_factor (v : HeightOneSpectrum (𝓞 K))
 /-! ## Endpoint theorems -/
 
 set_option linter.style.haveILetI false in
-/-- Global norm as the product of local completion norms (Corollary 11.24,
-norm part). -/
+/-- **Global norm as a product of local norms.** Let $L/K$ be an extension of number fields, let
+$v$ be a finite place of $K$, given as a height-one prime of the ring of integers $\mathcal{O}_K$,
+and let $K_v$ be the completion of $K$ at $v$. For each of the finitely many finite places $w$ of
+$L$ lying over $v$, regard the completion $L_w$ as a $K_v$-algebra through the continuous ring
+homomorphism $K_v \to L_w$ extending $K \to L$. Then for every $\alpha \in L$, the image of the
+norm $N_{L/K}(\alpha)$ in $K_v$ equals $\prod_{w \mid v} N_{L_w/K_v}(\alpha)$, where $\alpha$ is
+viewed in $L_w$ and the product runs over the finite places $w$ of $L$ lying over $v$.
+
+Source: Corollary 11.24, norm part. -/
 theorem algebraMap_norm_eq_prod_adicCompletion
     (v : HeightOneSpectrum (𝓞 K)) [Fintype (v.placesOver L)] (α : L) :
     algebraMap K (v.adicCompletion K) (Algebra.norm K α) =
@@ -285,8 +292,16 @@ theorem algebraMap_norm_eq_prod_adicCompletion
     exact completionTensorProductRightAlgEquiv_tmul_one (K := K) (L := L) v α w
 
 set_option linter.style.haveILetI false in
-/-- Global trace as the sum of local completion traces (Corollary 11.24,
-trace part). -/
+/-- **Global trace as a sum of local traces.** Let $L/K$ be an extension of number fields, let
+$v$ be a finite place of $K$, given as a height-one prime of the ring of integers $\mathcal{O}_K$,
+and let $K_v$ be the completion of $K$ at $v$. For each of the finitely many finite places $w$ of
+$L$ lying over $v$, regard the completion $L_w$ as a $K_v$-algebra through the continuous ring
+homomorphism $K_v \to L_w$ extending $K \to L$. Then for every $\alpha \in L$, the image of the
+trace $\operatorname{Tr}_{L/K}(\alpha)$ in $K_v$ equals
+$\sum_{w \mid v} \operatorname{Tr}_{L_w/K_v}(\alpha)$, where $\alpha$ is viewed in $L_w$ and the
+sum runs over the finite places $w$ of $L$ lying over $v$.
+
+Source: Corollary 11.24, trace part. -/
 theorem algebraMap_trace_eq_sum_adicCompletion
     (v : HeightOneSpectrum (𝓞 K)) [Fintype (v.placesOver L)] (α : L) :
     algebraMap K (v.adicCompletion K) (Algebra.trace K L α) =

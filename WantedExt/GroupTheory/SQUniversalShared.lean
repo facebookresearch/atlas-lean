@@ -22,9 +22,9 @@ public import Mathlib.Basic.Countable.Defs
 
 namespace MathlibExt.GroupTheory.SQUniversalShared
 
-/-- `G` is SQ-universal: every countable group is isomorphic to a subgroup of a quotient of `G`.
-A quotient of `G` is a group `Q` with a surjective homomorphism `G → Q`, and a subgroup of `Q`
-isomorphic to `C` is the image of an injective homomorphism `C → Q`. -/
+/-- **SQ-universal group.** A group $G$ is SQ-universal if every countable group is isomorphic
+to a subgroup of a quotient of $G$: for every countable group $C$ there are a group $Q$, a
+surjective homomorphism $G \to Q$ and an injective homomorphism $C \to Q$. -/
 def IsSQUniversal (G : Type*) [Group G] : Prop :=
   ∀ (C : Type) [Group C] [Countable C], ∃ (Q : Type) (_ : Group Q) (q : G →* Q),
     Function.Surjective q ∧ ∃ f : C →* Q, Function.Injective f

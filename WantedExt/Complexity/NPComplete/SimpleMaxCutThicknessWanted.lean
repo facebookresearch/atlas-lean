@@ -28,11 +28,11 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.GraphThicknessWanted
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -62,7 +62,7 @@ certificate is the partition of `V` together with the partition `E₁, …, E_k`
 directly and each `Gᵢ` checked by a polynomial-time planarity test.
 
 The instance, the simple-edge-list conditions and the question are those of MAXIMUM CUT
-(`WantedExt.Complexity.NPComplete.MaxCutWanted`, whose question already counts edges), reused
+(`CSLibExt.Complexity.NPComplete.MaxCutDefs`, whose question already counts edges), reused
 here as in `SimpleMaxCutDegreeThreeWanted`, plus `0 < K` as in [ND16]. The restriction is that
 the graph has thickness at most `k`: the question of GRAPH THICKNESS
 (`GraphThickness.GraphThicknessFeasible` from

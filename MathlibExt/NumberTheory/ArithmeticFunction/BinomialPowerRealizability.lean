@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
+public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Nat.Factorial.BigOperators
@@ -22,14 +24,13 @@ namespace MetaMathlibExt
 
 section
 
-/-- Realizability of binomial-power sequences (Apéry, Delannoy, Franel).
+/-- **Binomial-power sequences.** For natural numbers $r$, $s$ and $n$, the binomial-power number
+$A_{r,s}(n)$ is the natural number
 
-`binomialPowerSeq r s n = ∑_k C(n,k)^r C(n+k,k)^s` over `k ≤ n`, whose
-specializations include the Apéry numbers (`r = s = 2`), central Delannoy
-numbers (`r = s = 1`), and Franel numbers of order `r` (`s = 0`).
-`doldRealizable` is the Möbius criterion: `(μ*a)(n)` is non-negative and
-divisible by `n` for all `n ≥ 1`. The wanted theorem is realizability for
-every `s ≥ 0` and `r ≥ 1`.
+$$A_{r,s}(n) = \sum_{k=0}^{n} \binom{n}{k}^r \binom{n+k}{k}^s.$$
+
+Special cases include the central Delannoy numbers ($r = s = 1$), the Apéry numbers
+($r = s = 2$) and the Franel numbers of order $r$ ($s = 0$).
 
 Source: Geng-Rui Zhang, "Realizability of Some Combinatorial Sequences,"
 Journal of Integer Sequences 27 (2024), Article 24.3.3, Theorem
@@ -41,13 +42,15 @@ def binomialPowerSeq (r s n : ℕ) : ℕ :=
   ∑ k ∈ Finset.range (n + 1),
     (Nat.choose n k) ^ r * (Nat.choose (n + k) k) ^ s
 
-/-- Möbius criterion for Dold realizability: the Dold congruences
-(`n ∣ (μ * a) n`) plus non-negativity of the Möbius transform.
+/-- **Dold realizable sequences.** An integer sequence $(a(n))_{n \ge 0}$ is Dold realizable when,
+for every integer $n \ge 1$, the Möbius transform $\sum_{d \mid n} \mu(d)\, a(n/d)$ is divisible
+by $n$ and non-negative, where $\mu$ is the Möbius function and $d$ runs over the positive
+divisors of $n$.
 
-The divisibility half is the classical Dold condition; the repository's
-trace-side characterization is `MetaMathlibExt.IsDoldSequence`
-(Wójcik, Lemma 3). The equivalence between the two forms is not
-formalized here. -/
+The divisibility condition alone is the classical Dold condition.
+
+Source: the repository's trace-side characterization is `MetaMathlibExt.IsDoldSequence`
+(Wójcik, Lemma 3). The equivalence between the two forms is not formalized here. -/
 def doldRealizable (a : ℕ → ℤ) : Prop :=
   ∀ n : ℕ, 0 < n →
     (n : ℤ) ∣ ∑ d ∈ Nat.divisors n,
@@ -55,22 +58,30 @@ def doldRealizable (a : ℕ → ℤ) : Prop :=
     0 ≤ ∑ d ∈ Nat.divisors n,
       (⇑ArithmeticFunction.moebius d) * a (n / d)
 
-/-- Divisibility (Dold congruence) half of `doldRealizable`. -/
+/-- **Dold realizable sequences satisfy the Dold congruences.** If an integer sequence
+$(a(n))_{n \ge 0}$ is Dold realizable, then for every integer $n \ge 1$, $n$ divides
+$\sum_{d \mid n} \mu(d)\, a(n/d)$, where $\mu$ is the Möbius function and $d$ runs over the
+positive divisors of $n$. -/
 theorem doldRealizable_dvd {a : ℕ → ℤ} (h : doldRealizable a) (n : ℕ)
     (hn : 0 < n) :
     (n : ℤ) ∣ ∑ d ∈ Nat.divisors n,
       (⇑ArithmeticFunction.moebius d) * a (n / d) :=
   (h n hn).1
 
-/-- Non-negativity half of `doldRealizable`. -/
+/-- **The Möbius transform of a Dold realizable sequence is non-negative.** If an integer sequence
+$(a(n))_{n \ge 0}$ is Dold realizable, then for every integer $n \ge 1$,
+$\sum_{d \mid n} \mu(d)\, a(n/d) \ge 0$, where $\mu$ is the Möbius function and $d$ runs over
+the positive divisors of $n$. -/
 theorem doldRealizable_nonneg {a : ℕ → ℤ} (h : doldRealizable a) (n : ℕ)
     (hn : 0 < n) :
     0 ≤ ∑ d ∈ Nat.divisors n,
       (⇑ArithmeticFunction.moebius d) * a (n / d) :=
   (h n hn).2
 
-/-- Repackaging the Dold congruences and non-negativity into
-`doldRealizable`. -/
+/-- **Criterion for Dold realizability.** Let $(a(n))_{n \ge 0}$ be an integer sequence and let
+$\mu$ be the Möbius function. If for every integer $n \ge 1$ the sum
+$\sum_{d \mid n} \mu(d)\, a(n/d)$ over the positive divisors $d$ of $n$ is divisible by $n$, and
+for every integer $n \ge 1$ this sum is non-negative, then $a$ is Dold realizable. -/
 theorem doldRealizable_of_dvd_and_nonneg {a : ℕ → ℤ}
     (hdvd : ∀ n : ℕ, 0 < n →
       (n : ℤ) ∣ ∑ d ∈ Nat.divisors n,
@@ -1212,6 +1223,55 @@ private theorem choose_prime_pow_congr (p t n j : ℕ)
       Nat.choose_eq_zero_of_lt hltM
     rw [hC1, hC2]
 
+/-- **Binomial coefficients at multiples of a prime divisor.** Let $p$ be a prime and let
+$n \ge 1$ be an integer divisible by $p$. Then for every integer $\lambda \ge 0$ with
+$\lambda p \ne n$,
+
+$$\binom{n}{\lambda p} \equiv \binom{n/p}{\lambda} \pmod{p^e},$$
+
+where $e = \max(\nu_p(n), \nu_p(n - \lambda p))$ and $\nu_p$ is the $p$-adic valuation; the
+integer $n - \lambda p$ may be negative, and $\nu_p(n - \lambda p)$ is the valuation of its
+absolute value.
+
+Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
+Sequences 27 (2024), Article 24.3.3, Lemma 27 (`jis-2024-24.3.3-lem-27`). -/
+theorem choose_mul_prime_modEq_choose_div (n p l : ℕ) (hp : p.Prime) (hpn : p ∣ n)
+    (hn : 0 < n) (hl : l * p ≠ n) :
+    (n.choose (l * p) : ℤ) ≡ ((n / p).choose l : ℤ)
+      [ZMOD (p : ℤ) ^ max (padicValNat p n) (padicValInt p ((n : ℤ) - l * p))] := by
+  by_cases h : n < l * p
+  · rw [Nat.choose_eq_zero_of_lt h, Nat.choose_eq_zero_of_lt ((Nat.div_lt_iff_lt_mul hp.pos).2 h)]
+  have hle : l * p ≤ n := (lt_of_le_of_ne (le_of_not_gt h) hl).le
+  have : Fact p.Prime := ⟨hp⟩
+  rw [← Nat.cast_mul, ← Nat.cast_sub hle, padicValInt.of_nat, ← Nat.cast_pow,
+    Int.natCast_modEq_iff, Nat.padicValNat_def]
+  have hv : 0 < multiplicity p n := one_le_multiplicity_of_dvd hn.ne' hpn
+  obtain ⟨t, ht⟩ := Nat.exists_eq_add_one_of_ne_zero
+    (hv.trans_le (le_max_left _ (multiplicity p (n - l * p)))).ne'
+  rw [ht]
+  have hmul (m : ℕ) : p ^ (t + 1) * m = p * (p ^ t * m) := by
+    rw [pow_succ', mul_assoc]
+  -- Factor the larger power out of either the top index or the gap between the indices.
+  rcases le_total (multiplicity p (n - l * p)) (multiplicity p n) with hval | hval
+  · have hdvd : p ^ (t + 1) ∣ n := by
+      rw [← ht, max_eq_left hval]
+      exact pow_multiplicity_dvd _ _
+    obtain ⟨m, hm⟩ := hdvd
+    have hdiv : n / p = p ^ t * m := by
+      rw [hm, hmul, Nat.mul_div_cancel_left _ hp.pos]
+    rw [hdiv, hm, mul_comm l p]
+    exact choose_prime_pow_congr p t m l
+  · have hdvd : p ^ (t + 1) ∣ n - l * p := by
+      rw [← ht, max_eq_right hval]
+      exact pow_multiplicity_dvd _ _
+    obtain ⟨m, hm⟩ := hdvd
+    have hsum : p ^ (t + 1) * m + p * l = n := by
+      rw [← hm, mul_comm p l, Nat.sub_add_cancel hle]
+    have hdiv : n / p = p ^ t * m + l := by
+      rw [← hsum, hmul, ← Nat.mul_add, Nat.mul_div_cancel_left _ hp.pos]
+    rw [hdiv, ← hsum, mul_comm l p]
+    exact choose_add_prime_pow_congr p t m l
+
 private theorem dvd_choose_of_not_dvd (p N K m : ℕ) [Fact (Nat.Prime p)]
     (hKN : K ≤ N) (hK0 : 0 < K) (hNdvd : p ^ m ∣ N) (hKndvd : ¬ p ∣ K) :
     p ^ m ∣ Nat.choose N K := by
@@ -1667,11 +1727,13 @@ private theorem moebius_sum_reorg (p t m0 : ℕ) [Fact (Nat.Prime p)]
   intro e he
   ring
 
-/-- Realizability of binomial-power sequences
-(Zhang 2024, J. Integer Seq. 27, Article 24.3.3, Theorem 1.13):
-for every `r ≥ 1` and `s ≥ 0`, the sequence
-`n ↦ binomialPowerSeq r s n` is Dold realizable.
+/-- **Binomial-power sequences are Dold realizable.** Let $r \ge 1$ and $s \ge 0$ be integers and
+let $A_{r,s}(n) = \sum_{k=0}^{n} \binom{n}{k}^r \binom{n+k}{k}^s$. Then the integer sequence
+$(A_{r,s}(n))_{n \ge 0}$ is Dold realizable: for every integer $n \ge 1$, the sum
+$\sum_{d \mid n} \mu(d)\, A_{r,s}(n/d)$ over the positive divisors $d$ of $n$, where $\mu$ is
+the Möbius function, is non-negative and divisible by $n$.
 
+Source: Zhang 2024, J. Integer Seq. 27, Article 24.3.3, Theorem 1.13.
 Proves `Wanted` entry `binomial_power_sequence_dold_realizable`.
 -/
 theorem binomial_power_sequence_dold_realizable : ∀ r s : ℕ, 0 < r → doldRealizable
@@ -1745,16 +1807,20 @@ theorem binomial_power_sequence_dold_realizable : ∀ r s : ℕ, 0 < r → doldR
       exact Int.natAbs_dvd_natAbs.mp hfin
   · exact binomialPowerSeq_moebius_nonneg r s n hr hn
 
-/-- Dold congruences for binomial-power sequences, factored out of
-`binomial_power_sequence_dold_realizable`. -/
+/-- **Dold congruences for binomial-power sequences.** Let $r \ge 1$ and $s \ge 0$ be integers
+and let $A_{r,s}(m) = \sum_{k=0}^{m} \binom{m}{k}^r \binom{m+k}{k}^s$. Then for every integer
+$n \ge 1$, $n$ divides $\sum_{d \mid n} \mu(d)\, A_{r,s}(n/d)$, where $\mu$ is the Möbius
+function and $d$ runs over the positive divisors of $n$. -/
 theorem binomialPowerSeq_dold_congruences (r s : ℕ) (hr : 0 < r) (n : ℕ)
     (hn : 0 < n) :
     (n : ℤ) ∣ ∑ d ∈ Nat.divisors n, (⇑ArithmeticFunction.moebius d) *
       ((binomialPowerSeq r s (n / d) : ℕ) : ℤ) :=
   doldRealizable_dvd (binomial_power_sequence_dold_realizable r s hr) n hn
 
-/-- Non-negativity of the Möbius transform of binomial-power sequences,
-factored out of `binomial_power_sequence_dold_realizable`. -/
+/-- **Non-negativity of the Möbius transform of binomial-power sequences.** Let $r \ge 1$ and
+$s \ge 0$ be integers and let $A_{r,s}(m) = \sum_{k=0}^{m} \binom{m}{k}^r \binom{m+k}{k}^s$.
+Then for every integer $n \ge 1$, $\sum_{d \mid n} \mu(d)\, A_{r,s}(n/d) \ge 0$, where $\mu$
+is the Möbius function and $d$ runs over the positive divisors of $n$. -/
 theorem binomialPowerSeq_moebius_sum_nonneg (r s : ℕ) (hr : 0 < r) (n : ℕ)
     (hn : 0 < n) :
     0 ≤ ∑ d ∈ Nat.divisors n, (⇑ArithmeticFunction.moebius d) *

@@ -6,4 +6,4 @@ $\min_c \|r_0 - A K_k c\|_2$.
 
 ## Informally uses
 
-- Least-squares estimates exist: least-squares solutions exist for every matrix, rank-deficient included.
+- [Least-squares estimates exist](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/exists-normal.md): least-squares solutions exist for every matrix, rank-deficient included.

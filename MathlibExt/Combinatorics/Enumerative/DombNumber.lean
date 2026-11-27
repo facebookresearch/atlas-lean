@@ -29,11 +29,15 @@ Remark Rem1.8 introduces the sequence of *Domb numbers* (OEIS A002895) as
 We formalize it as the specialization `D(n,2,1,1)` of `MetaMathlibExt.dombTypeSum`.
 -/
 
-/-- The Domb numbers `Domb(n) = D(n,2,1,1)` (OEIS A002895). -/
+/-- **Domb numbers.** For a natural number $n$, the Domb number $\mathrm{Domb}(n)$ is the
+Domb-type sum $D(n,2,1,1)$, that is,
+$\mathrm{Domb}(n) = \sum_{k=0}^{n} \binom{n}{k}^2 \binom{2k}{k} \binom{2(n-k)}{n-k}$
+(OEIS A002895). -/
 public def dombNumber (n : ℕ) : ℕ :=
   dombTypeSum n 2 1 1
 
-/-- Unfolded sum for the Domb numbers, with the powers of one simplified. -/
+/-- **Explicit formula for the Domb numbers.** For every natural number $n$, the Domb number
+$\mathrm{Domb}(n)$ equals $\sum_{k=0}^{n} \binom{n}{k}^2 \binom{2k}{k} \binom{2(n-k)}{n-k}$. -/
 public theorem dombNumber_unfold (n : ℕ) :
     dombNumber n =
       ∑ k ∈ Finset.range (n + 1),

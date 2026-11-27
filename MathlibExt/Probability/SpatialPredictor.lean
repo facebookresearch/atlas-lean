@@ -16,7 +16,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
-public import MathlibExt.Probability.Finance.PortfolioVariance
+public import MathlibExt.Probability.Statistics.CovarianceMatrix
 
 open ProbabilityTheory
 

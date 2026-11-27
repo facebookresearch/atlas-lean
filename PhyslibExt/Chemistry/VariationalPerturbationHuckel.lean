@@ -14,6 +14,7 @@ public import Mathlib.Analysis.InnerProductSpace.Rayleigh
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Combinatorics.SimpleGraph.LapMatrix
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
+public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Algebra.Ring.Parity
@@ -115,12 +116,13 @@ open scoped Matrix
 
 namespace PhyslibExt.Chemistry.VariationalPerturbationHuckel
 
-/-- Rayleigh quotient `(x ⬝ᵥ H *ᵥ x) / (x ⬝ᵥ x)`. -/
+/-- Rayleigh quotient `(x ⬝ᵥ H *ᵥ x) / (x ⬝ᵥ x)`; it is `0` at `x = 0` (`x / 0 = 0`). -/
 noncomputable def rayleighQuotient {n : ℕ} (H : Matrix (Fin n) (Fin n) ℝ)
     (x : Fin n → ℝ) : ℝ :=
   (x ⬝ᵥ H *ᵥ x) / (x ⬝ᵥ x)
 
-/-- Generalized Rayleigh quotient `(x ⬝ᵥ H *ᵥ x) / (x ⬝ᵥ S *ᵥ x)`. -/
+/-- Generalized Rayleigh quotient `(x ⬝ᵥ H *ᵥ x) / (x ⬝ᵥ S *ᵥ x)`; it is `0` when the denominator
+vanishes (`x / 0 = 0`). -/
 noncomputable def generalizedRayleighQuotient {n : ℕ}
     (H S : Matrix (Fin n) (Fin n) ℝ) (x : Fin n → ℝ) : ℝ :=
   (x ⬝ᵥ H *ᵥ x) / (x ⬝ᵥ S *ᵥ x)
@@ -130,24 +132,27 @@ noncomputable def huckelMatrix {n : ℕ} (α β : ℝ) (G : SimpleGraph (Fin n))
     [DecidableRel G.Adj] : Matrix (Fin n) (Fin n) ℝ :=
   α • 1 + β • G.adjMatrix ℝ
 
-/-- First-order energy correction: `(H1) 0 0`. -/
+/-- First-order energy correction of level `0`, for `n ≥ 1` levels: `(H1) 0 0`. -/
 noncomputable def pertE1 {n : ℕ} [NeZero n] (H1 : Matrix (Fin n) (Fin n) ℝ) : ℝ :=
   H1 0 0
 
-/-- First-order eigenvector correction (zero 0-component). -/
+/-- First-order eigenvector correction (zero 0-component), for `n ≥ 1` levels. A component with
+`d j = d 0` is `0`, by the convention `x / 0 = 0`. -/
 noncomputable def pertV1 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 : Matrix (Fin n) (Fin n) ℝ) : Fin n → ℝ :=
   fun j => if j = 0 then 0 else H1 j 0 / (d 0 - d j)
 
-/-- Second-order energy correction. -/
+/-- Second-order energy correction of level `0`, for `n ≥ 1` levels. A term with `d j = d 0` is `0`,
+by the convention `x / 0 = 0`. -/
 noncomputable def pertE2 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 H2 : Matrix (Fin n) (Fin n) ℝ) : ℝ :=
   H2 0 0 + ∑ j ∈ Finset.univ.erase 0, (H1 j 0) ^ 2 / (d 0 - d j)
 
-/-- Second-order eigenvector coefficient (zero `0`-component), the Rayleigh–Schrödinger formula
-in intermediate normalization. In `secondOrder_projected_residual` it enters only the `t ^ 3`
-remainder of the `e₀`-component; the tests check the full second-order residual on a `3 × 3`
-example. -/
+/-- Second-order eigenvector coefficient (zero `0`-component) for `n ≥ 1` levels, the
+Rayleigh–Schrödinger formula in intermediate normalization. In `secondOrder_projected_residual` it
+enters only the `t ^ 3` remainder of the `e₀`-component; the tests check the full second-order
+residual on a `3 × 3` example. Terms with a vanishing denominator are `0`, by the convention
+`x / 0 = 0`. -/
 noncomputable def pertV2 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 H2 : Matrix (Fin n) (Fin n) ℝ) : Fin n → ℝ :=
   fun j => if j = 0 then 0 else
@@ -275,7 +280,8 @@ private lemma rq_norm_pos {n : ℕ} {H : Matrix (Fin n) (Fin n) ℝ}
     simp [hall0]
   · exact hpos
 
-/-- Rayleigh quotient is at least the smallest eigenvalue. -/
+/-- For a real symmetric `H` and `x ≠ 0`, the Rayleigh quotient is at least the smallest
+eigenvalue. -/
 theorem rayleighQuotient_ge_eigenvalues_min {n : ℕ} (hn : 0 < n)
     {H : Matrix (Fin n) (Fin n) ℝ} (hH : H.IsHermitian) {x : Fin n → ℝ} (hx : x ≠ 0) :
     sInf (Set.range hH.eigenvalues) ≤ rayleighQuotient H x := by
@@ -291,7 +297,8 @@ theorem rayleighQuotient_ge_eigenvalues_min {n : ℕ} (hn : 0 < n)
   rw [le_div_iff₀ hW]
   exact hle
 
-/-- Rayleigh quotient is at most the largest eigenvalue. -/
+/-- For a real symmetric `H` and `x ≠ 0`, the Rayleigh quotient is at most the largest
+eigenvalue. -/
 theorem rayleighQuotient_le_eigenvalues_max {n : ℕ} (hn : 0 < n)
     {H : Matrix (Fin n) (Fin n) ℝ} (hH : H.IsHermitian) {x : Fin n → ℝ} (hx : x ≠ 0) :
     rayleighQuotient H x ≤ sSup (Set.range hH.eigenvalues) := by
@@ -307,8 +314,8 @@ theorem rayleighQuotient_le_eigenvalues_max {n : ℕ} (hn : 0 < n)
   rw [div_le_iff₀ hW]
   exact hle
 
-/-- One-dimensional Cauchy interlacing: every diagonal entry lies between the
-extreme eigenvalues. -/
+/-- One-dimensional Cauchy interlacing: every diagonal entry of a real symmetric matrix lies
+between its extreme eigenvalues. -/
 theorem cauchyInterlacing_oneDim {n : ℕ} (hn : 0 < n)
     {H : Matrix (Fin n) (Fin n) ℝ} (hH : H.IsHermitian) (i : Fin n) :
     sInf (Set.range hH.eigenvalues) ≤ H i i ∧ H i i ≤ sSup (Set.range hH.eigenvalues) := by
@@ -327,8 +334,9 @@ theorem cauchyInterlacing_oneDim {n : ℕ} (hn : 0 < n)
   · rw [← hRQ]
     exact rayleighQuotient_le_eigenvalues_max hn hH hx
 
-/-- A generalized eigenvalue equals its generalized Rayleigh quotient: for `S` positive
-definite, `H *ᵥ c = E • (S *ᵥ c)` and `c ≠ 0` give `E = (c ⬝ᵥ H *ᵥ c) / (c ⬝ᵥ S *ᵥ c)`. -/
+/-- A generalized eigenvalue equals its generalized Rayleigh quotient: for symmetric `H` and `S`
+positive definite, `H *ᵥ c = E • (S *ᵥ c)` and `c ≠ 0` give
+`E = (c ⬝ᵥ H *ᵥ c) / (c ⬝ᵥ S *ᵥ c)`. -/
 theorem generalizedEigenvalue_eq_ratio {n : ℕ}
     {H S : Matrix (Fin n) (Fin n) ℝ} (hH : H.IsHermitian) (hS : S.IsHermitian)
     (hSpos : ∀ x : Fin n → ℝ, x ≠ 0 → 0 < x ⬝ᵥ S *ᵥ x)
@@ -344,8 +352,9 @@ theorem generalizedEigenvalue_eq_ratio {n : ℕ}
 
 /-! ## C. Perturbation residuals -/
 
-/-- First-order perturbation: with `v(t) = e₀ + t • pertV1` and
-`E(t) = d 0 + t * pertE1`, the residual of `(diagonal d + t • H1)` is `O(t ^ 2)`. -/
+/-- First-order perturbation: for `n ≥ 1` levels and a nondegenerate level, `d 0 ≠ d j` for
+`j ≠ 0`, with `v(t) = e₀ + t • pertV1` and `E(t) = d 0 + t * pertE1`, the residual of
+`(diagonal d + t • H1)` is `t ^ 2 • (H1 *ᵥ pertV1 - pertE1 • pertV1)`, so `O(t ^ 2)`. -/
 theorem firstOrder_residual {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 : Matrix (Fin n) (Fin n) ℝ)
     (hd : ∀ j : Fin n, j ≠ 0 → d 0 - d j ≠ 0) (t : ℝ) :
@@ -369,7 +378,8 @@ theorem firstOrder_residual {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     field_simp [hd j hj]
     ring
 
-/-- Second-order perturbation: the `e₀`-projected residual of the full family
+/-- Second-order perturbation: for `n ≥ 1` levels, symmetric `H1` and a nondegenerate level,
+`d 0 ≠ d j` for `j ≠ 0`, the `e₀`-projected residual of the full family
 `diagonal d + t • H1 + t ^ 2 • H2` at `v = e₀ + t • v1 + t ^ 2 • v2`,
 `E = d 0 + t * E1 + t ^ 2 * E2` is `O(t ^ 3)` with the explicit remainder. -/
 theorem secondOrder_projected_residual {n : ℕ} [NeZero n] (d : Fin n → ℝ)
@@ -639,7 +649,7 @@ lemma huckel_path_sineMode_ne_zero {n : ℕ} (hn : 0 < n) {k : ℕ} (hk1 : 1 ≤
   rw [harg] at h0
   linarith
 
-/-- The path Hückel eigenvalues for distinct `k` are distinct (for `β ≠ 0`). -/
+/-- The path Hückel eigenvalues for distinct `k` with `1 ≤ k ≤ n` are distinct (for `β ≠ 0`). -/
 theorem huckel_path_eigenvalues_distinct {n : ℕ} (hn : 0 < n) (α : ℝ) {β : ℝ} (hβ : β ≠ 0)
     {k l : ℕ} (hk1 : 1 ≤ k) (hkn : k ≤ n) (hl1 : 1 ≤ l) (hln : l ≤ n)
     (hkl : k ≠ l) :
@@ -1420,7 +1430,7 @@ theorem huckel_cycle_closedForm_count_eq_alpha_4m {m : ℕ} (hm : 0 < m) (α β 
 
 /-! ## G. The two-orbital LCAO secular determinant -/
 
-/-- 2×2 LCAO secular determinant factorization. `H = !![α, β; β, α]`,
+/-- 2×2 LCAO secular determinant factorization, for `S ^ 2 ≠ 1`. `H = !![α, β; β, α]`,
 overlap `Smat = !![1, S; S, 1]`. -/
 theorem lcao_det (α β S E : ℝ) (hS : S ^ 2 ≠ 1) :
     ((!![α, β; β, α] : Matrix (Fin 2) (Fin 2) ℝ) -
@@ -1442,7 +1452,8 @@ theorem lcao_det (α β S E : ℝ) (hS : S ^ 2 ≠ 1) :
   field_simp
   ring
 
-/-- The LCAO energies `(α ± β) / (1 ± S)` annihilate the secular determinant. -/
+/-- For `S ≠ 1` and `S ≠ -1`, the LCAO energies `(α ± β) / (1 ± S)` annihilate the secular
+determinant. -/
 theorem lcao_energies_are_roots (α β S : ℝ) (hS1 : S ≠ 1) (hS2 : S ≠ -1) :
     ((!![α, β; β, α] : Matrix (Fin 2) (Fin 2) ℝ) -
       ((α + β) / (1 + S)) • (!![1, S; S, 1] : Matrix (Fin 2) (Fin 2) ℝ)).det = 0 ∧

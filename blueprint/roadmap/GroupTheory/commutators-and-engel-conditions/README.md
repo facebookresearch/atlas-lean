@@ -16,3 +16,6 @@ Commutator calculus and nilpotency in (often infinite) groups: basic commutators
 - [Perfect locally nilpotent p-groups](perfect-locally-nilpotent-p-groups/README.md)
 - [Residually nilpotent groups](residually-nilpotent-groups/README.md)
 - [Word maps on Lie groups](word-maps-on-lie-groups/README.md)
+- [A nontrivial nilpotent group has nontrivial centre](nilpotent-group-nontrivial-center.md)
+- [Commutator subgroup of a group](commutator-subgroup.md)
+- [Abelianization of a group](abelianization.md)

@@ -56,7 +56,10 @@ namespace SuffixTree
 
 variable {α : Type u} [DecidableEq α]
 
-/-- The terminated string: every symbol of `s` tagged `some`, with `none` appended. -/
+/-- **Terminated string.** For a list $s = (s_0, \dots, s_{n-1})$ over $\alpha$, the terminated
+string of $s$ is the list $(\mathrm{some}\,s_0, \dots, \mathrm{some}\,s_{n-1}, \mathrm{none})$
+over $\mathrm{Option}\,\alpha$: every symbol of $s$ tagged $\mathrm{some}$, followed by the
+terminator $\mathrm{none}$. -/
 def terminated (s : List α) : List (Option α) :=
   s.map some ++ [none]
 
@@ -72,12 +75,19 @@ theorem terminated_drop (s : List α) {i : Nat} (hi : i ≤ s.length) :
   rw [terminated, List.drop_append_of_le_length hlen, ← List.map_drop]
 
 omit [DecidableEq α] in
-/-- Terminated suffixes are the `SuffixArray.suffix` suffixes, tagged and terminated. -/
+/-- **Suffixes of the terminated string.** For a list $s$ over $\alpha$ and a natural number
+$i \le |s|$, removing the first $i$ entries of the terminated string of $s$ gives the suffix
+of $s$ starting at index $i$ with every symbol tagged $\mathrm{some}$, followed by
+$\mathrm{none}$. -/
 theorem terminated_drop_eq_suffix_map (s : List α) {i : Nat} (hi : i ≤ s.length) :
     (terminated s).drop i = (SuffixArray.suffix s i).map some ++ [none] :=
   terminated_drop s hi
 
-/-- The suffix entries of `s`: each suffix of `terminated s` with its starting index. -/
+/-- **Suffix entries of a string.** For a list $s = (s_0, \dots, s_{n-1})$ over $\alpha$, let
+$\hat s = (\mathrm{some}\,s_0, \dots, \mathrm{some}\,s_{n-1}, \mathrm{none})$ be its
+terminated string. The suffix entries of $s$ are the list of pairs $(\hat s_{\ge i}, i)$ for
+$i = 0, 1, \dots, n$ in increasing order, where $\hat s_{\ge i}$ is $\hat s$ with its first
+$i$ entries removed: each nonempty suffix of $\hat s$ paired with its starting index. -/
 def suffixEntries (s : List α) : List (List (Option α) × Nat) :=
   (List.range (s.length + 1)).map (fun i => ((terminated s).drop i, i))
 
@@ -102,7 +112,11 @@ theorem suffixEntries_map_fst (s : List α) :
   rfl
 
 omit [DecidableEq α] in
-/-- The terminated suffixes are pairwise distinct, since their lengths differ. -/
+/-- **Terminated suffixes are distinct.** Let $s$ be a list over $\alpha$. The lists obtained from
+the terminated string of $s$ by removing its first $i$ symbols, for $i$ ranging over
+$0, 1, \ldots, |s|$, are pairwise distinct.
+
+They are distinct because their lengths differ. -/
 theorem nodup_terminated_drops (s : List α) :
     ((List.range (s.length + 1)).map (fun i => (terminated s).drop i)).Nodup := by
   refine List.nodup_range.map_on ?_
@@ -120,29 +134,38 @@ theorem suffixEntries_fst_nodup (s : List α) :
   rw [suffixEntries_map_fst]
   exact nodup_terminated_drops s
 
-/--
-The suffix tree of `s`: the radix trie of all suffixes of `terminated s`, each stored
-with its starting index, built by naive insertion.
--/
+/-- **Suffix tree.** For a list $s = (s_0, \dots, s_{n-1})$ over $\alpha$, let
+$\hat s = (\mathrm{some}\,s_0, \dots, \mathrm{some}\,s_{n-1}, \mathrm{none})$ be its
+terminated string over $\mathrm{Option}\,\alpha$. The suffix tree of $s$ is the radix trie
+with keys over $\mathrm{Option}\,\alpha$ and natural-number values obtained from the empty
+trie by inserting, for $i = n, n - 1, \dots, 0$ in this order, the suffix of $\hat s$
+starting at index $i$ with value $i$. -/
 def suffixTree (s : List α) : RadixTrie (Option α) Nat :=
   RadixTrie.buildFrom (suffixEntries s)
 
 theorem valid_suffixTree (s : List α) : RadixTrie.Valid (suffixTree s) :=
   RadixTrie.Valid.buildFrom _
 
-/-- Looking up a terminated suffix in the suffix tree returns its starting index. -/
+/-- **Lookup of a suffix returns its starting index.** Let $s$ be a list over $\alpha$ and $i$ a
+natural number with $i \le |s|$. Looking up, in the suffix tree of $s$, the terminated string of
+$s$ with its first $i$ symbols removed returns $i$. -/
 theorem lookup_suffix {s : List α} {i : Nat} (hi : i ≤ s.length) :
     (suffixTree s).lookup ((terminated s).drop i) = some i :=
   RadixTrie.lookup_buildFrom_of_mem (suffixEntries_fst_nodup s)
     (mem_suffixEntries.mpr ⟨hi, rfl⟩)
 
-/-- Everything found by lookup in the suffix tree is a terminated suffix. -/
+/-- **Lookup in the suffix tree returns starting indices.** Let $s$ be a list over $\alpha$, let
+$k$ be a list over $\alpha$ extended by a fresh terminator symbol, and let $i$ be a natural number.
+If looking up $k$ in the suffix tree of $s$ returns $i$, then $i \le |s|$ and $k$ is the
+terminated string of $s$ with its first $i$ symbols removed. -/
 theorem eq_drop_of_lookup_suffixTree {s : List α} {k : List (Option α)} {i : Nat}
     (h : (suffixTree s).lookup k = some i) :
     i ≤ s.length ∧ k = (terminated s).drop i :=
   mem_suffixEntries.mp (RadixTrie.mem_of_lookup_buildFrom h)
 
-/-- The stored keys of the suffix tree are exactly the terminated suffixes. -/
+/-- **The stored keys of a suffix tree are its terminated suffixes.** Let $s$ be a list over
+$\alpha$. A key $k$ is stored in the suffix tree of $s$ if and only if there is a natural number
+$i \le |s|$ such that $k$ is the terminated string of $s$ with its first $i$ symbols removed. -/
 theorem mem_suffixTree_keys {s : List α} {k : List (Option α)} :
     k ∈ (suffixTree s).keys ↔ ∃ i ≤ s.length, k = (terminated s).drop i := by
   rw [suffixTree, RadixTrie.mem_keys_buildFrom]
@@ -153,11 +176,11 @@ theorem mem_suffixTree_keys {s : List α} {k : List (Option α)} :
   · rintro ⟨i, hi, rfl⟩
     exact ⟨i, mem_suffixEntries.mpr ⟨hi, rfl⟩⟩
 
-/--
-The stored keys of the suffix tree: exactly the terminated suffixes.
-This is a statement about stored keys, not about structural trie leaves;
-`RadixTrie.Valid` permits values at internal nodes in general, and no
-leaf characterization is claimed.
+/-- **Stored keys of the suffix tree.** For a list $s$ over $\alpha$, the stored keys of $s$ form
+the list of keys stored in the suffix tree of $s$, in stored sibling order.
+
+They are exactly the terminated suffixes. This concerns stored keys, not structural trie leaves:
+a valid radix trie may carry values at internal nodes, and no leaf characterization is claimed.
 -/
 def storedKeys (s : List α) : List (List (Option α)) :=
   (suffixTree s).keys
@@ -169,8 +192,10 @@ theorem mem_storedKeys_iff {s : List α} {k : List (Option α)} :
 theorem storedKeys_nodup (s : List α) : (storedKeys s).Nodup :=
   (valid_suffixTree s).keys_nodup
 
-/-- The suffix tree stores exactly `s.length + 1` keys, one per terminated
-suffix. -/
+/-- **The suffix tree stores one key per suffix.** For a list $s$ over $\alpha$, the list of
+stored keys of the suffix tree of $s$ has length $|s| + 1$.
+
+There is one key for each terminated suffix. -/
 theorem storedKeys_length (s : List α) : (storedKeys s).length = s.length + 1 := by
   apply Nat.le_antisymm
   · have h := (storedKeys_nodup s).length_le_of_subset
@@ -187,10 +212,11 @@ theorem storedKeys_length (s : List α) : (storedKeys s).length = s.length + 1 :
     simpa using h
 
 omit [DecidableEq α] in
-/--
-A tagged pattern can only prefix a terminated string inside the tagged part: the
-terminator `none` differs from every `some`, so the pattern cannot reach past it.
--/
+/-- **A tagged pattern cannot reach past the terminator.** For lists $p$ and $q$ over $\alpha$,
+view their symbols in $\alpha$ extended by a fresh terminator symbol. If $p$ is a prefix of $q$
+followed by the terminator, then $p$ is a prefix of $q$.
+
+The terminator differs from every symbol of $\alpha$, so the pattern cannot reach past it. -/
 theorem isPrefix_of_map_some_prefix_append_none {p q : List α} :
     (p.map some) <+: (q.map some ++ [none]) → p <+: q := by
   induction p generalizing q with
@@ -209,7 +235,9 @@ theorem isPrefix_of_map_some_prefix_append_none {p q : List α} :
           exact ⟨t₂, by rw [List.cons_append, ht₂]⟩
 
 omit [DecidableEq α] in
-/-- A pattern occurs in `s` as an infix exactly when it prefixes some suffix of `s`. -/
+/-- **Infixes are prefixes of suffixes.** For lists $s$ and $p$, $p$ is an infix (a contiguous
+sublist) of $s$ if and only if there is a natural number $i$ such that $p$ is a prefix of the list
+obtained from $s$ by removing its first $i$ symbols. -/
 theorem isInfix_iff_exists_isPrefix_drop {s p : List α} :
     p <:+: s ↔ ∃ i, p <+: s.drop i := by
   constructor
@@ -220,10 +248,10 @@ theorem isInfix_iff_exists_isPrefix_drop {s p : List α} :
   · rintro ⟨i, t, ht⟩
     exact ⟨s.take i, t, by rw [List.append_assoc, ht, List.take_append_drop]⟩
 
-/--
-Prefix lookup in the suffix tree succeeds exactly when the pattern prefixes some
-suffix of `s`.
--/
+/-- **Suffix-tree search finds exactly the prefixes of suffixes.** For lists $s$ and $p$ over
+$\alpha$, prefix search for $p$ (each symbol viewed in the alphabet extended by the terminator) in
+the suffix tree of $s$ succeeds if and only if there is a natural number $i$ such that $p$ is a
+prefix of the list obtained from $s$ by removing its first $i$ symbols. -/
 theorem hasPrefix_suffixTree_iff_exists {s p : List α} :
     (suffixTree s).hasPrefix (p.map some) = true ↔ ∃ i, p <+: s.drop i := by
   rw [RadixTrie.hasPrefix_eq_true_iff (valid_suffixTree s)]
@@ -251,7 +279,9 @@ theorem hasPrefix_suffixTree_iff_exists {s p : List α} :
       rw [terminated_drop s (le_refl _)]
       simp
 
-/-- Prefix lookup in the suffix tree succeeds exactly when the pattern occurs in `s`. -/
+/-- **Suffix-tree search finds exactly the infixes.** For lists $s$ and $p$ over $\alpha$, prefix
+search for $p$ (each symbol viewed in the alphabet extended by the terminator) in the suffix tree
+of $s$ succeeds if and only if $p$ occurs in $s$ as a contiguous sublist (an infix). -/
 theorem hasPrefix_suffixTree_iff_isInfix {s p : List α} :
     (suffixTree s).hasPrefix (p.map some) = true ↔ p <:+: s :=
   hasPrefix_suffixTree_iff_exists.trans isInfix_iff_exists_isPrefix_drop.symm

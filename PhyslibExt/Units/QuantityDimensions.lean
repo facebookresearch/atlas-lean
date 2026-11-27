@@ -103,8 +103,8 @@ declaration here applies them to a `WithDim` quantity. No thermodynamic law is p
   temperature and logarithm conventions.
 - `Physlib.Units.ISQDimensionBase`, `Physlib.Units.ISQBridge`, `Physlib.Units.ParametricUnits` and
   `Physlib.Units.WithDim.Basic` in https://github.com/leanprover-community/physlib at the root
-  package's pin. Physlib's `Constants.kB` fixes the SI value of the Boltzmann constant, so it and
-  `Temperature.beta_pos` are cited as analogues but not used.
+  package's pin. Physlib's Boltzmann constant `BoltzmannConstant` and `Temperature.beta_pos` are
+  cited as analogues but not used.
 -/
 
 @[expose] public section
@@ -572,7 +572,7 @@ lemma celsiusToKelvin_two_mul_twenty_ne :
   norm_num [celsiusToKelvin]
 
 /-- The inverse temperature `1 / (k_B T)` is positive when `k_B > 0` and `T > 0`. Physlib's
-`Temperature.beta_pos` is the analogue for its fixed constant `Constants.kB`. -/
+`Temperature.beta_pos` is the analogue for a Boltzmann constant `kB : BoltzmannConstant`. -/
 lemma inverseTemperature_pos {kB T : ℝ} (hkB : 0 < kB) (hT : 0 < T) : 0 < 1 / (kB * T) :=
   one_div_pos.mpr (mul_pos hkB hT)
 

@@ -45,9 +45,25 @@ to the direct claim. Status: resolved true (all parts proved; Fox–Loh–
 Zhao [FLZ15]). -/
 
 open Classical in
-/-- The Ramsey–Turán density of `K₄` is `1/8`, with the matching upper
-bound, the Bollobás–Erdős lower bound, and the Fox–Loh–Zhao quantitative
-form. -/
+/-- **Ramsey–Turán problem for $K_4$ (Erdős Problem 22).** For a graph $G$ write $\alpha(G)$ for
+its independence number and $e(G)$ for its number of edges, and call $G$ $K_4$-free if it has no
+four pairwise adjacent vertices. The statement is the conjunction of the following four
+assertions.
+
+(i) For every real $\varepsilon > 0$ and all sufficiently large $n$, there is a $K_4$-free graph
+$G$ on $n$ vertices with $\alpha(G) \le \varepsilon n$ and $e(G) \ge n^2/8$.
+
+(ii) (Szemerédi's upper bound.) For every real $\varepsilon > 0$ there is a real $\delta > 0$ such
+that, for all sufficiently large $n$, every $K_4$-free graph $G$ on $n$ vertices with
+$\alpha(G) \le \delta n$ satisfies $e(G) \le (1/8 + \varepsilon) n^2$.
+
+(iii) (Bollobás–Erdős lower bound.) For all real $\varepsilon > 0$ and $\delta > 0$ and all
+sufficiently large $n$, there is a $K_4$-free graph $G$ on $n$ vertices with
+$\alpha(G) \le \delta n$ and $e(G) \ge (1/8 - \varepsilon) n^2$.
+
+(iv) (Fox–Loh–Zhao quantitative form.) There is a real $C > 0$ such that, for all sufficiently
+large $n$, there is a $K_4$-free graph $G$ on $n$ vertices with $e(G) \ge n^2/8$ and
+$\alpha(G) \le C n (\log \log n)^{3/2} / (\log n)^{1/2}$. -/
 def conjecture : Prop :=
   (∀ ε : ℝ, 0 < ε → ∀ᶠ (n : ℕ) in atTop,
     ∃ G : SimpleGraph (Fin n), G.CliqueFree 4 ∧
@@ -67,7 +83,9 @@ def conjecture : Prop :=
       (n : ℝ) ^ 2 / 8 ≤ G.edgeFinset.card)
 
 open Classical in
-/-- The empty graph satisfies the Szemerédi upper bound. -/
+/-- **The empty graph meets the Ramsey–Turán edge bound for $K_4$.** For every natural number $n$
+and every real $\varepsilon > 0$, the empty graph on $n$ vertices has no four pairwise adjacent
+vertices, and its number of edges (namely $0$) is at most $(1/8 + \varepsilon) n^2$. -/
 theorem test_bot (n : ℕ) (ε : ℝ) (hε : 0 < ε) :
     (⊥ : SimpleGraph (Fin n)).CliqueFree 4 ∧
       (((⊥ : SimpleGraph (Fin n)).edgeFinset.card : ℝ)) ≤ (1 / 8 + ε) * n ^ 2 := by
@@ -76,9 +94,26 @@ theorem test_bot (n : ℕ) (ε : ℝ) (hε : 0 < ε) :
   simp only [Finset.card_empty, Nat.cast_zero]
   positivity
 
-/--
-Resolved true: Resolved true (Fox-Loh-Zhao): the Ramsey-Turan density of K4 is 1/8, with all
-variants and the proved empty-graph test. Source: Jacob Fox, Po-Shen Loh, and Yufei Zhao, The
+/-- **Resolution of Erdős Problem 22 (Fox–Loh–Zhao).** For a graph $G$ write $\alpha(G)$ for its
+independence number and $e(G)$ for its number of edges, and call $G$ $K_4$-free if it has no four
+pairwise adjacent vertices. All four of the following assertions hold.
+
+(i) For every real $\varepsilon > 0$ and all sufficiently large $n$, there is a $K_4$-free graph
+$G$ on $n$ vertices with $\alpha(G) \le \varepsilon n$ and $e(G) \ge n^2/8$.
+
+(ii) (Szemerédi's upper bound.) For every real $\varepsilon > 0$ there is a real $\delta > 0$ such
+that, for all sufficiently large $n$, every $K_4$-free graph $G$ on $n$ vertices with
+$\alpha(G) \le \delta n$ satisfies $e(G) \le (1/8 + \varepsilon) n^2$.
+
+(iii) (Bollobás–Erdős lower bound.) For all real $\varepsilon > 0$ and $\delta > 0$ and all
+sufficiently large $n$, there is a $K_4$-free graph $G$ on $n$ vertices with
+$\alpha(G) \le \delta n$ and $e(G) \ge (1/8 - \varepsilon) n^2$.
+
+(iv) (Fox–Loh–Zhao quantitative form.) There is a real $C > 0$ such that, for all sufficiently
+large $n$, there is a $K_4$-free graph $G$ on $n$ vertices with $e(G) \ge n^2/8$ and
+$\alpha(G) \le C n (\log \log n)^{3/2} / (\log n)^{1/2}$.
+
+Source: Jacob Fox, Po-Shen Loh, and Yufei Zhao, The
 critical window for the classical Ramsey-Turán problem, Combinatorica 35 (2015), 435–476. Moved
 from `OpenConjectures/GraphTheory/ErdosProblem22`.
 -/

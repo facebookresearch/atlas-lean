@@ -1,0 +1,3 @@
+# Inclusion of the wired inner graph into the extended wired graph
+
+Let $d, n \in \mathbb{N}$, $\Lambda_m = \{-m, \dots, m\}^d$, and $\omega$ a configuration of $\Lambda_n$. The inclusion $\Lambda_n \subseteq \Lambda_{n+1}$ is a graph homomorphism from the wired graph $H_\omega$ of $\Lambda_n$ (the edges of $\Lambda_n$ open in $\omega$ together with all pairs of distinct vertices of $\partial\Lambda_n = \Lambda_n \setminus \Lambda_{n-1}$) into the wired graph $\tilde H_\omega$ of $\Lambda_{n+1}$ (the edges of $\Lambda_{n+1}$ open in the [closed-annulus extension](cross-ext.md) $\tilde\omega$ together with all pairs of distinct vertices of $\Lambda_{n+1}$ lying in $\partial\Lambda_n$).

@@ -1,0 +1,17 @@
+# Non Unital Commutative
+
+- [Category of commutative nonunital C*-algebras](non-unital-comm-cstar-alg-cat.md)
+- [Commutative nonunital C*-algebra as an object](of.md)
+- [Forgetting commutativity of a C*-algebra](to-non-unital-cstar-alg-cat.md)
+- [Forgetful functor for commutative C*-algebras](forgetful-functor.md)
+- [Full faithfulness of forgetting commutativity](fully-faithful-forgetful.md)
+- [Carrier under forgetting commutativity](to-non-unital-cstar-alg-cat-carrier.md)
+- [Values of the forgetful functor on morphisms](forgetful-functor-map-apply.md)
+- [Locally compact character space](character-space-object.md)
+- [Partial character-space map](character-space-map.md)
+- [Contravariant nonunital character-space functor](character-space-functor.md)
+- [Carrier of a commutative nonunital C*-object](of-carrier.md)
+- [Carrier of the nonunital character-space object](character-space-object-carrier.md)
+- [One-point character precomposition](character-space-map-precomposition.md)
+- [Evaluation of nonunital character precomposition](character-space-map-evaluation.md)
+- [Character precomposition fixes infinity](character-space-map-infty.md)

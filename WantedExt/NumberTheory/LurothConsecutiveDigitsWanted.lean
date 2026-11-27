@@ -9,8 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.LurothConsecutiveDigitsIntegral
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
+public import MathlibExt.NumberTheory.LurothConsecutiveDigitsLeVolumeLurothDigitsGe
+public import MathlibExt.NumberTheory.LurothConsecutiveDigitsVolumeLurothCylinder
+public import MathlibExt.NumberTheory.LurothConsecutiveDigits
 
 /-!
 # Functions of consecutive digits in Lüroth series
@@ -36,29 +40,7 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The first Lüroth digit `d₁(x) = ⌊1 / x⌋ + 1`.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2. -/
-noncomputable def lurothDigit (x : ℝ) : ℕ :=
-  ⌊1 / x⌋₊ + 1
-
-/-- The Lüroth map `L(x) = d₁(x) (d₁(x) - 1) x - (d₁(x) - 1)`.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2. -/
-noncomputable def lurothMap (x : ℝ) : ℝ :=
-  (lurothDigit x : ℝ) * ((lurothDigit x : ℝ) - 1) * x - ((lurothDigit x : ℝ) - 1)
-
-/-- The Lüroth digits of `x`, indexed from `0`: `lurothDigitSeq x k = d₁(L^k(x))`, the
-paper's `d_{k+1}(x)`.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2. -/
-noncomputable def lurothDigitSeq (x : ℝ) (k : ℕ) : ℕ :=
-  lurothDigit (lurothMap^[k] x)
-
-/-- `d₁(1) = 2`.
+/-- **First Lüroth digit of 1.** The first Lüroth digit of $1$ is $d_1(1) = 2$.
 
 Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
 Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2
@@ -66,7 +48,7 @@ Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 
 theorem lurothDigit_one : lurothDigit 1 = 2 := by
   simp [lurothDigit]
 
-/-- `d₁(1/2) = 3`.
+/-- **First Lüroth digit of 1/2.** The first Lüroth digit of $1/2$ is $d_1(1/2) = 3$.
 
 Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
 Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2
@@ -74,7 +56,7 @@ Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 
 theorem lurothDigit_half : lurothDigit (1 / 2) = 3 := by
   norm_num [lurothDigit]
 
-/-- `L(1) = 1`.
+/-- **The Lüroth map fixes 1.** The Lüroth map $L$ satisfies $L(1) = 1$.
 
 Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
 Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2
@@ -82,7 +64,7 @@ Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 
 theorem lurothMap_one : lurothMap 1 = 1 := by
   norm_num [lurothMap, lurothDigit_one]
 
-/-- `L(1/2) = 1`.
+/-- **The Lüroth map at 1/2.** The Lüroth map $L$ sends $1/2$ to $1$: $L(1/2) = 1$.
 
 Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
 Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2
@@ -90,7 +72,7 @@ Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 
 theorem lurothMap_half : lurothMap (1 / 2) = 1 := by
   norm_num [lurothMap, lurothDigit_half]
 
-/-- `L(0) = 0`.
+/-- **The Lüroth map fixes 0.** The Lüroth map $L$ satisfies $L(0) = 0$.
 
 Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
 Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2
@@ -98,7 +80,9 @@ Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 
 theorem lurothMap_zero : lurothMap 0 = 0 := by
   simp [lurothMap, lurothDigit]
 
-/-- The digits of `L(x)` are the digits of `x` shifted by one: `d_{k+1}(L x) = d_{k+2}(x)`.
+/-- **The Lüroth map shifts the digits.** For every real number $x$ and every $n \ge 1$, the
+$n$-th Lüroth digit of $L(x)$, where $L$ is the Lüroth map, is the $(n+1)$-st Lüroth digit of
+$x$: $d_n(L(x)) = d_{n+1}(x)$.
 
 Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
 Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2
@@ -107,36 +91,17 @@ theorem lurothDigitSeq_succ (x : ℝ) (k : ℕ) :
     lurothDigitSeq x (k + 1) = lurothDigitSeq (lurothMap x) k := by
   simp [lurothDigitSeq, Function.iterate_succ_apply]
 
-/-- The Lüroth cylinder `I_n(c) = {x ∈ (0, 1] : d_j(x) = c_j, 1 ≤ j ≤ n}` has Lebesgue
-measure `∏ 1 / (c_j (c_j - 1))`. Stated for every `c`; when some `c_j < 2` both sides
-vanish.
+/-- **Zero-one law for weighted products of consecutive Lüroth digits.** Let $m \ge 1$, let
+$t_0, \dots, t_{m-1}$ be positive reals, let $T = \max_i t_i$ and let $\ell$ be the number of
+indices $j$ with $t_j = T$. Let $(\Psi(n))_{n \ge 0}$ be a sequence of positive reals for which
+there is $c > 1$ with $\Psi(n) \ge c$ for all sufficiently large $n$ (equivalently,
+$\liminf_n \Psi(n) > 1$). Write $d_k(x)$ for the $k$-th Lüroth digit of $x$ and let $E$ be the
+set of $x \in (0, 1]$ such that $\prod_{i=0}^{m-1} d_{n+i+1}(x)^{t_i} \ge \Psi(n)$ for
+infinitely many $n$. If the series $\sum_{n \ge 0} (\log \Psi(n))^{\ell - 1} / \Psi(n)^{1/T}$
+converges then $E$ has Lebesgue measure $0$, and if it diverges then $E$ has Lebesgue
+measure $1$.
 
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Proposition 1,
-(10) (`integers-2024-A67-prop-1`). -/
-public theorem_wanted volume_lurothCylinder {n : ℕ} (c : Fin n → ℕ) :
-    volume {x ∈ Set.Ioc (0 : ℝ) 1 | ∀ j : Fin n, lurothDigitSeq x j = c j} =
-      ∏ j, ENNReal.ofReal (1 / ((c j : ℝ) * ((c j : ℝ) - 1)))
-
-/-- Lüroth analogue of the Borel-Bernstein theorem: for positive `Ψ`, the set of `x ∈ (0, 1]`
-with `d_n(x) ≥ Ψ(n)` for infinitely many `n` has Lebesgue measure `0` if `∑ Ψ(n)⁻¹ < ∞` and
-`1` if `∑ Ψ(n)⁻¹ = ∞` (convergence of a positive series as `Summable`). Quoted in the paper
-from Jager and de Vroedt (its reference [3]).
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 1
-(`integers-2024-A67-thm-1`). -/
-public theorem_wanted volume_lurothDigit_ge_zero_one (Ψ : ℕ → ℝ) (hΨ : ∀ n, 0 < Ψ n) :
-    let E := {x ∈ Set.Ioc (0 : ℝ) 1 | ∃ᶠ n in atTop, Ψ n ≤ lurothDigitSeq x n}
-    (Summable (fun n => (Ψ n)⁻¹) → volume E = 0) ∧
-      (¬ Summable (fun n => (Ψ n)⁻¹) → volume E = 1)
-
-/-- Weighted products of consecutive Lüroth digits: for `m ≥ 1`, weights `t_i > 0`,
-`T = max t_i`, `ℓ(t) = #{j : t_j = T}` and positive `Ψ` with `liminf Ψ(n) > 1` (written as
-`Ψ(n) ≥ c` eventually for some `c > 1`), the set of `x ∈ (0, 1]` with
-`∏ d_{n+i}(x)^{t_i} ≥ Ψ(n)` for infinitely many `n` has Lebesgue measure `0` if
-`∑ (log Ψ(n))^{ℓ(t)-1} / Ψ(n)^{1/T} < ∞` and `1` if that series diverges (convergence as
-`Summable`). Quoted in the paper from Brown-Sarre, Robert and Hussain (its reference [2]).
+The paper quotes this result from Brown-Sarre, Robert and Hussain (its reference [2]).
 
 Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
 Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 2, with `T` and
@@ -151,11 +116,17 @@ public theorem_wanted volume_lurothWeightedProduct_ge_zero_one {m : ℕ} (hm : 0
     (Summable (fun n => Real.log (Ψ n) ^ (ℓ - 1) / Ψ n ^ (1 / T)) → volume E = 0) ∧
       (¬ Summable (fun n => Real.log (Ψ n) ^ (ℓ - 1) / Ψ n ^ (1 / T)) → volume E = 1)
 
-/-- Zero-one law for a function of `m` consecutive Lüroth digits: with
-`H(y) = ∑_{d ∈ D^m, F(d) ≥ y} ∏ 1 / (d_i (d_i - 1))` (`D = ℕ_{≥ 2}`), the set of
-`x ∈ (0, 1]` with `F(d_n(x), …, d_{n+m-1}(x)) ≥ Ψ(n)` for infinitely many `n` has measure
-`0` if `∑ H(Ψ(n)) < ∞` and `1` if `∑ H(Ψ(n)) = ∞`. The paper's positivity of `F` and `Ψ`
-is not needed and is dropped.
+/-- **Zero-one law for functions of consecutive Lüroth digits.** Let $m \in \mathbb{N}$, let $F$
+be a real-valued function on $m$-tuples of natural numbers and let $(\Psi(n))_{n \ge 0}$ be a
+real sequence. For $y \in \mathbb{R}$ put
+$$H(y) = \sum_{a} \prod_{i=1}^{m} \frac{1}{a_i (a_i - 1)} \in [0, \infty],$$
+the sum running over the $a = (a_1, \dots, a_m) \in \mathbb{N}^m$ with every $a_i \ge 2$ and
+$F(a) \ge y$. Write $d_k(x)$ for the $k$-th Lüroth digit of $x$ and let $E$ be the set of
+$x \in (0, 1]$ such that $F(d_{n+1}(x), \dots, d_{n+m}(x)) \ge \Psi(n)$ for infinitely many
+$n$. If $\sum_{n \ge 0} H(\Psi(n)) < \infty$ then $E$ has Lebesgue measure $0$, and if
+$\sum_{n \ge 0} H(\Psi(n)) = \infty$ then $E$ has Lebesgue measure $1$.
+
+Unlike the paper, $F$ and $\Psi$ need not be positive.
 
 Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
 Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 3, with
@@ -169,33 +140,13 @@ public theorem_wanted volume_lurothConsecutiveDigits_zero_one {m : ℕ}
       ∃ᶠ n in atTop, Ψ n ≤ F (fun i => lurothDigitSeq x (n + i))}
     (∑' n, H (Ψ n) < ∞ → volume E = 0) ∧ (∑' n, H (Ψ n) = ∞ → volume E = 1)
 
-/-- Integral form of the zero-one law: let `F` be positive, measurable and non-decreasing
-on `[2, ∞)^m` with `F(x) ≤ M F(⌊x⌋)` there (condition (6)), and
-`G(y) = ∫_{x_i ≥ 2, F(x) ≥ y} ∏ 1 / x_i²`. The set of `x ∈ (0, 1]` with
-`F(d_n(x), …, d_{n+m-1}(x)) ≥ Ψ(n)` for infinitely many `n` has measure `0` if
-`∑ G(Ψ(n)) < ∞` and `1` if `∑ G(M Ψ(n)) = ∞`. Here `M` is any constant satisfying (6)
-(the paper takes the supremum; a larger `M` only weakens the divergence condition). The
-paper's positivity of `Ψ` is dropped.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 4, with (6)
-and `G` from (7) (`integers-2024-A67-thm-4`). -/
-public theorem_wanted volume_lurothConsecutiveDigits_zero_one_integral {m : ℕ}
-    (F : (Fin m → ℝ) → ℝ) (hFm : Measurable F)
-    (hpos : ∀ x : Fin m → ℝ, (∀ i, 2 ≤ x i) → 0 < F x)
-    (hmono : MonotoneOn F {x | ∀ i, 2 ≤ x i}) (M : ℝ)
-    (hM : ∀ x : Fin m → ℝ, (∀ i, 2 ≤ x i) → F x ≤ M * F (fun i => (⌊x i⌋₊ : ℝ)))
-    (Ψ : ℕ → ℝ) :
-    let G : ℝ → ℝ≥0∞ := fun y =>
-      ∫⁻ x in {x : Fin m → ℝ | (∀ i, 2 ≤ x i) ∧ y ≤ F x}, ENNReal.ofReal (∏ i, 1 / x i ^ 2)
-    let E := {x ∈ Set.Ioc (0 : ℝ) 1 |
-      ∃ᶠ n in atTop, Ψ n ≤ F (fun i => (lurothDigitSeq x (n + i) : ℝ))}
-    (∑' n, G (Ψ n) < ∞ → volume E = 0) ∧ (∑' n, G (M * Ψ n) = ∞ → volume E = 1)
-
-/-- Borel–Cantelli dichotomy for the Lüroth map: if each `A_n` is a union of cylinders of
-level `m`, i.e. `A_n = {x ∈ (0, 1] : (d_1(x), …, d_m(x)) ∈ S_n}`, then
-`λ(limsup L^{-n} A_n)` is `0` if `∑ λ(A_n) < ∞` and `1` if `∑ λ(A_n) = ∞`
-(`x ∈ L^{-n} A_n` means `(d_{n+1}(x), …, d_{n+m}(x)) ∈ S_n`).
+/-- **Borel–Cantelli dichotomy for Lüroth cylinder events.** Let $m \in \mathbb{N}$, let
+$(S_n)_{n \ge 0}$ be a sequence of sets of $m$-tuples of natural numbers, write $d_k(x)$ for
+the $k$-th Lüroth digit of $x$ and $\lambda$ for Lebesgue measure. Put
+$A_n = \{x \in (0, 1] : (d_1(x), \dots, d_m(x)) \in S_n\}$ (a union of cylinders of level $m$)
+and let $E$ be the set of $x \in (0, 1]$ such that $(d_{n+1}(x), \dots, d_{n+m}(x)) \in S_n$
+for infinitely many $n$. If $\sum_{n \ge 0} \lambda(A_n) < \infty$ then $\lambda(E) = 0$, and
+if $\sum_{n \ge 0} \lambda(A_n) = \infty$ then $\lambda(E) = 1$.
 
 Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
 Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 5
@@ -207,33 +158,6 @@ public theorem_wanted volume_limsup_lurothPreimage_zero_one {m : ℕ}
     let E := {x ∈ Set.Ioc (0 : ℝ) 1 |
       ∃ᶠ n in atTop, (fun i : Fin m => lurothDigitSeq x (n + i)) ∈ S n}
     (∑' n, volume (A n) < ∞ → volume E = 0) ∧ (∑' n, volume (A n) = ∞ → volume E = 1)
-
-/-- Upper bound: for `F` non-decreasing on `[2, ∞)^m` and every real `y`,
-`λ{x ∈ (0, 1] : F(d_1(x), …, d_m(x)) ≥ y} ≤ 3^m G(y)` with `G` as in (7). The paper
-states it for `y = Ψ(n)` under the hypotheses of Theorem 4; only monotonicity is used.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 6
-(`integers-2024-A67-thm-6`). -/
-public theorem_wanted volume_lurothDigits_ge_le {m : ℕ} (F : (Fin m → ℝ) → ℝ)
-    (hmono : MonotoneOn F {x | ∀ i, 2 ≤ x i}) (y : ℝ) :
-    volume {x ∈ Set.Ioc (0 : ℝ) 1 | y ≤ F (fun i => (lurothDigitSeq x i : ℝ))} ≤
-      3 ^ m * ∫⁻ x in {x : Fin m → ℝ | (∀ i, 2 ≤ x i) ∧ y ≤ F x},
-        ENNReal.ofReal (∏ i, 1 / x i ^ 2)
-
-/-- Lower bound: for `F` positive on `[2, ∞)^m` with `F(x) ≤ M F(⌊x⌋)` there (condition
-(6)) and every real `y`, `G(M y) ≤ λ{x ∈ (0, 1] : F(d_1(x), …, d_m(x)) ≥ y}` with `G` as in
-(7). The paper states it for `y = Ψ(n)` under the hypotheses of Theorem 4.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 7
-(`integers-2024-A67-thm-7`). -/
-public theorem_wanted le_volume_lurothDigits_ge {m : ℕ} (F : (Fin m → ℝ) → ℝ)
-    (hpos : ∀ x : Fin m → ℝ, (∀ i, 2 ≤ x i) → 0 < F x) (M : ℝ)
-    (hM : ∀ x : Fin m → ℝ, (∀ i, 2 ≤ x i) → F x ≤ M * F (fun i => (⌊x i⌋₊ : ℝ))) (y : ℝ) :
-    (∫⁻ x in {x : Fin m → ℝ | (∀ i, 2 ≤ x i) ∧ M * y ≤ F x},
-        ENNReal.ofReal (∏ i, 1 / x i ^ 2)) ≤
-      volume {x ∈ Set.Ioc (0 : ℝ) 1 | y ≤ F (fun i => (lurothDigitSeq x i : ℝ))}
 
 end
 

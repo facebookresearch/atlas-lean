@@ -19,11 +19,13 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook91Wanted
 
-/-- Mazur's Problem 91 from the Scottish Book, in its equivalent Banach-space
-formulation: every finite-dimensional Banach space isometric to its dual is
-(necessarily) a Hilbert space, i.e. its norm comes from an inner product.
-The original formulation asks whether a convex body in `ℝⁿ` affine to its
-conjugate (polar) body is necessarily an ellipsoid. -/
+/-- **Mazur's Problem 91 (Scottish Book), Banach-space form.** This is the proposition that
+every finite-dimensional real normed space $E$ that is linearly isometric to its dual
+space $E^*$ (the continuous linear functionals on $E$ with the operator norm) is an inner
+product space, that is, its norm is induced by some inner product on $E$.
+
+Mazur's original formulation asks whether, for every $n$, a convex body in $\mathbb{R}^n$
+that is affinely equivalent to its conjugate (polar) body is necessarily an ellipsoid. -/
 def ScottishBookProblem91Claim : Prop :=
   ∀ (n : ℕ) (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E],
@@ -32,7 +34,11 @@ def ScottishBookProblem91Claim : Prop :=
     ∃ _ : InnerProductSpace ℝ E, True
 
 /--
-Problem 91 is false in general: the claim fails already in even dimension.
+**Mazur's Problem 91 has a negative answer.** There is a finite-dimensional real normed
+space $E$ that is linearly isometric to its dual space $E^*$ (the continuous linear
+functionals on $E$ with the operator norm) but whose norm is not induced by any inner
+product on $E$. Thus the Banach-space form of Mazur's Problem 91 is false.
+
 Source: S. Mazur, Problem 91 of the Scottish Book. The typescript itself
 records the negative answer when `n` is even (for example, `ℓ¹ 2`, whose unit
 ball is a diamond, is linearly isometric to its dual `ℓ^∞ 2` but is not a

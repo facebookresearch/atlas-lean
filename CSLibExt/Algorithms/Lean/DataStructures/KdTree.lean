@@ -46,7 +46,9 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean
 
-/-- A kd-tree over points `Fin d → Int`: empty, a point leaf, or a split node. -/
+/-- **Kd-trees.** A kd-tree over points of $\mathbb{Z}^d$ is either empty, a leaf holding one
+point of $\mathbb{Z}^d$, or a split node holding a split axis $a \in \{0, \dots, d-1\}$, a split
+value $s \in \mathbb{Z}$ and two kd-trees, its left and right subtrees. -/
 inductive KdTree (d : Nat) where
   | empty : KdTree d
   | leaf : (Fin d → Int) → KdTree d
@@ -56,19 +58,26 @@ namespace KdTree
 
 variable {d : Nat}
 
-/-- Accumulator traversal threading the output suffix, so collecting the
-points of an `n`-point tree takes linear time instead of repeatedly
-appending (and copying) left-subtree results. -/
+/-- **Kd-tree point traversal with an accumulator.** For a kd-tree $t$ over points of
+$\mathbb{Z}^d$ and a list $\mathit{acc}$ of such points, the accumulator traversal of $t$ onto
+$\mathit{acc}$ is $\mathit{acc}$ when $t$ is empty, the point $p$ followed by $\mathit{acc}$ when
+$t$ is a leaf holding $p$, and, when $t$ is a split node with left subtree $L$ and right subtree
+$R$, the traversal of $L$ onto the traversal of $R$ onto $\mathit{acc}$.
+
+Threading the output suffix avoids repeatedly appending (and copying) left-subtree results. -/
 def toListAux : KdTree d → List (Fin d → Int) → List (Fin d → Int)
   | .empty, acc => acc
   | .leaf p, acc => p :: acc
   | .node _ _ left right, acc => left.toListAux (right.toListAux acc)
 
-/-- The points stored in a tree, from left to right. -/
+/-- **Point list of a kd-tree.** The point list of a kd-tree is the list of the points stored at
+its leaves, from left to right. -/
 def toList (t : KdTree d) : List (Fin d → Int) :=
   t.toListAux []
 
-/-- The accumulator traversal prepends exactly the tree's points. -/
+/-- **Accumulator traversal of a kd-tree.** For every kd-tree $t$ over $\mathbb{Z}^d$ and
+every list $acc$ of points, the accumulator traversal of $t$ onto $acc$ equals the list of
+points of $t$ in left-to-right order followed by $acc$. -/
 @[simp]
 theorem toListAux_eq (t : KdTree d) (acc : List (Fin d → Int)) :
     t.toListAux acc = t.toList ++ acc := by
@@ -93,21 +102,27 @@ theorem toList_empty : (KdTree.empty : KdTree d).toList = [] :=
 theorem toList_leaf (p : Fin d → Int) : (KdTree.leaf p).toList = [p] :=
   rfl
 
-/-- Characteristic equation for `toList` at a split node; with the
-accumulator definition this is a theorem, not a definitional unfolding. -/
+/-- **Point list of a kd-tree split node.** For a split node with axis $a$, split value $s$, left
+subtree $L$ and right subtree $R$, the point list of the node is the point list of $L$ followed
+by the point list of $R$. -/
 @[simp]
 theorem toList_node (a : Fin d) (s : Int) (left right : KdTree d) :
     (KdTree.node a s left right).toList = left.toList ++ right.toList := by
   show left.toListAux (right.toListAux []) = left.toList ++ right.toList
   rw [toListAux_eq, toListAux_eq, List.append_nil]
 
-/-- The number of points stored in a tree. -/
+/-- **Size of a kd-tree.** The size of a kd-tree is defined by recursion: the empty tree has
+size $0$, a leaf has size $1$, and a split node has the sum of the sizes of its two
+children. Since points are stored only at leaves, this is the number of points stored in the
+tree, counted with multiplicity. -/
 def size : KdTree d → Nat
   | .empty => 0
   | .leaf _ => 1
   | .node _ _ left right => left.size + right.size
 
-/-- The length of the point list is the size of the tree. -/
+/-- **Length of the point list of a kd-tree.** For every kd-tree $t$, the list of the points
+stored in $t$, read from left to right, has length equal to the size of $t$, the number of
+points stored in $t$. -/
 @[simp]
 theorem length_toList (t : KdTree d) : t.toList.length = t.size := by
   induction t with
@@ -115,11 +130,15 @@ theorem length_toList (t : KdTree d) : t.toList.length = t.size := by
   | leaf _ => rfl
   | node _ _ _ _ ihLeft ihRight => simp [size, ihLeft, ihRight]
 
-/-- The next split axis, cyclically. -/
+/-- **Next split axis of a kd-tree.** For a dimension $d \ge 1$ and an axis
+$a \in \{0, \dots, d - 1\}$, the next split axis is $(a + 1) \bmod d$, so the axes are
+visited cyclically. -/
 def nextAxis [NeZero d] (a : Fin d) : Fin d :=
   Fin.ofNat d (a.val + 1)
 
-/-- A point lies in the axis-aligned box `[lo, hi]`. -/
+/-- **Membership in an axis-aligned box.** For $lo, hi, p \in \mathbb{Z}^d$, the point $p$ lies
+in the closed axis-aligned box $[lo, hi]$ when $lo_i \le p_i \le hi_i$ for every coordinate
+$i \in \{0, \dots, d-1\}$. -/
 abbrev inBox (lo hi p : Fin d → Int) : Prop :=
   ∀ i, lo i ≤ p i ∧ p i ≤ hi i
 
@@ -131,14 +150,19 @@ private theorem filter_inBox_eq_nil {lo hi : Fin d → Int}
   simpa using h p hp
 
 /--
-Accumulator form of the orthogonal range report: `reportAux t lo hi acc`
-prepends the reported points (in left-to-right order) onto `acc`. The
-accumulator avoids repeatedly appending left results, so constructing the
-output list costs only work linear in the number of reported points; the
-traversal itself still visits every node that pruning does not cut, which
-can be the whole tree even for an empty report, and no complexity bound is
-proved here. At a split node with axis `a` and value `s`, the left child is
-pruned when `s < lo a` and the right child is pruned when `hi a < s`.
+**Accumulator range report of a kd-tree.** Points are vectors in $\mathbb{Z}^d$ with
+coordinates $p_0, \dots, p_{d-1}$; the box $[lo, hi]$ consists of the points $p$ with
+$lo_i \le p_i \le hi_i$ for every $i$. For a kd-tree $t$ and a list $acc$ of points, the
+accumulator report of $t$ for $[lo, hi]$ onto $acc$ is defined by recursion on $t$. For the
+empty tree it is $acc$. For a leaf $p$ it is $p$ followed by $acc$ if $p$ lies in the box,
+and $acc$ otherwise. For a split node with axis $a$, split value $s$, left child $L$ and
+right child $R$, let $acc'$ be $acc$ if $hi_a < s$ and the report of $R$ onto $acc$
+otherwise; the result is $acc'$ if $s < lo_a$ and the report of $L$ onto $acc'$ otherwise.
+
+The accumulator avoids repeatedly appending the results of left subtrees, so building the
+output list costs work linear in the number of reported points; the traversal still visits
+every node that pruning does not cut, which can be the whole tree even for an empty report.
+No complexity bound is formalized.
 -/
 def reportAux : KdTree d → (Fin d → Int) → (Fin d → Int) →
     List (Fin d → Int) → List (Fin d → Int)
@@ -148,15 +172,15 @@ def reportAux : KdTree d → (Fin d → Int) → (Fin d → Int) →
       let rightAcc := if hi a < s then acc else reportAux right lo hi acc
       if s < lo a then rightAcc else reportAux left lo hi rightAcc
 
-/-- The orthogonal range report for the box `[lo, hi]`; see `reportAux`. -/
+/-- **Orthogonal range report of a kd-tree.** For a kd-tree $t$ over $\mathbb{Z}^d$ and
+$lo, hi \in \mathbb{Z}^d$, the range report of $t$ for the box $[lo, hi]$ is the accumulator
+range report of $t$ for $[lo, hi]$ onto the empty list. -/
 def report (t : KdTree d) (lo hi : Fin d → Int) : List (Fin d → Int) :=
   reportAux t lo hi []
 
-/--
-The kd invariant: at a node with axis `a` and split value `s`, every point on
-the left has `a`-coordinate at most `s` and every point on the right has
-`a`-coordinate at least `s`.
--/
+/-- **Kd invariant.** A kd-tree satisfies the kd invariant when at every split node, with axis $a$
+and split value $s$, every point of the left subtree has $a$-coordinate at most $s$ and every
+point of the right subtree has $a$-coordinate at least $s$. -/
 inductive Valid : KdTree d → Prop where
   | empty : Valid .empty
   | leaf (p : Fin d → Int) : Valid (.leaf p)
@@ -164,7 +188,11 @@ inductive Valid : KdTree d → Prop where
       (hRight : Valid right) (hL : ∀ p ∈ left.toList, p a ≤ s)
       (hR : ∀ p ∈ right.toList, s ≤ p a) : Valid (.node a s left right)
 
-/-- The accumulator report of a valid tree is its filtered point list on `acc`. -/
+/-- **Accumulator range report of a valid kd-tree.** Let $t$ be a valid kd-tree over
+$\mathbb{Z}^d$, let $lo, hi \in \mathbb{Z}^d$, and let $acc$ be a list of points. The
+accumulator range report of $t$ for the box $[lo, hi]$ onto $acc$ equals the list of points
+of $t$, in left-to-right order, that lie in the box (the points $p$ with
+$lo_i \le p_i \le hi_i$ for every coordinate $i$), followed by $acc$. -/
 theorem reportAux_eq_filter_append {t : KdTree d} (h : t.Valid)
     (lo hi : Fin d → Int) (acc : List (Fin d → Int)) :
     t.reportAux lo hi acc =
@@ -213,29 +241,40 @@ theorem reportAux_eq_filter_append {t : KdTree d} (h : t.Valid)
           rw [hLeftEq]
           simp [List.filter_append, List.append_assoc]
 
-/-- The report of a valid tree is its point list filtered by the box. -/
+/-- **Correctness of the kd-tree range report.** For every valid kd-tree $t$ over
+$\mathbb{Z}^d$ and all $lo, hi \in \mathbb{Z}^d$, the range report of $t$ for the box
+$[lo, hi]$ equals the list of points of $t$, in left-to-right order, that lie in the box,
+that is, the points $p$ with $lo_i \le p_i \le hi_i$ for every coordinate $i$. -/
 theorem report_eq_filter {t : KdTree d} (h : t.Valid)
     (lo hi : Fin d → Int) :
     t.report lo hi = t.toList.filter (fun p => inBox lo hi p) := by
   rw [report, reportAux_eq_filter_append h]
   simp
 
-/-- Membership in the report of a valid tree, stated on its point list. -/
+/-- **Range report of a valid kd-tree.** Let $t$ be a kd-tree over $\mathbb{Z}^d$ that
+satisfies the kd invariant, and let $lo, hi, p \in \mathbb{Z}^d$. Then $p$ occurs in the range
+report of $t$ for the box $[lo, hi]$ if and only if $p$ is one of the points stored in $t$ and
+$lo_i \le p_i \le hi_i$ for every coordinate $i$. -/
 theorem mem_report_iff {t : KdTree d} (h : t.Valid)
     {lo hi p : Fin d → Int} :
     p ∈ t.report lo hi ↔ p ∈ t.toList ∧ inBox lo hi p := by
   rw [report_eq_filter h]
   simp
 
-/-- The `a`-coordinate of the first point of a list, or `0` if it is empty. -/
+/-- **First-point coordinate.** For an axis $a \in \{0, \dots, d-1\}$ and a list of points in
+$\mathbb{Z}^d$, this is the $a$-coordinate of the first point of the list, or $0$ if the list
+is empty. -/
 def headCoord (a : Fin d) (xs : List (Fin d → Int)) : Int :=
   (xs.head?.map (fun p => p a)).getD 0
 
-/--
-Builds a kd-tree by alternating-axis median splits: sort by the current axis,
-split the sorted list in half, take the split value from the first point of
-the right half, and recurse on the next axis.
--/
+/-- **Kd-tree construction by median splits.** Let $d \ge 1$, let $a \in \{0, \dots, d-1\}$ be
+an axis and let $P$ be a list of points in $\mathbb{Z}^d$. The kd-tree built from $P$ starting at
+axis $a$ is the empty tree if $P$ is empty and the leaf holding $p$ if $P = [p]$. If $P$ has
+$n \ge 2$ points, sort $P$ by $a$-coordinate with merge sort, let $L$ be the first
+$\lfloor n/2 \rfloor$ points of the sorted list and $R$ the remaining ones. The result is the
+split node with axis $a$ whose split value is the $a$-coordinate of the first point of $R$, whose
+left subtree is built from $L$ and whose right subtree is built from $R$, both starting at the
+next axis $(a + 1) \bmod d$. -/
 def build [NeZero d] : Fin d → List (Fin d → Int) → KdTree d
   | _, [] => .empty
   | _, [p] => .leaf p
@@ -347,51 +386,74 @@ private theorem build_spec [NeZero d] :
               rw [List.take_append_drop]
               exact hSperm
 
-/-- A tree built by median splits satisfies the kd invariant. -/
+/-- **Median-split kd-trees satisfy the kd invariant.** For $d \ge 1$, every axis $a$ and every
+list of points of $\mathbb{Z}^d$, the kd-tree built from the list by median splits starting at
+axis $a$ satisfies the kd invariant. -/
 theorem valid_build [NeZero d] (a : Fin d) (pts : List (Fin d → Int)) :
     (build a pts).Valid :=
   (build_spec a pts).1
 
-/-- The point list of a built tree is a permutation of the input. -/
+/-- **Building a kd-tree preserves its points.** For $d \ge 1$, every axis $a$ and every list of
+points of $\mathbb{Z}^d$, the point list of the kd-tree built from the list by median splits
+starting at axis $a$ is a permutation of the list. -/
 theorem toList_build_perm [NeZero d] (a : Fin d) (pts : List (Fin d → Int)) :
     (build a pts).toList.Perm pts :=
   (build_spec a pts).2
 
-/-- Membership in the point list of a built tree is membership in the input. -/
+/-- **A built kd-tree holds the same points as its input.** Let $d \ge 1$, let
+$a \in \{0, \dots, d-1\}$ and let $P$ be a list of points in $\mathbb{Z}^d$. A point
+$p \in \mathbb{Z}^d$ is stored in the kd-tree built from $P$ by median splits starting at axis
+$a$ if and only if $p$ occurs in $P$. -/
 theorem mem_toList_build_iff [NeZero d] (a : Fin d) (pts : List (Fin d → Int))
     (p : Fin d → Int) :
     p ∈ (build a pts).toList ↔ p ∈ pts :=
   (toList_build_perm a pts).mem_iff
 
-/-- The size of a built tree is the number of input points. -/
+/-- **Size of a built kd-tree.** Let $d \ge 1$. For every starting axis $a$ and every list
+$P$ of points of $\mathbb{Z}^d$, the size of the kd-tree built from $P$ starting at axis $a$
+equals the length of $P$ (repeated points counted with multiplicity). -/
 @[simp]
 theorem size_build [NeZero d] (a : Fin d) (pts : List (Fin d → Int)) :
     (build a pts).size = pts.length := by
   rw [← length_toList]
   exact (toList_build_perm a pts).length_eq
 
-/-- Builds a kd-tree starting from axis `0`. -/
+/-- **Kd-tree construction from the first axis.** For $d \ge 1$ and a list of points in
+$\mathbb{Z}^d$, this is the kd-tree built from the list by alternating-axis median splits,
+starting with split axis $0$. -/
 def buildRoot [NeZero d] (pts : List (Fin d → Int)) : KdTree d :=
   build (Fin.ofNat d 0) pts
 
-/-- A tree built from axis `0` satisfies the kd invariant. -/
+/-- **Kd-trees built from axis 0 satisfy the kd invariant.** For $d \ge 1$ and every list of
+points of $\mathbb{Z}^d$, the kd-tree built from the list by median splits starting at axis $0$
+satisfies the kd invariant. -/
 theorem valid_buildRoot [NeZero d] (pts : List (Fin d → Int)) :
     (buildRoot pts).Valid :=
   valid_build _ pts
 
-/-- The point list of a tree built from axis `0` permutes the input. -/
+/-- **Building a kd-tree from axis 0 preserves its points.** For $d \ge 1$ and every list of
+points of $\mathbb{Z}^d$, the point list of the kd-tree built from the list by median splits
+starting at axis $0$ is a permutation of the list. -/
 theorem toList_buildRoot_perm [NeZero d] (pts : List (Fin d → Int)) :
     (buildRoot pts).toList.Perm pts :=
   toList_build_perm _ pts
 
-/-- The report of a built tree is its point list filtered by the box. -/
+/-- **Range report of a built kd-tree as a filter.** Let $d \ge 1$. For every starting axis
+$a$, every list $P$ of points of $\mathbb{Z}^d$ and all $lo, hi \in \mathbb{Z}^d$, let $T$ be
+the kd-tree built from $P$ starting at axis $a$. The range report of $T$ for the box
+$[lo, hi]$ equals the list of points of $T$, in left-to-right order, that lie in the box,
+that is, the points $p$ with $lo_i \le p_i \le hi_i$ for every coordinate $i$. -/
 theorem report_build [NeZero d] (a : Fin d) (pts : List (Fin d → Int))
     (lo hi : Fin d → Int) :
     (build a pts).report lo hi =
       (build a pts).toList.filter (fun p => inBox lo hi p) :=
   report_eq_filter (valid_build a pts) lo hi
 
-/-- The report of a built tree permutes the input filtered by the box. -/
+/-- **Range report of a built kd-tree up to order.** Let $d \ge 1$. For every starting axis $a$,
+every list $P$ of points of $\mathbb{Z}^d$ and all $lo, hi \in \mathbb{Z}^d$, the range report
+for the box $[lo, hi]$ of the kd-tree built from $P$ starting at axis $a$ is a permutation of
+the list of entries of $P$ that lie in the box, that is, the points $p$ with
+$lo_i \le p_i \le hi_i$ for every coordinate $i$. -/
 theorem report_build_perm [NeZero d] (a : Fin d) (pts : List (Fin d → Int))
     (lo hi : Fin d → Int) :
     ((build a pts).report lo hi).Perm
@@ -399,13 +461,21 @@ theorem report_build_perm [NeZero d] (a : Fin d) (pts : List (Fin d → Int))
   rw [report_build]
   exact (toList_build_perm a pts).filter _
 
-/-- Membership in the report of a built tree, stated on the input. -/
+/-- **Membership in the range report of a built kd-tree.** Let $d \ge 1$, let
+$a \in \{0, \dots, d-1\}$, let $P$ be a list of points in $\mathbb{Z}^d$ and let
+$lo, hi, p \in \mathbb{Z}^d$. Then $p$ occurs in the range report, for the box $[lo, hi]$, of the
+kd-tree built from $P$ by median splits starting at axis $a$ if and only if $p$ occurs in $P$ and
+$lo_i \le p_i \le hi_i$ for every coordinate $i$. -/
 theorem mem_report_build_iff [NeZero d] (a : Fin d) (pts : List (Fin d → Int))
     {lo hi p : Fin d → Int} :
     p ∈ (build a pts).report lo hi ↔ p ∈ pts ∧ inBox lo hi p := by
   rw [mem_report_iff (valid_build a pts), mem_toList_build_iff]
 
-/-- Membership in the report of a tree built from axis `0`. -/
+/-- **Range report of a kd-tree built from the first axis.** Let $d \ge 1$, let $P$ be a list
+of points in $\mathbb{Z}^d$ and let $lo, hi, p \in \mathbb{Z}^d$. Then $p$ occurs in the range
+report, for the box $[lo, hi]$, of the kd-tree built from $P$ by median splits starting at
+axis $0$ if and only if $p$ occurs in $P$ and $lo_i \le p_i \le hi_i$ for every coordinate
+$i$. -/
 theorem mem_report_buildRoot_iff [NeZero d] (pts : List (Fin d → Int))
     {lo hi p : Fin d → Int} :
     p ∈ (buildRoot pts).report lo hi ↔ p ∈ pts ∧ inBox lo hi p :=

@@ -1,0 +1,3 @@
+# Boundary orbit face loop as a lattice walk
+
+Let $K \subseteq \mathbb{Z}^2$ be finite and $e$ a boundary dart of $K$, and let $\sigma_K$ be the boundary successor map of $K$. Fix a period $p \ge 1$ of $e$ under $\sigma_K$ ($\sigma_K^p(e) = e$; such $p$ exist because $K$ is finite, and one of them is chosen, not necessarily the minimal one). Labelling unit faces by their lower left corners and writing $F(f)$ for the face to the left of a dart $f$, the orbit loop is the closed walk $F(e), F(\sigma_K(e)), \dots, F(\sigma_K^p(e)) = F(e)$, regarded as a closed walk in the square lattice $\mathbb{Z}^2$.

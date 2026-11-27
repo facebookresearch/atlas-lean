@@ -16,6 +16,8 @@ public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 public import Mathlib.RingTheory.Norm.Basic
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.Data.Nat.Nth
+public import MathlibExt.NumberTheory.Schatunowsky
+public import MathlibExt.NumberTheory.SchatunowskyImaginaryQuadratic
 
 /-!
 # Bertrand postulates and Schatunowsky-type theorems in ℕ and Gaussian and Eisenstein integers
@@ -44,9 +46,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Bertrand's postulate for Gaussian integers: for every Gaussian prime `π` other than the
-associates of `1 + i` (equivalently `N(π) ≠ 2`; the paper's `π_n` with `n ≥ 2`), there is a
-Gaussian prime `ρ` with `N(π) < N(ρ) ≤ 2 N(π)`.
+/-- **Bertrand's postulate for Gaussian integers.** Let $N(a + bi) = a^2 + b^2$ be the norm on the
+Gaussian integers $\mathbb{Z}[i]$. For every prime element $\pi$ of $\mathbb{Z}[i]$ with
+$N(\pi) \ne 2$ (that is, $\pi$ is not an associate of $1 + i$) there is a prime element $\rho$
+of $\mathbb{Z}[i]$ with $N(\pi) < N(\rho) \le 2N(\pi)$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
 Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 2
@@ -55,9 +58,10 @@ public theorem_wanted gaussianInt_exists_prime_norm_between {π : GaussianInt} (
     (hπ₂ : π.norm ≠ 2) :
     ∃ ρ : GaussianInt, Prime ρ ∧ π.norm < ρ.norm ∧ ρ.norm ≤ 2 * π.norm
 
-/-- Bertrand's postulate for Eisenstein integers: for every Eisenstein prime `π` (the paper's
-`π_n`, `n ≥ 1`), there is an Eisenstein prime `ρ` with `N(π) < N(ρ) ≤ 2 N(π)`. The Eisenstein
-integers are `𝓞 (CyclotomicField 3 ℚ)` and `N` is the field norm to `ℚ`.
+/-- **Bertrand's postulate for Eisenstein integers.** Let $\mathcal{O}$ be the ring of integers of
+the cyclotomic field $\mathbb{Q}(\zeta_3)$, and let $N$ be the field norm from $\mathbb{Q}(\zeta_3)$
+to $\mathbb{Q}$. For every prime element $\pi$ of $\mathcal{O}$ there is a prime element $\rho$ of
+$\mathcal{O}$ with $N(\pi) < N(\rho) \le 2N(\pi)$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
 Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 3
@@ -68,22 +72,10 @@ public theorem_wanted eisenstein_exists_prime_norm_between
       Algebra.norm ℚ (π : CyclotomicField 3 ℚ) < Algebra.norm ℚ (ρ : CyclotomicField 3 ℚ) ∧
       Algebra.norm ℚ (ρ : CyclotomicField 3 ℚ) ≤ 2 * Algebra.norm ℚ (π : CyclotomicField 3 ℚ)
 
-/-- Schatunowsky's theorem: the integers `a ≥ 2` such that every `b` with `1 < b < a` and
-`gcd(a, b) = 1` is prime are exactly `2, 3, 4, 6, 8, 12, 18, 24, 30`. Here
-`T(a) = {b | 1 < b < a, gcd(a, b) = 1}`, the rational counterpart of the paper's
-`T_G(α) = {β | 1 < N(β) < N(α), gcd(α, β) = 1}`; `a = 0, 1` (empty `T(a)`) are excluded, as
-in the printed set.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 1,
-quoting Schatunowsky (`integers-2026-A110-thm-1`). -/
-public theorem_wanted nat_schatunowsky :
-    {a : ℕ | 2 ≤ a ∧ ∀ b : ℕ, 1 < b → b < a → Nat.Coprime a b → b.Prime} =
-      {2, 3, 4, 6, 8, 12, 18, 24, 30}
-
-/-- Iwata's generalization of Schatunowsky's theorem: for each `ℓ`, only finitely many `a`
-have `Ω(b) ≤ ℓ` for every `b` with `1 < b < a` and `gcd(a, b) = 1`; `Ω` is
-`ArithmeticFunction.cardFactors`, the number of prime factors with multiplicity.
+/-- **Iwata's generalization of Schatunowsky's theorem.** For every natural number $\ell$, there
+are only finitely many natural numbers $a$ such that every natural number $b$ with $1 < b < a$
+and $\gcd(a, b) = 1$ satisfies $\Omega(b) \le \ell$, where $\Omega(b)$ is the number of prime
+factors of $b$ counted with multiplicity.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
 Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 2,
@@ -92,10 +84,11 @@ public theorem_wanted nat_iwata_finite (ℓ : ℕ) :
     {a : ℕ | ∀ b : ℕ, 1 < b → b < a → Nat.Coprime a b →
       ArithmeticFunction.cardFactors b ≤ ℓ}.Finite
 
-/-- Dalezman's Gaussian Schatunowsky theorem: let `S_G` be the set of Gaussian integers `α` such
-that every `β` with `1 < N(β) < N(α)` and `gcd(α, β) = 1` is a Gaussian prime. Then `5 + 5i`
-lies in `S_G`, every element of `S_G` has norm at most `N(5 + 5i) = 50`, and every element of
-`S_G` of norm `50` is a unit multiple of `5 + 5i`.
+/-- **Dalezman's Schatunowsky theorem for the Gaussian integers.** Let $N(a + bi) = a^2 + b^2$ be
+the norm on the Gaussian integers $\mathbb{Z}[i]$, and let $S$ be the set of
+$\alpha \in \mathbb{Z}[i]$ such that every $\beta \in \mathbb{Z}[i]$ coprime to $\alpha$ with
+$1 < N(\beta) < N(\alpha)$ is a Gaussian prime. Then $5 + 5i \in S$, every element of $S$ has
+norm at most $50$, and every element of $S$ of norm $50$ is an associate of $5 + 5i$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
 Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 3,
@@ -107,76 +100,9 @@ public theorem_wanted gaussianInt_schatunowsky_max_norm_five_add_five_i :
       ∀ α ∈ S, α.norm = 50 → Associated α ⟨5, 5⟩
 
 
-/-- `N(π_n)`, the norm of the `n`-th prime of the paper's ordered set `P_m^+` (Definition 1), with
-`N(π_0) = 1` for the paper's convention `π_0 = 1`: the `n`-th smallest norm of a nonzero prime
-ideal of `𝓞 K` (distinct primes of `P_m^+` have distinct norms `p` or `p^2`).
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1 and
-Section 4 (`N(π_n)`). -/
-public noncomputable def quadPrimeNorm (K : Type*) [Field K] [NumberField K] (n : ℕ) : ℕ :=
-  if n = 0 then 1
-  else Nat.nth (fun x => ∃ P : Ideal (𝓞 K), P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P = x) (n - 1)
-
-/-- `N(π_0) = 1`.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1
-(convention `π_0 = 1`). -/
-public theorem quadPrimeNorm_zero (K : Type*) [Field K] [NumberField K] :
-    quadPrimeNorm K 0 = 1 := by
-  simp [quadPrimeNorm]
-
-/-- `N(π_n#)`, the norm of the paper's quadratic primorial (Definition 2): the product of the norms
-of the nonzero prime ideals of norm at most `N(π_n)`.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2
-(`π_n#`). -/
-public noncomputable def quadPrimorialNorm (K : Type*) [Field K] [NumberField K] (n : ℕ) : ℕ :=
-  ∏ᶠ P ∈ {P : Ideal (𝓞 K) | P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P ≤ quadPrimeNorm K n},
-    Ideal.absNorm P
-
-/-- `N(π_0#) = 1`: no nonzero prime ideal has norm at most `1`.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2
-(`π_0# = 1`). -/
-public theorem quadPrimorialNorm_zero (K : Type*) [Field K] [NumberField K] :
-    quadPrimorialNorm K 0 = 1 := by
-  have hempty : {P : Ideal (𝓞 K) | P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P ≤ 1} = ∅ := by
-    refine Set.eq_empty_of_forall_notMem fun P ⟨hP, hbot, hle⟩ => ?_
-    rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hle with h | h
-    · exact hbot (Ideal.absNorm_eq_zero_iff.mp h)
-    · exact hP.ne_top (Ideal.absNorm_eq_one_iff.mp h)
-  rw [quadPrimorialNorm, quadPrimeNorm_zero, hempty, finprod_mem_empty]
-
-/-- The paper's set `Q_{m,ℓ}` (Equation (4)), as a set of elements of `𝓞 K` (it is closed under
-multiplication by units): `α` with `N(α) > 1` such that every `β` with `1 < N(β) < N(α)` and
-`gcd(α, β) = 1` has `Ω(β) ≤ ℓ`.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation
-(4). -/
-public def quadSchatunowskySet (K : Type*) [Field K] [NumberField K] (ℓ : ℕ) : Set (𝓞 K) :=
-  {α | 1 < Ideal.absNorm (Ideal.span {α}) ∧ ∀ β : 𝓞 K,
-      1 < Ideal.absNorm (Ideal.span {β}) →
-      Ideal.absNorm (Ideal.span {β}) < Ideal.absNorm (Ideal.span {α}) →
-    IsCoprime α β → (UniqueFactorizationMonoid.normalizedFactors (Ideal.span {β})).card ≤ ℓ}
-
-/-- `1 ∉ Q_{m,ℓ}` (its norm is `1`).
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation
-(4). -/
-public theorem one_not_mem_quadSchatunowskySet (K : Type*) [Field K] [NumberField K] (ℓ : ℕ) :
-    (1 : 𝓞 K) ∉ quadSchatunowskySet K ℓ := by
-  simp [quadSchatunowskySet]
-
-/-- Proposition 2 (units): the unit group of the ring of integers of an imaginary quadratic field
-is cyclic of order `4` for `ℚ(√-1)` (discriminant `-4`), `6` for `ℚ(√-3)` (discriminant `-3`),
-and `2` otherwise. The representative convention `-θ_m < arg α ≤ θ_m` in the record is setup text
-and is not stated.
+/-- **Unit groups of imaginary quadratic fields.** Let $K$ be an imaginary quadratic field with
+discriminant $d_K$. The unit group of its ring of integers $\mathcal{O}_K$ is cyclic, of order
+$4$ if $d_K = -4$, of order $6$ if $d_K = -3$, and of order $2$ otherwise.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
 Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 2
@@ -186,10 +112,18 @@ public theorem_wanted imagQuadratic_units_isCyclic_card {K : Type*} [Field K] [N
     IsCyclic (𝓞 K)ˣ ∧
       Nat.card (𝓞 K)ˣ = if discr K = -4 then 4 else if discr K = -3 then 6 else 2
 
-/-- Lemma 1: `N(ρ_{n+1}) / N(ρ_n) → 1` and `N(π_{n+1}) / N(π_n) → 1`, where `N(ρ_n)` is the
-`n`-th smallest norm of a nonzero prime ideal counted with multiplicity (the paper's `ρ_n` runs
-over all primes up to units, Definition 1). Indices are shifted by one (`n ≥ 1`). Stated for every
-imaginary quadratic field: the norms do not need the paper's class-number-one assumption.
+/-- **Ratios of consecutive prime ideal norms in an imaginary quadratic field tend to $1$.** Let
+$K$ be an imaginary quadratic field, that is, a totally complex number field of degree $2$ over
+$\mathbb{Q}$, with ring of integers $\mathcal{O}_K$. For $m \ge 1$ let $r_m$ be the least natural
+number $x$ such that at least $m$ nonzero prime ideals of $\mathcal{O}_K$ have absolute norm at
+most $x$; this is the $m$-th smallest norm of a nonzero prime ideal, counted with multiplicity.
+Let $N(\pi_m)$ be the $m$-th smallest element of the set of absolute norms of nonzero prime
+ideals of $\mathcal{O}_K$. Then the real quotients satisfy $r_{m+1}/r_m \to 1$ and
+$N(\pi_{m+1})/N(\pi_m) \to 1$ as $m \to \infty$.
+
+The sequence $r_m$ is the paper's $N(\rho_m)$, where $\rho_m$ runs over all primes up to units
+(Definition 1). The statement holds for every imaginary quadratic field: the norms do not need
+the paper's class-number-one assumption.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
 Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 1
@@ -205,9 +139,12 @@ public theorem_wanted tendsto_quadPrimeNorm_succ_div {K : Type*} [Field K] [Numb
       Filter.Tendsto (fun n : ℕ => (quadPrimeNorm K (n + 2) : ℝ) / quadPrimeNorm K (n + 1))
         Filter.atTop (nhds 1)
 
-/-- Proposition 4: for every `ℓ ≥ 0` there is `n(ℓ)` with `N(π_{n+1})^{ℓ+1} < N(π_n#)` for all
-`n ≥ n(ℓ)`. Stated for every imaginary quadratic field (no class-number-one assumption is needed
-at the level of norms).
+/-- **Prime norm powers eventually fall below the quadratic primorial.** Let $K$ be an imaginary
+quadratic field. Put $N(\pi_0) = 1$ and, for $n \ge 1$, let $N(\pi_n)$ be the $n$-th smallest
+number that is the norm of a nonzero prime ideal of $\mathcal{O}_K$; let $N(\pi_n\#)$ be the
+product of the norms of the nonzero prime ideals of $\mathcal{O}_K$ of norm at most $N(\pi_n)$.
+For every natural number $\ell$ there is $n_0$ such that $N(\pi_{n+1})^{\ell+1} < N(\pi_n\#)$
+for all $n \ge n_0$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
 Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 4
@@ -217,55 +154,13 @@ public theorem_wanted exists_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Type*} 
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (ℓ : ℕ) :
     ∃ n₀ : ℕ, ∀ n ≥ n₀, quadPrimeNorm K (n + 1) ^ (ℓ + 1) < quadPrimorialNorm K n
 
-/-- Lemma 4: for `α ∈ Q_{m,ℓ}` with `N(π_n)^{ℓ+1} < N(α)`, `π_n# ∣ α`, i.e. `α` lies in every
-nonzero prime ideal of norm at most `N(π_n)`.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 4
-(`integers-2026-A110-lem-4`). -/
-public theorem_wanted mem_prime_of_mem_quadSchatunowskySet {K : Type*} [Field K] [NumberField K]
-    (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n : ℕ)
-    (α : 𝓞 K) (hα : α ∈ quadSchatunowskySet K ℓ)
-    (hn : quadPrimeNorm K n ^ (ℓ + 1) < Ideal.absNorm (Ideal.span {α})) :
-    ∀ P : Ideal (𝓞 K), P.IsPrime → P ≠ ⊥ → Ideal.absNorm P ≤ quadPrimeNorm K n → α ∈ P
-
-/-- Theorem 4: if `n₀` has the property of Proposition 4 (`N(π_{n+1})^{ℓ+1} < N(π_n#)` for all
-`n ≥ n₀`), then no `α` with `N(π_{n₀})^{ℓ+1} < N(α)` lies in `Q_{m,ℓ}`; and `Q_{m,ℓ}` is finite.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 4
-(`integers-2026-A110-thm-4`). -/
-public theorem_wanted quadSchatunowskySet_norm_bound_and_finite {K : Type*} [Field K]
-    [NumberField K]
-    (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n₀ : ℕ)
-    (hn₀ : ∀ n ≥ n₀, quadPrimeNorm K (n + 1) ^ (ℓ + 1) < quadPrimorialNorm K n) :
-    (∀ α : 𝓞 K, quadPrimeNorm K n₀ ^ (ℓ + 1) < Ideal.absNorm (Ideal.span {α}) →
-        α ∉ quadSchatunowskySet K ℓ) ∧
-      (quadSchatunowskySet K ℓ).Finite
-
-/-- Theorem 5 (main identity): if `n₀` has the property of Proposition 4, then
-`Q_{m,ℓ} = ⋃_{n=1}^{n₀} Q_{m,ℓ,n}` with
-`Q_{m,ℓ,n} = {α | N(π_{n-1})^{ℓ+1} < N(α) ≤ N(π_n)^{ℓ+1}, π_{n-1}# ∣ α}`. The record's
-"in particular" clause (the element of largest norm is divisible by `π_{n₀-1}#`) holds only for
-the least admissible `n₀`: for the Gaussian integers with `ℓ = 1`, `n₀ = 4` is admissible (as is
-`3`), but the element of largest norm, `5(1+i) = π_2#`, is not divisible by `π_3# = 15(1+i)`; it is
-omitted.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 5
-(`integers-2026-A110-thm-5`). -/
-public theorem_wanted quadSchatunowskySet_eq_iUnion {K : Type*} [Field K] [NumberField K]
-    (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n₀ : ℕ)
-    (hn₀ : ∀ n ≥ n₀, quadPrimeNorm K (n + 1) ^ (ℓ + 1) < quadPrimorialNorm K n) :
-    quadSchatunowskySet K ℓ = ⋃ n ∈ Finset.Icc 1 n₀,
-      {α : 𝓞 K | quadPrimeNorm K (n - 1) ^ (ℓ + 1) < Ideal.absNorm (Ideal.span {α}) ∧
-        Ideal.absNorm (Ideal.span {α}) ≤ quadPrimeNorm K n ^ (ℓ + 1) ∧
-        ∀ P : Ideal (𝓞 K), P.IsPrime → P ≠ ⊥ → Ideal.absNorm P ≤ quadPrimeNorm K (n - 1) → α ∈ P}
-
-/-- Proposition 5: for the Gaussian integers (`discr K = -4`, i.e. `K ≅ ℚ(i)`) and
-`(ℓ, n(ℓ)) = (1, 3), (2, 4), (3, 5), (4, 5), (5, 6), (6, 7), (7, 7)`,
-`N(π_{n+1})^{ℓ+1} < N(π_n#)` for all `n ≥ n(ℓ)`. The record's trailing "…" (larger `ℓ`) is
-not stated.
+/-- **Explicit primorial thresholds for the Gaussian integers.** Let $K$ be a number field of
+discriminant $-4$ (so $K \cong \mathbb{Q}(i)$). Put $N(\pi_0) = 1$ and, for $n \ge 1$, let
+$N(\pi_n)$ be the $n$-th smallest number that is the norm of a nonzero prime ideal of
+$\mathcal{O}_K$; let $N(\pi_n\#)$ be the product of the norms of the nonzero prime ideals of
+$\mathcal{O}_K$ of norm at most $N(\pi_n)$. For each pair $(\ell, n_\ell)$ among $(1, 3)$,
+$(2, 4)$, $(3, 5)$, $(4, 5)$, $(5, 6)$, $(6, 7)$, $(7, 7)$ and every $n \ge n_\ell$,
+$N(\pi_{n+1})^{\ell+1} < N(\pi_n\#)$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
 Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 5
@@ -276,9 +171,13 @@ public theorem_wanted gaussian_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Type*
     ∀ p ∈ [(1, 3), (2, 4), (3, 5), (4, 5), (5, 6), (6, 7), (7, 7)], ∀ n ≥ p.2,
       quadPrimeNorm K (n + 1) ^ (p.1 + 1) < quadPrimorialNorm K n
 
-/-- Proposition 6: for the Eisenstein integers (`discr K = -3`, i.e. `K ≅ ℚ(√-3)`) and
-`(ℓ, n(ℓ)) = (1, 3), (2, 4), (3, 5), (4, 5), (5, 6), (6, 7), (7, 8)`,
-`N(π_{n+1})^{ℓ+1} < N(π_n#)` for all `n ≥ n(ℓ)`. The record's trailing "…" is not stated.
+/-- **Explicit primorial thresholds for the Eisenstein integers.** Let $K$ be a number field of
+discriminant $-3$ (so $K \cong \mathbb{Q}(\sqrt{-3})$). Put $N(\pi_0) = 1$ and, for $n \ge 1$, let
+$N(\pi_n)$ be the $n$-th smallest number that is the norm of a nonzero prime ideal of
+$\mathcal{O}_K$; let $N(\pi_n\#)$ be the product of the norms of the nonzero prime ideals of
+$\mathcal{O}_K$ of norm at most $N(\pi_n)$. For each pair $(\ell, n_\ell)$ among $(1, 3)$,
+$(2, 4)$, $(3, 5)$, $(4, 5)$, $(5, 6)$, $(6, 7)$, $(7, 8)$ and every $n \ge n_\ell$,
+$N(\pi_{n+1})^{\ell+1} < N(\pi_n\#)$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
 Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 6
@@ -289,15 +188,22 @@ public theorem_wanted eisenstein_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Typ
     ∀ p ∈ [(1, 3), (2, 4), (3, 5), (4, 5), (5, 6), (6, 7), (7, 8)], ∀ n ≥ p.2,
       quadPrimeNorm K (n + 1) ^ (p.1 + 1) < quadPrimorialNorm K n
 
-/-- Corollary 1: for the Gaussian integers (`discr K = -4`), with `π_1 = 1 + i` the prime of norm
-`2` (any element `π` of norm `2`; all are associates), `π_2# = 5π`, `π_3# = 15π`, `π_4# = 195π`:
-`Q_{-1,1} = {α | 1 < N(α) ≤ 4} ∪ {γπ_1 | 3 ≤ N(γ) ≤ 12} ∪ {π_2#}`,
-`Q_{-1,2} = {α | 1 < N(α) ≤ 8} ∪ {γπ_1 | 5 ≤ N(γ) ≤ 62} ∪ {γ(π_2#) | 3 ≤ N(γ) ≤ 14} ∪
-{γ(π_3#) | 2 ≤ N(γ) ≤ 4}`,
-`Q_{-1,3} = {α | 1 < N(α) ≤ 16} ∪ {γπ_1 | 9 ≤ N(γ) ≤ 312} ∪ {γ(π_2#) | 13 ≤ N(γ) ≤ 131} ∪
-{γ(π_3#) | 15 ≤ N(γ) ≤ 63} ∪ {π_4#}` (as sets of elements, so `{π_k#}` is its associates), and
-the elements of largest norm are `π_2# = 5(1+i)`, `2(π_3#) = 30(1+i)` and `π_4# = 195(1+i)`,
-unique up to units. The record's closing remark on Dalezman is omitted.
+/-- **The first three Schatunowsky sets of the Gaussian integers.** Let $K$ be a number field
+of discriminant $-4$ (so $K \cong \mathbb{Q}(i)$). For $\alpha \in \mathcal{O}_K$ let $N(\alpha)$
+be the absolute norm of the ideal $(\alpha)$, and let $Q_\ell$ be the set of
+$\alpha \in \mathcal{O}_K$ with $N(\alpha) > 1$ such that every $\beta \in \mathcal{O}_K$ coprime
+to $\alpha$ with $1 < N(\beta) < N(\alpha)$ has at most $\ell$ prime ideal factors, counted with
+multiplicity. Below, $\gamma$ ranges over $\mathcal{O}_K$ and $\pi$ over the elements of norm $2$.
+Then $Q_1$ consists of the $\alpha$ with $1 < N(\alpha) \le 4$, the products $\gamma\pi$ with
+$3 \le N(\gamma) \le 12$, and the associates of $5\pi$. The set $Q_2$ consists of the $\alpha$
+with $1 < N(\alpha) \le 8$, the $\gamma\pi$ with $5 \le N(\gamma) \le 62$, the $5\gamma\pi$ with
+$3 \le N(\gamma) \le 14$, and the $15\gamma\pi$ with $2 \le N(\gamma) \le 4$. The set $Q_3$
+consists of the $\alpha$ with $1 < N(\alpha) \le 16$, the $\gamma\pi$ with
+$9 \le N(\gamma) \le 312$, the $5\gamma\pi$ with $13 \le N(\gamma) \le 131$, the $15\gamma\pi$
+with $15 \le N(\gamma) \le 63$, and the associates of $195\pi$. Moreover, the elements of largest
+norm are unique up to units: for $(c, \ell) = (5, 1), (30, 2), (195, 3)$ there is a $\pi$ of
+norm $2$ with $c\pi \in Q_\ell$ such that every $\alpha \in Q_\ell$ has $N(\alpha) \le N(c\pi)$,
+with $\alpha$ an associate of $c\pi$ in case of equality.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
 Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Corollary 1
@@ -342,16 +248,25 @@ public theorem_wanted gaussian_quadSchatunowskySet_eq {K : Type*} [Field K] [Num
             (Ideal.absNorm (Ideal.span {α}) = Ideal.absNorm (Ideal.span {(195 * π)}) →
                 Associated α (195 * π)))
 
-/-- Corollary 2: for the Eisenstein integers (`discr K = -3`), with `π_1 = 1 + ζ` the prime of
-norm `3` (any element `π` of norm `3`), `π_2# = 2π`, `π_3# = 14π`, `π_4# = 182π`:
-`Q_{-3,1} = {α | 1 < N(α) ≤ 9} ∪ {γπ_1 | 4 ≤ N(γ) ≤ 5} ∪ {γ(π_2#) | 2 ≤ N(γ) ≤ 4}`,
-`Q_{-3,2} = {α | 1 < N(α) ≤ 27} ∪ {γπ_1 | 10 ≤ N(γ) ≤ 21} ∪ {γ(π_2#) | 6 ≤ N(γ) ≤ 28} ∪
-{γ(π_3#) | 1 ≤ N(γ) ≤ 3}`,
-`Q_{-3,3} = {α | 1 < N(α) ≤ 81} ∪ {γπ_1 | 28 ≤ N(γ) ≤ 85} ∪ {γ(π_2#) | 22 ≤ N(γ) ≤ 200} ∪
-{γ(π_3#) | 5 ≤ N(γ) ≤ 48} ∪ {π_4#}`, and the elements of largest norm are `2(π_2#) = 4(1+ζ)`,
-`(2-ζ)(π_3#) = 42` and `π_4# = 182(1+ζ)`, unique up to units. The record prints the second as
-`(2-ζ)(π_4#) = 42`; `(2-ζ)(π_4#)` has norm `298116`, while `(2-ζ)(π_3#) = 42` (norm `1764`), the
-element of largest norm in the `γ(π_3#)` part.
+/-- **The first three Schatunowsky sets of the Eisenstein integers.** Let $K$ be a number
+field of discriminant $-3$ (so $K \cong \mathbb{Q}(\sqrt{-3})$). For $\alpha \in \mathcal{O}_K$ let
+$N(\alpha)$ be the absolute norm of the ideal $(\alpha)$, and let $Q_\ell$ be the set of
+$\alpha \in \mathcal{O}_K$ with $N(\alpha) > 1$ such that every $\beta \in \mathcal{O}_K$ coprime
+to $\alpha$ with $1 < N(\beta) < N(\alpha)$ has at most $\ell$ prime ideal factors, counted with
+multiplicity. Below, $\gamma$ ranges over $\mathcal{O}_K$ and $\pi$ over the elements of norm $3$.
+Then $Q_1$ consists of the $\alpha$ with $1 < N(\alpha) \le 9$, the products $\gamma\pi$ with
+$4 \le N(\gamma) \le 5$, and the products $2\gamma\pi$ with $2 \le N(\gamma) \le 4$. The set
+$Q_2$ consists of the $\alpha$ with $1 < N(\alpha) \le 27$, the $\gamma\pi$ with
+$10 \le N(\gamma) \le 21$, the $2\gamma\pi$ with $6 \le N(\gamma) \le 28$, and the $14\gamma\pi$
+with $1 \le N(\gamma) \le 3$. The set $Q_3$ consists of the $\alpha$ with
+$1 < N(\alpha) \le 81$, the $\gamma\pi$ with $28 \le N(\gamma) \le 85$, the $2\gamma\pi$ with
+$22 \le N(\gamma) \le 200$, the $14\gamma\pi$ with $5 \le N(\gamma) \le 48$, and the associates
+of $182\pi$. Moreover, the elements of largest norm are unique up to units: there is a $\pi$ of
+norm $3$ with $4\pi \in Q_1$ such that every $\alpha \in Q_1$ has $N(\alpha) \le N(4\pi)$, with
+$\alpha$ an associate of $4\pi$ in case of equality; $42 \in Q_2$, and every $\alpha \in Q_2$ has
+$N(\alpha) \le N(42)$, with $\alpha$ an associate of $42$ in case of equality; and there is a
+$\pi$ of norm $3$ with $182\pi \in Q_3$ such that every $\alpha \in Q_3$ has
+$N(\alpha) \le N(182\pi)$, with $\alpha$ an associate of $182\pi$ in case of equality.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
 Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Corollary 2

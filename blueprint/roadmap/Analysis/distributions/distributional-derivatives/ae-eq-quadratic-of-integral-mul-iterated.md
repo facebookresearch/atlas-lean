@@ -1,4 +1,4 @@
-# A function with vanishing weak third derivative on $(0,1)$ is a.e. a polynomial of degree at most $2$ on $(0,1)$
+# A function with vanishing weak third derivative on $(0,1)$ is a.e. a polynomial of degree at most $2$ on $[0,1]$
 
 **A function with vanishing weak third derivative on $(0,1)$ is a.e. a polynomial of
 degree at most $2$ on $[0,1]$.** Let $f:\mathbb{R}\to\mathbb{R}$ be integrable on $[0,1]$, and

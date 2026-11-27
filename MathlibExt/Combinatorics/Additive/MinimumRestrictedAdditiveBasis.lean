@@ -44,13 +44,16 @@ private theorem mrab_not_exists_of_odd {s : Nat} (hs : Odd s) :
   omega
 
 open Classical in
-/-- Minimum restricted additive-basis cardinality for `[0, s]`: the summand
-set `A : Finset ℕ` satisfies the restriction `2 * a ≤ s` for all `a ∈ A`;
-every `x ≤ s` equals `a + b` for some `a ∈ A`, `b ∈ A` (independent choices,
-so `a = b` allowed); `A.card = k` for `opt = some k`, minimal among all such
-witness sets; `opt = none` exactly when no such witness set exists. The
-restriction `2 * a ≤ s` applies for every `s`, odd or even, with no parity
-requirement and no sentinel value for absence.
+/-- **Minimum size of a restricted additive basis.** Let $s$ be a natural number. A restricted
+additive basis of $\{0, 1, \dots, s\}$ is a finite set $A$ of natural numbers with $2a \le s$ for
+every $a \in A$ such that every natural number $x \le s$ can be written as $x = a + b$ with
+$a, b \in A$, where $a = b$ is allowed. The minimum restricted additive basis size $k^*(s)$ is
+the smallest cardinality of a restricted additive basis of $\{0, 1, \dots, s\}$; it is undefined
+when no restricted additive basis of $\{0, 1, \dots, s\}$ exists.
+
+The restriction $2a \le s$ is imposed for odd $s$ as well as for even $s$.
+
+Proves `Wanted` entry `minimumRestrictedAdditiveBasisCard`.
 
 Source: Jukka Kohonen, Visa Koivunen, and Robin Rajamäki, *Planar Additive
 Bases for Rectangles*, Journal of Integer Sequences 21 (2018), Article
@@ -61,9 +64,7 @@ restricted-basis notation `k^*`, lines 200–203,
 The one-dimensional `k^*(s, 0)` notion supports G. Yu's restricted 2-basis
 bound (`s_x / k^*(s_x, 0)^2 ≤ 0.41983`, equation `eq:yu_restr`, lines
 897–901), quoting G. Yu, *Upper bounds for finite additive 2-bases*,
-Proc. Amer. Math. Soc. 137 (2009), 11–18, Theorem 1.2.
-
-Proves `Wanted` entry `minimumRestrictedAdditiveBasisCard`. -/
+Proc. Amer. Math. Soc. 137 (2009), 11–18, Theorem 1.2. -/
 public noncomputable def minimumRestrictedAdditiveBasisCard (s : Nat) :
     { opt : Option Nat //
       (∀ k : Nat, opt = some k →
@@ -101,7 +102,11 @@ public noncomputable def minimumRestrictedAdditiveBasisCard (s : Nat) :
     · intro _ hx
       exact h hx
 
-/-- The value of `minimumRestrictedAdditiveBasisCard s` is `none` iff `s % 2 = 1`. -/
+/-- **The minimum restricted additive basis size is undefined exactly in the odd case.** For
+every natural number $s$, the minimum size $k^*(s)$ of a restricted additive basis of
+$\{0, 1, \dots, s\}$, that is, of a finite set $A$ of natural numbers with $2a \le s$ for every
+$a \in A$ such that every natural number $x \le s$ equals $a + b$ for some $a, b \in A$, is
+undefined if and only if $s$ is odd. -/
 public theorem minimumRestrictedAdditiveBasisCard_eq_none_iff (s : ℕ) :
     (minimumRestrictedAdditiveBasisCard s).val = none ↔ s % 2 = 1 := by
   rw [← Nat.odd_iff]
@@ -119,7 +124,11 @@ public theorem minimumRestrictedAdditiveBasisCard_eq_none_iff (s : ℕ) :
       obtain ⟨A, hP, hQ, -⟩ := hex
       exact absurd ⟨A, hP, hQ⟩ hno
 
-/-- The value of `minimumRestrictedAdditiveBasisCard s` is `some` iff `s % 2 = 0`. -/
+/-- **The minimum restricted additive basis size is defined exactly in the even case.** For
+every natural number $s$, the minimum size $k^*(s)$ of a restricted additive basis of
+$\{0, 1, \dots, s\}$, that is, of a finite set $A$ of natural numbers with $2a \le s$ for every
+$a \in A$ such that every natural number $x \le s$ equals $a + b$ for some $a, b \in A$, is
+defined if and only if $s$ is even. -/
 public theorem minimumRestrictedAdditiveBasisCard_isSome_iff (s : ℕ) :
     (minimumRestrictedAdditiveBasisCard s).val.isSome ↔ s % 2 = 0 := by
   rw [← Nat.even_iff]

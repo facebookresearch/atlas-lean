@@ -8,3 +8,4 @@
 - [Gould's alternating identity for Bernoulli polynomials](gould-bernoulli-identity.md)
 - [Kaneko's Stirling-number formula for the Bernoulli numbers](kaneko-bernoulli-stirling-sum.md)
 - [Tuenter's power-sum identity for Bernoulli numbers](tuenter-bernoulli-power-sum-identity.md)
+- [Von Staudt–Clausen theorem](von-staudt-clausen.md)

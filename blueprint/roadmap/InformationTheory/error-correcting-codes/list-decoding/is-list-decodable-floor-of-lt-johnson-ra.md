@@ -1,0 +1,3 @@
+# List decodability below the q-ary Johnson radius, relative form
+
+Let $C$ be a code of length $n$ (a finite set of words in $\alpha^n$) over a finite alphabet $\alpha$ with $q = |\alpha| \ge 2$ letters, whose distinct codewords are at Hamming distance at least $d$. Let $J(q, \delta) = (1 - 1/q)\bigl(1 - \sqrt{\max(0,\, 1 - q\delta/(q-1))}\bigr)$ be the total $q$-ary Johnson radius, computed in $\mathbb{R}$ with $x/0 = 0$. For every real $\rho$ with $0 \le \rho < J(q, d/n)$ (with $d/n$ the real quotient, $0$ when $n = 0$), the code $C$ is list decodable from $\lfloor \rho n \rfloor$ errors with list size $q d n$: every Hamming ball of radius $\lfloor \rho n \rfloor$ contains at most $q d n$ codewords.

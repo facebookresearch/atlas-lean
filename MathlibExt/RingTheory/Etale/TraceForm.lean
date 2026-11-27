@@ -60,7 +60,12 @@ universe u
 
 variable {K : Type u} [Field K]
 
-/-- The trace on a finite product of algebras is the sum of the traces. -/
+/-- **Trace on a finite product of algebras.** Let $K$ be a field, and for a finite-dimensional
+commutative $K$-algebra $A$ and $z \in A$ write $\operatorname{Tr}_{A/K}(z)$ for the trace of the
+$K$-linear map given by multiplication by $z$. Let $(A_i)_{i \in I}$ be a family of
+finite-dimensional commutative $K$-algebras indexed by a finite set $I$, and let
+$P = \prod_{i \in I} A_i$. Then for every $x = (x_i)_{i \in I}$ in $P$,
+$\operatorname{Tr}_{P/K}(x) = \sum_{i \in I} \operatorname{Tr}_{A_i/K}(x_i)$. -/
 theorem trace_pi {ι : Type*} [Fintype ι] {A : ι → Type*}
     [∀ i, CommRing (A i)] [∀ i, Algebra K (A i)]
     [∀ i, Module.Finite K (A i)] [∀ i, Module.Free K (A i)]
@@ -93,8 +98,13 @@ theorem trace_pi {ι : Type*} [Fintype ι] {A : ι → Type*}
         rw [trace_eq_matrix_trace (Module.Free.chooseBasis K (A i)) (x i)]
         simp only [Matrix.trace, Matrix.diag_apply]
 
-/-- The trace form on a finite product of algebras is the sum of the trace
-forms. -/
+/-- **Trace form of a finite product of algebras.** Let $K$ be a field, and for a
+finite-dimensional commutative $K$-algebra $A$ and $z \in A$ write $\operatorname{Tr}_{A/K}(z)$
+for the trace of the $K$-linear map given by multiplication by $z$. Let $(A_i)_{i \in I}$ be a
+family of finite-dimensional commutative $K$-algebras indexed by a finite set $I$, and let
+$P = \prod_{i \in I} A_i$. Then for all $x = (x_i)_{i \in I}$ and $y = (y_i)_{i \in I}$ in $P$,
+$\operatorname{Tr}_{P/K}(xy) = \sum_{i \in I} \operatorname{Tr}_{A_i/K}(x_i y_i)$, that is, the
+trace form of $P$ over $K$ is the sum of the trace forms of the factors. -/
 theorem traceForm_pi {ι : Type*} [Fintype ι] {A : ι → Type*}
     [∀ i, CommRing (A i)] [∀ i, Algebra K (A i)]
     [∀ i, Module.Finite K (A i)] [∀ i, Module.Free K (A i)]
@@ -104,15 +114,25 @@ theorem traceForm_pi {ι : Type*} [Fintype ι] {A : ι → Type*}
   rw [traceForm_apply, trace_pi]
   exact Finset.sum_congr rfl fun i _ => by rw [Pi.mul_apply, traceForm_apply]
 
-/-- The trace form is unchanged under an algebra equivalence. -/
+/-- **The trace form is invariant under algebra isomorphisms.** For a commutative algebra $A$
+over a field $K$ and $z \in A$, write $\operatorname{Tr}_{A/K}(z)$ for the trace of the $K$-linear
+map given by multiplication by $z$, taken to be $0$ when $A$ is infinite-dimensional over $K$. Let
+$R$ and $S$ be commutative algebras over $K$ and let $e : R \to S$ be an isomorphism of
+$K$-algebras. Then for all $x, y \in R$ we have
+$\operatorname{Tr}_{S/K}(e(x)\,e(y)) = \operatorname{Tr}_{R/K}(xy)$, that is, $e$ carries the
+trace form of $R$ over $K$ to the trace form of $S$ over $K$. -/
 theorem traceForm_apply_of_algEquiv {R S : Type*} [CommRing R] [CommRing S]
     [Algebra K R] [Algebra K S] (e : R ≃ₐ[K] S) (x y : R) :
     traceForm K S (e x) (e y) = traceForm K R x y := by
   rw [traceForm_apply, traceForm_apply, ← map_mul, trace_eq_of_algEquiv]
 
-/-- A nilpotent element pairs to zero against everything under the trace
-form: multiplication by a nilpotent is a nilpotent endomorphism, whose trace
-vanishes. -/
+/-- **Nilpotent elements pair to zero under the trace form.** Let $R$ be a commutative algebra
+over a field $K$, and for $z \in R$ write $\operatorname{Tr}_{R/K}(z)$ for the trace of the
+$K$-linear map given by multiplication by $z$, taken to be $0$ when $R$ is infinite-dimensional
+over $K$. If $x, y \in R$ and $x$ is nilpotent, then the trace form of $R$ over $K$ vanishes at
+$(x, y)$, that is, $\operatorname{Tr}_{R/K}(xy) = 0$.
+
+Multiplication by a nilpotent element is a nilpotent endomorphism, whose trace vanishes. -/
 theorem traceForm_apply_eq_zero_of_isNilpotent {R : Type*} [CommRing R]
     [Algebra K R] {x y : R} (hx : IsNilpotent x) :
     traceForm K R x y = 0 := by
@@ -124,15 +144,24 @@ theorem traceForm_apply_eq_zero_of_isNilpotent {R : Type*} [CommRing R]
     rw [← map_pow, hn, map_zero]
   exact (LinearMap.isNilpotent_trace_of_isNilpotent hnil).eq_zero
 
-/-- If the trace form is nondegenerate then the algebra is reduced: every
-nilpotent element lies in the kernel of the trace form, hence is zero. -/
+/-- **A nondegenerate trace form forces the algebra to be reduced.** Let $R$ be a commutative
+algebra over a field $K$. For $z \in R$ write $\operatorname{Tr}_{R/K}(z)$ for the trace of the
+$K$-linear map given by multiplication by $z$, taken to be $0$ when $R$ is infinite-dimensional
+over $K$. If the trace form $(x, y) \mapsto \operatorname{Tr}_{R/K}(xy)$ of $R$ over $K$ is
+nondegenerate, then $R$ is reduced, that is, its only nilpotent element is $0$.
+
+Every nilpotent element lies in the kernel of the trace form, hence is zero. -/
 theorem isReduced_of_traceForm_nondegenerate {R : Type*} [CommRing R]
     [Algebra K R] (h : (traceForm K R).Nondegenerate) : IsReduced R :=
   ⟨fun x hx => h.1 x fun _ => traceForm_apply_eq_zero_of_isNilpotent hx⟩
 
-/-- ATLAS `NumberTheoryI` Theorem 5.20: for a finite-dimensional commutative
-algebra over a field, the trace pairing is nondegenerate if and only if the
-algebra is étale. -/
+/-- **Trace form criterion for étale algebras.** Let $R$ be a finite-dimensional commutative
+algebra over a field $K$, and for $z \in R$ write $\operatorname{Tr}_{R/K}(z)$ for the trace of
+the $K$-linear map given by multiplication by $z$. Then the trace form
+$(x, y) \mapsto \operatorname{Tr}_{R/K}(xy)$ of $R$ over $K$ is nondegenerate if and only if $R$
+is étale over $K$.
+
+Source: ATLAS NumberTheoryI Theorem 5.20. -/
 theorem traceForm_nondegenerate_iff_etale {R : Type u} [CommRing R] [Algebra K R]
     [Module.Finite K R] :
     (traceForm K R).Nondegenerate ↔ Etale K R := by
@@ -224,33 +253,44 @@ theorem traceForm_nondegenerate_iff_etale {R : Type u} [CommRing R] [Algebra K R
     rw [hex, map_zero] at hx0
     exact hx0
 
-/-- The discriminant of a basis is nonzero if and only if the trace form is
-nondegenerate. -/
+/-- **Discriminant and nondegeneracy of the trace form.** Let $R$ be a commutative algebra over a
+field $K$ and let $b$ be a $K$-basis of $R$ indexed by a finite set. For $z \in R$ write
+$\operatorname{Tr}_{R/K}(z)$ for the trace of the $K$-linear map given by multiplication by $z$.
+Then the discriminant of $b$ over $K$ is nonzero if and only if the trace form
+$(x, y) \mapsto \operatorname{Tr}_{R/K}(xy)$ of $R$ over $K$ is nondegenerate. -/
 theorem discr_ne_zero_iff_traceForm_nondegenerate {R : Type*} [CommRing R]
     [Algebra K R] {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Module.Basis ι K R) :
     Algebra.discr K b ≠ 0 ↔ (traceForm K R).Nondegenerate := by
   rw [Algebra.discr_def, Algebra.traceMatrix_of_basis]
   exact (LinearMap.BilinForm.nondegenerate_iff_det_ne_zero b).symm
 
-/-- ATLAS `NumberTheoryI` Lemma 12.18: for a basis of a finite-dimensional
-commutative algebra over a field, the discriminant of the basis is nonzero if
-and only if the algebra is étale. -/
+/-- **Étale algebras are detected by the discriminant.** Let $R$ be a commutative algebra over a
+field $K$ and let $b$ be a $K$-basis of $R$ indexed by a finite set. Then the discriminant of $b$
+over $K$ is nonzero if and only if $R$ is étale over $K$.
+
+Source: ATLAS NumberTheoryI Lemma 12.18. -/
 theorem discr_ne_zero_iff_etale {R : Type u} [CommRing R] [Algebra K R]
     {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Module.Basis ι K R) :
     Algebra.discr K b ≠ 0 ↔ Etale K R := by
   let : Module.Finite K R := Module.Finite.of_basis b
   rw [discr_ne_zero_iff_traceForm_nondegenerate b, traceForm_nondegenerate_iff_etale]
 
-/-- One direction of Lemma 12.18: an étale algebra has nonzero discriminant
-for every basis. -/
+/-- **Étale algebras have nonzero discriminant.** Let $R$ be a commutative algebra over a field
+$K$ that is étale over $K$. Then for every $K$-basis $b$ of $R$ indexed by a finite set, the
+discriminant of $b$ over $K$ is nonzero.
+
+Source: ATLAS NumberTheoryI Lemma 12.18, one direction. -/
 theorem discr_ne_zero_of_etale {R : Type u} [CommRing R] [Algebra K R]
     {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Module.Basis ι K R)
     (hR : Etale K R) :
     Algebra.discr K b ≠ 0 :=
   (discr_ne_zero_iff_etale b).mpr hR
 
-/-- One direction of Lemma 12.18: a nonzero discriminant for some basis forces
-the algebra to be étale. -/
+/-- **A nonzero discriminant forces étaleness.** Let $R$ be a commutative algebra over a field
+$K$ and let $b$ be a $K$-basis of $R$ indexed by a finite set. If the discriminant of $b$ over
+$K$ is nonzero, then $R$ is étale over $K$.
+
+Source: ATLAS NumberTheoryI Lemma 12.18, one direction. -/
 theorem etale_of_discr_ne_zero {R : Type u} [CommRing R] [Algebra K R]
     {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Module.Basis ι K R)
     (h : Algebra.discr K b ≠ 0) :

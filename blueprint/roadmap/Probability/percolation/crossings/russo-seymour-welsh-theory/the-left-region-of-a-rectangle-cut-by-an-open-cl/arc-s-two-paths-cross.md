@@ -1,0 +1,3 @@
+# Condition that every left-right crossing meets the open cluster
+
+Let $\omega$ be a bond configuration on $\mathbb{Z}^2$, let $\alpha, \beta, m, m', c, d \in \mathbb{Z}$ and $x_B \in O = [m, m'] \times [c, d]$, and let $C_O(x_B)$ be the [open cluster of $x_B$ inside the overlap](../../box-crossing-property-for-positively-associated/horizontal-and-vertical-crossings-meet/overlap-comp.md). The condition is: if $\alpha \le m \le m' \le \beta$, then every lattice path (not necessarily open) that stays in $[\alpha, \beta] \times [c, d]$ and goes from a site with first coordinate $\alpha$ to a site with first coordinate $\beta$ visits a site of $C_O(x_B)$. This condition fails for some configurations $\omega$.

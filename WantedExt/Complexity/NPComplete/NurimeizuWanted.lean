@@ -20,7 +20,7 @@ FUN 2026, LIPIcs 366, 35, doi:10.4230/LIPIcs.FUN.2026.35, Section 2.1.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Prod

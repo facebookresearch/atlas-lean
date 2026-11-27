@@ -24,14 +24,14 @@ attributed to Proskurowski and Sysło).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.CycleCover
 public import MathlibExt.Combinatorics.SimpleGraph.Domination
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Combinatorics.SimpleGraph.VertexConnectivity
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -52,7 +52,7 @@ Johnson's column describes the same variant as the dominating set being "require
 cycle"; the cycle need not be an induced subgraph, as in the definition above.
 
 The instance, its graph and the simple-edge-list well-formedness are those of
-`WantedExt.Complexity.NPComplete.DominatingSetWanted` ([GT2]): vertices `Fin n`, a list of
+`CSLibExt.Complexity.NPComplete.DominatingSetDefs` ([GT2]): vertices `Fin n`, a list of
 distinct undirected edges without loops or repeated pairs, and the bound `K`. Planarity is the
 repository's `SimpleGraph.IsPlanar` (a crossing-free straight-line drawing, which by Fáry's
 theorem exists exactly for planar graphs), 2-connectivity the shared MathlibExt predicate

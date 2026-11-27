@@ -17,10 +17,10 @@ Corollary 1, and Fact 1 of Section 5).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import Cslib.Logics.Propositional.Defs
+public import CSLibExt.Logics.Propositional.Legacy.Defs
 public import CSLibExt.Logics.Propositional.NaturalDeduction.Semantics
 public import WantedExt.Complexity.NPComplete.NonTautologyWanted
 
@@ -28,7 +28,7 @@ public import WantedExt.Complexity.NPComplete.NonTautologyWanted
 
 namespace MetaMathlibExt.Complexity.NPComplete.ExistentialPresburgerArithmetic
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 open NonTautology (parse valuation)
 
 /-!
@@ -45,8 +45,9 @@ arithmetic with the doubling function `φ₂(x) = 2x`, so that a term spells a c
 coefficients, so an atomic formula is a linear inequality
 `a₀ y₀ + ⋯ + a_{k-1} y_{k-1} + b ≤ c₀ y₀ + ⋯ + c_{k-1} y_{k-1} + e`; here it is given by the
 coefficient lists `[a₀, ..., a_{k-1}]`, `[c₀, ..., c_{k-1}]` and the constants `b`, `e`, all in
-binary. The quantifier-free part is CSLib's `Cslib.Logic.PL.Proposition` over the atomic
-formulas, written as a postfix token list and read by `NonTautology.parse`: the token `(0, x)`
+binary. The quantifier-free part is a proposition of CSLib v4.35, restored as
+`Cslib.Logic.LegacyPL.Proposition`, over the atomic formulas, written as a postfix token list and
+read by `NonTautology.parse`: the token `(0, x)`
 is the `x`-th atomic formula of the list, `(1, _)` is `¬`, and `(2, _)`, `(3, _)`, `(4, _)` are
 `∧`, `∨`, `→`. Truth values are CSLibExt's `Proposition.evalBool` under
 `NonTautology.valuation`, which makes `⊥` false. An assignment of the variables is the list

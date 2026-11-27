@@ -37,11 +37,14 @@ open Filter ωSequence Automata ωAcceptor
 
 variable {Symbol : Type*}
 
-/-- Words with infinitely many letters in `p`. -/
+/-- **Infinitely often.** For a set $p$ of symbols, the ω-language “infinitely often $p$”
+consists of the infinite words $x_0 x_1 x_2 \ldots$ with $x_k \in p$ for infinitely many $k$. -/
 def infinitelyOften (p : Set Symbol) : ωLanguage Symbol :=
   { xs : ωSequence Symbol | ∃ᶠ k in atTop, xs k ∈ p }
 
-/-- Words whose letters are eventually all in `p`. -/
+/-- **Eventually always.** For a set $p$ of symbols, the ω-language “eventually always $p$”
+consists of the infinite words $x_0 x_1 x_2 \ldots$ for which there is an $N$ with $x_k \in p$
+for all $k \ge N$. -/
 def eventuallyAlways (p : Set Symbol) : ωLanguage Symbol :=
   { xs : ωSequence Symbol | ∀ᶠ k in atTop, xs k ∈ p }
 
@@ -53,7 +56,9 @@ theorem mem_eventuallyAlways {p : Set Symbol} {xs : ωSequence Symbol} :
     xs ∈ eventuallyAlways p ↔ ∀ᶠ k in atTop, xs k ∈ p :=
   Iff.rfl
 
-/-- Not infinitely often in `p` is eventually always outside `p`. -/
+/-- **Complement of “infinitely often”.** For every set $p$ of symbols, the complement of the
+ω-language of infinite words with infinitely many letters in $p$ is the ω-language of infinite
+words whose letters are eventually all in the complement of $p$. -/
 theorem compl_infinitelyOften (p : Set Symbol) :
     (infinitelyOften p)ᶜ = eventuallyAlways pᶜ := by
   apply ωLanguage.mem_ext
@@ -61,9 +66,12 @@ theorem compl_infinitelyOften (p : Set Symbol) :
   rw [ωLanguage.mem_compl, mem_infinitelyOften, mem_eventuallyAlways, not_frequently]
   rfl
 
-/-- A two-state Büchi automaton for `infinitelyOften p`, with a single start state and exactly one
-successor for each state and letter: the state records whether the last letter read was in `p`
-(initially `true`), and `true` is accepting. -/
+/-- **Two-state Büchi automaton for “infinitely often”.** For a set $p$ of symbols, this is the
+nondeterministic Büchi automaton over the alphabet of symbols with states $\mathsf{true}$ and
+$\mathsf{false}$, single start state $\mathsf{true}$ and single accepting state $\mathsf{true}$,
+in which reading a letter $x$ from either state leads to exactly one state: $\mathsf{true}$ if
+$x \in p$ and $\mathsf{false}$ otherwise. So the state records whether the last letter read was
+in $p$. -/
 def infinitelyOftenNa (p : Set Symbol) : NA.Buchi Bool Symbol where
   Tr _ x s' := (s' = true ↔ x ∈ p)
   start := {true}
@@ -96,9 +104,11 @@ theorem language_infinitelyOftenNa (p : Set Symbol) :
         change decide (xs b ∈ p) ∈ ({true} : Set Bool)
         simp [hpb]⟩
 
-/-- The two-state Büchi automaton for `eventuallyAlways p`: in state `false` it reads anything
-and may guess to move to `true`; in state `true`, the accepting state, it only reads letters in
-`p` and stays. -/
+/-- **Two-state Büchi automaton for “eventually always”.** For a set $p$ of symbols, this is the
+nondeterministic Büchi automaton over the alphabet of symbols with states $\mathsf{false}$ and
+$\mathsf{true}$, single start state $\mathsf{false}$ and single accepting state $\mathsf{true}$.
+From $\mathsf{false}$ it may read any letter and move to either state; from $\mathsf{true}$ it
+may read only letters in $p$, and then it stays in $\mathsf{true}$. -/
 def eventuallyAlwaysNa (p : Set Symbol) : NA.Buchi Bool Symbol where
   Tr s x s' := s = true → x ∈ p ∧ s' = true
   start := {false}

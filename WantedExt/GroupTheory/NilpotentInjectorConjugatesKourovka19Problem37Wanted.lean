@@ -40,42 +40,63 @@ uses a family `Fin k → G`, part (b) `k = 3`. `fittingSubgroup` is that of the 
 open MathlibExt.GroupTheory.NilpotentThreeConjugatesFittingKourovka17Problem40Wanted
   (fittingSubgroup)
 
-/-- `H` is a nilpotent injector of `G`: for every subnormal subgroup `K` of `G`, `H ⊓ K` is a
-nilpotent subgroup of `K` contained in no larger nilpotent subgroup of `K`. -/
+/-- **Nilpotent injector.** A subgroup $H$ of a group $G$ is a nilpotent injector when, for every
+subnormal subgroup $K$ of $G$, the intersection $H \cap K$ is nilpotent and is a maximal nilpotent
+subgroup of $K$: every nilpotent subgroup $L$ of $G$ with $H \cap K \le L \le K$ equals
+$H \cap K$. -/
 def IsNilpotentInjector {G : Type*} [Group G] (H : Subgroup G) : Prop :=
   ∀ K : Subgroup G, K.IsSubnormal → Group.IsNilpotent ↥(H ⊓ K) ∧
     ∀ L : Subgroup G, L ≤ K → Group.IsNilpotent L → H ⊓ K ≤ L → L = H ⊓ K
 
-/-- Kourovka 19.37(a) (S. F. Kamornikov): there is an absolute constant `k` such that for every
-nilpotent injector `H` of every finite group `G`, some `k` conjugates of `H` intersect in `F(G)`. -/
+/-- **Kourovka Problem 19.37(a).** The assertion that there is a natural number $k$ such that for
+every finite group $G$ and every nilpotent injector $H$ of $G$ there are elements
+$g_1, \dots, g_k \in G$, not necessarily distinct, with
+$g_1 H g_1^{-1} \cap \dots \cap g_k H g_k^{-1} = F(G)$, where $F(G)$ is the Fitting subgroup of
+$G$. -/
 def nilpotentInjectorBoundedConjugates : Prop :=
   ∃ k : ℕ, ∀ (G : Type) [Group G] [Finite G] (H : Subgroup G), IsNilpotentInjector H →
     ∃ g : Fin k → G, ⨅ i, H.map (MulAut.conj (g i)).toMonoidHom = fittingSubgroup G
 
-/-- Kourovka 19.37(b) (S. F. Kamornikov): `k = 3` works: for every nilpotent injector `H` of a
-finite group `G`, some three conjugates of `H` intersect in `F(G)`. -/
+/-- **Kourovka Problem 19.37(b).** The assertion that for every finite group $G$ and every
+nilpotent injector $H$ of $G$ there are elements $g_1, g_2, g_3 \in G$, not necessarily distinct,
+with $g_1 H g_1^{-1} \cap g_2 H g_2^{-1} \cap g_3 H g_3^{-1} = F(G)$, where $F(G)$ is the Fitting
+subgroup of $G$. -/
 def nilpotentInjectorThreeConjugates : Prop :=
   ∀ (G : Type) [Group G] [Finite G] (H : Subgroup G), IsNilpotentInjector H →
     ∃ g : Fin 3 → G, ⨅ i, H.map (MulAut.conj (g i)).toMonoidHom = fittingSubgroup G
 
 /--
-Resolved true: the Kourovka Archive records that Zenkov proved (using the classification of finite
-simple groups) that `k = 3` works, so an absolute constant exists. Source: E. I. Khukhro and V. D.
-Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
-arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 19.37 (S. F. Kamornikov); resolution:
-V. I. Zenkov, Intersections of three nilpotent subgroups in a finite group, Siberian Math. J. 62
-(2021), no. 4, 621-637, doi:10.1134/S0037446621040066, Kourovka Archive, Problem 19.37: Yes, one can
-choose k = 3 as such a constant, mod CFSG, https://arxiv.org/abs/1401.0300v49.
+**Boundedly many conjugates of a nilpotent injector meet in the Fitting subgroup.** There is a
+natural number $k$ such that for every finite group $G$ and every nilpotent injector $H$ of $G$
+there are elements $g_1, \dots, g_k \in G$, not necessarily distinct, with
+$g_1 H g_1^{-1} \cap \dots \cap g_k H g_k^{-1} = F(G)$, where $F(G)$ is the Fitting subgroup of
+$G$.
+
+Zenkov proved, using the classification of finite simple groups, that $k = 3$ works, which answers
+Kourovka Problem 19.37(a) positively.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 19.37 (S. F.
+Kamornikov); resolution: V. I. Zenkov, Intersections of three nilpotent subgroups in a finite
+group, Siberian Math. J. 62 (2021), no. 4, 621-637, doi:10.1134/S0037446621040066, Kourovka
+Archive, Problem 19.37: Yes, one can choose k = 3 as such a constant, mod CFSG,
+https://arxiv.org/abs/1401.0300v49.
 -/
 public theorem_wanted nilpotentInjectorBoundedConjugates_holds : nilpotentInjectorBoundedConjugates
 
 /--
-Resolved true: the Kourovka Archive answers 19.37 "Yes, one can choose `k = 3`" (Zenkov, mod CFSG):
-some three conjugates of a nilpotent injector intersect in `F(G)`; the soluble case is due to
-Passman and Mann. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory:
-The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem
-19.37 (S. F. Kamornikov); resolution: V. I. Zenkov, Intersections of three nilpotent subgroups in a
-finite group, Siberian Math. J. 62 (2021), no. 4, 621-637, doi:10.1134/S0037446621040066, Kourovka
+**Three conjugates of a nilpotent injector meet in the Fitting subgroup.** For every finite group
+$G$ and every nilpotent injector $H$ of $G$ there are elements $g_1, g_2, g_3 \in G$, not
+necessarily distinct, with $g_1 H g_1^{-1} \cap g_2 H g_2^{-1} \cap g_3 H g_3^{-1} = F(G)$, where
+$F(G)$ is the Fitting subgroup of $G$.
+
+This answers Kourovka Problem 19.37(b) positively; it is due to Zenkov and uses the classification
+of finite simple groups, the soluble case being due to Passman and Mann.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 19.37 (S. F.
+Kamornikov); resolution: V. I. Zenkov, Intersections of three nilpotent subgroups in a finite
+group, Siberian Math. J. 62 (2021), no. 4, 621-637, doi:10.1134/S0037446621040066, Kourovka
 Archive, Problem 19.37: Yes, one can choose k = 3 as such a constant, mod CFSG,
 https://arxiv.org/abs/1401.0300v49.
 -/

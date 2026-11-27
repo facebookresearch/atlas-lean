@@ -24,7 +24,7 @@
 
 ## Related topics
 
-- Matrix concentration inequalities
+- [Matrix concentration inequalities](../../../Probability/concentration-inequalities/matrix-concentration-inequalities/README.md)
 - [Interlacing families of polynomials](../../../Algebra/zeros-of-polynomials/interlacing-families-of-polynomials/README.md): the largest-root lemma for interlacing families on which the bound for some outcome rests.
-- Spectral sparsification: the Batson–Spielman–Srivastava barrier argument that the multivariate barrier here extends.
-- Expander graphs: the same interlacing-family method gives bipartite Ramanujan graphs of every degree.
+- [Spectral sparsification](../../../GraphTheory/algebraic-graph-theory/part-02/spectral-sparsification/README.md): the Batson–Spielman–Srivastava barrier argument that the multivariate barrier here extends.
+- [Expander graphs](../../../GraphTheory/graph-families-and-operations/expander-graphs/README.md): the same interlacing-family method gives bipartite Ramanujan graphs of every degree.
