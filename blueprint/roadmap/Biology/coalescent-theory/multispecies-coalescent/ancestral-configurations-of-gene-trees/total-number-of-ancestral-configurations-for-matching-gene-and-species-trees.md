@@ -1,6 +1,6 @@
 # Total number of ancestral configurations for matching gene and species trees
 
-**Setting.** Let a gene-tree labeled topology $G$ and a species tree $S$ have the same labeled topology $t$ with $n$ leaves. An *ancestral configuration* at an internal node $k$ of $S$ is a set of gene lineages that can be present at the top of the edge above $k$ in some realization of $G$ in $S$. These configurations index the terms in recursive formulas for the gene-tree probability under the multispecies coalescent. For matching trees, the number $R(t)$ of root configurations satisfies $R(\bullet)=0$ for a leaf and
+**Setting.** Let a gene-tree labeled topology $G$ and a species tree $S$ have the same labeled topology $t$ with $n$ leaves. With time running from the leaves to the root, an *ancestral configuration* at a node $k$ of $S$ is a set of gene lineages that can be present at $k$, at the time point immediately before node $k$ (that is, immediately below it), in some realization of $G$ in $S$, each lineage named by its immediate descendant node of $G$. The single lineage $\{k\}$ is therefore not a configuration at $k$, and a leaf has no configurations. These configurations index the terms in recursive formulas for the gene-tree probability under the multispecies coalescent. For matching trees, the number $R(t)$ of root configurations satisfies $R(\bullet)=0$ for a leaf and
 
 $$R(t)=\big(R(t_L)+1\big)\big(R(t_R)+1\big)$$
 

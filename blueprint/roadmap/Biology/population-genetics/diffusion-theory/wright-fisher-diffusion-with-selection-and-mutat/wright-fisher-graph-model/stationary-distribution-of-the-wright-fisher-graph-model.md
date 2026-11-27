@@ -18,7 +18,7 @@ $$\Omega_N = 1 + 2\sum_{u,v}\eta_u\lambda_{uv}\big(1 + \ln N + K_{\gamma_{uv}}\b
 
 In the neutral case ($\gamma \equiv 0$) the polymorphic density reduces to the familiar $1/y$ site-frequency profile.
 
-**Consequence for diversity.** Extended to $L$ loci with mutation parameters $\theta_{uv} = \lambda_{uv}L$, the effective mutation rate $\hat\theta_{\mathrm{eff}}$ satisfies $\theta_{\min}/(1 + 2L^{-1}(1+\ln N)\theta_{\min}) \le \hat\theta_{\mathrm{eff}} \le \hat\theta \le \theta_{\max}$, and for homogeneous mutation $\theta$ the expected frequency spectrum obeys $E_N\langle\mathcal X_\infty, f\rangle \le 2\theta\{f(0+) + \int_{1/N}^1 f(y)/y\,dy\}$: directional selection never increases genetic variation beyond its neutral level.
+**Consequence for diversity.** Extended to $L$ loci with mutation parameters $\theta_{uv} = \lambda_{uv}L$, the effective mutation rate $\hat\theta_{\mathrm{eff}}$ satisfies $\theta_{\min}/(1 + 2L^{-1}(1+\ln N)\theta_{\min}) \le \hat\theta_{\mathrm{eff}} \le \hat\theta \le \theta_{\max}$. Let $X^j_\infty$ be the stationary state of locus $j = 1,\dots,L$ and $\mathcal X_\infty = \sum_{j=1}^L \delta_{X^j_\infty}$ the point measure collecting them, so $\langle\mathcal X_\infty, f\rangle = \sum_j f(X^j_\infty)$. Let $f \ge 0$ depend only on the frequency, $f(u,v,y) = f(y)$, with $f(0) = 0$ (monomorphic states contribute nothing) and a limit $f(0+) = \lim_{y\downarrow0} f(y)$. For homogeneous mutation $\theta$ the expected frequency spectrum then obeys $E_N\langle\mathcal X_\infty, f\rangle \le 2\theta\{f(0+) + \int_{1/N}^1 f(y)/y\,dy\}$: directional selection never increases genetic variation beyond its neutral level.
 
 ## Depends on
 

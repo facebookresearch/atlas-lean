@@ -24,6 +24,10 @@ $$
 where $(N^1, N^2)$ counts lineages on each island in a [structured coalescent](../../../coalescent-theory/structured-coalescent/structured-coalescent-for-n-lineages-with-a-gene.md) with migration and coalescence, extended by killing (absorption in the cemetery $\Delta$, read as value $0$) or branching driven by immigration and selection.
 4. *(Large islands.)* As $z_1 = z_2 = z \to \infty$, $\mathbb{E}\sup_{t \le T} \|\mathbf{R}^{(z)}_t - \mathbf{R}^{(\infty)}_t\|^p \to 0$ for every $p > 1$, where $\mathbf{R}^{(\infty)}$ solves the deterministic ODE with the $1/z$ terms removed, and $\sqrt{z}(\mathbf{R}^{(z)} - \mathbf{R}^{(\infty)})$ converges weakly in $\mathbb{C}([0,T], \mathbb{R}^2)$ to the unique strong solution of a linear Gaussian SDE (a time-inhomogeneous Ornstein–Uhlenbeck process).
 
+## Depends on
+
+- [Structured coalescent for n lineages with a general migration matrix](../../../coalescent-theory/structured-coalescent/structured-coalescent-for-n-lineages-with-a-gene.md)
+
 ## Expansion
 
 Fixing island sizes turns ratio dynamics of branching masses into a Wright–Fisher-type diffusion: Itô's formula on $X/(X + Y)$ gives the asymmetric noise $c^X r(1-r)^2 + c^Y r^2 (1-r)$, which collapses to the Wright–Fisher term $c\,r(1-r)$ when $c^X = c^Y$, and the difference $c^X - c^Y$ appears as an effective selection term. Duality is proved by the generator criterion: $H(\mathbf{n}, \mathbf{r}) = r_1^{n_1} r_2^{n_2}$ satisfies $\mathcal{L}^{\mathbf{z}}_{\mathbf{r}} H = \mathcal{Q}^{\mathbf{z}}_{\mathbf{n}} H$, and nonnegativity of the coefficients is what lets $\mathcal{Q}$ be the generator of a Markov chain. Reading the islands as active and dormant compartments connects the dual to seed-bank coalescents.
