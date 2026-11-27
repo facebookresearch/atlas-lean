@@ -48,6 +48,10 @@ def disk : Mesh (Fin 3) := ⟨[[0, 1, 2]]⟩
 /-- A single two-vertex face: not a valid polygon, but it uses both directions of its edge. -/
 def digon : Mesh (Fin 2) := ⟨[[0, 1]]⟩
 
+/-- Two copies of one triangle: as listed both use the same directed edges, but reversing one copy
+orients them. -/
+def twoCopies : Mesh (Fin 3) := ⟨[[0, 1, 2], [0, 1, 2]]⟩
+
 /-- The raw face `[0, 1, 0]` repeats the vertex `0`, so its link at `1` is the loop `s(0, 0)`. -/
 def rawLoop : Mesh (Fin 2) := ⟨[[0, 1, 0]]⟩
 
@@ -172,6 +176,14 @@ lies in one face only. -/
 theorem digon_orientable_not_valid : Orientable digon ∧ ¬ Valid digon := by decide
 
 theorem digon_edge_in_one_face : faceCount digon s(0, 1) = 1 := by decide
+
+/-- A failed listed orientation is no obstruction to orientability: `twoCopies` is not
+consistently oriented as listed, yet it is `Orientable`. -/
+theorem twoCopies_not_oriented_but_orientable :
+    ¬ ConsistentlyOriented twoCopies ∧ Orientable twoCopies := by decide
+
+theorem twoCopies_reorient_second :
+    ConsistentlyOriented (reorient twoCopies fun i => decide (i.val = 1)) := by decide
 
 /-- For a `Valid` mesh a boundary edge rules orientability out: the disk's edge `(0, 1)` lies in
 no other face. -/

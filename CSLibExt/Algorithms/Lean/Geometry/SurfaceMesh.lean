@@ -26,11 +26,16 @@ vertices, edges and Euler characteristic `chi` of a mesh, and decidable predicat
 surfaces (`ClosedSurface`: valid faces, every edge in exactly two faces, every vertex link a
 single cycle), for consistent orientation, and for orientability.
 
-`ConsistentlyOriented` and `Orientable` are edge-parity conditions on raw meshes: every directed
-edge is used by at most one face and its reverse by some face. For a mesh with `ClosedSurface`
-they are the usual coherent orientation and orientability of the closed surface. On a raw mesh the
-obstruction is a directed edge whose reverse no face uses; one face may supply both directions of
-an edge, so the single face `[0, 1]` is `Orientable`. `Valid` faces never do, so in a `Valid`
+`ConsistentlyOriented` and `Orientable` are edge-parity conditions on raw meshes.
+`ConsistentlyOriented` tests the faces as listed: every directed edge is used by at most one face
+and its reverse by some face. `Orientable` asks for some choice of face reversals that passes this
+test, so a failed listed orientation is no obstruction: two copies of one triangle use the same
+directed edges, yet reversing one copy orients them. For a mesh with `ClosedSurface` the two
+predicates are the usual coherent orientation and orientability of the closed surface. On a raw
+mesh `Orientable` fails exactly when an undirected edge lies in only one face, which traverses it
+in one direction only (`EdgesPaired` fails), or when no flips meet the parity constraints between
+faces (`orientable_iff_edgesPaired_and_flipCompatible`). One face may supply both directions of an
+edge, so the single face `[0, 1]` is `Orientable`. `Valid` faces never do, so in a `Valid`
 orientable mesh every edge lies in a second face (`Orientable.edge_shared_of_valid`): there a
 boundary edge rules orientability out.
 
@@ -168,11 +173,13 @@ def VertexLinkCycle {V : Type _} [DecidableEq V] (M : Mesh V) : Prop :=
 def ClosedSurface {V : Type _} [DecidableEq V] (M : Mesh V) : Prop :=
   Valid M ∧ EdgeManifold M ∧ VertexLinkCycle M
 
-/-- **Consistent orientation.** Every directed edge is used by at most one face, and its reverse
-by some face. For a mesh with `ClosedSurface` this says the faces are coherently oriented: the two
-faces at each edge traverse it in opposite directions. On a raw mesh it is only this edge
-condition, which fails when a face uses a directed edge whose reverse no face uses; the faces need
-not be valid polygons, and one face may supply both directions of an edge. -/
+/-- **Consistent orientation.** The faces as listed are consistently oriented: every directed edge
+is used by at most one face, and its reverse by some face. For a mesh with `ClosedSurface` this says
+the faces are coherently oriented: the two faces at each edge traverse it in opposite directions.
+On a raw mesh it is only this test of the listed orientation, which fails when two faces use the
+same directed edge or a face uses a directed edge whose reverse no face uses; reversing faces may
+repair either failure (`Orientable`). The faces need not be valid polygons, and one face may supply
+both directions of an edge. -/
 def ConsistentlyOriented {V : Type _} [DecidableEq V] (M : Mesh V) :
     Prop :=
   (∀ d ∈ allDirectedEdges M,
@@ -185,11 +192,15 @@ def reorient {V : Type _} (M : Mesh V)
   ⟨List.ofFn (fun i => if flip i then M.faces[i].reverse else M.faces[i])⟩
 
 /-- **Orientability.** Some choice of face reversals makes the mesh `ConsistentlyOriented`. For a
-mesh with `ClosedSurface` this is orientability of the closed surface it describes. On a raw mesh
-it is only the edge-parity condition, which fails when a face uses a directed edge whose reverse no
-face uses. One face may supply both directions of an edge: the single face `[0, 1]` is orientable.
-`Valid` faces never do, so in a `Valid` orientable mesh every edge lies in a second face
-(`Orientable.edge_shared_of_valid`), and a boundary edge rules orientability out. -/
+mesh with `ClosedSurface` this is orientability of the closed surface it describes. On a raw mesh it
+is only the edge-parity condition, and a failed listed orientation is no obstruction: two copies of
+one triangle use the same directed edges, yet reversing one copy gives each direction once.
+Orientability fails exactly when an undirected edge lies in only one face, which traverses it in
+one direction only (`EdgesPaired` fails), or when no flips meet the parity constraints between
+faces (`orientable_iff_edgesPaired_and_flipCompatible`). One face may supply both directions of an
+edge: the single face `[0, 1]` is orientable. `Valid` faces never do, so in a `Valid` orientable
+mesh every edge lies in a second face (`Orientable.edge_shared_of_valid`), and a boundary edge
+rules orientability out. -/
 def Orientable {V : Type _} [DecidableEq V] (M : Mesh V) : Prop :=
   ∃ flip : Fin M.faces.length → Bool, ConsistentlyOriented (reorient M flip)
 
@@ -357,8 +368,9 @@ def FlipCompatible (M : Mesh V) (flip : Fin M.faces.length → Bool) : Prop :=
       (sharesOppositeEdge M.faces[i] M.faces[j] = true → flip i = flip j)
 
 /-- **Paired edges.** Every directed edge of a face is traversed again, in either direction, by
-another face, or in the opposite direction by the same face. This part of `ConsistentlyOriented`
-does not depend on the flips. -/
+another face, or in the opposite direction by the same face. This is the part of `Orientable` that
+does not depend on the flips (`orientable_iff_edgesPaired_and_flipCompatible`); it fails exactly
+when an undirected edge lies in only one face, which traverses it in one direction only. -/
 def EdgesPaired (M : Mesh V) : Prop :=
   ∀ (i : Fin M.faces.length), ∀ e ∈ directedEdgesOfFace M.faces[i],
     (e.2, e.1) ∈ directedEdgesOfFace M.faces[i] ∨
