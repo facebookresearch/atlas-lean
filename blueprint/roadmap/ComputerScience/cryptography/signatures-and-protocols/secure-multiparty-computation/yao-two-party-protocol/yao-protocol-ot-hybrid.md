@@ -17,7 +17,6 @@ The garbler's view contains only its own coins and the output. The evaluator's v
 
 - [Point-and-permute garbling is correct and simulation private from a PRF](../boolean-garbling-constructions/point-and-permute-security.md)
 - [Correctness and privacy of half-gates garbling](../boolean-garbling-constructions/half-gates-security.md)
-- [Correctness and privacy of Free-XOR garbling under circular correlation robustness](../boolean-garbling-constructions/free-xor-security.md)
 
 ## Sources
 

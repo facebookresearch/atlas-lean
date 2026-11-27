@@ -9,6 +9,8 @@ The reconstruction and refresh identities are parity computations. For privacy, 
 ## Depends on
 
 - [Client-preprocessing single-server PIR](client-preprocessing-pir.md)
+- [PRF advantage](../../../symmetric-key/pseudorandom-functions/prf-advantage.md)
+- [PRP advantage](../../../symmetric-key/pseudorandom-permutations/prp-advantage.md)
 
 ## Sources
 

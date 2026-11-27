@@ -10,7 +10,8 @@ The simulator picks one random label and colour bit per wire not driven by an XO
 
 - [Free-XOR garbling](free-xor-garbling.md)
 - [Side-information functions and privacy notions for garbling schemes](../garbling-scheme-security/garbling-privacy-notions.md)
-- [Circular correlation robust hash functions](../garbling-scheme-security/circular-correlation-robustness.md)
+- [Correlation-robust and circular correlation-robust hash families](../../../hash-functions/hash-constructions-and-idealized-models/correlation-robust-hash.md)
+- [Ideal 1-out-of-2, batched and 1-out-of-4 oblivious transfer](../oblivious-transfer-protocols/oblivious-transfer-functionalities.md)
 
 ## Proof depends on
 

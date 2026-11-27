@@ -9,6 +9,9 @@ The invertible PRF computes the preimage set of an index directly instead of sca
 ## Depends on
 
 - [Client-preprocessing single-server PIR](client-preprocessing-pir.md)
+- [PRF advantage](../../../symmetric-key/pseudorandom-functions/prf-advantage.md)
+- [PRP advantage](../../../symmetric-key/pseudorandom-permutations/prp-advantage.md)
+- [One-way functions exist](../../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/owfexists.md)
 
 ## Proof depends on
 
