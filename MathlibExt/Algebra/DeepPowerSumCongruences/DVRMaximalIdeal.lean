@@ -21,9 +21,7 @@ import MathlibExt.RingTheory.LocalRing.CharP
 
 - Samuele Anni, Alexandru Ghitza and Anna Medvedovsky, *Elementary Symmetric Functions and Deep
   Power-Sum Congruences*, INTEGERS 24 (2024), Article A46, pp. 1–26, Corollary 8. The proof uses
-  the generator test of Proposition 5 and the valuation argument of Lemma 7. Membership in the
-  ideal permits equality of valuations, as in Corollary 8, despite the strict inequality printed
-  in Lemma 7.
+  the generator test of Proposition 5 and the valuation argument of Lemma 7.
 - Pierre Berthelot and Arthur Ogus, *Notes on Crystalline Cohomology*, Mathematical Notes 21,
   Princeton University Press and University of Tokyo Press, 1978, §3, cited in §2.2 for the
   divided-power structure in the torsion-free setting.
