@@ -13755,6 +13755,7 @@
   "MathlibExt/NumberTheory/OlympicGamesNumerationExistsTwoPellHalfCompanionRepresentation": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Numeration by Fibonacci and Pell numbers"},
   "MathlibExt/NumberTheory/OppermannCyclicNumbers": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Distribution of cyclic numbers"},
   "MathlibExt/NumberTheory/OresmeConvolutions": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Oresme numbers"},
+  "MathlibExt/NumberTheory/OresmeConvolutionsJacobsthalOresmeConvolution": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Oresme numbers"},
   "MathlibExt/NumberTheory/OresmeJacobsthalLucasCongruence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Oresme numbers"},
   "MathlibExt/NumberTheory/OresmePellCongruence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Oresme numbers"},
   "MathlibExt/NumberTheory/OrderOfTwoMulCoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
