@@ -664,14 +664,32 @@ def compl₂EDS : R :=
   letI p := preNormEDS (b ^ 4) c d
   (p (m - 1) ^ 2 * p (m + 2) - p (m - 2) * p (m + 1) ^ 2) * if Even m then 1 else b
 
-private lemma compl₂EDS_eq_complEDS₂ : compl₂EDS b c d m = complEDS₂ b c d m := rfl
-
-lemma compl₂EDSAux_neg : compl₂EDSAux b c d (-m) = -complEDS₂ b c d m - compl₂EDSAux b c d m := by
-  simp_rw [compl₂EDSAux, complEDS₂, neg_sub_left, neg_add_eq_sub, ← neg_sub m,
+lemma compl₂EDSAux_neg : compl₂EDSAux b c d (-m) = -compl₂EDS b c d m - compl₂EDSAux b c d m := by
+  simp_rw [compl₂EDSAux, compl₂EDS, neg_sub_left, neg_add_eq_sub, ← neg_sub m,
     preNormEDS_neg, even_neg]; ring_nf
 
+@[simp] lemma compl₂EDS_zero : compl₂EDS b c d 0 = 2 := by simp [compl₂EDS, one_add_one_eq_two]
+@[simp] lemma compl₂EDS_one : compl₂EDS b c d 1 = b := by simp [compl₂EDS]
+@[simp] lemma compl₂EDS_two : compl₂EDS b c d 2 = d := by simp [compl₂EDS]
+
+@[simp] lemma compl₂EDS_neg : compl₂EDS b c d (-m) = compl₂EDS b c d m := by
+  simp_rw [compl₂EDS, neg_sub_left, neg_add_eq_sub, ← neg_sub m, preNormEDS_neg, even_neg]; ring_nf
+
+lemma normEDS_mul_compl₂EDS :
+    normEDS b c d m * compl₂EDS b c d m = normEDS b c d (2 * m) := by
+  rw [show compl₂EDS b c d m = complEDS₂ b c d m from rfl]
+  exact normEDS_mul_complEDS₂ b c d m
+
+lemma normEDS_dvd_two_mul : normEDS b c d m ∣ normEDS b c d (2 * m) :=
+  ⟨_, (normEDS_mul_compl₂EDS b c d m).symm⟩
+
+lemma compl₂EDS_mul_b : letI W := normEDS b c d
+    compl₂EDS b c d m * b = W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2 := by
+  rw [show compl₂EDS b c d m = complEDS₂ b c d m from rfl]
+  exact complEDS₂_mul_b b c d m
+
 lemma normEDS_six_eq_mul : normEDS b c d 6 = (normEDS b c d 5 - d ^ 2) * b * c := by
-  rw [show (6 : ℤ) = 2 * 3 by rfl, ← normEDS_mul_complEDS₂, complEDS₂, ite_eq_right (by decide)]
+  rw [show (6 : ℤ) = 2 * 3 by rfl, ← normEDS_mul_compl₂EDS, compl₂EDS, ite_eq_right (by decide)]
   simp_rw [Int.reduceAdd, Int.reduceSub, normEDS_three, normEDS]
   rw [preNormEDS_one, preNormEDS_two, preNormEDS_four, ite_eq_right (by decide)]
   ring
@@ -712,10 +730,10 @@ noncomputable def universalNormEDS : ℤ → MvPolynomial Param ℤ := normEDS (
 lemma normEDS_eq_aeval : normEDS b c d = (aeval (Param.rec b c d) <| universalNormEDS ·) := by
   simp_rw [universalNormEDS, map_normEDS_fl, aeval_X]
 
-lemma complEDS₂_eq_aeval :
-    complEDS₂ b c d =
-      (aeval (Param.rec b c d) <| complEDS₂ (X (R := ℤ) B) (X C) (X D) ·) := by
-  simp_rw [map_complEDS₂, aeval_X]
+lemma compl₂EDS_eq_aeval :
+    compl₂EDS b c d =
+      (aeval (Param.rec b c d) <| compl₂EDS (X (R := ℤ) B) (X C) (X D) ·) := by
+  simp_rw [map_compl₂EDS, aeval_X]
 
 end Map
 
@@ -753,8 +771,12 @@ protected lemma IsEllSequence'.ext (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
       convert congr($h₄ * $h₂ ^ 3 - $h₁ * $h₃ ^ 3) <;> omega
   | neg ih n => rw [ellW.neg one two, ellU.neg (h1 ▸ one) (h2 ▸ two), ih]
 
-lemma compl₂EDS_two_three_two (n : ℤ) : compl₂EDS (2 : ℤ) 3 2 n = 2 :=
-  complEDS₂_two_three_two n
+lemma compl₂EDS_two_three_two (n : ℤ) : compl₂EDS (2 : ℤ) 3 2 n = 2 := by
+  obtain rfl | hn := eq_or_ne n 0
+  · exact compl₂EDS_zero ..
+  · have := normEDS_mul_compl₂EDS (2 : ℤ) 3 2 n
+    rwa [normEDS_two_three_two, normEDS_two_three_two, mul_comm,
+      mul_cancel_right_mem_nonZeroDivisors (mem_nonZeroDivisors_of_ne_zero hn)] at this
 
 section Divisibility
 
@@ -794,13 +816,13 @@ variable (b c d)
 def redInvarNum : R :=
   compl₂EDS b c d m + normEDS b c d m ^ 3 * b + 2 * compl₂EDSAux b c d m
 
-lemma complEDS₂_eq_redInvarNum_sub :
-    complEDS₂ b c d m =
+lemma compl₂EDS_eq_redInvarNum_sub :
+    compl₂EDS b c d m =
       redInvarNum b c d m - normEDS b c d m ^ 3 * b - 2 * compl₂EDSAux b c d m := by
-  rw [redInvarNum, compl₂EDS_eq_complEDS₂]; ring
+  rw [redInvarNum]; ring
 
 lemma invarNum_eq_redInvarNum_mul : invarNum (normEDS b c d) 1 m = redInvarNum b c d m * b := by
-  simp_rw [redInvarNum, compl₂EDS_eq_complEDS₂, right_distrib, complEDS₂_mul_b, mul_assoc 2 _ b,
+  simp_rw [redInvarNum, right_distrib, compl₂EDS_mul_b, mul_assoc 2 _ b,
     compl₂EDSAux_mul_b, invarNum_normEDS]; ring
 
 def redInvarDenom : R :=
@@ -1173,8 +1195,7 @@ public protected def ωe (n : ℤ) : R[X][Y] :=
 lemma ωe_spec (n : ℤ) :
     2 * W.ωe n + CC W.a₁ * W.φ n * W.ψ n + CC W.a₃ * W.ψ n ^ 3 = W.ψc n := by
   have hψ : W.ψ = normEDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) := rfl
-  rw [ψc, compl₂EDS_eq_complEDS₂, complEDS₂_eq_redInvarNum_sub, redInvar_normEDS,
-    preΨ₄_add_ψ₂_pow_four,
+  rw [ψc, compl₂EDS_eq_redInvarNum_sub, redInvar_normEDS, preΨ₄_add_ψ₂_pow_four,
     mul_assoc (C _), φ_mul_ψ, hψ, invarDenom_eq_redInvarDenom_mul, WeierstrassCurve.ωe, ← hψ,
     invar, b₂, b₄, ψ₂, Affine.polynomialY, Affine.polynomialX, Affine.negPolynomial]
   C_simp; ring
@@ -1183,13 +1204,13 @@ lemma two_mul_ωe (n : ℤ) :
     2 * W.ωe n = W.ψc n - CC W.a₁ * W.φ n * W.ψ n - CC W.a₃ * W.ψ n ^ 3 := by
   rw [← ωe_spec]; abel
 
-lemma ψc_spec (n : ℤ) : W.ψ n * W.ψc n = W.ψ (2 * n) := normEDS_mul_complEDS₂ _ _ _ _
+lemma ψc_spec (n : ℤ) : W.ψ n * W.ψc n = W.ψ (2 * n) := normEDS_mul_compl₂EDS _ _ _ _
 
 @[simp] lemma ωe_zero : W.ωe 0 = 1 := by simp [WeierstrassCurve.ωe]
 
 @[simp] lemma ωe_one : W.ωe 1 = Y := by simp [WeierstrassCurve.ωe, ψ₂, ← Affine.Y_sub_polynomialY]
 
-@[simp] lemma ψc_neg (n : ℤ) : W.ψc (-n) = W.ψc n := by simp [ψc, compl₂EDS_eq_complEDS₂]
+@[simp] lemma ψc_neg (n : ℤ) : W.ψc (-n) = W.ψc n := by simp [ψc]
 
 end
 
@@ -1272,7 +1293,7 @@ lemma polyEval_cusp_φ : polyEval cusp 1 1 (curve.φ n) = 1 := by
 
 lemma polyEval_cusp_ψc : polyEval cusp 1 1 (curve.ψc n) = 2 := by
   rw [ψc, map_compl₂EDS, ← evalEval_ψ₂, ← evalEval_Ψ₃, ← evalEval_preΨ₄]
-  simp [cusp_ψ₂, cusp_Ψ₃, cusp_preΨ₄, evalEval, compl₂EDS_eq_complEDS₂, complEDS₂_two_three_two]
+  simp [cusp_ψ₂, cusp_Ψ₃, cusp_preΨ₄, evalEval, compl₂EDS_two_three_two]
 
 lemma polyEval_cusp_ωe : polyEval cusp 1 1 (curve.ωe n) = 1 := by
   have := congr(polyEval cusp 1 1 $(curve.two_mul_ωe n))
