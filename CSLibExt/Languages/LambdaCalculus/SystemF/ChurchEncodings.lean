@@ -16,16 +16,19 @@ public import CSLibExt.Languages.LambdaCalculus.SystemF.Typing
 
 Church-encoded lists with their map, Church numerals, and the Leivant encoding
 of an existential counter interface, built from type variables, arrows and
-universal types only. Every encoding is a pure System F term with a typing
-theorem; no constructor is added to the syntax and no fixpoint is used.
-Erased encoded lists of arbitrary model terms, the beta-conversion relation and
-the graph relation of a model term are the inputs the free theorems
-instantiate.
+universal types only. Each of these encodings is a pure System F term with a
+typing theorem; no constructor is added to the syntax and no fixpoint is used.
+The open list term `encListTm k` has type `List X` in a context of `k` element
+variables of type `X`. Its closure `encList xs : Model` substitutes arbitrary model
+terms for those variables, so the elements of `encList xs` need not be erasures of
+typed terms. The closed lists `encList xs`, the beta-conversion relation and the
+graph relation of a model term are the inputs the free theorems instantiate.
 
 ## Main definitions
 
-* `listTy`, `mapTm`, `encListTm`, `encList`: encoded lists, the encoded map as
-  a fold, and erased lists of model terms.
+* `listTy`, `mapTm`, `encListTm`: the list type, the encoded map as a fold, and
+  the typed open list term.
+* `encList`: the open list term closed by a list of model terms.
 * `natTy`, `zeroTm`, `succTm`: Church numerals.
 * `packageTy`, `pack`: counter packages `∃X. X × (X → X) × (X → Nat)` in the
   Leivant encoding.

@@ -15,18 +15,24 @@ import Cslib.Languages.LambdaCalculus.LocallyNameless.Untyped.FullBetaConfluence
 # Free theorems for pure System F
 
 Consequences of the fundamental theorem of relational parametricity in the
-erased-term model, each a syntactic analogue of an informal free theorem. Every
-conclusion is beta-conversion of erasures applied to arbitrary arguments; no
-equality of unapplied terms, eta rule, contextual equivalence, call-by-value
-termination or set-valued reading is claimed.
+erased-term model, each a syntactic analogue of an informal free theorem.
 
-* Naturality: every closed rearrangement `r : ∀X. List X → List X` commutes with
-  the encoded map, as in Wadler's `a* ∘ r_A = r_A' ∘ a*`.
-* Representation independence: counter packages related by a beta-invariant
-  simulation relation give beta-convertible numeral observations to every closed
-  client. A unary counter and an accumulator counter with different hidden state
-  types are indistinguishable, while a client tells the unary counter apart from a
-  counter whose increment does nothing.
+* Naturality: for every closed typed rearrangement `r : ∀X. List X → List X` and
+  every input `encList xs` built from a finite list `xs` of model terms, mapping
+  before or after `r` gives beta-convertible results after the two fold arguments,
+  as in Wadler's `a* ∘ r_A = r_A' ∘ a*`.
+* Representation independence: counter packages whose erased operations satisfy a
+  beta-invariant simulation relation are logically related at the package type,
+  and every closed client of type `Package → Nat` returns, on the two packages,
+  numerals that are beta-convertible once both are applied to the same two
+  arguments. A unary counter and an accumulator counter with different hidden
+  state types are indistinguishable by every such client, while one such client
+  tells the unary counter apart from a counter whose increment does nothing.
+
+For two packages the conclusion is relatedness at the package type, not beta
+conversion, and nothing is claimed for untyped consumers. No equality of unapplied
+terms, eta rule, contextual equivalence, call-by-value termination or set-valued
+reading is claimed.
 
 ## References
 
@@ -314,20 +320,15 @@ theorem accGet_typed : Typing Fin.elim0 accGet (.arr accTy natTy) := by
 theorem accumulatorPackage_typed : Typing Fin.elim0 accumulatorPackage packageTy := by
   exact pack_typed (idTm_typed _ _) accInc_typed accGet_typed
 
-/-- **Iterated application.** `Model.iter s k z` applies `s` to `z` exactly `k` times. -/
-def Model.iter (s : Model) : Nat → Model → Model
-  | 0, z => z
-  | k + 1, z => Model.app s (Model.iter s k z)
-
 /-- **Counter simulation relation.** Relates a unary state `x` to an accumulator state
 `h` when there is a count `k` such that, for all model terms `m`, `s` and `z`, the term
 `x s z` is beta-convertible to `s` applied `k` times to `z`, and `h m s z` is
 beta-convertible to `s` applied `k` times to `m s z`. -/
 def counterRel : Rel where
   holds x h := ∃ k : Nat,
-    (∀ s z, BetaEq (Model.app (Model.app x s) z) (Model.iter s k z)) ∧
+    (∀ s z, BetaEq (Model.app (Model.app x s) z) ((Model.app s)^[k] z)) ∧
       ∀ m s z, BetaEq (Model.app (Model.app (Model.app h m) s) z)
-        (Model.iter s k (Model.app (Model.app m s) z))
+        ((Model.app s)^[k] (Model.app (Model.app m s) z))
   congr := by
     intro f f' g g' hf hg
     constructor
@@ -359,18 +360,23 @@ private theorem succ_red (x s z : Model) :
 
 /-- **Iterated application respects beta conversion of the start.** -/
 private theorem iter_congr (s : Model) {a b : Model} (h : BetaEq a b) (k : Nat) :
-    BetaEq (Model.iter s k a) (Model.iter s k b) := by
+    BetaEq ((Model.app s)^[k] a) ((Model.app s)^[k] b) := by
   induction k with
   | zero => exact h
-  | succ k ih => exact BetaEq.appArg s ih
+  | succ k ih =>
+    rw [Function.iterate_succ_apply', Function.iterate_succ_apply']
+    exact BetaEq.appArg s ih
 
 /-- **Iterated application preserves a relation.** -/
 private theorem iter_rel (S : Rel) {s s' : Model}
     (hs : ∀ a b, S.holds a b → S.holds (Model.app s a) (Model.app s' b)) {z z' : Model}
-    (hz : S.holds z z') (k : Nat) : S.holds (Model.iter s k z) (Model.iter s' k z') := by
+    (hz : S.holds z z') (k : Nat) :
+    S.holds ((Model.app s)^[k] z) ((Model.app s')^[k] z') := by
   induction k with
   | zero => exact hz
-  | succ k ih => exact hs _ _ ih
+  | succ k ih =>
+    rw [Function.iterate_succ_apply', Function.iterate_succ_apply']
+    exact hs _ _ ih
 
 /-- **The initial states are related.** The counter simulation relation relates zero
 to the identity on numerals. -/
@@ -384,14 +390,16 @@ theorem counterRel_inc {x h : Model} (hxh : counterRel.holds x h) :
     counterRel.holds (Model.app (Tm.eraseModel (succTm : Tm 0 0)) x)
       (Model.app (Tm.eraseModel accInc) h) := by
   obtain ⟨k, h1, h2⟩ := hxh
-  refine ⟨k + 1, fun s z => (succ_red x s z).trans (BetaEq.appArg s (h1 s z)),
-    fun m s z => ?_⟩
+  refine ⟨k + 1, fun s z => ?_, fun m s z => ?_⟩
+  · rw [Function.iterate_succ_apply']
+    exact (succ_red x s z).trans (BetaEq.appArg s (h1 s z))
   have hacc : BetaEq
       (Model.app (Model.app (Model.app (Model.app (Tm.eraseModel accInc) h) m) s) z)
       (Model.app (Model.app (Model.app (Tm.eraseModel (succTm : Tm 0 0)) (Model.app h m)) s)
         z) :=
     ((((Tm.close_beta Fin.elim0 accTy _ h).appFun m).appFun s).appFun z).trans
       (((Tm.close_beta _ natTy _ m).appFun s).appFun z)
+  rw [Function.iterate_succ_apply']
   exact hacc.trans ((succ_red _ s z).trans (BetaEq.appArg s (h2 m s z)))
 
 /-- **Related states give numeral-related observations.** If the counter simulation
@@ -406,7 +414,7 @@ theorem counterRel_get {x h : Model} (hxh : counterRel.holds x h) :
   exact (((Tm.close_beta Fin.elim0 accTy _ h).appFun s').appFun z').trans
     ((h2 _ s' z').trans (iter_congr s' (zero_red s' z') k))
 
-/-- **The unary and accumulator counters are indistinguishable.** Every closed client
+/-- **Typed clients do not distinguish the unary and accumulator counters.** Every closed client
 `e : Package → Nat` gives beta-convertible observations on the unary counter and the
 accumulator counter, applied to arbitrary arguments `s` and `z`. -/
 theorem counters_indistinguishable {e : Tm 0 0}

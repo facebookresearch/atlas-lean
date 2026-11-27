@@ -97,6 +97,26 @@ example (f x y n c : Model) :
         n) c) :=
   rearrangement_natural doubleTm_typed natTy accTy f [x, y] n c
 
+-- List doubling folds the list twice, so it is not the identity rearrangement.
+example (x y n c : Model) :
+    BetaEq
+      (Model.app (Model.app
+        (Model.app (Tm.eraseModel (.tapp doubleTm natTy)) (encList [x, y])) n) c)
+      (Model.app (Model.app c x) (Model.app (Model.app c y)
+        (Model.app (Model.app c x) (Model.app (Model.app c y) n)))) := by
+  have hfold : ∀ N : Model, BetaEq (Model.app (Model.app (encList [x, y]) N) c)
+      (Model.app (Model.app c x) (Model.app (Model.app c y) N)) := fun N =>
+    ((Tm.close_beta (fun i => [x, y].get i) (.var 0)
+      (.lam (.arr (.var 1) (.arr (.var 0) (.var 0))) (encListBody 2 (List.finRange 2)))
+        N).appFun c).trans (Tm.close_beta _ _ _ c)
+  refine (((Tm.close_beta (n := 1) Fin.elim0 (listTy (.var 0)) _ _).appFun n).appFun
+    c).trans ?_
+  refine ((Tm.close_beta (n := 2) _ (.var 0) _ n).appFun c).trans ?_
+  refine (Tm.close_beta (n := 2) _ (.arr (.var 1) (.arr (.var 0) (.var 0))) _ c).trans ?_
+  change BetaEq (Model.app (Model.app (encList [x, y])
+    (Model.app (Model.app (encList [x, y]) n) c)) c) _
+  exact (hfold _).trans (BetaEq.appArg _ (BetaEq.appArg _ (hfold n)))
+
 -- The element-replacing function fails naturality.
 example : ¬ BetaEq
     (Model.app (Model.app
