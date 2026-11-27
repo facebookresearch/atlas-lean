@@ -10,7 +10,7 @@ $$w(u) = (1-u)\frac{u - u_{\min}}{u + \kappa}, \qquad 0 < u_{\min} \ll 1,\ \kapp
 
 and a **nonlocal inflow** of T cells, produced elsewhere (lymph nodes) in proportion to the total viral load and entering through a subregion $\Theta \subset \Omega$:
 
-$$ju = \delta\,\chi_\Theta(\mathbf x)\,U(t), \qquad U(t) = \int_\Omega u(t,\mathbf x)\,d\mathbf x,$$
+$$j[u](\mathbf x) = \delta\,\chi_\Theta(\mathbf x)\,U(t), \qquad U(t) = \int_\Omega u(t,\mathbf x)\,d\mathbf x,$$
 
 where $\chi_\Theta \ge 0$ is bounded, piecewise continuous, supported in $\Theta$ and integrates to $1$. Constants $\alpha, \beta, \gamma, \delta, \eta > 0$; $\gamma u v$ is the killing of virus by T cells and $\eta(1-u)v$ the fading of the immune response in the absence of virus.
 

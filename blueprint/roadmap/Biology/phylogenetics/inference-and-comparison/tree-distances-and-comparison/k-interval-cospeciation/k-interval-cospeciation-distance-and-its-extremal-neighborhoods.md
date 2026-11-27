@@ -8,7 +8,7 @@ and **precise** $k$-IC if they satisfy $k$-IC but not $(k-1)$-IC; set $d(T_1,T_2
 
 **Theorem (metric and complexity).** $d$ is a metric on $n$-taxon trees, computable in polynomial time ($O(n^3 \log n)$ via all pairwise path lengths).
 
-**Theorem (relation to other quantities).** If $T_1, T_2$ precisely satisfy $k$-IC, then the nearest-neighbor-interchange distance satisfies $d_{\mathrm{NNI}}(T_1,T_2) \ge k$; and the lengths (in edges) of the longest leaf-to-leaf paths of $T_1$ and $T_2$ differ by at most $k$, with the two end taxa of a longest path of $T_1$ also ending a longest path of $T_2$ when the difference equals $k$.
+**Theorem (relation to other quantities).** If $T_1, T_2$ precisely satisfy $k$-IC, then the nearest-neighbor-interchange distance satisfies $d_{\mathrm{NNI}}(T_1,T_2) \ge k$; and the lengths (in edges) of the longest leaf-to-leaf paths of $T_1$ and $T_2$ differ by at most $k$, and when the difference equals $k$, the two end taxa of a longest path of the tree whose longest path is longer also end a longest path of the other tree. (The direction matters: for $n = 6$, $T_1 = ((1,2),(3,4),(5,6))$ and the caterpillar $T_2$ with splits $12|3456$, $124|356$, $1234|56$ precisely satisfy $1$-IC, yet $\{3,5\}$ ends a longest path of $T_1$ and is at path length $3$ in $T_2$.)
 
 **Theorem (maximal distance).** Two $n$-taxon trees satisfy precise $k$-IC for some $k \le n-3$; if $d(T,T') = n-3$, at least one of $T, T'$ is a caterpillar. For a tree $T$ with $c \ge 3$ cherries,
 

@@ -13,7 +13,9 @@ $$\dot P=f(P):=\pi(P)-r-\epsilon\,\pi'(P)\,(1-P).$$
 1. There is at least one equilibrium in $(0,p^\ast)$, since $f(0)=(1-r)-\epsilon\pi'(0)>0$ and $f(1)=-r<0$.
 2. If $\pi$ is convex, there is a unique equilibrium $P_0$; it is stable (a Nash equilibrium of the game), decreasing in $r$ and increasing in $\epsilon$, and
 
-$$P_0\in\Bigl[\pi^{-1}(r),\ \min\Bigl\{p^\ast,\ (\pi')^{-1}\Bigl(\frac{1-r}{\epsilon}\Bigr)\Bigr\}\Bigr].$$
+$$P_0\in\bigl[\pi^{-1}(r),\ p^\ast\bigr).$$
+
+(The source's upper bound also involves $(\pi')^{-1}\bigl(\frac{1-r}{\epsilon}\bigr)$, but $\pi'\le0$ never takes the positive value $\frac{1-r}{\epsilon}$, so that term is undefined and is dropped here.)
 
 3. For general $\pi$, there is an odd number of non-degenerate equilibria, and they alternate between stable and unstable starting with a stable one at the lowest uptake.
 4. As $r$ or $\epsilon$ varies, the only bifurcations are saddle-node bifurcations, creating or annihilating a stable–unstable pair. The bifurcation diagram in $r$ is the graph of $P\mapsto\pi(P)-\epsilon\pi'(P)(1-P)$ rotated by $\pi/2$ and cut off at the levels $0$ and $1$; for $r\neq0$ the diagram in $\epsilon$ is likewise the rotated graph of $P\mapsto\frac{\pi(P)-r}{\pi'(P)(1-P)}$ cut off at $0$ and $1$.

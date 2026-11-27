@@ -1,6 +1,6 @@
 # Phylogenetic inference and comparison
 
-These articles concern inference of evolutionary trees, networks and recorded cell lineages, and comparison of trees by agreement subtrees. Their observation and sampling models are separate; reading order does not assert a mathematical dependency.
+These articles concern inference of evolutionary trees, networks and recorded cell lineages, inference of species trees from gene trees under the multispecies coalescent and gene transfer, and comparison of trees by agreement subtrees, parsimony and quartet distances, cospeciation and tanglegrams. Their observation and sampling models are separate; reading order does not assert a mathematical dependency.
 
 ## Tree inference
 
@@ -21,20 +21,11 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 
 ## Species trees
 
-- [Generalized STAR species-tree estimation](generalized-star-species-tree-estimation/README.md)
-- [Loci versus sequence length trade-off under the multispecies coalescent](loci-versus-sequence-length-tradeoff-under-the-multispecies-coalescent/README.md)
-- [Multilocus distance methods for species trees](multilocus-distance-methods-for-species-trees/README.md)
-- [Species tree recovery under random lateral gene transfer](species-tree-recovery-under-random-lateral-gene-transfer/README.md)
-- [Species trees under random horizontal gene transfer](species-trees-under-random-horizontal-gene-transfer/README.md)
+- [Species trees under the coalescent and gene transfer](species-trees-under-the-coalescent-and-gene-transfer/README.md)
 
 ## Tree comparison
 
 - [Maximum agreement subtree of two random binary trees](maximum-agreement-subtree-of-random-trees.md)
-- [Computational complexity of parsimony distance](computational-complexity-of-parsimony-distance/README.md)
-- [k-interval cospeciation](k-interval-cospeciation/README.md)
-- [Maximum parsimony distance: metric properties and complexity](maximum-parsimony-distance-metric-properties/README.md)
-- [Maximum quartet distance](maximum-quartet-distance/README.md)
-- [Nonbinary maximum agreement forests](nonbinary-maximum-agreement-forests/README.md)
-- [Tanglegrams](tanglegrams/README.md)
+- [Tree distances and tree comparison](tree-distances-and-comparison/README.md)
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)

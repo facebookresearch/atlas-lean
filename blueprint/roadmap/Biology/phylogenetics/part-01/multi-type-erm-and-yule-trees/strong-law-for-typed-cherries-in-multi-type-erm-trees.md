@@ -6,9 +6,9 @@ $$c_1 = 2q_1^{11}+q_1^{12}, \qquad c_2 = 2q_2^{11}+q_2^{12}.$$
 
 **Mean number of type-1 leaves (Lemma 2.1).** If $c_1-c_2\notin\{-2,2\}$, then for $n\ge 3$
 
-$$\mathbb{E}[N_1(n)] = \frac{c_2\,n}{2-c_1+c_2} - \frac{\bigl(2c_2-(2-c_1+c_2)\nu_1(2)\bigr)\,\Gamma(n-1+c_1-c_2)}{(2-c_1+c_2)\,\Gamma(c_1-c_2+2)\,\Gamma(n)},$$
+$$\mathbb{E}[N_1(n)] = \frac{c_2\,n}{2-c_1+c_2} - \frac{\bigl(2c_2-(2-c_1+c_2)\nu_1(2)\bigr)\,\Gamma(n-1+c_1-c_2)}{(2-c_1+c_2)\,\Gamma(c_1-c_2+1)\,\Gamma(n)},$$
 
-with $\nu_1(2)=c_1$ if the initial leaf has type $1$ and $\nu_1(2)=c_2$ otherwise.
+with $\nu_1(2)=c_1$ if the initial leaf has type $1$ and $\nu_1(2)=c_2$ otherwise. (Lemma 2.1 of the source prints $\Gamma(c_1-c_2+2)$; with that factor the formula neither gives $\nu_1(2)$ at $n=2$ nor solves the recursion in the Expansion.)
 
 **Theorem (strong law, Theorem 2.6).** Assume every cherry type can eventually be attached to every other (irreducibility of the cherry state space). Then, almost surely as $n\to\infty$,
 

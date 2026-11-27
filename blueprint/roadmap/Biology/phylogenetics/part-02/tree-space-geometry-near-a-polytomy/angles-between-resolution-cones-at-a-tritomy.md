@@ -12,7 +12,7 @@ $$\arccos\Big(\frac{-c}{\sqrt{(a+c)(b+c)}}\Big).$$
 
 $$\arccos\Big(-\frac{bc + ad}{\sqrt{(a+b)(a+c)(b+d)(c+d)}}\Big).$$
 
-In both cases $\operatorname{span} K_T$ is $2$-dimensional. The three angles are equal ($120^\circ$) only for balanced clade sizes; unbalanced polytomies give unequal angles, so the regions of data space mapped to each resolution have unequal size.
+In both cases $\operatorname{span} K_T$ is $2$-dimensional. For equidistant trees the three angles are equal ($120^\circ$) only when $a = b = c$; otherwise the angles are unequal, so the regions of data space mapped to each resolution have unequal size. For unrooted trees equality of the angles is not tied to balanced sizes: for sizes $(a,b,c,d) = (k,1,1,1)$ the formula gives cosine $-\frac{1+k}{2(k+1)} = -\frac12$ for each of the three pairs, so all three angles are $120^\circ$ for every $k$.
 
 ## Expansion
 

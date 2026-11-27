@@ -12,7 +12,7 @@ $$h(\hat\theta,\hat\psi) = c_{v_1} + \min\Big\{\bar c_{v_2}, \frac{c_{v_2}}{\hat
 
 balances vaccination cost and perceived side-effect risk (lower when many are already vaccinated) against infection risk $p_I$. A policy is an **ESS-AS** if the equilibrium vaccination probability $q^*$ is the unique best response and remains so against every small $\varepsilon$-fraction of mutants. Let $h_m = h(1 - 1/\rho, 0)$, the vaccination incentive in the unvaccinated endemic state.
 
-**Theorem.**
+**Theorem.** Assume there are no excess deaths, $d_e = 0$ (the case the source analyses; then $\rho = \lambda/(r+b)$ and $h_m = c_{v_1} + \bar c_{v_2} - p_I(1 - 1/\rho)\,c_{I_1}$). For $d_e > 0$ the zero of the $\theta$-equation with $q = 1$ is $\phi = (r + b + d_e - d_e\theta)/\lambda \ne 1/\rho$, and the source leaves that case open.
 
 1. If $\rho < 1$, or if $\rho > 1$ and $h_m > 0$, the non-vaccinating policy $\pi(0)$ is an ESS-AS within any family $\Pi$.
 2. If $\rho > 1$ and $h_m < 0$, an ESS-AS exists in $\Pi$ if and only if (i) some $\beta^* > 0$ makes $q = 1$ but $\tilde q \ne 1$ at the attractor of $\pi(\beta^*)$, and (ii) that attractor is

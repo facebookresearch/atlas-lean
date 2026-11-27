@@ -10,15 +10,19 @@ $$-D_T \Delta T_\infty = \lambda(x) - \mu_T T_\infty$$
 
 with the same boundary conditions. Then $T_\infty$ is smooth, not identically zero, and $0 \le T_\infty(x) \le \|\lambda\|_\infty/\mu_T$.
 
-**Principal eigenvalue.** Linearizing about $E_c$, the $(I, V)$ equations decouple and are governed by the self-adjoint operator $\mathcal{L} = \nabla \cdot (D\nabla) + M(x)$ with
+**Principal eigenvalue.** Linearizing about $E_c$, the $(I, V)$ equations decouple and are governed by the operator $\mathcal{L} = \nabla \cdot (D\nabla) + M(x)$ with
 
 $$D = \mathrm{diag}(D_I, D_V), \qquad M(x) = \begin{pmatrix} -\mu_I & kT_\infty(x) \\ N\mu_I & -\mu_V \end{pmatrix}.$$
 
-Let $\eta_0$ be the largest eigenvalue of $\mathcal{L}$ (its spectrum is real, discrete and tends to $-\infty$), and define the local reproduction ratio
+The matrix $M(x)$ is not symmetric, so $\mathcal L$ is not self-adjoint; but $M(x)$ is cooperative (its off-diagonal entries are nonnegative), so the spectral bound $\eta_0 = \sup\{\operatorname{Re}\mu : \mu \in \sigma(\mathcal L)\}$ is a real principal eigenvalue of $\mathcal L$ with a positive eigenfunction. Define the local reproduction ratio
 
 $$R_0(x) = \frac{N k T_\infty(x)}{\mu_V}.$$
 
-For constant $\lambda$ one has $T_\infty = \lambda/\mu_T$, $R_0 = \lambda k N/(\mu_T\mu_V)$ is the classical basic reproductive ratio, and $\eta_0 = R_0 - 1$.
+For constant $\lambda$ under Neumann boundary conditions one has $T_\infty = \lambda/\mu_T$, $R_0 = \lambda k N/(\mu_T\mu_V)$ is the classical basic reproductive ratio, and $\eta_0$ is the largest eigenvalue of the constant matrix $M$,
+
+$$\eta_0 = \tfrac12\Big(-(\mu_I + \mu_V) + \sqrt{(\mu_I - \mu_V)^2 + 4\mu_I\mu_V R_0}\Big),$$
+
+which has the sign of $R_0 - 1$ but is not equal to $R_0 - 1$ (for $\mu_I = \mu_V = 1$, $kT_\infty = 2$, $N = 1$: $R_0 = 2$, $\eta_0 = \sqrt2 - 1$). (The source's remarks call $\mathcal L$ self-adjoint and write $\eta_0 = R_0 - 1$; its theorems use $\eta_0$ as the spectral bound, as here.)
 
 **Theorem (uniqueness).** If $\eta_0 < 0$, then $E_c$ is the unique non-negative steady state.
 
@@ -40,7 +44,7 @@ All conclusions are independent of the diffusion coefficients and of the dimensi
 
 ## Expansion
 
-The sign of $\eta_0$, given by the Rayleigh quotient of $\mathcal{L}$, decides linear stability, since the $T$ equation of the linearization is a damped heat equation. The operator $\mathcal{L}$ is negative when $-M(x)$ is positive semi-definite, which (because $\mu_I > 0$) follows from $\det(-M(x)) = \mu_I(\mu_V - NkT_\infty(x)) > 0$ for all $x$, i.e. from $\|R_0\|_\infty < 1$; the global clearance theorem proves decay of $I$ and $V$ under this condition through sup-norm estimates on the full nonlinear system, using the boundedness of $T$. The estimate on $T - T_\infty$ comes from the heat semigroup with damping $\mu_T$. The corollary follows from $T_\infty \le \|\lambda\|_\infty/\mu_T$. The authors leave open whether $\eta_0 < 0$ alone implies global stability.
+The sign of the spectral bound $\eta_0$ decides linear stability, since the $T$ equation of the linearization is a damped heat equation. When $\|R_0\|_\infty < 1$, i.e. $\det(-M(x)) = \mu_I(\mu_V - NkT_\infty(x)) > 0$ for all $x$, a constant vector $v = (1, v_2)$ with $N\mu_I/\mu_V < v_2 < \mu_I/(k\|T_\infty\|_\infty)$ satisfies $M(x)v < 0$ componentwise and uniformly in $x$, so it is a strict supersolution of the cooperative linear problem and $\eta_0 < 0$; the global clearance theorem proves decay of $I$ and $V$ under this condition through sup-norm estimates on the full nonlinear system, using the boundedness of $T$. The estimate on $T - T_\infty$ comes from the heat semigroup with damping $\mu_T$. The corollary follows from $T_\infty \le \|\lambda\|_\infty/\mu_T$. The authors leave open whether $\eta_0 < 0$ alone implies global stability.
 
 ## Sources
 

@@ -4,13 +4,13 @@
 
 **Theorem (epidemic threshold).** In the mean-field approximation and the large-population limit $n \to \infty$, let
 
-$$\xi := (1-p_{\mathrm q})(1-\sigma_{\mathrm n})\bigl[\theta + (1-\theta)(1-v)\bigr] + (1-\gamma_{\mathrm t})\bigl1 - p_{\mathrm q}(1-\gamma_{\mathrm q})\bigr\bigl[\theta + (1-\theta)v\bigr],$$
+$$\xi := (1-p_{\mathrm q})(1-\sigma_{\mathrm n})\bigl[\theta + (1-\theta)(1-v)\bigr] + (1-\gamma_{\mathrm t})\bigl[1 - p_{\mathrm q}(1-\gamma_{\mathrm q})\bigr](1-\sigma_{\mathrm v})\bigl[\theta + (1-\theta)v\bigr],$$
 
-$$\bar\tau := \lambda\xi - \beta + \lambda\sqrt{\xi^2 - 4\theta(1-\gamma_{\mathrm t})(1-p_{\mathrm q})\bigl1 - p_{\mathrm q}(1-\gamma_{\mathrm q})\bigr(1-\sigma_{\mathrm v})}.$$
+$$\bar\tau := \lambda\xi - \beta + \lambda\sqrt{\xi^2 - 4\theta(1-\gamma_{\mathrm t})(1-p_{\mathrm q})\bigl[1 - p_{\mathrm q}(1-\gamma_{\mathrm q})\bigr](1-\sigma_{\mathrm n})(1-\sigma_{\mathrm v})}.$$
 
 If the testing rate satisfies $\tau > \bar\tau$, the disease-free equilibrium is locally asymptotically stable. In particular, no testing is needed if $\beta$ exceeds $\lambda\xi$ plus the square-root term. Without homophily ($\theta = 0$) the threshold reduces to
 
-$$\tau^* = 2\lambda(1-p_{\mathrm q})(1-v)(1-\sigma_{\mathrm n}) + 2\lambda(1-\gamma_{\mathrm t})\,v\,\bigl1 - p_{\mathrm q}(1-\gamma_{\mathrm q})\bigr - \beta .$$
+$$\tau^* = 2\lambda(1-p_{\mathrm q})(1-v)(1-\sigma_{\mathrm n}) + 2\lambda(1-\gamma_{\mathrm t})\,v\,\bigl[1 - p_{\mathrm q}(1-\gamma_{\mathrm q})\bigr](1-\sigma_{\mathrm v}) - \beta .$$
 
 The threshold separates the effect of vaccines on transmission ($\gamma_{\mathrm t}$) from their effect on severity ($\gamma_{\mathrm q}$). A vaccine that mainly prevents severe illness increases the share of mild, untested infectious vaccinated individuals and can raise the testing effort needed. Polarization $\theta > 0$ concentrates transmission in the non-vaccinated group.
 

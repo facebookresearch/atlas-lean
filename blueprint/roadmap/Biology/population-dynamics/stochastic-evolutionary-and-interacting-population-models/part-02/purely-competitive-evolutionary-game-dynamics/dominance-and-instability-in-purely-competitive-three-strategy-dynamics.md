@@ -9,9 +9,9 @@ $$p_{i,t+1} = p_{i,t}^2 + 2\,p_{i,t}\sum_{j \neq i}\tilde u_{ij}\,p_{j,t} = 2\,p
 1. the pure states $\mathbf e_1, \mathbf e_2, \mathbf e_3$ are fixed points;
 2. $\mathbf e_i$ is evolutionarily stable if and only if type $i$ is **dominant**, $\tilde u_{ij} > \tfrac12$ (equivalently $u_{ij} > u_{ji}$) for all $j \neq i$; in that case the pure states are the only fixed points and $\mathbf e_i$ is globally attracting;
 3. if there is no dominant type and the pairwise contests are cyclic, $\tilde u_{12} > \tfrac12$, $\tilde u_{23} > \tfrac12$, $\tilde u_{13} < \tfrac12$ (type $1$ beats $2$, $2$ beats $3$, $3$ beats $1$), there is a unique non-pure fixed point, and it lies in the interior of the simplex;
-4. any interior fixed point is unstable: arbitrarily close to it there are initial states whose orbits do not converge to it, and the population eventually cycles among neighbourhoods of the three pure states.
+4. any interior fixed point is unstable: arbitrarily close to it there are initial states whose orbits do not converge to it.
 
-With a small probability $\mu$ that each offspring mutates to one of the other two types, a dominant type keeps a globally attracting fixed point near its pure state, while in the cyclic case the interior fixed point undergoes a supercritical Hopf bifurcation and becomes globally attracting above a typically small critical mutation rate, so weak mutation stabilizes rock–paper–scissors-like competition.
+**Numerical observations (not part of the theorem).** The source reports, from numerical investigation only, that without mutation orbits near the interior fixed point eventually cycle among neighbourhoods of the three pure states, and that with a small probability $\mu$ that each offspring mutates to one of the other two types, a dominant type keeps a globally attracting fixed point near its pure state, while in the cyclic case the interior fixed point undergoes a supercritical Hopf bifurcation and becomes globally attracting above a typically small critical mutation rate. These are not proved there.
 
 ## Expansion
 

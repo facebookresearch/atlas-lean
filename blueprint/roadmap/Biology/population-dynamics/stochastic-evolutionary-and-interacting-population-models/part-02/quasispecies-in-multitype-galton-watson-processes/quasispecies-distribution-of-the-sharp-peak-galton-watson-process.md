@@ -1,6 +1,6 @@
 # Quasispecies distribution of the sharp-peak Galton–Watson process
 
-Fix a finite alphabet $\mathcal A$ with $\kappa \ge 1$ letters and a sequence length $\ell \ge 1$. Individuals are genotypes $u \in \mathcal A^\ell$. On the **sharp peak landscape** a master sequence $w^*$ has fitness $A(w^*) = \sigma \ge 1$ and every other sequence has fitness $1$. Mutations act independently at each locus: with probability $q \in (0,1)$ a letter is replaced by one of the other $\kappa - 1$ letters chosen uniformly, so the mutation kernel is
+Fix a finite alphabet $\mathcal A$ with $\kappa \ge 2$ letters and a sequence length $\ell \ge 1$. Individuals are genotypes $u \in \mathcal A^\ell$. On the **sharp peak landscape** a master sequence $w^*$ has fitness $A(w^*) = \sigma > 1$ and every other sequence has fitness $1$. (The source's model section writes $\kappa \ge 1$ and $\sigma \ge 1$; but $\kappa = 1$ makes $M$ divide by $\kappa - 1 = 0$, and with $\sigma = 1$ every type has Poisson$(1)$ offspring, so $|X_n|_1$ is a critical Galton–Watson process that dies out almost surely.) Mutations act independently at each locus: with probability $q \in (0,1)$ a letter is replaced by one of the other $\kappa - 1$ letters chosen uniformly, so the mutation kernel is
 
 $$M(u,v) = \prod_{i=1}^{\ell}\Big((1-q)\mathbf 1_{u(i)=v(i)} + \frac{q}{\kappa-1}\mathbf 1_{u(i)\neq v(i)}\Big).$$
 

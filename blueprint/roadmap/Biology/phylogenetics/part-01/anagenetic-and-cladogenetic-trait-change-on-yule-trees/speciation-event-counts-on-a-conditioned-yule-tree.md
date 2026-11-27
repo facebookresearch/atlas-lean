@@ -19,7 +19,9 @@ $$\mathbb{E}\bigl[s^{\Upsilon}\bigr]=\frac{1}{n\,b_{n-1,2s-1}},$$
 
 and, for $n\ge 2$,
 
-$$\mathbb{E}\bigl[s^{\upsilon}\bigr]=\frac{1}{(n-1)(3-2s)}\Bigl((n+1)-\frac{2}{n\,b_{n-1,2s-1}}\Bigr)\quad(s\neq 3/2), \qquad \mathbb{E}\bigl[(3/2)^{\upsilon}\bigr]=\frac{2(n+1)}{n-1}\Bigl(H_{n+1}-\frac{5}{3}\Bigr).$$
+$$\mathbb{E}\bigl[s^{\upsilon}\bigr]=\frac{1}{(n-1)(3-2s)}\Bigl((n+1)-\frac{2}{n\,b_{n-1,2s-1}}\Bigr)\quad(s\neq 3/2), \qquad \mathbb{E}\bigl[(3/2)^{\upsilon}\bigr]=\frac{n+1}{n-1}\Bigl(H_{n+1}-\frac{3}{2}\Bigr).$$
+
+The value at $s=3/2$ is the limit $s\to3/2$ of the general formula (for $n=3$ it is $7/6$, which exact enumeration confirms); the source's eq. (11) prints $\frac{2(n+1)}{n-1}\bigl(H_{n+1}-\frac53\bigr)$, a slip.
 
 **Moments.**
 

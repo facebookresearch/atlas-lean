@@ -10,11 +10,11 @@ $$N'=M,\quad M'=\frac1{D_1}\Bigl(-vM-NF(N)+\alpha NP+\frac{\epsilon N^2}{k}\Bigr
 
 with coexistence fixed point $(N_0,0,P_0,0)$, $N_0=G(P_0)/\beta$, $P_0=\bigl(F(N_0)-\epsilon N_0/k\bigr)/\alpha$. Write $F_0=F(N_0)$, $G_0=G(P_0)$, $F_0'=F'(N_0)$, $G_0'=G'(P_0)$.
 
-**Theorem.** The last Routh–Hurwitz condition for the fixed point, at equality, is the quartic $f(v)=v^2(Av^2+B)=0$ with explicit coefficients $A,B$ depending on $D_1,D_2,\alpha,\beta,\epsilon,k,F_0,F_0',G_0,G_0'$; in particular
+**Theorem.** Write the characteristic polynomial of the fixed point as $\lambda^4+b_1\lambda^3+b_2\lambda^2+b_3\lambda+b_4$, with $b_1=v(1/D_1+1/D_2)$. Its Routh–Hurwitz conditions are $b_1>0$, $b_4>0$, $b_1b_2>b_3$ and $f(v):=b_1(b_2b_3-b_1b_4)-b_3^2>0$, and the last quantity is the quartic $f(v)=v^2(Av^2+B)$ with explicit coefficients $A,B$ depending on $D_1,D_2,\alpha,\beta,\epsilon,k,F_0,F_0',G_0,G_0'$; in particular
 
 $$A=\frac{(D_1+D_2)\bigl(-\epsilon\alpha G_0+\alpha kF_0'G_0+(\epsilon G_0-\beta kF_0)G_0'\bigr)}{\alpha\beta k\,D_1^3D_2^3}.$$
 
-If $AB<0$, there are two critical wave speeds $v_\mp=\mp\sqrt{-B/A}$. If $A>0>B$ the fixed point is stable for $|v|>v_+$ and unstable for $|v|<v_+$; if $A<0<B$ the reverse holds; if $A\ge0$, $B>0$ it is stable for all $v$, and if $A\le0$, $B<0$ unstable for all $v$. At $v=v_\mp$ the characteristic polynomial factors as $(\lambda^2+\omega^2)(\lambda^2+s\lambda+p)$ with
+If $AB<0$, there are two critical wave speeds $v_\mp=\mp\sqrt{-B/A}$, where $f$ changes sign: if $A>0>B$, then $f(v)>0$ for $|v|>v_+$ and $f(v)<0$ for $0<|v|<v_+$; if $A<0<B$ the signs are reversed; if $A\ge0$, $B>0$, then $f(v)>0$ for all $v\ne0$; and if $A\le0$, $B<0$, then $f(v)<0$ for all $v\ne0$. The trace of the Jacobian is $-b_1=-v(1/D_1+1/D_2)$, so the fixed point is unstable for $v<0$ and not asymptotically stable for $v=0$. For $v>0$ it is asymptotically stable exactly where $f(v)>0$ and the remaining conditions $b_4>0$ and $b_1b_2>b_3$ hold, and it is not asymptotically stable where $f(v)<0$. (The source's case list (a)–(d) uses only the sign of $f$ and so also calls the fixed point stable for large negative $v$; this is corrected here.) At $v=v_\mp$ the characteristic polynomial factors as $(\lambda^2+\omega^2)(\lambda^2+s\lambda+p)$ with
 
 $$\omega^2=\frac{G_0'(\epsilon G_0-\beta kF_0)+\alpha G_0(kF_0'-\epsilon)}{\alpha\beta k(D_1+D_2)},$$
 

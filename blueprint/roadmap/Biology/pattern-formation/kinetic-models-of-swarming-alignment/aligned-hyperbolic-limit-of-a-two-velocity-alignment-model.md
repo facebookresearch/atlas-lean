@@ -16,7 +16,7 @@ For every $T > 0$ there are $\varepsilon_0 > 0$ and $c_\gamma > 0$ such that, if
 
 $$\sup_{t\in[0,T]}\Big\|f(t) - \bar\varrho(t) - \bar h\big(\tfrac t\varepsilon\big)\Big\|_\infty \le c_T\,\varepsilon,$$
 
-where $\bar\varrho(t,k,x) = F(k,x - kt)$, $\bar\varrho(t,-k,x) = 0$ (all mass transported rigidly in direction $k$, a traveling wave) and $\bar h(\tau,k,\cdot) = -h(\tau,\cdot)$, $\bar h(\tau,-k,\cdot) = h(\tau,\cdot)$, with $h$ decaying exponentially in $\tau$ uniformly in $x$.
+where $\bar\varrho(t,k,x) = \varrho_0(x - kt)$ with $\varrho_0 = F(1,\cdot) + F(-1,\cdot)$, $\bar\varrho(t,-k,x) = 0$ (all mass transported rigidly in direction $k$, a traveling wave) and $\bar h(\tau,k,\cdot) = -h(\tau,\cdot)$, $\bar h(\tau,-k,\cdot) = h(\tau,\cdot)$, with $h$ decaying exponentially in $\tau$ uniformly in $x$. (Theorem 5.2 of the source writes $\bar\varrho(t,k,x) = F(k,x-kt)$; then at $t = 0$ the $k$-component of the error is $F(-k,\cdot) \ge \mu > 0$, so the $c_T\varepsilon$ bound would fail. The layer equation already uses the total density $\varrho_0$.)
 
 Near the isotropic equilibrium the corresponding parabolic scaling yields, at both zeroth and first order, the linear diffusion equation for the total density.
 

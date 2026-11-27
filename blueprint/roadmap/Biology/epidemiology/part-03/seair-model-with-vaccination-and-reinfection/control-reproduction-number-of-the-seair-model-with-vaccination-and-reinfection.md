@@ -19,7 +19,7 @@ $$\mathcal R_c = \frac{N_1}{N_0}\,\frac{\beta\gamma}{k_3}\Big(\frac{p}{k_4} + \f
 **Theorem.**
 
 1. The disease-free equilibrium is locally asymptotically stable if $\mathcal R_c < 1$ and unstable if $\mathcal R_c > 1$; it is globally asymptotically stable when $\mathcal R_c < 1$ provided $\frac{N_1}{N_0} \ge \frac{S + \phi_1V + \phi_2R}{N}$ along solutions.
-2. Endemic equilibria are the positive roots of an explicit polynomial in the equilibrium force of infection; depending on the signs of its coefficients there is exactly one endemic equilibrium when $\mathcal R_c > 1$ in some parameter regimes and two in others, and for $\mathcal R_c < 1$ the disease-free state can coexist with two endemic equilibria (backward bifurcation).
+2. Endemic equilibria are the positive roots of an explicit cubic $\mathcal A_3\lambda^{*3} + \mathcal A_2\lambda^{*2} + \mathcal A_1\lambda^* + \mathcal A_0 = 0$ in the equilibrium force of infection $\lambda^*$, with $\mathcal A_3 < 0$ and $\mathcal A_0 > 0$ when $\mathcal R_c > 1$. Hence, when $\mathcal R_c > 1$, the number of positive roots counted with multiplicity is odd: there is one endemic equilibrium, or up to three when $\mathcal A_2 > 0 > \mathcal A_1$. For $\mathcal R_c < 1$ the disease-free state can coexist with two endemic equilibria, suggesting a backward bifurcation.
 3. (Reaction–diffusion extension.) For the same reaction terms with diffusion in each compartment and homogeneous Neumann boundary conditions on a bounded domain, solutions with nonnegative initial data are nonnegative, unique and bounded; the spatially homogeneous disease-free state is locally asymptotically stable iff $\mathcal R_c < 1$, and globally stable under the analogous pointwise condition.
 
 ## Depends on

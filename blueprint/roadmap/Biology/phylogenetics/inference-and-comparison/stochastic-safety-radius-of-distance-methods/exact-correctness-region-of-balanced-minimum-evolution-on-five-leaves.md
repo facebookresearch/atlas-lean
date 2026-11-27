@@ -4,7 +4,7 @@
 
 **Random errors model.** The input is $\delta_{xy} = d_{xy} + \epsilon_{xy}$, where $d = d_T$ is the tree metric of a binary tree $T$ with branch lengths and the $\epsilon_{xy}$ are i.i.d. $N(0,\sigma^2)$. A method has **$\eta$-stochastic safety radius** $s_n$ if, with $\sigma^2 = c^2/\log n$, every binary $T$ with minimum interior edge length $w_{\min}$ satisfies $c < s_n w_{\min} \Rightarrow \mathbb P(M(\delta) = T) \ge 1-\eta$.
 
-**Theorem.** Let $T$ be a binary tree on five leaves $\{a,b,c,d,e\}$ with cherries $\{a,b\}$ and $\{c,d\}$ and interior edge lengths $w_1, w_2$ (labeled as in the source). Put
+**Theorem.** Let $T$ be a binary tree on five leaves $\{a,b,c,d,e\}$ with cherries $\{a,b\}$ and $\{d,e\}$, middle leaf $c$, and interior edge lengths $w_1$ (the edge above $\{a,b\}$) and $w_2$ (the edge above $\{d,e\}$). (Theorem 3 of the source describes the tree with cherries $\{a,b\}$ and $\{c,d\}$, but its inequalities are the BME region of $((a,b),c,(d,e))$: comparing the BME lengths of all $15$ five-leaf trees with Pauplin weights reproduces exactly the five inequalities below for this tree.) Put
 
 $$y_1 = 2\epsilon_{ac} + \epsilon_{ad} - \epsilon_{bc} + \epsilon_{bd} + 3\epsilon_{be} - \epsilon_{ce}, \qquad y_2 = 2\epsilon_{ac} + \epsilon_{ae} - \epsilon_{bc} + 3\epsilon_{bd} + \epsilon_{be} - \epsilon_{cd},$$
 

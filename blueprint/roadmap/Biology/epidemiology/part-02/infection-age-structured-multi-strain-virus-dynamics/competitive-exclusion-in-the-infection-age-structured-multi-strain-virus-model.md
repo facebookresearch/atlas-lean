@@ -18,7 +18,7 @@ When $\mathcal R_i > 1$ there is a single-strain equilibrium $E_i$ with $\overli
 
 $$\big(f(T) - f(\overline T_i)\big)\Big(1 - \frac{\overline T_i}{T}\Big) \le 0 \quad \text{for all } T > 0,\ i = 1,\dots,n$$
 
-(automatic when $f$ is decreasing). Then $E_1$, the equilibrium of the strain with maximal reproduction number, is globally asymptotically stable for all initial data with $V_1(0) + \int_0^\infty T_1^*(0,a)\,da > 0$.
+(automatic when $f$ is decreasing). Then $E_1$, the equilibrium of the strain with maximal reproduction number, is globally asymptotically stable for all initial data with $V_1(0) + \int_0^{\bar a_1} T_1^*(0,a)\,da > 0$, where $\bar a_1 = \sup\{a : p_1(a) > 0\}$ is the last infection age at which strain-$1$ cells produce virus (cells infected by strain $1$ that are already older than $\bar a_1$ never produce virus, so they cannot seed strain $1$).
 
 So the strain that drives target cells lowest, $\overline T_1 = \overline T_0/\mathcal R_1$, excludes all others regardless of the shape of the age-dependent production and death profiles.
 

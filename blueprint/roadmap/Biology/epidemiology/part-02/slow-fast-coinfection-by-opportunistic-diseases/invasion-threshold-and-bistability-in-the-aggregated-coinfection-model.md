@@ -26,10 +26,10 @@ Assume now $r>m$ and $\bar\beta>\bar c_{IS}$.
 4. *(Bistability without invasion.)* If $S_1^*<\bar A<\bar B$, $E_1^*$ is asymptotically stable. Let
 
 $$
-\mathcal R = \frac{\bar c_{II}(r-m) + (\bar ar+\bar\gamma)(\bar\beta-\bar c_{IS}) + (\bar c_{SI}+\bar\beta)(\bar\mu+\bar\gamma)}{2\sqrt{\big(c_{SS}\bar c_{II}+(\bar c_{SI}+\bar\beta)(\bar\beta-\bar c_{IS})\big)(\bar ar+\bar\gamma)(\bar\mu+\bar\gamma)}}.
+\mathcal R = \frac{\bar c_{II}(r-m) + (\bar ar+\bar\gamma)(\bar\beta-\bar c_{IS}) + (\bar c_{SI}+\bar\beta)(m+\bar\mu+\bar\gamma)}{2\sqrt{\big(c_{SS}\bar c_{II}+(\bar c_{SI}+\bar\beta)(\bar\beta-\bar c_{IS})\big)(\bar ar+\bar\gamma)(m+\bar\mu+\bar\gamma)}}.
 $$
 
-If $\mathcal R<1$ there is no interior equilibrium and $E_1^*$ attracts $\mathbb R_+^2\setminus\{0\}$. If $\mathcal R=1$ there is a single, unstable interior equilibrium. If $\mathcal R>1$ there are two interior equilibria $E_{+1}^*<E_{+2}^*$ (componentwise), a saddle and a locally asymptotically stable node: the infection can persist even though it cannot invade the disease-free population.
+(Substituting the $I$-nullcline into the $S$-equation gives the quadratic $\big(c_{SS}\bar c_{II}+(\bar c_{SI}+\bar\beta)(\bar\beta-\bar c_{IS})\big)S^2-\big(\bar c_{II}(r-m)+(\bar ar+\bar\gamma)(\bar\beta-\bar c_{IS})+(\bar c_{SI}+\bar\beta)(m+\bar\mu+\bar\gamma)\big)S+(\bar ar+\bar\gamma)(m+\bar\mu+\bar\gamma)=0$ for interior equilibria, and $\mathcal R$ compares its discriminant with zero. The source's (12)–(14) drop $m$ from $m+\bar\mu+\bar\gamma$; with $r=2$, $m=1$, $c_{SS}=1$, $\bar c_{SI}=\bar c_{IS}=0$, $\bar c_{II}=\bar a=\bar\beta=\bar\gamma=1$, $\bar\mu=0$ the quadratic is $S^2-3S+3=0$, with no real root, and $\mathcal R=6/(2\sqrt{12})<1$ as written here.) If $\mathcal R<1$ there is no interior equilibrium and $E_1^*$ attracts $\mathbb R_+^2\setminus\{0\}$. If $\mathcal R=1$ there is a single, unstable interior equilibrium. If $\mathcal R>1$ there are two interior equilibria $E_{+1}^*<E_{+2}^*$ (componentwise), a saddle and a locally asymptotically stable node: the infection can persist even though it cannot invade the disease-free population.
 
 ## Expansion
 

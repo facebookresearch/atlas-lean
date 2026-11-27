@@ -2,7 +2,7 @@
 
 Let $\mathcal{T}_n$ be the BHV space of metric phylogenetic trees with $n$ leaves: one nonnegative orthant $\mathbb{R}_{\ge 0}^{n-2}$ for each binary topology (coordinates are interior edge lengths), glued along faces corresponding to shared compatible splits, with the induced geodesic metric $d$. It is a CAT(0) space, so any two trees $X, T$ are joined by a unique geodesic.
 
-**Geodesic structure.** For trees $X$ and $T$ with no common splits, the geodesic is described by a support $(\mathcal{A},\mathcal{B}) = ((A_1,\dots,A_k),(B_1,\dots,B_k))$, a partition of the splits of $X$ into $A_1,\dots,A_k$ and of $T$ into $B_1,\dots,B_k$ such that each $A_i \cup B_{j}$ for $j > i$ is compatible, satisfying the ratio-ordering and minimality conditions (P2)–(P3):
+**Geodesic structure.** For trees $X$ and $T$ with no common splits, the geodesic is described by a support $(\mathcal{A},\mathcal{B}) = ((A_1,\dots,A_k),(B_1,\dots,B_k))$, a partition of the splits of $X$ into $A_1,\dots,A_k$ and of $T$ into $B_1,\dots,B_k$ such that each $A_i \cup B_{j}$ for $i > j$ is compatible (condition (P1)), satisfying the ratio-ordering and minimality conditions (P2)–(P3):
 
 $$
 

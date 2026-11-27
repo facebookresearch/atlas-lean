@@ -30,7 +30,7 @@ and
 
 $$B_{\circ,0}(x) = \int_{1-x}^1\frac1\xi\big[\mathcal G''(\xi)\mathcal B_1(\xi) - \mathcal G(\xi)\mathcal B_1''(\xi)\big]d\xi.$$
 
-**Corollary.** At steady state the fitness of a randomly chosen species has density $g_{\mathrm{marg}}(x) = \big[\tfrac35 + \mathcal B_1'(1-x)\big]\mathbf 1_{[0,1]}(x)$.
+**Corollary.** At steady state the fitness of a randomly chosen species has density $g_{\mathrm{marg}}(x) = \big[\tfrac35 + 2\,\mathcal B_1'(1-x)\big]\mathbf 1_{[0,1]}(x)$. (The corollary as printed in the source omits the factor $2$, which its proof carries; without it the density integrates to $\tfrac35 + \mathcal B_1(1) - \mathcal B_1(0) = \tfrac45$ instead of $1$.)
 
 ## Expansion
 

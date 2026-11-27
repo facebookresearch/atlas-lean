@@ -14,7 +14,9 @@ $$\mathcal R_0 = \frac{1}{(\sigma+u)N^0}\Big(\beta_s S^0 + \int_0^\infty \beta_r
 
 $N^0 = S^0 + \int_0^\infty r^0$. Let $\bar\beta^*$ be the value of $\bar\beta$ with $\mathcal R_0 = 1$, write $K = \theta + \frac{(1-\rho)\sigma\epsilon}{\gamma_A + u} + \frac{\rho\sigma}{\gamma_I + \mu + u}$ and $J = \int_0^\infty \beta_{r0}(\tau)e^{-u\tau}\,d\tau$, and define the quadratic-nonlinearity coefficient
 
-$$a = \frac{2u}{\Lambda}K\Big[\bar\beta^* J\Big(\frac{\alpha(\sigma+u)}{\alpha+u} + \frac{\gamma_A(1-\rho)\sigma}{\gamma_A + u} + \frac{\gamma_I\rho\sigma}{\gamma_I + \mu + u}\Big) - \frac{u}{\alpha+u}\big(\beta_s + \alpha\bar\beta^* J\big)\Big(1 + \frac{(1-\rho)\sigma}{u} + \frac{(\gamma_I + u)\rho\sigma}{\gamma_I + \mu + u}\Big) - \frac{\alpha u}{\alpha+u}(\bar\beta^*)^2 K\int_0^\infty \beta_{r0}(\tau)e^{-u\tau}\!\int_0^\tau \beta_{r0}(h)\,dh\,d\tau\Big].$$
+$$a = \frac{2u}{\Lambda}K\Big[\bar\beta^* J\Big(\frac{\alpha(\sigma+u)}{\alpha+u} + \frac{\gamma_A(1-\rho)\sigma}{\gamma_A + u} + \frac{\gamma_I\rho\sigma}{\gamma_I + \mu + u}\Big) - \frac{u}{\alpha+u}\big(\beta_s + \alpha\bar\beta^* J\big)\Big(1 + \frac{(1-\rho)\sigma}{u} + \frac{(\gamma_I + u)\rho\sigma}{u(\gamma_I + \mu + u)}\Big) - \frac{\alpha u}{\alpha+u}(\bar\beta^*)^2 K\int_0^\infty \beta_{r0}(\tau)e^{-u\tau}\!\int_0^\tau \beta_{r0}(h)\,dh\,d\tau\Big].$$
+
+(The source's eq. (3) prints the third term in the second bracket as $\frac{(\gamma_I + u)\rho\sigma}{\gamma_I + \mu + u}$, a rate added to dimensionless terms; the kernel vector gives $\hat x_4(1 + \gamma_I/u) = \frac{(\gamma_I + u)\rho\sigma}{u(\gamma_I + \mu + u)}$, as written here.)
 
 **Theorem.** At $\mathcal R_0 = 1$ the disease-free equilibrium undergoes a transcritical bifurcation, which is **backward** if $a > 0$ and **forward** if $a < 0$.
 

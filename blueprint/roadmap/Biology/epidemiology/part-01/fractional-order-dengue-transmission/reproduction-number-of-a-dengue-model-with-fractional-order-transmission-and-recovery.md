@@ -16,7 +16,7 @@ $$R_0 = \sqrt{\frac{\Pi_V\,b^{\alpha+p}\,\beta_V^H\,\beta_H^V\,C^\beta}{N_H\,C^p
 2. a unique endemic equilibrium exists if and only if $R_0 > 1$, with $I_V^* = \frac{\mu_H}{A}(R_0^2 - 1)$ for an explicit constant $A > 0$, and it is then locally and globally asymptotically stable in the interior of the attracting region;
 3. an optimal control problem with time-dependent controls on transmission and treatment admits an optimal control, by the standard existence conditions (convex admissible set, dynamics linear in the controls, convex integrand, coercivity).
 
-Memory exponents enter $R_0$ explicitly. With $\alpha = \beta = p = 1$ the classical host–vector value $R_0^2 = \frac{\Pi_Vb^2\beta_V^H\beta_H^V}{N_H\mu_V^2(1/C + \mu_H)}$ is recovered.
+Memory exponents enter $R_0$ explicitly. With $\alpha = \beta = p = 1$ the formula gives $R_0^2 = \frac{\Pi_Vb^2\beta_V^H\beta_H^V}{N_H\mu_V^2(1 + \mu_HC)}$. This is the usual host–vector value $\frac{\Pi_Vb^2\beta_V^H\beta_H^V}{N_H\mu_V^2(1/C + \mu_H)}$ divided by $C$, because in this model the mosquito infection rate carries the factor $1/C^p$.
 
 ## Expansion
 

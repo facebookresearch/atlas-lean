@@ -6,7 +6,9 @@ $$\begin{aligned} \dot S_i &= \mu_i - \sum_{j=1}^n\bigl(\beta^A_{ij}A_j + \beta^
 
 where $\mu_i$ is the birth and death rate, $\nu_i$ the vaccination rate, $\gamma$ the rate of loss of immunity, $\alpha$ the rate at which asymptomatic cases develop symptoms, and $\delta_A, \delta_I$ the recovery rates. The contact matrices $[\beta^A_{ij}]$ and $[\beta^I_{ij}]$ are irreducible with positive diagonals. The region $\Gamma = \{S_i + A_i + I_i \le 1\}$ is positively invariant. The basic reproduction number is the spectral radius
 
-$$\mathcal R_0 = \rho\!\left(\Bigl[\Bigl(\beta^A_{ij} + \frac{\alpha\,\beta^I_{ij}}{\delta_I + \mu_i}\Bigr)\frac{\gamma + \mu_i}{(\gamma + \mu_i + \nu_i)(\alpha + \delta_A + \mu_i)}\Bigr]_{i,j=1}^n\right).$$
+$$\mathcal R_0 = \rho\!\left(\Bigl[\frac{\gamma + \mu_i}{\gamma + \mu_i + \nu_i}\Bigl(\beta^A_{ij} + \frac{\alpha\,\beta^I_{ij}}{\delta_I + \mu_j}\Bigr)\frac{1}{\alpha + \delta_A + \mu_j}\Bigr]_{i,j=1}^n\right).$$
+
+Here $S_i^0 = \frac{\gamma + \mu_i}{\gamma + \mu_i + \nu_i}$ is the disease-free susceptible fraction of the receiving community $i$, and the factors with $\mu_j$ are the mean asymptomatic and symptomatic periods of an infective of the source community $j$. (The source's displays (9)–(10) put $\mu_i$ in these factors, scaling rows instead of columns; that changes the spectral radius. For $n = 2$, $\alpha = \delta_A = \delta_I = 1$, $\gamma = \nu_i = 0$, $\mu = (2,1)$, $\beta^A = \begin{pmatrix}2&0.5\\2&1\end{pmatrix}$, $\beta^I = \begin{pmatrix}0.5&2\\0.5&1\end{pmatrix}$ the row-scaled matrix has spectral radius $0.989$ while the next-generation matrix has $25/24$.)
 
 **Theorem.**
 

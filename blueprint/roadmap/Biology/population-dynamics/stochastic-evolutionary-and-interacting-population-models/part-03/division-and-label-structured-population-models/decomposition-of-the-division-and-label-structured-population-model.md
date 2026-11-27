@@ -18,9 +18,9 @@ with $\bar N_0(0)=\bar N_{0,\mathrm{init}}$, $\bar N_i(0)=0$; and
 
 (ii) the normalized label densities solve the decoupled transport equations $\partial_tn_i-k(t)\,\partial_x(xn_i)=0$ with $n_i(0,x)=\gamma^in_{0,\mathrm{init}}(\gamma^ix)$, explicitly
 
-$$N_i(t,x)=\bar N_i(t)\,\gamma^i\,e^{-\int_0^tk(\tau)d\tau}\,n_{0,\mathrm{init}}\Big(\gamma^ie^{\int_0^tk(\tau)d\tau}x\Big),\qquad M(t,x)=\sum_{i\ge0}N_i(t,x).$$
+$$N_i(t,x)=\bar N_i(t)\,\gamma^i\,e^{\int_0^tk(\tau)d\tau}\,n_{0,\mathrm{init}}\Big(\gamma^ie^{\int_0^tk(\tau)d\tau}x\Big),\qquad M(t,x)=\sum_{i\ge0}N_i(t,x).$$
 
-The factorization holds exactly when the label loss rate is linear in $x$.
+Here $n_{0,\mathrm{init}}=N_{0,\mathrm{init}}/\bar N_{0,\mathrm{init}}$, and each $n_i(t,\cdot)$ stays a probability density. (The source's Corollaries 1–2 print the prefactor $e^{-\int_0^tk}$, which neither solves the transport equation nor preserves the integral; its Appendix A has the characteristics used here.) The factorization holds exactly when the label loss rate is linear in $x$.
 
 **Closed forms for the sizes.** If $\alpha_i\equiv\alpha\ge0$ and $\beta_i\equiv\beta>0$, then
 

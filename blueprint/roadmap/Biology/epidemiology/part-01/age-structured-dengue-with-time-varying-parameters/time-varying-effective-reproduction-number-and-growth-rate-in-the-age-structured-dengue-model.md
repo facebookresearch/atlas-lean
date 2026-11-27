@@ -5,13 +5,13 @@
 **Time-varying Lotka equation.** Integrating the infected-host equations along characteristics and substituting into the mosquito equation gives $1 = \mathcal{L}(t, r_t)$ with
 
 $$
-\mathcal{L}(t, r_t) = \frac{\mathcal{N}_m(t)s_m(t)}{r_t\mathcal{N}_m(t) + \Lambda_m(t)}\int_0^\infty\beta_m(t,\zeta)p(t,\zeta)\int_{\max\{0,\,t^0+\zeta-t\}}^\zeta\beta_h(\eta+t-\zeta,\eta)\,s+\sigma v\,F(t,\eta,\zeta)\,e^{-\int_{\eta+t-\zeta}^tr_\tau\,d\tau}\,d\eta\,d\zeta.
+\mathcal{L}(t, r_t) = \frac{\mathcal{N}_m(t)s_m(t)}{r_t\mathcal{N}_m(t) + \Lambda_m(t)}\int_0^\infty\beta_m(t,\zeta)p(t,\zeta)\int_{\max\{0,\,t^0+\zeta-t\}}^\zeta\beta_h(\eta+t-\zeta,\eta)\,\big[s+\sigma v\big](\eta+t-\zeta,\eta)\,F(t,\eta,\zeta)\,e^{-\int_{\eta+t-\zeta}^tr_\tau\,d\tau}\,d\eta\,d\zeta.
 $$
 
 **Definition.** The time-varying effective reproduction number is the value at zero growth,
 
 $$
-\mathcal{R}_f(t) = \frac{\mathcal{N}_m(t)s_m(t)}{\Lambda_m(t)}\int_0^\infty\beta_m(t,\zeta)p(t,\zeta)\int_{\max\{0,\,t^0+\zeta-t\}}^\zeta\beta_h(\eta+t-\zeta,\eta)\,s+\sigma v\,F(t,\eta,\zeta)\,d\eta\,d\zeta,
+\mathcal{R}_f(t) = \frac{\mathcal{N}_m(t)s_m(t)}{\Lambda_m(t)}\int_0^\infty\beta_m(t,\zeta)p(t,\zeta)\int_{\max\{0,\,t^0+\zeta-t\}}^\zeta\beta_h(\eta+t-\zeta,\eta)\,\big[s+\sigma v\big](\eta+t-\zeta,\eta)\,F(t,\eta,\zeta)\,d\eta\,d\zeta,
 $$
 
 the expected number of secondary infections at time $t$. It reduces to the basic effective reproduction number at the disease-free state, and it falls as host and mosquito susceptibles deplete or vaccination proceeds.
@@ -19,7 +19,7 @@ the expected number of secondary infections at time $t$. It reduces to the basic
 **Proposition (growth rate relation).** If $i_m(t - u)/i_m(t)$ is replaced by its first-order expansion $1 - r_tu$ over the short infection ages $u = \zeta - \eta$, then
 
 $$
-r_t = \frac{\Lambda_m(t)}{\mathcal{N}_m(t)\,(1 + \mathcal{K}_t)}\big(\mathcal{R}_f(t) - 1\big), \qquad \mathcal{K}_t = \int_0^\infty s_m(t)\beta_m(t,\zeta)p(t,\zeta)\int_{\max\{0,\,t^0+\zeta-t\}}^\zeta\beta_h(\eta+t-\zeta,\eta)(\zeta-\eta)\,s+\sigma v\,F(t,\eta,\zeta)\,d\eta\,d\zeta.
+r_t = \frac{\Lambda_m(t)}{\mathcal{N}_m(t)\,(1 + \mathcal{K}_t)}\big(\mathcal{R}_f(t) - 1\big), \qquad \mathcal{K}_t = \int_0^\infty s_m(t)\beta_m(t,\zeta)p(t,\zeta)\int_{\max\{0,\,t^0+\zeta-t\}}^\zeta\beta_h(\eta+t-\zeta,\eta)(\zeta-\eta)\,\big[s+\sigma v\big](\eta+t-\zeta,\eta)\,F(t,\eta,\zeta)\,d\eta\,d\zeta.
 $$
 
 So incidence in mosquitoes increases, is flat, or decreases at time $t$ exactly as $\mathcal{R}_f(t)$ is above, at, or below $1$, and $\mathcal{R}_f(t) = 1 + r_t/\gamma(t)$ with $\gamma(t) = \Lambda_m(t)/(\mathcal{N}_m(t)(1 + \mathcal{K}_t))$. This is the form $r_t = \gamma(t)(\mathcal{R}_f(t) - 1)$ familiar from discrete-time renewal models, and it lets $\mathcal{R}_f(t)$ be estimated from surveillance growth rates.

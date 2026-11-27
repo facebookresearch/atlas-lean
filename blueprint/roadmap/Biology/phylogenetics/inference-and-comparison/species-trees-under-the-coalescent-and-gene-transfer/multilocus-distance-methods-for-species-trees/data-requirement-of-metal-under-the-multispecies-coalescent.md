@@ -26,9 +26,9 @@ a bound that behaves like a constant times $f^{-2}$ as $f\to0$. So a total of $m
 
 ## Depends on
 
-- [Multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/README.md)
-- [Jukes–Cantor model](../../jukes-cantor-model/README.md)
-- [Splits, compatibility, ultrametrics and UPGMA](../../splits-compatibility-ultrametrics-and-upgma/README.md)
+- [Multispecies coalescent](../../../../coalescent-theory/multispecies-coalescent/README.md)
+- [Jukes–Cantor model](../../../jukes-cantor-model/README.md)
+- [Splits, compatibility, ultrametrics and UPGMA](../../../splits-compatibility-ultrametrics-and-upgma/README.md)
 
 ## Expansion
 

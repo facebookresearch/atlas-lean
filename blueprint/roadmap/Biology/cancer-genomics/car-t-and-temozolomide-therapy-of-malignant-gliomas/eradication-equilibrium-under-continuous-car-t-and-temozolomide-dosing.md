@@ -16,7 +16,7 @@ with positive parameters. Here $\varepsilon_1$ is the TMZ-induced conversion to 
 
 **Theorem.**
 
-1. *(Positivity.)* For $\varepsilon_1\ge 0$, nonnegative initial data give nonnegative solutions; $S=0$, $R_C=0$, $R_E=0$ and $E=0$ are invariant.
+1. *(Positivity.)* For $\varepsilon_1\ge 0$, nonnegative initial data give nonnegative solutions; $S=0$ and $R_C=0$ are invariant; $E=0$ is invariant when $\bar E_0=0$; and $R_E=0$ is invariant only if $\varepsilon_1=0$ (otherwise $\dot R_E=\varepsilon_1(S+R_C)E>0$ on $\{R_E=0\}$ wherever $S+R_C>0$ and $E>0$). (The source's invariance statement lists all four faces; its own positivity proof computes the $\varepsilon_1(S+R_C)E$ term.)
 2. *(No therapy: carrying-capacity plane.)* Without dosing ($\bar v=\bar E_0=0$), if $r_1\ne r_2$ every isolated biologically relevant equilibrium is unstable, while the plane $\{C=E=0,\ S+R_C+R_E=K\}$ consists of equilibria and is locally stable for the reference parameter ranges. Hence after a single dose of each therapy, trajectories approach the tumor carrying capacity.
 3. *(Eradication under continuous dosing.)* With constant doses, the tumor-free state is $Q_6=(0,0,0,C^*,E^*)$ with
 

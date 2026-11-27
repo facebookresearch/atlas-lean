@@ -14,7 +14,7 @@ with $r(\mathcal M)$ the spectral radius of $\mathcal M$ on $C(\Omega)$.
 2. If two landscapes satisfy $\mathbb E\bigl(a(\tilde\theta_{m+1})\prod_{k=1}^ms(\tilde\theta_k)\bigr)\le\mathbb E\bigl(a(\theta_{m+1})\prod_{k=1}^ms(\theta_k)\bigr)$ for all $m\ge1$, their equilibria are ordered in the same way at every location $z$.
 3. For a stationary chain, $\mathbb E\bigl(\prod_{k=0}^m s(\theta_k)\bigr)\le\mathbb E\bigl(s(\theta_0)^{m+1}\bigr)$. Hence, among landscape dynamics with a given stationary law and constant patch weights, the static landscape maximizes the local population life span and the equilibrium occupancy.
 
-With $\bar f$ independent of $\theta$ and constant weight $\bar a$, $r_S=\bar a\,\bar f'(0)\sum_{m\ge0}\mathbb E\bigl(\prod_{k=0}^{m-1}s(\theta_k)\bigr)$, i.e. weight times initial colonization slope times the expected life span of a local population, mirroring the factorization of persistence criteria for the spatially realistic Levins model.
+With $\bar f$ independent of $\theta$ and constant weight $\bar a$, $r_S=\bar a\,\bar f'(0)\sum_{m\ge1}\mathbb E\bigl(\prod_{k=0}^{m-1}s(\theta_k)\bigr)$, i.e. weight times initial colonization slope times the expected number of later time steps a newly colonized local population survives (the source's display after Theorem 4.1 sums from $m=0$, adding $\bar a\,\bar f'(0)$, which the definition of $r_S$ above does not contain), mirroring the factorization of persistence criteria for the spatially realistic Levins model.
 
 ## Depends on
 

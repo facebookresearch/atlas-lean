@@ -16,13 +16,18 @@ $$V(x) = \|\dot x\|_1 = \sum_{i=1}^n \Bigl|\, \sum_{j\ne i}\bigl(R_{ji}(x_j) - R
 
 is an RLF.
 
-2. (Stability-preserving graph modifications.) Let $\tilde{\mathcal N}$ be obtained from a linear BIN by a finite sequence of elementary modifications: reversing a reaction, inserting an intermediate complex, external or conserved regulation of a species, adding a catalyst, or adding a dimer. Then $V = \sum_i |\dot x_i|$, summed over all species of $\tilde{\mathcal N}$, is still an RLF. In particular, replacing each $X_i \to X_j$ by the enzymatic mechanism $X_i + E_{ij} \rightleftharpoons C_{ij} \to X_j + E_{ij}$ keeps $V = \sum_i |\dot x_i| + \sum |\dot c_{ij}|$ an RLF, although the network is now nonlinear.
+2. (Stability-preserving graph modifications.) Let $\mathcal N$ be a linear BIN with species set $\mathscr S$, and let $\tilde{\mathcal N}$ be obtained from it by a finite sequence of elementary modifications. Three separate results hold, each with its own summation set:
+   - (a) If the modifications are limited to reversing a reaction, inserting an intermediate complex, and external or conserved regulation of a species, then $\tilde{\mathcal N}$ is again linear and $V = \sum_i |\dot x_i|$, summed over **all** species of $\tilde{\mathcal N}$, is an RLF (by item 1).
+   - (b) If the modifications are limited to adding a catalyst and adding a dimer, then $V = \sum_{i=1}^{|\mathscr S|} |\dot x_i|$, summed over the **original** species of $\mathcal N$ only, is an RLF for $\tilde{\mathcal N}$, although $\tilde{\mathcal N}$ may be nonlinear.
+   - (c) If each reaction $X_i \to X_j$ is replaced by the enzymatic mechanism $X_i + E_{ij} \rightleftharpoons C_{ij} \to X_j + E_{ij}$, then $V = \sum_{i=1}^{|\mathscr S|} |\dot x_i| + \sum_{C_{ij}} |\dot c_{ij}|$, summed over the original species and the intermediates $C_{ij}$ but not the enzymes $E_{ij}$, is an RLF for $\tilde{\mathcal N}$.
+
+   No result is claimed here for sequences that mix the modification types of (a) and (b) other than the enzymatic pattern in (c).
 
 3. (Consequences.) If such a network also satisfies LaSalle's invariance principle (which holds for the networks in item 2), every bounded trajectory converges to the steady-state set. If moreover a steady state is isolated in its stoichiometric class and all trajectories are bounded, that steady state is globally asymptotically stable in its class, for all admissible kinetics at once.
 
 ## Expansion
 
-For a linear network, $\dot x$ itself satisfies the linear time-varying system $\ddot x = J(t)\dot x$, where $J = \Gamma\,\partial R/\partial x$ is a compartmental (Metzler, column-diagonally-dominant) matrix whatever the admissible rates. The $\ell^1$ norm is non-increasing under compartmental flows, so $\|\dot x\|_1$ cannot grow. The modifications in item 2 preserve the needed sign and column-sum structure of the Jacobian in the enlarged state space, which the paper verifies one modification at a time. This gives graphical certificates that replace linear-programming searches for piecewise-linear RLFs.
+For a linear network, $\dot x$ itself satisfies the linear time-varying system $\ddot x = J(t)\dot x$, where $J = \Gamma\,\partial R/\partial x$ is a compartmental (Metzler, column-diagonally-dominant) matrix whatever the admissible rates. The $\ell^1$ norm is non-increasing under compartmental flows, so $\|\dot x\|_1$ cannot grow. The modifications in item 2(a) keep the network linear, so item 1 applies directly; for catalysts and dimers (item 2(b)) the paper shows that the currents of the original species still form a non-expanding $\ell^1$ system, and item 2(c) combines (a) (inserting the intermediate, then reversal) with (b) (adding the enzyme as a catalyst). This gives graphical certificates that replace linear-programming searches for piecewise-linear RLFs.
 
 ## Sources
 

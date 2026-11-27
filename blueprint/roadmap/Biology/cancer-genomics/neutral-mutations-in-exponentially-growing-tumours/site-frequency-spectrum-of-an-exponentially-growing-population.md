@@ -1,10 +1,12 @@
 # Site frequency spectrum of an exponentially growing population
 
-**Setting.** Type-0 cells form a linear birth–death branching process $Z_0(t)$ with birth rate $a_0$ and death rate $b_0 < a_0$; put $\lambda_0 = a_0 - b_0$ and $\gamma = \lambda_0 / a_0$. Conditioned on non-extinction, the number $Y_0(t)$ of cells whose families survive forever is a Yule process with birth rate $\gamma$ (in the source's normalization), and $Y_0(t)/Z_0(t) \to \gamma$ in probability. Neutral (passenger) mutations arise at rate $\nu$ per cell, each at a new site (infinite sites). Let $F_t(x)$ be the expected number of passenger mutations carried by more than a fraction $x$ of the cells at time $t$ and $F(x) = \lim_{t\to\infty} F_t(x)$.
+**Setting.** Type-0 cells form a linear birth–death branching process $Z_0(t)$ with birth rate $a_0$ and death rate $b_0 < a_0$; put $\lambda_0 = a_0 - b_0$ and $\gamma = \lambda_0 / a_0$. Time is measured so that $a_0 = 1$, hence $\gamma = \lambda_0$. Conditioned on non-extinction, the number $Y_0(t)$ of cells whose families survive forever is a Yule process with birth rate $\lambda_0$ ($= \gamma$ under this normalization), and $Y_0(t)/Z_0(t) \to \gamma$ in probability. Neutral (passenger) mutations arise at rate $\nu$ per cell per unit time, each at a new site (infinite sites). Let $F_t(x)$ be the expected number of passenger mutations carried by more than a fraction $x$ of the cells at time $t$ and $F(x) = \lim_{t\to\infty} F_t(x)$.
 
 **Theorem 1 (population spectrum).** For $0 < x < 1$,
 
 $$ F(x) = \frac{\nu}{\gamma x}. $$
+
+Without the normalization $a_0 = 1$ the result reads $F(x) = \nu/(\lambda_0 x)$: each period with $k$ surviving lineages carries $\nu/\lambda_0$ expected mutations, each above frequency $x$ with probability $(1-x)^{k-1}$. (The source writes $\nu/(\gamma x)$ and a Yule rate $\gamma$ without fixing $a_0 = 1$, which is correct only when $a_0 = 1$.)
 
 **Theorem 2 (sample spectrum).** Consider a Moran model whose population size $t$ units before the present is $N(t) = N e^{-\gamma t}$, with neutral mutation rate $\nu$, and let $\eta_{n,m}$ be the number of segregating sites at which exactly $m$ of $n$ sampled individuals carry the mutant base. As $N \to \infty$,
 

@@ -16,7 +16,7 @@ Earlier hardness results needed multifurcating input trees; binary trees are the
 
 ## Depends on
 
-- [Small parsimony problem](../../small-parsimony-problem/README.md)
+- [Small parsimony problem](../../../small-parsimony-problem/README.md)
 
 ## Expansion
 

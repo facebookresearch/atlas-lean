@@ -8,11 +8,13 @@ Let $W_1,W_2$ be independent standard Brownian motions and $\mathrm{Br}_1(f)=W_1
 
 **Theorem (functional CLT).** For every $f_0\in(f_c,1]$,
 
-$$\sqrt n\,\Big(\hat\Delta_n\big|_{[f_0,1]},\ \hat F_n(f_c)\Big)\ \Rightarrow\ \frac{1}{\mathbb{E}I_+}\Big(\sqrt{\mathbb{E}I_+}\,\mathrm{Br}_1+(1-F)\,\sigma_2\,W_2(1),\ \Psi(Y_\infty)\Big)\quad\text{in } D([f_0,1])\times\mathbb{R}.$$
+$$\sqrt n\,\Big(\hat\Delta_n\big|_{[f_0,1]},\ \hat F_n(f_c)\Big)\ \Rightarrow\ \frac{1}{(1-f_c)\,\mathbb{E}I_+}\Big(\sqrt{\mathbb{E}I_+}\,\mathrm{Br}_1+(1-F)\,\sigma_2\,W_2(1),\ \Psi(Y_\infty)\Big)\quad\text{in } D([f_0,1])\times\mathbb{R}.$$
 
 **One-dimensional marginals.** With $Z$ standard normal and
 
-$$g(f)=\frac{1}{\mathbb{E}I_+}\sqrt{f(1-f)\,\mathbb{E}I_+ +\Big(\frac{1-f}{1-f_c}\Big)^2\big(f_c^2\,\mathbb{E}(I_+^2)+2f_c\,\mathbb{E}I_+\,\mathbb{E}I_-+\mathbb{E}(I_-^2)\big)} ,$$
+$$g(f)=\frac{1}{(1-f_c)\,\mathbb{E}I_+}\sqrt{f(1-f)\,\mathbb{E}I_+ +\Big(\frac{1-f}{1-f_c}\Big)^2\sigma_2^2},\qquad \sigma_2^2=f_c^2\,\mathbb{E}(I_+^2)+\mathbb{E}(I_-^2),$$
+
+where $\sigma_2^2$ is the variance of the mean-zero variable $f_cI_+-I_-$ (no cross term, since $I_+I_-=0$). (The source's Theorem 2 has the prefactor $1/\mathbb{E}I_+$ and a cross term $2f_c\,\mathbb{E}I_+\,\mathbb{E}I_-$; but the population has size about $n(1-f_c)\mathbb{E}I_+$, and a simulation of the $\pm1$ walk with $\mathbb P(I=1)=0.7$ gives standard deviations $1.000$ at $f=0.8$ and $1.514$ at $f=0.6$, matching $1.014$ and $1.537$ from the formula above.)
 
 $$\sqrt n\,\hat\Delta_n(f)\Rightarrow\begin{cases} g(f)\,Z, & f>f_c,\\ g(f_c)\,|Z|, & f=f_c,\end{cases}$$
 
