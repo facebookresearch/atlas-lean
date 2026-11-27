@@ -13,3 +13,8 @@ Exact pattern matching (naive, finite automaton, Knuth-Morris-Pratt, Boyer-Moore
 - [Boyer–Moore string-search algorithm](boyer-moore-string-search-algorithm/README.md)
 - [Winnowing and minimizers](winnowing-and-minimizers/README.md)
 - [String matching specifications](string-matching-specifications/README.md)
+- [Edit Distance with General Costs](edit-distance-with-general-costs/README.md)
+- [Huffman Two-Queue Construction and the Kraft Converse](huffman-two-queue-construction-and-kraft-converse/README.md)
+- [Lempel-Ziv Parsings](lempel-ziv-parsings/README.md)
+- [Linear-Time String Transforms on the Word RAM](linear-time-string-transforms-on-the-word-ram/README.md)
+- [Palindromes, LCP Arrays and Multi-Pattern Matching](palindromes-lcp-arrays-and-multipattern-matching/README.md)

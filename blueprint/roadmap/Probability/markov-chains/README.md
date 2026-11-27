@@ -27,3 +27,4 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 - [Density-dependent Markov chains](density-dependent-markov-chains/README.md)
 - [Contact process](contact-process/README.md)
 - [Autoregressive processes](autoregressive-processes/README.md)
+- [Mixing-time bounds](mixing-time-bounds/README.md)
