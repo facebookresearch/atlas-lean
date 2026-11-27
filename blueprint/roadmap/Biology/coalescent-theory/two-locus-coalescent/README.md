@@ -69,4 +69,6 @@
 - [Topology-unchanging probability and the waiting distance between topology changes](topology-change-waiting-distance-smc-prime.md)
 - [Unbiased sample estimators of frequency-weighted haplotype moments](unbiased-poisson-estimator-frequency-weighted-ld.md)
 - [Waiting distance until the next tree change under the SMC'](waiting-distance-until-next-tree-change-smc-prime.md)
+## Identity by descent along the genome
+- [Central limit theorems for detectable IBD rates](central-limit-theorems-for-detectable-ibd-rates/README.md)
 - [IBD segments on coalescent trees](ibd-segments-on-coalescent-trees/README.md)
