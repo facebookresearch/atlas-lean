@@ -14,7 +14,7 @@ The univariate polynomial $\prod_i (1 + t x_i) = \sum_{d=0}^{n} e_d(x) t^d$ has 
 
 ## Depends on
 
-- [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
+- [Arithmetic AC0: constant-depth arithmetic circuits with division and piecewise computation](constant-depth-arithmetic-formula.md)
 
 ## Sources
 
