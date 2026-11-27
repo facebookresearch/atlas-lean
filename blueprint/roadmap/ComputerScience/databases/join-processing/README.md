@@ -32,4 +32,3 @@
 - [GYO ear deletion](ear-step.md)
 - [Empty output of GYO](gyoempties.md)
 - [Existence of a terminal GYO output](exists-terminal-ear-removal.md)
-- [Proof ingredients for the AGM bound and acyclic joins](proof-ingredients/README.md)

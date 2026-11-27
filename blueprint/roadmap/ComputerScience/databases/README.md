@@ -26,3 +26,4 @@ Relational algebra, functional dependencies, normal forms and lossless decomposi
 - [Concurrency control and recovery](concurrency-control-and-recovery/README.md)
 - [Reasoning about dependencies](dependency-reasoning/README.md)
 - [Data exchange](data-exchange/README.md)
+- [Join processing: proof ingredients for the AGM bound and acyclic joins](join-processing-proof-ingredients/README.md)

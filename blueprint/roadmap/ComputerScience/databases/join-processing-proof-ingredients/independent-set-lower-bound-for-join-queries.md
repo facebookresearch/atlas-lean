@@ -7,11 +7,11 @@ $$k^{|V|} \le |q(D)|.$$
 
 For the triangle query and $V = \{A\}$ this is the database with $R = \{(i, 1)\}$, $S = \{(1, 1)\}$ and $T = \{(1, i)\}$ for
 $i \in [k]$, which has $k$ answers. The tight version, with fractional independent sets matching the
-[AGM bound](../agm-output-size-bound-for-join-queries.md), is the first item of the AGM tightness node.
+[AGM bound](../join-processing/agm-output-size-bound-for-join-queries.md), is the first item of the AGM tightness node.
 
 ## Depends on
 
-- [Natural join queries, their hypergraphs and fractional edge covers](../natural-join-queries-their-hypergraphs-and-fractional-edge-c.md)
+- [Natural join queries, their hypergraphs and fractional edge covers](../join-processing/natural-join-queries-their-hypergraphs-and-fractional-edge-c.md)
 - [Fractional independent sets of a hypergraph](fractional-independent-sets-of-a-hypergraph.md)
 
 ## Sources

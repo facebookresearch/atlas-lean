@@ -6,12 +6,12 @@ $q(D)$ is true if and only if there are nonempty sets $S_1 \subseteq q_1(D), \do
 consistent: $S_i = S_i \ltimes S_j$ for all $i, j \in [n]$. Consequently the procedure that starts from $S_i = q_i(D)$,
 replaces $S_i$ by $S_i \ltimes S_j$ while some $S_i \ne S_i \ltimes S_j$, and then fails if some $S_i$ is empty, succeeds
 exactly when $q(D)$ is true. It is the $1$-consistency procedure of
-[the k-consistency procedure for Boolean conjunctive queries](../../tractable-conjunctive-queries/k-consistency-procedure.md).
+[the k-consistency procedure for Boolean conjunctive queries](../tractable-conjunctive-queries/k-consistency-procedure.md).
 
 ## Depends on
 
-- [Answers of a conjunctive query](../../conjunctive-queries/answers-of-a-conjunctive-query.md)
-- [Characterizations of acyclic database schemas](../characterizations-of-acyclic-database-schemas.md)
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Characterizations of acyclic database schemas](../join-processing/characterizations-of-acyclic-database-schemas.md)
 
 ## Proof depends on
 
