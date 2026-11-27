@@ -4,10 +4,6 @@ Let $G$ be a simple graph on a finite vertex set $V$. The strong chromatic numbe
 
 The restriction to positive $k$ is essential. For $k = 0$ no partition of a nonempty set into nonempty parts has all parts of size at most $0$, so every graph is strongly $0$-colorable vacuously, and an infimum over all natural numbers would be $0$ for every graph.
 
-## Depends on
-
-- [Strongly k-colorable graph](is-strongly-colorable.md)
-
 ## Sources
 
 - Wikipedia, *Strong coloring*, https://en.wikipedia.org/wiki/Strong_coloring
