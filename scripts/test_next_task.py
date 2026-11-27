@@ -899,7 +899,7 @@ INDEX = {"schema": "autoform-dag-search/v1", "relations": [], "nodes": [
     node("Algebra/groups/cayley", status="can_state"),
     node("Algebra/t1"),                            # its id is an open pull request's branch
     node("Algebra/t10"),
-    node("Combinatorics/ramsey"),
+    dict(node("Combinatorics/ramsey"), route=7),  # a route that is not a text gives no page
 ]}
 GRAPH_PULLS = [
     pull(20, "Expand the Sylow theorems", "Expands `blueprint/roadmap/Algebra/groups/sylow.md` into its parts."),
@@ -914,6 +914,11 @@ class Graph(unittest.TestCase):
         code, out, err = run(site, "--graph", env=TOKEN)
         self.assertEqual((code, out), (1, ""))
         self.assertIn("is not the graph's index of nodes", err)
+
+    def test_graph_takes_the_sites_task_list_only(self) -> None:
+        # Its pull requests merged since tasks.json's commit would not match the graph's index otherwise.
+        with self.assertRaises(SystemExit):
+            run(Site(), "--graph", "--tasks", "other.json", env=TOKEN)
 
     def test_a_pull_request_takes_the_node_it_names_and_no_other(self) -> None:
         site = Site(open_pages=(OPEN_PULLS + GRAPH_PULLS,))
@@ -947,6 +952,7 @@ class Graph(unittest.TestCase):
         self.assertEqual([item["node_id"] for item in json.loads(out)["graph"]["next"]],
                          ["Combinatorics/ramsey", "Algebra/t1", "Algebra/t10", "Algebra/groups/sylow",
                           "Algebra/groups/sylow-applications"])
+        self.assertIsNone(json.loads(out)["graph"]["next"][0]["page"])
 
     def test_without_graph_the_index_is_not_read(self) -> None:
         site = Site()

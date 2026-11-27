@@ -71,6 +71,7 @@ from pathlib import Path
 TASKS = "https://facebookresearch.github.io/atlas-lean/tasks.json"
 # Every node of the graph with its status, as the site publishes it; a node to expand is marked not_ready.
 DEPENDENCIES = "https://facebookresearch.github.io/atlas-lean/dependencies/index.json"
+GRAPH_SCHEMA = "autoform-dag-search/v1"
 REPOSITORY = "facebookresearch/atlas-lean"
 API = "https://api.github.com"
 # The branch tasks.json is built from, whose merged pull requests are read.
@@ -590,14 +591,15 @@ def load_graph() -> list[dict]:
     """The nodes still to expand: each node (not a folder) that the site's dependencies/index.json marks not_ready,
     with its node id, title, page and article path, in the index's order."""
     try:
-        nodes = json.loads(request(DEPENDENCIES)).get("nodes")
-    except (ValueError, AttributeError):
-        nodes = None
+        index = json.loads(request(DEPENDENCIES))
+    except ValueError:
+        index = None
+    nodes = index.get("nodes") if isinstance(index, dict) and index.get("schema") == GRAPH_SCHEMA else None
     if not isinstance(nodes, list) or not all(isinstance(node, dict) and isinstance(node.get("id"), str)
                                               for node in nodes):
-        raise Failure(f"{DEPENDENCIES} is not the graph's index of nodes")
+        raise Failure(f"{DEPENDENCIES} is not the graph's index of nodes ({GRAPH_SCHEMA})")
     return [{"node_id": node["id"], "title": node.get("title"), "article_path": f"blueprint/roadmap/{node['id']}.md",
-             "page": urllib.parse.urljoin(DEPENDENCIES, node.get("route") or "")}
+             "page": urllib.parse.urljoin(DEPENDENCIES, node["route"]) if isinstance(node.get("route"), str) else None}
             for node in nodes if node.get("kind") == "node" and node.get("status") == "not_ready"]
 
 
@@ -652,6 +654,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--graph", action="store_true",
                         help="also print the next nodes of the graph still to expand, the graph-building tasks")
     args = parser.parse_args(argv)
+    if args.graph and args.tasks != TASKS:
+        # The site publishes the graph's index with tasks.json, so tasks.json's commit date dates both; another task
+        # list's would not.
+        parser.error("--graph reads the site's graph index, so it takes the site's tasks.json, not --tasks")
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or None
     source = args.priorities if args.priorities is not None else str(PRIORITIES) if PRIORITIES.is_file() else None
     try:
