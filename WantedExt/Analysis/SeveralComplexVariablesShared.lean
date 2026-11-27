@@ -62,9 +62,14 @@ def IsPseudoconvexDomain (n : ℕ) (Ω : Set (Fin n → ℂ)) : Prop :=
             ∀ f : (Fin n → ℂ) → ℂ, DifferentiableOn ℂ f Ω →
               ‖f z‖ ≤ sSup ((fun x => ‖f x‖) '' K) })
 
-/-- The Fatou set of a self-map `F` of `ℂ²`: points near which the forward iterates of `F` are
-uniformly bounded (copy of `OpenConjectures.Analysis.SCVHenonFatouComponents.fatouSet`; this is the
-definition of the Fatou set in Problem 65 of the problem list). -/
+/-- The bounded-iterate Fatou set of a self-map `F` of `ℂ²`: the points `z` having a neighborhood
+`U` and a bound `M` with `‖F^[k] w‖ ≤ M` for every `k` and every `w ∈ U`, that is, the points near
+which the forward iterates of `F` are uniformly bounded (copy of
+`OpenConjectures.Analysis.SCVHenonFatouComponents.fatouSet`). This is the convention of
+Problem 10.2.2 (E. Bedford) of the problem list, which calls this set the Fatou set of a polynomial
+automorphism of `ℂ²`. It is not the general Fatou set, where the iterates form a normal family: for
+the translation `(z, w) ↦ (z + 1, w)` this set is empty, although the iterates converge locally
+uniformly to a point at infinity in projective space and so form a normal family there. -/
 def fatouSet (F : (Fin 2 → ℂ) → Fin 2 → ℂ) : Set (Fin 2 → ℂ) :=
   {z | ∃ U ∈ 𝓝 z, ∃ M : ℝ, ∀ k : ℕ, ∀ w ∈ U, ‖F^[k] w‖ ≤ M}
 
