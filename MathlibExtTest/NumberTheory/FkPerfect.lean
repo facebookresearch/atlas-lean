@@ -128,4 +128,33 @@ example (a l : ℕ) (hl : 1 ≤ l) : ¬ IsKLNearPerfect 1 l (2 * 5 ^ a) := by
       exact dvd_pow_self 5 (by omega)
     norm_num at hdiv
 
+-- `3 ^ 1 * 5 ^ 2` is not deficient `F₂`-perfect: `1 + 2` is odd.
+example : ¬ IsDeficientFkPerfect 2 (3 ^ 1 * 5 ^ 2) :=
+  not_isDeficientFkPerfect_pow_mul_pow 2 3 5 1 2 (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide) (Or.inl (by decide))
+
+-- `3 ^ 1 * 5 ^ 1` is not deficient `F₃`-perfect: both exponents are odd.
+example : ¬ IsDeficientFkPerfect 3 (3 ^ 1 * 5 ^ 1) :=
+  not_isDeficientFkPerfect_pow_mul_pow 3 3 5 1 1 (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide)
+    (Or.inr ⟨by decide, by decide⟩)
+
+-- A concrete instance with a positive exponent.
+example : ¬ IsDeficientFkPerfect 2 (3 ^ 5 * 5) :=
+  not_isDeficientFkPerfect_prime_pow_mul (k := 2) (p₁ := 3) (p₂ := 5) (a := 5)
+    (hk := by decide) (hp₁ := by decide) (hp₂ := by decide)
+    (ho₁ := ⟨1, rfl⟩) (ho₂ := ⟨2, rfl⟩) (hne := by decide)
+
+-- The zero exponent is included: `5 ^ 0 * 7` is the prime `7`.
+example : ¬ IsDeficientFkPerfect 3 (5 ^ 0 * 7) :=
+  not_isDeficientFkPerfect_prime_pow_mul (k := 3) (p₁ := 5) (p₂ := 7) (a := 0)
+    (hk := by decide) (hp₁ := by decide) (hp₂ := by decide)
+    (ho₁ := ⟨2, rfl⟩) (ho₂ := ⟨3, rfl⟩) (hne := by decide)
+
+-- Specialized to `3 ^ a * 5`, the statement holds for every exponent.
+example (a : ℕ) : ¬ IsDeficientFkPerfect 2 (3 ^ a * 5) :=
+  not_isDeficientFkPerfect_prime_pow_mul (k := 2) (p₁ := 3) (p₂ := 5) (a := a)
+    (hk := by decide) (hp₁ := by decide) (hp₂ := by decide)
+    (ho₁ := ⟨1, rfl⟩) (ho₂ := ⟨2, rfl⟩) (hne := by decide)
+
 end MathlibExtTest.NumberTheory.FkPerfect
