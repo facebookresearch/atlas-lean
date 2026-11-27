@@ -15,7 +15,6 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.RingTheory.PowerSeries.PiTopology
 public import Mathlib.Topology.Instances.Rat
-public import MathlibExt.NumberTheory.EisensteinRamanujanCongruenceEisensteinCongrDeltaMulEisensteinDimTwo
 
 /-!
 # Explicit Ramanujan-type congruences between Eisenstein series and cusp forms (Lu)
