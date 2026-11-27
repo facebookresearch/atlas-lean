@@ -90696,6 +90696,7 @@
 "MetaMathlibExt.count_zmod_two_pow_prod_small_special": "44fabcc8ed1c5cee",
 "MetaMathlibExt.countable_not_type2IrrationalitySequence_floor_pow_two_pow": "6a4dc536a0bcfc7c",
 "MetaMathlibExt.covariance_inner_of_map_eq": "ba255a7c8189a526",
+"MetaMathlibExt.coverCount_cons": "4126ef5c56a673ab",
 "MetaMathlibExt.coverCount_init_add_last": "757c9606bef3eb22",
 "MetaMathlibExt.coverCount_init_add_zsmul_last": "4748dd5c45f720b6",
 "MetaMathlibExt.coverCount_le_one_of_not_mem_oddCombinations": "17a35eb31090e143",
