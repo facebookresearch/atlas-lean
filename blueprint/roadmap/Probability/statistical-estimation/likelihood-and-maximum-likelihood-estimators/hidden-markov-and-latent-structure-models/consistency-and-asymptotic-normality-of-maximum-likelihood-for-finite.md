@@ -1,0 +1,16 @@
+# Consistency and asymptotic normality of maximum likelihood for hidden Markov models
+
+Douc, Moulines and Rydén (2004) consider autoregressive models with Markov regime: a hidden Markov chain $(X_k)$ with transition densities $q_\theta(x, x')$ on a compact state space, and observations $Y_k$ whose conditional density $g_\theta(y_k \mid \bar y_{k-1}, x_k)$ given the regime may depend on $s$ previous observations; hidden Markov models are the case without autoregression. The parameter $\theta$ ranges over a compact set $\Theta \subset \mathbb{R}^p$ (their Section 2, imposed before the assumptions). Let $\hat\theta_{n,x_0}$ maximize the log likelihood conditional on an initial state $x_0$. Under their assumptions (A1)–(A5), which include transition densities bounded away from $0$ and $\infty$ uniformly in $\theta$ and in the states (A1)(a), positive Harris recurrence and aperiodicity (A2), continuity in $\theta$ (A4), and identifiability, $\theta = \theta^*$ if and only if the stationary laws of the observations coincide (A5), the estimator is strongly consistent: $\hat\theta_{n,x_0} \to \theta^*$ almost surely for every $x_0$ (Theorem 1). Under (A1)–(A8), with the true parameter $\theta^*$ in the interior of the parameter space $\Theta$ and a positive definite Fisher information $I(\theta^*)$, $\sqrt n(\hat\theta_{n,x_0} - \theta^*) \to N(0, I(\theta^*)^{-1})$ in distribution (Theorem 4), and Section 7 extends both results to nonstationary observations. They record that Baum and Petrie (1966) had proved consistency and asymptotic normality of the maximum likelihood estimator for hidden Markov models in which both the observed and the hidden variables take finitely many values.
+
+## Expansion
+
+1. The model: autoregressive models with Markov regime, the compact parameter space $\Theta \subset \mathbb{R}^p$, the conditional likelihood, and the assumptions (A1)–(A8).
+2. Forgetting of the initial condition: the deterministic geometric bounds of Lemma 1 and Corollary 1, from the uniform minorization (A1)(a).
+3. Strong consistency (Theorem 1): convergence of the normalized conditional log likelihood to a limit uniquely maximized at $\theta^*$ under (A5).
+4. Asymptotic normality (Theorem 4) for $\theta^* \in \operatorname{int}(\Theta)$: the central limit theorem for the score (Theorem 2) and convergence of the observed information (Theorem 3).
+5. The finite-alphabet case of Baum and Petrie as a specialization, and identifiability results for finite hidden Markov models ([generic identifiability of latent structure models](generic-identifiability-of-latent-structure-models-via-kruskals-theore.md)).
+
+## Sources
+
+- R. Douc, E. Moulines and T. Rydén, Asymptotic properties of the maximum likelihood estimator in autoregressive models with Markov regime, Ann. Statist. 32 (2004), 2254–2304; arXiv:math/0503681, assumptions (A1)–(A5), Theorems 1 and 4. <https://arxiv.org/abs/math/0503681>
+- Original result: L. E. Baum and T. Petrie, Statistical inference for probabilistic functions of finite state Markov chains, Ann. Math. Statist. 37 (1966), 1554–1563. <https://doi.org/10.1214/aoms/1177699147> The finite-state statement follows Douc, Moulines and Rydén, Section 1.
