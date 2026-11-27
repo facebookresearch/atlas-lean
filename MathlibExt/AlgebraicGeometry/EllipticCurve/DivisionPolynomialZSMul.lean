@@ -69,9 +69,10 @@ the theory of elliptic divisibility sequences; that machinery is private to this
 * `WeierstrassCurve.zsmul_eq_smulEval`: for a nonsingular point `(x, y)` over a field, `n • (x, y)`
   is the class of the triple `smulEval W x y n`.
 * `WeierstrassCurve.smul_eq_zero_iff_evalEval_ψ`: `n • (x, y) = 0` exactly when `ψₙ(x, y) = 0`.
-* `WeierstrassCurve.evalEval_ψ_sq` and `WeierstrassCurve.evalEval_φ`: at any pair `(x, y)` that
-  satisfies the curve equation, `ψₙ ^ 2` and `φₙ` agree with the univariate polynomials `ΨSqₙ` and
-  `Φₙ`.
+* `WeierstrassCurve.evalEval_ψ_sq_of_commRing` and `WeierstrassCurve.evalEval_φ_of_commRing`: over
+  a commutative ring, at any pair `(x, y)` that satisfies the curve equation, `ψₙ ^ 2` and `φₙ`
+  agree with the univariate polynomials `ΨSqₙ` and `Φₙ`. `WeierstrassCurve.evalEval_ψ_sq` and
+  `WeierstrassCurve.evalEval_φ` are the same statements over a field.
 * `WeierstrassCurve.isCoprime_Φ_ΨSq`: over an algebraically closed field, `Φₙ` and `ΨSqₙ` are
   coprime for an elliptic curve and `n > 0`.
 -/
@@ -1756,7 +1757,7 @@ variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
 
 /-- **`ψₙ` squared on the curve.** For a Weierstrass curve `W` over a commutative ring and any pair
 `(x, y)` that satisfies the equation of `W`, singular or not, `ψₙ(x, y) ^ 2 = ΨSqₙ(x)`. -/
-public theorem evalEval_ψ_sq {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) :
+public theorem evalEval_ψ_sq_of_commRing {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) :
     (W.ψ n).evalEval x y ^ 2 = (W.ΨSq n).eval x := by
   have hmk : Affine.CoordinateRing.mk W (W.ψ n ^ 2) = Affine.CoordinateRing.mk W (C (W.ΨSq n)) := by
     rw [map_pow, Affine.CoordinateRing.mk_ψ, Affine.CoordinateRing.mk_Ψ_sq]
@@ -1768,7 +1769,7 @@ public theorem evalEval_ψ_sq {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) 
 
 /-- **`φₙ` on the curve.** For a Weierstrass curve `W` over a commutative ring and any pair
 `(x, y)` that satisfies the equation of `W`, singular or not, `φₙ(x, y) = Φₙ(x)`. -/
-public theorem evalEval_φ {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) :
+public theorem evalEval_φ_of_commRing {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) :
     (W.φ n).evalEval x y = (W.Φ n).eval x := by
   obtain ⟨p, hp⟩ := AdjoinRoot.mk_eq_mk.mp (Affine.CoordinateRing.mk_φ W n)
   have h0 : (W.toAffine.polynomial).evalEval x y = 0 := h
@@ -1779,6 +1780,22 @@ public theorem evalEval_φ {x y : R} (h : W.toAffine.Equation x y) (n : ℤ) :
 end Ring
 
 variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F)
+
+omit [DecidableEq F] in
+/-- **`ψₙ` squared on the curve, over a field.** For a Weierstrass curve `W` over a field and a
+pair `(x, y)` that satisfies the equation of `W`, `ψₙ(x, y) ^ 2 = ΨSqₙ(x)`. This is the case of
+`evalEval_ψ_sq_of_commRing` for fields. -/
+public theorem evalEval_ψ_sq {x y : F} (h : W.toAffine.Equation x y) (n : ℤ) :
+    ((W.ψ n).evalEval x y) ^ 2 = (W.ΨSq n).eval x :=
+  evalEval_ψ_sq_of_commRing W h n
+
+omit [DecidableEq F] in
+/-- **`φₙ` on the curve, over a field.** For a Weierstrass curve `W` over a field and a pair
+`(x, y)` that satisfies the equation of `W`, `φₙ(x, y) = Φₙ(x)`. This is the case of
+`evalEval_φ_of_commRing` for fields. -/
+public theorem evalEval_φ {x y : F} (h : W.toAffine.Equation x y) (n : ℤ) :
+    (W.φ n).evalEval x y = (W.Φ n).eval x :=
+  evalEval_φ_of_commRing W h n
 
 /-- **`n`-torsion through `ψₙ`.** A nonsingular point `(x, y)` of a Weierstrass curve `W` over a
 field satisfies `n • (x, y) = 0` exactly when `ψₙ(x, y) = 0`. -/
@@ -1816,6 +1833,8 @@ namespace WeierstrassCurve
 
 open Polynomial
 
+section
+
 variable {F K : Type*} [Field F] [Field K] [Algebra F K] (W : WeierstrassCurve F)
 
 private theorem ΨSq_eval_eq_zero_of_preΨ {m : ℕ} {x₀ : K}
@@ -1833,7 +1852,7 @@ private lemma eval_ne_of_isCoprime {f g : Polynomial K} (h : IsCoprime f g) {x�
 
 variable [IsAlgClosed K]
 
-private theorem isCoprime_ΨSq_succ [W.IsElliptic] (n : ℕ) :
+private theorem isCoprime_ΨSq_succ [DecidableEq K] [W.IsElliptic] (n : ℕ) :
     IsCoprime ((W.baseChange K).ΨSq n) ((W.baseChange K).ΨSq (n + 1)) := by
   classical
   rw [Polynomial.isCoprime_iff_aeval_ne_zero_of_isAlgClosed (k := K) (K := K)]
@@ -1871,9 +1890,14 @@ private theorem isCoprime_ΨSq_succ [W.IsElliptic] (n : ℕ) :
     exact hsub
   exact Affine.Point.some_ne_zero hns hP
 
+end
+
+variable {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
+variable (W : WeierstrassCurve F)
+
 /-- **`Φₙ` and `ΨSqₙ` are coprime.** For an elliptic curve `W` over `F`, an algebraically closed
 field `K` over `F` and `n > 0`, the polynomials `Φₙ` and `ΨSqₙ` of `W` over `K` are coprime. -/
-public theorem isCoprime_Φ_ΨSq [W.IsElliptic] {n : ℕ} (hn : 0 < n) :
+public theorem isCoprime_Φ_ΨSq [IsAlgClosed K] [W.IsElliptic] {n : ℕ} (hn : 0 < n) :
     IsCoprime ((W.baseChange K).Φ n) ((W.baseChange K).ΨSq n) := by
   rw [Polynomial.isCoprime_iff_aeval_ne_zero_of_isAlgClosed (k := K) (K := K)]
   intro x₀

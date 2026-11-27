@@ -24,8 +24,8 @@ private theorem exactSource {F : Type*} [Field F] [DecidableEq F] (W : Weierstra
   W.zsmul_eq_smulEval h n
 
 /-- Consumer of the coprimality of `Φₙ` and `ΨSqₙ`. -/
-private theorem exactSourceCoprime {F K : Type*} [Field F] [Field K] [Algebra F K] [IsAlgClosed K]
-    (W : WeierstrassCurve F) [W.IsElliptic] {n : ℕ} (hn : 0 < n) :
+private theorem exactSourceCoprime {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
+    [IsAlgClosed K] (W : WeierstrassCurve F) [W.IsElliptic] {n : ℕ} (hn : 0 < n) :
     IsCoprime ((W.baseChange K).Φ n) ((W.baseChange K).ΨSq n) :=
   W.isCoprime_Φ_ΨSq hn
 
@@ -42,15 +42,16 @@ example {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F) {x y : F}
     (2 : ℤ) • Affine.Point.some x y h = 0 ↔ W.ψ₂.evalEval x y = 0 := by
   rw [W.smul_eq_zero_iff_evalEval_ψ h, ψ_two]
 
-/-- The case `n = 2` of `evalEval_ψ_sq`, over a commutative ring: `ψ₂(x, y) ^ 2 = Ψ₂Sq(x)`. -/
+/-- The case `n = 2` of `evalEval_ψ_sq_of_commRing`, over a commutative ring:
+`ψ₂(x, y) ^ 2 = Ψ₂Sq(x)`. -/
 example {R : Type*} [CommRing R] (W : WeierstrassCurve R) {x y : R}
     (h : W.toAffine.Equation x y) : W.ψ₂.evalEval x y ^ 2 = W.Ψ₂Sq.eval x := by
-  simpa using W.evalEval_ψ_sq h 2
+  simpa using W.evalEval_ψ_sq_of_commRing h 2
 
-/-- The case `n = 1` of `evalEval_φ`: `φ₁(x, y) = x`. -/
+/-- The case `n = 1` of `evalEval_φ_of_commRing`: `φ₁(x, y) = x`. -/
 example {R : Type*} [CommRing R] (W : WeierstrassCurve R) {x y : R}
     (h : W.toAffine.Equation x y) : (W.φ 1).evalEval x y = x := by
-  simpa using W.evalEval_φ h 1
+  simpa using W.evalEval_φ_of_commRing h 1
 
 end DivisionPolynomialZSMulTest
 
