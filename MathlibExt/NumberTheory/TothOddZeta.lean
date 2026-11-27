@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.NumberTheory.BernoulliPolynomials
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
 import Mathlib.NumberTheory.ZetaValues
@@ -24,12 +25,13 @@ namespace MetaMathlibExt
 
 open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry
 
-namespace hurwitzZeta_three_quarters_two_mul_add_one
-
--- Extend the even-index sequence by zero at odd indices.
-private lemma bernoulli_quarter (k : ℕ) :
+/-- **Bernoulli polynomials at one quarter and Euler numbers.** For every natural number $k$,
+$B_{2k+1}(1/4) = -(2k+1) E_{2k} / 4^{2k+1}$, where $E_{2k}$ is the even-index Euler number
+`chapter5EulerEven k`. -/
+public theorem bernoulli_eval_quarter_eq_chapter5EulerEven (k : ℕ) :
     (Polynomial.bernoulli (2 * k + 1)).eval (1 / 4) =
       -(2 * k + 1 : ℚ) * chapter5EulerEven k / 4 ^ (2 * k + 1) := by
+  -- Extend the even-index sequence by zero at odd indices.
   let E (n : ℕ) := if n % 2 = 0 then chapter5EulerEven (n / 2) else 0
   have hE (n : ℕ) (hn : 0 < n) :
       ∑ j ∈ Finset.range (n / 2 + 1), (n.choose (2 * j) : ℤ) * E (n - 2 * j) = 0 := by
@@ -50,6 +52,8 @@ private lemma bernoulli_quarter (k : ℕ) :
       simp [E, show (n - 2 * j) % 2 ≠ 0 by omega]
   simpa [E] using EulerNumbers.bernoulli_eval_quarter_of_recurrence E
     ⟨by simp [E, chapter5EulerEven_zero], hE⟩ k
+
+namespace hurwitzZeta_three_quarters_two_mul_add_one
 
 private noncomputable def term (s n : ℕ) : ℝ := 1 / (n : ℝ) ^ s
 
@@ -121,7 +125,7 @@ private lemma odd_difference (k : ℕ) (hk : 1 ≤ k) :
       -(s : ℝ) * (chapter5EulerEven k : ℝ) / (4 : ℝ) ^ s := by
     change (Polynomial.map (algebraMap ℚ ℝ) _).eval _ = _
     rw [show (1 / 4 : ℝ) = (algebraMap ℚ ℝ) (1 / 4 : ℚ) by norm_num,
-      Polynomial.eval_map_apply, bernoulli_quarter]
+      Polynomial.eval_map_apply, bernoulli_eval_quarter_eq_chapter5EulerEven]
     simp [s]
   have h := (sine_sum hs).unique
     (hasSum_one_div_nat_pow_mul_sin (k := k) (by omega)

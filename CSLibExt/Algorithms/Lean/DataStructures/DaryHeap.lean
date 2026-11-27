@@ -1248,7 +1248,7 @@ theorem smallerChild_eq_darySmallestChild_two {α : Type u} [LinearOrder α] (a 
   simp only [smallerChild, daryChild, heapLeft, heapRight]
   by_cases hl : 2 * i + 1 < a.size <;> by_cases hr : 2 * i + 2 < a.size <;>
     simp [hl, hr, show 2 * i + 1 + 1 = 2 * i + 2 by omega]
-  all_goals rfl
+  rfl
 
 /-- Binary sift-down is `d`-ary sift-down at arity two, on every array and start index. -/
 theorem siftDown_eq_darySiftDown_two {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
