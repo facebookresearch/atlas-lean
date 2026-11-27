@@ -1,6 +1,6 @@
 # Diffusion theory
 
-The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamics: generator and semigroup, fixation probabilities, absorption and sojourn times, mutation and stationary laws, allele age and the Poisson random field, and fixation in a two-type competitive diffusion whose population size fluctuates.
+The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamics: generator and semigroup, fixation probabilities, absorption and sojourn times, mutation and stationary laws, allele age and the Poisson random field.
 
 - [Wright–Fisher diffusion](wright-fisher-diffusion/README.md)
 - [Diffusion limit of the Wright–Fisher model](diffusion-limit-of-the-wright-fisher-model/README.md)
@@ -26,4 +26,6 @@ The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamic
 
 - [Conditioned Wright–Fisher diffusions](conditioned-wright-fisher-diffusions/README.md)
 - [Numerical analysis of Wright–Fisher equations](numerical-analysis-of-wright-fisher-equations/README.md)
+- [Coupled Wright–Fisher diffusion duality](coupled-wright-fisher-diffusion-duality/README.md)
+The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamics: generator and semigroup, fixation probabilities, absorption and sojourn times, mutation and stationary laws, allele age and the Poisson random field, and fixation in a two-type competitive diffusion whose population size fluctuates.
 - [Fixation under demographic fluctuations](fixation-under-demographic-fluctuations/README.md)
