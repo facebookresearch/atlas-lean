@@ -10,4 +10,4 @@ by a sign, a numerator and a denominator); $U_{\mathbb{C}}$ is the complex matri
 represents. For a $2 \times 2$ Gaussian-rational matrix $U$ and qubit positions $c$ (control) and
 $t$ (target), the controlled gate is $(c, t, e)$, with $e$ the entry list of controlled-$U$ with the
 first qubit of the pair as control, when $c < t$; otherwise it is $(t, c, e')$, with $e'$ the entry
-list of controlled-$U$ with the second qubit as control. The smaller position always comes first.
+list of controlled-$U$ with the second qubit as control. The positions are in nondecreasing order, and the second branch is used when $c = t$: then the result $(c, c, e')$ is an encoding, but not a well-formed gate on any number of qubits.

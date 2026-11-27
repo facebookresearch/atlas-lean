@@ -435,8 +435,8 @@ def cvHighEntries : List (RatEnc × RatEnc) := entriesOf (ctrlHigh vGate)
 def cvDagLowEntries : List (RatEnc × RatEnc) := entriesOf (ctrlLow vDagGate)
 def cvDagHighEntries : List (RatEnc × RatEnc) := entriesOf (ctrlHigh vDagGate)
 
-/-- A controlled gate on control `c` and target `t`, encoded in the unique
-Atlas order `min c t < max c t`. -/
+/-- A controlled gate on control `c` and target `t`, encoded on `(min c t, max c t)`; for `c = t`
+it is `(c, c, entriesOf (ctrlHigh U))`, an encoding but not a well-formed gate. -/
 def controlledGate (U : Matrix (Fin 2) (Fin 2) GRat) (c t : ℕ) : QGate :=
   if c < t then (c, t, entriesOf (ctrlLow U))
   else (t, c, entriesOf (ctrlHigh U))
