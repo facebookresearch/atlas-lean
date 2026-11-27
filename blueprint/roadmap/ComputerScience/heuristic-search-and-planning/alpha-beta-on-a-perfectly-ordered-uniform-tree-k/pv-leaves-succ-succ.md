@@ -1,4 +1,4 @@
-# Pv Leaves succ succ
+# Recurrence for the principal-node count
 
-The principal-node recurrence: `pvLeaves (j + 1) (d + 1) = pvLeaves (j + 1) d + j *
-cutLeaves (j + 1) d`.
+For a branching factor $k \ge 1$ and a height $d$, the Knuth–Moore principal-node count $P(k, d) = k^{\lceil d/2 \rceil} + k^{\lfloor d/2 \rfloor} - 1$ satisfies
+$$P(k, d + 1) = P(k, d) + (k - 1)\, k^{\lfloor d/2 \rfloor}.$$

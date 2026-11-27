@@ -1,3 +1,3 @@
 # Equiv Matrix apply
 
-The matrix entry of `equivMatrix n m` at `(i, j)` is the edge query.
+In the Boolean matrix corresponding to an adjacency matrix $m$ on $n$ vertices, the entry at $(i, j)$ is the edge query of $m$ at $(i, j)$.

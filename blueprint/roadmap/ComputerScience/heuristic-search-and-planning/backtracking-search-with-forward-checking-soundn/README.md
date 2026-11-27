@@ -6,7 +6,7 @@
 - [Forward Check](forward-check.md)
 - [Search Order](search-order.md)
 - [To Total](to-total.md)
-- [Search](search.md)
+- [Backtracking search with forward checking](search.md)
 - [Backtracking with forward checking](backtrack-fc.md)
 
 ## Forward checking

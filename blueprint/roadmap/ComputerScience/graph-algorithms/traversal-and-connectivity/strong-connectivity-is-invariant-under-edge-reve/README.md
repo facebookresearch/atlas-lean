@@ -2,4 +2,3 @@
 
 - [Mutual refl Trans Gen swap iff](mutual-refl-trans-gen-swap-iff.md)
 - [Strongly Connected transpose iff](strongly-connected-transpose-iff.md)
-- [Strongly Connected Setoid transpose](strongly-connected-setoid-transpose.md)

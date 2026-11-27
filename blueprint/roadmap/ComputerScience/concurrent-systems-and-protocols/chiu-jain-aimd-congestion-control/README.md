@@ -20,4 +20,4 @@
 - [Aiad cycle step one](aiad-cycle-step-one.md)
 - [Aiad cycle step two](aiad-cycle-step-two.md)
 - [Aiad cycle fairness](aiad-cycle-fairness.md)
-- [Aiad cycle not tendsto one](aiad-cycle-not-tendsto-one.md)
+- [An AIAD orbit whose fairness does not converge to one](aiad-cycle-not-tendsto-one.md)

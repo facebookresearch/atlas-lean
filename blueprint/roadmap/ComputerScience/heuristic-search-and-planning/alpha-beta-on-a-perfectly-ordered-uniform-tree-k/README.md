@@ -4,7 +4,7 @@
 - [Cut Leaves](cut-leaves.md)
 - [All Leaves](all-leaves.md)
 - [Pv Leaves](pv-leaves.md)
-- [Pv Leaves succ succ](pv-leaves-succ-succ.md)
+- [Recurrence for the principal-node count](pv-leaves-succ-succ.md)
 
 ## Minimax facts
 

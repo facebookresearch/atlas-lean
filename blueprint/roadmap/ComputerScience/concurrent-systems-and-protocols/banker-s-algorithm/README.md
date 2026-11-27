@@ -17,7 +17,7 @@
 - [Letting a process that fits finish preserves safety](safe-iff-safe-erase.md)
 - [Safe iff detect eq nil](safe-iff-detect-eq-nil.md)
 - [Banker's safety algorithm with fuel](safety-check-aux.md)
-- [Safety Check Aux iff reduce Aux](safety-check-aux-iff-reduce-aux.md)
+- [The safety loop agrees with deadlock detection](safety-check-aux-iff-reduce-aux.md)
 - [Banker's safety algorithm](safety-check.md)
 - [Correctness of the safety algorithm](safety-check-iff.md)
 - [Granting a request](grant.md)
