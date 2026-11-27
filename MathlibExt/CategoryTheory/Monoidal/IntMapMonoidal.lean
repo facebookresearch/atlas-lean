@@ -33,7 +33,7 @@ variable (T : SymmetricTrace C) (S : SymmetricTrace D) (F : C ⥤ D) [F.Braided]
 variable (hF : T.Preserves S F)
 
 /-- The lift `map T S F hF` of a trace-preserving braided strong monoidal functor `F` acts
-componentwise on separated morphisms: `mapPair a b ↦ mapPair (F.map a) (F.map b)`. -/
+componentwise on separated morphisms: `mapPair T f g ↦ mapPair S (F.map f) (F.map g)`. -/
 @[simp] theorem map_mapPair {X Y : IntConstruction T}
     (f : X.positive ⟶ Y.positive) (g : Y.negative ⟶ X.negative) :
     (map T S F hF).map (mapPair T f g) = mapPair S (F.map f) (F.map g) := by
@@ -51,8 +51,8 @@ def mapUnitIso : 𝟙_ (IntConstruction S) ≅ (map T S F hF).obj (𝟙_ (IntCon
 
 /-- The tensor comparison `L X ⊗ L Y ≅ L (X ⊗ Y)` of the lift `L = map T S F hF` is the pair
 isomorphism `pairIso S (μIso F X⁺ Y⁺) (μIso F Y⁻ X⁻).symm`, writing `X⁺` and `X⁻` for
-`X.positive` and `X.negative`. The negative component is the inverse of `μIso F` at the
-reversed factors `Y⁻` and `X⁻`; it is not an extra braiding. -/
+`X.positive` and `X.negative`, and `Y⁺` and `Y⁻` likewise. The negative component is the
+inverse of `μIso F` at the reversed factors `Y⁻` and `X⁻`; it is not an extra braiding. -/
 def mapTensorIso (X Y : IntConstruction T) :
     (map T S F hF).obj X ⊗ (map T S F hF).obj Y ≅ (map T S F hF).obj (X ⊗ Y) :=
   pairIso S (μIso F X.positive Y.positive) (μIso F Y.negative X.negative).symm
@@ -95,7 +95,7 @@ def mapTensorIso (X Y : IntConstruction T) :
 
 set_option backward.defeqAttrib.useBackward true in
 /-- For the trace-preserving lift `L = map T S F hF`, the forward map `μ` of `mapTensorIso` is
-natural in arbitrary crossed morphisms `f` and `g`: `(L f ⊗ L g) ≫ μ = μ ≫ L (f ⊗ g)`. -/
+natural in arbitrary crossed morphisms `f` and `g`: `(L f ⊗ₘ L g) ≫ μ = μ ≫ L (f ⊗ₘ g)`. -/
 theorem mapTensorIso_hom_natural {X₁ X₂ Y₁ Y₂ : IntConstruction T}
     (f : X₁ ⟶ Y₁) (g : X₂ ⟶ Y₂) :
     ((map T S F hF).map f ⊗ₘ (map T S F hF).map g) ≫ (mapTensorIso T S F hF Y₁ Y₂).hom =
@@ -121,7 +121,8 @@ theorem mapTensorIso_hom_natural {X₁ X₂ Y₁ Y₂ : IntConstruction T}
 set_option backward.defeqAttrib.useBackward true in
 /-- The strong monoidal structure on the trace-preserving lift `map T S F hF`: the unit
 isomorphism `mapUnitIso` and the tensor isomorphism `mapTensorIso`, with forward maps
-`mapPair S (ε F) (η F)` and `mapPair S (μ F X⁺ Y⁺) (δ F Y⁻ X⁻)`. -/
+`mapPair S (ε F) (η F)` and, at `X` and `Y`,
+`mapPair S (μ F X.positive Y.positive) (δ F Y.negative X.negative)`. -/
 def mapCoreMonoidal : (map T S F hF).CoreMonoidal where
   εIso := mapUnitIso T S F hF
   μIso := mapTensorIso T S F hF
@@ -186,8 +187,8 @@ instance mapBraided : (map T S F hF).Braided where
 
 set_option backward.defeqAttrib.useBackward true in
 /-- Applying `F` before or after the canonical embedding gives isomorphic functors,
-`embedding T ⋙ map T S F hF ≅ F ⋙ embedding S`, with components
-`pairIso S (Iso.refl (F.obj X)) (εIso F)`. -/
+`embedding T ⋙ map T S F hF ≅ F ⋙ embedding S`, with component
+`pairIso S (Iso.refl (F.obj X)) (εIso F)` at `X`. -/
 def embeddingMapIso : embedding T ⋙ map T S F hF ≅ F ⋙ embedding S :=
   NatIso.ofComponents (fun X => pairIso S (Iso.refl (F.obj X)) (εIso F)) (by
     intro X Y f

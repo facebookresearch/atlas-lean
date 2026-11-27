@@ -122,10 +122,10 @@ instance mapCompIso_hom_isMonoidal :
     rfl
 
 /-- Associativity of `mapCompIso` for a third such functor `H : E ⥤ B`, `hH : R.Preserves Q H`.
-It compares two composites `L((F ⋙ G) ⋙ H) ≅ L(F) ⋙ (L(G) ⋙ L(H))`: the comparisons
-`mapCompIso` followed by the associator of the lifts `Functor.associator (L F) (L G) (L H)`,
-and the lift `mapIso (Functor.associator F G H)` of the input functors' associator followed by
-the comparisons. -/
+It states that two composites `L((F ⋙ G) ⋙ H) ≅ L(F) ⋙ (L(G) ⋙ L(H))` are equal: the
+comparisons `mapCompIso` followed by the associator of the lifts
+`Functor.associator (L F) (L G) (L H)`, and the lift `mapIso (Functor.associator F G H)` of the
+input functors' associator followed by the comparisons. -/
 theorem mapCompIso_assoc (Q : SymmetricTrace B) (H : E ⥤ B) [H.Braided]
     (hH : R.Preserves Q H) :
     mapCompIso T R Q (F ⋙ G) H (hF.comp hG) hH ≪≫

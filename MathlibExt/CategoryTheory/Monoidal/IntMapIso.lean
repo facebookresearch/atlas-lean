@@ -131,8 +131,9 @@ set_option backward.defeqAttrib.useBackward true in
 
 set_option backward.defeqAttrib.useBackward true in
 /-- Lifting commutes with composition of monoidal natural isomorphisms `i : F ≅ G` and
-`j : G ≅ H`: `mapIso (i ≪≫ j) = mapIso i ≪≫ mapIso j`, where each lift has crossed component
-`i.hom.app X.positive ⊗ₘ i.inv.app X.negative` at `X`. -/
+`j : G ≅ H`: `mapIso (i ≪≫ j) = mapIso i ≪≫ mapIso j`, where the lift `mapIso k` of a monoidal
+natural isomorphism `k` has crossed component `k.hom.app X.positive ⊗ₘ k.inv.app X.negative` at
+`X` (`hom_mapIso_hom_app`). -/
 theorem mapIso_trans (hH : T.Preserves S H) (j : G ≅ H) [NatTrans.IsMonoidal j.hom] :
     mapIso T S hF hH (i ≪≫ j) = mapIso T S hF hG i ≪≫ mapIso T S hG hH j := by
   apply Iso.ext

@@ -38,8 +38,9 @@ def mapCrossed {A B U V : C} (f : A ⊗ V ⟶ B ⊗ U) :
   simp [mapCrossed]
 
 /-- For a braided strong monoidal functor `F` that preserves the traces, `hF : T.Preserves S F`,
-the crossed map `mapCrossed F f = μ F A V ≫ F.map f ≫ δ F B U` sends feedback composition for
-`T` to feedback composition for `S`. -/
+the crossed map `mapCrossed F f = μ F A V ≫ F.map f ≫ δ F B U` of `f : A ⊗ V ⟶ B ⊗ U` sends
+feedback composition for `T` to feedback composition for `S`: for `g : B ⊗ W ⟶ E ⊗ V`,
+`mapCrossed F (compose T f g) = compose S (mapCrossed F f) (mapCrossed F g)`. -/
 theorem mapCrossed_compose (hF : T.Preserves S F) {A B E U V W : C}
     (f : A ⊗ V ⟶ B ⊗ U) (g : B ⊗ W ⟶ E ⊗ V) :
     mapCrossed F (compose T f g) = compose S (mapCrossed F f) (mapCrossed F g) := by
