@@ -54,7 +54,7 @@ def depthTourAux : Tree V → Nat → List (V × Nat) → List (V × Nat)
 def depthTour (d : Nat) (t : Tree V) : List (V × Nat) :=
   depthTourAux t d []
 
-/-- The accumulator tour appends the depth-annotated tour onto its
+/-- The accumulator tour is the depth-annotated tour followed by the
 accumulator. -/
 theorem depthTourAux_eq (t : Tree V) (d : Nat) (acc : List (V × Nat)) :
     depthTourAux t d acc = depthTour d t ++ acc := by

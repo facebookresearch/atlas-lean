@@ -58,3 +58,18 @@ example : (∑ s ∈ nColorPartitions 4, (s.toFinset.filter fun p => 2 ≤ s.cou
   decide +kernel
 
 end MetaMathlibExt.nColor_partsMultiplicityGe_generatingFunction
+
+namespace MetaMathlibExt
+
+-- When m = t, only the partition consisting of t ones contributes.
+example : (∑ s ∈ nColorPartitions 2, (s.toFinset.filter fun p => 2 ≤ s.count p).card) = 1 := by
+  rw [nColor_partsMultiplicityGe_eq_sum 2 2 (by decide) (by decide)]
+  decide +kernel
+
+-- At m = 5 and t = 2, size one contributes C(3), size two contributes 2 * C(1),
+-- and size three is too large. This checks the multiplier and the nonintegral cutoff.
+example : (∑ s ∈ nColorPartitions 5, (s.toFinset.filter fun p => 2 ≤ s.count p).card) = 8 := by
+  rw [nColor_partsMultiplicityGe_eq_sum 5 2 (by decide) (by decide)]
+  decide +kernel
+
+end MetaMathlibExt

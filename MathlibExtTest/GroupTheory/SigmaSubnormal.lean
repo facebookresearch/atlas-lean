@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.GroupTheory.Subgroup.Simple
 import MathlibExt.GroupTheory.SigmaSubnormal
 
 open MathlibExt.GroupTheory.KourovkaNotebookShared
@@ -41,5 +42,30 @@ example {G : Type*} [Group G] (H : Subgroup G) [H.Normal] :
   intro i hi
   obtain rfl : i = 0 := by omega
   exact ⟨le_top, Or.inl (inferInstanceAs (H.subgroupOf ⊤).Normal)⟩
+
+-- In a simple group, `⊤ / ⊥` is a chief factor.
+example {G : Type*} [Group G] [IsSimpleGroup G] : IsChiefFactor (⊤ : Subgroup G) ⊥ :=
+  ⟨inferInstance, inferInstance, bot_lt_top,
+    fun N _ _ _ => IsSimpleGroup.eq_bot_or_eq_top_of_normal N⟩
+
+-- A chief factor is a proper step: `A / A` never is one.
+example {G : Type*} [Group G] (A : Subgroup G) : ¬ IsChiefFactor A A :=
+  fun h => h.2.2.1.ne rfl
+
+-- With one block containing every prime, every group is σ-soluble.
+example {G : Type*} [Group G] : IsSigmaSoluble (fun _ : Unit => {p : ℕ | p.Prime}) G :=
+  fun _ _ _ => ⟨(), fun _ hp _ => hp⟩
+
+-- For the singleton partition, the chief factor `⊤ / ⊥` of a simple group whose order has two
+-- prime divisors is not σ-primary, so such a group is not σ-soluble.
+example {G : Type*} [Group G] [IsSimpleGroup G] (h2 : 2 ∣ Nat.card G) (h3 : 3 ∣ Nat.card G) :
+    ¬ IsSigmaSoluble singletons G := by
+  intro h
+  obtain ⟨i, hi⟩ := h ⊤ ⊥ ⟨inferInstance, inferInstance, bot_lt_top,
+    fun N _ _ _ => IsSimpleGroup.eq_bot_or_eq_top_of_normal N⟩
+  rw [Subgroup.relIndex_bot_left, Subgroup.card_top] at hi
+  have e₂ : 2 = i.val := hi 2 Nat.prime_two h2
+  have e₃ : 3 = i.val := hi 3 Nat.prime_three h3
+  omega
 
 end MathlibExt.GroupTheory.SigmaSubnormalJoinConjugateKourovka19Problem84Wanted
