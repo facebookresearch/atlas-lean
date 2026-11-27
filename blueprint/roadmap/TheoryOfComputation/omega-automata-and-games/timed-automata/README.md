@@ -20,4 +20,3 @@ all Boolean operations. Emptiness is decided by the region construction, in
 - [Inclusion in the language of a deterministic timed automaton is PSPACE-complete](inclusion-in-a-deterministic-timed-automaton-is-pspace-complete.md)
 - [Zones and difference-bound matrices](zones-and-difference-bound-matrices.md)
 - [Timed games](timed-games.md)
-- [Timed reachability games are solved by a backward fixed point](timed-reachability-games-are-solved-by-a-backward-fixed-point.md)

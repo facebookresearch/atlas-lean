@@ -15,7 +15,7 @@ Read for Adam, the record gives a deterministic safety automaton over priorities
 automaton is a strong $(n, d)$-[separator](separating-automata-for-parity-games.md) with at most $1 + (d + 1)^{\lceil \log_2 n \rceil + 2}$ states (the top entry is $0$ before rejection, and one
 rejecting sink suffices), which is $n^{\log_2 d + O(1)}$ when $d \le 2n$:
 
-- it accepts every path of an $n$-vertex parity graph all of whose cycles have even maximum;
+- it accepts every path of an $n$-vertex parity graph (priorities on edges, as in the cited theorem) all of whose cycles have even maximum;
 - it rejects every word whose largest priority seen infinitely often is odd.
 
 Eve's own record is no separator: for the least $\ell$ with $2^\ell > 2n$, on $2^\ell$ copies of $2$ followed by $1$ forever, she is declared the winner although the word does not satisfy parity.
