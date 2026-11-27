@@ -11,6 +11,13 @@ normalizing terms.
 
 - [The intersection type system D](intersection-type-system-d.md)
 - [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
+- [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
+
+## Proof depends on
+
+- [Adequacy lemma for system D](adequacy-lemma-for-system-d.md)
+- [β-normal terms are typable in system D](normal-terms-are-typable-in-system-d.md)
+- [Typing substituted terms with intersections](typing-substituted-terms-with-intersections.md)
 
 ## Sources
 
