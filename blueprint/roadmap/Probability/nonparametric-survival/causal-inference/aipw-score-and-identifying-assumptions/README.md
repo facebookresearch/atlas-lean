@@ -15,5 +15,3 @@
 - [Correct propensity: the augmentation has conditional mean zero](cond-exp-propensity-residual-mul.md)
 - [Correct outcome regression, treated arm: the weighted residual has conditional mean zero](cond-exp-outcome-residual-treated.md)
 - [Correct outcome regression, control arm](cond-exp-outcome-residual-control.md)
-- [Cond Exp outcome Residual treated](cond-exp-outcome-residual-treated-2.md)
-- [Cond Exp outcome Residual control](cond-exp-outcome-residual-control-2.md)

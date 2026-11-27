@@ -1,5 +1,0 @@
-# Cond Exp outcome Residual control
-
-Let $\mu$ be a finite measure on $\Omega$, $X : \Omega \to \mathcal{X}$ measurable, and write $\mathbb{E}[\,\cdot \mid X]$ for conditional expectation given $\sigma(X)$. Let $T \subseteq \Omega$ be measurable and $Y, Y_0, Y_1 : \Omega \to \mathbb{R}$. Assume the identifying assumptions for the average treatment effect: consistency $Y = \mathbf{1}_T Y_1 + \mathbf{1}_{T^c} Y_0$ at every point; mean exchangeability $\mathbb{E}[\mathbf{1}_T Y_1 \mid X] = \mathbb{E}[\mathbf{1}_T \mid X]\, \mathbb{E}[Y_1 \mid X]$ and $\mathbb{E}[\mathbf{1}_{T^c} Y_0 \mid X] = \mathbb{E}[\mathbf{1}_{T^c} \mid X]\, \mathbb{E}[Y_0 \mid X]$ $\mu$-a.e.; and strong overlap $\varepsilon_0 \le \mathbb{E}[\mathbf{1}_T \mid X] \le 1 - \varepsilon_0$ $\mu$-a.e. for some $\varepsilon_0 > 0$. Let $Y_0$ be integrable and $e, m_0 : \mathcal{X} \to \mathbb{R}$ measurable with $e(x) \le 1 - \varepsilon$ for every $x$ and some $\varepsilon > 0$. If $\mathbb{E}[Y_0 \mid X] = m_0(X)$ $\mu$-a.e., then
-
-$$\mathbb{E}\left[\mathbf{1}_{T^c} \, \frac{Y - m_0(X)}{1 - e(X)} \;\middle|\; X\right] = 0 \quad \mu\text{-a.e.}$$
