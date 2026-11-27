@@ -17,6 +17,7 @@ public import MathlibExt.Combinatorics.Enumerative.GaleShapleyOneRound
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingDisjointProfiles
 public import MathlibExt.Combinatorics.Enumerative.GaleShapleySameTaste
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingHellCouples
+public import MathlibExt.Combinatorics.Enumerative.StableMatchingOutcastProfiles
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingSequences
 public import MathlibExt.Combinatorics.Enumerative.StableMatchingSoulmates
 
@@ -111,20 +112,6 @@ public theorem_wanted mutually_latin_soulmate_profiles_card (n k : ℕ) :
           (∀ r : Fin n, Function.Injective fun j => P.2 j r) ∧ soulmatePairCount P = k} : ℚ) =
       (latinSquareCount n : ℚ) ^ 2 / (n ! : ℚ) * (n.choose k : ℚ) *
         ∑ i ∈ range (n - k + 1), (-1 : ℚ) ^ i * ((n - k)! : ℚ) / (i ! : ℚ)
-
-/-- **Profiles with a pair of outcasts.** In a preference profile for $n$ men and $n$ women, a man
-$i$ and a woman $j$ form a pair of outcasts when every man other than $i$ ranks $j$ last and every
-woman other than $j$ ranks $i$ last. The number of preference profiles with at least one pair of
-outcasts is $14$ if $n = 2$ and $n^4 ((n-1)!)^{2n}$ if $n \ne 2$ (this is $0$ for $n = 0$).
-
-Source: Borodin et al., *Sequences of the Stable Matching Problem*, Journal of
-Integer Sequences 27 (2024), Article 24.2.2, Proposition 14
-(`jis-2024-24.2.2-prop-14`). -/
-public theorem_wanted outcast_profiles_card (n : ℕ) :
-    Nat.card {P : PreferenceProfile n // ∃ i j : Fin n,
-        (∀ i' : Fin n, i' ≠ i → manRank P i' j = n - 1) ∧
-          (∀ j' : Fin n, j' ≠ j → womanRank P j' i = n - 1)} =
-      if n = 2 then 14 else n ^ 4 * ((n - 1)!) ^ (2 * n)
 
 end
 

@@ -58,6 +58,17 @@ Source: Spreafico and Catarino, INTEGERS 26 (2026), Article A48, Definition 1. -
 theorem hyperLeonardo_succ (r n : ℕ) :
     hyperLeonardo (r + 1) n = ∑ k ∈ Finset.range (n + 1), hyperLeonardo r k := rfl
 
+/-- **Recurrence across consecutive orders of hyper-Leonardo numbers.** For all natural numbers
+$r \ge 1$ and $n \ge 1$, the hyper-Leonardo numbers $Le^{(r)}_n$ satisfy
+$Le^{(r)}_n = Le^{(r)}_{n-1} + Le^{(r-1)}_n$.
+
+Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
+Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 3, Equation (4)
+(`integers-2026-A48-prop-3`). -/
+theorem hyperLeonardo_succ_succ (r n : ℕ) :
+    hyperLeonardo (r + 1) (n + 1) = hyperLeonardo (r + 1) n + hyperLeonardo r (n + 1) := by
+  rw [hyperLeonardo_succ r (n + 1), hyperLeonardo_succ r n, Finset.sum_range_succ]
+
 /-- **First hyper-Leonardo numbers of order one.** The hyper-Leonardo numbers $Le^{(1)}_n$ of
 order $1$ satisfy $Le^{(1)}_0 = 1$, $Le^{(1)}_1 = 2$, $Le^{(1)}_2 = 5$ and $Le^{(1)}_3 = 10$.
 
