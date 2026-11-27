@@ -17,3 +17,4 @@
 - [The Bulmer effect: selection reduces additive variance](bulmer-effect.md)
 
 - [Neutral drift of the mean of an additive trait under the infinitesimal model](neutral-drift-of-a-quantitative-trait-mean.md)
+- [Infinitesimal inheritance kernels in hermaphroditic populations](infinitesimal-inheritance-kernels-in-hermaphroditic-populations/README.md)

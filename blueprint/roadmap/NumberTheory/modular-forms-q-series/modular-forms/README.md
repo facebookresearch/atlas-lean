@@ -27,3 +27,4 @@ Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruenc
 - [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](hecke-operators-of-level-n.md)
 - [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](hecke-endomorphisms-of-the-modular-jacobian.md)
 - [Shimura's abelian variety attached to a weight-two eigenform](shimura-abelian-variety-of-an-eigenform.md)
+- [Modular parametrization of an elliptic curve over $\mathbb{Q}$](modular-parametrization-of-an-elliptic-curve.md)
