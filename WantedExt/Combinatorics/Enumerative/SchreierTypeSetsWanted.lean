@@ -58,6 +58,7 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.RefinedSchreierMinimum
 public import MathlibExt.Combinatorics.Enumerative.SchreierSparseCount
 public import MathlibExt.Combinatorics.Enumerative.StrongSchreierCount
 
@@ -125,19 +126,6 @@ def partitionDistinctMinPartCount (n l : ℕ) : ℕ :=
   (Nat.Partition.restricted n (fun x => l ≤ x) ∩
     Nat.Partition.distincts n).card
 
-/-- **Partitions with a given gap between the two largest parts.** For natural numbers $n$,
-$\ell$, $k$ and $q$, $|E_{n,\ell,k,q}|$ is the number of partitions of $n$ into exactly $k$ parts,
-all at least $\ell$, whose largest part exceeds the second largest part (counted with
-multiplicity) by exactly $q$; such a partition has at least two parts, so the count is $0$ for
-$k < 2$. -/
-noncomputable def partitionMinPartGapCount (n l k q : ℕ) : ℕ := by
-  classical
-  exact ((Nat.Partition.restricted n (fun x => l ≤ x)).filter
-    (fun P => P.parts.card = k ∧
-      ∃ b : ℕ, ∃ rest : Multiset ℕ,
-        P.parts = (b + q) ::ₘ b ::ₘ rest ∧
-          ∀ x ∈ rest, x ≤ b)).card
-
 /-- **Partitions avoiding parts from 2 up to a bound.** For natural numbers $n$ and $\ell$,
 $|G_{n,\ell}|$ is the number of partitions of $n$ none of whose parts lies in
 $\{2, \dots, \ell\}$. -/
@@ -166,19 +154,6 @@ contained in $\{0, \dots, n + 1\}$. -/
 def refinedSchreierCount (n l : ℕ) : ℕ :=
   ((Finset.Icc 0 (n + 1)).powerset.filter
     (IsRefinedSchreier n l)).card
-
-/-- **Refined Schreier sets with a given size and minimum.** For natural numbers $n$ and
-$\ell$, let $F_{n,\ell}$ be the family of finite sets $A$ of natural numbers such that $A$ has
-largest element $n + 1$ and at least three elements, $A$ is sparse (the differences of
-consecutive elements, in increasing order, are non-decreasing) and $\ell$-strong Schreier
-($\ell|A| + 1 \le a + \ell$ for every $a \in A$), and the second and third largest elements
-$b > a$ of $A$ satisfy $n + 1 + a = 2b$. For natural numbers $k$ and $q$, $|F_{n,\ell,k,q}|$
-is the number of sets in $F_{n,\ell}$ with exactly $k$ elements whose smallest element is
-$q$. -/
-def refinedSchreierCardMinCount (n l k q : ℕ) : ℕ :=
-  ((Finset.Icc 0 (n + 1)).powerset.filter
-    (fun A => IsRefinedSchreier n l A ∧ A.card = k ∧
-      q ∈ A ∧ ∀ x ∈ A, q ≤ x)).card
 
 /-- **Schreier sparse sets with given minimum and maximum.** For natural numbers $m$ and $n$
 with $m + 1 \le n$, the number of Schreier sparse sets $F \subseteq \{1, \dots, n\}$ with
@@ -256,25 +231,6 @@ theorem_wanted strongSchreierCardCount_eq (m n l : ℕ) (hn : 1 ≤ n)
     (hm : 1 ≤ m) :
     strongSchreierCardCount n l m =
       compositionMinPartExactCount (n + l) (l + 1) m
-
-/-- **Refined Schreier sets with a given minimum and partitions with a given top gap.** Let
-$n$, $\ell$, $k$ and $q$ be natural numbers with $n \ge \ell + 1$, $k \ge 2$ and $q \ge 1$.
-Let $F_{n,\ell}$ be the family of finite sets $A$ of natural numbers such that $A$ has largest
-element $n + 1$ and at least three elements, $A$ is sparse (the differences of consecutive
-elements, in increasing order, are non-decreasing) and $\ell$-strong Schreier
-($\ell|A| + 1 \le a + \ell$ for every $a \in A$), and the second and third largest elements
-$b > a$ of $A$ satisfy $n + 1 + a = 2b$. Then the number $|F_{n,\ell,k+1,\ell k+q}|$ of sets
-in $F_{n,\ell}$ with exactly $k + 1$ elements and smallest element $\ell k + q$ equals the
-number $|E_{n,\ell+1,k,q-1}|$ of partitions of $n$ into exactly $k$ parts, all at least
-$\ell + 1$, whose largest part exceeds the second largest part (counted with multiplicity) by
-exactly $q - 1$.
-
-Source: Kevin Beanland and Hùng Việt Chu, "On Schreier-Type
-Sets, Partitions, and Compositions", Lemma 11. -/
-theorem_wanted refinedSchreierCardMinCount_eq (n l k q : ℕ)
-    (hn : l + 1 ≤ n) (hk : 2 ≤ k) (hq : 1 ≤ q) :
-    refinedSchreierCardMinCount n l (k + 1) (l * k + q) =
-      partitionMinPartGapCount n (l + 1) k (q - 1)
 
 /-- **Partitions into large parts and the refined Schreier family.** Let $n$ and $\ell$ be
 natural numbers with $n \ge \ell + 1$. Let $F_{n,\ell}$ be the family of finite sets $A$ of
