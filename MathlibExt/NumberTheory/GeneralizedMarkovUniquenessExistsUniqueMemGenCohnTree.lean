@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import MathlibExt.NumberTheory.GeneralizedMarkovCharacteristic
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
@@ -24,11 +25,12 @@ import Mathlib.Tactic.Ring
 # Vertices of generalized Cohn trees
 
 Generalized Cohn triples and trees, built on the generalized Cohn matrices of
-`MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul`, and uniqueness of the tree
-parameter and path of a triple whose middle Markov entry is largest.
+`MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul`, the fact that both children of a
+generalized Cohn triple are generalized Cohn triples, and uniqueness of the tree parameter and
+path of a triple whose middle Markov entry is largest.
 
 Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 3.17.
+Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 3.5 and Proposition 3.17.
 -/
 
 namespace MetaMathlibExt
@@ -432,6 +434,25 @@ private theorem cohn_right_parent {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2
   · simp only [genCohnStep]
     rw [← he]
 
+/-- **Parent triples of a generalized Cohn triple.** Let $k$ be a natural number and let $S$ be
+the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$. Let $(P, Q, R)$ be a $k$-generalized
+Cohn triple associated with $(a, b, c)$, and let $b' = \lfloor (a^2 + kac + c^2)/b \rfloor$. Then
+$(P, R, P^{-1}(R + S))$ is a $k$-generalized Cohn triple associated with $(a, c, b')$, and
+$((P + S)R^{-1}, P, R)$ is a $k$-generalized Cohn triple associated with $(b', a, c)$.
+
+Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
+Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.11. -/
+public theorem IsGenCohnTriple.parent {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2) ℤ}
+    (h : IsGenCohnTriple k P Q R a b c) :
+    IsGenCohnTriple k P R (P⁻¹ * (R + genCohnS k)) a c ((a ^ 2 + k * a * c + c ^ 2) / b) ∧
+      IsGenCohnTriple k ((P + genCohnS k) * R⁻¹) P R ((a ^ 2 + k * a * c + c ^ 2) / b) a c := by
+  have hPinv : P⁻¹ = P.adjugate := by
+    rw [Matrix.inv_def, h.1.1, Ring.inverse_one, one_smul]
+  have hRinv : R⁻¹ = R.adjugate := by
+    rw [Matrix.inv_def, h.2.2.1.1, Ring.inverse_one, one_smul]
+  rw [hPinv, hRinv]
+  exact ⟨(cohn_left_parent h).1, (cohn_right_parent h).1⟩
+
 private theorem det_sub_cohnS (k : ℕ) (P : Matrix (Fin 2) (Fin 2) ℤ) :
     (P - genCohnS k).det = P.det - k * P.trace +
       (3 * (k : ℤ) ^ 2 + 3 * k) * P 0 1 + (k : ℤ) ^ 2 := by
@@ -530,6 +551,20 @@ private theorem cohn_right_child {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2)
     ring
   simpa only [cohnFlip_invol, cohnFlip_sub, cohnFlip_mul, cohnFlip_S, he] using
     cohn_flip (cohn_left_child (cohn_flip h))
+
+/-- **Children of a generalized Cohn triple.** Let $k$ be a natural number, let $S$ be the integer
+matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$, and let $(P, Q, R)$ be a $k$-generalized Cohn
+triple associated with $(a, b, c)$. Then $(P, PQ - S, Q)$ is a $k$-generalized Cohn triple
+associated with $(a, \lfloor (a^2 + kab + b^2)/c \rfloor, b)$, and $(Q, QR - S, R)$ is a
+$k$-generalized Cohn triple associated with $(b, \lfloor (b^2 + kbc + c^2)/a \rfloor, c)$.
+
+Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
+Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 3.5. -/
+public theorem IsGenCohnTriple.step {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2) ℤ}
+    (h : IsGenCohnTriple k P Q R a b c) :
+    IsGenCohnTriple k P (P * Q - genCohnS k) Q a ((a ^ 2 + k * a * b + b ^ 2) / c) b ∧
+      IsGenCohnTriple k Q (Q * R - genCohnS k) R b ((b ^ 2 + k * b * c + c ^ 2) / a) c :=
+  ⟨cohn_left_child h, cohn_right_child h⟩
 
 private def CohnVertex (k : ℕ)
     (T : Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ) : Prop :=
