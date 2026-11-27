@@ -15,3 +15,5 @@
 - [When the first Borsuk failure dimension is infinite](first-borsuk-failure-dimension-eq-top-if.md)
 - [Two-distance sets](is-two-distance-set.md)
 - [Two-distance Borsuk number in dimension $n$](two-distance-borsuk-number.md)
+
+- [Rank-one projector set with no ten smaller-diameter pieces](rank-one-projectors-nine-dimensional-counterexample.md)

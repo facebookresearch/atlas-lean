@@ -8,6 +8,7 @@ Assume no four points of $P$ lie on a common circle and no three on a common lin
 
 - [Delaunay triangulation](delaunay-triangulation.md)
 - [Average formula for the expected time over random orderings](../../randomized-algorithms/average-case-running-time/expected-time-uniform-permutation.md)
+- [Existence and uniqueness of the Delaunay triangulation](existence-and-uniqueness-of-the-delaunay-triangulation.md)
 
 ## Proof depends on
 
