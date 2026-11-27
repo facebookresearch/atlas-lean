@@ -73,10 +73,13 @@ def IsExtensionOfAbelianVarietyByTorus (G : Over (Spec (.of k))) [GrpObj G] : Pr
     IsTorus T ∧ IsMonHom i ∧ IsMonHom p ∧ Flat p.left ∧ Surjective p.left ∧
       IsPullback i (toUnit T) p η[B.model]
 
-/-- `j : G⁰ → G` is the identity component of a group scheme `G` over a field: a homomorphism
-that is an open immersion whose image is the connected component of the identity point. -/
-def IsIdentityComponent {G₀ G : Over (Spec (.of k))} [GrpObj G₀] [GrpObj G] (j : G₀ ⟶ G) :
-    Prop :=
+/-- `j : G⁰ → G` is the identity component of a group scheme `G` locally of finite type over a
+field: a homomorphism that is an open immersion whose image is the connected component of the
+identity point. For such `G` that component is open, since `G` is locally Noetherian and hence
+locally connected (Stacks Project, Tags 01T6, 01OZ, 04MF and 04ME), and it underlies the identity
+subgroup scheme `G⁰` of Tag 0B7R. Without finite type the component need not be open. -/
+def IsIdentityComponent {G₀ G : Over (Spec (.of k))} [GrpObj G₀] [GrpObj G]
+    [LocallyOfFiniteType G.hom] (j : G₀ ⟶ G) : Prop :=
   IsOpenImmersion j.left ∧ IsMonHom j ∧
     ∀ x : (𝟙_ (Over (Spec (.of k)))).left,
       Set.range j.left = connectedComponent (η[G].left x)

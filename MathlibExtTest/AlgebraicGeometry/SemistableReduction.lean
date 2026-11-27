@@ -13,7 +13,8 @@ public import MathlibExt.AlgebraicGeometry.SemistableReduction
 # Semistable reduction probes
 
 The split torus of rank zero carries its Hopf-algebra group law by instance search, and the
-identity of the trivial group scheme over a field is its identity component.
+identity of the trivial group scheme over a field, which is locally of finite type, is its identity
+component.
 -/
 
 @[expose] public noncomputable section
@@ -31,6 +32,11 @@ variable (k : Type) [Field k]
 example : GrpObj (splitTorus k 0) := inferInstance
 
 example : IsCommMonObj (splitTorus k 0) := inferInstance
+
+/-- The trivial group scheme `Spec k` is locally of finite type over `k`. -/
+instance locallyOfFiniteType_unit : LocallyOfFiniteType (𝟙_ (Over (Spec (.of k)))).hom := by
+  change LocallyOfFiniteType (𝟙 (Spec (.of k)))
+  infer_instance
 
 /-- The identity of the trivial group scheme `Spec k` over a field is its identity component. -/
 theorem isIdentityComponent_id_unit : IsIdentityComponent (𝟙 (𝟙_ (Over (Spec (.of k))))) := by

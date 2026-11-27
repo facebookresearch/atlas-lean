@@ -11,9 +11,11 @@ $G$ over $k$ is an [extension of an abelian variety by a torus](is-extension-of-
 if there are a torus $T$, an abelian variety $B$ over $k$ (an
 [abelian scheme](../../not-yet-classified/abelian-schemes/abelian-scheme.md) over $\operatorname{Spec} k$)
 and homomorphisms $T \to G \to B$ such that $G \to B$ is flat and surjective and $T$ is its kernel,
-the fibre of $G \to B$ over the zero section of $B$. A homomorphism $G^0 \to G$ is the
-[identity component](is-identity-component.md) of $G$ if it is an open immersion whose image is the
-connected component of the identity point of $G$.
+the fibre of $G \to B$ over the zero section of $B$. For a group scheme $G$ locally of finite type
+over $k$, a homomorphism $G^0 \to G$ is the [identity component](is-identity-component.md) of $G$ if
+it is an open immersion whose image is the connected component of the identity point of $G$; for such
+$G$ that component is open, as $G$ is locally Noetherian and hence locally connected, and it underlies
+the identity subgroup scheme of $G$ (Stacks Project, Tags 01T6, 01OZ, 04MF, 04ME and 0B7R).
 
 Let $R$ be a discrete valuation ring with fraction field $K$ and residue field $k$, and let $X$ be an
 abelian variety over $K$. A Néron model of $X$ is a smooth separated $R$-scheme $\mathcal{X}$ of
@@ -23,7 +25,8 @@ extends uniquely to an $R$-morphism $Y \to \mathcal{X}$; it carries a
 [commutative group law](../../not-yet-classified/neron-models/group-structure.md) extending that of
 $X$. The abelian variety $X$ has [semistable reduction](has-semistable-reduction.md) at $R$ if it has
 a Néron model $\mathcal{X}$, with such a group law, such that the identity component $X_v^0$ of the
-special fibre $X_v = \mathcal{X} \otimes_R k$ is an extension of an abelian variety by a torus. Néron
+special fibre $X_v = \mathcal{X} \otimes_R k$, a group scheme of finite type over $k$, is an extension of
+an abelian variety by a torus. Néron
 models and their group laws are unique up to unique isomorphism, so this does not depend on the
 choice. For a discrete valuation $v$ on a field, semistable reduction at $v$ means semistable reduction
 at its valuation ring.
@@ -120,6 +123,10 @@ A good expansion states and links the following steps of Conrad's proof, which t
   (Néron's existence theorem: a smooth separated $R$-scheme of finite type), Example 1.2 and
   Remark 1.3, pp. 2–3 (uniqueness, and finite type is not a formal consequence of the mapping
   property).
+- The Stacks Project, <https://stacks.math.columbia.edu>: Tag 01T6 (Morphisms, Lemma 29.15.6), Tag 01OZ
+  (Properties, Lemma 28.5.5), Tag 04MF (Topology, Lemma 5.9.6), Tag 04ME (Topology, Lemma 5.7.11) and
+  Tag 0B7R (Groupoids, Proposition 39.7.11), for the identity component of a group scheme locally of
+  finite type over a field.
 - J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008),
   <https://www.jmilne.org/math/CourseNotes/AV.pdf>: Chapter I, Remark 17.2 and Theorem 17.3
   (statement: an abelian variety acquires semistable reduction after a finite extension).
