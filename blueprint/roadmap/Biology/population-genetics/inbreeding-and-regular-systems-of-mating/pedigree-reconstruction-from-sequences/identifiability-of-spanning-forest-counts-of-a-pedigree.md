@@ -14,7 +14,7 @@ the sum running over isomorphism classes of undirected $X$-forests of $P$; in pa
 2. (Forests are identifiable under mutation.) For every $\mu \in (0, 1/|\Sigma|)$ and undirected $X$-forests $T_1, T_2$ with a bounded number of edges, if $\mathbb P\{C\mid T_1, \mathrm M(\mu)\} = \mathbb P\{C\mid T_2, \mathrm M(\mu)\}$ for all characters $C$, then $T_1 \cong T_2$.
 3. (Counting forest sequences.) Let $P$ and $Q$ be pedigrees with $e(P) = e(Q) = 2e$ arcs and let $\mathbf T = (T_1,\dots,T_m)$ be a sequence of undirected $X$-forests with consecutive terms non-isomorphic. For every $\mu \in (0,1/|\Sigma|)$ there is $p_0 = p_0(e,m,\mu) \in (0,1)$ such that for all $p\in(0,p_0)$: if $P$ and $Q$ induce the same distribution on alignments of every length $L$ under RM$(p,\mu)$, then $n(\mathbf G > \mathbf T : P) = n(\mathbf G > \mathbf T : Q)$, where $n(\mathbf G > \mathbf T : P)$ counts sequences of spanning forests $G_1,\dots,G_m$ of $P$ with $T_u(G_i)\cong T_i$ and consecutive $G_i$ differing by a single recombination. In particular $P$ and $Q$ have the same number of spanning forests of each $X$-forest type.
 
-Consequently, pairs of pedigrees that are not distinguished by their collections of extant subpedigrees can be distinguished from the alignment distribution under RM.
+In particular, the non-reconstructible pedigree pairs of Thatte (2013) that are not distinguished by their collections of extant subpedigrees are distinguished from the alignment distribution under RM (Thatte Corollary 5.15), although equal $X$-forest counts alone do not distinguish all pedigree pairs.
 
 ## Depends on
 

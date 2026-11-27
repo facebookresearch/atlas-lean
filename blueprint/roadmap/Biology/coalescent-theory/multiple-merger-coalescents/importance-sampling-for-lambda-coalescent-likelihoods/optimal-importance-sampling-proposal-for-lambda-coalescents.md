@@ -10,9 +10,9 @@ $$\mathbb Q^*(H_i \mid H_{i+1}) \propto \begin{cases} (n_{i+1})_h\,\theta_l\,\df
 
 ranging over all mutations of present haplotypes and all mergers of $k \in \{2,\dots,(n_{i+1})_h\}$ lineages of a common type $h$. Unlike Kingman's coalescent, multiple mergers require the multivariate CSD $\pi((k-1)\mathbf e_h \mid \cdot)$; because its argument contains a single type, it can be factorized into univariate CSDs without breaking exchangeability.
 
-**Approximate CSD.** Let a single extra lineage, traced backward, mutate at locus $l$ at rate $\theta_l$ via $P^{(l)}$ and be absorbed into the fixed *trunk* $\mathbf n$ (a degenerate ancestry with no dynamics) at rate $\frac{\Lambda(\{0\})n}{2} + \frac{1}{n+1}\sum_{k=2}^{n+1}\binom{n+1}{k}\lambda_{n+1,k}$, copying a uniformly chosen trunk lineage. Its type law $\hat\pi^K(\mathbf e_h \mid \mathbf n)$ solves the linear system
+**Approximate CSD.** Let a single extra lineage, traced backward, mutate at locus $l$ at rate $\theta_l$ via $P^{(l)}$ and be absorbed into the fixed *trunk* $\mathbf n$ (a degenerate ancestry with no dynamics) at rate $\frac{1}{n+1}\sum_{k=2}^{n+1}\binom{n+1}{k}\lambda_{n+1,k}$ (where $\lambda_{n+1,2}$ already includes the Kingman atom $\Lambda(\{0\})$), copying a uniformly chosen trunk lineage. Its type law $\hat\pi^K(\mathbf e_h \mid \mathbf n)$ solves the linear system
 
-$$\Big[\tfrac{\Lambda(\{0\})n}{2} + \theta + \tfrac{1}{n+1}\textstyle\sum_{k=2}^{n+1}\binom{n+1}{k}\lambda_{n+1,k}\Big]\hat\pi^K(\mathbf e_h \mid \mathbf n) = \tfrac{\Lambda(\{0\})n_h}{2} + \textstyle\sum_{l}\theta_l\sum_{a\in E_l}P^{(l)}_{a\,h[l]}\hat\pi^K(\mathbf e_{S^a_l(h)} \mid \mathbf n) + \tfrac{n_h}{n(n+1)}\textstyle\sum_{k=2}^{n+1}\binom{n+1}{k}\lambda_{n+1,k},$$
+$$\Big[\theta + \tfrac{1}{n+1}\textstyle\sum_{k=2}^{n+1}\binom{n+1}{k}\lambda_{n+1,k}\Big]\hat\pi^K(\mathbf e_h \mid \mathbf n) = \textstyle\sum_{l}\theta_l\sum_{a\in E_l}P^{(l)}_{a\,h[l]}\hat\pi^K(\mathbf e_{S^a_l(h)} \mid \mathbf n) + \tfrac{n_h}{n(n+1)}\textstyle\sum_{k=2}^{n+1}\binom{n+1}{k}\lambda_{n+1,k},$$
 
 and is the stationary distribution of a Markov chain on $\mathcal H$. Plugging $\hat\pi^K$ into $\mathbb Q^*$ gives an approximately optimal IS proposal; with $\Lambda = \delta_0$ it reduces to the Stephens–Donnelly approximation for Kingman's coalescent.
 
