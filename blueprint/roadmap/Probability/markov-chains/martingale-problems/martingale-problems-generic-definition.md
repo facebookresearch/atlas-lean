@@ -5,8 +5,10 @@ Let $E$ be a metric space (for example a compact one such as $[0,1]$ or a simple
 1. $X$ is $(\mathcal F_t)$-adapted, with paths in a stated class: continuous, or càdlàg;
 2. $X_0$ has law $\mu$;
 3. for every $f\in\mathcal D(A)$,
-$$M^f_t=f(X_t)-f(X_0)-\int_0^tAf(X_s)\,ds$$
-is an $(\mathcal F_t)$-martingale.
+
+    $$M^f_t=f(X_t)-f(X_0)-\int_0^tAf(X_s)\,ds$$
+
+    is an $(\mathcal F_t)$-martingale.
 
 A solution with respect to some filtration is a solution with respect to the natural filtration of $X$. The **graph** of $A$ is $\{(f,Af):f\in\mathcal D(A)\}$; a martingale problem may equally be posed for a set of pairs $(f,g)$, with $g$ in place of $Af$. **Uniqueness** holds for $(A,\mu)$ if any two solutions, possibly on different probability spaces, have the same finite-dimensional distributions; the martingale problem is **well posed** in the stated path class if for every initial law $\mu$ a solution exists and uniqueness holds.
 

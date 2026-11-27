@@ -20,3 +20,4 @@
 - [Equivalence of small-step and big-step semantics](terminates-iff-big-step.md)
 - [Small-step termination is deterministic](deterministic-2.md)
 - [Hoare validity via small-step termination](iff-terminates.md)
+- [Transition systems for operational semantics](transition-systems-for-operational-semantics.md)

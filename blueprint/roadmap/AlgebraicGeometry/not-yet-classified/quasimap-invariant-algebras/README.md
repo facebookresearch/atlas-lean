@@ -1,0 +1,15 @@
+# Quasimap Invariant Algebras
+
+- [Invariant Piece](invariant-piece.md)
+- [Invariant Grading](invariant-grading.md)
+- [Invariant Algebra Model](invariant-algebra-model.md)
+- [Git Scheme](git-scheme.md)
+- [Affine Quotient](affine-quotient.md)
+- [Git Affine Projection](git-affine-projection.md)
+- [Invariant Scalar Map](invariant-scalar-map.md)
+- [Git Evaluation](git-evaluation.md)
+- [Irrelevant Covers](irrelevant-covers.md)
+- [Irrelevant Open Cover](irrelevant-open-cover.md)
+- [From Of Irrelevant Cover](from-of-irrelevant-cover.md)
+- [Irrelevant Covers of map eq top](irrelevant-covers-of-map-eq-top.md)
+- [Git Orbit Map](git-orbit-map.md)

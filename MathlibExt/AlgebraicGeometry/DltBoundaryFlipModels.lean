@@ -72,7 +72,11 @@ structure DltWitness (P : LogPair k n) where
   exceptional : ∀ p : PrimePoint model.variety,
     IsExceptional model.map p → 0 < logDiscrepancy model p
 
-/-- Dlt is existence of the actual log-resolution witness, including coefficient-one boundaries. -/
+/-- A log pair $(X, Δ)$ is dlt if it has a `DltWitness`: its boundary coefficients are at most one,
+and it has a proper birational model $Y → X$, with $Y$ smooth over $k$, on which the reduced union
+of the locus where $Y → X$ is not an isomorphism over $X$ and the preimage of the support of $Δ$ has
+strict normal crossings, and on which every exceptional prime divisor (one whose image does not have
+codimension one) has positive log discrepancy. -/
 def IsDlt (P : LogPair k n) : Prop := Nonempty (DltWitness P)
 
 /-- Plt tests all actual exceptional divisors and retains coefficient-one original
@@ -105,7 +109,9 @@ structure BoundaryFlip {S : Over (Spec (.of k))} {P : LogPair k n}
   boundary : ∀ p, source.boundary (primeEquiv p) = P.boundary p
   adjointAmple : IsRelativelyAmpleR map source.adjoint
 
-/-- Positive source inclusion: every existing klt flip supplies the general boundary geometry. -/
+/-- The boundary-preserving flip of `C` underlying a klt flip `F`: the same flipped pair, map,
+identification and boundary data, with the model calculus of the flipped pair taken from its klt
+condition. -/
 def ofKltFlip {S : Over (Spec (.of k))} {P : LogPair k n}
     {q : P.variety.X ⟶ S} {v : RelativeN1 q} {C : RelativeContraction P q v}
     (F : RelativeFlip C) : BoundaryFlip C where

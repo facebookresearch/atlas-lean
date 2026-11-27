@@ -93,9 +93,12 @@ def degreeTwoPower {C : Type*} [Category* C] [HasShift C ℤ]
       (shiftFunctorAdd' C (2 : ℤ) (2 * (k : ℤ)) (2 * ((k + 1 : ℕ) : ℤ))
         (by omega)).inv.app K
 
-/-- Comparison inputs for the fixed hyperplane pullback/direct-image
-pipeline. Every field is an isomorphism of actual objects; no arbitrary
-functor, zero model, or relative Lefschetz assertion is supplied. -/
+/-- For a relative projective embedding $E$ of $f : X ⟶ Y$ into $Y ×_ℂ ℙ^n$ and $d, k ∈ ℕ$:
+comparison isomorphisms between rational complexes on the spaces of complex points, namely
+between the two presentations of $ℚ[d]$ and of $ℚ[d + 2k]$ on $ℙ^n$ (the constant sheaf placed in
+degree $-d$, resp. $-(d + 2k)$, and the shift of the constant sheaf in degree zero), between the
+inverse images of these along the map $X ⟶ ℙ^n$ of $E$ and the corresponding complexes on $X$,
+and between $Rf_* ℚ[d + 2k]$ and $(Rf_* ℚ[d])[2k]$. -/
 structure HyperplaneComparisons {X Y : ComplexScheme} {f : X ⟶ Y} {n : ℕ}
     (E : RelativeProjectiveEmbedding f n) (d k : ℕ) where
   /-- `ℚ[d]` on `ℙⁿ` in its two presentations. -/

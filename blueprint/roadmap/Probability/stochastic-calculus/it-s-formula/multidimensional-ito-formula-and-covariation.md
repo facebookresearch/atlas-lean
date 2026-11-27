@@ -7,10 +7,14 @@ $$X^i_t=X^i_0+\int_0^tb^i_s\,ds+\sum_{k=1}^m\int_0^t\sigma^{ik}_s\,dB^k_s,\qquad
 with progressively measurable $b^i$ and $\sigma^{ik}$ satisfying $\int_0^t|b^i_s|\,ds<\infty$ and $\int_0^t(\sigma^{ik}_s)^2\,ds<\infty$ almost surely for every $t$. Then:
 
 1. **Covariation.** For all $i,j$ and $t$, the sums $\sum_k(X^i_{t_{k+1}}-X^i_{t_k})(X^j_{t_{k+1}}-X^j_{t_k})$ over partitions of $[0,t]$ with mesh tending to $0$ converge in probability to
-$$[X^i,X^j]_t=\int_0^t(\sigma_s\sigma_s^{\mathsf T})_{ij}\,ds .$$
+
+    $$[X^i,X^j]_t=\int_0^t(\sigma_s\sigma_s^{\mathsf T})_{ij}\,ds .$$
+
 2. **Itô's formula.** For every $f\in C^2(\mathbb R^d)$, almost surely for all $t\ge0$,
-$$f(X_t)=f(X_0)+\sum_{i=1}^d\int_0^t\partial_if(X_s)\,dX^i_s+\frac12\sum_{i,j=1}^d\int_0^t\partial_{ij}f(X_s)\,d[X^i,X^j]_s,$$
-where $\int\partial_if(X)\,dX^i=\int\partial_if(X)b^i\,ds+\sum_k\int\partial_if(X)\sigma^{ik}\,dB^k$.
+
+    $$f(X_t)=f(X_0)+\sum_{i=1}^d\int_0^t\partial_if(X_s)\,dX^i_s+\frac12\sum_{i,j=1}^d\int_0^t\partial_{ij}f(X_s)\,d[X^i,X^j]_s,$$
+
+    where $\int\partial_if(X)\,dX^i=\int\partial_if(X)b^i\,ds+\sum_k\int\partial_if(X)\sigma^{ik}\,dB^k$.
 
 Example: if $X$ takes values in the simplex and $\sigma\sigma^{\mathsf T}(X_s)=\bigl(X^i_s(\delta_{ij}-X^j_s)\bigr)_{ij}$, as for the [K-allele Wright–Fisher diffusion](../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-selection-and-mutat/k-allele-wright-fisher-generator-on-the-simplex.md), then $d[X^i,X^j]_t=X^i_t(\delta_{ij}-X^j_t)\,dt$ and the second-order term of the formula is the diffusion part of that generator.
 

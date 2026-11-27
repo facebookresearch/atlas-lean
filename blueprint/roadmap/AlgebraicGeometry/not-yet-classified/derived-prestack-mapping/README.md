@@ -1,0 +1,18 @@
+# Derived Prestack Mapping
+
+- [Prestack](prestack.md)
+- [Lift Simplicial](lift-simplicial.md)
+- [Affine Mapping](affine-mapping.md)
+- [To Simplicial](to-simplicial.md)
+- [Mapping](mapping.md)
+- [Mapping Bifunctor](mapping-bifunctor.md)
+- [Mapping Zero](mapping-zero.md)
+- [Affine Yoneda](affine-yoneda.md)
+- [Affine Times](affine-times.md)
+- [Is Injectively Fibrant](is-injectively-fibrant.md)
+- [Fibrant Replacement](fibrant-replacement.md)
+- [Mapping Prestack Functor](mapping-prestack-functor.md)
+- [Mapping Prestack Functor obj](mapping-prestack-functor-obj.md)
+- [Mapping Prestack Model](mapping-prestack-model.md)
+- [Algebra prestack fibrant replacement](algebra-prestack-fibrant-replacement.md)
+- [Derived mapping prestack](derived-mapping-prestack.md)

@@ -30,69 +30,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Topology.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibility
-
-set_option autoImplicit false
-
-@[expose] public section
-
-namespace MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted
-
-/-- **The minimum of $\pi(n)/n$ over $1 \le n < N$ tends to zero.** Let $\pi(n)$ denote the Pisano
-period of $n$. As $N \to \infty$, the minimum of the real numbers $\pi(n)/n$ over the integers
-$1 \le n \le N - 1$ (defined for $N \ge 2$) tends to $0$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Corollary 1. -/
-theorem_wanted tendsto_iInf_pisanoPeriod_div_atTop
-    :
-    Filter.Tendsto
-      (fun N : ℕ =>
-        ⨅ n : {n : ℕ // n ∈ Finset.Icc 1 (N - 1)},
-          (pisanoPeriod n.1 : ℝ) / n.1)
-      Filter.atTop (nhds 0)
-
-/-- **Sum of the first $p$ Fibonacci numbers modulo a prime $p$.** Let $p > 5$ be a prime, let
-$F_i$ denote the $i$-th Fibonacci number, with $F_1 = F_2 = 1$, and let
-$S = F_1 + F_2 + \dots + F_p$. If $p \equiv 1$ or $4 \pmod 5$, then $S$ leaves remainder $1$ on
-division by $p$; if $p \equiv 2$ or $3 \pmod 5$, then $S$ leaves remainder $p - 2$ on division
-by $p$; and in every case $p$ does not divide $S$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Theorem 1. -/
-theorem_wanted sum_fib_mod_prime_eq_and_not_dvd
-    (p : ℕ) (hp : p.Prime) (hp5 : 5 < p) :
-    ((p % 5 = 1 ∨ p % 5 = 4) →
-        (∑ i ∈ Finset.Icc 1 p, Nat.fib i) % p = 1) ∧
-      ((p % 5 = 2 ∨ p % 5 = 3) →
-        (∑ i ∈ Finset.Icc 1 p, Nat.fib i) % p = p - 2) ∧
-      ¬p ∣ (∑ i ∈ Finset.Icc 1 p, Nat.fib i)
-
-/-- **Odd Fibonacci numbers $F_n$ with $F_{F_n + 2} \equiv 1 \pmod{F_n}$.** Let $F_m$ denote the
-$m$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. If $p$ is an odd prime with
-$p \equiv 2 \pmod 3$ and $p \equiv 2$ or $3 \pmod 5$, and $n = 2p$ or $n = 4p$, then $F_n$ is odd
-and $F_{F_n + 2}$ leaves remainder $1$ on division by $F_n$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Theorem 2. -/
-theorem_wanted fib_two_mul_prime_odd_and_fib_fib_add_two_mod
-    (p n : ℕ) (hp : p.Prime) (hpodd : p % 2 = 1)
-    (hp3 : p % 3 = 2) (hp5 : p % 5 = 2 ∨ p % 5 = 3)
-    (hn : n = 2 * p ∨ n = 4 * p) :
-    Nat.fib n % 2 = 1 ∧
-      Nat.fib (Nat.fib n + 2) % Nat.fib n = 1
-
-/-- **Infinitely many odd $k$ divide the sum of the first $k$ Fibonacci numbers.** Let $F_i$ denote
-the $i$-th Fibonacci number, with $F_1 = F_2 = 1$. There are infinitely many odd positive integers
-$k$ such that $k$ divides $F_1 + F_2 + \dots + F_k$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Corollary 2. -/
-theorem_wanted infinite_setOf_odd_dvd_sum_fib
-    :
-    {k : ℕ | Odd k ∧ k ∣ (∑ i ∈ Finset.Icc 1 k, Nat.fib i)}.Infinite
-
-end MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted
+public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityPrimeIndices
+public import MathlibExt.NumberTheory.Recurrences.OddFibonacciSumDivisibility
+public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilitySumFibModPrimeEqAndNotDvd
+public import MathlibExt.NumberTheory.Recurrences.PisanoPeriodMinRatio

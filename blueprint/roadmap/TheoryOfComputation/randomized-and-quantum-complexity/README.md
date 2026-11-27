@@ -13,6 +13,7 @@ Probabilistic classes (RP, BPP), Arthur–Merlin and interactive proofs (AM, MA,
 - [Adleman's theorem: BPP is contained in P/poly](adleman.md)
 - [IP = PSPACE (Shamir)](ip-eq-pspace.md)
 - [Sipser-Gács-Lautemann: BPP is in $\Sigma_2^p$ and $\Pi_2^p$](sipser-gacs-lautemann.md)
+- [Interactive proofs](interactive-proofs/README.md)
 
 - [Deterministic polynomial identity testing](deterministic-polynomial-identity-testing.md)
 

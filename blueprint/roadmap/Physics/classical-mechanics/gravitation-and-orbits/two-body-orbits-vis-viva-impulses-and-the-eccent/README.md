@@ -91,3 +91,5 @@
 - [Equal-speed chord: the squared velocity change is 2 s² (1 − cos i)](speed-sq-sub-of-speed-sq-eq.md)
 - [For s ≥ 0 and 0 ≤ i ≤ π, √(2 s² (1 − cos i)) = 2 s sin(i / 2)](sqrt-two-mul-sq-mul-one-sub-cos.md)
 - [Equal-speed plane change of transverse velocities costs 2 v sin(i / 2)](impulse-magnitude-plane-change.md)
+
+- [The Hohmann transfer minimizes two-impulse delta-v](the-hohmann-transfer-minimizes-two-impulse-delta-v.md)

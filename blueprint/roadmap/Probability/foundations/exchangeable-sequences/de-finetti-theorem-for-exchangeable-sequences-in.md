@@ -3,10 +3,13 @@
 Let $S$ be a standard Borel space and $X=(X_1,X_2,\ldots)$ an infinite sequence of $S$-valued random variables on a probability space $(\Omega,\mathcal F,\mathbb P)$. Suppose $X$ is exchangeable: for every permutation $\pi$ of $\{1,2,\ldots\}$ that moves only finitely many points, $(X_{\pi(1)},X_{\pi(2)},\ldots)$ has the same law as $X$. Let $\mathcal T=\bigcap_n\sigma(X_n,X_{n+1},\ldots)$ be the tail $\sigma$-algebra. Then:
 
 1. There is a random probability measure $\Lambda$ on $S$, that is, a $\mathcal T$-measurable map from $\Omega$ to the space of probability measures on $S$ with its usual $\sigma$-algebra, such that $X$ is conditionally independent and identically distributed given $\mathcal T$ with directing law $\Lambda$: for every $n$ and all Borel sets $B_1,\ldots,B_n\subseteq S$,
-$$\mathbb P(X_1\in B_1,\ldots,X_n\in B_n\mid\mathcal T)=\prod_{i=1}^n\Lambda(B_i)\qquad\text{almost surely}.$$
-$\Lambda$ is almost surely unique, and $\Lambda=\mathbb P(X_1\in\cdot\mid\mathcal T)$ as a regular conditional distribution.
+
+    $$\mathbb P(X_1\in B_1,\ldots,X_n\in B_n\mid\mathcal T)=\prod_{i=1}^n\Lambda(B_i)\qquad\text{almost surely}.$$
+
+    $\Lambda$ is almost surely unique, and $\Lambda=\mathbb P(X_1\in\cdot\mid\mathcal T)$ as a regular conditional distribution.
 2. For any Polish topology on $S$ that generates its Borel $\sigma$-algebra, the empirical measures converge weakly to $\Lambda$ almost surely:
-$$\frac1n\sum_{i=1}^n\delta_{X_i}\Longrightarrow\Lambda\qquad\text{almost surely.}$$
+
+    $$\frac1n\sum_{i=1}^n\delta_{X_i}\Longrightarrow\Lambda\qquad\text{almost surely.}$$
 
 Clause 1 needs only the standard Borel structure; clause 2 needs the choice of a compatible Polish topology.
 

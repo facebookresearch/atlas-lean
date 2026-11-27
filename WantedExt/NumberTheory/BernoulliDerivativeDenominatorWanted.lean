@@ -11,25 +11,17 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.Radical.Basic
 public import Mathlib.RingTheory.UniqueFactorizationDomain.Nat
+public import MathlibExt.NumberTheory.Bernoulli.DifferenceDenominatorLCM
+public import MathlibExt.NumberTheory.Bernoulli.KellnerSondowBernoulliDenominator
 public import MathlibExt.NumberTheory.Bernoulli.OddRadical
+public import MathlibExt.NumberTheory.Bernoulli.PolynomialDenominatorRadical
+public import MathlibExt.NumberTheory.BernoulliDerivativeDenominatorBernoulliDerivativeIntegralIff
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Polynomial UniqueFactorizationMonoid
-
-/-- **Product formula for the denominator of $B_n(x) - B_n$.** Let $n \ge 1$, let $B_n(x)$ be
-the $n$-th Bernoulli polynomial and $B_n = B_n(0)$ the $n$-th Bernoulli number, and write
-$s_p(n)$ for the sum of the base-$p$ digits of $n$. Then $\mathbb{D}_n$, the product of the
-primes $p$ with $s_p(n) \ge p$, equals the denominator of the polynomial $B_n(x) - B_n$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 2,
-definition of `𝔻_n` and equation (2.3), quoting Kellner (2017), Section 5. -/
-public theorem_wanted bernoulliDiffDenominator_eq_polynomialDenominator (n : ℕ) (hn : 1 ≤ n) :
-    bernoulliDiffDenominator n =
-      polynomialDenominator (Polynomial.bernoulli n - C (_root_.bernoulli n))
 
 /-- **Kellner's large-prime conjectures imply the Bernoulli derivative conjectures.** For
 $n \in \mathbb{N}$ let $\mathbb{D}^{+}_n$ be the product of the primes $p > \sqrt{n}$ whose
@@ -76,48 +68,6 @@ public theorem_wanted bernoulli_integral_derivative_succ_prime_and_large :
     (∀ n ∈ bernoulliIntegralDerivativeIndices 1, (n + 1).Prime) ∧
     ∀ n ∈ bernoulliIntegralDerivativeIndices 1,
       n ∉ ({1, 2, 4, 6, 10, 12, 28, 30, 36, 60} : Set ℕ) → 10 ^ 7 < n
-
-/-- **Denominators of Bernoulli polynomials are even.** Let $n \ge 1$. Write $\mathfrak{D}_n$ for
-the denominator of the Bernoulli polynomial $B_n(x)$, $\mathcal{D}_n$ for the denominator of
-$S_n(x) = (B_{n+1}(x) - B_{n+1}) / (n + 1)$, where $B_{n+1}$ is the Bernoulli number,
-$\operatorname{rad}(m)$ for the product of the primes dividing $m$, and $\mathbb{D}^{\perp}_n$ for
-the product of the primes $p \nmid n$ whose base-$p$ digit sum $s_p(n)$ satisfies $s_p(n) \ge p$.
-Then $\mathfrak{D}_n = \operatorname{rad}(\mathcal{D}_n)$; $\mathfrak{D}_n$ is even; some
-coefficient of $B_n(x)$ is not an integer; $\mathbb{D}^{\perp}_n$ is even if $n \ge 3$ is odd;
-and $\mathbb{D}^{\perp}_n$ is odd if $n = 1$ or $n$ is even.
-
-Part (iii) of Corollary 8 is printed as "otherwise, $\mathbb{D}^{\perp}_n$ is even", which fails
-at $n = 2$, where $\mathbb{D}^{\perp}_2 = 1$; the proof in the paper shows
-$\mathbb{D}^{\perp}_1 = 1$ and $2 \nmid \mathbb{D}^{\perp}_n$ for even $n$, and the statement
-above follows that proof.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Corollary 8
-(`jis-2024-24.2.8-cor-8`). -/
-public theorem_wanted bernoulli_polynomial_denominator_rad_even (n : ℕ) (hn : 1 ≤ n) :
-    polynomialDenominator (Polynomial.bernoulli n) =
-        radical (polynomialDenominator
-          (C ((n : ℚ) + 1)⁻¹ * (Polynomial.bernoulli (n + 1) - C (_root_.bernoulli (n + 1))))) ∧
-      Even (polynomialDenominator (Polynomial.bernoulli n)) ∧
-      (∃ i, ((Polynomial.bernoulli n).coeff i).den ≠ 1) ∧
-      (3 ≤ n → Odd n → Even (bernoulliDiffDenominatorCoprimePart n)) ∧
-      (n = 1 ∨ Even n → Odd (bernoulliDiffDenominatorCoprimePart n))
-
-/-- **Integrality of the derivative of a Bernoulli polynomial.** Let $n \ge 1$, let $B_m(x)$
-denote the $m$-th Bernoulli polynomial, write $s_p(n)$ for the sum of the base-$p$ digits of $n$,
-and let $\mathbb{D}^\perp_n$ be the product of the primes $p$ with $p \nmid n$ and
-$s_p(n) \ge p$. Then $B_n'(x)$ has integer coefficients if and only if $\mathbb{D}^\perp_n = 1$,
-and $\mathbb{D}^\perp_n = 1$ if and only if the denominator of $B_{n-1}(x)$ equals the radical
-$\operatorname{rad}(n)$. Moreover, if $B_n'(x)$ has integer coefficients, then $n + 1$ is prime.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Theorem 9
-(`jis-2024-24.2.8-thm-9`). -/
-public theorem_wanted bernoulli_derivative_integral_iff (n : ℕ) (hn : 1 ≤ n) :
-    (n ∈ bernoulliIntegralDerivativeIndices 1 ↔ bernoulliDiffDenominatorCoprimePart n = 1) ∧
-    (bernoulliDiffDenominatorCoprimePart n = 1 ↔
-      polynomialDenominator (Polynomial.bernoulli (n - 1)) = radical n) ∧
-    (n ∈ bernoulliIntegralDerivativeIndices 1 → (n + 1).Prime)
 
 /-- **Indices with $\mathbb{D}_n = \operatorname{rad}(n + 1)$.** Write $s_p(m)$ for the sum of
 the base-$p$ digits of $m$, let $\mathbb{D}_m$ be the product of the primes $p$ with
@@ -192,24 +142,6 @@ public theorem_wanted bernoulliIntegralDerivativeIndices_finite_and_mono :
     (∀ k : ℕ, 1 ≤ k → (bernoulliIntegralDerivativeIndices k).Finite) ∧
     ∀ k : ℕ, 1 ≤ k →
       bernoulliIntegralDerivativeIndices k ⊆ bernoulliIntegralDerivativeIndices (k + 1)
-
-/-- **Parity, radical divisibility and an lcm recursion for $\mathbb{D}_n$.** Write $s_p(m)$ for
-the sum of the base-$p$ digits of $m$, let $\mathbb{D}_m$ be the product of the primes $p$ with
-$s_p(m) \ge p$, and let $\mathbb{D}^\perp_m$ be the product of the primes $p$ with $p \nmid m$
-and $s_p(m) \ge p$. Let $n \ge 1$. Then $\mathbb{D}_n$ is odd if and only if $n = 2^e$ for some
-$e \ge 0$. If $n + 1$ is not prime, then the radical $\operatorname{rad}(n + 1)$ divides both
-$\mathbb{D}_n$ and $\mathbb{D}^\perp_n$. If $n \ge 3$ is odd, then
-$\mathbb{D}_n = \operatorname{lcm}(\mathbb{D}_{n+1}, \operatorname{rad}(n + 1))$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Lemma 16
-(`jis-2024-24.2.8-lem-16`). -/
-public theorem_wanted bernoulliDiffDenominator_parity_radical_lcm (n : ℕ) (hn : 1 ≤ n) :
-    (Odd (bernoulliDiffDenominator n) ↔ ∃ e, n = 2 ^ e) ∧
-    (¬ (n + 1).Prime → radical (n + 1) ∣ bernoulliDiffDenominator n ∧
-      radical (n + 1) ∣ bernoulliDiffDenominatorCoprimePart n) ∧
-    (3 ≤ n → Odd n →
-      bernoulliDiffDenominator n = Nat.lcm (bernoulliDiffDenominator (n + 1)) (radical (n + 1)))
 
 /-- **$\mathbb{D}^+_n$ eventually exceeds every fixed rising product.** Write $s_p(n)$ for the sum
 of the base-$p$ digits of $n$ and let $\mathbb{D}^+_n$ be the product of the primes $p$ with

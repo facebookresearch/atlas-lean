@@ -82,8 +82,13 @@ def testRestriction {Y : Over S} (R : Model Y) (F : Y.left.Modules)
   let e := eqToHom (congrArg (fun f => (Scheme.Modules.pullback f).obj F) (R.testMap_comp h))
   (e.val.app (op (⊤ : ((pointScheme R.stack).obj a).Opens))).hom (v.hom t)
 
-/-- The source-complete module dictionary, normalized on all affine tests
-and both module and base morphisms. Existence is source integration. -/
+/-- A dictionary between quasicoherent modules on the stack $\mathcal X$ of a model `R` of $Y$ (a
+stack over $S$ whose fibred category is identified with schemes over $Y$, compatibly with the
+projections to $S$) and quasicoherent modules on $Y$: an equivalence
+`QCoh R.stack ≌ SchemeQCoh Y.left`, with, for every module $M$ and every affine point $a$ of
+$\mathcal X$, a linear isomorphism between $M(a)$ and the global sections of the pullback of the
+corresponding module on $Y$ along the test map of $a$, natural in $M$ and compatible with
+restriction along morphisms of affine points. -/
 structure ModuleDictionary {Y : Over S} (R : Model Y) where
   equivalence : QCoh R.stack ≌ SchemeQCoh Y.left
   sections : ∀ (M : QCoh R.stack) (a : AffinePoint R.stack),

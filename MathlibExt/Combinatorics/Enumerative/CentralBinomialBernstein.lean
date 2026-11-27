@@ -38,6 +38,47 @@ private theorem coeff_pow_add_C_mul_X (n : ℕ) (a b : ℂ) (p : ℂ[X]) :
     coeff_C_mul, coeff_mul_X_pow', ite_eq_left (Nat.sub_le _ _), Nat.sub_sub_self hkn]
   ring
 
+/-- **Reflection symmetry of the central binomial polynomial sum.** For every natural number $n$
+and every complex $x$,
+$$\sum_{k=0}^{n} (-1)^{n-k} \binom{2k}{k} 2^{-2k} \binom{n}{k} (1-x)^{n-k} =
+\sum_{k=0}^{n} (-1)^k \binom{2k}{k} 2^{-2k} \binom{n}{k} x^{n-k}.$$
+
+Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
+Sums*, INTEGERS 26 (2026), Article A19, Corollary 5 (`integers-2026-A19-cor-5`). -/
+public theorem sum_centralBinom_choose_one_sub_pow_symm (n : ℕ) (x : ℂ) :
+    ∑ k ∈ range (n + 1),
+        (-1) ^ (n - k) * ((2 * k).choose k : ℂ) / 2 ^ (2 * k) * (n.choose k : ℂ) *
+          (1 - x) ^ (n - k) =
+      ∑ k ∈ range (n + 1),
+        (-1) ^ k * ((2 * k).choose k : ℂ) / 2 ^ (2 * k) * (n.choose k : ℂ) * x ^ (n - k) := by
+  -- The two sums are middle coefficients, using squares centered at −1 and 1.
+  have hfour : C (1 / 4 : ℂ) * 4 = 1 := by
+    rw [← map_ofNat C, ← map_mul, ← map_one C]
+    norm_num
+  have hquad : C (1 / 4 : ℂ) * (1 + X) ^ 2 + C (x - 1) * X =
+      C (1 / 4 : ℂ) * (X + C (-1)) ^ 2 + C x * X := by
+    calc
+      _ = C (1 / 4 : ℂ) * (X + C (-1)) ^ 2 + C x * X + (C (1 / 4 : ℂ) * 4 - 1) * X := by
+        simp only [map_sub, map_neg, map_one]
+        ring
+      _ = _ := by rw [hfour, sub_self, zero_mul, add_zero]
+  have hscale (k : ℕ) : (1 / 4 : ℂ) ^ k = (2 ^ (2 * k))⁻¹ := by
+    rw [pow_mul, show (2 : ℂ) ^ 2 = 4 by norm_num, one_div, inv_pow]
+  calc
+    _ = ((C (1 / 4 : ℂ) * (1 + X) ^ 2 + C (x - 1) * X) ^ n).coeff n := by
+      rw [coeff_pow_add_C_mul_X]
+      apply sum_congr rfl
+      intro k _
+      rw [← pow_mul, coeff_one_add_X_pow, hscale, show x - 1 = -1 * (1 - x) by ring, mul_pow]
+      ring
+    _ = ((C (1 / 4 : ℂ) * (X + C (-1)) ^ 2 + C x * X) ^ n).coeff n := by rw [hquad]
+    _ = _ := by
+      rw [coeff_pow_add_C_mul_X]
+      apply sum_congr rfl
+      intro k _
+      rw [← pow_mul, coeff_X_add_C_pow, show 2 * k - k = k by omega, hscale]
+      ring
+
 /-- **Central binomial polynomial identity, Bernstein form.** For every natural number $n$ and
 every complex $x$,
 $$\sum_{k=0}^{n} \binom{n}{k} 2^{-k} \binom{2k}{k} (1-x)^k x^{n-k} =
@@ -113,5 +154,42 @@ public theorem sum_choose_even_centralBinom_div_four_pow (n : ℕ) :
   apply (Rat.cast_injective (α := ℂ))
   change (Rat.castHom ℂ) _ = (Rat.castHom ℂ) _
   simpa only [map_sum, map_mul, map_div₀, map_pow, map_natCast, map_ofNat] using h.symm
+
+/-- **Even-index expansion of a weighted central binomial sum.** For every natural number $n$,
+$$\sum_{k=0}^{n} \binom{n}{k} 2^{-k} \binom{2k}{k} =
+\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} 2^{n-4k} \binom{2k}{k}.$$
+
+Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
+Sums*, INTEGERS 26 (2026), Article A19, Proposition 5 (`integers-2026-A19-prop-5`). -/
+public theorem sum_choose_centralBinom_div_two_pow (n : ℕ) :
+    ∑ k ∈ range (n + 1), (n.choose k : ℚ) / 2 ^ k * ((2 * k).choose k : ℚ) =
+      ∑ k ∈ range (n / 2 + 1),
+        (n.choose (2 * k) : ℚ) * 2 ^ n / 2 ^ (4 * k) * ((2 * k).choose k : ℚ) := by
+  apply (Rat.cast_injective (α := ℂ))
+  change (Rat.castHom ℂ) _ = (Rat.castHom ℂ) _
+  simp only [map_sum, map_mul, map_div₀, map_pow, map_natCast, map_ofNat]
+  have hhalf : 1 - (1 / 2 : ℂ) = 1 / 2 := by ring
+  have h := sum_choose_centralBinom_one_sub_pow_mul_pow n (1 / 2)
+  rw [hhalf] at h
+  calc
+    _ = (∑ k ∈ range (n + 1),
+          (n.choose k : ℂ) / 2 ^ k * ((2 * k).choose k : ℂ) * (1 / 2) ^ k * (1 / 2) ^ (n - k)) *
+          2 ^ n := by
+      rw [sum_mul]
+      apply sum_congr rfl
+      intro k hk
+      have hkn := Nat.le_of_lt_succ (mem_range.mp hk)
+      rw [mul_assoc (_ / _ * _), ← pow_add, Nat.add_sub_of_le hkn, mul_assoc, ← mul_pow,
+        div_mul_cancel₀ _ (two_ne_zero : (2 : ℂ) ≠ 0), one_pow, mul_one]
+    _ = (∑ k ∈ range (n / 2 + 1),
+          (n.choose (2 * k) : ℂ) / 2 ^ (2 * k) * ((2 * k).choose k : ℂ) * (1 / 2) ^ (2 * k)) *
+          2 ^ n := by rw [h]
+    _ = _ := by
+      rw [sum_mul]
+      apply sum_congr rfl
+      intro k _
+      rw [show 4 * k = 2 * k + 2 * k by omega, pow_add, div_pow, one_pow]
+      simp only [div_eq_mul_inv, mul_inv_rev]
+      ring
 
 end MetaMathlibExt

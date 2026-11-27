@@ -127,8 +127,12 @@ def globalFaceIso (T : Realization ℂ F) (σ τ : F.Face) (h : τ.val.IsFaceOf 
       (congrArg (fun f : affineChart ℂ τ.val ⟶ T.scheme ↦ f.left)
         (T.face_naturality σ τ h))).app M
 
-/-- The assembled functor is characterized on actual toric affine charts.
-Its existence is a separate Cox construction obligation. -/
+/-- Sheafification of graded modules over the Cox ring on a given realization $T$ of the fan over
+$ℂ$, for a given chart comparison $C$: a functor from graded modules to sheaves of modules on $T$,
+with quasi-coherent values, together with isomorphisms, natural in the module, from its
+restriction to the affine chart of each cone $σ$ of the fan to `localSheaf` (the sheaf of the
+degree-zero part of the localized module), and face comparisons (`FaceComparison`) for each face
+$τ$ of $σ$, compatible with these isomorphisms. -/
 structure Sheafification (C : ChartComparison R) (T : Realization ℂ F) where
   functor : GradedModule R ⥤ T.scheme.left.Modules
   localIso : ∀ (σ : F.Face) (M : GradedModule R),

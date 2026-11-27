@@ -45,16 +45,24 @@ namespace WantedExt.AlgebraicGeometry.GeometricTropicalizationWanted
 open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.ValuativeTropicalization
 
-/-- Tropical lifting with actual residue/coordinate normalization. All
-geometric field hypotheses are explicit binders of the stored declaration. -/
+/-- Tropical lifting: let $K$ be a complete, algebraically closed field with a nontrivial
+valuation $v$ with values in $ℝ_{≥0}$, $I$ an ideal of the Laurent polynomial ring
+$K[\mathbb{Z}^n]$ and $t ∈ (K^×)^n$. For every point $p$ of the initial degeneration
+$\mathrm{in}_t(I)$ with coordinates in the residue field of $v$: a point $x$ of $V(I)$ with
+coordinates in $K$ and units $u_i$ of the valuation ring such that $x_i = t_i u_i$ and the
+residue of $u_i$ is $p_i$ for every $i$ (`InitialPointLift`). -/
 public def_wanted initialPointLift {K : Type} [Field K] [Valued K NNReal]
     [CompleteSpace K] [IsAlgClosed K]
     (_nontrivial : (Valued.v : Valuation K NNReal).IsNontrivial) {n : ℕ}
     (I : Ideal (CoordinateRing K n)) (t : Fin n → Kˣ)
     (p : Point (initialIdeal I t) (Residue (K := K))) : InitialPointLift I t p
 
-/-- The general fundamental tropical support theorem at every realized
-weight, with the actual initial scheme and valued-point closure fixed. -/
+/-- Fundamental theorem of tropical geometry, support version: let $K$ be a complete,
+algebraically closed field with a nontrivial valuation $v$ with values in $ℝ_{≥0}$, $I$ an ideal
+of the Laurent polynomial ring $K[\mathbb{Z}^n]$ and $t ∈ (K^×)^n$. Then the initial ideal
+$\mathrm{in}_t(I)$ is not the unit ideal if and only if the weight vector
+$(-\log v(t_i))_i$ lies in the tropicalization of $I$ over $K$, the closure of the set of
+valuation vectors of the $K$-points of $V(I)$. -/
 public theorem_wanted initial_support {K : Type} [Field K] [Valued K NNReal]
     [CompleteSpace K] [IsAlgClosed K]
     (_nontrivial : (Valued.v : Valuation K NNReal).IsNontrivial) {n : ℕ}

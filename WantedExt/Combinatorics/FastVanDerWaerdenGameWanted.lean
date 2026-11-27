@@ -39,6 +39,7 @@ public import Mathlib.Combinatorics.HalesJewett
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Algebra.Order.Ring.Rat
 public import MathlibExt.GameTheory.FastVanDerWaerdenGame
+public import MathlibExt.Combinatorics.FastVanDerWaerdenGameIsSymmetricOfMakerWinsWithinCard
 
 set_option autoImplicit false
 
@@ -50,35 +51,6 @@ namespace FastVanDerWaerdenGame
 
 open Finset
 
-/-- **Containing a homothetic copy.** Let $S$ and $M$ be finite sets of natural numbers. $M$
-contains a homothetic copy of $S$ if there are a natural number $a > 0$ and an integer $b$ such
-that $as + b \in M$ for every $s \in S$, that is, $aS + b \subseteq M$. This is Maker's winning
-condition.
-
-Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
-Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Section 1. -/
-def ContainsCopy (S M : Finset ℕ) : Prop :=
-  ∃ a : ℕ, 0 < a ∧ ∃ b : ℤ, ∀ s ∈ S, ∃ m ∈ M, (m : ℤ) = a * s + b
-
-/-- **Maker wins within $p$ moves.** Let $S$ be a finite set of natural numbers. In the
-$S$-game, Maker and Breaker alternately claim unclaimed natural numbers, and Maker wins once the
-numbers Maker has claimed contain a copy $aS + b = \{as + b : s \in S\}$ of $S$, where $a$ is a
-positive integer and $b$ is an integer. Let $M$ and $B$ be finite sets of natural numbers
-(claimed by Maker and by Breaker) and $p$ a natural number, with Maker to move. Maker wins
-within $p$ moves if $M$ already contains such a copy of $S$, or if $p \ge 1$ and there is a
-number $x \notin M \cup B$ such that for every number $y \ne x$ with $y \notin M \cup B$, Maker
-wins within $p - 1$ moves from the position where Maker has claimed $M \cup \{x\}$ and Breaker
-has claimed $B \cup \{y\}$.
-
-Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
-Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Sections 1
-and 5 (`p`-move strategy). -/
-def MakerWinsWithin (S : Finset ℕ) : ℕ → Finset ℕ → Finset ℕ → Prop
-  | 0, M, _ => ContainsCopy S M
-  | p + 1, M, B => ContainsCopy S M ∨
-      ∃ x : ℕ, x ∉ M ∧ x ∉ B ∧
-        ∀ y : ℕ, y ≠ x → y ∉ M → y ∉ B → MakerWinsWithin S p (insert x M) (insert y B)
-
 /-- **Reflections of finite sets of rationals.** Let $A$ and $B$ be finite sets of rational
 numbers. $B$ is a reflection of $A$ if there are rationals $a < 0$ and $b$ such that
 $B = aA + b = \{ax + b : x \in A\}$.
@@ -87,15 +59,6 @@ Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
 Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Section 6. -/
 def IsRatReflection (A B : Finset ℚ) : Prop :=
   ∃ a b : ℚ, a < 0 ∧ B = A.image fun x => a * x + b
-
-/-- **Symmetric sets of rationals.** A finite set $S$ of rational numbers is symmetric if it is
-symmetric of some type $(i, j)$ with $i, j < |S|$.
-
-Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
-Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40,
-Definition 2. -/
-def IsSymmetric (S : Finset ℚ) : Prop :=
-  ∃ i j : Fin S.card, IsSymmetricOfType S i j
 
 /-- **The zero-geometric set $S_2(n, k)$.** For a natural number $n$ and a rational number $k$,
 $S_2(n, k)$ is the finite set of rationals $\{0\} \cup \{k^i : 0 \le i < n - 1\}$, that is,
@@ -161,31 +124,6 @@ Corollary 1 (`integers-2026-A40-cor-1`). -/
 public theorem_wanted makerWinsWithin_card_of_card_le_three (S : Finset ℕ)
     (hS : S.card ≤ 3) :
     MakerWinsWithin S S.card ∅ ∅
-
-/-- **A fast Maker win forces symmetry.** Let $S$ be a finite set of natural numbers with at
-least two elements. If Maker, moving first with no numbers claimed, can force a win in the
-game on $S$ within $|S|$ selections, then $S$, viewed as a set of rational numbers, is
-symmetric.
-
-Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
-Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Lemma 1
-(`integers-2026-A40-lem-1`). -/
-public theorem_wanted isSymmetric_of_makerWinsWithin_card (S : Finset ℕ)
-    (hS : 2 ≤ S.card) (h : MakerWinsWithin S S.card ∅ ∅) :
-    IsSymmetric (S.image fun s : ℕ => (s : ℚ))
-
-/-- **Possible types of a symmetric set.** Let $S$ be a finite set of rational numbers with
-$n \ge 4$ elements. If $S$ is symmetric of type $(i, j)$, with positions counted from $0$, then
-$(i, j)$ is $(0, n - 1)$, $(1, n - 1)$ or $(0, n - 2)$. In the paper's one-based numbering these
-are the types $(1, n)$, $(2, n)$ and $(1, n - 1)$.
-
-Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
-Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Lemma 2
-(`integers-2026-A40-lem-2`). -/
-public theorem_wanted isSymmetricOfType_cases (S : Finset ℚ) (hS : 4 ≤ S.card)
-    (i j : Fin S.card) (h : IsSymmetricOfType S i j) :
-    (i.val = 0 ∧ j.val = S.card - 1) ∨ (i.val = 1 ∧ j.val = S.card - 1) ∨
-      (i.val = 0 ∧ j.val = S.card - 2)
 
 /-- **Zero-geometric copies of symmetric sets.** Let $S = \{s_0 < s_1 < \dots < s_{n-1}\}$ be a
 finite set of $n$ rational numbers, and let $i, j < n$ be such that $S$ is symmetric of type

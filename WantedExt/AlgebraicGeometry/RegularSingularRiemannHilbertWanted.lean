@@ -44,10 +44,13 @@ public def_wanted analytic_connection_deRham_data (S : Finset ℂ) (r : ℕ)
     (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A) :
   AnalyticConnectionDeRhamData S r A hA
 
-/-- The actual solution sheaf resolves the analytic connection de Rham complex of the requested
-data `analytic_connection_deRham_data`. Its degree-zero comparison sends every solution to the
-same holomorphic vector function. The shift `[1]` gives the curve perverse normalization used in
-the Riemann--Hilbert correspondence. -/
+/-- Let $S \subset \mathbb{C}$ be finite and $A$ an $r \times r$ matrix of rational functions with
+poles in $S$ (`hA`). Then there is a quasi-isomorphism $\eta$ from the sheaf of holomorphic
+solutions of $f' = Af$ on $\mathbb{C} \setminus S$ (`solutionSheaf`), placed in degree $0$, to the
+analytic de Rham complex $\mathcal{O}^r \to \Omega^r$, $f \mapsto f' - Af$, of the de Rham data
+`analytic_connection_deRham_data` (unshifted, in degrees $0$ and $1$; its shift by $[1]$ is the
+perverse normalization on a curve), such that in degree $0$, $\eta$ sends every solution on an
+open $U$ to the same function, viewed as a holomorphic vector function on $U$. -/
 public def_wanted analytic_deRham_comparison (S : Finset ℂ) (r : ℕ)
     (A : Matrix (Fin r) (Fin r) RationalFunctions) (hA : PolesWithin S A) :
     {η : (HomologicalComplex.single _ (ComplexShape.up ℕ) 0).obj

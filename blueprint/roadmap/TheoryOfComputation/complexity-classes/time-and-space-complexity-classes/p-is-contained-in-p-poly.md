@@ -1,6 +1,10 @@
 # P is contained in P/poly
 
-If a language $L$ is decided by a Turing machine in time $t(n) \ge n$, then $L$ has Boolean circuits of size $O(t(n)^2)$ on inputs of length $n$; if moreover $t(n)$ is computable from $1^n$ in space $O(\log t(n))$, as it is for every polynomial $t$, these circuits are constructible in space $O(\log t(n))$ from $1^n$. Consequently $\mathsf{P} \subseteq \mathsf{P/poly}$, and indeed every language in $\mathsf{P}$ has logspace-uniform polynomial-size circuits.
+**Theorem.** A language has logspace-uniform Boolean circuit families of polynomial size if and only if it is in $\mathsf{P}$. In particular $\mathsf{P} \subseteq \mathsf{P/poly}$.
+
+The "only if" direction evaluates the circuit generated in logarithmic space. For the "if" direction, a machine running in time $T(n)$ is simulated by an oblivious
+machine, whose head movements do not depend on the input, in time $O(T(n)^2)$, and the snapshots of the oblivious computation are computed by a circuit whose
+structure is the same for all inputs of length $n$ and can be generated in logarithmic space, as in the proof of the Cook–Levin theorem.
 
 ## Depends on
 
@@ -8,11 +12,11 @@ If a language $L$ is decided by a Turing machine in time $t(n) \ge n$, then $L$ 
 
 ## Expansion
 
-This page becomes ready once these prerequisites are stated:
+This page becomes ready once:
 
-- Turing machine (statement prerequisite; formal statement exists, page pending)
+- Logspace-uniform circuit families (statement prerequisite; not yet stated)
+- Simulation of a time-$T(n)$ Turing machine by an oblivious machine in time $O(T(n)^2)$ (proof prerequisite; not yet stated)
 
 ## Sources
 
-- S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, Cambridge University Press, 2009
-- M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage Learning, 2013
+- S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08, <https://theory.cs.princeton.edu/complexity/>: Definition 6.5 (logspace-uniform circuit families), Theorem 6.7 with its proof sketch, and Remark 6.8.

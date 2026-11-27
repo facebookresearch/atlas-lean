@@ -87,7 +87,9 @@ instance derivedSections_isRightDerived :
   dsimp [derivedSections, derivedSectionsUnit]
   infer_instance
 
-/-- Actual cohomology object with no carrier supplied by a user/provider. -/
+/-- The derived global sections `RΓ(X, F)` of a sheaf `F` of abelian groups on the small étale
+site of `X`: the total right derived functor of global sections (`derivedSections`, which exists
+by `HasDerivedSections X`) applied to `F` placed in degree zero. -/
 def globalObject (F : Coefficients X) : DerivedCategory (ModuleCat.{1} Scalar) :=
   (derivedSections X).obj ((DerivedCategory.singleFunctor (Coefficients X) 0).obj F)
 

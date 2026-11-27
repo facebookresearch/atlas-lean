@@ -32,8 +32,10 @@ A full proof page must establish the following.
 - The $n$-sample law, by the coalescent with killing: trace lineages back, a lineage being killed at its first mutation and assigned an independent $\pi$-type, merging lineages at coalescences, and assigning the root type from $\pi$. The resulting Pólya-urn (Hoppe-type) construction gives the exchangeable sequence law and hence the Dirichlet-multinomial counts. Equivalently, the counts are the multinomial mixture over the [Dirichlet stationary law of parent-independent mutation](../diffusion-theory/wright-fisher-diffusion-with-selection-and-mutat/dirichlet-stationary-law-for-parent-independent.md); identifying the coalescent sample law with that mixture is a separate duality step and is not assumed here.
 - The uniform-type corollary and the limit $\theta\downarrow0$.
 - The role of the stationary root. If instead the root type is a fixed type $a$, the identity probability for $n=2$ changes in general. Conditioning on the coalescence time $T\sim\mathrm{Exp}(1)$ and writing $S=\sum_i\pi_i^2$, a direct computation gives
-  $$S+\frac{1-S}{1+\theta}+\frac{2\theta\,(\pi_a-S)}{(1+\theta)(2+\theta)},$$
-  which differs from item 1 whenever $\pi_a\ne S$; for the uniform law $\pi_a=S$ and the two agree. This probe is a local derivation, not a claim of the cited sources.
+
+    $$S+\frac{1-S}{1+\theta}+\frac{2\theta\,(\pi_a-S)}{(1+\theta)(2+\theta)},$$
+
+    which differs from item 1 whenever $\pi_a\ne S$; for the uniform law $\pi_a=S$ and the two agree. This probe is a local derivation, not a claim of the cited sources.
 - Consistency with the infinite-alleles limit: letting $\max_i\pi_i\to0$ gives identity probability $1/(1+\theta)$, the value of the [Kimura–Crow limit](tendsto-eq-homozygosity.md).
 
 ## Sources

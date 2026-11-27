@@ -224,7 +224,7 @@ variable [(NativeRestrictionCohomologyMaps.restrictY (AnalyticAbsoluteDeRhamSour
   [ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (AnalyticAbsoluteDeRhamSources.constantK p K B X PX) (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (ax (E := E) (Q := Q) (H := H)))]
   [ExactCochainUnit (NativeTensorProjectionMaps.tensorX Q.functor SY.regular (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q) (inverseUnit (J := proTopology p Y.left PY) (T := proTopology p X.left PX) Q.functor SY.regular) (AnalyticAbsoluteDeRhamSources.forms p K B Y PY SY H.absoluteFormsY))]
 
-variable  (PC : PositiveConnectionSource p K SX.regular SX.positive SX.untilting SX.scalars
+variable (PC : PositiveConnectionSource p K SX.regular SX.positive SX.untilting SX.scalars
     (ProEtaleDeRhamSources.forms p K B X Y f PX SX Ω) FS.differential)
   (FC : FullConnectionSource p K SX.regular SX.positive SX.untilting SX.scalars
     (ProEtaleDeRhamSources.forms p K B X Y f PX SX Ω) FS.differential PC)
@@ -335,7 +335,18 @@ local instance originalZRestrictionAdditive :
 variable [PreservesFiniteLimits (NativeRestrictionCohomologyMaps.restrictY (Zhat p Y.left PY) (Zhat p Y.left PY) (𝟙 (Zhat p Y.left PY)))]
   [PreservesFiniteColimits (NativeRestrictionCohomologyMaps.restrictY (Zhat p Y.left PY) (Zhat p Y.left PY) (𝟙 (Zhat p Y.left PY)))]
 
-/-- Restriction of scalars from `Ẑ_p` on `X` to the inverse image of `Ẑ_p` on `Y` is exact. -/
+/-- **Restriction of scalars to the inverse image of $\hat{\mathbb{Z}}_p$ is exact.** Let
+$f : X \to Y$ be a proper smooth morphism of smooth, locally Noetherian analytic spaces over the
+base realization $B$ of $K$ (`RelativeScope`), with the given period, base-change, point-projection,
+local-system and relative de Rham data of $f$, the given data `H` associating the integral local
+system $L$ on $X$ with a filtered vector bundle with connection (`BaseData`), and the standing
+technical hypotheses on the sheaf and module categories involved (such as the existence of
+sheafifications, enough injectives, the existence of adjoints and the exactness of module pullbacks
+along units to inverse-image rings). Then restriction of scalars from $\hat{\mathbb{Z}}_p$-modules
+on $X$ to modules over the inverse image $f^{-1}\hat{\mathbb{Z}}_p$ of $\hat{\mathbb{Z}}_p$ on $Y$,
+along the scalar map $f^{-1}\hat{\mathbb{Z}}_p \to \hat{\mathbb{Z}}_p$, is exact in the sense of
+`ExactCochainUnit`: for every bounded-below complex $C^\bullet$, the canonical map from its termwise
+restriction to its right derived restriction is an isomorphism. -/
 public def_wanted integralRestrictionExact (h : RelativeScope p B X Y f) :
     ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)))
 
@@ -344,7 +355,7 @@ variable [ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (baseZ (p 
 public def_wanted originalLisseRestrictionSquare (h : RelativeScope p B X Y f) :
   NativeRestrictionCohomologyMaps.SourceSquare Q.functor (Zhat p Y.left PY) (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (𝟙 (Zhat p Y.left PY)) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (coefficientScalar p K B X Y f PX PY E Q N PS)
 
-variable  (RZ : NativeRestrictionCohomologyMaps.SourceSquare Q.functor (Zhat p Y.left PY) (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (𝟙 (Zhat p Y.left PY)) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (coefficientScalar p K B X Y f PX PY E Q N PS))
+variable (RZ : NativeRestrictionCohomologyMaps.SourceSquare Q.functor (Zhat p Y.left PY) (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (𝟙 (Zhat p Y.left PY)) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (coefficientScalar p K B X Y f PX PY E Q N PS))
   (IDZ : IdentityRestrictionSource (Zhat p Y.left PY))
   (SSZ : SingleRestrictionSource (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)))
 

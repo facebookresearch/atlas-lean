@@ -11,6 +11,8 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.CategoryTheory.DGRelativeCYCospanGluing
 public import WantedExt.AlgebraicGeometry.DGInductionDiagramFoundationsWanted
 public import WantedExt.AlgebraicGeometry.RelativeCalabiYauFoundationsWanted
+public import MathlibExt.AlgebraicGeometry.DGRelativeCYDiagramLedgerDgCoherentGridSquare
+public import MathlibExt.AlgebraicGeometry.DGRelativeCYDiagramLedgerRelativeCyBarCounitSquare
 
 /-!
 # Wanted normalized relative CY cospan integration and composition
@@ -50,11 +52,6 @@ open MathlibExt.Algebra.Homology.DGCategoryTraceModels
 
 universe u
 
-/-- The bar-counit square commutes by the fixed native induction units and actual bar maps. -/
-theorem_wanted relative_cy_bar_counit_square (k : Type u) [Field k] (P : Cospan (k := k))
-    (S : NegativeTraceSystem k) (n : ℤ) (D : ModuleData P S n) (K : InductionData D) :
-  BarCounitSquare D K
-
 /-- Source Theorem 6.1: the single computed total bar-counit cofiber compares quasi-isomorphically to Z. -/
 def_wanted dg_morita_bar_counit_pushout (k : Type u) [Field k] (R : DGFrameSystem k)
     (P : Cospan (k := k)) (S : NegativeTraceSystem k) (n : ℤ)
@@ -66,13 +63,6 @@ def_wanted dg_morita_bar_counit_pushout_dual (k : Type u) [Field k]
     (P : Cospan (k := k)) (S : NegativeTraceSystem k) (n : ℤ)
     (D : ModuleData P S n) (K : InductionData D) (B : BarCounitSquare D K)
     (Q : ModuleHomotopyPushout B.square) : DualCotangentComparison B Q
-
-/-- The square's degree -1 cell is the signed difference of its two native chain cells. -/
-theorem_wanted dg_coherent_grid_square (k : Type u) [Field k]
-    (R : CoherentIndexModel k GridIndex) (C : DGCat k) (Q : CoherentDiagram R C)
-    (nodes : GridIndex → DGDerivedModules k C)
-    (eq : ∀ q : GridIndex, Q.toEnrichedFunctor.obj (R.objects.symm q) = (nodes q).obj)
-    (s : SmallSquare) : CoherentSquareModel Q nodes eq s
 
 /-- The coproduct diagonal split uses actual bar inclusions and the fixed composition units. -/
 def_wanted relative_cy_coproduct_split_context (k : Type u) [Field k] (A B X : DGCat k)
@@ -116,8 +106,17 @@ theorem_wanted relative_cy_negation_nondegeneracy (k : Type u) [Field k] (A B : 
     (C : RelativeConeContext F n) (M : RelativeCYMapModel F n a C) (N : NegatedRelativeCYMaps M) :
   IsRelativeCalabiYau N.negated ↔ IsRelativeCalabiYau M
 
-/-- Construct the whole cospan, source-normalized cone completion, and one joint comparison for every
-compatible class. Smoothness is requested only for A/B/C/X/Y; Z smoothness is a source 6.1 consequence. -/
+/-- Construction data for composing relative Calabi–Yau cospans (Brav–Dyckerhoff, Theorem 6.2). Let
+$k$ be a field and `P` a diagram of DG categories over $k$ consisting of functors $e : A \to X$,
+$f : B \to X$, $g : B \to Y$, $h : C \to Y$, $i : X \to Z$ and $j : Y \to Z$ with
+$i \circ f = j \circ g$, such that the square formed by $f$, $g$, $i$ and $j$ is a Morita pushout
+(for the DG frame system `R`). Let $n \in \mathbb{Z}$, let `S` be a negative cyclic trace system,
+and fix bar and duality data `DA`, …, `DZ` (`CYCategoryData`) for the six categories, with $A$, $B$,
+$C$, $X$ and $Y$ homologically smooth (no smoothness hypothesis on $Z$). This constructs a
+`CospanTraceIntegration` with these data: module data, the cospan operations, the completed coherent
+grid diagrams, the cyclic coefficient data and, for every compatible negative cyclic class, the
+class-induced maps together with a joint comparison of the dual and shifted grid diagrams,
+identified with the class maps pointwise up to homotopy. -/
 def_wanted relative_cy_cospan_trace_integration (k : Type u) [Field k] (R : DGFrameSystem k)
     (P : Cospan (k := k)) (S : NegativeTraceSystem k) (n : ℤ)
     (DA : CYCategoryData S P.A) (DB : CYCategoryData S P.B) (DC : CYCategoryData S P.C)

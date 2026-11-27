@@ -48,10 +48,12 @@ def landsIn (V : W.left.Opens) (T : Over (Spec (.of R))) :
 abbrev OpenPoints (V : W.left.Opens) (T : Over (Spec (.of R))) :=
   (landsIn (G := G) V T).FullSubcategory
 
-/-- A native open-source adapter is fixed on all objects and fibre arrows
-by the whole full-inclusion functor into the original quotient source. For an
-arbitrary open `V` this is the full substack of points whose whole orbit lands
-in `V`; it is an open substack when `V` is `G`-invariant. -/
+/-- A model of the substack of the quotient stack $[W/G]$ (given by the quotient source $Q$) of the
+points whose equivariant map lands in an open $V \subseteq W$: a stack over $\operatorname{Spec} R$
+with a morphism to the stack of $Q$ and, for every $R$-scheme $T$, an equivalence between its fibre
+over $T$ and the full subcategory of quotient points over $T$ (a $G$-torsor $P \to T$ with a
+$G$-equivariant map $P \to W$) whose map $P \to W$ lands in $V$, compatible up to isomorphism with
+the fibre equivalence of $Q$ through the inclusion of that full subcategory. -/
 structure OpenSource (Q : QuotientSource R (G := G) (W := W)) (V : W.left.Opens) where
   stack : RelativeStack (Spec (.of R))
   inclusion : stack.toPseudofunctor ⟶ Q.stack.toPseudofunctor

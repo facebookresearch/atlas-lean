@@ -58,8 +58,12 @@ def scalarUnit (M : ModuleCat.{u} R) : M →ₛₗ[g.hom] (ModuleCat.extendScala
 
 variable [HasDerivedScalarExtensions.{u}]
 
-/-- Completed-source properties of the literal scalar-extension complex.
-The derived isomorphism is the native counit, rather than an assigned map. -/
+/-- Conditions on the termwise extension of scalars $S \otimes_R P$ of a two-term complex $P$ of
+finite projective $R$-modules (in degrees $-1$ and $0$) along a ring homomorphism $g : R \to S$,
+given derived scalar extensions (`HasDerivedScalarExtensions`): every term of $S \otimes_R P$ is a
+finite projective $S$-module, $S \otimes_R P$ is concentrated in degrees $-1$ and $0$, and the
+counit of derived scalar extension at $P$, from $S \otimes^{L}_R P$ to $S \otimes_R P$ in the
+derived category of $S$-modules, is an isomorphism. -/
 structure ScalarComplexData (P : LocalComplex R) where
   finite : ∀ i : ℤ, Module.Finite S ((scalarComplex g P.complex).X i)
   projective : ∀ i : ℤ, Module.Projective S ((scalarComplex g P.complex).X i)
@@ -142,7 +146,16 @@ theorem determinantMap_normalization (P : LocalComplex R) (C : ScalarComplexData
   scalarHomMap_normalization (negativeMap g P C U T) (negativeMap_extension g P C U T)
     (zeroMap g P C U T) f x
 
-/-- Completed-source scalar-extension property of this fixed actual determinant map. -/
+/-- The condition that the determinant map of a base-changed two-term complex is a scalar extension.
+Let $P$ be a two-term complex of finite projective $R$-modules, $g : R \to S$ a ring homomorphism,
+`C` the conditions `ScalarComplexData` on the termwise extension of scalars $S \otimes_R P$, `U` the
+fact that each unit map $P^i \to S \otimes_R P^i$ is a scalar extension, and `T` determinant
+base-change maps for the terms in degrees $-1$ and $0$. The condition is that the $g$-semilinear map
+`determinantMap` from $\operatorname{Hom}_R(\det P^{-1}, \det P^0)$ to
+$\operatorname{Hom}_S(\det(S \otimes_R P^{-1}), \det(S \otimes_R P^0))$ induced by `T` is a scalar
+extension (`IsScalarExtension`): composition with it is a bijection from $S$-linear maps out of its
+target to $g$-semilinear maps out of its source, into every $S$-module. Here $\det$ is the
+determinant module `determinantModule`. -/
 structure DeterminantExtension (P : LocalComplex R) (C : ScalarComplexData g P)
     (U : ∀ i : ℤ, IsScalarExtension g.hom (scalarUnit g (P.complex.X i)))
     (T : TermDeterminantData g P C U) : Prop where

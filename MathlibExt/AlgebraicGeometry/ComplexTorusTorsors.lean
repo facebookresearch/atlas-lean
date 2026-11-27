@@ -47,8 +47,9 @@ open MathlibExt.AlgebraicGeometry.PerverseSheaves
 /-- The point `Spec ℂ`, as a scheme over `ℂ`. -/
 abbrev Point : ComplexScheme := Over.mk (𝟙 (Spec (.of ℂ)))
 
-/-- The multiplicative group `Spec ℂ[T, T⁻¹]` over `ℂ`. Its group-object
-structure is Mathlib's, induced by the Hopf algebra of Laurent polynomials. -/
+/-- The multiplicative group $\mathbb{G}_m = \operatorname{Spec} \mathbb{C}[T, T^{-1}]$ as a scheme
+over $\operatorname{Spec} \mathbb{C}$. Its group-object structure is induced by the Hopf algebra
+structure of $\mathbb{C}[T, T^{-1}]$, the group algebra of $\mathbb{Z}$. -/
 abbrev Gm : ComplexScheme :=
   (Spec (.of (LaurentPolynomial ℂ))).asOver (Spec (.of ℂ))
 
@@ -77,13 +78,13 @@ def relation (h : A.smul ≫ q = snd Gm X ≫ q) :
   pullback.lift (snd Gm X).left A.smul.left
     (by simpa using (congrArg (fun f : Gm ⊗ X ⟶ Y => f.left) h).symm)
 
-/-- `q : X ⟶ Y` is a `Gm`-torsor for the action `A` (Mathlib's `ModObj Gm X`,
-passed explicitly since a scheme can carry several actions): `q` is invariant,
-smooth and surjective, and `(g, x) ↦ (x, g • x)` is an isomorphism onto
-`X ×_Y X`. The action of `ℂˣ` on complex points is part of the data, pinned
-down by `compatibility` (it is the action induced by `A`), and is continuous.
-It depends on `A`, so it is not a global instance: use `torsorBorel`, or
-`letI := T.mulAction`. -/
+/-- A $\mathbb{G}_m$-torsor structure on $q : X \to Y$ for the action $A$ of $\mathbb{G}_m$ on $X$
+(schemes over $\mathbb{C}$): a continuous action of $\mathbb{C}^\times$ on the space of complex
+points of $X$ (`mulAction`, `continuousAction`) under which $g \cdot x$ is the image of $(g, x)$
+under the action morphism of $A$ (`compatibility`); and the conditions that $q$ is invariant,
+$q(g \cdot x) = q(x)$ as morphisms $\mathbb{G}_m \times X \to Y$ (`invariant`), that the morphism
+$\mathbb{G}_m \times X \to X \times_Y X$, $(g, x) \mapsto (x, g \cdot x)$, is an isomorphism
+(`relationIso`), and that $q$ is smooth and surjective (`smooth`, `surjective`). -/
 class TorusTorsor where
   /-- The action of `ℂˣ` on the complex points of `X` induced by `A`. -/
   [mulAction : MulAction ℂˣ (space X)]

@@ -1,0 +1,3 @@
+# Easy direction of Cheeger's inequality
+
+Let $\alpha$ be a finite set, $K$ a Markov kernel on $\alpha$ (nonnegative entries, rows summing to one) and $\pi$ a probability vector on $\alpha$ (nonnegative, summing to one) for which $K$ is reversible, $\pi(x) K(x, y) = \pi(y) K(y, x)$. Suppose $\gamma$ is a Poincaré constant for $K$: $\gamma \operatorname{Var}_\pi(f) \le \mathcal E(f)$ for every $f$, with $\mathcal E$ the Dirichlet form of $K$ against $\pi$. Then every set $S$ with $0 < \pi(S) \le 1/2$ has $\gamma \le 2\, \Phi(S)$, where $\Phi(S)$ is the conductance of $S$. This is the easy direction of Cheeger's inequality, in test-function form.

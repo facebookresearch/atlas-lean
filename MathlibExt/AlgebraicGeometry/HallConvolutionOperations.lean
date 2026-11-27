@@ -90,7 +90,12 @@ def rawConvolution {H : HallStacks X} (D : ConvolutionModels H) :
     Finsupp.linearCombination ℂ (fun b =>
       stageSymbol (D a.1 b.1).generator (a.2+b.2)))
 
-/-- Only preservation of the specified geometric and Lefschetz relations is requested. -/
+/-- Descent of the convolution product of stack functions on the moduli stack of the Hall stacks
+$H$ (over a complex scheme), for the chosen convolution squares $D$: the staged relations (the
+geometric relations at every stage and the Lefschetz relations) lie in the kernel of the bilinear
+map `rawConvolution D` in each of its two variables. Here `rawConvolution D` sends a pair of staged
+generators $(a, n)$, $(b, m)$ to the stage-$(n + m)$ symbol of the convolution generator of $a$
+and $b$. -/
 structure ConvolutionDescent {H : HallStacks X} (D : ConvolutionModels H) : Prop where
   left : stagedRelations H.moduli ≤ (rawConvolution D).ker
   right : stagedRelations H.moduli ≤ (rawConvolution D).flip.ker

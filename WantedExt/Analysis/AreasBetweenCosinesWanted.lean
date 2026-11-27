@@ -17,6 +17,7 @@ public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CotangentLimit
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosineAlternatingIntegralLimit
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosinePowerAreaRecurrence
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosinePowerAreaDoubleFactorial
 
 namespace MetaMathlibExt
 
@@ -78,43 +79,6 @@ public theorem_wanted tendsto_cosPowArea_of_even (n : ℕ) :
       (𝓝 (16 / (2 ^ n * π) * ∑ j ∈ Finset.range ((n - 4) / 4 + 1),
         (n.choose (2 * j + 1) : ℝ) / ((n : ℝ) / 2 - (2 * j + 1)) ^ 2)))
 
-/-- **Limiting area between cosine powers via double factorials.** For natural numbers $n$ and
-$k$, let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$. As $k \to \infty$ through the natural
-numbers: if $n$ is odd, then
-$$A_n(k) \to \frac{8 \, n!}{\pi (n!!)^2} \sum_{j=0}^{(n-1)/2} \frac{(2j-1)!!}{(2j)!! (2j+1)},$$
-and if $n \ge 2$ is even, then
-$$A_n(k) \to \frac{16 \, n!}{\pi (n!!)^2} \sum_{j=0}^{(n-2)/2} \frac{(2j)!!}{(2j+1)!! (2j+2)}.$$
-Here $(-1)!! = 1$ and $0!! = 1$.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Theorem 4
-(`jis-2025-25.2.3-thm-4`). -/
-public theorem_wanted tendsto_cosPowArea_doubleFactorial (n : ℕ) :
-    (Odd n → Tendsto (fun k => cosPowArea n k) atTop
-      (𝓝 (8 / π * ((n.factorial : ℝ) / (n.doubleFactorial : ℝ) ^ 2) *
-        ∑ j ∈ Finset.range ((n - 1) / 2 + 1),
-          ((2 * j - 1).doubleFactorial : ℝ) /
-            ((2 * j).doubleFactorial * (2 * j + 1))))) ∧
-    (Even n → 0 < n → Tendsto (fun k => cosPowArea n k) atTop
-      (𝓝 (16 / π * ((n.factorial : ℝ) / (n.doubleFactorial : ℝ) ^ 2) *
-        ∑ j ∈ Finset.range ((n - 2) / 2 + 1),
-          ((2 * j).doubleFactorial : ℝ) /
-            ((2 * j + 1).doubleFactorial * (2 * j + 2)))))
-
-/-- **Integral sums of $\cos qkx - \cos qx$ for odd $q$ and odd $k$.** Let $q$ be an odd natural
-number, and for each natural number $m$ put $k = 2m + 1$. Then, as $m \to \infty$,
-$$\sum_{\ell=1}^{m} \int_{2\pi\ell/(k+1)}^{2\pi\ell/(k-1)} \bigl(\cos(qkx) - \cos(qx)\bigr)\,dx
-\to \frac{4}{q^2\pi}.$$
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 9
-(`jis-2025-25.2.3-lem-9`). -/
-public theorem_wanted tendsto_sum_integral_cos_sub_cos_odd_odd {q : ℕ} (hq : Odd q) :
-    Tendsto (fun m : ℕ => ∑ l ∈ Finset.Icc 1 m,
-      ∫ x in (2 * π * l / ((2 * m + 1 : ℝ) + 1))..(2 * π * l / ((2 * m + 1 : ℝ) - 1)),
-        (cos (q * (2 * m + 1 : ℝ) * x) - cos (q * x))) atTop
-      (𝓝 (4 / ((q : ℝ) ^ 2 * π)))
-
 /-- **Alternating integral sums of $\cos qx - \cos qkx$ for even $q$ and odd $k$.** Let $q$ be an
 even natural number, for each natural number $m$ put $k = 2m + 1$, and let
 $f(x) = \cos(qx) - \cos(qkx)$. Then, as $m \to \infty$,
@@ -132,23 +96,6 @@ public theorem_wanted tendsto_sum_integral_cos_sub_cos_odd_even {q : ℕ} (hq : 
         ∫ x in ((l : ℝ) * π / ((2 * m + 1 : ℝ) + 1))..((l : ℝ) * π / ((2 * m + 1 : ℝ) - 1)),
           (cos (q * x) - cos (q * (2 * m + 1 : ℝ) * x)))) atTop
       (𝓝 (if q % 4 = 0 then 0 else 16 / ((q : ℝ) ^ 2 * π)))
-
-/-- **Alternating integral sums of $\cos qx - \cos qkx$ for odd $q$ and even $k$.** Let $q$ be an
-odd natural number, for each natural number $m$ put $k = 2m$, and let
-$f(x) = \cos(qx) - \cos(qkx)$. Then, as $m \to \infty$,
-$$\sum_{\ell=1}^{m} \left(\int_{2(\ell-1)\pi/(k-1)}^{2\ell\pi/(k+1)} f(x)\,dx -
-\int_{2\ell\pi/(k+1)}^{2\ell\pi/(k-1)} f(x)\,dx\right) \to \frac{8}{q^2\pi}.$$
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 11
-(`jis-2025-25.2.3-lem-11`). -/
-public theorem_wanted tendsto_sum_integral_cos_sub_cos_even_odd {q : ℕ} (hq : Odd q) :
-    Tendsto (fun m : ℕ => ∑ l ∈ Finset.Icc 1 m,
-      ((∫ x in (((l : ℝ) - 1) * 2 * π / ((2 * m : ℝ) - 1))..((l : ℝ) * 2 * π / ((2 * m : ℝ) + 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x))) -
-        ∫ x in ((l : ℝ) * 2 * π / ((2 * m : ℝ) + 1))..((l : ℝ) * 2 * π / ((2 * m : ℝ) - 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x)))) atTop
-      (𝓝 (8 / ((q : ℝ) ^ 2 * π)))
 
 end
 

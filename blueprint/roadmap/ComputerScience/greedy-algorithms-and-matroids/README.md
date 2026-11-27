@@ -10,3 +10,6 @@ Greedy choice and exchange arguments: the matroid greedy algorithm and its chara
 - [Single-machine scheduling](single-machine-scheduling/README.md)
 - [Smith's rule minimizes total weighted completion time](smith-s-rule-for-weighted-completion-time.md)
 - [The earliest-due-date rule minimizes maximum lateness](earliest-due-date-rule.md)
+- [Matroid intersection by augmenting paths](matroid-intersection-by-augmenting-paths.md)
+- [Matroid Union and p-Systems](matroid-union-and-p-systems/README.md)
+- [Submodular Maximization and Oracle Complexity](submodular-maximization-and-oracle-complexity/README.md)

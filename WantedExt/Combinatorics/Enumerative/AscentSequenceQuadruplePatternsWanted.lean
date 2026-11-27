@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.AscentSequenceBinomialFibonacci
+public import MathlibExt.Combinatorics.Enumerative.AscentSequenceQuadrupleCardFormulas
 public import MathlibExt.Combinatorics.Enumerative.AscentSequenceQuadruplePatterns
 public import MathlibExt.Combinatorics.Enumerative.MotzkinNumber
 public import MathlibExt.Combinatorics.Enumerative.WeakAscentWilfClass162
@@ -268,53 +269,6 @@ public theorem_wanted quadrupleUSet_quadrupleVSet_recurrence :
     ∀ f ∈ [fun n => (quadrupleUSet n 1).ncard, fun n => (quadrupleVSet n 1).ncard],
       (∀ j ≤ 5, f j = 0) ∧ f 6 = 1 ∧
         ∀ n, 7 ≤ n → (f n : ℤ) = 5 * f (n - 1) - 7 * f (n - 2) + 2 * f (n - 3)
-
-/-- **Sum formulas for $|U_{n,1}|$ and $|V_{n,1}|$ (Proposition 2).** For every natural number
-$n$ let $f(n, a) = \min(n - 3 - a, \lfloor (a - 1)/2 \rfloor)$ and
-$$
-S(n) = \sum_{a=2}^{n-4} \sum_{k=1}^{f(n,a)} \left( \binom{a-2}{2k} 2^{a-2k-2} +
-\binom{a-2}{2k-1} 2^{a-2k-1} \right) (n - k - a - 2).
-$$
-Then for every $n \ge 1$
-$$
-|U_{n,1}| = \sum_{k=1}^{\lfloor n/3 \rfloor - 1} \left( \binom{n-k-4}{2k} 2^{n-3k-4} +
-\binom{n-k-4}{2k-1} 2^{n-3k-3} \right)
-$$
-and
-$$
-|V_{n,1}| = \sum_{a=2}^{n-4} 2^{a-2} (n - a - 3) + S(n),
-$$
-and for every $n \ge 4$
-$$
-|V_{n,1}| = 2^{n-4} - n + 3 + S(n).
-$$
-
-A sum whose upper limit is below its lower limit is empty, and an exponent such as
-$n - 3k - 4$ is negative only where the binomial coefficient multiplying it is $0$; such a
-term is $0$. The last formula is stated only for $n \ge 4$: at $n = 3$ the expression
-$2^{n-4} - n + 3$ equals $1/2$, while $\sum_{a=2}^{n-4} 2^{a-2} (n - a - 3)$ is $0$.
-
-Source: David Callan and Toufik Mansour, *Ascent Sequences and Weak Ascent Sequences
-Avoiding a Quadruple of Length-3 Patterns*, INTEGERS 25 (2025), Article A80,
-Proposition 2 (`integers-2025-A80-prop-2`). -/
-public theorem_wanted quadrupleUSet_quadrupleVSet_card_formulas :
-    (∀ n : ℕ, 1 ≤ n →
-      (quadrupleUSet n 1).ncard =
-        ∑ k ∈ Finset.Icc 1 (n / 3 - 1),
-          (Nat.choose (n - k - 4) (2 * k) * 2 ^ (n - 3 * k - 4) +
-            Nat.choose (n - k - 4) (2 * k - 1) * 2 ^ (n - 3 * k - 3))) ∧
-    (∀ n : ℕ, 1 ≤ n →
-      (quadrupleVSet n 1).ncard =
-        ∑ a ∈ Finset.Icc 2 (n - 4), 2 ^ (a - 2) * (n - a - 3) +
-          ∑ a ∈ Finset.Icc 2 (n - 4), ∑ k ∈ Finset.Icc 1 (min (n - 3 - a) ((a - 1) / 2)),
-            (Nat.choose (a - 2) (2 * k) * 2 ^ (a - 2 * k - 2) +
-              Nat.choose (a - 2) (2 * k - 1) * 2 ^ (a - 2 * k - 1)) * (n - k - a - 2)) ∧
-    ∀ n : ℕ, 4 ≤ n →
-      ((quadrupleVSet n 1).ncard : ℤ) =
-        2 ^ (n - 4) - n + 3 +
-          ∑ a ∈ Finset.Icc 2 (n - 4), ∑ k ∈ Finset.Icc 1 (min (n - 3 - a) ((a - 1) / 2)),
-            ((Nat.choose (a - 2) (2 * k) * 2 ^ (a - 2 * k - 2) +
-              Nat.choose (a - 2) (2 * k - 1) * 2 ^ (a - 2 * k - 1)) * (n - k - a - 2) : ℕ)
 
 end
 

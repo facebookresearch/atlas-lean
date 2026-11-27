@@ -76,11 +76,12 @@ section TwoFibre
 variable {A : Type u} {B : Type v} {C : Type w}
   [Category A] [Category B] [Category C]
 
-/-- The 2-fibre product of categories: Mathlib's categorical pullback, whose objects are triples
-`(a, b, f a ≅ g b)` and whose morphisms are pairs of morphisms commuting with the comparison
-isomorphisms. Its projections are `Limits.CategoricalPullback.π₁` and `π₂`, its 2-cell is the
-`CatCommSq` instance, and functors into it correspond to such data
-(`Limits.CategoricalPullback.functorEquiv`). -/
+/-- The 2-fibre product of categories of functors `f : A ⥤ C` and `g : B ⥤ C`, the categorical
+pullback: its objects are triples `(a, b, f a ≅ g b)` and its morphisms are pairs of morphisms
+commuting with the comparison isomorphisms. Its projections are `Limits.CategoricalPullback.π₁` and
+`π₂`, its 2-cell is the `CatCommSq` instance, and functors from a category `X` into it correspond
+to pairs of functors `X ⥤ A`, `X ⥤ B` with a natural isomorphism between their composites with `f`
+and `g` (`Limits.CategoricalPullback.functorEquiv`). -/
 abbrev IsoFibre (f : A ⥤ C) (g : B ⥤ C) := Limits.CategoricalPullback f g
 
 /-- The 2-fibre product of groupoids is a groupoid. -/
@@ -108,8 +109,9 @@ abbrev twoFibreAt {X Y Z : StackInGroupoids.{u}}
     (f : StackInGroupoids.Hom X Z) (g : StackInGroupoids.Hom Y Z) (T : Scheme.{u}) :=
   IsoFibre (component f T) (component g T)
 
-/-- An invertible modification between two morphisms of stacks: an isomorphism in Mathlib's
-category `Pseudofunctor.StrongTrans.homCategory` of strong transformations and modifications. -/
+/-- An invertible modification between two morphisms of stacks `p q : X ⟶ Y`: an isomorphism
+from `p` to `q` in the category `Pseudofunctor.StrongTrans.homCategory` of strong transformations
+between the underlying pseudofunctors and modifications. -/
 abbrev TwoIso {X Y : StackInGroupoids.{u}} (p q : StackInGroupoids.Hom X Y) : Type (u + 1) :=
   @Iso (X.toSchPseudofunctor ⟶ Y.toSchPseudofunctor) _ p q
 

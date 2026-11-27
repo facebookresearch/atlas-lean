@@ -12,3 +12,4 @@
 - [Zeno executions and finite-jump hypotheses](remaining-clauses-of-zeno-executions-and-finite-jump-hypothe.md)
 - [Box and diamond are dual in differential dynamic logic](box-and-diamond-are-dual-in-differential-dynamic-logic.md)
 - [Initialization of rectangular automata is decidable](initialization-of-rectangular-automata-is-decidable.md)
+- [Executions of hybrid automata with half-open domains](executions-with-half-open-domains/README.md)

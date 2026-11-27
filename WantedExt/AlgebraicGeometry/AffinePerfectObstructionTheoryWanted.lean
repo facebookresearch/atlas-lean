@@ -10,6 +10,8 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.AffinePerfectObstructionTheory
+public import MathlibExt.AlgebraicGeometry.AffinePerfectObstructionTheoryPolynomialLiftIndependence
+public import MathlibExt.AlgebraicGeometry.AffinePerfectObstructionTheoryPresentationObstructionEqZeroIff
 
 /-!
 # An actual affine POT-to-deformation comparison
@@ -38,8 +40,13 @@ open MathlibExt.AlgebraicGeometry.AffinePerfectObstructionTheory
 
 variable {k B : Type} [Field k] [CommRing B] [Algebra k B]
 
-/-- Construct the actual normalized cochain cocycle across a square-zero
-extension, rather than choosing an unconstrained class in an obstruction group. -/
+/-- The obstruction cocycle of a lift across a square-zero extension: for a field $k$, a
+$k$-algebra $B$ with a polynomial resolution $\varepsilon : P_\bullet \to B$, a surjection of
+$k$-algebras $Q \to B$ whose kernel $I$ satisfies $I^2 = 0$, and a $k$-algebra map
+$L : P_0 \to Q$ lifting $\varepsilon_0$, a morphism of complexes of $B$-modules from
+`affineComplex R`, the complex $\Omega_{P_\bullet/k} \otimes_{P_\bullet} B$, to the conormal
+module $I/I^2$ placed in degree $-1$, whose degree $-1$ component sends $1 \otimes dp$ to the
+class of $L(d_0 p) - L(d_1 p)$ for every $p \in P_1$ (`CotangentExtensionCocycle`). -/
 public def_wanted extensionCocycle (R : PolynomialResolution k B)
     (Q : Algebra.Extension.{0} k B) (_squareZero : Q.ker ^ 2 = ⊥)
     (L : PolynomialLift R Q) : CotangentExtensionCocycle R Q L
@@ -51,26 +58,5 @@ public theorem_wanted vanishing_iff_lift [Algebra.FiniteType k B]
     (Q : Algebra.Extension.{0} k B) (_squareZero : Q.ker ^ 2 = ⊥)
     (L : PolynomialLift R Q) (C : CotangentExtensionCocycle R Q L) :
     obstructionClass T C = 0 ↔ Nonempty (Liftings Q)
-
-/-- The class in the actual derived obstruction group is independent of the
-chosen polynomial lift, with the explicit cocycle normalization retained. -/
-public theorem_wanted polynomial_lift_independence
-    (R : PolynomialResolution k B) (T : PerfectObstructionTheory R)
-    (Q : Algebra.Extension.{0} k B) (_squareZero : Q.ker ^ 2 = ⊥)
-    (L L' : PolynomialLift R Q)
-    (C : CotangentExtensionCocycle R Q L) (C' : CotangentExtensionCocycle R Q L') :
-    obstructionClass T C = obstructionClass T C'
-
-open MathlibExt.AlgebraicGeometry.AffineObstructionComplexes in
-/-- For a perfect obstruction theory relative to the naive cotangent complex of a presentation
-`G` of `B` and a square-zero extension `Q` of a `B`-algebra `A`, the obstruction attached to a
-morphism of extensions from `G` to `Q` vanishes exactly when `B → A` lifts to `Q`
-(Behrend--Fantechi, Theorem 4.5, affine presentation form). -/
-public theorem_wanted presentation_obstruction_eq_zero_iff {n : ℕ}
-    {G : Algebra.Generators k B (Fin n)} (T : PresentationTheory G)
-    {A : Type} [CommRing A] [Algebra k A] [Algebra B A] [IsScalarTower k B A]
-    (Q : Algebra.Extension.{0} k A) (_squareZero : Q.ker ^ 2 = ⊥)
-    (h : Algebra.Extension.Hom G.toExtension Q) :
-    obstruction T.model Q h T.comparison = 0 ↔ HasLift (B := B) Q
 
 end WantedExt.AlgebraicGeometry.AffinePerfectObstructionTheoryWanted

@@ -29,4 +29,3 @@ hash lemma with $m$ sources applies to each conditional law.
 ## Sources
 
 - D. Boneh and V. Shoup, *A Graduate Course in Applied Cryptography*, version 0.4, 2017, <https://toc.cryptobook.us/>: Theorem 8.11 and the discussion following it of a secret $s$ with side information $I(s)$, independent of the key, and the bound on distinguishing $(k, I(s), H(k, s))$ from $(k, I(s), t)$. The conditioning argument and the average-case form are derived on this page.
-- Y. Dodis, R. Ostrovsky, L. Reyzin and A. Smith, "Fuzzy extractors: how to generate strong keys from biometrics and other noisy data", *SIAM Journal on Computing* 38(1):97–139, 2008 (not opened; the average-case form is attributed to this paper).

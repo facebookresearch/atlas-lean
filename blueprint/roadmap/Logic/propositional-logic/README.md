@@ -12,10 +12,12 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 - [Model-count-preserving CNF transformations](model-count-preserving-cnf-transformations/README.md)
 - [Resolution](resolution/README.md)
 - [Resolution size and width](resolution-size-and-width/README.md)
+- [Semantic tableaux](semantic-tableaux/README.md)
 - [2-satisfiability](2-satisfiability/README.md)
 - [Davis–Putnam algorithm](davis-putnam-algorithm/README.md)
 - [Tseitin transformation](tseitin-transformation/README.md)
 - [Propositional proof complexity](propositional-proof-complexity/README.md)
+- [Sat solving](sat-solving/README.md)
 
 - [Kripke semantics for intuitionistic propositional logic](kripke-semantics-for-intuitionistic-propositional-logic.md)
 - [Fages: stable models of tight programs = completion models](fages-stable-models-of-tight-programs-completion-models.md)

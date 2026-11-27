@@ -34,21 +34,31 @@ open MathlibExt.AlgebraicGeometry.AnalyticAdicDiamondification
 open MathlibExt.AlgebraicGeometry.PerfectoidDiamondModels
 open MathlibExt.AlgebraicGeometry.PerfectoidSliceSites
 
-/-- The actual relation-to-quotient-kernel-pair map is invertible. -/
+/-- Let $p$ be a prime and $R \rightrightarrows X$ a representable pro-étale equivalence relation of
+perfectoid spaces (`Relation p`), with quotient v-sheaf $X/R$, the coequalizer. Then the canonical
+map from $R$ to the kernel pair $X \times_{X/R} X$ of the quotient map is an isomorphism. -/
 public theorem_wanted relationToKernelIsIso (p : ℕ) [Fact p.Prime] (R : Relation p) :
     IsIso (relationToKernel p R)
 
-/-- The fixed Kan-unit comparison is exactly the marked-untilt isomorphism-class formula. -/
+/-- Let $p$ be a prime, $R$ an affine realization, $Y$ an analytic adic space and $P$ an affine
+perfectoid space. Then `classComparison` is a bijection from the isomorphism classes of marked
+untilts of $P$ over $Y$ (an affine untilt with an isomorphism of its tilt with $P$ and a map from
+its realization to $Y$) to the value at $P$ of the raw diamond presheaf of $Y$; it sends a class to
+its image under the unit of the left Kan extension. -/
 public theorem_wanted markedUntiltingFormula (p : ℕ) [Fact p.Prime]
     (R : AffineRealization p) (Y : AnalyticAdicSpace p) (P : Affine p) :
     Function.Bijective (classComparison (R := R) (Y := Y) P)
 
-/-- The prescribed raw mapping/Kan-extension presheaf already satisfies v-descent. -/
+/-- Let $p$ be a prime, $R$ an affine realization and $Y$ an analytic adic space. Then the raw
+diamond presheaf of $Y$, the left Kan extension along tilting of the presheaf of maps from
+realizations of affine untilts to $Y$, is a sheaf for the v-topology on affine perfectoid spaces. -/
 public theorem_wanted rawDiamondIsVSheaf (p : ℕ) [Fact p.Prime]
     (R : AffineRealization p) (Y : AnalyticAdicSpace p) :
     Presheaf.IsSheaf (topology p) ((rawDiamondFunctor p R).obj Y)
 
-/-- Construct a pro-etale relation presentation of the actual fixed diamondification sheaf. -/
+/-- For a prime $p$, an affine realization $R$ and an analytic adic space $Y$: a diamond (a v-sheaf
+with a representable pro-étale equivalence relation of perfectoid spaces whose quotient is
+isomorphic to it) whose v-sheaf is the diamondification `diamondFunctor p R` of $Y$. -/
 public def_wanted analyticDiamondPresentation (p : ℕ) [Fact p.Prime]
     (R : AffineRealization p) (Y : AnalyticAdicSpace p) :
     {D : Diamond p // D.sheaf = (diamondFunctor p R).obj Y}

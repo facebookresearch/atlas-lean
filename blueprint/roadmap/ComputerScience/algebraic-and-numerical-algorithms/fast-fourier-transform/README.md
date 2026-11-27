@@ -1,5 +1,6 @@
 # Fast Fourier transform
 
+- [Near-square-root logarithmic cost for formal convolution over the integers](integer-coefficient-circuits-for-formal-convolution.md)
 - [Discrete Fourier sum](dft-sum.md)
 - [Even–odd splitting of the DFT sum](dft-sum-two-mul.md)
 - [The DFT sum at a root of unity depends only on the frequency modulo the length](dft-sum-mod.md)
@@ -92,6 +93,16 @@
 - [FFT after inverse FFT at the positive root is the identity](fft-ifft-std-add-char-one.md)
 - [Overlap-add block convolution with a finite FFT size](overlap-add-block-convolution-with-a-finite-fft/README.md)
 
+## Planned results
+
+- [Exact complex DFT circuits below every fixed n log n bound at arbitrarily large orders](complex-dft-sub-nlogn-on-arbitrarily-large-orders.md)
+- [Finite abelian Fourier complexity and geometric-border feedback lower bound](finite-abelian-fourier-complexity-and-feedback-border.md)
+- [Batched Fourier complexity with joint rank and support errors](batched-fourier-complexity-with-joint-border-errors.md)
+- [Uniform exact positive-sign DFT with a logarithmic power saving in a scalar RAM](uniform-exact-dft-power-saving-ram.md)
+- [Uniform exact linear convolution with a logarithmic power saving in a scalar RAM](uniform-exact-linear-convolution-power-saving-ram.md)
+
 ## Related topics
 
 - [Quantum Fourier transform](../../../QuantumInformation/quantum-operations/quantum-fourier-transform/README.md): the normalised discrete Fourier transform acting on quantum amplitudes, which Shor implements for $q = 2^l$ by a circuit of Hadamard and controlled phase gates.
+- [Polynomial multiplication by evaluation and interpolation](polynomial-multiplication-by-evaluation-and.md)
+- [Typed scalar and index RAM for exact Fourier algorithms](typed-scalar-and-index-ram.md)

@@ -248,11 +248,10 @@ instance rotationCokernelJComparison_isIso (A : Shtuka p X S r) :
     (IsPushout.of_hasPushout A.t
       ((Scheme.Modules.pullback (twist p X S)).map A.j)).flip
 
-/-- Exact known source prerequisites on the actual Frobenius pullback.
-`Shtuka/BaseChange.lean` proves these for a separated curve (closed graphs)
-from graph-line flatness under any base change; here they are requested as
-`WantedExt.AlgebraicGeometry.ShtukaPartialFrobenius.pullbackConditions`. The algebraic Tor step is
-ported complete in `FlatCokernelBaseChange`. -/
+/-- Conditions on the pullback $\tau^* j : \tau^* E \to \tau^* E'$ of the modification $j$ of the
+right shtuka `A` along $\tau = \mathrm{id}_X \times \mathrm{Frob}_S$: it is a monomorphism, and its
+cokernel is the pushforward of a line bundle on $S$ along the graph of `A.rotationPole`, the pole of
+`A` followed by the Frobenius of $X$. -/
 structure PullbackConditions (A : Shtuka p X S r) : Prop where
   mono : Mono ((Scheme.Modules.pullback (twist p X S)).map A.j)
   cokernel : IsGraphLineBundle

@@ -7,7 +7,9 @@ $$\Pi_{\varepsilon_n}(d\theta\mid s)\propto\pi(\theta)\,P_\theta\bigl(|S_n-s|\le
 Let the data be drawn under $P_{\theta_0}$ and $\varepsilon_n\to0$. Then:
 
 1. *Concentration.* For every sequence $M_n\to\infty$,
-$$\Pi_{\varepsilon_n}\bigl(|\theta-\theta_0|>M_n\max(\varepsilon_n,n^{-1/2})\bigm| S_n\bigr)\to0\quad\text{in }P_{\theta_0}\text{-probability.}$$
+
+    $$\Pi_{\varepsilon_n}\bigl(|\theta-\theta_0|>M_n\max(\varepsilon_n,n^{-1/2})\bigm| S_n\bigr)\to0\quad\text{in }P_{\theta_0}\text{-probability.}$$
+
 2. *Asymptotic normality.* If $\varepsilon_n=o(n^{-1/2})$, then the total-variation distance between $\Pi_{\varepsilon_n}(\cdot\mid S_n)$ and $\mathcal N(S_n,1/n)$ tends to $0$ in $P_{\theta_0}$-probability.
 
 A tolerance that does not tend to zero gives no concentration: for fixed $\varepsilon>0$, as $n\to\infty$ the ABC posterior converges to the prior restricted to $[\theta_0-\varepsilon,\theta_0+\varepsilon]$ and renormalized.

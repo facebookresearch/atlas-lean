@@ -107,7 +107,11 @@ def sourceMorphism {F G : CoefficientComplexes Λ X} (f : F ⟶ G) :
   apply ForgetEnrichment.homOf SSet.{1}
   simpa only [DGSimplicialCategory.hom_eq, DGSimplicialCategory.underlying_of] using h
 
-/-- Only functoriality is requested; every source object and source map is independently fixed. -/
+/-- A functor from cochain complexes of sheaves of $\Lambda$-modules on the small étale site of $X$
+($\Lambda$ a ring) to the simplicial category `sourceSimplicialCategory` obtained from their cochain
+DG enrichment $N$ through the Dold–Kan correspondence, with prescribed values: through the given
+equalities of objects, it sends each complex $F$ to `sourceObject F` and each cochain map $f$ to
+`sourceMorphism f`, the vertex given by $f$ through the lax unit and the Dold–Kan map. -/
 structure CoefficientSimplicialFunctorSource where
   functor : CoefficientComplexes Λ X ⥤ sourceSimplicialCategory Λ X N
   objects : ∀ F : CoefficientComplexes Λ X, functor.obj F = sourceObject Λ X N F

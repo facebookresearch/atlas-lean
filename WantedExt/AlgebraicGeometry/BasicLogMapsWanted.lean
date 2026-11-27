@@ -43,7 +43,12 @@ def_wanted geometricGhostMap [InverseImageTheory.{0}] (X Y : LogScheme.{0})
     (f : MathlibExt.AlgebraicGeometry.EtaleLogSchemes.Hom X Y) (Ω : Type) [Field Ω] [IsSepClosed Ω]
     (x : Spec (.of Ω) ⟶ X.scheme) : GhostMap f x
 
-/-- The actual universal basic log curve, with native node/marking maps. -/
+/-- The basic log curve of a marked nodal family: for a Noetherian scheme $T$ of finite type over
+$\mathbb{C}$ (locally of finite type and quasi-compact) and a marked family $F$ over $T$ (proper,
+flat and of finite presentation, with $n$ disjoint markings in the smooth locus and connected nodal
+fibres of genus $g$), a log curve structure on $F$ that is initial among the log curve structures on
+$F$ (`BasicLogCurve F`). Log structures are on small étale sites, with the inverse images of the
+given `InverseImageTheory`. -/
 def_wanted basicLogCurve [InverseImageTheory.{0}] (T : Scheme.{0})
     [IsNoetherian T] (c : T ⟶ Spec (.of ℂ)) [LocallyOfFiniteType c] [QuasiCompact c]
     (n g : ℕ) (F : MarkedFamily T n g) : BasicLogCurve F

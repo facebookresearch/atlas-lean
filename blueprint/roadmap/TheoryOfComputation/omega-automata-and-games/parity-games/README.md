@@ -63,3 +63,5 @@
 - [Progress measures give winning strategies in parity games](progress-measures-give-winning-strategies-in.md)
 - [Finite parity games are positionally determined](finite-parity-games-are-positionally-determined.md)
 - [Small progress measures](small-progress-measures.md)
+- [Min-parity and max-parity games have the same winners after reversing priorities](min-parity-and-max-parity-games-have-the-same.md)
+- [Uniform positional winning strategies on winning regions](uniform-positional-winning-strategies-on.md)

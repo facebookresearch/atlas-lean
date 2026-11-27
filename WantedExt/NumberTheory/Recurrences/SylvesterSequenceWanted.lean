@@ -19,7 +19,9 @@ The classical Sylvester sequence starts with `S₀ = 2` and satisfies
 initial value `1 + 1 = 2` and the same recurrence.
 
 Proposition 1, Proposition 2, and Corollary 1 are split into their
-atomic congruence, divisibility, and classification claims.
+atomic congruence, divisibility, and classification claims; the claim
+`mersenne_sylvester_values_eq` is proved in
+`MathlibExt.NumberTheory.Recurrences.SylvesterSequenceMersenneSylvesterValuesEq`.
 Proposition 3 is split into its perfect-power and `a^m ± 1` claims.
 The quoted Theorem 1 is F. Luca, Sz. Tengely, and A. Togbé,
 "On the Diophantine equation `x² + C = 4yⁿ`", *Annales des Sciences
@@ -32,54 +34,16 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.NumberTheory.Divisors
-public import MathlibExt.NumberTheory.GeneralizedSylvester
+public import MathlibExt.NumberTheory.Recurrences.SylvesterModuloFour
+public import MathlibExt.NumberTheory.Recurrences.SylvesterSequence
+public import MathlibExt.NumberTheory.Recurrences.SylvesterSequenceMersenneSylvesterValuesEq
+public import MathlibExt.NumberTheory.Recurrences.SylvesterSequenceModTen
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Recurrences.SylvesterSequenceWanted
-
-/-- **Sylvester numbers.** The Sylvester numbers $S_0, S_1, S_2, \dots$ are the natural numbers
-given by $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$ for $n \ge 0$, so the sequence begins
-$2, 3, 7, 43, 1807, \dots$. It is the generalized Sylvester sequence with parameter $1$. -/
-abbrev sylvesterNumber (n : ℕ) : ℕ :=
-  Nat.generalizedSylvester 1 n
-
-/-- **Divisibility of differences of Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
-sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For all natural numbers $k$, $m$ and $n$
-with $k \ge 1$, $m \ge k$ and $n \ge k$, the integer $(S_k - 1)^2$ divides $S_n - S_m$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, divisibility
-(4). -/
-theorem_wanted sylvester_sub_dvd
-    (k m n : ℕ) (hk : 1 ≤ k) (hm : k ≤ m) (hn : k ≤ n) :
-    ((sylvesterNumber k : ℤ) - 1) ^ 2 ∣
-      (sylvesterNumber n : ℤ) - (sylvesterNumber m : ℤ)
-
-/-- **Sylvester numbers modulo 4.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
-$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 1$, $S_n \equiv 3 \pmod 4$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (5). -/
-theorem_wanted sylvester_modEq_three_mod_four
-    (n : ℕ) (hn : 1 ≤ n) :
-    sylvesterNumber n % 4 = 3
-
-/-- **Sylvester numbers modulo 36.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
-$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 2$, $S_n \equiv 7 \pmod{36}$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (6). -/
-theorem_wanted sylvester_modEq_seven_mod_thirty_six
-    (n : ℕ) (hn : 2 ≤ n) :
-    sylvesterNumber n % 36 = 7
-
-/-- **Sylvester numbers modulo 1764.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
-$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 3$, $S_n \equiv 43 \pmod{1764}$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (7). -/
-theorem_wanted sylvester_modEq_forty_three_mod_1764
-    (n : ℕ) (hn : 3 ≤ n) :
-    sylvesterNumber n % 1764 = 43
 
 /-- **Alternating divisibility for Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For all natural numbers $k$ and $n$ with
@@ -93,16 +57,6 @@ theorem_wanted sylvester_sq_add_one_dvd_sub
       (sylvesterNumber n : ℤ) -
         (-1 : ℤ) ^ (n - k) * (sylvesterNumber k : ℤ)
 
-/-- **Sylvester numbers of even index modulo 10.** Let $(S_n)_{n \ge 0}$ be the Sylvester
-sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $i \ge 1$,
-$S_{2i} \equiv 7 \pmod{10}$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9),
-even indices. -/
-theorem_wanted sylvester_even_index_mod_ten
-    (i : ℕ) (hi : 1 ≤ i) :
-    sylvesterNumber (2 * i) % 10 = 7
-
 /-- **Sylvester numbers of odd index modulo 10.** Let $(S_n)_{n \ge 0}$ be the Sylvester
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $i \ge 1$,
 $S_{2i+1} \equiv 3 \pmod{10}$.
@@ -112,15 +66,6 @@ odd indices. -/
 theorem_wanted sylvester_odd_index_mod_ten
     (i : ℕ) (hi : 1 ≤ i) :
     sylvesterNumber (2 * i + 1) % 10 = 3
-
-/-- **Mersenne numbers in the Sylvester sequence.** Let $(S_n)_{n \ge 0}$ be the Sylvester
-sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. The natural numbers $x$ such that $x = S_n$
-for some $n$ and $x = 2^r - 1$ for some $r \ge 1$ are exactly $3$ and $7$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(a). -/
-theorem_wanted mersenne_sylvester_values_eq :
-    {x : ℕ | ∃ n r : ℕ, 1 ≤ r ∧ x = sylvesterNumber n ∧
-      x = 2 ^ r - 1} = {3, 7}
 
 /-- **The only triangular Sylvester number is $3$.** Let $S_n$ denote the $n$-th Sylvester
 number. A natural number $x$ equals $S_n$ for some $n$ and satisfies $2x = m(m + 1)$ for some
@@ -138,15 +83,6 @@ Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(c
 theorem_wanted sylvester_not_perfect
     (n : ℕ) :
     ¬ (sylvesterNumber n).Perfect
-
-/-- **Prime divisors congruent to 3 modulo 4 of Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the
-Sylvester sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 1$, $S_n$ has a
-prime divisor $p$ with $p \equiv 3 \pmod 4$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(d). -/
-theorem_wanted sylvester_exists_prime_divisor_mod_four_eq_three
-    (n : ℕ) (hn : 1 ≤ n) :
-    ∃ p : ℕ, p.Prime ∧ p ∣ sylvesterNumber n ∧ p % 4 = 3
 
 /-- **Sylvester numbers are not perfect powers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n$ there are no natural numbers

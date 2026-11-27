@@ -302,8 +302,12 @@ abbrev rawCharacteristicAt {O : RingSheaf J} (L : LogStructure J O)
     (p : J.Point.{max u v}) : CommMonCat.{max u v} :=
   monoidCharacteristic ((p.sheafFiber (A := CommMonCat)).obj (monoid J L))
 
-/-- The comparison between the two actual characteristic constructions is
-fixed on the quotient projection. Its producer is a shared proof request. -/
+/-- A comparison, at a point $p$ of the site, of the two characteristic monoids of the log
+structure $L$ with monoid sheaf $M$: an isomorphism (`iso`) from $M_p / M_p^\times$, the fibre of
+$M$ at $p$ modulo its units, to the fibre at $p$ of the characteristic sheaf
+$\overline{M} = M / \mathcal{O}^\times$, such that the projection $M_p \to M_p / M_p^\times$
+followed by this isomorphism is the fibre at $p$ of the quotient map $M \to \overline{M}$
+(`normalized`). -/
 structure CharacteristicFiberComparison {O : RingSheaf J} (L : LogStructure J O)
     (p : J.Point.{max u v}) where
   iso : rawCharacteristicAt J L p ≅ characteristicAt J L p
