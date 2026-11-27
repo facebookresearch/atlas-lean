@@ -14,7 +14,7 @@ while $DD$, $DR$ and $RR$ are unchanged; with no drive allele at the next locus,
 
 ## Depends on
 
-- [One-locus viability selection regimes](../one-locus-selection-dynamics/one-locus-viability-selection-regimes.md)
+- [One-locus viability selection regimes](../../one-locus-selection-dynamics/one-locus-viability-selection-regimes.md)
 
 ## Expansion
 

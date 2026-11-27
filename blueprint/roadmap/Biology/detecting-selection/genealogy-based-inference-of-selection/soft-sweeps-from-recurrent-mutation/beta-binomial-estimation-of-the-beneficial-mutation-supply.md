@@ -16,7 +16,7 @@ where $B$ is the beta function. Maximizing $L$ gives $\hat\theta$, the estimated
 
 ## Depends on
 
-- [Ewens sampling formula](../../population-genetics/ewens-sampling-formula-and-the-chinese-restauran/ewens-prob.md)
+- [Ewens sampling formula](../../../population-genetics/ewens-sampling-formula-and-the-chinese-restauran/ewens-prob.md)
 
 ## Expansion
 

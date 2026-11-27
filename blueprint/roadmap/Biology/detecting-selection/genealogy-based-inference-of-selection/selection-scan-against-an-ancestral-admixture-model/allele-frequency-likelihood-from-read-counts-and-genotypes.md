@@ -8,7 +8,7 @@ The maximum-likelihood frequency $\hat p = \arg\max_p L(p; D)$ is used as the po
 
 ## Depends on
 
-- [Hardy–Weinberg proportions](../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+- [Hardy–Weinberg proportions](../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
 
 ## Expansion
 

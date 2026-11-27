@@ -25,7 +25,3 @@ These topics distinguish one-locus deterministic recurrences, spatial selection,
 - [Genetic contribution of advantaged ancestors](genetic-contribution-of-advantaged-ancestors/README.md)
 - [Ancestral learning graphs](ancestral-learning-graphs/README.md)
 - [Selection, gene drives, and polygenic adaptation](selection-drives-and-polygenic-adaptation/README.md)
-- [CRISPR homing drive invasion and stability](crispr-homing-drive-invasion-and-stability/README.md)
-- [Daisy-chain gene drives](daisy-chain-gene-drives/README.md)
-- [Stochastic homing gene-drive dynamics](stochastic-homing-gene-drive-dynamics/README.md)
-- [Non-crossover gene conversion](non-crossover-gene-conversion/README.md)
