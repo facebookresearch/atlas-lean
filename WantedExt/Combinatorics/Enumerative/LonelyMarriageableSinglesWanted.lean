@@ -52,19 +52,6 @@ public theorem_wanted maximalSetsOfLanes_equiv_noncrossingPartition (n : ℕ) :
     (Finset.univ.filter fun S : Finset (Fin n × Fin n) =>
       IsMaximalSetOfLanes Finset.univ S).card = catalan n
 
-/-- **Nonabsolute maximal sets of lanes are counted by marriageable singles partitions.** For
-every $n \ge 0$, the number of maximal sets of lanes of the standard road intersection of size $n$
-that are not absolute equals $M_n$, the number of noncrossing partitions of $\{0, \dots, n-1\}$
-that are marriageable singles partitions.
-
-Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
-Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Corollary 17
-(`jis-2025-25.1.1-cor-17`). -/
-public theorem_wanted card_nonabsolute_maximalSetsOfLanes (n : ℕ) :
-    (Finset.univ.filter fun S : Finset (Fin n × Fin n) =>
-      IsMaximalSetOfLanes Finset.univ S ∧ ¬ IsAbsoluteMaximalSetOfLanes S).card =
-      marriageableSinglesCount n
-
 /-- **Recursive lower bound for marriageable singles partitions.** For every $n \ge 0$,
 $C_n + 3M_n \le M_{n+2}$, where $C_n$ is the number of noncrossing partitions of
 $\{0, \dots, n-1\}$ and $M_n$ is the number of those that are marriageable singles partitions.
