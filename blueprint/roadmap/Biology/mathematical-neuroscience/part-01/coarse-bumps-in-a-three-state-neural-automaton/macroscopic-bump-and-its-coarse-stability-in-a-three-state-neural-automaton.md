@@ -22,13 +22,13 @@ then $J_b(0,0,\Delta)=J_b(\Delta,0,\Delta)=h$: the interval $[0,\Delta]$ is repr
 
 **Coarse stability.** Track the bump by its threshold crossings $\xi=(\xi_1,\xi_2)$ through the implicit map $J_b(\xi_i(t+1),\xi_1(t),\xi_2(t))=h$, $i=1,2$. Linearizing at $\xi_*=(0,\Delta)$ gives the eigenvalues
 
-$$|\lambda_1|=1\ \ (v^1=(1,1)^{\top},\ \text{translation}),\qquad \lambda_2=-\frac{W(0)+W(\Delta)}{W(0)-W(\Delta)}\ \ (v^2=(-1,1)^{\top},\ \text{width}),$$
+$$\lambda_1=1\ \ (v^1=(1,1)^{\top},\ \text{translation}),\qquad \lambda_2=\frac{W(0)+W(\Delta)}{W(0)-W(\Delta)}\ \ (v^2=(-1,1)^{\top},\ \text{width}),$$
 
 so the bump is coarsely stable to width perturbations iff $|\lambda_2|<1$, i.e. iff $W(\Delta)<0$: the bump edges must lie in the inhibitory surround of the kernel.
 
 ## Expansion
 
-Within a fully resolved bump every neuron cycles $0\to1\to-1\to0$, so at any time a third of the active region spikes. As $m\to\infty$ the spiking strips equidistribute in $[\eta_1,\eta_2)$, and the Riemann sums $\kappa\sum_j\int_{A^m_{3j}}W(x-y)\,dy$ converge uniformly to one third of the full integral by uniform continuity of $W$; this is the factor $1/3$ in $J_b$. The threshold condition makes the endpoints of $[0,\Delta]$ exactly critical, and by symmetry of $W$ the input exceeds $h$ inside. For stability, implicit differentiation of the threshold conditions gives a $2\times2$ matrix whose entries are $\pm W(0)$ on the diagonal and $\mp W(\Delta)$ off it, scaled by $1/(W(0)-W(\Delta))$; the translation mode has modulus one by rotational invariance, and the width mode contracts exactly when $W(\Delta)<0$. The same construction yields multi-bump states and travelling waves, which the paper continues numerically in the stochastic network via equation-free methods.
+Within a fully resolved bump every neuron cycles $0\to1\to-1\to0$, so at any time a third of the active region spikes. As $m\to\infty$ the spiking strips equidistribute in $[\eta_1,\eta_2)$, and the Riemann sums $\kappa\sum_j\int_{A^m_{3j}}W(x-y)\,dy$ converge uniformly to one third of the full integral by uniform continuity of $W$; this is the factor $1/3$ in $J_b$. The threshold condition makes the endpoints of $[0,\Delta]$ exactly critical, and by symmetry of $W$ the input exceeds $h$ inside. For stability, implicit differentiation of the threshold conditions gives a $2\times2$ matrix with entries $W(0)$ on the diagonal and $-W(\Delta)$ off it, scaled by $1/(W(0)-W(\Delta))$; the translation mode has eigenvalue one by rotational invariance, and the width mode contracts, monotonically and without alternating sign, exactly when $W(\Delta)<0$. (The source prints $\lambda_1=-1$ and a negative $\lambda_2$; both signs contradict translation invariance.) The same construction yields multi-bump states and travelling waves, which the paper continues numerically in the stochastic network via equation-free methods.
 
 ## Sources
 
