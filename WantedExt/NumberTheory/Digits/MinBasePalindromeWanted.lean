@@ -22,6 +22,8 @@ public import MathlibExt.NumberTheory.Digits.PalindromicTwoPowBinomialForm
 public import MathlibExt.NumberTheory.Digits.SmallBaseBinomialForm
 public import MathlibExt.NumberTheory.Digits.ThreeDigitBinomialForm
 public import MathlibExt.NumberTheory.Digits.ThreeDigitPalindromeTwoPow
+public import MathlibExt.NumberTheory.Digits.TwoPowBinomialForm
+public import MathlibExt.NumberTheory.Digits.MinBasePalindromeMinPalindromicBaseEqPred
 
 /-!
 # Minimum-base palindromic representations of powers of 2
@@ -43,16 +45,6 @@ statement and docstring, as `succ_dvd_of_palindrome_even_length` in
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Minimum palindromic base.** For a natural number $N$, $b(N)$ is the smallest base $b \ge 2$
-in which $N$ is a palindrome, that is, in which the base-$b$ digits of $N$ read the same forwards
-and backwards. Such a base exists: $0$ has no digits and is a palindrome in every base, and for
-$N \ge 1$ the number $N$ is written with the single digit $N$ in base $N + 1$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Section 1. -/
-public noncomputable def minPalindromicBase (N : ℕ) : ℕ :=
-  sInf {b | 2 ≤ b ∧ (Nat.digits b N).Palindrome}
 
 /-- **The minimum palindromic base of two.** The smallest base $b \ge 2$ in which the number $2$
 is a palindrome is $b(2) = 3$: in base $2$ the number $2$ is written $(1, 0)_2$, which is not a
@@ -84,26 +76,6 @@ Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
 Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Section 1. -/
 public theorem hasBinomialForm_16_2023 : HasBinomialForm 16 2023 :=
   ⟨7, 2, by norm_num, by norm_num, by norm_num [List.range_succ]⟩
-
-/-- **Brown's theorem on minimal palindromic base one less than the number.** Let $N \ge 1$ be a
-natural number and let $b(N)$ be the smallest base $b \ge 2$ in which $N$ is a palindrome. If
-$b(N) = N - 1$, then $N \in \{3, 4, 6\}$, or $N > 6$ and $N$ is prime.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 1
-(`integers-2024-A69-thm-1`), credited to K. Brown. -/
-public theorem_wanted minPalindromicBase_eq_pred (N : ℕ) (hN : 1 ≤ N)
-    (h : minPalindromicBase N = N - 1) : N = 3 ∨ N = 4 ∨ N = 6 ∨ (6 < N ∧ N.Prime)
-
-/-- **Sufficient condition for a binomial form of a power of 2.** Let $n$, $x$, $k$ and $r$ be
-natural numbers with $k \ge 1$, $n = xk + r$ and $2^r\binom{k}{\lceil k/2 \rceil} < 2^x - 1$.
-Then $2^n$ has a base-$(2^x - 1)$ representation in binomial form.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 1
-(`integers-2024-A69-cor-1`). -/
-public theorem_wanted hasBinomialForm_two_pow (n x k r : ℕ) (hk : 1 ≤ k) (hn : n = x * k + r)
-    (h : 2 ^ r * k.choose ((k + 1) / 2) < 2 ^ x - 1) : HasBinomialForm (2 ^ x - 1) (2 ^ n)
 
 /-- **The Nagell–Ljunggren equation in natural numbers (Bugeaud–Mihăilescu).** Let $x, y, n, q$
 be natural numbers with $x \ge 2$, $y \ge 2$, $n \ge 3$ and $q \ge 2$ such that

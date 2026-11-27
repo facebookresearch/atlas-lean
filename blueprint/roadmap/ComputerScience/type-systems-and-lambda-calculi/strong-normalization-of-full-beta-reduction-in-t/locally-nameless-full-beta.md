@@ -1,0 +1,5 @@
+# Full beta reduction on locally nameless terms with natural-number names
+
+Locally nameless terms with natural-number names are bound variables $\mathrm{bvar}\,i$ ($i \in \mathbb{N}$, a de Bruijn index), free variables $\mathrm{fvar}\,x$ ($x \in \mathbb{N}$), unannotated abstractions $\mathrm{abs}\,t$ and applications $\mathrm{app}\,t\,u$. Opening $\mathrm{openRec}\,k\,u\,t$ replaces every bound variable $\mathrm{bvar}\,k$ of $t$ (with $k$ increased by one under each abstraction) by $u$, without shifting $u$; $\mathrm{open}'\,t\,u = \mathrm{openRec}\,0\,u\,t$.
+
+Full beta reduction on these terms is the least relation containing beta contraction $\mathrm{app}\,(\mathrm{abs}\,M)\,N \to \mathrm{open}'\,M\,N$ whenever $\mathrm{abs}\,M$ and $N$ are locally closed, and closed under the congruences: if $M \to N$ and $Z$ is locally closed, then $\mathrm{app}\,Z\,M \to \mathrm{app}\,Z\,N$ and $\mathrm{app}\,M\,Z \to \mathrm{app}\,N\,Z$; and $\mathrm{abs}\,M \to \mathrm{abs}\,N$ when $\mathrm{open}'\,M\,(\mathrm{fvar}\,x) \to \mathrm{open}'\,N\,(\mathrm{fvar}\,x)$ for every name $x$ outside some finite set.
