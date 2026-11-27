@@ -54,8 +54,7 @@ asymptotic to `e^{-γ} log n`, by `O(log log n)`.
   the Variance of the Distribution of the Smallest Components of Combinatorial Objects*,
   INTEGERS 24 (2024), Article A7, pp. 1–18, Theorems 1 and 2.
 - D. Panario and B. Richmond, *Smallest Components in Decomposable Structures: Exp-Log Class*,
-  Algorithmica 29 (2001), pp. 205–226, Section 1 (earlier moment estimates cited by Gravel and
-  Panario in their Section 2.1).
+  Algorithmica 29 (2001), pp. 205–226, Section 4, Theorem 5 (earlier moment asymptotics).
 
 The variance proof uses this module's `smallest_cycle_moment_asymp` at order two and
 `smallest_cycle_mean_asymp` to bound the squared mean.
