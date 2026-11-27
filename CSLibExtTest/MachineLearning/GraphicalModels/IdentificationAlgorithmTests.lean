@@ -1231,7 +1231,7 @@ theorem chain2_eval_sum : IdExpr.eval (fun x : Fin 2 → Bool => if x 0 then (if
 theorem chain2_eval_cond_zero : IdExpr.eval (fun x : Fin 2 → Bool => if x 0 then (0 : ℝ) else 1) (.cond (Finset.univ : Finset (Fin 2)) ({1} : Finset (Fin 2)) ({0} : Finset (Fin 2)) .obs) (fun _ => true) = 0 := by
   simp only [IdExpr.eval, MetaMathlibExt.FiniteWeight.marginal]
   rw [filter_eval_condnum, Finset.sum_singleton]
-  rw [if_pos (show (![true, true] : Fin 2 → Bool) 0 = true from rfl)]
+  rw [ite_eq_left (show (![true, true] : Fin 2 → Bool) 0 = true from rfl)]
   exact zero_div _
 
 theorem chain2_eval_line6 : IdExpr.eval (fun x : Fin 2 → Bool => if x 0 then (if x 1 then (3 : ℝ) else 1) else 2) (.sum ∅ (.mul (.cond (Finset.univ : Finset (Fin 2)) ({1} : Finset (Fin 2)) ({0} : Finset (Fin 2)) .obs) .one)) (fun _ => true) = 3 / 4 := by

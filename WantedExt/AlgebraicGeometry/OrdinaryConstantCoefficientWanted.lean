@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.OrdinaryConstantCoefficientModels
+public import MathlibExt.AlgebraicGeometry.OrdinaryConstantCoefficient
 
 /-!
 # Native constant-ring module construction and full DG comparison
@@ -17,7 +18,11 @@ The constant simplicial ring, all native module complexes, scalar
 actions, homogeneous maps and balanced Tor tests are fixed before
 these requests. No Perf descent statement is a source hypothesis.
 
-Sources: Keller Section2; Bhatt--Mathew1807.04725v4, Section5.4.
+Source for the degree-zero DG comparison: Bernhard Keller, *Deriving DG categories*,
+Sections 1.2 and 2.1.
+Motivation only, since it concerns arc-hyperdescent rather than this comparison:
+Bhargav Bhatt and Akhil Mathew, *The arc-topology*, arXiv:1807.04725v4, Section 5.4
+(Theorem 5.16).
 -/
 
 set_option autoImplicit false
@@ -36,12 +41,6 @@ def_wanted ordinary_constant_ring_source (A : OrdinaryAlgebras) (N : ShuffleAlge
 /-- Assemble the complete native ordinary-to-DG module comparison with every action and homogeneous map fixed. -/
 def_wanted ordinary_constant_module_source (A : OrdinaryAlgebras) (N : ShuffleAlgebraFunctor ℤ)
     (C : ConstantRingSource A N) : OrdinaryModuleSource A N C
-
-/-- This all-complex native source comparison is a whole DG quasi-equivalence. -/
-theorem_wanted ordinary_constant_module_quasi_equivalence (A : OrdinaryAlgebras)
-    (N : ShuffleAlgebraFunctor ℤ) (C : ConstantRingSource A N) (J : OrdinaryModuleSource A N C) :
-    letI := moduleDG A
-    J.functor.IsQuasiEquivalence
 
 /-- Assemble the same native constant-ring module/action construction over all ordinary rings. -/
 def_wanted ordinary_tor_system (N : ShuffleAlgebraFunctor ℤ) : OrdinaryTorSystem N

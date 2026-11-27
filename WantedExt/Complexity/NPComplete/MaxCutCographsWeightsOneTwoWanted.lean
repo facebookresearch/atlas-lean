@@ -27,7 +27,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -44,7 +44,7 @@ least `K`?
 
 This is MAX CUT ([ND16], whose weights are positive integers) restricted to cographs with every
 weight 1 or 2. Johnson's column records Bodlaender's result that the unweighted problem
-(`MaxCutWanted`) is polynomial for cographs, while this restriction is NP-complete.
+(`MaxCutDefs`) is polynomial for cographs, while this restriction is NP-complete.
 
 The vertices are `0, ..., n - 1`; the weighted edge list holds triples `(u, v, w)`. Its edges
 `(u, v)` form a simple edge list in the sense of `MaxCut.WellFormed` (no repeated edge in either
@@ -52,7 +52,7 @@ orientation, no loop, endpoints in range), which `WellFormed` reuses. A cograph 
 induced path on four vertices (Corneil, Lerchs and Stewart Burlingham 1981), as in
 `AchromaticNumberCographsWanted` and `CographEditingWanted`: Mathlib's
 `(SimpleGraph.pathGraph 4).IsIndContained` fails for the graph
-`Cslib.Complexity.Karp.edgeGraph n E`. As in `MaxCutWanted`, the partition is `V₁ = S`,
+`Cslib.Complexity.Karp.edgeGraph n E`. As in `MaxCutDefs`, the partition is `V₁ = S`,
 `V₂ = V - S`, and the question is witnessed by a sublist of crossing edges of total weight at
 least `K` (weights are positive, so this is the same as the full crossing weight being at
 least `K`). Numbers use the canonical binary encoding.

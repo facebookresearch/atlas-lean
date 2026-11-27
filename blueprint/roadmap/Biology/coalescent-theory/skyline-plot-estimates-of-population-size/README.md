@@ -20,3 +20,9 @@
 
 - [Canonical probability space for the skyline model](skyline-pi-measure.md)
 - [Coordinate projections form a skyline model](of-pi.md)
+- [Bayesian skyline coalescent prior](bayesian-skyline-coalescent-prior.md)
+
+## Further topics
+
+- [Limits of inference on population-size histories](limits-of-inference-on-population-size-histories/README.md)
+- [Gaussian process inference of population size trajectories](gaussian-process-inference-of-population-size-trajectories/README.md)

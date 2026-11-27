@@ -17,3 +17,6 @@
 - [Ciliberto–Miranda lower bound for the ten-point Seshadri constant](ciliberto-miranda2011-lower-bound-wanted.md)
 - [Eckl's 2011 lower bound for the ten-point Seshadri constant](eckl2011-lower-bound-wanted.md)
 - [Submaximal upper bound for the ten-point Seshadri constant](submaximal-upper-bound-wanted.md)
+- [Positive-degree equations of homogeneous plane cycles](homogeneous-plane-cycle-equation.md)
+- [Nagata’s strict inequality for very general plane points](nagata-projective-plane.md)
+- [Homogeneous-coordinate form of Nagata’s inequality](nagata-plane-polynomial.md)
