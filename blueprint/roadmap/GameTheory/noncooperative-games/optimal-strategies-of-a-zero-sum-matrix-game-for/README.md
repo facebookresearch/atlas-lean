@@ -2,7 +2,6 @@
 
 - [Maximin strategy of a zero-sum matrix game](is-maximin-strategy.md)
 - [Minimax strategy of a zero-sum matrix game](is-minimax-strategy.md)
-- [Optimal strategies form a saddle point](is-saddle-point-of-optimal-of-value-eq.md)
 - [Action sets of a two-player zero-sum game](zero-sum-actions.md)
 - [Payoffs of the two-player encoding of a zero-sum matrix game](zero-sum-payoffs.md)
 - [Mixed profile of the two-player encoding of a zero-sum matrix game](zero-sum-profile.md)

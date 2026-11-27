@@ -20,9 +20,7 @@ An agent with a value $t \in [a, b]$ who reports $s$ to a single-parameter mecha
 ## Dominant-strategy auctions
 
 - [Dominant-strategy incentive compatibility of a single-parameter auction](dsic.md)
-- [Allocations of a dominant-strategy incentive-compatible auction are monotone](myerson-monotone.md)
 - [Myerson payment of an allocation rule](myerson-payment.md)
-- [The Myerson payment makes truthful bidding optimal](myerson-payment-dsic.md)
 - [The Myerson payment of a zero bid is zero](myerson-payment-zero.md)
 
 ## Related topics

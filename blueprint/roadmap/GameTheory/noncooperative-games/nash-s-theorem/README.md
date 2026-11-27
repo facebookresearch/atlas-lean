@@ -6,7 +6,6 @@ Brouwer's fixed-point theorem for products of simplices, by Nash's 1951 argument
 
 - [Expected payoff of a mixed profile](expected-payoff.md)
 - [Mixed Nash equilibrium](is-mixed-nash.md)
-- [Exists is Mixed Nash of brouwer](exists-is-mixed-nash-of-brouwer.md)
 - [Nash's theorem](exists-is-mixed-nash.md)
 - [Strictly dominated actions are not played in a pure Nash equilibrium](strictly-dominated-actions-are-never-played-in-equilibrium.md)
 - [Matching pennies has no pure Nash equilibrium](matching-pennies-has-no-pure-nash-equilibrium.md)

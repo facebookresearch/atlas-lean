@@ -6,4 +6,3 @@
 - [Kemeny is Condorcet-consistent](is-kemeny-ranking-top-of-is-condorcet-wi.md)
 - [Dodgson is Condorcet-consistent](dodgson-score-eq-zero-iff.md)
 - [Borda is not Condorcet-consistent](exists-is-condorcet-winner-not-mem-winne.md)
-- [Exists is Condorcet Winner winners borda Score ne](exists-is-condorcet-winner-winners-borda.md)

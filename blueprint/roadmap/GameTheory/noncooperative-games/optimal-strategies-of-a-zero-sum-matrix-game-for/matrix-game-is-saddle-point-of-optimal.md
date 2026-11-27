@@ -5,3 +5,5 @@ Let $A$ be an $m \times n$ real matrix with $m, n \ge 1$, let $p$ be a maximin m
 $$p'^{\mathsf T}Aq \le p^{\mathsf T}Aq \le p^{\mathsf T}Aq',$$
 
 so neither player gains by a unilateral deviation.
+
+No hypothesis on the value of the game is needed, so the same conclusion holds in particular when the two optimal strategies are given together with the value.
