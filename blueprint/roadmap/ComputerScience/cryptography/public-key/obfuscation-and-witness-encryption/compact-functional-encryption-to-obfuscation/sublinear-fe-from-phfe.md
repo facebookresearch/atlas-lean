@@ -1,6 +1,6 @@
 # Sublinear functional encryption from partially hiding FE and structured-seed PRGs
 
-Assume a partially hiding FE for functions of degree $2$ in the private input (with ciphertext linear in the private input), a structured-seed PRG with stretch $n^{1+\tau}$ whose output is degree $2$ in the private seed and constant-degree in the public seed, and LWE (to hide the residual leakage by noise flooding and to build the outer encryption). Then there is a single-key, selectively secure, weakly compact public-key FE for polynomial-size circuits (with security loss polynomial in the reductions' advantages).
+Let $\gamma,\epsilon$ and $d$ be constants and $p$ a prime. Assume the (subexponential) hardness of SXDH in bilinear groups of order $p$ (which gives a partially hiding FE for functions of degree $2$ in the private input, with ciphertext linear in the private input); LWE with modulus-to-noise ratio $2^{k^{\epsilon}}$, where $k$ is the dimension of the secret (to hide the residual leakage by noise flooding and to build the outer encryption); the existence of a Boolean PRG in $\mathsf{NC}^0$ with polynomial stretch and multilinear degree $d$; and a (subexponentially) $\gamma$-pseudorandom structured-seed PRG over $\mathbb{Z}_p$ with polynomial stretch whose output is degree $2$ in the private seed and computed from the public seed in $\mathsf{arith}\text{-}\mathsf{NC}^0$, with $\gamma$ small enough that $2\gamma+O(1/\lambda)<1$. Then there is a single-key, weakly selective, (subexponentially) indistinguishability-secure public-key FE for polynomial-size circuits that is weakly compact: its encryption time is $\mathrm{poly}(\lambda,l)\cdot S^{1-\sigma}$ for inputs of length $l$, circuits of size $S$ and a constant $\sigma\in(0,1)$. The proof first turns the structured-seed PRG into a perturbation-resilient generator (Theorem 5.1), then builds a single-key, weakly selective secret-key FE for $\mathsf{NC}^0$ (Theorem 5.2), and finally lifts it to all polynomial-size circuits, amplifies security and converts it to public-key FE (Theorem 5.3).
 
 ## Proof sketch
 
@@ -8,8 +8,9 @@ Encrypt $x$ with a lattice-based encryption whose decryption, combined with a ra
 
 ## Depends on
 
-- [Partially hiding functional encryption for degree-two private computations](partially-hiding-fe.md)
+- [The symmetric external Diffie–Hellman assumption](../obfuscation-from-well-founded-assumptions/sxdh-assumption.md)
 - [Structured-seed pseudorandom generators](../obfuscation-from-well-founded-assumptions/structured-seed-prg.md)
+- [Pseudorandom generators in NC0 with polynomial stretch](../obfuscation-from-well-founded-assumptions/local-prg.md)
 - [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
 - [Single-key weakly compact public-key functional encryption](weakly-compact-fe.md)
 
@@ -20,4 +21,4 @@ Encrypt $x$ with a lattice-based encryption whose decryption, combined with a ra
 
 ## Sources
 
-- Aayush Jain, Huijia Lin, Amit Sahai, "Indistinguishability Obfuscation from Well-Founded Assumptions", STOC (2021), IACR ePrint 2020/1003, arXiv:2008.09317.
+- Aayush Jain, Huijia Lin, Amit Sahai, "Indistinguishability Obfuscation from Well-Founded Assumptions", STOC (2021), IACR ePrint 2020/1003, arXiv:2008.09317, Theorems 5.1, 5.2 and 5.3.
