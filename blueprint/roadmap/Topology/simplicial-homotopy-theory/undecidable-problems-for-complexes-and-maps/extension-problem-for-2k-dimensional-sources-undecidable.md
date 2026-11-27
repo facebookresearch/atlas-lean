@@ -13,7 +13,8 @@ Conventions: by companion results of the same group of authors, for $(k-1)$-conn
 
 ## Depends on
 
-None.
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
+- [Topological space](../../topological-spaces/topological-space.md)
 
 ## Proof depends on
 

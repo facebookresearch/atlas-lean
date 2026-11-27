@@ -10,7 +10,7 @@ Conventions: the input complexes are finite and connected (connectedness is deci
 
 ## Depends on
 
-None.
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
 
 ## Proof depends on
 

@@ -10,7 +10,7 @@ Conventions: knotting is defined through simplicial isotopies in subdivisions of
 
 ## Depends on
 
-None.
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
 
 ## Proof depends on
 

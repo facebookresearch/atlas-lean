@@ -14,6 +14,7 @@ Conventions: a finite simplicial complex is described by its vertex set and the 
 ## Depends on
 
 - [Integral singular homology](../../algebraic-topology/hurewicz-theorem/integral-homology.md)
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
 
 ## Proof depends on
 

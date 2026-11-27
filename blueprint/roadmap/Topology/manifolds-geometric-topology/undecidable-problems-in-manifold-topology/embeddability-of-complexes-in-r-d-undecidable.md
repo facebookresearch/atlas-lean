@@ -10,7 +10,7 @@ Conventions: the dimension $d$ is fixed and the complex is the input. In contras
 
 ## Depends on
 
-None.
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
 
 ## Proof depends on
 

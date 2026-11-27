@@ -10,7 +10,7 @@ Conventions: regular covers enter as finite data through their deck transformati
 
 ## Depends on
 
-None.
+- [Normal subgroup](../../../GroupTheory/group-basics/normal-subgroup.md)
 
 ## Proof depends on
 

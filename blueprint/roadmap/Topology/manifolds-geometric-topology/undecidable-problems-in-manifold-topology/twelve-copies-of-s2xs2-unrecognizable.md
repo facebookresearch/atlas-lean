@@ -11,6 +11,9 @@ Conventions: the input is a finite simplicial complex whose realization is a clo
 ## Depends on
 
 - [Algorithmic recognition problem for a manifold](recognition-problem-for-a-manifold.md)
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
+- [Closed manifold, not required to be connected](../closed-topological-manifold.md)
+- [Homeomorphism](../../topological-spaces/homeomorphism.md)
 
 ## Proof depends on
 

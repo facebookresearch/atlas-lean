@@ -13,7 +13,8 @@ Conventions: the dimensions $m$ and $n$ are fixed and the manifold is the input.
 
 ## Depends on
 
-None.
+- [Semialgebraic set](../../../Logic/model-theory/wilkie-s-conjecture/is-semialgebraic.md)
+- [Closed manifold, not required to be connected](../closed-topological-manifold.md)
 
 ## Proof depends on
 

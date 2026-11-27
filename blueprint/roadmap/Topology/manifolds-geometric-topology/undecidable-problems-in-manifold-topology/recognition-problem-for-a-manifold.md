@@ -13,6 +13,8 @@ Variants:
 ## Depends on
 
 - [Closed manifold, not required to be connected](../closed-topological-manifold.md)
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
+- [Homeomorphism](../../topological-spaces/homeomorphism.md)
 
 ## Proof depends on
 

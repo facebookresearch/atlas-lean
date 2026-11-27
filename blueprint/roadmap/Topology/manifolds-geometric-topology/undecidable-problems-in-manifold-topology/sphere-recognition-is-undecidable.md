@@ -9,6 +9,8 @@ Conventions: the dimension $n$ is fixed and the complex is the input; the statem
 ## Depends on
 
 - [Algorithmic recognition problem for a manifold](recognition-problem-for-a-manifold.md)
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
+- [Homeomorphism](../../topological-spaces/homeomorphism.md)
 
 ## Proof depends on
 

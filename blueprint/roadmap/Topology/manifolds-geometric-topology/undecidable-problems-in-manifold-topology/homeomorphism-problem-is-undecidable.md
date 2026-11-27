@@ -11,6 +11,10 @@ Conventions: the theorem is about a fixed dimension, with both manifolds part of
 ## Depends on
 
 - [Algorithmic recognition problem for a manifold](recognition-problem-for-a-manifold.md)
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
+- [Closed manifold, not required to be connected](../closed-topological-manifold.md)
+- [R-orientation of a topological manifold](../../algebraic-topology/homological-orientation.md)
+- [Homeomorphism](../../topological-spaces/homeomorphism.md)
 
 ## Proof depends on
 

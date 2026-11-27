@@ -10,7 +10,7 @@ Conventions: the input is promised to present a group in $\mathcal{A}$. The case
 
 ## Depends on
 
-None.
+- [R-orientation of a topological manifold](../../algebraic-topology/homological-orientation.md)
 
 ## Proof depends on
 

@@ -12,7 +12,8 @@ Conventions: the dimension $l$ (and in the extendability version the number $m$)
 
 ## Depends on
 
-None.
+- [Finite abstract simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/rational-homology-of-simplicial-complexes/is-simplicial-complex.md)
+- [Polyhedral subdivisions](../../algebraic-topology/adapting-families-of-maps-to-open-covers/subdivision.md)
 
 ## Proof depends on
 

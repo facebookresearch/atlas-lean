@@ -10,7 +10,8 @@ Conventions: the dimensions are fixed and the manifold is the input; manifolds w
 
 ## Depends on
 
-None.
+- [Semialgebraic set](../../../Logic/model-theory/wilkie-s-conjecture/is-semialgebraic.md)
+- [Homeomorphism](../../topological-spaces/homeomorphism.md)
 
 ## Proof depends on
 

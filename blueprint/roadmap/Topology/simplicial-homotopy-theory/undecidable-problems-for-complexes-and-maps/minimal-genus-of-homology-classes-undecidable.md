@@ -17,6 +17,7 @@ Conventions: $B$ is fixed and the complex and class are the input; for each fixe
 ## Depends on
 
 - [Integral singular homology](../../algebraic-topology/hurewicz-theorem/integral-homology.md)
+- [R-orientation of a topological manifold](../../algebraic-topology/homological-orientation.md)
 
 ## Proof depends on
 
