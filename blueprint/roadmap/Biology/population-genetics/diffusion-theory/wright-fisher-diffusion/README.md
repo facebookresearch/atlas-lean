@@ -54,3 +54,5 @@
 - [Gradient-flow structure of evolutionary models](gradient-flow-structure-of-evolutionary-models/README.md)
 - [Generalized Kimura diffusion operators](generalized-kimura-diffusion-operators/README.md)
 - [Generalized Kimura diffusions on manifolds with corners](generalized-kimura-diffusions-on-manifolds-with-corners/README.md)
+- [Excursion theory of the Wright–Fisher diffusion](excursion-theory-of-the-wright-fisher-diffusion/README.md)
+- [Jacobi flows](jacobi-flows/README.md)

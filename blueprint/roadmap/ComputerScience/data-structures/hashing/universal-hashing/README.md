@@ -29,3 +29,7 @@
 - [Number of mod-prime indices](mod-prime-index-card.md)
 - [Universality of the mod-prime family](mod-prime-is-universal-on.md)
 - [Members of the mod-prime family](mem-mod-prime-family.md)
+
+## Near-universal hash families
+
+- [Near-universal hash family](is-near-universal.md)
