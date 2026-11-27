@@ -52,3 +52,4 @@
 - [Best-fit population simulation](best-fit-population-simulation/README.md)
 - [Estimating recombination from haplotype frequency paths](estimating-recombination-from-haplotype-frequency-paths/README.md)
 - [Recombination equations and labelled partitioning duality](recombination-equations-and-labelled-partitioning-duality/README.md)
+- [Gamma renewal model of chiasma interference](gamma-renewal-model-of-chiasma-interference/README.md)
