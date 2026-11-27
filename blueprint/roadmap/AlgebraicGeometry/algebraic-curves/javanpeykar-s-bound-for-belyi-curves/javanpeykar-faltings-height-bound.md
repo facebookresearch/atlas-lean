@@ -28,6 +28,23 @@ takes the image of the origin back to the origin, is an isomorphism of abelian v
 the abelian variety structures on one $K$-scheme give isomorphic abelian varieties, every such
 $J$ is isomorphic to $J(C)$ with its group law, and $h_F(J) = h_F(J(C)) = h_{\mathrm{Fal}}(X)$.
 
+## Informally uses
+
+- [Belyi's theorem](belyi-s-theorem.md), which gives every such curve a Belyi map, so that
+  $\deg_B(X)$ is the degree of one; the statement takes this as its hypothesis
+- [Bost's lower bound for the Faltings height](../../abelian-varieties/stable-faltings-height/bost-lower-bound.md),
+  for the lower bound (Javanpeykar's Lemma 2.4.4), applied to the Jacobian, of dimension $g$ by
+  [the Jacobian has dimension equal to the genus](../jacobians-of-curves/smooth-of-relative-dimension-genus.md)
+- [Arakelov invariants bounded by the height of a non-Weierstrass point](arakelov-invariants-and-a-non-weierstrass-point.md),
+  for $h_{\mathrm{Fal}}(X) \le \frac12 g(g+1) h(b) + \log \lVert \mathrm{Wr} \rVert_{\mathrm{Ar}}(b)$
+- [A non-Weierstrass point of bounded height on a Belyi curve](non-weierstrass-point-of-bounded-height.md)
+- [Bound for the Wronskian differential of a Belyi cover](wronskian-bound-for-belyi-covers.md)
+
+The upper bound follows, as in Javanpeykar's §4.6, p. 123: with $h(b) \le 6378033 \deg_B(X)^5 / g$
+and $\log \lVert \mathrm{Wr} \rVert_{\mathrm{Ar}}(b) \le 6378028 \, g \deg_B(X)^5$,
+$h_{\mathrm{Fal}}(X) \le \bigl(\frac{g+1}{2} \cdot 6378033 + 6378028 \, g\bigr) \deg_B(X)^5 \le
+12756061 \, g \deg_B(X)^5$.
+
 ## Sources
 
 - A. Javanpeykar, *Polynomial bounds for Arakelov invariants of Belyi curves*, Algebra Number Theory 8 (2014), 89–140, Theorem 1.1.1, p. 90, with $h_{\mathrm{Fal}}$ defined in §2.3, where it is identified with the stable Faltings height of the Jacobian, and its normalization compared with that of Gaudron and Rémond in Lemma 2.4.4, <https://doi.org/10.2140/ant.2014.8.89> (arXiv:1403.6404v1).

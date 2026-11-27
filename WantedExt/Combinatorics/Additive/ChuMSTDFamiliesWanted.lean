@@ -49,15 +49,6 @@ public theorem_wanted chu_family_balanced {k : ℕ} (hk : 0 < k) :
     let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock k ++ chuBlock (k + 1) ++ [1, 1])
     (A + A).card = (A - A).card
 
-/-- **Size of the difference set of the Chu family set.** Let $k$, $l$, $t$ be positive integers
-and let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$. Then
-$|A - A| = 11 + 6klt + 8lt + 8t$.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 6 (`integers-2024-A32-thm-6`). -/
-public theorem_wanted chuFamilyKLT_card_sub {k l t : ℕ} (hk : 0 < k) (hl : 0 < l) (ht : 0 < t) :
-    (chuFamilyKLT k l t - chuFamilyKLT k l t).card = 11 + 6 * k * l * t + 8 * l * t + 8 * t
-
 end
 
 end MetaMathlibExt
