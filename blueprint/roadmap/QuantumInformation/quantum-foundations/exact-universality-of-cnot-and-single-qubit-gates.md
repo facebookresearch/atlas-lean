@@ -8,18 +8,16 @@ unitaries, each the diagonal phase matrix of $D$ restricted to one pair of basis
 controlled-NOT and single-qubit gates. No global phase remains, since $D$ carries every phase exactly. The construction uses $O(n^3 4^n)$ gates.
 Approximate synthesis from a finite gate set (Solovay–Kitaev) is a different statement.
 
-## Expansion
-
-A good expansion adds a page for each pending prerequisite below.
-
-- Statement prerequisite: two-level unitaries, and the decomposition of every unitary on $\mathbb{C}^d$ into at most $d(d-1)/2$ two-level unitaries and a diagonal phase matrix (Givens-style factorization).
-- Statement prerequisite: for even $d$, every diagonal unitary on $\mathbb{C}^d$ is a product of $d/2$ two-level diagonal unitaries acting on disjoint pairs of basis states.
-- Proof prerequisite: every two-level unitary on $n$ qubits is a product of at most $2n - 1$ multiply-controlled gates $\wedge_{n-1}(V)$, conjugated by single-qubit NOT gates, along a Gray code joining its two basis states.
-- Proof prerequisite: every multiply-controlled single-qubit unitary $\wedge_{m}(U)$ on $m + 1$ qubits is a finite product of controlled-NOT and single-qubit gates without ancillas, with $O(m^2)$ gates.
-
 ## Depends on
 
 - [Unitary evolution and elementary gates](unitary-evolution-and-elementary-gates.md)
+- [Decomposition of a unitary into two-level unitaries](../quantum-error-correction/universal-gate-sets/decomposition-into-two-level-unitaries.md)
+- [A diagonal unitary is a product of two-level diagonal unitaries](../quantum-error-correction/universal-gate-sets/diagonal-unitary-as-a-product-of-two-level-unitaries.md)
+
+## Proof depends on
+
+- [A two-level unitary from multiply controlled gates along a Gray code](../quantum-error-correction/universal-gate-sets/two-level-unitary-from-multiply-controlled-gates-along-a-gray-code.md)
+- [Multiply controlled unitaries from CNOT and single-qubit gates](../quantum-error-correction/universal-gate-sets/multiply-controlled-unitary-from-cnot-and-single-qubit-gates.md)
 
 ## Sources
 
