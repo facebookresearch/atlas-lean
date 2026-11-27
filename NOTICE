@@ -413,3 +413,39 @@ Files:
   MathlibExt/CategoryTheory/Monad/BarSimplicial.lean
   MathlibExt/CategoryTheory/Monad/Module.lean
   MathlibExt/CategoryTheory/Monad/MonoidalBar.lean
+
+
+Stable matrix module source attributions
+---------------------------------------
+
+Source snapshot: fairinternal/formal-math at 9a495da20622876d4a72852b4de7e0921e976bc0.
+The source authorship notice for the following modules and tests is reproduced
+below. This attribution does not change applicable license terms.
+
+Files:
+
+  MathlibExt/LinearAlgebra/Matrix/StableModule.lean
+  MathlibExt/LinearAlgebra/Matrix/StableModule/Truncate.lean
+  MathlibExtTest/LinearAlgebra/Matrix/StableModule.lean
+  MathlibExtTest/LinearAlgebra/Matrix/StableModule/Truncate.lean
+
+/-
+Author: @toskua
+-/
+
+
+Stable matrix algebra source attributions
+----------------------------------------
+
+Source snapshot: fairinternal/formal-math at 9a495da20622876d4a72852b4de7e0921e976bc0.
+The source authorship notice for the following module and test is reproduced
+below. This attribution does not change applicable license terms.
+
+Files:
+
+  MathlibExt/LinearAlgebra/Matrix/Stable.lean
+  MathlibExtTest/LinearAlgebra/Matrix/Stable.lean
+
+/-
+Author: @toskua
+-/
