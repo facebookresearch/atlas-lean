@@ -16,6 +16,11 @@ Write $\alpha \le_R \beta$ if $\emptyset \supset \alpha \le \beta$ is derivable.
 - [The tree ordering on recursive types](tree-ordering-on-recursive-types.md)
 - [The Amadio–Cardelli subtyping algorithm](the-amadio-cardelli-subtyping-algorithm.md)
 
+## Proof depends on
+
+- [Correctness of the Amadio–Cardelli subtyping algorithm](correctness-of-the-amadio-cardelli-subtyping-algorithm.md)
+- [Complete rules for equality of recursive types](complete-rules-for-recursive-type-equality.md)
+
 ## Sources
 
 - R. M. Amadio and L. Cardelli, "Subtyping recursive types", *ACM Transactions on Programming Languages and Systems* 15(4):575–631, 1993, <http://lucacardelli.name/Papers/SRT.pdf>: Section 5.3 (the rules, including (µR) from the Amber language), Proposition 5.3.1 (soundness), Lemmas 5.4.1 and 5.4.3 (from execution trees to proof trees) and Theorem 5.4.5 (completeness).

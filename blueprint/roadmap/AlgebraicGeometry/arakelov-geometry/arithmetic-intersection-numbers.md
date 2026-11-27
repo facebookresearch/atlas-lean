@@ -148,8 +148,8 @@ formula applies.
   \sum n_i \#(\mathcal{O}_F / \mathfrak{p}_i)$ is a misprint for $\log \#(Z) = \sum n_i \log
   \#(\mathcal{O}_F / \mathfrak{p}_i)$.
 - J.-B. Bost, H. Gillet and C. Soulé, "Heights of projective varieties and positive Green forms", J.
-  Amer. Math. Soc. 7 (1994), 903–1027, archived publisher scan
-  <https://web.archive.org/web/20170815232351id_/https://www.ams.org/journals/jams/1994-07-04/S0894-0347-1994-1260106-X/S0894-0347-1994-1260106-X.pdf>:
+  Amer. Math. Soc. 7 (1994), 903–1027,
+  <https://doi.org/10.1090/S0894-0347-1994-1260106-X>:
   §2.1.2, p. 932 ($\hat c_1(\bar L) = [(\operatorname{div} s, -\log \lVert s \rVert^2)]$); (2.3.16),
   p. 944, and §3.1.2.2, pp. 946–947 (the arithmetic degree with $\log \mathrm{N}\mathfrak{p}$;
   (2.1.8), p. 934, prints it without the logarithm); Proposition 2.3.1 and §2.3.1, Remark (ii), pp.

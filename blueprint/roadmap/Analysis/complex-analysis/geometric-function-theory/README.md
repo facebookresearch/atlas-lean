@@ -19,3 +19,7 @@ Conformal and univalent maps: Riemann mapping, Koebe and Bloch theorems, Schwarz
 - [No proper holomorphic map from the unit disc to the complex plane](not-exists-differentiable-on-ball-is-com.md)
 - [Nonconstant holomorphic functions of modulus one on the unit circle cover the unit disc](ball-subset-image-of-norm-eq-one-on-sphe.md)
 - [Automorphisms of the open unit disc](unit-disc-automorphisms.md)
+
+- [Circle-domain uniformization](circle-domain-uniformization.md)
+- [Circle-domain rigidity from a removable source boundary](removable-circle-domain-rigidity.md)
+- [Integral means and integrability of univalent functions](integral-means-and-integrability/README.md)
