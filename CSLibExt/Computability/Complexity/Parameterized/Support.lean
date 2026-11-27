@@ -132,8 +132,10 @@ theorem compactUniverse_size {n : ℕ} (k : ℕ) (C : List WCGate) :
   unfold dummyCount
   omega
 
-/-- Exact weights are preserved when the ground set and the requested weight
-are both shrunk. This holds for every condition on the active truth values. -/
+/-- Let `A` be a subset of the `n` input variables and suppose `k ≤ n`. For any condition
+on the selected variables in `A`, there is a selection of exactly `k` of the original inputs
+meeting the condition if and only if there is a selection of exactly `min k A.card` inputs
+from `compactUniverse n k A` meeting the same condition. -/
 theorem compress_weight {n k : ℕ} (hk : k ≤ n) (A : Finset ℕ)
     (hA : A ⊆ Finset.range n) (ok : Finset ℕ → Prop) :
     (∃ S ⊆ Finset.range n, S.card = k ∧ ok (S ∩ A)) ↔
@@ -263,8 +265,10 @@ def labels (n k : ℕ) (C : List WCGate) : List ℕ :=
 theorem labels_length_le (n k : ℕ) (C : List WCGate) : (labels n k C).length ≤ 2 * C.length := by
   simpa [labels] using compactUniverse_size (n := n) k C
 
-/-- Shrink the input count and the weight together, leaving the number of
-gates, their wiring and the acceptance condition unchanged. -/
+/-- Suppose `k ≤ n` and let `m` be the number of active inputs of the circuit `C` on `n`
+inputs. For any weft and depth bounds, weighted circuit satisfiability accepts `C` at weight
+`k` if and only if it accepts the circuit reindexed on the compact input labels at weight
+`min k m` under the same bounds. -/
 theorem reindex_correct (n k : ℕ) (hk : k ≤ n) (C : List WCGate) (t d : ℕ) :
     let L := labels n k C
     let E := MetaMathlibExt.BitstringEncoding.bitEncode (α := ℕ × List WCGate)

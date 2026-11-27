@@ -103,9 +103,10 @@ private theorem small_false_witness (a : Fin k → V) (lit : V × Bool)
     · obtain ⟨j, hj, hji, hvj⟩ := hfirst i (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hgt⟩)
       exact ⟨⟨j, Finset.mem_union_right _ hj⟩, Or.inr ⟨hji, (Finset.mem_filter.mp hvj).2⟩⟩
 
-/-- A strictly increasing choice of variables satisfies every listed clause
-if and only if no bounded bag witnesses a false clause. Duplicate literals and
-clauses in the serialized lists do not affect this equivalence. -/
+/-- Suppose the `k` selected variables are listed in strictly increasing order and each
+clause contains at most `d` distinct literals. The selection satisfies every clause if and only
+if no set of at most `max 2 (2 * d)` selection positions witnesses the falsity of all the
+literals of a single clause. -/
 theorem all_bags_iff_models (d : ℕ) (a : Fin k → V) (inc : StrictMono a)
     (p : List (List (V × Bool))) (width : ∀ c ∈ p, c.toFinset.card ≤ d) :
     (∀ b : Bag k (2 * d), ∀ c ∈ p,

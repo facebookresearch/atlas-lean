@@ -223,8 +223,9 @@ private theorem table_record (C : List WCGate) (a : List Bool) (hf : WCWellForme
       cases p <;> rfl
     simpa only [table_getD _ _ _ _ hi, hV, hW, choose] using result p
 
-/-- Each gate's computed formula has the semantic value of that gate when the depth permits
-sufficiently many synchronous rounds. -/
+/-- In a well-formed circuit, let gate `i` have depth at most `d` and weft at most one.
+For any input assignment and Boolean polarity `p`, the assignment satisfies the formula for
+`i` at polarity `p` after `d + 1` synchronous rounds if and only if gate `i` evaluates to `p`. -/
 theorem gate_satisfies (C : List WCGate) (a : List Bool) (hf : WCWellFormed C)
     (d i : ℕ) (hi : i < C.length) (hd : (wcCircuitDepths C).getD i 0 ≤ d)
     (hw : (wcCircuitWefts C).getD i 0 ≤ 1) (p : Bool) :

@@ -137,8 +137,9 @@ private def runGate (a vs : List Bool) (g : WCGate) : Bool :=
 def clashes (a : List Bool) (p : ℕ × ℕ) : Bool :=
   a.getD p.1 false && a.getD p.2 false
 
-/-- Evaluation of the exclusion circuit, for every input assignment and even an empty set
-of constraints. -/
+/-- If both indices of every forbidden pair are in range for the input assignment, the
+last gate of the exclusion circuit outputs true exactly when no forbidden pair has both inputs
+set to true. In particular, an empty list of forbidden pairs gives output true. -/
 theorem exclusionCircuit_eval (a : List Bool) (pairs : List (ℕ × ℕ))
     (h : ∀ p ∈ pairs, p.1 < a.length ∧ p.2 < a.length) :
     (wcCircuitEval (exclusionCircuit a.length pairs) a).getLast? =

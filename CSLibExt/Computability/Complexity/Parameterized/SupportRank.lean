@@ -67,8 +67,9 @@ theorem index_count (n k : ℕ) (C : List WCGate) {i : ℕ} (hi : i ∈ active n
   rw [← eq]
   exact (List.toFinset_card_of_nodup ((Finset.sort_nodup ..).filter _)).symm
 
-/-- Natural numbers below the dummy count are recognized by these two
-comparisons. The scanned range has length equal to the active set's size. -/
+/-- If `m` of the `n` inputs are active (`m ≤ n`), the dummy count for target weight `k`
+equals the number of natural numbers `j < m` satisfying both `j < min k m` and
+`k + m + j < n + min k m`. -/
 theorem dummyCount_eq_filter {n k m : ℕ} (hm : m ≤ n) :
     dummyCount n m k =
       ((List.range m).filter (fun j => decide

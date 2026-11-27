@@ -31,8 +31,8 @@ def scan {Q : Type} (step : Q → Bool → Q × List Bool) (finish : Q → List 
   | [] => finish q
   | b :: x => (step q b).2 ++ scan step finish (step q b).1 x
 
-/-- A finite-state scan stores output in reverse order and reverses it once at the end.
-Each transition emits a bounded number of bits because the state and input alphabets are finite. -/
+/-- A bit-string scan with finitely many states runs in polynomial time. It concatenates
+the outputs of the successive transitions, followed by the output of the final state. -/
 theorem polyScan {Q : Type} [Finite Q]
     (step : Q → Bool → Q × List Bool) (finish : Q → List Bool) (q₀ : Q) :
     IsPolyTime (scan step finish q₀) := by

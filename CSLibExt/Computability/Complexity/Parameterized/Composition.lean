@@ -29,7 +29,7 @@ open Cslib.Complexity.PolynomialEncoding.BitScan
 
 local notation "Bits" => List Bool
 
-/-- A computable envelope for a possibly nonmonotone output-parameter bound. -/
+/-- The running maximum of `f` through `n`, that is, the largest `f i` for `0 ≤ i ≤ n`. -/
 def parameterEnvelope (f : ℕ → ℕ) (n : ℕ) : ℕ :=
   Nat.rec (f 0) (fun i a => max a (f (i + 1))) n
 

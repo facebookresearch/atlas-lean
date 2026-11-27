@@ -278,8 +278,10 @@ private theorem satisfies_or {L : Type*} (t : L → Prop) (a b : FamilyOf L)
     · obtain ⟨p, hp⟩ := List.exists_mem_of_ne_nil _ ha
       exact ⟨_, ⟨p, hp, q, hq, rfl⟩, (models_distribute t p q).mpr (Or.inr h)⟩
 
-/-- The machine realizes conjunction or disjunction of its inputs. At a gate of fan-in
-above two, the relevant weft-one invariant is that each child has one alternative. -/
+/-- Suppose every child family is nonempty and, when the gate has more than two children,
+each child family contains exactly one alternative. An assignment satisfies the combined family
+at an AND gate if and only if it satisfies every child family. At an OR gate it satisfies the
+combined family if and only if it satisfies at least one child family. -/
 theorem combine_satisfies {L : Type*} (t : L → Prop) (conjunction : Bool) (xs : List (FamilyOf L))
     (nonempty : ∀ a ∈ xs, a ≠ []) (single : 2 < xs.length → ∀ a ∈ xs, a.length = 1) :
     Satisfies t (combineFamilies conjunction xs) ↔
