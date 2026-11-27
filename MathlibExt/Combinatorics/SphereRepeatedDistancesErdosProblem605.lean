@@ -20,6 +20,16 @@ import Mathlib.Tactic.Ring
 
 We prove Erdős Problem 605 by lifting a grid of planar points and lines to the unit sphere.
 Each incidence gives a pair of orthogonal unit vectors at distance `√2`.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/SphereRepeatedDistancesErdosProblem605Wanted.lean`:
+
+Source: T. F. Bloom, Erdős Problems, Problem #605, https://www.erdosproblems.com/605 (status
+PROVED). UnsolvedMath record UM-30006947 (`EP-605`), dataset ulamai/UnsolvedMath v1.8.0.
+
+The sphere is the unit sphere in `ℝ³` (`EuclideanSpace ℝ (Fin 3)`); by scaling this loses nothing.
+Pairs are unordered pairs of distinct points; the common distance `δ` may depend on the point set.
 -/
 
 @[expose] public section

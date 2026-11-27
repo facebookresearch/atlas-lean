@@ -15,6 +15,7 @@ public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import MathlibExt.NumberTheory.DigitSumCongruenceCount
 public import MathlibExt.NumberTheory.FloorIdentities
+public import MathlibExt.NumberTheory.PalindromeAPCountBasePow
 public import MathlibExt.NumberTheory.PalindromeAPCountOfDvdBase
 public import MathlibExt.NumberTheory.PalindromeCountClosedForm
 public import MathlibExt.NumberTheory.PalindromesArithmeticProgressions
@@ -148,35 +149,6 @@ public theorem_wanted palindromeAPCount_of_modEq_one {b m q r : ℕ} (hb : 2 ≤
         else
           2 * ((b : ℚ) ^ (k / 2) - 1) / q + ((a (k / 2) / q : ℕ) : ℚ) + m₃ -
             (if r = 0 then 1 else 0) + (if rr (k / 2) < ss (k / 2) then 1 else 0) + δ)
-
-/-- **Palindromes up to a power of the base in residue classes.** Let $b \ge 2$, $k \ge 1$ and
-$q \ge 1$ be natural numbers and let $r$ be a natural number with $r < q$. Write $A_b(m, q, r)$
-for the number of base-$b$ palindromes $n$ with $1 \le n \le m$ and $n \equiv r \pmod q$, and
-$[r = 0]$ for $1$ if $r = 0$ and $0$ otherwise. If $q \mid b$, then
-
-$$A_b(b^k, q, r) = \left(\frac{b}{q} - [r = 0]\right)
-\frac{b^{\lceil k/2 \rceil} + b^{\lfloor k/2 \rfloor} - 2}{b - 1}.$$
-
-If $b \equiv 1 \pmod q$, then $A_b(b^k, q, r)$ equals
-$(b^{\lceil k/2 \rceil} + b^{\lfloor k/2 \rfloor} - 2)/q$ if $q$ is odd,
-$(b - 1) b^{\lfloor (k-1)/2 \rfloor}/q$ if $q$ is even and $r$ is odd, and
-$((b + 1) b^{\lfloor (k-1)/2 \rfloor} + 2 b^{\lfloor k/2 \rfloor} - 4)/q$ if $q$ and $r$ are both
-even. All these identities hold as identities of rational numbers.
-
-Source: K. Onphaeng, T. Khemaratchatakumthorn, P. N. Phunphayap and P. Pongsriiam, *Exact
-Formulas for the Number of Palindromes in Certain Arithmetic Progressions*, Journal of Integer
-Sequences 27 (2024), Article 24.4.8, Corollary 11. -/
-public theorem_wanted palindromeAPCount_base_pow {b k q r : ℕ} (hb : 2 ≤ b) (hk : 1 ≤ k)
-    (hq : 1 ≤ q) (hr : r < q) :
-    (q ∣ b →
-      (palindromeAPCount b (b ^ k) q r : ℚ) =
-        ((b : ℚ) / q - (if r = 0 then 1 else 0)) *
-          (((b : ℚ) ^ ((k + 1) / 2) + (b : ℚ) ^ (k / 2) - 2) / ((b : ℚ) - 1))) ∧
-    (b ≡ 1 [MOD q] →
-      (palindromeAPCount b (b ^ k) q r : ℚ) =
-        if Odd q then ((b : ℚ) ^ ((k + 1) / 2) + (b : ℚ) ^ (k / 2) - 2) / q
-        else if Odd r then ((b : ℚ) - 1) * (b : ℚ) ^ ((k - 1) / 2) / q
-        else (((b : ℚ) + 1) * (b : ℚ) ^ ((k - 1) / 2) + 2 * (b : ℚ) ^ (k / 2) - 4) / q)
 
 end
 

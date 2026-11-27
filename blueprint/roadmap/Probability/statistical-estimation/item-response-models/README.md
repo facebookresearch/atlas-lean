@@ -7,3 +7,4 @@
 - [Rasch model](rasch-model-response-law.md)
 - [Two-parameter logistic model](two-parameter-logistic-model.md)
 - [The Rasch model is the two-parameter logistic model with unit discriminations](rasch-model-is-the-2pl-with-unit-discriminations.md)
+- [Item response theory: Rasch sufficiency, 2PL affine maps, graded response](item-response-theory-rasch-sufficiency-2pl-affin/README.md)
