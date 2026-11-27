@@ -103,20 +103,20 @@ example : ∃ Te : ℝ, Te ∈ Set.Ioo 1 (1 + 1 / 1) ∧
           ((fun s : ℝ => if s ≤ 1 then Te else 0) s) / 1)
         (Set.Icc 0 1) s := by
     intro s hs
-    have hfun : (fun s : ℝ => if s ≤ 1 then Te else 0) s = Te := if_pos hs.2
+    have hfun : (fun s : ℝ => if s ≤ 1 then Te else 0) s = Te := ite_eq_left hs.2
     rw [hfun, hrate]
     have hconst := hasDerivWithinAt_const s (Set.Icc (0 : ℝ) 1) Te
     have hev : (fun s : ℝ => if s ≤ 1 then Te else 0) =ᶠ[nhdsWithin s (Set.Icc (0 : ℝ) 1)]
         (fun _ : ℝ => Te) :=
-      Filter.eventuallyEq_of_mem self_mem_nhdsWithin (fun y hy => if_pos hy.2)
-    have h := hconst.congr_of_eventuallyEq hev (if_pos hs.2)
+      Filter.eventuallyEq_of_mem self_mem_nhdsWithin (fun y hy => ite_eq_left hy.2)
+    have h := hconst.congr_of_eventuallyEq hev (ite_eq_left hs.2)
     simpa using h
   have h := Chemistry.CombustionAcoustics.arrhenius_solution_trapped_on_interval
     (G := 1) (H := 1) (B := 1) (Ta := 1) (C := 1) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num) (t := 1) (by norm_num) hderiv
     (fun s hs => by
       show 0 < (if s ≤ 1 then Te else (0 : ℝ))
-      rw [if_pos hs.2]
+      rw [ite_eq_left hs.2]
       exact lt_trans zero_lt_one hTe.1)
   simpa using h
 
@@ -179,7 +179,6 @@ example :
     convert h2 using 1
     · first
       | (ext s; simp)
-      | norm_num
     · first
       | (ext s; simp)
       | norm_num
@@ -188,7 +187,6 @@ example :
     convert h1 using 1
     · first
       | (ext s; simp)
-      | norm_num
     · first
       | (ext s; simp)
       | norm_num
@@ -219,7 +217,6 @@ example :
     convert h2 using 1
     · first
       | (ext s; simp)
-      | norm_num
     · first
       | (ext s; simp)
       | norm_num
@@ -228,7 +225,6 @@ example :
     convert h1 using 1
     · first
       | (ext s; simp)
-      | norm_num
     · first
       | (ext s; simp)
       | norm_num
@@ -292,13 +288,6 @@ example :
     convert h using 1
     · first
       | (funext s; simp)
-      | (simp only [id_eq]
-         rw [show Real.sqrt 2 / 2 * (Real.cos (Real.sqrt 2 * t) *
-              (Real.sqrt 2 * 1))
-            = Real.cos (Real.sqrt 2 * t) * ((Real.sqrt 2 * Real.sqrt 2) / 2)
-            by ring,
-          Real.mul_self_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
-         norm_num)
     · first
       | (funext s; simp)
       | (simp only [id_eq]
@@ -342,7 +331,6 @@ example :
     convert h using 1
     · first
       | (funext s; simp)
-      | simp
     · first
       | (funext s; simp)
       | simp
@@ -377,7 +365,6 @@ example :
     convert h3 using 1
     · first
       | (funext s; simp only [id_eq]; congr 1; ring)
-      | (simp only [id_eq]; ring_nf)
     · first
       | (funext s; simp only [id_eq]; congr 1; ring)
       | (simp only [id_eq]; ring_nf)

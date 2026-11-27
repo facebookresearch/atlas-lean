@@ -2,4 +2,3 @@
 
 - [Identification](identification/README.md)
 - [Information Inequality Identification](information-inequality-identification/README.md)
-- [Item Response](item-response/README.md)

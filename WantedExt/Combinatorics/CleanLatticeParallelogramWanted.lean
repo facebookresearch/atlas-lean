@@ -18,6 +18,7 @@ public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import MathlibExt.Combinatorics.CleanLatticeParallelogram.ConvergentVectors
 public import MathlibExt.Combinatorics.CleanLatticeParallelogram.Determinant
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.InteriorPoints
 public import MathlibExt.Combinatorics.CleanLatticeParallelogram.Lame
 public import MathlibExt.Combinatorics.CleanLatticeParallelogram.PairedColumns
 public import MathlibExt.Combinatorics.CleanLatticeParallelogram.Reflection
@@ -77,21 +78,6 @@ public theorem_wanted cleanParallelogram_unimodularlyEquivalent_std {u v : ℝ �
     (harea : volume (latticeParallelogram u v) = n) :
     ∃ a : ℕ, 1 ≤ a ∧ a < n ∧ Nat.Coprime a n ∧
       UnimodularlyEquivalent (latticeParallelogram u v) (stdCleanParallelogram a n)
-
-/-- **Interior lattice points of a standard clean parallelogram.** Let $1 \le a < n$ with
-$\gcd(a, n) = 1$, let $P_{a,n} = \{s (1, 0) + t (a, n) : 0 \le s \le 1,\ 0 \le t \le 1\}$, and
-write $\langle x \rangle = x - \lfloor x \rfloor$ for the fractional part of a real number $x$.
-The lattice points in the interior of $P_{a,n}$ are exactly the points
-$\langle k(n - a)/n \rangle \, (1, 0) + (k/n) \, (a, n)$ for $k = 1, \dots, n - 1$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Lemma 3 (`integers-2026-A10-lem-3`). -/
-public theorem_wanted interior_stdCleanParallelogram_latticePoints {a n : ℕ} (ha : 1 ≤ a)
-    (han : a < n) (hcop : Nat.Coprime a n) :
-    interior (stdCleanParallelogram a n) ∩ latticePoints =
-      (fun k : ℕ => (Int.fract ((k : ℝ) * (n - a) / n) + (k : ℝ) * a / n, (k : ℝ))) ''
-        Set.Icc 1 (n - 1)
 
 /-- **The point reflection symmetry of $P_{a,n}$.** Let $a$ and $n$ be natural numbers with
 $1 \le a < n$ and $\gcd(a, n) = 1$, let $P_{a,n} \subseteq \mathbb{R}^2$ be the parallelogram
