@@ -33,5 +33,6 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Seasonally forced SIRS model](seasonally-forced-sirs-model/README.md)
 - [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
 - [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
+- [Epidemic coalescent models](epidemic-coalescent-models/README.md)
 - [Stochastic and network epidemic models](stochastic-and-network-epidemic-models/README.md)
 - [Compartmental models of transmission and control](compartmental-models-of-transmission-and-control/README.md)
