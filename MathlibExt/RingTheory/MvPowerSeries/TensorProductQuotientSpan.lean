@@ -80,7 +80,7 @@ private theorem exists_le_degree_eq (N : ℕ) (x : σ →₀ ℕ) (hx : N ≤ x.
     · subst h
       rw [Finsupp.single_eq_same]
       omega
-    · rw [Finsupp.single_apply, if_neg h]
+    · rw [Finsupp.single_apply, ite_eq_right h]
       omega
 
 omit [Finite σ] in
@@ -127,11 +127,11 @@ private theorem mem_of_forall_coeff_eq_zero_of_forall_monomial_mem (N : ℕ) (I 
     by_cases hx : N ≤ x.degree
     · obtain ⟨hYx, hYdeg⟩ := hY x hx
       rw [Finset.sum_eq_single (Y x)]
-      · rw [if_pos hYx, hr, tsub_add_cancel_of_le hYx, if_pos ⟨hx, rfl⟩]
+      · rw [ite_eq_left hYx, hr, tsub_add_cancel_of_le hYx, ite_eq_left ⟨hx, rfl⟩]
       · intro y _ hne
         split_ifs with hyx
         · rw [hr, tsub_add_cancel_of_le hyx]
-          rw [if_neg]
+          rw [ite_eq_right]
           rintro ⟨_, h⟩
           exact hne h.symm
         · rfl
@@ -554,7 +554,7 @@ private theorem pow_span_X_le_of_forall_X_pow_mem [Fintype σ] (N : ℕ) (I : Id
     intro j
     by_cases hij : i = j
     · subst hij; rwa [Finsupp.single_eq_same]
-    · rw [Finsupp.single_apply, if_neg hij]; exact Nat.zero_le _
+    · rw [Finsupp.single_apply, ite_eq_right hij]; exact Nat.zero_le _
   rw [hsplit, ← one_mul (1 : R), ← monomial_mul_monomial, ← X_pow_eq]
   exact Ideal.mul_mem_right _ _ (hI i)
 

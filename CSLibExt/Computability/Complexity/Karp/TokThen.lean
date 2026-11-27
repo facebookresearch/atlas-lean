@@ -202,14 +202,14 @@ theorem embeds_tok : Embeds (embT E) (φT E) Tokenizer.prog (prog E) := by
   by_cases hr : l = .rej
   · subst hr; exact .inr rfl
   left
-  simp only [φT, ha, hr, if_false, prog]
+  simp only [φT, ha, hr, ite_false, prog]
 
 theorem embeds_em : Embeds (embE E) (φE E) E.prog (prog E) := by
   intro l
   by_cases hd : l = E.done
   · subst hd; exact .inr E.prog_done
   left
-  simp only [φE, hd, if_false, prog]
+  simp only [φE, hd, ite_false, prog]
 
 /-- **Initial stacks of the tokenizer.** For a bit string $x$, the SAT tokenizer's initial stacks
 hold $x$, as bit symbols, on the formula-bit stack $X$ and leave every other stack empty. -/

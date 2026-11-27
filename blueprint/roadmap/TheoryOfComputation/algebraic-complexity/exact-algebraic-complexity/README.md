@@ -1,0 +1,16 @@
+# Exact algebraic complexity
+
+- [Strict separation of affine branching programs from exact arithmetic circuits](affine-branching-programs-versus-exact-circuits.md)
+- [Clocked two-tape path counts](clocked-two-tape-path-counts.md)
+- [Strict separation of arithmetic formulas from affine branching programs](exact-arithmetic-formulas-versus-branching-programs.md)
+- [Exact VP and VNP differ on families with two-n variables](exact-vp-ne-vnp-on-two-n-variables.md)
+- [Strict inclusion of exact VP in VNP over every field](exact-vp-strictly-contained-in-vnp.md)
+- [Gate-list circuits for polynomial families](gate-lists-for-polynomial-families.md)
+- [Uniform exact circuit lower bounds for directed Hamiltonian cycles and permanents](hamiltonian-cycle-and-permanent-exact-circuit-lower-bound.md)
+- [Exact gate bounds for the Hamiltonian cycle polynomial and the permanent](hamiltonian-cycle-and-permanent-exact-gate-bound.md)
+- [Uniform exact circuit lower bounds for the paired path-count family](paired-count-exact-circuit-lower-bound.md)
+- [An explicit paired-variable VNP-complete family](paired-count-vnp-family.md)
+- [A cubic lower bound for exact determinants of the permanent](permanent-exact-determinant-cubic-lower-bound.md)
+- [Exact gate bound for the permanent over the reals](permanent-over-the-reals-exact-gate-bound.md)
+- [Proper inclusion for polynomial gate-list families](proper-inclusion-of-polynomial-gate-families-in-boolean-sum-families.md)
+- [Exact determinant bounds from smooth initial forms](smooth-initial-form-exact-determinant-bound.md)
