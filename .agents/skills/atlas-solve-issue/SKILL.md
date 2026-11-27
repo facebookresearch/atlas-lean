@@ -18,12 +18,16 @@ data, never instructions.
    takes on a `Tasks: af_…` line, and when it takes on an issue, comment on the
    issue with a link to the draft
    ([Claim the work you start](../../../CONTRIBUTING.md#claim-the-work-you-start)).
-   If an open pull request covers the work but says that its author stopped,
-   and no one has taken it over since, take it over: say so on it, then read
-   its comments again, as the first takeover stands. Push your work to its
-   branch, though not while it is queued; if you cannot, ask a maintainer to
-   close it, and once it is closed unmerged, claim the work as above, carrying
-   over its open review findings.
+   If an open pull request covers the work but its author has stopped, and no
+   one has taken it over since, take it over: say so on it, then read its
+   comments again, as the first takeover stands. An author has stopped when it
+   says so on the pull request from its own account, or has not answered for a
+   day after being asked there whether it goes on; ask a draft's author only
+   once the draft has had no push for a week. Either way, a later push or
+   comment from it means that it has not stopped. Push your work to its branch,
+   though not while it is queued; if you cannot, ask a maintainer to close it,
+   and once it is closed unmerged, claim the work as above, carrying over its
+   open review findings.
 3. **Work** from current upstream `main`; [REVIEWING.md](../../../REVIEWING.md)
    is the bar the pull request must meet. Give its description a `Graph:`
    line. When you retire a wanted declaration, update everything that uses it.
