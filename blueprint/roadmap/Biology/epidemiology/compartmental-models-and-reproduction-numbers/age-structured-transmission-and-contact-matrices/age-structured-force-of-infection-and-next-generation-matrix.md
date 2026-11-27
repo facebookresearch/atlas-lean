@@ -8,17 +8,20 @@ and new infections in group $i$ occur at rate $\lambda_i(t)\,S_i(t)$. Reciprocit
 
 **Next-generation matrix.** For an SEIR-type natural history in which an infected individual of group $j$ is infectious for an expected duration $D_j$ (latent stages do not transmit), linearizing at the disease-free state $S_i = N_i$ gives the next-generation matrix
 
-$$K_{ij} = q\,\sigma_i\, c_{ij}\, \frac{N_i}{N_j}\, D_j \qquad (i, j = 1, \dots, n),$$
+$$K_{ij} = q\,\sigma_i\, c_{ij}\, \frac{N_i}{N_j}\, D_j = q\,\sigma_i\, c_{ji}\, D_j \qquad (i, j = 1, \dots, n),$$
 
-the expected number of group-$i$ infections caused by one infectious individual of group $j$, and the basic reproduction number is its spectral radius
+the expected number of group-$i$ infections caused by one infectious individual of group $j$ (the second form uses reciprocity: a group-$j$ infective meets $c_{ji}$ members of group $i$ per unit time), and the basic reproduction number is its spectral radius
 
 $$R_0 = \rho(K).$$
+
+The linearized infected subsystem at the disease-free state is asymptotically stable if and only if $R_0 < 1$. Linearizing instead at a disease-free state with $S_i \le N_i$ susceptibles multiplies row $i$ of $K$ by $S_i / N_i$; pre-existing immunity in a fraction $\pi_i$ of group $i$ thus amounts to replacing $\sigma_i$ by $\sigma_i(1 - \pi_i)$.
 
 Consequences:
 
 - $R_0$ is linear in $q$, so $q$ can be calibrated from a target $R_0$ once the contact structure is fixed: $q = R_0 / \rho(K|_{q=1})$.
 - With $\sigma_i \equiv \sigma$ and $D_j \equiv D$, $K$ is similar to $q\sigma D\, C$ (via the diagonal matrix $\mathrm{diag}(N_i)$), so $R_0 = q\,\sigma\, D\, \rho(C)$ with $C = (c_{ij})$.
 - If $K$ is irreducible (every age group can eventually infect every other), the Perron eigenvector of $K$ gives the age distribution of infections in the early exponential phase.
+- For the SEIR model with per-contact transmission rate $\tau$, latent rate $\nu$ and recovery rate $g$ (so $q\sigma_i = \tau$ and $D_j = 1/g$), $K_{ij} = (\tau/g)\, c_{ji}\, S_i/N_i$, independent of $\nu$. Since $R$ is linear in $\tau$ and in the contact matrix, the ratio of $R$ under two contact matrices (for example school term versus holidays) depends only on the contact data.
 
 ## Depends on
 
@@ -27,9 +30,11 @@ Consequences:
 
 ## Expansion
 
-Write the infected subsystem near the disease-free state as $\dot x = (\mathcal F - \mathcal V)x$, where $\mathcal F$ collects new infections and $\mathcal V$ the transitions between infected stages; $K = \mathcal F \mathcal V^{-1}$ restricted to the newly infected states. New infections in group $i$ come from infectious individuals of group $j$ at per-capita rate $q \sigma_i c_{ij} N_i / N_j$, and an individual stays infectious for expected time $D_j$, giving $K_{ij}$. The similarity claim follows from $K = q\sigma D\,\mathrm{diag}(N)\, C\, \mathrm{diag}(N)^{-1}$ in that case, and the spectral radius is invariant under similarity. In practice the contact matrix comes from diary surveys (for example POLYMOD); the influenza study resampled survey participants to produce alternative matrices and inferred $q$ and the $\sigma_i$ jointly with them by MCMC on surveillance data, and the COVID-19 lockdown study computed $R_0$ by the same next-generation approach on a model with prodromic, asymptomatic and symptomatic infectious stages of different infectiousness.
+Write the infected subsystem near the disease-free state as $\dot x = (\mathcal F - \mathcal V)x$, where $\mathcal F$ collects new infections and $\mathcal V$ the transitions between infected stages; $K = \mathcal F \mathcal V^{-1}$ restricted to the newly infected states. New infections in group $i$ come from infectious individuals of group $j$ at per-capita rate $q \sigma_i c_{ij} N_i / N_j$, and an individual stays infectious for expected time $D_j$, giving $K_{ij}$. With latent stages, $\mathcal F$ and $\mathcal V$ act on the latent and infectious compartments together; because each latent individual becomes infectious with probability one, $\rho(\mathcal F \mathcal V^{-1}) = \rho(K)$, and the threshold statement is the van den Driessche–Watmough criterion that $\mathcal F - \mathcal V$ is Hurwitz if and only if $\rho(\mathcal F\mathcal V^{-1}) < 1$. The latent period changes the growth rate but not $R_0$. The similarity claim follows from $K = q\sigma D\,\mathrm{diag}(N)\, C\, \mathrm{diag}(N)^{-1}$ in that case, and the spectral radius is invariant under similarity. In practice the contact matrix comes from diary surveys (for example POLYMOD); the influenza study resampled survey participants to produce alternative matrices and inferred $q$ and the $\sigma_i$ jointly with them by MCMC on surveillance data, and the COVID-19 lockdown study computed $R_0$ by the same next-generation approach on a model with prodromic, asymptomatic and symptomatic infectious stages of different infectiousness.
 
 ## Sources
 
 - M. Baguelin, S. Flasche, A. Camacho, N. Demiris, E. Miller, W. J. Edmunds, "Assessing optimal target populations for influenza vaccination programmes: an evidence synthesis and modelling study", PLoS Medicine (2013), Methods (transmission model, age-group-specific force of infection, Eq. 4, with transmissibility $q$, contact rates $c_{ij}$ and susceptibilities $\sigma_i$; contact-matrix resampling), <https://doi.org/10.1371/journal.pmed.1001527> (PMC3793005).
+- K. T. Eames, N. L. Tilston, E. Brooks-Pollock, W. J. Edmunds, "Measured dynamic social contact patterns explain the spread of H1N1v influenza", PLoS Computational Biology (2012), Methods, "Dynamic Disease Model" (force of infection and next-generation matrix $M_{i,j} = (\tau/g) B_{j,i} S_i / n_i$, prior immunity, term-time and holiday contact matrices), <https://doi.org/10.1371/journal.pcbi.1002425> (PMC3297563).
+- P. van den Driessche and J. Watmough, "Reproduction numbers and sub-threshold endemic equilibria for compartmental models of disease transmission", Mathematical Biosciences 180 (2002) 29–48, <https://doi.org/10.1016/S0025-5564(02)00108-6>.
 - L. Di Domenico, G. Pullano, C. E. Sabbatini, P.-Y. Boëlle, V. Colizza, "Impact of lockdown on COVID-19 epidemic in Île-de-France and possible exit strategies", BMC Medicine (2020), Methods ("Mixing", "Compartmental model and transmission") and Results ($R_0$ by the next-generation approach), <https://doi.org/10.1186/s12916-020-01698-4> (PMC7391016).

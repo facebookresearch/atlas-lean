@@ -16,7 +16,7 @@ reflecting that pyramidal dendrites form an approximately open-field dipole, wit
 
 ## Depends on
 
-- [Leaky integrate-and-fire neuron](../leaky-integrate-and-fire-neuron/README.md)
+- [Leaky integrate-and-fire neuron](../../leaky-integrate-and-fire-neuron/README.md)
 
 ## Expansion
 

@@ -13,11 +13,11 @@ $$\mathrm{OEF}_{\max} \;=\; 1 - (1 + k\beta)^{-\alpha} \;=\; 1 - \Bigl(1 + \frac
 
 ## Depends on
 
-- [Renkin–Crone extraction with plasma protein binding](../../pharmacokinetics/blood-brain-barrier-transport-kinetics/renkin-crone-extraction-with-plasma-protein-binding.md)
+- [Renkin–Crone extraction with plasma protein binding](../../../pharmacokinetics/blood-brain-barrier-transport-kinetics/renkin-crone-extraction-with-plasma-protein-binding.md)
 
 ## Proof depends on
 
-- [Moment generating function of the gamma distribution](../../../Probability/distributions/continuous/gamma-distribution/gamma-mgf/mgf-gamma-measure-of-lt.md)
+- [Moment generating function of the gamma distribution](../../../../Probability/distributions/continuous/gamma-distribution/gamma-mgf/mgf-gamma-measure-of-lt.md)
 
 ## Expansion
 

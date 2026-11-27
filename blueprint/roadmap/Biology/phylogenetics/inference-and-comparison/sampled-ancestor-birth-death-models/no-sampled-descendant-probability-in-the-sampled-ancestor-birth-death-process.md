@@ -4,15 +4,15 @@
 
 **Proposition.** Let $p_0(t)$ be the probability that a lineage alive at time $t$ before the present has no sampled descendants. Then $p_0$ solves the Riccati equation
 
-$$p_0'(t) = \mu - (\lambda + \mu + \psi)\, p_0(t) + \lambda\, p_0(t)^2, \qquad p_0(0) = 1 - \rho,$$
+$$p_0'(t) = \mu - (\lambda + \mu + \psi)\, p_0(t) + \lambda\, p_0(t)^2, \qquad p_0(0) = 1 - \rho.$$
 
-whose solution is
+If $c_1 > 0$ (that is, $\psi > 0$ or $\lambda \ne \mu$), its solution is
 
 $$p_0(t) = \frac{1}{2\lambda}\left[\lambda + \mu + \psi + c_1\, \frac{e^{-c_1 t}(1 - c_2) - (1 + c_2)}{e^{-c_1 t}(1 - c_2) + (1 + c_2)}\right],$$
 
 $$c_1 = \sqrt{(\lambda - \mu - \psi)^2 + 4\lambda\psi}, \qquad c_2 = -\frac{\lambda - \mu - 2\lambda\rho - \psi}{c_1}.$$
 
-As $t \to \infty$, $p_0(t)$ converges to the smaller root $(\lambda + \mu + \psi - c_1)/(2\lambda)$ of $\lambda x^2 - (\lambda + \mu + \psi)x + \mu = 0$.
+If moreover $\psi + \rho > 0$, then as $t \to \infty$, $p_0(t)$ converges to the smaller root $(\lambda + \mu + \psi - c_1)/(2\lambda)$ of $\lambda x^2 - (\lambda + \mu + \psi)x + \mu = 0$. If $\psi = \rho = 0$, nothing is ever sampled and $p_0 \equiv 1$. In the remaining case $\psi = 0$, $\lambda = \mu$ (where $c_1 = 0$), $p_0(t) = 1 - \rho/(1 + \lambda \rho t)$.
 
 **Corollary (sampled-ancestor probability).** An individual sampled at time $t$ before the present appears as a sampled ancestor in the reconstructed tree with probability
 
@@ -20,7 +20,7 @@ $$(1 - r)\,\big(1 - p_0(t)\big).$$
 
 ## Expansion
 
-Condition on the first event in a short interval $[t, t + dt]$ looking forward in time from $t$: with probability $\mu\,dt$ the lineage dies (no sampled descendants), with probability $\lambda\,dt$ it splits and both daughters must leave no sample ($p_0^2$), and with probability $\psi\,dt$ it is sampled, which is incompatible with having no sampled descendants (the sample itself is observed). Collecting terms gives the Riccati equation, and its constant-coefficient solution follows from the roots $x_\pm = (\lambda + \mu + \psi \pm c_1)/(2\lambda)$, using $(\lambda + \mu + \psi)^2 - 4\lambda\mu = (\lambda - \mu - \psi)^2 + 4\lambda\psi$; at $t = 0$ the bracket equals $\lambda + \mu + \psi - c_1 c_2 = 2\lambda(1 - \rho)$. A sampled individual is a sampled ancestor exactly when it stays in the process (probability $1 - r$) and then leaves at least one sampled descendant (probability $1 - p_0(t)$). The function $p_0$ is the main ingredient of the reconstructed-tree densities of these models; for the transmission process with $\rho = 0$ the tree density depends on $(\lambda, \mu, \psi, r)$ only through three combinations, so one parameter must be fixed for inference, whereas under the fossilized birth–death process all four of $(\lambda, \mu, \psi, \rho)$ are estimable.
+Condition on the first event in a short interval $[t, t + dt]$ looking forward in time from $t$: with probability $\mu\,dt$ the lineage dies (no sampled descendants), with probability $\lambda\,dt$ it splits and both daughters must leave no sample ($p_0^2$), and with probability $\psi\,dt$ it is sampled, which is incompatible with having no sampled descendants (the sample itself is observed). Collecting terms gives the Riccati equation, and its constant-coefficient solution follows from the roots $x_\pm = (\lambda + \mu + \psi \pm c_1)/(2\lambda)$, using $(\lambda + \mu + \psi)^2 - 4\lambda\mu = (\lambda - \mu - \psi)^2 + 4\lambda\psi$; at $t = 0$ the bracket equals $\lambda + \mu + \psi - c_1 c_2 = 2\lambda(1 - \rho)$. The limit is the smaller root $x_-$ exactly when $1 + c_2 > 0$; since $c_1 \ge |\lambda - \mu - \psi|$ with equality only if $\psi = 0$, we have $c_1 c_2 = 2\lambda\rho - (\lambda - \mu - \psi) \ge 2\lambda\rho - c_1$ and hence $1 + c_2 \ge 2\lambda\rho / c_1 \ge 0$, with $1 + c_2 = 0$ only if $\psi = \rho = 0$ (then $p_0 \equiv x_+ = 1$ when $\lambda > \mu$). For $\psi = 0$, $\lambda = \mu$ the equation reads $p_0' = \lambda(1 - p_0)^2$, and $q = 1 - p_0$ solves $q' = -\lambda q^2$, $q(0) = \rho$. A sampled individual is a sampled ancestor exactly when it stays in the process (probability $1 - r$) and then leaves at least one sampled descendant (probability $1 - p_0(t)$). The function $p_0$ is the main ingredient of the reconstructed-tree densities of these models; for the transmission process with $\rho = 0$ the tree density depends on $(\lambda, \mu, \psi, r)$ only through three combinations, so one parameter must be fixed for inference, whereas under the fossilized birth–death process all four of $(\lambda, \mu, \psi, \rho)$ are estimable.
 
 ## Sources
 

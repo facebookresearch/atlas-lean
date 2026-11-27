@@ -2,7 +2,6 @@
 
 Deterministic transmission models with age, stage, quarantine, masks, vaccination or within-host structure, their reproduction numbers and final sizes, and the effect of interventions.
 
-- [Age-structured SEIR with social contact matrices](age-structured-seir-with-social-contact-matrices/README.md)
 - [Age-structured transmission and contact matrices](age-structured-transmission-and-contact-matrices/README.md)
 - [Case isolation and contact tracing](case-isolation-and-contact-tracing/README.md)
 - [Compartmental model with a super-spreader class](compartmental-model-with-a-super-spreader-class/README.md)

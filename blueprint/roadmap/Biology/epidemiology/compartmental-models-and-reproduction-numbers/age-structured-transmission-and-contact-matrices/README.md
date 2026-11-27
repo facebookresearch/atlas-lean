@@ -4,3 +4,4 @@ Respiratory pathogens spread along social contacts whose rates differ strongly b
 
 - [Age-structured force of infection and next-generation matrix](age-structured-force-of-infection-and-next-generation-matrix.md)
 - [Setting-specific contact matrices and the reproduction number under social distancing](setting-specific-contact-matrices-and-social-distancing.md)
+- [Clinical and subclinical infection in age-structured transmission](clinical-and-subclinical-infection-in-age-structured-transmission.md)

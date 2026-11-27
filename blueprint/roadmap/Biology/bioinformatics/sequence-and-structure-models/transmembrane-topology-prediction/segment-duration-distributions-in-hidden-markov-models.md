@@ -1,6 +1,6 @@
 # Segment duration distributions in hidden Markov models
 
-**Setting.** In a hidden Markov model, a state $s$ with self-transition probability $1 - p$ ($0 < p \le 1$) produces segments whose duration $D_s$ (number of consecutive positions spent in $s$) is geometric:
+**Setting.** In a hidden Markov model, a state $s$ with self-transition probability $1 - p$ ($0 < p < 1$) produces segments whose duration $D_s$ (number of consecutive positions spent in $s$) is geometric:
 
 $$\Pr(D_s = d) = p(1 - p)^{d - 1}, \qquad d = 1, 2, \dots,$$
 

@@ -12,7 +12,7 @@ with $P(-1; t) = 0$. The mean $y(t)$ solves the reaction rate equation $y' = \al
 
 $$H(z) = \frac{1}{T} \int_0^T e^{u\, y(t)}\, dt = \frac{e^{u \alpha / \beta}}{\beta T} \Big[\mathrm{Ei}(u c) - \mathrm{Ei}\big(u c\, e^{-\beta T}\big)\Big],$$
 
-where $\mathrm{Ei}$ is the exponential integral. This mixture of Poisson laws is not a standard parametric family. If instead cells are desynchronized and $T \to \infty$, the time average converges to the stationary law (ergodic theorem): $P(x) = \lim_{T \to \infty} T^{-1} \int_0^T P(x; t)\, dt = \lim_{t \to \infty} P(x; t)$.
+for $u c \ne 0$, where $\mathrm{Ei}$ is the exponential integral (principal value for positive arguments). If $u c = 0$, that is $z = 1$ or $y_0 = \alpha/\beta$ (a start from stationarity), then $y(t) \equiv \alpha/\beta$ or $u = 0$, and $H(z) = e^{u \alpha/\beta}$. This mixture of Poisson laws is not a standard parametric family. If instead cells are desynchronized and $T \to \infty$, the time average converges to the stationary law (ergodic theorem): $P(x) = \lim_{T \to \infty} T^{-1} \int_0^T P(x; t)\, dt = \lim_{t \to \infty} P(x; t)$.
 
 ## Expansion
 
