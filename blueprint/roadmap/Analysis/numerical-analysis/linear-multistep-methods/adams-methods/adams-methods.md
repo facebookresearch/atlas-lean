@@ -22,6 +22,10 @@ The orders are properties of these coefficients, not of $\rho$ alone: backward E
 - [Zero-stability](../zero-stability.md)
 - [Evaluated Lagrange basis polynomial](../../../approximation-theory/lagrange-interpolation/eval-basis.md)
 
+## Proof depends on
+
+- [Zero-stability and the root condition](../zero-stability-iff-root-condition.md)
+
 ## Sources
 
 - E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 3.1, the integral form $y(x_{n+1}) - y(x_n) = \int_{x_n}^{x_{n+1}} y'(\xi)\,d\xi$, the backward-difference expansions (41)–(42) and their truncations, which give the Adams–Moulton and Adams–Bashforth formulas (the truncated backward-difference form of the interpolant integrals above); Example 4(b); the end of Section 3.5, the broad terminology (every method with $\rho(z) = z^k - z^{k-1}$ is an Adams method, explicit ones Adams–Bashforth, implicit ones Adams–Moulton); Section 3.7.2, the particular $k$-step Adams methods for $k \le 4$ with their orders. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>

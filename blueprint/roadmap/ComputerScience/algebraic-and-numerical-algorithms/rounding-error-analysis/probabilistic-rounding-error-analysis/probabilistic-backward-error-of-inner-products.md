@@ -11,6 +11,7 @@ $$\hat y = (a + \Delta a)^T b = a^T (b + \Delta b), \qquad |\Delta a| \le \tilde
 - [Probabilistic model of rounding errors](probabilistic-model-of-rounding-errors.md)
 - [Floating-point dot product](../dot-fl.md)
 - [Probabilistic product bound under mean independence](probabilistic-product-bound-under-mean-independence.md)
+- [The constant γₙ of rounding error analysis](../gamma.md)
 
 ## Sources
 

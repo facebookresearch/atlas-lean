@@ -16,15 +16,12 @@ Since [stochastic rounding errors are mean independent](stochastic-rounding-erro
 
 - [Probabilistic model of rounding errors](probabilistic-model-of-rounding-errors.md)
 - [Stochastic rounding](stochastic-rounding.md)
+- [The constant γₙ of rounding error analysis](../gamma.md)
 
 ## Proof depends on
 
 - [Azuma's inequality](../../../../Probability/concentration-inequalities/azuma-inequality.md)
 - [Stochastic rounding errors are mean independent](stochastic-rounding-errors-are-mean-independent.md)
-
-## Related topics
-
-- [The constant γₙ of rounding error analysis](../gamma.md)
 
 ## Sources
 

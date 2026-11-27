@@ -10,6 +10,9 @@ with the coefficients chosen to give order $k$. For example, $k = 1$ is the impl
 
 - [Linear multistep method](../linear-multistep-method.md)
 - [Order of accuracy and error constants of a linear multistep method](../order-of-accuracy-and-error-constants.md)
+
+## Related topics
+
 - [A(α)-stability](a-alpha-stability.md)
 - [Stiff stability](stiff-stability.md)
 
