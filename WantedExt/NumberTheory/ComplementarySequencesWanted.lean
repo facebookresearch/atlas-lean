@@ -18,8 +18,8 @@ public import Mathlib.Tactic.IntervalCases
 public import MathlibExt.NumberTheory.AscFactorialBounds
 public import MathlibExt.NumberTheory.ComplementarySequences
 public import MathlibExt.NumberTheory.ComplementarySequencesInterleaveNear
-public import MathlibExt.NumberTheory.ComplementarySequencesNthNonCenteredPolygonal
 public import MathlibExt.NumberTheory.NonSecondPentagonal
+public import MathlibExt.NumberTheory.ComplementarySequencesNthNonCenteredPolygonal
 
 /-!
 # Algorithms for complementary sequences (wanted statements)
