@@ -17727,6 +17727,7 @@
   "WantedExt/NumberTheory/ModularInverseProductMeanWanted": {"to": "NumberTheory/exponential-sums", "title": "Mean values of products of modular inverses"},
   "WantedExt/NumberTheory/MultiplicativeAdditivePairedSquaresWanted": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "WantedExt/NumberTheory/NLagrangeSpectrumWanted": {"to": "NumberTheory/diophantine-approximation", "title": "n-Lagrange and n-Markoff spectra"},
+  "MathlibExt/NumberTheory/NLagrangeSpectrum": {"to": "NumberTheory/diophantine-approximation", "title": "n-Lagrange and n-Markoff spectra"},
   "WantedExt/NumberTheory/NagellLjunggrenCubeResiduesWanted": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Nagell–Ljunggren equation"},
   "WantedExt/NumberTheory/NagellLjunggrenFiveCubeWanted": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Nagell–Ljunggren equation"},
   "WantedExt/NumberTheory/NarayanaConcatRepdigitsWanted": {"to": "NumberTheory/linear-recurrences/diophantine-recurrences", "title": "Narayana numbers as concatenations of repdigits"},
