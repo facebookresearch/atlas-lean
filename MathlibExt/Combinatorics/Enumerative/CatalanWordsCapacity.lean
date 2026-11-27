@@ -240,6 +240,26 @@ to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `a(n, i; 
 public noncomputable def catalanCapacityDist (n i : ℕ) : ℤ[X] :=
   capacityDist (wordsEndingIn (catalanWords n) i)
 
+/-- **Words with all letters at most a bound.** Given a finite set $S$ of words of length $n$
+with letters in $\mathbb{N}$ and a natural number $k$, this is the set of words in $S$ all of
+whose letters are at most $k$. Applied to the words of $S$ whose last letter is $k$, it gives
+those whose largest letter is $k$.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `ℬ_{n,i}`. -/
+public def wordsBoundedBy {n : ℕ} (S : Finset (Fin n → ℕ)) (k : ℕ) : Finset (Fin n → ℕ) :=
+  S.filter fun w => ∀ i : Fin n, w i ≤ k
+
+/-- **Capacity distribution of Catalan words ending in their largest letter.** For natural
+numbers $n$ and $i$, $b(n, i; q) \in \mathbb{Z}[q]$ is the sum of $q^{\mathrm{cap}(w)}$, where
+$\mathrm{cap}(w)$ is the capacity of $w$, over the Catalan words $w$ of length $n$ whose last
+letter is $i$ and all of whose letters are at most $i$.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `b(n, i; q)`. -/
+public noncomputable def catalanMaxEndCapacityDist (n i : ℕ) : ℤ[X] :=
+  capacityDist (wordsBoundedBy (wordsEndingIn (catalanWords n) i) i)
+
 namespace catalanCapacityDist_eval_zero
 
 /-! A word has capacity zero exactly when no letter lies strictly below letters on both of its
@@ -471,6 +491,131 @@ public theorem catalanCapacityDist_eval_zero (n i : ℕ) (hi : 2 ≤ i) (hin : i
       ∑ m ∈ Finset.range (n - i + 1),
         (((n - m - 2).choose (i - 2) * (if m = 0 then 1 else Nat.fib (2 * m - 1)) : ℕ) : ℤ) := by
   rw [eval_zero_eq_card, card_zero_eq n i hi hin, Nat.cast_sum]
+
+namespace catalanCapacityDist_boundary
+
+open catalanCapacityDist_eval_zero
+
+-- Appending a letter no taller than any existing one cannot add water.
+private theorem wordCapacity_snoc_of_le {n : ℕ} (w : Fin n → ℕ) {a : ℕ}
+    (ha : ∀ i, a ≤ w i) : wordCapacity (Fin.snoc (α := fun _ => ℕ) w a) = wordCapacity w := by
+  let v := Fin.snoc (α := fun _ => ℕ) w a
+  change wordCapacity v = wordCapacity w
+  have hlast : (univ.filter (Fin.last n < ·)).sup v = 0 := by
+    rw [filter_eq_empty_iff.mpr fun i _ => not_lt_of_ge (Fin.le_last i)]
+    rfl
+  simp only [wordCapacity, Fin.sum_univ_castSucc, hlast, _root_.min_zero, Nat.zero_sub,
+    Nat.add_zero]
+  refine sum_congr rfl fun i _ => ?_
+  have hleft : (univ.filter (· < i.castSucc)).sup v = (univ.filter (· < i)).sup w := by
+    apply eq_of_forall_ge_iff
+    intro b
+    have h : ¬Fin.last n < i.castSucc := not_lt_of_ge (Fin.le_last i.castSucc)
+    simp [Finset.sup_le_iff, Fin.forall_fin_succ', v, h]
+  have hright : (univ.filter (i.castSucc < ·)).sup v = max ((univ.filter (i < ·)).sup w) a := by
+    apply eq_of_forall_ge_iff
+    intro b
+    simp [Finset.sup_le_iff, Fin.forall_fin_succ', v, Fin.castSucc_lt_last, max_le_iff]
+  rw [hleft, hright, show v i.castSucc = w i from Fin.snoc_castSucc ..]
+  -- The right maximum may rise to a, but not above the height of this column.
+  rcases le_total ((univ.filter (i < ·)).sup w) a with h | h
+  · rw [max_eq_right h, Nat.sub_eq_zero_of_le ((min_le_right _ _).trans (ha i)),
+      Nat.sub_eq_zero_of_le ((min_le_right _ _).trans (h.trans (ha i)))]
+  · rw [max_eq_left h]
+
+private theorem dist_succ_succ_one (n : ℕ) :
+    catalanCapacityDist (n + 2) 1 = capacityDist (catalanWords (n + 1)) := by
+  rw [catalanCapacityDist, wordsEndingIn_succ, capacityDist, capacityDist]
+  -- Appending 1 is a capacity-preserving bijection, with inverse Fin.init.
+  symm
+  apply Finset.sum_nbij' (Fin.snoc (α := fun _ => ℕ) · 1) Fin.init
+  · intro w hw
+    exact mem_filter.mpr ⟨(snoc_mem_catalanWords w 1).mpr ⟨hw, le_rfl, Nat.succ_pos _⟩,
+      Fin.snoc_last ..⟩
+  · intro w hw
+    obtain ⟨hw, hlast⟩ := mem_filter.mp hw
+    rw [← Fin.snoc_init_self w, hlast, snoc_mem_catalanWords] at hw
+    exact hw.1
+  · intro w _
+    exact Fin.init_snoc ..
+  · intro w hw
+    calc
+      Fin.snoc (α := fun _ => ℕ) (Fin.init w) 1 = Fin.snoc (Fin.init w) (w (Fin.last (n + 1))) :=
+        congrArg _ (mem_filter.mp hw).2.symm
+      _ = w := Fin.snoc_init_self w
+  · intro w hw
+    rw [wordCapacity_snoc_of_le w ((mem_catalanWords_iff w).mp hw).1]
+
+private theorem wordsEndingIn_length (n : ℕ) :
+    wordsEndingIn (catalanWords (n + 1)) (n + 1) = {fun i => i.val + 1} := by
+  rw [wordsEndingIn_succ, eq_singleton_iff_unique_mem]
+  refine ⟨mem_filter.mpr ⟨(mem_catalanWords_succ_iff _).mpr
+    ⟨fun i => Nat.succ_pos _, rfl, fun i => le_rfl⟩, rfl⟩, ?_⟩
+  intro w hw
+  obtain ⟨hw, hlast⟩ := mem_filter.mp hw
+  obtain ⟨_, hhead, hstep⟩ := (mem_catalanWords_succ_iff w).mp hw
+  -- The letter plus the number of steps remaining is antitone and has equal endpoints.
+  have hanti : Antitone (fun i : Fin (n + 1) => w i + (n - i.val)) := by
+    rw [Fin.antitone_iff_succ_le]
+    intro i
+    have h := hstep i
+    simp only [Fin.val_succ, Fin.val_castSucc]
+    have hi := i.isLt
+    omega
+  funext i
+  have h₁ := hanti (Fin.zero_le i)
+  have h₂ := hanti (Fin.le_last i)
+  simp only [Fin.val_zero, Nat.sub_zero, Fin.val_last, Nat.sub_self, Nat.add_zero, hhead, hlast]
+    at h₁ h₂
+  have hi := i.isLt
+  omega
+
+private theorem wordsBoundedBy_one (n : ℕ) :
+    wordsBoundedBy (wordsEndingIn (catalanWords (n + 1)) 1) 1 = {fun _ => 1} := by
+  rw [wordsEndingIn_succ, wordsBoundedBy, filter_filter, eq_singleton_iff_unique_mem]
+  refine ⟨mem_filter.mpr ⟨(mem_catalanWords_succ_iff _).mpr
+    ⟨fun _ => le_rfl, rfl, fun _ => by decide⟩, rfl, fun _ => le_rfl⟩, ?_⟩
+  intro w hw
+  obtain ⟨hw, _, hle⟩ := mem_filter.mp hw
+  funext i
+  exact le_antisymm (hle i) (((mem_catalanWords_iff w).mp hw).1 i)
+
+private theorem capacityDist_singleton_of_mono {n : ℕ} {w : Fin n → ℕ} (hw : Monotone w) :
+    capacityDist {w} = 1 := by
+  have hzero := (wordCapacity_eq_zero_iff w).mpr fun _ => Or.inl fun _ h => hw h.le
+  simp [capacityDist, hzero]
+
+end catalanCapacityDist_boundary
+
+open catalanCapacityDist_boundary catalanCapacityDist_eval_zero in
+/-- **Boundary values of the capacity distributions on Catalan words.** Write $a(n, i)$ for the
+capacity distribution of the Catalan words of length $n$ ending in $i$, $b(n, i)$ for that of
+those Catalan words of length $n$ ending in $i$ whose largest letter is $i$, and $a(n)$ for the
+capacity distribution of all Catalan words of length $n$. For every $n \ge 1$,
+$a(n, n) = b(n, 1) = b(n, n) = 1$, and if $n \ge 2$ then $a(n, 1) = a(n - 1)$.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Lemma 2 (`integers-2025-A5-lem-2`). -/
+public theorem catalanCapacityDist_boundary (n : ℕ) (hn : 1 ≤ n) :
+    (2 ≤ n → catalanCapacityDist n 1 = capacityDist (catalanWords (n - 1))) ∧
+      catalanCapacityDist n n = 1 ∧ catalanMaxEndCapacityDist n 1 = 1 ∧
+        catalanMaxEndCapacityDist n n = 1 := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+  have hdiag : catalanCapacityDist (n + 1) (n + 1) = 1 := by
+    rw [catalanCapacityDist, wordsEndingIn_length]
+    exact capacityDist_singleton_of_mono (fun _ _ h => Nat.succ_le_succ h)
+  refine ⟨?_, hdiag, ?_, ?_⟩
+  · intro hn
+    obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+    exact dist_succ_succ_one m
+  · rw [catalanMaxEndCapacityDist, wordsBoundedBy_one]
+    exact capacityDist_singleton_of_mono (fun _ _ _ => le_rfl)
+  · have hbound : ∀ w ∈ wordsEndingIn (catalanWords (n + 1)) (n + 1), ∀ i, w i ≤ n + 1 := by
+      intro w hw i
+      rw [wordsEndingIn_succ] at hw
+      exact (mem_Icc.mp (letter_mem_Icc (mem_filter.mp hw).1 i)).2
+    rw [catalanMaxEndCapacityDist, wordsBoundedBy, filter_eq_self.mpr hbound]
+    exact hdiag
 
 end
 

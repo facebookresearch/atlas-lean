@@ -27,7 +27,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.IndependentSetDuallyChordalWanted
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -43,7 +43,7 @@ INSTANCE: a dually chordal graph `G = (V, E)` and a positive integer `K ≤ |V|`
 QUESTION: can `V` be partitioned into `k ≤ K` disjoint sets `V₁, …, V_k` such that each `Vᵢ`
 induces a complete subgraph of `G`?
 
-This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesWanted`) on the ISGCI class
+This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesDefs`) on the ISGCI class
 `gc_185`. ISGCI defines: a vertex `u` in the closed neighbourhood `N[v]` is a maximum neighbour
 of `v` if `N[w] ⊆ N[u]` for all `w ∈ N[v]`; a vertex ordering `v₁ … vₙ` is a maximum
 neighbourhood ordering if each `vᵢ` has a maximum neighbour in the subgraph `Gᵢ` induced by

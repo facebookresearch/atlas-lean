@@ -29,4 +29,10 @@
 
 ## Ranked tree shapes
 
+- [F-matrix distances between ranked tree shapes](f-matrix-distances-between-ranked-tree-shapes/README.md)
+- [Tajima's genealogies](tajima-genealogies/README.md)
+
+## Multifurcating trees
+
+- [Labeled histories and maximally probable topologies of multifurcating trees](labeled-histories-of-multifurcating-trees/README.md)
 - [Fréchet summaries of ranked tree shapes](frechet-summaries-of-ranked-tree-shapes/README.md)

@@ -2,17 +2,16 @@
 
 The problem $\mathrm{LinRF}(\mathbb{Q})$, whether a rational multipath [linear-constraint loop](linear-constraint-loops.md) given by its constraints has a [linear ranking function](linear-ranking-functions.md), is decidable in polynomial time, and an LRF can be synthesized in polynomial time when one exists. The method of Podelski and Rybalchenko reduces the existence of an LRF for one transition polyhedron to the feasibility of a system of linear inequalities whose size is polynomial in that of the loop, and the LRFs of a multipath loop are those common to its paths. The problem remains in polynomial time when the polyhedra are given by generators instead of constraints.
 
-## Expansion
-
-This page becomes ready once these prerequisites are stated:
-
-- Feasibility of a rational linear program is decidable in polynomial time (proof prerequisite)
-
 ## Depends on
 
 - [Linear ranking functions](linear-ranking-functions.md)
 - [The complexity class P](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
 - [Linear-constraint loops](linear-constraint-loops.md)
+
+## Proof depends on
+
+- [Podelski–Rybalchenko certificates for linear ranking functions](podelski-rybalchenko-certificates-for-linear-ranking-functions.md)
+- [Linear programming is in P (Khachiyan)](../../../../TheoryOfComputation/polynomial-time-problems/linear-programming-feasibility/lp-in-p.md)
 
 ## Sources
 
