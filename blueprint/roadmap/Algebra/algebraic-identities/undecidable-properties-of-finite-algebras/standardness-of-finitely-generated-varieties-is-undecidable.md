@@ -18,6 +18,8 @@ Clause 2 answers Problem 9.3 of Clark, Davey, Freese and Jackson. Their Problem 
 
 - [Varieties of algebras and finitely generated varieties](varieties-of-algebras-and-finitely-generated-varieties.md)
 - [Topological space](../../../Topology/topological-spaces/topological-space.md)
+- [Congruences and subdirectly irreducible algebras](congruences-and-subdirectly-irreducible-algebras.md)
+- [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
 
 ## Proof depends on
 

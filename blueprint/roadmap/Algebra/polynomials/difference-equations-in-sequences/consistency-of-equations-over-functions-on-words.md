@@ -4,11 +4,15 @@ Over a field of characteristic zero, no algorithm decides whether a finite syste
 
 **Theorem (Pogudin–Scanlon–Wibmer).** Let $k$ be a field of characteristic zero, let $k_0 \subseteq k$ be a computable subfield, and let $M_2$ be the free monoid on two generators. There is no algorithm that decides, given a finite set $F$ of $M_2$-polynomials in finitely many unknowns with coefficients in $k_0$, whether the system $F = 0$ has a solution in $k^{M_2}$.
 
-Conventions: $k^{M_2}$ is the ring of functions $x \colon M_2 \to k$, with $\sigma^w(x)(u) = x(uw)$ for words $u, w$, as in the linked definition.
+Conventions: $k^{M_2}$ is the ring of functions $x \colon M_2 \to k$, with $\sigma^w(x)(u) = x(uw)$ for words $u, w$, as in the linked definitions.
 
 ## Depends on
 
-- [Difference rings, rings of sequences and difference equations](difference-rings-and-equations-in-sequences.md)
+- [Difference rings and rings of sequences](difference-rings-and-equations-in-sequences.md)
+- [Difference polynomials and their solutions](difference-polynomials-and-their-solutions.md)
+- [Computable subfields](computable-subfields.md)
+- [Field](../../rings-and-fields/field.md)
+- [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
 
 ## Proof depends on
 

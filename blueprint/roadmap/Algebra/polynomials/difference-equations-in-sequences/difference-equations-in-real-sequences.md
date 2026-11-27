@@ -4,11 +4,15 @@ For a subfield of the real numbers, no algorithm decides whether a finite system
 
 **Theorem (Pogudin–Scanlon–Wibmer).** Let $k$ be a field with $k \subseteq \mathbb{R}$, let $k_0 \subseteq k$ be a computable subfield, and let $M$ be $\mathbb{N}$ or $\mathbb{Z}$. There is no algorithm that decides, given a finite set $F$ of difference polynomials in finitely many unknowns with coefficients in $k_0$, whether the system $F = 0$ has a solution in $k^M$.
 
-Conventions: difference polynomials, the rings $k^{\mathbb{N}}$ and $k^{\mathbb{Z}}$ with the shift, and solutions are as in the linked definition; the number of unknowns and the orders of the shifts are part of the input. By contrast, the source recalls that for an algebraically closed difference field $K$ consistency of a finite system of difference equations in $K^{\mathbb{N}}$ is decidable, by an effective bound in the difference Nullstellensatz of Ovchinnikov, Pogudin and Scanlon; the proof below uses the order of $\mathbb{R}$ through sums of squares.
+Conventions: difference polynomials, the rings $k^{\mathbb{N}}$ and $k^{\mathbb{Z}}$ with the shift, and solutions are as in the linked definitions; the number of unknowns and the orders of the shifts are part of the input. By contrast, the source recalls that for an algebraically closed difference field $K$ consistency of a finite system of difference equations in $K^{\mathbb{N}}$ is decidable, by an effective bound in the difference Nullstellensatz of Ovchinnikov, Pogudin and Scanlon; the proof below uses the order of $\mathbb{R}$ through sums of squares.
 
 ## Depends on
 
-- [Difference rings, rings of sequences and difference equations](difference-rings-and-equations-in-sequences.md)
+- [Difference rings and rings of sequences](difference-rings-and-equations-in-sequences.md)
+- [Difference polynomials and their solutions](difference-polynomials-and-their-solutions.md)
+- [Computable subfields](computable-subfields.md)
+- [Field](../../rings-and-fields/field.md)
+- [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
 
 ## Proof depends on
 

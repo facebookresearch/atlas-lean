@@ -15,6 +15,7 @@ Conventions: no parameters from $S$ are allowed in sentences or in $\Omega$; cla
 
 - [Commutative ring with identity](../../rings-and-fields/commutative-ring-with-identity.md)
 - [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
+- [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
 
 ## Proof depends on
 

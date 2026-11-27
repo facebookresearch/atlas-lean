@@ -12,7 +12,7 @@ $$
 
 1. $T$ halts;
 2. $\mathcal{V}(A'(T))$ has definable principal subcongruences;
-3. $A'(T)$ is finitely based.
+3. $\mathcal{V}(A'(T))$ is finitely based, that is, $A'(T)$ is finitely based.
 
 Consequently there is no algorithm that decides, given a finite algebra $A$ of finite type, whether $\mathcal{V}(A)$ has definable principal subcongruences, and none that decides whether $A$ is finitely based.
 
@@ -21,6 +21,9 @@ Conventions: Turing machines are given by finite lists of instructions, and $T$ 
 ## Depends on
 
 - [Varieties of algebras and finitely generated varieties](varieties-of-algebras-and-finitely-generated-varieties.md)
+- [Congruences and subdirectly irreducible algebras](congruences-and-subdirectly-irreducible-algebras.md)
+- [Halting on an input](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/halts-on.md)
+- [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
 
 ## Proof depends on
 

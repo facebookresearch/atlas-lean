@@ -4,11 +4,15 @@ Over a field of characteristic zero, no algorithm decides whether a finite syste
 
 **Theorem (Pogudin–Scanlon–Wibmer).** Let $k$ be a field of characteristic zero, let $k_0 \subseteq k$ be a computable subfield, and let $M$ be $\mathbb{N}^2$ or $\mathbb{Z}^2$ (under addition). There is no algorithm that decides, given a finite set $F$ of $M$-polynomials in finitely many unknowns with coefficients in $k_0$, whether the system $F = 0$ has a solution in $k^M$.
 
-Conventions: $k^M$ is the ring of sequences $(x_{i,j})$ indexed by $M$ with the shifts $\sigma^{(1,0)}$ and $\sigma^{(0,1)}$ (and their inverses for $\mathbb{Z}^2$), as in the linked definition. For $M = \mathbb{N}$ or $\mathbb{Z}$ the same question is undecidable for $k \subseteq \mathbb{R}$ by a separate argument; for one-sided sequences $K^{\mathbb{N}}$ over an algebraically closed difference field $K$ it is decidable, by the effective bound of Ovchinnikov, Pogudin and Scanlon that the source recalls.
+Conventions: $k^M$ is the ring of sequences $(x_{i,j})$ indexed by $M$ with the shifts $\sigma^{(1,0)}$ and $\sigma^{(0,1)}$ (and their inverses for $\mathbb{Z}^2$), as in the linked definitions. For $M = \mathbb{N}$ or $\mathbb{Z}$ the same question is undecidable for $k \subseteq \mathbb{R}$ by a separate argument; for one-sided sequences $K^{\mathbb{N}}$ over an algebraically closed difference field $K$ it is decidable, by the effective bound of Ovchinnikov, Pogudin and Scanlon that the source recalls.
 
 ## Depends on
 
-- [Difference rings, rings of sequences and difference equations](difference-rings-and-equations-in-sequences.md)
+- [Difference rings and rings of sequences](difference-rings-and-equations-in-sequences.md)
+- [Difference polynomials and their solutions](difference-polynomials-and-their-solutions.md)
+- [Computable subfields](computable-subfields.md)
+- [Field](../../rings-and-fields/field.md)
+- [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
 
 ## Proof depends on
 

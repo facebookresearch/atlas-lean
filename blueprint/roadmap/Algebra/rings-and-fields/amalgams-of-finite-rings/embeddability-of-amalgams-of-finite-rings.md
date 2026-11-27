@@ -14,6 +14,7 @@ Conventions: rings are associative and are not required to have an identity elem
 ## Depends on
 
 - [Ring, not necessarily with an identity element](../ring.md)
+- [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
 
 ## Proof depends on
 

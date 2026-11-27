@@ -17,6 +17,7 @@ Conventions: for commutative rings the corresponding problem, whether two finite
 ## Depends on
 
 - [Ring with identity](../../rings-and-fields/ring-with-identity.md)
+- [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
 
 ## Proof depends on
 
