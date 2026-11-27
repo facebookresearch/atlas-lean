@@ -24,7 +24,7 @@ public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -40,7 +40,7 @@ cycle of length at least `6` has a chord.
 QUESTION: does `G` contain a Hamiltonian circuit?
 
 The instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple graph on
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` ([GT37]: a simple graph on
 `Fin n` given by an edge list; a Hamiltonian circuit needs at least three vertices). The
 restriction adds that the graph is chordal bipartite: bipartite, as Mathlib's
 `SimpleGraph.IsBipartite` (`Colorable 2`), and without a chordless cycle of length at least `6`,
