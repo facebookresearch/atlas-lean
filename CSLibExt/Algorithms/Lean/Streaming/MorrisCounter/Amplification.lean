@@ -241,8 +241,10 @@ theorem exactCounter_val {n m : ℕ} (hn : n ≤ m) : (exactCounter m n).val = n
   | zero => rfl
   | succ n ih => simp [exactCounter, ih (by omega), min_eq_left hn]
 
-/-- In the fallback range even one bit per scheduled counter suffices for the exact
-counter's entire state space. Hence the same padded bit budget covers both regimes. -/
+/-- Suppose `m + 1 < k` and there are `s > 0` blocks of `k` counters each. The exact fallback
+counter has `m + 1` possible states, and their number is at most `2 ^ (s * k * registerBits m)`.
+Here `registerBits m = 1 + ⌈log₂ (1 + ⌈log₂ (m + 1)⌉)⌉` is the padded bit allowance per
+scheduled register. The bound counts persistent states, not temporary or readout storage. -/
 theorem exactCounter_card_le {k m s : ℕ} (hk : m + 1 < k) (hs : 0 < s) :
     Fintype.card (Fin (m + 1)) ≤ 2 ^ (s * k * registerBits m) := by
   have h₁ : k ≤ s * k := by simpa using Nat.mul_le_mul_right k hs
