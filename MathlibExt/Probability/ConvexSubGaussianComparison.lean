@@ -19,8 +19,9 @@ public import Mathlib.Probability.Moments.SubGaussian
 # One-dimensional convex comparison under a sub-Gaussian tail bound
 
 The comparator parameter is the variance factor `C`, so the standard Gaussian is scaled
-by `sqrt C`. The Davis–Power equation data and the sharp comparison requests live in the
-`WantedExt` module `ConvexSubGaussianComparisonWanted`.
+by `sqrt C`. The Davis–Power equation data is defined in
+`MathlibExt.Probability.ConvexSubGaussianComparisonDavisPowerSystemExistsUnique`, and the sharp
+comparison requests live in the `WantedExt` module `ConvexSubGaussianComparisonWanted`.
 -/
 
 universe u

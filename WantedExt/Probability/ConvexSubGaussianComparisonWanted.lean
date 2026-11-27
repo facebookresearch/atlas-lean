@@ -11,15 +11,19 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Probability.ConvexSubGaussianComparison
 public import MathlibExt.Probability.ConvexSubGaussianComparisonFiniteness
+public import MathlibExt.Probability.ConvexSubGaussianComparisonDavisPowerSystemExistsUnique
 
 /-!
 # Sharp one-dimensional convex sub-Gaussian comparison: literature requests
 
-All five results below are unproved data, not proofs. The implemented probability
+All four results below are unproved data, not proofs. The implemented probability
 model and characteristic APIs are upstream. The numerical approximations in Davis–Power
 Remark 2 are not asserted here, and the solved one-dimensional problem is not an open target.
 The finiteness of the comparison constant is proved in
-`MathlibExt.Probability.ConvexSubGaussianComparisonFiniteness`.
+`MathlibExt.Probability.ConvexSubGaussianComparisonFiniteness`, and the existence and
+uniqueness of the Davis–Power system solution (`davisPowerSystem_existsUnique`) is proved in
+`MathlibExt.Probability.ConvexSubGaussianComparisonDavisPowerSystemExistsUnique`, where the
+Davis–Power equation data it uses is defined.
 -/
 
 @[expose] public section
@@ -27,72 +31,12 @@ The finiteness of the comparison constant is proved in
 open MeasureTheory ProbabilityTheory
 open MathlibExt.Probability.ConvexSubGaussianComparison
 
--- The Davis–Power equation data (Davis–Power 2026, equations (3)-(6)), kept with its
--- owning literature requests instead of the reusable `MathlibExt` library.
+-- The Davis–Power constant `c_0` (Davis–Power 2026, equation (6)), kept with its owning
+-- literature requests; the equation data it is defined from is in
+-- `MathlibExt.Probability.ConvexSubGaussianComparisonDavisPowerSystemExistsUnique`.
 namespace MathlibExt.Probability.ConvexSubGaussianComparisonWantedDavis
 
 open Set
-
-/-- **Standard Gaussian upper tail.** For a real number $x$, the standard Gaussian upper tail at
-$x$ is $Q(x) = \int_x^\infty \varphi(t)\,dt$, where $\varphi(t) = e^{-t^2/2}/\sqrt{2\pi}$ is the
-standard Gaussian density. -/
-noncomputable def standardNormalTail (x : ℝ) : ℝ :=
-  ∫ t in Ici x, gaussianPDFReal 0 1 t
-
-/-- **The Davis–Power transition threshold.** The transition threshold is the real number
-$t_0 = \sqrt{2\log 2}$, where $\log$ is the natural logarithm. -/
-noncomputable def davisPowerT0 : ℝ :=
-  Real.sqrt (2 * Real.log 2)
-
-/-- **The envelope integral $A$.** Let $A = \int_0^\infty \min(1, 2e^{-t^2/2})\,dt$, the integral
-over $[0, \infty)$ of the capped Gaussian tail envelope $t \mapsto \min(1, 2e^{-t^2/2})$.
-
-This integral appears in equation (3) of Davis–Power (2026). -/
-noncomputable def davisPowerA : ℝ :=
-  ∫ t in Ici (0 : ℝ), gaussianTailEnvelope t
-
-/-- **Half the envelope integral, $B$.** Let $B = A/2$, where
-$A = \int_0^\infty \min(1, 2e^{-t^2/2})\,dt$ is the integral over $[0, \infty)$ of the capped
-Gaussian tail envelope.
-
-This constant appears in equation (3) of Davis–Power (2026). -/
-noncomputable def davisPowerB : ℝ :=
-  davisPowerA / 2
-
-/-- **The function $h$ of Davis–Power.** For real $x$, let
-$h(x) = 2x e^{-x^2/2} + 2\int_x^\infty e^{-t^2/2}\,dt$.
-
-This is equation (4) of Davis–Power (2026); the Davis–Power equation system uses $h$ only at
-points above the transition threshold $\sqrt{2 \log 2}$. -/
-noncomputable def davisPowerH (x : ℝ) : ℝ :=
-  2 * x * Real.exp (-x ^ 2 / 2) + 2 * ∫ t in Ici x, Real.exp (-t ^ 2 / 2)
-
-/-- **Parameter quadruples of the Davis–Power system.** A parameter quadruple is a quadruple
-$(a, p_0, z, c_0)$ of real numbers, the unknowns of the Davis–Power equation system. Being a
-solution of the system is a separate condition. -/
-@[ext] structure DavisPowerSolution where
-  a : ℝ
-  p0 : ℝ
-  z : ℝ
-  c0 : ℝ
-
-/-- **Valid solutions of the Davis–Power system.** Let $\varphi(t) = e^{-t^2/2}/\sqrt{2\pi}$ be
-the standard Gaussian density, $Q(x) = \int_x^\infty \varphi(t)\,dt$ its upper tail,
-$t_0 = \sqrt{2\log 2}$ with $\log$ the natural logarithm,
-$B = \frac{1}{2}\int_0^\infty \min(1, 2e^{-t^2/2})\,dt$ and
-$h(x) = 2x e^{-x^2/2} + 2\int_x^\infty e^{-t^2/2}\,dt$. A quadruple $(a, p_0, z, c_0)$ of real
-numbers is a valid solution of the Davis–Power system when $a > t_0$, $h(a) = B$,
-$p_0 = 2e^{-a^2/2}$, $0 < p_0 < 1$, $Q(z) = p_0$ and $c_0 = B/\varphi(z)$.
-
-These are equations (3)–(6) of Davis–Power (2026), with the domain conditions that select the
-solution. -/
-noncomputable def DavisPowerSolution.IsValid (q : DavisPowerSolution) : Prop :=
-  davisPowerT0 < q.a ∧
-    davisPowerH q.a = davisPowerB ∧
-    q.p0 = 2 * Real.exp (-q.a ^ 2 / 2) ∧
-    0 < q.p0 ∧ q.p0 < 1 ∧
-    standardNormalTail q.z = q.p0 ∧
-    q.c0 = davisPowerB / gaussianPDFReal 0 1 q.z
 
 /-- **Values of $c_0$ solving the Davis–Power system.** Let $\varphi(t) = e^{-t^2/2}/\sqrt{2\pi}$
 be the standard Gaussian density, $B = \frac12 \int_0^\infty \min(1, 2e^{-t^2/2})\,dt$ and
@@ -134,13 +78,6 @@ end MathlibExt.Probability.ConvexSubGaussianComparisonWantedDavis
 open MathlibExt.Probability.ConvexSubGaussianComparisonWantedDavis
 
 namespace MathlibExt.Probability.ConvexSubGaussianComparisonWanted
-
-/-- **Existence and uniqueness for the Davis–Power system.** There is exactly one quadruple
-$(a, p_0, z, c_0)$ of real numbers that is a valid solution of the Davis–Power system.
-
-Source: Davis–Power (2026), equations (3)–(6), existence and uniqueness. -/
-public theorem_wanted davisPowerSystem_existsUnique :
-    ∃! q : DavisPowerSolution, q.IsValid
 
 /-- **Davis–Power upper bound: $c_0^2$ is an admissible variance factor.** Let $c_0$ be the
 Davis–Power constant and $G$ a standard Gaussian. Then $c_0^2 > 0$, and every real random
