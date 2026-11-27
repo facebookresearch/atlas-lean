@@ -17,6 +17,7 @@ public import MathlibExt.Algebra.Polynomial.FactorialEvalBound
 public import MathlibExt.Algebra.Polynomial.InterpolationPolyExchange
 public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomial
 public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomialComp
+public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomialInjective
 public import MathlibExt.Algebra.Polynomial.LowDegreeInterpolant
 public import MathlibExt.Data.Nat.ProgressionIntersection
 
@@ -42,18 +43,6 @@ open Polynomial Filter Topology
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Integer polynomials embed in LIP(U).** For every infinite set $U \subseteq \mathbb{Z}$, the
-evaluation map $\mathbb{Z}[x] \to \mathrm{LIP}(U)$, sending $p$ to the function $u \mapsto p(u)$,
-is injective: distinct integer polynomials give distinct functions on $U$.
-
-The other part of Lemma 1, that $\mathrm{LIP}(U)$ is a subring of the ring of all functions
-$U \to \mathbb{Z}$, holds by construction.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 1 (`integers-2025-A41-lem-1`). -/
-public theorem_wanted polynomialToLIP_injective {U : Set ℤ} (hU : U.Infinite) :
-    Function.Injective (polynomialToLIP U)
 
 /-- **Locally integer polynomial functions agreeing on an infinite subset are equal.** Let
 $U \subseteq V \subseteq \mathbb{Z}$ with $U$ infinite, and let $f, g : V \to \mathbb{Z}$ lie in
