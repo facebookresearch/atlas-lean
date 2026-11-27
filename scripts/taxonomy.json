@@ -10778,6 +10778,7 @@
   "MathlibExt/Combinatorics/Additive/SidonIsolatedSums": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon sets"},
   "MathlibExt/Combinatorics/Additive/SingerDifferenceSet": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Singer difference sets"},
   "MathlibExt/Combinatorics/Additive/SmallCrossNumberZeroSum": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Zero-sum subsequences of small cross number"},
+  "MathlibExt/Combinatorics/Additive/SmallCrossNumberZeroSumZModTwo": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Zero-sum subsequences of small cross number"},
   "MathlibExt/Combinatorics/Additive/SingerSet": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Constructions of thick B_h-sets"},
   "MathlibExt/Combinatorics/Additive/SingletonSumFreeMod": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Modular Schur numbers"},
   "MathlibExt/Combinatorics/Additive/SmallDoublingTripling": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Small doubling and small tripling"},
