@@ -1,6 +1,6 @@
 # Eyring–Kramers formula for reversible diffusions
 
-Let $X$ solve $dX(t) = -\nabla F(X(t))\,dt + \sqrt{2\varepsilon}\, dW(t)$ in a domain of $\mathbb{R}^d$, where $F$ satisfies the growth condition (1.3) and the assumptions (H1), (ND) and (IB) of Bovier, Eckhoff, Gayrard and Klein (2004): finitely many local minima, saddle points between minima that are finite sets of isolated points, and non-degenerate Hessians at minima and saddle points. Let $x_i$ be a local minimum such that the set $M_i$ of the other local minima $y \ne x_i$ with $F(y) \le F(x_i)$ is nonempty, and let the barrier height relative to $M_i$ be
+Let $X$ solve $dX(t) = -\nabla F(X(t))\,dt + \sqrt{2\varepsilon}\, dW(t)$ in a domain of $\mathbb{R}^d$, where $W$ is a standard $d$-dimensional Brownian motion (identity covariance, the noise normalization of this equation) and $F$ satisfies the growth condition (1.3) and the assumptions (H1), (ND) and (IB) of Bovier, Eckhoff, Gayrard and Klein (2004): finitely many local minima, saddle points between minima that are finite sets of isolated points, and non-degenerate Hessians at minima and saddle points. Let $x_i$ be a local minimum such that the set $M_i$ of the other local minima $y \ne x_i$ with $F(y) \le F(x_i)$ is nonempty, and let the barrier height relative to $M_i$ be
 
 $$F(z^*) - F(x_i), \qquad F(z^*) = \inf_{\omega:\, \omega(0) = x_i,\ \omega(1) \in M_i}\ \sup_{t \in [0, 1]} F(\omega(t)),$$
 
@@ -9,6 +9,10 @@ with the infimum over continuous paths, the height of the saddle between $x_i$ a
 $$E_{x_i}\tau_D = \frac{2\pi}{|\lambda_1^*(z^*)|}\sqrt{\frac{|\det\nabla^2 F(z^*)|}{\det\nabla^2 F(x_i)}}\; e^{[F(z^*) - F(x_i)]/\varepsilon}\,\bigl(1 + O(\varepsilon^{1/2}|\ln\varepsilon|)\bigr).$$
 
 The proof rests on the sharp capacity estimate of Theorem 3.1 and the representation of mean hitting times through capacities and equilibrium potentials (Section 2).
+
+## Depends on
+
+- [Multidimensional Brownian motion](../../../Probability/stochastic-calculus/construction-and-sample-paths-of-brownian-motion/multidimensional-brownian-motion.md)
 
 ## Expansion
 

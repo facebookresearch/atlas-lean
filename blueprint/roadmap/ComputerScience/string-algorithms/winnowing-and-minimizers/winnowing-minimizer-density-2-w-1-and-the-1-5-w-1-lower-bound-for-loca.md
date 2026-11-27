@@ -9,7 +9,7 @@ Let $h_1, h_2, \dots$ be the hashes of the consecutive $k$-grams of a document, 
 3. The density of winnowing for tie-free random hashes: a charging argument in which a window is charged when it selects a hash not selected by the previous window, which happens when the minimum of the union of two consecutive windows lies at its leftmost or rightmost position, each with probability $1/(w + 1)$.
 4. Theorem 1: the lower bound for random hashes, using only pairs of windows far enough apart to be disjoint.
 5. Separate target: the exact density of winnowing with rightmost tie-breaking for i.i.d. hashes uniform on a finite range, and its convergence to $2/(w + 1)$ as the range grows.
-6. Comparison with the 0 mod $p$ selection method, whose density for comparable guarantees is larger, as a separate statement.
+6. Comparison with the 0 mod $p$ selection method, as two separate statements. Section 3.1.1: ordinary 0 mod $p$, which selects the hashes divisible by $p$, taken at the same density as winnowing; for $p > 1$ it has no match-length guarantee, since a window of any length may contain no hash divisible by $p$, and the source computes the probability that it misses a match. Section 3.1.2: Safe 0 mod $p$, which also selects hashes to cover the gaps, taken at the same guarantee $t$ as winnowing, where its density is larger.
 
 ## Sources
 
