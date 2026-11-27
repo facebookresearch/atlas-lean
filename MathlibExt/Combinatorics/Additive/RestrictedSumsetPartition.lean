@@ -48,19 +48,23 @@ public import MathlibExt.Combinatorics.Additive.RestrictedSumset
 
 `Green25.Property25 k N` says that `1 ≤ k ≤ N` and that every partition of
 `{1, ..., N}` into exactly `k` parts has `10 * |⋃ᵢ (Aᵢ +̂ Aᵢ)| ≥ N`, where `S +̂ S`
-is the restricted sumset. Green's open problem 25 asks for which `k` this holds;
-the best known upper bound for the range where it fails is `k ≍ N / log N`. This
-file lowers that bound: it builds,
-for all large `N`, a partition into `k(N) = o(N / log N)` parts whose restricted
-sumsets cover less than `N / 10` points.
+is the restricted sumset. Green's open problem 25 asks for which `k` this holds.
+Splitting a part cannot enlarge the union of restricted sumsets, so once the property
+fails at some `k ≤ N` it fails at every larger `k ≤ N`; the question is where the least
+failing `k` lies. The comparison function `bestUpper N = N / log N` records the scale of
+the upper bound of [ESS89] on it. This file builds, for all large `N`, a partition into
+`k(N) = o(N / log N)` parts whose restricted sumsets cover fewer than `N / 10` points, so
+the least failing `k` is `o(N / log N)`.
 
 ## Source and provenance
 
 The definitions of `Property25` and `bestUpper` are copied verbatim from
 `FormalConjectures/GreensOpenProblems/25.lean` of
 [google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures).
-The docstring of `Property25` is restated as a definition that names its range
-condition `1 ≤ k ≤ N`; the upstream docstring poses the question without it.
+The docstrings are restated: that of `Property25` as a definition that names its range
+condition `1 ≤ k ≤ N`, which the upstream docstring, posing the question, leaves out, and
+that of `bestUpper` without the upstream description of `N / log N` as the best known
+bound.
 
 The statement `green_25.upper` is **not** a verbatim copy. Upstream states it as a
 value question, with an opaque `green_25.upper.answer : ℕ → ℕ` left as `sorry`:
@@ -73,16 +77,17 @@ theorem green_25.upper :
 ```
 
 Here the opaque answer is replaced by an existential quantifier over the witness,
-and the last conjunct is strengthened from `¬ ∀ᶠ N, Property25 ..` ("not
-eventually") to `∀ᶠ N, ¬ Property25 ..` ("eventually not"); over `atTop` the
-latter implies the former, so the claim proved below is at least as strong as the
-upstream one in that conjunct, and weaker only in that it does not name the
-witness. It is therefore a different statement from the upstream value question,
-and proving it here does not prove the upstream `green_25.upper`, which is still
+and the last conjunct `¬ ∀ᶠ N, Property25 ..` ("not eventually") is replaced by
+`∀ᶠ N, ¬ Property25 ..` ("eventually not"). For the same function, "eventually not"
+implies "not eventually" along `atTop`, so the theorem below gives the upstream
+conjuncts for its own witness (the test module derives that form). It says nothing
+about the fixed function `green_25.upper.answer`, so it is a different statement from
+the upstream value question, and proving it here does not prove the upstream
+`green_25.upper`, which is still
 `@[category research open, question value, AMS 5 11]` at commit
-`d8d031d4998c78575159ccab9a7a9e95ce043883`. The same underlying mathematics —
-that the best-known upper bound can be lowered — is recorded upstream for the
-explicit witness `k N = ⌈N ^ (23 / 40)⌉` by the separate theorem
+`d8d031d4998c78575159ccab9a7a9e95ce043883`. That the least failing `k` is
+`o(N / log N)` is also recorded upstream, for the explicit witness
+`k N = ⌈N ^ (23 / 40)⌉`, by the separate theorem
 `green_25.variants.upper_pow_23_40`, which is `research solved` there.
 
 The statement carried the Formal Conjectures attribute
@@ -91,7 +96,8 @@ written against.
 
 ## Main results
 
-- `Green25.Property25`: the covering property of a `k`-part partition.
+- `Green25.Property25`: the covering property of every partition of `{1, ..., N}` into
+  exactly `k` parts, with `1 ≤ k ≤ N`.
 - `Green25.green_25.upper`: a witness `k = o(N / log N)` for which the property
   eventually fails.
 -/
@@ -116,7 +122,10 @@ def Property25 (k N : ℕ) : Prop :=
   10 * #(P.parts.biUnion Finset.restrictedSumset) ≥ N
 
 
-/-- The best-known upper bound [ESS89]. -/
+/-- The comparison function `N / log N`, as a real number, from the upper bound of [ESS89]
+on the least `k` for which `Property25 k N` fails. With Lean's conventions
+`Real.log 0 = Real.log 1 = 0` and division by zero giving `0`, its value at `N = 0, 1`
+is `0`. -/
 noncomputable def bestUpper (N : ℕ) : ℝ := (N : ℝ) / Real.log N
 
 
@@ -920,13 +929,14 @@ private lemma linear_le_pow25 (u : ℕ) (hu : 5 ≤ u) : 4 + 4 * u ≤ 2 ^ u := 
 set_option maxHeartbeats 800000 in
 
 /--
-**The known upper bound for Green's problem 25 can be lowered.** There is a
+**`Property25` fails along some `k = o(N / log N)`.** There is a
 `k : ℕ → ℕ` with `1 ≤ k N ≤ N` eventually, `k = o(N / log N)`, and
 `¬ Property25 (k N) N` for all large `N`.
 
 In `FormalConjectures/GreensOpenProblems/25.lean`, `green_25.upper` uses the fixed
 opaque function `green_25.upper.answer`. Here the witness is existentially quantified,
-and the last conjunct is the stronger "eventually not" condition at `atTop`.
+and the last conjunct is "eventually not", which for the same function implies the
+upstream "not eventually".
 See the module docstring for the exact comparison.
 -/
 theorem green_25.upper :

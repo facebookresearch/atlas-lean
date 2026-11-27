@@ -61,17 +61,19 @@ theorem eq (h : s.IsAPOfLength l) :
     ∃ a d : α, s = {a + n • d | (n : ℕ) (_ : n < l)} :=
   ⟨h.choose, h.choose_spec.choose, h.choose_spec.choose_spec.2⟩
 
-/-- The only arithmetic progression of length `0` is the empty set.
+/-- In an additive commutative monoid, the only arithmetic progression of length `0` is the
+empty set.
 
 Ported from `FormalConjecturesForMathlib/Combinatorics/AP/Basic.lean` of
-google-deepmind/formal-conjectures, unchanged. -/
+google-deepmind/formal-conjectures; the statement is unchanged. -/
 @[simp] theorem zero : s.IsAPOfLength 0 ↔ s = ∅ := by
   simp [Set.IsAPOfLength, Set.IsAPOfLengthWith]
 
-/-- The arithmetic progressions of length `1` are the singletons.
+/-- In an additive commutative monoid, the arithmetic progressions of length `1` are the
+singletons.
 
 Ported from `FormalConjecturesForMathlib/Combinatorics/AP/Basic.lean` of
-google-deepmind/formal-conjectures, unchanged. -/
+google-deepmind/formal-conjectures; the statement is unchanged. -/
 @[simp] theorem one : s.IsAPOfLength 1 ↔ ∃ a, s = {a} := by
   simp only [Set.IsAPOfLength, Set.IsAPOfLengthWith]
   constructor
@@ -219,12 +221,14 @@ theorem card_le_maxCard {S : Finset ℕ} {k N : ℕ}
 
 end Set.IsAPOfLengthFree
 
-/-- A colouring of a set `M` contains a monochromatic arithmetic progression of
-length `k`: some colour class contains a set of `M`-elements whose underlying
-values form an arithmetic progression of length `k`.
+/-- A colouring of a set `M` of elements of an additive commutative monoid by a finite type
+`κ` of colours contains a monochromatic arithmetic progression of length `k`: there are a
+colour `c` and a set of elements of `M`, all coloured `c`, whose underlying values form an
+arithmetic progression of length `k`. The colour must exist, so the property fails when `κ`
+is empty, even for `k = 0`.
 
 Ported from `FormalConjecturesForMathlib/Combinatorics/AP/Basic.lean` of
-google-deepmind/formal-conjectures, unchanged. -/
+google-deepmind/formal-conjectures; the definition is unchanged. -/
 def ContainsMonoAPofLength {κ : Type} [Finite κ] {M : Set α}
     (coloring : M → κ) (k : ℕ) : Prop :=
   ∃ c : κ, ∃ ap : Set M, ((·.1) '' ap).IsAPOfLength k ∧

@@ -45,18 +45,20 @@ namespace SimpleGraph
 
 variable {α : Type*} [Fintype α] [DecidableEq α]
 
-/-- A set `S` is a total dominating set of `G` if every vertex has a neighbor in `S`. -/
+/-- For a graph `G` on a finite vertex type, a finite set `S` of vertices is a total
+dominating set if every vertex, including each vertex of `S`, has a neighbor in `S`. -/
 def IsTotalDominatingSet (G : SimpleGraph α) [DecidableRel G.Adj] (S : Finset α) : Prop :=
   ∀ v : α, ∃ w ∈ S, G.Adj v w
 
-/-- A total dominating set `S` is minimal if no proper subset of `S` is also a
-total dominating set. -/
+/-- For a graph on a finite vertex type, a total dominating set `S` is minimal if no proper
+subset of `S` is also a total dominating set. -/
 def IsMinimalTotalDominatingSet (G : SimpleGraph α) [DecidableRel G.Adj] (S : Finset α) : Prop :=
   IsTotalDominatingSet G S ∧
   ∀ T : Finset α, T ⊂ S → ¬IsTotalDominatingSet G T
 
-/-- A graph `G` is well totally dominated if every minimal total dominating set
-has the same cardinality. -/
+/-- A graph `G` on a finite vertex type is well totally dominated if any two minimal total
+dominating sets have the same cardinality. This holds vacuously when `G` has no total
+dominating set, for example when it has an isolated vertex. -/
 def IsWellTotallyDominated (G : SimpleGraph α) [DecidableRel G.Adj] : Prop :=
   ∀ S T : Finset α,
     IsMinimalTotalDominatingSet G S →

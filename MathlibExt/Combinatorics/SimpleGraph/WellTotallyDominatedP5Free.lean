@@ -44,7 +44,8 @@ occur.
 
 ## Source and provenance
 
-`largestInducedPathSize` and the statement of `conjecture314` are copied verbatim
+The definition of `largestInducedPathSize` (whose docstring is expanded here) and the
+statement of `conjecture314` are copied verbatim
 from `FormalConjectures/WrittenOnTheWallII/GraphConjecture314.lean` of
 [google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures),
 which transcribes
@@ -91,7 +92,9 @@ variable {α : Type*} [Fintype α] [DecidableEq α]
 A subset $s \subseteq V(G)$ is an *induced path* when the induced subgraph
 `G.induce s` is a tree in which every vertex has degree at most $2$
 (equivalently: a tree that is itself a path graph). We define
-`largestInducedPathSize G` as the supremum of `s.card` over all such subsets.
+`largestInducedPathSize G` as the supremum in `ℕ` of `s.card` over all such finite subsets
+of the finite vertex type. A single vertex is an induced path, so this is a maximum when `G`
+has a vertex; a graph with no vertices has no induced path, and the value is then `0`.
 
 This is *not* the `SimpleGraph.path` invariant of Mathlib, which is the floor of
 the average distance. -/

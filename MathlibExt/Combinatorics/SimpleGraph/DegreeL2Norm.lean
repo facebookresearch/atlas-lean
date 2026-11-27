@@ -37,12 +37,13 @@ namespace SimpleGraph
 
 variable {α : Type*} [Fintype α] [DecidableEq α]
 
-/-- The length of a graph: the square root of the sum of the squares of degrees. -/
+/-- The length of a graph on a finite vertex type: the square root of the sum, over all
+vertices, of the squares of their degrees. -/
 noncomputable def degreeL2Norm (G : SimpleGraph α) [DecidableRel G.Adj] : ℝ :=
   Real.sqrt (∑ v, (G.degree v : ℝ) ^ 2)
 
 omit [DecidableEq α] in
-/-- The length of a graph is nonnegative. -/
+/-- The length of a graph on a finite vertex type is nonnegative. -/
 lemma degreeL2Norm_nonneg (G : SimpleGraph α) [DecidableRel G.Adj] :
     0 ≤ degreeL2Norm G :=
   Real.sqrt_nonneg _

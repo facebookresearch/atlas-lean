@@ -84,7 +84,8 @@ length `k`.
 
 ## Source and provenance
 
-`monoAP_guarantee_set`, `monoAPNumber`, `W` and the statement of
+The definitions of `monoAP_guarantee_set`, `monoAPNumber` and `W` (whose docstrings are
+expanded here to state their colour and boundary conventions) and the statement of
 `erdos_138.variants.dvd_two_pow` are copied verbatim from
 `FormalConjectures/ErdosProblems/138.lean` of
 [google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures);
@@ -118,9 +119,11 @@ namespace Erdos138
 /--
 The set of natural numbers that guarantee a monochromatic arithmetic progression.
 
-A number `N` belongs to this set if, for a given number of colors `r` and an arithmetic
-progression length `k`, any `r`-coloring of the integers `{1, ..., N}` must contain a
-monochromatic arithmetic progression of length `k`.
+A number `N` belongs to this set if, for a number of colours `r` and an arithmetic
+progression length `k`, every colouring `Finset.Icc 1 N → Fin r` of `{1, ..., N}` (not
+necessarily using every colour) contains a monochromatic arithmetic progression of length
+`k`. A monochromatic progression needs a colour, so for `r = 0` the condition fails at
+`N = 0` and holds vacuously for every `N > 0`.
 -/
 def monoAP_guarantee_set (r k : ℕ) : Set ℕ :=
   { N | ∀ coloring : Finset.Icc 1 N → Fin r, ContainsMonoAPofLength coloring k}
@@ -236,9 +239,10 @@ lemma monoAP_guarantee_set_two_nonempty (k : ℕ) :
 
 
 /--
-The **van der Waerden number**, is the smallest integer `N` such that any `r`-coloring of
-`{1, ..., N}` is guaranteed to contain a monochromatic arithmetic progression of
-length `k`. It is defined as the infimum of the (non-empty) set of all such numbers `N`.
+The **van der Waerden number**: the least natural number `N` (possibly `0`) such that every
+colouring of `{1, ..., N}` by `Fin r` contains a monochromatic arithmetic progression of
+length `k`. It is defined as the infimum `sInf` of `monoAP_guarantee_set r k`, which is `0`
+if that set is empty.
 -/
 noncomputable def monoAPNumber (r k : ℕ) : ℕ := sInf (monoAP_guarantee_set r k)
 
@@ -340,9 +344,9 @@ lemma exists_bad_coloring_of_lt_two_mul_sub_one {k N : ℕ} (hk : 1 ≤ k)
 
 
 /--
-An abbreviation for the van der Waerden number for 2 colors, commonly written as `W(k)`.
-This represents the smallest integer `N` such that any 2-coloring of `{1, ..., N}`
-must contain a monochromatic arithmetic progression of length `k`.
+An abbreviation for the van der Waerden number for 2 colours, commonly written as `W(k)`:
+the least natural number `N` (possibly `0`; `W 0 = 0`) such that every 2-colouring of
+`{1, ..., N}` contains a monochromatic arithmetic progression of length `k`.
 -/
 noncomputable abbrev W : ℕ → ℕ := monoAPNumber 2
 

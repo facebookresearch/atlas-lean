@@ -40,8 +40,9 @@ namespace Finset
 variable {α : Type*} [Add α] [DecidableEq α]
 
 /--
-The restricted sumset of a set $S$, denoted $S \hat{+} S$, is the set
-$\lbrace s_1 + s_2 : s_1, s_2 \in S, s_1 \neq s_2 \rbrace$.
+The restricted sumset of a finite set $S$, denoted $S \hat{+} S$, is the finite set
+$\lbrace s_1 + s_2 : s_1, s_2 \in S, s_1 \neq s_2 \rbrace$ of sums of two distinct
+elements of $S$.
 -/
 def restrictedSumset (S : Finset α) : Finset α :=
   S.offDiag.image (fun p => p.1 + p.2)
@@ -62,8 +63,8 @@ namespace Finset
 
 variable {α : Type*} [AddCommMonoid α] [DecidableEq α]
 
-/-- The binary restricted sumset is the `h = 2` case of the `h`-fold restricted
-sumset `MetaMathlibExt.restrictedSumset`. -/
+/-- In an additive commutative monoid with decidable equality, the binary restricted sumset
+is the `h = 2` case of the `h`-fold restricted sumset `MetaMathlibExt.restrictedSumset`. -/
 lemma restrictedSumset_eq_metaMathlibExt_two (S : Finset α) :
     S.restrictedSumset = MetaMathlibExt.restrictedSumset 2 S := by
   ext x

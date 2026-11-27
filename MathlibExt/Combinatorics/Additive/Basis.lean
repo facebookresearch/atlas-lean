@@ -76,8 +76,9 @@ basis if there is a natural number $n$ such that $A$ is a weak additive basis of
 is, every element of $M$ is a sum of at most $n$ (not necessarily distinct) elements of $A$. -/
 def IsWeakAddBasis (A : Set M) : Prop := ∃ n, A.IsWeakAddBasisOfOrder n
 
-/-- `A` is an asymptotic additive basis of order `n` exactly when a cofinite set
-of `a : M` can be written as `a = a₁ + ... + aₙ` with every `aᵢ ∈ A`.
+/-- In an additive commutative monoid `M`, `A` is an asymptotic additive basis of order `n`
+exactly when all but finitely many `a : M` can be written as a sum `a = a₁ + ... + aₙ` of
+exactly `n` elements of `A`, repetitions allowed (for `n = 0`, the empty sum `0`).
 
 Ported from `isAsymptoticMulBasisOfOrder_iff_prod` of the same source file
 (stated there multiplicatively with `@[to_additive]`). -/

@@ -74,16 +74,18 @@ public import Mathlib.Tactic.SetNotationForOrder
 # Counting the words of [A108081](https://oeis.org/A108081)
 
 `OeisA108081.XWord` is the smallest set of integer words containing `[0]` and
-closed under `w ↦ l u ++ v` and `w ↦ u ++ r v`, where `l` reverses a word and
+closed under `(u, v) ↦ l u ++ v` and `(u, v) ↦ u ++ r v`, where `l` reverses a word and
 subtracts `1` from each letter and `r` reverses it and adds `1`. A108081 observes
-that the number of such words of length `n` equals `a (n - 1)` for `n ≤ 12`,
-where `a n = ∑_{k ≤ n} C(n + k - 1, k) F(n - k + 1)`, and asks whether this always
-holds. This file proves that it does.
+that the number of such words of length `n` equals `a (n - 1)` for `1 ≤ n ≤ 12`,
+where `a n = ∑_{k ≤ n} C(n + k - 1, k) F(n - k + 1)` with natural-number subtraction,
+and asks whether this always holds. This file proves that it does for every `n ≥ 1`.
+The words are nonempty, so there is none of length `0`, while `a 0 = 1`.
 
 ## Source and provenance
 
-`a`, `Word`, `l`, `r`, `XWord`, `xN` and the statement of
-`count_words_in_x_is_a_shifted` are copied verbatim from
+The definitions of `a`, `Word`, `l`, `r`, `XWord` and `xN` (the docstrings of `a` and
+`XWord` are expanded here) and the statement of `count_words_in_x_is_a_shifted` are copied
+verbatim from
 `FormalConjectures/OEIS/108081.lean` of
 [google-deepmind/formal-conjectures](https://github.com/google-deepmind/formal-conjectures).
 The statement carried the Formal Conjectures attribute
@@ -106,7 +108,8 @@ open Nat
 
 
 /-- The primary defining sequence `a`.
-$a(n) = \sum_{k=0}^n \binom{n+k-1}{k} F(n-k+1)$, where $F(m)$ is the $m$-th Fibonacci number. -/
+$a(n) = \sum_{k=0}^n \binom{n+k-1}{k} F(n-k+1)$, where $F(m)$ is the $m$-th Fibonacci number
+and the subtraction in the binomial index is natural-number subtraction, so that `a 0 = 1`. -/
 def a (n : ℕ) : ℕ :=
   ∑ k ∈ Finset.range (n + 1), (n + k - 1).choose k * fib (n - k + 1)
 
@@ -154,7 +157,8 @@ lemma mem_r_iff {z : ℤ} {w : Word} : z ∈ r w ↔ z - 1 ∈ w := by
 
 
 /--
-`XWord` is the smallest set of words satisfying the inductive properties described in A108081.
+`XWord` is the smallest set of words that contains `[0]` and contains `l u ++ v` and
+`u ++ r v` whenever it contains `u` and `v`; this is the inductive description in A108081.
 -/
 inductive XWord : Word → Prop
   | base : XWord [0]
@@ -3866,7 +3870,7 @@ lemma coord_enumeration (m : ℕ) : (coordXN (m + 1)).ncard = a m := by
 /--
 **A108081 counts the words of `X`.** For `n ≥ 1` the number of words of `XWord`
 of length `n` is `a (n - 1)`. The [A108081](https://oeis.org/A108081) entry
-records the equality for `n ≤ 12` and asks whether it always holds.
+records the equality for `1 ≤ n ≤ 12` and asks whether it always holds.
 
 Statement copied verbatim from `FormalConjectures/OEIS/108081.lean`
 (`OeisA108081.count_words_in_x_is_a_shifted`).

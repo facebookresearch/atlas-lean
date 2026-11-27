@@ -81,7 +81,8 @@ in the statement is changed.
 ## Main results
 
 - `OeisA211417.a`: the factorial ratio sequence.
-- `OeisA211417.supercongruence`: `p ^ (3 k) ∣ a (p ^ k) - a (p ^ (k - 1))`.
+- `OeisA211417.supercongruence`: for every prime `p ≥ 5` and every `k ≥ 1`, `p ^ (3 k)`
+  divides the integer difference `a (p ^ k) - a (p ^ (k - 1))`.
 -/
 
 namespace OeisA211417

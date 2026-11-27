@@ -65,13 +65,15 @@ lemma sum_stdAddChar_dot {N : ℕ} [NeZero N] {ι : Type*}
         apply Finset.prod_eq_zero (Finset.mem_univ i)
         simp [hi]
 
-/-- `stdAddChar a * conj (stdAddChar b) = stdAddChar (a - b)`. -/
+/-- For a positive modulus `N` and `a b : ZMod N`,
+`stdAddChar a * conj (stdAddChar b) = stdAddChar (a - b)`. -/
 lemma stdAddChar_mul_star {N : ℕ} [NeZero N] (a b : ZMod N) :
     ZMod.stdAddChar a * star (ZMod.stdAddChar b) = ZMod.stdAddChar (a - b) := by
   change ZMod.stdAddChar a * (starRingEnd ℂ) (ZMod.stdAddChar b) = _
   rw [← AddChar.map_neg_eq_conj, ← AddChar.map_add_eq_mul, sub_eq_add_neg]
 
-/-- The standard additive character of `ZMod N` takes values of modulus one. -/
+/-- For a positive modulus `N`, the standard additive character of `ZMod N` takes values of
+modulus one: `‖stdAddChar a‖ = 1` for every `a : ZMod N`. -/
 lemma norm_stdAddChar {N : ℕ} [NeZero N] (a : ZMod N) :
     ‖ZMod.stdAddChar a‖ = 1 := by
   rw [ZMod.stdAddChar_apply]

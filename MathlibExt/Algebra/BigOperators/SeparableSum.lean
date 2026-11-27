@@ -26,7 +26,9 @@ Extracted from the absolutely-maximally-entangled-state development now in
 
 namespace MetaMathlibExt
 
-/-- Reorder a quadruple sum, moving the last two indices to the front. -/
+/-- Reorder a quadruple sum over finite index types `U`, `V`, `A`, `B` with values in an
+additive commutative monoid, moving the last two indices to the front:
+`∑ u, ∑ v, ∑ a, ∑ b, f u v a b = ∑ a, ∑ b, ∑ u, ∑ v, f u v a b`. -/
 lemma sum_four_comm {R U V A B : Type*} [AddCommMonoid R]
     [Fintype U] [Fintype V] [Fintype A] [Fintype B]
     (f : U → V → A → B → R) :
@@ -43,8 +45,9 @@ lemma sum_four_comm {R U V A B : Type*} [AddCommMonoid R]
     _ = _ := by
       apply Finset.sum_congr rfl; intro a ha; rw [Finset.sum_comm]
 
-/-- A double sum of a product that separates in the two indices factors as a product of
-sums. -/
+/-- Over finite index types `U`, `V` and a commutative ring, a double sum of a product that
+separates in the two indices factors as a product of sums:
+`∑ u, ∑ v, K * B u * Q v = K * (∑ u, B u) * (∑ v, Q v)`. -/
 lemma sum_separable {R U V : Type*} [CommRing R] [Fintype U] [Fintype V]
     (K : R) (B : U → R) (Q : V → R) :
     (∑ u, ∑ v, K * B u * Q v) = K * (∑ u, B u) * (∑ v, Q v) := by
@@ -52,8 +55,11 @@ lemma sum_separable {R U V : Type*} [CommRing R] [Fintype U] [Fintype V]
   apply Finset.sum_congr rfl; intro v hv
   rw [Finset.mul_sum, Finset.sum_mul]
 
-/-- A double sum of a product of two separable bilinear expressions factors into a sum over
-the inner indices of products of one-index sums. -/
+/-- Over finite index types `U`, `V`, `A`, `B` and a commutative ring, a double sum of a
+product of two separable bilinear expressions factors into a sum over the inner indices of
+products of one-index sums:
+`∑ u, ∑ v, (C * ∑ a, bx a u * qx a v) * (D * ∑ b, byy b u * qy b v)` equals
+`C * D * ∑ a, ∑ b, (∑ u, bx a u * byy b u) * (∑ v, qx a v * qy b v)`. -/
 lemma sum_product_separable {R U V A B : Type*} [CommRing R]
     [Fintype U] [Fintype V] [Fintype A] [Fintype B]
     (C D : R) (bx : A → U → R) (byy : B → U → R)
