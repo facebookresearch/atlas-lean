@@ -14,3 +14,4 @@ The framework of game-based security proofs: adaptive oracle algorithms, averagi
 - [Identical-until-Bad Oracle Handlers and Bad-Event Bounds](identical-until-bad-oracle-handlers/README.md)
 - [Probabilistic Oracle Programs and Their Simulation](probabilistic-oracle-programs/README.md)
 - [State-Separating Proofs](state-separating-proofs/README.md)
+- [Quantum Random Oracle Techniques and Post-Quantum Rewinding](quantum-random-oracle-techniques/README.md)

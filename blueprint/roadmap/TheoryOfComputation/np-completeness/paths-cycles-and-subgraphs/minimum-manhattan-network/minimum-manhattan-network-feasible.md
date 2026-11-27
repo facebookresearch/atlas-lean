@@ -1,0 +1,3 @@
+# Feasible MINIMUM MANHATTAN NETWORK instances
+
+Some list $N$ of axis-parallel segments of total length at most $L$ has, for all points $p, q$ of $T$, a [rectilinear path](is-rectilinear-path-in.md) from $p$ to $q$ in the union of its segments whose length is the $L_1$ distance of $p$ and $q$. For $p = q$ the one-point path qualifies whether or not $p$ lies on a segment of $N$. The network graph is therefore read with every terminal as a vertex, isolated terminals included, as in the source, where the graph has vertex set $V \supseteq T$; this graph can differ from the union of its segments. For example, with $T = \{p\}$ the empty list of segments stands for the graph with the single vertex $p$ and no edges.
