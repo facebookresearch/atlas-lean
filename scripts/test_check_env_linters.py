@@ -350,6 +350,11 @@ theorem thm (n : Nat) : n = n := h n
 where
   h (k : Nat) : k = k := rfl
 
+/-- Not exposed, in an exposed section. -/
+@[no_expose] def hidden (n : Nat) : Nat := haux n
+where
+  haux (m : Nat) : Nat := m
+
 end
 """
 
@@ -422,7 +427,7 @@ class IndexTests(unittest.TestCase):
     def test_module_files_give_helpers_fields_and_constructors_their_own_visibility(self):
         index = check.index_source(MODULE_CHILDREN)
         self.assertEqual(index.private_names,
-                         {"outer.aux", "withRec.loop", "S.b", "S.mk", "thm.h"})
+                         {"outer.aux", "withRec.loop", "S.b", "S.mk", "thm.h", "hidden.haux"})
         self.assertTrue({"outer", "withRec", "exposedOuter", "exposedOuter.eaux", "ab", "ab.abAux",
                          "S", "S.a", "T", "T.make", "T.a", "inExposed", "inExposed.xaux",
                          "thm"} <= index.public_names)
