@@ -46,6 +46,10 @@
 - [Multi-allelic linkage disequilibria tend to zero](tendsto-linkage-diseq-iterate-2.md)
 
 - [Many-locus variance components and the covariance of relatives](many-locus-variance-components-and-covariance-of.md)
+
+## Further topics
+
+- [Best-fit population simulation](best-fit-population-simulation/README.md)
 - [General multi-parent recombination equation](general-multi-parent-recombination-equation/README.md)
 - [Moment closure in the Moran model with recombination](moment-closure-in-the-moran-model-with-recombination/README.md)
 - [Moran model with single-crossover recombination](moran-model-with-single-crossover-recombination/README.md)

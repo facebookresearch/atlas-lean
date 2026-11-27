@@ -9,5 +9,6 @@ These topics distinguish one-locus deterministic recurrences, spatial selection,
 - [Fitness landscapes](fitness-landscapes/README.md)
 - [Hybrid incompatibilities](hybrid-incompatibilities/README.md)
 - [Sexual selection and genetic conflict](sexual-selection-and-genetic-conflict/README.md)
+- [Prestige-biased cultural transmission](prestige-biased-cultural-transmission/README.md)
 - [Multiallelic Levene model](multiallelic-levene-model/README.md)
 - [Protection of alleles under migration and selection](protection-of-alleles-under-migration-and-selection/README.md)

@@ -26,5 +26,6 @@ The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamic
 
 - [Conditioned Wright–Fisher diffusions](conditioned-wright-fisher-diffusions/README.md)
 - [Numerical analysis of Wright–Fisher equations](numerical-analysis-of-wright-fisher-equations/README.md)
+- [Coupled Wright–Fisher diffusion duality](coupled-wright-fisher-diffusion-duality/README.md)
 - [Generalized Kimura diffusion operators](generalized-kimura-diffusion-operators/README.md)
 - [Generalized Kimura diffusions on manifolds with corners](generalized-kimura-diffusions-on-manifolds-with-corners/README.md)
