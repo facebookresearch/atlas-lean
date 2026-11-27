@@ -12,9 +12,9 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.NumberTheory.HyperLeonardo
-public import MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex
 public import MathlibExt.NumberTheory.LeonardoLogBalanced
 public import WantedExt.NumberTheory.GenLeonardoWanted
+public import MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex
 
 /-!
 # Hyper-Leonardo numbers
