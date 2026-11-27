@@ -123,8 +123,10 @@ theorem HasExpGrowth.affine_bound {f : ℝ → ℝ} (hg : HasExpGrowth f)
 
 namespace GaussianMoments
 
-/-- Damping the datum by `exp (-a * y ^ 2)` shifts the Gaussian parameter by `a`: for all `f`,
-`n`, real `a` and `p`, `gaussianMoment f n p` equals
+/-- Damping the datum by `exp (-a * y ^ 2)` shifts the Gaussian parameter by `a`: for
+`f : ℝ → ℝ`, `n : ℕ`, `a : ℝ` and `p : ℝ × ℝ`, multiplying `f y` by `exp (-a * y ^ 2)` leaves
+the moment unchanged when the parameter changes from `(p.1, p.2)` to `(p.1 - a, p.2)`:
+`gaussianMoment f n p` equals
 `gaussianMoment (fun y => exp (-a * y ^ 2) * f y) n (p.1 - a, p.2)`, where
 `gaussianMoment f n p = ∫ y, y ^ n * exp (-p.1 * y ^ 2 + p.2 * y) * f y`. -/
 theorem gaussianMoment_damped (f : ℝ → ℝ) (n : ℕ) (a : ℝ) (p : ℝ × ℝ) :

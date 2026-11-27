@@ -91,12 +91,14 @@ the code range `[kmin, kmax]`. -/
 def IsClipped (Δ : ℝ) (kmin kmax : ℤ) (x : ℝ) : Prop :=
   round (x / Δ) < kmin ∨ kmax < round (x / Δ)
 
-/-- The least signed `w`-bit code, `-(2 ^ (w - 1))`, where `w - 1` is truncated natural
-subtraction, so the value at `w = 0` is `-1`. -/
+/-- The integer `-(2 ^ (w - 1))`. For `1 ≤ w` it is the least signed `w`-bit code. At `w = 0`
+the definition returns the convention value `-1`, because truncated natural subtraction gives
+`w - 1 = 0`. -/
 def signedMinCode (w : ℕ) : ℤ := -(2 : ℤ) ^ (w - 1)
 
-/-- The greatest signed `w`-bit code, `2 ^ (w - 1) - 1`, where `w - 1` is truncated natural
-subtraction, so the value at `w = 0` is `0`. -/
+/-- The integer `2 ^ (w - 1) - 1`. For `1 ≤ w` it is the greatest signed `w`-bit code. At
+`w = 0` the definition returns the convention value `0`, because truncated natural subtraction
+gives `w - 1 = 0`. -/
 def signedMaxCode (w : ℕ) : ℤ := (2 : ℤ) ^ (w - 1) - 1
 
 /-- The endpoints of the full-scale interval are ordered, as required
