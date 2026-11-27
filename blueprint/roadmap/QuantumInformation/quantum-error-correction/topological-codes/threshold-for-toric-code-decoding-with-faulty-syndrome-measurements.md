@@ -18,12 +18,10 @@ readout leaves an unpaired detection event; this page does not cover it.
 
 ## Expansion
 
-A good expansion adds the spacetime versions of the three steps of the
+The bound for a fixed spacetime path is already a page (linked below). A good expansion adds the spacetime versions of the remaining two steps of the
 [perfect-syndrome threshold](threshold-for-minimum-weight-decoding-of-the-toric-code.md): a failure, a nonzero total spatial homology class of
 $E + E'$, needs a self-avoiding closed path in the spacetime slab of length at least $L$ that is homologically
-nontrivial in the spatial directions; such a fixed path with $H$ space-like and $V$ time-like edges lies in
-the error plus the correction with probability at most $(4p(1 - p))^{H/2} (4q(1 - q))^{V/2}$, because the minimality is
-for the weighted length, so the error edges on the path carry at least half of its weight; and the count of
+nontrivial in the spatial directions; and the count of
 self-avoiding walks from a fixed vertex of the cubic lattice, at most $\mu_3^{\ell} e^{o(\ell)}$, with the $L^2 (T + 1)$
 vertices of the slab as starting points. Dennis, Kitaev, Landahl and Preskill state the argument for the complete
 history, counting walks between two time slices; the expansion checks that it applies unchanged in the finite slab.
@@ -32,6 +30,10 @@ history, counting walks between two time slices; the expansion checks that it ap
 
 - [Toric code](toric-code.md)
 - [Minimum-weight decoding of the toric code](minimum-weight-decoding-of-the-toric-code.md)
+
+## Proof depends on
+
+- [The probability that a fixed cycle lies in the error plus the correction](probability-that-a-fixed-cycle-lies-in-the-error-plus-the-correction.md): the weighted bound for a fixed spacetime path on the finite record.
 
 ## Related topics
 

@@ -19,7 +19,6 @@ polylogarithmically many gates in $1/\varepsilon$, and its key step is the appro
 - [Decomposition of a unitary into two-level unitaries](decomposition-into-two-level-unitaries.md)
 - [A diagonal unitary is a product of two-level diagonal unitaries](diagonal-unitary-as-a-product-of-two-level-unitaries.md)
 - [A two-level unitary from multiply controlled gates along a Gray code](two-level-unitary-from-multiply-controlled-gates-along-a-gray-code.md)
-- [Balanced group commutators in $SU(2)$](balanced-group-commutator-in-su2.md)
 - [A traceless Hermitian matrix is a commutator of small Hermitian matrices](traceless-hermitian-matrix-as-a-commutator.md)
 - [The group commutator of exponentials approximates the exponential of the commutator](group-commutator-of-exponentials-approximates-the-exponential-of-the-commutator.md)
 - [Approximate balanced group commutators in $SU(d)$](approximate-balanced-group-commutators-in-sud.md)

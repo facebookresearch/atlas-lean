@@ -18,6 +18,7 @@ as $-I$, acts on $C(S)$ as a scalar and is not a logical error.
 ## Depends on
 
 - [The Pauli group on $n$ qubits](../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
+- [Stabilizer groups and stabilizer states](../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 - [Correctable errors on a quantum code](knill-laflamme-conditions/is-correctable.md)
 - [Distance of a quantum code (lower bound)](distance-of-a-quantum-code/has-distance-at-least.md)
 - [Weight of a Pauli operator](distance-of-a-quantum-code/pauli-weight.md)

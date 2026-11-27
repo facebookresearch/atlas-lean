@@ -4,11 +4,12 @@ Let $n \ge 7$ and let $\wedge_{n-2}(X)$ be the gate on $n - 1$ of $n$ qubits tha
 controls are all $|1\rangle$. On $n$ qubits, $\wedge_{n-2}(X)$ is a product of $8(n - 5)$ Toffoli gates $\wedge_2(X)$, using
 the remaining qubit as a work qubit whose state is arbitrary and is restored; consequently, with the
 [doubly controlled construction](doubly-controlled-unitary-from-a-square-root.md) of at most $20$ gates per Toffoli, it is
-a product of at most $160(n - 5)$ single-qubit gates and CNOTs, so $O(n)$ of them. The construction splits the controls into
-two groups of sizes $m_1 = \lceil (n - 1)/2 \rceil$ and $m_2 = \lfloor (n - 1)/2 \rfloor$, both in $\{3, \dots, \lceil n/2 \rceil\}$
-for $n \ge 7$, simulates $\wedge_{m_1}(X)$ and $\wedge_{m_2}(X)$ by $4(m_i - 2)$ Toffoli
-gates each using the idle qubits as work qubits, and composes two of each with the borrowed qubit as an intermediate
-target.
+a product of at most $160(n - 5)$ single-qubit gates and CNOTs, so $O(n)$ of them. With $m_1 = \lceil (n - 1)/2 \rceil$ and $m_2 = \lfloor (n - 1)/2 \rfloor$, both in
+$\{3, \dots, \lceil n/2 \rceil\}$ for $n \ge 7$, the construction splits the $n - 2$ original controls into disjoint groups of
+$m_1$ and $m_2 - 1$ controls. One gadget is $\wedge_{m_1}(X)$ with the first group as controls and the borrowed qubit as
+target; the other is $\wedge_{m_2}(X)$ with the second group and the borrowed qubit as controls and the original target as
+target. Each $\wedge_{m_i}(X)$ is simulated by $4(m_i - 2)$ Toffoli gates using the idle qubits as work qubits, and two
+copies of each are composed, giving $8(m_1 + m_2 - 4) = 8(n - 5)$ Toffoli gates.
 
 ## Depends on
 

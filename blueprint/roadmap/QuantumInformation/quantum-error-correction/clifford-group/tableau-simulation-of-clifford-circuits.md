@@ -3,12 +3,13 @@
 A state of $n$ qubits obtained from $|0\rangle^{\otimes n}$ by CNOT, Hadamard and phase gates and computational-basis
 measurements is a [stabilizer state](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md),
 and it can be represented by a tableau of $2n$ rows of $2n + 1$ bits each: the $n$ stabilizer generators and $n$
-"destabilizer" Pauli operators that together with them generate the Pauli group, each row holding the binary vector
+"destabilizer" Pauli operators that together with them generate the Pauli group modulo scalar phases (they are
+Hermitian, so they cannot generate $iI$), each row holding the binary vector
 $(x, z)$ of a Pauli operator and its sign bit. The tableau algorithm of Aaronson and Gottesman updates this representation
 exactly: a CNOT, Hadamard or phase gate costs $O(n)$ bit operations, and a measurement of one qubit, whose outcome is
 random with probability $1/2$ each or determined by the state, costs $O(n^2)$ bit operations, including the update of the
 state after a random outcome. The representation keeps the invariants that the stabilizer rows generate the stabilizer of
-the state, all $2n$ rows generate the Pauli group, the destabilizer rows commute pairwise, row $h$ anticommutes with row
+the state, all $2n$ rows generate the Pauli group modulo phases, the destabilizer rows commute pairwise, row $h$ anticommutes with row
 $h + n$, and row $i$ commutes with row $h + n$ for $i \ne h$.
 
 ## Depends on

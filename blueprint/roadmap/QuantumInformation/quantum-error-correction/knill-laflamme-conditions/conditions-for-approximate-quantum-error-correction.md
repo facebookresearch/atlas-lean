@@ -11,10 +11,15 @@ $$P E_i^{*} E_j P = \lambda_{ij} P + P B_{ij} P$$
 
 for the entries $\lambda_{ij}$ of some density operator and operators $B_{ij}$ with $d(\Lambda + \mathcal{B}, \Lambda) \le \varepsilon$,
 where $\Lambda(\rho) = \sum_{ij} \lambda_{ij} \operatorname{Tr}(\rho) |i\rangle\langle j|$ and
-$(\Lambda + \mathcal{B})(\rho) = \Lambda(\rho) + \sum_{ij} \operatorname{Tr}(\rho B_{ij}) |i\rangle\langle j|$. For
+$(\Lambda + \mathcal{B})(\rho) = \Lambda(\rho) + \sum_{ij} \operatorname{Tr}(\rho B_{ij}) |i\rangle\langle j|$, both regarded as
+channels on states supported on the code, so that the maximum in $d$ ranges over code states $\rho = P \rho P$ (as in
+Bény and Oreshkov, who apply their criterion to the noise composed with the encoding). For
 $\varepsilon = 0$ this reduces to the [Knill–Laflamme conditions](is-correctable-iff-knill-laflamme.md). Choosing
-$\lambda_{ij} = \operatorname{Tr}(\sigma E_i^{*} E_j)$ for any state $\sigma$ gives a value of $\varepsilon$ at most twice
-the optimal one.
+$\lambda_{ij} = \operatorname{Tr}(\sigma E_i^{*} E_j)$ for any state $\sigma$ supported on the code ($\sigma = P \sigma P$,
+equivalently $\sigma = V \tau V^{*}$ for the encoding isometry $V$ and a logical state $\tau$) gives a value of
+$\varepsilon$ at most twice the optimal one. The support condition is needed: for the noise with Kraus operators $P$ and
+$I - P$, which is the identity on the code, a state $\sigma$ supported on the orthogonal complement gives distance $1$,
+not $0$.
 
 ## Expansion
 

@@ -14,7 +14,6 @@ The topics follow the order of Preskill's lecture notes (Chapter 7): the Knillâ€
 - [Stabilizer formalism](stabilizer-formalism/README.md)
 - [Clifford group](clifford-group/README.md)
 - [Topological codes](topological-codes/README.md)
-- [Quantum LDPC codes](quantum-ldpc-codes/README.md)
 - [Subsystem codes](subsystem-codes/README.md)
 - [Bosonic codes](bosonic-codes/README.md)
 

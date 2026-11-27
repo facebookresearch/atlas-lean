@@ -1,7 +1,7 @@
 # The greedy Gilbert–Varshamov lemma for code families
 
 Let $V \subseteq \mathbb{F}_2^n$ be a subspace, let $Z \subseteq V$ be a set of nonzero vectors of weight at least $d$, and
-let $\varphi$ be a nonempty family of $k$-dimensional binary
+let $\varphi$ be a nonempty family of $k$-dimensional binary, $k \ge 1$,
 [linear codes](../../../InformationTheory/error-correcting-codes/linear-codes/linear-code.md) contained in $V$ such that
 every nonzero vector of $V \setminus Z$ lies in the same number $W$ of codes of $\varphi$. If
 
@@ -14,7 +14,9 @@ Shor's Lemma 3 is the case $V = \mathbb{F}_2^n$, $Z = \emptyset$, where the cond
 $\sum_{j=1}^{d-1} \binom{n}{j} < (2^n - 1)/(2^k - 1)$; for good CSS codes it is applied to the codes $C^{\perp}$ of
 [weakly self-dual codes](counting-weakly-self-dual-codes.md), with $V$ the even-weight words and $Z = \{1_n\}$. With the
 [entropy bound on Hamming balls](../../../InformationTheory/error-correcting-codes/bounds-on-code-size/sum-choose-mul-pow-le-exp.md),
-families of rate $k/n > R$ contain codes with $R \ge 1 - H_2(d/n)$ asymptotically, the Gilbert–Varshamov bound.
+in the full-space case this gives the Gilbert–Varshamov bound from below: for $0 < \delta < 1/2$ and fixed
+$0 < r < 1 - H_2(\delta)$, every such family of codes of dimension $k = \lfloor r n \rfloor$ contains a code of minimum distance
+at least $\lceil \delta n \rceil$, for all large $n$, since $\sum_{j < \lceil \delta n \rceil} \binom{n}{j} \le 2^{n H_2(\delta)} < 2^{n(1 - r)} \le (2^n - 1)/(2^k - 1)$.
 
 ## Depends on
 

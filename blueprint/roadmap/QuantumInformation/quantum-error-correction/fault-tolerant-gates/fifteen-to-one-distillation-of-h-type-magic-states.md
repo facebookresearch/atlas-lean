@@ -17,8 +17,9 @@ $$\varepsilon_{\mathrm{out}} = \frac{1 - 15 (1 - 2\varepsilon)^7 + 15 (1 - 2\var
 
 These come from $p_s = \sum_{v \in L_1^{\perp}} \varepsilon^{15 - |v|} (1 - \varepsilon)^{|v|}$ and
 $\varepsilon_{\mathrm{out}} = p_s^{-1} \sum_{v \in L_2} \varepsilon^{15 - |v|} (1 - \varepsilon)^{|v|}$ by the
-MacWilliams identity and the weight enumerator $W_{L_1}(x, y) = x^{15} + 15 x^7 y^8$. The fixed point
-$\varepsilon_{\mathrm{out}}(\varepsilon) = \varepsilon$ is at $\varepsilon_0 \approx 0.141$; below it, iterating the
+MacWilliams identity and the weight enumerator $W_{L_1}(x, y) = x^{15} + 15 x^7 y^8$. Besides $0$ and $1/2$, the
+equation $\varepsilon_{\mathrm{out}}(\varepsilon) = \varepsilon$ has the interior threshold solution $\varepsilon_0 \approx 0.141$ in
+$(0, 1/2)$; below it, iterating the
 subroutine drives the error to zero.
 
 ## Depends on

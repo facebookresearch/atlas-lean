@@ -20,6 +20,7 @@ independent generators unless $s = 0$.
 
 - [Symplectic product of Pauli operators](symplectic-product-of-pauli-operators.md)
 - [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
+- [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 
 ## Proof depends on
 

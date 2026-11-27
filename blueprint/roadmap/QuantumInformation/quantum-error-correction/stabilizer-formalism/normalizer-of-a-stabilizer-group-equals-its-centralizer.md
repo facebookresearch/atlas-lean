@@ -15,6 +15,7 @@ $S$, then $-I = (-M) M^{-1} \in S$, which is excluded. Hence $A M A^{-1} \in S$ 
 ## Depends on
 
 - [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
+- [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 
 ## Proof depends on
 

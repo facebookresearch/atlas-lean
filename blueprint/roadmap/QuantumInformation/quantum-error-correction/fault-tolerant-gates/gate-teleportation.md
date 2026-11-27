@@ -4,10 +4,10 @@ Let $U$ be a one-qubit unitary and $|\Phi_U\rangle = (I \otimes U)(|00\rangle + 
 measurement on a qubit in state $|\psi\rangle$ and the first qubit of $|\Phi_U\rangle$, as in
 [teleportation](../../quantum-foundations/quantum-teleportation.md); the outcome determines a Pauli operator
 $Q \in \{I, X, Y, Z\}$. Then the second qubit of $|\Phi_U\rangle$ is left in the state $U Q |\psi\rangle$ up to a global
-phase, and applying $U Q U^{*}$ to it gives $U |\psi\rangle$. If $U$ lies in level $k$ of the
+phase, and applying $U Q U^{*}$ to it gives $U |\psi\rangle$. If $U$ lies in level $k \ge 2$ of the
 [Clifford hierarchy](../clifford-group/clifford-hierarchy.md), then $U Q U^{*}$ lies in level $k - 1$; in particular, for a
 Clifford $U$ the correction is a Pauli operator, and for $U$ in the third level (such as $T$) it is a Clifford operator.
-So a gate of level $k$ is implemented by gates of level $k - 1$, Bell measurements and the prepared resource state
+So a gate of level $k \ge 2$ is implemented by gates of level $k - 1$, Bell measurements and the prepared resource state
 $|\Phi_U\rangle$, and the same holds for multi-qubit $U$ with several Bell pairs. Applied to encoded blocks, this reduces
 fault-tolerant implementation of $U$ to fault-tolerant preparation of the encoded resource state.
 

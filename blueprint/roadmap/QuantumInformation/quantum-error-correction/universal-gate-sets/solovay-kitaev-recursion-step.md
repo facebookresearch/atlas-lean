@@ -17,7 +17,7 @@ $l_n = 5^n l_0$, hence length $O(\log^{\ln 5/\ln(3/2)}(1/\varepsilon))$ for accu
 ## Proof depends on
 
 - [Finite nets from an instruction set](epsilon-nets-from-an-instruction-set.md)
-- [Balanced group commutators in $SU(2)$](balanced-group-commutator-in-su2.md)
+- [Balanced group commutator decomposition near the identity](../../quantum-operations/solovay-kitaev-gate-compilation/balanced-group-commutator-decomposition.md)
 - [Approximate balanced group commutators in $SU(d)$](approximate-balanced-group-commutators-in-sud.md)
 - [Approximating a group commutator](approximating-a-group-commutator.md)
 
