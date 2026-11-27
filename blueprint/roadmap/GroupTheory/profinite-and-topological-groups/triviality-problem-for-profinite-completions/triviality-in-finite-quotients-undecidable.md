@@ -10,7 +10,7 @@ $$
 
 is recursively enumerable but not recursive (Theorem 2.1 of the Bridson–Wilton source). Here $F(A)$ is the free group on $A$, identified with the set of freely reduced words, and $w \ne 1$ in $\widehat{G}$ means that the image of $w$ in some finite quotient of $G$ is non-trivial.
 
-The theorem is contained in Slobodskoi's proof that the universal theory of finite groups is undecidable (Theorem 2.2 of the Bridson–Wilton source); it can be read as a profinite analogue of the Novikov–Boone theorem. The uniform version, that no algorithm decides from a finite presentation and a word whether the word survives in some finite quotient, is the undecidability of the uniform word problem for finite groups.
+The theorem is contained in Slobodskoi's proof that the universal theory of finite groups is undecidable (Theorem 2.2 of the Bridson–Wilton source); it can be read as a profinite analogue of the Novikov–Boone theorem. The uniform version, that no algorithm decides from a finite presentation and a word whether the word has non-trivial image in some finite quotient of the presented group, is the undecidability of the uniform finite-quotient word problem; the presented groups need not be finite.
 
 ## Depends on
 

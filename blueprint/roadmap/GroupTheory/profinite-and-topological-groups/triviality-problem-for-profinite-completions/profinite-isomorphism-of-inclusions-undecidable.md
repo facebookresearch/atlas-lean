@@ -12,7 +12,7 @@ For a group $G$ let $\hat{G}$ be its profinite completion; a monomorphism $u : P
 
 Consequently there is no algorithm that, given a monomorphism $u : P \hookrightarrow \Gamma$ of finitely presented residually finite groups, decides whether $\hat{u}$ is an isomorphism, or whether it is surjective, or whether $\hat{P} \cong \hat{\Gamma}$.
 
-Conventions: the groups $\Gamma_n$ are of the form $H_n \times H_n$ with $H_n$ a residually finite hyperbolic group with a $2$-dimensional classifying space, and $P_n$ is a fiber product. A monomorphism $u$ for which $\hat{u}$ is an isomorphism but $P \not\cong \Gamma$ is a Grothendieck pair; deciding isomorphism of $P$ and $\Gamma$ for such pairs is a different question.
+Conventions: the groups $\Gamma_n$ are of the form $H_n \times H_n$ with $H_n$ a residually finite hyperbolic group with a $2$-dimensional classifying space, and $P_n$ is a fiber product. The theorem concerns the profinite completions only; whether the discrete groups $P_n$ and $\Gamma_n$ are themselves isomorphic is a different question, which it does not address.
 
 ## Depends on
 
@@ -21,6 +21,8 @@ Conventions: the groups $\Gamma_n$ are of the form $H_n \times H_n$ with $H_n$ a
 - [Group](../../group-basics/group.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Word-hyperbolic groups](../../geometric-group-theory/hyperbolic-groups/is-hyperbolic.md)
+- [Eilenberg–MacLane space](../../../Topology/algebraic-topology/is-eilenberg-maclane-space.md)
 
 ## Proof depends on
 
@@ -28,7 +30,7 @@ Conventions: the groups $\Gamma_n$ are of the form $H_n \times H_n$ with $H_n$ a
 
 ## Expansion
 
-The proof uses a strengthening, proved in the same paper, of the undecidability of profinite triviality: a recursive sequence of aspherical finite combinatorial complexes $K_n$ with $H_1(K_n; \mathbb{Z}) = H_2(K_n; \mathbb{Z}) = 0$ such that the set of $n$ for which $\widehat{\pi_1 K_n}$ is nontrivial is recursively enumerable but not recursive. Wise's residually finite Rips construction applied to $Q_n = \pi_1 K_n$ gives $1 \to N_n \to H_n \to Q_n \to 1$ with $H_n$ residually finite hyperbolic, and the effective 1-2-3 Theorem of Bridson, Howie, Miller and Short produces finite presentations of the fiber products $P_n \subseteq H_n \times H_n$. The induced map of profinite completions is an isomorphism exactly when $\hat{Q}_n$ is trivial. The Rips construction and the effective 1-2-3 Theorem have no page here.
+The proof uses a strengthening, proved in the same paper, of the undecidability of profinite triviality: a recursive sequence of aspherical finite combinatorial complexes $K_n$ with $H_1(K_n; \mathbb{Z}) = H_2(K_n; \mathbb{Z}) = 0$ such that the set of $n$ for which $\widehat{\pi_1 K_n}$ is nontrivial is recursively enumerable but not recursive. Wise's residually finite Rips construction applied to $Q_n = \pi_1 K_n$ gives $1 \to N_n \to H_n \to Q_n \to 1$ with $H_n$ residually finite hyperbolic, and the effective 1-2-3 Theorem of Bridson, Howie, Miller and Short produces finite presentations of the fiber products $P_n \subseteq H_n \times H_n$. The induced map of profinite completions is an isomorphism exactly when $\hat{Q}_n$ is trivial. The Rips construction and the effective 1-2-3 Theorem have no pages on main yet.
 
 ## Sources
 

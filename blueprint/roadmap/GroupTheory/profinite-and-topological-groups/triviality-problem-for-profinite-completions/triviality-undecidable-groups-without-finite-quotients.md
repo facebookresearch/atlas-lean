@@ -10,6 +10,7 @@ More precisely (Theorem 3.1), there are a finite set $X$ and a recursive sequenc
 
 - [Group](../../group-basics/group.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Eilenberg–MacLane space](../../../Topology/algebraic-topology/is-eilenberg-maclane-space.md)
 
 ## Proof depends on
 
@@ -17,8 +18,8 @@ More precisely (Theorem 3.1), there are a finite set $X$ and a recursive sequenc
 
 ## Expansion
 
-The proof starts from the Collins–Miller theorem: a recursive sequence of torsion-free groups with aspherical presentations of fixed size whose triviality is undecidable (Theorem 3.2 of the source). An algorithm the author attributes to C. F. Miller III turns a finite presentation of a perfect group into one of a super-perfect group with no finite quotients that is trivial exactly when the original is, keeping asphericity, so a compact classifying space survives.
+The proof starts from the Collins–Miller theorem: a recursive sequence of finite presentations $\Pi_n$, with fixed numbers of generators and relators, of torsion-free groups $\Lambda_n$ whose triviality is undecidable, where $\Pi_n$ is aspherical whenever $\Lambda_n$ is non-trivial (Theorem 3.2 of the source); the trivial groups of the sequence get no such promise. Amalgamating a copy of a finitely presented group with no finite quotients, such as Higman's group, along each generator gives presentations of groups $\Lambda'_n$ with no non-trivial finite quotients, trivial exactly when $\Lambda_n$ is, and aspherical when non-trivial (Definition 3.3 and Lemma 3.4); this is the step that excludes finite quotients. An algorithm the author learnt from C. F. Miller III outputs a finite presentation of the universal central extension of a finitely presented perfect group (Proposition 3.5 and Corollary 3.6). Applied to the groups $\Lambda'_n$, it gives super-perfect groups $Q_n$; passing to the universal central extension preserves having no non-trivial finite quotients and, from a $2$-dimensional classifying space, gives a compact classifying space (Proposition 1.3(4), (5) and (8)), and these are the properties the theorem states for the non-trivial $Q_n$. A good expansion adds and links pages for the Collins–Miller theorem and for Proposition 1.3 of the source, neither of which has a page on main yet.
 
 ## Sources
 
-- M. R. Bridson, "Decision problems and profinite completions of groups", Journal of Algebra 326 (2011), no. 1, 59–73, https://doi.org/10.1016/j.jalgebra.2010.06.019; read in arXiv:0810.0390v1 (Theorem D of the introduction and Theorems 3.1 and 3.2 of arXiv:0810.0390v1).
+- M. R. Bridson, "Decision problems and profinite completions of groups", Journal of Algebra 326 (2011), no. 1, 59–73, https://doi.org/10.1016/j.jalgebra.2010.06.019; read in arXiv:0810.0390v1 (Theorem D of the introduction, Proposition 1.3, Theorems 3.1 and 3.2, Definition 3.3, Lemma 3.4, Proposition 3.5 and Corollary 3.6 of arXiv:0810.0390v1).

@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-The main technical result (Theorem 4 of the source) is a free module $M$ of finite rank over $\mathbb{Z}[\mathbb{Z} \times \mathbb{Z}]$ with a fixed finitely generated subsemimodule (closed under addition and under the action of $\mathbb{Z} \times \mathbb{Z}$) whose membership problem is undecidable, proved by encoding a tiling problem for the plane. For a group $G$ and a $G$-module $M$, a subsemimodule $N$ with undecidable membership gives the submonoid $N \rtimes G$ of $M \rtimes G$ with undecidable membership (Proposition 2), and $M \rtimes (\mathbb{Z} \times \mathbb{Z})$ embeds in $\mathbb{Z} \wr (\mathbb{Z} \times \mathbb{Z})$. Submodule membership for free $\mathbb{Z}[\mathbb{Z} \times \mathbb{Z}]$-modules is decidable, which underlies the decidability of subgroup membership in metabelian groups (Romanovskii).
+The main technical result (Theorem 4 of the source) is a free module $M$ of finite rank over $\mathbb{Z}[\mathbb{Z} \times \mathbb{Z}]$ with a fixed finitely generated subsemimodule (closed under addition and under the action of $\mathbb{Z} \times \mathbb{Z}$) whose membership problem is undecidable, proved by encoding a tiling problem for the plane. For a finitely generated group $G$ and a finitely generated $G$-module $M$, a fixed subsemimodule $N$ with undecidable membership gives the submonoid $N \rtimes G$ of $M \rtimes G$ with undecidable membership (Proposition 2), and $M \rtimes (\mathbb{Z} \times \mathbb{Z})$ embeds in $\mathbb{Z} \wr (\mathbb{Z} \times \mathbb{Z})$. Submodule membership for free $\mathbb{Z}[\mathbb{Z} \times \mathbb{Z}]$-modules is decidable, which underlies the decidability of subgroup membership in metabelian groups (Romanovskii).
 
 ## Sources
 

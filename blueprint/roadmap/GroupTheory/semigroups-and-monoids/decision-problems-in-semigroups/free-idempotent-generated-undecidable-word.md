@@ -17,14 +17,15 @@ More precisely (Theorem 5.3), if $G$ is a finitely presented group with decidabl
 - [Solvable word problem](../../presentations-and-decision-problems/word-problem-for-groups/word-problem-solvable.md)
 - [Group](../../group-basics/group.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Membership problem for a subset of a finitely generated group](../../presentations-and-decision-problems/membership-and-equation-problems/submonoid-and-rational-subset-membership/membership-problem-for-a-subset.md)
 
 ## Proof depends on
 
-- [Membership problem for a subset of a finitely generated group](../../presentations-and-decision-problems/membership-and-equation-problems/submonoid-and-rational-subset-membership/membership-problem-for-a-subset.md)
+- [The membership problem for finitely generated subgroups of F₂ × F₂ is unsolvable](../../presentations-and-decision-problems/membership-and-equation-problems/subgroup-membership-problem/membership-problem-in-f2-times-f2-unsolvable.md)
 
 ## Expansion
 
-Theorem 5.2 shows that a solution of the word problem of $\mathrm{IG}(\mathcal{B}_{G,H})$ would decide membership in $H$ within $G$; the band $B_{G,H}$ has five $\mathcal{D}$-classes, the least being a zero. Mihailova's theorem (Theorem 5.4 of the source) supplies the pair: for a free group $\Gamma$ of rank at least 2, the group $G = \Gamma \times \Gamma$ has decidable word problem and a finitely generated subgroup with undecidable membership problem, namely the fibre product of a surjection from $\Gamma$ onto a finitely presented group with undecidable word problem. Since every non-trivial maximal subgroup is isomorphic to $\Gamma \times \Gamma$, all maximal subgroups have decidable word problem.
+Theorem 5.2 shows that a solution of the word problem of $\mathrm{IG}(\mathcal{B}_{G,H})$ would decide membership in $H$ within $G$; the band $B_{G,H}$ has five $\mathcal{D}$-classes, the least being a zero. Mihailova's theorem (Theorem 5.4 of the source) supplies the pair: for a finitely generated free group $\Gamma$ of rank at least 2 (for instance $F_2$), the group $G = \Gamma \times \Gamma$ has decidable word problem and a finitely generated subgroup with undecidable membership problem, namely the fibre product of a surjection from $\Gamma$ onto a finitely presented group with undecidable word problem. The uniform form of this theorem is on [the page for membership in F₂ × F₂](../../presentations-and-decision-problems/membership-and-equation-problems/subgroup-membership-problem/membership-problem-in-f2-times-f2-unsolvable.md); a good expansion adds a page for the fixed-subgroup form used here and for Theorem 5.2. Since every non-trivial maximal subgroup is isomorphic to $\Gamma \times \Gamma$, all maximal subgroups have decidable word problem.
 
 ## Sources
 

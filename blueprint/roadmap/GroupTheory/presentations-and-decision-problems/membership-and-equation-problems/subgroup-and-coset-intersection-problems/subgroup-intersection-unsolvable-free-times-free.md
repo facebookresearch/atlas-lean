@@ -1,6 +1,6 @@
 # Subgroup and coset intersection problems are unsolvable in a direct product of two free groups
 
-In $F_2 \times F_2$, and in every right-angled Artin group whose defining graph contains an induced square, no algorithm decides whether the intersection of two finitely generated subgroups is finitely generated (and computes it), nor whether two cosets of finitely generated subgroups intersect.
+In $F_2 \times F_2$, and in every right-angled Artin group whose defining graph contains an induced square, no algorithm decides whether the intersection of two finitely generated subgroups is finitely generated and, in the affirmative case, computes a finite generating set of it; nor does any algorithm decide whether two cosets of finitely generated subgroups intersect and, if they do, find a common element.
 
 For a finitely generated group $G$, the subgroup intersection problem $\mathrm{SIP}(G)$ asks, given finite sets of words generating subgroups $H, K \le G$, whether $H \cap K$ is finitely generated and, if so, for a finite generating set; the coset intersection problem $\mathrm{CIP}(G)$ asks, given words $w, w'$ and finite sets generating $H, K$, whether $wH \cap w'K$ is empty, and if not for an element of it. For right-angled Artin groups (PC-groups), each of $\mathrm{SIP}$ and $\mathrm{CIP}$ implies the subgroup membership problem; in particular $\mathrm{SIP}$ and $\mathrm{CIP}$ are unsolvable for $F_2 \times F_2$ (the right-angled Artin group of the square $C_4$), and hence for every right-angled Artin group whose defining graph contains $C_4$ as an induced subgraph (Corollary 2.3 of the source).
 
@@ -17,11 +17,12 @@ By contrast, the source solves $\mathrm{SIP}$ for every right-angled Artin group
 ## Proof depends on
 
 - [Novikov–Boone theorem (unsolvability of the word problem)](../../word-problem-for-groups/novikov-unsolvable.md)
+- [The membership problem for finitely generated subgroups of F₂ × F₂ is unsolvable](../subgroup-membership-problem/membership-problem-in-f2-times-f2-unsolvable.md)
 
 ## Expansion
 
-Given $u$ and generators $v_1, \dots, v_m$, apply $\mathrm{SIP}$ to $H = \langle u \rangle$ and $K = \langle v_1, \dots, v_m \rangle$: the intersection is cyclic, hence finitely generated, and since right-angled Artin groups are torsion-free with solvable word problem, a computed generator $u^k$ of it decides whether $u \in K$ (Lemma 2.1); similarly $\mathrm{CIP}$ decides whether $u \in K$ through $u\langle 1 \rangle \cap K$. Membership in finitely generated subgroups of $F_2 \times F_2$ is undecidable by Mihailova's construction from a finitely presented group with undecidable word problem; Mihailova's theorem has no page here. Since the three problems pass to subgroups, and a right-angled Artin group whose defining graph contains an induced square contains $F_2 \times F_2$, unsolvability passes to such groups.
+Given $u$ and generators $v_1, \dots, v_m$, apply $\mathrm{SIP}$ to $H = \langle u \rangle$ and $K = \langle v_1, \dots, v_m \rangle$: the intersection is cyclic, hence finitely generated, and since right-angled Artin groups are torsion-free with solvable word problem, a computed generator $u^k$ of it decides whether $u \in K$ (Lemma 2.1); similarly $\mathrm{CIP}$ decides whether $u \in K$, since $u \in K$ exactly when $u \cdot \{1\} \cap 1 \cdot K \ne \varnothing$ (Remark 2.2). Membership in finitely generated subgroups of $F_2 \times F_2$ is undecidable by Mihailova's construction from a finitely presented group with undecidable word problem ([Mikhailova's theorem](../subgroup-membership-problem/membership-problem-in-f2-times-f2-unsolvable.md)). Since the three problems pass to subgroups, and a right-angled Artin group whose defining graph contains an induced square contains $F_2 \times F_2$, unsolvability passes to such groups.
 
 ## Sources
 
-- J. Delgado, E. Ventura and A. Zakharov, "Intersection problem for Droms RAAGs", International Journal of Algebra and Computation 28 (2018), no. 7, 1129–1162, https://doi.org/10.1142/S0218196718500509; read in arXiv:1709.01155v3 (Theorem 1.4, Lemma 2.1 and Corollary 2.3 of arXiv:1709.01155v3).
+- J. Delgado, E. Ventura and A. Zakharov, "Intersection problem for Droms RAAGs", International Journal of Algebra and Computation 28 (2018), no. 7, 1129–1162, https://doi.org/10.1142/S0218196718500509; read in arXiv:1709.01155v3 (Theorem 1.4, Lemma 2.1, Remark 2.2 and Corollary 2.3 of arXiv:1709.01155v3).

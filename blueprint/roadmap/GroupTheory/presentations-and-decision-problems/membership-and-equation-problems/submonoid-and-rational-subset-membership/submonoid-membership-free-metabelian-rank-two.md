@@ -13,12 +13,12 @@ Let $M_2 = F_2 / F_2''$ be the free metabelian group of rank two, the quotient o
 
 ## Proof depends on
 
-- [A fixed submonoid of Z wr (Z x Z) with undecidable membership](submonoid-membership-wreath-z-by-z-squared.md)
+None.
 
 ## Expansion
 
-The derived subgroup $[M_2, M_2]$, viewed as a module over a finite-index subgroup $m\mathbb{Z} \times \mathbb{Z}$ of the abelianization $\mathbb{Z}^2$, contains a free module of rank $m - 1$ as a direct summand. This lets the source reduce the subsemimodule membership problem of Theorem 4, which underlies the result for $\mathbb{Z} \wr (\mathbb{Z} \times \mathbb{Z})$, to the submonoid membership problem for $M_2$.
+The derived subgroup $[M_2, M_2]$, viewed as a module over a finite-index subgroup $m\mathbb{Z} \times \mathbb{Z}$ of the abelianization $\mathbb{Z}^2$, contains a free module of rank $m - 1$ as a direct summand. This lets the source reduce the subsemimodule membership problem of Theorem 4 to the submonoid membership problem for $M_2$. The result for $\mathbb{Z} \wr (\mathbb{Z} \times \mathbb{Z})$ on [the sibling page](submonoid-membership-wreath-z-by-z-squared.md) is a parallel consequence of Theorem 4, not a prerequisite; a good expansion adds and links a page for Theorem 4, which has no page on main yet.
 
 ## Sources
 
-- M. Lohrey and B. Steinberg, "Tilings and submonoids of metabelian groups", Theory of Computing Systems 48 (2011), no. 2, 411–427, https://doi.org/10.1007/s00224-010-9264-9; read in arXiv:0903.0648v1 (Theorem 6 in Section 2 of arXiv:0903.0648v1).
+- M. Lohrey and B. Steinberg, "Tilings and submonoids of metabelian groups", Theory of Computing Systems 48 (2011), no. 2, 411–427, https://doi.org/10.1007/s00224-010-9264-9; read in arXiv:0903.0648v1 (Theorems 4 and 6 in Section 2 of arXiv:0903.0648v1).

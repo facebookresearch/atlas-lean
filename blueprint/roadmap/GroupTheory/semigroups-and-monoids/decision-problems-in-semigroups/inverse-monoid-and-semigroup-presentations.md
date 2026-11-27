@@ -15,6 +15,7 @@ The word problem for a presentation with finite $A$ is the decision problem: giv
 ## Depends on
 
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Group](../../group-basics/group.md)
 
 ## Proof depends on
 
@@ -27,4 +28,4 @@ The word problem of a free inverse monoid is decidable (Scheiblich, Munn: elemen
 ## Sources
 
 - R. D. Gray, "Undecidability of the word problem for one-relator inverse monoids via right-angled Artin subgroups of one-relator groups", Inventiones Mathematicae 219 (2020), no. 3, 987–1008, https://doi.org/10.1007/s00222-019-00920-2; arXiv:1902.03822v3 (Section 3, "Preliminaries on inverse monoid presentations", in arXiv:1902.03822v3).
-- E. Rodaro and P. V. Silva, "Amalgams of inverse semigroups and reversible two-counter machines", Journal of Pure and Applied Algebra 217 (2013), no. 4, 585–597, https://doi.org/10.1016/j.jpaa.2012.08.012; arXiv:1105.1905v1 (Section 1 of arXiv:1105.1905v1, for inverse semigroup presentations and amalgamated free products).
+- E. Rodaro and P. V. Silva, "Amalgams of inverse semigroups and reversible two-counter machines", Journal of Pure and Applied Algebra 217 (2013), no. 4, 585–597, https://doi.org/10.1016/j.jpaa.2012.08.012; arXiv:1105.1905v1 (Section 2, "Inverse semigroups", of arXiv:1105.1905v1, for inverse semigroup presentations and the notation for amalgams, and Section 1 for amalgamated free products).

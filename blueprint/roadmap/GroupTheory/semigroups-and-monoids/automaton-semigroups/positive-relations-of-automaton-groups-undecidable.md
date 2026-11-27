@@ -16,7 +16,7 @@ Positive relations depend on the generating automaton, not only on the group. If
 
 ## Depends on
 
-- [Automaton semigroups, monoids and groups](automaton-semigroups.md)
+- [Automaton semigroups and monoids](automaton-semigroups.md)
 - [Group](../../group-basics/group.md)
 - [Mealy machine](../../../TheoryOfComputation/regular-languages/automata-and-expressions/sequential-transducers-mealy-and-moore-machines/mealy-machine.md)
 - [Automaton group](../../geometric-group-theory/branch-and-thompson-groups/finite-state-automorphisms-of-rooted-trees/automaton-group.md)
@@ -28,7 +28,7 @@ None.
 
 ## Expansion
 
-The proof reduces the Identity Correspondence Problem of Bell and Potapov: given finitely many pairs $(s_i, t_i)$ of elements of the free group on two generators, is there a nonempty sequence of indices with $s_{l_1} \cdots s_{l_k} = t_{l_1} \cdots t_{l_k} = 1$? Using automata of Brunner–Sidki and Šunić–Ventura that realize groups of affine maps given by integer matrices, an instance is turned into a G-automaton whose positive relations correspond to solutions of the instance. A good expansion links the undecidability of the Identity Correspondence Problem, which has no page on main.
+The proof reduces the Identity Correspondence Problem of Bell and Potapov: given finitely many pairs $(s_i, t_i)$ of elements of the free group on two generators, is there a nonempty sequence of indices with $s_{l_1} \cdots s_{l_k} = t_{l_1} \cdots t_{l_k} = 1$? Using automata of Brunner–Sidki and Šunić–Ventura that realize groups of affine maps given by integer matrices, an instance is turned into a G-automaton whose positive relations correspond to solutions of the instance. A good expansion links the undecidability of the Identity Correspondence Problem, which has no page on main yet.
 
 ## Sources
 

@@ -7,7 +7,7 @@ Elements $x, y$ of a monoid $M$ are $o$-conjugate, $x \sim_o y$, if there are $g
 1. there exists a finitely presented homogeneous monoid $M = \langle A \mid R \rangle$ in which the $o$-conjugacy problem is undecidable: no algorithm takes two words over $A$ and decides whether they represent $o$-conjugate elements (Theorem 4.1);
 2. there exists a finitely presented multihomogeneous monoid with undecidable $o$-conjugacy problem (Theorem 4.8).
 
-Homogeneous monoids have no zero, so for them $o$-conjugacy coincides with $c$-conjugacy, and they have decidable word problem, since a relation preserves length and each length class is finite.
+Homogeneous monoids have no zero, so for them $o$-conjugacy coincides with $c$-conjugacy, and a finitely presented homogeneous monoid has decidable word problem: its relations preserve length, so two words are equal only if they have the same length, and the finitely many words of that length over the finite alphabet can be searched exhaustively under the finitely many relations.
 
 ## Depends on
 

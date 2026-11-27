@@ -16,6 +16,7 @@ This answers a question of Lohrey and Steinberg whether some finitely generated 
 - [Submonoid membership problem](submonoid-membership-problem.md)
 - [Group](../../../group-basics/group.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Membership problem for a subset of a finitely generated group](membership-problem-for-a-subset.md)
 
 ## Proof depends on
 
@@ -27,4 +28,4 @@ Take a Diophantine equation $D(x_1, \dots, x_m) = \upsilon$ with a fixed polynom
 
 ## Sources
 
-- V. A. Roman'kov, "Undecidability of the submonoid membership problem for free nilpotent group of class $l \geq 2$ of sufficiently large rank", *Izvestiya: Mathematics* 87(4):798–816, 2023, doi:10.4213/im9342e; read as arXiv:2209.14786v1, <https://arxiv.org/abs/2209.14786v1>: Theorems 5.1 and 5.2 and Proposition 5.3, with the numbering of that version.
+- V. Roman'kov, "Undecidability of the submonoid membership problem for a sufficiently large finite direct power of the Heisenberg group", *Siberian Electronic Mathematical Reports* 20 (2023), no. 1, 293–305; read as arXiv:2209.14786v1, <https://arxiv.org/abs/2209.14786v1>: Theorems 5.1 and 5.2 and Proposition 5.3, with the numbering of that version.

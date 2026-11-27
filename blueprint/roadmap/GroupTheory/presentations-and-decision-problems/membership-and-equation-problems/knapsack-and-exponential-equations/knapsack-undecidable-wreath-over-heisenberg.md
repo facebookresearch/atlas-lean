@@ -1,6 +1,6 @@
 # Knapsack is undecidable for wreath products over the Heisenberg group
 
-For every non-trivial group $G$, the knapsack problem for the restricted wreath product $G \wr H_3(\mathbb{Z})$ over the discrete Heisenberg group is undecidable, although the knapsack problem for $H_3(\mathbb{Z})$ itself is decidable.
+For every finitely generated non-trivial group $G$, the knapsack problem for the restricted wreath product $G \wr H_3(\mathbb{Z})$ over the discrete Heisenberg group is undecidable, although the knapsack problem for $H_3(\mathbb{Z})$ itself is decidable.
 
 Let $H_3(\mathbb{Z})$ be the discrete Heisenberg group of upper unitriangular $3 \times 3$ integer matrices, and for a group $G$ let $G \wr H_3(\mathbb{Z})$ be the restricted wreath product, the semidirect product of the finitely supported functions $H_3(\mathbb{Z}) \to G$ with $H_3(\mathbb{Z})$ acting by translation. For every finitely generated non-trivial group $G$, the knapsack problem $\mathrm{KP}(G \wr H_3(\mathbb{Z}))$, with exponents in the natural numbers, is undecidable (Theorem 3.3 of the source).
 

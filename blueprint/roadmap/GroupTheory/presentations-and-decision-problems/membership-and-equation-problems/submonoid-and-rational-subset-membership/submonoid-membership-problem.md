@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-Decidability does not depend on the finite generating set $A$. If a fixed finitely generated submonoid $N$ of $M$ has undecidable membership problem in the sense of [Membership problem for a subset of a finitely generated group](membership-problem-for-a-subset.md), then the submonoid membership problem for $M$ is undecidable: fix $W$ to be a finite set of words representing generators of $N$. Every finitely generated submonoid is a rational subset, so decidability of the [Rational subset membership problem](rational-subset-membership-problem.md) implies decidability of the submonoid membership problem.
+Decidability does not depend on the finite generating set $A$. If a fixed finitely generated submonoid $N$ of $M$ has undecidable membership problem, that is, no algorithm decides for a word $w \in A^*$ whether $\pi(w) \in N$, then the submonoid membership problem for $M$ is undecidable: fix $W$ to be a finite set of words representing generators of $N$. For a group this fixed-subset problem is the one on [Membership problem for a subset of a finitely generated group](membership-problem-for-a-subset.md); for a monoid it is defined in the same way over $A^*$, with no inverse letters. Every finitely generated submonoid is a rational subset, so decidability of the [Rational subset membership problem](rational-subset-membership-problem.md) implies decidability of the submonoid membership problem.
 
 ## Sources
 

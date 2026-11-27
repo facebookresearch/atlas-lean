@@ -18,6 +18,7 @@ The monoid is fixed and the system of equations is the input. Since the trivial 
 - [Group](../../group-basics/group.md)
 - [Context-free languages](../../../TheoryOfComputation/context-free-languages/grammars-and-pushdown-automata/context-free-languages.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Unit: an element with a two-sided inverse](../ring-unit.md)
 
 ## Proof depends on
 
@@ -25,7 +26,7 @@ None.
 
 ## Expansion
 
-Otto constructed a finite special rewriting system $S$ without nontrivial critical pairs such that the Diophantine problem for the monoid $M_S$ it presents is undecidable, by encoding an instance of the Post correspondence problem (Theorem 1 of the source). A finite special system without nontrivial critical pairs presents a monoid with trivial group of units, because each defining word is then a single minimal invertible piece (Lemma 1). A special monoid with trivial group of units has context-free word problem by an earlier theorem of the author, and context-free monoids are word-hyperbolic. A good expansion links Otto's undecidability theorem for $M_S$ and the author's theorem that a finitely presented special monoid with trivial group of units has context-free word problem, which have no pages.
+Otto constructed a finite special rewriting system $S$ without nontrivial critical pairs such that the Diophantine problem for the monoid $M_S$ it presents is undecidable, by encoding an instance of the Post correspondence problem (Theorem 1 of the source). A finite special system without nontrivial critical pairs presents a monoid with trivial group of units, because each defining word is then a single minimal invertible piece (Lemma 1). A special monoid with trivial group of units has context-free word problem by an earlier theorem of the author, and context-free monoids are word-hyperbolic. A good expansion links Otto's undecidability theorem for $M_S$ and the author's theorem that a finitely presented special monoid with trivial group of units has context-free word problem, which have no pages on main yet.
 
 ## Sources
 

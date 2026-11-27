@@ -2,7 +2,7 @@
 
 No algorithm decides whether a permutoid on a finite set can be completed to a finite permutation group, proving a conjecture of Cameron; nor whether a finite rigid pseudogroup has a finite development.
 
-A permutoid $(\Pi; X)$ is a set $\Pi$ of partial permutations of a set $X$ that contains the identity and is such that partial compositions, when defined, have at most one extension in $\Pi$. A finite permutoid is developable (completable) if it embeds, compatibly with partial compositions, in a finite permutation group acting on a finite set containing $X$. There does not exist an algorithm that, given a finite permutoid $(\Pi; X)$, can determine whether or not it is developable (Theorem 4.1 of the source); this is Cameron's conjecture of 2004.
+A permutoid $(\Pi; X)$ is a set $\Pi$ of partial permutations of a set $X$ that contains the identity and is such that partial compositions, when defined, have at most one extension in $\Pi$. A finite permutoid is developable (completable) if there are a finite set $Y$, an injection $\Phi\colon X \to Y$ and, for each $p \in \Pi$, a permutation $f_p$ of $Y$ extending $p$ along $\Phi$ (that is, $f_p(\Phi(x)) = \Phi(p(x))$ for $x$ in the domain of $p$), with $f_{1_X}$ the identity and $f_r = f_p f_q$ whenever $r$ extends $p \cdot q$; only the map $\Phi$ on points must be injective, and distinct $p$ may have the same $f_p$ (Definition 2.1 and Remarks 2.2(2) of the source). There does not exist an algorithm that, given a finite permutoid $(\Pi; X)$, can determine whether or not it is developable (Theorem 4.1 of the source); this is Cameron's conjecture of 2004.
 
 The same construction shows that no algorithm determines whether a finite rigid pseudogroup has a finite development (Theorem 5.2 of the source), that is, a finite set $Y \supseteq X$ and a finite group acting freely on $Y$ such that each non-empty element of the pseudogroup is a restriction of a group element.
 
@@ -24,4 +24,4 @@ To a finite presentation of a group $G$ and a radius $\rho$ the source attaches 
 
 ## Sources
 
-- M. R. Bridson and H. Wilton, "Undecidability and the developability of permutoids and rigid pseudogroups", Forum of Mathematics, Sigma 5 (2017), article e10, https://doi.org/10.1017/fms.2017.6; read in arXiv:1405.4368v2 (with an appendix by B. Steinberg) (Theorems 4.1 and 5.2 of arXiv:1405.4368v2).
+- M. R. Bridson and H. Wilton, "Undecidability and the developability of permutoids and rigid pseudogroups", Forum of Mathematics, Sigma 5 (2017), article e10, https://doi.org/10.1017/fms.2017.6; read in arXiv:1405.4368v2 (with an appendix by B. Steinberg) (Definition 2.1, Remarks 2.2, Theorems 4.1 and 5.2 of arXiv:1405.4368v2).

@@ -11,6 +11,7 @@ More generally (Theorem 1.4), the group of reversible finite-state machines on $
 - [Order problem and torsion problem of a finitely generated group](order-problem.md)
 - [Group](../../../group-basics/group.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Homeomorphism](../../../../Topology/topological-spaces/homeomorphism.md)
 
 ## Proof depends on
 
@@ -18,7 +19,7 @@ None.
 
 ## Expansion
 
-A finite-state machine moves a head over a fixed tape without changing it, so its periodicity is a question about the paths the head can follow on a configuration. In dimension one a pigeonhole argument decides periodicity, and indeed finiteness of finitely generated subgroups. In dimension two and higher, the source derives undecidability from Kari's undecidability of the snake tiling problem: a finitely generated group of finite-state machines can make a head follow a snake through tiles, and every element is periodic exactly when no infinite snake exists.
+A finite-state machine moves a head over a fixed tape without changing it, so its periodicity is a question about the paths the head can follow on a configuration. In dimension one a pigeonhole argument decides periodicity, and indeed finiteness of finitely generated subgroups. In dimension two and higher, the source derives undecidability from Kari's undecidability of the snake tiling problem: from an instance of a modified snake tiling problem the source builds one specific reversible machine $T_f$ whose head follows a snake through the tiles, and this element has finite order exactly when no infinite snake exists; the construction is then carried out with a fixed alphabet and number of states and inside a finitely generated subgroup.
 
 ## Sources
 

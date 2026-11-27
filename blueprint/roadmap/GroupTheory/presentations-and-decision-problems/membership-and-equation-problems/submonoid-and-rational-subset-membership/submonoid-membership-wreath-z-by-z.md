@@ -4,7 +4,7 @@ The wreath product $\mathbb{Z} \wr \mathbb{Z}$ contains a fixed finitely generat
 
 Let $\mathbb{Z} \wr \mathbb{Z}$ be the restricted wreath product, the semidirect product of the finitely supported functions $\mathbb{Z} \to \mathbb{Z}$ with $\mathbb{Z}$ acting by translation. There is a fixed finitely generated submonoid $M$ of $\mathbb{Z} \wr \mathbb{Z}$ whose membership problem is undecidable (Theorem 6 of the source).
 
-Since $\mathbb{Z} \wr \mathbb{Z}$ embeds in both, Thompson's group $F$ and Baumslag's finitely presented metabelian group $\langle a, s, t \mid [s, t] = [a^t, a] = 1,\ a^s = a a^t \rangle$ contain finitely generated submonoids with undecidable membership problem (Corollary 1). By contrast, the source proves that $H \wr V$ has decidable rational subset membership problem for every finite group $H$ and virtually free group $V$, in particular for $H \wr \mathbb{Z}$ (Theorem 3).
+Since $\mathbb{Z} \wr \mathbb{Z}$ embeds in both, Thompson's group $F$ and Baumslag's finitely presented metabelian group $\langle a, s, t \mid [s, t] = [a^t, a] = 1,\ a^s = a a^t \rangle$ contain finitely generated submonoids with undecidable membership problem (Corollary 1). By contrast, the source proves that $H \wr V$ has decidable [rational subset membership problem](rational-subset-membership-problem.md) for every finite group $H$ and virtually free group $V$, in particular for $H \wr \mathbb{Z}$ (Theorem 3).
 
 ## Depends on
 

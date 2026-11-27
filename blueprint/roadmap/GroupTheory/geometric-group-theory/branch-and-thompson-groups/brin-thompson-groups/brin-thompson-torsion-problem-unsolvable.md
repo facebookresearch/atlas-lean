@@ -2,7 +2,7 @@
 
 For every $n \ge 2$ the finitely presented group $nV$, which has solvable word problem, has unsolvable torsion problem: no algorithm decides whether a given element has finite order.
 
-For every integer $n \ge 2$ and every finite generating set of the Brin–Thompson group $nV$, there is no algorithm that decides, given a word in the generators and their inverses, whether it represents an element of finite order in $nV$ (Theorem 1.1 of the source). The groups $nV$ are finitely presented with solvable word problem, so they are concrete finitely presented groups with solvable word problem and unsolvable torsion problem; the existence of such groups was first shown, without an explicit example, by Arzhantseva, Lafont and Minasyan. Thompson's groups $F$, $T$ and $V = 1V$ have solvable torsion problem.
+For every integer $n \ge 2$ and every finite generating set of the Brin–Thompson group $nV$, there is no algorithm that decides, given a word in the generators and their inverses, whether it represents an element of finite order in $nV$ (Theorem 1.1 of the source). The groups $nV$ are finitely presented with solvable word problem, so they are concrete finitely presented groups with solvable word problem and unsolvable torsion problem; the existence of such groups was first shown, without an explicit example, by Arzhantseva, Lafont and Minasyan. Thompson's groups [$F$](../thompson-s-group-f/thompson-f.md), $T$ and $V = 1V$ have solvable torsion problem.
 
 ## Depends on
 

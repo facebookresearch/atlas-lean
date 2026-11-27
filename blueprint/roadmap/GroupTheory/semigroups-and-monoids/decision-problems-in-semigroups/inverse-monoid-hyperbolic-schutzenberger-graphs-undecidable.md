@@ -15,6 +15,7 @@ By contrast, for finitely presented inverse monoids whose Schützenberger graphs
 - [Inverse monoid and inverse semigroup presentations](inverse-monoid-and-semigroup-presentations.md)
 - [Gromov $\delta$-hyperbolic space](../../../Geometry/metric-geometry/gromov-hyperbolic-spaces/is-delta-hyperbolic.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Cayley digraph](../../../GraphTheory/algebraic-graph-theory/part-01/directed-cayley-graph.md)
 
 ## Proof depends on
 
@@ -22,7 +23,7 @@ By contrast, for finitely presented inverse monoids whose Schützenberger graphs
 
 ## Expansion
 
-Rips' construction gives a finitely presented hyperbolic group $H$ with a fixed finitely generated subgroup of undecidable membership (from a finitely presented group with undecidable word problem). Gray's theorem turns such a subgroup into an $E$-unitary special inverse monoid with maximal group image $H * \mathbb{Z}$ and undecidable word problem, by adjoining an idempotent word built from conjugates $t w_i t^{-1}$. The source shows its Schützenberger graphs form trees of uniformly hyperbolic graphs, hence are uniformly hyperbolic. The Rips construction and Gray's theorem have no pages here.
+Rips' construction gives a finitely presented hyperbolic group $H$ with a fixed finitely generated subgroup of undecidable membership (from a finitely presented group with undecidable word problem). Gray's theorem turns such a subgroup into an $E$-unitary special inverse monoid with maximal group image $H * \mathbb{Z}$ and undecidable word problem, by adjoining an idempotent word built from conjugates $t w_i t^{-1}$. The source shows its Schützenberger graphs form trees of uniformly hyperbolic graphs, hence are uniformly hyperbolic. The Rips construction and Gray's theorem have no pages on main yet.
 
 ## Sources
 

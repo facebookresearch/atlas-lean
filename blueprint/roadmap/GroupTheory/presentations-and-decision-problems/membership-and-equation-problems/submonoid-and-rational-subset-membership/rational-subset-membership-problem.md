@@ -18,9 +18,10 @@ None.
 
 ## Expansion
 
-Every finitely generated submonoid $\pi(W^*)$ is rational, and an automaton for $W^*$ is computed from $W$, so the [Submonoid membership problem](submonoid-membership-problem.md) reduces to the rational subset membership problem. Decidability does not depend on the finite generating set. A fixed rational subset in which membership is undecidable, in the sense of [Membership problem for a subset of a finitely generated group](membership-problem-for-a-subset.md), makes the rational subset membership problem undecidable.
+Every finitely generated submonoid $\pi(W^*)$ is rational, and an automaton for $W^*$ is computed from $W$, so the [Submonoid membership problem](submonoid-membership-problem.md) reduces to the rational subset membership problem. Decidability does not depend on the finite generating set. A fixed rational subset $R$ in which membership is undecidable, that is, such that no algorithm decides for a word $w \in A^*$ whether $\pi(w) \in R$, makes the rational subset membership problem undecidable; for a group this fixed-subset problem is the one on [Membership problem for a subset of a finitely generated group](membership-problem-for-a-subset.md), and for a monoid it is defined in the same way over $A^*$.
 
 ## Sources
 
 - R. D. Gray, "Undecidability of the word problem for one-relator inverse monoids via right-angled Artin subgroups of one-relator groups", Inventiones Mathematicae 219 (2020), no. 3, 987–1008, https://doi.org/10.1007/s00222-019-00920-2; arXiv:1902.03822v3 (Section 2, definition of the rational subset membership problem in arXiv:1902.03822v3).
 - C. Bodart, "Membership problems in nilpotent groups", Journal of Groups, Complexity, Cryptology 17 (2025), no. 1, article 13954, https://doi.org/10.46298/jgcc.2025.17.1.13954; arXiv:2401.15504v6 (Section 1, "Background on rational subsets", of arXiv:2401.15504v6).
+- I. Foniqi, R. D. Gray and C.-F. Nyberg-Brodda, "Membership problems for positive one-relator groups and one-relation monoids", Canadian Journal of Mathematics 78 (2026), no. 3, 802–841, https://doi.org/10.4153/S0008414X24000798; arXiv:2305.15672v2 (Section 1, where the rational subset membership problem of a monoid asks to decide membership in the image of an arbitrary regular language).

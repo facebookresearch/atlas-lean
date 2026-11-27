@@ -1,11 +1,11 @@
 # Multiple HNN extensions of free groups with Dehn function n² log n and undecidable conjugacy problem
 
-There are finitely presented multiple HNN extensions of free groups with Dehn function $n^2 \log n$ and undecidable conjugacy problem; $n^2 \log n$ is the smallest Dehn function of a multiple HNN extension of a free group with undecidable conjugacy problem.
+There are finitely presented multiple HNN extensions of free groups with Dehn function $n^2 \log n$ and undecidable conjugacy problem; $n^2 \log n$ is the smallest such Dehn function, in the sense that a Dehn function $d(n)$ with $d(n)/(n^2 \log n) \to 0$ constructively forces decidable conjugacy.
 
 A multiple HNN extension of a free group $F$ is a group $\langle F, t_1, \dots, t_k \mid t_i^{-1} u t_i = \phi_i(u)\ (u \in U_i,\ 1 \le i \le k) \rangle$ for finitely generated subgroups $U_i, V_i$ of $F$ and isomorphisms $\phi_i\colon U_i \to V_i$. Then (Theorem 1.1 of the source):
 
 1. there exist finitely presented multiple HNN extensions of free groups with Dehn function $n^2 \log n$, and some of them have undecidable conjugacy problem;
-2. conversely, if $d(n)$ is the Dehn function of a multiple HNN extension of a free group and the constructive limit of $d(n) / (n^2 \log n)$ as $n \to \infty$ is $0$, then the group has decidable conjugacy problem.
+2. conversely, if $d(n)$ is the Dehn function of a multiple HNN extension of a free group and the constructive limit of $d(n) / (n^2 \log n)$ as $n \to \infty$ is $0$ (the usual limit, with $N$ depending recursively on $\varepsilon$; Definition 2.1 and Remark 1.2), then the group has decidable conjugacy problem.
 
 These were the first groups with Dehn function $n^2 \log n$.
 
@@ -25,4 +25,4 @@ The upper bound on Dehn functions comes from a new invariant of bipartite chord 
 
 ## Sources
 
-- A. Yu. Olshanskii and M. V. Sapir, "Groups with small Dehn functions and bipartite chord diagrams", Geometric and Functional Analysis 16 (2006), no. 6, 1324–1376, https://doi.org/10.1007/s00039-006-0580-9; read in arXiv:math/0411174v3 (Theorem 1.1 and Lemma 3.15 of arXiv:math/0411174v3).
+- A. Yu. Olshanskii and M. V. Sapir, "Groups with small Dehn functions and bipartite chord diagrams", Geometric and Functional Analysis 16 (2006), no. 6, 1324–1376, https://doi.org/10.1007/s00039-006-0580-9; read in arXiv:math/0411174v3 (Theorem 1.1, Remark 1.2, Definition 2.1 and Lemma 3.15 of arXiv:math/0411174v3).

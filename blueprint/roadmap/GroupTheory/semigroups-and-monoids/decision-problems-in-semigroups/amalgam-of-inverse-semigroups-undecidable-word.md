@@ -16,6 +16,7 @@ This contrasts with amalgamated free products of finite inverse semigroups, whos
 
 - [Inverse monoid and inverse semigroup presentations](inverse-monoid-and-semigroup-presentations.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Green's relations and $\mathcal{J}$-trivial monoids](../../../TheoryOfComputation/regular-languages/syntactic-monoids/varieties-and-algebraic-characterizations/green-s-relations-and-j-trivial-monoids.md)
 
 ## Proof depends on
 

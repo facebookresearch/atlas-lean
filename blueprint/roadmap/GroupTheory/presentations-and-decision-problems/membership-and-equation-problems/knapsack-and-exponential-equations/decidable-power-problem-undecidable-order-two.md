@@ -6,7 +6,7 @@ For a group $G$ given by a recursive presentation and $n \ge 1$, let $\mathrm{P}
 
 There exists a finitely presented group $G$ such that $\mathrm{P}[1]$ is decidable and $\mathrm{P}[2]$ is undecidable; moreover $G$ has decidable conjugacy problem (Theorem A of the source).
 
-Decidability of $\mathrm{P}[n+1]$ implies decidability of $\mathrm{P}[n]$, by padding with the identity, so the theorem shows that this hierarchy is strict at its first step.
+The source allows recursive presentations on countably many generators, as for the auxiliary group of Proposition 2.1; the group $G$ of the theorem is finitely presented, so it is recursively presented in the finitely generated sense of the linked page. Decidability of $\mathrm{P}[n+1]$ implies decidability of $\mathrm{P}[n]$, by padding with the identity, so the theorem shows that this hierarchy is strict at its first step.
 
 ## Depends on
 

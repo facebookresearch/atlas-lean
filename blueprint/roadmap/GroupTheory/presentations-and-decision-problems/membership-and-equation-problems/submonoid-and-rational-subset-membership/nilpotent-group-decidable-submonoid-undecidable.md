@@ -15,12 +15,12 @@ So for finitely generated nilpotent groups the two problems are not equivalent.
 
 ## Proof depends on
 
-None.
+- [Knapsack is undecidable for class-two nilpotent groups with large derived subgroup](../knapsack-and-exponential-equations/knapsack-undecidable-class-two-nilpotent.md)
 
 ## Expansion
 
-Earlier work on knapsack problems in nilpotent groups, cited by the source, shows that some group $N_{2,m} \times \mathbb{Z}^n$ has undecidable rational subset membership problem, and a later result cited there gives such a group with $m \le 26$. Take such a group with $m$ minimal. The source's dimension-gain theorem (Theorem 2.6) reduces each instance of the submonoid membership problem of $G = N_{2,m} \times \mathbb{Z}^n$ to finitely many instances of rational subset membership in subgroups $H$ with smaller Hirsch length of $[H, H]$. Each such subgroup has (Lemma 2.7) a finite-index subgroup isomorphic to $N_{2,k} \times \mathbb{Z}^\ell$ with $k < m$, computable from generators, and rational subset membership there is decidable by minimality of $m$; decidability passes to $H$ through finite-index subgroups.
+Earlier work on knapsack problems in nilpotent groups, cited by the source, shows that some group $N_{2,m} \times \mathbb{Z}^n$ has undecidable rational subset membership problem, and the knapsack result of Mishchenko and Treier cited there gives such a group with $m \le 26$: an integer knapsack instance asks for membership in the product $\langle g_1 \rangle \cdots \langle g_k \rangle$ of cyclic subgroups, a rational subset. Take such a group with $m$ minimal. The source's dimension-gain theorem (Theorem 2.6) reduces each instance of the submonoid membership problem of $G = N_{2,m} \times \mathbb{Z}^n$ to finitely many instances of rational subset membership in subgroups $H$ with smaller Hirsch length of $[H, H]$. Each such subgroup has (Lemma 2.7) a finite-index subgroup isomorphic to $N_{2,k} \times \mathbb{Z}^\ell$ with $k < m$, computable from generators, and rational subset membership there is decidable by minimality of $m$; decidability passes to $H$ through finite-index subgroups (Lemma 1.2 and Proposition 1.1 of the source). A good expansion adds and links pages for Theorem 2.6 and Lemma 2.7 of the source, neither of which has a page on main yet.
 
 ## Sources
 
-- C. Bodart, "Membership problems in nilpotent groups", Journal of Groups, Complexity, Cryptology 17 (2025), no. 1, article 13954, https://doi.org/10.46298/jgcc.2025.17.1.13954; arXiv:2401.15504v6 (Corollary 2.8 in Section 2, "Dimension gain for the Submonoid Membership", of arXiv:2401.15504v6, proved from Theorem 2.6 and Lemma 2.7).
+- C. Bodart, "Membership problems in nilpotent groups", Journal of Groups, Complexity, Cryptology 17 (2025), no. 1, article 13954, https://doi.org/10.46298/jgcc.2025.17.1.13954; arXiv:2401.15504v6 (Corollary 2.8 in Section 2, "Dimension gain for the Submonoid Membership", of arXiv:2401.15504v6, proved from Theorem 2.6 and Lemma 2.7, with Lemma 1.2 and Proposition 1.1).

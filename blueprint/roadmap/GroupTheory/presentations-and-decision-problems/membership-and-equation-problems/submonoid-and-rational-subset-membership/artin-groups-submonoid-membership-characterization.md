@@ -18,14 +18,15 @@ The source also gives the condition in terms of induced subgraphs of $\Gamma$, e
 - [Group](../../../group-basics/group.md)
 - [Artin group](../../braid-and-artin/artin-groups/artin-group.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Locally subgroup-separable (LERF) group](../../../profinite-and-topological-groups/subgroup-separability-of-baumslag-solitar-groups/is-locally-subgroup-separable.md)
 
 ## Proof depends on
 
-None.
+- [The membership problem for finitely generated subgroups of F₂ × F₂ is unsolvable](../subgroup-membership-problem/membership-problem-in-f2-times-f2-unsolvable.md)
 
 ## Expansion
 
-$A(C_4) = F_2 \times F_2$ has a finitely generated subgroup with undecidable membership (Mihailova) and $A(P_4)$ a finitely generated submonoid with undecidable membership (Lohrey and Steinberg); these pass to every group containing them. Neither theorem has a page here. Conversely, Artin groups without such subgroups are built from Artin groups of rank at most $2$ by free products and direct products with $\mathbb{Z}$, which preserve decidability of rational subset membership; the source combines this with the Almeida–Lima characterization of subgroup separable Artin groups.
+$A(C_4) = F_2 \times F_2$ has a finitely generated subgroup with undecidable membership (Mihailova) and $A(P_4)$ a finitely generated submonoid with undecidable membership (Lohrey and Steinberg); these pass to every group containing them. The uniform form of Mihailova's theorem is on [the page for membership in F₂ × F₂](../subgroup-membership-problem/membership-problem-in-f2-times-f2-unsolvable.md), whose construction gives the fixed subgroup used here; a good expansion adds pages for that fixed-subgroup form and for the Lohrey–Steinberg theorem on $A(P_4)$, neither of which has a page on main yet. Conversely, Artin groups without such subgroups are built from Artin groups of rank at most $2$ by free products and direct products with $\mathbb{Z}$, which preserve decidability of rational subset membership; the source combines this with the Almeida–Lima characterization of subgroup separable Artin groups.
 
 ## Sources
 

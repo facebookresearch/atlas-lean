@@ -29,11 +29,11 @@ Earlier examples of finitely presented groups with unsolvable order and power pr
 Take a one-to-one recursive function $\phi$ whose range is not recursive. The recursive presentations
 
 $$
-\Pi_1 = \langle x_n \ (n \ge 1) \mid x_{\phi(n)}^{\,n} = 1 \ (n \ge 1) \rangle, \qquad \Pi_2 = \langle y_n, z_n \ (n \ge 1) \mid y_n z_n = z_n y_n,\ y_{\phi(n)} = z_{\phi(n)}^{\,n} \ (n \ge 1) \rangle
+\Pi_1 = \langle x_n \ (n \ge 1) \mid x_{\phi(n)}^{\,n!} = 1 \ (n \ge 1) \rangle, \qquad \Pi_2 = \langle y_n, z_n \ (n \ge 1) \mid y_n z_n = z_n y_n,\ y_{\phi(n)} = z_{\phi(n)}^{\,n} \ (n \ge 1) \rangle
 $$
 
-have solvable word problem, yet $x_r$ has finite order, and $y_r \in \langle z_r \rangle$, exactly when $r$ is in the range of $\phi$; and $\langle x_r \rangle$ is infinite cyclic (free abelian, free) exactly when it is not. McCool's Theorem 1, combining his embedding theorem for countable groups with a result of Clapham, effectively embeds a recursively presented group with solvable word problem into a finitely presented group $L_i$ with solvable word problem, in which membership in the embedded copy is decidable. Then $L = L_1 \times L_2$ has the stated properties.
+have solvable word problem, yet $x_r$ has finite order, and $y_r \in \langle z_r \rangle$, exactly when $r$ is in the range of $\phi$ (for $r = \phi(1)$ the relator makes $x_r$ trivial, which still has finite order); and $\langle x_r \rangle$ is infinite cyclic (free abelian, free) exactly when $r$ is not in the range of $\phi$. McCool's Theorem 1, combining his embedding theorem for countable groups with a result of Clapham, effectively embeds a recursively presented group with solvable word problem into a finitely presented group $L_i$ with solvable word problem, in which membership in the embedded copy is decidable. Then $L = L_1 \times L_2$ has the stated properties.
 
 ## Sources
 
-- J. McCool, "Unsolvable problems in groups with solvable word problem", Canadian Journal of Mathematics 22 (1970), no. 4, 836–838, https://doi.org/10.4153/CJM-1970-094-6 (Theorem 1 and Theorem 2). Read in the open-access copy https://www.cambridge.org/core/services/aop-cambridge-core/content/view/CFCCC6647CA6F09E49AC90B5F042502F/S0008414X00047544a.pdf/div-class-title-unsolvable-problems-in-groups-with-solvable-word-problem-div.pdf (the published version).
+- J. McCool, "Unsolvable problems in groups with solvable word problem", Canadian Journal of Mathematics 22 (1970), no. 4, 836–838, https://doi.org/10.4153/CJM-1970-094-6 (Theorem 1 and Theorem 2, with the presentations $\Pi_1$ and $\Pi_2$ in the proof of Theorem 2). Read in the open-access copy https://www.cambridge.org/core/services/aop-cambridge-core/content/view/CFCCC6647CA6F09E49AC90B5F042502F/S0008414X00047544a.pdf/div-class-title-unsolvable-problems-in-groups-with-solvable-word-problem-div.pdf (the published version).

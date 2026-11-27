@@ -8,6 +8,8 @@ The knapsack problem here is the integer version: given words $g_1, \dots, g_k, 
 2. if $G$ is the free nilpotent group of class 2 on $n \ge 26$ generators, the knapsack problem for $G$ is undecidable (Corollary 1);
 3. for $n \ge 53$ the knapsack problem is undecidable for the groups $\mathrm{UT}_n(\mathbb{Z})$ of upper unitriangular integer matrices, $\mathrm{GL}_n(\mathbb{Z})$ and $\mathrm{SL}_n(\mathbb{Z})$ (Corollary 3).
 
+The bound $322$ is that of the copy read; the abstract of the published article states the theorem for derived subgroups of rank at least $316$, which implies the statement above.
+
 ## Depends on
 
 - [Knapsack problem for a finitely generated group](knapsack-problem-for-a-group.md)

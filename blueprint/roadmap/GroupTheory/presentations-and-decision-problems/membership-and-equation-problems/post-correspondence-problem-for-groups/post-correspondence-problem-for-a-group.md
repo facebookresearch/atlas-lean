@@ -1,6 +1,6 @@
 # Post correspondence problem for a group
 
-Post's correspondence problem for a group $\Gamma$ takes a finite alphabet $\Sigma$ and two homomorphisms $g, h$ from the free group on $\Sigma$ to $\Gamma$, and asks whether some $x$ with $g(x) = h(x)$ lies outside $\ker g \cap \ker h$.
+Post's correspondence problem for a group $\Gamma$ takes a finite alphabet $\Sigma$ and two homomorphisms $g, h$ from the free group on $\Sigma$ to $\Gamma$, and asks whether the quotient of the equalizer of $g$ and $h$ by $\ker g \cap \ker h$ is trivial, that is, whether there is no solution, an element $x$ with $g(x) = h(x)$ outside $\ker g \cap \ker h$.
 
 An instance is a tuple $I = (\Sigma, \Gamma, g, h)$ where $\Sigma$ is a finite alphabet with free group $F(\Sigma)$, $\Gamma$ is a group given by a recursive presentation (finitely many generators and a recursive, for instance finite, set of relators), and $g, h\colon F(\Sigma) \to \Gamma$ are homomorphisms, given by the images of the letters of $\Sigma$ as words in the generators of $\Gamma$. The equalizer of $g$ and $h$ is the subgroup
 
@@ -8,12 +8,14 @@ $$
 \mathrm{Eq}(g, h) = \{ x \in F(\Sigma) : g(x) = h(x) \}.
 $$
 
-The (kernel-based) Post correspondence problem asks: is the quotient $\mathrm{Eq}(g, h) / (\ker g \cap \ker h)$ trivial? Equivalently, is there no solution $x \in \mathrm{Eq}(g, h) \setminus (\ker g \cap \ker h)$? The binary version restricts to instances with $|\Sigma| = 2$, and for a class $\mathfrak{X}$ of recursively presented groups, the problem for $\mathfrak{X}$ restricts to instances with $\Gamma \in \mathfrak{X}$.
+The (kernel-based) Post correspondence problem asks: is the quotient $\mathrm{Eq}(g, h) / (\ker g \cap \ker h)$ trivial? Equivalently, is there no solution, where a *solution* is an element $x \in \mathrm{Eq}(g, h) \setminus (\ker g \cap \ker h)$? A yes answer thus means that no solution exists. The binary version restricts to instances with $|\Sigma| = 2$, and for a class $\mathfrak{X}$ of recursively presented groups, the problem for $\mathfrak{X}$ restricts to instances with $\Gamma \in \mathfrak{X}$.
 
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
 - [Recursively presented group](../../../orderable-groups/word-problem-for-orderable-groups/is-recursively-presented.md)
+- [Kernel of a homomorphism from a group](../../../group-basics/group-homomorphism-kernel.md)
+- [Quotient group by a normal subgroup](../../../group-basics/quotient-group.md)
 
 ## Proof depends on
 

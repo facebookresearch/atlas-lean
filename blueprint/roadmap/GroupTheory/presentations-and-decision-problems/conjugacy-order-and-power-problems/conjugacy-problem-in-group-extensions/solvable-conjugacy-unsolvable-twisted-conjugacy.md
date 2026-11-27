@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-Gorjaga and Kirkinskii, and Collins and Miller, gave finitely presented groups $F$ with an index-two subgroup $G$ such that $\mathrm{CP}(G)$ is solvable and $\mathrm{CP}(F)$ is not. For a normal subgroup of finite index, a solution of the twisted conjugacy problem of the subgroup would solve the conjugacy problem of the larger group (Proposition 4.7 of the source), so $\mathrm{TCP}(G)$ is unsolvable. Then some automorphism $\varphi$ has $\mathrm{TCP}_\varphi(G)$ unsolvable, which makes $\mathrm{CP}(G \rtimes_\varphi \mathbb{Z})$ unsolvable; the converse uses the Collins–Miller example with an order-two automorphism.
+Gorjaga and Kirkinskii, and Collins and Miller, gave finitely presented groups $F$ with an index-two subgroup $G$ such that $\mathrm{CP}(G)$ is solvable and $\mathrm{CP}(F)$ is not. For a normal subgroup of finite index, a solution of the twisted conjugacy problem of the subgroup would solve the conjugacy problem of the larger group (Proposition 4.7 of the source), so $\mathrm{TCP}(G)$ is unsolvable. Then some automorphism $\varphi$ has $\mathrm{TCP}_\varphi(G)$ unsolvable: the proof of Proposition 4.7(ii) reduces $\mathrm{CP}(F)$ to the twisted conjugacy problems of $G$ for the finitely many automorphisms given by conjugation by coset representatives of $G$ in $F$, so one of these fixed twists is unsolvable; this makes $\mathrm{CP}(G \rtimes_\varphi \mathbb{Z})$ unsolvable (Proposition 4.1); the converse uses the Collins–Miller example with an order-two automorphism.
 
 ## Sources
 

@@ -12,6 +12,7 @@ There exists an automaton group $G$ whose Engel problem is undecidable; the same
 - [Order problem and torsion problem of a finitely generated group](../../../presentations-and-decision-problems/conjugacy-order-and-power-problems/order-and-power-problems/order-problem.md)
 - [Group](../../../group-basics/group.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Iterated commutators for Engel lengths](../../../commutators-and-engel-conditions/engel-elements/engel-comm.md)
 
 ## Proof depends on
 

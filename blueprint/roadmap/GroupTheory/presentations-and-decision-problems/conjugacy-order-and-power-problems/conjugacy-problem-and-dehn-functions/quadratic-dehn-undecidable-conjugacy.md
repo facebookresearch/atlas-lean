@@ -18,7 +18,7 @@ A finitely presented group with quadratic Dehn function has decidable word probl
 
 ## Expansion
 
-The group is built from an $S$-machine, a group-theoretic model of computation, simulating a Turing machine with non-recursive language of accepted inputs, embedded into a group with quadratic Dehn function following Olshanskii's earlier constructions of groups with small Dehn functions. Accepted inputs correspond to conjugacy of certain words with a fixed one, so conjugacy is undecidable while van Kampen diagrams of all trivial words have quadratic area.
+The group is built from an $S$-machine, a group-theoretic model of computation, simulating a Turing machine with non-recursive language of accepted inputs, embedded into a group with quadratic Dehn function following Olshanskii's earlier constructions of groups with small Dehn functions. As a group the $S$-machine is a multiple HNN extension of a free group, and the group $G$ is obtained from it by adjoining a hub relation; accepted inputs correspond to conjugacy of certain words with a fixed one, so conjugacy is undecidable, while the hubs and the disks they form make every word trivial in $G$ admit a van Kampen diagram of quadratic area. The bound concerns a minimal filling: other van Kampen diagrams of the same word can have larger area.
 
 ## Sources
 

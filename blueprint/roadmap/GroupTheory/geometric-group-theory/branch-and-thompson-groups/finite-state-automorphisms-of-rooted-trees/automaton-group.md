@@ -22,7 +22,7 @@ None.
 
 ## Expansion
 
-Automaton groups include the Grigorchuk group, the Aleshin group and the Basilica group. Their word problem is decidable: two words represent the same element exactly when the finite automaton obtained by composing the corresponding states acts trivially, which is checked by a finite computation on sections. Conventions differ on composition order; the source composes as a right action, $\sigma_{pq} = \sigma_q \circ \sigma_p$, which does not affect the group up to isomorphism.
+Automaton groups include the Grigorchuk group, the Aleshin group and the Basilica group. Their word problem is decidable: words $u$ and $v$ in the generators and their inverses represent the same element exactly when $u v^{-1}$ acts trivially, and since the sections of $u v^{-1}$ lie in a finite set computable from the automaton, triviality is checked by a finite computation on the first letters and the sections. Conventions differ on composition order; the source composes as a right action, $\sigma_{pq} = \sigma_q \circ \sigma_p$, which does not affect the group up to isomorphism.
 
 ## Sources
 

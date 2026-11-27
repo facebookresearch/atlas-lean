@@ -12,7 +12,7 @@ with $g_{ij}, h_i \in G$ and variables $x_{ij}$ ranging over $\mathbb{N}$, where
 
 **Theorem.** For every $q \ge 2$, $\mathrm{ExpEq}(\mathrm{BS}(1, q))$ is undecidable (Theorem 5.1 of the source).
 
-The source also proves that the knapsack problem for $\mathrm{BS}(1, q)$ is NP-complete (Theorem 4.1) and that its power word problem is in $\mathrm{TC}^0$ (Theorem 3.1, stated for the matrix groups $T(\alpha)$, which include $\mathrm{BS}(1, q)$ as $T(q)$).
+The source also proves that the knapsack problem for $\mathrm{BS}(1, q)$ is NP-complete (Theorem 4.1) and that its power word problem is in DLOGTIME-uniform $\mathrm{TC}^0$ (Theorem 3.1, stated for the matrix groups $T(\alpha)$, which include $\mathrm{BS}(1, q)$ as $T(q)$).
 
 ## Depends on
 
@@ -20,6 +20,7 @@ The source also proves that the knapsack problem for $\mathrm{BS}(1, q)$ is NP-c
 - [Group](../../../group-basics/group.md)
 - [The Baumslag–Solitar group BS(1, n)](../../../profinite-and-topological-groups/subgroup-separability-of-baumslag-solitar-groups/bs1.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [NP-complete decision problems](../../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
 
 ## Proof depends on
 
@@ -27,7 +28,7 @@ None.
 
 ## Expansion
 
-The proof reduces from the existential theory of $(\mathbb{N}, +, (x, y) \mapsto x \cdot 2^y)$, which Büchi and Senger showed undecidable: the proof generalizes to $(x, y) \mapsto x \cdot q^y$, and in $\mathrm{BS}(1, q)$ the atomic formulas become exponent equations: $x + y = z$ as $a^x a^y a^{-z} = 1$, $x < y$ as $\exists z\, a^x a^z a\, a^{-y} = 1$, and $x \cdot q^y = z$ as $t^y a^x t^{-y} a^{-z} = 1$. The Büchi–Senger theorem has no page here. Exponent equations govern knapsack for wreath products: knapsack is decidable for $\mathbb{Z} \wr G$ exactly when solvability of systems of exponent equations is decidable for $G$, which the source notes follows from work of Ganardi, König, Lohrey and Zetzsche. Systems of exponent equations are also undecidable for the discrete Heisenberg group (König, Lohrey and Zetzsche).
+The proof reduces from the existential theory of $(\mathbb{N}, +, (x, y) \mapsto x \cdot 2^y)$, which Büchi and Senger showed undecidable: the proof generalizes to $(x, y) \mapsto x \cdot q^y$, and in $\mathrm{BS}(1, q)$ the atomic formulas become exponent equations: $x + y = z$ as $a^x a^y a^{-z} = 1$, $x < y$ as $\exists z\, a^x a^z a\, a^{-y} = 1$, and $x \cdot q^y = z$ as $t^y a^x t^{-y} a^{-z} = 1$. The Büchi–Senger theorem has no page on main yet. Exponent equations govern knapsack for wreath products: knapsack is decidable for $\mathbb{Z} \wr G$ exactly when solvability of systems of exponent equations is decidable for $G$, which the source notes follows from work of Ganardi, König, Lohrey and Zetzsche. Systems of exponent equations are also undecidable for the discrete Heisenberg group (König, Lohrey and Zetzsche).
 
 ## Sources
 
