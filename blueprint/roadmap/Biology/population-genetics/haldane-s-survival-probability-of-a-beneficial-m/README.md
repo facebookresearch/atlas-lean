@@ -8,5 +8,5 @@
 - [Survival probability is less than one](survival-prob-lt-one.md)
 - [Nonnegativity of the survival probability](survival-prob-nonneg.md)
 - [Haldane's approximation $\pi(s) \approx 2s$](tendsto-survival-prob-div.md)
-
+- [Serial-transfer model of the Lenski experiment](serial-transfer-model-of-the-lenski-experiment/README.md)
 - [Finite-horizon survival in Galton–Watson processes](finite-horizon-survival-in-galton-watson-processes/README.md)
