@@ -4,7 +4,7 @@ Genotypes are words of length $\ell$ over an alphabet of size $\kappa\ge2$. Each
 
 $$ \ell\to\infty,\qquad m\to\infty,\qquad q\to0,\qquad \ell q\to a\in(0,\infty),\qquad m/\ell\to\alpha\in(0,\infty). $$
 
-In this limit the mean dynamics of the first $K+1$ class proportions is the map $G_i(r)=\phi(r)^{-1}\sum_{h=0}^{i}r_hA(h)\,a^{i-h}/(i-h)!$, with mean fitness $\phi(r)=1+\sum_{h\le K}r_h(A(h)-1)$ (forward mutations become Poisson with mean $a$, back mutations vanish). When $A(0)e^{-a}>1$, $G$ has a fixed point $\rho^0$ with $\rho^0_0>0$ whose basin is $\{r:r_0>0\}$; for the sharp peak, $\rho^0_0=(A(0)e^{-a}-1)/(A(0)-1)$.
+In this limit the mean dynamics of the first $K+1$ class proportions is the map $G_i(r)=\phi(r)^{-1}\sum_{h=0}^{i}r_hA(h)\,e^{-a}a^{i-h}/(i-h)!$, with mean fitness $\phi(r)=1+\sum_{h\le K}r_h(A(h)-1)$ (forward mutations become Poisson with mean $a$, with weights $e^{-a}a^j/j!$, and back mutations vanish). When $A(0)e^{-a}>1$, $G$ has a fixed point $\rho^0$ with $\rho^0_0>0$ whose basin is $\{r:r_0>0\}$; for the sharp peak, $\rho^0_0=(A(0)e^{-a}-1)/(A(0)-1)$.
 
 **Theorem.** Let $\psi(a)=V(\rho^0,0)$, the large-deviation cost for the population to move from $\rho^0$ to the state with no individual in classes $0,\dots,K$, for $a<\ln A(0)$, and $\psi(a)=0$ for $a\ge\ln A(0)$. Then for every $k\ge0$:
 
@@ -24,4 +24,4 @@ Since $m\to\infty$ the multinomial transitions concentrate around $G$, and the o
 ## Sources
 
 - Joseba Dalmau, "The Wright–Fisher model for class–dependent fitness landscapes", *Electron. J. Probab.* 26 (2021), 1-44. <https://doi.org/10.1214/21-EJP704>
-- Preprint version (the locators in this item follow its numbering): J. Dalmau, "The Wright–Fisher model for class–dependent fitness landscapes", arXiv:1712.00279 (2017), <https://doi.org/10.48550/arXiv.1712.00279>. Theorem 3.1 and Corollary 3.2 (dichotomy), Section 2 (the limiting map and its fixed points, Propositions 2.1 and 2.2), Section 10 (definition of $\psi$). The sharp-peak value of $\rho^0_0$ is obtained by solving $G_0(r)=r_0$ with $K=0$.
+- Preprint version (the locators in this item follow its numbering): J. Dalmau, "The Wright–Fisher model for class–dependent fitness landscapes", arXiv:1712.00279 (2017), <https://doi.org/10.48550/arXiv.1712.00279>. Theorem 3.1 and Corollary 3.2 (dichotomy), Section 2 (the limiting map and its fixed points, Propositions 2.1 and 2.2), Section 10 (definition of $\psi$). The sharp-peak value of $\rho^0_0$ is obtained by solving $G_0(r)=r_0$ with $K=0$. The preprint's display of the limiting map omits the Poisson factor $e^{-a}$; the published version (eq. (2.8)) includes it, and the map above follows the published version.

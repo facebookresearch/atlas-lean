@@ -1,6 +1,6 @@
 # Extinction process of alleles equals the Kingman block-counting process
 
-**Setting.** Consider a Moran population of constant size $N$ in which every individual carries a distinct allele at time $0$. Every ordered pair $(a,b)$ of individuals has an independent rate-$1$ Poisson clock; when it rings, $a$ gives birth to an offspring of its allele and $b$ dies. Define the **extinction process** and its jump times
+**Setting.** Consider a Moran population of constant size $N$ in which every individual carries a distinct allele at time $0$. Every unordered pair $\{a,b\}$ of individuals has an independent rate-$1$ Poisson clock; when it rings, one of the two, chosen uniformly, gives birth to an offspring of its allele and the other dies (equivalently, every ordered pair $(a,b)$ has a rate-$1/2$ clock at which $a$ reproduces and $b$ dies). Define the **extinction process** and its jump times
 
 $$\hat A^N_t = \#\{\text{alleles present at time } t\}, \qquad \hat T^{N,k} = \sup\{t > 0 : \hat A^N_t \ge k\}, \quad k \in \{2,\dots,N\},$$
 
@@ -21,4 +21,4 @@ In the Moran model, conditionally on the current allele count $k$ and the allele
 ## Sources
 
 - Guillaume Achaz, Amaury Lambert and Emmanuel Schertzer, "The sequential loss of allelic diversity", *Adv. Appl. Probab.* 50 (2018), 13-29. <https://doi.org/10.1017/apr.2018.67>
-- Preprint version (the locators in this item follow its numbering): Guillaume Achaz, Amaury Lambert and Emmanuel Schertzer, "The sequential loss of allelic diversity", arXiv:1801.00683 (2018), Theorem 2.1 (binary case) and Theorem 3.1 (general $\Lambda$ case, part (2) due to Hénard), <https://doi.org/10.48550/arXiv.1801.00683>.
+- Preprint version (the locators in this item follow its numbering): Guillaume Achaz, Amaury Lambert and Emmanuel Schertzer, "The sequential loss of allelic diversity", arXiv:1801.00683 (2018), Theorem 2.1 (binary case) and Theorem 3.1 (general $\Lambda$ case, part (2) due to Hénard), <https://doi.org/10.48550/arXiv.1801.00683>. The preprint's Section 2.1 gives every ordered pair a rate-$1$ clock, which makes each unordered pair resolve at rate $2$ and is off by a time factor of $2$ from the rates $k(k-1)/2$ in its (2.3); the model above uses the rate under which the stated identity holds (for $N=2$ both fixation times are exponential with rate $1$).
