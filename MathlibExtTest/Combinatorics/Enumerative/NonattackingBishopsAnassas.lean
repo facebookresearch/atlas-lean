@@ -31,6 +31,17 @@ example : bishopsSquare 3 5 = 0 := by
 -- The extension uses unsigned first-kind numbers for negative arguments.
 example : extStirlingSecond (-1) (-3) = 2 ∧ extStirlingSecond 0 (-1) = 0 := by decide
 
+-- Ward's identity on the diagonal, at the other endpoint, and with contributions from
+-- both a triple and two pairs: `S(5, 3) = 10 + 15`.
+example : (Nat.stirlingSecond 5 (5 - 0) : ℤ) = 1 :=
+  (stirlingSecond_sub_eq_sum_associated (m := 5) (k := 0) (hk := by decide)).trans (by decide)
+
+example : (Nat.stirlingSecond 5 (5 - 5) : ℤ) = 0 :=
+  (stirlingSecond_sub_eq_sum_associated (m := 5) (k := 5) (hk := by decide)).trans (by decide)
+
+example : (Nat.stirlingSecond 5 (5 - 2) : ℤ) = 10 + 15 :=
+  (stirlingSecond_sub_eq_sum_associated (m := 5) (k := 2) (hk := by decide)).trans (by decide)
+
 -- The boundary clauses include the empty board, no pieces, and both sides of the diagonal.
 example : anassasBelow 0 0 0 = 1 := by
   simpa using (anassasBelow_recurrence (m := 0) (k := 0) (p := 0)).2.1

@@ -55,8 +55,8 @@ identifiability theorem is stated for `(c_2, …, c_n)`. The bound `n ≥ 2K` is
 2014, Corollary 7). Consequently, for every `n` there are two bounded measurable histories,
 different on a set of positive measure, with the same `c_2, …, c_n`. The
 Myers–Fefferman–Patterson theorem (one pair with the same `c_m` for every `m`, which needs a
-Müntz-type construction) is recorded in
-`WantedExt/Biology/PopulationGenetics/Coalescent/VariableSFSWanted.lean`.
+Müntz-type construction) is proved in
+`Domains/Biology/PopulationGenetics/Coalescent/VariableSFSExistsNeAeFirstCoalMeanEq.lean`.
 
 ## Main results
 
@@ -1060,7 +1060,7 @@ positive measure in `[0, ∞)`, with the same `c_m` for `2 ≤ m ≤ n` (two `(n
 histories from `PiecewiseHistory.exists_ne_firstCoalMean_eq_of_lt`, extended to `s < 0` by
 their size at `0`). This is the finite-sample shape of the statement of Myers, Fefferman &
 Patterson (2008); their theorem, one pair of functions with equal `c_m` for **every** `m`, is
-not proved here (it is `VariableSFSWanted.exists_ne_ae_firstCoalMean_eq`). -/
+proved in `VariableSFSExistsNeAeFirstCoalMeanEq` (`VariableSFSWanted.exists_ne_ae_firstCoalMean_eq`). -/
 theorem exists_ne_ae_firstCoalMean_eq_Icc (n : ℕ) :
     ∃ η₁ η₂ : ℝ → ℝ, Measurable η₁ ∧ Measurable η₂ ∧
       (∃ a b : ℝ, 0 < a ∧ ∀ s, a ≤ η₁ s ∧ η₁ s ≤ b ∧ a ≤ η₂ s ∧ η₂ s ≤ b) ∧

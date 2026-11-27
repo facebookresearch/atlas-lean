@@ -12,6 +12,7 @@ public import Mathlib.Algebra.Field.Rat
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.NumberTheory.Bernoulli
+public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.Group.ForwardDiff
 import MathlibExt.Combinatorics.Enumerative.GarabedianBernoulliStirling
 import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
@@ -24,7 +25,8 @@ import Mathlib.Tactic.Ring
 
 The recurrence for the sum $U$ follows by applying the Stirling recurrence to its defining sum
 and shifting the summation index. Pairing this recurrence with a row of Stirling numbers gives
-the formulas for Bernoulli numbers in terms of forward differences at one and at zero.
+the step identity for $H$ and the formulas for Bernoulli numbers in terms of forward differences
+at one and at zero.
 -/
 
 @[expose] public section
@@ -103,27 +105,72 @@ private theorem diffPowEval_one (m k : ℕ) :
     simp only [← mul_assoc] at hlower
     simpa only [hlower, add_right_inj] using h.symm
 
--- The recurrence for U transfers one unit of the first index to the Stirling row.
+/-- **The Zerroukhat–Khaldi sum $H_{n,m}$.** For natural numbers $n$ and $m$, define the rational
+number
+$$H_{n,m} = (-1)^n \, n \sum_{k=1}^{n-m} U(m+1, k) \, S(n-m, k),$$
+where $U(m+1, k)$ is the Zerroukhat–Khaldi sum $U$, $S(n-m, k)$ is the Stirling number of the
+second kind, and $n - m$ is truncated at $0$, so that $H_{n,m} = 0$ when $m \ge n$. -/
+def zerroH (n m : ℕ) : ℚ :=
+  (-1 : ℚ) ^ n * (n : ℚ) *
+    ∑ k ∈ Finset.Icc 1 (n - m), zerroU (m + 1) k *
+      (Nat.stirlingSecond (n - m) k : ℚ)
+
 private def stirlingSum (r m : ℕ) : ℚ :=
   ∑ k ∈ Finset.range (m + 1), zerroU r k * (Nat.stirlingSecond m k : ℚ)
+
+-- The recurrence for U transfers one unit of the first index to the Stirling row.
+private theorem stirlingSum_succ (r m : ℕ) (hm : 0 < m) :
+    stirlingSum (r + 1) m = stirlingSum r (m + 1) := by
+  unfold stirlingSum
+  rw [sum_stirlingSecond_succ]
+  apply Finset.sum_congr rfl
+  intro k _
+  cases k with
+  | zero =>
+    obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm.ne'
+    simp
+  | succ k =>
+    rw [zerroU_succ r (k + 1) (by omega)]
+    ring
+
+private theorem zerroH_eq_mul_stirlingSum (n m : ℕ) (hm : m < n) :
+    zerroH n m = (-1 : ℚ) ^ n * (n : ℚ) * stirlingSum (m + 1) (n - m) := by
+  unfold zerroH stirlingSum
+  congr 1
+  apply Finset.sum_subset
+  · intro k hk
+    simp only [Finset.mem_Icc, Finset.mem_range] at hk ⊢
+    omega
+  · intro k hk hk'
+    have hk0 : k = 0 := by
+      simp only [Finset.mem_Icc, Finset.mem_range] at hk hk'
+      omega
+    obtain ⟨l, hl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n - m ≠ 0)
+    simp [hk0, hl]
+
+/-- **A step identity for the Zerroukhat–Khaldi sums $H_{n,m}$.** Let $H_{n,m}$ denote the
+Zerroukhat–Khaldi sum. For all natural numbers $n$ and $r$ with $r \ge 1$ and $n \ge r + 1$,
+$H_{n,r} = H_{n,r-1}$.
+
+Source: Schehrazade Zerroukhat and Laala Khaldi, "A Note
+on Explicit Formulas for Bernoulli and Genocchi Numbers",
+Lemma 3. -/
+theorem zerroH_eq (n r : ℕ) (hr : 1 ≤ r)
+    (hnr : r + 1 ≤ n) :
+    zerroH n r = zerroH n (r - 1) := by
+  rw [zerroH_eq_mul_stirlingSum n r (by omega),
+    zerroH_eq_mul_stirlingSum n (r - 1) (by omega),
+    show r - 1 + 1 = r by omega,
+    show n - (r - 1) = (n - r) + 1 by omega,
+    stirlingSum_succ r (n - r) (by omega)]
 
 private theorem stirlingSum_eq_base (r m : ℕ) (hm : 0 < m) :
     stirlingSum r m = stirlingSum 0 (m + r) := by
   induction r generalizing m with
   | zero => simp
   | succ r ih =>
-    rw [show m + (r + 1) = (m + 1) + r by omega, ← ih (m + 1) (by omega)]
-    unfold stirlingSum
-    rw [sum_stirlingSecond_succ]
-    apply Finset.sum_congr rfl
-    intro k _
-    cases k with
-    | zero =>
-      obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm.ne'
-      simp
-    | succ k =>
-      rw [zerroU_succ r (k + 1) (by omega)]
-      ring
+    rw [show m + (r + 1) = (m + 1) + r by omega, ← ih (m + 1) (by omega),
+      stirlingSum_succ r m hm]
 
 -- At r = 0 the only term of U is the signed factorial in Garabedian’s formula.
 private theorem signed_bernoulli_eq_base (n : ℕ) (hn : 1 ≤ n) :
