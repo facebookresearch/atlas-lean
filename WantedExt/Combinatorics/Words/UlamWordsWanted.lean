@@ -53,19 +53,6 @@ public theorem_wanted ulamWordCount_limsup_div_pow_eq_top (α : ℝ) (hα : 1 < 
     (hα₀ : α < ((ulamWordCount 30 : ℝ) / (2 * 31)) ^ ((1 : ℝ) / 30)) (C : ℝ) (N : ℕ) :
     ∃ n ≥ N, C * α ^ n ≤ ulamWordCount n
 
-/-- **The inverse Ulam density has the order of the mean gap.** For $n \in \mathbb{N}$ let $U_n$
-be the set of Ulam words of length $n$, and let $\mu_g(n)$ be the mean gap of the binary values
-of the words in $U_n$. Then $2^n / |U_n|$ (the reciprocal of the density $|U_n| / 2^n$) and
-$\mu_g(n)$ have the same order of growth as $n \to \infty$: there are constants $c, C > 0$ such
-that $c \, \mu_g(n) \le 2^n / |U_n| \le C \, \mu_g(n)$ for all sufficiently large $n$.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 4 (first
-sentence). -/
-public theorem_wanted ulamDensity_inv_isTheta_ulamGapMean :
-    (fun n : ℕ => (2 : ℝ) ^ n / ulamWordCount n) =Θ[Filter.atTop]
-      fun n => (ulamGapMean n : ℝ)
-
 /-- **Ulam words with one 101 block.** For natural numbers $a$ and $b$ with $a + b \ge 2$, the
 binary word $0^a 101 0^b$ ($a$ zeros, then the letters $1, 0, 1$, then $b$ zeros) is an Ulam word
 if and only if $a + b$ is odd.
