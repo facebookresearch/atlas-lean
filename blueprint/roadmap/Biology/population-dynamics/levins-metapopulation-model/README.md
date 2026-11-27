@@ -123,3 +123,4 @@ needs.
 - [For m > 0, every solution starting nonnegative tends to p̂](tendsto-immigration-eq.md)
 - [For m > 0, the immigration equilibrium is globally stable](is-globally-stable-2.md)
 - [For 0 ≤ c ≤ e with e > 0, propagule rain ensures persistence](propagule-rain-persistence.md)
+- [Levins model with time-varying colonization and extinction](levins-model-with-time-varying-colonization-and-extinction.md)
