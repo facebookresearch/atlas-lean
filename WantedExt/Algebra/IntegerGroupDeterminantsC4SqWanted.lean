@@ -14,6 +14,7 @@ public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 public import MathlibExt.Algebra.IntegerGroupDeterminantsC4SqNormProduct
+public import MathlibExt.Algebra.IntegerGroupDeterminantsC4SqProductModSixteen
 public import MathlibExt.LinearAlgebra.Matrix.CirculantDetFour
 public import MathlibExt.LinearAlgebra.Matrix.CirculantDetFourCongruences
 
@@ -275,20 +276,6 @@ public theorem_wanted c4Sq_circulantDetFour_product_classes (a : Fin 4 × Fin 4 
         ∃ k l : ℤ, k ≡ l [ZMOD 2] ∧ D = (8 * k - 3) * (8 * l - 3)) ∧
       ((x ≡ 1 [ZMOD 4] ∧ y ≡ -1 [ZMOD 4]) ∨ (x ≡ -1 [ZMOD 4] ∧ y ≡ 1 [ZMOD 4]) →
         ∃ k l : ℤ, ¬ k ≡ l [ZMOD 2] ∧ D = (8 * k - 3) * (8 * l - 3))
-
-/-- **$D_4(b) D_4(c)$ modulo $16$.** Let
-$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ have sums $b_i$ and alternating sums
-$c_i$, and let $D_4$ be the $4 \times 4$ circulant determinant. If
-$b_0 + b_2 \not\equiv b_1 + b_3 \pmod 2$, then
-$D_4(b) D_4(c) \equiv 1 - 4(b_0 b_2 + b_1 b_3 + c_0 c_2 + c_1 c_3) \pmod{16}$.
-
-Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
-C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 10 (`integers-2024-A30-lem-10`). -/
-public theorem_wanted c4Sq_circulantDetFour_product_mod_sixteen (a : Fin 4 × Fin 4 → ℤ)
-    (h : ¬ c4SqB a 0 + c4SqB a 2 ≡ c4SqB a 1 + c4SqB a 3 [ZMOD 2]) :
-    circulantDetFour (c4SqB a) * circulantDetFour (c4SqC a) ≡
-      1 - 4 * (c4SqB a 0 * c4SqB a 2 + c4SqB a 1 * c4SqB a 3 +
-        c4SqC a 0 * c4SqC a 2 + c4SqC a 1 * c4SqC a 3) [ZMOD 16]
 
 /-- **A prime factor $8l - 3$ of $D_4(b) D_4(c)$.** Let
 $a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ have sums $b_i$, alternating sums

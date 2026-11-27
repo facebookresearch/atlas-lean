@@ -1,11 +1,13 @@
 # Flow-shop scheduling
 
 - [Instances of FLOW-SHOP SCHEDULING](flow-shop-scheduling-instance.md)
+- [Task lengths in FLOW-SHOP SCHEDULING](len.md)
 - [Well-formed instances of FLOW-SHOP SCHEDULING](well-formed.md)
 - [Feasible instances of FLOW-SHOP SCHEDULING](flow-shop-scheduling-feasible.md)
 - [FLOW-SHOP SCHEDULING as a decision problem](flow-shop-scheduling-dec.md)
 - [FLOW-SHOP SCHEDULING is NP-complete](flow-shop-scheduling-np-complete.md)
 - [Instances of multi-purpose machine flow shops](mpmflow-shop-instance.md)
+- [Machine set of a stage of a multi-purpose machine flow shop](machine-set.md)
 - [Well-formed multi-purpose machine flow shops](mpmwell-formed.md)
 - [Multi-purpose machine flow-shop schedules (flow-shop form)](is-mpmflow-shop-schedule.md)
 - [Well-formed instances of THREE-MACHINE MULTI-PURPOSE MACHINE FLOW SHOP](well-formed-2.md)
