@@ -6,10 +6,14 @@ proof are not.
 Let $L$ be a number field with ring of integers $\mathcal{O}_L$, let $E$ be an elliptic curve over
 $L$, let $\mathcal{E}$ be its Néron model over $\mathcal{O}_L$, defined as the
 [Néron model](../abelian-varieties/neron-model.md) over a discrete valuation ring with
-$\mathcal{O}_L$ in place of the discrete valuation ring: the smooth separated group scheme of finite
-type over $\mathcal{O}_L$ with generic fibre $E$ that represents the functor
+$\mathcal{O}_L$ in place of the discrete valuation ring: a
+[finite-type Néron model](../not-yet-classified/neron-models/finite-type-neron-model.md) of $E$ over
+$\mathcal{O}_L$ and its fraction field $L$, that is, a smooth separated scheme of finite type over
+$\mathcal{O}_L$ with generic fibre identified with $E$ that represents the functor
 $S \mapsto \operatorname{Hom}_L(S \times_{\operatorname{Spec} \mathcal{O}_L} \operatorname{Spec} L, E)$
-on smooth $\mathcal{O}_L$-schemes. Let $\varepsilon$ be its zero section, and let
+on smooth $\mathcal{O}_L$-schemes, with a commutative
+[group structure](../not-yet-classified/neron-models/group-structure.md) for which the identification
+of its generic fibre with $E$ is a homomorphism. Let $\varepsilon$ be its zero section, and let
 $\omega = \varepsilon^* \Omega^1_{\mathcal{E}/\mathcal{O}_L}$, an invertible $\mathcal{O}_L$-module
 with $\omega \otimes_{\sigma} \mathbb{C} = H^0(E_\sigma, \Omega^1)$ for every embedding
 $\sigma : L \to \mathbb{C}$. The **Faltings height of $E/L$** is
@@ -60,7 +64,10 @@ $$h_F(E) = - \frac{1}{12 [L : \mathbb{Q}]} \sum_{\sigma : L \to \mathbb{C}}
 
 In general, for $E$ over a number field $k$ with $j$-invariant $j$, with $\tau_\iota \in \mathbb{H}$
 of $j$-invariant $\iota(j)$ for each embedding $\iota : k \to \mathbb{C}$, and with
-$\| \cdot \|_v$ the normalized absolute values at the finite places $v$ of $k$,
+$\| \cdot \|_v$ Deligne's absolute value at a finite place $v$ of $k$, the one given by a maximal
+ideal $\mathfrak{p}$ of $\mathcal{O}_k$: $\| x \|_v = (N\mathfrak{p})^{-\operatorname{ord}_{\mathfrak{p}}(x)}$
+for $x \ne 0$, where $N\mathfrak{p} = \#(\mathcal{O}_k / \mathfrak{p})$, with no further factor
+$1/[k : \mathbb{Q}]$ (the degree is on the left),
 
 $$[k : \mathbb{Q}] \, h_F(E) = \frac{1}{12} \sum_{v \text{ finite}} \log \max(1, \| j \|_v)
   - \frac{1}{12} \sum_{\iota : k \to \mathbb{C}} \log \bigl( |\Delta(\tau_\iota)| \, (\operatorname{Im} \tau_\iota)^6 \bigr).$$
@@ -91,8 +98,9 @@ Deligne's minimum
 $h_{\mathrm{geom}}(E) = -\frac{1}{2} \log \bigl( \frac{1}{\sqrt 3} (\Gamma(1/3)/\Gamma(2/3))^3 \bigr)
 \approx -0.749$.
 
-A good expansion has pages for: the Néron model of an elliptic curve over $\mathcal{O}_L$, its existence,
-and its relation to the Néron models over the local rings $\mathcal{O}_{L,\mathfrak{p}}$; the Faltings
+A good expansion has pages for: the existence of the finite-type Néron model of an elliptic curve
+over $\mathcal{O}_L$, with its group structure, and its relation to the Néron models over the local
+rings $\mathcal{O}_{L,\mathfrak{p}}$; the Faltings
 height $h_{\mathrm{Fal}}(E/L)$ of an elliptic curve over $L$ through its Néron model, and its
 comparison with the stable height (Deligne, pp. 26–27); the minimal discriminant ideal, with the
 discriminant of a minimal Weierstrass equation at each place (Silverman, "Heights and elliptic
@@ -113,10 +121,14 @@ $\mathbb{Z} + \mathbb{Z}\tau$ is $\operatorname{Im} \tau$.
 
 ## Depends on
 
-- [Néron model of an abelian variety](../abelian-varieties/neron-model.md), for the functor that the
-  Néron model $\mathcal{E}$ of $E$ over $\mathcal{O}_L$ represents, through which
-  $h_{\mathrm{Fal}}(E/L)$ is defined, and for good reduction at a finite place $\mathfrak{p}$, over
-  the local ring $\mathcal{O}_{L,\mathfrak{p}}$
+- [Néron model of an abelian variety](../abelian-varieties/neron-model.md), for the definition over a
+  discrete valuation ring that the Néron model $\mathcal{E}$ of $E$ over $\mathcal{O}_L$ follows, and
+  for good reduction at a finite place $\mathfrak{p}$, over the local ring $\mathcal{O}_{L,\mathfrak{p}}$
+- [Finite-type Néron model](../not-yet-classified/neron-models/finite-type-neron-model.md), over
+  $\mathcal{O}_L$ and its fraction field $L$, for the Néron model $\mathcal{E}$ through which
+  $h_{\mathrm{Fal}}(E/L)$ is defined
+- [Group structure on a Néron model](../not-yet-classified/neron-models/group-structure.md), for the
+  group law of $\mathcal{E}$ and its zero section $\varepsilon$
 - [Semistable reduction theorem for abelian varieties](../abelian-varieties/semistable-reduction-theorem.md),
   for semistable reduction at a finite place, over the local ring, in the relation with the stable
   height
@@ -155,9 +167,14 @@ $\mathbb{Z} + \mathbb{Z}\tau$ is $\operatorname{Im} \tau$.
   $h_{\mathrm{geom}}(E) = h^{\mathrm{stab}}_{\mathrm{Fal}}(E/L) + \frac{1}{2} \log \pi$, p. 2; equation (6.2), p. 14, the theorem with
   $\Delta(z) = (2\pi)^{12} \eta(z)^{24}$, stated as Silverman's Proposition 1.1, and its form (6.3)
   with $-\log(2\pi)$ and $F(z) = \sqrt{\operatorname{Im}(z)} |\eta(z)|^2$ of (3.2), p. 5.
-- P. Deligne, "Preuve des conjectures de Tate et Shafarevitch [d'après G. Faltings]", Séminaire
+- P. Deligne, "Preuve des conjectures de Tate et de Shafarevitch [d'après G. Faltings]", Séminaire
   Bourbaki, exposé 616 (1983/84), Astérisque 121–122 (1985), 25–41,
-  <http://www.numdam.org/item/SB_1983-1984__26__25_0/>: p. 26, §1.2 (b), the metric
+  <http://www.numdam.org/item/SB_1983-1984__26__25_0/>: pp. 25–26, §1.1, the absolute values
+  $\| \cdot \|_v$ on $k$, which satisfy the product formula, and
+  $\#(L_{\mathcal{O}} / \mathcal{O} \cdot \ell) = \prod_{v \text{ fini}} \| \ell \|_v^{-1}$ for an
+  $\mathcal{O}$-form $L_{\mathcal{O}}$ of a $k$-vector space of rank one and $\ell \in L_{\mathcal{O}}$;
+  for the $\mathcal{O}$-form $\mathcal{O}_k$ of $k$ itself this gives
+  $\| x \|_v = (N\mathfrak{p})^{-\operatorname{ord}_{\mathfrak{p}}(x)}$; p. 26, §1.2 (b), the metric
   $\frac{1}{(2\pi)^g} \int |\alpha \wedge \bar\alpha|$ (with Faltings' $\frac{1}{2^g} |\alpha \wedge \bar\alpha|$
   noted at the foot of p. 26); p. 27, the height $h(A)$, its invariance under extension of scalars
   for semistable reduction, the geometric height $h_{\mathrm{geom}}(A) = h(A_{k'})$ and
