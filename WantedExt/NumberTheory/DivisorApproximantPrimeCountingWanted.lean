@@ -33,35 +33,6 @@ open Asymptotics Filter Finset
 
 @[expose] public section
 
-/-- **Exponential approximation of the divisibility indicator.** Let $A$ be a real-valued
-function of two natural numbers such that $A(k, n) \sin^2(n\pi/k) \ge 1$ for all natural numbers
-$k, n$ with $1 \le k \le n$ and $k \nmid n$. Then for all natural numbers $k, n$ with
-$1 \le k \le n$,
-$$\left| e^{-nkA(k, n)\sin^2(n\pi/k)} - \delta_{k \mid n} \right| \le e^{-nk},$$
-where $\delta_{k \mid n}$ is $1$ if $k$ divides $n$ and $0$ otherwise.
-
-When $k \mid n$ the difference is $0$; otherwise it lies in $(0, e^{-nk}]$.
-
-Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
-Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Lemma 1 (`integers-2026-A46-lem-1`). -/
-public theorem_wanted abs_exp_approx_sub_dvd_indicator_le (A : ℕ → ℕ → ℝ)
-    (hA : ∀ k n, 1 ≤ k → k ≤ n → ¬ k ∣ n →
-      1 ≤ A k n * Real.sin (n * Real.pi / k) ^ 2)
-    (k n : ℕ) (hk : 1 ≤ k) (hkn : k ≤ n) :
-    |Real.exp (-(n * k * A k n * Real.sin (n * Real.pi / k) ^ 2)) - (if k ∣ n then 1 else 0)| ≤
-      Real.exp (-(n * k : ℝ))
-
-/-- **Sine lower bound at non-divisors.** For all positive integers $k$ and $n$ with $k \nmid n$,
-$$\frac{\pi^2 k^2}{2} \sin^2\frac{n\pi}{k} \ge 1.$$
-In other words, $A(k, n) = \pi^2 k^2 / 2$ satisfies the hypothesis
-$A(k, n) \sin^2(n\pi/k) \ge 1$ of the exponential approximation of the divisibility indicator.
-
-Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
-Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Lemma 4 (`integers-2026-A46-lem-4`). -/
-public theorem_wanted one_le_pi_sq_mul_sq_div_two_mul_sin_sq (k n : ℕ) (hk : 1 ≤ k)
-    (hn : 1 ≤ n) (hkn : ¬ k ∣ n) :
-    1 ≤ Real.pi ^ 2 * k ^ 2 / 2 * Real.sin (n * Real.pi / k) ^ 2
-
 /-- **Trigonometric approximation of the divisor-counting function.** For a natural number $k$
 let $\tau(k)$ be the number of positive divisors of $k$ and
 $$\tilde\tau(k) = \sum_{j=1}^{k} \exp\left(-\frac{\pi^2}{2} k j^3 \sin^2\frac{k\pi}{j}\right).$$

@@ -46,7 +46,7 @@ endpoints is exactly when they intersect. Every circle graph has such a model. `
 states the chord conditions of `DominatingSetCircleGraph.WellFormed` (that predicate also
 constrains a domination bound, which this problem does not have).
 
-The question is the one of HAMILTONIAN CIRCUIT ([GT37], `HamiltonianCycleUndirectedWanted`):
+The question is the one of HAMILTONIAN CIRCUIT ([GT37], `HamiltonianCycleUndirectedDefs`):
 at least three vertices and a Hamiltonian cycle (Mathlib's `SimpleGraph.IsHamiltonian`), asked
 of the circle graph.
 

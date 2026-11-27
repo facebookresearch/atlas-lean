@@ -23,4 +23,7 @@
 - [Ben-Or's randomized consensus](ben-or-s-randomized-consensus.md)
 - [Consensus under partial synchrony needs a majority](consensus-under-partial-synchrony-needs-a.md)
 - [k-set agreement](k-set-agreement.md)
-- [Impossibility of coordinated attack](impossibility-of-coordinated-attack.md)
+- [Impossibility of coordinated attack](coordinated-attack/README.md)
+- [Approximate Agreement and Clock Synchronization](approximate-agreement-and-clock-synchronization/README.md)
+- [Randomized Consensus, Snapshot Detection and Self-Stabilization](randomized-consensus-snapshots-and-self-stabilization/README.md)
+- [Unreliable Failure Detectors](unreliable-failure-detectors/README.md)

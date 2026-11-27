@@ -18,6 +18,12 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 
 The general reduction lemma bounds the token surplus of a reduced position when a move
 produces a nonreduced option.
+
+## References
+
+* Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
+  Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, pp. 1–25. Theorem 4 (Section 3.2) gives the
+  NIRB criterion, and Lemma 4 (Section 3.5) gives the General Reduction Lemma.
 -/
 
 namespace MetaMathlibExt
@@ -174,6 +180,32 @@ private theorem reduced_of_total {n : ℕ} {A : Finset ℕ} {a : ℕ} (ha : a �
   exact ⟨t, hpq.trans hqt, ht, hti⟩
 
 end slowANim_generalReduction
+
+/-- **NIRB criterion for reduced positions.** Let $A \subseteq \{1, \dots, n\}$ be nonempty with
+least element $a$, and let $p$ be a position of Slow $A$-Nim on $n$ stacks. Then $p$ is reduced
+if and only if $a \cdot M \le \sum_i p_i$, where $M$ is the largest stack height of $p$ (taken
+to be $0$ when $n = 0$).
+
+The source assumes $n \ge 3$; the statement here is made for every $n$.
+
+Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
+Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 4. -/
+public theorem slowANimReduced_iff_nirb (n : ℕ) (A : Finset ℕ)
+    (hA : A ⊆ Finset.Icc 1 n) (hAne : A.Nonempty) (p : Fin n → ℕ) :
+    SlowANimReduced A p ↔ A.min' hAne * Finset.univ.sup p ≤ ∑ i, p i := by
+  constructor
+  · intro hp
+    cases n with
+    | zero => simp
+    | succ n =>
+      obtain ⟨i, -, hi⟩ := Finset.exists_mem_eq_sup Finset.univ
+        ⟨(0 : Fin (n + 1)), Finset.mem_univ _⟩ p
+      obtain ⟨t, hpt, -, ht⟩ := hp i
+      rw [hi]
+      exact slowANim_generalReduction.tokens_needed_to_empty hAne i hpt ht
+  · intro h
+    have ha := Finset.min'_mem A hAne
+    exact slowANim_generalReduction.reduced_of_total ha (Finset.mem_Icc.mp (hA ha)).1 h
 
 /-- **General reduction lemma.** Let $A \subseteq \{1, \dots, n\}$ be nonempty with least element
 $a$, and let $p$ be a reduced position of Slow$A$-Nim $\mathrm{SN}(n, A)$ with largest stack
