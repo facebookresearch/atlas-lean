@@ -44,14 +44,11 @@ total contour length, its whole-trace ropelength ratio, and the
 ropelength of its ambient-isotopy type as the infimum over isotopic
 representatives.
 
-`ParametrizedKnot`, `AmbientIsotopy`, and `CircleReparam` deliberately
-match, field for field, the `Knot`, `AmbientIsotopy`, and
-`CircleReparam` of `WantedExt.Topology.ConwayKnotShared`. That file is
-a trusted verbatim copy of lean-eval helpers and MathlibExt cannot
-import WantedExt, so this file is the canonical working copy instead;
-`WantedExt.Topology.ConwayKnotEuclideanBridge` proves the two APIs
-interoperate (fieldwise equivalences and isotopy transfer) without
-modifying either definition.
+Use this API for new work on parametrized smooth knots and links.
+`ParametrizedKnot`, `AmbientIsotopy`, and `CircleReparam` match the fields of
+`Knot`, `AmbientIsotopy`, and `CircleReparam` in `MathlibExt.Topology.ConwayKnotShared`,
+which preserves the lean-eval benchmark definitions. `MathlibExt.Topology.ConwayKnotEuclideanBridge`
+converts between the two APIs and transfers isotopy of knots and two-component links.
 -/
 
 /-- **Parametrized knot.** An oriented parametrized smooth knot in Euclidean 3-space is a

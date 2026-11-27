@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.MetricSpace.HausdorffDimension
-public import MathlibExt.NumberTheory.LurothConvergent
+public import MathlibExt.NumberTheory.LurothDiophantineApproximation
 public import WantedExt.NumberTheory.LurothConsecutiveDigitsWanted
 
 namespace MetaMathlibExt
@@ -47,19 +47,6 @@ public theorem wellApproximableSet_subset_Ico (ψ : ℕ → ℝ) :
     wellApproximableSet ψ ⊆ Set.Ico 0 1 :=
   fun _ hx => hx.1
 
-/-- **Lower order at infinity.** For $\psi : \mathbb{N} \to \mathbb{R}$, the lower order at infinity
-of $1/\psi$ is
-$$\tau_\psi = \liminf_{q \to \infty} \max\left(-\frac{\log \psi(q)}{\log q},\, 0\right),$$
-with the liminf taken in $[0, \infty]$. Here $\log x$ means $\log |x|$ for $x \ne 0$ and
-$\log 0 = 0$, and the ratio is read as $0$ when $\log q = 0$. For $\psi$ with values in $(0, 1]$
-the ratio is nonnegative once $q \ge 2$, so the truncation at $0$ has no effect there, and
-$\tau_\psi$ may be infinite.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, equation (11). -/
-public noncomputable def lowerOrderAtInfinity (ψ : ℕ → ℝ) : ℝ≥0∞ :=
-  liminf (fun q : ℕ => ENNReal.ofReal (-Real.log (ψ q) / Real.log q)) atTop
-
 /-- **Upper order at infinity.** For a function $\psi$ from the natural numbers to the reals, the
 upper order at infinity of $\psi$ is the element
 $$\bar\tau_\psi = \limsup_{q \to \infty} \max\left(0, \frac{-\log \psi(q)}{\log q}\right)$$
@@ -69,31 +56,6 @@ Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
 Properties and Conjectures*, INTEGERS 26 (2026), Article A45, equation (11). -/
 public noncomputable def upperOrderAtInfinity (ψ : ℕ → ℝ) : ℝ≥0∞ :=
   limsup (fun q : ℕ => ENNReal.ofReal (-Real.log (ψ q) / Real.log q)) atTop
-
-/-- **The order ratio of $q^{-\tau}$.** For every real $\tau$ and all sufficiently large natural
-numbers $q$, $\max(0, -\log((q^{\tau})^{-1})/\log q) = \max(0, \tau)$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, equation (11). -/
-public theorem orderRatio_rpow_inv (τ : ℝ) :
-    ∀ᶠ q : ℕ in atTop,
-      ENNReal.ofReal (-Real.log (((q : ℝ) ^ τ)⁻¹) / Real.log q) = ENNReal.ofReal τ := by
-  filter_upwards [eventually_ge_atTop 2] with q hq
-  have hq' : (1 : ℝ) < q := by exact_mod_cast hq
-  have hlog : Real.log q ≠ 0 := (Real.log_pos hq').ne'
-  rw [Real.log_inv, Real.log_rpow (by linarith), neg_neg, mul_div_assoc, div_self hlog,
-    mul_one]
-
-/-- **Lower order at infinity of a power function.** For a real number $\tau$, let
-$\psi : \mathbb{N} \to \mathbb{R}$ be given by $\psi(q) = q^{-\tau}$ (the value at $q = 0$ does not
-matter). Then the lower order at infinity of $1/\psi$ is $\tau_\psi = \max(\tau, 0)$, an element of
-$[0, \infty]$; in particular $\tau_\psi = \tau$ when $\tau \ge 0$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, remark after Theorem 7. -/
-public theorem lowerOrderAtInfinity_rpow_inv (τ : ℝ) :
-    lowerOrderAtInfinity (fun q => ((q : ℝ) ^ τ)⁻¹) = ENNReal.ofReal τ := by
-  rw [lowerOrderAtInfinity, liminf_congr (orderRatio_rpow_inv τ), liminf_const]
 
 /-- **Upper order at infinity of $q^{-\tau}$.** For every real $\tau$, the upper order at infinity
 of $q \mapsto (q^{\tau})^{-1}$ is $\max(0, \tau)$; in particular it is $\tau$ when $\tau \ge 0$.
@@ -183,17 +145,6 @@ public theorem lurothMap_lurothMap_27_71 :
   · rw [lurothMap, h1]; norm_num
   · rw [lurothMap, h2]; norm_num
 
-/-- **Recurrence for Lüroth denominators.** For every sequence of natural numbers
-$d_0, d_1, d_2, \dots$ with Lüroth denominators $Q_0, Q_1, Q_2, \dots$ and every $n \ge 0$,
-$$Q_{n+1} = Q_n (d_n - 1) d_{n+1}.$$
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, equation (8). -/
-public theorem lurothDenominator_succ (d : ℕ → ℕ) (n : ℕ) :
-    lurothDenominator d (n + 1) = lurothDenominator d n * (d n - 1) * d (n + 1) := by
-  simp only [lurothDenominator, Finset.prod_range_succ]
-  ring
-
 /-- **Lüroth denominators of the constant digit sequence 2.** If $d_j = 2$ for every $j \ge 0$,
 then the Lüroth denominators are $Q_n = 2^{n+1}$ for every $n \ge 0$ (digits numbered from $0$;
 this is the paper's $Q_{n+1} = 2^{n+1}$).
@@ -205,53 +156,6 @@ public theorem lurothDenominator_two (n : ℕ) :
   induction n with
   | zero => rfl
   | succ n ih => rw [lurothDenominator_succ, ih]; ring
-
-/-- **Recurrence for Lüroth convergents.** For every sequence of natural numbers
-$d_0, d_1, d_2, \dots$ with Lüroth denominators $Q_n$ and Lüroth convergents $x_n$, and every
-$n \ge 0$, $x_{n+1} = x_n + 1/Q_{n+1}$, where $1/Q_{n+1}$ is read as $0$ if $Q_{n+1} = 0$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, Section 2. -/
-public theorem lurothConvergent_succ (d : ℕ → ℕ) (n : ℕ) :
-    lurothConvergent d (n + 1) =
-      lurothConvergent d n + 1 / (lurothDenominator d (n + 1) : ℚ) := by
-  rw [lurothConvergent, Finset.sum_range_succ, ← lurothConvergent]
-
-/-- **Lüroth well approximable numbers.** For a function $\psi$ from the natural numbers to the
-reals, $L(\psi)$ is the set of $x \in (0, 1]$ such that $|x - c_n(x)| < \psi(Q_n(x))/Q_n(x)$ for
-infinitely many $n$, where $Q_n(x)$ and $c_n(x)$ are the $n$-th Lüroth denominator and the $n$-th
-Lüroth convergent of the Lüroth digit sequence of $x$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, Section 2. -/
-public def lurothWellApproximableSet (ψ : ℕ → ℝ) : Set ℝ :=
-  {x | x ∈ Set.Ioc 0 1 ∧ ∃ᶠ n in atTop,
-    |x - lurothConvergent (lurothDigitSeq x) n| <
-      ψ (lurothDenominator (lurothDigitSeq x) n) / lurothDenominator (lurothDigitSeq x) n}
-
-/-- **Lüroth well approximable numbers lie in $(0, 1]$.** For every function $\psi$ from the
-natural numbers to the reals, the set $L(\psi)$ of Lüroth $\psi$-well approximable numbers is
-contained in $(0, 1]$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, Section 2. -/
-public theorem lurothWellApproximableSet_subset_Ioc (ψ : ℕ → ℝ) :
-    lurothWellApproximableSet ψ ⊆ Set.Ioc 0 1 :=
-  fun _ hx => hx.1
-
-/-- **Lüroth convergent triples.** The set $S$ consists of the triples $(c_n(y), Q_n(y), d_n(y))$
-for $y \in (0, 1]$ and $n \ge 0$, where $d_0(y), d_1(y), \dots$ are the Lüroth digits of $y$
-(indexed from $0$), $Q_n(y) = d_n(y) \prod_{j < n} d_j(y)(d_j(y) - 1)$ is the $n$-th Lüroth
-denominator of this digit sequence, and $c_n(y) = \sum_{k \le n} 1/Q_k(y)$ is its $n$-th Lüroth
-convergent. The first entry is the rational number $c_n(y)$, the second the natural number
-$Q_n(y)$ and the third the digit $d_n(y)$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, equation (16). -/
-public def lurothTripleSet : Set (ℚ × ℕ × ℕ) :=
-  {t | ∃ y ∈ Set.Ioc (0 : ℝ) 1, ∃ n,
-    t = (lurothConvergent (lurothDigitSeq y) n, lurothDenominator (lurothDigitSeq y) n,
-      lurothDigitSeq y n)}
 
 /-- **A Lüroth triple from the expansion of $1$.** Let $S$ be the set of triples
 $(P_n(y)/Q_n(y), Q_n(y), d_n(y))$ for $y \in (0, 1]$ and $n \ge 0$, where $P_n(y)/Q_n(y)$ is the
@@ -288,20 +192,6 @@ public theorem_wanted hausdorffMeasure_limsup_closedBall_of_volume (c r : ℕ �
       limsup (fun n => Metric.closedBall (c n) (r n ^ s)) atTop) = 1) :
     μH[s] (limsup (fun n => Metric.closedBall (c n) (r n)) atTop) = ∞ ∧
       ENNReal.ofReal s ≤ dimH (limsup (fun n => Metric.closedBall (c n) (r n)) atTop)
-
-/-- **Recognising Lüroth convergents.** For $y \in (0, 1]$ and $n \ge 0$ let $P_n(y)/Q_n(y)$ be
-the $n$-th Lüroth convergent of $y$, $Q_n(y)$ its Lüroth denominator and $d_n(y)$ the $n$-th
-Lüroth digit of $y$, and let $S$ be the set of all triples $(P_n(y)/Q_n(y), Q_n(y), d_n(y))$ for
-$y \in (0, 1]$ and $n \ge 0$. If $x \in (0, 1]$ and $(P/Q, Q, d) \in S$ satisfy
-$0 < x - P/Q \le 1/((d - 1) Q)$, then $P/Q$ is a Lüroth convergent of $x$, that is,
-$P/Q = P_n(x)/Q_n(x)$ for some $n$.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, Proposition 4. -/
-public theorem_wanted exists_lurothConvergent_eq_of_mem_lurothTripleSet (x : ℝ)
-    (hx : x ∈ Set.Ioc 0 1) (t : ℚ × ℕ × ℕ) (ht : t ∈ lurothTripleSet)
-    (hpos : 0 < x - t.1) (hle : x - t.1 ≤ 1 / (((t.2.2 : ℝ) - 1) * t.2.1)) :
-    ∃ n, lurothConvergent (lurothDigitSeq x) n = t.1
 
 /-- **Lüroth $q^{-\tau}$-well approximable numbers as a limsup over convergent triples.** Let
 $\tau \ge 0$ and let $L(\tau)$ be the set of Lüroth $\psi$-well approximable numbers for
@@ -423,23 +313,6 @@ public theorem_wanted dimH_lurothWellApproximableSet_bounds_denominators (ψ : �
     lowerOrderAtInfinity ψ ≤ lowerLam ∧ upperLam ≤ upperOrderAtInfinity ψ ∧
       (1 + upperLam)⁻¹ ≤ dimH (lurothWellApproximableSet ψ) ∧
       dimH (lurothWellApproximableSet ψ) ≤ (1 + lowerLam)⁻¹
-
-/-- **Without monotonicity the Lüroth dimension can vanish.** For every real number $\tau \ge 0$
-there is a function $\psi$ from the natural numbers to $(0, 1]$ such that: $\psi$ is not
-non-increasing on $\{q : q \ge N\}$ for any $N$; the lower order at infinity
-$\liminf_{q \to \infty} (-\log \psi(q) / \log q)$ of $1/\psi$ equals $\tau$; and the set
-$L(\psi)$ of $x \in (0, 1]$ such that $|x - P_n(x)/Q_n(x)| < \psi(Q_n(x))/Q_n(x)$ for infinitely
-many $n$, where $P_n(x)/Q_n(x)$ is the $n$-th Lüroth convergent of $x$ and $Q_n(x)$ its Lüroth
-denominator, has Hausdorff dimension $0$.
-
-Since $0 < 1/(1 + \tau)$, the Tan–Zhou conjecture fails without monotonicity.
-
-Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
-Properties and Conjectures*, INTEGERS 26 (2026), Article A45, Theorem 9. -/
-public theorem_wanted exists_not_antitone_dimH_lurothWellApproximableSet_eq_zero (τ : ℝ)
-    (hτ : 0 ≤ τ) :
-    ∃ ψ : ℕ → ℝ, (∀ q, 0 < ψ q ∧ ψ q ≤ 1) ∧ (¬ ∃ N, AntitoneOn ψ (Set.Ici N)) ∧
-      lowerOrderAtInfinity ψ = ENNReal.ofReal τ ∧ dimH (lurothWellApproximableSet ψ) = 0
 
 /-- **Dimension of Lüroth well approximable sets under a divergence condition.** Let $\psi$ be a
 function from the natural numbers to $(0, 1]$. Let $L(\psi)$ be the set of $x \in (0, 1]$ such

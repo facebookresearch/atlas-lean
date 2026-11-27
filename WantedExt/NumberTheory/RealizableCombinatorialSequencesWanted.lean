@@ -16,6 +16,7 @@ public import MathlibExt.Combinatorics.Enumerative.ZagierNumber
 public import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizability
 public import MathlibExt.NumberTheory.ArithmeticFunction.MoebiusGeometricGrowth
 public import MathlibExt.NumberTheory.DoldPrimePowerCongruences
+public import MathlibExt.NumberTheory.HelouTerjanianLargePrime
 public import MathlibExt.NumberTheory.HelouTerjanianTwo
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
@@ -82,19 +83,6 @@ public theorem_wanted not_isAlmostRealizableSeq_catalan_motzkin_schroder :
     ¬ IsAlmostRealizableSeq catalan ∧ ¬ IsAlmostRealizableSeq motzkinNumber ∧
       ¬ IsAlmostRealizableSeq Nat.largeSchroder
 
-/-- **Helou–Terjanian congruence for primes $p \ge 5$.** Let $p \ge 5$ be a prime and let $m$ and
-$n$ be integers with $0 < m < n$. Then $\binom{np}{mp} \equiv \binom{n}{m} \pmod{p^e}$, where
-$e = 3 + \max(\nu_p(m), \nu_p(n - m)) + \nu_p\big(\binom{n}{m}\big)$ and $\nu_p$ is the $p$-adic
-valuation.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Lemma 26 (1) (`jis-2024-24.3.3-lem-26`). -/
-public theorem_wanted choose_mul_prime_modEq_of_five_le (p n m : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p)
-    (hm : 0 < m) (hmn : m < n) :
-    (n * p).choose (m * p) ≡ n.choose m
-      [MOD p ^ (3 + max (padicValNat p m) (padicValNat p (n - m)) +
-        padicValNat p (n.choose m))]
-
 /-- **Helou–Terjanian congruence for $p = 3$.** Let $m$ and $n$ be integers with $0 < m < n$.
 Then $\binom{3n}{3m} \equiv \binom{n}{m} \pmod{3^e}$, where
 $e = 2 + \max(\nu_3(m), \nu_3(n - m)) + \nu_3\big(\binom{n}{m}\big)$ and $\nu_3$ is the $3$-adic
@@ -106,23 +94,6 @@ public theorem_wanted choose_three_mul_modEq (n m : ℕ) (hm : 0 < m) (hmn : m <
     (3 * n).choose (3 * m) ≡ n.choose m
       [MOD 3 ^ (2 + max (padicValNat 3 m) (padicValNat 3 (n - m)) +
         padicValNat 3 (n.choose m))]
-
-/-- **Binomial coefficients at multiples of a prime divisor.** Let $p$ be a prime and let
-$n \ge 1$ be an integer divisible by $p$. Then for every integer $\lambda \ge 0$ with
-$\lambda p \ne n$,
-
-$$\binom{n}{\lambda p} \equiv \binom{n/p}{\lambda} \pmod{p^e},$$
-
-where $e = \max(\nu_p(n), \nu_p(n - \lambda p))$ and $\nu_p$ is the $p$-adic valuation; the
-integer $n - \lambda p$ may be negative, and $\nu_p(n - \lambda p)$ is the valuation of its
-absolute value.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Lemma 27 (`jis-2024-24.3.3-lem-27`). -/
-public theorem_wanted choose_mul_prime_modEq_choose_div (n p l : ℕ) (hp : p.Prime) (hpn : p ∣ n)
-    (hn : 0 < n) (hl : l * p ≠ n) :
-    (n.choose (l * p) : ℤ) ≡ ((n / p).choose l : ℤ)
-      [ZMOD (p : ℤ) ^ max (padicValNat p n) (padicValInt p ((n : ℤ) - l * p))]
 
 /-- **Even-binomial-type sums are Dold realizable.** Let $r \ge 1$, $s$, $t$ and $u$ be natural
 numbers with $t + u \ge 1$, and let

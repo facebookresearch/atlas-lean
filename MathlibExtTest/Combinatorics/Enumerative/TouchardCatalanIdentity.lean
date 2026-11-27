@@ -12,6 +12,20 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.NormNum
 import MathlibExt.Combinatorics.Enumerative.TouchardCatalanIdentity
 
+open Finset MetaMathlibExt
+
+example :
+    ∑ k ∈ range (3 + 1), ((3 : ℕ).choose k : ℚ) * (2 * k + 1) / (k + 2) *
+      2 / 2 ^ k * catalan k = 19 / 2 := by
+  rw [sum_choose_two_mul_add_one_div_catalan]
+  decide +kernel
+
+example :
+    ∑ k ∈ range (4 + 1), ((4 : ℕ).choose k : ℚ) * (2 * k + 1) / (k + 2) *
+      2 / 2 ^ k * catalan k = 177 / 8 := by
+  rw [sum_choose_two_mul_add_one_div_catalan]
+  decide +kernel
+
 open Finset
 
 namespace MetaMathlibExt

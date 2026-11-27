@@ -19,14 +19,8 @@ $g_2^3 - 27 g_3^2 = \frac{64 \pi^{12}}{27} (E_4^3 - E_6^2) = (2\pi)^{12} (E_4^3 
 [identity $\Delta = (E_4^3 - E_6^2)/1728$](discriminant-eq-eisenstein-cube-sub-sq.md) for the modular discriminant
 $\Delta = \eta^{24}$.
 
-## Depends on
-
-This node has no prerequisites.
-
-## Proof depends on
-
-- [Even zeta values and Bernoulli numbers](../../zeta-l-functions/riemann-zeta/zeta-even-integers-bernoulli.md), for $\zeta(4) = \pi^4/90$ and $\zeta(6) = \pi^6/945$
-- [The modular discriminant in terms of Eisenstein series](discriminant-eq-eisenstein-cube-sub-sq.md), for $\eta^{24} = (E_4^3 - E_6^2)/1728$
+The sum can include the zero pair in Lean without changing its value: its summand is zero
+under Lean's convention $0^{-1}=0$.
 
 ## Sources
 

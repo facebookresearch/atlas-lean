@@ -1,0 +1,3 @@
+# Self-dual monotone functions on n + 1 variables split as b and its dual
+
+Order $\{0,1\}$ by $0 < 1$, inputs coordinatewise and Boolean functions pointwise, with $\lor$ the pointwise disjunction; let $f^*(x) = \lnot f(\bar x)$ be the dual of $f$, where $\bar x$ is the coordinatewise complement of $x$, and call a Boolean function self-dual monotone when it is monotone and equals its dual. Let $F$ be a self-dual monotone Boolean function on $\{0,1\}^{n+1}$ and let $b(x) = F(x, 0)$ for $x \in \{0,1\}^n$. Then $b$ is monotone, $b \le b^*$, and $F(x, 0) = b(x)$ and $F(x, 1) = b^*(x)$ for every $x$, that is, $F$ is the concatenation $b \cdot b^*$.

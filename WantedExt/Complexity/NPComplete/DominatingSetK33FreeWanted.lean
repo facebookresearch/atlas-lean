@@ -26,7 +26,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -43,7 +43,7 @@ INSTANCE: a graph `G = (V, E)` with no subgraph homeomorphic to `K₃,₃`, and 
 `V' ⊆ V` with `|V'| ≤ K` such that for all `u ∈ V - V'` there is a `v ∈ V'` for which
 `{u, v} ∈ E`?
 
-This is the restriction of DOMINATING SET (`WantedExt.Complexity.NPComplete.DominatingSetWanted`,
+This is the restriction of DOMINATING SET (`CSLibExt.Complexity.NPComplete.DominatingSetDefs`,
 [GT2]) to the class that Johnson's 1985 table calls "K3,3-free" and de Figueiredo et al. call
 K3,3-FREE*: "the class of graphs that contain no subgraphs homeomorphic to K3,3; in other words,
 the class of graphs that do not contain K3,3 as a topological minor". The instance, the graph,

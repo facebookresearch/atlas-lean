@@ -1,0 +1,17 @@
+# Smith Hazel
+
+- [Model](model.md)
+- [Phenotype](phenotype.md)
+- [Aggregate](aggregate.md)
+- [Index](index-2.md)
+- [Phenotypic Cov](phenotypic-cov.md)
+- [Genetic Cov](genetic-cov.md)
+- [Residual Cov](residual-cov.md)
+- [Objective Cov](objective-cov.md)
+- [Regression Weights](regression-weights.md)
+- [Beta](beta.md)
+- [Heritability](heritability.md)
+- [Gain](gain.md)
+- [Rescaling the index coefficients](upper-event-smul.md)
+- [Reversing the index coefficients](upper-event-neg.md)
+- [Positive phenotypic variances](variance-phenotype-pos.md)
