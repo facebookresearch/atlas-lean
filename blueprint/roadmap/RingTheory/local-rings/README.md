@@ -22,3 +22,5 @@ Local rings and their residue fields, Krull dimension, adic completion, regular 
 - [Nakayama's lemma for finitely generated submodules](nakayama-lemma.md)
 - [Nakayama's lemma for maps onto a finite module](nakayama-surjectivity-criterion.md)
 - [The Krull dimension of a Noetherian local ring is at most the number of generators of its maximal ideal](noetherian-local-dimension-bound.md)
+- [Dutta multiplicity bounds Hilbert–Samuel multiplicity for complete domains](dutta-multiplicity-complete-domain.md)
+- [Ring-theoretic properties of the completed surface-cone candidate](complete-normal-threefold-local-domain.md)

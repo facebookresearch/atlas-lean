@@ -25,7 +25,11 @@ with the corresponding letter of the sequence.
 
 * Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for ℤ*,
   INTEGERS 24 (2024), Article A112, pp. 1–27. Neutral padding follows Lemma 7.1 (p. 19),
-  using the automaton identities (7) and (8) of Section 6.
+  using the automaton identities (7) and (8) of Section 6. Tail injectivity and order follow
+  Lemma 3.12 (pp. 10–11), using the weighted-length bound and uniqueness in Lemmas 3.3 and 3.4.
+* Jean-Marie Dumont and Alain Thomas, *Systèmes de numération et fonctions fractales relatifs aux
+  substitutions*, Theoretical Computer Science 65 (2) (1989), pp. 153–169, Lemmas 1.1 and 1.3
+  (the originals of Lemmas 3.3 and 3.4, respectively).
 -/
 
 namespace MetaMathlibExt
@@ -357,6 +361,99 @@ public theorem letterAdmissibleSequence_eq_of_weightedLength_eq {A : Type*}
     · exact htop
     · exact ih (s (k + 1)).2 hshort hshort' (Nat.add_right_cancel hsum) i
         (Nat.le_of_lt_succ hi)
+
+/-- **Tails are injective and order-preserving.** Let $\eta$ be a substitution, let $x$ be a
+letter, let $p \ge 1$, and let $(m_j, a_j)_{j = 0, \dots, p-1}$ and
+$(m'_j, a'_j)_{j = 0, \dots, p-1}$ be $x$-admissible sequences. Put
+$n = \sum_{j<p} |\eta^j(m_j)|$ and $n' = \sum_{j<p} |\eta^j(m'_j)|$, and let $t$ and $t'$ be the
+digit words $|m_{p-1}| \cdots |m_0|$ and $|m'_{p-1}| \cdots |m'_0|$. Then $n = n'$ if and only if
+$t = t'$, and $n < n'$ if and only if $t$ is lexicographically smaller than $t'$, with digits
+compared as natural numbers.
+
+Source: Sébastien Labbé and Jana Lepšová, *Dumont-Thomas Complement Numeration Systems for
+ℤ*, INTEGERS 24 (2024), Article A112, Lemma 3.12. -/
+public theorem tail_injective_and_strictMono {A : Type*} (η : A → List A)
+    (hη : IsSubstitution η) (p : ℕ) (hp : 1 ≤ p) (x : A) (s s' : ℕ → List A × A)
+    (hs : IsLetterAdmissibleSequence η x s (p - 1))
+    (hs' : IsLetterAdmissibleSequence η x s' (p - 1)) :
+    ((∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length =
+        ∑ j ∈ Finset.range p, (morphIterate η j (s' j).1).length) ↔
+      (List.range p).reverse.map (fun j => (s j).1.length) =
+        (List.range p).reverse.map (fun j => (s' j).1.length)) ∧
+    ((∑ j ∈ Finset.range p, (morphIterate η j (s j).1).length <
+        ∑ j ∈ Finset.range p, (morphIterate η j (s' j).1).length) ↔
+      (List.range p).reverse.map (fun j => (s j).1.length) <
+        (List.range p).reverse.map (fun j => (s' j).1.length)) := by
+  let weight (q : ℕ) (u : ℕ → List A × A) :=
+    ∑ j ∈ Finset.range q, (morphIterate η j (u j).1).length
+  let digits (q : ℕ) (u : ℕ → List A × A) := (List.range q).reverse.map fun j => (u j).1.length
+  have weight_lt_of_top_lt {u v : ℕ → List A × A} {q : ℕ} {b : A}
+      (hu : IsLetterAdmissibleSequence η b u q) (hv : IsLetterAdmissibleSequence η b v q)
+      (hlt : (u q).1.length < (v q).1.length) : weight (q + 1) u < weight (q + 1) v := by
+    -- The upper endpoint of the smaller digit's block is at most the larger digit's weight.
+    have hpre : (u q).1 ++ [(u q).2] <+: (v q).1 :=
+      List.prefix_of_prefix_length_le hu.2 (List.IsPrefix.trans ⟨[(v q).2], rfl⟩ hv.2) (by
+        simpa only [List.length_append, List.length_singleton] using Nat.succ_le_of_lt hlt)
+    obtain ⟨rest, hrest⟩ := hpre
+    have himage : morphIterate η q ((u q).1 ++ [(u q).2]) <+:
+        morphIterate η q (v q).1 := by
+      refine ⟨morphIterate η q rest, ?_⟩
+      rw [← morphIterate_getElem_eq_substitutionAutomaton_tail.iterate_append, hrest]
+    refine (admissibleSequence_weightedLength_lt η hη u q hu.1).trans_le
+      (himage.length_le.trans ?_)
+    simp only [weight, Finset.sum_range_succ (n := q)]
+    exact Nat.le_add_left _ _
+  have weight_lt_iff (u v : ℕ → List A × A) (q : ℕ) (b : A)
+      (hu : 0 < q → IsLetterAdmissibleSequence η b u (q - 1))
+      (hv : 0 < q → IsLetterAdmissibleSequence η b v (q - 1)) :
+      weight q u < weight q v ↔ digits q u < digits q v := by
+    induction q generalizing b with
+    | zero => simp [weight, digits]
+    | succ q ih =>
+      have hu := hu q.succ_pos
+      have hv := hv q.succ_pos
+      simp only [Nat.add_one_sub_one] at hu hv
+      -- Reversing the range brings the most significant digit to the head.
+      simp only [digits, List.range_succ (n := q), List.reverse_append, List.reverse_singleton,
+        List.singleton_append, List.map_cons, List.cons_lt_cons_iff]
+      rcases lt_trichotomy (u q).1.length (v q).1.length with hlt | heq | hgt
+      · simp [hlt, weight_lt_of_top_lt hu hv hlt]
+      · -- Equal digits pick the same prefix and next letter in the common image.
+        have hlen : ((u q).1 ++ [(u q).2]).length = ((v q).1 ++ [(v q).2]).length := by
+          simp [heq]
+        have hwords := (List.prefix_of_prefix_length_le hu.2 hv.2 hlen.le).eq_of_length hlen
+        obtain ⟨hm, ha⟩ := List.append_inj hwords heq
+        have htop : u q = v q := Prod.ext hm (by simpa using ha)
+        have shorten {t : ℕ → List A × A} (ht : IsAdmissibleSequence η t q) (hq : 0 < q) :
+            IsLetterAdmissibleSequence η (t q).2 t (q - 1) := by
+          refine ⟨fun i hi => ht i (by omega), ?_⟩
+          simpa only [Nat.sub_add_cancel hq] using ht (q - 1) (by omega)
+        have hshort' (hq : 0 < q) : IsLetterAdmissibleSequence η (u q).2 v (q - 1) := by
+          rw [htop]
+          exact shorten hv.1 hq
+        simpa only [weight, Finset.sum_range_succ (n := q), htop, Nat.add_lt_add_iff_right,
+          heq, lt_self_iff_false, false_or, true_and] using ih (u q).2 (shorten hu.1) hshort'
+      · simp [Nat.lt_asymm hgt, hgt.ne.symm, Nat.lt_asymm (weight_lt_of_top_lt hv hu hgt)]
+  change (weight p s = weight p s' ↔ digits p s = digits p s') ∧
+    (weight p s < weight p s' ↔ digits p s < digits p s')
+  have hlt := weight_lt_iff s s' p x (fun _ => hs) (fun _ => hs')
+  refine ⟨⟨?_, ?_⟩, hlt⟩
+  · intro h
+    have hpair := letterAdmissibleSequence_eq_of_weightedLength_eq η hη (p - 1) x s s' hs hs'
+      (by simpa only [Nat.sub_add_cancel hp] using h)
+    apply List.map_congr_left
+    intro j hj
+    have hjlt := List.mem_range.mp (List.mem_reverse.mp hj)
+    rw [hpair j (by omega)]
+  · intro h
+    rcases lt_trichotomy (weight p s) (weight p s') with hab | he | hba
+    · have hd := hlt.mp hab
+      rw [h] at hd
+      exact (List.lt_irrefl _ hd).elim
+    · exact he
+    · have hd := (weight_lt_iff s' s p x (fun _ => hs') (fun _ => hs)).mp hba
+      rw [h] at hd
+      exact (List.lt_irrefl _ hd).elim
 
 /-- **Two-sided periodic points.** Let $\eta$ map each letter of an alphabet $A$ to a finite
 word over $A$, extended to finite words by concatenation, with iterates $\eta^j$; let
