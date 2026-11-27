@@ -24,16 +24,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **When the singleton $\{1\}$ is sum-free.** Let $m \ge 1$ and $l$ be natural
-numbers. The singleton $\{1\}$ is not $l$-sum-free modulo $m$ if and only if
-$l \equiv 1 \pmod{m}$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Corollary 1
-(`integers-2025-A62-cor-1`). -/
-public theorem_wanted not_isSumFreeMod_singleton_one_iff (m l : ℕ) (hm : 0 < m) :
-    ¬ IsSumFreeMod m l {1} ↔ l ≡ 1 [MOD m]
-
 /-- **Congruence upper bound for modular Schur numbers.** Let $m$, $k$, $l$ and $a$ be natural
 numbers with $k \ge 1$, $l \ge 1$ and $1 \le a \le m - 1$, and let $d = \gcd(a, m)$. If
 $l \equiv 1 \pmod{m/d}$, then the generalized Schur number $S_m(k, l)$ modulo $m$ satisfies

@@ -15,6 +15,7 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
+- [Post-selection inference for changepoints](post-selection-inference-for-changepoints/README.md)
 - [Age-structured microlesion model of tumour growth](age-structured-microlesion-model-of-tumour-growth/README.md)
 - [Consecutive seeding of metastases](consecutive-seeding-of-metastases/README.md)
 - [Driver mutations in a two-type branching process](driver-mutations-in-a-two-type-branching-process/README.md)

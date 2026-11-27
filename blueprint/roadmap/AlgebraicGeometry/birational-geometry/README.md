@@ -24,3 +24,5 @@ Resolution of singularities and principalization of ideals in characteristic zer
 - [Nadel vanishing theorem](nadel-vanishing-theorem.md)
 - [Nadel vanishing for pairs and separation of points by sections](nadel-vanishing-for-klt-pairs-and-point-separation.md)
 - [Seshadri constants of points in the plane](seshadri-constants-of-points-in-the-plane/README.md)
+- [Logarithmic Kodaira additivity for negative fibers](negative-fiber-log-kodaira-additivity.md)
+- [Eventual maximal multipoint Seshadri constants on surfaces](eventual-maximal-seshadri-constants.md)
