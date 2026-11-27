@@ -18564,7 +18564,8 @@
   "MathlibExt/NumberTheory/LSeries/ZeroCounts": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Zeros of the Riemann zeta function"},
   "MathlibExt/Analysis/InnerProductSpace/CompleteNumericalRangeSharpness": {"to": "Analysis/operator-theory/spectral-theory", "title": "Numerical range and numerical radius"},
   "MathlibExt/Analysis/InnerProductSpace/NumericalRangeRationalDenominators": {"to": "Analysis/operator-theory/spectral-theory", "title": "Numerical range and numerical radius"},
-  "MathlibExt/InformationTheory/GaussianRowMessageRefinement": {"to": "Probability/linear-models-multivariate", "title": "Row relative entropy under deterministic message refinement"}
+  "MathlibExt/InformationTheory/GaussianRowMessageRefinement": {"to": "Probability/linear-models-multivariate", "title": "Row relative entropy under deterministic message refinement"},
+  "MathlibExt/Combinatorics/EuclideanRamsey": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Euclidean Ramsey configurations"}
  },
  "mathlib_exclusions": {
   "Mathlib/Algebra/AddTorsor": "Deprecated re-export of the corresponding torsor module",
