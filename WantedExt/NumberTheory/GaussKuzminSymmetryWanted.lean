@@ -16,6 +16,8 @@ public import MathlibExt.NumberTheory.GaussKuzminFundamentalIntervals
 public import MathlibExt.NumberTheory.GaussKuzminCharacterization
 public import MathlibExt.NumberTheory.GaussKuzminSymmetryNontrivialSymmetryLengthThreeAndInfinite
 public import MathlibExt.NumberTheory.GaussKuzminSymmetryStablePlusNontrivialSymmetry
+public import MathlibExt.NumberTheory.GaussKuzminMassReversal
+public import MathlibExt.NumberTheory.GaussKuzminSymmetryExistsReverseSymmetricDensityNeGaussKuzmin
 
 namespace MetaMathlibExt
 
@@ -40,48 +42,6 @@ public theorem_wanted gaussKuzmin_string_frequency :
           (((Finset.range N).filter (fun i => ∀ j (hj : j < a.length),
               (GenContFract.of x).partDens.get? (i + j) = some (a[j] : ℝ))).card : ℝ) / N)
         atTop (𝓝 (gaussKuzminMass a))
-
-/-- **Reversal symmetry of the Gauss–Kuzmin mass.** For every string $a$ of positive integers,
-$P_{GK}(\overleftarrow{a}) = P_{GK}(a)$, where $P_{GK}$ is the Gauss–Kuzmin mass and
-$\overleftarrow{a}$ is the reverse of $a$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Proposition 1.3 (`integers-2025-A89-prop-1-3`), equations (1.8) and (1.9). -/
-public theorem_wanted gaussKuzminMass_reverse (a : List ℕ) (ha : (∀ x ∈ a, 0 < x)) :
-    gaussKuzminMass a.reverse = gaussKuzminMass a
-
-/-- **Symmetry up to a fixed length does not force the Gauss–Kuzmin density.** Write $I(a)$ for
-the fundamental interval of a string $a$ and $\overleftarrow{a}$ for the reverse of $a$. For every
-integer $N \ge 1$ there is a real function $f$, continuous and nonnegative on $[0, 1]$ with
-$\int_0^1 f(x)\,dx = 1$, such that $\int_{I(a)} f(x)\,dx = \int_{I(\overleftarrow{a})} f(x)\,dx$
-for every string $a$ of positive integers of length at most $N$, but
-$f(x) \ne \frac{1}{\log 2 \cdot (1 + x)}$ for some $x \in [0, 1]$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Theorem 2 (`integers-2025-A89-thm-2`). -/
-public theorem_wanted exists_reverse_symmetric_density_ne_gaussKuzmin (N : ℕ) (hN : 1 ≤ N) :
-    ∃ f : ℝ → ℝ, ContinuousOn f (Set.Icc 0 1) ∧ (∀ x ∈ Set.Icc (0 : ℝ) 1, 0 ≤ f x) ∧
-      ∫ x in (0 : ℝ)..1, f x = 1 ∧
-      (∀ a : List ℕ, (∀ x ∈ a, 0 < x) → a.length ≤ N →
-        ∫ x in cfCylinder a, f x = ∫ x in cfCylinder a.reverse, f x) ∧
-      ∃ x ∈ Set.Icc (0 : ℝ) 1, f x ≠ 1 / (log 2 * (1 + x))
-
-/-- **Explicit Gauss–Kuzmin mass of a string.** Let $a$ be a string of $n$ positive integers, let
-$p$, $q'$ and $q$ be the upper-right, lower-left and lower-right entries of its convergent matrix
-$C(a)$, and let $\overleftarrow{a}$ be the reverse of $a$. Then the Gauss–Kuzmin masses satisfy
-$P_{GK}(a) = P_{GK}(\overleftarrow{a})$ and
-$P_{GK}(a) = \left|\log_2\left(1 + \frac{(-1)^n}{(p + q)(q' + q)}\right)\right|$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Lemma 2.5 (`integers-2025-A89-lem-2-5`), equation (2.13). -/
-public theorem_wanted gaussKuzminMass_eq_abs_logb (a : List ℕ) (ha : (∀ x ∈ a, 0 < x)) :
-    gaussKuzminMass a = gaussKuzminMass a.reverse ∧
-      gaussKuzminMass a = |logb 2 (1 + (-1) ^ a.length / (((convergentMatrix a 0 1 : ℝ) +
-          (convergentMatrix a 1 1 : ℝ)) * ((convergentMatrix a 1 0 : ℝ) +
-          (convergentMatrix a 1 1 : ℝ))))|
 
 /-- **Reversal symmetry from agreement with the Gauss–Kuzmin measure.** Let $\mu$ be a probability
 measure on $\mathbb{R}$ and let $N \ge 1$. For a string $a$ of positive integers write $I(a)$ for

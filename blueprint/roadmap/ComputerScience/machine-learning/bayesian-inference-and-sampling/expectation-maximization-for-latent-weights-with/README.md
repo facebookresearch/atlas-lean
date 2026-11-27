@@ -4,7 +4,6 @@
 - [Two-parameter logistic items](two-pl.md)
 - [Response law of two-parameter logistic items](local-indep-pmf-two-pl.md)
 - [Valid latent weight functions](weight-valid.md)
-- [Space of valid latent weights](valid-weights.md)
 - [Joint probability of a response pattern and a latent state](item-joint.md)
 - [The joint probability of a response pattern and a latent state is positive](item-joint-pos.md)
 - [Likelihood of a response pattern](item-lik.md)

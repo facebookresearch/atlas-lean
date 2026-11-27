@@ -97,7 +97,8 @@ private theorem loop_rel (b : BExp) (c : Cmd) :
   rw [exists_eq_left, branch_tensor_rel b (interpret .skip) (commandRel c)]
   cases t <;> simp [interpret, loopBody, commandRel, BigStep.skip_iff]
 
-/-- Compiling preserves exactly the existing terminating execution relation. -/
+/-- The diagram compiled from `c` denotes exactly the terminating execution relation of `c`,
+`commandRel c`. -/
 theorem denote_compile (c : Cmd) :
     (compile c).denote interpret SumRelCat.symmetricTrace = commandRel c := by
   induction c with

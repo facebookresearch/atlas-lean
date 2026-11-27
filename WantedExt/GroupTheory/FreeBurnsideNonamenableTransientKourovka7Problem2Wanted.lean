@@ -46,8 +46,9 @@ is finite.
 open MathlibExt.GroupTheory.BurnsideHigmanEmbeddingKourovka12Problem32Wanted
 
 /-- The number of words of length `k` in the letters `a₁^{±1}, …, a_m^{±1}` that represent `1` in
-`B(m, n) = BurnsidePresented n m ∅`; divided by `(2m) ^ k` it is the probability that the simple
-random walk on `B(m, n)` with respect to the standard generators is back at `1` after `k` steps. -/
+`B(m, n) = BurnsidePresented n m ∅`; for `m ≥ 1`, divided by `(2m) ^ k` it is the probability
+that the simple random walk on `B(m, n)` with respect to the standard generators is back at `1`
+after `k` steps. -/
 noncomputable def returnCount (m n k : ℕ) : ℕ :=
   Nat.card {w : Fin k → Fin m × Bool //
     (PresentedGroup.mk _ (FreeGroup.mk (List.ofFn w)) : BurnsidePresented n m ∅) = 1}

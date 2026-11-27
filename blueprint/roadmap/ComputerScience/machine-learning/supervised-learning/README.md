@@ -18,7 +18,6 @@ Prediction from labelled data: least squares, ridge, lasso, logistic regression,
 - [Sufficient input subsets](sufficient-input-subsets/README.md)
 - [Matrix-aware optimizers](matrix-aware-optimizers/README.md)
 - [Effective ranks and benign overfitting](effective-ranks-and-benign-overfitting/README.md)
-- [Empirical cross-entropy of a fixed model on a finite sample](empirical-cross-entropy-of-a-fixed-model-on-a-fi/README.md)
 - [Implicit regularization of SGD in linear models](implicit-regularization-of-sgd-in-linear-models/README.md)
 - [Finite-sample expressivity of ReLU networks](finite-sample-expressivity-of-relu-networks/README.md)
 - [Classification-calibrated losses](classification-calibrated-losses/README.md)
@@ -27,3 +26,4 @@ Prediction from labelled data: least squares, ridge, lasso, logistic regression,
 - [VC dimension of sign-activation neural networks](vc-dimension-of-sign-activation-neural-networks.md)
 - [Message-passing GNNs and 1-WL color refinement](message-passing-gnns-and-1-wl-color-refinement.md)
 - [GD on overparameterized two-layer ReLU networks reaches zero training loss (Du et al.)](gd-on-overparameterized-two-layer-relu-networks-reaches-zero.md)
+- [Regularized Loss Minimization, Stability and SGD](regularized-loss-minimization-and-sgd/README.md)

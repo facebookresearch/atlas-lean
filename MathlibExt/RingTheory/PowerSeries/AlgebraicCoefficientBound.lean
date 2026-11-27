@@ -335,8 +335,9 @@ private theorem exists_prepared_tail {φ : ℂ⟦X⟧} {P : ℂ[X][X]} (hP : aev
     ext n
     rw [map_add, PowerSeries.coeff_X_pow_mul', Polynomial.coeff_coe, hp, coeff_trunc]
     by_cases hn : a + 1 ≤ n
-    · rw [if_pos hn, if_neg (by omega), hψ, PowerSeries.coeff_mk, Nat.sub_add_cancel hn, add_zero]
-    · rw [if_neg hn, if_pos (by omega), zero_add]
+    · rw [ite_eq_left hn, ite_eq_right (by omega), hψ, PowerSeries.coeff_mk, Nat.sub_add_cancel hn,
+        add_zero]
+    · rw [ite_eq_right hn, ite_eq_left (by omega), zero_add]
 
   set T : ℂ[X][X] := taylor p P with hT
   set n : ℕ := P.natDegree + 1 with hn
@@ -372,7 +373,7 @@ private theorem exists_prepared_tail {φ : ℂ⟦X⟧} {P : ℂ[X][X]} (hP : aev
     rw [hq1coeff i (by omega), hlt i hi]
   have hu0 : u.coeff 0 ≠ 0 := by
     have h1 : q1.coeff a = u.coeff 0 := by
-      rw [hu, Polynomial.coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self]
+      rw [hu, Polynomial.coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self]
     rw [← h1, hq1coeff a (Nat.lt_succ_self a)]
     exact ha
 
@@ -424,17 +425,17 @@ private theorem exists_prepared_tail {φ : ℂ⟦X⟧} {P : ℂ[X][X]} (hP : aev
       else -(Polynomial.C (u.coeff 0)⁻¹ * T.coeff j * Polynomial.X ^ ((a + 1) * (j - 2)))
   have he0 : e 0 = 0 := by
     show (if (0 : ℕ) = 0 then (0 : ℂ[X]) else _) = 0
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
   have he1 : e 1 = -(Polynomial.C (u.coeff 0)⁻¹ * divX u) := by
     show (if (1 : ℕ) = 0 then (0 : ℂ[X]) else if (1 : ℕ) = 1 then _ else _) = _
-    rw [if_neg one_ne_zero, if_pos rfl]
+    rw [ite_eq_right one_ne_zero, ite_eq_left rfl]
   have he2 : ∀ j : ℕ, e (j + 2) =
       -(Polynomial.C (u.coeff 0)⁻¹ * T.coeff (j + 2) * Polynomial.X ^ ((a + 1) * j)) := by
     intro j
     show (if j + 2 = 0 then (0 : ℂ[X]) else if j + 2 = 1 then _
       else -(Polynomial.C (u.coeff 0)⁻¹ * T.coeff (j + 2) *
         Polynomial.X ^ ((a + 1) * (j + 2 - 2)))) = _
-    rw [if_neg (by omega), if_neg (by omega), Nat.add_sub_cancel]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), Nat.add_sub_cancel]
   have hsum : ∑ j ∈ range (n + 2), (e j : ℂ⟦X⟧) * ψ ^ j =
       -(PowerSeries.C (u.coeff 0)⁻¹ * V) := by
     rw [sum_range_succ', sum_range_succ', he0, Polynomial.coe_zero, zero_mul, add_zero,
