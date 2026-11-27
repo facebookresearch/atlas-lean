@@ -54,4 +54,7 @@ example (i : Fin 9) : q2Cycle i i = 0 := q2Cycle_diag i
 example (i j : Fin 10) : q5Graph i j = q5Graph j i := q5Graph_symm i j
 example (i : Fin 10) : q5Graph i i = 0 := q5Graph_diag i
 
+-- `q5Select` accepts an unbalanced mask: with no `true` entry, it returns the fallback vertex.
+example : q5Select (fun _ => false) true 0 = 0 := by decide
+
 end PhyslibExtTest.QuantumInfo.AbsolutelyMaximallyEntangled

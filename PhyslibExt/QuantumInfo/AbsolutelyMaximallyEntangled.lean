@@ -136,7 +136,9 @@ open MetaMathlibExt
 abbrev Config (n d : ℕ) := Fin n → Fin d
 
 
-/-- A state vector in the computational basis, viewed as a finite-dimensional Hilbert space. -/
+/-- A vector of the finite-dimensional Hilbert space spanned by the computational basis
+`Config n d`. It is an arbitrary vector: normalisation is the separate condition
+`IsNormalized`. -/
 abbrev StateVector (n d : ℕ) := EuclideanSpace ℂ (Config n d)
 
 
@@ -156,12 +158,14 @@ def IsNormalized {n d : ℕ} (ψ : StateVector n d) : Prop :=
   ‖ψ‖ = 1
 
 
-/-- Permute the parties of a configuration. -/
+/-- Permute the parties of a configuration: party `i` of the result carries the letter of
+party `π i` of `x`. -/
 def permuteConfig {n d : ℕ} (π : Equiv.Perm (Fin n)) (x : Config n d) : Config n d :=
   fun i => x (π i)
 
 
-/-- Permute the parties of a state. -/
+/-- Permute the parties of a state: the amplitude of the result on `x` is the amplitude of
+`ψ` on `permuteConfig π x`. -/
 def permuteState {n d : ℕ} (π : Equiv.Perm (Fin n)) (ψ : StateVector n d) : StateVector n d :=
   mkStateVector fun x => ψ (permuteConfig π x)
 
@@ -169,8 +173,9 @@ def permuteState {n d : ℕ} (π : Equiv.Perm (Fin n)) (ψ : StateVector n d) : 
 
 
 
-/-- Assemble a configuration of all $n$ parties from a configuration of the first $m$ and a
-configuration of the remaining $n - m$. -/
+/-- For $m \le n$, assemble a configuration of all $n$ parties from a configuration `x` of
+the first $m$ and a configuration `y` of the remaining $n - m$: party $i < m$ carries
+`x i` and party $i \ge m$ carries `y (i - m)` (all indices zero-based). -/
 def combineFirst {n d : ℕ} (m : ℕ) (hm : m ≤ n)
     (x : Config m d) (y : Config (n - m) d) : Config n d :=
   fun i =>
@@ -189,7 +194,11 @@ def combineFirst {n d : ℕ} (m : ℕ) (hm : m ≤ n)
 
 
 
-/-- The reduced density matrix of the first $m$ parties: trace out the remaining $n - m$. -/
+/-- For $m \le n$ and an arbitrary vector `ψ` (zero included), the partial trace of
+$\psi\psi^*$ over the last $n - m$ parties: the entry at `(x, y)` is
+$\sum_z \psi(x, z) \overline{\psi(y, z)}$, where `(x, z)` is `combineFirst m hm x z`. It is a
+density matrix (positive semidefinite of trace $1$) exactly when `ψ` is normalized; in
+general its trace is $\lVert\psi\rVert^2$. -/
 noncomputable def reducedDensityFirst {n d : ℕ} (m : ℕ) (hm : m ≤ n) (ψ : StateVector n d) :
     Matrix (Config m d) (Config m d) ℂ :=
   fun x y =>
@@ -198,14 +207,19 @@ noncomputable def reducedDensityFirst {n d : ℕ} (m : ℕ) (hm : m ≤ n) (ψ :
         star (ψ (combineFirst (n := n) (d := d) m hm y z))
 
 
-/-- The maximally mixed state of $m$ parties of local dimension $d$. -/
+/-- The maximally mixed state of $m$ parties of local dimension $d$: the reciprocal of the
+number of configurations `Fintype.card (Config m d)` (that is, $d^m$) times the identity
+matrix. When the basis is empty ($d = 0 < m$) the matrix is the empty matrix, of trace
+$0$: there is then no trace-one state. -/
 noncomputable def maximallyMixed (m d : ℕ) :
     Matrix (Config m d) (Config m d) ℂ :=
   ((Fintype.card (Config m d) : ℂ)⁻¹) •
     (1 : Matrix (Config m d) (Config m d) ℂ)
 
 
-/-- The reduced state of the first $m$ parties is maximally mixed. -/
+/-- For $m \le n$, the reduced matrix `reducedDensityFirst m hm ψ` of the first $m$ parties
+equals `maximallyMixed m d`. The vector `ψ` is arbitrary; normalisation is required
+separately in `IsAME`. -/
 def HasMaximallyMixedFirstReduction {n d : ℕ} (m : ℕ) (hm : m ≤ n)
     (ψ : StateVector n d) : Prop :=
   reducedDensityFirst (n := n) (d := d) m hm ψ = maximallyMixed m d
@@ -240,7 +254,8 @@ def ExistsAME (n d : ℕ) : Prop :=
 
 
 
-/-- A configuration in which every party carries the same letter. -/
+/-- A configuration in which every party carries the same letter (vacuously true for
+$n = 0$). -/
 def IsConstantConfig {n d : ℕ} (x : Config n d) : Prop :=
   ∀ i j, x i = x j
 
@@ -277,29 +292,40 @@ def q5Graph (i j : Fin 10) : ZMod 5 :=
 
 
 /-- The `5 × 5` cut matrix of `q5Graph` for a five-element set `A` of vertices: rows indexed
-by the complement of `A`, columns by `A`, both in increasing order. -/
+by the complement of `A`, columns by `A`, both in increasing order, so that the zero-based
+entry `(i, j)` is the weight between the `i`-th vertex outside `A` and the `j`-th vertex of
+`A`. -/
 def q5CutMatrix (A : Finset (Fin 10)) (hA : A.card = 5) :
     Matrix (Fin 5) (Fin 5) (ZMod 5) :=
   let hAc : Aᶜ.card = 5 := by simp [Finset.card_compl, hA]
   fun i j => q5Graph ((Aᶜ.orderIsoOfFin hAc) i).1 ((A.orderIsoOfFin hA) j).1
 
 
-/-- The vertices whose mask value is `b`, in increasing order. -/
+/-- The vertices whose mask value is `b`, in increasing order; the list has between `0` and
+`10` entries, depending on the mask. -/
 def q5Indices (mask : Fin 10 → Bool) (b : Bool) : List (Fin 10) :=
   (List.finRange 10).filter (fun i => mask i == b)
 
-/-- The `k`-th vertex (as a natural number) whose mask value is `b`. -/
+/-- The `k`-th vertex (zero-based, as a natural number) whose mask value is `b`, or the
+fallback vertex `0` when fewer than `k + 1` vertices have mask value `b`. -/
 def q5Select (mask : Fin 10 → Bool) (b : Bool) (k : Fin 5) : ℕ :=
   ((q5Indices mask b)[k.1]?.getD 0).1
 
 /-- The weights of `q5Graph` as natural numbers, indexed by natural numbers; used to lift a
-cut matrix to `ℤ` so that its determinant can be evaluated by the kernel. -/
+cut matrix to `ℤ` so that its determinant can be evaluated by the kernel. It uses the
+truncated subtraction `10 - e` of `ℕ`. Its cast to `ZMod 5` agrees with `q5Graph` on
+natural representatives `i j < 10`; outside that range it need not, for example
+`q5GraphNat 0 11 = 0`, not the weight `3` of `(0, 1)`. -/
 def q5GraphNat (i j : ℕ) : ℕ :=
   let e := Nat.dist i j
   let e := min e (10 - e)
   if e = 1 then 3 else if e = 2 ∨ e = 3 then 1 else 0
 
-/-- The integer cut matrix attached to a Boolean mask on the ten vertices. -/
+/-- The integer matrix attached to a Boolean mask on the ten vertices: the zero-based entry
+`(i, j)` is `q5GraphNat` of the `i`-th `false` vertex and the `j`-th `true` vertex, as
+chosen by `q5Select`. Any mask is accepted. Only for a mask with exactly five `true` entries
+is this a cut matrix (it then lifts `q5CutMatrix` of the `true` set); otherwise missing rows
+or columns use the fallback vertex `0`, and vertices past the fifth are dropped. -/
 def q5MaskMatrix (mask : Fin 10 → Bool) : Matrix (Fin 5) (Fin 5) ℤ :=
   fun i j => q5GraphNat (q5Select mask false i) (q5Select mask true j)
 
@@ -338,7 +364,8 @@ lemma q5Select_not_mem (A : Finset (Fin 10)) (hA : A.card = 5) (k : Fin 5) :
   rfl
 
 /-- The affine symmetries of the cycle `Fin 10`: a rotation by `s`, optionally preceded by
-the reflection `i ↦ -i`. They preserve `q5Graph`. -/
+the reflection `i ↦ -i`, that is `i ↦ s + i` or (when `flip`) `i ↦ s - i`, modulo `10`.
+They preserve `q5Graph` (`q5Graph_affine`). -/
 def q5Affine (s : Fin 10) (flip : Bool) : Equiv.Perm (Fin 10) :=
   if flip then (Equiv.neg (Fin 10)).trans (Equiv.addLeft s) else Equiv.addLeft s
 
@@ -592,7 +619,7 @@ def quintPart (x : Fin 10) : ZMod 5 := (localTenEquiv.symm x).2
 
 
 /-- A local letter is the same thing as a pair consisting of a `ZMod 2` letter and a
-`ZMod 5` letter. -/
+`ZMod 5` letter: `x ↦ (bitPart x, quintPart x)`. -/
 def localPartsEquiv : Fin 10 ≃ ZMod 2 × ZMod 5 :=
   localTenEquiv.symm.trans
     (Equiv.prodCongr (ZMod.finEquiv 2).toEquiv (ZMod.finEquiv 5).toEquiv)
@@ -639,8 +666,9 @@ lemma q5Phase_sub (x y : Fin 10 → ZMod 5) :
   simp only [Pi.sub_apply, mul_sub, Finset.sum_sub_distrib]
   ring
 
-/-- The `ZMod 2` logical label attached to the logical qubits `a`: the coefficient vector of
-the two parity checks `q2Check₁` and `q2Check₂`. -/
+/-- The `ZMod 2` logical label attached to the logical qubits `a`: the linear combination,
+with coefficients `a 0` and `a 1`, of the check vectors of `q2Check₁` and `q2Check₂` (the
+indicator vectors of the coordinates $\{0, 1, 3, 4, 6, 7\}$ and $\{0, 2, 3, 5, 6, 8\}$). -/
 def q2Label (a : Fin 2 → ZMod 2) (i : Fin 9) : ZMod 2 :=
   a 0 * (if i.1 ∈ ([0, 1, 3, 4, 6, 7] : List ℕ) then 1 else 0) +
   a 1 * (if i.1 ∈ ([0, 2, 3, 5, 6, 8] : List ℕ) then 1 else 0)
@@ -651,12 +679,14 @@ lemma q2Label_dot (a : Fin 2 → ZMod 2) (x : Fin 9 → ZMod 2) :
       a 0 * q2Check₁ x + a 1 * q2Check₂ x := by
   decide +revert
 
-/-- The `ZMod 5` letter carried by the logical qubits `a`, namely $a_0 + 2 a_1$. -/
+/-- The `ZMod 5` letter carried by the logical qubits `a`: both bits are lifted to their
+natural representatives in $\{0, 1\}$ (`ZMod.val`), and $a_0 + 2 a_1 \in \{0, 1, 2, 3\}$ is
+computed in `ℕ` and cast to `ZMod 5`. -/
 def q5Logical (a : Fin 2 → ZMod 2) : ZMod 5 :=
   ((a 0).val + 2 * (a 1).val : ℕ)
 
 /-- The `ZMod 2` phase of the state: the nine-cycle graph phase of the qubit word `u`, plus
-its pairing with the logical label. -/
+its dot product $\sum_i (\mathrm{q2Label}\ a)_i u_i$ with the logical label. -/
 def binaryPhase (a : Fin 2 → ZMod 2) (u : Fin 9 → ZMod 2) : ZMod 2 :=
   graphPhase q2Cycle u + ∑ i, q2Label a i * u i
 
@@ -681,7 +711,9 @@ def quinaryPhase (a : Fin 2 → ZMod 2) (v : Fin 9 → ZMod 5) : ZMod 5 :=
 
 /-- The amplitude of the constructed state on a computational-basis configuration: the
 uniform superposition over the two logical qubits of the product of the two graph-state
-phases, normalised by $(2^{11} 5^9)^{-1/2}$. -/
+phases, multiplied by $(2^{11} 5^9)^{-1/2}$. Here the qubit word `u` and the qudit word
+`v` are the `bitPart` and `quintPart` of the letters of `x`, and the phases enter through
+`ZMod.stdAddChar`. -/
 noncomputable def ameAmplitude (x : Config 9 10) : ℂ :=
   let u : Fin 9 → ZMod 2 := fun i => bitPart (x i)
   let v : Fin 9 → ZMod 5 := fun i => quintPart (x i)
@@ -689,7 +721,7 @@ noncomputable def ameAmplitude (x : Config 9 10) : ℂ :=
     ∑ a : Fin 2 → ZMod 2,
       ZMod.stdAddChar (binaryPhase a u) * ZMod.stdAddChar (quinaryPhase a v)
 
-/-- The candidate $\mathrm{AME}(9, 10)$ state. -/
+/-- The candidate $\mathrm{AME}(9, 10)$ state: the vector with amplitudes `ameAmplitude`. -/
 noncomputable def ameState : StateVector 9 10 := mkStateVector ameAmplitude
 
 /-- The assertion that an $\mathrm{AME}(9, 10)$ state exists, named so that the proof can be
@@ -872,7 +904,8 @@ lemma q2_phase_paste_sum (A : Finset (Fin 9)) (hA : A.card = 4)
       simp [c, d]
     simp [hc, hxy]
 
-/-- Add the logical vertex `0` to a set of physical vertices, shifted into `Fin 10`. -/
+/-- Add the logical vertex `0` to a set of physical vertices, each physical vertex `i` being
+shifted to `i + 1` in `Fin 10`. -/
 def liftPhysicalSet (A : Finset (Fin 9)) : Finset (Fin 10) :=
   {0} ∪ A.map ⟨Fin.succ, Fin.succ_injective 9⟩
 
@@ -1086,8 +1119,8 @@ lemma q5_phase_paste_sum (A : Finset (Fin 10)) (hA : A.card = 5)
   · have hc0 : c ≠ 0 := fun hc0 => hxy (hc.mp hc0)
     simp [hc0, hxy]
 
-/-- A word of local letters is the same thing as a pair consisting of a `ZMod 2` word and a
-`ZMod 5` word. -/
+/-- For an arbitrary index type `ι`, a function `ι → Fin 10` is the same thing as a pair of
+functions `ι → ZMod 2` and `ι → ZMod 5`, split pointwise by `bitPart` and `quintPart`. -/
 def splitFunctionsEquiv (ι : Type*) :
     (ι → Fin 10) ≃ (ι → ZMod 2) × (ι → ZMod 5) where
   toFun z := (fun i => bitPart (z i), fun i => quintPart (z i))
@@ -1242,21 +1275,23 @@ lemma ameState_normalized : IsNormalized ameState := by
 
 /-! ## F. Four-party reductions and the main result -/
 
-/-- The four parties that the permutation `π` moves into the first four positions. -/
+/-- The parties `i` with `π i < 4`, that is, the four parties that the permutation `π` moves
+into the first four positions. -/
 def permFirstSet (π : Equiv.Perm (Fin 9)) : Finset (Fin 9) :=
   Finset.univ.filter (fun i => (π i).1 < 4)
 
 @[simp] lemma permFirstSet_mem (π : Equiv.Perm (Fin 9)) (i : Fin 9) :
     i ∈ permFirstSet π ↔ (π i).1 < 4 := by simp [permFirstSet]
 
-/-- `permFirstSet π` is indexed by `Fin 4` through `π`. -/
+/-- `permFirstSet π` is indexed by `Fin 4` through `π`, by `i ↦ π i`. -/
 def permFrontEquiv (π : Equiv.Perm (Fin 9)) : permFirstSet π ≃ Fin 4 where
   toFun i := ⟨(π i.1).1, (permFirstSet_mem π i.1).mp i.2⟩
   invFun k := ⟨π.symm ⟨k.1, by omega⟩, by simp⟩
   left_inv i := by ext; simp
   right_inv k := by ext; simp
 
-/-- The complement of `permFirstSet π` is indexed by `Fin 5` through `π`. -/
+/-- The complement of `permFirstSet π` is indexed by `Fin 5` through `π`, by
+`i ↦ π i - 4`. -/
 def permRestEquiv (π : Equiv.Perm (Fin 9)) :
     {i : Fin 9 // i ∉ permFirstSet π} ≃ Fin 5 where
   toFun i := ⟨(π i.1).1 - 4, by
