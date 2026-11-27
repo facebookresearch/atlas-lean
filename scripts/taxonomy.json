@@ -13593,6 +13593,7 @@
   "MathlibExt/NumberTheory/InitialRepetitionsC3": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
   "MathlibExt/NumberTheory/InitialRepetitionsC8": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
   "MathlibExt/NumberTheory/InitialRepetitionsC8Prime": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
+  "MathlibExt/NumberTheory/InitialRepetitionsQuadraticNonresidues": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
   "MathlibExt/NumberTheory/IncompleteLeonardoPBinomialSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/IncompleteLeonardoPPartialSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/IntPythagoreanTriples": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pythagorean triples"},
