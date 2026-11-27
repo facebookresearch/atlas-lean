@@ -30,29 +30,11 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Recurrences.SchutzKellyBinomialSum
 public import MathlibExt.NumberTheory.Recurrences.SuperLeonardoPBinomial
 public import MathlibExt.NumberTheory.Recurrences.SuperLeonardoPFibonacciSum
+public import MathlibExt.NumberTheory.SuperLeonardoPSuperLeonardoPEqAddMul
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Reduction of supergeneralized Leonardo p-numbers to the homogeneous case.** Let $p \ge 1$
-and $k$ be natural numbers, $x$ a real sequence, $y$ the real sequence $y_i = i + 1$, and write
-$\mathcal{L}_{p,k,x}(n)$ for the supergeneralized Leonardo $p$-numbers. For every natural number
-$n$, $\mathcal{L}_{p,k,x}(n) = \mathcal{L}_{p,0,x}(n)$ if $n \le p$, and
-$\mathcal{L}_{p,k,x}(n) = \mathcal{L}_{p,0,x}(n) + \mathcal{L}_{p,1,y}(n-(p+1)) \cdot k$ if $n > p$.
-
-The paper writes the correction term as $\max\{0, \mathcal{L}_{p,1,y}(n-(p+1))\} \cdot k$ with
-$y = (1, \dots, p + 1)$ and sets $\mathcal{L} \le 0$ at negative indices, so the correction term
-is $0$ for $n \le p$; for $n > p$ the $\max$ is redundant since $\mathcal{L}_{p,1,y}$ is positive.
-
-Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
-Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
-Theorem 3. -/
-public theorem_wanted superLeonardoP_eq_add_mul (p k : ℕ) (hp : 1 ≤ p) (x : ℕ → ℝ) (n : ℕ) :
-    superLeonardoP p k x n =
-      superLeonardoP p 0 x n +
-        (if p < n then superLeonardoP p 1 (fun i => (i : ℝ) + 1) (n - (p + 1)) else 0) *
-          k
 
 end
 

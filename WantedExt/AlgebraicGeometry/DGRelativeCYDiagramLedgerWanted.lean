@@ -11,6 +11,8 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.CategoryTheory.DGRelativeCYCospanGluing
 public import WantedExt.AlgebraicGeometry.DGInductionDiagramFoundationsWanted
 public import WantedExt.AlgebraicGeometry.RelativeCalabiYauFoundationsWanted
+public import MathlibExt.AlgebraicGeometry.DGRelativeCYDiagramLedgerDgCoherentGridSquare
+public import MathlibExt.AlgebraicGeometry.DGRelativeCYDiagramLedgerRelativeCyBarCounitSquare
 
 /-!
 # Wanted normalized relative CY cospan integration and composition
@@ -50,11 +52,6 @@ open MathlibExt.Algebra.Homology.DGCategoryTraceModels
 
 universe u
 
-/-- The bar-counit square commutes by the fixed native induction units and actual bar maps. -/
-theorem_wanted relative_cy_bar_counit_square (k : Type u) [Field k] (P : Cospan (k := k))
-    (S : NegativeTraceSystem k) (n : ℤ) (D : ModuleData P S n) (K : InductionData D) :
-  BarCounitSquare D K
-
 /-- Source Theorem 6.1: the single computed total bar-counit cofiber compares quasi-isomorphically to Z. -/
 def_wanted dg_morita_bar_counit_pushout (k : Type u) [Field k] (R : DGFrameSystem k)
     (P : Cospan (k := k)) (S : NegativeTraceSystem k) (n : ℤ)
@@ -66,13 +63,6 @@ def_wanted dg_morita_bar_counit_pushout_dual (k : Type u) [Field k]
     (P : Cospan (k := k)) (S : NegativeTraceSystem k) (n : ℤ)
     (D : ModuleData P S n) (K : InductionData D) (B : BarCounitSquare D K)
     (Q : ModuleHomotopyPushout B.square) : DualCotangentComparison B Q
-
-/-- The square's degree -1 cell is the signed difference of its two native chain cells. -/
-theorem_wanted dg_coherent_grid_square (k : Type u) [Field k]
-    (R : CoherentIndexModel k GridIndex) (C : DGCat k) (Q : CoherentDiagram R C)
-    (nodes : GridIndex → DGDerivedModules k C)
-    (eq : ∀ q : GridIndex, Q.toEnrichedFunctor.obj (R.objects.symm q) = (nodes q).obj)
-    (s : SmallSquare) : CoherentSquareModel Q nodes eq s
 
 /-- The coproduct diagonal split uses actual bar inclusions and the fixed composition units. -/
 def_wanted relative_cy_coproduct_split_context (k : Type u) [Field k] (A B X : DGCat k)
