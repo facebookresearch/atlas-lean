@@ -19,3 +19,4 @@
 - [Consistent cuts and their lattice](consistent-cuts-and-their-lattice.md)
 - [Correctness of the Chandy–Lamport snapshot algorithm](correctness-of-the-chandylamport-snapshot.md)
 - [Message channel semantics](message-channel-semantics.md)
+- [Ring Election, Distributed MST, Paxos Quorums and Logical Clocks](rings-trees-quorums-and-clocks/README.md)

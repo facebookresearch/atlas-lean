@@ -26,9 +26,11 @@ the cases `x = 0, 1`). The paper's auxiliary sums
 `H_{n,m} = (-1)ⁿ n ∑_{k ≥ 1} U(m+1,k) S(n-m,k)` are
 `zerroU` and `zerroH`. The first equality of Theorem 1,
 `2(1-2ⁿ)Bₙ = Gₙ`, is MathlibExt's proved
-`genocchiNumber_eq_bernoulli`; the declaration below
-states the second equality. All identities were verified
-by exact rational computation before stating.
+`genocchiNumber_eq_bernoulli`; the second equality is
+`genocchiNumber_eq_sum`, proved in
+`MathlibExt.NumberTheory.GenocchiExplicitGenocchiNumberEqSum`.
+All identities were verified by exact rational computation
+before stating.
 -/
 module
 
@@ -40,31 +42,12 @@ public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.NumberTheory.GenocchiExplicit
 public import MathlibExt.NumberTheory.GenocchiNumber
+public import MathlibExt.NumberTheory.GenocchiExplicitGenocchiNumberEqSum
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.GenocchiExplicitWanted
-
-/-- **Explicit formula for Genocchi numbers via Stirling numbers.** Let $n$ and $r$ be positive
-integers with $n \ge r + 1$, let $G_n$ be the $n$-th Genocchi number and let $S(a, b)$ denote
-the Stirling numbers of the second kind. For $k \ge 1$ write
-$c_k = \sum_{j=0}^{r} (-1)^{k+j+r} \frac{(k+j-1)!}{2^{k+j-1}} S(r, j)$. Then
-$G_n = (-1)^n \, n \sum_{k=1}^{n-r} c_k \, S(n-r, k)$.
-
-Source: Schehrazade Zerroukhat and Laala Khaldi, "A Note
-on Explicit Formulas for Bernoulli and Genocchi Numbers",
-Theorem 1. -/
-theorem_wanted genocchiNumber_eq_sum (n r : ℕ) (hn : 1 ≤ n)
-    (hr : 1 ≤ r) (hnr : r + 1 ≤ n) :
-    MetaMathlibExt.genocchiNumber n =
-      (-1 : ℚ) ^ n * (n : ℚ) *
-        ∑ k ∈ Finset.Icc 1 (n - r),
-          (∑ j ∈ Finset.range (r + 1),
-            (-1 : ℚ) ^ (k + j + r) *
-              ((k + j - 1).factorial : ℚ) / 2 ^ (k + j - 1) *
-              (Nat.stirlingSecond r j : ℚ)) *
-          (Nat.stirlingSecond (n - r) k : ℚ)
 
 end MathlibExt.NumberTheory.GenocchiExplicitWanted
