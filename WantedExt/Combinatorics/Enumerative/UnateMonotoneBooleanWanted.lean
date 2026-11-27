@@ -13,7 +13,6 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Order.BooleanFunction.SelfDual
-public import MathlibExt.Combinatorics.Enumerative.BalancedUnateClassCount
 public import MathlibExt.Combinatorics.Enumerative.BooleanFunctionInclusionExclusion
 public import MathlibExt.Combinatorics.Enumerative.UnateMonotoneBoolean
 
