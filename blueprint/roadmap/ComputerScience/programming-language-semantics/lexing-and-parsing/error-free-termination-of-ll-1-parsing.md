@@ -2,7 +2,7 @@
 
 For the table-driven parser of [soundness of LL(1) parsing](soundness-of-ll-1-parsing.md), if its table is [correct](ll-1-lookahead-and-correct-parse-tables.md) for some grammar, then $\mathrm{parse}(s, ts)$ never returns the error that signals a revisited nonterminal: it either returns a value or rejects the input.
 
-**Proof idea.** The parser reports that error only when its set of visited nonterminals already contains a nonterminal reachable by a nullable path from the current symbol, or when the grammar is left recursive. The top-level call starts with an empty visited set, and [LL(1) grammars have no left recursion](ll-1-grammars-have-no-left-recursion.md).
+**Proof idea.** The parser reports that error only when its set of visited nonterminals already contains a nonterminal reachable by a nullable path from the current symbol, or when the grammar is left recursive on the current lookahead symbol, in the sense of [the left-recursion lemma](ll-1-grammars-have-no-left-recursion.md). The top-level call starts with an empty visited set, and [LL(1) grammars have no left recursion](ll-1-grammars-have-no-left-recursion.md).
 
 ## Depends on
 

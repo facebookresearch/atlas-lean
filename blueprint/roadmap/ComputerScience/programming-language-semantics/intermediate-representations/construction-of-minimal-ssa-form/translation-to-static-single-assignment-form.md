@@ -10,7 +10,7 @@ A *translation to SSA form* replaces a program by a program with the same contro
 
 A translation is to *minimal SSA form* if it inserts as few $\varphi$-functions as possible subject to condition 1. The control-flow graph has an entry node with edges to the nodes where the program can be entered and no incoming edges, and the entry node is treated as containing an assignment to every variable.
 
-The *renaming* step visits the dominator tree top down, keeping for each variable $V$ a counter $C(V)$ and a stack $S(V)$ of indices. At each node it replaces every use of $V$ in an ordinary assignment by $V_i$ for $i$ the top of $S(V)$; replaces every target $V$ by $V_i$ for $i = C(V)$, pushes $i$ and increments $C(V)$; fills the operand of each $\varphi$-function in each successor for the edge from this node with $V_i$ for $i$ the top of $S(V)$; recurses into the children; and finally pops what it pushed.
+The *renaming* step visits the dominator tree top down, keeping for each variable $V$ a counter $C(V)$ and a stack $S(V)$ of indices. At each node it processes the statements in order, the $\varphi$-functions first: for an ordinary assignment it first replaces every use of $V$ by $V_i$ for $i$ the top of $S(V)$, and then, for every statement, it replaces the target $V$ by $V_i$ for $i = C(V)$, pushes $i$ and increments $C(V)$; the operands of $\varphi$-functions are not renamed here. The order matters: in a node $x \leftarrow 1;\ y \leftarrow x$, the use of $x$ must be renamed after the target of $x \leftarrow 1$. After the statements it fills the operand of each $\varphi$-function in each successor for the edge from this node with $V_i$ for $i$ the top of $S(V)$; recurses into the children; and finally pops what it pushed.
 
 ## Depends on
 
