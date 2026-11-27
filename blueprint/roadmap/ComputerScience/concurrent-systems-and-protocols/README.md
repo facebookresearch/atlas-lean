@@ -9,6 +9,7 @@ Specific concurrent or distributed systems and their verified properties: deadlo
 - [Byzantine generals problem](byzantine-generals-problem/README.md)
 - [Chang–Roberts leader election](chang-roberts-leader-election/README.md)
 - [Consensus from test-and-set](consensus-from-test-and-set/README.md)
+- [Consistent cuts](consistent-cuts/README.md)
 - [Consistency of the Chandy–Lamport snapshot](snapshot-consistent.md)
 - [Deadlock and circular wait](deadlock-and-circular-wait/README.md)
 - [Deadlock detection](deadlock-detection/README.md)

@@ -32,6 +32,9 @@ message sent by another event, and causality is acyclic can be listed so.
   of a process, all earlier events of the same process.
 * `IsConsistentCut`: a cut that is left-closed under happened-before.
 * `globalTime`: the componentwise maximum of the vector timestamps of the events of a set.
+* `isConsistentCut_iff_vectorTime`: Mattern's vector-time criterion: a cut with last events
+  `c p` is consistent exactly when `C(c q) p ≤ C(c p) p` for all processes `p` and `q`, that is,
+  when the componentwise supremum of the `C(c p)` is `fun p => C(c p) p`.
 * `consistentCuts_lattice`: the cuts form a sublattice of the lattice of sets of events; on a
   well-formed execution a cut is consistent exactly when every message received in it was sent
   in it; the consistent cuts form a sublattice of the cuts, so finitely many of them (at least
@@ -373,6 +376,31 @@ theorem isConsistentCut_iff_le {X : Set (Fin tr.length)} {c : P → Fin tr.lengt
       exact (hc _).1
     · exact hXc.2 a _ (hc _).1 (hc _).2.1.symm hac.lt
 
+/-- **Vector-time criterion for consistent cuts.** Let $X$ be a cut of an execution of a finite
+set $P$ of processes, with last event $c_p$ on each process $p$, and let $C(e) \in \mathbb{N}^P$ be
+the vector timestamps that the vector clock algorithm assigns to the events. Then $X$ is
+consistent if and only if $C(c_q)[p] \le C(c_p)[p]$ for all processes $p$ and $q$, and if and only
+if the componentwise supremum of $C(c_p)$ over $p \in P$ equals $(C(c_p)[p])_{p \in P}$. The
+execution need not be well formed, and a message may be received by several events. -/
+theorem isConsistentCut_iff_vectorTime [Fintype P] {X : Set (Fin tr.length)}
+    {c : P → Fin tr.length} (hX : IsCut tr X)
+    (hc : ∀ p, c p ∈ X ∧ tr[c p].proc = p ∧ ∀ a ∈ X, tr[a].proc = p → a ≤ c p) :
+    (IsConsistentCut tr X ↔
+      ∀ p q, (timestamps tr).getD (c q) 0 p ≤ (timestamps tr).getD (c p) 0 p) ∧
+    (IsConsistentCut tr X ↔ (Finset.univ.sup fun p => (timestamps tr).getD (c p) 0) =
+      fun p => (timestamps tr).getD (c p) 0 p) := by
+  refine ⟨isConsistentCut_iff_le hX hc, ?_⟩
+  rw [isConsistentCut_iff_le hX hc, funext_iff]
+  refine forall_congr' fun i => ?_
+  rw [Finset.sup_apply]
+  constructor
+  · intro h
+    exact le_antisymm (Finset.sup_le fun j _ => h j)
+      (Finset.le_sup (f := fun p => (timestamps tr).getD (c p) 0 i) (Finset.mem_univ i))
+  · intro h j
+    rw [← h]
+    exact Finset.le_sup (f := fun p => (timestamps tr).getD (c p) 0 i) (Finset.mem_univ j)
+
 theorem isSublattice_image_globalTime :
     IsSublattice (globalTime tr '' {C | IsConsistentCut tr C}) where
   supClosed := by
@@ -429,31 +457,23 @@ theorem consistentCuts_lattice [Fintype P] (hwf : WellFormed tr) :
     ⟨fun C hC => hC.1, isSublattice_isConsistentCut, fun S hS h =>
       ⟨isConsistentCut_biUnion hS h, isConsistentCut_biInter h, fun C hC =>
         ⟨Set.subset_biUnion_of_mem (u := id) hC, Set.biInter_subset_of_mem (t := id) hC⟩⟩⟩,
-    fun X c hX hc => ⟨globalTime_eq_sup hc, ?_, isConsistentCut_iff_le hX hc⟩,
+    fun X c hX hc => ⟨globalTime_eq_sup hc,
+      by rw [globalTime_eq_sup hc]; exact (isConsistentCut_iff_vectorTime hX hc).2,
+      (isConsistentCut_iff_vectorTime hX hc).1⟩,
     isSublattice_image_globalTime,
     fun X Y hX hY => ⟨globalTime_union X Y, globalTime_inter hX.2 hY.2⟩, ?_⟩
-  · rw [isConsistentCut_iff_le hX hc, globalTime_eq_sup hc, funext_iff]
-    refine forall_congr' fun i => ?_
-    rw [Finset.sup_apply]
-    constructor
-    · intro h
-      exact le_antisymm (Finset.sup_le fun j _ => h j)
-        (Finset.le_sup (f := fun p => (timestamps tr).getD (c p) 0 i) (Finset.mem_univ i))
-    · intro h j
-      rw [← h]
-      exact Finset.le_sup (f := fun p => (timestamps tr).getD (c p) 0 i) (Finset.mem_univ j)
-  · let f : {C : Set (Fin tr.length) // IsConsistentCut tr C} →
-        globalTime tr '' {C | IsConsistentCut tr C} :=
-      fun X => ⟨globalTime tr X, X, X.2, rfl⟩
-    have hle : ∀ X Y, f X ≤ f Y ↔ X ≤ Y := fun X Y =>
-      (subset_iff_globalTime_le X.2.2 Y.2.2).symm
-    have hinj : Function.Injective f := fun X Y h =>
-      le_antisymm ((hle X Y).1 h.le) ((hle Y X).1 h.ge)
-    have hsurj : Function.Surjective f := by
-      rintro ⟨_, X, hX, rfl⟩
-      exact ⟨⟨X, hX⟩, rfl⟩
-    exact ⟨{ toEquiv := Equiv.ofBijective f ⟨hinj, hsurj⟩, map_rel_iff' := hle _ _ },
-      fun X => rfl⟩
+  let f : {C : Set (Fin tr.length) // IsConsistentCut tr C} →
+      globalTime tr '' {C | IsConsistentCut tr C} :=
+    fun X => ⟨globalTime tr X, X, X.2, rfl⟩
+  have hle : ∀ X Y, f X ≤ f Y ↔ X ≤ Y := fun X Y =>
+    (subset_iff_globalTime_le X.2.2 Y.2.2).symm
+  have hinj : Function.Injective f := fun X Y h =>
+    le_antisymm ((hle X Y).1 h.le) ((hle Y X).1 h.ge)
+  have hsurj : Function.Surjective f := by
+    rintro ⟨_, X, hX, rfl⟩
+    exact ⟨⟨X, hX⟩, rfl⟩
+  exact ⟨{ toEquiv := Equiv.ofBijective f ⟨hinj, hsurj⟩, map_rel_iff' := hle _ _ },
+    fun X => rfl⟩
 
 end GlobalTime
 

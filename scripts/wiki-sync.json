@@ -23642,6 +23642,7 @@
 "Cslib.Distributed.ConsistentCut.IsCut": "e1a883cc710cc60e",
 "Cslib.Distributed.ConsistentCut.consistentCuts_lattice": "f422edf4b0c7a35e",
 "Cslib.Distributed.ConsistentCut.globalTime": "5e226da4c9b6f8e3",
+"Cslib.Distributed.ConsistentCut.isConsistentCut_iff_vectorTime": "ffecadffe6a9428a",
 "Cslib.Distributed.CrashConsensus.CrashPattern": "a622b256335c3810",
 "Cslib.Distributed.CrashConsensus.CrashPattern.Good": "507347501a887670",
 "Cslib.Distributed.CrashConsensus.CrashPattern.card_faulty_le": "b105a048cb1dc1ad",

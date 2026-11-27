@@ -97,6 +97,17 @@ theorem isConsistentCut_0123 : IsConsistentCut tr (evs [0, 1, 2, 3]) := by
     (by simp only [evs, Set.mem_ofPred_eq]; decide)]
   decide
 
+/-- The supremum form of the criterion: for `{0, 1, 2, 3}` the supremum of the
+last events' timestamps `(2, 0)` and `(2, 2)` is their diagonal `(2, 2)`, and for
+`{0, 2, 3}` the supremum `(2, 2)` of `(1, 0)` and `(2, 2)` is not the diagonal
+`(1, 2)`. -/
+example : IsConsistentCut tr (evs [0, 1, 2, 3]) ∧ ¬ IsConsistentCut tr (evs [0, 2, 3]) := by
+  rw [(isConsistentCut_iff_vectorTime (c := (![1, 3] : Fin 2 → Fin 5)) isCut_0123
+      (by simp only [evs, Set.mem_ofPred_eq]; decide)).2,
+    (isConsistentCut_iff_vectorTime (c := (![0, 3] : Fin 2 → Fin 5)) isCut_023
+      (by simp only [evs, Set.mem_ofPred_eq]; decide)).2]
+  decide
+
 theorem isConsistentCut_initial : IsConsistentCut tr (evs [0, 2]) := by
   rw [isConsistentCut_iff_le (c := (![0, 2] : Fin 2 → Fin 5)) isCut_initial
     (by simp only [evs, Set.mem_ofPred_eq]; decide)]
