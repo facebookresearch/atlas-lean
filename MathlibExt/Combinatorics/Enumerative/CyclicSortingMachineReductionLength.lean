@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Combinatorics.Enumerative.CyclicPatternAvoidingStacks
 import all MathlibExt.Combinatorics.Enumerative.CyclicPatternAvoidingStacks
+import all MathlibExt.Combinatorics.Enumerative.CyclicSortingMachineSuperimpose
 
 /-!
 # Strict reduction after a pass of the cyclic sorting machine for `123`
@@ -24,7 +25,7 @@ largest entries through West's stack.
   Article A15, Section 3.1, Lemmas 1 and 2 (pp. 5–6).
 * Katalin Berlow, *Restricted Stacks as Functions*, Discrete Mathematics 344 (11) (2021),
   Article 112571 (the restricted-stack map).
-* Julian West, *Permutations with restricted subsequences and stack-sortable permutations*,
+* Julian West, *Permutations with forbidden subsequences and stack-sortable permutations*,
   Ph.D. thesis, Massachusetts Institute of Technology (1990) (the deterministic sorting map).
 -/
 
@@ -33,6 +34,7 @@ namespace MetaMathlibExt
 namespace length_reductionSeq_cyclicSortingMachine_123_lt
 
 open cyclicSortingMachine_123_iterate_eq_id_iff_reductionSeq
+open cyclicSortingMachine_321_superimpose (wbad_pair runW_pop_all)
 
 -- Processing a prefix leaves the protected bottom of the stack in place. Any continuation
 -- then runs from that stack, and the entries above the bottom came only from the prefix or stack.
@@ -129,9 +131,6 @@ private theorem cyclic_ends_pair (a : ℕ) (s : List ℕ) (hn : (a :: s).Nodup)
 -- West's only obstruction to pushing onto a good stack is a smaller entry already there.
 private theorem west_bad_cons (x : ℕ) (st : List ℕ) :
     bad false (x :: st) ↔ (∃ y ∈ st, y < x) ∨ bad false st := by
-  have hpair (a b : ℕ) : forbidden false [a, b] ↔ b < a := by
-    simp [forbidden, SameRelativeOrder, Nat.forall_lt_succ_right]
-    omega
   constructor
   · intro hb
     obtain ⟨s, hsub, hf⟩ := (bad_iff ..).mp hb
@@ -143,9 +142,10 @@ private theorem west_bad_cons (x : ℕ) (st : List ℕ) :
       | cons y t =>
         have ht' : t = [] := List.length_eq_zero_iff.mp (by simpa using hlen)
         subst t
-        exact Or.inl ⟨y, List.singleton_sublist.mp ht, (hpair x y).mp hf⟩
+        have hp : bad false [x, y] := (bad_iff ..).mpr ⟨_, List.Sublist.refl _, hf⟩
+        exact Or.inl ⟨y, List.singleton_sublist.mp ht, (wbad_pair x y).mp hp⟩
   · rintro (⟨y, hy, hyx⟩ | hb)
-    · exact (bad_iff ..).mpr ⟨_, (List.singleton_sublist.mpr hy).cons_cons _, (hpair x y).mpr hyx⟩
+    · exact bad_mono ((List.singleton_sublist.mpr hy).cons_cons _) false ((wbad_pair x y).mpr hyx)
     · exact bad_mono (List.sublist_cons_self ..) false hb
 
 private theorem west_last_pair (a : ℕ) (st : List ℕ) :
@@ -166,14 +166,6 @@ private theorem west_last_pair (a : ℕ) (st : List ℕ) :
         · exact hb ((west_bad_cons ..).mpr (Or.inl ⟨z, hz, by omega⟩))
       exact ⟨[], y :: ys, by rw [run_push hb, run_push hg]; rfl⟩
 
-private theorem west_flush (m : ℕ) (s st : List ℕ) (h : ∀ y ∈ st, y < m) :
-    run false (m :: s) st = st ++ run false s [m] := by
-  induction st with
-  | nil => exact run_push (bad_singleton false m)
-  | cons y ys ih =>
-    have hb := (west_bad_cons m (y :: ys)).mpr (Or.inl ⟨y, by simp, h y (by simp)⟩)
-    rw [run_pop hb, ih (fun z hz => h z (by simp [hz])), List.cons_append]
-
 private theorem west_ends_max (m : ℕ) (s : List ℕ) (hn : s.Nodup)
     (hm : m ∈ s) (hbound : ∀ x ∈ s, x ≤ m) : ∃ u, run false s [] = u ++ [m] := by
   obtain ⟨u, v, rfl⟩ := List.append_of_mem hm
@@ -185,7 +177,9 @@ private theorem west_ends_max (m : ℕ) (s : List ℕ) (hn : s.Nodup)
     simp only [List.append_nil] at hxu
     exact lt_of_le_of_ne (hbound x (List.mem_append_left _ hxu)) (fun h => hu (h ▸ hxu))
   simp only [List.nil_append] at he
-  rw [he (m :: v), west_flush m v _ hlt]
+  have hpop : run false (m :: v) (st ++ []) = (st ++ []) ++ run false v [m] :=
+    runW_pop_all v hlt
+  rw [he (m :: v), hpop]
   have hsafe (x : ℕ) (hx : x ∈ v) : ¬bad false [x, m] := by
     simp [west_bad_cons, bad_singleton, Nat.not_lt.mpr (hbound x (by simp [hx]))]
   obtain ⟨out', st', _, hv⟩ := run_prefix false v [] [m] hsafe
@@ -200,7 +194,9 @@ private theorem west_append_max (m : ℕ) (s : List ℕ) (hbound : ∀ x ∈ s, 
     hbound x (by simpa using hst x (by simpa using hx))
   simp only [List.nil_append] at he
   have hz : run false s [] = out ++ st := by simpa [restrictedStackSortAux] using he []
-  rw [he [m], hz, west_flush m [] _ hlt]
+  have hpop : run false [m] (st ++ []) = (st ++ []) ++ run false [] [m] :=
+    runW_pop_all [] hlt
+  rw [he [m], hz, hpop]
   simp [List.append_assoc, restrictedStackSortAux]
 
 private theorem machine_has_pair {n : ℕ} (hn : 2 ≤ n) {π : List ℕ}
