@@ -511,7 +511,7 @@ lemma betaScore_extendActive (J : Sym2 V → ℝ) (β : ℝ)
   · apply Finset.sum_congr rfl
     intro e _
     congr 2
-    simp [coord, OSSS.Lindeberg.coord, extendActive_apply]
+    simp [coordR, OSSS.Lindeberg.coord, extendActive_apply]
   · intro e
     rw [SimpleGraph.mem_edgeFinset]
 

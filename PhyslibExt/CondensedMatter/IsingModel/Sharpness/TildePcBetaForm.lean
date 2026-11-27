@@ -65,13 +65,15 @@ lemma sh1_tildePc_lt_one_of_pc_lt_one (hd : 0 < d) (hpc : pc d < 1) :
   rw [heq]
   exact_mod_cast hpc
 
-/-- The critical inverse temperature `β̃_c` is positive when `p_c(d) < 1`. -/
+/-- For `J > 0` and `d > 0`, the critical inverse temperature `β̃_c = -log(1 - p̃_c)/J` is positive
+when `p_c(d) < 1`. -/
 lemma sh1_betaTildeC_pos_of_pc_lt_one {J : ℝ} (hJ : 0 < J) (hd : 0 < d)
     (hpc : pc d < 1) :
     0 < betaTildeC d J :=
   betaTildeC_pos hJ hd (sh1_tildePc_lt_one_of_pc_lt_one hd hpc)
 
-/-- Mean-field lower bound `θ(p(β)) ≥ (β - β̃_c)/β` for `β > β̃_c`, assuming `p_c(d) < 1`. -/
+/-- For `J > 0` and `d > 0`, with `p(β) = 1 - e^{-βJ}` and `β̃_c = -log(1 - p̃_c)/J`: the mean-field
+lower bound `θ(p(β)) ≥ (β - β̃_c)/β` for `β > β̃_c`, assuming `p_c(d) < 1`. -/
 lemma sh1_theta_ge_betaForm_of_pc_lt_one {J β : ℝ} (hJ : 0 < J) (hd : 0 < d)
     (hpc : pc d < 1) (hβ : betaTildeC d J < β) :
     theta d (pBeta J β).toNNReal (pBeta_toNNReal_le_one J β)

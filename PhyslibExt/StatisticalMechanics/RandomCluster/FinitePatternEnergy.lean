@@ -472,7 +472,7 @@ variable {C}
 lemma cFE_pow_mul_agreeWeightSum_le_setPattern
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I) (psi : ConfigSpace (Sym2 V)) :
-    cFE p q ^ I.card * agreeWeightSum G p q I psi ≤
+    cFE p q ^ I.card * inducedFkZ G p q I psi ≤
       fkWeight G p q (setPattern I eta psi) := by
   classical
   induction I using Finset.induction generalizing psi with
@@ -516,15 +516,15 @@ lemma cFE_pow_mul_agreeWeightSum_le_setPattern
         agreeWeightSum_insert G p q he, htarget]
       have hc : 0 ≤ cFE p q := (cFE_pos hp hp1 hq).le
       have hsum : cFE p q ^ I.card *
-            (agreeWeightSum G p q I (setClosed e psi) +
-              agreeWeightSum G p q I (setOpen e psi)) ≤
+            (inducedFkZ G p q I (setClosed e psi) +
+              inducedFkZ G p q I (setOpen e psi)) ≤
           fkWeight G p q (setClosed e rho) + fkWeight G p q (setOpen e rho) := by
         calc
           cFE p q ^ I.card *
-              (agreeWeightSum G p q I (setClosed e psi) +
-                agreeWeightSum G p q I (setOpen e psi)) =
-              cFE p q ^ I.card * agreeWeightSum G p q I (setClosed e psi) +
-                cFE p q ^ I.card * agreeWeightSum G p q I (setOpen e psi) := by ring
+              (inducedFkZ G p q I (setClosed e psi) +
+                inducedFkZ G p q I (setOpen e psi)) =
+              cFE p q ^ I.card * inducedFkZ G p q I (setClosed e psi) +
+                cFE p q ^ I.card * inducedFkZ G p q I (setOpen e psi) := by ring
           _ ≤ fkWeight G p q (setPattern I etaI (setClosed e psi)) +
                 fkWeight G p q (setPattern I etaI (setOpen e psi)) :=
             add_le_add ihc iho
@@ -532,11 +532,11 @@ lemma cFE_pow_mul_agreeWeightSum_le_setPattern
             rw [hclosed, hopen]
       calc
         cFE p q ^ I.card * cFE p q *
-            (agreeWeightSum G p q I (setClosed e psi) +
-              agreeWeightSum G p q I (setOpen e psi)) =
+            (inducedFkZ G p q I (setClosed e psi) +
+              inducedFkZ G p q I (setOpen e psi)) =
             cFE p q * (cFE p q ^ I.card *
-              (agreeWeightSum G p q I (setClosed e psi) +
-                agreeWeightSum G p q I (setOpen e psi))) := by ring
+              (inducedFkZ G p q I (setClosed e psi) +
+                inducedFkZ G p q I (setOpen e psi))) := by ring
         _ ≤ cFE p q *
             (fkWeight G p q (setClosed e rho) + fkWeight G p q (setOpen e rho)) :=
           mul_le_mul_of_nonneg_left hsum hc
@@ -608,8 +608,9 @@ lemma dependsOnOutside_preimage_setPattern
 
 /-! ## E. Conditional pattern bounds -/
 
-/-- Finite energy for patterns with boundary wiring: given the configuration `ψ` off `I`, the
-pattern `η` on `I` has conditional probability at least `cFE p q ^ |I|`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for patterns with any boundary wiring `C`: given the
+configuration `ψ` off `I`, the pattern `η` on `I` has conditional probability at least
+`cFE p q ^ |I|`. -/
 lemma cFE_pow_le_condBcProb_pattern
     (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -656,13 +657,7 @@ lemma cFE_pow_mul_condFibreMass_le_pattern
   have hZ : 0 < fkZ G p q := fkZ_pos G hp hp1 (zero_lt_one.trans_le hq)
   have hweights :
       (∑ omega ∈ condFibre I psi, fkWeight G p q omega) =
-        agreeWeightSum G p q I psi := by
-    apply Finset.sum_congr
-    · ext omega
-      simp only [mem_condFibre, Finset.mem_filter, Finset.mem_univ, true_and,
-        AgreesOff]
-    · intro omega _
-      rfl
+        inducedFkZ G p q I psi := rfl
   unfold fkProb
   rw [← Finset.sum_div, ← mul_div_assoc, hweights]
   exact div_le_div_of_nonneg_right
@@ -793,8 +788,8 @@ lemma condFkProb_cross_outside
   by_cases hA : rho ∈ A <;> by_cases hBrho : rho ∈ B <;>
     simp [Set.indicator, hA, hBrho, hBeq, Set.mem_inter_iff]
 
-/-- Finite energy for the free measure: for an event `B` depending only on edges off `I`, `cFE ^
-|I| P(B) ≤ P(pattern η on I, B)`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy for the free measure: for every event `B` depending
+only on edges off `I`, `cFE ^ |I| P(B) ≤ P(pattern η on I, B)`. -/
 lemma cFE_pow_mul_event_le_pattern_inter
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
@@ -820,8 +815,8 @@ lemma cFE_pow_mul_event_le_pattern_inter
   · rw [Set.indicator_of_notMem hpsiB]
     simp
 
-/-- Finite energy with boundary wiring `C`: for an event `B` depending only on edges off `I`,
-`cFE ^ |I| P(B) ≤ P(pattern η on I, B)`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite energy with boundary wiring `C`: for every event `B`
+depending only on edges off `I`, `cFE ^ |I| P(B) ≤ P(pattern η on I, B)`. -/
 lemma cFE_pow_mul_bcEvent_le_pattern_inter
     (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -850,9 +845,9 @@ lemma cFE_pow_mul_bcEvent_le_pattern_inter
   · rw [Set.indicator_of_notMem hpsiB]
     simp
 
-/-- Finite-energy modification bound: replacing the edges of `I` by the pattern `η` changes
-event probabilities by at most a factor `cFE ^ |I|`, `cFE ^ |I| P(setPattern I η ⁻¹' A) ≤
-P(A)`. -/
+/-- For `0 < p < 1` and `q ≥ 1`, finite-energy modification bound with boundary wiring `C`: for
+every event `A`, `cFE ^ |I| P(setPattern I η ⁻¹' A) ≤ P(A)`, where `setPattern I η ⁻¹' A` is the
+event that forcing the pattern `η` on `I` gives a configuration in `A`. -/
 lemma cFE_pow_mul_bcPreimage_le_event
     (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)

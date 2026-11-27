@@ -84,8 +84,8 @@ lemma lind_var_indicator {μ : ConfigSpace (Sym2 V) → ℝ}
 lemma fk_differential_inequality (G : SimpleGraph V) [DecidableRel G.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (A : Set (ConfigSpace (Sym2 V))) (hA : IsIncreasing A)
-    (hbridge : ∑ e, fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coord e)
-          = ∑ e ∈ G.edgeFinset, fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coord e)) :
+    (hbridge : ∑ e, fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e)
+          = ∑ e ∈ G.edgeFinset, fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e)) :
     russoPrefactor p * (fkProbOf G p q A * (1 - fkProbOf G p q A))
       ≤ deriv (fun p => fkProbOf G p q A) p := by
   have hq0 : 0 < q := lt_of_lt_of_le zero_lt_one hq
@@ -145,14 +145,14 @@ lemma fk_q2_crossing_decay_poincare (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Set (ConfigSpace (Sym2 V))) (hA : IsIncreasing A)
     (a b κ : ℝ) (hab : a < b) (ha0 : 0 < a) (hb1 : b < 1) (hκ : 0 < κ)
     (hbridge : ∀ p ∈ Icc a b,
-      ∑ e, fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e)
-        = ∑ e ∈ G.edgeFinset, fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e))
+      ∑ e, fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e)
+        = ∑ e ∈ G.edgeFinset, fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e))
     (hθub : ∀ p ∈ Icc a b, fkProbOf G p 2 A ≤ 1 - κ) :
     fkProbOf G a 2 A ≤ Real.exp (-(4 * κ * (b - a))) := by
   have hFKcov : ∀ p ∈ Icc a b, ((1 : ℕ) : ℝ) * 1
         * (fkProbOf G p 2 A * (1 - fkProbOf G p 2 A))
       ≤ 1 * ∑ e ∈ G.edgeFinset,
-          fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e) := by
+          fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e) := by
     intro p hp
     rw [Set.mem_Icc] at hp
     have hp0 : 0 < p := lt_of_lt_of_le ha0 hp.1

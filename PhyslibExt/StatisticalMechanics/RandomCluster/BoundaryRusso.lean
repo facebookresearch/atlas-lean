@@ -89,7 +89,7 @@ lemma hasDerivAt_bcWeight {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (q : ℝ)
     (ω : ConfigSpace (Sym2 V)) :
     HasDerivAt (fun p => bcWeight G C p q ω)
       (bcWeight G C p q ω
-        * ((∑ e ∈ G.edgeFinset, (coord e ω - p)) / (p * (1 - p)))) p := by
+        * ((∑ e ∈ G.edgeFinset, (coordR e ω - p)) / (p * (1 - p)))) p := by
   have h := (hasDerivAt_edgeProduct_clean G hp hp1 ω).mul_const
     (q ^ numClustersBC G C ω)
   refine h.congr_deriv ?_
@@ -100,12 +100,12 @@ lemma hasDerivAt_bcNumer {p : ℝ} (hp : 0 < p) (hp1 : p < 1) (q : ℝ)
     (g : ConfigSpace (Sym2 V) → ℝ) :
     HasDerivAt (fun p => bcNumer G C p q g)
       ((∑ ω, g ω * (bcWeight G C p q ω
-        * ∑ e ∈ G.edgeFinset, (coord e ω - p))) / (p * (1 - p))) p := by
+        * ∑ e ∈ G.edgeFinset, (coordR e ω - p))) / (p * (1 - p))) p := by
   unfold bcNumer
   have hsum : HasDerivAt
       (fun p => ∑ ω, g ω * bcWeight G C p q ω)
       (∑ ω, g ω * (bcWeight G C p q ω
-        * ((∑ e ∈ G.edgeFinset, (coord e ω - p)) / (p * (1 - p))))) p := by
+        * ((∑ e ∈ G.edgeFinset, (coordR e ω - p)) / (p * (1 - p))))) p := by
     apply HasDerivAt.fun_sum
     intro ω _
     exact (hasDerivAt_bcWeight G C hp hp1 q ω).const_mul (g ω)
@@ -192,23 +192,23 @@ lemma bcCov_sub_const (p q : ℝ) (f g : ConfigSpace (Sym2 V) → ℝ) {c : ℝ}
 
 lemma bcCov_centeredCount (p q : ℝ) (hZ : bcZ G C p q ≠ 0)
     (g : ConfigSpace (Sym2 V) → ℝ) :
-    bcCov G C p q g (fun ω => ∑ e ∈ G.edgeFinset, (coord e ω - p)) =
-      ∑ e ∈ G.edgeFinset, bcCov G C p q g (coord e) := by
+    bcCov G C p q g (fun ω => ∑ e ∈ G.edgeFinset, (coordR e ω - p)) =
+      ∑ e ∈ G.edgeFinset, bcCov G C p q g (coordR e) := by
   rw [bcCov_sum_right G C p q G.edgeFinset]
-  exact Finset.sum_congr rfl fun e _ => bcCov_sub_const G C p q g (coord e) hZ
+  exact Finset.sum_congr rfl fun e _ => bcCov_sub_const G C p q g (coordR e) hZ
 
 /-- The `p`-derivative of the boundary-conditioned expectation of `g` is `(p(1 - p))⁻¹ ∑_{e ∈ E(G)}
 Cov(g, ω_e)`. -/
 theorem hasDerivAt_bcMean {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {q : ℝ} (hq : 0 < q) (g : ConfigSpace (Sym2 V) → ℝ) :
     HasDerivAt (fun p => bcMean G C p q g)
-      ((∑ e ∈ G.edgeFinset, bcCov G C p q g (coord e)) / (p * (1 - p))) p := by
+      ((∑ e ∈ G.edgeFinset, bcCov G C p q g (coordR e)) / (p * (1 - p))) p := by
   have hppos : 0 < p * (1 - p) := mul_pos hp (by linarith)
   have hpne : p * (1 - p) ≠ 0 := hppos.ne'
   have hZpos : 0 < bcZ G C p q := bcZ_pos G C hp hp1 hq
   have hZne : bcZ G C p q ≠ 0 := hZpos.ne'
   let K : ConfigSpace (Sym2 V) → ℝ :=
-    fun ω => ∑ e ∈ G.edgeFinset, (coord e ω - p)
+    fun ω => ∑ e ∈ G.edgeFinset, (coordR e ω - p)
   have hN : HasDerivAt (fun p => bcNumer G C p q g)
       (bcNumer G C p q (fun ω => g ω * K ω) / (p * (1 - p))) p := by
     refine (hasDerivAt_bcNumer G C hp hp1 q g).congr_deriv ?_
@@ -256,7 +256,7 @@ lemma hasDerivAt_bcProbOf {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {q : ℝ} (hq : 0 < q) (A : Set (ConfigSpace (Sym2 V))) :
     HasDerivAt (fun p => bcProbOf G C p q A)
       ((∑ e ∈ G.edgeFinset,
-        bcCov G C p q (A.indicator fun _ => (1 : ℝ)) (coord e)) / (p * (1 - p))) p :=
+        bcCov G C p q (A.indicator fun _ => (1 : ℝ)) (coordR e)) / (p * (1 - p))) p :=
   hasDerivAt_bcMean G C hp hp1 hq _
 
 end StatMech.FK

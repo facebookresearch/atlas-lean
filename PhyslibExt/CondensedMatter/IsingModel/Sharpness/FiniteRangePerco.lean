@@ -27,9 +27,9 @@ set outside `S` leaves `S` through a first boundary pair; the inhomogeneous BK i
 probability by `∑ p_{xy} P(u ↔ x in S) P(y ↔ B)` (`frp_bk_criterion`, section B). The crossing
 events depend on finitely many edges (section C) and are translation covariant (section D), so the
 surface argument of Duminil-Copin–Tassion gives geometric decay along a subsequence and exponential
-decay of the one-arm probability (section E). With `β̃_c(K)` the supremum of the `β` below which
-witnesses exist, decay holds for every `β < β̃_c(K)` (section F). All results are proved
-unconditionally.
+decay of the one-arm probability (section E). With `β̃_c(K)` the real `sSup` of the `β` below
+which witnesses exist (their supremum when they are bounded above, and `0` otherwise), decay holds
+for every `β < β̃_c(K)` (section F). All results are proved unconditionally.
 
 ## ii. Key results
 
@@ -37,7 +37,8 @@ unconditionally.
 - `frpMeasure` : the percolation measure; `frpMeasure_translationInvariant`
 - `frp_bk_criterion` : the first-exit BK bound
 - `frp_subcritical_decay` : exponential decay from a witness `φ_β(S) < 1`
-- `frpTildeBetaC`, `frp_subcritical_decay_of_lt_tildeBetaC` : decay below `β̃_c(K)`
+- `frpTildeBetaC`, `frp_subcritical_decay_of_lt_tildeBetaC` : the witness threshold `β̃_c(K)`
+  and decay below it
 
 ## iii. Table of contents
 
@@ -46,7 +47,7 @@ unconditionally.
 - C. Crossing events depend on finitely many edges
 - D. Translations
 - E. Subcritical decay
-- F. The critical point `β̃_c(K)`
+- F. The witness threshold `β̃_c(K)`
 
 ## iv. References
 
@@ -903,7 +904,7 @@ lemma frp_subcritical_decay (K : FiniteRangeKernel d) (beta : ℝ)
   exact geometric_subseq_antitone_decay' hL hr0 hr1 (by positivity)
     (frpCrossProb_antitone K beta) hsub
 
-/-! ## F. The critical point `β̃_c(K)` -/
+/-! ## F. The witness threshold `β̃_c(K)` -/
 
 lemma frpEdgeParam_eq_zero_of_nonpos (K : FiniteRangeKernel d)
     {beta : ℝ} (hbeta : beta ≤ 0) (e : Sym2 (Site d)) :
@@ -933,7 +934,8 @@ def frpSubcriticalSet (K : FiniteRangeKernel d) : Set ℝ :=
   {beta | 0 ≤ beta ∧ ∀ gamma, 0 ≤ gamma → gamma ≤ beta →
     ∃ S : Finset (Site d), (0 : Site d) ∈ S ∧ frpPhi K gamma S < 1}
 
-/-- The critical point `β̃_c(K) = sup frpSubcriticalSet K`. -/
+/-- The witness threshold `β̃_c(K) = sSup (frpSubcriticalSet K)` in `ℝ`: the supremum of
+`frpSubcriticalSet K` when it is bounded above, and `0` otherwise (`Real.sSup_of_not_bddAbove`). -/
 noncomputable def frpTildeBetaC (K : FiniteRangeKernel d) : ℝ :=
   sSup (frpSubcriticalSet K)
 
@@ -960,7 +962,8 @@ lemma exists_frpPhi_witness_of_lt_tildeBetaC (K : FiniteRangeKernel d)
       exists_lt_of_lt_csSup (frpSubcriticalSet_nonempty K) hbeta
     exact hgamma.2 beta hb0' hbg.le
 
-/-- Exponential decay of the one-arm probability for every `β < β̃_c(K)`. -/
+/-- Exponential decay of the one-arm probability for every `β < β̃_c(K)`. When
+`frpSubcriticalSet K` is not bounded above, `β̃_c(K) = 0` and this covers only `β < 0`. -/
 theorem frp_subcritical_decay_of_lt_tildeBetaC (K : FiniteRangeKernel d)
     {beta : ℝ} (hbeta : beta < frpTildeBetaC K) :
     ∃ c > 0, ∃ C > 0, ∀ n,

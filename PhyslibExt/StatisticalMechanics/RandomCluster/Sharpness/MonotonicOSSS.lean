@@ -137,8 +137,8 @@ lemma genCov_fkMass (p q : ℝ) (f g : ConfigSpace (Sym2 V) → ℝ) :
 
 omit [DecidableEq V] [Fintype V] in
 lemma genCoord_eq_coord (e : Sym2 V) : (StatMech.OSSS.CovLowerBound.coordI e : ConfigSpace (Sym2 V)
-    → ℝ) = FK.coord e := by
-  funext ω; unfold StatMech.OSSS.CovLowerBound.coordI FK.coord; rfl
+    → ℝ) = FK.coordR e := by
+  funext ω; unfold StatMech.OSSS.CovLowerBound.coordI FK.coordR; rfl
 
 lemma genVar_fkMass_indicator (p q : ℝ) (A : Set (ConfigSpace (Sym2 V))) :
     genVar (fkMass G p q) (A.indicator (fun _ => (1 : ℝ)))
@@ -194,7 +194,7 @@ lemma monotonicOSSS_to_fkCov (p : ℝ)
     (N : ℝ) * c₀
         * (FK.fkProbOf G p 2 A * (1 - FK.fkProbOf G p 2 A))
       ≤ D * ∑ e ∈ G.edgeFinset,
-          FK.fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e) := by
+          FK.fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e) := by
   unfold MonotonicOSSSBound at hMonOSSS
   rw [fkVar_indicator G p 2 A] at hMonOSSS
   refine hMonOSSS.trans_eq ?_
@@ -203,8 +203,8 @@ lemma monotonicOSSS_to_fkCov (p : ℝ)
   intro e _
   rw [genCov_fkMass, genCoord_eq_coord]
   unfold FK.fkCov
-  rw [show (fun ω => FK.coord e ω * A.indicator (fun _ => (1 : ℝ)) ω)
-        = (fun ω => A.indicator (fun _ => (1 : ℝ)) ω * FK.coord e ω) from by funext ω; ring]
+  rw [show (fun ω => FK.coordR e ω * A.indicator (fun _ => (1 : ℝ)) ω)
+        = (fun ω => A.indicator (fun _ => (1 : ℝ)) ω * FK.coordR e ω) from by funext ω; ring]
   ring
 
 end MonotonicFK
