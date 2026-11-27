@@ -54,6 +54,10 @@ A sum of $n$ rounded products is accurate to $\gamma_n = nu/(1 - nu)$ relative t
 
 - [Probabilistic rounding error analysis](probabilistic-rounding-error-analysis/README.md)
 
+## Softmax and log-sum-exp
+
+- [Softmax and log-sum-exp](softmax-and-log-sum-exp/README.md)
+
 ## Related topics
 
 - [Floating-point rounding](../floating-point-rounding/README.md): the rounding model.
