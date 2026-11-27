@@ -7,6 +7,7 @@ No algorithm decides, given a while program over uninterpreted functions and an 
 ## Depends on
 
 - [Uninterpreted programs and their verification problem](uninterpreted-programs-and-their-verification.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

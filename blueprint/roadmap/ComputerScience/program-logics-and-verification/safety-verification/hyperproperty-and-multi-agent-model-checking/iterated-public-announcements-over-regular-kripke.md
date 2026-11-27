@@ -11,6 +11,7 @@ For every regular Kripke structure and closed PPAL formula, the set of states sa
 ## Depends on
 
 - [Epistemic models](../../../../Logic/modal-logic/epistemic-logic/model.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -7,6 +7,9 @@ Whether every heap satisfying one regular graph constraint also satisfies anothe
 ## Depends on
 
 - [Regular graph constraints over heaps](regular-graph-constraints-over-heaps.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 
@@ -20,4 +23,4 @@ The source draws the consequence that procedure preconditions or data-structure 
 
 ## Sources
 
-- Viktor Kuncak and Martin Rinard, "Existential Heap Abstraction Entailment Is Undecidable", in *Static Analysis (SAS 2003)*, Lecture Notes in Computer Science 2694, Springer, 2003, pp. 418–438, <https://doi.org/10.1007/3-540-44898-5_24>; read as the technical report arXiv:cs/0408014v1, "Typestate Checking and Regular Graph Constraints", <https://arxiv.org/abs/cs/0408014v1>: Section 3 ("Undecidability of Implication"), the theorem of its final subsection "The Undecidability Result", of that version.
+- Viktor Kuncak and Martin Rinard, "Existential Heap Abstraction Entailment Is Undecidable", in *Static Analysis (SAS 2003)*, Lecture Notes in Computer Science 2694, Springer, 2003, pp. 418–438, <https://doi.org/10.1007/3-540-44898-5_24>; read as the technical report arXiv:cs/0408014v1, "Typestate Checking and Regular Graph Constraints", <https://arxiv.org/abs/cs/0408014v1>: Theorem 38 in Section 3.4 ("The Undecidability Result") of Section 3 ("Undecidability of Implication"), in the numbering of that version.

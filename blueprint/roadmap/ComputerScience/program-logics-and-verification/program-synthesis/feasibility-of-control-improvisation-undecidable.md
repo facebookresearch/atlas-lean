@@ -14,6 +14,8 @@ Feasibility holds exactly when $|I| \ge 1/\rho$ and $|A| \ge (1 - \epsilon)/\rho
 ## Depends on
 
 - [Probabilistic automata and cut-point languages](../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/probabilistic-automata-and-cut-point-languages.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

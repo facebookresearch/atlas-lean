@@ -18,7 +18,7 @@ The proof gives undecidability already for finite iCGS with three agents and the
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

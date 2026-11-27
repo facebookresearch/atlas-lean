@@ -13,7 +13,8 @@ For a single game, uniform ability and the paper's adaptive ability coincide, so
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Formulas of linear temporal logic](../../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
 
 ## Proof depends on
 
@@ -25,4 +26,4 @@ For part 1, the template generated from a deterministic Turing machine consists 
 
 ## Sources
 
-- Catalin Dima and Wojciech Jamroga, "Computationally Feasible Strategies", Proceedings of the 22nd International Conference on Autonomous Agents and Multiagent Systems (AAMAS 2023), pp. 784–792, 2023, <https://doi.org/10.65109/xzdv5972>; Sections 2 and 3 (iCGS, model templates, computational strategies, their complexity and uniform ability) and the problem definition and two undecidability theorems of Section 5 ("Model Checking for Computational Strategies") of arXiv:2310.17234v1, read at <https://arxiv.org/abs/2310.17234v1>.
+- Catalin Dima and Wojciech Jamroga, "Computationally Feasible Strategies", Proceedings of the 22nd International Conference on Autonomous Agents and Multiagent Systems (AAMAS 2023), pp. 784–792, 2023, <https://doi.org/10.65109/xzdv5972>; Definition 2.1 (iCGS) and Definitions 3.1 to 3.11 (model templates, computational strategies, their complexity and uniform ability), Definition 4.3 (adaptive ability), and Definition 5.1 (model checking) with Theorems 5.2 and 5.3 in Section 5.2 of Section 5 ("Model Checking for Computational Strategies") of arXiv:2310.17234v1, read at <https://arxiv.org/abs/2310.17234v1>.

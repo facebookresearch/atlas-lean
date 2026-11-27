@@ -12,6 +12,7 @@ In part 1 the axiom set is fixed and even a single coherent execution cannot be 
 ## Depends on
 
 - [Verification of uninterpreted programs modulo axioms](verification-modulo-axioms.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -24,4 +25,4 @@ Part 1 reduces from the word problem for finitely generated semigroups, undecida
 
 ## Sources
 
-- Umang Mathur, P. Madhusudan and Mahesh Viswanathan, "What's Decidable About Program Verification Modulo Axioms?", Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2020), Part II, Lecture Notes in Computer Science 12079, pp. 158–177, Springer, 2020, <https://doi.org/10.1007/978-3-030-45237-7_10>; the theorem on associativity in the section on axioms over functions, the theorem on EPR axioms in the section on axioms over relations, and their proofs in the appendix of arXiv:1910.10889v2 (the copy read), <https://arxiv.org/abs/1910.10889v2>.
+- Umang Mathur, P. Madhusudan and Mahesh Viswanathan, "What's Decidable About Program Verification Modulo Axioms?", Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2020), Part II, Lecture Notes in Computer Science 12079, pp. 158–177, Springer, 2020, <https://doi.org/10.1007/978-3-030-45237-7_10>; Theorem 8 (associativity) in Section 6, "Axioms Over Functions", Theorem 2 (EPR axioms) in Section 5, "Axioms over Relations", and their proofs in the appendix, which uses Post's theorem on the word problem for semigroups (Theorem 12) of arXiv:1910.10889v2 (the copy read), <https://arxiv.org/abs/1910.10889v2>.

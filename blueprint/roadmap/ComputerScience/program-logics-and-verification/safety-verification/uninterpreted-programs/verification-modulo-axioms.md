@@ -6,8 +6,8 @@ Verification modulo axioms restricts the data models of an uninterpreted program
 
 **Definition (coherence modulo axioms).** Write $t \cong_\Gamma t'$ when $\Gamma \models t = t'$. An execution $\rho$ is *coherent modulo $\mathcal{A}$* if:
 
-- (memoizing) for every prefix $\pi = \sigma \cdot (x := f(\vec{z}))$ with $t = \mathrm{comp}(\pi, x)$, if $t \cong_{\mathcal{A} \cup \kappa(\sigma)} t'$ for some term $t'$ computed in $\sigma$, then $t \cong_{\mathcal{A} \cup \kappa(\sigma)} \mathrm{comp}(\sigma, y)$ for some $y \in V$;
-- (early assumes) for every prefix $\pi = \sigma \cdot \mathtt{assume}(c)$ and every term $t$ computed in $\sigma$ that has been dropped (no variable holds a term $\cong_{\mathcal{A} \cup \kappa(\sigma)} t$), if $t \cong_{\mathcal{A} \cup \kappa(\pi)} t'$ for a term $t'$ computed in $\sigma$, then already $t \cong_{\mathcal{A} \cup \kappa(\sigma)} t'$.
+- (memoizing) for every prefix $\pi = \sigma \cdot (x := f(\vec{z}))$ with $t = \mathrm{comp}(\pi, x)$, if $t \cong_{\mathcal{A} \cup \kappa(\sigma)} t'$ for some term $t'$ computed in $\sigma$, it follows that $t \cong_{\mathcal{A} \cup \kappa(\sigma)} \mathrm{comp}(\sigma, y)$ for some $y \in V$;
+- (early assumes) for every prefix $\pi = \sigma \cdot \mathtt{assume}(c)$ and every term $t$ computed in $\sigma$ that has been dropped (no variable stores a term $\cong_{\mathcal{A} \cup \kappa(\sigma)} t$), if $t \cong_{\mathcal{A} \cup \kappa(\pi)} t'$ for a term $t'$ computed in $\sigma$, it follows that already $t \cong_{\mathcal{A} \cup \kappa(\sigma)} t'$.
 
 A program is coherent modulo $\mathcal{A}$ if all its executions are. *Coherent verification modulo $\mathcal{A}$* asks, for a program coherent modulo $\mathcal{A}$ and a postcondition, whether the program satisfies it modulo $\mathcal{A}$.
 
@@ -25,4 +25,4 @@ With $\mathcal{A} = \emptyset$ every execution coherent in the earlier sense is 
 
 ## Sources
 
-- Umang Mathur, P. Madhusudan and Mahesh Viswanathan, "What's Decidable About Program Verification Modulo Axioms?", Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2020), Part II, Lecture Notes in Computer Science 12079, pp. 158–177, Springer, 2020, <https://doi.org/10.1007/978-3-030-45237-7_10>; the subsections on feasibility and program verification modulo axioms in Section 3 and the definition of coherence modulo axioms in Section 4 of arXiv:1910.10889v2 (the copy read), <https://arxiv.org/abs/1910.10889v2>.
+- Umang Mathur, P. Madhusudan and Mahesh Viswanathan, "What's Decidable About Program Verification Modulo Axioms?", Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2020), Part II, Lecture Notes in Computer Science 12079, pp. 158–177, Springer, 2020, <https://doi.org/10.1007/978-3-030-45237-7_10>; Section 3 (feasibility modulo axioms and Definition 1, program verification modulo axioms) and Definition 2 (coherence modulo axioms) in Section 4 of arXiv:1910.10889v2 (the copy read), <https://arxiv.org/abs/1910.10889v2>.

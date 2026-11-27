@@ -7,6 +7,7 @@ The verification problem stays undecidable for uninterpreted programs all of who
 ## Depends on
 
 - [Uninterpreted programs and their verification problem](uninterpreted-programs-and-their-verification.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

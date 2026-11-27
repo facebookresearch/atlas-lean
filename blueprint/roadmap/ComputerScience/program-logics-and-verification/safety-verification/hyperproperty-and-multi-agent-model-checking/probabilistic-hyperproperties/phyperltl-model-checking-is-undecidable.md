@@ -19,6 +19,7 @@ The proof uses a formula with a single probability constraint; the authors note 
 - [Markov decision processes and adversaries](../../../../../Logic/temporal-logic/probabilistic-model-checking/markov-decision-processes-and-adversaries.md)
 - [Discrete-time Markov chains](../../../../../Logic/temporal-logic/probabilistic-model-checking/discrete-time-markov-chains.md)
 - [Formulas of linear temporal logic](../../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -30,4 +31,4 @@ The reduction is from emptiness of probabilistic finite automata: given an autom
 
 ## Sources
 
-- Francesco Pontiggia, Filip Macák, Roman Andriushchenko, Michele Chiari and Milan Češka, "Decentralized Planning Using Probabilistic Hyperproperties", Proceedings of the 24th International Conference on Autonomous Agents and Multiagent Systems (AAMAS 2025), pp. 1688–1697, IFAAMAS, 2025, <https://doi.org/10.65109/vnon1089>; Theorem 3.1 with the proof in the appendix "Undecidability of PHyperLTL", the syntax and semantics of Section 3, and the corollary of Section 5 of arXiv:2502.13621v1 (the copy read), <https://arxiv.org/abs/2502.13621v1>.
+- Francesco Pontiggia, Filip Macák, Roman Andriushchenko, Michele Chiari and Milan Češka, "Decentralized Planning Using Probabilistic Hyperproperties", Proceedings of the 24th International Conference on Autonomous Agents and Multiagent Systems (AAMAS 2025), pp. 1688–1697, IFAAMAS, 2025, <https://doi.org/10.65109/vnon1089>; Theorem 3.1 with the proof in the appendix "Undecidability of PHyperLTL", the syntax and semantics of Section 3 (Sections 3.1 and 3.2), Definition 2.3 (factored, observation-independent, locally fully observable Dec-MDPs), and Corollary 5.1 of Section 5 of arXiv:2502.13621v1 (the copy read), <https://arxiv.org/abs/2502.13621v1>.

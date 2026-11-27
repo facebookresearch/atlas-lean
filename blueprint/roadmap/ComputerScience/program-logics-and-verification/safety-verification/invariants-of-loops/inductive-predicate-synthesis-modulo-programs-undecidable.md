@@ -10,7 +10,7 @@ The same paper reduces IPS-MP to constrained Horn clause solving and identifies 
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +22,4 @@ The reduction is from the halting problem of two-counter machines. With variable
 
 ## Sources
 
-- Scott Wesley, Maria Christakis, Jorge A. Navas, Richard Trefler, Valentin Wüstholz and Arie Gurfinkel, "Inductive Predicate Synthesis Modulo Programs", 38th European Conference on Object-Oriented Programming (ECOOP 2024), LIPIcs 313, Article 43, 2024, <https://doi.org/10.4230/LIPIcs.ECOOP.2024.43>; the definitions of the sections "From Verification to Synthesis" and "IPS-MP: Problem Definition", the undecidability theorem for linear integer arithmetic in the decidability section, and its proof in the appendix of the extended version arXiv:2407.08455v1, read at <https://arxiv.org/abs/2407.08455v1>.
+- Scott Wesley, Maria Christakis, Jorge A. Navas, Richard Trefler, Valentin Wüstholz and Arie Gurfinkel, "Inductive Predicate Synthesis Modulo Programs", 38th European Conference on Object-Oriented Programming (ECOOP 2024), LIPIcs 313, Article 43, 2024, <https://doi.org/10.4230/LIPIcs.ECOOP.2024.43>; the programming language and logical program verification of Section 3 ("Background"), Definition 4 in Section 4 ("IPS-MP: Problem Definition"), Theorem 14 in Section 5 ("Decidability of IPS-MP"), with Corollary 9 (Boolean programs) and Theorems 10 and 11 (the reduction to constrained Horn clauses), of the extended version arXiv:2407.08455v1, read at <https://arxiv.org/abs/2407.08455v1>.

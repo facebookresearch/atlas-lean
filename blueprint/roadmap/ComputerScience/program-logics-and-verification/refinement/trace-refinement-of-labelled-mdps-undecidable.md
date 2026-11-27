@@ -13,6 +13,7 @@ This answers an open question of Doyen, Henzinger and Raskin. When $\mathcal{E}$
 - [Probabilistic automata and cut-point languages](../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/probabilistic-automata-and-cut-point-languages.md)
 - [Markov decision processes and adversaries](../../../Logic/temporal-logic/probabilistic-model-checking/markov-decision-processes-and-adversaries.md)
 - [Markov decision process](../../heuristic-search-and-planning/value-iteration/mdp.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
