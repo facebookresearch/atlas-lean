@@ -4,14 +4,13 @@
 - [Binary Shifted Loss](binary-shifted-loss.md)
 - [Binary Prior](binary-prior.md)
 - [Binary Cost Rule](binary-cost-rule.md)
-- [Bayes average cost of a binary decision kernel](binary-cost-avg-risk.md)
+- [Bayes weighted cost of a binary decision kernel](binary-cost-avg-risk.md)
 - [Bayes rule for binary classification with misclassification costs](bayes-rule-for-binary-classification.md)
 
 ## Encoding lemmas
 
 - [Lintegral density eq one](lintegral-density-eq-one.md)
 - [Is Probability Measure with Density of lintegral eq one](is-probability-measure-with-density-of-l.md)
-- [Binary Prior eq of Real smul](binary-prior-eq-of-real-smul.md)
 - [Binary Shifted Loss eq table](binary-shifted-loss-eq-table.md)
 - [Binary Cost Rule of tie](binary-cost-rule-of-tie.md)
 - [Measurable binary Cost Rule](measurable-binary-cost-rule.md)

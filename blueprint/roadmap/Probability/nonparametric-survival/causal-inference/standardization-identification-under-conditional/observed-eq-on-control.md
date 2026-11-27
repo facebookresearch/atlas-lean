@@ -1,3 +1,0 @@
-# Observed eq on control
-
-Let $T \subseteq \Omega$ and $Y_0, Y_1 : \Omega \to \mathbb{R}$, and let $Y = \mathbf{1}_T Y_1 + \mathbf{1}_{T^c} Y_0$ be the observed outcome. Then $Y(\omega) = Y_0(\omega)$ for every $\omega \in T^c$.

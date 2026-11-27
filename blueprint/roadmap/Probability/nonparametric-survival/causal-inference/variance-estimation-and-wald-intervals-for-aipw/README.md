@@ -5,7 +5,6 @@
 - [Aipw Fitted Score](aipw-fitted-score.md)
 - [Aipw Estimator](aipw-estimator.md)
 - [Aipw Variance Estimator](aipw-variance-estimator.md)
-- [Aipw Variance Estimator eq](aipw-variance-estimator-eq.md)
 
 ## Basic
 

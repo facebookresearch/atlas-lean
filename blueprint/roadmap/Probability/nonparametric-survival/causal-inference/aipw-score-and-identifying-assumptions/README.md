@@ -3,7 +3,6 @@
 ## AIPW score and identifying assumptions
 
 - [Aipw Score](aipw-score.md)
-- [Aipw Score eq](aipw-score-eq.md)
 - [Aipw Score of mem](aipw-score-of-mem.md)
 - [Aipw Score of not Mem](aipw-score-of-not-mem.md)
 - [Aipw Score eq of consistency](aipw-score-eq-of-consistency.md)

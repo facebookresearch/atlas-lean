@@ -4,4 +4,4 @@ Let $\mu$ be a measure on a measurable space $\Omega$, $R \subseteq \Omega$ the 
 
 $$\mu_{\mathbb R}(R \cap \{Y \in B\} \cap \{X = x\})\, \mu_{\mathbb R}(X = x) = \mu_{\mathbb R}(R \cap \{X = x\})\, \mu_{\mathbb R}(\{Y \in B\} \cap \{X = x\}).$$
 
-Here $\mu_{\mathbb R}(A)$ is the real number $\mu(A)$ when $\mu(A) < \infty$ and $0$ when $\mu(A) = \infty$, and $x / 0 = 0$. The condition holds vacuously when every level set $\{X = x\}$ is null (for example for an atomless $X$); it expresses conditional independence only for a covariate with countably many values.
+Here $\mu_{\mathbb R}(A)$ is the real number $\mu(A)$ when $\mu(A) < \infty$ and $0$ when $\mu(A) = \infty$, and $x / 0 = 0$. For a finite measure and a covariate with countably many values and measurable singletons, the condition is conditional independence of $R$ and $Y$ given $X$. On a part of the space where the law of $X$ is diffuse every level set $\{X = x\}$ is null, so the condition holds there vacuously and need not detect conditional dependence.

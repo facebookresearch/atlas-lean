@@ -24,8 +24,6 @@
 - [Train Fold](train-fold.md)
 - [Train Data](train-data.md)
 - [Cross Fit Estimator](cross-fit-estimator.md)
-- [Mem eval Fold](mem-eval-fold.md)
-- [Mem train Fold](mem-train-fold.md)
 - [The cross-fitted estimator is `√n`-equivalent to the oracle estimator](tendsto-in-measure-cross-fit-estimator-s.md)
 - [From the oracle gap to asymptotic normality](tendsto-in-distribution-of-tendsto-in-me.md)
 - [Asymptotic normality of a cross-fitted estimator](tendsto-in-distribution-cross-fit-estima.md)

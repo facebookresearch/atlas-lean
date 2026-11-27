@@ -26,7 +26,7 @@
 ## Identification
 
 - [Identification with a shadow variable](eq-of-map-shadow-obs-eq.md)
-- [Every outcome mean is identified](integral-eq-of-map-shadow-obs-eq.md)
+- [Every outcome integral is identified](integral-eq-of-map-shadow-obs-eq.md)
 
 ## Completeness is necessary
 
