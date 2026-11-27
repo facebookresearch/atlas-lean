@@ -17,7 +17,6 @@
 - [Diagonal Reconstruction mem distortion Feasible zero](diagonal-reconstruction-mem-distortion-f.md)
 - [Measure Mutual Information diagonal Reconstruction](measure-mutual-information-diagonal-reco.md)
 - [Measure Mutual Information diagonal Reconstruction zero](measure-mutual-information-diagonal-reco-2.md)
-- [Rate Distortion zero zero](rate-distortion-zero-zero.md)
 
 ## Large distortion: zero rate
 

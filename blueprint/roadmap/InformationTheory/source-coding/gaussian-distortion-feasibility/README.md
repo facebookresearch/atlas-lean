@@ -20,8 +20,6 @@
 
 - [Constant Reconstruction](constant-reconstruction.md)
 - [Constant Reconstruction mem distortion Feasible](constant-reconstruction-mem-distortion-f.md)
-- [Measure Mutual Information constant Reconstruction](measure-mutual-information-constant-reco.md)
-- [Rate Distortion self eq zero](rate-distortion-self-eq-zero.md)
 
 ## Validation: an infinite lower integral is never admissible
 
