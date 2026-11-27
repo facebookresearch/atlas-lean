@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.ZeckendorfOdometer
+public import MathlibExt.NumberTheory.ZeckendorfNewInformationZone
 public import MathlibExt.Probability.MixingCoefficients
 public import Mathlib.Data.Nat.Fib.Zeckendorf
 public import Mathlib.NumberTheory.Real.GoldenRatio
@@ -619,22 +620,6 @@ public theorem_wanted zeckAdicVariation_ergodic_average (μ : Measure (ℕ → B
 
 /-! ### Rokhlin towers and new-information zones -/
 
-/-- **Prefix value of a digit sequence.** For $k \in \mathbb{N}$ and a binary sequence
-$x = (x_i)_{i \in \mathbb{N}}$, the prefix value of order $k$ is the natural number
-$v_k(x) = \sum_{i=2}^{k+1} x_i F_i$, where $F_i$ is the $i$-th Fibonacci number
-($F_1 = F_2 = 1$). It is the value of the block $x_{k+1} \cdots x_2$ of the $k$ rightmost digits
-of $x$, the name of the cylinder of order $k$ that contains $x$.
-
-In the paper the levels of the two Rokhlin towers of order $k$ are level sets of $v_k$: the
-large tower has levels $\{v_k = j - 1\}$ for $1 \le j \le F_{k+1}$, and the small tower has
-levels $\{v_k = F_{k+1} + j - 1\}$ for $1 \le j \le F_k$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 3.1 (cylinders of order `k` and the two towers). -/
-public def zeckAdicPrefixValue (k : ℕ) (x : ℕ → Bool) : ℕ :=
-  ∑ i ∈ Finset.Icc 2 (k + 1), if x i = true then Nat.fib i else 0
-
 /-- **Prefix value of order one.** For every binary sequence $x = (x_i)_{i \in \mathbb{N}}$, the
 prefix value of order $1$ is $v_1(x) = x_2 F_2$, where $F_2 = 1$ is the second Fibonacci number.
 It equals $x_2$: it is $1$ if $x_2 = 1$ and $0$ otherwise.
@@ -645,22 +630,6 @@ An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Inte
 public theorem zeckAdicPrefixValue_one (x : ℕ → Bool) :
     zeckAdicPrefixValue 1 x = if x 2 = true then 1 else 0 := by
   simp [zeckAdicPrefixValue]
-
-/-- **The sets $\mathrm{CST}_k$.** Fix $r, k \in \mathbb{N}$. For a digit sequence
-$x = (x_i)_{i \in \mathbb{N}}$ in $\{0, 1\}$ let $v_k(x) = \sum_{i=2}^{k+1} x_i F_i$, where $F_i$
-is the $i$-th Fibonacci number ($F_1 = F_2 = 1$). The set $\mathrm{CST}_k$ (for the shift $r$)
-consists of the digit sequences $x$ such that either $v_k(x) + r < F_{k+1}$, or both
-$F_{k+1} \le v_k(x)$ and $v_k(x) + r < F_{k+2}$.
-
-In terms of the Rokhlin towers of order $k$, this is the union of the levels of the large and the
-small tower except the $r$ highest levels of each tower.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 5.1 (definition of `CST_k`). -/
-public def zeckCST (r k : ℕ) : Set (ℕ → Bool) :=
-  {x | zeckAdicPrefixValue k x + r < Nat.fib (k + 1) ∨
-    (Nat.fib (k + 1) ≤ zeckAdicPrefixValue k x ∧ zeckAdicPrefixValue k x + r < Nat.fib (k + 2))}
 
 /-- **$\mathrm{CST}_1$ is empty for every positive shift.** For every $r \ge 1$, the set
 $\mathrm{CST}_1$ for the shift $r$ is empty.
@@ -676,19 +645,6 @@ public theorem zeckCST_one {r : ℕ} (hr : 1 ≤ r) : zeckCST r 1 = ∅ := by
   show ¬(_ ∨ _)
   rw [h2, h3]
   omega
-
-/-- **New-information zone.** Let $F_1 = F_2 = 1, F_3 = 2, \dots$ be the Fibonacci numbers, and
-for a digit sequence $x = (x_i)_{i \ge 0}$ with $x_i \in \{0, 1\}$ and $j \in \mathbb{N}$ let
-$v_j(x) = \sum_{i=2}^{j+1} x_i F_i$. For $r \in \mathbb{N}$ let $\mathrm{CST}_j$ be the
-set of digit sequences $x$ with $v_j(x) + r < F_{j+1}$, or with $F_{j+1} \le v_j(x)$ and
-$v_j(x) + r < F_{j+2}$. For $k \in \mathbb{N}$, the new-information zone of order $k$
-for $r$ is $\mathrm{NIZ}_k = \mathrm{CST}_k \setminus \mathrm{CST}_{k-1}$, where $k - 1$ is read
-as $0$ when $k = 0$ (so $\mathrm{NIZ}_0 = \emptyset$).
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 5.1 (definition of `NIZ_k`). -/
-public def zeckNIZ (r k : ℕ) : Set (ℕ → Bool) := zeckCST r k \ zeckCST r (k - 1)
 
 /-- **New-information zones lie in $\mathrm{CST}_k$.** For all $r, k \in \mathbb{N}$, the
 new-information zone $\mathrm{NIZ}_k$ of order $k$ for the shift $r$ is contained in the set
@@ -728,40 +684,6 @@ public theorem_wanted zeckNIZ_levels {r ℓ : ℕ} (hℓ : 2 ≤ ℓ) (hr : Nat.
       zeckAdicPrefixValue (ℓ + 1) x + r < Nat.fib (ℓ + 2)) ∧
     ∀ k, ℓ + 1 < k → (x ∈ zeckNIZ r k ↔
       Nat.fib k ≤ zeckAdicPrefixValue k x + r ∧ zeckAdicPrefixValue k x < Nat.fib k)
-
-/-- **Points of $\mathrm{NIZ}_k$ have leading digits $00$.** Let $r \ge 1$ and $k \ge 2$, and
-let $\mathrm{NIZ}_k$ be the new-information zone of order $k$ for $r$. Every Zeckendorf-adic
-integer $x = (x_i)_{i \ge 2}$ in $\mathrm{NIZ}_k$ has $x_{k+1} = x_k = 0$, that is, the name
-$x_{k+1} \cdots x_2$ of its cylinder of order $k$ starts with $00$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Lemma 32 (`jis-2024-24.3.2-lem-32`). -/
-public theorem_wanted zeckNIZ_leading_zeros {r k : ℕ} (hr : 1 ≤ r) (hk : 2 ≤ k)
-    {x : ℕ → Bool} (hx : x ∈ zeckAdic) (h : x ∈ zeckNIZ r k) :
-    x (k + 1) = false ∧ x k = false
-
-/-- **Shifting a new-information cylinder by two orders.** Let $\mathbb{X}$ be the set of
-Zeckendorf-adic integers: the digit sequences $x = (x_i)_{i \in \mathbb{N}}$ in $\{0, 1\}$ with
-$x_0 = x_1 = 0$ and no two consecutive digits equal to $1$. Let $r \ge 1$, $k \ge 2$ and
-$y \in \mathbb{X}$. Suppose that every $x \in \mathbb{X}$ with $x_{k+1} = x_k = 0$ and $x_i = y_i$
-for $2 \le i \le k - 1$ lies in the new-information zone $\mathrm{NIZ}_k$ (for the shift $r$).
-Then every $x \in \mathbb{X}$ with $x_{k+3} = x_{k+2} = 0$, $x_{k+1} = 1$, $x_k = 0$ and
-$x_i = y_i$ for $2 \le i \le k - 1$ lies in $\mathrm{NIZ}_{k+2}$.
-
-In the paper's cylinder notation, where $C_w$ is the set of points of $\mathbb{X}$ whose digits
-ending at $x_2$ read $w$, and with $n_i = y_i$: $C_{00 n_{k-1} \cdots n_2} \subseteq \mathrm{NIZ}_k$
-implies $C_{0010 n_{k-1} \cdots n_2} \subseteq \mathrm{NIZ}_{k+2}$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Lemma 33 (`jis-2024-24.3.2-lem-33`). -/
-public theorem_wanted zeckNIZ_cylinder_shift {r k : ℕ} (hr : 1 ≤ r) (hk : 2 ≤ k)
-    {y : ℕ → Bool} (hy : y ∈ zeckAdic)
-    (h : zeckAdic ∩ {x | x (k + 1) = false ∧ x k = false ∧
-      ∀ i, 2 ≤ i → i ≤ k - 1 → x i = y i} ⊆ zeckNIZ r k) :
-    zeckAdic ∩ {x | x (k + 3) = false ∧ x (k + 2) = false ∧ x (k + 1) = true ∧ x k = false ∧
-      ∀ i, 2 ≤ i → i ≤ k - 1 → x i = y i} ⊆ zeckNIZ r (k + 2)
 
 /-- **Lifting a cylinder of $\mathrm{NIZ}_k$ to order $k + 2$ lowers the variation by $1$.**
 Let $\ell \ge 2$, let $r$ satisfy $F_\ell \le r < F_{\ell+1}$, where $F_1 = F_2 = 1, F_3 = 2,

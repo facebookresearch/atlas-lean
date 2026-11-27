@@ -42,16 +42,6 @@ public theorem_wanted opx_rotate_reflect (n : ℝ) (P : Set (ℝ × ℝ)) :
       opx n ((fun p : ℝ × ℝ => (-p.1, p.2)) '' P) = opx n P ∧
       opx n ((fun p : ℝ × ℝ => (p.1, -p.2)) '' P) = opx n P
 
-/-- **Monotonicity of the continuous Turán number under containment.** Let $n$ be a real number
-and let $P, Q \subseteq \mathbb{R}^2$. If $Q$ contains $P$ in the sense of containment of planar
-point sets, then $\operatorname{opx}(n, P) \le \operatorname{opx}(n, Q)$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 2.3
-(`integers-2024-A1-lem-2-3`). -/
-public theorem_wanted opx_mono_of_containsPattern (n : ℝ) {P Q : Set (ℝ × ℝ)}
-    (h : PointSetContainsPattern Q P) :
-    opx n P ≤ opx n Q
-
 /-- **Superadditivity of the continuous Turán number.** For every set $P \subseteq \mathbb{R}^2$
 and all real numbers $m, n > 0$,
 $\operatorname{opx}(m, P) + \operatorname{opx}(n, P) \le \operatorname{opx}(m + n, P)$.

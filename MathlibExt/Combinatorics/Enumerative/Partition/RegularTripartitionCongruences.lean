@@ -10,8 +10,11 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
+public import Mathlib.Data.Nat.Prime.Defs
 import Mathlib.Combinatorics.Enumerative.Partition.Glaisher
 import Mathlib.Data.ZMod.Basic
+import Mathlib.NumberTheory.Padics.PadicVal.Basic
+import Mathlib.NumberTheory.SumTwoSquares
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.Combinatorics.Enumerative.Partition.RamanujanPartitionCongruence
 
@@ -19,7 +22,8 @@ import MathlibExt.Combinatorics.Enumerative.Partition.RamanujanPartitionCongruen
 # Congruences for 3-regular tripartitions
 
 The 3-regular tripartition count is divisible by 3 at sizes `3n + 1` and by 9 at sizes
-`3n + 2`. Modulo 9 its generating series is the square of Jacobi's cube series.
+`3n + 2`. It is also divisible by 3 on progressions indexed by primes congruent to 3 modulo 4.
+Modulo 9 its generating series is the square of Jacobi's cube series.
 -/
 
 open PowerSeries
@@ -159,6 +163,100 @@ public theorem regularTripartitionCount_three_mod_three_nine (n : ℕ) :
   have d₂ := dvd_coeff_square (3 * n + 2)
   simp at d₁ d₂
   omega
+
+namespace regularTripartitionCount_three_prime_three_mod_four
+
+-- Two triangular exponents contributing to the product give two odd squares.
+private theorem coeff_square_eq_zero {k : ℕ}
+    (hk : ¬ ∃ x y : ℕ, 8 * k + 2 = x ^ 2 + y ^ 2) :
+    coeff k (jacobiCubeSeries ^ 2) = 0 := by
+  rw [pow_two, coeff_mul]
+  apply Finset.sum_eq_zero
+  rintro ⟨a, b⟩ hab
+  have hab' : a + b = k := Finset.mem_antidiagonal.mp hab
+  by_cases ha : ∃ s : ℕ, (s + 1).choose 2 = a
+  · obtain ⟨s, rfl⟩ := ha
+    suffices hb : ∀ t : ℕ, (t + 1).choose 2 ≠ b by
+      simp [coeff_jacobiCubeSeries_eq_zero hb]
+    rintro t rfl
+    apply hk
+    refine ⟨2 * s + 1, 2 * t + 1, ?_⟩
+    nlinarith [two_mul_choose_two_succ s, two_mul_choose_two_succ t]
+  · simp [coeff_jacobiCubeSeries_eq_zero (not_exists.mp ha)]
+
+-- A prime congruent to 3 modulo 4 occurs to even order in every sum of two squares.
+private theorem not_sum_sq {p α b : ℕ} (hp : p.Prime) (hp4 : p % 4 = 3)
+    (hb : ¬ p ∣ b) : ¬ ∃ x y : ℕ, p ^ (2 * α + 1) * b = x ^ 2 + y ^ 2 := by
+  have : Fact p.Prime := ⟨hp⟩
+  have hb₀ : b ≠ 0 := fun h ↦ hb (h ▸ dvd_zero _)
+  have hpow := pow_ne_zero (2 * α + 1) hp.ne_zero
+  have hmem : p ∈ (p ^ (2 * α + 1) * b).primeFactors :=
+    Nat.mem_primeFactors.mpr ⟨hp, dvd_mul_of_dvd_left (dvd_pow_self p (by omega)) _,
+      mul_ne_zero hpow hb₀⟩
+  intro h
+  have hev := Nat.eq_sq_add_sq_iff.mp h p hmem hp4
+  rw [Nat.padicValNat_def, Nat.multiplicity_mul hpow hb₀, Nat.multiplicity_prime_pow,
+    multiplicity_eq_zero_of_not_dvd hb, add_zero] at hev
+  obtain ⟨j, hj⟩ := hev
+  omega
+
+end regularTripartitionCount_three_prime_three_mod_four
+
+open regularTripartitionCount_three_prime_three_mod_four in
+/-- **A congruence modulo 3 for 3-regular tripartitions at primes $p \equiv 3 \pmod 4$.** Let
+$T_3(m)$ be the number of $3$-regular tripartitions of $m$, and let $p$ be a prime with
+$p \equiv 3 \pmod 4$. For all natural numbers $\alpha$ and $n$ and every integer $i$ with
+$1 \le i \le p - 1$,
+$$
+T_3\Bigl(3 p^{2\alpha+1} (p n + i) + \frac{p^{2\alpha+2} - 1}{4}\Bigr) \equiv 0 \pmod 3,
+$$
+where the division by $4$ is exact.
+
+Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
+l in {2,3}*, INTEGERS 24 (2024), Article A86, Theorem 5 (congruence (55)). -/
+public theorem regularTripartitionCount_three_prime_three_mod_four
+    (p α n i : ℕ) (hp : p.Prime) (hp4 : p % 4 = 3) (hi : 1 ≤ i) (hip : i < p) :
+    3 ∣ regularTripartitionCount 3
+      (3 * p ^ (2 * α + 1) * (p * n + i) + (p ^ (2 * α + 2) - 1) / 4) := by
+  let k := 3 * p ^ (2 * α + 1) * (p * n + i) + (p ^ (2 * α + 2) - 1) / 4
+  change 3 ∣ regularTripartitionCount 3 k
+  have hsq : p ^ 2 ≡ 1 [MOD 4] := by
+    simp [Nat.ModEq, Nat.pow_mod, hp4]
+  have hmod : p ^ (2 * α + 2) ≡ 1 [MOD 4] := by
+    simpa only [← pow_mul, Nat.mul_add, mul_one, one_pow] using hsq.pow (α + 1)
+  have hexact : 4 * ((p ^ (2 * α + 2) - 1) / 4) + 1 = p ^ (2 * α + 2) := by
+    change p ^ (2 * α + 2) % 4 = 1 at hmod
+    omega
+  have hindex : 4 * k + 1 = p ^ (2 * α + 1) * (12 * (p * n + i) + p) := by
+    dsimp [k]
+    rw [Nat.mul_add, add_assoc, hexact, pow_succ p (2 * α + 1)]
+    ring
+  by_cases hp3 : p = 3
+  · have hdiv : 3 ∣ 4 * k + 1 := by
+      rw [hindex, hp3]
+      exact dvd_mul_of_dvd_left (dvd_pow_self 3 (by omega)) _
+    have hk : k = 3 * (k / 3) + 2 := by omega
+    have h := (regularTripartitionCount_three_mod_three_nine (k / 3)).2
+    rw [← hk] at h
+    exact dvd_trans (by decide : 3 ∣ 9) h
+  · have hp2 : ¬ p ∣ 2 := Nat.not_dvd_of_pos_of_lt (by decide) (by omega)
+    have hnd : ¬ p ∣ 24 := by
+      rw [show 24 = 2 ^ 3 * 3 by decide, hp.dvd_mul]
+      exact not_or_intro (fun h ↦ hp2 (hp.dvd_of_dvd_pow h))
+        (Nat.not_dvd_of_pos_of_lt (by decide) (by omega))
+    have hi' : ¬ p ∣ p * n + i := by
+      rw [Nat.dvd_add_right (dvd_mul_right p n)]
+      exact Nat.not_dvd_of_pos_of_lt hi hip
+    have hb : ¬ p ∣ 24 * (p * n + i) + 2 * p := by
+      rw [Nat.dvd_add_left (dvd_mul_left p 2), hp.dvd_mul]
+      exact not_or_intro hnd hi'
+    have hk : 8 * k + 2 = p ^ (2 * α + 1) * (24 * (p * n + i) + 2 * p) := by
+      linear_combination 2 * hindex
+    have hzero := coeff_square_eq_zero (k := k) (hk ▸ not_sum_sq hp hp4 hb)
+    have h := Int.modEq_iff_dvd.mp
+      (regularTripartitionCount_three_mod_three_nine.count_mod_nine k)
+    rw [hzero] at h
+    omega
 
 end
 

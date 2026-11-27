@@ -12,12 +12,11 @@ public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.RingTheory.RamificationInertia.Inertia
 public import Mathlib.RingTheory.RamificationInertia.Ramification
 
-import Mathlib.RingTheory.Ideal.Int
-
 /-! # The generalized fruit equation at a prime above two
 
-We define the set of unramified degree-one primes above two and prove that the generalized fruit
-equation has no solution with even first coordinate when this set is nonempty.
+For each unramified degree-one prime above two, we identify the quotients by its positive powers
+with the corresponding rings of integers modulo powers of two. The generalized fruit equation
+has no solution with even first coordinate when such a prime exists.
 -/
 
 namespace MetaMathlibExt
@@ -49,68 +48,58 @@ theorem mem_twoUnramifiedDegreeOnePrimes {K : Type*} [Field K] [NumberField K]
       P.IsPrime ∧ (2 : 𝓞 K) ∈ P ∧ P.ramificationIdx ℤ = 1 ∧ P.inertiaDeg ℤ = 1 :=
   Iff.rfl
 
-namespace generalizedFruit_no_solution_two_dvd
+open Ideal in
+/-- **Quotients by powers of a prime in $T_K$.** Let $K$ be a number field with ring of integers
+$\mathcal{O}_K$, and let $P \in T_K$, that is, $P$ is a prime ideal of $\mathcal{O}_K$ lying over
+$2$ with ramification index $1$ and inertia degree $1$ over $\mathbb{Z}$. Then for every $n \ge 1$
+the ring $\mathcal{O}_K / P^n$ is isomorphic to $\mathbb{Z} / 2^n \mathbb{Z}$.
 
-open Ideal
-open UniqueFactorizationMonoid
-
-private theorem quotient_sq_equiv_zmod_four {K : Type*} [Field K] [NumberField K]
-    (P : Ideal (𝓞 K)) (hP : P ∈ twoUnramifiedDegreeOnePrimes K) :
-    Nonempty ((𝓞 K ⧸ P ^ 2) ≃+* ZMod 4) := by
+Source: Satyabrat Sahoo and Shanta Laishram, *Generalized Fruit Diophantine Equation over
+Number Fields*, INTEGERS 26 (2026), Article A21, Lemma 1 (`integers-2026-A21-lem-1`). -/
+theorem ringOfIntegers_quotient_pow_ringEquiv_zmod_two_pow (K : Type*) [Field K]
+    [NumberField K] (P : Ideal (𝓞 K)) (hP : P ∈ twoUnramifiedDegreeOnePrimes K) (n : ℕ)
+    (hn : 1 ≤ n) :
+    Nonempty ((𝓞 K ⧸ P ^ n) ≃+* ZMod (2 ^ n)) := by
   classical
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hn)
   obtain ⟨hprime, htwo, he, hf⟩ := (mem_twoUnramifiedDegreeOnePrimes P).mp hP
   let : P.IsPrime := hprime
   let p : Ideal ℤ := span {(2 : ℤ)}
-  let : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-  let hp : p.IsMaximal := Int.ideal_span_isMaximal_of_prime 2
-  let : P.LiesOver p := ⟨hp.eq_of_le (comap_ne_top _ hprime.ne_top)
-    ((span_singleton_le_iff_mem _).mpr (by simpa using htwo))⟩
-  have hmap : p.map (algebraMap ℤ (𝓞 K)) = span {(2 : 𝓞 K)} := by
-    simp [p, map_span]
-  have hmap0 : p.map (algebraMap ℤ (𝓞 K)) ≠ ⊥ := by
-    rw [hmap, ne_eq, span_singleton_eq_bot]
-    exact two_ne_zero
+  let : P.LiesOver p := (liesOver_span_iff hprime.ne_top
+    (Nat.prime_iff_prime_int.mp Nat.prime_two)).mpr (by simpa using htwo)
   have hP0 : P ≠ ⊥ := by
     intro h
     simp [h] at htwo
-  -- The exponent of P in (2) is one, so 2 survives in the quotient by P².
-  have hnot : (2 : 𝓞 K) ∉ P ^ 2 := by
-    intro h
-    have hle : p.map (algebraMap ℤ (𝓞 K)) ≤ P ^ 2 := by
-      rwa [hmap, span_singleton_le_iff_mem]
-    have hcount := count_le_of_ideal_ge hle hmap0 P
-    rw [← Ideal.IsDedekindDomain.ramificationIdx_eq_normalizedFactors_count p P hmap0, he,
-      normalizedFactors_of_irreducible_pow (prime_of_isPrime hP0 hprime).irreducible,
-      normalize_eq, Multiset.count_replicate_self] at hcount
-    exact (by decide : ¬ (2 : ℕ) ≤ 1) hcount
-  let R := 𝓞 K ⧸ P ^ 2
-  let q : 𝓞 K →+* R := Ideal.Quotient.mk (P ^ 2)
-  have htwoR : (2 : R) ≠ 0 := by
-    rw [← map_ofNat q]
-    exact mt Ideal.Quotient.eq_zero_iff_mem.mp hnot
-  have hfourR : (4 : R) = 0 := by
-    have hpow : (4 : 𝓞 K) ∈ P ^ 2 := by
-      convert pow_mem_pow htwo 2 using 1
-      norm_num
-    rw [← map_ofNat q]
-    exact Ideal.Quotient.eq_zero_iff_mem.mpr hpow
-  let : CharP R 4 := by
-    obtain ⟨k, hk, hchar⟩ := (Nat.dvd_prime_pow Nat.prime_two).mp
-      (show ringChar R ∣ 2 ^ 2 from ringChar.dvd hfourR)
-    have hk2 : k = 2 := by
-      by_contra h
-      apply htwoR
-      exact (ringChar.spec R 2).mpr (hchar ▸ (pow_dvd_pow 2 (by omega : k ≤ 1)))
-    exact ringChar.of_eq (by simpa [hk2] using hchar)
+  let R := 𝓞 K ⧸ P ^ (m + 1)
   let : Infinite (𝓞 K) := Infinite.of_injective _ (Int.cast_injective (α := 𝓞 K))
-  have hnorm : P.absNorm = 2 := by
-    simpa [hf] using (pow_inertiaDeg 2 P).symm
-  let : Finite R := Ring.HasFiniteQuotients.finiteQuotient (pow_ne_zero 2 hP0)
+  let : Finite R := Ring.HasFiniteQuotients.finiteQuotient (pow_ne_zero _ hP0)
   let : Fintype R := Fintype.ofFinite R
-  have hcard : Fintype.card R = 4 := by
-    rw [← Nat.card_eq_fintype_card, ← absNorm_eq_natCard (P ^ 2), map_pow, hnorm]
-    rfl
+  -- The inertia degree determines the cardinality of the quotient.
+  have hnorm : P.absNorm = 2 := by simpa [hf] using (pow_inertiaDeg 2 P).symm
+  have hcard : Fintype.card R = 2 ^ (m + 1) := by
+    rw [← Nat.card_eq_fintype_card, ← absNorm_eq_natCard (P ^ (m + 1)), map_pow, hnorm]
+  -- Since the ramification index is one, the multiplicity of P in (2^m) is m.
+  have hmap : p.map (algebraMap ℤ (𝓞 K)) = span {(2 : 𝓞 K)} := by simp [p, map_span]
+  have hspan : span {(2 : 𝓞 K)} ≠ ⊥ := by simp
+  have hmult : multiplicity P (span {(2 : 𝓞 K)}) = 1 := by
+    rwa [Ideal.IsDedekindDomain.ramificationIdx_eq_multiplicity p P (hmap ▸ hspan), hmap] at he
+  have hnot : (2 : 𝓞 K) ^ m ∉ P ^ (m + 1) := by
+    rw [← dvd_span_singleton, ← span_singleton_pow]
+    have hp := prime_of_isPrime hP0 hprime
+    rw [(FiniteMultiplicity.of_prime_left hp (pow_ne_zero m hspan)).pow_dvd_iff_le_multiplicity,
+      multiplicity_pow hp, hmult, mul_one]
+    exact Nat.not_succ_le_self m
+  let : CharP R (2 ^ (m + 1)) := by
+    apply ringChar.of_eq (Nat.eq_prime_pow_of_dvd_least_prime_pow Nat.prime_two ?_ ?_)
+    · rw [← ringChar.spec R, Nat.cast_pow, Nat.cast_ofNat]
+      rw [← map_ofNat (Ideal.Quotient.mk (P ^ (m + 1))) 2, ← map_pow,
+        Ideal.Quotient.eq_zero_iff_mem]
+      exact hnot
+    · rw [← hcard]
+      exact ringChar.dvd (Nat.cast_card_eq_zero R)
   exact ⟨(ZMod.ringEquiv R hcard).symm⟩
+
+namespace generalizedFruit_no_solution_two_dvd
 
 private theorem residue_obstruction (t y z : ZMod 4) :
     -y ^ 2 - z ^ 2 + (2 * t) * y * z + 3 ≠ 0 := by
@@ -142,7 +131,7 @@ theorem generalizedFruit_no_solution_two_dvd (K : Type*) [Field K]
     (hd' : Odd d) (x y z : 𝓞 K) (hx : 2 ∣ x) :
     a * x ^ d - y ^ 2 - z ^ 2 + x * y * z - (2 ^ d * b - 3 ^ r) ≠ 0 := by
   obtain ⟨P, hP⟩ := hT
-  obtain ⟨e⟩ := generalizedFruit_no_solution_two_dvd.quotient_sq_equiv_zmod_four P hP
+  obtain ⟨e⟩ := ringOfIntegers_quotient_pow_ringEquiv_zmod_two_pow K P hP 2 (by decide)
   let f : 𝓞 K →+* ZMod 4 := e.toRingHom.comp (Ideal.Quotient.mk (P ^ 2))
   obtain ⟨t, rfl⟩ := hx
   intro h

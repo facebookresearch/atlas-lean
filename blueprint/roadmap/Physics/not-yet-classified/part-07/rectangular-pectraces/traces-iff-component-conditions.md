@@ -1,0 +1,3 @@
+# PEC traces in component form
+
+For widths $a, b$ and fields $E, B : \mathbb{R}^3 \to \mathbb{R}^3$, the *PEC trace condition* of the rectangular guide requires $a > 0$, $b > 0$, and that the tangential components of $E$ and the normal component of $B$ vanish at every point of the four side walls $\{x = 0\}$, $\{x = a\}$ (with $0 \le y \le b$) and $\{y = 0\}$, $\{y = b\}$ (with $0 \le x \le a$), for every $z$. The *component conditions* require $a > 0$, $b > 0$, $E_y = E_z = B_x = 0$ on $x = 0$ and $x = a$ for $0 \le y \le b$, and $E_x = E_z = B_y = 0$ on $y = 0$ and $y = b$ for $0 \le x \le a$, for every $z$. For all real $a, b$ and all fields $E, B$, the PEC trace condition holds if and only if the component conditions hold.

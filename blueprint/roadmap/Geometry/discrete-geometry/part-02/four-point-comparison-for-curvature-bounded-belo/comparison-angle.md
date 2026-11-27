@@ -1,0 +1,3 @@
+# Comparison Angle
+
+In a metric space, the comparison angle of curvature $\kappa$ at $p$ of the triple $p, x, y$ is the [model angle](model-angle.md) opposite the side $d(x, y)$ with adjacent sides $d(p, x)$ and $d(p, y)$, given by the cosine law of the model plane of curvature $\kappa$. It is a real number for every triple. The cosine-law formula returns a real number for every input: division by zero gives $0$ (so when an adjacent side is $0$ the argument of $\arccos$ is $0$ and the angle is $\pi/2$), and the real $\arccos$ returns $\pi$ below $-1$ and $0$ above $1$. It is the geometric comparison angle when the triple is [admissible](model-angle-defined.md).

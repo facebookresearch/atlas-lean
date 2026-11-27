@@ -14,6 +14,7 @@ public import Mathlib.Combinatorics.Enumerative.DyckWord
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.Enumerative.DescendingNaplesBinaryTrees
 public import MathlibExt.Combinatorics.Enumerative.DescendingNaplesDyckPath
 public import MathlibExt.Combinatorics.Enumerative.KNaplesParking
 public import MathlibExt.Combinatorics.Enumerative.KNaplesParkingInt
@@ -70,20 +71,6 @@ public def ascendingNaplesOneCount (n k : ℕ) : ℕ :=
   ((Fintype.piFinset fun _ : Fin n => Finset.Icc 1 n).filter fun α =>
     (∀ i j : Fin n, i ≤ j → α i ≤ α j) ∧ IsNaplesParkingFunction k α ∧
       ∃ i : Fin n, i.val = 0 ∧ α i = 1).card
-
-/-- **Number of descending strictly $k$-Naples parking functions.** For natural numbers $n$ and
-$k$, this is the number of preferences $\alpha = (a_1, \dots, a_n) \in \{1, \dots, n\}^n$ that
-are descending ($a_1 \ge a_2 \ge \dots \ge a_n$), are $k$-Naples parking functions, and are not
-$(k - 1)$-Naples parking functions. It is used for $k \ge 1$; for $k = 0$, where $k - 1$ is
-read as $0$, the count is $0$.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Proposition 4. -/
-public def descendingStrictNaplesCount (n k : ℕ) : ℕ :=
-  ((Fintype.piFinset fun _ : Fin n => Finset.Icc 1 n).filter fun α =>
-    (∀ i j : Fin n, i ≤ j → α j ≤ α i) ∧ IsNaplesParkingFunction k α ∧
-      ¬ IsNaplesParkingFunction (k - 1) α).card
 
 /-- **Naples counts for $n = 2$ and $k = 1$.** Among the preferences of length $2$ with entries
 in $\{1, 2\}$, exactly $3$ are weakly increasing $1$-Naples parking functions ($I_{2,1} = 3$),
@@ -156,9 +143,10 @@ Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vinda
 Article A44, Proposition 3. -/
 public theorem_wanted descendingNaplesCount_eq_card_dyckPath {n k : ℕ} (hn : 1 ≤ n)
     (hk : 1 ≤ k) :
-    descendingNaplesCount n k = (Finset.univ.filter fun p : {p : DyckWord // p.semilength = n + k} =>
-      List.replicate k DyckStep.U <+: p.1.toList ∧
-        List.replicate (k + 1) DyckStep.D <:+ p.1.toList).card
+    descendingNaplesCount n k = (Finset.univ.filter
+      fun p : {p : DyckWord // p.semilength = n + k} =>
+        List.replicate k DyckStep.U <+: p.1.toList ∧
+          List.replicate (k + 1) DyckStep.D <:+ p.1.toList).card
 
 open Classical in
 /-- **Descending strictly $k$-Naples parking functions and Dyck paths with an early return.**
@@ -173,10 +161,11 @@ Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vinda
 Article A44, Proposition 4. -/
 public theorem_wanted descendingStrictNaplesCount_eq_card_dyckPath {n k : ℕ} (hn : 1 ≤ n)
     (hk : 1 ≤ k) :
-    descendingStrictNaplesCount n k = (Finset.univ.filter fun p : {p : DyckWord // p.semilength = n + k} =>
-      List.replicate k DyckStep.U <+: p.1.toList ∧
-        List.replicate (k + 1) DyckStep.D <:+ p.1.toList ∧
-        ∃ j < 2 * (n + k), 0 < j ∧ dyckStepHeight p.1.toList j = 0).card
+    descendingStrictNaplesCount n k = (Finset.univ.filter
+      fun p : {p : DyckWord // p.semilength = n + k} =>
+        List.replicate k DyckStep.U <+: p.1.toList ∧
+          List.replicate (k + 1) DyckStep.D <:+ p.1.toList ∧
+          ∃ j < 2 * (n + k), 0 < j ∧ dyckStepHeight p.1.toList j = 0).card
 
 /-- **Recurrence for ascending $k$-Naples parking functions.** Let $I_{n,k}$ be the number of
 weakly increasing $k$-Naples parking functions of length $n$, let $U_{n,k}$ be the number of
@@ -244,21 +233,6 @@ public theorem_wanted ascendingNaples_generatingFunction {k : ℕ} (hk : 1 ≤ k
           (catalan k : PowerSeries ℕ) * PowerSeries.X ^ k *
             PowerSeries.mk (fun n => ascendingNaplesOneCount n (k - 1)) *
             PowerSeries.mk (fun n => ascendingNaplesOneCount n k)
-
-/-- **Counting descending $k$-Naples parking functions.** For all natural numbers $n \ge 1$ and
-$k \ge 1$, the number of weakly decreasing $k$-Naples parking functions of length $n$ is
-$\binom{2n-1}{n} - \binom{2n-1}{n+k+1}$, and the number of weakly decreasing strictly
-$k$-Naples parking functions of length $n$ (those that are $k$-Naples but not $(k-1)$-Naples)
-is $\frac{k+1}{n} \binom{2n}{n+k+1}$.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Theorem 7. -/
-public theorem_wanted descendingNaplesCount_eq_choose {n k : ℕ} (hn : 1 ≤ n) (hk : 1 ≤ k) :
-    descendingNaplesCount n k = Nat.choose (2 * n - 1) n - Nat.choose (2 * n - 1) (n + k + 1) ∧
-      (descendingStrictNaplesCount n k : ℚ) =
-        ((k : ℚ) + 1) / n * Nat.choose (2 * n) (n + k + 1)
-
 
 /-- **Lattice path of a parking preference.** Let $\alpha = (a_1, \dots, a_n)$ be a sequence of
 natural numbers. Its lattice path is the sequence of $2n$ steps, each an Up step $(1, 1)$ or a
@@ -345,16 +319,6 @@ public theorem_wanted ascendingNaplesCount_eq_card_dyckPath {n k : ℕ} (hn : 1 
             ∃ j, i + 1 < j ∧ j ≤ i + 1 + 2 * k ∧ j ≤ 2 * (n + k) ∧
               (k : ℤ) < dyckStepHeight p.1.toList j).card
 
-/-- The number of nodes on the left spine of a binary tree: the root, its left child, that
-child's left child, and so on (`0` for the empty tree).
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Section 4 (Proposition 4.12). -/
-public def leftSpineLength {α : Type*} : BinaryTree α → ℕ
-  | .nil => 0
-  | .node _ l _ => leftSpineLength l + 1
-
 /-- **Left spine lengths of small binary trees.** The empty binary tree has left spine length
 $0$, and the binary tree with three nodes, a root whose left child and right child have no
 children, has left spine length $2$.
@@ -367,20 +331,6 @@ public theorem leftSpineLength_examples :
       leftSpineLength (BinaryTree.node () (BinaryTree.node () .nil .nil)
         (BinaryTree.node () .nil .nil)) = 2 := by
   decide
-
-/-- **Descending strictly $k$-Naples parking functions and binary trees.** For every $n$ and
-every $k \ge 1$, the number of descending strictly $k$-Naples parking functions of length $n$
-(descending preferences that are $k$-Naples but not $(k - 1)$-Naples) equals the number of
-binary trees $t$ with $n + k$ nodes such that the left spine of $t$ (the root, its left child,
-that child's left child, and so on) has at least $k$ nodes and the left spine of the right
-subtree of $t$ has at least $k + 1$ nodes.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Proposition 4.12 (published as Proposition 5). -/
-public theorem_wanted descendingStrictNaplesCount_eq_card_binaryTree {n k : ℕ} (hk : 1 ≤ k) :
-    descendingStrictNaplesCount n k = ((BinaryTree.treesOfNumNodesEq (n + k)).filter fun t =>
-      k ≤ leftSpineLength t ∧ k + 1 ≤ leftSpineLength t.right).card
 
 /-- **Edges of an inscribed polygon.** Let $R$ be a set of vertices of the convex $s$-gon with
 vertices $0, 1, \dots, s - 1$. The edges of the polygon with vertex set $R$ are the pairs
@@ -470,8 +420,9 @@ Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vinda
 Article A44, Theorem 6.4 (published as Proposition 7). -/
 public theorem_wanted descendingStrictNaplesCount_eq_card_noncrossingPartition {n k : ℕ}
     (hk : 1 ≤ k) :
-    descendingStrictNaplesCount n k = (Finset.univ.filter fun P : NoncrossingPartition (n + k + 1) =>
-      (NoncrossingPartition.block P 0).card = 2 * k + 2).card
+    descendingStrictNaplesCount n k = (Finset.univ.filter
+      fun P : NoncrossingPartition (n + k + 1) =>
+        (NoncrossingPartition.block P 0).card = 2 * k + 2).card
 
 end
 
