@@ -106,9 +106,12 @@ section Definitions
 
 variable {Ω 𝒳 : Type*}
 
-/-- **Hahn's variance bound** for the average treatment effect at centering `τ`:
-`E[s₁(X) / e(X) + s₀(X) / (1 - e(X)) + (m₁(X) - m₀(X) - τ)²]`, where `s_a` is the conditional
-variance of `Y_a` given `X`. -/
+/-- **Hahn's expression** at centering `τ`: the integral
+`E[s₁(X) / e(X) + s₀(X) / (1 - e(X)) + (m₁(X) - m₀(X) - τ)²]` against `μ`, defined for any
+inputs. It is Hahn's variance bound for the average treatment effect only at the true center
+`τ = E[Y₁ - Y₀]` under Hahn's hypotheses, with `e` the propensity score and `m_a`, `s_a` the
+conditional mean and variance of `Y_a` given `X` (`HahnSetup.variance_aipwScore`,
+`HahnSetup.hahnBound_le_variance_augmentedIPWScore`). -/
 noncomputable def hahnBound [MeasurableSpace Ω] (μ : Measure Ω) (X : Ω → 𝒳)
     (e m₀ m₁ s₀ s₁ : 𝒳 → ℝ) (τ : ℝ) : ℝ :=
   ∫ ω, (s₁ (X ω) / e (X ω) + s₀ (X ω) / (1 - e (X ω)) + (m₁ (X ω) - m₀ (X ω) - τ) ^ 2) ∂μ
