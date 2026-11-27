@@ -1,9 +1,8 @@
 # Irreducibility of the Galois representation of a weight-one cusp form
 
 Let $N \ge 1$, let $\varepsilon$ be a Dirichlet character mod $N$ with $\varepsilon(-1) = -1$, and let $f \ne 0$ be a cusp
-form of type $(1, \varepsilon)$ on $\Gamma_0(N)$ (as on
-[Rankin's bound](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md)) that is an eigenvector of the Hecke
-operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Let $\rho \colon G \to \mathrm{GL}_2(\mathbb{C})$,
+form of [type $(1, \varepsilon)$ on $\Gamma_0(N)$](modular-forms-of-type-k-epsilon.md) that is an eigenvector of the
+Hecke operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Let $\rho \colon G \to \mathrm{GL}_2(\mathbb{C})$,
 $G = \operatorname{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$, be a representation with finite image, unramified outside $N$, with
 $\operatorname{Tr}(F_{\rho,p}) = a_p$ and $\det(F_{\rho,p}) = \varepsilon(p)$ for every prime $p \nmid N$ (unramified and
 $F_{\rho,p}$ as on
@@ -28,6 +27,7 @@ which contradicts (5.1.1) of [Rankin's bound](rankin-bound-for-the-mean-square-o
 
 ## Depends on
 
+- [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for cusp forms of type $(1, \varepsilon)$ and the operators $T_p$
 - [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](semisimple-galois-representations-with-equal-frobenius-polynomials.md), for the conventions on unramified representations and Frobenius elements
 
 ## Proof depends on
@@ -41,8 +41,10 @@ which contradicts (5.1.1) of [Rankin's bound](rankin-bound-for-the-mean-square-o
 This node is still to be broken down. A good expansion states and links:
 
 - the correspondence between characters of $G$ of finite order unramified outside $N$ and Dirichlet characters of
-  conductor divisible only by primes dividing $N$, under which $\chi(F_{\chi,p}) = \chi(p)$, and the value at complex
-  conjugation, $\varepsilon(c) = \varepsilon(-1)$ (Deligne–Serre, Remarques 4.4 and 4.5);
+  conductor divisible only by primes dividing $N$, under which $F_{\chi,p} = \chi(\mathrm{Frob}_p) = \chi(p)$ for
+  $p \nmid N$, $\mathrm{Frob}_p$ an arithmetic Frobenius element at $p$, with the character of $G$ in the middle and the
+  Dirichlet character on the right, and the value at complex conjugation, $\varepsilon(c) = \varepsilon(-1)$
+  (Deligne–Serre, Remarques 4.4 and 4.5);
 - the estimates $\sum_p p^{-s} = \log(1/(s-1)) + O(1)$ and, for a nontrivial Dirichlet character $\chi$,
   $\sum_p \chi(p) p^{-s} = O(1)$ as $s \to 1$, from $L(1, \chi) \neq 0$ (Serre, *Cours d'arithmétique*, VI.4.2, as cited in
   Deligne–Serre (1974), p. 526).

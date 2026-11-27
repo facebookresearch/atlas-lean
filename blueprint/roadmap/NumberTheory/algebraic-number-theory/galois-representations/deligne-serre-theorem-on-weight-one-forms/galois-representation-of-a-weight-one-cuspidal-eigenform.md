@@ -1,9 +1,8 @@
 # Galois representation of a weight-one cuspidal eigenform
 
 Let $N \ge 1$, let $\varepsilon$ be a Dirichlet character mod $N$ with $\varepsilon(-1) = -1$, and let $f \ne 0$ be a cusp
-form of type $(1, \varepsilon)$ on $\Gamma_0(N)$ (as on
-[Rankin's bound](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md)) that is an eigenvector of the Hecke
-operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Then:
+form of [type $(1, \varepsilon)$ on $\Gamma_0(N)$](modular-forms-of-type-k-epsilon.md) that is an eigenvector of the
+Hecke operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Then:
 
 1. there is an integer $A \ge 1$ such that for every prime $p \nmid N$
 
@@ -43,6 +42,7 @@ is unramified outside $N$ and the equality holds for every $p \nmid N$.
 
 ## Depends on
 
+- [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for cusp forms of type $(1, \varepsilon)$ and the operators $T_p$
 - [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](semisimple-galois-representations-with-equal-frobenius-polynomials.md), for the conventions on unramified representations and Frobenius elements
 
 ## Proof depends on
@@ -50,18 +50,24 @@ is unramified outside $N$ and the equality holds for every $p \nmid N$.
 - [Representations modulo ℓ attached to a weight-one cuspidal eigenform](representations-mod-l-of-a-weight-one-cuspidal-eigenform.md), for the $\rho_\ell$ and their Frobenius polynomials
 - [Uniform bound on the images of the representations modulo ℓ](uniform-bound-on-the-images-of-the-representations-mod-l.md), for the constant $A$
 - [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](semisimple-galois-representations-with-equal-frobenius-polynomials.md), for $\rho \cong \rho'$
+- [Chebotarev density theorem](../../adeles-class-field-theory/chebotarev-density-theorem.md), applied to the Galois extension $K$ of $\mathbb{Q}$ with $C = \{1\}$, for the infinitude of $L$ (§§8.5–8.6): the primes that split completely in $K$ have Dirichlet density $1/[K : \mathbb{Q}] > 0$
 
 ## Expansion
 
 This node is still to be broken down. A good expansion states and links:
 
-- the lifting of a representation of a finite group of order prime to $\ell$ from $\mathbb{F}_\ell$ to the valuation ring
-  $\mathcal{O}_{\lambda_\ell}$ of a place of residue field $\mathbb{F}_\ell$ ("par un argument standard", Deligne–Serre, §8.6);
+- the lifting of a representation of a finite group of order at most $A$ and prime to $\ell$ from $\mathbb{F}_\ell$ to
+  the valuation ring $\mathcal{O}_{\lambda_\ell}$ ("par un argument standard", Deligne–Serre, §8.6), stated with the
+  hypothesis of §8.5 that $K$ contains the $n$-th roots of unity for all $n \le A$: the residue field $\mathbb{F}_\ell$
+  alone does not suffice, as the character of order $3$ of $\mathbb{Z}/3\mathbb{Z}$ that sends a generator to
+  $2 \in \mathbb{F}_7^\times$ does not lift to $\mathbb{Z}_{(7)}^\times$, which has no element of order $3$;
 - the eigenvalues of an element of a finite group of order at most $A$ in a representation, roots of unity of order at
   most $A$, and their reduction modulo $\lambda_\ell$ to the roots of unity of $\mathbb{F}_\ell$, which gives the congruence
   of §8.5 for $\ell \ne p$;
-- the finiteness of $L \smallsetminus L'$ and the infinitude of $L$, from the Chebotarev density theorem for the Galois
-  extension $K$ of $\mathbb{Q}$.
+- the finiteness of $L \smallsetminus L'$, which is separate from the infinitude of $L$: for each of the finitely many
+  pairs $R \ne S$ of elements of $Y$, some coefficient of $R - S$ is a nonzero element of $\mathcal{O}_K$, which lies in
+  only finitely many prime ideals of $\mathcal{O}_K$, hence in $\lambda_\ell$ for only finitely many $\ell$; the same
+  fact turns the congruences of §8.5 modulo $\lambda_\ell$ for infinitely many $\ell$ into an equality.
 
 ## Sources
 

@@ -28,6 +28,7 @@ $\rho_\ell$ is semisimple, so $|G_\ell| \le A(\eta, M)$.
 
 ## Depends on
 
+- [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for cusp forms of type $(1, \varepsilon)$ and the operators $T_p$
 - [Representations modulo ℓ attached to a weight-one cuspidal eigenform](representations-mod-l-of-a-weight-one-cuspidal-eigenform.md), for $\rho_\ell$
 
 ## Proof depends on

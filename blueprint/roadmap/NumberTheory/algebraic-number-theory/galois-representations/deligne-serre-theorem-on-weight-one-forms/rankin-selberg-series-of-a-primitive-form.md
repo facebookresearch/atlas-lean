@@ -17,6 +17,10 @@ whole plane: that holds for $N = 1$, but for $N > 1$ the Euler factors of $\zeta
 can give poles on the line $\operatorname{Re}(s) = k - 1$. That the pole at $s = k$ is simple is how they use it, since they
 conclude from it that the series $L(s)$ of that page has a simple pole at $s = k$.
 
+## Depends on
+
+- [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for forms of type $(k, \varepsilon)$
+
 ## Proof depends on
 
 Its proof uses the inputs listed under Expansion.
@@ -27,8 +31,9 @@ This node is still to be broken down. A good expansion states and links:
 
 - the definition of primitive forms of type $(k, \varepsilon)$ on $\Gamma_0(N)$ (Deligne–Serre, §1.7, citing Atkin–Lehner
   for $\varepsilon = 1$ and Deligne, Li and Miyake in general, as cited there);
-- a proof of the convergence and of the continuation with its only pole, which Deligne–Serre attribute to Rankin [18],
-  also citing Li [12], Miyake [13] and Ogg [15] (as cited in Deligne–Serre (1974), p. 518).
+- a proof of the convergence and of the continuation, with its simple pole at $s = k$ on $\operatorname{Re}(s) > k - 1$,
+  which Deligne–Serre attribute to Rankin [18], also citing Li [12], Miyake [13] and Ogg [15] (as cited in
+  Deligne–Serre (1974), p. 518).
 
 ## Sources
 

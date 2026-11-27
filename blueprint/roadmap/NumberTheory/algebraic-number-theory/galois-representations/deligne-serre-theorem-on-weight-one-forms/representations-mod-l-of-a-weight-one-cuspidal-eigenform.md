@@ -1,10 +1,9 @@
 # Representations modulo ℓ attached to a weight-one cuspidal eigenform
 
 Let $N \ge 1$, let $\varepsilon$ be a Dirichlet character mod $N$ with $\varepsilon(-1) = -1$, and let $f \ne 0$ be a cusp
-form of type $(1, \varepsilon)$ on $\Gamma_0(N)$ (as on
-[Rankin's bound](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md)) that is an eigenvector of the Hecke
-operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Let $K \subset \mathbb{C}$ be a number field, Galois over $\mathbb{Q}$,
-whose ring of integers $\mathcal{O}_K$ contains the $a_p$ and the $\varepsilon(p)$; such a field exists by the
+form of [type $(1, \varepsilon)$ on $\Gamma_0(N)$](modular-forms-of-type-k-epsilon.md) that is an eigenvector of the
+Hecke operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Let $K \subset \mathbb{C}$ be a number field, Galois over
+$\mathbb{Q}$, whose ring of integers $\mathcal{O}_K$ contains the $a_p$ and the $\varepsilon(p)$; such a field exists by the
 [integral lattice of cusp forms](integral-lattice-of-cusp-forms-and-algebraicity-of-hecke-eigenvalues.md). Let $L$ be the
 set of primes $\ell$ that split completely in $K$, and for each $\ell \in L$ choose a place $\lambda_\ell$ of $K$ above
 $\ell$, whose residue field is $\mathbb{F}_\ell$. Then for each $\ell \in L$ there is a continuous semisimple representation
@@ -31,6 +30,7 @@ $\lambda_\ell$ at $F_{\rho_\ell,p}$, which is the congruence above.
 
 ## Depends on
 
+- [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for cusp forms of type $(1, \varepsilon)$ and the operators $T_p$
 - [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](semisimple-galois-representations-with-equal-frobenius-polynomials.md), for the conventions on unramified representations and Frobenius elements
 
 ## Proof depends on

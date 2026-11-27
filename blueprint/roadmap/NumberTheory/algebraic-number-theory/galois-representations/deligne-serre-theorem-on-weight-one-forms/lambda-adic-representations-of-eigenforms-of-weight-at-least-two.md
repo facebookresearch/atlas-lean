@@ -1,11 +1,11 @@
 # λ-adic representations attached to eigenforms of weight at least two
 
 Let $N \ge 1$, let $\varepsilon$ be a Dirichlet character mod $N$ and $k \ge 2$ an integer with
-$\varepsilon(-1) = (-1)^k$, and let $f \ne 0$ be a modular form of type $(k, \varepsilon)$ on $\Gamma_0(N)$ (as on
-[Rankin's bound](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md); $f$ need not be a cusp form) that is an
-eigenvector of the Hecke operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Let $K$ be a finite extension of
-$\mathbb{Q}$ containing the $a_p$ and the $\varepsilon(p)$, let $\lambda$ be a finite place of $K$ with residue
-characteristic $\ell$, and let $K_\lambda$ be the completion of $K$ at $\lambda$. Then there is a continuous semisimple
+$\varepsilon(-1) = (-1)^k$, and let $f \ne 0$ be a
+[modular form of type $(k, \varepsilon)$ on $\Gamma_0(N)$](modular-forms-of-type-k-epsilon.md), not necessarily a cusp
+form, that is an eigenvector of the Hecke operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Let $K$ be a finite
+extension of $\mathbb{Q}$ containing the $a_p$ and the $\varepsilon(p)$, let $\lambda$ be a finite place of $K$ with
+residue characteristic $\ell$, and let $K_\lambda$ be the completion of $K$ at $\lambda$. Then there is a continuous semisimple
 representation
 
 $$\rho_\lambda \colon G \to \mathrm{GL}_2(K_\lambda), \qquad G = \operatorname{Gal}(\overline{\mathbb{Q}}/\mathbb{Q}),$$
@@ -25,11 +25,12 @@ is proved in a special case by Deligne [4], and the general case is treated by a
 
 ## Depends on
 
+- [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for forms of type $(k, \varepsilon)$ and the operators $T_p$
 - [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](semisimple-galois-representations-with-equal-frobenius-polynomials.md), for the conventions on unramified representations and Frobenius elements
 
 ## Proof depends on
 
-Its proof uses the inputs listed under Expansion.
+- [Cyclotomic character and Tate twists](../cyclotomic-character-and-tate-twists.md), for the $\ell$-adic cyclotomic character $\chi_\ell$, through which $G$ acts on the $\ell$-power roots of unity, so that $\chi_\ell$ is unramified outside $\ell$ and takes the value $p$ at an arithmetic Frobenius element at $p \ne \ell$: when $f$ is an Eisenstein series, one of the two representations of degree $1$ whose sum is $\rho_\lambda$ (Remarque 6.2) is a Dirichlet character times a power of $\chi_\ell$
 
 ## Expansion
 

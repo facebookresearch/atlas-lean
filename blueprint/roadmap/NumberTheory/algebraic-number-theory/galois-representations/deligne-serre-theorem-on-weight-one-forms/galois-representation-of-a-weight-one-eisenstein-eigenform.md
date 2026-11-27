@@ -1,10 +1,9 @@
 # Galois representation of a weight-one Eisenstein eigenform
 
 Let $N \ge 1$, let $\varepsilon$ be a Dirichlet character mod $N$ with $\varepsilon(-1) = -1$, and let $f \ne 0$ be an
-Eisenstein series of type $(1, \varepsilon)$ on $\Gamma_0(N)$, a form whose decomposition in §1.9 of Deligne–Serre has
-no cuspidal part (forms of type $(1, \varepsilon)$ as on
-[Rankin's bound](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md)), that is an eigenvector of the Hecke
-operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Then there are characters $\chi_1$, $\chi_2$ of
+Eisenstein series of [type $(1, \varepsilon)$ on $\Gamma_0(N)$](modular-forms-of-type-k-epsilon.md), a form whose
+decomposition in §1.9 of Deligne–Serre has no cuspidal part, that is an eigenvector of the Hecke operators $T_p$,
+$p \nmid N$, with eigenvalues $a_p$. Then there are characters $\chi_1$, $\chi_2$ of
 $(\mathbb{Z}/N\mathbb{Z})^*$ with
 
 $$\chi_1 \chi_2 = \varepsilon \qquad \text{and} \qquad a_p = \chi_1(p) + \chi_2(p) \quad \text{for every prime } p \nmid N.$$
@@ -21,6 +20,7 @@ Hecke.
 
 ## Depends on
 
+- [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for forms of type $(1, \varepsilon)$ and the operators $T_p$
 - [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](semisimple-galois-representations-with-equal-frobenius-polynomials.md), for the conventions on unramified representations and Frobenius elements
 
 ## Proof depends on
@@ -33,8 +33,9 @@ This node is still to be broken down. A good expansion states and links:
 
 - Hecke's description of the eigenvalues of the Eisenstein series of type $(1, \varepsilon)$ that are eigenvectors of the
   $T_p$, $p \nmid N$ ([9], p. 690, as cited in Deligne–Serre (1974), p. 525);
-- the action of an arithmetic Frobenius element at $p \nmid N$ on the $N$-th roots of unity, $\zeta \mapsto \zeta^p$, so that
-  $\chi_i(F_{\chi_i,p}) = \chi_i(p)$ (Deligne–Serre, Remarque 4.4);
+- the action of an arithmetic Frobenius element $\mathrm{Frob}_p$ at $p \nmid N$ on the $N$-th roots of unity,
+  $\zeta \mapsto \zeta^p$, so that $F_{\chi_i,p} = \chi_i(\mathrm{Frob}_p) = \chi_i(p)$, with the character of $G$ in the
+  middle and the Dirichlet character on the right (Deligne–Serre, Remarque 4.4);
 - the reduction at the start of §8: by §1.9 a form of type $(1, \varepsilon)$ is the sum of an Eisenstein series and a cusp
   form, the $T_p$ preserve the two summands, so a nonzero summand of an eigenvector is an eigenvector with the same
   eigenvalues, and Théorème 4.1 for $f$ follows from the case of an Eisenstein series when $f$ is not a cusp form and

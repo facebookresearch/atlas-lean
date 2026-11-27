@@ -7,10 +7,9 @@ $$\operatorname{dens.sup} X = \limsup_{s \to 1,\ s > 1} \Bigl( \sum_{p \in X} p^
 the limit superior over real $s > 1$; it lies between $0$ and $1$.
 
 Let $N \ge 1$, let $\varepsilon$ be a Dirichlet character mod $N$ with $\varepsilon(-1) = -1$, and let $f \ne 0$ be a cusp
-form of type $(1, \varepsilon)$ on $\Gamma_0(N)$ (as on
-[Rankin's bound](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md)) that is an eigenvector of the Hecke
-operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Then for every $\eta > 0$ there are a set $X_\eta$ of primes and a
-finite subset $Y_\eta$ of $\mathbb{C}$ such that
+form of [type $(1, \varepsilon)$ on $\Gamma_0(N)$](modular-forms-of-type-k-epsilon.md) that is an eigenvector of the
+Hecke operators $T_p$, $p \nmid N$, with eigenvalues $a_p$. Then for every $\eta > 0$ there are a set $X_\eta$ of
+primes and a finite subset $Y_\eta$ of $\mathbb{C}$ such that
 
 $$\operatorname{dens.sup} X_\eta \le \eta \qquad \text{and} \qquad a_p \in Y_\eta \text{ for every prime } p \nmid N \text{ with } p \notin X_\eta.$$
 
@@ -30,6 +29,10 @@ $$\sum_\sigma \sum_{p \nmid N} |\sigma(a_p)|^2 p^{-s} \le r \log\bigl(1/(s-1)\bi
 
 and $\sum_\sigma |\sigma(a_p)|^2 \ge c$ for $p \in X(c)$, so $c \sum_{p \in X(c)} p^{-s} \le r \log(1/(s-1)) + O(1)$ and
 $\operatorname{dens.sup} X(c) \le r/c$. Take $c \ge r/\eta$, $X_\eta = X(c)$ and $Y_\eta = Y(c)$.
+
+## Depends on
+
+- [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for cusp forms of type $(1, \varepsilon)$ and the operators $T_p$
 
 ## Proof depends on
 

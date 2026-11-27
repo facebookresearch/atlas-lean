@@ -42,12 +42,17 @@ This node is still to be broken down. A good expansion states and links:
   invertible sheaf on the algebraic stack of $\Gamma_1(N)$ ([7], VII, 3.2, as cited in §2.6), and the criterion of §2.6 for a
   form to be defined over a subfield;
 - the stability of $L$ under the $T_p$, from formula (2.5.1), and the passage from (2.7.1) and (2.7.2) to (2.7.3) and
-  (2.7.4): the $T_p$ act on the finite free $\mathbb{Z}$-module $L$, so their eigenvalues are roots of monic integer
-  polynomials, and $\sigma$ commutes with operators defined on $L$.
+  (2.7.4): each $T_p$ acts on the finite free $\mathbb{Z}$-module $L$, so its eigenvalues are roots of a monic integer
+  polynomial, which makes them algebraic integers one operator at a time; the one finite extension of $\mathbb{Q}$ of
+  (2.7.3) comes from the $T_p$ commuting with one another (§2.3): they generate a finite-dimensional commutative
+  $\mathbb{Q}$-algebra of endomorphisms of $\mathbb{Q} \otimes L$, which has finitely many residue fields, all number
+  fields, and each eigenvalue of a $T_p$ is the image of $T_p$ under a homomorphism of that algebra to $\mathbb{C}$,
+  which factors through one of them; and $\sigma$ commutes with operators defined on $L$.
 
 ## Sources
 
 - P. Deligne and J.-P. Serre, *Formes modulaires de poids 1*, Ann. Sci. École Norm. Sup. (4) 7 (1974), 507–530,
   [doi:10.24033/asens.1277](https://doi.org/10.24033/asens.1277): Proposition 2.7, (2.7.1)–(2.7.4), and its proof, p. 512;
-  §2.6 and (2.6.1), p. 512; formula (2.5.1), p. 511, and (2.5.2), p. 512; §§2.2–2.4, pp. 510–511; §1.4, p. 508, for the
+  §2.6 and (2.6.1), p. 512; formula (2.5.1), p. 511, and (2.5.2), p. 512; §§2.2–2.4, pp. 510–511, with §2.3, p. 511, for
+  the commutation of the $T_p$ ("Les $T_p$ commutent entre eux, et commutent aux $R_d$"); §1.4, p. 508, for the
   operators $R_d$; Remarque 2.8, p. 512.

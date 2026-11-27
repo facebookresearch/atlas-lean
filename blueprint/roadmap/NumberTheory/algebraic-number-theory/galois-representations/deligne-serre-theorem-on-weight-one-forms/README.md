@@ -15,6 +15,7 @@ are sums of two roots of unity, and for large $\ell$ the representation in chara
 representation with finite image, which Rankin's bound makes irreducible (§8). An Eisenstein series gives a sum of
 two characters (§8.1).
 
+- [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md)
 - [Integral lattice of cusp forms on Γ₁(N) and algebraicity of their Hecke eigenvalues](integral-lattice-of-cusp-forms-and-algebraicity-of-hecke-eigenvalues.md)
 - [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](semisimple-galois-representations-with-equal-frobenius-polynomials.md)
 - [Rankin–Selberg series of a primitive form](rankin-selberg-series-of-a-primitive-form.md)

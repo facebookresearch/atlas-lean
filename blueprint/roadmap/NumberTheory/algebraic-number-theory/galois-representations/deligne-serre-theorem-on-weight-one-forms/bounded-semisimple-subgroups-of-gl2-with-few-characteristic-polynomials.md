@@ -33,6 +33,10 @@ cases.
 
 The remark on $\ell = 2$ in (c) is added here: Deligne and Serre state the index $2$ without restriction.
 
+## Depends on
+
+- [Semisimple subgroups of GL₂ over a prime field](semisimple-subgroups-of-gl2-over-a-prime-field.md), for the definition of a semisimple subgroup of $\mathrm{GL}_2(\mathbb{F}_\ell)$
+
 ## Proof depends on
 
 - [Semisimple subgroups of GL₂ over a prime field](semisimple-subgroups-of-gl2-over-a-prime-field.md), for the four cases

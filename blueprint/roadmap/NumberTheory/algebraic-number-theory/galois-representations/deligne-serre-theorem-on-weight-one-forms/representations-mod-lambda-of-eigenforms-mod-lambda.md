@@ -2,10 +2,10 @@
 
 Let $K \subset \mathbb{C}$ be a number field, $\lambda$ a finite place of $K$, $\mathcal{O}_\lambda$ the corresponding valuation
 ring, $\mathfrak{m}_\lambda$ its maximal ideal, $k_\lambda = \mathcal{O}_\lambda/\mathfrak{m}_\lambda$ the residue field and $\ell$
-its characteristic. A modular form $f$ of type $(k, \varepsilon)$ on $\Gamma_0(N)$ (as on
-[Rankin's bound](rankin-bound-for-the-mean-square-of-hecke-eigenvalues.md)) is $\lambda$-integral, resp. $\equiv 0$
-(mod $\lambda$), if the coefficients of its $q$-expansion lie in $\mathcal{O}_\lambda$, resp. in $\mathfrak{m}_\lambda$. A
-$\lambda$-integral $f$ is an eigenvector of $T_p$ modulo $\lambda$ with eigenvalue $a_p \in k_\lambda$ if
+its characteristic. A [modular form $f$ of type $(k, \varepsilon)$ on $\Gamma_0(N)$](modular-forms-of-type-k-epsilon.md)
+is $\lambda$-integral, resp. $\equiv 0$ (mod $\lambda$), if the coefficients of its $q$-expansion lie in
+$\mathcal{O}_\lambda$, resp. in $\mathfrak{m}_\lambda$. A $\lambda$-integral $f$ is an eigenvector of $T_p$ modulo
+$\lambda$ with eigenvalue $a_p \in k_\lambda$ if
 
 $$f|T_p - a_p f \equiv 0 \pmod{\lambda},$$
 
@@ -49,6 +49,7 @@ $\det(1 - sT)$, $s \in \varphi(G)$, lie in $k_f$ (6.12.1), and $\varphi$ is
 
 ## Depends on
 
+- [Modular forms of type (k, ε) on Γ₀(N)](modular-forms-of-type-k-epsilon.md), for forms of type $(k, \varepsilon)$ and the operators $T_p$
 - [Semisimple Galois representations with the same Frobenius polynomials are isomorphic](semisimple-galois-representations-with-equal-frobenius-polynomials.md), for the conventions on unramified representations and Frobenius elements
 
 ## Proof depends on
