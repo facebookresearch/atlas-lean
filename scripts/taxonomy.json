@@ -13625,6 +13625,7 @@
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanOneTwo": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Rogers–Ramanujan–Slater functions of order eighteen"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanProduct": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Generalized Frobenius partitions"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanProductDifference": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Rogers–Ramanujan–Slater functions of order eighteen"},
+  "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanProductSum": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Rogers–Ramanujan–Slater functions of order eighteen"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanPsiFChi": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Ramanujan's continued fractions of order sixteen"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanSummability": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Ramanujan's theta function"},
   "MathlibExt/NumberTheory/ModularForms/LatticeDiscriminantEta": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Jacobi's product formula for the discriminant of a lattice"},
