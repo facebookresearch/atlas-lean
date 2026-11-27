@@ -12,6 +12,7 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
 - [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
+- [Continuum models of tumour-induced angiogenesis](continuum-models-of-tumour-induced-angiogenesis/README.md)
 - [Bespoke Turing systems](bespoke-turing-systems/README.md)
 - [Fisher–KPP equation on river-network graphs](fisher-kpp-equation-on-river-network-graphs/README.md)
 - [Nonlocal multi-species advection–diffusion](nonlocal-multi-species-advection-diffusion/README.md)

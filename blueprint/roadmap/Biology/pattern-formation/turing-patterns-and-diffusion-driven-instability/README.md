@@ -70,6 +70,7 @@
 - [Determinant of the Gierer–Meinhardt Jacobian](det-gierer-meinhardt-jacobian.md)
 - [Trace condition for the Gierer–Meinhardt steady state](trace-gierer-meinhardt-jacobian-neg-iff.md)
 - [Turing instability of the Gierer–Meinhardt kinetics](gierer-meinhardt-turing-iff.md)
+- [Reaction–diffusion on an anisotropically growing manifold pulled back to a fixed domain](reaction-diffusion-on-anisotropically-growing-manifolds.md)
 - [Kinetic stability of the diluted homogeneous state on a growing domain](diluted-homogeneous-state-stability.md)
 - [Mixed boundary conditions for activator–inhibitor systems from a heterogeneous medium](mixed-boundary-conditions-from-a-heterogeneous-medium.md)
 - [Riccati comparison bound for growth of a second-order non-autonomous linear ODE](riccati-comparison-growth-bound.md)
