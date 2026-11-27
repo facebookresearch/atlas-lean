@@ -20,7 +20,7 @@ in $[0, \infty]$. For example, $X$ may be the path space $C([0, T]; \mathbb{R}^d
 
 A sound expansion has separate pages for:
 
-1. **The variational formula over bounded continuous functions.** $\mathrm{KL}(\mu \,\|\, \nu) = \sup_g \bigl( \int g\, d\mu - \log \int e^g\, d\nu \bigr)$ with $g$ bounded and continuous. Over bounded measurable $g$ this is the Donsker–Varadhan formula. A measurable $g$ with $|g| \le M$ is a limit in $L^1(\mu + \nu)$ of continuous $g_k$ with $|g_k| \le M$, because a finite Borel measure on a metric space is regular, and both integrals pass to the limit.
+1. **The variational formula over bounded continuous functions.** $\mathrm{KL}(\mu \,\|\, \nu) = \sup_g \bigl( \int g\, d\mu - \log \int e^g\, d\nu \bigr)$ with $g$ bounded and continuous. Over bounded measurable $g$ this is the Donsker–Varadhan formula. A measurable $g$ with $|g| \le M$ is a limit in $L^1(\mu + \nu)$ of continuous $g_k$ with $|g_k| \le M$, because every Borel set can be approximated from inside by a closed set and from outside by an open set with arbitrarily small difference in measure for $\mu + \nu$ (P. Billingsley, *Convergence of Probability Measures*, 2nd ed., Wiley, 1999, Theorem 1.1), and both integrals pass to the limit.
 2. **Lower semicontinuity.** For each bounded continuous $g$, the map $(\mu, \nu) \mapsto \int g\, d\mu - \log \int e^g\, d\nu$ is continuous for weak convergence, and a supremum of continuous functions is lower semicontinuous.
 
 ## Sources
