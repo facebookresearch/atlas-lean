@@ -20,6 +20,11 @@ on the simplex $x + y + b = N$ has stable equilibria $(N, 0, 0)$ and $(0, N, 0)$
 
 **Transformation to the cell-cycle switch.** Replacing the mutual autocatalysis by catalysis through intermediate activators ($r$ activated by $x$ and activating $x$; $z$ activated by $y$ and activating $y$, with threshold catalysts) gives the *simply catalytic* switch with the same convergence up to a time factor. Removing the catalytic activity of $y$ and letting $x$ inactivate $y$ through $z$ yields the core **cell-cycle switch**, with $x, y$ the active and inactive forms of the cyclin-dependent kinase and $r, z$ the active forms of the phosphatase Cdc25 and the kinase Wee1; this network still computes approximate majority and implements an input-driven switch, and its performance matches AM when the extra feedback present in natural cell-cycle networks is included.
 
+## Depends on
+
+- [Chemical reaction network](../../../../Dynamics/smooth-dynamics/reaction-network.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
+
 ## Expansion
 
 The undecided state $b$ is what makes AM fast: a single $x$–$y$ encounter turns one agent undecided, and undecided agents are recruited by whichever species is more abundant, so the majority's lead grows multiplicatively, the same positive feedback visible in $\frac{d}{dt}(x - y) = k\,b\,(x - y)$. The deterministic picture captures only the bistable switching; the $O(\log N)$ time, the $\omega(\sqrt{N} \log N)$ reliability margin and robustness are statements about the stochastic kinetics (a continuous-time Markov chain on counts). The "pinched arrow" structure, where a catalyst drives a two-step conversion through an intermediate, is suggestive of multisite phosphorylation, which is how the transformed network maps onto Cdk regulation by Wee1 and Cdc25. The argument is that the cell-cycle switch is shaped by an algorithm (approximate majority) subject to biochemical constraints, not by chance.

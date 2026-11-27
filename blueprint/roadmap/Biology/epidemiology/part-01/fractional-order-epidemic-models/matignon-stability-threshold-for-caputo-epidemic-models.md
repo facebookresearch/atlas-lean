@@ -26,6 +26,8 @@ Thus the fractional order changes the transient (algebraic instead of exponentia
 - [Well-posedness of Caputo fractional initial value problems](caputo-fractional-initial-value-problem-well-posedness.md)
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 - [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+- [Hurwitz criterion for block lower-triangular matrices](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-from-blocks-zero-iff.md)
+- [Threshold theorem, instability half, spectral form](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-jacobian-of-one-lt-r0.md)
 
 ## Expansion
 

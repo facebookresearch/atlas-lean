@@ -36,6 +36,7 @@ boundary equilibria, and (iii) a positive parameterization exists. Then:
 ## Depends on
 
 - [Determinant criterion for unique and multiple equilibria in reaction networks](determinant-criterion-for-unique-and-multiple-equilibria.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
 ## Expansion
 

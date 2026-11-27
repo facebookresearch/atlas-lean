@@ -18,6 +18,10 @@ $$\lambda = p - c - c_T T_0 .$$
     where $V^\ast$ is the unique root in $\big(0,\ V_{\max} - c_T T_0 K/p\big)$ of $G(V) = G_0(V) := \frac{\delta_T}{r}\Big(1 - \frac{c_T T_0 K}{p\,(V_{\max} - V)}\Big)$.
     3. *(Stability.)* Whenever $E^\ast$ exists it is locally asymptotically stable: the trace of $J(E^\ast)$ is $-\big(pV^\ast/K + s_T/T^\ast\big) < 0$ and its determinant is $p s_T V^\ast/(K T^\ast) + c_T r V^\ast T^\ast G'(V^\ast) > 0$; it is a node or a spiral according to the sign of the discriminant.
 
+## Proof depends on
+
+- [Routh–Hurwitz: a real 2 × 2 matrix is Hurwitz iff tr M < 0 < det M](../../../../Analysis/ordinary-differential-equations/linear-systems-and-fundamental-matrices/is-hurwitz-iff-trace-neg-and-det-pos.md)
+
 ## Expansion
 
 At $V = 0$ the Jacobian is triangular, with entries $p - c - c_T T_0 = \lambda$ and $rG(0) - \delta_T = -\delta_T$, which gives item 1; the discriminant $(\lambda + \delta_T)^2 \ge 0$ rules out spirals. At a positive equilibrium the $V$-equation gives $T^\ast$ linearly in $V^\ast$, positive iff $V^\ast < V_{\max}$, which requires $p > c$; substituting into the $T$-equation gives $G(V^\ast) = G_0(V^\ast)$. Since $G_0$ strictly decreases on $(0, V_{\max})$ and $G$ strictly increases from $G(0) = 0$, the difference $G_0 - G$ is strictly decreasing and has a root iff $G_0(0) > 0$, i.e. iff $p - c > c_T T_0$, i.e. $\lambda > 0$; the root lies below the zero of $G_0$, which is $V_{\max} - c_T T_0 K/p$. Using the equilibrium equations the Jacobian at $E^\ast$ simplifies to $\begin{pmatrix} -pV^\ast/K & -c_T V^\ast \\ r T^\ast G'(V^\ast) & -s_T/T^\ast \end{pmatrix}$, whose trace is negative and determinant positive. The threshold $\lambda = 0$ is a transcritical bifurcation: viral replication net of non-immune clearance must exceed the killing capacity of the resting T-cell pool, $\lambda > 0$ being the analogue of a within-host reproduction number $p/(c + c_T T_0) > 1$; near $\lambda = 0$ the equilibrium viral load is very sensitive to parameters.

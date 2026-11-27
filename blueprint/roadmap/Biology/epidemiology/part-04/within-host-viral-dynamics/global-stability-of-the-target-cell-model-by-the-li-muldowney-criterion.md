@@ -28,6 +28,7 @@ Part 2 follows from the [Li–Muldowney second-compound criterion](../../part-01
 ## Proof depends on
 
 - [Li–Muldowney second-compound criterion](../../part-01/geometric-approach-to-global-stability/li-muldowney-second-compound-criterion.md)
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
 
 ## Expansion
 

@@ -18,6 +18,10 @@ $$r_i + \sum_{j=1}^{N} a_{ij}\, x^I_j = 0, \qquad I \in \mathcal I_i,$$
 
 so these samples lie on a hyperplane in $\mathbb R^N$. Given at least as many affinely independent samples in $\mathcal I_i$ as unknowns, the row $(a_{i1}, \dots, a_{iN})$ and growth rate $r_i$ are determined up to a common scale factor, fixed by one known value (for example the self-interaction $a_{ii}$ or the carrying capacity of taxon $i$ in monoculture). The coefficient of determination of the hyperplane fit measures how far the dynamics of taxon $i$ departs from the Lotka–Volterra form.
 
+## Depends on
+
+- [Generalized Lotka–Volterra vector field](../../replicator-and-lotka-volterra-equivalence/lv-field.md)
+
 ## Expansion
 
 The orthogonality relation is the fundamental theorem of calculus applied to $f_i$ along the segment joining two equilibria at which taxon $i$ is present; the line segment lies in the nonnegative orthant, where the sign assumption holds. Geometrically each difference vector defines a hyperplane through the origin, and the admissible sign patterns are the orthants (including lower-dimensional faces) that every such hyperplane crosses; intersecting over all sample pairs is a finite combinatorial computation, exhaustive for small communities and heuristic for larger ones. In the Lotka–Volterra case the constraint is linear and exact, so the parameters follow from a regression of zero on the abundances of samples containing taxon $i$; sparsity-promoting regularization, with false-discovery control, is used when samples are fewer than unknowns. Applied to an eight-species synthetic soil community, 50 of 64 interaction signs matched the pairwise-culture ground truth.

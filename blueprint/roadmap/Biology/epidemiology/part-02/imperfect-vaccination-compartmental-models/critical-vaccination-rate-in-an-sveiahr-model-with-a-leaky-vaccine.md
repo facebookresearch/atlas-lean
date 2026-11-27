@@ -27,6 +27,11 @@ where $G_1 = \lambda(1-\phi)(1-\psi) + g_5\psi$, $G_2 = g_6\omega_I + \gamma(1-\
 
     satisfies $\mathcal{R}_0(v^*) = 1$, and $\mathcal{R}_0(v) \gtrless 1$ according as $v \lessgtr v^*$.
 
+## Depends on
+
+- [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+- [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+
 ## Expansion
 
 An exposed individual becomes symptomatic directly with probability $\sigma\psi/g_3$ or via the asymptomatic class with probability $\sigma(1-\psi)\lambda(1-\phi)/(g_3 g_5)$, and contributes infectiousness $\omega_A/g_5$ while asymptomatic, $\omega_I/g_4$ while symptomatic and $\omega_H\gamma(1-\kappa)/(g_4 g_6)$ while hospitalized; summing gives $\sigma(G_1G_2 + G_3)/(g_3g_4g_5g_6)$ per exposed individual. The second factor in $\mathcal{R}_0(v)$ is the susceptibility-weighted fraction $(S^0 + (1-\varepsilon)V^0)/N^0$. Its derivative in $v$ has the sign of $-\varepsilon\mu(1-p)$, giving monotonicity, and solving $\mathcal{R}_0(v) = 1$, a linear equation in $v$, gives $v^*$, using $(\varepsilon - \varepsilon^*)\mathcal{R}_0 = 1 - (1-\varepsilon)\mathcal{R}_0$. A leaky vaccine cannot by itself eliminate a pathogen whose $\mathcal{R}_0$ exceeds $1/(1-\varepsilon)$, however fast it is delivered.

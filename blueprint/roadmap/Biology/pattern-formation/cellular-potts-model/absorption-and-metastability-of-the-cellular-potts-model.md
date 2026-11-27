@@ -8,6 +8,10 @@
 
 **Theorem 2 (metastable exit times).** Restricted to the class $\mathcal E_A$ with $|A| \ge 2$, if the substochastic block $Q_A$ is primitive, its Perron eigenvalue $\lambda_A \in (0, 1)$ governs the exit time: $\Pr(\text{exit after } k \text{ steps}) \approx c\, \lambda_A^{k}$, i.e. the time until the first cell disappears is approximately geometric with parameter $1 - \lambda_A$. The time to full absorption is a sum of such stages as indices disappear one at a time.
 
+## Depends on
+
+- [Perron–Frobenius theorem for primitive nonnegative matrices](../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius-for-primitive-nonnegative-matri.md)
+
 ## Expansion
 
 Copying an index from a neighbour can never introduce an index that is absent from the configuration, so the set of present indices is non-increasing along trajectories; it decreases whenever the last site of some cell is overwritten, which has positive probability from every non-constant configuration under the modified algorithm. This gives the communication-class structure and almost-sure absorption; absorption probabilities and the convex-hull description of stationary laws follow from standard finite absorbing-chain theory. Perron–Frobenius applied to the primitive substochastic block gives a dominant eigenvalue with positive eigenvectors, so $Q_A^k \approx \lambda_A^k v u^{\mathsf T}$ and exit times are asymptotically geometric. At infinite temperature every proposal is accepted and the CPM is a multi-type voter model, whose cells die out; the standard (unmodified) Metropolis algorithm, which can assign arbitrary indices, does not have this degeneracy. Biologically meaningful CPM behaviour therefore lives on the metastable time scale before the first cell disappears, and the volume constraint violates the finite-range locality needed to treat the CPM as an interacting particle system.

@@ -22,6 +22,8 @@ $E_0$ is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$. E
 ## Depends on
 
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+- [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+- [Unstable mode of the infected subsystem exactly when $R_0 > 1$](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-iff-one-lt-r0.md)
 ## Expansion
 
 At $E_0$ the infected subsystem $(I_h, I_v)$ has new-infection matrix $F = \begin{pmatrix} 0 & \beta_h \\ \beta_v p \Lambda_v \mu_h / (\Lambda_h(\mu_v + u_2)) & 0\end{pmatrix}$ (since $S_h I_v/(pI_h + S_h) \approx I_v$ and $p I_h S_v/(p I_h + S_h) \approx p I_h \mu_h \Lambda_v / (\Lambda_h(\mu_v+u_2))$ to first order) and transition matrix $V = \operatorname{diag}(u_1\delta_1 + \delta_0 + \mu_h,\ \mu_v + u_2)$; at $I_h = 0$ the saturated treatment rate equals $\delta_1$. The spectral radius of the anti-diagonal matrix $F V^{-1}$ is the geometric mean of its two entries, the human-to-mosquito and mosquito-to-human reproduction numbers. Larger vector bias $p$ raises $R_0$, while fumigation enters quadratically through $(\mu_v + u_2)^2$ because it shortens both the mosquito lifetime and the mosquito population size.

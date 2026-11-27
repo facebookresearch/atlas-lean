@@ -15,6 +15,8 @@ The operator $L$ is positive, continuous and compact; when $\mathcal{R}_0 > 0$, 
 ## Depends on
 
 - [Basic reproduction number of the next-generation matrix](r0.md)
+- [Krein–Rutman theorem for $C(K)$](../../../Analysis/operator-theory/spectral-theory/krein-rutman.md)
+- [The basic reproduction ratio `R₀`](../next-generation-operator-and-basic-reproduction/generation-growth.md)
 
 ## Expansion
 

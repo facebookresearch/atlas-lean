@@ -24,6 +24,10 @@ where $\theta = (r_0, r_1, A)$. Ignoring dilution noise, the colour of successiv
 
 An interior stable fixed point of $G_\theta$ means that offspring collectives founded with a perturbed colour return toward the parental colour within a generation: heredity at the collective level emerges from particle ecology.
 
+## Depends on
+
+- [Generalized Lotka–Volterra vector field](../../replicator-and-lotka-volterra-equivalence/lv-field.md)
+
 ## Expansion
 
 In the colour coordinates, $\dot x = x(1-x)\,h(x, N)$ for a function $h$ given by the difference of per-capita growth rates of the two types, so $x \equiv 0$ and $x \equiv 1$ are invariant, giving item 1; continuity of $G_\theta$ on $[0,1]$ and equal stability at both ends force a crossing of the diagonal (intermediate value theorem). For short growth and small founding size, competition is negligible, $N_i(T) \approx N_i(0)e^{r_iT}$, so $G_\theta(\phi) = \phi e^{r_0T}/(\phi e^{r_0T} + (1-\phi)e^{r_1T}) > \phi$ on $(0,1)$ and red fixes. For long growth, $x(T)$ converges to the colour of the attracting Lotka–Volterra equilibrium; solving $1 = a_{00}N_0 + a_{01}N_1 = a_{10}N_0 + a_{11}N_1$ gives $N_0^* \propto a_{11} - a_{01}$, $N_1^* \propto a_{00} - a_{10}$ and hence $x^*$. Under selection for an intermediate collective colour, particle traits evolve from the regime of item 2 (maintenance only by stochastic correction and purging) toward item 3 with an interior fixed point near the target (developmental correction).

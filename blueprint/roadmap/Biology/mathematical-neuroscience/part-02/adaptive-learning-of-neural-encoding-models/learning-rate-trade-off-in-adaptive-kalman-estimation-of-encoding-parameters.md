@@ -30,6 +30,10 @@ $$s = \frac{4h_1}{V^{-2} - h_1^2}, \qquad \text{valid when } V^{-2} > h_1^2 .$$
 
 (ii) To reach relative error $E$ within time $C$ at sampling interval $\Delta$, choose the smallest $s$ with $\big(\kappa_1/(\kappa_1 + s)\big)^{C/\Delta} \le E$, which has a closed-form solution.
 
+## Depends on
+
+- [Kalman filter step](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/kalman-filter/step.md)
+
 ## Expansion
 
 With a constant information rate $H$ in place of $\tilde v_t \tilde v_t' Z^{-1}$, the covariance recursion becomes the scalar Riccati recursion $\sigma \mapsto \big((\sigma + s)^{-1} + h\big)^{-1}$ in each eigendirection of $H$. Its prior-variance form has the fixed point solving $h\kappa^2 + hs\kappa - s = 0$, whose positive root is $\kappa_m$, and the posterior variance at the fixed point is $(\kappa_m^2 + s\kappa_m)/(2\kappa_m + s) = 1/\sqrt{h_m^2 + 4h_m/s}$. The Kalman gain at this fixed point gives the mean-error contraction factor $\kappa_m/(\kappa_m + s)$. A larger $s$ means less averaging: faster tracking of parameter changes, larger steady-state jitter. The same analysis extends to point-process filters for spiking encoding models, where the information matrix is replaced by its expected Fisher-information counterpart. In use, $V$ or $C$ is set from performance requirements and only the average of $\tilde v_t\tilde v_t'$ over training trajectories is needed.

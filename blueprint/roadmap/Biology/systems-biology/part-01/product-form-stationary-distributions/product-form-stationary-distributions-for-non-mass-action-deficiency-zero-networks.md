@@ -37,6 +37,10 @@ which can be normalized to a stationary distribution whenever it is summable.
 ## Depends on
 
 - [Anderson–Craciun–Kurtz on a finite class](../../stochastic-mass-action-metabolic-control-and-flu/poisson-weight-vec-mul-class-generator.md)
+- [Chemical reaction network](../../../../Dynamics/smooth-dynamics/reaction-network.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
+- [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
+- [Horn–Feinberg: complex balancing for every choice of rate constants](../../complex-balancing-and-the-deficiency-zero-theore/exists-pos-is-complex-balanced.md)
 
 ## Expansion
 

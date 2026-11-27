@@ -22,6 +22,11 @@ $$E_2(\pi/4) \approx 1 - \Phi\!\left(\Phi^{-1}(\alpha) + \frac{p N i_0\, \epsilo
 
 **Consequences.** With any noise, the worst-case type II error tends to $1 - \alpha$ as $p \to 0$ or $\epsilon \to 0$. With noise proportional to population size ($\sigma_t = N\sigma$) it also tends to $1 - \alpha$ as $N \to \infty$ with $i_0 = 1/N$. Thus maximum likelihood estimates scatter along a line of slope one in the $(\beta, \gamma)$ plane, the growth rate $\beta - \gamma$ is well determined, and $\hat{\mathcal{R}}_0 = \hat\beta/\hat\gamma$ is highly uncertain before the peak.
 
+## Depends on
+
+- [Solution of the Kermack–McKendrick SIR system](../../kermack-mckendrick-sir-model/is-solution.md)
+- [Neyman–Pearson lemma](../../../../Probability/hypothesis-testing/neyman-pearson-dominated-two-simple.md)
+
 ## Expansion
 
 For two Gaussian hypotheses with known variances the likelihood ratio test reduces to a test on a single projection of the data, whose standardized mean shift is $d(\omega)$, hence the formula $1 - \Phi(\Phi^{-1}(\alpha) + d)$. Under the exponential-phase approximation the incidence depends on $\theta$ through $\beta$ (a prefactor) and $\delta$ (the exponent). A perturbation with $f(\omega) \ne 0$ changes $\delta$ and produces differences growing like $e^{\epsilon t f(\omega)}$, while a perturbation along $\beta - \gamma = \text{const}$ only changes the prefactor by $\epsilon/\sqrt 2$. This direction is not exactly the least distinguishable one (for $\beta = 0.3$, $\gamma = 0.1$, $T = 30$, $\epsilon = 0.01$ and constant $\sigma_t$, $d(\omega)$ is smallest near $\omega \approx 0.268\pi$, about $0.08$ times $d(\pi/4)$; the source reaches $\pi/4$ by a first-order heuristic), but $E_2(\pi/4)$ is a lower bound on the worst case, which is all the consequences use. The structural identifiability of $(\beta, \gamma)$ (the MLE exists and is unique even before the peak) therefore does not translate into practical identifiability: the log-likelihood is nearly flat along the slope-one direction.

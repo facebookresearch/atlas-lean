@@ -20,6 +20,10 @@ where $x_t$ are compartment sizes (e.g. $S, I, R$ and environmental virus $V$), 
 
 **Property.** If $f$ and $h$ are linear and all noises Gaussian, then as $n \to \infty$ the analysis ensemble mean and sample covariance converge to the Kalman filter mean and covariance; for nonlinear epidemic dynamics the EnKF propagates the ensemble through the full nonlinear model and applies a linear (Gaussian) correction, without Jacobians.
 
+## Depends on
+
+- [Kalman filter step](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/kalman-filter/step.md)
+
 ## Expansion
 
 The Kalman gain $K = P_{xy}(P_{yy} + R)^{-1}$ is the regression coefficient of the state on the predicted observation under a joint Gaussian approximation; perturbing the observations with independent noise of covariance $R$ makes the analysis ensemble spread match the posterior covariance, $(I - KH)P^f$ in the linear case, rather than underestimating it. Alternating a state update at fixed parameters with a parameter update at the filtered state (dual estimation) keeps the augmented problem low-dimensional and stable. Unobserved compartments, such as unreported infections or environmental virus, are reconstructed through their cross-covariance with the observed flows, and the filtered $\beta_t$ yields a time-varying reproduction number and initial conditions for short-term forecasts.

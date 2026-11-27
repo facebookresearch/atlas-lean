@@ -26,6 +26,11 @@ $$x(t^\ast; \sigma_0, x_0, y_0) = \frac{1}{\sigma_0\big(1 - e^{-\gamma(T - t^\as
 
 That is, the epidemic runs uncontrolled until the susceptible fraction falls to this moving threshold, and the strongest intervention is applied for the rest of the window.
 
+## Depends on
+
+- [Solution of the Kermack–McKendrick SIR system](../../kermack-mckendrick-sir-model/is-solution.md)
+- [Limits and final size of the SIR epidemic](../../global-behaviour-of-the-sir-model/tendsto-final-size.md)
+
 ## Expansion
 
 Since $\mu' = \gamma y(\sigma_0 - \sigma)\mu$, maximizing $x_\infty$ is equivalent to maximizing $I = \int_0^T y(\tau)(\sigma_0 - \sigma(\tau))\, d\tau$. Pontryagin's principle with Hamiltonian $H = -\lambda_1\gamma\sigma x y + \lambda_2\gamma y(\sigma x - 1)$ gives $\partial H/\partial\sigma = (\lambda_2 - \lambda_1)\gamma x y$, so optimal controls are bang–bang; a singular arc would force $\lambda_1 = \lambda_2$ on all of $[0,T]$, contradicting the terminal conditions derived from the partial derivatives of $x_\infty$. An optimal control must also reach its terminal state in minimum time, and among bang–bang paths between two states the fastest makes all its horizontal ($\sigma = \sigma_0$) and vertical ($\sigma = 0$) travel at the largest possible $y$, which forces a single switch from $\sigma_0$ to $0$. For such a control $I = \frac{\sigma_0}{\gamma}\, y(t^\ast)\big(1 - e^{-\gamma(T - t^\ast)}\big)$, and $dI/dt^\ast = \sigma_0 y(t^\ast)\big[\sigma_0 x(t^\ast)(1 - e^{-\gamma(T - t^\ast)}) - 1\big]$ vanishes exactly at the stated threshold. The result is not obtained from standard Pontryagin sufficiency conditions because the SIR right-hand side is nonconvex; with a running cost of control the optimum becomes continuous and is computed numerically.

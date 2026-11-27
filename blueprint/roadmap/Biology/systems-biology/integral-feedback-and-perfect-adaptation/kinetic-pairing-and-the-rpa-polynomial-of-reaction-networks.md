@@ -15,6 +15,8 @@ where $g \in \mathbb R[x_i, x_j]$ is non-vanishing on $(0, X_i^{\mathrm{tot}}) \
 ## Depends on
 
 - [The integral-feedback loop as a linear system and its equilibrium](the-integral-feedback-loop-as-a-linear-system-and-its-equilibrium.md)
+- [Chemical reaction network](../../../Dynamics/smooth-dynamics/reaction-network.md)
+- [Mass-action vector field](../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
 ## Expansion
 

@@ -14,6 +14,7 @@ Because the Robinson–Foulds distance takes finitely many values, ties among th
 
 - [Nominal coverage of credible intervals under the prior predictive](nominal-coverage-of-credible-intervals-under-the-prior-predictive.md)
 - [Simulation-based calibration: conditional no-ties and randomized ranks](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/bayes-rule/simulation-based-calibration-rank-uniformity-und.md)
+- [Robinson–Foulds distance](../../splits-compatibility-ultrametrics-and-upgma/rf-dist.md)
 
 ## Expansion
 

@@ -24,6 +24,10 @@ $$\hat T_1 = \frac{\bar\delta}{2} + \frac{1}{6}\sqrt{3\bar\delta(3\bar\delta + 4
 
 and the SU length estimate is $\hat t_1 = \bar L_I' \, \hat T_1$ (set to a small positive value when $\bar\delta < 0$).
 
+## Depends on
+
+- [The multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
+
 ## Expansion
 
 In a matching gene tree the internal branch includes the part of branch $1$ during which the $A$ and $B$ lineages have coalesced but neither has met $C$ or $D$, plus a contribution from deeper coalescences; in a discordant gene tree the internal branch arises only from coalescence above branch $1$, so differencing cancels most of the deep-time contribution and leaves the term $6\mu_1(e^{-T_1} - 1 + T_1)$, the expected excess time spent in branch $1$. The probability $1 - \tfrac23 e^{-T_1}$ of a matching topology produces the denominator $3 - 2e^{-T_1}$. The exact equation is solvable with the Lambert $W$ function; the substitution $e^{T_1} \approx 1 + T_1$ is accurate for short branches, where discordance is common and the estimator matters most. For trees with $n > 4$ taxa, each internal branch defines four leaf groups, the quartet quantities are averaged over all quartets with one leaf in each group, and these averages over all $\Theta(n^4)$ quartets are computed by dynamic programming in $O(n^2)$ time per gene tree.

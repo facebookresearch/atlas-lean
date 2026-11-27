@@ -24,6 +24,10 @@ with logistic regrowth (maximal rate $r$, carrying capacity $K$ shared by uninfe
 
 - [Threshold and stability of the infected equilibrium](../within-host-effector-t-cell-model/threshold-and-stability-of-the-infected-equilibrium.md)
 
+## Proof depends on
+
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+
 ## Expansion
 
 At $E_1$ the infected subsystem $(I, V)$ has Jacobian $\begin{pmatrix} -\delta & \beta K \\ p & -c\end{pmatrix}$, with determinant $c\delta - \beta pK = c\delta(1 - R_0)$, so the infection grows iff $R_0 > 1$; $T$ contributes the eigenvalue $-r$ and $S$ the eigenvalue $-d_S$, and $S$ never feeds back, so it only reports $I$. At $E_2$, the equation $\dot I = 0$ with $V = pI/c$ forces $\beta T^\ast p/c = \delta$, i.e. $T^\ast = K/R_0$, and the logistic balance $r(1 - (T^\ast + I^\ast)/K) = \beta V^\ast$ gives $I^\ast$. The remaining cubic follows from the $3 \times 3$ block in $(T, I, V)$, and the Routh–Hurwitz criterion for cubics (all coefficients positive and $A_1A_2 > A_3$) gives the stability condition; large $R_0$ with slow infected-cell death favours its violation and hence oscillatory chronic infection. An extension in which infected cells are cured at rate $\rho$ into a proliferating class refractory to reinfection (with waning back to susceptibility) lowers the chronic viral load while leaving antigen levels similar.

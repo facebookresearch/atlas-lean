@@ -19,6 +19,10 @@ The simplex $\{(S,A,I) \in \mathbb{R}^3_{\ge 0} : S + A + I \le 1\}$ is invarian
 
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
+## Proof depends on
+
+- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
+
 ## Expansion
 
 Since $\dot V \le 0$ on $L_V(c)$, that compact set is forward invariant, so each trajectory starting in it has a nonempty compact invariant $\omega$-limit set. $V$ is non-increasing and bounded below on $L_V(c)$, so it tends to a constant and is constant on the $\omega$-limit set, which therefore lies in $M$ and, being invariant, in $\Omega$; definiteness of $V$ was never used. For SAIR take $V = S + A + I$: then $\dot V = -(\gamma_A A + \gamma_I I) \le 0$, vanishing exactly on $\{A = I = 0\}$, which consists of equilibria and is invariant. The epidemic always burns out, and the final susceptible fraction depends on initial conditions, which is why convergence is to a set of equilibria rather than to one point. Linearizing at $(S_0, 0, 0)$ gives the reproduction number $R_0 = S_0\big(\beta_A + \beta_I\,\delta/\gamma_I\big)/(\gamma_A + \delta)$: an asymptomatic case infects at rate $\beta_A S_0$ for mean time $1/(\gamma_A + \delta)$ and becomes symptomatic with probability $\delta/(\gamma_A + \delta)$, then infects at rate $\beta_I S_0$ for mean time $1/\gamma_I$.

@@ -24,6 +24,10 @@ $$\mathcal{R}_0^\ast = \mathrm{DC}\, \mathcal{R}_0^+ + (1 - \mathrm{DC})\, \math
 
 the duty-cycle-weighted average of the open and lockdown reproduction numbers. Fast switching with $\mathcal{R}_0^\ast < 1$ therefore suppresses the epidemic even though $\mathcal{R}_0^+ > 1$ during open days.
 
+## Depends on
+
+- [Solution of the Kermack–McKendrick SIR system](../../kermack-mckendrick-sir-model/is-solution.md)
+
 ## Expansion
 
 The estimate is a quantitative first-order averaging result. Writing $\beta_i = \beta_i^\ast + (\bar\beta_i - \beta_i^\ast) + \tilde\beta_i$ with $\bar\beta_i$ the mean and $\tilde\beta_i$ zero-mean and $T_i$-periodic, the antiderivative of $\tilde\beta_i$ is bounded by a multiple of $T_i$; integrating by parts in the variation-of-constants difference of the two solutions turns the oscillating forcing into an $O(T_i)$ term, the mean offset contributes $O(\mathrm{A})$, and Grönwall's inequality on $K$ (where the $f_i$ and their derivatives are bounded) propagates both, giving the growth functions $\alpha_j(t)$. For the SIR model with constant $\beta$ and $\mathcal{R}_0 > 1$, an outbreak occurs iff $S(0) > N/\mathcal{R}_0$; with $R(0) = 0$ the peak prevalence is

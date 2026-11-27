@@ -26,6 +26,7 @@ $$f(\Theta) = \frac{1}{\langle k\rangle}\sum_{k} \frac{k P(k)\big\{\beta_S(k)[\b
 ## Depends on
 
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+- [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
 
 ## Expansion
 

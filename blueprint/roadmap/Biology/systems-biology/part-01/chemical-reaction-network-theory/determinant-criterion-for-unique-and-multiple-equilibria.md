@@ -33,6 +33,11 @@ no boundary equilibria in $P_c$. Then:
 $x \in \mathbb{R}^n_{>0}$ (for instance, for injective networks), every class with nonempty interior
 contains exactly one positive equilibrium, and it is non-degenerate.
 
+## Depends on
+
+- [Chemical reaction network](../../../../Dynamics/smooth-dynamics/reaction-network.md)
+- [Stoichiometric subspace](../../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
+
 ## Expansion
 
 The proof computes the Brouwer degree of $\varphi_c$ at $0$ on a bounded neighbourhood of the

@@ -13,6 +13,11 @@ A reaction network is a pair $(\mathcal M, \mathcal R)$ of a finite set of speci
 
 For mass-action (and other standard) kinetics the set of species with positive concentration at any fixed point is an organization. Therefore any transition between steady states with different sets of reacting species requires adding or removing a cycle.
 
+## Depends on
+
+- [Chemical reaction network](../../../../Dynamics/smooth-dynamics/reaction-network.md)
+- [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
+
 ## Expansion
 
 For item 1, one first shows from reactivity of $B$ and closedness of $A$ that some reaction in $\mathcal R_B$ consumes a species of $B \setminus A$. Let $x_1 \in B \setminus A$ be consumed. By semi-self-maintenance some reaction produces $x_1$, and since $A$ is closed its support must contain a species $x_2 \in B \setminus A$, so $x_2 \to x_1$. Repeating the argument from $x_2$ gives an infinite backward chain in the finite set $B \setminus A$, which must revisit a species and so closes a cycle. Item 2 follows by taking $A = O_1$ and $B = O_2$, since organizations are closed and semi-self-maintaining. The closed-subset hypothesis is needed: a network whose species are all made from the inflow can be self-maintaining without any cycle. In a reflexive autocatalytic network, where each species catalyses the production of the next around a cycle, the positive feedback of that cycle gives a stable positive fixed point. Examples include the mitotic spindle assembly and spindle position checkpoints.
