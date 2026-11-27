@@ -472,7 +472,7 @@ variable {C}
 lemma cFE_pow_mul_agreeWeightSum_le_setPattern
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I) (psi : ConfigSpace (Sym2 V)) :
-    cFE p q ^ I.card * agreeWeightSum G p q I psi ≤
+    cFE p q ^ I.card * inducedFkZ G p q I psi ≤
       fkWeight G p q (setPattern I eta psi) := by
   classical
   induction I using Finset.induction generalizing psi with
@@ -516,15 +516,15 @@ lemma cFE_pow_mul_agreeWeightSum_le_setPattern
         agreeWeightSum_insert G p q he, htarget]
       have hc : 0 ≤ cFE p q := (cFE_pos hp hp1 hq).le
       have hsum : cFE p q ^ I.card *
-            (agreeWeightSum G p q I (setClosed e psi) +
-              agreeWeightSum G p q I (setOpen e psi)) ≤
+            (inducedFkZ G p q I (setClosed e psi) +
+              inducedFkZ G p q I (setOpen e psi)) ≤
           fkWeight G p q (setClosed e rho) + fkWeight G p q (setOpen e rho) := by
         calc
           cFE p q ^ I.card *
-              (agreeWeightSum G p q I (setClosed e psi) +
-                agreeWeightSum G p q I (setOpen e psi)) =
-              cFE p q ^ I.card * agreeWeightSum G p q I (setClosed e psi) +
-                cFE p q ^ I.card * agreeWeightSum G p q I (setOpen e psi) := by ring
+              (inducedFkZ G p q I (setClosed e psi) +
+                inducedFkZ G p q I (setOpen e psi)) =
+              cFE p q ^ I.card * inducedFkZ G p q I (setClosed e psi) +
+                cFE p q ^ I.card * inducedFkZ G p q I (setOpen e psi) := by ring
           _ ≤ fkWeight G p q (setPattern I etaI (setClosed e psi)) +
                 fkWeight G p q (setPattern I etaI (setOpen e psi)) :=
             add_le_add ihc iho
@@ -532,11 +532,11 @@ lemma cFE_pow_mul_agreeWeightSum_le_setPattern
             rw [hclosed, hopen]
       calc
         cFE p q ^ I.card * cFE p q *
-            (agreeWeightSum G p q I (setClosed e psi) +
-              agreeWeightSum G p q I (setOpen e psi)) =
+            (inducedFkZ G p q I (setClosed e psi) +
+              inducedFkZ G p q I (setOpen e psi)) =
             cFE p q * (cFE p q ^ I.card *
-              (agreeWeightSum G p q I (setClosed e psi) +
-                agreeWeightSum G p q I (setOpen e psi))) := by ring
+              (inducedFkZ G p q I (setClosed e psi) +
+                inducedFkZ G p q I (setOpen e psi))) := by ring
         _ ≤ cFE p q *
             (fkWeight G p q (setClosed e rho) + fkWeight G p q (setOpen e rho)) :=
           mul_le_mul_of_nonneg_left hsum hc
@@ -657,13 +657,7 @@ lemma cFE_pow_mul_condFibreMass_le_pattern
   have hZ : 0 < fkZ G p q := fkZ_pos G hp hp1 (zero_lt_one.trans_le hq)
   have hweights :
       (∑ omega ∈ condFibre I psi, fkWeight G p q omega) =
-        agreeWeightSum G p q I psi := by
-    apply Finset.sum_congr
-    · ext omega
-      simp only [mem_condFibre, Finset.mem_filter, Finset.mem_univ, true_and,
-        AgreesOff]
-    · intro omega _
-      rfl
+        inducedFkZ G p q I psi := rfl
   unfold fkProb
   rw [← Finset.sum_div, ← mul_div_assoc, hweights]
   exact div_le_div_of_nonneg_right

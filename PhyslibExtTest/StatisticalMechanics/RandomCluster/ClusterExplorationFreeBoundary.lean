@@ -54,7 +54,7 @@ example : Nonempty (ClusterUnexploredVertex G2 allClosed {0}) := ⟨⟨1, one_un
 
 -- The wiring induced on the unexplored region is empty.
 example : ocd_inducedWiring G2 (Subtype.val : ClusterUnexploredVertex G2 allClosed {0} → Fin 2)
-    (falseBoundary : Fin 2 → Prop) allClosed = ⊥ :=
+    (bdp_noBdry : Fin 2 → Prop) allClosed = ⊥ :=
   clusterExploration_inducedWiring_eq_bot G2 _ _
 
 -- The conditional law on the unexplored region is the free measure.
