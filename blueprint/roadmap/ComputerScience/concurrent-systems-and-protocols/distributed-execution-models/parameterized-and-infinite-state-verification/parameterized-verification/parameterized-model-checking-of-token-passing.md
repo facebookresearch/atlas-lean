@@ -15,6 +15,7 @@ For direction-unaware processes the same paper proves cutoffs, hence decidabilit
 ## Depends on
 
 - [Formulas of linear temporal logic](../../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -15,6 +15,7 @@ The two problems coincide: by Dickson's lemma an infinite run visiting $\ell$ in
 
 - [Lossy counter machines](lossy-counter-machines.md)
 - [Σ_n sets](../../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

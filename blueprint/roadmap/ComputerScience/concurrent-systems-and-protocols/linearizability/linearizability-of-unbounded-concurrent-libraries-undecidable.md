@@ -12,6 +12,7 @@ In contrast, the same paper shows that conflict serializability and static linea
 
 - [Linearizable histories](linearizable.md)
 - [Sequential specifications](seq-spec.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

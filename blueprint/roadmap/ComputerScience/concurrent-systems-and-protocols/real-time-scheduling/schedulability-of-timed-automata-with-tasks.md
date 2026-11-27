@@ -11,6 +11,7 @@ The source notes that the proof also applies, without change, to earliest-deadli
 ## Depends on
 
 - [Timed Büchi automata and timed regular languages](../../../TheoryOfComputation/omega-automata-and-games/timed-automata/timed-buchi-automata.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ The proof encodes the halting problem of a two-counter machine, following the wr
 
 ## Sources
 
-- Pavel Krčál and Wang Yi, *Decidable and Undecidable Problems in Schedulability Analysis Using Timed Automata*, Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2004), Lecture Notes in Computer Science 2988, Springer, 2004, pp. 236–250, https://doi.org/10.1007/978-3-540-24730-2_20; Definitions 1–4 and Theorems 1–4, read in the open-access copy at https://link.springer.com/content/pdf/10.1007/978-3-540-24730-2_20.pdf.
+- Pavel Krčál and Wang Yi, *Decidable and Undecidable Problems in Schedulability Analysis Using Timed Automata*, Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2004), Lecture Notes in Computer Science 2988, Springer, 2004, pp. 236–250, https://doi.org/10.1007/978-3-540-24730-2_20; the definitions of timed automata extended with tasks and of schedulability, the undecidability theorem for preemptive fixed-priority scheduling with interval execution times and task feedback, and the decidability results for the restricted settings, read in the open-access copy at https://link.springer.com/content/pdf/10.1007/978-3-540-24730-2_20.pdf.

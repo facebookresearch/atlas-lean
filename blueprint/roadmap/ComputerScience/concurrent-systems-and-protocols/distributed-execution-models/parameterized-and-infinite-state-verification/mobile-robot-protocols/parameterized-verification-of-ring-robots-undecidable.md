@@ -13,7 +13,7 @@ When at most one robot can move in any configuration, the three semantics have t
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,8 +21,8 @@ None.
 
 ## Expansion
 
-Both proofs encode runs of deterministic counter machines. The distances between robots on the ring store the machine's control state and counter values, so that a configuration of the robots of a special "machine-like" shape represents a machine configuration, and the protocol makes the robots move so that successive machine-like configurations follow the machine's transitions. In the asynchronous case, a bad configuration becomes reachable from a configuration encoding the initial machine configuration exactly when the machine halts; because the ring size is existentially quantified, a large enough ring holds any finite computation.
+Both proofs encode runs of deterministic counter machines: Theorem 2 reduces the halting problem of deterministic two-counter machines, with $k = 42$ robots, and Theorem 3 reduces the repeated reachability problem for deterministic three-counter zero-initializing bounded-strongly-cyclic machines (does an infinite space-bounded run exist?), which the source cites as undecidable. The distances between robots on the ring store the machine's control state and counter values, so that a configuration of the robots of a special "machine-like" shape represents a machine configuration, and the protocol makes the robots move so that successive machine-like configurations follow the machine's transitions. In the asynchronous case, a bad configuration (a collision) becomes reachable from a configuration encoding the initial machine configuration exactly when the machine halts; because the ring size is existentially quantified, a large enough ring holds any finite computation. A good expansion links a page for the undecidability of that repeated reachability problem.
 
 ## Sources
 
-- Arnaud Sangnier, Nathalie Sznajder, Maria Potop-Butucaru and Sébastien Tixeuil, "Parameterized verification of algorithms for oblivious robots on a ring", Formal Methods in Computer-Aided Design (FMCAD 2017), pp. 212–219, 2017, <https://doi.org/10.23919/FMCAD.2017.8102262>; journal version Formal Methods in System Design 56, pp. 55–89, 2019, <https://doi.org/10.1007/s10703-019-00335-y>; Section 2 (the formal model, protocols and the three semantics, the two problems), Theorem 2 and Theorem 3 (main statement) of Section 3, and Theorem 1 of arXiv:1706.05193v1, read at <https://arxiv.org/abs/1706.05193v1>.
+- Arnaud Sangnier, Nathalie Sznajder, Maria Potop-Butucaru and Sébastien Tixeuil, "Parameterized verification of algorithms for oblivious robots on a ring", Formal Methods in Computer-Aided Design (FMCAD 2017), pp. 212–219, 2017, <https://doi.org/10.23919/FMCAD.2017.8102262>; journal version Formal Methods in System Design 56, pp. 55–89, 2019, <https://doi.org/10.1007/s10703-019-00335-y>; Section 2 (the formal model, protocols and the three semantics, the two problems), Theorem 2 and Theorem 3 (main statement) of Section 3 with their proofs in Appendices B and C, Theorem 1 (uniquely-sequentializable protocols) of Section 2, and Theorem 4 (decidability of safety in the synchronous and semi-synchronous modes) of arXiv:1706.05193v1, read at <https://arxiv.org/abs/1706.05193v1>.

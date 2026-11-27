@@ -11,6 +11,7 @@ Undecidability persists when the adversary is limited to $O(f(n))$ time and spac
 ## Depends on
 
 - [Finite simple graph](../../../../../GraphTheory/planar-graphs-and-minors/graph-minors/fin-graph.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ On the triangle with nodes $\mathrm{Source}, A, B$, a fixed periodic delay funct
 
 ## Sources
 
-- Oluwatobi Alafin, George B. Mertzios and Paul G. Spirakis, "Round-delayed amnesiac flooding", Theoretical Computer Science 1075, Article 115956, 2026, <https://doi.org/10.1016/j.tcs.2026.115956>; Section 3 (model, protocol and termination) and the undecidability and resilient undecidability theorems of Section 6 ("Undecidability with Arbitrary Computable Adversaries"), with Section 7 on eventually periodic adversaries, of arXiv:2604.04260v1, read at <https://arxiv.org/abs/2604.04260v1>.
+- Oluwatobi Alafin, George B. Mertzios and Paul G. Spirakis, "Round-delayed amnesiac flooding", Theoretical Computer Science 1075, Article 115956, 2026, <https://doi.org/10.1016/j.tcs.2026.115956>; Section 3 (model, protocol and termination, Definitions 1 and 2), Lemma 6, Theorem 5 (undecidability) and Theorem 6 (resilient undecidability) of Section 6 ("Undecidability with Arbitrary Computable Adversaries"), and Theorem 7 of Section 7 on eventually periodic adversaries, of arXiv:2604.04260v1, read at <https://arxiv.org/abs/2604.04260v1>.

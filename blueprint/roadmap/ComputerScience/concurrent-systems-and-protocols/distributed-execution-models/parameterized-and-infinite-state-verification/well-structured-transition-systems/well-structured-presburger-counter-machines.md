@@ -11,6 +11,7 @@ In contrast, the same paper shows that the well structured problem is decidable 
 ## Depends on
 
 - [Well-structured transition systems](../../../../../Logic/temporal-logic/timed-and-infinite-state-verification/well-structured-transition-systems.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

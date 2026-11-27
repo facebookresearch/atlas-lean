@@ -10,7 +10,7 @@ The same paper revisits bounded coefficient synthesis, where the indeterminates 
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +22,4 @@ The proof first shows the non-negative version undecidable by reduction from the
 
 ## Sources
 
-- A. R. Balasubramanian, "Coefficient Synthesis for Threshold Automata", Automated Technology for Verification and Analysis (ATVA 2022), Lecture Notes in Computer Science, pp. 125–139, 2022, <https://doi.org/10.1007/978-3-031-19135-0_9>; the definitions of Section 2 (environments, threshold automata, coverability and coefficient synthesis) and the two undecidability theorems of Section 3 ("Undecidability of Coefficient Synthesis") of the extended version arXiv:2304.08917v3, read at <https://arxiv.org/abs/2304.08917v3>.
+- A. R. Balasubramanian, "Coefficient Synthesis for Threshold Automata", Automated Technology for Verification and Analysis (ATVA 2022), Lecture Notes in Computer Science, pp. 125–139, 2022, <https://doi.org/10.1007/978-3-031-19135-0_9>; the definitions of Section 2 (environments, threshold automata, coverability and coefficient synthesis) and Theorem 3.1 and Theorem 3.12 (non-negative coefficients) of Section 3 ("Undecidability of Coefficient Synthesis"), and Section 4 on bounded coefficient synthesis of the extended version arXiv:2304.08917v3, read at <https://arxiv.org/abs/2304.08917v3>.

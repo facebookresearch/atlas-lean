@@ -11,6 +11,7 @@ For quiescent consistency without the per-process order constraint, the same pap
 ## Depends on
 
 - [Sequential consistency of concurrent histories](../shared-memory-objects/shared-memory-synchronization/sequential-consistency-of-concurrent-histories.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ Under QSC events of different processes commute while events of one process do n
 
 ## Sources
 
-- Brijesh Dongol and Robert M. Hierons, "Decidability and complexity for quiescent consistency and its variations", Information and Computation 257, pp. 1–21, 2017, <https://doi.org/10.1016/j.ic.2017.09.012>; the definitions of quiescent and end-to-end quiescent traces and of the membership and correctness problems in the section "Quiescent consistency", the definition of QSC in the section on quiescent sequential consistency, and the undecidability theorem of the section "Correctness for QSC" of arXiv:1511.08447v1, read at <https://arxiv.org/abs/1511.08447v1>.
+- Brijesh Dongol and Robert M. Hierons, "Decidability and complexity for quiescent consistency and its variations", Information and Computation 257, pp. 1–21, 2017, <https://doi.org/10.1016/j.ic.2017.09.012>; the definitions of quiescent and end-to-end quiescent traces and of the membership and correctness problems in Section 3, "Quiescent consistency", Theorem 1 (membership) in Section 4 and Theorems 3 to 6 (correctness for quiescent consistency) in Section 5, Definitions 7 and 8 (quiescent sequential consistency), and Theorem 10 in Section 8.1 of Section 8, "Correctness for quiescent sequential consistency" of arXiv:1511.08447v1, read at <https://arxiv.org/abs/1511.08447v1>.

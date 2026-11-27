@@ -10,7 +10,7 @@ The domain size $M$ and the actions are part of the input; the ring size is univ
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-Satisfying $R \leadsto Q$ without fairness requires that computations starting in $R$ neither deadlock nor livelock outside $Q$. The proof derives undecidability from the undecidability of livelock-freedom for symmetric uni-ring protocols of self-disabling deterministic processes, a result of Klinkhamer and Ebnenasir that the paper recalls (also for deterministic livelocks, in which exactly one process is enabled in each state). That result has no page here.
+Satisfying $R \leadsto Q$ without fairness requires that computations starting in $R$ neither deadlock nor livelock outside $Q$. The proof derives undecidability from the undecidability of livelock-freedom for symmetric uni-ring protocols of self-disabling deterministic processes, a result of Klinkhamer and Ebnenasir that the paper recalls (also for deterministic livelocks, in which exactly one process is enabled in each state). A good expansion links a page for that result.
 
 ## Sources
 

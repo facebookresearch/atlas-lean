@@ -7,6 +7,7 @@ For networks of any number of identical processes communicating by rendez-vous w
 ## Depends on
 
 - [Rendez-vous protocols with non-blocking semantics](rendez-vous-protocols-non-blocking.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

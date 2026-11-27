@@ -14,7 +14,7 @@ In the proof the template has jump bound $b = 1$. For a fixed parameter valuatio
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

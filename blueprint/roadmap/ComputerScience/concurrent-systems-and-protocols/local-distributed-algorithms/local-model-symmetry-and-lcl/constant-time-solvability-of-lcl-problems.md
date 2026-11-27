@@ -11,6 +11,7 @@ On toroidal two-dimensional grids, in contrast, constant-time solvability is tri
 ## Depends on
 
 - [The LOCAL model](../../distributed-execution-models/the-local-model.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

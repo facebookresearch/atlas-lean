@@ -17,6 +17,7 @@ Consequently the set of configurations from which $M$ must terminate, although d
 
 - [Lossy counter machines](lossy-counter-machines.md)
 - [Π_n sets](../../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
