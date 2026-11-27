@@ -1,12 +1,12 @@
 # Advanced composition with the $\tanh$ term
 
-Let the adjacency relation be symmetric and let each of $k$ adaptively chosen mechanisms be $(\varepsilon, \delta)$-differentially private, where in round $i$ an adversary, knowing all previous outputs, chooses the mechanism and the pair of adjacent datasets. Then for every $\delta' > 0$ the $k$-fold adaptive composition is
+Let the adjacency relation be symmetric, let $\varepsilon \ge 0$ and $\delta \in [0, 1]$, and let each of $k$ adaptively chosen mechanisms be $(\varepsilon, \delta)$-differentially private, where in round $i$ an adversary, knowing all previous outputs, chooses the mechanism and the pair of adjacent datasets. Then for every $\delta' > 0$ the $k$-fold adaptive composition is
 
 $$
 \Bigl(\sqrt{2k\ln(1/\delta')}\,\varepsilon + k\,\varepsilon \tanh(\varepsilon/2),\; k\delta + \delta'\Bigr)\text{-differentially private}.
 $$
 
-Since $\tanh(\varepsilon/2) \le e^\varepsilon - 1$, this implies the standard bound with $k\varepsilon(e^\varepsilon - 1)$.
+Since $\tanh(\varepsilon/2) \le e^\varepsilon - 1$ for $\varepsilon \ge 0$, this implies the standard bound with $k\varepsilon(e^\varepsilon - 1)$. The sign condition is needed: the linked definition allows $\varepsilon < 0$, and for $k = 1$, $\varepsilon = -1$, $\delta = 1 - e^{-1}$, $\delta' = 0.01$ a constant mechanism is $(\varepsilon, \delta)$-differentially private while the claimed parameter $\varepsilon' = -\sqrt{2\ln 100} + \tanh(1/2) \approx -2.57$ would bound the probability $1$ of the whole output space by $e^{\varepsilon'} + \delta + \delta' \approx 0.72$.
 
 ## Proof sketch
 
@@ -23,5 +23,5 @@ Reduce $(\varepsilon, \delta)$ rounds to $(\varepsilon, 0)$ rounds at the cost o
 
 ## Sources
 
-- Cynthia Dwork and Aaron Roth, "The Algorithmic Foundations of Differential Privacy", Foundations and Trends in Theoretical Computer Science, 2014, Theorem 3.20 (the bound with $k\varepsilon(e^\varepsilon - 1)$).
-- Peter Kairouz, Sewoong Oh and Pramod Viswanath, "The Composition Theorem for Differential Privacy", Proceedings of the 32nd International Conference on Machine Learning (ICML 2015); arXiv:1311.0776v4, Theorem 3.4 (the bound with $(e^\varepsilon - 1)\varepsilon k/(e^\varepsilon + 1) = k\varepsilon\tanh(\varepsilon/2)$).
+- Cynthia Dwork and Aaron Roth, "The Algorithmic Foundations of Differential Privacy", Foundations and Trends in Theoretical Computer Science, 2014, Theorem 3.20, stated for $\varepsilon, \delta, \delta' \ge 0$ (the bound with $k\varepsilon(e^\varepsilon - 1)$).
+- Peter Kairouz, Sewoong Oh and Pramod Viswanath, "The Composition Theorem for Differential Privacy", Proceedings of the 32nd International Conference on Machine Learning (ICML 2015); arXiv:1311.0776v4, Theorem 3.4, stated for $\varepsilon > 0$ and $\delta \in [0, 1]$ (the bound with $(e^\varepsilon - 1)\varepsilon k/(e^\varepsilon + 1) = k\varepsilon\tanh(\varepsilon/2)$).

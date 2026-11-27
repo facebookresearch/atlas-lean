@@ -1,6 +1,6 @@
 # Stretch amplification of a one-bit pseudorandom generator
 
-Let $G$ be a pseudorandom generator stretching $n$ bits to $n+1$ bits, and write $G(s) = G'(s) \| \sigma(s)$ with $|G'(s)| = n$ and $\sigma(s)$ a single bit. For a polynomial-time computable $\ell$ with $\ell(n) > n$, define $s_0 = s$, $s_i = G'(s_{i-1})$ and $\sigma_i = \sigma(s_{i-1})$ for $i = 1, \dots, \ell(n)$. Then $G_\ell(s) = \sigma_1 \sigma_2 \cdots \sigma_{\ell(n)}$ is a pseudorandom generator with output length $\ell(n)$.
+Let $G$ be a pseudorandom generator stretching $n$ bits to $n+1$ bits, and write $G(s) = G'(s) \| \sigma(s)$ with $|G'(s)| = n$ and $\sigma(s)$ a single bit. For a polynomially bounded $\ell$ (that is, $\ell(n) \le p(n)$ for a polynomial $p$), computable from $1^n$ in time polynomial in $n$, with $\ell(n) > n$, define $s_0 = s$, $s_i = G'(s_{i-1})$ and $\sigma_i = \sigma(s_{i-1})$ for $i = 1, \dots, \ell(n)$. Then $G_\ell(s) = \sigma_1 \sigma_2 \cdots \sigma_{\ell(n)}$ is a pseudorandom generator with output length $\ell(n)$.
 
 ## Proof sketch
 

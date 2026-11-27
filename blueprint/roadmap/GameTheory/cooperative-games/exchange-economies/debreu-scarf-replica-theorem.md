@@ -1,6 +1,6 @@
 # Debreu–Scarf replica theorem
 
-Consider an exchange economy whose traders have continuous, strictly convex, strictly monotone preferences, and its $r$-fold replicas in which each trader type is copied $r$ times. Every allocation in the core of a replica gives identical bundles to identical copies, and an allocation (assigning one bundle per type) lies in the core of every $r$-fold replica if and only if it is a competitive equilibrium allocation of the original economy. Competitive equilibrium allocations remain in the core of every replica.
+Consider an exchange economy whose traders have continuous, strictly convex, strictly monotone preferences and endowments that are strictly positive in every good, and its $r$-fold replicas in which each trader type is copied $r$ times. Every allocation in the core of a replica gives identical bundles to identical copies, and an allocation (assigning one bundle per type) lies in the core of every $r$-fold replica if and only if it is a competitive equilibrium allocation of the original economy. Competitive equilibrium allocations remain in the core of every replica.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Subgame-perfect trigger strategies in the repeated prisoner’s dilemma
 
-In the infinitely repeated prisoner's dilemma with stage payoffs $\pi(C,C) = 1$, $\pi(D,D) = 0$, $\pi(D,C) = 2$, $\pi(C,D) = -1$ and normalized discounted payoff $(1 - \delta) \sum_t \delta^t u_t$ with $0 \le \delta < 1$, a strategy profile is a subgame-perfect equilibrium iff no player gains from a one-shot deviation at any history. Grim trigger played by both players is subgame perfect iff $\delta \ge 1/2$, tit-for-tat played by both is subgame perfect iff $\delta = 1/2$ exactly, and naive grim trigger (which punishes even its own defection forever without regard to the opponent) is not subgame perfect.
+In the infinitely repeated prisoner's dilemma with stage payoffs $\pi(C,C) = 1$, $\pi(D,D) = 0$, $\pi(D,C) = 2$, $\pi(C,D) = -1$ and normalized discounted payoff $(1 - \delta) \sum_t \delta^t u_t$ with $0 \le \delta < 1$, a strategy profile is a subgame-perfect equilibrium iff no player gains from a one-shot deviation at any history. Grim trigger played by both players is subgame perfect iff $\delta \ge 1/2$, tit-for-tat played by both is subgame perfect iff $\delta = 1/2$ exactly, and the naive variant of grim trigger that plays $C$ unless the opponent has defected (ignoring its own defections) is not subgame perfect for any $\delta$: after its own defection it keeps playing $C$ against an opponent who now plays $D$ forever.
 
 ## Proof sketch
 

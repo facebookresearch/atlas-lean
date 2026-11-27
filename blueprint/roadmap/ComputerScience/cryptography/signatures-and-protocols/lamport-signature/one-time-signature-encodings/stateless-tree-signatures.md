@@ -1,6 +1,6 @@
 # Stateless tree signatures from an indexed scheme and a PRF
 
-Let $S$ be a secure indexed signature scheme of capacity $q \ge 2$ and $F$ a PRF. The *stateless tree signature* scheme fixes a $q$-ary tree of depth $\ell$ whose nodes carry key pairs of $S$ generated from PRF outputs on the node names; to sign $m$ it chooses a leaf (pseudo)randomly, signs $m$ with the leaf's key, and certifies the path to the root by signing each child's public key under its parent at the child's index. If $q^{\ell}$ is super-polynomial, the scheme is EUF-CMA secure.
+Let $S$ be a secure indexed signature scheme of capacity $q \ge 2$ (an indexed scheme signs deterministically; a scheme with randomized signing can be used instead if its signing coins on each node are also derived from the PRF, as in Goldreich's construction) and $F$ a PRF, with $q$ and the depth $\ell$ polynomially bounded. The *stateless tree signature* scheme fixes a $q$-ary tree of depth $\ell$ whose nodes carry key pairs of $S$ generated from PRF outputs on the node names; to sign $m$ it chooses a leaf (pseudo)randomly, signs $m$ with the leaf's key, and certifies the path to the root by signing each child's public key under its parent at the child's index, so that every signature on a node's public key is the same at every use. If $q^{\ell}$ is super-polynomial, the scheme is EUF-CMA secure.
 
 ## Proof sketch
 

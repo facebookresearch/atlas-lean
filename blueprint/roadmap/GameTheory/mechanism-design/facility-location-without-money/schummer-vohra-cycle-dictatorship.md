@@ -1,6 +1,6 @@
 # Schummer–Vohra cycle dictatorship
 
-On a finite connected metric graph that is not a tree, every deterministic strategyproof onto facility-location mechanism acts as a dictatorship on profiles supported on any shortest cycle: some agent's reported location is always chosen. If the graph is itself a cycle (of length at least $3$), every deterministic strategyproof onto mechanism is a dictatorship. Cycle dictatorship need not extend to a global dictatorship on general graphs.
+On a finite connected metric graph that is not a tree, every deterministic strategyproof onto facility-location mechanism acts as a dictatorship on profiles supported on any cycle $C$ of the graph: some agent's reported location is chosen whenever all reports lie on $C$ (Schummer–Vohra, Theorem 2). One agent is this dictator for every cycle at once (Lemma 6), and indeed on the minimal connected subgraph containing all cycles (Lemma 7). If the graph is itself a cycle, every deterministic strategyproof onto mechanism is a dictatorship. Cycle dictatorship need not extend to a global dictatorship on general graphs.
 
 ## Proof sketch
 

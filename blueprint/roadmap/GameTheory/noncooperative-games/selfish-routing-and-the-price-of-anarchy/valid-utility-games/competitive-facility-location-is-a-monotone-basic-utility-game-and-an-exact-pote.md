@@ -1,6 +1,6 @@
 # Competitive facility location is a monotone basic utility game and an exact potential game
 
-In Vetta's competitive facility location game, social welfare is a monotone submodular function of the set of opened locations, total provider profit is at most social welfare, and each provider's profit equals its marginal contribution $V(s) - V(s - s_i)$. Hence the game is a monotone basic utility game, negative social welfare is an exact potential, pure Nash equilibria exist, every welfare-maximizing profile is an equilibrium (price of stability $1$), improvement dynamics terminate, and every pure Nash equilibrium has welfare at least half the optimum; an instance with two providers and two clients shows the factor $2$ is attained.
+In Vetta's competitive facility location game, social welfare is a monotone submodular function of the set of opened locations, total provider profit is at most social welfare, and each provider's profit equals its marginal contribution $V(s) - V(s - s_i)$. Hence the game is a monotone basic utility game, negative social welfare is an exact potential, pure Nash equilibria exist, every welfare-maximizing profile is an equilibrium (price of stability $1$), improvement dynamics terminate, and every pure Nash equilibrium has welfare at least half the optimum.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # LWE with uniform errors has zero advantage
 
-Let $R$ be a finite commutative ring and let the error vector $e$ be uniform on $R^m$. Then for every secret law, the real LWE pair $(A, A s + e)$ with $A$ uniform in $R^{m \times n}$ is distributed exactly as a uniform pair $(A, u)$, and is independent of $s$. Consequently every distinguisher has advantage $0$, so LWE hardness can only hold for error laws that are far from uniform.
+Let $R$ be a finite commutative ring and let the error vector $e$ be uniform on $R^m$. Then for every law of the secret $s$, with $A$ uniform in $R^{m \times n}$ and $A$, $s$, $e$ independent, the real LWE pair $(A, A s + e)$ is distributed exactly as a uniform pair $(A, u)$, and is independent of $s$. Consequently every distinguisher has advantage $0$: decision LWE with uniform error is hard for the trivial reason that the two distributions coincide, while the samples carry no information about $s$, so no algorithm recovers $s$ with higher probability than by guessing it from its law alone.
 
 ## Proof sketch
 

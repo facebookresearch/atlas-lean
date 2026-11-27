@@ -1,10 +1,10 @@
 # Equilibria of weakest-link and best-shot reliability games
 
-Assume the reliability function $P$ is concave. In a weakest-link game every common effort level up to the smallest stand-alone optimum $\min_i \bar x_i$ is a pure Nash equilibrium (and the profile with all agents at that level is the best one); with identical agents the social optimum is an equilibrium, and liability or negligence rules can make the efficient common level an equilibrium. In a best-shot game every pure Nash equilibrium has at most one agent exerting positive effort, equal to its stand-alone optimum, and the profile where the agent with the highest benefit-cost ratio provides its stand-alone effort is an equilibrium; reliability falls short of the optimum.
+Assume the reliability function $P$ is concave. In a weakest-link game every common effort level up to the smallest stand-alone optimum $\min_i \bar x_i$ is a pure Nash equilibrium (and the profile with all agents at that level is the best one); with identical agents the social optimum is an equilibrium, and liability or negligence rules can make the efficient common level an equilibrium. In a best-shot game every pure Nash equilibrium has at most one agent exerting positive effort, equal to its stand-alone optimum, and the profile where the agent with the highest benefit-cost ratio provides its stand-alone effort is an equilibrium. If moreover $P$ is differentiable and strictly concave, equilibrium reliability is at most the socially optimal reliability, and with at least two agents it falls strictly short of it whenever the socially optimal effort is positive.
 
 ## Proof sketch
 
-Under weakest link, raising effort above the current minimum is wasted and lowering it reduces reliability, so any common level below every stand-alone optimum is stable. Under best shot, only the maximal effort matters, so at most one agent profits from positive effort.
+Under weakest link, raising effort above the current minimum is wasted and lowering it reduces reliability, so any common level below every stand-alone optimum is stable. Under best shot, only the maximal effort matters, so at most one agent profits from positive effort. A positive social optimum sets the aggregate where $(\sum_i v_i) P' = \min_i c_i$, while an active agent $j$ stops where $v_j P' = c_j$, which with two or more agents is a strictly larger marginal reliability, hence a strictly smaller effort.
 
 ## Depends on
 

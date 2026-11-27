@@ -1,6 +1,12 @@
 # Mixed-modulus circuits and BMR16 garbling
 
-A *mixed-modulus circuit* has wires each carrying a residue modulo its own modulus $p$; addition and multiplication by constants act within one modulus, and *projection gates* apply an arbitrary function $\mathbb{Z}_p \to \mathbb{Z}_{p'}$. In the garbling of Ball, Malkin and Rosulek, every modulus $p$ has a global offset $\Delta_p \in \mathbb{Z}_p^\ell$, wire labels are $W_i + x_i\Delta_p$ (generalized Free-XOR), linear gates are free, and a projection gate with input modulus $p$ is garbled with $p - 1$ ciphertexts using a tweakable hash and a point-and-permute colour in $\mathbb{Z}_p$. *Mixed-modulus circular correlation robustness* asks that the oracle $(x, t, c) \mapsto H(x + c\Delta_p, t)$ be indistinguishable from random for nonzero $c$.
+A *mixed-modulus circuit* (a mixed-modulus simple circuit of Ball, Malkin and Rosulek) has wires each carrying a residue modulo its own modulus $m$; its internal gates are addition modulo $m$ (of unbounded fan-in, all wires mod $m$), multiplication by a public constant $c$ that is a unit modulo $m$ (input and output wires mod $m$), and *projection gates* applying an arbitrary function $\varphi : \mathbb{Z}_m \to \mathbb{Z}_n$ from a mod-$m$ wire to a mod-$n$ wire. In their garbling, every modulus $m$ has a global offset $\Delta_m$, a uniform vector over $\mathbb{Z}_m$ whose last (colour) digit is $1$; wire labels are $W_i^0 + x\Delta_m$ (generalized Free-XOR), so addition and multiplication by units are free; and a projection gate $g$ with input wire $i$ (modulus $m$) and output wire $j$ (modulus $n$) is garbled with $m - 1$ ciphertexts (after row reduction) of the form $H(g, W_i^0 + x\Delta_m) + W_j^0 + \varphi(x)\Delta_n$, indexed by the colour digit of the input label, using a hash $H$ with the gate index $g$ as tweak. *Mixed-modulus circular correlation robustness* asks that, with the offsets $\Delta_{m_1}, \dots, \Delta_{m_r}$ uniform, the oracle
+
+$$
+O(g, i, j, X, a, c) = H(g, X + a\Delta_{m_i}) + c\Delta_{m_j}
+$$
+
+(inner addition modulo $m_i$, outer addition modulo $m_j$) be indistinguishable from a random function for every polynomial-time adversary that queries it on distinct values of $g$ and with $a \ne 0$.
 
 ## Depends on
 

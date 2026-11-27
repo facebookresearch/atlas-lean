@@ -1,6 +1,6 @@
 # Pure price of anarchy O(log m / log log m) on related machines
 
-Let $A$ be a pure Nash equilibrium of a load-balancing game on $m$ uniformly related machines. If $\max_j \ell_j(A) \ge (c + 1)\,\mathrm{OPT}$ for an integer $c$, then $c! \le m$ (Vocking, proof of Theorem 20.7). Consequently
+Let $A$ be a pure Nash equilibrium of a load-balancing game on $m$ uniformly related machines in which some job has positive weight, so that $\mathrm{OPT} > 0$. If $\max_j \ell_j(A) \ge (c + 1)\,\mathrm{OPT}$ for an integer $c$, then $c! \le m$ (Vocking, proof of Theorem 20.7). Consequently
 
 $$
 \max_j \ell_j(A) = O\Bigl(\frac{\log m}{\log\log m}\Bigr)\mathrm{OPT}

@@ -1,6 +1,6 @@
 # Sybilproofness of reputation mechanisms on trust graphs
 
-On transitive trust graphs (nonnegative directed edge weights), a sybil strategy lets a node replace itself by any set of nodes with arbitrary internal trust edges, keeping the incoming edges. No nontrivial symmetric global reputation function (invariant under graph isomorphism) is rank-sybilproof, or even $K$-rank-sybilproof for $K \ge 1$, and none is rank-strategyproof. The seeded max-flow reputation (maximum flow from a fixed seed) is value-sybilproof but not rank-sybilproof, while seeded shortest-path (Pathrank) reputation is value- and rank-sybilproof.
+On transitive trust graphs (nonnegative directed edge weights), a sybil strategy lets a node replace itself by any set of nodes with arbitrary internal trust edges, keeping the incoming edges. No nontrivial symmetric global reputation function (invariant under graph isomorphism) is rank-sybilproof, or even $K$-rank-sybilproof for $K \ge 1$, and none that is also monotonic (adding an incoming edge to a node never lowers its rank relative to any other node) is rank-strategyproof (no node can improve its rank by changing its own outgoing trust edges). The seeded max-flow reputation (maximum flow from a fixed seed) is value-sybilproof but not rank-sybilproof, while seeded shortest-path (Pathrank) reputation is value- and rank-sybilproof.
 
 ## Proof sketch
 

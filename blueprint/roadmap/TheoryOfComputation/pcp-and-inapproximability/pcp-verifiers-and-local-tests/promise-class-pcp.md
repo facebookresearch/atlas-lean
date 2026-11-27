@@ -4,7 +4,7 @@ A promise problem $\Pi = (\Pi_{\mathrm{yes}}, \Pi_{\mathrm{no}})$ over binary st
 - (completeness) for every $x \in \Pi_{\mathrm{yes}}$ some proof $\pi$ is accepted with probability $1$;
 - (soundness) for every $x \in \Pi_{\mathrm{no}}$ every proof $\pi$ is accepted with probability at most $1/2$.
 
-No condition is imposed on inputs outside $\Pi_{\mathrm{yes}} \cup \Pi_{\mathrm{no}}$. For a language $L$ (the promise $\Pi_{\mathrm{no}} = \overline{L}$) this is the class $\mathrm{PCP}(r, q)$ with perfect completeness.
+No condition is imposed on inputs outside $\Pi_{\mathrm{yes}} \cup \Pi_{\mathrm{no}}$. For a language $L$ (the promise $\Pi_{\mathrm{no}} = \overline{L}$) this is the class of languages with PCPs of perfect completeness, soundness $1/2$, $O(r)$ randomness and $O(q)$ queries; these parameters differ from those of the class $\mathrm{PCP}(r, q)$ linked below (exactly $r(n)$ random bits, at most $q(n)$ queries, acceptance thresholds $2/3$ and $1/3$).
 
 ## Depends on
 

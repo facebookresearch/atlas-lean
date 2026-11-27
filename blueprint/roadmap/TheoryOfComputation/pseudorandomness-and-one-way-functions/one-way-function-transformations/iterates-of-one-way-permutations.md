@@ -1,6 +1,6 @@
 # Iterates of a one-way permutation are one-way
 
-Let $f$ be a length-preserving one-way permutation and let $k(n) \ge 1$ be computable in time polynomial in $n$ (for example $k(n) = \lceil n^c \rceil$ for a rational $c > 0$). Then $F(x) = f^{(k(|x|))}(x)$, the $k(|x|)$-fold iterate, is a one-way permutation. Concretely, an inverter for $F$ with success $\varepsilon$ is itself an inverter for $f$ after $k(n) - 1$ additional evaluations of $f$, with the same success probability.
+Let $f$ be a length-preserving one-way permutation and let $k(n) \ge 1$ be polynomially bounded ($k(n) \le p(n)$ for a polynomial $p$) and computable from $1^n$ in time polynomial in $n$ (for example $k(n) = \lceil n^c \rceil$ for a rational $c > 0$). Then $F(x) = f^{(k(|x|))}(x)$, the $k(|x|)$-fold iterate, is a one-way permutation. Concretely, an inverter for $F$ with success $\varepsilon$ is itself an inverter for $f$ after $k(n) - 1$ additional evaluations of $f$, with the same success probability.
 
 ## Proof sketch
 

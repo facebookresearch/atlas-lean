@@ -6,11 +6,11 @@ $$
 \frac{\varepsilon'^2}{Q} - \frac{\varepsilon'}{|C|}, \qquad \varepsilon' = \varepsilon - q_S (q_S + q_H)\,\delta, \quad Q = q_H + 1,
 $$
 
-where the signing oracle is simulated by programming $H$ at simulated commitments. The same reduction proves soundness of Fiat–Shamir non-interactive proofs. Schnorr signatures (commitments $r g$ are $1/q$-unpredictable) are EUF-CMA secure under the discrete logarithm assumption; reusing related nonces $r$ and $a r + b$ for two messages reveals the signing key.
+where the signing oracle is simulated by programming $H$ at simulated commitments. The same reduction proves soundness of Fiat–Shamir non-interactive proofs. Schnorr signatures (commitments $r g$ are $1/q$-unpredictable) are EUF-CMA secure under the discrete logarithm assumption; reusing related nonces $r$ and $a r + b$ (with known $a, b$) for two messages reveals the signing key, provided the two challenges satisfy $c_1 \ne a c_0$, which fails with probability at most $1/|C|$ when $c_1$ is a fresh random-oracle answer.
 
 ## Proof sketch
 
-Simulate signatures with the HVZK simulator and program the oracle; programming fails only if the commitment was queried before, which unpredictability bounds. A forgery uses some oracle answer as its challenge; forking at that query gives two accepting conversations with the same commitment, from which special soundness extracts a witness. For related nonces, two linear equations in the nonce and the key determine both.
+Simulate signatures with the HVZK simulator and program the oracle; programming fails only if the commitment was queried before, which unpredictability bounds. A forgery uses some oracle answer as its challenge; forking at that query gives two accepting conversations with the same commitment, from which special soundness extracts a witness. For related nonces, the two responses give two linear equations in the nonce and the key, which determine both exactly when $c_1 \ne a c_0$.
 
 ## Depends on
 

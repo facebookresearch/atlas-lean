@@ -1,10 +1,10 @@
 # Peterson's filter lock and the single-register impossibility
 
-Peterson's $n$-process filter lock uses atomic registers $\mathit{level}[i] \in \{0, \dots, n-1\}$ and $\mathit{victim}[r]$ for $n - 1$ waiting rooms, with each room's condition evaluated by individual reads. At most $n - (r + 1)$ processes are simultaneously at or above level $r + 1$, so at most one process is in the critical section (mutual exclusion), and the lock is deadlock-free. By contrast, no deadlock-free mutual exclusion algorithm for $n \ge 2$ processes uses a single shared read/write register.
+Peterson's $n$-process filter lock uses atomic registers $\mathit{level}[i] \in \{0, \dots, n-1\}$ and $\mathit{victim}[k]$ for waiting rooms $k = 1, \dots, n - 1$: to enter room $k$, process $i$ writes $\mathit{level}[i] := k$ and then $\mathit{victim}[k] := i$, and waits while some other process $j$ has $\mathit{level}[j] \ge k$ and $\mathit{victim}[k] = i$, each room's condition being evaluated by individual reads; after room $n - 1$ it enters the critical section, and on leaving it resets $\mathit{level}[i] := 0$. For $k = 1, \dots, n - 1$, at any time at most $n - k$ processes have completed the waiting loop of room $k$ in their current attempt, so at most one process is in the critical section (mutual exclusion), and the lock is deadlock-free. (A process writes its level before waiting in that room, so the number of processes whose register reads at least $k$ is not bounded by $n - k$.) By contrast, no deadlock-free mutual exclusion algorithm for $n \ge 2$ processes uses a single shared read/write register.
 
 ## Proof sketch
 
-In each waiting room the last process to write the victim register is blocked while others remain, so each room filters out at least one process. For one register, a covering argument lets a process enter the critical section while another's pending write erases all trace of it.
+By induction on $k$: of the at most $n - k + 1$ processes that have completed room $k - 1$, the last one to write $\mathit{victim}[k]$ cannot complete room $k$ while another of them is at level $k$ or above, so each room filters out at least one process. For one register, a covering argument lets a process enter the critical section while another's pending write erases all trace of it.
 
 ## Depends on
 

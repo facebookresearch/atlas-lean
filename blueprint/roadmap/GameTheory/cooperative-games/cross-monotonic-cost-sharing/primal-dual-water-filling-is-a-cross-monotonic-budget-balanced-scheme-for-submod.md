@@ -1,6 +1,6 @@
 # Primal-dual water filling is a cross-monotonic budget-balanced scheme for submodular games
 
-For every nonnegative submodular cost-sharing game, the water-filling scheme, which for coalition $T$ raises all active agents' shares uniformly from $0$ and freezes the agents of each newly tight set until all agents are frozen, is nonnegative, $1$-budget-balanced and cross-monotonic. Consequently Moulin's mechanism with this scheme is group-strategyproof and budget-balanced for every submodular cost function.
+For every nonnegative submodular cost-sharing game, the water-filling scheme, which for coalition $T$ raises all active agents' shares uniformly from $0$ and freezes the agents of each newly tight set until all agents are frozen, is nonnegative, $1$-budget-balanced and cross-monotonic. Consequently Moulin's mechanism with this scheme is group-strategyproof and budget-balanced for every nonnegative submodular cost function.
 
 ## Proof sketch
 

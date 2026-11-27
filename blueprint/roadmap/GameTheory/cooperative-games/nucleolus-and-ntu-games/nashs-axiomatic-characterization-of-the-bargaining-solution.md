@@ -1,6 +1,6 @@
 # Nash's axiomatic characterization of the bargaining solution
 
-Let $X \subseteq \mathbb{R}^2$ be compact and convex, $d \in X$, and suppose some $x \in X$ has $x > d$. The maximizer of the Nash product $(x_1 - d_1)(x_2 - d_2)$ over $\{x \in X : x \ge d\}$ is unique and is strongly Pareto optimal, symmetric, invariant under positive affine rescaling of each player's utility, and independent of irrelevant alternatives. Conversely it is the unique bargaining solution satisfying weak (or strong) Pareto optimality, symmetry, scale invariance and independence of irrelevant alternatives.
+Let $X \subseteq \mathbb{R}^2$ be compact and convex, $d \in X$, and suppose some $x \in X$ has $x > d$. The maximizer of the Nash product $(x_1 - d_1)(x_2 - d_2)$ over $\{x \in X : x \ge d\}$ is unique and is strongly Pareto optimal, symmetric, invariant under positive affine rescaling of each player's utility, and independent of irrelevant alternatives. Conversely it is the unique bargaining solution satisfying weak (or strong) Pareto optimality, symmetry, invariance under positive affine rescaling of each player's utility (applied to both $X$ and $d$) and independence of irrelevant alternatives.
 
 ## Proof sketch
 

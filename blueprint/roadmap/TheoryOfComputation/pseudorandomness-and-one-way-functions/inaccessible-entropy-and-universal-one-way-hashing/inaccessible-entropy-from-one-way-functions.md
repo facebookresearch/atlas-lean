@@ -1,14 +1,14 @@
 # Inaccessible average max-entropy from any one-way function
 
-Let $g$ be a one-way function with fixed output length $m(n)$. Define
+Let $f : \{0,1\}^n \to \{0,1\}^n$ be a length-preserving one-way function (any one-way function yields one by normalizing its output length), and let $\mathcal{G}$ be a family of hash functions $g : \{0,1\}^n \to \{0,1\}^n$ that is three-wise independent and constructible (a member can be sampled and evaluated in time polynomial in $n$). Define $F$ on $\mathrm{Dom}(F) = \{0,1\}^n \times \mathcal{G} \times [n]$ by
 
-$$F_0(x, A, b, r) = \bigl(A,\ b,\ r,\ \text{first } \min(r, n) \text{ bits of } A\,g(x) + b\bigr),$$
+$$F(x, g, i) = \bigl(g(f(x))_{1..i},\ g,\ i\bigr),$$
 
-zero-padded to fixed length, where $A$ is a uniform $m(n) \times m(n)$ Boolean matrix, $b$ a uniform vector (a 3-wise independent affine hash), and $r$ a uniform index of $\lfloor \log_2 n\rfloor + 1$ bits. Then $F_0$ is polynomial-time computable and, for every constant $d > 0$, its accessible average max-entropy is eventually at most $H(Z \mid F_0(Z)) - d \log_2 n / n$, with $Z$ the uniform input; moreover the accessible sets can be chosen independently of the adversary.
+where $g(f(x))_{1..i}$ is the first $i$ bits of $g(f(x))$. Then $F$ is polynomial-time computable and, for every constant $d > 0$, its accessible average max-entropy is at most $H(Z \mid F(Z)) - d \log_2 n / n$, with $Z$ uniform on $\mathrm{Dom}(F)$ (Haitner–Holenstein–Reingold–Vadhan–Wee, Theorem 4.5); moreover the accessible sets can be chosen independently of the adversary.
 
 ## Proof sketch
 
-When the prefix length is near $\log$ of the number of images "lighter" than $g(x)$, any collision finder that outputs a preimage outside a small light set yields an inverter for $g$ by guessing the hash prefix; hence efficient finders stay inside sets whose size is, on average, about $d\log n/n$ bits smaller than the real fiber.
+For a large constant $c$, the accessible set of $(x, g, i)$ consists of the inputs $(x', g, i)$ with $g(f(x'))_{1..i} = g(f(x))_{1..i}$ whose image $f(x')$ is $f(x)$ itself or *$i$-light*, $|f^{-1}(f(x'))| \le 2^{n-i}/n^c$. A collision finder that leaves these sets with noticeable probability yields an inverter for $f$ (Claim 4.6), and the sets are on average $\Omega(c \log n / n)$ bits smaller than the fibers of $F$ (Claim 4.7).
 
 ## Depends on
 
@@ -21,4 +21,4 @@ When the prefix length is near $\log$ of the number of images "lighter" than $g(
 
 ## Sources
 
-- I. Haitner, T. Holenstein, O. Reingold, S. Vadhan and H. Wee, "Inaccessible Entropy II: IE Functions and Universal One-Way Hashing", Theory of Computing 16, 2020.
+- I. Haitner, T. Holenstein, O. Reingold, S. Vadhan and H. Wee, "Inaccessible Entropy II: IE Functions and Universal One-Way Hashing", Theory of Computing 16(8), 2020: Theorem 4.5, with the accessible sets (4.4)-(4.5) and Claims 4.6-4.7.

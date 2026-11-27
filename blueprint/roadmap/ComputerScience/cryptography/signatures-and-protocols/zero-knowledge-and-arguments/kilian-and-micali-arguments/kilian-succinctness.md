@@ -6,7 +6,7 @@ $$
 n + n + k\, r(x) + k\, q\,(1 + n\lceil\log_2 N\rceil)
 $$
 
-bits, which for a verifier with $r(x) \le c(\log_2|x| + 1)$ random bits is polynomial in $n$ and polylogarithmic in $|x|$. Moreover every accepted transcript has at most the length displayed above, and verification reads only that many leading bits of a raw prover message, so the verifier runs in time polynomial in $n$ and $\log |x|$ on arbitrary (unframed or oversized) prover messages.
+bits, which for a verifier with $r(x) \le c(\log_2|x| + 1)$ random bits is polynomial in $n$ and polylogarithmic in $|x|$. Moreover every accepted transcript has at most the length displayed above, and verification reads only that many leading bits of a raw prover message, so the verifier processes arbitrary (unframed or oversized) prover messages in time polynomial in $n$ and $\log |x|$; its total running time is this plus the time of its $k$ runs of the PCP verifier on $x$, which compute the queries and the decision and depend on $|x|$.
 
 ## Proof sketch
 

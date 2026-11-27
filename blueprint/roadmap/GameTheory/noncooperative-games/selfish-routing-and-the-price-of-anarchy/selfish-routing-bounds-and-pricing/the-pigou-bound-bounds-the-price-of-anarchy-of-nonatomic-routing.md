@@ -1,6 +1,6 @@
 # The Pigou bound bounds the price of anarchy of nonatomic routing
 
-Let $\mathcal C$ be a class of latency functions containing the constants. For every nonatomic congestion game whose latencies lie in $\mathcal{C}$, every Wardrop equilibrium $f$ and every feasible flow $f^*$ satisfy $C(f) \le \alpha(\mathcal C)\, C(f^*)$. For the class of polynomials of degree at most $d$ with nonnegative coefficients,
+Let $\mathcal C$ be a class of latency functions. For every nonatomic congestion game whose latencies lie in $\mathcal{C}$, every Wardrop equilibrium $f$ and every feasible flow $f^*$ satisfy $C(f) \le \alpha(\mathcal C)\, C(f^*)$. For the class of polynomials of degree at most $d$ with nonnegative coefficients,
 
 $$
 \alpha = \Bigl(1 - d\,(d+1)^{-(d+1)/d}\Bigr)^{-1},

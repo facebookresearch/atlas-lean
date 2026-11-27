@@ -1,6 +1,6 @@
 # Semantic security implies security against parity prediction
 
-Let a cipher with message space $\{0,1\}^{L}$ be one-time semantically secure. Then every efficient adversary, given the encryption of a uniform message $m$, predicts the parity $\bigoplus_i m_i$ with probability at most $\tfrac12 + \mathrm{SSadv}$ for a comparable semantic-security adversary.
+Let a cipher with message space $\{0,1\}^{L}$, where $L \ge 1$, be one-time semantically secure. Then every efficient adversary, given the encryption of a uniform message $m$, predicts the parity $\bigoplus_i m_i$ with probability at most $\tfrac12 + \mathrm{SSadv}$ for a comparable semantic-security adversary.
 
 ## Proof sketch
 
