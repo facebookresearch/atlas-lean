@@ -13,6 +13,10 @@
 - [Bounded trajectories of weakly reversible single-linkage-class mass action systems](bounded-trajectories-of-weakly-reversible-single-linkage-class-mass-action-systems.md)
 - [Weakly reversible reaction network](../../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
 
+## Proof depends on
+
+- [Foster's criterion for positive recurrence](../../../../Probability/markov-chains/foster-lyapunov-criteria/foster-s-criterion-for-positive-recurrence.md)
+
 ## Expansion
 
 The deterministic boundedness proof finds, along any escaping sequence, a conservation-type function that the dominant reactions decrease. In the stochastic setting this function serves as a Lyapunov function, but one step of the jump chain only sees a single reaction, so the argument studies the $n$-step embedded chain, over which the dominant top-tier reactions have fired with high probability and produce a uniform negative drift outside a finite set (Foster's criterion). Falling factorials can differ from monomials when some counts are small, which is where the tier inclusion is needed; for binary networks with each species appearing as $S$ or $2S$, the inclusion holds, giving the main theorem.

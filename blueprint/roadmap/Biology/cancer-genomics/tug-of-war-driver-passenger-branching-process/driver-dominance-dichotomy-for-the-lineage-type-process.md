@@ -19,6 +19,10 @@ $$q_i=\frac{d}{\delta(i)}+\frac{\nu}{\delta(i)}q_{i-1}+\frac{b(i)}{\delta(i)}q_i
 2. *(Driver dominance.)* If $\nu\le\mu L$, then $(Y_n)$ and $(X_t)$ are transient: the expected type and the expected fitness $\mathbb{E}\,b(X_t)$ along the lineage diverge, and there is no limiting type distribution.
 3. *(Passenger dominance.)* If $\nu>\mu L$, then $(Y_n)$ is positive recurrent and $(X_t)$ has a limiting distribution: fitness along surviving lineages stabilizes.
 
+## Proof depends on
+
+- [Foster's criterion for positive recurrence](../../../Probability/markov-chains/foster-lyapunov-criteria/foster-s-criterion-for-positive-recurrence.md)
+
 ## Expansion
 
 Monotonicity of $q_i$ follows by coupling a fitter founder with a less fit one. The conditional drift of the jump chain is $\mathbb{E}[Y_{n+1}-i\mid Y_n=i]\propto\mu L(1-q_{i+L})-\nu(1-q_{i-1})$; since $q_i$ decreases in $i$, this is at least $\mu L-\nu$ times a positive factor at high types, so for $\nu\le\mu L$ the chain is a submartingale with the transience criterion $q_i\le d/b(i)$. For $\nu>\mu L$, at high types $q_{i\pm}\approx0$ and the drift is $\approx\mu L-\nu<0$, while at very negative types survival forces upward moves, so a Foster-Lyapunov argument (via a discrete Levinson theorem for the asymptotics of $q_i$) gives positive recurrence. The threshold $\nu=\mu L$ is exactly where the mean fitness change per mutation event, $+L$ at rate $\mu$ against $-1$ at rate $\nu$, vanishes.
