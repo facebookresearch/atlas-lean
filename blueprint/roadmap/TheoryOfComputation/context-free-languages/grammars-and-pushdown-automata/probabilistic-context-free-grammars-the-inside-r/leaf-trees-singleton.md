@@ -1,0 +1,3 @@
+# Leaf trees of a one-letter word
+
+For a context-free grammar with nonterminals $N$ and terminals $\Sigma$, a derivation tree is either a leaf labelled by a nonterminal $A$ and a terminal $a$ (standing for the rule $A \to a$), or a node labelled by nonterminals $A, B, C$ with a left and a right subtree (standing for the rule $A \to B\,C$). The root of a tree is $A$ in both cases, and its yield is the word $a$ for a leaf and the concatenation of the yields of the left and right subtrees for a node. For a nonterminal $A$ and a terminal $a$, the set of leaf trees of $A$ on the one-letter word $a$ is the singleton containing the leaf for $A \to a$ if $A \to a$ is a rule of the grammar, and is empty otherwise.
