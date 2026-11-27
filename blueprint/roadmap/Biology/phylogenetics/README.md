@@ -29,9 +29,10 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Phylogenetic inference and comparison](inference-and-comparison/README.md)
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
-
+- [Phylogenetic invariants](phylogenetic-invariants/README.md)
+- [Displayed-tree measures on phylogenetic networks](displayed-tree-measures-on-phylogenetic-networks/README.md)
+- [Trinet encoding of phylogenetic networks](trinet-encoding-of-phylogenetic-networks/README.md)
 ## [Random trees, trait evolution and tree-space statistics](part-01/README.md)
-
 - [Distance to stochastic phylogenetic regions](part-01/distance-to-stochastic-phylogenetic-regions/README.md)
 - [Dominant-type model of pathogen phylogenies](part-01/dominant-type-model-of-pathogen-phylogenies/README.md)
 - [Normal approximation of Ornstein–Uhlenbeck traits on Yule trees](part-01/normal-approximation-of-ornstein-uhlenbeck-traits-on-yule-trees/README.md)

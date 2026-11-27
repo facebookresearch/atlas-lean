@@ -6,11 +6,15 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Contact process on power-law random graphs](contact-process-on-power-law-random-graphs/README.md)
 - [Diffusion approximation of the stochastic SIR epidemic](diffusion-approximation-of-the-stochastic-sir-ep/README.md)
 - [Euler–Lotka equation and the reproduction number](euler-lotka-equation-and-the-reproduction-number/README.md)
+- [Extinction times in the stochastic SIS logistic epidemic](extinction-times-in-the-stochastic-sis-logistic/README.md)
 - [Final size of a stochastic epidemic in a large population](final-size-of-a-stochastic-epidemic-in-a-large-p/README.md)
 - [Global behaviour of the SIR model](global-behaviour-of-the-sir-model/README.md)
+- [Global stability of multigroup SIR epidemics](global-stability-of-multigroup-sir-epidemics/README.md)
 - [Global stability of the SEIR model](global-stability-of-the-seir-model/README.md)
+- [Global stability with nonlinear incidence](global-stability-with-nonlinear-incidence/README.md)
 - [Household reproduction number and threshold](household-reproduction-number-and-threshold/README.md)
 - [Kermack–McKendrick SIR model](kermack-mckendrick-sir-model/README.md)
+- [Multigroup SIS epidemic threshold](multigroup-sis-epidemic-threshold/README.md)
 - [Next-generation matrix and the basic reproduction number](next-generation-matrix-and-the-basic-reproductio/README.md)
 - [Poisson reporting of epidemic incidence](poisson-reporting-of-epidemic-incidence/README.md)
 - [SEIR epidemic model](seir-epidemic-model/README.md)
@@ -24,9 +28,12 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Superspreading and negative-binomial offspring](superspreading-and-negative-binomial-offspring/README.md)
 
 - [Epidemics on networks](epidemics-on-networks/README.md)
-
+- [Age-of-infection epidemic models and the McKendrick–von Foerster equation](age-of-infection-mckendrick-von-foerster-models/README.md)
+- [Incentive design for epidemic control](incentive-design-for-epidemic-control/README.md)
+- [Seasonally forced SIRS model](seasonally-forced-sirs-model/README.md)
+- [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
+- [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
 ## [Compartmental, delay, fractional-order and contagion models](part-01/README.md)
-
 - [Actively controlled SIS model](part-01/actively-controlled-sis-model/README.md)
 - [Behaviour–perception feedback in epidemic models](part-01/behaviour-perception-feedback-in-epidemic-models/README.md)
 - [Carrier epidemic model with information-dependent vaccination](part-01/carrier-epidemic-model-with-information-dependent-vaccination/README.md)
@@ -46,9 +53,7 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Threshold-delay epidemic models](part-01/threshold-delay-epidemic-models/README.md)
 - [Two-group SIR contact thresholds](part-01/two-group-sir-contact-thresholds/README.md)
 - [Two-stage contagion models](part-01/two-stage-contagion-models/README.md)
-
 ## [Stochastic, network and spatial epidemic models](part-02/README.md)
-
 - [Bayesian spatio-temporal disease mapping](part-02/bayesian-spatio-temporal-disease-mapping/README.md)
 - [Epidemic inference on dynamic networks](part-02/epidemic-inference-on-dynamic-networks/README.md)
 - [Perron–Frobenius growth rate of transport SEIR models](part-02/perron-frobenius-growth-rate-of-transport-seir-models/README.md)
@@ -61,9 +66,7 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Stochastic SIR model with distributed delay and Lévy jumps](part-02/stochastic-sir-model-with-distributed-delay-and-levy-jumps/README.md)
 - [Stochastic SIS patch model with migration](part-02/stochastic-sis-patch-model-with-migration/README.md)
 - [Two-patch epidemics with nonlinear reinfection](part-02/two-patch-epidemics-with-nonlinear-reinfection/README.md)
-
 ## [Testing, control, within-host and vector-borne models](part-03/README.md)
-
 - [Crop–vector epidemics with biomass growth and roguing](part-03/crop-vector-epidemics-with-biomass-growth-and-roguing/README.md)
 - [CTL-response viral model with distributed delays](part-03/ctl-response-viral-model-with-distributed-delays/README.md)
 - [Dengue with vector early-life stage](part-03/dengue-with-vector-early-life-stage/README.md)

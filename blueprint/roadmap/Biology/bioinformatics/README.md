@@ -24,9 +24,14 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [q-gram (seed) filtering lemma for approximate matching](q-gram-filtering-lemma-for-approximate-matching.md)
 - [Signed reversal distance: the Hannenhalli–Pevzner formula and polynomial-time sorting](remaining-clauses-of-complexity-of-reversal-distance-signed.md)
 - [Shortest common superstring via maximum-overlap Hamiltonian paths](remaining-clauses-of-shortest-common-superstring-via-maximum.md)
-
+- [Activity-by-contact model of enhancer–gene regulation](activity-by-contact-enhancer-gene-model/README.md)
+- [Collinear block detection](collinear-block-detection/README.md)
+- [Count splitting for latent variable inference](count-splitting-for-latent-variable-inference/README.md)
+- [DNA sample contamination](dna-sample-contamination/README.md)
+- [Intron-cluster splicing quantification](intron-cluster-splicing-quantification/README.md)
+- [k-mer-based assembly evaluation](k-mer-based-assembly-evaluation/README.md)
+- [Zero-inflated Poisson factor model for microbiome read counts](zero-inflated-poisson-factor-model-for-microbiome-counts.md)
 ## [RNA structure combinatorics and folding](part-01/README.md)
-
 - [Asymptotic enumeration of k-noncrossing RNA structures](part-01/asymptotic-enumeration-of-k-noncrossing-rna-structures/README.md)
 - [Chord-diagram models of RNA pseudoknots](part-01/chord-diagram-models-of-rna-pseudoknots/README.md)
 - [Conformational ratio reconstruction from probing data](part-01/conformational-ratio-reconstruction-from-probing-data/README.md)
@@ -37,9 +42,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Neutral networks of combinatory maps](part-01/neutral-networks-of-combinatory-maps/README.md)
 - [Returns and the largest irreducible component of RNA structures](part-01/returns-and-largest-irreducible-component-of-rna-structures/README.md)
 - [RNA branching polytope and parametric folding](part-01/rna-branching-polytope-and-parametric-folding/README.md)
-
 ## [Assembly graphs, pangenomes, indexing and alignment](part-02/README.md)
-
 - [Aho–Corasick automata for motif counting](part-02/aho-corasick-automata-for-motif-counting/README.md)
 - [Axiomatic string-graph representations of pangenomes](part-02/axiomatic-string-graph-representations-of-pangenomes/README.md)
 - [Coding sequence alignment with frameshifts](part-02/coding-sequence-alignment-with-frameshifts/README.md)
@@ -56,9 +59,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Shortest common superstring model of assembly](part-02/shortest-common-superstring-model-of-assembly/README.md)
 - [Variable-order de Bruijn graphs](part-02/variable-order-de-bruijn-graphs/README.md)
 - [XBWT indexing of aligned readsets](part-02/xbwt-indexing-of-aligned-readsets/README.md)
-
 ## [Genome rearrangements, repeats and sequence structure](part-03/README.md)
-
 - [Chromosome territory proximity from exchange aberrations](part-03/chromosome-territory-proximity-from-exchange-aberrations/README.md)
 - [CTCF-constrained network models of TADs](part-03/ctcf-constrained-network-models-of-tads/README.md)
 - [DCJ-indel distances with duplicated genes](part-03/dcj-indel-distances-with-duplicated-genes/README.md)
@@ -69,9 +70,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [PQ-tree search for gene clusters](part-03/pq-tree-search-for-gene-clusters/README.md)
 - [Topological pressure of DNA sequences](part-03/topological-pressure-of-dna-sequences/README.md)
 - [Weighted genome rearrangement distance](part-03/weighted-genome-rearrangement-distance/README.md)
-
 ## [Statistical models of omics and imaging data](part-04/README.md)
-
 - [Bayesian deconvolution of NMR metabolite spectra](part-04/bayesian-deconvolution-of-nmr-metabolite-spectra/README.md)
 - [Joint isoform quantification across RNA-seq samples](part-04/joint-isoform-quantification-across-rna-seq-samples/README.md)
 - [Langmuir birth–death model of microarray hybridization](part-04/langmuir-birth-death-model-of-microarray-hybridization/README.md)

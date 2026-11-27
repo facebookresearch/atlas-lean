@@ -12,9 +12,8 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
 - [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
-
+- [Continuum models of tumour-induced angiogenesis](continuum-models-of-tumour-induced-angiogenesis/README.md)
 ## [Chemotaxis systems: analysis and inverse problems](part-01/README.md)
-
 - [Bacterial chemotaxis to two stimuli](part-01/bacterial-chemotaxis-to-two-stimuli/README.md)
 - [Chemotactic tumour–immune models](part-01/chemotactic-tumour-immune-models/README.md)
 - [Flux-limited models of glioma invasion](part-01/flux-limited-models-of-glioma-invasion/README.md)
@@ -22,17 +21,13 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Inverse problems for attraction–repulsion chemotaxis](part-01/inverse-problems-for-attraction-repulsion-chemotaxis/README.md)
 - [Steady states of chemotaxis–consumption systems](part-01/steady-states-of-chemotaxis-consumption-systems/README.md)
 - [Stochastic homogenization of chemotaxis](part-01/stochastic-homogenization-of-chemotaxis/README.md)
-
 ## [Kinetic and transport models of cell motion](part-02/README.md)
-
 - [Anisotropic interaction models of fingerprint ridges](part-02/anisotropic-interaction-models-of-fingerprint-ridges/README.md)
 - [Kinetic chemotaxis in slab geometry](part-02/kinetic-chemotaxis-in-slab-geometry/README.md)
 - [Kinetic chemotaxis models of bacterial travelling pulses](part-02/kinetic-chemotaxis-models-of-bacterial-travelling-pulses/README.md)
 - [Kinetic models of non-local cell adhesion](part-02/kinetic-models-of-non-local-cell-adhesion/README.md)
 - [Self-organized hydrodynamics of myxobacteria](part-02/self-organized-hydrodynamics-of-myxobacteria/README.md)
-
 ## [Morphogens, Turing patterns and developmental patterning](part-03/README.md)
-
 - [Auxin peaks in concentration-based transport models](part-03/auxin-peaks-in-concentration-based-transport-models/README.md)
 - [Bulk-surface wave-pinning](part-03/bulk-surface-wave-pinning/README.md)
 - [Lateral-inhibition patterns on stratified bilayers](part-03/lateral-inhibition-patterns-on-stratified-bilayers/README.md)
