@@ -10,7 +10,7 @@ $$W_\beta(S) = \prod_{i=1}^{n} w_i(s_i) = e^{-\beta\, d(S,q)}, \qquad d(S,q) = \
 
 $$Z_\beta = \sum_{S} e^{-E(S)/RT}\,W_\beta(S),$$
 
-the sum over all secondary structures of $a$. For $\beta = 0$ this is the [McCaskill partition function](../../mccaskill-partition-function-for-rna-folding/partition-function.md).
+the sum over all [secondary structures](../../mccaskill-partition-function-for-rna-folding/structures.md) of $a$. For $\beta = 0$ this is McCaskill's partition function for the nearest-neighbour energy (not the additive base-pair energy of the McCaskill partition-function page; loop energies are not additive over base pairs).
 
 **Recursions.** $Z_\beta$ is computed by the McCaskill dynamic programme in which every unpaired run $[i,j]$ contributes the product of the unpaired weights $w_k(\text{unpaired})$, $i \le k \le j$, and every base pair $(i,j)$ contributes $w_i(\text{paired})\,w_j(\text{paired})$, alongside the usual hairpin, interior-loop and affine multiloop Boltzmann factors. Inside and outside passes then give the weighted base-pair probabilities
 
@@ -20,7 +20,7 @@ at the same asymptotic cost as the unweighted algorithm. Replacing sums by minim
 
 ## Depends on
 
-- [McCaskill partition function](../../mccaskill-partition-function-for-rna-folding/partition-function.md)
+- [Set of all secondary structures of a sequence](../../mccaskill-partition-function-for-rna-folding/structures.md)
 
 ## Expansion
 

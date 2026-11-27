@@ -8,7 +8,7 @@ the hybrid Rayleigh–van der Pol (HKB) oscillator. Under **full-state diffusive
 
 $$\dot x_i = f_i(x_i) - \frac{c}{N_i}\sum_{j=1}^N a_{ij}\,(x_i - x_j), \qquad c > 0,$$
 
-with $f_i$ the uncoupled vector field. Let $\bar x = \frac1N\sum_j x_j$, $e_i = x_i - \bar x$ and $\eta(t) = \|(e_1,\dots,e_N)\|_2$. The network achieves **bounded synchronization** if there is $\epsilon > 0$ such that for every initial condition there is $\hat t$ (depending on it) with $\eta(t) \le \epsilon$ for all $t > \hat t$.
+with $f_i$ the uncoupled vector field. Let $\bar x = \frac1N\sum_j x_j$, $e_i = x_i - \bar x$ and $\eta(t) = \|(e_1,\dots,e_N)\|_2$. The network achieves **bounded synchronization** if for every initial condition there are $\epsilon > 0$ and $\hat t$, both depending on it, with $\eta(t) \le \epsilon$ for all $t > \hat t$; the theorems below give $\epsilon$ explicitly.
 
 **Theorem (Lyapunov, QUAD-affine form).** Assume $\gamma_i = \tilde\gamma > 0$ for all $i$ (the oscillatory regime), and let $L_N$ be the degree-normalized Laplacian ($l_{ii} = 1$, $l_{ij} = -a_{ij}/N_i$ for neighbours) with algebraic connectivity $\lambda_2(L_N) > 0$. For $P = \mathrm{diag}(P_{11},P_{22}) \succ 0$ and $W_{11} > 0$ set
 
@@ -18,7 +18,7 @@ If
 
 $$c > \bar c = \min_{W_{11},P_{11},P_{22}>0}\ \frac{\max\{W_{11},\,\tilde\gamma P_{22}\}}{\lambda_2(L_N)\,\min\{P_{11},P_{22}\}} = \frac{\tilde\gamma}{\lambda_2(L_N)},$$
 
-then the network achieves bounded synchronization: for every diagonal $P \succ 0$ and $W_{11} > 0$ with $d_\epsilon > 0$, $\limsup_{t\to\infty}\eta(t) \le \sqrt N\,\bar M \max\{P_{11},P_{22}\}/d_\epsilon$, and $\epsilon(c)$ is the minimum of this bound over such choices. Here $\bar M = (1+\alpha_M p_M^2+\beta_M v_M^2)v_M + \omega_M^2 p_M$ bounds the heterogeneous part of the dynamics along the network trajectory, in terms of the maximal parameter magnitudes $\alpha_M,\beta_M,\omega_M$ and $p_M = \max_i \sup_{t \ge 0}|x_{i1}(t)|$, $v_M = \max_i \sup_{t \ge 0}|x_{i2}(t)|$, the suprema taken along the network trajectory (finite since the trajectories are bounded). The bound decreases as $c$ grows.
+then the network achieves bounded synchronization: along every trajectory, for every diagonal $P \succ 0$ and $W_{11} > 0$ with $d_\epsilon > 0$, $\limsup_{t\to\infty}\eta(t) \le \sqrt N\,\bar M \max\{P_{11},P_{22}\}/d_\epsilon$, so any $\epsilon$ above the minimum $\epsilon(c)$ of this bound over such choices works for that trajectory. The bound depends on the trajectory through $\bar M$, and is not uniform over initial conditions. Here $\bar M = (1+\alpha_M p_M^2+\beta_M v_M^2)v_M + \omega_M^2 p_M$ bounds the heterogeneous part of the dynamics along the network trajectory, in terms of the maximal parameter magnitudes $\alpha_M,\beta_M,\omega_M$ and $p_M = \max_i \sup_{t \ge 0}|x_{i1}(t)|$, $v_M = \max_i \sup_{t \ge 0}|x_{i2}(t)|$, the suprema taken along the network trajectory (finite since the trajectories are bounded). The bound decreases as $c$ grows.
 
 **Theorem (contraction, all-to-all).** On the unweighted complete graph ($a_{ij} = 1$ for $i \ne j$), assuming $\tilde\alpha, \tilde\beta > 0$, if the virtual system's trajectories satisfy $|z_1| \le z_1^{\max}$, $|z_2| \le z_2^{\max}$ and, with $\tilde\alpha,\tilde\beta,\tilde\omega,\tilde\gamma$ the parameter averages,
 

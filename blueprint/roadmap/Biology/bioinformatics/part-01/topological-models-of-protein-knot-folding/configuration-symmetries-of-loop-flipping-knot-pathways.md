@@ -1,6 +1,6 @@
 # Configuration symmetries of loop-flipping knot pathways
 
-**Setting.** A topological model of protein knot folding: an open chain forms a small red loop and a large green loop, each with $0$, $\pm 1$ or $\pm 2$ twists; the blue terminus approaches so that the black arc passes in front of or behind the red arc; then the green loop flips over the red loop and the blue end while the blue end threads the red loop, in either order. The resulting projection (closed up by joining the termini) is a *configuration* written $XY(\varepsilon, a, b)$, where
+**Setting.** A topological model of protein knot folding: an open chain forms a small red loop and a large green loop, each with some number of vertical twists; the blue terminus approaches so that the black arc passes in front of or behind the red arc; then the green loop flips over the red loop and the blue end while the blue end threads the red loop, in either order. The resulting projection (closed up by joining the termini) is a *configuration* written $XY(\varepsilon, a, b)$, where
 
 - $X, Y \in \{L, R\}$ record whether the left or right side of the red loop ($X$) and of the green loop ($Y$) lies in front of the blue arc after threading;
 - $\varepsilon \in \{+, -\}$ is the sign of the red-black crossing at the bottom ($+$ exactly when the black arc goes over the red arc), using the convention that a crossing is $+$ when its overcrossing has positive slope;

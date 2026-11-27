@@ -4,7 +4,7 @@ Let the joint mark intensity $\lambda(t,m)$ be correctly specified and not depen
 
 **Theorem.** Under these hypotheses:
 
-1. given $n$ and a fixed partition of $R$ into subregions $R_1,\dots,R_K$ with $p_i = |R_i|/|R|$, the counts $(r_1,\dots,r_K)$ of rescaled points in the $R_i$ are $\mathrm{Multinomial}(n; p_1,\dots,p_K)$, so $X^2 = \sum_{i=1}^K (r_i - np_i)^2/(np_i)$ converges in distribution to $\chi^2_{K-1}$ as $n \to \infty$;
+1. given $n$, $|R| > 0$ and a fixed partition of $R$ into subregions $R_1,\dots,R_K$ of positive volume, with $p_i = |R_i|/|R|$, the counts $(r_1,\dots,r_K)$ of rescaled points in the $R_i$ are $\mathrm{Multinomial}(n; p_1,\dots,p_K)$, so $X^2 = \sum_{i=1}^K (r_i - np_i)^2/(np_i)$ converges in distribution to $\chi^2_{K-1}$ as $n \to \infty$;
 2. for every measurable $R_s \subseteq R$, the rescaled times of the points in $R_s$ form a Poisson process with intensity $\int\mathbf 1\{(\tau,m)\in R_s\}\,dm$ (for $R_s = R$, the rescaled times ignoring marks);
 3. given $n$, the normalized times $\tilde\tau_j = \tau_j(m_j)/b(m_j)$ are i.i.d. uniform on $[0,1]$.
 

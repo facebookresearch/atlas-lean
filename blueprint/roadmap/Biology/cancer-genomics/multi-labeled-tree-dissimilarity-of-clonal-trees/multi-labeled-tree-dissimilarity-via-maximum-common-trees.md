@@ -16,15 +16,15 @@ where $T^\ast$ is a maximum common tree: the total number of labels deleted to r
 
 **Not a metric.** With $L = \{A, B\}$ and an unlabeled root in each tree, let $T_1$ be the path root $\to \{A\} \to \{B\}$, $T_2$ the path root $\to \{B\} \to \{A\}$, and $T_3$ the path root $\to \{A, B\}$. Then $\mathrm{MLTD}(T_1, T_3) = \mathrm{MLTD}(T_2, T_3) = 0$ but $\mathrm{MLTD}(T_1, T_2) = 2$, violating the triangle inequality.
 
-**Polynomial-time computation.** A maximum common tree, and hence MLTD, can be computed in time polynomial in $|V(T_1)|$, $|V(T_2)|$ and the label counts. For vertices $a\in V(T_1)$, $b\in V(T_2)$ let $G(a,b)$ be the size of a maximum common tree of the subtrees rooted at $a$ and $b$, and let $G'(a,b)$ be the size of a maximum common tree of these subtrees, excluding the labels of $a$ and $b$, among those in which $a$ and $b$ are mapped to the same branching vertex of the common tree. Then, with children $a_1,\dots,a_n$ of $a$ and $b_1,\dots,b_m$ of $b$,
+**Polynomial-time computation.** A maximum common tree, and hence MLTD, can be computed in time polynomial in $|V(T_1)|$, $|V(T_2)|$ and the label counts. For vertices $a\in V(T_1)$, $b\in V(T_2)$ let $G(a,b)$ be the size of a maximum common tree of the subtrees rooted at $a$ and $b$, and, with children $a_1,\dots,a_n$ of $a$ and $b_1,\dots,b_m$ of $b$, define for every pair
 
 $$G'(a,b) = \max_N \sum_{(x,y)\in N} G(x,y),$$
 
-the maximum over bijections $N$ between equal-size subsets of the two child sets, a maximum-weight bipartite matching, and
+the maximum over bijections $N$ between equal-size subsets of the two child sets (a maximum-weight bipartite matching; $N = \varnothing$ is allowed, so $G'(a,b) = 0$ when $a$ or $b$ is a leaf). Then
 
 $$G(a,b) = \max_{x \in T_1(a),\ y \in T_2(b)} \big[G'(x,y) + D(a,b,x,y)\big],$$
 
-where $T_i(v)$ is the vertex set of the subtree rooted at $v$ and $D(a,b,x,y)$ is the optimum of the set alignment problem for the label sequences of the downward paths $a \to x$ and $b \to y$. (The matching recurrence alone, applied to every pair, is false: for $T_1$ = $a \to a_1 \to$ leaves $\{X\}, \{Y\}$ and $T_2$ = $b \to$ leaves $\{X\}, \{Y\}$, expanding $b$ gives a common tree with two labels, which a matching of the children of $a$ and $b$ cannot reach.)
+where $T_i(v)$ is the vertex set of the subtree rooted at $v$ and $D(a,b,x,y)$ is the optimum of the set alignment problem for the label sequences of the downward paths $a \to x$ and $b \to y$. The maximum is attained at a pair $x, y$ that correspond to the same *crucial* vertex (a leaf or a vertex with at least two children) of a maximum common tree, where $G'(x,y)$ counts the labels of the common subtree below that vertex. (The matching recurrence alone, applied to every pair, is false: for $T_1$ = $a \to a_1 \to$ leaves $\{X\}, \{Y\}$ and $T_2$ = $b \to$ leaves $\{X\}, \{Y\}$, expanding $b$ gives a common tree with two labels, which a matching of the children of $a$ and $b$ cannot reach.)
 
 ## Expansion
 

@@ -18,9 +18,9 @@ with $W_0$ the principal branch of the Lambert $W$ function, and $S_\infty < S^*
 
 $$X_{\mathrm{st}} = \{(\bar S, 0) : 0 \le \bar S \le S^*\}$$
 
-is the set of Lyapunov-stable equilibria and the smallest closed asymptotically stable set (the unique asymptotically stable set of equilibria: larger forward-invariant sets such as $\{(S,I) \in X : S \le S^*,\ I \le \eta\}$ are asymptotically stable too), and every trajectory starting in $X$ with $I > 0$ converges to a point of $X_{\mathrm{st}}$.
+is the set of Lyapunov-stable equilibria. It is Lyapunov stable and attracts every trajectory starting in $X$ with $I_0 > 0$ (each converges to a point of $X_{\mathrm{st}}$), and it is the smallest closed set with these two properties; larger forward-invariant sets such as $\{(S,I) \in X : S \le S^*,\ I \le \eta\}$ have them too. "Asymptotically stable" below means these two properties, with domain of attraction $\{(S,I) \in X : I > 0\}$, as in the source. For $\bar{\mathcal R} > 1$, $X_{\mathrm{st}}$ is not asymptotically stable in the usual sense (Lyapunov stable and attracting a neighbourhood): the disease-free equilibria $(\bar S, 0)$ with $S^* < \bar S \le 1$ lie arbitrarily close to it and never move.
 
-**Corollary 2.1.** $X_{\mathrm{st}}$ does not depend on the initial state; its subsets are stable but not attractive (only the segment as a whole is asymptotically stable), including the state $(S^*, 0)$; if $\bar{\mathcal R} < 1$, then $S^* = 1$ and $X_{\mathrm{st}}$ is the whole disease-free segment.
+**Corollary 2.1.** $X_{\mathrm{st}}$ does not depend on the initial state; its proper closed subsets are Lyapunov stable but do not attract every trajectory with $I_0 > 0$ (only the segment as a whole is asymptotically stable in the sense of Theorem 1), including the state $(S^*, 0)$; if $\bar{\mathcal R} < 1$, then $S^* = 1$ and $X_{\mathrm{st}}$ is the whole disease-free segment.
 
 ## Depends on
 

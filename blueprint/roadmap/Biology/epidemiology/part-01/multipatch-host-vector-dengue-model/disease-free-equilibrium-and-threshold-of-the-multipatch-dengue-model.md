@@ -26,7 +26,11 @@ $$R_{0i}^2 = \frac{b_i^2\, \beta_i^h \beta_i^v\, \nu_i^h \nu_i^v\, S_i^{h*} S_i^
 ## Depends on
 
 - [Basic reproduction number of the next-generation matrix](../../next-generation-matrix-and-the-basic-reproductio/r0.md)
+
+## Proof depends on
+
 - [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+- [Unstable mode of the infected subsystem exactly when $R_0 > 1$](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-iff-one-lt-r0.md)
 
 ## Expansion
 

@@ -16,7 +16,7 @@ where a limit cycle appears with period $2\pi/u$.
 
 $$T(\tau)=\ln\frac{(\alpha e^{\tau}-\alpha+1)(\alpha e^{\tau}-1)}{\alpha-1},$$
 
-and $T(\tau) > 2\tau$ for every $\tau > 0$. For every $\tau > 0$ the equation also has a countable family of further cycles $C_k$, $k \ge 1$ (Lemma 1): $s \mapsto s + kT(s)$ increases continuously from $0$, so there is a unique $\tau_k \in (0,\tau)$ with $\tau_k + kT(\tau_k) = \tau$, and the $T(\tau_k)$-periodic cycle of the equation with delay $\tau_k$ also solves it with delay $\tau$, since its delayed values repeat after $kT(\tau_k)$. These have periods $T(\tau_k) < \tau/k < 2\tau$, so the cycle of period $T(\tau)$ is the only one with period above $2\tau$. (The source states the family under the condition $T(\tau) < 2\tau$, which never holds.)
+and $T(\tau) > 2\tau$ for every $\tau > 0$. For every $\tau > 0$ the equation also has a countable family of further cycles $C_k$, $k \ge 1$ (Lemma 1): $s \mapsto s + kT(s)$ increases continuously from $0$, so there is a unique $\tau_k \in (0,\tau)$ with $\tau_k + kT(\tau_k) = \tau$, and the $T(\tau_k)$-periodic cycle of the equation with delay $\tau_k$ also solves it with delay $\tau$, since its delayed values repeat after $kT(\tau_k)$. These have periods $T(\tau_k) < \tau/k < 2\tau$; the source states, without proof, that the cycle of period $T(\tau)$ is the unique cycle with period above $2\tau$. (The source states the family under the condition $T(\tau) < 2\tau$, which never holds.)
 
 ## Expansion
 

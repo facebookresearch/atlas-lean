@@ -12,7 +12,16 @@
 
     $$\sigma_{o\mid d} = \sqrt{\sigma^2 + \frac{q(d)\,\sigma^4}{g(d)} - \frac{g'(d)^2\,\sigma^4}{g(d)^2}},$$
 
-    with $g$ and $q$ the functions of $d$ defined in the source's Additional file 1 from $\mu$, $\sigma$, the read length and the lengths of the shorter and longer contig. Agreement gives $\pi_\sigma$ near $1$.
+    where, with read length $r$, contig lengths $c_{\min} \le c_{\max}$ and $f$ the $N(\mu, \sigma^2)$ insert-size density,
+
+    $$p(x) = \min\big\{\max\{x - 2r + 1, 0\},\ c_{\min} - r + 1,\ \max\{c_{\min} + c_{\max} - x + 1, 0\}\big\},$$
+
+    $$g(d) = \int_{2r-1}^{c_{\min} + c_{\max} + 1} p(x)\, f(x + d)\, dx,$$
+
+    $$q(d) = \int p(x)\, f''(x + d)\, dx = f(d + 2r - 1) + f(d + c_{\min} + c_{\max} + 1) - f(d + c_{\min} + r) - f(d + c_{\max} + r)$$
+
+    (the last form by two integrations by parts against the piecewise-linear $p$). Agreement gives $\pi_\sigma$ near $1$.
+
 - *Link dispersity score* $\pi_\zeta = 1 - D_n$: after translating and reflecting the $n$ link positions on each contig into a common coordinate, let $F_{1,n}$ and $F_{2,n}$ be the empirical distribution functions of the two samples, and
 
     $$D_n = \sup_x \big|F_{1,n}(x) - F_{2,n}(x)\big| \in [0,1],$$
@@ -33,4 +42,4 @@ The two mates of a read pair are aligned independently, so the link positions on
 
 ## Sources
 
-- K. Sahlin, F. Vezzi, B. Nystedt, J. Lundeberg, L. Arvestad, *BESST: efficient scaffolding of large fragmented assemblies*, BMC Bioinformatics 15 (2014), 281, Background ("Formalizing scaffolding") and Methods ("Link variation score", "Link dispersity score", "Scoring edges", Theorem 1). <https://doi.org/10.1186/1471-2105-15-281> (PMCID: PMC4262078)
+- K. Sahlin, F. Vezzi, B. Nystedt, J. Lundeberg, L. Arvestad, *BESST: efficient scaffolding of large fragmented assemblies*, BMC Bioinformatics 15 (2014), 281, Background ("Formalizing scaffolding") and Methods ("Link variation score", "Link dispersity score", "Scoring edges", Theorem 1) and Additional file 1, §2.1–2.2 (definitions of $p$, $g$ and $q$). <https://doi.org/10.1186/1471-2105-15-281> (PMCID: PMC4262078)

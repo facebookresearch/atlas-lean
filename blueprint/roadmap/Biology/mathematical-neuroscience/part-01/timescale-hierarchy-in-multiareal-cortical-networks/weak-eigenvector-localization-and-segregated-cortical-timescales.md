@@ -17,14 +17,14 @@ which makes the long-range input to an area's excitatory population nearly cance
 
 $$(\Lambda_U + \Sigma_{UL})u = \lambda u,\qquad \Sigma_{LL}u + (\Lambda_L + \Sigma_{LR})v = \lambda v.$$
 
-**Proposition.** If all matrices are analytic in $\epsilon,\delta$, the orders above hold, $\Lambda_U = O(\epsilon)$, $\Lambda_L = O(1)$, $\Lambda_U/\epsilon$ has $n$ simple eigenvalues at $\epsilon = 0$ (gaps $\lvert(\Lambda_U)_{jj} - (\Lambda_U)_{kk}\rvert \ge c\epsilon$), and $\Lambda_L + \Sigma_{LR}$ is diagonalizable, then
+**Proposition.** If all matrices are analytic in $\epsilon,\delta$, the orders above hold with $\epsilon = O(\delta)$ (so $\Sigma_{UL} = O(\epsilon\delta)$ and $\Sigma_{UR} = O(\epsilon^2\delta)$, as in the source), $\Lambda_U = O(\epsilon)$, $\Lambda_L = O(1)$, $\Lambda_U/\epsilon$ has $n$ simple eigenvalues at $\epsilon = 0$ (gaps $\lvert(\Lambda_U)_{jj} - (\Lambda_U)_{kk}\rvert \ge c\epsilon$), and $\Lambda_L + \Sigma_{LR}$ is diagonalizable, then
 
 1. there are $n$ eigenvectors with $u = 0$ and $\lambda = O(1)$;
 2. there are $n$ eigenvectors with $u$ weakly localized and pairwise weakly orthogonal and $\lambda = O(\epsilon)$.
 
 Mapping back, the unit eigenvectors $(r_E, r_I)$ of $W$ satisfy: for $\lambda = O(\epsilon)$, $r_E = c^{-1}(I + AB)e_k + O(\epsilon) + O(\delta)$, i.e. the excitatory parts are localized and orthogonal up to $O(\epsilon + \delta)$; for $\lambda = O(1)$, $r_E = O(\epsilon)$. Hence each area's excitatory population sees essentially one slow timescale of its own, and fast modes are invisible in excitatory activity.
 
-**First-order correction and the spectral gap.** Writing $\bar\Lambda_U = \Lambda_U/\epsilon$ (diagonal entries $\bar\lambda_j$), $\bar\Sigma_{UL} = \Sigma_{UL}/(\epsilon\delta)$ and $u = e_k + \delta u_1 + O(\delta^2)$,
+**First-order correction and the spectral gap.** Under the same hypotheses (in particular $\epsilon = O(\delta)$, so that $\bar\Sigma_{UL}$ below is bounded), writing $\bar\Lambda_U = \Lambda_U/\epsilon$ (diagonal entries $\bar\lambda_j$), $\bar\Sigma_{UL} = \Sigma_{UL}/(\epsilon\delta)$ and $u = e_k + \delta u_1 + O(\delta^2)$,
 
 $$u_{1,j} = \frac{(\bar\Sigma_{UL})_{jk}}{\bar\lambda_k - \bar\lambda_j}\qquad (j \neq k).$$
 

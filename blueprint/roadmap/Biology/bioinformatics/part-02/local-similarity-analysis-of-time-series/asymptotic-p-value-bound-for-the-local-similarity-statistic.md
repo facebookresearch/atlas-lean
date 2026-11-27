@@ -1,4 +1,4 @@
-# Asymptotic p-value bound for the local similarity statistic
+# Boole bound and normal approximation for the local similarity p-value
 
 **Statistic.** Let $X = (X_1,\dots,X_n)$ and $Y = (Y_1,\dots,Y_n)$ be standardized time series and $D \ge 0$ a maximal lag. With $P_{i,0} = P_{0,j} = N_{i,0} = N_{0,j} = 0$, define for $1 \le i,j \le n$ with $|i-j| \le D$
 
