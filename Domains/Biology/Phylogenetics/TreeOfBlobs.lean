@@ -226,7 +226,7 @@ theorem connected : N.toGraph.toSimpleGraph.Connected := by
       exact ih.tail ⟨e, Or.inl ⟨rfl, rfl⟩⟩
   have : Nonempty V(N.toGraph) := ⟨⟨N.root, trivial⟩⟩
   refine ⟨fun a b ↦ toSimpleGraph_reachable_iff.2 ?_⟩
-  exact (reflTransGen_adj_symm (hrel (N.reflTransGen_root a))).trans
+  exact (symm (hrel (N.reflTransGen_root a))).trans
     (hrel (N.reflTransGen_root b))
 
 /-! ### The lowest stable ancestor -/
@@ -505,18 +505,19 @@ noncomputable def reducedUnrootedTreeOfBlobs :
   N.unrootedTreeOfBlobs.suppressDegreeTwo
 
 /-- With at least two taxa, the blob of a leaf has at most one neighbour in `T(N⁻)`. -/
-theorem ncard_neighborSet_blobOf_leaf_le_one [Nontrivial X] (x : X) :
+theorem subsingleton_neighborSet_blobOf_leaf [Nontrivial X] (x : X) :
     (N.unrootedTreeOfBlobs.neighborSet
-      (N.semidirected.graph.blobOf (N.leaf_mem_semidirected x))).ncard ≤ 1 :=
-  ncard_neighborSet_treeOfBlobs_le_one _ (mem_blobOf _)
+      (N.semidirected.graph.blobOf (N.leaf_mem_semidirected x))).Subsingleton :=
+  subsingleton_neighborSet_treeOfBlobs _ (mem_blobOf _)
     (fun e f y z ↦ (N.semidirected_isLink_leaf x).1 e f y z) (N.semidirected_isLink_leaf x).2
 
 /-- The vertex of `T_rd(N⁻)` labelled by a taxon: the blob of its leaf, which is not suppressed
-as it has degree at most one. -/
+as it has at most one neighbour. -/
 noncomputable def taxonVertex [Nontrivial X] (x : X) :
     {B // (N.unrootedTreeOfBlobs.neighborSet B).ncard ≠ 2} :=
   ⟨N.semidirected.graph.blobOf (N.leaf_mem_semidirected x), by
-    have := N.ncard_neighborSet_blobOf_leaf_le_one x
+    have h := N.subsingleton_neighborSet_blobOf_leaf x
+    have := (Set.ncard_le_one_iff h.finite).2 fun ha hb ↦ h ha hb
     omega⟩
 
 /-- Four distinct taxa `a, b, c, d` form a **B-quartet** (blob quartet) on the network when the

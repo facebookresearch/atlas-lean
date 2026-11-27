@@ -18,10 +18,12 @@ import Mathlib.Data.Fintype.EquivFin
 /-!
 # Blobs and the tree of blobs of a multigraph
 
-A **blob** of a multigraph `G` (Gusfield–Bansal–Bafna–Song 2007; Allman–Baños–Mitchell–Rhodes
-2023, Definition 7) is a maximal connected subgraph of `G` that contains no cut edge of `G`. Here
-a cut edge is Mathlib's `Graph.IsBridge`, an edge that alone forms an edge cut; on a finite graph
-this is exactly an edge whose deletion increases the number of connected components
+A **blob** of a multigraph `G` (Allman–Baños–Mitchell–Rhodes 2023, Definition 7) is a maximal
+connected subgraph of `G` that contains no cut edge of `G`. This differs slightly from the blobs of
+Gusfield–Bansal–Bafna–Song 2007, maximal edge sets built from cycles that share edges, under which
+two cycles meeting at a single vertex are two blobs rather than one. Here a cut edge is Mathlib's
+`Graph.IsBridge`, an edge that alone forms an edge cut; on a finite graph this is exactly an edge
+whose deletion increases the number of connected components
 (`Graph.isBridge_iff_natCard_connectedComponent_lt`). Connectivity of a multigraph is that of
 its simple graph `Graph.toSimpleGraph`, which only forgets loops and parallel edges.
 
@@ -31,7 +33,8 @@ Xu–Ané), so every vertex lies in exactly one blob (`Graph.exists_isBlob_mem`,
 `Graph.IsBlob.eq_of_mem`). An edge is incident to a blob `H` if exactly one of its ends lies in
 `H`: these are the edges of the edge cut `G.edgeCut V(H)`. A blob is an `m`-blob if it has exactly
 `m` incident cut edges (`Graph.IsMBlob`); in a rooted graph, the blob containing the root counts
-the root as one more incident edge (`Graph.IsRootedMBlob`).
+the root as one more incident edge (`Graph.IsRootedMBlob`). These counts are cardinalities in
+`ℕ∞` (`Set.encard`), so a blob with infinitely many incident cut edges is an `m`-blob for no `m`.
 
 The **tree of blobs** `Graph.treeOfBlobs` contracts every blob to a single vertex: its vertices
 are the blobs, two of them adjacent when an edge of `G` joins them (Xu–Ané 2023 give this
@@ -49,7 +52,7 @@ applied to the tree of blobs of a phylogenetic network it gives the reduced tree
 * `Graph.IsBlob.vertexSet_subset`: blobs do not cross cut edges.
 * `Graph.isTrivialBlob_induce_singleton`: a vertex all of whose edges are cut edges is a trivial
   blob.
-* `Graph.ncard_neighborSet_treeOfBlobs_le_one`: a vertex with a single incident edge, which is
+* `Graph.subsingleton_neighborSet_treeOfBlobs`: a vertex with a single incident edge, which is
   not a loop, lies in a blob with at most one neighbour in the tree of blobs.
 
 ## References
@@ -94,20 +97,6 @@ theorem toSimpleGraph_reachable_iff {x y : V(G)} :
       · subst hb
         rfl
       · exact SimpleGraph.Adj.reachable ⟨fun h ↦ hb (congrArg Subtype.val h), hbc⟩
-
-/-- Chains of adjacencies of a graph whose adjacency is symmetric can be reversed. -/
-theorem reflTransGen_adj_symm (h : Relation.ReflTransGen G.Adj x y) :
-    Relation.ReflTransGen G.Adj y x := by
-  induction h with
-  | refl => exact .refl
-  | tail _ hbc ih => exact .head hbc.symm ih
-
-/-- A chain of adjacencies of a subgraph is one of the graph. -/
-theorem reflTransGen_adj_mono (hHG : H ≤ G) (h : Relation.ReflTransGen H.Adj x y) :
-    Relation.ReflTransGen G.Adj x y := by
-  induction h with
-  | refl => exact .refl
-  | tail _ hbc ih => exact ih.tail (hbc.mono hHG)
 
 /-! ### Cut edges -/
 
@@ -173,7 +162,7 @@ theorem reflTransGen_deleteEdges_of_reachable (he : G.IsLink e u v)
     · subst hfe
       obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ := he.eq_and_eq_or_eq_and_eq hf
       · exact ih.trans huv
-      · exact ih.trans (reflTransGen_adj_symm huv)
+      · exact ih.trans (symm huv)
     · exact ih.tail ⟨f, hf, hfe⟩
 
 /-- The identity map of the vertices, as a homomorphism from the simple graph of `G` without some
@@ -238,19 +227,21 @@ def IsTrivialBlob (G H : Graph α β) : Prop :=
 
 /-- An **`m`-blob** of an unrooted graph: a blob with exactly `m` incident cut edges. An edge is
 incident to the blob `H` when exactly one of its ends lies in `H`, that is, when it lies in the
-edge cut `G.edgeCut V(H)`. -/
+edge cut `G.edgeCut V(H)`. The count is a cardinality in `ℕ∞`, so a blob with infinitely many
+incident cut edges is an `m`-blob for no `m`. -/
 def IsMBlob (G : Graph α β) (m : ℕ) (H : Graph α β) : Prop :=
-  G.IsBlob H ∧ (G.edgeCut V(H) ∩ {e | G.IsBridge e}).ncard = m
+  G.IsBlob H ∧ (G.edgeCut V(H) ∩ {e | G.IsBridge e}).encard = m
 
 /-- An **`m`-blob** of a graph rooted at `r` (Allman–Baños–Mitchell–Rhodes 2023, Definition 7): a
 blob with exactly `m` incident cut edges that does not contain the root, or with exactly `m - 1`
 incident cut edges that contains it (the count plus one is `m`, rather than the count is `m - 1`
-in truncated subtraction, so that no blob containing the root is a `0`-blob). So the root of a
-rooted binary tree, with its two cut edges, is a trivial `3`-blob. -/
+in truncated subtraction, so that no blob containing the root is a `0`-blob). The count is a
+cardinality in `ℕ∞`, so a blob with infinitely many incident cut edges is an `m`-blob for no `m`.
+So the root of a rooted binary tree, with its two cut edges, is a trivial `3`-blob. -/
 def IsRootedMBlob (G : Graph α β) (r : α) (m : ℕ) (H : Graph α β) : Prop :=
   G.IsBlob H ∧
-    (r ∉ V(H) ∧ (G.edgeCut V(H) ∩ {e | G.IsBridge e}).ncard = m ∨
-      r ∈ V(H) ∧ (G.edgeCut V(H) ∩ {e | G.IsBridge e}).ncard + 1 = m)
+    (r ∉ V(H) ∧ (G.edgeCut V(H) ∩ {e | G.IsBridge e}).encard = m ∨
+      r ∈ V(H) ∧ (G.edgeCut V(H) ∩ {e | G.IsBridge e}).encard + 1 = m)
 
 section characterization
 
@@ -271,7 +262,7 @@ private theorem le_comp (hKG : K ≤ G) (hconn : K.toSimpleGraph.Connected)
     (hK : ∀ e ∈ E(K), ¬ G.IsBridge e) (hx : x ∈ V(K)) : K ≤ comp G x := by
   have hle := le_deleteEdges_isBridge hKG hK
   have hreach : ∀ y ∈ V(K), Relation.ReflTransGen (G.deleteEdges {e | G.IsBridge e}).Adj x y :=
-    fun y hy ↦ reflTransGen_adj_mono hle
+    fun y hy ↦ Relation.ReflTransGen.mono (fun _ _ h ↦ h.mono hle) _ _
       (toSimpleGraph_reachable_iff.1 (hconn.preconnected ⟨x, hx⟩ ⟨y, hy⟩))
   exact ⟨fun y hy ↦ hreach y hy, fun e a b h ↦
     ⟨h.mono hle, hreach a h.left_mem, hreach b h.right_mem⟩⟩
@@ -301,7 +292,7 @@ private theorem comp_prop (hx : x ∈ V(G)) :
   refine ⟨(induce_le (G := G') hCV).trans deleteEdges_le, ?_, fun e he hbr ↦ ?_⟩
   · have : Nonempty V(G'.induce C) := ⟨⟨x, Relation.ReflTransGen.refl⟩⟩
     refine ⟨fun a b ↦ toSimpleGraph_reachable_iff.2 ?_⟩
-    exact (reflTransGen_adj_symm (hind _ a.2)).trans (hind _ b.2)
+    exact (symm (hind _ a.2)).trans (hind _ b.2)
   · obtain ⟨a, b, hab⟩ := exists_isLink_of_mem_edgeSet he
     exact hab.1.2 hbr
 
@@ -352,7 +343,7 @@ theorem IsBlob.eq_of_mem (hH : G.IsBlob H) (hK : G.IsBlob K) (hxH : x ∈ V(H)) 
         {y | Relation.ReflTransGen (G.deleteEdges {e | G.IsBridge e}).Adj x y} := by
     intro a hax
     ext y
-    exact ⟨fun hay ↦ (reflTransGen_adj_symm hax).trans hay, fun hxy ↦ hax.trans hxy⟩
+    exact ⟨fun hay ↦ (symm hax).trans hay, fun hxy ↦ hax.trans hxy⟩
   change Relation.ReflTransGen _ a x at hxH
   change Relation.ReflTransGen _ b x at hxK
   rw [hcomp hxH, hcomp hxK]
@@ -471,18 +462,16 @@ theorem IsBlob.vertexSet_eq_singleton (hB : G.IsBlob H) (hxH : x ∈ V(H))
 /-- **A pendant vertex is a blob of degree at most one in the tree of blobs.** If every edge at
 `x` is one and the same edge, which is not a loop, then the blob containing `x` consists of `x`
 alone and is adjacent to at most one blob in the tree of blobs (to none when `x` is isolated). -/
-theorem ncard_neighborSet_treeOfBlobs_le_one (B : {H // G.IsBlob H}) (hxB : x ∈ V(B.1))
+theorem subsingleton_neighborSet_treeOfBlobs (B : {H // G.IsBlob H}) (hxB : x ∈ V(B.1))
     (hx : ∀ e f y z, G.IsLink e x y → G.IsLink f x z → e = f) (hloop : ∀ e, ¬ G.IsLink e x x) :
-    (G.treeOfBlobs.neighborSet B).ncard ≤ 1 := by
+    (G.treeOfBlobs.neighborSet B).Subsingleton := by
   have hV := B.2.vertexSet_eq_singleton hxB hx hloop
-  have hsub : (G.treeOfBlobs.neighborSet B).Subsingleton := by
-    rintro K₁ ⟨-, e₁, p₁, q₁, h₁, hp₁, hq₁⟩ K₂ ⟨-, e₂, p₂, q₂, h₂, hp₂, hq₂⟩
-    rw [hV, mem_singleton_iff] at hp₁ hp₂
-    subst hp₁ hp₂
-    obtain rfl := hx _ _ _ _ h₁ h₂
-    obtain rfl := h₁.right_unique h₂
-    exact Subtype.ext (K₁.2.eq_of_mem K₂.2 hq₁ hq₂)
-  exact (Set.ncard_le_one_iff hsub.finite).2 fun ha hb ↦ hsub ha hb
+  rintro K₁ ⟨-, e₁, p₁, q₁, h₁, hp₁, hq₁⟩ K₂ ⟨-, e₂, p₂, q₂, h₂, hp₂, hq₂⟩
+  rw [hV, mem_singleton_iff] at hp₁ hp₂
+  subst hp₁ hp₂
+  obtain rfl := hx _ _ _ _ h₁ h₂
+  obtain rfl := h₁.right_unique h₂
+  exact Subtype.ext (K₁.2.eq_of_mem K₂.2 hq₁ hq₂)
 
 end Graph
 

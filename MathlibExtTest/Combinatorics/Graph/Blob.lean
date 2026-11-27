@@ -18,7 +18,8 @@ Two parallel edges between two vertices are not cut edges, and the whole graph i
 blob with no incident edge. A single edge is a cut edge: deleting it raises the number of
 connected components from one to two, each end is a trivial blob, the end chosen as root is a
 `2`-blob and the other end a `1`-blob, and the two blobs are adjacent in the tree of blobs. A pendant
-vertex has at most one neighbour in the tree of blobs. Suppressing the middle vertex of a path on
+vertex has at most one neighbour in the tree of blobs. The centre of an infinite star has
+infinitely many incident cut edges and is an `m`-blob for no `m`. Suppressing the middle vertex of a path on
 three vertices joins the two ends, while the centre of a star with three leaves is kept, so no
 two leaves of the star are joined.
 -/
@@ -70,7 +71,7 @@ example : ¬ parallelPair.IsTrivialBlob parallelPair := by
 /-- No edge leaves the whole graph, so it is a `0`-blob. -/
 example : parallelPair.IsMBlob 0 parallelPair := by
   refine ⟨parallelPair_isBlob, ?_⟩
-  rw [Set.ncard_eq_zero]
+  rw [Nat.cast_zero, Set.encard_eq_zero]
   ext e
   simp only [Set.mem_inter_iff, mem_edgeCut_iff, Set.mem_empty_iff_false, iff_false]
   rintro ⟨⟨u, v, huv, -, hv⟩, -⟩
@@ -112,12 +113,13 @@ theorem singleEdge_edgeCut (v : Fin 2) :
 /-- With the vertex `0` as root, the blob of the root has one incident cut edge and counts the root
 as a second one, so it is a `2`-blob. -/
 example : singleEdge.IsRootedMBlob 0 2 (singleEdge.induce {0}) :=
-  ⟨(singleEdge_isTrivialBlob 0).1, Or.inr ⟨rfl, by rw [singleEdge_edgeCut, Set.ncard_singleton]⟩⟩
+  ⟨(singleEdge_isTrivialBlob 0).1,
+    Or.inr ⟨rfl, by rw [singleEdge_edgeCut, Set.encard_singleton]; rfl⟩⟩
 
 /-- The other end is a `1`-blob. -/
 example : singleEdge.IsRootedMBlob 0 1 (singleEdge.induce {1}) :=
   ⟨(singleEdge_isTrivialBlob 1).1,
-    Or.inl ⟨by simp, by rw [singleEdge_edgeCut, Set.ncard_singleton]⟩⟩
+    Or.inl ⟨by simp, by rw [singleEdge_edgeCut, Set.encard_singleton]; rfl⟩⟩
 
 /-- The two blobs of a single edge are adjacent in the tree of blobs. -/
 example : singleEdge.treeOfBlobs.Adj ⟨_, (singleEdge_isTrivialBlob 0).1⟩
@@ -130,9 +132,44 @@ example : singleEdge.treeOfBlobs.Adj ⟨_, (singleEdge_isTrivialBlob 0).1⟩
 /-- An end of a single edge is pendant: its blob has at most one neighbour in the tree of
 blobs. -/
 example (B : {H // singleEdge.IsBlob H}) (h : (0 : Fin 2) ∈ V(B.1)) :
-    (singleEdge.treeOfBlobs.neighborSet B).ncard ≤ 1 :=
-  ncard_neighborSet_treeOfBlobs_le_one B h (fun e f _ _ _ _ ↦ Subsingleton.elim e f)
+    (singleEdge.treeOfBlobs.neighborSet B).Subsingleton :=
+  subsingleton_neighborSet_treeOfBlobs B h (fun e f _ _ _ _ ↦ Subsingleton.elim e f)
     (fun _ h ↦ by simp at h)
+
+/-! ### An infinite star -/
+
+/-- The star on `ℕ` with centre `0`: the edge `e` joins `0` and `e + 1`. -/
+def infiniteStar : Graph ℕ ℕ where
+  vertexSet := Set.univ
+  IsLink e x y := x = 0 ∧ y = e + 1 ∨ x = e + 1 ∧ y = 0
+  isLink_symm _ _ := ⟨fun _ _ h ↦ (Or.symm h).imp And.symm And.symm⟩
+  eq_or_eq_of_isLink_of_isLink := by
+    rintro e x y v w (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> simp
+  left_mem_of_isLink _ _ _ _ := trivial
+
+theorem infiniteStar_isBridge (e : ℕ) : infiniteStar.IsBridge e :=
+  isBridge_of_forall_isLink_eq (x := e + 1) (y := 0) (Or.inr ⟨rfl, rfl⟩) (by omega)
+    fun f z h ↦ by rcases h with ⟨h, -⟩ | ⟨h, -⟩ <;> omega
+
+/-- The centre of the infinite star has infinitely many incident cut edges, so it is an `m`-blob
+for no `m`, rooted at the centre or not. -/
+example (m : ℕ) : ¬ infiniteStar.IsMBlob m (infiniteStar.induce {0}) ∧
+    ¬ infiniteStar.IsRootedMBlob 0 m (infiniteStar.induce {0}) := by
+  have huniv : infiniteStar.edgeCut V(infiniteStar.induce {0}) ∩
+      {e | infiniteStar.IsBridge e} = Set.univ := by
+    refine Set.eq_univ_of_forall fun e ↦ ⟨mem_edgeCut_iff.2 ⟨0, e + 1, Or.inl ⟨rfl, rfl⟩, rfl,
+      fun h ↦ by simp at h⟩, infiniteStar_isBridge e⟩
+  have htop : (infiniteStar.edgeCut V(infiniteStar.induce {0}) ∩
+      {e | infiniteStar.IsBridge e}).encard = ⊤ := by
+    rw [huniv, Set.encard_eq_top_iff]
+    exact Set.infinite_univ
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · rw [h.2] at htop
+    exact ENat.natCast_ne_top m htop
+  · rcases h.2 with ⟨h0, -⟩ | ⟨-, h⟩
+    · exact h0 rfl
+    · rw [htop, top_add] at h
+      exact ENat.natCast_ne_top m h.symm
 
 /-! ### Suppressing vertices of degree two -/
 

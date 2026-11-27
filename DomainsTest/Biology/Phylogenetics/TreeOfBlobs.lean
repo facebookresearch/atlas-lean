@@ -220,7 +220,8 @@ example : quartetTree.toGraph.IsRootedMBlob quartetTree.root 3
     · intro hf
       refine ⟨?_, quartetTree_isBridge_root f (by simpa using hf)⟩
       rcases hf with rfl | rfl <;> simp [quartetTree]
-  rw [this, Set.ncard_pair (by decide)]
+  rw [this, Set.encard_pair (by decide)]
+  rfl
 
 /-! #### `{a, b, c, d}` is a T-quartet -/
 
@@ -460,7 +461,8 @@ example : twoCycleNetwork.toGraph.IsRootedMBlob 0 2 (twoCycleNetwork.toGraph.blo
       · exact B.2.mem_of_isLink (mem_blobOf _) (Or.inl ⟨rfl, rfl⟩ : twoCycleNetwork.toGraph.IsLink 0 _ _)
           (twoCycleNetwork_not_isBridge 0 (Or.inl rfl))
   refine ⟨B.2, Or.inr ⟨by rw [hV]; simp, ?_⟩⟩
-  rw [hV, hcut, Set.inter_eq_left.2 (by rintro e rfl; exact hbr), Set.ncard_singleton]
+  rw [hV, hcut, Set.inter_eq_left.2 (by rintro e rfl; exact hbr), Set.encard_singleton]
+  rfl
 
 /-! ### A `4`-blob -/
 
@@ -605,8 +607,7 @@ noncomputable def fourBlobNetworkCycleVertex :
 theorem fourBlobNetwork_eq_cycle (x : Fin 4) (K : {H // fourBlobNetwork.semidirected.graph.IsBlob H})
     (hK : fourBlobNetwork.unrootedTreeOfBlobs.Adj (fourBlobNetwork.taxonVertex x).1 K) :
     K = fourBlobNetworkCycleVertex.1 :=
-  (Set.ncard_le_one_iff (Set.toFinite _)).1 (fourBlobNetwork.ncard_neighborSet_blobOf_leaf_le_one x)
-    hK (fourBlobNetwork_adj_cycle x)
+  fourBlobNetwork.subsingleton_neighborSet_blobOf_leaf x hK (fourBlobNetwork_adj_cycle x)
 
 /-- **`{a, b, c, d}` is a B-quartet of the network with a `4`-blob**: every path between two leaves
 of the reduced unrooted tree of blobs passes through the blob of the cycle, so no two such paths
@@ -669,8 +670,9 @@ example : fourBlobNetwork.semidirected.graph.IsMBlob 4 fourBlobNetworkCycle.1 :=
       hbr) ?_
     rintro v (rfl | rfl | rfl | rfl) <;> exact fourBlobNetwork_mem_cycle _ (by decide)
   refine ⟨fourBlobNetworkCycle.2, ?_⟩
-  rw [hV, Set.inter_eq_left.2 fun o ho ↦ hbr o ho, hcut, Set.ncard_insert_of_notMem (by simp),
-    Set.ncard_insert_of_notMem (by simp), Set.ncard_pair (by simp)]
+  rw [hV, Set.inter_eq_left.2 fun o ho ↦ hbr o ho, hcut, Set.encard_insert_of_notMem (by simp),
+    Set.encard_insert_of_notMem (by simp), Set.encard_pair (by simp)]
+  rfl
 
 /-- In the semidirected network the hybrid edge `2 → 4` keeps its direction, while the tree edge
 `1 - 2` and the edge replacing the root, which joins two tree edges, are undirected. -/
