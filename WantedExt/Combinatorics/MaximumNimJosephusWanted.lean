@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.JosephusFunction
+public import MathlibExt.Combinatorics.MaximumNimFloorReduction
 public import MathlibExt.Combinatorics.MaximumNimIterates
 public import MathlibExt.Combinatorics.MaximumNimJosephus
 public import MathlibExt.GameTheory.SpragueGrundy
@@ -335,23 +336,6 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_decomposition (k n t u i : ℕ
     (hi : 1 ≤ i) (hin : i ≤ n) (hki : ¬k ∣ i) :
     maximumNimGrundy (· / k) (n * k - i) =
       maximumNimGrundy (· / k) ((n - t) * k - (u + i - i / k))
-
-/-- **Floor-rule Maximum Nim: one-step Grundy reduction when k = nt + h.** Let $n$, $t$, $h$ be
-natural numbers with $t \ge 1$ and $1 \le h \le n$, and let $k = nt + h$. Write $G(x)$ for the
-Grundy number of a pile of $x$ stones in Maximum Nim with rule function
-$f(y) = \lfloor y/k \rfloor$, and let $F(x) = \lfloor (k-1)x/k \rfloor$. Then for every natural
-number $i$ with $1 \le i \le n$,
-$$G(nk - i) = G(F(nk - i)) = G(n(k - 1) - i).$$
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 5(ii.1) (`integers-2024-G5-lem-5`). -/
-public theorem_wanted maximumNimGrundy_mul_sub_eq_F_eq_pred (k n t h i : ℕ)
-    (ht : 1 ≤ t) (hh : 1 ≤ h)
-    (hdecomp : k = n * t + h) (hhn : h ≤ n) (hi : 1 ≤ i) (hin : i ≤ n) :
-    maximumNimGrundy (· / k) (n * k - i) =
-        maximumNimGrundy (· / k) ((k - 1) * (n * k - i) / k) ∧
-      maximumNimGrundy (· / k) ((k - 1) * (n * k - i) / k) =
-        maximumNimGrundy (· / k) (n * (k - 1) - i)
 
 /-- **Floor-rule Maximum Nim: t-step Grundy reduction when k = nt + h.** Let $n$, $t$, $h$ be
 natural numbers with $t \ge 1$ and $1 \le h \le n$, and let $k = nt + h$. Write $G(x)$ for the
