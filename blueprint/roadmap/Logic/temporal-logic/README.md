@@ -15,6 +15,7 @@ Linear and branching-time temporal logics interpreted over infinite words and tr
 - [Vardi-Wolper state bound for the LTL tableau](vardi-wolper-state-bound-for-the-ltl-tableau/README.md)
 
 - [Continuous stochastic logic](continuous-stochastic-logic.md)
+- [Probabilistic model checking](probabilistic-model-checking/README.md)
 
 - [Model-checking algorithms](model-checking-algorithms/README.md)
 - [Temporal specification](temporal-specification/README.md)

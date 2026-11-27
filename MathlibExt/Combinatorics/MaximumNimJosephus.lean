@@ -84,6 +84,10 @@ through $k \ge 1$, and the conclusion also holds for $x = 0$, whose Grundy numbe
 
 ## References
 
+* Shoei Takahashi, Hikaru Manabe, and Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+  INTEGERS 24 (2024), Article G5, pp. 1–16 (<https://math.colgate.edu/~integers/yg5/yg5.pdf>).
+  Lemma 6(ii), p. 11, gives the growth bound `maximumNimH_succ_le`.
+
 * Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and Josephus Problem*,
   arXiv:2403.19308v1 (2024) (<https://arxiv.org/abs/2403.19308>). Definition 2.1 in Section 2
   defines the mex and the Grundy numbers. In Section 3, Lemma 3.1(i) states that $G(x) = x/k$ when
@@ -449,6 +453,21 @@ public theorem maximumNimH_strictMono (k x x' : ℕ) (hk : 2 ≤ k) (hxx' : x < 
   have hdiv : x / (k - 1) ≤ x' / (k - 1) :=
     Nat.div_le_div hxx'.le le_rfl (by omega)
   exact Nat.succ_lt_succ (Nat.add_lt_add_of_lt_of_le hxx' hdiv)
+
+-- Keep the source's hypothesis and its binder name even though the bound holds for every `k`.
+set_option linter.unusedVariables false in
+/-- **The Maximum Nim map $h_k$ exceeds its argument.** Let $k \ge 2$ be a natural number and let
+$h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. Every natural
+number $x$ satisfies $x < x + 1 \le h_k(x)$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 6(ii) (`integers-2024-G5-lem-6`). -/
+public theorem maximumNimH_succ_le (k x : ℕ) (hk : 2 ≤ k) :
+    x < x + 1 ∧ x + 1 ≤ maximumNimH k x := by
+  refine ⟨Nat.lt_succ_self x, ?_⟩
+  unfold maximumNimH
+  generalize x / (k - 1) = q
+  omega
 
 /-- **Linear bounds on h_k and their iterates.** Let $k \ge 2$ be a natural number, let
 $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on natural numbers, and define the real maps

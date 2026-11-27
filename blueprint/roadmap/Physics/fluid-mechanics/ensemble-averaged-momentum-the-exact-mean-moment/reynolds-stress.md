@@ -1,0 +1,3 @@
+# Reynolds stress
+
+For a measure $\mu$ on a space of realizations and a random velocity field $u$, the Reynolds stress per unit density at $(\tau, y)$ is $\int (u_j - m_j)(u_i - m_i)\,d\mu$, where $m_k = \int u_k\,d\mu$ (Bochner integrals, $0$ for non-integrable integrands). When $\mu$ is a probability measure and the velocity components are square integrable, this is the covariance $\mathbb E[u'_j u'_i]$ of the velocity components, with fluctuation $u' = u - \mathbb E[u]$, and equals $\mathbb E[u_j u_i] - \mathbb E[u_j]\,\mathbb E[u_i]$. As a stress on the mean flow it enters as $-\rho\,\mathbb E[u'_j u'_i]$.
