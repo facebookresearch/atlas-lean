@@ -2,6 +2,7 @@
 
 - [Two floor-function identities](floor-add-floor-neg-and-floor-add-eq.md)
 - [Palindromes in an arithmetic progression](palindrome-apcount.md)
+- [Counting palindromes by filling the gaps in odd-length prefixes](palindrome-apcount-base-pow-add-skipped.md)
 - [Palindromic half copy](palindromic-half-copy.md)
 - [Digit-sum congruence count](digit-sum-congruence-count.md)
 - [Two small palindrome counts](palindrome-apcount-small.md)
