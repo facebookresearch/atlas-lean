@@ -1,0 +1,16 @@
+# Left Kan Tensor
+
+- [Left Kan Tensor Hom](left-kan-tensor-hom.md)
+- [Left Kan Tensor Hom unit](left-kan-tensor-hom-unit.md)
+- [Left Kan Tensor Inv](left-kan-tensor-inv.md)
+- [Left Kan Tensor Inv unit](left-kan-tensor-inv-unit.md)
+- [Left Kan Tensor Iso](left-kan-tensor-iso.md)
+- [Left Kan Tensor Inv ι](left-kan-tensor-inv-2.md)
+- [Left Kan Tensor Hom ι](left-kan-tensor-hom-2.md)
+- [Left Kan Tensor Hom naturality](left-kan-tensor-hom-naturality.md)
+- [Left Kan Tensor Hom scalar naturality](left-kan-tensor-hom-scalar-naturality.md)
+- [Left Kan Tensor Inv naturality](left-kan-tensor-inv-naturality.md)
+- [Left Kan Tensor Inv scalar naturality](left-kan-tensor-inv-scalar-naturality.md)
+- [Left Kan Tensor Nat Iso](left-kan-tensor-nat-iso.md)
+- [Left Kan Tensor Inv graded Map](left-kan-tensor-inv-graded-map.md)
+- [Left Kan Tensor Hom graded Map](left-kan-tensor-hom-graded-map.md)

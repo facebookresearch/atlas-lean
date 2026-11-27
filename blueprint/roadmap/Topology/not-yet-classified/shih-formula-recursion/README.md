@@ -1,0 +1,15 @@
+# Shih Formula Recursion
+
+- [Derived Simplex Hom](derived-simplex-hom.md)
+- [Δ succ comp derived Simplex Hom](succ-comp-derived-simplex-hom.md)
+- [Derived Simplex Hom comp δ succ](derived-simplex-hom-comp-succ.md)
+- [Δ zero comp derived Simplex Hom](zero-comp-derived-simplex-hom.md)
+- [Cone Simplex Hom](cone-simplex-hom.md)
+- [Δ succ comp cone Simplex Hom](succ-comp-cone-simplex-hom.md)
+- [Map derived Simplex Hom comp δ succ](map-derived-simplex-hom-comp-succ.md)
+- [Δ succ comp map derived Simplex Hom](succ-comp-map-derived-simplex-hom.md)
+- [Map derived Simplex Hom comp δ zero](map-derived-simplex-hom-comp-zero.md)
+- [Derived Shih Summand](derived-shih-summand.md)
+- [Gap One Shih Component](gap-one-shih-component.md)
+- [Sum shih Summand gap gt one](sum-shih-summand-gap-gt-one.md)
+- [Shih Component succ](shih-component-succ.md)

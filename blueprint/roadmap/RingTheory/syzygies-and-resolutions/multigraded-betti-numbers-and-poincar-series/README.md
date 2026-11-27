@@ -16,3 +16,6 @@
 - [Finite support of the multigraded Poincaré coefficients](multigraded-poincare-coefficients-has-fi.md)
 - [Base change of a homogeneous element along zero evaluation](base-change-mem-degree-span.md)
 - [The base-changed differential preserves multidegree](base-changed-differential-preserves-degr.md)
+- [Projections in internally graded algebras](projections-in-internally-graded-algebras/README.md)
+- [Homogeneous](homogeneous/README.md)
+- [Homogeneous components of graded algebra homomorphisms](homogeneous-components-of-graded-algebra-homomor/README.md)

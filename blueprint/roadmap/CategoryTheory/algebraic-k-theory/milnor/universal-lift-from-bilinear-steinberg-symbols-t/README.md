@@ -1,0 +1,45 @@
+# Universal lift from bilinear Steinberg symbols to Milnor K₂
+
+- [Tensor Pair Degree](tensor-pair-degree.md)
+- [Tensor Pair Degree coe](tensor-pair-degree-coe.md)
+- [Is Steinberg](is-steinberg.md)
+- [Degree K2 Lift](degree-k2-lift.md)
+- [Degree K2 Lift tensor Pair Degree](degree-k2-lift-tensor-pair-degree.md)
+- [Is Adjacent Steinberg](is-adjacent-steinberg.md)
+- [Is Steinberg Insert Vanishing](is-steinberg-insert-vanishing.md)
+
+## Textbook presentation kernel lemmas
+
+- [Le ker steinberg Degree Span In Degree](le-ker-steinberg-degree-span-in-degree.md)
+- [Le ker degree K2 Lift](le-ker-degree-k2-lift.md)
+- [Lift K2](lift-k2.md)
+- [Lift K2 mk](lift-k2-mk.md)
+- [Lift K2 tensor Pair Degree](lift-k2-tensor-pair-degree.md)
+- [K2 Symbol eq mk tensor Pair Degree](k2-symbol-eq-mk-tensor-pair-degree.md)
+- [Lift K2 k2 Symbol](lift-k2-k2-symbol.md)
+- [Lift K2 ext](lift-k2-ext.md)
+
+## Bundled separately multiplicative Steinberg bimap
+
+- [Steinberg Bimap](steinberg-bimap.md)
+- [Ext](ext.md)
+- [Map one left](map-one-left.md)
+- [Map one right](map-one-right.md)
+- [Map inv left](map-inv-left.md)
+- [Map inv right](map-inv-right.md)
+- [Map zpow left](map-zpow-left.md)
+- [Map zpow right](map-zpow-right.md)
+- [To Multilinear Map](to-multilinear-map.md)
+- [To Multilinear Map apply](to-multilinear-map-apply.md)
+- [Is Steinberg to Multilinear Map](is-steinberg-to-multilinear-map.md)
+- [Comp Linear Map](comp-linear-map.md)
+- [Comp Linear Map apply](comp-linear-map-apply.md)
+- [To Multilinear Map comp Linear Map](to-multilinear-map-comp-linear-map.md)
+- [Lift K2 Of Bimap](lift-k2-of-bimap.md)
+- [Lift K2 Of Bicharacter](lift-k2-of-bicharacter.md)
+- [Lift K2 Of Bimap k2 Symbol](lift-k2-of-bimap-k2-symbol.md)
+- [Lift K2 Of Bimap mk tensor Pair Degree](lift-k2-of-bimap-mk-tensor-pair-degree.md)
+- [Lift K2 Of Bimap mk](lift-k2-of-bimap-mk.md)
+- [Lift K2 Of Bimap comp](lift-k2-of-bimap-comp.md)
+- [Lift K2 Of Bimap ext](lift-k2-of-bimap-ext.md)
+- [Lift K2 Of Bimap congr](lift-k2-of-bimap-congr.md)

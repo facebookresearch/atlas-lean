@@ -69,3 +69,4 @@ Categories of modules and finitely generated modules over a ring: abelian and mo
 - [Tor comparisons from the original source category](tor-comparisons-from-the-original-source-categor/README.md)
 - [ULift comparisons for induced modules](ulift-comparisons-for-induced-modules/README.md)
 - [Universe lifts preserve module preorder colimits](ulift-direct-limit-cocone-is-colimit.md)
+- [Base change of finitely generated projective modules](base-change-of-finitely-generated-projective-modules/README.md)

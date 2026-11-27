@@ -1,0 +1,17 @@
+# Classical K₂ laws for MilnorK F 2
+
+- [K2 Symbol mul left](k2-symbol-mul-left.md)
+- [K2 Symbol mul right](k2-symbol-mul-right.md)
+- [K2 Symbol zpow left](k2-symbol-zpow-left.md)
+- [K2 Symbol zpow right](k2-symbol-zpow-right.md)
+- [K2 Symbol pow left](k2-symbol-pow-left.md)
+- [K2 Symbol pow right](k2-symbol-pow-right.md)
+- [K2 Symbol inv left](k2-symbol-inv-left.md)
+- [K2 Symbol inv right](k2-symbol-inv-right.md)
+- [K2 Symbol div left](k2-symbol-div-left.md)
+- [K2 Symbol div right](k2-symbol-div-right.md)
+- [K2 Symbol pow pow](k2-symbol-pow-pow.md)
+- [K2 Symbol zpow zpow](k2-symbol-zpow-zpow.md)
+- [K2 Symbol a a](k2-symbol-a-a.md)
+- [K2 Symbol add swap](k2-symbol-add-swap.md)
+- [K2 Symbol anticomm](k2-symbol-anticomm.md)

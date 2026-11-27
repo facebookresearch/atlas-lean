@@ -21,3 +21,5 @@ Categories enriched in abelian groups and modules: preadditive, additive and lin
 - [Semisimple objects and categories](semisimple-objects-and-categories/README.md)
 - [Quillen exact functors](quillen-exact-functors/README.md)
 - [The canonical split exact structure](the-canonical-split-exact-structure/README.md)
+- [Exact functors](exact-functors/README.md)
+- [Exact monoidal categories](exact-monoidal-categories/README.md)

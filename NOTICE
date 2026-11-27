@@ -6,6 +6,10 @@ source headers for the listed ATLAS modules. It does not replace or extend
 any applicable license terms.
 
 Files:
+  MathlibExt/AlgebraicTopology/SimplicialObject/ToAugmented.lean
+  MathlibExt/AlgebraicTopology/SimplicialObject/ToSimplicial.lean
+  MathlibExt/CategoryTheory/Enriched/Limits/Products.lean
+  MathlibExt/CategoryTheory/Enriched/Ordinary/HomCongr.lean
   MathlibExt/CategoryTheory/Waldhausen/Basic.lean
   MathlibExt/CategoryTheory/Waldhausen/ExactFunctor.lean
   MathlibExt/CategoryTheory/Waldhausen/SConstruction/FiniteStage.lean
@@ -254,6 +258,62 @@ Files:
   MathlibExt/AlgebraicTopology/SimplicialObject/EilenbergZilber/ShuffleUnit.lean
 
 Authors: Avocado
+
+Files:
+  MathlibExt/CategoryTheory/Enriched/EnrichedProductInclusions.lean
+  MathlibExtTest/CategoryTheory/Enriched/EnrichedProductInclusionsCompatibility.lean
+
+Author: @toskua
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplexCategory/ZeroAddSuccIso.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/BoundaryMatching.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/BoundaryMatchingLift.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ProperFaceBoundary.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/SSetULiftContainedIso.lean
+
+Authors: @toskua
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialSet/ModelCategory/SmallObject.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ProdStdSimplexOneCompat.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/RealizationPresentation.lean
+  MathlibExtTest/AlgebraicTopology/SimplicialSet/BoundaryDescTests.lean
+  MathlibExtTest/AlgebraicTopology/SimplicialSet/RealizationPresentationTests.lean
+
+Authors: @toskua, Avocado
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Basic.lean
+
+Authors: @toskua, Avocado, Joël Riou
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplexCategory/EpiInsertion.lean
+  MathlibExt/AlgebraicTopology/SimplexCategory/Reedy.lean
+  MathlibExt/AlgebraicTopology/SimplexCategory/ReedyComparison.lean
+
+Authors: @toskua, Codex
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialObject/DataEvaluation.lean
+  MathlibExt/CategoryTheory/CategoryBar/Basic.lean
+  MathlibExt/CategoryTheory/CategoryBar/Change.lean
+  MathlibExt/CategoryTheory/CategoryBar/Functoriality.lean
+  MathlibExt/CategoryTheory/CategoryBar/SimplicialReplacement.lean
+  MathlibExtTest/AlgebraicTopology/SimplicialObject/DataEvaluationTests.lean
+  MathlibExtTest/CategoryTheory/CategoryBar/BasicTests.lean
+  MathlibExtTest/CategoryTheory/CategoryBar/FunctorialityTests.lean
+  MathlibExtTest/CategoryTheory/CategoryBar/SimplicialReplacementTests.lean
+
+Authors: @toskua, Avocado
+
+Files:
+  MathlibExt/Topology/Convenient/StdSimplex.lean
+  MathlibExt/Topology/Convenient/StdSimplexHornLocus.lean
+  MathlibExt/Topology/Convenient/StdSimplexHornRetract.lean
+
+Author: @toskua, Avocado
 
 Homological algebra source notices
 ----------------------------------

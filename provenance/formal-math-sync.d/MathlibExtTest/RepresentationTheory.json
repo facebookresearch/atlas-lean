@@ -1,11 +1,58 @@
 {
   "rows": [
-    {"path": "MathlibExtTest/RepresentationTheory/CoinvariantsReflectionTests.lean", "disposition": "identical", "published_sha256": "71bf1fa1b0aafa8ecc6d7aa88223236b2342444f6ebb797820d105db472ac195", "upstream_sha256": "4fd2c63cde72e542b5f2025d484d727ba0a5b11611bfcf33607415b75fd8bee1"},
-    {"path": "MathlibExtTest/RepresentationTheory/Homological/ContCohomology/DiscreteCoefficientCupProduct.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "403005a61824c94cfe18e7cfccc975c6dd2e1c347508d0e9070f2a0803f78e4a", "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "9005eca700c4237d23ee200b74cd7cdad065aa14cd32cfdaae76424a26ed9100"},
-    {"path": "MathlibExtTest/RepresentationTheory/Homological/ContCohomology/DiscreteCoefficientLongExactTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "623cbc7d3d90ade503662548d7133dfd9e5c7314854228c2e1deba850c85c76f", "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "53b883f7d0217b644e71d8d4c089a09398e5c604ff08265fb0a19447370b44c2"},
-    {"path": "MathlibExtTest/RepresentationTheory/Homological/GroupCohomology/SchreierTransferCupOneAnyProjectionTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "89217e5dc410e578355b53a3892b73ef6d1a9febb2a82d878d10ba0fb20d40f5", "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "74b63f71a3252563b8307f3024c9f22ddb0ff474fe8fdce2966afbd25fc8a371"},
-    {"path": "MathlibExtTest/RepresentationTheory/Homological/NormalizedBar/Linear.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e991cc4d095d7d2ed9a0c6319f78ab9f9266d1854929fd4d253546924d686b69", "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "c6c57f837d3b86bdea2de3fd7291232f1e2501a6ff83b51cbd02bef3c0e12952"},
-    {"path": "MathlibExtTest/RepresentationTheory/Homological/TateCohomology/FiniteCyclic.lean", "disposition": "identical", "published_sha256": "dfec59da227751d90db11d4d80ed0ffa31ee292e8424b6b4c51798b0c57ab872", "upstream_sha256": "5f619c12bc6b5d442adf0e99bbb66691ca15cd643765783794eff77946030637"},
-    {"path": "MathlibExtTest/RepresentationTheory/Homological/TateCohomology/HerbrandQuotient.lean", "disposition": "identical", "published_sha256": "32d4584b51426f9f641b6622537bc423a0ffbd88041cf6402a03f0c86102365e", "upstream_sha256": "a1a80f22fc0b6a7ed93254905550043b07151f87518a2e2473bfd760e84b8350"}
+    {
+      "path": "MathlibExtTest/RepresentationTheory/CoinvariantsReflectionTests.lean",
+      "disposition": "identical",
+      "published_sha256": "71bf1fa1b0aafa8ecc6d7aa88223236b2342444f6ebb797820d105db472ac195",
+      "upstream_sha256": "4fd2c63cde72e542b5f2025d484d727ba0a5b11611bfcf33607415b75fd8bee1"
+    },
+    {
+      "path": "MathlibExtTest/RepresentationTheory/Homological/ContCohomology/DiscreteCoefficientCupProduct.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "403005a61824c94cfe18e7cfccc975c6dd2e1c347508d0e9070f2a0803f78e4a",
+      "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9005eca700c4237d23ee200b74cd7cdad065aa14cd32cfdaae76424a26ed9100"
+    },
+    {
+      "path": "MathlibExtTest/RepresentationTheory/Homological/ContCohomology/DiscreteCoefficientLongExactTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "623cbc7d3d90ade503662548d7133dfd9e5c7314854228c2e1deba850c85c76f",
+      "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "53b883f7d0217b644e71d8d4c089a09398e5c604ff08265fb0a19447370b44c2"
+    },
+    {
+      "path": "MathlibExtTest/RepresentationTheory/Homological/GroupCohomology/SchreierTransferCupOneAnyProjectionTests.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "89217e5dc410e578355b53a3892b73ef6d1a9febb2a82d878d10ba0fb20d40f5",
+      "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "74b63f71a3252563b8307f3024c9f22ddb0ff474fe8fdce2966afbd25fc8a371"
+    },
+    {
+      "path": "MathlibExtTest/RepresentationTheory/Homological/NormalizedBar/Linear.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e991cc4d095d7d2ed9a0c6319f78ab9f9266d1854929fd4d253546924d686b69",
+      "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "c6c57f837d3b86bdea2de3fd7291232f1e2501a6ff83b51cbd02bef3c0e12952"
+    },
+    {
+      "path": "MathlibExtTest/RepresentationTheory/Homological/TateCohomology/FiniteCyclic.lean",
+      "disposition": "identical",
+      "published_sha256": "dfec59da227751d90db11d4d80ed0ffa31ee292e8424b6b4c51798b0c57ab872",
+      "upstream_sha256": "5f619c12bc6b5d442adf0e99bbb66691ca15cd643765783794eff77946030637"
+    },
+    {
+      "path": "MathlibExtTest/RepresentationTheory/Homological/TateCohomology/HerbrandQuotient.lean",
+      "disposition": "identical",
+      "published_sha256": "32d4584b51426f9f641b6622537bc423a0ffbd88041cf6402a03f0c86102365e",
+      "upstream_sha256": "a1a80f22fc0b6a7ed93254905550043b07151f87518a2e2473bfd760e84b8350"
+    }
   ]
 }

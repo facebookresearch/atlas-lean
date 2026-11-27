@@ -1,0 +1,15 @@
+# Quillen simplices extracted from edgewise Stage shells
+
+- [Edgewise Stage Vertex le](edgewise-stage-vertex-le.md)
+- [Edgewise Stage Vertex](edgewise-stage-vertex.md)
+- [Edgewise Stage Shell Source Eq Vertex](edgewise-stage-shell-source-eq-vertex.md)
+- [Edgewise Stage Shell Target Eq Vertex](edgewise-stage-shell-target-eq-vertex.md)
+- [Edgewise Stage Shell Class Normalized](edgewise-stage-shell-class-normalized.md)
+- [Edgewise Stage Shell Class Normalized refl](edgewise-stage-shell-class-normalized-re.md)
+- [Edgewise Stage Shell Class Normalized comp](edgewise-stage-shell-class-normalized-co.md)
+- [Edgewise Stage Quillen Simplex](edgewise-stage-quillen-simplex.md)
+- [Edgewise Stage Quillen Simplex map hom Of LE](edgewise-stage-quillen-simplex-map-hom-o.md)
+- [Edgewise Stage Vertex Iso](edgewise-stage-vertex-iso.md)
+- [Edgewise Stage Shell Class Normalized naturality](edgewise-stage-shell-class-normalized-na.md)
+- [Edgewise Stage Quillen Simplex Map](edgewise-stage-quillen-simplex-map.md)
+- [Edgewise Stage Quillen Simplex Functor](edgewise-stage-quillen-simplex-functor.md)
