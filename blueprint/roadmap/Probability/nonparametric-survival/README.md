@@ -24,3 +24,4 @@ Distribution-free and semiparametric methods: empirical distribution functions (
 - [Simultaneous confidence bands for survival curves](simultaneous-confidence-bands-for-survival-curve/README.md)
 - [U-statistics](u-statistics/README.md)
 - [Reliability and monitoring](reliability-and-monitoring/README.md)
+- [Sensitivity analysis for unmeasured confounding](sensitivity-analysis-for-unmeasured-confounding/README.md)
