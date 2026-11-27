@@ -23,11 +23,12 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
-/-- **Euclidean Ramsey configurations.** A fixed indexed configuration $a$ in Euclidean space
-is Euclidean Ramsey if, for each finite palette with at least two colors, there is a positive
+/-- **Euclidean Ramsey configurations.** A fixed finite indexed family $a$ of points in Euclidean
+space is Euclidean Ramsey if, for each finite palette with at least two colors, there is a positive
 host dimension such that every coloring of that Euclidean space by that palette contains an
-indexed monochromatic copy of $a$ with the same pairwise distances. The distances are
-preserved, not merely proportional, and there is no regularity restriction on colorings.
+indexed monochromatic copy of $a$ with the same pairwise distances. The family $a$ may be empty
+and may have repeated points. The distances are preserved, not merely proportional, and there is
+no regularity restriction on colorings.
 
 Sources: Erdős, Graham, Montgomery, Rothschild, Spencer and Straus,
 [*Euclidean Ramsey theorems. I*](https://doi.org/10.1016/0097-3165(73)90011-3), §1, pp. 342–344;
