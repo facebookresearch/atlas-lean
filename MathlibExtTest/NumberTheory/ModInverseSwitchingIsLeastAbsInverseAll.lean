@@ -9,9 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Tactic.IntervalCases
-import MathlibExt.NumberTheory.ModInverseSwitchingIsLeastAbsInverseAll
+import MathlibExt.NumberTheory.ModInverseSwitchingEuclidBezoutCoeffsAbsLe
 
-/-! # Tests for `MathlibExt.NumberTheory.ModInverseSwitchingIsLeastAbsInverseAll` -/
+/-!
+# Tests for `isLeastAbsInverse_all`
+
+The theorem is proved in `MathlibExt.NumberTheory.ModInverseSwitchingEuclidBezoutCoeffsAbsLe`.
+-/
 
 namespace MathlibExtTest.NumberTheory.ModInverseSwitchingIsLeastAbsInverseAll
 

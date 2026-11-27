@@ -53,7 +53,6 @@ public import MathlibExt.NumberTheory.ModInverseSwitching
 public import MathlibExt.NumberTheory.ModInverseSwitchingAbsEqHalvesIffSubEqTwoOfOdd
 public import MathlibExt.NumberTheory.ModInverseSwitchingEuclidBezoutCoeffsAbsLe
 public import MathlibExt.NumberTheory.ModInverseSwitchingEuclidBezoutCoeffsSqAddLe
-public import MathlibExt.NumberTheory.ModInverseSwitchingIsLeastAbsInverseAll
 
 set_option autoImplicit false
 
