@@ -1,13 +1,13 @@
 # Polynomial rings over indecomposable rings have undecidable theories
 
-If a commutative ring R has no idempotents other than 0 and 1, then every polynomial ring over R, in any nonempty set of variables, has an undecidable first-order theory in the language of rings, and arithmetic is interpretable in it.
+If a commutative ring R has no idempotents other than 0 and 1, then every polynomial ring over R, in any nonempty set of variables, has an undecidable first-order theory in the language of rings, by one translation of sentences that works for all of them, and the ring of integers has a finite-dimensional interpretation without parameters in it.
 
 Let $R$ be a commutative ring with identity that is *indecomposable*: its only idempotents are $0$ and $1$. Let $X$ be a nonempty set of indeterminates and $S = R[X]$ the polynomial ring, viewed as a structure for the language $(0, 1, +, \cdot)$ of rings. $R[X]$ is indecomposable exactly when $R$ is.
 
 **Theorem (Barone–Caro-Montoya–Naziazeno).** For every indecomposable commutative ring $R$ with identity and every nonempty set $X$ of indeterminates:
 
-1. the theory $\operatorname{Th}(R[X])$ of $R[X]$ in the language of rings is undecidable, by a proof that is uniform over the class of all such rings;
-2. arithmetic is interpretable in $R[X]$.
+1. there is one map $\varphi \mapsto \hat\varphi$ from sentences about the structure $(\mathbb{Z}^+, +, \mid)$ to sentences of the language of rings such that $R[X] \models \hat\varphi$ if and only if $(\mathbb{Z}^+, +, \mid) \models \varphi$, for every sentence $\varphi$ and every such $R$ and $X$ (a uniform translation of sentences, Definition 1.2 of the source); in particular the theory $\operatorname{Th}(R[X])$ of $R[X]$ in the language of rings is undecidable;
+2. the structure $(\mathbb{Z}, +, \times)$ has an $n$-dimensional interpretation in $R[X]$ for some $n \ge 1$, given by formulas of the language of rings without parameters (Definition 1.1 of the source); these interpretations are uniform on each of certain subclasses whose union is the whole class (Theorem 3.2), not on the whole class at once.
 
 Conventions: $R$ need not be reduced; no parameters are allowed in sentences. The reduced case in one variable is the linked theorem.
 
@@ -29,4 +29,4 @@ A good expansion adds and links pages for the uniform first-order definition of 
 
 ## Sources
 
-- Marco Barone, Nicolás Caro-Montoya and Eudes Naziazeno, *Undecidability of indecomposable polynomial rings*, Archive for Mathematical Logic 64 (2025), no. 1–2, 185–203 (published online 2024), https://doi.org/10.1007/s00153-024-00936-3; read as arXiv:2304.02165v2, where both clauses are the conclusion of Section 3.3 (from Theorems 3.2 and 3.3, Lemma 3.4 and Proposition 3.5), and the indecomposability criterion is recalled in Section 1.1.
+- Marco Barone, Nicolás Caro-Montoya and Eudes Naziazeno, *Undecidability of indecomposable polynomial rings*, Archive for Mathematical Logic 64 (2025), no. 1–2, 185–203 (published online 2024), https://doi.org/10.1007/s00153-024-00936-3; read as arXiv:2304.02165v2, where both clauses are the conclusion of Section 3.3 (from Theorems 3.2 and 3.3, Lemma 3.4 and Proposition 3.5), with interpretations and uniform translations as in Definitions 1.1 and 1.2, and the indecomposability criterion recalled in Section 1.1.

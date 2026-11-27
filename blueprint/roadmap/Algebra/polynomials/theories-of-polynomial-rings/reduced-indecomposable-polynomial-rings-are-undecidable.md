@@ -14,6 +14,7 @@ Conventions: no parameters from $S$ are allowed in sentences or in $\Omega$; cla
 ## Depends on
 
 - [Commutative ring with identity](../../rings-and-fields/commutative-ring-with-identity.md)
+- [Polynomials in one variable over a semiring](../univariate-polynomial-arithmetic/polynomial-ring.md)
 - [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
 - [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
 
@@ -29,5 +30,5 @@ A good expansion adds and links pages for the undecidability of the first-order 
 
 ## Sources
 
-- Marco Barone, Nicolás Caro-Montoya and Eudes Naziazeno, *Uniform definability of integers in reduced indecomposable polynomial rings*, The Journal of Symbolic Logic 85 (2020), no. 4, 1376–1402, https://doi.org/10.1017/jsl.2020.50; read as arXiv:1703.08266v7, where clause 1 is Theorem 6.1 and clause 2 is Theorem 6.11, with the definitions in Section 2 and the example $\mathbb{Q}[s, t]/(st)$ in Section 4.2 and Section 6.5.
+- Marco Barone, Nicolás Caro and Eudes Naziazeno, *Uniform definability of integers in reduced indecomposable polynomial rings*, The Journal of Symbolic Logic 85 (2020), no. 4, 1376–1402, https://doi.org/10.1017/jsl.2020.50; read as arXiv:1703.08266v7 (titled *Interpretability and uniform definability of integers, and undecidability of reduced indecomposable polynomial rings*), where clause 1 is Theorem 6.1 and clause 2 is Theorem 6.11, with the definitions in Section 2 and the example $\mathbb{Q}[s, t]/(st)$ in Section 4.2 and Section 6.5.
 - Raphael M. Robinson, *Undecidable rings*, Transactions of the American Mathematical Society 70 (1951), 137–159, https://doi.org/10.2307/1990529, for the integral-domain case, as cited in the paper above.

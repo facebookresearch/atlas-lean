@@ -10,7 +10,9 @@ Conventions: the type is part of the input, and isomorphic algebras are counted 
 
 ## Depends on
 
-- [Varieties of algebras and finitely generated varieties](varieties-of-algebras-and-finitely-generated-varieties.md)
+- [Algebras of a finite type](algebras-of-a-finite-type.md)
+- [Identities satisfied by an algebra](identities-satisfied-by-an-algebra.md)
+- [Varieties of algebras](varieties-of-algebras-and-finitely-generated-varieties.md)
 - [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
 
 ## Proof depends on

@@ -8,8 +8,9 @@ Conventions: $k^{M_2}$ is the ring of functions $x \colon M_2 \to k$, with $\sig
 
 ## Depends on
 
-- [Difference rings and rings of sequences](difference-rings-and-equations-in-sequences.md)
-- [Difference polynomials and their solutions](difference-polynomials-and-their-solutions.md)
+- [Rings of sequences indexed by a monoid](difference-rings-and-equations-in-sequences.md)
+- [Rings of M-polynomials](difference-polynomials-and-their-solutions.md)
+- [Solutions of systems of M-polynomial equations](solutions-of-difference-equations.md)
 - [Computable subfields](computable-subfields.md)
 - [Field](../../rings-and-fields/field.md)
 - [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
