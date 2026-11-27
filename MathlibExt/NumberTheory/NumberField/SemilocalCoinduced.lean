@@ -51,6 +51,8 @@ Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+The source states its results for number fields in `Type`; here they hold for
+number fields in any universe `Type u`.
 -/
 
 module
@@ -124,6 +126,8 @@ The coinduced representation is Mathlib's `Rep.coind`: functions `f` on the Galo
 -/
 
 @[expose] public section
+
+universe u
 
 open IsDedekindDomain NumberField
 
@@ -904,7 +908,7 @@ open scoped NumberField.PlaceDecomp
 
 namespace NumberField.FiniteSIdele
 
-variable (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
+variable (E K : Type u) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
 
 /-- **Decomposition group at the chosen place above a finite place.** The decomposition group in
 `K ≃ₐ[E] K` of the chosen place `PlaceAbove.above E K v` above the finite place `v` of `E`. -/
@@ -1164,7 +1168,7 @@ namespace NumberField.ArchIdele
 
 open scoped NumberField.InfPlaceDecomp
 
-variable (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
+variable (E K : Type u) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
 
 /-- **Chosen infinite place above an infinite place.** A choice, made with `Classical.choose`, of
 an infinite place of `K` restricting to the infinite place `v` of `E` (see `comap_above`). -/
@@ -1306,8 +1310,6 @@ the module coinduced from `M x₀` is additively the product of the fibres over 
 moves the component at `y'` to the component at `g • y'` by `T g`. -/
 
 namespace StabilizerOrbitAux
-
-universe u
 
 variable {G : Type u} [Group G] {X : Type*} {M : X → Type u}
   [∀ x, CommGroup (M x)] {x₀ : X} {H : Subgroup G} [MulDistribMulAction H (M x₀)] {P : X → Prop}
@@ -1498,7 +1500,7 @@ open scoped NumberField.PlaceDecomp NumberField.PlaceTransport
 
 section general
 
-variable {E K : Type} [Field E] [Field K] [NumberField K] [Algebra E K]
+variable {E K : Type u} [Field E] [Field K] [NumberField K] [Algebra E K]
 
 private theorem transportUnits_trans (σ τ : K ≃ₐ[E] K) {w w' w'' : HeightOneSpectrum (𝓞 K)} (h₁ : τ
   • w = w') (h₂ : σ • w' = w'')
@@ -1529,7 +1531,7 @@ private theorem transportUnits_eq_smul {w : HeightOneSpectrum (𝓞 K)} (d : Pla
 
 end general
 
-variable (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
+variable (E K : Type u) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
 
 omit [NumberField K] in
 private theorem under_above (v : HeightOneSpectrum (𝓞 E)) : (PlaceAbove.above E K v).under (𝓞 E) = v
@@ -1556,7 +1558,7 @@ of the units of `w.adicCompletion K` over all finite places `w` of `K` above `v`
 with the Galois action: for `g : K ≃ₐ[E] K` and places `w`, `w'` above `v` with `g • w' = w`,
 the `w`-component of the image of `g • f` is the transport along `g` of the `w'`-component of
 the image of `f`. -/
-theorem NumberField.FiniteSIdele.exists_addEquiv_coind_localUnits (E K : Type) [Field
+theorem NumberField.FiniteSIdele.exists_addEquiv_coind_localUnits (E K : Type u) [Field
   E] [NumberField E] [Field K]
     [NumberField K] [Algebra E K] [IsGalois E K] (v
       : IsDedekindDomain.HeightOneSpectrum (NumberField.RingOfIntegers E)) :
@@ -1590,7 +1592,7 @@ open scoped NumberField.InfPlaceDecomp
 
 section general
 
-variable {E K : Type} [Field E] [Field K] [Algebra E K]
+variable {E K : Type u} [Field E] [Field K] [Algebra E K]
 
 private theorem comap_smul_algebraMap (σ : K ≃ₐ[E] K) (w : InfinitePlace K) :
     (σ • w).comap (algebraMap E K) = w.comap (algebraMap E K) := by
@@ -1627,7 +1629,7 @@ private theorem transportUnits_eq_smul {w : InfinitePlace K} (d : InfPlaceDecomp
 
 end general
 
-variable (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
+variable (E K : Type u) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
 
 -- The infinite places above `v` form the orbit of the chosen place.
 private theorem mem_orbit_iff [IsGalois E K] (v : InfinitePlace E) (w : InfinitePlace K) :
@@ -1652,8 +1654,8 @@ the units of `w.Completion` over all infinite places `w` of `K` above `v`, compa
 Galois action: for `g : K ≃ₐ[E] K` and places `w`, `w'` above `v` with `g • w' = w`, the
 `w`-component of the image of `g • f` is the transport along `g` of the `w'`-component of the
 image of `f`. -/
-theorem NumberField.ArchIdele.exists_addEquiv_coind_localUnits (E K : Type) [Field E] [NumberField
-  E] [Field K] [NumberField K]
+theorem NumberField.ArchIdele.exists_addEquiv_coind_localUnits (E K : Type u) [Field E]
+    [NumberField E] [Field K] [NumberField K]
     [Algebra E K] [IsGalois E K] (v : NumberField.InfinitePlace E) :
     ∃ e : (Rep.coind (NumberField.InfPlaceDecomp.decomp E K (NumberField.ArchIdele.above E K
       v)).subtype

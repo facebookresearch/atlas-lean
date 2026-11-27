@@ -329,3 +329,48 @@ example (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K]
           = NumberField.InfinitePlaceTransport.transportUnits g h
             (Additive.toMul (e f) w') :=
   NumberField.ArchIdele.exists_addEquiv_coind_localUnits E K v
+
+/-! ### Number fields in an arbitrary universe
+
+Both equivalences apply to number fields in any universe `Type u`. -/
+
+universe u
+
+-- The finite place variant at a variable universe.
+example (E K : Type u) [Field E] [NumberField E] [Field K] [NumberField K]
+    [Algebra E K] [IsGalois E K] (v : HeightOneSpectrum (𝓞 E)) :
+    ∃ e : (Rep.coind (NumberField.FiniteSIdele.D E K v).subtype
+          (NumberField.FiniteSIdele.localUnits E K v))
+          ≃+ Additive (Π w : {w : HeightOneSpectrum (𝓞 K) // w.under (𝓞 E) = v},
+            (w.1.adicCompletion K)ˣ),
+      ∀ (g : K ≃ₐ[E] K)
+        (f : Rep.coind (NumberField.FiniteSIdele.D E K v).subtype
+          (NumberField.FiniteSIdele.localUnits E K v))
+        (w w' : {w : HeightOneSpectrum (𝓞 K) // w.under (𝓞 E) = v})
+        (h : g • w'.1 = w.1),
+        Additive.toMul (e ((Rep.coind (NumberField.FiniteSIdele.D E K v).subtype
+          (NumberField.FiniteSIdele.localUnits E K v)).ρ g f)) w
+          = NumberField.PlaceTransport.transportUnits g h (Additive.toMul (e f) w') :=
+  NumberField.FiniteSIdele.exists_addEquiv_coind_localUnits E K v
+
+-- The archimedean variant at a variable universe.
+example (E K : Type u) [Field E] [NumberField E] [Field K] [NumberField K]
+    [Algebra E K] [IsGalois E K] (v : NumberField.InfinitePlace E) :
+    ∃ e : (Rep.coind (NumberField.InfPlaceDecomp.decomp E K
+          (NumberField.ArchIdele.above E K v)).subtype
+          (NumberField.InfPlaceDecomp.localUnits E K (NumberField.ArchIdele.above E K v)))
+          ≃+ Additive (Π w : {w : NumberField.InfinitePlace K //
+            w.comap (algebraMap E K) = v}, (w.1.Completion)ˣ),
+      ∀ (g : K ≃ₐ[E] K)
+        (f : Rep.coind (NumberField.InfPlaceDecomp.decomp E K
+          (NumberField.ArchIdele.above E K v)).subtype
+          (NumberField.InfPlaceDecomp.localUnits E K (NumberField.ArchIdele.above E K v)))
+        (w w' : {w : NumberField.InfinitePlace K // w.comap (algebraMap E K) = v})
+        (h : g • w'.1 = w.1),
+        Additive.toMul (e ((Rep.coind (NumberField.InfPlaceDecomp.decomp E K
+          (NumberField.ArchIdele.above E K v)).subtype
+          (NumberField.InfPlaceDecomp.localUnits E K
+            (NumberField.ArchIdele.above E K v))).ρ g f)) w
+          = NumberField.InfinitePlaceTransport.transportUnits g h
+            (Additive.toMul (e f) w') :=
+  NumberField.ArchIdele.exists_addEquiv_coind_localUnits E K v
