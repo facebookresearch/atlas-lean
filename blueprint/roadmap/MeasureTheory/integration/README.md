@@ -17,9 +17,14 @@ The Lebesgue integral and its convergence theorems, modes of convergence of meas
 - [Jensen's inequality for integrals](jensen-s-inequality-for-integrals/README.md)
 - [Products of measures with densities](products-of-measures-with-densities/README.md)
 - [Scheffé's lemma](scheff-s-lemma/README.md)
+- [Oriented interval integral](oriented-interval-integral.md)
 - [Integral of a product of coordinate functions over Euclidean space](integral-prod-coord.md)
 - [Circle integrals of functions of the square vanish](circle-integral-comp-sq-eq-zero.md)
 - [Plane integrals as quadrant integrals of the four reflections](integral-prod-eq-set-integral-ioi-set-in.md)
 - [Egorov's theorem on the real line under integrable domination](egorov-s-theorem/README.md)
 - [Lusin's theorem](lusin-s-theorem/README.md)
 - [Monotonicity of Lorentzian integrals in the width](lorentzian-width-monotonicity/README.md)
+
+## Sources
+
+- The oriented interval integral accumulates speed in the regular-curve case of [Tau Ceti’s geometric measure theory roadmap, G1](https://github.com/TauCetiProject/TauCetiRoadmap/blob/8cc2f79f60ebc394160c214a3d0abd16c3c0aff9/TauCetiRoadmap/GeometricMeasureTheory/README.md#L106-L139).
