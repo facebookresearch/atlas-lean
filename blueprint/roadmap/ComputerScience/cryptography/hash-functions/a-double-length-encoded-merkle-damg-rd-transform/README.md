@@ -30,6 +30,4 @@
 - [Keyed full Merkle-Damgård hash family](md-family.md)
 - [Compression-collision reduction](md-reduction.md)
 - [Collision resistance of the full Merkle-Damgård hash family](coll-advantage-md-family-le.md)
-- [Block-count length block](block-count-len-block.md)
-- [Block Count Len Block inj On](block-count-len-block-inj-on.md)
 - [Collision resistance of Merkle-Damgård with n-bit length fields](coll-advantage-block-count-le.md)

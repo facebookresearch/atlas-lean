@@ -32,7 +32,7 @@
 - [Fresh counter ranges give an exact half guessing chance](ctr-two-mul-card-wins.md)
 - [Few challenge counters overlap the query counters](card-not-ctr-fresh.md)
 - [Counter-mode reduction against a random function](ctr-prf-rand-le.md)
-- [Counter mode is CPA-secure, concrete bound](ctr-cpa-advantage-le.md)
+- [Concrete CPA advantage bound for counter mode](ctr-cpa-advantage-le.md)
 
 ## Cipher block chaining
 

@@ -5,8 +5,8 @@ Let $F$ be a field and $\mathrm{Party}$ a finite type of parties, with Shamir pa
 - **addition:** $P(w_0) + P(w_1)$ (the weights and the tape are unused);
 - **multiplication:**
 
-$$
-\sum_{i \in \mathrm{Party}} \lambda_i \cdot S_i, \qquad S_i = \text{the Shamir sharing polynomial with secret } \bigl(P(w_0)\,P(w_1)\bigr)(\alpha_i) \text{ and random coefficients } \tau_i .
-$$
+    $$
+    \sum_{i \in \mathrm{Party}} \lambda_i \cdot S_i, \qquad S_i = \text{the Shamir sharing polynomial with secret } \bigl(P(w_0)\,P(w_1)\bigr)(\alpha_i) \text{ and random coefficients } \tau_i .
+    $$
 
 Each $S_i$ has constant term $(P(w_0)P(w_1))(\alpha_i)$, the product of party $i$'s two argument shares when the $P(w_j)$ are the sharing polynomials, and degree at most $t$.

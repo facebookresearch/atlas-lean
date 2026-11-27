@@ -1,4 +1,4 @@
-# Counter mode is CPA-secure, concrete bound
+# Concrete CPA advantage bound for counter mode
 
 Let $N > 0$, $\ell \le N$, let $Y$ be a finite nonempty additive commutative group, and let the key space $K$ and the adversary's coin space $R$ be finite and nonempty. For every keyed function $F \colon K \to \mathbb{Z}/N \to Y$ and every CPA adversary against [counter mode](ctr-scheme.md) with $\ell$-block messages whose coins are uniform on $R$ and which makes at most $q$ encryption queries in total along every path,
 
