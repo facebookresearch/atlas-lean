@@ -58,6 +58,8 @@ theorem mem_higherUnitsAt_iff {n : ℕ} {u : (v.adicCompletion K)ˣ} :
       (n = 0 ∨ Valued.v ((u : v.adicCompletion K) - 1) ≤ WithZero.exp (-(n : ℤ))) :=
   Iff.rfl
 
+variable (K : Type) [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K))
+
 theorem mem_higherUnitsAt_zero_iff {u : (v.adicCompletion K)ˣ} :
     u ∈ higherUnitsAt K v 0 ↔ Valued.v (u : v.adicCompletion K) = 1 := by
   simp [mem_higherUnitsAt_iff]
