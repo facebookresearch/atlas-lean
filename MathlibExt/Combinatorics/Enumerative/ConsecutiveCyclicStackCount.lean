@@ -12,14 +12,133 @@ public import MathlibExt.Combinatorics.Enumerative.CyclicPatternAvoidingStacks
 import Mathlib.Data.List.Permutation
 
 /-!
-# Counting permutations sorted by the consecutive cyclic 321-stack
+# Counting permutations sorted by consecutive cyclic stacks
 
-The consecutive cyclic 321-stack sorts exactly `2 ^ (n - 2)` permutations of length `n ≥ 2`.
-Each such permutation starts with `n`. We count its possible tails by successively choosing
-an endpoint of the remaining interval, and show that each tail is a good sequence.
+The consecutive cyclic 123-stack sorts no permutation of length at least four. The consecutive
+cyclic 321-stack sorts exactly `2 ^ (n - 2)` permutations of length `n ≥ 2`. Each such permutation
+starts with `n`. We count its possible tails by successively choosing an endpoint of the remaining
+interval, and show that each tail is a good sequence.
+
+## References
+
+* Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026), Article A15,
+  pp. 1–12, Theorems 3 and 4 (§§3.3–3.4).
 -/
 
 namespace MetaMathlibExt
+
+section
+
+variable {bad : List ℕ → Prop} [DecidablePred bad]
+
+private def popCount (bad : List ℕ → Prop) [DecidablePred bad] (x : ℕ) (st : List ℕ) : ℕ :=
+  ((List.range (st.length + 1)).find? fun k => !decide (bad (x :: st.drop k))).getD st.length
+
+private theorem popCount_cons (x y : ℕ) (st : List ℕ) :
+    popCount bad x (y :: st) = if bad (x :: y :: st) then popCount bad x st + 1 else 0 := by
+  unfold popCount
+  rw [List.length_cons, List.range_succ_eq_map, List.find?_cons, List.find?_map]
+  simp only [List.drop_zero, List.drop_succ_cons, Function.comp_def]
+  split_ifs <;> simp_all
+
+private theorem run_pop {x y : ℕ} {xs st : List ℕ} (hb : bad (x :: y :: st)) :
+    restrictedStackSortAux bad (x :: xs) (y :: st) =
+      y :: restrictedStackSortAux bad (x :: xs) st := by
+  change (y :: st).take (popCount bad x (y :: st)) ++
+    restrictedStackSortAux bad xs (x :: (y :: st).drop (popCount bad x (y :: st))) =
+    y :: (st.take (popCount bad x st) ++ restrictedStackSortAux bad xs (x :: st.drop
+      (popCount bad x st)))
+  simp [popCount_cons, hb]
+
+private theorem run_push {x : ℕ} {xs st : List ℕ} (hg : ¬bad (x :: st)) :
+    restrictedStackSortAux bad (x :: xs) st = restrictedStackSortAux bad xs (x :: st) := by
+  have hz : popCount bad x st = 0 := by
+    cases st with
+    | nil => simp [popCount, List.range_succ_eq_map, hg]
+    | cons y st => simp [popCount_cons, hg]
+  change st.take (popCount bad x st) ++
+    restrictedStackSortAux bad xs (x :: st.drop (popCount bad x st)) = _
+  simp [hz]
+
+-- Entries already on the stack leave it in their current relative order.
+private theorem stack_sublist (xs st : List ℕ) : st.Sublist (restrictedStackSortAux bad xs st) := by
+  induction xs generalizing st with
+  | nil => exact .refl _
+  | cons x xs ih =>
+    let k := popCount bad x st
+    change st.Sublist (st.take k ++ restrictedStackSortAux bad xs (x :: st.drop k))
+    have h := (List.sublist_cons_self x (st.drop k)).trans (ih (x :: st.drop k))
+    simpa using (List.Sublist.refl (st.take k)).append h
+
+end
+
+namespace sortedPermutations_consecutiveCyclicStackSort_123
+
+private def bad (st : List ℕ) : Prop :=
+  ∃ p ∈ [1, 2, 3].cyclicPermutations, ContainsConsecutivePatternSeq st p
+
+private instance decidableBad : DecidablePred bad := fun st => by
+  unfold bad
+  infer_instance
+
+local notation "run" => restrictedStackSortAux bad
+
+private theorem rotations :
+    ([1, 2, 3] : List ℕ).cyclicPermutations = [[1, 2, 3], [2, 3, 1], [3, 1, 2]] := by decide
+
+private theorem bad_short (x : ℕ) (st : List ℕ) (hs : st.length ≤ 1) : ¬bad (x :: st) := by
+  rcases st with _ | ⟨y, _ | ⟨z, t⟩⟩ <;>
+    simp [bad, rotations, ContainsConsecutivePatternSeq, SameRelativeOrder, List.tails] at *
+
+private theorem bad_three (x a b : ℕ) (hab : a < b) : bad [x, a, b] ↔ x < a ∨ b < x := by
+  simp [bad, rotations, ContainsConsecutivePatternSeq, SameRelativeOrder, List.tails,
+    Nat.forall_lt_succ_right]
+  omega
+
+private theorem not_increasing_after_two_pushes {x a b : ℕ} {xs : List ℕ} :
+    ¬ (run (x :: xs) [a, b]).Pairwise (· < ·) := by
+  intro hout
+  have hs := hout.sublist (stack_sublist (x :: xs) [a, b])
+  have hab := (List.pairwise_cons.mp hs).1 b (by simp)
+  by_cases hb : bad [x, a, b]
+  · -- A pop emits `a`. The two-entry stack `[x, b]` then appears in order after it.
+    rw [run_pop hb, run_push (bad_short x [b] (by simp))] at hout
+    have h := hout.sublist ((stack_sublist xs [x, b]).cons_cons a)
+    have hax := (List.pairwise_cons.mp h).1 x (by simp)
+    have hxb := (List.pairwise_cons.mp h.of_cons).1 b (by simp)
+    rcases (bad_three x a b hab).mp hb with hxa | hbx
+    · exact (Nat.lt_asymm hax) hxa
+    · exact (Nat.lt_asymm hxb) hbx
+  · -- A direct push could only sort if `x < a`, which would form `123`.
+    rw [run_push hb] at hout
+    have h := hout.sublist (stack_sublist xs [x, a, b])
+    exact hb ((bad_three x a b hab).mpr (Or.inl ((List.pairwise_cons.mp h).1 a (by simp))))
+
+end sortedPermutations_consecutiveCyclicStackSort_123
+
+open sortedPermutations_consecutiveCyclicStackSort_123 in
+/-- **No permutation of length at least four is sorted by the consecutive cyclic $123$-stack.**
+Let $s^{[123]}$ be the consecutive-cyclic-pattern-avoiding stack-sorting map for $123$. For every
+$n \ge 4$, no permutation of $[n] = \{1, \dots, n\}$ is mapped by $s^{[123]}$ to the identity
+$12 \cdots n$; that is, the set $\mathrm{Sort}_n(s^{[123]})$ of permutations of $[n]$ that
+$s^{[123]}$ maps to the identity has $0$ elements.
+
+Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
+Article A15, Theorem 3 (`integers-2026-A15-thm-3`). -/
+public theorem sortedPermutations_consecutiveCyclicStackSort_123 {n : ℕ} (hn : 4 ≤ n) :
+    (sortedPermutations (consecutiveCyclicStackSort [1, 2, 3]) n).card = 0 := by
+  rw [Finset.card_eq_zero, Finset.eq_empty_iff_forall_notMem]
+  intro π hπ
+  simp only [sortedPermutations, Finset.mem_filter, List.mem_toFinset, List.mem_permutations] at hπ
+  obtain ⟨hperm, hsort⟩ := hπ
+  have hlen := hperm.length_eq
+  simp only [List.length_range'] at hlen
+  rcases π with _ | ⟨b, _ | ⟨a, _ | ⟨x, xs⟩⟩⟩ <;>
+    simp only [List.length_cons, List.length_nil] at hlen <;> try omega
+  change (restrictedStackSortAux bad (b :: a :: x :: xs) []) = _ at hsort
+  rw [run_push (bad_short b [] (by simp)), run_push (bad_short a [b] (by simp))] at hsort
+  exact not_increasing_after_two_pushes (hsort ▸ List.pairwise_lt_range')
+
 namespace card_sortedPermutations_consecutiveCyclicStackSort_321
 
 private def bad (st : List ℕ) : Prop :=
@@ -29,7 +148,7 @@ private instance decidableBad : DecidablePred bad := fun st => by
   unfold bad
   infer_instance
 
-private abbrev run := restrictedStackSortAux bad
+local notation "run" => restrictedStackSortAux bad
 
 private theorem rotations :
     ([3, 2, 1] : List ℕ).cyclicPermutations = [[3, 2, 1], [2, 1, 3], [1, 3, 2]] := by decide
@@ -68,42 +187,6 @@ private theorem bad_push_iff {x a b : ℕ} {st : List ℕ}
   have hab := (List.pairwise_cons.mp hs).1 b (by simp)
   rw [bad_three]
   simp [hab.not_gt, increasing_good hs]
-
-private def popCount (x : ℕ) (st : List ℕ) : ℕ :=
-  ((List.range (st.length + 1)).find? fun k => !decide (bad (x :: st.drop k))).getD st.length
-
-private theorem popCount_cons (x y : ℕ) (st : List ℕ) :
-    popCount x (y :: st) = if bad (x :: y :: st) then popCount x st + 1 else 0 := by
-  unfold popCount
-  rw [List.length_cons, List.range_succ_eq_map, List.find?_cons, List.find?_map]
-  simp only [List.drop_zero, List.drop_succ_cons, Function.comp_def]
-  split_ifs <;> simp_all
-
-private theorem run_pop {x y xs st} (hb : bad (x :: y :: st)) :
-    run (x :: xs) (y :: st) = y :: run (x :: xs) st := by
-  change (y :: st).take (popCount x (y :: st)) ++
-    run xs (x :: (y :: st).drop (popCount x (y :: st))) =
-    y :: (st.take (popCount x st) ++ run xs (x :: st.drop (popCount x st)))
-  simp [popCount_cons, hb]
-
-private theorem run_push {x xs st} (hg : ¬bad (x :: st)) :
-    run (x :: xs) st = run xs (x :: st) := by
-  have hz : popCount x st = 0 := by
-    cases st with
-    | nil => simp [popCount, List.range_succ_eq_map, hg]
-    | cons y st => simp [popCount_cons, hg]
-  change st.take (popCount x st) ++ run xs (x :: st.drop (popCount x st)) = _
-  simp [hz]
-
--- Entries already on the stack leave it in their current relative order.
-private theorem stack_sublist (xs st : List ℕ) : st.Sublist (run xs st) := by
-  induction xs generalizing st with
-  | nil => exact .refl _
-  | cons x xs ih =>
-    let k := popCount x st
-    change st.Sublist (st.take k ++ run xs (x :: st.drop k))
-    have h := (List.sublist_cons_self x (st.drop k)).trans (ih (x :: st.drop k))
-    simpa using (List.Sublist.refl (st.take k)).append h
 
 private theorem increasing_cons {x a : ℕ} {st : List ℕ}
     (hx : x < a) (hs : (a :: st).Pairwise (· < ·)) : (x :: a :: st).Pairwise (· < ·) :=
@@ -228,7 +311,7 @@ private theorem sorts_iff_choices {k lo b : ℕ} {s st : List ℕ}
     rw [List.range'_one] at hp ⊢
     obtain rfl := hp.eq_singleton
     rw [push_smaller (by omega : lo < b) hs]
-    simp [run, restrictedStackSortAux, choices]
+    simp [restrictedStackSortAux, choices]
   | succ k ih =>
     have hlen := hp.length_eq
     simp only [List.length_range'] at hlen

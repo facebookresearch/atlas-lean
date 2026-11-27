@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.ExtendedCunninghamChain
+public import MathlibExt.NumberTheory.PrimeWalkAppendingDigits
 public import MathlibExt.NumberTheory.WalkingToInfinity
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Nat.Squarefree
@@ -18,19 +19,6 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Real
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Walking to infinity on primes by appending decimal digits.** For every prime $p_0$ there is
-a sequence of primes $p_0, p_1, p_2, \ldots$ starting at $p_0$ such that for every $i \ge 1$ there
-are integers $n_i \ge 1$ and $k_i$ with $0 < k_i < 10^{n_i}$ and $p_i = 10^{n_i} p_{i-1} + k_i$;
-that is, each term is obtained from the previous one by appending $n_i$ decimal digits on the
-right.
-
-Source: Steven J. Miller, Fei Peng, Tudor Popescu, Joshua M. Siktar, and Nawapan
-Wattanawanichkul, *Walking to Infinity Along Some Number Theory Sequences*, INTEGERS 24 (2024),
-Article A78, Theorem 2.3. -/
-public theorem_wanted exists_prime_walk_appending_decimal_digits (p₀ : ℕ) (hp₀ : p₀.Prime) :
-    ∃ p : ℕ → ℕ, p 0 = p₀ ∧ (∀ i, (p i).Prime) ∧
-      ∀ i, ∃ n k : ℕ, 0 < n ∧ 0 < k ∧ k < 10 ^ n ∧ p (i + 1) = 10 ^ n * p i + k
 
 /-- **Counting right-truncatable square-free numbers.** For natural numbers $b$ and $k$,
 $L_{b,k}$ is the number of right-truncatable square-free numbers with exactly $k$ digits in
