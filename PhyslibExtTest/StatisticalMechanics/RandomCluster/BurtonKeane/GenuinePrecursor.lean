@@ -22,12 +22,15 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineP
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.GenuinePrecursor
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation _root_.StatMech.Walls
 
 -- Interior plus boundary decomposition for the upper-lines configuration.
-example : bc89_genuineTcount bc60_upperLines 3 ≤
+example : bc48_Tcount_classical 2 bc60_upperLines 3 ≤
     (bc97_interiorGenuineFinset bc60_upperLines 3).card + boxSV_boundaryCard 2 3 :=
   bc97_genuineCount_le_interior_plus_boundary _ 3
 
@@ -39,13 +42,13 @@ example (ω : ConfigSpace (Sym2 (Site 2))) :
 -- A precursor configuration becomes a classical trifurcation after forcing.
 example (a₁ a₂ a₃ x₁ x₂ x₃ : Site 2) (ω : ConfigSpace (Sym2 (Site 2)))
     (h : ω ∈ bc97_SingleSitePrecursor 2 a₁ a₂ a₃ x₁ x₂ x₃) :
-    bc89_GenuineTrif 2 (forceOpenFinset {s((0 : Site 2), a₁), s(0, a₂), s(0, a₃)} ω) 0 :=
+    IsEncounterPoint 2 (forceOpenFinset {s((0 : Site 2), a₁), s(0, a₂), s(0, a₃)} ω) 0 :=
   bc97_precursor_subset_force_genuineTrif a₁ a₂ a₃ x₁ x₂ x₃ h
 
 -- The same through `bc97_forceOrigin_genuineTrif`.
 example (a₁ a₂ a₃ x₁ x₂ x₃ : Site 2) (ω : ConfigSpace (Sym2 (Site 2)))
     (h : ω ∈ bc97_SingleSitePrecursor 2 a₁ a₂ a₃ x₁ x₂ x₃) :
-    bc89_GenuineTrif 2 (forceOpenFinset {s((0 : Site 2), a₁), s(0, a₂), s(0, a₃)} ω) 0 :=
+    IsEncounterPoint 2 (forceOpenFinset {s((0 : Site 2), a₁), s(0, a₂), s(0, a₃)} ω) 0 :=
   bc97_forceOrigin_genuineTrif ω h.1 h.2.1 h.2.2.1 h.2.2.2
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.GenuinePrecursor

@@ -21,6 +21,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestAr
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.ForestArmDensity
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.ConfigSpace
@@ -28,7 +31,8 @@ open _root_.StatMech.Percolation _root_.StatMech.Walls MeasureTheory
 open scoped NNReal
 
 -- The upper lines have no genuine trifurcation in the radius-3 box, yet `N = ⊤`.
-example : bc89_genuineTcount bc60_upperLines 3 = 0 ∧ numInfiniteClusters 2 bc60_upperLines = ⊤ :=
+example : bc48_Tcount_classical 2 bc60_upperLines 3 = 0 ∧
+    numInfiniteClusters 2 bc60_upperLines = ⊤ :=
   bc95_status.{0}.2.2.2.2.2 3
 
 -- The complete graph on three vertices has a spanning forest.
@@ -38,7 +42,7 @@ example : ∃ F : SimpleGraph (Fin 3), F ≤ ⊤ ∧ F.IsAcyclic ∧
 
 -- Probability zero plus single-site rewiring exclude `N = ⊤`.
 example (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ]
-    (h0 : μ {ω | bc89_GenuineTrif 2 ω 0} = 0) (hrw : bc95_SingleSiteRewiring μ) :
+    (h0 : μ {ω | IsEncounterPoint 2 ω 0} = 0) (hrw : bc95_SingleSiteRewiring μ) :
     μ {ω | numInfiniteClusters 2 ω = ⊤} = 0 :=
   bc95_bk_from_residues μ h0 hrw
 

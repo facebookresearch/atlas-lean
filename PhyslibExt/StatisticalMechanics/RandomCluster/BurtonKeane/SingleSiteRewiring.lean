@@ -53,6 +53,9 @@ a positive-probability classical trifurcation.
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint measurableSet_isEncounterPoint)
+
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
 open StatMech StatMech.Lattice StatMech.ConfigSpace
@@ -84,7 +87,7 @@ lemma bc96_genuineTrif_of_reachOrigin_full (ω : ConfigSpace (Sym2 (Site d)))
       cluster d (removeSite 0 ω) x₁ ≠ cluster d (removeSite 0 ω) x₃ ∧
       cluster d (removeSite 0 ω) x₂ ≠ cluster d (removeSite 0 ω) x₃)
     (hopen : ω s(0, a₁) = true ∧ ω s(0, a₂) = true ∧ ω s(0, a₃) = true) :
-    bc89_GenuineTrif d ω 0 := by
+    IsEncounterPoint d ω 0 := by
   obtain ⟨hadj1, hadj2, hadj3⟩ := hadj
   obtain ⟨hc1, hc2, hc3⟩ := hconn
   obtain ⟨hi1, hi2, hi3⟩ := hinf
@@ -105,9 +108,6 @@ lemma bc96_genuineTrif_of_reachOrigin_full (ω : ConfigSpace (Sym2 (Site d)))
   have hne12 : a₁ ≠ a₂ := fun hh => nd12 (by rw [hh])
   have hne13 : a₁ ≠ a₃ := fun hh => nd13 (by rw [hh])
   have hne23 : a₂ ≠ a₃ := fun hh => nd23 (by rw [hh])
-  have hnx1 : a₁ ≠ (0 : Site d) := fun hh => hadj1.ne' (by rw [hh])
-  have hnx2 : a₂ ≠ (0 : Site d) := fun hh => hadj2.ne' (by rw [hh])
-  have hnx3 : a₃ ≠ (0 : Site d) := fun hh => hadj3.ne' (by rw [hh])
   have hai1 : (cluster d (removeSite 0 ω) a₁).Infinite := by rw [ea1]; exact hi1
   have hai2 : (cluster d (removeSite 0 ω) a₂).Infinite := by rw [ea2]; exact hi2
   have hai3 : (cluster d (removeSite 0 ω) a₃).Infinite := by rw [ea3]; exact hi3
@@ -117,74 +117,34 @@ lemma bc96_genuineTrif_of_reachOrigin_full (ω : ConfigSpace (Sym2 (Site d)))
     fun hh => nd13 (cluster_eq_of_connected hh)
   have hsep23 : ¬ Connected d (removeSite 0 ω) a₂ a₃ :=
     fun hh => nd23 (cluster_eq_of_connected hh)
-  refine ⟨a₁, a₂, a₃, ⟨hne12, hne13, hne23⟩, ⟨hnx1, hnx2, hnx3⟩,
+  refine ⟨a₁, a₂, a₃, ⟨hne12, hne13, hne23⟩,
     ⟨⟨hadj1, ho1⟩, ⟨hadj2, ho2⟩, ⟨hadj3, ho3⟩⟩,
     ⟨hai1, hai2, hai3⟩, ⟨hsep12, hsep13, hsep23⟩⟩
 
 lemma bc96_measurableSet_genuineTrif (x : Site d) :
-    MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | bc89_GenuineTrif d ω x} := by
-  classical
-  have heq : {ω : ConfigSpace (Sym2 (Site d)) | bc89_GenuineTrif d ω x}
-      = ⋃ a₁ : Site d, ⋃ a₂ : Site d, ⋃ a₃ : Site d,
-          ((if (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧ (a₁ ≠ x ∧ a₂ ≠ x ∧ a₃ ≠ x)
-              then Set.univ else ∅)
-            ∩ ({ω | (openSubgraph d ω).Adj x a₁} ∩ {ω | (openSubgraph d ω).Adj x a₂}
-                ∩ {ω | (openSubgraph d ω).Adj x a₃})
-            ∩ ({ω | (cluster d (removeSite x ω) a₁).Infinite}
-                ∩ {ω | (cluster d (removeSite x ω) a₂).Infinite}
-                ∩ {ω | (cluster d (removeSite x ω) a₃).Infinite})
-            ∩ ({ω | ¬ Connected d (removeSite x ω) a₁ a₂}
-                ∩ {ω | ¬ Connected d (removeSite x ω) a₁ a₃}
-                ∩ {ω | ¬ Connected d (removeSite x ω) a₂ a₃})) := by
-    ext ω
-    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
-    constructor
-    · rintro ⟨a₁, a₂, a₃, hne, hnx, hadj, hinf, hsep⟩
-      refine ⟨a₁, a₂, a₃, ⟨⟨⟨?_, ⟨⟨hadj.1, hadj.2.1⟩, hadj.2.2⟩⟩,
-        ⟨⟨hinf.1, hinf.2.1⟩, hinf.2.2⟩⟩, ⟨⟨hsep.1, hsep.2.1⟩, hsep.2.2⟩⟩⟩
-      rw [ite_eq_left ⟨hne, hnx⟩]; exact Set.mem_univ _
-    · rintro ⟨a₁, a₂, a₃, ⟨⟨⟨hif, ⟨⟨ha1, ha2⟩, ha3⟩⟩, ⟨⟨hi1, hi2⟩, hi3⟩⟩, ⟨⟨hs1, hs2⟩, hs3⟩⟩⟩
-      by_cases hh : (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧ (a₁ ≠ x ∧ a₂ ≠ x ∧ a₃ ≠ x)
-      · exact ⟨a₁, a₂, a₃, hh.1, hh.2, ⟨ha1, ha2, ha3⟩, ⟨hi1, hi2, hi3⟩, ⟨hs1, hs2, hs3⟩⟩
-      · rw [ite_eq_right hh] at hif; exact absurd hif (Set.notMem_empty _)
-  rw [heq]
-  refine MeasurableSet.iUnion fun a₁ => MeasurableSet.iUnion fun a₂ =>
-    MeasurableSet.iUnion fun a₃ => ?_
-  apply MeasurableSet.inter
-  apply MeasurableSet.inter
-  apply MeasurableSet.inter
-  · by_cases hh : (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧ (a₁ ≠ x ∧ a₂ ≠ x ∧ a₃ ≠ x)
-    · rw [ite_eq_left hh]; exact MeasurableSet.univ
-    · rw [ite_eq_right hh]; exact MeasurableSet.empty
-  · exact ((StatMech.Percolation.measurableSet_openAdj x a₁).inter (StatMech.Percolation.measurableSet_openAdj x a₂)).inter
-      (StatMech.Percolation.measurableSet_openAdj x a₃)
-  · exact ((Percolation.DisjointPaths.measurableSet_clusterInfinite_removeSite x a₁).inter
-      (Percolation.DisjointPaths.measurableSet_clusterInfinite_removeSite x a₂)).inter
-      (Percolation.DisjointPaths.measurableSet_clusterInfinite_removeSite x a₃)
-  · exact (((measurableSet_connected_removeSite x a₁ a₂).compl).inter
-      ((measurableSet_connected_removeSite x a₁ a₃).compl)).inter
-      ((measurableSet_connected_removeSite x a₂ a₃).compl)
+    MeasurableSet {ω : ConfigSpace (Sym2 (Site d)) | IsEncounterPoint d ω x} :=
+  measurableSet_isEncounterPoint x
 
 lemma bc96_singleSiteRewiring_of_precursor
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (hfe : HasFiniteEnergyMerge μ)
     (hpre : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
       ∃ (G : Finset (Sym2 (Site d))) (A : Set (ConfigSpace (Sym2 (Site d)))),
-        0 < μ A ∧ A ⊆ (fun ω => forceOpenFinset G ω) ⁻¹' {ω | bc89_GenuineTrif d ω 0}) :
+        0 < μ A ∧ A ⊆ (fun ω => forceOpenFinset G ω) ⁻¹' {ω | IsEncounterPoint d ω 0}) :
     bc95_SingleSiteRewiring μ := by
   intro hpos
   obtain ⟨G, A, hApos, hAsub⟩ := hpre hpos
-  have htgt : 0 < μ {ω | bc89_GenuineTrif d ω 0} :=
+  have htgt : 0 < μ {ω | IsEncounterPoint d ω 0} :=
     DisjointPaths.pos_of_forceOpen_preimage μ hfe G (bc96_measurableSet_genuineTrif 0) hAsub hApos
-  exact ⟨{ω | bc89_GenuineTrif d ω 0}, htgt, subset_rfl⟩
+  exact ⟨{ω | IsEncounterPoint d ω 0}, htgt, subset_rfl⟩
 
 lemma bc96_bk_from_precursor
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (hfe : HasFiniteEnergyMerge μ)
-    (hprob0 : μ {ω | bc89_GenuineTrif d ω 0} = 0)
+    (hprob0 : μ {ω | IsEncounterPoint d ω 0} = 0)
     (hpre : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
       ∃ (G : Finset (Sym2 (Site d))) (A : Set (ConfigSpace (Sym2 (Site d)))),
-        0 < μ A ∧ A ⊆ (fun ω => forceOpenFinset G ω) ⁻¹' {ω | bc89_GenuineTrif d ω 0}) :
+        0 < μ A ∧ A ⊆ (fun ω => forceOpenFinset G ω) ⁻¹' {ω | IsEncounterPoint d ω 0}) :
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
   bc95_bk_from_residues μ hprob0 (bc96_singleSiteRewiring_of_precursor μ hfe hpre)
 
@@ -207,7 +167,7 @@ lemma bc96_genuineTrif_of_mco (ω : ConfigSpace (Sym2 (Site d)))
     (hopen : ∀ a : Site d, (hypercubicLattice d).Adj 0 a →
       (∃ x, Connected d (removeSite 0 ω) a x ∧ (cluster d (removeSite 0 ω) x).Infinite) →
       ω s(0, a) = true) :
-    bc89_GenuineTrif d ω 0 := by
+    IsEncounterPoint d ω 0 := by
   obtain ⟨a₁, a₂, a₃, x₁, x₂, x₃, hadj, hconn, hinf, hdist⟩ := h
   refine bc96_genuineTrif_of_reachOrigin_full ω hadj hconn hinf hdist ?_
   refine ⟨hopen a₁ hadj.1 ⟨_, hconn.1, hinf.1⟩,
@@ -228,22 +188,22 @@ lemma bc96_status :
         cluster 2 (removeSite 0 ω) x₁ ≠ cluster 2 (removeSite 0 ω) x₃ ∧
         cluster 2 (removeSite 0 ω) x₂ ≠ cluster 2 (removeSite 0 ω) x₃) →
       (ω s(0, a₁) = true ∧ ω s(0, a₂) = true ∧ ω s(0, a₃) = true) →
-      bc89_GenuineTrif 2 ω 0) ∧
-    (MeasurableSet {ω : ConfigSpace (Sym2 (Site 2)) | bc89_GenuineTrif 2 ω 0}) ∧
+      IsEncounterPoint 2 ω 0) ∧
+    (MeasurableSet {ω : ConfigSpace (Sym2 (Site 2)) | IsEncounterPoint 2 ω 0}) ∧
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ],
       HasFiniteEnergyMerge μ →
       (0 < μ {ω | numInfiniteClusters 2 ω = ⊤} →
         ∃ (G : Finset (Sym2 (Site 2))) (A : Set (ConfigSpace (Sym2 (Site 2)))),
-          0 < μ A ∧ A ⊆ (fun ω => forceOpenFinset G ω) ⁻¹' {ω | bc89_GenuineTrif 2 ω 0}) →
+          0 < μ A ∧ A ⊆ (fun ω => forceOpenFinset G ω) ⁻¹' {ω | IsEncounterPoint 2 ω 0}) →
       bc95_SingleSiteRewiring μ) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (x a : Site 2),
       (cluster 2 (removeSite x ω) a).Infinite → ∀ n : ℕ,
       ∃ z, z ∉ box 2 n ∧ Connected 2 (removeSite x ω) a z) ∧
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ],
-      HasFiniteEnergyMerge μ → μ {ω | bc89_GenuineTrif 2 ω 0} = 0 →
+      HasFiniteEnergyMerge μ → μ {ω | IsEncounterPoint 2 ω 0} = 0 →
       (0 < μ {ω | numInfiniteClusters 2 ω = ⊤} →
         ∃ (G : Finset (Sym2 (Site 2))) (A : Set (ConfigSpace (Sym2 (Site 2)))),
-          0 < μ A ∧ A ⊆ (fun ω => forceOpenFinset G ω) ⁻¹' {ω | bc89_GenuineTrif 2 ω 0}) →
+          0 < μ A ∧ A ⊆ (fun ω => forceOpenFinset G ω) ⁻¹' {ω | IsEncounterPoint 2 ω 0}) →
       μ {ω | numInfiniteClusters 2 ω = ⊤} = 0) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro ω a₁ a₂ a₃ x₁ x₂ x₃ hadj hconn hinf hdist hopen

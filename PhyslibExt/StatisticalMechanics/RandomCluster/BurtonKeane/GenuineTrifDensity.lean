@@ -29,7 +29,7 @@ is at most the boundary almost surely, while translation invariance makes its ex
 proportional to the volume; so a null origin trifurcation event excludes `N = ∞`.
 
 The trifurcation notion here is the classical one: three open neighbours whose clusters stay
-infinite and pairwise disjoint after the centre is removed (`bc89_GenuineTrif`). For that notion the
+infinite and pairwise disjoint after the centre is removed (`IsEncounterPoint`). For that notion the
 counting bound is the classical deterministic Burton–Keane estimate; results that assume a
 certificate for every configuration remain conditional on it.
 
@@ -54,6 +54,9 @@ certificate for every configuration remain conditional on it.
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
 open StatMech StatMech.Lattice StatMech.ConfigSpace
@@ -75,21 +78,21 @@ variable {d : ℕ}
 classical trifurcation at the origin. -/
 def bc94_GenuineTrifExistence (μ : Measure (ConfigSpace (Sym2 (Site d)))) : Prop :=
   0 < μ {ω | numInfiniteClusters d ω = ⊤} →
-    0 < μ {ω | bc89_GenuineTrif d ω 0}
+    0 < μ {ω | IsEncounterPoint d ω 0}
 
 /-! ## B. Results -/
 
 lemma bc94_count_bound_under_top (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (_hN : numInfiniteClusters d ω = ⊤) (h : bst_BoxOpenForest ω n) :
-    bc89_genuineTcount ω n ≤ boxSV_boundaryCard d n :=
+    bc48_Tcount_classical d ω n ≤ boxSV_boundaryCard d n :=
   bc89_genuineTcount_le_boundary_of_openForest ω n h
 
 lemma bc94_count_bound_under_ge_two (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) (hn : 1 ≤ n)
     (_hN : 2 ≤ numInfiniteClusters d ω)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → bc89_GenuineTrif d ω x)
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
       ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n) :
-    bc89_genuineTcount ω n ≤ boxSV_boundaryCard d n :=
+    bc48_Tcount_classical d ω n ≤ boxSV_boundaryCard d n :=
   bc90_genuineTcount_le_boundary_of_genuine_armsInBox ω n hn hcanon harmbox
 
 /-- Almost every configuration has a box open forest in every box `B_n`. -/
@@ -98,24 +101,24 @@ def bc94_DensityForestResidue (μ : Measure (ConfigSpace (Sym2 (Site d)))) : Pro
 
 lemma bc94_ae_genuineCount_bound_of_residue (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (hres : bc94_DensityForestResidue μ) (n : ℕ) :
-    ∀ᵐ ω ∂μ, bc89_genuineTcount ω n ≤ boxSV_boundaryCard d n := by
+    ∀ᵐ ω ∂μ, bc48_Tcount_classical d ω n ≤ boxSV_boundaryCard d n := by
   filter_upwards [hres n] with ω hω
   exact bc89_genuineTcount_le_boundary_of_openForest ω n hω
 
 lemma bc94_upperLines_zero_density_and_N_top (n : ℕ) :
-    bc89_genuineTcount bc60_upperLines n = 0 ∧
+    bc48_Tcount_classical 2 bc60_upperLines n = 0 ∧
     numInfiniteClusters 2 bc60_upperLines = ⊤ :=
   ⟨bc89_upperLines_genuineTcount_zero n, bc60_numInfiniteClusters_top⟩
 
 lemma bc94_forward_density_uses_top (μ : Measure (ConfigSpace (Sym2 (Site d))))
     (hexist : bc94_GenuineTrifExistence μ)
     (hpos : 0 < μ {ω | numInfiniteClusters d ω = ⊤}) :
-    0 < μ {ω | bc89_GenuineTrif d ω 0} :=
+    0 < μ {ω | IsEncounterPoint d ω 0} :=
   hexist hpos
 
 lemma bc94_exclude_top_of_density (μ : Measure (ConfigSpace (Sym2 (Site d))))
     [IsProbabilityMeasure μ]
-    (hprob0 : μ {ω | bc89_GenuineTrif d ω 0} = 0)
+    (hprob0 : μ {ω | IsEncounterPoint d ω 0} = 0)
     (hexist : bc94_GenuineTrifExistence μ) :
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 := by
   by_contra htop
@@ -128,7 +131,7 @@ lemma bc94_circularity_contrast (ω : ConfigSpace (Sym2 (Site d))) (L n : ℕ) :
     ((numInfiniteClusters d ω ≤ 1 → ∀ y', ¬ bc93_BadBox ω L y') ∧
      (∀ y', bc93_BadBox ω L y' → 2 ≤ numInfiniteClusters d ω)) ∧
     (numInfiniteClusters d ω = ⊤ → bst_BoxOpenForest ω n →
-      bc89_genuineTcount ω n ≤ boxSV_boundaryCard d n) := by
+      bc48_Tcount_classical d ω n ≤ boxSV_boundaryCard d n) := by
   refine ⟨⟨fun hN y' => bc93_no_badBox_of_le_one ω L hN y', ?_⟩, ?_⟩
   · intro y' h; exact bc93_two_le_numInfinite_of_badBox ω L h
   · intro hN h; exact bc94_count_bound_under_top ω n hN h
@@ -137,23 +140,23 @@ lemma bc94_circularity_contrast (ω : ConfigSpace (Sym2 (Site d))) (L n : ℕ) :
 
 lemma bc94_status :
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))), bc94_GenuineTrifExistence μ →
-      0 < μ {ω | numInfiniteClusters 2 ω = ⊤} → 0 < μ {ω | bc89_GenuineTrif 2 ω 0}) ∧
+      0 < μ {ω | numInfiniteClusters 2 ω = ⊤} → 0 < μ {ω | IsEncounterPoint 2 ω 0}) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ), numInfiniteClusters 2 ω = ⊤ →
-      bst_BoxOpenForest ω n → bc89_genuineTcount ω n ≤ boxSV_boundaryCard 2 n) ∧
+      bst_BoxOpenForest ω n → bc48_Tcount_classical 2 ω n ≤ boxSV_boundaryCard 2 n) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ), 1 ≤ n →
-      (∀ x, x ∈ box 2 n → IsTrifurcation 2 ω x → bc89_GenuineTrif 2 ω x) →
+      (∀ x, x ∈ box 2 n → IsTrifurcation 2 ω x → IsEncounterPoint 2 ω x) →
       (∀ x, x ∈ box 2 n → IsTrifurcation 2 ω x →
         ∀ a, (openSubgraph 2 ω).Adj x a → (cluster 2 (removeSite x ω) a).Infinite → a ∈ box 2 n) →
-      bc89_genuineTcount ω n ≤ boxSV_boundaryCard 2 n) ∧
+      bc48_Tcount_classical 2 ω n ≤ boxSV_boundaryCard 2 n) ∧
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ],
-      μ {ω | bc89_GenuineTrif 2 ω 0} = 0 → bc94_GenuineTrifExistence μ →
+      μ {ω | IsEncounterPoint 2 ω 0} = 0 → bc94_GenuineTrifExistence μ →
       μ {ω | numInfiniteClusters 2 ω = ⊤} = 0) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (L n : ℕ),
       ((numInfiniteClusters 2 ω ≤ 1 → ∀ y', ¬ bc93_BadBox ω L y') ∧
        (∀ y', bc93_BadBox ω L y' → 2 ≤ numInfiniteClusters 2 ω)) ∧
       (numInfiniteClusters 2 ω = ⊤ → bst_BoxOpenForest ω n →
-        bc89_genuineTcount ω n ≤ boxSV_boundaryCard 2 n)) ∧
-    (∀ n : ℕ, bc89_genuineTcount bc60_upperLines n = 0 ∧
+        bc48_Tcount_classical 2 ω n ≤ boxSV_boundaryCard 2 n)) ∧
+    (∀ n : ℕ, bc48_Tcount_classical 2 bc60_upperLines n = 0 ∧
       numInfiniteClusters 2 bc60_upperLines = ⊤) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro μ hexist hpos; exact bc94_forward_density_uses_top μ hexist hpos

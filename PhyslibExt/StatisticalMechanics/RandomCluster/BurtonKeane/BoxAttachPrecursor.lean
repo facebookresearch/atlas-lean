@@ -48,6 +48,9 @@ and, with zero probability of a genuine trifurcation at the origin, the Burton�
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
 open StatMech StatMech.Lattice StatMech.ConfigSpace
@@ -207,7 +210,7 @@ lemma bc98_close_a_of_boxAttach
 lemma bc98_bk_from_boxAttach
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (hfe : HasFiniteEnergyMerge μ)
-    (hprob0 : μ {ω | bc89_GenuineTrif d ω 0} = 0)
+    (hprob0 : μ {ω | IsEncounterPoint d ω 0} = 0)
     (hres : ∀ n : ℕ, tex_BoxAttachData d n) :
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
   bc95_bk_from_residues μ hprob0 (bc98_close_a_of_boxAttach μ hfe hres)
@@ -232,7 +235,7 @@ lemma bc98_status :
       HasFiniteEnergyMerge μ → (∀ n : ℕ, tex_BoxAttachData 2 n) →
       bc95_SingleSiteRewiring μ) ∧
     (∀ (μ : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure μ],
-      HasFiniteEnergyMerge μ → μ {ω | bc89_GenuineTrif 2 ω 0} = 0 →
+      HasFiniteEnergyMerge μ → μ {ω | IsEncounterPoint 2 ω 0} = 0 →
       (∀ n : ℕ, tex_BoxAttachData 2 n) →
       μ {ω | numInfiniteClusters 2 ω = ⊤} = 0) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
