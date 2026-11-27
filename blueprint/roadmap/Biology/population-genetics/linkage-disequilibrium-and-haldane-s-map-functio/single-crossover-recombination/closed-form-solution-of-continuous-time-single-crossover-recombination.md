@@ -16,7 +16,7 @@ a large nonlinear system of ordinary differential equations.
 
 $$\omega_t = \sum_{G \subseteq L} a_G(t)\, R_G(\omega_0), \qquad a_G(t) = \prod_{\alpha \in L\setminus G} e^{-\varrho_\alpha t} \prod_{\beta \in G} \big(1 - e^{-\varrho_\beta t}\big).$$
 
-The coefficient $a_G(t)$ is the probability that the set of links of a given sequence that have seen at least one crossover by time $t$ is exactly $G$; its product form says the links act independently. As $t \to \infty$, $\omega_t$ converges to $\|\omega_0\|^{-(n-1)}$ times the product of the $n+1$ single-site marginals of $\omega_0$ (linkage equilibrium).
+The coefficient $a_G(t)$ is the probability that the set of links of a given sequence that have seen at least one crossover by time $t$ is exactly $G$; its product form says the links act independently. As $t \to \infty$, $\omega_t$ converges to $\|\omega_0\|^{-n}$ times the product of the $n+1$ single-site marginals of $\omega_0$ (linkage equilibrium).
 
 **Theorem (Baake, Theorem 2; underlying linearity).** Let $c^{(L')}_{G'}(t)$, $G' \subseteq L' \subseteq L$, be non-negative functions with $\sum_{H \subseteq L'} c^{(L')}_H(t) = 1$ and $c^{(L)}_G = c^{(L_1)}_{G\cap L_1}\, c^{(L_2)}_{G \cap L_2}$ for every partition $L = L_1 \cup L_2$. Then for every non-negative measure $v$ and $H \subseteq L$,
 

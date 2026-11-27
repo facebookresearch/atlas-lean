@@ -9,7 +9,7 @@ so the Malthusian parameter is $m = \varrho(\mathbf M) = R(1-d)$.
 **Theorem.**
 
 1. (Three regimes.) Starting with at least one particle of maximal class $R$, the process is subcritical if $R(1-d) < 1$, so the virus goes extinct almost surely in finite time. It is critical if $R(1-d) = 1$, with almost sure extinction. It is supercritical if $R(1-d) > 1$: the virus survives with positive probability and then grows like $m^n$. The extinction threshold in the $(d,R)$ plane is the curve $R = 1/(1-d)$.
-2. (Lethal mutagenesis.) The population is driven to extinction exactly when $(1-d)R < 1$: the product of the probability of a neutral replication and the maximal replication capacity must fall below $1$. This is a criterion combining a mutational component ($d$) and an ecological component ($R$).
+2. (Lethal mutagenesis.) The population is driven to extinction if $(1-d)R < 1$: the product of the probability of a neutral replication and the maximal replication capacity must fall below $1$. This is a criterion combining a mutational component ($d$) and an ecological component ($R$).
 3. (Stationary class distribution.) In the supercritical case, started with one particle of class $R$, the relative class frequencies converge, up to a random scalar factor, to the binomial distribution
 
 $$u_k = \binom Rk(1-d)^kd^{R-k}, \qquad k = 0,\dots,R .$$

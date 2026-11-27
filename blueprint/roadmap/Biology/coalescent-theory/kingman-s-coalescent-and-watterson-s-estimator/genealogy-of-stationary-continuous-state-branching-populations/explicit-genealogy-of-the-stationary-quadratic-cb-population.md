@@ -15,7 +15,7 @@ for which $u(\lambda,t) = \dfrac{2\theta\lambda}{(2\theta+\lambda)e^{2\theta\bet
 $$\big(Z^A, Z^I, Z^O\big) \overset{d}{=} \Big(\frac{\mathbf e_1+\mathbf e_2}{2\theta + c(t)},\ \frac{\mathbf e_3+\mathbf e_4}{2\theta + c(t)},\ \frac{\mathbf e_5}{2\theta + c(t)}\Big).$$
 
 4. (**Quantified bottleneck.**) Almost surely $\mathbb P(Z^A < Z\mid A) = \tfrac{11}{16}$ and $\mathbb E[Z^A\mid A] = \tfrac23\,\mathbb E[Z\mid A]$; hence $\mathbb P(Z^A < Z) = \tfrac{11}{16}$ and $\mathbb E[Z^A] = \tfrac23\,\mathbb E[Z]$: on average the population just before its MRCA is one third smaller than the current population.
-5. Conditionally on $Z$, $\mathbb P(A > t\mid Z) = e^{-c(t)Z}$, the probability that a CB started from $Z$ is still alive at time $t$.
+5. Conditionally on $Z$, $\mathbb{P}(A \le t \mid Z) = e^{-c(t)Z} = \mathbb{P}_Z(\zeta \le t)$: given $Z$, $A$ has the law of the extinction time $\zeta$ of a CB started from $Z$.
 
 ## Depends on
 
