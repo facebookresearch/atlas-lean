@@ -22,7 +22,7 @@ with $\|\cdot\|_1$ the entrywise $\ell_1$ norm and $\|\cdot\|_*$ the nuclear nor
 
 ## Depends on
 
-- [Gaussian conditioning (Schur complement)](../../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-multivariate-gaussian.md)
+- [Gaussian conditioning (Schur complement)](../../../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-multivariate-gaussian.md)
 
 ## Expansion
 

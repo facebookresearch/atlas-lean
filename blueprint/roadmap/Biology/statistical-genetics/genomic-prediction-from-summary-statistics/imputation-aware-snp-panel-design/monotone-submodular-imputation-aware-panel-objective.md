@@ -22,4 +22,4 @@ The coverage term is a facility-location function: for each locus $j$, $f_j(S) =
 
 ## Sources
 
-- Y. Xu and X. Tan, *Imputation-aware optimization of ultra-low-density SNP panels: synthetic benchmarking and evaluation*, Plants 15(21) (2026), 3346, Eqs. (2)–(6), Theorems 1–2, Lemma 1 and Proposition 2. <https://doi.org/10.3390/plants15213346>
+- Y. Xu and X. Tan, *Imputation-aware optimization of ultra-low-density SNP panels: synthetic benchmarking and evaluation in a Camellia oleifera family*, Plants 15(21) (2026), 3346, Eqs. (2)–(6), Theorems 1–2, Lemma 1 and Proposition 2. <https://doi.org/10.3390/plants15213346>

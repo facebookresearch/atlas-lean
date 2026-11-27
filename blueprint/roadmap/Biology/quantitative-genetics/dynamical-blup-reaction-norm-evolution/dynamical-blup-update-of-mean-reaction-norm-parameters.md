@@ -7,16 +7,18 @@ $$y_{j,i,t}=\big(\bar a_{j,t}+a'_{j,i,t}+v_{j,i,t}\big)+\sum_{k=1}^q\big(\bar b_
 where $\bar a,\bar b$ are population mean intercepts and slopes, $x_{i,t}=(a'_{\cdot,i,t},b'_{\cdot\cdot,i,t})$ are zero-mean additive genetic deviations with covariance $G$, and $v,\eta$ are zero-mean non-additive effects with variances giving the residual covariance $R_t$ (diagonal, depending on $u_t$). Writing $y_{i,t}=\bar y_t+Z_tx_{i,t}+e_{i,t}$ with design matrix $Z_t=[\,I_p\ \ I_p\otimes u_t^\top]$, Henderson's mixed-model equations with the $n\times n$ additive relationship matrix $A_t$ give BLUP predictions $\hat x_{i,t}$ of the individual reaction-norm deviations from phenotypes alone. Let $w_{i,t}$ be relative fitness (number of descendants normalized to mean 1).
 
 **Theorem.**
-1. (Update rule.) In a population described by this model, the generation-to-generation change of every mean reaction-norm parameter $\bar z_t\in\{\bar a_{j,t},\bar b_{jk,t}\}$ is given by Robertson's secondary theorem of natural selection applied to the BLUP-predicted deviations,
+
+**Part 1 (update rule).** In a population described by this model, the generation-to-generation change of every mean reaction-norm parameter $\bar z_t\in\{\bar a_{j,t},\bar b_{jk,t}\}$ is given by Robertson's secondary theorem of natural selection applied to the BLUP-predicted deviations,
 
 $$\Delta\bar z_t=\operatorname{cov}\big(w_{i,t},\hat z'_{i,t}\big).$$
 
-2. (Selection-gradient form.) With unrelated individuals, $A_t=I_n$, the update can be written
+**Part 2 (selection-gradient form).** With unrelated individuals, $A_t=I_n$, the update can be written
 
 $$\Delta\begin{pmatrix}\bar a_t\\ \bar b_t\end{pmatrix}=G\,Z_t^\top P_{yy,t}^{-1}\operatorname{cov}(w_{i,t},y_{i,t}),\qquad P_{yy,t}=Z_tPZ_t^\top,$$
 
 where $P$ is the phenotypic covariance of the individual reaction-norm parameters and $P_{yy,t}^{-1}\operatorname{cov}(w,y)$ is the selection gradient on the expressed traits.
-3. (Consistency.) Under the standard assumptions of the multivariate breeder's equation (additive plus i.i.d. non-additive effects, multivariate normality, fitness acting only through phenotype, no non-selective change of breeding values) and $A_t=I_n$, the dynamical BLUP model and the multivariate breeder's equation $\Delta\bar\theta=GP^{-1}\operatorname{cov}(w,\theta)$ for the reaction-norm parameters $\theta$ give identical mean responses.
+
+**Part 3 (consistency).** Under the standard assumptions of the multivariate breeder's equation (additive plus i.i.d. non-additive effects, multivariate normality, fitness acting only through phenotype, no non-selective change of breeding values) and $A_t=I_n$, the dynamical BLUP model and the multivariate breeder's equation $\Delta\bar\theta=GP^{-1}\operatorname{cov}(w,\theta)$ for the reaction-norm parameters $\theta$ give identical mean responses.
 
 ## Expansion
 
@@ -24,11 +26,11 @@ Robertson's secondary theorem says the response of a mean breeding value equals 
 
 ## Depends on
 
-- [Breeder's equation](../breeder-s-equation/README.md)
-- [Lande's selection gradient](../lande-s-selection-gradient/README.md)
-- [Linear mixed models and BLUP](../linear-mixed-models-and-blup/README.md)
-- [Solution of Henderson's mixed-model equations](../../../Probability/linear-models-multivariate/generalized-least-squares/is-mmesolution.md)
 - [Breeder's equation](../breeder-s-equation/response-eq.md)
+- [Lande's equation for multivariate traits](../lande-s-selection-gradient/selection-differential-mv-eq.md)
+- [The Lande–Arnold selection gradient](../lande-s-selection-gradient/selection-differential-div-eq.md)
+- [BLUP is the conditional expectation](../linear-mixed-models-and-blup/cond-exp-mixed-model.md)
+- [Solution of Henderson's mixed-model equations](../../../Probability/linear-models-multivariate/generalized-least-squares/is-mmesolution.md)
 
 ## Proof depends on
 

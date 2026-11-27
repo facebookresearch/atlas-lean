@@ -13,7 +13,7 @@ is computable from observed variables without the unobserved errors, and $\Delta
 
 ## Depends on
 
-- [Markovian structural causal model](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/structural-causal-models-and-counterfactuals/scm.md)
+- [Markovian structural causal model](../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/structural-causal-models-and-counterfactuals/scm.md)
 
 ## Expansion
 

@@ -1,6 +1,6 @@
 # Multiplicative epistasis equals the natural parameters of a multivariate Bernoulli distribution
 
-**Setting.** For $L$ biallelic loci, a genotype is $x \in \{0,1\}^L$ and has fitness $f_x > 0$; for $T \subseteq \{1,\dots,L\}$ write $f_T$ for the fitness of the genotype mutated exactly at $T$ ($f_\emptyset$ is the wild type). The *multiplicative epistasis measure* of a set $S$ of loci, $|S| \ge 1$, is defined through its logarithm, the alternating sum
+**Setting.** For $L$ biallelic loci, a genotype is $x \in \{0,1\}^L$ and has fitness $f_x$, a real number, positive for Theorem 1 and for the multiplicative measure; for $T \subseteq \{1,\dots,L\}$ write $f_T$ for the fitness of the genotype mutated exactly at $T$ ($f_\emptyset$ is the wild type). The *multiplicative epistasis measure* of a set $S$ of loci, $|S| \ge 1$, is defined through its logarithm, the alternating sum
 
 $$\log \epsilon_S^{M} = \sum_{T \subseteq S} (-1)^{|S| - |T|}\,\log f_T ,$$
 
@@ -12,7 +12,7 @@ $$\log p_x = \sum_{S \subseteq \mathrm{supp}(x)} \beta_S .$$
 
 **Theorem 1.** If $f_x = c\,p_x$ for some constant $c > 0$ and some MVB distribution $p$, then for every non-empty $S$, $\log \epsilon_S^{M} = \beta_S$.
 
-**Corollary 1.** If instead $f_x = c\log p_x$ for some $c > 0$, the additive measure, the same alternating sum applied to $f$, equals $c\,\beta_S$ for every non-empty $S$ (equal to $\beta_S$ on the normalised scale $c = 1$).
+**Corollary 1.** Let the fitness values be real numbers, not necessarily positive. If $f_x = c\log p_x$ for some $c > 0$ and some MVB distribution $p$ (so every $f_x$ is negative), then the additive measure, the same alternating sum applied to $f$, equals $c\,\beta_S$ for every non-empty $S$ (equal to $\beta_S$ on the normalised scale $c = 1$).
 
 ## Depends on
 

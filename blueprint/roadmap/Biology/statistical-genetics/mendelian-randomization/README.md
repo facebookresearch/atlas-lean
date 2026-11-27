@@ -47,6 +47,7 @@ See [potential outcomes and the local average treatment effect](../../../Probabi
 ## Further topics
 
 - [Causal network pruning by MR-separation](causal-network-pruning-by-mr-separation/README.md)
+- [Expression QTLs, trait networks and root causal genes](expression-qtls-trait-networks-and-root-causal-genes/README.md)
 - [Focused instrument selection in Mendelian randomization](focused-instrument-selection-in-mendelian-randomization/README.md)
 - [Mendelian randomization causal networks](mendelian-randomization-causal-networks/README.md)
 - [Nonparametric bounds in two-sample Mendelian randomization](nonparametric-bounds-in-two-sample-mendelian-randomization/README.md)

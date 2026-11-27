@@ -15,6 +15,7 @@ $$p_\pm=\frac{1+3\vartheta\pm\sqrt{(1-\vartheta)^2+8\mu\vartheta/\alpha}}{4\vart
 and analogously $q_\pm$; within the one-locus system the equilibrium at $p_-$ is asymptotically stable whenever admissible and the one at $p_+$ is always unstable. The continental fixation $p=0$ loses stability exactly when $\mu<\alpha(1+\vartheta)$, the invasion rate of a rare island-favoured allele, which appears in heterozygotes.
 
 **Theorem.**
+
 1. Under weak migration and strictly intermediate dominance ($|\vartheta|,|\sigma|<1$) there is a unique, globally asymptotically stable full polymorphism $F_\mu$.
 2. Under linkage equilibrium (strong recombination, $\rho\gg\max\{\alpha,\beta,\mu\}$, $D=0$) the dynamics decouple into the two one-locus dynamics, and the possible full polymorphisms are the four products of $p_\pm$ and $q_\pm$; only $F_1=(p_-,q_-)$ can be stable, and it is stable whenever admissible. As $\mu$ increases there are exactly seven possible bifurcation patterns, determined by $\vartheta,\sigma$ and the ratio $\alpha/\beta$.
 3. For completely linked loci ($\rho=0$) only two bifurcation patterns occur, those of a single diallelic locus.

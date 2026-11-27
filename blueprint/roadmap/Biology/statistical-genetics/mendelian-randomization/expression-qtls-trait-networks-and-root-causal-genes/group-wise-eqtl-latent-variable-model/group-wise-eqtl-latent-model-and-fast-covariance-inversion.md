@@ -18,7 +18,7 @@ $$\Sigma^{-1} = T - TW S^{-1} W^\top T, \qquad S = I_H + W^\top T W, \qquad T = 
 
 ## Depends on
 
-- [Laplace distribution](../../../../Probability/distributions/continuous/laplace-distribution/laplace-measure.md)
+- [Laplace distribution](../../../../../Probability/distributions/continuous/laplace-distribution/laplace-measure.md)
 
 ## Expansion
 

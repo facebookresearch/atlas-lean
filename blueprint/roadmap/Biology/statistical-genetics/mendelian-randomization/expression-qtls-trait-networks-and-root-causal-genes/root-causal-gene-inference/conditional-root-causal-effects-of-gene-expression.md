@@ -19,7 +19,7 @@ where the second equality holds under **exchangeability** (no latent linkage con
 ## Depends on
 
 - [Conditional root causal effects from observed parents](../root-causal-genes/conditional-root-causal-effects-from-observed-parents.md)
-- [d-separation](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/causal-bayesian-networks/dseparated.md)
+- [d-separation](../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/causal-bayesian-networks/dseparated.md)
 
 ## Expansion
 

@@ -2,14 +2,15 @@
 
 Let $a_n = \sum_{i=1}^{n-1} 1/i$, so the normalized neutral spectrum is $1/(i\,a_n)$. For linear neutrality tests $T_\Omega$ with weights $\sum_i \Omega_i = 0$:
 
-1. If $n \ge 4$, then for every such weight vector $\Omega$ there exist numbers $\Delta_i$, not of the form $\text{const}/i$, and $\alpha \in [0,1]$ such that
+**Part 1.** If $n \ge 4$, then for every such weight vector $\Omega$ there exist numbers $\Delta_i$, not of the form $\text{const}/i$, and $\alpha \in [0,1]$ such that
 
 $$\sum_i i\,\Omega_i\,\Delta_i = 0 \quad\text{and}\quad \min_{1 \le i \le n-1}\left(\alpha\,\frac{1}{i\,a_n} + (1-\alpha)\Delta_i\right) = 0.$$
 
 Thus the spectrum $\xi_i = \alpha/(i a_n) + (1-\alpha)\Delta_i$, which completely lacks alleles in some frequency class, gives the test zero expected value and is undetectable by $T_\Omega$.
 
-2. The same holds in the large-sample limit: for every piecewise continuous $\Omega(f) \in L^1[1/N, 1]$ with $\int_{1/N}^1 \Omega(f)\,df = 0$ there is a smooth $\Delta(f) \ne \text{const}/f$ and $\alpha \in [0,1]$ with $\int_{1/N}^1 f\,\Omega(f)\,\Delta(f)\,df = 0$ and $\inf_{f}\left(\alpha \frac{1}{f\log N} + (1-\alpha)\Delta(f)\right) = 0$.
-3. Conversely, given at least $n-2$ linearly independent centred weight vectors, no $\Delta \ne \text{const}/i$ satisfies $\sum_i i\,\Omega_i\,\Delta_i = 0$ for all of them.
+**Part 2.** The same holds in the large-sample limit: for every piecewise continuous $\Omega(f) \in L^1[1/N, 1]$ with $\int_{1/N}^1 \Omega(f)\,df = 0$ there is a smooth $\Delta(f) \ne \text{const}/f$ and $\alpha \in [0,1]$ with $\int_{1/N}^1 f\,\Omega(f)\,\Delta(f)\,df = 0$ and $\inf_{f}\left(\alpha \frac{1}{f\log N} + (1-\alpha)\Delta(f)\right) = 0$.
+
+**Part 3.** Conversely, given at least $n-2$ linearly independent centred weight vectors, no $\Delta \ne \text{const}/i$ satisfies $\sum_i i\,\Omega_i\,\Delta_i = 0$ for all of them.
 
 Hence linear tests must be designed against specific alternatives, or combined.
 

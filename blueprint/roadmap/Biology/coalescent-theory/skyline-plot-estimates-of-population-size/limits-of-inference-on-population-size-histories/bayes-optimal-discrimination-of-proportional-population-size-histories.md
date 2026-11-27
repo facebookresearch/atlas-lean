@@ -6,11 +6,11 @@ $$H_1: N(s) = N_1(s), \qquad H_2: N(s) = c\,N_1(s), \qquad 0 < c < 1,$$
 
 with equal prior probabilities, and let the classifier choose the hypothesis with the larger posterior. Then:
 
-1. from one pairwise coalescence time, the probability of correct classification is
+**Part 1.** From one pairwise coalescence time, the probability of correct classification is
 
 $$P[\text{correct}] = \frac12\,c^{\frac{c}{1-c}} + \frac12\Bigl(1 - c^{\frac{1}{1-c}}\Bigr);$$
 
-2. from $J$ independent pairwise coalescence times (unlinked loci),
+**Part 2.** From $J$ independent pairwise coalescence times (unlinked loci),
 
 $$P[\text{correct}] = \frac12\Bigl(1 - \frac{\gamma\bigl(J,\ \tfrac{Jc\log(1/c)}{1-c}\bigr)}{\Gamma(J)} + \frac{\gamma\bigl(J,\ \tfrac{J\log(1/c)}{1-c}\bigr)}{\Gamma(J)}\Bigr),$$
 

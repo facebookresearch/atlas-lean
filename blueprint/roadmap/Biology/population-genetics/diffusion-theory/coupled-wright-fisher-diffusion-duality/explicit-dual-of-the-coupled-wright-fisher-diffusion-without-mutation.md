@@ -26,7 +26,7 @@ Letting $t\to\infty$ links fixation and extinction probabilities of allele types
 
 ## Expansion
 
-In the neutral one-locus model with parent-independent mutation, $k(n)=B(n+2u)/B(2u)$, which tends to $B(n)$ as $\theta\to0$. This motivates the choice of $k$. With this $k$, every ratio $k(\hat n)/k(n)$ in the general rates is a ratio of Gamma functions, e.g. $B(n-e_i)/B(n)=(n^{(l)}-1)/(n^{(l)}_i-1)$ and $B(n+e_j)/B(n)=n^{(l)}_j/n^{(l)}$. Substituting these turns the implicit rates of the mutation-driven dual into the closed forms above. Since there is no mutation, the mutation jumps disappear, and the same generator calculation and duality criterion give the process duality.
+In the neutral one-locus model with parent-independent mutation, $k(n)=B(n+2u)/B(2u)$. As $\theta\to0$ the constant $B(2u)$ diverges while $B(n+2u)$ tends to $B(n)$, so $k(n)$ is asymptotically proportional to $B(n)$. This motivates the choice of $k$. With this $k$, every ratio $k(\hat n)/k(n)$ in the general rates is a ratio of Gamma functions, e.g. $B(n-e_i)/B(n)=(n^{(l)}-1)/(n^{(l)}_i-1)$ and $B(n+e_j)/B(n)=n^{(l)}_j/n^{(l)}$. Substituting these turns the implicit rates of the mutation-driven dual into the closed forms above. Since there is no mutation, the mutation jumps disappear, and the same generator calculation and duality criterion give the process duality.
 
 ## Sources
 

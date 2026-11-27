@@ -4,7 +4,7 @@
 
 **Lemma.** For every non-ancestral haplotype $y \ne 0$,
 
-$$g(y) \ge 2k\,f(y)\,f(0)^{2k-1},\qquad\text{so}\qquad g(y) > f(y)\ \text{ whenever }\ f(0) > \Big(\frac{1}{2k}\Big)^{1/(2k-1)} .$$
+$$g(y) \ge 2k\,f(y)\,f(0)^{2k-1},\qquad\text{so}\qquad g(y) > f(y)\ \text{ whenever }\ f(y)>0\ \text{ and }\ f(0) > \Big(\frac{1}{2k}\Big)^{1/(2k-1)} .$$
 
 Meanwhile $g(0) = f(0)^{2k} < f(0)$: pooling and collapsing move probability from the ancestral haplotype to the non-ancestral ones.
 

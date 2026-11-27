@@ -27,4 +27,4 @@ For the best linear predictor, $\mathbb{E}(G_j - \hat G_j)^2 = \sigma_j^2(1 - R_
 
 ## Sources
 
-- Y. Xu and X. Tan, *Imputation-aware optimization of ultra-low-density SNP panels: synthetic benchmarking and evaluation*, Plants 15(21) (2026), 3346, Proposition 1, Theorem 3 and Corollary 1. <https://doi.org/10.3390/plants15213346>
+- Y. Xu and X. Tan, *Imputation-aware optimization of ultra-low-density SNP panels: synthetic benchmarking and evaluation in a Camellia oleifera family*, Plants 15(21) (2026), 3346, Proposition 1, Theorem 3 and Corollary 1. <https://doi.org/10.3390/plants15213346>

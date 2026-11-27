@@ -6,14 +6,15 @@ $$\Omega_j = \sigma_{Y_j}^2 + \theta_0^2\sigma_{X_j}^2,\quad \eta_C = \sum_{j\in
 
 with $\eta_S, \zeta_S$ the same sums over $S$. The Core and Full estimators minimize the profile objective $\sum_j (\hat\beta_{Y_j} - \hat\beta_{X_j}\theta)^2/(\sigma_{Y_j}^2 + \sigma_{X_j}^2\theta^2)$ over $j \in S_0$ and over $j \in S_0 \cup S$, respectively.
 
-1. The Core estimator satisfies $\Delta_C^{-1/2}(\hat\theta_C - \theta_0) \to N(0,1)$ with $\Delta_C = \eta_C^{-2}(\eta_C + \zeta_C)$.
-2. The Full estimator is consistent, and $\Delta_F^{-1/2}(\hat\theta_F - \theta_0 - b) \to N(0,1)$ with
+**Part 1.** The Core estimator satisfies $\Delta_C^{-1/2}(\hat\theta_C - \theta_0) \to N(0,1)$ with $\Delta_C = \eta_C^{-2}(\eta_C + \zeta_C)$.
+
+**Part 2.** The Full estimator is consistent, and $\Delta_F^{-1/2}(\hat\theta_F - \theta_0 - b) \to N(0,1)$ with
 
 $$\Delta_F = \frac{\eta_C + \eta_S + \zeta_C + \zeta_S}{(\eta_C + \eta_S)^2},\qquad b = \frac{1}{\eta_C + \eta_S}\sum_{j\in S}\frac{\beta_{X_j}\tau_j}{\Omega_j}.$$
 
 The squared bias and the variance are of the same order, so including $S$ trades variance for bias.
 
-3. With $\hat\Omega_j$, $\hat\eta_C$, $\hat\eta_S$ computed by plugging in $\hat\theta_C$ and $\hat\beta_{X_j}^2 - \sigma_{X_j}^2$, the estimator $\hat b = (\hat\eta_C + \hat\eta_S)^{-1}\left[\sum_{j\in S}\hat\Omega_j^{-1}\hat\beta_{X_j}\hat\beta_{Y_j} - \hat\theta_C\sum_{j\in S}\hat\Omega_j^{-1}(\hat\beta_{X_j}^2 - \sigma_{X_j}^2)\right]$ is asymptotically unbiased but not consistent: $\Delta_B^{-1/2}(\hat b - b) \to N(0,1)$ with
+**Part 3.** With $\hat\Omega_j$, $\hat\eta_C$, $\hat\eta_S$ computed by plugging in $\hat\theta_C$ and $\hat\beta_{X_j}^2 - \sigma_{X_j}^2$, the estimator $\hat b = (\hat\eta_C + \hat\eta_S)^{-1}\left[\sum_{j\in S}\hat\Omega_j^{-1}\hat\beta_{X_j}\hat\beta_{Y_j} - \hat\theta_C\sum_{j\in S}\hat\Omega_j^{-1}(\hat\beta_{X_j}^2 - \sigma_{X_j}^2)\right]$ is asymptotically unbiased but not consistent: $\Delta_B^{-1/2}(\hat b - b) \to N(0,1)$ with
 
 $$\Delta_B = (\eta_C + \eta_S)^{-2}\left[\eta_S + \zeta_S + \xi_S + \eta_C^{-2}\eta_S^2(\eta_C + \zeta_C)\right],\qquad \xi_S = 2\theta_0^2\sum_{j\in S}\frac{\sigma_{X_j}^4}{\Omega_j^2}.$$
 

@@ -14,7 +14,7 @@ $$\hat\theta = \frac{x_1^{\top}\hat y_1}{x_1^{\top}x_1}.$$
 
 $$\hat\theta = \theta - \theta\,\frac{\varepsilon^{\top}\varepsilon}{x_1^{\top}x_1} - \theta\,\frac{(Z_1\beta)^{\top}\varepsilon}{x_1^{\top}x_1} + \frac{x_1^{\top}Z_1(\widetilde{\beta\theta} - \beta\theta)}{x_1^{\top}x_1}.$$
 
-Hence $\hat\theta$ is unbiased under $H_0 : \theta = 0$, and for $\theta \ne 0$ its bias comes from the factor $\kappa = \varepsilon^{\top}\varepsilon / x_1^{\top}x_1 = 1 - R^2$, where $R^2$ is the stage-1 coefficient of determination of $x$ on $Z$.
+Hence $\hat\theta$ is unbiased under $H_0 : \theta = 0$, and for $\theta \ne 0$ its bias comes from the factor $\kappa = \varepsilon^{\top}\varepsilon / x_1^{\top}x_1$, the unexplained fraction of stage-1 variance, which is approximately $1 - R^2$ with $R^2$ the population stage-1 coefficient of determination of $x$ on $Z$.
 
 **Corrected estimator.** $\tilde\theta = \hat\theta/(1 - \kappa)$, with $1 - \kappa$ estimated by the Olkin–Pratt or adjusted $R^2$ of the stage-1 regression; as $n_1 \to \infty$, $1 - \kappa$ converges to the population $R^2$, and Theorem 1 gives the asymptotic normal distribution of $\tilde\theta$ including the extra variance term $(Z_1\beta)^{\top}\varepsilon\,\theta/x_1^{\top}x_1$.
 

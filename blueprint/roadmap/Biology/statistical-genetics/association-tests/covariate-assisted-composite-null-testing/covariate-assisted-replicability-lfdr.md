@@ -12,7 +12,9 @@ where $f_{10}=f_{20}=f_{30}$ is the uniform density and the non-null densities l
 
 $$\mathrm{Lfdr}_i=1-P(\theta_{1i}=\theta_{2i}=1\mid p_{1i},p_{2i},x_i)=\frac{\sum_{(k,l,r)\in\mathcal H}\xi_{klr}f_{1k}(p_{1i})f_{2l}(p_{2i})f_{3r}(x_i)}{\sum_{(k,l,r)\in S}\xi_{klr}f_{1k}(p_{1i})f_{2l}(p_{2i})f_{3r}(x_i)},$$
 
-which is non-decreasing in $(p_{1i},p_{2i},x_i)$ when $f_{11},f_{21},f_{31}\in\mathcal G$.
+which is non-decreasing in $p_{1i}$ and in $p_{2i}$ when $f_{11},f_{21}\in\mathcal G$. It is also non-decreasing in $x_i$ when $f_{31}\in\mathcal G$ and the auxiliary signal goes with the replicable state, in the sense that $\xi_{kl1}\xi_{110}\le\xi_{kl0}\xi_{111}$ for every $(k,l)\ne(1,1)$; without this condition monotonicity in $x_i$ can fail.
+
+*Monotonicity.* With $t=f_{31}(x_i)$, $\mathrm{Lfdr}_i/(1-\mathrm{Lfdr}_i)=\sum_{(k,l)\ne(1,1)}\frac{f_{1k}(p_{1i})f_{2l}(p_{2i})}{f_{11}(p_{1i})f_{21}(p_{2i})}\cdot\frac{\xi_{kl0}+\xi_{kl1}t}{\xi_{110}+\xi_{111}t}$. Each first factor is $1$ or a product of the non-decreasing ratios $1/f_{11}(p_{1i})$ and $1/f_{21}(p_{2i})$. The second factor is non-increasing in $t$, hence non-decreasing in $x_i$, exactly when $\xi_{kl1}\xi_{110}\le\xi_{kl0}\xi_{111}$. For instance, with $\xi_{000}=0.3$, $\xi_{001}=0.4$, $\xi_{110}=0.29$, $\xi_{111}=0.01$, the other weights $0$, $f_{11}=f_{21}=f_{31}=2(1-u)$ and $p_{1i}=p_{2i}=0.05$, $\mathrm{Lfdr}_i$ is $0.494$ at $x_i=0.01$ and $0.227$ at $x_i=0.99$. The source states monotonicity in all three arguments without this restriction.
 
 **Covariate as a feature-specific prior.** Conditionally on $x_i$,
 

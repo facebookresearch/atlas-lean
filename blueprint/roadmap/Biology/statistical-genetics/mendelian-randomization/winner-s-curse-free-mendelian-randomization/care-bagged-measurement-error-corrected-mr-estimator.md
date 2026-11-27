@@ -18,15 +18,29 @@ $$\hat\theta_b=\frac{\sum_{j\in\hat{\mathcal V}_b}\hat\beta_{Yj}\hat\beta_{Xj,RB
 
 The variance is estimated by the nonparametric delta method, $\hat\sigma_n^2=\sum_{j\in\mathcal S_\lambda}\hat S_j^2$ with $\hat S_j=\frac1B\sum_b(w^*_{jb}-\bar w^*_j)(\hat\theta_b-\tilde\theta)$, giving the interval $\tilde\theta\pm z_{\alpha/2}\hat\sigma_n$.
 
-**Theorem (asymptotic normality).** Let $\kappa_\lambda=s_\lambda^{-1}\sum_{j\in\mathcal S_\lambda}\beta_{Xj}^2/\sigma_{Yj}^2$ be the average selected instrument strength. Assume Assumption 1, a variance-stabilization condition with no dominating instrument ($\max_j\beta_{Xj}^2/\sum_j\beta_{Xj}^2\to_p0$), negligible bias from imperfectly screened invalid instruments after bagging, and pseudo-noise scales bounded and bounded away from zero. If $s_\lambda\to_p\infty$ and $\kappa_\lambda\lambda^2\to_p\infty$, then $\tilde\theta-\theta$ admits, after scaling, an asymptotically linear representation in
+**Noise terms.** Write $u_j=\hat\beta_{Xj}-\beta_{Xj}$ and $v_j=\hat\beta_{Yj}-\theta\beta_{Xj}-r_j$ for the centred measurement errors of Assumption 1, $\kappa_\lambda=s_\lambda^{-1}\sum_{j\in\mathcal S_\lambda}\beta_{Xj}^2/\sigma_{Yj}^2$ for the average selected instrument strength, and $E^*[\cdot]=E[\cdot\mid\mathcal S_\lambda,(\hat\beta_{Yj},\hat\beta_{Xj,RB})_{j\in\mathcal S_\lambda}]$ for expectation over the bootstrap resampling. Let $\hat w_{jb}=w^*_{jb}\,\mathbf 1\{\hat r_{jb}=0\}\,\mathbf 1\{w^*_{jb}\ge1\}$ be the weight of SNP $j$ in the refit of bootstrap sample $b$ and
 
-$$\tilde u_j=\hat\beta_{Xj,RB}(\theta\beta_{Xj}+v_j)-\theta\bigl(\hat\beta_{Xj,RB}^2-\hat\sigma^2_{Xj,RB}\bigr),\qquad j\in\mathcal S_\lambda,$$
+$$A_b=\sum_{k\in\mathcal S_\lambda}\hat w_{kb}\bigl(\hat\beta_{Xk,RB}^2-\hat\sigma^2_{Xk,RB}\bigr)/\sigma_{Yk}^2 .$$
 
-and conditional on the selection event $\tilde\sigma^{-1}(\tilde\theta-\theta)\rightsquigarrow N(0,1)$ with $\tilde\sigma^2=\sum_{j\in\mathcal S_\lambda}\tau_j^2\,\mathrm{Var}(\tilde u_j\mid\mathcal S_\lambda)/a_\lambda^2$, where $a_\lambda$ and $\tau_j$ are the variance-stabilizing quantities of the second assumption.
+**Assumption 2 (variance stabilization).** There are a scalar $a_\lambda$ and a vector $\tau=(\tau_j)_{j\in\mathcal S_\lambda}$, each component independent of $(u_j,v_j)_{j\in\mathcal S_\lambda}$ and uniformly bounded in probability, with
+
+$$\sup_{j\in\mathcal S_\lambda}\bigl|a_\lambda\,E^*\bigl(A_b^{-1}\hat w_{jb}\bigr)-\tau_j\bigr|=o_p(1),$$
+
+and no instrument dominates: $\max_{j\in\mathcal S_\lambda}\beta_{Xj}^2/\sum_{j\in\mathcal S_\lambda}\beta_{Xj}^2\to_p0$.
+
+**Assumption 3 (negligible invalid-instrument bias).** $\dfrac{a_\lambda}{\sqrt{s_\lambda\kappa_\lambda}}\,E^*\Bigl(A_b^{-1}\sum_{j\in\mathcal S_\lambda}\hat\beta_{Xj,RB}\,r_j\,\hat w_{jb}/\sigma_{Yj}^2\Bigr)=o_p(1)$.
+
+**Assumption 4 (instrument selection).** The pseudo-noise scales of the randomized selection, $Z_j\sim N(0,\eta_j^2)$ (a common $\eta$ by default), have $\min_j\eta_j$ and $\max_j\eta_j$ bounded and bounded away from zero.
+
+**Theorem (asymptotic normality).** Consider the ideal bagged estimator $\tilde\theta=E^*\hat\theta_b$. Under Assumptions 1–4, if $s_\lambda\to_p\infty$ and $\kappa_\lambda/\lambda^2\to_p\infty$, then
+
+$$\frac{a_\lambda}{\sqrt{s_\lambda\kappa_\lambda}}\,(\tilde\theta-\theta)=\frac1{\sqrt{s_\lambda\kappa_\lambda}}\sum_{j\in\mathcal S_\lambda}\tau_j\tilde u_j+o_p(1),\qquad \tilde u_j=\hat\beta_{Xj,RB}(\theta\beta_{Xj}+v_j)-\theta\bigl(\hat\beta_{Xj,RB}^2-\hat\sigma^2_{Xj,RB}\bigr),$$
+
+and conditional on the selection event $\tilde\sigma^{-1}(\tilde\theta-\theta)\rightsquigarrow N(0,1)$ with $\tilde\sigma^2=\sum_{j\in\mathcal S_\lambda}\tau_j^2\,\mathrm{Var}(\tilde u_j\mid\mathcal S_\lambda)/a_\lambda^2$.
 
 ## Expansion
 
-Each $\hat\theta_b$ is a debiased inverse-variance-weighted estimator: subtracting $\hat\sigma^2_{Xj,RB}$ in the denominator removes the regression-dilution bias that $E\hat\beta_{Xj}^2=\beta_{Xj}^2+\sigma_{Xj}^2$ would otherwise cause, and the Rao–Blackwellized inputs remove the winner's curse. Perfect screening is not needed: the bias condition holds if instruments with large $|r_j|$ are removed, even when some weakly pleiotropic ones remain. The condition $\kappa_\lambda\lambda^2\to\infty$ says the selected instruments are strong on average relative to the threshold.
+Each $\hat\theta_b$ is a debiased inverse-variance-weighted estimator: subtracting $\hat\sigma^2_{Xj,RB}$ in the denominator removes the regression-dilution bias that $E\hat\beta_{Xj}^2=\beta_{Xj}^2+\sigma_{Xj}^2$ would otherwise cause, and the Rao–Blackwellized inputs remove the winner's curse. Perfect screening is not needed: the bias condition holds if instruments with large $|r_j|$ are removed, even when some weakly pleiotropic ones remain. The condition $\kappa_\lambda/\lambda^2\to\infty$ says the selected instruments are strong on average relative to the threshold.
 
 ## Depends on
 
