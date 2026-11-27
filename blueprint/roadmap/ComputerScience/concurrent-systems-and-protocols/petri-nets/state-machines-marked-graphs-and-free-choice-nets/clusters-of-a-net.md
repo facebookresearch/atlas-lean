@@ -9,3 +9,4 @@ Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md) with arcs 
 ## Sources
 
 - J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Definition 5.3.4 and Proposition 5.3.5, pp. 107–108.
+- J. Desel and J. Esparza, *Free Choice Petri Nets*, Cambridge Tracts in Theoretical Computer Science 40, Cambridge University Press, 1995, author's copy <https://www.model.in.tum.de/~esparza/fcbook-middle.pdf>, Definition 4.4 and Proposition 4.5 (clusters partition the nodes of every net), the paragraph before Proposition 4.6 and Proposition 4.6 (free-choice nets in the sense of Definition 4.1, the extended free-choice nets here), pp. 65–66.

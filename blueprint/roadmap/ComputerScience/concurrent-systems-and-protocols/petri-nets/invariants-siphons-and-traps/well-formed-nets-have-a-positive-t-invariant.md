@@ -1,12 +1,13 @@
 # Well-formed nets have a positive T-invariant
 
-Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md). $N$ is *well formed* if some marking $M_0$ makes $(N, M_0)$ [live](../liveness-and-deadlock-freedom.md) and [bounded](../boundedness-and-safeness.md). Every well-formed net has a T-invariant $J$ with $J(t) > 0$ for every transition $t$ (see [T-invariants and reproducing firing sequences](t-invariants-and-reproducing-sequences.md)).
+Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md) whose net is [connected](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md) and has at least one place and one transition. $N$ is *well formed* if some marking $M_0$ makes $(N, M_0)$ [live](../liveness-and-deadlock-freedom.md) and [bounded](../boundedness-and-safeness.md). Every well-formed net has a T-invariant $J$ with $J(t) > 0$ for every transition $t$ (see [T-invariants and reproducing firing sequences](t-invariants-and-reproducing-sequences.md)).
 
 ## Depends on
 
 - [Liveness and deadlock-freedom of Petri nets](../liveness-and-deadlock-freedom.md)
 - [Boundedness and safeness of Petri nets](../boundedness-and-safeness.md)
 - [T-invariants and reproducing firing sequences](t-invariants-and-reproducing-sequences.md)
+- [Connected and strongly connected nets](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md)
 
 ## Sources
 

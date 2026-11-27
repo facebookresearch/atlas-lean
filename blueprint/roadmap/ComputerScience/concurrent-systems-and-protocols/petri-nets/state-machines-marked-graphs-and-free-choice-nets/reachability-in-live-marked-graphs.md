@@ -1,12 +1,13 @@
 # Reachability in live marked graphs
 
-Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) [marked graph](../subclasses-of-petri-nets.md). A marking $M$ of $N$ is reachable from $M_0$ if and only if $M \sim M_0$, that is, $M$ and $M_0$ [agree on all S-invariants](../invariants-siphons-and-traps/agreement-on-all-s-invariants.md).
+Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) [marked graph](../subclasses-of-petri-nets.md) whose net is [connected](connected-and-strongly-connected-nets.md) and has at least one place and one transition. A marking $M$ of $N$ is reachable from $M_0$ if and only if $M \sim M_0$, that is, $M$ and $M_0$ [agree on all S-invariants](../invariants-siphons-and-traps/agreement-on-all-s-invariants.md).
 
 ## Depends on
 
 - [State machines, marked graphs and free-choice nets](../subclasses-of-petri-nets.md)
 - [Liveness and deadlock-freedom of Petri nets](../liveness-and-deadlock-freedom.md)
 - [Agreement of markings on all S-invariants](../invariants-siphons-and-traps/agreement-on-all-s-invariants.md)
+- [Connected and strongly connected nets](connected-and-strongly-connected-nets.md)
 
 ## Proof depends on
 

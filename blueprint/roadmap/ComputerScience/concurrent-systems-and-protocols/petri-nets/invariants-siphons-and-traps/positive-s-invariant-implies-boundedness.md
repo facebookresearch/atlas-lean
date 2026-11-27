@@ -1,6 +1,6 @@
 # A positive S-invariant implies boundedness
 
-Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md) with incidence matrix $\mathbf{N}$ (see [Incidence matrix and marking equation of an ordinary net](incidence-matrix-and-marking-equation-of-an-ordinary-net.md)). A vector $I : P \to \mathbb{Q}$ is an *S-invariant* if $I \cdot \mathbf{N} = 0$; it is *positive* if $I(s) > 0$ for every place $s$. If $N$ has a positive S-invariant $I$, then for every initial marking $M_0$ the net $(N, M_0)$ is [bounded](../boundedness-and-safeness.md): every reachable marking $M$ satisfies $M(s) \le I \cdot M_0 / I(s)$ for every place $s$.
+Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md) whose net is [connected](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md) and has at least one place and one transition, with incidence matrix $\mathbf{N}$ (see [Incidence matrix and marking equation of an ordinary net](incidence-matrix-and-marking-equation-of-an-ordinary-net.md)). A vector $I : P \to \mathbb{Q}$ is an *S-invariant* if $I \cdot \mathbf{N} = 0$; it is *positive* if $I(s) > 0$ for every place $s$. If $N$ has a positive S-invariant $I$, then for every initial marking $M_0$ the net $(N, M_0)$ is [bounded](../boundedness-and-safeness.md): every reachable marking $M$ satisfies $M(s) \le I \cdot M_0 / I(s)$ for every place $s$.
 
 For a pure net these S-invariants are the rational solutions of the equation on [S-invariants of a Petri net](../s-invariants.md), whose incidence matrix is the transpose of $\mathbf{N}$; multiplying a rational S-invariant by a common denominator of its entries gives an integer one, and keeps it positive.
 
@@ -9,6 +9,7 @@ For a pure net these S-invariants are the rational solutions of the equation on 
 - [Incidence matrix and marking equation of an ordinary net](incidence-matrix-and-marking-equation-of-an-ordinary-net.md)
 - [Boundedness and safeness of Petri nets](../boundedness-and-safeness.md)
 - [S-invariants of a Petri net](../s-invariants.md)
+- [Connected and strongly connected nets](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md)
 
 ## Sources
 

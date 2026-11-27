@@ -1,6 +1,6 @@
 # Non-reachability in Petri nets has a semilinear inductive invariant
 
-Let $(N, M_0)$ be an ordinary Petri net and $M_1$ a marking of $N$. If $M_1$ is not reachable from $M_0$, then there is a [semilinear set](../../../../TheoryOfComputation/context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md) $\mathcal{M}$ of markings of $N$ such that
+Let $(N, M_0)$ be an ordinary Petri net whose net is [connected](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md) and has at least one place and one transition, and $M_1$ a marking of $N$. If $M_1$ is not reachable from $M_0$, then there is a [semilinear set](../../../../TheoryOfComputation/context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md) $\mathcal{M}$ of markings of $N$ such that
 
 1. $M_0 \in \mathcal{M}$;
 2. if $M \in \mathcal{M}$ and $M [t\rangle M'$ for a transition $t$, then $M' \in \mathcal{M}$; and
@@ -12,6 +12,7 @@ Conversely, a set with these three properties shows that $M_1$ is not reachable 
 
 - [Semilinear set of vectors](../../../../TheoryOfComputation/context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md)
 - [Reachability set and reachability graph](../reachability-set-and-reachability-graph.md)
+- [Connected and strongly connected nets](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md)
 
 ## Expansion
 

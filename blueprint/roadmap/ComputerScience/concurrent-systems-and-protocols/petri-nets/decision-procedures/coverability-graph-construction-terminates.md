@@ -1,10 +1,11 @@
 # The coverability graph construction terminates
 
-For every ordinary Petri net $(N, M_0)$, the [coverability graph algorithm](coverability-graph-algorithm.md) terminates, so the coverability graph of $(N, M_0)$ is finite.
+For every ordinary Petri net $(N, M_0)$ whose net is [connected](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md) and has at least one place and one transition, the [coverability graph algorithm](coverability-graph-algorithm.md) terminates, so the coverability graph of $(N, M_0)$ is finite.
 
 ## Depends on
 
 - [The coverability graph algorithm](coverability-graph-algorithm.md)
+- [Connected and strongly connected nets](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md)
 
 ## Proof depends on
 
