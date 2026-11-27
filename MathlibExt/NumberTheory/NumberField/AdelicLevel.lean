@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
+`P2M/Sol/S_NumberField_AdelicLevel_exists_glFin_globalPoints_mul_mem_finiteLevelOne_rat.lean`,
 `Definitions/Def_NumberField_AdelicLevel.lean`
 and
 `Definitions/Def_AutomorphicForm_SmoothAutomorphicFnAt.lean`
@@ -41,6 +42,8 @@ Let `R` be a Dedekind domain with fraction field `K`. This file defines
 
 * `glArch` and `glFin`, the projections of `GL₂` over the adeles onto `GL₂` over the infinite
   and the finite adeles;
+* `archComponent K w` and `finComponent R K v`, the components of `GL₂` over the infinite and
+  the finite adeles at an infinite place `w` and at a finite place `v`;
 * `finiteLevelOne R K N`, the level subgroup of `GL₂` over the finite adeles at an ideal `N`:
   the matrices `g` such that `g` and `g⁻¹` have integral entries, lower-left entry in `N` and
   lower-right entry congruent to `1` modulo `N` at every finite place;
@@ -78,6 +81,28 @@ theorem glArch_apply (g : GL (Fin 2) (AdeleRing R K)) (i j : Fin 2) :
 theorem glFin_apply (g : GL (Fin 2) (AdeleRing R K)) (i j : Fin 2) :
     (glFin R K g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) i j =
       ((g : Matrix (Fin 2) (Fin 2) (AdeleRing R K)) i j).2 :=
+  rfl
+
+/-- The component of an archimedean `GL(2)` element at one infinite place. -/
+def archComponent (w : InfinitePlace K) :
+    GL (Fin 2) (InfiniteAdeleRing K) →* GL (Fin 2) w.Completion :=
+  Matrix.GeneralLinearGroup.map (archEval K w)
+
+/-- The component at a finite place `v` of `GL₂` over the finite adeles. -/
+def finComponent (v : HeightOneSpectrum R) :
+    GL (Fin 2) (FiniteAdeleRing R K) →* GL (Fin 2) (v.adicCompletion K) :=
+  Matrix.GeneralLinearGroup.map (finAdeleEval R K v)
+
+theorem archComponent_apply (w : InfinitePlace K) (g : GL (Fin 2) (InfiniteAdeleRing K))
+    (i j : Fin 2) :
+    (archComponent K w g : Matrix (Fin 2) (Fin 2) w.Completion) i j =
+      (g : Matrix (Fin 2) (Fin 2) (InfiniteAdeleRing K)) i j w :=
+  rfl
+
+theorem finComponent_apply (v : HeightOneSpectrum R) (g : GL (Fin 2) (FiniteAdeleRing R K))
+    (i j : Fin 2) :
+    (finComponent R K v g : Matrix (Fin 2) (Fin 2) (v.adicCompletion K)) i j =
+      (g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) i j v :=
   rfl
 
 end Projections
@@ -144,6 +169,27 @@ theorem mul_mem_idealBall_right {x y : FiniteAdeleRing R K} (hx : x ∈ idealBal
     (hy : y ∈ AdelicBox.integralFiniteAdeles R K) : x * y ∈ idealBall R K N := by
   rw [mul_comm]
   exact mul_mem_idealBall_left hy hx
+
+theorem neg_mem_idealBall {x : FiniteAdeleRing R K} (hx : x ∈ idealBall R K N) :
+    -x ∈ idealBall R K N := fun v => by
+  rw [show (-x) v = -(x v) from rfl, Valuation.map_neg]; exact hx v
+
+theorem sub_mem_idealBall {x y : FiniteAdeleRing R K} (hx : x ∈ idealBall R K N)
+    (hy : y ∈ idealBall R K N) : x - y ∈ idealBall R K N := by
+  rw [sub_eq_add_neg]; exact add_mem_idealBall hx (neg_mem_idealBall hy)
+
+theorem idealBall_mono {M : Ideal R} (h : M ≤ N) :
+    idealBall R K M ⊆ idealBall R K N := fun x hx v => by
+  refine (hx v).trans ?_
+  by_cases hM : M = ⊥
+  · rw [idealBound, ite_eq_left hM]
+    exact zero_le
+  have hN : N ≠ ⊥ := fun hN => hM (le_bot_iff.mp (hN ▸ h))
+  rw [idealBound, ite_eq_right hM, idealBound, ite_eq_right hN, WithZero.exp_le_exp,
+    neg_le_neg_iff, Int.ofNat_le]
+  exact Associates.count_le_count_of_le (Associates.mk_ne_zero.mpr hM)
+    (Associates.irreducible_mk.mpr v.irreducible)
+    (Associates.mk_le_mk_iff_dvd.mpr (Ideal.dvd_iff_le.mpr h))
 
 variable (R K N)
 

@@ -99,6 +99,7 @@ jobs:
             scripts/test_generate_wiki_navigation.py
             scripts/test_generate_wiki_docstrings.py
             scripts/test_sync_wiki.py
+            scripts/test_graph_batch.py
             scripts/test_import_mathgraph.py
             scripts/test_extract_v2_lean_dependencies.py
             scripts/test_extract_mathlib_graph.py
@@ -301,6 +302,7 @@ jobs:
           scripts.test_generate_wiki_navigation
           scripts.test_generate_wiki_docstrings
           scripts.test_sync_wiki
+          scripts.test_graph_batch
           scripts.test_import_mathgraph
           scripts.test_extract_v2_lean_dependencies
           scripts.test_extract_mathlib_graph
@@ -377,6 +379,7 @@ jobs:
           scripts.test_generate_wiki_navigation
           scripts.test_generate_wiki_docstrings
           scripts.test_sync_wiki
+          scripts.test_graph_batch
           scripts.test_import_mathgraph
           scripts.test_extract_v2_lean_dependencies
           scripts.test_extract_mathlib_graph
@@ -430,6 +433,7 @@ jobs:
           mkdir -p "$installer_dir"
           curl --fail --silent --show-error --location \
             --proto '=https' --tlsv1.2 \
+            --retry 5 --retry-all-errors --retry-delay 10 --connect-timeout 30 \
             https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
             --output "$archive"
           echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
@@ -762,6 +766,7 @@ jobs:
           mkdir -p "$installer_dir"
           curl --fail --silent --show-error --location \
             --proto '=https' --tlsv1.2 \
+            --retry 5 --retry-all-errors --retry-delay 10 --connect-timeout 30 \
             https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
             --output "$archive"
           echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
