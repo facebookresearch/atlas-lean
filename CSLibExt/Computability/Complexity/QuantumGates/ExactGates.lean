@@ -190,13 +190,13 @@ theorem complexOfGRatMatrix_onHigh (U : Matrix (Fin 2) (Fin 2) GRat) :
     simp [h, toComplex_gaussRatEnc_zero, complexOfGRatMatrix,
       Matrix.one_apply]
 
-/-- Atlas decoding of a low embedding. -/
+/-- Decoding the entry list of the low embedding of `U` gives the Kronecker product `U ⊗ 1`. -/
 theorem matrixOfEntries_onLow (U : Matrix (Fin 2) (Fin 2) GRat) :
     matrixOfEntries (entriesOf (onLow U)) =
       Matrix.kronecker (complexOfGRatMatrix U) 1 := by
   rw [matrixOfEntries_entriesOf, complexOfGRatMatrix_onLow]
 
-/-- Atlas decoding of a high embedding. -/
+/-- Decoding the entry list of the high embedding of `U` gives the Kronecker product `1 ⊗ U`. -/
 theorem matrixOfEntries_onHigh (U : Matrix (Fin 2) (Fin 2) GRat) :
     matrixOfEntries (entriesOf (onHigh U)) =
       Matrix.kronecker 1 (complexOfGRatMatrix U) := by
@@ -401,7 +401,8 @@ theorem vDagGate_unitary :
       Complex.ext_iff, Matrix.mul_apply, Matrix.star_apply,
       Fin.sum_univ_two, Matrix.one_apply]
 
-/-- Entry lists for the exported spectator embeddings. -/
+/-- The entry list of the phase-shifted Hadamard gate on the low qubit, the identity on the
+high one; the entry lists of the other spectator embeddings follow. -/
 def omegaHLowEntries : List (RatEnc × RatEnc) := entriesOf (onLow omegaH)
 def omegaHHighEntries : List (RatEnc × RatEnc) := entriesOf (onHigh omegaH)
 def sLowEntries : List (RatEnc × RatEnc) := entriesOf (onLow sGate)
@@ -413,7 +414,8 @@ def xHighEntries : List (RatEnc × RatEnc) := entriesOf (onHigh xGate)
 def zLowEntries : List (RatEnc × RatEnc) := entriesOf (onLow zGate)
 def zHighEntries : List (RatEnc × RatEnc) := entriesOf (onHigh zGate)
 
-/-- Entry lists for the exported controlled gates. -/
+/-- The entry list of the controlled-NOT gate with the low qubit as control; the entry lists
+of the other controlled gates follow. -/
 def cnotLowEntries : List (RatEnc × RatEnc) := entriesOf (ctrlLow xGate)
 def cnotHighEntries : List (RatEnc × RatEnc) := entriesOf (ctrlHigh xGate)
 def controlledOmegaHLowEntries : List (RatEnc × RatEnc) :=
@@ -433,8 +435,8 @@ def cvHighEntries : List (RatEnc × RatEnc) := entriesOf (ctrlHigh vGate)
 def cvDagLowEntries : List (RatEnc × RatEnc) := entriesOf (ctrlLow vDagGate)
 def cvDagHighEntries : List (RatEnc × RatEnc) := entriesOf (ctrlHigh vDagGate)
 
-/-- A controlled gate on control `c` and target `t`, encoded in the unique
-Atlas order `min c t < max c t`. -/
+/-- A controlled gate on control `c` and target `t`, encoded on `(min c t, max c t)`; for `c = t`
+it is `(c, c, entriesOf (ctrlHigh U))`, an encoding but not a well-formed gate. -/
 def controlledGate (U : Matrix (Fin 2) (Fin 2) GRat) (c t : ℕ) : QGate :=
   if c < t then (c, t, entriesOf (ctrlLow U))
   else (t, c, entriesOf (ctrlHigh U))
@@ -446,9 +448,9 @@ theorem controlledGate_wellFormed (U : Matrix (Fin 2) (Fin 2) GRat)
     QGateWellFormed N (controlledGate U c t) := by
   unfold controlledGate
   by_cases h : c < t
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     exact qGateWellFormed_ctrlLow U hU h htN
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have htc : t < c := by omega
     exact qGateWellFormed_ctrlHigh U hU htc hcN
 
@@ -498,6 +500,6 @@ theorem omegaH_eq_smul_hadamard :
   fin_cases i <;> fin_cases j <;>
     simp [complexOfGRatMatrix, omegaH, hadamard, toComplex_gaussRatEnc,
       exp_pi_div_four_I, Complex.ext_iff] <;>
-    ((first | rw [div_mul_div_comm, hsq] | skip); norm_num)
+    ((first | rw [div_mul_div_comm, hsq]); norm_num)
 
 end Cslib.Complexity.Classes.QuantumGates
