@@ -13,6 +13,7 @@ In the Aitchison geometry of $\Delta$ (perturbation $\oplus$, inner product $\la
 $$ A = -\lambda I + u\otimes\mathbf{1} + \mathbf{1}\otimes v \qquad \text{for some } u, v \in \mathbb{R}^n,\ \lambda \ge 0 . $$
 
 If $\lambda > 0$, additionally $W_\Delta(\mu_t,\mu'_t) \le e^{-\lambda t}W_A(\mu_0,\mu'_0)$ for the Euclidean Wasserstein distance $W_\Delta$. No payoff matrix gives exponential contraction $W_A(\mu_t,\mu'_t) \le e^{-\lambda t}W_A(\mu_0,\mu'_0)$ with $\lambda > 0$.
+
 3. (Deterministic counterpart.) For such $A$ with $\lambda > 0$, any two solutions of the replicator equation satisfy $\|p(t)\ominus q(t)\|_A^2 + 2\lambda\int_0^t\|p(s) - q(s)\|^2\,ds \le \|p\ominus q\|_A^2$ and $\|p(t) - q(t)\| \le e^{-\lambda t}\|p\ominus q\|$, but again no $A$ gives exponential contraction in $\|\cdot\|_A$.
 
 ## Depends on
