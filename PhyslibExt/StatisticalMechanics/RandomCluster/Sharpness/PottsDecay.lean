@@ -65,8 +65,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 lemma ofa_fk_q2_differential_inequality (G : SimpleGraph V) [DecidableRel G.Adj]
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (A : Set (ConfigSpace (Sym2 V))) (hA : IsIncreasing A)
-    (hbridge : ∑ e, fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e)
-          = ∑ e ∈ G.edgeFinset, fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e)) :
+    (hbridge : ∑ e, fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e)
+          = ∑ e ∈ G.edgeFinset, fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e)) :
     russoPrefactor p * (fkProbOf G p 2 A * (1 - fkProbOf G p 2 A))
       ≤ deriv (fun p => fkProbOf G p 2 A) p :=
   fk_differential_inequality G hp hp1 (by norm_num : (1 : ℝ) ≤ 2) A hA hbridge
@@ -77,8 +77,8 @@ lemma ofa_fk_q2_sharpness (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Set (ConfigSpace (Sym2 V))) (hA : IsIncreasing A)
     (a b κ : ℝ) (hab : a < b) (ha0 : 0 < a) (hb1 : b < 1) (hκ : 0 < κ)
     (hbridge : ∀ x ∈ Icc a b,
-        ∑ e, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e)
-          = ∑ e ∈ G.edgeFinset, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e))
+        ∑ e, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e)
+          = ∑ e ∈ G.edgeFinset, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e))
     (hθub : ∀ x ∈ Icc a b, fkProbOf G x 2 A ≤ 1 - κ)
     (T : ℕ → ℝ → ℝ) (mseq : ℕ → ℝ) (β' β fβ fβ' m : ℝ)
     (hββ : β' ≤ β) (hm1 : 1 ≤ m)
@@ -100,11 +100,11 @@ lemma ofa_summary (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Set (ConfigSpace (Sym2 V))) (hA : IsIncreasing A)
     (a b κ : ℝ) (hab : a < b) (ha0 : 0 < a) (hb1 : b < 1) (hκ : 0 < κ)
     (hbridge : ∀ x ∈ Icc a b,
-        ∑ e, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e)
-          = ∑ e ∈ G.edgeFinset, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e))
+        ∑ e, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e)
+          = ∑ e ∈ G.edgeFinset, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e))
     (hθub : ∀ x ∈ Icc a b, fkProbOf G x 2 A ≤ 1 - κ) :
     (fkProbOf G a 2 A * (1 - fkProbOf G a 2 A)
-        ≤ ∑ e, fkCov G a 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e))
+        ≤ ∑ e, fkCov G a 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e))
     ∧ (fkProbOf G a 2 A ≤ Real.exp (-(4 * κ * (b - a)))) :=
   ⟨StatMech.OSSS.MonotonicFK.fk_poincare_indicator G ha0 (by linarith) (by norm_num : (1 : ℝ) ≤ 2) A hA,
    StatMech.OSSS.fk_q2_crossing_decay_poincare G A hA a b κ hab ha0 hb1 hκ hbridge hθub⟩

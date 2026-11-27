@@ -10,6 +10,7 @@ module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreFreeDomination
 public import PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreEventLaw
+public import PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvariance
 
 /-!
 # Free boundary condition after exploring the root clusters
@@ -120,7 +121,7 @@ lemma not_clusterOutsideGraph_adj_from_unexplored
     (x : ClusterUnexploredVertex G rho roots) (y : V) :
     ¬ (ocd_outsideGraph G
       (Subtype.val : ClusterUnexploredVertex G rho roots -> V)
-      (falseBoundary : V -> Prop) rho).Adj x.1 y := by
+      (bdp_noBdry : V -> Prop) rho).Adj x.1 y := by
   classical
   let : Fintype (ClusterUnexploredVertex G rho roots) :=
     instFintypeClusterUnexploredVertex G rho roots
@@ -141,7 +142,7 @@ lemma eq_of_clusterOutsideGraph_reachable_from_unexplored
     (hx : ¬ ClusterExploredVertex G rho roots x)
     (hreach : (ocd_outsideGraph G
       (Subtype.val : ClusterUnexploredVertex G rho roots -> V)
-      (falseBoundary : V -> Prop) rho).Reachable x y) :
+      (bdp_noBdry : V -> Prop) rho).Reachable x y) :
     x = y := by
   exact hreach.elim fun p => by
     cases p with
@@ -155,7 +156,7 @@ lemma clusterExploration_inducedWiring_eq_bot
     (rho : ConfigSpace (Sym2 V)) (roots : Finset V) :
     ocd_inducedWiring G
         (Subtype.val : ClusterUnexploredVertex G rho roots -> V)
-        (falseBoundary : V -> Prop) rho =
+        (bdp_noBdry : V -> Prop) rho =
       (⊥ : SimpleGraph (ClusterUnexploredVertex G rho roots)) := by
   apply le_antisymm
   · intro x y hadj
@@ -177,7 +178,7 @@ lemma clusterExploration_condBcProb_eq_free
       (Sym2 (ClusterUnexploredVertex G rho roots))) :
     condBcProb G
         (StatMech.Lattice.boundaryCliqueGraph
-          (falseBoundary : V -> Prop)) p q
+          (bdp_noBdry : V -> Prop)) p q
         (clusterUnexploredPairEdges G rho roots) rho
         (@ocd_psiExt
           (ClusterUnexploredVertex G rho roots) V
@@ -195,7 +196,7 @@ lemma clusterExploration_condBcProb_eq_free
     (Gin := clusterUnexploredGraph G rho roots)
     (Gout := G)
     (ιV := (Subtype.val : ClusterUnexploredVertex G rho roots -> V))
-    (bdryOut := falseBoundary)
+    (bdryOut := bdp_noBdry)
     Subtype.val_injective (fun _ _ => Iff.rfl)
     hp hp1 hq rho omega
   have hfree := @bcProb_congr_boundary
@@ -205,7 +206,7 @@ lemma clusterExploration_condBcProb_eq_free
     (clusterUnexploredGraph G rho roots)
     (ocd_inducedWiring G
       (Subtype.val : ClusterUnexploredVertex G rho roots -> V)
-      (falseBoundary : V -> Prop) rho)
+      (bdp_noBdry : V -> Prop) rho)
     (⊥ : SimpleGraph (ClusterUnexploredVertex G rho roots))
     (instDecidableRelClusterUnexploredGraph G rho roots)
     (instDecidableRelAdjOcd_inducedWiring _ _ _) (by infer_instance)
@@ -226,7 +227,7 @@ lemma clusterExploration_condBcProb_innerEvent_eq_free
             (fun _ => (1 : Real)) sigma *
           condBcProb G
             (StatMech.Lattice.boundaryCliqueGraph
-              (falseBoundary : V -> Prop)) p q
+              (bdp_noBdry : V -> Prop)) p q
             (clusterUnexploredPairEdges G rho roots) rho sigma) =
       ∑ omega,
         A.indicator (fun _ => (1 : Real)) omega *
@@ -236,7 +237,7 @@ lemma clusterExploration_condBcProb_innerEvent_eq_free
     (Gin := clusterUnexploredGraph G rho roots)
     (Gout := G)
     (iota := (Subtype.val : ClusterUnexploredVertex G rho roots -> V))
-    (bdryOut := falseBoundary)
+    (bdryOut := bdp_noBdry)
     Subtype.val_injective (fun _ _ => Iff.rfl)
     hp hp1 hq rho
     (fun omega =>

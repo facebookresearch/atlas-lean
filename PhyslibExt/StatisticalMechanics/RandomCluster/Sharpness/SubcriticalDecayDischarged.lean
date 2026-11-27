@@ -168,7 +168,7 @@ lemma fk_russo_discharges {V : Type*} [Fintype V] [DecidableEq V]
     (A : Set (ConfigSpace (Sym2 V))) :
     0 < FK.russoPrefactor p ∧
       FK.russoPrefactor p
-          * (∑ e ∈ G.edgeFinset, FK.fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coord e))
+          * (∑ e ∈ G.edgeFinset, FK.fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e))
         ≤ deriv (fun p => FK.fkProbOf G p q A) p :=
   ⟨FK.russoPrefactor_pos hp hp1, FK.russo_bound G hp hp1 hq A⟩
 

@@ -134,16 +134,6 @@ lemma indexedEdgeProduct_logModular
 
 /-! ## B. Cluster counts with a boundary wiring -/
 
-/-- Adding edges does not increase the number of connected components. -/
-lemma card_connectedComponent_antitone
-    {G H : SimpleGraph V} (hGH : G <= H) :
-    Nat.card H.ConnectedComponent <= Nat.card G.ConnectedComponent := by
-  classical
-  let _ : DecidableRel H.Adj := Classical.decRel _
-  have h := card_connectedComponent_marginal hGH H
-  rw [sup_eq_right.mpr hGH, sup_idem] at h
-  omega
-
 /-- The number of clusters of the open graph joined with the boundary wiring `C`. -/
 def indexedNumClustersBC (ends : E -> Sym2 V)
     (C : SimpleGraph V) [DecidableRel C.Adj] (omega : E -> Bool) : Nat :=
@@ -182,7 +172,7 @@ lemma indexedMixed_supermodular_bc
   rw [e1, e2] at hmarg
   have hmeet : Nat.card ((A ⊓ B) ⊔ C).ConnectedComponent <=
       Nat.card (I ⊔ C).ConnectedComponent :=
-    card_connectedComponent_antitone (sup_le_sup_right hI C)
+    SimpleGraph.ConnectedComponent.card_le_card_of_le (sup_le_sup_right hI C)
   unfold indexedNumClustersBC
   change Nat.card (A ⊔ C).ConnectedComponent +
       Nat.card (B ⊔ C').ConnectedComponent <=

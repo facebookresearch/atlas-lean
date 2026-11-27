@@ -98,8 +98,8 @@ omit [Fintype V] in
 
 omit [Fintype V] in
 lemma coord_add_flip (e : Sym2 V) (ω : ConfigSpace (Sym2 V)) :
-    coord e ω + coord e (flipE e ω) = 1 := by
-  unfold coord
+    coordR e ω + coordR e (flipE e ω) = 1 := by
+  unfold coordR
   simp only [flipE_self]
   cases ω e <;> simp
 
@@ -199,24 +199,24 @@ lemma fkMean_flip (g : ConfigSpace (Sym2 V) → ℝ) (e : Sym2 V) :
 
 lemma fkMean_mul_coord_off {e : Sym2 V} (he : e ∉ G.edgeFinset)
     (f : ConfigSpace (Sym2 V) → ℝ) (hf : ∀ ω, f (flipE e ω) = f ω) :
-    fkMean G p q (fun ω => f ω * coord e ω) = fkMean G p q f / 2 := by
-  have hreindex : fkMean G p q (fun ω => f ω * coord e ω)
-      = ∑ ω, f ω * coord e (flipE e ω) * fkProb G p q ω := by
-    rw [fkMean_flip G p q (fun ω => f ω * coord e ω) e]
+    fkMean G p q (fun ω => f ω * coordR e ω) = fkMean G p q f / 2 := by
+  have hreindex : fkMean G p q (fun ω => f ω * coordR e ω)
+      = ∑ ω, f ω * coordR e (flipE e ω) * fkProb G p q ω := by
+    rw [fkMean_flip G p q (fun ω => f ω * coordR e ω) e]
     apply Finset.sum_congr rfl
     intro ω _
     rw [hf ω, hbg_fkProb_flipE G p q he ω]
-  have hsum2 : fkMean G p q (fun ω => f ω * coord e ω)
-        + fkMean G p q (fun ω => f ω * coord e ω) = fkMean G p q f := by
+  have hsum2 : fkMean G p q (fun ω => f ω * coordR e ω)
+        + fkMean G p q (fun ω => f ω * coordR e ω) = fkMean G p q f := by
     nth_rewrite 2 [hreindex]
-    rw [show fkMean G p q (fun ω => f ω * coord e ω)
-        = ∑ ω, f ω * coord e ω * fkProb G p q ω from rfl, ← Finset.sum_add_distrib]
+    rw [show fkMean G p q (fun ω => f ω * coordR e ω)
+        = ∑ ω, f ω * coordR e ω * fkProb G p q ω from rfl, ← Finset.sum_add_distrib]
     unfold fkMean
     apply Finset.sum_congr rfl
     intro ω _
     have hc := coord_add_flip e ω
-    have hrw : f ω * coord e ω * fkProb G p q ω + f ω * coord e (flipE e ω) * fkProb G p q ω
-        = f ω * (coord e ω + coord e (flipE e ω)) * fkProb G p q ω := by ring
+    have hrw : f ω * coordR e ω * fkProb G p q ω + f ω * coordR e (flipE e ω) * fkProb G p q ω
+        = f ω * (coordR e ω + coordR e (flipE e ω)) * fkProb G p q ω := by ring
     rw [hrw, hc, mul_one]
   linarith
 
@@ -229,11 +229,11 @@ lemma fkMean_one (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
 lemma hbg_fkCov_coord_off (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     {e : Sym2 V} (he : e ∉ G.edgeFinset)
     (f : ConfigSpace (Sym2 V) → ℝ) (hf : ∀ ω, f (flipE e ω) = f ω) :
-    fkCov G p q f (coord e) = 0 := by
+    fkCov G p q f (coordR e) = 0 := by
   unfold fkCov
-  have h1 : fkMean G p q (fun ω => f ω * coord e ω) = fkMean G p q f / 2 :=
+  have h1 : fkMean G p q (fun ω => f ω * coordR e ω) = fkMean G p q f / 2 :=
     fkMean_mul_coord_off G p q he f hf
-  have h2 : fkMean G p q (coord e) = 1 / 2 := by
+  have h2 : fkMean G p q (coordR e) = 1 / 2 := by
     have := fkMean_mul_coord_off G p q he (fun _ => (1 : ℝ)) (fun _ => rfl)
     simp only [one_mul] at this
     rw [this, fkMean_one G p q hp hp1 hq]
@@ -242,8 +242,8 @@ lemma hbg_fkCov_coord_off (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
 lemma hbg_bridge (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (f : ConfigSpace (Sym2 V) → ℝ)
     (hf : ∀ e ∉ G.edgeFinset, ∀ ω, f (flipE e ω) = f ω) :
-    ∑ e, fkCov G p q f (coord e)
-      = ∑ e ∈ G.edgeFinset, fkCov G p q f (coord e) := by
+    ∑ e, fkCov G p q f (coordR e)
+      = ∑ e ∈ G.edgeFinset, fkCov G p q f (coordR e) := by
   symm
   apply Finset.sum_subset (Finset.subset_univ _)
   intro e _ he
@@ -252,8 +252,8 @@ lemma hbg_bridge (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
 lemma hbg_event_bridge (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (A : Set (ConfigSpace (Sym2 V)))
     (hA : ∀ e ∉ G.edgeFinset, ∀ ω, (flipE e ω ∈ A ↔ ω ∈ A)) :
-    ∑ e, fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (coord e)
-      = ∑ e ∈ G.edgeFinset, fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (coord e) := by
+    ∑ e, fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (coordR e)
+      = ∑ e ∈ G.edgeFinset, fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (coordR e) := by
   apply hbg_bridge G p q hp hp1 hq
   intro e he ω
   unfold Set.indicator
@@ -270,9 +270,9 @@ lemma hbg_connEvent_offGraph {x y : V} {e : Sym2 V} (he : e ∉ G.edgeFinset)
   rw [openSub_flipE G he ω]
 
 lemma hbg_connEvent_bridge (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) (x y : V) :
-    ∑ e, fkCov G p q ((connEvent G x y).indicator (fun _ => (1 : ℝ))) (coord e)
+    ∑ e, fkCov G p q ((connEvent G x y).indicator (fun _ => (1 : ℝ))) (coordR e)
       = ∑ e ∈ G.edgeFinset,
-          fkCov G p q ((connEvent G x y).indicator (fun _ => (1 : ℝ))) (coord e) :=
+          fkCov G p q ((connEvent G x y).indicator (fun _ => (1 : ℝ))) (coordR e) :=
   hbg_event_bridge G p q hp hp1 hq (connEvent G x y)
     (fun _ he ω => hbg_connEvent_offGraph G he ω)
 

@@ -32,9 +32,9 @@ open _root_.StatMech.FK _root_.StatMech.OSSS.BetaCMatch
 /-- The bridge identity holds for the empty event: every covariance vanishes. -/
 theorem bridge_empty (x : ℝ) :
     ∑ e, fkCov (⊤ : SimpleGraph (Fin 2)) x 2
-        ((∅ : Set (ConfigSpace (Sym2 (Fin 2)))).indicator (fun _ => (1 : ℝ))) (FK.coord e)
+        ((∅ : Set (ConfigSpace (Sym2 (Fin 2)))).indicator (fun _ => (1 : ℝ))) (FK.coordR e)
       = ∑ e ∈ (⊤ : SimpleGraph (Fin 2)).edgeFinset, fkCov ⊤ x 2
-        ((∅ : Set (ConfigSpace (Sym2 (Fin 2)))).indicator (fun _ => (1 : ℝ))) (FK.coord e) := by
+        ((∅ : Set (ConfigSpace (Sym2 (Fin 2)))).indicator (fun _ => (1 : ℝ))) (FK.coordR e) := by
   simp [fkCov, fkMean]
 
 -- Non-vacuity: the hypotheses of `ofa_summary` hold for the empty event on `K₂`.
@@ -42,7 +42,7 @@ example :
     (fkProbOf (⊤ : SimpleGraph (Fin 2)) (1 / 4) 2 ∅
         * (1 - fkProbOf (⊤ : SimpleGraph (Fin 2)) (1 / 4) 2 ∅)
         ≤ ∑ e, fkCov (⊤ : SimpleGraph (Fin 2)) (1 / 4) 2
-          ((∅ : Set (ConfigSpace (Sym2 (Fin 2)))).indicator (fun _ => (1 : ℝ))) (FK.coord e))
+          ((∅ : Set (ConfigSpace (Sym2 (Fin 2)))).indicator (fun _ => (1 : ℝ))) (FK.coordR e))
       ∧ fkProbOf (⊤ : SimpleGraph (Fin 2)) (1 / 4) 2 ∅
         ≤ Real.exp (-(4 * (1 / 2) * (3 / 4 - 1 / 4))) :=
   ofa_summary ⊤ ∅ isUpperSet_empty (1 / 4) (3 / 4) (1 / 2) (by norm_num) (by norm_num)
@@ -62,8 +62,8 @@ example {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRe
     (A : Set (ConfigSpace (Sym2 V))) (hA : IsIncreasing A)
     (a b κ : ℝ) (hab : a < b) (ha0 : 0 < a) (hb1 : b < 1) (hκ : 0 < κ)
     (hbridge : ∀ x ∈ Icc a b,
-        ∑ e, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e)
-          = ∑ e ∈ G.edgeFinset, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e))
+        ∑ e, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e)
+          = ∑ e ∈ G.edgeFinset, fkCov G x 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e))
     (hθub : ∀ x ∈ Icc a b, fkProbOf G x 2 A ≤ 1 - κ)
     (T : ℕ → ℝ → ℝ) (mseq : ℕ → ℝ) (β' β fβ fβ' m : ℝ)
     (hββ : β' ≤ β) (hm1 : 1 ≤ m)

@@ -114,9 +114,9 @@ lemma lindebergMean_fkMass_indicator (p q : ℝ) (A : Set (ConfigSpace (Sym2 V))
 
 lemma lindebergCov_fkMass_coord (p q : ℝ) (A : Set (ConfigSpace (Sym2 V))) (e : Sym2 V) :
     Lindeberg.cov (fkMass G p q) (A.indicator (fun _ => (1 : ℝ))) (Lindeberg.coord e)
-      = FK.fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coord e) := by
-  have hcoord : (Lindeberg.coord e : ConfigSpace (Sym2 V) → ℝ) = FK.coord e := by
-    funext ω; unfold Lindeberg.coord FK.coord; rfl
+      = FK.fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e) := by
+  have hcoord : (Lindeberg.coord e : ConfigSpace (Sym2 V) → ℝ) = FK.coordR e := by
+    funext ω; unfold Lindeberg.coord FK.coordR; rfl
   unfold Lindeberg.cov Lindeberg.mean fkMass FK.fkCov FK.fkMean
   rw [hcoord]
 
@@ -125,7 +125,7 @@ random-cluster statement, used by `Assembly` and its consumers. -/
 lemma fk_poincare_indicator {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (A : Set (ConfigSpace (Sym2 V))) (hA : IsIncreasing A) :
     FK.fkProbOf G p q A * (1 - FK.fkProbOf G p q A)
-      ≤ ∑ e, FK.fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coord e) := by
+      ≤ ∑ e, FK.fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e) := by
   have hq0 : 0 < q := lt_of_lt_of_le zero_lt_one hq
   have hmain := poincare_covSum_indicator_ge
     (μ := fkMass G p q)

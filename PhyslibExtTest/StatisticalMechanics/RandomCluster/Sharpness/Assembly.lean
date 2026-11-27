@@ -41,7 +41,7 @@ example :
         * (1 - fkProbOf (⊤ : SimpleGraph (Fin 2)) (1 / 2) 2
           {ω | ω (s(0, 1) : Sym2 (Fin 2)) = true})
       ≤ ∑ e, fkCov (⊤ : SimpleGraph (Fin 2)) (1 / 2) 2
-          ({ω | ω (s(0, 1) : Sym2 (Fin 2)) = true}.indicator (fun _ => (1 : ℝ))) (FK.coord e) :=
+          ({ω | ω (s(0, 1) : Sym2 (Fin 2)) = true}.indicator (fun _ => (1 : ℝ))) (FK.coordR e) :=
   MonotonicFK.fk_poincare_indicator ⊤ (by norm_num) (by norm_num) (by norm_num) _
     (fun a b hab ha => by
       have h := hab s(0, 1)
@@ -51,9 +51,9 @@ example :
 -- The `q = 2` crossing decay on `K₂` on the window `[1/4, 3/4]`, given its two hypotheses.
 example (A : Set (ConfigSpace (Sym2 (Fin 2)))) (hA : IsIncreasing A) (κ : ℝ) (hκ : 0 < κ)
     (hbridge : ∀ p ∈ Icc (1 / 4 : ℝ) (3 / 4),
-      ∑ e, fkCov (⊤ : SimpleGraph (Fin 2)) p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e)
+      ∑ e, fkCov (⊤ : SimpleGraph (Fin 2)) p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e)
         = ∑ e ∈ (⊤ : SimpleGraph (Fin 2)).edgeFinset,
-            fkCov ⊤ p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e))
+            fkCov ⊤ p 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e))
     (hθub : ∀ p ∈ Icc (1 / 4 : ℝ) (3 / 4), fkProbOf (⊤ : SimpleGraph (Fin 2)) p 2 A ≤ 1 - κ) :
     fkProbOf (⊤ : SimpleGraph (Fin 2)) (1 / 4) 2 A ≤ Real.exp (-(4 * κ * (3 / 4 - 1 / 4))) :=
   fk_q2_crossing_decay_poincare ⊤ A hA _ _ κ (by norm_num) (by norm_num) (by norm_num) hκ

@@ -31,7 +31,7 @@ abbrev G2 : SimpleGraph (Fin 2) := ⊤
 
 -- The centred edge score of an extension is the active `p`-score.
 example (ω : ConfigSpace G2.edgeSet) :
-    (∑ e ∈ G2.edgeFinset, (coord e (extendActive G2 ω) - 1 / 2)) = activePScore G2 (1 / 2) ω :=
+    (∑ e ∈ G2.edgeFinset, (coordR e (extendActive G2 ω) - 1 / 2)) = activePScore G2 (1 / 2) ω :=
   centeredScore_extendActive G2 _ ω
 
 -- The `p`-derivative of an active expectation.

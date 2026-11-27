@@ -34,15 +34,16 @@ example :
   ⟨by simp, flipE_flipE _ _⟩
 
 -- An edge coordinate and its flip add up to one.
-example (ω : ConfigSpace (Sym2 (Fin 2))) : coord s(0, 1) ω + coord s(0, 1) (flipE s(0, 1) ω) = 1 :=
+example (ω : ConfigSpace (Sym2 (Fin 2))) :
+    coordR s(0, 1) ω + coordR s(0, 1) (flipE s(0, 1) ω) = 1 :=
   coord_add_flip _ ω
 
 -- The bridge identity for the connection event `0 ↔ 1` on `K₂`.
 example :
     ∑ e, fkCov (⊤ : SimpleGraph (Fin 2)) (1 / 2) 2
-        ((connEvent (⊤ : SimpleGraph (Fin 2)) 0 1).indicator (fun _ => (1 : ℝ))) (coord e)
+        ((connEvent (⊤ : SimpleGraph (Fin 2)) 0 1).indicator (fun _ => (1 : ℝ))) (coordR e)
       = ∑ e ∈ (⊤ : SimpleGraph (Fin 2)).edgeFinset,
-          fkCov ⊤ (1 / 2) 2 ((connEvent ⊤ 0 1).indicator (fun _ => (1 : ℝ))) (coord e) :=
+          fkCov ⊤ (1 / 2) 2 ((connEvent ⊤ 0 1).indicator (fun _ => (1 : ℝ))) (coordR e) :=
   hbg_connEvent_bridge ⊤ (1 / 2) 2 (by norm_num) (by norm_num) (by norm_num) 0 1
 
 -- Exponential decay of `P(0 ↔ 1)` on `K₂` over `[1/4, 3/4]`, given the uniform upper bound.

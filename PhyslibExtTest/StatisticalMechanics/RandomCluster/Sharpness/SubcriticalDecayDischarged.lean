@@ -33,7 +33,7 @@ example (A : Set (ConfigSpace (Sym2 (Fin 2)))) :
     0 < FK.russoPrefactor (1 / 2) ∧
       FK.russoPrefactor (1 / 2)
           * (∑ e ∈ (⊤ : SimpleGraph (Fin 2)).edgeFinset,
-              FK.fkCov ⊤ (1 / 2) 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coord e))
+              FK.fkCov ⊤ (1 / 2) 2 (A.indicator (fun _ => (1 : ℝ))) (FK.coordR e))
         ≤ deriv (fun p => FK.fkProbOf (⊤ : SimpleGraph (Fin 2)) p 2 A) (1 / 2) :=
   fk_russo_discharges ⊤ (by norm_num) (by norm_num) (by norm_num) A
 

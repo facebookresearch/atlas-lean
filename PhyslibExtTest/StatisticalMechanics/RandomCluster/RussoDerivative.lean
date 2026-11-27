@@ -40,7 +40,7 @@ example : fkMean G2 (1 / 2) 2 (fun _ => 3) = 3 :=
 -- Russo's formula for the event "the edge `s(0, 1)` is open".
 example : HasDerivAt (fun p => fkProbOf G2 p 2 {ω | ω s(0, 1) = true})
     ((∑ e ∈ G2.edgeFinset, fkCov G2 (1 / 2) 2
-      (({ω | ω s(0, 1) = true} : Set _).indicator fun _ => (1 : ℝ)) (coord e)) /
+      (({ω | ω s(0, 1) = true} : Set _).indicator fun _ => (1 : ℝ)) (coordR e)) /
         (1 / 2 * (1 - 1 / 2))) (1 / 2) :=
   hasDerivAt_fkProbOf G2 (by norm_num) (by norm_num) two_pos _
 

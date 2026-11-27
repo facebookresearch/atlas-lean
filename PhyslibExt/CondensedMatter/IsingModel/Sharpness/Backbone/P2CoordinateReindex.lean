@@ -39,7 +39,7 @@ Headline fidelity:
   `segmentNum_mul_partialActualMass_eq_pairTsum` are unconditional.
 - `actualMass_active_of_coordinateToggle` is conditional on a contributing-path selector `path`,
   its source condition `path_sources` and the transport equivalence `transport`. These data do not
-  exist for the vacuum selector when the segment numerator is nonzero
+  exist for the vacuum selector on a one-segment word `[s]` when the segment numerator is nonzero
   (`vacuumCoordinateToggleData_isEmpty`, `P2CoordinateToggleObstruction`); they are not
   constructed here for any selector, and the identity is a form of the backbone chain rule (P2).
 
@@ -97,18 +97,11 @@ noncomputable def extendFlux (_hHG : H ≤ G)
     (r : H.edgeFinset -> Nat) : G.edgeFinset -> Nat := fun e =>
   if he : e.1 ∈ H.edgeFinset then r ⟨e.1, he⟩ else 0
 
-omit [DecidableEq V] in
-/-- The edges of a subgraph are edges of the ambient graph. -/
-lemma edgeFinset_subset (hHG : H ≤ G) : H.edgeFinset ⊆ G.edgeFinset := by
-  intro e he
-  rw [SimpleGraph.mem_edgeFinset] at he ⊢
-  exact edgeSet_mono hHG he
-
 lemma extendFlux_injective (hHG : H ≤ G) :
     Function.Injective (extendFlux hHG) := by
   intro r t hrt
   funext e
-  have heG : e.1 ∈ G.edgeFinset := edgeFinset_subset hHG e.2
+  have heG : e.1 ∈ G.edgeFinset := SimpleGraph.edgeFinset_mono hHG e.2
   have heq := congrFun hrt (⟨e.1, heG⟩ : G.edgeFinset)
   simpa [extendFlux, e.2] using heq
 
@@ -116,7 +109,7 @@ lemma ofEdgeFun_extendFlux (hHG : H ≤ G) (r : H.edgeFinset -> Nat) :
     ofEdgeFun G (extendFlux hHG r) = ofEdgeFun H r := by
   funext e
   by_cases heH : e ∈ H.edgeFinset
-  · have heG : e ∈ G.edgeFinset := edgeFinset_subset hHG heH
+  · have heG : e ∈ G.edgeFinset := SimpleGraph.edgeFinset_mono hHG heH
     simp [ofEdgeFun, extendFlux, heH, heG]
   · simp [ofEdgeFun, extendFlux, heH]
 
@@ -130,7 +123,7 @@ lemma incidentFlux_extendFlux (hHG : H ≤ G)
   apply Finset.sum_subset
   · intro e he
     rw [Finset.mem_filter] at he ⊢
-    exact ⟨edgeFinset_subset hHG he.1, he.2⟩
+    exact ⟨SimpleGraph.edgeFinset_mono hHG he.1, he.2⟩
   · intro e heG heH
     rw [Finset.mem_filter] at heG
     have hnot : e ∉ H.edgeFinset := by
@@ -154,7 +147,7 @@ lemma weight_extendFlux (hHG : H ≤ G) (beta : Real)
   rw [ofEdgeFun_extendFlux hHG r]
   unfold weight
   symm
-  apply Finset.prod_subset (edgeFinset_subset hHG)
+  apply Finset.prod_subset (SimpleGraph.edgeFinset_mono hHG)
   intro e heG heH
   have hzero : ofEdgeFun H r e = 0 := by
     simp [ofEdgeFun, heH]

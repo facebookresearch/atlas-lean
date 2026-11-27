@@ -13,16 +13,19 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABHypercubic
 /-!
 # The forward characteristic bound for the Aizenman–Barsky magnetization
 
-From the finite-volume inequality `∂_β M_n ≤ J C_n ∂_h M_n` with `C_n ≤ M`, the limit magnetization
-satisfies, for small `t ≥ 0`, `M(β + t, h) ≤ M(β, h + J (M(β, h) + ε) t)`: moving along the
-characteristic increases `h` faster than `β`.
+From the finite-volume inequality `∂_β M_n ≤ J C_n ∂_h M_n` with `C_n ≤ M`, and the further
+hypotheses listed below, the limit magnetization satisfies, for small `t ≥ 0`,
+`M(β + t, h) ≤ M(β, h + J (M(β, h) + ε) t)`: moving along the characteristic increases `h` faster
+than `β`.
 
 ## i. Overview
 
 `abfc_forward_characteristic_physical_envelope` is real analysis on functions `M_n`, `C_n`, `M`. Its
-hypotheses carry the input: the finite-volume differential inequality `hfinite`, monotonicity of
-`C_n` (`hmonoBeta`, `hmonoField`), the envelope `C_n ≤ M` (`hle`), pointwise convergence `hconv`,
-and continuity of `M` at `(β, h)` (`hcont`). `abfc_abig_forward_characteristic_of_exhaustion`
+hypotheses carry the input: the finite-volume differential inequality `hfinite`, `∂_h M_n ≥ 0`
+(`hfield`), monotonicity of `C_n` (`hmonoBeta`, `hmonoField`), the envelope `C_n ≤ M` (`hle`),
+pointwise convergence `hconv`, joint differentiability of each `M_n` (`hjointFinite`), joint
+continuity of `M` at `(β, h)` (`hcont`), and `J ≥ 0`, `β ≥ 0`, `h > 0`, `M(β, h) ≥ 0` (`hJ`,
+`hbeta`, `hh`, `hM`). `abfc_abig_forward_characteristic_of_exhaustion`
 applies it to the infinite-graph magnetization `abigMag` along an exhaustion by finite windows; its
 remaining hypotheses are the row-sum bound `hrow`, the comparison `hInfiniteTarget` (every site has
 magnetization at most that of `o`, e.g. by translation invariance), and the exhaustion properties
@@ -53,9 +56,11 @@ namespace Sharpness
 
 /-! ## A. The characteristic bound for limits -/
 
-/-- Forward characteristic bound: under the finite-volume inequality `∂_β M_n ≤ J C_n ∂_h M_n` with
-`C_n ≤ M` monotone and `M_n → M`, for every `ε > 0` and small `t ≥ 0`,
-`M(β + t, h) ≤ M(β, h + J (M(β, h) + ε) t)`. -/
+/-- Forward characteristic bound: let `J ≥ 0`, `β ≥ 0`, `h > 0` and `M(β, h) ≥ 0`. Suppose that on
+`b, t ≥ 0` the finite-volume functions satisfy `∂_β M_n ≤ J C_n ∂_h M_n` and `∂_h M_n ≥ 0`, that
+there `M_n → M` pointwise and `C_n ≤ M` with each `C_n` monotone in `b` and in `t`, that each `M_n`
+is jointly differentiable, and that `M` is jointly continuous at `(β, h)`. Then for every `ε > 0`
+and small `t ≥ 0`, `M(β + t, h) ≤ M(β, h + J (M(β, h) + ε) t)`. -/
 lemma abfc_forward_characteristic_physical_envelope
     (Mn Cn : Nat → Real → Real → Real) (M : Real → Real → Real)
     (J beta h : Real)

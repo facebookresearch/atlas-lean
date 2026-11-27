@@ -43,7 +43,7 @@ example :
     FK.fkProbOf (⊤ : SimpleGraph (Fin 2)) (1 / 2) 2 edgeOpen
         * (1 - FK.fkProbOf (⊤ : SimpleGraph (Fin 2)) (1 / 2) 2 edgeOpen)
       ≤ ∑ e, FK.fkCov (⊤ : SimpleGraph (Fin 2)) (1 / 2) 2
-          (edgeOpen.indicator (fun _ => (1 : ℝ))) (FK.coord e) :=
+          (edgeOpen.indicator (fun _ => (1 : ℝ))) (FK.coordR e) :=
   MonotonicFK.fk_poincare_indicator ⊤ (by norm_num) (by norm_num) (by norm_num)
     edgeOpen isIncreasing_edgeOpen
 

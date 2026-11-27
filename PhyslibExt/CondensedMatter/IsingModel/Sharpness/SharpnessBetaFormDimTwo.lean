@@ -14,8 +14,8 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.SharpnessAssembly
 /-!
 # Sharpness in the `β`-parametrization for `d ≥ 2`
 
-The `β`-form sharpness theorem and the mean-field lower bound on `θ` for `d ≥ 2`, with the
-hypothesis `p_c(d) < 1` discharged.
+The `β`-form sharpness statement in its witness-set form and the mean-field lower bound on `θ` for
+`d ≥ 2`, with the hypothesis `p_c(d) < 1` discharged.
 
 ## i. Overview
 
@@ -28,7 +28,8 @@ comparison in `PcUpperViaFK`), so the results here are unconditional apart from 
 
 - `theta_ge_betaForm_of_two_le` : `θ(p(β)) ≥ (β - β̃_c)/β` for `β > β̃_c`
 - `theta_ge_betaForm_of_two_le_closed` : the same for `β ≥ β̃_c`
-- `sharpness_betaForm_of_two_le` : the sharpness theorem in the `β`-parametrization
+- `sharpness_betaForm_of_two_le` : the four-clause witness-set sharpness statement in the
+  `β`-parametrization
 
 ## iii. Table of contents
 
@@ -50,7 +51,9 @@ open StatMech.Percolation
 
 /-! ## A. Sharpness for `d ≥ 2` -/
 
-/-- **Mean-field lower bound** for `d ≥ 2`: `θ(p(β)) ≥ (β - β̃_c)/β` for `β > β̃_c`. -/
+/-- **Mean-field lower bound** (Duminil-Copin–Tassion 2016, Theorem 1.1(1)): for `d ≥ 2` and
+`J > 0`, with `p(β) = 1 - e^{-βJ}` and `β̃_c = -log(1 - p̃_c)/J`, `θ(p(β)) ≥ (β - β̃_c)/β` for
+`β > β̃_c`. -/
 theorem theta_ge_betaForm_of_two_le {d : ℕ} {J beta : ℝ}
     (hd : 2 ≤ d) (hJ : 0 < J) (hbeta : betaTildeC d J < beta) :
     theta d (pBeta J beta).toNNReal (pBeta_toNNReal_le_one J beta) ≥
@@ -58,7 +61,8 @@ theorem theta_ge_betaForm_of_two_le {d : ℕ} {J beta : ℝ}
   exact sh1_theta_ge_betaForm_of_pc_lt_one hJ (by omega)
     (pc_nontrivial_of_two_le hd).2 hbeta
 
-/-- The mean-field lower bound for `d ≥ 2` and `β ≥ β̃_c` (at `β = β̃_c` the bound is `0`). -/
+/-- For `d ≥ 2` and `J > 0`, with `p(β) = 1 - e^{-βJ}` and `β̃_c = -log(1 - p̃_c)/J`, the
+mean-field lower bound `θ(p(β)) ≥ (β - β̃_c)/β` for `β ≥ β̃_c` (at `β = β̃_c` the bound is `0`). -/
 lemma theta_ge_betaForm_of_two_le_closed {d : ℕ} {J beta : ℝ}
     (hd : 2 ≤ d) (hJ : 0 < J) (hbeta : betaTildeC d J ≤ beta) :
     theta d (pBeta J beta).toNNReal (pBeta_toNNReal_le_one J beta) ≥
@@ -68,9 +72,15 @@ lemma theta_ge_betaForm_of_two_le_closed {d : ℕ} {J beta : ℝ}
       (pBeta_toNNReal_le_one J (betaTildeC d J))
   · exact theta_ge_betaForm_of_two_le hd hJ hbeta
 
-/-- **Sharpness of the phase transition** (Duminil-Copin–Tassion 2016) for `d ≥ 2` in the
-`β`-parametrization, with no hypothesis on `p_c`. -/
-theorem sharpness_betaForm_of_two_le {d : ℕ} {J : ℝ}
+/-- **Witness-set form of the sharpness of the phase transition** for `d ≥ 2` and `J > 0`, with no
+hypothesis on `p_c`, where `p(β) = 1 - e^{-βJ}` and `β̃_c = -log(1 - p̃_c)/J`: `p̃_c = p_c`;
+`β > β̃_c` iff `p(β) > p̃_c`; if `p(β) ∈ tildePcSet d`, that is, some finite `S ∋ 0` has
+`φ_{p(β)}(S) < 1`, the one-arm probability decays exponentially; and `θ(p(β)) ≥ (β - β̃_c)/β` for
+`β > β̃_c` (Duminil-Copin–Tassion 2016, Theorem 1.1, items 1 and 3 in the form proved there). This
+is not Theorem 1.1 verbatim: decay is stated on the witness set, not for every `β < β̃_c`, and
+finite susceptibility is the separate `finite_susceptibility_of_lt_tildeBetaCPerco` (for the unit
+coupling, `p = 1 - e^{-β}`). -/
+lemma sharpness_betaForm_of_two_le {d : ℕ} {J : ℝ}
     (hd : 2 ≤ d) (hJ : 0 < J) :
     tildePc d = pc d
       ∧ (∀ beta : ℝ,

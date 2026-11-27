@@ -1466,16 +1466,15 @@ lemma crr_boxFaceRep_component (n : Int) (C : Ising.kwg_Face (crr_boxPlanar n)) 
   left/right face graph. -/
 noncomputable def crr_cutFaceHom
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int) :
-    Ising.kwg_deleteVertexGraph
-        (Ising.kwg_faceSupportGraph
-          (fun e : ↑(crr_boxRCut omega n) =>
-            Ising.kwg_dualEnds (crr_boxPlanar n) e.1))
+    (Ising.kwg_faceSupportGraph
+        (fun e : ↑(crr_boxRCut omega n) =>
+          Ising.kwg_dualEnds (crr_boxPlanar n) e.1)).deleteIncidenceSet
         ((whb_faceRegion (imageGraph (crr_boxPlanar n))).connectedComponentMk ![-1, -1]) →g
       crr_LRFaceGraph omega n where
   toFun C := crr_boxFaceRep n C
   map_rel' := by
     intro C D hCD
-    obtain ⟨hCDsupp, hCout, hDout⟩ := hCD
+    obtain ⟨hCDsupp, hCout, hDout⟩ := SimpleGraph.deleteIncidenceSet_adj.mp hCD
     obtain ⟨hCDne, e, heEnds⟩ := hCDsupp
     have hecut : e.1 ∈ crr_boxRCut omega n := e.2
     have hflank : (crr_LRFaceGraph omega n).Adj

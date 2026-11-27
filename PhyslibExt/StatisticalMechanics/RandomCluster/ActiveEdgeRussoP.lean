@@ -72,7 +72,7 @@ noncomputable def activePScore (p : ℝ) (ω : ConfigSpace G.edgeSet) : ℝ :=
   ∑ e : G.edgeSet, (OSSS.Lindeberg.coord e ω - p)
 
 lemma centeredScore_extendActive (p : ℝ) (ω : ConfigSpace G.edgeSet) :
-    (∑ e ∈ G.edgeFinset, (coord e (extendActive G ω) - p)) =
+    (∑ e ∈ G.edgeFinset, (coordR e (extendActive G ω) - p)) =
       activePScore G p ω := by
   unfold activePScore
   rw [Finset.sum_subtype G.edgeFinset]
