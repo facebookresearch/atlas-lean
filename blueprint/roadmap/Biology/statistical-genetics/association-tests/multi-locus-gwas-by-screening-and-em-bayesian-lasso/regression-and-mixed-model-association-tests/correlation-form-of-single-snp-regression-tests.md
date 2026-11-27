@@ -18,11 +18,11 @@ The dominant cost of a full scan is the matrix product, about $2\times(\#\text{g
 
 ## Depends on
 
-- [The Cochran–Armitage statistic is N r²](../cochran-armitage-trend-test/ca-stat-eq-mul-sample-corr-sq.md)
+- [The Cochran–Armitage statistic is N r²](../../cochran-armitage-trend-test/ca-stat-eq-mul-sample-corr-sq.md)
 
 ## Proof depends on
 
-- [Frisch–Waugh–Lovell theorem, existence](../../principal-component-correction-for-stratificatio/exists-frisch-waugh-lovell.md)
+- [Frisch–Waugh–Lovell theorem, existence](../../../principal-component-correction-for-stratificatio/exists-frisch-waugh-lovell.md)
 
 ## Expansion
 

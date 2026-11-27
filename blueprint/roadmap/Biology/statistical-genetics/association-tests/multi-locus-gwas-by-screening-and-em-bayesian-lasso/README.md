@@ -3,3 +3,4 @@
 - [Iterative sure independence screening with the SCAD penalty](iterative-sure-independence-screening-with-the-scad-penalty.md)
 - [EM algorithm for the multi-locus Bayesian LASSO mixed model](em-algorithm-for-the-bayesian-lasso-mixed-model.md)
 - [LOD score for a marker effect in a multi-locus model](lod-score-for-a-marker-effect-in-a-multi-locus-model.md)
+- [Regression and mixed-model association tests](regression-and-mixed-model-association-tests/README.md)
