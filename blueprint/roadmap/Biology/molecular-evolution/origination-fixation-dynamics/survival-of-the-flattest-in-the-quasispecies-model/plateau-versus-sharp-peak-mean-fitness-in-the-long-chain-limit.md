@@ -22,7 +22,7 @@ Since $\lambda(a,\sigma)$ decreases more slowly in $a$ than $\delta e^{-a}$, for
 
 ## Depends on
 
-- [Eigen's error threshold](../../population-dynamics/eigen-s-quasispecies-error-threshold/master-equilibrium-exp-pos-iff.md)
+- [Eigen's error threshold](../../../population-dynamics/eigen-s-quasispecies-error-threshold/master-equilibrium-exp-pos-iff.md)
 
 ## Expansion
 
