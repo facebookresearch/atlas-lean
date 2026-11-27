@@ -18,6 +18,7 @@ There is an algorithm that decides, given a [Petri net](place-transition-petri-n
 This page becomes ready once:
 
 - A page reducing reachability in Petri nets with arc weights to reachability in ordinary Petri nets, or to vector addition systems in Leroux's sense, so that the separation theorem, stated for ordinary nets, applies to every net (proof prerequisite)
+- A page reducing reachability in an arbitrary ordinary net to reachability in nets that are connected and have at least one place and one transition, or to vector addition systems, since the separation theorem is stated for those nets (proof prerequisite)
 
 ## Sources
 

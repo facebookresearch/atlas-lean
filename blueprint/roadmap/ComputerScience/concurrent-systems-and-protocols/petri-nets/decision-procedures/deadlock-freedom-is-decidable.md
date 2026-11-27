@@ -1,6 +1,6 @@
 # Deadlock-freedom of Petri nets is decidable
 
-There is an algorithm that decides, given an ordinary Petri net $(N, M_0)$, whether it is [deadlock-free](../liveness-and-deadlock-freedom.md): deadlock-freedom reduces in polynomial time to reachability. For a net that is [connected](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md) and has at least one place and one transition, the reduction is the composition of the two reductions linked below.
+There is an algorithm that decides, given an ordinary Petri net $(N, M_0)$, whether it is [deadlock-free](../liveness-and-deadlock-freedom.md): deadlock-freedom reduces in polynomial time to reachability. For a net that is [connected](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md) and has at least one place and one transition, the reduction is the composition of the two reductions linked below. Other nets reduce to such nets: the connected components of a net evolve independently, so a dead marking is reachable if and only if every component can reach one; a component without places is never dead, and one without transitions is always dead.
 
 ## Depends on
 

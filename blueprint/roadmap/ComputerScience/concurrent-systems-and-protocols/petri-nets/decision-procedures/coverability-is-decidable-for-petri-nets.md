@@ -1,6 +1,6 @@
 # Coverability is decidable for Petri nets
 
-There is an algorithm that decides, given an ordinary Petri net $(N, M_0)$ and a marking $M$ of $N$, whether some marking $M' \ge M$ is reachable from $M_0$, since [Petri nets are well-structured transition systems](petri-nets-are-well-structured-transition-systems.md) and coverability is decidable for those. When the net is [connected](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md) and has at least one place and one transition, the cited lecture notes give a direct algorithm: compute the [coverability graph](coverability-graph-algorithm.md), which is finite, and check whether one of its nodes is $\ge M$.
+There is an algorithm that decides, given an ordinary Petri net $(N, M_0)$ and a marking $M$ of $N$, whether some marking $M' \ge M$ is reachable from $M_0$, since [Petri nets are well-structured transition systems](petri-nets-are-well-structured-transition-systems.md) and coverability is decidable for those, since their predecessor bases are computable ([backward reachability from an upward-closed set stabilizes](backward-reachability-stabilizes.md)). When the net is [connected](../state-machines-marked-graphs-and-free-choice-nets/connected-and-strongly-connected-nets.md) and has at least one place and one transition, the cited lecture notes give a direct algorithm: compute the [coverability graph](coverability-graph-algorithm.md), which is finite, and check whether one of its nodes is $\ge M$.
 
 ## Depends on
 
@@ -16,6 +16,7 @@ There is an algorithm that decides, given an ordinary Petri net $(N, M_0)$ and a
 - [The coverability graph characterizes coverable markings](coverability-graph-characterizes-coverability.md)
 - [Petri nets are well-structured transition systems](petri-nets-are-well-structured-transition-systems.md)
 - [Coverability is decidable for well-structured transition systems](../../../../Logic/temporal-logic/timed-and-infinite-state-verification/coverability-is-decidable-for-well-structured.md)
+- [Backward reachability from an upward-closed set stabilizes](backward-reachability-stabilizes.md)
 
 ## Sources
 
