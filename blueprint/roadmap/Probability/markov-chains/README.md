@@ -10,6 +10,7 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 - [Interchange process on the hypercube](interchange-process-on-the-hypercube/README.md)
 - [Jump–hold chains](jump-hold-chains/README.md)
 - [Kolmogorov's criterion for reversibility](kolmogorov-s-criterion-for-reversibility/README.md)
+- [Foster–Lyapunov criteria](foster-lyapunov-criteria/README.md)
 - [Finite Markov chains](finite-markov-chains/README.md)
 - [Construction of Markov chains](construction-of-markov-chains/README.md)
 - [Dirichlet forms](dirichlet-forms/README.md)

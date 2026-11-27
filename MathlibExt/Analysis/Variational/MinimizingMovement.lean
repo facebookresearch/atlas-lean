@@ -36,9 +36,9 @@ state gives
 the triangle and Cauchy–Schwarz inequalities turn it into a `½`-Hölder bound in time.
 
 This file formalizes that skeleton on an arbitrary (pseudo)metric space, for an arbitrary
-real-valued functional `F`. The Wasserstein-specific parts of the JKO paper (existence of the
-minimizer on probability densities, Proposition 4.1, and convergence to the Fokker–Planck
-equation, Theorem 5.1) are stated as wanted results in
+real-valued functional `F`. Existence and uniqueness of the minimizer on probability densities
+(Proposition 4.1) are proved in `MathlibExt/Probability/Diffusion/JKOStep.lean`. Convergence
+to the Fokker–Planck equation (Theorem 5.1) is stated in
 `WantedExt/MeasureTheory/JKOSchemeWanted.lean`.
 
 ## Main results

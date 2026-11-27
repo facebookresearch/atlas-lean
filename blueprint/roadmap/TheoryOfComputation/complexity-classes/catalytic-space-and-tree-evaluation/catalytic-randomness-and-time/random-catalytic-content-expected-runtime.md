@@ -1,16 +1,16 @@
 # Buhrman et al.: a random catalytic content gives expected running time 2^{O(s)}, hence CL is in ZPP
 
-Let $M$ be a deterministic catalytic machine with free space $s\ge\log n$ and catalytic space $c$, and let $T_M(x,\tau)$ be its running time on input $x$ with initial catalytic content $\tau$. Then for every $x$,
+Let $M$ be a deterministic catalytic machine with free space $s\ge\log n$ and catalytic space $c \le 2^{O(s)}$, and let $T_M(x,\tau)$ be its running time on input $x$ with initial catalytic content $\tau$. Then for every $x$,
 
 $$
-\mathbb{E}_{\tau\in\{0,1\}^c}\bigl[T_M(x,\tau)\bigr]\le 2^{O(s)}.
+\mathbb{E}_{\tau\in\{0,1\}^c}\bigl[T_M(x,\tau)\bigr]\le 2^{O(s)}
 $$
 
-Consequently $\mathsf{CL}\subseteq\mathsf{ZPP}$: a polynomial-time machine fills a simulated catalytic tape with random bits, runs $M$ for $4\cdot 2^{O(s)}=\mathrm{poly}(n)$ steps, and outputs $\bot$ if it has not halted.
+(without the bound $c \le 2^{O(s)}$, the average running time is bounded by $c \cdot 2^{O(s)}$ because of the catalytic head positions). Consequently $\mathsf{CL}\subseteq\mathsf{ZPP}$: a polynomial-time machine fills a simulated catalytic tape of length $c = 2^{O(\log n)} = \mathrm{poly}(n)$ with random bits, runs $M$ for $4\cdot 2^{O(s)}=\mathrm{poly}(n)$ steps, and outputs $\bot$ if it has not halted.
 
 ## Proof sketch
 
-The computation paths from distinct initial contents are vertex-disjoint in the configuration graph: a deterministic path is determined by any of its configurations onward, and a shared configuration would force both paths to halt in the same configuration, whose catalytic part equals the restored content. Hence $\sum_\tau T_M(x,\tau)$ is at most the number $2^{c}\cdot 2^{O(s)}$ of configurations, and averaging gives the bound. Markov's inequality bounds the probability of $\bot$ by $1/4$.
+The computation paths from distinct initial contents are vertex-disjoint in the configuration graph: a deterministic path is determined by any of its configurations onward, and a shared configuration would force both paths to halt in the same configuration, whose catalytic part equals the restored content. Counting work-tape contents, state, work-head position, and the $c$ catalytic-head positions gives at most $2^{c} \cdot c \cdot 2^{O(s)}$ configurations, so $\sum_\tau T_M(x,\tau) \le 2^{c} \cdot c \cdot 2^{O(s)}$; dividing by $2^c$ and using $c \le 2^{O(s)}$ yields $2^{O(s)}$. Markov's inequality bounds the probability of $\bot$ by $1/4$.
 
 ## Depends on
 
