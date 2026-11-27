@@ -95,7 +95,9 @@ theorem burgersFromHeat_tendsto_zero {f : ℝ → ℝ} (hf : ContDiff ℝ 1 f)
   tendsto_const_nhds.mul ((heatSolution_deriv_tendsto_zero_scaled hf hb hdb hν x).div
     (heatSolution_tendsto_zero_scaled hf.continuous hb hν x) hx)
 
-/-- The nonpositive-time convention also gives the prescribed quotient at time zero. -/
+/-- At time `0`, the Burgers field obtained from `f` by heat evolution with heat time `ν * t` is
+`burgersFromHeat ν f 0 x = -2 * ν * (deriv f x / f x)`, for every `ν`, `f` and `x`, with real
+division (`0` where `f x = 0`). -/
 @[simp] theorem burgersFromHeat_zero (ν : ℝ) (f : ℝ → ℝ) (x : ℝ) :
     burgersFromHeat ν f 0 x = -2 * ν * (deriv f x / f x) := by
   simp [burgersFromHeat, classicalTransform]
@@ -105,11 +107,13 @@ This is the spatial exponential in the initial slice of the inverse Cole–Hopf 
 noncomputable def initialHeatProfile (ν : ℝ) (u₀ : ℝ → ℝ) (x₀ x : ℝ) : ℝ :=
   exp (-(∫ y in x₀..x, u₀ y) / (2 * ν))
 
-/-- The anchored exponential is strictly positive, with no uniform lower bound required. -/
+/-- The initial heat profile `exp (-(∫ y in x₀..x, u₀ y) / (2 * ν))` is strictly positive,
+for all `ν`, `u₀`, `x₀` and `x`. -/
 theorem initialHeatProfile_pos (ν : ℝ) (u₀ : ℝ → ℝ) (x₀ x : ℝ) :
     0 < initialHeatProfile ν u₀ x₀ x := exp_pos _
 
-/-- Normalization at the spatial anchor. -/
+/-- The initial heat profile `exp (-(∫ y in x₀..x, u₀ y) / (2 * ν))` equals `1` at the anchor
+`x = x₀`, for all `ν`, `u₀` and `x₀`. -/
 @[simp] theorem initialHeatProfile_anchor (ν : ℝ) (u₀ : ℝ → ℝ) (x₀ : ℝ) :
     initialHeatProfile ν u₀ x₀ x₀ = 1 := by simp [initialHeatProfile]
 

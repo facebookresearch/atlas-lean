@@ -22,3 +22,7 @@ Inequalities relating entropies, divergences and mutual information, such as the
 ## Research directions
 
 - [Entropy region of four random variables](entropy-region-of-four-random-variables.md)
+- [Binary Relative Entropy](binary-relative-entropy/README.md)
+- [Collision Probability, Hash Isolation and Smoothed Extraction](collision-entropy-and-smoothed-extraction/README.md)
+- [KL Tensorization and Conditioning of Product Distributions](kl-tensorization-and-product-conditioning/README.md)
+- [Renyi, Chi-Square and Hockey-Stick Divergences](renyi-chi-square-and-hockey-stick-divergences/README.md)
