@@ -9,9 +9,11 @@ LICENSE file in the root directory of this source tree.
 /-
 # Dissipation bounds steady-state current fluctuations
 
-Gingrich, Horowitz, Perunov and England (2016) consider a continuous-time Markov jump process on
-a finite state space with rates `r(y, z) ≥ 0` (with `r(z, y) > 0` whenever `r(y, z) > 0`) and
-stationary law `π`. For a density `p` and an edge `y < z` with positive rates they set
+Gingrich, Horowitz, Perunov and England (2016) consider an ergodic continuous-time Markov jump
+process on a finite state space, with rates `r(y, z) ≥ 0` (with `r(z, y) > 0` whenever
+`r(y, z) > 0`, and any two states joined by a chain of transitions of positive rate), whose
+density relaxes to a unique stationary law `π`. For a density `p` and an edge `y < z` with
+positive rates they set
 `j^p(y, z) = p(y) r(y, z) - p(z) r(z, y)` and `a^p(y, z) = 2 √(p(y) p(z) r(y, z) r(z, y))`; the
 force is `F(y, z) = ln (π(y) r(y, z) / (π(z) r(z, y)))`, the entropy production rate along the
 edge is `σ^π = j^π F`, and the total is `Σ^π = ∑_{y<z} σ^π(y, z)` (`k_B = 1`). The level-2.5
@@ -125,12 +127,16 @@ noncomputable def generalizedRate (r : Fin N → Fin N → ℝ) (d : Fin N → F
     ℝ≥0∞ :=
   ⨅ (j : Fin N → Fin N → ℝ) (_ : Conservative r j ∧ generalizedCurrent r d j = x), currentRate r j
 
-/-- The setting: rates `r ≥ 0` with `r(z, y) > 0` whenever `r(y, z) > 0`; a positive
-stationary probability law `π` (`∑_y π(y) r(y, z) = π(z) ∑_y r(z, y)` for every `z`); and
-nonzero stationary current `j^π(y, z) ≠ 0` on every edge `y < z` of positive rate. -/
+/-- The setting, the source's (p. 1, before Eq. (1)): an ergodic chain. Its rates `r ≥ 0` have
+`r(z, y) > 0` whenever `r(y, z) > 0`, and any two states are joined by a chain of transitions of
+positive rate (irreducibility, which with finitely many states makes the stationary law unique);
+`π` is a positive stationary probability law (`∑_y π(y) r(y, z) = π(z) ∑_y r(z, y)` for every
+`z`), so the unique one; and the stationary current `j^π(y, z)` is nonzero on every edge `y < z`
+of positive rate. -/
 structure Setting (r : Fin N → Fin N → ℝ) (π : Fin N → ℝ) : Prop where
   r_nonneg : ∀ y z, 0 ≤ r y z
   r_symm_pos : ∀ y z, 0 < r y z → 0 < r z y
+  irreducible : ∀ y z, Relation.ReflTransGen (fun a b => 0 < r a b) y z
   π_pos : ∀ y, 0 < π y
   sum_π : ∑ y, π y = 1
   stationary : ∀ z, ∑ y, π y * r y z = π z * ∑ y, r z y
@@ -144,19 +150,24 @@ Source: Gingrich, Horowitz, Perunov and England (2016), Eq. (12). -/
 theorem_wanted psi_le_quadratic (j jbar a : ℝ) (hjbar : jbar ≠ 0) (ha : 0 < a) :
     psi j jbar a ≤ (j - jbar) ^ 2 / (4 * jbar ^ 2) * (2 * jbar * Real.arsinh (jbar / a))
 
-/-- **Edge entropy production** (Gingrich et al. 2016, after Eq. (12)). Let `r(y, z) > 0`,
-`r(z, y) > 0`, `π(y) > 0` and `π(z) > 0`. Then
-`j^π(y, z) F(y, z) = 2 j^π(y, z) arsinh (j^π(y, z) / a^π(y, z))`.
+/-- **Edge entropy production** (Gingrich et al. 2016, after Eq. (12)). In the setting
+`Setting r π` (an ergodic chain and its stationary law `π`), on every edge of positive rate,
+`r(y, z) > 0`, the stationary current and the force satisfy
+`j^π(y, z) F(y, z) = 2 j^π(y, z) arsinh (j^π(y, z) / a^π(y, z))`: the source's
+`σ^π = 2 j^π arcsinh (j^π / a^π)` for the steady state. `Setting` gives `r(z, y) > 0`
+(`r_symm_pos`) and `π(y), π(z) > 0` (`π_pos`).
 
-Source: Gingrich, Horowitz, Perunov and England (2016), text after Eq. (12). -/
-theorem_wanted meanCurrent_mul_force (r : Fin N → Fin N → ℝ) (π : Fin N → ℝ) (y z : Fin N)
-    (hyz : 0 < r y z) (hzy : 0 < r z y) (hy : 0 < π y) (hz : 0 < π z) :
+Source: Gingrich, Horowitz, Perunov and England (2016), text after Eq. (12), in the setting of
+p. 1. -/
+theorem_wanted meanCurrent_mul_force (r : Fin N → Fin N → ℝ) (π : Fin N → ℝ) (h : Setting r π)
+    (y z : Fin N) (hyz : 0 < r y z) :
     meanCurrent r π y z * force r π y z =
       2 * meanCurrent r π y z * Real.arsinh (meanCurrent r π y z / traffic r π y z)
 
 /-- **Linear-response bound on current fluctuations** (Gingrich et al. 2016, Eq. (3)). In the
-setting `Setting` (rates `r ≥ 0` with positive reverse rates on edges, a positive stationary
-probability law `π`, and nonzero stationary current on every edge of positive rate), for every
+setting `Setting r π` (an ergodic chain: rates `r ≥ 0` with positive reverse rates on edges and
+any two states joined by a chain of transitions of positive rate; its positive stationary
+probability law `π`; and nonzero stationary current on every edge of positive rate), for every
 conservative current `j`,
 `I(j) ≤ ∑_{y<z} (j(y, z) - j^π(y, z))² σ^π(y, z) / (4 j^π(y, z)²)` in `[0, ∞]` (the right side is
 a nonnegative real number), with `σ^π = j^π F`, the sum over edges `y < z` of positive rate, and
@@ -169,10 +180,11 @@ theorem_wanted currentRate_le (r : Fin N → Fin N → ℝ) (π : Fin N → ℝ)
       (meanCurrent r π e.1 e.2 * force r π e.1 e.2) / (4 * meanCurrent r π e.1 e.2 ^ 2))
 
 /-- **Dissipation bounds every generalized current** (Gingrich et al. 2016, Eqs. (4)–(5)). In
-the setting `Setting`, for every weight `d` with `j_d^π = ∑_{y<z} d(y, z) j^π(y, z) ≠ 0` and
-every real `x`, `I(j_d = x) ≤ (x - j_d^π)² Σ^π / (4 (j_d^π)²)` in `[0, ∞]` (the right side is a
-nonnegative real number; in particular every `x` is feasible and `I(j_d = x)` is finite).
-Eq. (5) is the case `d = F`.
+the setting `Setting r π` (an ergodic chain and its stationary law `π`, as in `currentRate_le`),
+for every weight `d` with `j_d^π = ∑_{y<z} d(y, z) j^π(y, z) ≠ 0` and every real `x`,
+`I(j_d = x) ≤ (x - j_d^π)² Σ^π / (4 (j_d^π)²)` in `[0, ∞]` (the right side is a nonnegative real
+number; in particular every `x` is feasible and `I(j_d = x)` is finite). Eq. (5) is the case
+`d = F`.
 
 Source: Gingrich, Horowitz, Perunov and England (2016), Eqs. (4)–(5). -/
 theorem_wanted generalizedRate_le (r : Fin N → Fin N → ℝ) (π : Fin N → ℝ) (h : Setting r π)
@@ -181,8 +193,9 @@ theorem_wanted generalizedRate_le (r : Fin N → Fin N → ℝ) (π : Fin N → 
       entropyRate r π / (4 * generalizedCurrent r d (meanCurrent r π) ^ 2))
 
 /-- **Thermodynamic uncertainty relation, curvature form** (Gingrich et al. 2016, Eq. (8)). In
-the setting `Setting`, let `d` be a weight with `j_d^π ≠ 0` (so every `x` is feasible and the rate
-`I(j_d = x)` is finite; the real-valued rate function is `x ↦ (I(j_d = x)).toReal`), and suppose
+the setting `Setting r π` (an ergodic chain and its stationary law `π`), let `d` be a weight with
+`j_d^π ≠ 0` (so every `x` is feasible and the rate `I(j_d = x)` is finite; the real-valued rate
+function is `x ↦ (I(j_d = x)).toReal`), and suppose
 this real rate function is differentiable near `j_d^π` and its derivative has derivative
 `c = I''(j_d^π) > 0` at `j_d^π`. Then the reciprocal curvature satisfies
 `(1 / I''(j_d^π)) Σ^π / (j_d^π)² ≥ 2`, i.e. `I''(j_d^π) ≤ Σ^π / (2 (j_d^π)²)`. This is a
