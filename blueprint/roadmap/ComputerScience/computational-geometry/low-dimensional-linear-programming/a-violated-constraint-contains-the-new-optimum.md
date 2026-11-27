@@ -4,9 +4,9 @@ Let $h_1, \dots, h_n$ be closed halfspaces in $\mathbb{R}^d$ and $c \in \mathbb{
 
 Let $v_{i-1}$ be the unique optimal point for $h_1, \dots, h_{i-1}$ with $i > d$. If $v_{i-1} \notin h_i$ and the program for $h_1, \dots, h_i$ is feasible, then its optimal point lies on the hyperplane bounding $h_i$.
 
-## Depends on
+## Related topics
 
-- [Linear program](../../../Geometry/convex-geometry/linear-programming/linear-program.md)
+- [Linear program](../../../Geometry/convex-geometry/linear-programming/linear-program.md): the standard form; this page uses general halfspace programs.
 
 ## Sources
 
