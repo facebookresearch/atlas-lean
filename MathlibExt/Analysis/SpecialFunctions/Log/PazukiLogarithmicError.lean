@@ -15,12 +15,14 @@ import Mathlib.Analysis.Complex.ExponentialBounds
 # Pazuki's lemma on logarithmic errors
 
 F. Pazuki, *Theta height and Faltings height*, Bull. Soc. Math. France 140 (2012), 19–49,
-Lemma 5.7 (p. 20 of arXiv:0907.1458v2): an error term `c log (2 + a)` in a
-comparison `|a - b| ≤ c log (2 + a)` can be replaced by `c̃ log (2 + min a b)`, with
-`c̃ = c log (6 + 2c log (2c) - 2c) / log 3`.
+Lemma 5.7 (p. 20 of arXiv:0907.1458v2): for real numbers `a`, `b`, `c` with `b ≥ 1` and
+`c ≥ 2`, an error term `c log (2 + a)` in a comparison `|a - b| ≤ c log (2 + a)` can be replaced
+by `c̃ log (2 + min a b)`, with `c̃ = c log (6 + 2c log (2c) - 2c) / log 3`.
 
 The proof follows Pazuki's. The printed lemma assumes `a ≥ 1`; the proof here does not use it
-(when `a ≤ b`, the hypothesis itself forces `log (2 + a) ≥ 0`), so the statement drops it.
+(when `a ≤ b`, the hypothesis itself forces `log (2 + a) ≥ 0`), so the statement drops it. For
+`a ≤ -2`, `log (2 + a)` is Mathlib's `Real.log`, which is `log |2 + a|` (and `0` at `a = -2`); for
+`a > -2`, which contains Pazuki's range `a ≥ 1`, it is the usual logarithm.
 
 ## Main results
 
@@ -75,7 +77,10 @@ and let $c \ge 2$ be a real number with $|a - b| \le c \log(2 + a)$. Then
 $$|a - b| \le \tilde c \log(2 + \min\{a, b\}), \qquad
 \tilde c = \frac{c \log(6 + 2c \log(2c) - 2c)}{\log 3}.$$
 
-Pazuki also assumes $a \ge 1$; the statement does not need it.
+Pazuki also assumes $a \ge 1$; the statement does not need it. It holds for every real $a$,
+with Mathlib's `Real.log`, for which $\log x = \log |x|$ (and $\log 0 = 0$): for $a \le -2$ the
+logarithms $\log(2 + a)$ and $\log(2 + \min\{a, b\})$ are read this way. For $a > -2$, which
+contains Pazuki's range $a \ge 1$, they are the usual logarithms.
 
 Source: F. Pazuki, *Theta height and Faltings height*, Bull. Soc. Math. France 140 (2012),
 19–49, Lemma 5.7 and its proof, read in arXiv:0907.1458v2, p. 20. -/
