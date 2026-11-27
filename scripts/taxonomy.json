@@ -10852,6 +10852,7 @@
   "MathlibExt/Combinatorics/Additive/BhSet": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "B_h-sets"},
   "MathlibExt/Combinatorics/Additive/BoseChowlaSubgroup": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Difference bases"},
   "MathlibExt/Combinatorics/Additive/BoundedSubsequenceSums": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Subset sums with a bounded number of terms"},
+  "MathlibExt/Combinatorics/Additive/BoundedSubsequenceSumsPositive": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Subset sums with a bounded number of terms"},
   "MathlibExt/Combinatorics/Additive/CapSetDimFour": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Small values of cap set sizes and Roth numbers"},
   "MathlibExt/Combinatorics/Additive/BoundedSubsetSums": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Subset sums with a bounded number of terms"},
   "MathlibExt/Combinatorics/Additive/CapSetDimThree": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Small values of cap set sizes and Roth numbers"},
