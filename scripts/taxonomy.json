@@ -14233,6 +14233,7 @@
   "MathlibExt/NumberTheory/Recurrences/SchutzKellyBinomialSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/Recurrences/SecondOrderBinomialSumsSecondOrderBiSeqSumCentralChooseMul": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Binomial sums with second-order recurrences"},
   "MathlibExt/NumberTheory/Recurrences/ShiftedLucasComposite": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Composite terms of shifted Lucas sequences"},
+  "MathlibExt/NumberTheory/Recurrences/ShiftedLucasQNegOneComposite": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Composite terms of shifted Lucas sequences"},
   "MathlibExt/NumberTheory/Recurrences/SkolemMahlerLech": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Skolem–Mahler–Lech theorem"},
   "MathlibExt/NumberTheory/Recurrences/SmallProductRemainder": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Mod-mod representations of C-recursive sequences"},
   "MathlibExt/NumberTheory/Recurrences/SquareFibonacciLucas": {"to": "NumberTheory/linear-recurrences/diophantine-recurrences", "title": "Squares in Fibonacci and Lucas sequences"},
