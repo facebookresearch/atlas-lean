@@ -15,8 +15,6 @@ public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Logic.Function.Basic
 import Mathlib.Tactic.Ring
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.FinCases
 
 /-!
 # Box terminal flux to nodal injection: the port sign bridge
@@ -44,17 +42,21 @@ box and the negated outward current when its head is at the box
 (`portSign`, `IsFluxPortCurrent`). Under this sign conversion the net
 branch outflow at the box node equals the sum of the six outward
 terminal currents, hence minus the enclosed-charge rate. When the
-enclosed charge is steady (rate zero) the outflow is zero, so current
-balance at the box holds with zero supplied injection, and every
-injection compatible with current balance vanishes at the box.
-Reversing the sign of a single port current with nonzero flux breaks
-that equality.
+outward fluxes balance (continuity at rate zero) the outflow is zero,
+so current balance at the box holds with zero supplied injection, and
+every injection compatible with current balance vanishes at the box.
+For the box `Set.Icc lo hi` that balance is derived rather than
+assumed: constant enclosed charge and the local continuity law give it
+through `boxTerminalCurrents_sum_eq_zero_of_constantCharge`. Reversing
+the sign of a single port current with nonzero flux breaks that
+equality.
 
 This is a representation bridge between the two conventions, not an
 identification of arbitrary electromagnetic fields with a lumped
 circuit. No second conservation law is derived: continuity enters
-only through the `chargeContinuity` premise of the face-flux
-interface `sum_terminalCurrent_eq_neg_chargeRate`.
+through the `chargeContinuity` premise of the face-flux interface
+`sum_terminalCurrent_eq_neg_chargeRate`, or, for the box, through the
+local continuity law of `PhyslibExt.Circuits.BoxTerminalFlux`.
 
 ## ii. Key results
 
@@ -64,9 +66,13 @@ interface `sum_terminalCurrent_eq_neg_chargeRate`.
 - `injection_box_eq_neg_chargeRate`: every nodal injection compatible
   with current balance equals minus the enclosed-charge rate at the
   box node.
-- `fluxPortSignBridge_correct`: the headline statement for steady
-  enclosed charge; the outflow is the flux sum, that sum is zero, and
-  every compatible injection vanishes at the box node.
+- `fluxPortSignBridge_correct`: the headline statement, assuming the
+  zero flux balance (continuity at rate zero); the outflow is the flux
+  sum, that sum is zero, and every compatible injection vanishes at the
+  box node.
+- `boxInjection_eq_zero_of_constantCharge`: for the box `Set.Icc lo hi`,
+  constant enclosed charge and the local continuity law give zero
+  outflow and zero injection at the box node.
 - `reversedPortSign_breaks_injection`: negating one port current with
   nonzero flux makes the box outflow `-2 * I f₀`, which is nonzero.
 
@@ -158,7 +164,7 @@ private lemma boxEntry_eq_zero_of_not_port {V : Type*} [Fintype V] [DecidableEq 
 /-- **Sign-correct outflow.** Under the terminal wiring and the sign conversion, the
 electrical-incidence outflow at the box node is the sum of the six outward terminal currents,
 whatever the orientation of each port branch. -/
-theorem electricalIncidence_mulVec_box_eq_sum {V : Type*} [Fintype V] [DecidableEq V]
+lemma electricalIncidence_mulVec_box_eq_sum {V : Type*} [Fintype V] [DecidableEq V]
     {E : Type*} [Fintype E] [DecidableEq E] (tail head : E → V) (b : V) (port : Fin 6 → E)
     (I : Fin 6 → ℝ) (i : E → ℝ) (hwire : IsTerminalWiring tail head b port)
     (hcur : IsFluxPortCurrent tail b port I i) :
@@ -182,7 +188,7 @@ theorem electricalIncidence_mulVec_box_eq_sum {V : Type*} [Fintype V] [Decidable
 /-- **Injection at the box.** With the box-terminal flux identification and charge
 continuity at rate `chargeRate`, every nodal injection compatible with current balance equals
 minus the enclosed-charge rate at the box node. -/
-theorem injection_box_eq_neg_chargeRate {V : Type*} [Fintype V] [DecidableEq V]
+lemma injection_box_eq_neg_chargeRate {V : Type*} [Fintype V] [DecidableEq V]
     {E : Type*} [Fintype E] [DecidableEq E] (D : Fin 6 → Set (ℝ × ℝ))
     (density : Fin 6 → (ℝ × ℝ) → ℝ) (I : Fin 6 → ℝ) (chargeRate : ℝ)
     (hI : ∀ f : Fin 6, I f = faceFlux D density f)
@@ -196,11 +202,13 @@ theorem injection_box_eq_neg_chargeRate {V : Type*} [Fintype V] [DecidableEq V]
   rw [← hKCL, hsum, hbox]
 
 /-- **Flux-to-injection sign bridge (headline).** For six oriented box faces, with terminal
-outward currents identified with the current-density flux integrals and steady enclosed charge
-(continuity at rate zero), wired into the network at the box node with the port orientation
-sign: the outflow at the box node is the sum of the outward terminal currents, that sum is zero,
-and every nodal injection compatible with current balance vanishes at the box node. -/
-theorem fluxPortSignBridge_correct {V : Type*} [Fintype V] [DecidableEq V]
+outward currents identified with the current-density flux integrals and the zero flux balance
+assumed (continuity at rate zero), wired into the network at the box node with the port
+orientation sign: the outflow at the box node is the sum of the outward terminal currents, that
+sum is zero, and every nodal injection compatible with current balance vanishes at the box node.
+`boxInjection_eq_zero_of_constantCharge` derives the same conclusion for the box `Set.Icc lo hi`
+from constant enclosed charge and the local continuity law. -/
+lemma fluxPortSignBridge_correct {V : Type*} [Fintype V] [DecidableEq V]
     {E : Type*} [Fintype E] [DecidableEq E] (D : Fin 6 → Set (ℝ × ℝ))
     (density : Fin 6 → (ℝ × ℝ) → ℝ) (I : Fin 6 → ℝ)
     (hI : ∀ f : Fin 6, I f = faceFlux D density f)
@@ -217,6 +225,33 @@ theorem fluxPortSignBridge_correct {V : Type*} [Fintype V] [DecidableEq V]
   · rw [hsum, hzero]
   · intro j hj
     rw [← hj, hsum, hzero]
+
+/-- **Steady enclosed charge gives zero injection at the box.** For the box `Set.Icc lo hi`, with
+terminal outward currents identified with the outward face fluxes of a current density `J`, a
+charge density `ρ` whose enclosed charge is constant in time, and the local continuity law
+`ρdot + div J = 0` at time `t`: the outflow at the box node is zero, and every nodal injection
+compatible with current balance vanishes there. The zero flux balance is derived by
+`boxTerminalCurrents_sum_eq_zero_of_constantCharge`, not assumed. -/
+lemma boxInjection_eq_zero_of_constantCharge {V : Type*} [Fintype V] [DecidableEq V]
+    {E : Type*} [Fintype E] [DecidableEq E] (lo hi : Fin 3 → ℝ) (hle : lo ≤ hi)
+    (ρ ρdot : ℝ → (Fin 3 → ℝ) → ℝ)
+    (hρ : Continuous (Function.uncurry ρ)) (hρdot : Continuous (Function.uncurry ρdot))
+    (hderiv : ∀ s x, HasDerivAt (fun s => ρ s x) (ρdot s x) s) (t : ℝ)
+    (hconst : ∀ s, enclosedCharge lo hi ρ s = enclosedCharge lo hi ρ t)
+    (J : (Fin 3 → ℝ) → Fin 3 → ℝ) (J' : (Fin 3 → ℝ) → (Fin 3 → ℝ) →L[ℝ] Fin 3 → ℝ)
+    (hc : ContinuousOn J (Set.Icc lo hi))
+    (hd : ∀ x ∈ Set.pi Set.univ fun i => Set.Ioo (lo i) (hi i), HasFDerivAt J (J' x) x)
+    (hlocal : ∀ x ∈ Set.Icc lo hi, ρdot t x + fderivDivergence J' x = 0)
+    (I : Fin 6 → ℝ) (hI : ∀ f : Fin 6, I f = boxOutwardFlux lo hi J f)
+    (tail head : E → V) (b : V) (port : Fin 6 → E) (i : E → ℝ)
+    (hwire : IsTerminalWiring tail head b port) (hcur : IsFluxPortCurrent tail b port I i) :
+    (electricalIncidence tail head *ᵥ i) b = 0 ∧
+      ∀ j : V → ℝ, electricalIncidence tail head *ᵥ i = j → j b = 0 := by
+  have hsum := electricalIncidence_mulVec_box_eq_sum tail head b port I i hwire hcur
+  have hzero : ∑ f : Fin 6, I f = 0 :=
+    boxTerminalCurrents_sum_eq_zero_of_constantCharge lo hi hle ρ ρdot hρ hρdot hderiv t hconst
+      J J' hc hd hlocal I hI
+  exact ⟨hsum.trans hzero, fun j hj => by rw [← hj, hsum, hzero]⟩
 
 /-! ## C. Validation -/
 
@@ -276,46 +311,6 @@ lemma reversedPortSign_breaks_injection {V : Type*} [Fintype V] [DecidableEq V]
         = -(electricalIncidence tail head b (port f₀) * i (port f₀)) := by ring
     rw [hS, hneg, hface]
     ring
-  exact ⟨hpart1, by rw [hpart1]; exact mul_ne_zero (by norm_num) hf₀⟩
-
-/-- Two-terminal network: box node `0`, network nodes `1` and `2`. Face `0`'s port branch
-leaves the box to node `1`; face `1`'s port branch enters the box from node `2`; faces `2` to
-`5` are insulating, with port branches from the box to node `1`. -/
-def twoTerminalTail : Fin 6 → Fin 3 := ![0, 2, 0, 0, 0, 0]
-
-/-- Heads of the two-terminal network branches. -/
-def twoTerminalHead : Fin 6 → Fin 3 := ![1, 0, 1, 1, 1, 1]
-
-/-- Outward terminal currents with equal and opposite flux on faces `0` and `1`. -/
-def equalOppositeFlux (c : ℝ) : Fin 6 → ℝ := ![-c, c, 0, 0, 0, 0]
-
-/-- Branch currents from the sign conversion: face `1`'s port branch enters the box, so its
-branch current is the negated outward current. -/
-def equalOppositeBranchCurrent (c : ℝ) : Fin 6 → ℝ := ![-c, -c, 0, 0, 0, 0]
-
-/-- **Two terminals with equal opposite flux.** The two-terminal network is a terminal wiring
-at node `0`, the branch currents are the sign-converted outward currents, and current balance
-gives the injection `(0, c, -c)`: zero at the box, `c` supplied at node `1`, `-c` at node
-`2`. Without the sign conversion (face `1`'s branch carrying the unconverted outward current
-`c`), the injection at the box is `-2 * c`. -/
-lemma twoTerminal_equalOppositeFlux (c : ℝ) :
-    IsTerminalWiring twoTerminalTail twoTerminalHead 0 id ∧
-      IsFluxPortCurrent twoTerminalTail 0 id (equalOppositeFlux c)
-        (equalOppositeBranchCurrent c) ∧
-      electricalIncidence twoTerminalTail twoTerminalHead *ᵥ equalOppositeBranchCurrent c =
-        ![0, c, -c] ∧
-      (electricalIncidence twoTerminalTail twoTerminalHead *ᵥ equalOppositeFlux c) 0 =
-        -2 * c := by
-  refine ⟨⟨Function.injective_id, by decide, by decide, fun e _ => ⟨e, rfl⟩⟩, ?_, ?_, ?_⟩
-  · intro f
-    fin_cases f <;>
-      simp [equalOppositeBranchCurrent, equalOppositeFlux, portSign, twoTerminalTail]
-  · funext v
-    fin_cases v <;>
-      simp [Matrix.mulVec_apply_eq_sum, Fin.sum_univ_six, electricalIncidence_apply,
-        twoTerminalTail, twoTerminalHead, equalOppositeBranchCurrent]
-  · simp [Matrix.mulVec_apply_eq_sum, Fin.sum_univ_six, electricalIncidence_apply,
-      twoTerminalTail, twoTerminalHead, equalOppositeFlux]
-    ring
+  exact ⟨hpart1, by rw [hpart1]; exact mul_ne_zero (neg_ne_zero.mpr two_ne_zero) hf₀⟩
 
 end PhyslibExt.Circuits.FluxPortSignBridge

@@ -20,6 +20,46 @@ open PhyslibExt.Circuits.FluxPortSignBridge
 
 namespace PhyslibExtTest.Circuits.FluxPortSignBridge
 
+/-- Two-terminal network: box node `0`, network nodes `1` and `2`. Face `0`'s port branch
+leaves the box to node `1`; face `1`'s port branch enters the box from node `2`; faces `2` to
+`5` are insulating, with port branches from the box to node `1`. -/
+def twoTerminalTail : Fin 6 → Fin 3 := ![0, 2, 0, 0, 0, 0]
+
+/-- Heads of the two-terminal network branches. -/
+def twoTerminalHead : Fin 6 → Fin 3 := ![1, 0, 1, 1, 1, 1]
+
+/-- Outward terminal currents with equal and opposite flux on faces `0` and `1`. -/
+def equalOppositeFlux (c : ℝ) : Fin 6 → ℝ := ![-c, c, 0, 0, 0, 0]
+
+/-- Branch currents from the sign conversion: face `1`'s port branch enters the box, so its
+branch current is the negated outward current. -/
+def equalOppositeBranchCurrent (c : ℝ) : Fin 6 → ℝ := ![-c, -c, 0, 0, 0, 0]
+
+/-- **Two terminals with equal opposite flux.** The two-terminal network is a terminal wiring
+at node `0`, the branch currents are the sign-converted outward currents, and current balance
+gives the injection `(0, c, -c)`: zero at the box, `c` supplied at node `1`, `-c` at node
+`2`. Without the sign conversion (face `1`'s branch carrying the unconverted outward current
+`c`), the injection at the box is `-2 * c`. -/
+lemma twoTerminal_equalOppositeFlux (c : ℝ) :
+    IsTerminalWiring twoTerminalTail twoTerminalHead 0 id ∧
+      IsFluxPortCurrent twoTerminalTail 0 id (equalOppositeFlux c)
+        (equalOppositeBranchCurrent c) ∧
+      electricalIncidence twoTerminalTail twoTerminalHead *ᵥ equalOppositeBranchCurrent c =
+        ![0, c, -c] ∧
+      (electricalIncidence twoTerminalTail twoTerminalHead *ᵥ equalOppositeFlux c) 0 =
+        -2 * c := by
+  refine ⟨⟨Function.injective_id, by decide, by decide, fun e _ => ⟨e, rfl⟩⟩, ?_, ?_, ?_⟩
+  · intro f
+    fin_cases f <;>
+      simp [equalOppositeBranchCurrent, equalOppositeFlux, portSign, twoTerminalTail]
+  · funext v
+    fin_cases v <;>
+      simp [Matrix.mulVec_apply_eq_sum, Fin.sum_univ_six, electricalIncidence_apply,
+        twoTerminalTail, twoTerminalHead, equalOppositeBranchCurrent]
+  · simp [Matrix.mulVec_apply_eq_sum, Fin.sum_univ_six, electricalIncidence_apply,
+      twoTerminalTail, twoTerminalHead, equalOppositeFlux]
+    ring
+
 /-- Constant outward densities `(-c, c, 0, 0, 0, 0)` on the six face domains of area `1/2`
 give the face fluxes `(-c/2, c/2, 0, 0, 0, 0)`. -/
 example (c : ℝ) (f : Fin 6) :
@@ -167,5 +207,22 @@ example :
       (electricalIncidence twoTerminalTail twoTerminalHead *ᵥ equalOppositeFlux 3) 0 = -6 := by
   obtain ⟨-, -, h1, h2⟩ := twoTerminal_equalOppositeFlux 3
   exact ⟨h1, by rw [h2]; norm_num⟩
+
+/-- Steady charge from the local continuity law on the box `[0, 1]³`: a constant current density
+`c` with zero charge density has zero divergence and constant enclosed charge, so the
+sign-converted port currents of the two-terminal network give zero outflow at the box node, and
+every compatible injection vanishes there. The zero flux balance is derived, not assumed. -/
+example (c : Fin 3 → ℝ) :
+    let I : Fin 6 → ℝ := boxOutwardFlux 0 1 (fun _ => c)
+    let i : Fin 6 → ℝ := fun e => portSign twoTerminalTail 0 e * I e
+    (electricalIncidence twoTerminalTail twoTerminalHead *ᵥ i) 0 = 0 ∧
+      ∀ j : Fin 3 → ℝ, electricalIncidence twoTerminalTail twoTerminalHead *ᵥ i = j →
+        j 0 = 0 := by
+  intro I i
+  exact boxInjection_eq_zero_of_constantCharge 0 1 zero_le_one (fun _ _ => 0) (fun _ _ => 0)
+    continuous_const continuous_const (fun s _ => hasDerivAt_const s 0) 0 (fun _ => rfl)
+    (fun _ => c) (fun _ => 0) continuousOn_const (fun x _ => hasFDerivAt_const c x)
+    (fun x _ => by simp [fderivDivergence]) I (fun _ => rfl)
+    twoTerminalTail twoTerminalHead 0 id i (twoTerminal_equalOppositeFlux 0).1 (fun _ => rfl)
 
 end PhyslibExtTest.Circuits.FluxPortSignBridge
