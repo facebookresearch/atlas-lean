@@ -14029,6 +14029,7 @@
   "MathlibExt/NumberTheory/Recurrences/JacobsthalOffsetIntegral": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integral representations of k-Jacobsthal numbers"},
   "MathlibExt/NumberTheory/Recurrences/JacobsthalPolynomialSquareFamilySums": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Reciprocal sums of squares of gibonacci polynomials"},
   "MathlibExt/NumberTheory/Recurrences/KJacobsthal": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integral representations of k-Jacobsthal numbers"},
+  "MathlibExt/NumberTheory/Recurrences/KFibonacciBrousseauSum": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Brousseau sums of k-Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/KJacobsthalGeneratingFunction": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integral representations of k-Jacobsthal numbers"},
   "MathlibExt/NumberTheory/Recurrences/KFibonacciBrousseauSums": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Brousseau sums of k-Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/KFibonacciShiftedBrousseauSum": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Brousseau sums of k-Fibonacci numbers"},
