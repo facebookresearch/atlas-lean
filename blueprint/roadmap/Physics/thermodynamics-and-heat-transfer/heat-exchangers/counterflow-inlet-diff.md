@@ -1,0 +1,3 @@
+# Temperature difference at the hot inlet of a counterflow exchanger
+
+For capacity rates $C_h$, $C_c$, conductance per unit length $K$, length $L$ and inlets $T_{hi}$, $T_{ci}$, the temperature difference at the hot inlet of the counterflow solution is $D_0 = (T_{hi} - T_{ci})/\big(1 + \frac{K}{C_c}\int_0^L e^{-s y}\,dy\big)$ with $s = K(1/C_h - 1/C_c)$, with the convention $x/0 = 0$. For $C_h, C_c > 0$ and $K, L \ge 0$ the denominator is positive, and the counterflow temperatures built from $D_0$ satisfy the cold inlet condition $T_c(L) = T_{ci}$. Without these conditions they need not: for $C_h = C_c = L = 1$, $K = -1$, $T_{hi} = 1$ and $T_{ci} = 0$ the denominator is $0$, so $D_0 = 0$ and $T_c(1) = 1$.

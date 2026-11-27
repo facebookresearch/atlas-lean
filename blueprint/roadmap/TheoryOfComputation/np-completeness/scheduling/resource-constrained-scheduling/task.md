@@ -1,0 +1,3 @@
+# Tasks of an instance of RESOURCE CONSTRAINED SCHEDULING
+
+An instance of RESOURCE CONSTRAINED SCHEDULING is a tuple $(m, r, B, T, D)$ of a number $m$ of processors, a number $r$ of resources, a list $B$ of natural numbers (the resource bounds), a list $T$ of lists of natural numbers (one row of requirements per task), and a deadline $D$. Neither $B$ nor any row is required to have $r$ entries; in a well-formed instance $B$ has exactly $r$ entries and so does every row. Its tasks are the positions $0, \dots, n-1$ of the list $T$, one per row of the requirement table, where $n$ is the length of $T$.

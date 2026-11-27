@@ -136,7 +136,7 @@ structure Assignment where
   /-- The images of all atomic arrows. -/
   atom (Δ : SimplexCategoryᵒᵖ) {x y : O} :
     A.generator Δ x y → (obj x ⟶[SSet.{max u w}] obj y).obj Δ
-  /-- Scalar faces and degeneracies use their , possibly composite, path images. -/
+  /-- Simplex operators act by their prescribed path images. -/
   operator {Δ Δ' : SimplexCategoryᵒᵖ} (θ : Δ ⟶ Δ') {x y : O} (g : A.generator Δ x y) :
     (obj x ⟶[SSet.{max u w}] obj y).map θ (atom Δ g) =
       evaluate obj Δ' (atom Δ') (A.operator θ g)

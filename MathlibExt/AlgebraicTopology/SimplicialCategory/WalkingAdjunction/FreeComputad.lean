@@ -133,7 +133,7 @@ namespace SSet
 structure SimplicialComputad (O : Type v) where
   /-- The atomic arrows in each simplicial degree. -/
   generator : SimplexCategoryᵒᵖ → O → O → Type u
-  /-- A scalar operator sends an atom to its , possibly composite, path. -/
+  /-- A simplex operator sends an atomic arrow to a possibly composite path. -/
   operator {Δ Δ' : SimplexCategoryᵒᵖ} (θ : Δ ⟶ Δ') {x y : O} :
     generator Δ x y → SimplicialComputad.Path (generator Δ') x y
   /-- The identity operator is the singleton path. -/
@@ -191,7 +191,7 @@ def hom (x y : O) : SSet.{max u v} where
 
 /-- An object label in the enriched category of the specified computad. -/
 structure Object (A : SimplicialComputad.{u, v} O) where
-  /-- The , unchanged object label. -/
+  /-- The object label. -/
   label : O
 
 /-- The full simplicial enrichment constructed from the native degreewise path categories. -/

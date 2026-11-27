@@ -58,7 +58,7 @@ generator sums to zero: adjoining the sink makes the amount
 dynamics conservative. -/
 theorem pk2_augmented_budget (k10 k12 k21 : ℝ) (j : Fin 3) :
     ∑ i, pk2AugmentedGenerator k10 k12 k21 i j = 0 := by
-  fin_cases j <;> simp [pk2AugmentedGenerator, Fin.sum_univ_three] <;> ring
+  fin_cases j <;> simp [pk2AugmentedGenerator, Fin.sum_univ_three]
 
 /-- **Zero-exchange reduction.** With `k12 = 0` and no
 peripheral amount, the central equation is pure elimination. -/
