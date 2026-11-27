@@ -73178,6 +73178,7 @@
 "MathlibExt.Probability.Statistics.LinearModel.integral_rss_div": "cb6115654b39c643",
 "MathlibExt.Probability.Statistics.LinearModel.isMaxOn_remlLogLik_mul_left_iff": "74d3525c9bf98f49",
 "MathlibExt.Probability.Statistics.LinearModel.isUnit_hypothesisGram": "6a6e39f63c6f77b5",
+"MathlibExt.Probability.Statistics.LinearModel.least_squares_fitted_projection": "0b9369761be7f507",
 "MathlibExt.Probability.Statistics.LinearModel.measurableSet_fullRankDesigns": "cf861355f0ca139f",
 "MathlibExt.Probability.Statistics.LinearModel.measurable_fStatistic": "f0e9dc8bf4e8dcec",
 "MathlibExt.Probability.Statistics.LinearModel.measurable_hc0OLSSandwich": "fd72336150095b8d",
