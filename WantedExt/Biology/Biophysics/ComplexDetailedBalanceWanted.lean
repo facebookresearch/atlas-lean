@@ -71,7 +71,8 @@ def IsComplexBalanced (y : V → S → ℕ) (κ : V → V → ℝ) : Prop :=
     ∀ i, ∑ j, κ j i * monomial c (y j) = (∑ j, κ i j) * monomial c (y i)
 
 /-- The system is detailed balanced: some positive `c` has `κ_{ij} c^{y_i} = κ_{ji} c^{y_j}` for
-all vertices `i`, `j` (on non-edges both sides vanish by reversibility). -/
+all vertices `i`, `j` (for reversible rates, `IsReversibleRates`, both sides vanish on
+non-edges). -/
 def IsDetailedBalanced (y : V → S → ℕ) (κ : V → V → ℝ) : Prop :=
   ∃ c : S → ℝ, (∀ s, 0 < c s) ∧ ∀ i j, κ i j * monomial c (y i) = κ j i * monomial c (y j)
 

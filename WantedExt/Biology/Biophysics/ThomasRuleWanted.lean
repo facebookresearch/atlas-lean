@@ -72,7 +72,8 @@ def HasPositiveCircuit (A : Matrix (Fin n) (Fin n) ℝ) : Prop :=
   ∃ (k : ℕ) (v : Fin (k + 1) → Fin n), Function.Injective v ∧
     0 < ∏ m, A (v (m + 1)) (v m)
 
-/-- The Jacobian matrix `J(a)_{ij} = ∂F_i/∂x_j (a)` of `F : ℝ^n → ℝ^n` at `a`. -/
+/-- The Jacobian matrix `J(a)_{ij} = ∂F_i/∂x_j (a)` of `F : ℝ^n → ℝ^n` at a point `a` where `F` is
+differentiable (`fderiv` is `0` elsewhere). -/
 noncomputable def jacobian (F : (Fin n → ℝ) → Fin n → ℝ) (a : Fin n → ℝ) :
     Matrix (Fin n) (Fin n) ℝ :=
   fun i j => fderiv ℝ F a (Pi.single j 1) i

@@ -120,7 +120,7 @@ noncomputable def jumpTime (q : σ → σ → ℝ) {Ω : Type*} (Y : ℕ → Ω 
 
 open Classical in
 /-- The state at time `t`: `Y n` for the first `n` with `T_n ≤ t < T_{n+1}` (and `Y 0` if there
-is none, which happens only after an explosion). -/
+is none, which happens for `t < 0` and, for `t ≥ 0`, only after an explosion). -/
 noncomputable def stateAt (q : σ → σ → ℝ) {Ω : Type*} (Y : ℕ → Ω → σ) (E : ℕ → Ω → ℝ)
     (ω : Ω) (t : ℝ) : σ :=
   if h : ∃ n, jumpTime q Y E ω n ≤ t ∧ t < jumpTime q Y E ω (n + 1) then Y (Nat.find h) ω
@@ -216,13 +216,14 @@ def OpenLoop.stoichMatrix (net : OpenLoop d K) : Matrix (Fin (d + 1)) (Fin K) �
 def IsHurwitz {m : Type*} [Fintype m] [DecidableEq m] (A : Matrix m m ℝ) : Prop :=
   ∀ (z : ℂ) (v : m → ℂ), v ≠ 0 → (A.map (↑)) *ᵥ v = z • v → z.re < 0
 
-/-- The stationary mean of `Z_1`: `-(μ/θ + (A⁻¹ b)_ℓ)/(k A⁻¹ ℓ 0)`, the value of `z` for which
-the solution `m` of `0 = A m + b + k z e_1` has `m_ℓ = μ/θ` (with `b = S w₀`). -/
+/-- The stationary mean of `Z_1`: `-(μ/θ + (A⁻¹ b)_ℓ)/(k A⁻¹ ℓ 0)`, the value of `z` for which,
+for invertible `A`, the solution `m` of `0 = A m + b + k z e_1` has `m_ℓ = μ/θ` (with
+`b = S w₀`). -/
 noncomputable def limZ1 (A : Matrix (Fin (d + 1)) (Fin (d + 1)) ℝ) (b : Fin (d + 1) → ℝ)
     (μ θ k : ℝ) (ℓ : Fin (d + 1)) : ℝ :=
   -(μ / θ + (A⁻¹ *ᵥ b) ℓ) / (k * A⁻¹ ℓ 0)
 
-/-- The stationary mean of `X`: `-A⁻¹ (b + k z e_1)`, the solution `m` of
+/-- The stationary mean of `X`: `-A⁻¹ (b + k z e_1)`, for invertible `A` the solution `m` of
 `0 = A m + b + k z e_1` (with `b = S w₀` and `e_1` the actuated species, index `0`). -/
 noncomputable def limX (A : Matrix (Fin (d + 1)) (Fin (d + 1)) ℝ) (b : Fin (d + 1) → ℝ)
     (k z : ℝ) : Fin (d + 1) → ℝ :=

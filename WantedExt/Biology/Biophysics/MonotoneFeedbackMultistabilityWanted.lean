@@ -24,7 +24,7 @@ input `u`, `k_X(u)` is the unique globally asymptotically stable equilibrium of 
 and `det D_x f(k_X(u), u) ≠ 0`; its input/output characteristic is `k_Y = h ∘ k_X`. A map
 `k : U → U` has non-degenerate fixed points if at every fixed point `k'(u)` exists and `k'(u) ≠ 1`.
 
-**Theorem 3** (Angeli–Sontag 2004, numbering of arXiv:q-bio/0309002). Consider a monotone
+**Theorem 3** (Angeli–Sontag 2004). Consider a monotone
 single-input single-output system with a non-degenerate I/S and I/O static characteristic, and close
 the loop with the unitary positive feedback `u = y`. Then the equilibria of the closed loop
 `ẋ = f(x, h(x))` are in one-to-one correspondence with the fixed points of `k_Y`. Moreover, if `k_Y`
@@ -87,8 +87,8 @@ structure IsPositivityCone (K : Set (Fin n → ℝ)) : Prop where
   pointed : ∀ x, x ∈ K → -x ∈ K → x = 0
   interior_nonempty : (interior K).Nonempty
 
-/-- An input: a measurable function `u : ℝ → ℝ`, bounded on every bounded interval of times, with
-values in `U` on `[0, ∞)`. -/
+/-- An input: a measurable function `u : ℝ → ℝ`, bounded on `[0, T]` for every `T`, with values in
+`U` on `[0, ∞)`. -/
 def IsInput (U : Set ℝ) (u : ℝ → ℝ) : Prop :=
   Measurable u ∧ (∀ T, ∃ M, ∀ t ∈ Set.Icc 0 T, |u t| ≤ M) ∧ ∀ t, 0 ≤ t → u t ∈ U
 
@@ -103,11 +103,12 @@ noncomputable def stateJacobian (f : (Fin n → ℝ) → ℝ → Fin n → ℝ) 
   fun i j => fderiv ℝ (fun z => f z u) x (Pi.single j 1) i
 
 /-- A single-input single-output system `ẋ = f(x, u)`, `y = h(x)` with state space `X`, input set
-`U`, positivity cone `K` on states and solution map `φ t ξ u`, satisfying the source's standing
-assumptions: `X` is the closure of an open set, `f` (jointly in `(x, u)`) and the output map `h`
-are continuously differentiable (`C¹`), and for every `ξ ∈ X` and every input `u` the solution
-`t ↦ φ t ξ u` exists on `[0, ∞)`, stays in `X`, and is the unique solution with these
-properties. -/
+`U`, positivity cone `K` on states and solution map `φ t ξ u`. As the source assumes, `X` is the
+closure of an open set, and for every `ξ ∈ X` and every input `u` the solution `t ↦ φ t ξ u`
+exists on `[0, ∞)`, stays in `X`, and is the unique solution with these properties. The vector
+field `f` (jointly in `(x, u)`) and the output map `h` are continuously differentiable (`C¹`):
+the source takes `f` differentiable for simplicity and `h` monotone, and this encoding takes `C¹`
+for the linearization of the closed loop and the generic convergence argument. -/
 structure IOSystem (n : ℕ) where
   /-- The positivity cone ordering the states. -/
   K : Set (Fin n → ℝ)

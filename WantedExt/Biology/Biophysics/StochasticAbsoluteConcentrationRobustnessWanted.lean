@@ -75,7 +75,8 @@ def IsTurnedOff (y x : S → ℕ) : Prop :=
 def Step (x x' : S → ℕ) : Prop :=
   ∃ r, N.src r ≤ x ∧ x' = x - N.src r + N.prod r
 
-/-- `x` is a (positive) recurrent state: every state reachable from `x` reaches `x` back. -/
+/-- `x` is recurrent: every state reachable from `x` reaches `x` back. For a conservative network
+this is positive recurrence under any stoichiometrically admissible kinetics. -/
 def IsRecurrent (x : S → ℕ) : Prop :=
   ∀ x', Relation.ReflTransGen (Step N) x x' → Relation.ReflTransGen (Step N) x' x
 

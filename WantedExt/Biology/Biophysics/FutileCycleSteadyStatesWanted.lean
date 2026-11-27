@@ -29,7 +29,7 @@ version is followed; its arXiv preprint has index typos in the reaction list. Th
 of `FS_{j+1}` is stored at index `j`.
 
 Sources: L. Wang, E. D. Sontag, "On the number of steady states in a multiple futile cycle",
-J. Math. Biol. 57 (2008) 29–52, Section 2, Eqs. (1)–(2), and Section 4.2, Theorem 3
+J. Math. Biol. 57 (2008) 29–52, Section 3, Eqs. (1)–(2), and Section 4.2, Theorem 3
 (arXiv:0704.0036).
 -/
 module
@@ -58,7 +58,9 @@ structure State (n : ℕ) where
   /-- The free phosphatase `F`. -/
   f : ℝ
 
-/-- The `6n` rate constants, indexed by `j < n`. -/
+/-- The `6n` rate constants, indexed by `j < n`: `kon_j`, `koff_j` and `kcat_j` for
+`S_j + E → ES_j`, `ES_j → S_j + E` and `ES_j → S_{j+1} + E`, and `lon_j`, `loff_j` and `lcat_j`
+for `S_{j+1} + F → FS_{j+1}`, `FS_{j+1} → S_{j+1} + F` and `FS_{j+1} → S_j + F`. -/
 structure Rates (n : ℕ) where
   /-- Binding `S_j + E → ES_j`. -/
   kon : Fin n → ℝ
@@ -87,19 +89,21 @@ noncomputable def ds (i : Fin (n + 1)) : ℝ :=
     ∑ j : Fin n, if j.succ = i then
       κ.kcat j * x.c j - κ.lon j * x.s i * x.f + κ.loff j * x.d j else 0
 
-/-- The mass-action rate of change of `ES_j`. -/
+/-- The mass-action rate of change of `ES_j`: `kon_j s_j e - (koff_j + kcat_j) c_j`. -/
 noncomputable def dc (j : Fin n) : ℝ :=
   κ.kon j * x.s j.castSucc * x.e - (κ.koff j + κ.kcat j) * x.c j
 
-/-- The mass-action rate of change of `FS_{j+1}`. -/
+/-- The mass-action rate of change of `FS_{j+1}`: `lon_j s_{j+1} f - (loff_j + lcat_j) d_j`, where
+`d_j = [FS_{j+1}]`. -/
 noncomputable def dd (j : Fin n) : ℝ :=
   κ.lon j * x.s j.succ * x.f - (κ.loff j + κ.lcat j) * x.d j
 
-/-- The mass-action rate of change of `E`. -/
+/-- The mass-action rate of change of `E`: `∑_j (-kon_j s_j e + (koff_j + kcat_j) c_j)`. -/
 noncomputable def de : ℝ :=
   ∑ j, (-(κ.kon j * x.s j.castSucc * x.e) + (κ.koff j + κ.kcat j) * x.c j)
 
-/-- The mass-action rate of change of `F`. -/
+/-- The mass-action rate of change of `F`: `∑_j (-lon_j s_{j+1} f + (loff_j + lcat_j) d_j)`, where
+`d_j = [FS_{j+1}]`. -/
 noncomputable def df : ℝ :=
   ∑ j, (-(κ.lon j * x.s j.succ * x.f) + (κ.loff j + κ.lcat j) * x.d j)
 
@@ -111,7 +115,8 @@ def IsPositive : Prop :=
 def IsSteady : Prop :=
   (∀ i, x.ds κ i = 0) ∧ (∀ j, x.dc κ j = 0) ∧ (∀ j, x.dd κ j = 0) ∧ x.de κ = 0 ∧ x.df κ = 0
 
-/-- The conserved totals equal `(Etot, Ftot, Stot)`. -/
+/-- The conserved totals equal `(Etot, Ftot, Stot)`: `e + ∑_j c_j = Etot`, `f + ∑_j d_j = Ftot` and
+`∑_i s_i + ∑_j c_j + ∑_j d_j = Stot`, where `d_j = [FS_{j+1}]`. -/
 def HasTotals (Etot Ftot Stot : ℝ) : Prop :=
   x.e + ∑ j, x.c j = Etot ∧ x.f + ∑ j, x.d j = Ftot ∧
     ∑ i, x.s i + ∑ j, x.c j + ∑ j, x.d j = Stot
