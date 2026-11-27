@@ -2,8 +2,9 @@
 
 Let $k$ be an algebraically closed field of characteristic $0$ and $T$ a finite subset of
 $\mathbb{P}^1(\mathbb{Q}) = \mathbb{Q} \cup \{\infty\} \subset \mathbb{P}^1(k)$. Then there is a
-finite morphism $q \colon \mathbb{P}^1_k \to \mathbb{P}^1_k$ with $q(T) \subset \{0, 1, \infty\}$
-that is unramified over $\mathbb{P}^1_k \setminus \{0, 1, \infty\}$.
+[Belyi map](../is-belyi-map.md) $q \colon \mathbb{P}^1_k \to \mathbb{P}^1_k$ over $k$ with $q(T)
+\subset \{0, 1, \infty\}$: a finite $k$-morphism that is unramified over the
+[complement of $0$, $1$ and $\infty$](../belyi-locus.md).
 
 Köck states this over $\mathbb{C}$, for a finite subset $T$ of $\mathbb{Q}$, and applies it to a
 set that may contain $\infty$; his proof moves $\infty$ like any other point and uses only
@@ -12,7 +13,9 @@ fractional linear transformations defined over $\mathbb{Q}$ and the polynomials 
 
 ## Depends on
 
-None among the pages.
+- [Belyi map](../is-belyi-map.md), for the property of $q$
+- [The complement of $0$, $1$ and $\infty$ in the projective line](../belyi-locus.md), the open
+  subscheme over which $q$ is unramified
 
 ## Proof depends on
 

@@ -14,17 +14,6 @@ field $K$, and an automorphism of $\mathbb{P}^1_{\bar K}$ that maps the branch p
 $\{0, 1, \infty\}$ turns that morphism into a Belyi map of the same degree. So the
 [Belyi degree](../belyi-degree.md) $\deg_B(X)$ is the least degree of a Belyi map of $X$.
 
-The proof follows Köck's proof of the "only if" direction of his Theorem 3.3. Choose a finite
-morphism $t' \colon C_{\bar K} \to \mathbb{P}^1_{\bar K}$; it is unramified outside a finite set
-$S$ of closed points, that is, of elements of $\bar K \cup \{\infty\}$. As $\bar K$ is an algebraic
-closure of $\mathbb{Q}$, there is a nonconstant $p \in \mathbb{Q}[z]$ with $p(S \setminus
-\{\infty\}) \subset \mathbb{Q}$ and $p(r) \in \mathbb{Q}$ at the zeros $r$ of $p'$; the morphism
-$p \circ t'$ is then unramified outside the finite set $T = p(S) \cup \{p(r) : p'(r) = 0\} \cup
-\{\infty\} \subset \mathbb{P}^1(\mathbb{Q})$. A finite $q \colon \mathbb{P}^1_{\bar K} \to
-\mathbb{P}^1_{\bar K}$ with $q(T) \subset \{0, 1, \infty\}$, unramified outside $\{0, 1,
-\infty\}$, makes $t = q \circ p \circ t'$ unramified outside $\{0, 1, \infty\}$. It is finite, as
-a composite of finite morphisms, and has constant degree.
-
 ## Depends on
 
 - [Base change to an algebraic closure](../over-algebraic-closure.md)
@@ -46,6 +35,19 @@ a composite of finite morphisms, and has constant degree.
   and $q \circ p \circ t'$
 - [A finite morphism of curves has constant degree](degree-of-a-finite-morphism-of-curves.md),
   for the degree $d$ of $t$
+
+## Proof sketch
+
+The proof follows Köck's proof of the "only if" direction of his Theorem 3.3. Choose a finite
+morphism $t' \colon C_{\bar K} \to \mathbb{P}^1_{\bar K}$; it is unramified outside a finite set
+$S$ of closed points, that is, of elements of $\bar K \cup \{\infty\}$. As $\bar K$ is an algebraic
+closure of $\mathbb{Q}$, there is a nonconstant $p \in \mathbb{Q}[z]$ with $p(S \setminus
+\{\infty\}) \subset \mathbb{Q}$ and $p(r) \in \mathbb{Q}$ at the zeros $r$ of $p'$; the morphism
+$p \circ t'$ is then unramified outside the finite set $T = p(S) \cup \{p(r) : p'(r) = 0\} \cup
+\{\infty\} \subset \mathbb{P}^1(\mathbb{Q})$. A Belyi map $q \colon \mathbb{P}^1_{\bar K} \to
+\mathbb{P}^1_{\bar K}$ over $\bar K$ with $q(T) \subset \{0, 1, \infty\}$, finite and unramified
+outside $\{0, 1, \infty\}$, makes $t = q \circ p \circ t'$ unramified outside $\{0, 1, \infty\}$. It is finite, as
+a composite of finite morphisms, and has constant degree.
 
 ## Sources
 

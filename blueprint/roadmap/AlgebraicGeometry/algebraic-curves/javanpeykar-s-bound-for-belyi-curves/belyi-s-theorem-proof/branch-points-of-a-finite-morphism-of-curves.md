@@ -1,7 +1,8 @@
 # Finitely many branch points in characteristic zero
 
 Let $k$ be a field of characteristic $0$, and let $f \colon X \to Y$ be a finite morphism of
-smooth curves over $k$, with $X$ irreducible. Then there is a finite set $B$ of closed points of
+curves over $k$, that is, of $k$-schemes that are proper, smooth of relative dimension $1$ and
+geometrically irreducible. Then there is a finite set $B$ of closed points of
 $Y$ such that $f$ is unramified over $Y \setminus B$, that is, the restriction $f^{-1}(Y \setminus
 B) \to Y \setminus B$ is unramified.
 

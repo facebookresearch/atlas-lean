@@ -8,11 +8,6 @@ $p^{-1}(\infty) = \{\infty\}$, and $p$ is unramified over
 
 $$\mathbb{P}^1_k \setminus \bigl( \{\infty\} \cup \{p(r) : r \in k, \ p'(r) = 0\} \bigr).$$
 
-On $\mathbb{A}^1_k$ the morphism is $\operatorname{Spec} k[z] \to \operatorname{Spec} k[w]$, $w
-\mapsto p(z)$, whose module of relative differentials is $k[z] \, dz / (p'(z) \, dz) \cong
-k[z]/(p'(z))$: it vanishes exactly away from the zeros of $p'$, and $p' \ne 0$ as $p$ is nonconstant and $k$
-has characteristic $0$.
-
 ## Depends on
 
 None among the pages.
@@ -20,6 +15,13 @@ None among the pages.
 ## Proof depends on
 
 None among the pages.
+
+## Proof sketch
+
+On $\mathbb{A}^1_k$ the morphism is $\operatorname{Spec} k[z] \to \operatorname{Spec} k[w]$, $w
+\mapsto p(z)$, whose module of relative differentials is $k[z] \, dz / (p'(z) \, dz) \cong
+k[z]/(p'(z))$: it vanishes exactly away from the zeros of $p'$, and $p' \ne 0$ as $p$ is nonconstant and $k$
+has characteristic $0$.
 
 ## Sources
 
