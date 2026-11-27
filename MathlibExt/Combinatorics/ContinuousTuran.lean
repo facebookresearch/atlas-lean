@@ -137,6 +137,38 @@ public theorem opx_mono_left (P : Set (ℝ × ℝ)) {m n : ℝ} (hmn : m ≤ n) 
   rintro _ ⟨T, ⟨_, hTn, _⟩, rfl⟩
   exact measureReal_mono hTn (isCompact_Icc.prod isCompact_Icc).measure_ne_top
 
+open Set MeasureTheory in
+/-- **Monotonicity of the continuous Turán number under containment.** Let $n$ be a real number
+and let $P, Q \subseteq \mathbb{R}^2$. If $Q$ contains $P$ in the sense of containment of planar
+point sets, then $\operatorname{opx}(n, P) \le \operatorname{opx}(n, Q)$.
+
+Containment is transitive: composing the coordinate maps that place $P$ in $Q$ with those that
+place $Q$ in a set $S$ places $P$ in $S$. So every open subset of $[0, n]^2$ that avoids $P$ also
+avoids $Q$.
+
+Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 2.3
+(`integers-2024-A1-lem-2-3`). -/
+public theorem opx_mono_of_containsPattern (n : ℝ) {P Q : Set (ℝ × ℝ)}
+    (h : PointSetContainsPattern Q P) :
+    opx n P ≤ opx n Q := by
+  apply Real.sSup_le _ (opx_nonneg n Q)
+  rintro _ ⟨S, ⟨hopen, hSn, hfree⟩, rfl⟩
+  refine le_csSup ?_ ⟨S, ⟨hopen, hSn, fun hSQ => hfree ?_⟩, rfl⟩
+  · refine ⟨volume.real (Icc 0 n ×ˢ Icc 0 n), ?_⟩
+    rintro _ ⟨T, ⟨_, hTn, _⟩, rfl⟩
+    exact measureReal_mono hTn (isCompact_Icc.prod isCompact_Icc).measure_ne_top
+  · obtain ⟨fX, fY, hfX, hfY, hfQ⟩ := h
+    obtain ⟨gX, gY, hgX, hgY, hgS⟩ := hSQ
+    refine ⟨gX ∘ fX, gY ∘ fY, ?_, ?_, fun p hp => hgS _ (hfQ p hp)⟩
+    · intro p hp q hq hlt
+      have hgap := hfX p hp q hq hlt
+      have hlt' := sub_pos.mp ((sub_pos.mpr hlt).trans_le hgap)
+      exact hgap.trans (hgX _ (hfQ p hp) _ (hfQ q hq) hlt')
+    · intro p hp q hq hlt
+      have hgap := hfY p hp q hq hlt
+      have hlt' := sub_pos.mp ((sub_pos.mpr hlt).trans_le hgap)
+      exact hgap.trans (hgY _ (hfQ p hp) _ (hfQ q hq) hlt')
+
 /-- **Saturating sets for a point pattern.** Let $n$ be a real number and let $P$ and $S$ be
 subsets of $\mathbb{R}^2$. Then $S$ is saturating for $P$ in $[0, n]^2$ when $S$ is an open
 subset of $[0, n]^2$ that does not contain $P$, while every open set $S'$ with

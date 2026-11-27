@@ -37,7 +37,6 @@ Later change (ATLAS, 2026): the `theorem_wanted` `fejer` was proved, and it and 
 definitions moved from `WantedExt/Analysis/FourierConvergenceWanted.lean` to this `MathlibExt`
 module with unchanged names, statements and docstrings; the imports of
 `Batteries.Util.ProofWanted` and of all of Mathlib were replaced by narrower imports.
-`dirichlet_pointwise` stays wanted in that module.
 
 The rest of this file is new ATLAS work, not adapted from lean-eval: the proof of `fejer`, the
 lemmas it uses, the module documentation and the linter options.
@@ -74,9 +73,9 @@ circle theorem pulls back along `x ↦ (x : AddCircle (2 * π))`.
 ## Implementation notes
 
 The definitions and the statement keep the full names they had in the wanted module
-`WantedExt/Analysis/FourierConvergenceWanted.lean`, where `dirichlet_pointwise` stays wanted, so
-the namespace still reads `FourierConvergenceWanted` and repeats `Analysis`; the `dupNamespace`
-linter is turned off for each declaration of this file.
+`WantedExt/Analysis/FourierConvergenceWanted.lean`, so the namespace still reads
+`FourierConvergenceWanted` and repeats `Analysis`. Each declaration has a local
+`dupNamespace` exception.
 
 ## References
 

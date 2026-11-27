@@ -11,6 +11,16 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# ATLAS_TOOL_TESTS=skip leaves out the tool tests at the end, which read only scripts, workflows and
+# the pins. CI sets it on a pull request that changes none of those (scripts/ci_scope.py).
+tool_tests="${ATLAS_TOOL_TESTS-run}"
+case "$tool_tests" in
+  run|skip) ;;
+  *)
+    echo "ATLAS_TOOL_TESTS must be run or skip, not '${tool_tests}'" >&2
+    exit 2
+    ;;
+esac
 TMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/atlas-scripts.XXXXXX")"
 trap 'rm -rf "$TMP_ROOT"' EXIT
 
@@ -796,20 +806,33 @@ check_copyright --all || { cat "$TMP_ROOT/output.log" >&2; fail "--all rejected 
 grep -q 'check_copyright.py --all' "$REPO_ROOT/scripts/check.sh" ||
   fail "preflight does not check every file's copyright header"
 
-PYTHONPATH="$REPO_ROOT/scripts${PYTHONPATH:+:$PYTHONPATH}" \
-  python3 -m unittest discover \
-    -s "$REPO_ROOT/scripts/import_optimizer" -p 'test_*.py' -v
-python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
-python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_audit_parallel.py -v
-python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
-python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v
-python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_reference_workflow.py -v
+# These suites always run: they read more than scripts, workflows and the pins (the required checks
+# and their list in CONTRIBUTING.md, the build's cache inputs, the task list's graph data, and the
+# queue preflight, which follows this repository's own files), or have not been shown to read only
+# those.
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_codex_workflow.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_merge_queue_checks.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_ci_scope.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_ci_build_trims.py -v
-python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_bump_cache_workflow.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_next_task.py -v
-python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
-python3 "$REPO_ROOT/scripts/bump/test_bump_branch.py"
 python3 -m unittest discover -s "$REPO_ROOT/scripts/queue" -p 'test_*.py' -v
+
+# The tool tests read only scripts, workflows and the pins (scripts/ci_scope.py): a suite that reads
+# anything else belongs above.
+if [[ "$tool_tests" == run ]]; then
+  PYTHONPATH="$REPO_ROOT/scripts${PYTHONPATH:+:$PYTHONPATH}" \
+    python3 -m unittest discover \
+      -s "$REPO_ROOT/scripts/import_optimizer" -p 'test_*.py' -v
+  python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
+  python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_audit_parallel.py -v
+  python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
+  python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v
+  python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_reference_workflow.py -v
+  python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_bump_cache_workflow.py -v
+  python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
+  python3 "$REPO_ROOT/scripts/bump/test_bump_branch.py"
+else
+  echo "skipped [scripts]: the tool tests (ATLAS_TOOL_TESTS=skip)."
+fi
 
 echo "ok [scripts]: repository policy regression tests passed."

@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import MathlibExt.NumberTheory.IncompleteExponentialSum
 public import MathlibExt.NumberTheory.LogarithmicCompletion
+public import MathlibExt.NumberTheory.ReciprocalSineSum
 
 /-!
 # Explicit estimates for incomplete exponential sums (statements)
@@ -28,8 +29,10 @@ written out inline: `∑ x ∈ Finset.Icc 1 B, Complex.exp (2 * π * I * f(x) / 
 `f` in `(ZMod p)[X]`.
 
 Lemma 2.2 is proved in `MathlibExt.NumberTheory.TwistedCompleteExponentialSum` and
-Lemma 3.1 in `MathlibExt.NumberTheory.IncompleteExponentialSum`. The proof of Corollary 1.1 is in
-`MathlibExt.NumberTheory.LogarithmicCompletion`.
+Lemma 3.1 in `MathlibExt.NumberTheory.IncompleteExponentialSum`. Lemma 2.1 and Corollary 1.1
+are proved in `MathlibExt.NumberTheory.LogarithmicCompletion`. The reciprocal sine bound is
+proved in `MathlibExt.NumberTheory.ReciprocalSineSum`, together with the bound
+`sum_min_one_div_abs_sin_lt` for the sum with each term capped at the length.
 -/
 
 namespace MetaMathlibExt
@@ -37,22 +40,6 @@ namespace MetaMathlibExt
 open Complex Finset
 
 @[expose] public section
-
-/-- **Bound for a sum of reciprocal sines.** Let $p$ be a prime, let $a$ be an integer not
-divisible by $p$, let $B$ be an integer with $1 \le B < p/2$, and let $\gamma$ be the
-Euler–Mascheroni constant. Then
-$$
-\sum_{h=1}^{B} \frac{1}{|\sin(\pi a h / p)|} <
-\frac{p}{\pi}\left(\log B + \gamma + \frac{1}{2B}\right) + \frac{pB(B+1)}{\pi(p^2 - B^2)}.
-$$
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 3.2 (`integers-2025-A48-lem-3-2`). -/
-public theorem_wanted sum_one_div_abs_sin_lt (p : ℕ) (hp : p.Prime) (a : ℤ)
-    (ha : ¬ (p : ℤ) ∣ a) (B : ℕ) (hB₁ : 1 ≤ B) (hB : (B : ℝ) < p / 2) :
-    ∑ h ∈ Icc 1 B, 1 / |Real.sin (Real.pi * a * h / p)| <
-      (p / Real.pi) * (Real.log B + Real.eulerMascheroniConstant + 1 / (2 * B)) +
-        p * B * (B + 1) / (Real.pi * ((p : ℝ) ^ 2 - (B : ℝ) ^ 2))
 
 /-- **Bound for a weighted sum of absolute sines.** Let $K$ be a positive integer, let $\xi$ be a
 real number, and let $\gamma$ be the Euler–Mascheroni constant. Then
@@ -133,27 +120,6 @@ public theorem_wanted norm_incomplete_monic_cubic_sum_lt (p : ℕ) (hp : p.Prime
       ‖∑ x ∈ Icc 1 B, exp (2 * Real.pi * I * ((x ^ 3 + b * x ^ 2 + c * x : ℤ) : ℂ) / p)‖ <
         ((B : ℝ) * p) ^ ((1 : ℝ) / 4) * Real.log p ^ ((1 : ℝ) / 2)
 
-/-- **Completing an incomplete exponential sum.** Let $p$ be a prime, write
-$e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients, and let $B$ be an
-integer with $1 \le B \le p$. Put
-$T_p(B) = \frac{1}{p} \sum_{y=1}^{p-1} \left|\frac{\sin(\pi B y/p)}{\sin(\pi y/p)}\right|$ and
-$M = \max_{1 \le y \le p-1} \left|\sum_{x=1}^{p} e_p(f(x) + yx)\right|$. Then there is a complex
-number $\theta$ with $|\theta| \le 1$ such that
-$\sum_{x=1}^{B} e_p(f(x)) = \frac{B}{p} \sum_{x=1}^{p} e_p(f(x)) + \theta \, T_p(B) \, M$.
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 2.1 (`integers-2025-A48-lem-2-1`). -/
-public theorem_wanted exists_incompleteSum_eq_completeSum_add (p : ℕ) (hp : p.Prime)
-    (f : Polynomial ℤ) (B : ℕ) (hB₁ : 1 ≤ B) (hB₂ : B ≤ p) :
-    ∃ θ : ℂ, ‖θ‖ ≤ 1 ∧
-      ∑ x ∈ Icc 1 B, exp (2 * Real.pi * I * ((f.eval (x : ℤ) : ℤ) : ℂ) / p) =
-        ((B : ℂ) / p) * ∑ x ∈ Icc 1 p, exp (2 * Real.pi * I * ((f.eval (x : ℤ) : ℤ) : ℂ) / p) +
-          θ * (((1 / p : ℝ) * ∑ y ∈ Icc 1 (p - 1),
-              |Real.sin (Real.pi * B * y / p) / Real.sin (Real.pi * y / p)| : ℝ) : ℂ) *
-            ((((Icc 1 (p - 1)).sup fun y : ℕ =>
-              ‖∑ x ∈ Icc 1 p,
-                exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ) : ℂ)
-
 /-- **Explicit completion bound for incomplete exponential sums.** Let $p$ be a prime, write
 $e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients whose reduction
 modulo $p$ has degree at least $2$, and let $B$ be an integer with $1 \le B \le p$. Put
@@ -173,22 +139,6 @@ public theorem_wanted norm_incompleteSum_le_min_mul_sup (p : ℕ) (hp : p.Prime)
         (((range p).sup fun y : ℕ =>
           ‖∑ x ∈ Icc 1 p,
             exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ)
-
-/-- **Bound for a truncated sum of reciprocal sines.** Let $p$ be a prime, let $a$ be an integer
-not divisible by $p$, and let $B$ be an integer with $\sqrt{p/\pi} < B < p/2$. Then
-$$
-\sum_{h=1}^{B} \min\left\{B, \frac{1}{|\sin(\pi a h / p)|}\right\} <
-\frac{p}{\pi}\left(\log\frac{\pi B^2}{p} + 1 + \frac{\pi B}{p}\right) +
-\frac{pB(B+1)}{\pi(p^2 - B^2)}.
-$$
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 3.3 (`integers-2025-A48-lem-3-3`). -/
-public theorem_wanted sum_min_one_div_abs_sin_lt (p : ℕ) (hp : p.Prime) (a : ℤ)
-    (ha : ¬ (p : ℤ) ∣ a) (B : ℕ) (hB₁ : Real.sqrt (p / Real.pi) < B) (hB₂ : (B : ℝ) < p / 2) :
-    ∑ h ∈ Icc 1 B, min (B : ℝ) (1 / |Real.sin (Real.pi * a * h / p)|) <
-      (p / Real.pi) * (Real.log (Real.pi * B ^ 2 / p) + 1 + Real.pi * B / p) +
-        p * B * (B + 1) / (Real.pi * ((p : ℝ) ^ 2 - (B : ℝ) ^ 2))
 
 /-- **Bound for a sum of sine ratios.** Let $q$, $K$ and $B$ be natural numbers with
 $1 \le K < q$ and $B \ge 1$, and let $\gamma$ be the Euler–Mascheroni constant. Then

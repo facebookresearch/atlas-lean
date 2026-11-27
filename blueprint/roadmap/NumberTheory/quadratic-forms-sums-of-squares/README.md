@@ -14,3 +14,4 @@ Representations by quadratic forms: sums of two, three and four squares, binary 
 - [Order of the unitary group over a finite field](finite-unitary-group-order.md)
 - [Local factor of a unimodular Hermitian lattice at an inert prime](hermitian-unimodular-local-factor-inert.md)
 - [Mass ratio of the standard unimodular Hermitian lattices in consecutive ranks](hermitian-standard-lattice-mass-ratio.md)
+- [Hermitian lattice definitions](hermitian-lattice-definitions/README.md)

@@ -158,7 +158,9 @@ private lemma integral_bounded {q : ℕ} (hq : 2 ≤ q) :
   rw [abs_mul, abs_mul, abs_of_pos hq₀, abs_of_pos (inv_pos.mpr hq₀)]
   gcongr <;> apply hC
 
-private lemma series_bounded {q : ℕ} (hq : 2 ≤ q) :
+/-- **Delange's series is bounded.** For every natural number $q \ge 2$ there is a constant $C$
+with $|h(x)| \le C$ for every real $x$, where $h$ is Delange's series in base $q$. -/
+lemma series_bounded {q : ℕ} (hq : 2 ≤ q) :
     ∃ C : ℝ, ∀ x : ℝ, |trollopeDelangeSeries q x| ≤ C := by
   obtain ⟨C, hC⟩ := integral_bounded hq
   have hq₁ : 1 < (q : ℝ) := by exact_mod_cast (show 1 < q from hq)
@@ -173,7 +175,10 @@ private lemma series_bounded {q : ℕ} (hq : 2 ≤ q) :
     inv_pow, ← div_eq_mul_inv]
   exact div_le_div_of_nonneg_right (hC _) (by positivity)
 
-private lemma fluctuation_bddAbove {q : ℕ} (hq : 2 ≤ q) :
+/-- **The Trollope–Delange fluctuation is bounded.** For every natural number $q \ge 2$ the
+absolute values $|F(t)|$ of the Trollope–Delange fluctuation in base $q$, for real $t$, are
+bounded above. -/
+lemma fluctuation_bddAbove {q : ℕ} (hq : 2 ≤ q) :
     BddAbove (Set.range (fun t => |trollopeDelangeFluctuation q t|)) := by
   obtain ⟨C, hC⟩ := series_bounded hq
   have hq₁ : 1 ≤ (q : ℝ) := by exact_mod_cast (by omega : 1 ≤ q)
