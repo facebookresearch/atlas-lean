@@ -24,7 +24,9 @@ import Mathlib.Tactic.Ring
 
 This module proves `euclid_bezout_coeffs_abs_le`: for Euclidean switching data with
 `r 0 = m / gcd m n` and `r 1 = n / gcd m n`, every pair of integers `x` and `y` with
-`x * m + y * n = gcd m n` satisfies `|s 2| ≤ |x|` and `|s 1| ≤ |y|`.
+`x * m + y * n = gcd m n` satisfies `|s 2| ≤ |x|` and `|s 1| ≤ |y|`. It also proves
+`isLeastAbsInverse_all`: for `1 ≤ i ≤ N + 1`, `s i` is the least absolute inverse of `r i` modulo
+`r (i - 1)`.
 
 Statements from Spiros Konstantogiannis, "The Euclidean Algorithm
 as a Sequence of Modular Inverse Switching Formulas", *INTEGERS*
@@ -60,6 +62,20 @@ private theorem isLeastAbsInverse_next {r : ℕ → ℕ} {s : ℕ → ℤ} {N : 
   | of_succ i hi ih =>
     have h := isLeastAbsInverse_succ_imp r s N hseq' (i + 1) (by omega) hi ih
     rwa [Nat.add_sub_cancel] at h
+
+/-- **Every switching inverse is a least absolute inverse.** Let $(r_i)$, $(s_i)$ and $N$ be
+Euclidean switching data. Then for every $i$ with $1 \le i \le N + 1$, $s_i$ is the least
+absolute inverse of $r_i$ modulo $r_{i-1}$.
+
+Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
+Sequence of Modular Inverse Switching Formulas", Corollary 1. -/
+theorem isLeastAbsInverse_all
+    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N) :
+    ∀ i : ℕ, 1 ≤ i → i ≤ N + 1 →
+      IsLeastAbsInverse (s i) (r i : ℤ) (r (i - 1)) := by
+  intro i hi1 hi2
+  have h := isLeastAbsInverse_next hseq (i := i - 1) (by omega)
+  rwa [Nat.sub_add_cancel hi1] at h
 
 set_option linter.unusedVariables false in
 /-- **The Euclidean Bézout coefficients are smallest in absolute value.** Let $m > n > 1$ be
