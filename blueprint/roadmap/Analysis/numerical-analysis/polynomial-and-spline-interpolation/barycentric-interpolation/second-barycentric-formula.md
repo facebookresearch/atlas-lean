@@ -4,6 +4,8 @@ Let $F$ be a field, $s$ a finite set of indices, $v : s \to F$ nodes that are pa
 
 $$p(x) = \frac{\displaystyle\sum_{i \in s} \frac{w_i}{x - v_i}\, r_i}{\displaystyle\sum_{i \in s} \frac{w_i}{x - v_i}} .$$
 
+For $s = \emptyset$ both sides are $0$, with the convention $0/0 = 0$.
+
 ## Sources
 
 - J.-P. Berrut and L. N. Trefethen, "Barycentric Lagrange interpolation", *SIAM Review* 46(3):501–517, 2004, Section 4, the identity (4.1) and the formula (4.2). <https://people.maths.ox.ac.uk/trefethen/barycentric.pdf>

@@ -8,7 +8,7 @@ Then
 
 $$\hat y = (a + \Delta a)^T b = a^T (b + \Delta b), \qquad |\Delta a| \le \tilde\gamma_n^{(s)}(\lambda) |a|, \quad |\Delta b| \le \tilde\gamma_n^{(s)}(\lambda) |b|,$$
 
-with probability at least $1 - 2n\exp(-\lambda^2/2)$. No independence assumption is needed. The range assumption is: for the one-term product $\eta \cdot \tfrac12$, with $\eta$ the smallest positive subnormal number of a bounded format, the computed result is $0$ or $\eta$, a relative error of $1$.
+with probability at least $1 - 2n\exp(-\lambda^2/2)$. No independence assumption is needed. The range assumption is needed: for the one-term product $\eta \cdot \tfrac12$, with $\eta$ the smallest positive subnormal number of a bounded format, the computed result is $0$ or $\eta$, a relative error of $1$.
 
 ## Depends on
 
