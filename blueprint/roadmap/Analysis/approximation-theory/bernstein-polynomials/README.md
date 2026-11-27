@@ -9,3 +9,11 @@
 ## Rate of Bernstein approximation
 
 - [Voronovskaya's theorem](tendsto-voronovskaya.md)
+
+## Exact polynomial conversion to the Bernstein basis
+
+- [Binomial moments of the Bernstein polynomials](choose-bernstein-sum.md)
+- [Monomials in the Bernstein basis](monomial-bernstein.md)
+- [Bernstein coefficients of a real polynomial](bernstein-coeff.md)
+- [Values of a polynomial from its Bernstein coefficients](eval-eq-sum-bernstein.md)
+- [Expansion of a polynomial in the Bernstein basis](eq-sum-bernstein.md)
