@@ -15,7 +15,9 @@ $$f_0Q < f_2 \quad\text{and}\quad f_1Q' < f_2,$$
 i.e. iff both mutation rates exceed the error thresholds $\mu_0 > 1 - f_2/f_0$ and $\mu_1 > 1 - f_2/f_1$.
 2. **Unstable–malignant coexistence** $\Big(0, \dfrac{f_1Q' - f_2}{f_1 - f_2}, \dfrac{f_1(1 - Q')}{f_1 - f_2}\Big)$, admissible iff $f_1 > f_2$ and $f_1Q' > f_2$, with eigenvalues
 
-$$f_0Q - f_1Q', \qquad \frac{f_1(f_2 - f_1Q')}{f_1 - f_2}, \qquad \frac{2f_1f_2Q' - f_1^2Q' - f_2^2}{f_1 - f_2}.$$
+$$f_0Q - f_1Q', \qquad f_2 - f_1Q', \qquad -f_1Q',$$
+
+the last transverse to the simplex.
 
 3. **Full coexistence**, where $\Phi = f_0Q$, given by
 
