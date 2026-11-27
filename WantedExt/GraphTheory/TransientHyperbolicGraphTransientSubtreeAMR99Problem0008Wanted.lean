@@ -42,15 +42,23 @@ returns). A subtree is a subgraph that is a tree, with its own random walk.
 noncomputable def vertexDegree {V : Type*} (G : SimpleGraph V) (v : V) : ℕ :=
   (G.neighborSet v).ncard
 
-/-- The `n`-step return probability of simple random walk on `G` at `o`: the sum over closed walks
-of length `n` at `o` of `∏ 1 / deg` over the vertices the walk leaves. -/
+/-- The weighted return sum of `G` at `o` after `n` steps: the sum over closed walks of length `n`
+at `o` of `∏ 1 / deg` over the vertices the walk leaves, where `deg` is the `ncard` of the
+neighbour set (`0` for an infinite one) and `0⁻¹ = ∞` in `ENNReal`. It is the `n`-step return
+probability of simple random walk when every vertex has finitely many neighbours and at least one;
+otherwise it need not be: at the centre of an infinite star the two-step value is `∞`, and at an
+isolated vertex the value is `1` at `n = 0` and `0` afterwards. -/
 noncomputable def returnProb {V : Type*} (G : SimpleGraph V) (o : V) (n : ℕ) : ENNReal :=
   ∑' w : {w : G.Walk o o // w.length = n},
     (w.1.support.dropLast.map fun v => ((vertexDegree G v : ENNReal))⁻¹).prod
 
-/-- Simple random walk on the infinite graph `G` is transient: the expected number of returns to
-some vertex, `∑ₙ pₙ(o, o)`, is finite. Finite graphs are excluded: on a one-vertex graph the walk
-sum above would count no returns at all, although the walk never leaves its vertex. -/
+/-- `G` is infinite and, at some vertex `o`, the weighted return sums have a finite total,
+`∑ₙ returnProb G o n ≠ ⊤`. When every vertex has finitely many neighbours and at least one, this
+total is the expected number of visits of simple random walk from `o` to `o`, time `0` included, so
+the predicate says that the walk started at `o` is transient. Without that condition the reading
+fails: the infinite graph with no edges satisfies the definition (its total is `1`). Finite graphs
+are excluded: on a one-vertex graph the walk sum would count no returns after time `0`, although
+the walk never leaves its vertex. -/
 def IsTransient {V : Type*} (G : SimpleGraph V) : Prop :=
   Infinite V ∧ ∃ o : V, ∑' n, returnProb G o n ≠ ⊤
 

@@ -1,6 +1,6 @@
 # Frame theorem for terminating runs of memory-safe programs
 
-**Theorem (Frame OK).** In the [memory-safe language](block-structured-memory-safe-language.md), let $c$ be a command and $s_1$, $s'_1$, $s_2$ states with
+**Theorem (Frame OK).** In the [memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md), let $c$ be a command and $s_1$, $s'_1$, $s_2$ states with
 $[\![c]\!](s_1) = s'_1$, $\mathrm{vars}(c) \subseteq \mathrm{vars}(s_1)$ and $\mathrm{blocks}(s_1) \cap \mathrm{blocks}(s_2) = \emptyset$. Then there is a permutation $\pi$ of identifiers such that
 $[\![c]\!](s_1 \cup s_2) = \pi \cdot s'_1 \cup s_2$ and $\mathrm{blocks}(\pi \cdot s'_1) \cap \mathrm{blocks}(s_2) = \emptyset$.
 
@@ -8,7 +8,7 @@ The extra state $s_2$ is untouched, and the result differs from $s'_1$ only by r
 
 ## Depends on
 
-- [A memory-safe language with block identifiers](block-structured-memory-safe-language.md)
+- [Syntax and semantics of the memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md)
 
 ## Proof depends on
 
