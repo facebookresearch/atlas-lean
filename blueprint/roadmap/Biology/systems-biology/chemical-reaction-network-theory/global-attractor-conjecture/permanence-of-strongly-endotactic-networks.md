@@ -7,7 +7,6 @@
 ## Depends on
 
 - [Global attractor conjecture for single linkage class networks](global-attractor-conjecture-for-single-linkage-class-networks.md)
-- [Extended Permanence Conjecture](../extended-permanence-conjecture.md)
 
 ## Expansion
 

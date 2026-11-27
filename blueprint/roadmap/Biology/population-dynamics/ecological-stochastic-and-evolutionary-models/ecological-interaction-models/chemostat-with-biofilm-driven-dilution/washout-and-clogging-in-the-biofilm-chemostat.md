@@ -20,7 +20,7 @@ Thus washout is decided by the $2\times2$ linearization $M = \begin{pmatrix} A &
 
 ## Depends on
 
-- [Chemostat equilibria and the washout threshold](../../chemostat/chemostat-equilibria-and-washout.md)
+- [Chemostat equilibria and the washout threshold](../../../chemostat/chemostat-equilibria-and-washout.md)
 
 ## Expansion
 

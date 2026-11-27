@@ -24,7 +24,7 @@ So the trait invades at speed $u_c$, which for small $\tilde\beta$ strictly exce
 
 ## Depends on
 
-- [The minimal speed is the least Fisher–KPP front speed](../../../pattern-formation/fisher-kpp-travelling-waves/is-least-front-speeds.md)
+- [The minimal speed is the least Fisher–KPP front speed](../../../../pattern-formation/fisher-kpp-travelling-waves/is-least-front-speeds.md)
 
 ## Expansion
 
