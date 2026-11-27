@@ -7623,7 +7623,6 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/part-01/README.md"}], "id": "af_7d220029c1d21c78a22db929", "extensions": {"org.autoform": {"navigation": "transparent"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/systems-biology/part-01/README.md"}], "id": "af_c630cb4e079c4d4bb9b77e2f", "extensions": {"org.autoform": {"navigation": "transparent"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/systems-biology/part-02/README.md"}], "id": "af_eb9c428fe5a72cbdf84b0846", "extensions": {"org.autoform": {"navigation": "transparent"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/Biology/epidemiology/epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics.md"}], "id": "af_a151da47d041132e76b05670", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/bioinformatics/part-02/bias-corrected-microbiome-correlations/README.md"}], "id": "af_841161239bd94b5bdf7aba6a", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/bioinformatics/part-02/bias-corrected-microbiome-correlations/sampling-fraction-corrected-log-abundance-correlation.md"}], "id": "af_943ee61fe00e43d1480d519c", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/bioinformatics/part-01/bit-sliced-bloom-filter-sequence-indexing/README.md"}], "id": "af_cfa10b5f81ca883f6acfecf5", "extensions": {"org.autoform": {"navigation": "module"}}}
