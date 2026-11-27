@@ -107,6 +107,7 @@
 - [Pseudo-GWAS subsampling for PRS ensembles](pseudo-gwas-subsampling-for-prs-ensembles/README.md)
 - [Local and global ancestry interaction models](local-and-global-ancestry-interaction-models/README.md)
 - [Imputation-aware SNP panel design](imputation-aware-snp-panel-design/README.md)
+- [Boosted polygenic scores with non-additive effects](boosted-polygenic-scores-with-non-additive-effects/README.md)
 - [Dudbridge's variance explained by a cross-trait polygenic score](dudbridge-cross-trait-polygenic-score-r2.md)
 - [First principal component of polygenic scores across thresholding settings (PRS-PCA)](first-principal-component-of-thresholded-polygenic-scores.md)
 - [lassosum: the LASSO from summary statistics with a shrunk reference LD matrix](lassosum-summary-statistic-lasso.md)
