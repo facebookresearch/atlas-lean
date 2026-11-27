@@ -21,6 +21,7 @@ $$\operatorname{Var}(\tilde p) = \operatorname{Var}(\hat p) + \frac{(n-m)\,p(1-p
 
 ## Proof depends on
 
+- [Variance of the binomial law](../../../../Probability/distributions/discrete/binomial-distribution/variance-id-map-cast-binomial.md)
 - [Mean of the hypergeometric distribution](../../../../Probability/distributions/discrete/hypergeometric-distribution/sum-mul-hypergeometric-real.md)
 - [Variance of the hypergeometric distribution](../../../../Probability/distributions/discrete/hypergeometric-distribution/sum-sq-sub-mean-mul-hypergeometric-real.md)
 - [Rao–Blackwell inequality for one law](../../../../Probability/statistical-estimation/rao-blackwell-theorem/integral-comp-cond-exp-le.md)

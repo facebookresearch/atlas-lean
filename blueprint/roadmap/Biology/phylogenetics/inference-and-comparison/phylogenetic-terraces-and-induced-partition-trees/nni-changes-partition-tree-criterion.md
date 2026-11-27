@@ -14,6 +14,7 @@ equivalently if and only if $f(e_1), f(e_2), f(e_3), f(e_4)$ are all different f
 
 ## Proof depends on
 
+- [Clusters determine an unrooted binary tree](../../../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/iso-of-cluster-set-eq.md)
 - [Post-order recursion for the edge map](edge-map-recursion.md)
 
 ## Proof sketch
