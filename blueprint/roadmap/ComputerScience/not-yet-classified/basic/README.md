@@ -10,5 +10,3 @@
 - [Attention Weights](part-06/attention-weights.md)
 - [Attn](part-06/attn.md)
 - [Attn perm](part-06/attn-perm.md)
-
-## [Valid Plan to Basic](part-08/README.md)
