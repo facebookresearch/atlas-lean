@@ -56,3 +56,5 @@
 ## Recurrent mutation of rare variants
 
 - [Latent recurrent mutations of rare variants](latent-recurrent-mutations-of-rare-variants/README.md)
+- [Infinitely many genes model](infinitely-many-genes-model/README.md)
+- [Poisson mutation calculus on ancestral genomes](poisson-mutation-calculus-on-ancestral-genomes/README.md)
