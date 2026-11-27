@@ -1,3 +1,3 @@
-# Map Right Dual Iso
+# Dual comparison for a strong monoidal functor
 
-The image of a chosen right dual is canonically isomorphic to the chosen image dual.
+Let $C$ and $D$ be monoidal categories and $F : C \to D$ a strong monoidal functor, with unit map $\varepsilon$ and tensor comparison $\mu$ with inverse $\delta$. For an object $X$ of $C$ with a chosen right dual $X^\vee$ such that $FX$ also has a chosen right dual $(FX)^\vee$ (rigidity of the whole categories is not assumed), the image of the exact pairing of $X$ and $X^\vee$ is an exact pairing of $FX$ and $F(X^\vee)$, with coevaluation $\mathrm{coev}_{\mathrm{mapped}} = \varepsilon ; F(\mathrm{coev}_X) ; \delta_{X, X^\vee}$. The dual comparison $c_X : F(X^\vee) \cong (FX)^\vee$ compares this mapped pairing with the chosen target pairing. The strong monoidal hypothesis matters: for the constant functor at $1$ on the discrete additive monoidal category of integers, the image of any dual is $1$, while the dual of the image is $-1$. This is the image-pairing construction of Etingof–Gelaki–Nikshych–Ostrik, *Tensor Categories*, Example 2.10.6 (the book calls this evaluation order a left dual).

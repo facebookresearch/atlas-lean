@@ -1,3 +1,3 @@
-# Embedding μ
+# Tensor comparison of the Int embedding
 
-The tensor comparison inserts the unit on the negative component.
+Let $C$ be a symmetric monoidal category with symmetric trace $T$, and let $\mathrm{Int}(T)$ be the [Int construction](../the-int-construction/README.md), whose objects are pairs $X = (X^+, X^-)$ and whose morphisms $X \to Y$ are crossed morphisms $X^+ \otimes Y^- \to Y^+ \otimes X^-$. Write $\mathrm{pair}(a, b) = a \otimes b$ for the [separated morphism](map-pair.md) $X \to Y$ given by $a : X^+ \to Y^+$ and $b : Y^- \to X^-$ (the negative argument points backwards), and $\mathrm{pairIso}(a, b)$ for the isomorphism with forward map $\mathrm{pair}(a.\mathrm{hom}, b.\mathrm{hom})$ and inverse $\mathrm{pair}(a.\mathrm{inv}, b.\mathrm{inv})$. Write $J : C \to \mathrm{Int}(T)$, $J(A) = (A, \mathbf{1})$, for the embedding; the negative component of $X \otimes Y$ in $\mathrm{Int}(T)$ is $Y^- \otimes X^-$. The tensor comparison of $J$ at objects $X, Y$ of $C$ is $\mu_J(X, Y) = \mathrm{pair}(1_{X \otimes Y}, \lambda_{\mathbf{1}}.\mathrm{inv}) : (X \otimes Y, \mathbf{1} \otimes \mathbf{1}) \to (X \otimes Y, \mathbf{1})$.

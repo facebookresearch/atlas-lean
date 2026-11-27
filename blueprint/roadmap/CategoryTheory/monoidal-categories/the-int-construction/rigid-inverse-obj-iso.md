@@ -1,3 +1,3 @@
-# Rigid Inverse Obj Iso
+# The inverse of the Int embedding for a rigid source
 
-The chosen inverse represents a pair by its positive object tensored with the dual negative.
+Let $C$ be a symmetric monoidal category with symmetric trace $T$, let $\mathrm{Int}(T)$ be its [Int construction](README.md), whose objects are pairs $X = (X^+, X^-)$, and let $J : C \to \mathrm{Int}(T)$, $J(A) = (A, \mathbf{1})$, be the embedding; the negative component of $X \otimes Y$ is $Y^- \otimes X^-$. Suppose further that $C$ is right rigid, with a chosen right dual $U^\vee$ of each object $U$ of $C$. A traced category need not have such duals: in the discrete monoidal category $(\mathbb{N}, +)$ cancellation gives a trace, but $1$ has no dual. Then $J$ is an equivalence; for its chosen inverse $K : \mathrm{Int}(T) \to C$ and every object $X = (X^+, X^-)$, $K(X^+, X^-) \cong X^+ \otimes (X^-)^\vee$, using the chosen source right dual of $X^-$.

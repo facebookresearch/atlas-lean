@@ -1,3 +1,3 @@
-# Hom map Iso hom app
+# Forward components of a lifted isomorphism
 
-The lifted forward component uses the inverse on its negative wire.
+Let $C$ and $D$ be symmetric monoidal categories with symmetric traces $T$ and $S$, and let $\mathrm{Int}(T)$ be the [Int construction](../the-int-construction/README.md), whose objects are pairs $X = (X^+, X^-)$ and whose morphisms $X \to Y$ are crossed morphisms $X^+ \otimes Y^- \to Y^+ \otimes X^-$. Let $F, G : C \to D$ be braided strong monoidal functors preserving $T$ relative to $S$, and $i : F \cong G$ a monoidal natural isomorphism. For every object $X = (X^+, X^-)$ of $\mathrm{Int}(T)$, the forward component at $X$ of the [lifted isomorphism](map-iso.md) $L(i) : L(F) \cong L(G)$ has underlying crossed morphism $i.\mathrm{hom}_{X^+} \otimes i.\mathrm{inv}_{X^-}$.

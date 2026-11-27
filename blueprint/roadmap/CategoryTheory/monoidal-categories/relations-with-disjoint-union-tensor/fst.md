@@ -1,3 +1,3 @@
-# Fst
+# First projection relation
 
-The first relational projection is defined exactly on the left summand.
+For sets $X$ and $Y$, the first projection relation $\pi_1 : X \sqcup Y \to X$ relates $s$ to $x$ exactly when $s = \mathrm{inl}(x)$.

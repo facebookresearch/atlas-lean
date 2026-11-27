@@ -1,3 +1,3 @@
-# Map Iso trans
+# Lifting composites of monoidal natural isomorphisms
 
-Lifting commutes with composition of monoidal natural isomorphisms.
+Let $C$ and $D$ be symmetric monoidal categories with symmetric traces $T$ and $S$, and let $\mathrm{Int}(T)$ be the [Int construction](../the-int-construction/README.md), whose objects are pairs $X = (X^+, X^-)$ and whose morphisms $X \to Y$ are crossed morphisms $X^+ \otimes Y^- \to Y^+ \otimes X^-$. Let $F, G : C \to D$ be braided strong monoidal functors preserving $T$ relative to $S$, and $i : F \cong G$ a monoidal natural isomorphism. For a further such functor $H$ and monoidal natural isomorphism $j : G \cong H$, the [lifts](map-iso.md) satisfy $L(i ; j) = L(i) ; L(j)$.

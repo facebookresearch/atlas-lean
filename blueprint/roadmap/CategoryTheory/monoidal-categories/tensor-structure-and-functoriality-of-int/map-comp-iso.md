@@ -1,3 +1,3 @@
-# Map Comp Iso
+# Int of a composite functor
 
-Int of a composite functor is naturally isomorphic to the composite of the Int functors.
+Let $C$ and $D$ be symmetric monoidal categories with symmetric traces $T$ and $S$, and let $\mathrm{Int}(T)$ be the [Int construction](../the-int-construction/README.md), whose objects are pairs $X = (X^+, X^-)$ and whose morphisms $X \to Y$ are crossed morphisms $X^+ \otimes Y^- \to Y^+ \otimes X^-$. For a braided strong monoidal $F$ that preserves $T$ relative to $S$, the induced functor $L(F) : \mathrm{Int}(T) \to \mathrm{Int}(S)$ sends $(A, U)$ to $(FA, FU)$ and acts on morphisms by $F^\times$. For a further symmetric monoidal category $E$ with trace $R$ and a braided strong monoidal $G : D \to E$ preserving $S$ relative to $R$, $L(F ; G) \cong L(F) ; L(G)$, with every component the identity of the common image object $(GFX^+, GFX^-)$.

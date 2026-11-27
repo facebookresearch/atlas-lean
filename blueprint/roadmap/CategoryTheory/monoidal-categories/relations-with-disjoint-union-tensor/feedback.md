@@ -1,3 +1,3 @@
-# Feedback
+# Finite-path feedback
 
-Relational feedback includes exactly the terminating finite executions.
+In the category of sets and relations with the disjoint union as tensor, let $f : X \sqcup U \to Y \sqcup U$ be a relation, with $U$ the summand fed back. Its feedback $\mathrm{fb}(f) : X \to Y$ is the relation on external endpoints with $(x, y) \in \mathrm{fb}(f)$ exactly when $\mathrm{Path}_f(\mathrm{inl}(x), y)$, for the [terminating-path predicate](feedback-path.md). Its elements are pairs, not executions; a terminating path that starts inside the loop contributes nothing (for $X$ empty, $U$ and $Y$ singletons and the sole edge $\mathrm{inr}(u) \to \mathrm{inl}(y)$, there is a terminating path but $\mathrm{fb}(f)$ is empty).

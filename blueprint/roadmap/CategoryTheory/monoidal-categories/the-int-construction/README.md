@@ -17,16 +17,16 @@
 
 - [Dual](dual.md)
 - [Positive and negative copies of an object are dual in Int](positive-pairing.md)
-- [Decomposition](decomposition.md)
+- [Decomposition of an Int object into its components](decomposition.md)
 - [Exact Pairing](exact-pairing.md)
 - [Embedding preserves trace](embedding-preserves-trace.md)
 
 ## Int recovers symmetric rigid categories
 
-- [Negative Iso](negative-iso.md)
-- [Representative Iso](representative-iso.md)
+- [Formal negatives are embedded source duals](negative-iso.md)
+- [Every Int object is the embedding of a source object](representative-iso.md)
 - [Rigid Equivalence](rigid-equivalence.md)
-- [Rigid Inverse Obj Iso](rigid-inverse-obj-iso.md)
+- [The inverse of the Int embedding for a rigid source](rigid-inverse-obj-iso.md)
 - [Rigid Inverse preserves trace](rigid-inverse-preserves-trace.md)
 - [Trace eq of rigid](trace-eq-of-rigid.md)
 
@@ -43,5 +43,5 @@
 ## Functoriality of the Int construction
 
 - [Map Crossed](map-crossed.md)
-- [Map Crossed compose](map-crossed-compose.md)
-- [Map](map.md)
+- [The crossed action of a trace-preserving functor respects Int composition](map-crossed-compose.md)
+- [The functor induced on Int by a trace-preserving functor](map.md)

@@ -12,7 +12,7 @@
 - [Ident](ident.md)
 - [Compose](compose.md)
 - [Graph](graph.md)
-- [Iso Of Order Iso](iso-of-order-iso.md)
+- [Order isomorphisms as isomorphisms of monotone relations](iso-of-order-iso.md)
 - [Tensor product of preorders](prod.md)
 - [Unit](unit.md)
 - [Tensor](tensor.md)

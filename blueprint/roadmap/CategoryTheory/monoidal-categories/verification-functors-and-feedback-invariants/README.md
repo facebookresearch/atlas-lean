@@ -20,7 +20,7 @@
 - [Verification](verification.md)
 - [Tensor Order Iso](tensor-order-iso.md)
 - [Unit Order Iso](unit-order-iso.md)
-- [Tensor Iso](tensor-iso.md)
+- [Tensor comparison of the powerset verification functor](tensor-iso.md)
 - [Unit Iso](unit-iso.md)
 - [Core Monoidal](core-monoidal.md)
 - [Safe Invariant](safe-invariant.md)

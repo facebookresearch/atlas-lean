@@ -1,3 +1,3 @@
-# Pair Iso
+# Isomorphisms of Int objects from component isomorphisms
 
-Component isomorphisms induce an isomorphism of Int objects.
+Let $C$ and $D$ be symmetric monoidal categories with symmetric traces $T$ and $S$, and let $\mathrm{Int}(T)$ be the [Int construction](../the-int-construction/README.md), whose objects are pairs $X = (X^+, X^-)$ and whose morphisms $X \to Y$ are crossed morphisms $X^+ \otimes Y^- \to Y^+ \otimes X^-$. For isomorphisms $a : X^+ \cong Y^+$ and $b : Y^- \cong X^-$ of $C$ (the second points backwards), the isomorphism $\mathrm{pairIso}(a, b) : X \cong Y$ has forward map the [separated morphism](map-pair.md) $\mathrm{pair}(a.\mathrm{hom}, b.\mathrm{hom}) = a.\mathrm{hom} \otimes b.\mathrm{hom}$ and inverse $\mathrm{pair}(a.\mathrm{inv}, b.\mathrm{inv})$.
