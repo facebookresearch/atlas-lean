@@ -4,7 +4,7 @@
 
 $$N(t+1) = N(t)\, W(X(t), Y(t))\, f(N(t)), \qquad X_i(t+1) = X_i(t)\,\frac{W_i(X(t), Y(t))}{W(X(t), Y(t))}.$$
 
-Small symmetric fluctuations: $Y_i(t) = 1 + \varepsilon^2\mu + \varepsilon\sigma Z_i(t)$ with $(Z(t))_t$ i.i.d. in time, $\mathbb{E} Z_i = 0$, $\operatorname{Var} Z_i = 1$, $\operatorname{Corr}(Z_i, Z_j) = \rho \in [-1/(k-1), 1)$. Normalize $\phi(1) = \phi'(1) = 1$ and let $\gamma = (\log\phi)''(1) = \phi''(1) - 1$; $\gamma < 0$ for concave or mildly convex fitness. Let $\Delta_0$ be the set where some allele is absent and $S_0$ the set where $N = 0$ or some allele is absent.
+Small symmetric fluctuations: $Y_i(t) = 1 + \varepsilon^2\mu + \varepsilon\sigma Z_i(t)$ with $(Z(t))_t$ i.i.d. in time, $\mathbb{E} Z_i = 0$, $\operatorname{Var} Z_i = 1$, $\operatorname{Corr}(Z_i, Z_j) = \rho \in [-1/(k-1), 1)$. Normalize $\phi(1) = \phi'(1) = 1$ and let $\gamma = (\log\phi)''(1) = \phi''(1) - 1$; $\gamma < 0$ for concave or mildly convex fitness. Let $\Delta_0$ be the set where some allele is absent and $S_0 = \Delta \times \{0\}$ the set where $N = 0$.
 
 **Theorem.** Let $\varepsilon > 0$ be sufficiently small.
 
@@ -18,7 +18,7 @@ Small symmetric fluctuations: $Y_i(t) = 1 + \varepsilon^2\mu + \varepsilon\sigma
 
 $$r_N = \varepsilon^2\Big(\mu + \frac{\sigma^2\gamma}{2} + \frac{\sigma^2\gamma(\gamma - 1)(1 - \rho)}{2(1 - 2\gamma)}\Big(1 - \frac1k\Big)\Big) + O(\varepsilon^3);$$
 
-if $r_N > 0$ the population and all alleles persist, and if $r_N < 0$ then $N(t) \to 0$ almost surely.
+if $r_N > 0$ the population and all alleles persist ($S_0$- and $\Delta_0$-stochastically persistent, as in Theorem 3.3), and if $r_N < 0$ then $N(t) \to 0$ almost surely.
 
 The last term is positive when $\gamma < 0$ and grows with the number of alleles $k$ and with $1 - \rho$: the same environmental fluctuations that maintain genetic diversity also raise the population growth rate, so allelic diversity can be necessary for persistence.
 
