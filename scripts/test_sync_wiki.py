@@ -3867,6 +3867,25 @@ class ScopedRun(unittest.TestCase):
         self.assertIn(f"  python3 scripts/sync_wiki.py declarations --base {self.base}\n", out)
         self.assertEqual(self.tree(), before)
 
+    def test_a_withheld_declaration_gets_no_page_and_keeps_its_digest(self) -> None:
+        # As a graph-sync batch withholds a declaration that may state a planned page a merged pull request names: no
+        # page, as for a held one, its digest written all the same; the check agrees only given the same list.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n"
+                         "/-- Another result. -/\ntheorem other : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--withhold", "Ext.fresh", "--withhold", "Ext.lagrange")
+        self.assertEqual(status, 0, err)
+        self.assertEqual((report["missing"], report["withheld"]), (["Ext.other"], ["Ext.fresh"]))
+        self.assertIn("Of them, those withheld, so with no page: 1\n  Ext.fresh\n", out)
+        roadmap = self.root / "blueprint" / "roadmap"
+        self.assertEqual(list(roadmap.rglob("fresh.md")), [])
+        self.assertTrue((roadmap / "Algebra/groups/group-basics/other.md").is_file())
+        state = json.loads((self.root / "scripts/wiki-sync.json").read_text())["docstrings"]
+        self.assertEqual(state["Ext.fresh"], sync.digest("A new result."))
+        status, out, err, report = self.run_sync("--check", "--withhold", "Ext.fresh")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"), out + err)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["missing"], report["wiki_changes"]), (1, ["Ext.fresh"], "other"))
+
     def test_a_docstring_edit_rewrites_its_digest_and_names_its_page(self) -> None:
         self.groups(lagrange="The order of a subgroup divides the order of a finite group.")
         status, out, err, report = self.run_sync("--check")
