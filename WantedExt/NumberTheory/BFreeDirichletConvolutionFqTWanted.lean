@@ -63,27 +63,6 @@ public theorem_wanted monic_perron_formula {F : Type*} [Field F] [Finite F]
           (∑' f : {f : F[X] // f.Monic}, a f * u ^ (f : F[X]).natDegree) /
             (u ^ n * (1 - u)) * u⁻¹
 
-/-- **Dirichlet convolution of completely multiplicative functions at a product.** Let $F$ be a
-field and let $\alpha, \beta : F[T] \to \mathbb{C}$ be completely multiplicative, that is,
-monoid homomorphisms from the multiplicative monoid of $F[T]$ to $\mathbb{C}$. Write
-$\gamma = \alpha * \beta$ for their Dirichlet convolution over monic divisors and $\mu$ for the
-Möbius function. Then for all monic $f, g \in F[T]$,
-$$\gamma(fg) = \sum_{\ell} \mu(\ell) \alpha(\ell) \beta(\ell) \gamma(f/\ell) \gamma(g/\ell),$$
-where $\ell$ runs over the monic common divisors of $f$ and $g$.
-
-Every completely multiplicative function on monic polynomials extends to such a homomorphism (send
-nonzero constants to $1$ and $0$ to $0$), and only values at monic polynomials enter.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 2
-(`integers-2026-A80-lem-2`). -/
-public theorem_wanted monicDirichletConv_mul_of_completelyMultiplicative {F : Type*} [Field F]
-    (α β : F[X] →* ℂ) {f g : F[X]} (hf : f.Monic) (hg : g.Monic) :
-    monicDirichletConv α β (f * g) =
-      ∑ᶠ ℓ ∈ {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ f ∧ ℓ ∣ g},
-        (moebius ℓ : ℂ) * α ℓ * β ℓ * monicDirichletConv α β (f /ₘ ℓ) *
-          monicDirichletConv α β (g /ₘ ℓ)
-
 /-- **Möbius sum over the monic divisors of a polynomial over a finite field.** Let $F$ be a finite
 field with $q$ elements and let $\mu$ be the Möbius function of $F[T]$. For every monic
 $f \in F[T]$,
