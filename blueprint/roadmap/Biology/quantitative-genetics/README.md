@@ -19,6 +19,7 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Bayesian-alphabet priors for marker effects](bayesian-alphabet-marker-effect-priors/README.md)
 - [Homozygosity-by-descent hidden Markov models](homozygosity-by-descent-hidden-markov-models/README.md)
 - [Predicting cross means and variances](predicting-cross-means-and-variances/README.md)
+- [ANOVA heritability from clonal replicates](anova-heritability-from-clonal-replicates/README.md)
 - [Dynamical BLUP reaction-norm evolution](dynamical-blup-reaction-norm-evolution/README.md)
 - [Expected cross value for mate selection](expected-cross-value-for-mate-selection/README.md)
 - [Information-theoretic quantitative genetics](information-theoretic-quantitative-genetics/README.md)
