@@ -130,3 +130,5 @@
 - [Quartet concordance factors depend only on the unrooted quartet network](quartet-concordance-factors-depend-only-on-the-unrooted-quartet-network.md)
 - [Three-cycles with a two-leaf hybrid are the source of four-taxon anomalies](three-two-cycles-and-four-taxon-anomalies.md)
 - [A degree-2 sub-blob can be replaced by a single edge without changing quartet CFs](two-sub-blob-replacement-preserves-quartet-cfs.md)
+## Networks: the tree of blobs
+- [Tree of blobs of a species network under the coalescent](tree-of-blobs-identifiability/README.md)

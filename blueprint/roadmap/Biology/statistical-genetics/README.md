@@ -26,6 +26,7 @@ Statistical methods for genome-wide association studies, heritability estimation
 - [Testing LD consistency of association statistics](testing-ld-consistency-of-association-statistics/README.md)
 - [Transmission disequilibrium test](transmission-disequilibrium-test/README.md)
 - [Familial relative risk explained by common variants](familial-relative-risk-explained-by-common-variants/README.md)
+- [Sum of Single Effects (SuSiE) regression](sum-of-single-effects-susie/README.md)
 - [Adaptive shrinkage and the local false sign rate](adaptive-shrinkage-and-local-false-sign-rate/README.md)
 - [Combining p-values](combining-p-values/README.md)
 - [EMMA: efficient mixed-model association](emma-efficient-mixed-model-association/README.md)
