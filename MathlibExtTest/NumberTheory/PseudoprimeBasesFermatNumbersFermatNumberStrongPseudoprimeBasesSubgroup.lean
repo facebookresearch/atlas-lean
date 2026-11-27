@@ -28,6 +28,46 @@ example :
     fermatNumber_strongPseudoprime_bases_subgroup fermatNumber_five_not_prime
   exact ⟨H, by simpa using hcard⟩
 
+-- The subgroup membership equivalence at `k = 5`: the unit `65535 = 2 ^ 16 - 1`, the base
+-- `2 ^ (2 ^ 4 + 0) - 2 ^ 0` of `S_5`, lies in the returned subgroup.
+example : ∃ (H : Subgroup (ZMod (Nat.fermatNumber 5))ˣ) (u : (ZMod (Nat.fermatNumber 5))ˣ),
+    u ∈ H ∧ (u : ZMod (Nat.fermatNumber 5)) = 65535 := by
+  obtain ⟨H, hmem, _, _⟩ :=
+    fermatNumber_strongPseudoprime_bases_subgroup fermatNumber_five_not_prime
+  have hcop : Nat.Coprime 65535 (Nat.fermatNumber 5) := by
+    norm_num [Nat.fermatNumber]
+  refine ⟨H, ZMod.unitOfCoprime 65535 hcop, ?_, by simp⟩
+  rw [hmem]
+  refine Or.inr ⟨0, Or.inr ?_⟩
+  rw [ZMod.coe_unitOfCoprime]
+  norm_num
+
+-- The paper's `448911555` is a strong base of `F_5` but lies in no coset of the subgroup:
+-- no unit of the returned subgroup equals it. Powers of `2` repeat with period `64`, so the
+-- three families of `S_5` have only `3 * 64` residues, all different from `448911555`.
+example : ∃ H : Subgroup (ZMod (Nat.fermatNumber 5))ˣ,
+    ∀ u ∈ H, (u : ZMod (Nat.fermatNumber 5)) ≠ 448911555 := by
+  obtain ⟨H, hmem, _, _⟩ :=
+    fermatNumber_strongPseudoprime_bases_subgroup fermatNumber_five_not_prime
+  refine ⟨H, fun u hu hu' => ?_⟩
+  have h64 : (2 : ZMod (Nat.fermatNumber 5)) ^ 64 = 1 := by decide +kernel
+  have hper : ∀ t : ℕ, (2 : ZMod (Nat.fermatNumber 5)) ^ t = 2 ^ (t % 64) := fun t => by
+    conv_lhs => rw [← Nat.div_add_mod t 64, pow_add, pow_mul, h64, one_pow, one_mul]
+  have hfin : ∀ r : Fin 64,
+      (2 : ZMod (Nat.fermatNumber 5)) ^ (r : ℕ) ≠ 448911555 ∧
+      (2 : ZMod (Nat.fermatNumber 5)) ^ (r : ℕ) * (2 ^ 16 + 1) ≠ 448911555 ∧
+      (2 : ZMod (Nat.fermatNumber 5)) ^ (r : ℕ) * (2 ^ 16 - 1) ≠ 448911555 := by
+    decide +kernel
+  have hS := (hmem u).mp hu
+  rcases hS with ⟨t, ht⟩ | ⟨t, ht | ht⟩
+  · exact (hfin ⟨t % 64, Nat.mod_lt _ (by norm_num)⟩).1 (by rw [← hu', ht, hper t])
+  · refine (hfin ⟨t % 64, Nat.mod_lt _ (by norm_num)⟩).2.1 ?_
+    rw [← hu', ht, pow_add, ← hper t]
+    ring
+  · refine (hfin ⟨t % 64, Nat.mod_lt _ (by norm_num)⟩).2.2 ?_
+    rw [← hu', ht, pow_add, ← hper t]
+    ring
+
 -- `F_5` is a strong pseudoprime to the base `2`, which lies in `S_5` with `t = 1`.
 example : IsStrongPseudoprime (Nat.fermatNumber 5) 2 := by
   obtain ⟨_, _, _, hspsp⟩ :=

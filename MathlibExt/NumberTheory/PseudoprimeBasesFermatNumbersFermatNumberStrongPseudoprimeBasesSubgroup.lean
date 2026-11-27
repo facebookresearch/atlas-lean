@@ -124,13 +124,8 @@ private theorem orderOf_u2 (k : ℕ) :
 
 private theorem pow_mod_eq (k t : ℕ) :
     u2 k ^ t = u2 k ^ (t % 2 ^ (k + 1)) := by
-  have hdiv :
-      2 ^ (k + 1) * (t / 2 ^ (k + 1)) + t % 2 ^ (k + 1) = t :=
-    Nat.div_add_mod t _
-  have hrewrite : u2 k ^ t =
-      u2 k ^ (2 ^ (k + 1) * (t / 2 ^ (k + 1)) + t % 2 ^ (k + 1)) := by
-    rw [hdiv]
-  rw [hrewrite, pow_add, pow_mul, u2_pow_card, one_pow, one_mul]
+  rw [← orderOf_u2 k]
+  exact (pow_mod_orderOf (u2 k) t).symm
 
 private theorem odd_e_add_one (k : ℕ) (hk2 : 2 ≤ k) :
     Odd (e k + 1) := by
@@ -204,13 +199,6 @@ private theorem sub_factor (k t : ℕ) :
   rw [pow_add]
   ring
 
-private theorem mul_add_eq (k t : ℕ) :
-    (2 : ZMod (Nat.fermatNumber k)) ^ t * (a k + 1) =
-      2 ^ (e k + t) + 2 ^ t := by
-  simp only [a, e]
-  rw [pow_add]
-  ring
-
 private theorem mem_S_iff (k : ℕ) (hk2 : 2 ≤ k)
     (x : ZMod (Nat.fermatNumber k)) :
     ((∃ t : ℕ, x = 2 ^ t) ∨
@@ -245,7 +233,7 @@ private theorem mem_S_iff (k : ℕ) (hk2 : 2 ≤ k)
     · exact Or.inl ⟨t, rfl⟩
     · right
       refine ⟨t, Or.inl ?_⟩
-      have h := mul_add_eq k t
+      have h := (add_factor k t).symm
       simpa [e] using h
 
 private theorem val_pow_u2 (k t : ℕ) :
@@ -305,16 +293,13 @@ private theorem mul_closed (k : ℕ) (hk2 : 2 ≤ k)
 
 private theorem inv_pow_u2 (k t : ℕ) :
     ∃ s : ℕ, (u2 k ^ t)⁻¹ = u2 k ^ s := by
-  have hNpos : 0 < 2 ^ (k + 1) := Nat.two_pow_pos _
-  have hle : t ≤ 2 ^ (k + 1) * (t + 1) :=
-    le_trans (Nat.le_succ t) (Nat.le_mul_of_pos_left _ hNpos)
-  have hadd : t + (2 ^ (k + 1) * (t + 1) - t) = 2 ^ (k + 1) * (t + 1) :=
-    Nat.add_sub_cancel' hle
-  have hpow : u2 k ^ (2 ^ (k + 1) * (t + 1)) = 1 := by
-    rw [pow_mul, u2_pow_card, one_pow]
-  have hmul : u2 k ^ t * u2 k ^ (2 ^ (k + 1) * (t + 1) - t) = 1 := by
-    rw [← pow_add, hadd, hpow]
-  exact ⟨_, inv_eq_of_mul_eq_one_right hmul⟩
+  have hfin : IsOfFinOrder (u2 k) :=
+    orderOf_pos_iff.mp (by rw [orderOf_u2]; exact Nat.two_pow_pos _)
+  have hz : (u2 k ^ t)⁻¹ ∈ Subgroup.zpowers (u2 k) := by
+    rw [← zpow_natCast, ← zpow_neg]
+    exact Subgroup.zpow_mem_zpowers _ _
+  obtain ⟨s, hs⟩ := hfin.mem_powers_iff_mem_zpowers.mpr hz
+  exact ⟨s, hs.symm⟩
 
 private theorem inv_closed (k : ℕ) (hk2 : 2 ≤ k)
     (u : (ZMod (Nat.fermatNumber k))ˣ)
@@ -338,32 +323,8 @@ private theorem inv_closed (k : ℕ) (hk2 : 2 ≤ k)
 private theorem pow_inj_on_range (k : ℕ) {t1 t2 : ℕ}
     (h1 : t1 < 2 ^ (k + 1)) (h2 : t2 < 2 ^ (k + 1))
     (h : u2 k ^ t1 = u2 k ^ t2) : t1 = t2 := by
-  have hord := orderOf_u2 k
-  rcases le_total t1 t2 with hle | hle
-  · obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hle
-    have hpow : u2 k ^ d = 1 := by
-      have hcancel : u2 k ^ t1 * u2 k ^ d = u2 k ^ t1 * 1 := by
-        rw [← pow_add, mul_one]
-        exact h.symm
-      exact mul_left_cancel hcancel
-    have hdvd : 2 ^ (k + 1) ∣ d := by
-      rw [← hord]
-      exact orderOf_dvd_of_pow_eq_one hpow
-    have hlt : d < 2 ^ (k + 1) := by omega
-    have hzero : d = 0 := Nat.eq_zero_of_dvd_of_lt hdvd hlt
-    omega
-  · obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hle
-    have hpow : u2 k ^ d = 1 := by
-      have hcancel : u2 k ^ t2 * u2 k ^ d = u2 k ^ t2 * 1 := by
-        rw [← pow_add, mul_one]
-        exact h
-      exact mul_left_cancel hcancel
-    have hdvd : 2 ^ (k + 1) ∣ d := by
-      rw [← hord]
-      exact orderOf_dvd_of_pow_eq_one hpow
-    have hlt : d < 2 ^ (k + 1) := by omega
-    have hzero : d = 0 := Nat.eq_zero_of_dvd_of_lt hdvd hlt
-    omega
+  rw [← orderOf_u2 k] at h1 h2
+  exact pow_injOn_Iio_orderOf h1 h2 h
 
 private noncomputable def H (k : ℕ) (hk2 : 2 ≤ k) :
     Subgroup (ZMod (Nat.fermatNumber k))ˣ where
