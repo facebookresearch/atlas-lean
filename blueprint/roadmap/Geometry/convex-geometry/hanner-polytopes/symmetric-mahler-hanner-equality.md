@@ -8,7 +8,7 @@ For $n\geq1$ and a compact convex origin-symmetric $K\subseteq\mathbb R^n$ with 
 
 ## Proof depends on
 
-- [Sharp symmetric Mahler bound](../symmetric-mahler-sharp-bound.md).
+- [Sharp symmetric Mahler bound](../extremal-volume-and-area-bounds/symmetric-mahler-sharp-bound.md).
 
 The equality-case passage to metric medians in the gauge space of the body and its dual, and the recursive linear Hanner classification from these properties.
 

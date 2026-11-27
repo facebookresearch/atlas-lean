@@ -7,3 +7,4 @@
 - [Laplacian of the Gaussian potential](laplacian-gaussian.md)
 
 - [Failure of Euclidean harmonic-dimension comparison at an integer growth degree](harmonic-growth-dimension-counterexample.md)
+- [Nodal measure of Laplace eigenfunctions](nodal-measure/README.md)

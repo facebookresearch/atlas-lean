@@ -26,5 +26,3 @@ Resolution of singularities and principalization of ideals in characteristic zer
 - [Seshadri constants of points in the plane](seshadri-constants-of-points-in-the-plane/README.md)
 - [Logarithmic Kodaira additivity for negative fibers](negative-fiber-log-kodaira-additivity.md)
 - [Eventual maximal multipoint Seshadri constants on surfaces](eventual-maximal-seshadri-constants.md)
-- [An explicit failure of complex affine-space cancellation](complex-affine-space-cancellation.md)
-- [Compact normalized weight families of closed-chart field valuations](compactness-normalized-etale-chart-valuations.md)

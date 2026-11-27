@@ -15,6 +15,7 @@ Ramsey's theorem for sets and hypergraphs (including size Ramsey numbers and Par
 - [Euclidean Ramsey configurations](is-euclidean-ramsey.md)
 - [Finite Euclidean Ramsey configurations are cospherical](euclidean-ramsey-configurations-cospherical.md)
 - [Finite Ramsey theorem for pairs](ramsey-two-uniform.md)
+- [Infinite Ramsey theorem](infinite-ramsey-theorem.md)
 - [Strengthened finite Ramsey theorem (Paris–Harrington principle)](paris-harrington.md)
 - [Tensor-field classification of Euclidean Ramsey configurations](euclidean-ramsey-tensor-field-criterion.md)
 - [At most five points on a circle form a Ramsey configuration](at-most-five-circle-points-euclidean-ramsey.md)

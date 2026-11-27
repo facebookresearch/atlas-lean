@@ -24,8 +24,4 @@ The Fourier transform on R^n and Schwartz functions: convolution, Bochner, Hausd
 - [The L² Fourier transform agrees with the Fourier integral on L¹ ∩ L²](the-l2-fourier-transform-agrees-with-the-fourier-integral-on-l1-cap-l2.md)
 - [Convolution with an integrable kernel acts on L² as a Fourier multiplier](convolution-with-an-integrable-kernel-acts-on-l2-as-a-fourier-multiplier.md)
 
-- [Uniform Bochner–Riesz bounds in the strict range](bochner-riesz-strict-range.md)
-- [Euclidean half-wave local smoothing](euclidean-half-wave-local-smoothing.md)
-- [Spherical extension in the strict mixed-norm range](spherical-extension-strict-mixed-range.md)
-- [Stein's Bochner–Riesz radius square function in the strict range](stein-bochner-riesz-radius-square-function.md)
-- [Logarithmic and endpoint wave estimates](endpoint-wave-estimates/README.md)
+- [Fourier restriction and smoothing estimates](restriction-and-smoothing/README.md)

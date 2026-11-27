@@ -17,3 +17,4 @@ Functions from {0,1}^n to {0,1}: counting monotone, self-dual and unate Boolean 
 - [Quantitative separation of block sensitivity and sensitivity](quantitative-block-sensitivity-separation.md)
 - [Unbounded signed violations of the square-root Fourier-degree bound](unbounded-square-root-fourier-degree-violations.md)
 - [Unbounded absolute Fourier singleton sums relative to square-root degree](unbounded-absolute-fourier-singleton-ratios.md)
+- [Global Hypercontractivity and Sharp Thresholds](global-hypercontractivity-and-sharp-thresholds/README.md)

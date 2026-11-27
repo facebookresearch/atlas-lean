@@ -8,3 +8,6 @@
 - [Iso-recursive types: safety without normalization](iso-recursive-types-safety-without-normalization.md)
 - [Soundness of algorithmic conversion for dependent type theory](soundness-of-algorithmic-conversion-for.md)
 - [System-wide weak normalization implies strong normalization for pure type systems](weak-implies-strong-normalization-for-pure-type-systems.md)
+- [The λP calculus](the-lambda-p-calculus/README.md)
+- [Recursive types and subtyping](recursive-types-and-subtyping/README.md)
+- [Gradual typing](gradual-typing/README.md)

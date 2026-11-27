@@ -6,6 +6,7 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Bifurcation of Turing pattern branches](bifurcation-of-turing-pattern-branches/README.md)
 - [Cauchy–Kovalevskaya theorem](cauchy-kovalevskaya-theorem/README.md)
 - [Heat equation](heat-equation/README.md)
+- [Heat-kernel Duhamel derivatives](heat-kernel-duhamel-derivatives/README.md)
 - [Heat-kernel Duhamel integral](heat-kernel-duhamel-integral/README.md)
 - [Hessian estimates for the σ₂ equation](hessian-estimates-for-the-equation/README.md)
 - [Lyapunov–Schmidt reduction for Turing pattern branches](lyapunov-schmidt-reduction-for-turing-pattern-br/README.md)
@@ -23,19 +24,9 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Conservation laws with concave flux](conservation-laws-with-concave-flux/README.md)
 - [Analytic elliptic regularity](analytic-elliptic-regularity.md)
 
-- [Global regularity of the three-dimensional Navier–Stokes equations](global-regularity-of-the-navier-stokes-equations.md)
 
 - [Optimality system for linear-quadratic elliptic optimal control](optimality-system-for-linear-quadratic-elliptic-optimal-control.md)
-- [Euclidean-complete affine maximal graphs in dimensions three through nine](affine-bernstein-rigidity-in-dimensions-three-through-nine.md)
-- [Global classical relativistic Vlasov–Maxwell solutions in three dimensions](global-classical-relativistic-vlasov-maxwell.md)
-- [Scalar conductivity nonuniqueness for full weak boundary data](scalar-conductivity-nonuniqueness-for-full-boundary-data.md)
-- [A nonflat one-homogeneous Bernoulli minimizer in dimension seven](nonflat-one-phase-bernoulli-minimizer-in-seven.md)
-- [Strict interior hot-spots bound on smooth simply connected planar domains](strict-hot-spots-on-simply-connected-planar-domains.md)
-- [Subcritical Hénon–Lane–Emden nonexistence off the origin](subcritical-henon-lane-emden-nonexistence.md)
 
-- [Defocusing Schrödinger blowup](defocusing-schrodinger-blowup/README.md)
 
-- [Nonuniqueness of global renormalized periodic hard-sphere Boltzmann flow](nonuniqueness-of-periodic-hard-sphere-boltzmann-flow.md)
-- [Smooth forced Navier–Stokes solution classes](forced-navier-stokes-solution-classes.md)
-- [Forced Navier–Stokes breakdown on Euclidean three-space](forced-navier-stokes-breakdown-on-euclidean-space.md)
-- [Forced Navier–Stokes breakdown on the flat three-torus](forced-navier-stokes-breakdown-on-the-three-torus.md)
+- [Elliptic rigidity, extrema and inverse problems](elliptic-rigidity-extrema-and-inverse-problems/README.md)
+- [Viscous, dispersive and kinetic evolution](viscous-dispersive-and-kinetic-evolution/README.md)

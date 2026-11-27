@@ -34,6 +34,10 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 - [Seven-color upper bound for the Euclidean plane](part-02/exists-seven-coloring.md)
 - [Squaring the square with distinct squares](part-02/squaring-the-square-distinct-squares.md)
 - [Sylvester–Gallai theorem](part-02/sylvester-gallai.md)
+- [Degenerate model angles and the real line](part-02/degenerate-model-angles-and-the-real-line/README.md)
+- [Derivatives of model trigonometry](part-02/derivatives-of-model-trigonometry/README.md)
+- [Euclidean affine spaces satisfy the curvature-0 four-point comparison](part-02/euclidean-affine-spaces-are-alexandrov-of-curvat/README.md)
+- [Four-point comparison for curvature bounded below](part-02/four-point-comparison-for-curvature-bounded-belo/README.md)
 
 ## Research directions
 
@@ -41,3 +45,7 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 - [Optimality of the body-centered cubic Wigner crystal](optimality-of-the-body-centered-cubic-wigner-crystal.md)
 - [Power-saving bound for planar halving pairs](power-saving-planar-halving-and-level-switches.md)
 - [Power-saving bound for planar level switches](power-saving-planar-level-switch-count.md)
+
+## Contents
+
+- [Euclidean Steinitz–Bergström bound with one constant](euclidean-signed-and-reordered-prefix-bound.md)

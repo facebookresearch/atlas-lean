@@ -11,3 +11,4 @@ Directed graphs, orientations of undirected graphs, digraph colorings and tourna
 - [Tournaments and score sequences](tournaments-and-score-sequences/README.md)
 - [Transitive subtournaments](transitive-subtournaments/README.md)
 - [Seymour's second out-neighborhood inequality](seymour-second-neighborhood-bound.md)
+- [Functional graphs](functional-graphs/README.md)

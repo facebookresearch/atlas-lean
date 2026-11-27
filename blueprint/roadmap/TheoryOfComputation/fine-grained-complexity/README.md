@@ -6,3 +6,4 @@ Exact running times of hard problems beyond the polynomial/non-polynomial divide
 - [Tensor-network contraction](tensor-network-contraction/README.md)
 - [Fine-grained hypotheses](fine-grained-hypotheses/README.md)
 - [Unconditional fixed-dimension WL equivalence time lower bounds](unconditional-wl-equivalence-time-lower-bounds.md)
+- [Weaker Fine-Grained Hypotheses and Combinatorial Matrix Multiplication](real-hypotheses-and-combinatorial-matrix-multiplication/README.md)

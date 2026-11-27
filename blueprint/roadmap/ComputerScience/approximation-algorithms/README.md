@@ -23,3 +23,7 @@ Polynomial-time algorithms with proved approximation ratios for NP-hard optimiza
 - [Deterministic metric k-median approximation within arbitrary positive slack of 1 + 2/e](deterministic-metric-k-median-approximation.md)
 - [Conditional infimum of deterministic metric k-median factors](metric-k-median-approximation-infimum.md)
 - [Polynomial-time factor-two approximation for shortest common superstring](polynomial-time-factor-two-shortest-common-superstring.md)
+- [Extended Formulations and Extension Complexity](extended-formulations-and-extension-complexity/README.md)
+- [Metric k-Center, Steiner Tree and TSP Approximation](metric-k-center-steiner-tree-and-tsp/README.md)
+- [Moser-Tardos Algorithmic Local Lemma](moser-tardos-algorithmic-local-lemma/README.md)
+- [Semidefinite Rounding for MAX-2SAT and MAX-DICUT](semidefinite-rounding-for-two-variable-csps/README.md)

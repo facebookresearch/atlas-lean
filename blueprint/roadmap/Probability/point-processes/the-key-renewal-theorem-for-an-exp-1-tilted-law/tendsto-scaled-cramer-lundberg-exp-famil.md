@@ -1,0 +1,3 @@
+# Cramér–Lundberg limit for the Exp(1) tilted family
+
+For $\theta > 0$ let $G_\theta = (1 + \theta)^{-1} \cdot \operatorname{Exp}(1 + \theta)$. If $Z$ is measurable, bounded, zero on $(-\infty, 0)$ and solves $Z(t) = \mathbf 1\{t \ge 0\}\, G_\theta(t, \infty) + \int Z(t - y)\, dG_\theta(y)$ for every real $t$, then $e^{\theta t} Z(t) \to (1 + \theta)^{-1}$. No key renewal hypothesis is needed. Separately, for the maximum $M \ge 0$ of the ladder process, $\mathbb{P}(M > t) = (1 + \theta)^{-1} e^{-\theta t}$ exactly for $t \ge 0$ (for $t < 0$ the probability is $1$): it is a geometric sum of $\operatorname{Exp}(1 + \theta)$ ladder heights with continuation probability $(1 + \theta)^{-1}$.

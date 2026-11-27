@@ -29,5 +29,3 @@ Probabilistic classes (RP, BPP), Arthur–Merlin and interactive proofs (AM, MA,
 - [QMA error reduction by parallel repetition](qma-error-reduction-by-parallel-repetition.md)
 - [BQP is contained in QIP](bqp-is-contained-in-qip.md)
 - [Optimal provers exist in finite dimension](existence-of-optimal-provers-in-finite-dimension.md)
-
-- [Parallel repetition of two-player quantum games](two-player-quantum-parallel-repetition/README.md)

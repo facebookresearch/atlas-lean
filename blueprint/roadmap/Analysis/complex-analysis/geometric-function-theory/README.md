@@ -20,12 +20,6 @@ Conformal and univalent maps: Riemann mapping, Koebe and Bloch theorems, Schwarz
 - [Nonconstant holomorphic functions of modulus one on the unit circle cover the unit disc](ball-subset-image-of-norm-eq-one-on-sphe.md)
 - [Automorphisms of the open unit disc](unit-disc-automorphisms.md)
 
-- [Brennan's area integrability for maps onto the disk](brennan-area-integrability.md)
 - [Circle-domain uniformization](circle-domain-uniformization.md)
-- [Strict inverse-first-power integral-means estimate](inverse-first-power-integral-means.md)
-- [Uniform inverse-square integral means on the disk](inverse-square-integral-means.md)
-- [Universal integral-means spectrum at exponent minus two](inverse-square-spectrum.md)
-- [Koebe-map witnesses for the four Brennan endpoints](koebe-brennan-endpoints.md)
-- [Strict bounded spectrum bound at minus one and failure of Kraetzer's formula](kraetzer-spectrum-counterexample-minus-one.md)
 - [Circle-domain rigidity from a removable source boundary](removable-circle-domain-rigidity.md)
-- [Area integrability of derivative moments of univalent disk maps](univalent-disk-area-integrability.md)
+- [Integral means and integrability of univalent functions](integral-means-and-integrability/README.md)

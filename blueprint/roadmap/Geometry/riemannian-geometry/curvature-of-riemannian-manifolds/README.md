@@ -27,3 +27,4 @@
 - [Oriented positively curved Einstein four-manifolds](positively-curved-oriented-einstein-four-manifolds.md)
 
 - [Positively curved Einstein four-manifolds without an orientability hypothesis](positively-curved-einstein-four-manifolds.md)
+- [Manifolds admitting a metric of positive scalar curvature](admits-positive-scalar-curvature-metric.md)

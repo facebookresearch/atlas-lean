@@ -15,7 +15,7 @@ The open radius-$\delta$ neighborhood of a closed unit core segment, finite inde
 
 ## Proof depends on
 
-- [Critical logarithmic local smoothing](../endpoint-wave-estimates/critical-frequency-local-smoothing-logarithmic-loss.md).
+- [Critical logarithmic local smoothing](../restriction-and-smoothing/endpoint-wave-estimates/critical-frequency-local-smoothing-logarithmic-loss.md).
 
 Derive the localized logarithmic restriction and tube extension estimate, then transfer to global occupied volume without restrictions on the centers.
 

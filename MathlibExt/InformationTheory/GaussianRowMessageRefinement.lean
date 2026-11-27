@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`lean/ComparatorChallenges/GaussianReplacement.lean` (openai/math,
+revision `3344da59991ed94f9ba711217b29c1d760badfa6`): the statement of `actualRowRefinement`.
+No copyright notice is stated for this source file at that revision.
+Licensed under the Apache License, Version 2.0 (see `lean/LICENSE` in openai/math).
+Authors: OpenAI (project attribution in `lean/formalization.yaml`).
+-/
 module
 
 public import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
