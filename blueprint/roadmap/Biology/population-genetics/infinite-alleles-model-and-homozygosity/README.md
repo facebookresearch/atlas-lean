@@ -15,3 +15,4 @@
 - [Parent-independent finite-alleles mutation on the coalescent genealogy](parent-independent-finite-alleles-mutation-on-th.md)
 
 - [Percolation models of neutral mutation on Galton–Watson trees](percolation-models-of-neutral-mutation-on-galton-watson-trees/README.md)
+- [Central limit theorem for the homozygosity of the hierarchical Dirichlet process](central-limit-theorem-for-homozygosity-of-the-hierarchical-dirichlet-process.md)

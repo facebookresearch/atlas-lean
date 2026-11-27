@@ -10,6 +10,7 @@ Let $S$ be a set of $n$ segments as in the definition of the trapezoidal map. In
 ## Proof depends on
 
 - [Expected number of trapezoids created by an insertion](expected-number-of-trapezoids-created-by-an-insertion.md)
+- [A query point changes trapezoid with probability at most 4/i](a-query-point-changes-trapezoid-with-probability-at-most-4-over-i.md)
 
 ## Sources
 
