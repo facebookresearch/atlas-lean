@@ -38,7 +38,7 @@ $v_1, \dots, v_q$ such that each boundary point $x$ of $K$ has some $i$ and some
 $x + t v_i$ in the interior of $K$.
 
 Source: Arman, Kaire and Prymak, arXiv:2510.25968v3, introduction; follows from the
-finite-count equivalence, whose Lean proof is also requested here. -/
+finite-count equivalence proved in `ConvexCovering.directionalInteriorFormulationsEquivalent`. -/
 public theorem uniformDirectionalIlluminationInterpretation (n : ℕ) (hn : 0 < n) (q : ℕ) :
     UniformInteriorTranslateBound n q ↔
       ∀ K : Set (EuclideanSpace ℝ (Fin n)), IsConvexBody K → IlluminatedByDirections K q := by
