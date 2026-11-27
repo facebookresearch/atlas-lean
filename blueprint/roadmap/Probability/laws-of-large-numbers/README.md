@@ -12,6 +12,7 @@ Almost-sure behaviour of sums of independent variables: strong and weak laws of 
 - [Deviations of mean-zero sums on the cube](deviations-on-the-cube/README.md)
 - [Variance of the sample mean](variance-of-the-sample-mean/README.md)
 - [L² weak law of large numbers](l2-weak-law-of-large-numbers/README.md)
+- [Longest matching subsequences](longest-matching-subsequences/README.md)
 
 ## Related topics
 
