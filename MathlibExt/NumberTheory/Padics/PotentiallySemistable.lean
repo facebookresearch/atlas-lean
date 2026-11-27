@@ -26,9 +26,9 @@ public import MathlibExt.RingTheory.Perfectoid.SemistablePeriodRingAbstract
 
 Let `V` be a `ℚ_[p]`-linear representation of `G = Gal(ℚ̄_p/ℚ_p)` and let `K ⊆ ℚ̄_p` be an
 extension of `ℚ_p`, with `G_K = Gal(ℚ̄_p/K)` (`IntermediateField.fixingSubgroup`). Following
-J.-M. Fontaine, *Le corps des périodes p-adiques*, Astérisque 223 (1994), Exposé III, §5.1.2
-p. 155 and §5.6.1 p. 166, with admissibility in the dimension form of Exposé III, §1.5.1 p. 124
-(`Representation.IsAdmissible`), `V` is
+J.-M. Fontaine, *Représentations p-adiques semi-stables*, Astérisque 223 (1994), Exposé III,
+§5.1.2 p. 155 and §5.6.1 p. 166, with admissibility in the dimension form of Exposé III, §1.5.1
+p. 124 (`Representation.IsAdmissible`), `V` is
 
 * **de Rham over `K`** if it is `B_dR`-admissible as a representation of `G_K`
   (`Representation.IsDeRham`);
