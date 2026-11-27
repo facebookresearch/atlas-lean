@@ -13,9 +13,6 @@ homomorphism tests between their disjuncts.
 
 - [Containment, equivalence and homomorphisms of conjunctive queries](containment-equivalence-and-homomorphisms-of-conjunctive-queries.md)
 - [Answers of a conjunctive query](../answers-of-a-conjunctive-query.md)
-
-## Proof depends on
-
 - [Homomorphism theorem for conjunctive queries with constants](homomorphism-theorem-for-conjunctive-queries-with-constants.md)
 
 ## Sources

@@ -11,10 +11,10 @@ this complexity is the expression complexity of evaluating Datalog programs.
 - [Datalog programs and the immediate consequence operator](../datalog-programs-and-the-immediate-consequence-operator.md)
 - [The class EXP](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/exp.md)
 - [NP-complete decision problems](../../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
+- [Containment of a conjunctive query in a Datalog query via the canonical database](containment-of-a-cq-in-a-datalog-query-via-the-canonical-database.md)
 
 ## Proof depends on
 
-- [Containment of a conjunctive query in a Datalog query via the canonical database](containment-of-a-cq-in-a-datalog-query-via-the-canonical-database.md)
 - [Datalog evaluation is EXPTIME-complete](../datalog-evaluation-is-exptime-complete.md)
 
 ## Sources
