@@ -3,7 +3,7 @@
 A family $\{C_n\}$ is **log-space-advice-uniform $\mathrm{TC}^0$ of size $T$** if some machine, given $1^n$ and $C\log T$ bits of advice, runs in space $C\log T$ and prints $C_n$. Assume that for every constant $c$ there are constants $k,d\in\mathbb{N}$, $\delta>0$ and $f\colon\{0,1\}^n\to\{0,1\}$ such that
 
 1. $f$ is computable by logspace-uniform $\mathrm{TC}^0$ circuits of depth $d$ and size $O(n^{k})$, and
-2. every log-space-advice-uniform family of $\mathrm{TC}^0$ circuits with oracle gates to a $\mathrm{DSPACE}[c\log n]$ function, of size $n^{c^2}$ and depth $c\cdot d\cdot k$, satisfies $\Pr_{x\sim U_n}[C_n(x)\ne f(x)]\ge\delta$ for all large $n$.
+2. every log-space-advice-uniform family of $\mathrm{TC}^0$ circuits with oracle gates to a $\mathrm{DSPACE}[c\log n]$ function, of size $n^{c}$ and depth $c\cdot d\cdot k^{2}$, satisfies $\Pr_{x\sim U_n}[C_n(x)\ne f(x)]\ge\delta$ for all large $n$.
 
 Then $\mathrm{BPL}\subseteq\bigcap_{\varepsilon>0}\mathrm{avg}_{\varepsilon}\mathrm{L}$, where $\mathrm{avg}_{\varepsilon}\mathrm{L}$ is the class of languages decided by a deterministic logspace algorithm that on every input either answers correctly or outputs $\bot$, and outputs $\bot$ on at most an $\varepsilon$ fraction of inputs of each length. Moreover, for every $c,c',d$ some language in $\mathrm{L}$ is unconditionally hard for log-space-advice-uniform $(\mathrm{TC}^0)^{\mathrm{DSPACE}[c'\log n]}$ circuits of size $n^{c}$ and depth $d$ (in the worst case).
 

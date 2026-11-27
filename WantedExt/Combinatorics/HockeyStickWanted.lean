@@ -31,6 +31,7 @@ public import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Nat.Choose.Basic
 public import MathlibExt.Combinatorics.HockeyStick
+public import MathlibExt.Combinatorics.HockeyStickTableauCardinality
 
 set_option autoImplicit false
 
@@ -57,15 +58,6 @@ theorem hockeyCompositions_five_three :
     hockeyCompositions 5 3 = {[], [2], [3], [4], [2, 2], [2, 3], [3, 2]} := by
   decide
 
-/-- The labeled tableaux `Λ(α, r)` of shape `α`: in each row `i` the entries after the empty first
-box are strictly increasing labels in `{0, …, r - 1}`, recorded as the set of the `α_i - 1` labels
-of the row.
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Section 2.3 (labeled tableaux). -/
-def labeledTableaux (α : List ℕ) (r : ℕ) : Finset (Fin α.length → Finset (Fin r)) :=
-  Fintype.piFinset fun i => (Finset.univ : Finset (Fin r)).powersetCard (α.get i - 1)
-
 /-- `|Λ((2, 2), 2)| = 4` and `|Λ(∅, 3)| = 1`.
 
 Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
@@ -73,13 +65,6 @@ Integer Sequences 28 (2025), Article 25.7.7, Section 2.3 (labeled tableaux). -/
 theorem card_labeledTableaux_small :
     (labeledTableaux [2, 2] 2).card = 4 ∧ (labeledTableaux [] 3).card = 1 := by
   decide
-
-/-- `|Λ(α, r)| = ∏_j C(r, α_j - 1)` (equal to `1` for `α = ∅`).
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Proposition 4 (`jis-2025-25.7.7-prop-4`). -/
-theorem_wanted card_labeledTableaux (α : List ℕ) (r : ℕ) :
-    (labeledTableaux α r).card = (α.map fun a => r.choose (a - 1)).prod
 
 /-- The lattice sequences `𝓛(m, h)` of width `m` and height `h`:
 `0 = L_0 ≤ L_1 ≤ ⋯ ≤ L_{m+1} = h`, as maps `Fin (m + 2) → Fin (h + 1)`.

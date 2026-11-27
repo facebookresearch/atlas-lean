@@ -5,3 +5,4 @@
 - [Weir–Cockerham variance components of allele frequencies](weir-cockerham-variance-components.md)
 - [Spectral theory of Wright's $F_{ST}$](spectral-theory-of-wright-s-fst/README.md)
 - [Tree-structured F_ST and coancestry](tree-structured-fst-and-coancestry/README.md)
+- [$F_{ST}$ constraints from the most frequent allele](fst-constraints-from-the-most-frequent-allele/README.md)
