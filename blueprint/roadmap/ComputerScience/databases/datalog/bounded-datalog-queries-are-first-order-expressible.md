@@ -10,11 +10,11 @@ bounded if the stage of $R$ is at most a fixed $k$ on every database, and the pr
 at most a fixed $k$ on every database.
 
 For a Datalog query $q = (\Pi, R)$ over a schema $S$ the following are equivalent: (1) $q$ is bounded; (2) $q$ is
-equivalent to a first-order query over $S$; (3) $q$ is equivalent to a union of conjunctive queries over $S$ with a common output tuple, in which a disjunct may also
+equivalent to a first-order query over $S$; (3) $q$ is equivalent to a union of conjunctive queries over $S$ with a common output tuple, possibly the empty union of
+the arity of $R$ (the empty relation of that arity), in which a disjunct may also
 contain equality atoms $y = z$ between two variables and $y = a$ between a variable and a constant, variables of the
 output tuple included, each variable of the output tuple being equal, through these atoms, to a constant or to a
-variable of a relational atom of the disjunct, or to the empty union of the arity of $R$, which denotes the empty
-relation of that arity. The empty union is needed: over the empty extensional schema the rule $Q() \mathrel{:-} Q()$
+variable of a relational atom of the disjunct. The empty union is needed: over the empty extensional schema the rule $Q() \mathrel{:-} Q()$
 defines a bounded query that is always false, and no conjunctive query over that schema has a relational atom.
 Both kinds of equality are needed even for head-safe programs. The
 rules $Q(x, x) \mathrel{:-} R(x)$ and $Q(x, y) \mathrel{:-} S(x, y)$ return the diagonal of $R$ together with $S$,
