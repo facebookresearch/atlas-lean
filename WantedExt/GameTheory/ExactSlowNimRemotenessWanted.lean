@@ -121,23 +121,6 @@ public theorem_wanted exactSlowNimBasicValue_of_supports_basicA0 {k : ℕ} (hk :
         exactSlowNimBasicValue k (slowANimAfter x (Finset.univ.erase j)) =
           exactSlowNimBasicValue k x - 1)
 
-/-- **Moves at a position supported by an (A1) basic vector (Lemma 3).** Let $k \ge 1$, let
-$B$ be the basic-vector value on $\mathbb{N}^{k+1}$, and let $x, z \in \mathbb{N}^{k+1}$ with
-$z \le x$ componentwise, where $z$ is a basic vector of type (A1) with parameter $B(x)$. Then
-every option $x'$ of $x$ in Slow$\{k\}$-Nim on $k + 1$ stacks (a move removes one token from
-each of exactly $k$ nonempty stacks) satisfies $B(x') \ge B(x) - 2$, and the position $x''$
-obtained from $x$ by the M-move satisfies $B(x'') = B(x) - 1$, where subtraction is truncated
-at $0$.
-
-Source: Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi, *On
-Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
-Lemma 3. -/
-public theorem_wanted exactSlowNimBasicValue_of_supports_basicA1 {k : ℕ} (hk : 0 < k)
-    (x z : Fin (k + 1) → ℕ) (hzx : z ≤ x)
-    (hz : IsExactSlowNimBasicA1 k (exactSlowNimBasicValue k x) z) :
-    (∀ x' ∈ slowANimMoves {k} x, exactSlowNimBasicValue k x - 2 ≤ exactSlowNimBasicValue k x') ∧
-      exactSlowNimBasicValue k (exactSlowNimMRuleMove x) = exactSlowNimBasicValue k x - 1
-
 /-- **Theorem 3 (Smith's remoteness of exact slow k-NIM is polynomial-time computable).** The map
 sending a list $(x_0, \dots, x_{n-1})$ of natural numbers of length $n$ to Smith's remoteness of
 the position $(x_0, \dots, x_{n-1})$ of Slow$A$-Nim on $n$ stacks with $A = \{n - 1\}$ (where

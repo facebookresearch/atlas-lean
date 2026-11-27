@@ -1,0 +1,9 @@
+# Automata and trace inclusion
+
+An (untimed) *automaton* $A$ consists of a set of states, a nonempty set of start states, a set of actions containing a special internal action $\tau$, and a set of steps $s' \xrightarrow{a}_A s$, triples of states and actions. The other actions are *external*. An *execution* is a finite or infinite alternating sequence $s_0 a_1 s_1 a_2 s_2 \cdots$ of states and actions that begins with a start state, ends with a state if finite, and has $s_i \xrightarrow{a_{i+1}}_A s_{i+1}$ for all $i$. Its *trace* is the sequence of its actions with every $\tau$ deleted, and $\mathit{traces}^\ast(A)$ and $\mathit{traces}(A)$ are the sets of finite, respectively all, traces of executions of $A$. Write $A \le_{\ast T} B$ if $\mathit{traces}^\ast(A) \subseteq \mathit{traces}^\ast(B)$ and $A \le_T B$ if $\mathit{traces}(A) \subseteq \mathit{traces}(B)$. A *move* $s' \overset{\beta}{\Longrightarrow}_A s$, for a finite sequence $\beta$ of external actions, means that some finite execution fragment from $s'$ to $s$ has trace $\beta$; for an action $a$, $\hat a$ is $a$ with $\tau$ deleted.
+
+$A$ is *deterministic* if it has one start state and, for every state $s'$ and finite sequence $\beta$ of external actions, at most one state $s$ with $s' \overset{\beta}{\Longrightarrow}_A s$. $A$ has *finite invisible nondeterminism* (fin) if it has finitely many start states and finitely many such $s$ for each $s'$ and $\beta$. $A$ is a *forest* if every state is reached by a unique execution.
+
+## Sources
+
+- N. Lynch and F. Vaandrager, "Forward and backward simulations, Part I: Untimed systems", *Information and Computation* 121(2):214–233, 1995; author version of the journal paper, October 31, 1994, <https://groups.csail.mit.edu/tds/papers/Lynch/IC95.pdf>, Sections 2.1 and 2.2.

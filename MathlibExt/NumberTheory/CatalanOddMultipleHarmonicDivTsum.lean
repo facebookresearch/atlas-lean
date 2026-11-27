@@ -138,7 +138,13 @@ private lemma sum_complement (k n : ℕ) (hkn : k ≤ n) :
   · intro s hs
     rfl
 
-private lemma hyperharmonic_half_eq (k n : ℕ) :
+end catalan_oddMultipleHarmonic_div_tsum
+
+open catalan_oddMultipleHarmonic_div_tsum in
+/-- **Generalized hyperharmonic numbers at order one half.** The value $H_n^{[1/2]}(k)$ is
+$\binom{2n}{n} O_n(k)/4^n$. This is Young, *Parametric Euler Sums of Generalized Hyperharmonic
+Numbers*, INTEGERS 26 (2026), Article A81, (2.12). -/
+lemma generalizedHyperharmonic_half_eq (k n : ℕ) :
     generalizedHyperharmonic n k (1 / 2 : ℂ) =
       ((2 * n).choose n : ℂ) / 4 ^ n * (oddMultipleHarmonic k n : ℂ) := by
   by_cases hkn : k ≤ n
@@ -160,6 +166,8 @@ private lemma hyperharmonic_half_eq (k n : ℕ) :
   · have hlt : n < k := Nat.lt_of_not_le hkn
     rw [generalizedHyperharmonic_of_lt hlt, oddMultipleHarmonic_of_lt hlt]
     simp
+
+namespace catalan_oddMultipleHarmonic_div_tsum
 
 private lemma zero_one_eq_one (n : ℕ) : generalizedHyperharmonic n 0 (1 : ℂ) = 1 := by
   have hcard : (Finset.range n).powersetCard n = {Finset.range n} := by
@@ -202,11 +210,14 @@ private lemma zero_zero_eq_ite (n : ℕ) :
       simp
     rw [hprod, zero_div]
 
-private lemma half_shift_zeta_tsum (k : ℕ) (hk : 0 < k) :
-    (∑' n : ℕ, (1 : ℂ) / ((n : ℂ) + 1 / 2) ^ (k + 1)) =
-      (2 ^ (k + 1) - 1) * riemannZeta ((k + 1 : ℕ) : ℂ) := by
-  set s : ℕ := k + 1 with hs
-  have hs1 : 1 < s := by omega
+end catalan_oddMultipleHarmonic_div_tsum
+
+/-- **Half-integer reciprocal power sums.** For integers $s > 1$,
+$\sum_{n \ge 0} (n + 1/2)^{-s} = (2^s - 1)\zeta(s)$, by separating the even and odd terms
+of the zeta series. See Young, INTEGERS 26 (2026), Article A81, Corollaries 2 and 3. -/
+lemma hasSum_one_div_nat_add_half_pow (s : ℕ) (hs1 : 1 < s) :
+    HasSum (fun n : ℕ => (1 : ℂ) / ((n : ℂ) + 1 / 2) ^ s)
+      ((2 ^ s - 1) * riemannZeta (s : ℂ)) := by
   have hs0 : s ≠ 0 := by omega
   have hsum : Summable (fun n : ℕ => (1 : ℂ) / (n : ℂ) ^ s) := by
     apply Summable.of_norm_bounded (g := fun n : ℕ => (1 : ℝ) / (n : ℝ) ^ s)
@@ -244,20 +255,27 @@ private lemma half_shift_zeta_tsum (k : ℕ) (hk : 0 < k) :
   have hodd_val : (∑' n : ℕ, (1 : ℂ) / ((2 * n + 1 : ℕ) : ℂ) ^ s) =
       (1 - ((2 : ℂ) ^ s)⁻¹) * riemannZeta ((s : ℕ) : ℂ) := by
     linear_combination -hsplit
-  have hhalf : (∑' n : ℕ, (1 : ℂ) / ((n : ℂ) + 1 / 2) ^ s) =
-      (2 : ℂ) ^ s * (∑' n : ℕ, (1 : ℂ) / ((2 * n + 1 : ℕ) : ℂ) ^ s) := by
-    rw [← tsum_mul_left]
-    apply tsum_congr
+  have hhalf : HasSum (fun n : ℕ => (1 : ℂ) / ((n : ℂ) + 1 / 2) ^ s)
+      ((2 : ℂ) ^ s * (∑' n : ℕ, (1 : ℂ) / ((2 * n + 1 : ℕ) : ℂ) ^ s)) := by
+    apply (hodd.mul_left ((2 : ℂ) ^ s)).congr_fun
     intro n
     have heq : ((n : ℂ) + 1 / 2) = (((2 * n + 1 : ℕ) : ℂ)) / 2 := by
       push_cast
       ring
-    rw [heq, div_pow, one_div_div]
-    rw [div_eq_mul_one_div]
-  rw [hhalf, hodd_val]
-  have h2 : ((2 : ℂ)) ^ s ≠ 0 := pow_ne_zero _ (by norm_num)
-  have hmul : (2 : ℂ) ^ s * ((2 : ℂ) ^ s)⁻¹ = 1 := mul_inv_cancel₀ h2
-  linear_combination -((riemannZeta ((s : ℕ) : ℂ)) * hmul)
+    rw [heq, div_pow, one_div_div, div_eq_mul_one_div]
+  rw [hodd_val] at hhalf
+  simpa only [mul_sub, mul_one, ← mul_assoc, mul_inv_cancel₀ (pow_ne_zero s (by norm_num :
+    (2 : ℂ) ≠ 0)), one_mul, sub_mul] using hhalf
+
+namespace catalan_oddMultipleHarmonic_div_tsum
+
+/-- **Half-integer zeta sum.** For every integer $k > 0$,
+$\sum_{n \ge 0} (n + 1/2)^{-(k+1)} = (2^{k+1} - 1)\zeta(k+1)$.
+See Young, INTEGERS 26 (2026), Article A81, Corollaries 2 and 3. -/
+lemma half_shift_zeta_tsum (k : ℕ) (hk : 0 < k) :
+    (∑' n : ℕ, (1 : ℂ) / ((n : ℂ) + 1 / 2) ^ (k + 1)) =
+      (2 ^ (k + 1) - 1) * riemannZeta ((k + 1 : ℕ) : ℂ) := by
+  exact (hasSum_one_div_nat_add_half_pow (k + 1) (by omega)).tsum_eq
 
 private lemma eulerSum_zero_one_half (k : ℕ) (hk : 0 < k) :
     hyperharmonicEulerSum 0 (1 : ℂ) ((k : ℤ) + 1) (1 / 2) =
@@ -320,7 +338,7 @@ private lemma term_eq (k n : ℕ) (hk : 0 < k) :
     have hO : (oddMultipleHarmonic k (n + 1) : ℂ) =
         generalizedHyperharmonic (n + 1) k (1 / 2 : ℂ) * (4 : ℂ) ^ (n + 1) /
           (((2 * (n + 1)).choose (n + 1) : ℂ)) := by
-      rw [hyperharmonic_half_eq]
+      rw [generalizedHyperharmonic_half_eq]
       field_simp
     rw [zpow_one, zpow_one, add_zero]
     push_cast
