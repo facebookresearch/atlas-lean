@@ -10,5 +10,7 @@ Pell and negative Pell equations, norm equations, Pythagorean triples, Markov tr
 - [Pythagorean triples](pythagorean-triples/README.md)
 - [Shadow Markov triples](shadow-markov-triples/README.md)
 - [Sums of consecutive squares](sums-of-consecutive-squares/README.md)
+- [Markoff triples modulo an integer](markoff-triple.md)
+- [Markoff graph modulo an integer](markoff-graph.md)
 - [Chen's theorem for Markoff graphs](dvd-card-connected-component-markoff-gra.md)
 - [Integer solutions of $x^2 - xy - y^2 = \pm 1$](fibonacci-norm-eq-one-or-neg-one-iff.md)

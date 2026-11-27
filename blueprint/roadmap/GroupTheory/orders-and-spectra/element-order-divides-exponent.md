@@ -1,0 +1,9 @@
+# The integer powers of a group element that equal the identity are the multiples of its order
+
+If an element $x$ of a group has finite order $m$, the least positive integer with $x^m = e$, and $x^n = e$ for an integer $n$, then $m$ divides $n$. Mathlib proves an equivalence for all integer exponents, which also covers elements of infinite order. Let $G$ be a group and $x \in G$. Mathlib's order of $x$ is the least positive integer $m$ with $x^m = 1$ if such an integer exists, and $0$ if $x$ has infinite order. Let $i$ be an integer, positive, negative or zero. Here $i$ is an arbitrary integer exponent; it is not the exponent of the group. The order of $x$ divides $i$ if and only if $x^i = 1$. When $x$ has infinite order its order is $0$, and $0$ divides $i$ only for $i = 0$; so the theorem then says that $x^i = 1$ only for $i = 0$. No finiteness of $G$ is assumed, and the theorem concerns the order of the element $x$, not the order of $G$. For an element of finite order, the implication from $x^i = 1$ to divisibility gives the familiar statement.
+
+## Sources
+
+- David S. Dummit and Richard M. Foote, Abstract Algebra, 3rd ed., John Wiley & Sons, 2004.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for the order of an element, which is $0$ for elements of infinite order: `orderOf`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/GroupTheory/OrderOfElement.lean#L176-L180.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for order $0$ exactly for elements of infinite order: `orderOf_eq_zero_iff`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/GroupTheory/OrderOfElement.lean#L207-L209.
