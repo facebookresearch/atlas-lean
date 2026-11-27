@@ -12,4 +12,3 @@
 - [Game](game.md)
 - [Feasible EQUILIBRIUM POINT instances](equilibrium-point-feasible.md)
 - [EQUILIBRIUM POINT as a decision problem](equilibrium-point-dec.md)
-- [EQUILIBRIUM POINT is NP-complete](equilibrium-point-np-complete.md)

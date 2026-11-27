@@ -5,4 +5,3 @@
 - [Red arcs](is-red.md)
 - [Feasible EVEN ALTERNATING PATH (2-arc-colored digraphs) instances](even-alternating-path-feasible.md)
 - [EVEN ALTERNATING PATH (2-arc-colored digraphs) as a decision problem](even-alternating-path-dec.md)
-- [EVEN ALTERNATING PATH (2-arc-colored digraphs) is NP-complete](even-alternating-path-np-complete.md)

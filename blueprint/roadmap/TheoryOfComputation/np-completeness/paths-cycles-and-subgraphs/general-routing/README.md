@@ -4,4 +4,3 @@
 - [Well-formed GENERAL ROUTING instances](well-formed.md)
 - [Feasible GENERAL ROUTING instances](general-routing-feasible.md)
 - [GENERAL ROUTING as a decision problem](general-routing-dec.md)
-- [GENERAL ROUTING is NP-complete](general-routing-np-complete.md)

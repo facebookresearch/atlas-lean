@@ -8,4 +8,3 @@
 - [Well-formed INEQUIVALENCE OF LOOP PROGRAMS WITHOUT NESTING instances](well-formed.md)
 - [Inequivalence Loop Programs Feasible](inequivalence-loop-programs-feasible.md)
 - [INEQUIVALENCE OF LOOP PROGRAMS WITHOUT NESTING as a decision problem](inequivalence-loop-programs-dec.md)
-- [INEQUIVALENCE OF LOOP PROGRAMS WITHOUT NESTING is NP-complete](inequivalence-loop-programs-np-complete.md)

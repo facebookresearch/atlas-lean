@@ -2,4 +2,3 @@
 
 - [Well-formed GEOMETRIC CAPACITATED SPANNING TREE with equal requirements instances](well-formed.md)
 - [GEOMETRIC CAPACITATED SPANNING TREE with equal requirements as a decision problem](geometric-capacitated-spanning-tree-equa.md)
-- [GEOMETRIC CAPACITATED SPANNING TREE with equal requirements is NP-complete](geometric-capacitated-spanning-tree-equa-2.md)

@@ -5,4 +5,3 @@
 - [Is Independent Sequence](is-independent-sequence.md)
 - [Feasible INDEPENDENT SEQUENCE instances](independent-sequence-feasible.md)
 - [INDEPENDENT SEQUENCE as a decision problem](independent-sequence-dec.md)
-- [INDEPENDENT SEQUENCE is NP-complete](independent-sequence-np-complete.md)

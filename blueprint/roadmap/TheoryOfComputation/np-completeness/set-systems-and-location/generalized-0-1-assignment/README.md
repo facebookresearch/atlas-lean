@@ -7,4 +7,3 @@
 - [Well-formed GENERALIZED 0-1 ASSIGNMENT instances](well-formed.md)
 - [Feasible GENERALIZED 0-1 ASSIGNMENT instances](generalized-zero-one-assignment-feasible.md)
 - [GENERALIZED 0-1 ASSIGNMENT as a decision problem](generalized-zero-one-assignment-dec.md)
-- [GENERALIZED 0-1 ASSIGNMENT is NP-complete](generalized-zero-one-assignment-np-compl.md)

@@ -4,4 +4,3 @@
 - [Graph of a EDGE EMBEDDING ON A GRID instance](graph.md)
 - [Feasible EDGE EMBEDDING ON A GRID instances](edge-embedding-on-agrid-feasible.md)
 - [EDGE EMBEDDING ON A GRID as a decision problem](edge-embedding-on-agrid-dec.md)
-- [EDGE EMBEDDING ON A GRID is NP-complete](edge-embedding-on-agrid-np-complete.md)

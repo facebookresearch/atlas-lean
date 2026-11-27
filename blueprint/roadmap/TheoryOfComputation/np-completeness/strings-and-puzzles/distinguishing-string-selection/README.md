@@ -6,4 +6,3 @@
 - [Well-formed DISTINGUISHING STRING SELECTION instances](well-formed.md)
 - [Feasible DISTINGUISHING STRING SELECTION instances](distinguishing-string-selection-feasible.md)
 - [DISTINGUISHING STRING SELECTION as a decision problem](distinguishing-string-selection-dec.md)
-- [DISTINGUISHING STRING SELECTION is NP-complete](distinguishing-string-selection-np-compl.md)

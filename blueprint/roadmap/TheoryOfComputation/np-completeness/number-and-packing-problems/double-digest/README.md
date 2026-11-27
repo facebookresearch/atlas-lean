@@ -6,4 +6,3 @@
 - [Fragments](fragments.md)
 - [Feasible DOUBLE DIGEST instances](double-digest-feasible.md)
 - [DOUBLE DIGEST as a decision problem](double-digest-dec.md)
-- [DOUBLE DIGEST is NP-complete](double-digest-np-complete.md)

@@ -6,4 +6,3 @@
 - [Well-formed FAULT DETECTION WITH TEST POINTS instances](well-formed.md)
 - [Feasible FAULT DETECTION WITH TEST POINTS instances](fault-detection-with-test-points-feasibl.md)
 - [FAULT DETECTION WITH TEST POINTS as a decision problem](fault-detection-with-test-points-dec.md)
-- [FAULT DETECTION WITH TEST POINTS is NP-complete](fault-detection-with-test-points-np-comp.md)

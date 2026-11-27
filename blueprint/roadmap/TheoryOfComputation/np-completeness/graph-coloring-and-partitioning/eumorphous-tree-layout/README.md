@@ -7,4 +7,3 @@
 - [Is Subtree Iso](is-subtree-iso.md)
 - [Feasible EUMORPHOUS TREE LAYOUT instances](eumorphous-tree-layout-feasible.md)
 - [EUMORPHOUS TREE LAYOUT as a decision problem](eumorphous-tree-layout-dec.md)
-- [EUMORPHOUS TREE LAYOUT is NP-complete](eumorphous-tree-layout-np-complete.md)

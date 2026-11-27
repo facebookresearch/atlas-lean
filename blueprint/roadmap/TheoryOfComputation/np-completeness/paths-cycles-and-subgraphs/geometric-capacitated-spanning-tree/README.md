@@ -6,4 +6,3 @@
 - [Well-formed GEOMETRIC CAPACITATED SPANNING TREE instances](well-formed.md)
 - [Feasible GEOMETRIC CAPACITATED SPANNING TREE instances](geometric-capacitated-spanning-tree-feas.md)
 - [GEOMETRIC CAPACITATED SPANNING TREE as a decision problem](geometric-capacitated-spanning-tree-dec.md)
-- [GEOMETRIC CAPACITATED SPANNING TREE is NP-complete](geometric-capacitated-spanning-tree-np-c.md)

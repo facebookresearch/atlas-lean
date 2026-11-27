@@ -1,9 +1,0 @@
-# GEOMETRIC CONNECTED DOMINATING SET is NP-complete
-
-The decision problem GEOMETRIC CONNECTED DOMINATING SET belongs to NP, and every decision
-problem in NP has a polynomial-time many-one reduction to it.
-
-## Sources
-
-- M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of NP-Completeness*, W. H. Freeman (1979), problem [ND48] GEOMETRIC CONNECTED DOMINATING SET.
-- D. Lichtenstein, "Planar formulae and their uses", SIAM Journal on Computing 11 (1982), 329-343, doi:10.1137/0211025.

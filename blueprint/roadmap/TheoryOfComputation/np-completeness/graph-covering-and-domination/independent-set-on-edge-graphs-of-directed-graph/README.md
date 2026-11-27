@@ -5,4 +5,3 @@
 - [Graph of a INDEPENDENT SET on edge graphs of directed graphs instance](graph.md)
 - [Well-formed INDEPENDENT SET on edge graphs of directed graphs instances](well-formed.md)
 - [INDEPENDENT SET on edge graphs of directed graphs as a decision problem](independent-set-edge-graph-digraph-dec.md)
-- [INDEPENDENT SET on edge graphs of directed graphs is NP-complete](independent-set-edge-graph-digraph-np-co.md)

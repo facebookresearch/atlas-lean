@@ -16634,7 +16634,6 @@
   "WantedExt/Complexity/NPComplete/HamiltonianCircuitCubicPlanarBiconnectedWanted": {"to": "TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs", "title": "Hamiltonian circuit on restricted graph classes"},
   "WantedExt/Complexity/NPComplete/HamiltonianCircuitCubicPlanarBipartiteBiconnectedWanted": {"to": "TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs", "title": "Hamiltonian circuit on restricted graph classes"},
   "WantedExt/Complexity/NPComplete/HamiltonianCircuitCubicPlanarWanted": {"to": "TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs", "title": "Hamiltonian circuit on restricted graph classes"},
-  "WantedExt/Complexity/NPComplete/HamiltonianCircuitCubicWanted": {"to": "TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs", "title": "Hamiltonian circuit on cubic graphs"},
   "WantedExt/Complexity/NPComplete/HamiltonianCircuitDirectedPathGraphsWanted": {"to": "TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs", "title": "Hamiltonian circuit on directed path graphs"},
   "WantedExt/Complexity/NPComplete/HamiltonianCircuitGirthNineWanted": {"to": "TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs", "title": "Hamiltonian circuit on restricted graph classes"},
   "WantedExt/Complexity/NPComplete/HamiltonianCircuitGivenHamiltonianPathWanted": {"to": "TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs", "title": "Hamiltonian circuit given a Hamiltonian path"},

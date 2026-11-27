@@ -8,4 +8,3 @@
 - [Well-formed INEQUIVALENCE OF SIMPLE FUNCTIONS instances](well-formed.md)
 - [Feasible INEQUIVALENCE OF SIMPLE FUNCTIONS instances](inequivalence-of-simple-functions-feasib.md)
 - [INEQUIVALENCE OF SIMPLE FUNCTIONS as a decision problem](inequivalence-of-simple-functions-dec.md)
-- [INEQUIVALENCE OF SIMPLE FUNCTIONS is NP-complete](inequivalence-of-simple-functions-np-com.md)

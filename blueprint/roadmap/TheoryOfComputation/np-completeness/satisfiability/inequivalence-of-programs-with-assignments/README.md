@@ -8,4 +8,3 @@
 - [Initial Store](initial-store.md)
 - [Feasible INEQUIVALENCE OF PROGRAMS WITH ASSIGNMENTS instances](inequivalence-programs-assignments-feasi.md)
 - [INEQUIVALENCE OF PROGRAMS WITH ASSIGNMENTS as a decision problem](inequivalence-programs-assignments-dec.md)
-- [INEQUIVALENCE OF PROGRAMS WITH ASSIGNMENTS is NP-complete](inequivalence-programs-assignments-np-co.md)

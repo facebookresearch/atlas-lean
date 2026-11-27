@@ -34,7 +34,6 @@ Hamiltonian paths and cycles, longest paths and cycles, disjoint paths and path 
 - [Hamiltonian circuit in grid graphs](hamiltonian-circuit-in-grid-graphs/README.md)
 - [Hamiltonian circuit on chordal graphs](hamiltonian-circuit-on-chordal-graphs/README.md)
 - [Hamiltonian circuit on comparability graphs](hamiltonian-circuit-on-comparability-graphs/README.md)
-- [Hamiltonian circuit on cubic graphs](hamiltonian-circuit-on-cubic-graphs/README.md)
 - [Hamiltonian circuit on directed path graphs](hamiltonian-circuit-on-directed-path-graphs/README.md)
 - [Hamiltonian circuit on restricted graph classes](hamiltonian-circuit-on-restricted-graph-classes/README.md)
 - [Hamiltonian circuit on split graphs](hamiltonian-circuit-on-split-graphs/README.md)
