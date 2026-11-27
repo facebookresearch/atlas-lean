@@ -42,11 +42,17 @@ variables, with actual finite free modules, kernel/range exactness and
 differential image in the irrelevant ideal times the target.
 
 References:
-* Eisenbud, *Commutative Algebra with a View Toward Algebraic Geometry*,
-  Chapter 20, https://doi.org/10.1007/978-1-4612-5350-1.
-* Covered ordinary-resolution source: AxiomMath/Stacks at
+* Eisenbud, *Commutative Algebra with a View Toward Algebraic Geometry*, GTM 150,
+  Chapter 1 (Hilbert's syzygy theorem), Chapter 19 (minimal resolutions and projective
+  dimension) and Chapter 20 (free resolutions), https://doi.org/10.1007/978-1-4612-5350-1.
+* Adapted from `MathlibExt/RingTheory/GradedAlgebra/MultigradedHilbertSyzygy.lean` in this
+  repository: the cover and kernel proofs (`emr_exists_homogeneous_span` through
+  `emr_ker_eq_bot_of_projective`) follow its `mgsyz_` proofs, adapted from multidegrees and
+  finitely supported vectors to integer degrees and finite tuples.
+* Background only, not adapted here: AxiomMath/Stacks at
   c496df0d9beea9deaeabcea8492605f9a0a2313b,
-  `StacksFrontier/AlgebraicGeometry/ResolutionsAndBounds/LocalSyzygy.lean`.
+  `StacksFrontier/AlgebraicGeometry/ResolutionsAndBounds/LocalSyzygy.lean`, a local free-cover
+  step for coherent sheaves.
 -/
 
 noncomputable section
@@ -465,7 +471,6 @@ private theorem emr_phi_graded {k : Type*} [Field k] {n : ℕ} {W : Type*}
   have hmem := S.gW.smul_mem _ _ (f j) hfij (emr_gen S j) hgj
   rwa [sub_add_cancel] at hmem
 
-set_option linter.style.haveILetI false in
 private theorem emr_ker_graded {k : Type*} [Field k] {n b : ℕ} {W : Type*}
     [AddCommGroup W] [Module (PolynomialRing k n) W] [Module k W]
     (δ : Fin b → ℤ) (gW : emr_PreGrading k n W)
@@ -474,7 +479,7 @@ private theorem emr_ker_graded {k : Type*} [Field k] {n b : ℕ} {W : Type*}
     (q : Fin b → PolynomialRing k n) (hq : q ∈ LinearMap.ker φ) (β : ℤ) :
     emr_freePart (k := k) δ β q ∈ LinearMap.ker φ := by
   classical
-  letI := gW.decomp
+  let this := gW.decomp
   rw [LinearMap.mem_ker]
   have hpartmem : ∀ γ, φ (emr_freePart (k := k) δ γ q) ∈ gW.piece γ := fun γ =>
     hφ γ _ (emr_freePart_mem (k := k) δ γ q)
@@ -796,7 +801,6 @@ private theorem emr_finite_quotient {k : Type*} [Field k] {n : ℕ} {M : Type*}
   Module.Finite.of_surjective (Submodule.mkQ _)
     (Submodule.mkQ_surjective _)
 
-set_option linter.style.haveILetI false in
 open CategoryTheory in
 private theorem emr_pdim_base {k : Type*} [Field k] {n : ℕ} {M : Type*}
     [AddCommGroup M] [Module (PolynomialRing k n) M] [Module k M]
@@ -806,10 +810,9 @@ private theorem emr_pdim_base {k : Type*} [Field k] {n : ℕ} {M : Type*}
       (ModuleCat.of (PolynomialRing k n)
         ((Fin (emr_rank (emr_stageZero G)) → PolynomialRing k n) ⧸
           LinearMap.ker (emr_phi (emr_stageZero G)))) n := by
-  haveI := emr_finite_quotient G
+  have := emr_finite_quotient G
   exact MathlibExt.RingTheory.Polynomial.HilbertSyzygyWanted.hilbert_syzygy
 
-set_option linter.style.haveILetI false in
 open CategoryTheory in
 private theorem emr_pdim_one {k : Type*} [Field k] {n : ℕ} {M : Type*}
     [AddCommGroup M] [Module (PolynomialRing k n) M] [Module k M]
@@ -823,26 +826,25 @@ private theorem emr_pdim_one {k : Type*} [Field k] {n : ℕ} {M : Type*}
   let ψ : (Fin (emr_rank (emr_stageZero G)) → PolynomialRing k n) →ₗ[PolynomialRing k n] Q :=
     Submodule.mkQ N₁
   let T := LinearMap.shortComplexKer ψ
-  haveI hprev : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n) Q) (n + 1) :=
+  have hprev : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n) Q) (n + 1) :=
     emr_pdim_base G
-  haveI hboost : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n) Q) (n - 1 + 2) :=
+  have hboost : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n) Q) (n - 1 + 2) :=
     hasProjectiveDimensionLT_of_ge _ (n := n + 1) (m := n - 1 + 2) (h := by omega)
   have hshort : T.ShortExact :=
     LinearMap.shortExact_shortComplexKer (Submodule.mkQ_surjective _)
   have hfree : Projective T.X₂ :=
     ModuleCat.projective_of_free
       (Pi.basisFun (PolynomialRing k n) (Fin (emr_rank (emr_stageZero G))))
-  haveI hker : HasProjectiveDimensionLT T.X₁ (n - 1 + 1) :=
+  have hker : HasProjectiveDimensionLT T.X₁ (n - 1 + 1) :=
     (hshort.hasProjectiveDimensionLT_X₃_iff (n - 1) hfree).mp hboost
   let e : T.X₁ ≅ ModuleCat.of (PolynomialRing k n)
       ↥(LinearMap.ker (emr_phi (emr_stageZero G))) :=
     (LinearEquiv.ofEq _ _ (Submodule.ker_mkQ N₁)).toModuleIso
-  haveI hkerN : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n)
+  have hkerN : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n)
       ↥(LinearMap.ker (emr_phi (emr_stageZero G)))) (n - 1 + 1) :=
     hasProjectiveDimensionLT_of_iso e _
   exact hkerN
 
-set_option linter.style.haveILetI false in
 open CategoryTheory in
 private theorem emr_pdim_step {k : Type*} [Field k] {n : ℕ} {M : Type*}
     [AddCommGroup M] [Module (PolynomialRing k n) M] [Module k M]
@@ -853,9 +855,9 @@ private theorem emr_pdim_step {k : Type*} [Field k] {n : ℕ} {M : Type*}
     HasProjectiveDimensionLE (ModuleCat.of (PolynomialRing k n)
       ↥(emr_Sk G (t + 1)).N) (n - (t + 1 + 1)) := by
   let T := LinearMap.shortComplexKer (emr_phiToN (emr_Sk G t))
-  haveI hprev : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n)
+  have hprev : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n)
       ↥(emr_Sk G t).N) (n - (t + 1) + 1) := ih
-  haveI hboost : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n)
+  have hboost : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n)
       ↥(emr_Sk G t).N) (n - (t + 1) - 1 + 2) :=
     hasProjectiveDimensionLT_of_ge _ (n := n - (t + 1) + 1)
       (m := n - (t + 1) - 1 + 2) (h := by omega)
@@ -864,21 +866,20 @@ private theorem emr_pdim_step {k : Type*} [Field k] {n : ℕ} {M : Type*}
   have hfree : Projective T.X₂ :=
     ModuleCat.projective_of_free
       (Pi.basisFun (PolynomialRing k n) (Fin (emr_rank (emr_Sk G t))))
-  haveI hker : HasProjectiveDimensionLT T.X₁ (n - (t + 1) - 1 + 1) :=
+  have hker : HasProjectiveDimensionLT T.X₁ (n - (t + 1) - 1 + 1) :=
     (hshort.hasProjectiveDimensionLT_X₃_iff (n - (t + 1) - 1) hfree).mp hboost
   have hNeq : LinearMap.ker (emr_phiToN (emr_Sk G t)) = (emr_Sk G (t + 1)).N := by
     rw [emr_phiToN_ker]
     exact (emr_Sk_succ_N G t).symm
   let e : T.X₁ ≅ ModuleCat.of (PolynomialRing k n) ↥(emr_Sk G (t + 1)).N :=
     (LinearEquiv.ofEq _ _ hNeq).toModuleIso
-  haveI hkerN : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n)
+  have hkerN : HasProjectiveDimensionLT (ModuleCat.of (PolynomialRing k n)
       ↥(emr_Sk G (t + 1)).N) (n - (t + 1) - 1 + 1) :=
     hasProjectiveDimensionLT_of_iso e _
   have heq : n - (t + 1) - 1 + 1 = n - (t + 1 + 1) + 1 := by omega
   rw [heq] at hkerN
   exact hkerN
 
-set_option linter.style.haveILetI false in
 open CategoryTheory in
 private theorem emr_pdim_le {k : Type*} [Field k] {n : ℕ} {M : Type*}
     [AddCommGroup M] [Module (PolynomialRing k n) M] [Module k M]
@@ -894,14 +895,13 @@ private theorem emr_pdim_le {k : Type*} [Field k] {n : ℕ} {M : Type*}
     intro ht
     exact emr_pdim_step G t ht (ih (by omega))
 
-set_option linter.style.haveILetI false in
 private theorem emr_ker_eq_bot_of_rank_eq_zero {k : Type*} [Field k] {n : ℕ} {W : Type*}
     [AddCommGroup W] [Module (PolynomialRing k n) W] [Module k W]
     (S : emr_StageData k n W) (hS : emr_rank S = 0) :
     LinearMap.ker (emr_phi S) = ⊥ := by
   have hI : IsEmpty (Fin (emr_rank S)) :=
     ⟨fun j => by have h2 := j.isLt; omega⟩
-  haveI : Subsingleton (Fin (emr_rank S) → PolynomialRing k n) :=
+  have : Subsingleton (Fin (emr_rank S) → PolynomialRing k n) :=
     ⟨fun f g => funext fun j => hI.elim j⟩
   rw [Submodule.eq_bot_iff]
   intro x _
@@ -919,7 +919,6 @@ private theorem emr_eq_C_constantCoeff_of_zero_vars {k : Type*} [Field k]
   · have hempty : a = 0 := Finsupp.ext fun i => Fin.elim0 i
     exact absurd hempty ha
 
-set_option linter.style.haveILetI false in
 open CategoryTheory in
 private theorem emr_N_succ_bot {k : Type*} [Field k] {n : ℕ} {M : Type*}
     [AddCommGroup M] [Module (PolynomialRing k n) M] [Module k M]
@@ -940,7 +939,7 @@ private theorem emr_N_succ_bot {k : Type*} [Field k] {n : ℕ} {M : Type*}
     have hproj : Projective
         (ModuleCat.of (PolynomialRing k (m + 1)) ↥(emr_Sk G m).N) :=
       (projective_iff_hasProjectiveDimensionLE_zero _).mpr hle
-    haveI hmod : Module.Projective (PolynomialRing k (m + 1)) ↥(emr_Sk G m).N :=
+    have hmod : Module.Projective (PolynomialRing k (m + 1)) ↥(emr_Sk G m).N :=
       (IsProjective.iff_projective _).mpr hproj
     have hker := emr_ker_eq_bot_of_projective (emr_Sk G m)
     rwa [emr_Sk_succ_N]
