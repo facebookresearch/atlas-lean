@@ -9446,7 +9446,6 @@
   "MathlibExt/Algebra/TensorProduct/Domain": {"to": "RingTheory/algebras-and-differentials", "title": "Tensor products of reduced algebras and domains"},
   "MathlibExt/Algebra/TensorProduct/Norm": {"to": "FieldTheory/galois-theory", "title": "Norms and Galois conjugates"},
   "MathlibExt/Algebra/TensorProduct/PointSeparation": {"to": "RingTheory/algebras-and-differentials", "title": "Algebra homomorphisms into an algebraically closed field"},
-  "MathlibExt/Algebra/VirtualQuandle": {"to": "Algebra/nonassociative-algebras", "title": "Virtual racks and quandles"},
   "MathlibExt/Algebra/ZModPermutationPolynomial": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/Algebra/ZModPowerSum": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/AlgebraicGeometry/Affine/DefinedOver": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Fields of definition of algebraic sets"},
