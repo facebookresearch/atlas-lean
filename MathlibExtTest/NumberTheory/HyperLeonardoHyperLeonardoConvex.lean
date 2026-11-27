@@ -28,4 +28,13 @@ example (r n : ℕ) (hn : 1 ≤ n) : hyperLeonardo r n - hyperLeonardo r (n - 1)
   have h := hyperLeonardo_convex r n hn
   omega
 
+-- The first step includes the next ordinary Leonardo number, `Le₁ = 1`.
+example : hyperLeonardo 1 1 = hyperLeonardo 1 0 + 1 :=
+  hyperLeonardo_one_succ 0
+
+-- At the next step, order one contributes `2` and order zero contributes `3`.
+example : hyperLeonardo 1 2 = 5 := by
+  rw [hyperLeonardo_one_succ]
+  exact (congrArg (· + 3) hyperLeonardo_one_small.2.1)
+
 end MathlibExtTest.NumberTheory.HyperLeonardoHyperLeonardoConvex

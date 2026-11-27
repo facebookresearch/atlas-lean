@@ -8,7 +8,7 @@ Evaluate $\Phi$ at $D + 1$ distinct field elements $\alpha_0, \dots, \alpha_D$ i
 
 ## Depends on
 
-- [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
+- [Arithmetic AC0: constant-depth arithmetic circuits with division and piecewise computation](constant-depth-arithmetic-formula.md)
 
 ## Proof depends on
 
