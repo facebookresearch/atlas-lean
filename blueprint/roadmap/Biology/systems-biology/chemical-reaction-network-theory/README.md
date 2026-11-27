@@ -2,6 +2,7 @@
 
 - [Persistence of weakly reversible systems with two-dimensional stoichiometric subspace](persistence-of-weakly-reversible-systems-with-two-dimensional-stoichiometric-subspace.md)
 
+- [Global bounds for positive weakly reversible mass-action trajectories](global-bounded-persistent-weakly-reversible-trajectories.md)
 - [Absolute concentration robustness](absolute-concentration-robustness/README.md)
 - [Atoms of multistationarity](atoms-of-multistationarity/README.md)
 - [Catalysis and critical siphons in reaction networks](catalysis-and-critical-siphons-in-reaction-networks/README.md)

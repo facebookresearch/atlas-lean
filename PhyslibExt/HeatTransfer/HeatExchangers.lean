@@ -730,7 +730,7 @@ lemma counterflowHotTemp_sub_counterflowColdTemp (Ch Cc K L Thi Tci x : ℝ) :
     simp
   · simp only [expDecayIntegral, ite_eq_right hs]
     field_simp [hs]
-    try ring
+    ring
 
 /-- **Boundary constant for unequal capacity rates.** For `Ch ≠ Cc`, `K, L ≥ 0`, the inlet-end
 difference is `(Cc - Ch) (Thi - Tci) / (Cc - Ch exp (-s L))`, the textbook form, whose
@@ -752,7 +752,7 @@ lemma counterflowInletDiff_eq_of_ne {Ch Cc K L : ℝ} (hCh : 0 < Ch) (hCc : 0 < 
     rw [hφ, hs0]
     simp only [zero_mul, neg_zero, Real.exp_zero, mul_one]
     field_simp [hCd]
-    try ring
+    ring
   · have h11 : (1 : ℝ) / Ch ≠ 1 / Cc := by
       intro hcon
       apply hne
@@ -780,7 +780,7 @@ lemma counterflowInletDiff_eq_of_ne {Ch Cc K L : ℝ} (hCh : 0 < Ch) (hCc : 0 < 
         field_simp [hCc0, hs]
       rw [hφ, hKK, hKeq]
       field_simp [hCd]
-      try ring
+      ring
     unfold counterflowInletDiff
     rw [hden]
     field_simp [hden2, hCd]
@@ -1291,7 +1291,7 @@ lemma IsCounterflowSolution.equalCapacity_heat {C UA L Thi Tci : ℝ} {Th Tc : �
       simp [expDecayIntegral, hs0]
     rw [hφ, hD0]
     field_simp [hC.ne', hL.ne']
-    try ring
+    ring
   have hbal := IsCounterflowSolution.balance_aux h L hLmem
   rw [h.2.1] at hbal
   have hright : C * (Tc 0 - Tci) = UA * (Thi - Tci) / (1 + UA / C) := by

@@ -21,9 +21,7 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Maximum agreement subtree of two random binary trees](maximum-agreement-subtree-of-random-trees.md)
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
-
-## Models, alignment and identifiability
-
+- [Phylogenetic network identifiability, recombination tests, and tree-space geometry](phylogenetic-network-identifiability-and-geometry/README.md)
 - [Brownian motion tree models](brownian-motion-tree-models/README.md)
 - [Embeddability of centrosymmetric markov matrices](embeddability-of-centrosymmetric-markov-matrices/README.md)
 - [Identifiability under the TKF91 indel model](identifiability-under-the-tkf91-indel-model/README.md)

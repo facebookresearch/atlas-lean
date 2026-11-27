@@ -1,9 +1,9 @@
 # Stochastic reaction networks
 
 - [Non-explosivity of complex-balanced stochastic reaction networks](non-explosivity-of-complex-balanced-stochastic-reaction-networks.md)
+- [Stochastic first-passage, immune dynamics, and weak-form estimation](stochastic-and-inverse-systems-biology/README.md)
 - [Sum of reactions monoid and reachability in stochastic reaction networks](sum-of-reactions-monoid-and-reachability.md)
 - [Weak error of tau-leaping, midpoint and weak trapezoidal methods](weak-error-of-tau-leaping-midpoint-and-weak-trapezoidal-methods.md)
-
 - [Detailed balance of stochastic reaction networks](detailed-balance-of-stochastic-reaction-networks/README.md)
 - [Fast-reaction elimination in stochastic reaction networks](fast-reaction-elimination-in-stochastic-reaction-networks/README.md)
 - [Filtering of multiscale reaction networks](filtering-of-multiscale-reaction-networks/README.md)

@@ -1,7 +1,7 @@
 # Gene regulatory network dynamics
 
 - [Secant criterion for diagonal stability of cyclic negative feedback](secant-criterion-diagonal-stability-of-cyclic-negative-feedback.md)
-
+- [Wagner model of transcriptional network development](wagner-model-of-transcriptional-network-development/README.md)
 - [Backward sde models of gene expression](backward-sde-models-of-gene-expression/README.md)
 - [Canalizing boolean networks](canalizing-boolean-networks/README.md)
 - [Catastrophe manifolds of cell-fate landscapes](catastrophe-manifolds-of-cell-fate-landscapes/README.md)
