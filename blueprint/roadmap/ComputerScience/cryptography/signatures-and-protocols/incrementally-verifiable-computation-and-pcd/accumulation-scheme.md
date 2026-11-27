@@ -1,0 +1,11 @@
+# Accumulation scheme for a predicate
+
+Let $\Phi$ be a predicate on *inputs* $q$ (for example, the expensive part of a SNARK verifier), with predicate parameters sampled by an algorithm $\mathsf{H}$ and a predicate index $i_\Phi$; all algorithms may access a random oracle. An *accumulation scheme* for $(\Phi,\mathsf{H})$ is a tuple $(\mathsf{G},\mathsf{I},\mathsf{P},\mathsf{V},\mathsf{D})$: the generator $\mathsf{G}(1^{\lambda})$ outputs public parameters; the deterministic indexer $\mathsf{I}$ maps the public parameters, the predicate parameters and $i_\Phi$ to an accumulator proving key $\mathsf{apk}$, an accumulator verification key $\mathsf{avk}$ and a decision key $\mathsf{dk}$; on $n$ inputs $q_1,\dots,q_n$ and $m$ old accumulators $\mathsf{acc}_1,\dots,\mathsf{acc}_m$, the accumulation prover $\mathsf{P}(\mathsf{apk},\dots)$ outputs a new accumulator $\mathsf{acc}$ and a proof $\pi_{\mathsf V}$; the accumulation verifier $\mathsf{V}(\mathsf{avk},[q_i],[\mathsf{acc}_j],\mathsf{acc},\pi_{\mathsf V})$ outputs a bit; and the decider $\mathsf{D}(\mathsf{dk},\mathsf{acc})$ outputs a bit. *Completeness:* for every (unbounded) adversary choosing $i_\Phi$, inputs and old accumulators, if $\mathsf{D}(\mathsf{dk},\mathsf{acc}_j)=1$ for all $j$ and $\Phi(q_i)=1$ for all $i$, then the honestly produced $(\mathsf{acc},\pi_{\mathsf V})$ satisfies $\mathsf{V}=1$ and $\mathsf{D}(\mathsf{dk},\mathsf{acc})=1$ with probability $1$; for $m=n=0$ the precondition holds vacuously. *Soundness:* for every polynomial-size adversary choosing $i_\Phi$, inputs, old accumulators, $\mathsf{acc}$ and $\pi_{\mathsf V}$, with probability at least $1-\mathrm{negl}(\lambda)$, if $\mathsf{V}$ accepts and $\mathsf{D}(\mathsf{dk},\mathsf{acc})=1$, then $\mathsf{D}(\mathsf{dk},\mathsf{acc}_j)=1$ for all $j$ and $\Phi(q_i)=1$ for all $i$. The scheme is useful when $\mathsf{V}$ is much cheaper than $\Phi$ and the accumulator size does not grow: the expensive check is deferred to a single final call of $\mathsf{D}$.
+
+## Depends on
+
+- [Succinct arguments and SNARKs](../zero-knowledge-and-arguments/succinct-arguments-and-snarks.md)
+
+## Sources
+
+- Benedikt Bünz, Alessandro Chiesa, Pratyush Mishra, Nicholas Spooner, "Proof-Carrying Data from Accumulation Schemes", TCC (2020), IACR ePrint 2020/499, Section 4.1.

@@ -40,8 +40,7 @@ theorem applyGate_cnotLow_basis_true_false :
   fin_cases x <;> simp [applyGate, cnotLowEntries, qBit, setBits, basisState,
     qNumOf, matrixOfEntries_entriesOf, complexOfGRatMatrix, ctrlLow, xGate,
     toComplex_gaussRatEnc, Fintype.sum_prod_type, Fin.sum_univ_two,
-    Complex.ext_iff] <;>
-    first | rfl | norm_num [Complex.ext_iff] | decide
+    Complex.ext_iff]
 
 #print axioms cnotLow_wellFormed_two
 #print axioms applyGate_cnotLow_basis_true_false

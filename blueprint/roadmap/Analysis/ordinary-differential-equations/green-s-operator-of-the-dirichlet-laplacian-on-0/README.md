@@ -29,3 +29,4 @@
 - [Diagonal integral of the Green's kernel](integral-greens-kernel-diag.md)
 - [The Green's eigenvalues sum to the diagonal integral of the kernel](greens-eigenvalue-sum-eq-kernel-diagonal.md)
 - [Squared Hilbert–Schmidt norm of the Green's operator](hs-norm-sq-greens-operator.md)
+- [Tail bound for finite sums in the sine basis](sine-basis-tail-norm-sq-le.md)
