@@ -19,6 +19,8 @@ Graphs drawn in the plane and on the square lattice, crossing numbers, Euler's f
 - [Whitney's cut–cycle duality on the square lattice](whitney-s-cut-cycle-duality-on-the-square-lattic/README.md)
 - [Discrete Jordan curve theorem for the square lattice](discrete-jordan-curve-theorem-for-the-square-lat/README.md)
 - [Hopf's Umlaufsatz for lattice polygons](hopf-s-umlaufsatz-for-lattice-polygons/README.md)
+- [Planar graphs of positive combinatorial curvature](planar-graphs-of-positive-combinatorial-curvatur/README.md)
+- [Planar subgraphs of dense graphs](planar-subgraphs-of-dense-graphs/README.md)
 - [Crossing points of the regular drawing of the complete bipartite graph](legendre-regular-crossing.md)
 - [Constant-distortion L¹ embedding of planar graph metrics](planar-metrics-l1-distortion.md)
 - [Ordinary crossing formula for complete bipartite graphs](complete-bipartite-ordinary-crossing-number.md)
