@@ -1,6 +1,6 @@
 # Bogomolnaia–Moulin impossibility theorem
 
-For $n \ge 4$ agents and objects, no random assignment rule is simultaneously sd-efficient, satisfies equal treatment of equals, and is sd-strategy-proof. For $n = 4$ the conclusion holds even with sd-efficiency weakened to the absence of two-cycles in the trading relation.
+For $n \ge 4$ agents and objects, no random assignment rule is simultaneously sd-efficient, satisfies equal treatment of equals, and is sd-strategy-proof.
 
 ## Proof sketch
 
@@ -16,4 +16,4 @@ For four agents, follow two chains of single-agent adjacent swaps among three ra
 
 ## Sources
 
-- Anna Bogomolnaia and Herve Moulin, "A New Solution to the Random Assignment Problem", Journal of Economic Theory, 2001.
+- Anna Bogomolnaia and Herve Moulin, "A New Solution to the Random Assignment Problem", Journal of Economic Theory 100 (2001), 295–328, Theorem 2 (for $n \ge 4$ no mechanism is ordinally efficient, strategyproof and satisfies equal treatment of equals).
