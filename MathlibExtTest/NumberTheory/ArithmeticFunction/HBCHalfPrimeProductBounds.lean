@@ -56,4 +56,13 @@ example : (3 : ℝ) * 4 ≤ 2 ^ 4 - 2 ^ 2 := by
     (by norm_num)
   convert h using 1 <;> norm_num [Finset.prod_Icc_succ_top]
 
+-- The sharper first-prime-five bound also applies to the crossing at 23.
+example : ∏ i ∈ Icc 1 7, (primesFrom5 i : ℝ) ≤
+    Real.sqrt (8 / (3 : ℝ) ^ ((31 : ℝ) / 32)) ^ 2 ^ 7 -
+      Real.sqrt (8 / (3 : ℝ) ^ ((31 : ℝ) / 32)) ^ 2 ^ (7 - 1) :=
+  hbcAdmissible_half_prime_prod_le_of_eq_five 7 primesFrom5 (by decide) (by decide +kernel)
+    (by rw [show Icc 1 7 = {1, 2, 3, 4, 5, 6, 7} by decide]; norm_num [primesFrom5])
+    (by rw [show Icc 1 (7 - 1) = {1, 2, 3, 4, 5, 6} by decide]; norm_num [primesFrom5])
+    (by decide)
+
 end HBCHalfPrimeProductBoundsTest
