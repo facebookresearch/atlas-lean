@@ -20,3 +20,6 @@ all Boolean operations. Emptiness is decided by the region construction, in
 - [Inclusion in the language of a deterministic timed automaton is PSPACE-complete](inclusion-in-a-deterministic-timed-automaton-is-pspace-complete.md)
 - [Zones and difference-bound matrices](zones-and-difference-bound-matrices.md)
 - [Timed games](timed-games.md)
+- [Recursive timed and hybrid automata](recursive-timed-and-hybrid-automata/README.md)
+- [Timed synthesis games](timed-synthesis-games/README.md)
+- [Weak detectability of labeled timed automata is undecidable](weak-detectability-of-labeled-timed-automata.md)
