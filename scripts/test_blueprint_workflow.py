@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import yaml
 
@@ -832,6 +833,63 @@ elif "/compare/" in path:
         self.assertEqual((keep["with"]["name"], keep["with"]["path"], keep["with"]["if-no-files-found"]),
                          ("tasks", "build/tasks.json", "error"))
 
+    def test_the_nodes_to_expand_are_published_with_the_task_lists_commit(self):
+        # CONTRIBUTING.md, Picking a task: graph-tasks.json, from the index the render wrote, after tasks.json and
+        # before MkDocs copies site-src/ into the site. Only `next_task.py --graph` needs it, so it cannot fail the job.
+        name = "List the nodes still to expand"
+        step = self.step(name)
+        names = [s.get("name") for s in self.steps]
+        self.assertEqual(names.index(name), names.index("Keep the task list") + 1)
+        self.assertLess(names.index(name), names.index("Build the Markdown site"))
+        self.assertTrue(step["continue-on-error"])
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "build").mkdir()
+            (root / "site-src" / "dependencies").mkdir(parents=True)
+            (root / "build" / "tasks.json").write_text(json.dumps({"commit": "c" * 40, "commit_date": "2026-11-27"}))
+            nodes = [{"id": "Algebra", "kind": "scope", "status": "not_ready", "route": "../roadmap/Algebra/"},
+                     {"id": "Algebra/a", "kind": "node", "status": "not_ready", "title": "A",
+                      "route": "../roadmap/Algebra/index.html#a"},
+                     {"id": "Algebra/b", "kind": "node", "status": "can_state", "route": "../roadmap/Algebra/b.html"},
+                     # A node to expand without a usable route is still listed, with no page.
+                     {"id": "Algebra/c", "kind": "node", "status": "not_ready", "title": "C"},
+                     {"id": "Algebra/d", "kind": "node", "status": "not_ready", "title": "D", "route": 7}]
+            index = root / "site-src" / "dependencies" / "index.json"
+            index.write_text(json.dumps({"schema": "autoform-dag-search/v1", "nodes": nodes}))
+            script = step["run"]
+            result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            published = json.loads((root / "site-src" / "graph-tasks.json").read_text())
+            self.assertEqual(published, {"schema": next_task.GRAPH_SCHEMA, "commit": "c" * 40,
+                                         "commit_date": "2026-11-27", "nodes": [
+                                             {"node_id": "Algebra/a", "title": "A",
+                                              "page": "roadmap/Algebra/index.html#a"},
+                                             {"node_id": "Algebra/c", "title": "C", "page": None},
+                                             {"node_id": "Algebra/d", "title": "D", "page": None}]})
+            # next_task.py reads what the step writes.
+            with mock.patch.object(next_task, "request", lambda url: json.dumps(published).encode()):
+                self.assertEqual([item["node_id"] for item in next_task.load_graph({"commit": "c" * 40,
+                                                                                    "commit_date": "2026-11-27"})],
+                                 ["Algebra/a", "Algebra/c", "Algebra/d"])
+            # An index with no node to expand gives an empty list.
+            index.write_text(json.dumps({"schema": "autoform-dag-search/v1", "nodes": [nodes[2]]}))
+            result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads((root / "site-src" / "graph-tasks.json").read_text())["nodes"], [])
+            # Another format, a node without its kind or status, or a node to expand without an id, or one id twice,
+            # leaves no file.
+            for wrong in ({"nodes": nodes}, {"schema": "autoform-dag-search/v1", "nodes": "x"},
+                          {"schema": "autoform-dag-search/v1", "nodes": [{"id": "Algebra/c", "kind": "node"}]},
+                          {"schema": "autoform-dag-search/v1", "nodes": [nodes[1], nodes[1]]},
+                          {"schema": "autoform-dag-search/v1", "nodes": [dict(nodes[1], id=" ")]}):
+                (root / "site-src" / "graph-tasks.json").unlink(missing_ok=True)
+                index.write_text(json.dumps(wrong))
+                result = subprocess.run(["bash", "-c", script], cwd=root, text=True, capture_output=True, check=False)
+                self.assertNotEqual(result.returncode, 0, wrong)
+                self.assertFalse((root / "site-src" / "graph-tasks.json").exists(), wrong)
+
     def run_task_step(self, output: str, status: int = 0, files: dict[str, str] | None = None):
         """Run the task step in a fixture checkout of *files*, with an Autoform that writes *output* and exits with
         *status*."""
@@ -1037,6 +1095,72 @@ elif "/compare/" in path:
         # A run of main, as the `changes` job decides, whether or not the site is published.
         self.assertEqual(full["if"], "needs.changes.outputs.main == 'true'")
 
+    def test_a_site_that_does_not_keep_the_moved_addresses_is_neither_kept_nor_published(self):
+        # The card pages hook keeps the move ledger's old addresses or only says why it cannot, and MkDocs builds the
+        # site without them. The step after the site's checks fails the job instead, on every build, a pull request's
+        # too, before the site is kept, packed or uploaded: no later step but the diagnostics runs, and neither do the
+        # Mathlib pages or the deployment, which need the job.
+        name = "Check that the site keeps the moved addresses"
+        step = self.step(name)
+        names = [s.get("name") for s in self.steps]
+        self.assertEqual(names.index(name), names.index("Check routes, anchors, and article cards") + 1)
+        self.assertEqual(names.index("Keep dependency diagnostics"), names.index(name) + 1)
+        for later in ("Keep the built site", "Pack the site for GitHub Pages", "Check the packed site",
+                      "Upload Pages artifact"):
+            self.assertLess(names.index(name), names.index(later))
+        for key in ("if", "continue-on-error"):
+            self.assertNotIn(key, step)
+        for later in self.steps[names.index(name) + 2:]:
+            for function in ("always()", "failure()", "cancelled()"):
+                self.assertNotIn(function, later.get("if", ""), later["name"])
+        for job in ("mathlib-pages", "deploy"):
+            self.assertIn("wiki", self.workflow["jobs"][job]["needs"])
+            self.assertNotIn("always()", self.workflow["jobs"][job].get("if", ""))
+        # It checks the hook's own table against the hook's own ledger, the frozen file, and its fragments: a table is
+        # the hook's when it starts with the line the hook's moves_script writes first, which a file of that name from
+        # the theme, also copied into the site, would not.
+        hook = (ROOT / "hooks" / "card_pages.py").read_text()
+        table, ledger = (re.search(rf'(?m)^{constant} = "([^"]+)"$', hook).group(1)
+                         for constant in ("SCRIPT", "LEDGER"))
+        script = step["run"]
+        self.assertIn("set -euo pipefail", script)
+        self.assertIn(f"table={table}\n", script)
+        self.assertIn(f"[[ -f {ledger} ]]", script)
+        self.assertNotIn("${{", script)
+        header = re.search(r"(?m)^header='([^']*)'$", script).group(1)
+        written = re.search(r'(?s)\ndef moves_script\(.*?\n    return \(\n        "(.*?)\\n"', hook)
+        self.assertEqual(written.group(1), header)
+        row = '{"page": "A/old", "to": "A/new", "article_id": "af_' + "0" * 24 + '"}\n'
+        fragment = "scripts/card-moves.d/20261127T000000Z-move.jsonl"
+        made = header + "\n   rewritten to where the address leads before the explorer starts. */\n"
+        cases = [
+            # A row and the hook's table: the site keeps the moved addresses.
+            ({ledger: row, f"site/{table}": made}, 0),
+            # A row, and no table, an empty one, one that is not the hook's, as the theme's would be, or one from the
+            # site source, which the hook never replaces (it then keeps nothing).
+            ({ledger: row}, 1),
+            ({ledger: row, f"site/{table}": ""}, 1),
+            ({ledger: row, f"theme/{table}": "var moves = {};\n", f"site/{table}": "var moves = {};\n"}, 1),
+            ({ledger: row, f"site/{table}": made, f"site-src/{table}": made}, 1),
+            # A row in a fragment only.
+            ({ledger: "", fragment: row, f"site/{table}": made}, 0),
+            ({ledger: "", fragment: row}, 1),
+            # No row, blank lines aside: the hook writes no table.
+            ({ledger: ""}, 0),
+            ({ledger: "\n \t\n"}, 0),
+            # No frozen file is no empty ledger: the hook keeps nothing.
+            ({}, 1),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            for files, expected in cases:
+                root = Path(tempfile.mkdtemp(dir=directory))
+                for path, text in files.items():
+                    (root / path).parent.mkdir(parents=True, exist_ok=True)
+                    (root / path).write_text(text)
+                run = subprocess.run(["bash", "-c", script], cwd=root, capture_output=True, text=True)
+                self.assertEqual(run.returncode, expected, (files, run.stdout, run.stderr))
+                self.assertEqual("::error title=Moved addresses not kept::" in run.stdout, bool(expected), run.stdout)
+
     def test_the_mathlib_pages_cannot_hold_back_the_site(self):
         # The pages have their own read-only job after the wiki and the Mathlib layer; deployment waits for the
         # wiki job alone, and the wiki job never runs the pages script.
@@ -1168,13 +1292,31 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             if "uses" in step:
                 self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
 
-    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main"):
+    def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main",
+                  changed: str | None = None, event: str = "pull_request", lean: bool = True):
         """Run the check's step with a uv that prints a verdict, writes *report* as the check's JSON report, if any,
-        and exits with *status*; returns the result, the job summary and the arguments uv got."""
+        and exits with *status*, in a repository whose HEAD changes the files *changed* names, beside a README and,
+        when *lean*, a Lean file, from the commit BASE names; with a git that fails when *changed* is None. Returns the
+        result, the job summary and the arguments uv got."""
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         root = Path(directory.name)
         (root / "bin").mkdir()
+        base = "b" * 40
+        if changed is None:
+            (root / "bin" / "git").write_text("#!/bin/sh\nexit 128\n")
+            (root / "bin" / "git").chmod(0o755)
+        else:
+            git = lambda *args: subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t",
+                                                *args], check=True, capture_output=True, text=True).stdout.strip()
+            git("init", "-q", "-b", "main")
+            git("commit", "-q", "--allow-empty", "-m", "base")
+            base = git("rev-parse", "HEAD")
+            for path in [*(["MathlibExt/Algebra/Changed.lean"] if lean else []), "README.md", *changed.split()]:
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_text("changed\n")
+            git("add", "-A")
+            git("commit", "-q", "-m", "change")
         if report is not None:
             (root / "report.json").write_text(report)
         (root / "bin" / "uv").write_text(f'#!/bin/sh\necho "$@" > uv-arguments\necho "In step: no"\necho "error: a link" >&2\n'
@@ -1184,9 +1326,10 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         summary = root / "summary.md"
         result = subprocess.run(
             ["bash", "-c", self.steps["Check that the graph is in step with the Lean"]["run"]], cwd=root, text=True,
-            capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": "b" * 40,
+            capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": base,
                                       "AUTOFORM_SOURCE": "https://example.invalid/autoform.git", "AUTOFORM_REF": "a" * 40,
-                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_FETCH": fix_fetch})
+                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra, "FIX_FETCH": fix_fetch,
+                                      "EVENT": event})
         return result, summary.read_text(), (root / "uv-arguments").read_text().split()
 
     def test_the_check_output_can_neither_issue_a_command_nor_end_the_summary_block(self):
@@ -1236,6 +1379,53 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             self.assertIn("::warning title=Graph sync::The check could not run", result.stdout)
             self.assertIn(f"The check could not run (exit {status})", summary)
             self.assertNotIn("merge-base", summary)
+
+    def test_a_lean_change_or_a_merge_group_is_held_only_to_the_errors(self):
+        # A Lean pull request changes no graph file but links files, which it changes only for the declarations it
+        # renames, moves or removes, and a merge group holds others' changes: their missing pages are the next
+        # graph-sync batch's (docs/BLUEPRINT.md, Maintaining articles), so the check passes and asks for no sync.
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        pages = '{"in_step": false, "errors": [], "missing": ["Ext.fresh"], "changed": ["Ext.edited (Algebra/edited.md)"]}'
+        for changed, event in (("", "pull_request"), ("blueprint/links/Algebra.jsonl", "pull_request"),
+                               ("blueprint/roadmap/Algebra/fresh.md", "merge_group")):
+            with self.subTest(changed=changed, event=event):
+                result, summary, _ = self.run_check(1, pages, changed=changed, event=event)
+                self.assertEqual(result.returncode, 0)
+                self.assertNotIn("::warning", result.stdout)
+                self.assertIn("the next graph-sync\nbatch writes its new declarations' pages", summary)
+                self.assertNotIn("merge-base", summary)
+                # The pages whose docstring changed are still listed, for the reviewer.
+                self.assertIn("for the reviewer to check", summary)
+                self.assertIn("\n    Ext.edited (Algebra/edited.md)\n", summary)
+        # What the errors name is the change's to fix, by hand: the summary shows them alone, with no command that
+        # would write the sync's output.
+        errors = ('{"in_step": false, "errors": ["blueprint/links/Algebra.jsonl:3 links Ext.gone", "two\\n```"], '
+                  '"changed": ["Ext.edited (Algebra/edited.md)"]}')
+        for event in ("pull_request", "merge_group"):
+            with self.subTest(event=event):
+                result, summary, _ = self.run_check(1, errors, changed="", event=event)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("::warning title=Graph sync::This change's Lean leaves links or markers behind",
+                              result.stdout)
+                self.assertIn("\n    blueprint/links/Algebra.jsonl:3 links Ext.gone\n    two\n    ```\n", summary)
+                self.assertIn("A Lean pull request runs no sync", summary)
+                self.assertIn("\n    Ext.edited (Algebra/edited.md)\n", summary)
+                self.assertNotIn("In step: no", summary)
+                self.assertNotIn("error: a link", summary)
+                self.assertNotIn("merge-base", summary)
+        # A graph pull request, which changes other graph files (the links' defaults or a page count) or links files
+        # with no Lean, or a change git cannot read, is held to the sync.
+        for changed, lean in (("blueprint/links/Algebra.jsonl scripts/taxonomy.json", True),
+                              ("blueprint/links/_defaults.json", True), ("blueprint/roadmap/Algebra/fresh.md", True),
+                              ("blueprint/links/Algebra.jsonl", False), (None, True)):
+            with self.subTest(changed=changed, lean=lean):
+                result, summary, _ = self.run_check(1, pages, changed=changed, lean=lean)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("::warning title=Graph sync::The graph is not in step", result.stdout)
+                self.assertIn('--base "$(git merge-base FETCH_HEAD HEAD)"', summary)
+                self.assertIn("    In step: no\n", summary)
+                self.assertNotIn("for the reviewer to check", summary)
 
     def find_base(self, event: str, env=lambda main, merge: {}):
         """Run the step that finds the base in a repository whose HEAD merges a branch into main, as a pull request's
