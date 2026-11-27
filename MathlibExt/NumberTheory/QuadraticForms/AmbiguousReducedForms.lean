@@ -10,10 +10,10 @@ module
 
 public import MathlibExt.NumberTheory.QuadraticForms.Reduced
 public import Mathlib.NumberTheory.Divisors
-public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.Set.Card
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
+import MathlibExt.NumberTheory.UnitaryDivisorCount
 
 /-!
 # Reduced forms of the ambiguous classes of a negative discriminant
@@ -38,78 +38,11 @@ namespace BinaryQuadraticForm
 
 /-! ### Coprime factorizations -/
 
-private lemma prod_ne_zero_of_subset (m : ℕ) {S : Finset ℕ} (hS : S ⊆ m.primeFactors) :
-    ∏ p ∈ S, p ^ m.factorization p ≠ 0 :=
-  Finset.prod_ne_zero_iff.mpr fun _ hp =>
-    pow_ne_zero _ (Nat.prime_of_mem_primeFactors (hS hp)).ne_zero
-
-private lemma primeFactors_prod_pow (m : ℕ) (S : Finset ℕ) (hS : S ⊆ m.primeFactors) :
-    (∏ p ∈ S, p ^ m.factorization p).primeFactors = S := by
-  induction S using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih =>
-    obtain ⟨has, hs⟩ := Finset.insert_subset_iff.mp hS
-    have hpa := Nat.prime_of_mem_primeFactors has
-    have hfa : m.factorization a ≠ 0 := by
-      rw [← Finsupp.mem_support_iff, Nat.support_factorization]
-      exact has
-    rw [Finset.prod_insert ha, Nat.primeFactors_mul (pow_ne_zero _ hpa.ne_zero)
-      (prod_ne_zero_of_subset m hs), Nat.primeFactors_prime_pow hfa hpa, ih hs,
-      Finset.insert_eq]
-
-private lemma prod_mul_prod_sdiff (m : ℕ) (hm : m ≠ 0) {S : Finset ℕ}
-    (hS : S ⊆ m.primeFactors) :
-    (∏ p ∈ S, p ^ m.factorization p) * ∏ p ∈ m.primeFactors \ S, p ^ m.factorization p =
-      m := by
-  rw [mul_comm, Finset.prod_sdiff hS]
-  exact Nat.prod_factorization_pow_eq_self hm
-
-private lemma prod_pow_of_coprime {x y : ℕ} (hxy : Nat.Coprime x y) (hx : x ≠ 0)
-    (hy : y ≠ 0) : ∏ p ∈ x.primeFactors, p ^ (x * y).factorization p = x := by
-  rw [Nat.factorization_mul hx hy]
-  conv_rhs => rw [← Nat.prod_factorization_pow_eq_self hx]
-  refine Finset.prod_congr rfl fun p hp => ?_
-  have hpy : p ∉ y.primeFactors := Finset.disjoint_left.mp hxy.disjoint_primeFactors hp
-  rw [← Nat.support_factorization, Finsupp.notMem_support_iff] at hpy
-  simp [hpy]
-
 private lemma card_coprime_antidiagonal (m : ℕ) (hm : m ≠ 0) :
     ((Nat.divisorsAntidiagonal m).filter (fun p => Nat.Coprime p.1 p.2)).card =
       2 ^ m.primeFactors.card := by
-  rw [← Finset.card_powerset]
-  refine Finset.card_nbij' (fun p => p.1.primeFactors)
-    (fun S => (∏ p ∈ S, p ^ m.factorization p,
-      ∏ p ∈ m.primeFactors \ S, p ^ m.factorization p)) ?_ ?_ ?_ ?_
-  · rintro ⟨x, y⟩ h
-    simp only [Finset.coe_filter, Nat.mem_divisorsAntidiagonal, Set.mem_ofPred_eq] at h
-    simp only [Finset.coe_powerset, Set.mem_preimage, Set.mem_powerset_iff, Finset.coe_subset]
-    exact Nat.primeFactors_mono (Dvd.intro y h.1.1) hm
-  · intro S hS
-    simp only [Finset.coe_powerset, Set.mem_preimage, Set.mem_powerset_iff,
-      Finset.coe_subset] at hS
-    simp only [Finset.coe_filter, Nat.mem_divisorsAntidiagonal, Set.mem_ofPred_eq]
-    refine ⟨⟨prod_mul_prod_sdiff m hm hS, hm⟩, ?_⟩
-    rw [← Nat.disjoint_primeFactors (prod_ne_zero_of_subset m hS)
-      (prod_ne_zero_of_subset m Finset.sdiff_subset), primeFactors_prod_pow m S hS,
-      primeFactors_prod_pow m _ Finset.sdiff_subset]
-    exact Finset.disjoint_sdiff
-  · rintro ⟨x, y⟩ h
-    simp only [Finset.coe_filter, Nat.mem_divisorsAntidiagonal, Set.mem_ofPred_eq] at h
-    obtain ⟨⟨hxy, -⟩, hco⟩ := h
-    have hx : x ≠ 0 := by rintro rfl; simp at hxy; exact hm hxy.symm
-    have hy : y ≠ 0 := by rintro rfl; simp at hxy; exact hm hxy.symm
-    have h1 : ∏ p ∈ x.primeFactors, p ^ m.factorization p = x := by
-      rw [← hxy]
-      exact prod_pow_of_coprime hco hx hy
-    have h2 := prod_mul_prod_sdiff m hm (Nat.primeFactors_mono (Dvd.intro y hxy) hm)
-    rw [h1, ← hxy] at h2
-    simp only [h1, Prod.mk.injEq, true_and]
-    rw [← hxy]
-    exact Nat.eq_of_mul_eq_mul_left (Nat.pos_of_ne_zero hx) h2
-  · intro S hS
-    simp only [Finset.coe_powerset, Set.mem_preimage, Set.mem_powerset_iff,
-      Finset.coe_subset] at hS
-    exact primeFactors_prod_pow m S hS
+  rw [← Nat.map_div_right_divisors, Finset.filter_map, Finset.card_map]
+  exact MetaMathlibExt.card_unitaryDivisors m hm
 
 private lemma card_coprime_antidiagonal_lt (m : ℕ) (hm : 1 < m) :
     ((Nat.divisorsAntidiagonal m).filter (fun p => Nat.Coprime p.1 p.2 ∧ p.1 < p.2)).card =
