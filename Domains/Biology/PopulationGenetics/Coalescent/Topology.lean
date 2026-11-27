@@ -746,4 +746,92 @@ theorem partitionsOf_injective {n : ℕ} :
   funext i
   exact hall i i.isLt
 
+/-! ### The ancestral partitions step by step
+
+The sequence `partitionsOf h` has `n` partitions; it starts with the singletons, each step
+merges two distinct blocks, and for `n ≥ 1` it ends with the one-block partition. -/
+
+theorem length_partitionsOf {n : ℕ} (h : RankedHistory n) : (partitionsOf h).length = n := by
+  simp [partitionsOf, blocksOf]
+
+private theorem partitionsOf_getD {n : ℕ} (h : RankedHistory n) {t : ℕ} (ht : t < n) :
+    (partitionsOf h).getD t ∅ = (blocksAfter h t).toFinset := by
+  simp [partitionsOf, blocksOf, ht]
+
+theorem partitionsOf_getD_zero {n : ℕ} (h : RankedHistory n) :
+    (partitionsOf h).getD 0 ∅ = (univ : Finset (Fin n)).image ({·}) := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp [partitionsOf, blocksOf]
+  · rw [partitionsOf_getD h hn, blocksAfter_zero]
+    ext B
+    simp [eq_comm]
+
+private theorem merge_indices {n : ℕ} (h : RankedHistory n) {t : ℕ} (hlt : t < n - 1) :
+    ((h ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0 < (blocksAfter h t).length ∧
+    ((h ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0 < (blocksAfter h t).length ∧
+    ((h ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0 ≠
+      ((h ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0 := by
+  have hcard := mapPair_card (h ⟨t, hlt⟩)
+  rw [length_blocksAfter h t hlt.le]
+  refine ⟨?_, ?_, ne_of_lt (pairMin_lt_pairMax _ hcard)⟩
+  · simpa using mapPair_mem_lt (h ⟨t, hlt⟩) _ (pairMin_getD_mem _ hcard)
+  · simpa using mapPair_mem_lt (h ⟨t, hlt⟩) _ (pairMax_getD_mem _ hcard)
+
+theorem partitionsOf_getD_succ {n : ℕ} (h : RankedHistory n) {t : ℕ} (ht : t + 1 < n) :
+    ∃ X ∈ (partitionsOf h).getD t ∅, ∃ Y ∈ (partitionsOf h).getD t ∅, X ≠ Y ∧
+      (partitionsOf h).getD (t + 1) ∅ =
+        insert (X ∪ Y) ((((partitionsOf h).getD t ∅).erase X).erase Y) := by
+  have hlt : t < n - 1 := by omega
+  obtain ⟨hnodup, -, -⟩ := invar_blocksAfter h t hlt.le
+  obtain ⟨ha, hb, hab⟩ := merge_indices h hlt
+  have estep : blocksAfter h (t + 1) =
+      mergeBlocks (blocksAfter h t)
+        (((h ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0)
+        (((h ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0) :=
+    blocksAfter_step h t hlt
+  rw [partitionsOf_getD h (by omega), partitionsOf_getD h ht, estep]
+  refine ⟨_, List.mem_toFinset.2 (List.getElem_mem ha), _,
+    List.mem_toFinset.2 (List.getElem_mem hb), fun heq => hab ((hnodup.getElem_inj_iff).1 heq), ?_⟩
+  ext x
+  simp only [List.mem_toFinset, mem_mergeBlocks _ _ _ ha hb hab hnodup, Finset.mem_insert,
+    Finset.mem_erase]
+  tauto
+
+private theorem cover_blocksAfter {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t ≤ n - 1)
+    (x : Fin n) : ∃ B ∈ blocksAfter h t, x ∈ B := by
+  induction t with
+  | zero => exact ⟨{x}, by simp [blocksAfter_zero], Finset.mem_singleton_self x⟩
+  | succ t ih =>
+    have hlt : t < n - 1 := by omega
+    obtain ⟨B, hB, hxB⟩ := ih hlt.le
+    obtain ⟨hnodup, -, -⟩ := invar_blocksAfter h t hlt.le
+    obtain ⟨ha, hb, hab⟩ := merge_indices h hlt
+    have estep : blocksAfter h (t + 1) =
+        mergeBlocks (blocksAfter h t)
+          (((h ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0)
+          (((h ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0) :=
+      blocksAfter_step h t hlt
+    rw [estep]
+    by_cases h1 : B = (blocksAfter h t)[((h ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0]
+    · exact ⟨_, (mem_mergeBlocks _ _ _ ha hb hab hnodup _).2 (Or.inl rfl),
+        Finset.mem_union_left _ (h1 ▸ hxB)⟩
+    by_cases h2 : B = (blocksAfter h t)[((h ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0]
+    · exact ⟨_, (mem_mergeBlocks _ _ _ ha hb hab hnodup _).2 (Or.inl rfl),
+        Finset.mem_union_right _ (h2 ▸ hxB)⟩
+    exact ⟨B, (mem_mergeBlocks _ _ _ ha hb hab hnodup _).2 (Or.inr ⟨hB, h1, h2⟩), hxB⟩
+
+theorem partitionsOf_getD_pred {n : ℕ} (h : RankedHistory n) (hn : n ≠ 0) :
+    (partitionsOf h).getD (n - 1) ∅ = {univ} := by
+  rw [partitionsOf_getD h (by omega)]
+  obtain ⟨hnodup, -, -⟩ := invar_blocksAfter h (n - 1) le_rfl
+  have hcard : (blocksAfter h (n - 1)).toFinset.card = 1 := by
+    rw [List.toFinset_card_of_nodup hnodup, length_blocksAfter h _ le_rfl]
+    omega
+  obtain ⟨B, hB⟩ := Finset.card_eq_one.1 hcard
+  rw [hB, Finset.singleton_inj, Finset.eq_univ_iff_forall]
+  intro x
+  obtain ⟨C, hC, hxC⟩ := cover_blocksAfter h (n - 1) le_rfl x
+  have hCB : C ∈ ({B} : Finset (Finset (Fin n))) := hB ▸ List.mem_toFinset.2 hC
+  rwa [Finset.mem_singleton.1 hCB] at hxC
+
 end MathlibExt.Biology.PopulationGenetics.Coalescent
