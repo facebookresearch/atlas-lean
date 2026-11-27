@@ -17,3 +17,4 @@
 
 - [Sub-inhibitory selection of antibiotic resistance](sub-inhibitory-selection-of-antibiotic-resistance/README.md)
 - [Poissonian interacting trajectories](poissonian-interacting-trajectories/README.md)
+- [Selection as multiplicative weights](selection-as-multiplicative-weights/README.md)

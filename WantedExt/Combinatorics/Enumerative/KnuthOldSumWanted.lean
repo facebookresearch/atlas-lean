@@ -16,6 +16,8 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPolynomial
 public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialConvolution
 public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.AlternatingWeightedCentralBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.CatalanBernstein
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
 public import MathlibExt.Combinatorics.Enumerative.CosinePowerIntegral
 public import MathlibExt.Combinatorics.Enumerative.ParityWeightedBinomialSum
@@ -834,19 +836,6 @@ public theorem_wanted sum_choose_two_pow_div_succ_one_sub_pow_mul_pow (n : ℕ) 
     ∑ k ∈ range (n + 1), (n.choose k : ℂ) * 2 ^ k / (k + 1) * (1 - x) ^ k * x ^ (n - k) =
       ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℂ) / (2 * k + 1) * (1 - x) ^ (2 * k)
 
-/-- **Catalan polynomial identity, Bernstein form.** Let $C_m = \binom{2m}{m}/(m+1)$ denote the
-$m$-th Catalan number. For every natural number $n$ and every complex $x$,
-$$\sum_{k=0}^{n} \binom{n}{k} 2^{-k} C_{k+1} (1-x)^k x^{n-k} =
-\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} 2^{-2k} C_k (1-x)^{2k}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Corollary 6 (`integers-2026-A19-cor-6`). -/
-public theorem_wanted sum_choose_catalan_succ_one_sub_pow_mul_pow (n : ℕ) (x : ℂ) :
-    ∑ k ∈ range (n + 1),
-        (n.choose k : ℂ) / 2 ^ k * (catalan (k + 1) : ℂ) * (1 - x) ^ k * x ^ (n - k) =
-      ∑ k ∈ range (n / 2 + 1),
-        (n.choose (2 * k) : ℂ) / 2 ^ (2 * k) * (catalan k : ℂ) * (1 - x) ^ (2 * k)
-
 /-! ## More combinatorial identities -/
 
 /-- **Alternating sum of reciprocal generalized binomial coefficients.** For every natural
@@ -908,18 +897,6 @@ public theorem_wanted sum_choose_two_pow_gammaBinom (n : ℕ) (v : ℝ) (hv : -1
       ∑ k ∈ range (n / 2 + 1),
         (n.choose (2 * k) : ℂ) * 2 ^ n / 2 ^ (4 * k) * ((2 * k).choose k : ℂ) *
           (gammaBinom ((2 * k + v) / 2) k)⁻¹
-
-/-- **Alternating sum of $\binom{n}{k} 2^{n-2k} \binom{2k}{k}$.** For every natural number $n$,
-the following identity holds in $\mathbb{Q}$:
-$$\sum_{k=0}^{n} (-1)^k \binom{n}{k} \frac{2^n}{2^{2k}} \binom{2k}{k}
-= \sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{1}{2^{2k}} \binom{2k}{k}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 3 (`integers-2026-A19-prop-3`). -/
-public theorem_wanted sum_neg_one_pow_choose_two_pow_centralBinom (n : ℕ) :
-    ∑ k ∈ range (n + 1), (-1 : ℚ) ^ k * (n.choose k : ℚ) * 2 ^ n / 2 ^ (2 * k) *
-        ((2 * k).choose k : ℚ) =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ)
 
 /-- **Alternating binomial sum of Catalan numbers.** For every natural number $n$, in the
 rational numbers
