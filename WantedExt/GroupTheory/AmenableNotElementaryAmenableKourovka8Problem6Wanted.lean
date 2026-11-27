@@ -20,7 +20,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import MathlibExt.GroupTheory.AmenableGroup
-public import WantedExt.GroupTheory.ElementaryAmenableVirtuallySolvableKourovka16Problem52Wanted
+public import MathlibExt.GroupTheory.ElementaryAmenableVirtuallySolvable
 
 @[expose] public section
 

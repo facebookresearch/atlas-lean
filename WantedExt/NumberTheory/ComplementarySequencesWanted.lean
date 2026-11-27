@@ -89,14 +89,6 @@ public theorem_wanted nthNonValue_eq_interleave_of_le_sub (f : ℕ → ℕ) (hf1
     (hfar : ∀ m : ℕ, 2 ≤ m → (m : ℝ) ≤ f m - α m) (n : ℕ) (hn : 1 ≤ n) :
     nthNonValue f n = if f (h n) < n + h n then n + h n else n + h n - 1
 
-/-- **Formula for the non-square numbers.** For every integer $n \ge 1$, the $n$-th positive
-integer that is not a perfect square is $n + \lfloor \sqrt{n} + 1/2 \rfloor$.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Corollary 3. -/
-public theorem_wanted nthNonValue_sq_eq_round (n : ℕ) (hn : 1 ≤ n) :
-    nthNonValue (fun j => j ^ 2) n = n + ⌊Real.sqrt n + 1 / 2⌋₊
-
 /-- **Formula for the non-polygonal numbers.** Let $k \ge 3$, and for $j \ge 1$ let
 $T(k, j) = (k - 2) j (j - 1)/2 + j$ be the $k$-gonal numbers. For every integer $n \ge 1$, put
 $s = \lfloor \sqrt{2n/(k - 2)} \rfloor$. Then the $n$-th positive integer that is not of the form

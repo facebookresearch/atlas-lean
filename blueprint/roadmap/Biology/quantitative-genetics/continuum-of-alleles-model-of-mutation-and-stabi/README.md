@@ -19,3 +19,5 @@
 ## Equilibrium results
 
 - [Equilibrium of the continuum-of-alleles model](stationary-law-of-the-continuum-of-alleles-model.md)
+- [House-of-cards approximation for polygenic mutation–selection balance](house-of-cards-approximation-to-mutation-selection-balance.md)
+- [Lande's equilibrium genetic variance under mutation and stabilizing selection with linked loci](lande-equilibrium-variance-with-linked-loci.md)

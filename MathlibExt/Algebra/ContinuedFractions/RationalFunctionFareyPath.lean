@@ -14,11 +14,13 @@ import Mathlib.Algebra.Polynomial.Degree.Operations
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# Polynomial continued fractions and determinant-one Farey paths
+# Polynomial continued fractions and Farey paths
 
 We define finite continued fractions with polynomial partial quotients and prove
 `MetaMathlibExt.polyContFract_of_farey_path_det_one`, the signed convergent formula
-for Farey paths with increasing denominator degrees and adjacent determinants one.
+for Farey paths with increasing denominator degrees and adjacent determinants one, and
+`MetaMathlibExt.polyContFract_of_farey_path_det_neg_one_pow`, the convergent formula for such
+paths whose adjacent determinants alternate as $(-1)^i$.
 -/
 
 namespace MetaMathlibExt
@@ -217,6 +219,95 @@ public theorem polyContFract_of_farey_path_det_one
       · rw [GenContFract.dens_recurrence hs hv₀ hv₁]
         simpa only [map_add, map_mul, one_mul] using
           congrArg (algebraMap F[X] (RatFunc F)) (hrec i hi hv)
+
+/-- **Farey paths of polynomials with alternating determinants starting at −1.** Let $F$ be a
+field, let $n \in \mathbb{N}$, and let $u_i, v_i \in F[X]$ for $i \ge 0$. Suppose that $v_0 = 1$
+and that for $1 \le i \le n$ we have $\deg v_{i-1} < \deg v_i$ and
+$u_i v_{i-1} - u_{i-1} v_i = (-1)^i$. Let $a_0, a_1, \ldots \in F[X]$ satisfy $a_0 = u_0$,
+$a_1 = -v_1$ and $a_i = (-1)^i (u_i v_{i-2} - u_{i-2} v_i)$ for $2 \le i \le n$. Then $a_i$ is
+nonconstant for $1 \le i \le n$, and for every $i \le n$ the numerator $A_i$ and denominator
+$B_i$ of the $i$th convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$
+are $A_i = (-1)^i u_i$ and $B_i = (-1)^i v_i$.
+
+Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
+*An Interpretation of Continued Fractions and Farey Graphs in the Field of
+Rational Functions*, INTEGERS 26 (2026), Article A3, Corollary 2. -/
+public theorem polyContFract_of_farey_path_det_neg_one_pow
+    (u v : ℕ → F[X]) (n : ℕ) (hv0 : v 0 = 1)
+    (hdeg : ∀ i, 1 ≤ i → i ≤ n → (v (i - 1)).degree < (v i).degree)
+    (hdet : ∀ i, 1 ≤ i → i ≤ n → u i * v (i - 1) - u (i - 1) * v i = C ((-1) ^ i))
+    (a : ℕ → F[X]) (ha0 : a 0 = u 0) (ha1 : a 1 = -v 1)
+    (ha : ∀ i, 2 ≤ i → i ≤ n → a i = C ((-1) ^ i) * (u i * v (i - 2) - u (i - 2) * v i)) :
+    (∀ i, 1 ≤ i → i ≤ n → 0 < (a i).natDegree) ∧
+      ∀ i ≤ n, (polyContFract a n).nums i = algebraMap F[X] (RatFunc F) (C ((-1) ^ i) * u i) ∧
+        (polyContFract a n).dens i = algebraMap F[X] (RatFunc F) (C ((-1) ^ i) * v i) := by
+  have hC (k : ℕ) : C ((-1 : F) ^ k) = (-1 : F[X]) ^ k := by simp
+  have hsq (k : ℕ) : (-1 : F[X]) ^ k * (-1) ^ k = 1 := by
+    rw [← mul_pow, neg_one_mul, neg_neg, one_pow]
+  -- The adjacent determinants give `w i = w (i + 2) + a (i + 2) * w (i + 1)` for `w = u, v`.
+  have hstep (i : ℕ) (hi : i + 2 ≤ n) :
+      u (i + 2) + a (i + 2) * u (i + 1) = u i ∧
+      v (i + 2) + a (i + 2) * v (i + 1) = v i := by
+    have hprev : u (i + 1) * v i - u i * v (i + 1) = C ((-1) ^ (i + 1)) :=
+      hdet (i + 1) (by omega) (by omega)
+    have hcurr : u (i + 2) * v (i + 1) - u (i + 1) * v (i + 2) = C ((-1) ^ (i + 2)) :=
+      hdet (i + 2) (by omega) hi
+    have hquot : a (i + 2) = C ((-1) ^ (i + 2)) * (u (i + 2) * v i - u i * v (i + 2)) :=
+      ha (i + 2) (by omega) hi
+    rw [hC] at hprev hcurr hquot
+    constructor
+    · linear_combination u (i + 1) * hquot + (-1) ^ i * u i * hcurr +
+        (-1) ^ i * u (i + 2) * hprev + (u i - u (i + 2)) * hsq i
+    · linear_combination v (i + 1) * hquot + (-1) ^ i * v i * hcurr +
+        (-1) ^ i * v (i + 2) * hprev + (v i - v (i + 2)) * hsq i
+  have hrec (i : ℕ) {p q r : F[X]} (h : r + a (i + 2) * q = p) :
+      a (i + 2) * (C ((-1) ^ (i + 1)) * q) + C ((-1) ^ i) * p = C ((-1) ^ (i + 2)) * r := by
+    rw [hC, hC, hC]
+    linear_combination (-(-1 : F[X]) ^ i) * h
+  refine ⟨?_, ?_⟩
+  · intro i hi hin
+    obtain _ | _ | i := i
+    · omega
+    · simpa [natDegree_pos_iff_degree_pos, hv0, ha1] using hdeg 1 hi hin
+    change 0 < (a (i + 2)).natDegree
+    have hprev : (v i).degree < (v (i + 1)).degree := hdeg (i + 1) (by omega) (by omega)
+    have hcurr : (v (i + 1)).degree < (v (i + 2)).degree := hdeg (i + 2) hi hin
+    have hprod : (a (i + 2) * v (i + 1)).natDegree = (v (i + 2)).natDegree := by
+      rw [show a (i + 2) * v (i + 1) = v i - v (i + 2) by linear_combination (hstep i hin).2]
+      exact natDegree_eq_of_degree_eq (degree_sub_eq_right_of_degree_lt (hprev.trans hcurr))
+    have hlt := natDegree_lt_natDegree (ne_zero_of_degree_gt hprev) hcurr
+    have hle : (a (i + 2) * v (i + 1)).natDegree ≤
+        (a (i + 2)).natDegree + (v (i + 1)).natDegree :=
+      natDegree_mul_le
+    omega
+  · intro i
+    induction i using Nat.twoStepInduction with
+    | zero => simp [polyContFract_h, ha0, hv0]
+    | one =>
+      intro hi
+      have hu1 : u 1 = v 1 * u 0 - 1 := by
+        have h : u 1 * v 0 - u 0 * v 1 = C ((-1) ^ 1) := hdet 1 le_rfl hi
+        rw [hv0, mul_one, pow_one, map_neg, map_one] at h
+        linear_combination h
+      have hn : 0 < n := by omega
+      rw [polyContFract_nums_one a hn, polyContFract_dens_one a hn, ha0, ha1, hu1, pow_one,
+        C_neg, C_1]
+      constructor <;> congr 1 <;> ring
+    | more i ih₀ ih₁ =>
+      intro hi
+      obtain ⟨hu₀, hv₀⟩ := ih₀ (by omega)
+      obtain ⟨hu₁, hv₁⟩ := ih₁ (by omega)
+      have hs : (polyContFract a n).s.get? (i + 1) =
+          some ⟨1, algebraMap F[X] (RatFunc F) (a (i + 2))⟩ := by
+        simp [polyContFract_s_get?, show i + 1 < n by omega]
+      obtain ⟨hu, hv⟩ := hstep i hi
+      constructor
+      · rw [GenContFract.nums_recurrence hs hu₀ hu₁]
+        simpa only [map_add, map_mul, one_mul] using
+          congrArg (algebraMap F[X] (RatFunc F)) (hrec i hu)
+      · rw [GenContFract.dens_recurrence hs hv₀ hv₁]
+        simpa only [map_add, map_mul, one_mul] using
+          congrArg (algebraMap F[X] (RatFunc F)) (hrec i hv)
 
 end
 
