@@ -1,9 +1,9 @@
 # Question reduction by introspection
 
-There is a polynomial-time transformation mapping a normal form verifier $\mathcal{V} = (S, D)$ whose sampler runs in time $T_S(n)$ to a normal form verifier $\mathcal{V}^{\mathrm{intro}}$ whose questions have length $\mathrm{polylog}(T_S(n))$ and whose decider runs in time $\mathrm{poly}(T_S(n), T_D(n))$, such that for every $n$:
+There is a polynomial-time transformation mapping a $\lambda$-bounded normal form verifier $\mathcal{V} = (S, D)$ (sampler time $T_S(n)$ and decider time $T_D(n)$ at most $n^\lambda$) to a normal form verifier $\mathcal{V}^{\mathrm{intro}}$ whose questions at index $n$ have length $\mathrm{poly}(n, \lambda)$ (polylogarithmic in $N = 2^n$) and whose decider runs in time $\mathrm{poly}(T_S(N), T_D(N))$, with constants $a, b > 0$ such that (Ji–Natarajan–Vidick–Wright–Yuen, Theorem 8.3):
 
-- if $\omega^*_s(\mathcal{V}_n) = 1$ (witnessed by an oracularizable synchronous strategy), then $\omega^*_s(\mathcal{V}^{\mathrm{intro}}_n) = 1$;
-- if $\omega^*(\mathcal{V}_n) \le 1/2$, then $\omega^*(\mathcal{V}^{\mathrm{intro}}_n) \le 1 - c$ for a universal constant $c > 0$.
+- *(Completeness)* if $\mathcal{V}_{2^n}$ has a value-$1$ projective, consistent, commuting (PCC) strategy, then so does $\mathcal{V}^{\mathrm{intro}}_n$;
+- *(Soundness)* for every $\varepsilon > 0$, if $\omega^*(\mathcal{V}^{\mathrm{intro}}_n) > 1 - \varepsilon$, then $\omega^*(\mathcal{V}_{2^n}) \ge 1 - \delta(\varepsilon, n)$ where $\delta(\varepsilon, n) = a\bigl((\lambda n)^a \varepsilon^b + (\lambda n)^{-b}\bigr)$; in particular, $\omega^*(\mathcal{V}_{2^n}) \le 1/2$ implies $\omega^*(\mathcal{V}^{\mathrm{intro}}_n) \le 1 - \varepsilon(n)$ for an inverse-polynomial gap $\varepsilon(n) = 1/\mathrm{poly}(\lambda n)$.
 
 ## Proof sketch
 
