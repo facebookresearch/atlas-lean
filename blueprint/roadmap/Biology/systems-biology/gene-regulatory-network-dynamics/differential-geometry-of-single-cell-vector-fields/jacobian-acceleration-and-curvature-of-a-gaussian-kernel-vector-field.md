@@ -22,13 +22,13 @@ $$\kappa = \frac{1}{\lVert v\rVert}\frac{d}{dt}\frac{v}{\lVert v\rVert} = \frac{
 
 - in dimension $3$, the curl $\nabla \times f$ from the antisymmetric part of $J$.
 
-All are pointwise functions of $v$ and $J(x)$, hence define new vector or scalar fields on state space. An attracting fixed point has $\operatorname{tr} J < 0$ there, but negative divergence does not imply attraction.
+All are pointwise functions of $v$ and $J(x)$, hence define new vector or scalar fields on state space. A hyperbolic attracting fixed point has $\operatorname{tr} J < 0$ there (in general an attracting fixed point has $\operatorname{tr} J \le 0$), but negative divergence does not imply attraction.
 
 **Back to gene space.** If $f$ is learned in coordinates $z = Q^{\top} x$ given by $k$ orthonormal principal axes $Q \in \mathbb R^{d \times k}$ of a $d$-gene space, the gene-space field $x \mapsto Q f(Q^{\top} x)$ has Jacobian $G = Q J Q^{\top}$; $G_{ij}$ approximates the sensitivity of the velocity of gene $i$ to the expression of gene $j$.
 
 ## Expansion
 
-The Jacobian formula is the chain rule applied to each kernel term, and the matrix form collects the sum. The acceleration follows from $\dot x = v$ and $\frac{d}{dt}f(x(t)) = J\dot x$. For the curvature, differentiate the unit tangent $v/\lVert v\rVert$: $\frac{d}{dt}\frac{v}{\lVert v\rVert} = \frac{a}{\lVert v\rVert} - \frac{v\,(v\cdot a)}{\lVert v\rVert^3}$, then divide by $\lVert v\rVert$ and substitute $a = Jv$. At a stable fixed point all eigenvalues of $J$ have negative real part, so their sum $\operatorname{tr} J$ is negative; a saddle with one strongly contracting and one weakly expanding direction also has negative trace, which shows the converse fails. The gene-space Jacobian is again the chain rule, $\partial_x [Q f(Q^{\top} x)] = Q J Q^{\top}$; it is only an approximation of the true gene-level Jacobian because the dynamics orthogonal to the $k$ retained axes are discarded.
+The Jacobian formula is the chain rule applied to each kernel term, and the matrix form collects the sum. The acceleration follows from $\dot x = v$ and $\frac{d}{dt}f(x(t)) = J\dot x$. For the curvature, differentiate the unit tangent $v/\lVert v\rVert$: $\frac{d}{dt}\frac{v}{\lVert v\rVert} = \frac{a}{\lVert v\rVert} - \frac{v\,(v\cdot a)}{\lVert v\rVert^3}$, then divide by $\lVert v\rVert$ and substitute $a = Jv$. At a hyperbolic stable fixed point all eigenvalues of $J$ have negative real part, so their sum $\operatorname{tr} J$ is negative (an eigenvalue with positive real part would make the point unstable, so a non-hyperbolic attractor still has $\operatorname{tr} J \le 0$, and $\dot x = -x^3$ shows equality occurs); a saddle with one strongly contracting and one weakly expanding direction also has negative trace, which shows the converse fails. The gene-space Jacobian is again the chain rule, $\partial_x [Q f(Q^{\top} x)] = Q J Q^{\top}$; it is only an approximation of the true gene-level Jacobian because the dynamics orthogonal to the $k$ retained axes are discarded.
 
 ## Sources
 

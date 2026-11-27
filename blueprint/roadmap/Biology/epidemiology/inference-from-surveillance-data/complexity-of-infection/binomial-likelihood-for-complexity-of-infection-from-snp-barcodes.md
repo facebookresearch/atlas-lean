@@ -22,7 +22,7 @@ where failed assays are omitted from the product. The maximum a posteriori value
 
 $$\operatorname{Var} X = np(1 - p) + p(1 - p)\sum_{i \ne j}\rho_{ij},$$
 
-so linkage disequilibrium between assays, or relatedness between co-infecting lineages, overdisperses the polymorphic-call count and makes single-sample COI estimates more extreme while leaving population averages approximately unbiased.
+so linkage disequilibrium between assays overdisperses the polymorphic-call count and makes single-sample COI estimates more extreme while leaving population averages approximately unbiased. Relatedness between co-infecting lineages instead makes monomorphic calls more likely and biases COI estimates downward, with no balancing effect.
 
 ## Expansion
 
@@ -30,4 +30,4 @@ Each lineage independently carries the alternate allele with probability $p_i$, 
 
 ## Sources
 
-- K. Galinsky, C. Valim, A. Salmier, B. de Thoisy, L. Musset, E. Legrand, A. Faust, M. L. Baniecki, D. Ndiaye, R. F. Daniels, D. L. Hartl, et al., *COIL: a methodology for evaluating malarial complexity of infection using likelihood from single nucleotide polymorphism data*, Malaria Journal 14 (2015), 4, <https://doi.org/10.1186/1475-2875-14-4>, PMCID PMC4417311. Methods (binomial model of alternate-allele counts, three assay outcomes, error matrix, posterior with uniform prior up to COI five, Beta(1,1) allele-frequency prior) and Discussion (variance of correlated Bernoulli sums and consequences of violating assay or lineage independence). The monotonicity statements are derived here.
+- K. Galinsky, C. Valim, A. Salmier, B. de Thoisy, L. Musset, E. Legrand, A. Faust, M. L. Baniecki, D. Ndiaye, R. F. Daniels, D. L. Hartl, et al., *COIL: a methodology for evaluating malarial complexity of infection using likelihood from single nucleotide polymorphism data*, Malaria Journal 14 (2015), 4, <https://doi.org/10.1186/1475-2875-14-4>, PMCID PMC4417311. Methods (binomial model of alternate-allele counts, three assay outcomes, error matrix, posterior with uniform prior up to COI five, Beta(1,1) allele-frequency prior) and Discussion (variance of correlated Bernoulli sums; overdispersion and unbiased population estimates under assay non-independence; downward bias of COI under relatedness of co-infecting lineages). The monotonicity statements are derived here.
