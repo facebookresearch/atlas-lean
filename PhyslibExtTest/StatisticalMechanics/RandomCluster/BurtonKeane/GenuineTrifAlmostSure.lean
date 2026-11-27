@@ -16,7 +16,8 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineT
 
 * `bc89_upperLines_not_genuineTrif`: the upper-lines configuration has no classical trifurcation,
   and the classical count vanishes (`bc89_status`).
-* `bc89_genuine_imp_isTrif` and the count comparison `bc89_genuineTcount ≤ Tcount` (`bc89_status`).
+* `bc89_genuine_imp_isTrif` and the count comparison `bc48_Tcount_classical ≤ Tcount`
+  (`bc89_status`).
 * `bc89_genuineTrif_open_degree_ge_three` on the complete graph on a three-site finset plus a
   centre (instance).
 * `bc89_genuineTcount_le_boundary_of_openForest` as a conditional statement.
@@ -24,17 +25,20 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineT
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifAlmostSure
 
 open _root_.StatMech _root_.StatMech.Lattice _root_.StatMech.Percolation _root_.StatMech.Walls
 
 -- The upper-lines configuration has no classical trifurcation, at the origin or in `B_5`.
-example : ¬ bc89_GenuineTrif 2 bc60_upperLines 0 ∧ bc89_genuineTcount bc60_upperLines 5 = 0 :=
+example : ¬ IsEncounterPoint 2 bc60_upperLines 0 ∧ bc48_Tcount_classical 2 bc60_upperLines 5 = 0 :=
   ⟨bc89_upperLines_not_genuineTrif 0, bc89_status.2.2.2.1 5⟩
 
 -- Classical trifurcations are weak trifurcations, so the classical count is the smaller one.
-example (ω : ConfigSpace (Sym2 (Site 2))) (x : Site 2) (h : bc89_GenuineTrif 2 ω x) :
-    IsTrifurcation 2 ω x ∧ bc89_genuineTcount ω 3 ≤ Tcount 2 ω 3 :=
+example (ω : ConfigSpace (Sym2 (Site 2))) (x : Site 2) (h : IsEncounterPoint 2 ω x) :
+    IsTrifurcation 2 ω x ∧ bc48_Tcount_classical 2 ω 3 ≤ Tcount 2 ω 3 :=
   ⟨bc89_genuine_imp_isTrif ω x h, bc89_status.2.1 ω 3⟩
 
 /-- Four sites of `ℤ`: `0, 1, 2, 3`. -/
@@ -53,7 +57,7 @@ example [DecidableRel (⊤ : SimpleGraph (↑V4 : Type)).Adj] :
 
 -- A box open forest bounds the classical count.
 example (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ) (h : bst_BoxOpenForest ω n) :
-    bc89_genuineTcount ω n ≤ boxSV_boundaryCard 2 n :=
+    bc48_Tcount_classical 2 ω n ≤ boxSV_boundaryCard 2 n :=
   bc89_genuineTcount_le_boundary_of_openForest ω n h
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.GenuineTrifAlmostSure

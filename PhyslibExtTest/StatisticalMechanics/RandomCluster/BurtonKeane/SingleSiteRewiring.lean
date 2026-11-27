@@ -14,7 +14,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SingleSi
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SingleSiteRewiring`
 
-* the all-closed configuration has no classical trifurcation (`bc89_GenuineTrif`), and the
+* the all-closed configuration has no classical trifurcation (`IsEncounterPoint`), and the
   classical-trifurcation event is measurable (`bc96_measurableSet_genuineTrif`), so its point mass
   gives it probability `0`;
 * `bc96_genuineTrif_of_reachOrigin_full` used contrapositively on the all-closed configuration;
@@ -22,6 +22,9 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SingleSi
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
 
 namespace PhyslibExtTest.StatisticalMechanics.RandomCluster.BurtonKeane.SingleSiteRewiring
 
@@ -31,13 +34,13 @@ open _root_.StatMech.ConfigSpace MeasureTheory
 variable {d : ℕ}
 
 /-- The all-closed configuration has no classical trifurcation. -/
-theorem not_genuine_closed (x : Site d) : ¬ bc89_GenuineTrif d (fun _ => false) x := by
-  rintro ⟨a, -, -, -, -, ⟨h, -, -⟩, -⟩
+theorem not_genuine_closed (x : Site d) : ¬ IsEncounterPoint d (fun _ => false) x := by
+  rintro ⟨a, -, -, -, ⟨h, -, -⟩, -⟩
   exact Bool.false_ne_true h.2
 
 -- The point mass at the all-closed configuration gives the classical-trifurcation event mass `0`.
 example (x : Site d) : Measure.dirac (fun _ => false)
-    {ω : ConfigSpace (Sym2 (Site d)) | bc89_GenuineTrif d ω x} = 0 := by
+    {ω : ConfigSpace (Sym2 (Site d)) | IsEncounterPoint d ω x} = 0 := by
   rw [Measure.dirac_apply' _ (bc96_measurableSet_genuineTrif x)]
   simp [Set.indicator, not_genuine_closed x]
 
@@ -67,10 +70,10 @@ example (ω : ConfigSpace (Sym2 (Site d))) (x a : Site d)
 
 -- Zero classical-trifurcation probability with precursors excludes `N = ∞`.
 example (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
-    (hfe : HasFiniteEnergyMerge μ) (hprob0 : μ {ω | bc89_GenuineTrif d ω 0} = 0)
+    (hfe : HasFiniteEnergyMerge μ) (hprob0 : μ {ω | IsEncounterPoint d ω 0} = 0)
     (hpre : 0 < μ {ω | numInfiniteClusters d ω = ⊤} →
       ∃ (G : Finset (Sym2 (Site d))) (A : Set (ConfigSpace (Sym2 (Site d)))),
-        0 < μ A ∧ A ⊆ (fun ω => forceOpenFinset G ω) ⁻¹' {ω | bc89_GenuineTrif d ω 0}) :
+        0 < μ A ∧ A ⊆ (fun ω => forceOpenFinset G ω) ⁻¹' {ω | IsEncounterPoint d ω 0}) :
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
   bc96_bk_from_precursor μ hfe hprob0 hpre
 
