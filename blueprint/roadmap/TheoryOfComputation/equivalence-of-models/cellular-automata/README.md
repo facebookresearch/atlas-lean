@@ -12,6 +12,7 @@ automata as continuous shift-commuting maps are in
 - [Cellular automata on $\mathbb{Z}^d$](cellular-automata-on-z-d.md)
 - [Finite, periodic and Garden-of-Eden configurations](finite-periodic-and-garden-of-eden-configurations.md)
 - [Elementary cellular automata and Wolfram numbers](elementary-cellular-automata-and-wolfram-numbers.md)
+- [Curtis–Hedlund–Lyndon theorem on $\mathbb{Z}^d$](curtis-hedlund-lyndon-theorem-on-z-d.md)
 - [Bijective cellular automata are reversible](bijective-cellular-automata-are-reversible.md)
 - [Garden-of-Eden theorem](garden-of-eden-theorem.md)
 - [Injective cellular automata are surjective](injective-cellular-automata-are-surjective.md)
