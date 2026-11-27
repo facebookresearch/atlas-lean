@@ -14023,6 +14023,7 @@
   "MathlibExt/NumberTheory/PrimePairExponentialDiophantinePrimePairPowAddTwoPowOddMulPowNeSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/PrimePairOneAddTwoPowMulPowEqSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/PrimePairPowAddPowEqSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares of the form $p^x + (2p - 1)^y$ for prime pairs"},
+  "MathlibExt/NumberTheory/PrimePairPowAddTwoPowEvenMulPowEqSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/PrimePairPowSubTwoPowOddMulPowEqSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/PrimePairTwoPowEvenMulPowSubPowEqSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/PrimePairTwoPowOddMulPowSubPowEqSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
