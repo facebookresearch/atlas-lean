@@ -4,3 +4,4 @@
 - [Henkin completeness of Church's simple type theory](henkin-completeness-of-church-s-simple-type-theory.md)
 
 - [Intuitionistic type theory](intuitionistic-type-theory.md)
+- [Higher-order unification](higher-order-unification/README.md)
