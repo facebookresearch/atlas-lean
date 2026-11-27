@@ -4,7 +4,7 @@ $\mathsf{EOPL}=\mathsf{SOPL}\cap\mathsf{PPAD}$: a total search problem reducible
 
 ## Proof sketch
 
-Given reductions to both problems, run the sink-of-potential-line instance and the end-of-line instance in parallel on a product graph whose potential is that of the first coordinate; every end of the combined potential line yields a sink of the first instance or an end of the second, and both map back to solutions of the original problem.
+$\mathsf{EOPL}\subseteq\mathsf{SOPL}\cap\mathsf{PPAD}$ holds because END-OF-POTENTIAL-LINE trivially reduces to SINK-OF-POTENTIAL-LINE (fewer solutions) and to END-OF-LINE (the pruned graph). Conversely, $\mathsf{SOPL}\cap\mathsf{PPAD}$ has the complete problem 'solve a SINK-OF-POTENTIAL-LINE instance or a bijective pigeonhole (bij-PHP) instance', and Lemma 4 of Göös et al. reduces it to END-OF-POTENTIAL-LINE: take $K$ copies of the sink-of-potential-line instance, each with a reversed copy whose sinks feed the original sources, so that non-distinguished sources disappear; add a new distinguished source $u$; and connect the $K+1$ nodes $u$ and the reversed copies of the distinguished sources to the $K$ copies of the distinguished sources according to the bij-PHP instance with $K+1$ pigeons and $K$ holes. Every end of a line of the result yields a sink of the original instance or a bij-PHP solution.
 
 ## Depends on
 
@@ -16,4 +16,4 @@ Given reductions to both problems, run the sink-of-potential-line instance and t
 
 ## Sources
 
-- Mika Göös et al., "Further Collapses in TFNP", 37th Computational Complexity Conference (CCC 2022), arXiv:2202.07761, 2022, Lemma 4.
+- Mika Göös, Alexandros Hollender, Siddhartha Jain, Gilbert Maystre, William Pires, Robert Robere and Ran Tao, "Further Collapses in TFNP", 37th Computational Complexity Conference (CCC 2022), arXiv:2202.07761, 2022; SIAM Journal on Computing 53(3), 2024, Lemma 4.

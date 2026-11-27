@@ -12,5 +12,6 @@ The map $a+ib\mapsto\begin{pmatrix}a&-b\\b&a\end{pmatrix}$ is an injective ring 
 
 ## Sources
 
-- Yaoyun Shi, "Both Toffoli and Controlled-NOT Need Little Help to Universal Quantum Computing", Quantum Information and Computation, 2003.
-- Dorit Aharonov, "A Simple Proof that Toffoli and Hadamard are Quantum Universal", 2003.
+- Yaoyun Shi, "Both Toffoli and Controlled-NOT Need Little Help to Universal Quantum Computing", Quantum Information and Computation 3(1), 84–92, 2003.
+- Dorit Aharonov, "A Simple Proof that Toffoli and Hadamard are Quantum Universal", arXiv:quant-ph/0301040, 2003 (unrefereed; supplementary to Shi).
+- Ethan Bernstein and Umesh Vazirani, "Quantum Complexity Theory", SIAM Journal on Computing 26(5), 1411–1473, 1997 (real amplitudes suffice).

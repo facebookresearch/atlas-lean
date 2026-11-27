@@ -12,4 +12,4 @@ Run the one-sided machine $k$ times in sequence on fresh coins, reusing the same
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Chapter 7.

@@ -18,10 +18,6 @@ With $O(\log n)$ NP queries, binary search computes the exact census of $S$ up t
 - [The polynomial hierarchy](../../time-and-space-complexity-classes/ph.md)
 - [Bounded-query oracle classes and P^{NP[O(log n)]}](bounded-query-classes.md)
 
-## Proof depends on
-
-- [Karp-Lipton theorem: NP in P/poly collapses PH](../../karp-lipton.md)
-
 ## Sources
 
 - Jim Kadin, "P^NP[O(log n)] and Sparse Turing-Complete Sets for NP", Journal of Computer and System Sciences 39(3), 1989.

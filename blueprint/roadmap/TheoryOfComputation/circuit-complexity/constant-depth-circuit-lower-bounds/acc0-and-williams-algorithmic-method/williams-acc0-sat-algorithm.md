@@ -1,10 +1,10 @@
 # Williams's faster-than-brute-force algorithm for ACC0-SAT
 
-For every depth $d$ and modulus $m\ge1$ there are constants $0<\varepsilon<\delta<1$ and $c_0>0$ such that satisfiability of single-output $\mathsf{ACC}^0[m]$ circuits of depth at most $d$ and size at most $2^{n^\varepsilon}$ on $n$ inputs is decidable by a deterministic multi-tape Turing machine in time $O\bigl(2^{\,n-c_0 n^{\delta}}\bigr)$.
+For every depth $d\ge2$ and modulus $m\ge2$ there are constants $0<\varepsilon<\delta<1$ and $c_0>0$ such that satisfiability of single-output $\mathsf{ACC}^0[m]$ circuits of depth at most $d$ and size at most $2^{n^\varepsilon}$ on $n$ inputs is decidable deterministically in time $O\bigl(2^{\,n-c_0 n^{\delta}}\bigr)$, that is, $2^{n-\Omega(n^\delta)}$ (Williams notes that the choice of standard machine model, for example a multi-tape Turing machine, is not crucial).
 
 ## Proof sketch
 
-Fix the first $\ell=n^\delta$ inputs in all $2^\ell$ ways and take the OR of the resulting circuits (an $\mathsf{ACC}^0$ circuit of size $2^\ell 2^{n^\varepsilon}$ on $n-\ell$ inputs). Convert it to a $\mathrm{SYM}\circ\mathrm{AND}$ circuit of size $2^{\mathrm{polylog}}\ll 2^{(n-\ell)/2}$ and evaluate it on all $2^{n-\ell}$ remaining inputs with the evaluation lemma.
+Fix the first $\ell=n^\delta$ inputs in all $2^\ell$ ways and take the OR of the resulting circuits (an $\mathsf{ACC}^0$ circuit of size $2^\ell 2^{n^\varepsilon}$ on $n-\ell$ inputs). Convert this depth-$(d+1)$ circuit to a $\mathrm{SYM}\circ\mathrm{AND}$ circuit of size $s^{e(\ell\log s)^{e}}\le 2^{O(n^{(2e+1)\delta})}\le 2^{0.1(n-\ell)}$, where $s=2^{\ell}2^{n^\varepsilon}$ and $e$ depends only on $d$ and $m$ (choose $\delta<1/(2e+1)$) and evaluate it on all $2^{n-\ell}$ remaining inputs with the evaluation lemma, in time $2^{n-\ell}\mathrm{poly}(n)$.
 
 ## Depends on
 
@@ -19,4 +19,4 @@ Fix the first $\ell=n^\delta$ inputs in all $2^\ell$ ways and take the OR of the
 
 ## Sources
 
-- Ryan Williams, "Nonuniform ACC Circuit Lower Bounds", Journal of the ACM, 2014.
+- Ryan Williams, "Nonuniform ACC Circuit Lower Bounds", Journal of the ACM 61(1), Article 2, 2014 (Theorem 4.1).

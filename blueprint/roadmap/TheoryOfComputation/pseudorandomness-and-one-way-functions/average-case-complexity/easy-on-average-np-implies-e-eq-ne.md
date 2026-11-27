@@ -1,10 +1,10 @@
 # Ben-David–Chor–Goldreich–Luby: easy-on-average DistNP implies E = NE
 
-If every distributional problem in $\mathsf{DistNP}$ has a polynomial-time heuristic scheme (i.e. $\mathsf{DistNP}\subseteq\mathsf{HeurP}$), then $\mathsf{NE}=\mathsf{E}$.
+Here $\mathsf{E}=\mathsf{DTIME}(2^{O(n)})$ and $\mathsf{NE}=\mathsf{NTIME}(2^{O(n)})$. If $\mathsf{DistNP}\subseteq\mathsf{AvgP}$, then $\mathsf{NE}=\mathsf{E}$ (Ben-David–Chor–Goldreich–Luby, Theorem 5, in contrapositive form). With ensembles $D_n$ supported on $\{0,1\}^n$, the same conclusion already follows from the weaker hypothesis that every distributional problem in $\mathsf{DistNP}$ has a polynomial-time heuristic scheme ($\mathsf{DistNP}\subseteq\mathsf{HeurP}$), by the padding argument below.
 
 ## Proof sketch
 
-For $L\in\mathsf{NE}$, the padded language $L'=\{x\,1^{2^{|x|}} : x\in L\}$ is in $\mathsf{NP}$. Under the ensemble that, at each padded length $N\approx 2^{|x|}$, gives every padded instance probability about $1/N$, a heuristic scheme with error parameter below $1/(2N)$ must be correct on every padded instance; running it decides $L$ in time $\mathrm{poly}(N)=2^{O(|x|)}$.
+For $L\in\mathsf{NE}$, the padded language $L'=\{x\,1^{2^{|x|}} : x\in L\}$ is in $\mathsf{NP}$. Under the polynomial-time computable ensemble that is uniform on the $2^{\ell}$ padded instances of length $N=\ell+2^{\ell}$ (and a point mass at other lengths), a heuristic scheme with error parameter $\delta=2^{-\ell-1}$ must be correct on every padded instance, since each has probability $2^{-\ell}>\delta$ (an errorless scheme is a special case); running it decides $L$ in time $\mathrm{poly}(N)=2^{O(|x|)}$.
 
 ## Depends on
 
@@ -17,4 +17,4 @@ For $L\in\mathsf{NE}$, the padded language $L'=\{x\,1^{2^{|x|}} : x\in L\}$ is i
 
 ## Sources
 
-- Shai Ben-David, Benny Chor, Oded Goldreich and Michael Luby, "On the Theory of Average Case Complexity", Journal of Computer and System Sciences 44(2), 1992.
+- Shai Ben-David, Benny Chor, Oded Goldreich and Michael Luby, "On the Theory of Average Case Complexity", Journal of Computer and System Sciences 44(2), 193–219, 1992, Theorem 5 and Proposition 1 (via Book's characterization of $\mathsf{NE}\ne\mathsf{E}$ by unary $\mathsf{NP}\setminus\mathsf{P}$ languages).

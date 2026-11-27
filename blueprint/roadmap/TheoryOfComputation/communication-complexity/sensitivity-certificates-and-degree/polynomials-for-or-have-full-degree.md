@@ -1,6 +1,6 @@
 # Polynomials agreeing with OR on the cube have full degree
 
-Let $R$ be a nontrivial commutative ring and $p \in R[x_1, \dots, x_n]$ any polynomial (multilinear or not) with $p(x) = \mathrm{OR}(x)$ for every $x \in \{0,1\}^n$. Then $\deg p \ge n$, and $1 - \prod_{i=1}^n (1 - x_i)$ attains degree $n$. In particular over $\mathbb{F}_q$ with $q$ prime, OR has exact degree $n$.
+Let $n \ge 1$, let $R$ be a nontrivial commutative ring and $p \in R[x_1, \dots, x_n]$ any polynomial (multilinear or not) with $p(x) = \mathrm{OR}(x)$ for every $x \in \{0,1\}^n$. Then $\deg p \ge n$, and $1 - \prod_{i=1}^n (1 - x_i)$ attains degree $n$. In particular over $\mathbb{F}_q$ with $q$ prime, OR has exact degree $n$.
 
 ## Proof sketch
 

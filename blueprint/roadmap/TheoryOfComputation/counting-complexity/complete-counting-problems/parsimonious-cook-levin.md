@@ -18,4 +18,5 @@ Every tableau variable other than the certificate bits is determined by the dete
 ## Sources
 
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
-- Leslie G. Valiant, "The Complexity of Computing the Permanent", Theoretical Computer Science 8(2), 1979.
+- Leslie G. Valiant, "The Complexity of Enumeration and Reliability Problems", SIAM Journal on Computing 8(3), 1979, Fact 1.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Theorem 6.18 and the corollaries after it.

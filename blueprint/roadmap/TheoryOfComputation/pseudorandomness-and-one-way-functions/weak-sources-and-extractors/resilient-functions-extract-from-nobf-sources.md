@@ -13,4 +13,5 @@ Couple $Z$ with $D$ on the good coordinates up to their distance; where $f$ is d
 
 ## Sources
 
-- E. Chattopadhyay and D. Zuckerman, "Explicit Two-Source Extractors and Resilient Functions", Annals of Mathematics, 2019.
+- E. Chattopadhyay and D. Zuckerman, "Explicit Two-Source Extractors and Resilient Functions", Annals of Mathematics 189(3), 653–705, 2019 (numbering of ECCC TR15-119), Definitions 1.8–1.12 and Lemma 2.11 (stated there for $(t,\gamma)$-wise independent good coordinates).
+- N. Alon, O. Goldreich and Y. Mansour, "Almost k-wise Independence versus k-wise Independence", Information Processing Letters 88(3), 107–110, 2003 (smoothing, which converts the $t$-wise small-bias hypothesis used here into a nearby $t$-wise independent distribution).

@@ -8,5 +8,5 @@ For sets $P$ of pigeons and $H$ of holes with $|P| = |H| + 1$, an assignment to 
 
 ## Sources
 
-- P. Beame and T. Pitassi, "Simplified and Improved Resolution Lower Bounds", Proceedings of the 37th IEEE Symposium on Foundations of Computer Science (FOCS), 1996.
+- P. Beame and T. Pitassi, "Simplified and Improved Resolution Lower Bounds", Proceedings of the 37th IEEE Symposium on Foundations of Computer Science (FOCS), 1996: Section 3.
 - A. Haken, "The Intractability of Resolution", Theoretical Computer Science 39, 297–308, 1985.

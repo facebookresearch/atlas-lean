@@ -4,7 +4,7 @@ If $g : \{-1,1\}^n \to \mathbb{R}$ is nonzero of degree at most $d$, then $\Pr_x
 
 ## Proof sketch
 
-Induct on $d$: write $g = x_1 g_1 + g_0$; restricting $x_1$ to the value making the top-degree part survive reduces the degree, and averaging over the two values of $x_1$ loses a factor of $2$. The derivative $D_i f$ of a Boolean function of degree $d$ has degree at most $d - 1$ and values in $\{0, \pm 1\}$, so $\mathbf{Inf}_i[f] = \Pr[D_i f \ne 0] \ge 2^{1-d}$.
+Induct on $d$; a nonzero constant is nonzero everywhere. For $d \ge 1$ choose a variable $x_i$ of a highest-degree monomial and write $g = g_0 + x_i g_1$ with $g_0, g_1$ free of $x_i$; the derivative $g_1$ is nonzero of degree at most $d - 1$, so $g_1 \ne 0$ with probability at least $2^{-(d-1)}$ by induction. Wherever $g_1 \ne 0$, at least one of $g_0 + g_1$, $g_0 - g_1$ is nonzero, so a uniform $x_i$ makes $g \ne 0$ with probability at least $1/2$. (Restricting $x_i$ need not lower the degree: for $x_1x_2 + x_3x_4$ both restrictions of $x_1$ keep $x_3x_4$.) The derivative $D_i f$ of a Boolean function of degree $d$ has degree at most $d - 1$ and values in $\{0, \pm 1\}$, so $\mathbf{Inf}_i[f] = \Pr[D_i f \ne 0] \ge 2^{1-d}$.
 
 ## Depends on
 

@@ -9,4 +9,4 @@ The **reversible pebble game** on a DAG $G$ has the same configurations as the b
 ## Sources
 
 - Charles H. Bennett, "Time/Space Trade-Offs for Reversible Computation", SIAM Journal on Computing 18(4), 1989.
-- Ming Li, John Tromp and Paul Vitányi, "Reversible Simulation of Irreversible Computation by Pebble Games", Physica D: Nonlinear Phenomena 120, arXiv:quant-ph/9703009, 1998.
+- Ming Li, John Tromp and Paul Vitányi, "Reversible Simulation of Irreversible Computation", Physica D: Nonlinear Phenomena 120(1–2), arXiv:quant-ph/9703009, 1998.

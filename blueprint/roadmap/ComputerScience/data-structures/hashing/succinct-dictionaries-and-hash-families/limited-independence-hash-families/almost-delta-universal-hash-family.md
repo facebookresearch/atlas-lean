@@ -14,6 +14,8 @@ When $Y = \{0,1\}^m$ with bitwise XOR this is $\varepsilon$-almost XOR-universal
 
 ## Sources
 
+- H. Krawczyk, "LFSR-based Hashing and Authentication", Advances in Cryptology (CRYPTO 1994), LNCS 839, 1994.
+- P. Rogaway, "Bucket Hashing and Its Application to Fast Message Authentication", Advances in Cryptology (CRYPTO 1995), LNCS 963, 1995.
 - D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", version 0.6, 2023.
-- M. N. Wegman and J. L. Carter, "New Hash Functions and Their Use in Authentication and Set Equality", Journal of Computer and System Sciences, 1981.
+- M. N. Wegman and J. L. Carter, "New Hash Functions and Their Use in Authentication and Set Equality", Journal of Computer and System Sciences 22(3), 1981.
 - J. Katz and Y. Lindell, "Introduction to Modern Cryptography", CRC Press, 2020.

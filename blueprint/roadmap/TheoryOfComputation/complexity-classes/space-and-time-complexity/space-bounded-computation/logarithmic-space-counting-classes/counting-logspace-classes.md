@@ -9,4 +9,6 @@ $\#\mathsf{L}$ is the class of functions $f:\{0,1\}^*\to\mathbb{N}$ for which th
 
 ## Sources
 
+- Carme Àlvarez and Birgit Jenner, "A Very Hard Log-Space Counting Class", Theoretical Computer Science 107(1), 1993.
+- Gerhard Buntrock, Carsten Damm, Ulrich Hertrampf and Christoph Meinel, "Structure and Importance of Logspace-MOD Class", Mathematical Systems Theory 25(3), 1992.
 - Klaus Reinhardt and Eric Allender, "Making Nondeterminism Unambiguous", SIAM Journal on Computing 29(4), 2000.

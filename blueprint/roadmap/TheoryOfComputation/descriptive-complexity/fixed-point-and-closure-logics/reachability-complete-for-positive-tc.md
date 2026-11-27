@@ -18,5 +18,5 @@ Definability is the single closure $[\mathrm{tc}\, E](0, \max)$. Conversely a po
 
 ## Sources
 
-- N. Immerman, "Languages That Capture Complexity Classes", SIAM Journal on Computing 16(4), 760–778, 1987.
+- N. Immerman, "Languages That Capture Complexity Classes", SIAM Journal on Computing 16(4), 760–778, 1987: Theorem 3.1, Theorem 3.3 (normal form) and Corollary 3.6 (GAP is complete for NL via first-order translations).
 - N. Immerman, Descriptive Complexity, Springer, 1999.

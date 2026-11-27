@@ -1,10 +1,10 @@
 # Ordinary CNF encoding of exact-one semantics
 
-For every clause formula $\varphi$ there is a CNF formula $\mathrm{EO}(\varphi)$ on the same variables, with no auxiliary variables, such that an assignment satisfies $\mathrm{EO}(\varphi)$ (in the ordinary sense) if and only if it one-satisfies $\varphi$: each clause $\ell_1 \vee \dots \vee \ell_k$ contributes itself and the clauses $\neg \ell_i \vee \neg \ell_j$ for all pairs of positions $i < j$. For a clause of three literals on distinct variables, five clauses on those variables suffice. The encoding is computable in polynomial time and preserves model counts.
+For every clause formula $\varphi$ there is a CNF formula $\mathrm{EO}(\varphi)$ on the same variables, with no auxiliary variables, such that an assignment satisfies $\mathrm{EO}(\varphi)$ (in the ordinary sense) if and only if it one-satisfies $\varphi$: each clause $\ell_1 \vee \dots \vee \ell_k$ contributes itself and the clauses $\neg \ell_i \vee \neg \ell_j$ for all pairs of positions $i < j$. For a clause of three literals this gives four clauses; if every output clause must contain three distinct variables, a three-literal clause on distinct variables is instead replaced by the five clauses that forbid its five patterns of weight $0$ or at least $2$. The encoding is computable in polynomial time and preserves model counts.
 
 ## Proof sketch
 
-The at-least-one clause forbids zero true occurrences, and the pairwise clauses forbid two; for three literals the truth table has exactly five forbidden patterns of weight $0$ or $\ge 2$.
+The at-least-one clause forbids zero true occurrences, and the pairwise clauses forbid two or more (a repeated literal yields the unit clause $\neg\ell$, matching the multiplicity convention); for three literals on distinct variables the truth table has exactly five forbidden patterns of weight $0$ or $\ge 2$.
 
 ## Depends on
 

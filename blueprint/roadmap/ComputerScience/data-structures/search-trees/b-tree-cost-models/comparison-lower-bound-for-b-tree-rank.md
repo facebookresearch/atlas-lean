@@ -11,10 +11,6 @@ Fix a tree with $n$ keys; as $q$ ranges over an infinite ordered set, all $n + 1
 - [Comparison-query cost model](comparison-query-cost-model.md)
 - [B-trees of a given minimum degree](../b-tree/is-btree.md)
 
-## Proof depends on
-
-- [A binary tree with n! leaves has height at least log n!](../../../sorting-and-searching/lower-bound-for-comparison-sorting/factorial-le-two-pow-height.md)
-
 ## Sources
 
 - D. E. Knuth, "The Art of Computer Programming, Volume 3: Sorting and Searching", 2nd edition, Addison-Wesley, 1998.

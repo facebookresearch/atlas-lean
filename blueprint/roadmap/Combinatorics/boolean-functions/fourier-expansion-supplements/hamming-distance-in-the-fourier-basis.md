@@ -4,7 +4,7 @@ For Boolean functions $f, g$ read as $F = (-1)^f$, $G = (-1)^g$, the relative Ha
 
 $$\Pr_x[f(x) \ne g(x)] = \frac{1}{4}\mathbb{E}[(F - G)^2] = \frac14 \sum_S \big(\hat F(S) - \hat G(S)\big)^2.$$
 
-The map $f \mapsto \hat F / 2$ is therefore an isometric embedding of Boolean functions with the square root of the relative Hamming distance into $\ell_2$; the related noise distance satisfies $\frac14\mathbb{E}_{(x,y)\ \rho\text{-correlated}}[(F(x) - F(y))^2] = \frac12(1 - \mathrm{Stab}_\rho[F])$.
+The map $f \mapsto \hat F / 2$ is therefore an isometric embedding of Boolean functions with the square root of the relative Hamming distance into $\ell_2$; for $-1 \le \rho \le 1$ the related noise distance satisfies $\frac14\mathbb{E}_{(x,y)\ \rho\text{-correlated}}[(F(x) - F(y))^2] = \frac12(1 - \mathrm{Stab}_\rho[F])$.
 
 ## Proof sketch
 

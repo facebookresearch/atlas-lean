@@ -11,6 +11,10 @@ Every randomized tree is a finite mixture of deterministic trees indexed by its 
 ## Depends on
 
 - [Randomized cell-probe scheme with private coins](randomized-cell-probe-scheme.md)
+- [Deterministic dynamic cell-probe scheme](deterministic-cell-probe-scheme.md)
+
+## Proof depends on
+
 - [Yao's minimax principle](../../../TheoryOfComputation/randomized-and-quantum-complexity/yao-s-minimax-principle/yao-minimax.md)
 
 ## Sources

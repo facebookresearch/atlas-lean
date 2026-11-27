@@ -1,7 +1,6 @@
 # Dictionary Specifications and Information-Theoretic Space
 
 - [Iterated logarithm and log-star](iterated-logarithm.md)
-- [Lazy sampling of uniform hash functions](lazy-sampling-of-uniform-hash-functions.md)
 - [Bounded-capacity dictionary specification](bounded-capacity-dictionary.md)
 - [Information-theoretic space bound for dictionaries](information-theoretic-dictionary-space.md)
 - [Direct-address table](direct-address-table.md)

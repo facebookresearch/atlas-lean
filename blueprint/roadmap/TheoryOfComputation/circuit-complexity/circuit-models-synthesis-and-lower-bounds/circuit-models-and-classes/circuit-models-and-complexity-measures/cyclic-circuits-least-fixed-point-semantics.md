@@ -8,4 +8,5 @@ A *cyclic circuit* over a basis interpreted by monotone operations on a complete
 
 ## Sources
 
-- Alexander A. Razborov, "On the Method of Approximations", Proceedings of the Twenty-First Annual ACM Symposium on Theory of Computing, 1989.
+- Katsutoshi Nakayama, Akira Maruoka, "Loop Circuits and Their Relation to Razborov's Approximation Model", Information and Computation 119(2), 154–159, 1995.
+- Bruno P. Cavalar, Igor C. Oliveira, "Boolean Circuit Complexity and Two-Dimensional Cover Problems", ACM Transactions on Computation Theory, 2025 (Section 2.5, cyclic constructions evaluated from the empty sets).

@@ -8,4 +8,4 @@ Let $\varphi$ be a CNF formula in which every clause has exactly $k$ literals on
 
 ## Sources
 
-- R. A. Moser, "A Constructive Proof of the Lovász Local Lemma", Proceedings of the 41st ACM Symposium on Theory of Computing (STOC), 2009.
+- R. A. Moser, "A Constructive Proof of the Lovász Local Lemma", Proceedings of the 41st ACM Symposium on Theory of Computing (STOC), 343–350, 2009, Algorithm 2.1 (local correction with the lexicographically first violated clause of the inclusive neighbourhood; the source also restarts runs that take too long).

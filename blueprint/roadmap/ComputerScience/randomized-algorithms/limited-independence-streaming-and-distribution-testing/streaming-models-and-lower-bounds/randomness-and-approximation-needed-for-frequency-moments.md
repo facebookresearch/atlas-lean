@@ -4,7 +4,7 @@ For every nonnegative integer $k \ne 1$: (1) every deterministic streaming algor
 
 ## Proof sketch
 
-Use graph streams: for a word $a \in \Gamma^n$ list the pairs $(i, a_i)$. For two words, $F_k$ of the concatenation is $2^k \#\{i : a_i = b_i\} + 2\, d_H(a, b)$. (1) Take a code over a 16-letter alphabet with $2^{\Omega(n)}$ words pairwise disagreeing in at least half the positions; a deterministic approximation distinguishes equal from distinct codewords, so the memory states must differ. (2) Exact $F_k$ decides whether two words agree nowhere, which encodes disjointness, so randomized disjointness gives $\Omega(n)$.
+Use graph streams: for a word $a \in \Gamma^n$ list the pairs $(i, a_i)$. For two words, $F_k$ of the concatenation is $2^k \#\{i : a_i = b_i\} + 2\, d_H(a, b)$. (1) Take a code over a 16-letter alphabet with $2^{\Omega(n)}$ words pairwise disagreeing in at least half the positions; equal codewords give $F_k = 2^k n$ and distinct ones $F_k \le 2^{k-1} n + n$ (for $k = 0$: $n$ versus at least $3n/2$), which a $1 \pm 0.1$ approximation separates when $k \ne 1$, so distinct codewords must leave distinct memory states. (2) Since $2^k \ne 2$, exact $F_k$ determines the number of agreements; with $a_i = 1$ if $x_i = 1$ (else $0$) and $b_i = 1$ if $y_i = 1$ (else $2$) the words agree somewhere iff $x$ and $y$ intersect, so randomized disjointness gives $\Omega(n)$.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ Use graph streams: for a word $a \in \Gamma^n$ list the pairs $(i, a_i)$. For tw
 
 ## Sources
 
-- N. Alon, Y. Matias and M. Szegedy, "The Space Complexity of Approximating the Frequency Moments", Journal of Computer and System Sciences 58(1), 1999.
+- N. Alon, Y. Matias and M. Szegedy, "The Space Complexity of Approximating the Frequency Moments", Journal of Computer and System Sciences 58(1), 1999, Propositions 3.7 (deterministic, relative error $0.1$, via a family of $n/4$-sets with small pairwise intersections) and 3.8 (randomized exact computation, via disjointness).

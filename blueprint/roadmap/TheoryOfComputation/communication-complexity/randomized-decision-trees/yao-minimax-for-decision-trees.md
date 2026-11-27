@@ -1,6 +1,6 @@
 # Yao's minimax principle for bounded-error and zero-error decision trees
 
-For every $f : \{0,1\}^n \to \beta$ with finite input space: (1) $R_\varepsilon(f) = \max_\mu D^\mu_\varepsilon(f)$, the maximum of the distributional complexity over input distributions; (2) for zero-error algorithms, with cost the expected number of executed queries,
+For every $f : \{0,1\}^n \to \beta$ with finite input space: (1) for $0 < \varepsilon < 1/2$, $R_\varepsilon(f) = \max_\mu D^\mu_\varepsilon(f)$, the maximum of the distributional complexity over input distributions (both sides bounded-depth; at $\varepsilon = 0$ they both equal $D(f)$, not the expected-cost $R_0$); (2) for zero-error algorithms, with cost the expected number of executed queries,
 
 $$R_0(f) = \max_{\mu} \min_{T} \mathbb{E}_{x \sim \mu}\big[\mathrm{cost}(T, x)\big],$$
 

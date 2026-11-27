@@ -2,7 +2,9 @@
 
 For every $f : \{-1,1\}^n \to \{-1,1\}$, with $\alpha = \min(\Pr[f = 1], \Pr[f = -1])$,
 
-$$2\alpha \log_2\frac{1}{\alpha} \le \mathbf{I}[f].$$
+$$2\alpha \log_2\frac{1}{\alpha} \le \mathbf{I}[f],$$
+
+with the left side read as $0$ when $\alpha = 0$.
 
 Equivalently, a set $A \subseteq \{0,1\}^n$ of density $\alpha \le 1/2$ has at least $\alpha \log_2(1/\alpha) \cdot 2^n$ edges leaving it. Equality holds for subcubes (e.g. $\alpha$ a power of $1/2$).
 

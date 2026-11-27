@@ -8,9 +8,9 @@ For distinct points $x_1, \dots, x_t$ with $t \le k$, evaluation $c \mapsto (h_c
 
 ## Depends on
 
-- [k-wise independent hash families](../word-ram-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash family](../word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 
-- S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science, 2012.
-- M. N. Wegman and J. L. Carter, "New Hash Functions and Their Use in Authentication and Set Equality", Journal of Computer and System Sciences, 1981.
+- S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science 7(1-3), 2012.
+- M. N. Wegman and J. L. Carter, "New Hash Functions and Their Use in Authentication and Set Equality", Journal of Computer and System Sciences 22(3), 1981.

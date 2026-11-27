@@ -23,4 +23,5 @@
 ## Sources
 
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
+- Ker-I Ko, "Some Observations on the Probabilistic Algorithms and NP-hard Problems", Information Processing Letters 14(1), 39–43, 1982 ($\mathsf{NP}\subseteq\mathsf{BPP}$ implies $\mathsf{NP}=\mathsf{RP}$).
 - Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.

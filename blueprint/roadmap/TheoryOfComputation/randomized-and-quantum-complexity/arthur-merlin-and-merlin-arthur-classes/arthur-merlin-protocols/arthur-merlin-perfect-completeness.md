@@ -17,5 +17,5 @@ Amplify the error to $2^{-m}$ and apply the Lautemann covering argument: Merlin 
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 6–7", 2007, Exercise 6.12.
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 9–10", 2007, Exercises 9.8 and 9.9.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 6.12 ($\mathsf{MA}$ with perfect soundness equals $\mathsf{NP}$; two-sided $\mathsf{MA}$ equals $\mathsf{MA}$ with perfect completeness) and Exercises 9.8–9.9 (two-sided $\mathsf{AM}$ and $\mathsf{IP}$ equal their perfect-completeness versions), numbering of the 2007 public draft.
+- Martin Fürer, Oded Goldreich, Yishay Mansour, Michael Sipser and Stathis Zachos, "On Completeness and Soundness in Interactive Proof Systems", Advances in Computing Research 5, 1989.

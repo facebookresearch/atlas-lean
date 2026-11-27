@@ -19,4 +19,4 @@ $G$ is non-bipartite iff some vertex $v$ has $(v,0)$ connected to $(v,1)$ in the
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Exercise 5.16.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 5.16.

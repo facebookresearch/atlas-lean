@@ -1,6 +1,6 @@
 # MOD_q gates from majority gates: AC^i[q] is contained in TC^i
 
-Over a basis containing the unbounded fan-in basis, $\mathrm{MOD}_q$ on $n$ bits is computed by a circuit with one majority gate per threshold, of size $O(n)$ per term and constant depth: $\mathrm{MOD}_q(x)=\bigvee_{k\le n,\,q\nmid k}[\,|x|=k\,]$ and $[\,|x|=k\,]=\mathrm{Th}_{\ge k}(x)\wedge\neg\mathrm{Th}_{\ge k+1}(x)$, where each threshold is a majority of the input padded with constants. A single $\mathrm{MOD}_q$ gate becomes a circuit of $O(n^2)$ gates and depth five. Consequently $\mathsf{AC}^i[q]\subseteq\mathsf{TC}^i$ for every $i$ and every $q\ge2$.
+Over a basis containing the unbounded fan-in basis, $\mathrm{MOD}_q$ on $n$ bits is computed by a circuit with one majority gate per threshold, of size $O(n)$ per term and constant depth: $\mathrm{MOD}_q(x)=\bigvee_{k\le n,\,q\nmid k}[\,|x|=k\,]$ and $[\,|x|=k\,]=\mathrm{Th}_{\ge k}(x)\wedge\neg\mathrm{Th}_{\ge k+1}(x)$, where each threshold is a majority of the input padded with constants. A single $\mathrm{MOD}_q$ gate becomes a circuit of $O(n)$ gates and $O(n^2)$ wires, of depth at most five. Consequently $\mathsf{AC}^i[q]\subseteq\mathsf{TC}^i$ for every $i$ and every $q\ge2$.
 
 ## Proof sketch
 

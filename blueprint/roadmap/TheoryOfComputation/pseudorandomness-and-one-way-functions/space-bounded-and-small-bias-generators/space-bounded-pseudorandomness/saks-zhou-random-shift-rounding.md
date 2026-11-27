@@ -8,5 +8,5 @@ Count shifts exactly: for $a \le b$ the number of shifts with different integer 
 
 ## Sources
 
-- M. Saks and S. Zhou, "BP_H SPACE(S) ⊆ DSPACE(S^{3/2})", Journal of Computer and System Sciences, 1999.
+- M. Saks and S. Zhou, "BP_H SPACE(S) ⊆ DSPACE(S^{3/2})", Journal of Computer and System Sciences 58(2), 376–403, 1999.
 - E. Chattopadhyay and J.-J. Liao, "Optimal Error Pseudodistributions for Read-Once Branching Programs", 35th Computational Complexity Conference (CCC 2020), 2020.

@@ -18,5 +18,5 @@ Truncating a Las Vegas machine at twice its expected time and outputting a defau
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Theorem 7.8.
-- John Gill, "Computational Complexity of Probabilistic Turing Machines", SIAM Journal on Computing 6(4), 1977.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Chapter 7 (Theorem 7.8 and Exercise 7.4 of the January 2007 web draft, with $\mathsf{ZPP}=\bigcup_c\mathsf{ZTIME}(n^c)$ defined by expected running time).
+- John Gill, "Computational Complexity of Probabilistic Turing Machines", SIAM Journal on Computing 6(4), 675–695, 1977.

@@ -13,4 +13,4 @@ A winning family never falsifies a line of a width-$w$ proof: a position falsify
 
 ## Sources
 
-- A. Atserias and V. Dalmau, "A Combinatorial Characterization of Resolution Width", Journal of Computer and System Sciences 74(3), 323–334, 2008.
+- A. Atserias and V. Dalmau, "A Combinatorial Characterization of Resolution Width", Journal of Computer and System Sciences 74(3), 323–334, 2008: Lemmas 1–2 and Theorem 2 (stated there for $r$-CNF formulas).

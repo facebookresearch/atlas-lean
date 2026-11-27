@@ -4,7 +4,7 @@ Let $T$ be a decision tree of depth $d$ over $\{0,1\}^n$ with leaves labelled in
 
 ## Proof sketch
 
-Each leaf contributes $g(\text{label})$ times the indicator of a subcube of codimension at most $d$, a product of at most $d$ affine functions of single coordinates. Total influence is $\sum_S |S|\hat f(S)^2 \le d \sum_S \hat f(S)^2 = d$.
+Each consistent root-to-leaf path contributes $g(\text{label})$ times the indicator of the subcube it fixes, of codimension at most $d$ (these subcubes partition the cube), a product of at most $d$ affine functions of single coordinates. Total influence is $\sum_S |S|\hat f(S)^2 \le d \sum_S \hat f(S)^2 = d$.
 
 ## Depends on
 

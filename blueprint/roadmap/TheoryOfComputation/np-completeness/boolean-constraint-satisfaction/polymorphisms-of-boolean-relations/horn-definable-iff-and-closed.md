@@ -8,11 +8,12 @@ Models of a Horn clause are closed under AND since a Horn clause is satisfied by
 
 ## Depends on
 
-- [Polymorphisms of relations](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/boolean-clones-and-post-lattice/polymorphisms-of-relations.md)
+- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](../../satisfiability/finite-domain-csp-dichotomy/polymorphism-clone-of-a-finite-structure.md)
 - [Horn formula](../../../../Logic/propositional-logic/horn-satisfiability/is-horn.md)
 
 ## Sources
 
+- R. Dechter and J. Pearl, "Structure Identification in Relational Data", Artificial Intelligence 58(1–3), 237–270, 1992.
 - M. Bodirsky, Graph Homomorphisms and Universal Algebra, lecture notes, TU Dresden.
 - T. J. Schaefer, "The Complexity of Satisfiability Problems", Proceedings of the 10th ACM Symposium on Theory of Computing (STOC), 216–226, 1978.
 - H. Chen, "A Rendezvous of Logic, Complexity, and Algebra", SIGACT News 37(4), 85–114, 2006 (extended version ACM Computing Surveys 42(1), 2009).

@@ -1,14 +1,14 @@
 # Nayak–Wu: quantum lower bounds for approximate median and k-th smallest
 
-Let a $T$-query value-oracle algorithm over a linearly ordered alphabet, on inputs $x \in \Sigma^N$, output an element whose rank is within $\Delta$ of $k$ (resp. a $\delta$-approximate median, $0 < \delta < 1$), with error $\varepsilon \le 1/2$. Then for $1 \le k \le N$, $1 \le \Delta$, $4\Delta \le N$:
+Let the input be a list $X = (x_1, \dots, x_N)$ of numbers in $[0, 1]$, given by a value oracle, and let $\Delta \in [1/2, N)$ and $\varepsilon \in [1/(2N), 1)$. A **$\Delta$-approximate $k$-th smallest element** ($1 \le k \le N$) is an entry $x_i$ that is a $j$-th smallest element of $X$ for some $j$ with $k - \Delta < j < k + \Delta$; an **$\varepsilon$-approximate median** is an entry $x_i$ with $|\{j : x_j < x_i\}| < (1 + \varepsilon)N/2$ and $|\{j : x_j > x_i\}| < (1 + \varepsilon)N/2$. Every bounded-error quantum query algorithm for the first problem makes
 
-$$\big(1 - 2\sqrt{\varepsilon(1 - \varepsilon)}\big)\Big(\sqrt{\frac{N}{\Delta}} + \frac{\sqrt{k(N-k)}}{\Delta}\Big) \le 32\, T, \qquad \big(1 - 2\sqrt{\varepsilon(1-\varepsilon)}\big)\min\Big(\frac{1}{\delta}, N\Big) \le 24\, T$$
+$$\Omega\Big(\sqrt{\frac{N}{\Delta}} + \frac{\sqrt{k(N-k)}}{\Delta}\Big)$$
 
-for selection and the median respectively (with improved constants $16$ and $12$ when the oracle steps are involutions). The same bounds hold, with $T$ replaced by $T + 1$, for algorithms returning an index of such an element.
+queries, and every bounded-error quantum query algorithm for the second makes $\Omega(1/\varepsilon)$ queries. Both bounds also hold for the relaxed problems in which the output need not be an entry of $X$, and in the comparison-tree model.
 
 ## Proof sketch
 
-Reduce from distinguishing weight layers of a Boolean string: map a bit string to a sequence over a two-element-valued ordered alphabet so that the rank of the answer reveals the Hamming weight up to $\Delta$, and simulate one value query with one bit query.
+Reduce from distinguishing two weight layers of a Boolean string: for a $0/1$ list, the value of an approximate $k$-th smallest element reveals whether the number of zeros is below or above a window of width about $2\Delta$ around $k$, and the weight-layer lower bound applies to the two layers bounding that window. The median bound is the case $k = \lceil N/2 \rceil$, $\Delta = \varepsilon N/2$.
 
 ## Depends on
 
@@ -21,4 +21,4 @@ Reduce from distinguishing weight layers of a Boolean string: map a bit string t
 
 ## Sources
 
-- A. Nayak and F. Wu, "The Quantum Query Complexity of Approximating the Median and Related Statistics", STOC 1999.
+- A. Nayak and F. Wu, "The Quantum Query Complexity of Approximating the Median and Related Statistics", STOC 1999, Section 1.2 (problem definitions), Theorem 1.5 and Corollaries 1.6 and 1.9.

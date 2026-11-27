@@ -16,4 +16,4 @@ Relate inputs with exactly one true bit in every block to inputs obtained by cle
 
 ## Sources
 
-- A. Ambainis, "Quantum Lower Bounds by Quantum Arguments", Journal of Computer and System Sciences 64(4), 2002.
+- A. Ambainis, "Quantum Lower Bounds by Quantum Arguments", Journal of Computer and System Sciences 64(4), 2002, Theorem 4 (case $s = w = \sqrt N$).

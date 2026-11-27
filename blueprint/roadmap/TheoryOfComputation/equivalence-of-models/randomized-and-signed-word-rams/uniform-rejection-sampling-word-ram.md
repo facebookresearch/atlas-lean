@@ -8,7 +8,7 @@ Each iteration exits with probability $m/2^{b}>1/2$, independently; conditioned 
 
 ## Depends on
 
-- [Randomized word RAMs and expected running time](randomized-word-rams.md)
+- [Randomized word RAM](../../../ComputerScience/sorting-and-searching/word-ram-integer-algorithms/randomized-word-ram.md)
 
 ## Proof depends on
 

@@ -1,6 +1,6 @@
 # Jerrum–Valiant–Vazirani: approximate counting and almost uniform sampling are equivalent
 
-For every self-reducible relation $R$: $|R(x)|$ has an FPRAS if and only if $R$ has an FPAUS. Moreover exact counts give exact uniform sampling.
+For every self-reducible relation $R\in\mathsf{PC}$ (polynomially bounded witnesses, polynomial-time membership test): $|R(x)|$ has an FPRAS if and only if $R$ has an FPAUS. Moreover an exact counting oracle gives an exact uniform generator in probabilistic polynomial time.
 
 ## Proof sketch
 
@@ -12,4 +12,4 @@ Sampling to counting: write $|R(x)|=|R(x_{\mathrm{last}})|\prod_i\frac{|R(x_{i-1
 
 ## Sources
 
-- Mark R. Jerrum, Leslie G. Valiant and Vijay V. Vazirani, "Random Generation of Combinatorial Structures from a Uniform Distribution", Theoretical Computer Science 43, 1986.
+- Mark R. Jerrum, Leslie G. Valiant and Vijay V. Vazirani, "Random Generation of Combinatorial Structures from a Uniform Distribution", Theoretical Computer Science 43, 169–188, 1986, Theorems 6.3 and 6.4 (and Section 3 for exact counting).

@@ -14,3 +14,4 @@ With the control set to $e_k$, a monotone circuit for the shift must carry each 
 
 - Edmund A. Lamagna, John E. Savage, "Combinational Complexity of Some Monotone Functions", Proceedings of the 15th Annual Symposium on Switching and Automata Theory (SWAT 1974), 1974.
 - Nicholas Pippenger, Leslie G. Valiant, "Shifting Graphs and Their Applications", Journal of the ACM 23(3), 1976.
+- Igor S. Sergeev, "On the Monotone Complexity of the Shift Operator", arXiv:1905.10747, 2020 (preprint; Theorem 3, $L(S_{q,A})\ge qn\log_2 n-O(qn)$ for every antichain $A$, and the $O(n\log n)$ upper bound for the one-hot code).

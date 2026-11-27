@@ -19,4 +19,4 @@ Membership: it is a special case of bounded directed connectivity on the symmetr
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Exercise 5.24.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 5.24.

@@ -8,7 +8,7 @@ Moreover a Boolean function computed by a tree of depth $d$, read as $\pm 1$, ha
 
 ## Proof sketch
 
-At a node querying $x_i$ with subtrees $h_0, h_1$, $\hat h(S) = \frac12(\hat h_0(S) + \hat h_1(S))$ for $i \notin S$ and similarly with the coefficient of $S \triangle \{i\}$ otherwise; since $S \mapsto S \triangle\{i\}$ is a bijection, the spectral norm of $h$ is at most the sum of those of the subtrees. Combined with granularity $2^{1-d}$ and Parseval, at most $4^{d}$ coefficients are nonzero.
+Sum over reachable leaf subcubes rather than recursing on subtrees: the linked tree definition allows a variable to be tested again below its first test, and the subtree below a test of $x_i$ may still depend on $x_i$ (if the root tests $x$, its $0$-child computes $x$ and its $1$-child returns $0$, the tree computes $0$, but averaging the children's constant coefficients would give $1/4$). Every input follows exactly one consistent root-to-leaf path $P$, so $h=\sum_P g(\ell_P)\mathbf 1_{C_P}$ over the consistent paths, where $C_P$ is the subcube fixed by the answers along $P$. The indicator of a subcube of codimension $c$ has $2^c$ Fourier coefficients, each $\pm2^{-c}$, so its spectral norm is $1$; with $|g|\le1$ the spectral norm of $h$ is at most the number of consistent paths, at most $L$. For the count, a Boolean function of tree depth $d\ge1$ has coefficients in $2^{1-d}\mathbb Z$ and, by Parseval, squared coefficients summing to $1$, so at most $4^{d-1}\le4^d$ of them are nonzero; for $d=0$ there is one.
 
 ## Depends on
 
@@ -23,4 +23,4 @@ At a node querying $x_i$ with subtrees $h_0, h_1$, $\hat h(S) = \frac12(\hat h_0
 ## Sources
 
 - E. Kushilevitz and Y. Mansour, "Learning Decision Trees Using the Fourier Spectrum", SIAM Journal on Computing 22(6), 1993.
-- R. O'Donnell, "Analysis of Boolean Functions", Cambridge University Press, 2014.
+- R. O'Donnell, "Analysis of Boolean Functions", Cambridge University Press, 2014 (Fact 3.15 and Proposition 3.16).

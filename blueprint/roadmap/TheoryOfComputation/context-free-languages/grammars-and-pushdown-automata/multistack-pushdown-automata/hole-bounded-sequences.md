@@ -8,4 +8,4 @@ In a sequence of MPDA transitions, a push $\downarrow$ with matching pop $\uparr
 
 ## Sources
 
-- S. Akshay, Paul Gastin, S. Krishna and Sparsa Roychowdhury, "Revisiting Underapproximate Reachability for Multipushdown Systems", Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2020), arXiv:2002.05950, 2020, Definition 1.
+- S. Akshay, Paul Gastin, S. Krishna and Sparsa Roychowdhury, "Revisiting Underapproximate Reachability for Multipushdown Systems", Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2020), arXiv:2002.05950, 2020, Definition 1 (a hole of stack $i$ is a maximal factor $(\downarrow_i ws)^{+}$ with $ws$ well-nested; the hole-push formulation above makes precise which pushes are absorbed into well-nested factors, so that well-nested runs have no holes as in their Theorem 2).

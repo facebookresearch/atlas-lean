@@ -13,4 +13,4 @@ Membership: guess $u$ and run the clocked universal machine for $t$ steps, which
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Theorem 2.9.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Theorem 2.9 (published by Cambridge University Press, 2009).

@@ -17,5 +17,5 @@ Completeness is immediate from the identity. For soundness, each sum-check round
 
 ## Sources
 
-- Shafi Goldwasser, Yael Tauman Kalai and Guy N. Rothblum, "Delegating Computation: Interactive Proofs for Muggles", Journal of the ACM 62(4), 2015.
-- Justin Thaler, "Proofs, Arguments, and Zero-Knowledge", Foundations and Trends in Privacy and Security 4(2–4), 2022, Section 4.6.
+- Shafi Goldwasser, Yael Tauman Kalai and Guy N. Rothblum, "Delegating Computation: Interactive Proofs for Muggles", Journal of the ACM 62(4), Article 27, 2015.
+- Justin Thaler, "Proofs, Arguments, and Zero-Knowledge", Foundations and Trends in Privacy and Security 4(2–4), 2022, Section 4.6 (soundness error $O(d\log S/|\mathbb{F}|)$).

@@ -4,7 +4,7 @@ For a vocabulary with finitely many relation symbols and no function symbols, an
 
 ## Proof sketch
 
-Induction on $n$: rank-$0$ formulas are Boolean combinations of the finitely many atomic formulas in the given variables; a rank-$(n+1)$ formula is a Boolean combination of atomic formulas and $\exists x\psi$ with $\psi$ among finitely many rank-$n$ classes.
+Induction on $n$, simultaneously for all $k$: rank-$0$ formulas in $k$ variables are Boolean combinations of the finitely many atomic formulas in those variables; a rank-$(n+1)$ formula in $k$ variables is a Boolean combination of atomic formulas and formulas $\exists x_{k+1}\psi$ with $\psi$ of rank at most $n$ in $k+1$ variables, of which there are finitely many up to equivalence.
 
 ## Depends on
 

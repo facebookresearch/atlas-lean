@@ -13,5 +13,7 @@ By the path-sum expansion each amplitude is $2^{-h/2}$ times a signed count of c
 
 ## Sources
 
-- Ronald de Wolf, "Quantum Computing: Lecture Notes", 2019.
-- Scott Aaronson, "Quantum Computing, Postselection, and Probabilistic Polynomial-Time", Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences, 2005.
+- Christopher M. Dawson, Henry L. Haselgrove, Andrew P. Hines, Duncan Mortimer, Michael A. Nielsen and Tobias J. Osborne, "Quantum Computing and Polynomial Equations over the Finite Field Z_2", Quantum Information and Computation 5(2), 102–112, 2005 (path sums for Hadamard–Toffoli circuits).
+- Igor L. Markov and Yaoyun Shi, "Simulating Quantum Computation by Contracting Tensor Networks", SIAM Journal on Computing 38(3), 963–981, 2008.
+- Ronald de Wolf, "Quantum Computing: Lecture Notes", arXiv:1907.09415, 2019 (lecture notes; supplementary pointer).
+- Scott Aaronson, "Quantum Computing, Postselection, and Probabilistic Polynomial-Time", Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences 461(2063), 3473–3482, 2005.

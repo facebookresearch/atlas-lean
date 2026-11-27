@@ -14,12 +14,13 @@ Parseval gives $\sum_S \mathrm{bias}_X(S)^2 = 2^n \,\mathrm{cp}(X)$ for the coll
 
 ## Depends on
 
-- [Bias, ε-biased and k-wise ε-biased distributions](small-bias-distributions.md)
+- [Small-bias distribution and generator](../space-bounded-and-small-bias-generators/small-bias-distributions.md)
 - [Parseval's identity on the Boolean cube](../../../Combinatorics/boolean-functions/kahn-kalai-linial-inequality/walsh-fourier-analysis-on-the-uniform-cube-and-t/khc-parseval.md)
 - [Total variation distance of functions on a finite set](../../../Probability/markov-chains/mixing-times-of-markov-chains/tv-dist.md)
 
 ## Sources
 
 - U. V. Vazirani, "Randomness, Adversaries and Computation", PhD thesis, University of California, Berkeley, 1986.
-- J. Naor and M. Naor, "Small-Bias Probability Spaces: Efficient Constructions and Applications", SIAM Journal on Computing, 1993.
-- S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science, 2012.
+- J. Naor and M. Naor, "Small-Bias Probability Spaces: Efficient Constructions and Applications", SIAM Journal on Computing 22(4), 838–856, 1993, Lemma 2 as restated by Alon–Goldreich–Håstad–Peralta (linear composition with a $k$-wise independent linear space).
+- N. Alon, O. Goldreich, J. Håstad and R. Peralta, "Simple Constructions of Almost k-wise Independent Random Variables", Random Structures & Algorithms 3(3), 289–304, 1992, Lemma 1 and Corollary 1 (Vazirani's lemma: $L_1$ distance at most $(2^k-1)^{1/2}\varepsilon$ on $k$ coordinates).
+- S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science 7(1–3), 2012, Section 8.2.

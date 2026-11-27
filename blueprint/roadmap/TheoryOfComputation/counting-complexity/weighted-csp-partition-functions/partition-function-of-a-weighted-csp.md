@@ -13,5 +13,6 @@ the sum ranging over the assignments of the occurring variables. With $0/1$ weig
 
 ## Sources
 
+- Martin Dyer, Leslie Ann Goldberg and Mark Jerrum, "The Complexity of Weighted Boolean #CSP", SIAM Journal on Computing 38(5), 2009 (partition functions of weighted constraint satisfaction problems).
 - M. Cygan, F. V. Fomin, Ł. Kowalik, D. Lokshtanov, D. Marx, M. Pilipczuk, M. Pilipczuk and S. Saurabh, Parameterized Algorithms, Springer, 2015.
 - L. G. Valiant, "The Complexity of Computing the Permanent", Theoretical Computer Science 8(2), 189–201, 1979.

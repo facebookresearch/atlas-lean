@@ -12,4 +12,4 @@ Satisfiability of each part for a fixed graph is exactly the existence of a $k$-
 
 ## Sources
 
-- J. Krajíček, "Interpolation Theorems, Lower Bounds for Proof Systems, and Independence Results for Bounded Arithmetic", The Journal of Symbolic Logic 62(2), 457–486, 1997.
+- J. Krajíček, "Interpolation Theorems, Lower Bounds for Proof Systems, and Independence Results for Bounded Arithmetic", The Journal of Symbolic Logic 62(2), 457–486, 1997: discussion after Definition 7.1.

@@ -9,7 +9,7 @@ Both bounds are asymptotically optimal.
 
 ## Proof sketch
 
-For the indicator, split inputs into two halves and use a perfect-hash style decomposition so that each element of $S$ is recognized by one conjunction of two shared half-minterms. For partial functions, apply Lupanov-type local coding to the $2^p$ defined points, which behave like a full truth table on $p$ variables.
+Both bounds are cases of the general estimate $C(f)\le(1+o(1))\,\log_2\binom{D}{N}\big/\log_2\log_2\binom{D}{N}+O(n)$ for a partial function defined on $D$ points and equal to $1$ on $N$ of them, proved by local coding combined with linear hashing of the domain into a smaller cube. For the indicator take $D=2^{2p}$, $N=|S|\le 2^p$, where $\log_2\binom{2^{2p}}{2^p}=(1+o(1))\,p\,2^p$; for partial functions $\log_2\binom{D}{N}\le D\le 2^p$. In both cases the additive $O(n)=O(p)$ term is absorbed.
 
 ## Depends on
 
@@ -21,6 +21,6 @@ For the indicator, split inputs into two halves and use a perfect-hash style dec
 
 ## Sources
 
-- O. B. Lupanov, "On an Approach to the Synthesis of Control Systems: the Principle of Local Coding", Problemy Kibernetiki, 1965.
+- O. B. Lupanov, "On an Approach to the Synthesis of Control Systems: the Principle of Local Coding", Problemy Kibernetiki 14, 31–110, 1965.
 - L. A. Sholomov, "On the Realization of Incompletely Defined Boolean Functions by Circuits of Functional Elements", Problemy Kibernetiki, 1969.
-- A. V. Chashkin, "On Computing Partial Boolean Functions", Matematicheskie Voprosy Kibernetiki, 2024.
+- A. V. Chashkin, "On Computing Partial Boolean Functions", Matematicheskie Voprosy Kibernetiki 22, 152–222, 2024 (inequality (1.1)).

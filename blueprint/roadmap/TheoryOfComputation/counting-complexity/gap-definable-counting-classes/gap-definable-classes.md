@@ -17,6 +17,6 @@ One has $\mathsf{UP}\subseteq\mathsf{FewP}\subseteq\mathsf{SPP}\subseteq\mathsf{
 
 ## Sources
 
-- Stephen A. Fenner, Lance J. Fortnow and Stuart A. Kurtz, "Gap-Definable Counting Classes", Journal of Computer and System Sciences 48(1), 1994.
+- Stephen A. Fenner, Lance J. Fortnow and Stuart A. Kurtz, "Gap-Definable Counting Classes", Journal of Computer and System Sciences 48(1), 1994, Proposition 3.5, Definition 4.1, Proposition 4.2, Sections 5 (SPP, Definition 5.13 of WPP and LWPP) and Corollaries 5.10–5.11.
 - Stephen A. Fenner, "PP-Lowness and a Simple Definition of AWPP", Theory of Computing Systems 36(2), 2003.
 - Richard Beigel and John Gill, "Counting Classes: Thresholds, Parity, Mods, and Fewness", Theoretical Computer Science 103(1), 1992.

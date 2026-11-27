@@ -1,6 +1,6 @@
 # Naming and honesty theorems
 
-(Naming, McCreight–Meyer.) For every Blum measure $\Phi$ there is a **measured** family of total-where-defined functions $(\nu_i)$ (the predicate $\nu_i(n)=m$ is decidable uniformly in $i$) such that every complexity class $C_t$ of a total computable $t$ equals $C_{\nu_i}$ for some $i$. (Honesty.) There is one total computable $g$ such that every such class $C_t$ has a **$g$-honest** name $t'$ with $C_{t'}=C_t$: some program computes $t'$ with cost at most $g(n,t'(n))$ for almost all $n$.
+(Naming, McCreight–Meyer.) For every Blum measure $\Phi$ there is a **measured** family $(\nu_i)$ of partial computable functions (the predicate $\nu_i(n)=m$ is decidable uniformly in $i$, $n$ and $m$) such that every complexity class $C_t$ of a total computable $t$ equals $C_{\nu_i}$ for some $i$. (Honesty.) There is one total computable $g$ such that every such class $C_t$ has a **$g$-honest** name $t'$ with $C_{t'}=C_t$: some program computes $t'$ with cost at most $g(n,t'(n))$ for almost all $n$.
 
 ## Proof sketch
 

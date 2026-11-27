@@ -10,6 +10,6 @@ For a word $\pi\in\{A,M\}^*$, a language $L$ is in $\mathsf{AM}[\pi]$ if there a
 
 ## Sources
 
-- László Babai, "Trading Group Theory for Randomness", Proceedings of the 17th Annual ACM Symposium on Theory of Computing, 1985.
-- László Babai and Shlomo Moran, "Arthur–Merlin Games: A Randomized Proof System, and a Hierarchy of Complexity Classes", Journal of Computer and System Sciences 36(2), 1988.
+- László Babai, "Trading Group Theory for Randomness", Proceedings of the 17th Annual ACM Symposium on Theory of Computing, 421–429, 1985.
+- László Babai and Shlomo Moran, "Arthur–Merlin Games: A Randomized Proof System, and a Hierarchy of Complexity Classes", Journal of Computer and System Sciences 36(2), 254–276, 1988, Section 2.
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.

@@ -6,4 +6,4 @@ A *(positive-arity) Boolean clone* is a set $C$ of operations $f : \{0,1\}^n \to
 
 - E. L. Post, The Two-Valued Iterative Systems of Mathematical Logic, Annals of Mathematics Studies 5, Princeton University Press, 1941.
 - F. J. Pelletier and N. M. Martin, "Post's Functional Completeness Theorem", Notre Dame Journal of Formal Logic 31(3), 462–475, 1990.
-- H. Chen, "A Rendezvous of Logic, Complexity, and Algebra", SIGACT News 37(4), 85–114, 2006 (extended version ACM Computing Surveys 42(1), 2009).
+- H. Chen, "A Rendezvous of Logic, Complexity, and Algebra", SIGACT News 37(4), 85–114, 2006 (extended version ACM Computing Surveys 42(1), 2009): Section 3 (clones, generation, Examples 3.17–3.18).

@@ -1,6 +1,6 @@
 # Fourier coefficients bounded by the L¹ norm and values by the spectral norm
 
-For every real function $f$ on $\{-1,1\}^n$: $|\hat f(S)| \le \mathbb{E}|f|$ for every $S$, i.e. $\|\hat f\|_\infty \le \|f\|_1$; and $|f(x)| \le \sum_S |\hat f(S)|$ for every $x$, i.e. $\|f\|_\infty \le \|\hat f\|_1$. These are the two endpoint cases of the Hausdorff–Young inequality on the cube.
+For every real function $f$ on $\{-1,1\}^n$: $|\hat f(S)| \le \mathbb{E}|f|$ for every $S$, i.e. $\|\hat f\|_\infty \le \|f\|_1$; and $|f(x)| \le \sum_S |\hat f(S)|$ for every $x$, i.e. $\|f\|_\infty \le \|\hat f\|_1$. The first is the $p = 1$ endpoint of the Hausdorff–Young inequality $\|\hat f\|_{p'} \le \|f\|_p$ ($1 \le p \le 2$, uniform measure on the cube, counting measure on sets); the second is the same endpoint for Fourier inversion.
 
 ## Proof sketch
 

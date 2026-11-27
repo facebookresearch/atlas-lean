@@ -1,13 +1,14 @@
 # A CDCL solver with watched literals returns models or LRAT refutations
 
-Consider a CDCL solver that is an instance of abstract DPLL with learning, uses two watched literals for propagation, first-UIP conflict analysis with recursive clause minimization, VSIDS decisions with phase saving, and Luby restarts, and records each learned clause as an LRAT addition step with its propagation hints. On every CNF formula $\varphi$ on which it terminates (it terminates under the standard restart and learning conditions of abstract DPLL with learning), it returns either a total assignment satisfying $\varphi$, or an LRAT certificate that an LRAT checker accepts for $\varphi$, which is then unsatisfiable.
+Consider a CDCL solver that is an instance of abstract DPLL with learning, uses two watched literals for propagation, first-UIP conflict analysis with recursive clause minimization, VSIDS decisions with phase saving, and Luby restarts, and records each learned clause as an LRAT addition step with its propagation hints. On every CNF formula $\varphi$ on which it terminates, it returns either a total assignment satisfying $\varphi$, or an LRAT certificate that an LRAT checker accepts for $\varphi$, which is then unsatisfiable. Termination is a separate property of the strategy: the termination theorem for abstract DPLL with learning gives it when Learn and Forget steps cannot alternate forever and restarts have strictly increasing periodicity; Luby restart intervals are unbounded but not increasing, so that theorem does not apply to them directly.
 
 ## Proof sketch
 
-Every move is a move of abstract DPLL with learning, whose invariant gives soundness of models; each learned clause is RUP from the current database with the recorded hints, so the log of additions ending in the empty clause is an accepted certificate.
+Every move is a move of abstract DPLL with learning, whose invariant gives soundness of models; each first-UIP clause is RUP from the current database with its reasons as hints in trail order followed by the conflict clause, each minimized clause stays RUP, and a conflict at decision level $0$ yields the empty clause, so the log of additions ending in the empty clause is an accepted certificate.
 
 ## Depends on
 
+- [Abstract DPLL with learning](../../../Logic/propositional-logic/sat-solving/abstract-dpll-with-learning.md)
 - [Two-watched-literal scheme](two-watched-literal-scheme.md)
 - [VSIDS branching heuristic](vsids-branching-heuristic.md)
 - [Phase saving](phase-saving.md)
@@ -20,6 +21,7 @@ Every move is a move of abstract DPLL with learning, whose invariant gives sound
 - [Completeness of propagation with two watched literals](watched-literal-invariant.md)
 - [Minimized learned clauses are derivable by unit propagation](minimized-clause-is-rup.md)
 - [Final states of abstract DPLL with learning](../../../Logic/propositional-logic/sat-solving/final-states-of-abstract-dpll-with-learning.md)
+- [Termination of abstract DPLL with learning](../../../Logic/propositional-logic/sat-solving/termination-of-abstract-dpll-with-learning.md)
 
 ## Sources
 

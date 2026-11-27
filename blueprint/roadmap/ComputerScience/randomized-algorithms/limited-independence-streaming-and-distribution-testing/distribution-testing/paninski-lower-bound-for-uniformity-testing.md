@@ -4,7 +4,7 @@ For even $n$ and proximity $\delta \le 1/2$, every $k$-sample uniformity tester 
 
 ## Proof sketch
 
-Pair up the points and, for a uniformly random sign vector $\sigma$, perturb the uniform distribution by $\pm 2\delta/n$ on each pair; each such distribution is $\delta$-far from uniform. The mixture over $\sigma$ of the $k$-sample product distributions is close to the uniform product distribution: its chi-square divergence is bounded by $\exp(O(k^2\delta^4/n)) - 1$, so a tester needs $k^2\delta^4 = \Omega(n)$.
+Pair up the points and, for a uniformly random sign vector $\sigma \in \{\pm1\}^{n/2}$, give the two points of pair $j$ masses $(1 + 2\delta\sigma_j)/n$ and $(1 - 2\delta\sigma_j)/n$; each such distribution is $\delta$-far from uniform. The mixture over $\sigma$ of the $k$-sample product distributions is close to the uniform product distribution: its chi-square divergence is at most $\exp(16k^2\delta^4/n) - 1$. A tester with success probability $2/3$ needs total variation distance at least $1/3$, hence chi-square divergence at least $4/9$, so $16k^2\delta^4 \ge n\ln(13/9) \ge 0.36\,n$, which gives $n \le 45\,k^2\delta^4 \le 52\,k^2\delta^4$. Paninski proves the $\Omega(\sqrt n/\delta^2)$ bound with this construction; the explicit constant comes from the computation above.
 
 ## Depends on
 
@@ -12,5 +12,5 @@ Pair up the points and, for a uniformly random sign vector $\sigma$, perturb the
 
 ## Sources
 
-- L. Paninski, "A Coincidence-Based Test for Uniformity Given Very Sparsely Sampled Discrete Data", IEEE Transactions on Information Theory 54(10), 2008.
+- L. Paninski, "A Coincidence-Based Test for Uniformity Given Very Sparsely Sampled Discrete Data", IEEE Transactions on Information Theory 54(10), 2008: the lower-bound construction.
 - C. L. Canonne, "A Survey on Distribution Testing: Your Data is Big. But is it Blue?", Theory of Computing Graduate Surveys 9, 2020.

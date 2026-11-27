@@ -16,4 +16,4 @@ Start from the better of the two constant functions, which agrees with $f$ on at
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 7–8", 2007.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.

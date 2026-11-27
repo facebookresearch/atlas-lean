@@ -14,4 +14,4 @@ Fewer than $2^{-(p+1)}\cdot2^{2p}=2^{p-1}$ coin strings $rs$ make $A$ err on $x$
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 6–7", 2007, Exercise 6.11.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 6.11 (numbering of the 2007 public draft; there the no-instances are all pairs $(x,r)$ with $x\notin S$, a subset of the no-instances used here).

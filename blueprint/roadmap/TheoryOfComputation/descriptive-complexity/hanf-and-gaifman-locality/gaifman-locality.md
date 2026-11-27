@@ -4,7 +4,7 @@ Let $\varphi(\bar x)$ be a first-order formula of quantifier rank $n$ and $\math
 
 ## Proof sketch
 
-Isomorphic neighborhoods of radius $3r+1$ inside one structure yield Hanf equivalence of $(\mathfrak{A}, \bar a)$ and $(\mathfrak{A}, \bar b)$ at radius $r$ by matching the complement of the balls identically; apply Hanf locality.
+With $d = (3^n - 1)/2$ the Hanf radius of rank-$n$ formulas, $r = 3d + 1$. Isomorphic $(3d+1)$-neighborhoods of $\bar a$ and $\bar b$ inside one structure yield $(\mathfrak{A}, \bar a) \leftrightarrows_d (\mathfrak{A}, \bar b)$, by the isomorphism near the tuples and a type-preserving matching of the remaining elements; apply Hanf locality.
 
 ## Depends on
 
@@ -16,4 +16,5 @@ Isomorphic neighborhoods of radius $3r+1$ inside one structure yield Hanf equiva
 
 ## Sources
 
-- L. Libkin, Elements of Finite Model Theory, Springer, 2004.
+- L. Libkin, Elements of Finite Model Theory, Springer, 2004: Lemma 4.9, Theorem 4.11 and Corollary 4.13.
+- L. Hella, L. Libkin and J. Nurmonen, "Notions of Locality and Their Logical Characterizations over Finite Models", Journal of Symbolic Logic 64(4), 1751–1773, 1999.

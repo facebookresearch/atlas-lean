@@ -22,5 +22,5 @@ Apply Nechiporuk's lemma to each block $Y_i$ with $\ell_i$ leaves, where $\sum\e
 
 ## Sources
 
-- E. I. Nechiporuk, "On a Boolean function", Soviet Mathematics Doklady, 1966.
+- E. I. Nechiporuk, "On a Boolean function", Soviet Mathematics Doklady 7(4), 999–1000, 1966.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

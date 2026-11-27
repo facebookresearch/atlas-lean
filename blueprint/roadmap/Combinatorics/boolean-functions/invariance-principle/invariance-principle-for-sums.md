@@ -2,8 +2,10 @@
 
 Let $X_1, \dots, X_n$ and $Y_1, \dots, Y_n$ be independent real random variables in $L^3$ with $\mathbb{E}X_i = \mathbb{E}Y_i$ and $\mathbb{E}X_i^2 = \mathbb{E}Y_i^2$, and let $\gamma = \sum_i (\mathbb{E}|X_i|^3 + \mathbb{E}|Y_i|^3)$. Then:
 - for every $C^3$ function $\psi$ with $|\psi'''| \le C$: $\big|\mathbb{E}\psi(\sum_i X_i) - \mathbb{E}\psi(\sum_i Y_i)\big| \le \frac{C}{6}\gamma$;
-- for every $K$-Lipschitz $\psi$: the same difference is at most $6K\gamma^{1/3}$;
-- the Lévy distance between $\sum_i X_i$ and $\sum_i Y_i$ is at most $3\gamma^{1/4}$.
+- for every $K$-Lipschitz $\psi$: the same difference is at most $cK\gamma^{1/3}$;
+- the Lévy distance between $\sum_i X_i$ and $\sum_i Y_i$ is at most $c\gamma^{1/4}$;
+
+here $c$ is a universal constant (O'Donnell, Cor. 11.59 and Cor. 11.61).
 
 The two families need not be defined on a common probability space.
 

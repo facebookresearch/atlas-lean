@@ -8,7 +8,7 @@ and for $N \ge 2$ also $\big(1 - 2\sqrt{\varepsilon(1-\varepsilon)}\big)\sqrt{N}
 
 ## Proof sketch
 
-Partition permutations according to whether $\pi^{-1}(t)$ lies in the first or second half, relate permutations differing by a transposition moving the preimage of $t$ across, and apply the relational adversary bound with $m, m' \approx N/2$ and $L \approx N/2$ (at the preimage position of $t$, $x$ has all $N/2$ partners differing there and each partner $y$ has one), giving $\sqrt{mm'/L} \approx \sqrt{N/2}$.
+Partition permutations according to whether $\pi^{-1}(t)$ lies in the first or second half, relate permutations differing by a transposition moving the preimage of $t$ across, and apply the relational adversary bound. With $\lceil N/2 \rceil$ positions in the first half, $m = \lfloor N/2 \rfloor$ and $m' = \lceil N/2 \rceil$ (or vice versa). At a position where the two related permutations differ, one of them has its preimage of $t$ there and all its partners differ there, while the other has exactly one partner differing there; so $L = \lceil N/2 \rceil$ and $\sqrt{mm'/L} = \sqrt{\lfloor N/2 \rfloor}$. For $N \ge 2$, $\lfloor N/2 \rfloor \ge N/3$; at $\varepsilon = 1/3$, $1 - 2\sqrt{2}/3 \ge 1/18$.
 
 ## Depends on
 
@@ -20,4 +20,4 @@ Partition permutations according to whether $\pi^{-1}(t)$ lies in the first or s
 
 ## Sources
 
-- A. Ambainis, "Quantum Lower Bounds by Quantum Arguments", Journal of Computer and System Sciences 64(4), 2002.
+- A. Ambainis, "Quantum Lower Bounds by Quantum Arguments", Journal of Computer and System Sciences 64(4), 2002, Theorem 7 (Ambainis splits by the parity of the preimage position).

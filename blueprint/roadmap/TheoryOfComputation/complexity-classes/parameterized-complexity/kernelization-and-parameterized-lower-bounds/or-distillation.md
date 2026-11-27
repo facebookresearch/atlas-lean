@@ -17,5 +17,5 @@ Fix a length $n$ and $t=\mathrm{poly}(n)$. Each no-instance $y$ of $B$ of the ou
 
 ## Sources
 
-- Lance Fortnow and Rahul Santhanam, "Infeasibility of Instance Compression and Succinct PCPs for NP", Journal of Computer and System Sciences 77(1), 2011.
+- Lance Fortnow and Rahul Santhanam, "Infeasibility of Instance Compression and Succinct PCPs for NP", Journal of Computer and System Sciences 77(1), 2011, Theorem 1.2 (stated for SAT; a Karp reduction from SAT to any NP-hard language transfers it).
 - Hans L. Bodlaender, Bart M. P. Jansen and Stefan Kratsch, "Kernelization Lower Bounds by Cross-Composition", SIAM Journal on Discrete Mathematics 28(1), arXiv:1206.5941, 2014.

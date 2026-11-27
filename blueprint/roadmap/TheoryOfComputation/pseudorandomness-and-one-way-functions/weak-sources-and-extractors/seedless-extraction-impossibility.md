@@ -12,5 +12,5 @@ Some value $b$ of the first output bit has at least $2^{n-1}$ preimages; let $X$
 
 ## Sources
 
-- S. Arora and B. Barak, "Computational Complexity: A Modern Approach", web draft of January 8, 2007.
-- S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science, 2012.
+- S. Arora and B. Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Chapter 21 (Chapter 16, Exercise 7 of the January 2007 web draft).
+- S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science 7(1–3), 1–336, 2012, Proposition 6.11.

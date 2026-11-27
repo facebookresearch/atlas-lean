@@ -8,13 +8,13 @@ Put $\varphi$ in prenex form, introduce a propositional variable for each ground
 
 ## Depends on
 
-- [First-order and quantifier-free projections](first-order-and-quantifier-free-projections.md)
+- [First-order and quantifier-free projections (Immerman-Landau)](../first-order-projections/first-order-and-quantifier-free-projections.md)
 - [Existential second-order definable graph classes](../fagin-s-theorem/fagin-esodefinable.md)
 - [Binary encoding of finite relational structures](../finite-structures-and-definability/binary-encoding-of-finite-structures.md)
 
 ## Proof depends on
 
-- [Projections compose and are closed under identity](projections-compose.md)
+- [Immerman-Landau: first-order and quantifier-free projection reducibilities are preorders refining FO reducibility](../first-order-projections/projection-reducibility-is-a-preorder.md)
 - [Ordered SAT reduces to 3-SAT by a BIT-free quantifier-free projection](sat-to-3sat-quantifier-free-projection.md)
 - [Ordered SAT reduces to independent set, clique and vertex cover by quantifier-free projections](sat-to-independent-set-quantifier-free-projection.md)
 - [Ordered SAT reduces to 3-colorability by a quantifier-free projection](sat-to-3col-quantifier-free-projection.md)

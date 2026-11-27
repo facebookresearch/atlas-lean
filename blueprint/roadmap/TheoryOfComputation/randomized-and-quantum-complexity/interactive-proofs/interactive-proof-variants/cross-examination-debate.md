@@ -4,7 +4,7 @@ Let $M$ be a probabilistic oracle machine with a stochastic oracle $O$, running 
 
 ## Proof sketch
 
-The proposer commits to conditional acceptance probabilities along the run; the challenger points to a step where the claimed probabilities are inconsistent with the step law by more than a threshold; the verifier samples that step to estimate the discrepancy. A Lipschitz condition bounds how errors propagate, so a false global claim forces a large local discrepancy at some step.
+Round by round, the proposer announces the conditional probability $\hat p_t$ that the next transcript bit of $M$ is $1$, the two provers jointly flip a shared uniform $z_t$, and the bit is set to $1$ iff $z_t \le \hat p_t$; the challenger may abort at a round where $\hat p_t$ is wrong, and the verifier then estimates the true conditional probability from $O(K^2)$ samples (oracle queries) and rejects the proposer if it differs from $\hat p_t$ by at least $1/(4\lceil150K\rceil)$. A Lipschitz condition bounds how errors propagate, so a false global claim forces a large local discrepancy at some step.
 
 ## Depends on
 
@@ -12,4 +12,4 @@ The proposer commits to conditional acceptance probabilities along the run; the 
 
 ## Sources
 
-- Jonah Brown-Cohen, Geoffrey Irving and Georgios Piliouras, "Scalable AI Safety via Doubly-Efficient Debate", Proceedings of the 41st International Conference on Machine Learning, arXiv:2311.14125, 2024, Definition 6.1, Theorem 6.2 and Appendix D.
+- Jonah Brown-Cohen, Geoffrey Irving and Georgios Piliouras, "Scalable AI Safety via Doubly-Efficient Debate", Proceedings of the 41st International Conference on Machine Learning, PMLR 235, 2024 (arXiv:2311.14125), Definition 6.1, Figure 1, Theorem 6.2 and Appendix D.

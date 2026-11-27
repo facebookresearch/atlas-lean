@@ -16,4 +16,4 @@ Average the coding inequality $\sum_x 2^{|F_\pi(x)|} \le 2^n$ over a uniformly r
 
 ## Sources
 
-- R. Paturi, P. Pudlák and F. Zane, "Satisfiability Coding Lemma", Chicago Journal of Theoretical Computer Science, 1999.
+- R. Paturi, P. Pudlák and F. Zane, "Satisfiability Coding Lemma", Chicago Journal of Theoretical Computer Science 1999(11), 1999, Lemmas 2 and 4, Fact 3 (the weighted form follows from Lemma 2 and the Kraft inequality as in Lemma 5).

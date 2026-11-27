@@ -9,6 +9,6 @@ An **ensemble** is a family $\mathcal{D}=(D_n)_n$ of distributions with $D_n$ on
 
 ## Sources
 
-- Leonid A. Levin, "Average Case Complete Problems", SIAM Journal on Computing 15(1), 1986.
-- Andrej Bogdanov and Luca Trevisan, "Average-Case Complexity", Foundations and Trends in Theoretical Computer Science 2(1), arXiv:cs/0606037, 2006.
-- Shai Ben-David, Benny Chor, Oded Goldreich and Michael Luby, "On the Theory of Average Case Complexity", Journal of Computer and System Sciences 44(2), 1992.
+- Leonid A. Levin, "Average Case Complete Problems", SIAM Journal on Computing 15(1), 285–286, 1986.
+- Andrej Bogdanov and Luca Trevisan, "Average-Case Complexity", Foundations and Trends in Theoretical Computer Science 2(1), 1–106, 2006, Definitions 1, 2, 6, 8 and 11 (there $D_n$ may live on $\{0,1\}^{\le m(n)}$; restricting to $\{0,1\}^n$ is the convention of Goldreich's textbook).
+- Shai Ben-David, Benny Chor, Oded Goldreich and Michael Luby, "On the Theory of Average Case Complexity", Journal of Computer and System Sciences 44(2), 193–219, 1992.

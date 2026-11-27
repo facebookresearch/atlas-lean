@@ -16,4 +16,4 @@ The encoded bit at position $(z,r)$ is $\langle\hat f(z),r\rangle$ for the low-d
 
 ## Sources
 
-- Madhu Sudan, Luca Trevisan and Salil Vadhan, "Pseudorandom Generators without the XOR Lemma", Journal of Computer and System Sciences 62(2), 2001.
+- Madhu Sudan, Luca Trevisan and Salil Vadhan, "Pseudorandom Generators without the XOR Lemma", Journal of Computer and System Sciences 62(2), 236–266, 2001 (Sections 4–5: the low-degree extension over a field of size $2^{O(n)}$ concatenated with the Hadamard code, and its local list decoding).

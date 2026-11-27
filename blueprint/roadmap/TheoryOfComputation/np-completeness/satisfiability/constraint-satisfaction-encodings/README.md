@@ -4,4 +4,3 @@
 - [Variable-occurrence bounds for CSP instances](variable-occurrence-bounds.md)
 - [One-hot CNF encoding of finite-domain CSPs](one-hot-cnf-encoding.md)
 - [Primal graph of a CSP instance](primal-graph-of-a-csp.md)
-- [CSPs of bounded treewidth are solvable by dynamic programming](bounded-treewidth-csp-dynamic-programming.md)

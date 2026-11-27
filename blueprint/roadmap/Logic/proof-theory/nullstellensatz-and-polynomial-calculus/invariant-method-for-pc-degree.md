@@ -12,5 +12,6 @@ Induction along the proof: inputs lie in $M$, $M$ is closed under linear combina
 
 ## Sources
 
+- M. Clegg, J. Edmonds and R. Impagliazzo, "Using the Groebner Basis Algorithm to Find Proofs of Unsatisfiability", Proceedings of the 28th ACM Symposium on Theory of Computing (STOC), 1996: Theorem 1 (the space $V_d$ of degree-$d$ consequences).
 - R. Impagliazzo, P. Pudlák and J. Sgall, "Lower Bounds for the Polynomial Calculus and the Gröbner Basis Algorithm", Computational Complexity 8(2), 127–144, 1999.
 - S. Buss, D. Grigoriev, R. Impagliazzo and T. Pitassi, "Linear Gaps between Degrees for the Polynomial Calculus Modulo Distinct Primes", Journal of Computer and System Sciences 62(2), 267–289, 2001.

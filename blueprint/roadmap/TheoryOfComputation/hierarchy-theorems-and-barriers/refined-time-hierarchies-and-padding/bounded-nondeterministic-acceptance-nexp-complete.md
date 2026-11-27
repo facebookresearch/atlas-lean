@@ -4,7 +4,7 @@ Let $\mathrm{NBA}$ be the language of triples $\langle M,x,t\rangle$ (with $t$ w
 
 ## Proof sketch
 
-Membership: guess $c$ and simulate for $t\le 2^{|t|}$ steps. Hardness: a language decided by a verifier in time $2^{n^k}$ maps $x$ to $\langle V,x,2^{|x|^k}\rangle$, whose binary bound has polynomial length. The deterministic version is outside $\mathsf{P}$ by the time hierarchy theorem.
+Membership: guess $c$ and simulate for $t<2^{|t|}$ steps, which takes time $2^{O(n)}$ on inputs of length $n\ge|t|$. Hardness: a language decided by a verifier $V$ in time $2^{n^k}$ maps $x$ to $\langle V,x,2^{|x|^k}\rangle$, whose binary bound has polynomial length. The deterministic version is in $\mathsf{E}$ by clocked universal simulation, $\mathsf{EXP}$-hard by the analogous reduction $x\mapsto\langle M,x,2^{|x|^k}\rangle$, and outside $\mathsf{P}$ because $\mathsf{P}\ne\mathsf{EXP}$ by the time hierarchy theorem (Goldreich, Exercises 4.6–4.7).
 
 ## Depends on
 
@@ -18,5 +18,5 @@ Membership: guess $c$ and simulate for $t\le 2^{|t|}$ steps. Hardness: a languag
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Chapter 2, Exercise 9.
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Exercises 4.6–4.7.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Chapter 2, Exercise 9 (published by Cambridge University Press, 2009).
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Exercises 4.6–4.7 (published by Cambridge University Press, 2008).

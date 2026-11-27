@@ -19,5 +19,5 @@ Hennie–Stearns block structure: each simulated tape is stored on one track in 
 
 ## Sources
 
-- F. C. Hennie and R. E. Stearns, "Two-Tape Simulation of Multitape Turing Machines", Journal of the ACM 13, 1966.
+- F. C. Hennie and R. E. Stearns, "Two-Tape Simulation of Multitape Turing Machines", Journal of the ACM 13(4), 533–546, 1966.
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.

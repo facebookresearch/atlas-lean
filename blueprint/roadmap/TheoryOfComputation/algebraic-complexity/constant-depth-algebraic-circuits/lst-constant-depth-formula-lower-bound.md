@@ -1,16 +1,16 @@
 # Limaye–Srinivasan–Tavenas lower bound for constant-depth formulas over any field
 
-Over every field, let $10d\le k$, $2^k\le n$ and $\Delta\ge1$. Every unbounded fan-in formula of product-depth at most $\Delta$ computing $\mathrm{IMM}_{n,d}$ (with its variables renamed) with $s$ nodes satisfies
+Over every field, with the absolute constant $c$ of the circuit bound, let $d,k,\Delta\ge1$ with $k\ge10d$ and $2^k\le n$. Every unbounded fan-in formula of product-depth at most $\Delta$ with $s\ge2$ nodes computing $\mathrm{IMM}_{n,d}$ satisfies
 
 $$
-2^{k\left(d^{1/(4^\Delta-1)}/20-1/2\right)}\le \mathrm{poly}\bigl(s,\Theta(d/\ln d)^d\bigr),
+\bigl(s\cdot d^{d}\cdot 2^{k}\bigr)^{c\Delta}\ \ge\ 2^{k\left(d^{1/(4^\Delta-1)}/20-1/2\right)} .
 $$
 
-with the polynomial and the implied constants of the set-multilinearization bound. For constant $\Delta$, taking $k=\lfloor\log_2n\rfloor$ and $d=\lfloor\log_2 k\rfloor$ makes the left side $n^{\Omega(d^{1/(4^\Delta-1)})}$ while $(d/\ln d)^d=n^{o(1)}$, so constant-depth formulas for $\mathrm{IMM}_{n,d}$ need superpolynomial size.
+For constant $\Delta$, taking $k=\lfloor\log_2n\rfloor$ and $d=\lfloor\log_2 k\rfloor$ makes the right side $n^{\Omega(d^{1/(4^\Delta-1)})}$ while $d^d=n^{o(1)}$, so constant-depth formulas for $\mathrm{IMM}_{n,d}$ need superpolynomial size.
 
 ## Proof sketch
 
-Set-multilinearize the formula (Forbes's characteristic-free version): this gives a set-multilinear formula of product-depth at most $2\Delta$ and size $\mathrm{poly}(s,\Theta(d/\ln d)^d)$. Apply the set-multilinear lower bound at product-depth $2\Delta$, where the exponent $d^{1/(2^{2\Delta}-1)}=d^{1/(4^\Delta-1)}$.
+A formula is a circuit of the same size and product-depth, so the circuit bound applies.
 
 ## Depends on
 
@@ -19,10 +19,9 @@ Set-multilinearize the formula (Forbes's characteristic-free version): this give
 
 ## Proof depends on
 
-- [Set-multilinearization of constant-depth formulas over any field](set-multilinearization-over-any-field.md)
-- [LST lower bound for set-multilinear formulas computing IMM](lst-set-multilinear-lower-bound.md)
+- [Constant-depth algebraic circuits for IMM need superpolynomial size](lst-constant-depth-circuit-lower-bound.md)
 
 ## Sources
 
 - Nutan Limaye, Srikanth Srinivasan, Sébastien Tavenas, "Superpolynomial Lower Bounds Against Low-Depth Algebraic Circuits", 62nd IEEE Symposium on Foundations of Computer Science (FOCS 2021), 2021.
-- Michael A. Forbes, "Low-Depth Algebraic Circuit Lower Bounds over Any Field", 39th Computational Complexity Conference (CCC 2024), 2024, Corollary 27.
+- Michael A. Forbes, "Low-Depth Algebraic Circuit Lower Bounds over Any Field", 39th Computational Complexity Conference (CCC 2024), LIPIcs 300, 2024, Theorem 10 and Corollary 27.

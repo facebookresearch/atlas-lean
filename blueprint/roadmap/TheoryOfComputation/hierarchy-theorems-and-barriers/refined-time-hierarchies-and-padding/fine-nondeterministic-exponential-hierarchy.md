@@ -6,11 +6,11 @@ $$
 \mathsf{NTIME}\bigl(\lfloor 2^{\,n-c_0 n^{\delta}}\rfloor\bigr)\subsetneq\mathsf{NTIME}(2^{n}),
 $$
 
-and there is $k$ with $\mathsf{NTIME}(2^{n}/(n+1)^{k})\subsetneq\mathsf{NTIME}(2^{n})$.
+and $\mathsf{NTIME}(\lfloor 2^{n}/(n+1)^{k}\rfloor)\subsetneq\mathsf{NTIME}(2^{n})$ for every integer $k\ge1$.
 
 ## Proof sketch
 
-Lazy diagonalization (Žák): on an interval of input lengths, mirror the simulated nondeterministic machine on the next length until the end of the interval, where the deterministic exponential simulation of the first length is affordable and is used to disagree. The universal simulation in time $O(t\log t)$ keeps the overhead to a polynomial factor in $n$.
+Both separations are instances of the nondeterministic time hierarchy theorem of Seiferas–Fischer–Meyer and Žák: if $f$ and $g$ are time-constructible and $f(n+1)=o(g(n))$ then $\mathsf{NTIME}(f)\subsetneq\mathsf{NTIME}(g)$ (Arora–Barak Theorem 3.3). Here $g(n)=2^{n}$; when $f$ is not time-constructible (irrational $\delta$ or $c_0$), replace it by the larger time-constructible bound $2^{\,n-\lfloor n^{\delta'}\rfloor}$ for a rational $0<\delta'<\delta$, which satisfies the same hypothesis. Moreover $f(n+1)\le 2^{\,n+1-c_0(n+1)^{\delta}}=o(2^{n})$ because $c_0(n+1)^{\delta}\to\infty$, respectively $f(n+1)\le 2^{n+1}/(n+2)^{k}=o(2^{n})$ for $k\ge1$. The theorem is proved by lazy diagonalization: on an interval of input lengths, mirror the diagonalized machine on the next length until the end of the interval, where the deterministic exponential simulation of the first length is affordable and is used to disagree. The linked hierarchy page is the special case $n$ versus $n^2$.
 
 ## Depends on
 
@@ -19,9 +19,9 @@ Lazy diagonalization (Žák): on an interval of input lengths, mirror the simula
 ## Proof depends on
 
 - [Nondeterministic time hierarchy](../nondet-time-hierarchy.md)
-- [Hennie–Stearns: a universal multi-tape machine with O(t log t) overhead](../../equivalence-of-models/ram-word-ram-and-pointer-machines/universal-simulation-t-log-t.md)
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
-- Stanislav Žák, "A Turing Machine Time Hierarchy", Theoretical Computer Science 26(3), 1983.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009, Section 3.3 (Theorem 3.3 in the 2007 web draft).
+- Stanislav Žák, "A Turing Machine Time Hierarchy", Theoretical Computer Science 26(3), 327–333, 1983.
+- Joel I. Seiferas, Michael J. Fischer and Albert R. Meyer, "Separating Nondeterministic Time Complexity Classes", Journal of the ACM 25(1), 146–167, 1978.

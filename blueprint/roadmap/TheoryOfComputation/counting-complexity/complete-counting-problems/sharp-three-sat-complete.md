@@ -17,5 +17,6 @@ The standard clause-splitting reduction from CNF to 3-CNF can be made parsimonio
 
 ## Sources
 
-- Leslie G. Valiant, "The Complexity of Computing the Permanent", Theoretical Computer Science 8(2), 1979.
+- Leslie G. Valiant, "The Complexity of Enumeration and Reliability Problems", SIAM Journal on Computing 8(3), 1979, Facts 1 and 2.
+- Christos H. Papadimitriou, "Computational Complexity", Addison-Wesley, 1994, Proposition 9.3 (three occurrences per variable).
 - Michael R. Garey and David S. Johnson, "Computers and Intractability: A Guide to the Theory of NP-Completeness", W. H. Freeman, 1979.

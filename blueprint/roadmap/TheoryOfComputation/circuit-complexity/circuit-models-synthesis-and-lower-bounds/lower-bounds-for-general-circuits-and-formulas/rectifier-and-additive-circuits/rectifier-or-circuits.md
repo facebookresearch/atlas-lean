@@ -8,5 +8,5 @@ A *rectifier $(p,q)$-circuit* is a directed graph with $p$ input poles and $q$ o
 
 ## Sources
 
-- O. B. Lupanov, "On Rectifier and Switching-and-Rectifier Schemes", Doklady Akademii Nauk SSSR, 1956.
-- Stasys Jukna, Igor Sergeev, "Complexity of Linear Boolean Operators", Foundations and Trends in Theoretical Computer Science, 2013.
+- O. B. Lupanov, "On Rectifier and Switching-and-Rectifier Schemes", Doklady Akademii Nauk SSSR 111(6), 1171–1174, 1956.
+- Stasys Jukna, Igor Sergeev, "Complexity of Linear Boolean Operators", Foundations and Trends in Theoretical Computer Science 9(1), 1–123, 2013.

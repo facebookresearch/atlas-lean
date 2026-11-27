@@ -10,4 +10,4 @@ The *disjoint-set interface* on $[n]$ has as state an equivalence relation $\sim
 ## Sources
 
 - T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
-- R. E. Tarjan, "Efficiency of a Good But Not Linear Set Union Algorithm", Journal of the ACM 22(2), 1975.
+- R. E. Tarjan, "Efficiency of a Good But Not Linear Set Union Algorithm", Journal of the ACM 22(2), pp. 215-225, 1975.

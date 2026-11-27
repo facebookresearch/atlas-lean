@@ -8,10 +8,10 @@ The parity on $S$ equals $\langle \beta(p_S(x)), \beta(y)\rangle$. For fixed $x$
 
 ## Depends on
 
-- [Bias, ε-biased and k-wise ε-biased distributions](small-bias-distributions.md)
+- [Small-bias distribution and generator](../space-bounded-and-small-bias-generators/small-bias-distributions.md)
 - [The Galois field with pⁿ elements](../../../FieldTheory/finite-fields/finite-field-existence.md)
 - [Inner product of bit strings modulo two](../../../ComputerScience/quantum-algorithms/deutsch-jozsa-and-bernstein-vazirani-algorithms/bit-dot.md)
 
 ## Sources
 
-- N. Alon, O. Goldreich, J. Håstad and R. Peralta, "Simple Constructions of Almost k-wise Independent Random Variables", Random Structures & Algorithms, 1992.
+- N. Alon, O. Goldreich, J. Håstad and R. Peralta, "Simple Constructions of Almost k-wise Independent Random Variables", Random Structures & Algorithms 3(3), 289–304, 1992, Construction 3 and Proposition 3.

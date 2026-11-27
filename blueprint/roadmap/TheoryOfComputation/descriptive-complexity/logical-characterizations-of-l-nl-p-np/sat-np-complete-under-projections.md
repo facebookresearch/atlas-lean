@@ -9,7 +9,7 @@ Encode CNF formulas as ordered structures (clauses, variables, positive and nega
 ## Depends on
 
 - [First-order and quantifier-free reductions](../first-order-interpretations-and-reductions/first-order-reductions.md)
-- [First-order and quantifier-free projections](../quantifier-free-projections/first-order-and-quantifier-free-projections.md)
+- [First-order and quantifier-free projections (Immerman-Landau)](../first-order-projections/first-order-and-quantifier-free-projections.md)
 - [The complexity class NP](../../complexity-classes/the-classes-p-np-and-conp/np.md)
 - [Existential second-order definable graph classes](../fagin-s-theorem/fagin-esodefinable.md)
 
@@ -24,4 +24,4 @@ Encode CNF formulas as ordered structures (clauses, variables, positive and nega
 
 - Neil Immerman, "Descriptive Complexity", Springer, 1999.
 - Neil Immerman and Susan Landau, "The Complexity of Iterated Multiplication", Information and Computation 116(1), 1995.
-- Ronald Fagin, "Generalized First-Order Spectra and Polynomial-Time Recognizable Sets", Complexity of Computation, 1974.
+- Ronald Fagin, "Generalized First-Order Spectra and Polynomial-Time Recognizable Sets", in Complexity of Computation, SIAM-AMS Proceedings 7, 43–73, 1974.

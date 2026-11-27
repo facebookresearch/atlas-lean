@@ -18,5 +18,5 @@ A circuit with at most $s$ gates over a basis of at most $5$ operations is descr
 
 ## Sources
 
-- Claude E. Shannon, "The Synthesis of Two-Terminal Switching Circuits", Bell System Technical Journal, 1949.
+- Claude E. Shannon, "The Synthesis of Two-Terminal Switching Circuits", Bell System Technical Journal 28(1), 59–98, 1949.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

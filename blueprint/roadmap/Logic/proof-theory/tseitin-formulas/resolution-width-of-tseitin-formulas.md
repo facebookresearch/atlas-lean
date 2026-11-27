@@ -19,5 +19,5 @@ Measure each clause $C$ by the least number of vertex constraints implying it. A
 
 ## Sources
 
-- E. Ben-Sasson and A. Wigderson, "Short Proofs Are Narrow — Resolution Made Simple", Journal of the ACM 48(2), 149–169, 2001.
+- E. Ben-Sasson and A. Wigderson, "Short Proofs Are Narrow — Resolution Made Simple", Journal of the ACM 48(2), 149–169, 2001: Theorem 4.4 (width), Corollary 3.6 (size from width) and Section 6.1 (proof).
 - A. Urquhart, "Hard Examples for Resolution", Journal of the ACM 34(1), 209–219, 1987.

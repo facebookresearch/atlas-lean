@@ -16,5 +16,6 @@ Local coding adapted to formulas: partition a block of the variable cube into pu
 
 ## Sources
 
+- O. B. Lupanov, "On the Complexity of Realization of Functions of the Algebra of Logic by Formulae", Problemy Kibernetiki 3, 61–80, 1960.
 - O. B. Lupanov, "On the Realization of Functions of Logical Algebra by Formulae of Finite Classes (Formulae of Limited Depth) in the Basis ∧, ∨, ¬", Problemy Kibernetiki, 1961.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

@@ -1,16 +1,16 @@
 # Linial–Mansour–Nisan: AC0 functions have concentrated Fourier spectra
 
-There is a constant $c$ such that for every circuit over the unbounded fan-in basis of depth $d$ with $g$ gates computing $f:\{0,1\}^n\to\{0,1\}$ and every $k$,
+Let $f:\{0,1\}^n\to\{0,1\}$ be computed by a circuit over the unbounded fan-in basis of depth $d$ and size $M$, and let $F=(-1)^f$. Then for every integer $t$,
 
 $$
-\sum_{|S|\ge k}\widehat{F}(S)^2\le 2g\cdot 2^{-c\,k^{1/d}},\qquad F=(-1)^f .
+\sum_{|S|>t}\widehat{F}(S)^2\le 2M\cdot 2^{-t^{1/d}/20}.
 $$
 
-In an explicit form: for $s\ge2$, the Fourier weight on sets of size at least $k$ is at most $2g/2^s$ whenever $\max(8,2s,n)\le k\lfloor n/(16s+1)^d\rfloor$, which gives $g\,2^{-\Omega(k^{1/(d+1)})}$ when depth counts negations.
+Equivalently, $F$ is approximated in $\ell_2$ by its Fourier truncation to degree $t$ with squared error at most $2M\,2^{-t^{1/d}/20}$. Tal later sharpened the tail to $2\cdot 2^{-\Omega(t/(\log M)^{d-1})}$.
 
 ## Proof sketch
 
-Apply a random restriction leaving a random set of $\ell=\lfloor n/(16s+1)^d\rfloor$ variables free; by Håstad's switching lemma the restricted circuit is a decision tree of depth below $s$ except with probability $g2^{-s}$, so its Fourier spectrum has degree below $s$. A random restriction maps high-degree Fourier weight of $f$ to weight of degree at least $s$ with constant probability, which bounds the tail.
+Let $\rho$ be a random restriction leaving each variable free with probability $p=1/(10\,t^{(d-1)/d})$ and put $s=pt/2=t^{1/d}/20$. Repeated use of Håstad's switching lemma shows that $f|_\rho$ has Fourier degree above $s$ with probability at most $M2^{-s}$. When $pt\ge8$, a Chernoff bound shows that a set $A$ with $|A|>t$ keeps more than $pt/2$ free variables with probability at least $1/2$, so $\sum_{|S|>t}\widehat F(S)^2\le 2\,\mathbb{E}_\rho\bigl[\sum_{|S|>s}\widehat{F|_\rho}(S)^2\bigr]\le 2M2^{-s}$.
 
 ## Depends on
 
@@ -23,5 +23,6 @@ Apply a random restriction leaving a random set of $\ell=\lfloor n/(16s+1)^d\rfl
 
 ## Sources
 
-- Nathan Linial, Yishay Mansour, Noam Nisan, "Constant Depth Circuits, Fourier Transform, and Learnability", Journal of the ACM, 1993.
+- Nathan Linial, Yishay Mansour, Noam Nisan, "Constant Depth Circuits, Fourier Transform, and Learnability", Journal of the ACM 40(3), 1993 (Main Lemma, Lemma 7; Lemmas 2 and 6 for the proof).
+- Avishay Tal, "Tight Bounds on the Fourier Spectrum of AC^0", 32nd Computational Complexity Conference (CCC 2017), LIPIcs 79, 2017.
 - Ryan O'Donnell, "Analysis of Boolean Functions", Cambridge University Press, 2014.

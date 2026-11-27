@@ -1,10 +1,10 @@
 # A time hierarchy for the word RAM
 
-For every time-constructible, polynomially bounded $T$ with $T(n)\ge n$, there is a constant $d$, independent of $T$, and a problem decided by one fixed word-RAM program over the additive basis within $O(T(n)^{d})$ instructions at every word size $w\ge k\log n$ (for a constant $k>0$), but by no word-RAM program within $O(T(n))$ instructions at any such family of word sizes. That is, $\mathsf{RAMTIME}(T)\subsetneq\mathsf{RAMTIME}(T^{d})$.
+Fix a constant $k\ge1$ and consider word sizes $w$ with $k\log n\le w\le n^{k}$. There is a constant $d$ depending only on $k$ such that for every time-constructible, polynomially bounded $T$ with $T(n)\ge n$ some problem is decided by one fixed word-RAM program over the additive basis within $O(T(n)^{d})$ instructions at every such word size, but by no word-RAM program within $O(T(n))$ instructions at any such family of word sizes. (Some upper bound on $w$ is needed: with unit-cost multiplication on unboundedly long words, a RAM can build numbers with $2^{t}$ bits in $t$ steps.) That is, $\mathsf{RAMTIME}(T)\subsetneq\mathsf{RAMTIME}(T^{d})$.
 
 ## Proof sketch
 
-Translate to multi-tape machines: word-RAM time $T$ is within Turing time $\mathrm{poly}(T)$, apply the deterministic time hierarchy there, and simulate the separating machine back on the word RAM in linear overhead.
+Translate to multi-tape machines: word-RAM time $T$ at word size $w\le n^{k}$ is within Turing time $T^{c}$ for a constant $c=c(k)$ (using $T\ge n$), apply the deterministic time hierarchy theorem there to separate $\mathrm{DTIME}(T^{c})$ from $\mathrm{DTIME}(T^{c+1})$, and simulate the separating machine back on the word RAM with linear overhead. The repository's time-hierarchy node covers only linear versus quadratic time; the general case is the Hartmanis–Stearns theorem.
 
 ## Depends on
 
@@ -17,4 +17,5 @@ Translate to multi-tape machines: word-RAM time $T$ is within Turing time $\math
 
 ## Sources
 
+- J. Hartmanis and R. E. Stearns, "On the Computational Complexity of Algorithms", Transactions of the American Mathematical Society 117, 285–306, 1965.
 - Stephen A. Cook and Robert A. Reckhow, "Time Bounded Random Access Machines", Journal of Computer and System Sciences 7(4), 1973.

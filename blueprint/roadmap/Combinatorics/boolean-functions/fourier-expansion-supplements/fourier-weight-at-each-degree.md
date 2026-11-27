@@ -7,6 +7,11 @@ For a real function $f$ on $\{-1,1\}^n$ with Fourier coefficients $\hat f(S)$, t
 - [Fourier coefficient on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/bool-fourier-coeff.md)
 - [Fourier character on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/cube-chi.md)
 
+## Proof depends on
+
+- [Parseval's identity on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/expect-sq-eq-sum-bool-fourier-coeff-sq.md)
+- [Orthogonality of the Boolean cube characters](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/sum-cube-chi-mul-cube-chi-eq-ite.md)
+
 ## Sources
 
 - R. O'Donnell, "Analysis of Boolean Functions", Cambridge University Press, 2014.

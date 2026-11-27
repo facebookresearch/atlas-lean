@@ -4,18 +4,13 @@ Let $T$ be a decision tree of depth $k$ with leaves labelled in a set $\beta$ an
 
 ## Proof sketch
 
-The function has Fourier degree at most $k$ and integer values; a function of degree at most $k$ with integer values has coefficients in $2^{-k}\mathbb{Z}$ (via the Möbius/indicator expansion of its monomials over subcubes). For $\pm1$ values, writing $f = 1 - 2\cdot\mathbf{1}_{f = -1}$ improves the denominator by one factor of two.
+Every input follows exactly one consistent root-to-leaf path, so $g(T(x))=\sum_P g(\ell_P)\,\mathbf 1_{C_P}(x)$ over the consistent paths $P$, where $\ell_P$ is the leaf and $C_P$ the subcube fixed by the answers along $P$. A subcube of codimension $c\le k$ has indicator $\prod_{i}\frac{1\pm\chi_{\{i\}}}{2}$ over its $c$ fixed coordinates, whose coefficients are $\pm2^{-c}\in2^{-k}\mathbb Z$. For $\pm1$ values, write $f = 1 - 2\cdot\mathbf{1}_{f = -1}$ and apply the first statement to the $0/1$-valued tree computing $\mathbf 1_{f=-1}$.
 
 ## Depends on
 
 - [Binary decision tree](../../../Combinatorics/boolean-functions/osss-inequality-for-decision-trees/decision-tree.md)
 - [Fourier coefficient on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/bool-fourier-coeff.md)
 
-## Proof depends on
-
-- [Functions computed by depth-d trees have Fourier degree at most d and total influence at most d](decision-tree-depth-bounds-fourier-degree.md)
-- [Boolean functions of degree at most k have Fourier coefficients in 2^{1−k}ℤ](../../../Combinatorics/boolean-functions/fourier-expansion-supplements/granularity-of-low-degree-boolean-functions.md)
-
 ## Sources
 
-- R. O'Donnell, "Analysis of Boolean Functions", Cambridge University Press, 2014.
+- R. O'Donnell, "Analysis of Boolean Functions", Cambridge University Press, 2014 (Fact 3.15 and Proposition 3.16, granularity of integer-valued decision trees).

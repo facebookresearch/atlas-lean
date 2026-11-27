@@ -1,15 +1,20 @@
 # Count-Sketch point-query guarantee
 
-The *Count-Sketch* maintains $d = 2r$ rows of $w$ counters with a pairwise independent bucket hash $h_j : U \to [w]$ and a pairwise independent sign hash $g_j : U \to \{\pm 1\}$ per row; reading item $a$ adds $g_j(a)$ to counter $h_j(a)$ in each row, and a point query for $a$ returns the median over rows of $g_j(a) \cdot C_j[h_j(a)]$. For every stream with frequency vector $f$ and every item $a$, the estimate $\hat f_a$ satisfies $|\hat f_a - f_a| \le \sqrt{3/w}\,\|f_{-a}\|_2$ with probability at least $1 - e^{-\Omega(r)}$, using $O(r w \log m)$ bits.
+The *Count-Sketch* maintains $d = 2r$ rows of $w$ counters with a pairwise independent bucket hash $h_j : U \to [w]$ and a pairwise independent sign hash $g_j : U \to \{\pm 1\}$ per row; reading item $a$ adds $g_j(a)$ to counter $h_j(a)$ in each row, and a point query for $a$ returns the median over rows of $g_j(a) \cdot C_j[h_j(a)]$. For every stream with frequency vector $f$ and every item $a$, the estimate $\hat f_a$ satisfies $|\hat f_a - f_a| \le \sqrt{3/w}\,\|f_{-a}\|_2$ with probability at least $1 - e^{-\Omega(r)}$, using $O(r w \log m)$ bits for the counters (for streams of length $m$) plus $O(r \log |U|)$ bits for the hash seeds.
 
 ## Proof sketch
 
-In one row, $g_j(a) C_j[h_j(a)] - f_a = \sum_{b \ne a, h_j(b) = h_j(a)} g_j(a)g_j(b) f_b$ has mean $0$ and variance at most $\|f_{-a}\|_2^2/w$; Chebyshev gives error at most $\sqrt{3/w}\|f_{-a}\|_2$ with probability at least $2/3$, and the median of $2r$ independent rows fails only if half of them fail (Chernoff).
+In one row, $g_j(a) C_j[h_j(a)] - f_a = \sum_{b \ne a, h_j(b) = h_j(a)} g_j(a)g_j(b) f_b$ has mean $0$ and variance at most $\|f_{-a}\|_2^2/w$; Chebyshev gives error at most $\sqrt{3/w}\|f_{-a}\|_2$ with probability at least $2/3$, and the median of $2r$ independent rows fails only if at least half of them fail, which by a Chernoff bound has probability $e^{-\Omega(r)}$.
 
 ## Depends on
 
 - [Randomized streaming algorithm with $s$ bits of memory](../../frequency-moments-of-data-streams/streaming-algorithm.md)
 - [Frequency moment of a stream](../../frequency-moments-of-data-streams/freq-moment.md)
+- [k-wise independent hash family](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
+
+## Proof depends on
+
+- [One row of a Count-Sketch: unbiasedness and variance](../concentration-under-limited-independence/count-sketch-row.md)
 
 ## Sources
 

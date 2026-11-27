@@ -10,12 +10,12 @@ ties counting toward the event. Consequently, for any family $(w_a)_{a \in \math
 
 ## Proof sketch
 
-Conditioned on the rank of $x$, the indicators that competitors have smaller rank are four-wise independent with mean $\rho$; a fourth-moment bound shows that none is smaller with probability $O(1/(|S|\rho)^2)$ when $|S|\rho \ge 1$. Summing over the rank of $x$ and telescoping consecutive reciprocals gives the inverse-linear bound; averaging over seeds gives the window statement.
+Condition on $h_i(x) = \alpha$ and let $\rho = \alpha/q$. The indicators $[h_i(y) < \alpha]$, $y \in S$, are four-wise independent with mean $\rho$, so the fourth central moment of their sum $Z$ is at most $|S|\rho + 3(|S|\rho)^2$ and $\Pr[Z = 0] \le 4/(|S|\rho)^2$ when $|S|\rho \ge 1$. Averaging over $\alpha$, the values $\alpha < 2q/|S|$ contribute at most $2/|S| + 1/q$ and the others at most $4/|S|$, so the probability is at most $7/|S|$ since $|S| \le q$. For the windows, apply the bound to each endpoint against the other $L$ points of an injective window and average over seeds.
 
 ## Depends on
 
-- [k-wise independent hash families](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash family](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 
-- M. B. T. Knudsen and M. Stöckel, "Quicksort, Largest Bucket, and Min-Wise Hashing with Limited Independence", European Symposium on Algorithms (ESA 2015), 2015.
+- M. B. T. Knudsen and M. Stöckel, "Quicksort, Largest Bucket, and Min-Wise Hashing with Limited Independence", European Symposium on Algorithms (ESA 2015), LNCS 9294, 2015, Theorem 2: the bound $O(1/(|S|+1))$ for hash values in $(0,1)$ with strict inequality. The explicit constant for the discrete range with ties follows from the same fourth-moment argument (it gives $7/|S|$).

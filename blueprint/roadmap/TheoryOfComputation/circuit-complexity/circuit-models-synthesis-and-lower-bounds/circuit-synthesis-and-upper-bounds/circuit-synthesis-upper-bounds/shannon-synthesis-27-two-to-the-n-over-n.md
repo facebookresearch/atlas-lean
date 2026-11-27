@@ -4,7 +4,7 @@ For every $n\ge 16$, every Boolean function $f:\{0,1\}^n\to\{0,1\}$ has a De Mor
 
 ## Proof sketch
 
-Split the inputs into $a=\lfloor\log_2 n\rfloor-1$ address bits and $n-a$ data bits. Compute all minterms of both blocks and all $2^{2^a}$ functions of the address block (a shared column library of size $O(2^{2^a})$). For each assignment of the data bits select the column of the truth table it determines, and combine by a disjunction over data minterms; the total is $O(2^n/n)$ with the constant $27$.
+Split the inputs into $a=\lfloor\log_2 n\rfloor-1$ address bits $x$ and $m=n-a$ data bits $y$, so $n/4<2^a\le n/2$ and $2^m<4\cdot 2^n/n$. Write $f=\bigvee_b [y=b]\wedge f_b(x)$. The minterms of $y$ cost at most $4\cdot 2^m<16\cdot 2^n/n$ gates; all $2^{2^a}\le 2^{n/2}$ functions of $x$ are computed with at most $2^{2^a}+2n+1$ gates (each nonzero function is one OR of a smaller one with a minterm); the $2^m$ ANDs and $2^m-1$ ORs cost fewer than $8\cdot 2^n/n$. The total is below $24\cdot 2^n/n+2^{n/2}+2n+1\le 27\cdot 2^n/n$ for $n\ge 16$. The constant $27$ comes from this count; the sources give the $O(2^n/n)$ bound.
 
 ## Depends on
 
@@ -17,6 +17,6 @@ Split the inputs into $a=\lfloor\log_2 n\rfloor-1$ address bits and $n-a$ data b
 
 ## Sources
 
-- Claude E. Shannon, "The Synthesis of Two-Terminal Switching Circuits", Bell System Technical Journal, 1949.
-- Oleg B. Lupanov, "On a Method of Circuit Synthesis", Izvestiya Vysshikh Uchebnykh Zavedenii. Radiofizika, 1958.
+- Claude E. Shannon, "The Synthesis of Two-Terminal Switching Circuits", Bell System Technical Journal 28(1), 59–98, 1949.
+- Oleg B. Lupanov, "On a Method of Circuit Synthesis", Izvestiya Vysshikh Uchebnykh Zavedenii. Radiofizika 1(1), 120–140, 1958.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

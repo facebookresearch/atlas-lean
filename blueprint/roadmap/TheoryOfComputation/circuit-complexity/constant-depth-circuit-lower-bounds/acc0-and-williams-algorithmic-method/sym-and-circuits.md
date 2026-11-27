@@ -8,5 +8,5 @@ A *$\mathrm{SYM}\circ\mathrm{AND}$ circuit* on inputs $x_1,\dots,x_n$ consists o
 
 ## Sources
 
-- Richard Beigel, Jun Tarui, "On ACC", Computational Complexity, 1994.
-- Ryan Williams, "Nonuniform ACC Circuit Lower Bounds", Journal of the ACM, 2014.
+- Richard Beigel, Jun Tarui, "On ACC", Computational Complexity 4, 1994.
+- Ryan Williams, "Nonuniform ACC Circuit Lower Bounds", Journal of the ACM 61(1), Article 2, 2014 (Section 2, SYM+ circuits).

@@ -1,6 +1,6 @@
 # Cutting planes are exponentially stronger than resolution
 
-Resolution does not polynomially simulate cutting planes: the formulas $\mathrm{PHP}^{n+1}_n$ have cutting planes refutations with at most $(n+1)(n+2)^2$ lines, while every resolution refutation has at least $2^{n/24}$ lines. Combined with the simulation of resolution by cutting planes, cutting planes is strictly stronger than resolution.
+Resolution does not polynomially simulate cutting planes: the formulas $\mathrm{PHP}^{n+1}_n$ have cutting planes refutations with $O(n^3)$ lines, while every resolution refutation has $2^{\Omega(n)}$ lines. Combined with the simulation of resolution by cutting planes, cutting planes is strictly stronger than resolution.
 
 ## Proof sketch
 
@@ -20,5 +20,6 @@ Combine the polynomial-size cutting planes refutation with Haken's lower bound f
 ## Sources
 
 - W. Cook, C. R. Coullard and Gy. Turán, "On the Complexity of Cutting-Plane Proofs", Discrete Applied Mathematics 18(1), 25–38, 1987.
+- S. Buss and J. Nordström, "Proof Complexity and SAT Solving", in Handbook of Satisfiability, 2nd ed., IOS Press, 2021, Section 7.7.2.
 - A. Haken, "The Intractability of Resolution", Theoretical Computer Science 39, 297–308, 1985.
 - S. Jukna, Boolean Function Complexity: Advances and Frontiers, Springer, 2012.

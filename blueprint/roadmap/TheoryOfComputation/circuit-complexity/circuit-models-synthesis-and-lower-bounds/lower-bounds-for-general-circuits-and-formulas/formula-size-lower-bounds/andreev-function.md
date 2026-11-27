@@ -15,5 +15,5 @@ where $\oplus(y_i)$ is the parity of row $i$. Usually $b\approx\log_2 n$ and $m\
 
 ## Sources
 
-- A. E. Andreev, "On a Method for Obtaining More Than Quadratic Effective Lower Bounds for the Complexity of π-Schemes", Moscow University Mathematics Bulletin, 1987.
+- A. E. Andreev, "On a Method for Obtaining More Than Quadratic Effective Lower Bounds for the Complexity of π-Schemes", Moscow University Mathematics Bulletin 42(1), 63–66, 1987.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

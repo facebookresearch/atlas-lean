@@ -12,5 +12,5 @@ Consider the bipartite incidence graph between clauses and variables. Every set 
 
 ## Sources
 
-- C. A. Tovey, "A Simplified NP-Complete Satisfiability Problem", Discrete Applied Mathematics 8(1), 85–89, 1984.
+- C. A. Tovey, "A Simplified NP-Complete Satisfiability Problem", Discrete Applied Mathematics 8(1), 85–89, 1984: Theorem 2.3 (3,4-SAT is NP-complete) and Theorem 2.4 (every 3,3-SAT instance is satisfiable).
 - P. Berman, M. Karpinski and A. D. Scott, "Computational Complexity of Some Restricted Instances of 3-SAT", Discrete Applied Mathematics 155(5), 649–653, 2007.

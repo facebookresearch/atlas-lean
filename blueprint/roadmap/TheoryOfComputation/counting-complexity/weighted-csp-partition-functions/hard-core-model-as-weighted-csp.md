@@ -12,4 +12,5 @@ An assignment is the indicator of a vertex set; edge weights vanish unless the s
 
 ## Sources
 
+- Dror Weitz, "Counting Independent Sets up to the Tree Threshold", Proceedings of the 38th Annual ACM Symposium on Theory of Computing (STOC 2006), 2006 (the hard-core model and its partition function).
 - N. Alon and J. H. Spencer, The Probabilistic Method, 4th ed., Wiley, 2016.

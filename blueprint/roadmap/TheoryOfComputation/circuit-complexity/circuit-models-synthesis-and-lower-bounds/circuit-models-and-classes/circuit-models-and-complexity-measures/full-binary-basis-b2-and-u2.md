@@ -9,4 +9,4 @@ The *full binary Boolean basis* $B_2$ consists of all $16$ Boolean functions $\{
 ## Sources
 
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.
-- Magnus Gausdal Find, Alexander Golovnev, Edward A. Hirsch, Alexander S. Kulikov, "A Better-than-3n Lower Bound for the Circuit Complexity of an Explicit Function", IEEE 57th Annual Symposium on Foundations of Computer Science, 2016.
+- Magnus Gausdal Find, Alexander Golovnev, Edward A. Hirsch, Alexander S. Kulikov, "A Better-than-3n Lower Bound for the Circuit Complexity of an Explicit Function", IEEE 57th Annual Symposium on Foundations of Computer Science, 89–98, 2016.

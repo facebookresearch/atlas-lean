@@ -4,8 +4,8 @@ Fix a finite domain $D$ and a relation alphabet with semantics $\mathrm{sem}(R) 
 
 ## Depends on
 
-- [Unsatisfiability value of a CNF formula or CSP instance](unsatisfiability-value.md)
-- [BINARY CONSTRAINT SATISFACTION is NP-complete](../../np-completeness/satisfiability/binary-constraint-satisfaction/binary-csp-np-complete.md)
+- [Finite-domain constraint satisfaction problems](../../np-completeness/satisfiability/constraint-satisfaction-encodings/finite-domain-constraint-satisfaction.md)
+- [CNF formula](../../../Logic/propositional-logic/conjunctive-normal-form/cnf.md)
 
 ## Sources
 

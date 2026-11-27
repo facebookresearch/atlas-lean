@@ -10,5 +10,6 @@ An *$(n, k)$ affine source* is the uniform distribution on an affine subspace of
 
 ## Sources
 
-- X. Li, "Two Source Extractors for Asymptotically Optimal Entropy, and (Many) More", Proceedings of the 64th IEEE Symposium on Foundations of Computer Science, 2023.
+- X. Li, "Two Source Extractors for Asymptotically Optimal Entropy, and (Many) More", Proceedings of the 64th IEEE Symposium on Foundations of Computer Science, 2023 (numbering of arXiv:2303.06802), Definitions 3.1 and 7.8.
+- E. Chattopadhyay and J.-J. Liao, "Extractors for Sum of Two Sources", Proceedings of the 54th ACM Symposium on Theory of Computing (STOC 2022), 2022, Definitions 1.2 and 1.8 (arXiv:2110.12652).
 - X. Li and Y. Zhong, "Explicit Directional Affine Extractors and Improved Hardness for Linear Branching Programs", 39th Computational Complexity Conference (CCC 2024), 2024.

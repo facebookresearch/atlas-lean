@@ -18,7 +18,7 @@ Prove the inequality for one bit by an elementary two-point inequality and tenso
 ## Proof depends on
 
 - [Bonami–Beckner hypercontractive inequality](../kahn-kalai-linial-inequality/walsh-fourier-analysis-on-the-uniform-cube-and-t/khc-hypercontractivity-general.md)
-- [L^p norms under a uniform distribution increase with p](../fourier-expansion-supplements/lp-norms-increase-with-p.md)
+- [L^p seminorms under a probability measure increase with the exponent](../fourier-expansion-supplements/lp-norms-increase-with-p.md)
 
 ## Sources
 

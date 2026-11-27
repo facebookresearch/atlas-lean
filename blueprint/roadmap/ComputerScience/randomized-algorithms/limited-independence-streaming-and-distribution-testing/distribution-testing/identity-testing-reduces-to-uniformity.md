@@ -16,5 +16,5 @@ First mix each sample with a uniform draw with probability $1/2$, so every mass 
 
 ## Sources
 
-- O. Goldreich, "The Uniform Distribution is Complete with Respect to Testing Identity to a Fixed Distribution", ECCC technical report TR16-015, 2016, Theorem 1.
+- O. Goldreich, "The Uniform Distribution is Complete with Respect to Testing Identity to a Fixed Distribution", in Computational Complexity and Property Testing, LNCS 12050, Springer, 2020 (ECCC TR16-015, 2016), Theorem 1 and Section 3.2.
 - O. Goldreich, "Introduction to Property Testing", Cambridge University Press, 2017.

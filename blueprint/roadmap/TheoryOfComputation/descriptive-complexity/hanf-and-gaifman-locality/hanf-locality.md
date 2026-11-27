@@ -17,4 +17,5 @@ Induction on $n$: Hanf equivalence at radius $3d + 1$ is preserved, at radius $d
 
 ## Sources
 
-- L. Libkin, Elements of Finite Model Theory, Springer, 2004.
+- L. Libkin, Elements of Finite Model Theory, Springer, 2004: Corollary 4.10 and Theorem 4.12 ($\mathrm{hlr} \le (3^k - 1)/2$ for quantifier rank $k$).
+- R. Fagin, L. Stockmeyer and M. Y. Vardi, "On Monadic NP vs Monadic co-NP", Information and Computation 120(1), 78–92, 1995.

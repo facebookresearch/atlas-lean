@@ -13,4 +13,4 @@ A deterministic verifier's interaction is determined by the prover's messages, s
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Theorem 8.3.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Chapter 8 (Theorem 8.3 of the January 2007 web draft; perfect soundness gives $\mathsf{NP}$ by its Exercise 8.1(e)).

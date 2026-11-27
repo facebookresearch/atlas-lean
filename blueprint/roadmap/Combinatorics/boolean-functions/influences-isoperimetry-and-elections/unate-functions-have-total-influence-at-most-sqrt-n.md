@@ -11,10 +11,14 @@ By unateness $\mathbf{I}[f] = \sum_i |\hat f(\{i\})|$; Cauchy–Schwarz gives $\
 - [Total influence on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-total-influence.md)
 - [Variance on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-variance.md)
 - [Unate Boolean function](../unate-and-monotone-boolean-functions/is-unate-bool-fun.md)
+- [Linear threshold function](../majority-is-least-stable-conjecture/is-linear-threshold-function.md)
+- [Majority function](../majority-is-least-stable-conjecture/majority.md)
 
 ## Proof depends on
 
-- [A direction is unate exactly when its influence equals its degree-one coefficient](unate-direction-influence-equals-coefficient.md)
+- [Linear threshold functions are unate](linear-threshold-functions-are-unate.md)
+
+- [A direction is unate exactly when its influence equals the absolute value of its degree-one coefficient](unate-direction-influence-equals-coefficient.md)
 - [Parseval's identity on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/expect-sq-eq-sum-bool-fourier-coeff-sq.md)
 
 ## Sources

@@ -1,6 +1,6 @@
 # Immerman: FO(TC) collapses to positive transitive closure
 
-On ordered finite structures, every FO(TC) sentence is equivalent to one in which the transitive-closure operator occurs only positively (indeed to a single application $\mathrm{TC}[\varphi](\bar 0,\overline{\max})$ with $\varphi$ quantifier-free or first-order). Hence FO(TC) and FO(positive TC) both capture $\mathsf{NL}$, and FO(TC) model checking for a fixed sentence is in $\mathsf{NL}$, negated closures being evaluated by inductive counting.
+On ordered finite structures, every FO(TC) sentence is equivalent to one in which the transitive-closure operator occurs only positively (indeed to a single application $\mathrm{TC}[\varphi](\bar 0,\overline{\max})$ with $\varphi$ first-order, and even quantifier-free when the successor relation is a built-in symbol). Hence FO(TC) and FO(positive TC) both capture $\mathsf{NL}$, and FO(TC) model checking for a fixed sentence is in $\mathsf{NL}$, negated closures being evaluated by inductive counting.
 
 ## Proof sketch
 
@@ -20,5 +20,5 @@ FO(posTC) $\subseteq$ NL by guessing paths; NL $\subseteq$ FO(posTC) via the NL-
 
 ## Sources
 
-- Neil Immerman, "Languages That Capture Complexity Classes", SIAM Journal on Computing 16(4), 1987, Theorem 3.1.
-- Neil Immerman, "Nondeterministic Space Is Closed under Complementation", SIAM Journal on Computing 17(5), 1988, Corollary 3.
+- Neil Immerman, "Languages That Capture Complexity Classes", SIAM Journal on Computing 16(4), 760–778, 1987: Theorem 3.1 (NL = FO(pos TC)), Theorems 3.3 and 3.7 (the single-closure normal form, first-order and quantifier-free with successor).
+- Neil Immerman, "Nondeterministic Space Is Closed under Complementation", SIAM Journal on Computing 17(5), 935–938, 1988, Corollary 3.

@@ -8,4 +8,4 @@ A Boolean operation $f : \{0,1\}^n \to \{0,1\}$ is *essentially unary* if it dep
 
 ## Sources
 
-- H. Chen, "A Rendezvous of Logic, Complexity, and Algebra", SIGACT News 37(4), 85–114, 2006 (extended version ACM Computing Surveys 42(1), 2009).
+- H. Chen, "A Rendezvous of Logic, Complexity, and Algebra", SIGACT News 37(4), 85–114, 2006 (extended version ACM Computing Surveys 42(1), 2009): Section 5 (definition before Theorem 5.1).

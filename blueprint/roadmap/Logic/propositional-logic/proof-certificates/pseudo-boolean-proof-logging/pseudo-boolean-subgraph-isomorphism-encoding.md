@@ -17,4 +17,4 @@ Exactly-one and at-most-one constraints make solutions injective maps; the adjac
 
 ## Sources
 
-- S. Gocht, C. McCreesh, M. O. Myreen, J. Nordström, A. Oertel and Y. K. Tan, "End-to-End Verification for Subgraph Solving", Proceedings of the 38th AAAI Conference on Artificial Intelligence, 2024.
+- S. Gocht, C. McCreesh, M. O. Myreen, J. Nordström, A. Oertel and Y. K. Tan, "End-to-End Verification for Subgraph Solving", Proceedings of the 38th AAAI Conference on Artificial Intelligence, 2024: Figure 2 (non-induced subgraph isomorphism) and Section 3.

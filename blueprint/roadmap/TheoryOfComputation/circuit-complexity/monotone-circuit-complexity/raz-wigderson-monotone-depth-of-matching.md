@@ -1,6 +1,6 @@
 # Raz–Wigderson: monotone formulas for perfect matching need linear depth
 
-Every monotone formula computing bipartite perfect matching on $K_{n,n}$ has depth $\Omega(n)$; explicitly at least $(n-2^{14})/2^{13}$. Equivalently, the monotone Karchmer–Wigderson game of $\mathrm{PM}_n$ has communication complexity $\Omega(n)$.
+Every monotone formula computing bipartite perfect matching on $K_{n,n}$ has depth $\Omega(n)$; the same holds for deciding whether a graph on $n$ vertices has a matching of size $n/3$, and for perfect matching in general graphs. Equivalently, the monotone Karchmer–Wigderson game of $\mathrm{PM}_n$ has communication complexity $\Omega(n)$.
 
 ## Proof sketch
 
@@ -17,5 +17,5 @@ By the monotone Karchmer–Wigderson theorem it suffices to lower-bound the game
 
 ## Sources
 
-- Ran Raz, Avi Wigderson, "Monotone Circuits for Matching Require Linear Depth", Journal of the ACM, 1992.
+- Ran Raz, Avi Wigderson, "Monotone Circuits for Matching Require Linear Depth", Journal of the ACM 39(3), 1992 (Main Theorem, Theorem 4.1).
 - Eyal Kushilevitz, Noam Nisan, "Communication Complexity", Cambridge University Press, 1997.

@@ -2,9 +2,9 @@
 
 Let $X_1, \dots, X_n$ be independent real random variables in $L^3$ with $\mathbb{E}X_i = 0$ and $\sum_i \mathbb{E}X_i^2 = 1$, and let $\gamma = \sum_i \mathbb{E}|X_i|^3$. Then for every $u \in \mathbb{R}$,
 
-$$\Big|\Pr\Big[\sum_i X_i \le u\Big] - \Phi(u)\Big| \le 6\,\gamma^{1/4},$$
+$$\Big|\Pr\Big[\sum_i X_i \le u\Big] - \Phi(u)\Big| \le c\,\gamma^{1/4},$$
 
-where $\Phi$ is the standard Gaussian distribution function. (The classical Berry–Esseen theorem improves $\gamma^{1/4}$ to $O(\gamma)$.)
+where $\Phi$ is the standard Gaussian distribution function and $c$ is a universal constant (O'Donnell, Cor. 11.62). (The classical Berry–Esseen theorem improves $\gamma^{1/4}$ to $O(\gamma)$.)
 
 ## Proof sketch
 

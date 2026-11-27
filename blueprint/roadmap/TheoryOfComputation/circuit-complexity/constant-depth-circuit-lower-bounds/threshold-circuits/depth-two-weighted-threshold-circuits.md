@@ -8,5 +8,5 @@ A *depth-two weighted threshold circuit* ($\mathrm{THR}\circ\mathrm{THR}$) on $n
 
 ## Sources
 
-- Daniel M. Kane, Ryan Williams, "Super-Linear Gate and Super-Quadratic Wire Lower Bounds for Depth-Two and Depth-Three Threshold Circuits", Proceedings of the Forty-Eighth Annual ACM Symposium on Theory of Computing (STOC 2016), 2016.
-- András Hajnal, Wolfgang Maass, Pavel Pudlák et al., "Threshold Circuits of Bounded Depth", Journal of Computer and System Sciences, 1993.
+- Daniel M. Kane, Ryan Williams, "Super-Linear Gate and Super-Quadratic Wire Lower Bounds for Depth-Two and Depth-Three Threshold Circuits", Proceedings of the Forty-Eighth Annual ACM Symposium on Theory of Computing (STOC 2016), 2016 (LTF ∘ LTF circuits, gate and wire counts).
+- András Hajnal, Wolfgang Maass, Pavel Pudlák et al., "Threshold Circuits of Bounded Depth", Journal of Computer and System Sciences 46(2), 1993.

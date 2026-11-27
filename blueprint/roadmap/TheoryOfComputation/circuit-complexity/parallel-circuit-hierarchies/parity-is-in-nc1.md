@@ -1,6 +1,6 @@
 # Parity is in NC1
 
-The parity of $n$ bits has a De Morgan formula of depth at most $2\lceil\log_2 n\rceil$ (negations free), namely a balanced tree of exclusive ors, each expanded as $(x\wedge\neg y)\vee(\neg x\wedge y)$. Hence $\mathrm{PARITY}\in\mathsf{NC}^1$ nonuniformly.
+For $n\ge1$, the parity of $n$ bits has a De Morgan formula of depth at most $2\lceil\log_2 n\rceil$ (negations free), namely a balanced tree of exclusive ors, each expanded as $(x\wedge\neg y)\vee(\neg x\wedge y)$. Hence $\mathrm{PARITY}\in\mathsf{NC}^1$ nonuniformly.
 
 ## Proof sketch
 

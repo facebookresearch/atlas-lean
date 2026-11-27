@@ -12,4 +12,4 @@ Write $P-1=2^{k}m$ with $m$ odd. Starting from $s^{(P-1)/2}=1$, repeatedly halve
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 6–7", 2007, Exercise 6.16.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 6.16, Items 1–3 (numbering of the 2007 public draft).

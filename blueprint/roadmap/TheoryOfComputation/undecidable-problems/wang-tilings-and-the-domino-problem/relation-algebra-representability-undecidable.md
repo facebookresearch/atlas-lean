@@ -4,7 +4,7 @@ There is no algorithm that decides, given a finite relation algebra (as an atom 
 
 ## Proof sketch
 
-Reduce the every-tile-occurs tiling problem: from a palette build a finite relation algebra whose atoms encode tiles and grid directions; a representation is constructed step by step via a winning strategy in a two-player representation game, and winning strategies correspond exactly to tilings in which every tile occurs.
+Reduce the every-tile-occurs tiling problem, normalized by adding a special tile that tiles the plane only on its own: from a palette $\tau$ with $k$ tiles build a finite weakly associative algebra $\mathrm{RA}(\tau)$ with $2k+28$ atoms encoding tiles and grid directions. A finite relation algebra is representable iff the existential player has a winning strategy in a countable representation game; a winning strategy yields, for each tile, a tiling with that tile at the origin, and conversely such tilings make $\mathrm{RA}(\tau)$ associative and give a winning strategy. Associativity of a finite weakly associative algebra is decidable, so a decision procedure for representability would decide the tiling problem.
 
 ## Depends on
 
@@ -17,4 +17,4 @@ Reduce the every-tile-occurs tiling problem: from a palette build a finite relat
 
 ## Sources
 
-- Robin Hirsch and Ian Hodkinson, "Representability is not Decidable for Finite Relation Algebras", Transactions of the American Mathematical Society 353(4), 2001, Theorem 8.
+- Robin Hirsch and Ian Hodkinson, "Representability is not Decidable for Finite Relation Algebras", Transactions of the American Mathematical Society 353(4), 1403–1425, 2001, Theorems 1, 3, 4 and 8.

@@ -10,6 +10,7 @@ Enumerate halting programs to approximate $\Omega$ from below. Given $\omega_1 \
 
 - [Chaitin's halting probability Ω](chaitins-halting-probability.md)
 - [Martin-Löf tests and Martin-Löf randomness](martin-lof-tests-and-randomness.md)
+- [Prefix-free Kolmogorov complexity](prefix-free-kolmogorov-complexity.md)
 
 ## Proof depends on
 
@@ -17,6 +18,6 @@ Enumerate halting programs to approximate $\Omega$ from below. Given $\omega_1 \
 
 ## Sources
 
-- G. J. Chaitin, "A Theory of Program Size Formally Identical to Information Theory", Journal of the ACM 22(3), 1975.
+- G. J. Chaitin, "A Theory of Program Size Formally Identical to Information Theory", Journal of the ACM 22(3), 329–340, 1975.
 - M. Li and P. Vitányi, "An Introduction to Kolmogorov Complexity and Its Applications", 4th ed., Springer, 2019.
 - A. Shen, V. A. Uspensky and N. Vereshchagin, "Kolmogorov Complexity and Algorithmic Randomness", American Mathematical Society, 2017.

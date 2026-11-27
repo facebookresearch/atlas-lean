@@ -13,4 +13,4 @@ Take $U$ undecidable (e.g. the codes of halting machines) and let the advice bit
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Theorem 3.7.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Theorem 3.7.

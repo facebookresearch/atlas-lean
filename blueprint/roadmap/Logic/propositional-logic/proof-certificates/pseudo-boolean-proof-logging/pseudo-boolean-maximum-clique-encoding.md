@@ -17,4 +17,4 @@ A 0/1 vector satisfies all non-edge constraints iff its support contains no non-
 
 ## Sources
 
-- S. Gocht, C. McCreesh, M. O. Myreen, J. Nordström, A. Oertel and Y. K. Tan, "End-to-End Verification for Subgraph Solving", Proceedings of the 38th AAAI Conference on Artificial Intelligence, 2024.
+- S. Gocht, C. McCreesh, M. O. Myreen, J. Nordström, A. Oertel and Y. K. Tan, "End-to-End Verification for Subgraph Solving", Proceedings of the 38th AAAI Conference on Artificial Intelligence, 2024: Section 3 (verified clique encoder and bound conclusions).

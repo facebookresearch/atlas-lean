@@ -4,7 +4,7 @@ Let $F$ be a (weighted) Max-CSP instance with $m$ constraints on $n$ variables o
 
 ## Proof sketch
 
-For a fixed assignment the rescaled sampled score is an average of $s$ independent $[0,m]$-valued variables, so Hoeffding's inequality gives a tail $2e^{-2s\delta^2}$; a union bound over the $|D|^n$ assignments finishes, and the two one-sided deviations add to $2\delta m$ for the optimizer.
+For a fixed assignment the rescaled sampled score is an average of $s$ independent $[0,m]$-valued variables, so Hoeffding's inequality gives a tail $2e^{-2s\delta^2}$ for a deviation of $\delta m$; a union bound over the $|D|^n$ assignments finishes (already $s\ge\delta^{-2}(n\ln|D|+\ln(2/\eta))/2$ suffices, so the stated bound has slack), and the two one-sided deviations add to $2\delta m$ for the optimizer.
 
 ## Depends on
 

@@ -18,4 +18,4 @@
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 0–2", 2006, Exercises 2.14, 2.16, 2.17.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercises 2.14, 2.16, 2.17.

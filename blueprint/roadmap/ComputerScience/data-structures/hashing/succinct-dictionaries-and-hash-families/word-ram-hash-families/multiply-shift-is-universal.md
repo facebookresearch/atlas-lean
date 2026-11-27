@@ -6,7 +6,7 @@ $$
 \Pr_a\left[h_a(x) = h_a(y)\right] \le \frac{2}{2^M}.
 $$
 
-Consequently, mapping a set $W$ of keys by multiply-shift to $R$ bits is injective on $W$ except with probability at most $|W| (|W| - 1) / 2^R$.
+Consequently, for $1 \le R \le w_0$ and a set $W \subseteq [2^{w_0}]$ fixed independently of $a$, mapping $W$ by multiply-shift to $R$ bits ($M = R$) is injective on $W$ except with probability at most $|W| (|W| - 1) / 2^R$.
 
 ## Proof sketch
 
@@ -19,4 +19,4 @@ Write $x - y = 2^i z$ with $z$ odd. Then $a(x-y) \bmod 2^{w_0}$ is $2^i$ times a
 
 ## Sources
 
-- M. Dietzfelbinger, T. Hagerup, J. Katajainen and M. Penttonen, "A Reliable Randomized Algorithm for the Closest-Pair Problem", Journal of Algorithms 25(1), 1997.
+- M. Dietzfelbinger, T. Hagerup, J. Katajainen and M. Penttonen, "A Reliable Randomized Algorithm for the Closest-Pair Problem", Journal of Algorithms 25(1), 1997, Lemma 2.4 and Lemma 2.6.

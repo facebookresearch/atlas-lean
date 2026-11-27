@@ -16,4 +16,4 @@ For a fixed circuit, a uniformly random $f$ agrees with it on at least $\tfrac12
 
 ## Sources
 
-- Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007.
+- Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009 (exercise on random functions with $H_{\mathrm{avg}}\ge 2^{n/10}$; Chapter 16, Exercise 3 in the 2007 web draft).

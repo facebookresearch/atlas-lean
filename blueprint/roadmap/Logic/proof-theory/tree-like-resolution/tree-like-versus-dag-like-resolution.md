@@ -18,4 +18,5 @@ List the nodes of the tree in post-order to get a line-based proof; conversely u
 ## Sources
 
 - S. Buss and J. Nordström, "Proof Complexity and SAT Solving", in Handbook of Satisfiability, 2nd ed., IOS Press, 2021.
+- O. Beyersdorff, N. Galesi and M. Lauria, "A Lower Bound for the Pigeonhole Principle in Tree-Like Resolution by Asymmetric Prover–Delayer Games", Information Processing Letters 110(23), 1074–1077, 2010: Section 2 (decision-tree view, size = number of nodes).
 - K. Iwama and S. Miyazaki, "Tree-Like Resolution Is Superpolynomially Slower Than DAG-Like Resolution for the Pigeonhole Principle", Algorithms and Computation (ISAAC), 1999.

@@ -1,6 +1,6 @@
 # Carry-save addition and logarithmic-depth bit counting
 
-A $3$-to-$2$ carry-save adder maps three $w$-bit words $x,y,z$ to the bitwise sum $x\oplus y\oplus z$ and the shifted majority word $2\cdot\mathrm{MAJ}(x,y,z)$, preserving $x+y+z$ modulo $2^w$, with $O(w)$ gates and constant depth (at most $6$). Combining $k$ one-bit inputs along a balanced tree of carry-save reducers and finishing with one carry-lookahead addition yields a fan-in-two De Morgan circuit computing the Hamming weight of $k$ bits with $O(k\log k)$ gates and depth $O(\log k)$.
+A $3$-to-$2$ carry-save adder maps three $w$-bit words $x,y,z$ to the bitwise sum $x\oplus y\oplus z$ and the shifted majority word $2\cdot\mathrm{MAJ}(x,y,z)$, preserving $x+y+z$ modulo $2^w$, with $O(w)$ gates and constant depth (at most $6$). Combining $k$ one-bit inputs along a balanced tree of carry-save reducers and finishing with one carry-lookahead addition yields a fan-in-two De Morgan circuit computing the Hamming weight of $k$ bits with $O(k\log(k+2))$ gates and depth $O(\log(k+2))$ (the shift by $2$ keeps both bounds meaningful for $k\le1$, where the weight is a constant or the input bit itself).
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Hella's bijective $k$-pebble game
 
-The *bijective $k$-pebble game* on finite structures $\mathfrak{A}, \mathfrak{B}$ with $|A| = |B|$ uses $k$ pairs of pebbles. Each round, Spoiler picks a pair $i$; Duplicator answers with a bijection $f : A \to B$; Spoiler then places the $\mathfrak{A}$-pebble of pair $i$ on any $c \in A$, which puts the $\mathfrak{B}$-pebble of pair $i$ on $f(c)$. Duplicator wins a play if after every round the pebbled pairs define a partial isomorphism. If $|A| \ne |B|$ Duplicator loses immediately.
+The *bijective $k$-pebble game* on finite structures $\mathfrak{A}, \mathfrak{B}$ with $|A| = |B|$ uses $k$ pairs of pebbles. Each round, Spoiler picks a pair $i$; Duplicator answers with a bijection $f : A \to B$; Spoiler then places the $\mathfrak{A}$-pebble of pair $i$ on any $c \in A$, which puts the $\mathfrak{B}$-pebble of pair $i$ on $f(c)$. Duplicator wins a play if after every round the pebbled pairs define a partial isomorphism. If $|A| \ne |B|$ no bijection exists, so Duplicator loses as soon as a round is played; a play of $0$ rounds is won iff the initial position is a partial isomorphism.
 
 ## Depends on
 

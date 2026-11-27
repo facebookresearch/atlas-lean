@@ -6,10 +6,6 @@ Over every field, if every row of a matrix $M$ has at most $d$ nonzero entries, 
 
 A row basis of $\operatorname{rank}M$ rows spans all rows, so every nonzero column is nonzero in some basis row, and the basis rows have at most $d\operatorname{rank}M$ nonzero positions in total; each nonzero column then contributes at most $e$ entries.
 
-## Depends on
-
-- [Subadditivity of the rank](../../../Analysis/approximation-theory/low-rank-matrix-recovery/rank-sub-le.md)
-
 ## Sources
 
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

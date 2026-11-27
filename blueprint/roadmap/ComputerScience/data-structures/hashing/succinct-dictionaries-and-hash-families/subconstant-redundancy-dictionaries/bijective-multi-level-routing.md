@@ -1,10 +1,10 @@
 # Bijective multi-level coordinate routing
 
-In the multi-level dictionary tree, with the universe rounded up to $[U']$ by sentinel keys, the level-by-level map sending a key to its (node, identifier, quotient) coordinates at level $\ell$ is a bijection between $[U']$ and the level-$\ell$ coordinate space, the coordinates at level $\ell$ depend only on the seeds of the key's ancestors at levels below $\ell$, and under a good seed assignment no node overflows or underflows and identifiers are injective on the active keys of each node.
+In the multi-level dictionary tree, with the universe rounded up to $[U']$ by sentinel keys, the level-by-level map sending a key to its (node, identifier, quotient) coordinates at level $\ell$ is a bijection between $[U']$ and the level-$\ell$ coordinate space, the coordinates at level $\ell$ depend only on the child-router permutations of the key's ancestors at levels below $\ell$ (and of the top-level router) and on the per-child identifier permutations of the nodes on its path down to level $\ell$, and under a good seed assignment no node overflows or underflows and identifiers are injective on the active keys of each node.
 
 ## Proof sketch
 
-Each routing step is the composition of a one-round Feistel permutation with a fixed mixed-radix bijection, hence bijective, and the composite of bijections is bijective. The dependence claim follows by induction on the level; the load and injectivity claims are the definition of good seeds.
+Each routing step is the composition of two one-round Feistel permutations, the node's child router and the receiving child's identifier permutation (Li, Liang, Yu and Zhou, Section 5.4 and Appendix B), with fixed bit-splitting bijections, hence bijective, and the composite of bijections is bijective. The dependence claim follows by induction on the level; the load and injectivity claims are the definition of good seeds.
 
 ## Depends on
 

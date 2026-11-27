@@ -11,11 +11,8 @@ After addition the inequality reads $\sum_{\ell \in A} \ell + \sum_{\ell \in B} 
 - [The cutting planes proof system](cutting-planes-proof-system.md)
 - [Resolution refutation](../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 
-## Proof depends on
-
-- [Soundness and refutation completeness of cutting planes](cutting-planes-soundness-and-completeness.md)
-
 ## Sources
 
 - W. Cook, C. R. Coullard and Gy. Turán, "On the Complexity of Cutting-Plane Proofs", Discrete Applied Mathematics 18(1), 25–38, 1987.
+- S. Buss and J. Nordström, "Proof Complexity and SAT Solving", in Handbook of Satisfiability, 2nd ed., IOS Press, 2021, Sections 7.6.1 and 7.7.2.
 - S. Jukna, Boolean Function Complexity: Advances and Frontiers, Springer, 2012.

@@ -9,5 +9,5 @@ Let $S, w \ge 1$. A *memory* is a function $m : [S] \to \{0, 1, \dots, 2^w - 1\}
 ## Sources
 
 - P. B. Miltersen, "Cell Probe Complexity - a Survey", Advances in Data Structures Workshop (FSTTCS pre-conference workshop), 1999.
-- A. C.-C. Yao, "Should Tables Be Sorted?", Journal of the ACM 28(3), 1981.
+- A. C.-C. Yao, "Should Tables Be Sorted?", Journal of the ACM 28(3), pp. 615-628, 1981.
 - M. Minsky and S. Papert, "Perceptrons: An Introduction to Computational Geometry", MIT Press, 1969.

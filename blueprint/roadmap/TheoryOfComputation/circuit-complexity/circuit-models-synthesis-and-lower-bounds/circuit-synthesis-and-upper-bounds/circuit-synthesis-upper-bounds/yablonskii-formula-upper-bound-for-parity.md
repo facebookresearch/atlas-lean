@@ -13,5 +13,5 @@ Split the bits into blocks of $2^{k-1}+\lfloor r/2\rfloor$ and $2^{k-1}+\lceil r
 
 ## Sources
 
-- S. V. Yablonskii, "Realization of a linear function in the class of π-schemes", Doklady Akademii Nauk SSSR, 1954.
+- S. V. Yablonskii, "Realization of a linear function in the class of π-schemes", Doklady Akademii Nauk SSSR 94(5), 805–806, 1954.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

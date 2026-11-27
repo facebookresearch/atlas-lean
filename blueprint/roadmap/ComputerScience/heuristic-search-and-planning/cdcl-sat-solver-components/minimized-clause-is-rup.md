@@ -1,10 +1,10 @@
 # Minimized learned clauses are derivable by unit propagation
 
-If $D'$ is obtained from a learned clause $D$ by removing redundant literals, then $D'$ is a reverse-unit-propagation (RUP) consequence of the clause database together with $D$: assuming the negations of the literals of $D'$, unit propagation along the reason clauses of the removed literals derives the negation of every removed literal and then falsifies $D$. Consequently an LRAT step for $D'$ with hints listing those reasons and $D$ is accepted by an LRAT checker.
+If $D'$ is obtained from a learned clause $D$ by removing redundant literals, then $D'$ is a reverse-unit-propagation (RUP) consequence of the clause database together with $D$: assuming the negations of the literals of $D'$, unit propagation along the reason clauses of the removed literals derives the negation of every removed literal and then falsifies $D$. Consequently an LRAT step for $D'$ whose hints list those reasons (and the unit clauses of any removed level-$0$ literals) in trail order, followed by $D$, is accepted by an LRAT checker.
 
 ## Proof sketch
 
-Induction on the recursion depth of redundancy: if all other literals of the reason $R$ of $\neg y$ are false, $R$ is unit and propagates $\neg y$.
+Process the removed and recursively visited literals in trail order: when all other literals of the reason $R$ of $\neg y$ are false (they lie in $D'$ or were handled earlier), $R$ is unit and propagates $\neg y$. Afterwards every literal of $D$ is false.
 
 ## Depends on
 

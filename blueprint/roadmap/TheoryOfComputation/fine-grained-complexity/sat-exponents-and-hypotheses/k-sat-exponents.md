@@ -11,4 +11,5 @@ For $k\ge1$, the **SAT exponent** $s_k$ is the infimum of $\delta\ge0$ such that
 ## Sources
 
 - Russell Impagliazzo and Ramamohan Paturi, "On the Complexity of k-SAT", Journal of Computer and System Sciences 62(2), 2001.
-- Chris Calabro, Russell Impagliazzo and Ramamohan Paturi, "A Duality between Clause Width and Clause Density for SAT", 21st Annual IEEE Conference on Computational Complexity (CCC 2006), 2006.
+- Marek Cygan et al., "Parameterized Algorithms", Springer, 2015, Conjectures 14.1 and 14.2.
+- Holger Dell, Thore Husfeldt, Dániel Marx, Nina Taslaman and Martin Wahlén, "Exponential Time Complexity of the Permanent and the Tutte Polynomial", ACM Transactions on Algorithms 10(4), 2014 (the counting hypothesis #ETH).

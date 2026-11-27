@@ -18,4 +18,4 @@ For nonnegative matrices, $\operatorname{perm}(M)>0$ iff the bipartite graph of 
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 6–7", 2007, Exercise 6.25.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 6.25.

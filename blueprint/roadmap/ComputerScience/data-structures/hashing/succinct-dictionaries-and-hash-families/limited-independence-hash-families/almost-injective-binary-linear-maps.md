@@ -6,10 +6,11 @@ Let $P$ be a finite set of pairs of distinct vectors in $\{0,1\}^n$ and let $A$ 
 
 Each pair collides with probability $2^{-m}$ since $A(x - y)$ is uniform; linearity of expectation and averaging give the existence claims.
 
-## Depends on
+## Proof depends on
 
 - [Subset-sum and random-matrix hashing are optimally Δ-universal](subset-sum-and-matrix-hashing.md)
 
 ## Sources
 
 - S. Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.
+- J. L. Carter and M. N. Wegman, "Universal Classes of Hash Functions", Journal of Computer and System Sciences 18(2), 1979 (Proposition 9: the class $H_3$ of Boolean linear maps is universal).

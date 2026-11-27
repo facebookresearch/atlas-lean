@@ -20,5 +20,5 @@ Bipartite matching reduces to maximum flow, which is in $\mathsf{P}$; $\mathsf{P
 
 ## Sources
 
-- Alexander A. Razborov, "Lower Bounds on Monotone Complexity of the Logical Permanent", Mathematical Notes of the Academy of Sciences of the USSR, 1985.
+- Alexander A. Razborov, "Lower Bounds on Monotone Complexity of the Logical Permanent", Mathematical Notes of the Academy of Sciences of the USSR 37(6), 1985.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

@@ -4,17 +4,14 @@ Any two Frege systems (over possibly different complete sets of connectives) pol
 
 ## Proof sketch
 
-Each axiom scheme and rule of the first system is a tautological implication, hence derivable in the second by implicational completeness; substituting instances costs polynomially. Changing connectives requires translating formulas with a balanced-formula technique to avoid exponential blowup.
+Over a common connective set (Cook–Reckhow): each rule of the first system is a sound implication between schemes, hence has a fixed derivation in the second by implicational completeness, and substituting instances multiplies the number of lines by a constant and the formula size by a constant. Changing connective sets (Reckhow) requires translating every formula into the other basis without exponential blowup, which is the involved part of the proof.
 
 ## Depends on
 
 - [Frege systems](frege-systems.md)
 - [Superpolynomial lower bounds for Frege proofs](../superpolynomial-lower-bounds-for-frege-proofs.md)
 
-## Proof depends on
-
-- [Soundness and implicational completeness of the Hilbert–Frege system](frege-soundness-and-completeness.md)
-
 ## Sources
 
-- S. A. Cook and R. A. Reckhow, "The Relative Efficiency of Propositional Proof Systems", The Journal of Symbolic Logic 44(1), 36–50, 1979.
+- S. A. Cook and R. A. Reckhow, "The Relative Efficiency of Propositional Proof Systems", The Journal of Symbolic Logic 44(1), 36–50, 1979: Theorem 2.3 and Corollary 2.4 (same connective set), and the remark after Corollary 2.4 crediting the case of different connective sets to Reckhow's 1976 Ph.D. thesis (University of Toronto).
+- S. Buss and J. Nordström, "Proof Complexity and SAT Solving", in Handbook of Satisfiability, 2nd ed., IOS Press, 2021, Section 7.9.

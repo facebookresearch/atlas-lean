@@ -10,6 +10,7 @@ A *polynomial-time uniform family of quantum circuits* assigns to each input len
 
 ## Sources
 
-- John Watrous, "Quantum Computational Complexity", 2008.
-- Chris Marriott, John Watrous, "Quantum Arthur–Merlin Games", Computational Complexity, 2005.
-- Ronald de Wolf, "Quantum Computing: Lecture Notes", 2019.
+- John Watrous, "Quantum Computational Complexity", in Encyclopedia of Complexity and Systems Science, Springer, 7174–7201, 2009 (arXiv:0804.3401).
+- Chris Marriott, John Watrous, "Quantum Arthur–Merlin Games", Computational Complexity 14(2), 122–152, 2005.
+- A. Yu. Kitaev, A. H. Shen and M. N. Vyalyi, "Classical and Quantum Computation", Graduate Studies in Mathematics 47, American Mathematical Society, 2002, Chapter 14 (QMA).
+- Ronald de Wolf, "Quantum Computing: Lecture Notes", arXiv:1907.09415, 2019 (lecture notes; supplementary pointer).

@@ -1,6 +1,6 @@
 # Unfolding a circuit into a formula of the same depth
 
-Every circuit over a basis of fan-in at most $r$ of depth $d$ computes the same function as a formula over the same basis of depth $d$ obtained by copying each gate once for every path from it to the output. The formula has at most $r^d$ leaves and fewer than $r^{d+1}$ nodes. Conversely, a formula with at most $d$ AND and OR gates on every path has at most $2^d$ leaves.
+Let $r\ge 2$. Every circuit over a basis of fan-in at most $r$ of depth $d$ computes the same function as a formula over the same basis of depth $d$ obtained by copying each gate once for every path from it to the output. The formula has at most $r^d$ leaves and fewer than $r^{d+1}$ nodes. Conversely, a formula with at most $d$ AND and OR gates on every path has at most $2^d$ leaves.
 
 ## Proof sketch
 

@@ -4,7 +4,7 @@ For $V \ge 2$, every deterministic step-indexed cell-probe scheme with words of 
 
 ## Proof sketch
 
-Each of the $n$ queries must return a value determined by a uniformly random key-value pair, which carries $\Omega(\log U + \log V)$ bits of information not available before the matching insertion; a query reading fewer than one cell written since that insertion would answer independently of it. Since a cell holds $O(\log U + \log V)$ bits, each insertion-query pair forces a constant number of probes in expectation.
+A probe tree that makes no probe returns a fixed leaf label. For a fixed key $x$ and step index, admissible histories of the same length end with $x$ stored under different values (here $V \ge 2$ is used), so the tree that answers $\mathrm{query}(x)$ at that step must make at least one probe. Hence each of the $n$ queries of the distribution makes at least one probe, on every outcome.
 
 ## Depends on
 
@@ -13,9 +13,9 @@ Each of the $n$ queries must return a value determined by a uniformly random key
 
 ## Proof depends on
 
-- [Counting bound for cell-probe trees](../cell-probe-complexity/counting-bound-for-cell-probe-trees.md)
+- [Adaptive cell-probe decision tree](../cell-probe-complexity/adaptive-cell-probe-decision-tree.md)
 
 ## Sources
 
-- T. Li, J. Liang, H. Yu and R. Zhou, "Tight Cell-Probe Lower Bounds for Dynamic Succinct Dictionaries", Proceedings of the 64th IEEE Symposium on Foundations of Computer Science (FOCS), 2023; arXiv:2306.02253.
+- T. Li, J. Liang, H. Yu and R. Zhou, "Tight Cell-Probe Lower Bounds for Dynamic Succinct Dictionaries", Proceedings of the 64th IEEE Symposium on Foundations of Computer Science (FOCS), pp. 1842-1862, 2023; arXiv:2306.02253.
 - P. B. Miltersen, "Cell Probe Complexity - a Survey", Advances in Data Structures Workshop (FSTTCS pre-conference workshop), 1999.

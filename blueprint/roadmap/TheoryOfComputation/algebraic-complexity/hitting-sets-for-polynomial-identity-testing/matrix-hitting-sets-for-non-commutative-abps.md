@@ -4,7 +4,7 @@ Over a field of characteristic zero, there is an explicit set of $n$-tuples of $
 
 ## Proof sketch
 
-Forbes–Shpilka reduction: substituting upper-triangular shift matrices $x_i\mapsto\sum_{k}y_k^{\,i-1}E_{k,k+1}$ turns the non-commutative ABP into a commutative ROABP in $d$ new variables with width $W$ and layer degree $n-1$; apply a hitting set for ROABPs in known order.
+Substitute strictly upper-triangular $(d+1)\times(d+1)$ matrices $x_i\mapsto\sum_{k=1}^{d}y_k^{\,i-1}E_{k,k+1}$: the $(1,d+1)$ entry of $f$ evaluated there is $\sum_w\mathrm{coeff}_w(f)\prod_ky_k^{\,i_k-1}$ over words $w=x_{i_1}\cdots x_{i_d}$, which is nonzero iff $f$ is and is computed by a commutative ROABP in $y_1,\dots,y_d$ of width $W$ and individual degree at most $n-1$; apply a hitting set for ROABPs. (Forbes and Shpilka use the analogous reduction to set-multilinear ABPs.)
 
 ## Depends on
 
@@ -18,5 +18,5 @@ Forbes–Shpilka reduction: substituting upper-triangular shift matrices $x_i\ma
 
 ## Sources
 
-- Michael A. Forbes, Amir Shpilka, "Quasipolynomial-Time Identity Testing of Non-commutative and Read-Once Oblivious Algebraic Branching Programs", 54th Annual IEEE Symposium on Foundations of Computer Science (FOCS), 2013.
+- Michael A. Forbes, Amir Shpilka, "Quasipolynomial-Time Identity Testing of Non-commutative and Read-Once Oblivious Algebraic Branching Programs", 54th Annual IEEE Symposium on Foundations of Computer Science (FOCS), 2013 (arXiv:1209.2408), Corollary 4.7 (over fields with at least $(2(d+1)^5nW^4)^2$ elements, size at most $(2(d+1)^4n^2W^3)^{\lceil\log_2d\rceil+1}$).
 - Manindra Agrawal, Rohit Gurjar, Arpita Korwar, Nitin Saxena, "Hitting-Sets for ROABP and Sum of Set-Multilinear Circuits", SIAM Journal on Computing, 2015.

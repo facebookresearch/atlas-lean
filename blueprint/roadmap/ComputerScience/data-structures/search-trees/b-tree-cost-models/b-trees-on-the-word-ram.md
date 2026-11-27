@@ -1,6 +1,6 @@
 # B-trees on the Word RAM in O(t log_t n) instructions
 
-There is a word-RAM implementation of classic B-trees of minimum degree $t \ge 2$ in a flat array arena in which lookup walks one root-to-leaf path in $O(t(h + 1))$ instructions, where $h$ is the height, and proactive top-down insertion (splitting a full root, then splitting every full child before descending into it) runs in $O(t h)$ instructions and allocates at most two nodes. Both are correct with respect to the sorted association-list model, so lookup and insertion take $O(t \log_t n)$ time on $n$ keys.
+There is a word-RAM implementation of classic B-trees of minimum degree $t \ge 2$ in a flat array arena in which lookup walks one root-to-leaf path in $O(t(h + 1))$ instructions, where $h$ is the height, and proactive top-down insertion (splitting a full root, then splitting every full child before descending into it) runs in $O(t h)$ instructions and allocates at most $h + 1$ nodes (one per split, plus the new root when the root splits). Both are correct with respect to the sorted association-list model, so lookup and insertion take $O(t \log_t n)$ time on $n$ keys.
 
 ## Proof sketch
 
@@ -20,4 +20,4 @@ Each node is a fixed-size record of $2t - 1$ key and value slots, $2t$ child poi
 ## Sources
 
 - T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
-- R. Bayer and E. M. McCreight, "Organization and Maintenance of Large Ordered Indexes", Acta Informatica 1, 1972.
+- R. Bayer and E. M. McCreight, "Organization and Maintenance of Large Ordered Indexes", Acta Informatica 1(3), pp. 173-189, 1972.

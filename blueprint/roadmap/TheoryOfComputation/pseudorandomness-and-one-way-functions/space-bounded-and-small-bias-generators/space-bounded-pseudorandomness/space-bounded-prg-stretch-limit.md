@@ -1,6 +1,6 @@
 # Space-bounded pseudorandom generators with error below 1/2 have stretch below 2^k
 
-If $G : \{0,1\}^k \to \{0,1\}^\ell$ is an $(s, \varepsilon)$-pseudorandom generator against read-once programs of width $2^s$ with $s \ge 1$ and $\varepsilon < 1/2$, then $\ell < 2^k$. The hypothesis $\varepsilon < 1$ printed in Goldreich's Exercise 8.25(2) does not suffice: $\sigma \mapsto \sigma\sigma$ has $\ell = 2 = 2^1$ and error $1/2$.
+If $G : \{0,1\}^k \to \{0,1\}^\ell$ is an $(s, \varepsilon)$-pseudorandom generator against read-once programs of width $2^s$ with $s \ge 1$ and $\varepsilon < 1/2$, then $\ell < 2^k$. The hypothesis $\varepsilon < 1$ printed in Exercise 8.25(2) of Goldreich's 2007 public draft (derived there from Exercises 8.37 and 8.38) does not suffice: $\sigma \mapsto \sigma\sigma$ has $\ell = 2 = 2^1$ and error $1/2$.
 
 ## Proof sketch
 
@@ -17,4 +17,4 @@ By the previous theorem $G$ is $2\varepsilon$-biased with $2\varepsilon < 1$, an
 
 ## Sources
 
-- O. Goldreich, "Computational Complexity: A Conceptual Perspective", public draft of Chapters 7–8, March 2007.
+- O. Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercises 8.25(2), 8.37 and 8.38 (numbering of the 2007 public draft).

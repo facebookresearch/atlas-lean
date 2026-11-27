@@ -8,10 +8,10 @@ For a fixed nonempty $S$, the parities on $S$ of $d$ independent uniform strings
 
 ## Depends on
 
-- [Bias, ε-biased and k-wise ε-biased distributions](small-bias-distributions.md)
+- [Small-bias distribution and generator](../space-bounded-and-small-bias-generators/small-bias-distributions.md)
 - [Hoeffding's inequality for averages of bounded variables](../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 
 ## Sources
 
-- J. Naor and M. Naor, "Small-Bias Probability Spaces: Efficient Constructions and Applications", SIAM Journal on Computing, 1993.
-- N. Alon, O. Goldreich, J. Håstad and R. Peralta, "Simple Constructions of Almost k-wise Independent Random Variables", Random Structures & Algorithms, 1992.
+- J. Naor and M. Naor, "Small-Bias Probability Spaces: Efficient Constructions and Applications", SIAM Journal on Computing 22(4), 838–856, 1993.
+- N. Alon, O. Goldreich, J. Håstad and R. Peralta, "Simple Constructions of Almost k-wise Independent Random Variables", Random Structures & Algorithms 3(3), 289–304, 1992.

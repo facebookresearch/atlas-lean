@@ -17,4 +17,4 @@ Each split produces two nodes with at least $t - 1$ items, and the copied or mov
 ## Sources
 
 - T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
-- D. Comer, "The Ubiquitous B-Tree", ACM Computing Surveys 11(2), 1979.
+- D. Comer, "The Ubiquitous B-Tree", ACM Computing Surveys 11(2), pp. 121-137, 1979.

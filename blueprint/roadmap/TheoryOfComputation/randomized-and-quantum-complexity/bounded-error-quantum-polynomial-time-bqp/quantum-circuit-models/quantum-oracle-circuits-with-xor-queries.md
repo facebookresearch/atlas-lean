@@ -9,6 +9,7 @@ For a function $H:\{0,1\}^a\to\{0,1\}^b$, the *coherent XOR query* on designated
 
 ## Sources
 
-- Charles H. Bennett, Ethan Bernstein, Gilles Brassard, Umesh Vazirani, "Strengths and Weaknesses of Quantum Computing", SIAM Journal on Computing, 1997.
-- Dan Boneh, Özgür Dagdelen, Marc Fischlin et al., "Random Oracles in a Quantum World", 2012.
-- Ronald de Wolf, "Quantum Computing: Lecture Notes", 2019.
+- Charles H. Bennett, Ethan Bernstein, Gilles Brassard, Umesh Vazirani, "Strengths and Weaknesses of Quantum Computing", SIAM Journal on Computing 26(5), 1510–1523, 1997.
+- Dan Boneh, Özgür Dagdelen, Marc Fischlin, Anja Lehmann, Christian Schaffner and Mark Zhandry, "Random Oracles in a Quantum World", Advances in Cryptology – ASIACRYPT 2011, Lecture Notes in Computer Science 7073, 41–69, 2011.
+- Michael A. Nielsen and Isaac L. Chuang, "Quantum Computation and Quantum Information", Cambridge University Press, 2000, Section 6.1.
+- Ronald de Wolf, "Quantum Computing: Lecture Notes", arXiv:1907.09415, 2019 (lecture notes; supplementary pointer).

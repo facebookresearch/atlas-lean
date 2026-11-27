@@ -8,10 +8,11 @@ The blocks of a uniform input are independent, so the expectation of the product
 
 ## Depends on
 
-- [Yao's XOR lemma: hardness amplification by XOR](../../pseudorandomness-and-one-way-functions/yao-s-xor-lemma/yao-xor-lemma.md)
+- [XOR of independent copies of a function](../../pseudorandomness-and-one-way-functions/yao-s-xor-lemma/xor-of.md)
 - [Fourier coefficient on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/bool-fourier-coeff.md)
 
 ## Sources
 
-- Andrew C. Yao, "Theory and Application of Trapdoor Functions", Proceedings of the 23rd Annual Symposium on Foundations of Computer Science, 1982.
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 7–8", 2007.
+- Andrew C. Yao, "Theory and Application of Trapdoor Functions", Proceedings of the 23rd Annual Symposium on Foundations of Computer Science (FOCS 1982), 1982 (the $k$-fold XOR).
+- Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009 (Johnson bound: a binary code of relative distance at least $\tfrac12-\gamma$ has at most $1/(2\beta^2)$ codewords within relative distance $\tfrac12-\beta$ of any word when $\beta\ge\sqrt\gamma$, applied with $\beta=\eta/2$ and $\gamma=\eta^2/4$; Theorem 17.26 in the 2007 web draft).
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008 (Chapters 7–8).

@@ -4,7 +4,7 @@ For $f : \mathbb{F}_2^n \to \mathbb{F}_2$ read as $F = (-1)^f$, the *Odd BLR tes
 
 $$\frac12 + \frac12 \sum_{|S| \text{ odd}} \hat F(S)^3,$$
 
-hence with probability at most $\frac12 + \frac12 M$ for every $M \ge 0$ with $\hat F(S) \le M$ for all odd $|S|$. (The bound with $M = \max_{|S|\text{ odd}}\hat F(S)$ fails when that maximum is negative: the NAND of two bits has odd coefficients $-1/2$ and passes with probability $3/8$.) Folded long codes, being odd functions, pass with probability $1$, which is why this test underlies Håstad's 3-bit PCPs.
+hence with probability at most $\frac12 + \frac12 M$ for every $M \ge 0$ with $\hat F(S) \le M$ for all odd $|S|$. (The bound with $M = \max_{|S|\text{ odd}}\hat F(S)$ fails when that maximum is negative: the NAND of two bits has odd coefficients $-1/2$ and passes with probability $3/8$.) An honest long-code word is a coordinate projection $f(x) = x_i$, so $F = \chi_{\{i\}}$ has its only nonzero coefficient, $+1$, on a singleton and passes with probability $1$; this is why the test underlies Håstad's 3-bit PCPs. Oddness alone does not suffice: the odd table $F = -\chi_{\{i\}}$ passes with probability $0$.
 
 ## Proof sketch
 

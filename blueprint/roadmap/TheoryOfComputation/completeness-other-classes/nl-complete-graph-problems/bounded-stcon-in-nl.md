@@ -17,4 +17,4 @@ Guess the walk vertex by vertex, keeping the current vertex and a step counter c
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Exercise 5.19.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 5.19.

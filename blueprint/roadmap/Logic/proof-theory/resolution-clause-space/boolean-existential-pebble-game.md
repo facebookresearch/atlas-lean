@@ -8,4 +8,4 @@ Let $\varphi$ be a CNF formula and $k \ge 1$. In the existential $k$-pebble game
 
 ## Sources
 
-- A. Atserias and V. Dalmau, "A Combinatorial Characterization of Resolution Width", Journal of Computer and System Sciences 74(3), 323–334, 2008.
+- A. Atserias and V. Dalmau, "A Combinatorial Characterization of Resolution Width", Journal of Computer and System Sciences 74(3), 323–334, 2008: Definition 2.

@@ -1,6 +1,6 @@
 # Babai–Nisan–Szegedy lower bound for the generalized inner product
 
-The *generalized inner product* of $k$ strings $x_1, \dots, x_k \in \{0,1\}^n$ is $\mathrm{GIP}_{k,n}(x) = \bigoplus_{r=1}^n \bigwedge_{i=1}^k x_{i,r}$; for $k = 2$ it is the inner product modulo two. Its uniform cube expectation is $\big(1 - 2^{1-k}\big)^n$, hence $\mathrm{disc}^k(\mathrm{GIP}) \le \exp(-n / 4^{k})$ up to constants, and every public-coin NOF protocol computing $\mathrm{GIP}_{k,n}$ with error at most $1/3$ has cost $\Omega(n / 4^k)$.
+For $k \ge 2$, the *generalized inner product* of $k$ strings $x_1, \dots, x_k \in \{0,1\}^n$ is $\mathrm{GIP}_{k,n}(x) = \bigoplus_{r=1}^n \bigwedge_{i=1}^k x_{i,r}$; for $k = 2$ it is the inner product modulo two. Its uniform cube expectation is $\big(1 - 2^{1-k}\big)^n$, hence, by the cube bound, $\mathrm{disc}^k(\mathrm{GIP}_{k,n}) \le (1 - 2^{1-k})^{n/2^k} \le \exp(-2n / 4^{k})$, and every public-coin NOF protocol computing $\mathrm{GIP}_{k,n}$ with error at most $1/3$ has cost $\Omega(n / 4^k)$.
 
 ## Proof sketch
 

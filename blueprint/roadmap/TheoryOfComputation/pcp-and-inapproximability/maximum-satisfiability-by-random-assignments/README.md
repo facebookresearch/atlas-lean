@@ -6,6 +6,5 @@
 - [Dictator-vs.-No-Notables tests](dictator-vs-no-notables-tests.md)
 - [Constraint subsampling preserves the Max-CSP optimum up to $2\delta m$](constraint-subsampling-for-max-csp.md)
 - [Satisfaction probability at a randomized assignment is the multilinear expansion](satisfaction-probability-multilinear-expansion.md)
-- [Johnson's algorithm by conditional expectations](johnson-algorithm-conditional-expectations.md)
 - [Limited independence fools clause counts](limited-independence-fools-clause-counts.md)
-- [Håstad's 3-query linearity test is a $(1-\delta, 1/2)$ Dictator-vs.-No-Notables test](hastad-dictator-vs-no-notables-test.md)
+- [Håstad's 3-query linearity test is a $(1/2, 1-\delta)$ Dictator-vs.-No-Notables test](hastad-dictator-vs-no-notables-test.md)

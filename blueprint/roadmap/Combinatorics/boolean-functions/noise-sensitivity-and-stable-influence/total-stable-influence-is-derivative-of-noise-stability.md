@@ -1,10 +1,10 @@
 # Total stable influence is the derivative of noise stability
 
-For every real $f$ on $\{-1,1\}^n$ and every real $\rho$, $\frac{d}{d\rho}\mathrm{Stab}_\rho[f] = \mathbf{I}^{(\rho)}[f] = \sum_S |S|\rho^{|S|-1}\hat f(S)^2$.
+For every real $f$ on $\{-1,1\}^n$ and every $\rho \in [0, 1]$ (one-sided derivatives at the endpoints), $\frac{d}{d\rho}\mathrm{Stab}_\rho[f] = \mathbf{I}^{(\rho)}[f] = \sum_{S \ne \emptyset} |S|\rho^{|S|-1}\hat f(S)^2$, with $0^0 = 1$.
 
 ## Proof sketch
 
-Differentiate the Fourier formula $\mathrm{Stab}_\rho[f] = \sum_S\rho^{|S|}\hat f(S)^2$ term by term.
+Differentiate the Fourier formula $\mathrm{Stab}_\rho[f] = \sum_S\rho^{|S|}\hat f(S)^2$ term by term; the constant term $\hat f(\emptyset)^2$ contributes nothing.
 
 ## Depends on
 

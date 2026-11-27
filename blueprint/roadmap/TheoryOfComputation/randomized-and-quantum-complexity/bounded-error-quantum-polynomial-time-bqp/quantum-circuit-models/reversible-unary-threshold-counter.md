@@ -13,4 +13,6 @@ Stage $s$ introduces $T$ fresh level qubits; reading input bit $b$, the new leve
 
 ## Sources
 
-- Ronald de Wolf, "Quantum Computing: Lecture Notes", 2019.
+- Charles H. Bennett, "Logical Reversibility of Computation", IBM Journal of Research and Development 17(6), 525–532, 1973.
+- Michael A. Nielsen and Isaac L. Chuang, "Quantum Computation and Quantum Information", Cambridge University Press, 2000, Section 3.2.5 (the counter is an elementary construction from Toffoli and CNOT gates).
+- Ronald de Wolf, "Quantum Computing: Lecture Notes", arXiv:1907.09415, 2019 (lecture notes; supplementary pointer).

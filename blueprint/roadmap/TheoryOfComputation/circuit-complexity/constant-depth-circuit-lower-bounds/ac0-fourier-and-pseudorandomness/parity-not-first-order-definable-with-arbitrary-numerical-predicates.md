@@ -8,15 +8,15 @@ A definition would give, by first-order model checking, constant-depth polynomia
 
 ## Depends on
 
-- [First-order model checking in constant depth](first-order-model-checking-in-ac0.md)
-- [Even cardinality is not first-order definable](../../../descriptive-complexity/finite-model-theory/even-cardinality-is-not-first-order-definable.md)
+- [Logics on finite structures as query languages](../../../descriptive-complexity/finite-model-theory/logics-on-finite-structures-as-query-languages.md)
 
 ## Proof depends on
 
+- [First-order model checking in constant depth](first-order-model-checking-in-ac0.md)
 - [Parity is not in AC0](../../lower-bounds-for-ac0-circuits/parity-not-in-ac0.md)
 
 ## Sources
 
-- Merrick Furst, James B. Saxe, Michael Sipser, "Parity, Circuits, and the Polynomial-Time Hierarchy", Mathematical Systems Theory, 1984.
-- Miklós Ajtai, "Σ¹₁-Formulae on Finite Structures", Annals of Pure and Applied Logic, 1983.
+- Merrick Furst, James B. Saxe, Michael Sipser, "Parity, Circuits, and the Polynomial-Time Hierarchy", Mathematical Systems Theory 17(1), 1984.
+- Miklós Ajtai, "Σ¹₁-Formulae on Finite Structures", Annals of Pure and Applied Logic 24(1), 1983.
 - Neil Immerman, "Descriptive Complexity", Springer, 1999.

@@ -5,6 +5,5 @@
 - [Pullback of formulas along interpretations](pullback-along-interpretations.md)
 - [CNF formulas, graphs and sized graphs as finite structures](cnf-formulas-and-graphs-as-finite-structures.md)
 - [First-order reductions preserve definability](first-order-reductions-preserve-definability.md)
-- [Order-free reductions must special-case tiny structures](order-free-reductions-on-small-structures.md)
 - [First-order reductions are computable in logarithmic space](first-order-reductions-logspace-computable.md)
 - [Order-free first-order reductions between 3-SAT and 3-colorability](order-free-reductions-3sat-3col.md)

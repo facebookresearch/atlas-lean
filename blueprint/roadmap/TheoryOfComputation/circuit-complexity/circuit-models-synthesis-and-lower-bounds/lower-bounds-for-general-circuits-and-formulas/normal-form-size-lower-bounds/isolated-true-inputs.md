@@ -5,4 +5,4 @@ Let $g : \{0,1\}^n \to \{0,1\}$. An input $x$ is an *isolated true input* of $g$
 ## Sources
 
 - S. Jukna, Boolean Function Complexity: Advances and Frontiers, Springer, 2012.
-- R. Paturi, P. Pudlák and F. Zane, "Satisfiability Coding Lemma", Chicago Journal of Theoretical Computer Science, 1999.
+- R. Paturi, P. Pudlák and F. Zane, "Satisfiability Coding Lemma", Chicago Journal of Theoretical Computer Science 1999, Article 11.

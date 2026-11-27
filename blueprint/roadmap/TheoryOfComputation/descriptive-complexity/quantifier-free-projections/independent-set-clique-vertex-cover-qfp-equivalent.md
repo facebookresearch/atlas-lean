@@ -8,12 +8,12 @@ The loop-free complement of the edge relation is a projection selecting $\bot$ o
 
 ## Depends on
 
-- [First-order and quantifier-free projections](first-order-and-quantifier-free-projections.md)
+- [First-order and quantifier-free projections (Immerman-Landau)](../first-order-projections/first-order-and-quantifier-free-projections.md)
 - [CNF formulas, graphs and sized graphs as finite structures](../first-order-interpretations-and-reductions/cnf-formulas-and-graphs-as-finite-structures.md)
 
 ## Proof depends on
 
-- [Projections compose and are closed under identity](projections-compose.md)
+- [Immerman-Landau: first-order and quantifier-free projection reducibilities are preorders refining FO reducibility](../first-order-projections/projection-reducibility-is-a-preorder.md)
 
 ## Sources
 

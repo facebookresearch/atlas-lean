@@ -4,7 +4,7 @@ If every tally language in $\mathsf{NP}$ is in $\mathsf{P}$, then $\mathsf{EXP}=
 
 ## Proof sketch
 
-For $L\in\mathsf{NE}$, write $x$ in binary as a number $m_x$ and consider the tally set $\{1^{m_x}: x\in L\}$, which is in $\mathsf{NP}$ because the unary length pays for the exponential-time verification. If it is in $\mathsf{P}$, the deterministic algorithm on $1^{m_x}$ runs in time $2^{O(|x|)}$.
+For $L\in\mathsf{NE}$, let $m_x$ be the number whose binary representation is $1x$ (so $x\mapsto m_x$ is injective and $m_x<2^{|x|+1}$) and consider the tally set $T_L=\{1^{m_x}: x\in L\}$, which is in $\mathsf{NP}$ because the unary length pays for the $2^{O(|x|)}$-time nondeterministic computation. If $T_L\in\mathsf{P}$, then $L$ is decided by writing $1^{m_x}$ and running the polynomial-time algorithm, in time $2^{O(|x|)}$, so $\mathsf{E}=\mathsf{NE}$; padding then lifts $\mathsf{E}=\mathsf{NE}$ to $\mathsf{EXP}=\mathsf{NEXP}$.
 
 ## Depends on
 
@@ -19,5 +19,5 @@ For $L\in\mathsf{NE}$, write $x$ in binary as a number $m_x$ and consider the ta
 
 ## Sources
 
-- Juris Hartmanis, Neil Immerman and Vivian Sewelson, "Sparse Sets in NP-P: EXPTIME versus NEXPTIME", Information and Control 65(2–3), 1985.
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Chapter 2, Exercise 23.
+- Juris Hartmanis, Neil Immerman and Vivian Sewelson, "Sparse Sets in NP-P: EXPTIME versus NEXPTIME", Information and Control 65(2–3), 158–181, 1985.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Chapter 2, Exercise 23 (published by Cambridge University Press, 2009).

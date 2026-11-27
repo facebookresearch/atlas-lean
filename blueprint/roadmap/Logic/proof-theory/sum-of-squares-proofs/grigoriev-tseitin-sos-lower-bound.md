@@ -1,16 +1,16 @@
 # Grigoriev: sum-of-squares degree lower bound for Tseitin parity systems
 
-Let $G$ be a connected multigraph with charge $\chi$ of odd total. The $\pm1$ encoding of the Tseitin parity system of $(G,\chi)$ has no sum-of-squares refutation of degree less than $e(G)$ (the minimum balanced cut). On constant-degree expanders with edge expansion $h(G) > 0$ every SOS refutation has degree at least $h(G)|V|/3$, linear in the number of variables; hence the Lasserre hierarchy needs linearly many levels to refute random-like parity systems.
+Let $G_k$ be an $r$-regular expander on $k$ vertices ($r$ a constant) with a charge $\chi$ of odd total. Over a real field, every Positivstellensatz refutation of the Boolean binomial system of the Tseitin formula (the $\pm 1$ encoding $\prod_{e \ni v} y_e = (-1)^{\chi(v)}$, $y_e^2 = 1$) has degree $\Omega(k)$, linear in the number of variables. More generally, for any Boolean binomial system the Positivstellensatz degree is at least half of its refutation degree $D$, the least degree within which Laurent-monomial derivations reach a constant other than $1$. Since static sum-of-squares refutations are special Positivstellensatz refutations, the bound applies to them.
 
 ## Proof sketch
 
-A sum of vertex equations is the equation of the edge boundary of the set $U$ of summed vertices, with right-hand side the charge of $U$. Below width $e(G)$ every derivable equation comes from a set $U$ smaller than a third of the vertices, whose charge differs from the complement's, so $0 = 1$ is not derivable; apply Schoenebeck's lemma.
+A product of vertex equations is the equation of the edge boundary of the set $U$ of multiplied vertices, with sign given by the charge of $U$. Deriving $-1 = 1$ needs all $k$ vertices, so some intermediate Laurent monomial involves between $k/3$ and $2k/3$ vertices, and expansion gives it degree $\Omega(k)$; thus $D = \Omega(k)$. Below degree $D/2$, the linear map sending each monomial equivalent to a constant $b$ to $b$, and every other monomial to $0$, is nonnegative on squares and vanishes on the ideal, which rules out a refutation. Schoenebeck's lemma gives the same kind of bound from width lower bounds.
 
 ## Depends on
 
 - [Parity systems and bounded-width derivations](parity-systems-and-bounded-width-derivations.md)
 - [Tseitin formulas of a multigraph](../tseitin-formulas/tseitin-formulas-of-a-multigraph.md)
-- [Ben-Sasson–Wigderson expansion of a multigraph](../tseitin-formulas/balanced-cut-expansion.md)
+- [Positivstellensatz (sum-of-squares) refutations](positivstellensatz-refutations.md)
 
 ## Proof depends on
 
@@ -19,5 +19,5 @@ A sum of vertex equations is the equation of the edge boundary of the set $U$ of
 
 ## Sources
 
-- D. Grigoriev, "Linear Lower Bound on Degrees of Positivstellensatz Calculus Proofs for the Parity", Theoretical Computer Science 259(1–2), 613–622, 2001.
+- D. Grigoriev, "Linear Lower Bound on Degrees of Positivstellensatz Calculus Proofs for the Parity", Theoretical Computer Science 259(1–2), 613–622, 2001: Theorem (Section 2), Lemma 8 and Corollary 1 (Section 3).
 - G. Schoenebeck, "Linear Level Lasserre Lower Bounds for Certain k-CSPs", Proceedings of the 49th IEEE Symposium on Foundations of Computer Science (FOCS), 2008.

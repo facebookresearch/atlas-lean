@@ -8,8 +8,9 @@ The XOR of two codewords is the codeword of the nonzero sum message, which is $\
 
 ## Depends on
 
-- [Bias, ε-biased and k-wise ε-biased distributions](small-bias-distributions.md)
+- [Small-bias distribution and generator](../space-bounded-and-small-bias-generators/small-bias-distributions.md)
 
 ## Sources
 
-- D. M. Kane and R. Williams, "Super-Linear Gate and Super-Quadratic Wire Lower Bounds for Depth-Two and Depth-Three Threshold Circuits", Proceedings of the 48th ACM Symposium on Theory of Computing, 2016.
+- D. M. Kane and R. Williams, "Super-Linear Gate and Super-Quadratic Wire Lower Bounds for Depth-Two and Depth-Three Threshold Circuits", Proceedings of the 48th ACM Symposium on Theory of Computing, 633–643, 2016 (numbering of arXiv:1511.07860), Proposition 2 (codes from small-bias sets) and Lemma 6.1 (few codewords correlate with a fixed word, by a Gram-matrix argument; the explicit bound $N(\gamma^2-\delta)\le1$ here is the exact form of that argument).
+- N. Alon, O. Goldreich, J. Håstad and R. Peralta, "Simple Constructions of Almost k-wise Independent Random Variables", Random Structures & Algorithms 3(3), 289–304, 1992, Section 4.

@@ -10,3 +10,4 @@ Let $G = (V, E)$ be a finite multigraph (parallel edges allowed; self-loops are 
 
 - G. S. Tseitin, "On the Complexity of Derivation in Propositional Calculus", in Automation of Reasoning 2, Springer, 1983 (original 1968).
 - A. Urquhart, "Hard Examples for Resolution", Journal of the ACM 34(1), 209–219, 1987.
+- E. Ben-Sasson and A. Wigderson, "Short Proofs Are Narrow — Resolution Made Simple", Journal of the ACM 48(2), 149–169, 2001: Definition 4.1 and Lemma 4.2.

@@ -4,6 +4,6 @@ A *Martin-Löf test* is a uniformly computably enumerable sequence $(V_k)_{k \ge
 
 ## Sources
 
-- P. Martin-Löf, "The Definition of Random Sequences", Information and Control 9(6), 1966.
+- P. Martin-Löf, "The Definition of Random Sequences", Information and Control 9(6), 602–619, 1966.
 - M. Li and P. Vitányi, "An Introduction to Kolmogorov Complexity and Its Applications", 4th ed., Springer, 2019.
 - A. Shen, V. A. Uspensky and N. Vereshchagin, "Kolmogorov Complexity and Algorithmic Randomness", American Mathematical Society, 2017.

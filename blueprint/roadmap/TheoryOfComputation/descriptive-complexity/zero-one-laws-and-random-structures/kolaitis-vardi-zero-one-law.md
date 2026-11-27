@@ -10,12 +10,12 @@ In a graph satisfying the extension axioms with at most $k$ parameters, the part
 
 - [Finite-variable logics $\mathrm{FO}^k$ and $L^k_{\infty\omega}$](../finite-variable-logics/finite-variable-logics.md)
 - [The uniform random graph $G(n, 1/2)$ and $G(n, p)$](uniform-random-graph.md)
+- [The Rado graph is the countable random graph](rado-graph-countable-random-graph.md)
 
 ## Proof depends on
 
 - [Pebble games characterize $\mathrm{FO}^k$ and $L^k_{\infty\omega}$](../finite-variable-logics/pebble-games-characterize-finite-variable-logic.md)
 - [Extension axioms hold almost surely](extension-axioms-hold-almost-surely.md)
-- [The Rado graph is the countable random graph](rado-graph-countable-random-graph.md)
 
 ## Sources
 

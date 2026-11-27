@@ -12,4 +12,4 @@ The coefficient of $\chi_S$ in the restriction to a face is $\sum_{T \supseteq S
 
 ## Sources
 
-- R. O'Donnell, "Analysis of Boolean Functions", Cambridge University Press, 2014, Proposition 3.21.
+- R. O'Donnell, "Analysis of Boolean Functions", Cambridge University Press, 2014, Proposition 3.21 (the Fourier expansion of a restriction), from which the statement follows by maximality.

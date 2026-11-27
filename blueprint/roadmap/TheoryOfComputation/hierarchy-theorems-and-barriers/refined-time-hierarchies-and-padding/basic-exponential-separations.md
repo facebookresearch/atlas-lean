@@ -4,7 +4,7 @@ On binary words: $\mathsf{P}\subsetneq\mathsf{E}\subsetneq\mathsf{EXP}$, $\maths
 
 ## Proof sketch
 
-The deterministic and nondeterministic time hierarchies and the space hierarchy separate the classes. For non-closure, pad a language of $\mathsf{DTIME}(2^{n^2})\setminus\mathsf{E}$ to quadratic length: the padded language lies in $\mathsf{E}$ and the original reduces to it.
+The general hierarchy theorems separate the classes: the deterministic time hierarchy for time-constructible $f,g$ with $f\log f=o(g)$ (Arora–Barak Theorem 3.1) gives $\mathsf{P}\subseteq\mathsf{DTIME}(2^{n})\subsetneq\mathsf{DTIME}(2^{2n})\subseteq\mathsf{E}$ and $\mathsf{E}\subseteq\mathsf{DTIME}(2^{n^{3/2}})\subsetneq\mathsf{DTIME}(2^{n^{2}})\subseteq\mathsf{EXP}$; the nondeterministic time hierarchy for $f(n+1)=o(g(n))$ (Theorem 3.3) gives $\mathsf{NP}\subseteq\mathsf{NTIME}(2^{n})\subsetneq\mathsf{NTIME}(2^{n^{2}})\subseteq\mathsf{NEXP}$; the space hierarchy gives $\mathsf{PSPACE}\subsetneq\mathsf{EXPSPACE}$ in the same way. The linked hierarchy pages are the special cases $n$ versus $n^2$ of the first two theorems. For non-closure, pick $L\in\mathsf{DTIME}(2^{n^2})\setminus\mathsf{E}$ and pad it to quadratic length: $L'=\{x10^{|x|^2} : x\in L\}$: then $L'\in\mathsf{E}$ and $x\mapsto x10^{|x|^2}$ reduces $L$ to $L'$ in polynomial time, so closure would put $L$ in $\mathsf{E}$. Since $\mathsf{NP}$ and $\mathsf{PSPACE}$ are closed under these reductions, neither equals $\mathsf{E}$.
 
 ## Depends on
 
@@ -21,10 +21,9 @@ The deterministic and nondeterministic time hierarchies and the space hierarchy 
 - [Deterministic time hierarchy: quadratic versus linear time](../time-hierarchy-theorem/time-hierarchy.md)
 - [Nondeterministic time hierarchy](../nondet-time-hierarchy.md)
 - [Space hierarchy theorem for space-constructible bounds](../space-hierarchy-theorem/space-hierarchy-theorem-for-space-constructible.md)
-- [Padding: upward translation of class collapses](padding-translates-collapses.md)
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009, Chapter 3 (Theorems 3.1–3.3 in the 2007 web draft).
 - Michael Sipser, "Introduction to the Theory of Computation", Cengage Learning, 2013.
-- Ronald V. Book, "Comparing Complexity Classes", Journal of Computer and System Sciences 9(2), 1974.
+- Ronald V. Book, "Comparing Complexity Classes", Journal of Computer and System Sciences 9(2), 213–229, 1974.

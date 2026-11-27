@@ -1,10 +1,10 @@
 # Set-multilinearization of constant-depth formulas over any field
 
-Over any field, let $F$ be an unbounded fan-in formula of product-depth $\Delta$ and size $s$ computing a set-multilinear polynomial $f$ of degree $d$ (in variables split into $d$ blocks). Then $f$ is computed by a syntactically set-multilinear formula of product-depth at most $2\Delta$ and size at most $\mathrm{poly}\bigl(s,\Theta(d/\ln d)^d\bigr)$.
+Over any field, let the variables be partitioned into blocks $X_1,\dots,X_d$, and let $f$ be computed by an unbounded fan-in circuit (in particular, a formula) of product-depth $\Delta$ and size $s$. Then the set-multilinear part of $f$ on all $d$ blocks (the sum of the monomials of $f$ that contain exactly one variable from each block) is computed by a syntactically set-multilinear circuit of product-depth at most $2\Delta$ and size at most $\mathrm{poly}\bigl(s,\Theta(d/\ln d)^d\bigr)$; the polynomial and the implied constants are absolute. When $f$ itself is set-multilinear, this circuit computes $f$.
 
 ## Proof sketch
 
-Gate by gate, each gate $g$ is replaced by the set-multilinear parts $g_S$ of $g$ on the sets $S$ of blocks: inputs are kept on their own block and sum gates are simulated blockwise. A product gate $\prod_j f_j$ is replaced by a sum, over the ways to distribute the blocks of $S$ among the factors, of products of the corresponding parts; the factors that receive no block contribute only their constant parts, which are grouped by interpolation. Each original product layer thus becomes at most two product layers, so the product-depth at most doubles, and the blow-up per gate depends only on $d$. This argument needs no assumption on the characteristic.
+Gate simulation: every gate $v$ is replaced by its set-multilinear parts $v_S$ on all sets $S$ of blocks. A linear combination of gates is simulated part by part, adding no product-depth. For a product gate $v=v_1\cdots v_m$, normalize the factors with nonzero constant term to have constant term $1$; the part $v_S$ is then a sum, over the set partitions of $S$, of $k$-surjective rectangular permanents of matrices whose entries are parts of the factors, and the Binet–Minc identity computes each such permanent by a set-multilinear product-depth-two formula of size $\mathrm{poly}(m,\Theta(\ell/\ln\ell)^{\ell})$ for $|S|=\ell$. Each product layer thus becomes at most two product layers, and no step depends on the characteristic.
 
 ## Depends on
 
@@ -12,5 +12,5 @@ Gate by gate, each gate $g$ is replaced by the set-multilinear parts $g_S$ of $g
 
 ## Sources
 
-- Michael A. Forbes, "Low-Depth Algebraic Circuit Lower Bounds over Any Field", 39th Computational Complexity Conference (CCC 2024), 2024, Corollary 27.
-- Nutan Limaye, Srikanth Srinivasan, Sébastien Tavenas, "Superpolynomial Lower Bounds Against Low-Depth Algebraic Circuits", 62nd IEEE Symposium on Foundations of Computer Science (FOCS 2021), 2021.
+- Michael A. Forbes, "Low-Depth Algebraic Circuit Lower Bounds over Any Field", 39th Computational Complexity Conference (CCC 2024), LIPIcs 300, 2024, Lemmas 25 and 26 and Corollary 27.
+- Nutan Limaye, Srikanth Srinivasan, Sébastien Tavenas, "Superpolynomial Lower Bounds Against Low-Depth Algebraic Circuits", 62nd IEEE Symposium on Foundations of Computer Science (FOCS 2021), 2021 (the characteristic-dependent version, via homogenization).

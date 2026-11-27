@@ -17,7 +17,7 @@ By the hash mixing lemma and a union bound over $2^k - 1$ levels and the entries
 
 ## Sources
 
-- M. Saks and S. Zhou, "BP_H SPACE(S) ⊆ DSPACE(S^{3/2})", Journal of Computer and System Sciences, 1999.
-- N. Nisan, "Pseudorandom Generators for Space-Bounded Computation", Combinatorica, 1992.
+- M. Saks and S. Zhou, "BP_H SPACE(S) ⊆ DSPACE(S^{3/2})", Journal of Computer and System Sciences 58(2), 376–403, 1999.
+- N. Nisan, "Pseudorandom Generators for Space-Bounded Computation", Combinatorica 12(4), 449–461, 1992.
 - E. Chattopadhyay and J.-J. Liao, "Optimal Error Pseudodistributions for Read-Once Branching Programs", 35th Computational Complexity Conference (CCC 2020), 2020.
 - W. M. Hoza, "Better Pseudodistributions and Derandomization for Space-Bounded Computation", APPROX/RANDOM 2021, 2021.

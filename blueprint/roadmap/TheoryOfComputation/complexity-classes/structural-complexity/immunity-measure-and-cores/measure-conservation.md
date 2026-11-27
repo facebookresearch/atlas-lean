@@ -13,4 +13,5 @@ Diagonalize against $d$: define $A$ bit by bit, always choosing the bit on which
 
 ## Sources
 
-- Jack H. Lutz, "Almost everywhere high nonuniform complexity", Journal of Computer and System Sciences 44(2), 1992, Theorem 3.13, Corollary 3.14.
+- Jack H. Lutz, "Almost everywhere high nonuniform complexity", Journal of Computer and System Sciences 44(2), 1992, Theorem 3.13 and Corollary 3.14 (stated with density functions, equivalent to martingales).
+- Jack H. Lutz, "The Quantitative Structure of Exponential Time", in Complexity Theory Retrospective II, Springer, 1997, Theorem 3.3 and Corollary 5.3 (almost every language in $\mathsf{E}$ has $\{0,1\}^*$ as a $\mathsf{DTIME}(2^{cn})$-complexity core, so $\mathsf{DTIME}(2^{cn})$ has measure zero in $\mathsf{E}$).

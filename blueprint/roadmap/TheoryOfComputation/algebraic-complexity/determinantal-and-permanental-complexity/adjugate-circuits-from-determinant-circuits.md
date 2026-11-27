@@ -1,6 +1,6 @@
 # Adjugate circuits from determinant circuits
 
-The partial derivative of the generic determinant with respect to the entry $(a,b)$ is the $(b,a)$ entry of the adjugate: $\partial\det X/\partial x_{ab}=\operatorname{adj}(X)_{ba}$. Consequently an arithmetic circuit with $s$ gates computing $\det_n$ yields a circuit with at most $5s+2$ gates (and three times as many multiplications) computing all $n^2$ entries of the adjugate; with division-free determinant circuits, the adjugate is in $\mathsf{VP}$ over every commutative ring.
+The partial derivative of the generic determinant with respect to the entry $(a,b)$ is the $(b,a)$ entry of the adjugate: $\partial\det X/\partial x_{ab}=\operatorname{adj}(X)_{ba}$. Consequently an arithmetic circuit with $s$ gates computing $\det_n$ yields a circuit with at most $5s+O(1)$ gates, and at most three times as many multiplications, computing all $n^2$ entries of the adjugate; with division-free determinant circuits, each entry family of the adjugate is in $\mathsf{VP}$ over every commutative ring.
 
 ## Proof sketch
 

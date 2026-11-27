@@ -17,7 +17,7 @@ For monotone $f$, $\hat f(\{i\}) = \mathbf{Inf}_i[f]$; apply the KKL edge-isoper
 ## Proof depends on
 
 - [KKL edge-isoperimetric theorem](kkl-edge-isoperimetric-theorem.md)
-- [A direction is unate exactly when its influence equals its degree-one coefficient](unate-direction-influence-equals-coefficient.md)
+- [A direction is unate exactly when its influence equals the absolute value of its degree-one coefficient](unate-direction-influence-equals-coefficient.md)
 
 ## Sources
 

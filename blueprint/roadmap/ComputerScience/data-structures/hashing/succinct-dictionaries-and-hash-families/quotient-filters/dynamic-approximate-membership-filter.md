@@ -5,9 +5,8 @@ A *dynamic approximate-membership filter* with universe $[U]$, capacity $n$ and 
 ## Depends on
 
 - [Oblivious-sequence specification of a randomized data structure](../../../data-structure-interfaces-and-refinement/oblivious-sequence-specification.md)
-- [Bloom filter](../../bloom-filter/bloom-filter.md)
 
 ## Sources
 
-- A. Pagh, R. Pagh and S. S. Rao, "An Optimal Bloom Filter Replacement", Proceedings of the 16th ACM-SIAM Symposium on Discrete Algorithms (SODA), 2005.
+- A. Pagh, R. Pagh and S. S. Rao, "An Optimal Bloom Filter Replacement", Proceedings of the 16th ACM-SIAM Symposium on Discrete Algorithms (SODA), 2005 (Theorem 1.2).
 - M. A. Bender, M. Farach-Colton, R. Johnson, R. Kraner, B. C. Kuszmaul, D. Medjedovic, P. Montes, P. Shetty, R. P. Spillane and E. Zadok, "Don't Thrash: How to Cache Your Hash on Flash", Proceedings of the VLDB Endowment 5(11), 2012.

@@ -13,4 +13,4 @@ Let $R=\{(x,1): x\in H\}\cup\{(x,0): x\in\{0,1\}^*\}$ for an undecidable $H$ suc
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 0–2", 2006, Exercise 2.1.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 2.1.

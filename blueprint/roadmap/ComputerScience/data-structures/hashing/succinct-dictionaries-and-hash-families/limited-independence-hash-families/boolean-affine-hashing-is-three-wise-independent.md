@@ -8,7 +8,7 @@ For distinct $x_1, x_2, x_3$, the vectors $u = x_2 - x_1$ and $v = x_3 - x_1$ ar
 
 ## Depends on
 
-- [k-wise independent hash families](../word-ram-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash family](../word-ram-hash-families/k-wise-independent-hash-family.md)
 - [Pairwise-independent hashing by affine maps over GF(2)](../../../../../TheoryOfComputation/counting-complexity/counting-and-the-polynomial-hierarchy/pairwise-independent-hashing-by-affine-maps.md)
 
 ## Sources

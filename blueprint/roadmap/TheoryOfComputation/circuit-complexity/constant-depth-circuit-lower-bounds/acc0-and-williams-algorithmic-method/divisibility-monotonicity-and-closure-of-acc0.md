@@ -13,5 +13,5 @@ Reading each input $q'/q$ times multiplies the count by $q'/q$, and $q\mid k$ if
 
 ## Sources
 
-- David A. Barrington, "Bounded-width polynomial-size branching programs recognize exactly those languages in NC^1", Journal of Computer and System Sciences, 1989.
+- David A. Barrington, "Bounded-width polynomial-size branching programs recognize exactly those languages in NC^1", Journal of Computer and System Sciences 38(1), 1989.
 - Heribert Vollmer, "Introduction to Circuit Complexity: A Uniform Approach", Springer, 1999.

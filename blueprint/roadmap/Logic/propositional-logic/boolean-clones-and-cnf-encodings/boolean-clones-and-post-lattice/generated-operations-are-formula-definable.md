@@ -14,3 +14,4 @@ Induction on superposition derivations in one direction and on formulas in the o
 ## Sources
 
 - F. J. Pelletier and N. M. Martin, "Post's Functional Completeness Theorem", Notre Dame Journal of Formal Logic 31(3), 462–475, 1990.
+- H. Chen, "A Rendezvous of Logic, Complexity, and Algebra", SIGACT News 37(4), 85–114, 2006 (extended version ACM Computing Surveys 42(1), 2009): remark after Example 3.18 (generated operations are those computed by circuits over the generators).

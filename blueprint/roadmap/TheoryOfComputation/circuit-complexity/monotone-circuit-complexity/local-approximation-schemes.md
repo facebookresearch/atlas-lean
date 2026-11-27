@@ -8,6 +8,6 @@ A *local approximation scheme* for a circuit $C$ over a basis with exact interpr
 
 ## Sources
 
-- Alexander A. Razborov, "Lower Bounds on the Monotone Complexity of Some Boolean Functions", Soviet Mathematics Doklady, 1985.
-- Alexander A. Razborov, "On the Method of Approximations", Proceedings of the Twenty-First Annual ACM Symposium on Theory of Computing, 1989.
+- Alexander A. Razborov, "Lower Bounds on the Monotone Complexity of Some Boolean Functions", Soviet Mathematics Doklady 31, 1985.
+- Alexander A. Razborov, "On the Method of Approximations", Proceedings of the Twenty-First Annual ACM Symposium on Theory of Computing (STOC 1989), 1989 (formal framework of approximation models).
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

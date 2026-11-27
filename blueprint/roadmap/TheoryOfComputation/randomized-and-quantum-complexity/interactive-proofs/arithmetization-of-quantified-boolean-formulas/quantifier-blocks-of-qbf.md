@@ -9,4 +9,4 @@ For lists of variables $B_1,\dots,B_k$ and a quantified Boolean formula $\varphi
 ## Sources
 
 - L. J. Stockmeyer and A. R. Meyer, "Word Problems Requiring Exponential Time", Proceedings of the 5th ACM Symposium on Theory of Computing (STOC), 1–9, 1973.
-- S. Arora and B. Barak, Computational Complexity: A Modern Approach, Cambridge University Press, 2009.
+- S. Arora and B. Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Chapters 4–5.

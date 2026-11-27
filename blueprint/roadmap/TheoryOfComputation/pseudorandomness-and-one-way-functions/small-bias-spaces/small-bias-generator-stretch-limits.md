@@ -8,8 +8,8 @@ If the output bits, minus constants, lie in a space $W$ of functions of the seed
 
 ## Depends on
 
-- [Bias, ε-biased and k-wise ε-biased distributions](small-bias-distributions.md)
+- [Small-bias distribution and generator](../space-bounded-and-small-bias-generators/small-bias-distributions.md)
 
 ## Sources
 
-- O. Goldreich, "Computational Complexity: A Conceptual Perspective", public draft of Chapters 7–8, March 2007.
+- O. Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 8.37 and its two corollaries (numbering of the 2007 public draft; bias there is $|\Pr[0]-\Pr[1]|$ as here).

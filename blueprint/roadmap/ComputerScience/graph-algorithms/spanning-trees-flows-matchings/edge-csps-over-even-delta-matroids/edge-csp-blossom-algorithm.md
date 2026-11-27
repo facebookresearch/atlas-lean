@@ -1,10 +1,10 @@
 # Edge CSPs over even delta-matroids are solvable by a blossom algorithm
 
-For an edge CSP all of whose constraints are nonempty even delta-matroids, the algorithm that repeatedly performs one improvement step (a fresh forest search; flip an augmenting walk, or contract a blossom and recurse on the smaller instance, lifting any improvement back) at most one more time than the number of variables returns a valid labeling with the minimum number of defects; it has zero defects exactly when the instance is satisfiable. Each successful improvement removes exactly two defects and each recursion strictly decreases a contraction measure. This generalizes Edmonds' blossom algorithm for perfect matching and underlies the polynomial-time tractability of planar Boolean CSPs over even delta-matroids.
+For an edge CSP all of whose constraints are nonempty even delta-matroids, start from any valid labeling (one tuple chosen per constraint) and repeat the improvement step: run a fresh forest search, and either flip an augmenting walk, or contract a blossom, recurse on the contracted instance and lift any improvement back, or stop when the search is exhausted. Each successful step removes at least two defects (exactly two for a direct augmentation), so after at most one more step than the number of variables the algorithm stops, and it returns an optimal valid labeling; the instance is satisfiable exactly when that labeling has no defects. A chain of nested contractions has length at most twice the number of variables, since each contraction adds one constraint, never adds variables, and an edge CSP with $n$ variables has at most $2n$ constraints with nonempty scope. The whole computation takes time polynomial in the size of the instance. This generalizes Edmonds' blossom algorithm for perfect matching and underlies the polynomial-time tractability of planar Boolean CSPs over even delta-matroids.
 
 ## Proof sketch
 
-Termination: defects decrease by two per successful improvement and contraction decreases the instance. Correctness: the augmentation lemma, the blossom contraction lemma, and the optimality of an exhausted search.
+Termination: the number of defects is at most the number of variables, all valid labelings have the same parity of defects, and each successful step strictly decreases it; nested contractions are bounded as stated, and each contraction enlarges the instance by $O(n)$ tuples. Correctness: the augmentation lemma, the blossom contraction lemma, and the optimality of an exhausted search, by induction on the nesting depth of contractions.
 
 ## Depends on
 
@@ -20,4 +20,4 @@ Termination: defects decrease by two per successful improvement and contraction 
 
 ## Sources
 
-- A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), 2019.
+- A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), Article 22, 2019, Theorem 21, Theorem 24, Corollary 27, Corollary 46 and Section 5.4.

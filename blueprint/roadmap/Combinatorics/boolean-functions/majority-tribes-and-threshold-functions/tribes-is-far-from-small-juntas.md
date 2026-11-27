@@ -1,6 +1,6 @@
 # Tribes is far from every small junta
 
-For the nearly balanced Tribes function on $n = sw$ bits, every Boolean function that depends on at most $3n/4$ of the coordinates disagrees with Tribes on at least a $1/256$ fraction of inputs. Hence Tribes, which has total influence $O(\log n)$, is not close to any junta on a constant fraction fewer coordinates; Friedgut's junta theorem is thus sharp in its dependence on the total influence.
+For the nearly balanced Tribes function on $n = sw$ bits, with $n > 1$, every Boolean function that depends on at most $3n/4$ of the coordinates disagrees with Tribes on at least an $\varepsilon_0$ fraction of inputs, for a universal constant $\varepsilon_0 > 0$ (O'Donnell, Ex. 4.15). Hence Tribes, which has total influence $O(\log n)$, is not close to any junta on a constant fraction fewer coordinates; Friedgut's junta theorem is thus sharp in its dependence on the total influence.
 
 ## Proof sketch
 

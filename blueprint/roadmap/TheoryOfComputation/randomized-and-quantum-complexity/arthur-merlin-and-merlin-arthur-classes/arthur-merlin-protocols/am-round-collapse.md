@@ -16,6 +16,6 @@ Swap: amplify the error of the $MA$ suffix by parallel repetition so that Merlin
 
 ## Sources
 
-- László Babai and Shlomo Moran, "Arthur–Merlin Games: A Randomized Proof System, and a Hierarchy of Complexity Classes", Journal of Computer and System Sciences 36(2), 1988.
-- László Babai, "Trading Group Theory for Randomness", Proceedings of the 17th Annual ACM Symposium on Theory of Computing, 1985.
+- László Babai and Shlomo Moran, "Arthur–Merlin Games: A Randomized Proof System, and a Hierarchy of Complexity Classes", Journal of Computer and System Sciences 36(2), 254–276, 1988, Theorem 3 (Collapse Theorem: $\mathsf{AM}=\mathsf{AM}(k)=\mathsf{MA}(k+1)$ for constant $k\ge2$) and Section 3.
+- László Babai, "Trading Group Theory for Randomness", Proceedings of the 17th Annual ACM Symposium on Theory of Computing, 421–429, 1985.
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.

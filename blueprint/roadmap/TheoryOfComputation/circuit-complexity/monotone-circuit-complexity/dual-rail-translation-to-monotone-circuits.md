@@ -13,5 +13,5 @@ De Morgan's laws: $\neg(a\wedge b)=\neg a\vee\neg b$ and $\neg(a\vee b)=\neg a\w
 
 ## Sources
 
-- Leslie M. Goldschlager, "The Monotone and Planar Circuit Value Problems Are Log Space Complete for P", ACM SIGACT News, 1977.
+- Leslie M. Goldschlager, "The Monotone and Planar Circuit Value Problems Are Log Space Complete for P", ACM SIGACT News 9(2), 1977.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

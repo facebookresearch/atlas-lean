@@ -8,8 +8,12 @@ Lifting blocks is injective, so distinct messages stay distinct, and $H_{\mathrm
 
 ## Depends on
 
-- [Difference bound after reducing digests modulo a smaller modulus](difference-universality-under-modulus-reduction.md)
+- [Almost Δ-universal (difference-universal) hash families](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/limited-independence-hash-families/almost-delta-universal-hash-family.md)
 - [Carter–Wegman MACs](../../symmetric-key/macs-and-modes/carterwegman-macs.md)
+
+## Proof depends on
+
+- [Difference bound after reducing digests modulo a smaller modulus](difference-universality-under-modulus-reduction.md)
 
 ## Sources
 

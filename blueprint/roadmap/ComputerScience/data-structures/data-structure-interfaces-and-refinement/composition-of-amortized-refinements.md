@@ -6,7 +6,7 @@ $$
 \Phi(f) = \Phi_2(f) + \Phi_1(\alpha_2(f)).
 $$
 
-Consequently, for every admissible sequence of $D$-operations executed through $F$ from an initial state $f_0$, the total $F$-cost is at most $\Phi(f_0)$ plus the sum of the $D$-charges.
+Consequently, for every admissible sequence of $D$-operations executed through $F$ from an initial state $f_0$ satisfying the invariant of the second refinement and whose abstraction $\alpha_2(f_0)$ satisfies the invariant of the first, the total $F$-cost is at most $\Phi(f_0)$ plus the sum of the $D$-charges.
 
 ## Proof sketch
 
@@ -23,4 +23,6 @@ Running a $D$-method through $F$ replaces each $E$-operation by its $F$-method. 
 ## Sources
 
 - T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
-- D. D. Sleator and R. E. Tarjan, "Self-Adjusting Binary Search Trees", Journal of the ACM 32(3), 1985.
+- D. D. Sleator and R. E. Tarjan, "Self-Adjusting Binary Search Trees", Journal of the ACM 32(3), pp. 652-686, 1985.
+- C. A. R. Hoare, "Proof of Correctness of Data Representations", Acta Informatica 1(4), pp. 271-281, 1972.
+- R. E. Tarjan, "Amortized Computational Complexity", SIAM Journal on Algebraic and Discrete Methods 6(2), pp. 306-318, 1985.

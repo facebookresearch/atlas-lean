@@ -18,4 +18,4 @@ $\mathrm{dist}=K$ iff $\mathrm{dist}\le K$ and not $\mathrm{dist}\le K-1$; both 
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Exercise 5.24.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 5.24.

@@ -1,6 +1,6 @@
 # Feasible interpolation for resolution
 
-If $A(x, y) \wedge B(x, z)$ has a resolution refutation with $s$ lines, then it has an interpolant computed by a De Morgan circuit with at most $4s$ gates. If moreover the shared variables occur only positively in $A$ (or only negatively in $B$), then it has a monotone interpolant computed by a monotone circuit with at most $2s$ gates. The circuit is computable from the refutation in polynomial time.
+If $A(x, y) \wedge B(x, z)$ has a resolution refutation with $s$ lines, then it has an interpolant computed by a circuit over $\{0, 1, \wedge, \vee, \mathrm{sel}\}$ whose underlying graph is the graph of the refutation, where $\mathrm{sel}(0, a, b) = a$ and $\mathrm{sel}(1, a, b) = b$; expanding each selector gives a De Morgan circuit with at most $4s$ gates. If moreover the shared variables occur only positively in $A$ (or only negatively in $B$), then the selector can be replaced by a monotone ternary connective, giving a monotone interpolant computed by a monotone circuit with $O(s)$ gates. The circuit is computable from the refutation in polynomial time, and for each $a$ the refutation restricted by $x = a$ contains a refutation, no longer than the original, of $A(a, y)$ if the circuit outputs $0$ and of $B(a, z)$ if it outputs $1$.
 
 ## Proof sketch
 
@@ -14,5 +14,5 @@ Assign a gate to each line: constant $0$ to clauses of $A$, constant $1$ to clau
 
 ## Sources
 
-- J. Krajíček, "Interpolation Theorems, Lower Bounds for Proof Systems, and Independence Results for Bounded Arithmetic", The Journal of Symbolic Logic 62(2), 457–486, 1997.
-- P. Pudlák, "Lower Bounds for Resolution and Cutting Plane Proofs and Monotone Computations", The Journal of Symbolic Logic 62(3), 981–998, 1997.
+- J. Krajíček, "Interpolation Theorems, Lower Bounds for Proof Systems, and Independence Results for Bounded Arithmetic", The Journal of Symbolic Logic 62(2), 457–486, 1997: Theorem 6.1.
+- P. Pudlák, "Lower Bounds for Resolution and Cutting Plane Proofs and Monotone Computations", The Journal of Symbolic Logic 62(3), 981–998, 1997: Theorems 1 and 2 and their proofs.

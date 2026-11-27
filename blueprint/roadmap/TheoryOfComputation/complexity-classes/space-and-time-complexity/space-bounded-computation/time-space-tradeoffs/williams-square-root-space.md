@@ -10,7 +10,7 @@ for multi-tape Turing machines (space counted in visited work cells, read-only i
 
 ## Proof sketch
 
-Partition the computation into $t/b$ time blocks of length $b$ and view the dependencies between blocks (Hopcroft–Paul–Valiant block-respecting computation) as a tree-evaluation instance of depth about $t/b$ and fan-in $O(1)$ over an alphabet of $2^{O(b)}$; evaluate it with the Cook–Mertz algorithm in space $O(b\cdot\text{fanin}+ (t/b)\log b)$, and choose $b=\sqrt{t\log t}$.
+Partition the computation into $t/b$ time blocks of length $b$ and view the dependencies between blocks (Hopcroft–Paul–Valiant block-respecting computation) as a tree-evaluation instance of depth about $t/b$ and fan-in $O(1)$ over an alphabet of $2^{O(b)}$, enumerating the $O(t/b)$-bit descriptions of the block dependency graph; evaluate it with the Cook–Mertz algorithm, which for fan-in $d$, value length $b$ and height $h$ uses space $O(d\cdot b+h\log(d\cdot b))$, and choose $b=\sqrt{t\log t}$. Without constructibility, run the whole procedure for the guesses $t=n,n+1,\dots$ until it halts.
 
 ## Depends on
 
@@ -19,6 +19,7 @@ Partition the computation into $t/b$ time blocks of length $b$ and view the depe
 
 ## Proof depends on
 
+- [Time-block computations are implicit Tree Evaluation instances](../tree-evaluation/time-blocks-as-tree-evaluation.md)
 - [Time classes are contained in space classes](../../../time-and-space-classes-on-multi-tape-machines/dtime-subset-dspace.md)
 - [Cook–Mertz: Tree Evaluation is in space O(log n · log log n)](../tree-evaluation/tree-evaluation-in-small-space.md)
 

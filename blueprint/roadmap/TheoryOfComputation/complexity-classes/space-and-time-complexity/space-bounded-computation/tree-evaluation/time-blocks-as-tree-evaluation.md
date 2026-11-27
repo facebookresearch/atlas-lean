@@ -1,6 +1,6 @@
 # Time-block computations are implicit Tree Evaluation instances
 
-Let $M$ be a deterministic multi-tape Turing machine running for $t$ steps, and split the run into $T=\lceil t/b\rceil$ time blocks of $b$ steps. For each block $i$ let $\beta_i$ be the content of the $O(b)$-cell work-tape window visited during block $i$ together with head positions and state at its end. Then each $\beta_i$ is a fixed function, computable in space $O(b)$ from the input, of the $O(1)$ earlier block summaries $\beta_j$ that last wrote to the cells touched in block $i$ (Hopcroft–Paul–Valiant). Unrolling these dependencies gives a Tree Evaluation instance of height $O(T)$, fan-in $O(1)$ and value length $O(b)$ whose root value determines the output of $M$, and each gate entry is computable from the input in small space.
+Let $M$ be a deterministic multi-tape Turing machine running for $t$ steps, and split the run into $T=\lceil t/b\rceil$ time blocks of $b$ steps. For each block $i$ let $\beta_i$ be the content of the $O(b)$-cell work-tape window visited during block $i$ together with head positions and state at its end. Then each $\beta_i$ is a fixed function, computable in space $O(b)$ from the input, of the $O(1)$ earlier block summaries $\beta_j$ that last wrote to the cells touched in block $i$ (Hopcroft–Paul–Valiant). The dependency graph is not known in advance, but it is described by $O(T)$ bits (the head movement of each tape per block); for the correct description, unrolling these dependencies gives a Tree Evaluation instance of height $O(T)$, fan-in $O(1)$ and value length $O(b)$ whose root value determines the output of $M$, each node's function being computable from the input in space $O(b)$, while a wrong description is detected during the evaluation. Williams enumerates all $O(T)$-bit descriptions.
 
 ## Proof sketch
 
@@ -14,4 +14,4 @@ In a time block the heads move at most $b$ cells, so the window is determined by
 ## Sources
 
 - John Hopcroft, Wolfgang Paul and Leslie Valiant, "On Time Versus Space", Journal of the ACM 24(2), 1977.
-- Ryan Williams, "Simulating Time With Square-Root Space", Proceedings of the 57th Annual ACM Symposium on Theory of Computing (STOC 2025), 2025.
+- Ryan Williams, "Simulating Time With Square-Root Space", Proceedings of the 57th Annual ACM Symposium on Theory of Computing (STOC 2025), 2025, Section 3.

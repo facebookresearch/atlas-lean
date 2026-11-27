@@ -9,5 +9,5 @@ For $a:\mathbb{N}\to\mathbb{N}$, $\mathsf{P}/a$ is the class of languages $L\sub
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Section 3.1.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Section 3.1.
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.

@@ -17,5 +17,5 @@ Amplify the error of the AM protocol below $2^{-n-1}$; by a union bound a single
 
 ## Sources
 
-- László Babai and Shlomo Moran, "Arthur–Merlin Games: A Randomized Proof System, and a Hierarchy of Complexity Classes", Journal of Computer and System Sciences 36(2), 1988.
-- Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
+- László Babai and Shlomo Moran, "Arthur–Merlin Games: A Randomized Proof System, and a Hierarchy of Complexity Classes", Journal of Computer and System Sciences 36(2), 254–276, 1988.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Chapter 7 (Exercise 7.5 of the January 2007 web draft: $\mathsf{BP}\cdot\mathsf{NP}\subseteq\mathsf{NP}/\mathrm{poly}$, and $\mathsf{BP}\cdot\mathsf{NP}=\mathsf{AM}$).

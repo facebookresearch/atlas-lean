@@ -1,6 +1,6 @@
 # ESO-definable classes reduce to SAT by order-free interpretations
 
-Let $\sigma$ be relational and $K$ an ESO-definable class of finite $\sigma$-structures that contains the empty structure. Then $K$ reduces to the class of satisfiable CNF structures by an order-free first-order (tagged, quantifier-free) interpretation. Without order, a linear order on the universe can be guessed existentially, so the order-free and ordered settings define the same ESO classes.
+Let $\sigma$ be relational and $K$ an ESO-definable class of finite $\sigma$-structures that contains the empty structure. Then $K$ reduces to the class of satisfiable CNF structures by an order-free first-order (tagged, quantifier-free) interpretation. Without order, a linear order on the universe can be guessed existentially, so a class of unordered structures defined by an ESO sentence using a built-in linear order in an order-invariant way is ESO-definable without the order.
 
 ## Proof sketch
 
@@ -14,7 +14,7 @@ Ground the prenex first-order matrix: tagged copies of tuples serve as propositi
 ## Proof depends on
 
 - [Pullback of formulas along interpretations](../first-order-interpretations-and-reductions/pullback-along-interpretations.md)
-- [ESO definability is closed under first-order reductions](eso-closed-under-first-order-reductions.md)
+- [First-order reductions preserve definability](../first-order-interpretations-and-reductions/first-order-reductions-preserve-definability.md)
 
 ## Sources
 

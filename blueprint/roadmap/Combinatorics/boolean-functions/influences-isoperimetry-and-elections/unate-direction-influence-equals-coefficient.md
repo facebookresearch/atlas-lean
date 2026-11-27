@@ -1,4 +1,4 @@
-# A direction is unate exactly when its influence equals its degree-one coefficient
+# A direction is unate exactly when its influence equals the absolute value of its degree-one coefficient
 
 For every $f : \{-1,1\}^n \to \{-1,1\}$ and coordinate $i$, $|\hat f(\{i\})| \le \mathbf{Inf}_i[f]$, with equality if and only if $f$ is unate in direction $i$ (flipping $x_i$ from $1$ to $-1$ never decreases $f$ at any point, or never increases it). In particular for monotone $f$, $\mathbf{Inf}_i[f] = \hat f(\{i\})$.
 

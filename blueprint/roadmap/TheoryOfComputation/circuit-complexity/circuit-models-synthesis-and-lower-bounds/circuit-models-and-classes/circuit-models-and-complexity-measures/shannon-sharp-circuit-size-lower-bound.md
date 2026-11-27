@@ -12,6 +12,6 @@ Count circuits up to relabelling of their gates. A circuit with $s\ge n$ gates i
 
 ## Sources
 
-- Claude E. Shannon, "The Synthesis of Two-Terminal Switching Circuits", Bell System Technical Journal, 1949.
+- Claude E. Shannon, "The Synthesis of Two-Terminal Switching Circuits", Bell System Technical Journal 28(1), 59–98, 1949.
 - Ingo Wegener, "The Complexity of Boolean Functions", Wiley-Teubner, 1987.
-- Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.
+- Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012, Section 1.4.

@@ -14,3 +14,4 @@ Replace each query node on $x_i$ by a read node on cell $i$ whose two children a
 ## Sources
 
 - P. B. Miltersen, "Cell Probe Complexity - a Survey", Advances in Data Structures Workshop (FSTTCS pre-conference workshop), 1999.
+- H. Buhrman and R. de Wolf, "Complexity Measures and Decision Tree Complexity: A Survey", Theoretical Computer Science 288(1), pp. 21-43, 2002.

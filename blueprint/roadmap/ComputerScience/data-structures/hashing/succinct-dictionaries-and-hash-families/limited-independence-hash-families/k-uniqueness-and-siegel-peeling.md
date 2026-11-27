@@ -8,8 +8,9 @@ Induct on $|S|$. Pick $x_0$ and $j$ with a unique character $f(x_0)_j$; the tabl
 
 ## Depends on
 
-- [k-wise independent hash families](../word-ram-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash family](../word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 
-- M. Thorup, "Simple Tabulation, Fast Expanders, Double Tabulation, and High Independence", Proceedings of the 54th IEEE Symposium on Foundations of Computer Science, 2013.
+- M. Thorup, "Simple Tabulation, Fast Expanders, Double Tabulation, and High Independence", Proceedings of the 54th IEEE Symposium on Foundations of Computer Science, 2013 (Lemma 2, proved in Appendix A, with each table only $k$-wise independent); arXiv:1311.3121.
+- A. Siegel, "On Universal Classes of Extremely Random Constant-Time Hash Functions", SIAM Journal on Computing 33(3), 2004 (Lemma 2.6, stated for $k$-peelable maps).

@@ -1,6 +1,6 @@
 # PP is closed under truth-table reductions; P^PP = P^#P
 
-(Beigel–Reingold–Spielman) $\mathsf{PP}$ is closed under intersection and union. (Fortnow–Reingold) More generally, $\mathsf{PP}$ is closed under polynomial-time truth-table reductions, and under polynomially bounded $\forall$/$\exists$ over polynomially many indices. Moreover $\mathsf{P}^{\mathsf{PP}}=\mathsf{P}^{\#\mathsf{P}}$, since one bit of a shifted $\#\mathsf{P}$ count answers a $\mathsf{PP}$ query and binary search with $\mathsf{PP}$ queries recovers $\#\mathsf{P}$ values.
+(Beigel–Reingold–Spielman) $\mathsf{PP}$ is closed under intersection and union. (Fortnow–Reingold) More generally, $\mathsf{PP}$ is closed under polynomial-time truth-table reductions, in particular under intersections and unions of polynomially many $\mathsf{PP}$ languages indexed by the input, and even under constant-round truth-table reductions. Moreover $\mathsf{P}^{\mathsf{PP}}=\mathsf{P}^{\#\mathsf{P}}$, since one bit of a shifted $\#\mathsf{P}$ count answers a $\mathsf{PP}$ query and binary search with $\mathsf{PP}$ queries recovers $\#\mathsf{P}$ values.
 
 ## Proof sketch
 
@@ -20,5 +20,5 @@ Represent the sign of a gap by a low-degree rational function (Newman's approxim
 ## Sources
 
 - Richard Beigel, Nick Reingold and Daniel A. Spielman, "PP Is Closed under Intersection", Journal of Computer and System Sciences 50(2), 1995.
-- Lance Fortnow and Nick Reingold, "PP Is Closed under Truth-Table Reductions", Information and Computation 124(1), 1996.
+- Lance Fortnow and Nick Reingold, "PP Is Closed under Truth-Table Reductions", Information and Computation 124(1), 1996, Theorem 5.4.
 - Lance Fortnow, "Counting Complexity", Complexity Theory Retrospective II, 1997, Theorem 4.14.

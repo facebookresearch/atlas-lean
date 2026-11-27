@@ -4,7 +4,7 @@ It is undecidable whether a finite palette $T$ together with a seed tile $t_0\in
 
 ## Proof sketch
 
-Row $k$ of the tiling spells the tape at time $k$; colours on vertical edges carry tape symbols, and the head with its state is propagated by horizontal colour constraints; the seed row starts the computation, and no tile exists for a halting state.
+Row $k$ of the tiling spells the tape at time $k$: the colours on the top and bottom edges of a tile carry the tape symbol (and the state, at the head's cell) from row $k$ to row $k+1$, and the colours on the left and right edges pass the head between neighbouring cells when it moves; the seed tile and the bottom row start the computation on the empty tape, and no tile continues a halting state.
 
 ## Depends on
 
@@ -13,6 +13,7 @@ Row $k$ of the tiling spells the tape at time $k$; colours on vertical edges car
 
 ## Sources
 
-- Hao Wang, "Proving Theorems by Pattern Recognition II", Bell System Technical Journal 40, 1961.
-- Robert Berger, "The Undecidability of the Domino Problem", Memoirs of the American Mathematical Society, 1966.
-- Raphael M. Robinson, "Undecidability and Nonperiodicity for Tilings of the Plane", Inventiones Mathematicae 12(3), 1971.
+- Hao Wang, "Proving Theorems by Pattern Recognition II", Bell System Technical Journal 40(1), 1–41, 1961.
+- Robert Berger, "The Undecidability of the Domino Problem", Memoirs of the American Mathematical Society 66, 1966.
+- A. S. Kahr, E. F. Moore and H. Wang, "Entscheidungsproblem Reduced to the ∀∃∀ Case", Proceedings of the National Academy of Sciences 48(3), 365–377, 1962 (undecidability of the origin-constrained domino problem).
+- Raphael M. Robinson, "Undecidability and Nonperiodicity for Tilings of the Plane", Inventiones Mathematicae 12(3), 177–209, 1971.

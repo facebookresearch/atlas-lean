@@ -15,7 +15,7 @@ For $q \ge 2$: $\|f^{\le k}\|_q \le \sqrt{q-1}^{\,k}\|f^{\le k}\|_2 \le \sqrt{q-
 
 - [Bonami Lemma](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/bonami-lemma.md)
 - [Hypercontractivity Theorem (Bonami–Beckner)](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/hypercontractivity-theorem.md)
-- [L^p norms under a uniform distribution increase with p](../fourier-expansion-supplements/lp-norms-increase-with-p.md)
+- [L^p seminorms under a probability measure increase with the exponent](../fourier-expansion-supplements/lp-norms-increase-with-p.md)
 
 ## Sources
 

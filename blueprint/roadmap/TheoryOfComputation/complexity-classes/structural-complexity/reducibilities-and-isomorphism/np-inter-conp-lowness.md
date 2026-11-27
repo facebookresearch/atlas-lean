@@ -15,5 +15,6 @@ A nondeterministic machine can replace each oracle query by guessing the answer 
 
 ## Sources
 
+- Uwe Schöning, "A Low and a High Hierarchy within NP", Journal of Computer and System Sciences 27(1), 1983.
 - Uwe Schöning, "Probabilistic Complexity Classes and Lowness", Journal of Computer and System Sciences 39(1), 1989.
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.

@@ -1,6 +1,6 @@
 # Unbounded fan-in arithmetic formulas and circuits of bounded product-depth
 
-An *unbounded fan-in arithmetic circuit* over a field $K$ is a DAG whose leaves are variables or constants and whose inner gates are sum gates (computing $K$-linear combinations of their children) and product gates (computing products of their children, each child read once), of unbounded fan-in; it is a *formula* if every gate has fan-out one. Its *product-depth* is the largest number of product gates on a leaf-to-root path, and its size is the number of gates (or nodes, for formulas). Consecutive sum gates can be merged, so without loss of generality layers alternate.
+An *unbounded fan-in arithmetic circuit* over a field $K$ is a DAG whose leaves are variables or constants and whose inner gates are sum gates (computing $K$-linear combinations of their children) and product gates (computing products of their children), of unbounded fan-in; it is a *formula* if every gate has fan-out at most one. Its *product-depth* is the largest number of product gates on a leaf-to-root path, and its size is its number of nodes, leaves included. Consecutive sum gates can be merged without increasing size or product-depth, so without loss of generality sum and product layers alternate.
 
 ## Depends on
 

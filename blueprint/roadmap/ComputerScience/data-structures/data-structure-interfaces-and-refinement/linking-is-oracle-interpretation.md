@@ -12,4 +12,5 @@ Both linking and interpretation are defined by structural recursion on the clien
 
 ## Sources
 
-- T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
+- G. D. Plotkin and M. Pretnar, "Handlers of Algebraic Effects", Programming Languages and Systems (ESOP 2009), LNCS 5502, pp. 80-94, 2009.
+- W. Swierstra, "Data Types à la Carte", Journal of Functional Programming 18(4), pp. 423-436, 2008.

@@ -19,5 +19,5 @@ The hardness yields a Nisan–Wigderson generator with logarithmic seed fooling 
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Chapter 16, Exercise 4.
-- Russell Impagliazzo and Avi Wigderson, "P = BPP if E Requires Exponential Circuits: Derandomizing the XOR Lemma", Proceedings of the 29th Annual ACM Symposium on Theory of Computing, 1997.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Chapter 20 (Chapter 16, Exercise 4 of the January 2007 web draft, with hardness $H_{\mathrm{avg}}(f)(n)\ge2^{\varepsilon n}$ for every $n$).
+- Russell Impagliazzo and Avi Wigderson, "P = BPP if E Requires Exponential Circuits: Derandomizing the XOR Lemma", Proceedings of the 29th Annual ACM Symposium on Theory of Computing, 220–229, 1997.

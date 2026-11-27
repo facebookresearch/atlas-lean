@@ -17,5 +17,5 @@ Take the ensemble that samples a random pair $(\varphi,a)$ and outputs $\varphi$
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 9–10", 2007, Exercise 10.26.
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Chapter 15, Exercise 4.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 10.26 (numbering of the 2007 public draft; "simple" ensembles there are the polynomial-time computable ones).
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Chapter 18 (Chapter 15, Exercise 4 of the January 2007 web draft).

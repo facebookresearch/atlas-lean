@@ -1,6 +1,6 @@
 # Bini's theorem: border rank bounds the matrix multiplication exponent
 
-If the matrix multiplication tensor $\langle n,n,n\rangle$ has border rank at most $r$ over a field $K$, then $\omega_K\le\log_nr$. More generally degenerations compose: if $T$ is a degeneration of order $h$ of $S$ and $S$ of order $h'$ of $U$, then $T$ is a degeneration of order $h+h'$ of $U$; and if $T$ is a degeneration of order $h$ of $\langle r\rangle$ then $R(T)\le\binom{h+2}{2}r$, so $R(T^{\otimes k})\le\binom{hk+2}{2}\,\underline R(T)^k$.
+If, for some $n\ge2$, the matrix multiplication tensor $\langle n,n,n\rangle$ has border rank at most $r$ over a field $K$, then $\omega_K\le\log_nr$. More generally degenerations compose: if $T$ is a degeneration of order $h$ of $S$ and $S$ of order $h'$ of $U$, then $T$ is a degeneration of order $h+h'$ of $U$; and if $T$ is a degeneration of order $h$ of $\langle r\rangle$ then $R(T)\le\binom{h+2}{2}r$, so if $T$ is a degeneration of order $h$ of $\langle\underline R(T)\rangle$, then $R(T^{\otimes k})\le\binom{hk+2}{2}\,\underline R(T)^k$.
 
 ## Proof sketch
 

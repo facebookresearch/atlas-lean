@@ -12,4 +12,5 @@ Resampling the variables of $C$ can only falsify neighbours of $C$; the inner lo
 
 ## Sources
 
-- R. A. Moser, "A Constructive Proof of the Lovász Local Lemma", Proceedings of the 41st ACM Symposium on Theory of Computing (STOC), 2009.
+- R. A. Moser, "A Constructive Proof of the Lovász Local Lemma", Proceedings of the 41st ACM Symposium on Theory of Computing (STOC), 343–350, 2009, Algorithm 2.1 and its analysis.
+- L. Fortnow, "A Kolmogorov Complexity Proof of the Lovász Local Lemma", Computational Complexity blog, 2009 (unrefereed write-up of Moser's STOC 2009 talk; source of the entropy-compression encoding and of the constant $2^{k-3}$).

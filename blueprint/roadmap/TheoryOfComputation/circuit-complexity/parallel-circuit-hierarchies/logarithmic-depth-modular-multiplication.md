@@ -1,6 +1,6 @@
 # Logarithmic-depth modular multiplication and inner products of words
 
-For $w\ge1$, the product of two $w$-bit unsigned integers modulo $2^w$, and more generally the inner product modulo $2^w$ of two arrays of $k$ $w$-bit words, are computed by fan-in-two De Morgan circuits of size polynomial in $w$ and $k$ and depth $O(\log(wk))$: all shifted partial products are formed in one layer, reduced along a balanced carry-save tree, and finished by a carry-lookahead addition. Modular subtraction is addition of the complement with an incoming carry. Hence these word operations are in $\mathsf{NC}^1$.
+For $w\ge1$, the product of two $w$-bit unsigned integers modulo $2^w$, and more generally the inner product modulo $2^w$ of two arrays of $k$ $w$-bit words, are computed by fan-in-two De Morgan circuits of size polynomial in $w$ and $k$ and depth $O(1+\log(wk))$ for $k\ge1$: all shifted partial products are formed in one layer, reduced along a balanced carry-save tree, and finished by a carry-lookahead addition. Modular subtraction is addition of the complement with an incoming carry. Hence these word operations are in $\mathsf{NC}^1$.
 
 ## Proof sketch
 

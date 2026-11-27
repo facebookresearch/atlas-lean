@@ -18,4 +18,4 @@ The machine has polynomially many configurations; its acceptance probability aft
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Chapter 7.

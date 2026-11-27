@@ -8,4 +8,5 @@ Let $h_1, h_2 : X \to [r]$ and let $S \subseteq X$. The *cuckoo graph* of $S$ is
 
 ## Sources
 
+- L. Devroye and P. Morin, "Cuckoo Hashing: Further Analysis", Information Processing Letters 86(4), 2003 (section "The cuckoo graph": a component with $k$ vertices and $k+1$ or more edges makes placement impossible, and the cuckoo insertion succeeds when every component is a tree or unicyclic).
 - R. Pagh and F. F. Rodler, "Cuckoo Hashing", Journal of Algorithms 51(2), 2004.

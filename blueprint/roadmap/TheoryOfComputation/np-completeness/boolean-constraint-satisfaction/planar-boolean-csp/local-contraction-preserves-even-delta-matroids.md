@@ -4,7 +4,7 @@ Let $R$ be an even delta-matroid of arity $n$ and $r \in R$ a feasible reference
 
 ## Proof sketch
 
-The delta-matroid exchange axiom applied to two retained rows yields an exchange partner that changes at most one internal position, and parity is preserved by the connector bookkeeping.
+The contracted relation is the composition (gadget construction) of $R$ with the relation $Z$ on the internal positions and the connector whose tuples are $r$ restricted to $P$ with connector $0$, and the tuples obtained from it by flipping one internal position together with the connector. $Z$ is an even delta-matroid, and compositions of (even) delta-matroids are (even) delta-matroids (Bouchet–Cunningham), which is how Kazda, Kolmogorov and Rolínek show that a contracted blossom constraint is again an even delta-matroid.
 
 ## Depends on
 
@@ -12,4 +12,6 @@ The delta-matroid exchange axiom applied to two retained rows yields an exchange
 
 ## Sources
 
-- A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), Article 22, 2019.
+- A. Bouchet and W. H. Cunningham, "Delta-Matroids, Jump Systems, and Bisubmodular Polyhedra", SIAM Journal on Discrete Mathematics 8(1), 17–32, 1995.
+
+- A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), Article 22, 2019, Section 5.3 and Proposition 6.

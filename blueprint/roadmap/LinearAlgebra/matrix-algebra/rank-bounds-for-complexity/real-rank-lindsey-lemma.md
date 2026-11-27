@@ -10,13 +10,13 @@ For $M$ the indicator matrix of a rectangle this recovers Lindsey's lemma; for $
 
 ## Proof sketch
 
-Decompose $M$ into $\operatorname{rank}M$ orthogonal rank-one pieces (orthogonal projection onto the nonzero column space) whose squared Frobenius norms add up to $\|M\|_F^2$; apply the weighted Lindsey bound to each rank-one piece and combine by Cauchy–Schwarz.
+The sum is $\langle M, H\rangle$ for $H = ((-1)^{p^{T}Bq})$, and $|\langle M, H\rangle| \le \|M\|_{\mathrm{tr}}\,\|H\|$. The proof of Lindsey's lemma gives $\|H\|^2 = 2^{\alpha+\beta-\operatorname{rank}B}$, and Cauchy–Schwarz over the $\operatorname{rank}M$ nonzero singular values gives $\|M\|_{\mathrm{tr}}^2 \le \operatorname{rank}(M)\sum_{p,q}M_{pq}^2$.
 
-## Depends on
+## Proof depends on
 
 - [Lindsey's lemma over GF(2)](lindsey-lemma-over-gf2.md)
 
 ## Sources
 
 - Stasys Jukna, "Extremal Combinatorics: With Applications in Computer Science", Springer, 2011.
-- Samuel Fiorini, Serge Massar, Sebastian Pokutta et al., "Exponential Lower Bounds for Polytopes in Combinatorial Optimization", Journal of the ACM, 2015.
+- Samuel Fiorini, Serge Massar, Sebastian Pokutta et al., "Exponential Lower Bounds for Polytopes in Combinatorial Optimization", Journal of the ACM 62(2), 2015.

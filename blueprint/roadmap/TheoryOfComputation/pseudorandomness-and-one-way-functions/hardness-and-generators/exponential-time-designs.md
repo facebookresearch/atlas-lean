@@ -12,5 +12,5 @@ Greedy construction: split $[k]$ into $t=\lfloor k/B\rfloor$ blocks of $B$ eleme
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 7–8", 2007, Exercise 8.19.
-- Noam Nisan and Avi Wigderson, "Hardness vs Randomness", Journal of Computer and System Sciences 49(2), 1994.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Theorem 8.18 (Condition 2) and Exercise 8.19 (numbering of the 2007 public draft; the exercise builds the sets greedily from random $m(k)$-subsets, the block variant here is an equivalent counting argument).
+- Noam Nisan and Avi Wigderson, "Hardness vs Randomness", Journal of Computer and System Sciences 49(2), 149–167, 1994.

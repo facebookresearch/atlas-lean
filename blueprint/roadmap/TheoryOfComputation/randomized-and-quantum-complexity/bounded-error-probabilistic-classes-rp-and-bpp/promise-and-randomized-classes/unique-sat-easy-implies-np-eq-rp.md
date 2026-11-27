@@ -18,5 +18,5 @@ Valiant–Vazirani maps a satisfiable formula, with probability $\Omega(1/n)$, t
 
 ## Sources
 
-- Leslie G. Valiant and Vijay V. Vazirani, "NP is as Easy as Detecting Unique Solutions", Theoretical Computer Science 47, 1986.
+- Leslie G. Valiant and Vijay V. Vazirani, "NP is as Easy as Detecting Unique Solutions", Theoretical Computer Science 47, 85–93, 1986.
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.

@@ -6,7 +6,6 @@ $\mathsf{VP}_K$ is the class of p-families $f$ over $K$ whose circuit size $L(f_
 
 - [Polynomial families and p-families](polynomial-families-and-p-families.md)
 - [Projections and p-projections](projections-and-p-projections.md)
-- [Valiant's VP versus VNP conjecture](../valiant-s-vp-versus-vnp-conjecture.md)
 
 ## Sources
 

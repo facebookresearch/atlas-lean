@@ -4,7 +4,7 @@ If $\mathsf{coNP}\subseteq\mathsf{AM}$, then $\Sigma_2^p=\Pi_2^p=\mathsf{AM}$ an
 
 ## Proof sketch
 
-$\Sigma_2^p=\exists\cdot\mathsf{coNP}\subseteq\exists\cdot\mathsf{AM}=\mathsf{MA}\cdot\mathsf{M}\subseteq\mathsf{AM}$ by the round collapse, and $\mathsf{AM}\subseteq\Pi_2^p$; hence $\Sigma_2^p\subseteq\Pi_2^p$. GI is in $\mathsf{coAM}$, so NP-completeness would give $\mathsf{coNP}\subseteq\mathsf{AM}$.
+$\Sigma_2^p=\exists\cdot\mathsf{coNP}\subseteq\exists\cdot\mathsf{AM}\subseteq\mathsf{MAM}=\mathsf{AM}$ by the round collapse, and $\mathsf{AM}\subseteq\Pi_2^p$; hence $\Sigma_2^p\subseteq\Pi_2^p$. GI is in $\mathsf{coAM}$, so NP-completeness would give $\mathsf{coNP}\subseteq\mathsf{AM}$.
 
 ## Depends on
 
@@ -20,5 +20,6 @@ $\Sigma_2^p=\exists\cdot\mathsf{coNP}\subseteq\exists\cdot\mathsf{AM}=\mathsf{MA
 
 ## Sources
 
-- Ravi B. Boppana, Johan Håstad and Stathis Zachos, "Does co-NP Have Short Interactive Proofs?", Information Processing Letters 25(2), 1987.
+- Ravi B. Boppana, Johan Håstad and Stathis Zachos, "Does co-NP Have Short Interactive Proofs?", Information Processing Letters 25(2), 127–132, 1987.
+- László Babai and Shlomo Moran, "Arthur–Merlin Games: A Randomized Proof System, and a Hierarchy of Complexity Classes", Journal of Computer and System Sciences 36(2), 254–276, 1988, Proposition 2 (derived there from the Collapse Theorem).
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.

@@ -1,16 +1,16 @@
 # Random matrices over a finite field are highly rigid
 
-Let $K$ be a finite field, $n\ge1$ and $0\le r\le n$. A uniformly random $n\times n$ matrix $A$ over $K$ satisfies
+Let $K$ be a finite field with $q$ elements, $n\ge1$ and $0\le r\le n$. For every integer $t\ge1$ with $t\le(n-r)^2/(4\log_qn+2)$, a uniformly random $n\times n$ matrix $A$ over $K$ satisfies
 
 $$
-R_A(r)\ge\Bigl\lfloor\frac{(n-r)^2}{4\lfloor\log_{|K|}n\rfloor+6}\Bigr\rfloor
+\Pr\bigl[R_A(r)<t\bigr]\le4t\,q^{-(n-r)^2/2} .
 $$
 
-with probability greater than $1-|K|^{-\lfloor(n-r)^2/2\rfloor}$. In particular, for fixed $|K|$ and $r\le(1-\varepsilon)n$, almost all matrices have rigidity $\Omega((n-r)^2/\log n)$.
+In particular, for fixed $q$ and $r\le(1-\varepsilon)n$, almost all matrices have rigidity $R_A(r)=\Omega((n-r)^2/\log n)$.
 
 ## Proof sketch
 
-Count matrices within distance $t$ of a rank-$r$ matrix: there are $O(|K|^{r(2n-r)})$ matrices of rank at most $r$ (a rank-$r$ matrix is determined by its column space, one of $O(|K|^{r(n-r)})$ subspaces, and an $r\times n$ coefficient matrix), and at most $\binom{n^2}{t}|K|^t$ ways to change $t$ entries; for $t$ as stated the product is a tiny fraction of $|K|^{n^2}$.
+Count matrices within fewer than $t$ changes of a matrix of rank at most $r$: such a matrix has its columns in some $r$-dimensional subspace, one of at most $3.5\,q^{r(n-r)}$, so there are at most $3.5\,q^{r(2n-r)}$ of them; and there are at most $t\,(n^2q)^{t-1}\le t\,q^{(t-1)(2\log_qn+1)}$ ways to change fewer than $t$ entries. For $t$ as stated the product is at most $4t\,q^{n^2-(n-r)^2/2}$, since $r(2n-r)=n^2-(n-r)^2$.
 
 ## Depends on
 

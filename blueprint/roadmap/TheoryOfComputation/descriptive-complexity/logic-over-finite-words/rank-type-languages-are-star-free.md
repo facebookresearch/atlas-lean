@@ -1,6 +1,6 @@
 # Languages of rank-$n$ types are star-free
 
-Over a finite alphabet, for every $n$ and every rank-$n$ type $\tau$ of words, the language of words of type $\tau$ is star-free; so is the language of pointed words whose split at the pointed position has prescribed types on the left and right. Since every FO[<] sentence of quantifier rank $n$ defines a finite union of such type languages, every FO[<]-definable language is star-free (the hard direction of McNaughton–Papert).
+Over a finite alphabet, for every $n$ and every rank-$n$ type $\tau$ of words, the language of words of type $\tau$ is star-free (it lies in the smallest family of languages containing $\Sigma^*$ and the singletons $\{a\}$, $a \in \Sigma$, closed under finite union, complement in $\Sigma^*$ and concatenation); so is the language of pointed words whose split at the pointed position has prescribed types on the left and right. Since every FO[<] sentence of quantifier rank $n$ defines a finite union of such type languages, every FO[<]-definable language is star-free (the hard direction of McNaughton–Papert).
 
 ## Proof sketch
 
@@ -19,3 +19,4 @@ Induction on $n$: the rank-$(n+1)$ type of a word is determined by which pairs (
 
 - L. Libkin, Elements of Finite Model Theory, Springer, 2004.
 - R. McNaughton and S. Papert, Counter-Free Automata, MIT Press, 1971.
+- W. Thomas, "Languages, Automata, and Logic", in Handbook of Formal Languages, Vol. 3, Springer, 389–455, 1997.

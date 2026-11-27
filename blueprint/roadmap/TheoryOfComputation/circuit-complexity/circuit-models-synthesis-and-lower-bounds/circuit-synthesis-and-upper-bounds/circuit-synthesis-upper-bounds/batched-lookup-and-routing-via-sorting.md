@@ -13,4 +13,6 @@ After sorting by (key, tag), each query's sources precede it within its key run;
 
 ## Sources
 
-- Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.
+- Kenneth E. Batcher, "Sorting Networks and Their Applications", AFIPS Spring Joint Computer Conference 32, 307–314, 1968.
+- Ingo Wegener, "The Complexity of Boolean Functions", Wiley-Teubner, 1987, Section 6.2 (Batcher's sorting network as a Boolean circuit).
+- Richard E. Ladner, Michael J. Fischer, "Parallel Prefix Computation", Journal of the ACM 27(4), 831–838, 1980.

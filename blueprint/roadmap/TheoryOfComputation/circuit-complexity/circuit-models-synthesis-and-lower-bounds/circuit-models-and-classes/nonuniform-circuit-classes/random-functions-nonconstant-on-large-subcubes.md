@@ -13,4 +13,4 @@ A subcube with $k\ge n^\varepsilon$ free coordinates is constant with probabilit
 ## Sources
 
 - Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007.
-- Alexander A. Razborov, Steven Rudich, "Natural Proofs", Journal of Computer and System Sciences, 1997.
+- Alexander A. Razborov, Steven Rudich, "Natural Proofs", Journal of Computer and System Sciences 55(1), 24–35, 1997.

@@ -6,7 +6,7 @@ $$
 a^{(k+1)}_{ij}\,a^{(k-1)}_{kk}=a^{(k)}_{k+1,k+1}a^{(k)}_{ij}-a^{(k)}_{i,k+1}a^{(k)}_{k+1,j}\quad(\text{with } a^{(-1)}_{00}=1).
 $$
 
-Consequently Bareiss's fraction-free Gaussian elimination, which updates entries by this formula with exact division by the previous pivot, stays within the ring (over $\mathbb{Z}$ all intermediate values are minors of $A$, hence of polynomial bit length) and computes $\det A=a^{(n-1)}_{nn}$.
+Consequently, when the leading principal minors $a^{(k-1)}_{kk}$ ($1 \le k < n$) are not zero divisors (over $\mathbb{Z}$: nonzero; otherwise rows are exchanged first), Bareiss's fraction-free Gaussian elimination, which updates entries by this formula with exact division by the previous pivot, stays within the ring (over $\mathbb{Z}$ all intermediate values are minors of $A$, hence of polynomial bit length) and computes $\det A=a^{(n-1)}_{nn}$.
 
 ## Proof sketch
 
@@ -20,4 +20,4 @@ Apply the Desnanot–Jacobi (Schur complement) identity to the bordered $(k+2)\t
 ## Sources
 
 - Alexander Schrijver, "Theory of Linear and Integer Programming", John Wiley & Sons, 1986.
-- E. H. Bareiss, "Sylvester's identity and multistep integer-preserving Gaussian elimination", Mathematics of Computation 22, 1968.
+- E. H. Bareiss, "Sylvester's identity and multistep integer-preserving Gaussian elimination", Mathematics of Computation 22(103), 1968.

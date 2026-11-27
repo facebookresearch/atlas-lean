@@ -4,7 +4,7 @@ Over every commutative ring $K$ and for an arbitrary set of variables, every pol
 
 ## Proof sketch
 
-Every polynomial is computed by some arithmetic formula (a sum of monomials), and formulas are projections of determinants of size one more than their node count.
+Every polynomial is computed by some arithmetic formula (a sum of monomials), and formulas are projections of determinants of size one more than their number of operation gates.
 
 ## Depends on
 
@@ -17,4 +17,4 @@ Every polynomial is computed by some arithmetic formula (a sum of monomials), an
 ## Sources
 
 - Leslie G. Valiant, "Completeness Classes in Algebra", Proceedings of the Eleventh Annual ACM Symposium on Theory of Computing, 1979.
-- Ramprasad Saptharishi, "A survey of lower bounds in arithmetic circuit complexity", 2026.
+- Ramprasad Saptharishi, "A survey of lower bounds in arithmetic circuit complexity", version 9.0.3, 2021.

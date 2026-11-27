@@ -5,10 +5,9 @@ A *prefix circuit* on $N$ inputs is a circuit over the basis $\{\ast,\mathrm{id}
 ## Depends on
 
 - [Straight-line programs and circuits over a basis](../../circuit-models-and-classes/circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
-- [Parallel steps of Blelloch's scan](../../../../../ComputerScience/parallel-algorithms/parallel-prefix-sums/blelloch-span.md)
 
 ## Sources
 
-- Igor S. Sergeev, "A Note on the Depth of Optimal Fanout-Bounded Prefix Circuits", 2025.
-- Richard E. Ladner, Michael J. Fischer, "Parallel Prefix Computation", Journal of the ACM, 1980.
+- Richard E. Ladner, Michael J. Fischer, "Parallel Prefix Computation", Journal of the ACM 27(4), 831–838, 1980.
 - Marc Snir, "Depth-Size Trade-offs for Parallel Prefix Computation", Journal of Algorithms 7(2), 185–201, 1986.
+- Igor S. Sergeev, "A Note on the Depth of Optimal Fanout-Bounded Prefix Circuits", arXiv:2512.23657, 2025 (preprint; terminology for fanout).

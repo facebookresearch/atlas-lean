@@ -17,4 +17,4 @@ Stockmeyer's hashing argument approximates $|R(x)|$ to within a constant factor 
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 6–7", 2007, Exercise 6.39.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 6.39 (stated there for PC-complete $R$; the proof only uses that the NP oracle of Stockmeyer's procedure reduces to $S_R$).

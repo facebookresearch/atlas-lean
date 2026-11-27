@@ -4,9 +4,9 @@ Let $f : \{0,1\}^n \to \{0,1\}$ and $Q \subseteq [n]$ a coalition. $f$ is *undet
 
 ## Depends on
 
-- [k-wise independent hash families](../../../ComputerScience/data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash family](../../../ComputerScience/data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 
-- E. Chattopadhyay and D. Zuckerman, "Explicit Two-Source Extractors and Resilient Functions", Annals of Mathematics, 2019.
+- E. Chattopadhyay and D. Zuckerman, "Explicit Two-Source Extractors and Resilient Functions", Annals of Mathematics 189(3), 653–705, 2019 (numbering of ECCC TR15-119), Definitions 1.8, 1.9 and 1.12 (there the maximum is over coalitions of size exactly $q$, equivalent by monotonicity).
 - R. O'Donnell, "Analysis of Boolean Functions", Cambridge University Press, 2014.

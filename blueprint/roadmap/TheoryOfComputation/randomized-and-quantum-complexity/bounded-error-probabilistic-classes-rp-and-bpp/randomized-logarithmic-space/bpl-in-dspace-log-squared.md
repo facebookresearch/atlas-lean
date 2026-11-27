@@ -19,8 +19,7 @@ Run the $\mathsf{BPL}$ machine on the output of Nisan's generator for every seed
 
 - [Nisan's generator for read-once branching programs](../../../pseudorandomness-and-one-way-functions/space-bounded-and-small-bias-generators/nisan-generator.md)
 - [Nisan's generator fools space-bounded computation](../../../pseudorandomness-and-one-way-functions/space-bounded-and-small-bias-generators/nisan-generator-fools-space-bounded-computation.md)
-- [Error reduction for RL](rl-error-reduction.md)
 
 ## Sources
 
-- Noam Nisan, "Pseudorandom Generators for Space-Bounded Computation", Combinatorica 12(4), 1992.
+- Noam Nisan, "Pseudorandom Generators for Space-Bounded Computation", Combinatorica 12(4), 449–461, 1992, Theorem 1 and its application to $\mathsf{BPL}$.

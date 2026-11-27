@@ -9,5 +9,5 @@ Let $\mathrm{Ext} : \Omega \times \Sigma \to \Theta$ with $\Sigma, \Theta$ finit
 
 ## Sources
 
-- N. Nisan and D. Zuckerman, "Randomness is Linear in Space", Journal of Computer and System Sciences, 1996.
-- S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science, 2012.
+- N. Nisan and D. Zuckerman, "Randomness is Linear in Space", Journal of Computer and System Sciences 52(1), 43–52, 1996.
+- S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science 7(1–3), 1–336, 2012, Definitions 6.13 and 6.16.

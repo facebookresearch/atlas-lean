@@ -4,11 +4,10 @@ Let $F$ be a finite field (more generally a finite ring) with $|F| \ge 16$, fix 
 
 ## Proof sketch
 
-For fixed $k$, the hash of a uniform two-block message is uniform on $F$ (adding a uniform $a_2$ is a translation of the additive group), so the birthday lower bound gives a collision among digests with probability at least about $1 - e^{-q(q-1)/(2|F|)}$. Subtracting the probability that two sampled messages are equal, at most $\binom{q}{2}/|F|^2$, leaves at least $1/8$ once $|F| \ge 16$.
+For fixed $k$, the hash of a uniform two-block message is uniform on $F$ (adding a uniform $a_2$ is a translation of the additive group), so the $q$ digests are independent and uniform on $F$. With $N = |F|$ they are pairwise distinct with probability $\prod_{i<q}(1 - i/N) \le e^{-q(q-1)/(2N)}$. Since $q \ge 4$ and $N < (q+1)^2$, $q(q-1)/(2N) > q(q-1)/(2(q+1)^2) \ge 6/25$, so some two digests coincide with probability at least $1 - e^{-6/25} > 0.2$. Two sampled messages are equal with probability at most $\binom{q}{2}/N^2 \le 1/(2N) \le 1/32$, which leaves more than $1/8$.
 
 ## Depends on
 
-- [Birthday lower bound](../birthday-bound/collision-prob-ge.md)
 - [Carter–Wegman MACs](../../symmetric-key/macs-and-modes/carterwegman-macs.md)
 
 ## Sources

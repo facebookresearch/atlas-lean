@@ -12,5 +12,5 @@ Run the heuristic scheme with error parameter $\delta=1/(2p(n))$; its failure se
 
 ## Sources
 
-- Andrej Bogdanov and Luca Trevisan, "Average-Case Complexity", Foundations and Trends in Theoretical Computer Science 2(1), arXiv:cs/0606037, 2006.
-- Shai Ben-David, Benny Chor, Oded Goldreich and Michael Luby, "On the Theory of Average Case Complexity", Journal of Computer and System Sciences 44(2), 1992.
+- Andrej Bogdanov and Luca Trevisan, "Average-Case Complexity", Foundations and Trends in Theoretical Computer Science 2(1), 1–106, 2006, Definitions 10–11 (heuristic schemes).
+- Shai Ben-David, Benny Chor, Oded Goldreich and Michael Luby, "On the Theory of Average Case Complexity", Journal of Computer and System Sciences 44(2), 193–219, 1992.

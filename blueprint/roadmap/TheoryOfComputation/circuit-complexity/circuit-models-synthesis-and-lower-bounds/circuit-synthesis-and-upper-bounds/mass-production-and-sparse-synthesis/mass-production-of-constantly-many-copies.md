@@ -4,7 +4,7 @@ For every constant $c\ge 1$ and every $P>0$ there is $L_0$ such that for all $L\
 
 ## Proof sketch
 
-A constant copy count satisfies Uhlig's depth condition, so the bound is the special case $d$ constant of Uhlig's theorem.
+Take $d=\lceil\log_2 c\rceil$, a constant, which satisfies $d\log_2 L=o(L)$; a circuit for $F^{\times 2^d}$ computes $F^{\times c}$ after discarding outputs, so the bound is the constant-$d$ case of Uhlig's theorem.
 
 ## Depends on
 
@@ -16,4 +16,4 @@ A constant copy count satisfies Uhlig's depth condition, so the bound is the spe
 
 ## Sources
 
-- Dietmar Uhlig, "Networks Computing Boolean Functions for Multiple Input Values", Boolean Function Complexity, 1992.
+- Dietmar Uhlig, "Networks Computing Boolean Functions for Multiple Input Values", in M. S. Paterson (ed.), Boolean Function Complexity, London Mathematical Society Lecture Note Series 169, Cambridge University Press, 1992.

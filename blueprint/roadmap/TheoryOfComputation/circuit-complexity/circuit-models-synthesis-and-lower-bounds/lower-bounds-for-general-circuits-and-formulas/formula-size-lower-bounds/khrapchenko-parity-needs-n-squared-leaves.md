@@ -17,5 +17,5 @@ Take $A$ the odd-weight and $B$ the even-weight inputs: $|A|=|B|=2^{n-1}$ and ev
 
 ## Sources
 
-- V. M. Khrapchenko, "Complexity of the realization of a linear function in the class of Π-circuits", Mathematical Notes of the Academy of Sciences of the USSR, 1971.
+- V. M. Khrapchenko, "Complexity of the realization of a linear function in the class of Π-circuits", Mathematical Notes of the Academy of Sciences of the USSR 10(1), 474–479, 1971.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

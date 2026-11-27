@@ -10,6 +10,7 @@ For a vocabulary with finitely many relation symbols, structures $\mathfrak{A}, 
 
 - [Rank-$n$ types and Hintikka formulas](hintikka-formulas.md)
 - [Duplicator wins the EF game iff there is a back-and-forth system](ef-game-back-and-forth.md)
+- [Quantifier rank and rank-$n$ equivalence](../finite-structures-and-definability/quantifier-rank.md)
 
 ## Proof depends on
 

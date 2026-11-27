@@ -10,4 +10,5 @@ Lines of cutting planes are integer linear inequalities $\sum_v a_v x_v \ge b$ (
 ## Sources
 
 - W. Cook, C. R. Coullard and Gy. Turán, "On the Complexity of Cutting-Plane Proofs", Discrete Applied Mathematics 18(1), 25–38, 1987.
+- S. Buss and J. Nordström, "Proof Complexity and SAT Solving", in Handbook of Satisfiability, 2nd ed., IOS Press, 2021, Section 7.6.1 (rules (7.27a)–(7.27d)).
 - V. Chvátal, "Edmonds Polytopes and a Hierarchy of Combinatorial Problems", Discrete Mathematics 4(4), 305–337, 1973.

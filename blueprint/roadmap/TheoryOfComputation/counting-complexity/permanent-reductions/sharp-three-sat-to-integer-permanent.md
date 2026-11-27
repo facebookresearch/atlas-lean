@@ -19,5 +19,5 @@ Valiant's gadget construction: a variable gadget has two cycle covers, one per t
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 6–7", 2007, Proposition 6.21.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Proposition 6.21 and Figure 6.3 (the eight-vertex clause gadget with $c=12$; Valiant's original gadgets give $c=2^{10}$).
 - Leslie G. Valiant, "The Complexity of Computing the Permanent", Theoretical Computer Science 8(2), 1979.

@@ -1,10 +1,10 @@
 # A Boolean function of variance at least 1/2 has a large low-degree Fourier coefficient
 
-Let $f : \{-1,1\}^n \to \{-1,1\}$ have $\mathrm{Var}[f] \ge 1/2$ and $\mathbf{I}[f] \le K$. Then some nonempty $S$ with $|S| \le 8K$ satisfies $\hat f(S)^2 \ge \exp(-O(K^2))$; explicitly $\hat f(S)^2 \ge \frac{1}{4(M + 1)^{\lfloor 8K \rfloor}}$ with $M = \frac{256}{9}K^3 81^{8K}$.
+Let $f : \{-1,1\}^n \to \{-1,1\}$ have $\mathrm{Var}[f] \ge 1/2$ and $\mathbf{I}[f] \le K$. Then some nonempty $S$ with $|S| \le 8K$ satisfies $\hat f(S)^2 \ge \exp(-O(K^2))$; explicitly $\hat f(S)^2 \ge \frac{1}{4(M + 1)^{\lfloor 8K \rfloor}}$ with $M = 64K^3\, 9^{\lfloor 8K \rfloor}$. (Here $K \ge \mathbf{I}[f] \ge \mathrm{Var}[f] \ge 1/2$.)
 
 ## Proof sketch
 
-By Markov at least $1/4$ of the Fourier weight lies on nonempty sets of size at most $8K$; Friedgut's argument shows these sets lie within a junta of at most $M$ coordinates up to small weight, and there are at most $(M + 1)^{8K}$ such sets, so one carries the stated weight.
+Put $k = \lfloor 8K \rfloor$ and $\varepsilon = 1/8$. By Markov the weight on $|S| > k$ is at most $\mathbf{I}[f]/(k + 1) < 1/8$. For $J = \{j : \mathbf{Inf}_j[f] \ge \varepsilon^2/(\mathbf{I}[f]^2 9^k)\}$, the spectral part of Friedgut's argument bounds the weight on sets of size at most $k$ not contained in $J$ by $1/8$, and $|J| \le \mathbf{I}[f]^3 9^k/\varepsilon^2 \le M$. Since $\hat f(\emptyset)^2 = 1 - \mathrm{Var}[f] \le 1/2$, the nonempty subsets of $J$ of size at most $k$ carry weight at least $1 - \frac12 - \frac18 - \frac18 = \frac14$; there are at most $(M + 1)^k$ of them, so one carries weight at least $1/(4(M + 1)^k)$ (O'Donnell, Cor. 9.32).
 
 ## Depends on
 
@@ -14,7 +14,8 @@ By Markov at least $1/4$ of the Fourier weight lies on nonempty sets of size at 
 
 ## Proof depends on
 
-- [Friedgut's Junta Theorem](../structure-theorems-for-boolean-functions/friedgut-junta-theorem.md)
+- [Spectral part of Friedgut's argument](../structure-theorems-for-boolean-functions/sum-sq-not-subset-le-of-influence.md)
+- [Few coordinates have large influence](../structure-theorems-for-boolean-functions/card-influential-le.md)
 - [Low total influence implies low-degree spectral concentration](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/spectral-structure-of-boolean-functions/sum-sq-card-gt-le-of-pos.md)
 
 ## Sources

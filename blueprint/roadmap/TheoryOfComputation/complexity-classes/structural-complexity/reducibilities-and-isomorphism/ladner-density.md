@@ -1,10 +1,10 @@
 # Ladner's density theorem for polynomial-time degrees
 
-Let $A<^{p}_{m}B$ (i.e. $A\le^{p}_{m}B$ and $B\not\le^{p}_{m}A$) be languages over $\{0,1\}$ with $B$ decidable and $B\notin\mathsf{P}$. Then there is a decidable $C$ with $A<^{p}_{m}C<^{p}_{m}B$; if $A,B\in\mathsf{NP}$, then $C$ can be taken in $\mathsf{NP}$. In particular, if $\mathsf{P}\ne\mathsf{NP}$, below every $\mathsf{NP}$-complete language there is an $\mathsf{NP}$-intermediate language, and the polynomial-time many-one degrees of decidable sets are dense.
+Let $A<^{p}_{m}B$ (i.e. $A\le^{p}_{m}B$ and $B\not\le^{p}_{m}A$) be languages over $\{0,1\}$ with $B$ decidable and $B\notin\mathsf{P}$. Then there is a decidable $C$ with $A<^{p}_{m}C<^{p}_{m}B$; if $A,B\in\mathsf{NP}$, then $C$ can be taken in $\mathsf{NP}$. In particular, if $\mathsf{P}\ne\mathsf{NP}$, below every $\mathsf{NP}$-complete language there is an $\mathsf{NP}$-intermediate language, and the polynomial-time many-one degrees of decidable sets outside $\mathsf{P}$ are dense.
 
 ## Proof sketch
 
-Uniform diagonalization (Schöning): the recursively presentable classes $\{C : C\le^p_m A\}$-complement conditions are combined by a 'delayed' union $C=(B\cap G)\cup(A\cap\overline{G})$ where $G\in\mathsf{P}$ alternates between long blocks; each block waits until a new candidate reduction or decider has been refuted, which is possible because both $\{L: B\le L\}$ and $\{L: L\le A\}$ fail on finite variations of $B$ and $A$.
+Apply Schöning's uniform diagonalization to the decidable classes $\mathcal{C}_1=\{L : L\le^p_m A\}$ and $\mathcal{C}_2=\{L : B\le^p_m A\oplus L\}$, which are recursively presentable and closed under finite variations, with $B\notin\mathcal{C}_1$ and $\emptyset\notin\mathcal{C}_2$. It yields $G\in\mathsf{P}$ such that $D=B\cap G$ lies in neither class. Then $C=A\oplus D$ satisfies $A\le^p_m C\le^p_m B$, $C\not\le^p_m A$ (else $D\le^p_m A$) and $B\not\le^p_m C$; if $A,B\in\mathsf{NP}$ then $C\in\mathsf{NP}$. (If $A$ is $\emptyset$ or $\{0,1\}^*$, any $C\in\mathsf{P}$ other than $\emptyset$ and $\{0,1\}^*$ works.)
 
 ## Depends on
 
@@ -14,6 +14,7 @@ Uniform diagonalization (Schöning): the recursively presentable classes $\{C : 
 ## Proof depends on
 
 - [Ladner's theorem: NP-intermediate languages exist](../../ladner.md)
+- [Schöning's uniform diagonalization theorem](../uniform-diagonalization-and-closure-properties/uniform-diagonalization.md)
 - [Recursively presentable complexity classes](recursively-presentable-classes.md)
 
 ## Sources

@@ -1,6 +1,6 @@
 # The rank of the communication matrix bounds the tiling number
 
-Let $M_f$ be the $0/1$ communication matrix of a Boolean $f : X \times Y \to \{0,1\}$ over a commutative semiring with the strong rank condition (for example any field). For every labelled rectangle partition for $f$, $\mathrm{rank}(M_f)$ is at most the number of rectangles labelled $1$; hence $\mathrm{rank}(M_f) \le \chi(f)$.
+Let $K$ be a field and $M_f$ the $0/1$ communication matrix over $K$ of a Boolean $f : X \times Y \to \{0,1\}$ on finite sets. For every labelled rectangle partition for $f$, $\mathrm{rank}_K(M_f)$ is at most the number of rectangles labelled $1$; hence $\mathrm{rank}_K(M_f) \le \chi(f)$. Over a semiring \"rank\" is ambiguous: over the Boolean semiring the six rows of the $6 \times 4$ matrix of two-element subsets of a four-element set need six generators, although four column rectangles partition its ones, so the field rank should not be replaced by a semiring rank without saying which one (for instance the least inner dimension of a factorization, which the rectangles bound).
 
 ## Proof sketch
 

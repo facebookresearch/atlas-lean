@@ -4,7 +4,7 @@ There is a constant $c$ such that for every $n$ the binary representation of the
 
 ## Proof sketch
 
-Pad to a power of two and add along a balanced binary tree using ripple-carry adders; a node at height $h$ adds $(h+1)$-bit words, and there are $n/2^{h}$ such nodes, so the total cost $\sum_h O(h)\,n/2^h$ is $O(n)$. A comparison with the constant $t$ adds $O(\log n)$ gates.
+Pad to a power of two and add along a balanced binary tree using ripple-carry adders; a node at height $h$ adds $(h+1)$-bit words, and there are $n/2^{h}$ such nodes, so the total cost $\sum_h O(h)\,n/2^h$ is $O(n)$. A comparison with the constant $t$ adds $O(\log n)$ gates. A symmetric function is a function of the $\lceil\log_2(n+1)\rceil$-bit weight, and any function of $m=\lceil\log_2(n+1)\rceil$ bits is a disjunction of some of its $2^m\le 2n+2$ minterms, all computable with $O(2^m)=O(n)$ gates.
 
 ## Depends on
 

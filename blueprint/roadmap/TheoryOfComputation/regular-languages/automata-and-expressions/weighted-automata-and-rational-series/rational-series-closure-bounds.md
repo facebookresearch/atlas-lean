@@ -4,7 +4,7 @@ If $f\in\mathrm{Rat}_{\le m}$ and $g\in\mathrm{Rat}_{\le n}$ then $f+g\in\mathrm
 
 ## Proof sketch
 
-Block-diagonal sum of representations for $f+g$; for the product, a block upper-triangular representation whose off-diagonal block is $\rho_f\lambda_g$; for the star, add a state feeding the final vector back to the initial vector.
+Block-diagonal sum of representations for $f+g$; for the product, the block upper-triangular representation with $\mu(a)=\begin{pmatrix}\mu_f(a)&\rho_f\lambda_g\mu_g(a)\\0&\mu_g(a)\end{pmatrix}$, initial vector $(\lambda_f,0)$ and final vector $(\rho_f\lambda_g\rho_g;\rho_g)$, which sums $f(u)g(v)$ over all factorizations $w=uv$; for the star, add a state feeding the final vector back to the initial vector.
 
 ## Depends on
 
@@ -12,5 +12,5 @@ Block-diagonal sum of representations for $f+g$; for the product, a block upper-
 
 ## Sources
 
-- Jean Berstel and Christophe Reutenauer, "Noncommutative Rational Series with Applications", Cambridge University Press, 2011.
-- Marcel-Paul Schützenberger, "On the Definition of a Family of Automata", Information and Control 4, 1961.
+- Jean Berstel and Christophe Reutenauer, "Noncommutative Rational Series with Applications", Encyclopedia of Mathematics and its Applications 137, Cambridge University Press, 2011, Chapter 1 (closure of recognizable series under sum, Cauchy product and star of proper series, with the standard constructions).
+- Marcel-Paul Schützenberger, "On the Definition of a Family of Automata", Information and Control 4(2–3), 245–270, 1961.

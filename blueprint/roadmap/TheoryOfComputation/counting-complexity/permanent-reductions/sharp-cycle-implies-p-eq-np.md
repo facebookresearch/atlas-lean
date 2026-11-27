@@ -4,7 +4,7 @@ Let $\#\mathrm{CYCLE}$ be the function counting the simple directed cycles of a 
 
 ## Proof sketch
 
-Replace every arc of an $n$-vertex digraph by a gadget of $L=\mathrm{poly}(n)$ layers with $2^{L}$ paths between its ends, so a simple cycle of length $\ell$ yields $2^{L\ell}$ cycles. A Hamiltonian cycle then contributes $2^{Ln}$, more than all shorter cycles combined, so thresholding $\#\mathrm{CYCLE}$ decides Hamiltonicity, which is NP-complete.
+Replace every arc of an $n$-vertex digraph by a gadget of $L=\mathrm{poly}(n)$ layers with $2^{L}$ paths between its ends, so a simple cycle of length $\ell$ yields $2^{L\ell}$ cycles. A Hamiltonian cycle then contributes $2^{Ln}$, more than all shorter cycles combined, so thresholding $\#\mathrm{CYCLE}$ decides whether a digraph has a Hamiltonian cycle, which is NP-complete (Hamiltonian path reduces to it by adding one vertex with arcs to and from every vertex).
 
 ## Depends on
 
@@ -14,8 +14,8 @@ Replace every arc of an $n$-vertex digraph by a gadget of $L=\mathrm{poly}(n)$ l
 
 ## Proof depends on
 
-- [Cook–Levin theorem: SAT is NP-complete](../../np-completeness/cook-levin/cook-levin-sat-np-complete.md)
+- [DIRECTED HAMILTONIAN PATH is NP-complete](../../np-completeness/paths-cycles-and-subgraphs/hamiltonian-path-in-directed-graphs/directed-hamiltonian-path-np-complete.md)
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Theorem 9.4.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Section 17.1 (the theorem that $\#\mathrm{CYCLE}\in\mathsf{FP}$ implies $\mathsf{P}=\mathsf{NP}$).

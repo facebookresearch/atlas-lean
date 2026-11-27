@@ -10,7 +10,7 @@ lies in neither $\mathcal{C}_1$ nor $\mathcal{C}_2$. Moreover $A$ is decidable a
 
 ## Proof sketch
 
-$G$ consists of long blocks of consecutive input lengths; a block ends only after the slow, clocked enumeration has found, for the next machine of $\mathcal{C}_1$ (resp. $\mathcal{C}_2$), an input on which it differs from $A_1$ (resp. $A_2$), such inputs exist because the classes are closed under finite variations. Because block boundaries are computed by a clocked search, $G$ is polynomial-time decidable.
+$G$ consists of long blocks of consecutive input lengths; a block ends only after the slow, clocked enumeration has found, for the next machine of $\mathcal{C}_1$ (resp. $\mathcal{C}_2$), an input on which it differs from $A_1$ (resp. $A_2$). Such inputs exist beyond any given length because $A_1\notin\mathcal{C}_1$ (resp. $A_2\notin\mathcal{C}_2$) and the classes are closed under finite variations, so no member of the class can agree with $A_1$ (resp. $A_2$) on all long inputs. Because block boundaries are computed by a clocked search, $G$ is polynomial-time decidable.
 
 ## Depends on
 

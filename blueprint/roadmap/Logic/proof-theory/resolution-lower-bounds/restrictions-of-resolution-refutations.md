@@ -14,5 +14,5 @@ Apply $\rho$ to every line: a satisfied line is dropped and its uses are bypasse
 
 ## Sources
 
-- E. Ben-Sasson and A. Wigderson, "Short Proofs Are Narrow — Resolution Made Simple", Journal of the ACM 48(2), 149–169, 2001.
+- E. Ben-Sasson and A. Wigderson, "Short Proofs Are Narrow — Resolution Made Simple", Journal of the ACM 48(2), 149–169, 2001: Section 2.2 and Lemmas 3.1–3.2.
 - P. Beame and T. Pitassi, "Simplified and Improved Resolution Lower Bounds", Proceedings of the 37th IEEE Symposium on Foundations of Computer Science (FOCS), 1996.

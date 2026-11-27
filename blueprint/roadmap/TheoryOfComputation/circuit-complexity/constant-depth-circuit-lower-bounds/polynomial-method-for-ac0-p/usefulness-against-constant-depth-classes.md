@@ -9,4 +9,4 @@ Let $\mathcal{C}=(\mathcal{C}_n)$ be a property of Boolean functions and let $\m
 
 ## Sources
 
-- Alexander A. Razborov, Steven Rudich, "Natural Proofs", Journal of Computer and System Sciences, 1997.
+- Alexander A. Razborov, Steven Rudich, "Natural Proofs", Journal of Computer and System Sciences 55(1), 1997.

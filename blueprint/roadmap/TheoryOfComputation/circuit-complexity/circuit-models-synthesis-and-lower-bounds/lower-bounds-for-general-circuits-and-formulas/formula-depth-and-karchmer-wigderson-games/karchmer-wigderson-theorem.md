@@ -17,5 +17,5 @@ A formula gives a protocol by walking down from the root: at an AND gate Bob (wh
 
 ## Sources
 
-- Mauricio Karchmer, Avi Wigderson, "Monotone circuits for connectivity require super-logarithmic depth", SIAM Journal on Discrete Mathematics, 1990.
+- Mauricio Karchmer, Avi Wigderson, "Monotone circuits for connectivity require super-logarithmic depth", SIAM Journal on Discrete Mathematics 3(2), 255–265, 1990.
 - Eyal Kushilevitz, Noam Nisan, "Communication Complexity", Cambridge University Press, 1997.

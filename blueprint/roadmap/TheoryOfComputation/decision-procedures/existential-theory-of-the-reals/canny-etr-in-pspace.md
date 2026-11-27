@@ -4,7 +4,7 @@ The existential theory of the reals is decidable in polynomial space: there is a
 
 ## Proof sketch
 
-Reduce to deciding nonemptiness of sign conditions of the atomic polynomials via a generalized characteristic polynomial and the roadmap or critical-point method; the sign-determination computations are carried out by parallel (NC) algebraic algorithms over integers of exponential magnitude, which run in polynomial space.
+Canny's main lemma decides, in polynomial space, the signs of several polynomials at the common zeros of a zero-dimensional polynomial system, using resultants (the generalized characteristic polynomial, which handles degenerate systems) and parallel (NC) sign-determination algorithms over integers of exponential magnitude. A homogenizing perturbation reduces nonemptiness of the solution set of a formula to sign conditions at finitely many such zeros (points of a bounded perturbed semialgebraic set in the cube $[-1,1]^n$), and the main lemma decides those. (Canny's roadmap algorithm is used for motion planning, not for this theorem.)
 
 ## Depends on
 
@@ -14,9 +14,8 @@ Reduce to deciding nonemptiness of sign conditions of the atomic polynomials via
 ## Proof depends on
 
 - [Modular evaluation and size bounds for integer terms](modular-evaluation-of-integer-terms.md)
-- [Quantifier elimination over the reals](../../../Logic/model-theory/quantifier-elimination-for-real-closed-fields/qe.md)
 
 ## Sources
 
-- J. Canny, "Some Algebraic and Geometric Computations in PSPACE", Proceedings of the 20th ACM Symposium on Theory of Computing (STOC), 460–467, 1988.
+- J. Canny, "Some Algebraic and Geometric Computations in PSPACE", Proceedings of the 20th ACM Symposium on Theory of Computing (STOC), 460–467, 1988, Section 2 (main lemma) and Theorem 3.3.
 - S. Basu, R. Pollack and M.-F. Roy, Algorithms in Real Algebraic Geometry, 2nd ed., Springer, 2006.

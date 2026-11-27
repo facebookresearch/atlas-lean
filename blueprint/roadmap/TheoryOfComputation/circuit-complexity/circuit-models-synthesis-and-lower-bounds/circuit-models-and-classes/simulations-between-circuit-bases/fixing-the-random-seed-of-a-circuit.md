@@ -12,5 +12,5 @@ Union bound over the $2^n$ inputs: the bad seeds of all inputs together form few
 
 ## Sources
 
-- Leonard Adleman, "Two Theorems on Random Polynomial Time", 19th Annual Symposium on Foundations of Computer Science, 1978.
+- Leonard Adleman, "Two Theorems on Random Polynomial Time", 19th Annual Symposium on Foundations of Computer Science, 75–83, 1978.
 - Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007.

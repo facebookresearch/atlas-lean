@@ -5,4 +5,3 @@
 - [Density-restoring partition](density-restoring-partition.md)
 - [Full-range lemma for dense pointer sets](full-range-lemma.md)
 - [Lifting with low-discrepancy gadgets](lifting-with-low-discrepancy-gadgets.md)
-- [Raz–McKenzie / Göös–Pitassi–Watson deterministic lifting theorem](deterministic-lifting-theorem.md)

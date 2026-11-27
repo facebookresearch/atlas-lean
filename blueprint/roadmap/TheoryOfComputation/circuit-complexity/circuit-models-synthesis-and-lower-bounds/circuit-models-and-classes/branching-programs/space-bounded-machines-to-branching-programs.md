@@ -17,4 +17,4 @@ The nodes are the time-stamped configuration cores (state, input-head position, 
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009, Theorem 13.15.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009 (web draft of 2007-01-08, Theorem 13.15).

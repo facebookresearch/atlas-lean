@@ -4,7 +4,7 @@ If every relation of a finite Boolean constraint language $\Gamma$ is an even de
 
 ## Proof sketch
 
-An instance with an empty constraint is unsatisfiable. Otherwise every constraint is a nonempty even delta-matroid, so the blossom algorithm returns a valid labeling with the minimum number of defects after at most one more improvement step than there are variables; each step is a forest search with polynomially many nested blossom contractions, so the whole run takes polynomial time. The instance is satisfiable if and only if the returned labeling has no defects.
+Start from the valid edge labeling that gives every constraint one of its tuples (delta-matroids are nonempty); a variable is a defect when its two constraints disagree on it. The blossom algorithm returns a valid labeling with the minimum number of defects after at most one more improvement step than there are variables; each step is a forest search with polynomially many nested blossom contractions, so the whole run takes polynomial time. The instance is satisfiable if and only if the returned labeling has no defects.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ An instance with an empty constraint is unsatisfiable. Otherwise every constrain
 
 ## Sources
 
-- A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), Article 22, 2019.
+- A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), Article 22, 2019, Theorem 8 and Section 5.

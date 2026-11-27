@@ -1,10 +1,14 @@
 # Krajíček's interpolation theorem for semantic derivations
 
-Let the variables be split into shared $X$ ($|X| = n$) and private $Y$, $Z$; let $\mathcal{A}$ be initial sets depending only on $X \cup Y$ and $\mathcal{B}$ initial sets depending only on $X \cup Z$. Suppose there is a semantic refutation from $\mathcal{A} \cup \mathcal{B}$ with $k$ lines, each of which, viewed as a function of the $(X \cup Y)$-part and the $Z$-part, has two-party communication complexity at most $t$. Then there is a Boolean circuit of size $(k + 2n) \cdot 2^{O(t)}$ (and in fact of size $(k\, 2^{2t} + 1)\, 2^{2t+1}$, independent of $n$) separating $\{u : \exists q\; (u,q) \models \mathcal{A}\}$ from $\{v : \exists r\; (v,r) \models \mathcal{B}\}$; if the communication is monotone, the circuit can be taken monotone.
+Let $N = n + s + t$, let $A_1,\dots,A_m \subseteq \{0,1\}^{n+s}$ and $B_1,\dots,B_\ell \subseteq \{0,1\}^{n+t}$, and let $\tilde A_i, \tilde B_j \subseteq \{0,1\}^N$ be their cylinders (extended arbitrarily on the last $t$, respectively the middle $s$, coordinates). For $D \subseteq \{0,1\}^N$, the *communication complexity* $CC(D)$ is the least number of bits two players, one knowing $u \in \{0,1\}^n$ and $q_u \in \{0,1\}^s$ and the other knowing $v \in \{0,1\}^n$ and $r_v \in \{0,1\}^t$, must exchange in the worst case to solve each of the tasks: decide whether $(u, q_u, r_v) \in D$; decide whether $(v, q_u, r_v) \in D$; and, if exactly one of the two tuples lies in $D$, find $i \le n$ with $u_i \ne v_i$. Suppose there is a semantic derivation $D_1,\dots,D_k = \emptyset$ from $\tilde A_1,\dots,\tilde A_m, \tilde B_1,\dots,\tilde B_\ell$ with $CC(D_i) \le t'$ for all $i \le k$. Then the sets
+
+$$U = \{u : \exists q\; (u,q) \in \textstyle\bigcap_i A_i\}, \qquad V = \{v : \exists r\; (v,r) \in \textstyle\bigcap_j B_j\}$$
+
+are separated by a Boolean circuit of size at most $(k + 2n)\, 2^{O(t')}$. If moreover the $A_i$ satisfy the monotonicity condition $(u,q) \in \bigcap_i A_i \wedge u \le u' \Rightarrow (u',q) \in \bigcap_i A_i$ and every $D_i$ has monotone communication complexity (with respect to $U$) at most $t'$, or symmetrically for the $B_j$ and $V$, then $U$ and $V$ are separated by a monotone circuit of size at most $(k + n)\, 2^{O(t')}$.
 
 ## Proof sketch
 
-Alice holds a model of $\mathcal{A}$ and Bob a model of $\mathcal{B}$; they walk backwards from the empty line along lines falsified by the mixed assignment, which cannot end at a derived line or a $\mathcal{B}$-set, so it ends at an $\mathcal{A}$-set where a coordinate of $X$ on which their shared parts differ is found. This is a dag-like protocol for the Karchmer–Wigderson game, and such protocols convert into circuits.
+Holding $u \in U$ and $v \in V$ with witnesses, the players walk from $D_k = \emptyset$ towards the initial sets, keeping both mixed tuples $(u, q_u, r_v)$ and $(v, q_u, r_v)$ outside the current line: from a line derived from $X$ and $Y$ they move to $X$ if neither tuple lies in $X$, to $Y$ if both do. No initial set avoids both tuples, so they eventually reach a premise containing exactly one tuple, where they find $i$ with $u_i \ne v_i$. This is a protocol for the Karchmer–Wigderson game on $(U, V)$ with $k + 2n$ nodes, and a protocol with $K$ nodes and communication $t'$ yields a separating circuit of size $K\, 2^{O(t')}$ (monotone for a monotone protocol).
 
 ## Depends on
 
@@ -14,4 +18,4 @@ Alice holds a model of $\mathcal{A}$ and Bob a model of $\mathcal{B}$; they walk
 
 ## Sources
 
-- J. Krajíček, "Interpolation Theorems, Lower Bounds for Proof Systems, and Independence Results for Bounded Arithmetic", The Journal of Symbolic Logic 62(2), 457–486, 1997.
+- J. Krajíček, "Interpolation Theorems, Lower Bounds for Proof Systems, and Independence Results for Bounded Arithmetic", The Journal of Symbolic Logic 62(2), 457–486, 1997: Definition 4.3, Theorem 2.3 and Theorem 5.1.

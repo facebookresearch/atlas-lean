@@ -1,10 +1,10 @@
 # Rivest–Vuillemin parity criterion for evasiveness
 
-Let $f : \{0,1\}^n \to \{0,1\}$ and let $e$ and $o$ be the numbers of inputs of even and odd Hamming weight on which $f = 1$. If $e \ne o$ (equivalently, the top Fourier coefficient $\hat f([n])$ of $f$ read as $\pm1$ is nonzero), then every decision tree computing $f$ queries all $n$ variables on some input; in particular $D(f) = n$, i.e. $f$ is *evasive*.
+Let $f : \{0,1\}^n \to \{0,1\}$ and let $e$ and $o$ be the numbers of inputs of even and odd Hamming weight on which $f = 1$. If $e \ne o$ (for $n \ge 1$ this is equivalent to the top Fourier coefficient $\hat f([n])$ of $f$ read as $\pm1$ being nonzero, since $\hat f([n]) = -2^{1-n}(e-o)$; for $n=0$ the equivalence fails, as the constant $0$ has $e=o=0$ but $\hat f(\varnothing)=1$), then every decision tree computing $f$ queries all $n$ variables on some input; in particular $D(f) = n$, i.e. $f$ is *evasive*.
 
 ## Proof sketch
 
-A leaf at depth less than $n$ corresponds to a subcube of positive dimension on which $f$ is constant; such a subcube has equally many even and odd inputs. If every leaf had depth less than $n$, summing over leaves would give $e = o$.
+A consistent path that reads fewer than $n$ distinct variables ends at a leaf whose subcube has positive dimension and on which $f$ is constant; such a subcube has equally many even and odd inputs. If no input made the tree read all $n$ variables, summing over these subcubes, which partition the cube, would give $e = o$.
 
 ## Depends on
 

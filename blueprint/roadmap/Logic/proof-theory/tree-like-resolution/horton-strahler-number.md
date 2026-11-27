@@ -8,5 +8,5 @@ The *Horton–Strahler number* $\mathrm{hs}(T)$ of a binary tree $T$ is defined 
 
 ## Sources
 
-- J. L. Esteban and J. Torán, "Space Bounds for Resolution", Information and Computation 171(1), 84–97, 2001.
+- J. L. Esteban and J. Torán, "Space Bounds for Resolution", Information and Computation 171(1), 84–97, 2001: proof of Theorem 7 (the depth $d_c$ of the largest embedded complete binary tree).
 - J. Torán, "Space and Width in Propositional Resolution", Bulletin of the EATCS 83, 86–104, 2004.

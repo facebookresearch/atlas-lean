@@ -1,6 +1,6 @@
 # The every-tile-occurs tiling problem is undecidable
 
-It is undecidable whether every tile of a finite palette $T$ occurs at the origin of some tiling of the plane by $T$ (by translation, equivalently whether every tile occurs somewhere in some tiling by $T$). The domino problem Turing-reduces to it: a decider for the every-tile-occurs problem, applied to the nonempty sub-palettes of $T$, decides whether $T$ tiles the plane.
+It is undecidable whether every tile of a finite palette $T$ occurs at the origin of some tiling of the plane by $T$ (by translation, equivalently whether each tile occurs somewhere in some tiling by $T$, the tiling depending on the tile). The domino problem Turing-reduces to it: a decider for the every-tile-occurs problem, applied to the nonempty sub-palettes of $T$, decides whether $T$ tiles the plane.
 
 ## Proof sketch
 
@@ -16,4 +16,4 @@ $T$ tiles the plane iff some nonempty sub-palette $T'\subseteq T$ has every tile
 
 ## Sources
 
-- Robin Hirsch and Ian Hodkinson, "Representability is not Decidable for Finite Relation Algebras", Transactions of the American Mathematical Society 353(4), 2001, Section 3.
+- Robin Hirsch and Ian Hodkinson, "Representability is not Decidable for Finite Relation Algebras", Transactions of the American Mathematical Society 353(4), 1403–1425, 2001, Section 3 (where undecidability of this problem is noted as following from Berger's theorem).

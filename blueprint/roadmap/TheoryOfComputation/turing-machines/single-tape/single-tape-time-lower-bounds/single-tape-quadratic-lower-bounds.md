@@ -12,5 +12,5 @@ Equal crossing sequences for two pairs at a boundary in the middle would, by cut
 
 ## Sources
 
-- F. C. Hennie, "One-tape, off-line Turing machine computations", Information and Control 8(6), 1965.
-- Eyal Kushilevitz and Noam Nisan, "Communication Complexity", Cambridge University Press, 1997.
+- F. C. Hennie, "One-tape, off-line Turing machine computations", Information and Control 8(6), 553–578, 1965.
+- Eyal Kushilevitz and Noam Nisan, "Communication Complexity", Cambridge University Press, 1997, Chapter 12 (Turing-machine time lower bounds from communication complexity).

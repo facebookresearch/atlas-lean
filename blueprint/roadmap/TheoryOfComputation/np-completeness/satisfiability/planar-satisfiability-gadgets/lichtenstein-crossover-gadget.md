@@ -4,7 +4,7 @@ There is a fixed planar CNF gadget with four boundary variables $a, b, a', b'$ p
 
 ## Proof sketch
 
-Verification of a fixed truth table: the gadget realizes $a' = a$ and $b' = b$ through XOR-like subgadgets drawn without crossings; uniqueness of extensions is checked exhaustively.
+Lichtenstein's box introduces copies $a_2\leftrightarrow a$, $b_2\leftrightarrow b$ and four variables with $\alpha\leftrightarrow a_2\wedge b_2$, $\beta\leftrightarrow a_2\wedge b'$, $\gamma\leftrightarrow a'\wedge b'$, $\delta\leftrightarrow a'\wedge b_2$, a clause $\alpha\vee\beta\vee\gamma\vee\delta$ and four binary clauses forbidding cyclically adjacent pairs of $\alpha,\beta,\gamma,\delta$; with the definitions, exactly one of the four is true, and these clauses force $a'\leftrightarrow a$ and $b'\leftrightarrow b$, and all internal variables are functions of $a$ and $b$. Hunt, Marathe, Radhakrishnan and Stearns replace the four-literal clause by $(\alpha\vee\delta\vee\xi)\wedge(\neg\xi\vee\beta\vee\gamma)$ with a fresh $\xi$ that is again determined, giving width three and unique extensions. Splitting each internal variable into copies tied by a cycle of binary implications keeps planarity and uniqueness and leaves at most three occurrences per copy.
 
 ## Depends on
 
@@ -14,3 +14,4 @@ Verification of a fixed truth table: the gadget realizes $a' = a$ and $b' = b$ t
 ## Sources
 
 - D. Lichtenstein, "Planar Formulae and Their Uses", SIAM Journal on Computing 11(2), 329–343, 1982.
+- H. B. Hunt III, M. V. Marathe, V. Radhakrishnan and R. E. Stearns, "The Complexity of Planar Counting Problems", SIAM Journal on Computing 27(4), 1142–1167, 1998, Theorem 3.2 and Claim 3.3.

@@ -1,6 +1,6 @@
 # Hearn–Demaine: AND/OR constraint-logic reachability is PSPACE-complete
 
-All three reachability problems of AND/OR NCL (configuration-to-configuration, configuration-to-edge, and edge-to-edge) are $\mathsf{PSPACE}$-complete under polynomial-time many-one reductions, already on loop-free AND/OR graphs (self-loops and parallel edges are allowed in the input model).
+All three reachability problems of AND/OR NCL (configuration-to-configuration, configuration-to-edge, and edge-to-edge) are $\mathsf{PSPACE}$-complete under polynomial-time many-one reductions, already on AND/OR constraint graphs (Theorem 5 for configuration-to-edge, Corollary 6 for the other two). The input model allows loops and parallel edges, and the hard instances built in the proof use a loop.
 
 ## Proof sketch
 

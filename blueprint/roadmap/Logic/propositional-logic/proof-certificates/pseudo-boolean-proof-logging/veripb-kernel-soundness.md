@@ -1,10 +1,10 @@
 # Soundness of the VeriPB kernel proof format
 
-Consider a VeriPB kernel proof for a pseudo-Boolean instance (constraints and an optional linear objective) built from the rules: cutting planes derivations (the pol rule), RUP steps, proof by contradiction, redundance-based strengthening with witnesses, solution logging and deletions within the core set. If a sound checker accepts the proof with conclusion UNSAT then the instance has no solution; with conclusion SAT a solution exists; with conclusion BOUNDS $(\mathit{lb}, \mathit{ub})$ the optimum lies between them, every logged solution certifying an upper bound; and output sections certify that an output formula is equisatisfiable with (or implied by) the input, so preprocessing steps can be certified. Variable renamings of the instance do not change these conclusions.
+Consider a VeriPB kernel proof for a pseudo-Boolean instance (constraints and an optional linear objective) built from the rules: cutting planes derivations, RUP steps, redundance-based and dominance-based strengthening with witnesses, solution logging and objective-improving steps, and deletions within the core set. If a sound checker accepts the proof with conclusion UNSAT then the instance has no solution; with conclusion SAT a solution exists; with conclusion BOUNDS $(\mathit{lb}, \mathit{ub})$ the optimum lies between them, every logged solution certifying an upper bound.
 
 ## Proof sketch
 
-Each rule preserves the invariant that the core constraints have the same optimal value as the input instance and the derived constraints are implied modulo redundance; conclusions read off this invariant.
+Each rule preserves the validity invariant of Bogaerts et al.: the core constraints have the same optimal value as the input instance (or are equisatisfiable with it), and every solution of the core can be turned into one, no worse, of the core and derived constraints; the conclusions read off this invariant.
 
 ## Depends on
 

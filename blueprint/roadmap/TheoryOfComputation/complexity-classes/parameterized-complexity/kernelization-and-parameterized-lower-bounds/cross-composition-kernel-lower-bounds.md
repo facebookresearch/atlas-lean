@@ -16,4 +16,4 @@ Composing the cross-composition with the compression gives an OR-distillation of
 
 ## Sources
 
-- Hans L. Bodlaender, Bart M. P. Jansen and Stefan Kratsch, "Kernelization Lower Bounds by Cross-Composition", SIAM Journal on Discrete Mathematics 28(1), arXiv:1206.5941, 2014, Definition 9.
+- Hans L. Bodlaender, Bart M. P. Jansen and Stefan Kratsch, "Kernelization Lower Bounds by Cross-Composition", SIAM Journal on Discrete Mathematics 28(1), arXiv:1206.5941, 2014, Definition 9, Theorem 5 and Corollary 2.

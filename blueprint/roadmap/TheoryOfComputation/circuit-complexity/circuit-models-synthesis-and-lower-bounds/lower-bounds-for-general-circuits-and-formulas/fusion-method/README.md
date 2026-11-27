@@ -1,7 +1,6 @@
 # The Fusion Method
 
 - [Semifilters and semifilter (fusion) covers](semifilters-and-fusion-covers.md)
-- [The fixed-distribution counting barrier for the fusion method](fixed-distribution-counting-barrier-for-fusion.md)
 - [Cover complexity of the inequality graph and of random bipartite graphs](cover-complexity-of-inequality-and-random-graphs.md)
 - [Semifilter covers lower-bound the AND count of monotone circuits](fusion-covers-lower-bound-and-gates.md)
 - [Quadratic completeness of semifilter covers](quadratic-completeness-of-fusion-covers.md)

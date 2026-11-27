@@ -17,6 +17,10 @@ $H(k,x) - H(k,x')$ is a nonzero polynomial in $k$ of degree at most $n-1$, with 
 - [Almost Δ-universal (difference-universal) hash families](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/limited-independence-hash-families/almost-delta-universal-hash-family.md)
 - [Bounded universal hash functions](../bounded-universal-hash-functions.md)
 
+## Proof depends on
+
+- [A polynomial over an integral domain has at most as many roots as its degree](../../../../Algebra/zeros-of-polynomials/card-roots-le-degree.md)
+
 ## Sources
 
 - D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", version 0.6, 2023.

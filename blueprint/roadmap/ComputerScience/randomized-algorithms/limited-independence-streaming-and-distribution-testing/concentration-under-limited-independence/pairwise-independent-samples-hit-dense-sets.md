@@ -1,6 +1,6 @@
 # Pairwise independent samples hit dense sets
 
-Let $h : \iota \times X \to Y$ be pairwise independent with uniform seed, $S \subseteq X$ a set of $m$ points and $B \subseteq Y$ of density $p = |B|/|Y|$. Then
+Let $h : \iota \times X \to Y$ be pairwise independent with uniform seed and $Y$ finite and nonempty, $S \subseteq X$ a set of $m$ points and $B \subseteq Y$ of density $p = |B|/|Y|$. Then
 
 $$
 \Pr_i[\exists x \in S : h_i(x) \in B] \ge \frac{\min(mp, 1)}{2}, \quad\text{and}\quad \Pr_i[\exists x \in S : h_i(x) \in B] \ge \frac{3mp}{4} \text{ when } 2mp \le 1 .
@@ -14,10 +14,10 @@ For the first bound use the second-moment method: the count $X$ of points landin
 
 ## Depends on
 
-- [k-wise independent hash families](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash family](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 
-- O. Goldreich, "Computational Complexity: A Conceptual Perspective", public draft of Chapters 7–8, March 2007.
-- B. Chor and O. Goldreich, "On the Power of Two-Point Based Sampling", Journal of Complexity, 1989.
+- O. Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.
+- B. Chor and O. Goldreich, "On the Power of Two-Point Based Sampling", Journal of Complexity 5(1), 1989.
 - S. Goldwasser and M. Sipser, "Private Coins versus Public Coins in Interactive Proof Systems", Proceedings of the 18th ACM Symposium on Theory of Computing, 1986.

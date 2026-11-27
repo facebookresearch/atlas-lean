@@ -1,10 +1,10 @@
 # Strict hierarchy of exact-advice classes
 
-Let $a,b:\mathbb{N}\to\mathbb{N}$ with $a(n)< b(n)$ for all $n$ and with $b(n)\le 2^{n}$ eventually (so that $b(n)$ advice bits can be stored in the truth table of length-$n$ inputs). Then $\mathsf{P}/a\subsetneq\mathsf{P}/b$. In particular $\mathsf{P}/k\subsetneq\mathsf{P}/(k+1)$ for every constant $k$, and $\mathsf{P}/(b-1)\subsetneq\mathsf{P}/b$ for positive $b$. On the other hand, unbounded nonnegative gaps alone do not force containment: there are polynomially bounded $a\le b$ with $b-a$ unbounded and $\mathsf{P}/a\not\subseteq\mathsf{P}/b$, so pointwise strict growth is the natural hypothesis.
+Let $a,b:\mathbb{N}\to\mathbb{N}$ with $a(n)< b(n)$ for all $n$ and with $b(n)\le 2^{n}$ eventually (so that $b(n)$ advice bits can be stored in the truth table of length-$n$ inputs). Then $\mathsf{P}/a\subsetneq\mathsf{P}/b$. In particular $\mathsf{P}/k\subsetneq\mathsf{P}/(k+1)$ for every constant $k$, and $\mathsf{P}/(b-1)\subsetneq\mathsf{P}/b$ for positive $b$.
 
 ## Proof sketch
 
-Inclusion: pad advice of length $a(n)$ with a delimiter to length exactly $b(n)$. Strictness: by counting, at each length there are $2^{b(n)}$ possible behaviours of a language on the first $b(n)$ inputs, but only $2^{a(n)}$ advice strings for each of countably many machines; diagonalize length by length against machine $i$ at length $n_i$. The counterexample uses advice lengths that are not monotone so that delimiter padding is impossible.
+Inclusion: pad advice of length $a(n)$ with a delimiter to length exactly $b(n)$. Strictness: the machine that outputs the $i$-th advice bit on the $i$-th input of length $n$ (and $0$ beyond $b(n)$) defines, for each advice sequence of length $b$, a language in $\mathsf{P}/b$, and different sequences give different languages. A fixed machine with advice of length $a(n)\le b(n)-1$ realizes at most $2^{a(n)}$ behaviours at length $n$, so some advice string of length $b(n)$ defeats it at that length; assigning to each machine its own infinite set of lengths and choosing the advice there accordingly defeats every machine that takes $a$-bit advice.
 
 ## Depends on
 
@@ -12,5 +12,5 @@ Inclusion: pad advice of length $a(n)$ with a delimiter to length exactly $b(n)$
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Theorem 3.7, Exercise 3.3, Theorem 4.1.
-- Oded Goldreich, "A Tighter Version of Theorem 4.1", Online addendum to Computational Complexity: A Conceptual Perspective.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Theorem 3.7, Exercise 3.3 and Theorem 4.1 (strictness for unbounded gaps).
+- Oded Goldreich, "A Tighter Version of Thm 4.1", online addendum to "Computational Complexity: A Conceptual Perspective" (Theorem 4.1': $\mathsf{P}/(\ell-1)\subsetneq\mathsf{P}/\ell$ whenever $\ell(n)\le 2^n$).

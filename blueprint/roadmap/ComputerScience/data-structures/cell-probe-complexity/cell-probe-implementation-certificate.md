@@ -7,6 +7,8 @@ A *cell-probe implementation* of a specification $D$ from an abstract initial st
 - [Deterministic dynamic cell-probe scheme](deterministic-cell-probe-scheme.md)
 - [Randomized cell-probe scheme with private coins](randomized-cell-probe-scheme.md)
 - [State-transition specification of a data structure](../data-structure-interfaces-and-refinement/state-transition-specification.md)
+- [Word-RAM implementation certificate with potential-amortized running time](../data-structure-interfaces-and-refinement/word-ram-implementation-certificate.md)
+- [Simulation of Word-RAM data structures by cell-probe schemes](word-ram-simulation-by-cell-probe-schemes.md)
 
 ## Sources
 

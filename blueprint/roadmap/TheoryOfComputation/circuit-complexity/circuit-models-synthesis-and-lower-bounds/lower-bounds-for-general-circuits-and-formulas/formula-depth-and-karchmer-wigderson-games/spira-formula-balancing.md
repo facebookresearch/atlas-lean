@@ -16,5 +16,5 @@ Find a subformula $G$ with between $L/3$ and $2L/3$ leaves; write $F=(G\wedge F[
 
 ## Sources
 
-- Philip M. Spira, "On Time-Hardware Complexity Tradeoffs for Boolean Functions", Proceedings of the Fourth Hawaii International Symposium on System Sciences, 1971.
+- Philip M. Spira, "On Time-Hardware Complexity Tradeoffs for Boolean Functions", Proceedings of the Fourth Hawaii International Symposium on System Sciences, 525–527, 1971.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

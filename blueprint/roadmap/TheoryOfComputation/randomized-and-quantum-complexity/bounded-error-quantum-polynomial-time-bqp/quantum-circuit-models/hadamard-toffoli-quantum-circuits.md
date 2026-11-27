@@ -10,6 +10,7 @@ An $m$-qubit register has state space $\mathbb{C}^{\{0,1\}^m}$ with computationa
 
 ## Sources
 
-- Yaoyun Shi, "Both Toffoli and Controlled-NOT Need Little Help to Universal Quantum Computing", Quantum Information and Computation, 2003.
-- Dorit Aharonov, "A Simple Proof that Toffoli and Hadamard are Quantum Universal", 2003.
-- Ronald de Wolf, "Quantum Computing: Lecture Notes", 2019.
+- Yaoyun Shi, "Both Toffoli and Controlled-NOT Need Little Help to Universal Quantum Computing", Quantum Information and Computation 3(1), 84–92, 2003.
+- Dorit Aharonov, "A Simple Proof that Toffoli and Hadamard are Quantum Universal", arXiv:quant-ph/0301040, 2003 (unrefereed; supplementary to Shi).
+- A. Yu. Kitaev, A. H. Shen and M. N. Vyalyi, "Classical and Quantum Computation", Graduate Studies in Mathematics 47, American Mathematical Society, 2002.
+- Ronald de Wolf, "Quantum Computing: Lecture Notes", arXiv:1907.09415, 2019 (lecture notes; supplementary pointer).

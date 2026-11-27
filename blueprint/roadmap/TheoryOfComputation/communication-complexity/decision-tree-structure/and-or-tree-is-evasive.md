@@ -4,7 +4,7 @@ For every $k \ge 0$ the function computed by the complete binary AND–OR tree $
 
 ## Proof sketch
 
-The top Fourier coefficient of the NAND tree is nonzero: writing NAND in $\pm1$ form, the coefficient of the full set multiplies through the levels and never vanishes, so the Rivest–Vuillemin criterion applies. The AND–OR tree of depth $2k$ equals the NAND tree up to negating inputs and output.
+The top Fourier coefficient of the NAND tree is nonzero: in $\pm1$ form NAND has top coefficient $1/2$, and for a composition $F(G_1(y_1),G_2(y_2))$ with disjoint variable sets the coefficient of the full variable set is $\hat F(\{1,2\})\,\hat G_1(\text{top})\,\hat G_2(\text{top})$, so it is a product of nonzero factors through the levels; since $n=4^k\ge1$, the Rivest–Vuillemin criterion applies. The AND–OR tree of depth $2k$ equals the NAND tree up to negating inputs and output.
 
 ## Depends on
 

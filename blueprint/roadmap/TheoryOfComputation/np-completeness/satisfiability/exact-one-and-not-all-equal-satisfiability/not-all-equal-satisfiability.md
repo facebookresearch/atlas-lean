@@ -1,6 +1,6 @@
 # Not-all-equal satisfiability
 
-A clause $\ell_1 \vee \dots \vee \ell_k$ is *not-all-equal satisfied* by an assignment $\sigma$ if at least one literal is true and at least one literal is false under $\sigma$; in particular empty and singleton clauses are never NAE-satisfied. A CNF formula is NAE-satisfiable if some assignment NAE-satisfies every clause. Since complementing every variable maps NAE-satisfying assignments to NAE-satisfying assignments, the NAE-models of a formula come in complementary pairs.
+A clause $\ell_1 \vee \dots \vee \ell_k$ is *not-all-equal satisfied* by an assignment $\sigma$ if at least one literal is true and at least one literal is false under $\sigma$; in particular empty and singleton clauses are never NAE-satisfied. A CNF formula is NAE-satisfiable if some assignment NAE-satisfies every clause. Since complementing every variable maps NAE-satisfying assignments to NAE-satisfying assignments, the NAE-models of a formula over at least one variable come in complementary pairs.
 
 ## Depends on
 

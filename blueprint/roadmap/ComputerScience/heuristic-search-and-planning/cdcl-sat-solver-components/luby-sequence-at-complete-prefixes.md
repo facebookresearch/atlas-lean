@@ -4,7 +4,7 @@ For every base $y \ge 2$ and $k \ge 1$, the term of the base-$y$ Luby sequence a
 
 ## Proof sketch
 
-Induction on $k$ using the recursive definition: the prefix of length $2^{k} - 1$ consists of two copies of the prefix of length $2^{k-1} - 1$ followed by $2^{k-1}$.
+The first value is the first case of the definition. For the sum, induct on $k$: by the second case, the prefix of length $2^{k} - 1$ consists of two copies of the prefix of length $2^{k-1} - 1$ followed by $2^{k-1}$, so its sum is $2 (k-1) 2^{k-2} + 2^{k-1} = k \cdot 2^{k-1}$.
 
 ## Depends on
 
@@ -13,3 +13,4 @@ Induction on $k$ using the recursive definition: the prefix of length $2^{k} - 1
 ## Sources
 
 - M. Luby, A. Sinclair and D. Zuckerman, "Optimal Speedup of Las Vegas Algorithms", Information Processing Letters 47(4), 1993.
+- J. Huang, "The Effect of Restarts on the Efficiency of Clause Learning", Proceedings of the 20th International Joint Conference on Artificial Intelligence (IJCAI 2007), 2007.

@@ -4,13 +4,17 @@ On the directed path $0\to1\to2\to\cdots$, with $k$ pebbles: a configuration con
 
 ## Proof sketch
 
-Bennett: pebble the midpoint recursively, pebble the end from the midpoint recursively, then run the first stage backwards. Lower bound by induction on $k$: restrict a reversed run to the vertices below the least pebbled vertex, and a forward run to the vertices above $2^{k-1}$, each restriction using at most $k-1$ pebbles.
+Bennett: pebble the midpoint recursively, pebble the end from the midpoint recursively, then run the first stage backwards; the move count satisfies $T(k)=3T(k-1)$, $T(0)=1$. Both thresholds follow from the characterization of reachable configurations, with the start of the path counted as a permanent pebble at position $-1$: a configuration containing $v$ needs pebbles numbered so that the chain of gaps from $v$ back to $-1$ is at most $2^{0}+2^{1}+\dots+2^{k-1}=2^{k}-1$, i.e. $v+1\le 2^{k}-1$; the single pebble of $\{v\}$ carries the number $k-1$, so it is reachable iff $v+1\le 2^{k-1}$.
 
 ## Depends on
 
 - [Bennett's reversible pebble game](reversible-pebble-game.md)
 
+## Proof depends on
+
+- [Characterization of reachable reversible pebblings of the path](reachable-reversible-path-configurations.md)
+
 ## Sources
 
-- Ming Li, John Tromp and Paul Vitányi, "Reversible Simulation of Irreversible Computation by Pebble Games", Physica D: Nonlinear Phenomena 120, arXiv:quant-ph/9703009, 1998.
+- Ming Li, John Tromp and Paul Vitányi, "Reversible Simulation of Irreversible Computation", Physica D: Nonlinear Phenomena 120(1–2), arXiv:quant-ph/9703009, 1998, Section 7, Corollaries 1 and 2.
 - Charles H. Bennett, "Time/Space Trade-Offs for Reversible Computation", SIAM Journal on Computing 18(4), 1989.

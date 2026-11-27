@@ -1,10 +1,16 @@
 # Semi-ultrafilter covers characterize conondeterministic AND complexity
 
-Call a semifilter a *semi-ultrafilter* if for every set $A$ it accepts exactly one of $A$ and its complement. For a Boolean function $f$, let $\mathrm{coAND}(f)$ be the least number of AND gates of a monotone verifier circuit $V(x,r)$ (literals free) with $f(x)=\forall r\,V(x,r)$. Then semi-ultrafilter covers of $f$ of length $t$ give such verifiers with $2t$ auxiliary bits and exactly $3t$ AND gates, and conversely every verifier with $t$ AND gates yields a semi-ultrafilter cover of length $t$. Thus semi-ultrafilter cover complexity equals conondeterministic AND complexity up to a factor $3$.
+Call a semifilter $F$ over $U$ a *semi-ultrafilter* if for every set $A\subseteq U$ at least one of $A$ and $U\setminus A$ belongs to $F$. For a Boolean function $f$, let $\rho_{\mathrm{ultra}}(f)$ be the least number of pairs of subsets of $f^{-1}(0)$ covering every semi-ultrafilter over $f^{-1}(0)$ that is above an input in $f^{-1}(1)$ (with the literal sets as supplied sets), and let $\mathrm{coAND}(f)$ be the least number of fan-in-two AND gates of a circuit $V(x,r)$ (negations only on inputs) with $f(x)=1\iff\forall r\,V(x,r)=1$. Then there is an absolute constant $c\ge1$ with
+
+$$
+\rho_{\mathrm{ultra}}(f)\le\mathrm{coAND}(f)\le c\cdot\rho_{\mathrm{ultra}}(f).
+$$
+
+Equivalently $\mathrm{coAND}(f)$ is the nondeterministic OR complexity of $\neg f$.
 
 ## Proof sketch
 
-From a verifier: for each false input choose a rejecting auxiliary assignment; a semi-ultrafilter above a true input selects a fused auxiliary reference that the verifier accepts, and pulling back its AND pairs gives a cover. From a cover: two auxiliary bits per pair label its components, and three AND gates per pair check consistency of the guessed labels.
+Both inequalities are due to Karchmer: the lower bound adapts the fusion argument of the deterministic case to circuits with universally quantified auxiliary inputs, and the upper bound turns a cover into a conondeterministic circuit. Cavalar and Oliveira restate the characterization in the set-theoretic cover framework.
 
 ## Depends on
 
@@ -17,5 +23,5 @@ From a verifier: for each false input choose a rejecting auxiliary assignment; a
 
 ## Sources
 
-- Alexander A. Razborov, "On the Method of Approximations", Proceedings of the Twenty-First Annual ACM Symposium on Theory of Computing, 1989.
-- Igor Carboni Oliveira, "Notes on the Method of Approximations and the Emergence of the Fusion Method", 2018.
+- Mauricio Karchmer, "On Proving Lower Bounds for Circuit Size", Proceedings of the 8th Annual Structure in Complexity Theory Conference, 112–118, 1993.
+- Bruno P. Cavalar, Igor C. Oliveira, "Boolean Circuit Complexity and Two-Dimensional Cover Problems", ACM Transactions on Computation Theory, 2025 (Definition 44 and Theorem 45).

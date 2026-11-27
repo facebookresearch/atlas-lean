@@ -1,10 +1,10 @@
 # Under ETH, Clique has no f(k)·n^{o(k)} algorithm
 
-Assuming ETH, there is no algorithm deciding whether an $N$-vertex graph has a clique of size $k$ in time $f(k)\cdot N^{o(k)}$ for any computable (indeed any) function $f$; in particular Clique is not fixed-parameter tractable under ETH.
+Assuming ETH, there is no algorithm deciding whether an $N$-vertex graph has a clique of size $k$ in time $f(k)\cdot N^{o(k)}$ for any computable function $f$; the same holds for Independent Set, and in particular neither problem is fixed-parameter tractable under ETH.
 
 ## Proof sketch
 
-Clause grouping: split the $m$ clauses of a 3-CNF into $k$ groups of $m/k$ clauses; the vertices of group $i$ are the $\le 2^{3m/k}$ partial assignments satisfying that group, and edges join consistent assignments. A $k$-clique is exactly a satisfying assignment. With $N\le k2^{3m/k}$, an $f(k)N^{o(k)}$ algorithm gives $2^{o(m)}$ time for 3-SAT for slowly growing $k$, contradicting ETH via sparsification.
+Suppose Clique is solvable in time $f(k)\,N^{k/s(k)}$ with $s$ nondecreasing and unbounded. Given an $n$-vertex instance of 3-Colouring, split its vertices into $k\approx f^{-1}(n)$ groups and build a graph whose vertices are the proper 3-colourings of single groups, two of them adjacent iff they lie in different groups and are compatible on the edges between those groups. It has at most $k\cdot3^{n/k}=2^{o(n)}$ vertices, its $k$-cliques are exactly the proper 3-colourings of the whole graph, and the assumed algorithm runs on it in time $2^{o(n)}$ (computability of $f$ is used to choose $k$ within the time budget). This contradicts the ETH lower bound for 3-Colouring.
 
 ## Depends on
 
@@ -14,8 +14,8 @@ Clause grouping: split the $m$ clauses of a 3-CNF into $k$ groups of $m/k$ claus
 
 ## Proof depends on
 
-- [ETH holds for sparse 3-SAT iff for general 3-SAT](../sparsification-lemma/eth-for-sparse-3sat.md)
+- [ETH lower bounds for classical graph problems](../linear-size-reductions-and-graph-lower-bounds/eth-lower-bounds-for-graph-problems.md)
 
 ## Sources
 
-- Marek Cygan et al., "Parameterized Algorithms", Springer, 2015, Theorem 14.21.
+- Marek Cygan et al., "Parameterized Algorithms", Springer, 2015, Theorem 14.21 and its proof.

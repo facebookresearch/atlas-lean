@@ -15,8 +15,8 @@ A prefix query visits the indices obtained by repeatedly clearing the lowest set
 ## Proof depends on
 
 - [Bitwise identities for the lowest set bit](bitwise-identities-for-the-lowest-set-bit.md)
-- [Fenwick-tree operations take logarithmic time](../fenwick-tree/fenwick-tree-operations-take-logarithmic-time.md)
+- [Fenwick prefix queries and updates have logarithmically many probes](../fenwick-tree/fenwick-tree-operations-take-logarithmic-time.md)
 
 ## Sources
 
-- P. M. Fenwick, "A New Data Structure for Cumulative Frequency Tables", Software: Practice and Experience 24(3), 1994.
+- P. M. Fenwick, "A New Data Structure for Cumulative Frequency Tables", Software: Practice and Experience 24(3), pp. 327-336, 1994.

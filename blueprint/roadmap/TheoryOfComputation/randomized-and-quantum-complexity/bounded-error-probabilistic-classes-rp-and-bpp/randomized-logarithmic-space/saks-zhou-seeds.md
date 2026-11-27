@@ -17,5 +17,5 @@ Each Nisan-powering step approximates $M^{2^s}$ within $2^{-\Omega(d)}$ for most
 
 ## Sources
 
-- Michael Saks and Shiyu Zhou, "BP_HSPACE(S) ⊆ DSPACE(S^3/2)", Journal of Computer and System Sciences 58(2), 1999.
-- Noam Nisan, "Pseudorandom Generators for Space-Bounded Computation", Combinatorica 12(4), 1992.
+- Michael Saks and Shiyu Zhou, "BP_HSPACE(S) ⊆ DSPACE(S^{3/2})", Journal of Computer and System Sciences 58(2), 376–403, 1999 (with $r_1=r_2=s$ there: $s$ levels of Nisan's generator and $s$ rounding steps).
+- Noam Nisan, "Pseudorandom Generators for Space-Bounded Computation", Combinatorica 12(4), 449–461, 1992.

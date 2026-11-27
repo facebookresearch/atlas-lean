@@ -23,6 +23,6 @@ Inductive counting: a nondeterministic machine computes the exact number $r_k$ o
 
 ## Sources
 
-- Neil Immerman, "Nondeterministic Space Is Closed under Complementation", SIAM Journal on Computing 17(5), 1988.
-- Róbert Szelepcsényi, "The Method of Forcing for Nondeterministic Automata", Bulletin of the European Association for Theoretical Computer Science 33, 1987.
+- Neil Immerman, "Nondeterministic Space Is Closed under Complementation", SIAM Journal on Computing 17(5), 1988, Theorem 1 and the remark after its proof (space-constructibility is not needed).
+- Róbert Szelepcsényi, "The Method of Forced Enumeration for Nondeterministic Automata", Acta Informatica 26(3), 1988.
 - Michael Sipser, "Introduction to the Theory of Computation", Cengage Learning, 2013.

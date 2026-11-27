@@ -17,4 +17,4 @@ Let $L_B=\{1^n:\exists y\in B,\ |y|=n\}$. Diagonalize over oracle reductions $R_
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Chapter 3, Exercise 3.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Chapter 3, Exercise 6.

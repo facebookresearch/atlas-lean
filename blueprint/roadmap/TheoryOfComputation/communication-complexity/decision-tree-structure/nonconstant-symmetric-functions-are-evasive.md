@@ -4,7 +4,7 @@ Every nonconstant symmetric function $f : \{0,1\}^n \to \{0,1\}$ (one depending 
 
 ## Proof sketch
 
-Choose a weight $k$ where the weight profile changes value. The adversary answers queries so that the number of ones among the queried bits stays compatible with total weight both $k$ and $k+1$ until all bits are read; formally, on subcubes whose output depends only on the number of true free bits through a profile with a change point, every tree must query all free coordinates.
+Write $f(x)=F(|x|)$ and choose $k$ with $F(k)\ne F(k+1)$, $0\le k<n$. The adversary answers $1$ to the first $k$ distinct variables queried and $0$ to the next $n-k-1$. Before the last variable is read, the inputs consistent with the answers have weight $k$ or $k+1$, so the value is still undetermined and every tree must read all $n$ variables on this input.
 
 ## Depends on
 

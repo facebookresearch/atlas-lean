@@ -1,6 +1,6 @@
 # Dvořák–Kupec crossover gadgets
 
-Let $\Gamma$ be a Boolean language and suppose some relation $R \in \Gamma$ is not an even delta-matroid, so that its cyclic difference exhibits a failed exchange (a *cyclic exchange obstruction*), and that disequality is planarly pp-definable. Then the four-ary crossing relation $\{(a,b,a,b)\}$, whose ports appear in the cyclic order $v_1, v_2, v_3, v_4$ and forces $v_1 = v_3$ and $v_2 = v_4$, is planarly pp-definable from $\Gamma$ by a fixed conjunction of copies of a normalized obstruction relation and disequality constraints. Consequently every instance of $\mathrm{CSP}(\Gamma)$ reduces in polynomial time to a planar one.
+Let $\Gamma$ be a Boolean language whose relations are self-complementary, and suppose some relation $R \in \Gamma$ has a cyclic difference $dR$ that is not an even delta-matroid; since all tuples of $dR$ have even weight, $dR$ then exhibits a failed exchange (a *cyclic exchange obstruction*). Suppose also that disequality is planarly pp-definable. Then the four-ary crossing relation $\{(a,b,a,b)\}$, whose ports appear in the cyclic order $v_1, v_2, v_3, v_4$ and forces $v_1 = v_3$ and $v_2 = v_4$, is planarly pp-definable from $\Gamma$ by a fixed conjunction of copies of a normalized obstruction relation and disequality constraints. Consequently every instance of $\mathrm{CSP}(\Gamma)$ reduces in polynomial time to a planar one.
 
 ## Proof sketch
 
@@ -14,4 +14,5 @@ Normalize the obstruction by planar operations (cyclic rotation, adjacent identi
 
 ## Sources
 
+- A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), Article 22, 2019, Theorem 15(2) (restating the Dvořák–Kupec hardness result).
 - Z. Dvořák and M. Kupec, "On Planar Boolean CSP", Automata, Languages, and Programming — ICALP 2015, Part I, LNCS 9134, 432–443, 2015.

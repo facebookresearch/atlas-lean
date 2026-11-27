@@ -10,7 +10,7 @@ and the order is optimal: $2^p\le 16\,\omega_{2p,1}(2^p)$ for all $p\ge 4$.
 
 ## Proof sketch
 
-A circuit for $g$ is obtained from one for $f$ by XOR-ing with $f\oplus g$, which is supported on at most $2^p$ points and is synthesized by the sparse synthesis bounds; for the lower bound, pick a set of $2^p$ points on which some function is hard by counting.
+For one output, $g=f\oplus h$ where $h=f\oplus g$ has at most $2^p$ ones, so $C(g)\le C(f)+(1+\varepsilon)2^p$ by the sparse indicator bound and a constant number of gates for the XOR. For $m\le 2p$ outputs let $S$ (with $|S|\le 2^p$) be the set of inputs where $f$ and $g$ differ; compute $[x\in S]$ once with $(1+\varepsilon)2^p$ gates and, for each output $i$, a circuit agreeing on $S$ with the partial function $h_i|_S$ with $(1+\varepsilon)2^p/p$ gates; then $h_i=[x\in S]\wedge h_i$, and the $m\le 2p$ partial circuits cost at most $(2+2\varepsilon)2^p$. For the lower bound compare $f\equiv 0$ (complexity $1$) with the functions having exactly $2^p$ ones: there are at least $2^{p2^p}$ of them, while by the counting bound fewer than that many functions have complexity at most $2^{p-4}$ when $p\ge 4$, so some such $g$ has $C(g)\ge 2^{p-4}+1$. These bounds are derived here from the sparse synthesis bounds and counting; they are not stated in the source.
 
 ## Depends on
 
@@ -19,7 +19,8 @@ A circuit for $g$ is obtained from one for $f$ by XOR-ing with $f\oplus g$, whic
 ## Proof depends on
 
 - [Sparse synthesis at the square root of the cube](sparse-synthesis-at-the-square-root.md)
+- [Counting functions with small De Morgan circuits](../../circuit-models-and-classes/circuit-models-and-complexity-measures/counting-functions-with-small-circuits.md)
 
 ## Sources
 
-- A. V. Chashkin, "On Computing Partial Boolean Functions", Matematicheskie Voprosy Kibernetiki, 2024.
+- A. V. Chashkin, "On Computing Partial Boolean Functions", Matematicheskie Voprosy Kibernetiki 22, 152–222, 2024.

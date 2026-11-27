@@ -14,5 +14,6 @@ Prepare $n$ uniform seed bits with Hadamards, compile $C$ reversibly into fresh 
 
 ## Sources
 
-- John Watrous, "Quantum Computational Complexity", 2008.
-- Ronald de Wolf, "Quantum Computing: Lecture Notes", 2019.
+- John Watrous, "Quantum Computational Complexity", in Encyclopedia of Complexity and Systems Science, Springer, 7174–7201, 2009 (arXiv:0804.3401).
+- Michael A. Nielsen and Isaac L. Chuang, "Quantum Computation and Quantum Information", Cambridge University Press, 2000, Section 3.2.5 (reversible computation).
+- Ronald de Wolf, "Quantum Computing: Lecture Notes", arXiv:1907.09415, 2019 (lecture notes; supplementary pointer).

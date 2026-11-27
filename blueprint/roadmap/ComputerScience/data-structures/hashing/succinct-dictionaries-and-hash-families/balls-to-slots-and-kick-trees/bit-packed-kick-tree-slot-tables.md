@@ -1,6 +1,6 @@
 # Bit-packed slot tables for kick-tree dictionaries
 
-The Word-RAM layout of a $k$-kick tree dictionary stores five parallel bit-packed arrays over the slots: quotients, values, a one-bit occupancy array, a one-bit elevated (kicked) array, and sparse slot metadata of a few bits. A slot query reads the occupancy bit before comparing the stored quotient with the target, so a stored value $0$ is distinguished from absence; zeroed memory is an empty table, and every slot read or write takes $O(1)$ instructions.
+In the source's fixed-capacity dictionary, a cubby of capacity $K$ stores a storage array of $K$ slots holding the stored key bits (after quotienting, only the bits not recoverable from the position) and the value of each present key; a mini-array of local query routers; a mini-array $M$ recording, for each depth-1 bin, which slots are free and the depth of the key in each occupied slot; after quotienting, a mini-array $B$ recovering the remaining key bits; and a free-slot tree of constant depth and fanout $\log n$ that finds a free slot in $O(1)$ time. Occupancy is therefore read from metadata, never from the stored bits, so a stored all-zero key part or value is distinguished from an empty slot, and every slot read or write takes $O(1)$ time. The fixed-width per-slot fields (stored key part, value, a one-bit occupancy flag and the depth of the occupant) can equally be kept in parallel bit-packed arrays, which also take $O(1)$ word-RAM instructions per slot access and represent the empty cubby by zeroed memory; this flat layout is a word-RAM realization of the cubby slot state, not the source's mini-array encoding.
 
 ## Depends on
 
@@ -9,4 +9,4 @@ The Word-RAM layout of a $k$-kick tree dictionary stores five parallel bit-packe
 
 ## Sources
 
-- M. A. Bender, M. Farach-Colton, J. Kuszmaul, W. Kuszmaul and M. Liu, "On the Optimal Time/Space Tradeoff for Hash Tables", Proceedings of the 54th ACM Symposium on Theory of Computing (STOC), 2022; arXiv:2111.00602.
+- M. A. Bender, M. Farach-Colton, J. Kuszmaul, W. Kuszmaul and M. Liu, "On the Optimal Time/Space Tradeoff for Hash Tables", Proceedings of the 54th ACM Symposium on Theory of Computing (STOC), 2022; arXiv:2111.00602 (Sections 5.1 and 5.3).

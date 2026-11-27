@@ -18,4 +18,5 @@ With $m=\lceil w/2\rceil$ and $a=a_0+2^m a_1$, $b=b_0+2^m b_1$, compute $a_0b_0$
 ## Sources
 
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.
-- Ingo Wegener, "The Complexity of Boolean Functions", Wiley-Teubner, 1987.
+- Ingo Wegener, "The Complexity of Boolean Functions", Wiley-Teubner, 1987, Theorem 3.2.2.
+- Anatolii A. Karatsuba, Yuri P. Ofman, "Multiplication of Multidigit Numbers on Automata", Soviet Physics Doklady 7, 595–596, 1963.

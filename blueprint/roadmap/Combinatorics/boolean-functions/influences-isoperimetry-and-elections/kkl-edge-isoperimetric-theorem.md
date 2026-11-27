@@ -8,7 +8,7 @@ In particular, if $\mathbf{I}[f] \le K\,\mathrm{Var}[f]$ then some coordinate ha
 
 ## Proof sketch
 
-By the small-set expansion form of hypercontractivity applied to the derivatives, $\sum_i \mathbf{Inf}_i^{(1/3)}[f] \le \sum_i \mathbf{Inf}_i[f]^{3/2}$ (stable influences at $\rho = 1/3$). If every influence is below $\delta$, the right side is at most $\sqrt\delta\, \mathbf{I}[f]$. On the left, Fourier weight of degree at most $k$ contributes at least $3^{-k}$ times its size, and at least half the variance lies at degree at most $2\tilde{\mathbf{I}}$ by Markov; combining gives the bound.
+Write $u = \tilde{\mathbf{I}}$. Applying the small-set expansion form of hypercontractivity to the derivatives gives $\mathbf{Inf}_i^{(1/3)}[f] \le \mathbf{Inf}_i[f]^{3/2}$, so $\mathbf{I}^{(1/3)}[f] \le \sum_i \mathbf{Inf}_i[f]^{3/2} \le \sqrt{\max_i \mathbf{Inf}_i[f]}\,\mathbf{I}[f]$. On the other side $\mathbf{I}^{(1/3)}[f] = \sum_{S \ne \emptyset}|S|\,3^{1-|S|}\hat f(S)^2 \ge 3\sum_{S \ne \emptyset}3^{-|S|}\hat f(S)^2$. The weights $\hat f(S)^2/\mathrm{Var}[f]$ on nonempty $S$ form a probability distribution under which $\mathbb{E}|S| = u$, so Jensen's inequality for the convex $s \mapsto 3^{-s}$ gives $\sum_{S \ne \emptyset}3^{-|S|}\hat f(S)^2 \ge \mathrm{Var}[f]\,3^{-u}$. Hence $3\,\mathrm{Var}[f]\,3^{-u} \le \sqrt{\max_i\mathbf{Inf}_i[f]}\,\mathbf{I}[f]$; squaring and dividing by $\mathbf{I}[f]^2 = u^2\mathrm{Var}[f]^2$ gives the bound (O'Donnell, §9.6 and Ex. 9.29).
 
 ## Depends on
 
@@ -19,7 +19,8 @@ By the small-set expansion form of hypercontractivity applied to the derivatives
 ## Proof depends on
 
 - [Stable influences are bounded by powers of influences](../noise-sensitivity-and-stable-influence/stable-influences-bounded-by-powers-of-influences.md)
-- [Low total influence implies low-degree spectral concentration](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/spectral-structure-of-boolean-functions/sum-sq-card-gt-le-of-pos.md)
+- [Stable influence and total stable influence](../noise-sensitivity-and-stable-influence/stable-influence.md)
+- [Total influence in Fourier form](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-total-influence-eq-sum-card-mul-sq.md)
 
 ## Sources
 

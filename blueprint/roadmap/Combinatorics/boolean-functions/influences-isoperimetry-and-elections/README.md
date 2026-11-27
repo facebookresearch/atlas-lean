@@ -5,7 +5,7 @@
 - [Linear threshold functions are unate](linear-threshold-functions-are-unate.md)
 - [Majority maximizes the sum of degree-one Fourier coefficients](majority-maximizes-sum-of-degree-one-coefficients.md)
 - [Sharp edge-isoperimetric inequality for the Boolean cube](sharp-edge-isoperimetric-inequality.md)
-- [A direction is unate exactly when its influence equals its degree-one coefficient](unate-direction-influence-equals-coefficient.md)
+- [A direction is unate exactly when its influence equals the absolute value of its degree-one coefficient](unate-direction-influence-equals-coefficient.md)
 - [Bribing O(n/log n) voters biases a monotone election](bribing-monotone-elections.md)
 - [Unate functions have total influence at most √(n·Var)](unate-functions-have-total-influence-at-most-sqrt-n.md)
 - [KKL edge-isoperimetric theorem](kkl-edge-isoperimetric-theorem.md)

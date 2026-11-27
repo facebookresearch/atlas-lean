@@ -8,10 +8,10 @@ Solution sets of linear systems are cosets, closed under $x \oplus y \oplus z$. 
 
 ## Depends on
 
-- [Polymorphisms of relations](../../../../Logic/propositional-logic/boolean-clones-and-cnf-encodings/boolean-clones-and-post-lattice/polymorphisms-of-relations.md)
+- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](../../satisfiability/finite-domain-csp-dichotomy/polymorphism-clone-of-a-finite-structure.md)
 - [Boolean constraint languages and CSP(Γ)](boolean-constraint-languages.md)
 
 ## Sources
 
-- H. Chen, "A Rendezvous of Logic, Complexity, and Algebra", SIGACT News 37(4), 85–114, 2006 (extended version ACM Computing Surveys 42(1), 2009).
+- H. Chen, "A Rendezvous of Logic, Complexity, and Algebra", SIGACT News 37(4), 85–114, 2006 (extended version ACM Computing Surveys 42(1), 2009): Theorem 4.3.
 - T. J. Schaefer, "The Complexity of Satisfiability Problems", Proceedings of the 10th ACM Symposium on Theory of Computing (STOC), 216–226, 1978.

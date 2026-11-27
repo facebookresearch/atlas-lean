@@ -13,5 +13,5 @@ Borrowing keeps both siblings within bounds and updates the separator to the new
 ## Sources
 
 - T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
-- D. Comer, "The Ubiquitous B-Tree", ACM Computing Surveys 11(2), 1979.
-- R. Bayer and E. M. McCreight, "Organization and Maintenance of Large Ordered Indexes", Acta Informatica 1, 1972.
+- D. Comer, "The Ubiquitous B-Tree", ACM Computing Surveys 11(2), pp. 121-137, 1979.
+- R. Bayer and E. M. McCreight, "Organization and Maintenance of Large Ordered Indexes", Acta Informatica 1(3), pp. 173-189, 1972.

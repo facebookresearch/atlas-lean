@@ -18,5 +18,5 @@ Fixing variable $x_i$ removes its $\ell_i$ leaves; in a leaf-minimal formula eac
 
 ## Sources
 
-- B. A. Subbotovskaya, "Realizations of Linear Functions by Formulas Using ∨, &, −", Soviet Mathematics Doklady, 1961.
-- Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.
+- B. A. Subbotovskaya, "Realizations of Linear Functions by Formulas Using ∨, &, −", Soviet Mathematics Doklady 2, 110–112, 1961.
+- Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012 (Subbotovskaya's lemma and its probabilistic form: with probability at least $3/4$, $L(f|_\rho)\le 4(k/n)^{3/2}L(f)$).

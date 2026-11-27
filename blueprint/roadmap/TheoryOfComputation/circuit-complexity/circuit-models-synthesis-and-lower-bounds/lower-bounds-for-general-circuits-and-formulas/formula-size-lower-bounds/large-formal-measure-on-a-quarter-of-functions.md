@@ -12,5 +12,5 @@ For any $g$ put $h=f\oplus g$; then $f=(g\wedge\neg h)\vee(\neg g\wedge h)$, so 
 
 ## Sources
 
-- Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007.
-- Alexander A. Razborov, Steven Rudich, "Natural Proofs", Journal of Computer and System Sciences, 1997.
+- Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Lemma 22.2.
+- Alexander A. Razborov, Steven Rudich, "Natural Proofs", Journal of Computer and System Sciences 55(1), 24–35, 1997.

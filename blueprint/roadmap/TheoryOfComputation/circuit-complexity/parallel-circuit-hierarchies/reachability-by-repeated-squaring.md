@@ -4,7 +4,7 @@ The Boolean square of an $N\times N$ Boolean matrix is computed by an unbounded 
 
 ## Proof sketch
 
-Squaring the adjacency matrix with self-loops doubles the length of walks represented; $\lceil\log_2 N\rceil$ squarings cover all paths of length below $N$.
+Squaring the adjacency matrix with self-loops doubles the length of walks represented; $\lceil\log_2 N\rceil$ squarings cover all paths of length below $N$. For $\mathsf{NL}$, the adjacency matrix of the polynomial-size configuration graph of a log-space machine on an input of length $n$ is computed from the input by a depth-one circuit layer (each entry is a constant or an input literal, since a transition reads one input bit), and reachability from the start to the accepting configuration is then decided as above.
 
 ## Depends on
 

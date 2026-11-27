@@ -16,4 +16,6 @@ Sturm's theorem counts distinct real roots in an interval by the difference of s
 
 ## Sources
 
-- Alexander Schrijver, "Theory of Linear and Integer Programming", John Wiley & Sons, 1986.
+- Lee E. Heindel, "Integer Arithmetic Algorithms for Polynomial Real Zero Determination", Journal of the ACM 18(4), 533–548, 1971.
+- Saugata Basu, Richard Pollack and Marie-Françoise Roy, "Algorithms in Real Algebraic Geometry", 2nd ed., Springer, 2006.
+- Kurt Mahler, "An Inequality for the Discriminant of a Polynomial", Michigan Mathematical Journal 11(3), 257–262, 1964.

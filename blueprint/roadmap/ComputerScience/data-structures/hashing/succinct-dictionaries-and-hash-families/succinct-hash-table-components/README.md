@@ -1,15 +1,7 @@
 # Components of Succinct Hash Tables
 
 - [In-place slot rearrangement by cycle following](in-place-slot-rearrangement.md)
-- [Bucket and micro-bucket address decomposition](bucket-and-micro-bucket-decomposition.md)
 - [Word-parallel split-only B+-tree query mapper](word-parallel-b-plus-tree-query-mapper.md)
-- [Micro-bucket chains with two-phase search](micro-bucket-chains.md)
 - [Bounded-depth character trie collision buffer](bounded-depth-trie-buffer.md)
-- [Compressed sparse row fallback dictionary](compressed-sparse-row-fallback.md)
 - [Deamortized global rebuilding by epochs](deamortized-global-rebuilding.md)
 - [Slab storage with hysteresis has amortized constant reorganization cost](slab-storage-with-hysteresis.md)
-- [Small-capacity regime of the succinct dictionary](small-capacity-regime.md)
-- [Circular tail-to-dense compaction for resizable succinct tables](circular-tail-to-dense-compaction.md)
-- [Good hash seeds on a trailing window of operations](good-seeds-on-a-trailing-window.md)
-- [Parameter inequalities of the high-probability succinct dictionary](parameter-inequalities.md)
-- [Self-healing returns the dictionary to the fast mode](self-healing-to-the-fast-mode.md)

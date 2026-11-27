@@ -13,5 +13,6 @@ Apply the symmetric Lovász Local Lemma to the violation events: each has probab
 
 ## Sources
 
-- N. Alon and J. H. Spencer, The Probabilistic Method, 4th ed., Wiley, 2016.
+- N. Alon and J. H. Spencer, The Probabilistic Method, 4th ed., Wiley, 2016, Chapter 5 (symmetric local lemma and its $k$-SAT corollary).
+- P. Erdős and L. Lovász, "Problems and Results on 3-Chromatic Hypergraphs and Some Related Questions", in Infinite and Finite Sets, Colloquia Mathematica Societatis János Bolyai 10, 609–627, 1975.
 - R. A. Moser and G. Tardos, "A Constructive Proof of the General Lovász Local Lemma", Journal of the ACM 57(2), Article 11, 2010.

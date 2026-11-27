@@ -9,7 +9,6 @@ Extension axioms for $\sigma$ hold almost surely for constant probabilities, the
 ## Depends on
 
 - [Extension axioms and the theory of the random graph](extension-axioms-random-graph.md)
-- [Zero-one law for first-order logic](../../../Logic/model-theory/zero-one-law-for-first-order-logic/zero-one-law.md)
 
 ## Proof depends on
 

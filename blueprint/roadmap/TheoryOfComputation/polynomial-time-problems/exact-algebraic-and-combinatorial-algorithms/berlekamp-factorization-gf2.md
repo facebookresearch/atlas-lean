@@ -4,7 +4,7 @@ Every polynomial $f\in\mathbb{F}_2[x]$ of degree $d$ can be factored into irredu
 
 ## Proof sketch
 
-After removing repeated factors via $\gcd(f,f')$, the Berlekamp subalgebra $\{g : g^{2}\equiv g\pmod f\}$ is the kernel of $Q-I$ for the Frobenius matrix $Q$; its dimension is the number of irreducible factors, and for a nontrivial element $g$ the gcds $\gcd(f,g)$ and $\gcd(f,g+1)$ split $f$. Since the field has two elements, trying both constants is deterministic.
+After removing repeated factors via $\gcd(f,f')$ (when $f'=0$, $f$ is a square $g^2$ in $\mathbb{F}_2[x]$ and one factors $g$), the Berlekamp subalgebra $\{g : g^{2}\equiv g\pmod f\}$ is the kernel of $Q-I$ for the Frobenius matrix $Q$; its dimension is the number of irreducible factors, and for an element $g$ of the subalgebra that is not a constant, $f=\gcd(f,g)\cdot\gcd(f,g+1)$ is a nontrivial splitting because $g(g+1)\equiv0\pmod f$; refining with all basis elements yields the complete factorization. Since the field has two elements, trying both constants is deterministic, and the linear algebra is over $\mathbb{F}_2$.
 
 ## Depends on
 
@@ -12,8 +12,8 @@ After removing repeated factors via $\gcd(f,f')$, the Berlekamp subalgebra $\{g 
 
 ## Proof depends on
 
-- [Polynomial-time rational Gaussian elimination (Bareiss)](bareiss-rational-gaussian-elimination.md)
+- [XOR-SAT is solvable by Gaussian elimination over GF(2)](../two-sat-and-xor-sat-algorithms/xor-sat-gaussian-elimination.md)
 
 ## Sources
 
-- Elwyn R. Berlekamp, "Factoring Polynomials over Finite Fields", Bell System Technical Journal 46, 1967.
+- Elwyn R. Berlekamp, "Factoring Polynomials over Finite Fields", Bell System Technical Journal 46(8), 1853–1859, 1967.

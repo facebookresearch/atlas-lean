@@ -1,16 +1,22 @@
 # Ben-Sasson–Kopparty: the trace of an elementary symmetric polynomial is an affine disperser
 
-Let $F$ be a field with $2^n$ elements in which every proper subfield has at most $2^s$ elements, let $\mu \in F^\times$, $r \ge 1$ and $t \ge 1$. Define $\mathrm{TS}(x) = \mathrm{Tr}_{F/\mathbb{F}_2}\bigl(\mu \, e_t(y_0, \dots, y_{r-1})\bigr)$ for $x \in F^r$, where $y_i = x_i^{2^{r+1-i} - 1}$ and $e_t$ is the $t$-th elementary symmetric polynomial. Then $\mathrm{TS}$ is nonconstant on every $\mathbb{F}_2$-affine subspace $A \subseteq F^r$ with
+Let $t<r$ be positive integers, let $n$ be a prime with $n\ge r(r+1)/t$, let $F=\mathbb{F}_{2^n}$ and $\mu\in F^\times$. For $i\in[r]$ put $e_i=r+1-i$ and $\alpha_i=\sum_{k=0}^{e_i}2^k=2^{r+2-i}-1$, and define $f:F^r\to\mathbb{F}_2$ by
 
 $$
-\dim A > r\max(r+1, s) + r(r+1) + nt + \lfloor nr/t \rfloor .
+f(x_1,\dots,x_r)=\mathrm{Tr}_{F/\mathbb{F}_2}\Bigl(\mu\sum_{I\subseteq[r],\ |I|=t}\ \prod_{i\in I}x_i^{\alpha_i}\Bigr).
 $$
 
-Reading $r$ field elements from $N$ input bits in a fixed $\mathbb{F}_2$-basis, the induced Boolean function on $\{0,1\}^N$ is nonconstant on every affine subspace of dimension greater than $N - rn$ plus the same bound. The algebraic core: for $\mathbb{F}_2$-subspaces $Y_i \subseteq F$ of dimensions $d_i > s$ and integers $2 \le k_i < d_i$ with $\sum_i(d_i - k_i) \ge n + 1 - \max_i d_i$, every nonzero functional $z \mapsto \mathrm{Tr}(\mu z)$ is nonzero on some product $\prod_i \Delta(u_i)$ of Moore determinants of families $u_i \in Y_i^{k_i}$.
+Then $f$ is nonconstant on every $\mathbb{F}_2$-affine subspace $A\subseteq F^r$ with
+
+$$
+\dim A>\frac{nr}{t}+nt+r(r+1).
+$$
+
+Composing with an injective $\mathbb{F}_2$-linear map $\{0,1\}^N\to F^r$ (so $N\le rn$) gives a function on $\{0,1\}^N$ that is nonconstant on every affine subspace of dimension greater than $nr/t+nt+r(r+1)$.
 
 ## Proof sketch
 
-Parametrize each pivot subspace by its subspace polynomial; the map $w \mapsto \mathrm{Tr}(\mu\prod_i\Delta(Q_i\circ w_i))$ is a reduced polynomial whose coefficient at a suitably chosen monomial is a sum over Frobenius rotations of products of permanents. Choosing exponents so that the unrotated matrices are triangular with nonzero diagonal while every nontrivial rotation has a zero row isolates a nonzero coefficient, and a reduced polynomial with a nonzero coefficient is a nonzero function.
+Restricted to $A$, write each coordinate through a subspace polynomial and decompose $A$ into a triangular family of pivot subspaces (Bourgain's decomposition). The restricted function is a reduced polynomial; the structural lemma on coefficients of subspace polynomials, together with a choice of exponents for which one monomial has a single nonvanishing contribution, isolates a nonzero coefficient, and a nonzero reduced polynomial is a nonconstant function. Primality of $n$ rules out proper subfields other than $\mathbb{F}_2$.
 
 ## Depends on
 
@@ -19,4 +25,4 @@ Parametrize each pivot subspace by its subspace polynomial; the map $w \mapsto \
 
 ## Sources
 
-- E. Ben-Sasson and S. Kopparty, "Affine Dispersers from Subspace Polynomials", SIAM Journal on Computing, 2012.
+- E. Ben-Sasson and S. Kopparty, "Affine Dispersers from Subspace Polynomials", SIAM Journal on Computing 41(4), 880–914, 2012, Theorem 7.3 (case $p=2$), Lemmas 3.10, 3.13 and 7.1.

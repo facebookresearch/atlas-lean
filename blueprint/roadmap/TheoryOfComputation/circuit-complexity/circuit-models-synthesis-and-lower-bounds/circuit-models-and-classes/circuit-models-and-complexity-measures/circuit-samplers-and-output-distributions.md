@@ -8,4 +8,4 @@ A Boolean circuit $C$ with $n$ inputs and $m$ outputs is a *sampler*: its *outpu
 
 ## Sources
 
-- Amit Sahai, Salil Vadhan, "A Complete Problem for Statistical Zero Knowledge", Journal of the ACM, 2003.
+- Amit Sahai, Salil Vadhan, "A Complete Problem for Statistical Zero Knowledge", Journal of the ACM 50(2), 196–249, 2003.

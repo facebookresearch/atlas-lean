@@ -1,6 +1,6 @@
 # SL = L
 
-Symmetric logarithmic space collapses to deterministic logarithmic space: $\mathsf{SL}=\mathsf{L}$. Equivalently, $\mathrm{USTCON}$ is complete for $\mathsf{L}$ under logspace many-one reductions.
+Symmetric logarithmic space collapses to deterministic logarithmic space: $\mathsf{SL}=\mathsf{L}$. Equivalently, $\mathrm{USTCON}\in\mathsf{L}$ (and then $\mathrm{USTCON}$ is $\mathsf{L}$-complete under logspace many-one reductions, as every language in $\mathsf{L}$ other than $\emptyset$ and $\{0,1\}^*$ is).
 
 ## Proof sketch
 

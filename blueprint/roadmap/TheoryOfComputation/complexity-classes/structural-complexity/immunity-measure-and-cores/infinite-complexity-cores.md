@@ -1,10 +1,10 @@
 # Lynch: languages outside P have infinite polynomial complexity cores
 
-Let $\mathcal{C}$ be a countable class of sets containing all finite sets and closed under finite unions, and let $A\notin\mathcal{C}$. Then $A$ has an infinite complexity core for $\mathcal{C}$; if $\mathcal{C}$ is recursively presentable (e.g. $\mathsf{P}$) and $A$ is recursive, the core can be taken recursive. In particular every recursive $A\notin\mathsf{P}$ has an infinite polynomial complexity core: an infinite set $X$ such that every machine deciding $A$ runs in super-polynomial time on all but finitely many elements of $X$.
+Let $\mathcal{C}$ be a countable class of sets containing all finite sets and closed under finite unions, and let $A\notin\mathcal{C}$. Then $A$ has an infinite complexity core for $\mathcal{C}$. For $\mathcal{C}=\mathsf{P}$ Lynch proves an effective version with cores defined by running times: every recursive $A\notin\mathsf{P}$ has an infinite recursive polynomial complexity core, i.e. an infinite recursive set $X$ such that for every machine $M$ deciding $A$ and every polynomial $p$, $M$ runs for more than $p(|x|)$ steps on all but finitely many $x\in X$.
 
 ## Proof sketch
 
-Enumerate $\mathcal{C}=\{C_1,C_2,\dots\}$; build $X$ in stages, adding at stage $s$ a string on which none of the finitely many $C_i\subseteq A$ or $\subseteq\overline{A}$ with $i\le s$ is correct-and-contained; such strings exist because $A\notin\mathcal{C}$ and $\mathcal{C}$ is closed under finite unions and finite variations.
+Enumerate $\mathcal{C}=\{C_1,C_2,\dots\}$ and build $X$ in stages: at stage $s$ add a new string lying outside $U_s=\bigcup\{C_i : i\le s,\ C_i\subseteq A\text{ or }C_i\subseteq\overline{A}\}$. Such a string exists, since otherwise $A$ would be the union of the sets $C_i\subseteq A$ with $i\le s$ and a finite set, hence in $\mathcal{C}$. Each $C_i$ contained in $A$ or $\overline{A}$ then meets $X$ only in strings added before stage $i$. This construction is not effective; Lynch's recursive core for $\mathsf{P}$ comes from a clocked simulation of all machines against a decider for $A$.
 
 ## Depends on
 

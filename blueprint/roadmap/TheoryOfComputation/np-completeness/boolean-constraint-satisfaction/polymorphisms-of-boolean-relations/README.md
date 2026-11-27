@@ -6,4 +6,3 @@
 - [Affine relations are exactly the minority-closed relations](affine-iff-minority-closed.md)
 - [2-CNF-definable relations are exactly the majority-closed relations](two-cnf-definable-iff-majority-closed.md)
 - [Horn-definable relations are exactly the AND-closed relations](horn-definable-iff-and-closed.md)
-- [Geiger / Bodnarčuk et al.: pp-definability is captured by polymorphisms](pp-definability-captured-by-polymorphisms.md)

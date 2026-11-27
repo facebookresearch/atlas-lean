@@ -1,10 +1,10 @@
 # Kabanets–Impagliazzo: hardness gives hitting sets for constant-depth formulas
 
-Let $f$ be a multilinear polynomial in $m$ variables of degree at most $d$, and $S_1,\dots,S_n\subseteq L$ an $(m,a)$-design. Over a field of characteristic zero, if $f$ has no unbounded fan-in formula of product-depth $\Delta+2$ with at most $\mathrm{poly}(s\,2^a(a+1),d)$ nodes, then the values of $\mathrm{NW}_f$ on the grid $\{0,1,\dots,sd\}^{L}$ form a hitting set for the $n$-variate polynomials computed by formulas of product-depth $\Delta$ with at most $s$ nodes.
+Over a field of characteristic zero there are an absolute constant $c_0$ and an absolute polynomial $q$ such that the following holds. Let $f$ be a multilinear polynomial in $m$ variables of degree at most $d$, and $S_1,\dots,S_n\subseteq L$ an $(m,a)$-design. If $f$ has no unbounded fan-in circuit of product-depth at most $\Delta+c_0$ with at most $q\bigl(s\,2^a(a+1),d,m\bigr)$ nodes, then the values of $\mathrm{NW}_f$ on the grid $\{0,1,\dots,sd\}^{L}$ form a hitting set for the $n$-variate polynomials computed by unbounded fan-in formulas of product-depth at most $\Delta$ with at most $s$ nodes.
 
 ## Proof sketch
 
-If a small formula $C$ vanishes on the generator's image, a hybrid argument finds an index $i$ and a fixing of the other seed variables such that $C$ with the first $i-1$ outputs substituted vanishes when $y_i=f(z|_{S_i})$ but not identically; so $f$ is a root of a small formula in $y_i$ whose other inputs depend on at most $a$ variables of $S_i$ each, and by the root lemma $f$ has a small formula of product-depth $\Delta+2$, a contradiction.
+A formula with $s$ nodes computes a polynomial of degree at most $s$, so $C\circ\mathrm{NW}_f$ has degree at most $sd$ and, if nonzero, does not vanish on the grid. If a small formula $C$ is nonzero but $C\circ\mathrm{NW}_f=0$, a hybrid argument finds an index $i$ and a fixing of the seed variables outside $S_i$ such that $P(z,y)=C(f(z|_{S_1}),\dots,f(z|_{S_{i-1}}),y,\dots)$ is nonzero while $P(z,f(z|_{S_i}))=0$; each other substituted output depends on at most $a$ variables of $S_i$ and so has a sum-of-products formula with at most $2^a(a+1)+1$ nodes. Then $P$ has a formula of product-depth $\Delta+1$ and size $O(s\,2^a(a+1))$, and by the root lemma $f$ has a circuit of product-depth $\Delta+O(1)$ and size polynomial in $s\,2^a(a+1)$, $d$ and $m$, a contradiction.
 
 ## Depends on
 
@@ -20,4 +20,4 @@ If a small formula $C$ vanishes on the generator's image, a hybrid argument find
 
 - Valentine Kabanets, Russell Impagliazzo, "Derandomizing Polynomial Identity Tests Means Proving Circuit Lower Bounds", Computational Complexity, 2004.
 - Chi-Ning Chou, Mrinal Kumar, Noam Solomon, "Closure Results for Polynomial Factorization", Theory of Computing, 2019.
-- Somnath Bhattacharjee, Mrinal Kumar, Shanthanu S. Rai et al., "Closure under factorization from a result of Furstenberg", 58th Annual ACM Symposium on Theory of Computing (STOC 2026), 2026.
+- Somnath Bhattacharjee, Mrinal Kumar, Shanthanu S. Rai, Varun Ramanathan, Ramprasad Saptharishi, Shubhangi Saraf, "Closure under factorization from a result of Furstenberg", 58th Annual ACM Symposium on Theory of Computing (STOC 2026), 2026; arXiv:2506.23214, Theorem 6.1.

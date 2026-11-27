@@ -1,10 +1,10 @@
 # Valiant: #2SAT is #P-complete under counting Turing reductions
 
-Counting satisfying assignments of 2-CNF formulas (literals of either sign) is in $\#\mathsf{P}$ and is $\#\mathsf{P}$-hard under polynomial-time counting Turing reductions, although 2-SAT is in $\mathsf{P}$. Consequently $\#2\mathrm{SAT}\in\mathsf{FP}$ would imply $\mathsf{P}=\mathsf{NP}$.
+Counting satisfying assignments of 2-CNF formulas is in $\#\mathsf{P}$ and is $\#\mathsf{P}$-hard under polynomial-time Turing reductions, already for monotone 2-CNF formulas (no negated literals), although 2-SAT is in $\mathsf{P}$. Consequently $\#2\mathrm{SAT}\in\mathsf{FP}$ would imply $\mathsf{P}=\mathsf{NP}$.
 
 ## Proof sketch
 
-For a CNF $\varphi$ with $m$ clauses, build for each $r$ a 2-CNF whose model count is $\sum_\sigma(r+1)^{u(\sigma)}$, where $u(\sigma)$ is the number of clauses falsified by $\sigma$ (each clause gets a weighted 2-CNF gadget). Querying $m+1$ values of $r$ and interpolating the polynomial recovers the number of $\sigma$ with $u(\sigma)=0$, i.e. $\#\varphi$.
+Valiant's chain of reductions: counting perfect matchings of a bipartite graph $G$ (equivalently the $0/1$ permanent, $\#\mathsf{P}$-complete) reduces to counting all matchings of $G$, by attaching $k$ pendant vertices to every vertex of one side for $k=1,\dots,n+1$ and interpolating the polynomial $\sum_r A_r (k+1)^r$, where $A_r$ is the number of matchings of size $n-r$; counting matchings is counting satisfying assignments of the monotone 2-CNF with one variable per edge (true meaning "absent") and one clause per pair of edges sharing a vertex.
 
 ## Depends on
 
@@ -14,8 +14,8 @@ For a CNF $\varphi$ with $m$ clauses, build for each $r$ a 2-CNF whose model cou
 
 ## Proof depends on
 
-- [Counting SAT is #P-complete](../counting-satisfiability-sat/count-sat-sharp-p-complete.md)
+- [The permanent is #P-complete (Valiant)](../complexity-of-the-permanent/permanent-sharp-p-complete.md)
 
 ## Sources
 
-- Leslie G. Valiant, "The Complexity of Enumeration and Reliability Problems", SIAM Journal on Computing 8(3), 1979.
+- Leslie G. Valiant, "The Complexity of Enumeration and Reliability Problems", SIAM Journal on Computing 8(3), 410–421, 1979, Theorem 1 (reductions 2, 6 and 7, problem MONOTONE 2-SAT).

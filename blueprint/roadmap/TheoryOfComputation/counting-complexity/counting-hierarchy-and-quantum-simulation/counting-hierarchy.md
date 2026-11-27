@@ -1,6 +1,6 @@
 # The counting hierarchy CH
 
-The **counting hierarchy** is defined by $\mathsf{C}_0\mathsf{P}=\mathsf{P}$ and $\mathsf{C}_{k+1}\mathsf{P}=\mathsf{PP}^{\mathsf{C}_k\mathsf{P}}$ (equivalently, strict-majority polynomial-time verifiers relative to a $\mathsf{C}_k\mathsf{P}$ oracle), with $\mathsf{CH}=\bigcup_k\mathsf{C}_k\mathsf{P}$. The corresponding function levels $\mathsf{F}_k$ are the polynomial-time computable functions relative to $\mathsf{C}_k\mathsf{P}$ oracles. By Toda's theorem $\mathsf{PH}\subseteq\mathsf{C}_2\mathsf{P}$ (indeed $\subseteq\mathsf{P}^{\mathsf{PP}}$), and $\mathsf{CH}\subseteq\mathsf{PSPACE}$.
+The **counting hierarchy** is defined by $\mathsf{C}_0\mathsf{P}=\mathsf{P}$ and $\mathsf{C}_{k+1}\mathsf{P}=\mathsf{PP}^{\mathsf{C}_k\mathsf{P}}$ (equivalently, strict-majority polynomial-time verifiers relative to a $\mathsf{C}_k\mathsf{P}$ oracle), with $\mathsf{CH}=\bigcup_k\mathsf{C}_k\mathsf{P}$. By Toda's theorem $\mathsf{PH}\subseteq\mathsf{C}_2\mathsf{P}$ (indeed $\subseteq\mathsf{P}^{\mathsf{PP}}$), and $\mathsf{CH}\subseteq\mathsf{PSPACE}$.
 
 ## Depends on
 

@@ -12,5 +12,5 @@ If $D_n(x)\le2^{-|x|}$, let $C(x)=0x$. Otherwise let $C(x)=1z$ where $z$ is the 
 
 ## Sources
 
-- Andrej Bogdanov and Luca Trevisan, "Average-Case Complexity", Foundations and Trends in Theoretical Computer Science 2(1), arXiv:cs/0606037, 2006, Claim 20.
+- Andrej Bogdanov and Luca Trevisan, "Average-Case Complexity", Foundations and Trends in Theoretical Computer Science 2(1), 1–106, 2006, Claim 20 and Theorem 19.
 - Leonid A. Levin, "Average Case Complete Problems", SIAM Journal on Computing 15(1), 1986.

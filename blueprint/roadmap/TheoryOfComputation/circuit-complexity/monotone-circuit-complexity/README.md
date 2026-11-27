@@ -1,8 +1,6 @@
 # Monotone Circuit Complexity
 
 - [Monotone cyclic shift operator](monotone-cyclic-shift-operator.md)
-- [Monotone span programs](monotone-span-programs.md)
-- [Efficient reconstruction and complementary programs for monotone span programs](span-program-reconstruction-and-complements.md)
 - [Local approximation schemes (Razborov's method of approximations)](local-approximation-schemes.md)
 - [Dual-rail translation of De Morgan circuits into monotone circuits](dual-rail-translation-to-monotone-circuits.md)
 - [Monotone cyclic shift needs Ω(n log n) gates](monotone-shift-lower-bound.md)

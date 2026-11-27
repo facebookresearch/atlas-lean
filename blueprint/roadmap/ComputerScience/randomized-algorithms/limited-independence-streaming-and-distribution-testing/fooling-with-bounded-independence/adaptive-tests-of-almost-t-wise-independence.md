@@ -13,4 +13,4 @@ Each subcube fixing at most $t$ coordinates has probability within $\varepsilon$
 
 ## Sources
 
-- O. Goldreich, "Computational Complexity: A Conceptual Perspective", public draft of Chapters 7–8, March 2007.
+- O. Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.

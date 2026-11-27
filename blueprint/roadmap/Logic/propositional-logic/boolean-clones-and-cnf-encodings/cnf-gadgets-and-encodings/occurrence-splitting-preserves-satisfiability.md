@@ -1,6 +1,6 @@
 # Occurrence splitting preserves satisfiability and not-all-equal satisfiability
 
-For every CNF formula $\varphi$: (1) $\mathrm{Occ}_3(\varphi)$ is satisfiable if and only if $\varphi$ is; (2) $\mathrm{Occ}_3(\varphi)$ is not-all-equal satisfiable (in the NAE sense applied to the original clauses, with the cycle clauses read as equalities) if and only if $\varphi$ is; (3) every variable of $\mathrm{Occ}_3(\varphi)$ occurs at most three times, the clause width does not increase beyond $\max(2, w(\varphi))$, and the construction is computable in polynomial time. Hence SAT restricted to formulas with at most three occurrences per variable is NP-complete.
+For every CNF formula $\varphi$: (1) $\mathrm{Occ}_3(\varphi)$ is satisfiable if and only if $\varphi$ is; (2) $\mathrm{Occ}_3(\varphi)$ is not-all-equal satisfiable (in the NAE sense for every clause, under which a binary cycle clause $\neg a \vee b$ holds exactly when $a = b$) if and only if $\varphi$ is; (3) every variable of $\mathrm{Occ}_3(\varphi)$ occurs at most three times, the clause width does not increase beyond $\max(2, w(\varphi))$, and the construction is computable in polynomial time. Hence SAT restricted to formulas with at most three occurrences per variable is NP-complete.
 
 ## Proof sketch
 

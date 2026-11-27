@@ -9,4 +9,4 @@ $L\in\mathsf{SBP}$ if there are a polynomial-time predicate $V$, a polynomial $p
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.
+- Elmar Böhler, Christian Glaßer and Daniel Meister, "Error-Bounded Probabilistic Computations between MA and AM", Journal of Computer and System Sciences 72(6), 1043–1076, 2006 (definition of SBP, amplification, and $\mathsf{MA}\subseteq\mathsf{SBP}\subseteq\mathsf{AM}$).

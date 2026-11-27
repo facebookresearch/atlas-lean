@@ -9,4 +9,5 @@ For $m, n \ge 0$ the pigeonhole formula $\mathrm{PHP}^m_n$ has a variable $p_{i,
 ## Sources
 
 - A. Haken, "The Intractability of Resolution", Theoretical Computer Science 39, 297–308, 1985.
-- S. Buss and J. Nordström, "Proof Complexity and SAT Solving", in Handbook of Satisfiability, 2nd ed., IOS Press, 2021.
+- S. Buss and J. Nordström, "Proof Complexity and SAT Solving", in Handbook of Satisfiability, 2nd ed., IOS Press, 2021, formulas (7.7a)–(7.7b).
+- E. Ben-Sasson and A. Wigderson, "Short Proofs Are Narrow — Resolution Made Simple", Journal of the ACM 48(2), 149–169, 2001: Definition 4.6.

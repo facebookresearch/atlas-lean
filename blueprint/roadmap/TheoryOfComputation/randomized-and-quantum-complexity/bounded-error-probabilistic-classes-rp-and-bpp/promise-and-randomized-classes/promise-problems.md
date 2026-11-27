@@ -10,5 +10,5 @@ A **promise problem** is a pair $\Pi=(\Pi_{\mathrm{yes}},\Pi_{\mathrm{no}})$ of 
 
 ## Sources
 
-- Oded Goldreich, "On Promise Problems: A Survey", Theoretical Computer Science: Essays in Memory of Shimon Even, 2006.
+- Oded Goldreich, "On Promise Problems: A Survey", in Theoretical Computer Science: Essays in Memory of Shimon Even, Lecture Notes in Computer Science 3895, 254–290, 2006.
 - Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.

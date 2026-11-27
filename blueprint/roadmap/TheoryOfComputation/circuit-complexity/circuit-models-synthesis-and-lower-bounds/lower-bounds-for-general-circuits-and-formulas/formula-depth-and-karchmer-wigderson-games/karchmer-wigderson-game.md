@@ -5,10 +5,9 @@ For a Boolean function $f:\{0,1\}^n\to\{0,1\}$, the *Karchmer–Wigderson game* 
 ## Depends on
 
 - [Communication cost of a protocol](../../../../communication-complexity/deterministic-communication-protocols/depth.md)
-- [Rectangle lemma](../../../../communication-complexity/deterministic-communication-protocols/transcript-eq-iff.md)
 
 ## Sources
 
-- Mauricio Karchmer, Avi Wigderson, "Monotone circuits for connectivity require super-logarithmic depth", SIAM Journal on Discrete Mathematics, 1990.
+- Mauricio Karchmer, Avi Wigderson, "Monotone circuits for connectivity require super-logarithmic depth", SIAM Journal on Discrete Mathematics 3(2), 255–265, 1990.
 - Eyal Kushilevitz, Noam Nisan, "Communication Complexity", Cambridge University Press, 1997.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

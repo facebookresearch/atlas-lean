@@ -12,4 +12,4 @@ Induction on the formula: literals have measure at most one and each AND or OR g
 
 ## Sources
 
-- Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007.
+- Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Theorem 22.1.

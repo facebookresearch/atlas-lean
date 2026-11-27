@@ -14,5 +14,5 @@ The classes $\mathsf{AvgP}$ and $\mathsf{HeurP}$ are closed under distributional
 
 ## Sources
 
-- Andrej Bogdanov and Luca Trevisan, "Average-Case Complexity", Foundations and Trends in Theoretical Computer Science 2(1), arXiv:cs/0606037, 2006, Definition 17, Lemma 18.
+- Andrej Bogdanov and Luca Trevisan, "Average-Case Complexity", Foundations and Trends in Theoretical Computer Science 2(1), 1–106, 2006, Definition 17, Lemma 18 (the source requires domination only for $y$ in the support of $D'_{m(n)}$; requiring it for all $y$ is the slightly stronger form stated here).
 - Leonid A. Levin, "Average Case Complete Problems", SIAM Journal on Computing 15(1), 1986.

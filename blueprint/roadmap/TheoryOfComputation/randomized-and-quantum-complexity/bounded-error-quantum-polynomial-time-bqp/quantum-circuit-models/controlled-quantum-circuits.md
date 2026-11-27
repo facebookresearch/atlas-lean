@@ -12,4 +12,5 @@ Each gate is a tensor product with the identity on untouched qubits; involutivit
 
 ## Sources
 
-- Ronald de Wolf, "Quantum Computing: Lecture Notes", 2019.
+- Michael A. Nielsen and Isaac L. Chuang, "Quantum Computation and Quantum Information", Cambridge University Press, 2000, Sections 4.2–4.3.
+- Ronald de Wolf, "Quantum Computing: Lecture Notes", arXiv:1907.09415, 2019 (lecture notes; supplementary pointer).

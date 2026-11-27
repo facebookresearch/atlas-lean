@@ -8,11 +8,15 @@ $$
 
 The circuit family is **uniform** if the wiring extensions are evaluable in time $\mathrm{poly}(s_j,\log|\mathbb{F}|)$.
 
+## Proof sketch
+
+Both sides are multilinear in $z$ and agree on $z\in\{0,1\}^{s_j}$, where the wiring predicates select the two inputs of gate $z$; a multilinear polynomial is determined by its values on the cube.
+
 ## Depends on
 
-- [The sum-check protocol](../the-sum-check-protocol.md)
+- [Multilinear extension of a Boolean function](../../../hierarchy-theorems-and-barriers/algebrization-barrier/multilinear-ext.md)
 
 ## Sources
 
-- Shafi Goldwasser, Yael Tauman Kalai and Guy N. Rothblum, "Delegating Computation: Interactive Proofs for Muggles", Journal of the ACM 62(4), 2015.
-- Justin Thaler, "Proofs, Arguments, and Zero-Knowledge", Foundations and Trends in Privacy and Security 4(2–4), 2022, Section 4.6.
+- Shafi Goldwasser, Yael Tauman Kalai and Guy N. Rothblum, "Delegating Computation: Interactive Proofs for Muggles", Journal of the ACM 62(4), Article 27, 2015.
+- Justin Thaler, "Proofs, Arguments, and Zero-Knowledge", Foundations and Trends in Privacy and Security 4(2–4), 2022, Section 4.6 (the identity for $\widetilde W_j$).

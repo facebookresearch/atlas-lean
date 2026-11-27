@@ -6,10 +6,6 @@ Over a field, every matrix $A$ contains a nonsingular $\operatorname{rank}A\time
 
 The upper bound follows from factorizations $A=UV$, $B=U'V'$ with inner dimensions equal to the ranks. For the lower bound, the Kronecker product of nonsingular $r\times r$ and $r'\times r'$ submatrices is a submatrix of $A\otimes B$ with determinant $\det(A_0)^{r'}\det(B_0)^{r}\neq0$.
 
-## Depends on
-
-- [Subadditivity of the rank](../../../Analysis/approximation-theory/low-rank-matrix-recovery/rank-sub-le.md)
-
 ## Sources
 
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

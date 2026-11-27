@@ -4,7 +4,7 @@ There is no first-order sentence in the language of graphs that holds in exactly
 
 ## Proof sketch
 
-On a linear order of size $n$, a definable cycle (successor plus a wrap-around edge) is bipartite iff $n$ is even; a definable graph built from step-two edges with endpoints joined is acyclic iff $n$ is even. Apply parity transfer.
+On a linear order of size $n$, a definable cycle (successor plus a wrap-around edge) is bipartite iff $n$ is even; the step-two graph (each element joined to the element two above it, and the second element to the last) is acyclic iff $n$ is odd, for $n \ge 5$: for odd $n$ it is a single path, for even $n$ the odd elements form a cycle. Apply parity transfer.
 
 ## Depends on
 
@@ -13,7 +13,6 @@ On a linear order of size $n$, a definable cycle (successor plus a wrap-around e
 ## Proof depends on
 
 - [Parity transfer from linear orders to graph properties](parity-transfer-from-linear-orders.md)
-- [Connectivity is not first-order definable on finite graphs](../../../ComputerScience/databases/query-language-expressiveness/connectivity-is-not-first-order-definable-on-finite-graphs.md)
 
 ## Sources
 

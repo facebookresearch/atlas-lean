@@ -1,6 +1,6 @@
 # Alman–Williams: Walsh–Hadamard matrices are not rigid
 
-Let $H_n$ be the $N\times N$ Sylvester–Hadamard (Walsh–Hadamard) matrix, $N=2^n$, indexed by subsets $x,y\subseteq[n]$ with entries $(-1)^{|x\cap y|}$. For every $\varepsilon>0$ there is $\delta>0$ such that $R_{H_n}(N^{1-\delta})\le N^{1+\varepsilon}$ for all large $n$.
+Let $H_n$ be the $N\times N$ Sylvester–Hadamard (Walsh–Hadamard) matrix, $N=2^n$, indexed by subsets $x,y\subseteq[n]$ with entries $(-1)^{|x\cap y|}$. Over every field, for every sufficiently small $\varepsilon>0$ and every $n$, $R_{H_n}(N^{1-f(\varepsilon)})\le N^{1+\varepsilon}$ with $f(\varepsilon)=\Theta(\varepsilon^2/\log(1/\varepsilon))$; in fact changing at most $N^{\varepsilon}$ entries in each row suffices. Hence for every $\varepsilon>0$ there is $\delta>0$ with $R_{H_n}(N^{1-\delta})\le N^{1+\varepsilon}$.
 
 ## Proof sketch
 
@@ -17,4 +17,4 @@ For rows and columns of weight near $n/2$, the sign $(-1)^{|x\cap y|}$ depends o
 
 ## Sources
 
-- Josh Alman, Ryan Williams, "Probabilistic Rank and Matrix Rigidity", 2017.
+- Josh Alman, Ryan Williams, "Probabilistic Rank and Matrix Rigidity", 49th Annual ACM Symposium on Theory of Computing (STOC 2017), 2017 (arXiv:1611.05558), Theorem 1.1 and Lemma 3.1.

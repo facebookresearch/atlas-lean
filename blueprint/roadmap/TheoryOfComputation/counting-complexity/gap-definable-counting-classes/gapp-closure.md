@@ -4,7 +4,7 @@ $\mathsf{GapP}$ is closed under negation, addition, multiplication, and under su
 
 ## Proof sketch
 
-Combine machines: for sums branch over $y$; for products run the machines in sequence and multiply signs; differences of counts handle negation. Binomial coefficients choose $k$ distinct accepting paths in order.
+Combine machines: for sums branch over $y$; for products run the machines in sequence and multiply signs; differences of counts handle negation. Binomial coefficients choose $k$ distinct accepting paths in increasing order, which handles $\#\mathsf{P}$ functions; for a gap $f=\#\mathrm{acc}-\#\mathrm{rej}$ one expands $\binom{f}{k}$ by a Vandermonde-type identity into binomials of path counts.
 
 ## Depends on
 
@@ -12,5 +12,5 @@ Combine machines: for sums branch over $y$; for products run the machines in seq
 
 ## Sources
 
-- Stephen A. Fenner, Lance J. Fortnow and Stuart A. Kurtz, "Gap-Definable Counting Classes", Journal of Computer and System Sciences 48(1), 1994.
+- Stephen A. Fenner, Lance J. Fortnow and Stuart A. Kurtz, "Gap-Definable Counting Classes", Journal of Computer and System Sciences 48(1), 1994, Proposition 3.5, Closure Properties 1–5 and Lemma 3.7.
 - Lance Fortnow, "Counting Complexity", Complexity Theory Retrospective II, 1997.

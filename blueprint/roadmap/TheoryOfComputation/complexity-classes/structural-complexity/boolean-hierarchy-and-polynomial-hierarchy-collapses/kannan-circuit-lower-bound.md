@@ -10,10 +10,10 @@ First, a $\Sigma_4^p$ (in fact $\Sigma_3^p$) language: at length $n$, take the l
 
 - [The class $\Sigma_k^p$](../../time-and-space-complexity-classes/sigma-k.md)
 - [The universal levels of the polynomial hierarchy](../../time-and-space-complexity-classes/pi-k.md)
-- [Shannon: most Boolean functions need exponential circuits](../../../circuit-complexity/shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 
 ## Proof depends on
 
+- [Shannon: most Boolean functions need exponential circuits](../../../circuit-complexity/shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 - [Karp-Lipton theorem: NP in P/poly collapses PH](../../karp-lipton.md)
 
 ## Sources

@@ -4,9 +4,9 @@ Over a linearly ordered field $K$, consider the primal program $\max\{c^{T}x: Ax
 
 ## Proof sketch
 
-Weak duality is $c^{T}x=y^{T}Ax\le y^{T}b$. For strong duality, apply Farkas' lemma to the combined system $Ax\le b$, $-A^{T}y\le-c$, $A^{T}y\le c$, $-y\le0$, $c^{T}x\ge b^{T}y$ and show the alternative contradicts feasibility of both programs; boundedness above follows by Fourier–Motzkin projection onto the objective.
+Weak duality is $c^{T}x=y^{T}Ax\le y^{T}b$. For strong duality, apply Farkas' lemma to the combined system $Ax\le b$, $-A^{T}y\le-c$, $A^{T}y\le c$, $-y\le0$, $c^{T}x\ge b^{T}y$ and show the alternative contradicts feasibility of both programs; a solution of the combined system gives optimal $x, y$ with equal values by weak duality. If the dual is infeasible, Farkas' lemma gives $z$ with $Az \le 0$ and $c^{T}z > 0$, along which the primal is unbounded.
 
-## Depends on
+## Proof depends on
 
 - [Farkas' lemma over linearly ordered fields](farkas-lemma-over-ordered-fields.md)
 

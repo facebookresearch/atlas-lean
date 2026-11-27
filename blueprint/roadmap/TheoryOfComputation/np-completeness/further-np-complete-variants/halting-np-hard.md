@@ -13,4 +13,4 @@ Let $L\in\mathsf{NP}$ have a polynomial-time verifier $V$ with certificates of l
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Chapter 2, Exercise 3.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Chapter 2, Exercise 3 (published by Cambridge University Press, 2009).

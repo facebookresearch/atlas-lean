@@ -14,4 +14,4 @@ that is, the top $M$ bits of the low $w_0$ bits of $a x$. On a Word RAM with $2 
 
 ## Sources
 
-- M. Dietzfelbinger, T. Hagerup, J. Katajainen and M. Penttonen, "A Reliable Randomized Algorithm for the Closest-Pair Problem", Journal of Algorithms 25(1), 1997.
+- M. Dietzfelbinger, T. Hagerup, J. Katajainen and M. Penttonen, "A Reliable Randomized Algorithm for the Closest-Pair Problem", Journal of Algorithms 25(1), 1997, Section 2.2.

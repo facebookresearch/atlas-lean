@@ -13,4 +13,4 @@ Run the oracle machine for all $2^{r(n)}=\mathrm{poly}(n)$ possible answer seque
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 0–2", 2006, Exercise 2.10.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 2.10.

@@ -4,7 +4,7 @@ There is a fixed deterministic multi-tape Turing machine which, on input the bin
 
 ## Proof sketch
 
-Convert binary to unary by repeated halving, writing $n$ marks in $O(n)$ total time (the amortized cost of binary decrement is $O(1)$), then sweep the marks, entering the signal state once per mark.
+Copy the input to a work tape and repeatedly decrement it in binary until it reaches $0$, entering the signal state once per decrement. A decrement flips the trailing $0$s and the lowest $1$, so the head travels only over the flipped bits and back; as for binary increment, the total number of flips over $n$ decrements is at most $2n$, so the run takes $O(n)$ steps after the $O(\log(n+1))$ copying phase (Goldreich's amortized step-counter).
 
 ## Depends on
 
@@ -12,4 +12,4 @@ Convert binary to unary by repeated halving, writing $n$ marks in $O(n)$ total t
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Exercise 4.5.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Exercise 4.5 (published by Cambridge University Press, 2008).

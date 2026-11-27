@@ -8,5 +8,5 @@ A *bit-packed array* stores $N$ entries of $k \le w$ bits each in $\lceil N k / 
 
 ## Sources
 
-- T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
+- G. Navarro, "Compact Data Structures: A Practical Approach", Cambridge University Press, 2016, Section 3.1 (arrays of fixed-size elements).
 - M. Patrascu, "Succincter", Proceedings of the 49th IEEE Symposium on Foundations of Computer Science (FOCS), 2008.

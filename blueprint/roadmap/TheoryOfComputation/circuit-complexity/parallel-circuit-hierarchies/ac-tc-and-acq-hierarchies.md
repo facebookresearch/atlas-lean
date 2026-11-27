@@ -1,6 +1,6 @@
 # The AC, TC and AC[q] hierarchies
 
-For a Boolean basis $\Omega$ and $i\ge0$, let $\mathsf{C}^i[\Omega]$ be the non-uniform class of languages whose slices are decided by circuit families, with no uniformity condition, over $\Omega$ of size polynomial in $n$ and depth at most $c(\lfloor\log_2 n\rfloor+1)^i$ for a constant $c$. Then:
+For a Boolean basis $\Omega$ and $i\ge0$, let $\mathsf{C}^i[\Omega]$ be the non-uniform class of languages whose slices are decided by circuit families, with no uniformity condition, over $\Omega$ of size polynomial in $n$ and depth at most $c(\lfloor\log_2\max(n,1)\rfloor+1)^i$ for a constant $c$ (the maximum makes the bound defined for the slice $n=0$). Then:
 
 - $\mathsf{AC}^i$ uses $\neg$ and unbounded fan-in $\wedge,\vee$;
 - $\mathsf{AC}^i[q]$, for an integer $q\ge2$, adds unbounded fan-in $\mathrm{MOD}_q$ gates (output $1$ iff the number of true inputs is not divisible by $q$);

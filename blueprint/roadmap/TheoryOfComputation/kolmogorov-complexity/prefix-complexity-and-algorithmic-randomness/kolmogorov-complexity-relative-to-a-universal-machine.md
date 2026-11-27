@@ -6,16 +6,11 @@ $$K_U(x) \le K_M(x) + 2|\langle M \rangle| + 1.$$
 
 ## Proof sketch
 
-Prefix a shortest $M$-description of $x$ with the self-delimiting encoding of $\langle M\rangle$, of length $2|\langle M\rangle| + 1$; universality makes $U$ output $x$ on it.
+Prefix a shortest $M$-description of $x$ with the self-delimiting encoding of $\langle M\rangle$, of length $2|\langle M\rangle| + 1$; universality makes $U$ output $x$ on it. This is the invariance theorem with an explicit constant for this particular universal machine; the Kolmogorov complexity page fixes a different universal description method.
 
 ## Depends on
 
 - [Kolmogorov complexity](../k.md)
-- [The universal description method](../u.md)
-
-## Proof depends on
-
-- [Optimality (the invariance theorem)](../exists-k-le-of-partrec.md)
 
 ## Sources
 

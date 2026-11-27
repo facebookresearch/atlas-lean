@@ -16,6 +16,6 @@ The unary languages $\{1^n: n\in A\}$ for $A\subseteq\mathbb{N}$ are uncountably
 
 ## Sources
 
-- Ker-I Ko, "On Self-Reducibility and Weak P-Selectivity", Journal of Computer and System Sciences, 1983.
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 6–7", 2007.
+- Ker-I Ko, "On Self-Reducibility and Weak P-Selectivity", Journal of Computer and System Sciences 26(2), 209–221, 1983.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.
 - Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007.

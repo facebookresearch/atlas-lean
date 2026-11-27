@@ -8,7 +8,7 @@ and in particular $\Pr[|f - \mu| > \sigma/2] \ge \frac{9}{16}\, 9^{-k}$. So a no
 
 ## Proof sketch
 
-Apply the Paley–Zygmund inequality to $Z = (f - \mu)^2$, which has $\mathbb{E}[Z] = \sigma^2$ and $\mathbb{E}[Z^2] \le 9^k\sigma^4$ by the Bonami Lemma applied to $f - \mu$.
+Apply the Paley–Zygmund inequality with $\theta = t^2$ to $Z = (f - \mu)^2$, which has $\mathbb{E}[Z] = \sigma^2$ and $\mathbb{E}[Z^2] \le 9^k\sigma^4$ by the Bonami Lemma applied to $f - \mu$.
 
 ## Depends on
 
@@ -18,6 +18,7 @@ Apply the Paley–Zygmund inequality to $Z = (f - \mu)^2$, which has $\mathbb{E}
 ## Proof depends on
 
 - [Bonami Lemma](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/bonami-lemma.md)
+- [The Paley–Zygmund inequality](../../../Probability/concentration-inequalities/paley-zygmund.md)
 
 ## Sources
 

@@ -4,7 +4,7 @@ For $n \ge 4$, split $[n]$ into $k = \lfloor \sqrt n \rfloor$ balanced contiguou
 
 $$\sqrt n \le s(f) \le 3\sqrt n, \qquad n \le 3\, bs(f), \qquad bs(f) \le C(f) \le D(f) \le n.$$
 
-For an arbitrary layout into $k$ consecutive blocks of at most $M$ bits, $s(f) \le \max(3k, M)$ and $\sum_{\text{blocks } B} \lfloor |B|/2 \rfloor \le bs(f)$. Hence block sensitivity can be quadratically larger than sensitivity (Rubinstein's phenomenon).
+For an arbitrary layout into $k$ consecutive blocks of at most $M$ bits, $s(f) \le \max(3k, M)$ and $\sum_{\text{blocks } B} \lfloor |B|/2 \rfloor \le bs(f)$. Hence block sensitivity can be quadratically larger than sensitivity. This is a variant of Rubinstein's function, which instead accepts a block when its true bits are exactly one of the fixed pairs $\{2j-1, 2j\}$; the bounds above are derived for the variant on this page.
 
 ## Proof sketch
 

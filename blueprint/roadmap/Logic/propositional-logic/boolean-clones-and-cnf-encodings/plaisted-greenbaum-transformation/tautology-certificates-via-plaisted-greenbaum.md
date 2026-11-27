@@ -1,6 +1,6 @@
 # Tautology certificates via Plaisted–Greenbaum and clausal refutations
 
-Let $A$ be a propositional formula over atoms $x_1,\dots,x_n$. If some LRAT certificate accepted by a sound LRAT checker refutes the CNF formula $\mathrm{PG}(\neg A)$ (with numbered definition variables), then $A$ is a tautology: it is true under every Boolean assignment of $x_1,\dots,x_n$. Consequently any SAT solver that emits checked LRAT refutations yields a complete and sound tautology prover for propositional logic whose certificates are checked against a clause form of linear size.
+Let $A$ be a propositional formula over atoms $x_1,\dots,x_n$. If some LRAT certificate accepted by a sound LRAT checker refutes the CNF formula $\mathrm{PG}(\neg A)$ (with numbered definition variables), then $A$ is a tautology: it is true under every Boolean assignment of $x_1,\dots,x_n$. Consequently a SAT solver that emits LRAT refutations, combined with a sound LRAT checker, yields a sound tautology prover whose certificates are checked against a clause form of linear size; it is also complete when the solver returns a refutation for every unsatisfiable input, as every unsatisfiable CNF formula has an LRAT refutation.
 
 ## Proof sketch
 
@@ -14,6 +14,7 @@ An accepted LRAT certificate shows that $\mathrm{PG}(\neg A)$ has no model; by e
 ## Proof depends on
 
 - [Plaisted–Greenbaum: the polarity-aware clause form is equisatisfiable](plaisted-greenbaum-equisatisfiability.md)
+- [Every unsatisfiable CNF has an LRAT refutation](../../proof-certificates/every-unsatisfiable-cnf-has-an-lrat-refutation.md)
 
 ## Sources
 

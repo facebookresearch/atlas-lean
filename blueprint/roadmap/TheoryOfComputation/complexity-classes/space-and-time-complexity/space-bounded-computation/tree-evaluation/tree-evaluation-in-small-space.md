@@ -6,7 +6,7 @@ $$
 O\bigl((\ell+H+1)\log(\ell+2)+\log(n+2)\bigr),
 $$
 
-where $n$ is the length of the encoded instance (the output is not charged). On nontrivial instances ($\ell,H\ge 1$) this is $O(\log n\cdot\log\log n)$.
+where $n$ is the length of the encoded instance (the output is not charged). On nontrivial instances ($\ell,H\ge 1$) this is $O(\log n\cdot\log\log n)$. More generally, Tree Evaluation with fan-in $d$, height $H$ and value length $\ell$ is computable in space $O\bigl((H+d\ell)\log(d\ell)\bigr)$ plus the $O(\log n)$ needed to address the input.
 
 ## Proof sketch
 
@@ -23,4 +23,4 @@ Run the register procedure over a prime field of size $\mathrm{poly}(\ell)$: the
 
 ## Sources
 
-- James Cook and Ian Mertz, "Tree Evaluation is in Space O(log n · log log n)", Proceedings of the 56th Annual ACM Symposium on Theory of Computing (STOC 2024), pp. 1268–1278 (ECCC TR23-174).
+- James Cook and Ian Mertz, "Tree Evaluation is in Space O(log n · log log n)", Proceedings of the 56th Annual ACM Symposium on Theory of Computing (STOC 2024), pp. 1268–1278 (ECCC TR23-174, Theorems 1, 10 and 18).

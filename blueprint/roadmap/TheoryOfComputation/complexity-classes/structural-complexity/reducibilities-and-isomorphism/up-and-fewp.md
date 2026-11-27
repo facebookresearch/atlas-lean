@@ -8,5 +8,5 @@ $\mathsf{UP}$ is the class of languages $L$ with a polynomial-time verifier $V$ 
 
 ## Sources
 
-- Christos H. Papadimitriou, "Computational Complexity", Addison-Wesley, 1994.
+- Leslie G. Valiant, "Relative Complexity of Checking and Evaluating", Information Processing Letters 5(1), 1976.
 - Christos H. Papadimitriou, "Computational Complexity", Addison-Wesley, 1994.

@@ -4,7 +4,7 @@ There is a DPLL solver (splitting and unit propagation, without the pure-literal
 
 ## Proof sketch
 
-On an unsatisfiable formula, the failing search tree yields a tree-like resolution refutation; each resolvent is RUP from its two premises, so the refutation becomes LRAT addition steps with two hints each.
+On an unsatisfiable formula, the failing search tree yields a tree-like resolution refutation; each resolvent is RUP from its two premises, so the refutation becomes LRAT addition steps with at most two hints each (the premises, in the order in which they become unit and then falsified), ending with the empty clause.
 
 ## Depends on
 

@@ -13,3 +13,4 @@ Let $H\subseteq\{0,1\}^{d-1}$ be the Hamming code of length $d-1=2^r-1$, which i
 ## Sources
 
 - O. B. Lupanov, "On the Realization of Functions of Logical Algebra by Formulae of Finite Classes (Formulae of Limited Depth) in the Basis ∧, ∨, ¬", Problemy Kibernetiki, 1961.
+- F. J. MacWilliams, N. J. A. Sloane, "The Theory of Error-Correcting Codes", North-Holland, 1977 (perfect Hamming codes).

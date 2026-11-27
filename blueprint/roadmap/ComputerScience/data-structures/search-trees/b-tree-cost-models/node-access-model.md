@@ -9,6 +9,6 @@ In the *node-access model*, a tree is stored in an external store and accessed o
 
 ## Sources
 
-- R. Bayer and E. M. McCreight, "Organization and Maintenance of Large Ordered Indexes", Acta Informatica 1, 1972.
-- A. Aggarwal and J. S. Vitter, "The Input/Output Complexity of Sorting and Related Problems", Communications of the ACM 31(9), 1988.
-- D. Comer, "The Ubiquitous B-Tree", ACM Computing Surveys 11(2), 1979.
+- R. Bayer and E. M. McCreight, "Organization and Maintenance of Large Ordered Indexes", Acta Informatica 1(3), pp. 173-189, 1972.
+- A. Aggarwal and J. S. Vitter, "The Input/Output Complexity of Sorting and Related Problems", Communications of the ACM 31(9), pp. 1116-1127, 1988.
+- D. Comer, "The Ubiquitous B-Tree", ACM Computing Surveys 11(2), pp. 121-137, 1979.

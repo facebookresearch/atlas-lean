@@ -13,4 +13,4 @@ Take one clause of $\ell$ literals for each falsifying assignment of $f$, exclud
 
 ## Sources
 
-- Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007.
+- Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Claim 2.14.

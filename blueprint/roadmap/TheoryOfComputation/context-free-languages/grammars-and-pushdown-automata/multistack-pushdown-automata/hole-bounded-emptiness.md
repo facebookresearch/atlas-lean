@@ -17,4 +17,4 @@ The abstract configurations form a finite graph. Soundness: each abstract step i
 
 ## Sources
 
-- S. Akshay, Paul Gastin, S. Krishna and Sparsa Roychowdhury, "Revisiting Underapproximate Reachability for Multipushdown Systems", Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2020), arXiv:2002.05950, 2020, Theorem 1, Algorithms 1–6.
+- S. Akshay, Paul Gastin, S. Krishna and Sparsa Roychowdhury, "Revisiting Underapproximate Reachability for Multipushdown Systems", Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2020), arXiv:2002.05950, 2020, Theorem 1, Algorithm 1 and the witness-generation algorithms of Section 3.

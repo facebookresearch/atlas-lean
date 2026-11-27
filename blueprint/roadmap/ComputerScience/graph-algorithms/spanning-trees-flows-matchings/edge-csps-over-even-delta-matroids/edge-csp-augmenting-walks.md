@@ -1,10 +1,13 @@
 # Augmenting walks remove two defects
 
-Grow a forest from the defects of a valid labeling, alternating between variables and copies of constraints and recording at each constraint the feasible partner ports (positions whose labels can be flipped together while staying in the relation). If two branches from distinct roots meet, the resulting **augmenting walk** can be flipped: the new labeling is valid and has exactly two fewer defects. If two branches from the same root meet, the meeting determines a **blossom**: a cycle through a common lowest ancestor, with an explicit base and child ports.
+Let $f$ be a valid labeling of an edge CSP whose constraints are even delta-matroids. The **forest search** grows a directed forest whose roots are the defects of $f$, alternating between variables and timestamped copies of constraints: it repeatedly picks a variable $v$ of the forest and an incident constraint $C$ not yet used at $v$, adds a new copy of $C$ as a child of $v$, and adds as children of that copy, all at once, every variable $w \neq v$ in the scope of $C$ with $f(C) \oplus v \oplus w \in C$ that is not yet in the forest. When such a $w$ is already in the forest without a constraint parent, two branches meet.
+
+- If they come from distinct roots, the concatenated **augmenting walk** $p$ (from one defect to another, with all intermediate variables consistent) is valid to flip: $f \oplus p$ is a valid labeling with exactly two fewer defects.
+- If they come from the same root, they determine a **blossom**: a closed walk through the lowest common ancestor of the two branches. If that ancestor is a variable it is a defect and serves as the base; if it is a copy of a constraint, the labeling is first flipped along the forest path to the child $r$ of that ancestor on the branch of $v$, which keeps it valid, keeps the number of defects, and makes $r$ the defective base.
 
 ## Proof sketch
 
-The six invariants of the forest (unique incoming arcs, saturation of completed scans, no shortcuts, and so on) together with the even delta-matroid exchange property at each constraint make the flips along the walk compatible.
+The forest stays an *$f$-DAG*: every incidence is used at most once, every variable has at most one incoming arc, timestamps order the nodes, every pair of arcs at a constraint copy entering at $u$ and continuing at $v$ is a feasible flip ($f(C) \oplus u \oplus v \in C$), and there are no shortcuts from an earlier copy of a constraint to a later one. Using the even delta-matroid exchange property at each constraint, flipping along such a DAG keeps every intermediate labeling valid, which gives both the augmentation and the blossom property.
 
 ## Depends on
 
@@ -13,4 +16,4 @@ The six invariants of the forest (unique incoming arcs, saturation of completed 
 
 ## Sources
 
-- A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), 2019.
+- A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), Article 22, 2019, Section 5.2, Lemma 25, Lemma 34, Corollary 36 and Proposition 38.

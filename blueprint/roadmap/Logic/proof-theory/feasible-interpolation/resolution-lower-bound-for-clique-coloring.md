@@ -1,14 +1,15 @@
 # Resolution lower bound for clique–coloring formulas
 
-Every resolution refutation of $\mathrm{Clique}_{n,k} \wedge \mathrm{Color}_{n,k-1}$ has more than half as many lines as the least monotone circuit separating $k$-cliques from complete $(k-1)$-partite graphs. Consequently, for $2 \le k$ and $k^4 \le n$ every refutation has more than $2^{2\lfloor\sqrt{k}\rfloor}/2$ lines, and with $k \approx n^{1/4}$ the size is $2^{\Omega(n^{1/8})}$; via Alon–Boppana approximators, suitable parameters give $2^{n^{\Omega(1)}}$ lower bounds.
+If $\mathrm{Clique}_{n,\omega} \wedge \mathrm{Color}_{n,\xi}$ ($\xi < \omega$) has a resolution refutation with $k$ clauses, then the graphs with an $\omega$-clique are separated from the $\xi$-colorable graphs by a monotone circuit of size $k\, n^{O(1)}$. Since for $3 \le \xi < \omega$ with $\sqrt{\xi}\,\omega \le n/(8 \log n)$ every such monotone circuit has size $2^{\Omega(\sqrt{\xi})}$ (Alon–Boppana), taking $\xi = \lceil \sqrt{n} \rceil$ and $\omega = \xi + 1$ shows that for all sufficiently large $n$ every resolution refutation has at least $2^{\Omega(n^{1/4})}$ clauses.
 
 ## Proof sketch
 
-Monotone feasible interpolation turns a refutation with $s$ lines into a monotone circuit with at most $2s$ gates computing a separator; Razborov's method of approximations, which reads circuits only on $k$-cliques and complete $(k-1)$-partite graphs, bounds such circuits from below.
+The shared edge variables occur only positively in the clique part, so monotone feasible interpolation turns a refutation into a small monotone interpolant, which separates the two graph classes. Razborov's method of approximations as sharpened by Alon and Boppana, which tests circuits only on $\omega$-cliques and complete $\xi$-partite graphs, bounds such circuits from below.
 
 ## Depends on
 
 - [Clique–coloring formulas](clique-coloring-formulas.md)
+- [Monotone circuits](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-monotone-circuit.md)
 
 ## Proof depends on
 
@@ -19,7 +20,7 @@ Monotone feasible interpolation turns a refutation with $s$ lines into a monoton
 
 ## Sources
 
-- J. Krajíček, "Interpolation Theorems, Lower Bounds for Proof Systems, and Independence Results for Bounded Arithmetic", The Journal of Symbolic Logic 62(2), 457–486, 1997.
-- P. Pudlák, "Lower Bounds for Resolution and Cutting Plane Proofs and Monotone Computations", The Journal of Symbolic Logic 62(3), 981–998, 1997.
+- J. Krajíček, "Interpolation Theorems, Lower Bounds for Proof Systems, and Independence Results for Bounded Arithmetic", The Journal of Symbolic Logic 62(2), 457–486, 1997: Theorem 7.2 and Corollary 7.3(1).
+- P. Pudlák, "Lower Bounds for Resolution and Cutting Plane Proofs and Monotone Computations", The Journal of Symbolic Logic 62(3), 981–998, 1997: Theorem 2 and Section 5.
 - A. A. Razborov, "Lower Bounds on the Monotone Complexity of Some Boolean Functions", Soviet Mathematics Doklady 31, 354–357, 1985.
 - N. Alon and R. B. Boppana, "The Monotone Circuit Complexity of Boolean Functions", Combinatorica 7(1), 1–22, 1987.

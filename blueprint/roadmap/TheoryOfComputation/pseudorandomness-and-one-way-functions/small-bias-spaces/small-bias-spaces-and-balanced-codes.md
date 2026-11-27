@@ -6,7 +6,7 @@ $$
 \frac{(1-\varepsilon)N}{2} \le d_H\bigl(C_G(u), C_G(v)\bigr) \le \frac{(1+\varepsilon)N}{2}.
 $$
 
-With $\sigma = \{0,1\}^k$ this matches $\varepsilon$-bias generators of stretch $\ell$ with binary linear codes from $\ell$ to $2^k$ bits whose codewords are pairwise at distance $(1 \pm \varepsilon)2^{k-1}$ (Goldreich, Exercise 8.41).
+With $\sigma = \{0,1\}^k$ this matches $\varepsilon$-bias generators of stretch $\ell$ with binary linear codes from $\ell$ to $2^k$ bits whose codewords are pairwise at distance $(1 \pm \varepsilon)2^{k-1}$ (Goldreich 2008, Exercise 8.41).
 
 ## Proof sketch
 
@@ -14,10 +14,10 @@ The distance between $C_G(u)$ and $C_G(v)$ counts seeds where the parity of $G(s
 
 ## Depends on
 
-- [Bias, ε-biased and k-wise ε-biased distributions](small-bias-distributions.md)
+- [Small-bias distribution and generator](../space-bounded-and-small-bias-generators/small-bias-distributions.md)
 - [Linear code](../../../InformationTheory/error-correcting-codes/linear-codes/linear-code.md)
 
 ## Sources
 
-- O. Goldreich, "Computational Complexity: A Conceptual Perspective", public draft of Chapters 7–8, March 2007.
-- J. Naor and M. Naor, "Small-Bias Probability Spaces: Efficient Constructions and Applications", SIAM Journal on Computing, 1993.
+- O. Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 8.41 (numbering of the 2007 public draft).
+- J. Naor and M. Naor, "Small-Bias Probability Spaces: Efficient Constructions and Applications", SIAM Journal on Computing 22(4), 838–856, 1993.

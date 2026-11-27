@@ -4,7 +4,7 @@ There is a fixed set of four exact-one clauses of width three, on three source l
 
 ## Proof sketch
 
-Exhaustive verification of the fixed truth tables of the gadgets of Hunt, Marathe, Radhakrishnan and Stearns.
+Exhaustive verification of the fixed truth tables of the gadgets of Hunt, Marathe, Radhakrishnan and Stearns: the disjunction gadget uses four exact-one clauses with five auxiliary variables, each source literal occurring once, and its seven satisfying source patterns each have a unique extension; the forcing gadget $(a,d,e),(a,e,f),(d,e,f)$ has the unique exact-one model $e=1$, $a=d=f=0$; and $(z,y,a)$ with $a$ forced to $0$ makes $y=\neg z$.
 
 ## Depends on
 
@@ -12,4 +12,4 @@ Exhaustive verification of the fixed truth tables of the gadgets of Hunt, Marath
 
 ## Sources
 
-- H. B. Hunt III, M. V. Marathe, V. Radhakrishnan and R. E. Stearns, "The Complexity of Planar Counting Problems", SIAM Journal on Computing 27(4), 1142–1167, 1998.
+- H. B. Hunt III, M. V. Marathe, V. Radhakrishnan and R. E. Stearns, "The Complexity of Planar Counting Problems", SIAM Journal on Computing 27(4), 1142–1167, 1998, Lemma 3.6 and proof of Theorem 3.8.

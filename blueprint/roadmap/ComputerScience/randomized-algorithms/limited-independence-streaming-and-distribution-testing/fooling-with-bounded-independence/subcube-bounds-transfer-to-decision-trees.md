@@ -8,7 +8,7 @@ $$
 
 ## Proof sketch
 
-An input reaches a leaf exactly on the subcube of inputs agreeing with it on the queried coordinates. Induct over the tree, carrying the partial assignment fixed so far: a query whose answer is already fixed follows one branch, so repeated queries cost nothing, and each leaf contributes at most $C\varepsilon$ over at most $2^k$ leaves reached.
+An input reaches a leaf exactly on the subcube of inputs agreeing with it on the queried coordinates. Induct over the tree, carrying the partial assignment fixed so far: a query whose answer is already fixed follows one branch, so repeated queries cost nothing, and each leaf contributes at most $C\varepsilon$ over at most $2^k$ leaves reached (a reached leaf is determined by the answers to at most $k$ distinct queries).
 
 ## Depends on
 
@@ -16,4 +16,4 @@ An input reaches a leaf exactly on the subcube of inputs agreeing with it on the
 
 ## Sources
 
-- O. Goldreich, "Computational Complexity: A Conceptual Perspective", public draft of Chapters 7–8, March 2007.
+- O. Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.

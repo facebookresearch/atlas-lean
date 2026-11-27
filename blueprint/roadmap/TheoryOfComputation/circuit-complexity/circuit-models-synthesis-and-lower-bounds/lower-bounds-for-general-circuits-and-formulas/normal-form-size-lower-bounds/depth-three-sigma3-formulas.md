@@ -5,9 +5,8 @@ Fix $k \ge 1$. A $\Sigma_3^k$ formula for $f : \{0,1\}^n \to \{0,1\}$ is a disju
 ## Depends on
 
 - [CNF formula](../../../../../Logic/propositional-logic/conjunctive-normal-form/cnf.md)
-- [Depth-d circuit size of parity](../../../lower-bounds-for-ac0-circuits/depth-d-circuit-size-of-parity.md)
 
 ## Sources
 
-- R. Paturi, P. Pudlák and F. Zane, "Satisfiability Coding Lemma", Chicago Journal of Theoretical Computer Science, 1999.
+- R. Paturi, P. Pudlák and F. Zane, "Satisfiability Coding Lemma", Chicago Journal of Theoretical Computer Science 1999, Article 11.
 - S. Jukna, Boolean Function Complexity: Advances and Frontiers, Springer, 2012.

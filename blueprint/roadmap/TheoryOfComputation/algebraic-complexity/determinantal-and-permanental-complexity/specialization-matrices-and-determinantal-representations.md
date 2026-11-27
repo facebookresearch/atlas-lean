@@ -10,5 +10,5 @@ A *specialization matrix* over $K[x_1,\dots,x_N]$ is a square matrix each of who
 ## Sources
 
 - Leslie G. Valiant, "Completeness Classes in Algebra", Proceedings of the Eleventh Annual ACM Symposium on Theory of Computing, 1979.
-- Ramprasad Saptharishi, "A survey of lower bounds in arithmetic circuit complexity", 2026.
+- Ramprasad Saptharishi, "A survey of lower bounds in arithmetic circuit complexity", version 9.0.3, 2021.
 - Ian Orzel, Srikanth Srinivasan, Sébastien Tavenas, Amir Yehudayoff, "The Algebraic Cost of a Boolean Sum", 45th IARCS Annual Conference on Foundations of Software Technology and Theoretical Computer Science, 2025.

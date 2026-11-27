@@ -9,12 +9,13 @@ The extension axioms hold almost surely in $G(n,p)$ for every constant $p$; the 
 ## Depends on
 
 - [The uniform random graph $G(n, 1/2)$ and $G(n, p)$](uniform-random-graph.md)
+- [Extension axioms and the theory of the random graph](extension-axioms-random-graph.md)
+- [The Rado graph is the countable random graph](rado-graph-countable-random-graph.md)
 
 ## Proof depends on
 
 - [Extension axioms hold almost surely](extension-axioms-hold-almost-surely.md)
 - [Transfer from almost-sure theories to zero-one laws](transfer-to-zero-one-laws.md)
-- [The Rado graph is the countable random graph](rado-graph-countable-random-graph.md)
 - [The theory of the random graph is $\aleph_0$-categorical and complete](random-graph-theory-categorical-and-complete.md)
 
 ## Sources

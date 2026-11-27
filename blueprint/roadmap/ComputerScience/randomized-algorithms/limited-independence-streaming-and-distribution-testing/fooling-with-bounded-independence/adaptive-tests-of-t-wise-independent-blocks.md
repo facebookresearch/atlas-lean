@@ -8,9 +8,9 @@ Apply the subcube transfer with $d$ the difference between $G$'s law and the uni
 
 ## Depends on
 
-- [k-wise independent hash families](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash family](../../../data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
 - [Subcube bounds transfer to adaptive decision-tree tests](subcube-bounds-transfer-to-decision-trees.md)
 
 ## Sources
 
-- O. Goldreich, "Computational Complexity: A Conceptual Perspective", public draft of Chapters 7–8, March 2007.
+- O. Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.

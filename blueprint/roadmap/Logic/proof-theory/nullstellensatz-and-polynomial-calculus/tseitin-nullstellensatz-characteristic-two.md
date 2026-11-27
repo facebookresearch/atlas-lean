@@ -14,4 +14,5 @@ In characteristic two the clause polynomials of the parity constraint at $v$ sum
 ## Sources
 
 - S. Buss, D. Grigoriev, R. Impagliazzo and T. Pitassi, "Linear Gaps between Degrees for the Polynomial Calculus Modulo Distinct Primes", Journal of Computer and System Sciences 62(2), 267–289, 2001.
+- S. Buss and J. Nordström, "Proof Complexity and SAT Solving", in Handbook of Satisfiability, 2nd ed., IOS Press, 2021, Section 7.5.3 (Tseitin formulas are easy over GF(2)).
 - D. Grigoriev, "Tseitin's Tautologies and Lower Bounds for Nullstellensatz Proofs", Proceedings of the 39th IEEE Symposium on Foundations of Computer Science (FOCS), 1998.

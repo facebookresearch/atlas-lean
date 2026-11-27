@@ -4,7 +4,7 @@ Let $Y$ be a set of variables. A formula over any basis of fan-in at most two wh
 
 ## Proof sketch
 
-After fixing the variables outside $Y$, every subformula without $Y$-leaves becomes a constant and every gate with one such argument becomes a unary function of the other, so the subfunction is determined by the at most $\ell-1$ binary gates reading $Y$ on both sides (16 choices each) and by the unary functions on the $\ell$ leaf paths.
+After fixing the variables outside $Y$, every subformula without $Y$-leaves becomes a constant and every gate with one such argument becomes a unary function of the other, so the subfunction is computed by a fixed tree whose $\ell$ leaves are the $Y$-leaves and whose at most $\ell-1$ inner nodes are the gates with $Y$-leaves on both sides. Each unary function ($0$, $1$, identity or negation) on an edge into such a node is absorbed into the node's two-argument Boolean function (16 choices), leaving only the unary function above the topmost node (4 choices); this gives at most $4\cdot 16^{\ell-1}=16^\ell/4$ subfunctions.
 
 ## Depends on
 
@@ -12,5 +12,5 @@ After fixing the variables outside $Y$, every subformula without $Y$-leaves beco
 
 ## Sources
 
-- E. I. Nechiporuk, "On a Boolean function", Soviet Mathematics Doklady, 1966.
+- E. I. Nechiporuk, "On a Boolean function", Soviet Mathematics Doklady 7(4), 999–1000, 1966.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

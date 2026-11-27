@@ -8,4 +8,4 @@ Let $\varphi$ be a CNF formula on variables $V$, $\pi$ a linear order of $V$ and
 
 ## Sources
 
-- R. Paturi, P. Pudlák and F. Zane, "Satisfiability Coding Lemma", Chicago Journal of Theoretical Computer Science, 1999.
+- R. Paturi, P. Pudlák and F. Zane, "Satisfiability Coding Lemma", Chicago Journal of Theoretical Computer Science 1999(11), 1999, Section 2 (Lemmas 1 and 2).

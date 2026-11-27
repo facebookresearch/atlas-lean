@@ -8,7 +8,7 @@ $$\mathbf{W}^1[\mathbf{1}_A] \le 2\alpha^2\ln\frac{1}{\alpha}$$
 
 ## Proof sketch
 
-Optimize the bound $\mathbf{W}^1 \le (\alpha^{2/(1+\rho)} - \alpha^2)/\rho$ over $\rho \to 0^+$: $\alpha^{2/(1+\rho)} = \alpha^2 \alpha^{-2\rho/(1+\rho)} \le \alpha^2(1 + 2\rho\ln(1/\alpha) + O(\rho^2))$-type estimates, made exact by convexity, give $2\alpha^2\ln(1/\alpha)$.
+For $0 < \alpha \le 1$ the bound $\mathbf{W}^1 \le (\alpha^{2/(1+\rho)} - \alpha^2)/\rho$ holds for every $0 < \rho \le 1$; letting $\rho \to 0^+$, the right side tends to the derivative of $\rho \mapsto \alpha^{2/(1+\rho)}$ at $\rho = 0$, which is $2\alpha^2\ln(1/\alpha)$ (O'Donnell, Ex. 9.24(b)).
 
 ## Depends on
 

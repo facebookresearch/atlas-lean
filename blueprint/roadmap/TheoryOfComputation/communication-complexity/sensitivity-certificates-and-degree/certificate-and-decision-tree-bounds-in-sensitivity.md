@@ -4,6 +4,8 @@ For every total Boolean function $f$:
 
 $$bs(f) \le 2\, s(f)^4, \qquad C(f) \le 2\, s(f)^5.$$
 
+The first bound is already stated on [Huang's sensitivity theorem](../query-and-communication-measures/huang-s-sensitivity-theorem.md); the new consequence recorded here is the bound on certificate complexity.
+
 ## Proof sketch
 
 Huang's theorem gives $\deg(f) \le s(f)^2$; with Nisan–Szegedy $bs \le 2\deg^2$ this gives $bs \le 2s^4$; Nisan's $C \le s \cdot bs$ gives $C \le 2s^5$.

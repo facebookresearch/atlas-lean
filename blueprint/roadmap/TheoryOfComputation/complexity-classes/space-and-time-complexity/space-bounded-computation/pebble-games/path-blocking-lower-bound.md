@@ -13,4 +13,4 @@ In a pebbling of $v$, let $s_i$ be the last moment before $v$ is pebbled at whic
 ## Sources
 
 - Michael S. Paterson and Carl E. Hewitt, "Comparative Schematology", Record of the Project MAC Conference on Concurrent Systems and Parallel Computation, ACM, 1970, pp. 119–127.
-- Jakob Nordström, "Pebble Games, Proof Complexity, and Time-Space Trade-offs", Logical Methods in Computer Science 9(3):15, 2013 (the induction behind the complete-binary-tree pebbling lower bound).
+- Jakob Nordström, "Pebble Games, Proof Complexity, and Time-Space Trade-offs", Logical Methods in Computer Science 9(3):15, 2013.

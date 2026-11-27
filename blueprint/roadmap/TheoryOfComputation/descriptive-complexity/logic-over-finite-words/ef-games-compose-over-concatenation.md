@@ -1,6 +1,6 @@
 # EF games compose over concatenations of words
 
-If Duplicator wins the $n$-round Ehrenfeucht–Fraïssé game on words $u_1, v_1$ and on $u_2, v_2$ (from given pebbled positions), then she wins it on $u_1 u_2$ and $v_1 v_2$ from the combined positions. Consequently the rank-$n$ type of a concatenation is determined by the rank-$n$ types of its factors, and for each $n$ the set of words of a given rank-$n$ type is a language whose membership depends only on finitely many types.
+If Duplicator wins the $n$-round Ehrenfeucht–Fraïssé game on words $u_1, v_1$ and on $u_2, v_2$ (from given pebbled positions), then she wins it on $u_1 u_2$ and $v_1 v_2$ from the combined positions. Consequently the rank-$n$ type of a concatenation is determined by the rank-$n$ types of its factors; since there are finitely many rank-$n$ types, $\equiv_n$ is a congruence of finite index on $\Sigma^*$.
 
 ## Proof sketch
 

@@ -21,3 +21,4 @@ Unsatisfiability is in $\mathsf{NL}$: guess a variable $x$ and paths $x\leadsto\
 
 - Christos H. Papadimitriou, "Computational Complexity", Addison-Wesley, 1994.
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
+- Neil D. Jones, Y. Edmund Lien and William T. Laaser, "New Problems Complete for Nondeterministic Log Space", Mathematical Systems Theory 10, 1–17, 1976.

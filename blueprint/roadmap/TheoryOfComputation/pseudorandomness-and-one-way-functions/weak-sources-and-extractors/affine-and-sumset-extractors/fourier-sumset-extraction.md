@@ -9,15 +9,16 @@ Characters are multiplicative under XOR and $A, B$ are independent. Expand the b
 ## Depends on
 
 - [Affine sources, affine extractors and sumset extractors](affine-sources-and-sumset-extractors.md)
-- [Bias, ε-biased and k-wise ε-biased distributions](../../small-bias-spaces/small-bias-distributions.md)
+- [Small-bias distribution and generator](../../space-bounded-and-small-bias-generators/small-bias-distributions.md)
 - [Parseval's identity on the Boolean cube](../../../../Combinatorics/boolean-functions/kahn-kalai-linial-inequality/walsh-fourier-analysis-on-the-uniform-cube-and-t/khc-parseval.md)
 
 ## Proof depends on
 
-- [Chor–Goldreich: the inner product extracts from two weak sources](../chor-goldreich-inner-product-extractor.md)
+- [Inner-product extraction above half entropy and the half-entropy barrier](../../non-malleable-extraction-and-explicit-ramsey-graphs/chor-goldreich-inner-product-extractor-and-half-entropy-barrier.md)
 
 ## Sources
 
 - X. Li, "Two Source Extractors for Asymptotically Optimal Entropy, and (Many) More", Proceedings of the 64th IEEE Symposium on Foundations of Computer Science, 2023.
-- B. Chor and O. Goldreich, "Unbiased Bits from Sources of Weak Randomness and Probabilistic Communication Complexity", SIAM Journal on Computing, 1988.
+- E. Chattopadhyay and J.-J. Liao, "Extractors for Sum of Two Sources", Proceedings of the 54th ACM Symposium on Theory of Computing (STOC 2022), 2022, Definitions 1.2 and 1.8 (arXiv:2110.12652).
+- B. Chor and O. Goldreich, "Unbiased Bits from Sources of Weak Randomness and Probabilistic Communication Complexity", SIAM Journal on Computing 17(2), 230–261, 1988.
 - S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science, 2012.

@@ -6,7 +6,7 @@ $$
 h(x) = T_1[x_1] \oplus T_2[x_2] \oplus \dots \oplus T_c[x_c],
 $$
 
-where $\oplus$ is bitwise exclusive or. It uses $c \cdot 2^b$ words of random tables and $O(c)$ time per evaluation.
+where $\oplus$ is bitwise exclusive or. It uses $c \cdot 2^b$ table entries of $M$ bits (words when $M \le w$) and $O(c)$ time per evaluation.
 
 ## Depends on
 

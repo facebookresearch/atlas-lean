@@ -20,3 +20,4 @@ Each class is defined by a condition on a $\#\mathsf{P}$ function, and the parsi
 - Leslie G. Valiant, "The Complexity of Computing the Permanent", Theoretical Computer Science 8(2), 1979.
 - Richard Beigel and John Gill, "Counting Classes: Thresholds, Parity, Mods, and Fewness", Theoretical Computer Science 103(1), 1992.
 - Lance Fortnow, "Counting Complexity", Complexity Theory Retrospective II, 1997.
+- Andreas Blass and Yuri Gurevich, "On the Unique Satisfiability Problem", Information and Control 55(1–3), 1982 (completeness of Unique-SAT for US).

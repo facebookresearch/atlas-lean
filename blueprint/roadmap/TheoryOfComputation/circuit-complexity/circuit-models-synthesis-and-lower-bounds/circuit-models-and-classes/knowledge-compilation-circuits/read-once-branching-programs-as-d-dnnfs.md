@@ -13,4 +13,4 @@ Each decision node on $x_i$ becomes $(x_i\wedge\text{high})\vee(\neg x_i\wedge\t
 ## Sources
 
 - Adnan Darwiche, "Decomposable Negation Normal Form", Journal of the ACM 48(4), 2001.
-- Adnan Darwiche, Pierre Marquis, "A Knowledge Compilation Map", Journal of Artificial Intelligence Research 17, 2002.
+- Adnan Darwiche, Pierre Marquis, "A Knowledge Compilation Map", Journal of Artificial Intelligence Research 17, 229–264, 2002.

@@ -8,6 +8,6 @@ Let $T$ be a tile set, with tilings and validity as in [Wang tiles and valid til
 
 ## Sources
 
-- Hao Wang, "Proving Theorems by Pattern Recognition II", Bell System Technical Journal 40, 1961.
-- Robert Berger, "The Undecidability of the Domino Problem", Memoirs of the American Mathematical Society, 1966.
-- Robin Hirsch and Ian Hodkinson, "Representability is not Decidable for Finite Relation Algebras", Transactions of the American Mathematical Society 353(4), 2001, Section 3.
+- Hao Wang, "Proving Theorems by Pattern Recognition II", Bell System Technical Journal 40(1), 1–41, 1961.
+- Robert Berger, "The Undecidability of the Domino Problem", Memoirs of the American Mathematical Society 66, 1966.
+- Robin Hirsch and Ian Hodkinson, "Representability is not Decidable for Finite Relation Algebras", Transactions of the American Mathematical Society 353(4), 1403–1425, 2001, Section 3.

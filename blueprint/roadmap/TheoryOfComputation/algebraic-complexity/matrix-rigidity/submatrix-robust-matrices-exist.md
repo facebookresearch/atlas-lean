@@ -4,7 +4,7 @@ A matrix is *submatrix-robust with deficiency $t$* if every square submatrix wit
 
 ## Proof sketch
 
-A $k\times k$ block of rank $r$ is determined by $r$ spanning columns, the coefficients expressing the others, and the positions; counting shows that blocks of rank below $k-t$ occur in only a small fraction of all matrices when $t\approx2\sqrt m$, and a union bound over blocks leaves a robust matrix; a further counting argument keeps invertibility.
+For a uniformly random matrix over $\mathbb{F}_2$, a fixed $k\times k$ block has rank below $k-t$ with probability at most $7\cdot2^{-(t+1)^2}$, by counting matrices of each rank through their column spaces. There are $\sum_k\binom mk^2\le4^m$ square blocks, and $(t+1)^2\ge4m$, so some block fails with probability at most $7\cdot2^{-2m}$, which for $m\ge3$ is below the probability (at least $0.28$) that the matrix is invertible; for $m\le2$ the deficiency is at least the size of every block.
 
 ## Depends on
 

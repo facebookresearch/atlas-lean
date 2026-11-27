@@ -8,5 +8,5 @@ For a Boolean function $f:\{0,1\}^n\to\{0,1\}$ and $k\ge 1$, the *direct product
 
 ## Sources
 
-- Dietmar Uhlig, "Networks Computing Boolean Functions for Multiple Input Values", Boolean Function Complexity, 1992.
-- Ingo Wegener, "The Complexity of Boolean Functions", Wiley-Teubner, 1987.
+- Dietmar Uhlig, "Networks Computing Boolean Functions for Multiple Input Values", in M. S. Paterson (ed.), Boolean Function Complexity, London Mathematical Society Lecture Note Series 169, Cambridge University Press, 1992.
+- Ingo Wegener, "The Complexity of Boolean Functions", Wiley-Teubner, 1987, Section 10.2.

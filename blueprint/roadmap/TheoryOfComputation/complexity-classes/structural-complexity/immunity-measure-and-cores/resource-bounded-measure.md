@@ -8,4 +8,5 @@ Identify a language $A$ with its characteristic sequence along the standard enum
 
 ## Sources
 
-- Jack H. Lutz, "Almost everywhere high nonuniform complexity", Journal of Computer and System Sciences 44(2), 1992.
+- Jack H. Lutz, "Almost everywhere high nonuniform complexity", Journal of Computer and System Sciences 44(2), 1992 (original formulation with density functions).
+- Jack H. Lutz, "The Quantitative Structure of Exponential Time", in Complexity Theory Retrospective II, Springer, 1997, Section 3 (the martingale formulation used here).

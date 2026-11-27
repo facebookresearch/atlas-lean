@@ -17,4 +17,4 @@ If $x \ne x'$, pick $i$ with $x_i \ne x'_i$; the difference equals $\pm w_i$ plu
 
 - C. Gentry, A. Sahai and B. Waters, "Homomorphic Encryption from Learning with Errors: Conceptually-Simpler, Asymptotically-Faster, Attribute-Based", CRYPTO 2013, 2013.
 - I. Haitner and S. Vadhan, "The Many Entropies in One-Way Functions", in Tutorials on the Foundations of Cryptography, Springer, 2017.
-- J. L. Carter and M. N. Wegman, "Universal Classes of Hash Functions", Journal of Computer and System Sciences, 1979.
+- J. L. Carter and M. N. Wegman, "Universal Classes of Hash Functions", Journal of Computer and System Sciences 18(2), 1979.

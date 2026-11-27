@@ -9,9 +9,8 @@ The two query unitaries agree on the subspace of addresses where $H=H'$; the dif
 ## Depends on
 
 - [Quantum oracle circuits with coherent XOR queries](quantum-oracle-circuits-with-xor-queries.md)
-- [BBBV lower bound in the standard query model](../../../../ComputerScience/quantum-algorithms/lower-bound-for-quantum-search/card-le-of-forall-success.md)
 
 ## Sources
 
-- Charles H. Bennett, Ethan Bernstein, Gilles Brassard, Umesh Vazirani, "Strengths and Weaknesses of Quantum Computing", SIAM Journal on Computing, 1997.
-- Ronald de Wolf, "Quantum Computing: Lecture Notes", 2019.
+- Charles H. Bennett, Ethan Bernstein, Gilles Brassard, Umesh Vazirani, "Strengths and Weaknesses of Quantum Computing", SIAM Journal on Computing 26(5), 1510–1523, 1997, Theorem 3.3 (Euclidean distance at most $2\sqrt{T\sum_t q_y(\varphi_t)}$; the trace-distance form for one query follows since trace distance is at most the Euclidean distance of purifications).
+- Ronald de Wolf, "Quantum Computing: Lecture Notes", arXiv:1907.09415, 2019 (lecture notes; supplementary pointer).

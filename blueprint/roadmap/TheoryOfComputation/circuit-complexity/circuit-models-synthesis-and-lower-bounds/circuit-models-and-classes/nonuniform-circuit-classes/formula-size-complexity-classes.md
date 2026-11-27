@@ -9,5 +9,5 @@ For $s:\mathbb{N}\to\mathbb{N}$, $\mathsf{Formula}[s]$ is the class of languages
 
 ## Sources
 
-- Igor Carboni Oliveira, Rahul Santhanam, "Hardness Magnification for Natural Problems", 59th IEEE Annual Symposium on Foundations of Computer Science (FOCS 2018), 2018.
+- Igor Carboni Oliveira, Rahul Santhanam, "Hardness Magnification for Natural Problems", 59th IEEE Annual Symposium on Foundations of Computer Science (FOCS 2018), 65–76, 2018.
 - Sanjeev Arora, Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007.

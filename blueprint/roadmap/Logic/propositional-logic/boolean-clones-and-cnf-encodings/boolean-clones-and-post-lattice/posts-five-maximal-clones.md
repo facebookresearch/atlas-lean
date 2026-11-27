@@ -5,9 +5,9 @@ The five classes of Boolean operations in Post's completeness criterion are: $T_
 ## Depends on
 
 - [Boolean clones](boolean-clones.md)
-- [Polymorphisms of relations](polymorphisms-of-relations.md)
+- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](../../../../TheoryOfComputation/np-completeness/satisfiability/finite-domain-csp-dichotomy/polymorphism-clone-of-a-finite-structure.md)
 
 ## Sources
 
 - E. L. Post, The Two-Valued Iterative Systems of Mathematical Logic, Annals of Mathematics Studies 5, Princeton University Press, 1941.
-- F. J. Pelletier and N. M. Martin, "Post's Functional Completeness Theorem", Notre Dame Journal of Formal Logic 31(3), 462–475, 1990.
+- F. J. Pelletier and N. M. Martin, "Post's Functional Completeness Theorem", Notre Dame Journal of Formal Logic 31(3), 462–475, 1990 (the five classes of the criterion).

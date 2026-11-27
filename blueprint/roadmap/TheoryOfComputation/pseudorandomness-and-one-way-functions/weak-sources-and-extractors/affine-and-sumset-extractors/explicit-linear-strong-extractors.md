@@ -20,7 +20,9 @@ Toeplitz: $Td$ is uniform for $d \ne 0$, so the leftover hash lemma applies. Tre
 
 ## Sources
 
-- S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science, 2012.
-- N. Nisan and A. Wigderson, "Hardness vs Randomness", Journal of Computer and System Sciences, 1994.
-- V. Guruswami, A. Rudra and M. Sudan, "Essential Coding Theory", draft book, 2019.
+- S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science 7(1–3), 1–336, 2012, Problem 3.3 (Toeplitz matrices) and Theorem 6.18 (leftover hash lemma).
+- N. Nisan and A. Wigderson, "Hardness vs Randomness", Journal of Computer and System Sciences 49(2), 149–167, 1994.
+- L. Trevisan, "Extractors and Pseudorandom Generators", Journal of the ACM 48(4), 860–879, 2001.
+- R. Raz, O. Reingold and S. Vadhan, "Extracting All the Randomness and Reducing the Error in Trevisan's Extractors", Journal of Computer and System Sciences 65(1), 97–128, 2002 (weak designs: universe size $\lceil t/\ln\rho\rceil t\le2t^2$ for $\rho=2$).
+- V. Guruswami, "List Decoding of Error-Correcting Codes", Lecture Notes in Computer Science 3282, Springer, 2004 (binary Johnson bound).
 - J. Katz and Y. Lindell, "Introduction to Modern Cryptography", CRC Press, 2020.

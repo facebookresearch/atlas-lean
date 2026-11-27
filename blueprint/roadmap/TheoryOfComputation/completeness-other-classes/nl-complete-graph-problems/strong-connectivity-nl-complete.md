@@ -18,4 +18,4 @@ Membership: for every ordered pair $(u,v)$ guess a path, keeping only two loop c
 ## Sources
 
 - Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Draft of a book, web draft dated 2007-01-08, 2007, Chapter 4, Exercise 4.
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Exercise 5.23.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 5.23.

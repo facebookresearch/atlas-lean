@@ -4,7 +4,7 @@ If $f : \{-1,1\}^n \to \{-1,1\}$ and a nonzero real function $\ell$ of degree at
 
 ## Proof sketch
 
-$\mathbb{E}[f\ell] = \mathbb{E}|\ell|$ and, by Cauchy–Schwarz, $\mathbb{E}[f\ell] = \sum_{|S| \le 1}\hat f(S)\hat\ell(S) \le \sqrt{\mathbf{W}^{\le 1}[f]}\,\|\ell\|_2$. For a degree-one $\ell$, Khintchine-type comparison $\|\ell\|_2 \le \sqrt2\,\|\ell\|_1$ gives the bound $1/2$.
+$\mathbb{E}[f\ell] = \mathbb{E}|\ell|$ and, by Cauchy–Schwarz, $\mathbb{E}[f\ell] = \sum_{|S| \le 1}\hat f(S)\hat\ell(S) \le \sqrt{\mathbf{W}^{\le 1}[f]}\,\|\ell\|_2$. For $\ell = a_0 + \sum_i a_ix_i$, an extra uniform sign $x_0$ gives $|\ell(x)| \overset{d}{=} |a_0x_0 + \sum_i a_ix_i|$, so the Khintchine–Kahane inequality yields $\|\ell\|_2 \le \sqrt2\,\|\ell\|_1$; since $\mathbb{E}|\ell| > 0$ this gives the bound $1/2$. For degree $k$ use $\|p\|_2 \le e^k\|p\|_1$ in the same way.
 
 ## Depends on
 

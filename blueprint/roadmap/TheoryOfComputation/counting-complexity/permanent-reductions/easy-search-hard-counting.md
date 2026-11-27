@@ -17,4 +17,4 @@ Subtracting one recovers the perfect-matching count, which is $\#\mathsf{P}$-com
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 6–7", 2007, Theorem 6.19.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Theorem 6.19.

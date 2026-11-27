@@ -13,5 +13,5 @@ If $G_0\not\cong G_1$, $H$ determines $b$ and an unbounded prover finds it. If $
 
 ## Sources
 
-- Oded Goldreich, Silvio Micali and Avi Wigderson, "Proofs that Yield Nothing but Their Validity or All Languages in NP Have Zero-Knowledge Proof Systems", Journal of the ACM 38(3), 1991.
-- Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
+- Oded Goldreich, Silvio Micali and Avi Wigderson, "Proofs that Yield Nothing but Their Validity or All Languages in NP Have Zero-Knowledge Proof Systems", Journal of the ACM 38(3), 690–728, 1991.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Chapter 8.

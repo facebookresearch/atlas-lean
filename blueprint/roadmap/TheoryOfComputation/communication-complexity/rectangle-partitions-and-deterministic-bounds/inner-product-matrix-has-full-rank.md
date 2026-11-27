@@ -4,7 +4,7 @@ The sign matrix $H$ of the inner product modulo two on $\{0,1\}^n$, with entries
 
 ## Proof sketch
 
-Character orthogonality gives $\sum_y (-1)^{\langle w, y\rangle} = 2^n [w = 0]$, hence $H^2 = 2^n I$. The $0/1$ matrix is $(J - H)/2$ with $J$ the all-ones matrix, whose rank differs by at most one, and it has a zero row.
+Character orthogonality gives $\sum_y (-1)^{\langle w, y\rangle} = 2^n [w = 0]$, hence $H^2 = 2^n I$. The $0/1$ matrix is $(J - H)/2$ with $J$ the all-ones matrix, so its rank is at least $2^n - 1$, and it is at most $2^n - 1$ because the row of $x = 0$ is zero. The leaf count follows from the rank bound: the $1$-leaves of a protocol tile the ones of the matrix.
 
 ## Depends on
 

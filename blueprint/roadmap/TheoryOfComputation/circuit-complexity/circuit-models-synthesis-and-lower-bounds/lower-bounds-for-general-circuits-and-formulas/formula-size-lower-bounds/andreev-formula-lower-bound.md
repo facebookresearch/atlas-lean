@@ -10,7 +10,7 @@ With $2^b\approx bm\approx n/2$ this gives $L\ge n^{5/2-o(1)}$.
 
 ## Proof sketch
 
-Hard-wire as $h$ a function of $b$ variables of formula size $\Omega(2^b/\log b)$. A random restriction leaving about $(\log b)$-many variables free in each row of $y$ survives with every row alive with good probability, after which $A_{b,m}$ contains a copy of $h$ on the row parities and needs formula size $\Omega(2^b/\log b)$; Subbotovskaya's shrinkage relates this to $L$ by the factor $(k/n)^{3/2}$.
+Hard-wire as $h$ a function of $b$ variables with $L(h)>2^b/(3b)$, which exists by counting formulas. Apply to the $bm$ bits of $y$ a random restriction leaving exactly $k=b\,(\lfloor\log_2 b\rfloor+2)\le bm$ of them free. With probability at least $3/4$ the restricted formula has at most $4(k/bm)^{3/2}L$ leaves, and every row keeps a free variable except with probability at most $b\,e^{-(\lfloor\log_2 b\rfloor+2)}<1/4$ (for $b\ge b_0$). For a restriction with both properties, fixing all but one free variable per row leaves $h$ applied to literals, so $2^b/(3b)<L(h)\le 4\bigl((\lfloor\log_2 b\rfloor+2)/m\bigr)^{3/2}L$, which rearranges to the stated inequality. This is the computation of Andreev's argument as presented by Jukna, with the counting bound $2^b/(3b)$ in place of the sharper $2^b/\log_2 b$.
 
 ## Depends on
 
@@ -19,10 +19,9 @@ Hard-wire as $h$ a function of $b$ variables of formula size $\Omega(2^b/\log b)
 ## Proof depends on
 
 - [Subbotovskaya's shrinkage under random restrictions](subbotovskaya-random-restriction-shrinkage.md)
-- [Khrapchenko: parity needs n^2 formula leaves](khrapchenko-parity-needs-n-squared-leaves.md)
 - [Counting functions with small De Morgan circuits](../../circuit-models-and-classes/circuit-models-and-complexity-measures/counting-functions-with-small-circuits.md)
 
 ## Sources
 
-- A. E. Andreev, "On a Method for Obtaining More Than Quadratic Effective Lower Bounds for the Complexity of π-Schemes", Moscow University Mathematics Bulletin, 1987.
+- A. E. Andreev, "On a Method for Obtaining More Than Quadratic Effective Lower Bounds for the Complexity of π-Schemes", Moscow University Mathematics Bulletin 42(1), 63–66, 1987.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

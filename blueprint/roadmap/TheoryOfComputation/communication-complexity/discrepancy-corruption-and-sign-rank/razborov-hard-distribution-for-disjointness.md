@@ -1,10 +1,14 @@
 # Razborov's hard distribution for disjointness is corrupted
 
-On $2m + 1$ points, draw a uniform partition into a point $i$ and two $m$-sets $T_x, T_y$, uniform subsets $x \subseteq T_x$, $y \subseteq T_y$, and output either the disjoint pair $(x, y)$ or, with probability $1/2$, the intersecting pair $(x \cup \{i\}, y \cup \{i\})$. Under this distribution disjointness is $(\alpha, 2^{-\Omega(m)})$-corrupted on the answer "disjoint" for an absolute constant $\alpha > 0$: every rectangle with substantial mass on disjoint pairs has a constant fraction of its mass on intersecting pairs. Consequently $R_{1/3}(\mathrm{DISJ}_n) = \Omega(n)$.
+Let $\ell = \lfloor n/4 \rfloor$. Let $\mu_0$ be the uniform distribution on pairs $(x, y)$ of $\ell$-subsets of $[n]$ with $x \cap y = \emptyset$, let $\mu_1$ be uniform on pairs of $\ell$-subsets with $|x \cap y| = 1$, and let $\mu = \frac34 \mu_0 + \frac14 \mu_1$. Razborov's main lemma: there are absolute constants $\alpha > 0$ and $\delta > 0$ such that for every rectangle $R = A \times B$,
+
+$$\mu_1(R) \ge \alpha\, \mu_0(R) - 2^{-\delta n}.$$
+
+Equivalently, under $\mu$ disjointness is $(\alpha/3,\ 2^{-\delta n}/4)$-corrupted on the answer "disjoint": every rectangle with substantial mass on disjoint pairs has a constant fraction of that mass on intersecting pairs. With the corruption bound, every deterministic protocol with sufficiently small constant error under $\mu$ has cost $\Omega(n)$; after amplification this gives the linear lower bound on $R_{1/3}$ recorded at [Randomized communication complexity of disjointness](../randomized-communication-protocols/rand-complexity-disj-fn-ge.md).
 
 ## Proof sketch
 
-For a rectangle $A \times B$, condition on the partition; the events "$x \cup\{i\} \in A$" and "$y \cup \{i\} \in B$" are compared with "$x \in A$", "$y \in B$" through a sampling lemma showing that for most partitions adding $i$ does not drop the conditional probabilities by more than a constant factor unless the rectangle is tiny.
+Take $n = 4m - 1$. Generate inputs by a uniformly random partition $(T_x, T_y, \{i\})$ of $[n]$ into sets of sizes $2m - 1$, $2m - 1$ and $1$, and independent uniform $m$-subsets $x \subseteq T_x \cup \{i\}$, $y \subseteq T_y \cup \{i\}$; conditioning on $i \notin x, i \notin y$ gives $\mu_0$ and on $i \in x, i \in y$ gives $\mu_1$. For a rectangle $A \times B$ and a fixed partition, $x$ and $y$ are independent, so both probabilities factor into an $A$-part and a $B$-part; a sampling argument shows that for most partitions adding $i$ to both sets does not drop either factor by more than a constant unless the rectangle is exponentially small.
 
 ## Depends on
 
@@ -13,6 +17,6 @@ For a rectangle $A \times B$, condition on the partition; the events "$x \cup\{i
 
 ## Sources
 
-- A. A. Razborov, "On the Distributional Complexity of Disjointness", Theoretical Computer Science 106(2), 1992.
+- A. A. Razborov, "On the Distributional Complexity of Disjointness", Theoretical Computer Science 106(2), 1992 (the measure $\mu$, the Main Lemma, and the coupled generation with $n = 4m - 1$).
 - B. Kalyanasundaram and G. Schnitger, "The Probabilistic Communication Complexity of Set Intersection", SIAM Journal on Discrete Mathematics 5(4), 1992.
 - E. Kushilevitz and N. Nisan, "Communication Complexity", Cambridge University Press, 1997.

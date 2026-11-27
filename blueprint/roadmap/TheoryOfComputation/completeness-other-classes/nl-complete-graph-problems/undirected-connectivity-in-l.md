@@ -4,7 +4,7 @@ $\mathrm{UCONN}$, the language of undirected graphs $G$ in which every two verti
 
 ## Proof sketch
 
-Take disjoint copies $G_1,\dots,G_{n-1}$ of $G$ on vertices $1,\dots,n$ and identify vertex $i+1$ of $G_i$ with vertex $i+1$ of $G_{i+1}$. Since consecutive copies meet only there, vertex $1$ of $G_1$ is connected to vertex $n$ of $G_{n-1}$ iff vertex $i$ is connected to $i+1$ in $G$ for every $i$, i.e. iff $G$ is connected. The construction is logspace, and Reingold's theorem finishes.
+Graphs with at most one vertex are connected, so let $n\ge 2$. Take disjoint copies $G_1,\dots,G_{n-1}$ of $G$ on vertices $1,\dots,n$ and identify vertex $i+1$ of $G_i$ with vertex $i+1$ of $G_{i+1}$. Since consecutive copies meet only there, vertex $1$ of $G_1$ is connected to vertex $n$ of $G_{n-1}$ iff vertex $i$ is connected to $i+1$ in $G$ for every $i$, i.e. iff $G$ is connected. The construction is logspace, and Reingold's theorem finishes.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ Take disjoint copies $G_1,\dots,G_{n-1}$ of $G$ on vertices $1,\dots,n$ and iden
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Theorem 5.6.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Theorem 5.6.

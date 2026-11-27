@@ -14,5 +14,4 @@ Because the stride $2h_2(u)+1$ is odd, it is invertible modulo $2^M$ and $\pi_u$
 
 ## Sources
 
-- T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
-- J. P. Schmidt and A. Siegel, "The Analysis of Closed Hashing under Limited Randomness", Proceedings of the 22nd ACM Symposium on Theory of Computing (STOC), 1990.
+- T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009 (Section 11.4, double hashing with $m$ a power of 2 and $h_2$ always odd).

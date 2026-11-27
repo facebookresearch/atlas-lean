@@ -4,7 +4,7 @@ Computing the partition function of Boolean CSP instances with the exactly-one w
 
 ## Proof sketch
 
-The permanent of a $0/1$ matrix, which is $\#\mathsf{P}$-complete by Valiant's theorem, is the exactly-one partition function of the row/column instance, in which each entry-variable lies in one row and one column constraint.
+The permanent of a $0/1$ matrix, which is $\#\mathsf{P}$-complete by Valiant's theorem, is the exactly-one partition function of the row/column instance, in which each entry-variable lies in one row and one column constraint. For bounded treewidth, the counting dynamic program over a nice tree decomposition, with each table entry a sum of products of constraint weights instead of a count of satisfying extensions, computes the partition function with polynomially many arithmetic operations.
 
 ## Depends on
 
@@ -13,8 +13,10 @@ The permanent of a $0/1$ matrix, which is $\#\mathsf{P}$-complete by Valiant's t
 
 ## Proof depends on
 
+- [Counting and deciding finite-domain CSPs over bounded treewidth](../../../ComputerScience/dynamic-programming/tree-decomposition-dynamic-programming/csp-bounded-treewidth-dynamic-programming.md)
 - [Exactly-one partition functions count perfect matchings and permanents](exactly-one-partition-function-permanent.md)
 
 ## Sources
 
 - L. G. Valiant, "The Complexity of Computing the Permanent", Theoretical Computer Science 8(2), 189–201, 1979.
+- M. Cygan, F. V. Fomin, Ł. Kowalik, D. Lokshtanov, D. Marx, M. Pilipczuk, M. Pilipczuk and S. Saurabh, Parameterized Algorithms, Springer, 2015.

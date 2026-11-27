@@ -4,7 +4,7 @@ For $f : \prod_i X_i \to \{0,1\}$ and a distribution $\nu$ on inputs, the *multi
 
 $$\mathrm{disc}^{k}_\nu(f) = \max_{C} \Big| \sum_{x \in C} \nu(x) (-1)^{f(x)} \Big|,$$
 
-the maximum over cylinder intersections $C$. As in the two-party case, a public-coin NOF protocol of cost $c$ computing $f$ with error at most $1/2 - \gamma$ satisfies $2\gamma \le 2^c\, \mathrm{disc}^k_\nu(f)$.
+the maximum over cylinder intersections $C$ (inputs finite); the *uniform multiparty discrepancy* $\mathrm{disc}^k(f)$ is $\mathrm{disc}^k_\nu(f)$ for $\nu$ uniform. As in the two-party case, a public-coin NOF protocol of cost $c$ computing $f$ with error at most $1/2 - \gamma$ on every input, for $0 < \gamma \le 1/2$, satisfies $2\gamma \le 2^c\, \mathrm{disc}^k_\nu(f)$.
 
 ## Depends on
 

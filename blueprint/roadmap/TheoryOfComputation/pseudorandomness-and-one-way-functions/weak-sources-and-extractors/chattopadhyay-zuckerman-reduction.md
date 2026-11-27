@@ -6,7 +6,7 @@ Let $\mathrm{cond} : \mathcal{Y} \times [D] \to \Sigma$ be a seeded condenser su
 
 ## Proof sketch
 
-Fix $Y$ and drop its bad seeds as a coalition. Conditioned on the good seeds, non-malleability with advice $i$ against the $t$ other coordinates makes the table $(\mathrm{nmExt}(X, \mathrm{cond}(Y,i), i))_i$ restricted to good coordinates $(t+1)$-wise $(2\gamma + 2^{\Delta+1}\varepsilon_{nm})$-biased, the factor $2^{\Delta}$ paying for the entropy deficiency of the seed. The bad coordinates form a non-oblivious coalition, and resilient extraction finishes.
+Fix the source $Y$ (its distribution) and drop its at most $q$ bad seeds as a coalition. Over the joint randomness of $X$ and $Y$, for each good $i$ non-malleability with advice $i$ against the $t$ other coordinates (their seeds being arbitrary random variables correlated with $\mathrm{cond}(Y, i)$ and independent of $X$) makes the table $(\mathrm{nmExt}(X, \mathrm{cond}(Y,i), i))_i$ restricted to good coordinates $(t+1)$-wise $(2\gamma + 2^{\Delta+1}\varepsilon_{nm})$-biased, the factor $2^{\Delta}$ paying for the entropy deficiency of the seed. The bad coordinates form a non-oblivious coalition, and resilient extraction finishes.
 
 ## Depends on
 
@@ -16,4 +16,4 @@ Fix $Y$ and drop its bad seeds as a coalition. Conditioned on the good seeds, no
 
 ## Sources
 
-- E. Chattopadhyay and D. Zuckerman, "Explicit Two-Source Extractors and Resilient Functions", Annals of Mathematics, 2019.
+- E. Chattopadhyay and D. Zuckerman, "Explicit Two-Source Extractors and Resilient Functions", Annals of Mathematics 189(3), 653–705, 2019 (numbering of ECCC TR15-119), Definition 3.2, Lemmas 2.11, 3.4 and 3.5. The source states the reduction with a non-malleable extractor without advice and a seeded extractor on $Y$ whose outputs on distinct seeds differ; the version with advice and a condenser of deficiency $\Delta$, and the displayed error, follow by the same argument (the factor $2^{\Delta}$ is the weak-seed loss, $D^{t+1}$ the smoothing loss), as used in later work such as Li 2023.

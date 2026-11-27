@@ -12,4 +12,4 @@ Group the $p$ rows by their pattern in $\{0,1\}^q$: one middle node per occurrin
 
 ## Sources
 
-- O. B. Lupanov, "On Rectifier and Switching-and-Rectifier Schemes", Doklady Akademii Nauk SSSR, 1956.
+- O. B. Lupanov, "On Rectifier and Switching-and-Rectifier Schemes", Doklady Akademii Nauk SSSR 111(6), 1171–1174, 1956.

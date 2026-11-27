@@ -8,9 +8,9 @@ $$
 
 They are mutually inverse: $\mu \zeta f = \zeta \mu f = f$.
 
-## Depends on
+## Proof sketch
 
-- [Möbius inversion formula for divisor sums](../../../NumberTheory/arithmetic-functions/multiplicative-functions/m-bius-inversion-for-arithmetic-functions/mobius-inversion.md)
+Both composites equal $\sum_{T \subseteq S} f(T) \sum_{T \subseteq U \subseteq S} (-1)^{|S \setminus U|}$, and the inner sum is $(1 - 1)^{|S \setminus T|} = [T = S]$ by the binomial theorem.
 
 ## Sources
 

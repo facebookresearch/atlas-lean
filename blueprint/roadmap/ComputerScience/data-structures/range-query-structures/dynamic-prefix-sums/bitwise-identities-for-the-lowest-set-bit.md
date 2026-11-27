@@ -18,4 +18,4 @@ Write $m = 2^j (2r + 1)$. Then $m - 1 = 2^{j+1} r + (2^j - 1)$, so $m$ and $m - 
 
 ## Sources
 
-- P. M. Fenwick, "A New Data Structure for Cumulative Frequency Tables", Software: Practice and Experience 24(3), 1994.
+- P. M. Fenwick, "A New Data Structure for Cumulative Frequency Tables", Software: Practice and Experience 24(3), pp. 327-336, 1994.

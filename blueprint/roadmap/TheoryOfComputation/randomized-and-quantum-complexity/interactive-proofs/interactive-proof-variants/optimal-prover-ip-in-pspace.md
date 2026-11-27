@@ -13,5 +13,5 @@ The value of a node of the interaction tree is the maximum over prover messages 
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
-- Shafi Goldwasser, Silvio Micali and Charles Rackoff, "The Knowledge Complexity of Interactive Proof Systems", SIAM Journal on Computing 18(1), 1989.
+- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009, Chapter 8.
+- Shafi Goldwasser, Silvio Micali and Charles Rackoff, "The Knowledge Complexity of Interactive Proof Systems", SIAM Journal on Computing 18(1), 186–208, 1989.

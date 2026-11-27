@@ -14,5 +14,5 @@ Write the direction $V$ of $X$ as $(V \cap \ker L_0) \oplus W$ for a complement 
 
 ## Sources
 
-- X. Li, "Two Source Extractors for Asymptotically Optimal Entropy, and (Many) More", Proceedings of the 64th IEEE Symposium on Foundations of Computer Science, 2023.
+- X. Li, "Two Source Extractors for Asymptotically Optimal Entropy, and (Many) More", Proceedings of the 64th IEEE Symposium on Foundations of Computer Science, 2023 (numbering of arXiv:2303.06802), Lemma 3.9 (affine conditioning, from Li's FOCS 2016 paper) and Lemma 3.10 (block decomposition).
 - X. Li and Y. Zhong, "Explicit Directional Affine Extractors and Improved Hardness for Linear Branching Programs", 39th Computational Complexity Conference (CCC 2024), 2024.

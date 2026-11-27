@@ -4,7 +4,7 @@ For every $q\ge2$ and $i\ge0$, $\mathsf{AC}^i[q]\subseteq\mathsf{AC}^{i+1}$; in 
 
 ## Proof sketch
 
-Replace each $\mathrm{MOD}_q$ gate by its majority-based circuit and each majority gate by a logarithmic-depth De Morgan circuit (for the $\mathsf{NC}$ inclusion) or by an $\mathsf{AC}^1$ circuit; constant depth becomes logarithmic depth.
+Replace each $\mathrm{MOD}_q$ gate by its majority-based circuit and each majority gate by a logarithmic-depth De Morgan circuit (for the $\mathsf{NC}$ inclusion) or by an $\mathsf{AC}^1$ circuit. A majority gate of polynomial fan-in costs depth $O(\log n)$, so depth $O(\log^i n)$ becomes $O(\log^{i+1} n)$, and polynomial size is preserved.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Lupanov's asymptotic rectifier synthesis bound
 
-For every $\varepsilon>0$ there are $N$ and $K$ such that every Boolean $p\times q$ matrix with $p\ge N$ and $q\ge K\log_2 p$ has a depth-two rectifier realization with at most $(1+\varepsilon)\,pq/\log_2 p$ edges. This matches the counting lower bound asymptotically, so the maximal OR-complexity of $p\times q$ matrices is $(1+o(1))pq/\log_2 p$ in this range.
+For every $\varepsilon>0$ there are $N$ and $K$ such that every Boolean $p\times q$ matrix with $p\ge N$ and $q\ge K\log_2 p$ has a depth-two rectifier realization with at most $(1+\varepsilon)\,pq/\log_2 p$ edges. Lupanov's counting argument shows that some $p\times q$ matrices need $(1-o(1))\,pq/\log_2(pq)$ edges in any depth-two realization, so the bound is asymptotically tight when moreover $\log_2 q=o(\log_2 p)$.
 
 ## Proof sketch
 
@@ -16,5 +16,5 @@ Split the columns into blocks of about $\log_2 p-2\log_2\log_2 p$ columns and ap
 
 ## Sources
 
-- O. B. Lupanov, "On Rectifier and Switching-and-Rectifier Schemes", Doklady Akademii Nauk SSSR, 1956.
-- Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.
+- O. B. Lupanov, "On Rectifier and Switching-and-Rectifier Schemes", Doklady Akademii Nauk SSSR 111(6), 1171–1174, 1956.
+- Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012 (Lupanov's decomposition lemma $\mathrm{Dec}(A)\le(1+o(1))\,pq/\log p$).

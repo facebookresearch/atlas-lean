@@ -10,8 +10,11 @@ The language of pairs (encoded circuit, input) accepted by the circuit is in $\m
 
 - [Straight-line programs and circuits over a basis](../circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
 - [The complexity class P](../../../../complexity-classes/the-classes-p-np-and-conp/p.md)
+
+## Proof depends on
+
 - [The Circuit Value Problem is P-complete](../../../../completeness-other-classes/circuit-value-problem/cvp-p-complete.md)
 
 ## Sources
 
-- Ryan Williams, "Nonuniform ACC Circuit Lower Bounds", Journal of the ACM, 2014.
+- Ryan Williams, "Nonuniform ACC Circuit Lower Bounds", Journal of the ACM 61(1), Article 2, 2014.

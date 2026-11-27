@@ -25,5 +25,5 @@ Decide reachability from the initial to an accepting configuration in the config
 ## Sources
 
 - Walter J. Savitch, "Relationships between Nondeterministic and Deterministic Tape Complexities", Journal of Computer and System Sciences 4(2), 1970.
-- Michael Sipser, "Introduction to the Theory of Computation", Cengage Learning, 2013, Theorem 8.5.
+- Michael Sipser, "Introduction to the Theory of Computation", Cengage Learning, 2013, Theorem 8.5 (stated there for $f(n)\ge n$).
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.

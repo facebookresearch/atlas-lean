@@ -4,14 +4,15 @@ Fix a basis $\Omega$ over a carrier $U$ and a weight $c$ on $\Omega$. The *circu
 
 - *De Morgan size* $C(f)$: basis $\{\wedge,\vee,\neg,0,1\}$ with fan-in two, every gate charged;
 - *binary cost*: only the AND and OR gates are charged, negations and constants are free;
-- *$B_2$-complexity*: the full binary basis of all $16$ Boolean functions of at most two arguments, charging only gates that depend on both arguments;
+- *$B_2$-complexity*: the full binary basis of all $16$ Boolean functions of two arguments, every gate charged;
 - *formula leaf size* $L(f)$: the least number of input leaves (counted with multiplicity) of a De Morgan formula computing $f$.
 
-For a set $\mathcal{F}$ of Boolean functions, $\mathrm{SIZE}(s(n))$ denotes the languages whose $n$-th slice has $C(f_n)\le s(n)$ for all $n$.
+$\mathrm{SIZE}(s(n))$ denotes the class of languages whose $n$-th slice $f_n$ has $C(f_n)\le s(n)$ for all $n$. De Morgan size and formula leaf size are the measures $\mathrm{CC}$ and leaf size of [Circuit complexity of a Boolean function and truth tables](../../../minimum-circuit-size-problem/circuit-complexity-of-a-boolean-function.md).
 
 ## Depends on
 
 - [Straight-line programs and circuits over a basis](straight-line-program-over-a-basis.md)
+- [Circuit complexity of a Boolean function and truth tables](../../../minimum-circuit-size-problem/circuit-complexity-of-a-boolean-function.md)
 
 ## Sources
 

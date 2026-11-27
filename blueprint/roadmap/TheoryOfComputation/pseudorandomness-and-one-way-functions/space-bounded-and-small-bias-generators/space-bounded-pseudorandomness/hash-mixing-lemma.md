@@ -8,8 +8,8 @@ $|X| D_i$ counts the points of $A$ retained in $B$; each is retained with probab
 
 ## Depends on
 
-- [k-wise independent hash families](../../../../ComputerScience/data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash family](../../../../ComputerScience/data-structures/hashing/succinct-dictionaries-and-hash-families/word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 
-- N. Nisan, "Pseudorandom Generators for Space-Bounded Computation", Combinatorica, 1992.
+- N. Nisan, "Pseudorandom Generators for Space-Bounded Computation", Combinatorica 12(4), 449–461, 1992, Lemma 1 (mixing lemma for universal hash families in the Carter–Wegman sense, i.e. pairwise independent).

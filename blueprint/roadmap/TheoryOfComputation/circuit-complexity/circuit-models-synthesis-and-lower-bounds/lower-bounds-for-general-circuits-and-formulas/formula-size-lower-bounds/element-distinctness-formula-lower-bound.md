@@ -16,5 +16,5 @@ Each block has at least $2^{t(m-1)}$ subfunctions: assign to the other blocks va
 
 ## Sources
 
-- E. I. Nechiporuk, "On a Boolean function", Soviet Mathematics Doklady, 1966.
+- E. I. Nechiporuk, "On a Boolean function", Soviet Mathematics Doklady 7(4), 999–1000, 1966.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

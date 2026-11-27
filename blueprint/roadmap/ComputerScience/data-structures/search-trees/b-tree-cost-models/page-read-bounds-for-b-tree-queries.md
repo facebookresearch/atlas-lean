@@ -1,6 +1,6 @@
 # Page-read bounds for B-tree queries
 
-In the node-access model, minimum, maximum, lookup, membership, predecessor, successor and rank (with subtree counts) on a store denoting a well-formed B-tree of minimum degree $t$ with $N$ entries return the same answers as the corresponding operations on the tree, using at most $\lfloor \log_t((N+1)/2) \rfloor + 1$ page reads; with a descent bound $f$ they use at most $f$ reads on every store, even a malformed one. A closed-interval range query returning $k$ entries uses at most $2(\lfloor \log_t((N+1)/2) \rfloor + 1) + k$ page reads.
+In the node-access model, minimum, maximum, lookup, membership, predecessor, successor and rank (with subtree counts) on a store denoting a well-formed B-tree of minimum degree $t$ with $N \ge 1$ entries return the same answers as the corresponding operations on the tree, using at most $\lfloor \log_t((N+1)/2) \rfloor + 1$ page reads; with a descent bound $f$ they use at most $f$ reads on every store, even a malformed one. A closed-interval range query returning $k$ entries uses at most $2(\lfloor \log_t((N+1)/2) \rfloor + 1) + k$ page reads.
 
 ## Proof sketch
 
@@ -16,6 +16,6 @@ Each point query reads one page per level and descends into at most one child; t
 
 ## Sources
 
-- R. Bayer and E. M. McCreight, "Organization and Maintenance of Large Ordered Indexes", Acta Informatica 1, 1972.
+- R. Bayer and E. M. McCreight, "Organization and Maintenance of Large Ordered Indexes", Acta Informatica 1(3), pp. 173-189, 1972.
 - T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
-- A. Aggarwal and J. S. Vitter, "The Input/Output Complexity of Sorting and Related Problems", Communications of the ACM 31(9), 1988.
+- A. Aggarwal and J. S. Vitter, "The Input/Output Complexity of Sorting and Related Problems", Communications of the ACM 31(9), pp. 1116-1127, 1988.

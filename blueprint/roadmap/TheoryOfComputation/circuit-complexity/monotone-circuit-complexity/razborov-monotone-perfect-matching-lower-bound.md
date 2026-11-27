@@ -1,10 +1,10 @@
 # Razborov: monotone circuits for bipartite perfect matching need size n^{Ω(log n)}
 
-Let $\mathrm{PM}_n$ be the Boolean function on the $n^2$ edge variables of subgraphs of $K_{n,n}$ that is $1$ iff the graph has a perfect matching. Every monotone circuit computing $\mathrm{PM}_n$ has size $n^{\Omega(\log n)}$; explicitly, more than $2^{\lfloor\lfloor\log_2 n\rfloor/16\rfloor\cdot c\log_2 n}$ gates for a fixed constant $c>0$ and all large $n$.
+Let $\mathrm{PM}_n$ be the Boolean function on the $n^2$ edge variables of subgraphs of $K_{n,n}$ that is $1$ iff the graph has a perfect matching. Every monotone circuit computing $\mathrm{PM}_n$ has size $n^{\Omega(\log n)}$.
 
 ## Proof sketch
 
-Method of approximations with approximators that are families of small matchings (at most $s=\Theta(\log n)$ edges), closed under a sunflower-type plucking (or closure) operation. Positive tests are the $n!$ perfect matchings, each missed by few approximator steps; negative tests are graphs induced by $2$-colourings of the vertices with an odd colour class, each wrongly accepted with small probability. Balancing the two error budgets gives the bound.
+Razborov's method of approximations: every gate is replaced by an approximator, a monotone function spanned by families of small partial matchings (of size $\Theta(\log n)$), kept small by a sunflower-type closure operation. Positive test inputs are the perfect matchings and negative test inputs are suitably distributed graphs without a perfect matching. Each approximation step errs on few positive tests and on a small fraction of negative tests, while the final approximator is wrong on many tests of one kind; balancing the two error budgets forces $n^{\Omega(\log n)}$ gates.
 
 ## Depends on
 
@@ -18,6 +18,6 @@ Method of approximations with approximators that are families of small matchings
 
 ## Sources
 
-- Alexander A. Razborov, "Lower Bounds on Monotone Complexity of the Logical Permanent", Mathematical Notes of the Academy of Sciences of the USSR, 1985.
-- Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.
-- Noga Alon, Ravi B. Boppana, "The Monotone Circuit Complexity of Boolean Functions", Combinatorica, 1987.
+- Alexander A. Razborov, "Lower Bounds on Monotone Complexity of the Logical Permanent", Mathematical Notes of the Academy of Sciences of the USSR 37(6), 1985.
+- Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012 (Section 9.10, Razborov's proof for perfect matching).
+- Noga Alon, Ravi B. Boppana, "The Monotone Circuit Complexity of Boolean Functions", Combinatorica 7(1), 1987.

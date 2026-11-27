@@ -1,10 +1,10 @@
 # ETH holds for sparse 3-SAT iff for general 3-SAT
 
-If 3-SAT on instances with $n$ variables and $m = O(n)$ clauses can be solved in time $2^{o(n)}$ (equivalently $2^{o(m)}$), then 3-SAT on arbitrary instances can be solved in time $2^{o(n)}$. Hence the Exponential Time Hypothesis is equivalent to the statement that 3-SAT requires time $2^{\delta m}$ for some $\delta > 0$, where $m$ is the number of clauses, and it implies $2^{\Omega(n)}$ lower bounds for every problem to which 3-SAT reduces by linear-size reductions.
+3-SAT on $n$ variables and $m$ clauses is solvable in time $2^{\delta n}\mathrm{poly}(n+m)$ for every $\delta>0$ if and only if it is solvable in time $2^{\delta m}\mathrm{poly}(n+m)$ for every $\delta>0$. Hence the Exponential Time Hypothesis is equivalent to the statement that for some $\delta > 0$ no algorithm solves 3-SAT in time $2^{\delta m}\mathrm{poly}(n+m)$, and also to the statement that for some $\delta>0$ none solves it in time $2^{\delta(n+m)}\mathrm{poly}(n+m)$; consequently, under ETH, no problem to which 3-SAT reduces in polynomial time with output size $O(n+m)$ is solvable in time $2^{o(\text{size})}$.
 
 ## Proof sketch
 
-Sparsify with parameter $\varepsilon$: each of the $2^{\varepsilon n}$ sparse formulas has $O_\varepsilon(n)$ clauses and is solved in $2^{o(n)}$ time; letting $\varepsilon \to 0$ gives $2^{o(n)}$ overall.
+One direction is trivial, since variables occurring in no clause can be deleted, leaving $n\le 3m$. Conversely, given $\delta>0$, sparsify with $\varepsilon=\delta/2$: each of the at most $2^{\delta n/2}$ formulas has at most $K(\delta)n$ clauses and is solved in time $2^{\delta' K(\delta) n}$ with $\delta'=\delta/(2K(\delta))$, for a total of $2^{\delta n}\mathrm{poly}$.
 
 ## Depends on
 
@@ -16,4 +16,5 @@ Sparsify with parameter $\varepsilon$: each of the $2^{\varepsilon n}$ sparse fo
 
 ## Sources
 
-- R. Impagliazzo, R. Paturi and F. Zane, "Which Problems Have Strongly Exponential Complexity?", Journal of Computer and System Sciences 63(4), 512–530, 2001.
+- R. Impagliazzo, R. Paturi and F. Zane, "Which Problems Have Strongly Exponential Complexity?", Journal of Computer and System Sciences 63(4), 512–530, 2001, Corollary 1.
+- Marek Cygan et al., "Parameterized Algorithms", Springer, 2015, Theorems 14.3 and 14.4.

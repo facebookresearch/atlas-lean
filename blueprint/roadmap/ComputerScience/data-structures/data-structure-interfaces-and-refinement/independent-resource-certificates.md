@@ -13,3 +13,4 @@ Add (respectively scale) the two per-operation physicist's inequalities.
 ## Sources
 
 - T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
+- R. E. Tarjan, "Amortized Computational Complexity", SIAM Journal on Algebraic and Discrete Methods 6(2), pp. 306-318, 1985.

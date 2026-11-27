@@ -1,6 +1,6 @@
 # Full-tuple interpretations pull back FO(LFP), FO(TC) and SO∃-Horn sentences
 
-Let $I$ be a full-tuple ordered interpretation of dimension $k$. For every sentence $\Phi$ of FO(LFP) (respectively FO(TC), FO(DTC), or SO∃-Horn) over the target vocabulary with its canonical numeric predicates, there is a sentence $\Phi^I$ of the same logic over the source such that $\mathfrak{A} \models \Phi^I$ iff $I(\mathfrak{A}) \models \Phi$. A fixed point or closure over $r$-tuples of target elements becomes one over $rk$-tuples of source elements, relation variables of arity $r$ become relation variables of arity $rk$, and positivity (polarity of fixed-point variables and of closure operators) is preserved. Hence FO(LFP), FO(TC), FO(DTC) and SO∃-Horn definability on ordered structures are closed under first-order reductions by full-tuple interpretations.
+Let $I$ be a full-tuple ordered interpretation of dimension $k$. For every sentence $\Phi$ of FO(LFP) (respectively FO(TC), FO(DTC)) over the target vocabulary with its canonical numeric predicates, there is a sentence $\Phi^I$ of the same logic over the source such that $\mathfrak{A} \models \Phi^I$ iff $I(\mathfrak{A}) \models \Phi$. A fixed point or closure over $r$-tuples of target elements becomes one over $rk$-tuples of source elements, and positivity (polarity of fixed-point variables and of closure operators) is preserved. Hence FO(LFP), FO(TC) and FO(DTC) definability on ordered structures are closed under first-order reductions by full-tuple interpretations. For SO∃-Horn the same substitution, with relation variables of arity $r$ becoming relation variables of arity $rk$, gives an SO∃-Horn sentence with first-order guards, which guard elimination turns into one with quantifier-free guards on structures with a built-in successor; so SO∃-Horn definability on such structures is closed under these reductions as well.
 
 ## Proof sketch
 
@@ -16,6 +16,7 @@ Replace each target variable by a block of $k$ coordinates, using the definable 
 
 - [Lexicographic order, successor and BIT on tuples are definable](lexicographic-tuple-numeric-predicates.md)
 - [Pullback of formulas along interpretations](../first-order-interpretations-and-reductions/pullback-along-interpretations.md)
+- [Guard elimination for SO∃-Horn on successor structures](../second-order-horn-logic/so-horn-guard-elimination.md)
 
 ## Sources
 

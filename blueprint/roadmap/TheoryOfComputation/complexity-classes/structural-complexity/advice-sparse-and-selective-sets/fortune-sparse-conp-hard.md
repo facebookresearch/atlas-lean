@@ -4,7 +4,7 @@ If some sparse language is $\mathsf{coNP}$-hard under polynomial-time many-one r
 
 ## Proof sketch
 
-Run the self-reduction tree of a formula level by level. Map each node (a partial assignment) by the reduction of UNSAT to the sparse set: nodes mapping to the same string are equisatisfiable, so keep one node per image; images known to be in the sparse set's 'unsatisfiable' part are pruned. Sparseness keeps every level polynomial in size while always retaining a satisfiable node if one exists.
+Let $f$ reduce SAT to $S\subseteq G$ with $G\setminus S$ sparse, and explore the tree of partial assignments of a formula level by level, mapping each node (the residual formula) by $f$. Nodes whose images lie outside $G$ are unsatisfiable and are pruned; nodes with equal images are equisatisfiable, so one node per image is kept. Unsatisfiable nodes have images in the sparse set $G\setminus S$, of which there are at most $p(n)$ of the relevant lengths, so keeping any $p(n)+1$ nodes with distinct images in $G$ retains a satisfiable node whenever the level contains one; every level stays polynomial and a satisfying assignment is found at the leaves if one exists. A sparse coNP-hard set $S'$ fits this form with $G=\{0,1\}^*$ and $S=\overline{S'}$.
 
 ## Depends on
 
@@ -21,4 +21,4 @@ Run the self-reduction tree of a formula level by level. Map each node (a partia
 ## Sources
 
 - Steven Fortune, "A Note on Sparse Complete Sets", SIAM Journal on Computing 8(3), 1979.
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 3–5", 2007, Exercise 3.12.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 3.12.

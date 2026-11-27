@@ -24,4 +24,3 @@ Given $L\in\Pi_3^p$ of the form $\forall\exists\forall$, a $\Sigma_3^p$ machine 
 ## Sources
 
 - Chee K. Yap, "Some Consequences of Non-Uniform Conditions on Uniform Classes", Theoretical Computer Science 26(3), 1983.
-- Hans L. Bodlaender, Bart M. P. Jansen and Stefan Kratsch, "Kernelization Lower Bounds by Cross-Composition", SIAM Journal on Discrete Mathematics 28(1), arXiv:1206.5941, 2014, Theorem 2.

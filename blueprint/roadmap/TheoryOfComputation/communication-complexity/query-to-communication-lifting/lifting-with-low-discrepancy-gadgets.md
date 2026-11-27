@@ -1,10 +1,14 @@
 # Lifting with low-discrepancy gadgets
 
-For every fixed $\eta > 0$ there is $k = O(1/\eta)$ such that the following holds. Let $g : [m] \times [m] \to \{0,1\}$ be any gadget with uniform discrepancy at most $m^{-\eta}$ and $m \ge n^{2048 k^2}$. If $R \circ g^n$ has a deterministic protocol of cost $c$, then $R$ has a decision tree of depth $d$ with $m^d \le 8^{256 k c}$, so $D^{cc}(R \circ g^n) = \Omega_\eta\big(D^{dt}(R) \log m\big)$. This applies to the inner product gadget on $b$-bit strings, which has discrepancy $2^{-b/2}$.
+For every $\eta > 0$ there is $c = O\big(\eta^{-2} \log(1/\eta)\big)$ such that the following holds. Let $R$ be a search problem on $n$ bits and let $g : \{0,1\}^b \times \{0,1\}^b \to \{0,1\}$ be any gadget with uniform discrepancy $\mathrm{disc}_{\mathrm{unif}}(g) \le 2^{-\eta b}$ and $b \ge c \log n$. Then
+
+$$D^{cc}(R \circ g^n) = \Omega\big(D^{dt}(R) \cdot b\big),$$
+
+with an absolute constant in $\Omega$; with the trivial simulation, $D^{cc}(R \circ g^n) = \Theta(D^{dt}(R) \cdot b)$ when $D^{cc}(g) = O(b)$. This applies to the inner product gadget on $b$-bit strings, whose uniform discrepancy is at most $2^{-b/2}$ (so $\eta = 1/2$); for $b = 1$ it is exactly $1/2$, since the largest absolute rectangle sum of the sign matrix with rows $(1,1)$ and $(1,-1)$ is $2$. The same paper proves the analogous randomized lifting theorem.
 
 ## Proof sketch
 
-Follow the simulation of the index-gadget proof with density replaced by a discrepancy-based notion: low discrepancy implies that conditioning on rare gadget outputs ("dangerous values") is unlikely, and counting canonical parity tests shows that a dense set has few unsafe values, so each density-restoring step costs few queries per bit of communication. The XOR bound on discrepancy controls the parity tests.
+Follow the simulation of the index-gadget proof with blockwise min-entropy of both players' sets as the density measure: low uniform discrepancy makes the gadget an extractor for independent high-min-entropy sources, and its XOR powers have exponentially small discrepancy, so parities of gadget outputs on a dense rectangle are nearly unbiased, which keeps every value of the unqueried bits possible; each density-restoring step costs few queries per bit of communication.
 
 ## Depends on
 
@@ -19,4 +23,4 @@ Follow the simulation of the index-gadget proof with density replaced by a discr
 
 ## Sources
 
-- A. Chattopadhyay, Y. Filmus, S. Koroth, O. Meir and T. Pitassi, "Query-to-Communication Lifting Using Low-Discrepancy Gadgets", SIAM Journal on Computing 50(1), 2021.
+- A. Chattopadhyay, Y. Filmus, S. Koroth, O. Meir and T. Pitassi, "Query-to-Communication Lifting Using Low-Discrepancy Gadgets", SIAM Journal on Computing 50(1), 2021 (Definition 1.1 and Theorem 1.2).

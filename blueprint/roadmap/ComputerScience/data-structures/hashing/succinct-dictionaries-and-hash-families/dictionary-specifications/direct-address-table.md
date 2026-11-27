@@ -9,4 +9,4 @@ A *direct-address table* for keys $[U]$ is an array of $U$ cells, cell $u$ holdi
 
 ## Sources
 
-- T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
+- T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009, Section 11.1.

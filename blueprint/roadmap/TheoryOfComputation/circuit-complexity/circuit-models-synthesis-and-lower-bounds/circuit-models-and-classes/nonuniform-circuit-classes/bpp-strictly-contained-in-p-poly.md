@@ -18,5 +18,5 @@ Inclusion is Adleman's theorem. Every $\mathsf{BPP}$ language is in $\mathsf{PSP
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 6–7", 2007.
-- Leonard Adleman, "Two Theorems on Random Polynomial Time", 19th Annual Symposium on Foundations of Computer Science, 1978.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.
+- Leonard Adleman, "Two Theorems on Random Polynomial Time", 19th Annual Symposium on Foundations of Computer Science, 75–83, 1978.

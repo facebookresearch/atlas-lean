@@ -9,10 +9,10 @@ $\mathbb{E}[\mathrm{IP}\cdot p] = \mathbb{E}|p| > 0$, while by flatness of the I
 ## Depends on
 
 - [Polynomial threshold functions and sparsity](polynomial-threshold-functions.md)
+- [Fourier spectrum of the inner product mod 2](../fourier-expansion-supplements/fourier-spectrum-of-inner-product-mod-2.md)
 
 ## Proof depends on
 
-- [Fourier spectrum of the inner product mod 2](../fourier-expansion-supplements/fourier-spectrum-of-inner-product-mod-2.md)
 - [Fourier coefficients bounded by the L¹ norm and values by the spectral norm](../fourier-expansion-supplements/fourier-coefficients-bounded-by-l1-norm.md)
 
 ## Sources

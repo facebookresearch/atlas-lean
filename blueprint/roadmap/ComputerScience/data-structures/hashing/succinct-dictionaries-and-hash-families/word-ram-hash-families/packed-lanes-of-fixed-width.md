@@ -9,4 +9,3 @@ A word holds $m$ *packed lanes* of width $W$ if lane $j$ occupies bits $[jW, (j+
 ## Sources
 
 - M. L. Fredman and D. E. Willard, "Surpassing the Information Theoretic Bound with Fusion Trees", Journal of Computer and System Sciences 47(3), 1993.
-- M. A. Bender, M. Farach-Colton, J. Kuszmaul and W. Kuszmaul, "Modern Hashing Made Simple", Proceedings of the 2024 SIAM Symposium on Simplicity in Algorithms (SOSA), 2024.

@@ -13,5 +13,5 @@ Plug the three address blocks of $D(z)$ into three copies of $W$ and compare wit
 
 ## Sources
 
-- Ryan Williams, "Improving Exhaustive Search Implies Superpolynomial Lower Bounds", Author's full version, 2010.
-- Ryan Williams, "Nonuniform ACC Circuit Lower Bounds", Journal of the ACM, 2014.
+- Ryan Williams, "Improving Exhaustive Search Implies Superpolynomial Lower Bounds", SIAM Journal on Computing 42(3), 2013 (STOC 2010).
+- Ryan Williams, "Nonuniform ACC Circuit Lower Bounds", Journal of the ACM 61(1), Article 2, 2014 (Section 3, proof sketch of Theorem 3.1 and Lemma 3.1).

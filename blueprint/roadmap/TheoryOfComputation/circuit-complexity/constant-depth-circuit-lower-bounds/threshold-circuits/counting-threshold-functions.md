@@ -4,7 +4,7 @@ Let $g_1,\dots,g_m:X\to\{0,1\}$ be functions on a finite set $X$. A *threshold f
 
 ## Proof sketch
 
-If two distinct threshold functions over the same features had equal Chow moments, the weighted sum $\sum_x(f(x)-f'(x))(\sum_ia_ig_i(x)-\theta)$ would be both zero and strictly positive. Each moment coordinate is an integer of absolute value at most $|X|$.
+Since $X$ is finite, the threshold $\theta$ of $f$ can be perturbed so that $\sum_ia_ig_i(x)\ne\theta$ for all $x$. If a different threshold function $f'$ over the same features had the same Chow moments, the weighted sum $\sum_x(f(x)-f'(x))(\sum_ia_ig_i(x)-\theta)$ would vanish, being a linear combination of moment differences, yet every nonzero term is positive. Each moment coordinate is an integer of absolute value at most $|X|$.
 
 ## Depends on
 
@@ -12,4 +12,5 @@ If two distinct threshold functions over the same features had equal Chow moment
 
 ## Sources
 
-- Daniel M. Kane, Ryan Williams, "Super-Linear Gate and Super-Quadratic Wire Lower Bounds for Depth-Two and Depth-Three Threshold Circuits", Proceedings of the Forty-Eighth Annual ACM Symposium on Theory of Computing (STOC 2016), 2016.
+- Daniel M. Kane, Ryan Williams, "Super-Linear Gate and Super-Quadratic Wire Lower Bounds for Depth-Two and Depth-Three Threshold Circuits", Proceedings of the Forty-Eighth Annual ACM Symposium on Theory of Computing (STOC 2016), 2016 (Theorem 2.2, Chow's theorem, and Theorem 2.3, the Roychowdhury–Siu–Orlitsky count $(2^n+1)^{s+1}$ of threshold functions over $s$ given functions).
+- C. K. Chow, "On the Characterization of Threshold Functions", Proceedings of the 2nd Annual Symposium on Switching Circuit Theory and Logical Design (FOCS 1961), 1961.

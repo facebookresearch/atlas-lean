@@ -15,7 +15,7 @@ Tractability uses the normal forms of each class (Horn, dual Horn, 2-CNF, affine
 ## Proof depends on
 
 - [Without Schaefer polymorphisms, all polymorphisms are projections or negated projections](without-schaefer-polymorphisms.md)
-- [Geiger / Bodnarčuk et al.: pp-definability is captured by polymorphisms](../polymorphisms-of-boolean-relations/pp-definability-captured-by-polymorphisms.md)
+- [Pol–Inv Galois connection over finite domains: CSP complexity depends only on the polymorphism clone](../../satisfiability/finite-domain-csp-dichotomy/pol-inv-galois-connection-finite-domains.md)
 - [Horn-definable relations are exactly the AND-closed relations](../polymorphisms-of-boolean-relations/horn-definable-iff-and-closed.md)
 - [2-CNF-definable relations are exactly the majority-closed relations](../polymorphisms-of-boolean-relations/two-cnf-definable-iff-majority-closed.md)
 - [Affine relations are exactly the minority-closed relations](../polymorphisms-of-boolean-relations/affine-iff-minority-closed.md)
@@ -27,4 +27,4 @@ Tractability uses the normal forms of each class (Horn, dual Horn, 2-CNF, affine
 ## Sources
 
 - T. J. Schaefer, "The Complexity of Satisfiability Problems", Proceedings of the 10th ACM Symposium on Theory of Computing (STOC), 216–226, 1978.
-- H. Chen, "A Rendezvous of Logic, Complexity, and Algebra", SIGACT News 37(4), 85–114, 2006 (extended version ACM Computing Surveys 42(1), 2009).
+- H. Chen, "A Rendezvous of Logic, Complexity, and Algebra", SIGACT News 37(4), 85–114, 2006 (extended version ACM Computing Surveys 42(1), 2009): Theorem 3.20.

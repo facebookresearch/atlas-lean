@@ -1,6 +1,6 @@
 # Every n × n matrix has rigidity at most (n - r)^2
 
-For every $n\times n$ matrix $A$ over a field and every $0\le r\le n$, $R_A(r)\le(n-r)^2$; more generally an $m\times n$ matrix has $R_A(r)\le(m-r)(n-r)$ for $r\le\min(m,n)$. The bound is attained, for example, by the $2\times2$ Hadamard matrix at $r=0$ and $r=1$.
+For every $n\times n$ matrix $A$ over a field and every $0\le r\le n$, $R_A(r)\le(n-r)^2$; more generally an $m\times n$ matrix has $R_A(r)\le(m-r)(n-r)$ for $r\le\min(m,n)$. The bound is attained, for example, by the $2\times2$ Hadamard matrix at $r=0$ and $r=1$ over any field of characteristic other than $2$.
 
 ## Proof sketch
 

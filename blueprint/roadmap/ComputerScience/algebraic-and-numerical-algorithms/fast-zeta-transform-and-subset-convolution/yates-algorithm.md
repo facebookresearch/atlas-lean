@@ -4,7 +4,7 @@ Store $f : 2^{[n]} \to R$ as a table of $2^n$ cells, cell $k$ holding the value 
 
 ## Proof sketch
 
-After passes $0, \dots, i-1$ cell $S$ holds the sum of $f(T)$ over the $T \subseteq S$ that agree with $S$ outside the first $i$ coordinates; pass $i$ extends the summation to coordinate $i$.
+After passes $0, \dots, i-1$ cell $S$ holds $\sum_T c^{|S \setminus T|} f(T)$ over the $T \subseteq S$ that agree with $S$ outside the first $i$ coordinates; pass $i$ extends the summation to coordinate $i$. For $c = 1$ this ends at $\zeta f$ and for $c = -1$ at $\mu f$.
 
 ## Depends on
 

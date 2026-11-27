@@ -1,6 +1,5 @@
 # Small-Bias Spaces
 
-- [Bias, ε-biased and k-wise ε-biased distributions](small-bias-distributions.md)
 - [k-wise small bias is close to exact k-wise independence](almost-k-wise-independence-smoothing.md)
 - [Pointwise mass bounds from parity biases](pointwise-mass-bounds-from-biases.md)
 - [The powering construction of small-bias spaces](powering-construction.md)

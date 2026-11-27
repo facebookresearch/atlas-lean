@@ -1,6 +1,6 @@
 # Space of the multi-level dictionary tree is OPT + O(R)
 
-There are constants $C$ and $n_0$, depending only on $\alpha_{\min}$ and $\alpha_{\max}$, such that for every $n \ge n_0$, every universe size $U$ with $n^{1+\alpha_{\min}} \le U \le n^{1+\alpha_{\max}}$, every value bound $V \ge 1$ and every redundancy parameter $R$ with $n / (\log_2 n)^{0.1} \le R \le n / 2^{\log^* n}$ (the regime $R > n / \log^{0.1} n$ of Theorem 1.1 of Li, Liang, Yu and Zhou, constructed in their Section 5), the total number of bits of the canonical multi-level dictionary tree — leaf minimaps, inner storage tables, metadata, waiting lists and all hash seeds — is at most
+There are constants $C$ and $n_0$, depending only on $\alpha_{\min}$ and $\alpha_{\max}$, such that for every $n \ge n_0$, every universe size $U$ with $n^{1+\alpha_{\min}} \le U \le n^{1+\alpha_{\max}}$, every value bound $V \ge 1$, word size $w = \Omega(\log(UV))$ and every redundancy parameter $R$ with $n / (\log_2 n)^{0.1} \le R \le n / 2^{\log^* n}$ (the regime $R \ge n / \log^{0.1} n$ of Theorem 1.1 of Li, Liang, Yu and Zhou, constructed in their Section 5), the total number of bits of the multi-level dictionary tree holding $n$ or $n - 1$ keys — leaf minimaps, inner storage tables, metadata, waiting lists and all hash seeds — is at most
 
 $$
 \log_2 \binom{U}{n} + n \log_2 V + C \cdot R .

@@ -1,10 +1,10 @@
 # An exhausted forest search certifies optimality
 
-If the forest search exhausts every incidence of every visited variable without finding an augmentation or a blossom, and every constraint is a nonempty even delta-matroid on its argument positions, then the current valid labeling has the minimum number of defects among all valid labelings.
+If every constraint is an even delta-matroid and the forest search for a valid labeling $f$ stops because every incidence of every variable in the forest has been used, without ever meeting two branches (no augmenting walk and no blossom), then $f$ is optimal: it has the minimum number of defects among all valid labelings.
 
 ## Proof sketch
 
-Compare with any valid labeling: saturation of the scans bounds local disagreements at each constraint by one-sided exchange, while fresh roots and unique children bound the global changes; counting the two bounds shows the other labeling cannot have fewer defects.
+If some valid labeling $g$ has fewer defects than $f$, the even delta-matroid exchange property at each constraint turns $f \triangle g$ into an augmenting walk for $f$. One then shows by induction along any walk that starts at a defect and keeps every intermediate labeling valid that each of its constraint-to-variable steps is an arc of the final forest. The last step of the augmenting walk enters a defect, which is a root and already has outgoing arcs to both its constraints, a contradiction.
 
 ## Depends on
 
@@ -14,4 +14,4 @@ Compare with any valid labeling: saturation of the scans bounds local disagreeme
 
 ## Sources
 
-- A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), 2019.
+- A. Kazda, V. Kolmogorov and M. Rolínek, "Even Delta-Matroids and the Complexity of Planar Boolean CSPs", ACM Transactions on Algorithms 15(2), Article 22, 2019, Lemma 31 and Lemma 45.

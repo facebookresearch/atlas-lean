@@ -17,4 +17,5 @@ where $Q'(b, s'', t) = Q(b, s'', t + c(s, o))$. A *cost Hoare triple* $\{P\}\, p
 ## Sources
 
 - T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, "Introduction to Algorithms", 3rd edition, MIT Press, 2009.
-- D. E. Knuth, "The Art of Computer Programming, Volume 1: Fundamental Algorithms", 3rd edition, Addison-Wesley, 1997.
+- E. W. Dijkstra, "Guarded Commands, Nondeterminacy and Formal Derivation of Programs", Communications of the ACM 18(8), pp. 453-457, 1975.
+- H. R. Nielson, "A Hoare-Like Proof System for Analysing the Computation Time of Programs", Science of Computer Programming 9(2), pp. 107-136, 1987.

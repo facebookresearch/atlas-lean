@@ -18,5 +18,6 @@ A satisfying assignment of $\varphi_1$ certifies a yes-instance and one of $\var
 
 ## Sources
 
-- Oded Goldreich, "Computational Complexity: A Conceptual Perspective, Chapters 0–2", 2006, Exercise 2.36.
-- Oded Goldreich, "On Promise Problems: A Survey", Theoretical Computer Science: Essays in Memory of Shimon Even, 2006.
+- Oded Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008, Exercise 2.36 (numbering of the December 2006 public draft).
+- Shimon Even, Alan L. Selman and Yacov Yacobi, "The Complexity of Promise Problems with Applications to Public-Key Cryptography", Information and Control 61(2), 159–173, 1984.
+- Oded Goldreich, "On Promise Problems: A Survey", in Theoretical Computer Science: Essays in Memory of Shimon Even, Lecture Notes in Computer Science 3895, 254–290, 2006.
