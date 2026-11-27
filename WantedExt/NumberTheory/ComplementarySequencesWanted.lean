@@ -17,7 +17,9 @@ public import Mathlib.Data.Nat.NthRoot.Defs
 public import Mathlib.Tactic.IntervalCases
 public import MathlibExt.NumberTheory.AscFactorialBounds
 public import MathlibExt.NumberTheory.ComplementarySequences
+public import MathlibExt.NumberTheory.ComplementarySequencesInterleaveNear
 public import MathlibExt.NumberTheory.NonSecondPentagonal
+public import MathlibExt.NumberTheory.ComplementarySequencesNthNonCenteredPolygonal
 
 /-!
 # Algorithms for complementary sequences (wanted statements)
@@ -27,7 +29,9 @@ complementary sequence `f_P` lists the positive integers that are not values `f 
 `m ≥ 1`. The paper computes its `n`-th term from the counting function
 `C_{¬P}(x) = #{m ≥ 1 : f m ≤ x}` or from an easily inverted interleaving function, and
 derives closed formulas for the complements of polygonal, second polygonal, centered
-polygonal, pyramidal, sum-of-powers and simplex numbers.
+polygonal, pyramidal, sum-of-powers and simplex numbers. The theorem
+`nth_nonCenteredPolygonal` is proved in
+`MathlibExt.NumberTheory.ComplementarySequencesNthNonCenteredPolygonal`.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95.
@@ -53,24 +57,6 @@ public theorem_wanted nthNonValue_eq_two_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1
     let C : ℕ → ℕ := fun x => ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card
     nthNonValue f n = n + C (n + C n)
 
-/-- **Interleaving formula when $f(m) - \alpha(m) < m$.** Let
-$f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$,
-and for $n \ge 1$ let $f_P(n)$ be the $n$-th positive integer that is not a value $f(m)$ with
-$m \ge 1$. Let $\alpha : \mathbb{N} \to \mathbb{R}$ satisfy $f(m - 1) \le \alpha(m) \le f(m)$ for
-all $m \ge 2$, and let $h : \mathbb{N} \to \mathbb{N}$ satisfy $h(n) \ge 1$ and
-$\alpha(h(n)) \le n < \alpha(h(n) + 1)$ for all $n \ge 1$.
-Suppose moreover that $f(m) - \alpha(m) < m$ for all $m \ge 1$. Then for every $n \ge 1$,
-$f_P(n) = n + h(n) + 1$ if $f(h(n) + 1) \le n + h(n)$, and $f_P(n) = n + h(n)$ otherwise.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Corollary 1. -/
-public theorem_wanted nthNonValue_eq_interleave_of_sub_lt (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
-    (hgap : ∀ m, 1 ≤ m → f m + m ≤ f (m + 1)) (α : ℕ → ℝ)
-    (hα : ∀ m, 2 ≤ m → (f (m - 1) : ℝ) ≤ α m ∧ α m ≤ f m) (h : ℕ → ℕ)
-    (hh : ∀ n, 1 ≤ n → 1 ≤ h n ∧ α (h n) ≤ n ∧ (n : ℝ) < α (h n + 1))
-    (hclose : ∀ m : ℕ, 1 ≤ m → (f m : ℝ) - α m < m) (n : ℕ) (hn : 1 ≤ n) :
-    nthNonValue f n = if f (h n + 1) ≤ n + h n then n + h n + 1 else n + h n
-
 /-- **Interleaving formula when $f(m) - \alpha(m) \ge m$.** Let
 $f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$,
 and for $n \ge 1$ let $f_P(n)$ be the $n$-th positive integer that is not a value $f(m)$ with
@@ -88,14 +74,6 @@ public theorem_wanted nthNonValue_eq_interleave_of_le_sub (f : ℕ → ℕ) (hf1
     (hh : ∀ n, 1 ≤ n → 1 ≤ h n ∧ α (h n) ≤ n ∧ (n : ℝ) < α (h n + 1))
     (hfar : ∀ m : ℕ, 2 ≤ m → (m : ℝ) ≤ f m - α m) (n : ℕ) (hn : 1 ≤ n) :
     nthNonValue f n = if f (h n) < n + h n then n + h n else n + h n - 1
-
-/-- **Formula for the non-square numbers.** For every integer $n \ge 1$, the $n$-th positive
-integer that is not a perfect square is $n + \lfloor \sqrt{n} + 1/2 \rfloor$.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Corollary 3. -/
-public theorem_wanted nthNonValue_sq_eq_round (n : ℕ) (hn : 1 ≤ n) :
-    nthNonValue (fun j => j ^ 2) n = n + ⌊Real.sqrt n + 1 / 2⌋₊
 
 /-- **Formula for the non-polygonal numbers.** Let $k \ge 3$, and for $j \ge 1$ let
 $T(k, j) = (k - 2) j (j - 1)/2 + j$ be the $k$-gonal numbers. For every integer $n \ge 1$, put
@@ -161,18 +139,6 @@ public theorem_wanted nthNonValue_secondPolygonal (k : ℕ) (hk : 5 < k) (n : �
     let s := Nat.sqrt (2 * n / (k - 2))
     nthNonValue (fun j => ((k - 2) * j ^ 2 + (k - 4) * j) / 2) n =
       if (k - 2) * s * (s + 1) < 2 * n + 4 * s then n + s else n + s - 1
-
-/-- **Non-centered polygonal numbers.** Let $k \ge 3$; the centered $k$-gonal numbers are
-$k j (j + 1)/2 + 1$ for $j \ge 0$. For $n \ge 1$ let $a(n)$ be the $n$-th nonnegative integer that
-is not a centered $k$-gonal number (so $a(1) = 0$), and let $s = \lfloor \sqrt{2n/k} \rfloor$.
-Then $a(n) = n + s$ if $k s (s + 1) < 2(n + s - 1)$, and $a(n) = n + s - 1$ otherwise.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Theorem 8. -/
-public theorem_wanted nth_nonCenteredPolygonal (k : ℕ) (hk : 3 ≤ k) (n : ℕ) (hn : 1 ≤ n) :
-    let s := Nat.sqrt (2 * n / k)
-    Nat.nth (fun x => ∀ j, k * j * (j + 1) / 2 + 1 ≠ x) (n - 1) =
-      if k * s * (s + 1) < 2 * (n + s - 1) then n + s else n + s - 1
 
 /-- **Formula for the non-pyramidal numbers.** Let $3 \le k \le 8$, and for $j \ge 1$ let
 $P(k, j) = j (j + 1) ((k - 2) j - (k - 5))/6$ be the $k$-gonal pyramidal numbers. For every

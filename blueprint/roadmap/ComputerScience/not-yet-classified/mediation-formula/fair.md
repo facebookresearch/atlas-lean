@@ -1,0 +1,3 @@
+# Fair
+
+A fair coin.
