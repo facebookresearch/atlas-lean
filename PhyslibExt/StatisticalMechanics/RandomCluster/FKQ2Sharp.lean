@@ -114,13 +114,13 @@ lemma pointwise_di_fk_q2 {n : ℕ} (hn : 1 ≤ n) {p : ℝ} (hp : 0 < p) (hp1 : 
     (hFKcov : (n : ℝ) * c₀
         * (fkProbOf G p 2 A * (1 - fkProbOf G p 2 A))
       ≤ D * ∑ e ∈ G.edgeFinset,
-          fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (coord e))
+          fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (coordR e))
     (hθub : fkProbOf G p 2 A ≤ 1 - κ) :
     (4 * (n : ℝ) * c₀ * κ / D) * fkProbOf G p 2 A
       ≤ deriv (fun p => fkProbOf G p 2 A) p := by
   set θ := fkProbOf G p 2 A with hθdef
   set S := ∑ e ∈ G.edgeFinset,
-      fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (coord e) with hSdef
+      fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (coordR e) with hSdef
   set θ' := deriv (fun p => fkProbOf G p 2 A) p with hθ'def
   have hnpos : (0 : ℝ) < n := by exact_mod_cast Nat.lt_of_lt_of_le Nat.zero_lt_one hn
   have hθnn : 0 ≤ θ := fkProbOf_nonneg G hp hp1 (by norm_num) A
@@ -154,7 +154,7 @@ lemma fk_q2_crossing_decay {n : ℕ} (hn : 1 ≤ n)
     (hFKcov : ∀ p ∈ Icc a b, (n : ℝ) * c₀
         * (fkProbOf G p 2 A * (1 - fkProbOf G p 2 A))
       ≤ D * ∑ e ∈ G.edgeFinset,
-          fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (coord e))
+          fkCov G p 2 (A.indicator (fun _ => (1 : ℝ))) (coordR e))
     (hθub : ∀ p ∈ Icc a b, fkProbOf G p 2 A ≤ 1 - κ) :
     fkProbOf G a 2 A
       ≤ Real.exp (-(4 * (n : ℝ) * c₀ * κ / D * (b - a))) := by
@@ -199,7 +199,7 @@ lemma fkTheta_subcritical_eq_zero (d : ℕ)
             * (fkProbOf (boxGraph d N) p 2 (Across N)
                 * (1 - fkProbOf (boxGraph d N) p 2 (Across N)))
           ≤ D * ∑ e ∈ (boxGraph d N).edgeFinset,
-              fkCov (boxGraph d N) p 2 ((Across N).indicator (fun _ => (1 : ℝ))) (coord e))
+              fkCov (boxGraph d N) p 2 ((Across N).indicator (fun _ => (1 : ℝ))) (coordR e))
       ∧ fkProbOf (boxGraph d N) p 2 (Across N) ≤ 1 - κ)
     (hBridge : ∀ (p : ℝ) (hp : 0 < p) (hp1 : p < 1), p ≤ FK.fkPc d 2 →
         (∀ N : ℕ, 1 ≤ N →

@@ -10,7 +10,6 @@ module
 import Mathlib.Analysis.Calculus.Deriv.Inv
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
-public import PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative
 /-!
 # Edge-parameter derivatives of the inhomogeneous random-cluster measure
 
@@ -171,13 +170,13 @@ lemma hasDerivAt_edgeProductW_clean {pf : Sym2 V → ℝ} {e₀ : Sym2 V} {t : �
     (ht : 0 < t) (ht1 : t < 1) (ω : ConfigSpace (Sym2 V)) (he : e₀ ∈ G.edgeFinset) :
     HasDerivAt (fun t => edgeProductW G (Function.update pf e₀ t) ω)
       (edgeProductW G (Function.update pf e₀ t) ω
-        * ((coord e₀ ω - t) / (t * (1 - t)))) t := by
+        * ((coordR e₀ ω - t) / (t * (1 - t)))) t := by
   refine (hasDerivAt_edgeProductW_update G pf e₀ t ω he).congr_deriv ?_
   have ht1' : (0 : ℝ) < 1 - t := by linarith
   have htne : t ≠ 0 := ht.ne'
   have ht1ne : (1 : ℝ) - t ≠ 0 := ht1'.ne'
   rw [edgeProductW_update_factor G pf e₀ t ω he]
-  unfold coord
+  unfold coordR
   by_cases h : ω e₀ = true
   · rw [ite_eq_left h, ite_eq_left h, ite_eq_left h]; field_simp
   · rw [ite_eq_right h, ite_eq_right h, ite_eq_right h]; field_simp; ring
@@ -187,7 +186,7 @@ lemma hasDerivAt_fkWeightW {pf : Sym2 V → ℝ} {e₀ : Sym2 V} {t : ℝ}
     (he : e₀ ∈ G.edgeFinset) :
     HasDerivAt (fun t => fkWeightW G (Function.update pf e₀ t) q ω)
       (fkWeightW G (Function.update pf e₀ t) q ω
-        * ((coord e₀ ω - t) / (t * (1 - t)))) t := by
+        * ((coordR e₀ ω - t) / (t * (1 - t)))) t := by
   have h := (hasDerivAt_edgeProductW_clean (pf := pf) G ht ht1 ω he).mul_const
     (q ^ numClusters G ω)
   refine h.congr_deriv ?_
@@ -214,7 +213,7 @@ lemma hasDerivAt_fkNumerW {pf : Sym2 V → ℝ} {e₀ : Sym2 V} {t : ℝ}
     (he : e₀ ∈ G.edgeFinset) :
     HasDerivAt (fun t => fkNumerW G (Function.update pf e₀ t) q g)
       ((∑ ω : ConfigSpace (Sym2 V),
-        g ω * (fkWeightW G (Function.update pf e₀ t) q ω * (coord e₀ ω - t)))
+        g ω * (fkWeightW G (Function.update pf e₀ t) q ω * (coordR e₀ ω - t)))
           / (t * (1 - t))) t := by
   unfold fkNumerW
   have hsum : HasDerivAt
@@ -222,7 +221,7 @@ lemma hasDerivAt_fkNumerW {pf : Sym2 V → ℝ} {e₀ : Sym2 V} {t : ℝ}
         g ω * fkWeightW G (Function.update pf e₀ t) q ω)
       (∑ ω : ConfigSpace (Sym2 V),
         g ω * (fkWeightW G (Function.update pf e₀ t) q ω
-          * ((coord e₀ ω - t) / (t * (1 - t))))) t := by
+          * ((coordR e₀ ω - t) / (t * (1 - t))))) t := by
     apply HasDerivAt.fun_sum
     intro ω _
     exact (hasDerivAt_fkWeightW (pf := pf) G ht ht1 q ω he).const_mul (g ω)
@@ -289,7 +288,7 @@ theorem hasDerivAt_fkMeanW {pf : Sym2 V → ℝ} (hpf : ∀ e, 0 < pf e) (hpf1 :
     {q : ℝ} (hq : 0 < q) {e₀ : Sym2 V} (he : e₀ ∈ G.edgeFinset)
     (g : ConfigSpace (Sym2 V) → ℝ) :
     HasDerivAt (fun t => fkMeanW G (Function.update pf e₀ t) q g)
-      (fkCovW G (Function.update pf e₀ (pf e₀)) q g (coord e₀) / (pf e₀ * (1 - pf e₀)))
+      (fkCovW G (Function.update pf e₀ (pf e₀)) q g (coordR e₀) / (pf e₀ * (1 - pf e₀)))
       (pf e₀) := by
   set t₀ := pf e₀ with ht₀
   have ht : 0 < t₀ := hpf e₀
@@ -307,7 +306,7 @@ theorem hasDerivAt_fkMeanW {pf : Sym2 V → ℝ} (hpf : ∀ e, 0 < pf e) (hpf1 :
     · subst h; rw [Function.update_self]; exact hs1
     · rw [Function.update_of_ne h]; exact hpf1 e
   have hN : HasDerivAt (fun t => fkNumerW G (Function.update pf e₀ t) q g)
-      (fkNumerW G (Function.update pf e₀ t₀) q (fun ω => g ω * (coord e₀ ω - t₀))
+      (fkNumerW G (Function.update pf e₀ t₀) q (fun ω => g ω * (coordR e₀ ω - t₀))
         / (t₀ * (1 - t₀))) t₀ := by
     have h := hasDerivAt_fkNumerW (pf := pf) G ht ht1 q g he
     refine h.congr_deriv ?_
@@ -316,7 +315,7 @@ theorem hasDerivAt_fkMeanW {pf : Sym2 V → ℝ} (hpf : ∀ e, 0 < pf e) (hpf1 :
     refine Finset.sum_congr rfl (fun ω _ => ?_)
     ring
   have hZd : HasDerivAt (fun t => fkZW G (Function.update pf e₀ t) q)
-      (fkNumerW G (Function.update pf e₀ t₀) q (fun ω => coord e₀ ω - t₀)
+      (fkNumerW G (Function.update pf e₀ t₀) q (fun ω => coordR e₀ ω - t₀)
         / (t₀ * (1 - t₀))) t₀ := by
     have h := hasDerivAt_fkNumerW (pf := pf) G ht ht1 q (fun _ => 1) he
     have hfun : (fun t => fkNumerW G (Function.update pf e₀ t) q (fun _ => 1))
@@ -340,23 +339,23 @@ theorem hasDerivAt_fkMeanW {pf : Sym2 V → ℝ} (hpf : ∀ e, 0 < pf e) (hpf1 :
   set Pf := Function.update pf e₀ t₀ with hPf
   set N := fkNumerW G Pf q g with hNdef
   set Z := fkZW G Pf q with hZdef
-  set NgC := fkNumerW G Pf q (fun ω => g ω * (coord e₀ ω - t₀)) with hNgC
-  set NC := fkNumerW G Pf q (fun ω => coord e₀ ω - t₀) with hNC
-  have hgC : fkMeanW G Pf q (fun ω => g ω * (coord e₀ ω - t₀)) = NgC / Z :=
+  set NgC := fkNumerW G Pf q (fun ω => g ω * (coordR e₀ ω - t₀)) with hNgC
+  set NC := fkNumerW G Pf q (fun ω => coordR e₀ ω - t₀) with hNC
+  have hgC : fkMeanW G Pf q (fun ω => g ω * (coordR e₀ ω - t₀)) = NgC / Z :=
     fkMeanW_eq_div G Pf q _
-  have hCexp : fkMeanW G Pf q (fun ω => coord e₀ ω - t₀) = NC / Z :=
+  have hCexp : fkMeanW G Pf q (fun ω => coordR e₀ ω - t₀) = NC / Z :=
     fkMeanW_eq_div G Pf q _
   have hgexp : fkMeanW G Pf q g = N / Z := fkMeanW_eq_div G Pf q g
-  have hcov : fkCovW G Pf q g (fun ω => coord e₀ ω - t₀)
+  have hcov : fkCovW G Pf q g (fun ω => coordR e₀ ω - t₀)
       = (NgC * Z - N * NC) / Z ^ 2 := by
     unfold fkCovW
     rw [hgC, hCexp, hgexp]
     field_simp
-  have hshift : fkCovW G Pf q g (fun ω => coord e₀ ω - t₀)
-      = fkCovW G Pf q g (coord e₀) :=
-    fkCovW_sub_const G Pf q g (coord e₀) hZne
+  have hshift : fkCovW G Pf q g (fun ω => coordR e₀ ω - t₀)
+      = fkCovW G Pf q g (coordR e₀) :=
+    fkCovW_sub_const G Pf q g (coordR e₀) hZne
   change (NgC / (t₀ * (1 - t₀)) * Z - N * (NC / (t₀ * (1 - t₀)))) / Z ^ 2
-      = fkCovW G Pf q g (coord e₀) / (t₀ * (1 - t₀))
+      = fkCovW G Pf q g (coordR e₀) / (t₀ * (1 - t₀))
   rw [← hshift, hcov]
   field_simp
 
@@ -364,7 +363,7 @@ lemma deriv_fkMeanW {pf : Sym2 V → ℝ} (hpf : ∀ e, 0 < pf e) (hpf1 : ∀ e,
     {q : ℝ} (hq : 0 < q) {e₀ : Sym2 V} (he : e₀ ∈ G.edgeFinset)
     (g : ConfigSpace (Sym2 V) → ℝ) :
     deriv (fun t => fkMeanW G (Function.update pf e₀ t) q g) (pf e₀)
-      = fkCovW G (Function.update pf e₀ (pf e₀)) q g (coord e₀)
+      = fkCovW G (Function.update pf e₀ (pf e₀)) q g (coordR e₀)
         / (pf e₀ * (1 - pf e₀)) :=
   (hasDerivAt_fkMeanW G hpf hpf1 hq he g).deriv
 
@@ -378,7 +377,7 @@ lemma hasDerivAt_fkProbWOf {pf : Sym2 V → ℝ} (hpf : ∀ e, 0 < pf e)
     (A : Set (ConfigSpace (Sym2 V))) :
     HasDerivAt (fun t => fkProbWOf G (Function.update pf e₀ t) q A)
       (fkCovW G (Function.update pf e₀ (pf e₀)) q (A.indicator (fun _ => (1 : ℝ)))
-          (coord e₀)
+          (coordR e₀)
         / (pf e₀ * (1 - pf e₀)))
       (pf e₀) :=
   hasDerivAt_fkMeanW G hpf hpf1 hq he _
@@ -388,7 +387,7 @@ lemma deriv_fkProbWOf {pf : Sym2 V → ℝ} (hpf : ∀ e, 0 < pf e)
     (A : Set (ConfigSpace (Sym2 V))) :
     deriv (fun t => fkProbWOf G (Function.update pf e₀ t) q A) (pf e₀)
       = fkCovW G (Function.update pf e₀ (pf e₀)) q (A.indicator (fun _ => (1 : ℝ)))
-          (coord e₀)
+          (coordR e₀)
         / (pf e₀ * (1 - pf e₀)) :=
   (hasDerivAt_fkProbWOf G hpf hpf1 hq he A).deriv
 
@@ -417,13 +416,13 @@ lemma hasDerivAt_fkProbWOf_beta {pf : Sym2 V → ℝ} (hpf : ∀ e, 0 < pf e)
       (fun b => fkProbWOf G (Function.update pf e₀ (1 - Real.exp (-(b * J)))) q A)
       ((J / (1 - Real.exp (-(β₀ * J))))
         * fkCovW G (Function.update pf e₀ (pf e₀)) q
-            (A.indicator (fun _ => (1 : ℝ))) (coord e₀))
+            (A.indicator (fun _ => (1 : ℝ))) (coordR e₀))
       β₀ := by
   have hinner := hasDerivAt_paramOfBeta J β₀
   have hval : (1 - Real.exp (-(β₀ * J))) = pf e₀ := hpt.symm
   have houter : HasDerivAt (fun t => fkProbWOf G (Function.update pf e₀ t) q A)
       (fkCovW G (Function.update pf e₀ (pf e₀)) q (A.indicator (fun _ => (1 : ℝ)))
-          (coord e₀) / (pf e₀ * (1 - pf e₀)))
+          (coordR e₀) / (pf e₀ * (1 - pf e₀)))
       (1 - Real.exp (-(β₀ * J))) := by
     rw [hval]; exact hasDerivAt_fkProbWOf G hpf hpf1 hq he A
   have hcomp := houter.comp β₀ hinner

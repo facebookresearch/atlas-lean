@@ -1127,7 +1127,7 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
   `Measure.infinitePi` instead.
 - Third round (94 of 635 sources ported so far): no ported module was deleted or merged; each ported
   source has its own module.
-  Three ported declarations were retired inside their modules as duplicates of first-round
+  Four ported declarations were retired inside their modules as duplicates of first-round
   declarations with the same full type (definitions and instances with a definitionally equal
   value); their users call the canonical declaration, and the pull-request description lists them
   too (original → canonical):
@@ -1139,7 +1139,12 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
     `StatMech.Sharpness.abbEdgeEquiv_mk` (from `Code/Sharpness/ABBoundaryPhi.lean`, in
     `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryPhi`) →
     `StatMech.Lattice.sym2Congr` and `StatMech.Lattice.sym2Congr_mk` (from
-    `Code/Lattice/PlanarDual.lean`, in `MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual`).
+    `Code/Lattice/PlanarDual.lean`, in `MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual`);
+  - `StatMech.FK.coord` (from `Code/FK/RussoDerivative.lean`, in
+    `PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative`) → `StatMech.FK.coordR`
+    (from `Code/FK/RussoDerivativeBeta.lean`, in
+    `PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivativeBeta`, which `RussoDerivative`
+    now imports), the same definition `if ω e then 1 else 0`.
 - `Atlas/StatisticalMechanics/Code/RSW/BoxCrossingCapstone.lean` (second round). The ported
   capstone's hypothesis unfolded to its advertised box-crossing conclusion, so it proved nothing
   beyond assuming the result; the module was removed during cleanup. The underlying RSW
