@@ -19,6 +19,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
+public import MathlibExt.NumberTheory.GobelSequenceGobelSequenceErrorEqTsumLe
 
 namespace MetaMathlibExt
 
@@ -155,35 +156,6 @@ Article 24.8.1, Proposition 10 (`jis-2024-24.8.1-prop-10`). -/
 public theorem_wanted gobelSequence_root_tendsto_gt_one (k l : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) :
     ∃ C : ℝ, 1 < C ∧
       Tendsto (fun n : ℕ => (gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n)) atTop (𝓝 C)
-
-/-- **Series formula and bound for the Göbel error.** Let $k, l \ge 2$ be natural numbers, let
-$g_{k,l}$ be the $(k, l)$-Göbel sequence, and let $C$ be a real number such that the real numbers
-$C_{k,l}(n) = g_{k,l}(n)^{1/k^n}$ tend to $C$ as $n \to \infty$. Then for every natural number
-$n \ge 1$ the error
-
-$$\varepsilon_{k,l}(n) = \sum_{m=1}^{\infty} \frac{\log(m + n)}{k^m} -
-k^n \bigl(\log C_{k,l}(n) - \log C\bigr)$$
-
-satisfies
-
-$$\varepsilon_{k,l}(n) = \sum_{m=1}^{\infty} \frac{1}{k^m}
-\log\Bigl(1 + \frac{m + n - 1}{g_{k,l}(m + n - 1)^{k-1}}\Bigr) \le \frac{2n}{C^{(k-1) k^n}}.$$
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Lemma 12 (`jis-2024-24.8.1-lem-12`). -/
-public theorem_wanted gobelSequence_error_eq_tsum_le (k l : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) (C : ℝ)
-    (hC : Tendsto (fun n : ℕ => (gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n))
-      atTop (𝓝 C))
-    (n : ℕ) (hn : 1 ≤ n) :
-    (∑' m : ℕ, Real.log ((m + 1 : ℝ) + n) / (k : ℝ) ^ (m + 1))
-        - (k : ℝ) ^ n * (Real.log ((gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n))
-          - Real.log C)
-      = ∑' m : ℕ, Real.log (1 + ((m + n : ℕ) : ℝ) / (gobelSequence k l (m + n) : ℝ) ^ (k - 1))
-          / (k : ℝ) ^ (m + 1) ∧
-    ∑' m : ℕ, Real.log (1 + ((m + n : ℕ) : ℝ) / (gobelSequence k l (m + n) : ℝ) ^ (k - 1))
-          / (k : ℝ) ^ (m + 1)
-      ≤ 2 * n / C ^ ((k - 1) * k ^ n)
 
 /-- **Sondow–Hadjicostas asymptotic expansion.** Let $k \ge 2$ be a natural number. For $j \ge 1$
 put $S_j = \sum_{i \ge 1} i^j / k^i$ and $b_j = (-1)^{j-1} S_j / j$, and for $r \ge 0$ let

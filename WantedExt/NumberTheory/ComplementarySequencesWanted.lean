@@ -18,6 +18,7 @@ public import Mathlib.Tactic.IntervalCases
 public import MathlibExt.NumberTheory.AscFactorialBounds
 public import MathlibExt.NumberTheory.ComplementarySequences
 public import MathlibExt.NumberTheory.NonSecondPentagonal
+public import MathlibExt.NumberTheory.ComplementarySequencesNthNonCenteredPolygonal
 
 /-!
 # Algorithms for complementary sequences (wanted statements)
@@ -27,7 +28,9 @@ complementary sequence `f_P` lists the positive integers that are not values `f 
 `m ≥ 1`. The paper computes its `n`-th term from the counting function
 `C_{¬P}(x) = #{m ≥ 1 : f m ≤ x}` or from an easily inverted interleaving function, and
 derives closed formulas for the complements of polygonal, second polygonal, centered
-polygonal, pyramidal, sum-of-powers and simplex numbers.
+polygonal, pyramidal, sum-of-powers and simplex numbers. The theorem
+`nth_nonCenteredPolygonal` is proved in
+`MathlibExt.NumberTheory.ComplementarySequencesNthNonCenteredPolygonal`.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95.
@@ -137,18 +140,6 @@ public theorem_wanted nthNonValue_secondPolygonal (k : ℕ) (hk : 5 < k) (n : �
     let s := Nat.sqrt (2 * n / (k - 2))
     nthNonValue (fun j => ((k - 2) * j ^ 2 + (k - 4) * j) / 2) n =
       if (k - 2) * s * (s + 1) < 2 * n + 4 * s then n + s else n + s - 1
-
-/-- **Non-centered polygonal numbers.** Let $k \ge 3$; the centered $k$-gonal numbers are
-$k j (j + 1)/2 + 1$ for $j \ge 0$. For $n \ge 1$ let $a(n)$ be the $n$-th nonnegative integer that
-is not a centered $k$-gonal number (so $a(1) = 0$), and let $s = \lfloor \sqrt{2n/k} \rfloor$.
-Then $a(n) = n + s$ if $k s (s + 1) < 2(n + s - 1)$, and $a(n) = n + s - 1$ otherwise.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Theorem 8. -/
-public theorem_wanted nth_nonCenteredPolygonal (k : ℕ) (hk : 3 ≤ k) (n : ℕ) (hn : 1 ≤ n) :
-    let s := Nat.sqrt (2 * n / k)
-    Nat.nth (fun x => ∀ j, k * j * (j + 1) / 2 + 1 ≠ x) (n - 1) =
-      if k * s * (s + 1) < 2 * (n + s - 1) then n + s else n + s - 1
 
 /-- **Formula for the non-pyramidal numbers.** Let $3 \le k \le 8$, and for $j \ge 1$ let
 $P(k, j) = j (j + 1) ((k - 2) j - (k - 5))/6$ be the $k$-gonal pyramidal numbers. For every
