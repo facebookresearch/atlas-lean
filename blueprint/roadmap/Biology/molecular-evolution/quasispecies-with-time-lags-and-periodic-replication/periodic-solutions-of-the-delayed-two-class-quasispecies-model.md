@@ -24,4 +24,4 @@ On the invariant simplex the system reduces to a single scalar delay equation fo
 
 ## Sources
 
-- E. A. Turner, F. Crespo, J. Sardanyés and N. Morales, "Quasispecies dynamics with time lags and periodic fluctuations in replication", arXiv:2412.10475 (2024), general model with Propositions 1–3 (Section 2), and the periodic-fitness results, Theorems 2 and 3 (Section 3, backward-mutation case), <https://doi.org/10.48550/arXiv.2412.10475>.
+- Edward A. Turner, Francisco Crespo, Josep Sardanyés and Nolbert Morales, "Quasispecies dynamics with time lags and periodic fluctuations in replication", *Journal of Mathematical Biology* 91 (2025), 13, <https://doi.org/10.1007/s00285-025-02239-4>. Numbering as in the preprint arXiv:2412.10475v1, <https://arxiv.org/abs/2412.10475v1>: Propositions 1–3 (Section 2, general model) and Theorems 2 and 3 (Section 3, periodic fitness with backward mutation).

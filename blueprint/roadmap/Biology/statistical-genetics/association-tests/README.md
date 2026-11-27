@@ -12,3 +12,6 @@ Probability.
 - [Genomic control](genomic-control/README.md)
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
+
+- [Moment-matching p-values for Gaussian quadratic forms](moment-matching-p-values-for-gaussian-quadratic-forms/README.md)
+- [Two-stage interaction testing](two-stage-interaction-testing/README.md)

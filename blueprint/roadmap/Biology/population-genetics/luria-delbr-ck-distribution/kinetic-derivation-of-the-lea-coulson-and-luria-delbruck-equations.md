@@ -34,4 +34,4 @@ The scaling is the grazing (quasi-invariant) limit of kinetic theory: interactio
 
 ## Sources
 
-- L. Pareschi, G. Toscani, "The kinetic theory of mutation rates", arXiv:2212.00146 (2022), Sections 3–4 (kinetic model, Fourier-transformed equations and Theorem 1), <https://doi.org/10.48550/arXiv.2212.00146>.
+- Lorenzo Pareschi and Giuseppe Toscani, "The Kinetic Theory of Mutation Rates", *Axioms* 12 (2023), 265, <https://doi.org/10.3390/axioms12030265>. Numbering as in the preprint arXiv:2212.00146v1, <https://arxiv.org/abs/2212.00146v1>: Sections 3–4 (kinetic model, Fourier-transformed equations and Theorem 1).

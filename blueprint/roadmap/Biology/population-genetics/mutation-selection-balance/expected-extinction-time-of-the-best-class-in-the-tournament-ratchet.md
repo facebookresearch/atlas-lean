@@ -31,4 +31,4 @@ The best class fluctuates around its equilibrium size $(1-\rho)N$, with a restor
 
 ## Sources
 
-- J. L. Igelbrink, A. González Casanova, C. Smadi and A. Wakolbinger, "Muller's ratchet in a near-critical regime: tournament versus fitness proportional selection", arXiv:2306.00471 (2023), Definition 2.1 and the mutation–selection equilibrium equations (Section 2), best-class jump rates (Section 3.1) and Theorem 3.4, proved in the Green-function section, <https://doi.org/10.48550/arXiv.2306.00471>.
+- Jan Lukas Igelbrink, Adrián González Casanova, Charline Smadi and Anton Wakolbinger, "Muller’s ratchet in a near-critical regime: Tournament versus fitness proportional selection", *Theoretical Population Biology* 158 (2024), 121–138, <https://doi.org/10.1016/j.tpb.2024.06.001>. Numbering as in the preprint arXiv:2306.00471v3, <https://arxiv.org/abs/2306.00471v3>: Definition 2.1 and the mutation–selection equilibrium equations (Section 2), best-class jump rates (Section 3.1) and Theorem 3.4, proved via the Green function in Section 4.1.

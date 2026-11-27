@@ -43,3 +43,7 @@
 - [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
 - [Isolation by distance](isolation-by-distance.md)
 - [Pairwise coalescence time in the spatial Λ-Fleming–Viot process as a Cox process](pairwise-coalescence-time-in-the-slfv-as-a-cox-process.md)
+
+## Further topics
+
+- [Coalescing Brownian motion genealogies](coalescing-brownian-motion-genealogies/README.md)

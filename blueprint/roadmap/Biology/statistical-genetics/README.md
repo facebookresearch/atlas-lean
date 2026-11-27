@@ -25,8 +25,3 @@ Statistical methods for genome-wide association studies, heritability estimation
 - [Stratified LD-score regression](stratified-ld-score-regression/README.md)
 - [Testing LD consistency of association statistics](testing-ld-consistency-of-association-statistics/README.md)
 - [Transmission disequilibrium test](transmission-disequilibrium-test/README.md)
-- [Maf neutral allelic association test](maf-neutral-allelic-association-test/README.md)
-- [Moment matching p values for gaussian quadratic forms](moment-matching-p-values-for-gaussian-quadratic-forms/README.md)
-- [Principal component correction for population structure](principal-component-correction-for-population-structure/README.md)
-- [Sequencing design for rare variant association](sequencing-design-for-rare-variant-association/README.md)
-- [Two-stage interaction testing](two-stage-interaction-testing/README.md)

@@ -12,15 +12,15 @@ $$
 \iota=\frac{1}{\sqrt M}\sum_{l=1}^M\mathbb E[\phi_l(\hat\chi_l,\hat\chi_l)]
 $$
 
-stays bounded as $M\to\infty$, with $\hat\chi_l$ an ancestral allele at locus $l$. The observed trait is $\widetilde Z=Z+E$ with independent environmental noise $E$. Write the genetic value of offspring $i$ with parents $i[1],i[2]$ as $Z^i=(\mathcal A^i+\mathcal D^i)+(R_A^i+R_D^i)$, a part shared by the whole family plus Mendelian residuals from the additive and dominance components.
+stays bounded as $M\to\infty$, with $\hat\chi_l$ an ancestral allele at locus $l$. The observed trait is $\widetilde Z^i=Z^i+E^i$, where the environmental noise $E^i$ is Gaussian, $E^i\sim N(0,\sigma_E^2)$ with $\sigma_E^2>0$, independent of the genetic components, and shared by all offspring of a family (so it is part of the family-shared component, and the observed traits have a smooth density). Write the genetic value of offspring $i$ with parents $i[1],i[2]$ as $Z^i=(\mathcal A^i+\mathcal D^i)+(R_A^i+R_D^i)$, a part shared by the whole family plus Mendelian residuals from the additive and dominance components.
 
-Then, conditional on the pedigree up to generation $t$, $\mathcal P(t)$, and on the observed parental traits $\widetilde Z^{i[1]},\widetilde Z^{i[2]}$, the standardized residual $(R_A^i+R_D^i)/\sqrt{\operatorname{Var}(R_A^i+R_D^i)}$ is standard normal up to an error of order $1/\sqrt M$: for every $z\in\mathbb R$ the difference between its conditional distribution function and $\Phi(z)$ is at most
+Assume the residual variance $\operatorname{Var}(R_A^i+R_D^i)$, computed conditional on $\mathcal P(t-1)$, is positive. Then, conditional on the pedigree up to generation $t$, $\mathcal P(t)$, and on the observed parental traits $\widetilde Z^{i[1]},\widetilde Z^{i[2]}$, the standardized residual $(R_A^i+R_D^i)/\sqrt{\operatorname{Var}(R_A^i+R_D^i)}$ is standard normal up to an error of order $1/\sqrt M$: for every $z\in\mathbb R$ the difference between its conditional distribution function and $\Phi(z)$ is at most
 
 $$
 \frac{1}{\sqrt M}\,\frac{C'}{\sqrt{\operatorname{Var}(R_A^i+R_D^i)}}\Big(1+\frac{\widetilde C'}{\operatorname{Var}(R_A^i+R_D^i)}\Big)\big(1+\mathfrak C(i[1],i[2])\big),
 $$
 
-where $\mathfrak C$ grows with the standardized deviations of the parental traits from their conditional means and with the reciprocal of the normal density at those deviations. So the limit holds unless the parents' traits are extreme relative to the population.
+where the constants $C',\widetilde C'$ depend only on the bound $B$, and $\mathfrak C$ grows with the standardized deviations of the parental traits from their conditional means and with the reciprocal of the normal density at those deviations. So the limit holds unless the parents' traits are extreme relative to the population.
 
 ## Depends on
 
@@ -32,4 +32,4 @@ Conditionally on which parental gene is passed at each locus, the residual is a 
 
 ## Sources
 
-- N. H. Barton, A. M. Etheridge and A. Véber, "The infinitesimal model with dominance", arXiv:2211.03515 (2022), Section 3 (model, Eq. defining $Z$ and $\iota$) and Theorem 5.1; published in Genetics (2023). <https://doi.org/10.48550/arXiv.2211.03515>
+- Nicholas H. Barton, Alison M. Etheridge and Amandine Véber, "The infinitesimal model with dominance", *Genetics* 225 (2023), iyad133, <https://doi.org/10.1093/genetics/iyad133>. Numbering as in the preprint arXiv:2211.03515v3, <https://arxiv.org/abs/2211.03515v3>: Section 3 (model and the definition of $\iota$), Section 5 (Mendelian model, and the paragraph "Main results" on the Gaussian shared environmental noise) and Theorem 5.1 with Eqs. (30)–(31).
