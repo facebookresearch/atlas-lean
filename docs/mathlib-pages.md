@@ -8,8 +8,8 @@ Mathlib declarations they use. `scripts/build_mathlib_pages.py` writes it from
 the built site and the layer's `mathlib-graph` artifact of the same revision.
 Like the layer, these pages are build outputs and are never committed: they
 are about 1 GB of generated HTML. GitHub Pages, which publishes sites of up to
-1 GB, gets the full site with its pages stored gzipped
-([BLUEPRINT.md](BLUEPRINT.md#the-github-pages-copy)).
+1 GB, gets the full site with its pages and the project map's data stored
+gzipped ([BLUEPRINT.md](BLUEPRINT.md#the-github-pages-copy)).
 
 ## What a page shows
 
