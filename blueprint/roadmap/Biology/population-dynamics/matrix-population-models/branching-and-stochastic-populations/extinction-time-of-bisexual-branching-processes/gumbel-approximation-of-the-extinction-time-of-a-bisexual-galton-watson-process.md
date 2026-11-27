@@ -4,7 +4,7 @@
 
 $$Z_{n+1}=L_{Z_n}(F_{n+1},M_{n+1})$$
 
-mating units: the mating function is indexed by the current number of mating units, not by the generation (the size-dependent model of the source's Section 1.2, whose proofs condition on $Z_n=k$ and apply $L_k$). Let $\tau=\min\{k:Z_k=0\}$, $r_k=\frac1k\mathbb E[Z_{n+1}\mid Z_n=k]$ (which does not depend on $n$), and $p_f=\mathbb P(f_{1,0}=0)$, $p_m=\mathbb P(m_{1,0}=0)$. If the family $(L_k)_{k\ge 0}$ is superadditive across sizes, i.e., $L_{k+j}(x+x',y+y')\ge L_k(x,y)+L_j(x',y')$ for all $k,j\ge 0$ and $x,x',y,y'\ge 0$, then $(k+j)r_{k+j}\ge kr_k+jr_j$, so $r=\lim_k r_k=\sup_k r_k$ exists by Fekete's lemma and extinction is certain iff $r\le 1$.
+mating units: the mating function is indexed by the current number of mating units, not by the generation (the size-dependent model of the source's Section 1.2, whose proofs condition on $Z_n=k$ and apply $L_k$). Let $\tau=\min\{k:Z_k=0\}$, $r_k=\frac1k\mathbb E[Z_{n+1}\mid Z_n=k]$ (which does not depend on $n$), and $p_f=\mathbb P(f_{1,0}=0)$, $p_m=\mathbb P(m_{1,0}=0)$. If the family $(L_k)_{k\ge 0}$ is superadditive across sizes, i.e., $L_{k+j}(x+x',y+y')\ge L_k(x,y)+L_j(x',y')$ for all $k,j\ge 0$ and $x,x',y,y'\ge 0$, then $(k+j)r_{k+j}\ge kr_k+jr_j$, so $r=\lim_k r_k=\sup_k r_k$ exists by Fekete's lemma; if $r<1$, extinction is almost sure from each fixed finite initial size $j$ (by Proposition 2, $\mathbb{P}_j(\tau>t)\le j r^t$).
 
 **Hypotheses.** $p_m,p_f\in(0,1)$; the family $(L_k)_{k\ge 0}$ is superadditive across sizes ($L_{k+j}(x+x',y+y')\ge L_k(x,y)+L_j(x',y')$); there are constants $C,D>0$ with $L_k(x,y)\le Cx$ for all $k$ or $L_k(x,y)\le Dy$ for all $k$; $r<1$ (subcritical); and $p_mp_f<\frac12$, i.e. $\theta:=-\ln(p_mp_f)>\ln2$.
 
