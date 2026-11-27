@@ -11,8 +11,8 @@ where $\bar x$ is the expected number of amino acids spent on abnormal proteins.
 
 ## Depends on
 
-- [Negative binomial mass function with real shape](../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/neg-binomial-pmf.md)
-- [Mean of the negative binomial law](../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/has-sum-mul-neg-binomial-real.md)
+- [Negative binomial mass function with real shape](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/neg-binomial-pmf.md)
+- [Mean of the negative binomial law](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/has-sum-mul-neg-binomial-real.md)
 
 ## Expansion
 

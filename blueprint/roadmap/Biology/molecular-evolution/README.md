@@ -27,4 +27,3 @@
 - [Distribution of simple repeat lengths](distribution-of-simple-repeat-lengths/README.md)
 - [Fitness landscapes and epistasis](fitness-landscapes-and-epistasis/README.md)
 - [Mutation rates and generation time](mutation-rates-and-generation-time/README.md)
-- [Phenotypic mutation rates and translational errors](phenotypic-mutation-rates-and-translational-errors/README.md)

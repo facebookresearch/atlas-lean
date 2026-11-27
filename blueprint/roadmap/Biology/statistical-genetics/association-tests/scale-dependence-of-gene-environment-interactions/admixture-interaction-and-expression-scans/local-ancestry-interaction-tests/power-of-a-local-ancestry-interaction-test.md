@@ -20,12 +20,12 @@ with $F(\cdot \mid d, S)$ the non-central chi-square distribution function with 
 
 ## Depends on
 
-- [Wald's test](../../../../../Probability/hypothesis-testing/score-wald-and-likelihood-ratio-tests/tendsto-in-distribution-wald-statistic.md): the $\chi^2_1$ null of each Wald statistic
-- [Chi-square distribution](../../../../../Probability/distributions/continuous/chi-square-distribution/chi-square-measure.md)
+- [Wald's test](../../../../../../Probability/hypothesis-testing/score-wald-and-likelihood-ratio-tests/tendsto-in-distribution-wald-statistic.md): the $\chi^2_1$ null of each Wald statistic
+- [Chi-square distribution](../../../../../../Probability/distributions/continuous/chi-square-distribution/chi-square-measure.md)
 
 ## Proof depends on
 
-- [Local power of the likelihood-ratio test](../../../../../Probability/hypothesis-testing/local-power-of-the-likelihood-ratio-test/tendsto-in-distribution-two-mul-log-like-2.md): the noncentral $\chi^2_1$ limit under local alternatives
+- [Local power of the likelihood-ratio test](../../../../../../Probability/hypothesis-testing/local-power-of-the-likelihood-ratio-test/tendsto-in-distribution-two-mul-log-like-2.md): the noncentral $\chi^2_1$ limit under local alternatives
 
 ## Expansion
 

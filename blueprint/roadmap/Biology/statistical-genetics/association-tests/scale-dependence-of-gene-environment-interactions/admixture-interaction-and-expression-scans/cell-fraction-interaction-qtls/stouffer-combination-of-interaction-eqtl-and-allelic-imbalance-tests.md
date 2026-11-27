@@ -9,11 +9,11 @@ is standard normal under the null. It rewards agreement in sign: effects in oppo
 ## Depends on
 
 - [Cell-fraction regression of allelic imbalance](cell-fraction-regression-of-allelic-imbalance.md): the allelic-imbalance slope test and the interaction eQTL regression
-- [Stouffer's weighted z statistic](../../../../../Probability/hypothesis-testing/meta-analysis/stouffer-statistic.md): with equal weights
+- [Stouffer's weighted z statistic](../../../../../../Probability/hypothesis-testing/meta-analysis/stouffer-statistic.md): with equal weights
 
 ## Proof depends on
 
-- [Stouffer's method](../../../../../Probability/hypothesis-testing/meta-analysis/has-law-stouffer-statistic.md): the null law
+- [Stouffer's method](../../../../../../Probability/hypothesis-testing/meta-analysis/has-law-stouffer-statistic.md): the null law
 
 ## Expansion
 

@@ -15,7 +15,7 @@ $$\hat u\approx\frac{\pi_u}{c\sum_i n_i^2y_i},\qquad\frac{\hat u}{\hat\mu}\appro
 ## Depends on
 
 - [Expected abnormal-protein load under error-prone protein synthesis](expected-abnormal-protein-load-under-error-prone-synthesis.md)
-- [Mutation-rate modifiers and the drift-barrier hypothesis](../mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Mutation-rate modifiers and the drift-barrier hypothesis](../../mutation-rate-modifiers-and-the-drift-barrier-hy.md)
 
 ## Expansion
 

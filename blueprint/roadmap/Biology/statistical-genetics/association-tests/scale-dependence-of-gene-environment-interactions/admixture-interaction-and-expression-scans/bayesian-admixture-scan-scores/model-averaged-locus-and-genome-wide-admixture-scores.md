@@ -22,10 +22,10 @@ and the shortest central region of the peak holding $95\%$ of this mass is the $
 
 ## Depends on
 
-- [Hidden Markov model](../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/hmm.md): the ancestry model along a chromosome
-- [Likelihood of the observations](../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/likelihood.md): the locus likelihoods $L_\ell(m)$ are HMM marginal likelihoods
-- [Stationary Poisson-relabeling model of local ancestry](../../../../population-structure/admixture-linkage-disequilibrium/poisson-switch-markov-model-of-local-ancestry-al.md): ancestry switches at a rate set by the time since admixture
-- [Bayes posterior](../../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/bayes-rule/bayes-posterior.md): the posterior over the causal position
+- [Hidden Markov model](../../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/hmm.md): the ancestry model along a chromosome
+- [Likelihood of the observations](../../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/likelihood.md): the locus likelihoods $L_\ell(m)$ are HMM marginal likelihoods
+- [Stationary Poisson-relabeling model of local ancestry](../../../../../population-structure/admixture-linkage-disequilibrium/poisson-switch-markov-model-of-local-ancestry-al.md): ancestry switches at a rate set by the time since admixture
+- [Bayes posterior](../../../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/bayes-rule/bayes-posterior.md): the posterior over the causal position
 
 ## Expansion
 

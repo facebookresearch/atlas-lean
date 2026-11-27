@@ -17,16 +17,16 @@ and the Rauch–Tung–Striebel backward recursion gives the smoothed laws $x_i 
 
 ## Depends on
 
-- [Binomial probability mass function](../../../../cancer-genomics/detection-power-for-somatic-mutations/binom-pmf.md): the switch counts, the stationary law and the read counts
-- [Stationary distribution](../../../../../Probability/markov-chains/kolmogorov-s-criterion-for-reversibility/is-stationary.md)
-- [Reversible stochastic matrix](../../../../../Probability/markov-chains/kolmogorov-s-criterion-for-reversibility/is-reversible.md)
-- [Kalman filter step](../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/kalman-filter/step.md): the filtering recursion of item 4
+- [Binomial probability mass function](../../../../../cancer-genomics/detection-power-for-somatic-mutations/binom-pmf.md): the switch counts, the stationary law and the read counts
+- [Stationary distribution](../../../../../../Probability/markov-chains/kolmogorov-s-criterion-for-reversibility/is-stationary.md)
+- [Reversible stochastic matrix](../../../../../../Probability/markov-chains/kolmogorov-s-criterion-for-reversibility/is-reversible.md)
+- [Kalman filter step](../../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/kalman-filter/step.md): the filtering recursion of item 4
 
 ## Proof depends on
 
-- [Detailed balance implies stationarity](../../../../../Probability/markov-chains/kolmogorov-s-criterion-for-reversibility/detailed-balance-is-stationary.md): stationarity of $\mathrm{Bin}(N, \tfrac12)$
-- [Autocovariance of the causal AR(1) process](../../../../../Probability/markov-chains/autoregressive-processes/autocovariance-of-a-causal-ar1-process.md): the stationary variance $1/(4N)$
-- [The Kalman filter gives the conditional law given the whole observation history](../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/kalman-filter/kalman-filter-is-the-full-history-posterior.md): the filtered laws
+- [Detailed balance implies stationarity](../../../../../../Probability/markov-chains/kolmogorov-s-criterion-for-reversibility/detailed-balance-is-stationary.md): stationarity of $\mathrm{Bin}(N, \tfrac12)$
+- [Autocovariance of the causal AR(1) process](../../../../../../Probability/markov-chains/autoregressive-processes/autocovariance-of-a-causal-ar1-process.md): the stationary variance $1/(4N)$
+- [The Kalman filter gives the conditional law given the whole observation history](../../../../../../ComputerScience/machine-learning/probabilistic-graphical-models/kalman-filter/kalman-filter-is-the-full-history-posterior.md): the filtered laws
 
 ## Expansion
 

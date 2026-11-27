@@ -6,3 +6,4 @@ Relating mutation rates per generation, per year and over long evolutionary time
 - [Recombination-calibrated mutation rate](recombination-calibrated-mutation-rate/README.md)
 - [Generation time from mutation spectra](generation-time-from-mutation-spectra/README.md)
 - [Neutral molecular clock under spatial structure](neutral-molecular-clock-under-spatial-structure/README.md)
+- [Phenotypic mutation rates and translational errors](phenotypic-mutation-rates-and-translational-errors/README.md)

@@ -17,7 +17,7 @@ The full predictor of context $c$ is linear in genotype with SNP weights $\hat w
 ## Depends on
 
 - [Between- and within-individual decomposition of multi-context expression](between-and-within-individual-decomposition-of-multi-context-expression.md)
-- [Ordinary least-squares estimator](../../../../../../Probability/linear-models-multivariate/ordinary-least-squares/sampling-properties-of-the-ordinary-least-square/ols-estimator.md): the recombination step
+- [Ordinary least-squares estimator](../../../../../../../Probability/linear-models-multivariate/ordinary-least-squares/sampling-properties-of-the-ordinary-least-square/ols-estimator.md): the recombination step
 
 ## Expansion
 

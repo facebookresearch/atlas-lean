@@ -22,14 +22,14 @@ once $H$ is available.
 
 ## Depends on
 
-- [Best linear unbiased predictor of genetic effects](../../../../bolt-lmm-mixed-model-association/blup.md): $y_{\mathrm{BLUP}} = \hat\sigma_g^2 K \hat V^{-1}(y - X\hat\beta)$
-- [Marginal phenotypic covariance matrix](../../../../bolt-lmm-mixed-model-association/v.md): $V = \sigma_g^2 K + \sigma_\epsilon^2 I_N$
-- [Generalized least-squares estimator](../../../../bolt-lmm-mixed-model-association/gls.md): the covariate effects $\hat\beta$
+- [Best linear unbiased predictor of genetic effects](../../../../../bolt-lmm-mixed-model-association/blup.md): $y_{\mathrm{BLUP}} = \hat\sigma_g^2 K \hat V^{-1}(y - X\hat\beta)$
+- [Marginal phenotypic covariance matrix](../../../../../bolt-lmm-mixed-model-association/v.md): $V = \sigma_g^2 K + \sigma_\epsilon^2 I_N$
+- [Generalized least-squares estimator](../../../../../bolt-lmm-mixed-model-association/gls.md): the covariate effects $\hat\beta$
 
 ## Proof depends on
 
-- [BLUP is the conditional expectation](../../../../../quantitative-genetics/linear-mixed-models-and-blup/cond-exp-mixed-model.md): the left-out prediction is the BLUP from the other $N - 1$ individuals
-- [Gaussian conditioning (Schur complement)](../../../../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-multivariate-gaussian.md): the Schur-complement form of that conditional mean
+- [BLUP is the conditional expectation](../../../../../../quantitative-genetics/linear-mixed-models-and-blup/cond-exp-mixed-model.md): the left-out prediction is the BLUP from the other $N - 1$ individuals
+- [Gaussian conditioning (Schur complement)](../../../../../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-multivariate-gaussian.md): the Schur-complement form of that conditional mean
 
 ## Expansion
 
