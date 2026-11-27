@@ -16,6 +16,7 @@ The product of the marginals $\bar\rho\otimes\operatorname{diag}(p)$ is itself a
 
 - [Classical-quantum states](classical-quantum-state.md)
 - [Quantum mutual information](quantum-mutual-information.md)
+- [Support inclusion and Umegaki relative entropy](../../quantum-states-distances-and-entropy/quantum-relative-entropy/umegaki-relative-entropy.md)
 
 ## Proof depends on
 

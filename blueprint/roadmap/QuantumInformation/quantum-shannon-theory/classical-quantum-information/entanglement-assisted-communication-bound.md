@@ -10,6 +10,7 @@ Write $A$ for the sent register and $B$ for Bob's share. By no-signalling every 
 
 - [Von Neumann entropy and Holevo information](von-neumann-entropy-and-holevo-information.md)
 - [Superdense coding](../../quantum-foundations/superdense-coding.md)
+- [Positive-operator-valued measurements and the Born rule](../../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Proof depends on
 
