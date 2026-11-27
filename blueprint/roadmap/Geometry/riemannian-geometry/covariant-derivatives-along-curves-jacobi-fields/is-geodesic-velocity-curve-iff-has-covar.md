@@ -1,0 +1,3 @@
+# Is Geodesic Velocity Curve iff has Covariant Deriv Along
+
+On a finite-dimensional $C^2$ manifold with a $C^1$ Riemannian metric, write a curve in the tangent bundle, defined on all of $\mathbb{R}$, as $u(t) = (\gamma(t), v(t))$. Then $u$ is the velocity curve of a geodesic if and only if, at every real time $t$, both of the following hold: the base curve has derivative $\gamma'(t) = v(t)$ (so $u$ is a velocity lift), and the fibre component is parallel, $D_t v = 0$. The parallel condition alone is not enough: in flat $\mathbb{R}$ the curve $u(t) = (0, 1)$ has constant, hence parallel, fibre component, but its base has derivative $0 \ne 1$.
