@@ -26,3 +26,5 @@
 - [Product measure of independent exponential clocks](killing-measure.md)
 - [The product of the exponential clocks is a probability measure](is-probability-measure-killing-measure.md)
 - [A coalescent with killing on the product of exponential clocks](of-pi.md)
+
+- [Sequential loss of allelic diversity](sequential-loss-of-allelic-diversity/README.md)

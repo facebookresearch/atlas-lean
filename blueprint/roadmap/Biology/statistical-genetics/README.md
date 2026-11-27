@@ -25,6 +25,3 @@ Statistical methods for genome-wide association studies, heritability estimation
 - [Stratified LD-score regression](stratified-ld-score-regression/README.md)
 - [Testing LD consistency of association statistics](testing-ld-consistency-of-association-statistics/README.md)
 - [Transmission disequilibrium test](transmission-disequilibrium-test/README.md)
-- [Mendelian randomization with censored survival outcomes](mendelian-randomization-with-censored-survival-outcomes/README.md)
-- [Similarity-based heritability estimation](similarity-based-heritability-estimation/README.md)
-- [Winner's curse under sample structure in Mendelian randomization](winners-curse-under-sample-structure-in-mendelian-randomization/README.md)

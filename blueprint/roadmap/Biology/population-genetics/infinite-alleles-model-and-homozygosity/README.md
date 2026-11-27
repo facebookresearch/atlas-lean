@@ -13,3 +13,5 @@
 - [Stationary identity by descent in the circular stepping-stone model](circular-stepping-stone-model-exact-stationary-i.md)
 
 - [Parent-independent finite-alleles mutation on the coalescent genealogy](parent-independent-finite-alleles-mutation-on-th.md)
+
+- [Allelic frequency spectrum of splitting trees](allelic-frequency-spectrum-of-splitting-trees/README.md)

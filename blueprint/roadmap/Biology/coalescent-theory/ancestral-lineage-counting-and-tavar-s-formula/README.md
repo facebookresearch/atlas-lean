@@ -22,3 +22,5 @@
 - [Tavaré's formula](exp-block-counting-generator-apply.md)
 - [Truncation consistency](exp-smul-block-counting-generator-cast-l.md)
 - [The block-counting process never gains lineages](exp-smul-block-counting-generator-of-lt.md)
+
+- [Coalescence times in Galton–Watson genealogies](coalescence-times-in-galton-watson-genealogies/README.md)

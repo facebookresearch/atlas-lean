@@ -26,3 +26,5 @@ The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamic
 
 - [Conditioned Wright–Fisher diffusions](conditioned-wright-fisher-diffusions/README.md)
 - [Numerical analysis of Wright–Fisher equations](numerical-analysis-of-wright-fisher-equations/README.md)
+
+- [Weak frequency-dependent selection in diffusions](weak-frequency-dependent-selection-in-diffusions/README.md)

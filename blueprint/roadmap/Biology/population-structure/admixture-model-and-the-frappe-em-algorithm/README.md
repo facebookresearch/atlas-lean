@@ -54,3 +54,5 @@
 - [The FRAPPE update maximizes the EM objective](em-q-le-em-step.md)
 - [Each FRAPPE EM step does not decrease the admixture log-likelihood](admixture-log-lik-le-em-step.md)
 - [The admixture log-likelihood is monotone along the FRAPPE EM iterates](admixture-log-lik-iterate-em-step-monoto.md)
+
+- [Maximum likelihood in the admixture model](maximum-likelihood-in-the-admixture-model/README.md)

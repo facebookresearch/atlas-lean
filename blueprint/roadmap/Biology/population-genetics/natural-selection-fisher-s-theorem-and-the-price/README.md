@@ -46,3 +46,5 @@
 
 - [Quasi-linkage equilibrium dynamics of allele frequencies under weak selection](quasi-linkage-equilibrium-under-weak-selection.md)
 - [Two-locus quasi-linkage equilibrium approximation](two-locus-quasi-linkage-equilibrium-approximatio.md)
+
+- [Two-locus selection with mutation in changing environments](two-locus-selection-with-mutation-in-changing-environments/README.md)

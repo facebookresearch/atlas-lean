@@ -23,4 +23,5 @@ Since $m\to\infty$ the multinomial transitions concentrate around $G$, and the o
 
 ## Sources
 
-- J. Dalmau, "The Wright–Fisher model for class–dependent fitness landscapes", arXiv:1712.00279 (2017), <https://doi.org/10.48550/arXiv.1712.00279>. Theorem 3.1 and Corollary 3.2 (dichotomy), Section 2 (the limiting map and its fixed points, Propositions 2.1 and 2.2), Section 10 (definition of $\psi$). The sharp-peak value of $\rho^0_0$ is obtained by solving $G_0(r)=r_0$ with $K=0$.
+- Joseba Dalmau, "The Wright–Fisher model for class–dependent fitness landscapes", *Electron. J. Probab.* 26 (2021), 1-44. <https://doi.org/10.1214/21-EJP704>
+- Preprint version (the locators in this item follow its numbering): J. Dalmau, "The Wright–Fisher model for class–dependent fitness landscapes", arXiv:1712.00279 (2017), <https://doi.org/10.48550/arXiv.1712.00279>. Theorem 3.1 and Corollary 3.2 (dichotomy), Section 2 (the limiting map and its fixed points, Propositions 2.1 and 2.2), Section 10 (definition of $\psi$). The sharp-peak value of $\rho^0_0$ is obtained by solving $G_0(r)=r_0$ with $K=0$.

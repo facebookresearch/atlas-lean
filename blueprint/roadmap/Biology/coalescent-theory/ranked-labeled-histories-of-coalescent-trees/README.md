@@ -25,3 +25,6 @@
 - [Each ranked labeled history has probability $2^{n-1} / (n!(n-1)!)$](random-joining-singleton.md)
 
 - [The common ancestor of a subsample is that of the whole sample with probability (n+1)(m−1)/((n−1)(m+1))](mrca-of-a-subsample-equals-sample-mrca-with-prob.md)
+
+- [Horton–Strahler structure of coalescent trees](horton-strahler-structure-of-coalescent-trees/README.md)
+- [Kingman comb and the Brownian coalescent point process](kingman-comb-and-the-brownian-coalescent-point-process/README.md)
