@@ -26,8 +26,9 @@ Let `w ∈ A_inf = W(𝓞_ℂ_[p]♭)` and let `D = A_inf[w^n/n! : n ≥ 1]`
 (`PadicComplexInt.finiteDividedPowers`). A restricted power series `f = Σ aₙ Xⁿ` (with `aₙ → 0`
 `p`-adically) gives an element `PadicComplexInt.ofRestricted w hf` of the `p`-adic completion of
 `D`: the limit of the partial sums `Σ_{n<N} aₙ w^n/n! ∈ D`. Every element of the completion
-arises this way (`PadicComplexInt.exists_ofRestricted_eq`). This is the description of `A_cris`
-in Fontaine, *Le corps des périodes p-adiques*, Astérisque 223 (1994), Exposé II, §4.1.2 p. 83.
+arises this way (`PadicComplexInt.exists_ofRestricted_eq`). For a generator `w` of `ker θ`, this
+is the description of `A_cris` in Fontaine, *Le corps des périodes p-adiques*, Astérisque 223
+(1994), Exposé II, §4.1.2 p. 83.
 
 For a generator `w` of `ker θ`, the ring `D` is `p`-adically separated modulo the powers of the
 kernel of `θ` with `p` inverted: if `y ∈ D` lies in `p^k D + (ker θ)^m` for every `k`, then

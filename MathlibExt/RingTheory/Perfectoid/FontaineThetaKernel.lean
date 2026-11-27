@@ -438,7 +438,7 @@ theorem mem_span_xi_pow_of_algebraMap_mem (k : ℕ) (a : WittVector p (PreTilt �
     ring
   exact Ideal.mem_span_singleton'.mpr ⟨b, this.symm⟩
 
-/-- `⋂ₖ (pᵏ W(𝓞_ℂ_[p]♭) + ξ W(𝓞_ℂ_[p]♭)) = ξ W(𝓞_ℂ_[p]♭)`: an element that lies in
+/-- `⋂ₖ (pᵏ W(𝓞_ℂ_[p]♭) + ξ W(𝓞_ℂ_[p]♭)) ⊆ ξ W(𝓞_ℂ_[p]♭)`: an element that lies in
 `pᵏ W(𝓞_ℂ_[p]♭) + ξ W(𝓞_ℂ_[p]♭)` for every `k` is a multiple of `ξ`. -/
 theorem mem_span_xi_of_forall (w : WittVector p (PreTilt 𝓞_ℂ_[p] p))
     (h : ∀ k : ℕ, ∃ a b : WittVector p (PreTilt 𝓞_ℂ_[p] p),
@@ -454,7 +454,7 @@ theorem mem_span_xi_of_forall (w : WittVector p (PreTilt 𝓞_ℂ_[p] p))
     zero_mul, add_zero]
   exact dvd_mul_right _ _
 
-/-- `⋂ₖ (pᵏ W(𝓞_ℂ_[p]♭) + ξᵐ W(𝓞_ℂ_[p]♭)) = ξᵐ W(𝓞_ℂ_[p]♭)`: the quotient `W(𝓞_ℂ_[p]♭) / ξᵐ`
+/-- `⋂ₖ (pᵏ W(𝓞_ℂ_[p]♭) + ξᵐ W(𝓞_ℂ_[p]♭)) ⊆ ξᵐ W(𝓞_ℂ_[p]♭)`: the quotient `W(𝓞_ℂ_[p]♭) / ξᵐ`
 is `p`-adically separated. -/
 theorem mem_span_xi_pow_of_forall (m : ℕ) : ∀ w : WittVector p (PreTilt 𝓞_ℂ_[p] p),
     (∀ k : ℕ, ∃ a b : WittVector p (PreTilt 𝓞_ℂ_[p] p),
