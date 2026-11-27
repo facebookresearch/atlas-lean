@@ -13,8 +13,8 @@ public import MathlibExt.Combinatorics.PiecewiseSyndetic
 /-!
 # Piecewise syndetic sets in `ℕ^t`
 
-The results from Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*,
-INTEGERS 24 (2024), Article A2, are proved in `MathlibExt.Combinatorics.PiecewiseSyndetic`.
-This module re-exports them, including Theorem 2
-(`exists_cube_bound_monochromatic_card_gt_gapSize`).
+The `ℕ^t` results of Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*,
+INTEGERS 24 (2024), Article A2 (Theorem 1, Lemmas 1 and 2, and Theorem 2), are proved in
+`MathlibExt.Combinatorics.PiecewiseSyndetic`, which this module re-exports.
+The `ℕ^X` results of Section 4 are not stated here.
 -/

@@ -22,8 +22,9 @@ import Mathlib.Order.Interval.Finset.Nat
 
 This module proves Brown’s dense color class lemma for lattice cubes, and its consequence that
 some color class is `d`-dense in a subcube of side `m > f(d)` inside a cube `[1, A]^t` whose
-size `A` depends only on `r`, `t` and `f` (Lemmas 1 and 2). Theorem 2 uses this density to find a
-finite monochromatic set whose cardinality exceeds a prescribed function of its gap size.
+size `A` depends only on `r`, `t` and `f` (Lemmas 1 and 2). For `t ≥ 1` and nondecreasing `f`,
+Theorem 2 uses this density to find a finite monochromatic set `S` in a box `[0, B)^t` with
+`|S| > f(gs(S))`, where `gs(S)` is its gap size and `B` depends only on `r`, `t` and `f`.
 This module also proves that piecewise syndeticity is partition regular: when a piecewise syndetic
 set is the union of finitely many sets, one of them is piecewise syndetic. The proof shows that a
 union of two sets that are not piecewise syndetic is not piecewise syndetic. The definitions follow
