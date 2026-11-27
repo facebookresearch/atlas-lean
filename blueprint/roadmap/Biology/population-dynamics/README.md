@@ -25,5 +25,4 @@ Differential-equation and matrix models of population growth, structure, species
 - [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)
 
-- [Evolutionary dynamics](evolutionary-dynamics/README.md)
-- [Stochastic, structured and harvested populations](stochastic-structured-and-harvested-populations/README.md)
+- [Evolutionary and stochastic population dynamics](evolutionary-and-stochastic-population-dynamics/README.md)

@@ -25,7 +25,7 @@ where $\langle{k\atop h}\rangle$ is the number of permutations of $\{1,\dots,k\}
 
 ## Depends on
 
-- [Eigen's error threshold](../../eigen-s-quasispecies-error-threshold/master-equilibrium-exp-pos-iff.md)
+- [Eigen's error threshold](../../../eigen-s-quasispecies-error-threshold/master-equilibrium-exp-pos-iff.md)
 
 ## Expansion
 

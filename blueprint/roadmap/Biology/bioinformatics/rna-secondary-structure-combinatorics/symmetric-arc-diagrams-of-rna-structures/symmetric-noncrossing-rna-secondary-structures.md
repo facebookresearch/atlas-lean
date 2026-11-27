@@ -18,7 +18,7 @@ $$
 
 With $a_0=1$ and $a_n=L_{2n-1}$, one has $a_n=\sum_{j=0}^{n-1}M_{j+1}a_{n-1-j}$ and $a_{n+1}=3a_n-M_n$ for $n\ge 1$ (Theorem 4.4), and $L_{2n-1}$ equals the number of base-$3$ numbers with $n$ digits and digit sum $n$ (Theorem 4.6).
 
-**Rarity of symmetry.** With $\varphi=(1+\sqrt5)/2$, the known asymptotics $S_n\sim c_1(1+\varphi)^n n^{-3/2}$ and $R_n\sim c_2\varphi^nn^{-1/2}$ ($c_1\approx1.104$, $c_2\approx0.863$) give $R_n/S_n\sim(c_2/c_1)\,n\,\varphi^{-n}$, and $L_n/M_n<\sqrt{8/3}\,n\,3^{-n/2}$ asymptotically: a random structure of length $n$ is symmetric with exponentially small probability.
+**Rarity of symmetry.** With $\varphi=(1+\sqrt5)/2$, the known asymptotics $S_n\sim c_1(1+\varphi)^n n^{-3/2}$ and $R_n\sim c_2\varphi^nn^{-1/2}$ ($c_1\approx1.104$, $c_2\approx0.863$) give $R_n/S_n\sim(c_2/c_1)\,n\,\varphi^{-n}$, and $L_n/M_n\le(\sqrt{8/3}+o(1))\,n\,3^{-n/2}$, with equality in the limit along odd $n$: a random structure of length $n$ is symmetric with exponentially small probability.
 
 ## Depends on
 

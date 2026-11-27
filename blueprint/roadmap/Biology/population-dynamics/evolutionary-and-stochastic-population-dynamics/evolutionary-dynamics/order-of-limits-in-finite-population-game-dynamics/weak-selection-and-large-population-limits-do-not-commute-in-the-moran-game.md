@@ -26,7 +26,7 @@ In the $wN$ order, expanding $\prod_j f_B(j)/f_A(j)$ to first order in $w$ at fi
 
 ## Depends on
 
-- [Uniqueness of the Moran fixation probability](../../../population-genetics/moran-model/eq-moran-fixation.md)
+- [Uniqueness of the Moran fixation probability](../../../../population-genetics/moran-model/eq-moran-fixation.md)
 
 ## Sources
 

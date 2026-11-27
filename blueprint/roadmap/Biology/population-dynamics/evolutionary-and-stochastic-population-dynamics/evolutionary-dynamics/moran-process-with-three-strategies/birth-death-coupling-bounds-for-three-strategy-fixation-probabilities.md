@@ -27,7 +27,7 @@ The comparison chain is built from the same uniform random variables as the Mora
 
 ## Depends on
 
-- [Fixation probability of the Moran process](../../../population-genetics/moran-model/eq-moran-fixation.md)
+- [Fixation probability of the Moran process](../../../../population-genetics/moran-model/eq-moran-fixation.md)
 
 ## Sources
 

@@ -14,7 +14,7 @@ Both bounds have the form of the Moran fixation probability $(1-r^{-i})/(1-r^{-N
 
 ## Depends on
 
-- [Fixation probability of the Moran process](../../../population-genetics/moran-model/moran-fixation.md)
+- [Fixation probability of the Moran process](../../../../population-genetics/moran-model/moran-fixation.md)
 
 ## Expansion
 

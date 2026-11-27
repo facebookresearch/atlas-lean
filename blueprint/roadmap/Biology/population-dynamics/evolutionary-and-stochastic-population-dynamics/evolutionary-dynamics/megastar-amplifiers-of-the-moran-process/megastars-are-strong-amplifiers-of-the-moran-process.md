@@ -15,7 +15,7 @@ So the extinction probability of the best megastars decays like $n^{-1/2}$ up to
 
 ## Depends on
 
-- [Moran fixation probability](../../isothermal-theorem-for-evolutionary-graph-dynami/moran-fixation.md)
+- [Moran fixation probability](../../../isothermal-theorem-for-evolutionary-graph-dynami/moran-fixation.md)
 
 ## Expansion
 

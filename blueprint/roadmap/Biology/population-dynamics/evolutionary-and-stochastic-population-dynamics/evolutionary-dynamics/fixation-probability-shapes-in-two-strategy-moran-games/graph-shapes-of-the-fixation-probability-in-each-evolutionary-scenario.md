@@ -26,7 +26,7 @@ So each evolutionary scenario determines a definite qualitative shape of $i \map
 
 ## Depends on
 
-- [Moran fixation probability](../../isothermal-theorem-for-evolutionary-graph-dynami/moran-fixation.md)
+- [Moran fixation probability](../../../isothermal-theorem-for-evolutionary-graph-dynami/moran-fixation.md)
 
 ## Expansion
 
