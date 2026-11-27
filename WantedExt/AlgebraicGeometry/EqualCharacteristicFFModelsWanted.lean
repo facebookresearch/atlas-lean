@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.EqualCharacteristicFFAnalyticModels
+public import MathlibExt.AlgebraicGeometry.EqualCharacteristicFFModels
 
 /-!
 # Native equal-characteristic relative FF construction requests
@@ -35,13 +36,6 @@ open MathlibExt.AlgebraicGeometry.EqualCharacteristicCoefficientModels
 open MathlibExt.AlgebraicGeometry.EqualCharacteristicFFRingModels
 open MathlibExt.AlgebraicGeometry.EqualCharacteristicFFSheafModels
 open MathlibExt.AlgebraicGeometry.EqualCharacteristicFFAnalyticModels
-
-/-- For a prime $p$ and a finite field $k$ of characteristic $p$, the Laurent-series field $k((t))$,
-with the valuative relation of its $t$-adic valuation, is a nonarchimedean local field. -/
-public theorem_wanted laurentSeriesLocalField
-    (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p] [Fintype k] :
-    letI := valuativeRelation k
-    IsNonarchimedeanLocalField (CoefficientField k)
 
 /-- Restriction maps of the rational charts of the annulus: for a prime $p$, a finite field $k$ of
 characteristic $p$ with $\#k = p^f$ (`C`) and a perfectoid base `S` (a characteristic-$p$ perfectoid

@@ -13,3 +13,5 @@
 - [Stationary identity by descent in the circular stepping-stone model](circular-stepping-stone-model-exact-stationary-i.md)
 
 - [Parent-independent finite-alleles mutation on the coalescent genealogy](parent-independent-finite-alleles-mutation-on-th.md)
+
+- [Percolation models of neutral mutation on Galton–Watson trees](percolation-models-of-neutral-mutation-on-galton-watson-trees/README.md)
