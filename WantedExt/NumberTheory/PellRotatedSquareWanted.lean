@@ -13,6 +13,7 @@ public import MathlibExt.NumberTheory.PellInverseClosedForm
 public import MathlibExt.NumberTheory.PellShiftedIntercepts
 public import MathlibExt.NumberTheory.PellShiftedQuadrants
 public import MathlibExt.NumberTheory.PellRotatedSquarePellShiftedNormBijOnIci
+public import MathlibExt.NumberTheory.PellShiftedNormBeforeCrossing
 
 /-!
 # Integer solutions of the Pell equation in a closed rotated square region
@@ -115,26 +116,6 @@ Rotated Square Region*, INTEGERS 25 (2025), Article A112, Lemma 3.5
 public theorem_wanted pellShiftedNorm_zero_le_pellShiftBound (D α β a b : ℤ) {i j : ℤ}
     (hi : i = 1 ∨ i = -1) (hj : j = 1 ∨ j = -1) :
     pellShiftedNorm D α β a b i j 0 ≤ pellShiftBound D a b
-
-/-- **The shifted Pell norm function is at most the bound up to its last crossing.** Let $D$ be
-an integer, let $(\alpha, \beta)$ be the fundamental solution of the Pell equation
-$X^2 - D Y^2 = 1$, put $\varepsilon = \alpha + \beta \sqrt{D}$ and
-$\bar\varepsilon = \alpha - \beta \sqrt{D}$, and let
-$u(x) = (\varepsilon^x + \bar\varepsilon^x) / 2$ and
-$v(x) = (\varepsilon^x - \bar\varepsilon^x) / (2 \sqrt{D})$ for real $x$. Let $a$ and $b$ be
-integers, let $i, j \in \{1, -1\}$, let $f_{i,j}(x) = |i u(x) + a| + |j v(x) + b|$, let
-$K = |a| + \max(|b| + 1, \sqrt{1 + D b^2})$ and let $x_1 = \sup \{y \ge 0 : f_{i,j}(y) = K\}$.
-Then $f_{i,j}(x) \le K$ for every real $x$ with $0 \le x \le x_1$.
-
-Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
-Rotated Square Region*, INTEGERS 25 (2025), Article A112, Lemma 3.6
-(`integers-2025-A112-lem-3-6`). -/
-public theorem_wanted pellShiftedNorm_le_pellShiftBound {D : ℤ} {w : Pell.Solution₁ D}
-    (hw : Pell.IsFundamental w) (a b : ℤ) {i j : ℤ} (hi : i = 1 ∨ i = -1) (hj : j = 1 ∨ j = -1)
-    {x : ℝ} (hx₀ : 0 ≤ x)
-    (hx : x ≤ sSup {y : ℝ | 0 ≤ y ∧
-      pellShiftedNorm D w.x w.y a b i j y = pellShiftBound D a b}) :
-    pellShiftedNorm D w.x w.y a b i j x ≤ pellShiftBound D a b
 
 end
 

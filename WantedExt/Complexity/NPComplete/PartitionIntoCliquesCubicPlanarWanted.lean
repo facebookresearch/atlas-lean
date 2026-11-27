@@ -24,7 +24,7 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -40,12 +40,12 @@ integer `K ≤ |V|`.
 QUESTION: can `V` be partitioned into `k ≤ K` disjoint sets `V₁, …, V_k` such that each `Vᵢ`
 induces a complete subgraph of `G`?
 
-This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesWanted`) restricted to the graph
+This is PARTITION INTO CLIQUES ([GT15], `PartitionIntoCliquesDefs`) restricted to the graph
 class `cubic ∩ planar` of the ISGCI database. Cerioli, Faria, Ferreira, Martinhon, Protti and
 Reed (2008) establish the NP-completeness of partition into cliques for planar cubic graphs.
 
 The instance, the graph, the well-formedness `0 < K ≤ |V|` and the question are those of
-`PartitionIntoCliquesWanted`; the restriction adds to the well-formedness that the graph is
+`PartitionIntoCliquesDefs`; the restriction adds to the well-formedness that the graph is
 planar, the shared MathlibExt predicate `SimpleGraph.IsPlanar` (a crossing-free straight-line
 drawing; by Fáry's theorem this is the usual notion for simple graphs), and cubic, Mathlib's
 `SimpleGraph.IsRegularOfDegree 3`.
