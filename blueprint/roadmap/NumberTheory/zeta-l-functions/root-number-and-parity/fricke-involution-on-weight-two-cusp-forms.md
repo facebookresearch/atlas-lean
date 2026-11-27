@@ -12,8 +12,10 @@ Let $N \ge 1$ and $W_N = \begin{pmatrix} 0 & -1 \\ N & 0 \end{pmatrix} \in \math
    forms of weight $2$ for $\Gamma_0(N)$ to itself.
 3. $f \mid_2 W_N \mid_2 W_N = f$, as $W_N^2 = -N \cdot I$ and the scalar matrix $-N \cdot I$ acts trivially in weight $2$.
 
-The matrix identity and the formula for $f \mid_2 W_N$ are computed here from the definitions; the sources give the
-involution $w_N(z) = -1/(Nz)$ and its action on weight-two forms.
+The matrix identity and the formula for $f \mid_2 W_N$ are computed here from the definitions. Coates gives the
+involution as $w_N(z) = -1/(Nz)$ and writes its action on weight-two forms as $f \mid_2 w_N$; Darmon's (2.12) gives its
+action on newforms, with two misprints recorded below. Gross and Zagier's (2.1) is the involution $w_N$ of the curve
+$X_0(N)$, defined on points as cyclic isogenies, and is not a source for the slash formula.
 
 ## Depends on
 
@@ -28,7 +30,12 @@ involution $w_N(z) = -1/(Nz)$ and its action on weight-two forms.
   American Mathematical Society, 2004; author's version,
   <https://www.math.mcgill.ca/darmon/pub/Articles/Research/36.NSF-CBMS/chapter.pdf>, cited by the page numbers
   printed in that version: (2.12), p. 17, the involution $w_N$ on $S_2^{\mathrm{new}}(N)$, printed as
-  $w_N(f) = \frac{-1}{N\tau^2} f\bigl(\frac{-1}{N\tau^2}\bigr)$: the argument of $f$ should be $-1/(N\tau)$, and with the
-  sign in front Darmon's own (2.14) would change sign; the normalisation of item 2 is the one for which (2.14) holds, as
-  the [functional equation page](functional-equation-of-the-l-function-of-a-newform.md) computes.
-- B. H. Gross and D. B. Zagier, *Heegner points and derivatives of $L$-series*, Invent. Math. 84 (1986), 225–320: Chapter I, §2, (2.1), p. 227, the involution $w_N$ of $X_0(N)$, which interchanges the cusps $\infty$ and $0$.
+  $w_N(f) = \frac{-1}{N\tau^2} f\bigl(\frac{-1}{N\tau^2}\bigr)$. The argument of $f$ should be $-1/(N\tau)$; with that
+  correction the printed operator is $\frac{-1}{N\tau^2} f\bigl(\frac{-1}{N\tau}\bigr) = -(f \mid_2 W_N)(\tau)$, the
+  negative of item 2, and with that sign Darmon's own (2.14) would change sign. The normalisation of item 2 is the one
+  for which (2.14) holds, as the [functional equation page](functional-equation-of-the-l-function-of-a-newform.md)
+  computes.
+- B. H. Gross and D. B. Zagier, *Heegner points and derivatives of $L$-series*, Invent. Math. 84 (1986), 225–320:
+  Chapter I, §2, (2.1), p. 227, the canonical involution $w_N$ of $X_0(N)$, defined on a point $x = (\phi \colon E \to E')$,
+  a cyclic $N$-isogeny, by $w_N(x) = (\phi' \colon E' \to E)$ with $\phi'$ the dual isogeny, which interchanges the cusps
+  $\infty$ and $0$; cited for the involution of the curve, not for the formula of item 2.

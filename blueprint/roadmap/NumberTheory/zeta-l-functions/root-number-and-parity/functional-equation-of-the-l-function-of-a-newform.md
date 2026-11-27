@@ -32,7 +32,7 @@ $s \mapsto 2 - s$.
   American Mathematical Society, 2004; author's version,
   <https://www.math.mcgill.ca/darmon/pub/Articles/Research/36.NSF-CBMS/chapter.pdf>, cited by the page numbers
   printed in that version: (2.14), p. 18 ("Hecke showed (cf. Exercise 9) that $L(f, s)$ satisfies the functional equation
-  $\Lambda(f, s) = -\Lambda(w_N(f), 2 - s) = -\varepsilon\Lambda(f, 2 - s)$."), and Exercise 9 of Chapter 2, p. 24
+  $\Lambda(f, s) = -\Lambda(w_N(f), 2 - s) = -\varepsilon\Lambda(f, 2 - s)$."), and Exercise 9 of Chapter 2, p. 27
   ("Prove the functional equation (2.14) in the text.").
 - B. H. Gross, *Kolyvagin's work on modular elliptic curves*, in *L-functions and arithmetic* (Durham, 1989),
   London Math. Soc. Lecture Note Ser. 153, Cambridge Univ. Press, 1991, 235–256: (5.2) and the sentence after it, p. 243.

@@ -24,4 +24,4 @@ allows the sum and the integral to be exchanged.
   <https://www.math.mcgill.ca/darmon/pub/Articles/Research/36.NSF-CBMS/chapter.pdf>, cited by the page numbers
   printed in that version: (2.11), p. 17 ("A direct calculation (cf. Exercise 8) shows that
   $\Lambda(f, s) := (2\pi)^{-s}\Gamma(s)N^{s/2}L(f, s) = N^{s/2}\int_0^\infty f(it)t^{s-1}dt$"), stated there for a newform
-  without a domain of validity, and Exercise 8 of Chapter 2, p. 24 ("Check formula (2.11) in the text.").
+  without a domain of validity, and Exercise 8 of Chapter 2, p. 27 ("Check formula (2.11) in the text.").

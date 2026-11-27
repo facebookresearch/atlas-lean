@@ -36,6 +36,9 @@ Its proof is that of the sources below, as the Expansion describes.
   <https://www.math.mcgill.ca/darmon/pub/Articles/Research/36.NSF-CBMS/chapter.pdf>, cited by the page numbers
   printed in that version: §2.3, p. 17 (oldforms, the new subspace, Theorem 2.8 (Atkin–Lehner) and Corollary 2.9, "The simultaneous
   eigenvector $f_\lambda$ is sometimes called a normalised eigenform or simply a newform of level $N$"); (2.12) and
-  (2.13), pp. 17–18 ("for any newform $f$ of level $N$, $w_N(f) = \varepsilon f$, where $\varepsilon = \pm 1$").
+  (2.13), pp. 17–18 ("for any newform $f$ of level $N$, $w_N(f) = \varepsilon f$, where $\varepsilon = \pm 1$"). With the
+  printed sign of Darmon's operator (2.12), which is $-(f \mid_2 W_N)$ once its argument is corrected (see the
+  [Fricke involution page](fricke-involution-on-weight-two-cusp-forms.md)), $\varepsilon$ would change sign; the
+  $\varepsilon$ here is the eigenvalue of $f \mid_2 W_N$, the one for which Darmon's (2.14) holds.
 - B. H. Gross, *Kolyvagin's work on modular elliptic curves*, in *L-functions and arithmetic* (Durham, 1989),
   London Math. Soc. Lecture Note Ser. 153, Cambridge Univ. Press, 1991, 235–256: (5.2), p. 243 ("$f \mid w_N = \epsilon \cdot f$").
