@@ -7,3 +7,4 @@
 - [Small-projector converse lemma](small-projector-converse-lemma.md)
 - [Typical subspace](typical-subspace.md)
 - [Achievable rates form an interval containing zero](achievable-rates-form-an-interval-containing-zero.md)
+- [Classical-Quantum States, Mutual Information and Holevo Information](classical-quantum-information/README.md)

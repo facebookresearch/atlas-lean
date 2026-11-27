@@ -5,7 +5,6 @@ Quantum foundations studies what quantum mechanics rules out and allows at the l
 - [Gleason's theorem](gleason-s-theorem/README.md)
 - [Kochen–Specker theorem in $\mathbb{R}^3$](kochen-specker-finite-real-three.md)
 - [Tsirelson's bound is attained](tsirelson-bound-tight.md)
-
 - [Bell basis and maximally entangled states](bell-basis-and-maximally-entangled-states.md)
 - [Schmidt decomposition](schmidt-decomposition.md)
 - [Quantum teleportation](quantum-teleportation.md)
@@ -17,6 +16,8 @@ Quantum foundations studies what quantum mechanics rules out and allows at the l
 - [Purification and unitary equivalence of purifications](purification-and-unitary-equivalence-of-purifications.md)
 - [Superdense coding](superdense-coding.md)
 - [Classical and entangled values of the CHSH game](classical-and-entangled-values-of-the-chsh-game.md)
-
 - [Exact universality of CNOT and single-qubit gates](exact-universality-of-cnot-and-single-qubit-gates.md)
 - [Tsirelson's Problem and the Connes Embedding Conjecture](tsirelson-problem-and-connes-embedding/README.md)
+- [Pauli Groups, Pauli Twirls and Clifford Observables](pauli-groups-and-clifford-observables/README.md)
+- [Rigidity of Nonlocal Strategies: Linearity and Pauli Tests](rigidity-of-nonlocal-strategies/README.md)
+- [States and Measurements on Operator Algebras](states-and-measurements-on-operator-algebras/README.md)
