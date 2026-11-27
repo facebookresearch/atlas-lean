@@ -23,6 +23,7 @@ Applied to protein structural alignment (the minimization form of the score enve
 ## Depends on
 
 - [Protein structural alignment as low order value optimization](protein-structural-alignment-as-low-order-value-optimization.md)
+- [Armijo sufficient decrease condition](../../../../Analysis/numerical-analysis/line-search-methods/armijo-condition.md)
 
 ## Expansion
 

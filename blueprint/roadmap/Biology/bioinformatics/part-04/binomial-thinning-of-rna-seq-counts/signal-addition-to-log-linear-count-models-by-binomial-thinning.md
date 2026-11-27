@@ -20,6 +20,10 @@ $$\tilde\Theta = \Theta + Q = (\mu - e)1_N^\top + B_1X_1^\top + B_2X_2^\top + B_
 
 so the thinned data follow the same model with exactly known added effects $B_2, B_3$ and a shifted intercept, while every unknown feature of the real data ($B_1$, $A$, $Z$, $\Omega$) is retained. The same conclusion holds for negative binomial counts and for mixtures of negative binomials when the thinning acts on the mean.
 
+## Depends on
+
+- [Negative binomial mass function with size and mean](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/neg-binomial-real.md)
+
 ## Proof depends on
 
 - [Thinning of a Poisson process](../../../../Probability/point-processes/poisson-processes/thinning.md)

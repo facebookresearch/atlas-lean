@@ -14,6 +14,7 @@ A **forward decision vertex** has one predecessor and several successors, a **ba
 ## Depends on
 
 - [Hutchinson–Wilf count of words consistent with a de Bruijn graph](hutchinson-wilf-count-of-words-consistent-with-a-de-bruijn-graph.md)
+- [Euler circuit criterion for directed multigraphs](../../../../ComputerScience/graph-algorithms/traversal-and-connectivity/hierholzer-s-algorithm-for-euler-circuits/exists-is-euler-circuit-iff.md)
 
 ## Expansion
 

@@ -17,6 +17,7 @@ For a circular, non-periodic genome, cyclic rotations ending at the $d^+(t)$ occ
 - [De Bruijn multigraph of a string](../../de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
 - [The (k-1)-mer walk of a string is an Eulerian trail](../../de-bruijn-graph-genome-assembly/zip-tail-kmers-perm.md)
 - [Every Eulerian trail spells a string with the same k-mer multiset](../../de-bruijn-graph-genome-assembly/kmers-spell-perm.md)
+- [Euler path criterion for directed multigraphs](../../../../ComputerScience/graph-algorithms/traversal-and-connectivity/hierholzer-s-algorithm-for-euler-circuits/exists-is-euler-path-iff.md)
 
 ## Expansion
 

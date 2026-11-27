@@ -19,6 +19,8 @@ $$\text{M-step:}\quad \pi^{(t+1)}_{(j,k)} = \frac{\sum_{i=1}^N Z^{(t)}_{i,(j,k)}
 ## Depends on
 
 - [Dirichlet–multinomial conjugacy](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/conjugate-priors/posterior-categorical-seq-kernel-dirichl.md)
+- [Dirichlet distribution](../../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/dirichlet-measure.md)
+- [Multinomial mass function](../../../../Probability/distributions/discrete/multinomial-distribution/multinomial-real.md)
 
 ## Proof depends on
 

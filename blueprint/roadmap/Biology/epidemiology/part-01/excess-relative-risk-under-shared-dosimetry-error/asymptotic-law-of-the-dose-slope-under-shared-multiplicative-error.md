@@ -20,6 +20,7 @@ $$\Pr(b_{1,l}L + N \ge \hat b_1) = \alpha/2, \qquad \Pr(b_{1,u}L + N \le \hat b_
 ## Depends on
 
 - [Poisson excess relative risk model and the SUMA-corrected variance](poisson-excess-relative-risk-model-and-suma-corrected-variance.md)
+- [Log-normal distribution](../../../../Probability/distributions/continuous/log-normal-distribution/log-normal-measure.md)
 
 ## Proof depends on
 

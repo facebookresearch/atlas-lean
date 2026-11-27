@@ -6,6 +6,10 @@
 
 **Block decomposition.** Contract the strongly connected components (SCCs) of the wiring graph to obtain a DAG; the **gradient** of a node is the length of the longest path to it from a root of this DAG. A **block** is a set of nodes with consecutive gradients, and its **decision nodes** are the outside nodes with an edge into the block. The state of a block is determined by its own state and those of its decision nodes, so every attractor of the network is a combination of **local attractors**: those of the root block, then those of each subsequent block driven by the periodic sequences that the earlier blocks impose on its decision nodes. Every local attractor of the root block extends to at least one attractor of the network, so the network has at least as many attractors as the root block has local attractors; unsatisfiable continuations are discarded and multiple continuations branch.
 
+## Proof depends on
+
+- [The condensation of the computed components is acyclic](../../../../ComputerScience/graph-algorithms/traversal-and-connectivity/strongly-connected-components/components-condensation-acyclic.md)
+
 ## Expansion
 
 Since successors are unique and the successor of an attractor state stays in the attractor, once a path enters an attractor it can never leave, which proves the theorem by contradiction. The SAT encoding replaces explicit enumeration by bounded model checking with growing unrolling depth. The decomposition exploits that influence flows only downward along the SCC DAG: upstream components evolve autonomously, so their attractors can be computed first and fed as periodic inputs to downstream blocks, which shrinks the state space each SAT call explores and allows independent branches to be processed in parallel.

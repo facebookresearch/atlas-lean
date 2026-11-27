@@ -13,6 +13,7 @@ $G$ is an *amplifier of selection* if $\Phi_G(r) > \Phi_0(r)$ for all $r > 1$ an
 ## Depends on
 
 - [Moran Fixation](../../isothermal-theorem-for-evolutionary-graph-dynami/moran-fixation.md)
+- [Isothermal theorem, "if" direction](../../isothermal-theorem-for-evolutionary-graph-dynami/average-fixation-eq-moran-fixation.md)
 
 ## Expansion
 

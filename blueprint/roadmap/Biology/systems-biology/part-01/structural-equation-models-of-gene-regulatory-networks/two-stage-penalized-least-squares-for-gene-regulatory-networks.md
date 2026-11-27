@@ -27,6 +27,7 @@ When $p \asymp q = o(n)$ diverge, non-asymptotic bounds hold with high probabili
 ## Depends on
 
 - [Linear moment model for instrumental variables](../../../statistical-genetics/mendelian-randomization/linear-moment-model.md)
+- [Closed form of ridge regression](../../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/ridge-le-ridge-estimate.md)
 
 ## Expansion
 

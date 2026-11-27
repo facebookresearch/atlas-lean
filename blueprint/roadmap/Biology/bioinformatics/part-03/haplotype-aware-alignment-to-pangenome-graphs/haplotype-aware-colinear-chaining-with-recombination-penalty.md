@@ -19,6 +19,11 @@ The gap-sensitive variant (Problem 5), which also subtracts a gap cost between c
 ## Depends on
 
 - [Complexity of haplotype-aware sequence-to-graph alignment](complexity-of-haplotype-aware-sequence-to-graph-alignment.md)
+- [Exponential Time Hypothesis and Strong Exponential Time Hypothesis](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/exponential-time-hypothesis-and-strong.md)
+
+## Proof depends on
+
+- [SETH implies the Orthogonal Vectors hypothesis](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/seth-implies-the-orthogonal-vectors-hypothesis.md)
 
 ## Expansion
 

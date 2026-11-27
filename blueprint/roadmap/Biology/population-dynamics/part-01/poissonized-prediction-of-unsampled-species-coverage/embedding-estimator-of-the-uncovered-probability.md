@@ -13,6 +13,7 @@ Hence $(r-1)/T$ is an unbiased predictor of $\theta$ for $r \ge 2$, the uniforml
 ## Depends on
 
 - [The Good–Turing identity for the missing mass](../../../not-yet-classified/good-turing/expect-missing-mass.md)
+- [Thinning](../../../../Probability/point-processes/poisson-processes/thinning-2.md)
 
 ## Expansion
 

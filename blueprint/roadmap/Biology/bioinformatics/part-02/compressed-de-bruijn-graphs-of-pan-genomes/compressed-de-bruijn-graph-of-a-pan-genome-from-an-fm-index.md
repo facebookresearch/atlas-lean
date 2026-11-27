@@ -29,6 +29,12 @@ implicit graph support searching a pattern and then traversing the graph from th
 
 - [De Bruijn multigraph of a string](../../de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
 - [FM-index backward search](../../../../ComputerScience/string-algorithms/burrows-wheeler-transform-and-fm-index/backward-search.md)
+- [Suffix array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
+- [Burrows–Wheeler transform](../../../../ComputerScience/string-algorithms/burrows-wheeler-transform-and-fm-index/bwt.md)
+
+## Proof depends on
+
+- [The LCP array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/lcp-array.md)
 
 ## Expansion
 

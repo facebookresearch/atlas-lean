@@ -20,6 +20,7 @@ Only the previous time slice is needed, so memory is $O(NQ)$ for transitions and
 
 - [Forward variables of a hidden Markov model](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/forward.md)
 - [Backward variables of a hidden Markov model](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/hidden-markov-models/backward.md)
+- [One Baum-Welch step](../../../../ComputerScience/machine-learning/probabilistic-graphical-models/baum-welch-algorithm/em-step.md)
 
 ## Expansion
 

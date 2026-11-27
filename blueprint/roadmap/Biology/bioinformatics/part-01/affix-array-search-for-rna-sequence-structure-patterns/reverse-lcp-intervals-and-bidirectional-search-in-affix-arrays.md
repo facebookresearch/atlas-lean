@@ -13,6 +13,7 @@ An **RNA sequence-structure pattern** is a pair $(P,R)$ of an IUPAC pattern $P$ 
 ## Depends on
 
 - [Suffix array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
+- [The LCP array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/lcp-array.md)
 
 ## Expansion
 

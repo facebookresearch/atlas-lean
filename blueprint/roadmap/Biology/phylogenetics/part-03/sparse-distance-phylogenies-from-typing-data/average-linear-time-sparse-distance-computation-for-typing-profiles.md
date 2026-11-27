@@ -13,10 +13,12 @@ $$k < \frac{(m - k - 1)\log\sigma}{\log(md)} .$$
 ## Depends on
 
 - [Kruskal's algorithm gives a minimum spanning forest](../../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/kruskal-minimal.md)
+- [The LCP array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/lcp-array.md)
 
 ## Proof depends on
 
 - [Suffix array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
+- [Sparse table range-minimum query](../../../../ComputerScience/data-structures/range-query-structures/sparse-table/query.md)
 
 ## Expansion
 

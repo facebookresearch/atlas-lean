@@ -18,6 +18,10 @@ with $a = -Pq_2 + P + Tq_4$ and $\bar a = -q_2 + q_4 + 1$. Against opponents $q^
 
 - [Existence of a stationary distribution](../../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/exists-stationary.md)
 
+## Proof depends on
+
+- [Karush–Kuhn–Tucker conditions for inequality constraints](../../../../Analysis/convex-analysis-and-variations/karush-kuhn-tucker-inequality.md)
+
 ## Expansion
 
 The stationary distribution of the four-state chain is a ratio of determinants by Cramer's rule; each transition entry is affine in each $p_i$ and no product $p_i p_i$ appears in any minor, which leaves only cross terms $p_i p_j$ and gives zero diagonals. Since $u_q$ is not concave (against unconditional cooperation, $(0,0,0,0)$, $(\tfrac12, 0, 0, 0)$ and $(\tfrac12, 0, 0, \tfrac12)$ are all best responses), the maximum over the box is found by Karush–Kuhn–Tucker reasoning: on each face some coordinates sit at bounds and the others satisfy first-order conditions, a system of polynomial equations after clearing the positive denominators. Evaluating the objective on $S_q$ yields best responses that are generally not zero-determinant (extortionate) strategies, and in multi-opponent settings memory-one best responses can be outperformed by optimized strategies with longer memory.

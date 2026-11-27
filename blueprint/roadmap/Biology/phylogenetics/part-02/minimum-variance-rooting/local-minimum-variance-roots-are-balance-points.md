@@ -35,6 +35,10 @@ at the vertex of the parabola when it falls in $[0, e_v]$.
 arbitrary root, then $|v|$ and $S_I(v)$ bottom-up, then $S_T(v) = S_T(p(v)) + (n - 2|v|) e_v$ top-down,
 and minimizing the quadratic on each edge, finds the global MV in $O(n)$ time.
 
+## Depends on
+
+- [Ultrametric on taxa](../../splits-compatibility-ultrametrics-and-upgma/is-ultrametric.md)
+
 ## Expansion
 
 Moving $p$ a distance $x$ toward $v$ shortens the distances of the $|v|$ leaves below $v$ by $x$ and

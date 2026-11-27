@@ -16,6 +16,10 @@ $$\mathbb{E}\, T(y_i, y_j) = \frac{p_i p_j}{p_i + p_j - p_i p_j}.$$
 
 Consequently the *centered* coefficient $T^c(y_i, y_j) = T(y_i, y_j) - \dfrac{p_i p_j}{p_i + p_j - p_i p_j}$ has mean zero under the null hypothesis of independent occurrence, whatever the occurrence probabilities.
 
+## Depends on
+
+- [Multinomial mass function](../../../../Probability/distributions/discrete/multinomial-distribution/multinomial-real.md)
+
 ## Proof depends on
 
 - [Tower property of conditional expectation](../../../../Probability/foundations/conditional-expectation/tower-property/tower-property.md)

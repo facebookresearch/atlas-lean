@@ -14,6 +14,10 @@
 
 - [Fundamental bifurcation theorem for nonlinear matrix models](fundamental-bifurcation-theorem-for-nonlinear-matrix-models.md)
 
+## Proof depends on
+
+- [Implicit function theorem](../../../../Analysis/real-functions/multivariable-calculus/implicit-function-theorem.md)
+
 ## Expansion
 
 Stability at $x^*$ with $r = 1$ persists, by the implicit function theorem, to a curve of stable positive equilibria for nearby $r$, in particular for $r$ slightly below $1$, where extinction is also stable. The a priori bound turns unboundedness of the continuum into unboundedness of its $r$-spectrum; since the branch starts to the left of $1$ and the spectrum is connected, it covers $r = 1$, giving a positive equilibrium there. Condition A3(b) can fail: in a juvenile–adult example satisfying A1, A2 and A4, the positive state at $r = 1$ can be unstable while a stable positive 2-cycle provides the survival attractor, so a strong Allee effect arises with a cycle instead of an equilibrium. For $r > 1$ extinction is unstable and no strong Allee effect is possible.

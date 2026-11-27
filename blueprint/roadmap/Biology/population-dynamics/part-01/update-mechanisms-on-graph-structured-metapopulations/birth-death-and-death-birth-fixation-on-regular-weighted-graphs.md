@@ -14,6 +14,10 @@ Connectedness cannot be dropped: for two disjoint unit-weight edges, one entirel
 
 - [Fixation probability of the Moran process](../../../population-genetics/moran-model/moran-fixation.md)
 
+## Proof depends on
+
+- [General optional stopping for uniformly integrable martingales](../../../../Probability/martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
+
 ## Expansion
 
 On a regular graph the one-step transition probabilities of the mutant count are

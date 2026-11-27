@@ -12,6 +12,10 @@
 2. Its worst-case running time is $O(|G|^3 h_S + |G|^2|S|h_S)$.
 3. Only transfer nodes and their ancestors are ever moved, and the repair introduces at most $k h_G$ new duplications and at most $k h_G h_S$ new losses, bounding the cost increase over the (possibly infeasible) optimum.
 
+## Depends on
+
+- [Topological order](../../../../ComputerScience/graph-algorithms/traversal-and-connectivity/topological-sorting/is-topological-order.md)
+
 ## Expansion
 
 Every cycle of $F$ must use a contemporaneity arc of some transfer, because the tree-order arcs alone are acyclic; hence the node chosen for repair lies above some transfer (it is an ancestor of a transfer node). Pulling a lowest such node up removes the offending order constraint while keeping the scenario valid, and a node can move at most $h_S$ times, which bounds the number of iterations by $|I(G)| h_S$; each iteration costs $O(|G|^2 + |G||S|)$ for cycle detection. The cost bound follows by charging new duplications to ancestors of transfers (fewer than $h_G$ per transfer) and new losses to the at most $h_S$ steps each such node can move.

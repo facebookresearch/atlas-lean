@@ -17,6 +17,7 @@ $$\mathrm{pos}\big(\mathrm{spectrum}_k(s_1) - \mathrm{spectrum}_k(s_2)\big) \le 
 ## Depends on
 
 - [q-gram filtering lemma for approximate matching](../../q-gram-filtering-lemma-for-approximate-matching.md)
+- [Edit distance algorithm](../../../../ComputerScience/string-algorithms/edit-distance/edit-distance.md)
 
 ## Expansion
 

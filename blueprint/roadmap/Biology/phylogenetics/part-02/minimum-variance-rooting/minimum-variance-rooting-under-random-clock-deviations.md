@@ -21,6 +21,7 @@ that branch.
 ## Depends on
 
 - [Local minimum-variance roots are balance points](local-minimum-variance-roots-are-balance-points.md)
+- [Ultrametric on taxa](../../splits-compatibility-ultrametrics-and-upgma/is-ultrametric.md)
 
 ## Expansion
 

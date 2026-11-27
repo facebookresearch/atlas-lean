@@ -11,6 +11,7 @@
 ## Depends on
 
 - [FM-index backward search](../../../../ComputerScience/string-algorithms/burrows-wheeler-transform-and-fm-index/backward-search.md)
+- [Edit distance algorithm](../../../../ComputerScience/string-algorithms/edit-distance/edit-distance.md)
 
 ## Expansion
 

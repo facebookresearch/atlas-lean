@@ -16,6 +16,7 @@ where $V_{\text{within}}$ is the variance due to individual stochasticity (rando
 
 - [Gamma-Gompertz-Makeham frailty hazard](gamma-gompertz-makeham-frailty-hazard.md)
 - [State distribution in a discrete-time multistate life table](../../life-tables/multistate-life-table-by-matrix-products.md)
+- [Total-variance decomposition](../../../../Probability/not-yet-classified/part-05/finite-conditioning/sum-mul-sq-sub-eq-within-add-between.md)
 
 ## Expansion
 

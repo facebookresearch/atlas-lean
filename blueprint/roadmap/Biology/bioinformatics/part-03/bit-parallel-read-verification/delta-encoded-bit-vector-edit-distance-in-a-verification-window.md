@@ -19,6 +19,7 @@ Because $k$ is small for short reads (about 4–5% of the read length), the band
 ## Depends on
 
 - [q-gram (seed) filtering lemma for approximate matching](../../q-gram-filtering-lemma-for-approximate-matching.md)
+- [Edit distance algorithm](../../../../ComputerScience/string-algorithms/edit-distance/edit-distance.md)
 
 ## Expansion
 

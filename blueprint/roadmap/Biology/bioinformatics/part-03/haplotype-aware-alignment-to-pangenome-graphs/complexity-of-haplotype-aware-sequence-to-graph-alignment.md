@@ -17,6 +17,13 @@ unless the Strong Exponential Time Hypothesis (SETH) is false.
 ## Depends on
 
 - [The Li–Stephens copying model](../../../population-structure/li-stephens-haplotype-copying-model/hmm.md)
+- [Edit distance algorithm](../../../../ComputerScience/string-algorithms/edit-distance/edit-distance.md)
+- [Exponential Time Hypothesis and Strong Exponential Time Hypothesis](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/exponential-time-hypothesis-and-strong.md)
+
+## Proof depends on
+
+- [SETH implies the Orthogonal Vectors hypothesis](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/seth-implies-the-orthogonal-vectors-hypothesis.md)
+- [Edit distance has no strongly subquadratic algorithm unless SETH fails](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/edit-distance-has-no-strongly-subquadratic.md)
 
 ## Expansion
 

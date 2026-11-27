@@ -23,6 +23,8 @@ Since $F[Q] = D_{KL}[Q \,\|\, P(\cdot \mid o_{1:t})] - \log P(o_{1:t})$, minimiz
 ## Depends on
 
 - [Evidence lower bound of a single observation](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/mean-field-variational-inference/elbo.md)
+- [Kullback–Leibler divergence on a finite space](../../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/to-real-kl-div-eq-sum.md)
+- [Dirichlet distribution](../../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/dirichlet-measure.md)
 
 ## Expansion
 

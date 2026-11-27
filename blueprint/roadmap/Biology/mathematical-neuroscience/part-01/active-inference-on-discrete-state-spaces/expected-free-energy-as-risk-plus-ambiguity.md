@@ -21,6 +21,7 @@ $$\mathbb{E}_Q[-\log Q(\pi)] = \mathbb{E}_Q[G(\pi;\beta)].$$
 ## Depends on
 
 - [Variational free energy of a POMDP generative model](variational-free-energy-of-a-pomdp-generative-model.md)
+- [Kullback–Leibler divergence on a finite space](../../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/to-real-kl-div-eq-sum.md)
 
 ## Expansion
 

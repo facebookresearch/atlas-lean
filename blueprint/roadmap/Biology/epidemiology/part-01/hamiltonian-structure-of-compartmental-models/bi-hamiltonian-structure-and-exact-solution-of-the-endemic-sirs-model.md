@@ -30,6 +30,7 @@ The first structure is the general one for [compartmental models with conserved 
 ## Depends on
 
 - [Compartmental models with conserved population are Hamiltonian](compartmental-models-with-conserved-population-are-hamiltonian.md)
+- [Solution of the Kermack–McKendrick SIR system](../../kermack-mckendrick-sir-model/is-solution.md)
 
 ## Sources
 

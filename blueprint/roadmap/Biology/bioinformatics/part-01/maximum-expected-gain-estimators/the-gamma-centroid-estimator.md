@@ -34,6 +34,7 @@ $\gamma = 1$ is the centroid estimator.
 ## Depends on
 
 - [Base-pair probability](../../mccaskill-partition-function-for-rna-folding/pair-prob.md)
+- [Maximum likelihood estimator](../../../../Probability/statistical-estimation/likelihood-and-maximum-likelihood-estimators/is-maximum-likelihood-estimator.md)
 
 ## Expansion
 

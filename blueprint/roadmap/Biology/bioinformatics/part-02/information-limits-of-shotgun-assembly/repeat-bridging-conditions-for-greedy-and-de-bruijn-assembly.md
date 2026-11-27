@@ -16,6 +16,7 @@ Use the repeat, triple-repeat, interleaving and bridging notions of the bridging
 
 - [Bridging form of Ukkonen's condition](bridging-form-of-ukkonens-condition.md)
 - [De Bruijn multigraph of a string](../../de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
+- [Euler circuit criterion for directed multigraphs](../../../../ComputerScience/graph-algorithms/traversal-and-connectivity/hierholzer-s-algorithm-for-euler-circuits/exists-is-euler-circuit-iff.md)
 
 ## Expansion
 

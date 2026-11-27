@@ -14,6 +14,7 @@
 ## Depends on
 
 - [Is LCAReconciliation](../../../not-yet-classified/lcareconciliation/is-lcareconciliation.md)
+- [Robinson–Foulds distance](../../splits-compatibility-ultrametrics-and-upgma/rf-dist.md)
 
 ## Expansion
 

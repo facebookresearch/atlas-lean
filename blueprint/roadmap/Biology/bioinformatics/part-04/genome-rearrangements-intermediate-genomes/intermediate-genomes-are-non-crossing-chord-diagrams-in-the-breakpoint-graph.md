@@ -13,6 +13,7 @@ the product over the $AB$-cycles $K$ with $|K|$ vertices.
 ## Depends on
 
 - [Double-cut-and-join distance formula](../../genome-rearrangements/double-cut-and-join-distance-formula.md)
+- [Counting noncrossing perfect matchings](../../../../Combinatorics/set-partitions/noncrossing-partitions/noncrossing-pair-partitions-and-the-catalan-count/card-nc-matching.md)
 
 ## Expansion
 

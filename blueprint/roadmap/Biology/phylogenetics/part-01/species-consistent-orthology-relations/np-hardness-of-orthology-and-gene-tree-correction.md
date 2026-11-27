@@ -19,6 +19,7 @@ Use the definitions of DS-trees, $S$-consistency, relation graphs and $P_3(R)$ f
 ## Depends on
 
 - [Triplet characterization of species-consistent relation graphs](triplet-characterization-of-species-consistent-relation-graphs.md)
+- [Robinson–Foulds distance](../../splits-compatibility-ultrametrics-and-upgma/rf-dist.md)
 
 ## Expansion
 

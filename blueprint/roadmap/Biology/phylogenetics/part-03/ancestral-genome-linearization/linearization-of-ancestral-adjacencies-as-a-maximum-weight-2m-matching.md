@@ -30,6 +30,7 @@ the traveling salesman and vertex-disjoint path cover problems.
 ## Proof depends on
 
 - [General matching is in P (Edmonds' blossom algorithm)](../../../../TheoryOfComputation/polynomial-time-problems/matching-in-general-graphs/matching-in-p.md)
+- [Euler circuits in connected even graphs](../../../../GraphTheory/paths-cycles-connectivity/eulerian-circuits/exists-is-eulerian.md)
 
 ## Expansion
 

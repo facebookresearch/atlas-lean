@@ -13,6 +13,14 @@ In (A) $i$ updates its view of $j$ by asking every $k$ what $k$ thinks of $j$; i
 2. (Model A, generic data.) If $X(0)$ is not normal, under the same eigenvalue hypothesis $X(t)/\|X(t)\|_F \to u_1 v_1^{\mathsf T}/\|u_1 v_1^{\mathsf T}\|_F$ with $u_1, v_1$ the right and left eigenvectors, a rank-one limit whose sign pattern is generically not balanced.
 3. (Model B.) Writing $X = S + A$ with $S$ symmetric and $A$ skew, $A(t) \equiv A(0)$ is conserved and $S$ obeys a matrix Riccati equation that integrates explicitly. If $A(0) \ne 0$ the solution always blows up in finite time, and for a dense set of initial conditions $X(t)/\|X(t)\|_F \to ww^{\mathsf T}/\|w\|^2$ as $t \to t^*$, so the network generically becomes balanced in finite time.
 
+## Depends on
+
+- [Structural balance of complete signed graphs](../../../../GraphTheory/social-networks/structural-balance-of-complete-signed-graphs.md)
+
+## Proof depends on
+
+- [Spectral theorem for normal matrices](../../../../LinearAlgebra/eigenvalues-and-canonical-forms/spectral-theorem-for-normal-matrices/exists-unitary-diagonal-of-is-star-norma.md)
+
 ## Expansion
 
 For symmetric data, model A decouples in an orthonormal eigenbasis into scalar equations $\dot\lambda = \lambda^2$ with solutions $\lambda(t) = \lambda(0)/(1 - \lambda(0) t)$, so the largest positive eigenvalue explodes first and its eigenprojection dominates; for non-normal data the same dominance holds in the Jordan basis but produces $u_1 v_1^{\mathsf T}$, whose two sign vectors need not agree. In model B, $\frac{d}{dt}(X - X^{\mathsf T}) = XX^{\mathsf T} - XX^{\mathsf T} = 0$, which removes the asymmetry from the dynamics and leaves a symmetric Riccati flow whose blow-up direction is a single symmetric rank-one matrix. Read as cooperation ($X_{ij} > 0$ means $i$ cooperates with $j$), model B corresponds to judging others by how they treat third parties, the indirect-reciprocity mechanism; in evolutionary simulations of a donation game with fixation probabilities as the readout, agents updating by model B outcompete those using model A and resist unconditional defectors once the benefit-to-cost ratio exceeds a threshold that grows with group size.

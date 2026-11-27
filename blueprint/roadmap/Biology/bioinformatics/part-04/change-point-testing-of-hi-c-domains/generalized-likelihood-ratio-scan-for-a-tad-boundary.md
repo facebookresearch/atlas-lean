@@ -17,6 +17,7 @@ and if $\xi/n \to \delta > 0$, then $\tilde Z \to \max_{\delta < t < 1-\delta} g
 ## Depends on
 
 - [Negative binomial mass function with size and mean](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/negative-binomial/neg-binomial-real.md)
+- [Chi-square distribution](../../../../Probability/distributions/continuous/chi-square-distribution/chi-square-measure.md)
 
 ## Proof depends on
 

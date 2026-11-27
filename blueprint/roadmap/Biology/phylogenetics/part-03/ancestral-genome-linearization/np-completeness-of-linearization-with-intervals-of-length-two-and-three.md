@@ -26,6 +26,10 @@ NP-complete with weights and multiplicities.
 
 - [Linearization of ancestral adjacencies as a maximum weight 2m-matching](linearization-of-ancestral-adjacencies-as-a-maximum-weight-2m-matching.md)
 
+## Proof depends on
+
+- [3SAT is NP-complete](../../../../TheoryOfComputation/np-completeness/satisfiability/3-satisfiability/sat3-dec-np-complete.md)
+
 ## Expansion
 
 Variable gadgets are hypergraph cycles in which exactly one of two main hyperedges must be removed,

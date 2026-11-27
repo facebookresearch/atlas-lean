@@ -18,6 +18,7 @@ The proof is a pruning argument. Since $v \ge 0$ and $u$ is non-decreasing in th
 ## Depends on
 
 - [Mutual information test score for high-order dynamic Bayesian networks](mutual-information-test-score-for-high-order-dynamic-bayesian-networks.md)
+- [Chi-square distribution](../../../../Probability/distributions/continuous/chi-square-distribution/chi-square-measure.md)
 
 ## Sources
 

@@ -16,6 +16,11 @@ A **maximal repeated pair** is a triple $(p_1, p_2, \alpha)$ with $p_1 \ne p_2$ 
 
 **Consequences.** Since a string of length $|S|$ has at most $|S|$ maximal repeats, and each contributes at most $|\Sigma|^2$ pairs $(l, r)$, $S$ has at most $|S| \, |\Sigma|^2$ minimal absent words of length at least $3$. Maximal repeats are the path labels of the left-diverse internal nodes of the suffix tree of $S$, so all minimal absent words can be enumerated from a suffix tree, or equivalently from a suffix array with its LCP and Burrows-Wheeler arrays, in time linear in $|S|$ plus the output size.
 
+## Depends on
+
+- [Suffix array](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
+- [Burrows–Wheeler transform](../../../../ComputerScience/string-algorithms/burrows-wheeler-transform-and-fm-index/bwt.md)
+
 ## Proof depends on
 
 - [Suffix tree](../../../../ComputerScience/data-structures/tries-and-integer-dictionaries/suffix-tree/suffix-tree.md)

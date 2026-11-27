@@ -20,6 +20,10 @@ $$N > \max\left(\frac{G \ln(3/\epsilon)}{L - \tilde\ell_{crit} - 2\ell_{iid}},\;
 
 the X-phased Multibridging algorithm is $\epsilon$-feasible. Thus noisy reads need only about $2\ell_{iid}$ extra bases of read length beyond the noiseless requirement that every triple repeat and one repeat of each interleaved pair be bridged, while the coverage term matches Lander–Waterman coverage up to the same shift.
 
+## Depends on
+
+- [Edit distance algorithm](../../../../ComputerScience/string-algorithms/edit-distance/edit-distance.md)
+
 ## Proof depends on
 
 - [Fixed-direction Chernoff bound, rate form](../../../../Probability/large-deviations/cram-r-s-theorem/cramer-upper-bound-rate.md)

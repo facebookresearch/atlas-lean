@@ -11,6 +11,7 @@ where $\mathbb E_\pi$ and $V_\pi$ are the mean and variance over the mixing dist
 ## Depends on
 
 - [Occupancy times and longevity from the fundamental matrix](occupancy-times-and-longevity-from-the-fundamental-matrix.md)
+- [Total-variance decomposition](../../../../Probability/not-yet-classified/part-05/finite-conditioning/sum-mul-sq-sub-eq-within-add-between.md)
 
 ## Expansion
 

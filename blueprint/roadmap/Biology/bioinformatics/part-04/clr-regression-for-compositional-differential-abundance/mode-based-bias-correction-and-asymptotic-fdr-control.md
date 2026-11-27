@@ -16,6 +16,7 @@ $$\limsup_{m, n \to \infty} \mathrm{FDR}_{m,n}(t^*) \le q.$$
 
 - [Compositional bias of CLR regression coefficients](clr-regression-coefficient-bias.md)
 - [Benjamini–Hochberg rejection set](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
+- [Student's $t$ law](../../../../Probability/linear-models-multivariate/student-s-t-and-snedecor-s-f-distributions/student-tmeasure.md)
 
 ## Expansion
 

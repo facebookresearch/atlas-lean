@@ -16,6 +16,7 @@ The problem MPRST-SD asks for a reconciliation minimizing this cost.
 ## Depends on
 
 - [Is LCAReconciliation](../../../not-yet-classified/lcareconciliation/is-lcareconciliation.md)
+- [Mirsky's theorem](../../../../Combinatorics/partially-ordered-sets/mirsky-s-theorem/mirsky-dual.md)
 
 ## Expansion
 

@@ -21,6 +21,7 @@ $$\tilde n = \Big(1 - \frac{\Psi + 1 - \sum_iq_is_i}{\Phi + \sum_iq_iV_i}\Big)K.
 ## Depends on
 
 - [Replicator Field](../../stability-of-boundary-evolutionarily-stable-stra/replicator-field.md)
+- [Poisson process](../../../../Probability/point-processes/poisson-processes/is-poisson-process.md)
 
 ## Expansion
 

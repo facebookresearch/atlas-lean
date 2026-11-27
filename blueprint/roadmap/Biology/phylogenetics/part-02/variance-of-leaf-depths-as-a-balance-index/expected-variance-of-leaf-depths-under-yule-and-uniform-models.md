@@ -20,6 +20,7 @@ Under the Yule model the mean depth $E_Y(S_n)/n = 2H_n - 2$ and the depth varian
 ## Depends on
 
 - [Extremal trees for the variance of leaf depths](extremal-trees-for-the-variance-of-leaf-depths.md)
+- [Schröder's count of rooted binary phylogenetic trees](../../../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/nat-card-rooted-binary-tree.md)
 
 ## Expansion
 

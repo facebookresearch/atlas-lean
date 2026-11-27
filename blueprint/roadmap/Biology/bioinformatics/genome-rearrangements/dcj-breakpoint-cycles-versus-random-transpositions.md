@@ -13,6 +13,7 @@ Combined with Berestycki and Durrett's comparison of $\mathbb E[Cy_k]$ with the 
 ## Depends on
 
 - [Expected breakpoints after random DCJ operations](expected-breakpoints-after-random-dcj-operations.md)
+- [Number of cycles of a permutation](../../../Combinatorics/stirling-bell-eulerian/stirling-lah-numbers/stirling-numbers-of-the-first-kind/cycle-quotient-count.md)
 
 ## Expansion
 

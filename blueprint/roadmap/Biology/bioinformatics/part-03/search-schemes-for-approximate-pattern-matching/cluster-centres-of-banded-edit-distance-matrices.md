@@ -15,6 +15,7 @@ The cell $AM[c,j]$ is the cluster's *centre*, a local minimum of the column.
 ## Depends on
 
 - [Search schemes and the pigeonhole principle](search-schemes-and-the-pigeonhole-principle.md)
+- [Edit distance algorithm](../../../../ComputerScience/string-algorithms/edit-distance/edit-distance.md)
 
 ## Expansion
 

@@ -17,6 +17,7 @@ at a duplication the cost is $1$ plus the better of the two assignments in which
 ## Depends on
 
 - [Multi-gene reconciliation with segmental duplications](multi-gene-reconciliation-with-segmental-duplications.md)
+- [Topological order](../../../../ComputerScience/graph-algorithms/traversal-and-connectivity/topological-sorting/is-topological-order.md)
 
 ## Expansion
 

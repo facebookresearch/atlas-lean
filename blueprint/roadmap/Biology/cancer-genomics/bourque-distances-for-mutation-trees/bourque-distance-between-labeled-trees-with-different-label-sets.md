@@ -15,6 +15,7 @@ the sum over nontrivial bipartitions $P = \{C', C\setminus C'\}$ of $C$.
 ## Depends on
 
 - [Generalized NNI distance on node-labeled trees](generalized-nni-distance-on-node-labeled-trees.md)
+- [Robinson–Foulds distance](../../phylogenetics/splits-compatibility-ultrametrics-and-upgma/rf-dist.md)
 
 ## Expansion
 

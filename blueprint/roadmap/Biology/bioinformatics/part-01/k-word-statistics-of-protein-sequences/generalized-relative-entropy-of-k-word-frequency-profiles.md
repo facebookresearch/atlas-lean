@@ -16,6 +16,10 @@ with the convention $0\log 0 = 0$.
 1. Every summand satisfies $f(w^X_{k,t})\log_2\frac{2f(w^X_{k,t})}{f(w^X_{k,t})+f(w^Y_{k,t})} \le f(w^X_{k,t}) \le 1$; in particular $\mathrm{gre}_k$ is finite for all profiles, unlike the Kullback–Leibler divergence, which is infinite when $f^Y$ vanishes where $f^X$ does not.
 2. $\mathrm{gre}_k(X,Y) = \mathrm{KL}\big(F^X_k \,\big\|\, \tfrac12(F^X_k + F^Y_k)\big) \ge 0$, so $\mathrm{gre}_k(X,Y) + \mathrm{gre}_k(Y,X)$ is twice the Jensen–Shannon divergence of the two profiles and lies in $[0,2]$, with equality to $0$ iff $F^X_k = F^Y_k$.
 
+## Depends on
+
+- [Kullback–Leibler divergence on a finite space](../../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/to-real-kl-div-eq-sum.md)
+
 ## Proof depends on
 
 - [Jensen's inequality](../../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/jensen-inequality.md)
