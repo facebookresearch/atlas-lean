@@ -23,6 +23,7 @@ public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerIdeal
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerSpan
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DVRMaximalIdealPow
 public import MathlibExt.Algebra.DeepPowerSumCongruences.Moebius
+public import MathlibExt.Algebra.DeepPowerSumCongruences.PadicInt
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PEquivClass
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PartitionProduct
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PowerSumExp
@@ -182,15 +183,6 @@ public theorem_wanted isDividedPowerIdeal_maximalIdeal_iff {p : ℕ} [Fact p.Pri
     {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {e : ℕ} (he0 : e ≠ 0)
     (he : Ideal.span {(p : O)} = IsLocalRing.maximalIdeal O ^ e) :
     IsDividedPowerIdeal (IsLocalRing.maximalIdeal O) ↔ e ≤ p - 1
-
-/-- **$(p)$ is a divided-power ideal of $\mathbb{Z}_p$.** For every prime $p$, the ideal generated
-by $p$ in the ring $\mathbb{Z}_p$ of $p$-adic integers is a divided-power ideal.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Corollary 8, last sentence
-(`integers-2024-A46-cor-8`). -/
-public theorem_wanted isDividedPowerIdeal_span_prime_padicInt (p : ℕ) [Fact p.Prime] :
-    IsDividedPowerIdeal (Ideal.span {(p : ℤ_[p])})
 
 /-- **Congruent elementary symmetric functions give deep power-sum congruences.** Let $p$ be a
 prime and let $A$ be a commutative ring without additive torsion in which every natural number
