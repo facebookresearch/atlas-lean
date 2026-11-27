@@ -132,5 +132,6 @@
 - [A degree-2 sub-blob can be replaced by a single edge without changing quartet CFs](two-sub-blob-replacement-preserves-quartet-cfs.md)
 ## Networks: the tree of blobs
 - [Tree of blobs of a species network under the coalescent](tree-of-blobs-identifiability/README.md)
+- [Species tree estimation under taxon deletion](species-tree-estimation-under-taxon-deletion/README.md)
 - [Label-switching unidentifiability of bidirectional introgression](label-switching-unidentifiability-of-bidirectional-introgression.md)
 - [Gene-tree density under the multispecies coalescent with introgression](multispecies-coalescent-with-introgression-gene-tree-density.md)
