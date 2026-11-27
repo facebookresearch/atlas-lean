@@ -35,8 +35,10 @@ For degeneracy data `D` on finite edges (two vertex maps and positive widths), t
 degeneracy pushforwards of integer-valued functions on edges, the ribbon kernel (the functions
 both pushforwards kill), the Gram map of the width pairing on it, and Hecke data: commuting
 edge and vertex matrices that act on the ribbon kernel. Both the ribbon component group (the
-cokernel of the Gram map) and the Mumford period data of a quotient graph
-(`MathlibExt.Combinatorics.SimpleGraph.MumfordPeriod`) are built on this layer.
+cokernel of the Gram map) and the period data of
+`MathlibExt.Combinatorics.SimpleGraph.MumfordPeriod` are built on this layer. The ribbon kernel
+imposes the two pushforward conditions separately; `ribbonKernel` says how it compares with the
+cycle lattice of a graph.
 -/
 
 @[expose] public section
@@ -64,7 +66,13 @@ def jointDelta [Fintype E] [DecidableEq V] (D : DegeneracyData E V) :
     Fin 2 → ((E → ℤ) →ₗ[ℤ] (V → ℤ)) :=
   ![pushforward D.a, pushforward D.b]
 
-/-- **Ribbon kernel.** The functions on edges annihilated by both degeneracy pushforwards. -/
+/-- **Ribbon kernel.** The functions on edges annihilated by both degeneracy pushforwards. The two
+conditions are imposed separately, so this is the cycle lattice of the bipartite graph on two copies
+of the vertices, with an edge from `D.a e` in the first copy to `D.b e` in the second. When `D.a`
+and `D.b` take values in disjoint sets of vertices (the edges oriented from one vertex type to the
+other), it is also the cycle lattice of the graph on the vertices with an edge from `D.a e` to
+`D.b e`. In general it is not: the integer path modulo translation by two has two vertices, two
+edges and a rank-one cycle lattice, while its four dart orbits give a rank-two ribbon kernel. -/
 def ribbonKernel [Fintype E] [DecidableEq V] (D : DegeneracyData E V) :
     Submodule ℤ (E → ℤ) :=
   ⨅ i, LinearMap.ker (jointDelta D i)

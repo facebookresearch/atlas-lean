@@ -232,7 +232,7 @@ private theorem three_smul_torusAt_two :
   rw [LinearMap.smul_apply, torusAt_apply, QL_twoEdges, ribbonGram_diff_left,
     smul_smul]
 
-/-- A nonzero torsion class. The class of `torusAt 2` in the Jacobian has order
+/-- A nonzero torsion class. The class of `torusAt 2` in `JacPoints` has order
 `3`: `torusAt 2` lies in `U`, outside the period lattice. -/
 example : torusAt two ∈ twoEdgesPeriod.U ∧
     torusAt two ∉ twoEdgesPeriod.periodLattice ∧
@@ -270,8 +270,8 @@ example : torusAt three ∉ twoEdgesPeriod.U := by
   norm_num [diff] at h0
   exact ha0 h0
 
-/-- The projection `π` into the Jacobian points makes the Jacobian points
-capture exactly the torsion of the Jacobian through `U`. -/
+/-- The projection `π` into `JacPoints` makes `JacPoints` capture exactly its
+own torsion through `U`. -/
 private theorem isTorsionOf_jacPoints {E V : Type} [Fintype E] [DecidableEq V]
     {D : DegeneracyData E V} {K L : Type} [Field K] [Field L] [Algebra K L]
     {ord : Additive Kˣ →+ ℤ} (P : PeriodDatum D K L ord) :
@@ -291,7 +291,7 @@ private theorem isTorsionOf_jacPoints {E V : Type} [Fintype E] [DecidableEq V]
   · show P.periodLattice.mkQ u = 0 ↔ _
     rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
 
-/-- A positive `IsTorsionOf`: the Jacobian points of the two-edge datum. -/
+/-- A positive `IsTorsionOf`: `JacPoints` of the two-edge datum. -/
 example : twoEdgesPeriod.IsTorsionOf twoEdgesPeriod.JacPoints :=
   isTorsionOf_jacPoints twoEdgesPeriod
 
@@ -310,8 +310,8 @@ example : ¬ twoEdgesPeriod.IsTorsionOf Unit := by
     exact LinearMap.mem_range_self _ _
   exact torusAt_two_not_mem ((he ⟨_, hU⟩).mp (Subsingleton.elim _ _))
 
-/-- The target need not be a torsion group: adding a free summand `ℤ` to the
-Jacobian points keeps `IsTorsionOf`. -/
+/-- The target need not be a torsion group: adding a free summand `ℤ` to
+`JacPoints` keeps `IsTorsionOf`. -/
 example {E V : Type} [Fintype E] [DecidableEq V] {D : DegeneracyData E V}
     {K L : Type} [Field K] [Field L] [Algebra K L] {ord : Additive Kˣ →+ ℤ}
     (P : PeriodDatum D K L ord) : P.IsTorsionOf (P.JacPoints × ℤ) := by
@@ -501,7 +501,7 @@ example [Fintype (QuotEdge Unit (SimpleGraph.pathGraph 3))]
     rintro ⟨-, h⟩
     exact h rfl
 
-/-- `U` is the preimage of the torsion of the Jacobian, so it contains the
+/-- `U` is the preimage of the torsion of `JacPoints`, so it contains the
 period lattice. -/
 example {E V : Type} [Fintype E] [DecidableEq V] {D : DegeneracyData E V}
     {K L : Type} [Field K] [Field L] [Algebra K L] {ord : Additive Kˣ →+ ℤ}

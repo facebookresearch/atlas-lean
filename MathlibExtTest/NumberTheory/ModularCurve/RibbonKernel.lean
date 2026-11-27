@@ -73,6 +73,71 @@ example : pushforward loopAndEdge.a ![1, -1] = 0 ∧
     simp [loopAndEdge, jointDelta, pushforward, degeneracyMatrix, Matrix.mulVec,
       dotProduct, Fin.sum_univ_two] at h1
 
+/-- The quotient graph of the integer path modulo translation by two has two vertices and two
+edges. Read from its two edges oriented from the even vertex to the odd one (the two parallel edges
+of `parallel`), `D.a` and `D.b` take values in disjoint sets of vertices, and the ribbon kernel is
+the graph's rank-one cycle lattice, spanned by `(1, -1)`. -/
+example : ribbonKernel parallel = Submodule.span ℤ {![1, -1]} := by
+  apply le_antisymm
+  · intro x hx
+    have h0 := congrFun (mem_ribbonKernel.mp hx 0) 0
+    simp [parallel, jointDelta, pushforward, degeneracyMatrix, Matrix.mulVec, dotProduct,
+      Fin.sum_univ_two] at h0
+    rw [Submodule.mem_span_singleton]
+    exact ⟨x 0, by ext i; fin_cases i <;> simp; omega⟩
+  · rw [Submodule.span_le, Set.singleton_subset_iff]
+    exact diff_mem
+
+/-- The four dart orbits of the integer path modulo translation by two, ordered by starting
+parity: `0 → 1` and `0 → -1` start at the even vertex `0`, `1 → 2` and `1 → 0` at the odd vertex
+`1`. Every width is `1`. -/
+private def pathDarts : DegeneracyData (Fin 4) (Fin 2) where
+  a := ![0, 0, 1, 1]
+  b := ![1, 1, 0, 0]
+  w _ := 1
+
+/-- `(1, -1, 0, 0)` lies in the ribbon kernel of the four dart orbits. -/
+private theorem pathDarts_mem₁ : (![1, -1, 0, 0] : Fin 4 → ℤ) ∈ ribbonKernel pathDarts := by
+  rw [mem_ribbonKernel]
+  intro i
+  ext v
+  fin_cases i <;> fin_cases v <;>
+    simp [pathDarts, jointDelta, pushforward, degeneracyMatrix, Matrix.mulVec, dotProduct,
+      Fin.sum_univ_four]
+
+/-- `(0, 0, 1, -1)` lies in the ribbon kernel of the four dart orbits. -/
+private theorem pathDarts_mem₂ : (![0, 0, 1, -1] : Fin 4 → ℤ) ∈ ribbonKernel pathDarts := by
+  rw [mem_ribbonKernel]
+  intro i
+  ext v
+  fin_cases i <;> fin_cases v <;>
+    simp [pathDarts, jointDelta, pushforward, degeneracyMatrix, Matrix.mulVec, dotProduct,
+      Fin.sum_univ_four]
+
+/-- On all four dart orbits of the integer path modulo translation by two, the ribbon kernel has
+rank two: it is spanned by the independent differences `(1, -1, 0, 0)` and `(0, 0, 1, -1)`, while
+the quotient graph's cycle lattice has rank one. -/
+example : ribbonKernel pathDarts = Submodule.span ℤ {![1, -1, 0, 0], ![0, 0, 1, -1]} ∧
+    LinearIndependent ℤ ![(![1, -1, 0, 0] : Fin 4 → ℤ), ![0, 0, 1, -1]] := by
+  refine ⟨le_antisymm (fun x hx => ?_) ?_, LinearIndependent.pair_iff.mpr fun s t h => ?_⟩
+  · have h0 := congrFun (mem_ribbonKernel.mp hx 0) 0
+    have h1 := congrFun (mem_ribbonKernel.mp hx 0) 1
+    simp [pathDarts, jointDelta, pushforward, degeneracyMatrix, Matrix.mulVec, dotProduct,
+      Fin.sum_univ_four] at h0 h1
+    exact Submodule.mem_span_pair.mpr ⟨x 0, x 2, by ext i; fin_cases i <;> simp <;> omega⟩
+  · rw [Submodule.span_le, Set.insert_subset_iff, Set.singleton_subset_iff]
+    exact ⟨pathDarts_mem₁, pathDarts_mem₂⟩
+  · have h0 := congrFun h 0
+    have h2 := congrFun h 2
+    simp at h0 h2
+    exact ⟨h0, h2⟩
+
+/-- At unit widths, the Gram matrix of those two differences is `diag(2, 2)`. -/
+example : ribbonGram pathDarts ⟨_, pathDarts_mem₁⟩ ⟨_, pathDarts_mem₁⟩ = 2 ∧
+    ribbonGram pathDarts ⟨_, pathDarts_mem₁⟩ ⟨_, pathDarts_mem₂⟩ = 0 ∧
+    ribbonGram pathDarts ⟨_, pathDarts_mem₂⟩ ⟨_, pathDarts_mem₂⟩ = 2 := by
+  decide
+
 /-- The ribbon kernel lies in the character lattice. -/
 example : ribbonKernel parallel ≤ characterLattice (Fin 2) :=
   ribbonKernel_le_characterLattice parallel

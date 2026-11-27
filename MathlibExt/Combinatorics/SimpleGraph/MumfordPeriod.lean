@@ -1,18 +1,4 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`Definitions/Def_CerednikDrinfeld_MumfordPeriod.lean`
-(https://github.com/anthropics/fermats-last-theorem):
-Compared with the source file at commit
-`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The upstream NOTICE also credits:
@@ -20,9 +6,20 @@ Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
+-/
+
+/-
+Adapted from:
+
+`Definitions/Def_CerednikDrinfeld_MumfordPeriod.lean`
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source file at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -158,21 +155,24 @@ public theorem QL_apply (x y : ↥(ribbonKernel D)) :
 public def periodLattice : Submodule ℤ P.TorusPoints :=
   LinearMap.range P.QL
 
-/-- Points of the period Jacobian: the torus modulo the period lattice. -/
+/-- The torus quotient attached to a supplied period datum: the torus points
+modulo the period lattice. It is built from the supplied pairing alone;
+identifying it with the Jacobian of a curve needs further hypotheses and a
+comparison theorem. -/
 public abbrev JacPoints : Type :=
   P.TorusPoints ⧸ P.periodLattice
 
-/-- The preimage in the torus of the torsion subgroup of the Jacobian:
+/-- The preimage in the torus of the torsion subgroup of `JacPoints`:
 the points whose class modulo the period lattice is torsion. It contains the
 period lattice. -/
 public def U : Submodule ℤ P.TorusPoints :=
   (Submodule.torsion ℤ P.JacPoints).comap P.periodLattice.mkQ
 
-/-- The projection from `U` to the Jacobian points. -/
+/-- The projection from `U` to `JacPoints`. -/
 public def π : ↥P.U →ₗ[ℤ] P.JacPoints :=
   P.periodLattice.mkQ ∘ₗ P.U.subtype
 
-/-- `T` captures exactly the torsion of the Jacobian through `U`: there is an
+/-- `T` captures exactly the torsion of `JacPoints` through `U`: there is an
 additive homomorphism `e : U →+ T` whose values are exactly the finite-order
 elements of `T` (every finite-order element of `T` is a value of `e`, and every
 value of `e` has finite order), and whose kernel is the period lattice, viewed
