@@ -1,7 +1,8 @@
 # Implication of embedded dependencies is undecidable
 
 A dependency (in the unirelational setting) is a first-order sentence
-$\forall \bar x\,(\varphi(\bar x) \to \exists \bar z\, \psi(\bar y))$ where $\varphi$ is a conjunction of relation atoms
+$\forall \bar x\,(\varphi(\bar x) \to \exists \bar z\, \psi(\bar y))$ in which every argument of every relation and equality
+atom is a variable (there are no named constants), where $\varphi$ is a conjunction of relation atoms
 using all of $\bar x$, $\psi$ is a nonempty conjunction of relation and equality atoms, $\bar z$ lists the variables of
 $\psi$ not in $\bar x$, and no equality atom involves a variable of $\bar z$; every such dependency is equivalent to a
 set of tuple- and equality-generating dependencies. It is full when $\bar z$ is empty, and typed when its variables can
@@ -36,4 +37,4 @@ multivalued dependencies). A good expansion checks those original proofs and cit
 
 ## Sources
 
-- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Section 10.1 (pp. 217–220, with finite and unrestricted implication of dependencies on pp. 219–220) and Theorem 10.1.2(2) (p. 220).
+- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Section 10.1 (pp. 217–220, with arguments that are variables on p. 217, with finite and unrestricted implication of dependencies on pp. 219–220) and Theorem 10.1.2(2) (p. 220).

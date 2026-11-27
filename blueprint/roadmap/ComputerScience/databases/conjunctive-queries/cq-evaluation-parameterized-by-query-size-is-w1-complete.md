@@ -4,10 +4,10 @@ p-CQ-Evaluation is the parameterized problem whose input is a conjunctive query 
 $\bar a$ over $\mathrm{Dom}(D)$, whose question is whether $\bar a \in q(D)$, and whose parameter is the size
 $\lVert q \rVert$ of the encoding of $q$. Take $\mathrm{W}[1]$ to be the class of parameterized problems that
 FPT-reduce to the weighted definability problem of some universal first-order sentence $\varphi$ over a schema
-extended by a relation name $X$ (given a database $D$ and $k$, is there a set $S$ of $k$ tuples with
-$D \models \varphi(S)$, interpreting $X$ by $S$). Then p-CQ-Evaluation is $\mathrm{W}[1]$-complete under
+extended by a relation name $X$ (given a database $D$ and the parameter $k \in \mathbb N$, is there a set $S$ of $k$ tuples from
+$\mathrm{Dom}(D)^{\mathrm{ar}(X)}$ with $D \models \varphi(S)$, interpreting $X$ by $S$). Then p-CQ-Evaluation is $\mathrm{W}[1]$-complete under
 FPT-reductions: it lies in $\mathrm{W}[1]$, and every parameterized problem in $\mathrm{W}[1]$ FPT-reduces to it. Hardness holds already for
-Boolean queries, by the reduction from $k$-Clique that maps a graph $G = (V, E)$ and $k$ to the database
+Boolean queries, by the reduction from $k$-Clique that maps a graph $G = (V, E)$ and $k \ge 1$ to the database
 $\{\mathrm{Node}(v) : v \in V\} \cup \{\mathrm{Edge}(u, v) : \{u, v\} \in E, u \ne v\}$ and the query
 $\exists x_1 \cdots \exists x_k \bigwedge_i \mathrm{Node}(x_i) \wedge \bigwedge_{i \ne j} \mathrm{Edge}(x_i, x_j)$.
 
