@@ -30,6 +30,8 @@ converges absolutely and equals a positive Euler product.
 
 For the even count, we group by the exact exponent of two as in Srisopha and Srichan (2024, §2,
 equation (7)), generalizing Srichan's exact-exponent bijection (2020, §2, equation (7)).
+The weight and factorization helpers and the odd-counting bijection and floor-limit proofs
+are adapted from `MathlibExt.NumberTheory.KFullParity`.
 
 ## References
 
