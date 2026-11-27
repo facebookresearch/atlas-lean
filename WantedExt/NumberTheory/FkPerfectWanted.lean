@@ -39,19 +39,20 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.NumberTheory.Divisors
-public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
-public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
 public import MathlibExt.NumberTheory.FkPerfectIsDeficientFPerfectTwoMulPrimePow
-public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoMulPrimePow
+public import MathlibExt.NumberTheory.FkPerfectIsDeficientFPerfectTwoPowMulPrimeImp
 public import MathlibExt.NumberTheory.FkPerfectKlNearPerfectWithPrimePowTwoIff
 public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
 public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFkPerfectTwoMulPow
 public import MathlibExt.NumberTheory.FkPerfectNotIsKLNearPerfectTwoTwoPowMul
+public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoMulPrimePow
 public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoPowMulPrime
 public import MathlibExt.NumberTheory.FkPerfectNotKlDeficientPerfectWithTwoPowMul
-public import MathlibExt.NumberTheory.FkPerfectIsDeficientFPerfectTwoPowMulPrimeImp
+public import MathlibExt.NumberTheory.FkPerfectNotKlNearPerfectWithTwoPowMul
 public import MathlibExt.NumberTheory.FkPerfectSquarefreeOdd
+public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
+public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 
 set_option autoImplicit false
 
@@ -82,21 +83,5 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted isKLDeficientPerfect_prime_pow_imp
     (p a k l : ℕ) (hp : p.Prime) (hk : 2 ≤ k) :
     IsKLDeficientPerfect k l (p ^ a) → p = 2 ∧ a = 1
-
-/-- **For $a \ge 2$, $2^a p$ is not $[k,\ell]$-near-perfect with divisor $1$ or $p$.** Let $k$,
-$\ell$, $a$ be natural numbers with $\ell \ge 1$ and $a \ge 2$, and let $p$ be an odd prime. Call
-$n$ $[k,\ell]$-near-perfect with divisor $d$ when $d$ divides $n$, $d < n$ and
-$\sigma_k(n) = n^k + d^k + \ell n$, where $\sigma_k(n)$ is the sum of the $k$-th powers of the
-divisors of $n$. Then $2^a p$ is not $[k,\ell]$-near-perfect with divisor $1$, and not with
-divisor $p$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 11. -/
-theorem_wanted not_klNearPerfectWith_two_pow_mul
-    (k l p a : ℕ) (hl : 1 ≤ l) (hp : p.Prime) (hpo : Odd p)
-    (ha : 1 < a) :
-    ¬ KLNearPerfectWith k l (2 ^ a * p) 1 ∧
-      ¬ KLNearPerfectWith k l (2 ^ a * p) p
 
 end MathlibExt.NumberTheory.FkPerfectWanted

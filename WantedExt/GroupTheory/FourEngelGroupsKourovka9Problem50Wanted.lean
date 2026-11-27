@@ -21,7 +21,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.GroupTheory.Solvable
 public import MathlibExt.GroupTheory.EngelElementLengthPolynomialKourovka11Problem88
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
