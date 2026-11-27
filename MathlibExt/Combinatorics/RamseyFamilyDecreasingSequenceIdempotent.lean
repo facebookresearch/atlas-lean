@@ -15,6 +15,7 @@ import Mathlib.Topology.Algebra.Semigroup
 /-!
 # Idempotents from decreasing sequences in Ramsey families
 
+Assume that $\beta(F)$, the set of ultrafilters in the Ramsey family $F$, is a subsemigroup.
 Intersect the closed sets of ultrafilters in a Ramsey family that contain each successive
 term of the sequence. The shift condition makes the resulting compact set a subsemigroup.
 
@@ -27,7 +28,8 @@ term of the sequence. The shift condition makes the resulting compact set a subs
   $\mathcal{F}$-sets and its combinatorial consequences*, Semigroup Forum **104** (2022),
   pp. 45–57, Theorem 5, the source cited for the characterization.
 * Neil Hindman and Dona Strauss, *Algebra in the Stone-Čech Compactification: Theory and
-  Applications*, 2nd revised and extended edition, De Gruyter, 2012, p. 40, Theorem 2.5.
+  Applications*, 2nd revised and extended edition, De Gruyter, 2012, Theorem 2.5 (p. 40) for
+  idempotent existence and Theorem 4.20 (p. 91) for closure under multiplication.
 * Robert Ellis, *Distal transformation groups*, Pacific Journal of Mathematics **8** (1958),
   pp. 401–405, Lemma 1, for existence of an idempotent with one-sided continuity.
 -/
