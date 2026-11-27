@@ -61,10 +61,11 @@ namespace Cslib.MachineLearning.Fairness
 
 open MeasureTheory ProbabilityTheory Set
 
-/-- **Prevalence.** For a probability measure $\mu$ on $\{0,1\} \times \{0,1\}$, the joint law of
-a binary label $Y$ and a binary prediction $\hat Y$ in a group (Lean's `Bool × Bool`, with `true`
-for $1$; the first coordinate is $Y$), the prevalence of the group is $p = \Pr(Y = 1)$, the
-$\mu$-probability of the event $\{Y = 1\}$.
+/-- **Prevalence.** For a measure $\mu$ on $\{0,1\} \times \{0,1\}$ (Lean's `Bool × Bool`, with
+`true` for $1$), write $Y$ for the first coordinate and $\hat Y$ for the second. The prevalence of
+$\mu$ is the real number $\mu(\{Y = 1\})$, the mass of the event $\{Y = 1\}$, taken as $0$ when
+that mass is infinite. When $\mu$ is a probability measure, the joint law of a binary label $Y$
+and a binary prediction $\hat Y$ in a group, it is the prevalence $p = \Pr(Y = 1)$ of the group.
 
 Source: A. Chouldechova, *Fair prediction with disparate impact: A study of bias in recidivism
 prediction instruments*, arXiv:1703.00056v1 (Big Data 5(2), 2017), §2.3 (the recidivism
@@ -72,11 +73,14 @@ prevalence $P(Y = 1 \mid R = r)$ of group $r$). -/
 noncomputable def prevalence (μ : Measure (Bool × Bool)) : ℝ :=
   μ.real {z | z.1 = true}
 
-/-- **False-positive rate.** For a probability measure $\mu$ on $\{0,1\} \times \{0,1\}$, the
-joint law of a binary label $Y$ and a binary prediction $\hat Y$ in a group (Lean's
-`Bool × Bool`, with `true` for $1$; the first coordinate is $Y$), the false-positive rate is
-$\mathrm{FPR} = \Pr(\hat Y = 1 \mid Y = 0)$, computed with the conditional probability measure
-$\mu(\cdot \mid Y = 0)$. When $\Pr(Y = 0) = 0$ that measure is zero and the rate is $0$.
+/-- **False-positive rate.** For a measure $\mu$ on $\{0,1\} \times \{0,1\}$ (Lean's
+`Bool × Bool`, with `true` for $1$), write $Y$ for the first coordinate and $\hat Y$ for the
+second. The false-positive rate of $\mu$ is the real number $\mu(\{\hat Y = 1\} \mid Y = 0)$, the
+mass of $\{\hat Y = 1\}$ under the conditional measure
+$\mu(\cdot \mid Y = 0) = \mu(\{Y = 0\})^{-1} \, \mu(\cdot \cap \{Y = 0\})$; that measure is zero,
+and the rate $0$, when $\mu(\{Y = 0\})$ is $0$ or infinite. When $\mu$ is a probability measure,
+the joint law of a binary label $Y$ and a binary prediction $\hat Y$ in a group, the rate is
+$\mathrm{FPR} = \Pr(\hat Y = 1 \mid Y = 0)$, which is $0$ when $\Pr(Y = 0) = 0$.
 
 Source: A. Chouldechova, *Fair prediction with disparate impact: A study of bias in recidivism
 prediction instruments*, arXiv:1703.00056v1 (Big Data 5(2), 2017), §2.1, Definition 3,
@@ -84,11 +88,14 @@ equation (2.3). -/
 noncomputable def falsePositiveRate (μ : Measure (Bool × Bool)) : ℝ :=
   (μ[|{z | z.1 = false}]).real {z | z.2 = true}
 
-/-- **False-negative rate.** For a probability measure $\mu$ on $\{0,1\} \times \{0,1\}$, the
-joint law of a binary label $Y$ and a binary prediction $\hat Y$ in a group (Lean's
-`Bool × Bool`, with `true` for $1$; the first coordinate is $Y$), the false-negative rate is
-$\mathrm{FNR} = \Pr(\hat Y = 0 \mid Y = 1)$, computed with the conditional probability measure
-$\mu(\cdot \mid Y = 1)$. When $\Pr(Y = 1) = 0$ that measure is zero and the rate is $0$.
+/-- **False-negative rate.** For a measure $\mu$ on $\{0,1\} \times \{0,1\}$ (Lean's
+`Bool × Bool`, with `true` for $1$), write $Y$ for the first coordinate and $\hat Y$ for the
+second. The false-negative rate of $\mu$ is the real number $\mu(\{\hat Y = 0\} \mid Y = 1)$, the
+mass of $\{\hat Y = 0\}$ under the conditional measure
+$\mu(\cdot \mid Y = 1) = \mu(\{Y = 1\})^{-1} \, \mu(\cdot \cap \{Y = 1\})$; that measure is zero,
+and the rate $0$, when $\mu(\{Y = 1\})$ is $0$ or infinite. When $\mu$ is a probability measure,
+the joint law of a binary label $Y$ and a binary prediction $\hat Y$ in a group, the rate is
+$\mathrm{FNR} = \Pr(\hat Y = 0 \mid Y = 1)$, which is $0$ when $\Pr(Y = 1) = 0$.
 
 Source: A. Chouldechova, *Fair prediction with disparate impact: A study of bias in recidivism
 prediction instruments*, arXiv:1703.00056v1 (Big Data 5(2), 2017), §2.1, Definition 3,
@@ -96,12 +103,15 @@ equation (2.4). -/
 noncomputable def falseNegativeRate (μ : Measure (Bool × Bool)) : ℝ :=
   (μ[|{z | z.1 = true}]).real {z | z.2 = false}
 
-/-- **Positive predictive value.** For a probability measure $\mu$ on $\{0,1\} \times \{0,1\}$,
-the joint law of a binary label $Y$ and a binary prediction $\hat Y$ in a group (Lean's
-`Bool × Bool`, with `true` for $1$; the first coordinate is $Y$), the positive predictive value
-is $\mathrm{PPV} = \Pr(Y = 1 \mid \hat Y = 1)$, computed with the conditional probability measure
-$\mu(\cdot \mid \hat Y = 1)$. When $\Pr(\hat Y = 1) = 0$ that measure is zero and the value is
-$0$.
+/-- **Positive predictive value.** For a measure $\mu$ on $\{0,1\} \times \{0,1\}$ (Lean's
+`Bool × Bool`, with `true` for $1$), write $Y$ for the first coordinate and $\hat Y$ for the
+second. The positive predictive value of $\mu$ is the real number
+$\mu(\{Y = 1\} \mid \hat Y = 1)$, the mass of $\{Y = 1\}$ under the conditional measure
+$\mu(\cdot \mid \hat Y = 1) = \mu(\{\hat Y = 1\})^{-1} \, \mu(\cdot \cap \{\hat Y = 1\})$; that
+measure is zero, and the value $0$, when $\mu(\{\hat Y = 1\})$ is $0$ or infinite. When $\mu$ is a
+probability measure, the joint law of a binary label $Y$ and a binary prediction $\hat Y$ in a
+group, the value is $\mathrm{PPV} = \Pr(Y = 1 \mid \hat Y = 1)$, which is $0$ when
+$\Pr(\hat Y = 1) = 0$.
 
 Source: A. Chouldechova, *Fair prediction with disparate impact: A study of bias in recidivism
 prediction instruments*, arXiv:1703.00056v1 (Big Data 5(2), 2017), §2.1, Definition 2,
@@ -293,8 +303,9 @@ end Tradeoff
 
 section Exceptions
 
-/-- The measure on `Bool × Bool` with masses `a`, `b`, `c`, `d` at `(true, true)`,
-`(false, true)`, `(true, false)` and `(false, false)`. -/
+/-- For nonnegative weights `a`, `b`, `c`, `d`, the measure on `Bool × Bool` with masses `a`,
+`b`, `c`, `d` at `(true, true)`, `(false, true)`, `(true, false)` and `(false, false)`
+(`ENNReal.ofReal` clips a negative weight to `0`). -/
 private noncomputable def cellMeasure (a b c d : ℝ) : Measure (Bool × Bool) :=
   ENNReal.ofReal a • Measure.dirac (true, true) + ENNReal.ofReal b • Measure.dirac (false, true) +
     ENNReal.ofReal c • Measure.dirac (true, false) +
@@ -380,9 +391,10 @@ conditional probabilities under $\mu$. Then:
 In an admissible group every conditioning event has positive probability.
 
 Source: A. Chouldechova, *Fair prediction with disparate impact: A study of bias in recidivism
-prediction instruments*, arXiv:1703.00056v1 (Big Data 5(2), 2017), §2.3, equation (2.6) and the
-remark after it, which states part 2 without its exceptions; the exceptions and parts 3 to 6 are
-not stated there and follow from (2.6). -/
+prediction instruments*, arXiv:1703.00056v1 (Big Data 5(2), 2017), §2.3: part 1 is equation
+(2.6), and the remark after it states part 2 without its exceptions. The exceptions in part 2
+follow from (2.6) and part 3, parts 3 and 4 follow from the definitions of the rates, and parts 5
+and 6 from laws given by explicit cell masses; none of these is stated there. -/
 theorem predictiveParity_errorRateBalance_tradeoff :
     (∀ (μ : Measure (Bool × Bool)) [IsProbabilityMeasure μ], 0 < prevalence μ →
       prevalence μ < 1 → 0 < μ.real {z | z.2 = true} → 0 < positivePredictiveValue μ →

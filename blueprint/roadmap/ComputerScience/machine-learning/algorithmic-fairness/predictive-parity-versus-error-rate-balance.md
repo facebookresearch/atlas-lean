@@ -25,4 +25,4 @@ event of probability zero gives the zero measure, and the statement makes no cla
 
 ## Sources
 
-- A. Chouldechova, *Fair prediction with disparate impact: A study of bias in recidivism prediction instruments*, arXiv:1703.00056v1 (Big Data 5(2), 2017), §2.3, equation (2.6) and the remark after it; the exceptions $\mathrm{FNR} = 1$ and $\mathrm{PPV} = 1$, and the groups showing that both occur, are not stated there and follow from (2.6). <https://arxiv.org/pdf/1703.00056>
+- A. Chouldechova, *Fair prediction with disparate impact: A study of bias in recidivism prediction instruments*, arXiv:1703.00056v1 (Big Data 5(2), 2017), §2.3: the identity is equation (2.6), and the remark after it states the impossibility without its exceptions. The exceptions follow from (2.6) and the definitions of the rates; that $\mathrm{FNR} = 1$ exactly when $\mathrm{PPV} = 0$, and that $\mathrm{PPV} = 1$ forces $\mathrm{FPR} = 0$, follow from the definitions; and the groups showing that both exceptions occur are built from explicit cell probabilities. None of these is stated there. <https://arxiv.org/pdf/1703.00056>

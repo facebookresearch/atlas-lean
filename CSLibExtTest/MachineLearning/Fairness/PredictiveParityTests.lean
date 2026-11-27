@@ -170,6 +170,17 @@ example : ∃ μ ν : Measure (Bool × Bool), IsProbabilityMeasure μ ∧ IsProb
   exact ⟨μ, ν, hμ, hν, by rw [hpμ, hpν]; norm_num, hvμ.trans hvν.symm, hrμ.trans hrν.symm,
     hfμ.trans hfν.symm⟩
 
+/-! ### Measures that are not probability measures -/
+
+/-- The definitions take any measure: for twice the Dirac mass at `(true, true)`, `prevalence` is
+the mass `2`. -/
+example : prevalence ((2 : ℝ≥0∞) • Measure.dirac ((true, true) : Bool × Bool)) = 2 := by
+  simp [prevalence, measureReal_def]
+
+/-- An infinite conditioning mass gives the zero conditional measure, so the rate is `0`. -/
+example : falsePositiveRate (∞ • Measure.dirac ((false, true) : Bool × Bool)) = 0 := by
+  simp [falsePositiveRate, ProbabilityTheory.cond]
+
 /-! ### Random variables on a probability space -/
 
 /-- The identity for a label `Y` and a prediction `Ŷ` on an arbitrary probability space, with the
