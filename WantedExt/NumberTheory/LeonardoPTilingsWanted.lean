@@ -39,6 +39,7 @@ public import MathlibExt.NumberTheory.IncompleteLeonardoPBinomialSum
 public import MathlibExt.NumberTheory.IncompleteLeonardoPPartialSum
 public import MathlibExt.NumberTheory.HyperLeonardoPRec
 public import MathlibExt.NumberTheory.LeonardoPTilings
+public import MathlibExt.NumberTheory.LucasLeonardoPFromLucas
 public import MathlibExt.NumberTheory.LucasLeonardoPIdentity
 public import MathlibExt.NumberTheory.LucasLeonardoPPrefixSum
 public import MathlibExt.NumberTheory.LucasLeonardoPStrideSum
@@ -97,15 +98,6 @@ Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Nu
 Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 12. -/
 public theorem_wanted card_lucasLeonardoBracelets (p n : ℕ) (hp : 1 ≤ p) (hn : 1 ≤ n) :
     (Nat.card (lucasLeonardoBracelets p n) : ℤ) = lucasLeonardoP p n
-
-/-- **Lucas-Leonardo $p$-numbers from Lucas $p$-numbers.** For every $p \ge 1$ and every
-natural number $n$, the Lucas-Leonardo $p$-number $R_{p,n}$ and the Lucas $p$-number $L_{p,n}$
-satisfy $R_{p,n} = (p + 1) L_{p,n} - p$.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 13. -/
-public theorem_wanted lucasLeonardoP_eq_lucasP (p n : ℕ) (hp : 1 ≤ p) :
-    lucasLeonardoP p n = ((p : ℤ) + 1) * lucasP p n - p
 
 /-- **Recurrence for incomplete Lucas-Leonardo p-numbers.** For natural numbers $p \ge 1$,
 $n > p + 1$ and $k \le \lfloor n/(p+1) \rfloor$, the incomplete Lucas-Leonardo $p$-numbers

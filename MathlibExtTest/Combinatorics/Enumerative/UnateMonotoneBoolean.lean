@@ -241,3 +241,32 @@ example :
         boolFunClassCount (n := 2) IsBoolFunNPNEquiv
           (fun f => Monotone f ∧ 2 * boolFunWeight f = 4) :=
   boolFunClassCount_balanced_unate_eq_monotone 2
+
+-- At arity zero, output negation puts the two constant functions into a single class.
+example : boolFunClassCount (n := 0) IsBoolFunNNEquiv IsUnateBoolFun = 1 ∧
+    boolFunClassCount (n := 0) IsBoolFunNPNEquiv IsUnateBoolFun = 1 := by
+  have count (R : ((Fin 0 → Bool) → Bool) → ((Fin 0 → Bool) → Bool) → Prop)
+      (hR : ∀ f g, R f g) : boolFunClassCount R Monotone = 1 := by
+    have hclasses : {S | ∃ f, Monotone f ∧ S = {g | Monotone g ∧ R f g}} =
+        {{g | Monotone g}} := by
+      ext S
+      simp only [Set.mem_ofPred_eq, hR, and_true, Set.mem_singleton_iff]
+      exact ⟨fun ⟨_, _, h⟩ => h, fun h => ⟨fun _ => false, monotone_const, h⟩⟩
+    exact (congrArg Set.ncard hclasses).trans (Set.ncard_singleton _)
+  have hNN (f g : (Fin 0 → Bool) → Bool) : IsBoolFunNNEquiv f g := by
+    let x₀ : Fin 0 → Bool := Fin.elim0
+    refine ⟨fun _ => false, xor (f x₀) (g x₀), fun x => ?_⟩
+    have hx : x = x₀ := funext fun i => i.elim0
+    simp [hx]
+  have hNPN (f g : (Fin 0 → Bool) → Bool) : IsBoolFunNPNEquiv f g := by
+    obtain ⟨a, c, h⟩ := hNN f g
+    exact ⟨1, a, c, h⟩
+  obtain ⟨h₁, h₂⟩ := boolFunClassCount_unate_eq_monotone 0
+  exact ⟨h₁.trans (count _ hNN), h₂.trans (count _ hNPN)⟩
+
+-- In positive arity the same statement applies, even with mixed-polarity unate functions.
+example : boolFunClassCount (n := 2) IsBoolFunNNEquiv IsUnateBoolFun =
+      boolFunClassCount (n := 2) IsBoolFunNNEquiv Monotone ∧
+    boolFunClassCount (n := 2) IsBoolFunNPNEquiv IsUnateBoolFun =
+      boolFunClassCount (n := 2) IsBoolFunNPNEquiv Monotone :=
+  boolFunClassCount_unate_eq_monotone 2
