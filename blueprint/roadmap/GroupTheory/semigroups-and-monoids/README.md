@@ -6,3 +6,4 @@ Magmas, semigroups and monoids and their morphisms: units and invertible element
 - [Abelian group of additive homomorphisms into an abelian group](hom-group-abelian.md)
 - [Multiplication-preserving maps and group homomorphisms](group-homomorphism.md)
 - [Unit: an element with a two-sided inverse](ring-unit.md)
+- [Decision problems for matrix semigroups](decision-problems-for-matrix-semigroups/README.md)
