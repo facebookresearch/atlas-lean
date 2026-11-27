@@ -17,6 +17,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.NumberTheory.ChooseAddModEqPrime
+public import MathlibExt.NumberTheory.FourRegularPartitionParity
 public import MathlibExt.NumberTheory.GeneralizedTau
 public import MathlibExt.NumberTheory.GeneralizedTauPrimeSquare
 public import MathlibExt.NumberTheory.NineRegularPartitionIteration
@@ -24,6 +25,7 @@ public import MathlibExt.NumberTheory.PartitionConvolutionModThree
 public import MathlibExt.NumberTheory.RamanujanTauModNineteen
 public import MathlibExt.NumberTheory.RamanujanTauModSeventeen
 public import MathlibExt.NumberTheory.RamanujanTauModThree
+public import MathlibExt.NumberTheory.GeneralizedTauRegularPartitionCardPrimeRegularModEqGeneralizedTauPred
 
 /-!
 # Regular partition functions and a generalized tau function
@@ -80,16 +82,6 @@ public theorem_wanted generalizedTau_succ_modEq_card_frequency_two (k : ℕ) (hk
         ∀ i ∈ p.parts,
           p.parts.count i ∈ (Finset.Icc 1 k).filter (fun a => Odd (k.choose a))).card : ℤ)
       [ZMOD 2]
-
-/-- **Parity of the $4$-regular partition function.** For a positive integer $n$, let $R_4(n)$ be
-the number of partitions of $n$ with no part divisible by $4$. Then $R_4(n)$ is odd if and only if
-$n$ is a triangular number, that is, $n = m(m + 1)/2$ for some integer $m \ge 0$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 3 (`integers-2024-A39-thm-3`). -/
-public theorem_wanted odd_card_four_regular_iff_triangular (n : ℕ) (hn : 0 < n) :
-    Odd (Nat.Partition.restricted n (¬ 4 ∣ ·)).card ↔ ∃ m : ℕ, n = m * (m + 1) / 2
 
 /-- **Parity of $\tau_{14}$ and $\tau_6$ at odd arguments.** Let $\tau_k(m)$ be the generalized
 tau function, the coefficient of $q^m$ in $q \prod_{j \ge 1} (1 - q^j)^k$, and let $R_8(n)$ be
@@ -319,18 +311,6 @@ Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
 public theorem_wanted card_nine_regular_four_mul_add_one_modEq (n : ℕ) (hn : 0 < n) :
     ((Nat.Partition.restricted (4 * n + 1) (¬ 9 ∣ ·)).card : ℤ)
     ≡ ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3]
-
-/-- **Prime-regular partitions and the generalized tau function.** Let $p$ be a prime and $n$ a
-natural number. Let $R_p(n)$ be the number of partitions of $n$ in which no part is divisible by
-$p$, and let $\tau_k(m)$ be the generalized tau function, the coefficient of $q^m$ in
-$q \prod_{j \ge 1} (1 - q^j)^k$. Then $R_p(n) \equiv \tau_{p-1}(n + 1) \pmod p$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 20 (`integers-2024-A39-thm-20`). -/
-public theorem_wanted card_prime_regular_modEq_generalizedTau_pred (p : ℕ) (hp : p.Prime) (n : ℕ) :
-    ((Nat.Partition.restricted (n) (¬ p ∣ ·)).card : ℤ)
-        ≡ generalizedTau ((p : ℤ) - 1) (n + 1) [ZMOD p]
 
 /-- **$\tau_{-k}$ and partition convolutions modulo a prime.** Let $l$ be an odd prime, let $k$ be a
 natural number with $2 \le k < l$, let $n$ be a natural number, and write $p(s)$ for the number of
