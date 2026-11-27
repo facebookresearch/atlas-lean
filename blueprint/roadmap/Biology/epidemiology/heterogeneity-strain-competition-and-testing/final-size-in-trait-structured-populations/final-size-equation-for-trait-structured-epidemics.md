@@ -23,7 +23,12 @@ $F$ is order preserving, and every solution $y \ge 0$ satisfies $y < 1$ pointwis
 
 ## Proof depends on
 
+- [Subcritical decay](../../next-generation-operator-and-basic-reproduction/tendsto-norm-pow-apply-zero.md)
 - [Krein–Rutman theorem for $C(K)$](../../../../Analysis/operator-theory/spectral-theory/krein-rutman.md)
+
+## Depends on
+
+- [The basic reproduction ratio `R₀`](../../next-generation-operator-and-basic-reproduction/generation-growth.md)
 
 ## Expansion
 

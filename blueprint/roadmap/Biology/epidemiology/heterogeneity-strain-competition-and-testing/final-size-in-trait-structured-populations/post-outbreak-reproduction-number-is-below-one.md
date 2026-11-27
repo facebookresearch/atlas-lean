@@ -10,6 +10,7 @@ So a reintroduction of the pathogen into the post-outbreak population is subcrit
 
 ## Depends on
 
+- [The basic reproduction ratio `R₀`](../../next-generation-operator-and-basic-reproduction/generation-growth.md)
 - [Final size equation for trait-structured epidemics](final-size-equation-for-trait-structured-epidemics.md)
 
 ## Expansion

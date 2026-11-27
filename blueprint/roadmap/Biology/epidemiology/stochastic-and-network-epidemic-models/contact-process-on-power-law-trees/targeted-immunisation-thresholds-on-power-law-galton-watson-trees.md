@@ -21,6 +21,10 @@ $$
 
 So immunising the hubs either leaves the survival probability unchanged up to constants or kills the epidemic (or makes survival negligible), and the switch happens at a maximal degree that is *polynomial* in $1/\lambda$, not the $e^{\Theta(1/\lambda)}$ predicted by mean-field heuristics. Uniform immunisation of a small positive fraction of vertices, in contrast, never prevents survival.
 
+## Proof depends on
+
+- [Galton–Watson extinction criterion](../../../../Probability/branching-processes/galton-watson-process/extinction-prob-eq-one-iff.md)
+
 ## Expansion
 
 For $\tau \le 2.5$ the threshold is the criticality of the SIR epidemic it dominates: the ever-infected vertices of an SIR infection on a Galton–Watson tree with offspring $D$ form a Galton–Watson tree with mean offspring $\frac{\lambda}{1+\lambda}\mathbb{E}[D]$, and with $D = X\mathbf{1}_{X \le T}$, $T \sim \rho\lambda^{-1/(3-\tau)}$, one has $\mathbb{E}[D] \sim \lambda^{-1}c_\star\frac{\tau-2}{3-\tau}\rho^{3-\tau}$, which crosses $1/\lambda$ exactly at $\rho_c$. For $\tau > 2.5$ survival needs vertices of degree beyond $\lambda^{-2}$: on a star with $k$ leaves the expected extinction time is $e^{\Theta(\lambda^2 k)}$, so such stars hold the infection long enough to pass it to the next large vertex. Upper bounds compare the contact process with a branching random walk with sinks at the large vertices. Since the immunised tree is contained in the truncated tree and the survival strategies never use truncated vertices, both interventions give the same bounds.

@@ -24,6 +24,10 @@ and $\mathcal V$ is a Lyapunov function for the ODE above at $\tilde c$. With $d
 - [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
 - [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
+## Proof depends on
+
+- [Horn–Jackson inequality](../../complex-balancing-and-the-deficiency-zero-theore/helmholtz-rate-nonpos.md)
+
 ## Expansion
 
 The potential splits over species. For each species, $-\frac1V\ln\big[(V^{d_i}c_i)^{V\tilde x_i}/\prod_{j\le V\tilde x_i}\theta_i(j)\big]$ is evaluated with $\ln\theta_i(j) = d_i\ln j + \ln A_i + o(1)$ and a Stirling-type sum $\sum_{j\le n}\ln j = n\ln n - n + O(\ln n)$. This produces $\tilde x_i(d_i\ln\tilde x_i - \ln c_i - d_i + \ln A_i)$. The normalizing constant contributes the constant term, as a Laplace-type limit of the same expression maximized at $\tilde c_i$. The Lyapunov property is the standard complex-balanced computation applied to the ODE with kinetics $Ax^d$, whose equilibrium $\tilde c$ minimizes $\mathcal V$.
