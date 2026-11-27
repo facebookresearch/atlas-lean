@@ -32,8 +32,9 @@ namespace MetaMathlibExt.Complexity.NPComplete.MinimumStringAttractor
 
 INSTANCE: a string `T ∈ Σⁿ` over an unbounded alphabet and a natural number `p`.
 QUESTION: does `T` have a string attractor of size at most `p`, i.e., a set `Γ` of positions of
-`T` such that every substring `T[i..j]` (`i ≤ j`) has an occurrence `T[i'..j'] = T[i..j]` with
-`j'' ∈ [i', j']` for some `j'' ∈ Γ` (Kempa and Prezza, Definition 3.1), and `|Γ| ≤ p`?
+`T` such that every substring `T[i..j]` (`i ≤ j < |T|`) has an occurrence
+`T[i'..j'] = T[i..j]` with `j'' ∈ [i', j']` for some `j'' ∈ Γ` (Kempa and Prezza,
+Definition 3.1), and `|Γ| ≤ p`?
 This is the language `ATTRACTOR = {⟨T, p⟩ : T has an attractor of size ≤ p}` of Kempa and
 Prezza, Section 4; it is `k-ATTRACTOR` with `k = n`, NP-complete by their Theorem 4.2.
 
@@ -59,8 +60,9 @@ def substring (T : List ℕ) (i j : ℕ) : List ℕ :=
   (T.drop i).take (j + 1 - i)
 
 /-- `Γ` is a string attractor of `T` (Kempa and Prezza, Definition 3.1): a set of positions of
-`T` such that every substring `T[i..j]` with `i ≤ j` has an occurrence `T[i'..j'] = T[i..j]`
-with some position of `Γ` in `[i', j']`. -/
+`T` such that every substring `T[i..j]` with `i ≤ j < |T|` has an occurrence
+`T[i'..j'] = T[i..j]` with `i' ≤ j' < |T|` and some position of `Γ` in `[i', j']`; pairs with
+`j ≥ |T|` are not tested. -/
 def IsStringAttractor (T : List ℕ) (Γ : Finset ℕ) : Prop :=
   (∀ x ∈ Γ, x < T.length) ∧
     ∀ i j, i ≤ j → j < T.length →
