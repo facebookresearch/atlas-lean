@@ -74,17 +74,23 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 - **Rest on settled sources.** A planned page cites sources that settle its
   statement, a result or a definition: a statement is settled when settling
   sources support each of its clauses; one source need not support them all.
-  Refereed work, however recent, and a published book, monograph or accepted
-  thesis settle what they prove or define. A curated reference such as the
-  Stacks Project, cited at a fixed version, settles what it proves or presents
-  as established; a survey or lecture notes, published or not, settles what it
-  presents as established; neither settles a statement whose only proof or
-  definition is in other unrefereed work. A specification cited at a fixed
-  version settles what it specifies. Other unrefereed work (a preprint,
-  report, draft, manuscript, submission under review, online answer, blog post
-  or talk), an open wiki such as Wikipedia or nLab, and a problem list such as
-  the Kourovka Notebook settle nothing, at any version, though a page may cite
-  them beside a settling source; no other source settles a statement either.
+  Refereed work, however recent, settles what it proves or defines; an accepted
+  thesis, even one published as a book, settles only that. A published book or
+  monograph, a survey or column in a refereed venue, or a standard reference
+  work cited at a fixed version or edition, such as the Stacks Project, settles
+  what it proves, defines or presents as established, whatever source it credits
+  for the result; lecture notes published as a book count as a book. Any other
+  curated reference cited at a fixed version settles what it proves or presents
+  as established, and other surveys, columns and lecture notes, published or
+  not, settle what they present as established; neither settles a statement
+  whose only proof or definition is in other unrefereed work. No work settles a
+  result that it reports only as a claim or an announcement. A specification
+  cited at a fixed version settles what it specifies. Other unrefereed work (a
+  preprint, report, draft, manuscript, submission under review, online answer,
+  blog post or talk), an open wiki such as Wikipedia or nLab, and a problem list
+  such as the Kourovka Notebook settle nothing, at any version, though a page
+  may cite them beside a settling source; no other source settles a statement
+  either.
   One exception: a page that states a conjecture or open question as such is
   settled by the source that poses it, a problem list included; a page that
   states its resolution needs a source that settles the resolution. Leave a
