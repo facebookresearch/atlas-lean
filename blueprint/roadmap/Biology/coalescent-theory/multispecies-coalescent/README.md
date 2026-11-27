@@ -132,3 +132,12 @@
 - [A degree-2 sub-blob can be replaced by a single edge without changing quartet CFs](two-sub-blob-replacement-preserves-quartet-cfs.md)
 ## Networks: the tree of blobs
 - [Tree of blobs of a species network under the coalescent](tree-of-blobs-identifiability/README.md)
+- [Species tree estimation under taxon deletion](species-tree-estimation-under-taxon-deletion/README.md)
+- [Depth characterization of anomaly-producing species trees](depth-characterization-of-anomaly-producing-species-trees.md)
+- [Anomalous gene trees in phylogenetic networks](anomalous-gene-trees-in-phylogenetic-networks/README.md)
+- [Ranked gene tree probabilities](ranked-gene-tree-probabilities/README.md)
+- [Three-species species-tree estimation](three-species-species-tree-estimation/README.md)
+- [Time-dependent migration in the multispecies coalescent](time-dependent-migration-in-the-multispecies-coalescent/README.md)
+- [Ancestral configurations of gene trees](ancestral-configurations-of-gene-trees/README.md)
+- [Lattices of ancestral configurations](lattices-of-ancestral-configurations/README.md)
+- [TRAILS coalescent hidden Markov model on a three-species tree](trails-coalescent-hidden-markov-model-on-a-three-species-tree.md)

@@ -1,0 +1,3 @@
+# Survival mass of paths of length n
+
+For a finite set of states $S$, a real function $Q$ on $S \times S$, a start state $i$ and $n \in \mathbb{N}$, the survival mass at level $n$ is the total survival weight $\sum \prod_{k<n} Q(x_k, x_{k+1})$ over all paths $(x_0, \dots, x_n)$ with $x_0 = i$. It is a raw real weight: for one state with $Q(i,i) = -2$, the survival mass at level $1$ is $-2$. When $Q$ is the survival kernel of stop probabilities $q$ (nonnegative, with $q(x) + \sum_y Q(x, y) = 1$ for every $x$), it is the probability that the walk from $i$ has not stopped in its first $n$ transitions.
