@@ -50,7 +50,7 @@ variable {X : Scheme.{u}}
 
 /-- Use the native modification category on the fixed relative pseudofunctors. -/
 local instance nativeModificationCategory
-    (F G : Pseudofunctor (LocallyDiscrete (Over X)ᵒᵖ) Cat.{u, u+1}) :
+    (F G : Pseudofunctor (LocallyDiscrete (Over X)ᵒᵖ) Cat.{u, u + 1}) :
     Category (Pseudofunctor.StrongTrans F G) :=
   Pseudofunctor.StrongTrans.homCategory (F := F) (G := G)
 
