@@ -17,8 +17,8 @@ import Mathlib.Tactic.Ring
 
 For independent events of probability `p`: none of `n` occur with probability `(1 - p) ^ n`,
 exactly one of two occurs with probability `2 p (1 - p)`, all `n` occur with probability `p ^ n`,
-at least none of them occur surely, at least one of two occurs with probability `1 - (1 - p) ^ 2`,
-and more than `n` of them never occur.
+at least zero of them occur with probability `1`, at least one of two occurs with probability
+`1 - (1 - p) ^ 2`, and more than `n` of them never occur.
 -/
 
 @[expose] public section
@@ -51,7 +51,7 @@ example {n : ℕ} {E : Fin n → Set Ω} (hE : ∀ i, MeasurableSet (E i)) (h : 
   rw [h.measureReal_le_ncard hE hp n, binomTail]
   simp
 
-/-- At least none of the events occur, surely. -/
+/-- At least zero of the events occur with probability `1`. -/
 example {n : ℕ} {E : Fin n → Set Ω} (hE : ∀ i, MeasurableSet (E i)) (h : iIndepSet E μ)
     (hp : ∀ i, μ.real (E i) = p) :
     μ.real {ω | 0 ≤ {i | ω ∈ E i}.ncard} = 1 := by
