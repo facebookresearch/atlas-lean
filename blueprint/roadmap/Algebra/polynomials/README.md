@@ -22,3 +22,5 @@ Univariate and multivariate polynomials and formal power series as algebraic obj
 - [Univariate polynomial arithmetic](univariate-polynomial-arithmetic/README.md)
 - [Symmetric polynomials in the roots are polynomials in the coefficients](symmetric-polynomial-in-esymm.md)
 - [Independent commuting derivations with a coordinate-free joint kernel](commuting-locally-nilpotent-derivations.md)
+- [Difference equations in sequences](difference-equations-in-sequences/README.md)
+- [Theories of polynomial rings](theories-of-polynomial-rings/README.md)
