@@ -20,9 +20,10 @@ antigens at two independent loci; with Hardy–Weinberg and linkage equilibrium 
 The square-root identities of the triple-allele model (derived from Crow's Table 1; they are not
 printed in that table) are proved in
 `Domains.Biology.StatisticalGenetics.BernsteinABOSqrtEstimates`.
-Recorded here: the two-locus constraint, and the fact (derived) that the
-triple-allele model never satisfies the two-locus constraint when both `A` and `B` alleles are
-present, so the two models are distinguishable from phenotype frequencies alone. Hardy–Weinberg
+Recorded here: the fact (derived) that the triple-allele model never satisfies the two-locus
+constraint when both `A` and `B` alleles are present, so the two models are distinguishable
+from phenotype frequencies alone. The two-locus constraint is proved in
+`Domains.Biology.StatisticalGenetics.BernsteinABOTwoLocusConstraint`. Hardy–Weinberg
 proportions are inputs. The numerical rejection on Bernstein's data and any likelihood
 comparison are not formalized.
 
@@ -35,34 +36,11 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import Domains.Biology.StatisticalGenetics.BernsteinABOSqrtEstimates
+public import Domains.Biology.StatisticalGenetics.BernsteinABOTwoLocusConstraint
 
 @[expose] public section
 
 namespace WantedExt.Biology.StatisticalGenetics.BernsteinABOWanted
-
-/-- Probability that an individual carries antigen `X` when the antigen is dominant at its own
-locus with allele frequency `a`, in Hardy–Weinberg proportions: `1 - (1 - a)²`. -/
-noncomputable def carrierProb (a : ℝ) : ℝ := 1 - (1 - a) ^ 2
-
-/-- Frequency of blood group `AB` under the two-locus model (independent loci for the `A` and
-`B` antigens, allele frequencies `a` and `b`, Hardy–Weinberg and linkage equilibrium). -/
-noncomputable def twoLocusAB (a b : ℝ) : ℝ := carrierProb a * carrierProb b
-
-/-- Frequency of blood group `A` under the two-locus model. -/
-noncomputable def twoLocusA (a b : ℝ) : ℝ := carrierProb a * (1 - carrierProb b)
-
-/-- Frequency of blood group `B` under the two-locus model. -/
-noncomputable def twoLocusB (a b : ℝ) : ℝ := (1 - carrierProb a) * carrierProb b
-
-/-- **The two-locus constraint** (von Dungern–Hirszfeld model, as used by Bernstein; Crow 1993,
-p. 4): if the `A` and `B` antigens are dominant at two independent loci with allele frequencies
-`a, b ∈ [0, 1]`, in Hardy–Weinberg and linkage equilibrium, then the phenotype frequencies
-satisfy `(A + AB)(B + AB) = AB`.
-
-Sources: Bernstein (1925); Crow (1993), p. 4. -/
-public theorem_wanted twoLocus_constraint (a b : ℝ) (ha₀ : 0 ≤ a) (ha₁ : a ≤ 1) (hb₀ : 0 ≤ b)
-    (hb₁ : b ≤ 1) :
-    (twoLocusA a b + twoLocusAB a b) * (twoLocusB a b + twoLocusAB a b) = twoLocusAB a b
 
 /-- **The triple-allele model violates the two-locus constraint** (derived): for allele
 frequencies `p, q, r ≥ 0` with `p + q + r = 1` and both `p > 0` and `q > 0`, the triple-allele

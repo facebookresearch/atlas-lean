@@ -9,16 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Geometry.Polytope.Faces
-public import MathlibExt.Combinatorics.SimplicialSphereShared
+public import MathlibExt.Geometry.Polytope.BoundaryComplex
 public import WantedExt.Combinatorics.UpperBoundSimplicialSpheresWanted
 
 /-!
 # Face numbers of convex polytopes: wanted theorems
 
-The Euler–Poincaré relation, McMullen's upper bound theorem for polytopes, and the statement
-that the boundary complex of a simplicial polytope is a simplicial sphere (which links the
-polytope face numbers to the Dehn–Sommerville equations stated for simplicial spheres).
+The Euler–Poincaré relation, the characterization of face numbers in dimension three,
+and McMullen's upper bound theorem for polytopes.
 Faces and face numbers are those of `MathlibExt.Geometry.Polytope`: exposed subsets of
 `conv s`, counted by the dimension of their affine hull.
 -/
@@ -26,7 +24,6 @@ Faces and face numbers are those of `MathlibExt.Geometry.Polytope`: exposed subs
 @[expose] public section
 
 open MathlibExt.Geometry.Polytope
-open MathlibExt.Combinatorics.SimplicialSphereShared
 open MathlibExt.Combinatorics.UpperBoundSimplicialSpheresWanted.Combinatorics
 open UpperBoundSimplicialSpheresProblem (cyclicPolytopeFaceCount)
 
@@ -63,17 +60,5 @@ be full-dimensional in the ambient space. -/
 theorem_wanted upper_bound_theorem {n d m k : ℕ} (s : Finset (EuclideanSpace ℝ (Fin n)))
     (hd : dim s = d) (hm : faceNumber s 0 = m) (hk : k < d) :
     faceNumber s k ≤ cyclicPolytopeFaceCount m d k
-
-/-- **The boundary complex of a simplicial polytope is a simplicial sphere.** If `P = conv s` is a
-full-dimensional simplicial polytope in `ℝ^d`, then there is a finite simplicial `(d-1)`-sphere
-`X` in `ℝ^d` with the same face numbers as `P`: `f_k(X) = f_k(P)` for every `k < d`. The
-boundary complex of `P`, whose simplices are the proper faces of `P`, is such a sphere; the
-statement asserts only the existence of `X` with these face numbers, which is what is needed to
-transfer the Dehn–Sommerville equations for simplicial spheres to simplicial polytopes. -/
-theorem_wanted exists_simplicialSphere_faceCount_eq {d : ℕ}
-    (s : Finset (EuclideanSpace ℝ (Fin d)))
-    (hfull : (interior (convexHull ℝ (s : Set (EuclideanSpace ℝ (Fin d))))).Nonempty)
-    (hsimp : IsSimplicial s) :
-    ∃ X : FiniteSimplicialSphere d, ∀ k < d, faceCount X k = faceNumber s k
 
 end MathlibExt.Geometry.Polytope.FaceNumbersWanted
