@@ -44,18 +44,4 @@ theorem_wanted multiplicative_additive_on_sum_two_triangular_classification
     (∀ n : ℕ, f n = (n : ℂ)) ∨
       ((∀ n : ℕ, n ≠ 1 ∧ n ≠ 3 ∧ n ≠ 5 → f n = 0) ∧ f 3 * f 5 = 0)
 
-/-- **Park's Lemma 2: the identity up to 21 when the value at 2 is nonzero.** Let $f$ be a
-multiplicative arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$
-whenever $a$ and $b$ are both sums of two positive triangular numbers. If $f(2) \neq 0$, then
-$f(n) = n$ for every natural number $n \le 21$.
-
-Source: Poo-Sung Park, "Multiplicative Functions Additive on the Sums
-of Two Positive Triangular Numbers", Lemma 2. -/
-theorem_wanted multiplicative_additive_on_sum_two_triangular_eq_id_le_21
-    (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
-    (hadd : ∀ a b : ℕ, IsSumTwoPositiveTriangular a →
-      IsSumTwoPositiveTriangular b → f (a + b) = f a + f b)
-    (hf2 : f 2 ≠ 0) :
-    ∀ n : ℕ, n ≤ 21 → f n = (n : ℂ)
-
 end MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditiveWanted

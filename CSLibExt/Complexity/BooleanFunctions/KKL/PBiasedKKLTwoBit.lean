@@ -34,8 +34,6 @@ cases the tensorization arguments build on.
 open scoped BigOperators
 open Finset Real Set
 
-set_option linter.style.longLine false
-
 namespace StatMech.Probability
 
 open StatMech StatMech.OSSS
