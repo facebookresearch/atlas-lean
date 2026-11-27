@@ -125,4 +125,29 @@ example (n : ℕ) : 16 * powerSum 4 n =
   norm_num [show arrayR 2 1 = 1 by decide, show arrayR 2 2 = 12 by decide, Nat.add_assoc] at h
   exact h
 
+-- In the forward direction, the two columns for k = 2 have different scaling factors.
+example (a : ℕ → ℝ) (h : ∀ n : ℕ, (powerSum 4 n : ℝ) / (2 * (n : ℝ) + 1) =
+    ∑ m ∈ Finset.Icc 1 (2 : ℕ), a m * ((n + m).choose (2 * m) : ℝ)) :
+    (powerSum 3 3 : ℝ) = 18 * a 1 + (25 / 2) * a 2 := by
+  have h₃ := (powerSum_even_div_iff_odd 2 (by decide) a).mp h 3
+  rw [show Finset.Icc 1 (2 : ℕ) = {1, 2} by decide] at h₃
+  norm_num [Nat.choose] at h₃
+  rw [h₃]
+  ring
+
+-- In the reverse direction at k = 1, the same coefficient works at zero and at n = 2.
+example (a : ℕ → ℝ) (h : ∀ n : ℕ, (powerSum 1 n : ℝ) =
+    3 * a 1 * ((n + 1).choose 2 : ℝ)) :
+    (powerSum 2 0 : ℝ) = 0 ∧ (powerSum 2 2 : ℝ) / 5 = 3 * a 1 := by
+  have he := (powerSum_even_div_iff_odd 1 le_rfl a).mpr (fun n ↦ by
+    norm_num
+    exact h n)
+  constructor
+  · have h₀ := he 0
+    norm_num [Nat.choose] at h₀
+    exact_mod_cast h₀
+  · have h₂ := he 2
+    norm_num [Nat.choose] at h₂
+    simpa [mul_comm (a 1)] using h₂
+
 end MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted

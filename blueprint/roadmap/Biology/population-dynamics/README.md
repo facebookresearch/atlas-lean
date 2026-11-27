@@ -24,6 +24,9 @@ Differential-equation and matrix models of population growth, structure, species
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
 - [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)
+- [Nonlocal selection–mutation equations](nonlocal-selection-mutation-equations/README.md)
+- [Phase-field models of tumor growth](phase-field-models-of-tumor-growth/README.md)
+- [Phenotype-structured population models](phenotype-structured-population-models/README.md)
 - [Adaptive dynamics of the team game](stochastic-and-evolutionary-population-models/adaptive-dynamics-of-the-team-game/README.md)
 - [Additional-food biocontrol models](ecological-interaction-models/additional-food-biocontrol-models/README.md)
 - [Additional-food predator–pest models](ecological-interaction-models/additional-food-predator-pest-models/README.md)
@@ -63,6 +66,5 @@ Differential-equation and matrix models of population growth, structure, species
 - [Telomere length branching models](stochastic-and-evolutionary-population-models/telomere-length-branching-models/README.md)
 - [Two-patch Allee models with nonlinear dispersal](ecological-interaction-models/two-patch-allee-models-with-nonlinear-dispersal/README.md)
 - [Voter model perturbations and spatial competition](stochastic-and-evolutionary-population-models/voter-model-perturbations-and-spatial-competition/README.md)
-
 - [Ecological interaction models](ecological-interaction-models/README.md)
 - [Stochastic and evolutionary population models](stochastic-and-evolutionary-population-models/README.md)

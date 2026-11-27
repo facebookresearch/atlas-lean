@@ -28,6 +28,10 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 - [Phylogenetic inference and comparison](inference-and-comparison/README.md)
 
+- [Phylogenetic diversity](phylogenetic-diversity/README.md)
+- [Phylogenetic invariants](phylogenetic-invariants/README.md)
+- [Displayed-tree measures on phylogenetic networks](displayed-tree-measures-on-phylogenetic-networks/README.md)
+- [Trinet encoding of phylogenetic networks](trinet-encoding-of-phylogenetic-networks/README.md)
 - [Phylogenetic diversity](tree-shapes-characters-and-parsimony/phylogenetic-diversity/README.md)
 - [Phylogenetic invariants](inference-and-comparison/phylogenetic-invariants/README.md)
 - [Axioms of tree balance indices](tree-shapes-characters-and-parsimony/axioms-of-tree-balance-indices/README.md)
@@ -84,6 +88,5 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Unrooted hybrid number via cherry picking](phylogenetic-networks/unrooted-hybrid-number-via-cherry-picking/README.md)
 - [Weighted total cophenetic index for networks](phylogenetic-networks/weighted-total-cophenetic-index-for-networks/README.md)
 - [X-cactus encoding](phylogenetic-networks/x-cactus-encoding/README.md)
-
 - [Phylogenetic networks](phylogenetic-networks/README.md)
 - [Tree shapes, characters and parsimony](tree-shapes-characters-and-parsimony/README.md)

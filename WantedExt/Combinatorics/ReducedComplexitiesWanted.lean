@@ -47,36 +47,6 @@ namespace MathlibExt.Combinatorics.ReducedComplexitiesWanted
 
 open MetaMathlibExt
 
-/-- **Doubling recurrences for Thue–Morse alternation extrema.** For a natural number $k$, let
-$m_k$ and $M_k$ be the least and the largest number of alternations (positions where two adjacent
-letters differ) among the length-$k$ factors of the Thue–Morse sequence. Then for every $n \ge 2$,
-$m_{2n} = 2n - 1 - M_{n+1}$, $M_{2n} = 2n - 1 - m_n$, $m_{2n+1} = 2n - M_{n+1}$ and
-$M_{2n+1} = 2n - m_{n+1}$.
-
-Source: John M. Campbell, James D. Currie, and Narad
-Rampersad, "Reduced Complexities for Sequences Over Finite
-Alphabets", Lemma 2. -/
-theorem_wanted minAlt_maxAlt_two_mul (n : ℕ) (hn : 2 ≤ n) :
-    (minAlt (2 * n) : ℤ) = 2 * n - 1 - maxAlt (n + 1) ∧
-      (maxAlt (2 * n) : ℤ) = 2 * n - 1 - minAlt n ∧
-      (minAlt (2 * n + 1) : ℤ) = 2 * n - maxAlt (n + 1) ∧
-      (maxAlt (2 * n + 1) : ℤ) = 2 * n - minAlt (n + 1)
-
-/-- **Quadrupling recurrences for Thue–Morse alternation extrema.** For a natural number $k$, let
-$m_k$ and $M_k$ be the least and the largest number of alternations (positions where two adjacent
-letters differ) among the length-$k$ factors of the Thue–Morse sequence. Then for every $n \ge 1$,
-$m_{4n} = 2n - 1 + m_{n+1}$, $M_{4n} = 2n + M_{n+1}$, $m_{4n+2} = 2n + m_{n+1}$ and
-$M_{4n+2} = 2n + 1 + M_{n+1}$.
-
-Source: John M. Campbell, James D. Currie, and Narad
-Rampersad, "Reduced Complexities for Sequences Over Finite
-Alphabets", Lemma 3. -/
-theorem_wanted minAlt_maxAlt_four_mul (n : ℕ) (hn : 1 ≤ n) :
-    (minAlt (4 * n) : ℤ) = 2 * n - 1 + minAlt (n + 1) ∧
-      (maxAlt (4 * n) : ℤ) = 2 * n + maxAlt (n + 1) ∧
-      (minAlt (4 * n + 2) : ℤ) = 2 * n + minAlt (n + 1) ∧
-      (maxAlt (4 * n + 2) : ℤ) = 2 * n + 1 + maxAlt (n + 1)
-
 /-- **Reduced complexity of the Thue–Morse word at odd lengths.** Let $t$ be the Thue–Morse
 sequence and $\rho^{\mathrm{red}}_t$ its reduced factor complexity. For every odd natural
 number $n$, $\rho^{\mathrm{red}}_t(n) = \rho^{\mathrm{red}}_t((n+1)/2)$.
