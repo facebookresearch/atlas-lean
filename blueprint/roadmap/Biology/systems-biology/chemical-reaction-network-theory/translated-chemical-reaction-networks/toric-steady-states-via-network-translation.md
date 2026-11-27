@@ -14,9 +14,7 @@
 - [Mass-action vector field](../../../../Dynamics/smooth-dynamics/mass-action-field.md)
 - [Stoichiometric subspace](../../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
 - [Deficiency of a chemical reaction network](../../../../Dynamics/smooth-dynamics/deficiency.md)
-
-## Proof depends on
-
+- [Weakly reversible reaction network](../../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
 - [Sign-vector criterion for unique complex balancing equilibria of generalized mass action systems](../generalized-mass-action-systems/sign-vector-criterion-for-unique-complex-balancing-equilibria-of-generalized-mass-action-systems.md)
 
 ## Expansion

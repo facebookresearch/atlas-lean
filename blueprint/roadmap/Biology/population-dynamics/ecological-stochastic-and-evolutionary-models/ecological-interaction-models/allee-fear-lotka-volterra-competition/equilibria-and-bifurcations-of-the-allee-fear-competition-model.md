@@ -12,7 +12,7 @@ with all parameters positive, Allee threshold $0 < p < 1$, fear coefficient $q >
 
 $$A_1 x^2 + A_2 x + A_3 = 0,\qquad A_1 = a c^2 q + 1,\quad A_2 = -(2acq + ac + p + 1),\quad A_3 = a + aq + p,$$
 
-with discriminant $\Delta = A_2^2 - 4A_1A_3$. When $\Delta > 0$, $2A_1 + A_2 > 0$ and $0 < c < 1$ there are two interior equilibria $E_{1*}$ (smaller $x$) and $E_{2*}$; when $\Delta = 0$, $2A_1 + A_2 > 0$ and $0 < c < 1$ they merge into a single $E_{3*}$; in the remaining listed cases ($c = 1$, or $1 < c \le 1 + 1/q$ with $0 < p < 1/c$) there is exactly one interior equilibrium $E_{1*}$.
+with discriminant $\Delta = A_2^2 - 4A_1A_3$. When $\Delta > 0$, $2A_1 + A_2 > 0$ and $0 < c < 1$ there are two interior equilibria $E_{1*}$ (smaller $x$) and $E_{2*}$; when $\Delta = 0$, $2A_1 + A_2 > 0$ and $0 < c < 1$ they merge into a single $E_{3*}$; in the remaining listed cases ($c = 1$ with $a + p < 1$, that is, $\Delta > 0$ and $2A_1 + A_2 > 0$ at $c = 1$; or $1 < c \le 1 + 1/q$ with $0 < p < 1/c$) there is exactly one interior equilibrium $E_{1*}$. (At $c = 1$ the roots are $x = 1$ and $x = (a + aq + p)/(aq + 1)$, so for $a + p \ge 1$ there is no interior equilibrium.)
 
 **Stability.**
 

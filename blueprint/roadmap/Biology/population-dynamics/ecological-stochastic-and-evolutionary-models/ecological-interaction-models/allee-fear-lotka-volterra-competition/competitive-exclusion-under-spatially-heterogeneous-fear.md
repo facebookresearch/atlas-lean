@@ -16,7 +16,7 @@ $$\big(2ac\mathbf{q} + ac + p + 1\big)^2 < 4\big(ac^2\mathbf{q} + 1\big)\big(a +
 
 i.e. $\Delta(\hat{q}) < 0$ and $\Delta(\tilde{q}) < 0$, then the solution converges uniformly to the competitor-only state $(0,1)$ as $t \to \infty$, for flat initial data and, more generally, for any initial data in $L^\infty(\Omega)$.
 
-**Bistable exclusion.** If $\Delta > 0$, $2A_1 + A_2 > 0$, $1 \le c \le 1/\mathbf{q} + 1$ and $0 < p < 1/c$ for both $\mathbf{q} = \hat{q}, \tilde{q}$, then sufficiently small initial data converge uniformly to $(1,0)$ while sufficiently large data converge uniformly to $(0,1)$.
+**Bistable exclusion.** If $\Delta > 0$, $2A_1 + A_2 > 0$, $1 \le c \le 1/\mathbf{q} + 1$ and $0 < p < 1/c$ for both $\mathbf{q} = \hat{q}, \tilde{q}$, then there exist initial data (chosen in a wedge at the interior saddle $E_{1*}$, below both separatrices of the bounding constant-fear systems) whose solutions converge uniformly to $(1,0)$, and there exist initial data whose solutions converge uniformly to $(0,1)$. This is not a statement about all small data: if $\sup u_0 < p$, comparison gives $u \to 0$.
 
 **No Turing patterns for constant fear.** If $q(x) \equiv q > 0$ is constant, the system has no diffusion-driven instability for any parameters or diffusion coefficients $d_1, d_2$.
 

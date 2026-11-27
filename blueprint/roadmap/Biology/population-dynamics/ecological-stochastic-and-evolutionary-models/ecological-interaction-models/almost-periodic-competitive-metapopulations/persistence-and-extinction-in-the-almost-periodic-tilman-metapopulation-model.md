@@ -4,7 +4,7 @@
 
 $$p_1' = p_1\big\{c_1(t)(h - p_1) - m_1(t)\big\}, \qquad p_2' = p_2\big\{c_2(t)(h - p_1 - p_2) - m_2(t) - c_1(t)p_1\big\},$$
 
-with $0 < p_1(t_0) + p_2(t_0) < h$, where colonization rates $c_i$ and extinction rates $m_i$ are positive almost periodic functions with means $\mathcal{M}[\cdot]$. Define
+with $0 < p_1(t_0) + p_2(t_0) < h$, where colonization rates $c_i$ and extinction rates $m_i$ are positive almost periodic functions with means $\mathcal{M}[\cdot]$, and the colonization rates are bounded away from zero, $\inf_{t\in\mathbb{R}} c_i(t) = c_i^- > 0$ (assumption (1.8) of the source). Define
 
 $$\mathcal{R}_0 = \frac{\mathcal{M}[m_1]}{\mathcal{M}[c_1]},\qquad \mathcal{R}_1 = \frac{\mathcal{M}[m_2]}{\mathcal{M}[c_2]},\qquad \mathcal{R}^*_{1,1} = \mathcal{R}_1 + \ell_{1,1},\quad \ell_{1,1} = \frac{\mathcal{M}[(c_1+c_2)p^*_{1,1}]}{\mathcal{M}[c_2]},$$
 

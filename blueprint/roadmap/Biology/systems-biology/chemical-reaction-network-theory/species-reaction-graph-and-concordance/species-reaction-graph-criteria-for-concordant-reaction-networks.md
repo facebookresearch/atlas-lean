@@ -19,6 +19,11 @@ Two cycles have a *species-to-reaction intersection* if their intersection is no
 2. if the network is weakly reversible, then for any kinetics no nontrivial compatibility class has a boundary equilibrium; if it is also conservative, every continuous weakly monotonic kinetics has exactly one equilibrium in each nontrivial class, and it is positive;
 3. for differentiably monotonic kinetics every positive equilibrium is nondegenerate and every real eigenvalue of its Jacobian (restricted to $S$) is negative.
 
+## Depends on
+
+- [Boundary, eigenvalue and instability consequences of concordance and discordance](../concordant-reaction-networks/boundary-and-eigenvalue-consequences-of-concordance.md)
+- [Weakly reversible reaction network](../../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
+
 ## Expansion
 
 Concordance is a sign condition on the stoichiometry alone: it says that no direction $\sigma$ in the stoichiometric subspace can be reconciled with a flux perturbation $\alpha \in \ker L$ consistent with monotone kinetics. Discordance would produce a "sign-causality" graph that must contain a directed cycle; the SR Graph conditions force every such cycle to be an even cycle with balanced stoichiometry and keep even cycles from interlocking, which rules this out. Because the test reads off a finite graph, it certifies uniqueness and stability of equilibria for whole classes of kinetics without knowing rate constants.

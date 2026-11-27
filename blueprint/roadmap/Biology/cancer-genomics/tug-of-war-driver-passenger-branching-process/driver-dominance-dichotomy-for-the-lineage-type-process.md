@@ -1,6 +1,6 @@
 # Driver-dominance dichotomy for the lineage type process
 
-**Model.** A cell carrying $n_d$ drivers and $n_p$ passengers divides at rate $b=b_0(1+s_d)^{n_d}/(1+s_p)^{n_p}$ and dies at rate $d=1$, with $b_0>d$ and $s_d>s_p>0$. Drivers arrive at rate $\mu$, passengers at rate $\nu$, with $\mu<\nu$. Assume $1+s_d=(1+s_p)^L$ for an integer $L\ge2$. Then the type $i=n_dL-n_p\in\mathbb{Z}$ determines the birth rate $b(i)=b_0(1+s_p)^{i}$, and a type-$i$ cell
+**Model.** A cell carrying $n_d$ drivers and $n_p$ passengers divides at rate $b=b_0(1+s_d)^{n_d}/(1+s_p)^{n_p}$ and dies at rate $d=1$, with $b_0>d$ and $s_d>s_p>0$. Drivers arrive at rate $\mu$, passengers at rate $\nu$, with $\mu<\nu<d$. Assume $1+s_d=(1+s_p)^L$ for an integer $L\ge2$. Then the type $i=n_dL-n_p\in\mathbb{Z}$ determines the birth rate $b(i)=b_0(1+s_p)^{i}$, and a type-$i$ cell
 
 - divides into two type-$i$ cells at rate $b(i)$,
 - becomes type $i+L$ (driver) at rate $\mu$,
