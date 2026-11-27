@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Probability.Diffusion.JKOScheme
+public import MathlibExt.Probability.Diffusion.JKOStep
 public import Mathlib.Analysis.Calculus.Gradient.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.Analysis.InnerProductSpace.Laplacian
@@ -19,10 +19,10 @@ public import Mathlib.Algebra.Order.Floor.Defs
 /-!
 # The JKO scheme: wanted results
 
-Existence and uniqueness of the steps of the Jordan–Kinderlehrer–Otto scheme (Proposition 4.1)
-and convergence of the scheme to the Fokker–Planck equation (Theorem 5.1) of R. Jordan,
-D. Kinderlehrer and F. Otto, *The variational formulation of the Fokker–Planck equation*, SIAM J.
-Math. Anal. 29 (1998), 1–17, for the definitions of `MathlibExt.Probability.Diffusion.JKOScheme`.
+Convergence of the Jordan–Kinderlehrer–Otto scheme to the Fokker–Planck equation (Theorem 5.1)
+of R. Jordan, D. Kinderlehrer and F. Otto, *The variational formulation of the Fokker–Planck
+equation*, SIAM J. Math. Anal. 29 (1998), 1–17, for the definitions of
+`MathlibExt.Probability.Diffusion.JKOScheme`.
 
 The standing assumptions of their Section 4 on the potential are: `Ψ` is `C^∞`, `Ψ ≥ 0`, and
 `|∇Ψ(x)| ≤ C (Ψ(x) + 1)` for some constant `C`. They work on `ℝⁿ`; here `E` is any
@@ -37,19 +37,6 @@ open scoped ENNReal ContDiff
 open MathlibExt.Probability.Diffusion.JKOScheme
 
 namespace MathlibExt.Probability.Diffusion.JKOSchemeWanted
-
-/-- **Existence and uniqueness of the JKO step.** Let `Ψ : E → ℝ` be smooth (`C^∞`), nonnegative,
-with `|∇Ψ| ≤ C (Ψ + 1)`, and let `β > 0` and `h > 0`. For every admissible `ρ₀` (absolutely
-continuous with finite second moment) there is exactly one admissible `ρ` minimizing
-`½ W₂(ρ₀, ρ)² + h F(ρ)` over the admissible set, where `F(ρ) = ∫ Ψ ρ + β⁻¹ ∫ ρ log ρ`
-(R. Jordan, D. Kinderlehrer and F. Otto, *The variational formulation of the Fokker–Planck
-equation*, SIAM J. Math. Anal. 29 (1998), Proposition 4.1, under the assumptions of Section 4). -/
-theorem_wanted existsUnique_isJKOStep {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
-    {Ψ : E → ℝ} (hΨ : ContDiff ℝ ∞ Ψ) (hΨ0 : ∀ x, 0 ≤ Ψ x)
-    (hΨgrad : ∃ C : ℝ, ∀ x, ‖fderiv ℝ Ψ x‖ ≤ C * (Ψ x + 1))
-    {β h : ℝ} (hβ : 0 < β) (hh : 0 < h) (ρ₀ : ProbabilityMeasure E) (hρ₀ : IsAdmissible ρ₀) :
-    ∃! ρ : ProbabilityMeasure E, IsJKOStep Ψ β h ρ₀ ρ
 
 /-- **Convergence of the JKO scheme to the Fokker–Planck equation.** Under the assumptions of
 Section 4 on `Ψ`, let `β > 0` and let `ρ₀` be admissible with finite free energy. Then there is a

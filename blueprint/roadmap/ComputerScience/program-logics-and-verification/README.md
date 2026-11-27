@@ -11,6 +11,8 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [Separation logic](separation-logic/README.md)
 - [Metatheory of separation logic](separation-logic-metatheory/README.md)
 - [Verification-condition generation](verification-condition-generation/README.md)
+- [Hoare logic for typed traced diagrams](hoare-logic-for-typed-traced-diagrams/README.md)
+- [Verification conditions for annotated traced diagrams](verification-conditions-for-annotated-traced-dia/README.md)
 - [Interactive device state machines](interactive-device-state-machines.md)
 - [Decidable interface correctness criterion](decidable-interface-correctness-criterion.md)
 - [Mode confusion as mental-model divergence](mode-confusion-as-mental-model-divergence.md)
@@ -19,6 +21,7 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 
 - [Safety verification](safety-verification/README.md)
 - [Termination analysis](termination-analysis/README.md)
+- [Expected run-time calculus](expected-run-time-calculus/README.md)
 - [Testing and runtime verification](testing-and-runtime-verification/README.md)
 
 - [Concurrency logics](concurrency-logics/README.md)
