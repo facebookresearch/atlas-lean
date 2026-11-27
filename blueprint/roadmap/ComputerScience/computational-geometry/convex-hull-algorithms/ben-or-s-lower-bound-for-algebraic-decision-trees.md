@@ -1,6 +1,6 @@
 # Ben-Or's lower bound for algebraic decision trees
 
-Let $d \ge 1$, let $W \subseteq \mathbb{R}^N$ be a set with $M \ge 1$ connected components, and let $T$ be a $d$-th order algebraic decision tree of height $h$ that decides $W$. Then
+Let $d \ge 1$ and $N \ge 1$, let $W \subseteq \mathbb{R}^N$ be a set with $M \ge 1$ connected components, and let $T$ be a $d$-th order algebraic decision tree of height $h$ that decides $W$. Then
 
 $$3^h \, d\,(2d-1)^{N+h-1} \ge M, \qquad\text{so}\qquad h \ge \frac{\log_2 M - (N-1)\log_2(2d-1) - \log_2 d}{\log_2 3 + \log_2(2d-1)} .$$
 

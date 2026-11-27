@@ -19,6 +19,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.HigherANumbersPeriodicSumFloorMulPowModEq
+public import MathlibExt.NumberTheory.HigherANumbersTowerTauAdjacentDigits
 
 /-!
 # Higher `a`-numbers in `ℤ_p`-towers via lattice points
@@ -41,15 +42,6 @@ open Finset
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Base-$p$ digits of a rational number.** For a natural number $p$, a rational number $x$ and
-an integer $k$, the $k$-th base-$p$ digit of $x$ is $[p^k](x) = \lfloor x / p^k \rfloor \bmod p$;
-for $p \ge 1$ this is the residue of $\lfloor x / p^k \rfloor$ modulo $p$ in $\{0, \dots, p - 1\}$.
-
-Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
-*Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
-Section 2.2 (definition of `[p^k](x)`). -/
-def basePDigit (p : ℕ) (x : ℚ) (k : ℤ) : ℤ := ⌊x / (p : ℚ) ^ k⌋ % p
 
 /-- **Base-5 digits of 2/3.** Writing $[5^j](x)$ for the $j$-th base-$5$ digit of a rational
 number $x$, we have $[5^{-1}](2/3) = 3$, $[5^{-2}](2/3) = 1$ and $[5^0](2/3) = 0$.
@@ -97,13 +89,6 @@ Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Definition of `x̄`. 
 noncomputable def basePDigitAverage (p : ℕ) (x : ℚ) : ℚ :=
   (∑ k ∈ Icc (basePDelay p x + 1) (basePDelay p x + basePPeriod p x), (basePDigit p x (-k) : ℚ)) /
     basePPeriod p x
-
-/-- **The ratio $\tau = (p + 1)/d$.** For natural numbers $p$ and $d$, $\tau$ is the rational
-number $(p + 1)/d$, which is $0$ when $d = 0$.
-
-Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
-Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 1 (i). -/
-def towerTau (p d : ℕ) : ℚ := ((p : ℚ) + 1) / d
 
 /-- **The constant $\gamma$.** For natural numbers $p$, $d$ and $r$,
 $\gamma = ((p - 1) r + (p + 1))/d$, a rational number (taken to be $0$ when $d = 0$).
@@ -370,21 +355,6 @@ public theorem_wanted basePDigit_eventually_periodic_iff (p : ℕ) [Fact p.Prime
     (hx : 0 < x) (D : ℤ) {L : ℕ} (hL : 0 < L) :
     (∀ k : ℤ, D + 1 ≤ k → basePDigit p x (-(k + L)) = basePDigit p x (-k)) ↔
       basePPeriod p x ∣ L ∧ basePDelay p x ≤ D
-
-/-- **Digits of $\tau i$ next to the radix point.** Let $p$ be a prime, $d$ a divisor of $p - 1$
-and $\tau = (p + 1)/d$, and write $[p^j](x)$ for the $j$-th base-$p$ digit of a rational number
-$x$. For every natural number $i$, $[p^{-1}](\tau i) = [p^0](\tau i)$ if and only if $p$ divides
-$i$.
-
-The source's positivity assumption on $i$ is dropped (the claim holds at $i = 0$), and $p$ is any
-prime.
-
-Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
-*Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
-Lemma 3 (`integers-2026-A78-lem-3`). -/
-public theorem_wanted basePDigit_towerTau_neg_one_eq_zero_iff (p d : ℕ) [Fact p.Prime]
-    (hd : d ∣ p - 1) (i : ℕ) :
-    basePDigit p (towerTau p d * i) (-1) = basePDigit p (towerTau p d * i) 0 ↔ p ∣ i
 
 /-- **A digit criterion for $\delta(i) = 1$.** Let $p$ be a prime, $d$ a divisor of $p - 1$ and
 $\tau = (p + 1)/d$. For a rational $t$ and an integer $k$ write $[p^k](t)$ for the $k$-th base-$p$
