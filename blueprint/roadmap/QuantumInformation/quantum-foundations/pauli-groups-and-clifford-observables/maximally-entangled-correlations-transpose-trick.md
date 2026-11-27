@@ -16,6 +16,7 @@ Expanding in the basis, $\langle\Phi,(A\otimes B)\Phi\rangle = |\iota|^{-1}\sum_
 
 - [States on star-ordered algebras, state-dependent norm and approximation](../states-and-measurements-on-operator-algebras/algebraic-states-and-state-dependent-norm.md)
 - [Bell basis and maximally entangled states](../bell-basis-and-maximally-entangled-states.md)
+- [Density matrices, pure states and reduced states](../../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Sources
 
