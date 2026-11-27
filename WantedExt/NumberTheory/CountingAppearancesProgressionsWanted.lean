@@ -54,6 +54,7 @@ public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableRe
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFirstPrimes
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCount
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableCountDistinctPrimes
+public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCountSucc
 
 set_option autoImplicit false
 
@@ -121,20 +122,6 @@ theorem_wanted occupiedCount_firstPrimes_succ_add_free (k : ℕ)
       (∏ i : Fin k, Nat.nth Nat.Prime i.val) +
         (Nat.nth Nat.Prime k - 1) *
           occupiedCount (firstPrimes k) (r ∘ Fin.castSucc)
-
-/-- **Lemma 3, free recurrence.** Let $k \ge 1$, let $p_1 < p_2 < \cdots$ be the primes in
-increasing order, and let $r_1, \dots, r_{k+1}$ be natural numbers. For $m \in \{k, k + 1\}$
-write $\mathrm{free}(m)$ for the number of integers $n$ with $1 \le n \le p_1 \cdots p_m$ such
-that $n \not\equiv r_i \pmod{p_i}$ for every $i \le m$. Then
-$\mathrm{free}(k+1) = (p_{k+1} - 1) \cdot \mathrm{free}(k)$.
-
-Source: Florian Pausinger, "Counting Appearances of Integers in
-Sets of Arithmetic Progressions", Lemma 3. -/
-theorem_wanted freeCount_firstPrimes_succ (k : ℕ) (hk : 1 ≤ k)
-    (r : Fin (k + 1) → ℕ) :
-    freeCount (firstPrimes (k + 1)) r =
-      (Nat.nth Nat.Prime k - 1) *
-        freeCount (firstPrimes k) (r ∘ Fin.castSucc)
 
 /-- **Available integers for the first primes.** Let $k$ be a natural number, let
 $p_1, \dots, p_k$ be the first $k$ primes, and let $r_1, \dots, r_k$ be any natural numbers. Call an
