@@ -110,21 +110,6 @@ def epsilon : PreTilt 𝓞_ℂ_[p] p :=
 
 /-! ### Elements of the tilt from compatible sequences -/
 
-/-- The `n`-th `p`-power root `(F^{-n} x)♯` of `x♯`, for `x` in the tilt of `𝓞_ℂ_[p]`. -/
-private def root (x : PreTilt 𝓞_ℂ_[p] p) (n : ℕ) : 𝓞_ℂ_[p] :=
-  PreTilt.untilt (((_root_.frobeniusEquiv (PreTilt 𝓞_ℂ_[p] p) p).symm^[n]) x)
-
-private theorem root_pow (x : PreTilt 𝓞_ℂ_[p] p) (n : ℕ) : root p x n ^ p ^ n = x.untilt :=
-  PreTilt.untilt_iterate_frobeniusEquiv_symm_pow x n
-
-private theorem root_succ_pow (x : PreTilt 𝓞_ℂ_[p] p) (n : ℕ) :
-    root p x (n + 1) ^ p = root p x n := by
-  rw [root, root, Function.iterate_succ_apply', ← map_pow, frobeniusEquiv_symm_pow_p]
-
-private theorem mk_root (x : PreTilt 𝓞_ℂ_[p] p) (n : ℕ) :
-    Ideal.Quotient.mk (span {(p : 𝓞_ℂ_[p])}) (root p x n) = PreTilt.coeff n x := by
-  rw [root, PreTilt.mk_untilt_eq_coeff_zero, PreTilt.coeff_iterate_frobeniusEquiv_symm, zero_add]
-
 /-- The element `(z₀, z₁, …)` of the tilt of `𝓞_ℂ_[p]` defined by a sequence with
 `z (n + 1) ^ p = z n`. -/
 private def mkSeq (z : ℕ → 𝓞_ℂ_[p]) (hz : ∀ n, z (n + 1) ^ p = z n) : PreTilt 𝓞_ℂ_[p] p :=
@@ -146,11 +131,11 @@ private theorem untilt_mkSeq (z : ℕ → 𝓞_ℂ_[p]) (hz : ∀ n, z (n + 1) ^
   intro n
   rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top, Ideal.span_singleton_pow,
     Ideal.mem_span_singleton]
-  have h1 : root p (mkSeq p z hz) n - z n ∈ span {(p : 𝓞_ℂ_[p])} := by
-    rw [← Ideal.Quotient.eq, mk_root]
+  have h1 : (mkSeq p z hz).untiltRoot n - z n ∈ span {(p : 𝓞_ℂ_[p])} := by
+    rw [← Ideal.Quotient.eq, PreTilt.mk_untiltRoot]
     rfl
   have h2 := dvd_sub_pow_of_dvd_sub (Ideal.mem_span_singleton.mp h1) n
-  rw [root_pow, pow_seq p z hz] at h2
+  rw [PreTilt.untiltRoot_pow, pow_seq p z hz] at h2
   exact (pow_dvd_pow _ n.le_succ).trans h2
 
 /-- The roots of unity `zetaPow p n`, as elements of `𝓞_ℂ_[p]`. -/
@@ -212,33 +197,35 @@ theorem epsilon_ne_one : epsilon p ≠ 1 := by
 private theorem dvd_of_norm_le (a c : PreTilt 𝓞_ℂ_[p] p)
     (ha : ((a.untilt : 𝓞_ℂ_[p]) : ℂ_[p]) ≠ 0)
     (hle : ‖((c.untilt : 𝓞_ℂ_[p]) : ℂ_[p])‖ ≤ ‖((a.untilt : 𝓞_ℂ_[p]) : ℂ_[p])‖) : a ∣ c := by
-  have han : ∀ n, ‖((root p a n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ^ p ^ n =
+  have han : ∀ n, ‖((a.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ^ p ^ n =
       ‖((a.untilt : 𝓞_ℂ_[p]) : ℂ_[p])‖ := fun n => by
-    have h := congrArg (fun z : 𝓞_ℂ_[p] => ‖(z : ℂ_[p])‖) (root_pow p a n)
+    have h := congrArg (fun z : 𝓞_ℂ_[p] => ‖(z : ℂ_[p])‖) (PreTilt.untiltRoot_pow a n)
     simpa [norm_pow] using h
-  have hcn : ∀ n, ‖((root p c n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ^ p ^ n =
+  have hcn : ∀ n, ‖((c.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ^ p ^ n =
       ‖((c.untilt : 𝓞_ℂ_[p]) : ℂ_[p])‖ := fun n => by
-    have h := congrArg (fun z : 𝓞_ℂ_[p] => ‖(z : ℂ_[p])‖) (root_pow p c n)
+    have h := congrArg (fun z : 𝓞_ℂ_[p] => ‖(z : ℂ_[p])‖) (PreTilt.untiltRoot_pow c n)
     simpa [norm_pow] using h
-  have hne : ∀ n, ((root p a n : 𝓞_ℂ_[p]) : ℂ_[p]) ≠ 0 := fun n h0 => by
+  have hne : ∀ n, ((a.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p]) ≠ 0 := fun n h0 => by
     have := han n
     rw [h0, norm_zero, zero_pow (pow_ne_zero _ hp.out.ne_zero)] at this
     exact ha (norm_eq_zero.mp this.symm)
-  have hle' : ∀ n, ‖((root p c n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ≤ ‖((root p a n : 𝓞_ℂ_[p]) : ℂ_[p])‖ :=
+  have hle' : ∀ n, ‖((c.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ≤
+      ‖((a.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p])‖ :=
     fun n => by
       refine (pow_le_pow_iff_left₀ (norm_nonneg _) (norm_nonneg _)
         (pow_ne_zero n hp.out.ne_zero)).mp ?_
       rw [hcn, han]
       exact hle
-  let e : ℕ → 𝓞_ℂ_[p] := fun n => ⟨((root p c n : 𝓞_ℂ_[p]) : ℂ_[p]) /
-      ((root p a n : 𝓞_ℂ_[p]) : ℂ_[p]),
+  let e : ℕ → 𝓞_ℂ_[p] := fun n => ⟨((c.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p]) /
+      ((a.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p]),
     (mem_iff_norm_le_one p _).mpr (by
       rw [norm_div]; exact div_le_one_of_le₀ (hle' n) (norm_nonneg _))⟩
   have he : ∀ n, e (n + 1) ^ p = e n := fun n => by
     apply Subtype.ext
     simp only [e, SubmonoidClass.coe_pow, div_pow]
-    rw [← SubmonoidClass.coe_pow, ← SubmonoidClass.coe_pow, root_succ_pow, root_succ_pow]
-  have hce : ∀ n, root p c n = root p a n * e n := fun n => by
+    rw [← SubmonoidClass.coe_pow, ← SubmonoidClass.coe_pow, PreTilt.untiltRoot_succ_pow,
+      PreTilt.untiltRoot_succ_pow]
+  have hce : ∀ n, c.untiltRoot n = a.untiltRoot n * e n := fun n => by
     apply Subtype.ext
     simp only [e, MulMemClass.coe_mul]
     field_simp [hne n]
@@ -246,7 +233,7 @@ private theorem dvd_of_norm_le (a c : PreTilt 𝓞_ℂ_[p] p)
   apply Perfection.ext
   intro n
   change PreTilt.coeff n c = PreTilt.coeff n (a * mkSeq p e he)
-  rw [map_mul, coeff_mkSeq, ← mk_root, ← mk_root, ← map_mul, hce]
+  rw [map_mul, coeff_mkSeq, ← PreTilt.mk_untiltRoot, ← PreTilt.mk_untiltRoot, ← map_mul, hce]
 
 private theorem norm_one_sub_pow_le (ζ : 𝓞_ℂ_[p]) (k : ℕ) :
     ‖(1 : ℂ_[p]) - (ζ : ℂ_[p]) ^ k‖ ≤ ‖(1 : ℂ_[p]) - (ζ : ℂ_[p])‖ := by
@@ -334,29 +321,30 @@ private theorem norm_untilt_pow_ge :
     have h4 : r ^ (p * (p - 1)) ≤ ‖(p : ℂ_[p])‖ ^ (p * (p - 1)) :=
       pow_le_pow_left₀ (norm_nonneg _) hcon _
     linarith
-  -- `root y 1 ≡ ζ_{p²} - 1 (mod p)`
-  have hmem : root p y 1 - (zetaPowO p 2 - 1) ∈ span {(p : 𝓞_ℂ_[p])} := by
-    rw [← Ideal.Quotient.eq, mk_root, map_sub, map_sub, map_one, eps1, coeff_mkSeq, map_one]
+  -- `y.untiltRoot 1 ≡ ζ_{p²} - 1 (mod p)`
+  have hmem : y.untiltRoot 1 - (zetaPowO p 2 - 1) ∈ span {(p : 𝓞_ℂ_[p])} := by
+    rw [← Ideal.Quotient.eq, PreTilt.mk_untiltRoot, map_sub, map_sub, map_one, eps1, coeff_mkSeq,
+      map_one]
   obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.mp hmem
-  have hdiff : ‖((root p y 1 - (zetaPowO p 2 - 1) : 𝓞_ℂ_[p]) : ℂ_[p])‖ ≤ ‖(p : ℂ_[p])‖ := by
+  have hdiff : ‖((y.untiltRoot 1 - (zetaPowO p 2 - 1) : 𝓞_ℂ_[p]) : ℂ_[p])‖ ≤ ‖(p : ℂ_[p])‖ := by
     rw [← hc]
     push_cast
     rw [norm_mul]
     have := norm_le_one p c
     nlinarith [norm_nonneg ((c : 𝓞_ℂ_[p]) : ℂ_[p]), norm_nonneg (p : ℂ_[p])]
-  have hroot : r ≤ ‖((root p y 1 : 𝓞_ℂ_[p]) : ℂ_[p])‖ := by
+  have hroot : r ≤ ‖((y.untiltRoot 1 : 𝓞_ℂ_[p]) : ℂ_[p])‖ := by
     have h1 : ((zetaPowO p 2 : 𝓞_ℂ_[p]) : ℂ_[p]) - 1 =
-        ((root p y 1 : 𝓞_ℂ_[p]) : ℂ_[p]) -
-          ((root p y 1 - (zetaPowO p 2 - 1) : 𝓞_ℂ_[p]) : ℂ_[p]) := by
+        ((y.untiltRoot 1 : 𝓞_ℂ_[p]) : ℂ_[p]) -
+          ((y.untiltRoot 1 - (zetaPowO p 2 - 1) : 𝓞_ℂ_[p]) : ℂ_[p]) := by
       push_cast; ring
-    have h2 := IsUltrametricDist.norm_add_le_max ((root p y 1 : 𝓞_ℂ_[p]) : ℂ_[p])
-      (-((root p y 1 - (zetaPowO p 2 - 1) : 𝓞_ℂ_[p]) : ℂ_[p]))
+    have h2 := IsUltrametricDist.norm_add_le_max ((y.untiltRoot 1 : 𝓞_ℂ_[p]) : ℂ_[p])
+      (-((y.untiltRoot 1 - (zetaPowO p 2 - 1) : 𝓞_ℂ_[p]) : ℂ_[p]))
     rw [norm_neg, ← sub_eq_add_neg, ← h1] at h2
     rcases le_max_iff.mp h2 with h | h
     · exact h
     · linarith
-  have hy : ‖((y.untilt : 𝓞_ℂ_[p]) : ℂ_[p])‖ = ‖((root p y 1 : 𝓞_ℂ_[p]) : ℂ_[p])‖ ^ p := by
-    rw [← root_pow p y 1, pow_one]; push_cast; rw [norm_pow]
+  have hy : ‖((y.untilt : 𝓞_ℂ_[p]) : ℂ_[p])‖ = ‖((y.untiltRoot 1 : 𝓞_ℂ_[p]) : ℂ_[p])‖ ^ p := by
+    rw [← PreTilt.untiltRoot_pow y 1, pow_one]; push_cast; rw [norm_pow]
   rw [map_pow]
   push_cast
   rw [norm_pow, hy, ← pow_mul]
