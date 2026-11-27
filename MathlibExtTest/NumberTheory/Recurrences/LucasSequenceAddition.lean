@@ -55,4 +55,12 @@ example (m n : ℕ) :
 
 end two_mul_lucasU_add.Tests
 
+open MetaMathlibExt in
+-- The doubling formula at `n = 3` for `(P, Q) = (3, 2)`: `U_6 = U_3 V_3`, that is `63 = 7 * 9`.
+example : lucasU two_mul_lucasU_add.Tests.params32 (2 * 3) = 7 * 9 := by
+  have h := lucasU_two_mul_eq_lucasU_mul_lucasV two_mul_lucasU_add.Tests.params32 3
+  have h3 : lucasU two_mul_lucasU_add.Tests.params32 3 = 7 ∧
+      lucasV two_mul_lucasU_add.Tests.params32 3 = 9 := by decide
+  rw [h, h3.1, h3.2]
+
 end MathlibExt.NumberTheory.Recurrences.KruchininPerminovaHadamardWanted

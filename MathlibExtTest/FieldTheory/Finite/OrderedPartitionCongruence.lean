@@ -40,4 +40,18 @@ example : (∑ j ∈ Icc 1 1,
         (fun ω => ∑ i, ω i = j * 2), (∏ i, ω i) ^ 1) = 1 := by
   decide
 
+-- The linear congruence applies at k = 7 even though 9 does not divide k - 1.
+example : 3 ∣ ∑ j ∈ Icc 1 3,
+    ∑ ω ∈ (Fintype.piFinset fun _ : Fin 1 => Icc 1 7).filter
+        (fun ω => ∑ i, ω i = j * 2), ∏ i, ω i :=
+  prime_dvd_sum_compositions_prod (k := 7) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide)
+
+-- The linear congruence also handles tuples at the upper length bound s = p - 2.
+example : 5 ∣ ∑ j ∈ Icc 1 15,
+    ∑ ω ∈ (Fintype.piFinset fun _ : Fin 3 => Icc 1 21).filter
+        (fun ω => ∑ i, ω i = j * 4), ∏ i, ω i :=
+  prime_dvd_sum_compositions_prod (k := 21) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide)
+
 end MetaMathlibExt.OrderedPartitionCongruenceTest
