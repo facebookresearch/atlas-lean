@@ -15,6 +15,7 @@ import MathlibExt.CategoryTheory.Abelian.LeftDerived.ParameterMap
 import MathlibExt.CategoryTheory.Abelian.LeftDerived.ZeroNaturality
 import MathlibExt.Algebra.Homology.HomologicalComplex.BalancedTensor.TorBoundary
 import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor.ProjectiveExact
+import MathlibExt.Algebra.Category.ModuleCat.RegularElementTor
 import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor.LeftGroupAdjunction
 import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Unitors
 import Mathlib.Algebra.Category.ModuleCat.Images
@@ -28,8 +29,10 @@ import Mathlib.Tactic.Ring
 # Degree-one coefficient colimits with nonflat integer torsion
 
 The right integer complex has ℤ in every integer degree and multiplication
-by two from degree zero to degree minus one. Let A be its homology in
-degree minus one after the canonical lift to universe two.
+by two from degree zero to degree minus one. The principal-quotient
+presentation of ℤ/2 supplies that map and the projectivity of the regular
+term. Let A be its homology in degree minus one after the canonical lift
+to universe two.
 
 The coefficient diagram has two discrete objects, ℤ/4 and ℤ/6, with
 carriers lifted first to universe one and then to universe two. Its target
@@ -62,12 +65,32 @@ local notation "c" => ComplexShape.down ℤ
 
 private abbrev Z : ModuleCat.{0} ℤᵐᵒᵖ := ModuleCat.of ℤᵐᵒᵖ ℤ
 
-private def twice : Z ⟶ Z := ModuleCat.ofHom
-  { toFun := fun a => 2 * a
-    map_add' := fun a b => by change 2 * (a + b) = _; ring
-    map_smul' := fun r a => by
-      change 2 * (a * r.unop) = (2 * a) * r.unop
-      ring }
+private abbrev Z2 : ModuleCat.{2} ℤᵐᵒᵖ := (ModuleCat.uliftFunctor.{2, 0} ℤᵐᵒᵖ).obj Z
+
+private def rightRegularEquiv : ℤᵐᵒᵖ ≃ₗ[ℤᵐᵒᵖ] Z2 where
+  toFun r := ULift.up r.unop
+  invFun z := MulOpposite.op z.down
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_add' _ _ := rfl
+  map_smul' _ _ := rfl
+
+private def regularIso : ModuleCat.RegularElement.rightRegular.{0, 0} ℤ ≅ Z :=
+  (((ULift.moduleEquiv : ModuleCat.RegularElement.rightRegular.{0, 0} ℤ ≃ₗ[ℤᵐᵒᵖ] ℤᵐᵒᵖ).trans
+    rightRegularEquiv).trans (ULift.moduleEquiv : Z2 ≃ₗ[ℤᵐᵒᵖ] ℤ)).toModuleIso
+
+private lemma twoRegular : IsLeftRegular (2 : ℤ) := by
+  intro x y h
+  exact mul_left_cancel₀ (by norm_num : (2 : ℤ) ≠ 0) h
+
+private def twice : Z ⟶ Z :=
+  regularIso.inv ≫ ModuleCat.RegularElement.leftMultiplication.{0, 0} ℤ 2 ≫ regularIso.hom
+
+private instance twiceMono : Mono twice := by
+  letI : Mono (ModuleCat.RegularElement.leftMultiplication.{0, 0} ℤ 2) :=
+    (ModuleCat.RegularElement.leftMultiplication_mono_iff.{0, 0} ℤ 2).2 twoRegular
+  dsimp only [twice]
+  infer_instance
 
 private def d (i : ℤ) : Z ⟶ Z := if i = -1 then twice else 0
 
@@ -96,20 +119,16 @@ private lemma outgoing_zero : P.d (-1) (c.next (-1)) = 0 := by
     simpa only [ChainComplex.of_d] using (show d (-2) = 0 from rfl)
   exact (congrArg (fun j : ℤ => (show Z ⟶ Z from P.d (-1) j)) (next_int (-1))).trans h
 
-private abbrev Z2 : ModuleCat.{2} ℤᵐᵒᵖ := (ModuleCat.uliftFunctor.{2, 0} ℤᵐᵒᵖ).obj Z
 private abbrev P2 : ChainComplex (ModuleCat.{2} ℤᵐᵒᵖ) ℤ :=
   ((ModuleCat.uliftFunctor.{2, 0} ℤᵐᵒᵖ).mapHomologicalComplex c).obj P
 
-private def rightRegularEquiv : ℤᵐᵒᵖ ≃ₗ[ℤᵐᵒᵖ] Z2 where
-  toFun r := ULift.up r.unop
-  invFun z := MulOpposite.op z.down
-  left_inv _ := rfl
-  right_inv _ := rfl
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
+private def regularIso2 : ModuleCat.RegularElement.rightRegular.{0, 2} ℤ ≅ Z2 :=
+  ((ULift.moduleEquiv : ModuleCat.RegularElement.rightRegular.{0, 2} ℤ ≃ₗ[ℤᵐᵒᵖ] ℤᵐᵒᵖ).trans
+    rightRegularEquiv).toModuleIso
 
 private instance regular_projective : Projective Z2 :=
-  ModuleCat.projective_of_free ((Basis.singleton PUnit ℤᵐᵒᵖ).map rightRegularEquiv)
+  Projective.of_iso regularIso2
+    ((ModuleCat.RegularElement.projectiveResolution.{0, 2} ℤ 2 twoRegular).projective 0)
 
 private instance term_exact :
     ((ModuleCat.BalancedTensor.groupBifunctor ℤ).obj (P2.X (-1))).PreservesHomology := by
@@ -149,11 +168,12 @@ private lemma f_apply (x : Z2) : f.hom x = ULift.up (2 * x.down) := by
   rw [differential_value]
 
 private instance f_mono : Mono f := by
-  apply (ModuleCat.mono_iff_injective f).2
-  intro x y h
-  apply ULift.ext
-  rw [f_apply, f_apply] at h
-  exact mul_left_cancel₀ (by norm_num : (2 : ℤ) ≠ 0) (congrArg ULift.down h)
+  change Mono ((ModuleCat.uliftFunctor.{2, 0} ℤᵐᵒᵖ).map (P.d 0 (-1)))
+  have hd : P.d 0 (-1) = twice := by
+    change ChainComplex.of.d (fun _ : ℤ => Z) d ((-1 : ℤ) + 1) (-1) = twice
+    simpa only [ChainComplex.of_d] using (show d (-1) = twice from rfl)
+  rw [hd]
+  infer_instance
 
 private abbrev B : ModuleCat.{2} ℤᵐᵒᵖ := Abelian.image f
 
@@ -180,27 +200,19 @@ private lemma β_value : cyclesIso.hom.hom (β.hom imageOne) = ULift.up (2 : ℤ
   exact h₁.trans (h₂.trans (by simpa only [oneZ, mul_one] using f_apply oneZ))
 
 private def regularTensorIso (N : ModuleCat.{2} ℤ) :
-    (G.obj Z2).obj N ≅ (forget₂ (ModuleCat.{2} ℤ) AddCommGrpCat.{2}).obj N := by
-  letI : Module ℤ N := Module.compHom N (algebraMap ℤ ℤ)
-  let e : TensorProduct.Balanced ℤ ℤ Z2 N ≃ₗ[ℤ]
-      TensorProduct.Balanced ℤ ℤ ℤ N :=
-    TensorProduct.Balanced.congr (k := ℤ) (R := ℤ)
-      (ULift.moduleEquiv : Z2 ≃ₗ[ℤ] ℤ) (LinearEquiv.refl ℤ N)
-      (by intro r x; rfl) (by intro r n; rfl)
-  exact (forget₂ (ModuleCat.{2} ℤ) AddCommGrpCat.{2}).mapIso
-    (e.trans (TensorProduct.Balanced.leftUnitor ℤ ℤ N)).toModuleIso
+    (G.obj Z2).obj N ≅ (forget₂ (ModuleCat.{2} ℤ) AddCommGrpCat.{2}).obj N :=
+  (G.flip.obj N).mapIso regularIso2.symm ≪≫
+    ModuleCat.RegularElement.regularTensorIso.{0, 2} ℤ N
 
 private lemma regularTensorIso_mk (N : ModuleCat.{2} ℤ) (x : Z2) (n : N) :
     letI : Module ℤ N := Module.compHom N (algebraMap ℤ ℤ)
     (regularTensorIso N).hom.hom (TensorProduct.Balanced.mk ℤ ℤ Z2 N x n) =
       x.down • n := by
   letI : Module ℤ N := Module.compHom N (algebraMap ℤ ℤ)
-  change (TensorProduct.Balanced.leftUnitor ℤ ℤ N)
-    ((TensorProduct.Balanced.congr (k := ℤ) (R := ℤ)
-      (ULift.moduleEquiv : Z2 ≃ₗ[ℤ] ℤ) (LinearEquiv.refl ℤ N)
-      (by intro r x; rfl) (by intro r n; rfl))
-        (TensorProduct.Balanced.mk ℤ ℤ Z2 N x n)) = _
-  rw [TensorProduct.Balanced.congr_mk, TensorProduct.Balanced.leftUnitor_mk]
+  change (ModuleCat.RegularElement.regularTensorIso.{0, 2} ℤ N).hom.hom
+    (((G.map regularIso2.inv).app N).hom (TensorProduct.Balanced.mk ℤ ℤ Z2 N x n)) = x.down • n
+  rw [ModuleCat.BalancedTensor.groupBifunctor_map_mk,
+    ModuleCat.RegularElement.regularTensorIso_mk]
   rfl
 
 private abbrev A := P2.homology (-1)
