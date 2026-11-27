@@ -14,6 +14,7 @@ public import MathlibExt.Combinatorics.Enumerative.ClassicalMeteredParkingFuncti
 public import MathlibExt.Combinatorics.Enumerative.LongMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.MeteredParkingLowerBound
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredParkingFunctions
+public import MathlibExt.Combinatorics.Enumerative.OneMeteredTwoSpots
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
 public import MathlibExt.Combinatorics.Enumerative.TwoMeteredParkingFunctions
 
@@ -71,18 +72,6 @@ public theorem_wanted isMeteredParkingFunction_one_iff_lace {m n : ℕ} (hm : 0 
     (f : Fin m → Fin n) :
     IsMeteredParkingFunction 1 f ↔
       ∀ c ∈ laceDecomposition (List.ofFn fun i => (f i : ℕ)), n - 1 ∉ c.tail
-
-/-- **One-metered parking functions with two spots.** Let $m \ge 1$ and
-$f : \{0, \dots, m-1\} \to \{0, 1\}$. Then $f$ is a $1$-metered parking function with $m$ cars and
-$2$ spots if and only if every lace of the lace decomposition of $(f(0), \dots, f(m-1))$ that
-contains the value $1$ has length $1$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 3 (`integers-2025-A73-cor-3`). -/
-public theorem_wanted isMeteredParkingFunction_one_two_iff_lace {m : ℕ} (hm : 1 ≤ m)
-    (f : Fin m → Fin 2) :
-    IsMeteredParkingFunction 1 f ↔
-      ∀ c ∈ laceDecomposition (List.ofFn fun i => (f i : ℕ)), 1 ∈ c → c.length = 1
 
 /-- **Equal last-spot counts for 1-metered parking functions.** Let $1 \le m \le j < k \le n$
 and number the spots $1, \dots, n$. The number of $1$-metered $(m, n)$-parking functions whose
