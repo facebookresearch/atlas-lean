@@ -16,7 +16,7 @@ computed from the recombination fractions between the QTL position and the marke
 
 ## Depends on
 
-- [Genotypic values at a biallelic locus on Falconer's scale](fisher-s-decomposition-of-genetic-variance/biallelic-value.md)
+- [Genotypic values at a biallelic locus on Falconer's scale](../fisher-s-decomposition-of-genetic-variance/biallelic-value.md)
 
 ## Expansion
 

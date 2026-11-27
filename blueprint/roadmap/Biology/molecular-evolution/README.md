@@ -24,6 +24,3 @@
 - [Birth, death and innovation models of gene family size](birth-death-and-innovation-models-of-gene-family-size/README.md)
 - [Biochemical epistasis on combinatorially complete libraries](biochemical-epistasis-on-combinatorially-complete-libraries/README.md)
 - [Germline de novo mutation rates](germline-de-novo-mutation-rates/README.md)
-- [Microsatellite average squared distance](microsatellite-average-squared-distance/README.md)
-- [Position-specific substitution rates in binding sites](position-specific-substitution-rates-in-binding-sites/README.md)
-- [Regeneration process for evolutionary innovation](regeneration-process-for-evolutionary-innovation.md)

@@ -18,8 +18,8 @@ In the Icelandic data, half-sibling estimates exceeded grandparent–grandchild 
 
 ## Depends on
 
-- [Full-sib covariance of genotypic values](../fisher-s-decomposition-of-genetic-variance/cov-full-sibs.md)
-- [Half-sib covariance of genotypic values](../fisher-s-decomposition-of-genetic-variance/cov-half-sibs.md)
+- [Full-sib covariance of genotypic values](../../fisher-s-decomposition-of-genetic-variance/cov-full-sibs.md)
+- [Half-sib covariance of genotypic values](../../fisher-s-decomposition-of-genetic-variance/cov-half-sibs.md)
 
 ## Expansion
 

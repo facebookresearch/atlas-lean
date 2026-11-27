@@ -16,10 +16,6 @@ Three parameters are maximized; because a one-dimensional section of the log lik
 
 This score is the admixed-population analogue of an association test run inside a single ancestral population: it uses only the fine-scale correlation between the candidate SNP and the causal variant, and discards the information carried by the ancestry of the surrounding chromosomal segment.
 
-## Depends on
-
-- [Cochran–Armitage trend test](../../../cochran-armitage-trend-test/README.md)
-
 ## Expansion
 
 Tilting an allele frequency by an odds ratio, $p \mapsto Rp/(Rp + 1 - p)$, is the retrospective form of a logistic model with per-allele effect $\log R$: it is the case frequency implied by multiplicative penetrance on the allele, and it keeps the frequency in $(0,1)$ for every $R > 0$. Treating $p_A$ and $p_E$ as free is what makes the test robust; the price is two extra nuisance parameters per SNP and the loss of the case-only admixture signal, which lives entirely in the distribution of $X$ that this likelihood conditions on. Simulations on real admixed genotypes put this score at lower power than a trend test corrected only for genome-wide ancestry, because the trend test implicitly uses part of the admixture signal, and lower still than a statistic that models both sources jointly.

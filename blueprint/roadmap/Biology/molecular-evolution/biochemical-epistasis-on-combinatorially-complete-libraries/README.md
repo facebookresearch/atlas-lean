@@ -4,3 +4,4 @@ Decompositions of a phenotype measured on all $2^L$ combinations of $L$ mutation
 
 - [Möbius inversion for biochemical epistasis coefficients](mobius-inversion-for-biochemical-epistasis-coefficients.md)
 - [Antibody affinity landscapes](antibody-affinity-landscapes/README.md)
+- [Regeneration process for evolutionary innovation](regeneration-process-for-evolutionary-innovation.md)

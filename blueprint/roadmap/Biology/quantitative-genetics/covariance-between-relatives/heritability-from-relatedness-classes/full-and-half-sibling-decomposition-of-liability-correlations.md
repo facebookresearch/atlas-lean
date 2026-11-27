@@ -19,8 +19,8 @@ and under the ADE submodel ($C = 0$), $A = 4 r_{HS}$ and $D = 4 r_{FS} - 8 r_{HS
 
 ## Depends on
 
-- [Full-sib covariance of genotypic values](../fisher-s-decomposition-of-genetic-variance/cov-full-sibs.md)
-- [Half-sib covariance of genotypic values](../fisher-s-decomposition-of-genetic-variance/cov-half-sibs.md)
+- [Full-sib covariance of genotypic values](../../fisher-s-decomposition-of-genetic-variance/cov-full-sibs.md)
+- [Half-sib covariance of genotypic values](../../fisher-s-decomposition-of-genetic-variance/cov-half-sibs.md)
 
 ## Expansion
 

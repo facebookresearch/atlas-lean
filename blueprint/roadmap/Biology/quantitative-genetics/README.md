@@ -25,5 +25,3 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Information-theoretic quantitative genetics](information-theoretic-quantitative-genetics/README.md)
 - [Informative trait selection for multitrait QTL mapping](informative-trait-selection-for-multitrait-qtl-mapping/README.md)
 - [Translation invariance of marker coding](translation-invariance-of-marker-coding/README.md)
-- [Heritability from relatedness classes](heritability-from-relatedness-classes/README.md)
-- [Haley–Knott regression with additive and dominance effects](haley-knott-regression-with-additive-and-dominance-effects.md)

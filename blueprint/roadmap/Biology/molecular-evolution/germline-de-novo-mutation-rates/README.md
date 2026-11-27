@@ -6,3 +6,4 @@ Pedigree sequencing counts de novo mutations directly, one generation at a time.
 - [Paternal fraction of phased de novo mutations](paternal-fraction-of-phased-de-novo-mutations.md)
 - [Likelihood for parental-age effects with partially phased de novo mutations](likelihood-for-parental-age-effects-with-partially-phased-de-novo-mutations.md)
 - [De novo mutation rate estimation from pedigrees](de-novo-mutation-rate-estimation-from-pedigrees/README.md)
+- [Microsatellite average squared distance](microsatellite-average-squared-distance/README.md)

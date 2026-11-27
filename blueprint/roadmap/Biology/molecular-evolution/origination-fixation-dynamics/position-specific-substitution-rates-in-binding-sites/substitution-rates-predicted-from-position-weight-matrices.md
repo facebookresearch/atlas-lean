@@ -12,7 +12,7 @@ Positions where the factor tolerates a single base ($f_{bp} \to 0$ for $b \neq a
 
 ## Depends on
 
-- [Information content of a position weight matrix column](../../bioinformatics/position-weight-matrices/info-content.md)
+- [Information content of a position weight matrix column](../../../bioinformatics/position-weight-matrices/info-content.md)
 
 ## Expansion
 

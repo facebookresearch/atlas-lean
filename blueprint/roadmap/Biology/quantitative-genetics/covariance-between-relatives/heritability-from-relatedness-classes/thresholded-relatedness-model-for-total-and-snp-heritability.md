@@ -19,8 +19,8 @@ A related two-component model with $K^{\mathrm{IBD}}$ and $K^{\mathrm{IBD2}}$ (t
 
 ## Depends on
 
-- [Genetic relationship matrix](../../statistical-genetics/greml-and-haseman-elston-estimation-of-snp-herit/grm.md)
-- [GREML covariance matrix $\sigma_g^2 K + \sigma_e^2 I$](../../statistical-genetics/greml-and-haseman-elston-estimation-of-snp-herit/greml-cov.md)
+- [Genetic relationship matrix](../../../statistical-genetics/greml-and-haseman-elston-estimation-of-snp-herit/grm.md)
+- [GREML covariance matrix $\sigma_g^2 K + \sigma_e^2 I$](../../../statistical-genetics/greml-and-haseman-elston-estimation-of-snp-herit/greml-cov.md)
 
 ## Expansion
 

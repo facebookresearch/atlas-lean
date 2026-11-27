@@ -34,3 +34,8 @@
 - [Single-locus model as Cockerham components](to-components.md)
 - [Single-locus covariance between relatives in Cockerham form](rel-cov-eq-cov.md)
 - [One-locus phantom heritability](falconer-eq-of-locus.md)
+
+## Estimation from relatives and line crosses
+
+- [Heritability from relatedness classes](heritability-from-relatedness-classes/README.md)
+- [Haley–Knott regression with additive and dominance effects](haley-knott-regression-with-additive-and-dominance-effects.md)
