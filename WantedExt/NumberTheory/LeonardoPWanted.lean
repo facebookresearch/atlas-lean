@@ -50,6 +50,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Matrix.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.NumberTheory.LeonardoPCompanionQPowApply
+public import MathlibExt.NumberTheory.LeonardoPStrideSum
 
 set_option autoImplicit false
 
@@ -64,25 +65,6 @@ $H(m - a - b)$. -/
 def rMatrix (p : ℕ) (H : ℤ → ℤ) (m : ℕ) :
     Matrix (Fin (2 * p + 1)) (Fin (2 * p + 1)) ℤ :=
   Matrix.of fun a b => H ((m : ℤ) - a.val - b.val)
-
-/-- **Stride sums of the generalized Leonardo $p$-numbers.** Let $p \ge 1$ and $k \ge 1$ be
-natural numbers, and let $\mathcal{L}_{p,k}$ denote the generalized Leonardo $p$-numbers
-($\mathcal{L}_{p,k}(j) = 1$ for $0 \le j \le p$ and
-$\mathcal{L}_{p,k}(j) = \mathcal{L}_{p,k}(j-1) + \mathcal{L}_{p,k}(j-p-1) + k$ for $j > p$).
-Then for all natural numbers $m \le p$ and $n$, the sum
-$S = \sum_{i=0}^{n} \mathcal{L}_{p,k}((p+1)i + m)$ satisfies
-$S = \mathcal{L}_{p,k}((p+1)n + m + 1) - kn$ if $m < p$, and
-$S = \mathcal{L}_{p,k}((p+1)(n+1)) - k(n+1) - 1$ if $m = p$.
-
-Source: "On Generalized Leonardo `p`-Numbers", Journal
-of Integer Sequences 27 (2024), Article 24.4.6, Theorem 4. -/
-theorem_wanted sum_leonardoPK_stride (p k m n : ℕ)
-    (hp : 1 ≤ p) (hk : 1 ≤ k) (hm : m ≤ p) :
-    ∑ i ∈ Finset.range (n + 1), leonardoPK p k ((p + 1) * i + m) =
-      if m < p then
-        leonardoPK p k ((p + 1) * n + m + 1) - (k : ℤ) * n
-      else
-        leonardoPK p k ((p + 1) * (n + 1)) - (k : ℤ) * (n + 1) - 1
 
 /-- **Fibonacci $p$-numbers as differences of $A_p$.** For all natural numbers $p \ge 1$ and
 $n \ge 1$, the Fibonacci $p$-number $F_p(n)$ equals $A_p(n) - A_p(n-p)$. Here
