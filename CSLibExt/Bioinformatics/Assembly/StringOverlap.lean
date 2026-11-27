@@ -201,7 +201,8 @@ theorem foldl_merge_contains {α : Type*} [DecidableEq α] (l : List (List α)) 
         (List.IsPrefix.isInfix (foldl_merge_prefix tl (merge init hd)))
     | inr hmem' => exact ih _ _ hmem'
 
-/-- Every input string appears in the folded merge (superstring soundness). -/
+/-- Every string of the list `l` is a contiguous substring of `mergeAll l` (superstring
+soundness). -/
 theorem mem_mergeAll_contains {α : Type*} [DecidableEq α] (l : List (List α))
     (s : List α) (hmem : s ∈ l) : s <:+: mergeAll l :=
   foldl_merge_contains l [] s hmem

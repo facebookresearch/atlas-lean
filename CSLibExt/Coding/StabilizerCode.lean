@@ -33,7 +33,8 @@ noncomputable def generator {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c : 
     Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ :=
   c j • pauli (a j) (b j)
 
-/-- The product of the generators indexed by `T`, in index order. -/
+/-- For `T ⊆ {0, …, r - 1}`, the product of the generators `g j` with `j ∈ T` in increasing
+order of `j`; the empty product is `1`. -/
 noncomputable def groupElem {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c : Fin r → ℂ)
     (T : Finset (Fin r)) : Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ :=
   (List.ofFn fun j => if j ∈ T then generator a b c j else 1).prod
@@ -46,7 +47,8 @@ noncomputable def stabilizerGroup {n r : ℕ} (a b : Fin r → Fin n → ZMod 2)
   classical
   exact Finset.univ.image (groupElem a b c)
 
-/-- The common `+1` eigenspace of the generators. -/
+/-- The common `+1` eigenspace `{ψ | g j ψ = ψ for all j}` of the generators; the whole space
+when `r = 0`. -/
 noncomputable def codeSpace {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c : Fin r → ℂ) :
     Submodule ℂ ((Fin n → ZMod 2) → ℂ) :=
   ⨅ j, LinearMap.ker (Matrix.toLin' (generator a b c j) - LinearMap.id)
@@ -969,7 +971,8 @@ theorem finrank_stabilizerCode {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c
   have hfin_cast := htrace.symm.trans (hce.trans hcast)
   exact Nat.cast_injective (R := ℂ) hfin_cast
 
-/-- The two `X^a Z^b` carriers on main agree. -/
+/-- The Pauli operator `X^a Z^b` with phase `sign (b ⬝ᵥ v)` and the matrix with phase
+`(-1)^(b ⬝ᵥ v)` are equal: both send `|v⟩` to `(-1)^(b · v) |v + a⟩`. -/
 theorem pauli_eq_pauliXZ {n : ℕ} (a b : Fin n → ZMod 2) :
     pauli a b = MathlibExt.Quantum.PauliXZ.pauliXZ a b :=
   pauli_eq_pauliXZ_aux a b

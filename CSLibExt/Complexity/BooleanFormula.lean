@@ -47,7 +47,8 @@ inductive BooleanFormula (n : ℕ)
   | or (g h : BooleanFormula n) : BooleanFormula n
   | not (g : BooleanFormula n) : BooleanFormula n
 
-/-- Evaluation of a formula on an input assignment. -/
+/-- Evaluation under `σ`: an input leaf `i` takes `σ i`, a constant its value, and AND, OR and
+NOT gates the conjunction, disjunction and negation of their children's values. -/
 def BooleanFormula.eval {n : ℕ} (σ : Fin n → Bool) : BooleanFormula n → Bool
   | .input i => σ i
   | .const b => b
@@ -81,8 +82,8 @@ def BooleanFormula.subst {n m : ℕ} (wiring : Fin n → BooleanFormula m) :
   | .or g h => .or (g.subst wiring) (h.subst wiring)
   | .not g => .not (g.subst wiring)
 
-/-- Substitution evaluates pointwise: evaluating `g.subst wiring` is evaluating `g` on the values
-of the substituted formulas. -/
+/-- Under an assignment `τ` of the `m` inputs, the substituted formula takes the value `g` takes
+under `i ↦` (the value of `wiring i` under `τ`). -/
 theorem BooleanFormula.eval_subst {n m : ℕ} (wiring : Fin n → BooleanFormula m)
     (g : BooleanFormula n) (τ : Fin m → Bool) :
     (g.subst wiring).eval τ = g.eval (fun i => (wiring i).eval τ) := by
