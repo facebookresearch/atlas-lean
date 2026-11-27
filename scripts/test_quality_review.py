@@ -64,6 +64,14 @@ theorem in_comment : True := trivial
 
 theorem _root_.rooted : True := trivial
 
+private section
+
+theorem in_private_section : True := trivial
+
+end
+
+theorem after_private_section : True := trivial
+
 end B
 
 end
@@ -93,7 +101,7 @@ def git(repo: Path, *args: str, date: str = "") -> None:
 class StatementsTest(unittest.TestCase):
     def test_qualified_names_and_module_visibility(self):
         rows = qr.statements(MODULE, "MathlibExt/X.lean")
-        self.assertEqual([r["id"] for r in rows], ["A.documented", "A.same", "B.same", "rooted"])
+        self.assertEqual([r["id"] for r in rows], ["A.documented", "A.same", "B.same", "rooted", "B.after_private_section"])
         self.assertTrue(rows[1]["text"].startswith("/-- **Doubling.**"))
         self.assertIn("omega", rows[1]["text"])
         self.assertNotIn("helper", rows[1]["text"])
@@ -162,7 +170,7 @@ class RunTest(unittest.TestCase):
             summary = qr.run(self.args(), self.repo)
         samples = [json.loads(line) for line in (self.out / "samples.jsonl").read_text().splitlines()]
         self.assertEqual([(s["stratum"], s["id"]) for s in samples], [("new", "C.fresh")])
-        self.assertEqual((summary["status"], summary["population"]), ("complete", 6))
+        self.assertEqual((summary["status"], summary["population"]), ("complete", 7))
         self.assertTrue((self.out / "source" / "MathlibExt" / "D.lean").is_file())
         self.assertTrue((self.out / "mathlib" / "Mathlib" / "Basic.lean").is_file())
         self.assertFalse((self.out / "source" / ".git").exists())
@@ -176,6 +184,29 @@ class RunTest(unittest.TestCase):
         with self.assertRaises(SystemExit):
             qr.run(self.args(), self.repo)
         self.assertFalse(self.out.exists())
+
+    def test_unusable_cost_is_unknown_not_fatal(self):
+        response = json.dumps(dict(json.loads(good(3)), total_cost_usd="0.10"))
+        with mock.patch.object(qr, "judge", lambda *a: qr.parse_verdict(0, response)):
+            summary = qr.run(self.args(random=2, new=0), self.repo)
+        self.assertEqual((summary["status"], summary["judged"], summary["cost_usd"]), ("complete", 2, 0))
+        self.assertEqual(summary["strata"]["random"]["all"]["mean"]["tactics"], 3.0)
+
+    def test_run_aborts_if_a_checkout_moves_while_freezing(self):
+        real = qr.snapshot
+        for moved in ("source", "mathlib"):
+            with self.subTest(moved):
+                out = Path(str(self.out) + "-" + moved)
+
+                def snap(repo, dest, roots, moved=moved):
+                    row = real(repo, dest, roots)
+                    return dict(row, commit="0" * 40) if dest.name == moved else row
+
+                with mock.patch.object(qr, "snapshot", snap), \
+                        mock.patch.object(qr, "judge", lambda *a: self.fail("judged after a moved checkout")), \
+                        self.assertRaisesRegex(SystemExit, "moved while freezing"):
+                    qr.run(self.args(out=str(out)), self.repo)
+                self.assertFalse((out / "summary.json").exists())
 
     def test_run_rejects_uncommitted_sources(self):
         (self.repo / "MathlibExt" / "D.lean").write_text("theorem edited : True := trivial\n")

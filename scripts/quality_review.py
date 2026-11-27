@@ -37,6 +37,7 @@ import concurrent.futures
 import datetime as dt
 import hashlib
 import json
+import math
 import random
 import re
 import subprocess
@@ -56,7 +57,7 @@ MAX_CHARS = 12000
 
 DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)?(?P<mods>(?:(?:public|protected|noncomputable|private|nonrec)\s+)*)"
                   r"(?:theorem|lemma)\s+(?P<name>[^\s:({\[⦃]+)")
-SCOPE = re.compile(r"^(?:@\[[^\]]*\]\s*)?(?P<public>public\s+)?(?:noncomputable\s+)?"
+SCOPE = re.compile(r"^(?:@\[[^\]]*\]\s*)?(?:(?P<vis>public|private)\s+)?(?:noncomputable\s+)?"
                    r"(?P<kind>namespace|section)\b[ \t]*(?P<name>[^\s-]*)")
 TOP_LEVEL = re.compile(r"^(?:theorem|lemma|def|abbrev|instance|structure|class|inductive|example|@\[|/--|/-|"
                        r"end\b|namespace\b|section\b|open\b|variable\b|noncomputable\b|private\b|public\b|"
@@ -96,18 +97,18 @@ def statements(text: str, path: str) -> List[Dict]:
     """Public theorem/lemma declarations of one file, keyed by fully qualified name.
 
     Lexical, on comment-masked source: tracks `namespace`/`section`/`end` and module
-    visibility (in a `module` file a declaration is public only if marked `public` or
-    inside a public section).
+    visibility (in a `module` file a declaration is public if marked `public`, or if
+    unmarked and its innermost section with an explicit visibility is `public section`).
     """
     lines = text.splitlines()
     code = clean_source(text).splitlines()
     is_module = any(line.strip() == "module" for line in code[:40])
-    scopes: List[Tuple[str, str, bool]] = []
+    scopes: List[Tuple[str, str, Optional[str]]] = []
     out = []
     for i, line in enumerate(code):
         scope = SCOPE.match(line)
         if scope:
-            scopes.append((scope.group("kind"), scope.group("name"), bool(scope.group("public"))))
+            scopes.append((scope.group("kind"), scope.group("name"), scope.group("vis")))
             continue
         if re.match(r"^end\b", line):
             if scopes:
@@ -117,7 +118,9 @@ def statements(text: str, path: str) -> List[Dict]:
         if not m:
             continue
         mods = m.group("mods").split()
-        if "private" in mods or (is_module and "public" not in mods and not any(s[2] for s in scopes)):
+        section = next((s[2] for s in reversed(scopes) if s[2]), None)
+        public = "public" in mods or ("private" not in mods and (section == "public" if is_module else section != "private"))
+        if not public:
             continue
         name = m.group("name")
         namespace = ".".join(s[1] for s in scopes if s[0] == "namespace" and s[1])
@@ -193,7 +196,9 @@ def parse_verdict(returncode: int, stdout: str) -> Tuple[Optional[Dict], Optiona
         if not (isinstance(v, dict) and type(v.get("score")) is int and 1 <= v["score"] <= 5
                 and isinstance(v.get("reason"), str) and v["reason"].strip()):
             return None, f"invalid {r} verdict"
-    return dict(scores=scores, cost_usd=raw.get("total_cost_usd")), None
+    cost = raw.get("total_cost_usd")
+    usable = isinstance(cost, (int, float)) and not isinstance(cost, bool) and math.isfinite(cost) and cost >= 0
+    return dict(scores=scores, cost_usd=cost if usable else None), None
 
 
 def judge(row: Dict, out: Path, model: str, rubrics: str) -> Tuple[Optional[Dict], Optional[str]]:
@@ -258,8 +263,11 @@ def run(args: argparse.Namespace, repo: Optional[Path] = None) -> Dict:
     # Freeze the only sources the judges may read: committed files, no Git metadata or scripts.
     out.mkdir(parents=True)
     present = tuple(lib for lib in LIBRARIES if lib in git(repo, "ls-tree", "--name-only", commit).split())
-    snapshot(repo, out / "source", present)
-    snapshot(mathlib, out / "mathlib", ("Mathlib",))
+    frozen = (snapshot(repo, out / "source", present)["commit"].strip(),
+              snapshot(mathlib, out / "mathlib", ("Mathlib",))["commit"].strip())
+    if frozen != (commit, pinned):
+        sys.exit(f"a checkout moved while freezing ({frozen[0][:10]}, {frozen[1][:10]} instead of "
+                 f"{commit[:10]}, {pinned[:10]}); no judge was run, rerun into a new directory")
     (out / "samples.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in samples))
     print(f"froze {commit[:10]}; judging {len(samples)} of {len(pop)} statements "
           f"({len(fresh)} new since {base[:10]}) with {args.model}")
