@@ -32,16 +32,8 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **$F_{\pm 1}$ over $\mathbb{Z}/6$ is not $m$-vanishing for $m > 1$.** For every $m > 1$,
-neither of the sum-plus-product families $F_{-1}$ and $F_1$ over $\mathbb{Z}/6$, where
-$F_c(b_1, \dots, b_l) = b_1 + \dots + b_l + c\, b_1 \cdots b_l$, is $m$-vanishing.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 4
-(`integers-2026-A25-lem-4`). -/
-public theorem_wanted not_isMVanishingFamily_sumAddMulProd_six {m : ℕ} (hm : 1 < m) :
-    ¬ IsMVanishingFamily m (sumAddMulProdFamily (-1 : ZMod 6)) ∧
-      ¬ IsMVanishingFamily m (sumAddMulProdFamily (1 : ZMod 6))
+-- `not_isMVanishingFamily_sumAddMulProd_six` is proved in
+-- `MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductClassification`, re-exported here.
 
 /-- **$F_1$ modulo a prime $n \equiv 1 \pmod 4$ is not $m$-vanishing for $m > 0$.** Let $n$ be
 a prime with $n \equiv 1 \pmod 4$. Then for every $m > 0$ the sum-plus-product family $F_1$
