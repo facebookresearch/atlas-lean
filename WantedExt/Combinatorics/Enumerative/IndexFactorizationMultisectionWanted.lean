@@ -41,25 +41,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Parametric two-adic multisection.** Let $q \in \mathbb{C}$ and let $b : \mathbb{N} \to
-\mathbb{C}$ be a sequence (its value at $0$ is not used). Suppose that the families
-$(q^j b_{(2n-1) 2^j})$ and $(q^j (q - 1) b_{2n \cdot 2^j})$, indexed by the pairs $(j, n)$ of
-natural numbers with $n \ge 1$, are summable. Then
-$$\sum_{j \ge 0,\ n \ge 1} \left(q^j b_{(2n-1) 2^j} - q^j (q - 1) b_{2n \cdot 2^j}\right)
-= \sum_{m \ge 1} b_m.$$
-
-The two summability hypotheses imply that $(b_m)_{m \ge 1}$ is summable.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Proposition 1, series version (`jis-2024-24.5.5-prop-1`). -/
-public theorem_wanted tsum_twoAdic_parametric_multisection (q : ℂ) (b : ℕ → ℂ)
-    (hodd : Summable fun x : ℕ × ℕ => q ^ x.1 * b ((2 * x.2 + 1) * 2 ^ x.1))
-    (heven : Summable fun x : ℕ × ℕ => q ^ x.1 * (q - 1) * b ((2 * x.2 + 2) * 2 ^ x.1)) :
-    ∑' x : ℕ × ℕ, (q ^ x.1 * b ((2 * x.2 + 1) * 2 ^ x.1)
-        - q ^ x.1 * (q - 1) * b ((2 * x.2 + 2) * 2 ^ x.1))
-      = ∑' m : ℕ, b (m + 1)
-
 /-- **Parametric 3-adic multisection of a series.** Let $q$ be a complex number and let
 $(b_m)_{m \ge 1}$ be a sequence of complex numbers such that the three families
 $q^j b_{(3n-1) 3^j}$, $q^j b_{(3n-2) 3^j}$ and $q^j (q - 1) b_{3n \cdot 3^j}$, each indexed by

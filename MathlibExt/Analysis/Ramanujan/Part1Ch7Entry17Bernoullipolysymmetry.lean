@@ -110,8 +110,11 @@ private theorem entry17Left_eq (r : ℂ) :
   rw [HurwitzZeta.hurwitzZetaEven_neg, HurwitzZeta.hurwitzZetaOdd_neg]
   ring
 
-/-- Key lemma: the sine zeta at `1 / 4` is the Dirichlet beta function. -/
-private theorem sinZeta_quarter_eq_beta :
+/-- **Sine zeta at one quarter is the Dirichlet beta function.** For every complex number $s$, the
+sine Hurwitz zeta function `HurwitzZeta.sinZeta` at $a = 1/4$, which for $\operatorname{Re} s > 1$
+is the series $\sum_{n \ge 1} \sin(\pi n / 2) \, n^{-s}$, equals the Dirichlet beta function
+$\beta(s)$. -/
+theorem sinZeta_quarter_eq_beta :
     ∀ s : ℂ, HurwitzZeta.sinZeta ((1 / 4 : ℝ) : UnitAddCircle) s =
       chapter7DirichletBeta s := by
   have hNe : NeZero 4 := ⟨by decide⟩

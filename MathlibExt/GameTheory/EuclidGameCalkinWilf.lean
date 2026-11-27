@@ -8,14 +8,24 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Ring.Int.Defs
 public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.GameTheory.SpragueGrundy
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
 
 /-!
 # Euclid on the Calkin–Wilf tree
 
 Each arch top has a unique move to a child of the original position. From that child,
-subtracting once returns to the original position.
+subtracting once returns to the original position. Counting the left arch tops row by row
+gives `3 * Tₖ = 2 ^ (k - 2) + 2 * (-1) ^ k` for `2 ≤ k` (`count_arch_tops_calkinWilfRow`).
+
+## References
+
+* Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+  of the Game Euclid*, The Fibonacci Quarterly 62 (1) (2024), pp. 15–28,
+  Corollary 4.7 and Proposition 5.2.
 -/
 
 namespace MetaMathlibExt
@@ -618,6 +628,183 @@ public theorem fibonacci_arch_tops (n k : ℕ) (hn : 1 ≤ n) :
   · refine ⟨pX, pXL, pXR, ?_, ?_, ?_, ?_⟩ <;>
       rw [hX, htop] <;> dsimp only [t, s, a] <;> push_cast <;> ring
   · refine ⟨pY, pYL, pYR, ?_, ?_⟩ <;> ext <;> dsimp only [t, s, Y] <;> ring
+
+namespace count_arch_tops_calkinWilfRow
+
+open euclidPPosition_self_similar
+
+private def children (p : ℕ × ℕ) : List (ℕ × ℕ) :=
+  [(p.1, p.1 + p.2), (p.1 + p.2, p.2)]
+
+private def grandchildren (p : ℕ × ℕ) : List (ℕ × ℕ) :=
+  (children p).flatMap children
+
+private theorem row_succ (k : ℕ) :
+    calkinWilfRow (k + 1) = (calkinWilfRow k).flatMap children := rfl
+
+private theorem row_two (k : ℕ) :
+    calkinWilfRow (k + 2) = (calkinWilfRow k).flatMap grandchildren := by
+  rw [row_succ, row_succ, List.flatMap_assoc]
+  rfl
+
+private theorem children_length (l : List (ℕ × ℕ)) :
+    (l.flatMap children).length = 2 * l.length := by
+  induction l with
+  | nil => rfl
+  | cons p l ih => simp [children, ih]; omega
+
+private theorem row_length (k : ℕ) : (calkinWilfRow k).length = 2 ^ k := by
+  induction k with
+  | zero => rfl
+  | succ k ih => rw [row_succ, children_length, ih, pow_succ]; omega
+
+private theorem children_eq (p : ℕ × ℕ) : children p = [child p false, child p true] := by
+  simp [children, child]
+
+-- Repeating a direction gives N, and changing direction gives P exactly when the child is N
+-- (`grandchild_iff`), so a vertex's children and grandchildren hold exactly two P-positions.
+private theorem count_grandchildren {p : ℕ × ℕ} (hp : 0 < p.1 ∧ 0 < p.2) :
+    (grandchildren p).countP outcome + (children p).countP outcome = 2 := by
+  have g (b c : Bool) : outcome (child (child p b) c) = (!outcome (child p b) && b != c) := by
+    apply Bool.eq_iff_iff.mpr
+    rw [grandchild_iff hp]
+    simp
+  simp only [grandchildren, children_eq, List.flatMap_cons, List.flatMap_nil, List.cons_append,
+    List.nil_append, List.countP_cons, List.countP_nil, g]
+  cases outcome (child p false) <;> cases outcome (child p true) <;> rfl
+
+private theorem count_two (l : List (ℕ × ℕ))
+    (hl : ∀ p ∈ l, 0 < p.1 ∧ 0 < p.2) :
+    (l.flatMap grandchildren).countP outcome + (l.flatMap children).countP outcome =
+      2 * l.length := by
+  induction l with
+  | nil => rfl
+  | cons p l ih =>
+    have hp := count_grandchildren (hl p (by simp))
+    have ht := ih (fun q hq => hl q (by simp [hq]))
+    simp only [List.flatMap_cons, List.countP_append, List.length_cons]
+    omega
+
+private theorem row_count_step (k : ℕ) :
+    (calkinWilfRow (k + 2)).countP outcome + (calkinWilfRow (k + 1)).countP outcome =
+      2 * 2 ^ k := by
+  rw [row_two, row_succ, ← row_length]
+  exact count_two _ (fun _ h => row_pos h)
+
+private theorem row_count_sum (k : ℕ) :
+    (calkinWilfRow (k + 1)).countP outcome + (calkinWilfRow k).countP outcome = 2 ^ k := by
+  induction k with
+  | zero => decide
+  | succ k ih =>
+    have h := row_count_step k
+    change (calkinWilfRow (k + 2)).countP outcome +
+      (calkinWilfRow (k + 1)).countP outcome = 2 ^ (k + 1)
+    rw [pow_succ]
+    omega
+
+private theorem row_count_formula (k : ℕ) :
+    3 * ((calkinWilfRow k).countP outcome : ℤ) = 2 ^ k + 2 * (-1) ^ k := by
+  induction k with
+  | zero => rfl
+  | succ k ih =>
+    have h := congrArg (fun n : ℕ => (n : ℤ)) (row_count_sum k)
+    push_cast at h
+    rw [pow_succ, pow_succ]
+    linarith
+
+private def archPredicate (l : List (ℕ × ℕ)) (p : ℕ × ℕ) : Bool :=
+  l.any fun V => outcome V && p == (2 * V.1 + V.2, V.1 + V.2)
+
+private theorem arch_iff (l : List (ℕ × ℕ)) (p : ℕ × ℕ) :
+    archPredicate l p = true ↔
+      ∃ V ∈ l, outcome V = true ∧ p = (2 * V.1 + V.2, V.1 + V.2) := by
+  simp [archPredicate, List.any_eq_true]
+
+private theorem arch_bounds (l : List (ℕ × ℕ))
+    (hl : ∀ V ∈ l, 0 < V.1 ∧ 0 < V.2) (p : ℕ × ℕ)
+    (hp : archPredicate l p = true) : p.2 < p.1 ∧ p.1 < 2 * p.2 := by
+  obtain ⟨V, hV, _, rfl⟩ := (arch_iff l p).1 hp
+  have hv := hl V hV
+  dsimp
+  omega
+
+private theorem arch_grandchildren_count (l : List (ℕ × ℕ))
+    (hl : ∀ V ∈ l, 0 < V.1 ∧ 0 < V.2) (p : ℕ × ℕ) (hp : p ∈ l) :
+    (grandchildren p).countP (archPredicate l) = if outcome p then 1 else 0 := by
+  obtain ⟨a, b⟩ := p
+  have hab := hl (a, b) hp
+  have excluded (q : ℕ × ℕ) (hq : q.1 ≤ q.2 ∨ 2 * q.2 ≤ q.1) :
+      archPredicate l q = false := by
+    apply Bool.eq_false_iff.mpr
+    intro h
+    have hbound := arch_bounds l hl q h
+    omega
+  have hss := excluded (a, a + (a + b)) (by dsimp; omega)
+  have hds := excluded (a + b, a + b + b) (by dsimp; omega)
+  have hdd := excluded (a + b + b, b) (by dsimp; omega)
+  have hsd : archPredicate l (a + (a + b), a + b) = outcome (a, b) := by
+    apply Bool.eq_iff_iff.mpr
+    rw [arch_iff]
+    constructor
+    · rintro ⟨V, _, hV, he⟩
+      have h₁ := congrArg Prod.fst he
+      have h₂ := congrArg Prod.snd he
+      have hv : V = (a, b) := by
+        apply Prod.ext <;> dsimp at h₁ h₂ ⊢ <;> omega
+      simpa only [hv] using hV
+    · intro h
+      refine ⟨(a, b), hp, h, ?_⟩
+      apply Prod.ext <;> dsimp; omega
+  simp only [grandchildren, children, List.flatMap_cons, List.flatMap_nil,
+    List.cons_append, List.nil_append, List.countP_cons, List.countP_nil]
+  simp [hss, hds, hdd, hsd]
+
+private theorem arch_flatMap_count (l r : List (ℕ × ℕ))
+    (hl : ∀ V ∈ l, 0 < V.1 ∧ 0 < V.2) (hr : ∀ p ∈ r, p ∈ l) :
+    (r.flatMap grandchildren).countP (archPredicate l) = r.countP outcome := by
+  induction r with
+  | nil => rfl
+  | cons p r ih =>
+    have hp := arch_grandchildren_count l hl p (hr p (by simp))
+    have ht := ih (fun q hq => hr q (by simp [hq]))
+    simp only [List.flatMap_cons, List.countP_append, List.countP_cons, hp, ht]
+    omega
+
+private theorem arch_count (k : ℕ) :
+    (calkinWilfRow (k + 2)).countP (archPredicate (calkinWilfRow k)) =
+      (calkinWilfRow k).countP outcome := by
+  rw [row_two]
+  exact arch_flatMap_count _ _ (fun _ h => row_pos h) (fun _ h => h)
+
+end count_arch_tops_calkinWilfRow
+
+open count_arch_tops_calkinWilfRow euclidPPosition_self_similar in
+/-- **Number of arch tops in a row of the Calkin–Wilf tree.** For $k \ge 2$ let $T_k$ be the
+number of vertices of row $k$ of the Calkin–Wilf tree of the form $(2m+n)/(m+n)$ with $m/n$ a
+P-position of Euclid in row $k - 2$. Then $3T_k = 2^{k-2} + 2(-1)^k$, that is,
+$T_k = 2^{k-2}/3 + 2(-1)^k/3$.
+
+The vertex $(2m+n)/(m+n)$ is the son's daughter of $m/n$, the left top of the arch below $m/n$;
+the daughter's son $(m+n)/(m+2n)$ is the right top, so $T_k$ counts the arches whose tops lie in
+row $k$.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Corollary 4.7. -/
+public theorem count_arch_tops_calkinWilfRow (k : ℕ) (hk : 2 ≤ k) :
+    3 * (((calkinWilfRow k).countP fun p => (calkinWilfRow (k - 2)).any fun V =>
+        euclidPPosition V.1 V.2 && p == (2 * V.1 + V.2, V.1 + V.2)) : ℤ) =
+      2 ^ (k - 2) + 2 * (-1) ^ k
+    := by
+  have h : k = (k - 2) + 2 := by omega
+  change 3 * ((calkinWilfRow k).countP (archPredicate (calkinWilfRow (k - 2))) : ℤ) = _
+  have hc : (calkinWilfRow k).countP (archPredicate (calkinWilfRow (k - 2))) =
+      (calkinWilfRow (k - 2)).countP outcome := by
+    conv_lhs => arg 2; rw [h]
+    exact arch_count (k - 2)
+  have he : (-1 : ℤ) ^ k = (-1) ^ (k - 2) := by
+    conv_lhs => rw [h, pow_add]
+    norm_num
+  rw [hc, row_count_formula, he]
 
 open fibonacci_arch_tops in
 /-- **The Fibonacci arches.** Let $F_j$ be the Fibonacci numbers with $F_0 = F_1 = 1$ and

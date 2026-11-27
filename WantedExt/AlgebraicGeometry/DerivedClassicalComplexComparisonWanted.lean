@@ -12,6 +12,7 @@ public import MathlibExt.AlgebraicGeometry.ClassicalComplexCoefficientMaps
 public import MathlibExt.AlgebraicGeometry.NativeIdentityComplexesStack
 public import MathlibExt.AlgebraicGeometry.DerivedNativeComplexTruncation
 public import MathlibExt.AlgebraicGeometry.DerivedClassicalComplexComparisonClassicalCoefficientFamilyUnit
+public import MathlibExt.AlgebraicGeometry.DerivedClassicalComplexComparisonClassicalIdentitySourceTransportEquivalence
 
 /-!
 # Wanted native classical comparison for the universally glueable DG moduli locus
@@ -203,13 +204,6 @@ theorem_wanted classical_identity_source_transport (k : Type u) [CommRing k]
     (O : ∀ X : Scheme.{u}, EtaleStructureSource X) (L : EtalePullbackSystem O)
     (A : CommAlgCat.{u} k) (J : AffineEtaleModuleSource O (ordinaryRing A)) :
   IdentityComplexesTransportSource L A J
-
-/-- The actual projection inverse image identifies the two presentations of the native source fibre. -/
-theorem_wanted classical_identity_source_transport_equivalence (k : Type u) [CommRing k]
-    (O : ∀ X : Scheme.{u}, EtaleStructureSource X) (L : EtalePullbackSystem O)
-    (A : CommAlgCat.{u} k) (J : AffineEtaleModuleSource O (ordinaryRing A))
-    (H : IdentityComplexesTransportSource L A J) :
-  (identityComplexesTransport H).IsEquivalence
 
 /-- The final truncation comparison is to the literal native perfect/no-negative-fibre-Ext X_A groupoid. -/
 theorem_wanted classical_native_identity_moduli_comparison_equivalence (k : Type u) [CommRing k]

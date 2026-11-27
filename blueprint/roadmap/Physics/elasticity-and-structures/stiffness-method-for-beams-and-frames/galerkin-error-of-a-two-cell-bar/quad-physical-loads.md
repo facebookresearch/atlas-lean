@@ -1,0 +1,3 @@
+# Physical loads from the unit loads
+
+Consider a fixed-fixed bar of length $L$ and axial rigidity $EA$, discretized by the two-cell partition $\{0, \tfrac12, 1\}$ of $[0, 1]$ pulled back by $x/L$, with interior hat function $\varphi$ ($\varphi(0) = \varphi(1) = 0$, $\varphi(\tfrac12) = 1$, piecewise linear). Under the quadratic load $Q(x/L)^2$, the exact interior load is $F = \int_0^LQ(x/L)^2\varphi(x/L)\,dx$ and the composite midpoint load is $F_{mid} = \tfrac L2\bigl(Q(\tfrac14)^2\varphi(\tfrac14) + Q(\tfrac34)^2\varphi(\tfrac34)\bigr)$. If $L > 0$, then $F = QL\cdot\tfrac{7}{48}$ and $F_{mid} = QL\cdot\tfrac{5}{32}$, that is, $QL$ times the unit exact and midpoint loads.
