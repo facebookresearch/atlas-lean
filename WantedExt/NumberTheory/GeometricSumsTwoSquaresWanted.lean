@@ -31,8 +31,11 @@ Proposition 1 is stated from the journal text (its
 parity conclusions are truncated in the extraction).
 Not stated (see the source audit table): Proposition 12
 (a summary paragraph restating Theorem 10, proved in
-`MathlibExt.NumberTheory.GeometricSumsTwoSquaresAltBigeomPythagorean`,
-and Corollary 11, stated here).
+`MathlibExt.NumberTheory.GeometricSumsTwoSquares` and
+re-exported here, and Corollary 11, stated here).
+Theorem 6 is proved in
+`MathlibExt.NumberTheory.GeometricSumsTwoSquaresAltBigeomPythagorean`
+and re-exported here.
 -/
 module
 
