@@ -15,9 +15,13 @@ $$\pi(\vartheta \mid C(t^*) \in A) = \frac{\pi(\vartheta)\, P_\vartheta(C(t^*) \
 
 - [Superposition of single-index-case branching epidemics](superposition-of-single-index-case-branching-epidemics.md)
 
+## Proof depends on
+
+- [Rejection ABC returns the tolerance-conditioned posterior](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/rejection-sampling/abc-rejection-target-law-and-zero-tolerance-disc.md)
+
 ## Proof sketch
 
-The acceptance event has probability $\pi(\vartheta) P_\vartheta(C(t^*) \in A)$ for each grid point, so conditioning on acceptance gives Bayes' rule with the interval likelihood; unlike distance-based ABC there is no tolerance approximation, because the observation itself is an interval. For the early Wuhan epidemic the grid had 22 values of $R_0$ in $[0.8, 5]$, 20 log-spaced values of $k$ in $[0.01, 10]$, 8 mean generation intervals between 7 and 14 days (gamma with shape 2), and 6 values of $n$ between 1 and 50, with introduction dates uniform over two weeks around 27 November 2019. Single-index epidemics were simulated 1,000 times per combination and combined 100 times per combination by superposition. Accepting epidemics with 1,000 to 9,700 cases by 18 January 2020 gave $R_0 \approx 2.2$ (90% high-density interval 1.4–3.8) and a wide posterior for $k$ (median 0.54, interval 0.014–6.95) that disfavours very strong superspreading. The interval data inform $R_0$ much more than $k$, because many dispersion values produce similar cumulative sizes.
+The acceptance event has probability $\pi(\vartheta) P_\vartheta(C(t^*) \in A)$ for each grid point, so conditioning on acceptance gives Bayes' rule with the interval likelihood (the case $S = C(t^*)$, $s_{\rm obs} = (c_- + c_+)/2$, $\varepsilon = (c_+ - c_-)/2$ of rejection ABC with a tolerance); unlike distance-based ABC there is no tolerance approximation, because the observation itself is an interval. For the early Wuhan epidemic the grid had 22 values of $R_0$ in $[0.8, 5]$, 20 log-spaced values of $k$ in $[0.01, 10]$, 8 mean generation intervals between 7 and 14 days (gamma with shape 2), and 6 values of $n$ between 1 and 50, with introduction dates uniform over two weeks around 27 November 2019. Single-index epidemics were simulated 1,000 times per combination and combined 100 times per combination by superposition. Accepting epidemics with 1,000 to 9,700 cases by 18 January 2020 gave $R_0 \approx 2.2$ (90% high-density interval 1.4–3.8) and a wide posterior for $k$ (median 0.54, interval 0.014–6.95) that disfavours very strong superspreading. The interval data inform $R_0$ much more than $k$, because many dispersion values produce similar cumulative sizes.
 
 ## Sources
 

@@ -24,6 +24,8 @@ with $H$ the Heaviside function.
 ## Depends on
 
 - [Period of the leaky integrate-and-fire neuron](../leaky-integrate-and-fire-neuron/lif-period.md)
+- [Probability flux of a diffusion](../../../Probability/stochastic-calculus/fokker-planck-equation/flux.md)
+- [Fokker–Planck operator](../../../Probability/stochastic-calculus/fokker-planck-equation/fokker-planck-op.md)
 
 ## Proof sketch
 

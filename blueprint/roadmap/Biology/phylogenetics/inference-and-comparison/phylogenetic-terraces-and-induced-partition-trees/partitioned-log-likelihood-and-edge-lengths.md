@@ -21,6 +21,7 @@ Two consequences. First, under the edge-unlinked model an interchange that leave
 ## Depends on
 
 - [Induced partition tree and the edge map of a supermatrix](induced-partition-tree-edge-map.md)
+- [Site likelihood of a phylogenetic tree](../../felsenstein-s-pruning-algorithm/likelihood.md)
 
 ## Proof sketch
 

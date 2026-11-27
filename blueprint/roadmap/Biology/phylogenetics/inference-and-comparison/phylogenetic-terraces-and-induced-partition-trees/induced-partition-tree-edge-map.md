@@ -12,6 +12,10 @@ The definition is well posed: when both intersections are nonempty, $(A \cap Y_i
 
 **Definition (partial terrace).** Two species trees $T_1, T_2$ on $X$ lie on one **partial terrace** if $T_1|_{Y_j} = T_2|_{Y_j}$ for every $j$ in some nonempty $J \subseteq \{1, \dots, k\}$, and on one **full terrace** if this holds with $J = \{1, \dots, k\}$.
 
+## Depends on
+
+- [Unrooted binary phylogenetic tree](../../../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/unrooted-binary-tree.md)
+
 ## Remarks
 
 Pruning the species of $X \setminus Y_i$ from $T$ maps the split $A \mid B$ of $X$ to the set pair $(A \cap Y_i, B \cap Y_i)$; suppression of degree-two vertices removes precisely those edges for which one side of the pair is empty, and merges all edges of $T$ whose restricted splits coincide into the single edge of $T|_{Y_i}$ carrying that split. Hence $f_i$ is surjective onto $E_i$ but in general not injective: a whole path of $T$ collapses to one edge of $T|_{Y_i}$. The collection $F = \{f_1, \dots, f_k\}$ together with $T$ and $T|_{Y_1}, \dots, T|_{Y_k}$ is the terrace-aware data structure; its purpose is that the score of partition $i$ depends on $T$ only through $T|_{Y_i}$ with its edge lengths. Under the edge-unlinked partition model, where each partition tree has its own freely optimized edge lengths, trees sharing an induced partition tree therefore share that partition's optimal score. Under edge-linked models the induced edge lengths are sums of edge lengths of $T$ over the fibres of $f_i$, which can change when $T$ changes even though $T|_{Y_i}$ does not, so equal induced topologies do not by themselves give equal scores.

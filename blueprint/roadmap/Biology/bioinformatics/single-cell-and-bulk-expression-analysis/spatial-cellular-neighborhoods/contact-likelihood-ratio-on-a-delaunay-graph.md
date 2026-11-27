@@ -12,7 +12,7 @@ $L_{ij} = 1$ exactly when the observed number of $i$-$j$ edges equals the number
 
 ## Depends on
 
-- [Delaunay triangulations](../../../../ComputerScience/computational-geometry/polygons-and-triangulations/delaunay-triangulations.md)
+- [Delaunay triangulation](../../../../ComputerScience/computational-geometry/delaunay-triangulations/delaunay-triangulation.md)
 
 ## Remarks
 

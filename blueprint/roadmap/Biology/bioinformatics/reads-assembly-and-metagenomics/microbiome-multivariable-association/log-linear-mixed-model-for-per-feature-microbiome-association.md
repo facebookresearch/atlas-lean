@@ -20,6 +20,10 @@ $$y_{fs} = \beta_{f0} + x_s^{\top}\beta_f + z_s^{\top} b_{f,\,j(s)} + \varepsilo
    all $p \times q$ nominal $p$-values together with the Benjamini-Hochberg procedure, reporting the
    pairs whose $q$-value is below a chosen level (0.25 in the source's multi-omics analysis).
 
+## Depends on
+
+- [Benjamini–Hochberg rejection set](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
+
 ## Remarks
 
 Microbiome profiles are compositional, sparse and far from normal, which tempts count models

@@ -11,6 +11,7 @@ Ranks are compared by $\rho(k)$ together with the average reconstruction error $
 ## Depends on
 
 - [Frobenius-norm non-negative factorization of a mutation catalogue](frobenius-nmf-model-of-a-mutation-catalogue.md)
+- [States reachable by UPGMA](../../phylogenetics/splits-compatibility-ultrametrics-and-upgma/upgma-reaches.md)
 
 ## Remarks
 

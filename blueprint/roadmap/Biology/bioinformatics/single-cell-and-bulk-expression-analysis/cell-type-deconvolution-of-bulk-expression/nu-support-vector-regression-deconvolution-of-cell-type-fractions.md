@@ -11,8 +11,9 @@ of the system to perturbations of $m$ is measured by the 2-norm condition number
 $\kappa_2(B) = \sigma_{\max}(B) / \sigma_{\min}(B)$, and marker genes are chosen so that $\kappa_2(B)$
 is small.
 
-**Estimator.** Standardize $m$ and every column of the regression (each of the $c$ predictors) to
-mean $0$ and variance $1$ across the $g$ genes. Treat the genes $j = 1, \dots, g$ as observations with
+**Estimator.** Standardize $m$ to mean $0$ and variance $1$ across the $g$ genes, and standardize
+$B$ as a whole: subtract the mean of all its $cg$ entries and divide by their standard deviation (one
+shift and one scale shared by all $c$ predictors). Treat the genes $j = 1, \dots, g$ as observations with
 response $m_j$ and predictor vector $b_j = (B_{1j}, \dots, B_{cj})$, and fit a linear-kernel
 $\nu$-support vector regression, with $\nu \in (0, 1]$ and $C > 0$:
 
@@ -35,7 +36,10 @@ return fractions is kept; if none does, the sample has no estimate.
 
 The parameter $\nu$ is an upper bound on the fraction of genes lying outside the tube and a lower
 bound on the fraction of support vectors (the $\nu$-property of Schölkopf et al.), so larger $\nu$
-gives a narrower tube and more genes used. Two features make the estimator robust for deconvolution.
+gives a narrower tube and more genes used. Because the shift and scale of $B$ are common to all predictors, they rescale every coefficient by
+the same factor (the shift is absorbed by $w_0$ when $\sum_k f_k = 1$), so the renormalized $\hat f$
+still targets $f$; standardizing each predictor separately would instead weight $f_k$ by the
+standard deviation of row $k$ of $B$. Two features make the estimator robust for deconvolution.
 The linear loss grows more slowly than the squared loss of least squares, so genes that the linear
 mixture fits badly (noise, or cell types absent from $B$) have bounded influence, and the
 support-vector selection acts as a second, adaptive round of gene selection within the signature.
@@ -47,6 +51,8 @@ predictors toward each other, which counters the multicollinearity of closely re
 - A. M. Newman, C. L. Liu, M. R. Green, A. J. Gentles, W. Feng, Y. Xu, C. D. Hoang, M. Diehn,
   A. A. Alizadeh, "Robust enumeration of cell subsets from tissue expression profiles", Nature
   Methods 12 (2015) 453-457, Online Methods, "Deconvolution model", "Signature matrix" and
-  "Support vector regression (SVR)", <https://doi.org/10.1038/nmeth.3337> (PMC4739640).
+  "Support vector regression (SVR)", <https://doi.org/10.1038/nmeth.3337> (PMC4739640), and the
+  authors' CIBERSORT R script v1.02 (whole-matrix standardization of $B$, linear-kernel
+  $\nu$-regression without per-column scaling).
 - B. Schölkopf, A. J. Smola, R. C. Williamson, P. L. Bartlett, "New support vector algorithms",
   Neural Computation 12 (2000) 1207-1245, <https://doi.org/10.1162/089976600300015565>.

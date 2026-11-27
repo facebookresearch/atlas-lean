@@ -30,6 +30,7 @@ An outbreak is called *controlled* when no new infections occur between weeks 12
 ## Proof depends on
 
 - [Negative-binomial probability generating function](../../superspreading-and-negative-binomial-offspring/nb-pgf.md)
+- [Generating function of the negative-binomial law in closed form](../../superspreading-and-negative-binomial-offspring/pgf-nb-offspring.md)
 
 ## Remarks
 

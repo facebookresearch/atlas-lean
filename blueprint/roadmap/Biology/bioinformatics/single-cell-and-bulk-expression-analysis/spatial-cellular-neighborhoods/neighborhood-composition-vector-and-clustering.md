@@ -6,6 +6,11 @@ $$v_i = \big(v_{i1},\dots,v_{iT}\big) \in \Delta^{T-1}, \qquad v_{it} = \frac{1}
 
 a point of the probability simplex recording the frequency of each cell type among the $k$ cells of the window. A partition of $\{v_1,\dots,v_n\}$ into $m$ groups by $k$-means minimizes $\sum_{r=1}^{m}\sum_{i \in C_r} \lVert v_i - \mu_r \rVert_2^2$ with $\mu_r$ the mean of cluster $C_r$; each cell is then assigned the label of the cluster containing its own composition vector, and the resulting classes are the cellular neighbourhoods of the tissue.
 
+## Depends on
+
+- [The k-means cost](../../../../ComputerScience/machine-learning/unsupervised-learning/k-means-clustering/cost.md)
+- [Centroid](../../../../ComputerScience/machine-learning/unsupervised-learning/k-means-clustering/centroid.md)
+
 ## Remarks
 
 The construction describes a tissue by the local mixtures it contains rather than by its global cell-type proportions: two samples can have identical overall composition and entirely different organization, and only the window statistic separates them. Using a fixed count $k$ of nearest neighbours rather than a fixed radius adapts the window to local cell density, at the cost of making the physical window size vary. Because each $v_i$ lies in the simplex, Euclidean $k$-means on these vectors groups windows with similar proportions; the cluster centroids $\mu_r$ are themselves composition vectors and so are directly interpretable as recurrent local motifs.
