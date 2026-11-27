@@ -53,7 +53,6 @@ namespace RevealmentConstruction
 open StatMech.OSSS
 open StatMech.OSSS.DecisionTree
 open StatMech.OSSS.Revealment
-open scoped Classical
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 
@@ -238,6 +237,7 @@ theorem queried_exploreTree_imp (endU endV : E → V) (base : Finset V → Bool)
   · exact Or.inl (hτInv _ hU)
   · exact Or.inr (hτInv _ hV)
 
+open scoped Classical in
 theorem reveal_exploreTree_le {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
     (endU endV : E → V) (base : Finset V → Bool) (B : Set V) (l : List E) (disc₀ : Finset V)
     (hdisc₀ : ∀ x ∈ disc₀, x ∈ B) (i : E) :
@@ -309,6 +309,7 @@ theorem expect_indicator_mono {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
   · rw [ite_eq_left hp, ite_eq_left (h ω hp)]
   · rw [ite_eq_right hp]; split <;> norm_num
 
+open scoped Classical in
 theorem reveal_exploreTree_le_connected {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
     {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : E → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))
