@@ -50,3 +50,16 @@ example {k : ℕ} (hk : 1 ≤ k) :
 -- Beyond the endpoint, the order of the two earlier words matters.
 example : (hofTauList 3)^[4] [3] = [3, 1, 2, 3, 3, 1] :=
   (hofTauList_iterate_self (k := 3) (by decide) 4).2 (by decide)
+
+-- The zero iterate brackets each positive threshold between consecutive naturals.
+example (m : ℕ) (hm : 1 ≤ m) : ∃! n : ℕ, 1 ≤ n ∧ n - 1 < m ∧ m ≤ n := by
+  simpa only [Function.iterate_zero, id_eq] using
+    existsUnique_hofL_iterate_bracket (k := 2) (by decide) hm 0
+
+-- The first bracket includes its upper endpoint, 4.
+example (n : ℕ) (hn : 1 ≤ n ∧ (hofL 1)^[2] (n - 1) < 4 ∧ 4 ≤ (hofL 1)^[2] n) : n = 1 :=
+  (existsUnique_hofL_iterate_bracket (k := 1) le_rfl (by decide : 1 ≤ 4) 2).unique hn (by decide)
+
+-- The next bracket excludes 4 and contains 5.
+example (n : ℕ) (hn : 1 ≤ n ∧ (hofL 1)^[2] (n - 1) < 5 ∧ 5 ≤ (hofL 1)^[2] n) : n = 2 :=
+  (existsUnique_hofL_iterate_bracket (k := 1) le_rfl (by decide : 1 ≤ 5) 2).unique hn (by decide)

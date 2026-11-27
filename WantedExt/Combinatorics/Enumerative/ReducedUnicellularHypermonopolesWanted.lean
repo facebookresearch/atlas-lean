@@ -43,19 +43,6 @@ namespace MetaMathlibExt
 
 open Polynomial
 
-/-- **Generating polynomial of the cyclic product numbers.** For every natural number $n$, let
-$H(n, k)$ be the cyclic product numbers, viewed as rational numbers. Then in the polynomial
-ring $\mathbb{Q}[x]$
-$$\sum_{k=0}^{n} H(n, k) x^k = c_n (x (x + 1) \cdots (x + n) - x (x - 1) \cdots (x - n)),$$
-where $c_n = \frac{1}{(n + 1) n}$ for $n \ge 1$ and $c_0 = 0$; for $n = 0$ both sides are $0$.
-
-Source: Robert Cori and Gábor Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Lemma 6 (`jis-2025-25.3.3-lem-6`), quoting
-S. Grusea and A. Labarre. -/
-public theorem_wanted sum_cyclicProductNumber_mul_X_pow (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), C (cyclicProductNumber n k : ℚ) * X ^ k =
-      C (((n + 1 : ℚ) * n)⁻¹) * (ascPochhammer ℚ (n + 1) - descPochhammer ℚ (n + 1))
-
 /-- **Counting reduced unicellular hypermonopoles with a cyclic vertex permutation.** Let
 $n \ge 2$ and $k \ge 1$ be natural numbers with $2k \le n$, let $\sigma$ be the cyclic
 permutation $i \mapsto i + 1$ (modulo $n$) of $\{0, 1, \dots, n - 1\}$, and write $z(\pi)$ for

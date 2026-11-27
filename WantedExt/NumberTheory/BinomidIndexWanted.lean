@@ -18,10 +18,13 @@ public import Mathlib.Order.LiminfLimsup
 public import MathlibExt.Combinatorics.Enumerative.TotienomialCoefficient
 public import MathlibExt.NumberTheory.BinomidAverage
 public import MathlibExt.NumberTheory.BinomidPartialSum
+public import MathlibExt.NumberTheory.BinomidPrimeDivisibility
 public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
 public import MathlibExt.NumberTheory.PrimeDvdChoose
 public import MathlibExt.NumberTheory.BinomidIndexAdd
 public import MathlibExt.NumberTheory.BinomidIndexBinomidUpperAverageEqISup
+public import MathlibExt.NumberTheory.BinomidIndexApplyPeriodEqApplyZero
+public import MathlibExt.NumberTheory.BinomidIndexBinomidShiftImageInterEqZero
 
 namespace MetaMathlibExt
 
@@ -40,18 +43,6 @@ public theorem_wanted isLexMinimalExtensionOf_periodic_of_monotoneOn {m : ℕ}
     (hm : 0 < m) {e : ℕ → ℕ} (he : MonotoneOn e (Set.Iio m)) :
     IsLexMinimalExtensionOf (fun i => e (i % m)) m
 
-/-- **A lex-minimal extension periodic from its second entry is periodic.** Let
-$\eta = (e_1, e_2, \dots)$ be a lex-minimal extension and let $p \ge 1$. If $e_{i+p} = e_i$
-for every $i \ge 2$, then $e_{1+p} = e_1$, so the whole sequence $\eta$ is periodic with
-period $p$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 4
-(`integers-2024-A53-prop-4`). -/
-public theorem_wanted IsLexMinimalExtension.apply_period_eq_apply_zero {η : ℕ → ℕ}
-    (hη : IsLexMinimalExtension η) {p : ℕ} (hp : 0 < p)
-    (hper : ∀ i, 1 ≤ i → η (i + p) = η i) : η p = η 0
-
 /-- **Periodic binomid indices are lex-minimal extensions.** If an infinite binomid index
 $e = (e_1, e_2, \dots)$ is periodic, that is, there is $p \ge 1$ with $e_{i+p} = e_i$ for all
 $i$, then $e$ is a lex-minimal extension: it is the lex-minimal extension of
@@ -63,20 +54,6 @@ Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 5
 public theorem_wanted isLexMinimalExtension_of_periodic {η : ℕ → ℕ}
     (hη : IsBinomidIndex η) {p : ℕ} (hp : 0 < p) (hper : ∀ i, η (i + p) = η i) :
     IsLexMinimalExtension η
-
-/-- **Distinct shifts of lex-minimal extensions meet only in zero.** Let $L$ be the set of
-lex-minimal extensions, and for a natural number $l$ let $\sigma^l$ be the right shift that
-prepends $l$ zeros to a sequence. For natural numbers $l \neq m$,
-$\sigma^l(L) \cap \sigma^m(L) = \{(0, 0, 0, \dots)\}$: the only sequence in both images is
-the zero sequence.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 6
-(`integers-2024-A53-prop-6`). -/
-public theorem_wanted binomidShift_image_inter_eq_zero {l m : ℕ} (hlm : l ≠ m) :
-    binomidShift l '' {η | IsLexMinimalExtension η}
-        ∩ binomidShift m '' {η | IsLexMinimalExtension η}
-      = {fun _ => 0}
 
 /-- **Primes divide all inner Fibonomial coefficients of infinitely many rows.** Let $F_n$ be
 the Fibonacci numbers and $F_n! = F_1 F_2 \cdots F_n$ the Fibonacci factorial. For every prime
@@ -129,22 +106,6 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_nomid_eq_one {η : ℕ → 
     (hn : m < n) :
     ∃ k, 1 ≤ k ∧ k < n ∧
       generalizedBinomialCoefficient (fun i => p ^ η (i - 1)) k (n - k) = 1
-
-/-- **Nomid coefficients of binomid indices that are not lex-minimal extensions.** Let
-$\mu = (e_1, e_2, \dots)$ be a binomid index such that for no $m$ is $\mu$ the lex-minimal
-extension of its first $m$ entries, and let $p$ be a prime. Write $f_i = p^{e_i}$ for $i \ge 1$
-and let $[n, k]_f = \frac{f_n f_{n-1} \cdots f_{n-k+1}}{f_k f_{k-1} \cdots f_1}$ be the
-$f$-nomid coefficient. Then there are infinitely many natural numbers $n$ such that for every $k$
-with $1 \le k < n$ the coefficient $[n, k]_f$ is an integer multiple of $p$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 2
-(`integers-2024-A53-cor-2`). -/
-public theorem_wanted infinite_setOf_prime_dvd_nomid_of_not_isLexMinimalExtension
-    {μ : ℕ → ℕ} (hμ : IsBinomidIndex μ) (hlex : ¬ IsLexMinimalExtension μ) {p : ℕ}
-    (hp : p.Prime) :
-    {n : ℕ | ∀ k, 1 ≤ k → k < n → ∃ z : ℤ,
-      generalizedBinomialCoefficient (fun i => p ^ μ (i - 1)) k (n - k) = (p : ℚ) * z}.Infinite
 
 /-- **Lex-minimal extensions satisfy the Average Condition.** Every lex-minimal extension
 satisfies the Average Condition.

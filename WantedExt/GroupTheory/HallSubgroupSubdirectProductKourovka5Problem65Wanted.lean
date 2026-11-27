@@ -16,7 +16,7 @@ finite groups that have Hall π-subgroups closed under taking finite subdirect p
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.GroupTheory.DPiHallIntersectionKourovka18Problem31Wanted
+public import MathlibExt.GroupTheory.DPiHallIntersectionKourovka18Problem31
 
 @[expose] public section
 
