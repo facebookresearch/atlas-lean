@@ -9,4 +9,4 @@ Here `K` is a field, `σ` is an index set of variables, `i : σ` is the
 selected axis, and two series agree through degree `k` on axis `i` when
 their coefficients coincide at every exponent `n` with `n i ≤ k`. `pIntegral
 i f b` is the formal integral of `f` along `i` with the coefficients of `b`
-at exponents with `n i = 0`; its other coefficients are those of `f` with the `i`-degree lowered by one, divided by the `i`-degree in `K` (with `x / 0 = 0`), so it is an antiderivative of `f` only in characteristic zero.
+at exponents with `n i = 0`; its other coefficients are those of `f` with the `i`-degree lowered by one, divided by the `i`-degree in `K` (with `x / 0 = 0`), so it is guaranteed to be an antiderivative for every integrand in characteristic zero.

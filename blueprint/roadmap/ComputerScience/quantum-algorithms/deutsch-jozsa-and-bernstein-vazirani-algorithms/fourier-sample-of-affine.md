@@ -1,7 +1,7 @@
 # Bernstein–Vazirani algorithm
 
 If $f(x) = s\cdot x + b$ for all $x \in \mathbb{Z}_2^n$, then one query of Fourier sampling produces
-exactly the state $(-1)^b |s\rangle$, so measuring it returns the hidden string $s$ with certainty.
+exactly the state $(-1)^b |s\rangle$, so measuring it returns the hidden string $s$ with certainty. In coordinates, for bitstrings $s, t$ and a bit $\beta$ with $f(x) = s \cdot x \oplus \beta$, the normalized sum $2^{-n} \sum_x (-1)^{t \cdot x} (-1)^{f(x)}$ is $(-1)^\beta$ when $t = s$ and $0$ otherwise.
 
 Bernstein and Vazirani (Section 8.4) state the parity problem with $b = 0$ and an oracle that computes
 $f$ into a register, which their algorithm calls twice (compute, then uncompute); the version here, with

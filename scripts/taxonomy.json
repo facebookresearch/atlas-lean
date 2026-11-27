@@ -15076,7 +15076,7 @@
   "MathlibExt/Quantum/CHSH": {"to": "QuantumInformation/quantum-foundations", "title": "Classical CHSH bound"},
   "MathlibExt/Quantum/ClassicalFuchsVanDeGraaf": {"to": "InformationTheory/information-inequalities", "title": "Classical Fuchs–van de Graaf inequalities"},
   "MathlibExt/Quantum/FidelityDataProcessing": {"to": "InformationTheory/information-inequalities", "title": "Data processing for the classical fidelity"},
-  "MathlibExt/Quantum/HybridArgument": {"to": "ComputerScience/cryptography", "title": "Hybrid argument for sequences of distributions"},
+  "MathlibExt/Quantum/HybridArgument": {"to": "ComputerScience/cryptography/security-games", "title": "Games and advantages"},
   "MathlibExt/Quantum/PauliXZ": {"to": "QuantumInformation/quantum-error-correction", "title": "Pauli XZ operators"},
   "MathlibExt/Quantum/PurificationOverlap": {"to": "QuantumInformation/quantum-operations", "title": "Purification overlap and the Bhattacharyya coefficient"},
   "MathlibExt/Quantum/QFTAmplitudes": {"to": "ComputerScience/quantum-algorithms/fourier-transforms-block-encodings-and-error-budgets", "title": "QFT row normalization and orthogonality"},
