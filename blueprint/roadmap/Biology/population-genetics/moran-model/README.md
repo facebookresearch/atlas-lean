@@ -35,6 +35,7 @@
 - [Copy number dynamics of genetic elements](copy-number-dynamics-of-genetic-elements/README.md)
 - [Moran models with heterogeneous resampling rates](moran-models-with-heterogeneous-resampling-rates/README.md)
 - [Stein's method approximations in population genetics](stein-method-approximations-in-population-genetics/README.md)
+- [Moran process in heterogeneous environments](moran-process-in-heterogeneous-environments/README.md)
 - [Algebraic dualities of Wright–Fisher and Moran models](algebraic-dualities-of-wright-fisher-and-moran-models/README.md)
 - [Common ancestor type process](common-ancestor-type-process/README.md)
 - [Entropy rates of evolutionary Markov chains](entropy-rates-of-evolutionary-markov-chains/README.md)

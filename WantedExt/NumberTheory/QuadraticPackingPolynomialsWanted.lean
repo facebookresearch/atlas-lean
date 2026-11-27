@@ -13,6 +13,7 @@ public import Mathlib.Data.Nat.ModEq
 public import MathlibExt.NumberTheory.QuadraticPackingPolynomials
 public import MathlibExt.NumberTheory.QuadraticPackingPolynomialsShearedCriterion
 public import MathlibExt.NumberTheory.QuadraticPackingPolynomialsStaircaseCongruence
+public import MathlibExt.NumberTheory.QuadraticPackingPolynomialRationalForm
 
 /-!
 # Quadratic packing polynomials on sectors of `ℝ²`
@@ -48,25 +49,6 @@ public theorem_wanted quadraticPackingPolynomial_sector_form {α : ℝ} (hα : 0
       (∀ x y, P x y = (A : ℝ) / 2 * x * (x - 1) + B * x * y + (C : ℝ) / 2 * y * (y - 1) +
         D * x + E * y + F) ∧
       0 < A ∧ B ^ 2 = A * C ∧ α = (A : ℝ) / (1 - B)
-
-/-- **Stanton's form of a quadratic packing polynomial on a rational sector.** Let $m, n$ be
-coprime positive integers and let $P$ be a quadratic packing polynomial on the lattice points
-$I(n/m)$ of the sector of slope $n/m$. Then $n$ divides $(m - 1)^2$, and there are integers
-$D, E, F$ such that for all real $x, y$
-$$
-P(x, y) = \frac{n}{2} \left(x - \frac{m - 1}{n} y\right)^2 + \left(D - \frac{n}{2}\right) x +
-  \left(E - \frac{(m - 1)^2}{2n}\right) y + F.
-$$
-
-Source: Brandt and Gjaldbæk, *Classification of Quadratic Packing Polynomials on Sectors of
-R^2*, INTEGERS 25 (2025), Article A81, Theorem 2 (`integers-2025-A81-thm-2`). -/
-public theorem_wanted quadraticPackingPolynomial_rational_sector_form {m n : ℕ} (hm : 0 < m)
-    (hn : 0 < n) (hmn : Nat.Coprime m n) {P : ℝ → ℝ → ℝ}
-    (hP : IsQuadraticPackingPolynomial (sectorLatticePoints ((n : ℝ) / m)) P) :
-    (n : ℤ) ∣ ((m : ℤ) - 1) ^ 2 ∧
-      ∃ D E F : ℤ, ∀ x y, P x y =
-        (n : ℝ) / 2 * (x - ((m : ℝ) - 1) / n * y) ^ 2 + (D - (n : ℝ) / 2) * x +
-          (E - (((m : ℝ) - 1) ^ 2 / n) / 2) * y + F
 
 /-- **First step value and sheared form of a quadratic packing polynomial.** Let $m, n$ be
 coprime positive integers, let $l = \gcd(m - 1, n)$, and let $P$ be a quadratic packing

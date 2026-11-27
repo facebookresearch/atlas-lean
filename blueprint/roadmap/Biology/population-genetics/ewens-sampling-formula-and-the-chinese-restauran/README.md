@@ -31,4 +31,5 @@
 - [Ewens–Pitman large deviations](ewens-pitman-large-deviations/README.md)
 - [Martingale limit theorems for the Ewens–Pitman model](martingale-limit-theorems-for-the-ewens-pitman-model/README.md)
 - [Yule process with immigration](yule-process-with-immigration/README.md)
+- [Occupancy sampling from Gibbs–Poisson abundance models](occupancy-sampling-from-gibbs-poisson-abundance-models/README.md)
 - [Expected allelic partition of splitting trees](expected-allelic-partition-of-splitting-trees/README.md)
