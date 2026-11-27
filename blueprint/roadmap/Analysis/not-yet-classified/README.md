@@ -222,4 +222,3 @@ Topics added since this subject's fields were last revised.
 - [Arch Datum RLinear Combination](exists-lincomb.md)
 - [BSpline](bspline/README.md)
 - [Jensen's inequality for the logarithm of an analytic function](log-norm-le-circle-average-log-norm.md)
-- [Mellin Hermite Sum Nonvanishing](mellin-hermite-sum-nonvanishing/README.md)
