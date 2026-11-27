@@ -91,4 +91,3 @@ See [potential outcomes and the local average treatment effect](../../../Probabi
 - [MVMR-Median: least absolute deviations Mendelian randomization](multivariable-mr-median-lad.md)
 - [Multivariable constrained maximum likelihood (MVMR-cML) and its BIC consistency](multivariable-mr-constrained-maximum-likelihood.md)
 - [Within-family Mendelian randomization](within-family-mendelian-randomization.md)
-- [Summary-data-based Mendelian randomization (SMR) test statistic](smr-test-statistic.md)
