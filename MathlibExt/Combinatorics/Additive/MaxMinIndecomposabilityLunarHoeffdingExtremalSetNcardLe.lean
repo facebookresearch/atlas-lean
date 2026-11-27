@@ -27,8 +27,11 @@ import Mathlib.Tactic.Ring
 /-!
 # Hoeffding extremal lunar numbers
 
-This module defines lunar level counts and Hoeffding extremal lunar numbers, and bounds
-the cardinality of the extremal set.
+This module defines total lunar level counts and a bounded-factor version of the Hoeffding
+extremal set, and bounds its cardinality. Both factors have degree at most the degree bound
+on the result; this convention matters for zero products. The paper's level-support
+interpretation applies when the base is at least two and the level is between one and
+the base minus one.
 
 Statements from Benjamin Baily, Justine Dell, Henry L. Fleischmann, Faye Jackson, Ethan Pesikoff,
 Steven J. Miller and Luke Reifenberg, *Indecomposability Over the Max-Min Semiring*, Journal of
@@ -43,12 +46,17 @@ open MeasureTheory ProbabilityTheory
 
 /-- **Level counts of a lunar number.** Let $f$ be a lunar number of base $b$ and degree at most
 $n$, with digits $c_0, \dots, c_n \in \{0, \dots, b - 1\}$, and let $i$ be a natural number. The
-level count $|f_i|$ is the number of indices $k \le n$ with $c_k \ge i$, that is, the number of
-nonzero coefficients of the $i$-level support $f_i = s_i(f)$, the Boolean polynomial with
-coefficient $1$ at $x^k$ when $c_k \ge i$ and $0$ otherwise.
+level count is the number of indices $k \le n$ with $c_k \ge i$. For $b \ge 2$ and
+$1 \le i \le b - 1$, this is the number $|f_i|$ of nonzero coefficients of the paper's
+$i$-level support $f_i = s_i(f)$, the Boolean polynomial with coefficient $1$ at $x^k$
+when $c_k \ge i$ and $0$ otherwise.
 
-A lunar number $f$ is not a monomial $t x^m$ (with $t = 0$ allowed) if and only if $|f_1| \ge 2$,
-and $f_i$ is not a monomial if and only if $|f_i| \ge 2$.
+The function is defined for every natural level. At level zero every position is counted:
+`lunarLevelCount 0 f = n + 1`, including trailing zero digits, so this value depends on the
+chosen digit-string representation. For $b \ge 2$ and $i \ge b$, the count is zero.
+
+For $b \ge 2$, a lunar number $f$ is not a monomial $t x^m$ (with $t = 0$ allowed) if and only
+if $|f_1| \ge 2$; for $1 \le i \le b - 1$, $f_i$ is not a monomial if and only if $|f_i| \ge 2$.
 
 Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
 Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7,
@@ -56,18 +64,26 @@ Section 2, Definitions 13 and 16. -/
 public def lunarLevelCount {n b : ℕ} (i : ℕ) (f : Fin (n + 1) → Fin b) : ℕ :=
   (Finset.univ.filter fun k => i ≤ (f k : ℕ)).card
 
-/-- **Hoeffding extremal lunar numbers.** Let $b$ and $n$ be natural numbers and $d$ a real
-number. Let $\mathcal{L}_b^n$ be the set of lunar numbers of base $b$ and degree at most $n$
+/-- **Hoeffding extremal lunar numbers with bounded factors.** Let $b$ and $n$ be natural
+numbers and $d$ a real number. Let $\mathcal{L}_b^n$ be the set of lunar numbers of base $b$
+and degree at most $n$
 (digit strings $c_0, \dots, c_n$ with digits in $\{0, \dots, b - 1\}$), with the max-min product
 $\otimes$, and for $f \in \mathcal{L}_b^n$ let $|f_i|$ be the number of its digits that are at
-least $i$. The set $\mathcal{H}_b^n(d)$ of $d$-Hoeffding extremal lunar numbers consists of the
+least $i$. Here $\mathcal{H}_b^n(d)$ denotes the bounded-factor extremal set consisting of the
 $h \in \mathcal{L}_b^n$ for which there is an index $i$ with $1 \le i \le b - 1$ such that either
 $\bigl||h_i| - (b - i)n/b\bigr| > d/2$, or $h = f \otimes g$ for some $f, g \in \mathcal{L}_b^n$
 with $\bigl||f_i| + |g_i| - (b - i)(n + 1)/b\bigr| > d/2$.
 
+Both factors $f$ and $g$ are restricted to degree at most $n$. For a nonzero product this
+restriction follows from the degree bound on $h$, since degrees add under the max-min
+product. For zero, allowing larger-degree factors can change membership. For example, with
+$b = 2$, $n = 2$, and $d = 4$, zero is excluded here, whereas the factorization
+$0 = 0 \otimes (1 \oplus x \oplus x^2 \oplus x^3)$ has level-count deviation $5/2 > 2$
+if the degree-three factor is allowed.
+
 Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
 Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7,
-Definition 23. -/
+Definition 23, with the bounded-factor convention above. -/
 public def lunarHoeffdingExtremalSet (b n : ℕ) (d : ℝ) : Set (Fin (n + 1) → Fin b) :=
   {h | ∃ i, 1 ≤ i ∧ i ≤ b - 1 ∧
     (d / 2 < |(lunarLevelCount i h : ℝ) - ((b : ℝ) - i) * n / b| ∨
@@ -437,14 +453,19 @@ private lemma count_products {b n i : ℕ} (hb : 0 < b) (hi : 1 ≤ i) (hib : i 
         simpa [S, hsumN, hsumR] using hh
     _ = _ := by simp
 
-/-- **Bound on the number of Hoeffding extremal lunar numbers.** Fix an integer $b \ge 2$. There is
-a constant $C > 0$ such that for every integer $n \ge 1$ and every real $d > 0$, the set
-$\mathcal{H}_b^n(d)$ of $d$-Hoeffding extremal lunar numbers of base $b$ and degree at most $n$
+/-- **Bound on the number of Hoeffding extremal lunar numbers with bounded factors.** Fix an
+integer $b \ge 2$. There is a constant $C > 0$ such that for every integer $n \ge 1$ and
+every real $d > 0$, the set
+$\mathcal{H}_b^n(d)$ of $d$-Hoeffding extremal lunar numbers of base $b$ and degree at most $n$,
+with both factors restricted to degree at most $n$ as in `lunarHoeffdingExtremalSet`,
 has at most $C n^2 e^{-d^2/(4(n+2))} b^n$ elements.
+
+This bounds the bounded-factor set; its zero-product convention matters as explained in
+`lunarHoeffdingExtremalSet`.
 
 Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
 Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7,
-Lemma 24 (`jis-2025-25.2.7-lem-24`). -/
+Lemma 24 (`jis-2025-25.2.7-lem-24`), with the bounded-factor convention above. -/
 public theorem lunarHoeffdingExtremalSet_ncard_le {b : ℕ} (hb : 2 ≤ b) :
     ∃ C : ℝ, 0 < C ∧ ∀ n : ℕ, 1 ≤ n → ∀ d : ℝ, 0 < d →
       ((lunarHoeffdingExtremalSet b n d).ncard : ℝ) ≤

@@ -84,5 +84,84 @@ example : ∃ C : ℝ, 0 < C ∧
   · have h := hbound 2 (by decide) 2 (by norm_num)
     convert h using 1; norm_num; ring
 
+-- Level zero counts representation positions, including trailing zero digits.
+example : digitSeq (0 : Fin 1 → Fin 2) = digitSeq (0 : Fin 2 → Fin 2) ∧
+    lunarLevelCount 0 (0 : Fin 1 → Fin 2) = 1 ∧
+    lunarLevelCount 0 (0 : Fin 2 → Fin 2) = 2 := by
+  constructor
+  · funext k
+    simp [digitSeq]
+  · constructor <;> decide
+
+-- Levels at and above the base contain no digits.
+example : lunarLevelCount 2 fullDigits = 0 ∧ lunarLevelCount 3 fullDigits = 0 := by
+  constructor <;> decide
+
+private lemma zero_product_factor (f g : Fin 3 → Fin 2)
+    (hprod : maxMinMul (digitSeq f) (digitSeq g) = digitSeq (0 : Fin 3 → Fin 2)) :
+    f = 0 ∨ g = 0 := by
+  classical
+  by_cases hf : f = 0
+  · exact Or.inl hf
+  · right
+    obtain ⟨a, ha⟩ : ∃ a, f a ≠ 0 := by
+      by_contra h
+      apply hf
+      funext a
+      simpa using (not_exists.mp h a)
+    funext k
+    apply Fin.ext
+    by_contra hg
+    have hfa : 0 < digitSeq f a.val := by
+      simpa [digitSeq, a.isLt] using
+        (Nat.pos_of_ne_zero (show (f a : ℕ) ≠ 0 by simpa using ha))
+    have hgk : 0 < digitSeq g k.val := by
+      simpa [digitSeq, k.isLt] using Nat.pos_of_ne_zero hg
+    have hpair : (a.val, k.val) ∈ Finset.antidiagonal (a.val + k.val) :=
+      Finset.mem_antidiagonal.mpr rfl
+    have hle : min (digitSeq f a.val) (digitSeq g k.val) ≤
+        maxMinMul (digitSeq f) (digitSeq g) (a.val + k.val) :=
+      Finset.le_sup (f := fun p : ℕ × ℕ => min (digitSeq f p.1) (digitSeq g p.2)) hpair
+    have hpos := (lt_min hfa hgk).trans_le hle
+    rw [hprod] at hpos
+    simp [digitSeq] at hpos
+
+-- With both factors restricted to three digits, zero is not extremal here.
+example : (0 : Fin 3 → Fin 2) ∉ lunarHoeffdingExtremalSet 2 2 4 := by
+  rintro ⟨i, hi, hib, hdev⟩
+  have he : i = 1 := by omega
+  subst i
+  have hz : lunarLevelCount 1 (0 : Fin 3 → Fin 2) = 0 := by decide
+  rcases hdev with hdirect | ⟨f, g, hprod, hdev⟩
+  · norm_num [hz] at hdirect
+  · have count_bound (a : Fin 3 → Fin 2) :
+        |(lunarLevelCount 1 a : ℝ) - 3 / 2| ≤ 3 / 2 := by
+      have hcount : lunarLevelCount 1 a ≤ 3 := by
+        simpa [lunarLevelCount] using
+          Finset.card_filter_le (Finset.univ : Finset (Fin 3)) (fun k => 1 ≤ (a k : ℕ))
+      have hupper : (lunarLevelCount 1 a : ℝ) ≤ 3 := by exact_mod_cast hcount
+      have hlower : 0 ≤ (lunarLevelCount 1 a : ℝ) := Nat.cast_nonneg _
+      exact abs_le.mpr ⟨by linarith, by linarith⟩
+    rcases zero_product_factor f g hprod with rfl | rfl
+    · norm_num [hz] at hdev
+      linarith [count_bound g]
+    · norm_num [hz] at hdev
+      linarith [count_bound f]
+
+private def fourDigits : Fin 4 → Fin 2 := ![1, 1, 1, 1]
+
+-- A degree-three factor gives a zero product outside the bounded-factor convention.
+example : maxMinMul (digitSeq (0 : Fin 1 → Fin 2)) (digitSeq fourDigits) =
+      digitSeq (0 : Fin 3 → Fin 2) ∧
+    (4 : ℝ) / 2 <
+      |((lunarLevelCount 1 (0 : Fin 1 → Fin 2) + lunarLevelCount 1 fourDigits : ℕ) : ℝ) -
+        ((2 : ℝ) - 1) * (2 + 1) / 2| := by
+  constructor
+  · funext k
+    simp [maxMinMul, digitSeq]
+  · have hz : lunarLevelCount 1 (0 : Fin 1 → Fin 2) = 0 := by decide
+    have hfour : lunarLevelCount 1 fourDigits = 4 := by decide
+    norm_num [hz, hfour]
+
 end MaxMinIndecomposabilityLunarHoeffdingExtremalSetNcardLe
 end MathlibExtTest.Combinatorics.Additive
