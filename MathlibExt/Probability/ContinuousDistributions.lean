@@ -526,10 +526,11 @@ lemma weibullSurvival_rpow {k lam c : ℝ} (hk : 0 < k) (hlam : 0 < lam) (hc : 0
 /-! ## E. JMAK void probability -/
 
 /-- The stipulated JMAK void probability `exp (-kappa * volume)`: the probability that a region
-of the given volume contains no nucleus, for the nucleation intensity `kappa`. It is a
-STIPULATED model, not derived from a point process. Constructing a continuum Poisson point
-process and deriving this void law from it is a separately scoped optional extension; it is not
-part of this file and is not claimed. -/
+of the given volume contains no nucleus, for the nucleation intensity `kappa`. The probability
+reading needs `0 ≤ kappa` and `0 ≤ volume`; when `kappa * volume < 0` the value exceeds `1`.
+It is a STIPULATED model, not derived from a point process. Constructing a continuum Poisson
+point process and deriving this void law from it is a separately scoped optional extension; it
+is not part of this file and is not claimed. -/
 noncomputable def voidProbability (kappa volume : ℝ) : ℝ :=
   Real.exp (-kappa * volume)
 

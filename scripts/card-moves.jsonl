@@ -1130,6 +1130,7 @@
 {"folder": "Physics/not-yet-classified/part-04/finite-state", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state", "article_id": "af_789b392f10ac935b940278f9"}
 {"page": "Physics/not-yet-classified/part-04/finite-state/is-normalized", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state/is-normalized", "article_id": "af_c272e06a88b2426f1b036486"}
 {"page": "Physics/not-yet-classified/part-04/finite-state/born-prob", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state/born-prob", "article_id": "af_b8b6732cadf23683422121a1"}
+{"page": "ComputerScience/graph-algorithms/graph-algorithm-bounds/spectral-approximation-of-graphs", "to": "GraphTheory/algebraic-graph-theory/part-02/spectral-sparsification/spectral-approximation-of-graphs", "article_id": "af_dec166353a4ec8cdd3025548"}
 {"folder": "QuantumInformation/not-yet-classified/part-01/shor-factoring", "to": "ComputerScience/quantum-algorithms/shor-s-factoring-algorithm", "article_id": "af_b6684e3859d5d929c552cccb"}
 {"page": "QuantumInformation/not-yet-classified/part-01/shor-factoring/is-shor-output", "to": "ComputerScience/quantum-algorithms/shor-s-factoring-algorithm/is-shor-output", "article_id": "af_1f0da2d56969e9c883c6e8cf"}
 {"page": "QuantumInformation/not-yet-classified/part-01/shor-factoring/shor-factoring", "to": "ComputerScience/quantum-algorithms/shor-s-factoring-algorithm/shor-factoring", "article_id": "af_ddfb8358f64997b955d79955"}
