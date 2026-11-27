@@ -32,6 +32,11 @@ Kellner’s proof of Theorem 10, equation (8).
 The namespace `LogFactorialExpansion` exposes the error terms of these expansions for
 `log n!` and for the sum of `k * log k`, their limits and their recurrences, for reuse by
 other product asymptotics.
+
+## References
+
+* Bernd C. Kellner, *Asymptotic Products of Binomial and Multinomial Coefficients Revisited*,
+  INTEGERS 24 (2024), Article A59, pp. 1–10, Corollary 7 and Theorem 10.
 -/
 
 namespace MetaMathlibExt
