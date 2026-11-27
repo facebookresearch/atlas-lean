@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Data.Nat.Factorization.Basic
 public import MathlibExt.NumberTheory.WeightedDirichletConvolutionBFreeCoprimeIndicatorMulMoebius
+import Mathlib.Data.Nat.Factorization.Induction
 import all MathlibExt.NumberTheory.WeightedDirichletConvolutionBFreeCoprimeIndicatorMulMoebius
 
 /-!
@@ -32,25 +33,6 @@ namespace MetaMathlibExt
 
 open ArithmeticFunction Finset
 open scoped ArithmeticFunction.Moebius
-
-private theorem factorization_prod_primeFactors_pow (n : ℕ) (f : ℕ → ℕ → ℕ)
-    (hf : ∀ p, f p 0 = 0) (q : ℕ) :
-    (n.factorization.prod fun p e => p ^ f p e).factorization q = f q (n.factorization q) := by
-  classical
-  rw [Nat.prod_factorization_eq_prod_primeFactors,
-    Nat.factorization_prod_apply (fun p hp =>
-      pow_ne_zero _ (Nat.prime_of_mem_primeFactors hp).ne_zero)]
-  calc
-    _ = ∑ p ∈ n.primeFactors, if p = q then f p (n.factorization p) else 0 := by
-      apply sum_congr rfl
-      intro p hp
-      rw [(Nat.prime_of_mem_primeFactors hp).factorization_pow, Finsupp.single_apply]
-    _ = _ := by
-      by_cases hq : q ∈ n.primeFactors
-      · simp [hq]
-      · have hz : n.factorization q = 0 :=
-          Finsupp.notMem_support_iff.mp (by simpa only [Nat.support_factorization] using hq)
-        simp [hq, hz, hf]
 
 open scoped Classical in
 /-- **The $B_\kappa$-free indicator convolved with the Möbius function.** Let $\kappa$ be a
@@ -76,12 +58,22 @@ public theorem bFreeIndicator_mul_moebius_apply {κ : ℕ → ℕ}
   classical
   have hsum (m : ℕ) : (bFreeIndicator κ * μ) m =
       ∑ d ∈ m.divisors, (if d.Coprime 1 then bFreeIndicator κ d else 0) * μ (m / d) := by
-    rw [ArithmeticFunction.mul_apply,
-      Nat.sum_divisorsAntidiagonal (fun d e => bFreeIndicator κ d * μ e)]
-    simp only [ite_eq_left (Nat.coprime_one_right _)]
+    have ht : twistedIndicator κ 1 = bFreeIndicator κ := by
+      ext d
+      simp only [twistedIndicator, coe_mk, ite_eq_left (Nat.coprime_one_right _)]
+    simpa only [twistedConvolution, ht] using twistedConvolution_apply κ 1 m
   have hspec := bFreeCoprimeIndicator_mul_moebius hκ 1
-  have hpower (r p : ℕ) : (kappaPower κ r).factorization p = κ p * r.factorization p :=
-    factorization_prod_primeFactors_pow r (fun p e => κ p * e) (fun _ => mul_zero _) p
+  have hpower (r p : ℕ) : (kappaPower κ r).factorization p = κ p * r.factorization p := by
+    induction r using Nat.recOnPrimeCoprime with
+    | zero => simp [kappaPower]
+    | prime_pow q a hq =>
+      rw [kappaPower_prime_pow κ hq, hq.factorization_pow, hq.factorization_pow]
+      by_cases hp : q = p <;> simp [hp]
+    | coprime a b _ _ hab ha hb =>
+      have hc : (kappaPower κ a).Coprime (kappaPower κ b) :=
+        (kappaPower_coprime κ (kappaPower_coprime κ hab).symm).symm
+      rw [kappaPower_mul κ hab, Nat.factorization_mul_apply_of_coprime hc,
+        Nat.factorization_mul_apply_of_coprime hab, ha, hb, mul_add]
   by_cases hd : ∀ p : ℕ, κ p ∣ n.factorization p
   · rw [ite_eq_left hd]
     let r := n.factorization.prod fun p e => p ^ (e / κ p)
@@ -89,15 +81,25 @@ public theorem bFreeIndicator_mul_moebius_apply {κ : ℕ → ℕ}
       rw [show r = ∏ p ∈ n.primeFactors, p ^ (n.factorization p / κ p) from rfl]
       exact prod_ne_zero_iff.mpr fun p hp =>
         pow_ne_zero _ (Nat.prime_of_mem_primeFactors hp).ne_zero
+    let e : ℕ →₀ ℕ := Finsupp.onFinset n.factorization.support
+      (fun p => n.factorization p / κ p)
+      (fun p hp => Finsupp.mem_support_iff.mpr (fun h => hp (by simp [h])))
+    have hprod : e.prod (· ^ ·) = r := by
+      change (∏ p ∈ e.support, p ^ e p) = ∏ p ∈ n.factorization.support, p ^ e p
+      apply prod_subset Finsupp.support_onFinset_subset
+      intro p _ hp
+      rw [Finsupp.notMem_support_iff.mp hp, pow_zero]
+    have hroot : r.factorization = e := by
+      rw [← hprod]
+      exact Nat.factorization_prod_pow_eq_self_of_le_factorization (fun _ => Nat.div_le_self _ _)
     have hnr : n = kappaPower κ r := by
       apply Nat.eq_of_factorization_eq (Nat.ne_of_gt hn)
       · rw [kappaPower, Nat.prod_factorization_eq_prod_primeFactors]
         exact prod_ne_zero_iff.mpr fun p hp =>
           pow_ne_zero _ (Nat.prime_of_mem_primeFactors hp).ne_zero
       · intro p
-        rw [hpower, show r.factorization p = n.factorization p / κ p from
-          factorization_prod_primeFactors_pow n (fun p e => e / κ p) (fun _ => Nat.zero_div _) p,
-          Nat.mul_div_cancel' (hd p)]
+        rw [hpower, hroot]
+        exact (Nat.mul_div_cancel' (hd p)).symm
     change (bFreeIndicator κ * μ) n = μ r
     rw [hsum, hnr]
     simpa only [kappaPower, one_mul, moebius_apply_one] using
