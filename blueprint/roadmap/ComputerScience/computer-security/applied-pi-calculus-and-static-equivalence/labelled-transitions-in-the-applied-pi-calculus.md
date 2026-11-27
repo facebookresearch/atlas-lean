@@ -1,6 +1,6 @@
 # Labelled transitions in the applied pi calculus
 
-A label $\alpha$ of the [applied pi calculus](applied-pi-calculus.md) is either an input $N(M)$ or an output $\nu x.\overline{N}\langle x\rangle$ with $x$ not occurring in $N$; the bound
+A label $\alpha$ of the [applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md) is either an input $N(M)$ or an output $\nu x.\overline{N}\langle x\rangle$ with $x$ not occurring in $N$; the bound
 variables are $\mathrm{bv}(N(M)) = \emptyset$ and $\mathrm{bv}(\nu x.\overline{N}\langle x\rangle) = \{x\}$. The *labelled transition* relation $A \xrightarrow{\alpha} A'$ is the smallest relation
 satisfying
 
@@ -16,6 +16,7 @@ variable exported to the environment.
 ## Depends on
 
 - [Structural equivalence in the applied pi calculus](structural-equivalence-in-the-applied-pi-calculus.md)
+- [Terms and processes of the applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md)
 
 ## Sources
 

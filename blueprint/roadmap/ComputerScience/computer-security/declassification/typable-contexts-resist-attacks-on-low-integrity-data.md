@@ -9,6 +9,7 @@ satisfy $\langle M'_1, c[\vec a']\rangle \approx_\ell \langle M'_2, c[\vec a']\r
 ## Depends on
 
 - [Typing rules for robust declassification](typing-rules-for-robust-declassification.md)
+- [Robust declassification](robust-declassification.md)
 
 ## Proof depends on
 

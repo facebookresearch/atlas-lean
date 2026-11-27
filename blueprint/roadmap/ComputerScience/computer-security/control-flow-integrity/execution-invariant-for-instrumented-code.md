@@ -10,6 +10,8 @@ The proof is by complete induction on $n$, by cases on the last step and, for a 
 ## Depends on
 
 - [Well-instrumented code for control-flow integrity](cfi-instrumentation-conditions.md)
+- [Machine code under a memory-corrupting attacker](machine-code-under-attack.md)
+- [Control-flow graphs of machine code](control-flow-graphs-of-machine-code.md)
 
 ## Proof depends on
 

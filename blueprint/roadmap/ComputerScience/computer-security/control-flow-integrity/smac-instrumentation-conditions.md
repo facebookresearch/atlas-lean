@@ -8,9 +8,12 @@ $M_c$ and data memory $M_d$ with known bounds, the predicate $I_s(M_c, G)$ holds
 2. the destinations of $G$ are exactly the addresses holding $\mathtt{label}$ instructions, each labelled with its destination's identifier;
 3. every store is $\mathtt{st}\ r_0(0), r_s$ preceded by $\mathtt{addi}\ r_0, r_d, w$; $\mathtt{movi}\ r_1, \max(M_d)$; $\mathtt{movi}\ r_2, \min(M_d)$; $\mathtt{bgt}\ r_0, r_1, \mathit{HALT}$; $\mathtt{bgt}\ r_2, r_0, \mathit{HALT}$,
    which confines it to data memory;
-4. every computed jump is $\mathtt{jmp}\ r_0$ preceded by a sequence that confines $r_0$ to code memory, loads the word at $r_0$ and halts unless it equals the label the jump's
-   destinations carry;
-5. every direct branch target is in code memory and is not inside one of these checking sequences, except at its first instruction.
+4. every computed jump, at an address $w_0$, is $\mathtt{jmp}\ r_0$ preceded by exactly the nine instructions $\mathtt{addi}\ r_0, r_s, 0$; $\mathtt{movi}\ r_1, \max(M_c)$; $\mathtt{movi}\ r_2, \min(M_c)$;
+   $\mathtt{bgt}\ r_0, r_1, \mathit{HALT}$; $\mathtt{bgt}\ r_2, r_0, \mathit{HALT}$; $\mathtt{ld}\ r_1, r_0(0)$; $\mathtt{movi}\ r_2, \mathit{IMM}$; $\mathtt{bgt}\ r_1, r_2, \mathit{HALT}$; $\mathtt{bgt}\ r_2, r_1, \mathit{HALT}$, for some
+   register $r_s$, where $\mathit{IMM}$ is the word that decodes to the $\mathtt{label}$ instruction carried by the destinations of $w_0$; this confines $r_0$ to code memory and halts
+   unless the word there is that label;
+5. every target $w$ of a $\mathtt{bgt}$ or $\mathtt{jd}$ instruction is in code memory and holds neither a store or computed jump nor any instruction of the sequences in 3 and 4
+   preceding them, except possibly their first instruction ($\mathtt{addi}\ r_0, r_d, w$, respectively $\mathtt{addi}\ r_0, r_s, 0$).
 
 ## Depends on
 

@@ -10,6 +10,11 @@ its inner product with every column of $C_2$ is nonnegative and its inner produc
 
 - [Binary, partition and k-tries gain functions](binary-partition-and-k-tries-gain-functions.md)
 - [Composition refinement of channels](composition-refinement-of-channels.md)
+- [Information-theoretic channels](information-theoretic-channels.md)
+
+## Proof depends on
+
+- [When g-leakage is zero](zero-g-leakage-characterization.md)
 
 ## Sources
 

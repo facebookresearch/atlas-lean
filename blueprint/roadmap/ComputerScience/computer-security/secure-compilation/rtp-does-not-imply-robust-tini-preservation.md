@@ -13,6 +13,7 @@ secret it sees, but no single source context serves two executions with differen
 - [Robust trace property preservation](robust-trace-property-preservation.md)
 - [Robust hyperproperty preservation](robust-hyperproperty-preservation.md)
 - [Robust hypersafety preservation](robust-hypersafety-preservation.md)
+- [Compilation chains and robust satisfaction](compilation-chains-and-robust-satisfaction.md)
 
 ## Sources
 

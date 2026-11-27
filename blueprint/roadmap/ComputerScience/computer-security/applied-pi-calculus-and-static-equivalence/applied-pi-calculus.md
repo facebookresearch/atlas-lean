@@ -1,24 +1,31 @@
-# Terms and processes of the applied pi calculus
+# The applied pi calculus
 
-Fix a *signature* $\Sigma$, a finite set of function symbols each with an arity (constants have arity $0$), an infinite set of *names* $a, b, c, \dots, k, n, s$
-and an infinite set of *variables* $x, y, z$, each name and variable having a sort (among them a sort $\mathrm{Channel}$). *Terms* $M, N$ are names, variables
-and applications $f(M_1, \dots, M_l)$ with $l$ the arity of $f$, well sorted; a term is *ground* if it has no variables. *Plain processes* are
+The applied pi calculus extends the pi calculus with terms over a signature $\Sigma$ equipped with an
+[equational theory](equational-theories-and-convergent-subterm-theories.md). Plain processes are built from $0$, parallel composition $P \mid Q$, replication $!P$, name
+restriction $\nu n.P$, conditionals $\mathbf{if}\ M = N\ \mathbf{then}\ P\ \mathbf{else}\ Q$ (testing equality in the theory), input $N(x).P$ and output $\overline{N}\langle M\rangle.P$.
+*Extended processes* $A ::= P \mid A \mid B \mid \nu n.A \mid \nu x.A \mid \{M/x\}$ add *active substitutions* $\{M/x\}$, which record messages output to the environment.
+Expressions are well sorted, and only extended processes satisfying the following conditions are considered: $\mathrm{dom}(A) \cap \mathrm{dom}(B) = \emptyset$ in every $A \mid B$, where
+the *domain* $\mathrm{dom}(A)$ is the set of variables $x$ that $A$ *exports*, those with an active substitution $\{M/x\}$ not under a restriction on $x$; in every $\nu x.A$
+the variable $x$ has exactly one active substitution in $A$; and the substitution obtained by ignoring restrictions is cycle-free. Thus $\{M/x\} \mid \{N/x\}$ and
+$\{f(y)/x\} \mid \{f(x)/y\}$ are excluded. $A$ is *closed* if $\mathrm{fv}(A) = \mathrm{dom}(A)$. The *frame* of an extended process is obtained by replacing every plain process in it
+by $0$. An evaluation context is an extended process
+with a hole not under input, output, conditional or replication. Structural equivalence $\equiv$ and internal reduction $\to$ (communication on a channel and the two
+branches of the conditional) give the operational semantics, and a labelled semantics $A \xrightarrow{\alpha} A'$ adds input transitions $N(M)$ and output transitions that
+export messages through fresh variables.
 
-$$P, Q ::= 0 \mid P \mid Q \mid\ !P \mid \nu n.P \mid \mathbf{if}\ M = N\ \mathbf{then}\ P\ \mathbf{else}\ Q \mid N(x).P \mid \overline{N}\langle M\rangle.P,$$
+## Expansion
 
-the null process, parallel composition, replication, name restriction, a conditional on equality in the equational theory, input of $x$ on the channel $N$
-and output of $M$ on $N$. *Extended processes* add variable restriction and *active substitutions* $\{M/x\}$:
+This node names a family of definitions. A good expansion adds a page for each of the following and links it under the dependency sections:
 
-$$A, B ::= P \mid A \mid B \mid \nu n.A \mid \nu x.A \mid \{M/x\}.$$
+- Definition: syntax of terms, plain processes and extended processes, with free and bound names and variables (Section 2.1 of the source); stated in [Terms and processes of the applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md).
+- Definition: structural equivalence and internal reduction (Section 2.2); stated in [Structural equivalence in the applied pi calculus](structural-equivalence-in-the-applied-pi-calculus.md) and [Internal reduction in the applied pi calculus](internal-reduction-in-the-applied-pi-calculus.md).
+- Definition: labelled operational semantics (Section 4.3); stated in [Labelled transitions in the applied pi calculus](labelled-transitions-in-the-applied-pi-calculus.md).
 
-Names are bound by $\nu n$ and variables by $\nu x$ and by input; $\mathrm{fn}(A)$ and $\mathrm{fv}(A)$ are the free names and variables, and the *domain*
-$\mathrm{dom}(A)$ is the set of variables $x$ for which $A$ contains $\{M/x\}$ not under a restriction on $x$. Processes are identified up to renaming of bound
-names and variables. Substitutions are cycle-free, each variable has at most one active substitution, $\mathrm{dom}(A) \cap \mathrm{dom}(B) = \emptyset$ in every $A \mid B$,
-and $x \in \mathrm{dom}(A)$ in every $\nu x.A$. $A$ is *closed* when $\mathrm{dom}(A) = \mathrm{fv}(A)$. A *frame* $\varphi$ is an extended process built from $0$ and active
-substitutions by parallel composition and restriction, and the frame $\varphi(A)$ of $A$ replaces every plain process in $A$ by $0$. An *evaluation context* is
-an extended process with a hole that is not under replication, a conditional, an input or an output.
+## Depends on
+
+- [Equational theories and convergent subterm theories](equational-theories-and-convergent-subterm-theories.md)
 
 ## Sources
 
-- M. Abadi, B. Blanchet and C. Fournet, "The applied pi calculus: mobile values, new names, and secure communication", *Journal of the ACM* 65(1), 2018, arXiv:1609.03003v2, <https://arxiv.org/abs/1609.03003v2>: Section 2.1 (terms, plain and extended processes, Figure 1 for free names, free variables and domains, frames and the sort system) and Section 2.2 (evaluation contexts).
-- V. Cortier and S. Kremer, "Formal models and techniques for analyzing security protocols: a tutorial", *Foundations and Trends in Programming Languages* 1(3), 2014, doi:10.1561/2500000001, copy at <https://inria.hal.science/hal-01090874>: Section 5.1 (syntax and informal semantics).
+- M. Abadi, B. Blanchet and C. Fournet, "The applied pi calculus: mobile values, new names, and secure communication", *Journal of the ACM* 65(1), 2018, arXiv:1609.03003v2, <https://arxiv.org/abs/1609.03003v2>: Section 2 (syntax, informal semantics and operational semantics) and Section 4.3 (labelled operational semantics).
+- V. Cortier and S. Kremer, "Formal models and techniques for analyzing security protocols: a tutorial", *Foundations and Trends in Programming Languages* 1(3), 2014, doi:10.1561/2500000001, copy at <https://inria.hal.science/hal-01090874>: Chapter 5 (the calculus and its formal semantics).

@@ -9,6 +9,7 @@ $b \ge o$ in $H$. *Robust hyperliveness preservation* (RHLP) is [robust hyperpro
 
 - [Robust hyperproperty preservation](robust-hyperproperty-preservation.md)
 - [Robust hypersafety preservation](robust-hypersafety-preservation.md)
+- [Compilation chains and robust satisfaction](compilation-chains-and-robust-satisfaction.md)
 
 ## Sources
 

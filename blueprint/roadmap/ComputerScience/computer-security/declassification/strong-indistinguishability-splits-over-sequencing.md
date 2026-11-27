@@ -8,6 +8,7 @@ $N_1, N_2$ with $\langle M_1, c_1\rangle \Downarrow N_1$, $\langle M_2, c_1\rang
 ## Depends on
 
 - [Typing rules for robust declassification](typing-rules-for-robust-declassification.md)
+- [Robust declassification](robust-declassification.md)
 
 ## Proof depends on
 

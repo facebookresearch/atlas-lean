@@ -1,8 +1,8 @@
 # Structural equivalence in the applied pi calculus
 
-Fix a signature with an equational theory, a congruence on terms closed under substitution of terms for variables and names that respects sorts, written
-$\Sigma \vdash M = N$ (see [equational theories](equational-theories-and-convergent-subterm-theories.md)). *Structural equivalence* $\equiv$ is the smallest
-equivalence relation on the [extended processes](applied-pi-calculus.md) that is closed under application of evaluation contexts and satisfies
+Fix a signature with an equational theory, a congruence on terms closed under substitution of terms for variables and names that respects sorts and is
+nontrivial in each sort (some two terms of the sort are not equated), written $\Sigma \vdash M = N$ (see [equational theories](equational-theories-and-convergent-subterm-theories.md)). *Structural equivalence* $\equiv$ is the smallest
+equivalence relation on the [extended processes](terms-and-processes-of-the-applied-pi-calculus.md) that is closed under application of evaluation contexts and satisfies
 
 $$\begin{aligned}
 &A \mid 0 \equiv A, \quad (A \mid B) \mid C \equiv A \mid (B \mid C), \quad A \mid B \equiv B \mid A, \quad !P \equiv P \mid\ !P, \quad \nu n.0 \equiv 0, \quad \nu u.\nu v.A \equiv \nu v.\nu u.A,\\
@@ -15,9 +15,9 @@ $\nu\tilde n.(\{\tilde M/\tilde x\} \mid P)$ with $P$ a closed plain process, an
 
 ## Depends on
 
-- [Terms and processes of the applied pi calculus](applied-pi-calculus.md)
+- [Terms and processes of the applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md)
 - [Equational theories and convergent subterm theories](equational-theories-and-convergent-subterm-theories.md)
 
 ## Sources
 
-- M. Abadi, B. Blanchet and C. Fournet, "The applied pi calculus: mobile values, new names, and secure communication", *Journal of the ACM* 65(1), 2018, arXiv:1609.03003v2, <https://arxiv.org/abs/1609.03003v2>: Section 2.2, the definition of equational theories and of structural equivalence, and the normal form of closed extended processes that follows it.
+- M. Abadi, B. Blanchet and C. Fournet, "The applied pi calculus: mobile values, new names, and secure communication", *Journal of the ACM* 65(1), 2018, arXiv:1609.03003v2, <https://arxiv.org/abs/1609.03003v2>: Section 2.2, the definition of equational theories (respecting sorts and non-trivial, with two different terms in each sort) and of structural equivalence, and the normal form of closed extended processes that follows it.

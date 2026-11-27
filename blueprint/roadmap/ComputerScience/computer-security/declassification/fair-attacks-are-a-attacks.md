@@ -6,6 +6,7 @@
 ## Depends on
 
 - [Typing rules for robust declassification](typing-rules-for-robust-declassification.md)
+- [Robust declassification](robust-declassification.md)
 
 ## Sources
 

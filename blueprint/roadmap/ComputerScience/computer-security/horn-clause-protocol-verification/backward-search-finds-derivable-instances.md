@@ -7,6 +7,7 @@ $\mathcal R_1$.
 ## Depends on
 
 - [Resolution with selection and saturation](resolution-with-selection-and-saturation.md)
+- [Horn clauses and derivability for protocol analysis](horn-clauses-and-derivability.md)
 
 ## Sources
 

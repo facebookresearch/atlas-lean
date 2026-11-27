@@ -7,6 +7,7 @@ uniform prior $\pi_u$, then $C_1 \le_G C_2$.
 ## Depends on
 
 - [Composition refinement of channels](composition-refinement-of-channels.md)
+- [Information-theoretic channels](information-theoretic-channels.md)
 
 ## Sources
 

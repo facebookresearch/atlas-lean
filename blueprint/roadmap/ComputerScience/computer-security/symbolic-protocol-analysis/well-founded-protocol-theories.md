@@ -1,6 +1,6 @@
 # Well-founded protocol theories
 
-In [multiset rewriting](protocol-theories-in-multiset-rewriting.md), a rule $l \to r$ *enables* a rule $l' \to r'$ if some fact in $\sigma r$ is also in $\sigma' l'$ for some substitutions
+In [multiset rewriting](multiset-rewriting-with-existential-quantification.md), a rule $l \to r$ *enables* a rule $l' \to r'$ if some fact in $\sigma r$ is also in $\sigma' l'$ for some substitutions
 $\sigma, \sigma'$, and a theory $T$ *precedes* a theory $S$ if no rule of $S$ enables a rule of $T$.
 
 - A theory $A$ is a *bounded role theory* if there is a finite list of *role-state* predicates $S_0, S_1, \dots, S_k$ such that every rule $l \to r$ of $A$ has exactly one
@@ -14,7 +14,7 @@ $\sigma, \sigma'$, and a theory $T$ *precedes* a theory $S$ if no rule of $S$ en
 
 ## Depends on
 
-- [Multiset rewriting with existential quantification](protocol-theories-in-multiset-rewriting.md)
+- [Multiset rewriting with existential quantification](multiset-rewriting-with-existential-quantification.md)
 
 ## Sources
 

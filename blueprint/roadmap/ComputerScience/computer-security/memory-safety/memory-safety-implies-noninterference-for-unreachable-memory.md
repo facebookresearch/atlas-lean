@@ -1,6 +1,6 @@
 # Memory safety implies noninterference for unreachable memory
 
-**Corollary.** In the [memory-safe language](block-structured-memory-safe-language.md), let $s_1$, $s_{21}$ and $s_{22}$ be states and $c$ a command with
+**Corollary.** In the [memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md), let $s_1$, $s_{21}$ and $s_{22}$ be states and $c$ a command with
 $\mathrm{vars}(c) \subseteq \mathrm{vars}(s_1)$, $\mathrm{ids}(s_1) \# \mathrm{blocks}(s_{21})$ and $\mathrm{ids}(s_1) \# \mathrm{blocks}(s_{22})$. Then exactly one of the following holds:
 
 1. $[\![c]\!](s_1 \cup s_{21}) = [\![c]\!](s_1 \cup s_{22}) = \bot$;
@@ -11,7 +11,7 @@ Memory unreachable from $s_1$ is neither modified nor observed: its contents do 
 
 ## Depends on
 
-- [A memory-safe language with block identifiers](block-structured-memory-safe-language.md)
+- [Syntax and semantics of the memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md)
 
 ## Proof depends on
 

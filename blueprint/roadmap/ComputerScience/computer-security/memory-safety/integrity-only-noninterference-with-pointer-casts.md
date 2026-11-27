@@ -1,6 +1,6 @@
 # Integrity-only noninterference when pointers can be cast to integers
 
-Extend the [memory-safe language](block-structured-memory-safe-language.md) with an operation that converts a pointer to an integer, so that identifiers become
+Extend the [memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md) with an operation that converts a pointer to an integer, so that identifiers become
 observable. The frame theorems and the secrecy part of noninterference then fail, but integrity survives.
 
 **Theorem.** Let $s_1, s_2, s'$ be states and $c$ a command of the extended language with $\mathrm{vars}(c) \subseteq \mathrm{vars}(s_1)$, $\mathrm{ids}(s_1) \# \mathrm{blocks}(s_2)$ and
@@ -9,7 +9,7 @@ terminating run, although its contents may now influence the rest of the result.
 
 ## Depends on
 
-- [A memory-safe language with block identifiers](block-structured-memory-safe-language.md)
+- [Syntax and semantics of the memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md)
 
 ## Sources
 

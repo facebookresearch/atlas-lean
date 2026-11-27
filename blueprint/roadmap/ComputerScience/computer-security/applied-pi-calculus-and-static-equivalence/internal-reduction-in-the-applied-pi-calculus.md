@@ -1,6 +1,6 @@
 # Internal reduction in the applied pi calculus
 
-*Internal reduction* $\to$ is the smallest relation on [extended processes](applied-pi-calculus.md) that is closed under
+*Internal reduction* $\to$ is the smallest relation on [extended processes](terms-and-processes-of-the-applied-pi-calculus.md) that is closed under
 [structural equivalence](structural-equivalence-in-the-applied-pi-calculus.md) and application of evaluation contexts and contains
 
 $$\overline{N}\langle x\rangle.P \mid N(x).Q \to P \mid Q \ (\text{Comm}), \qquad \mathbf{if}\ M = M\ \mathbf{then}\ P\ \mathbf{else}\ Q \to P \ (\text{Then}),$$
@@ -13,6 +13,7 @@ $P$. $\to^*$ is the reflexive and transitive closure of $\to$.
 ## Depends on
 
 - [Structural equivalence in the applied pi calculus](structural-equivalence-in-the-applied-pi-calculus.md)
+- [Terms and processes of the applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md)
 
 ## Sources
 

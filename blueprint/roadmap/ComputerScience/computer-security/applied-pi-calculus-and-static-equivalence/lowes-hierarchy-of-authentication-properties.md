@@ -7,13 +7,14 @@ Whenever an honest agent $A$ completes a run of a protocol, apparently with an h
 - *non-injective agreement* on a set of data $d$ if $B$ has previously been running the protocol, apparently with $A$, with the same data $d$;
 - *injective agreement* on $d$ if moreover each such run of $A$ corresponds to a unique run of $B$, which excludes replays.
 
-Each property implies the previous one. In the [applied pi calculus](applied-pi-calculus.md) with honest agents' public keys as parameters, each is a
+Each property implies the previous one. In the [applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md) with honest agents' public keys as parameters, each is a
 [correspondence property](events-and-correspondence-properties.md) $e_{\mathrm{accept}}(t) \rightsquigarrow e_{\mathrm{begin}}(t)$ between an acceptance event of $A$ and a start event of $B$, with $t$ the
 partner's identity, both identities, or both identities and $d$; injective agreement uses $\rightsquigarrow_{\mathrm{inj}}$.
 
 ## Depends on
 
 - [Events and correspondence properties](events-and-correspondence-properties.md)
+- [Terms and processes of the applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md)
 
 ## Sources
 

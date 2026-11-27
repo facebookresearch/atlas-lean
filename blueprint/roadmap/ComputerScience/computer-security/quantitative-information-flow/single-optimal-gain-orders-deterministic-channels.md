@@ -9,6 +9,7 @@ $\le_{\mathcal G}$ for the gain functions of [binary, partition and k-tries gain
 
 - [Composition refinement of channels](composition-refinement-of-channels.md)
 - [Binary, partition and k-tries gain functions](binary-partition-and-k-tries-gain-functions.md)
+- [Information-theoretic channels](information-theoretic-channels.md)
 
 ## Sources
 

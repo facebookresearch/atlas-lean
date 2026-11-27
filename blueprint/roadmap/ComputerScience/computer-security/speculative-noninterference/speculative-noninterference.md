@@ -8,6 +8,7 @@ $[\![p]\!]_O(\sigma) = [\![p]\!]_O(\sigma')$. Speculative execution may leak not
 ## Depends on
 
 - [Speculative semantics with prediction oracles](speculative-semantics-with-prediction-oracles.md)
+- [A core assembly language with leakage observations](a-core-assembly-language-with-observations.md)
 
 ## Sources
 

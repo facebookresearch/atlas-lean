@@ -1,6 +1,6 @@
 # Events and correspondence properties
 
-Extend the plain processes of the [applied pi calculus](applied-pi-calculus.md) with *events* $\mathbf{event}\ e(t).P$, where $e$ is drawn from a set of event symbols outside the signature and
+Extend the plain processes of the [applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md) with *events* $\mathbf{event}\ e(t).P$, where $e$ is drawn from a set of event symbols outside the signature and
 $t$ is a term, and add the reduction $\mathbf{event}\ e(t).P \to P$ to [internal reduction](internal-reduction-in-the-applied-pi-calculus.md). A reduction sequence
 $R = A_0 \xrightarrow{\alpha_1} A_1 \cdots \xrightarrow{\alpha_n} A_n$ *satisfies $e(t)$ at step $i$* if $A_{i-1} \equiv C[\mathbf{event}\ e(t).P]$ and $A_i \equiv C[P]$ for some context $C$ and process $P$.
 
@@ -12,6 +12,7 @@ $\varphi$ on steps such that each step $i$ satisfying $e(t\sigma)$ has $e'(t'\si
 
 - [Internal reduction in the applied pi calculus](internal-reduction-in-the-applied-pi-calculus.md)
 - [Labelled transitions in the applied pi calculus](labelled-transitions-in-the-applied-pi-calculus.md)
+- [Terms and processes of the applied pi calculus](terms-and-processes-of-the-applied-pi-calculus.md)
 
 ## Sources
 

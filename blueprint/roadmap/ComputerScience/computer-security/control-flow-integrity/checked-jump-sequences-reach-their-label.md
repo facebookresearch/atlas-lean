@@ -8,6 +8,7 @@ then $w$ holds the label instruction that $G$ requires for the jump at $S_5.pc$.
 ## Depends on
 
 - [Well-instrumented code for control-flow integrity](cfi-instrumentation-conditions.md)
+- [Machine code under a memory-corrupting attacker](machine-code-under-attack.md)
 
 ## Sources
 

@@ -15,6 +15,7 @@ past the checks before a store.
 ## Proof depends on
 
 - [Stores checked by software memory access control stay in data memory](stores-checked-by-smac-stay-in-data-memory.md)
+- [Execution invariant for instrumented code](execution-invariant-for-instrumented-code.md)
 
 ## Sources
 

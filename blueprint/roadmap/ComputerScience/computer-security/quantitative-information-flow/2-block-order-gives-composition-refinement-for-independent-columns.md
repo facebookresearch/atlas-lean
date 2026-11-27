@@ -9,10 +9,12 @@ $\le_{\mathcal G}$ for the gain functions of [binary, partition and k-tries gain
 
 - [Composition refinement of channels](composition-refinement-of-channels.md)
 - [Binary, partition and k-tries gain functions](binary-partition-and-k-tries-gain-functions.md)
+- [Information-theoretic channels](information-theoretic-channels.md)
 
 ## Proof depends on
 
 - [Cat-vectors give a separating 2-block gain function](cat-vectors-separate-channels-by-a-2-block-gain-function.md)
+- [The 2-block order implies composition refinement for invertible channels](2-block-order-gives-composition-refinement-for-invertible-channels.md)
 
 ## Sources
 

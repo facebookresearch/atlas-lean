@@ -7,6 +7,7 @@ selection function is basic, $F$ is ground and $\mathcal R$ contains the fact $\
 ## Depends on
 
 - [Resolution with selection and saturation](resolution-with-selection-and-saturation.md)
+- [Horn clauses and derivability for protocol analysis](horn-clauses-and-derivability.md)
 
 ## Proof depends on
 
