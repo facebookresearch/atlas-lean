@@ -21,7 +21,6 @@
 - [Kl Div map scalar Coord Pair](kl-div-map-scalar-coord-pair.md)
 - [KL chain rule in scalar coordinates](kl-div-map-scalar-coord-pair-comp-prod-e.md)
 - [KL chain rule in scalar coordinates, reference-output form](kl-div-map-scalar-coord-pair-prod-refere.md)
-- [Scalar Gaussian divergence in vector form](scalar-gaussian-kl-div-eq-vector.md)
 - [Scalar Power Bound dirac two](scalar-power-bound-dirac-two.md)
 - [Not scalar Power Bound zero const](not-scalar-power-bound-zero-const.md)
 - [Scalar Power Bound gaussian Real](scalar-power-bound-gaussian-real.md)

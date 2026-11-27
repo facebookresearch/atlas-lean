@@ -26,7 +26,7 @@ Inequalities relating entropies, divergences and mutual information, such as the
 - [Scalar Gaussian coordinates](scalar-gaussian-coordinates/README.md)
 - [f-divergences](f-divergences/README.md)
 - [Bhattacharyya pairwise error bound](pairwise-error-le.md)
-- [Total variation: data processing and the classical Helstrom identity](helstrom-max-sum.md)
+- [Classical Helstrom identity](helstrom-max-sum.md)
 
 ## Related topics
 

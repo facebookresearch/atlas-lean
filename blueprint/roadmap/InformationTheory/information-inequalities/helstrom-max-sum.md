@@ -1,4 +1,4 @@
-# Total variation: data processing and the classical Helstrom identity
+# Classical Helstrom identity
 
 Let $\alpha$ be a finite set and $p, q$ probability distributions on $\alpha$. Then
 

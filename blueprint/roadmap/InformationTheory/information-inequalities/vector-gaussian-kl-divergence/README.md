@@ -13,7 +13,6 @@
 
 ## Validation
 
-- [Multivariate Gaussian KLReal fin one](multivariate-gaussian-klreal-fin-one.md)
 - [Multivariate Gaussian KLReal self](multivariate-gaussian-klreal-self.md)
 - [Multivariate Gaussian KLReal same covariance](multivariate-gaussian-klreal-same-covari.md)
 - [Kl Div multivariate Gaussian self](kl-div-multivariate-gaussian-self.md)

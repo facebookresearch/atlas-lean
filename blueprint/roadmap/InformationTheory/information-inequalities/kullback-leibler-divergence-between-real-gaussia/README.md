@@ -1,7 +1,6 @@
 # Kullback-Leibler divergence between real Gaussians
 
 - [Closed-form expression for the divergence between real Gaussians](scalar-gaussian-klreal.md)
-- [Kl Div gaussian Real of pos](kl-div-gaussian-real-of-pos.md)
 - [Scalar Gaussian KLReal self](scalar-gaussian-klreal-self.md)
 - [Kl Div gaussian Real self](kl-div-gaussian-real-self.md)
 - [The closed-form Gaussian divergence expression at a common variance](scalar-gaussian-klreal-same-variance.md)
