@@ -1,12 +1,12 @@
-# Realizable multiclass PAC learning from finite Natarajan dimension with explicit sample size
+# Realizable multiclass PAC learning from finite Natarajan dimension
 
-Let $X$ be countable with measurable singletons, $\beta$ a finite label set with $k \ge 2$ elements, and $C$ a class of functions $X \to \beta$ that N-shatters no finite set of more than $d$ points. On any $m$ points, $C$ realizes at most $\sum_{i \le d}\binom{m}{i}\binom{k}{2}^i$ labelings (Ben-David, Cesa-Bianchi, Haussler and Long, Theorem 9, with labels $\{0, \dots, n\}$ and $k = n + 1$); since the misclassification pattern of a hypothesis on labelled points is determined by its labeling of their instances, this also bounds the growth function of the Boolean loss class $\{(x,y) \mapsto [c(x) \ne y] : c \in C\}$. If $C$ has Natarajan dimension $d$, there are absolute constants $C_1, C_2 > 0$ such that $C$ is PAC learnable over the distributions realizable by $C$ with sample complexity
+Let $X$ be countable with measurable singletons, $\beta$ a finite label set with $k \ge 2$ elements, and $C$ a class of functions $X \to \beta$ that N-shatters no finite set of more than $d$ points. On any $m$ points, $C$ realizes at most $\sum_{i \le d}\binom{m}{i}\binom{k}{2}^i$ labelings (Ben-David, Cesa-Bianchi, Haussler and Long, Theorem 9, with labels $\{0, \dots, n\}$ and $k = n + 1$); since the misclassification pattern of a hypothesis on labelled points is determined by its labeling of their instances, this also bounds the growth function of the Boolean loss class $\{(x,y) \mapsto [c(x) \ne y] : c \in C\}$. If $C$ has Natarajan dimension $d$, there is an absolute constant $C_2 > 0$ such that $C$ is PAC learnable over the distributions realizable by $C$ with sample complexity
 
 $$
-C_1 \frac{d + \log(1/\delta)}{\varepsilon} \le m_C(\varepsilon, \delta) \le C_2 \frac{d \log\big(\frac{kd}{\varepsilon}\big) + \log(1/\delta)}{\varepsilon}
+m_C(\varepsilon, \delta) \le C_2 \frac{d \log\big(\frac{kd}{\varepsilon}\big) + \log(1/\delta)}{\varepsilon}
 $$
 
-(Shalev-Shwartz and Ben-David, Theorem 29.3, item 3).
+(Shalev-Shwartz and Ben-David, Theorem 29.3, item 3, upper bound).
 
 ## Proof sketch
 

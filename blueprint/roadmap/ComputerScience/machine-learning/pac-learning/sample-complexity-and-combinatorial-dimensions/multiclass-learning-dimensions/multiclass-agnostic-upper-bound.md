@@ -1,9 +1,9 @@
-# Agnostic multiclass PAC learning from finite Natarajan dimension with explicit sample size
+# Agnostic multiclass PAC learning from finite Natarajan dimension
 
-Let $X$ be countable with measurable singletons, $\beta$ a finite label set with $k \ge 2$ elements, and $C$ a class of functions $X \to \beta$ with Natarajan dimension $d$. There are absolute constants $C_1, C_2 > 0$ such that
+Let $X$ be countable with measurable singletons, $\beta$ a finite label set with $k \ge 2$ elements, and $C$ a class of functions $X \to \beta$ with Natarajan dimension $d$. There is an absolute constant $C_2 > 0$ such that
 
-1. $C$ has the uniform convergence property with sample complexity $C_1 \frac{d + \log(1/\delta)}{\varepsilon^2} \le m^{\mathrm{UC}}_C(\varepsilon, \delta) \le C_2 \frac{d \log k + \log(1/\delta)}{\varepsilon^2}$;
-2. $C$ is agnostically PAC learnable with sample complexity $C_1 \frac{d + \log(1/\delta)}{\varepsilon^2} \le m_C(\varepsilon, \delta) \le C_2 \frac{d \log k + \log(1/\delta)}{\varepsilon^2}$ (Shalev-Shwartz and Ben-David, Theorem 29.3, items 1 and 2), and every empirical risk minimizer is an agnostic PAC learner from $m^{\mathrm{UC}}_C(\varepsilon/2, \delta)$ examples (Corollary 4.4).
+1. $C$ has the uniform convergence property with sample complexity $m^{\mathrm{UC}}_C(\varepsilon, \delta) \le C_2 \frac{d \log k + \log(1/\delta)}{\varepsilon^2}$;
+2. $C$ is agnostically PAC learnable with sample complexity $m_C(\varepsilon, \delta) \le C_2 \frac{d \log k + \log(1/\delta)}{\varepsilon^2}$ (Shalev-Shwartz and Ben-David, Theorem 29.3, items 1 and 2, upper bounds), and every empirical risk minimizer is an agnostic PAC learner from $m^{\mathrm{UC}}_C(\varepsilon/2, \delta)$ examples (Corollary 4.4).
 
 ## Proof sketch
 

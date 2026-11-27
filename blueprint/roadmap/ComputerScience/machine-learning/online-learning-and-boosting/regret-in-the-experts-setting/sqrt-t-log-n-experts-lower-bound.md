@@ -1,6 +1,6 @@
 # General $\Omega(\sqrt{T \ln N})$ lower bound on expected external regret
 
-Let $X$ have $N \ge 2$ actions and let $T \ge N$. There is a random generation of loss sequences (an oblivious adversary chosen at random) against which every online algorithm has expected external regret $\Omega(\sqrt{T \log N})$ (Blum and Mansour, Exercise 4.5, "Show a $\Omega(\sqrt{T \log N})$ lower bound on external regret, for the case that $T \ge N$"; in time-averaged form, Roughgarden, Lecture 17, Example 1.8: with $n$ actions, expected regret cannot vanish faster than $\Theta(\sqrt{(\ln n)/T})$).
+Fix a finite action set $X$ of $N \ge 2$ actions. As the time horizon $T \to \infty$, there is a random generation of loss sequences (an oblivious adversary chosen at random) against which the expected time-averaged external regret of every online algorithm cannot vanish faster than $\Theta(\sqrt{(\ln N)/T})$, i.e., total expected external regret is $\Omega(\sqrt{T \ln N})$ (Roughgarden, Lecture 17, Remark 1.6, Example 1.8, Section 2.1 and Remark 2.3).
 
 ## Proof sketch
 
@@ -18,4 +18,4 @@ Derived (not stated in the cited sources): for $T \ge \lfloor \log_2 N \rfloor$ 
 ## Sources
 
 - Avrim Blum and Yishay Mansour, "Learning, Regret Minimization, and Equilibria", in N. Nisan, T. Roughgarden, É. Tardos and V. V. Vazirani (eds.), Algorithmic Game Theory, Cambridge University Press, 2007, Chapter 4, Section 4.3.4 and Exercise 4.5.
-- Tim Roughgarden, "CS364A: Algorithmic Game Theory, Lecture #17: No-Regret Dynamics", Stanford University, 2013, Example 1.8; open copy: <http://timroughgarden.org/f13/l/l17.pdf>.
+- Tim Roughgarden, "CS364A: Algorithmic Game Theory, Lecture #17: No-Regret Dynamics", Stanford University, 2013, Example 1.8; open copy: <https://timroughgarden.org/f13/l/l17.pdf>.

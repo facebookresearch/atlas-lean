@@ -1,4 +1,4 @@
-# Amplification of replicability from rho below one half
+# Amplification of replicability from rho below one quarter
 
 Let $\alpha > 0$ and let $A$ be $\rho$-replicable over a distribution $D$ with $\rho < 1/4 - \alpha$, using $m$ samples and erring with probability at most $\beta$. Then for every $\rho'$ with $0 < \rho' < \rho$ there is a $\rho'$-replicable algorithm $A'$ for $D$ with sample complexity $\tilde O\big(m \log^3(1/\beta)/(\rho'^2 \alpha^2)\big)$ that errs with probability at most $O(\beta + \rho')$ (Impagliazzo, Lei, Pitassi and Sorrell, Corollary A.4). The algorithm $A'$ draws $k = O(\log(1/\beta))$ shared random strings $r_1, \dots, r_k$ for $A$, runs the replicable heavy-hitters algorithm on the output distributions of $A$ with these strings (sampling each by running $A$ on fresh samples), and outputs the first heavy hitter returned, or $\bot$ if every call returns the empty list; its construction does not depend on $D$, so it serves every distribution of a family $\mathcal{D}$ over which $A$ satisfies the hypotheses (proof of Theorem A.3).
 

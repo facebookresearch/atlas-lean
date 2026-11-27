@@ -1,9 +1,9 @@
 # Sharp agnostic sample complexity of VC classes by chaining
 
-Let $C$ be a class of functions from a countable domain with measurable singletons to $\{0,1\}$, with the $0$-$1$ loss, of VC dimension $d < \infty$. There are absolute constants $C_1, C_2$ such that
+Let $C$ be a class of functions from a countable domain with measurable singletons to $\{0,1\}$, with the $0$-$1$ loss, of VC dimension $d < \infty$. There is an absolute constant $C_2 > 0$ such that
 
-1. $C$ has the uniform convergence property with sample complexity $C_1 \frac{d + \log(1/\delta)}{\varepsilon^2} \le m^{\mathrm{UC}}_C(\varepsilon, \delta) \le C_2 \frac{d + \log(1/\delta)}{\varepsilon^2}$;
-2. $C$ is agnostically PAC learnable with sample complexity $C_1 \frac{d + \log(1/\delta)}{\varepsilon^2} \le m_C(\varepsilon, \delta) \le C_2 \frac{d + \log(1/\delta)}{\varepsilon^2}$, with no logarithmic factor in $1/\varepsilon$ (Shalev-Shwartz and Ben-David, Theorem 6.8, items 1 and 2), and every empirical risk minimizer is an agnostic PAC learner from $m^{\mathrm{UC}}_C(\varepsilon/2, \delta)$ examples (Corollary 4.4).
+1. $C$ has the uniform convergence property with sample complexity $m^{\mathrm{UC}}_C(\varepsilon, \delta) \le C_2 \frac{d + \log(1/\delta)}{\varepsilon^2}$;
+2. $C$ is agnostically PAC learnable with sample complexity $m_C(\varepsilon, \delta) \le C_2 \frac{d + \log(1/\delta)}{\varepsilon^2}$, with no logarithmic factor in $1/\varepsilon$ (Shalev-Shwartz and Ben-David, Theorem 6.8, items 1 and 2, upper bounds), and every empirical risk minimizer is an agnostic PAC learner from $m^{\mathrm{UC}}_C(\varepsilon/2, \delta)$ examples (Corollary 4.4).
 
 ## Proof sketch
 
