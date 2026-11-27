@@ -373,8 +373,7 @@ private theorem toBDeRhamPlus_ofRestricted_logSeriesCoeff {ε : PreTilt 𝓞_ℂ
     (h : ε.untilt = 1) {c : 𝔸} (hc : c * xi p = WittVector.teichmuller p ε - 1) :
     toBDeRhamPlus (ker_fontaineTheta_eq_span_xi p) (ofRestricted (xi p) (logSeriesCoeff_mem p c)) =
       logTeichmuller p h := by
-  rw [toBDeRhamPlus_ofRestricted _ (algebraMap_mem_ker_fontaineThetaInvertP p (fontaineTheta_xi p)),
-    logTeichmuller, logOneAdd]
+  rw [toBDeRhamPlus_ofRestricted, logTeichmuller, logOneAdd]
   refine AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq _ _ _ _ _ fun n => ?_
   rw [coeff_dividedPowerSeries_mul_pow, logSeries, PowerSeries.coeff_mk, logSeriesCoeff,
     PowerSeries.coeff_mk]
