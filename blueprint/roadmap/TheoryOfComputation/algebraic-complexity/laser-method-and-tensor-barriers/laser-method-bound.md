@@ -1,6 +1,6 @@
 # The laser method bound on omega from tensor values
 
-Let $T$ be a tensor and $\tau \in [2/3, 1]$. If $V_\tau(T) \ge \underline{R}(T)$, then $\omega \le 3\tau$. For $T = \mathrm{CW}_q$, a lower bound on $V_\tau(\mathrm{CW}_q)$ is obtained from any probability distribution $\alpha$ on the six constituents: writing $H(\alpha_X)$ for the entropy of the induced marginal on $X$-blocks (and similarly for $Y, Z$),
+Let $T$ be a tensor and $\tau \in [2/3, 1]$. By Schönhage's asymptotic sum inequality, $V_{\omega/3}(T) \le \underline{R}(T)$; consequently, if $V_\tau(T) > \underline{R}(T)$, then $\omega < 3\tau$. (The strict inequality is necessary: for the unit tensor $T = \langle 1, 1, 1\rangle$, $V_\tau(T) = 1 = \underline{R}(T)$ for every $\tau \in [2/3, 1]$.) For $T = \mathrm{CW}_q$, a lower bound on $V_\tau(\mathrm{CW}_q)$ is obtained from any probability distribution $\alpha$ on the six constituents: writing $H(\alpha_X)$ for the entropy of the induced marginal on $X$-blocks (and similarly for $Y, Z$),
 
 $$
 \log V_\tau(\mathrm{CW}_q) \ge \min\bigl(H(\alpha_X), H(\alpha_Y), H(\alpha_Z)\bigr) + \tau \sum_{c} \alpha(c) \log \mathrm{vol}(c),
@@ -10,7 +10,7 @@ where $\mathrm{vol}(c) = nmk$ for a constituent $c \cong \langle n, m, k\rangle$
 
 ## Proof sketch
 
-The first statement is the asymptotic sum inequality applied to the direct sums witnessing $V_\tau(T)$ together with submultiplicativity of border rank. For the lower bound on the value, restrict $T^{\otimes N}$ to blocks of type $\alpha$, apply the progression-free hashing to obtain about $2^{N \min H(\alpha_\cdot) - o(N)}$ independent block triples, each a product of constituents and hence a matrix multiplication tensor of volume $\prod_c \mathrm{vol}(c)^{N\alpha(c)}$.
+For any degeneration of $T^{\otimes N}$ to a direct sum $\bigoplus_{i=1}^p \langle n_i, m_i, k_i\rangle$ of $p$ matrix multiplication tensors, submultiplicativity of border rank bounds the direct sum's border rank by $r = \underline{R}(T)^N$. Whenever $r > p$, Schönhage's asymptotic sum inequality yields $\sum_{i=1}^p (n_i m_i k_i)^{\omega/3} \le r = \underline{R}(T)^N$; taking $N$-th roots and the supremum over such degenerations gives $V_{\omega/3}(T) \le \underline{R}(T)$, and since $V_\tau(T)$ is nondecreasing in $\tau$, $V_\tau(T) > \underline{R}(T)$ implies $\omega < 3\tau$. For the lower bound on the value, restrict $T^{\otimes N}$ to blocks of type $\alpha$, apply the progression-free hashing to obtain about $2^{N \min H(\alpha_\cdot) - o(N)}$ independent block triples, each a product of constituents and hence a matrix multiplication tensor of volume $\prod_c \mathrm{vol}(c)^{N\alpha(c)}$.
 
 ## Depends on
 
@@ -19,6 +19,7 @@ The first statement is the asymptotic sum inequality applied to the direct sums 
 
 ## Proof depends on
 
+- [Schönhage's asymptotic sum inequality](asymptotic-sum-inequality.md)
 - [Coppersmith–Winograd hashing with progression-free sets](salem-spencer-hashing.md)
 - [The Coppersmith–Winograd tensor has border rank q+2](cw-border-rank.md)
 - [Coppersmith–Winograd 1990 bound on the square exponent](../matrix-multiplication-exponent/coppersmith-winograd1990-upper.md)
