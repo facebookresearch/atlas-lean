@@ -29,6 +29,7 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import MathlibExt.AlgebraicGeometry.Curve.IsCurveOverOfTranscendental
 public import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluation
 public import MathlibExt.AlgebraicGeometry.Curve.RatFuncPrincipalDivisors
 public import MathlibExt.AlgebraicGeometry.Curve.RationalFunctionField
@@ -403,14 +404,15 @@ section Reciprocity
 
 variable [IsAlgClosed K] [DecidableEq (RatFunc K)]
 
-omit [DecidableEq (RatFunc K)] in
-theorem isRational_of_isAlgClosed (v : Place K (RatFunc K)) : v.IsRational :=
-  (Place.isRational_iff_deg_eq_one v).2 (deg_eq_one_of_isAlgClosed K v)
+-- Every place of `RatFunc K` is rational over an algebraically closed `K`: it has degree one.
+local notation "isRatR " v:max =>
+  Iff.mpr (Place.isRational_iff_deg_eq_one v) (IsCurveOver.deg_eq_one_of_isAlgClosed v)
 
 /-- Evaluation on a divisor of `RatFunc K`, every place being rational over an algebraically
 closed `K`. -/
 local notation "evalFunR " f:max D:max =>
-  CurveDivisor.evalFun f D (fun v _ => isRational_of_isAlgClosed v)
+  CurveDivisor.evalFun f D (fun v _ =>
+    Iff.mpr (Place.isRational_iff_deg_eq_one v) (IsCurveOver.deg_eq_one_of_isAlgClosed v))
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
 theorem algebraMap_const_ne_zero {c : K} (hc : c ≠ 0) : algebraMap K (RatFunc K) c ≠ 0 := by
@@ -430,7 +432,7 @@ theorem sum_ord_eq_zero {f : RatFunc K} (hf : f ≠ 0) :
   rw [← Finsupp.sum_single (principalDivisor hf), Finsupp.sum, map_sum] at h
   rw [← h]
   exact Finset.sum_congr rfl fun v _ => by
-    rw [Divisor.degree_single, principalDivisor_apply, deg_eq_one_of_isAlgClosed K v,
+    rw [Divisor.degree_single, principalDivisor_apply, IsCurveOver.deg_eq_one_of_isAlgClosed v,
       Nat.cast_one, mul_one]
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
@@ -455,7 +457,7 @@ theorem reciprocity_algebraMap_right {f : RatFunc K} (hf : f ≠ 0) {c : K} (hc 
     rw [principalDivisor_apply, v.ord_algebraMap, Finsupp.coe_zero, Pi.zero_apply]
   rw [hzero, CurveDivisor.evalFun_zero, CurveDivisor.evalFun_def,
     Finset.prod_attach (principalDivisor hf).support fun v =>
-      v.evalAt (isRational_of_isAlgClosed v) (algebraMap K (RatFunc K) c) ^ principalDivisor hf v,
+      v.evalAt (isRatR v) (algebraMap K (RatFunc K) c) ^ principalDivisor hf v,
     Finset.prod_congr rfl fun v _ => by rw [Place.evalAt_algebraMap], zpow_sum_eq_prod hc]
   rw [show ∑ v ∈ (principalDivisor hf).support, principalDivisor hf v
       = ∑ v ∈ (principalDivisor hf).support, v.ord f from
@@ -477,14 +479,14 @@ theorem reciprocity_mul_right {f g₁ g₂ : RatFunc K} (hf : f ≠ 0) (hg₁ : 
     rw [principalDivisor_apply, Finsupp.add_apply, principalDivisor_apply,
       principalDivisor_apply, v.ord_mul hg₁ hg₂]
   rw [hsplit,
-    CurveDivisor.evalFun_add f (fun v _ => isRational_of_isAlgClosed v)
-      (fun v _ => isRational_of_isAlgClosed v) (fun v _ => isRational_of_isAlgClosed v)
+    CurveDivisor.evalFun_add f (fun v _ => isRatR v)
+      (fun v _ => isRatR v) (fun v _ => isRatR v)
       (fun v hv hvD => v.evalAt_ne_zero hv hf
         ((hd₁ v).resolve_right (ord_ne_zero_of_mem_support hg₁ hvD)))
       (fun v hv hvD => v.evalAt_ne_zero hv hf
         ((hd₂ v).resolve_right (ord_ne_zero_of_mem_support hg₂ hvD))),
     h₁, h₂,
-    ← CurveDivisor.evalFun_mul (fun v _ => isRational_of_isAlgClosed v)
+    ← CurveDivisor.evalFun_mul (fun v _ => isRatR v)
       (fun v hv => v.mem_of_ord_nonneg hg₁
         ((hd₁ v).resolve_left (ord_ne_zero_of_mem_support hf hv)).ge)
       (fun v hv => v.mem_of_ord_nonneg hg₂
@@ -513,8 +515,8 @@ theorem reciprocity_zpow_right {f g : RatFunc K} (hf : f ≠ 0) (hg : g ≠ 0) (
     ext v
     rw [principalDivisor_apply, Finsupp.smul_apply, principalDivisor_apply, v.ord_zpow,
       smul_eq_mul]
-  rw [hsplit, CurveDivisor.evalFun_zsmul f _ n fun v _ => isRational_of_isAlgClosed v, h,
-    ← CurveDivisor.evalFun_zpow_left hg n (fun v _ => isRational_of_isAlgClosed v)
+  rw [hsplit, CurveDivisor.evalFun_zsmul f _ n fun v _ => isRatR v, h,
+    ← CurveDivisor.evalFun_zpow_left hg n (fun v _ => isRatR v)
       (fun v hv => (hd v).resolve_left (ord_ne_zero_of_mem_support hf hv))]
 
 omit [DecidableEq (RatFunc K)] in
@@ -802,7 +804,7 @@ theorem reciprocity_linear (b : K) :
             (principalDivisor (zpow_ne_zero m hrne)) :=
       reciprocity_zpow_left hrne hLb m hd_r_Lb
         (crossRatio_reciprocity (fun h => hab h.symm) (fun h => ha₀b h.symm)
-          (fun v _ => isRational_of_isAlgClosed v) (fun v _ => isRational_of_isAlgClosed v))
+          (fun v _ => isRatR v) (fun v _ => isRatR v))
     have hih :
         evalFunR (f / (algebraMap K[X] (RatFunc K) (X - C a)
             / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m)

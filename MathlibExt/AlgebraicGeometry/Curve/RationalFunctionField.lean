@@ -13,18 +13,13 @@ Portions of this file are adapted from the following files of the FLT project
 for each `N` in:
 `FunctionField_exists_ratFuncAlgHom_apply_X_eq`;
 `FunctionField_finite_of_ratFuncAlgHom`;
-`RationalFunctionField_finite_setOf_ord_ne_zero`;
-`RationalFunctionField_exists_forall_ne_ofHeightOneSpectrum`;
-`RationalFunctionField_subsingleton_setOf_forall_ne_ofHeightOneSpectrum`;
 `RationalFunctionField_ord_ofHeightOneSpectrum_eq_neg_log`;
 `RationalFunctionField_ord_ofHeightOneSpectrum_of_span`;
 `RationalFunctionField_toValuationSubring_eq_of_forall_ne_ofHeightOneSpectrum`;
 `RationalFunctionField_ord_eq_neg_intDegree_of_forall_ne_ofHeightOneSpectrum`;
 `RationalFunctionField_deg_eq_one_of_forall_ne_ofHeightOneSpectrum`;
-`RationalFunctionField_degree_eq_zero_of_forall_eq_ord_algebraMap`;
 `RationalFunctionField_degree_eq_zero_of_forall_eq_ord`;
-`RationalFunctionField_hasPrincipalDivisors`;
-`RationalFunctionField_deg_eq_one_of_isAlgClosed`.
+`RationalFunctionField_hasPrincipalDivisors`.
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
@@ -44,21 +39,20 @@ module
 
 public import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceClassification
 import MathlibExt.AlgebraicGeometry.Curve.OrdEqNegLog
-import MathlibExt.AlgebraicGeometry.Curve.RatFuncNonFinitePlaceOrd
-import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceInftyDeg
 import MathlibExt.AlgebraicGeometry.Curve.RatFuncPrincipalDivisors
 
 /-!
 # Principal divisors of the rational function field
 
 The places of `RatFunc K` over `K` are the finite places attached to irreducible polynomials
-(`Curve/RatFuncPlaces`) and the place at infinity (`Curve/RatFuncPlaceInfty`). We show that the
-divisor of a nonzero rational function has degree zero
-(`AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord`;
-`Curve/RatFuncPrincipalDivisors` states this as `HasPrincipalDivisors K (RatFunc K)`), and that
-every place has degree one when `K` is algebraically closed. We also show that a field `F` finite
-over `RatFunc K` is finite over the image of any `K`-algebra map `RatFunc K → F`, and that over
-an algebraically closed `K` every nonconstant element of `F` is the image of `X` under such a map.
+(`Curve/RatFuncPlaces`) and the place at infinity (`Curve/RatFuncPlaceInfty`). We compute the
+order of a rational function at the finite place of a prime `(p)` through the valuation of `p`,
+and show that the divisor of a rational function has degree zero
+(`AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord`, from
+`HasPrincipalDivisors K (RatFunc K)` in `Curve/RatFuncPrincipalDivisors`). We also show that a
+field `F` finite over `RatFunc K` is finite over the image of any `K`-algebra map
+`RatFunc K → F`, and that over an algebraically closed `K` every nonconstant element of `F` is
+the image of `X` under such a map.
 -/
 
 @[expose] public section
@@ -245,42 +239,7 @@ theorem AlgebraicCurve.FunctionField.finite_of_ratFuncAlgHom {K F : Type*} [Fiel
     Module.Finite.of_surjective (Algebra.linearMap (RatFunc K) Kg) hsurj
   exact Module.Finite.trans Kg F
 
-namespace AlgebraicCurve
-
-namespace RationalFunctionField
-
-open IsDedekindDomain WithZero IsLocalRing
-
-variable {K : Type*} [Field K]
-
-theorem subsingleton_setOf_forall_ne_ofHeightOneSpectrum :
-    {v : Place K (RatFunc K) |
-      ∀ w : HeightOneSpectrum K[X], v ≠ Place.ofHeightOneSpectrum w}.Subsingleton := by
-  classical
-  intro v hv v' hv'
-  rcases eq_ofHeightOneSpectrum_or_eq_placeInfty v with ⟨w, h⟩ | h
-  · exact absurd h (hv w)
-  rcases eq_ofHeightOneSpectrum_or_eq_placeInfty v' with ⟨w, h'⟩ | h'
-  · exact absurd h' (hv' w)
-  rw [h, h']
-
-end RationalFunctionField
-
-end AlgebraicCurve
-
 open AlgebraicCurve IsDedekindDomain WithZero IsLocalRing
-
-theorem AlgebraicCurve.RationalFunctionField.exists_forall_ne_ofHeightOneSpectrum {K : Type*}
-    [Field K] : ∃ v : Place K (RatFunc K), ∀ w : IsDedekindDomain.HeightOneSpectrum (Polynomial K),
-    v ≠ Place.ofHeightOneSpectrum w := by
-  classical
-  refine ⟨RationalFunctionField.placeInfty K, fun w h => ?_⟩
-  refine RatFunc.adicValuation_not_isEquiv_infty_valuation w
-    ((Valuation.isEquiv_iff_valuationSubring _ _).mpr ?_)
-  have h2 := congrArg Place.toValuationSubring h
-  rw [RationalFunctionField.placeInfty_toValuationSubring,
-    Place.ofHeightOneSpectrum_toValuationSubring] at h2
-  exact h2.symm
 
 theorem AlgebraicCurve.RationalFunctionField.ord_ofHeightOneSpectrum_eq_neg_log {K : Type*} [Field
   K] (w : IsDedekindDomain.HeightOneSpectrum (Polynomial K)) {p : Polynomial K} (hp : p ≠ 0) (hw :
@@ -316,21 +275,3 @@ theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord {K 
   · obtain ⟨E, hE, hdeg⟩ :=
       (AlgebraicCurve.RationalFunctionField.hasPrincipalDivisors K).exists_divisor f hf
     rw [show D = E from Finsupp.ext fun v => (hD v).trans (hE v).symm, hdeg]
-
-theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord_algebraMap {K : Type*}
-    [Field K] (q : Polynomial K) : ∀ D : Divisor K (RatFunc K),
-    (∀ v : Place K (RatFunc K), D v = v.ord (algebraMap (Polynomial K) (RatFunc K) q)) →
-    Divisor.degree D = 0 :=
-  fun D hD => AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord D hD
-
-namespace AlgebraicCurve.RationalFunctionField
-
-variable (K : Type*) [Field K]
-
-theorem deg_eq_one_of_isAlgClosed [IsAlgClosed K] (v : Place K (RatFunc K)) : v.deg = 1 := by
-  classical
-  rcases eq_placeOfPoint_or_eq_placeInfty K v with ⟨a, rfl⟩ | rfl
-  · exact deg_placeOfPoint K a
-  · exact deg_placeInfty K
-
-end AlgebraicCurve.RationalFunctionField

@@ -68,7 +68,7 @@ theorem AlgebraicCurve.Place.isRational_of_isAlgClosed_of_finiteDimensional {K F
   let u : Place K (RatFunc K) := v.restrict (RatFunc K)
   have hu : u.IsRational :=
     (AlgebraicCurve.Place.isRational_iff_deg_eq_one u).2
-      (AlgebraicCurve.RationalFunctionField.deg_eq_one_of_isAlgClosed K u)
+      (AlgebraicCurve.IsCurveOver.deg_eq_one_of_isAlgClosed u)
   have hconst : ∀ {b : RatFunc K} (hb : algebraMap (RatFunc K) F b ∈ v.toValuationSubring),
       ∃ c : K, algebraMap K v.ResidueField c
         = IsLocalRing.residue _ (⟨algebraMap (RatFunc K) F b, hb⟩ : v.toValuationSubring) := by
@@ -276,7 +276,7 @@ theorem AlgebraicCurve.weilReciprocity (K F : Type*) [Field K] [IsAlgClosed K] [
     have hXg : @algebraMap (RatFunc K) F _ _ algφ RatFunc.X = g := hφ
     have hratF : ∀ v : Place K (RatFunc K), v.IsRational := fun v =>
       (AlgebraicCurve.Place.isRational_iff_deg_eq_one v).2
-        (AlgebraicCurve.RationalFunctionField.deg_eq_one_of_isAlgClosed K v)
+        (AlgebraicCurve.IsCurveOver.deg_eq_one_of_isAlgClosed v)
     have key := @AlgebraicCurve.weilReciprocity_algebraMap K (RatFunc K) F _ _ _ _ _ algφ stφ finφ
       sepφ _ _ (AlgebraicCurve.RationalFunctionField.weilReciprocity K) f RatFunc.X hf
       RatFunc.X_ne_zero Df Dg hDf (fun w => by rw [hDg w, ← hXg])
