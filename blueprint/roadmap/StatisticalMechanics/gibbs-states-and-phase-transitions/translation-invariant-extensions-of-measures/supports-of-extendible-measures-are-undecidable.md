@@ -4,13 +4,14 @@ No algorithm decides, given a finite set of colorings of a 2×2 box of ℤ², wh
 
 **Setting (Goldstein, Kuna, Lebowitz and Speer).** Let $\Omega$ be a finite set, $X = \Omega^{\mathbb Z^2}$ the configurations of the plane, and for $\Lambda \subset \mathbb Z^2$ let $X_\Lambda = \Omega^\Lambda$. A [probability measure](../../../Probability/foundations/probability-measures/is-probability-measure.md) $\mu_\Lambda$ on $X_\Lambda$ is *extendible* if there is a probability measure $\mu$ on $X$, invariant under all translations of $\mathbb Z^2$, whose marginal on $X_\Lambda$ is $\mu_\Lambda$. It is *locally translation invariant* (LTI) if for all $A, A' \subseteq \Lambda$ with $A'$ a translate of $A$, the marginal of $\mu_\Lambda$ on $X_{A'}$ is the translate of its marginal on $X_A$; this is necessary for extendibility. Fix $\Lambda$ to be a $2 \times 2$ box. A finite set $Y \subseteq X_\Lambda$ (for some finite $\Omega$) is a set of *tiles*, and $Y$ *tiles the plane* if some configuration in $X$ has its restriction to every $2 \times 2$ box in $Y$.
 
-**Theorem (Goldstein, Kuna, Lebowitz and Speer).** There is no algorithm that, given a set of tiles $Y \subseteq X_\Lambda$, decides whether there exists an extendible measure on $X_\Lambda$ with support $Y$. Equivalently, there is no algorithm that, given an LTI measure $\mu_\Lambda$ on $X_\Lambda$, decides whether some extendible measure on $X_\Lambda$ has the same support as $\mu_\Lambda$.
+**Theorem (Goldstein, Kuna, Lebowitz and Speer).** There is no algorithm that, given a set of tiles $Y \subseteq X_\Lambda$, decides whether there exists an extendible measure on $X_\Lambda$ with support $Y$. Equivalently, there is no algorithm that, given an LTI measure $\mu_\Lambda$ on $X_\Lambda$, decides whether some extendible measure on $X_\Lambda$ has the same support as $\mu_\Lambda$ (Corollary 21 of the source).
 
 The input is a finite set of tiles, not a measure: as the source notes, most measures $\mu_\Lambda$ are not computable and so cannot be given to an algorithm, and whether a given LTI measure is itself extendible is left without a precise undecidability statement. For $\Lambda$ an interval of $\mathbb Z$ the LTI condition is necessary and sufficient for extendibility, while for $\Lambda \subset \mathbb Z^d$ with $d \ge 2$ it is necessary but not sufficient.
 
 ## Depends on
 
 - [Probability measure](../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
