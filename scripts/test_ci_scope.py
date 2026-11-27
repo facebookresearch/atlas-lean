@@ -85,6 +85,7 @@ LEAN = [
 TOOL_TESTS = [
     "scripts/import_optimizer test_*.py",
     "scripts test_quality_eval.py",
+    "scripts test_quality_review.py",
     "scripts test_audit_parallel.py",
     "scripts test_formal_math_sync.py",
     "scripts test_public_references.py",

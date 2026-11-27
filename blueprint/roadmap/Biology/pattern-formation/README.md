@@ -18,5 +18,6 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Nonlocal multi-species advection–diffusion](nonlocal-multi-species-advection-diffusion/README.md)
 - [Reaction–diffusion on concentration-dependent growing domains](reaction-diffusion-on-concentration-dependent-growing-domains/README.md)
 - [Turing and wave instabilities in n-component systems](turing-and-wave-instabilities-in-n-component-systems/README.md)
+- [Turing instabilities for three interacting species](turing-instabilities-for-three-interacting-species/README.md)
 - [Velocity correlations in animal swarms](velocity-correlations-in-animal-swarms/README.md)
 - [Vertex models of epithelial tissues](vertex-models-of-epithelial-tissues/README.md)
