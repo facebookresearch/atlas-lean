@@ -25,3 +25,4 @@ Abelian varieties over fields and abelian schemes over general bases: duals and 
 - [Moduli of abelian varieties and their compactifications](moduli-and-compactifications/README.md)
 - [Stable Faltings height](stable-faltings-height/README.md)
 - [Gaudron–Rémond isogeny estimate](gaudron-r-mond-isogeny-estimate/README.md)
+- [Theta height](theta-height/README.md)
