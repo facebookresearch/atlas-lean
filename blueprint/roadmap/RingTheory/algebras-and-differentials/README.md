@@ -1,6 +1,6 @@
 # Étale algebras, norms and differentials
 
-Algebras over commutative rings: étale algebras and the trace form, norm and trace maps, Kähler differentials and derivations.
+Algebras over commutative rings: étale algebras and the trace form, norm and trace maps, Kähler differentials and derivations, the de Rham complex as a dg algebra, the Hochschild–Kostant–Rosenberg theorem, and the cotangent complex of a ring map.
 
 - [Algebra homomorphisms into an algebraically closed field](algebra-homomorphisms-into-an-algebraically-clos/README.md)
 - [Conormal bases from finite weakly regular sequences](conormal-bases-from-finite-weakly-regular-sequen/README.md)
@@ -29,3 +29,4 @@ Algebras over commutative rings: étale algebras and the trace form, norm and tr
 - [Surjectivity after localization at corresponding primes](local-ring-hom-surjective.md)
 - [A finitely generated commutative algebra over a Noetherian commutative ring is Noetherian](finitely-generated-algebra-noetherian.md)
 - [Discriminants under a change of basis](discriminant-change-of-basis.md)
+- [Finitely generated algebra](finitely-generated-algebra.md)

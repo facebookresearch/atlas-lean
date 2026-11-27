@@ -177,7 +177,7 @@ lemma ons_degreeFiberCoeff_eq_zero_of_eval_smul_eventually_zero
       ons_summable_norm_degreeFiberCoeff series weight hsum
   have hradius : (1 : ENNReal) ≤ p.radius := by
     apply p.le_radius_of_summable_norm
-    convert hcsum using 1 <;>
+    convert hcsum using 1;
       simp [p]
   have hradiusPos : 0 < p.radius :=
     lt_of_lt_of_le (by norm_num : (0 : ENNReal) < 1) hradius

@@ -13,6 +13,7 @@ public import MathlibExt.Analysis.Convex.DikinEllipsoid
 public import MathlibExt.Analysis.Convex.SelfConcordant
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import MathlibExt.Analysis.Convex.SelfConcordantBoundsOfDikinLtOne
+public import MathlibExt.Analysis.Convex.SelfConcordantDerivLeOfIsSelfConcordantBarrier
 
 /-!
 # Properties of self-concordant functions and barriers (wanted)
@@ -23,6 +24,8 @@ Programming*, lecture notes (2004), Sections 2.2 and 3.2, stated with the direct
 `MathlibExt.Analysis.Convex.SelfConcordant`; `|h|_x = (D²F(x)[h, h])^{1/2}` is the local norm.
 The bounds `bounds_of_dikin_lt_one` are in
 `MathlibExt.Analysis.Convex.SelfConcordantBoundsOfDikinLtOne`.
+The property `deriv_le_of_isSelfConcordantBarrier` is in
+`MathlibExt.Analysis.Convex.SelfConcordantDerivLeOfIsSelfConcordantBarrier`.
 -/
 
 @[expose] public section
@@ -32,15 +35,5 @@ open MathlibExt.Analysis.Convex.SelfConcordant
 namespace WantedExt.Analysis.Convex.SelfConcordantWanted
 
 export MathlibExt.Analysis.Convex.SelfConcordant (mem_of_dikin_lt_one)
-
-/-- **Semiboundedness of a self-concordant barrier.** If `F` is a `ϑ`-self-concordant barrier for
-`closure Q` (with interior `Q`), then `DF(x)[y - x] ≤ ϑ` for every `x ∈ Q` and every
-`y ∈ closure Q`. This is (3.6), item I of Section 3.2 of A. Nemirovski, *Interior Point
-Polynomial Time Methods in Convex Programming*, lecture notes (2004); it bounds the duality-type
-gap along the central path of path-following methods. -/
-theorem_wanted deriv_le_of_isSelfConcordantBarrier {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] [FiniteDimensional ℝ E] {F : E → ℝ} {Q : Set E} {ϑ : ℝ}
-    (hF : IsSelfConcordantBarrier F Q ϑ) {x y : E} (hx : x ∈ Q) (hy : y ∈ closure Q) :
-    deriv (fun t : ℝ => F (x + t • (y - x))) 0 ≤ ϑ
 
 end WantedExt.Analysis.Convex.SelfConcordantWanted
