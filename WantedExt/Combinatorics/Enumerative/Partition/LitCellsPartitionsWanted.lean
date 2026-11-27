@@ -50,15 +50,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Lit nodes of a partition.** The number of lit nodes of a partition $p$, drawn as a weakly
-increasing Ferrers diagram of nodes, is defined as the largest part of $p$ plus the number of
-parts of $p$ minus one; for the empty partition it is $0$.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Section 3, proof of Proposition 2. -/
-public def litNodesIncreasing {n : ℕ} (p : Nat.Partition n) : ℕ :=
-  p.parts.sup + p.parts.card - 1
-
 /-- **Lit nodes of a one-part partition.** For every natural number $n \ge 1$, the one-part
 partition $(n)$ of $n$ has exactly $n$ lit nodes.
 
@@ -84,21 +75,6 @@ Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on 
 Partitions*, INTEGERS 24 (2024), Article A56, Definition 1. -/
 public theorem trianglePartitionSeries_zero : trianglePartitionSeries 0 = 1 := by
   simp [trianglePartitionSeries, triangularQBinomial_zero_right]
-
-/-- **Generating function for lit nodes of weakly increasing diagrams.** Let
-$P(q) = \sum_{n \ge 0} p(n) q^n$ be the partition generating function, and let
-$N(q) \in \mathbb{Z}[[q]]$ be the power series whose coefficient of $q^n$ is the total number of
-lit nodes over all partitions of $n$ drawn as weakly increasing Ferrers diagrams of nodes. Then
-$$N(q) = 1 + P(q) \Bigl(\sum_{i \ge 1} \frac{2q^i}{1 - q^i} - 1\Bigr),$$
-where the sum converges coefficientwise.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Proposition 2, eq. (7)
-(`integers-2024-A56-prop-2`). -/
-public theorem_wanted litNodesIncreasing_generatingFunction :
-    mk (fun n => ∑ p : Nat.Partition n, (litNodesIncreasing p : ℤ)) =
-      1 + (mk fun n => (Fintype.card (Nat.Partition n) : ℤ)) *
-        (∑' i : ℕ, 2 * X ^ (i + 1) * invOfUnit (1 - X ^ (i + 1)) 1 - 1)
 
 /-- **Lit cells of weakly decreasing partitions with few parts.** Let $k$ and $s$ be natural
 numbers with $s \le k$. Write $\binom{M}{m}_q$ for the Gaussian binomial coefficient, and $t[s, i]$

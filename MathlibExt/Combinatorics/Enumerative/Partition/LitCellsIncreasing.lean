@@ -16,10 +16,21 @@ import Mathlib.Tactic.LinearCombination
 import MathlibExt.Combinatorics.Enumerative.Partition.Counting
 
 /-!
-# Lit cells of weakly increasing bargraphs
+# Lit cells and lit nodes of weakly increasing diagrams
 
 `litCellsIncreasing_generatingFunction` gives two Lambert series formulas for the
 total number of lit cells over the partitions of each size.
+`litNodesIncreasing_generatingFunction` gives the corresponding formula for lit nodes in
+Ferrers diagrams.
+
+## References
+
+* Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer Partitions*,
+  INTEGERS 24 (2024), Article A56, pp. 1–14, Section 2, equation (2), and Section 3,
+  Proposition 1, equation (5), and Proposition 2, equation (7).
+
+The lit-node proof reuses the coefficient count `coeff_total_parts` and the conjugation
+argument from `total_lit_cells`, both in this module.
 -/
 
 open PowerSeries
@@ -38,6 +49,15 @@ Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on 
 Partitions*, INTEGERS 24 (2024), Article A56, Section 3, proof of Proposition 1. -/
 public def litCellsIncreasing {n : ℕ} (p : Nat.Partition n) : ℕ :=
   p.parts.sup + p.parts.card - p.parts.dedup.card
+
+/-- **Lit nodes of a partition.** The number of lit nodes of a partition $p$, drawn as a weakly
+increasing Ferrers diagram of nodes, is defined as the largest part of $p$ plus the number of
+parts of $p$ minus one; for the empty partition it is $0$.
+
+Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
+Partitions*, INTEGERS 24 (2024), Article A56, Section 3, proof of Proposition 2. -/
+public def litNodesIncreasing {n : ℕ} (p : Nat.Partition n) : ℕ :=
+  p.parts.sup + p.parts.card - 1
 
 /-- **Lit cells of a one-part increasing bargraph.** For every natural number $n \ge 1$, the
 partition $(n)$ of $n$ with a single part has $n$ lit cells as a weakly increasing bargraph.
@@ -166,17 +186,19 @@ private theorem coeff_distinct_parts (n : ℕ) :
   exact h.unique (hasSum_sum fun p _ => hasSum_counts p.parts.dedup
     (fun hp => (p.parts_pos (Multiset.mem_dedup.mp hp)).false))
 
+private theorem sum_largest_parts_eq_sum_card (n : ℕ) :
+    ∑ p : Nat.Partition n, (p.parts.sup : ℤ) =
+      ∑ p : Nat.Partition n, (p.parts.card : ℤ) := by
+  simp_rw [← card_conjugate]
+  exact Equiv.sum_comp (Function.Involutive.toPerm _ Nat.Partition.conjugate_conjugate)
+    (fun p : Nat.Partition n => (p.parts.card : ℤ))
+
 private theorem total_lit_cells :
     mk (fun n => ∑ p : Nat.Partition n, (litCellsIncreasing p : ℤ)) =
       2 * (P * ∑' v, lambert v) - P * (X * invOfUnit (1 - X) 1) := by
   ext n
   rw [coeff_mk, map_sub, two_mul, map_add, coeff_total_parts, coeff_distinct_parts]
-  have hsup : ∑ p : Nat.Partition n, (p.parts.sup : ℤ) =
-      ∑ p : Nat.Partition n, (p.parts.card : ℤ) := by
-    simp_rw [← card_conjugate]
-    exact Equiv.sum_comp (Function.Involutive.toPerm _ Nat.Partition.conjugate_conjugate)
-      (fun p : Nat.Partition n => (p.parts.card : ℤ))
-  nth_rw 1 [← hsup]
+  nth_rw 1 [← sum_largest_parts_eq_sum_card n]
   rw [← sum_add_distrib, ← sum_sub_distrib]
   refine sum_congr rfl fun p _ => ?_
   have h := Multiset.card_le_card (Multiset.dedup_le p.parts)
@@ -222,6 +244,43 @@ public theorem litCellsIncreasing_generatingFunction :
   · rw [hasSum_weighted_lambert.tsum_eq, total_lit_cells]
     unfold P
     ring
+
+open Finset litCellsIncreasing_generatingFunction in
+/-- **Generating function for lit nodes of weakly increasing diagrams.** Let
+$P(q) = \sum_{n \ge 0} p(n) q^n$ be the partition generating function, and let
+$N(q) \in \mathbb{Z}[[q]]$ be the power series whose coefficient of $q^n$ is the total number of
+lit nodes over all partitions of $n$ drawn as weakly increasing Ferrers diagrams of nodes. Then
+$$N(q) = 1 + P(q) \Bigl(\sum_{i \ge 1} \frac{2q^i}{1 - q^i} - 1\Bigr),$$
+where the sum converges coefficientwise.
+
+Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
+Partitions*, INTEGERS 24 (2024), Article A56, Proposition 2, eq. (7)
+(`integers-2024-A56-prop-2`). -/
+public theorem litNodesIncreasing_generatingFunction :
+    mk (fun n => ∑ p : Nat.Partition n, (litNodesIncreasing p : ℤ)) =
+      1 + (mk fun n => (Fintype.card (Nat.Partition n) : ℤ)) *
+        (∑' i : ℕ, 2 * X ^ (i + 1) * invOfUnit (1 - X ^ (i + 1)) 1 - 1) := by
+  have htwo :
+      (∑' i : ℕ, 2 * X ^ (i + 1) * invOfUnit (1 - X ^ (i + 1)) 1 : ℤ⟦X⟧) =
+        2 * ∑' i, lambert i := by
+    simpa only [lambert, mul_assoc] using (summable_lambert.hasSum.mul_left 2).tsum_eq
+  rw [htwo]
+  change _ = 1 + P * (2 * (∑' i, lambert i) - 1)
+  rw [mul_sub, mul_one, two_mul, mul_add]
+  ext n
+  rw [coeff_mk, map_add, map_sub, map_add, coeff_total_parts, P, coeff_mk, coeff_one]
+  by_cases hn : n = 0
+  · subst n
+    simp [litNodesIncreasing]
+  rw [ite_eq_right hn, zero_add]
+  calc
+    _ = ∑ p : Nat.Partition n, ((p.parts.sup : ℤ) + p.parts.card - 1) := by
+      refine sum_congr rfl fun p _ => ?_
+      have hp : p.parts ≠ 0 := fun h => hn (by simpa [h] using p.parts_sum.symm)
+      have hcard := Multiset.card_pos.mpr hp
+      rw [litNodesIncreasing, Nat.cast_sub (by omega), Nat.cast_add, Nat.cast_one]
+    _ = _ := by
+      simp [sum_sub_distrib, sum_add_distrib, sum_largest_parts_eq_sum_card]
 
 end
 
