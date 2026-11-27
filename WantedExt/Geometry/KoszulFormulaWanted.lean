@@ -35,7 +35,7 @@ statements are unchanged. Source: J.-L. Koszul (course notes, 1950s); cf. do Car
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Geometry.MetricCompatibilityShared
+public import MathlibExt.Geometry.MetricCompatibilityShared
 public import Mathlib
 
 @[expose] public section
@@ -62,10 +62,12 @@ determined by the metric and Lie brackets via
 This is the **Koszul formula** — the explicit identity that *forces*
 uniqueness of the Levi-Civita connection.
 
-mathlib has the covariant-derivative / Riemannian-bundle / Lie-bracket
-machinery but no metric-compatibility predicate and no Koszul formula
-(`grep -ri Koszul`: no relevant hits). One helper definition
-(`IsMetricCompatible`, ~½ page) is added here.
+The pinned Mathlib has its own metric-compatibility predicate
+`CovariantDerivative.IsMetricCompatible` and proves the Koszul formula for the Levi-Civita
+connections in that sense (`CovariantDerivative.IsLeviCivitaConnection.apply_eq`), for vector
+fields differentiable at the point. The statement below uses instead the predicate
+`IsMetricCompatible`, imported from `MathlibExt.Geometry.MetricCompatibilityShared`, which asks
+for the product rule on smooth vector fields only.
 -/
 
 open scoped Manifold ContDiff Bundle Topology
