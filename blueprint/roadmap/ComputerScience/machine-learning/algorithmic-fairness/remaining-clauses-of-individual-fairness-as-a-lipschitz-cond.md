@@ -19,16 +19,20 @@ A sound expansion has separate pages for:
 3. **Linear program for total variation distance:** for finitely many individuals and outcomes and a loss that is linear in the outcome
    probabilities, computing a loss-minimizing classifier subject to the Lipschitz condition with total variation distance is a linear program
    of size polynomial in the numbers of individuals and outcomes (Dwork et al., Lemma 2.1).
-4. **Linear program for the relative $\ell_\infty$ distance:** the same holds for the Lipschitz condition $D_\infty(M(x), M(y)) \le d(x, y)$, where
-   $D_\infty(P, Q) = \sup_{a \in A} \log \max\{P(a)/Q(a), Q(a)/P(a)\}$ is the relative $\ell_\infty$ distance (Dwork et al., equation (6) and
-   Lemma 2.2); each such constraint is a family of linear inequalities $M(x)(a) \le e^{d(x, y)} M(y)(a)$.
+4. **Linear program for the relative $\ell_\infty$ distance:** the same holds for the Lipschitz condition $D_\infty(M(x), M(y)) \le d(x, y)$
+   (Dwork et al., Lemma 2.2). Here $D_\infty(P, Q)$, the relative $\ell_\infty$ distance of equation (6), is the least $b \ge 0$ such that
+   $P(a) \le e^b Q(a)$ and $Q(a) \le e^b P(a)$ for every outcome $a$, and $+\infty$ when no finite $b$ works. Equivalently, it is the largest
+   $\lvert \log(P(a)/Q(a)) \rvert$ over the outcomes, where an outcome with $P(a) = Q(a) = 0$ is ignored and an outcome where exactly one of
+   $P(a)$ and $Q(a)$ is zero gives $+\infty$. Deterministic classifiers are allowed: two equal point masses are at distance $0$, two different
+   ones at distance $+\infty$. Each constraint $D_\infty(M(x), M(y)) \le d(x, y)$ is the family of linear inequalities
+   $M(x)(a) \le e^{d(x, y)} M(y)(a)$ and $M(y)(a) \le e^{d(x, y)} M(x)(a)$ over the outcomes $a$.
 
 A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
 
 - Statement prerequisite of items 1 and 2: the statistical-parity bias, the maximum above (Dwork et al., Definition 3.2).
-- Statement prerequisites of item 4: the relative $\ell_\infty$ distance $D_\infty$ (Dwork et al., equation (6)) and the $(D_\infty, d)$-Lipschitz
-  condition (Dwork et al., Definition 2.1 with $D = D_\infty$). The Lipschitz condition linked under the dependencies uses total variation
-  distance, so it covers items 1 to 3 only.
+- Statement prerequisites of item 4: the relative $\ell_\infty$ distance $D_\infty$, with the convention of item 4 at zero probabilities (Dwork
+  et al., equation (6)), and the $(D_\infty, d)$-Lipschitz condition (Dwork et al., Definition 2.1 with $D = D_\infty$). The Lipschitz
+  condition linked under the dependencies uses total variation distance, so it covers items 1 to 3 only.
 
 ## Depends on
 
