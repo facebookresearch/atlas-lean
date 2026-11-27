@@ -131,8 +131,8 @@ A good expansion also states and links:
   500–503), 2.6.2 and Proposition 1 (pp. 503–504), §3.1, Definition 6, Corollary 3 and Lemma 21 (pp.
   509–512), §3.2, Definition 7, Lemma 25 and Theorems 5 and 6 (pp. 516–521).
 - J.-B. Bost, H. Gillet and C. Soulé, "Heights of projective varieties and positive Green forms", J.
-  Amer. Math. Soc. 7 (1994), 903–1027, archived publisher scan
-  <https://web.archive.org/web/20170815232351id_/https://www.ams.org/journals/jams/1994-07-04/S0894-0347-1994-1260106-X/S0894-0347-1994-1260106-X.pdf>:
+  Amer. Math. Soc. 7 (1994), 903–1027,
+  <https://doi.org/10.1090/S0894-0347-1994-1260106-X>:
   §2.1.2, pp. 932–933 (arithmetic Chern classes, $\hat c_1$ of a hermitian line bundle).
 - J.-M. Bismut, H. Gillet and C. Soulé, "Complex immersions and Arakelov geometry", in *The
   Grothendieck Festschrift I*, Birkhäuser, 1990, 249–331: §3 (j), pp. 305–307, and Theorem 3.22, p.

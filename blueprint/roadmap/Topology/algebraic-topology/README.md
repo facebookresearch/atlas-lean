@@ -28,3 +28,6 @@ Homotopy groups, singular homology and other algebraic invariants of spaces, wit
 - [Fundamental class of a closed R-oriented manifold](fundamental-class.md)
 - [R-orientation of a topological manifold](homological-orientation.md)
 - [Singular cohomology with coefficients in an abelian group](singular-cohomology-coefficients.md)
+- [Elementary expansions of cellular models of a Grothendieck coherator](grothendieck-elementary-expansion.md)
+- [Thomason model structures for positive strict finite dimensions and dimension omega](strict-higher-thomason-model-structures.md)
+- [Street nerve detection of Thomason weak equivalences in all supplied dimensions](street-nerve-detection-all-strict-dimensions.md)

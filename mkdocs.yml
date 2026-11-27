@@ -39,7 +39,8 @@ theme:
     code: JetBrains Mono
   # Readers with JavaScript browse with the explorer, which hides the theme's
   # header, sidebars and footer. For everyone else, theme/partials/nav.html
-  # lists Home, the sections above the page, its siblings and its entries.
+  # lists Home, the sections above the page, up to 50 of its siblings and its
+  # entries.
   features:
     - navigation.top
     - toc.follow
