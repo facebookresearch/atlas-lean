@@ -101,3 +101,7 @@
 - [Excess ratio of the initial concentrations](pfo-ratio.md)
 - [Error bound for the pseudo-first-order approximation](pfo-error-bound.md)
 - [Error bound normalized by the initial concentration](pfo-error-div-initial-bound.md)
+
+## Diffusion-controlled reactions
+
+- [Collins–Kimball rate constant for a partially absorbing sphere](debye-smoluchowski-diffusion-limited-rate-constant.md)
