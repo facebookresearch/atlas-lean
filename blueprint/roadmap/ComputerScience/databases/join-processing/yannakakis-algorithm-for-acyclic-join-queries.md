@@ -10,6 +10,8 @@ whether $q$ holds on a database $D$ in time $O(\|D\| \log \|D\| \cdot \|q\|)$.
 ## Depends on
 
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [One semijoin command](semijoin-step.md)
+- [Running a semijoin program](run-semijoins.md)
 
 ## Proof depends on
 

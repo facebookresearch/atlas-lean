@@ -15,6 +15,7 @@ Hence $q(D)$ is true if and only if $Q_r(D) \ne \emptyset$ for the root $r$, whi
 
 - [Answers of a conjunctive query](../../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Characterizations of acyclic database schemas](../../join-processing/characterizations-of-acyclic-database-schemas.md)
+- [One semijoin command](../../join-processing/semijoin-step.md)
 
 ## Sources
 

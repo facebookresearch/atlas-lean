@@ -12,6 +12,8 @@ exactly when $q(D)$ is true. It is the $1$-consistency procedure of
 
 - [Answers of a conjunctive query](../../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Characterizations of acyclic database schemas](../../join-processing/characterizations-of-acyclic-database-schemas.md)
+- [One semijoin command](../../join-processing/semijoin-step.md)
+- [Pairwise consistency](../../join-processing/pairwise-consistent.md)
 
 ## Proof depends on
 
