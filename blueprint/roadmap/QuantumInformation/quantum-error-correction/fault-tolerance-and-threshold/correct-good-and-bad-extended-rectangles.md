@@ -11,6 +11,7 @@ step is removed from it, and good and bad are decided for the truncated ExRec, r
 ## Depends on
 
 - [Fault-tolerant simulation of a circuit and extended rectangles](fault-tolerant-simulation-and-extended-rectangles.md)
+- [The $r$-filter and the ideal decoder](r-filter-and-ideal-decoder.md)
 
 ## Sources
 

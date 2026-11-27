@@ -17,6 +17,7 @@ ExRecs are handled in the same way; for a truncated ExRec one may insert a fault
 - [Fault-tolerant error-correction gadget](fault-tolerant-error-correction-gadget.md)
 - [Fault-tolerant preparation gadget](fault-tolerant-preparation-gadget.md)
 - [Fault-tolerant measurement gadget](fault-tolerant-measurement-gadget.md)
+- [The $r$-filter and the ideal decoder](r-filter-and-ideal-decoder.md)
 
 ## Sources
 

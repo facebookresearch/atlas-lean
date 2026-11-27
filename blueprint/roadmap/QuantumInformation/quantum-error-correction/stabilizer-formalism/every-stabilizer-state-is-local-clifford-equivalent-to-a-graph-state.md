@@ -13,6 +13,7 @@ $Z' X'^{-1}$ with zero diagonal.
 
 - [Graph state](graph-state.md)
 - [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md)
+- [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 
 ## Proof depends on
 

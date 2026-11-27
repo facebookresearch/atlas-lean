@@ -7,7 +7,7 @@ product of at most $5l$ elements of $\mathcal{G}$: approximate $U$ by $U'$, deco
 $\varepsilon'$ of $I$, as an approximate balanced group commutator $V W V^{*} W^{*}$, approximate $V$ and $W$ by products
 $\tilde V$ and $\tilde W$ (with $\tilde V^{*}$, $\tilde W^{*}$ obtained by reversing and inverting, using that
 $\mathcal{G}$ is closed under inverses), and return $\tilde V \tilde W \tilde V^{*} \tilde W^{*} U'$. Iterating from an
-$\varepsilon_0$-net with $\varepsilon_0 < 1/c^2$ gives $\varepsilon_n = c^{-2} (c^2 \varepsilon_0)^{(3/2)^n}$ with
+$\varepsilon_0$-net with $\varepsilon_0 \le \varepsilon_2$ and $\varepsilon_0 < 1/c^2$ gives $\varepsilon_n = c^{-2} (c^2 \varepsilon_0)^{(3/2)^n}$ with
 $l_n = 5^n l_0$, hence length $O(\log^{\ln 5/\ln(3/2)}(1/\varepsilon))$ for accuracy $\varepsilon$.
 
 ## Depends on

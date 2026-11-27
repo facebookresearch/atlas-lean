@@ -14,6 +14,7 @@ path, which has [at least $L$ edges](homologically-nontrivial-cycles-on-the-toru
 ## Depends on
 
 - [Minimum-weight decoding of the toric code](minimum-weight-decoding-of-the-toric-code.md)
+- [Toric code](toric-code.md)
 
 ## Proof depends on
 

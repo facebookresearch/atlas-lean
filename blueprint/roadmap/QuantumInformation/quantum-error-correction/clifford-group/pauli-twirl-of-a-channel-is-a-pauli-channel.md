@@ -23,6 +23,7 @@ $(-1)^{\omega(P, Q) + \omega(P', Q)}$, which averages to zero over $Q$ unless $P
 
 - [Pauli operators are orthogonal for the trace inner product](../stabilizer-formalism/pauli-operators-form-an-orthogonal-basis.md)
 - [Pauli operators commute exactly when their symplectic product vanishes](../stabilizer-formalism/pauli-operators-commute-iff-symplectic-product-vanishes.md)
+- [Symplectic product of Pauli operators](../stabilizer-formalism/symplectic-product-of-pauli-operators.md)
 
 ## Sources
 

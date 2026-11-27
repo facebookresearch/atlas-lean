@@ -19,10 +19,6 @@ unitaries induce only finitely many distinct operators on the code.
 
 - [The logical unitaries in a compact Lie group form a Lie subgroup](logical-unitaries-in-a-lie-group-form-a-lie-subgroup.md)
 
-## Proof depends on
-
-- [The logical unitaries in a compact Lie group form a Lie subgroup](logical-unitaries-in-a-lie-group-form-a-lie-subgroup.md)
-
 ## Sources
 
 - B. Eastin and E. Knill, *Restrictions on transversal encoded quantum gate sets*, Phys. Rev. Lett. 102 (2009), 110502, arXiv:0811.4262, proof of Theorem 1, which leaves the global phase implicit.

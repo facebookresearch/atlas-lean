@@ -1,8 +1,8 @@
 # A fault-tolerant simulation with only good extended rectangles is exact
 
 Let $C'$ be the [fault-tolerant simulation](fault-tolerant-simulation-and-extended-rectangles.md) of a circuit $C$, with
-some arrangement of faults in which every extended rectangle is good. Then the output distribution of $C'$ equals the output
-distribution of $C$. Proof: create ideal decoders at the measurement locations using their correctness, push them to the
+some arrangement of faults in which every extended rectangle is good. Then, for a circuit $C$ that ends by measuring its outputs, the distribution of the final measurement outcomes of $C'$
+equals that of $C$. Proof: create ideal decoders at the measurement locations using their correctness, push them to the
 left through every gate and wait ExRec by correctness, and remove them at the preparation locations; what remains is $C$.
 
 ## Depends on
