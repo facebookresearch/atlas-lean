@@ -52,6 +52,9 @@ on its own line. So the uniqueness statement `bc99_bk_from_reachesNbr` is vacuou
 
 @[expose] public section
 
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
+
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
 open StatMech StatMech.Lattice StatMech.ConfigSpace
@@ -94,7 +97,7 @@ lemma bc99_close_a_of_reachesNbr
 lemma bc99_bk_from_reachesNbr
     (μ : Measure (ConfigSpace (Sym2 (Site d)))) [IsProbabilityMeasure μ]
     (hfe : HasFiniteEnergyMerge μ)
-    (hprob0 : μ {ω | bc89_GenuineTrif d ω 0} = 0)
+    (hprob0 : μ {ω | IsEncounterPoint d ω 0} = 0)
     (h : ∀ n : ℕ, bc56_BoxClusterReachesNbr d n) :
     μ {ω | numInfiniteClusters d ω = ⊤} = 0 :=
   bc98_bk_from_boxAttach μ hfe hprob0 (fun n => bc99_texBoxAttach_of_reachesNbr (h n))

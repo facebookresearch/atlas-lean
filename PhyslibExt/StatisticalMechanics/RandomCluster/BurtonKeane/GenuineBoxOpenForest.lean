@@ -23,20 +23,18 @@ its degree three and the classical trifurcation count is at most the boundary si
 
 ## i. Overview
 
-For a classical trifurcation (`bc89_GenuineTrif`) whose infinite arms all start inside `B_n`, the
+For a classical trifurcation (`IsEncounterPoint`) whose infinite arms all start inside `B_n`, the
 spanning forest of the open box (`cfc_F`) still has degree at least three at the trifurcation. This
-gives a box open forest and the counting bound for classical trifurcations. The file also shows that
-this notion agrees with the canonical one and that the line configuration `bc60_upperLines` has an
-open forest for the classical count.
+gives a box open forest and the counting bound for classical trifurcations. The line configuration
+`bc60_upperLines` has an open forest for the classical count.
 
 The trifurcation notion here is the classical one: three open neighbours whose clusters stay
-infinite and pairwise disjoint after the centre is removed (`bc89_GenuineTrif`). For that notion the
+infinite and pairwise disjoint after the centre is removed (`IsEncounterPoint`). For that notion the
 counting bound is the classical deterministic Burton–Keane estimate; results that assume a
 certificate for every configuration remain conditional on it.
 
 ## ii. Key results
 
-- `bc90_genuineTrif_iff_canonical` : classical and canonical trifurcations agree
 - `bc90_spanForest_preserves_genuineTrif_deg3` : the box spanning forest keeps degree three
 - `bc90_genuineTcount_le_boundary_of_genuine_armsInBox` : the classical count is at most the
   boundary size
@@ -76,26 +74,10 @@ variable {d : ℕ}
 
 /-! ## A. Results -/
 
-lemma bc90_genuineTrif_iff_canonical (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) :
-    bc89_GenuineTrif d ω x ↔ IsEncounterPoint d ω x := by
-  constructor
-  · rintro ⟨a₁, a₂, a₃, hne, _hnx, hadj, hinf, hsep⟩
-    exact ⟨a₁, a₂, a₃, hne, hadj, hinf, hsep⟩
-  · rintro ⟨a₁, a₂, a₃, hne, hadj, hinf, hsep⟩
-    exact ⟨a₁, a₂, a₃, hne,
-      ⟨((openSubgraph d ω).ne_of_adj hadj.1).symm,
-       ((openSubgraph d ω).ne_of_adj hadj.2.1).symm,
-       ((openSubgraph d ω).ne_of_adj hadj.2.2).symm⟩,
-      hadj, hinf, hsep⟩
-
-lemma bc90_canonical_of_genuineTrif (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
-    (h : bc89_GenuineTrif d ω x) : IsEncounterPoint d ω x :=
-  (bc90_genuineTrif_iff_canonical ω x).mp h
-
 open Classical in
 lemma bc90_spanForest_preserves_genuineTrif_deg3 (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) {x : Site d} (hxbox : x ∈ box d n)
-    (hgen : bc89_GenuineTrif d ω x)
+    (hgen : IsEncounterPoint d ω x)
     (harmbox_x : ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite →
       a ∈ box d n) :
     ∃ c : Fin 3 → Site d,
@@ -105,7 +87,9 @@ lemma bc90_spanForest_preserves_genuineTrif_deg3 (ω : ConfigSpace (Sym2 (Site d
        ¬ Connected d (removeSite x ω) (c 0) (c 2) ∧
        ¬ Connected d (removeSite x ω) (c 1) (c 2)) := by
   classical
-  obtain ⟨a₁, a₂, a₃, hne, hnx, hadj3, hinf3, hsep3⟩ := hgen
+  obtain ⟨a₁, a₂, a₃, hne, hadj3, hinf3, hsep3⟩ := hgen
+  have hnx : a₁ ≠ x ∧ a₂ ≠ x ∧ a₃ ≠ x :=
+    ⟨hadj3.1.ne.symm, hadj3.2.1.ne.symm, hadj3.2.2.ne.symm⟩
   set c0 : Fin 3 → Site d := ![a₁, a₂, a₃] with hc0
   have hadj0 : ∀ i, (openSubgraph d ω).Adj x (c0 i) := by
     intro i; fin_cases i
@@ -138,7 +122,7 @@ lemma bc90_spanForest_preserves_genuineTrif_deg3 (ω : ConfigSpace (Sym2 (Site d
 open Classical in
 lemma bc90_spanForest_subtype_deg3 (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n) {x : Site d} (hxbox : x ∈ box d n)
-    (hgen : bc89_GenuineTrif d ω x)
+    (hgen : IsEncounterPoint d ω x)
     (harmbox_x : ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite →
       a ∈ box d n)
     [DecidableRel (cfc_F ω n).Adj] :
@@ -167,33 +151,29 @@ lemma bc90_spanForest_subtype_deg3 (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
 
 lemma bc90_boxOpenForest_of_genuine_armsInBox (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → bc89_GenuineTrif d ω x)
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
       ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n)
     (hexists : ∃ x, x ∈ box d n ∧ IsTrifurcation d ω x) :
     bst_BoxOpenForest ω n := by
-  have hcanon' : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x :=
-    fun x hx htri => bc90_canonical_of_genuineTrif ω x (hcanon x hx htri)
   have hsfa : sfa_ArmForestReaching ω n :=
-    cfc_armForestReaching_of_canonical_armsInBox ω n hn hcanon' harmbox hexists
+    cfc_armForestReaching_of_canonical_armsInBox ω n hn hcanon harmbox hexists
   exact spc_boxOpenForest_of_spanForestArms ω n (sfa_spanForestArms_of_armForestReaching ω n hsfa)
 
 lemma bc90_Tcount_le_boundary_of_genuine_armsInBox (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → bc89_GenuineTrif d ω x)
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
       ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n) :
     Tcount d ω n ≤ boxSV_boundaryCard d n := by
-  have hcanon' : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x :=
-    fun x hx htri => bc90_canonical_of_genuineTrif ω x (hcanon x hx htri)
-  exact cfc_Tcount_le_boundary_of_canonical ω n hn hcanon' harmbox
+  exact cfc_Tcount_le_boundary_of_canonical ω n hn hcanon harmbox
 
 lemma bc90_genuineTcount_le_boundary_of_genuine_armsInBox (ω : ConfigSpace (Sym2 (Site d)))
     (n : ℕ) (hn : 1 ≤ n)
-    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → bc89_GenuineTrif d ω x)
+    (hcanon : ∀ x, x ∈ box d n → IsTrifurcation d ω x → IsEncounterPoint d ω x)
     (harmbox : ∀ x, x ∈ box d n → IsTrifurcation d ω x →
       ∀ a, (openSubgraph d ω).Adj x a → (cluster d (removeSite x ω) a).Infinite → a ∈ box d n) :
-    bc89_genuineTcount ω n ≤ boxSV_boundaryCard d n :=
+    bc48_Tcount_classical d ω n ≤ boxSV_boundaryCard d n :=
   le_trans (bc89_genuineTcount_le_Tcount ω n)
     (bc90_Tcount_le_boundary_of_genuine_armsInBox ω n hn hcanon harmbox)
 
@@ -206,38 +186,38 @@ lemma bc90_harmbox_free_of_interior (ω : ConfigSpace (Sym2 (Site d))) {n : ℕ}
   exact (cfc_neighbour_outside_box_imp_boundary hn hxint' hlat hnot) hxint
 
 lemma bc90_upperLines_boxOpenForest_count_free (n : ℕ) :
-    bc89_genuineTcount bc60_upperLines n = 0 ∧
-    bc89_genuineTcount bc60_upperLines n ≤ boxSV_boundaryCard 2 n :=
+    bc48_Tcount_classical 2 bc60_upperLines n = 0 ∧
+    bc48_Tcount_classical 2 bc60_upperLines n ≤ boxSV_boundaryCard 2 n :=
   ⟨bc89_upperLines_genuineTcount_zero n, bc89_upperLines_genuine_le_boundary n⟩
 
 /-! ## B. Summary -/
 
 lemma bc90_status :
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ), 1 ≤ n → ∀ {x : Site 2}, x ∈ box 2 n →
-      bc89_GenuineTrif 2 ω x →
+      IsEncounterPoint 2 ω x →
       (∀ a, (openSubgraph 2 ω).Adj x a → (cluster 2 (removeSite x ω) a).Infinite → a ∈ box 2 n) →
       ∃ c : Fin 3 → Site 2, (c 0 ≠ c 1 ∧ c 0 ≠ c 2 ∧ c 1 ≠ c 2) ∧ (∀ i, (cfc_T ω n).Adj x (c i)) ∧
         (¬ Connected 2 (removeSite x ω) (c 0) (c 1) ∧ ¬ Connected 2 (removeSite x ω) (c 0) (c 2) ∧
          ¬ Connected 2 (removeSite x ω) (c 1) (c 2))) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ), 1 ≤ n → ∀ {x : Site 2} (hxbox : x ∈ box 2 n),
-      bc89_GenuineTrif 2 ω x →
+      IsEncounterPoint 2 ω x →
       (∀ a, (openSubgraph 2 ω).Adj x a → (cluster 2 (removeSite x ω) a).Infinite → a ∈ box 2 n) →
       ∀ [DecidableRel (cfc_F ω n).Adj],
         3 ≤ (cfc_F ω n).degree ⟨x, box_subset_succ 2 n hxbox⟩) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ), 1 ≤ n →
-      (∀ x, x ∈ box 2 n → IsTrifurcation 2 ω x → bc89_GenuineTrif 2 ω x) →
+      (∀ x, x ∈ box 2 n → IsTrifurcation 2 ω x → IsEncounterPoint 2 ω x) →
       (∀ x, x ∈ box 2 n → IsTrifurcation 2 ω x →
         ∀ a, (openSubgraph 2 ω).Adj x a → (cluster 2 (removeSite x ω) a).Infinite → a ∈ box 2 n) →
       (∃ x, x ∈ box 2 n ∧ IsTrifurcation 2 ω x) → bst_BoxOpenForest ω n) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ), 1 ≤ n →
-      (∀ x, x ∈ box 2 n → IsTrifurcation 2 ω x → bc89_GenuineTrif 2 ω x) →
+      (∀ x, x ∈ box 2 n → IsTrifurcation 2 ω x → IsEncounterPoint 2 ω x) →
       (∀ x, x ∈ box 2 n → IsTrifurcation 2 ω x →
         ∀ a, (openSubgraph 2 ω).Adj x a → (cluster 2 (removeSite x ω) a).Infinite → a ∈ box 2 n) →
       Tcount 2 ω n ≤ boxSV_boundaryCard 2 n) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ), 1 ≤ n → ∀ {x : Site 2}, x ∈ box 2 (n - 1) →
       ∀ {a : Site 2}, (openSubgraph 2 ω).Adj x a → a ∈ box 2 n) ∧
-    (∀ n : ℕ, bc89_genuineTcount bc60_upperLines n = 0 ∧
-      bc89_genuineTcount bc60_upperLines n ≤ boxSV_boundaryCard 2 n) := by
+    (∀ n : ℕ, bc48_Tcount_classical 2 bc60_upperLines n = 0 ∧
+      bc48_Tcount_classical 2 bc60_upperLines n ≤ boxSV_boundaryCard 2 n) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro ω n hn x hxbox hgen harmbox_x
     exact bc90_spanForest_preserves_genuineTrif_deg3 ω n hn hxbox hgen harmbox_x

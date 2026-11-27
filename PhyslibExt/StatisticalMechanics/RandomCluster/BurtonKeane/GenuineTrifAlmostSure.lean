@@ -17,13 +17,13 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CountBoo
 /-!
 # Classical trifurcations
 
-The classical trifurcation notion: three open neighbours whose clusters stay infinite and pairwise
-disjoint after the centre is removed.
+Results on classical trifurcations (main's `IsEncounterPoint`: three open neighbours whose
+clusters stay infinite and pairwise disjoint after the centre is removed) and their count.
 
 ## i. Overview
 
-`bc89_GenuineTrif d ω x` is the trifurcation of Burton and Keane. It implies `IsTrifurcation`, so
-`bc89_genuineTcount ≤ Tcount`, and it forces open degree at least three. The line configuration
+`IsEncounterPoint d ω x` is the trifurcation of Burton and Keane. It implies `IsTrifurcation`, so
+`bc48_Tcount_classical ≤ Tcount`, and it forces open degree at least three. The line configuration
 `bc60_upperLines` has no classical trifurcation, although every site on its first line is a
 trifurcation in the weak sense; so the two counts can differ by the whole line.
 
@@ -37,9 +37,8 @@ trifurcation in the weak sense; so the two counts can differ by the whole line.
 
 ## iii. Table of contents
 
-- A. Definitions
-- B. Results
-- C. Summary
+- A. Results
+- B. Summary
 
 ## iv. References
 
@@ -49,6 +48,9 @@ trifurcation in the weak sense; so the two counts can differ by the whole line.
 -/
 
 @[expose] public section
+
+open MathlibExt.Probability.Percolation.BurtonKeaneWanted
+  (IsEncounterPoint)
 
 open Set SimpleGraph Finset MeasureTheory Filter Topology
 open scoped BigOperators ENNReal NNReal
@@ -65,59 +67,19 @@ open StatMech.Percolation
 
 variable {d : ℕ}
 
-/-! ## A. Definitions -/
-
-/-- The classical trifurcation of Burton and Keane at `x`: three distinct open neighbours of `x`
-whose clusters, after `x` is removed, are infinite and pairwise distinct. -/
-def bc89_GenuineTrif (d : ℕ) (ω : ConfigSpace (Sym2 (Site d))) (x : Site d) : Prop :=
-  ∃ a₁ a₂ a₃ : Site d,
-    (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
-    (a₁ ≠ x ∧ a₂ ≠ x ∧ a₃ ≠ x) ∧
-    ((openSubgraph d ω).Adj x a₁ ∧ (openSubgraph d ω).Adj x a₂ ∧ (openSubgraph d ω).Adj x a₃) ∧
-    ((cluster d (removeSite x ω) a₁).Infinite ∧ (cluster d (removeSite x ω) a₂).Infinite ∧
-      (cluster d (removeSite x ω) a₃).Infinite) ∧
-    (¬ Connected d (removeSite x ω) a₁ a₂ ∧
-      ¬ Connected d (removeSite x ω) a₁ a₃ ∧
-      ¬ Connected d (removeSite x ω) a₂ a₃)
-
-/-- The classical trifurcations in the box `B_n`. -/
-noncomputable def bc89_genuineTrifFinset (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
-    Finset (Site d) := by
-  classical
-  exact (boxFinsetBK d n).filter (fun x => bc89_GenuineTrif d ω x)
-
-/-- The number of classical trifurcations in the box `B_n`. -/
-noncomputable def bc89_genuineTcount (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) : ℕ :=
-  (bc89_genuineTrifFinset ω n).card
-
-/-! ## B. Results -/
+/-! ## A. Results -/
 
 lemma bc89_genuine_imp_isTrif (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
-    (h : bc89_GenuineTrif d ω x) : IsTrifurcation d ω x := by
-  obtain ⟨a₁, a₂, a₃, hne, hnx, hadj, hinf, hsep⟩ := h
-  refine ⟨a₁, a₂, a₃, hne, ⟨?_, ?_, ?_⟩, ⟨?_, ?_, ?_⟩, hsep⟩
-  · exact hadj.1.reachable
-  · exact hadj.2.1.reachable
-  · exact hadj.2.2.reachable
-  · exact Set.Infinite.mono (cluster_mono (removeSite_le x ω) a₁) hinf.1
-  · exact Set.Infinite.mono (cluster_mono (removeSite_le x ω) a₂) hinf.2.1
-  · exact Set.Infinite.mono (cluster_mono (removeSite_le x ω) a₃) hinf.2.2
+    (h : IsEncounterPoint d ω x) : IsTrifurcation d ω x :=
+  ctc2_isTrifurcation_of_canonical h
 
 lemma bc89_genuineTrifFinset_subset (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
-    bc89_genuineTrifFinset ω n ⊆ tfc_trifFinset ω n := by
-  classical
-  intro x hx
-  rw [bc89_genuineTrifFinset, Finset.mem_filter] at hx
-  rw [tfc_mem_trifFinset]
-  refine ⟨?_, bc89_genuine_imp_isTrif ω x hx.2⟩
-  have := hx.1
-  rw [boxFinsetBK, Set.Finite.mem_toFinset] at this
-  exact this
+    bc48_classicalTrifFinset ω n ⊆ tfc_trifFinset ω n :=
+  bc48_classicalTrifFinset_subset ω n
 
 lemma bc89_genuineTcount_le_Tcount (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ) :
-    bc89_genuineTcount ω n ≤ Tcount d ω n := by
-  rw [bc89_genuineTcount, ← tfc_trifFinset_card]
-  exact Finset.card_le_card (bc89_genuineTrifFinset_subset ω n)
+    bc48_Tcount_classical d ω n ≤ Tcount d ω n :=
+  bc48_Tcount_classical_le_Tcount ω n
 
 lemma bc89_removeSite_no_open_nbr (x y : Site d) (ω : ConfigSpace (Sym2 (Site d))) :
     ¬ (openSubgraph d (removeSite x ω)).Adj x y := by
@@ -146,10 +108,10 @@ lemma bc89_center_removeSite_cluster_finite (x : Site d) (ω : ConfigSpace (Sym2
   exact fun h => h (Set.finite_singleton x)
 
 lemma bc89_three_open_nbrs_of_genuine (ω : ConfigSpace (Sym2 (Site d))) (x : Site d)
-    (h : bc89_GenuineTrif d ω x) :
+    (h : IsEncounterPoint d ω x) :
     ∃ a₁ a₂ a₃ : Site d, (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
       (openSubgraph d ω).Adj x a₁ ∧ (openSubgraph d ω).Adj x a₂ ∧ (openSubgraph d ω).Adj x a₃ := by
-  obtain ⟨a₁, a₂, a₃, hne, _, hadj, _, _⟩ := h
+  obtain ⟨a₁, a₂, a₃, hne, hadj, _, _⟩ := h
   exact ⟨a₁, a₂, a₃, hne, hadj⟩
 
 
@@ -213,25 +175,26 @@ lemma bc89_upperLines_no_three_open_nbrs (x a₁ a₂ a₃ : Site 2)
   · exact hne.1 (hsite_eq a₁ a₂ (by omega) (by omega))
 
 lemma bc89_upperLines_not_genuineTrif (x : Site 2) :
-    ¬ bc89_GenuineTrif 2 bc60_upperLines x := by
+    ¬ IsEncounterPoint 2 bc60_upperLines x := by
   intro h
   obtain ⟨a₁, a₂, a₃, hne, hadj⟩ := bc89_three_open_nbrs_of_genuine bc60_upperLines x h
   exact bc89_upperLines_no_three_open_nbrs x a₁ a₂ a₃ hne hadj
 
 lemma bc89_upperLines_genuineTcount_zero (n : ℕ) :
-    bc89_genuineTcount bc60_upperLines n = 0 := by
+    bc48_Tcount_classical 2 bc60_upperLines n = 0 := by
   classical
-  rw [bc89_genuineTcount, bc89_genuineTrifFinset, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  rw [bc48_Tcount_classical, bc48_classicalTrifFinset, Finset.card_eq_zero,
+    Finset.filter_eq_empty_iff]
   intro x _
   exact bc89_upperLines_not_genuineTrif x
 
 lemma bc89_upperLines_genuine_le_boundary (n : ℕ) :
-    bc89_genuineTcount bc60_upperLines n ≤ boxSV_boundaryCard 2 n := by
+    bc48_Tcount_classical 2 bc60_upperLines n ≤ boxSV_boundaryCard 2 n := by
   rw [bc89_upperLines_genuineTcount_zero]; exact Nat.zero_le _
 
 lemma bc89_genuineTcount_le_boundary_of_openForest (ω : ConfigSpace (Sym2 (Site d))) (n : ℕ)
     (h : bst_BoxOpenForest ω n) :
-    bc89_genuineTcount ω n ≤ boxSV_boundaryCard d n :=
+    bc48_Tcount_classical d ω n ≤ boxSV_boundaryCard d n :=
   le_trans (bc89_genuineTcount_le_Tcount ω n) (bst_Tcount_le_boundary_of_boxOpenForest ω n h)
 
 lemma bc89_audit (μ : Measure (ConfigSpace (Sym2 (Site d))))
@@ -254,19 +217,19 @@ lemma bc89_audit (μ : Measure (ConfigSpace (Sym2 (Site d))))
   · intro hforest_ae hexist hmergeGeom
     exact bc85_dc_step1_uniqueness μ hd L herg hfe hinv hforest_ae hexist hmergeGeom
 
-/-! ## C. Summary -/
+/-! ## B. Summary -/
 
 lemma bc89_status :
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (x : Site 2),
-      bc89_GenuineTrif 2 ω x → IsTrifurcation 2 ω x) ∧
-    (∀ (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ), bc89_genuineTcount ω n ≤ Tcount 2 ω n) ∧
-    (∀ x : Site 2, ¬ bc89_GenuineTrif 2 bc60_upperLines x) ∧
-    (∀ n : ℕ, bc89_genuineTcount bc60_upperLines n = 0) ∧
-    (∀ (ω : ConfigSpace (Sym2 (Site 2))) (x : Site 2), bc89_GenuineTrif 2 ω x →
+      IsEncounterPoint 2 ω x → IsTrifurcation 2 ω x) ∧
+    (∀ (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ), bc48_Tcount_classical 2 ω n ≤ Tcount 2 ω n) ∧
+    (∀ x : Site 2, ¬ IsEncounterPoint 2 bc60_upperLines x) ∧
+    (∀ n : ℕ, bc48_Tcount_classical 2 bc60_upperLines n = 0) ∧
+    (∀ (ω : ConfigSpace (Sym2 (Site 2))) (x : Site 2), IsEncounterPoint 2 ω x →
       ∃ a₁ a₂ a₃ : Site 2, (a₁ ≠ a₂ ∧ a₁ ≠ a₃ ∧ a₂ ≠ a₃) ∧
         (openSubgraph 2 ω).Adj x a₁ ∧ (openSubgraph 2 ω).Adj x a₂ ∧ (openSubgraph 2 ω).Adj x a₃) ∧
     (∀ (ω : ConfigSpace (Sym2 (Site 2))) (n : ℕ),
-      bst_BoxOpenForest ω n → bc89_genuineTcount ω n ≤ boxSV_boundaryCard 2 n) ∧
+      bst_BoxOpenForest ω n → bc48_Tcount_classical 2 ω n ≤ boxSV_boundaryCard 2 n) ∧
     (∀ {L : ℕ}, 3 ≤ L → bc61_IsCoarseTrifurcation bc60_upperLines L (0 : Site 2)) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro ω x h; exact bc89_genuine_imp_isTrif ω x h

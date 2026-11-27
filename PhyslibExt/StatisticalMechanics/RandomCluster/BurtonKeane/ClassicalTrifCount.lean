@@ -33,9 +33,13 @@ uniqueness.
 `bc48_classicalTrifFinset ω n` is the set of classical trifurcations in the box and
 `bc48_Tcount_classical` its size, at most `Tcount`. The classical boundary arm injection
 `bc48_ClassicalBoundaryArmInjection` bounds the classical count by `|∂Λₙ|`. Classical trifurcations
-are measurable and shift-covariant, so a deterministic classical bound of vanishing density gives
-probability zero, `N ≠ ⊤` and, with the merge argument, uniqueness. On `bc47_fakeConfig` the
-classical set is a proper subset of the trifurcation set.
+are measurable and shift-covariant. So, for a translation-invariant probability measure, a
+deterministic classical bound of vanishing density gives probability zero to an encounter point at
+the origin. For an ergodic one with the classical trifurcation step, the same bound makes the
+number `N` of infinite clusters almost surely equal to a finite constant. If the measure also has
+finite energy for opening edges (`HasFiniteEnergyMerge`), the merge argument with merge witnesses
+then gives uniqueness, in the sense that almost surely there is at most one infinite cluster. On
+`bc47_fakeConfig` the classical set is a proper subset of the trifurcation set.
 
 **Fidelity.** Unlike the `IsTrifurcation` bound, the classical bound is not refuted; the uniqueness
 theorems here are conditional on it for every configuration.
@@ -43,7 +47,8 @@ theorems here are conditional on it for every configuration.
 ## ii. Key results
 
 - `bc48_Tcount_classical_le_boundary_of_residue` : the classical count from the injection.
-- `bc48_burton_keane_uniqueness_via_merge_classical` : uniqueness for an ergodic measure, given a
+- `bc48_burton_keane_uniqueness_via_merge_classical` : uniqueness for an ergodic probability
+  measure with finite energy for opening edges (`HasFiniteEnergyMerge`), given a deterministic
   classical count bound of vanishing density, the classical trifurcation step and merge witnesses.
 
 ## iii. Table of contents
