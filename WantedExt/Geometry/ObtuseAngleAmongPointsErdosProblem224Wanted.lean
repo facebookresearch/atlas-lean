@@ -32,8 +32,9 @@ points `y, z` of `A`; collinear triples give the angle `π`. Compared with the f
 statement `ErdosProblems/224.lean` (`⟪y - x, z - x⟫ < 0`, equivalent; no code imported).
 -/
 
-/-- Erdős Problem 224 (Danzer and Grünbaum): among any `2^d + 1` points of `ℝ^d` some three
-distinct points `y, x, z` determine an obtuse angle `∠ y x z > π / 2`. -/
+/-- Erdős Problem 224, a question of Erdős (erdosproblems.com/224 cites it to [Er57]) that Danzer
+and Grünbaum proved [DaGr62]: among any `2^d + 1` points of `ℝ^d` some three distinct points
+`y, x, z` determine an obtuse angle `∠ y x z > π / 2`. -/
 def obtuseAngleAmongTwoPowPlusOnePoints : Prop :=
   ∀ (d : ℕ) (A : Finset (EuclideanSpace ℝ (Fin d))), A.card = 2 ^ d + 1 →
     ∃ x ∈ A, ∃ y ∈ A, ∃ z ∈ A, x ≠ y ∧ x ≠ z ∧ y ≠ z ∧

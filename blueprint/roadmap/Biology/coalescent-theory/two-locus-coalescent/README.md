@@ -69,6 +69,10 @@
 - [Topology-unchanging probability and the waiting distance between topology changes](topology-change-waiting-distance-smc-prime.md)
 - [Unbiased sample estimators of frequency-weighted haplotype moments](unbiased-poisson-estimator-frequency-weighted-ld.md)
 - [Waiting distance until the next tree change under the SMC'](waiting-distance-until-next-tree-change-smc-prime.md)
+- [Asymptotic expansion of two-locus sampling distributions](asymptotic-expansion-of-two-locus-sampling-distributions/README.md)
+- [Asymptotic sampling distributions under strong recombination](asymptotic-sampling-distributions-under-strong-recombination/README.md)
+- [Gaussian diffusion and coalescent for weakly linked loci](gaussian-diffusion-and-coalescent-for-weakly-linked-loci/README.md)
+- [Moment duality of the two-locus Wright–Fisher diffusion](moment-duality-of-the-two-locus-wright-fisher-diffusion/README.md)
 ## Identity by descent along the genome
 - [Central limit theorems for detectable IBD rates](central-limit-theorems-for-detectable-ibd-rates/README.md)
 - [Ancestral recombination graph under loose linkage](ancestral-recombination-graph-under-loose-linkage/README.md)
