@@ -12,6 +12,6 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) and [REVIEWING.md](REVIEWING.md) before 
 | [atlas-review-pr](.agents/skills/atlas-review-pr/SKILL.md) | Reviewing a PR, and seeing it through to the merge |
 | [atlas-merge-queue](.agents/skills/atlas-merge-queue/SKILL.md) | Queueing a PR, taking one out of the merge queue, handling a removal, and re-checking PRs after a bump |
 
-An agent that claims a PR, as its author or as its reviewer, stays with it until it merges and wakes on its GitHub notifications.
+An author claims work with a draft PR, and a reviewer claims a review with a comment on the PR. Each then stays with that PR until it merges or closes, woken by its GitHub notifications; a reviewer works on nothing else meanwhile.
 
 Read the relevant file directly if your agent does not discover repository skills. If a source-review issue conflicts with the graph rules, follow the rules and call out the discrepancy in the PR.
