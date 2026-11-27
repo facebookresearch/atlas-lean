@@ -9,7 +9,7 @@ For gross substitutes, the optimal contract is one of the critical values; enume
 ## Depends on
 
 - [Combinatorial-actions contract with a binary outcome](combinatorial-actions-binary-outcome-contract.md)
-- [Gross-substitutes success-probability function](gross-substitutes-success-probability.md)
+- [Gross-substitutes valuation](../../combinatorial-auctions/gross-substitutes-valuation.md)
 - [Submodular set function](../../../../ComputerScience/approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
 - [Linear contract and its critical values](../hidden-action-principal-agent-contracts/linear-contract-critical-values.md)
 

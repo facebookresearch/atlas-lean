@@ -3,7 +3,6 @@
 - [XOS set functions, demand queries and value queries](xos-functions-demand-and-value-queries.md)
 - [Combinatorial-actions contract with a binary outcome](combinatorial-actions-binary-outcome-contract.md)
 - [With a binary outcome, contracts paying only on success are without loss](binary-outcome-pay-on-success.md)
-- [Gross-substitutes success-probability function](gross-substitutes-success-probability.md)
 - [Multi-agent binary-action contract with a team reward function](multi-agent-binary-action-contract.md)
 - [Gross-substitutes success functions have polynomially many critical values](gross-substitutes-polynomially-many-critical-values.md)
 - [The multi-agent contract problem reduces to maximizing a set function](multi-agent-contract-set-function-reduction.md)

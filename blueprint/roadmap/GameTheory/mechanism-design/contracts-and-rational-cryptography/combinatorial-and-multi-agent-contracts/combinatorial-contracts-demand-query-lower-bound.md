@@ -16,7 +16,7 @@ For item 1, it is NP-hard to distinguish a normalized unweighted coverage functi
 
 - [Combinatorial-actions contract with a binary outcome](combinatorial-actions-binary-outcome-contract.md)
 - [Submodular set function](../../../../ComputerScience/approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
-- [Gross-substitutes success-probability function](gross-substitutes-success-probability.md)
+- [Gross-substitutes valuation](../../combinatorial-auctions/gross-substitutes-valuation.md)
 - [XOS set functions, demand queries and value queries](xos-functions-demand-and-value-queries.md)
 
 ## Proof depends on
