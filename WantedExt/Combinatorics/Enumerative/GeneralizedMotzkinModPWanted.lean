@@ -25,6 +25,8 @@ namespace MetaMathlibExt
 
 -- `centralTrinomial_recurrence` is proved in
 -- `GeneralizedMotzkinCentralTrinomial`, publicly imported above.
+-- `centralTrinomial_prime_minus_one_sq` is proved in
+-- `GeneralizedMotzkinModP`, publicly imported above.
 
 /-- **Three-term recurrence for generalized Motzkin numbers.** For integers $a$, $b$ let $M_r$ be
 the constant term of $(a x^{-1} + b + a x)^r (1 - x^2)$, the generalized Motzkin number. Then for
@@ -71,20 +73,6 @@ public theorem_wanted generalizedMotzkin_mod_prime_symmetry
     generalizedMotzkin a b (p - 3 - k) ≡
       (b ^ 2 - 4 * a ^ 2) ^ ((p - 3) / 2 - k) * generalizedMotzkin a b k
       [ZMOD p]
-
-/-- **Squared central trinomial coefficient at one less than a prime.** Let $a, b$ be integers,
-let $T_n$ be the constant term of $(a x^{-1} + b + a x)^n$, and let $p$ be a prime with
-$b^2 - 4a^2 \not\equiv 0 \pmod p$. Then $T_{p-1}^2 \equiv 1 \pmod p$.
-
-This is the source's Corollary 2 in an equivalent squared form, which avoids an inverse residue
-modulo $p$.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*,
-INTEGERS 26 (2026), Article A22, Corollary 2. -/
-public theorem_wanted centralTrinomial_prime_minus_one_sq
-    (a b : ℤ) (p : ℕ) (hp : p.Prime)
-    (hdisc : ¬(b ^ 2 - 4 * a ^ 2 ≡ 0 [ZMOD p])) :
-    centralTrinomial a b (p - 1) ^ 2 ≡ 1 [ZMOD p]
 
 /-- **Primes dividing the Motzkin number $M_{p-2}$.** A prime $p$ divides the Motzkin number
 $M_{p-2} = M^{(1,1)}_{p-2}$ if and only if $p \equiv 1 \pmod 3$.
