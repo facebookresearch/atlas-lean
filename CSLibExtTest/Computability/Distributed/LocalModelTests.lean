@@ -22,7 +22,8 @@ public import Mathlib.Data.Fintype.EquivFin
 * A `0`-round algorithm sees only its own identifier and input.
 * The run is stopped from outside after `t n` rounds: a node that counts rounds outputs `n` for
   `t = id`, even on a graph with no edges.
-* Sending every neighbour the same message (`LocalAlgorithm.broadcast`) gives the same outputs.
+* Sending every neighbour the same message (`LocalAlgorithm.broadcast`) gives the same outputs,
+  also for an algorithm that sends each neighbour that neighbour's own identifier.
 * An example algorithm: in one round every node learns its degree, the number of messages it
   receives (`degreeAlg_output`); `decide` evaluates it on the path `0 - 1 - 2`.
 * Flooding the largest identifier: on the path `0 - 1 - 2 - 3`, after two rounds node `0` holds
@@ -32,6 +33,9 @@ public import Mathlib.Data.Fintype.EquivFin
   four-cycle gets the same output from any one-round algorithm, although the graphs differ.
 * Locality needs the neighbours of the centre: node `0` has different degrees on the path and on
   the cycle.
+* Edges between two boundary nodes are free: adding the edge `{0, 2}` to the path
+  `0 - 1 - 2 - 3`, between two nodes at distance one from node `1`, changes no one-round output
+  at node `1`, although it changes the degree of node `0`.
 -/
 
 @[expose] public section
@@ -146,6 +150,27 @@ example : (List.finRange 3).map (degreeAlg.broadcast.output (fun _ => 1) (pathGr
     fun _ => ()) = [1, 2, 1] := by
   decide
 
+/-- Every node sends each neighbour that neighbour's own identifier, and keeps the sum of what it
+receives: after one round, its degree times its identifier. -/
+def recipientAlg : LocalAlgorithm Unit ℕ ℕ ℕ where
+  init _ _ := 0
+  send _ j := j
+  update _ m := m.sum
+  out s := s
+
+/-- `recipientAlg` sends different messages to neighbours with different identifiers. -/
+example : recipientAlg.send 0 1 ≠ recipientAlg.send 0 3 := by
+  decide
+
+/-- On the path `0 - 1 - 2` with identifiers `1, 2, 3`, one round of `recipientAlg` outputs
+`1, 4, 3`, and so does its broadcast form, in which each node evaluates the maps it receives at
+its own identifier. -/
+example : (List.finRange 3).map (recipientAlg.output (fun _ => 1) (pathGraph 3) (idFin 3)
+      fun _ => ()) = [1, 4, 3] ∧
+    (List.finRange 3).map (recipientAlg.broadcast.output (fun _ => 1) (pathGraph 3) (idFin 3)
+      fun _ => ()) = [1, 4, 3] := by
+  decide
+
 /-! ### Flooding the largest identifier -/
 
 /-- Every node keeps the largest identifier it has heard of and sends it to its neighbours. -/
@@ -203,6 +228,39 @@ example {I S M O : Type} (A : LocalAlgorithm I S M O) (ids : IdAssignment (Fin 4
 and degree `2` on the four-cycle. -/
 example : degreeAlg.output (fun _ => 1) (pathGraph 4) (idFin 4) (fun _ => ()) 0 = 1 ∧
     degreeAlg.output (fun _ => 1) (cycleGraph 4) (idFin 4) (fun _ => ()) 0 = 2 := by
+  decide
+
+/-- The path `0 - 1 - 2 - 3` with the extra edge `{0, 2}`. -/
+def path4Chord : SimpleGraph (Fin 4) :=
+  SimpleGraph.fromRel fun a b => a.val + 1 = b.val ∨ (a = 0 ∧ b = 2)
+
+instance : DecidableRel path4Chord.Adj := fun a b =>
+  inferInstanceAs (Decidable (a ≠ b ∧ ((a.val + 1 = b.val ∨ (a = 0 ∧ b = 2)) ∨
+    (b.val + 1 = a.val ∨ (b = 0 ∧ a = 2)))))
+
+/-- The extra edge `{0, 2}` joins two neighbours of node `1` in the path, nodes at distance one
+from it, and is the only difference between the two graphs. -/
+example : ¬ (pathGraph 4).Adj 0 2 ∧ path4Chord.Adj 0 2 ∧ (pathGraph 4).Adj 1 0 ∧
+    (pathGraph 4).Adj 1 2 ∧
+    ∀ u w : Fin 4, s(u, w) ≠ s(0, 2) → ((pathGraph 4).Adj u w ↔ path4Chord.Adj u w) := by
+  decide
+
+/-- An edge between two nodes on the boundary of the radius-one ball around node `1` is not
+seen there: any one-round algorithm outputs the same at node `1` with or without the edge
+`{0, 2}`. -/
+example {I S M O : Type} (A : LocalAlgorithm I S M O) (ids : IdAssignment (Fin 4) 1)
+    (x : Fin 4 → I) :
+    A.output (fun _ => 1) (pathGraph 4) ids x 1 = A.output (fun _ => 1) path4Chord ids x 1 := by
+  refine A.output_congr_ball _ 1 (fun u hu w => ?_) (fun _ _ => rfl) (fun _ _ => rfl)
+  rw [Nat.cast_one, Order.lt_one_iff, edist_eq_zero_iff] at hu
+  subst hu
+  revert w
+  decide
+
+/-- The extra edge is seen at node `0`, one of its endpoints: its degree changes from `1` to
+`2`. -/
+example : degreeAlg.output (fun _ => 1) (pathGraph 4) (idFin 4) (fun _ => ()) 0 = 1 ∧
+    degreeAlg.output (fun _ => 1) path4Chord (idFin 4) (fun _ => ()) 0 = 2 := by
   decide
 
 end Cslib.Distributed.LocalModelTests

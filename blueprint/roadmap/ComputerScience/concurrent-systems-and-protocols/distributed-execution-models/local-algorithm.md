@@ -5,4 +5,4 @@ An algorithm $A$ in the LOCAL model, with inputs in a set $I$, states in $S$, me
 ## Sources
 
 - N. Linial, "Locality in distributed graph algorithms", *SIAM Journal on Computing* 21(1):193–201, 1992: §1.
-- J. Suomela, *Distributed Algorithms*, Aalto University, 2021, <https://jukkasuomela.fi/da/>: §4.3.1–4.3.2, adapted without degrees, ports or stopping states.
+- J. Suomela, *Distributed Algorithms*, online textbook, 2014–2019, Aalto University (PDF version of 2 January 2021), <https://jukkasuomela.fi/da/>: §4.3.1–4.3.2, adapted without degrees, ports or stopping states.

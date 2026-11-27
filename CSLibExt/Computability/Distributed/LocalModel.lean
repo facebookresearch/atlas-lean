@@ -37,11 +37,17 @@ are arbitrary functions, so message size and local computation are unrestricted.
   port-numbering model, it does not know its degree, and there are no ports. The maps of a
   `LocalAlgorithm` do not take `n`, but the algorithm is a parameter, so a statement may choose it
   depending on `n` or on the graph (Linial's lower bounds hold even if every processor knows the
-  graph in advance).
+  graph in advance, and only the identifiers are unknown). Choosing it after seeing the
+  identifiers or the inputs is a different matter: such an algorithm could store a colouring for
+  the given identifiers and output it in zero rounds. The locality theorems keep the algorithm and
+  the number of rounds fixed.
 * **Addressing.** Addressing a message by its recipient's identifier is no stronger than sending
   every neighbour the same message: `LocalAlgorithm.broadcast` sends the map `j ↦ send s j` and
   lets the recipient apply it to its own identifier, with the same outputs
-  (`LocalAlgorithm.broadcast_output`).
+  (`LocalAlgorithm.broadcast_output`). This is an equality of outputs in the abstract round model,
+  where a message may be any value, a function included; it is not a finite-bit encoding or an
+  effective implementation. When states can be encoded and `send` is computable, a node can send
+  its encoded state instead, and the recipient evaluates `send` at its own identifier.
 * **Execution.** `LocalAlgorithm.stateAfter` gives the state of every node after `k` rounds.
 * **Rounds.** For `t : ℕ → ℕ`, the algorithm run as a `t`-round algorithm outputs at each node
   after `t n` rounds (`LocalAlgorithm.output`); its complexity is `t`. The run is stopped from
@@ -71,9 +77,10 @@ are arbitrary functions, so message size and local computation are unrestricted.
 
 * N. Linial, *Locality in distributed graph algorithms*, SIAM Journal on Computing 21(1), 1992,
   pp. 193–201: §1 (the model) and §2 (what a node can know after `t` rounds).
-* J. Suomela, *Distributed Algorithms*, Aalto University, 2021, <https://jukkasuomela.fi/da/>:
-  §4.3.1–4.3.2 (algorithms as state machines and their execution, adapted here without degrees,
-  ports or stopping states) and §5.1 (identifiers in `{1, …, n ^ c}`).
+* J. Suomela, *Distributed Algorithms*, online textbook, 2014–2019, Aalto University (PDF
+  version of 2 January 2021), <https://jukkasuomela.fi/da/>: §4.3.1–4.3.2 (algorithms as state
+  machines and their execution, adapted here without degrees, ports or stopping states) and §5.1
+  (identifiers in `{1, …, n ^ c}`).
 -/
 
 @[expose] public section
@@ -178,7 +185,8 @@ theorem stateAfter_succ (A : LocalAlgorithm I S M O) (G : SimpleGraph V) [Decida
 
 /- Sending every neighbour the same message loses nothing: `A.broadcast` keeps its identifier in its
 state, sends every neighbour the same message, the map `j ↦ A.send s j`, and applies each map it
-receives to its own identifier. -/
+receives to its own identifier. The outputs are equal in this abstract round model, where messages
+may be functions; this is not a finite-bit encoding. -/
 @[nolint docBlame]
 def broadcast (A : LocalAlgorithm I S M O) : LocalAlgorithm I (ℕ × S) (ℕ → M) O where
   init i x := (i, A.init i x)
@@ -237,11 +245,13 @@ private theorem edist_le_succ_of_adj {G : SimpleGraph V} {v u w : V} {r : ℕ} (
   omega
 
 /- Locality in the LOCAL model: after `k` rounds, the state of a node `v` depends only on its
-radius-`k` ball. Let `G` and `G'` be simple graphs on the same finite set of nodes, and let
-the identifiers `ids`, `ids'` and the inputs `x`, `x'` agree at every node at distance at most
-`k` from `v` in `G`, and the neighbours of every node at distance less than `k` from `v` be the
-same in `G` and `G'`. Then `v` is in the same state after `k` rounds of any algorithm `A` in
-both executions. Edges between two nodes at distance at least `k` from `v` are not constrained. -/
+radius-`k` ball, in this sense: the identifiers and inputs of the nodes at distance at most `k`
+from `v`, and the edges at the nodes at distance less than `k`. Let `G` and `G'` be simple graphs
+on the same finite set of nodes, and let the identifiers `ids`, `ids'` and the inputs `x`, `x'`
+agree at every node at distance at most `k` from `v` in `G`, and the neighbours of every node at
+distance less than `k` from `v` be the same in `G` and `G'`. Then `v` is in the same state after
+`k` rounds of the same algorithm `A` in both executions. Edges between two nodes at distance at
+least `k` from `v` are not constrained. -/
 theorem stateAfter_congr_ball (A : LocalAlgorithm I S M O) {G G' : SimpleGraph V}
     [DecidableRel G.Adj] [DecidableRel G'.Adj] {ids ids' : V → ℕ} {x x' : V → I} (k : ℕ)
     (v : V) (hadj : ∀ u, G.edist v u < k → ∀ w, G.Adj u w ↔ G'.Adj u w)
