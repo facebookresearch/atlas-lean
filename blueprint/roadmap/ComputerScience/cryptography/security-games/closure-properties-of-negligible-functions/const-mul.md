@@ -1,0 +1,3 @@
+# Nonnegative real multiples of negligible advantages
+
+Let $\varepsilon : \mathbb{N} \to \mathbb{R}$ be a negligible advantage and $a \in \mathbb{R}$ with $a \ge 0$. Then $n \mapsto a \, \varepsilon(n)$ is a negligible advantage. Here a real sequence $\varepsilon : \mathbb{N} \to \mathbb{R}$ is a negligible advantage when it is bounded above pointwise by a negligible rational sequence; this is a one-sided bound, and $\varepsilon$ itself need not be nonnegative. The sign condition is on the scalar: with $a < 0$ the result can fail, since the constant $-1$ is negligible and $-1$ times it is not. This is the constant case of the polynomial-multiple part of Katz and Lindell, Proposition 3.6.
