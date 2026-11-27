@@ -17,7 +17,7 @@ Let $B$ be a bidirected pangenome graph with reference tree $T$, as in [Bidirect
 
 ## Proof sketch
 
-The visit-count formula $|D(v)\cap\mathrm{sinks}(W)| - |D(v)\cap\mathrm{sources}(W)|$ depends only on the multisets of sources and sinks, not on their order, and these multisets are read off the genotype and the endpoints. So the genotype fixes the number of visits to every binode, hence the number of traversals of every tree edge; the variant-edge traversals are the genotype itself. A walk is determined by its edge multiset up to the ordering of closed subwalks, which proves the theorem (Theorem 1 and Algorithm 3 of the source). Consequently the variant edges act as a basis for differences between haplotypes: the symmetric difference of two walks' edge sets is captured by their genotype difference.
+The visit-count formula $|D(v)\cap\mathrm{sinks}(W)| - |(D(v) \setminus \{v\})\cap\mathrm{sources}(W)|$ depends only on the multisets of sources and sinks, not on their order, and these multisets are read off the genotype and the endpoints. So the genotype fixes the number of visits to every binode, hence the number of traversals of every tree edge; the variant-edge traversals are the genotype itself. A walk is determined by its edge multiset up to the ordering of closed subwalks, which proves the theorem (Theorem 1 and Algorithm 3 of the source). Consequently the variant edges act as a basis for differences between haplotypes: the symmetric difference of two walks' edge sets is captured by their genotype difference.
 
 ## Sources
 
