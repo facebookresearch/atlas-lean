@@ -21,3 +21,5 @@ Algebras over commutative rings: étale algebras and the trace form, norm and tr
 - [A finitely generated commutative algebra over a Noetherian commutative ring is Noetherian](finitely-generated-algebra-noetherian.md)
 - [Discriminants under a change of basis](discriminant-change-of-basis.md)
 - [Finitely generated algebra](finitely-generated-algebra.md)
+- [Diophantine problems in noncommutative rings](diophantine-problems-in-noncommutative-rings/README.md)
+- [Positivity of matrix moments](positivity-of-matrix-moments/README.md)
