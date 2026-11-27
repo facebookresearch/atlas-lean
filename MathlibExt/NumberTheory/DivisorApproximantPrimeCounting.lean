@@ -16,13 +16,46 @@ public import Mathlib.NumberTheory.Divisors
 /-!
 # Exponential approximation of the divisor count and divisor sum
 
-The exponential weights equal one on the divisors. The total contribution of the
-nondivisors is bounded by a geometric sum with ratio $e^{-n}$.
+The exponential weights equal one on the divisors and are at most $e^{-nk}$ on the
+nondivisors. The total contribution of the nondivisors is therefore bounded by a
+geometric sum with ratio $e^{-n}$.
 -/
 
 namespace MetaMathlibExt
 
 open Asymptotics Filter Finset
+
+/-- **Exponential approximation of the divisibility indicator.** Let $A$ be a real-valued
+function of two natural numbers such that $A(k, n) \sin^2(n\pi/k) \ge 1$ for all natural numbers
+$k, n$ with $1 \le k \le n$ and $k \nmid n$. Then for all natural numbers $k, n$ with
+$1 \le k \le n$,
+$$\left| e^{-nkA(k, n)\sin^2(n\pi/k)} - \delta_{k \mid n} \right| \le e^{-nk},$$
+where $\delta_{k \mid n}$ is $1$ if $k$ divides $n$ and $0$ otherwise.
+
+When $k \mid n$ the difference is $0$; otherwise it lies in $(0, e^{-nk}]$.
+
+Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
+Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Lemma 1 (`integers-2026-A46-lem-1`). -/
+public theorem abs_exp_approx_sub_dvd_indicator_le (A : ℕ → ℕ → ℝ)
+    (hA : ∀ k n, 1 ≤ k → k ≤ n → ¬ k ∣ n →
+      1 ≤ A k n * Real.sin (n * Real.pi / k) ^ 2)
+    (k n : ℕ) (hk : 1 ≤ k) (hkn : k ≤ n) :
+    |Real.exp (-(n * k * A k n * Real.sin (n * Real.pi / k) ^ 2)) - (if k ∣ n then 1 else 0)| ≤
+      Real.exp (-(n * k : ℝ)) := by
+  split_ifs with hd
+  · -- At a divisor the sine vanishes, so the weight is exactly one.
+    obtain ⟨d, hd'⟩ := hd
+    have hk' : (k : ℝ) ≠ 0 := by exact_mod_cast (show k ≠ 0 by omega)
+    have harg : (n : ℝ) * Real.pi / k = d * Real.pi := by
+      rw [hd', Nat.cast_mul]
+      field_simp
+    simpa [harg, Real.sin_nat_mul_pi] using (Real.exp_pos (-(n * k : ℝ))).le
+  · -- At a nondivisor the hypothesis bounds the exponent by `-n k`.
+    rw [sub_zero, abs_of_pos (Real.exp_pos _)]
+    apply Real.exp_le_exp.mpr
+    have h := mul_le_mul_of_nonneg_left (hA k n hk hkn hd)
+      (show 0 ≤ (n : ℝ) * k by positivity)
+    linarith only [h]
 
 private theorem sum_abs_exp_sub_indicator_lt (A : ℕ → ℕ → ℝ)
     (hA : ∀ k n, 1 ≤ k → k ≤ n → ¬ k ∣ n →
@@ -35,18 +68,8 @@ private theorem sum_abs_exp_sub_indicator_lt (A : ℕ → ℕ → ℝ)
   have hterm (k : ℕ) (hk : k ∈ Icc 1 n) :
       |w k - (if k ∣ n then 1 else 0)| ≤ Real.exp (-n) ^ k := by
     obtain ⟨hk₁, hkn⟩ := mem_Icc.mp hk
-    split_ifs with hd
-    · obtain ⟨d, hd'⟩ := hd
-      have hk' : (k : ℝ) ≠ 0 := by exact_mod_cast (show k ≠ 0 by omega)
-      have harg : (n : ℝ) * Real.pi / k = d * Real.pi := by
-        rw [hd', Nat.cast_mul]
-        field_simp
-      simpa [w, harg, Real.sin_nat_mul_pi] using pow_nonneg (Real.exp_pos (-(n : ℝ))).le k
-    · rw [sub_zero, abs_of_pos (Real.exp_pos _), ← Real.exp_nat_mul]
-      apply Real.exp_le_exp.mpr
-      have h := mul_le_mul_of_nonneg_left (hA k n hk₁ hkn hd)
-        (show 0 ≤ (n : ℝ) * k by positivity)
-      linarith only [h]
+    rw [← Real.exp_nat_mul, show (k : ℝ) * -n = -(n * k) by ring]
+    exact abs_exp_approx_sub_dvd_indicator_le A hA k n hk₁ hkn
   have hlt : Real.exp (-n) < 1 := Real.exp_lt_one_iff.mpr (neg_lt_zero.mpr hn')
   calc
     _ ≤ ∑ k ∈ Icc 1 n, Real.exp (-n) ^ k := sum_le_sum hterm

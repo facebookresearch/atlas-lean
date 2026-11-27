@@ -26,6 +26,10 @@ Differentiating the Euler–Maclaurin expansion for the sum of `k ^ r` at `r = 0
 gives expansions for the sums of `log k` and `k * log k`. Regrouping the factorials expresses
 the central binomial product in terms of these sums. Dividing by `(n + 1)!` gives the Catalan
 product.
+
+The namespace `LogFactorialExpansion` exposes the error terms of these expansions for
+`log n!` and for the sum of `k * log k`, their limits and their recurrences, for reuse by
+other product asymptotics.
 -/
 
 namespace MetaMathlibExt
@@ -34,7 +38,7 @@ open Filter Topology
 open MathlibExt.Analysis.Ramanujan.Part1Ch7.Entry1Powersum
 open MeasureTheory
 
-namespace tendsto_prod_centralBinom_catalan_div
+namespace LogFactorialExpansion
 
 private theorem integrand_bound {C x : ℝ} {r : ℂ} {b : ℝ}
     (hC : ‖bernoulliKernel 3 x‖ ≤ C) (hx : 1 ≤ x) (hr : r.re ≤ b) :
@@ -137,13 +141,18 @@ private theorem power_sum_derivative (n : ℕ) (hn : 1 < n) (a : ℂ) (ha : a = 
   rw [he]
   ring
 
-private noncomputable def weightedLog (n : ℕ) : ℝ :=
+/-- The weighted logarithmic sum $\sum_{k=1}^{n} k \log k$. -/
+@[expose] public noncomputable def weightedLog (n : ℕ) : ℝ :=
   ∑ k ∈ Finset.Icc 1 n, (k : ℝ) * Real.log k
 
-private noncomputable def factorialMain (x : ℝ) : ℝ :=
+/-- The main term $(x + 1/2) \log x - x + \log(2\pi)/2 + 1/(12x)$ of the expansion of
+$\log x!$. -/
+@[expose] public noncomputable def factorialMain (x : ℝ) : ℝ :=
   (x + 1 / 2) * Real.log x - x + Real.log (2 * Real.pi) / 2 + 1 / (12 * x)
 
-private noncomputable def weightedMain (x : ℝ) : ℝ :=
+/-- The main term $(x^2/2 + x/2 + 1/12) \log x - x^2/4 + \log A$ of the expansion of
+`weightedLog`, where $A$ is the Glaisher–Kinkelin constant. -/
+@[expose] public noncomputable def weightedMain (x : ℝ) : ℝ :=
   (x ^ 2 / 2 + x / 2 + 1 / 12) * Real.log x - x ^ 2 / 4 + Real.log glaisherKinkelinConstant
 
 private theorem factorial_expansion {n : ℕ} (hn : 1 < n) :
@@ -178,13 +187,16 @@ private theorem weighted_expansion {n : ℕ} (hn : 1 < n) :
   rw [log_glaisherKinkelinConstant]
   linear_combination hre
 
-private noncomputable def factorialError (n : ℕ) : ℝ :=
+/-- The error `Real.log n.factorial - factorialMain n` of the expansion of $\log n!$. -/
+@[expose] public noncomputable def factorialError (n : ℕ) : ℝ :=
   Real.log n.factorial - factorialMain n
 
-private noncomputable def weightedError (n : ℕ) : ℝ :=
+/-- The error `weightedLog n - weightedMain n` of the expansion of `weightedLog`. -/
+@[expose] public noncomputable def weightedError (n : ℕ) : ℝ :=
   weightedLog n - weightedMain n
 
-private theorem error_limits :
+/-- As $n \to \infty$, both `n * factorialError n` and `weightedError n` tend to $0$. -/
+public theorem error_limits :
     Tendsto (fun n : ℕ => n * factorialError n) atTop (𝓝 0) ∧
     Tendsto weightedError atTop (𝓝 0) := by
   obtain ⟨C, hC⟩ := bernoulliKernel_norm_le 1 (by decide)
@@ -209,14 +221,31 @@ private theorem error_limits :
     field_simp [hn0.ne'] at hb ⊢
     linarith
 
-private theorem log_factorial_succ (n : ℕ) :
+/-- For every natural number $n$, $\log (n + 1)! = \log n! + \log (n + 1)$. -/
+public theorem log_factorial_succ (n : ℕ) :
     Real.log ((n + 1).factorial : ℝ) = Real.log n.factorial + Real.log (n + 1 : ℝ) := by
   rw [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add_one, Real.log_mul (by positivity)
     (by positivity), add_comm]
 
-private theorem weightedLog_succ (n : ℕ) :
+/-- For every natural number $n$,
+`weightedLog (n + 1) = weightedLog n + (n + 1) * log (n + 1)`. -/
+public theorem weightedLog_succ (n : ℕ) :
     weightedLog (n + 1) = weightedLog n + (n + 1 : ℝ) * Real.log (n + 1 : ℝ) := by
   simp [weightedLog, Finset.sum_Icc_succ_top (show 1 ≤ n + 1 by omega)]
+
+/-- As $n \to \infty$, `factorialError n` tends to $0$. -/
+public theorem factorialError_limit : Tendsto factorialError atTop (𝓝 0) := by
+  have h := (tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop).mul error_limits.1
+  refine (show Tendsto _ _ (𝓝 (0 : ℝ)) by simpa only [zero_mul] using h).congr' ?_
+  filter_upwards [eventually_gt_atTop 0] with n hn
+  change (n : ℝ)⁻¹ * (n * factorialError n) = _
+  field_simp
+
+end LogFactorialExpansion
+
+open LogFactorialExpansion
+
+namespace tendsto_prod_centralBinom_catalan_div
 
 private theorem log_centralBinom (n : ℕ) :
     Real.log n.centralBinom = Real.log (2 * n).factorial - 2 * Real.log n.factorial := by
@@ -287,13 +316,6 @@ private theorem central_log_error (n : ℕ) (hn : 0 < n) :
     log_four]
   field_simp
   ring
-
-private theorem factorialError_limit : Tendsto factorialError atTop (𝓝 0) := by
-  have h := (tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop).mul error_limits.1
-  refine (show Tendsto _ _ (𝓝 (0 : ℝ)) by simpa only [zero_mul] using h).congr' ?_
-  filter_upwards [eventually_gt_atTop 0] with n hn
-  change (n : ℝ)⁻¹ * (n * factorialError n) = _
-  field_simp
 
 private theorem central_log_limit :
     Tendsto (fun n : ℕ => Real.log (centralProduct n) - Real.log (centralScale n) -
