@@ -50,15 +50,24 @@ noncomputable abbrev binaryPrior (pi0 pi1 : ℝ) : Measure Bool :=
 
 /-- The finite-cost threshold rule: decide `true` where
 `pi1 * (C01 - C11) * p1 x > pi0 * (C10 - C00) * p0 x`, the tie decision `tie` where the
-two sides are equal, and `false` otherwise. -/
+two sides are equal, and `false` otherwise. The definition takes arbitrary reals. For nonnegative
+prior weights `pi0, pi1` and densities `p0, p1`, it compares the posterior expected costs of the
+two decisions at the points `x` where `pi0 * p0 x + pi1 * p1 x > 0`, that is almost everywhere
+under the marginal law (`posterior_lintegral_binaryShiftedLoss` states the posterior losses for a
+probability prior). Where `pi0 * p0 x + pi1 * p1 x = 0` both sides are `0` and the rule returns
+`tie`, though the model does not determine the posterior at `x`. -/
 noncomputable def binaryCostRule {𝓧 : Type*} (pi0 pi1 C00 C01 C10 C11 : ℝ)
     (p0 p1 : 𝓧 → ℝ) (tie : Bool) (x : 𝓧) : Bool :=
   if pi0 * (C10 - C00) * p0 x < pi1 * (C01 - C11) * p1 x then true
   else if pi1 * (C01 - C11) * p1 x = pi0 * (C10 - C00) * p0 x then tie
   else false
 
-/-- Real-valued Bayes average cost of a decision kernel `κ` under the original costs:
-`pi0 * E_{κ∘P0}[C(·, 0)] + pi1 * E_{κ∘P1}[C(·, 1)]`. -/
+/-- The weighted cost `pi0 * E_{κ∘P0}[C(·, 0)] + pi1 * E_{κ∘P1}[C(·, 1)]` of a decision kernel
+`κ` under the original costs, with Bochner integrals against `(κ ∘ₖ P) false` and
+`(κ ∘ₖ P) true`; the definition takes any inputs. For nonnegative prior weights `pi0, pi1` and
+Markov kernels `P` and `κ` it is the cost of `κ` averaged over the truth against the finite
+prior with weights `pi0, pi1`, and an expected cost under a probability prior only when
+`pi0 + pi1 = 1`. -/
 noncomputable def binaryCostAvgRisk {𝓧 : Type*} [MeasurableSpace 𝓧]
     (C00 C01 C10 C11 : ℝ) (P : Kernel Bool 𝓧) (κ : Kernel 𝓧 Bool) (pi0 pi1 : ℝ) : ℝ :=
   pi0 * ∫ y, binaryCost C00 C01 C10 C11 y false ∂((κ ∘ₖ P) false) +
@@ -545,9 +554,15 @@ theorem isBayesEstimator_binaryCostRule {𝓧 : Type*} [MeasurableSpace 𝓧]
     measurable_of_finite _
   exact ⟨harg.measurable, harg.isBayesEstimator hl⟩
 
-/-- **Truth-only shift.** For every Markov decision kernel, the real Bayes average of the
-original costs equals the Mathlib average risk of the shifted loss plus the constant
-`pi0 * C00 + pi1 * C11`; hence the shift does not change the minimizer. -/
+/-- **Truth-only shift.** For probability laws `P0` and `P1`, costs with `C00 < C10` and
+`C11 < C01`, positive weights `pi0` and `pi1`, and every Markov decision kernel, the weighted
+cost `binaryCostAvgRisk` of the original costs equals the real part (`ENNReal.toReal`, which
+sends `∞` to `0`) of Mathlib's `avgRisk` of the shifted loss under `binaryPrior pi0 pi1`, plus
+the constant `pi0 * C00 + pi1 * C11`. The cost inequalities matter: `binaryShiftedLoss` clips
+the differences `C10 - C00` and `C01 - C11` at `0` (`ENNReal.ofReal`), so without them the
+identity can fail. The weights need not sum to `1`; when they do, the weighted cost is the
+Bayes expectation under the prior `(pi0, pi1)`. That the shift does not change the minimizer is
+a consequence this theorem does not state. -/
 theorem binaryCostAvgRisk_eq_toReal_avgRisk_add {𝓧 : Type*} [MeasurableSpace 𝓧]
     (P0 P1 : Measure 𝓧) [IsProbabilityMeasure P0] [IsProbabilityMeasure P1]
     (pi0 pi1 : ℝ) (hpi0 : 0 < pi0) (hpi1 : 0 < pi1)

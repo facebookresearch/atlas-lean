@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.GeneralizedTribonacciBasis
 public import MathlibExt.NumberTheory.DivisibilityRunsGibonacciNumberEqFib
 public import MathlibExt.NumberTheory.DivisibilityRunsDivRunCountTwo
 public import MathlibExt.NumberTheory.DivisibilityRunsDivRunCountThree
+public import MathlibExt.NumberTheory.DivisibilityRunsGibonacciGeneralizedTribonacciGrowthBounds
 
 namespace MetaMathlibExt
 
@@ -37,33 +38,6 @@ public theorem_wanted generalizedTribonacci_eq_zero_of_dvd (x y a b c : ℤ)
     (hdiv : ∀ n : ℕ, gibonacciNumber x y n ∣ generalizedTribonacci a b c n) :
     ∀ n : ℕ, generalizedTribonacci a b c n = 0
 
-
-/-- **Growth bounds for Gibonacci and generalized Tribonacci sequences.** Let $\varphi$ be the
-golden ratio. For integers $x, y$ let $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$
-and $P_1 = y$, and for integers $a, b, c$ let $(Q_n)_{n \ge 0}$ be the generalized Tribonacci
-sequence with $Q_0 = a$, $Q_1 = b$ and $Q_2 = c$. Then (i) for all integers $x, y$ and every
-$n \ge 0$, $|P_n| \le (|x| + |y|)\,\varphi^n$; (ii) there are real constants $c_0 > 0$ and
-$c_1 > 0$ such that for all integers $x, y$ with $(x, y) \ne (0, 0)$ and every $n \ge 0$ with
-$c_1 (\log(|x| + |y|) + 1) \le n$, one has $c_0\,\varphi^{n+1} / (|x| + |y|) \le |P_n|$; and
-(iii) for every real $\tau$ with $\tau^3 = \tau^2 + \tau + 1$, all integers $a, b, c$ and every
-$n \ge 0$, $|Q_n| \le (|a| + |b| + |c|)\,\tau^n$.
-
-The paper indexes both sequences from $1$, so its $n$-th terms are $P_{n-1}$ and $Q_{n-1}$ here.
-It prints (ii) with the threshold "n large enough depending on $|x| + |y|$"; the logarithmic
-threshold is the one the paper uses in its proof of Theorem 2.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Lemma 1
-(`integers-2026-A122-lem-1`), with the threshold as used in the proof of Theorem 2. -/
-public theorem_wanted gibonacci_generalizedTribonacci_growth_bounds :
-    (∀ (x y : ℤ) (n : ℕ),
-      |(gibonacciNumber x y n : ℝ)| ≤ (|(x : ℝ)| + |(y : ℝ)|) * Real.goldenRatio ^ n) ∧
-    (∃ c₀ c₁ : ℝ, 0 < c₀ ∧ 0 < c₁ ∧ ∀ x y : ℤ, (x, y) ≠ (0, 0) →
-      ∀ n : ℕ, c₁ * (Real.log (|(x : ℝ)| + |(y : ℝ)|) + 1) ≤ (n : ℝ) →
-        c₀ * Real.goldenRatio ^ (n + 1) / (|(x : ℝ)| + |(y : ℝ)|)
-          ≤ |(gibonacciNumber x y n : ℝ)|) ∧
-    (∀ τ : ℝ, τ ^ 3 = τ ^ 2 + τ + 1 → ∀ (a b c : ℤ) (n : ℕ),
-      |(generalizedTribonacci a b c n : ℝ)| ≤ (|(a : ℝ)| + |(b : ℝ)| + |(c : ℝ)|) * τ ^ n)
 
 /-- **Divisibility runs have logarithmic length.** There is a real constant $C > 0$ such that for
 every natural number $B \ge 2$, all integers $x, y, a, b, c \in [-B, B]$ with $(x, y) \ne (0, 0)$
