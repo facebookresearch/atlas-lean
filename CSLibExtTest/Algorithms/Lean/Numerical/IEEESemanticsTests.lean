@@ -23,9 +23,12 @@ public import Mathlib.Data.Rat.Floor
 * For every format and mode: NaN propagation without flags; each invalid case; division by
   zero; exact operations on infinities; the signed-zero rules (`+0 + -0`, `-0 + -0`, `x - x`,
   `√-0`, products); overflow of `M + M` and `-M + -M` in each mode, `M` the largest finite
-  number; and gradual underflow: half the smallest subnormal number `2^qmin` rounds to `+0` to
-  nearest and to `2^qmin` toward `+∞`, raising underflow and inexact, while the exact tiny result
-  `2^qmin` raises no flag.
+  number; and gradual underflow: half the smallest positive number of the format, `2^qmin`,
+  rounds to `+0` to nearest and to `2^qmin` toward `+∞`, raising underflow and inexact, while the
+  exact tiny result `2^qmin` raises no flag.
+* With `p = 3`, `qmin = -4` and `qmax = 0`, the tiny product `(1/2) × (7/16) = 7/32` rounds to
+  `1/4`, the smallest normal number, to nearest and toward `+∞`, and raises underflow and inexact,
+  as tininess is detected before rounding.
 * In binary64, multiplication is not associative.
 * Comparison: NaN is unordered with everything, `+0` and `-0` are equal, `-∞ < x < +∞`; `+0 ≤ -0`
   and `-0 ≤ +0` with `+0 ≠ -0`, so `≤` is not antisymmetric even without NaN.
@@ -228,7 +231,8 @@ example : ¬ ∀ a b c : Value F, ((Operation.add ((Operation.add a b).eval r).1
     ((Operation.add a ((Operation.add b c).eval r).1).eval r).1 :=
   not_add_assoc F r
 
--- gradual underflow: half the smallest subnormal number `2^qmin` is tiny and not representable
+-- gradual underflow: half the smallest positive number of the format, `2^qmin`, is tiny and not
+-- representable
 private theorem log_two_zpow (e : ℤ) : Int.log 2 |(2 : ℝ) ^ e| = e := by
   rw [abs_of_pos (two_zpow_pos e)]
   exact_mod_cast Int.log_zpow (R := ℝ) (b := 2) (by norm_num) e
@@ -241,8 +245,8 @@ private theorem isFloatIn_min (F : BinaryFormat) :
     IsFloatIn F.prec F.qmin F.qmax ((2 : ℝ) ^ F.qmin) :=
   ⟨1, F.qmin, abs_one_lt F, le_rfl, F.qmin_le_qmax, by simp⟩
 
--- the smallest subnormal number is at most the largest finite number, as every number of the
--- format is
+-- the smallest positive number of the format is at most the largest finite number, as every
+-- number of the format is
 private theorem min_le_maxFinite (F : BinaryFormat) : (2 : ℝ) ^ F.qmin ≤ F.maxFinite := by
   simpa [abs_of_pos (two_zpow_pos (K := ℝ) F.qmin)] using F.abs_le_maxFinite (isFloatIn_min F)
 
@@ -307,7 +311,7 @@ example (z : Bool) : roundResult F .towardPositive ((2 : ℝ) ^ (F.qmin - 1)) z 
     simp [hne]
     omega
 
--- the smallest subnormal number itself is exact: no flag, although it is tiny
+-- the smallest positive number of the format itself is exact: no flag, although it is tiny
 example (r : RoundingMode) (z : Bool) : roundResult F r ((2 : ℝ) ^ F.qmin) z =
     (.finite false _ (two_zpow_pos F.qmin).le (isFloatIn_min F), {}) := by
   have hr : r.round F.prec F.qmin ((2 : ℝ) ^ F.qmin) = 2 ^ F.qmin := by
@@ -320,6 +324,70 @@ example (r : RoundingMode) (z : Bool) : roundResult F r ((2 : ℝ) ^ F.qmin) z =
   simp [abs_of_pos hpos, not_lt.2 hpos.le]
 
 end General
+
+/-! ## A tiny result that rounds to the smallest normal number -/
+
+/-- The format with `p = 3`, `qmin = -4` and `qmax = 0`, whose smallest normal number is `1/4`. -/
+private def fmt3 : BinaryFormat := ⟨3, -4, 0, by norm_num, by norm_num⟩
+
+private theorem half_mem : IsFloatIn fmt3.prec fmt3.qmin fmt3.qmax (1 / 2 : ℝ) :=
+  ⟨1, -1, by norm_num [fmt3], by norm_num [fmt3], by norm_num [fmt3], by norm_num⟩
+
+private theorem seven_sixteenths_mem : IsFloatIn fmt3.prec fmt3.qmin fmt3.qmax (7 / 16 : ℝ) :=
+  ⟨7, -4, by norm_num [fmt3], by norm_num [fmt3], by norm_num [fmt3], by norm_num⟩
+
+private theorem quarter_mem : IsFloatIn fmt3.prec fmt3.qmin fmt3.qmax (1 / 4 : ℝ) :=
+  ⟨1, -2, by norm_num [fmt3], by norm_num [fmt3], by norm_num [fmt3], by norm_num⟩
+
+-- `7/32` is below `1/4`, so it is rounded at the last place `2^-4`, as `7/2 · 2^-4`
+private theorem round_seven_thirty_seconds (r : RoundingMode) :
+    r.round 3 (-4) (7 / 32 : ℝ) = (r.roundInt (7 / 2 : ℝ) : ℝ) * 2 ^ (-4 : ℤ) := by
+  have hlog : Int.log 2 |(7 / 32 : ℝ)| < -1 :=
+    (Int.lt_zpow_iff_log_lt (b := 2) (by norm_num) (by norm_num)).1 (by norm_num)
+  have he : max (ulpExp 3 (7 / 32 : ℝ)) (-4) = -4 :=
+    max_eq_right (by unfold ulpExp; push_cast; omega)
+  rw [RoundingMode.round, he]
+  norm_num
+
+private theorem eval_tiny_product (r : RoundingMode) (hr : r.roundInt (7 / 2 : ℝ) = 4) :
+    (Operation.mul (.finite false (1 / 2) (by norm_num) half_mem)
+      (.finite false (7 / 16) (by norm_num) seven_sixteenths_mem)).eval r =
+      (.finite false (1 / 4) (by norm_num) quarter_mem,
+        { underflow := true, inexact := true }) := by
+  have hround : r.round fmt3.prec fmt3.qmin ((1 / 2 : ℝ) * (7 / 16)) = 1 / 4 := by
+    rw [show (1 / 2 : ℝ) * (7 / 16) = 7 / 32 by norm_num]
+    change r.round 3 (-4) (7 / 32 : ℝ) = 1 / 4
+    rw [round_seven_thirty_seconds, hr]
+    norm_num
+  rw [Operation.eval_mul_finite]
+  simp only [Bool.false_eq_true, ↓reduceIte, Bool.xor_false]
+  unfold roundResult
+  split_ifs with h₀ h₁ h₂
+  · norm_num at h₀
+  · rw [hround] at h₁
+    norm_num [BinaryFormat.maxFinite, fmt3] at h₁
+  · rw [hround] at h₂
+    norm_num at h₂
+  · simp only [hround, Prod.mk.injEq]
+    refine ⟨by norm_num, ?_⟩
+    norm_num [fmt3]
+
+-- `7/32 = 3.5 · 2^-4` is a tie between `3 · 2^-4` and `4 · 2^-4 = 1/4`; it goes to the even `4`
+example : (Operation.mul (.finite false (1 / 2) (by norm_num) half_mem)
+    (.finite false (7 / 16) (by norm_num) seven_sixteenths_mem)).eval .nearestEven =
+      (.finite false (1 / 4) (by norm_num) quarter_mem,
+        { underflow := true, inexact := true }) := by
+  refine eval_tiny_product _ ?_
+  have hfl : ⌊(7 / 2 : ℝ)⌋ = 3 := Int.floor_eq_iff.2 (by norm_num)
+  simp only [RoundingMode.roundInt, rne, hfl]
+  norm_num
+  decide
+
+-- toward `+∞` it rounds up to `1/4`
+example : (Operation.mul (.finite false (1 / 2) (by norm_num) half_mem)
+    (.finite false (7 / 16) (by norm_num) seven_sixteenths_mem)).eval .towardPositive =
+      (.finite false (1 / 4) (by norm_num) quarter_mem, { underflow := true, inexact := true }) :=
+  eval_tiny_product _ (Int.ceil_eq_iff.2 (by norm_num))
 
 /-! ## binary64 -/
 

@@ -25,14 +25,16 @@ divide by zero, overflow, underflow and inexact.
   sign the operation fixes: a sum of two zeros of the same sign is that zero, any other exact zero sum is $+0$, or $-0$
   when rounding toward $-\infty$; a product or quotient has the exclusive or of the operands' signs; and
   $\sqrt{\pm 0} = \pm 0$. If $x \ne 0$, let $y$ be $x$ rounded in mode $r$ at the last-place exponent
-  $\max(\lfloor \log_2 |x| \rfloor - (p - 1), q_{\min})$, which rounds results below the normal range to subnormal
-  numbers or zero (gradual underflow) and leaves the exponent unbounded above.
+  $\max(\lfloor \log_2 |x| \rfloor - (p - 1), q_{\min})$, which rounds a result below the normal range to a multiple of
+  $2^{q_{\min}}$, that is to zero, a subnormal number or the smallest normal number $\pm 2^{q_{\min} + p - 1}$
+  (gradual underflow), and leaves the exponent unbounded above.
     - If $|y|$ exceeds the largest finite number $M = (2^p - 1) \cdot 2^{q_{\max}}$, the result overflows according to
       the mode, with the sign of $x$: it is $\pm\infty$ when rounding to nearest, $\pm M$ toward zero, $+\infty$ or
       $-M$ toward $+\infty$, and $+M$ or $-\infty$ toward $-\infty$. It raises the overflow and inexact flags.
     - Otherwise the result is $y$, a zero $y$ taking the sign of $x$. It raises the inexact flag if $y \ne x$, and the
-      underflow flag if moreover $x$ is tiny, $|x| < 2^{q_{\min} + p - 1}$: tininess is detected before rounding, and
-      an exact result raises no flag.
+      underflow flag if moreover $x$ is tiny, $|x| < 2^{q_{\min} + p - 1}$: tininess is detected before rounding, so a
+      tiny result that rounds to $\pm 2^{q_{\min} + p - 1}$ still raises underflow, and an exact result raises no
+      flag.
 
 Subtraction $a - b$ is the addition of $a$ and $b$ with its sign bit flipped, so $(+\infty) - (-\infty) = +\infty$, and
 $x - x = +0$ for a finite $x$, or $-0$ when rounding toward $-\infty$. In IEEE 754 the status flags are sticky; each

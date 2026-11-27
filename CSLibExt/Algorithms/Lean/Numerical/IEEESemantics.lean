@@ -132,9 +132,10 @@ to an integer in mode $r$: scale $x$ so that the last place of its $p$-bit signi
 place below $2^{q_{\min}}$, is the units digit, round to an integer in the mode, and scale back.
 
 Capping $e$ below at $q_{\min}$ gives gradual underflow: below the smallest normal number
-$2^{q_{\min} + p - 1}$ the result is rounded to a multiple of $2^{q_{\min}}$, a subnormal number
-or zero. The exponent is not bounded above, so the result can exceed the largest finite number;
-in the mode to nearest and from the smallest normal number on, this is $\mathrm{fl}_p(x)$.
+$2^{q_{\min} + p - 1}$ the result is rounded to a multiple of $2^{q_{\min}}$, which is zero, a
+subnormal number, or $\pm 2^{q_{\min} + p - 1}$ itself. The exponent is not bounded above, so the
+result can exceed the largest finite number; in the mode to nearest and from the smallest normal
+number on, this is $\mathrm{fl}_p(x)$.
 
 Source: Boldo, Jourdan, Leroy and Melquiond, *Verified compilation of floating-point computations*,
 Journal of Automated Reasoning 54(2), 2015, Section 5.2 (Flocq's rounding, with no upper bound on
