@@ -260,8 +260,9 @@ def check_nolints_decoder() -> bool:
                                     cwd=ROOT, capture_output=True, text=True, env=child_env())
             if result.returncode != want:
                 ok = False
-                print(f"FAIL lint_declarations.lean --check-nolints on {text}: exit "
-                      f"{result.returncode}, wanted {want}\n{result.stdout}{result.stderr}")
+                print(inert(f"FAIL lint_declarations.lean --check-nolints on {text}: exit "
+                            f"{result.returncode}, wanted {want}\n{result.stdout}"
+                            f"{result.stderr}"))
             else:
                 print(f"ok lint_declarations.lean --check-nolints on {text}: exit {want}")
     return ok

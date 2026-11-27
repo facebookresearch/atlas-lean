@@ -125,37 +125,51 @@ mutual
       return none
 end
 
-/-- Match the levels `us` with the levels `vs` in order, normalized, extending `ρ`. -/
-def matchLevelList (ρ : Renaming) : List Level → List Level → Continue → Option Renaming
-  | [], [], k => k ρ
-  | u :: us, v :: vs, k => matchLevel ρ u.normalize v.normalize fun ρ => matchLevelList ρ us vs k
-  | _, _, _ => none
+/-- The pairs of levels that a walk of two statements has met so far, and the pairs of subterms it
+has walked, which it does not walk again. -/
+abbrev LevelPairs := StateT (Std.HashSet (Level × Level) × Std.HashSet (Expr × Expr)) Option
 
-/-- Match the statement `a` with `b`, up to the names and annotations of binders, extending `ρ`;
-levels are normalized first, as Lean orders the arguments of a `max` by universe name. Every
-choice is tried until `k` succeeds, so a choice made early never blocks a match. -/
-partial def matchExpr (ρ : Renaming) (a b : Expr) (k : Continue) : Option Renaming :=
+/-- Walk `a` and `b` together, failing where they differ by more than the names and annotations of
+binders and their levels, and record each pair of levels at the same place, normalized (Lean
+orders the arguments of a `max` by universe name). Each pair of subterms is walked once, so a
+statement whose subterms are shared is not walked as a tree, and the recursion is as deep as the
+statements, not as large. -/
+partial def levelPairs (a b : Expr) : LevelPairs Unit := do
+  if (← get).2.contains (a, b) then return
+  modify fun (levels, walked) => (levels, walked.insert (a, b))
+  let add (u v : Level) : LevelPairs Unit :=
+    modify fun (levels, walked) => (levels.insert (u.normalize, v.normalize), walked)
   match a, b with
-  | .bvar i, .bvar j => if i == j then k ρ else none
-  | .sort u, .sort v => matchLevel ρ u.normalize v.normalize k
-  | .const m us, .const n vs => if m == n then matchLevelList ρ us vs k else none
-  | .app f x, .app g y => matchExpr ρ f g fun ρ => matchExpr ρ x y k
-  | .lam _ t x _, .lam _ s y _ => matchExpr ρ t s fun ρ => matchExpr ρ x y k
-  | .forallE _ t x _, .forallE _ s y _ => matchExpr ρ t s fun ρ => matchExpr ρ x y k
-  | .letE _ t v x _, .letE _ s w y _ =>
-    matchExpr ρ t s fun ρ => matchExpr ρ v w fun ρ => matchExpr ρ x y k
-  | .lit l, .lit l' => if l == l' then k ρ else none
-  | .proj s i x, .proj t j y => if s == t && i == j then matchExpr ρ x y k else none
-  | .mdata _ x, _ => matchExpr ρ x b k
-  | _, .mdata _ y => matchExpr ρ a y k
-  | .fvar x, .fvar y => if x == y then k ρ else none
-  | .mvar x, .mvar y => if x == y then k ρ else none
-  | _, _ => none
+  | .bvar i, .bvar j => unless i == j do failure
+  | .sort u, .sort v => add u v
+  | .const m us, .const n vs =>
+    unless m == n && us.length == vs.length do failure
+    for (u, v) in us.zip vs do add u v
+  | .app f x, .app g y => levelPairs f g; levelPairs x y
+  | .lam _ t x _, .lam _ s y _ => levelPairs t s; levelPairs x y
+  | .forallE _ t x _, .forallE _ s y _ => levelPairs t s; levelPairs x y
+  | .letE _ t v x _, .letE _ s w y _ => levelPairs t s; levelPairs v w; levelPairs x y
+  | .lit l, .lit l' => unless l == l' do failure
+  | .proj s i x, .proj t j y => unless s == t && i == j do failure; levelPairs x y
+  | .mdata _ x, _ => levelPairs x b
+  | _, .mdata _ y => levelPairs a y
+  | .fvar x, .fvar y => unless x == y do failure
+  | .mvar x, .mvar y => unless x == y do failure
+  | _, _ => failure
+
+/-- Whether some bijection between universe parameters maps the first level of each of `pairs`
+to its second, the arguments of each `max` in any order. Only the choices for a `max` are
+backtracked over, and the search is as deep as the levels of `pairs` are large together. -/
+partial def bijective (ρ : Renaming) : List (Level × Level) → Option Renaming
+  | [] => some ρ
+  | (u, v) :: pairs => matchLevel ρ u v fun ρ => bijective ρ pairs
 
 /-- Whether the statements `a` and `b` are equal up to the names and annotations of binders and
 some bijection between their universe parameters. -/
 def sameStatement (a b : Expr) : Bool :=
-  (matchExpr ({}, {}) a b some).isSome
+  match (levelPairs a b).run ({}, {}) with
+  | some ((), (levels, _)) => (bijective ({}, {}) levels.toList).isSome
+  | none => false
 
 /--
 A theorem's statement with every universe parameter replaced by `0`, which leaves only explicit

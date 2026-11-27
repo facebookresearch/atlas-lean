@@ -145,7 +145,16 @@ jobs:
       # Lean's own decoder, even when nothing else runs.
       - name: Check the exceptions file
         if: steps.scope.outputs.nolints == 'true'
-        run: lake env lean --run scripts/lint_declarations.lean --check-nolints
+        run: |
+          set -euo pipefail
+          # Lean's error quotes the entry it cannot read, which the pull request wrote, so the
+          # runner reads no workflow command while the check runs (a fresh token resumes them).
+          token="$(python3 -c 'import secrets; print(secrets.token_hex(16))')"
+          echo "::stop-commands::$token"
+          status=0
+          lake env lean --run scripts/lint_declarations.lean --check-nolints || status=$?
+          echo "::$token::"
+          exit "$status"
 
       # The builds that ci.yml saves from main, so that only the changed files
       # and the modules that main has not built yet are built here. The probe
