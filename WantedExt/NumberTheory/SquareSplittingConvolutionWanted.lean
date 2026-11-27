@@ -18,31 +18,16 @@ public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitDivisorCountLSeries
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitConvCommRingAxioms
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitTotientFormula
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitConvInverseOfIsMultiplicative
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusSupportDensity
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Filter Topology Asymptotics
-
-/-- **Ring axioms for the square-splitting convolution.** For all complex arithmetic functions
-$f$, $g$ and $h$, the square-splitting convolution $\star$ satisfies $f \star g = g \star f$,
-$(f \star g) \star h = f \star (g \star h)$, $f \star (g + h) = f \star g + f \star h$ and
-$\varepsilon \star f = f$, where $\varepsilon$ is the arithmetic function with $\varepsilon(1) = 1$
-and $\varepsilon(n) = 0$ for $n \ne 1$.
-
-With pointwise addition, these identities make the complex arithmetic functions a commutative ring
-under $\star$ with identity $\varepsilon$.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 2
-(`integers-2026-A56-thm-2`). -/
-public theorem_wanted squareSplitConv_commRing_axioms (f g h : ArithmeticFunction ℂ) :
-    squareSplitConv f g = squareSplitConv g f ∧
-      squareSplitConv (squareSplitConv f g) h = squareSplitConv f (squareSplitConv g h) ∧
-      squareSplitConv f (g + h) = squareSplitConv f g + squareSplitConv f h ∧
-      squareSplitConv 1 f = f
 
 /-- **Square-splitting convolution as a bivariate Dirichlet convolution.** Let $\star$ be the
 square-splitting convolution. For all complex arithmetic functions $f$ and $g$, every squarefree
@@ -67,37 +52,6 @@ public theorem_wanted squareSplitConv_bivariate_iso :
           f (u₁ * v₁ ^ 2) * g ((u / u₁) * (v / v₁) ^ 2)) ∧
     ∀ F : ℕ → ℕ → ℂ, ∃! f : ArithmeticFunction ℂ,
       ∀ u v, Squarefree u → 0 < v → f (u * v ^ 2) = F u v
-
-/-- **Inverse of a multiplicative function under the square-splitting convolution.** Let $f$ be a
-multiplicative complex arithmetic function (an arithmetic function $h$ is multiplicative when
-$h(1) = 1$ and $h(mn) = h(m)\, h(n)$ for coprime $m$ and $n$), let $\star$ be the square-splitting
-convolution, and let $\varepsilon$ be the arithmetic function with $\varepsilon(1) = 1$ and
-$\varepsilon(n) = 0$ for $n \ne 1$. Then there is a complex arithmetic function $g$ with
-$f \star g = \varepsilon$ such that every complex arithmetic function $g'$ with
-$f \star g' = \varepsilon$ equals $g$. Moreover, $g$ is multiplicative; for every prime $p$ and
-every $k \ge 1$, $\sum_{j=0}^{\lfloor k/2 \rfloor} f(p^{2j})\, g(p^{k-2j}) = 0$ if $k$ is even and
-$\sum_{j=0}^{\lfloor k/2 \rfloor} (f(p^{2j}) g(p^{k-2j}) + f(p^{2j+1}) g(p^{k-2j-1})) = 0$ if $k$ is
-odd; $g(1) = 1/f(1)$; and for every prime $p$, $g(p) = -f(p)/f(1)^2$,
-$g(p^2) = -f(p^2)/f(1)^2$ and $g(p^3) = \big(2 f(p) f(p^2) - f(p^3) f(1)\big)/f(1)^3$.
-
-Multiplicativity includes $f(1) = 1$, so the source's hypothesis $f(1) \ne 0$ holds automatically.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 5
-(`integers-2026-A56-thm-5`). -/
-public theorem_wanted squareSplitConv_inverse_of_isMultiplicative {f : ArithmeticFunction ℂ}
-    (hf : f.IsMultiplicative) :
-    ∃ g : ArithmeticFunction ℂ, squareSplitConv f g = 1 ∧
-      (∀ g' : ArithmeticFunction ℂ, squareSplitConv f g' = 1 → g' = g) ∧
-      g.IsMultiplicative ∧
-      (∀ p k : ℕ, p.Prime → 1 ≤ k →
-        ∑ j ∈ Finset.range (k / 2 + 1), f (p ^ (2 * j)) * g (p ^ (k - 2 * j)) +
-          (if Odd k then ∑ j ∈ Finset.range (k / 2 + 1),
-            f (p ^ (2 * j + 1)) * g (p ^ (k - (2 * j + 1))) else 0) = 0) ∧
-      g 1 = 1 / f 1 ∧
-      ∀ p : ℕ, p.Prime →
-        g p = -f p / f 1 ^ 2 ∧ g (p ^ 2) = -f (p ^ 2) / f 1 ^ 2 ∧
-        g (p ^ 3) = (2 * f p * f (p ^ 2) - f (p ^ 3) * f 1) / f 1 ^ 3
 
 /-- **Average order of the square-splitting totient function.** Let $A(n)$ be the set of
 square-splitting divisors of $n$, and let $\varphi_\star$ be any integer-valued arithmetic function
@@ -174,28 +128,6 @@ public theorem_wanted squareSplitDivisorCount_sum_asymptotic :
         (Aτ * x * Real.log x + Aτ * (2 * Real.eulerMascheroniConstant - 1 - Bτ -
           2 * (deriv riemannZeta 2 / riemannZeta 2).re) * x))
       =O[atTop] fun x => x ^ (1 / 2 : ℝ) * Real.log x ^ 3
-
-/-- **Support and density of the square-splitting Möbius function.** Let $\star$ be the
-square-splitting convolution, $\mathbf{1}$ the constant function $1$ on the positive integers,
-$\varepsilon$ the identity element ($\varepsilon(1) = 1$ and $\varepsilon(n) = 0$ for $n \ne 1$),
-and let $\mu_\star$ be any complex-valued arithmetic function with
-$\mathbf{1} \star \mu_\star = \varepsilon$. Then for every $n \ge 1$, $\mu_\star(n) \ne 0$ if and
-only if every prime exponent of $n$ is at most $3$. The proportion of the integers
-$1 \le n \le N$ with $\mu_\star(n) \ne 0$ tends to $\prod_p (1 - p^{-4})$ as $N \to \infty$, and
-$\prod_p (1 - p^{-4}) = 1/\zeta(4)$. Finally,
-$\sum_{1 \le n \le x} |\mu_\star(n)|^2 \sim x/\zeta(4)$ as $x \to \infty$.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 11
-(`integers-2026-A56-thm-11`). -/
-public theorem_wanted squareSplitMoebius_support_density (m : ArithmeticFunction ℂ)
-    (hm : squareSplitConv (ArithmeticFunction.zeta : ArithmeticFunction ℂ) m = 1) :
-    (∀ n ≠ 0, m n ≠ 0 ↔ ∀ p, n.factorization p ≤ 3) ∧
-    Tendsto (fun N : ℕ => (((Finset.Icc 1 N).filter fun n => m n ≠ 0).card : ℝ) / N) atTop
-      (𝓝 (∏' p : Nat.Primes, (1 - 1 / ((p : ℕ) : ℝ) ^ 4))) ∧
-    ((∏' p : Nat.Primes, (1 - 1 / ((p : ℕ) : ℝ) ^ 4) : ℝ) : ℂ) = 1 / riemannZeta 4 ∧
-    (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, ‖m n‖ ^ 2) ~[atTop]
-      fun x => x / (riemannZeta 4).re
 
 /-- **A square-splitting divisor function and its Euler product.** Let
 $\alpha \in \mathbb{C}$, let $\sigma_\beta(m) = \sum_{d \mid m} d^\beta$ for $\beta \in \mathbb{C}$
