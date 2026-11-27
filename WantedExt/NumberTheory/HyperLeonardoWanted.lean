@@ -15,6 +15,7 @@ public import MathlibExt.NumberTheory.HyperLeonardo
 public import MathlibExt.NumberTheory.LeonardoLogBalanced
 public import WantedExt.NumberTheory.GenLeonardoWanted
 public import MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex
+public import MathlibExt.NumberTheory.HyperLeonardoHyperFibonacci
 
 /-!
 # Hyper-Leonardo numbers
@@ -110,16 +111,6 @@ public theorem_wanted logConcave_convolution (x y : ℕ → ℝ) (hx : ∀ n, 0 
     (∑ k ∈ Finset.range j, x k * y (j - 1 - k)) *
         (∑ k ∈ Finset.range (j + 2), x k * y (j + 1 - k)) ≤
       (∑ k ∈ Finset.range (j + 1), x k * y (j - k)) ^ 2
-
-/-- **Hyper-Leonardo numbers in terms of hyper-Fibonacci numbers.** For all natural numbers $r$
-and $n$, the hyper-Leonardo number $\mathrm{Le}^{(r)}_n$ and the hyper-Fibonacci number
-$F^{(r)}_{n+1}$ satisfy $\mathrm{Le}^{(r)}_n = 2F^{(r)}_{n+1} - \binom{n+r}{r}$ as integers.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 6, Equation (9)
-(`integers-2026-A48-prop-6`). -/
-public theorem_wanted hyperLeonardo_eq_hyperFibonacci (r n : ℕ) :
-    hyperLeonardo r n = 2 * (hyperFibonacci r (n + 1) : ℤ) - ((n + r).choose r : ℕ)
 
 /-- **Log-convexity and log-concavity of the Leonardo numbers.** Let $Le_n$ be the Leonardo
 numbers ($Le_0 = Le_1 = 1$ and $Le_{n+2} = Le_{n+1} + Le_n + 1$). Then
