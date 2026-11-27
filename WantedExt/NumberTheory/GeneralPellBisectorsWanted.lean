@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.Diophantine.NegativePellGcd
 public import MathlibExt.NumberTheory.Diophantine.NegativePellRational
 public import MathlibExt.NumberTheory.GeneralPellBisectors
 public import MathlibExt.NumberTheory.NegativePellDivisibility
+public import MathlibExt.NumberTheory.GeneralPellBisectorsBisectorEquationFormTen
 
 namespace MetaMathlibExt
 
@@ -104,21 +105,6 @@ public theorem_wanted bisector_equation_form_nine (d m n : ℕ) (hd : 1 < d)
     let c := negPellG d ((2 * m - 1) * (2 * n)) / negPellG d (2 * m - 1)
     negPellG d (2 * m - 1) ∣ negPellG d ((2 * m - 1) * (2 * n)) ∧
       (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)
-
-/-- **Bisector-equation solutions from the powers of $1 + \sqrt{2}$.** The least solution of
-$x^2 - 2 y^2 = -1$ in positive integers is $(1, 1)$; define integers $f_k$ and $g_k$ by
-$f_k + g_k \sqrt{2} = (1 + \sqrt{2})^k$ for natural numbers $k$. For every natural number $n > 0$,
-the integers $a = f_{2n-1}$, $b = -f_{2n+1}$ and $c = f_{2n}$ satisfy
-$$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1).$$
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 3, converse for (10)
-(`integers-2024-A111-thm-3`). -/
-public theorem_wanted bisector_equation_form_ten (n : ℕ) (hn : 0 < n) :
-    let a := negPellF 2 (2 * n - 1)
-    let b := -negPellF 2 (2 * n + 1)
-    let c := negPellF 2 (2 * n)
-    (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)
 
 /-- **Finitely many classes of solutions of a general Pell equation.** Let $d > 0$ be an integer
 that is not a perfect square, let $\varepsilon$ be the fundamental solution of $x^2 - dy^2 = 1$,

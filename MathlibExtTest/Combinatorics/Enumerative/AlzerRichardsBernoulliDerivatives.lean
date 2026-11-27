@@ -43,3 +43,28 @@ example {f : ℝ → ℝ} (hf0 : f 0 = -1) (hf : ∀ x ≠ 0, f x = (1 - Real.ex
   rw [iteratedDeriv_inv_one_sub_exp_div_self_zero hf0 hf,
     bernoulli_eq_zero_of_odd ⟨n + 1, by ring⟩ (by omega)]
   simp
+
+-- At exponent zero, the value is `1` and every positive-order derivative vanishes.
+example {f : ℝ → ℝ} (hf0 : f 0 = -1) (hf : ∀ x ≠ 0, f x = (1 - Real.exp x) / x) (r : ℕ) :
+    iteratedDeriv 0 (fun x => f x ^ (0 : ℕ)) 0 = 1 ∧
+      iteratedDeriv (r + 1) (fun x => f x ^ (0 : ℕ)) 0 = 0 := by
+  constructor
+  · rw [iteratedDeriv_pow_one_sub_exp_div_self_zero hf0 hf 0 0]
+    simp
+  · rw [iteratedDeriv_pow_one_sub_exp_div_self_zero hf0 hf 0 (r + 1)]
+    simp
+
+-- For the explicit extension, the second derivative of the square is `7/6`.
+example :
+    iteratedDeriv 2 (fun x : ℝ => (if x = 0 then -1 else (1 - Real.exp x) / x) ^ (2 : ℕ)) 0 =
+      7 / 6 := by
+  rw [iteratedDeriv_pow_one_sub_exp_div_self_zero
+    (f := fun x : ℝ => if x = 0 then -1 else (1 - Real.exp x) / x) (by simp)
+    (fun x hx => by simp [hx]) 2 2]
+  norm_num [Nat.stirlingSecond, Nat.choose]
+
+-- An odd power keeps the minus sign: the first derivative of the cube is `-3/2`.
+example {f : ℝ → ℝ} (hf0 : f 0 = -1) (hf : ∀ x ≠ 0, f x = (1 - Real.exp x) / x) :
+    deriv (fun x => f x ^ (3 : ℕ)) 0 = -3 / 2 := by
+  rw [← iteratedDeriv_one, iteratedDeriv_pow_one_sub_exp_div_self_zero hf0 hf 3 1]
+  norm_num [Nat.stirlingSecond, Nat.choose]
