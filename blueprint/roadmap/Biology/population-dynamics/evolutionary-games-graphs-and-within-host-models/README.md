@@ -5,3 +5,4 @@ Stochastic and game-theoretic models of evolution and of populations inside host
 - [Evolutionary dynamics on graphs](evolutionary-dynamics-on-graphs/README.md)
 - [Evolutionary games and cooperation](evolutionary-games-and-cooperation/README.md)
 - [Within-host, microbial and prebiotic population models](within-host-microbial-and-prebiotic-models/README.md)
+- [Stochastic, evolutionary, and interacting population models](stochastic-evolutionary-and-interacting-population-models/README.md)

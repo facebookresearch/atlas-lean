@@ -19,7 +19,7 @@ The GEM$(\theta/b)$ limit is the size-biased order of the Poisson–Dirichlet la
 ## Depends on
 
 - [Negative binomial and Gamma laws of a CMJ population with immigration](negative-binomial-and-gamma-laws-of-a-cmj-population-with-immigration.md)
-- [Expected counting measure of GEM and Poisson–Dirichlet masses](../../../../population-genetics/ewens-sampling-formula-and-the-chinese-restauran/poisson-dirichlet-gem-limit-of-ewens-allele-freq.md)
+- [Expected counting measure of GEM and Poisson–Dirichlet masses](../../../../../population-genetics/ewens-sampling-formula-and-the-chinese-restauran/poisson-dirichlet-gem-limit-of-ewens-allele-freq.md)
 
 ## Expansion
 

@@ -18,7 +18,7 @@ So Eigen's deterministic quasispecies dynamics is the infinite-population limit 
 
 ## Depends on
 
-- [Interior equilibrium of the master-sequence frequency](../../../eigen-s-quasispecies-error-threshold/master-equilibrium.md)
+- [Interior equilibrium of the master-sequence frequency](../../../../eigen-s-quasispecies-error-threshold/master-equilibrium.md)
 
 ## Expansion
 

@@ -18,7 +18,7 @@ Large population, rare mutation and small mutation steps are taken simultaneousl
 
 ## Depends on
 
-- [Fitness gradient](../../../classification-of-adaptive-dynamics-singular-str/fitness-gradient.md)
+- [Fitness gradient](../../../../classification-of-adaptive-dynamics-singular-str/fitness-gradient.md)
 
 ## Expansion
 

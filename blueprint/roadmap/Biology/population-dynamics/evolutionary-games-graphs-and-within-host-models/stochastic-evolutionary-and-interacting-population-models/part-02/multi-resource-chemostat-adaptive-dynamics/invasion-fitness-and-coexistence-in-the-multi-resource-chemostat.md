@@ -17,7 +17,7 @@ So, as in Lotka–Volterra adaptive dynamics, coexistence after a small mutation
 ## Depends on
 
 - [Global convergence of the multi-resource chemostat system](global-convergence-of-the-multi-resource-chemostat-system.md)
-- [Mutual invasibility](../../../classification-of-adaptive-dynamics-singular-str/mutual-invasibility.md)
+- [Mutual invasibility](../../../../classification-of-adaptive-dynamics-singular-str/mutual-invasibility.md)
 
 ## Expansion
 

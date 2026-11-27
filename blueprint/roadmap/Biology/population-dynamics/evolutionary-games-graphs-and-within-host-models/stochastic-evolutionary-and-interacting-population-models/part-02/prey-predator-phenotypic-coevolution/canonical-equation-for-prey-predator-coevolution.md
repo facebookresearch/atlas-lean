@@ -20,7 +20,7 @@ For symmetric mutation kernels with covariances $\gamma$ and $\Gamma$ this reduc
 ## Depends on
 
 - [Global stability of multitype Lotka–Volterra prey–predator equilibria](global-stability-of-multitype-lotka-volterra-prey-predator-equilibria.md)
-- [Fitness Gradient](../../../classification-of-adaptive-dynamics-singular-str/fitness-gradient.md)
+- [Fitness Gradient](../../../../classification-of-adaptive-dynamics-singular-str/fitness-gradient.md)
 
 ## Expansion
 

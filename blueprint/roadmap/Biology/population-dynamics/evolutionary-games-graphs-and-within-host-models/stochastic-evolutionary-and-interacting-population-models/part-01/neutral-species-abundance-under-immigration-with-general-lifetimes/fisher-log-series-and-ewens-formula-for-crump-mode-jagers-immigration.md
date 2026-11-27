@@ -12,7 +12,7 @@ Thus the abundance distribution at any time is Fisher's log-series with paramete
 
 ## Depends on
 
-- [Ewens sampling formula](../../../../population-genetics/ewens-sampling-formula-and-the-chinese-restauran/ewens-prob.md)
+- [Ewens sampling formula](../../../../../population-genetics/ewens-sampling-formula-and-the-chinese-restauran/ewens-prob.md)
 
 ## Expansion
 

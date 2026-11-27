@@ -29,7 +29,7 @@ The **critical curve** $\{(a,\alpha) : \alpha\,\phi(a) = \ln\kappa\}$ separates 
 
 ## Depends on
 
-- [Eigen's error threshold](../../../eigen-s-quasispecies-error-threshold/master-equilibrium-exp-pos-iff.md)
+- [Eigen's error threshold](../../../../eigen-s-quasispecies-error-threshold/master-equilibrium-exp-pos-iff.md)
 
 ## Expansion
 

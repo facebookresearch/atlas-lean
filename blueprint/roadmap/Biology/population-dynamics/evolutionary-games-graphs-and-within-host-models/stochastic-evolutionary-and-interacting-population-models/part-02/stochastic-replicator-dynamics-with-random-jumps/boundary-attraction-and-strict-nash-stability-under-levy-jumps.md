@@ -30,7 +30,7 @@ Analogous results give extinction of strictly dominated pure strategies and posi
 
 ## Depends on
 
-- [Solutions of the replicator equation](../../../replicator-dynamics/is-solution.md)
+- [Solutions of the replicator equation](../../../../replicator-dynamics/is-solution.md)
 
 ## Expansion
 

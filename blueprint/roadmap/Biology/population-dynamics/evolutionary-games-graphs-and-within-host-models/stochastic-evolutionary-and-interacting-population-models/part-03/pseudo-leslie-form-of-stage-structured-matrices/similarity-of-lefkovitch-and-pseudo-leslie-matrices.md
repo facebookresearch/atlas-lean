@@ -22,7 +22,7 @@ $$\phi_j = -\frac{\Gamma_1^{j}}{\Lambda_1^{j-1}} + \sum_{k=1}^{j}\frac{\Gamma_k^
 
 ## Depends on
 
-- [Leslie matrix](../../../leslie-matrix-model/leslie-matrix.md)
+- [Leslie matrix](../../../../leslie-matrix-model/leslie-matrix.md)
 
 ## Expansion
 

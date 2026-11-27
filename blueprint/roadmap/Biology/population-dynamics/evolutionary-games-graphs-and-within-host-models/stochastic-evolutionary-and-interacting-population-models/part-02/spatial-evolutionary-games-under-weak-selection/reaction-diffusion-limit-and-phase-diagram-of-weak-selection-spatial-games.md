@@ -22,7 +22,7 @@ Under weak selection, the voter part mixes locally on a fast scale and its stati
 
 ## Depends on
 
-- [Solutions of the replicator equation](../../../replicator-dynamics/is-solution.md)
+- [Solutions of the replicator equation](../../../../replicator-dynamics/is-solution.md)
 
 ## Sources
 
