@@ -24,7 +24,6 @@ Topics added since this subject's fields were last revised.
 - [Two Cusp Reduction Span](two-cusp-reduction-span/README.md)
 - [Absolute Jacquet integral on the principal series of `GL₂(ℚ_p)`](absolute-jacquet-integral-lt-top-and-uni.md)
 - [Higher Units](higher-units-at.md)
-- [Degree of a singular modulus](finrank-adjoin-j-function-eq-gauss-class.md)
 - [Adelic Lift Exists](exists-is-adelic-lift-of.md)
 - [Eleven Pid](eleven-pid.md)
 - [Galois representations attached to normalized eigenforms](exists-galois-rep-charpoly-frob.md)
