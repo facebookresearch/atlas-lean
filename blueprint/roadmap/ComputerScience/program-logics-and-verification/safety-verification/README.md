@@ -16,3 +16,7 @@
 - [Frame invariants of IC3](frame-invariants-of-ic3.md)
 - [IC3 decides safety of finite transition systems](ic3-decides-safety-of-finite-transition-systems.md)
 - [Safety by inductive invariants](safety-by-inductive-invariants.md)
+- [Checking inductiveness of universal-existential invariants is undecidable](inductiveness-of-forall-exists-invariants.md)
+- [Invariants of loops](invariants-of-loops/README.md)
+- [Model checking hyperproperties and multi-agent logics](hyperproperty-and-multi-agent-model-checking/README.md)
+- [Verification of uninterpreted programs](uninterpreted-programs/README.md)
