@@ -4,7 +4,7 @@ $\mathsf{CL}\cap\mathsf{P}=\mathsf{CLP}$: every language decidable both by a cat
 
 ## Proof sketch
 
-Given $L\in\mathsf{CL}\cap\mathsf{P}$ with $\mathsf{CL}$ machine $M$, apply the compress-or-compute procedure to successive segments of an enlarged catalytic tape. Each attempt either computes $L(x)$ in polynomial time or frees one bit; after polynomially many compressions enough bits are free to run the polynomial-time algorithm for $L$ using them as ordinary memory. All compressions are then undone in reverse order, each in polynomial time, so the total time is polynomial for every initial content.
+Given $L\in\mathsf{CL}\cap\mathsf{P}$ with $\mathsf{CL}$ machine $M$ ($s = O(\log n)$) and a polynomial-time decider running in space $B = \mathrm{poly}(n)$, invoke $\mathrm{DetComp}_w(1^B, x)$ from the compress-or-compute theorem on an enlarged catalytic tape. In worst-case time $\mathrm{poly}(2^s, B) = \mathrm{poly}(n)$ and $O(\log n)$ additional workspace, $\mathrm{DetComp}$ either returns $L(x)$ directly with the tape restored, or frees $B$ zeroed catalytic bits. In the second case, run the polynomial-time algorithm for $L$ inside those $B$ free bits, clear them back to $0^B$, and call $\mathrm{DetDecomp}_{w' \circ 0^B}(1^B, x)$ to restore $w$ in worst-case time $\mathrm{poly}(n)$ via the reversible Euler-tour walk.
 
 ## Depends on
 

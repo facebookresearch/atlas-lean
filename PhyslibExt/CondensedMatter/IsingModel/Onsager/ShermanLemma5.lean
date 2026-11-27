@@ -65,7 +65,7 @@ weights over `S` to sum to zero. See also `Finset.sum_involution`. -/
 lemma ons_sum_zero_of_sign_involution {E} [Fintype E] [DecidableEq E] (Λ : Matrix E E ℂ)
     {n : ℕ} [NeZero n] (S : Finset (Fin n → E)) (g : (Fin n → E) → (Fin n → E))
     (hmaps : ∀ v ∈ S, g v ∈ S)
-    (hsign : ∀ v ∈ S, ons_loopWeight Λ (g v) = - ons_loopWeight Λ v)
+    (hsign : ∀ v ∈ S, ons_loopWeight Λ (g v) = -ons_loopWeight Λ v)
     (hinv : ∀ v ∈ S, g (g v) = v) (hne : ∀ v ∈ S, g v ≠ v) :
     ∑ v ∈ S, ons_loopWeight Λ v = 0 := by
   refine Finset.sum_involution (fun v _ => g v) ?_ ?_ ?_ ?_
@@ -94,7 +94,7 @@ lemma ons_lemma5_of_involution {E} [Fintype E] [DecidableEq E] (Λ : Matrix E E 
     (g : (Fin n → E) → (Fin n → E))
     (hmaps : ∀ v ∈ ons_loopSetBoth (n := n) e (rev e), g v ∈ ons_loopSetBoth (n := n) e (rev e))
     (hsign : ∀ v ∈ ons_loopSetBoth (n := n) e (rev e),
-      ons_loopWeight Λ (g v) = - ons_loopWeight Λ v)
+      ons_loopWeight Λ (g v) = -ons_loopWeight Λ v)
     (hinv : ∀ v ∈ ons_loopSetBoth (n := n) e (rev e), g (g v) = v)
     (hne : ∀ v ∈ ons_loopSetBoth (n := n) e (rev e), g v ≠ v) :
     ∑ v ∈ ons_loopSetBoth (n := n) e (rev e), ons_loopWeight Λ v = 0 :=
@@ -399,7 +399,7 @@ lemma ons_surgery_involutive {E} [DecidableEq E] {n : ℕ} [NeZero n] {e : E} {r
 lemma ons_sum_zero_of_sign_involution' {E} [Fintype E] [DecidableEq E] (Λ : Matrix E E ℂ)
     {n : ℕ} [NeZero n] (S : Finset (Fin n → E)) (g : (Fin n → E) → (Fin n → E))
     (hmaps : ∀ v ∈ S, g v ∈ S)
-    (hsign : ∀ v ∈ S, ons_loopWeight Λ (g v) = - ons_loopWeight Λ v)
+    (hsign : ∀ v ∈ S, ons_loopWeight Λ (g v) = -ons_loopWeight Λ v)
     (hinv : ∀ v ∈ S, g (g v) = v) :
     ∑ v ∈ S, ons_loopWeight Λ v = 0 := by
   refine Finset.sum_involution (fun v _ => g v) ?_ ?_ ?_ ?_
@@ -420,7 +420,7 @@ lemma ons_lemma5 {E} [Fintype E] [DecidableEq E] (Λ : Matrix E E ℂ)
     {n : ℕ} [NeZero n] (e : E) (rev : E → E) (hrev : Function.Involutive rev)
     (hrne : rev e ≠ e)
     (hsign : ∀ v ∈ ons_loopSetBoth (n := n) e (rev e),
-      ons_loopWeight Λ (ons_surgery e rev v) = - ons_loopWeight Λ v) :
+      ons_loopWeight Λ (ons_surgery e rev v) = -ons_loopWeight Λ v) :
     ∑ v ∈ ons_loopSetBoth (n := n) e (rev e), ons_loopWeight Λ v = 0 := by
   refine ons_sum_zero_of_sign_involution' Λ _ (ons_surgery e rev) ?_ hsign ?_
   · intro v hv

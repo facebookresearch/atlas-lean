@@ -1,0 +1,3 @@
+# Sequential verification through an intermediate assertion
+
+Let $C$ be a category and $F : C \to \mathbf{MonRel}$ a functor to the [category of preorders and monotone relations](../preorders-and-monotone-relations/README.md). A [Hoare triple](triple.md) $\{P\}\, f\, \{Q\}$ for $f : X \to Y$ means that $F(f)$ relates $P$ to $Q$. For $f : X \to Y$, $g : Y \to Z$, $P \in FX$ and $R \in FZ$, the triple $\{P\}\, g \circ f\, \{R\}$ for the composite $g \circ f : X \to Z$, $f$ followed by $g$, holds if and only if there is an assertion $Q \in FY$ such that both $\{P\}\, f\, \{Q\}$ and $\{Q\}\, g\, \{R\}$ hold. The backward direction is the [sequential Hoare rule](comp.md).
