@@ -385,13 +385,15 @@ private theorem riccatiCostToGo_posSemidef_aux {A : Matrix σ σ ℝ} {B : Matri
   | zero => exact hQf
   | succ _ ih => exact riccatiMap_posSemidef hQ hR ih
 
-/-- **Exact finite-horizon LQR cost decomposition.** Let `M j` be the Riccati cost-to-go
-matrix with `j` steps remaining and `x t` the state under the control stream `u`. The total
-cost is `x₀ᵀ M_T x₀` plus the sum of the quadratic costs of the feedback residuals
-`u t + K_{T-1-t} x t`, weighted by `R + Bᵀ M_{T-1-t} B`.
+/-- **Exact finite-horizon LQR cost decomposition.** Let the state and terminal cost
+matrices `Q` and `Qf` be positive semidefinite, and let the control cost matrix `R` be
+positive definite. Let `x_t` be the state at time `t` under the control stream `u`, and let `M_j`
+be the Riccati cost-to-go matrix with `j` steps remaining (`M_0 = Qf`). Define the gain
+`K_j = (R + Bᵀ M_j B)⁻¹ Bᵀ M_j A`. Over `T` steps, the total cost is `x₀ᵀ M_T x₀`
+plus `∑_{t<T} e_tᵀ (R + Bᵀ M_{T-1-t} B) e_t`, where `e_t = u_t + K_{T-1-t} x_t`.
 
 See Sontag, *Mathematical Control Theory*, §8.2, Exercise 8.2.7 for the discrete-time
-analogue. The identity follows by telescoping the existing one-step square completion. -/
+analogue. The identity follows by telescoping the one-step completion of squares. -/
 theorem lqrCost_eq_riccati_add_feedback_residual {A : Matrix σ σ ℝ} {B : Matrix σ ι ℝ}
     {Q : Matrix σ σ ℝ} {R : Matrix ι ι ℝ} {Qf : Matrix σ σ ℝ}
     (hQ : Q.PosSemidef) (hR : R.PosDef) (hQf : Qf.PosSemidef)
@@ -440,8 +442,12 @@ theorem lqrCost_eq_riccati_add_feedback_residual {A : Matrix σ σ ℝ} {B : Mat
     x₀ ⬝ᵥ (M T *ᵥ x₀) + ∑ t ∈ Finset.range T, E t
   linarith only [hs]
 
-/-- A control stream attains the Riccati value exactly when every control before `T`
-equals the Riccati feedback evaluated at its own state. No condition is imposed after `T - 1`. -/
+/-- Let the state and terminal cost matrices `Q` and `Qf` be positive semidefinite and
+let the control cost matrix `R` be positive definite. With `j` steps remaining, let
+`M_j` be the Riccati cost-to-go matrix (`M_0 = Qf`) and
+`K_j = (R + Bᵀ M_j B)⁻¹ Bᵀ M_j A`. A control stream has cost `x₀ᵀ M_T x₀` over `T`
+steps if and only if at every time `t < T` it uses `u_t = -K_{T-1-t} x_t`, where `x_t`
+is the state reached by that stream. No condition is imposed at or after `T`. -/
 theorem lqrCost_eq_riccati_iff_feedback {A : Matrix σ σ ℝ} {B : Matrix σ ι ℝ}
     {Q : Matrix σ σ ℝ} {R : Matrix ι ι ℝ} {Qf : Matrix σ σ ℝ}
     (hQ : Q.PosSemidef) (hR : R.PosDef) (hQf : Qf.PosSemidef)
@@ -481,9 +487,11 @@ theorem lqrCost_eq_riccati_iff_feedback {A : Matrix σ σ ℝ} {B : Matrix σ ι
       exact add_eq_zero_iff_eq_neg.mpr (h t (Finset.mem_range.mp ht))
     simp [E, he]
 
-/-- **Unique finite-horizon LQR control.** The Riccati feedback attains the minimum;
-every other stream attaining the same cost agrees with it on all indices `t < T`.
-Stream values at or after `T` are not part of the finite-horizon optimizer. -/
+/-- **Unique finite-horizon LQR control.** Let `Q` and `Qf` be positive semidefinite
+and `R` be positive definite. For horizon `T` and initial state `x₀`, some control stream
+attains the minimum cost `x₀ᵀ M_T x₀`, where `M_T` is the Riccati cost-to-go matrix
+with `T` steps remaining. Every stream attaining that cost agrees with the minimizer
+at every time `t < T`. Values at or after `T` do not enter the cost. -/
 theorem exists_lqrCost_minimizer_unique_prefix {A : Matrix σ σ ℝ} {B : Matrix σ ι ℝ}
     {Q : Matrix σ σ ℝ} {R : Matrix ι ι ℝ} {Qf : Matrix σ σ ℝ}
     (hQ : Q.PosSemidef) (hR : R.PosDef) (hQf : Qf.PosSemidef) (T : ℕ) (x₀ : σ → ℝ) :
