@@ -1,0 +1,3 @@
+# The decision problem METRIC DIMENSION on planar graphs
+
+METRIC DIMENSION on planar graphs as a decision problem on bitstrings: a bitstring is accepted exactly when it decodes, under the canonical bitstring encoding, to an instance that is [well-formed for METRIC DIMENSION on planar graphs](well-formed.md) (a well-formed METRIC DIMENSION instance whose graph is planar) and feasible for METRIC DIMENSION. The feasibility test is the unrestricted problem's; the restriction to METRIC DIMENSION on planar graphs comes from the well-formedness test alone. A bitstring that does not decode to an instance is rejected.
