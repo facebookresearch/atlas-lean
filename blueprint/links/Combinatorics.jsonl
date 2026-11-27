@@ -6817,6 +6817,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/not-yet-classified/arc-network/README.md"}], "id": "af_ddea348a078a7c419f2266fb", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/not-yet-classified/arc-network-demand/README.md"}], "id": "af_2a5b9a7fd45248486a478989", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/not-yet-classified/arc-network-walk/README.md"}], "id": "af_e93f0709fb1f201e5ec793a4", "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/ramsey-theory/structural-ramsey/is-euclidean-ramsey.md"}], "id": "af_8f8b2c6ab203c9767e4ca2ba", "object": [{"location": {"declaration": "IsEuclideanRamsey"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}, "org.autoform": {"origin": "cited"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/boolean-functions/global-hypercontractivity-and-sharp-thresholds/README.md"}], "id": "af_cfa284519a050fd92786ab98"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/extremal-set-theory/spread-families-and-robust-sunflowers/README.md"}], "id": "af_5fd638b05d5c200f111218a0"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/polytopes-simplicial-complexes/coboundary-and-cosystolic-expansion/README.md"}], "id": "af_424f5d494b71358f4b1a1d58"}
