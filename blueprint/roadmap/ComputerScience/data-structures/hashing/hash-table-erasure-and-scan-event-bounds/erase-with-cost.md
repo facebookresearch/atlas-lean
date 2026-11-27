@@ -1,3 +1,3 @@
 # Erase With Cost
 
-Deletes a key and counts the branch events in the traversal that computes the new bucket.
+For a hash table with $m$ buckets and hash function $h$, the selected chain of a key $k$ is the bucket at index $h(k) \bmod m$; keys need not lie in their selected bucket unless the table is valid. A scan of the selected chain charges one event per entry compared with $k$ until the first entry with key $k$, counting that successful comparison, or one terminal event at the end of the chain when no entry has key $k$. The costed erasure of $k$ removes the first entry with key $k$ from the selected chain, leaving every other bucket unchanged, and returns the new table together with the number of scan events.
