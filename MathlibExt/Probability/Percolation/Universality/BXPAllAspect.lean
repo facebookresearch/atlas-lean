@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.Probability.Percolation.Universality.BXPFromRSW
 public import MathlibExt.Probability.Percolation.Universality.CrossingReflection
+import MathlibExt.Combinatorics.SimpleGraph.Lattice.PathVisitsRow
 
 /-!
 # The box-crossing property at `p = 1/2` for every aspect ratio
@@ -52,16 +53,12 @@ open StatMech.Lattice
 open StatMech.RSW.Box
 open StatMech.RSW.Strip
 
-/-- Lattice neighbours differ by at most `1` in every coordinate. -/
+/-- Lattice neighbours differ by at most `1` in every coordinate. The same statement as
+`StatMech.Lattice.pvr_adj_coord_diff_le_one`. -/
 theorem bxa_adj_coord_diff_le {d : ℕ} {x y : Site d}
     (h : (hypercubicLattice d).Adj x y) (i : Fin d) :
-    (x i - y i).natAbs ≤ 1 := by
-  rw [hypercubicLattice_adj] at h
-  calc (x i - y i).natAbs
-      ≤ ∑ j, (x j - y j).natAbs :=
-        Finset.single_le_sum (f := fun j => (x j - y j).natAbs)
-          (fun j _ => Nat.zero_le _) (Finset.mem_univ i)
-    _ = 1 := h
+    (x i - y i).natAbs ≤ 1 :=
+  pvr_adj_coord_diff_le_one h i
 
 /-- An open walk from `x_i < t` to `y_i ≥ t` has a first vertex with `i`-th coordinate `t`. -/
 theorem bxa_walk_first_hit {ω : ConfigSpace (Sym2 (Site 2))} {x y : Site 2}
@@ -90,7 +87,7 @@ theorem bxa_walk_first_hit {ω : ConfigSpace (Sym2 (Site 2))} {x y : Site 2}
   have hadj := p.adj_getVert_succ hklt
   rw [hk] at hjP
   have hadj' : (hypercubicLattice 2).Adj (p.getVert k) (p.getVert (k + 1)) := hadj.1
-  have hdiff := bxa_adj_coord_diff_le hadj' i
+  have hdiff := pvr_adj_coord_diff_le_one hadj' i
   have hle : (p.getVert (k + 1)) i ≤ t := by
     have habs : ((p.getVert k) i - (p.getVert (k + 1)) i).natAbs ≤ 1 := hdiff
     have hb : |(p.getVert k) i - (p.getVert (k + 1)) i| ≤ 1 := by

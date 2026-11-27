@@ -56,6 +56,11 @@
 - [Unrestricted algebraic identity behind the LATE theorem](wald-estimand-eq-late-totalized.md)
 - [Local average treatment effect theorem](wald-estimand-eq-late.md)
 
+## Effect measures and mediation
+
+- [Collapsibility of effect measures without confounding](collapsibility-odds-ratio-non-collapsibility-without-confounding.md)
+- [Natural direct and indirect effects: decomposition of the total effect](natural-direct-and-indirect-effects-mediation-formula.md)
+
 ## Truncated endpoints at a horizon
 
 - [Event time truncated at a horizon](truncated-endpoint.md)

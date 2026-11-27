@@ -16,6 +16,7 @@ public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 public import MathlibExt.NumberTheory.Recurrences.LucasDiscriminantGcd
 public import MathlibExt.NumberTheory.Recurrences.LucasParityDivisibility
+public import MathlibExt.NumberTheory.Recurrences.LucasSequenceAddition
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceFirstKind
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceModThree
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceNegation
@@ -23,6 +24,7 @@ public import MathlibExt.NumberTheory.Recurrences.NondegenerateLucasPair
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceDivisibilityGcdLucasUTwoMulDivPEqOne
+public import MathlibExt.NumberTheory.Recurrences.LucasSequenceDivisibilityIsLucasFrobeniusPseudoprimeOfIsEulerLucasPseudoprime
 
 /-! # Divisibility and parity lemmas for Lucas sequences
 
@@ -43,16 +45,6 @@ notions
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Doubling formula $U_{2n} = U_n V_n$ for Lucas sequences.** Let $P$ and $Q$ be integers with
-$Q \ne 0$, and let $U$ and $V$ be the Lucas sequences $U(P, Q)$ and $V(P, Q)$. Then
-$U_{2n} = U_n V_n$ for every natural number $n$.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Proposition 2.3 (i) (`integers-2025-A107-prop-2-3`). -/
-public theorem_wanted lucasU_two_mul_eq_lucasU_mul_lucasV
-    (L : LucasSequenceParams) (n : ℕ) :
-    lucasU L (2 * n) = lucasU L n * lucasV L n
 
 /-- **Divisibility of Lucas sequences at divisible indices.** Let $U = U(P, Q)$ and
 $V = V(P, Q)$ be the Lucas sequences with integer parameters $P$ and $Q \ne 0$, and let $m$ and
@@ -290,105 +282,6 @@ public theorem lucasRankOfAppearance_one (L : LucasSequenceParams) :
   have hmem : (1 : ℕ) ∈ {r : ℕ | 0 < r ∧ ((1 : ℕ) : ℤ) ∣ lucasU L r} :=
     ⟨Nat.one_pos, by simp⟩
   exact le_antisymm (Nat.sInf_le hmem) (Nat.sInf_mem ⟨1, hmem⟩).1
-
-/-- **Index of the Lucas pseudoprime congruences.** Let $P, Q$ be integers with $Q \neq 0$ and
-$D = P^2 - 4Q$. For a natural number $N$, the index is $N - (D/N)$, where $(D/N)$ is the Jacobi
-symbol, replaced by $0$ when this difference is negative. For $N > 1$ the difference is positive.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, congruences (3.1), (3.4). -/
-public def lucasPseudoprimeIndex (L : LucasSequenceParams) (N : ℕ) : ℕ :=
-  ((N : ℤ) - jacobiSym (L.p ^ 2 - 4 * L.q) N).toNat
-
-/-- **Lucas pseudoprimes.** Let $P, Q$ be integers with $Q \neq 0$, let $U_n$ be the Lucas
-sequence of $(P, Q)$ and let $D = P^2 - 4Q$. A natural number $N$ is a Lucas pseudoprime with
-parameters $P, Q$ if $N$ is odd and composite, $\gcd(N, QD) = 1$ and $N$ divides
-$U_{N - (D/N)}$, where $(D/N)$ is the Jacobi symbol.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Definition 3.1. -/
-public def IsLucasPseudoprime (L : LucasSequenceParams) (N : ℕ) : Prop :=
-  Odd N ∧ 1 < N ∧ ¬ N.Prime ∧ Int.gcd N (L.q * (L.p ^ 2 - 4 * L.q)) = 1 ∧
-    (N : ℤ) ∣ lucasU L (lucasPseudoprimeIndex L N)
-
-/-- **Lucas pseudoprimes of the second kind.** Let $P, Q$ be integers with $Q \neq 0$, let $U_n$
-be the Lucas sequence of $(P, Q)$ and let $D = P^2 - 4Q$. A natural number $N$ is a Lucas
-pseudoprime of the second kind with parameters $P, Q$ if $N$ is odd and composite,
-$\gcd(N, QD) = 1$ and $U_N \equiv (D/N) \pmod{N}$, where $(D/N)$ is the Jacobi symbol.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Definition 3.2. -/
-public def IsLucasPseudoprimeSecondKind (L : LucasSequenceParams) (N : ℕ) : Prop :=
-  Odd N ∧ 1 < N ∧ ¬ N.Prime ∧ Int.gcd N (L.q * (L.p ^ 2 - 4 * L.q)) = 1 ∧
-    lucasU L N ≡ jacobiSym (L.p ^ 2 - 4 * L.q) N [ZMOD N]
-
-/-- **Dickson pseudoprimes.** Let $P$ and $Q \ne 0$ be integers with discriminant
-$D = P^2 - 4Q$, and let $(V_n)$ be the companion Lucas sequence $V(P, Q)$. A natural number $N$
-is a Dickson pseudoprime with parameters $P$ and $Q$ if $N$ is odd, $N > 1$, $N$ is not prime,
-$\gcd(N, QD) = 1$, and $V_N \equiv P \pmod N$.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Definition 3.3. -/
-public def IsDicksonPseudoprime (L : LucasSequenceParams) (N : ℕ) : Prop :=
-  Odd N ∧ 1 < N ∧ ¬ N.Prime ∧ Int.gcd N (L.q * (L.p ^ 2 - 4 * L.q)) = 1 ∧
-    lucasV L N ≡ L.p [ZMOD N]
-
-/-- **Dickson pseudoprimes of the second kind.** Let $P$ and $Q \ne 0$ be integers with
-discriminant $D = P^2 - 4Q$, and let $(V_n)$ be the companion Lucas sequence $V(P, Q)$. A
-natural number $N$ is a Dickson pseudoprime of the second kind with parameters $P$ and $Q$ if
-$N$ is odd, $N > 1$, $N$ is not prime, $\gcd(N, QD) = 1$, and
-$V_{N - (D/N)} \equiv 2Q^{(1 - (D/N))/2} \pmod N$, where $(D/N)$ is the Jacobi symbol.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Definition 3.4. -/
-public def IsDicksonPseudoprimeSecondKind (L : LucasSequenceParams) (N : ℕ) : Prop :=
-  Odd N ∧ 1 < N ∧ ¬ N.Prime ∧ Int.gcd N (L.q * (L.p ^ 2 - 4 * L.q)) = 1 ∧
-    lucasV L (lucasPseudoprimeIndex L N) ≡
-      2 * L.q ^ ((1 - jacobiSym (L.p ^ 2 - 4 * L.q) N) / 2).toNat [ZMOD N]
-
-/-- **Frobenius pseudoprime for Lucas parameters.** Let $U$ and $V$ be the Lucas sequences with
-integer parameters $P$ and $Q \neq 0$, and let $D = P^2 - 4Q$. A natural number $N$ is a
-Frobenius pseudoprime with parameters $P, Q$ when $\gcd(N, PQD) = 1$ and $N$ is a Lucas
-pseudoprime, a Lucas pseudoprime of the second kind, a Dickson pseudoprime and a Dickson
-pseudoprime of the second kind with parameters $P, Q$. Equivalently, $\gcd(N, PQD) = 1$, $N$ is
-odd and composite, and, writing $\varepsilon = (D/N)$ for the Jacobi symbol, $N$ satisfies the
-congruences $U_{N-\varepsilon} \equiv 0$, $U_N \equiv \varepsilon$, $V_N \equiv P$ and
-$V_{N-\varepsilon} \equiv 2Q^{(1-\varepsilon)/2}$ modulo $N$.
-
-This is the notion of the source, not Grantham's Frobenius pseudoprime defined through quotient
-rings of polynomials.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Definition 3.5. -/
-public def IsLucasFrobeniusPseudoprime (L : LucasSequenceParams) (N : ℕ) : Prop :=
-  Int.gcd N (L.p * L.q * (L.p ^ 2 - 4 * L.q)) = 1 ∧ IsLucasPseudoprime L N ∧
-    IsLucasPseudoprimeSecondKind L N ∧ IsDicksonPseudoprime L N ∧
-      IsDicksonPseudoprimeSecondKind L N
-
-/-- **Euler pseudoprime.** Let $a$ be an integer. A natural number $N$ is an Euler pseudoprime to
-the base $a$ when $N$ is odd and composite, $\gcd(a, N) = 1$, and
-$a^{(N-1)/2} \equiv (a/N) \pmod N$, where $(a/N)$ is the Jacobi symbol.
-
-The source states the definition for positive odd $a$ and applies it to the base $Q$ (for
-example $Q = -1$ in Remark 3.8); here $a$ is any integer.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Definition 3.7. -/
-public def IsEulerPseudoprime (a : ℤ) (N : ℕ) : Prop :=
-  Odd N ∧ 1 < N ∧ ¬ N.Prime ∧ Int.gcd a N = 1 ∧ a ^ ((N - 1) / 2) ≡ jacobiSym a N [ZMOD N]
-
-/-- **Euler–Lucas pseudoprime.** Let $U$ and $V$ be the Lucas sequences with integer parameters
-$P$ and $Q \neq 0$, and let $D = P^2 - 4Q$. A natural number $N$ is an Euler–Lucas pseudoprime
-with parameters $P, Q$ when $N$ is odd and composite, $\gcd(N, QD) = 1$, and, writing
-$\varepsilon = (D/N)$ for the Jacobi symbol, $N \mid U_{(N-\varepsilon)/2}$ if the Jacobi symbol
-$(Q/N)$ equals $1$, and $N \mid V_{(N-\varepsilon)/2}$ if $(Q/N) = -1$.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Definition 3.9. -/
-public def IsEulerLucasPseudoprime (L : LucasSequenceParams) (N : ℕ) : Prop :=
-  Odd N ∧ 1 < N ∧ ¬ N.Prime ∧ Int.gcd N (L.q * (L.p ^ 2 - 4 * L.q)) = 1 ∧
-    (jacobiSym L.q N = 1 → (N : ℤ) ∣ lucasU L (lucasPseudoprimeIndex L N / 2)) ∧
-    (jacobiSym L.q N = -1 → (N : ℤ) ∣ lucasV L (lucasPseudoprimeIndex L N / 2))
 
 /-- **Strong Lucas pseudoprimes.** Let $P, Q$ be integers with $Q \neq 0$, let $U_n$ and $V_n$ be
 the Lucas sequences of $(P, Q)$ and let $D = P^2 - 4Q$. A natural number $N$ is a strong Lucas
@@ -646,21 +539,6 @@ public theorem_wanted isSuperPseudoprime_of_lucasRankOfAppearance_eq
         lucasRankOfAppearance L p = lucasRankOfAppearance L q) :
     IsSuperPseudoprime L (IsStrongLucasPseudoprime L) N ∧
       (L.q = 1 ∨ L.q = -1 → IsSuperPseudoprime L (IsLucasFrobeniusPseudoprime L) N)
-
-/-- **From Euler–Lucas to Frobenius pseudoprimes.** Let $P$ and $Q \neq 0$ be integers forming a
-nondegenerate Lucas pair, and let $D = P^2 - 4Q$. If $N$ is an Euler–Lucas pseudoprime with
-parameters $P, Q$ and an Euler pseudoprime to the base $Q$, and $\gcd(N, PQD) = 1$, then $N$ is a
-Frobenius pseudoprime with parameters $P, Q$.
-
-The base $Q$ is any nonzero integer; the source's Definition 3.7 is stated for positive odd bases.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Theorem 3.18 (`integers-2025-A107-thm-3-18`). -/
-public theorem_wanted isLucasFrobeniusPseudoprime_of_isEulerLucasPseudoprime
-    (L : LucasSequenceParams) (hL : IsNondegenerateLucasPair L.p L.q) (N : ℕ)
-    (hEL : IsEulerLucasPseudoprime L N) (hE : IsEulerPseudoprime L.q N)
-    (hcop : Int.gcd N (L.p * L.q * (L.p ^ 2 - 4 * L.q)) = 1) :
-    IsLucasFrobeniusPseudoprime L N
 
 /-- **From strong Lucas to Frobenius pseudoprimes when Q = ±1.** Let $P$ and $Q$ be integers
 forming a nondegenerate Lucas pair with $Q = 1$ or $Q = -1$, and let $D = P^2 - 4Q$. If $N$ is a
