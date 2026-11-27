@@ -25,16 +25,21 @@ Solutions are those of the library's replicator equation
 `MathlibExt.Biology.Dynamics.Replicator.IsSolution` (`Domains.Biology.Dynamics.Replicator`) with
 the linear fitness `y ↦ A y`, and a point of the simplex is the library's
 `MathlibExt.Biology.Dynamics.AsymmetricESS.IsMixed` (`Domains.Biology.Dynamics.AsymmetricESS`).
-Asymptotic stability is relative to the simplex; global stability means Lyapunov stability plus
-convergence of every interior solution. Each stability predicate requires `z` to be a rest point
-in the simplex, so none of them holds vacuously at a point off the simplex. Zeeman (1980) and
-Hofbauer–Sigmund (1998, §7.7) were not read; the statement follows Hofbauer and Sigmund (2003),
-§2.4.
+Stability is in the sense of Hofbauer and Sigmund (2003, §2.2, p. 482), relative to the simplex,
+with the library's predicates: Lyapunov stability is
+`WantedExt.Biology.Ecology.EvolutionaryFolkTheoremWanted.IsLyapunovStable` and asymptotic
+stability is `WantedExt.Biology.Ecology.BoundaryESSStabilityWanted.IsAsymptoticallyStable`. They
+state the replicator equation as `IsReplicatorSolution A`, which asserts the same coordinate
+derivatives as `Replicator.IsSolution (fun y => A *ᵥ y)`, and the simplex as `simplex`, the same
+set as `IsMixed`. A rest point `z` is globally stable when it is stable and every solution starting
+in the simplex with `xᵢ(0) > 0` for every `i` with `zᵢ > 0` converges to `z`; for an interior `z`
+these are the solutions starting in the interior of `S₃`. Zeeman (1980) and Hofbauer–Sigmund
+(1998, §7.7) were not read; the statement follows Hofbauer and Sigmund (2003), §2.4.
 
 Sources: E. C. Zeeman, "Population dynamics from game theory", in *Global Theory of Dynamical
 Systems*, Lecture Notes in Math. 819, Springer (1980); J. Hofbauer and K. Sigmund, "Evolutionary
 game dynamics", Bull. Amer. Math. Soc. (N.S.) 40 (2003) 479–519,
-doi:10.1090/S0273-0979-03-00988-1, Theorem 2.
+doi:10.1090/S0273-0979-03-00988-1, §2.2 and Theorem 2.
 -/
 module
 
@@ -45,6 +50,8 @@ public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
+public import WantedExt.Biology.Ecology.BoundaryESSStabilityWanted
+public import WantedExt.Biology.Ecology.EvolutionaryFolkTheoremWanted
 
 @[expose] public section
 
@@ -68,30 +75,17 @@ simplex (`IsMixed z`: every `zᵢ ≥ 0` and `∑ zᵢ = 1`) and some coordinate
 is the heteroclinic cycle `e₁ → e₂ → e₃ → e₁`. -/
 def InBoundary (z : Fin 3 → ℝ) : Prop := IsMixed z ∧ ∃ i, z i = 0
 
-/-- **Lyapunov stability.** `z` is a Lyapunov stable rest point for solutions starting in the
-simplex: `z` is a point of the simplex (`IsMixed z`) and a rest point of the replicator equation,
-and for every `ε > 0` there is `δ > 0` such that every solution on `[0, ∞)` with `x(0)` in the
-simplex (`IsMixed (x 0)`) and `‖x(0) - z‖ < δ` has `‖x(t) - z‖ < ε` for every `t ≥ 0`. -/
-def IsLyapunovStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
-  IsMixed z ∧ Replicator.IsRestPoint (fun y => A *ᵥ y) z ∧
-    ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ → Fin 3 → ℝ,
-      Replicator.IsSolution (fun y => A *ᵥ y) x → IsMixed (x 0) →
-        ‖x 0 - z‖ < δ → ∀ t : ℝ, 0 ≤ t → ‖x t - z‖ < ε
-
-/-- **Asymptotic stability.** `z` is asymptotically stable: it is Lyapunov stable (in particular a
-rest point in the simplex), and there is `δ₀ > 0` such that every solution on `[0, ∞)` with `x(0)`
-in the simplex (`IsMixed (x 0)`) and `‖x(0) - z‖ < δ₀` converges to `z`. -/
-def IsAsymptoticallyStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
-  IsLyapunovStable A z ∧ ∃ δ₀ : ℝ, 0 < δ₀ ∧ ∀ x : ℝ → Fin 3 → ℝ,
-    Replicator.IsSolution (fun y => A *ᵥ y) x → IsMixed (x 0) →
-      ‖x 0 - z‖ < δ₀ → Tendsto x atTop (𝓝 z)
-
-/-- **Global stability.** `z` is globally stable: it is Lyapunov stable (in particular a rest point
-in the simplex), and every solution on `[0, ∞)` with `x(0)` in the interior of `S₃` converges to
-`z`. -/
+/-- **Global stability.** `z` is a globally stable rest point (Hofbauer and Sigmund 2003, §2.2,
+p. 482): `z` is a rest point of the replicator equation, it is Lyapunov stable on the simplex
+(`EvolutionaryFolkTheoremWanted.IsLyapunovStable`, which includes that `z` lies in the simplex),
+and every solution on `[0, ∞)` starting in the simplex (`IsMixed (x 0)`) with `xᵢ(0) > 0` for
+every `i` with `zᵢ > 0` converges to `z`. For an interior `z` these are the solutions starting in
+the interior of `S₃`. -/
 def IsGloballyStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
-  IsLyapunovStable A z ∧ ∀ x : ℝ → Fin 3 → ℝ,
-    Replicator.IsSolution (fun y => A *ᵥ y) x → InInterior (x 0) → Tendsto x atTop (𝓝 z)
+  Replicator.IsRestPoint (fun y => A *ᵥ y) z ∧
+    EvolutionaryFolkTheoremWanted.IsLyapunovStable A z ∧
+    ∀ x : ℝ → Fin 3 → ℝ, Replicator.IsSolution (fun y => A *ᵥ y) x → IsMixed (x 0) →
+      (∀ i, 0 < z i → 0 < x 0 i) → Tendsto x atTop (𝓝 z)
 
 /-- **Unique interior rest point.** For losses `aᵢ > 0` and wins `bᵢ > 0`, the rock–paper–scissors
 replicator equation has exactly one rest point in the interior of `S₃` (Hofbauer and Sigmund
@@ -104,13 +98,15 @@ public theorem_wanted existsUnique_interiorRestPoint (a b : Fin 3 → ℝ) (ha :
 
 /-- **Zeeman's equivalences.** Let `aᵢ > 0`, `bᵢ > 0`, and let `z` be the interior rest point of
 the rock–paper–scissors replicator equation with matrix `A`. Then the following are equivalent:
-(a) `z` is asymptotically stable; (b) `z` is globally stable; (c) `det A > 0`; (d) `zᵀ A z > 0`.
+(a) `z` is asymptotically stable (`BoundaryESSStabilityWanted.IsAsymptoticallyStable`); (b) `z`
+is globally stable; (c) `det A > 0`; (d) `zᵀ A z > 0`.
 
 Sources: Zeeman (1980); Hofbauer and Sigmund (2003), Theorem 2. -/
 public theorem_wanted zeeman_tfae (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i) (hb : ∀ i, 0 < b i)
     (z : Fin 3 → ℝ) (hz : InInterior z)
     (hrest : Replicator.IsRestPoint (fun y => rpsMatrix a b *ᵥ y) z) :
-    (IsAsymptoticallyStable (rpsMatrix a b) z ↔ IsGloballyStable (rpsMatrix a b) z) ∧
+    (BoundaryESSStabilityWanted.IsAsymptoticallyStable (rpsMatrix a b) z ↔
+        IsGloballyStable (rpsMatrix a b) z) ∧
       (IsGloballyStable (rpsMatrix a b) z ↔ 0 < (rpsMatrix a b).det) ∧
       (0 < (rpsMatrix a b).det ↔ 0 < z ⬝ᵥ (rpsMatrix a b *ᵥ z))
 

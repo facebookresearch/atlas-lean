@@ -21,10 +21,12 @@ with `∑ xᵢ = 0` and support in the support of `p`; conversely a regular Nash
 payoffs on the support, strictly lower payoffs off it) satisfying this condition is an ESS
 (Taylor and Jonker 1978).
 
-Recorded here: (a), (b), Haigh's necessary condition and the regular-ESS converse. The
-primaries of Bishop and Cannings (1976) and Haigh (1975) are paywalled and were not read; the
-statements follow Haigh's 1974 appendix, Taylor and Jonker (1978) and the Encyclopedia of
-Mathematics entry by C. Cannings. The ESS predicate is the library's
+Recorded here: (b), Haigh's necessary condition and the regular-ESS converse. Part (a) is not
+restated: both of its halves are proved for every ESS, boundary ESSs included, in
+`Domains.Biology.Ecology.BoundaryESSStabilityReLtZero`. The primaries of Bishop and Cannings
+(1976) and Haigh (1975) are paywalled and were not read; the statements follow Haigh's 1974
+appendix, Taylor and Jonker (1978) and the Encyclopedia of Mathematics entry by C. Cannings. The
+ESS predicate is the library's
 `MathlibExt.Biology.Dynamics.Replicator.IsESS` (`Domains.Biology.Dynamics.ReplicatorStability`),
 for which an ESS is a Nash equilibrium (`IsESS.isNash`), and a mixed strategy is the library's
 `MathlibExt.Biology.Dynamics.AsymmetricESS.IsMixed` (`Domains.Biology.Dynamics.AsymmetricESS`),
@@ -53,15 +55,6 @@ namespace WantedExt.Biology.Ecology.BishopCanningsWanted
 open Matrix
 open MathlibExt.Biology.Dynamics.Replicator (IsESS)
 open MathlibExt.Biology.Dynamics.AsymmetricESS (IsMixed)
-
-/-- **Equal payoffs on the support.** Let `A` be a real square matrix indexed by a finite type and
-`p` an ESS. Then every pure strategy `i` with `pᵢ > 0` earns `(A p)ᵢ = pᵀ A p`, and every pure
-strategy `j` earns `(A p)ⱼ ≤ pᵀ A p`.
-
-Sources: Haigh (1974); Bishop and Cannings (1978), Theorem 2. -/
-public theorem_wanted equal_payoffs_on_support {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ)
-    (p : ι → ℝ) (hp : IsESS A p) :
-    (∀ i, 0 < p i → (A *ᵥ p) i = p ⬝ᵥ (A *ᵥ p)) ∧ ∀ j, (A *ᵥ p) j ≤ p ⬝ᵥ (A *ᵥ p)
 
 /-- **No nested ESS supports.** Let `A` be a real square matrix indexed by a finite type and `p` an
 ESS. If `q` is a mixed strategy (`IsMixed q`) with `q ≠ p` whose support is contained in the

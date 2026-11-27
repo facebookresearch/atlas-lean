@@ -9,9 +9,10 @@ LICENSE file in the root directory of this source tree.
 /-
 # The war of attrition: no pure ESS, and the exponential persistence strategy
 
-In Maynard Smith's war of attrition (1974, §3) each contestant chooses the cost `m ≥ 0` it is
-prepared to pay, linear in display time. If `m₁ > m₂` the first gets `v - m₂` and the second
-`-m₂`; equal choices split the resource, giving `v / 2 - m` each. Maynard Smith showed:
+In Maynard Smith's war of attrition (1974, §3) over a resource of value `v > 0`, each contestant
+chooses the cost `m ≥ 0` it is prepared to pay, linear in display time. If `m₁ > m₂` the first
+gets `v - m₂` and the second `-m₂`; equal choices split the resource, giving `v / 2 - m` each.
+Maynard Smith showed:
 (i) no pure strategy is an ESS, since against a population playing `m` the mutant `m + ε` does
 better; (ii) the mixed strategy `I` with density `(1/v) e^{-x/v}` on `[0, ∞)` (Mathlib's
 `ProbabilityTheory.expMeasure` with rate `v⁻¹`) is an equilibrium:
@@ -45,9 +46,9 @@ noncomputable def payoff (v m m' : ℝ) : ℝ :=
   if m' < m then v - m' else if m < m' then -m else v / 2 - m
 
 /-- **Exponential persistence strategy.** The persistence strategy `I`: Mathlib's exponential law
-`ProbabilityTheory.expMeasure` with rate `v⁻¹`, whose density is `(1/v) e^{-x/v}` for `x ≥ 0` and
-`0` for `x < 0`. For `v > 0` it is a probability law
-(`ProbabilityTheory.isProbabilityMeasure_expMeasure`) with mean `v`. -/
+`ProbabilityTheory.expMeasure` with rate `v⁻¹`. For `v > 0` it is a probability law
+(`ProbabilityTheory.isProbabilityMeasure_expMeasure`) with density `(1/v) e^{-x/v}` for `x ≥ 0`
+and `0` for `x < 0`, and mean `v`. -/
 noncomputable def exponentialStrategy (v : ℝ) : Measure ℝ :=
   ProbabilityTheory.expMeasure v⁻¹
 
