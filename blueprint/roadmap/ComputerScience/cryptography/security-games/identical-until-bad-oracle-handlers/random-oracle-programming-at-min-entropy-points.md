@@ -6,7 +6,7 @@ $$
 |\Pr[W_1] - \Pr[W_0]| \le Q_s(Q_s + Q_{\mathrm{ro}} + 1)\delta
 $$
 
-(Boneh and Shoup, proof of Theorem 19.7 for Schnorr with $\delta = 1/q$, carried over verbatim to $\delta$-unpredictable commitments in Theorem 19.16). Consequently, the Fiat–Shamir signature advantage satisfies $\mathrm{SIG}^{\mathrm{ro}}\mathrm{adv}[A, S] \le Q_s(Q_s + Q_{\mathrm{ro}} + 1)\delta + r\mathrm{ID2adv}[B, I, Q_{\mathrm{ro}} + 1]$ (Theorem 19.16).
+(Boneh and Shoup, proof of Theorem 19.7 for Schnorr with $\delta = 1/q$, carried over verbatim to $\delta$-unpredictable commitments in Theorem 19.16).
 
 ## Proof sketch
 
@@ -16,6 +16,10 @@ On the $i$-th signing query, at most $Q_s + Q_{\mathrm{ro}} + 1$ oracle points h
 
 - [The random oracle model](../../public-key/random-oracle-constructions/the-random-oracle-model.md)
 - [Guessing probability, min-entropy and collision probability](../../randomness-extraction/guessing-probability-min-entropy-and-collision.md)
+- [A Sigma protocol](../../signatures-and-protocols/zero-knowledge-proofs/sigma-protocol.md)
+- [Fiat–Shamir signatures from Sigma protocols are EUF-CMA secure in the random oracle model](../../signatures-and-protocols/sigma-protocols-and-fiat-shamir/identification-and-fiat-shamir/fiat-shamir-signatures.md)
+- [Signature schemes and (strong) unforgeability in the random oracle model](../../signatures-and-protocols/sigma-protocols-and-fiat-shamir/random-oracle-signatures/rom-signature-unforgeability.md)
+- [The difference lemma](../games-and-advantages/advantage-le-win-prob-of-eq-of-not-bad.md)
 
 ## Proof depends on
 

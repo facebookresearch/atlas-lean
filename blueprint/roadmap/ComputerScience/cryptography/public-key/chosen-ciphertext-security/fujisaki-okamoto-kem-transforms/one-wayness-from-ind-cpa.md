@@ -16,6 +16,7 @@ for the guessing advantage $\mathrm{Adv}^{\mathrm{ind\text{-}cpa}}(\mathcal{B}) 
 
 - [Public-key encryption with explicit coins, $\delta$-correctness and $\gamma$-spreadness](pke-with-explicit-coins.md)
 - [CPA security of public-key encryption families](../../../security-games/asymptotic-security/pub-cpasecure.md)
+- [One-way and unpredictable public-key encryption](../../elgamal-encryption/elgamal-variants-and-properties/one-way-and-unpredictable-pke.md)
 
 ## Sources
 

@@ -10,6 +10,7 @@ Allender et al. derive Theorem 45 from the inversion theorem of Håstad, Impagli
 
 - [The Minimum Circuit Size Problem MCSP and Gap-MCSP](../../circuit-complexity/minimum-circuit-size-problem/minimum-circuit-size-problem.md)
 - [BPP](../../complexity-classes/time-and-space-complexity-classes/bpp.md)
+- [One-way function families](../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
 
 ## Proof depends on
 
