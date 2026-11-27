@@ -1130,5 +1130,6 @@
 {"folder": "Physics/not-yet-classified/part-04/finite-state", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state", "article_id": "af_789b392f10ac935b940278f9"}
 {"page": "Physics/not-yet-classified/part-04/finite-state/is-normalized", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state/is-normalized", "article_id": "af_c272e06a88b2426f1b036486"}
 {"page": "Physics/not-yet-classified/part-04/finite-state/born-prob", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state/born-prob", "article_id": "af_b8b6732cadf23683422121a1"}
+{"page": "ComputerScience/graph-algorithms/graph-algorithm-bounds/spectral-approximation-of-graphs", "to": "GraphTheory/algebraic-graph-theory/part-02/spectral-sparsification/spectral-approximation-of-graphs", "article_id": "af_dec166353a4ec8cdd3025548"}
 {"statement": "af_f043360fc726d23a4c826b96", "page": "ComputerScience/computational-geometry/polygons-and-triangulations/triangulations-of-simple-polygons-and-the-art", "replaced_by": "af_6d1901b4a6ff65859a35e8e7"}
 {"statement": "af_cbd7650684e403c307d5bfee", "page": "ComputerScience/computational-geometry/polygons-and-triangulations/delaunay-triangulations", "replaced_by": "af_f15ce7a6a79500e4f684d555"}
