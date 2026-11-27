@@ -14,6 +14,8 @@ public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.PowerSeries.Basic
+import Mathlib.Data.Finset.Preimage
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # Combinations without specified separations: generating functions
@@ -26,6 +28,11 @@ generating function of the restricted-overlap tilings.
 Statements from Michael A. Allen, *Connections Between Combinations Without Specified
 Separations and Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of
 Integer Sequences 28 (2025), Article 25.3.7 (arXiv:2409.00624v4).
+
+For forbidden differences 1 and 4, the next membership bit depends only on the last four
+bits. The eight reachable windows give a system of linear equations for the generating series.
+For differences 1 and 5, recording only the future positions blocked by those bits gives eleven
+reachable states and a corresponding system of linear equations.
 -/
 
 namespace MetaMathlibExt
@@ -354,5 +361,522 @@ public theorem restrictedCombination_genFun_eq_tiling_genFun (Q : Finset ℕ) :
     simp
 
 end
+
+@[expose] public section
+
+/-- **Number of subsets avoiding a set of differences.** For a finite set $Q$ of natural numbers
+and $n \ge 0$, $S^Q_n$ is the number of subsets of $\{1, \dots, n\}$ in which no two distinct
+elements differ by an element of $Q$. That is, $S^Q_n = \sum_{k=0}^{n} S^Q_{n,k}$, where
+$S^Q_{n,k}$ is the number of such subsets with $k$ elements.
+
+Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
+Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
+Sequences 28 (2025), Article 25.3.7, Section 1. -/
+public def restrictedCombinationTotal (Q : Finset ℕ) (n : ℕ) : ℕ :=
+  ∑ k ∈ Finset.range (n + 1), restrictedCombinationCount Q n k
+
+end
+
+namespace RestrictedTransfer
+
+private def succEmbedding : ℕ ↪ ℕ := ⟨Nat.succ, Nat.succ_injective⟩
+
+/-- Prepend a bit and shift all occupied suffix positions by one. -/
+private def prepend (b : Bool) (s : Finset ℕ) : Finset ℕ :=
+  if b then insert 1 (s.map succEmbedding) else s.map succEmbedding
+
+private theorem mem_prepend {b : Bool} {s : Finset ℕ} {a : ℕ} :
+    a ∈ prepend b s ↔ (a = 1 ∧ b = true) ∨ ∃ i ∈ s, a = i + 1 := by
+  cases b <;> simp [prepend, succEmbedding, Finset.mem_map, eq_comm]
+
+private theorem one_mem_prepend {b : Bool} {s : Finset ℕ} (hs : 0 ∉ s) :
+    1 ∈ prepend b s ↔ b = true := by
+  simp [mem_prepend, hs]
+
+private theorem succ_mem_prepend {b : Bool} {s : Finset ℕ} {a : ℕ} (ha : 0 < a) :
+    a + 1 ∈ prepend b s ↔ a ∈ s := by
+  simp [mem_prepend, Nat.ne_of_gt ha]
+
+private theorem prepend_subset {b : Bool} {s : Finset ℕ} {n : ℕ}
+    (hs : s ⊆ Finset.Icc 1 n) : prepend b s ⊆ Finset.Icc 1 (n + 1) := by
+  intro a ha
+  rcases mem_prepend.mp ha with ⟨rfl, _⟩ | ⟨i, hi, rfl⟩
+  · exact Finset.mem_Icc.mpr ⟨le_rfl, by omega⟩
+  · have := Finset.mem_Icc.mp (hs hi)
+    exact Finset.mem_Icc.mpr ⟨by omega, by omega⟩
+
+private theorem recover_prepend {b : Bool} {t : Finset ℕ} {n : ℕ}
+    (ht : t ⊆ Finset.Icc 1 (n + 1)) (hb : 1 ∈ t ↔ b = true) :
+    ∃ s ⊆ Finset.Icc 1 n, prepend b s = t := by
+  let s := (t.erase 1).preimage succEmbedding succEmbedding.injective.injOn
+  have hs (i : ℕ) : i ∈ s ↔ i + 1 ≠ 1 ∧ i + 1 ∈ t := by
+    rw [Finset.mem_preimage, Finset.mem_erase]
+    rfl
+  refine ⟨s, ?_, ?_⟩
+  · intro i hi
+    obtain ⟨hne, hmem⟩ := (hs i).1 hi
+    have := Finset.mem_Icc.mp (ht hmem)
+    exact Finset.mem_Icc.mpr ⟨by omega, by omega⟩
+  · ext a
+    simp only [mem_prepend, hs]
+    constructor
+    · rintro (⟨rfl, h⟩ | ⟨i, ⟨_, hi⟩, rfl⟩)
+      · exact hb.2 h
+      · exact hi
+    · intro ha
+      by_cases he : a = 1
+      · exact Or.inl ⟨he, hb.1 (he ▸ ha)⟩
+      · have := (Finset.mem_Icc.mp (ht ha)).1
+        exact Or.inr ⟨a - 1, ⟨by omega, by rwa [show a - 1 + 1 = a by omega]⟩, by omega⟩
+
+private theorem card_filter_prepend (b : Bool) (n : ℕ)
+    (suffix full : Finset (Finset ℕ)) (allowed : Prop) [Decidable allowed]
+    (hsuffix : ∀ s ∈ suffix, s ⊆ Finset.Icc 1 n)
+    (hfull : ∀ t ∈ full, t ⊆ Finset.Icc 1 (n + 1))
+    (hprepend : ∀ s ⊆ Finset.Icc 1 n, prepend b s ∈ full ↔ allowed ∧ s ∈ suffix) :
+    (full.filter fun t => (1 ∈ t ↔ b = true)).card = if allowed then suffix.card else 0 := by
+  have zero_not_mem {s : Finset ℕ} (hs : s ⊆ Finset.Icc 1 n) : 0 ∉ s :=
+    fun h => by simpa using (Finset.mem_Icc.mp (hs h)).1
+  by_cases hb : allowed
+  · rw [ite_eq_left hb]
+    symm
+    refine Finset.card_nbij (prepend b) ?_ ?_ ?_
+    · intro s hs
+      have hs' := hsuffix s hs
+      exact Finset.mem_filter.mpr ⟨(hprepend s hs').2 ⟨hb, hs⟩, one_mem_prepend (zero_not_mem hs')⟩
+    · intro s hs t ht he
+      ext a
+      by_cases ha : a = 0
+      · simp [ha, zero_not_mem (hsuffix s hs), zero_not_mem (hsuffix t ht)]
+      · have hpos := Nat.pos_of_ne_zero ha
+        rw [← succ_mem_prepend (b := b) hpos, he, succ_mem_prepend hpos]
+    · intro t ht
+      obtain ⟨ht, hbit⟩ := Finset.mem_filter.mp ht
+      obtain ⟨s, hs, rfl⟩ := recover_prepend (hfull t ht) hbit
+      exact ⟨s, ((hprepend s hs).1 ht).2, rfl⟩
+  · rw [ite_eq_right hb, Finset.card_eq_zero]
+    apply Finset.eq_empty_iff_forall_notMem.mpr
+    intro t ht
+    obtain ⟨ht, hbit⟩ := Finset.mem_filter.mp ht
+    obtain ⟨s, hs, rfl⟩ := recover_prepend (hfull t ht) hbit
+    exact hb ((hprepend s hs).1 ht).1
+
+end RestrictedTransfer
+
+namespace OneFour
+
+open RestrictedTransfer
+
+/-- The four preceding membership bits, oldest first. -/
+private structure Window where
+  first : Bool
+  second : Bool
+  third : Bool
+  fourth : Bool
+
+private def Window.shift (w : Window) (b : Bool) : Window :=
+  ⟨w.second, w.third, w.fourth, b⟩
+
+private def Window.allows (w : Window) (b : Bool) : Bool :=
+  !b || (!w.first && !w.fourth)
+
+private def zeroWindow : Window := ⟨false, false, false, false⟩
+
+private def Separated (s : Finset ℕ) : Prop :=
+  ∀ a ∈ s, a + 1 ∉ s ∧ a + 4 ∉ s
+
+private instance (s : Finset ℕ) : Decidable (Separated s) :=
+  inferInstanceAs (Decidable (∀ a ∈ s, a + 1 ∉ s ∧ a + 4 ∉ s))
+
+private theorem separated_iff (s : Finset ℕ) :
+    Separated s ↔ ∀ a ∈ s, ∀ b ∈ s, a < b → b - a ∉ ({1, 4} : Finset ℕ) := by
+  simp only [Separated, Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · intro h a ha b hb hab hd
+    rcases hd with hd | hd
+    · exact (h a ha).1 (by rwa [show a + 1 = b by omega])
+    · exact (h a ha).2 (by rwa [show a + 4 = b by omega])
+  · intro h a ha
+    exact ⟨fun hb => h a ha _ hb (by omega) (Or.inl (by omega)),
+      fun hb => h a ha _ hb (by omega) (Or.inr (by omega))⟩
+
+/-- A subset of the suffix is indicated by its occupied positions, numbered from 1.
+The four implications rule out conflicts across the boundary with the preceding window. -/
+private def Compatible (w : Window) (s : Finset ℕ) : Prop :=
+  Separated s ∧ (w.first = true → 1 ∉ s) ∧ (w.second = true → 2 ∉ s) ∧
+    (w.third = true → 3 ∉ s) ∧ (w.fourth = true → 1 ∉ s ∧ 4 ∉ s)
+
+private instance (w : Window) (s : Finset ℕ) : Decidable (Compatible w s) := by
+  unfold Compatible
+  infer_instance
+
+private def words (w : Window) (n : ℕ) : Finset (Finset ℕ) :=
+  (Finset.Icc 1 n).powerset.filter (Compatible w)
+
+private theorem mem_words {w : Window} {n : ℕ} {s : Finset ℕ} :
+    s ∈ words w n ↔ s ⊆ Finset.Icc 1 n ∧ Compatible w s := by
+  simp only [words, Finset.mem_filter, Finset.mem_powerset]
+
+private theorem total_eq_card_words (n : ℕ) :
+    restrictedCombinationTotal {1, 4} n = (words zeroWindow n).card := by
+  unfold restrictedCombinationTotal restrictedCombinationCount
+  have hcard : (↑(words zeroWindow n) : Set (Finset ℕ)).MapsTo
+      Finset.card (Finset.range (n + 1)) := by
+    intro s hs
+    have hle := Finset.card_le_card (mem_words.mp hs).1
+    simp only [Nat.card_Icc, Nat.add_sub_cancel] at hle
+    exact Finset.mem_range.mpr (by omega)
+  rw [Finset.card_eq_sum_card_fiberwise hcard]
+  apply Finset.sum_congr rfl
+  intro k _
+  congr 1
+  ext s
+  simp only [restrictedCombinations, Finset.mem_filter, Finset.mem_powersetCard, mem_words,
+    Compatible, zeroWindow, Bool.false_eq_true, false_implies, and_true, separated_iff]
+  tauto
+
+private theorem separated_prepend {b : Bool} {s : Finset ℕ} (hs : 0 ∉ s) :
+    Separated (prepend b s) ↔ Separated s ∧ (b = true → 1 ∉ s ∧ 4 ∉ s) := by
+  constructor
+  · intro h
+    refine ⟨?_, ?_⟩
+    · intro a ha
+      have ha' : 0 < a := Nat.pos_of_ne_zero (fun he => hs (he ▸ ha))
+      have hh := h (a + 1) ((succ_mem_prepend ha').2 ha)
+      exact ⟨fun ha₁ => hh.1 ((succ_mem_prepend (by omega)).2 ha₁),
+        fun ha₄ => hh.2 (by simpa [Nat.add_right_comm a 4 1] using
+          (succ_mem_prepend (by omega)).2 ha₄)⟩
+    · intro hb
+      have hh := h 1 ((one_mem_prepend hs).2 hb)
+      exact ⟨fun h1 => hh.1 ((succ_mem_prepend (by decide : 0 < 1)).2 h1),
+        fun h4 => hh.2 ((succ_mem_prepend (by decide : 0 < 4)).2 h4)⟩
+  · rintro ⟨h, hfirst⟩ a ha
+    rcases mem_prepend.mp ha with ⟨rfl, hb⟩ | ⟨i, hi, rfl⟩
+    · exact ⟨fun h1 => (hfirst hb).1 ((succ_mem_prepend (by decide : 0 < 1)).1 h1),
+        fun h4 => (hfirst hb).2 ((succ_mem_prepend (by decide : 0 < 4)).1 h4)⟩
+    · have hh := h i hi
+      exact ⟨fun h1 => hh.1 ((succ_mem_prepend (by omega)).1 h1),
+        fun h4 => hh.2 ((succ_mem_prepend (by omega)).1
+          (by simpa [Nat.add_right_comm i 4 1] using h4))⟩
+
+private theorem compatible_prepend {w : Window} {b : Bool} {s : Finset ℕ} (hs : 0 ∉ s) :
+    Compatible w (prepend b s) ↔ w.allows b = true ∧ Compatible (w.shift b) s := by
+  cases b <;> obtain ⟨a, c, d, e⟩ := w <;> cases a <;> cases e <;>
+    simp [Compatible, Window.allows, Window.shift, separated_prepend hs, one_mem_prepend hs,
+      succ_mem_prepend (by decide : 0 < 1), succ_mem_prepend (by decide : 0 < 2),
+      succ_mem_prepend (by decide : 0 < 3), and_assoc, and_left_comm, and_comm]
+
+private theorem card_words_filter (w : Window) (n : ℕ) (b : Bool) :
+    ((words w (n + 1)).filter fun s => (1 ∈ s ↔ b = true)).card =
+      if w.allows b then (words (w.shift b) n).card else 0 := by
+  apply card_filter_prepend b n _ _ (w.allows b = true)
+    (fun _ hs => (mem_words.mp hs).1) (fun _ ht => (mem_words.mp ht).1)
+  intro s hs
+  have h0 : 0 ∉ s := fun h => by simpa using (Finset.mem_Icc.mp (hs h)).1
+  simp only [mem_words, prepend_subset hs, hs, true_and, compatible_prepend h0]
+
+private theorem card_words_succ (w : Window) (n : ℕ) :
+    (words w (n + 1)).card = (words (w.shift false) n).card +
+      if w.allows true then (words (w.shift true) n).card else 0 := by
+  have hfalse : ((words w (n + 1)).filter fun s => 1 ∉ s).card =
+      (words (w.shift false) n).card := by
+    simpa [Window.allows] using card_words_filter w n false
+  have htrue : ((words w (n + 1)).filter fun s => 1 ∈ s).card =
+      if w.allows true then (words (w.shift true) n).card else 0 := by
+    simpa using card_words_filter w n true
+  rw [← hfalse, ← htrue]
+  simpa only [add_comm] using
+    (Finset.card_filter_add_card_filter_not (s := words w (n + 1)) (fun s => 1 ∈ s)).symm
+
+private theorem card_words_zero (w : Window) : (words w 0).card = 1 := by
+  have h : Compatible w ∅ := by simp [Compatible, Separated]
+  simp [words, Finset.filter_singleton, h]
+
+open PowerSeries in
+private noncomputable def series (w : Window) : PowerSeries ℤ :=
+  mk fun n => ((words w n).card : ℤ)
+
+open PowerSeries in
+private theorem series_eq (w : Window) :
+    series w = 1 + X * (series (w.shift false) +
+      if w.allows true then series (w.shift true) else 0) := by
+  ext n
+  cases n with
+  | zero => simp [series, card_words_zero]
+  | succ n =>
+    simp only [map_add, coeff_one, Nat.succ_ne_zero, ite_false, zero_add, coeff_succ_X_mul,
+      series, coeff_mk, card_words_succ, Nat.cast_add]
+    split <;> simp_all
+
+end OneFour
+
+open OneFour in
+/-- **Generating function for subsets avoiding differences 1 and 4.** Let $S^{\{1,4\}}_n$ be the
+number of subsets of $\{1, \dots, n\}$ in which no two elements differ by $1$ or by $4$. Then,
+in the ring $\mathbb{Z}[[x]]$ of formal power series,
+$$\Bigl(\sum_{n \ge 0} S^{\{1,4\}}_n x^n\Bigr)(1 - x - x^3 + x^4 - 2x^5 + x^6 - x^7) =
+1 + x + x^2 + x^3 + 2x^4 + x^6.$$
+
+This is the paper's formula for $\sum_{n \ge 0} S^{\{1,4\}}_n x^n$ as a quotient of the two
+polynomials, with the denominator cleared.
+
+Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
+Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
+Sequences 28 (2025), Article 25.3.7, Proposition 9. -/
+public theorem restrictedCombinationTotal_one_four_genFun :
+    PowerSeries.mk (fun n => (restrictedCombinationTotal {1, 4} n : ℤ)) *
+        (1 - PowerSeries.X - PowerSeries.X ^ 3 + PowerSeries.X ^ 4 - 2 * PowerSeries.X ^ 5 +
+          PowerSeries.X ^ 6 - PowerSeries.X ^ 7) =
+      1 + PowerSeries.X + PowerSeries.X ^ 2 + PowerSeries.X ^ 3 + 2 * PowerSeries.X ^ 4 +
+        PowerSeries.X ^ 6 := by
+  simp_rw [total_eq_card_words]
+  let x : PowerSeries ℤ := PowerSeries.X
+  change series zeroWindow * (1 - x - x ^ 3 + x ^ 4 - 2 * x ^ 5 + x ^ 6 - x ^ 7) =
+    1 + x + x ^ 2 + x ^ 3 + 2 * x ^ 4 + x ^ 6
+  -- The empty window and the seven other windows without adjacent true bits.
+  have h0000 := series_eq ⟨false, false, false, false⟩
+  have h0001 := series_eq ⟨false, false, false, true⟩
+  have h0010 := series_eq ⟨false, false, true, false⟩
+  have h0100 := series_eq ⟨false, true, false, false⟩
+  have h0101 := series_eq ⟨false, true, false, true⟩
+  have h1000 := series_eq ⟨true, false, false, false⟩
+  have h1001 := series_eq ⟨true, false, false, true⟩
+  have h1010 := series_eq ⟨true, false, true, false⟩
+  simp only [Window.shift, Window.allows, Bool.not_true, Bool.not_false, Bool.false_or,
+    Bool.true_and, Bool.false_and, Bool.false_eq_true, ite_true, ite_false, add_zero] at *
+  -- Eliminate the seven nonempty windows from their transfer equations.
+  unfold zeroWindow
+  linear_combination (1 - x ^ 3 - x ^ 5) * h0000 + (x - x ^ 4 - x ^ 6) * h0001 +
+    x ^ 2 * h0010 + (x ^ 3 + x ^ 5) * h0100 + x ^ 3 * h0101 +
+    (x ^ 4 + x ^ 6) * h1000 + (x ^ 4 + x ^ 6) * h1001 + x ^ 4 * h1010
+
+namespace RestrictedTransfer
+
+private def Separated (Q s : Finset ℕ) : Prop :=
+  ∀ a ∈ s, ∀ c ∈ s, a < c → c - a ∉ Q
+
+/-- The occupied positions in the suffix must avoid each other and the positions blocked by
+previous choices. -/
+private def Compatible (Q B s : Finset ℕ) : Prop :=
+  Separated Q s ∧ ∀ i ∈ s, i ∉ B
+
+private instance (Q B s : Finset ℕ) : Decidable (Compatible Q B s) := by
+  unfold Compatible Separated
+  infer_instance
+
+private def words (Q B : Finset ℕ) (n : ℕ) : Finset (Finset ℕ) :=
+  (Finset.Icc 1 n).powerset.filter (Compatible Q B)
+
+private theorem mem_words {Q B : Finset ℕ} {n : ℕ} {s : Finset ℕ} :
+    s ∈ words Q B n ↔ s ⊆ Finset.Icc 1 n ∧ Compatible Q B s := by
+  simp only [words, Finset.mem_filter, Finset.mem_powerset]
+
+private theorem total_eq_card_words (Q : Finset ℕ) (n : ℕ) :
+    restrictedCombinationTotal Q n = (words Q ∅ n).card := by
+  unfold restrictedCombinationTotal restrictedCombinationCount
+  have hcard : (↑(words Q ∅ n) : Set (Finset ℕ)).MapsTo
+      Finset.card (Finset.range (n + 1)) := by
+    intro s hs
+    have hle := Finset.card_le_card (mem_words.mp hs).1
+    simp only [Nat.card_Icc, Nat.add_sub_cancel] at hle
+    exact Finset.mem_range.mpr (by omega)
+  rw [Finset.card_eq_sum_card_fiberwise hcard]
+  apply Finset.sum_congr rfl
+  intro k _
+  congr 1
+  ext s
+  simp only [restrictedCombinations, Finset.mem_filter, Finset.mem_powersetCard, mem_words,
+    Compatible, Finset.notMem_empty, Separated]
+  tauto
+
+/-- Drop the first position and decrease the remaining blocked positions by one. -/
+private def advance (B : Finset ℕ) : Finset ℕ :=
+  (B.filter (fun i => 1 < i)).image (· - 1)
+
+private theorem mem_advance {B : Finset ℕ} {i : ℕ} :
+    i ∈ advance B ↔ 0 < i ∧ i + 1 ∈ B := by
+  simp only [advance, Finset.mem_image, Finset.mem_filter]
+  constructor
+  · rintro ⟨j, ⟨hj, hj'⟩, rfl⟩
+    exact ⟨by omega, by rwa [show j - 1 + 1 = j by omega]⟩
+  · rintro ⟨h, hi⟩
+    exact ⟨i + 1, ⟨hi, by omega⟩, by omega⟩
+
+/-- Taking the first position additionally blocks offsets in `Q` in the renumbered suffix. -/
+private def next (Q B : Finset ℕ) (b : Bool) : Finset ℕ :=
+  if b then advance B ∪ Q else advance B
+
+private theorem separated_prepend {Q s : Finset ℕ} {b : Bool} (hs : 0 ∉ s) :
+    Separated Q (prepend b s) ↔ Separated Q s ∧ (b = true → ∀ i ∈ s, i ∉ Q) := by
+  have lift_mem {a : ℕ} (ha : a ∈ s) : a + 1 ∈ prepend b s :=
+    mem_prepend.mpr (Or.inr ⟨a, ha, rfl⟩)
+  constructor
+  · intro h
+    refine ⟨?_, ?_⟩
+    · intro a ha c hc hac
+      rw [← show c + 1 - (a + 1) = c - a by omega]
+      exact h (a + 1) (lift_mem ha) (c + 1) (lift_mem hc) (by omega)
+    · intro hb i hi
+      have hpos : 0 < i := Nat.pos_of_ne_zero (fun he => hs (he ▸ hi))
+      simpa using h 1 ((one_mem_prepend hs).2 hb) (i + 1) (lift_mem hi) (by omega)
+  · rintro ⟨h, hfirst⟩ a ha c hc hac
+    rcases mem_prepend.mp ha with ⟨rfl, hb⟩ | ⟨i, hi, rfl⟩ <;>
+      rcases mem_prepend.mp hc with ⟨rfl, _⟩ | ⟨j, hj, rfl⟩
+    · omega
+    · simpa using hfirst hb j hj
+    · omega
+    · rw [show j + 1 - (i + 1) = j - i by omega]
+      exact h i hi j hj (by omega)
+
+private theorem compatible_prepend {Q B s : Finset ℕ} {b : Bool} (hs : 0 ∉ s) :
+    Compatible Q B (prepend b s) ↔ (b = true → 1 ∉ B) ∧ Compatible Q (next Q B b) s := by
+  have blocked : (∀ i ∈ prepend b s, i ∉ B) ↔
+      (b = true → 1 ∉ B) ∧ ∀ i ∈ s, i ∉ advance B := by
+    constructor
+    · intro h
+      refine ⟨fun hb => h 1 ((one_mem_prepend hs).2 hb), ?_⟩
+      intro i hi hm
+      exact h (i + 1) (mem_prepend.mpr (Or.inr ⟨i, hi, rfl⟩)) (mem_advance.mp hm).2
+    · rintro ⟨hfirst, h⟩ a ha
+      rcases mem_prepend.mp ha with ⟨rfl, hb⟩ | ⟨i, hi, rfl⟩
+      · exact hfirst hb
+      · intro hm
+        have hpos : 0 < i := Nat.pos_of_ne_zero (fun he => hs (he ▸ hi))
+        exact h i hi (mem_advance.mpr ⟨hpos, hm⟩)
+  simp only [Compatible, separated_prepend hs, blocked]
+  cases b <;> simp [next, forall_and, and_assoc, and_left_comm, and_comm]
+
+private theorem card_words_filter (Q B : Finset ℕ) (n : ℕ) (b : Bool) :
+    ((words Q B (n + 1)).filter fun s => (1 ∈ s ↔ b = true)).card =
+      if b = true → 1 ∉ B then (words Q (next Q B b) n).card else 0 := by
+  apply card_filter_prepend b n _ _ (b = true → 1 ∉ B)
+    (fun _ hs => (mem_words.mp hs).1) (fun _ ht => (mem_words.mp ht).1)
+  intro s hs
+  have h0 : 0 ∉ s := fun h => by simpa using (Finset.mem_Icc.mp (hs h)).1
+  simp only [mem_words, prepend_subset hs, hs, true_and, compatible_prepend h0]
+
+private theorem card_words_succ (Q B : Finset ℕ) (n : ℕ) :
+    (words Q B (n + 1)).card = (words Q (advance B) n).card +
+      if 1 ∉ B then (words Q (advance B ∪ Q) n).card else 0 := by
+  have hfalse : ((words Q B (n + 1)).filter fun s => 1 ∉ s).card =
+      (words Q (advance B) n).card := by
+    simpa [next] using card_words_filter Q B n false
+  have htrue : ((words Q B (n + 1)).filter fun s => 1 ∈ s).card =
+      if 1 ∉ B then (words Q (advance B ∪ Q) n).card else 0 := by
+    simpa [next] using card_words_filter Q B n true
+  rw [← hfalse, ← htrue]
+  simpa only [add_comm] using
+    (Finset.card_filter_add_card_filter_not (s := words Q B (n + 1)) (fun s => 1 ∈ s)).symm
+
+private theorem card_words_zero (Q B : Finset ℕ) : (words Q B 0).card = 1 := by
+  have h : Compatible Q B ∅ := by simp [Compatible, Separated]
+  simp [words, Finset.filter_singleton, h]
+
+open PowerSeries in
+private noncomputable def series (Q B : Finset ℕ) : PowerSeries ℤ :=
+  mk fun n => ((words Q B n).card : ℤ)
+
+open PowerSeries in
+private theorem series_eq (Q B : Finset ℕ) :
+    series Q B = 1 + X * (series Q (advance B) +
+      if 1 ∉ B then series Q (advance B ∪ Q) else 0) := by
+  ext n
+  cases n with
+  | zero => simp [series, card_words_zero]
+  | succ n =>
+    simp only [map_add, coeff_one, Nat.succ_ne_zero, ite_false, zero_add, coeff_succ_X_mul,
+      series, coeff_mk, card_words_succ, Nat.cast_add]
+    split <;> simp_all
+
+open PowerSeries in
+private theorem series_eq_of_free {Q B B₀ B₁ : Finset ℕ} (h : 1 ∉ B)
+    (h₀ : advance B = B₀) (h₁ : advance B ∪ Q = B₁) :
+    series Q B = 1 + X * (series Q B₀ + series Q B₁) := by
+  rw [series_eq Q B, ite_eq_left h, h₁, h₀]
+
+open PowerSeries in
+private theorem series_eq_of_blocked {Q B B₀ : Finset ℕ} (h : 1 ∈ B) (h₀ : advance B = B₀) :
+    series Q B = 1 + X * series Q B₀ := by
+  rw [series_eq Q B, ite_eq_right (not_not_intro h), add_zero, h₀]
+
+end RestrictedTransfer
+
+namespace OneFive
+
+-- The multipliers eliminate the ten nonempty blocked-position states.
+private theorem transfer_elimination {R : Type*} [CommRing R]
+    (x s0 s15 s4 s3 s135 s2 s125 s24 s1 s14 s13 : R)
+    (h0 : s0 = 1 + x * (s0 + s15))
+    (h15 : s15 = 1 + x * s4)
+    (h4 : s4 = 1 + x * (s3 + s135))
+    (h3 : s3 = 1 + x * (s2 + s125))
+    (h135 : s135 = 1 + x * s24)
+    (h2 : s2 = 1 + x * (s1 + s15))
+    (h125 : s125 = 1 + x * s14)
+    (h24 : s24 = 1 + x * (s13 + s135))
+    (h1 : s1 = 1 + x * s0)
+    (h14 : s14 = 1 + x * s3)
+    (h13 : s13 = 1 + x * s2) :
+    s0 * (1 - x ^ 2 - x ^ 3 - x ^ 4 + x ^ 5 - x ^ 6 - x ^ 7 - x ^ 8 - x ^ 10) =
+      1 + 2 * x + 2 * x ^ 2 + 2 * x ^ 3 + 2 * x ^ 4 + 4 * x ^ 5 + 3 * x ^ 6 +
+        2 * x ^ 7 + x ^ 8 + x ^ 9 := by
+  linear_combination
+    (1 + x - x ^ 3 - 2 * x ^ 4 - x ^ 5 - x ^ 6 - x ^ 7 - x ^ 8) * h0 +
+    (x + x ^ 2 - x ^ 4 - x ^ 5) * h15 +
+    (x ^ 2 + x ^ 3 - x ^ 5 - x ^ 6) * h4 + (x ^ 3 + x ^ 4) * h3 +
+    (x ^ 3 + x ^ 4 + x ^ 5) * h135 + (x ^ 4 + x ^ 5 + x ^ 6 + x ^ 7 + x ^ 8) * h2 +
+    (x ^ 4 + x ^ 5) * h125 + (x ^ 4 + x ^ 5 + x ^ 6) * h24 +
+    (x ^ 5 + x ^ 6 + x ^ 7 + x ^ 8 + x ^ 9) * h1 + (x ^ 5 + x ^ 6) * h14 +
+    (x ^ 5 + x ^ 6 + x ^ 7) * h13
+
+end OneFive
+
+open RestrictedTransfer OneFive in
+/-- **Generating function for subsets avoiding differences 1 and 5.** Let $S^{\{1,5\}}_n$ be the
+number of subsets of $\{1, \dots, n\}$ in which no two elements differ by $1$ or by $5$. Then,
+in the ring $\mathbb{Z}[[x]]$ of formal power series,
+$$\Bigl(\sum_{n \ge 0} S^{\{1,5\}}_n x^n\Bigr)
+(1 - x^2 - x^3 - x^4 + x^5 - x^6 - x^7 - x^8 - x^{10}) =
+1 + 2x + 2x^2 + 2x^3 + 2x^4 + 4x^5 + 3x^6 + 2x^7 + x^8 + x^9.$$
+
+This is the paper's formula for $\sum_{n \ge 0} S^{\{1,5\}}_n x^n$ as a quotient of the two
+polynomials, with the denominator cleared.
+
+Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
+Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
+Sequences 28 (2025), Article 25.3.7, Proposition 10. -/
+public theorem restrictedCombinationTotal_one_five_genFun :
+    PowerSeries.mk (fun n => (restrictedCombinationTotal {1, 5} n : ℤ)) *
+        (1 - PowerSeries.X ^ 2 - PowerSeries.X ^ 3 - PowerSeries.X ^ 4 + PowerSeries.X ^ 5 -
+          PowerSeries.X ^ 6 - PowerSeries.X ^ 7 - PowerSeries.X ^ 8 - PowerSeries.X ^ 10) =
+      1 + 2 * PowerSeries.X + 2 * PowerSeries.X ^ 2 + 2 * PowerSeries.X ^ 3 +
+        2 * PowerSeries.X ^ 4 + 4 * PowerSeries.X ^ 5 + 3 * PowerSeries.X ^ 6 +
+        2 * PowerSeries.X ^ 7 + PowerSeries.X ^ 8 + PowerSeries.X ^ 9 := by
+  let Q : Finset ℕ := {1, 5}
+  let S := series Q
+  have hS : PowerSeries.mk (fun n => (restrictedCombinationTotal Q n : ℤ)) = S ∅ := by
+    simp_rw [total_eq_card_words]
+    rfl
+  change PowerSeries.mk (fun n => (restrictedCombinationTotal Q n : ℤ)) * _ = _
+  rw [hS]
+  -- Each equation comes from dropping a free or blocked first position.
+  exact transfer_elimination PowerSeries.X (S ∅) (S {1, 5}) (S {4}) (S {3}) (S {1, 3, 5})
+    (S {2}) (S {1, 2, 5}) (S {2, 4}) (S {1}) (S {1, 4}) (S {1, 3})
+    (series_eq_of_free (Q := Q) (B := ∅) (B₀ := ∅) (B₁ := {1, 5})
+      (by decide) (by decide) (by decide))
+    (series_eq_of_blocked (Q := Q) (B := {1, 5}) (B₀ := {4}) (by decide) (by decide))
+    (series_eq_of_free (Q := Q) (B := {4}) (B₀ := {3}) (B₁ := {1, 3, 5})
+      (by decide) (by decide) (by decide))
+    (series_eq_of_free (Q := Q) (B := {3}) (B₀ := {2}) (B₁ := {1, 2, 5})
+      (by decide) (by decide) (by decide))
+    (series_eq_of_blocked (Q := Q) (B := {1, 3, 5}) (B₀ := {2, 4}) (by decide) (by decide))
+    (series_eq_of_free (Q := Q) (B := {2}) (B₀ := {1}) (B₁ := {1, 5})
+      (by decide) (by decide) (by decide))
+    (series_eq_of_blocked (Q := Q) (B := {1, 2, 5}) (B₀ := {1, 4}) (by decide) (by decide))
+    (series_eq_of_free (Q := Q) (B := {2, 4}) (B₀ := {1, 3}) (B₁ := {1, 3, 5})
+      (by decide) (by decide) (by decide))
+    (series_eq_of_blocked (Q := Q) (B := {1}) (B₀ := ∅) (by decide) (by decide))
+    (series_eq_of_blocked (Q := Q) (B := {1, 4}) (B₀ := {3}) (by decide) (by decide))
+    (series_eq_of_blocked (Q := Q) (B := {1, 3}) (B₀ := {2}) (by decide) (by decide))
 
 end MetaMathlibExt

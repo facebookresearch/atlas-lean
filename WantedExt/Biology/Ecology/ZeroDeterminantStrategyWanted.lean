@@ -24,7 +24,8 @@ The determinant formula `v · f = D(p, q, f) / D(p, q, 1)` needs the nondegenera
 relations do not: they follow from
 `v · p̃ = 0`, which holds for every stationary distribution `v` because `p̃` is the sum of the
 first two columns of `M(p, q) - I` (X cooperates next with probability `p_s` from outcome `s`).
-So they are stated for every stationary distribution. The paper notes that not all such
+So they are stated for every stationary distribution. The theorem `equalizer_score` is proved in
+`Domains.Biology.Ecology.ZeroDeterminantStrategyEqualizerScore`. The paper notes that not all such
 strategies are feasible and that singular cases exist.
 
 Sources: W. H. Press and F. J. Dyson, "Iterated Prisoner's Dilemma contains strategies that
@@ -39,6 +40,7 @@ public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Order.Interval.Set.Basic
 public import Domains.Biology.Ecology.ZeroDeterminantStrategyDotProductEqDivPdDet
+public import Domains.Biology.Ecology.ZeroDeterminantStrategyEqualizerScore
 
 @[expose] public section
 
@@ -49,10 +51,6 @@ open Matrix Set
 /-- X's stage payoffs `S_X = (R, S, T, P)` over `cc, cd, dc, dd`. -/
 def payoffX (R S T P : ℝ) : Fin 4 → ℝ :=
   ![R, S, T, P]
-
-/-- Y's stage payoffs `S_Y = (R, T, S, P)` over `cc, cd, dc, dd` (seen from X). -/
-def payoffY (R S T P : ℝ) : Fin 4 → ℝ :=
-  ![R, T, S, P]
 
 /-- **Zero-determinant strategies** (Press and Dyson 2012, eq. (7)). Let `p` be a memory-one
 strategy with `p̃ = α S_X + β S_Y + γ 1` for reals `α, β, γ` and payoffs `R, S, T, P`. Then for
@@ -68,22 +66,6 @@ public theorem_wanted zeroDeterminant_linear_relation {R S T P α β γ : ℝ} {
     {q : Fin 4 → ℝ} (hq : IsStrategy q) {v : Fin 4 → ℝ}
     (hv : IsStationary (markovMatrix p q) v) :
     α * (v ⬝ᵥ payoffX R S T P) + β * (v ⬝ᵥ payoffY R S T P) + γ = 0
-
-/-- **X sets Y's score: equalizer strategies** (Press and Dyson 2012, eqs. (8)–(9)). Let `R ≠ P`,
-let `p` be a memory-one strategy with `p₂ = (p₁ (T - P) - (1 + p₄)(T - R)) / (R - P)`,
-`p₃ = ((1 - p₁)(P - S) + p₄ (R - S)) / (R - P)` and `(1 - p₁) + p₄ ≠ 0`. Then for every memory-one
-strategy `q` of Y and every stationary distribution `v` of `M(p, q)`,
-`v · S_Y = ((1 - p₁) P + p₄ R) / ((1 - p₁) + p₄)`. No nondegeneracy assumption `D(p, q, 1) ≠ 0` is
-needed: every stationary `v` satisfies `v · p̃ = 0`, since `p̃` is the sum of the first two columns
-of `M(p, q) - I`.
-
-Source: Press and Dyson (2012), "X unilaterally sets Y's score", eqs. (8)–(9). -/
-public theorem_wanted equalizer_score {R S T P : ℝ} (hRP : R ≠ P) {p : Fin 4 → ℝ}
-    (hp : IsStrategy p) (hp2 : p 1 = (p 0 * (T - P) - (1 + p 3) * (T - R)) / (R - P))
-    (hp3 : p 2 = ((1 - p 0) * (P - S) + p 3 * (R - S)) / (R - P))
-    (hden : (1 - p 0) + p 3 ≠ 0) {q : Fin 4 → ℝ} (hq : IsStrategy q) {v : Fin 4 → ℝ}
-    (hv : IsStationary (markovMatrix p q) v) :
-    v ⬝ᵥ payoffY R S T P = ((1 - p 0) * P + p 3 * R) / ((1 - p 0) + p 3)
 
 /-- **In the Prisoner's Dilemma X can fix any score `P ≤ σ ≤ R` of Y** (Press and Dyson 2012,
 eqs. (8)–(9)). If `T > R > P > S`, then for every `σ` with `P ≤ σ ≤ R` there is a
