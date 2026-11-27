@@ -69,19 +69,23 @@ def qcMapUnrectifiableImagesOfUncountablyManyLines : Prop :=
     ¬ ContainsRectifiableCurve (f '' {z : ℂ | z.re ∈ E})
 
 /--
-Resolved true: Bishop, Hakobyan and Williams constructed a planar quasiconformal map and a set `S ⊆
-ℝ` of Hausdorff dimension arbitrarily close to 1 (Corollary 1.8), or equal to 1 (Theorem 1.9), such
-that the image of every line `ℝ × {y}`, `y ∈ S`, has no rectifiable subarc, and state that this
-answers AimPL Problem 5.3; such an `S` is totally disconnected, so the image of the union of these
-lines contains no rectifiable curve either (module documentation). Source: AimPL: Mapping theory in
+Resolved true: Bishop, Hakobyan and Williams (Corollary 1.8) constructed, for Hausdorff
+dimensions arbitrarily close to 1, a planar quasiconformal map and a set `S ⊆ ℝ` of that dimension
+such that the image of every whole line `ℝ × {y}`, `y ∈ S`, has no rectifiable subarc, and state
+that this answers AimPL Problem 5.3; such an `S` is uncountable and totally disconnected, so the
+image of the union of these lines contains no rectifiable curve either (module documentation).
+Their Theorem 1.9(3) reaches dimension equal to 1, with a compact `S ⊂ [0, 1]`, but only for the
+segments `[0, 1] × {y}`, which does not by itself give the statement about whole lines. Source:
+AimPL: Mapping theory in
 metric spaces, Problem 5.3 (H. Hakobyan, L. Kovalev, J. Tyson), http://aimpl.org/mappingmetric/5/;
 resolution: C. J. Bishop, H. Hakobyan and
 M. Williams, Quasisymmetric dimension distortion of Ahlfors regular subsets of a metric space, Geom.
 Funct. Anal. 26 (2016), 379-421, arXiv:1211.0233, Section 1.4: Problem 5.3 of [10] (AimPL mapping
 theory list) asks for an uncountable family of lines whose quasiconformal images contain no
-rectifiable subarcs, and Corollary 1.8 answers it 'with a resounding yes'; Theorem 1.9 even gives a
-compact S ⊂ [0, 1] of Hausdorff dimension 1 and a quasiconformal f with no rectifiable subarc in
-f([0, 1] × {y}) for every y ∈ S, https://doi.org/10.1007/s00039-016-0368-5.
+rectifiable subarcs, and Corollary 1.8 answers it 'with a resounding yes'; separately, Theorem
+1.9(3) gives a compact S ⊂ [0, 1] of Hausdorff dimension 1 and a quasiconformal f with no
+rectifiable subarc in f([0, 1] × {y}) for every y ∈ S (segments, not whole lines),
+https://doi.org/10.1007/s00039-016-0368-5.
 -/
 public theorem_wanted qcMapUnrectifiableImagesOfUncountablyManyLines_holds :
     qcMapUnrectifiableImagesOfUncountablyManyLines
