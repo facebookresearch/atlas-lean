@@ -10,7 +10,6 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.JosephusBaseThreeHalves
-public import MathlibExt.NumberTheory.JosephusBaseThreeHalvesJosephusThreeFixedPointDigitsOfGapAtLeastTwo
 
 namespace MetaMathlibExt
 
