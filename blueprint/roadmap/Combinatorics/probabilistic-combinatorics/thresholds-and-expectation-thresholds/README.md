@@ -6,3 +6,6 @@
 - [Size of a largest minimal element, $\ell(\mathcal F)$](l.md)
 - [The constant of the Frankston–Kahn–Narayanan–Park theorem](k.md)
 - [Thresholds versus fractional expectation-thresholds](theorem-1-1.md)
+- [Talagrand discrete convexity at the original density](talagrand-discrete-convexity.md)
+- [Constant-factor comparison of fractional and integral expectation thresholds](integral-fractional-expectation-threshold-comparison.md)
+- [Second Kahn–Kalai bound for graph containment](second-kahn-kalai-containment-threshold.md)

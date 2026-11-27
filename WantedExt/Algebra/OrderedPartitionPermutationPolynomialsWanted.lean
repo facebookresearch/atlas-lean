@@ -15,19 +15,21 @@ public import MathlibExt.FieldTheory.Finite.DilatedPowerSumPermutationPolynomial
 public import MathlibExt.FieldTheory.Finite.MonomialPermutationPolynomial
 public import MathlibExt.FieldTheory.Finite.OrderedPartitionCongruence
 public import MathlibExt.FieldTheory.Finite.PermutationPolynomial
+public import MathlibExt.FieldTheory.Finite.PowerSumCriterion
 public import MathlibExt.FieldTheory.Finite.ShiftedPowerSumPermutationPolynomial
 
 /-!
 # Permutation polynomials of the form `∑ n^t X^(n+a)` and related lemmas
 
 Statements from Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on
-Ordered Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12: the
-power-sum criterion the paper quotes and its two
-new classes of permutation polynomials over `𝔽_p`. Permutation polynomials use MathlibExt's
+Ordered Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, about
+permutation polynomials over `𝔽_p`. Permutation polynomials use MathlibExt's
 `Polynomial.IsPermutationPolynomial` (bijective evaluation map).
 
-Proved in `MathlibExt.FieldTheory.Finite.MonomialPermutationPolynomial`, which this module
-imports: the monomial criterion the paper quotes (`isPermutationPolynomial_X_pow_iff_coprime`).
+The power-sum criterion `injective_iff_sum_pow_eq` is proved in
+`MathlibExt.FieldTheory.Finite.PowerSumCriterion`, which this module imports.
+Proved in `MathlibExt.FieldTheory.Finite.MonomialPermutationPolynomial`, also imported here:
+the monomial criterion the paper quotes (`isPermutationPolynomial_X_pow_iff_coprime`).
 -/
 
 namespace MetaMathlibExt
@@ -35,20 +37,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- **Power-sum criterion for distinct elements of a finite field.** Let $K$ be a finite field
-with $q$ elements and let $a_1, \dots, a_q \in K$. Then $a_1, \dots, a_q$ are pairwise distinct
-if and only if $\sum_{i=1}^{q} a_i^t = 0$ for every $t = 0, 1, \dots, q - 2$ and
-$\sum_{i=1}^{q} a_i^{q-1} = -1$, where $0^0 = 1$.
-
-Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
-Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Lemma 3
-(`integers-2024-A12-lem-3`). -/
-public theorem_wanted injective_iff_sum_pow_eq {K : Type*} [Field K] [Fintype K]
-    (a : Fin (Fintype.card K) → K) :
-    Function.Injective a ↔
-      (∀ t : ℕ, t < Fintype.card K - 1 → ∑ i, a i ^ t = 0) ∧
-        ∑ i, a i ^ (Fintype.card K - 1) = -1
 
 /-- **Rational form of the power-weighted geometric sum.** For positive integers $t$ and $k$,
 the following identity holds in $\mathbb{Z}[X]$:
