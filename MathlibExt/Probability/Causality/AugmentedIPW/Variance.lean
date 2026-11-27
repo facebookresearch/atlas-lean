@@ -157,7 +157,9 @@ theorem measurable_aipwScore [MeasurableSpace 𝒳] {T : Set Ω₁} (hT : Measur
   · exact (hY.sub (hm₀.comp hX)).div (measurable_const.sub (he.comp hX))
 
 /-- The variance of the AIPW score is the second moment of the centered score
-`φ = ψ - τ`, where `τ = E[ψ]`: `Var(ψ) = Var(φ) = E[φ²]`. -/
+`φ = ψ - τ`, where `τ = E[ψ]`: `Var(ψ) = Var(φ) = E[φ²]`. Here `Var` is the real part of the
+extended variance and `E[φ²]` a Bochner integral, so both sides are `0` when the extended
+variance is infinite. -/
 theorem variance_aipwScore_eq_integral_sq {μ₁ : Measure Ω₁} {T : Set Ω₁} {X : Ω₁ → 𝒳}
     {Y : Ω₁ → ℝ} {e m₀ m₁ : 𝒳 → ℝ} (hψ : AEMeasurable (aipwScore T X Y e m₀ m₁) μ₁) {τ : ℝ}
     (hτ : ∫ ω, aipwScore T X Y e m₀ m₁ ω ∂μ₁ = τ) :
@@ -472,10 +474,12 @@ section ATE
 
 variable {Ω₁ 𝒳 : Type*} {mΩ₁ : MeasurableSpace Ω₁} [m𝒳 : MeasurableSpace 𝒳] {μ : Measure Ω₁}
 
-/-- **The AIPW score at the true nuisances has mean the average treatment effect.** Under
+/-- **The AIPW score with the true propensity and `Y₁ - Y₀` have the same integral.** Under
 consistency, mean exchangeability, integrability and `ε ≤ e(X) ≤ 1 - ε`, if the propensity is
 correct, `e(X) = P(T | X)` a.e., then `E[ψ] = E[Y₁ - Y₀]` for any measurable integrable outcome
-regressions. This discharges the centering hypothesis `hτ` of the limit theorems above with
+regressions. This is an identity of integrals against the finite measure `μ`; it says that the
+AIPW score has mean the average treatment effect only when `μ` is a probability measure. This
+discharges the centering hypothesis `hτ` of the limit theorems above with
 `τ = E[Y₁ - Y₀]`; it is `DoubleRobustness.integral_aipwScoreOfSigma_of_propensity` with
 `σ(X)`-measurable nuisances. -/
 theorem integral_aipwScore_eq_ate [IsFiniteMeasure μ] {T : Set Ω₁} (hT : MeasurableSet T)

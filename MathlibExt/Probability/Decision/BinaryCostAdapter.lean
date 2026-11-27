@@ -50,15 +50,19 @@ noncomputable abbrev binaryPrior (pi0 pi1 : ℝ) : Measure Bool :=
 
 /-- The finite-cost threshold rule: decide `true` where
 `pi1 * (C01 - C11) * p1 x > pi0 * (C10 - C00) * p0 x`, the tie decision `tie` where the
-two sides are equal, and `false` otherwise. -/
+two sides are equal, and `false` otherwise. The definition takes arbitrary reals; it compares the
+posterior expected costs of the two decisions at `x` only for nonnegative prior weights
+`pi0, pi1` and densities `p0, p1`. -/
 noncomputable def binaryCostRule {𝓧 : Type*} (pi0 pi1 C00 C01 C10 C11 : ℝ)
     (p0 p1 : 𝓧 → ℝ) (tie : Bool) (x : 𝓧) : Bool :=
   if pi0 * (C10 - C00) * p0 x < pi1 * (C01 - C11) * p1 x then true
   else if pi1 * (C01 - C11) * p1 x = pi0 * (C10 - C00) * p0 x then tie
   else false
 
-/-- Real-valued Bayes average cost of a decision kernel `κ` under the original costs:
-`pi0 * E_{κ∘P0}[C(·, 0)] + pi1 * E_{κ∘P1}[C(·, 1)]`. -/
+/-- The weighted cost `pi0 * E_{κ∘P0}[C(·, 0)] + pi1 * E_{κ∘P1}[C(·, 1)]` of a decision kernel
+`κ` under the original costs, with Bochner integrals against `(κ ∘ₖ P) false` and
+`(κ ∘ₖ P) true`. It is the real-valued Bayes average cost only for nonnegative prior weights
+`pi0, pi1` and Markov kernels `P` and `κ`; the definition takes any inputs. -/
 noncomputable def binaryCostAvgRisk {𝓧 : Type*} [MeasurableSpace 𝓧]
     (C00 C01 C10 C11 : ℝ) (P : Kernel Bool 𝓧) (κ : Kernel 𝓧 Bool) (pi0 pi1 : ℝ) : ℝ :=
   pi0 * ∫ y, binaryCost C00 C01 C10 C11 y false ∂((κ ∘ₖ P) false) +

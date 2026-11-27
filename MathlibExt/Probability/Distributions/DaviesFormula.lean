@@ -79,8 +79,8 @@ theorem integrable_id_weightedChiSq {k : Type*} [Fintype k] (lam : k → ℝ) :
     (by fun_prop : Measurable fun ξ : k → ℝ => ∑ j, lam j * ξ j ^ 2).aemeasurable]
   exact integrable_finsetSum _ fun j _ => (hint j).const_mul _
 
-/-- **Davies' p-value formula** (Davies 1980, eq. (1), from Gil-Pelaez's inversion theorem).
-For `Q ~ ∑ⱼ λⱼ χ²₁` and every `q`,
+/-- **Davies' p-value formula**: Gil-Pelaez's inversion theorem for `Q ~ ∑ⱼ λⱼ χ²₁`, the model
+of Davies (1980), eq. (1); that equation defines the model, not this limit. For every `q`,
 `½ + π⁻¹ ∫₀^T Im(e^{-i t q} φ(t)) / t dt → ½ (P(Q > q) + P(Q ≥ q))` as `T → ∞`, with
 `φ = daviesCharFun λ`. The improper integral is the one Davies' algorithm discretizes. -/
 theorem tendsto_davies {k : Type*} [Fintype k] (lam : k → ℝ) (q : ℝ) :
@@ -144,8 +144,8 @@ theorem weightedChiSq_singleton {k : Type*} [Fintype k] {lam : k → ℝ} {j : k
     (measurableSet_eq_fun (by fun_prop : Measurable fun x : ℝ => lam j * x ^ 2)
       measurable_const).nullMeasurableSet).trans (hpt _)
 
-/-- **Davies' formula, nondegenerate case**: when some weight is nonzero, the limit is the exact
-upper tail `P(Q > q)` for every `q`. -/
+/-- **Davies' formula, nondegenerate case**: when some weight is nonzero, the Gil-Pelaez limit
+of `tendsto_davies` is the exact upper tail `P(Q > q)` for every `q`. -/
 theorem tendsto_davies_of_ne_zero {k : Type*} [Fintype k] {lam : k → ℝ} {j : k} (hj : lam j ≠ 0)
     (q : ℝ) :
     Tendsto (fun T => 1 / 2 + π⁻¹ * ∫ t in (0 : ℝ)..T,
