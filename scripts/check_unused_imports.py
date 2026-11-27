@@ -48,7 +48,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lean_changes import (ROOT, ChangedFile, add_common_arguments, annotation, changed_files,
-                          guarded, in_actions, relative, write_summary)
+                          guarded, in_actions, inert, relative, unnameable, write_summary)
 
 # With --gh-style, agitate prints one of these for each import that it would remove,
 # with a 1-based column.
@@ -211,7 +211,10 @@ def main() -> int:
         print("No Lean file of the production libraries is added or modified.")
         return 0
     targets: dict[str, tuple[ChangedFile, Header]] = {}
+    skipped_files = unnameable(files)
     for file in files:
+        if file in skipped_files:
+            continue
         head = header(read_source(file.path))
         if head.lines & file.added_lines:
             targets[file.path] = (file, head)
@@ -233,12 +236,13 @@ def main() -> int:
     skipped: list[str] = []
     for tool, is_module, flags in (("agitate", True, MODULE_FLAGS),
                                    ("agitate-nonmodule", False, NONMODULE_FLAGS)):
-        modules = [file.module for file, head in targets.values() if head.is_module == is_module]
+        modules = [file.lean_module for file, head in targets.values()
+                   if head.is_module == is_module]
         if not modules:
             continue
         result = run_agitate(agitate_dir / ".lake" / "build" / "bin" / tool, flags, modules)
         if result.returncode not in (0, 1) or FAILED.search(result.stderr):
-            print(result.stdout + result.stderr, file=sys.stderr)
+            print(inert(result.stdout + result.stderr), file=sys.stderr)
             print(f"{tool} did not run on the changed files.", file=sys.stderr)
             return 2
         skipped += [match.group(0) for match in SKIPPED.finditer(result.stdout)]
@@ -263,7 +267,7 @@ def main() -> int:
         titles[title] += 1
         if in_actions():
             print(annotation(level, r.path, r.line, title, message, r.col))
-        print(f"{r.path}:{r.line}: {title}: {message}")
+        print(inert(f"{r.path}:{r.line}: {title}: {message}"))
     if kept:
         rows = "".join(f"| {title} | {count} |\n" for title, count in titles.most_common())
         write_summary(f"### Imports on added lines that agitate would remove\n\n"
@@ -271,7 +275,7 @@ def main() -> int:
         print(f"{len(kept)} added import(s) that agitate would remove.")
     if skipped:
         # agitate checked the other files, but not this one: the check is incomplete.
-        print("\n".join(skipped), file=sys.stderr)
+        print(inert("\n".join(skipped)), file=sys.stderr)
         print("agitate could not read the header of a changed file and skipped it, so the check "
               "is incomplete.", file=sys.stderr)
         return 2

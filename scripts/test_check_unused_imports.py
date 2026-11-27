@@ -296,6 +296,14 @@ class MainTests(unittest.TestCase):
         code, _, _ = run_main([done("", 0), done(unreadable, 0)], extra=["--report-only"])
         self.assertEqual(code, 2)
 
+    def test_names_a_module_as_lean_reads_it(self):
+        files = [ChangedFile("MathlibExt/B.lean", "A", frozenset(range(1, 7)))]
+        hyphen = ChangedFile("MathlibExt/New-Name.lean", "A", frozenset(range(1, 7)))
+        with patch.dict(SOURCES, {"MathlibExt/New-Name.lean": SOURCES["MathlibExt/B.lean"]}):
+            _, _, calls = run_main([done("", 0)], files=[hyphen, *files])
+        self.assertEqual(calls[0][-6:], ["--only", "MathlibExt.«New-Name»", "--only",
+                                         "MathlibExt.B", "MathlibExt.«New-Name»", "MathlibExt.B"])
+
     def test_nothing_to_check(self):
         code, out, calls = run_main([], files=[])
         self.assertEqual((code, calls), (0, []))
