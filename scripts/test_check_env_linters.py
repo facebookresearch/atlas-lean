@@ -242,7 +242,18 @@ def inner : Nat := 0
 
 end Nested
 
+section
+
+/-- In a plain section inside the public one. -/
+def plainInPublic : Nat := 0
+
 end
+
+end
+
+def afterPublic : Nat := 0
+
+theorem_wanted stillWanted : True
 
 end ReviewCases
 """
@@ -304,9 +315,11 @@ class IndexTests(unittest.TestCase):
         index = check.index_source(VISIBILITY)
         self.assertEqual(index.private_names, {
             "ReviewCases.helper", "ReviewCases.hiddenAgain", "ReviewCases.Hidden",
-            "ReviewCases.Hidden.mk", "ReviewCases.Hidden.x"})
+            "ReviewCases.Hidden.mk", "ReviewCases.Hidden.x", "ReviewCases.afterPublic"})
+        # A wanted statement is a placeholder, so it is pooled whatever its visibility.
         self.assertEqual(index.public_names, {
-            "ReviewCases.moved", "ReviewCases.exposed", "ReviewCases.Nested.inner"})
+            "ReviewCases.moved", "ReviewCases.exposed", "ReviewCases.Nested.inner",
+            "ReviewCases.plainInPublic", "wanted:ReviewCases.stillWanted"})
         # Outside a `module` file, only `private` makes a declaration private.
         plain = check.index_source(VISIBILITY.replace("module\n", "", 1))
         self.assertEqual(plain.private_names, {"ReviewCases.hiddenAgain"})
@@ -462,6 +475,16 @@ class PlaceTests(unittest.TestCase):
         moved = Finding("ReviewCases.moved", "unusedArguments", "", "MathlibExt.B",
                         "MathlibExt/B.lean", 8, 1)
         self.assertFalse(self.place_in(moved, head, base).added)
+
+    def test_an_undecorated_wanted_statement_moved_between_module_files_is_kept(self):
+        a_head = VISIBILITY.replace("theorem_wanted stillWanted : True\n\n", "")
+        b_head = ("module\n\nnamespace ReviewCases\n\n"
+                  "theorem_wanted stillWanted : True\n\nend ReviewCases\n")
+        base = base_names(WantedExt__A=VISIBILITY)
+        head = {"WantedExt/A.lean": (a_head, set()), "WantedExt/B.lean": (b_head, {1, 2, 3, 4, 5})}
+        finding = Finding("ReviewCases.stillWanted", "unusedArguments", "", "WantedExt.B",
+                          "WantedExt/B.lean", 5, 1, private=True)
+        self.assertFalse(self.place_in(finding, head, base).added)
 
     def test_an_anonymous_instance_is_known_by_its_header(self):
         base = "namespace ScopeProbe\n\ninstance : Inhabited (Fin 3) := ⟨0⟩\n\nend ScopeProbe\n"
