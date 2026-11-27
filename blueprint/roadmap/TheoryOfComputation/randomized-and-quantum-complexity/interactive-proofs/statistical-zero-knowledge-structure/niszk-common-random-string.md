@@ -1,10 +1,12 @@
 # Non-interactive statistical zero knowledge NISZK in the common random string model
 
-A promise problem $\Pi$ is in $\mathsf{NISZK}$ if there are a computationally unbounded prover $P$, a deterministic polynomial-time verifier $V$, a polynomial $\ell$ and a probabilistic polynomial-time simulator $S$ such that, for a common random string $\sigma\sim\{0,1\}^{\ell(|x|)}$ and a single message $\pi=P(x,\sigma)$:
+A promise problem $\Pi$ is in $\mathsf{NISZK}$ if there are a computationally unbounded probabilistic prover $P$, a probabilistic polynomial-time verifier $V$, a probabilistic polynomial-time simulator $S$ and a polynomial $\ell$ such that, for a common random string $\sigma$ uniform on $\{0,1\}^{\ell(|x|)}$ and a single message $\pi=P(x,\sigma)$ from the prover to the verifier:
 
-1. completeness: for $x\in\Pi_{\mathrm{yes}}$, $\Pr_\sigma[V(x,\sigma,P(x,\sigma))=1]\ge 1-\mathrm{negl}(|x|)$;
-2. soundness: for $x\in\Pi_{\mathrm{no}}$, $\Pr_\sigma[\exists\pi:V(x,\sigma,\pi)=1]\le\mathrm{negl}(|x|)$;
-3. zero knowledge: for $x\in\Pi_{\mathrm{yes}}$, $S(x)$ is statistically close to $(\sigma,P(x,\sigma))$.
+1. completeness: for $x\in\Pi_{\mathrm{yes}}$, $V(x,\sigma,P(x,\sigma))$ accepts with probability at least $2/3$;
+2. soundness: for $x\in\Pi_{\mathrm{no}}$ and every prover strategy $P^*$, $V(x,\sigma,P^*(x,\sigma))$ accepts with probability at most $1/3$;
+3. zero knowledge: for $x\in\Pi_{\mathrm{yes}}$, the statistical distance between $S(x)$ and $(\sigma,P(x,\sigma))$ is at most $\beta(|x|)$ for a negligible function $\beta$.
+
+The probabilities in 1 and 2 are over $\sigma$ and the coins of the verifier and the prover. Non-interactive statistical zero knowledge is closed under parallel repetition (with independent common random strings), so the completeness and soundness errors can be made exponentially small in $|x|$.
 
 Every $\mathsf{NISZK}$ proof is an honest-verifier $\mathsf{SZK}$ proof (the verifier sends $\sigma$), so $\mathsf{NISZK}\subseteq\mathsf{HVSZK}=\mathsf{SZK}$.
 
