@@ -110,7 +110,10 @@ the identity by descent `R` of generation `0`. The genealogy is uniformly random
 gene copies `a ≠ b` are drawn uniformly at random, independently of it: `h t` is the proportion of
 triples `(g, a, b)` with `a ≠ b` for which `a` and `b` are not identical by descent under `g`. So
 `h 0` is the proportion of ordered pairs of distinct gene copies of generation `0` that `R` does
-not relate. -/
+not relate. This is a probability when the sizes are positive through the sampled generation,
+`N i ≥ 1` for every `i ≤ t`. Otherwise there is no triple to draw, as no genealogy exists or
+generation `t` has fewer than two gene copies, and `h t = 0 / 0 = 0` by the convention
+`x / 0 = 0`: an empty sample is not a uniform draw. -/
 noncomputable def nonIdentityProb (R : Fin (2 * N 0) → Fin (2 * N 0) → Prop) [DecidableRel R]
     (t : ℕ) : ℝ :=
   (#{x : Genealogy N t × Fin (2 * N t) × Fin (2 * N t) |
@@ -119,18 +122,26 @@ noncomputable def nonIdentityProb (R : Fin (2 * N 0) → Fin (2 * N 0) → Prop)
 
 /-- The factor `Φ t = ∏_{i < t} (1 - 1 / (2 N i))` by which `t` generations of a Wright–Fisher
 population of sizes `N 0, …, N (t - 1)` multiply the probability of non-identity by descent
-(Felsenstein, (VI-40)). -/
+(Felsenstein, (VI-40)). It has this meaning when the sizes are positive through the sampled
+generation, `N i ≥ 1` for every `i ≤ t`. Outside that case the formula still evaluates, with
+the convention `x / 0 = 0`: a size `N i = 0` contributes the factor `1 - 1 / (2 * 0) = 1`. -/
 noncomputable def nonIdentityFactor (t : ℕ) : ℝ :=
   ∏ i ∈ range t, (1 - 1 / (2 * (N i : ℝ)))
 
 /-- The inbreeding effective size `N_e = 1 / (2 (1 - Φ t ^ (1 / t)))` of a Wright–Fisher
 population of sizes `N 0, …, N (t - 1)` over `t ≥ 1` generations, where `Φ t` is
-`nonIdentityFactor N t` (Felsenstein, (VI-42)). For `t = 0` it is the junk value `0`. -/
+`nonIdentityFactor N t` (Felsenstein, (VI-42)). It is the constant size of a Wright–Fisher
+population giving the same factor `Φ t` when the horizon is nonempty, `t ≥ 1`, and the parental
+sizes `N 0, …, N (t - 1)` are positive. Otherwise the formula still evaluates, with the
+convention `x / 0 = 0`: it is `0` for `t = 0`, and also when every parental size is `0`. -/
 noncomputable def inbreedingEffectiveSize (t : ℕ) : ℝ :=
   1 / (2 * (1 - nonIdentityFactor N t ^ (1 / (t : ℝ))))
 
 /-- The harmonic mean `N_H = t / ∑_{i < t} 1 / N i` of the sizes `N 0, …, N (t - 1)`
-(Felsenstein, (VI-44)). For `t = 0` it is the junk value `0`. -/
+(Felsenstein, (VI-44)), when the horizon is nonempty, `t ≥ 1`, and these sizes are positive.
+Otherwise the formula still evaluates, with the convention `x / 0 = 0`: it is `0` for `t = 0`,
+and a size `N i = 0` contributes `1 / 0 = 0` to the sum, so that the sizes `1, 0` give
+`2 / 1 = 2`, more than either size. -/
 noncomputable def harmonicMeanSize (t : ℕ) : ℝ :=
   t / ∑ i ∈ range t, 1 / (N i : ℝ)
 
