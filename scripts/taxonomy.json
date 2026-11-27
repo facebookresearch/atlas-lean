@@ -13769,7 +13769,6 @@
   "MathlibExt/NumberTheory/ProdigiousNumber": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Prodigious numbers"},
   "MathlibExt/NumberTheory/ProthTheorem": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Proth's theorem"},
   "MathlibExt/NumberTheory/PythagoreanTripleGroups": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pythagorean triples"},
-  "MathlibExt/NumberTheory/PythagoreanTripleGroupsPythagoreanCathetusProduct": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pythagorean triples"},
   "MathlibExt/NumberTheory/QAnalogCollatz": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Collatz problem"},
   "MathlibExt/NumberTheory/QAnalogCollatzQCollatzFixedPointsAndTwoCycle": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Collatz problem"},
   "MathlibExt/NumberTheory/QCollatzConjugacy": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Collatz problem"},
