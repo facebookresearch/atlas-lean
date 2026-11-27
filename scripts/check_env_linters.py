@@ -17,15 +17,18 @@ the change adds. That script runs:
 
 A declaration counts as added when the change adds the line that declares it
 (the line with its keyword and name, below any docstring, attribute or
-modifier; for a structure field or a constructor, its own line), and no
-declaration of that name is in the files the change modifies, renames or
-deletes, as they are at the base. So a change that only documents, tags or
-edits an existing declaration does not report it, nor does one that moves it
-between those files. A finding that the linters print without a position (a
-declaration without a source range, such as a structure's `mk.injEq`) is placed
-on the nearest enclosing declaration of the changed files that has one, under
-the same rule. Like `runLinter`, the linters see the private declarations of
-the modules too.
+modifier; for a structure field, a constructor or a `where` or `let rec`
+helper, its own line), and no declaration of that name is in the files the
+change modifies, renames or deletes, as they are at the base. A private
+declaration is the same only as one of its own file: another file's private
+declaration of that name is another declaration. An anonymous instance, whose
+name Lean generates, is known by its namespace and header. So a change that
+only documents, tags or edits an existing declaration does not report it, nor
+does one that moves a public declaration between those files. A finding that
+the linters print without a position (a declaration without a source range,
+such as a structure's `mk.injEq`) is placed on the nearest enclosing
+declaration of the changed files that has one, under the same rule. Like
+`runLinter`, the linters see the private declarations of the modules too.
 
     python3 scripts/check_env_linters.py --base origin/main [--report-only]
 
@@ -42,7 +45,7 @@ import re
 import subprocess
 import sys
 from collections import Counter
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -50,7 +53,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from bump.pinned_bump import _strip_lean_comments_and_strings
 from lean_changes import (ROOT, AggregatorError, ChangedFile, add_common_arguments, aggregators,
-                          annotation, base_text, changed_files, deleted_files, in_actions,
+                          annotation, base_text, changed_files, deleted_files, guarded, in_actions,
                           relative, write_summary)
 
 ENTRY = re.compile(r"^(?P<file>\S.*?\.lean):(?P<line>\d+):(?P<col>\d+): error: (?P<text>.*)$")
@@ -63,7 +66,10 @@ FINISHED = re.compile(r"^-- (?:Found \d+ errors? in|Linting passed for) ")
 
 @dataclass(frozen=True)
 class Finding:
-    """A finding on `declaration`, at a 1-based line and column, or with no position."""
+    """A finding on `declaration`, at a 1-based line and column, or with no position.
+
+    `private` is whether the linters printed the declaration's name as private (`name✝`).
+    """
 
     declaration: str
     linter: str
@@ -72,18 +78,21 @@ class Finding:
     path: str | None = None
     line: int | None = None
     col: int | None = None
+    private: bool = False
 
 
 DECLARATION = re.compile(r"@?(?P<name>(?:«[^«»\n]*»|[^\s«])+)\s*(?P<rest>.*)", re.DOTALL)
 
 
-def declaration_name(text: str) -> tuple[str, str]:
-    """Split `@Name.of.decl✝ the warning` into the user-facing name and the warning."""
+def declaration_name(text: str) -> tuple[str, str, bool]:
+    """Split `@Name.of.decl✝ the warning` into the user-facing name, the warning, and whether
+    the name is private (Lean prints a private name with `✝`)."""
     match = DECLARATION.match(text)
     if match is None:
-        return "", text
+        return "", text, False
+    private = "✝" in match.group("name")
     name = re.sub(r"✝[⁰¹²³⁴⁵⁶⁷⁸⁹]*", "", match.group("name"))
-    return name.replace("«", "").replace("»", ""), match.group("rest")
+    return name.replace("«", "").replace("»", ""), match.group("rest"), private
 
 
 def parse_run_linter(text: str, cwd: Path = ROOT) -> list[Finding]:
@@ -100,14 +109,14 @@ def parse_run_linter(text: str, cwd: Path = ROOT) -> list[Finding]:
         text = "\n".join([match.group("text"), *body]).strip()
         if not placed:
             text = text.removesuffix("-/").strip()
-        name, message = declaration_name(text)
+        name, message, private = declaration_name(text)
         message = message.removeprefix("/-").strip() if not placed else message
         if placed:
             findings.append(Finding(name, linter, message, module,
                                     relative(match.group("file"), cwd),
-                                    int(match.group("line")), int(match.group("col"))))
+                                    int(match.group("line")), int(match.group("col")), private))
         else:
-            findings.append(Finding(name, linter, message, module))
+            findings.append(Finding(name, linter, message, module, private=private))
 
     for line in text.splitlines():
         if header := HEADER.match(line):
@@ -142,9 +151,17 @@ DECLARATION_KINDS = ("theorem", "lemma", "def", "abbrev", "instance", "structure
                      "irreducible_def", "alias")
 COMMAND = re.compile(
     r"^[ \t]*(?:set_option[ \t]+\S+[ \t]+\S+[ \t]+in\s+)*(?:@\[[^\]]*\]\s*)*"
-    rf"(?:{MODIFIERS}\s+)*"
+    rf"(?P<modifiers>(?:{MODIFIERS}\s+)*)"
     rf"(?P<kind>namespace|section|end|mutual|{'|'.join(DECLARATION_KINDS)})\b",
     re.MULTILINE)
+# The kinds whose body can declare `where` and `let rec` helpers, named `<declaration>.<helper>`.
+HELPER_KINDS = ("theorem", "lemma", "def", "abbrev", "instance", "opaque", "irreducible_def")
+# A `where` helper's line: attributes, then its name.
+HELPER = re.compile(rf"[ \t]*(?:@\[[^\]]*\][ \t]*)*(?P<name>{NAME})(?=[\s:({{\[⦃|]|$)")
+# Words that can start a line among `where` helpers without declaring one.
+NOT_HELPERS = frozenset({"termination_by", "decreasing_by", "deriving", "where", "with"})
+LET_REC = re.compile(rf"\blet[ \t]+rec[ \t]+(?P<name>{NAME})")
+OPENERS, CLOSERS = "([{⟨⦃", ")]}⟩⦄"
 # What may stand between the start of a declaration's range and its keyword.
 PREFIX = re.compile(rf"\s+|@\[[^\]]*\]|{MODIFIERS}\b|set_option\s+\S+\s+\S+\s+in\b")
 NAME_AT = re.compile(rf"\s*(?P<name>{NAME})")
@@ -169,20 +186,31 @@ def unquote_name(name: str) -> str:
 
 @dataclass
 class SourceIndex:
-    """The declarations of one Lean file: full names and the lines that declare them."""
+    """The declarations of one Lean file: full names and the lines that declare them.
+
+    An anonymous instance, whose name Lean generates, is keyed by `instance <namespace>:
+    <header>` instead, with its header's whitespace collapsed.
+    """
 
     code: str | None
     line_starts: list[int] = field(default_factory=list)
     names_at: dict[int, set[str]] = field(default_factory=dict)
     line_of: dict[str, int] = field(default_factory=dict)
+    private_names: set[str] = field(default_factory=set)
 
     @property
     def names(self) -> set[str]:
         return set(self.line_of)
 
-    def add(self, name: str, line: int) -> None:
+    @property
+    def public_names(self) -> set[str]:
+        return set(self.line_of) - self.private_names
+
+    def add(self, name: str, line: int, private: bool = False) -> None:
         self.names_at.setdefault(line, set()).add(name)
         self.line_of.setdefault(name, line)
+        if private:
+            self.private_names.add(name)
 
     def line_at(self, offset: int) -> int:
         return bisect.bisect_right(self.line_starts, offset)
@@ -195,6 +223,71 @@ class SourceIndex:
         while (match := PREFIX.match(self.code, pos)) and match.end() > pos:
             pos = match.end()
         return self.line_at(pos)
+
+
+def top_level(code: str, start: int, stop: int) -> Iterator[tuple[int, str]]:
+    """The offsets and characters of `code[start:stop]` outside brackets."""
+    depth = 0
+    for offset in range(start, stop):
+        char = code[offset]
+        if char in OPENERS:
+            depth += 1
+        elif char in CLOSERS:
+            depth = max(0, depth - 1)
+        elif depth == 0:
+            yield offset, char
+
+
+def is_word_at(code: str, offset: int, word: str) -> bool:
+    """Whether `word` stands alone at `offset`, not inside a longer identifier."""
+    end = offset + len(word)
+    return (code.startswith(word, offset)
+            and (offset == 0 or not (code[offset - 1].isalnum() or code[offset - 1] in "_'.!?"))
+            and (end >= len(code) or not (code[end].isalnum() or code[end] in "_'!?")))
+
+
+def helpers(code: str, start: int, stop: int) -> list[tuple[str, int]]:
+    """The `where` and `let rec` helpers that `code[start:stop]`, a declaration, declares.
+
+    `where` declares helpers after a body (`:= ...`, or match alternatives `| ...`), and
+    structure fields when it comes straight after the signature (`instance : C where x := 0`);
+    only the first are helpers.
+    """
+    found = [(match.group("name"), match.start("name"))
+             for match in LET_REC.finditer(code, start, stop)]
+    body = False
+    for offset, char in top_level(code, start, stop):
+        if code.startswith(":=", offset):
+            body = True
+        elif char == "|" and not code[code.rfind("\n", 0, offset) + 1:offset].strip():
+            body = True
+        elif char == "w" and is_word_at(code, offset, "where"):
+            if body:
+                found += where_helpers(code, offset + len("where"), stop)
+            break
+    return found
+
+
+def where_helpers(code: str, start: int, stop: int) -> list[tuple[str, int]]:
+    """The helpers after a `where` that ends at `start`: the names that start a line at the
+    column of the first one (deeper lines are their bodies)."""
+    found = []
+    column = None
+    line_start = start
+    while line_start < stop:
+        line_end = code.find("\n", line_start, stop)
+        if line_end < 0:
+            line_end = stop
+        match = HELPER.match(code, line_start, line_end)
+        if match and match.group("name") not in NOT_HELPERS:
+            # The column of the line's first token, an attribute or the name.
+            first = len(code[line_start:line_end]) - len(code[line_start:line_end].lstrip())
+            if column is None:
+                column = first
+            if first == column:
+                found.append((match.group("name"), match.start("name")))
+        line_start = line_end + 1
+    return found
 
 
 def index_source(text: str) -> SourceIndex:
@@ -224,6 +317,7 @@ def index_source(text: str) -> SourceIndex:
             continue
         prefix = [part for scope in scopes for part in scope]
         line = index.line_at(command.start("kind"))
+        private = "private" in command.group("modifiers").split()
 
         def full(declared: str) -> str:
             declared = unquote_name(declared)
@@ -239,32 +333,43 @@ def index_source(text: str) -> SourceIndex:
             names = re.findall(NAME, code[rest:stop].split(":=", 1)[0])
             for declared in names:
                 if declared != "_":
-                    index.add(full(declared), line)
+                    index.add(full(declared), line, private)
             continue
         if kind == "instance":
             name_match = INSTANCE_NAME.match(code, rest, stop)
             name = name_match.group("name") if name_match else None
+            if name is None:
+                # Lean names it from its type: key it by its namespace and header instead.
+                end = next((offset for offset, char in top_level(code, rest, stop)
+                            if code.startswith(":=", offset) or is_word_at(code, offset, "where")),
+                           stop)
+                header = " ".join(code[rest:end].split())
+                index.add(f"instance in {'.'.join(prefix) or '_root_'}: {header}", line, private)
+                continue
         if kind == "example" or name is None:
             continue
         declared = full(name)
-        index.add(declared, line)
+        index.add(declared, line, private)
         body = code[name_match.end():stop] if name_match else ""
         if kind in ("structure", "class"):
-            index.add(f"{declared}.mk", line)
+            index.add(f"{declared}.mk", line, private)
             where = re.search(r"\bwhere\b", body)
             if where:
                 offset = name_match.end() + where.end()
                 for fields in FIELD.finditer(code, offset, stop):
                     for part in fields.group("names").split():
                         if code[fields.end() - 2: fields.end()] == "::":
-                            index.add(f"{declared}.{unquote_name(part)}", line)
+                            index.add(f"{declared}.{unquote_name(part)}", line, private)
                         else:
                             index.add(f"{declared}.{unquote_name(part)}",
-                                      index.line_at(fields.start("names")))
+                                      index.line_at(fields.start("names")), private)
         elif kind == "inductive":
             for constructor in CONSTRUCTOR.finditer(code, name_match.end(), stop):
                 index.add(f"{declared}.{unquote_name(constructor.group('name'))}",
-                          index.line_at(constructor.start("name")))
+                          index.line_at(constructor.start("name")), private)
+        elif kind in HELPER_KINDS:
+            for helper, offset in helpers(code, name_match.end(), stop):
+                index.add(f"{declared}.{unquote_name(helper)}", index.line_at(offset), private)
     return index
 
 
@@ -273,6 +378,31 @@ def enclosing(name: str) -> Iterable[str]:
     parts = name.split(".")
     for end in range(len(parts), 0, -1):
         yield ".".join(parts[:end])
+
+
+@dataclass
+class BaseNames:
+    """The declarations of the files that a change modifies, renames or deletes, at the base."""
+
+    # The names that each modified or renamed file declares at the base, by its path at HEAD.
+    by_file: dict[str, set[str]] = field(default_factory=dict)
+    # The public names that any of those files, or a deleted one, declares at the base.
+    public: set[str] = field(default_factory=set)
+
+    def add(self, index: SourceIndex, path: str | None = None) -> None:
+        """Add a base file's declarations; `path` is its path at HEAD, unless it is deleted."""
+        if path is not None:
+            self.by_file.setdefault(path, set()).update(index.names)
+        self.public |= index.public_names
+
+    def existed(self, path: str, name: str, private: bool) -> bool:
+        """Whether a declaration of `name`, at HEAD in `path`, was there at the base.
+
+        A private declaration is the same one only if its own file declared it: another file's
+        private declaration of that name is another declaration. A public one may have moved
+        from another of the files.
+        """
+        return name in self.by_file.get(path, ()) or (not private and name in self.public)
 
 
 @dataclass
@@ -286,8 +416,15 @@ class Placement:
 
 
 def place(finding: Finding, files: dict[str, ChangedFile], indexes: dict[str, SourceIndex],
-          base_names: set[str]) -> Placement | None:
+          base: BaseNames) -> Placement | None:
     """Where `finding` belongs among the changed files, or `None` if it is elsewhere."""
+
+    def existed(path: str, names: set[str]) -> bool:
+        index = indexes[path]
+        return any(base.existed(path, name, name in index.private_names
+                                or (name == finding.declaration and finding.private))
+                   for name in names)
+
     if finding.path is not None:
         file = files.get(finding.path)
         if file is None:
@@ -295,7 +432,7 @@ def place(finding: Finding, files: dict[str, ChangedFile], indexes: dict[str, So
         index = indexes[file.path]
         line = index.declaration_line(finding.line)
         names = {finding.declaration, *index.names_at.get(line, ())}
-        new = line in file.added_lines and not names & base_names
+        new = line in file.added_lines and not existed(file.path, names)
         return Placement(file.path, finding.line, finding.col, new)
     # No position: the nearest enclosing declaration that a changed file declares.
     for path, file in files.items():
@@ -306,8 +443,7 @@ def place(finding: Finding, files: dict[str, ChangedFile], indexes: dict[str, So
             line = index.line_of.get(candidate)
             if line is None:
                 continue
-            names = {finding.declaration, candidate}
-            new = line in file.added_lines and not names & base_names
+            new = line in file.added_lines and not existed(path, {finding.declaration, candidate})
             return Placement(path, line, None, new)
     return None
 
@@ -319,6 +455,7 @@ def read_source(path: str) -> str:
     return (ROOT / path).read_text(encoding="utf-8")
 
 
+@guarded
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -361,11 +498,13 @@ def main() -> int:
         return 2
 
     indexes = {path: index_source(read_source(path)) for path in files}
-    base_names: set[str] = set()
-    for path in [file.base_path for file in changed if file.base_path] + deleted_files(args.base):
-        text = base_text(args.base, path)
-        if text is not None:
-            base_names |= index_source(text).names
+    base = BaseNames()
+    for file in changed:
+        if file.base_path and (text := base_text(args.base, file.base_path)) is not None:
+            base.add(index_source(text), file.path)
+    for path in deleted_files(args.base):
+        if (text := base_text(args.base, path)) is not None:
+            base.add(index_source(text))
 
     findings = list(dict.fromkeys(f for output in outputs for f in parse_run_linter(output)))
     kept: list[tuple[Finding, Placement]] = []
@@ -373,7 +512,7 @@ def main() -> int:
     unplaced: list[Finding] = []
     changed_modules = {file.module for file in changed}
     for finding in findings:
-        placement = place(finding, files, indexes, base_names)
+        placement = place(finding, files, indexes, base)
         if placement is None:
             if finding.path is None and finding.module in changed_modules:
                 unplaced.append(finding)
