@@ -7,12 +7,13 @@ In [Heyting arithmetic](heyting-arithmetic.md):
 3. $\mathrm{HA} \vdash (\varphi \vee \psi) \leftrightarrow \exists x\, ((x = 0 \to \varphi) \wedge (\neg (x = 0) \to \psi))$ for a variable $x$ not free in $\varphi$ or $\psi$;
 4. (disjunction property) if $\mathrm{HA} \vdash \varphi \vee \psi$ for closed $\varphi$ and $\psi$, then $\mathrm{HA} \vdash \varphi$ or $\mathrm{HA} \vdash \psi$;
 5. (Markov's rule) for a closed formula $\exists x\, \varphi(x)$, if $\mathrm{HA} \vdash \forall x\, (\varphi(x) \vee \neg \varphi(x))$ and $\mathrm{HA} \vdash \neg\neg \exists x\, \varphi(x)$, then $\mathrm{HA} \vdash \exists x\, \varphi(x)$;
-   the proof finds a numeral $k$ with $\varphi(\underline{k})$ true and applies the disjunction property to the closed $\varphi(\underline{k}) \vee \neg\varphi(\underline{k})$. It is an admissible rule, not
-   an axiom: HA does not prove Markov's principle.
+   the proof finds a numeral $k$ with $\varphi(\underline{k})$ true and applies the disjunction property to the closed $\varphi(\underline{k}) \vee \neg\varphi(\underline{k})$. It is an admissible rule; the
+   corresponding implication, Markov's principle, is not among the axioms of HA.
 
 ## Depends on
 
 - [Heyting arithmetic](heyting-arithmetic.md)
+- [Numerals](../../first-order-logic/peano-arithmetic-and-robinson-s-q/numeral.md)
 
 ## Expansion
 

@@ -17,6 +17,7 @@ $M[x := N] \twoheadrightarrow_\beta M'[x := N']$.
 
 - [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 - [Beta equivalence in the untyped term model](../../system-f/the-existing-untyped-beta-conversion-term-model/beta-eq.md)
+- [Abstract reduction system](../../../../Logic/first-order-logic/term-rewriting/abstract-reduction-system.md)
 
 ## Sources
 

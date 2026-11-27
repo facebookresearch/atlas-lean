@@ -24,7 +24,7 @@ Moreover $t$ is solvable exactly when $t$ reduces by β- and η-reductions to a 
 
 This page becomes ready once:
 
-- Backward η-steps preserve typability with a non-trivial intersection type: if $t \to_\eta t'$ and $t'$ has a non-trivial type in DΩ, so does $t$, after instantiating type variables by arrow types (Lemma 4.29 of Krivine's book; proof prerequisite for the last sentence; not yet stated)
+- Backward η-steps preserve typability with a non-trivial intersection type: if $t \to_\eta t'$ and $t'$ has a non-trivial type in DΩ, so does $t$, after instantiating type variables by arrow types (Proposition 4.29 of Krivine's book; proof prerequisite for the last sentence; not yet stated)
 
 ## Sources
 

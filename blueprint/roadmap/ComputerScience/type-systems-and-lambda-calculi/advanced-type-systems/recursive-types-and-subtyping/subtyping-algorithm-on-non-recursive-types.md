@@ -2,7 +2,8 @@
 
 For μ-free types $\alpha$ and $\beta$, [the Amadio–Cardelli algorithm](the-amadio-cardelli-subtyping-algorithm.md) succeeds on $\alpha \le \beta$ if and only if $\alpha \le_T \beta$ in the
 [tree ordering](tree-ordering-on-recursive-types.md), which on μ-free types is the inductively generated subtyping. Both directions are by induction on $\alpha$ and $\beta$,
-using that assumptions may be added to or dropped from the trail, and equations to or from the system, when they are not reachable from the current goal.
+using that assumptions may be added to or dropped from the trail, and equations to or from the system, when they are not reachable from the current goal
+(adding equations requires their domain to be disjoint from the system's, and adding assumptions requires the trail to remain valid for the system).
 
 ## Depends on
 

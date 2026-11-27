@@ -14,6 +14,7 @@ monads of the examples in sets (partiality, nondeterminism, side effects, except
 ## Depends on
 
 - [Kleisli triples correspond to monads](kleisli-triples-correspond-to-monads.md)
+- [Terminal object](../../../../CategoryTheory/limits-and-colimits/shapes-of-limits/terminal-object.md)
 
 ## Sources
 

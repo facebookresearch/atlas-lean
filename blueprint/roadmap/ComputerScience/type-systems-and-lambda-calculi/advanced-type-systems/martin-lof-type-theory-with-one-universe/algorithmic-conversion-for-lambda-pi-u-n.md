@@ -33,3 +33,4 @@ The type-directed η-rule makes the checker complete for the extensionality rule
 ## Sources
 
 - A. Abel, J. Öhman and A. Vezzosi, "Decidability of conversion for type theory in type theory", *Proceedings of the ACM on Programming Languages* 2(POPL), Article 23, 2018, <https://doi.org/10.1145/3158111>: Section 4.1 and Figure 6 (algorithm for conversion of neutrals, types and terms).
+- The authors' Agda formalization of that paper, module `Definition.Conversion`, constructor `η-eq`, <https://mr-ohman.github.io/logrel-mltt/decofconv/Definition.Conversion.html>: the typing premises of the η-rule and its comparison in the extended context.

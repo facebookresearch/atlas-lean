@@ -11,6 +11,7 @@ end.
 ## Depends on
 
 - [β-reduction](beta-reduction.md)
+- [Confluence of a relation](../../../../Logic/first-order-logic/term-rewriting/confluence-of-a-relation.md)
 
 ## Proof depends on
 

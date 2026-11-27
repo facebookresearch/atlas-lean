@@ -11,6 +11,10 @@ $\lambda x_{p+1} \dots x_{n_i}\, x.\, x\, u_1 \cdots u_p\, x_{p+1} \cdots x_{n_i
 
 - [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
 
+## Proof depends on
+
+- [Head normal forms and solvable terms](head-normal-forms-and-solvable-terms.md): a normal term not beginning with λ has the form $y\, t_1 \cdots t_p$
+
 ## Sources
 
 - J.-L. Krivine, *Lambda-Calculus, Types and Models*, translated from the French by R. Cori, revised online edition, 2011, <https://www.irif.fr/~krivine/articles/Lambda.pdf>: Chapter 5, the definition of applicators, Proposition 5.1 and the remark after it.

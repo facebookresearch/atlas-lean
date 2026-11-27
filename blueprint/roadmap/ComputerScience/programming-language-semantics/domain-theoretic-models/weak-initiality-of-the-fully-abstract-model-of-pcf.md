@@ -1,8 +1,9 @@
 # Weak initiality of the fully abstract model of PCF
 
 A *general interpretation* of [PCF with the parallel conditional](pcf-with-the-parallel-conditional.md) assigns a cpo $D_\sigma$ to each type, continuous application maps
-$\mathrm{Ap}_{\sigma\tau} : D_{\sigma \to \tau} \times D_\sigma \to D_\tau$ and a denotation to each term, compositionally and with closed terms denoting independently of the
-environment. It is *fully abstract* if $M \sqsubseteq N$ operationally (in every program context) exactly when $[\![M]\!] \sqsubseteq [\![N]\!]$. A *morphism* of general interpretations
+$\mathrm{Ap}_{\sigma\tau} : D_{\sigma \to \tau} \times D_\sigma \to D_\tau$ and a denotation $[\![M]\!](\rho) \in D_\sigma$ to each term $M : \sigma$ in each type-respecting environment $\rho$, such that a variable denotes $\rho(x)$, an
+application denotes $[\![M\, N]\!](\rho) = \mathrm{Ap}([\![M]\!](\rho), [\![N]\!](\rho))$, and a closed term denotes independently of $\rho$; denotations of open terms are ordered
+pointwise in $\rho$. It is *fully abstract* if $M \sqsubseteq N$ operationally (in every program context) exactly when $[\![M]\!] \sqsubseteq [\![N]\!]$. A *morphism* of general interpretations
 is a family of continuous maps $\Phi_\sigma$ commuting with application, sending the denotation of a closed term below its denotation in the target, and preserving the
 denotations of programs. For the standard model, which is [fully abstract](full-abstraction-of-pcf-with-the-parallel.md):
 

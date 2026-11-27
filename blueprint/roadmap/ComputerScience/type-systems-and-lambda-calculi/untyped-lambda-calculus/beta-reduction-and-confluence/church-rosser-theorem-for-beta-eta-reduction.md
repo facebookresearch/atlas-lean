@@ -21,7 +21,7 @@ the Church–Rosser property.
 
 This page becomes ready once:
 
-- The extended parallel reduction for βη: its substitution lemma and its diamond property, including the peaks that mix β- and η-steps (Lemmas 1.32–1.34 of Krivine's book) (proof prerequisite; not yet stated)
+- The extended parallel reduction for βη: its substitution lemma and its diamond property, including the peaks that mix β- and η-steps (Theorem 1.32 and Lemmas 1.33–1.34 of Krivine's book) (proof prerequisite; not yet stated)
 
 ## Sources
 

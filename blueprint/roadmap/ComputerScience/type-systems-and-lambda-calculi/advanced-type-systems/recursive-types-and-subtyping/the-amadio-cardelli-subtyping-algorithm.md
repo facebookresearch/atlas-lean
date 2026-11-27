@@ -11,7 +11,7 @@ variables, by the rules
 
 An *initial goal* $\Sigma, \varepsilon \supset t \le s$ has root variables $t$ and $s$ in the disjoint domains of $\varepsilon = \varepsilon_1 \cup \varepsilon_2$ and no variable of $\Sigma$ in the domain
 of $\varepsilon$. Starting from an initial goal, unfoldings stay synchronized: whenever one side of a goal is a variable in the domain of $\varepsilon$, so is the other, so the
-last rule covers all cases. Applied backwards, with the assumption rule taking priority, the rules generate an *execution tree*, which is always finite, of depth of
+last rule covers all cases. Applied backwards, with the assumption rule taking priority (and the $\bot$ axiom before the $\top$ axiom at $\bot \le \top$), the rules generate an *execution tree*, which is always finite, of depth of
 the order of the product of the sizes of the two systems. The tree *succeeds* if every leaf is closed by one of the axioms (assumption, $\bot$, $\top$ or variable)
 and fails if some leaf is a goal to which no rule applies. Write $\alpha \le_A \beta$ if the execution tree for the initial goal
 $\emptyset, \varepsilon_\alpha \cup \varepsilon_\beta \supset \alpha^* \le \beta^*$ succeeds.

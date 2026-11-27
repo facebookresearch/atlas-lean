@@ -1,8 +1,10 @@
 # Canonical forms and regular systems of equations
 
 A recursive type is in *canonical form* if every $\mu t.\, \gamma$ in it has $t$ free in $\gamma$ and $\gamma$ of the form $\alpha \to \beta$. A *regular system in canonical form* $\varepsilon$ is a
-finite map from type variables to right-hand sides of the forms $\bot$, $\top$, a variable outside its domain, or $t_2 \to t_3$ with $t_2, t_3$ in its domain; a pair of a type
-$\alpha$ and such a system has a unique solution in trees, $\mathrm{Sol}(\alpha, \varepsilon)$, since the associated map on trees is a contraction.
+finite map from type variables to right-hand sides of the forms $\bot$, $\top$, a variable outside its domain, or $t_2 \to t_3$ with $t_2, t_3$ in its domain; such a system has a
+unique solution in trees, assigning a tree to each variable of its domain, since the associated map on tuples of trees for the domain variables is a contraction
+(each right-hand side is $\bot$, $\top$, a variable outside the domain, or an arrow, which is guarded). For a μ-free type $\alpha$, $\mathrm{Sol}(\alpha, \varepsilon)$ is the tree of
+$\alpha$ with each variable of the domain replaced by its solution; a recursive type is first translated into a root variable and a system, as in item 2.
 
 1. Every recursive type $\alpha$ has a type $\beta$ in canonical form with the same [tree expansion](recursive-types-and-their-tree-expansions.md), $T\alpha = T\beta$; the key step is
    $T(\mu t.\, \mu s.\, \gamma[t, s]) = T(\mu v.\, \gamma[v, v])$.

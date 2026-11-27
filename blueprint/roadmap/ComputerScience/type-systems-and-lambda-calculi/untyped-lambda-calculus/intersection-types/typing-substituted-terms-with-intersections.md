@@ -7,7 +7,8 @@ Let $\vdash$ be typing in [system D](intersection-type-system-d.md) or [system D
    $\Gamma, x_1 : A_1, \dots, x_k : A_k \vdash u : B$. In particular, if $\Gamma \vdash u[t/x] : B$ and $t$ is typable in $\Gamma$, then $\Gamma \vdash (\lambda x.\, u)\, t : B$.
 
 In DΩ every term is typable (with type $\Omega$), so the typability hypotheses hold automatically. The second part is where intersections are needed: the
-occurrences of $t_i$ in $u[t_1/x_1, \dots]$ may be typed differently, and $A_i$ is the intersection of their types.
+occurrences of $t_i$ in $u[t_1/x_1, \dots]$ may be typed differently, and $A_i$ is the intersection of their types; when $x_i$ does not occur in $u$, $A_i$ is any type of $t_i$ (D has no empty
+intersection).
 
 ## Depends on
 

@@ -9,6 +9,10 @@ series of casts.
 
 - [Precision of gradual types and terms](precision-of-gradual-types-and-terms.md)
 
+## Proof depends on
+
+- [Extra cast on the right](extra-cast-on-the-right.md): in the case of an extra wrapper on the right, the argument cast back to the inner domain reduces to a value still related to the left argument
+
 ## Sources
 
 - J. G. Siek, M. M. Vitousek, M. Cimini and J. T. Boyland, "Refined criteria for gradual typing", *1st Summit on Advances in Programming Languages (SNAPL 2015)*, LIPIcs 32, 274–293, <https://doi.org/10.4230/LIPIcs.SNAPL.2015.274>: Section 6, Lemma 10 (simulation of function application).

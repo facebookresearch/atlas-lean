@@ -8,6 +8,7 @@ definitions can be solved up to β-conversion. Turing's combinator $Z = A\, A$ w
 
 - [β-reduction](beta-reduction.md)
 - [The paradoxical combinator $Y$](../../../programming-language-semantics/models-of-the-untyped-lambda-calculus/y.md)
+- [Head normal forms and solvable terms](../solvability-and-bohm-s-theorem/head-normal-forms-and-solvable-terms.md)
 
 ## Sources
 

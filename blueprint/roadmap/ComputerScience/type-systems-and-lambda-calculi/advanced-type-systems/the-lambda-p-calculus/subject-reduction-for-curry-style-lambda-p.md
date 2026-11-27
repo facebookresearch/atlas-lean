@@ -10,4 +10,4 @@ subject-reduction property: if $\Gamma \vdash_P N : \tau$ and $N \twoheadrightar
 
 ## Sources
 
-- M. H. B. Sørensen and P. Urzyczyn, *Lectures on the Curry–Howard Isomorphism*, lecture notes, University of Copenhagen, May 1998: Section 10.4, Definition 10.4.1 and Proposition 10.4.2, whose proof the notes leave to H. Barendregt's handbook chapter "Lambda calculi with types".
+- M. H. B. Sørensen and P. Urzyczyn, *Lectures on the Curry–Howard Isomorphism*, lecture notes, University of Copenhagen, May 1998: Section 10.4, Definition 10.4.1 and Proposition 10.4.2, whose proof the notes leave to their reference [5], S. van Bakel, L. Liquori, S. Ronchi della Rocca and P. Urzyczyn, "Comparing cubes of typed and type assignment systems", *Annals of Pure and Applied Logic* 86:267–303, 1997.

@@ -16,6 +16,7 @@ realizer $f(n_1, \dots, n_k)$ of each instance. No number realizes $\bot$.
 ## Depends on
 
 - [Heyting arithmetic](heyting-arithmetic.md)
+- [Numerals](../../first-order-logic/peano-arithmetic-and-robinson-s-q/numeral.md)
 
 ## Expansion
 

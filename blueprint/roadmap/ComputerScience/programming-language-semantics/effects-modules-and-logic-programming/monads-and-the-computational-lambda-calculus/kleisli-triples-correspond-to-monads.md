@@ -7,6 +7,8 @@ $T(f) = (f ; \eta_B)^*$ for $f : A \to B$ and $\mu_A = \mathrm{id}_{TA}^*$; a mo
 ## Depends on
 
 - [Kleisli triples and Kleisli categories](kleisli-triples-and-kleisli-categories.md)
+- [Functor](../../../../CategoryTheory/categories-and-functors/functor.md)
+- [Natural transformation](../../../../CategoryTheory/categories-and-functors/natural-transformation.md)
 
 ## Sources
 
