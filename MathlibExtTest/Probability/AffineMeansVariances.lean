@@ -25,7 +25,22 @@ example :
   have h := div_sub_means_affine (μ := μ) (a := -2) (b := 3)
     (X := fun _ => 1) (Y := fun _ => 2) (U := fun _ => 4) (W := fun _ => 1)
     (integrable_const 1) (integrable_const 2) (integrable_const 4) (integrable_const 1)
-    (by norm_num) (by norm_num)
+    (by norm_num)
+  exact h.trans (by norm_num)
+
+-- A zero denominator is allowed in both cancellation laws.
+example : (∫ _ : Ω, (-2 : ℝ) * 1 ∂μ) / (∫ _ : Ω, (-2 : ℝ) * 0 ∂μ) = 0 := by
+  have h := div_means_const_mul (μ := μ) (X := fun _ => 1) (Y := fun _ => 0)
+    (a := -2) (by norm_num)
+  exact h.trans (by norm_num)
+
+example :
+    ((∫ _ : Ω, (-2 : ℝ) * 1 + 3 ∂μ) - ∫ _ : Ω, (-2 : ℝ) * 2 + 3 ∂μ) /
+      ((∫ _ : Ω, (-2 : ℝ) * 4 + 3 ∂μ) - ∫ _ : Ω, (-2 : ℝ) * 4 + 3 ∂μ) = 0 := by
+  have h := div_sub_means_affine (μ := μ) (a := -2) (b := 3)
+    (X := fun _ => 1) (Y := fun _ => 2) (U := fun _ => 4) (W := fun _ => 4)
+    (integrable_const 1) (integrable_const 2) (integrable_const 4) (integrable_const 4)
+    (by norm_num)
   exact h.trans (by norm_num)
 
 -- A unit shift of two distinct constants changes the ratio of their means.
@@ -35,8 +50,7 @@ example : (∫ _ : Ω, (1 : ℝ) ∂μ) / (∫ _ : Ω, (2 : ℝ) ∂μ) = 1 / 2 
 
 -- A zero slope still preserves a ratio of one when the new constant is nonzero.
 example : (∫ _ : Ω, (0 : ℝ) * 2 + 3 ∂μ) / (∫ _ : Ω, (0 : ℝ) * 2 + 3 ∂μ) = 1 := by
-  exact div_means_affine_eq_one (μ := μ) (a := 0) (b := 3)
-    (integrable_const 2) (integrable_const 2) (by norm_num) (by norm_num) (by norm_num)
+  exact div_means_affine_eq_one (μ := μ) (a := 0) (b := 3) (by norm_num) (by norm_num)
 
 open MathlibExtTest.Probability.Statistics.Measurement.FiniteFixtures in
 -- The variance clause of the summary applies to both a negative slope and a constant recoding.
