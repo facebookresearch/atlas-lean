@@ -142,8 +142,10 @@ section CosetSubst
 
 variable {K : Type*} [Field K]
 
-/-- The substitution attached to the coset representative `!![a, b; 0, ℓ / a]`: twist by
-`ζ ^ (a * b)`, then expand `q ↦ q ^ (a * a)`. -/
+/-- The substitution `f(t) ↦ f(ζ ^ (a * b) * t ^ (a * a))` of Laurent series: twist by
+`ζ ^ (a * b)`, then expand `t ↦ t ^ (a * a)`. When `ζ = e^(2πi/ℓ)`, `a * d = ℓ` and
+`t ^ ℓ = q`, it sends the `q`-expansion of `j(τ)` to the expansion in `t` of `j(στ)` for
+`σ = !![a, b; 0, d]` (D. A. Cox, *Primes of the Form x² + ny²*, 3rd ed., 2022, (11.13)). -/
 def cosetSubst (ζ : Kˣ) (a b : ℕ) [NeZero a] : LaurentSeries K →+* LaurentSeries K :=
   haveI : NeZero (a * a) := ⟨Nat.mul_ne_zero (NeZero.ne a) (NeZero.ne a)⟩
   (qExpand K (a * a)).comp (qTwist (ζ ^ (a * b)))
@@ -206,10 +208,16 @@ section CosetIndex
 
 variable (ℓ : ℕ)
 
-/-- The upper-left entry of the `i`-th coset representative of level `ℓ`. -/
+/-- The upper-left entry of the `i`-th matrix of the prime-level list: `!![ℓ, 0; 0, 1]` for
+`i = 0` and `!![1, b; 0, ℓ]` for `i = b + 1`. For prime `ℓ` these `ℓ + 1` matrices are the set
+`C(ℓ)` that Lemma 11.11 of D. A. Cox, *Primes of the Form x² + ny²* (3rd ed., 2022) matches with
+the right cosets of `Γ₀(ℓ)` in `SL(2, ℤ)`; for composite `ℓ` the list misses some of `C(ℓ)` (at
+`ℓ = 4`, the matrix `!![2, 1; 0, 2]`). -/
 def cosetA (i : Fin (ℓ + 1)) : ℕ := if i = 0 then ℓ else 1
 
-/-- The upper-right entry of the `i`-th coset representative of level `ℓ`. -/
+/-- The upper-right entry of the `i`-th matrix of the prime-level list: `!![ℓ, 0; 0, 1]` for
+`i = 0` and `!![1, b; 0, ℓ]` for `i = b + 1`, which for prime `ℓ` is the set `C(ℓ)` of
+Lemma 11.11 of D. A. Cox, *Primes of the Form x² + ny²* (3rd ed., 2022). -/
 def cosetB (i : Fin (ℓ + 1)) : ℕ := if i = 0 then 0 else (i : ℕ) - 1
 
 @[simp]
@@ -232,7 +240,7 @@ instance instNeZeroPhiGenCosetA [hℓ : Fact (Nat.Prime ℓ)] (i : Fin (ℓ + 1)
 
 end CosetIndex
 
-section ConjugateFamily
+section CosetSeries
 
 variable {K : Type*} [Field K]
 
@@ -242,8 +250,12 @@ theorem cosetSubst_congr (ζ : Kˣ) {a a' b b' : ℕ} [NeZero a] [NeZero a'] (ha
 
 variable [Algebra ℚ K] (ℓ : ℕ) [hℓ : Fact (Nat.Prime ℓ)] (ζ : Kˣ)
 
-/-- The `i`-th conjugate of `j` under the coset representatives, as a Laurent series in a
-variable `t` with `t ^ ℓ = q`. -/
+/-- The Laurent series `j(t ^ (ℓ * ℓ))` (for `i = 0`) and `j(ζ ^ b * t)` (for `i = b + 1`) in a
+variable `t`, with the coefficients of `j` mapped into `K`: `cosetSubst` for the `i`-th matrix of
+`cosetA` and `cosetB`, applied to `j`. When `ζ` is a primitive `ℓ`-th root of unity and
+`t ^ ℓ = q`, these `ℓ + 1` series are, in some order, the expansions in `t` of all the conjugates
+`j(στ)`, `σ ∈ C(ℓ)`, of `j` (D. A. Cox, *Primes of the Form x² + ny²*, 3rd ed., 2022,
+(11.13)–(11.15)). -/
 def conj (i : Fin (ℓ + 1)) : LaurentSeries K :=
   cosetSubst ζ (cosetA ℓ i) (cosetB ℓ i) (coeffEmb K jq)
 
@@ -258,7 +270,7 @@ theorem conj_succ (b : Fin ℓ) : conj ℓ ζ b.succ = qTwist (ζ ^ (b : ℕ)) (
   rw [h1, cosetSubst, RingHom.comp_apply,
     qExpand_congr (show 1 * 1 = 1 by norm_num), qExpand_one_apply, one_mul]
 
-end ConjugateFamily
+end CosetSeries
 
 section Product
 
@@ -294,8 +306,9 @@ section Descends
 
 variable {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ) [hℓ : Fact (Nat.Prime ℓ)] (ζ : Kˣ)
 
-/-- The coefficients of the product over conjugates descend to the rational series `c k`,
-expanded by `q ↦ q ^ ℓ`. -/
+/-- The coefficients of the product `phiProd ℓ (conj ℓ ζ)` of the series `conj ℓ ζ i` descend
+to `ℚ`: for each `k`, its `k`-th coefficient is the rational Laurent series `c k` in `q = t ^ ℓ`,
+with its coefficients mapped into `K`. -/
 def PhiGenDescends (c : ℕ → LaurentSeries ℚ) : Prop :=
   ∀ k : ℕ, (phiProd ℓ (conj ℓ ζ)).coeff k = coeffEmb K (qExpand ℚ ℓ (c k))
 
