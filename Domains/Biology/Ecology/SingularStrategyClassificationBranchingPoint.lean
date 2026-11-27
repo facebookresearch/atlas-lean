@@ -39,12 +39,15 @@ invade `x*`, and nearby strategies on opposite sides of `x*` invade each other.
 ## Main definitions
 
 * `fitnessGradient s x`: the local fitness gradient `D(x) = ∂s/∂y (x, x)`.
-* `sxy s a b` and `syy s a b`: the mixed and mutant second partial derivatives at `(a, b)`.
+* `sxx s a b`, `sxy s a b` and `syy s a b`: the resident, mixed and mutant second partial
+  derivatives at `(a, b)`.
 * `IsSingular s xs`: the standing hypotheses that `s` is `C²`, `s x x = 0` for every `x`,
   and `D(x*) = 0`.
 
 ## Main results
 
+* `diagonal_identity_and_hasDerivAt`: the Hessian identity on the diagonal and the derivative
+  of the fitness gradient.
 * `branchingPoint`: convergence-stable but not ESS-stable singular strategies are
   evolutionary branching points.
 
@@ -61,6 +64,10 @@ namespace WantedExt.Biology.Ecology.SingularStrategyClassificationWanted
 /-- The **local fitness gradient** `D(x) = ∂s/∂y (x, y)` at `y = x`. -/
 noncomputable def fitnessGradient (s : ℝ → ℝ → ℝ) (x : ℝ) : ℝ :=
   deriv (fun y => s x y) x
+
+/-- The second partial derivative `∂²s/∂x²` (resident variable) at `(a, b)`. -/
+noncomputable def sxx (s : ℝ → ℝ → ℝ) (a b : ℝ) : ℝ :=
+  deriv (fun x => deriv (fun x' => s x' b) x) a
 
 /-- The mixed second partial derivative `∂²s/∂x∂y` at `(a, b)`. -/
 noncomputable def sxy (s : ℝ → ℝ → ℝ) (a b : ℝ) : ℝ :=
@@ -107,6 +114,21 @@ private lemma hasDerivAt_sndFDeriv_comp {s : ℝ → ℝ → ℝ} {c : ℝ → �
     hF.comp_hasDerivAt (f := c) t hc
   have hmain := hcomp.clm_apply (hasDerivAt_const t v)
   simpa using hmain
+
+/-- The resident second partial `s_xx` applies the second Fréchet derivative twice to `(1, 0)`. -/
+private lemma sxx_eq {s : ℝ → ℝ → ℝ} {xs : ℝ}
+    (hS : ContDiff ℝ 2 (fun p : ℝ × ℝ => s p.1 p.2)) :
+    sxx s xs xs = fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 0) (1, 0) := by
+  have hpoint (x : ℝ) : ((0, xs) : ℝ × ℝ) + x • (1, 0) = (x, xs) := by
+    ext <;> simp
+  have hline : (fun x : ℝ => (fun p : ℝ × ℝ => s p.1 p.2) ((0, xs) + x • (1, 0))) =
+      fun x => s x xs := by
+    funext x
+    rw [hpoint x]
+  have hdd := LineHessian.deriv_deriv_line (fun p : ℝ × ℝ => s p.1 p.2) (0, xs) (1, 0)
+    (t := xs) hS.contDiffAt
+  rw [hline, hpoint xs] at hdd
+  exact hdd
 
 /-- The mixed partial `s_xy` is the second Fréchet derivative applied to `(1, 0)` then `(0, 1)`. -/
 private lemma sxy_eq {s : ℝ → ℝ → ℝ} {xs : ℝ}
@@ -156,6 +178,45 @@ private lemma hasDerivAt_fitnessGradient {s : ℝ → ℝ → ℝ} {xs : ℝ} (h
     rw [sxy_eq h.contDiff, syy_eq h.contDiff]
   rw [hD, ← hval]
   exact hmain
+
+/-- The diagonal second derivative is zero, expanded in the two coordinate directions. -/
+private lemma diagonal_hessian_sum_eq_zero {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s xs) :
+    fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 0) (1, 0)
+      + fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 0) (0, 1)
+      + fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (0, 1) (1, 0)
+      + fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (0, 1) (0, 1) = 0 := by
+  have hdiag : fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 1) (1, 1) = 0 := by
+    have hline : (fun u : ℝ => (fun p : ℝ × ℝ => s p.1 p.2) ((xs, xs) + u • (1, 1))) =
+        fun _ => 0 := by
+      funext u
+      have hpoint : (xs, xs) + u • ((1, 1) : ℝ × ℝ) = (xs + u, xs + u) := by
+        ext <;> simp
+      rw [hpoint]
+      exact h.diag (xs + u)
+    have hval := LineHessian.deriv_deriv_line (fun p : ℝ × ℝ => s p.1 p.2) (xs, xs) (1, 1)
+      (t := 0) h.contDiff.contDiffAt
+    have hzero : deriv (fun _ : ℝ => (0 : ℝ)) = fun _ => 0 := funext fun x => deriv_const x 0
+    rw [hline, hzero, deriv_const] at hval
+    simpa only [zero_smul, add_zero] using hval.symm
+  have e11 : ((1, 1) : ℝ × ℝ) = (1, 0) + (0, 1) := by ext <;> simp
+  simp only [e11, map_add, add_apply] at hdiag
+  linarith only [hdiag]
+
+/-- **Diagonal identity and the derivative of the fitness gradient** (Geritz et al. 1998).
+For an invasion fitness `s` with singular strategy `x*` (`s` is `C²`, `s x x = 0`, `D(x*) = 0`):
+`s_xx + 2 s_xy + s_yy = 0` at `(x*, x*)`, and `D` has derivative `s_xy + s_yy` at `x*`.
+
+Source: Geritz et al. (1998), eq. (7) for the identity and the equality in eq. (6) for the
+fitness-gradient derivative. -/
+public theorem diagonal_identity_and_hasDerivAt {s : ℝ → ℝ → ℝ} {xs : ℝ}
+    (h : IsSingular s xs) :
+    sxx s xs xs + 2 * sxy s xs xs + syy s xs xs = 0 ∧
+      HasDerivAt (fitnessGradient s) (sxy s xs xs + syy s xs xs) xs := by
+  refine ⟨?_, hasDerivAt_fitnessGradient h⟩
+  rw [sxx_eq h.contDiff, sxy_eq h.contDiff, syy_eq h.contDiff]
+  have hsym : IsSymmSndFDerivAt ℝ (fun p : ℝ × ℝ => s p.1 p.2) (xs, xs) :=
+    h.contDiff.contDiffAt.isSymmSndFDerivAt (by simp)
+  linarith only [diagonal_hessian_sum_eq_zero h, hsym.eq (1, 0) (0, 1)]
 
 /-- Convergence stability: near `x*`, the fitness gradient points towards `x*`. -/
 private lemma grad_part {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s xs)
@@ -223,23 +284,6 @@ private lemma mutual_part {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s
           + fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2) (xs, xs) (0, 1) := by
       rw [e3, map_add]
     linarith [hdiag1, hS01, hexp]
-  have hG1 : (fun u : ℝ => (fun p : ℝ × ℝ => s p.1 p.2) ((xs, xs) + u • (1, 1)))
-      = fun _ => 0 := by
-    funext u
-    have hpt : (xs, xs) + u • ((1, 1) : ℝ × ℝ) = (xs + u, xs + u) := by ext <;> simp
-    rw [hpt]
-    exact h.diag (xs + u)
-  have hG1dd : deriv (deriv (fun u : ℝ => (fun p : ℝ × ℝ => s p.1 p.2)
-      ((xs, xs) + u • (1, 1)))) 0 = 0 := by
-    have h0 : deriv (fun _ : ℝ => (0 : ℝ)) = fun _ => 0 := funext fun x => deriv_const x 0
-    rw [hG1, h0]
-    exact deriv_const 0 0
-  have hdiag2 : fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 1) (1, 1)
-      = 0 := by
-    have hval := LineHessian.deriv_deriv_line (fun p : ℝ × ℝ => s p.1 p.2) (xs, xs) (1, 1)
-      (t := 0) (h.contDiff.contDiffAt)
-    rw [hG1dd] at hval
-    simpa using hval.symm
   have hsym : IsSymmSndFDerivAt ℝ (fun p : ℝ × ℝ => s p.1 p.2) (xs, xs) :=
     h.contDiff.contDiffAt.isSymmSndFDerivAt (by simp)
   have hsymm : fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 0) (0, 1)
@@ -279,14 +323,6 @@ private lemma mutual_part {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s
     simp only [Function.comp_def] at hcomp
     rw [zero_smul, add_zero, hvalφ1] at hcomp
     exact hcomp
-  have hE1 : fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 1) (1, 1)
-      = fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 0) (1, 0)
-        + fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 0) (0, 1)
-        + fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (0, 1) (1, 0)
-        + fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (0, 1) (0, 1) := by
-    have e11 : ((1, 1) : ℝ × ℝ) = (1, 0) + (0, 1) := by ext <;> simp
-    simp only [e11, map_add, add_apply]
-    ring
   have hE2 : fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (-1, 1) (-1, 1)
       = fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 0) (1, 0)
         - fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 0) (0, 1)
@@ -298,7 +334,7 @@ private lemma mutual_part {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s
     ring
   have hφ2val : fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (-1, 1) (-1, 1)
       = -4 * sxy s xs xs := by
-    linarith [hE1, hE2, hdiag2, hsymm, hsxy]
+    linarith only [hE2, diagonal_hessian_sum_eq_zero h, hsymm, hsxy]
   have hφ2 : deriv (deriv (fun u : ℝ => (fun p : ℝ × ℝ => s p.1 p.2)
       ((xs, xs) + u • ((-1, 1) : ℝ × ℝ)))) 0
       = fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (-1, 1) (-1, 1) := by

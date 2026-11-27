@@ -31,6 +31,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Intron-cluster splicing quantification](intron-cluster-splicing-quantification/README.md)
 - [k-mer-based assembly evaluation](k-mer-based-assembly-evaluation/README.md)
 - [Zero-inflated Poisson factor model for microbiome read counts](zero-inflated-poisson-factor-model-for-microbiome-counts.md)
+- [Rare variant discovery probability in population sequencing](rare-variant-discovery-probability-in-population-sequencing/README.md)
 - [Batch optimization for array dna synthesis](algorithms-and-statistics-for-omics-data/batch-optimization-for-array-dna-synthesis/README.md)
 - [Bidimensionally linked matrix factorization](algorithms-and-statistics-for-omics-data/bidimensionally-linked-matrix-factorization/README.md)
 - [Merge-tree realizations of barcodes](algorithms-and-statistics-for-omics-data/merge-tree-realizations-of-barcodes/README.md)
