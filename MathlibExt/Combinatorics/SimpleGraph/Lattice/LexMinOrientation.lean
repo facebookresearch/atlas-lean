@@ -89,7 +89,8 @@ theorem lmo_lexMinCell (K : Set (Site 2)) (hK : K.Finite) (hne : K.Nonempty) :
 /-- The head of the leftward dart at `z₀` is `(z₀ 0 - 1, z₀ 1)`. -/
 theorem lmo_leftDartAt_head (z₀ : Site 2) :
     (leftDart z₀).head = ![z₀ 0 - 1, z₀ 1] := by
-  rw [leftDart, mkDart_head]; funext i; fin_cases i <;> (simp; try ring)
+  rw [leftDart, mkDart_head]; funext i; fin_cases i <;> simp
+  ring
 
 /-- The leftward dart at a site of `K` is a boundary dart when the site to its left is not in
 `K`. -/
