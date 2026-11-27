@@ -10,7 +10,6 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.GcdArithmeticTerm
-public import MathlibExt.NumberTheory.GcdArithmeticTermGcdArithmeticTermsSmallBases
 
 namespace MetaMathlibExt
 
