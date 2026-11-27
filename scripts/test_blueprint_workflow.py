@@ -1037,6 +1037,72 @@ elif "/compare/" in path:
         # A run of main, as the `changes` job decides, whether or not the site is published.
         self.assertEqual(full["if"], "needs.changes.outputs.main == 'true'")
 
+    def test_a_site_that_does_not_keep_the_moved_addresses_is_neither_kept_nor_published(self):
+        # The card pages hook keeps the move ledger's old addresses or only says why it cannot, and MkDocs builds the
+        # site without them. The step after the site's checks fails the job instead, on every build, a pull request's
+        # too, before the site is kept, packed or uploaded: no later step but the diagnostics runs, and neither do the
+        # Mathlib pages or the deployment, which need the job.
+        name = "Check that the site keeps the moved addresses"
+        step = self.step(name)
+        names = [s.get("name") for s in self.steps]
+        self.assertEqual(names.index(name), names.index("Check routes, anchors, and article cards") + 1)
+        self.assertEqual(names.index("Keep dependency diagnostics"), names.index(name) + 1)
+        for later in ("Keep the built site", "Pack the site for GitHub Pages", "Check the packed site",
+                      "Upload Pages artifact"):
+            self.assertLess(names.index(name), names.index(later))
+        for key in ("if", "continue-on-error"):
+            self.assertNotIn(key, step)
+        for later in self.steps[names.index(name) + 2:]:
+            for function in ("always()", "failure()", "cancelled()"):
+                self.assertNotIn(function, later.get("if", ""), later["name"])
+        for job in ("mathlib-pages", "deploy"):
+            self.assertIn("wiki", self.workflow["jobs"][job]["needs"])
+            self.assertNotIn("always()", self.workflow["jobs"][job].get("if", ""))
+        # It checks the hook's own table against the hook's own ledger, the frozen file, and its fragments: a table is
+        # the hook's when it starts with the line the hook's moves_script writes first, which a file of that name from
+        # the theme, also copied into the site, would not.
+        hook = (ROOT / "hooks" / "card_pages.py").read_text()
+        table, ledger = (re.search(rf'(?m)^{constant} = "([^"]+)"$', hook).group(1)
+                         for constant in ("SCRIPT", "LEDGER"))
+        script = step["run"]
+        self.assertIn("set -euo pipefail", script)
+        self.assertIn(f"table={table}\n", script)
+        self.assertIn(f"[[ -f {ledger} ]]", script)
+        self.assertNotIn("${{", script)
+        header = re.search(r"(?m)^header='([^']*)'$", script).group(1)
+        written = re.search(r'(?s)\ndef moves_script\(.*?\n    return \(\n        "(.*?)\\n"', hook)
+        self.assertEqual(written.group(1), header)
+        row = '{"page": "A/old", "to": "A/new", "article_id": "af_' + "0" * 24 + '"}\n'
+        fragment = "scripts/card-moves.d/20261127T000000Z-move.jsonl"
+        made = header + "\n   rewritten to where the address leads before the explorer starts. */\n"
+        cases = [
+            # A row and the hook's table: the site keeps the moved addresses.
+            ({ledger: row, f"site/{table}": made}, 0),
+            # A row, and no table, an empty one, one that is not the hook's, as the theme's would be, or one from the
+            # site source, which the hook never replaces (it then keeps nothing).
+            ({ledger: row}, 1),
+            ({ledger: row, f"site/{table}": ""}, 1),
+            ({ledger: row, f"theme/{table}": "var moves = {};\n", f"site/{table}": "var moves = {};\n"}, 1),
+            ({ledger: row, f"site/{table}": made, f"site-src/{table}": made}, 1),
+            # A row in a fragment only.
+            ({ledger: "", fragment: row, f"site/{table}": made}, 0),
+            ({ledger: "", fragment: row}, 1),
+            # No row, blank lines aside: the hook writes no table.
+            ({ledger: ""}, 0),
+            ({ledger: "\n \t\n"}, 0),
+            # No frozen file is no empty ledger: the hook keeps nothing.
+            ({}, 1),
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            for files, expected in cases:
+                root = Path(tempfile.mkdtemp(dir=directory))
+                for path, text in files.items():
+                    (root / path).parent.mkdir(parents=True, exist_ok=True)
+                    (root / path).write_text(text)
+                run = subprocess.run(["bash", "-c", script], cwd=root, capture_output=True, text=True)
+                self.assertEqual(run.returncode, expected, (files, run.stdout, run.stderr))
+                self.assertEqual("::error title=Moved addresses not kept::" in run.stdout, bool(expected), run.stdout)
+
     def test_the_mathlib_pages_cannot_hold_back_the_site(self):
         # The pages have their own read-only job after the wiki and the Mathlib layer; deployment waits for the
         # wiki job alone, and the wiki job never runs the pages script.
