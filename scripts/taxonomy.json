@@ -1807,7 +1807,7 @@
   "CSLibExt/InformationRetrieval/BooleanRetrieval": {"to": "ComputerScience/sorting-and-searching", "title": "Boolean retrieval and inverted indexes"},
   "CSLibExt/InformationRetrieval/DiscountedGain": {"to": "ComputerScience/sorting-and-searching", "title": "Discounted cumulative gain at a cutoff"},
   "CSLibExt/InformationRetrieval/PrecisionAt": {"to": "ComputerScience/sorting-and-searching", "title": "Precision at a cutoff"},
-  "CSLibExt/InformationRetrieval/ProbabilityRanking": {"to": "ComputerScience/sorting-and-searching", "title": "Probability ranking principle for expected precision"},
+  "CSLibExt/InformationRetrieval/ProbabilityRanking": {"to": "ComputerScience/sorting-and-searching", "title": "Precision at a cutoff"},
   "CSLibExt/InformationRetrieval/RecallAt": {"to": "ComputerScience/sorting-and-searching", "title": "Recall at a cutoff"},
   "CSLibExt/InformationRetrieval/Scoring": {"to": "ComputerScience/sorting-and-searching", "title": "BM25 term scoring"},
   "CSLibExt/Languages/CCS/Choice": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
