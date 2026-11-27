@@ -59,6 +59,8 @@
 - [Eager sampling with a continuation](eval-pmf-bind-eq-run-tape.md)
 - [Simulating a tape run by an oracle algorithm](sim-tape.md)
 - [Running a simulated tape run](run-sim-tape.md)
+- [A function of a uniform pair is a function of two independent uniform samples](uniform-of-fintype-map-prod.md)
+- [A function of the first entry of a uniform pair](uniform-of-fintype-map-fst.md)
 - [An entry of a uniform tape is independent of the rest of the tape](uniform-of-fintype-map-apply-eq-bind.md)
 - [Translating the queries of an oracle algorithm](reindex.md)
 - [Running a translated algorithm](run-reindex.md)
