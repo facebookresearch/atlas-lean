@@ -77,9 +77,10 @@ noncomputable def meanExtension (n : ℕ) (kB T ℓ : ℝ) (e : EuclideanSpace �
 /-- **Single-segment partition function** (Tokmakoff, Section 9.3). For every unit vector
 `e ∈ ℝ³` and every real `φ`, `∫_{S²} exp (φ u · e) dσ(u) = 4π S(φ)`, where
 `S(φ) = sinh φ / φ` for `φ ≠ 0` and `S(0) = 1`. This corrects the cited section, which prints
-`q_conf(f) = 2π sinh φ / φ` and
-`q = (∫_0^{2π} ∫_0^π exp[φ cos θ] sin θ dθ dϕ)^n = (2π sinh φ / φ)^n`: the integral it displays
-equals `4π sinh φ / φ` per segment, since the `θ`-integral is `2 sinh φ / φ`.
+`q_conf(f) = 2π sinh φ / φ` and, for `n` segments,
+`q ≈ ∫ dr³ exp(∑_i (fℓ/k_B T) cos θ_i) = (∫_0^{2π} ∫_0^π exp[φ cos θ] sin θ dθ dϕ)^n`
+`= (2π sinh(φ)/φ)^n`: the integral it displays equals `4π sinh φ / φ` per segment, since the
+`θ`-integral is `2 sinh φ / φ`.
 
 Source: Kuhn and Grün (1942); Tokmakoff, Section 9.3. -/
 theorem_wanted integral_exp_inner (e : EuclideanSpace ℝ (Fin 3)) (he : ‖e‖ = 1) (φ : ℝ) :
@@ -91,9 +92,9 @@ theorem_wanted integral_exp_inner (e : EuclideanSpace ℝ (Fin 3)) (he : ‖e‖
 `φ = f ℓ / (k_B T)`. Then `q(f) = (4π S(φ))^n`; `⟨r⟩(f) = k_B T ∂_f ln q(f)` (the function
 `f ↦ ln q(f)` has derivative `⟨r⟩(f) / (k_B T)` at `f`); and `⟨r⟩(f) = n ℓ L(φ)`. The first
 clause corrects the cited section, which prints `q_conf(f) = 2π sinh φ / φ` and
-`q = (∫_0^{2π} ∫_0^π exp[φ cos θ] sin θ dθ dϕ)^n = (2π sinh φ / φ)^n`: the integral it displays
-equals `(4π sinh φ / φ)^n`, since the `θ`-integral is `2 sinh φ / φ`. The factor does not change
-`⟨r⟩(f)`.
+`q ≈ ∫ dr³ exp(∑_i (fℓ/k_B T) cos θ_i) = (∫_0^{2π} ∫_0^π exp[φ cos θ] sin θ dθ dϕ)^n`
+`= (2π sinh(φ)/φ)^n`: the integral it displays equals `(4π sinh φ / φ)^n`, since the
+`θ`-integral is `2 sinh φ / φ`. The factor does not change `⟨r⟩(f)`.
 
 Source: Kuhn and Grün (1942); Tokmakoff, Section 9.3. -/
 theorem_wanted partitionFunction_and_meanExtension (n : ℕ) (kB T ℓ : ℝ) (hkB : 0 < kB)
