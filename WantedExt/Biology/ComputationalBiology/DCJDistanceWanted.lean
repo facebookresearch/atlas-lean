@@ -14,8 +14,9 @@ Genomes on the same `N` genes are given, as in
 extremities `2g` (tail) and `2g + 1` (head), and a genome is a simple graph on the extremities
 `Fin (2N)` in which each extremity lies in at most one adjacency (an extremity in none is a
 telomere). Chromosomes may be any mix of linear and circular ones. A double cut and join (DCJ)
-cuts one or two adjacencies and rejoins the freed extremities (`IsDCJ`), and the DCJ distance
-`d_DCJ(A, B)` is the least number of DCJs transforming `A` into `B` (`DCJWithin`).
+cuts zero, one or two adjacencies and rejoins the freed extremities and telomeres (`IsDCJ`); one
+that joins two telomeres cuts none. The DCJ distance `d_DCJ(A, B)` is the least number of DCJs
+transforming `A` into `B` (`DCJWithin`).
 
 The adjacency graph `AG(A, B)` has a vertex for each adjacency and each telomere of `A` and of
 `B`, and an edge for each extremity, joining the vertex of `A` containing it to the vertex of

@@ -7,6 +7,8 @@ $O(N)$ time (Algorithm 2 of Bergeron, Mixtacki and Stoye).
 ## Depends on
 
 - [Double-cut-and-join distance formula](dcj-distance.md)
+- [Num Cycles](num-cycles.md)
+- [Num Odd Paths](num-odd-paths.md)
 
 ## Expansion
 
@@ -17,8 +19,9 @@ A sound expansion has separate pages for:
    hold its head and its tail, so that the adjacency or telomere containing a gene extremity is
    found, and replaced, in constant time.
 2. **Greedy sorting** (Algorithm 2). For each adjacency $\{p, q\}$ of $B$ whose extremities lie in
-   different elements $u \ne v$ of $A$, replace $u$ and $v$ by $\{p, q\}$ and
-   $(u \setminus \{p\}) \cup (v \setminus \{q\})$; then, for each telomere $\{p\}$ of $B$ that lies in
+   different elements $u \ne v$ of $A$, replace $u$ and $v$ by $\{p, q\}$ and, only if it is
+   nonempty, by $(u \setminus \{p\}) \cup (v \setminus \{q\})$ (two telomeres $u = \{p\}$ and
+   $v = \{q\}$ give $\{p, q\}$ alone); then, for each telomere $\{p\}$ of $B$ that lies in
    an adjacency $u$ of $A$, replace $u$ by $\{p\}$ and $u \setminus \{p\}$. Each replacement is a DCJ
    operation, and the result is $B$.
 3. **Optimality** (Lemma 4 and Theorem 1). Each replacement increases $C + I/2$ by one, as it

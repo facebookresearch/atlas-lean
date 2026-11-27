@@ -6,6 +6,12 @@ reversals sorting $\pi$ to the signed identity can be computed in polynomial tim
 
 ## Depends on
 
+- [Signed permutation of 1, …, n](../../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/svalid.md)
+- [Signed reversal of the block of positions i to j of a list](../../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/srev-block.md)
+- [Signed reversal distance of a signed permutation](../../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/sdist.md)
+
+## Proof depends on
+
 - [Hannenhalli–Pevzner signed reversal distance formula](sdist-eq.md)
 
 ## Expansion
