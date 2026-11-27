@@ -129,8 +129,10 @@ theorem pgf_binaryOffspring (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (s : ℝ) :
   rw [pow_zero, smul_eq_mul, smul_eq_mul]
   ring
 
-/-- Mean offspring number `E ξ = 2p` on the probability range (in general `ENNReal.ofReal (2 * p)`) (so criticality `mean ≤ 1` is
-`p ≤ 1 / 2`). -/
+/-- The mean offspring number of `binaryOffspring p` is `ENNReal.ofReal (2 * p)` for every real
+`p`, that is `E ξ = 2p` on the probability range. This states the mean only; the criticality
+criterion `mean ≤ 1 ↔ p ≤ 1 / 2` on the probability range is
+`mean_binaryOffspring_le_one_iff`. -/
 theorem mean_binaryOffspring :
     mean (binaryOffspring p) = ENNReal.ofReal (2 * p) := by
   show (∫⁻ k, (k : ℝ≥0∞) ∂binaryOffspring p) = _
