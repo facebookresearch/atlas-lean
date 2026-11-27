@@ -6,9 +6,9 @@ $$B'=\frac{rH^2}{K+H^2}-d_bB-e^{-d_b\tau}B(t-\tau),\qquad H'=e^{-d_b\tau}B(t-\ta
 
 with egg-laying rate $r$, half-saturation $K>0$ and mortalities $d_b,d_h>0$. Interior equilibria satisfy $B^\ast=d_he^{d_b\tau}H^\ast$ and $\dfrac{rH}{K+H^2}=d_h(1+d_be^{d_b\tau})$.
 
-**Theorem (extinction equilibrium).** $E_e=(0,0)$ always exists.
-1. If $d_b\ge\frac{\sqrt2}{2}$, $E_e$ is asymptotically stable for all $\tau\ge 0$.
-2. If $0<d_b<\frac{\sqrt2}{2}$, $E_e$ is asymptotically stable for $\tau\in(0,\tau_0)$ and for $\tau\ge\tau_1$, and unstable for $\tau\in(\tau_0,\tau_1)$, where $\tau_k=(\theta+k\pi)/w$ with $\theta=\pi-\arctan(w/d_b)$ and $w=(e^{-2d_b\tau}-d_b^2)^{1/2}$.
+**Theorem (extinction equilibrium).** $E_e=(0,0)$ always exists, and its brood-equation characteristic equation $\lambda+d_b+e^{-d_b\tau}e^{-\lambda\tau}=0$ has roots $\lambda = W_k(-\tau)/\tau - d_b$. Accordingly, $E_e$ is asymptotically stable if and only if $\operatorname{Re} W_0(-\tau) < d_b\tau$:
+1. $E_e$ is asymptotically stable for all $\tau\ge 0$ if and only if $d_b \ge d^* := \max_{\tau>0} \operatorname{Re} W_0(-\tau)/\tau \approx 0.1704$.
+2. If $0 < d_b < d^*$, $E_e$ is unstable strictly between the two solutions $\tau_0 < \tau_1$ of $\tau w(\tau) = \theta(\tau)$, where $w(\tau) = (e^{-2d_b\tau}-d_b^2)^{1/2}$ and $\theta(\tau) = \pi - \arctan(w(\tau)/d_b)$, and asymptotically stable for $\tau \in [0, \tau_0)$ and $\tau > \tau_1$ (the source's Theorem 3.5 states the looser threshold $d_b = \sqrt{2}/2$ and $\tau_1 = (\theta+\pi)/w$).
 
 **Theorem (interior equilibria).** Let $r>2d_h\sqrt K(1+d_b)$ and $\tau^\ast=\frac{1}{d_b}\ln\!\Big(\frac{1}{d_b}\Big(\frac{r}{2d_h\sqrt K}-1\Big)\Big)$. For $\tau\in[0,\tau^\ast)$ there are two interior equilibria $E_1,E_2$ with $H_1^\ast<H_2^\ast$; $E_1$ is always unstable, and with $r_c=\dfrac{2d_h\sqrt K(1+d_b)^2}{\sqrt{(1+d_b)^2-4d_b^2}}$:
 1. if $d_b\ge 1$, or $0<d_b<1$ with $d_b^2+d_h^2\ge 1$ and $r\le r_c$, then $E_2$ is locally asymptotically stable for all $\tau\in[0,\tau^\ast)$;

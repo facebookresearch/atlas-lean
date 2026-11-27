@@ -14,7 +14,7 @@ $$\qquad+\Big(2\Big\lfloor\frac n2\Big\rfloor-n(n-3)\Big)H_{\lfloor n/2\rfloor}-
 
 **Asymptotics.** Writing $m=\lfloor n/4\rfloor$,
 
-$$\sigma_Y^2(C_n)=-\frac83\big(\pi^2+\log 64-18\big)m^2-8m\log m+\Big(20-8\gamma-32\log 2+\big(24-\tfrac43\pi^2-8\log 2\big)(n\bmod 4)\Big)m+O(1).$$
+$$\sigma_Y^2(C_n)=-\frac83\big(\pi^2+\log 64-18\big)m^2-2n\log m+\Big(20-8\gamma-32\log 2+\big(24-\tfrac43\pi^2-8\log 2\big)(n\bmod 4)\Big)m+O(1).$$
 
 In particular $\sigma_Y^2(C_n)\sim\big(3-\tfrac{\pi^2}{6}-\log 2\big)n^2$, so the standard deviation of the Colless index grows linearly in $n$, as for the Sackin index.
 

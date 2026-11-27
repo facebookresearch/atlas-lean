@@ -22,7 +22,7 @@ $$c\int_0^{x(0)}\frac{du}{a(u)}>x(0)+y(0);$$
 
 then herd immunity is reached, only asymptotically, with final susceptible fraction $x(\infty)=v^*$. For an initially almost fully susceptible population the condition reads $c\int_0^1\frac{du}{a(u)}>1$.
 
-*(5)* With $x(0)=1-\epsilon$, $y(0)=\epsilon$: if $a(1)>c$, $x(\infty)$ tends as $\epsilon\to0$ to the unique root in $(0,1)$ of $v-1-c\int_1^v\frac{du}{a(u)}=0$, which lies below $a^{-1}(c)$; if $a(1)\le c$, $x(\infty)\to1$.
+*(5)* Suppose $a$ is strictly increasing and $c\int_0^1\frac{du}{a(u)}>1$, with $x(0)=1-\epsilon$, $y(0)=\epsilon$: if $a(1)>c$, $x(\infty)$ tends as $\epsilon\to0$ to the unique root in $(0,1)$ of $v-1-c\int_1^v\frac{du}{a(u)}=0$, which lies below $a^{-1}(c)$; if $a(1)\le c$, $x(\infty)\to1$.
 
 Unlike the classical model, the final size is not a function of the initial reproduction number $a(1)/c$ alone: it depends on the whole transmission function, so it is not robust to small changes of $a$.
 

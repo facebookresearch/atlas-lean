@@ -1,6 +1,6 @@
 # Critical delay in a delayed Beverton–Holt recurrence
 
-**Model.** Let $z_t\ge0$ be the number of fecund individuals in generation $t$. Newborns need $\tau\in\mathbb N$ steps to reach fecundity, and those that die during this delay do not contribute to growth. With parameters $a,b,c>0$, the model modifies the Beverton–Holt map as
+**Model.** Let $z_t\ge0$ be the number of fecund individuals in generation $t$. Newborns need $\tau\in\mathbb Z_{\ge 1}$ steps to reach fecundity, and those that die during this delay do not contribute to growth. With parameters $a,b,c>0$, the model modifies the Beverton–Holt map as
 
 $$z_{t+1}=\frac{1}{m(z_t)}\Big\{z_t+\frac{ab\,z_{t-\tau+1}}{M(z_{t-\tau+1})}\Big\}=:H(z_t,z_{t-\tau+1}),$$
 
@@ -8,7 +8,7 @@ where
 
 $$m(x)=1+b+cx,\qquad M(x)=b\beta+(\beta-1)cx,\qquad\beta=(1+b)^\tau,$$
 
-and the initial data $(z_0,\dots,z_{\tau-1})$ are nonnegative. For $\tau=0$ it reduces to the Beverton–Holt recurrence $z_{t+1}=z_t/(1+b-a+cz_t)$. The **critical delay** is
+and the initial data $(z_0,\dots,z_{\tau-1})$ are nonnegative. (Remark: the undelayed case $\tau=0$ is excluded from the theorem below because $\beta=1$ makes the recurrence implicit and the denominator $2c(\beta-1)$ vanishes.) The **critical delay** is
 
 $$\tau_c=\frac{\log(a/b)}{\log(1+b)}.$$
 
