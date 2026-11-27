@@ -1,6 +1,6 @@
 # Johnson-bound list size for Reed–Solomon codes
 
-Let $C=\mathrm{RS}[\mathbb{F},L,d]$ have rate $\rho=d/|L|$. For every $\eta\in(0,\sqrt{\rho})$ and every $f:L\to\mathbb{F}$, the number of codewords within relative distance $1-\sqrt{\rho}-\eta$ of $f$ is at most $1/(2\eta\sqrt{\rho})$. In particular, within the Johnson radius $1-\sqrt{\rho}$ the code is list-decodable with polynomial list size, and the Guruswami–Sudan algorithm finds the list in polynomial time.
+Let $C=\mathrm{RS}[\mathbb{F},L,d]$ have rate $\rho=d/|L|$. For every $\eta\in(0,1-\sqrt{\rho})$ and every $f:L\to\mathbb{F}$, the number of codewords within relative distance $1-\sqrt{\rho}-\eta$ of $f$ is at most $1/(2\eta\sqrt{\rho})$. In particular, within the Johnson radius $1-\sqrt{\rho}$ the code is list-decodable with polynomial list size, and the Guruswami–Sudan algorithm finds the list in polynomial time.
 
 ## Proof sketch
 
@@ -18,4 +18,4 @@ This is the Johnson bound for codes of relative distance $1-\rho+1/|L|$: a secon
 
 - Venkatesan Guruswami, Madhu Sudan, "Improved Decoding of Reed-Solomon and Algebraic-Geometry Codes", IEEE Transactions on Information Theory (1999).
 - Eli Ben-Sasson, Dan Carmon, Yuval Ishai, Swastik Kopparty, Shubhangi Saraf, "Proximity Gaps for Reed–Solomon Codes", FOCS (2020), IACR ePrint 2020/654.
-- Gal Arnon, Alessandro Chiesa, Giacomo Fenzi, Eylon Yogev, "STIR: Reed–Solomon Proximity Testing with Fewer Queries", CRYPTO (2024), IACR ePrint 2024/390.
+- Gal Arnon, Alessandro Chiesa, Giacomo Fenzi, Eylon Yogev, "STIR: Reed–Solomon Proximity Testing with Fewer Queries", CRYPTO (2024), IACR ePrint 2024/390, Theorem 3.4.
