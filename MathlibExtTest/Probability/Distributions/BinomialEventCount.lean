@@ -17,8 +17,8 @@ import Mathlib.Tactic.Ring
 
 For independent events of probability `p`: none of `n` occur with probability `(1 - p) ^ n`,
 exactly one of two occurs with probability `2 p (1 - p)`, all `n` occur with probability `p ^ n`,
-at least one of two occurs with probability `1 - (1 - p) ^ 2`, and more than `n` of them never
-occur.
+at least none of them occur surely, at least one of two occurs with probability `1 - (1 - p) ^ 2`,
+and more than `n` of them never occur.
 -/
 
 @[expose] public section
@@ -48,15 +48,22 @@ example {E : Fin 2 → Set Ω} (hE : ∀ i, MeasurableSet (E i)) (h : iIndepSet 
 example {n : ℕ} {E : Fin n → Set Ω} (hE : ∀ i, MeasurableSet (E i)) (h : iIndepSet E μ)
     (hp : ∀ i, μ.real (E i) = p) :
     μ.real {ω | n ≤ {i | ω ∈ E i}.ncard} = p ^ n := by
-  rw [h.measureReal_le_ncard hE hp n]
+  rw [h.measureReal_le_ncard hE hp n, binomTail]
   simp
+
+/-- At least none of the events occur, surely. -/
+example {n : ℕ} {E : Fin n → Set Ω} (hE : ∀ i, MeasurableSet (E i)) (h : iIndepSet E μ)
+    (hp : ∀ i, μ.real (E i) = p) :
+    μ.real {ω | 0 ≤ {i | ω ∈ E i}.ncard} = 1 := by
+  rw [h.measureReal_le_ncard hE hp 0, binomTail_zero]
 
 /-- At least one of two independent events of probability `p` occurs with probability
 `1 - (1 - p) ^ 2`. -/
 example {E : Fin 2 → Set Ω} (hE : ∀ i, MeasurableSet (E i)) (h : iIndepSet E μ)
     (hp : ∀ i, μ.real (E i) = p) :
     μ.real {ω | 1 ≤ {i | ω ∈ E i}.ncard} = 1 - (1 - p) ^ 2 := by
-  rw [h.measureReal_le_ncard hE hp 1, show Icc 1 2 = {1, 2} from rfl, sum_pair (by norm_num)]
+  rw [h.measureReal_le_ncard hE hp 1, binomTail, show Icc 1 2 = {1, 2} from rfl,
+    sum_pair (by norm_num)]
   norm_num
   ring
 
@@ -64,7 +71,6 @@ example {E : Fin 2 → Set Ω} (hE : ∀ i, MeasurableSet (E i)) (h : iIndepSet 
 example {n : ℕ} {E : Fin n → Set Ω} (hE : ∀ i, MeasurableSet (E i)) (h : iIndepSet E μ)
     (hp : ∀ i, μ.real (E i) = p) :
     μ.real {ω | n + 1 ≤ {i | ω ∈ E i}.ncard} = 0 := by
-  rw [h.measureReal_le_ncard hE hp (n + 1)]
-  simp
+  rw [h.measureReal_le_ncard hE hp (n + 1), binomTail_of_lt (Nat.lt_succ_self n)]
 
 end MathlibExtTest.Probability.Distributions.BinomialEventCount

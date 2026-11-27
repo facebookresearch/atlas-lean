@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Data.Set.Card
 public import Mathlib.Probability.Independence.Basic
+public import MathlibExt.Probability.Distributions.BinomialTail
 
 import Mathlib.Probability.Distributions.Bernoulli
 import MathlibExt.Probability.BernoulliSumPmf
@@ -21,8 +22,8 @@ import MathlibExt.Probability.Distributions.PoissonBinomial
 If `E 0, …, E (n - 1)` are mutually independent events, each of probability `p`, then the number
 `#{i | ω ∈ E i}` of events that occur has the binomial law with parameters `n` and `p`: it equals
 `k` with probability `C(n, k) p ^ k (1 - p) ^ (n - k)`, and it is at least `k` with probability
-`∑_{k ≤ j ≤ n} C(n, j) p ^ j (1 - p) ^ (n - j)`. This is the event form of the binomial law of a
-sum of independent Bernoulli variables (`ProbabilityTheory.bernoulli_sum_pmf_iid`,
+`binomTail n k p = ∑_{k ≤ j ≤ n} C(n, j) p ^ j (1 - p) ^ (n - j)`. This is the event form of the
+binomial law of a sum of independent Bernoulli variables (`ProbabilityTheory.bernoulli_sum_pmf_iid`,
 `ProbabilityTheory.measure_le_sum_eq_poissonBinomialTail`), applied to the indicators of the
 events.
 
@@ -31,7 +32,7 @@ events.
 * `ProbabilityTheory.iIndepSet.measureReal_ncard_eq`: the probability that exactly `k` of the
   events occur.
 * `ProbabilityTheory.iIndepSet.measureReal_le_ncard`: the probability that at least `k` of the
-  events occur.
+  events occur, the binomial upper tail `ProbabilityTheory.binomTail`.
 -/
 
 @[expose] public section
@@ -81,7 +82,7 @@ theorem iIndepSet.measureReal_ncard_eq (hE : ∀ i, MeasurableSet (E i)) (h : iI
 /-- **Upper tail of the number of independent events that occur.** Let $\mu$ be a probability
 measure and let $E_0, \dots, E_{n-1}$ be mutually independent measurable events, each of
 probability $p$. Then for every $k \in \mathbb{N}$ the probability that at least $k$ of them occur
-is the binomial upper tail
+is the binomial upper tail `binomTail n k p`,
 
 $$\mu\{\omega : \#\{i : \omega \in E_i\} \ge k\} =
   \sum_{j = k}^{n} \binom{n}{j} p^j (1 - p)^{n - j},$$
@@ -89,13 +90,12 @@ $$\mu\{\omega : \#\{i : \omega \in E_i\} \ge k\} =
 an empty sum, equal to $0$, when $k > n$. -/
 theorem iIndepSet.measureReal_le_ncard (hE : ∀ i, MeasurableSet (E i)) (h : iIndepSet E μ)
     (hp : ∀ i, μ.real (E i) = p) (k : ℕ) :
-    μ.real {ω | k ≤ {i | ω ∈ E i}.ncard} =
-      ∑ j ∈ Icc k n, (n.choose j : ℝ) * p ^ j * (1 - p) ^ (n - j) := by
+    μ.real {ω | k ≤ {i | ω ∈ E i}.ncard} = binomTail n k p := by
   have := h.isProbabilityMeasure
   have htail := measure_le_sum_eq_poissonBinomialTail (isBernoulliRV_indicator hE h hp)
     h.iIndepFun_indicator (fun i => measurable_const.indicator (hE i)) k
   simp only [poissonBinomialTail, poissonBinomialPMF_const] at htail
-  rw [measureReal_def, ← htail]
+  rw [binomTail, measureReal_def, ← htail]
   simp [ncard_eq_sum_indicator]
 
 end ProbabilityTheory
