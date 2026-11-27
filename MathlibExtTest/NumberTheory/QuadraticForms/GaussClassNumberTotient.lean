@@ -69,22 +69,24 @@ open GaussClassNumberTotient BinaryQuadraticForm
 theorem isGaussReduced_one_zero_one : IsGaussReduced 1 0 1 :=
   IsGaussReduced.mk (by norm_num) (by norm_num [discrim]) (by norm_num) le_rfl (by norm_num)
 
--- `exists_reduced` on `2x² + 6xy + 5y²`, of discriminant `-4`, and `eq_of_equiv_of_reduced`
--- identify its reduced form as `x² + y²`: the substitution `x ↦ x + y`, `y ↦ x + 2y` takes
--- `x² + y²` to `2x² + 6xy + 5y²`, so `x² + y²` is properly equivalent to that reduced form too.
-example : ∃ G, FormEquiv (2, 6, 5) G ∧ IsGaussReduced G.1 G.2.1 G.2.2 ∧ G = (1, 0, 1) := by
-  obtain ⟨G, hFG, hred⟩ := exists_reduced (2, 6, 5) (by norm_num) (by norm_num [disc, discrim])
+-- The substitution `x ↦ x + y`, `y ↦ x + 2y`, of determinant `1`, takes `x² + y²` to
+-- `2x² + 6xy + 5y²`.
+theorem properlyEquivalent_one_zero_one_two_six_five : ProperlyEquivalent (1, 0, 1) (2, 6, 5) :=
+  ⟨⟨!![1, 1; 1, 2], by rw [Matrix.det_fin_two_of]; norm_num⟩, rfl⟩
+
+-- `exists_reduced` on `2x² + 6xy + 5y²`, of discriminant `-4`, gives a reduced form `G` properly
+-- equivalent to it. By the substitution above and transitivity, the reduced form `x² + y²` is
+-- properly equivalent to `G` too, so `eq_of_equiv_of_reduced` gives `G = x² + y²`.
+example :
+    ∃ G, ProperlyEquivalent (2, 6, 5) G ∧ IsGaussReduced G.1 G.2.1 G.2.2 ∧ G = (1, 0, 1) := by
+  obtain ⟨G, hFG, hred⟩ := exists_reduced (2, 6, 5) (by norm_num) (by norm_num [discrim])
   refine ⟨G, hFG, hred, ?_⟩
-  obtain ⟨p, q, r, s, hdet, rfl⟩ := hFG
-  have h : FormEquiv (1, 0, 1) (act (2, 6, 5) p q r s) := by
-    refine ⟨p + r, q + s, p + 2 * r, q + 2 * s, by linear_combination hdet, ?_⟩
-    simp only [act, Prod.mk.injEq]
-    refine ⟨by ring, by ring, by ring⟩
-  exact (eq_of_equiv_of_reduced isGaussReduced_one_zero_one hred h).symm
+  exact (eq_of_equiv_of_reduced isGaussReduced_one_zero_one hred
+    (properlyEquivalent_one_zero_one_two_six_five.trans hFG)).symm
 
 -- `2x² + xy + 3y²` and `2x² - xy + 3y²` are distinct reduced forms of discriminant `-23`, so they
 -- are not properly equivalent, though `x ↦ -x` takes one to the other.
-example : ¬ FormEquiv (2, 1, 3) (2, -1, 3) := fun h =>
+example : ¬ ProperlyEquivalent (2, 1, 3) (2, -1, 3) := fun h =>
   absurd (eq_of_equiv_of_reduced
     (IsGaussReduced.mk (by norm_num) (by norm_num [discrim]) (by norm_num) (by norm_num)
       (by norm_num))

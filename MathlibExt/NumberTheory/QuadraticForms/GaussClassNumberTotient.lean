@@ -11,6 +11,7 @@ module
 public import Mathlib.Data.Nat.Totient
 public import MathlibExt.NumberTheory.ImaginaryQuadraticDiscriminant
 public import MathlibExt.NumberTheory.QuadraticForms.GaussClassNumber
+public import MathlibExt.NumberTheory.QuadraticForms.RootLattice
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.Nat.PrimeFin
 import Mathlib.Data.ZMod.Basic
@@ -39,7 +40,9 @@ are, and then, up to an automorph of $F$, only if the two values of $k$ agree mo
 
 The reduction theory is public: by `GaussClassNumberTotient.exists_reduced` and
 `GaussClassNumberTotient.eq_of_equiv_of_reduced`, each positive definite form is properly
-equivalent (`GaussClassNumberTotient.FormEquiv`) to exactly one Gauss-reduced form.
+equivalent (`BinaryQuadraticForm.ProperlyEquivalent`) to exactly one Gauss-reduced form. The
+proofs here work with the coefficient relation `FormEquiv`, which `properlyEquivalent_iff_formEquiv`
+identifies with `BinaryQuadraticForm.ProperlyEquivalent`.
 -/
 
 namespace MetaMathlibExt
@@ -48,16 +51,8 @@ namespace GaussClassNumberTotient
 
 open BinaryQuadraticForm
 
-/-- **Linear substitution in a binary quadratic form.** For `F = (a, b, c)`, standing for the
-integral binary quadratic form $a x^2 + b x y + c y^2$, and integers $p, q, r, s$, `act F p q r s`
-is the form $F(px + qy, rx + sy) = A x^2 + B x y + C y^2$, where $A = a p^2 + b p r + c r^2$,
-$B = 2 a p q + b (p s + q r) + 2 c r s$ and $C = a q^2 + b q s + c s^2$.
-
-Source: Leonard Eugene Dickson, *Introduction to the Theory of Numbers*, University of Chicago
-Press, 1929, Chapter V, §38, p. 63, the transformation (3) $x = \alpha X + \beta Y$,
-$y = \gamma X + \delta Y$ and the coefficients (5) and (6) of the new form, with
-$(\alpha, \beta, \gamma, \delta) = (p, q, r, s)$. -/
-@[expose] public def act (F : ℤ × ℤ × ℤ) (p q r s : ℤ) : ℤ × ℤ × ℤ :=
+/-- The form `F(px + qy, rx + sy)`, for `F = (a, b, c)` standing for `ax² + bxy + cy²`. -/
+def act (F : ℤ × ℤ × ℤ) (p q r s : ℤ) : ℤ × ℤ × ℤ :=
   (F.1 * p ^ 2 + F.2.1 * p * r + F.2.2 * r ^ 2,
     2 * F.1 * p * q + F.2.1 * (p * s + q * r) + 2 * F.2.2 * r * s,
     F.1 * q ^ 2 + F.2.1 * q * s + F.2.2 * s ^ 2)
@@ -65,13 +60,8 @@ $(\alpha, \beta, \gamma, \delta) = (p, q, r, s)$. -/
 /-- The value `F(x, y) = ax² + bxy + cy²` of `F = (a, b, c)`. -/
 def val (F : ℤ × ℤ × ℤ) (x y : ℤ) : ℤ := F.1 * x ^ 2 + F.2.1 * x * y + F.2.2 * y ^ 2
 
-/-- **Discriminant of a binary quadratic form.** The discriminant of `F = (a, b, c)`, standing for
-the integral binary quadratic form $a x^2 + b x y + c y^2$, is $b^2 - 4ac$, Mathlib's
-`discrim a b c`.
-
-Source: Leonard Eugene Dickson, *Introduction to the Theory of Numbers*, University of Chicago
-Press, 1929, Chapter V, §38, p. 63, formula (2). -/
-@[expose] public def disc (F : ℤ × ℤ × ℤ) : ℤ := discrim F.1 F.2.1 F.2.2
+/-- The discriminant `b² - 4ac` of `F = (a, b, c)`. -/
+def disc (F : ℤ × ℤ × ℤ) : ℤ := discrim F.1 F.2.1 F.2.2
 
 theorem act_act (F : ℤ × ℤ × ℤ) (p q r s p' q' r' s' : ℤ) :
     act (act F p q r s) p' q' r' s' =
@@ -94,16 +84,8 @@ theorem val_act (F : ℤ × ℤ × ℤ) (p q r s x y : ℤ) :
   simp only [val, act]
   ring
 
-/-- **Proper equivalence of binary quadratic forms.** For integral binary quadratic forms
-`F = (a, b, c)` and `G`, each triple standing for the form $a x^2 + b x y + c y^2$,
-`FormEquiv F G` holds when there are integers $p, q, r, s$ with $ps - qr = 1$ such that $G$ is
-the form $F(px + qy, rx + sy)$, that is, `act F p q r s = G`.
-
-Source: Leonard Eugene Dickson, *Introduction to the Theory of Numbers*, University of Chicago
-Press, 1929, Chapter V, §39, pp. 65–66: $F$ is (properly) equivalent to $G$ when an integral
-transformation $x = \alpha X + \beta Y$, $y = \gamma X + \delta Y$ (his (3), p. 63) of
-determinant $\alpha\delta - \beta\gamma = 1$ replaces $F$ by $G$. -/
-@[expose] public def FormEquiv (F G : ℤ × ℤ × ℤ) : Prop :=
+/-- Proper equivalence: `G = F(px + qy, rx + sy)` with `ps - qr = 1`. -/
+def FormEquiv (F G : ℤ × ℤ × ℤ) : Prop :=
   ∃ p q r s : ℤ, p * s - q * r = 1 ∧ act F p q r s = G
 
 theorem FormEquiv.refl (F : ℤ × ℤ × ℤ) : FormEquiv F F := ⟨1, 0, 0, 1, by ring, act_one F⟩
@@ -129,6 +111,19 @@ theorem FormEquiv.symm {F G : ℤ × ℤ × ℤ} (h : FormEquiv F G) : FormEquiv
 theorem FormEquiv.disc_eq {F G : ℤ × ℤ × ℤ} (h : FormEquiv F G) : disc G = disc F := by
   obtain ⟨p, q, r, s, hd, rfl⟩ := h
   rw [disc_act, hd]; ring
+
+/-- `FormEquiv` is `BinaryQuadraticForm.ProperlyEquivalent`, with the entries of the matrix in
+`SL(2, ℤ)` as its witnesses: `BinaryQuadraticForm.substitute F γ` is
+`act F (γ 0 0) (γ 0 1) (γ 1 0) (γ 1 1)`. -/
+theorem properlyEquivalent_iff_formEquiv (F G : ℤ × ℤ × ℤ) :
+    ProperlyEquivalent F G ↔ FormEquiv F G := by
+  constructor
+  · rintro ⟨γ, rfl⟩
+    refine ⟨γ 0 0, γ 0 1, γ 1 0, γ 1 1, ?_, rfl⟩
+    have := γ.det_coe
+    rwa [Matrix.det_fin_two] at this
+  · rintro ⟨p, q, r, s, hdet, rfl⟩
+    exact ⟨⟨!![p, q; r, s], by rw [Matrix.det_fin_two_of]; exact hdet⟩, rfl⟩
 
 theorem c_pos_of {a b c : ℤ} (ha : 0 < a) (hd : discrim a b c < 0) : 0 < c := by
   unfold discrim at hd; nlinarith [sq_nonneg b]
@@ -186,11 +181,18 @@ theorem exists_reduced_aux (n : ℕ) : ∀ F : ℤ × ℤ × ℤ, F.1.toNat = n 
         push Not at hneg
         exact hbd ⟨h, hneg⟩
 
+/-- `exists_reduced` for the coefficient relation `FormEquiv`. -/
+theorem exists_formEquiv_reduced (F : ℤ × ℤ × ℤ) (ha : 0 < F.1) (hd : disc F < 0) :
+    ∃ G, FormEquiv F G ∧ IsGaussReduced G.1 G.2.1 G.2.2 :=
+  exists_reduced_aux _ F rfl ha hd
+
 /-- **Every positive definite binary quadratic form is properly equivalent to a reduced form.**
 Let $F = a x^2 + b x y + c y^2$ be an integral binary quadratic form with $a > 0$ and negative
-discriminant $b^2 - 4ac$. Then $F$ is properly equivalent (`FormEquiv`) to a Gauss-reduced form
-$A x^2 + B x y + C y^2$ (`BinaryQuadraticForm.IsGaussReduced`): $A > 0$, $B^2 - 4AC < 0$,
-$|B| \le A \le C$, and $B \ge 0$ whenever $|B| = A$ or $A = C$.
+discriminant $b^2 - 4ac$. Then $F$ is properly equivalent (`BinaryQuadraticForm.ProperlyEquivalent`:
+$G(x, y) = F(px + qy, rx + sy)$ for some
+$\begin{pmatrix} p & q \\ r & s \end{pmatrix} \in \mathrm{SL}_2(\mathbb{Z})$) to a Gauss-reduced
+form $G = A x^2 + B x y + C y^2$ (`BinaryQuadraticForm.IsGaussReduced`): $A > 0$,
+$B^2 - 4AC < 0$, $|B| \le A \le C$, and $B \ge 0$ whenever $|B| = A$ or $A = C$.
 
 Source: Leonard Eugene Dickson, *Introduction to the Theory of Numbers*, University of Chicago
 Press, 1929, Chapter V, §40, Theorem 51, p. 68: "Every real, positive form $q$ is equivalent to
@@ -199,9 +201,11 @@ discriminant is negative and $a > 0$ (p. 67), equivalence is by integral transfo
 determinant $1$ (§39, pp. 65–66), and a positive form is reduced when $-a < b \le a$, $c \ge a$,
 with $b \ge 0$ if $c = a$ (his (18), p. 68); so the reduced positive forms are exactly the
 Gauss-reduced forms. -/
-public theorem exists_reduced (F : ℤ × ℤ × ℤ) (ha : 0 < F.1) (hd : disc F < 0) :
-    ∃ G, FormEquiv F G ∧ IsGaussReduced G.1 G.2.1 G.2.2 :=
-  exists_reduced_aux _ F rfl ha hd
+public theorem exists_reduced (F : ℤ × ℤ × ℤ) (ha : 0 < F.1)
+    (hd : discrim F.1 F.2.1 F.2.2 < 0) :
+    ∃ G, ProperlyEquivalent F G ∧ IsGaussReduced G.1 G.2.1 G.2.2 := by
+  obtain ⟨G, hG, hred⟩ := exists_formEquiv_reduced F ha hd
+  exact ⟨G, (properlyEquivalent_iff_formEquiv F G).2 hG, hred⟩
 
 theorem one_le_sq_of_ne {x : ℤ} (hx : x ≠ 0) : 1 ≤ x ^ 2 := by
   have := sq_pos_of_ne_zero hx
@@ -251,15 +255,8 @@ theorem val_ge_of_reduced {a b c : ℤ} (h : IsGaussReduced a b c) {x y : ℤ}
     · have := val_ge_of_reduced_of_ne h hx hy
       linarith
 
-/-- **Properly equivalent reduced forms are equal.** If two integral binary quadratic forms
-$F$ and $G$ are Gauss reduced (`BinaryQuadraticForm.IsGaussReduced`) and $F$ is properly
-equivalent to $G$ (`FormEquiv`), then $F = G$.
-
-Source: Leonard Eugene Dickson, *Introduction to the Theory of Numbers*, University of Chicago
-Press, 1929, Chapter V, §42, Theorem 53, p. 71: "Equivalent, positive, reduced forms are
-identical." This is its case of integral forms, with positive forms, equivalence and reduced
-forms as recalled at `exists_reduced`; Dickson derives it from his Theorem 52, p. 70. -/
-public theorem eq_of_equiv_of_reduced {F G : ℤ × ℤ × ℤ} (hF : IsGaussReduced F.1 F.2.1 F.2.2)
+/-- `eq_of_equiv_of_reduced` for the coefficient relation `FormEquiv`. -/
+theorem eq_of_formEquiv_of_reduced {F G : ℤ × ℤ × ℤ} (hF : IsGaussReduced F.1 F.2.1 F.2.2)
     (hG : IsGaussReduced G.1 G.2.1 G.2.2) (h : FormEquiv F G) : F = G := by
   have hdisc : disc G = disc F := h.disc_eq
   obtain ⟨a, b, c⟩ := F
@@ -358,6 +355,18 @@ public theorem eq_of_equiv_of_reduced {F G : ℤ × ℤ × ℤ} (hF : IsGaussRed
       have : b' ^ 2 = a' ^ 2 := by linarith
       have := (sq_eq_sq₀ hb'0 ha'.le).mp this
       rw [this, hbeq]
+
+/-- **Properly equivalent reduced forms are equal.** If two integral binary quadratic forms
+$F$ and $G$ are Gauss reduced (`BinaryQuadraticForm.IsGaussReduced`) and $F$ is properly
+equivalent to $G$ (`BinaryQuadraticForm.ProperlyEquivalent`), then $F = G$.
+
+Source: Leonard Eugene Dickson, *Introduction to the Theory of Numbers*, University of Chicago
+Press, 1929, Chapter V, §42, Theorem 53, p. 71: "Equivalent, positive, reduced forms are
+identical." This is its case of integral forms, with positive forms, equivalence and reduced
+forms as recalled at `exists_reduced`; Dickson derives it from his Theorem 52, p. 70. -/
+public theorem eq_of_equiv_of_reduced {F G : ℤ × ℤ × ℤ} (hF : IsGaussReduced F.1 F.2.1 F.2.2)
+    (hG : IsGaussReduced G.1 G.2.1 G.2.2) (h : ProperlyEquivalent F G) : F = G :=
+  eq_of_formEquiv_of_reduced hF hG ((properlyEquivalent_iff_formEquiv F G).1 h)
 
 theorem act_inv {F : ℤ × ℤ × ℤ} {p q r s : ℤ} (hdet : p * s - q * r = 1) :
     act (act F p q r s) s (-q) (-r) p = F := by
@@ -763,13 +772,13 @@ theorem gaussClassNumber_eq (d : ℤ) :
 
 /-- A Gauss-reduced form properly equivalent to `G`, when `G` is positive definite. -/
 noncomputable def red (G : ℤ × ℤ × ℤ) : ℤ × ℤ × ℤ :=
-  if h : 0 < G.1 ∧ disc G < 0 then (exists_reduced G h.1 h.2).choose else G
+  if h : 0 < G.1 ∧ disc G < 0 then (exists_formEquiv_reduced G h.1 h.2).choose else G
 
 theorem red_spec {G : ℤ × ℤ × ℤ} (h1 : 0 < G.1) (h2 : disc G < 0) :
     FormEquiv G (red G) ∧ IsGaussReduced (red G).1 (red G).2.1 (red G).2.2 := by
   have h : 0 < G.1 ∧ disc G < 0 := ⟨h1, h2⟩
   simp only [red, h, and_self, ↓reduceDIte]
-  exact (exists_reduced G h1 h2).choose_spec
+  exact (exists_formEquiv_reduced G h1 h2).choose_spec
 
 /-- A proper transformation of `F` after which every `k` prime to `f` gives
 `gcd(F(1, k), f) = 1`. -/
@@ -868,7 +877,7 @@ theorem main_gt4 {D : ℤ} (hD : D < -4) {f : ℕ} (hf : 0 < f) :
     have hFF : FormEquiv x.1 y.1 :=
       hEx1.trans (FormEquiv.trans ⟨_, _, _, _, hNdet, hN⟩ hEy1.symm)
     have hF : x.1 = y.1 :=
-      eq_of_equiv_of_reduced (hS x.1 hx'.1).1 (hS y.1 hy'.1).1 hFF
+      eq_of_formEquiv_of_reduced (hS x.1 hx'.1).1 (hS y.1 hy'.1).1 hFF
     rw [← hF] at hN
     obtain ⟨hq, hr, hps⟩ := automorph_trivial hcx (by rw [hdx]; exact hD) hNdet hN
     subst hq
