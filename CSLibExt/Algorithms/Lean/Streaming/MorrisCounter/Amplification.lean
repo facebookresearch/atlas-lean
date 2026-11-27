@@ -37,24 +37,22 @@ open MeasureTheory ProbabilityTheory MathlibExt.Probability MathlibExt.Probabili
 
 namespace Cslib.Algorithms.Lean.MorrisCounter
 
-/-- The saturated register, with values from zero through the cap `h`. -/
-def clip (h x : ℕ) : Fin (h + 1) := ⟨min x h, by omega⟩
-
 /-- A bounded counter only uses its own finite state to process a token. At the upper
 endpoint both branches coincide, making it absorbing. -/
 noncomputable def boundedStep (h : ℕ) : Kernel (Fin (h + 1)) (Fin (h + 1)) :=
-  Kernel.ofFunOfCountable fun x => bernoulliMeasure (clip h (x.val + 1)) x (incrementProb x)
+  Kernel.ofFunOfCountable fun x => bernoulliMeasure (Fin.clamp (x.val + 1) h) x (incrementProb x)
 
 /-- The bounded law is coupled to the true register by saturation. -/
 noncomputable def boundedLaw (h n : ℕ) : Measure (Fin (h + 1)) :=
-  (law n).map fun x : Fin (n + 1) => clip h x
+  (law n).map fun x : Fin (n + 1) => Fin.clamp x h
 
 instance (h n : ℕ) : IsProbabilityMeasure (boundedLaw h n) :=
   (Measure.isProbabilityMeasure_map_iff (measurable_of_finite _).aemeasurable).mpr inferInstance
 
 /-- The bounded implementation also starts at zero, for every cap (including zero). -/
 theorem boundedLaw_zero (h : ℕ) : boundedLaw h 0 = Measure.dirac 0 := by
-  simp [boundedLaw, law, Measure.map_dirac' (measurable_of_finite _), clip]
+  rw [boundedLaw, law, Measure.map_dirac' (measurable_of_finite _)]
+  congr 1
 
 /-- Clipping is an online implementation: the clipped marginal evolves by `boundedStep`,
 without access to the underlying unbounded register. -/
@@ -65,13 +63,13 @@ theorem boundedLaw_succ (h n : ℕ) : boundedLaw h (n + 1) = boundedStep h ∘�
   congr 1
   funext x
   change (bernoulliMeasure x.succ x.castSucc _).map _ =
-    bernoulliMeasure (clip h ((clip h x).val + 1)) (clip h x) _
+    bernoulliMeasure (Fin.clamp ((Fin.clamp x h).val + 1) h) (Fin.clamp x h) _
   rw [map_bernoulliMeasure]
   by_cases hx : x.val ≤ h
-  · simp [clip, min_eq_left hx]
-  · have h₁ : clip h (x.val + 1) = clip h x.val := Fin.ext (by simp [clip]; omega)
-    have h₂ : clip h ((clip h x).val + 1) = clip h x.val := Fin.ext (by simp [clip]; omega)
-    simp [h₁, h₂]
+  · simp [min_eq_left hx]
+  · have h₁ : Fin.clamp (x.val + 1) h = Fin.clamp x h := Fin.ext (by simp; omega)
+    have h₂ : Fin.clamp ((Fin.clamp x h).val + 1) h = Fin.clamp x h := Fin.ext (by simp; omega)
+    simp only [Fin.val_succ, Fin.val_castSucc, h₁, h₂, bernoulliMeasure_self_eq_dirac]
 
 /-- The arithmetic mean of the estimates in one block. -/
 noncomputable def blockMean {k l : ℕ} (x : Fin k → Fin l) : ℝ :=
@@ -158,7 +156,7 @@ private lemma good_not_clipped {k n m : ℕ} (hn : n ≤ m) {ε : ℝ} (hε : ε
 private lemma bounded_block_failure {k n m : ℕ} (hn : n ≤ m) {ε : ℝ} (hε : 0 < ε)
     (hε' : ε ≤ 1) (hk : 4 / ε ^ 2 ≤ k) :
     (block k (boundedLaw (cap k m) n)).real {x | blockMean x ∉ target n ε} ≤ 1 / 8 := by
-  let c : Fin (n + 1) → Fin (cap k m + 1) := fun x => clip (cap k m) x
+  let c : Fin (n + 1) → Fin (cap k m + 1) := fun x => Fin.clamp x (cap k m)
   have hm := Measure.pi_map_pi (μ := fun _ : Fin k => law n) (f := fun _ => c)
     (fun _ => (measurable_of_finite c).aemeasurable)
   change (Measure.pi fun _ : Fin k => (law n).map c).real _ ≤ _
@@ -167,7 +165,7 @@ private lemma bounded_block_failure {k n m : ℕ} (hn : n ≤ m) {ε : ℝ} (hε
   intro x hx hg
   apply hx
   have heq (i : Fin k) : value (c (x i)) = value (x i) := by
-    simp [value, c, clip, min_eq_left (good_not_clipped hn hε' x hg i)]
+    simp [value, c, min_eq_left (good_not_clipped hn hε' x hg i)]
   simpa only [blockMean, heq] using hg
 
 /-- Number of independent counters in each block. -/
@@ -231,13 +229,13 @@ theorem registerArray_card_le {k m : ℕ} (hk : k ≤ m + 1) (s : ℕ) :
 It starts at zero and saturates at the promised upper bound. -/
 def exactCounter (m : ℕ) : ℕ → Fin (m + 1)
   | 0 => 0
-  | n + 1 => clip m ((exactCounter m n).val + 1)
+  | n + 1 => Fin.clamp ((exactCounter m n).val + 1) m
 
 /-- The short-horizon fallback is exact throughout the promised range. -/
 theorem exactCounter_val {n m : ℕ} (hn : n ≤ m) : (exactCounter m n).val = n := by
   induction n with
   | zero => rfl
-  | succ n ih => simp [exactCounter, clip, ih (by omega), min_eq_left hn]
+  | succ n ih => simp [exactCounter, ih (by omega), min_eq_left hn]
 
 /-- In the fallback range even one bit per scheduled counter suffices for the exact
 counter's entire state space. Hence the same padded bit budget covers both regimes. -/

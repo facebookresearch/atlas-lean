@@ -53,5 +53,13 @@ example :
 example : ∫ x, value x - 1 ∂(law 0) = 0 := by simpa using integral_estimate 0
 example : exactCounter 3 3 = 3 := by decide
 example : exactCounter 3 4 = 3 := by decide
-example : clip 2 100 = 2 := by decide
+
+-- The first token reaches the cap; the second cannot move the bounded register beyond it.
+example : boundedLaw 1 2 = Measure.dirac 1 := by
+  have h : boundedLaw 1 1 = Measure.dirac 1 := by
+    rw [boundedLaw, firstToken, Measure.map_dirac' (measurable_of_finite _)]
+    rfl
+  rw [boundedLaw_succ, h, Measure.dirac_bind (boundedStep 1).measurable]
+  exact bernoulliMeasure_self_eq_dirac (1 : Fin 2) _
+
 example : registerBits 0 = 1 := by decide
