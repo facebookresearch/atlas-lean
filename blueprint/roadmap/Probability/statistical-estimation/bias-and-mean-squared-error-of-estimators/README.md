@@ -31,3 +31,4 @@
 - [Mean squared error is frequentist risk under squared-error loss](frequentist-risk-squared-eq-family-mean.md)
 - [Variance of the stratified sample mean](variance-of-the-stratified-mean-estimator.md)
 - [A biased variance estimator with smaller mean squared error](biased-variance-estimator-with-smaller-mean-squared-error.md)
+- [Chebyshev confidence interval for the sample mean](chebyshev-sample-mean-interval-failure-b.md)
