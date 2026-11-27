@@ -659,6 +659,10 @@ lemma compl₂EDSAux_mul_b :
   simp_rw [compl₂EDSAux, normEDS, Int.even_add, Int.even_sub, Int.not_even_one, even_two,
     iff_false, iff_true]; split_ifs <;> ring
 
+def compl₂EDS : R :=
+  letI p := preNormEDS (b ^ 4) c d
+  (p (m - 1) ^ 2 * p (m + 2) - p (m - 2) * p (m + 1) ^ 2) * if Even m then 1 else b
+
 lemma compl₂EDSAux_neg : compl₂EDSAux b c d (-m) = -complEDS₂ b c d m - compl₂EDSAux b c d m := by
   simp_rw [compl₂EDSAux, complEDS₂, neg_sub_left, neg_add_eq_sub, ← neg_sub m,
     preNormEDS_neg, even_neg]; ring_nf
@@ -674,6 +678,9 @@ end Complement
 section Map
 
 variable {b c d}
+
+lemma map_compl₂EDS (n : ℤ) : f (compl₂EDS b c d n) = compl₂EDS (f b) (f c) (f d) n :=
+  map_complEDS₂ f b c d n
 
 private lemma map_normEDS_fl (n : ℤ) : f (normEDS b c d n) = normEDS (f b) (f c) (f d) n :=
   map_normEDS f b c d n
