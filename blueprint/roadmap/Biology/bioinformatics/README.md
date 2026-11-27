@@ -24,9 +24,14 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [q-gram (seed) filtering lemma for approximate matching](q-gram-filtering-lemma-for-approximate-matching.md)
 - [Signed reversal distance: the Hannenhalli–Pevzner formula and polynomial-time sorting](remaining-clauses-of-complexity-of-reversal-distance-signed.md)
 - [Shortest common superstring via maximum-overlap Hamiltonian paths](remaining-clauses-of-shortest-common-superstring-via-maximum.md)
-
+- [Activity-by-contact model of enhancer–gene regulation](activity-by-contact-enhancer-gene-model/README.md)
+- [Collinear block detection](collinear-block-detection/README.md)
+- [Count splitting for latent variable inference](count-splitting-for-latent-variable-inference/README.md)
+- [DNA sample contamination](dna-sample-contamination/README.md)
+- [Intron-cluster splicing quantification](intron-cluster-splicing-quantification/README.md)
+- [k-mer-based assembly evaluation](k-mer-based-assembly-evaluation/README.md)
+- [Zero-inflated Poisson factor model for microbiome read counts](zero-inflated-poisson-factor-model-for-microbiome-counts.md)
 ## [Sequences, genomes and molecular structure](part-01/README.md)
-
 - [Breakpoint refinement and conflict-free synteny blocks](part-01/breakpoint-refinement-and-conflict-free-synteny-blocks/README.md)
 - [DCJ-indel distance of natural genomes](part-01/dcj-indel-distance-of-natural-genomes/README.md)
 - [Exact p-values of position weight matrix scores](part-01/exact-p-values-of-position-weight-matrix-scores/README.md)
@@ -37,9 +42,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Sliding-window RNA folding](part-01/sliding-window-rna-folding/README.md)
 - [Statistical edge scoring in scaffold graphs](part-01/statistical-edge-scoring-in-scaffold-graphs/README.md)
 - [Topological models of protein knot folding](part-01/topological-models-of-protein-knot-folding/README.md)
-
 ## [Expression data and biological networks](part-02/README.md)
-
 - [Atom-level branching metabolic pathways](part-02/atom-level-branching-metabolic-pathways/README.md)
 - [Concordance index of co-expression modules](part-02/concordance-index-of-co-expression-modules/README.md)
 - [Contiguous column coherent biclustering](part-02/contiguous-column-coherent-biclustering/README.md)

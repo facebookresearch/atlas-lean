@@ -3,26 +3,33 @@
 Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers, the reporting of incidence, and the accuracy of diagnostic tests.
 
 - [Branching-process approximation of early epidemics](branching-process-approximation-of-early-epidemi/README.md)
+- [Contact process on power-law random graphs](contact-process-on-power-law-random-graphs/README.md)
 - [Diffusion approximation of the stochastic SIR epidemic](diffusion-approximation-of-the-stochastic-sir-ep/README.md)
 - [Euler–Lotka equation and the reproduction number](euler-lotka-equation-and-the-reproduction-number/README.md)
 - [Final size of a stochastic epidemic in a large population](final-size-of-a-stochastic-epidemic-in-a-large-p/README.md)
 - [Global behaviour of the SIR model](global-behaviour-of-the-sir-model/README.md)
 - [Global stability of the SEIR model](global-stability-of-the-seir-model/README.md)
+- [Household reproduction number and threshold](household-reproduction-number-and-threshold/README.md)
 - [Kermack–McKendrick SIR model](kermack-mckendrick-sir-model/README.md)
 - [Next-generation matrix and the basic reproduction number](next-generation-matrix-and-the-basic-reproductio/README.md)
 - [Poisson reporting of epidemic incidence](poisson-reporting-of-epidemic-incidence/README.md)
 - [SEIR epidemic model](seir-epidemic-model/README.md)
 - [Sensitivity, specificity and predictive values](sensitivity-specificity-and-predictive-values/README.md)
+- [SIR epidemics on configuration-model graphs](sir-epidemics-on-configuration-model-graphs/README.md)
 - [SIS epidemic model](sis-epidemic-model/README.md)
+- [SIS extinction times on finite graphs](sis-extinction-times-on-finite-graphs/README.md)
 - [SIS model with leaky vaccination](sis-model-with-leaky-vaccination/README.md)
 - [Stochastic SEIR epidemic with vital dynamics](stochastic-seir-epidemic-with-vital-dynamics/README.md)
 - [Stochastic SIR epidemic and its law of large numbers](stochastic-sir-epidemic-and-its-law-of-large-num/README.md)
 - [Superspreading and negative-binomial offspring](superspreading-and-negative-binomial-offspring/README.md)
 
 - [Epidemics on networks](epidemics-on-networks/README.md)
-
+- [Age-of-infection epidemic models and the McKendrick–von Foerster equation](age-of-infection-mckendrick-von-foerster-models/README.md)
+- [Incentive design for epidemic control](incentive-design-for-epidemic-control/README.md)
+- [Seasonally forced SIRS model](seasonally-forced-sirs-model/README.md)
+- [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
+- [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
 ## [Compartmental transmission models](part-01/README.md)
-
 - [Adaptive-contact SAIS on multilayer networks](part-01/adaptive-contact-sais-on-multilayer-networks/README.md)
 - [Anthrax carcass transmission with scavengers](part-01/anthrax-carcass-transmission-with-scavengers/README.md)
 - [Biphasic environmental decay of pathogens](part-01/biphasic-environmental-decay-of-pathogens/README.md)
@@ -41,9 +48,7 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Two-dose vaccination measles model](part-01/two-dose-vaccination-measles-model/README.md)
 - [Two-sided fractional SEIR models](part-01/two-sided-fractional-seir-models/README.md)
 - [Viral-load-dependent fuzzy SIR model](part-01/viral-load-dependent-fuzzy-sir-model/README.md)
-
 ## [Branching processes and epidemiological inference](part-02/README.md)
-
 - [Branching processes with lagged Poisson offspring](part-02/branching-processes-with-lagged-poisson-offspring/README.md)
 - [Comparative age-period-cohort analysis](part-02/comparative-age-period-cohort-analysis/README.md)
 - [Discrete-time next-generation matrix](part-02/discrete-time-next-generation-matrix/README.md)

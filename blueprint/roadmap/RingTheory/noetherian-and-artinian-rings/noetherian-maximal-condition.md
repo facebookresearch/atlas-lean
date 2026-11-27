@@ -1,0 +1,9 @@
+# Maximal condition for Noetherian modules
+
+In a Noetherian commutative ring, every nonempty set of ideals has a maximal element: an ideal in the set that is properly contained in no other member of the set. Mathlib proves this for modules over semirings, together with the converse. Let $R$ be a semiring, not necessarily commutative, and $M$ a left $R$-module, an additive commutative monoid with a scalar multiplication by $R$. The following are equivalent: every nonempty set $\Sigma$ of submodules of $M$ contains a member $N$ that is properly contained in no member of $\Sigma$; and $M$ is Noetherian, meaning that every submodule of $M$ is finitely generated. The member $N$ is maximal in $\Sigma$; it need not be the largest member of $\Sigma$, and it need not be a maximal proper submodule of $M$. For a commutative ring $R$ and $M = R$, the submodules are the ideals. A ring in which every ascending chain of ideals stabilizes has finitely generated ideals, by Mathlib's equivalence between the ascending chain condition and Noetherianity, so the implication from Noetherianity to the maximal condition gives the familiar statement; the converse implication is additional.
+
+## Sources
+
+- David S. Dummit and Richard M. Foote, Abstract Algebra, 3rd ed., John Wiley & Sons, 2004.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for Noetherian modules, in which every submodule is finitely generated: `IsNoetherian`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/RingTheory/Noetherian/Defs.lean#L57-L62.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for the equivalence of the ascending chain condition with Noetherianity: `monotone_stabilizes_iff_noetherian`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/RingTheory/Noetherian/Defs.lean#L154-L157.

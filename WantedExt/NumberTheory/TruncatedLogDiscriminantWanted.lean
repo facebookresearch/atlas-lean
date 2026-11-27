@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.TruncatedLogResultantPos
+public import MathlibExt.NumberTheory.TruncatedLogResultantPrimePower
 
 /-!
 # Discriminants of truncated logarithmic polynomials
@@ -123,17 +124,6 @@ Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 3
 (`integers-2025-A39-thm-3`). -/
 public theorem_wanted finite_primes_isSquare_discr_truncatedLog {m : ℕ} (hm : 1 ≤ m) :
     {q : ℕ | q.Prime ∧ m * q % 4 = 1 ∧ IsSquare (truncatedLogPolynomial (m * q)).discr}.Finite
-
-/-- **A prime $p \equiv 1 \pmod 4$ does not divide $\mathcal{P}_{p^e}$.** Let $p$ be a prime with
-$p \equiv 1 \pmod 4$, let $e \ge 1$, and let $\mathcal{P}_n$ be the truncated logarithmic
-resultant product. Then $p$ does not divide $\mathcal{P}_{p^e}$.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 4
-(`integers-2025-A39-thm-4`). -/
-public theorem_wanted not_dvd_truncatedLogResultantProduct_of_prime_power {p e : ℕ}
-    (hp : p.Prime) (hp4 : p % 4 = 1) (he : 1 ≤ e) :
-    ¬ (p : ℤ) ∣ truncatedLogResultantProduct (p ^ e)
 
 /-- **Discriminants of $F_{p^e}$ for primes $p \equiv 1 \pmod 4$.** Let $p$ be a prime with
 $p \equiv 1 \pmod 4$, let $e \ge 1$, let $F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the
