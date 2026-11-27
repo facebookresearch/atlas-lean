@@ -281,10 +281,10 @@ theorem coe_hodgeTateFixedSubalgebraEquiv (K : IntermediateField ℚ_[p] (PadicA
 
 /-! ### Regularity -/
 
-/-- **A vector spanning a `Gal(ℚ̄_p / K)`-stable line of `B_HT` over `ℂ_p` is a monomial**: if
-`b ∈ B_HT` has a nonzero coefficient `b_k` and `σ b ∈ ℂ_p b` for every `σ ∈ Gal(ℚ̄_p / K)`, then
-`b = b_k t^k`. Indeed, for `n ≠ k` the ratio `bₙ / b_k` is an invariant of `ℂ_p(n - k)`, so it
-vanishes (Tate). -/
+/-- **A vector spanning a `Gal(ℚ̄_p / K)`-stable line of `B_HT` over `ℂ_p` is a monomial**, for
+`K` finite over `ℚ_p` inside `ℚ̄_p`: if `b ∈ B_HT` has a nonzero coefficient `b_k` and
+`σ b ∈ ℂ_p b` for every `σ ∈ Gal(ℚ̄_p / K)`, then `b = b_k t^k`. Indeed, for `n ≠ k` the ratio
+`bₙ / b_k` is an invariant of `ℂ_p(n - k)`, so it vanishes (Tate). -/
 theorem eq_single_of_forall_exists_smul_eq (K : IntermediateField ℚ_[p] (PadicAlgCl p))
     [FiniteDimensional ℚ_[p] K] {b : ℂ_[p][T;T⁻¹]} {k : ℤ} (hk : b.coeff k ≠ 0)
     (h : ∀ σ ∈ K.fixingSubgroup, ∃ u : ℂ_[p], hodgeTateAction p σ b = u • b) :

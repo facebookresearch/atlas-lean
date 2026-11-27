@@ -35,7 +35,10 @@ semi-stables*, Astérisque 223 (1994), Exposé III, §3.7 pp. 141–142, we defi
   `Representation.isHodgeTate_iff_comparison_bijective`: the forms of admissibility agree, since
   `B_HT` is regular (Fontaine, *op. cit.*, Exposé III, Proposition 1.4.2 p. 123).
 * `Representation.isHodgeTate_cyclotomic`, `Representation.hodgeTateNumber_cyclotomic`: `ℚ_p(1)` is
-  Hodge–Tate, with `h₁ = 1` and `hᵢ = 0` for `i ≠ 1` (Example 6.7).
+  Hodge–Tate, and for `K` finite over `ℚ_p`, `h₁ = 1` and `hᵢ = 0` for `i ≠ 1`, by Definition 6.6
+  and Tate's theorems `ℂ_p^{G_K} = K` and `ℂ_p(j)^{G_K} = 0` for `j ≠ 0` (used in the proof of
+  Proposition 6.2); Example 6.7 makes the same computation for the Tate module of an elliptic
+  curve.
 
 ## Sign conventions
 
@@ -147,9 +150,9 @@ def hodgeTateNumber (ρ : Representation ℚ_[p] (Galois p) V)
 /-- **`V` is Hodge–Tate over `K`** (Fontaine–Ouyang, Definition 6.3; Fontaine, Astérisque 223,
 Exposé III, §3.7 p. 142), for a representation `ρ` of `Gal(ℚ̄_p / ℚ_p)` on `V` and a subfield `K`
 of `ℚ̄_p`: `V` is `B_HT`-admissible as a representation of `G_K = Gal(ℚ̄_p / K)`, that is, `V` is
-finite-dimensional and `dim_K (B_HT ⊗_{ℚ_p} V)^{G_K} = dim_{ℚ_p} V`, where `B_HT = ℂ_p[t, t⁻¹]`
-carries the action `PadicComplex.hodgeTateAction p` and `K = B_HT^{G_K}` for `K` finite over
-`ℚ_p` (`PadicComplex.fixedSubalgebra_hodgeTateAction`). -/
+finite-dimensional and `dim_{B_HT^{G_K}} (B_HT ⊗_{ℚ_p} V)^{G_K} = dim_{ℚ_p} V`, where
+`B_HT = ℂ_p[t, t⁻¹]` carries the action `PadicComplex.hodgeTateAction p`; for `K` finite over
+`ℚ_p`, `B_HT^{G_K} = K` (`PadicComplex.fixedSubalgebra_hodgeTateAction`). -/
 def IsHodgeTate (ρ : Representation ℚ_[p] (Galois p) V)
     (K : IntermediateField ℚ_[p] (PadicAlgCl p)) : Prop :=
   ρ.IsAdmissible (PadicComplex.hodgeTateAction p) K.fixingSubgroup
@@ -196,8 +199,8 @@ private theorem hodgeTateAction_T_neg_one_tmul (σ : Galois p) :
     cyclotomic_apply, ← smul_eq_mul, TensorProduct.tmul_smul, TensorProduct.smul_tmul', smul_smul,
     zpow_neg_one, mul_inv_cancel₀ (cyclotomicScalar_ne_zero p σ), one_smul]
 
-/-- **`ℚ_p(1)` is Hodge–Tate** (Fontaine–Ouyang, Example 6.7), over every subfield `K` of `ℚ̄_p`:
-the `G_K`-invariant vector `t⁻¹ ⊗ 1` is a `B_HT`-basis of `B_HT ⊗_{ℚ_p} ℚ_p(1)`. -/
+/-- **`ℚ_p(1)` is Hodge–Tate** over every subfield `K` of `ℚ̄_p`: the `G_K`-invariant vector
+`t⁻¹ ⊗ 1` is a `B_HT`-basis of `B_HT ⊗_{ℚ_p} ℚ_p(1)`. -/
 theorem isHodgeTate_cyclotomic (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
     (cyclotomic p).IsHodgeTate K :=
   HasFixedBasis.isAdmissible ⟨1,
@@ -233,9 +236,10 @@ private theorem mem_twistPeriods_cyclotomic_iff (K : IntermediateField ℚ_[p] (
   rw [← (_root_.TensorProduct.rid ℚ_[p] ℂ_[p]).injective.eq_iff, map_smul, rid_map_cyclotomic,
     smul_smul, ← zpow_add_one₀ (cyclotomicScalar_ne_zero p σ)]
 
-/-- **The Hodge–Tate numbers of `ℚ_p(1)`** (Fontaine–Ouyang, Example 6.7): for `K` finite over
-`ℚ_p` inside `ℚ̄_p`, `h₁ = 1` and `hᵢ = 0` for `i ≠ 1`, since
-`(ℂ_p(-i) ⊗_{ℚ_p} ℚ_p(1))^{G_K} = ℂ_p(1 - i)^{G_K}` is `K` for `i = 1` and `0` otherwise. -/
+/-- **The Hodge–Tate numbers of `ℚ_p(1)`** (from Fontaine–Ouyang, Definition 6.6): for `K` finite
+over `ℚ_p` inside `ℚ̄_p`, `h₁ = 1` and `hᵢ = 0` for `i ≠ 1`, since
+`(ℂ_p(-i) ⊗_{ℚ_p} ℚ_p(1))^{G_K} = ℂ_p(1 - i)^{G_K}` is `K` for `i = 1` and `0` otherwise, by
+Tate's theorems `ℂ_p^{G_K} = K` and `ℂ_p(j)^{G_K} = 0` for `j ≠ 0`. -/
 theorem hodgeTateNumber_cyclotomic (K : IntermediateField ℚ_[p] (PadicAlgCl p))
     [FiniteDimensional ℚ_[p] K] (i : ℤ) :
     (cyclotomic p).hodgeTateNumber K i = if i = 1 then 1 else 0 := by
