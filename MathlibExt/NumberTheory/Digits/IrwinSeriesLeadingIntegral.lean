@@ -213,7 +213,17 @@ private theorem phi_bound : ∀ (T : ℕ) (b d : ℕ) (_hb : 1 < b) (hd : d < b)
     rw [hgeom] at htot
     exact htot
 
-private theorem summable_stringWeight (b d k : ℕ) (hb : 1 < b) (hd : d < b) :
+end integral_eq_leadingReciprocal_hasSum
+
+open integral_eq_leadingReciprocal_hasSum in
+/-- **Summability of the digit-string weights with a fixed count of one digit.** Let $b > 1$ and
+$d < b$ be natural numbers, and let $k$ be a natural number. Over the base-$b$ digit strings in
+which the digit $d$ occurs exactly $k$ times, the weights $b^{-|X|}$ (read as real numbers) are
+summable.
+
+Source: Jean-François Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026),
+Article A11, definition of `μ_k`. -/
+public theorem summable_stringWeight (b d k : ℕ) (hb : 1 < b) (hd : d < b) :
     Summable (fun X : {X : List (Fin b) // X.count ⟨d, hd⟩ = k} =>
       (stringWeight b X.1).toReal) := by
   have hbR : (0 : ℝ) < b := by exact_mod_cast Nat.zero_lt_of_lt hb
@@ -278,6 +288,8 @@ private theorem summable_stringWeight (b d k : ℕ) (hb : 1 < b) (hd : d < b) :
           hle1.trans (mul_le_mul_of_nonneg_left hle2 h2k)
       _ = (2 : ℝ) ^ k * (2 * (b : ℝ)) := rfl
 
+namespace integral_eq_leadingReciprocal_hasSum
+
 private theorem foldl_stringValue (b : ℕ) :
     ∀ (Z : List (Fin b)) (m : ℕ),
       Z.foldl (fun n a => b * n + a.val) m =
@@ -296,12 +308,23 @@ private theorem stringValue_append (b : ℕ) (A Z : List (Fin b)) :
   unfold stringValue
   rw [List.foldl_append, foldl_stringValue]
 
-private theorem stringValue_cons (b : ℕ) (a : Fin b) (X : List (Fin b)) :
+end integral_eq_leadingReciprocal_hasSum
+
+open integral_eq_leadingReciprocal_hasSum in
+/-- **Value of a digit string with a first digit.** For a natural number $b$, a digit
+$a < b$ and a string $X$ of base-$b$ digits, the integer value of the string $a X$ is
+$a \cdot b^{|X|}$ plus the integer value of $X$.
+
+Source: Jean-François Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026),
+Article A11, Notation and Terminology. -/
+public theorem stringValue_cons (b : ℕ) (a : Fin b) (X : List (Fin b)) :
     stringValue b (a :: X) = a.val * b ^ X.length + stringValue b X := by
   unfold stringValue
   simp only [List.foldl_cons]
   rw [foldl_stringValue]
   simp
+
+namespace integral_eq_leadingReciprocal_hasSum
 
 private theorem stringValue_ofDigits (b : ℕ) (X : List (Fin b)) :
     stringValue b X = Nat.ofDigits b (X.reverse.map Fin.val) := by
@@ -652,7 +675,15 @@ private noncomputable def stringEquiv (b d n k : ℕ) (hb : 1 < b) (hd : d < b) 
     rw [hdiv, mul_comm (b ^ (integerLength b m.1 - integerLength b n)) n] at h
     exact h
 
-private theorem normalizedStringValue_mem_Ico (b : ℕ) (hb : 1 < b)
+end integral_eq_leadingReciprocal_hasSum
+
+open integral_eq_leadingReciprocal_hasSum in
+/-- **Normalized digit-string values lie in $[0, 1)$.** For a natural number $b > 1$ and a
+string $X$ of base-$b$ digits, the normalized value of $X$ is a real number in $[0, 1)$.
+
+Source: Jean-François Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026),
+Article A11, definition of `μ_k`. -/
+public theorem normalizedStringValue_mem_Ico (b : ℕ) (hb : 1 < b)
     (X : List (Fin b)) :
     normalizedStringValue b X ∈ Set.Ico (0 : ℝ) 1 := by
   have hbR : (0 : ℝ) < (b : ℝ) := by exact_mod_cast Nat.zero_lt_of_lt hb
@@ -663,6 +694,8 @@ private theorem normalizedStringValue_mem_Ico (b : ℕ) (hb : 1 < b)
   · unfold normalizedStringValue
     rw [div_lt_one hB]
     exact_mod_cast stringValue_lt b hb X
+
+namespace integral_eq_leadingReciprocal_hasSum
 
 private theorem atom_eq (b n : ℕ) (hb : 1 < b) (hn : 0 < n)
     (X : List (Fin b)) :

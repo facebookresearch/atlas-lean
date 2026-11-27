@@ -43,6 +43,8 @@ public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
 public import MathlibExt.NumberTheory.FkPerfectIsDeficientFPerfectTwoMulPrimePow
+public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoMulPrimePow
+public import MathlibExt.NumberTheory.FkPerfectKlNearPerfectWithPrimePowTwoIff
 public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
 public import MathlibExt.NumberTheory.FkPerfectNotIsKLNearPerfectTwoTwoPowMul
 public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoPowMulPrime
@@ -65,19 +67,6 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted prime_pow_not_fPerfect (p a : ℕ)
     (hp : p.Prime) :
     ¬ IsDeficientFPerfect (p ^ a) ∧ ¬ IsNearFPerfect (p ^ a)
-
-/-- **Prime powers that are $[2,\ell]$-near-perfect.** Let $p$ be a prime, let $a$, $\ell$ and
-$d$ be natural numbers with $\ell \ge 1$, and write $\sigma_2(m)$ for the sum of the squares of
-the divisors of $m$. Then $d$ is a proper divisor of $p^a$ ($d \mid p^a$ and $d < p^a$) with
-$\sigma_2(p^a) = (p^a)^2 + d^2 + \ell p^a$ if and only if $a = 2$, $\ell = 1$ and $d = 1$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 2. -/
-theorem_wanted klNearPerfectWith_prime_pow_two_iff
-    (p a l d : ℕ) (hp : p.Prime) (hl : 1 ≤ l) :
-    KLNearPerfectWith 2 l (p ^ a) d ↔
-      a = 2 ∧ l = 1 ∧ d = 1
 
 /-- **Prime powers that are $[k,\ell]$-near-perfect.** Let $p$ be a prime, let $a$, $k$, $\ell$
 and $d$ be natural numbers with $k \ge 1$ and $\ell \ge 1$, and write
@@ -162,18 +151,6 @@ theorem_wanted not_klNearPerfectWith_two_pow_mul
     (ha : 1 < a) :
     ¬ KLNearPerfectWith k l (2 ^ a * p) 1 ∧
       ¬ KLNearPerfectWith k l (2 ^ a * p) p
-
-/-- **No near $F$-perfect number of the form $2p^a$.** For every prime $p$ and every natural
-number $a$, the number $n = 2p^a$ is not near $F$-perfect: there is no divisor $d$ of $n$ with
-$d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n)$ is the sum of the squares of the
-divisors of $n$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 13. -/
-theorem_wanted not_isNearFPerfect_two_mul_prime_pow
-    (p a : ℕ) (hp : p.Prime) :
-    ¬ IsNearFPerfect (2 * p ^ a)
 
 /-- **No deficient $F_k$-perfect number of the form $2p^a$ for $k > 2$.** Let $k > 2$, let $p$ be
 an odd prime and let $a$ be a natural number. Then $2p^a$ is not deficient $F_k$-perfect.
