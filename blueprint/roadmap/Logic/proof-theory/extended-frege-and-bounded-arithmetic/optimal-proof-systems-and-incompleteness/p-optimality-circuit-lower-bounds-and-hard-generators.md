@@ -18,6 +18,8 @@ On input $u$ of length $n$, $g_T$ reads a formula $\Phi$ of length at most $\log
 
 - [Optimal and p-optimal propositional proof systems](optimal-and-p-optimal-proof-systems.md)
 - [The class P/poly](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/ppoly.md)
+- [The class E](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/e.md)
+- [The complexity class NP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md)
 - [Buss's bounded arithmetic theories $S^i_2$ and $T^i_2$](../bounded-arithmetic-correspondences/buss-theories-s2i-and-t2i.md)
 
 ## Proof depends on

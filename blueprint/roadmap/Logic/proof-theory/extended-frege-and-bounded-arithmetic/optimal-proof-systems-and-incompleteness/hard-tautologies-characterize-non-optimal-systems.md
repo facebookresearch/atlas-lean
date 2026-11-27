@@ -8,7 +8,7 @@ For a proof system at least as strong as extended Frege and closed under substit
 2. $P$ is not optimal;
 3. there is a propositional proof system $Q$ such that the tautologies $\lVert\mathrm{RFN}(Q)\rVert_n$ do not have $P$-proofs of size polynomial in $n$.
 
-Here a sequence $(\varphi_n)$ is hard for $P$ if it is polynomial-time constructible from $1^n$ and has no polynomial-size $P$-proofs.
+Here a sequence $(\varphi_n)$ is hard for $P$ if it is polynomial-time constructible from $1^n$ and has no polynomial-size $P$-proofs. $P$ is *closed under modus ponens* if there is a polynomial $p$ such that $P$-proofs of size at most $n$ of $\varphi_1,\dots,\varphi_k$ and of $\varphi_1\to\varphi_2\to\cdots\to\varphi_{k+1}$ imply a $P$-proof of $\varphi_{k+1}$ of size at most $p(n)$, and *closed under substitutions* if there is a polynomial $q$ such that a $P$-proof of $\varphi$ of size at most $n$ implies a $P$-proof of size at most $q(n+|\sigma(\varphi)|)$ of every substitution instance $\sigma(\varphi)$.
 
 ## Expansion
 
@@ -26,4 +26,4 @@ Here a sequence $(\varphi_n)$ is hard for $P$ if it is polynomial-time construct
 
 ## Sources
 
-- Olaf Beyersdorff, "On the correspondence between arithmetic theories and propositional proof systems – a survey", *Mathematical Logic Quarterly* 55(2):116–137, 2009, doi:10.1002/malq.200710069 (Section 12: Theorem 12.1, attributed to Krajíček, with its proof via Lemma 11.4 and Proposition 11.7; definition of hard sequences; pre-review numbering).
+- Olaf Beyersdorff, "On the correspondence between arithmetic theories and propositional proof systems – a survey", *Mathematical Logic Quarterly* 55(2):116–137, 2009, doi:10.1002/malq.200710069 (Section 4: Definitions 4.1 and 4.2 of closure under modus ponens and under substitutions; Section 12: Theorem 12.1, attributed to Krajíček, with its proof via Lemma 11.4 and Proposition 11.7; definition of hard sequences; numbering of the author's pre-review version deposited at White Rose Research Online, <https://eprints.whiterose.ac.uk/id/eprint/74440/>).

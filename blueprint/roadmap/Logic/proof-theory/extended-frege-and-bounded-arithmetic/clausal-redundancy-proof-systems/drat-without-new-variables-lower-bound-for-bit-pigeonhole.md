@@ -2,6 +2,12 @@
 
 DRAT refutations of the bit pigeonhole principle that use no new variables and never delete its axioms need size at least $2^{n/60}$. Hence RAT$^-$ does not simulate DRAT$^-$ or SPR$^-$: without new variables, deletion adds exponential power.
 
+For $n=2^k$, the bit pigeonhole principle $\mathrm{BPHP}_n$ gives each pigeon $x$ with $0\le x<n+1$ variables $p^x_1,\dots,p^x_k$ for the bits of its hole $y\in\{0,1\}^k$. Writing $(x\not\to y)$ for the clause $\bigvee_i (p^x_i\ne y_i)$, its axioms are
+
+$$
+(x\not\to y)\vee(x'\not\to y)\qquad\text{for all holes } y \text{ and all distinct pigeons } x,x'.
+$$
+
 **Theorem (Buss–Thapen).** Let $n=2^k$ and let $\Pi$ be a DRAT$^-$ refutation of $\mathrm{BPHP}_n$ in which no clause of $\mathrm{BPHP}_n$ is ever deleted. Then $\Pi$ has size at least $2^{n/60}$.
 
 **Corollary.** RAT$^-$ does not simulate DRAT$^-$, and RAT$^-$ does not simulate SPR$^-$.

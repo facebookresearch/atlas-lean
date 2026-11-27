@@ -15,6 +15,7 @@ From Frege to SKSg: each axiom scheme has a fixed SKSg proof, which can be insta
 
 ## Depends on
 
+- [Frege proof systems](../extended-and-substitution-frege/frege-system.md)
 - [The deep-inference system SKS in the calculus of structures](calculus-of-structures-system-sks.md)
 
 ## Proof depends on

@@ -16,6 +16,7 @@ The same equivalence lifts to deep inference: extended and substitution versions
 
 ## Depends on
 
+- [Frege proof systems](frege-system.md)
 - [Extended Frege proof systems](extended-frege-system.md)
 - [Substitution Frege proof systems](substitution-frege-system.md)
 
@@ -26,7 +27,7 @@ The same equivalence lifts to deep inference: extended and substitution versions
 
 ## Sources
 
-- Paul Beame and Toniann Pitassi, "Propositional proof complexity: past, present, and future", *Bulletin of the EATCS* 65, 1998; reprinted in *Current Trends in Theoretical Computer Science*, World Scientific, 2001, <https://mathweb.ucsd.edu/~sbuss/CourseWeb/Math268_2014W/BeamePitassi_pastpresentfuture.pdf> (Section 2.1: extended Frege proofs are p-equivalent to substitution Frege proofs, by Dowd and by Krajíček and Pudlák).
-- Olaf Beyersdorff, "On the correspondence between arithmetic theories and propositional proof systems – a survey", *Mathematical Logic Quarterly* 55(2):116–137, 2009, doi:10.1002/malq.200710069 (Section 3: $EF$ is simulated by $SF$ (Cook and Reckhow), the converse by Dowd and by Krajíček and Pudlák; Section 9: $SF \le EF$ follows from $S^1_2 \vdash \mathrm{RFN}(SF)$; pre-review numbering).
+- Paul Beame and Toniann Pitassi, "Propositional proof complexity: past, present, and future", *Bulletin of the EATCS* 65, 1998; reprinted in *Current Trends in Theoretical Computer Science*, World Scientific, 2001; ECCC report TR98-067, <https://eccc.weizmann.ac.il/report/1998/067/> (Section 2.1: extended Frege proofs are p-equivalent to substitution Frege proofs, by Dowd and by Krajíček and Pudlák).
+- Olaf Beyersdorff, "On the correspondence between arithmetic theories and propositional proof systems – a survey", *Mathematical Logic Quarterly* 55(2):116–137, 2009, doi:10.1002/malq.200710069 (Section 3: $EF$ is simulated by $SF$ (Cook and Reckhow), the converse by Dowd and by Krajíček and Pudlák; Section 9: $SF \le EF$ follows from $S^1_2 \vdash \mathrm{RFN}(SF)$; numbering of the author's pre-review version deposited at White Rose Research Online, <https://eprints.whiterose.ac.uk/id/eprint/74440/>).
 - Paola Bruscoli and Alessio Guglielmi, "On the proof complexity of deep inference", *ACM Transactions on Computational Logic* 10(2):14, 2009, doi:10.1145/1462179.1462186, arXiv:0709.1201v3 (Theorem 5.8: $xFrege$ and $sFrege$ are p-equivalent, attributed to Cook–Reckhow and Krajíček–Pudlák).
-- Samuel R. Buss, *Bounded arithmetic and propositional proofs, Part II: propositional proofs and two translations from bounded arithmetic*, lecture notes, <https://people.cs.rutgers.edu/~allender/lecture.notes/buss.part2.pdf> (slide 21: $sF$ and $eF$ p-simulate each other; $eF$ p-simulates $sF$ since $S^1_2$ proves $\mathrm{Con}(sF)$).
+- Samuel R. Buss, "Bounded arithmetic and propositional proof complexity", in *Logic of Computation* (H. Schwichtenberg, ed.), Springer, 1997, author's copy <https://mathweb.ucsd.edu/~sbuss/ResearchWeb/marktoberdorf95/paper.pdf> (Section 6.2: Theorem 35 (Cook and Reckhow; Dowd; Krajíček and Pudlák), $sF$ and $eF$ p-simulate each other, with $eF$ p-simulating $sF$ since $S^1_2\vdash\mathrm{Con}(sF)$).

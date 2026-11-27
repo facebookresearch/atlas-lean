@@ -6,16 +6,15 @@ Let $\mathcal T$ be the class of consistent arithmetical theories that extend Bu
 
 **Theorem (Friedman; Pudlák).** For every $T\in\mathcal T$ there is $\varepsilon>0$ such that every $T$-proof of $\mathrm{Con}_T(\bar n)$ has length at least $n^{\varepsilon}$. Moreover, if $T$ is sequential and finitely axiomatized, then $\mathrm{Con}_T(\bar n)$ has $T$-proofs of length polynomial in $n$.
 
-**Finite incompleteness conjectures.** Pudlák's Conjecture $\mathrm{CON}^N$ states that for every $S\in\mathcal T$ there is $T\in\mathcal T$ such that the lengths of $S$-proofs of $\mathrm{Con}_T(\bar n)$ are not bounded by any polynomial in $n$; by a result of Krajíček and Pudlák it is equivalent to the non-existence of a length-optimal propositional proof system. Its uniform version $\mathrm{CON}$, that $S$-proofs of $\mathrm{Con}_T(\bar n)$ cannot be constructed in time polynomial in $n$, is equivalent to the non-existence of a p-optimal propositional proof system.
-
 ## Expansion
+
+Pudlák's Conjecture $\mathrm{CON}^N$ states that for every $S\in\mathcal T$ there is $T\in\mathcal T$ such that the lengths of $S$-proofs of $\mathrm{Con}_T(\bar n)$ are not bounded by any polynomial in $n$; by a result of Krajíček and Pudlák it is equivalent to the non-existence of a length-optimal propositional proof system. Its uniform version $\mathrm{CON}$, that $S$-proofs of $\mathrm{Con}_T(\bar n)$ cannot be constructed in time polynomial in $n$, is equivalent to the non-existence of a p-optimal propositional proof system.
 
 The lower bound adapts Gödel's diagonal argument to the finite setting: a sentence $\delta_T(\bar n)$ saying "I have no $T$-proof of length at most $n$" is true and has no short proof, and it follows from $\mathrm{Con}_T(\bar n)$ by a short proof; the better the upper bounds on those auxiliary proofs, the stronger the lower bound (with Rosser's C-rule it improves to $\Omega(n/\log^2 n)$). The upper bound uses partial truth definitions: proofs of bounded length contain only formulas of bounded complexity, and a sequential theory can define truth for those formulas and verify that each axiom is true and each rule preserves truth. The intended analogue of Gödel's theorem is therefore not that a theory cannot prove its own finite consistency efficiently, but that no single theory proves the finite consistency of all theories efficiently.
 
 ## Depends on
 
 - [Buss's bounded arithmetic theories $S^i_2$ and $T^i_2$](../bounded-arithmetic-correspondences/buss-theories-s2i-and-t2i.md)
-- [Optimal and p-optimal propositional proof systems](optimal-and-p-optimal-proof-systems.md)
 
 ## Proof depends on
 

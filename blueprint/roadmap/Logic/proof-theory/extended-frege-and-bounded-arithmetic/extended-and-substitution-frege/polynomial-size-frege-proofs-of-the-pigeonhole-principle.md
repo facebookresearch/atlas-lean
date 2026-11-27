@@ -22,6 +22,7 @@ The Cook–Reckhow extended Frege proof defines, by extension variables $q^k_{i,
 
 ## Depends on
 
+- [Frege proof systems](frege-system.md)
 - [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 
 ## Proof depends on

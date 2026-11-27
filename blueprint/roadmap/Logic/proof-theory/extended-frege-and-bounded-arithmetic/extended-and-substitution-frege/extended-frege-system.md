@@ -2,7 +2,7 @@
 
 An extended Frege system is a Frege system augmented with Tseitin's extension rule, which lets a proof introduce a fresh propositional variable as an abbreviation for an arbitrary formula. Proof size is the total number of symbols in the proof.
 
-Fix a Frege system $F$: a finite set of sound axiom schemes and inference rules over a complete set of connectives, implicationally complete; for definiteness take Buss's system with connectives $\neg,\wedge,\vee,\to$, thirteen axiom schemes and modus ponens as its only rule. A sequence of formulas $A_1,\dots,A_k$ is an *extended Frege* ($eF$) *proof* of $A_k$ if every $A_i$ is an instance of an axiom scheme, follows from earlier lines by modus ponens, or is obtained by the *extension rule*, which allows
+Fix a [Frege system](frege-system.md) $F$; for definiteness take Buss's system with connectives $\neg,\wedge,\vee,\to$, thirteen axiom schemes and modus ponens as its only rule. A sequence of formulas $A_1,\dots,A_k$ is an *extended Frege* ($eF$) *proof* of $A_k$ if every $A_i$ is an instance of an axiom scheme, follows from earlier lines by modus ponens, or is obtained by the *extension rule*, which allows
 
 $$
 A_i \;=\; (p \to B) \wedge (B \to p)
@@ -24,6 +24,7 @@ An extension line $p \leftrightarrow B$ is sound because $p$ is new: any truth a
 
 ## Depends on
 
+- [Frege proof systems](frege-system.md)
 - [Cook–Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
 
 ## Proof depends on
@@ -34,4 +35,4 @@ None.
 
 - Samuel R. Buss, "Polynomial size proofs of the propositional pigeonhole principle", *Journal of Symbolic Logic* 52(4):916–927, 1987, doi:10.2307/2273826 (Section 2: the Frege system $F$, the extended Frege system $eF$, the extension rule, symbol size, Statman's line-to-size bound, and the open problem whether $F$ p-simulates $eF$).
 - Sam Buss and Jakob Nordström, "Proof complexity and SAT solving", Chapter 7 of *Handbook of Satisfiability*, 2nd edition (A. Biere, M. Heule, H. van Maaren and T. Walsh, eds.), IOS Press, 2021, doi:10.3233/FAIA200990 (Section 7.9: the extension axioms (7.75) for the sequent calculus formulation).
-- Paul Beame and Toniann Pitassi, "Propositional proof complexity: past, present, and future", *Bulletin of the EATCS* 65, 1998; reprinted in *Current Trends in Theoretical Computer Science*, World Scientific, 2001, <https://mathweb.ucsd.edu/~sbuss/CourseWeb/Math268_2014W/BeamePitassi_pastpresentfuture.pdf> (Sections 2.1 and 2.3: extended Frege systems are p-equivalent to each other and correspond to $\mathsf{P/poly}$-Frege).
+- Paul Beame and Toniann Pitassi, "Propositional proof complexity: past, present, and future", *Bulletin of the EATCS* 65, 1998; reprinted in *Current Trends in Theoretical Computer Science*, World Scientific, 2001; ECCC report TR98-067, <https://eccc.weizmann.ac.il/report/1998/067/> (Sections 2.1 and 2.3: extended Frege systems are p-equivalent to each other and correspond to $\mathsf{P/poly}$-Frege).
