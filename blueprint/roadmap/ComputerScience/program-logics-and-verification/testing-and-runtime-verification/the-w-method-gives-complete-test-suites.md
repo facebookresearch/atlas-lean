@@ -1,7 +1,7 @@
 # The W-method gives complete test suites
 
 Use deterministic, completely specified Mealy machines over fixed input and output alphabets, with equivalence of
-states as in [characterization sets of minimal finite-state machines](characterization-sets-of-minimal-finite-state.md).
+states as in [characterization sets of finite-state machines](characterization-sets-of-minimal-finite-state.md).
 Two machines are *equivalent* if their initial states produce the same output word on every input word, and they
 *agree on* a set $T$ of input words if their initial states produce the same output word on every $w \in T$. A test suite $T$
 is *$m$-complete* for $M$ if every machine with at most $m$ states that agrees with $M$ on $T$ is equivalent to $M$.
@@ -16,7 +16,7 @@ where $I^{\le k}$ is the set of input words of length at most $k$, is $m$-comple
 
 ## Depends on
 
-- [Characterization sets of minimal finite-state machines](characterization-sets-of-minimal-finite-state.md)
+- [Characterization sets of finite-state machines](characterization-sets-of-minimal-finite-state.md)
 
 ## Sources
 

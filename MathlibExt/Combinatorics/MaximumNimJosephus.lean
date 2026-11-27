@@ -84,6 +84,10 @@ through $k \ge 1$, and the conclusion also holds for $x = 0$, whose Grundy numbe
 
 ## References
 
+* Shoei Takahashi, Hikaru Manabe, and Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+  INTEGERS 24 (2024), Article G5, pp. 1–16 (<https://math.colgate.edu/~integers/yg5/yg5.pdf>).
+  Lemma 6(ii), p. 11, gives the growth bound `maximumNimH_succ_le`.
+
 * Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and Josephus Problem*,
   arXiv:2403.19308v1 (2024) (<https://arxiv.org/abs/2403.19308>). Definition 2.1 in Section 2
   defines the mex and the Grundy numbers. In Section 3, Lemma 3.1(i) states that $G(x) = x/k$ when
@@ -282,6 +286,151 @@ private theorem maximumNimGrundy_sub_ne_of_move (f : ℕ → ℕ) (y v : ℕ) (h
   have h := ((maximumNimMex_eq_iff _ (maximumNimGrundy f y)).mp (maximumNimGrundy_eq f y).symm).1
   exact h (Finset.mem_image.mpr ⟨⟨v, Finset.mem_Icc.mpr ⟨hv, hvy⟩⟩, Finset.mem_attach _ _, heq⟩)
 
+private theorem maximumNim_recurrence_succ (f : ℕ → ℕ) (hf0 : f 0 = 0)
+    (step : ∀ n, f n ≤ f (n + 1) ∧ f (n + 1) ≤ f n + 1) (n : ℕ) :
+    (f n < f (n + 1) → maximumNimGrundy f (n + 1) = f (n + 1)) ∧
+    (f (n + 1) = f n → maximumNimGrundy f (n + 1) = maximumNimGrundy f (n - f n)) := by
+  let G := maximumNimGrundy f
+  let d (t : ℕ) := t - f t
+  have hbound (t : ℕ) : f t ≤ t := by
+    induction t with
+    | zero => simp [hf0]
+    | succ t ih => exact (step t).2.trans (Nat.add_le_add_right ih 1)
+  have hfmono : Monotone f := monotone_nat_of_le_succ fun t => (step t).1
+  have hdmono : Monotone d := by
+    apply monotone_nat_of_le_succ
+    intro t
+    have ht := (step t).2
+    dsimp [d]
+    omega
+  have hG (t : ℕ) : G t ≤ f t :=
+    (maximumNimGrundy_le_min_rule f t).trans (min_le_left _ _)
+  have sep (a b : ℕ) (hab : a < b) (ha : d b ≤ a) : G a ≠ G b := by
+    change b - f b ≤ a at ha
+    have hm : b - a ≤ min (f b) b := le_min (by omega) (by omega)
+    have hs : b - (b - a) = a := by omega
+    simpa only [hs] using maximumNimGrundy_sub_ne_of_move f b (b - a) (by omega) hm
+  -- The window at `n` contains each Grundy value from zero to `f n` exactly once.
+  have cover (a : ℕ) (ha : a ≤ f n) : ∃ y, d n ≤ y ∧ y ≤ n ∧ G y = a := by
+    let W := Finset.Icc (d n) n
+    let S := W.attach.image (fun y => G y.1)
+    have hsub : S ⊆ Finset.range (f n + 1) := by
+      intro v hv
+      obtain ⟨⟨y, hy⟩, -, rfl⟩ := Finset.mem_image.mp hv
+      have hy' := (Finset.mem_Icc.mp hy).2
+      exact Finset.mem_range.mpr (Nat.lt_succ_of_le ((hG y).trans (hfmono hy')))
+    have hinj : Function.Injective fun y : W => G y.1 := by
+      rintro ⟨u, hu⟩ ⟨v, hv⟩ huv
+      have hu' := Finset.mem_Icc.mp hu
+      have hv' := Finset.mem_Icc.mp hv
+      rcases lt_trichotomy u v with h | h | h
+      · exact (sep u v h ((hdmono hv'.2).trans hu'.1) huv).elim
+      · exact Subtype.ext h
+      · exact (sep v u h ((hdmono hu'.2).trans hv'.1) huv.symm).elim
+    have hcard : S.card = f n + 1 := by
+      dsimp only [S, W]
+      rw [Finset.card_image_of_injective _ hinj, Finset.card_attach, Nat.card_Icc]
+      dsimp [d]
+      have h := hbound n
+      omega
+    have heq : S = Finset.range (f n + 1) :=
+      Finset.eq_of_subset_of_card_le hsub (by rw [hcard, Finset.card_range])
+    have hain : a ∈ S := heq ▸ Finset.mem_range.mpr (Nat.lt_succ_of_le ha)
+    obtain ⟨⟨y, hy⟩, -, hey⟩ := Finset.mem_image.mp hain
+    exact ⟨y, (Finset.mem_Icc.mp hy).1, (Finset.mem_Icc.mp hy).2, hey⟩
+  have mex (x v : ℕ) : G x = v ↔
+      (¬ ∃ y, d x ≤ y ∧ y < x ∧ G y = v) ∧
+        (∀ a < v, ∃ y, d x ≤ y ∧ y < x ∧ G y = a) := by
+    let T := (Finset.Icc 1 (min (f x) x)).attach.image (fun u => G (x - u.1))
+    have mem (a : ℕ) : a ∈ T ↔ ∃ y, d x ≤ y ∧ y < x ∧ G y = a := by
+      constructor
+      · intro ha
+        obtain ⟨⟨u, hu⟩, -, h⟩ := Finset.mem_image.mp ha
+        obtain ⟨hu₁, hu₂⟩ := Finset.mem_Icc.mp hu
+        have huf := hu₂.trans (min_le_left _ _)
+        have hux := hu₂.trans (min_le_right _ _)
+        exact ⟨x - u, by dsimp [d]; omega, by omega, h⟩
+      · rintro ⟨y, hy₁, hy₂, hy₃⟩
+        change x - f x ≤ y at hy₁
+        have hm : x - y ∈ Finset.Icc 1 (min (f x) x) :=
+          Finset.mem_Icc.mpr ⟨by omega, le_min (by omega) (Nat.sub_le _ _)⟩
+        refine Finset.mem_image.mpr ⟨⟨x - y, hm⟩, Finset.mem_attach _ _, ?_⟩
+        simpa only [show x - (x - y) = y by omega] using hy₃
+    have hg : G x = maximumNimMex T := maximumNimGrundy_eq f x
+    rw [hg, maximumNimMex_eq_iff, mem v]
+    simp only [mem]
+  constructor
+  · intro hrise
+    have hs : f (n + 1) = f n + 1 := by have ht := (step n).2; omega
+    have hd : d (n + 1) = d n := by dsimp [d]; omega
+    apply (mex _ _).mpr
+    constructor
+    · rintro ⟨y, -, hy, h⟩
+      have hle := (hG y).trans (hfmono (show y ≤ n by omega))
+      omega
+    · intro a ha
+      obtain ⟨y, hy₁, hy₂, hy₃⟩ := cover a (by omega)
+      exact ⟨y, hd.symm ▸ hy₁, by omega, hy₃⟩
+  · intro hflat
+    have hd : d (n + 1) = d n + 1 := by
+      have h := hbound n
+      dsimp [d]
+      omega
+    change G (n + 1) = G (d n)
+    apply (mex _ _).mpr
+    constructor
+    · rintro ⟨y, hy₁, hy₂, hy₃⟩
+      have hy₃' := hdmono (show y ≤ n by omega)
+      exact sep (d n) y (by omega) hy₃' hy₃.symm
+    · intro a ha
+      have hdn : d n ≤ n := Nat.sub_le _ _
+      have hle := (hG (d n)).trans (hfmono hdn)
+      obtain ⟨y, hy₁, hy₂, hy₃⟩ := cover a (by omega)
+      have hne : y ≠ d n := by
+        intro h
+        subst y
+        omega
+      exact ⟨y, by omega, by omega, hy₃⟩
+
+private theorem maximumNim_step (f : ℕ → ℕ)
+    (hf : ∀ m, 1 ≤ m → f (m - 1) ≤ f m ∧ f m ≤ f (m - 1) + 1) (n : ℕ) :
+    f n ≤ f (n + 1) ∧ f (n + 1) ≤ f n + 1 := by
+  simpa only [Nat.add_sub_cancel] using hf (n + 1) (by omega)
+
+/-- **Grundy number where the rule function increases.** Let $f : \mathbb{N} \to \mathbb{N}$
+satisfy $f(0) = 0$ and $f(m-1) \le f(m) \le f(m-1) + 1$ for every $m \ge 1$, and let $G$ be the
+Grundy number of Maximum Nim with rule function $f$. If $x \ge 1$ and $f(x-1) < f(x)$, then
+$G(x) = f(x)$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 1(i) (`integers-2024-G5-lem-1`). -/
+public theorem maximumNimGrundy_eq_rule_of_lt (f : ℕ → ℕ) (hf0 : f 0 = 0)
+    (hf : ∀ m, 1 ≤ m → f (m - 1) ≤ f m ∧ f m ≤ f (m - 1) + 1)
+    (x : ℕ) (hx : 1 ≤ x) (hfx : f (x - 1) < f x) :
+    maximumNimGrundy f x = f x := by
+  obtain ⟨n, rfl⟩ : ∃ n, x = n + 1 := ⟨x - 1, by omega⟩
+  have h := maximumNim_recurrence_succ f hf0 (maximumNim_step f hf) n
+  exact h.1 (by simpa only [Nat.add_sub_cancel] using hfx)
+
+/-- **Grundy number where the rule function is flat.** Let $f : \mathbb{N} \to \mathbb{N}$
+satisfy $f(0) = 0$ and $f(m-1) \le f(m) \le f(m-1) + 1$ for every $m \ge 1$, and let $G$ be the
+Grundy number of Maximum Nim with rule function $f$. If $x \ge 1$ and $f(x) = f(x-1)$, then
+$G(x) = G(x - f(x) - 1)$.
+
+Here $x - f(x) - 1 \ge 0$, since the hypotheses give $f(x) = f(x-1) \le x - 1$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 1(ii) (`integers-2024-G5-lem-1`). -/
+public theorem maximumNimGrundy_eq_sub_rule_succ (f : ℕ → ℕ) (hf0 : f 0 = 0)
+    (hf : ∀ m, 1 ≤ m → f (m - 1) ≤ f m ∧ f m ≤ f (m - 1) + 1)
+    (x : ℕ) (hx : 1 ≤ x) (hfx : f x = f (x - 1)) :
+    maximumNimGrundy f x = maximumNimGrundy f (x - f x - 1) := by
+  obtain ⟨n, rfl⟩ : ∃ n, x = n + 1 := ⟨x - 1, by omega⟩
+  have hn : f (n + 1) = f n := by simpa only [Nat.add_sub_cancel] using hfx
+  have hindex : n + 1 - f (n + 1) - 1 = n - f n := by omega
+  rw [hindex]
+  exact (maximumNim_recurrence_succ f hf0 (maximumNim_step f hf) n).2 hn
+
 /-- **Maximum Nim Grundy numbers at multiples of the divisor.** Let $k \ge 2$ and let $G$ be
 the Grundy number of Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$. Every positive
 multiple $x$ of $k$ satisfies $G(x) = x/k$.
@@ -449,6 +598,21 @@ public theorem maximumNimH_strictMono (k x x' : ℕ) (hk : 2 ≤ k) (hxx' : x < 
   have hdiv : x / (k - 1) ≤ x' / (k - 1) :=
     Nat.div_le_div hxx'.le le_rfl (by omega)
   exact Nat.succ_lt_succ (Nat.add_lt_add_of_lt_of_le hxx' hdiv)
+
+-- Keep the source's hypothesis and its binder name even though the bound holds for every `k`.
+set_option linter.unusedVariables false in
+/-- **The Maximum Nim map $h_k$ exceeds its argument.** Let $k \ge 2$ be a natural number and let
+$h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. Every natural
+number $x$ satisfies $x < x + 1 \le h_k(x)$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 6(ii) (`integers-2024-G5-lem-6`). -/
+public theorem maximumNimH_succ_le (k x : ℕ) (hk : 2 ≤ k) :
+    x < x + 1 ∧ x + 1 ≤ maximumNimH k x := by
+  refine ⟨Nat.lt_succ_self x, ?_⟩
+  unfold maximumNimH
+  generalize x / (k - 1) = q
+  omega
 
 /-- **Linear bounds on h_k and their iterates.** Let $k \ge 2$ be a natural number, let
 $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on natural numbers, and define the real maps

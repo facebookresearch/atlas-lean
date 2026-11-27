@@ -120,8 +120,10 @@ theorem aipwScore_eq_of_consistency (hY : ∀ ω, Y ω = observed T Y₀ Y₁ ω
 
 /-- **The AIPW score as an augmented IPW contrast.** When `e(X) ∉ {0, 1}`, the score is the IPW
 contrast `1_T Y / e(X) - 1_{Tᶜ} Y / (1 - e(X))` minus the propensity residual `1_T - e(X)`
-times `m₁(X) / e(X) + m₀(X) / (1 - e(X))`. When `e` is the true propensity this residual term
-has conditional mean zero given `X` (`condExp_propensityResidual_mul`). -/
+times `m₁(X) / e(X) + m₀(X) / (1 - e(X))`. The theorem is this pointwise identity only. That
+the residual term has conditional mean zero given `X` when `e` is the true propensity is the
+separate result `condExp_propensityResidual_mul`, under its own hypotheses: a finite measure,
+measurable `T`, `X` and `e`, and a bounded measurable multiplier. -/
 theorem aipwScore_eq_ipw_sub (he₀ : e (X ω) ≠ 0) (he₁ : e (X ω) ≠ 1) :
     aipwScore T X Y e m₀ m₁ ω =
       T.indicator (fun ω => Y ω / e (X ω)) ω - Tᶜ.indicator (fun ω => Y ω / (1 - e (X ω))) ω -
@@ -140,7 +142,8 @@ a covariate `X`, in primitive terms. With `σ(X) = MeasurableSpace.comap X m𝒳
 propensity `π = μ[1_T | σ(X)]`:
 * consistency: the observed outcome is `Y₁` on `T` and `Y₀` off it;
 * mean exchangeability: `E[1_T Y₁ | X] = π E[Y₁ | X]` and `E[1_{Tᶜ} Y₀ | X] = P(Tᶜ | X) E[Y₀ | X]`
-  (implied by `Y_a ⊥ T | X`);
+  (assumed as stated: nothing here derives it from `Y_a ⊥ T | X`, and since the conditional
+  expectation of a non-integrable function is `0`, that implication also needs integrability);
 * positivity (strong overlap): `ε ≤ π ≤ 1 - ε` almost surely, for some `ε > 0`. -/
 structure AIPWAssumptions (μ : Measure Ω) (T : Set Ω) (X : Ω → 𝒳) (Y Y₀ Y₁ : Ω → ℝ) :
     Prop where
