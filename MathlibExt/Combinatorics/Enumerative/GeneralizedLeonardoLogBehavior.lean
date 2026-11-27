@@ -27,9 +27,17 @@ that subtracts nonnegative multiples of the earlier terms.
 
 For a positive sequence with successive ratios `x n = z (n + 1) / z n`, the reciprocals
 are log-balanced exactly when `x n` decreases and `(n + 1) * x n` increases.
-For positive integer parameters, the generalized Leonardo partial sums are log-concave from
-index two on. The n-th roots of the generalized Leonardo numbers are log-balanced starting at
-any index at least both 9 and $(1 + \sqrt{64k - 7})/4$.
+For positive integer parameters, the reciprocals of generalized Leonardo numbers are log-balanced
+from index three on, and the partial sums are log-concave from index two on. The n-th roots of the
+generalized Leonardo numbers are log-balanced starting at any index at least both 9 and
+$(1 + \sqrt{64k - 7})/4$.
+
+## References
+
+* Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to the Generalized Leonardo
+  Numbers*, INTEGERS 24 (2024), Article A82, pp. 1–9, Lemma 2 and Theorem 1. The proof for
+  reciprocals uses Zhao's recurrence and propagation lemma, but bounds the product of the
+  successive ratios directly from monotonicity rather than using their limit.
 -/
 
 namespace MetaMathlibExt
@@ -269,7 +277,7 @@ public theorem genLeonardo_partialSum_logConcave (k : ℕ) (hk : 1 ≤ k) (n : �
   dsimp only [D] at h
   nlinarith only [h]
 
-namespace genLeonardo_rpow_inv_logBalanced
+namespace GenLeonardoLogBehavior
 
 private noncomputable def L (k i : ℕ) : ℝ := genLeonardo k i
 
@@ -453,9 +461,49 @@ private theorem root_bounds (k : ℕ) (hk : 1 ≤ k) (i : ℕ) (hi : 9 ≤ i)
       _ ≤ Real.log ((i + 2 : ℝ) / (i + 1)) := Real.one_sub_inv_le_log_of_pos (by positivity)
       _ = _ := Real.log_div (by positivity) (by positivity)
 
-end genLeonardo_rpow_inv_logBalanced
+end GenLeonardoLogBehavior
 
-open genLeonardo_rpow_inv_logBalanced in
+open GenLeonardoLogBehavior in
+/-- **Log-balancedness of the reciprocals of generalized Leonardo numbers.** Let $k \ge 1$ be an
+integer and let $L_{k,n}$ be the generalized Leonardo numbers. Then the sequence
+$(1/L_{k,n})_{n \ge 3}$ is log-balanced (Došlić): for every integer $n \ge 4$,
+$$\left(\frac{1}{L_{k,n}}\right)^2 \le \frac{1}{L_{k,n-1}} \cdot \frac{1}{L_{k,n+1}}$$
+and
+$$\frac{1}{L_{k,n-1} \, (n-1)!} \cdot \frac{1}{L_{k,n+1} \, (n+1)!} \le
+\left(\frac{1}{L_{k,n} \, n!}\right)^2.$$
+
+Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to the
+Generalized Leonardo Numbers*, INTEGERS 24 (2024), Article A82, Theorem 1
+(`integers-2024-A82-thm-1`). -/
+public theorem inv_genLeonardo_logBalanced (k : ℕ) (hk : 1 ≤ k) (n : ℕ) (hn : 4 ≤ n) :
+    (1 / (genLeonardo k n : ℝ)) ^ 2 ≤
+        (1 / (genLeonardo k (n - 1) : ℝ)) * (1 / (genLeonardo k (n + 1) : ℝ)) ∧
+      (1 / (genLeonardo k (n - 1) : ℝ) / (n - 1).factorial) *
+          (1 / (genLeonardo k (n + 1) : ℝ) / (n + 1).factorial) ≤
+        (1 / (genLeonardo k n : ℝ) / n.factorial) ^ 2 := by
+  apply inv_logBalanced_of_recurrence_of_initial 2 1 (by norm_num) (L k) (pos k) _ 3 _ _ n hn
+  · intro i hi
+    obtain ⟨j, rfl⟩ : ∃ j, i = j + 2 := ⟨i - 2, by omega⟩
+    rw [Nat.add_sub_cancel, one_mul]
+    linarith only [rec k j, rec k (j + 1)]
+  · intro i hlo hhi
+    obtain ⟨j, rfl⟩ : ∃ j, i = j + 1 := ⟨i - 1, by omega⟩
+    apply (balanced_iff_ratios j (pos k j) (pos k (j + 1)) (pos k (j + 2))).2
+    -- In both initial cases the cleared differences have nonnegative coefficients in k - 1.
+    obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le hk
+    rcases (show j = 3 ∨ j = 4 by omega) with rfl | rfl <;>
+      constructor <;> norm_num [L, genLeonardo, Int.cast_add, Int.cast_natCast, Nat.cast_add] <;>
+      field_simp <;> apply sub_nonneg.mp <;> ring_nf <;> positivity
+  · intro i _
+    -- The two ratios telescope, and monotonicity gives L (i + 2) ≥ 2 * L i.
+    calc
+      3 * (1 : ℝ) ≤ 2 * L k (i + 2) / L k i := by
+        rw [le_div_iff₀ (pos k i)]
+        linarith only [rec k i, increasing k i, (pos k i).le, Nat.cast_nonneg (α := ℝ) k]
+      _ = 2 * (L k (i + 1) / L k i) * (L k (i + 2) / L k (i + 1)) := by
+        field_simp [(pos k (i + 1)).ne']
+
+open GenLeonardoLogBehavior in
 /-- **Log-balancedness of the n-th roots of generalized Leonardo numbers.** Let $k \ge 1$ be an
 integer, let $L_{k,n}$ be the generalized Leonardo numbers, and let $n_k$ be an integer with
 $n_k \ge 9$ and $n_k \ge (1 + \sqrt{64k - 7})/4$. Then for every integer $n \ge n_k + 1$,
