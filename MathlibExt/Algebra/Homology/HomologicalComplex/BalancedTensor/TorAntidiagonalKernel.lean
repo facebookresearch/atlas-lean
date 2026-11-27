@@ -87,8 +87,8 @@ private theorem exactImageKernelIso_naturality
   apply (cancel_mono (kernel.ι S'.g)).1
   simp only [Category.assoc, exactImageKernelIso_hom_ι,
     kernel.map, kernel.lift_ι]
-  dsimp only [Abelian.im, Abelian.image.ι]
-  exact kernel.lift_ι _ _ _
+  exact Abelian.kernelImageSESFunctor_map_image_ι
+    (Arrow.homMk φ.τ₁ φ.τ₂ φ.comm₁₂)
 
 variable (R : Type u) [Ring R]
 variable {ι : Type κ} {c : ComplexShape ι}
