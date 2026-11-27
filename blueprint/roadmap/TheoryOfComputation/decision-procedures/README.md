@@ -14,3 +14,4 @@ Algorithms deciding questions about finite automata, regular expressions and con
 
 - [Presburger arithmetic and real addition](presburger-arithmetic-and-real-addition/README.md)
 - [Satisfiability modulo theories](satisfiability-modulo-theories/README.md)
+- [Regular intersection emptiness](regular-intersection-emptiness/README.md)
