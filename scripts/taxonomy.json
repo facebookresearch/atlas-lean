@@ -1063,6 +1063,7 @@
   "CSLibExt/Algorithms/Lean/DataStructures/RedBlackTree/Delete": {"to": "ComputerScience/data-structures/search-trees", "title": "Red–black tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/RedBlackTree/DeleteBalanced": {"to": "ComputerScience/data-structures/search-trees", "title": "Red–black tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/SegmentTree": {"to": "ComputerScience/data-structures/range-query-structures", "title": "Segment tree"},
+  "CSLibExt/Algorithms/Lean/DataStructures/SegmentTree/QueryVisits": {"to": "ComputerScience/data-structures/range-query-structures", "title": "Segment tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/SinglyLinkedList": {"to": "ComputerScience/data-structures/linear-structures", "title": "Singly linked list"},
   "CSLibExt/Algorithms/Lean/DataStructures/SkipList": {"to": "ComputerScience/data-structures/search-trees", "title": "Skip list"},
   "CSLibExt/Algorithms/Lean/DataStructures/SkipList/Erase": {"to": "ComputerScience/data-structures/search-trees", "title": "Skip list"},
