@@ -39,7 +39,8 @@ infimum is at most `2 + 2/t`. `∂_G(X)` is the set of edges with exactly one en
 
 open SimpleGraph
 
-/-- The number `|∂(X)|` of edges of the multigraph `M` with exactly one end in `X`. -/
+/-- The number `|∂(X)|` of edges of the multigraph `M` with exactly one end in `X`, as a
+`Set.ncard`: it is `0` when infinitely many edges cross `X`. -/
 noncomputable def cutSize {V E : Type} (M : EdgeIndexedMultigraph V E) (X : Set V) : ℕ :=
   {e | ∃ u ∈ M.ends e, ∃ w ∈ M.ends e, u ∈ X ∧ w ∉ X}.ncard
 

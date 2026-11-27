@@ -10,3 +10,4 @@
 - [Gupta–Kamath–Kayal–Saptharishi: the chasm at depth three](gkks-depth-three-chasm.md)
 - [Kumar: every homogeneous polynomial lies in the border of top-fan-in d+1 depth-three circuits](kumar-border-depth3.md)
 - [Dutta–Dwivedi–Saxena: debordering depth-three circuits of bounded top fan-in](dds-debordering-depth3.md)
+- [Depth-five homogeneous upper bound for iterated matrix multiplication](imm-depth-five-upper-bound.md)
