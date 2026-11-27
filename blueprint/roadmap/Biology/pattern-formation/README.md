@@ -12,6 +12,7 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
 - [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
+- [Continuum models of tumour-induced angiogenesis](continuum-models-of-tumour-induced-angiogenesis/README.md)
 - [Fisher–Stefan moving-boundary model](fisher-stefan-moving-boundary-model/README.md)
 - [Hyperbolic leader–follower swarm models](hyperbolic-leader-follower-swarm-models/README.md)
 - [Integrodifference Klausmeier vegetation model](integrodifference-klausmeier-vegetation-model/README.md)

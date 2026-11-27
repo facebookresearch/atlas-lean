@@ -181,7 +181,7 @@ theorem brownianProjectiveContent_tendsto_zero
         rw [brownianProjectiveContent_cylinder]
         · exact (hLdiff k).le
         · exact hdiffMeasurable k
-    _ ≤ ∑' k : Nat, error k := ENNReal.sum_le_tsum _
+    _ ≤ ∑' k : Nat, error k := sum_le_tsum _
     _ = epsilon / 2 := hsumError
     _ < epsilon := ENNReal.half_lt_self hepsilon.ne' hepsilonTop
 

@@ -30,6 +30,8 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 - [Phylogenetic diversity](phylogenetic-diversity/README.md)
 - [Phylogenetic invariants](phylogenetic-invariants/README.md)
+- [Displayed-tree measures on phylogenetic networks](displayed-tree-measures-on-phylogenetic-networks/README.md)
+- [Trinet encoding of phylogenetic networks](trinet-encoding-of-phylogenetic-networks/README.md)
 - [ASTRAL weighted-quartet species-tree estimation](astral-weighted-quartet-species-tree-estimation/README.md)
 - [Best match graphs and orthology](best-match-graphs-and-orthology/README.md)
 - [Classes of phylogenetic networks](classes-of-phylogenetic-networks/README.md)
