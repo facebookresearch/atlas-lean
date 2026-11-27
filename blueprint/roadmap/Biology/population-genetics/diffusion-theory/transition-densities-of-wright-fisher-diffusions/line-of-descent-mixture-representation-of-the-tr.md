@@ -32,7 +32,7 @@ $$d_{\rm TV}(K_t(x,\cdot),\operatorname{Beta}(\theta_1,\theta_2))
 
 ## Proof depends on
 
-- [Pure-death entrance process and absorption](transition-probabilities-q-theta-n-t-of-the-non.md)
+- [Pure-death entrance probabilities](transition-probabilities-q-theta-n-t-of-the-non.md)
 - [Killed moment duality and its finite moment equations](../wright-fisher-diffusion-with-mutation/moment-duality-with-mutation-killed-absorbed-blo.md)
 - [Compactly supported measures are determined by their moments](../../../../Analysis/harmonic-analysis/integral-transforms/moment-problem-for-compactly-supported-measures/ext-of-forall-integral-pow-eq-of-compl-i.md)
 

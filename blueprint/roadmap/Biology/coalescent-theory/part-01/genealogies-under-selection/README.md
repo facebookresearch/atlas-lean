@@ -4,4 +4,4 @@
 - [Joint escape of sampled lineages from a selective sweep](escape-from-a-sweep-by-recombination.md)
 - [Genealogies of soft sweeps](soft-sweeps-and-standing-variation.md)
 - [Allelic genealogies under strong balancing selection](balancing-selection-genealogy.md)
-- [Background selection and recurrent sweeps in the coalescent](background-selection-and-recurrent-sweeps.md)
+- [Recurrent selective sweeps give a Λ-coalescent limit](background-selection-and-recurrent-sweeps.md)

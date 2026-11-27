@@ -13,3 +13,6 @@
 - [Epistasis from fitness rank orders](epistasis-from-fitness-rank-orders/README.md)
 - [Greedy adaptation versus valley crossing in the sequential-fixation regime](greedy-adaptation-versus-valley-crossing-in-the-sequential-fixation-regime.md)
 - [Valley-crossing probability against a sweeping uphill mutation](valley-crossing-probability-against-a-sweeping-uphill-mutation.md)
+- [Maynard Smith's connectivity condition in protein space](maynard-smith-connectivity-condition-in-protein-space.md)
+- [Success probability of a mutant lineage in a fitness valley](success-probability-of-a-mutant-lineage-in-a-fitness-valley.md)
+- [Two-step valley-crossing time and the tunneling threshold](two-step-valley-crossing-time-and-tunneling-threshold.md)

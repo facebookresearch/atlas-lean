@@ -81,3 +81,7 @@
 - [Minimal descriptors of ancestral recombination graphs](minimal-descriptors-of-ancestral-recombination-graphs/README.md)
 - [SMC$'$ transition densities](smc-prime-transition-densities/README.md)
 - [Genealogy of genetic material under recombination](genealogy-of-genetic-material-under-recombination/README.md)
+- [IBS tract length spectrum](ibs-tract-length-spectrum/README.md)
+- [Multiple sequentially markovian coalescent](multiple-sequentially-markovian-coalescent/README.md)
+- [Tree-sequence inference by ancestral haplotype copying](tree-sequence-inference-by-ancestral-haplotype-copying/README.md)
+- [Wright–Fisher versus coalescent genealogies of long genomes](wright-fisher-versus-coalescent-genealogies-of-long-genomes/README.md)
