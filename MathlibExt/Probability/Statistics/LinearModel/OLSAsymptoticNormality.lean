@@ -52,9 +52,10 @@ open scoped Function RealInnerProductSpace Topology
 
 namespace MathlibExt.Probability.Statistics.LinearModel
 
-/-- The population score second-moment matrix `Ω a b = 𝔼[(x₀ u₀) a * (x₀ u₀) b]`, the meat of
-the sandwich covariance `Q⁻¹ Ω Q⁻¹`. Under the exogeneity hypothesis `𝔼[x₀ u₀] = 0` this is the
-covariance matrix of the score `x₀ u₀`. The frozen ST05.T02 statement keeps this name; it is an
+/-- For a measure `μ`, the population score second-moment matrix `Ω a b = ∫ u₀² x₀ a x₀ b ∂μ`,
+the meat of the sandwich covariance `Q⁻¹ Ω Q⁻¹`. When `μ` is a probability measure, the score
+`x₀ u₀` is square-integrable and `𝔼[x₀ u₀] = 0`, it is the covariance matrix of the score.
+The frozen ST05.T02 statement keeps this name; it is an
 abbreviation for the population HC0 meat `hc0PopMeat`, `𝔼[u₀² x₀ x₀ᵀ]`, the same matrix written
 with `u₀²` (`popScoreCov_apply` gives the score form of the entries). -/
 noncomputable abbrev popScoreCov {k : Type*} [Fintype k] {Ω : Type*} [MeasurableSpace Ω]
