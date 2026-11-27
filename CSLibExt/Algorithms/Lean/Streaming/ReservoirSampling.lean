@@ -36,7 +36,8 @@ open Finset
 open scoped ENNReal
 open Cslib.Probability.PMF (uniformOfFinset uniformOfFinset_apply mem_support_uniformOfFinset_iff)
 
-/-- Random index for the arrival following a prefix of length `m`, including the new index `m`. -/
+/-- The index drawn when item `m` arrives is uniform on the positions `{0, …, m}`,
+including the new position `m`. -/
 noncomputable def draw (m : ℕ) : PMF ℕ :=
   uniformOfFinset (range (m + 1)) nonempty_range_add_one
 
@@ -55,7 +56,8 @@ noncomputable def positions (k : ℕ) : ℕ → PMF (Finset ℕ)
   | m + 1 => if m < k then (positions k m).map (insert m) else
       (positions k m).bind fun s => (draw m).map fun j => replacePosition m j s
 
-/-- Probability that the draw hits a reservoir `s` of old positions and triggers replacement. -/
+/-- For any finite set `s` of positions below `m`, the probability that `draw m` lands in `s`
+is `s.card / (m + 1)`. -/
 theorem hit_probability {m : ℕ} {s : Finset ℕ} (hs : s ⊆ range m) :
     (draw m).toOuterMeasure (↑s : Set ℕ) = s.card / (m + 1 : ℝ≥0∞) := by
   rw [PMF.toOuterMeasure_apply_finset]
@@ -187,7 +189,8 @@ theorem positions_uniform {k m : ℕ} (h : k ≤ m) :
     rw [positions, ite_eq_right (by omega), ih]
     exact uniform_step hm _ _
 
-/-- Exactly the `k`-element sets of positions within the prefix can occur. -/
+/-- After a prefix of length `m ≥ k`, a position set can occur if and only if it consists of
+exactly `k` positions below `m`. -/
 theorem positions_support {k m : ℕ} (h : k ≤ m) (s : Finset ℕ) :
     s ∈ (positions k m).support ↔ s ⊆ range m ∧ s.card = k := by
   rw [positions_uniform h, mem_support_uniformOfFinset_iff, mem_powersetCard]
@@ -250,8 +253,9 @@ theorem sample_positions {α : Type*} [DecidableEq α] (k : ℕ) (a : ℕ → α
   have hf : (fun entries : Finset (ℕ × α) => entries.image Prod.fst) ∘ tagged a = id := funext h
   rw [hf, PMF.map_id]
 
-/-- A possible stored state consists of exactly the tagged stream entries for a `k`-subset
-of the prefix. Conversely, every such state is possible. -/
+/-- After a prefix of length `m ≥ k` of stream `a`, a stored state can occur if and only if it
+consists of the pairs `(i, a i)` for the positions `i` in some `k`-element subset of the prefix.
+Equal values at different positions give distinct pairs. -/
 theorem sample_support {α : Type*} [DecidableEq α] {k m : ℕ} (h : k ≤ m) (a : ℕ → α)
     (entries : Finset (ℕ × α)) :
     entries ∈ (sample k a m).support ↔
