@@ -23,6 +23,41 @@ namespace MathlibExt.Combinatorics.ReducedComplexitiesWanted
 
 open InfiniteWord
 
+-- The middle letter agrees with one of its neighbors.
+private theorem redWord_skip_middle (a b c : Bool) (w : List Bool) (h : c = !a) :
+    redWord (a :: b :: c :: w) = a :: redWord (c :: w) := by
+  subst c
+  cases a <;> cases b <;> simp [redWord]
+
+/-- **Runs in a word whose even-position letters alternate.** Let $n$ be a natural number and let
+$w = w_0 w_1 \cdots w_{2n}$ be a binary word of length $2n + 1$ with $w_{2i} \ne w_{2i+2}$ for
+every $i < n$, so that its even positions read $abab\cdots$ with $a \ne b$ and its odd positions
+are arbitrary. Then the reduction of $w$, the word obtained by collapsing each maximal run of
+equal letters of $w$ to a single letter, has length $n + 1$; that is, $w$ has exactly $n + 1$ runs.
+
+The paper applies this to factors of the paperfolding word.
+
+Source: John M. Campbell, James D. Currie, and Narad
+Rampersad, "Reduced Complexities for Sequences Over Finite
+Alphabets", Lemma 4. -/
+public theorem redWord_length_alternating_even (n : ℕ)
+    (w : Fin (2 * n + 1) → Bool)
+    (h : ∀ i : Fin n,
+      w ⟨2 * i.val, by omega⟩ ≠ w ⟨2 * (i.val + 1), by omega⟩) :
+    (redWord (List.ofFn w)).length = n + 1 := by
+  induction n with
+  | zero => simp only [List.ofFn_succ, List.ofFn_zero, redWord, List.length_cons, List.length_nil]
+  | succ n ih =>
+    let v : Fin (2 * n + 1) → Bool := fun i => w i.succ.succ
+    have hv : ∀ i : Fin n,
+        v ⟨2 * i.val, by omega⟩ ≠ v ⟨2 * (i.val + 1), by omega⟩ :=
+      fun i => h i.succ
+    have hfirst : v 0 = !(w 0) := Bool.eq_not_of_ne (h 0).symm
+    rw [List.ofFn_succ, List.ofFn_succ]
+    change (redWord (w 0 :: w (Fin.succ 0) :: List.ofFn v)).length = _
+    rw [List.ofFn_succ (f := v), redWord_skip_middle _ _ _ _ hfirst, ← List.ofFn_succ (f := v),
+      List.length_cons, ih v hv]
+
 namespace rhoRed_paperfolding_two_mul
 
 private theorem paperfoldingSeq_even (j : ℕ) :
@@ -53,12 +88,6 @@ private theorem redWord_cons_iterate (a b : Bool) (w : List Bool) (k : ℕ)
     redWord (a :: b :: w) =
       List.iterate Bool.not a (k + (decide (a ≠ b)).toNat) := by
   cases a <;> cases b <;> simp [redWord, h]
-
--- The middle letter agrees with one of its neighbors.
-private theorem redWord_skip_middle (a b c : Bool) (w : List Bool) (h : c = !a) :
-    redWord (a :: b :: c :: w) = a :: redWord (c :: w) := by
-  subst c
-  cases a <;> cases b <;> simp [redWord]
 
 private theorem red_factor_one (i : ℕ) :
     redWord (factorList paperfoldingSeq 1 i) = List.iterate Bool.not (paperfoldingSeq i) 1 := by

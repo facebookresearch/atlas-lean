@@ -293,8 +293,6 @@ theorem tailWeight_mem_Icc {k : ℕ} {μ : Fin k → ℝ} (hμ : ∀ i, μ i ∈
         rw [Fintype.sum_bool]
         first
           | show μ i + (1 - μ i) = 1; ring
-          | show (1 - μ i) + μ i = 1; ring
-          | simp
       show (∑ x : Fin k → Bool, ∏ i, (fun i (c : Bool) => if c then μ i else 1 - μ i) i (x i)) = 1
       rw [← h]
       simp only [hper, Finset.prod_const_one]

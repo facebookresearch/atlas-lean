@@ -1,11 +1,11 @@
 # Frame theorem for nonterminating runs of memory-safe programs
 
-**Theorem (Frame Loop).** In the [memory-safe language](block-structured-memory-safe-language.md), if $[\![c]\!](s_1) = \bot$, $\mathrm{vars}(c) \subseteq \mathrm{vars}(s_1)$ and
+**Theorem (Frame Loop).** In the [memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md), if $[\![c]\!](s_1) = \bot$, $\mathrm{vars}(c) \subseteq \mathrm{vars}(s_1)$ and
 $\mathrm{blocks}(s_1) \cap \mathrm{blocks}(s_2) = \emptyset$, then $[\![c]\!](s_1 \cup s_2) = \bot$: extending the initial state cannot make a diverging program terminate.
 
 ## Depends on
 
-- [A memory-safe language with block identifiers](block-structured-memory-safe-language.md)
+- [Syntax and semantics of the memory-safe language](syntax-and-semantics-of-the-memory-safe-language.md)
 
 ## Sources
 

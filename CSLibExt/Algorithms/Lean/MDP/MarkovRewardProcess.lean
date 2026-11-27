@@ -209,6 +209,47 @@ theorem tendsto_mrpValue (c : S → ℝ) :
 
 end MRP
 
+/-- The perturbation identity for Markov reward processes: `V_Q - V_P` is the value, in the chain
+`Q`, of the reward `s ↦ γ ∑ s', (Q - P)(s, s') V_P(s')`. -/
+private theorem mrpValue_sub_mrpValue {P Q : Matrix S S ℝ} (hP : P ∈ Matrix.rowStochastic ℝ S)
+    (hQ : Q ∈ Matrix.rowStochastic ℝ S) {γ : ℝ} (hγ0 : 0 ≤ γ) (hγ1 : γ < 1) (c : S → ℝ) :
+    mrpValue Q hQ hγ0 hγ1 c - mrpValue P hP hγ0 hγ1 c =
+      mrpValue Q hQ hγ0 hγ1
+        (fun s => γ * ∑ s', (Q s s' - P s s') * mrpValue P hP hγ0 hγ1 c s') := by
+  refine eq_mrpValue hQ hγ0 hγ1 fun s => ?_
+  have eQ := mrpValue_eq hQ hγ0 hγ1 c s
+  have eP := mrpValue_eq hP hγ0 hγ1 c s
+  simp only [Pi.sub_apply, mul_sub, sub_mul, Finset.sum_sub_distrib]
+  linear_combination eQ - eP
+
+/-- The value of a Markov reward process depends continuously on its transition matrix. -/
+theorem tendsto_mrpValue_of_tendsto {ι : Type*} {l : Filter ι} {P : ι → Matrix S S ℝ}
+    (hP : ∀ i, P i ∈ Matrix.rowStochastic ℝ S) {P₀ : Matrix S S ℝ}
+    (hP₀ : P₀ ∈ Matrix.rowStochastic ℝ S) {γ : ℝ} (hγ0 : 0 ≤ γ) (hγ1 : γ < 1)
+    (h : ∀ s s', Tendsto (fun i => P i s s') l (𝓝 (P₀ s s'))) (c : S → ℝ) (s₀ : S) :
+    Tendsto (fun i => mrpValue (P i) (hP i) hγ0 hγ1 c s₀) l
+      (𝓝 (mrpValue P₀ hP₀ hγ0 hγ1 c s₀)) := by
+  set V := mrpValue P₀ hP₀ hγ0 hγ1 c
+  -- `E i` bounds the reward of the perturbation identity in every state
+  set E : ι → ℝ := fun i => ∑ s, |γ * ∑ s', (P i s s' - P₀ s s') * V s'|
+  have hE : Tendsto E l (𝓝 0) := by
+    have : Tendsto E l (𝓝 (∑ s : S, |γ * ∑ s' : S, (P₀ s s' - P₀ s s') * V s'|)) := by
+      refine tendsto_finsetSum _ fun s _ => ?_
+      refine ((tendsto_finsetSum _ fun s' _ => ?_).const_mul γ).abs
+      exact ((h s s').sub tendsto_const_nhds).mul_const _
+    simpa using this
+  have hle : ∀ i, ‖mrpValue (P i) (hP i) hγ0 hγ1 c s₀ - V s₀‖ ≤ E i / (1 - γ) := by
+    intro i
+    have hb : ∀ s, |γ * ∑ s', (P i s s' - P₀ s s') * V s'| ≤ E i := fun s =>
+      Finset.single_le_sum (f := fun s => |γ * ∑ s', (P i s s' - P₀ s s') * V s'|)
+        (fun _ _ => abs_nonneg _) (Finset.mem_univ s)
+    have := abs_mrpValue_le (hP i) hγ0 hγ1 hb s₀
+    rw [← mrpValue_sub_mrpValue hP₀ (hP i) hγ0 hγ1 c, Pi.sub_apply] at this
+    simpa [Real.norm_eq_abs] using this
+  rw [tendsto_iff_norm_sub_tendsto_zero]
+  refine squeeze_zero (fun _ => norm_nonneg _) hle ?_
+  simpa using hE.div_const (1 - γ)
+
 /-! ## Discounted state visitation -/
 
 /-- The discounted state visitation of the Markov chain `P` from `s₀`:

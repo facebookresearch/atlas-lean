@@ -10,6 +10,15 @@ module
 
 public import MathlibExt.NumberTheory.LucasSequence
 
+/-!
+# A Lucas–Fibonacci identity for base-phi expansions
+
+This file proves $F_n + 3F_{n+1} = L_{n+2}$ for every natural number $n$, using
+`lucasNumber_add_one_eq_fib_add_fib` and the Fibonacci recurrence. This is Lemma 9 of
+F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24 (2024), Article A24,
+where the identity counts integers in certain intervals of base-phi expansions.
+-/
+
 namespace MetaMathlibExt
 
 /-- **Lucas numbers from Fibonacci numbers.** For every natural number $n$,
