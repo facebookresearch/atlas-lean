@@ -5,3 +5,4 @@ Magmas, semigroups and monoids and their morphisms: units and invertible element
 - [Commutative binary operation](commutative-binary-operation.md)
 - [Abelian group of additive homomorphisms into an abelian group](hom-group-abelian.md)
 - [Multiplication-preserving maps and group homomorphisms](group-homomorphism.md)
+- [Unit: an element with a two-sided inverse](ring-unit.md)

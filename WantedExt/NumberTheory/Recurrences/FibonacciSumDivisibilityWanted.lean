@@ -30,27 +30,14 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Topology.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibility
+public import MathlibExt.NumberTheory.Recurrences.OddFibonacciSumDivisibility
+public import MathlibExt.NumberTheory.Recurrences.PisanoPeriodMinRatio
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted
-
-/-- **The minimum of $\pi(n)/n$ over $1 \le n < N$ tends to zero.** Let $\pi(n)$ denote the Pisano
-period of $n$. As $N \to \infty$, the minimum of the real numbers $\pi(n)/n$ over the integers
-$1 \le n \le N - 1$ (defined for $N \ge 2$) tends to $0$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Corollary 1. -/
-theorem_wanted tendsto_iInf_pisanoPeriod_div_atTop
-    :
-    Filter.Tendsto
-      (fun N : ℕ =>
-        ⨅ n : {n : ℕ // n ∈ Finset.Icc 1 (N - 1)},
-          (pisanoPeriod n.1 : ℝ) / n.1)
-      Filter.atTop (nhds 0)
 
 /-- **Sum of the first $p$ Fibonacci numbers modulo a prime $p$.** Let $p > 5$ be a prime, let
 $F_i$ denote the $i$-th Fibonacci number, with $F_1 = F_2 = 1$, and let
@@ -83,16 +70,5 @@ theorem_wanted fib_two_mul_prime_odd_and_fib_fib_add_two_mod
     (hn : n = 2 * p ∨ n = 4 * p) :
     Nat.fib n % 2 = 1 ∧
       Nat.fib (Nat.fib n + 2) % Nat.fib n = 1
-
-/-- **Infinitely many odd $k$ divide the sum of the first $k$ Fibonacci numbers.** Let $F_i$ denote
-the $i$-th Fibonacci number, with $F_1 = F_2 = 1$. There are infinitely many odd positive integers
-$k$ such that $k$ divides $F_1 + F_2 + \dots + F_k$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Corollary 2. -/
-theorem_wanted infinite_setOf_odd_dvd_sum_fib
-    :
-    {k : ℕ | Odd k ∧ k ∣ (∑ i ∈ Finset.Icc 1 k, Nat.fib i)}.Infinite
 
 end MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted
