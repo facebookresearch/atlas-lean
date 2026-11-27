@@ -14,6 +14,7 @@ These are the first finitely presented groups with unsolvable generic equality p
 - [Recursively presented group](../../orderable-groups/word-problem-for-orderable-groups/is-recursively-presented.md)
 - [Amenable group](../../geometric-group-theory/amenable-groups/is-amenable.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

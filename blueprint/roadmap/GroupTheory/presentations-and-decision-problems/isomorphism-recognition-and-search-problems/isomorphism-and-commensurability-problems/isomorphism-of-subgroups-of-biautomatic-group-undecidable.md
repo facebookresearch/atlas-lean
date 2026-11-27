@@ -1,6 +1,6 @@
 # Isomorphism of finitely presented subgroups of some biautomatic CAT(0) group is undecidable
 
-There is a compact non-positively curved cubical complex with biautomatic fundamental group $G$ and a recursive family of finitely presented subgroups $H_n \subseteq G$ such that no algorithm decides whether $H_n$ is isomorphic to $H_1$.
+There is a non-positively curved $4$-dimensional cubical complex with biautomatic fundamental group $G$ and a recursive family of finitely presented subgroups $H_n \subseteq G$ such that no algorithm decides whether $H_n$ is isomorphic to $H_1$.
 
 A finitely generated group is *biautomatic* if it admits a biautomatic structure in the sense of Epstein, Cannon, Holt, Levy, Paterson and Thurston; fundamental groups of compact non-positively curved cubical complexes and hyperbolic groups are examples.
 
@@ -13,6 +13,7 @@ Conventions: the subgroups are given by explicit finite presentations and explic
 - [Word-hyperbolic groups](../../../geometric-group-theory/hyperbolic-groups/is-hyperbolic.md)
 - [Automatic group](../../../free-groups/automorphisms-of-free-groups/automaticity-of-automorphism-groups-of-free-grou/is-automatic-group.md)
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

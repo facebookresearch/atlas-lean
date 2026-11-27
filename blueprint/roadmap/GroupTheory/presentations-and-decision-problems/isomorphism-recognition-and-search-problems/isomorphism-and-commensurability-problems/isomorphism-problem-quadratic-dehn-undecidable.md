@@ -9,6 +9,7 @@ By contrast, the isomorphism problem is solvable for hyperbolic groups (Sela; Da
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

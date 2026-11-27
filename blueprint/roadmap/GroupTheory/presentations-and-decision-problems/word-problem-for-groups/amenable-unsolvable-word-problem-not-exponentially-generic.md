@@ -11,6 +11,7 @@ The source poses as an open problem the construction of a finitely presented gro
 - [Solvable word problem](word-problem-solvable.md)
 - [Group](../../group-basics/group.md)
 - [Amenable group (Følner condition)](../../geometric-group-theory/amenable-groups/is-amenable.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

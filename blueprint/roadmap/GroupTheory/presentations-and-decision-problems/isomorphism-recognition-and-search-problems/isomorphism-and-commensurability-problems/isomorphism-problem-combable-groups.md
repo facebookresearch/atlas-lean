@@ -9,6 +9,7 @@ The groups constructed are neither bicombable nor automatic; for those classes t
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

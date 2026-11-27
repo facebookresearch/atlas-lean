@@ -9,7 +9,7 @@ There is a critical exponent $n_0$ such that the following holds for every odd i
 1. $G_+$ belongs to $\mathcal{P}$, and
 2. no group of exponent $n$ containing $G_-$ as a subgroup belongs to $\mathcal{P}$.
 
-Then no algorithm takes as input a finite presentation relative to $\mathfrak{B}_n$ and decides whether the group it defines belongs to $\mathcal{P}$ (the theorem in Section 2.3 of the source, also stated in the introduction). In particular, for such $n$, being trivial, finite, cyclic, abelian, nilpotent, solvable or amenable is undecidable from finite presentations relative to $\mathfrak{B}_n$.
+Then no algorithm takes as input a finite presentation relative to $\mathfrak{B}_n$ and decides whether the group it defines belongs to $\mathcal{P}$ (Theorem 2.9 of the source, stated in the introduction as Theorem 1.2). In particular, for such $n$, being trivial, finite, cyclic, abelian, nilpotent, solvable or amenable is undecidable from finite presentations relative to $\mathfrak{B}_n$ (Corollary 2.10, stated in the introduction as Corollary 1.3).
 
 ## Depends on
 
@@ -17,6 +17,7 @@ Then no algorithm takes as input a finite presentation relative to $\mathfrak{B}
 - [Group](../../group-basics/group.md)
 - [Varieties of groups](../../varieties-and-equations/axiomatizable-classes-of-groups/is-variety.md)
 - [Free Burnside group](../free-burnside-groups/free-burnside-group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -28,4 +29,4 @@ The proof follows the Adian–Rabin scheme inside $\mathfrak{B}_n$. Kharlampovic
 
 ## Sources
 
-- R. Coulon and D. Gruber, "Small cancellation theory over Burnside groups", Advances in Mathematics 353 (2019), 722–775, https://doi.org/10.1016/j.aim.2019.05.029; arXiv:1705.09651v3 (the analogue of the Adian–Rabin theorem stated in the introduction and proved in Section 2.3, "Decision problems and Rips' construction", of arXiv:1705.09651v3, with its corollary listing trivial, finite, cyclic, abelian, nilpotent, solvable and amenable).
+- R. Coulon and D. Gruber, "Small cancellation theory over Burnside groups", Advances in Mathematics 353 (2019), 722–775, https://doi.org/10.1016/j.aim.2019.05.029; arXiv:1705.09651v3 (Theorem 2.9 and Corollary 2.10 in Section 2.3, "Decision problems and Rips' construction", stated in the introduction as Theorem 1.2 and Corollary 1.3, and Theorem 2.8 used in the proof, of arXiv:1705.09651v3).

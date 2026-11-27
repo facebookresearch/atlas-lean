@@ -11,6 +11,7 @@ The groups $F$, $T$, $V$ of Thompson are $F(1, \langle 2 \rangle, \mathbb{Z}[1/2
 - [Thompson's group $F$ by its standard presentation](thompson-f.md)
 - [Group](../../../group-basics/group.md)
 - [Complete theory of a first-order structure](../../../../Logic/first-order-logic/theory-of-structure.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

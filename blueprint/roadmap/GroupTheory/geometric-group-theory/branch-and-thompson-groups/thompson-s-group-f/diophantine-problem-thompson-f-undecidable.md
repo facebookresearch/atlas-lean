@@ -12,6 +12,7 @@ By contrast, $F$ has decidable conjugacy problem, so $F$ is a group with decidab
 
 - [Thompson's group F by its standard presentation](thompson-f.md)
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

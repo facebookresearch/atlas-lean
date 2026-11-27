@@ -11,6 +11,7 @@ Whether some algorithm outputs a non-trivial word of unbounded length from every
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

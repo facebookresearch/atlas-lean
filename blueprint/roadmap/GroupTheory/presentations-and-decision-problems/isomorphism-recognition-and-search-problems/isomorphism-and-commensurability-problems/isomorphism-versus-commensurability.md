@@ -13,6 +13,8 @@ Within the class of all finite presentations, both problems are unsolvable, as a
 
 - [Group](../../../group-basics/group.md)
 - [Solvable word problem](../../word-problem-for-groups/word-problem-solvable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

@@ -10,6 +10,7 @@ The source also proves that every HNN extension of a stackable group is stackabl
 
 - [Solvable word problem](word-problem-solvable.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

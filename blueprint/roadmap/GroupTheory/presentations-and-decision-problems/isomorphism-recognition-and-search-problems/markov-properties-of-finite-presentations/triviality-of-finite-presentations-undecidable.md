@@ -9,6 +9,7 @@ Since triviality is the special case of isomorphism in which one presentation is
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

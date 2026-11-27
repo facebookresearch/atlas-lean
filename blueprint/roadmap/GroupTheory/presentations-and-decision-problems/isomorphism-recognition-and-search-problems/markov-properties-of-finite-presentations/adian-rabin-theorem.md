@@ -14,6 +14,7 @@ Conventions: the input is a finite presentation $\langle x_1, \dots, x_n \mid r_
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -25,5 +26,5 @@ Fix $G_1$ and $G_2$ as in the definition, and a finitely presented group $U$ wit
 
 ## Sources
 
-- Bjorn Poonen, *Undecidable problems: a sampler*, in: Interpreting Gödel: Critical Essays (J. Kennedy, ed.), Cambridge University Press, 2014, pp. 211–241, https://doi.org/10.1017/CBO9780511756306.015, read in the copy arXiv:1204.0299v2, where the definition of a Markov property and the statement are in its subsection "Properties of groups", the statement being Theorem 6.2 there.
+- Bjorn Poonen, *Undecidable problems: a sampler*, in: Interpreting Gödel: Critical Essays (J. Kennedy, ed.), Cambridge University Press, 2014, pp. 211–241, https://doi.org/10.1017/CBO9780511756306.015, read in the copy arXiv:1204.0299v2, where the definition of a Markov property and the statement are in its Section 6.4 ("Properties of groups"), the statement being Theorem 6.2 there.
 - Michael O. Rabin, *Recursive unsolvability of group theoretic problems*, Ann. of Math. (2) 67 (1958), no. 1, 172–194, https://doi.org/10.2307/1969933, cited beside the survey read above; Adian's independent proofs appeared in 1955–1957 in Russian.

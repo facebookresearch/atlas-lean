@@ -7,6 +7,8 @@ By Theorem 6.8 of the source, there exists a finitely presented group $G$ such t
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -14,8 +16,8 @@ By Theorem 6.8 of the source, there exists a finitely presented group $G$ such t
 
 ## Expansion
 
-Let $\mathrm{TorOrd}(G)$ be the set of orders $n \ge 2$ of non-trivial torsion elements of $G$. Take a recursively enumerable non-recursive set $W$ and the recursive presentation $\langle x_0, x_1, \dots \mid x_i^{p_i} = 1 \ (i \ge 0),\ x_j = 1 \ (j \in W) \rangle$, with $p_i$ the $i$-th prime; its torsion orders are the primes $p_j$ with $j \notin W$. Embeddings into a two-generator recursively presented group and then, by Higman's embedding theorem, into a finitely presented group $Q$, all built from free products with amalgamation and HNN extensions, preserve the set of torsion orders (Lemma 6.11). Since $\langle t \mid t^m \rangle$ embeds in $Q$ exactly when $m \in \mathrm{TorOrd}(Q)$, an enumeration of the finite presentations embedding in $Q$ would enumerate the complement of $W$ in the indices.
+Let $\mathrm{TorOrd}(G)$ be the set of orders $n \ge 2$ of non-trivial torsion elements of $G$. Take a recursively enumerable non-recursive set $W$ and the recursive presentation $\langle x_0, x_1, \dots \mid x_i^{p_i} = 1 \ (i \ge 0),\ x_j = 1 \ (j \in W) \rangle$, with $p_i$ the $i$-th prime; its torsion orders are the primes $p_j$ with $j \notin W$. Embeddings into a two-generator recursively presented group and then, by Higman's embedding theorem, into a finitely presented group $Q$, all built from free products with amalgamation and HNN extensions, preserve the set of torsion orders (Lemma 6.9 and Theorem 6.10, with Theorem 6.2); this gives a finite presentation $Q$ whose torsion orders are one-one equivalent to the complement of $W$ (Lemma 6.11). Since $\langle t \mid t^m \rangle$ embeds in $Q$ exactly when $m \in \mathrm{TorOrd}(Q)$, an enumeration of the finite presentations embedding in $Q$ would enumerate the complement of $W$ in the indices.
 
 ## Sources
 
-- M. Chiodo, "Finding non-trivial elements and splittings in groups", Journal of Algebra 331 (2011), no. 1, 271–284, https://doi.org/10.1016/j.jalgebra.2010.12.013; arXiv:1002.2786v3 (Lemma 6.11 and Theorem 6.8 of arXiv:1002.2786v3).
+- M. Chiodo, "Finding non-trivial elements and splittings in groups", Journal of Algebra 331 (2011), no. 1, 271–284, https://doi.org/10.1016/j.jalgebra.2010.12.013; arXiv:1002.2786v3 (Theorem 6.2, Theorem 6.8, Lemma 6.9, Theorem 6.10 and Lemma 6.11 of arXiv:1002.2786v3).

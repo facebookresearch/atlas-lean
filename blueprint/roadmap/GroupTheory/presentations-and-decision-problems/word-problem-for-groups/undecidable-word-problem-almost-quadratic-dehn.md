@@ -10,6 +10,7 @@ By Theorem 1.1 of the source, there exists a finitely presented group $G$ with u
 
 - [Solvable word problem](word-problem-solvable.md)
 - [Group](../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -17,8 +18,8 @@ By Theorem 1.1 of the source, there exists a finitely presented group $G$ with u
 
 ## Expansion
 
-A finitely presented group has undecidable word problem exactly when its Dehn function is not bounded by a recursive function, so the Dehn function of $G$ exceeds every recursive function infinitely often while staying below $Cb^2$ on $B$. The set $B$ cannot be recursively enumerable, and contains no infinite recursively enumerable subset: an enumeration of an infinite part of $B$ would bound the area of diagrams and solve the word problem. Almost quadratic is the smallest possible growth here, since a Dehn function that is $o(n^2)$ on an infinite set forces the group to be hyperbolic, with linear Dehn function. The construction uses $S$-machines that accept a very sparse set of word lengths, built in Sapir's appendix; a variant gives a finitely presented multiple HNN extension of a free group with undecidable conjugacy problem whose Dehn function is below $Cn^2$ on an infinite set and below $Cn^3$ everywhere (Theorem 1.3). As a corollary, $G$ has both simply connected and non-simply connected asymptotic cones.
+A finitely presented group has undecidable word problem exactly when its Dehn function is not bounded by a recursive function, so the Dehn function of $G$ exceeds every recursive function infinitely often while staying below $Cb^2$ on $B$. The set $B$ cannot be recursively enumerable, and contains no infinite recursively enumerable subset: an enumeration of an infinite part of $B$ would bound the area of diagrams and solve the word problem. Almost quadratic is the smallest possible growth here, since a Dehn function that is $o(n^2)$ on an infinite set forces the group to be hyperbolic, with linear Dehn function. The construction uses $S$-machines simulating a Turing machine that recognizes a recursively enumerable, non-recursive set whose good lengths form a very sparse immune set, the machine of Sapir's appendix (Theorem 14.1); a variant gives a finitely presented multiple HNN extension of a free group with undecidable conjugacy problem whose Dehn function is below $Cn^2$ on an infinite set and below $Cn^3$ everywhere (Theorem 1.3). As a corollary, $G$ has both simply connected and non-simply connected asymptotic cones (Corollary 1.2).
 
 ## Sources
 
-- A. Yu. Olshanskii, with an appendix by M. V. Sapir, "Groups with undecidable word problem and almost quadratic Dehn function", Journal of Topology 5 (2012), no. 4, 785–886, https://doi.org/10.1112/jtopol/jts020; arXiv:1104.1476v1 (Theorem 1.1, Theorem 1.3 and the appendix of arXiv:1104.1476v1).
+- A. Yu. Olshanskii, with an appendix by M. V. Sapir, "Groups with undecidable word problem and almost quadratic Dehn function", Journal of Topology 5 (2012), no. 4, 785–886, https://doi.org/10.1112/jtopol/jts020; arXiv:1104.1476v1 (Theorem 1.1, Corollary 1.2, Theorem 1.3 and Theorem 14.1 of the appendix, of arXiv:1104.1476v1).
