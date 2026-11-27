@@ -17,6 +17,7 @@ with constant update time.
 - [Minimizations and cores of conjunctive queries](../../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 - [The online matrix-vector multiplication conjecture](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
 - [The 3SUM, APSP and Orthogonal Vectors hypotheses](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-3sum-apsp-and-orthogonal-vectors-hypotheses.md)
+- [Enumeration with linear preprocessing and constant delay](enumeration-with-linear-preprocessing-and-constant-delay.md)
 
 ## Proof depends on
 

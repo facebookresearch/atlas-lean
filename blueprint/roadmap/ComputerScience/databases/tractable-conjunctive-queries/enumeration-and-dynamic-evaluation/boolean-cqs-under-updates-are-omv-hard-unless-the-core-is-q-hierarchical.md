@@ -15,6 +15,7 @@ q-hierarchical, the query is answered in constant time after linear preprocessin
 - [Q-hierarchical conjunctive queries](q-hierarchical-conjunctive-queries.md)
 - [Minimizations and cores of conjunctive queries](../../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 - [The online matrix-vector multiplication conjecture](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
+- [Enumeration with linear preprocessing and constant delay](enumeration-with-linear-preprocessing-and-constant-delay.md)
 
 ## Proof depends on
 
