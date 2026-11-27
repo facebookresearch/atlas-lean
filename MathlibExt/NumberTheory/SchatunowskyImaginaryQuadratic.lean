@@ -30,7 +30,11 @@ import Mathlib.Tactic.Ring
 The prime norm $N(\pi_n)$, the primorial norm $N(\pi_n\#)$ and the Schatunowsky set
 $Q_\ell(K)$ of a number field, and the norm bound and finiteness of $Q_\ell(K)$ for an
 imaginary quadratic field of class number one when the prime norm powers eventually fall
-below the primorial norms.
+below the primorial norms. Large elements of $Q_\ell(K)$ lie in every small nonzero prime ideal
+(`mem_prime_of_mem_quadSchatunowskySet`), and under the same hypotheses $Q_\ell(K)$ is the union,
+over $1 \le n \le n_0$, of the elements with
+$N(\pi_{n-1})^{\ell+1} < N(\alpha) \le N(\pi_n)^{\ell+1}$ that lie in every nonzero prime ideal
+of norm at most $N(\pi_{n-1})$ (`quadSchatunowskySet_eq_iUnion`).
 -/
 
 open NumberField
@@ -423,5 +427,191 @@ theorem quadSchatunowskySet_norm_bound_and_finite {K : Type*} [Field K]
       (K := K) (quadPrimeNorm K n₀ ^ (ℓ + 1))) (fun α hα => ?_)
   by_contra hle
   exact hbound α (Nat.lt_of_not_le hle) hα
+
+-- The degree and total-complexity hypotheses belong to the source statement; the proof uses
+-- only class number one.
+set_option linter.unusedVariables false in
+/-- **Large elements of a Schatunowsky set lie in all small prime ideals.** Let $K$ be an
+imaginary quadratic field of class number $1$. For $\alpha \in \mathcal{O}_K$ let $N(\alpha)$ be
+the absolute norm of the ideal $(\alpha)$. Put $N(\pi_0) = 1$ and, for $n \ge 1$, let $N(\pi_n)$
+be the $n$-th smallest number that is the norm of a nonzero prime ideal of $\mathcal{O}_K$. For
+a natural number $\ell$, let $Q_\ell$ be the set of $\alpha \in \mathcal{O}_K$ with
+$N(\alpha) > 1$ such that every $\beta \in \mathcal{O}_K$ coprime to $\alpha$ with
+$1 < N(\beta) < N(\alpha)$ has at most $\ell$ prime ideal factors, counted with multiplicity.
+For natural numbers $\ell$ and $n$, if $\alpha \in Q_\ell$ and $N(\pi_n)^{\ell+1} < N(\alpha)$,
+then $\alpha$ lies in every nonzero prime ideal of $\mathcal{O}_K$ of norm at most $N(\pi_n)$.
+
+Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 4
+(`integers-2026-A110-lem-4`). -/
+theorem mem_prime_of_mem_quadSchatunowskySet {K : Type*} [Field K] [NumberField K]
+    (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n : ℕ)
+    (α : 𝓞 K) (hα : α ∈ quadSchatunowskySet K ℓ)
+    (hn : quadPrimeNorm K n ^ (ℓ + 1) < Ideal.absNorm (Ideal.span {α})) :
+    ∀ P : Ideal (𝓞 K), P.IsPrime → P ≠ ⊥ → Ideal.absNorm P ≤ quadPrimeNorm K n → α ∈ P :=
+  quadSchatunowskySet_norm_bound_and_finite.mem_prime_of_mem hK1 ℓ n α hα hn
+
+namespace quadSchatunowskySet_eq_iUnion
+
+/-- For `m ≠ 0`, the prime norm `quadPrimeNorm K m` is the `(m - 1)`-st element of the
+set of prime ideal norms. -/
+private theorem primeNorm_eq_nth_of_ne_zero {K : Type*} [Field K] [NumberField K] {m : ℕ}
+    (hm : m ≠ 0) : quadPrimeNorm K m =
+      Nat.nth (fun x => ∃ P : Ideal (𝓞 K), P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P = x) (m - 1) := by
+  simp [quadPrimeNorm, hm]
+
+/-- Every prime norm is at least one: the zeroth prime norm is one, and the others are
+absolute norms of nonzero prime ideals. -/
+private theorem primeNorm_ge_one {K : Type*} [Field K] [NumberField K] (m : ℕ) :
+    1 ≤ quadPrimeNorm K m := by
+  by_cases hm : m = 0
+  · rw [hm, quadPrimeNorm_zero]
+  · rw [primeNorm_eq_nth_of_ne_zero hm]
+    have hmem := Nat.nth_mem_of_infinite
+      (quadSchatunowskySet_norm_bound_and_finite.primeNormSet_infinite (K := K)) (m - 1)
+    obtain ⟨P, hPprime, hPne, hPeq⟩ := hmem
+    have hne : Ideal.absNorm P ≠ 0 := fun h => hPne (Ideal.absNorm_eq_zero_iff.mp h)
+    omega
+
+/-- A prime ideal norm above `quadPrimeNorm K (n - 1)` is at least `quadPrimeNorm K n`. -/
+private theorem primeNorm_le_of_mem_gt {K : Type*} [Field K] [NumberField K] (n : ℕ)
+    (hn : 1 ≤ n) (Q : Ideal (𝓞 K)) (hQprime : Q.IsPrime) (hQne : Q ≠ ⊥)
+    (hgt : quadPrimeNorm K (n - 1) < Ideal.absNorm Q) :
+    quadPrimeNorm K n ≤ Ideal.absNorm Q := by
+  have hQmem : ∃ P : Ideal (𝓞 K), P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P = Ideal.absNorm Q :=
+    ⟨Q, hQprime, hQne, rfl⟩
+  have hmem : Ideal.absNorm Q ∈ Set.ofPred
+      (fun x => ∃ P : Ideal (𝓞 K), P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P = x) := hQmem
+  obtain ⟨k, hk⟩ := Nat.subset_range_nth hmem
+  have hnth : quadPrimeNorm K n =
+      Nat.nth (fun x => ∃ P : Ideal (𝓞 K), P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P = x) (n - 1) :=
+    primeNorm_eq_nth_of_ne_zero (by omega)
+  rw [hnth, ← hk]
+  by_cases hle : n - 1 ≤ k
+  · exact (Nat.nth_strictMono
+      (quadSchatunowskySet_norm_bound_and_finite.primeNormSet_infinite (K := K))).monotone hle
+  · have hkn : k < n - 1 := not_le.mp hle
+    have hn2 : 2 ≤ n := by omega
+    have hkle : k ≤ n - 2 := by omega
+    have hmono := (Nat.nth_strictMono
+      (quadSchatunowskySet_norm_bound_and_finite.primeNormSet_infinite (K := K))).monotone hkle
+    have hsub : n - 1 - 1 = n - 2 := by omega
+    have heq : quadPrimeNorm K (n - 1) =
+        Nat.nth (fun x => ∃ P : Ideal (𝓞 K), P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P = x) (n - 2) := by
+      rw [primeNorm_eq_nth_of_ne_zero (by omega), hsub]
+    omega
+
+end quadSchatunowskySet_eq_iUnion
+
+/-- **Decomposition of the Schatunowsky set.** Let $K$ be an imaginary quadratic field (a totally
+complex number field of degree $2$ over $\mathbb{Q}$) with class number $1$ and ring of integers
+$\mathcal{O}_K$, and let $\ell$ and $n_0$ be natural numbers such that
+$N(\pi_{n+1})^{\ell+1} < N(\pi_n\#)$ for every $n \ge n_0$, where $N(\pi_n)$ and $N(\pi_n\#)$ are
+the prime and primorial norms of $K$. Write $N(\alpha)$ for the absolute norm of the principal
+ideal $(\alpha)$. Then the Schatunowsky set $Q_\ell(K)$ is the union, over $1 \le n \le n_0$, of
+the sets of $\alpha \in \mathcal{O}_K$ with
+$N(\pi_{n-1})^{\ell+1} < N(\alpha) \le N(\pi_n)^{\ell+1}$ that lie in every nonzero prime ideal
+of $\mathcal{O}_K$ of norm at most $N(\pi_{n-1})$.
+
+Since $K$ has class number $1$, lying in all these prime ideals means being divisible by the
+paper's primorial $\pi_{n-1}\#$. The element of largest norm in $Q_\ell(K)$ need not be divisible
+by $\pi_{n_0-1}\#$ unless $n_0$ is the least admissible value: for the Gaussian integers with
+$\ell = 1$, both $n_0 = 3$ and $n_0 = 4$ are admissible, but the element of largest norm,
+$5(1+i) = \pi_2\#$, is not divisible by $\pi_3\# = 15(1+i)$.
+
+Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 5
+(`integers-2026-A110-thm-5`). -/
+theorem quadSchatunowskySet_eq_iUnion {K : Type*} [Field K] [NumberField K]
+    (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n₀ : ℕ)
+    (hn₀ : ∀ n ≥ n₀, quadPrimeNorm K (n + 1) ^ (ℓ + 1) < quadPrimorialNorm K n) :
+    quadSchatunowskySet K ℓ = ⋃ n ∈ Finset.Icc 1 n₀,
+      {α : 𝓞 K | quadPrimeNorm K (n - 1) ^ (ℓ + 1) < Ideal.absNorm (Ideal.span {α}) ∧
+        Ideal.absNorm (Ideal.span {α}) ≤ quadPrimeNorm K n ^ (ℓ + 1) ∧
+        ∀ P : Ideal (𝓞 K), P.IsPrime → P ≠ ⊥ → Ideal.absNorm P ≤ quadPrimeNorm K (n - 1) →
+          α ∈ P} := by
+  classical
+  obtain ⟨hbound, -⟩ := quadSchatunowskySet_norm_bound_and_finite hK hK1 ℓ n₀ hn₀
+  ext α
+  constructor
+  · intro hα
+    have hN1 : 1 < Ideal.absNorm (Ideal.span {α}) := hα.1
+    have hle : Ideal.absNorm (Ideal.span {α}) ≤ quadPrimeNorm K n₀ ^ (ℓ + 1) := by
+      by_contra hlt
+      exact hbound α (not_le.mp hlt) hα
+    have hex : ∃ n, Ideal.absNorm (Ideal.span {α}) ≤ quadPrimeNorm K n ^ (ℓ + 1) := ⟨n₀, hle⟩
+    set n := Nat.find hex
+    have hspec : Ideal.absNorm (Ideal.span {α}) ≤ quadPrimeNorm K n ^ (ℓ + 1) :=
+      Nat.find_spec hex
+    have hn_le : n ≤ n₀ := Nat.find_min' hex hle
+    have hn_ne : n ≠ 0 := by
+      intro h0
+      rw [h0, quadPrimeNorm_zero, one_pow] at hspec
+      omega
+    have hn_ge : 1 ≤ n := Nat.one_le_iff_ne_zero.mpr hn_ne
+    have hlow : quadPrimeNorm K (n - 1) ^ (ℓ + 1) < Ideal.absNorm (Ideal.span {α}) := by
+      have hmin : ¬ Ideal.absNorm (Ideal.span {α}) ≤ quadPrimeNorm K (n - 1) ^ (ℓ + 1) :=
+        Nat.find_min hex (by omega)
+      exact not_le.mp hmin
+    have hsmall := mem_prime_of_mem_quadSchatunowskySet hK hK1 ℓ (n - 1) α hα hlow
+    have hnmem : n ∈ Finset.Icc 1 n₀ := Finset.mem_Icc.mpr ⟨hn_ge, hn_le⟩
+    exact Set.mem_iUnion₂_of_mem hnmem ⟨hlow, hspec, hsmall⟩
+  · intro hα
+    obtain ⟨n, hnmem, hαn⟩ := Set.mem_iUnion₂.mp hα
+    obtain ⟨hlow, hup, hsmall⟩ := hαn
+    rw [Finset.mem_Icc] at hnmem
+    obtain ⟨hn1, -⟩ := hnmem
+    have hN1 : 1 < Ideal.absNorm (Ideal.span {α}) :=
+      lt_of_le_of_lt (one_le_pow₀ (quadSchatunowskySet_eq_iUnion.primeNorm_ge_one (n - 1))) hlow
+    refine ⟨hN1, fun β hβ1 hβlt hcop => ?_⟩
+    by_contra hle
+    have hlt : ℓ < (UniqueFactorizationMonoid.normalizedFactors (Ideal.span {β})).card :=
+      not_le.mp hle
+    have hβne : Ideal.span ({β} : Set (𝓞 K)) ≠ ⊥ := by
+      intro hz
+      have h0 : Ideal.absNorm (Ideal.span {β}) = 0 := Ideal.absNorm_eq_zero_iff.mpr hz
+      omega
+    have hboundQ : ∀ Q ∈ UniqueFactorizationMonoid.normalizedFactors (Ideal.span {β}),
+        quadPrimeNorm K n ≤ Ideal.absNorm Q := by
+      intro Q hQmem
+      have hQprime : Q.IsPrime := Ideal.isPrime_of_prime
+        (UniqueFactorizationMonoid.prime_of_normalized_factor Q hQmem)
+      have hQne : Q ≠ ⊥ := UniqueFactorizationMonoid.ne_zero_of_mem_normalizedFactors hQmem
+      have hαnQ : α ∉ Q := by
+        intro hmem
+        have hdvd : Q ∣ Ideal.span {β} :=
+          UniqueFactorizationMonoid.dvd_of_mem_normalizedFactors hQmem
+        have hsup := (Ideal.sup_eq_top_iff_isCoprime α β).2 hcop
+        have hleQ : Ideal.span ({α} : Set (𝓞 K)) ⊔ Ideal.span ({β} : Set (𝓞 K)) ≤ Q :=
+          sup_le ((Ideal.span_singleton_le_iff_mem (I := Q)).mpr hmem)
+            (Ideal.dvd_iff_le.mp hdvd)
+        rw [hsup] at hleQ
+        exact hQprime.ne_top (eq_top_iff.mpr hleQ)
+      have hgt : quadPrimeNorm K (n - 1) < Ideal.absNorm Q := by
+        by_contra hle'
+        exact hαnQ (hsmall Q hQprime hQne (not_lt.mp hle'))
+      exact quadSchatunowskySet_eq_iUnion.primeNorm_le_of_mem_gt n hn1 Q hQprime hQne hgt
+    have h1 : quadPrimeNorm K n ^ (ℓ + 1) ≤
+        quadPrimeNorm K n ^ (UniqueFactorizationMonoid.normalizedFactors (Ideal.span {β})).card :=
+      pow_le_pow_right₀ (quadSchatunowskySet_eq_iUnion.primeNorm_ge_one n) (by omega)
+    have hprod : (UniqueFactorizationMonoid.normalizedFactors (Ideal.span {β})).prod =
+        Ideal.span {β} :=
+      Ideal.prod_normalizedFactors_eq_self hβne
+    have h2 : quadPrimeNorm K n ^ (UniqueFactorizationMonoid.normalizedFactors
+        (Ideal.span {β})).card ≤ Ideal.absNorm (Ideal.span {β}) := by
+      have hmap := map_multiset_prod Ideal.absNorm
+        (UniqueFactorizationMonoid.normalizedFactors (Ideal.span {β}))
+      rw [hprod] at hmap
+      rw [hmap]
+      have hcard : ((UniqueFactorizationMonoid.normalizedFactors (Ideal.span {β})).map
+          Ideal.absNorm).card
+          = (UniqueFactorizationMonoid.normalizedFactors (Ideal.span {β})).card :=
+        Multiset.card_map _ _
+      rw [← hcard]
+      exact Multiset.pow_card_le_prod (fun a ha => by
+        obtain ⟨Q, hQ, rfl⟩ := Multiset.mem_map.mp ha
+        exact hboundQ Q hQ)
+    omega
+
 
 end MetaMathlibExt

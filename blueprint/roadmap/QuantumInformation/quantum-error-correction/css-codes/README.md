@@ -16,6 +16,7 @@ The error-correction theorem is stated through the [Knill–Laflamme notion of c
 - [A phase flip shifts the CSS codeword](pauli-zero-mul-vec-codeword.md)
 - [A bit flip by a codeword of $C_1$ fixes the CSS codeword up to sign](pauli-mul-vec-codeword-of-mem.md)
 - [CSS codes correct $\lfloor (d - 1) / 2 \rfloor$ errors](is-correctable-css.md)
+- [Distance of a CSS code](distance-of-a-css-code.md)
 
 ## Related topics
 

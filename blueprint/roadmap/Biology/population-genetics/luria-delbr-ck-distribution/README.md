@@ -14,3 +14,4 @@
 - [Lea–Coulson generating function](has-sum-ld-pmf-mul-pow.md)
 - [Power form of the Lea–Coulson generating function](exp-lea-coulson-eq-rpow.md)
 - [Ma–Sandri–Sarkar recursion](ld-pmf-recursion.md)
+- [Kinetic derivation of the Lea–Coulson and Luria–Delbrück equations](kinetic-derivation-of-the-lea-coulson-and-luria-delbruck-equations.md)

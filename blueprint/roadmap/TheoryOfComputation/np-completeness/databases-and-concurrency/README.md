@@ -7,3 +7,5 @@ Relational database design and querying (keys, prime attributes, normal forms, c
 - [Databases and concurrency](databases-and-concurrency/README.md)
 - [Deadlock exposure in packet switching networks](deadlock-exposure-in-packet-switching-networks/README.md)
 - [Deadlock potential](deadlock-potential/README.md)
+- [k-anonymity](k-anonymity/README.md)
+- [Minimum cardinality key](minimum-cardinality-key/README.md)

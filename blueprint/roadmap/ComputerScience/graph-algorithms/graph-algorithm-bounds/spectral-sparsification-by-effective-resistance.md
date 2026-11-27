@@ -4,7 +4,7 @@ Let $G = (V, E, w)$ be a connected graph with $n \ge 2$ vertices and positive ed
 
 ## Depends on
 
-- [Spectral approximation of graphs](spectral-approximation-of-graphs.md)
+- [Spectral approximation of graphs](../../../GraphTheory/algebraic-graph-theory/part-02/spectral-sparsification/spectral-approximation-of-graphs.md)
 - [Effective resistance is a potential difference](../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/effective-resistance-eq-sub-of-laplacian.md)
 
 ## Proof depends on

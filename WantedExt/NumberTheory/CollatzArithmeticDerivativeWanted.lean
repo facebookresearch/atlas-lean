@@ -28,10 +28,14 @@ The statements already proved, such as the oddness of every positive `n` with
 `D(C(n)) = C(D(n))` and the prime gap bound for semiprime solutions, live in
 `MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, except
 `IsCompatibleSemiprimePair.mod_five`, which lives in
-`MathlibExt/NumberTheory/CollatzArithmeticDerivativeModFive.lean`, and
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeModFive.lean`,
 `IsCompatibleSemiprimePair.bounds`, which lives in
-`MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds.lean`; this module imports all
-three publicly.
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds.lean`,
+`arithmeticDerivative_bounds`, which lives in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeArithmeticDerivativeBounds.lean`, and
+`arithmeticDerivative_collatz_comm_prime_tetration_iff`, which lives in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativePrimeTetration.lean`; this module imports
+all five publicly.
 -/
 module
 
@@ -45,41 +49,13 @@ public import MathlibExt.NumberTheory.ArithmeticDerivative
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivative
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeModFive
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeBounds
+public import MathlibExt.NumberTheory.CompatibleSemiprimeReciprocals
+public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeArithmeticDerivativeBounds
+public import MathlibExt.NumberTheory.CollatzArithmeticDerivativePrimeTetration
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Bounds for the arithmetic derivative.** Let $n \ge 2$ be a natural number, let $p$ be the
-least prime factor of $n$, and let $\Omega(n)$ be the number of prime factors of $n$ counted with
-multiplicity. Then the arithmetic derivative $D(n)$ satisfies
-$$\Omega(n) \, n^{(\Omega(n) - 1)/\Omega(n)} \le D(n) \le \frac{n \log_p n}{p},$$
-and each of the two inequalities is an equality if and only if $n$ is a prime power.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Lemma 1
-(`jis-2025-25.1.8-lem-1`). -/
-public theorem_wanted arithmeticDerivative_bounds (n : ℕ) (hn : 2 ≤ n) :
-    let om : ℝ := n.primeFactorsList.length
-    let p : ℝ := n.minFac
-    let lower : ℝ := om * (n : ℝ) ^ ((om - 1) / om)
-    let upper : ℝ := n * Real.logb p n / p
-    lower ≤ arithmeticDerivative n ∧ (arithmeticDerivative n : ℝ) ≤ upper ∧
-      (lower = arithmeticDerivative n ↔ IsPrimePow n) ∧
-      ((arithmeticDerivative n : ℝ) = upper ↔ IsPrimePow n)
-
-/-- **Prime tetrations where the arithmetic derivative and the Collatz map commute.** Let $D$ be
-the arithmetic derivative and $C$ the accelerated Collatz map. For a prime $p$,
-$D(C(p^p)) = C(D(p^p))$ if and only if $C(p^p) = q^q$ for some prime $q$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 4 (`jis-2025-25.1.8-prop-4`). -/
-public theorem_wanted arithmeticDerivative_collatz_comm_prime_tetration_iff (p : ℕ)
-    (hp : p.Prime) :
-    arithmeticDerivative (collatzAccelerated (p ^ p)) =
-        collatzAccelerated (arithmeticDerivative (p ^ p)) ↔
-      ∃ q : ℕ, q.Prime ∧ collatzAccelerated (p ^ p) = q ^ q
 
 /-- **No special semiprime solves the derivative–Collatz equation.** Let $D$ be the arithmetic
 derivative and let $C$ be the accelerated Collatz map, $C(n) = n/2$ for even $n$ and
@@ -143,17 +119,8 @@ public theorem_wanted IsCompatibleSemiprimePair.mod_ten {p q r s : ℕ}
     ((p % 10 = 1 ∧ q % 10 = 9) ∨ (p % 10 = 9 ∧ q % 10 = 1)) ∧
       ((r % 10 = 1 ∧ s % 10 = 9) ∨ (r % 10 = 9 ∧ s % 10 = 1))
 
-/-- **Reciprocals of compatible semiprimes have a finite sum.** Call a natural number $n$ a
-compatible semiprime if $n = pq$ for primes $p, q$ for which there are primes $r, s$ with
-$2(r + s) = p + q$ and $2rs = 3pq + 1$. The sum of $1/n$ over all compatible semiprimes $n$
-converges.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Theorem 14 (`jis-2025-25.1.8-thm-14`). -/
-public theorem_wanted summable_inv_compatibleSemiprimes :
-    Summable (Set.indicator {n : ℕ | ∃ p q r s, IsCompatibleSemiprimePair p q r s ∧ n = p * q}
-      fun n => (1 : ℝ) / n)
+-- The reciprocal series is proved in
+-- `MathlibExt.NumberTheory.CompatibleSemiprimeReciprocals`, which this module publicly imports.
 
 end
 
