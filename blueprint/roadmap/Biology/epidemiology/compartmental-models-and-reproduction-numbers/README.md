@@ -8,7 +8,6 @@ Deterministic transmission models with age, stage, quarantine, masks, vaccinatio
 - [Contact-tracing quarantine model with asymptomatic carriers](contact-tracing-quarantine-model-with-asymptomatic-carriers/README.md)
 - [Environmental transmission models](environmental-transmission-models/README.md)
 - [Evolutionary epidemiology of pathogen life-history traits](evolutionary-epidemiology-of-pathogen-life-history-traits/README.md)
-- [Final size of age-of-infection epidemics](final-size-of-age-of-infection-epidemics/README.md)
 - [Final size relation for general stage durations](final-size-relation-for-general-stage-durations/README.md)
 - [Free-living inoculum transmission models](free-living-inoculum-transmission-models/README.md)
 - [Mask-structured epidemic models](mask-structured-epidemic-models/README.md)

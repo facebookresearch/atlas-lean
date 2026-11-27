@@ -20,8 +20,8 @@ Consequences:
 
 - $R_0$ is linear in $q$, so $q$ can be calibrated from a target $R_0$ once the contact structure is fixed: $q = R_0 / \rho(K|_{q=1})$.
 - With $\sigma_i \equiv \sigma$ and $D_j \equiv D$, $K$ is similar to $q\sigma D\, C$ (via the diagonal matrix $\mathrm{diag}(N_i)$), so $R_0 = q\,\sigma\, D\, \rho(C)$ with $C = (c_{ij})$.
-- If $K$ is irreducible (every age group can eventually infect every other), the Perron eigenvector of $K$ gives the age distribution of infections in the early exponential phase.
-- For the SEIR model with per-contact transmission rate $\tau$, latent rate $\nu$ and recovery rate $g$ (so $q\sigma_i = \tau$ and $D_j = 1/g$), $K_{ij} = (\tau/g)\, c_{ji}\, S_i/N_i$, independent of $\nu$. Since $R$ is linear in $\tau$ and in the contact matrix, the ratio of $R$ under two contact matrices (for example school term versus holidays) depends only on the contact data.
+- If $K$ is irreducible (every age group can eventually infect every other), the Perron eigenvector of $K$ gives the age distribution of infections per generation, and in the early exponential phase when all groups have the same infectious-period distribution (otherwise the calendar-time distribution is the Perron vector of the Laplace-transformed next-generation kernel at the growth rate).
+- For the SEIR model with per-contact transmission rate $\tau$, latent rate $\nu$ and recovery rate $g$ (so $q\sigma_i = \tau$ and $D_j = 1/g$), $K_{ij} = (\tau/g)\, c_{ji}\, S_i/N_i$, independent of $\nu$. Since $R$ is proportional to $\tau$ and homogeneous of degree one in the contact matrix (but not additive in it), the ratio of $R$ under two contact matrices (for example school term versus holidays) depends only on the contact matrices when $S_i/N_i$ is the same in both scenarios.
 
 ## Depends on
 
