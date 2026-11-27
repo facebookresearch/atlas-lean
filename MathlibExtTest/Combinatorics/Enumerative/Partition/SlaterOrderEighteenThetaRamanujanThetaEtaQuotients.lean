@@ -18,7 +18,7 @@ import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductDifferen
 # Tests for Ramanujan's eta-quotients
 
 Each of the seven identities is specialized to the nonreal point `Complex.I / 2`
-in the open unit disk.
+in the open unit disk. The identity for `f(q, q⁵)` is tested at that point and at zero.
 -/
 
 namespace MathlibExtTest.Combinatorics.Enumerative.Partition
@@ -54,6 +54,16 @@ example : qPochhammerInfRaw (-q) (q ^ 2) * (f₁ * f₄) = f₂ ^ 2 :=
 
 example : qPochhammerInfRaw q (q ^ 2) * f₂ = f₁ :=
   (ramanujanTheta_eta_quotients norm_half_I).2.2.2.2.2.2
+
+-- The identity includes the zero point.
+example : ramanujanThetaRaw 0 0 =
+    qPochhammerInfRaw 0 0 * ramanujanThetaRaw 0 0 := by
+  simpa using @ramanujanTheta_one_five 0 (by simp)
+
+-- A nonreal point on the open unit disk exercises the signed arguments.
+example : ramanujanThetaRaw q (q ^ 5) =
+    qPochhammerInfRaw (-q) (q ^ 2) * ramanujanThetaRaw (-q ^ 3) ((-q ^ 3) ^ 3) :=
+  ramanujanTheta_one_five norm_half_I
 
 end SlaterOrderEighteenThetaRamanujanThetaEtaQuotients
 end MathlibExtTest.Combinatorics.Enumerative.Partition
