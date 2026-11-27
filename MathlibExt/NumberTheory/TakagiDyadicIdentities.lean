@@ -258,6 +258,26 @@ public theorem treeNodes_nil :
     treeDNodes .nil = 0 ∧ treeSNodes .nil = 0 ∧ IsDivideConquerTree .nil :=
   ⟨rfl, rfl, trivial⟩
 
+/-- **$D$-nodes and $S$-nodes of a full binary tree.** Let $t$ be a full binary tree with $n$
+leaves and let $a$ be the number of $S$-nodes of $t$. Then the number of $D$-nodes of $t$ is
+$n - 1 - a$ (subtraction of natural numbers, truncated at $0$).
+
+Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
+Sequences 27 (2024), Article 24.2.7, Lemma 5 (`jis-2024-24.2.7-lem-5`). -/
+public theorem treeDNodes_eq_numLeaves_sub_one_sub_treeSNodes (t : BinaryTree Unit) :
+    treeDNodes t = t.numLeaves - 1 - treeSNodes t := by
+  have hcount : treeDNodes t + treeSNodes t + 1 = t.numLeaves := by
+    induction t with
+    | nil => rfl
+    | node u l r ihl ihr =>
+      rw [treeDNodes_node, treeSNodes_node, BinaryTree.numLeaves]
+      by_cases h : l.numLeaves = r.numLeaves
+      · simp only [ite_eq_left h]
+        omega
+      · simp only [ite_eq_right h]
+        omega
+  omega
+
 /-- **The divide-and-conquer condition at the root.** A full binary tree whose root has left
 subtree $L$ and right subtree $R$ is a divide-and-conquer tree if and only if the numbers of
 leaves of $L$ and $R$ differ by at most $1$ and both $L$ and $R$ are divide-and-conquer trees.

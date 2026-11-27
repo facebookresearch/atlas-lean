@@ -4,3 +4,4 @@ Gene-by-environment ($G \times E$) interaction estimates from linear regression 
 
 - [Sign-consistent interactions under monotone convex transformations](sign-consistent-interactions-under-monotone-convex-transformations.md)
 - [Opposite-sign interactions from endogenous threshold treatment](opposite-sign-interactions-from-endogenous-threshold-treatment.md)
+- [Admixture, interaction and expression scans](admixture-interaction-and-expression-scans/README.md)

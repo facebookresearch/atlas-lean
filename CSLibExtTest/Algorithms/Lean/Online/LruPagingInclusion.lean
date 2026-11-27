@@ -41,10 +41,11 @@ example : lruCache 0 [] repeatedRequests = [] ∧
 example : lruMisses 2 [] repeatedRequests ≤ lruMisses 0 [] repeatedRequests :=
   ((lru_inclusion repeatedRequests).2 (by decide : 0 ≤ 2)).2
 
-private def beladyRequests : List ℕ := [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5]
-
-example : policyMisses (fifoStep 3) [] beladyRequests = 9 ∧
-    policyMisses (fifoStep 4) [] beladyRequests = 10 := by
-  decide
+example :
+    let requests : List ℕ := [1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5]
+    (fifoPager ℕ 3).misses (fifoPager ℕ 3).init requests = 9 ∧
+      (fifoPager ℕ 4).misses (fifoPager ℕ 4).init requests = 10 := by
+  simp only [fifoPager_misses]
+  exact fifo_belady_anomaly
 
 end Cslib.Algorithms.Lean.Online.Paging
