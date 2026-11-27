@@ -7,6 +7,7 @@ Algorithms for quantum computers and their analysis: Fourier sampling with the D
 - [Lower bound for quantum search](lower-bound-for-quantum-search/README.md)
 - [Shor's order-finding algorithm](shor-s-order-finding-algorithm/README.md)
 - [Shor's reduction of factoring to order finding](shor-s-reduction-of-factoring-to-order-finding/README.md)
+- [Fourier transforms, block encodings and error budgets](fourier-transforms-block-encodings-and-error-budgets/README.md)
 
 - [Quantum query lower bounds](quantum-query-lower-bounds/README.md)
 - [Quantum phase estimation](quantum-phase-estimation.md)
@@ -30,4 +31,3 @@ Algorithms for quantum computers and their analysis: Fourier sampling with the D
 
 - [Quantum Information](../../QuantumInformation/README.md): states, channels, the quantum Fourier transform and error correction.
 - [Bounded-error quantum polynomial time (BQP)](../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/README.md): the complexity class of problems solved efficiently by quantum algorithms.
-- [Fourier transforms, block encodings and error budgets](fourier-transforms-block-encodings-and-error-budgets/README.md)

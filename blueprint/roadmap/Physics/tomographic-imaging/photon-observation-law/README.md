@@ -8,8 +8,6 @@
 
 - [Transmitted Poisson rate of a ray](transmitted-rate.md)
 - [Photon count law of a CT design](photon-law.md)
-- [Photon law as a product of Poisson laws](photon-law-eq.md)
-- [Transmitted rate as a real number](transmitted-rate-coe.md)
 - [Photon law identification](photon-law-agree-iff.md)
 - [Identification on an admissible set](photon-identify-iff.md)
 - [Rank deficiency defeats photon-law identification](photon-not-identify-of-kernel.md)

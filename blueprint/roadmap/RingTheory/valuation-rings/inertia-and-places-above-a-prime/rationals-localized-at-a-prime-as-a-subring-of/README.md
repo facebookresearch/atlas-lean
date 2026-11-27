@@ -3,7 +3,6 @@
 ## Rat
 
 - [Rationals localized at p](localized-at.md)
-- [Membership in the rationals localized at p](mem-localized-at.md)
 
 ## Is Discrete Valuation Ring
 

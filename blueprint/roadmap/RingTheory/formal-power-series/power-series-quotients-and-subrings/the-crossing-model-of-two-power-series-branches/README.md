@@ -10,6 +10,5 @@
 - [Quotient map onto the crossing model](mk.md)
 - [First branch coordinate of the crossing model](u.md)
 - [Second branch coordinate of the crossing model](v.md)
-- [Constants in the crossing model](const.md)
 - [Coefficient homomorphism into the crossing model](const-hom.md)
 - [The branch coordinates of the crossing model differ](u-ne-v.md)

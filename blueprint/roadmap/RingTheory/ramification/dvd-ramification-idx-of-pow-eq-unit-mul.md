@@ -1,7 +1,8 @@
 # Ramification index divisibility from a Kummer equation
 
-If an element of the fraction field satisfies `a ^ n = u * ϖ ^ m`, where `ϖ`
-is a uniformizer of a discrete valuation ring `O`, `u` is a unit of `O`, and
-`m` is coprime to the positive integer `n`, then `n` divides the
-ramification index of any nonzero prime of a Dedekind overring `R` lying
-over the maximal ideal of `O`.
+Let `O` be a discrete valuation ring with uniformizer `ϖ` and let `u` be a
+unit of `O`. Let `R` be a Dedekind domain with an `O`-algebra structure, `E`
+its fraction field, and `𝔓` a nonzero prime of `R` over the maximal ideal of
+`O`. If `a ∈ E` satisfies `a ^ n = u ϖ ^ m` in `E`, with `m ∈ ℤ` coprime to
+`n > 0`, then `n` divides the ramification index of `𝔓` over the maximal
+ideal of `O`.
