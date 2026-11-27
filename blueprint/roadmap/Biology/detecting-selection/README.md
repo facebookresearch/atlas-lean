@@ -14,5 +14,7 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Tajima's D](tajima-s-d/README.md)
 
 - [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)
+- [Codon-model likelihood ratio tests for positive selection](codon-model-tests-for-positive-selection/README.md)
+- [Latent factor mixed models](latent-factor-mixed-models/README.md)
 - [Genealogy-based inference of selection](genealogy-based-inference-of-selection/README.md)
 - [Rate of adaptive substitution from sweep scans](rate-of-adaptive-substitution-from-sweep-scans/README.md)

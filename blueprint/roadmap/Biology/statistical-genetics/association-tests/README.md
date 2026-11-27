@@ -13,6 +13,8 @@ Probability.
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
 - [Phenome-wide association scans](phenome-wide-association-scans/README.md)
+- [Multi-locus GWAS by screening and EM Bayesian LASSO](multi-locus-gwas-by-screening-and-em-bayesian-lasso/README.md)
+- [Phylogenetic association tests for microbial GWAS](phylogenetic-association-tests-for-microbial-gwas/README.md)
 - [FarmCPU: alternating fixed- and random-effect models for association testing](farmcpu-alternating-fixed-and-random-effect-models.md)
 - [Penalized quasi-likelihood fitting of a logistic mixed model with a sparse relationship matrix](penalized-quasi-likelihood-glmm-with-a-sparse-relationship-matrix.md)
 - [Beta approximation of permutation p-values in cis-QTL mapping](beta-approximation-of-permutation-p-values-in-cis-qtl-mapping.md)
