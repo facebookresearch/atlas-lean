@@ -10,15 +10,15 @@ module
 
 public import Mathlib.Algebra.Field.ZMod
 public import MathlibExt.FieldTheory.Finite.PermutationPolynomial
-import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.Data.Nat.Prime.Basic
+import MathlibExt.Algebra.ZModPermutationPolynomial
 import MathlibExt.FieldTheory.Finite.MonomialPermutationPolynomial
-import MathlibExt.FieldTheory.Finite.ShiftedPowerSumPermutationPolynomial
 
 /-!
 # Dilated power-sum permutation polynomials over prime fields
 
 The dilated power sum acts by a power map, the undilated power sum, and a nonzero scalar.
-The undilated sum induces the same function as the sum shifted by `p - 1`.
+The undilated sum is bijective by `bijective_sum_pow_mul_pow_zmod`.
 
 ## References
 
@@ -50,25 +50,19 @@ public theorem isPermutationPolynomial_sum_mul_pow_mul_X_pow_mul {p : ℕ}
     (∑ n ∈ Finset.Icc 1 k,
       C (((a * n : ℕ) : ZMod p) ^ t) * X ^ (a * n)).IsPermutationPolynomial := by
   have hprime : p.Prime := Fact.out
-  have hshift : 0 < p - 1 := Nat.sub_pos_of_lt hprime.one_lt
-  have hcop : (p - 1 + 1).Coprime (p - 1) := by
-    rw [Nat.coprime_self_add_left]
-    exact Nat.coprime_one_left _
-  have hbij : Function.Bijective
-      (fun x : ZMod p => ∑ n ∈ Icc 1 k, (n : ZMod p) ^ t * x ^ (n + (p - 1))) := by
-    simpa only [IsPermutationPolynomial, eval_finsetSum, eval_mul, eval_C, eval_pow, eval_X] using
-      isPermutationPolynomial_sum_pow_mul_X_pow_add hp hk ht hshift hcop hkcong hcases
-  have hremove (x : ZMod p) :
-      (∑ n ∈ Icc 1 k, (n : ZMod p) ^ t * x ^ (n + (p - 1))) =
-        ∑ n ∈ Icc 1 k, (n : ZMod p) ^ t * x ^ n := by
-    refine sum_congr rfl fun n hn => ?_
-    by_cases hx : x = 0
-    · have hn0 : 0 < n := (mem_Icc.mp hn).1
-      have hadd : n + (p - 1) ≠ 0 := by omega
-      rw [hx, zero_pow hadd, zero_pow hn0.ne']
-    · have hxpow : x ^ (p - 1) = 1 := by
-        simpa only [ZMod.card] using FiniteField.pow_card_sub_one_eq_one x hx
-      rw [pow_add, hxpow, mul_one]
+  have hpodd : p % 2 = 1 := Nat.odd_iff.mp (hprime.odd_of_ne_two hp)
+  have hmodulus : 1 < p * (p - 1) :=
+    hprime.one_lt.trans_le (Nat.le_mul_of_pos_right _ (Nat.sub_pos_of_lt hprime.one_lt))
+  have hkrem : k % (p * (p - 1)) = 1 := by
+    simpa only [Nat.ModEq, Nat.mod_eq_of_lt hmodulus] using hkcong
+  have hcases' : k % (p ^ 2) = 1 ∨ ¬(p - 1) ∣ t := by
+    refine hcases.symm.imp (fun hd => ?_) id
+    have hmod : 1 ≡ k [MOD p ^ 2] := Nat.modEq_of_dvd' hk hd
+    have hsq : 1 < p ^ 2 := Nat.one_lt_pow (by decide) hprime.one_lt
+    simpa only [Nat.ModEq, Nat.mod_eq_of_lt hsq] using hmod.symm
+  have hbij :=
+    MathlibExt.Algebra.PermutationPolynomialsWanted.bijective_sum_pow_mul_pow_zmod
+      p k t hprime hpodd hk ht hkrem hcases'
   have haBij : Function.Bijective (fun x : ZMod p => x ^ a) := by
     simpa only [IsPermutationPolynomial, eval_pow, eval_X] using
       (isPermutationPolynomial_X_pow_iff_coprime (K := ZMod p) ha).2
@@ -82,6 +76,6 @@ public theorem isPermutationPolynomial_sum_mul_pow_mul_X_pow_mul {p : ℕ}
     simp only [eval_finsetSum, eval_mul, eval_C, eval_pow, eval_X, Nat.cast_mul, mul_pow,
       pow_mul, mul_sum, mul_assoc]
   rw [IsPermutationPolynomial, funext heval]
-  simpa only [Function.comp_def, hremove] using hscale.comp (hbij.comp haBij)
+  exact hscale.comp (hbij.comp haBij)
 
 end MetaMathlibExt
