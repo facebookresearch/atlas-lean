@@ -5,6 +5,7 @@ The *art gallery problem* asks, for a simple polygon $P$ with integer vertex coo
 ## Depends on
 
 - [Chvátal's art gallery theorem](chvatal-s-art-gallery-theorem.md)
+- [The complexity class NP](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Expansion
 

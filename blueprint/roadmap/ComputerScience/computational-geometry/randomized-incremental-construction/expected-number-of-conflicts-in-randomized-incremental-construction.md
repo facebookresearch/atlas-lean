@@ -1,6 +1,6 @@
 # Expected number of conflicts in randomized incremental construction
 
-Let $S = (X, \Pi, D, K)$ be a configuration space of fixed dimension $d$ with $|X| = n$, and let $t_r$ be as in the previous theorem. A *conflict* is a pair $(\Delta, s)$ with $\Delta \in T_r$ for some step $r$ of the random insertion order and $s \in K(\Delta)$. The expected number of conflicts during the randomized incremental construction of $T(X)$ is
+Let $S = (X, \Pi, D, K)$ be a configuration space of fixed dimension $d$ with $|X| = n$, and let $t_r$ be the expected number of configurations active with respect to a uniformly random $r$-element subset of $X$. A *conflict* is a pair $(\Delta, s)$ with $\Delta \in T_r$ for some step $r$ of the random insertion order and $s \in K(\Delta)$. The expected number of conflicts during the randomized incremental construction of $T(X)$ is
 
 $$O\Big(n \sum_{r=1}^{n} \frac{t_r}{r^2}\Big).$$
 

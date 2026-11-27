@@ -5,10 +5,8 @@ Let $\pi = (p_1, \dots, p_n)$ and $\sigma = (q_1, \dots, q_m)$ be nonempty seque
 ## Depends on
 
 - [Discrete Fréchet distance](discrete-frechet-distance.md)
-
-## Proof depends on
-
 - [Minimum spanning trees contain bottleneck paths](minimum-spanning-trees-contain-bottleneck-paths.md)
+
 
 ## Sources
 

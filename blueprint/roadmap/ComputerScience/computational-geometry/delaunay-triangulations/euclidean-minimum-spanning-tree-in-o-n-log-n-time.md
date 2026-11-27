@@ -1,15 +1,16 @@
 # Euclidean minimum spanning tree in O(n log n) time
 
-The Euclidean minimum spanning tree of $n \ge 3$ points in $\mathbb{R}^2$, not all on one line, can be computed in $O(n \log n)$ time: compute a Delaunay triangulation, which has $O(n)$ edges, and run Kruskal's algorithm on its edges. This is correct because the Euclidean minimum spanning tree is a subgraph of the Delaunay triangulation, whereas running Kruskal's algorithm on all $\binom n2$ pairs takes $O(n^2 \log n)$ time.
+The Euclidean minimum spanning tree of $n \ge 3$ points in $\mathbb{R}^2$, not all on one line, can be computed in $O(n \log n)$ time: compute a Delaunay triangulation, which has $O(n)$ edges, and run Kruskal's algorithm on its edges (it uses only the order of the weights). This is correct because the Euclidean minimum spanning tree is a subgraph of the Delaunay triangulation, whereas running Kruskal's algorithm on all $\binom n2$ pairs takes $O(n^2 \log n)$ time.
 
 ## Depends on
 
 - [Delaunay triangulation](delaunay-triangulation.md)
+- [Euclidean minimum spanning trees lie in the Delaunay triangulation](euclidean-minimum-spanning-trees-lie-in-the-delaunay-triangulation.md)
 
 ## Proof depends on
 
-- [Euclidean minimum spanning trees lie in the Delaunay triangulation](euclidean-minimum-spanning-trees-lie-in-the-delaunay-triangulation.md)
 - [Number of triangles and edges of a triangulation](number-of-triangles-and-edges-of-a-triangulation.md)
+- [Kruskal's algorithm gives a minimum spanning forest](../../graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/kruskal-minimal.md)
 
 ## Sources
 
