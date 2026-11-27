@@ -119,10 +119,12 @@ section Remainder
 variable {Ω : Type*} {m : MeasurableSpace Ω} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 
 /-- The **AIPW remainder** at candidate nuisances `e, g₀, g₁`, with `m` the covariate
-σ-algebra: `E[(e* - e) ((μ₁* - g₁) / e + (μ₀* - g₀) / (1 - e))]`, where `e* = P(T | m)`,
-`μ₀* = E[Y₀ | m]` and `μ₁* = E[Y₁ | m]`. By `integral_aipwScoreOfSigma_sub` it is the bias
-`E[ψ] - E[Y₁ - Y₀]` of the AIPW score at these nuisances; it is a product of the propensity
-error and the outcome-regression errors. -/
+σ-algebra: `∫ (e* - e) ((μ₁* - g₁) / e + (μ₀* - g₀) / (1 - e)) dμ`, where `e* = P(T | m)`,
+`μ₀* = E[Y₀ | m]` and `μ₁* = E[Y₁ | m]`. Under the hypotheses of `integral_aipwScoreOfSigma_sub`,
+which assumes a finite measure, it is the difference of integrals `∫ ψ dμ - ∫ (Y₁ - Y₀) dμ` for
+the AIPW score `ψ` at these nuisances, and the bias of that score when `μ` is a probability
+measure; its integrand is a product of the propensity error and the outcome-regression
+errors. -/
 noncomputable def aipwRemainder (μ : Measure Ω) (m : MeasurableSpace Ω) (T : Set Ω)
     (Y₀ Y₁ e g₀ g₁ : Ω → ℝ) : ℝ :=
   ∫ ω, (μ[T.indicator 1 | m] ω - e ω) *
@@ -158,10 +160,11 @@ theorem aipwRemainder_eq_zero_of_outcome (hout₀ : g₀ =ᵐ[μ] μ[Y₀ | m])
 /-- **The remainder is bounded by a product of `L²` nuisance errors.** If
 `ε ≤ e ≤ 1 - ε` a.e., then
 `|aipwRemainder| ≤ ε⁻¹ ‖e* - e‖₂ (‖μ₁* - g₁‖₂ + ‖μ₀* - g₀‖₂)`, with `e* = P(T | m)`,
-`μₐ* = E[Yₐ | m]`. The theorem bounds the remainder, not the bias: the remainder is the bias of
-the AIPW score at these nuisances only under the extra hypotheses of
-`integral_aipwScoreOfSigma_sub`, and there this is the mixed-bias bound, with the bias second
-order, a product of the propensity error and the outcome-regression errors. -/
+`μₐ* = E[Yₐ | m]`. The theorem bounds the remainder, not a bias. Under the extra hypotheses of
+`integral_aipwScoreOfSigma_sub`, which assumes a finite measure, the remainder is the difference
+of integrals `∫ ψ dμ - ∫ (Y₁ - Y₀) dμ` for the AIPW score `ψ` at these nuisances, and it is the
+bias of that score when `μ` is a probability measure; there this is the mixed-bias bound, with
+the bias second order, a product of the propensity error and the outcome-regression errors. -/
 theorem abs_aipwRemainder_le [IsFiniteMeasure μ] (hT : MeasurableSet[mΩ] T)
     (hY₀ : MemLp Y₀ 2 μ) (hY₁ : MemLp Y₁ 2 μ) (he : AEStronglyMeasurable[mΩ] e μ)
     (hg₀ : MemLp g₀ 2 μ) (hg₁ : MemLp g₁ 2 μ) {ε : ℝ} (hε : 0 < ε)
