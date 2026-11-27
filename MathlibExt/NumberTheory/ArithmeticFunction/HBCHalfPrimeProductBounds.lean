@@ -1181,7 +1181,9 @@ public theorem hbcAdmissible_half_prime_prod_le_of_eq_five (k : ℕ) (y : ℕ �
       ring
     have hsplit (f : ℕ → ℝ) (j : ℕ) :
         ∏ i ∈ range (j + 1), f (i + 2) = f 2 * ∏ i ∈ range j, f (i + 3) := by
-      rw [prod_range_succ', mul_comm]
+      simpa only [prod_range_one, Nat.add_sub_cancel, Nat.zero_add,
+        show ∀ i : ℕ, 1 + i + 2 = i + 3 by omega] using
+        prod_range_split (κ := 1) (m := j + 1) (fun i => f (i + 2)) (by omega)
     have hle'' : ∏ i ∈ range n, (1 - 1 / (y (i + 3) : ℝ)) ≤ (a : ℝ) / (a + d) := by
       rw [← hcancel, le_div_iff₀ hfac, mul_comm, ← hsplit (fun j => 1 - 1 / (y j : ℝ)) n]
       exact hle'
