@@ -1,0 +1,15 @@
+# Pigeonhole, Modular and Long-Choice Total Search Classes
+
+- [BLICHFELDT and constrained SIS: lattice-flavoured pigeonhole search problems](blichfeldt-and-constrained-sis.md)
+- [LONG CHOICE and the class PLC of polynomial long choice for iterated pigeonhole arguments](long-choice-and-plc.md)
+- [The modular classes PPA_q via BIPARTITE_q and the Buss–Johnson operator & combining two classes](ppa-q-and-the-and-operator.md)
+- [Sotiraki–Zampetakis–Zirdelis: BLICHFELDT and constrained SIS are PPP-complete](blichfeldt-and-csis-ppp-complete.md)
+- [KÖNIG and ERDŐS–KO–RADO search problems are PPP-complete](konig-and-erdos-ko-rado-ppp-complete.md)
+- [CHEVALLEY_p, GENERAL-CHEVALLEY_p and CHEVALLEY-WITH-SYMMETRY_p: explicit search problems from the Chevalley–Warning theorem](chevalley-search-problems.md)
+- [ε-CONSENSUS-HALVING, NECKLACE-SPLITTING and DISCRETE HAM SANDWICH as explicit total search problems](consensus-halving-necklace-splitting.md)
+- [Jeřábek: integer factoring randomly reduces to PPA and to WEAK-PIGEON, and modular square roots lie in PPA](factoring-reduces-to-ppa-and-weak-pigeon.md)
+- [PPA_q equals the &-combination of PPA_p over the primes p dividing q, and PPA_p is closed under Turing reductions](ppa-q-equals-and-of-ppa-p.md)
+- [Chevalley–Warning lemma: the zero count mod p equals ± the number of max-degree monic monomials](chevalley-warning-counting-lemma.md)
+- [LONG CHOICE is total and PPP-hard, PWPP reduces to UNARY LONG CHOICE, and multi-colour Ramsey lies in PLC](plc-contains-ppp-and-ramsey.md)
+- [Filos-Ratsikas–Goldberg: consensus halving, two-thief necklace splitting and discrete ham sandwich are PPA-complete](consensus-halving-necklace-ppa-complete.md)
+- [Göös–Kamath–Sotiraki–Zampetakis: CHEVALLEY-WITH-SYMMETRY_p is PPA_p-complete and constant-depth formulas suffice](chevalley-with-symmetry-ppa-p-complete.md)
