@@ -23,6 +23,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from lean_changes import inert
+
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = Path(__file__).resolve().parent
 PROBE = Path("MathlibExt/LintersSelfTestProbe.lean")
@@ -119,8 +121,8 @@ def run_checks(base: str, round_: int) -> bool:
         missing = [pattern for pattern in expected[round_] if not re.search(pattern, output)]
         if result.returncode != want_code or missing:
             ok = False
-            print(f"FAIL {script} (round {round_ + 1}): exit {result.returncode}, wanted "
-                  f"{want_code}; missing {missing}\n{output}")
+            print(inert(f"FAIL {script} (round {round_ + 1}): exit {result.returncode}, wanted "
+                        f"{want_code}; missing {missing}\n{output}"))
         else:
             print(f"ok {script} (round {round_ + 1}): exit {result.returncode}")
     return ok

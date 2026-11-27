@@ -31,7 +31,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lean_changes import (ROOT, AggregatorError, add_common_arguments, aggregators, annotation,
-                          changed_files, guarded, in_actions, relative, write_summary)
+                          changed_files, guarded, in_actions, inert, relative, write_summary)
 
 ENTRY = re.compile(r"^(?P<file>\S.*?\.lean):(?P<line>\d+):(?P<col>\d+): "
                    r"(?P<severity>warning|error|information): (?P<text>.*)$")
@@ -123,11 +123,13 @@ def main() -> int:
     print(f"Checking {len(files)} changed Lean file(s) for linter and deprecation warnings.")
     try:
         with aggregators(files) as targets:
+            if not targets:
+                return 0
             # Lake replays the log of a file it has built already, deprecations included.
             build = subprocess.run(["lake", "build", *targets], cwd=ROOT, capture_output=True,
                                    text=True)
             if build.returncode != 0:
-                print(build.stdout + build.stderr, file=sys.stderr)
+                print(inert(build.stdout + build.stderr), file=sys.stderr)
                 print("The changed files do not build.", file=sys.stderr)
                 return 2
             # No `--linters` or `--lint-only`: either would rebuild the files with other options.
@@ -139,7 +141,7 @@ def main() -> int:
     output = result.stdout + result.stderr
     if result.returncode not in (0, 1) or len(
             [line for line in output.splitlines() if LINTED.match(line)]) < len(targets):
-        print(output, file=sys.stderr)
+        print(inert(output), file=sys.stderr)
         print("`lake lint` did not run.", file=sys.stderr)
         return 2
 
@@ -150,7 +152,7 @@ def main() -> int:
         if in_actions():
             # GitHub counts columns from 1, Lean from 0.
             print(annotation(level, w.path, w.line, w.linter, w.message, w.col + 1))
-        print(f"{w.path}:{w.line}:{w.col}: {w.linter}: {w.message}")
+        print(inert(f"{w.path}:{w.line}:{w.col}: {w.linter}: {w.message}"))
     counts = Counter(w.linter for w in kept)
     if kept:
         rows = "".join(f"| `{linter or 'unnamed'}` | {count} |\n"
