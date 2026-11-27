@@ -42,9 +42,9 @@ open scoped BigOperators
 variable {K : Type*} [Fintype K] [DecidableEq K] [Nonempty K]
 variable {T : ℕ}
 
-/-- **Blum–Mansour bound, uniform form.** If every copy's external regret
-against its scaled loss sequence is at most `R`, then the master's swap
-regret is at most `|K| * R`. -/
+/-- **Blum–Mansour bound, uniform form.** If `p` is the stationary play of the copies' plays `q`
+and every copy's external regret against its scaled loss sequence is at most `R`, then the
+master's swap regret is at most `|K| * R`. -/
 theorem swapRegret_le_card_mul_of_externalRegret_le (q : Fin T → K → K → ℝ)
     (p loss : Fin T → K → ℝ) (hp : IsStationaryPlay q p) (R : ℝ)
     (hR : ∀ j, externalRegret (fun t => q t j) (scaledLoss p loss j) ≤ R) :

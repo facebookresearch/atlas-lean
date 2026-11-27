@@ -1,0 +1,3 @@
+# A saddle point is a mixed Nash equilibrium
+
+Let $A$ be an $m \times n$ real matrix, read as the zero-sum game in which the row player, playing the mixed strategy $p \in \Delta_m$ against the column player's $q \in \Delta_n$, receives $p^{\mathsf T} A q$ and the column player pays it; $\Delta_k$ is the set of probability vectors in $\mathbb{R}^k$, which is empty when $k = 0$. If $p \in \Delta_m$ and $q \in \Delta_n$ satisfy $p'^{\mathsf T} A q \le p^{\mathsf T} A q$ for every $p' \in \Delta_m$ and $p^{\mathsf T} A q \le p^{\mathsf T} A q'$ for every $q' \in \Delta_n$, then $(p, q)$ is a mixed Nash equilibrium of the [two-player game](zero-sum-payoffs.md) with payoffs $A$ to the row player and $-A$ to the column player.

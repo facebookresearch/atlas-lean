@@ -13,7 +13,7 @@ The stationary-distribution step makes the player's realized cost equal to the s
 
 ## Proof depends on
 
-- [Blum–Mansour decomposition](../../../not-yet-classified/part-02/regret-blum-mansour/swap-regret-le-sum-external-regret-scale.md)
+- [Blum–Mansour decomposition](../../blum-mansour-swap-regret-decomposition/swap-regret-le-sum-external-regret-scale.md)
 - [Each player in Hedge dynamics has vanishing regret](each-player-in-hedge-dynamics-has-vanishing-regret.md)
 
 ## Sources

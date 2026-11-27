@@ -9,7 +9,7 @@ A coalition can move the $k$-th order statistic only by having members cross it,
 ## Depends on
 
 - [Facility-location mechanism on a metric space](facility-location-mechanism-on-a-metric-space.md)
-- [The median mechanism is group strategyproof](../../not-yet-classified/part-01/facility-location/median-is-group-strategyproof.md)
+- [The median mechanism is group strategyproof](../../noncooperative-games/strategyproof-facility-location-on-the-line/median-is-group-strategyproof.md)
 
 ## Sources
 

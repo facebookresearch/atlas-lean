@@ -8,12 +8,12 @@ Giving a good to an unenvied agent preserves EF1, since removing that good remov
 
 ## Depends on
 
-- [Is EF1](../../not-yet-classified/part-01/indivisible/is-ef1.md)
-- [Envy cycle](../../not-yet-classified/part-01/indivisible/is-envy-cycle.md)
+- [Is EF1](../../noncooperative-games/fair-division-of-indivisible-goods-ef1-via-envy/is-ef1.md)
+- [Envy cycle](../../noncooperative-games/fair-division-of-indivisible-goods-ef1-via-envy/is-envy-cycle.md)
 
 ## Proof depends on
 
-- [Existence of an EF1 allocation with acyclic envy graph](../../not-yet-classified/part-01/indivisible/exists-ef1-acyclic.md)
+- [Existence of an EF1 allocation with acyclic envy graph](../../noncooperative-games/fair-division-of-indivisible-goods-ef1-via-envy/exists-ef1-acyclic.md)
 
 ## Sources
 

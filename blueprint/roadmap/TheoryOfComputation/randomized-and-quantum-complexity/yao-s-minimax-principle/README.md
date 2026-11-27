@@ -13,6 +13,11 @@ Approach* (web draft of 2007-01-08), Section 11.6.
 - [Yao's principle, lower-bound form](exists-le-expected-cost.md)
 - [Yao's minimax principle](yao-minimax.md)
 
+## Yao's principle by averaging
+
+- [Yao's principle by averaging, algorithm side](yao-exists-det.md)
+- [Yao's principle by averaging, input side](yao-exists-input.md)
+
 ## Related topics
 
 - [Von Neumann's minimax theorem](../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/README.md): the theorem about matrix games that the principle specializes.

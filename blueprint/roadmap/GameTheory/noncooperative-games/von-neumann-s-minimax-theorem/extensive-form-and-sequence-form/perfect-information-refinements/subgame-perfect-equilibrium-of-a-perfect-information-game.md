@@ -4,7 +4,7 @@ Let $T$ be a finite perfect-information game tree with leaves carrying payoff ve
 
 ## Depends on
 
-- [Perfect-information game tree](../../../../not-yet-classified/part-01/backward-induction/perfect-info-game.md)
+- [Perfect-information game tree](../../../backward-induction-and-subgame-perfection/perfect-info-game.md)
 - [Pure Nash equilibrium of a finite game](../../../potential-games/is-pure-nash-2.md)
 
 ## Sources

@@ -14,6 +14,7 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 - [Bilateral trade impossibility (dominant-strategy form)](bilateral-trade-impossibility.md)
 - [Characterization of proper scoring rules](characterization-of-proper-scoring-rules.md)
 - [Scoring rules and properness for finite outcomes](remaining-clauses-of-scoring-rules-and-properness.md)
+- [Truthful scheduling on unrelated machines](truthful-scheduling-on-unrelated-machines/README.md)
 - [Combinatorial Agency and Rational Cryptography](contracts-and-rational-cryptography/README.md)
 - [Reputation Systems and Peer-to-Peer Incentives](reputation-and-peer-to-peer-incentives/README.md)
 - [Characterizations of Dominant-Strategy Incentive Compatibility](dsic-characterizations/README.md)

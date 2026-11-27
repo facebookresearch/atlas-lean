@@ -1,0 +1,3 @@
+# Optimal strategies form a mixed Nash equilibrium
+
+Let $A$ be an $m \times n$ real matrix, read as the zero-sum game in which the row player, playing the mixed strategy $p \in \Delta_m$ against the column player's $q \in \Delta_n$, receives $p^{\mathsf T} A q$ and the column player pays it; $\Delta_k$ is the set of probability vectors in $\mathbb{R}^k$, which is empty when $k = 0$. Suppose the game has a value, as in [optimal strategies form a saddle point](is-saddle-point-of-optimal-of-value-eq.md). If $p$ is a [maximin strategy](is-maximin-strategy.md) and $q$ a [minimax strategy](is-minimax-strategy.md), then $(p, q)$ is a mixed Nash equilibrium of the [two-player game](zero-sum-payoffs.md) with payoffs $A$ to the row player and $-A$ to the column player.

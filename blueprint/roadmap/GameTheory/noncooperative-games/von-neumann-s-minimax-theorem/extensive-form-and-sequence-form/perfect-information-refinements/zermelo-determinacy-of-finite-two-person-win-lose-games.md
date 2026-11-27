@@ -8,7 +8,7 @@ Define by well-founded recursion on the position tree whether the player to move
 
 ## Depends on
 
-- [Perfect-information game tree](../../../../not-yet-classified/part-01/backward-induction/perfect-info-game.md)
+- [Perfect-information game tree](../../../backward-induction-and-subgame-perfection/perfect-info-game.md)
 
 ## Sources
 

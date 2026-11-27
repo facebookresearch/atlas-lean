@@ -4,8 +4,8 @@ A *Bayesian cost game* has players $i$ with finite type sets $\Theta_i$, indepen
 
 ## Depends on
 
-- [Bayesian game](../../../not-yet-classified/part-01/bayesian-game/bayesian-game.md)
-- [Bayesian Nash equilibrium](../../../not-yet-classified/part-01/bayesian-game/is-bayes-nash.md)
+- [Bayesian game](../../finite-bayesian-games-and-the-agent-normal-form/bayesian-game.md)
+- [Bayesian Nash equilibrium](../../finite-bayesian-games-and-the-agent-normal-form/is-bayes-nash.md)
 
 ## Sources
 

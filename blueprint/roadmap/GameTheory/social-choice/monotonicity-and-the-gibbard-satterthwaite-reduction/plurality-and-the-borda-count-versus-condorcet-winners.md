@@ -11,11 +11,11 @@ Uniqueness: two Condorcet winners would each strictly beat the other. Explicit t
 - [Social choice functions](../gibbard-satterthwaite-theorem/social-choice-function.md)
 - [Social welfare function](../arrow-s-impossibility-theorem/social-welfare-function.md)
 - [Independence of irrelevant alternatives](../arrow-s-impossibility-theorem/is-iia.md)
-- [Scoring Score](../../not-yet-classified/part-02/voting-rules/scoring-score.md)
+- [Scoring Score](../voting-rules-and-majority-relations/voting-rules/scoring-score.md)
 
 ## Proof depends on
 
-- [Condorcet paradox](../../not-yet-classified/part-01/condorcet-cycle/exists-is-majority-cycle.md)
+- [Condorcet paradox](../voting-rules-and-majority-relations/condorcet-paradox-a-majority-cycle/exists-is-majority-cycle.md)
 
 ## Sources
 

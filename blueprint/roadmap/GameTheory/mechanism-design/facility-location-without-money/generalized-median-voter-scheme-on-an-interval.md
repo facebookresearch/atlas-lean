@@ -5,7 +5,7 @@ A *generalized median voter scheme* on a closed interval $[a, b]$ for a finite n
 ## Depends on
 
 - [Facility-location mechanism on a metric space](facility-location-mechanism-on-a-metric-space.md)
-- [Single-peaked profile](../../not-yet-classified/part-01/median-voter/single-peaked-profile.md)
+- [Single-peaked profile](../../social-choice/voting-rules-and-majority-relations/black-s-median-voter-theorem/single-peaked-profile.md)
 
 ## Sources
 

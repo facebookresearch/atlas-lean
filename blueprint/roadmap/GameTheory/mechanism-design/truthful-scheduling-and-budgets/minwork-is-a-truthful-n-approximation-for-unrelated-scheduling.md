@@ -8,8 +8,8 @@ Minimizing total work maximizes the negated total cost, so second-price payments
 
 ## Depends on
 
-- [MinWork allocation](../../not-yet-classified/part-02/truthful-scheduling/min-work.md)
-- [Is Truthful](../../not-yet-classified/part-02/truthful-scheduling/is-truthful.md)
+- [MinWork allocation](../truthful-scheduling-on-unrelated-machines/min-work.md)
+- [Is Truthful](../truthful-scheduling-on-unrelated-machines/is-truthful.md)
 
 ## Proof depends on
 

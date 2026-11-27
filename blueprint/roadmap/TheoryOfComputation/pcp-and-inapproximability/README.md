@@ -8,6 +8,7 @@ The PCP theorem and Dinur's gap amplification, optimization classes (NPO, APX, M
 - [The PCP theorem: NP = PCP(O(log n), O(1))](pcp-theorem.md)
 - [Blum–Luby–Rubinfeld linearity test](blum-luby-rubinfeld-linearity-test/README.md)
 - [Pcp constructions](pcp-constructions/README.md)
+- [The BLR linearity test over `ZMod 2`](the-blr-linearity-test-over-zmod-2/README.md)
 - [Approximation Algorithms and Hardness for Classical Problems](approximation-hardness-of-classical-problems/README.md)
 - [Components of Dinur's Proof of the PCP Theorem](dinur-proof-components/README.md)
 - [PCP Verifiers, Local Tests and Promise Classes](pcp-verifiers-and-local-tests/README.md)

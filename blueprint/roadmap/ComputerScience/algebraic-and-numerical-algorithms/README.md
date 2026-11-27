@@ -17,3 +17,4 @@ Algorithms on numbers, polynomials and matrices: integer and polynomial multipli
 - [Solving linear congruences](solving-linear-congruences/README.md)
 - [Strassen algorithm](strassen-algorithm/README.md)
 - [Lattice basis reduction](lattice-basis-reduction/README.md)
+- [Rational values of the core binary64 model](rational-values-of-the-core-binary64-model/README.md)

@@ -13,7 +13,7 @@ By the one-shot deviation principle every subgame-perfect equilibrium picks, at 
 ## Proof depends on
 
 - [One-shot deviation principle for finite perfect-information games](one-shot-deviation-principle-for-finite-perfect-information-games.md)
-- [Exists is Backward Induction is Subgame Perfect](../../../../not-yet-classified/part-01/backward-induction/exists-is-backward-induction-is-subgame.md)
+- [Exists is Backward Induction is Subgame Perfect](../../../backward-induction-and-subgame-perfection/exists-is-backward-induction-is-subgame.md)
 
 ## Sources
 

@@ -1,0 +1,15 @@
+# Logarithmic market scoring rule (LMSR) cost-function market maker
+
+- [Lmsr Loss](lmsr-loss.md)
+- [Lmsr Price nonneg](lmsr-price-nonneg.md)
+- [Lmsr Price pos](lmsr-price-pos.md)
+- [Sum lmsr Price](sum-lmsr-price.md)
+- [Lmsr Cost zero](lmsr-cost-zero.md)
+- [Le lmsr Cost](le-lmsr-cost.md)
+- [Lmsr Cost le](lmsr-cost-le.md)
+- [Tendsto lmsr Loss single](tendsto-lmsr-loss-single.md)
+- [LMSR cost function](lmsr-cost.md)
+- [LMSR price](lmsr-price.md)
+- [Worst-case loss of the LMSR market maker](lmsr-loss-le.md)
+- [The LMSR instantaneous price is the derivative of the cost](deriv-update-lmsr-cost.md)
+- [LMSR trade profit equals a log-score difference](trade-profit-eq-log-score.md)

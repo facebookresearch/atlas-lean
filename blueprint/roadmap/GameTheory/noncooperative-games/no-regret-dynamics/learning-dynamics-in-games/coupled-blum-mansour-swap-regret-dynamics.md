@@ -5,7 +5,7 @@ Fix a finite game and a horizon $T$. In *Blum–Mansour dynamics* each player $i
 ## Depends on
 
 - [Hedge (multiplicative-weights) dynamics in a finite game](hedge-multiplicative-weights-dynamics-in-a-finite-game.md)
-- [Swap regret](../../../not-yet-classified/part-02/regret/swap-regret.md)
+- [Swap regret](../../external-and-swap-regret/swap-regret.md)
 
 ## Sources
 
