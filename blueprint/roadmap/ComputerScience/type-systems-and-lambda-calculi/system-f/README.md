@@ -11,3 +11,4 @@
 - [Call-by-value safety for pure System F](call-by-value-safety-for-pure-system-f/README.md)
 - [Erasure of call-by-value evaluation](the-call-by-value-erasure-bridge/README.md)
 - [Curry-style System F](curry-style-system-f/README.md)
+- [Full reduction and subject reduction for pure System F](full-reduction-and-subject-reduction-for-pure-sy/README.md)

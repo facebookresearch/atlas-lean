@@ -1,0 +1,16 @@
+# Baby-step giant-step discrete logarithm in the generic group model
+
+- [Step count of baby-step giant-step](bsgs-m.md)
+- [Bsgs M sq](bsgs-m-sq.md)
+- [Baby Spec](baby-spec.md)
+- [Baby steps](babies-aux.md)
+- [Index lookup in the baby table](find-idx.md)
+- [Giant steps](giants-aux.md)
+- [Query budget of the giant steps](is-query-bounded-giants-aux.md)
+- [Query budget of the baby steps](is-query-bounded-with-babies-aux.md)
+- [Baby-step giant-step algorithm](bsgs.md)
+- [Baby-step giant-step decomposition of an exponent](bsgs-decomp.md)
+- [Giant steps find the discrete logarithm](run-giants-aux.md)
+- [Baby-step giant-step returns the discrete logarithm](bsgs-correct.md)
+- [Bsgs is Query Bounded](bsgs-is-query-bounded.md)
+- [Bsgs length queries le](bsgs-length-queries-le.md)
