@@ -15,6 +15,7 @@ public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.RingTheory.Coprime.Basic
 public import MathlibExt.NumberTheory.CarmichaelNumber
 public import MathlibExt.NumberTheory.FermatCongruenceCoprimeModuli
+public import MathlibExt.NumberTheory.FermatCongruenceTwinPrimes
 public import MathlibExt.NumberTheory.SophieGermainChainFermatCongruence
 public import MathlibExt.NumberTheory.SophieGermainChainLength
 public import MathlibExt.NumberTheory.SophieGermainPrime
@@ -35,22 +36,6 @@ paper does not fix the meaning of that fraction modulo `nm`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Fermat-type characterizations of twin primes.** Let $n \ge 3$ be odd, and suppose neither $n$
-nor $n + 2$ is a Carmichael number. Then $n$ and $n + 2$ are both prime if and only if
-$2a^{n+1} \equiv (n + 2)\,a^2 - n \pmod{n(n + 2)}$ for every integer $a$ coprime to $n(n + 2)$;
-and $n$ and $n + 2$ are both prime if and only if
-$n\,a^{n+1} \equiv (n + 2)\,a^{n-1} - 2 \pmod{n(n + 2)}$ for every integer $a$ coprime to
-$n(n + 2)$.
-
-Source: Takashi Agoh, *A Note on Fermat's Congruence*, INTEGERS 25 (2025), Article A31,
-Theorem 3.1, Congruences (3.2) (`integers-2025-A31-thm-3-1`). -/
-public theorem_wanted twinPrime_iff_forall_fermat_congruence {n : ℕ} (hodd : Odd n)
-    (hn : 3 ≤ n) (hnc : ¬Nat.IsCarmichaelNumber n) (hn2c : ¬Nat.IsCarmichaelNumber (n + 2)) :
-    ((n.Prime ∧ (n + 2).Prime) ↔ ∀ a : ℤ, IsCoprime a ((n : ℤ) * (n + 2)) →
-        2 * a ^ (n + 1) ≡ (n + 2) * a ^ 2 - n [ZMOD (n : ℤ) * (n + 2)]) ∧
-      ((n.Prime ∧ (n + 2).Prime) ↔ ∀ a : ℤ, IsCoprime a ((n : ℤ) * (n + 2)) →
-        n * a ^ (n + 1) ≡ (n + 2) * a ^ (n - 1) - 2 [ZMOD (n : ℤ) * (n + 2)])
 
 /-- **Alahmadi–Luca theorem on Carmichael numbers.** For every natural number $n$ and every odd
 prime $p$, the number $2^n p + 1$ is not a Carmichael number.
