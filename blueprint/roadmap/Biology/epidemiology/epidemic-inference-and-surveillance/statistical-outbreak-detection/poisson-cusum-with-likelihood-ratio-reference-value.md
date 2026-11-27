@@ -6,7 +6,7 @@ $$C_0 = 0, \qquad C_i = \max\big(0,\ C_{i-1} + y_i - k\big), \quad i \ge 1,$$
 
 and an alarm is raised at the first $i$ with $C_i > h$.
 
-**Likelihood-ratio reference value.** To detect a shift from an in-control distribution $f(\cdot\,;\theta_0)$ to an out-of-control distribution $f(\cdot\,;\theta_1)$, the CUSUM of log-likelihood ratios $\log f(y_i;\theta_1)/f(y_i;\theta_0)$ is the sequential probability ratio test restarted at zero. For Poisson counts with in-control mean $\mu_0$ and out-of-control mean $\mu_1 > \mu_0$,
+**Likelihood-ratio reference value.For Poisson counts with in-control mean $\mu_0$ and out-of-control mean $\mu_1 > \mu_0$,
 
 $$\log\frac{f(y;\mu_1)}{f(y;\mu_0)} = y \log\frac{\mu_1}{\mu_0} - (\mu_1 - \mu_0),$$
 

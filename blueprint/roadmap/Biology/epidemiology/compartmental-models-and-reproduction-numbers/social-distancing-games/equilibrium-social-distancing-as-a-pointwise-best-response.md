@@ -4,7 +4,7 @@
 
 $$S' = -b\, \beta(\bar\kappa) \frac{S I}{N}, \qquad I' = b\, \beta(\bar\kappa) \frac{S I}{N} - g I, \qquad R' = g I,$$
 
-with baseline transmission rate $b > 0$ and removal rate $g > 0$. The **relative risk** $\beta \colon [0, \infty) \to (0, 1]$ satisfies $\beta(0) = 1$, is decreasing, bounded below by a positive constant (imperfect protection) and, by diminishing returns, convex.
+with baseline transmission rate $b > 0$ and removal rate $g > 0$. The **relative risk** $\beta \colon [0, \infty) \to (0, 1]$ satisfies $\beta(0) = 1$, is decreasing, bounded below by $0$ and, by diminishing returns, convex.
 
 **Individual.** One susceptible individual using investment $\kappa(t)$ is infected at hazard $b\, \beta(\kappa(t))\, I(t)/N$; in an infinite population this choice does not affect $I(t)$. Infection costs $c_I > 0$ per day of illness, distancing costs $\kappa$ per day. Let $V_S(t)$ and $V_I(t)$ be the expected present values (negative expected future costs) of being susceptible or infected at time $t$ under the individual's strategy, so $V_S - V_I > 0$ is the expected cost averted by staying uninfected. In the absence of discounting, the values obey the adjoint (Bellman) equations of the individual's three-state Markov decision process,
 
