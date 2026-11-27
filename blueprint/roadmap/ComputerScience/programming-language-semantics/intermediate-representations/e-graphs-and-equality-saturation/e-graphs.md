@@ -9,7 +9,7 @@ An *e-graph* is a triple $(U, M, H)$ where
 
 An e-class id $a$ is *canonical* if $\mathrm{find}(a) = a$, and an e-node is canonical if it equals $\mathrm{canonicalize}(f(a_1, a_2, \dots)) = f(\mathrm{find}(a_1), \mathrm{find}(a_2), \dots)$.
 
-*Representation* is defined recursively: an e-graph represents a term if one of its e-classes does; an e-class represents a term if one of its e-nodes does; and an e-node $f(a_1, a_2, \dots)$ represents a term $f(t_1, t_2, \dots)$ if each e-class $M[a_i]$ represents $t_i$. An e-graph with cycles represents infinitely many terms.
+*Representation* is defined recursively: an e-graph represents a term if one of its e-classes does; an e-class represents a term if one of its e-nodes does; and an e-node $f(a_1, a_2, \dots)$ represents a term $f(t_1, t_2, \dots)$ if each e-class $M[a_i]$ represents $t_i$. An e-graph with cycles can represent infinitely many terms: the e-class $C = \{a, f(C)\}$ represents $a, f(a), f(f(a)), \dots$. A cycle without a way out represents nothing: the e-class $C = \{f(C)\}$ represents no term, by induction on the height of terms.
 
 ## Sources
 

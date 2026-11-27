@@ -13,7 +13,7 @@ In the class of separable pointer algorithms for which R. E. Tarjan proved the u
 
 This page becomes ready once this prerequisite is stated:
 
-- The lower bound $\Omega(m \cdot \alpha(n))$, for separable pointer algorithms, for union-find sequences on a universe of $n$ elements with $m$ operations in which every find follows every union (proof prerequisite; the source reduces it to R. E. Tarjan, "A class of algorithms which require nonlinear time to maintain disjoint sets", *Journal of Computer and System Sciences* 18(2):110–127, 1979, Theorem 4.4).
+- A lower bound for separable pointer algorithms on union-find sequences in which every find follows every union, in the regime the reduction uses: for some constant $c$, sequences with $m \le c\,n$ operations on $n$ elements that require $\Omega(n \cdot \alpha(n))$ time, or a precise two-parameter bound shown to apply to these separated sequences (proof prerequisite; the source reduces it to R. E. Tarjan, "A class of algorithms which require nonlinear time to maintain disjoint sets", *Journal of Computer and System Sciences* 18(2):110–127, 1979, Theorem 4.4). A bound of the form $\Omega(m \cdot \alpha(n))$ for all $m$ cannot hold: keeping a member list per set and a representative pointer per element costs $O(n^2)$ in total for the at most $n - 1$ successful unions and $O(1)$ per find, which is $O(m)$ once $m \ge n^2$.
 
 ## Sources
 
