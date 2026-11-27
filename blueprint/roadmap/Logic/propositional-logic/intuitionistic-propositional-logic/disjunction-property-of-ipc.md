@@ -2,7 +2,7 @@
 
 If $\vdash \varphi \vee \psi$ in [natural deduction for IPC](natural-deduction-for-intuitionistic-propositional-logic.md), then $\vdash \varphi$ or $\vdash \psi$.
 
-**Proof.** Suppose neither. By [completeness](kripke-completeness-of-ipc.md) there are [Kripke models](kripke-models-for-ipc.md) $\mathcal{C}_1$, $\mathcal{C}_2$ with least states $c_1, c_2$ such that $c_1 \nVdash \varphi$ and $c_2 \nVdash \psi$. Put the disjoint union of the two models above a new least state $c_0$ forcing no variable. Forcing at states of each part is unchanged. By [soundness](kripke-soundness-of-ipc.md), $c_0 \Vdash \varphi \vee \psi$, so $c_0$ forces $\varphi$ or $\psi$, and by [persistence](persistence-of-forcing-in-kripke-models.md) so does $c_1$ or $c_2$ respectively, a contradiction.
+**Proof.** Suppose neither. By [completeness](kripke-completeness-of-ipc.md) there are [Kripke models](kripke-models-for-ipc.md) with states $c_1$ and $c_2$ such that $c_1 \nVdash \varphi$ and $c_2 \nVdash \psi$; restricting each model to the states above $c_1$, respectively $c_2$, leaves forcing at those states unchanged and gives models $\mathcal{C}_1$, $\mathcal{C}_2$ with least states $c_1, c_2$. Put the disjoint union of the two models above a new least state $c_0$ forcing no variable. Forcing at states of each part is unchanged. By [soundness](kripke-soundness-of-ipc.md), $c_0 \Vdash \varphi \vee \psi$, so $c_0$ forces $\varphi$ or $\psi$, and by [persistence](persistence-of-forcing-in-kripke-models.md) so does $c_1$ or $c_2$ respectively, a contradiction.
 
 ## Depends on
 

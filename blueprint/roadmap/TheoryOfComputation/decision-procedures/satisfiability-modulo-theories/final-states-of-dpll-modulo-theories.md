@@ -5,7 +5,7 @@ Let $\emptyset \parallel F \Longrightarrow^*_{\mathcal{FT}} S$ be a derivation i
 1. $S$ is FailState if and only if $F$ is $T$-unsatisfiable;
 2. if $S = M \parallel F'$, then $M$ is a $T$-model of $F$.
 
-So, with a decision procedure for $T$-consistency of conjunctions of ground literals, such as a complete [theory solver](theory-solvers-for-dpll-t.md), any strategy that terminates and applies T-Learn when the assignment is $T$-inconsistent decides $T$-satisfiability.
+So, with a decision procedure for $T$-consistency of conjunctions of ground literals, such as a complete [theory solver](theory-solvers-for-dpll-t.md), a strategy decides $T$-satisfiability if it terminates, does not stop while a Basic DPLL modulo theories rule applies, and, when it would otherwise stop at a state $M \parallel F'$ with $M$ $T$-inconsistent and no conflicting clause, applies T-Learn to a conflicting clause $\neg l_1 \vee \dots \vee \neg l_n$ for a $T$-inconsistent subset $\{l_1, \dots, l_n\}$ of $M$, after which Fail or T-Backjump applies. Such a run ends in a state satisfying both hypotheses above. Termination and theory consistency alone are not enough: on the four clauses $p \vee q$, $p \vee \neg q$, $\neg p \vee q$ and $\neg p \vee \neg q$, a strategy that only applies UnitPropagate stops at once with the empty assignment, which is consistent, although Decide still applies.
 
 ## Depends on
 
@@ -20,4 +20,4 @@ So, with a decision procedure for $T$-consistency of conjunctions of ground lite
 
 ## Sources
 
-- R. Nieuwenhuis, A. Oliveras and C. Tinelli, "Solving SAT and SAT modulo theories: from an abstract Davis–Putnam–Logemann–Loveland procedure to DPLL(T)", *Journal of the ACM* 53(6):937–977, 2006, <https://www.cs.upc.edu/~roberto/papers/JACM2006.pdf>, Section 3.4, Theorem 3.10 and its proof, and the remarks after Property 3.9 and after Theorem 3.10.
+- R. Nieuwenhuis, A. Oliveras and C. Tinelli, "Solving SAT and SAT modulo theories: from an abstract Davis–Putnam–Logemann–Loveland procedure to DPLL(T)", *Journal of the ACM* 53(6):937–977, 2006, <https://www.cs.upc.edu/~roberto/papers/JACM2006.pdf>, Section 3.4, Theorem 3.10 and its proof, Property 3.9 (a $T$-inconsistent assignment gives a conflicting clause, present or learnable by one T-Learn step) and the remarks after it and after Theorem 3.10.
