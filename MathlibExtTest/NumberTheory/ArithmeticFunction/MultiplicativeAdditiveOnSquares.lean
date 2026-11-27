@@ -58,4 +58,43 @@ example (k : ℕ) (hk : 0 < k) : residueFunction (2 ^ (2 * k)) = 0 := by
   have h4 : residueFunction (2 ^ 2) = 0 := Nat.cast_zero
   rw [h, h4, zero_pow hk.ne']
 
+-- The minimal arity fixes prime powers, not just positive squares.
+example (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
+    (hadd : ∀ x : Fin 2 → ℕ, (∀ i, ∃ m n : ℕ, n < m ∧ x i = ∑ j ∈ Finset.Ioc n m, j ^ 2) →
+      f (∑ i, x i) = ∑ i, f (x i)) :
+    f (47 ^ 2) = ((47 ^ 2 : ℕ) : ℂ) ∧ f (2 ^ 5) = ((2 ^ 5 : ℕ) : ℂ) := by
+  have h := consecutiveSquareSums_kAdditiveUniqueness (k := 2) (hk := le_rfl) (f := f)
+    (hf := hf) (hadd := hadd)
+  exact ⟨h (47 ^ 2), h (2 ^ 5)⟩
+
+-- At larger arity the hypothesis still quantifies over positive blocks, but the conclusion
+-- includes arguments too small to be a sum of that many blocks (as well as zero).
+example (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
+    (hadd : ∀ x : Fin 5 → ℕ, (∀ i, ∃ m n : ℕ, n < m ∧ x i = ∑ j ∈ Finset.Ioc n m, j ^ 2) →
+      f (∑ i, x i) = ∑ i, f (x i)) : f 0 = 0 ∧ f 3 = 3 := by
+  have h := consecutiveSquareSums_kAdditiveUniqueness 5 (by decide) f hf hadd
+  exact ⟨by simpa only [Nat.cast_zero] using h 0, by simpa only [Nat.cast_ofNat] using h 3⟩
+
+-- Zero is not eligible for padding: the last index in any allowed interval contributes positively.
+example : ¬ ∃ m n : ℕ, n < m ∧ 0 = ∑ j ∈ Finset.Ioc n m, j ^ 2 := by
+  rintro ⟨m, n, hnm, hsum⟩
+  have hm : m ^ 2 ≤ ∑ j ∈ Finset.Ioc n m, j ^ 2 :=
+    Finset.single_le_sum (f := fun j : ℕ => j ^ 2) (fun j _ => Nat.zero_le (j ^ 2))
+      (Finset.mem_Ioc.mpr ⟨hnm, le_rfl⟩)
+  rw [← hsum] at hm
+  exact (Nat.pow_pos (by omega : 0 < m)).not_ge hm
+
+-- The old counterexample on individual squares is not additive on consecutive-square blocks.
+example : ¬ (∀ x : Fin 2 → ℕ,
+    (∀ i, ∃ m n : ℕ, n < m ∧ x i = ∑ j ∈ Finset.Ioc n m, j ^ 2) →
+    residueFunction (∑ i, x i) = ∑ i, residueFunction (x i)) := by
+  intro h
+  have he := h (fun _ => 14) (fun _ => ⟨3, 0, by decide, by decide⟩)
+  simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at he
+  change residueFunction 28 = 2 * residueFunction 14 at he
+  have h28 : residueFunction 28 = 0 := Nat.cast_zero
+  have h14 : residueFunction 14 = 2 := Nat.cast_ofNat
+  rw [h28, h14] at he
+  norm_num at he
+
 end MetaMathlibExt.multiplicative_additive_on_squares.Test

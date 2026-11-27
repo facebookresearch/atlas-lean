@@ -15,7 +15,7 @@ open CategoryTheory CategoryTheory.Limits
 
 universe u v
 
-theorem exactSource_corepresentable
+private theorem exactSource_corepresentable
     {R : Type u} [CommRing R] (F : Under (CommRingCat.of R) ⥤ Type v)
     (hsheaf : ∀ (B B' : Under (CommRingCat.of R)) (φ : B ⟶ B'),
       φ.right.hom.Flat → Function.Surjective (PrimeSpectrum.comap φ.right.hom) →

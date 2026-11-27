@@ -69,6 +69,31 @@ example : HasWeightedZeroSum (squareSet (4 ^ 4)) (fun _ : Fin 1 => (16 : ZMod (4
   have hcast : (ZMod.cast (16 : ZMod (4 ^ 4)) : ZMod (4 ^ 2)) = 0 := by decide
   simp [hcast]
 
+-- In `ZMod 12` the sequence `(1, 2)` reduces to `(1, 2)` modulo `3 = 3 ^ 1`, where
+-- `1 * 1 + 1 * 2 = 0`, so it has an `S(12)`-weighted zero sum.
+example : HasWeightedZeroSum (squareSet 12) ![1, 2] := by
+  refine squareWeightedZeroSum_of_primePower_reduction 12 3 1 2 (by decide) (by decide)
+    (by decide) ?_ _ ?_
+  · rw [show (12 : ℕ) = 3 * 4 by rfl, Nat.factorization_mul (by decide) (by decide)]
+    simp [Nat.Prime.factorization_self (by decide : Nat.Prime 3),
+      Nat.factorization_eq_zero_of_not_dvd (by decide : ¬ 3 ∣ 4)]
+  · refine ⟨fun _ => 1, fun _ => show (1 : ZMod (3 ^ 1)) ∈ squareSet (3 ^ 1) from
+      ⟨by decide, 1, by decide⟩, ?_⟩
+    decide
+
+-- The full power of two in `12` is `4`: the sequence `(1, 3)` reduces to `(1, 3)` modulo `4`,
+-- where `1 * 1 + 1 * 3 = 0`.
+example : HasWeightedZeroSum (squareSet 12) ![1, 3] := by
+  refine squareWeightedZeroSum_of_primePower_reduction 12 2 2 2 (by decide) (by decide)
+    (by decide) ?_ _ ?_
+  · rw [show (12 : ℕ) = 2 ^ 2 * 3 by rfl, Nat.factorization_mul (by decide) (by decide),
+      Nat.factorization_pow]
+    simp [Nat.Prime.factorization_self (by decide : Nat.Prime 2),
+      Nat.factorization_eq_zero_of_not_dvd (by decide : ¬ 2 ∣ 3)]
+  · refine ⟨fun _ => 1, fun _ => show (1 : ZMod (2 ^ 2)) ∈ squareSet (2 ^ 2) from
+      ⟨by decide, 1, by decide⟩, ?_⟩
+    decide
+
 open scoped Pointwise
 
 -- Positive scaling at an odd prime: the reduced unit squares are exactly `1`, `4`, and `7`.

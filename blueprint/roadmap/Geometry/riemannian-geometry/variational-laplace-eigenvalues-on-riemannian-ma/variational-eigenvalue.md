@@ -1,0 +1,3 @@
+# Variational min-max values
+
+For a manifold $M$ with a Riemannian bundle, a subspace $W$ of smooth real functions on $M$, a measure $\mu$ and an index $k \ge 0$, the $k$-th variational value is the min-max value $\inf_V \sup_{u \in V,\, u \ne 0} R(u)$, in $[0, \infty]$. The infimum runs over the $(k + 1)$-dimensional subspaces $V \subseteq W$ whose nonzero elements have positive finite mass $\int |u|^2\, d\mu$, and $R(u) = E(u) / \int |u|^2\, d\mu$ is the [Rayleigh quotient](rayleigh-quotient.md), with $E(u) = \int \|du\|^2\, d\mu$ the lower integral of the squared operator norm of the differential. It is $\infty$ when no such subspace exists. It is defined by extrema only; nothing says the value is attained or is an eigenvalue of an operator.

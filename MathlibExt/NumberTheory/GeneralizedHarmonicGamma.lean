@@ -31,6 +31,8 @@ because `X_s > 0` almost surely.
 ## Main statements
 
 * `MetaMathlibExt.generalizedHarmonic_eq_gamma_expectation`: the Gamma representation.
+* `MetaMathlibExt.sum_choose_mul_generalizedHarmonic`: the binomially weighted sum in terms of
+  generalized harmonic numbers of shifted orders.
 
 ## References
 
@@ -226,6 +228,48 @@ theorem stirlingFirst_generalizedHarmonic_eq_gamma_expectation (m : ℕ) (s : �
   rw [← Finset.sum_mul,
     stirlingFirst_generalizedHarmonic_eq_gamma_expectation.sum_signed_stirlingFirst,
     ← mul_assoc, ← mul_assoc, inv_mul_cancel₀ (by positivity), one_mul]
+
+namespace sum_choose_mul_generalizedHarmonic
+
+/-- The signed Stirling expansion of a binomial coefficient, weighted by a reciprocal power. -/
+private theorem stirling_increment (d k : ℕ) (hk : 0 < k) (α : ℝ) :
+    (d.factorial : ℝ)⁻¹ * ∑ r ∈ Finset.range (d + 1),
+        (Nat.stirlingFirst d r : ℝ) * (-1) ^ (d - r) * ((k : ℝ) ^ (α - r))⁻¹ =
+      (k.choose d : ℝ) * ((k : ℝ) ^ α)⁻¹ := by
+  simp_rw [Real.rpow_sub (Nat.cast_pos.mpr hk), Real.rpow_natCast, inv_div, div_eq_mul_inv,
+    ← mul_assoc]
+  rw [← Finset.sum_mul,
+    stirlingFirst_generalizedHarmonic_eq_gamma_expectation.sum_signed_stirlingFirst,
+    ← mul_assoc, ← mul_assoc, inv_mul_cancel₀ (by positivity), one_mul]
+
+end sum_choose_mul_generalizedHarmonic
+
+/-- **Binomially weighted sums of generalized harmonic numbers.** Write $[a, b]$ for the unsigned
+Stirling number of the first kind, the number of permutations of $a$ elements with exactly $b$
+cycles, and, for real $t$ and a natural number $n$, write $H_n^{(t)} = \sum_{k=1}^{n} 1/k^t$ for
+the generalized harmonic number. For all natural numbers $m$ and $n$ and every real $\alpha$,
+$$\sum_{j=1}^{n-1} \binom{j}{m} H_j^{(\alpha)} = \binom{n}{m+1} H_n^{(\alpha)} -
+\frac{1}{(m+1)!} \sum_{r=0}^{m+1} [m+1, r] (-1)^{m+1-r} H_n^{(\alpha-r)}.$$
+
+Source: Toshio Nakata, *A Probabilistic Representation of Generalized Harmonic Numbers and an
+Identity for Their Sums*, INTEGERS 26 (2026), Article A124, Proposition 1, Equation (3)
+(`integers-2026-A124-prop-1`). -/
+theorem sum_choose_mul_generalizedHarmonic (m n : ℕ) (α : ℝ) :
+    ∑ j ∈ Finset.Ico 1 n, (j.choose m : ℝ) * generalizedHarmonic α j =
+      (n.choose (m + 1) : ℝ) * generalizedHarmonic α n -
+        ((m + 1).factorial : ℝ)⁻¹ * ∑ r ∈ Finset.range (m + 2),
+          (Nat.stirlingFirst (m + 1) r : ℝ) * (-1) ^ (m + 1 - r) *
+            generalizedHarmonic (α - r) n := by
+  rw [Nat.Ico_succ_left_eq_erase_Ico (a := 0), ← Finset.range_eq_Ico,
+    Finset.sum_erase _ (by simp)]
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [Finset.sum_range_succ, ih]
+    simp only [generalizedHarmonic_succ, mul_add, Finset.sum_add_distrib]
+    rw [sum_choose_mul_generalizedHarmonic.stirling_increment (m + 1) (n + 1) (by omega) α,
+      Nat.choose_succ_succ, Nat.cast_add]
+    ring
 
 end
 
