@@ -35,3 +35,16 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
 - [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
 - [Epidemic coalescent models](epidemic-coalescent-models/README.md)
+- [Structural identifiability of within host viral models](structural-identifiability-of-within-host-viral-models/README.md)
+
+## [Epidemic control, identifiability and model structure](part-01/README.md)
+
+- [Antibiotic treatment games with resistance depletion](part-01/antibiotic-treatment-games-with-resistance-depletion/README.md)
+- [Behavioral replicator dynamics of self-restraint](part-01/behavioral-replicator-dynamics-of-self-restraint/README.md)
+- [Counterfactual diagnosis](part-01/counterfactual-diagnosis/README.md)
+- [Excess relative risk under shared dosimetry error](part-01/excess-relative-risk-under-shared-dosimetry-error/README.md)
+- [Fractional Routh–Hurwitz conditions](part-01/fractional-routh-hurwitz-conditions/README.md)
+- [Hamiltonian structure of compartmental models](part-01/hamiltonian-structure-of-compartmental-models/README.md)
+- [Real-options timing of epidemic lockdown](part-01/real-options-timing-of-epidemic-lockdown/README.md)
+- [Vaccine effects conditional on exposure](part-01/vaccine-effects-conditional-on-exposure/README.md)
+- [Vector-borne transmission with strain mutation in the vector](part-01/vector-borne-transmission-with-strain-mutation-in-the-vector/README.md)

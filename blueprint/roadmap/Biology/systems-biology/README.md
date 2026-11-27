@@ -30,3 +30,18 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Gillespie direct method (stochastic simulation algorithm)](gillespie-direct-method.md)
 - [Exactness of the SSA path law](exactness-of-the-ssa-path-law.md)
 - [Total-variation error of a finite-precision SSA step](total-variation-error-of-a-finite-precision-ssa-step.md)
+
+## [Network control, inference and stochastic gene networks](part-01/README.md)
+
+- [Control kernels of Boolean networks](part-01/control-kernels-of-boolean-networks/README.md)
+- [Effective number of experiments in expression compendia](part-01/effective-number-of-experiments-in-expression-compendia/README.md)
+- [Frequency–amplitude coordination of biological oscillators](part-01/frequency-amplitude-coordination-of-biological-oscillators/README.md)
+- [Globally optimal high-order dynamic Bayesian networks](part-01/globally-optimal-high-order-dynamic-bayesian-networks/README.md)
+- [Glucose–insulin regulation with the β-cell cycle](part-01/glucose-insulin-regulation-with-beta-cell-cycle/README.md)
+- [Intervention in probabilistic Boolean networks](part-01/intervention-in-probabilistic-boolean-networks/README.md)
+- [Minimum dominating set control of signalling networks](part-01/minimum-dominating-set-control-of-signalling-networks/README.md)
+- [Phototransduction recovery kinetics](part-01/phototransduction-recovery-kinetics/README.md)
+- [Robustness–evolvability tradeoff in stochastic gene networks](part-01/robustness-evolvability-tradeoff-in-stochastic-gene-networks/README.md)
+- [SAT-based attractor detection in Boolean networks](part-01/sat-based-attractor-detection-in-boolean-networks/README.md)
+- [Stochastic synchronization of genetic oscillators](part-01/stochastic-synchronization-of-genetic-oscillators/README.md)
+- [Structural equation models of gene regulatory networks](part-01/structural-equation-models-of-gene-regulatory-networks/README.md)
