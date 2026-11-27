@@ -227,7 +227,9 @@ private theorem checkBits_length (r : ℕ) (taps : BitVec r) (bits : List Bool) 
     (checkBits r taps bits).length = r := by
   simp [checkBits, Nat.length_toBitsBE]
 
-private theorem encodedBody_length (r : ℕ) (taps : BitVec r) (bits : List Bool) :
+/-- **Frame body length.** The encoded body of a payload is the payload followed by its `r`
+check bits, so it has `r` more bits than the payload. -/
+theorem encodedBody_length (r : ℕ) (taps : BitVec r) (bits : List Bool) :
     (encodedBody r taps bits).length = bits.length + r := by
   simp [encodedBody, checkBits_length]
 
