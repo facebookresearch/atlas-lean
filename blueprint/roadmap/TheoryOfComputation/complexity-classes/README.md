@@ -3,7 +3,6 @@
 Definitions of time and space complexity on machine models (P, NP, PSPACE, EXP, L, NL, the polynomial hierarchy, FPT and W[1]), polynomial-time encodings and reductions, simulation overheads, Blum measures, and inclusions and collapses among deterministic and nondeterministic classes (Savitch, Immerman–Szelepcsényi, Karp–Lipton, Ladner, Mahaney). Randomized, counting, circuit and quantum classes have their own fields.
 
 - [Blum complexity measures](blum-complexity-measures/README.md)
-- [Canonical complexity and machine models](canonical-complexity-and-machine-models/README.md)
 - [Circuit matrices and register-pair layouts](circuit-matrices-and-register-pair-layouts/README.md)
 - [Polynomially bounded functions](polynomially-bounded-functions/README.md)
 - [Quadratic overhead of single-tape simulation](quadratic-overhead-of-single-tape-simulation/README.md)
