@@ -9,3 +9,9 @@ Infinite-volume states of the Ising model and its phase transition: weak limits 
 
 - [Long-range order for continuous-symmetry spin models without translation invariance](robust-long-range-order-without-translation-invariance.md)
 - [Crystalline order at positive temperature](crystalline-order-at-positive-temperature.md)
+
+- [Ground-state condensation for the dilute hard-sphere gas](dilute-hard-sphere-ground-state-condensation.md)
+- [Spontaneous magnetization of the quantum Heisenberg ferromagnet](low-temperature-heisenberg-ferromagnet.md)
+- [Continuum free energy of radial pair potentials](continuum-radial-potentials/README.md)
+- [The exact factor-of-IID threshold for the free Ising law on a regular tree](free-ising-tree-factor-threshold.md)
+- [The free Ising cylinder law on a regular tree](free-ising-tree-cylinder-law.md)

@@ -89,8 +89,8 @@ structure SequenceHom (A B : Sequence (X := X) (T := T)) where
   projection : A.projection ≫ quotient.hom = middle.hom ≫ B.projection
 
 @[ext] theorem SequenceHom.ext {A B : Sequence (X := X) (T := T)}
-    {a b : SequenceHom A B} (hs : a.sub.hom=b.sub.hom)
-    (hm : a.middle.hom=b.middle.hom) (hq : a.quotient.hom=b.quotient.hom) : a=b := by
+    {a b : SequenceHom A B} (hs : a.sub.hom = b.sub.hom)
+    (hm : a.middle.hom = b.middle.hom) (hq : a.quotient.hom = b.quotient.hom) : a=b := by
   have hs' := Iso.ext hs
   have hm' := Iso.ext hm
   have hq' := Iso.ext hq

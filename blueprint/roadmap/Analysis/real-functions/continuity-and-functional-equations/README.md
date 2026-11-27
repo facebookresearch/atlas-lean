@@ -24,3 +24,4 @@ Fine structure of real functions: Blumberg's theorem, continuous nowhere-differe
 - [Discontinuous subadditive multiplicative functions on $\mathbb{C}$](exists-discontinuous-subadditive-multipl.md)
 - [Isolated points of a graph are countable](countable-diff-set-of-exists-seq-tendsto.md)
 - [Steinhaus's periodization problem (Scottish Book Problem 181)](steinhaus181-periodization-one.md)
+- [Intermediate value theorem](intermediate-value-theorem.md)
