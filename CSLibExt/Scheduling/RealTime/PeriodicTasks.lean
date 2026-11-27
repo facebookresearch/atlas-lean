@@ -65,6 +65,14 @@ The last two show that feasibility is neither vacuous nor automatic: a
 feasible schedule needs every run-time to be at most its period, and for a
 single task the priority-driven schedule is feasible exactly then.
 
+## Implementation notes
+
+`TaskSet`, `Schedule`, `release`, `deadline`, `currentRequest`,
+`RequestOverflow`, `OverflowAt` and `PriorityRule`, which the documentation of
+`Feasible` and `produceSchedule` states in full, and the helpers behind
+`produceSchedule` (`livePairs`, `scheduleStep`, `producePrefix`) carry plain
+comments rather than docstrings, so that they get no wiki pages of their own.
+
 ## References
 
 * C. L. Liu and J. W. Layland, *Scheduling algorithms for multiprogramming in
@@ -356,10 +364,10 @@ theorem overflowAt_of_agree_before {ι : Type*} [Fintype ι] [DecidableEq ι]
     omega
 
 /-- **Response time of a request.** The response time of request `k` of task `i` under a schedule is
-`some (t - release)`, where `t` is the first time by which the request has received `C` slots of
-work, the end of the slot in which it receives the last of them. Slots at or after the deadline of
-the request do not count, so a request that receives fewer than `C` slots of work by its deadline
-has no response time, `none`. -/
+`t` minus the time of the request, where `t` is the first time by which the request has received
+`C` slots of work, the end of the slot in which it receives the last of them. Slots at or after the
+deadline of the request do not count, so a request that receives fewer than `C` slots of work by its
+deadline has no response time. -/
 noncomputable def responseTime {ι : Type*} [Fintype ι] [DecidableEq ι]
     (tasks : TaskSet ι) (sched : Schedule ι) (i : ι) (k : ℕ) : Option ℕ :=
   haveI : Decidable (∃ t, (tasks i).C ≤ receivedWork tasks sched i k t) :=
@@ -435,10 +443,11 @@ priority-driven schedule of the rule runs in each slot `t` the task of the live 
 priority, ties between equal priorities being broken by the least task index, and leaves slot `t`
 idle only when no request is live at `t`. A request is live at `t` if it has been made, its
 deadline has not passed and it has received fewer than `C` slots of work before `t`, so a request
-whose deadline passes before it receives `C` slots is dropped. Whenever a task of higher priority
-than the running one is requested, the running task is thus interrupted at once and the requested
-task started: this is a preemptive, priority-driven scheduling algorithm in the sense of Liu and
-Layland, and it is feasible for a task set if this schedule is feasible. -/
+whose deadline passes before it receives `C` slots is dropped. As the choice is made afresh in
+every slot, a new request that outranks every live request preempts the running task at once,
+while one that another live request outranks waits, even if it outranks the running task. This is
+a preemptive, priority-driven scheduling algorithm in the sense of Liu and Layland, and it is
+feasible for a task set if this schedule is feasible. -/
 def produceSchedule {ι : Type*} {π : Type*} [Fintype ι] [LinearOrder ι] [LinearOrder π]
     (tasks : TaskSet ι) (rule : PriorityRule ι π) : Schedule ι :=
   fun t => producePrefix tasks rule (t + 1) t
