@@ -13,7 +13,7 @@ with $f_{\mathrm{Kelly}} = 0$ for $p \le p_-$ and $f_{\mathrm{Kelly}} = 1$ for $
 **Competitive game ($k = 2$).** Two lineages with strategies $f$ and $g$ experience the same environments and have independent initial sizes $W_0, V_0$ with a common uniform distribution (fair randomization). The payoff is $M_n(f,g) = P(W_0 W_n(f) > V_0 W_n(g))$.
 
 **Theorem.**
-1. $E[W_n(f)/W_n(f_{\mathrm{Kelly}})] \le 1$ for all $f$, with equality for all $f$ exactly when $p_- < p < p_+$.
+1. $E[W_n(f)/W_n(f_{\mathrm{Kelly}})] \le 1$ for all $f$, with equality for all $f$ exactly when $p_- \le p \le p_+$.
 2. For every horizon $n$, $M_n(f, f_{\mathrm{Kelly}}) < \tfrac12 = M_n(f_{\mathrm{Kelly}}, f_{\mathrm{Kelly}})$ for all $f \ne f_{\mathrm{Kelly}}$, so $(f_{\mathrm{Kelly}}, f_{\mathrm{Kelly}})$ is a strict Nash equilibrium.
 3. It is the unique Nash equilibrium, because $M_n(f,g) + M_n(g,f) \le 1$.
 4. The same holds, for every target size $c$, for the payoff "reach lineage size $c$ first", and Kelly remains the static equilibrium when environments are independent but not identically distributed.

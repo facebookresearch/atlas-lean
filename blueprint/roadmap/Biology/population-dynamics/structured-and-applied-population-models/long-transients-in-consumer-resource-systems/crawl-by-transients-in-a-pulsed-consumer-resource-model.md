@@ -4,7 +4,7 @@
 
 $$p_{m+1} = \delta_p p_m + \frac{\gamma_p\,p_m n_m}{1 + \sigma n_m^2}, \qquad n_{m+1} = \delta_n n_m \exp\!\Big(-\frac{\gamma_n p_m}{1 + \sigma n_m^2}\Big) + \frac{R\,n_m\,e^{-p_m}}{1 + n_m},$$
 
-with between-pulse survival $\delta_p, \delta_n \in (0,1)$, consumption parameters $\gamma_p, \gamma_n > 0$, group-defense strength $\sigma > 0$ (a Holling type IV response, decreasing for large resource density) and resource recruitment $R > 0$ with Beverton–Holt density dependence. Let $(0, n^*)$ be the resource-only equilibrium and assume $n^* > 1/\sigma$, so group defense acts below carrying capacity. The equilibria $(0, n^*)$ and a coexistence saddle undergo a transcritical bifurcation at
+with between-pulse survival $\delta_p, \delta_n \in (0,1)$, consumption parameters $\gamma_p, \gamma_n > 0$, group-defense strength $\sigma > 0$ (a Holling type IV response, decreasing for large resource density) and resource recruitment $R > 0$ with Beverton–Holt density dependence. Let $(0, n^*)$ be the resource-only equilibrium and assume $n^* > 1/\sqrt\sigma$ (the density of maximal consumption), so group defense acts below carrying capacity, and $n^* \ne \sqrt{(1-\delta_p)/(\sigma\delta_p)}$ (Appendix A). The equilibria $(0, n^*)$ and a coexistence saddle undergo a transcritical bifurcation at
 
 $$\gamma_p^* = \frac{(1-\delta_p)(1 + \sigma n^{*2})}{n^*};$$
 

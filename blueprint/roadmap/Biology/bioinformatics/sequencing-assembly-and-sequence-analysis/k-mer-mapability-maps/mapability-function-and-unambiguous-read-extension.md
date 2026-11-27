@@ -14,7 +14,7 @@ where $s_{[a,b)}$ is the substring from position $a$ to $b - 1$ (0-based).
 
 **Lemma 2 (monotonicity in the mismatch tolerance).** If $m > m'$, then $M(s, G, m) \ge M(s, G, m')$.
 
-**Unambiguous extension criterion.** In overlap-based assembly of a target genome $G$, let a contig end in a sequence $s$ that overlaps a read $r$ (so $s$ is a prefix of $r$). By Lemma 1, extending the contig with $r$ is guaranteed unambiguous iff
+**Unambiguous extension criterion.** In overlap-based assembly of a target genome $G$, let a contig end in a sequence $s$ that overlaps a read $r$ (so $s$ is a prefix of $r$), with $s$ occurring exactly once in $r$. By Lemma 1, extending the contig with $r$ is guaranteed unambiguous iff
 
 $$M(s, G) = M(r, G),$$
 

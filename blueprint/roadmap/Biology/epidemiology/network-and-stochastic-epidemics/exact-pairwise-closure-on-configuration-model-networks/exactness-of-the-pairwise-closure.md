@@ -8,7 +8,7 @@ and the closure under study, for $A \in \{S, I\}$, is
 
 $$[ASI] \simeq \kappa\,\frac{[AS][SI]}{[S]}.$$
 
-**Theorem.** Assume either $\psi(0) > 0$, $\psi'(0) > 0$ and $\psi''(1) < \infty$, or $\psi(u) = u^n$. The closure is exact, meaning both sides divided by $N$ agree as $N \to \infty$ (uniformly in probability on finite time intervals), if and only if the degree distribution is [Poisson-type](poisson-type-degree-distributions.md). In that case $\kappa = (n-1)/n$ for $\mathrm{Bin}(n,p)$ (including $n$-regular), $\kappa = 1$ for $\mathrm{Poi}(\lambda)$, and $\kappa = (r+1)/r$ for $\mathrm{NB}(r,p)$, and the closed pairwise system is equivalent to the edge-based (Volz) and dynamic survival analysis limits of the epidemic.
+**Theorem.** Assume either $\psi(0) > 0$, $\psi'(0) > 0$ and $\psi''(1) < \infty$, or $\psi(u) = u^n$. The closure is exact, meaning both sides divided by $N$ agree as $N \to \infty$ (uniformly in probability on finite time intervals), if and only if the degree distribution is [Poisson-type](poisson-type-degree-distributions.md). In that case $\kappa = (n-1)/n$ for $\mathrm{Bin}(n,p)$ (including $n$-regular, and $\kappa = 0$ for $n = 1$, where there are no triples), $\kappa = 1$ for $\mathrm{Poi}(\lambda)$, and $\kappa = (r+1)/r$ for $\mathrm{NB}(r,p)$, and the closed pairwise system is equivalent to the edge-based (Volz) and dynamic survival analysis limits of the epidemic.
 
 ## Depends on
 

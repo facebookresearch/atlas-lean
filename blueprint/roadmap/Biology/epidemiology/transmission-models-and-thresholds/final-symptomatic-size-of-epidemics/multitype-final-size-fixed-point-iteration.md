@@ -11,7 +11,7 @@ and the overall final size is $\pi = \sum_k \pi(y_k)$. The Jacobian at the origi
 **Theorem (fixed-point iteration).** Let $R_0 = \rho(G)$.
 
 1. If $R_0 < 1$, then $0$ is the only fixed point of $F$ in the positive cone and $F^l(w) \to 0$ as $l \to \infty$ for every $w$ in the positive cone.
-2. If $R_0 > 1$, then $F$ has a fixed point $\bar v \ne 0$ in the positive cone such that $F^l(w) \to \bar v$ for every $w$ with $w_i \ge \sum_{k=1}^{n} s_0(x_k)\, p_{x_k \to y_i}$ for all $i$. If $\bar v$ is the only nonzero fixed point in the positive cone, then $F^l(w) \to \bar v$ for every $w \ne 0$ in the positive cone.
+2. If $R_0 > 1$, then $F$ has a fixed point $\bar v \ne 0$ in the positive cone such that $F^l(w) \to \bar v$ for every $w$ with $w_i \ge \sum_{k=1}^{n} s_0(x_k)\, p_{x_k \to y_i}$ for all $i$. If $\bar v$ is the only nonzero fixed point in the positive cone, then $F^l(w) \to \bar v$ for every $w$ in the interior of the positive cone.
 
 ## Depends on
 

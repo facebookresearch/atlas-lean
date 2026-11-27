@@ -16,6 +16,10 @@ $$R(r^*) \le R(\hat r) + \sum_{i=1}^{K-1} \Delta_{s_i} + \frac{B - \theta}{c[s_K
 
 The expected-detection-time objective is not submodular, so the greedy guarantee does not extend to it.
 
+## Proof depends on
+
+- [SET COVER is NP-complete](../../../../TheoryOfComputation/np-completeness/set-systems-and-location/set-cover/set-cover-np-complete.md)
+
 ## Expansion
 
 Each $P(i \mid r)$ is one minus a product of factors $(1-r[v])^{\tau(v,i)}$ that are decreasing and log-concave in each coordinate, which makes the marginal gain of increasing $r[v]$ shrink as other coordinates grow; summing over cascades preserves monotone submodularity. The $(1 - 1/e)$ guarantee is the classical Nemhauser–Wolsey–Fisher bound transferred to lattice functions. The online bound uses submodularity to dominate the gain from moving $\hat r$ to $r^*$ by the best fractional-knapsack packing of single-coordinate improvements, which in practice is much tighter than $1-1/e$ and certifies when the greedy solution is optimal. The model treats hospital patients, staff and rooms as agents of a temporal bipartite contact network simulated for *C. difficile*.

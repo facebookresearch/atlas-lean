@@ -3,7 +3,7 @@
 **Setting.** A (unrooted binary phylogenetic) *network* on a finite set $X$ with $|X| = \ell \ge 3$ is a connected graph in which every vertex has degree 1 or 3 and whose leaves are labeled bijectively by $X$. Its reticulation number is $r(N) = |E(N)| - |V(N)| + 1$. Tier $i$, written $N_i(X)$, consists of the networks with $n = 2(\ell + i - 1)$ vertices; a network lies in $N_i(X)$ if and only if $r(N) = i$, and then $|E(N)| = 2\ell - 3 + 3i$ (tier 0 is the set of binary trees). An *NNI* operation on a path $v_1v_2v_3v_4$ through degree-3 vertices $v_2, v_3$ replaces it by $v_1v_3v_2v_4$, and stays within a tier; a *triangle* operation moves between tiers $i$ and $i+1$. NNI and triangle operations connect all networks on $X$, so they define a metric $d$ on $N(X) = \bigcup_i N_i(X)$, and NNI alone connects each tier. Let $\Delta_i$ be the NNI diameter of $N_i(X)$.
 
 **Theorem.** Let $i \ge 1$.
-1. (Size) $|N_i(X)| \ge (\ell + i - 3)!/(i-1)!$, and $|N_1(X)| \ge (\ell-2)!/(2\ell - 3)$.
+1. (Size) $|N_i(X)| \ge (\ell + i - 3)!/(i-1)!$, and $|N_1(X)| \ge (\ell-2)!\,2^{\ell-3}$.
 2. (Neighborhood growth) From any network in $N_i(X)$, at most $6^{\,2(\ell+i-1) + 10m} = 6^{\,n + 10m}$ networks of the tier are reachable in $m$ or fewer NNI operations.
 3. (Lower bound) $\Delta_i$ is bounded below by a term of order $n\log n$; explicitly, combining parts 1 and 2 gives $6^{\,n + 10\Delta_i} \ge (n/2 - 2)!/(i-1)!$, and Stirling's formula turns this into an $n\log_6 n$ bound.
 4. (Upper bound) $\Delta_i \le 3n + \binom{n/2 + i - 1}{2} - 2$.

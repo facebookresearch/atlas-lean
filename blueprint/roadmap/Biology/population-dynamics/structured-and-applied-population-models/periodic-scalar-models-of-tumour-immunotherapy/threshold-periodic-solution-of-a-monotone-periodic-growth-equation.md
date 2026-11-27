@@ -10,7 +10,7 @@ Solutions exist globally, are unique, and stay positive when $x_0 > 0$. Let $F_A
 
 **Theorem 1.** If $F_A > 0$, every solution with $x_0 > 0$ tends to $+\infty$.
 
-**Theorem 2.** If $F_A < 0$ and $F(t,x) \to f(t) > 0$ uniformly as $x \to \infty$, there is a curve $\gamma : [0,1) \to (0,\infty)$ such that solutions with $x_0 < \gamma(t_0)$ converge to $0$, solutions with $x_0 > \gamma(t_0)$ diverge to $+\infty$, and the solution with $x_0 = \gamma(t_0)$ is the unique periodic solution, whose graph separates the two basins.
+**Theorem 2.** If $F_A < 0$ and $F(t,x) \to f(t) > 0$ uniformly as $x \to \infty$, there is a curve $\gamma : [0,1) \to (0,\infty)$ such that solutions with $x_0 < \gamma(t_0)$ converge to $0$, solutions with $x_0 > \gamma(t_0)$ diverge to $+\infty$, and the solution with $x_0 = \gamma(t_0)$ is the unique positive periodic solution, whose graph separates the two basins.
 
 **Lemma (linear periodic forcing).** For $\dot x = F(t) - G(t)x$, $x(0) = 0$, with $1$-periodic $F$ and $G > 0$, $G_A = \int_0^1 G$, every solution converges to the $1$-periodic function
 

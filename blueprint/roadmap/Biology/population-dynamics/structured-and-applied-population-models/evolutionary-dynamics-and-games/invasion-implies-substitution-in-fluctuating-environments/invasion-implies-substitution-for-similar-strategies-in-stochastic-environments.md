@@ -12,7 +12,7 @@ $$\dot{\bar P}_{t_1} = \bar P_{t_1}(1 - \bar P_{t_1})\,\partial_y S_x(y)|_{y=x}\
 
 and $S_{x_1}(x_2) = -S_{x_2}(x_1) = \epsilon\,\partial_y S_x(y)|_{y=x}(\xi_2 - \xi_1) + O(\epsilon^2)$.
 
-**Theorem (invasion implies substitution).** Assume $\int|f(y,e,\theta)|^2\mu(de\,d\theta) < \infty$ for $y$ near $x$ and $\partial_y S_x(y)|_{y=x}(\xi_2 - \xi_1) \ne 0$. For every $\delta \in (0,1)$ there is $T_\delta$ such that, for all initial $p \in [0,1]$ and $\mu$-a.e. initial state,
+**Theorem (invasion implies substitution).** Assume $\int|f(y,e,\theta)|^2\mu(de\,d\theta) < \infty$ for $y$ near $x$ and $\partial_y S_x(y)|_{y=x}(\xi_2 - \xi_1) \ne 0$. For every $\delta \in (0,1)$ there is $T_\delta$ such that, for all initial $p \in (0,1)$ and $\mu$-a.e. initial state,
 
 $$P\Big\{\lim_{\epsilon\to 0}\sup_{t_1 \ge T_\delta}|P^\epsilon_{t_1} - p^*| \le \delta\Big\} = 1,$$
 

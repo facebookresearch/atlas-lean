@@ -6,7 +6,7 @@ $$\tau\,\partial_t\nu(t,x)=-\nu(t,x)+f\Bigl(\int_D w(x,y)\nu(t,y)\,dy+I(t,x)\Big
 
 with $\tau>0$, $w\in L^2(D\times D)$, input $I$, and a gain function $f\ge 0$ that is bounded and globally Lipschitz.
 
-**Microscopic model.** For each $n$, partition (most of) $D$ into $P(n)$ subdomains $D_{k,n}$, the $k$-th holding $l(k,n)$ neurons of which $\Theta^{k,n}_t$ are active. With averaged weights $\bar W^n_{kj}=|D_{k,n}|^{-1}\int_{D_{k,n}}\int_{D_{j,n}}w(x,y)\,dy\,dx$, averaged input $\bar I_{k,n}(t)$ and activation rate $\bar f_{k,n}(\theta,t)=f\bigl(\sum_j\bar W^n_{kj}\theta_j/l(j,n)+\bar I_{k,n}(t)\bigr)$, the count $\theta_k$ decreases by one at rate $\theta_k/\tau$ and increases by one at rate $l(k,n)\bar f_{k,n}/\tau$. Embed the process in $L^2(D)$ by $\nu^n_t=\sum_k\frac{\Theta^{k,n}_t}{l(k,n)}\mathbf 1_{D_{k,n}}$. Let $\delta_+(n)$ be the largest diameter of a subdomain and $\ell_-(n)$ the smallest population size.
+**Microscopic model.** For each $n$, partition (most of) $D$ into $P(n)$ subdomains $D_{k,n}$, the $k$-th holding $l(k,n)$ neurons of which $\Theta^{k,n}_t$ are active. With averaged weights $\bar W^n_{kj}=|D_{k,n}|^{-1}\int_{D_{k,n}}\int_{D_{j,n}}w(x,y)\,dy\,dx$, averaged input $\bar I_{k,n}(t)$ and activation rate $\bar f_{k,n}(\theta,t)=f\bigl(\sum_j\bar W^n_{kj}\theta_j/l(j,n)+\bar I_{k,n}(t)\bigr)$, the count $\theta_k$ decreases by one at rate $\theta_k/\tau$ and increases by one at rate $l(k,n)\bar f_{k,n}/\tau$. Embed the process in $L^2(D)$ by $\nu^n_t=\sum_k\frac{\Theta^{k,n}_t}{l(k,n)}\mathbf 1_{D_{k,n}}$. Let $\delta_+(n)$ be the largest diameter of a subdomain, $v_-(n)=\min_k|D_{k,n}|$ and $v_+(n)=\max_k|D_{k,n}|$ the smallest and largest subdomain volumes, and $\ell_-(n)=\min_k l(k,n)$ and $\ell_+(n)=\max_k l(k,n)$ the smallest and largest population sizes.
 
 **Theorem (law of large numbers).** Assume $I\in L^2_{\mathrm{loc}}(\mathbb R_+,H^1(D))$, $\nu^n_0\to\nu(0)$ in probability in $L^2(D)$, $\mathbb E\,\Theta^{k,n}_0\le l(k,n)$, and
 
@@ -18,7 +18,11 @@ $$\lim_{n\to\infty}\mathbb P\Bigl[\sup_{t\in[0,T]}\|\nu^n_t-\nu(t)\|_{L^2(D)}>\e
 
 and if moreover $\sup_n\mathbb E\|\nu^n_0\|^{2r}_{L^2(D)}<\infty$ for some $r\ge 1$, then $\mathbb E\sup_{t\le T}\|\nu^n_t-\nu(t)\|^r_{L^2(D)}\to 0$. Under additional regularity of $I$, the convergence in mean holds uniformly over all $t\ge 0$ in the weaker norm of $H^{-\alpha}(D)$, $\alpha\ge 0$.
 
-**Fluctuations.** Writing $\nu^n_t=\nu^n_0+\int_0^t(\text{drift})\,ds+M^n_t$, for $\alpha>d$ and suitably balanced patch volumes and sizes, the rescaled martingales $\sqrt{\ell_-(n)v_+(n)}\,M^n$ converge weakly in the space of $H^{-\alpha}(D)$-valued càdlàg paths to a centred Gaussian diffusion, which yields a Langevin approximation of the neural field.
+**Fluctuations.** Writing $\nu^n_t=\nu^n_0+\int_0^t(\text{drift})\,ds+M^n_t$, for $\alpha>d$, under the hypotheses of the theorem with convergence in mean for $r=1$, and if the patch volumes and sizes are asymptotically balanced,
+
+$$\lim_{n\to\infty}\frac{v_-(n)}{v_+(n)}\,\frac{\ell_-(n)}{\ell_+(n)}=1,$$
+
+the rescaled martingales $\sqrt{\ell_-(n)/v_+(n)}\,M^n$ converge weakly in the space of $H^{-\alpha}(D)$-valued càdlàg paths to a centred Gaussian diffusion, which yields a Langevin approximation of the neural field.
 
 ## Proof depends on
 

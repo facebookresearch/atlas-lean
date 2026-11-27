@@ -18,7 +18,7 @@ $$\frac{n^k}{(m+k-1)_k} \le \mathbb E\,|M(n)| \le \frac{n^k}{(m+k-1)_k}\Big(1 + 
 
 $$\mathbb E\,|M(n)|^2 = \binom{n-1}{m-1}^{-1} \sum_{i=0}^{k} \binom{k}{i}\, 2^i \binom{n+k-1}{m+k+i-1},$$
 
-and the variance vanishes exactly when $m = 1$ or $m = n$. These moments give the null mean and variance for significance tests of over-represented family-specific motifs in gene regulatory networks.
+and the variance vanishes exactly when $m = 1$, $m = n$, or $k = m = n - 1$ (then every composition has one part $2$ and $|M(n)| = 2$). These moments give the null mean and variance for significance tests of over-represented family-specific motifs in gene regulatory networks.
 
 ## Expansion
 

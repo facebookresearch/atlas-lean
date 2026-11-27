@@ -15,7 +15,7 @@ $$0 \le x, y \le \frac{1-p}{p}\,\frac{P - S}{R - S}.$$
 
 All equilibria are mutual defection, but unconditional defection $(0;0;0)$ is not evolutionarily stable, because the neutral variants $(0; x; 0)$ earn the same payoff.
 - *Defectors versus blind cooperators.* For $(1;0;0)$ against $(0;x;0)$: if $x$ satisfies the equilibrium bound and $x \le \frac{1}{p} - 2 + \frac{P - S}{T - R}$, then $(0;x;0)$ dominates; if neither holds, $(1;0;0)$ dominates; if only the first holds, they coexist; if only the second, they are bistable.
-- *Unequal reaction times.* Pure cooperators $(1;0;0)$ that see defectors with probability $p_{12}$ (seeing one another with probability $p_{11} \le 1/2$) and pure defectors $(0;0;0)$ are bistable iff $p_{12} > \frac{T-R}{T-P} + \frac{2R - S - T}{T - P}\,p_{11}$; for $(T,R,P,S) = (5,3,1,0)$ this reads $p_{12} > \tfrac12 + \tfrac14 p_{11}$, so cooperators can resist invasion when they see defections with probability above $5/8$.
+- *Unequal reaction times.* Pure cooperators $(1;0;0)$ that see defectors with probability $p_{12}$ (seeing one another with probability $p_{11} \le 1/2$), and are seen by defectors with probability $p_{21}$, where $0 < p_{21} < p_{12} < 1$, and pure defectors $(0;0;0)$ are bistable iff $p_{12} > \frac{T-R}{T-P} + \frac{2R - S - T}{T - P}\,p_{11}$; for $(T,R,P,S) = (5,3,1,0)$ this reads $p_{12} > \tfrac12 + \tfrac14 p_{11}$, so cooperators can resist invasion when they see defections with probability above $5/8$.
 
 ## Expansion
 

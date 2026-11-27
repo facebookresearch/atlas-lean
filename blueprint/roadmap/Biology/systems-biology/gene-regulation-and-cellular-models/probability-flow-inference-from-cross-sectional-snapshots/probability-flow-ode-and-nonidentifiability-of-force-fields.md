@@ -1,6 +1,6 @@
 # Probability flow ODE and non-identifiability of force fields
 
-Let cell states $x \in \mathbb{R}^d$ (for example gene expression) follow the Itô SDE $dx = f(x)\,dt + G(x)\,dW$ with force field $f$, intrinsic noise model $G$ and diffusion tensor $D = GG^{\mathsf T}$ (absorbing the usual factor $1/2$ into $D$). Single-cell omics provides only **cross-sectional snapshots**: independent samples from the marginals $p_t$ at a few times, with no trajectories. The marginals obey the Fokker-Planck equation
+Let cell states $x \in \mathbb{R}^d$ (for example gene expression) follow the Itô SDE $dx = f(x)\,dt + \sqrt{2}\,G(x)\,dW$ with force field $f$, intrinsic noise model $G$ and diffusion tensor $D = GG^{\mathsf T}$. Single-cell omics provides only **cross-sectional snapshots**: independent samples from the marginals $p_t$ at a few times, with no trajectories. The marginals obey the Fokker-Planck equation
 
 $$\partial_t p_t = -\nabla \cdot \big[f\, p_t - \nabla \cdot (D\, p_t)\big].$$
 

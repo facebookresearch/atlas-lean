@@ -7,7 +7,7 @@
 **Theorem.** Assume $p_{12} \le p_{21}$. The pure Nash equilibria are:
 - player 1 plays $(0;0;1)$, player 2 plays $(1;0;1)$, iff $\dfrac{p_{21}}{1 - p_{12}} \le \dfrac{T - R}{S - R}$ (condition (5));
 - player 1 plays $(1;0;1)$, player 2 plays $(0;0;1)$, iff $\dfrac{p_{12}}{1 - p_{21}} \le \dfrac{T - R}{S - R}$ (condition (6));
-- both play $(1;0;1)$ iff (6) fails.
+- both play $(1;0;1)$ iff $\dfrac{p_{12}}{1 - p_{21}} \ge \dfrac{T - R}{S - R}$ (that is, (6) fails or holds with equality).
 
 Condition (5) implies (6). When (5) holds there is also a mixed equilibrium in which player $i$ plays $(s^i_1; 0; 1)$ with
 

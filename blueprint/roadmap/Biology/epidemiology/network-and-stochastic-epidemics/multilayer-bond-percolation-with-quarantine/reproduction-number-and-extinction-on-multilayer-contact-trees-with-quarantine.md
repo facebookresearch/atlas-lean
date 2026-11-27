@@ -10,7 +10,7 @@ $$R_0 = (1-Q)\sum_{j=1}^n T_j\,E(k_j)\left(1 - \frac{1}{\sum_l E(k_l)}\right) + 
 
 where $\sigma(k_j)^2$ is the variance of the class-$j$ degree.
 
-**Proposition 2 and Theorems 3–4 (extinction).** The probability $P_\infty$ that the chain started from an individual reached along an edge dies out satisfies $P_\infty = \tilde Z(P_\infty)$, and $\tilde Z$ has at most two fixed points in $[0,1]$. The probability that the outbreak from patient zero dies out is $P = Z(P_\infty)$. If $R_0 \le 1$ then $P = P_\infty = 1$; if $R_0 > 1$ then $P_\infty, P \in (0,1)$. In all cases $P_\infty > Q$ and $P \ge Q$.
+**Proposition 2 and Theorems 3–4 (extinction).** The probability $P_\infty$ that the chain started from an individual reached along an edge dies out is the smallest fixed point of $\tilde Z$ in $[0,1]$; excluding the degenerate case $\tilde Z(x) \equiv x$ (every reached individual infects exactly one other), $\tilde Z$ has at most two fixed points in $[0,1]$. The probability that the outbreak from patient zero dies out is $P = Z(P_\infty)$. In the nondegenerate case, if $R_0 \le 1$ then $P = P_\infty = 1$; if $R_0 > 1$ and $\tilde Z(0) > 0$ (for instance $Q > 0$) then $P_\infty, P \in (0,1)$. In all cases $P_\infty \ge Q$ and $P \ge Q$.
 
 **Corollary (containment by isolation).** The outbreak dies out almost surely if and only if $Q \ge 1 - 1/R_0^{\mathrm{free}}$. For example, $R_0^{\mathrm{free}} = 3$ requires isolating at least $2/3$ of the infected.
 

@@ -11,6 +11,10 @@ This contrasts with rooted phylogenetic networks, where deciding tree-basedness 
 
 **Rooted–unrooted correspondence.** For a leaf $x \in X$, $N$ is tree-based if and only if some orientation of its edges turns $N$ with $x$ and its pendant edge removed into a rooted tree-based network on $X \setminus \{x\}$. Consequently, for every non-empty $X$ there is a *universal* unrooted tree-based network on $X$, having every phylogenetic tree on $X$ as a base-tree.
 
+## Proof depends on
+
+- [HAMILTONIAN CIRCUIT ON PLANAR CUBIC GRAPHS is NP-complete](../../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/hamiltonian-circuit-on-restricted-graph-classes/hamiltonian-circuit-cubic-planar-np-comp.md)
+
 ## Expansion
 
 Both problems are in NP because a candidate spanning tree can be checked in polynomial time. For hardness, take a cubic graph $C$, choose an edge $e$, and subdivide it twice, attaching new leaves $x$ and $y$; call the result $C_e(x,y)$. A support tree of a network with two leaves is a Hamiltonian path between them, so the following are equivalent: $C$ is Hamiltonian; $C_e(x,y)$ is tree-based for some $e$; $C_e(x,y)$ has a support tree that is an $x$–$y$ path, i.e. the one-edge tree on $\{x,y\}$ is a base-tree. Since Hamiltonicity of planar cubic $3$-connected graphs is NP-complete, and only $3|V(C)|/2$ edges need to be tried, both problems are NP-hard. For the correspondence, orient a support tree away from $x$ and direct each remaining edge away from its earlier endpoint in a topological order; this produces an acyclic rooted network with the same support tree. Applying it to a universal rooted network on $X \setminus \{x\}$ with $x$ attached above the root yields the universal unrooted network.

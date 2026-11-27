@@ -17,6 +17,10 @@ Several transmission edges between the same pair of hosts are allowed (a *weak b
 
 By contrast, under a strong bottleneck ($w \equiv 1$) the solutions can be counted and sampled uniformly in polynomial time, and dropping the direct transmission constraint (keeping only the timing and contact constraints) also gives a polynomial dynamic program. The three solution sets are nested: $\mathcal L_{SB} \subseteq \mathcal L \subseteq \mathcal L_{REL}$.
 
+## Proof depends on
+
+- [1-IN-3-SAT is NP-complete](../../../../TheoryOfComputation/np-completeness/satisfiability/1-in-3-sat/one-in-three-sat-np-complete.md)
+
 ## Expansion
 
 Membership in NP is immediate: a labelling is checked edge by edge. Hardness comes from a reduction from 1-in-3SAT, in which each clause becomes a gadget of hosts and subtrees whose admissible labellings choose exactly one true literal; the unique-infector and overlapping-interval conditions are what couple the gadgets. The reduction is parsimonious, preserving the number of solutions, so the #P-completeness of #1-in-3SAT transfers to #DTI. Since even deciding non-emptiness is NP-hard, a relative-error approximation of the count in randomized polynomial time would decide DTI in RP. In practice the problem is encoded as a Boolean formula and handed to approximate model counters and near-uniform samplers; alternatively one samples uniformly from the polynomially countable relaxed set $\mathcal L_{REL}$ and rejects labellings that violate the direct transmission constraint, which is uniform on $\mathcal L$ but can be slow when $|\mathcal L| \ll |\mathcal L_{REL}|$.

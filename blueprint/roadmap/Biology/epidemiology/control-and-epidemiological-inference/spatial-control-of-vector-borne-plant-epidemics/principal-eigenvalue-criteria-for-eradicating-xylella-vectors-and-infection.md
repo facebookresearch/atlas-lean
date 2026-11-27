@@ -27,7 +27,7 @@ $\tilde\lambda_1$ increases with $\gamma_1$, $\gamma_{21}$ and, by inclusion, wi
 
 **Theorem 2 (eradication of infection with surviving vectors).** When the transmission-reducing controls $\gamma_{22}, \gamma_{23}, \gamma_3$ act on the whole habitat, if $\tilde\lambda_1 < 0$, $q > \ell$, $C_I(\cdot, 0) \not\equiv 0$ and
 
-$$\Big[(1 - \gamma_{23})\|C_I^\ast\|_\infty \|k\|_2 + \zeta(1 - \gamma_{22})\, C(q-\ell)^+\Big]^2 < \lambda_1\Big[\mu + \ell + \alpha - b(1 - \gamma_3)\ell\, C(q - \ell)^+\Big],$$
+$$\Big[\beta(1 - \gamma_{23})\|C_I^\ast\|_\infty \|k\|_2 + \zeta(1 - \gamma_{22})\, C(q-\ell)^+\Big]^2 < \lambda_1\Big[\mu + \ell + \alpha - b(1 - \gamma_3)\ell\, C(q - \ell)^+\Big],$$
 
 where $C_I^\ast$ is the stationary solution of Proposition 1(2) and $\lambda_1$ is the principal eigenvalue of
 

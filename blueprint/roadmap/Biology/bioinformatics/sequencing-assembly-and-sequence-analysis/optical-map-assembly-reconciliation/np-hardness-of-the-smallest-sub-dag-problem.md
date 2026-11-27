@@ -6,6 +6,10 @@ After contigs are placed on unified optical-map coordinates, overlaps between co
 
 **Theorem.** The smallest sub-DAG problem is NP-hard.
 
+## Proof depends on
+
+- [SET COVER is NP-complete](../../../../TheoryOfComputation/np-completeness/set-systems-and-location/set-cover/set-cover-np-complete.md)
+
 ## Expansion
 
 The proof is a polynomial reduction from Set Cover. Given a universe $U$ and a family $\mathcal{C}$ of subsets, build one vertex per element of $U$ (these are the sinks), one vertex per set in $\mathcal{C}$, and a single source $s$. Add an arc from $s$ to every set vertex and an arc from a set vertex $c$ to an element vertex $e$ whenever $e \in c$. Any connected sub-DAG containing $s$ and all sinks must reach each element through some set vertex containing it, so its set vertices form a set cover; conversely a set cover of size $k$ yields such a sub-DAG on $1 + k + |U|$ vertices. Minimizing $|V'|$ therefore minimizes the cover size. Because of this hardness, the minimum tiling path is computed heuristically: take the shortest of all source-to-sink shortest paths, then repeatedly attach uncovered sources and sinks to the current sub-DAG by shortest paths.

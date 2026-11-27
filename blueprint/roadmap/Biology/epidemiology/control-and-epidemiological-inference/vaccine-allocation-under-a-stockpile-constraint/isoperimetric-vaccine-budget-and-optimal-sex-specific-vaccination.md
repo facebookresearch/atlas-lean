@@ -14,7 +14,7 @@ $$\dot Z = u_f S_f + u_m S_m, \qquad Z(0) = 0, \qquad Z(t_f) = W .$$
 
 The isoperimetric problem becomes a standard problem with one fixed terminal state.
 
-**Theorem.** An optimal pair $(u_f^*, u_m^*)$ exists. If it is optimal, there are $\lambda_0 \in \{0, 1\}$ and piecewise differentiable adjoints $\lambda_1, \dots, \lambda_7$, not all zero together with $\lambda_0$, such that the optimal control minimizes the Hamiltonian
+**Theorem.** Assuming some admissible control attains $Z(t_f) = W$, an optimal pair $(u_f^*, u_m^*)$ exists. If it is optimal, there are $\lambda_0 \in \{0, 1\}$ and piecewise differentiable adjoints $\lambda_1, \dots, \lambda_7$, not all zero together with $\lambda_0$, such that the optimal control minimizes the Hamiltonian
 
 $$H = \lambda_0\bigl[A_1 I_f + A_2 I_m + A_3 u_f^2 + A_4 u_m^2\bigr] + \sum_{i=1}^{6} \lambda_i\, g_i(S, V, I, u) + \lambda_7\,(u_f S_f + u_m S_m)$$
 
@@ -22,7 +22,7 @@ pointwise in $u$ ($g_1, \dots, g_6$ the right-hand sides for $S_f, V_f, I_f, S_m
 
 $$u_f^*(t) = \min\Bigl\{\max\Bigl\{0,\ \frac{(\lambda_1 - \lambda_2 - K)\, S_f^*}{2A_3}\Bigr\},\ u_{\max}\Bigr\}, \qquad u_m^*(t) = \min\Bigl\{\max\Bigl\{0,\ \frac{(\lambda_4 - \lambda_5 - K)\, S_m^*}{2A_4}\Bigr\},\ u_{\max}\Bigr\},$$
 
-with the constant $K$ chosen so that $Z(t_f) = W$. In the abnormal case $\lambda_0 = 0$ the Hamiltonian is linear in the controls and the optimal control is bang–bang (for example, vaccinate at $u_{\max}$ until the stockpile runs out), ignoring the objective.
+with the constant $K$ chosen so that $Z(t_f) = W$. In the abnormal case $\lambda_0 = 0$ the Hamiltonian is linear in the controls and the optimal control is bang–bang except possibly on singular arcs (for example, vaccinate at $u_{\max}$ until the stockpile runs out), ignoring the objective.
 
 ## Depends on
 

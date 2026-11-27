@@ -16,7 +16,7 @@ with maintenance (decay) rates $a_i \ge 0$. The growth functions are not of a sp
 
 Let $M_0(\cdot, s_2)$, $M_1(\cdot, s_2)$, $M_2$ be the inverses of $s_0 \mapsto \mu_0$, $s_1 \mapsto \mu_1$, $s_2 \mapsto \mu_2$. On the interval of $s_2$ where both $\mu_0(\infty, s_2) > D + a_0$ and $\mu_1(\infty, s_2) > D + a_1$, define
 
-$$\psi(s_2, D) = M_0(D + a_0, s_2) + M_1(D + a_1, s_2) + \frac{s_2}{1 - \omega},$$
+$$\psi(s_2, D) = M_0(D + a_0, s_2) + \frac{M_1(D + a_1, s_2) + s_2}{1 - \omega},$$
 
 assumed to have a unique interior minimum $\bar s_2(D)$ (true for Monod kinetics, where $\psi$ is convex), and put $F_1(D) = \psi(\bar s_2, D)$, $F_2(D) = \psi(M_2(D + a_2), D)$, $F_3(D) = \partial_{s_2}\psi(M_2(D + a_2), D)$.
 

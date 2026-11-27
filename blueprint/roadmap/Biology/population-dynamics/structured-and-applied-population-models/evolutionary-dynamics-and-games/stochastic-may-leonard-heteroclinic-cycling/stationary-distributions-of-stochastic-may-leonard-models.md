@@ -12,7 +12,7 @@ plus, in the **general variance model**, individual death $A_i \xrightarrow{d} \
 
 **Proposition 1 (total extinction).** In the general variance model with $d > 0$, the unique stationary distribution is $\pi = \delta_{(0,0,0)}$: all three species go extinct with probability one from every initial condition.
 
-**Proposition 2 (single-species persistence).** The minimal model has exactly four stationary distributions: $\delta_{(0,0,0)}$ and, for each $i \in \{1,2,3\}$,
+**Proposition 2 (single-species persistence).** The minimal model has exactly four extremal (ergodic) stationary distributions, and every stationary distribution is a convex combination of them: $\delta_{(0,0,0)}$ and, for each $i \in \{1,2,3\}$,
 
 $$\pi(N) = \frac{(r\Omega)^{N_i}}{N_i!\,\big(e^{r\Omega} - 1\big)}\ \delta(N_{i+1})\,\delta(N_{i+2}), \qquad N_i \ge 1,$$
 

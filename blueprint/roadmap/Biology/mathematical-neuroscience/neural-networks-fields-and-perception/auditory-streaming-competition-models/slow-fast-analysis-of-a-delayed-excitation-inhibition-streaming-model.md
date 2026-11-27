@@ -15,7 +15,7 @@ Let $I$ be the union of all tone intervals. Assume (U1) $a - b < \theta$ and (U2
 **Theorem.** In the singular limit $\tau \to 0$:
 1. Without input, (U1) makes the quiescent state $(0,0,0,0)$ the only equilibrium; if instead $a - b \ge \theta$, the active state $(1,1,1,1)$ coexists and every trajectory with $c \ge \theta$ ends there.
 2. (Dynamics between tones) For $t \notin I$: if either unit is OFF at $t$, both units are OFF from $t$ until the next tone onset; if either unit is ON at $t$, both have been ON since the end of the preceding tone interval. Hence each unit can switch ON only during a tone, and every state is either *LONG* (both units ON at some time between tones) or *SHORT* (both OFF between all tones).
-3. If $T_D + D < T_R$, both units are OFF at the start of each tone interval and each unit switches ON at most once per tone interval; the periodic states are then classified by binary matrices recording which unit switches on in each interval, with explicit inequalities in $(a, b, c, d, \theta, \tau_i, D, T_D, T_R)$ for their existence.
+3. If $T_D + D < T_R$ and $D > T_D$, both units are OFF at the start of each tone interval and each unit switches ON at most once per tone interval; the periodic states are then classified by binary matrices recording which unit switches on in each interval, with explicit inequalities in $(a, b, c, d, \theta, \tau_i, D, T_D, T_R)$ for their existence.
 
 These states map onto percepts: responses of both units to every tone correspond to integration, responses of each unit only to its own tone to segregation, with slow delayed inhibition masking the subsequent tone during segregation and fast excitation allowing integration even for large pitch differences.
 

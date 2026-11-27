@@ -22,7 +22,7 @@ $$I^* = \frac{\mu}{\delta} - \frac{\mu + v_0}{\beta}, \qquad S^* = \frac{\delta}
 
 indexed by the relay states compatible with $I^*$; all share the same susceptible fraction $S^*$ but have different vaccination rates and infected fractions.
 3. (Poincaré–Bendixson-type alternative.) If $\mathcal{R}_0 > 1$, every trajectory converges either to an endemic equilibrium or to a simple periodic orbit.
-4. Suppose every input–output loop of the Preisach operator for a simple periodic input is convex (ascending branch convex, descending branch concave), which holds for a uniform or nearly uniform density $q$, and that the relative loop width $L = \max_{I_1 < I_2} (I_2 - I_1)^{-1} \max_{I_1 \le I \le I_2} (\hat v(I) - \bar v(I))$ is sufficiently small. Then there are no periodic solutions and every trajectory converges to an endemic equilibrium.
+4. If $\mathcal{R}_0 > 1$, suppose every input–output loop of the Preisach operator for a simple periodic input is convex (ascending branch convex, descending branch concave), which holds for a uniform or nearly uniform density $q$, and that the relative loop width $L = \max_{I_1 < I_2} (I_2 - I_1)^{-1} \max_{I_1 \le I \le I_2} (\hat v(I) - \bar v(I))$ is sufficiently small. Then there are no periodic solutions and every trajectory converges to an endemic equilibrium.
 
 ## Expansion
 

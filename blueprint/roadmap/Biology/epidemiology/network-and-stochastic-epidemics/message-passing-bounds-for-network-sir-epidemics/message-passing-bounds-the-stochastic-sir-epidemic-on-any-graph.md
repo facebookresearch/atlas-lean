@@ -1,6 +1,6 @@
 # Message passing bounds the stochastic SIR epidemic on any graph
 
-Let $G = (V, E)$ be a graph (finite or countable) with neighbourhoods $N_i$. Each individual $i$ is initially infected, susceptible or recovered/vaccinated with probabilities $1 - y_i - z_i$, $z_i$, $y_i$. If infected, $i$ has infectious period $\mu_i$ and makes contact with neighbour $j$ at time $\omega_{ji}$ after its infection, and the contact is infectious if $\omega_{ji} < \mu_i$. Assume:
+Let $G = (V, E)$ be a locally finite graph (finite or countable) with neighbourhoods $N_i$. Each individual $i$ is initially infected, susceptible or recovered/vaccinated with probabilities $1 - y_i - z_i$, $z_i$, $y_i$. If infected, $i$ has infectious period $\mu_i$ and makes contact with neighbour $j$ at time $\omega_{ji}$ after its infection, and the contact is infectious if $\omega_{ji} < \mu_i$. Assume:
 - for each $i$ the family $\{-\mu_i\} \cup \{\omega_{ji} : j \in N_i\}$ is **associated**, i.e. $E[f g] \ge E[f]\,E[g]$ for all non-decreasing $f, g$ of these variables (independence is a special case);
 - these families are mutually independent over $i$ and independent of the initial states.
 
@@ -20,7 +20,7 @@ $$P(i \text{ susceptible at } t) \ge S^{(i)}_{\mathrm{mes}}(t), \qquad P(i \text
 
 with equality when $G$ is a tree or forest. Summing over $i$, message passing gives an upper bound on the expected epidemic size at every time.
 
-**Theorem 3 (cycles inhibit spread).** In the homogeneous model on an $n$-regular arc-transitive graph, with i.i.d. individual behaviour, the probability that an individual is susceptible at time $t$ is smallest, and the probability that it is recovered is largest, on the $n$-regular Bethe lattice (infinite tree).
+**Theorem 3 (cycles inhibit spread).** In the homogeneous model with bounded contact-time density, $\sup_{\tau \ge 0} f(\tau) < \infty$, on an $n$-regular arc-transitive graph, with i.i.d. individual behaviour, the probability that an individual is susceptible at time $t$ is smallest, and the probability that it is recovered is largest, on the $n$-regular Bethe lattice (infinite tree).
 
 ## Expansion
 

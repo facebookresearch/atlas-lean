@@ -4,7 +4,7 @@
 
 $$\frac{dn_i}{dt} = n_i\,F(s_i; s'; n'),$$
 
-where the fitness-generating function $F$ is smooth in all arguments and invariant under exchanging phenotypes together with their densities, so that nearly identical phenotypes act almost as one. Phenotypes closer than a threshold distance $\varepsilon = \varepsilon_\mu/\rho_\mu$ are grouped into clusters, each represented by an **approximate phenotype** $s_a$ carrying the cluster's total density $m_a$; clusters are assumed well separated, and before the invasion the approximate phenotypes sit at a stable equilibrium $\breve m$.
+where the fitness-generating function $F$ is smooth in all arguments and invariant under exchanging phenotypes together with their densities, so that nearly identical phenotypes act almost as one. Phenotypes closer than a threshold distance $\varepsilon = \rho_\mu\varepsilon_\mu$, for a constant $\rho_\mu > 1$ (so a mutant shares its parent's cluster), are grouped into clusters, each represented by an **approximate phenotype** $s_a$ carrying the cluster's total density $m_a$; clusters are assumed well separated, and before the invasion the approximate phenotypes sit at a stable equilibrium $\breve m$.
 
 **Theorem.**
 1. (Lotka–Volterra approximation) If during the transient after the invasion the approximate-phenotype densities stay close to their pre-invasion values, $\|m - \breve m\| \le \varepsilon C_m$, then
