@@ -22,9 +22,10 @@ untouched by either endpoint of any transposition is still a fixed point.
 
 open scoped BigOperators Topology
 open Equiv Filter
-open MathlibExt.RepresentationTheory.FourierTransformFiniteGroup (conv convPow sum_conv)
+open MathlibExt.RepresentationTheory.FourierTransformFiniteGroup (conv convPow)
 open MathlibExt.Probability.RandomWalkFiniteGroup
-  (uniform randomTransposition sum_randomTransposition)
+  (uniform randomTransposition randomTransposition_eq_expect randomTransposition_convPow_nonneg
+    sum_randomTransposition_convPow)
 open MathlibExt.Probability.MarkovMixing (tvDist)
 
 namespace MathlibExt.Probability.RandomWalkFiniteGroupWanted
@@ -33,70 +34,7 @@ variable {n : ℕ} [NeZero n]
 
 private abbrev WalkPerm (n : ℕ) := Equiv.Perm (Fin n)
 
-omit [NeZero n] in
-private theorem swap_eq_swap_iff {a b i j : Fin n} (hab : a ≠ b) :
-    swap i j = swap a b ↔ (i = a ∧ j = b) ∨ (i = b ∧ j = a) := by
-  constructor
-  · intro h
-    have ha := DFunLike.congr_fun h a
-    have hb := DFunLike.congr_fun h b
-    simp only [swap_apply_def] at ha hb
-    grind
-  · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
-    · rfl
-    · exact swap_comm _ _
-
-/-- Sampling two independent uniform endpoints and interchanging them gives the
-random-transposition measure, including the identity step when the endpoints agree. -/
-public theorem randomTransposition_eq_expect (σ : Equiv.Perm (Fin n)) :
-    randomTransposition n σ =
-      𝔼 i : Fin n, 𝔼 j : Fin n, if swap i j = σ then (1 : ℝ) else 0 := by
-  classical
-  by_cases h : σ = 1
-  · subst σ
-    simp [randomTransposition, swap_eq_one_iff]
-  by_cases hs : σ.IsSwap
-  · obtain ⟨a, b, hab, rfl⟩ := hs
-    have hsplit (i j : Fin n) :
-        (if swap i j = swap a b then (1 : ℝ) else 0) =
-          (if i = a then (if j = b then 1 else 0) else 0) +
-          (if i = b then (if j = a then 1 else 0) else 0) := by
-      simp only [swap_eq_swap_iff hab]
-      split_ifs <;> grind
-    simp_rw [hsplit, Fintype.expect_eq_sum_div_card, Finset.sum_add_distrib,
-      Finset.sum_ite_irrel, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.sum_const_zero]
-    simp [randomTransposition, h, Perm.swap_isSwap_iff, hab, add_div, ite_div,
-      Finset.sum_add_distrib]
-    ring
-  · have hne (i j : Fin n) : swap i j ≠ σ := by
-      rintro rfl
-      by_cases hij : i = j
-      · exact h (swap_eq_one_iff.mpr hij)
-      · exact hs (Perm.swap_isSwap_iff.mpr hij)
-    simp [randomTransposition, h, hs, hne]
-
 private noncomputable abbrev walk (n k : ℕ) [NeZero n] := convPow (randomTransposition n) k
-
-/-- Every convolution power of the random-transposition measure is nonnegative. -/
-public theorem randomTransposition_convPow_nonneg (k : ℕ) (σ : Equiv.Perm (Fin n)) :
-    0 ≤ convPow (randomTransposition n) k σ := by
-  change 0 ≤ walk n k σ
-  induction k generalizing σ with
-  | zero => simp [walk, convPow]; split <;> norm_num
-  | succ k ih =>
-    apply Finset.sum_nonneg
-    intro τ _
-    apply mul_nonneg _ (ih τ)
-    unfold randomTransposition
-    split_ifs <;> positivity
-
-/-- Every convolution power of the random-transposition measure has total mass one. -/
-public theorem sum_randomTransposition_convPow (k : ℕ) :
-    ∑ σ, convPow (randomTransposition n) k σ = 1 := by
-  change ∑ σ, walk n k σ = 1
-  induction k with
-  | zero => simp [walk, convPow]
-  | succ k ih => rw [walk, convPow, sum_conv, sum_randomTransposition, one_mul]; exact ih
 
 private theorem walk_succ_expect (k : ℕ) (f : WalkPerm n → ℝ) :
     ∑ σ, walk n (k + 1) σ * f σ =

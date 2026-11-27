@@ -43,7 +43,8 @@ noncomputable def symRankMap {n : ℕ} (j : ℕ) :
   map_add' f g := by ext p; simp [Finset.sum_add_distrib]
   map_smul' c f := by ext p; simp [Finset.mul_sum]
 
-/-- Number of coordinates in the compressed family of symmetrisers. -/
+/-- There are `n.choose j * n ^ j` coordinates in `SymRankCoord n j`: choose `j`
+positions and assign one of `n` images to each, without requiring distinct images. -/
 theorem card_symRankCoord (n j : ℕ) :
     Fintype.card (SymRankCoord n j) = n.choose j * n ^ j := by
   classical
@@ -56,8 +57,8 @@ theorem card_symRankCoord (n j : ℕ) :
       rw [Fintype.card_fun, Fintype.card_fin, Fintype.card_coe, S.property]
     _ = _ := by simp [Fintype.card_finset_len]
 
-/-- Codimension of the simultaneous vanishing conditions on symmetrisers at complement size `j`.
-For `j = 0` this is at most one. -/
+/-- The real codimension of `ker (symRankMap j)` is at most `n.choose j * n ^ j`.
+In particular, for `j = 0` this codimension is at most one. -/
 theorem finrank_quot_ker_symRankMap_le (n j : ℕ) :
     Module.finrank ℝ ((Equiv.Perm (Fin n) → ℝ) ⧸ (symRankMap (n := n) j).ker) ≤
       n.choose j * n ^ j := by
@@ -76,8 +77,8 @@ private theorem symRankMap_apply_restrict {n j : ℕ} (S : Finset (Fin n)) (hS :
   ext τ
   simp [Subtype.forall]
 
-/-- The kernel of `symRankMap j` is exactly the simultaneous kernel of every symmetriser on a set
-of size `n - j`. -/
+/-- For `j ≤ n`, `f` lies in the kernel of `symRankMap j` if and only if
+`symSum R f = 0` for every set `R` of `n - j` positions. -/
 theorem mem_ker_symRankMap_iff {n j : ℕ} (hj : j ≤ n) (f : Equiv.Perm (Fin n) → ℝ) :
     f ∈ (symRankMap j).ker ↔ ∀ R : Finset (Fin n), R.card = n - j → symSum R f = 0 := by
   classical

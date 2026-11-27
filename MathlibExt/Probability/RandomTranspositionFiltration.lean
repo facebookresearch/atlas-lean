@@ -215,7 +215,9 @@ section Eigenvalues
 
 variable {D R : Finset α} {f : Equiv.Perm α → ℝ} {μ : ℝ}
 
-/-- Deleting a maximally symmetrised block gives an exact smaller eigenproblem. -/
+/-- Let `R ⊆ D` and suppose `transSum D f = μ • f`. If `symSum (insert a R) f = 0` for
+every `a ∈ D \ R`, then `g = symSum R f` satisfies
+`transSum (D \ R) g = (μ - |R|² + 2 |D \ R|) • g`. -/
 theorem transSum_sdiff_eigen (hRD : R ⊆ D) (he : transSum D f = μ • f)
     (h0 : ∀ a ∈ D \ R, symSum (insert a R) f = 0) :
     transSum (D \ R) (symSum R f) =

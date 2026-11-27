@@ -36,8 +36,6 @@ permutation with random transpositions* (1981), Theorem 1, for the character-the
 
 open Matrix Module Equiv WithLp
 open MathlibExt.Probability.RandomWalkFiniteGroup
-open MathlibExt.Probability.RandomWalkFiniteGroupWanted (randomTransposition_eq_expect
-  randomTransposition_convPow_nonneg sum_randomTransposition_convPow)
 open MathlibExt.Probability.RandomTranspositionFiltration
 open MathlibExt.RepresentationTheory.FourierTransformFiniteGroup (convPow)
 open MathlibExt.Probability.MarkovMixing (tvDist)

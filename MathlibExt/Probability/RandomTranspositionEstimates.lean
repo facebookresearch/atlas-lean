@@ -38,8 +38,9 @@ namespace MathlibExt.Probability.RandomTranspositionEstimates
 
 open Finset Real
 
-/-- Upper bound for a nonnegative spectral value at first-row deficit `j` in the
-random-transposition walk (Diaconis and Shahshahani, 1981, §3). -/
+/-- The minimum of `1 - 2j(n-j+1)/n²` and `1 - j/n`. For `n > 0`, these are the two
+upper bounds for the normalised transposition eigenvalue at symmetriser deficit `j` given by
+`MathlibExt.Probability.RandomTranspositionFiltration.exists_level_bounds_univ`. -/
 noncomputable def cap (n j : ℕ) : ℝ :=
   min (1 - 2 * j * ((n : ℝ) - j + 1) / (n : ℝ) ^ 2) (1 - (j : ℝ) / n)
 
@@ -48,7 +49,7 @@ noncomputable def cap (n j : ℕ) : ℝ :=
 
 /-- Keep a nonnegative eigenvalue and replace a negative one by the eigenvalue of its
 sign twist. Twisting negates the transposition character and leaves the holding mass `1/n`
-unchanged (Diaconis and Shahshahani, 1981, Corollary 1). -/
+unchanged (Diaconis and Shahshahani, 1981, Corollary 1 and Lemma 8, (2.10)). -/
 noncomputable def oriented (n : ℕ) (x : ℝ) : ℝ := if 0 ≤ x then x else 2 / (n : ℝ) - x
 
 private theorem cap_nonneg {n j : ℕ} (hn : 2 ≤ n) (hj : 1 ≤ j) (hjn : j ≤ n) :
@@ -267,8 +268,8 @@ private theorem sign_term {n k : ℕ} (hn : 2 ≤ n) :
         _ = -2 * (2 * (k : ℝ) / n) := by ring
         _ ≤ _ := by linarith only [hl]
 
-/-- **Cutoff bound from a spectral moment.** Let `v` be a finite family of real eigenvalues
-listed with multiplicity, with a level in `[0,n]` for each index. Suppose that the eigenvalue
+/-- **Cutoff bound from a spectral moment.** Let `2 ≤ n`. Let `v` be a finite family of real
+numbers with a level in `[0,n]` for each index. Suppose that the value
 or its sign twist is at most `cap n j` at level `j`, and that each sign class contains at most
 `n.choose j * n ^ j` indices at that level (zero belongs to the nonnegative class).
 If `L ≤ 2` and `L² ≤ ∑ᵢ vᵢ^(2k) - 1`, then `L ≤ 2 e³ n exp (-2k/n)`.
@@ -303,7 +304,7 @@ theorem cutoff_of_spectrum {ι : Type*} [Fintype ι] {n k : ℕ} (hn : 2 ≤ n)
   · have he : 1 ≤ exp (3 - d) := one_le_exp_iff.mpr (by linarith)
     linarith
 
-/-- The rate `n * exp (-2k/n)` is `exp (-2c)` for the cutoff parameter
+/-- For `0 < n`, the rate `n * exp (-2k/n)` is `exp (-2c)` for the cutoff parameter
 `c = (k - n log n / 2) / n` of Diaconis and Shahshahani (1981, Theorem 1). -/
 theorem cutoff_rate_eq {n k : ℕ} (hn : 0 < n) :
     (n : ℝ) * exp (-2 * (k : ℝ) / n) = exp (-2 * (((k : ℝ) - n * log n / 2) / n)) := by
