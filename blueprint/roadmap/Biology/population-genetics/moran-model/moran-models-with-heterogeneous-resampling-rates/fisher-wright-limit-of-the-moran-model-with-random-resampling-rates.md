@@ -10,6 +10,10 @@ where $Y(t)=S(t)\,\mathbb P$ and $S$ is the Fisher–Wright diffusion
 
 $$dS(t)=\sqrt{D\,S(t)(1-S(t))}\,dW(t),\qquad S(0)=\nu(\mathbb R_+),\qquad \frac1D=\int_{\mathbb R_+}\frac1r\,\mathbb P(dr).$$
 
+## Depends on
+
+- [Backward generator of the Wright–Fisher diffusion with selection](../../diffusion-theory/wright-fisher-diffusion/generator.md)
+
 ## Expansion
 
 The limit says two things. First, for $t>0$ the type-$1$ frequency is the same within every rate class, so the rate profile of type $1$ is $S(t)\,\mathbb P$, whatever the initial profile $\nu$. Within-class frequencies equilibrate on a time scale of order $1$, much faster than drift, which acts on time scale $N$. Second, the common frequency performs Fisher–Wright drift with an effective rate given by the harmonic mean $D=\big(\int r^{-1}d\mathbb P\big)^{-1}$. An individual of rate $r$ keeps its type for a mean time $1/r$, so slow resamplers carry the population's memory and dominate drift. This mirrors how the effective population size of a fluctuating population is a harmonic mean. The initial equilibration is instantaneous in the limit, so the convergence holds in the Meyer–Zheng (pseudo-path) topology and not in Skorokhod's. The proof splits the error into four approximation terms by a triangle inequality, controlling the last by a coupling with $S$, and applies a generator-convergence criterion of Ethier and Kurtz.

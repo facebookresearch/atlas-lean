@@ -12,7 +12,11 @@ with equality if and only if all nonzero $\lambda_i$ are equal.
 
 ## Proof depends on
 
-- [Hölder's inequality, geometric-mean form](../../../../InformationTheory/channel-coding/random-coding-bound-and-gallager-s-exponent/sum-rpow-mul-rpow-le.md)
+- [Hölder's inequality, geometric-mean form](../../../../../InformationTheory/channel-coding/random-coding-bound-and-gallager-s-exponent/sum-rpow-mul-rpow-le.md)
+
+## Depends on
+
+- [A standard Gaussian quadratic form has a weighted chi-square law](../std-gaussian-map-inner-eq-weighted-chi-s.md)
 
 ## Expansion
 

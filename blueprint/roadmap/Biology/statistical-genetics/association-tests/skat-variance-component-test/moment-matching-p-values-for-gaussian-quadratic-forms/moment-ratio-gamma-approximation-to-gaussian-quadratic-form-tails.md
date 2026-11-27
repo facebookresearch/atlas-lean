@@ -22,7 +22,7 @@ In simulations with block-correlated covariances, MR controls type I error nearl
 
 ## Depends on
 
-- [Standard Gaussian quadratic form as a weighted chi-square sum](../skat-variance-component-test/std-gaussian-map-inner-eq-weighted-chi-s.md)
+- [Standard Gaussian quadratic form as a weighted chi-square sum](../std-gaussian-map-inner-eq-weighted-chi-s.md)
 
 ## Expansion
 
