@@ -28,3 +28,5 @@
 ## Further topics
 
 - [Permutation test of sample exchangeability](permutation-test-of-sample-exchangeability/README.md)
+- [Identifiability of structured population histories](identifiability-of-structured-population-histories/README.md)
+- [Estimated effective migration surfaces](estimated-effective-migration-surfaces/README.md)
