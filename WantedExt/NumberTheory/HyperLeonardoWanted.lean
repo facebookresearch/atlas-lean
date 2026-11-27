@@ -137,19 +137,6 @@ public theorem_wanted leonardo_logConvex_logConcave_pointwise :
     (∀ n, n = 2 ∨ n = 4 ∨ 6 ≤ n →
       genLeonardo 1 (n - 1) * genLeonardo 1 (n + 1) ≤ genLeonardo 1 n ^ 2)
 
-/-- **Log-convexity and log-concavity of the hyper-Leonardo numbers at index one.** The
-hyper-Leonardo numbers $\mathrm{Le}^{(r)}_n$ satisfy
-$\left(\mathrm{Le}^{(1)}_1\right)^2 \le \mathrm{Le}^{(1)}_0 \mathrm{Le}^{(1)}_2$, and for every
-natural number $r \ge 2$ they satisfy
-$\mathrm{Le}^{(r)}_0 \mathrm{Le}^{(r)}_2 \le \left(\mathrm{Le}^{(r)}_1\right)^2$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 12
-(`integers-2026-A48-prop-12`). -/
-public theorem_wanted hyperLeonardo_logConvex_logConcave_one :
-    hyperLeonardo 1 1 ^ 2 ≤ hyperLeonardo 1 0 * hyperLeonardo 1 2 ∧
-      ∀ r, 2 ≤ r → hyperLeonardo r 0 * hyperLeonardo r 2 ≤ hyperLeonardo r 1 ^ 2
-
 /-- **Eventual log-concavity of the hyper-Leonardo numbers of order one.** For every natural
 number $n \ge 2$, the hyper-Leonardo numbers $Le^{(1)}_n$ of order $1$ satisfy
 $Le^{(1)}_{n-1} Le^{(1)}_{n+1} \le (Le^{(1)}_n)^2$.

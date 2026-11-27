@@ -18,6 +18,7 @@ public import MathlibExt.Combinatorics.Enumerative.Hypersequence
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceAbelSummation
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceBinomial
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceRecurrence
+public import MathlibExt.Combinatorics.Enumerative.HypersequenceWeightedSums
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
@@ -128,21 +129,6 @@ public theorem_wanted hyperLucas_recurrence (r n : ℕ) :
         ((hypersequence lucasNumber (r + 1) (n + 1) : ℕ) : ℚ) +
           ((hypersequence lucasNumber (r + 1) n : ℕ) : ℚ) +
           ((n + 2 * (r + 1) : ℕ) : ℚ) / (n + 2) * ((n + r + 1).choose r : ℚ)
-
-/-- **Recurrence for power-weighted sums of hypersequences.** Let $a$ be a sequence of complex
-numbers, let $a^{(r)}_k$ denote its hypersequence of generation $r$, and for natural numbers
-$\ell$, $r$ and $n$ let $t^{(r)}_\ell(n) = \sum_{k=0}^{n} k^\ell a^{(r)}_k$, with the convention
-$0^0 = 1$. Then for all natural numbers $\ell$, $r$ and $n$,
-$$t^{(r)}_\ell(n) = (n + 1)^\ell a^{(r+1)}_n - \sum_{j=0}^{\ell-1} \binom{\ell}{j} t^{(r+1)}_j(n),$$
-where the sum over $j$ is empty when $\ell = 0$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 8, Equation (3.5) (`integers-2024-A70-thm-8`). -/
-public theorem_wanted sum_pow_mul_hypersequence_recurrence (a : ℕ → ℂ) (ℓ r n : ℕ) :
-    ∑ k ∈ range (n + 1), (k : ℂ) ^ ℓ * hypersequence a r k =
-      ((n : ℂ) + 1) ^ ℓ * hypersequence a (r + 1) n -
-        ∑ j ∈ range ℓ, (ℓ.choose j : ℂ) *
-          ∑ k ∈ range (n + 1), (k : ℂ) ^ j * hypersequence a (r + 1) k
 
 /-- **Power-weighted sums of hypersequences.** Let $a$ be a sequence of complex numbers, let
 $a^{(r)}_n$ denote its hypersequence of generation $r$, let

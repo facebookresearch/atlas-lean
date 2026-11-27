@@ -26,7 +26,12 @@ the roots of `2x² - (p + q)x + 3pq + 1 = 0`, that is, `2(r + s) = p + q` and
 
 The statements already proved, such as the oddness of every positive `n` with
 `D(C(n)) = C(D(n))` and the prime gap bound for semiprime solutions, live in
-`MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, which this module imports publicly.
+`MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, except
+`IsCompatibleSemiprimePair.mod_five`, which lives in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeModFive.lean`, and
+`IsCompatibleSemiprimePair.bounds`, which lives in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds.lean`; this module imports all
+three publicly.
 -/
 module
 
@@ -38,6 +43,8 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.ArithmeticDerivative
 public import MathlibExt.NumberTheory.CollatzArithmeticDerivative
+public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeModFive
+public import MathlibExt.NumberTheory.CollatzArithmeticDerivativeBounds
 
 namespace MetaMathlibExt
 
@@ -60,18 +67,6 @@ public theorem_wanted arithmeticDerivative_bounds (n : ℕ) (hn : 2 ≤ n) :
     lower ≤ arithmeticDerivative n ∧ (arithmeticDerivative n : ℝ) ≤ upper ∧
       (lower = arithmeticDerivative n ↔ IsPrimePow n) ∧
       ((arithmeticDerivative n : ℝ) = upper ↔ IsPrimePow n)
-
-/-- **Positive solutions of the Collatz arithmetic differential equation are composite.** Let
-$D$ be the arithmetic derivative and $C$ the accelerated Collatz map. Every positive integer $n$
-with $D(C(n)) = C(D(n))$ is composite, that is, $n > 1$ and $n$ is not prime.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 3 (`jis-2025-25.1.8-prop-3`). -/
-public theorem_wanted composite_of_arithmeticDerivative_collatz_comm (n : ℕ) (hn : 0 < n)
-    (h : arithmeticDerivative (collatzAccelerated n) =
-      collatzAccelerated (arithmeticDerivative n)) :
-    1 < n ∧ ¬ n.Prime
 
 /-- **Prime tetrations where the arithmetic derivative and the Collatz map commute.** Let $D$ be
 the arithmetic derivative and $C$ the accelerated Collatz map. For a prime $p$,
@@ -134,29 +129,6 @@ Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1
 public theorem_wanted IsCompatibleSemiprimePair.odd {p q r s : ℕ}
     (h : IsCompatibleSemiprimePair p q r s) :
     Odd p ∧ Odd q ∧ Odd r ∧ Odd s
-
-/-- **Bounds on the factors of compatible semiprimes.** Suppose the semiprimes $pq$ and $rs$ are
-compatible, where $q < p$. Then $r \ge 241$, $s \ge 241$, $3q < r < 3p$ and $3q < s < 3p$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Lemma 11
-(`jis-2025-25.1.8-lem-11`). -/
-public theorem_wanted IsCompatibleSemiprimePair.bounds {p q r s : ℕ}
-    (h : IsCompatibleSemiprimePair p q r s) (hqp : q < p) :
-    241 ≤ r ∧ 241 ≤ s ∧ 3 * q < r ∧ 3 * q < s ∧ r < 3 * p ∧ s < 3 * p
-
-/-- **Compatible semiprimes modulo 5.** Let $p, q, r, s$ be primes with $2(r + s) = p + q$ and
-$2rs = 3pq + 1$, so that the semiprimes $pq$ and $rs$ are compatible. Then one of $p, q$ is
-congruent to $1$ and the other to $4$ modulo $5$, and likewise one of $r, s$ is congruent to $1$
-and the other to $4$ modulo $5$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 12 (`jis-2025-25.1.8-prop-12`). -/
-public theorem_wanted IsCompatibleSemiprimePair.mod_five {p q r s : ℕ}
-    (h : IsCompatibleSemiprimePair p q r s) :
-    ((p % 5 = 1 ∧ q % 5 = 4) ∨ (q % 5 = 1 ∧ p % 5 = 4)) ∧
-      ((r % 5 = 1 ∧ s % 5 = 4) ∨ (s % 5 = 1 ∧ r % 5 = 4))
 
 /-- **Compatible semiprimes modulo 10.** Let $p, q, r, s$ be primes with $2(r + s) = p + q$ and
 $2rs = 3pq + 1$, so that the semiprimes $pq$ and $rs$ are compatible. Then one of $p, q$ is
