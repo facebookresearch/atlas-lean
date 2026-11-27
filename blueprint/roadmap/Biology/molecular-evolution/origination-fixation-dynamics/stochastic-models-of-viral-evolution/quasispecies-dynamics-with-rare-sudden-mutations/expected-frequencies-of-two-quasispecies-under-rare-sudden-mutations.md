@@ -6,7 +6,7 @@ $$dx^k_t = \big(f_k(x_t) - \bar f(x_t)\big)x^k_t\,dt + \sum_{i\ne k}\gamma_{ik}x
 
 The process is well defined, and the expected frequencies $u_k(x,t) = \mathbb E[x^k_t \mid x_0 = x]$ solve the nonlocal first-order Kolmogorov equation $\partial_t u_k + a(x)\cdot\nabla u_k = \mathcal J u_k$, $u_k(x,0) = x_k$, with $a_k(x) = -(f_k - \bar f)x_k$ and $\mathcal J\phi(x) = \sum_{i\ne j}\lambda_{ij}f_i(x)\big[\phi(x + \gamma_{ij}x_i(e_j - e_i)) - \phi(x)\big]$; it has a unique global mild solution, which coincides with the viscosity solution, satisfies a comparison principle, and is Lipschitz in $x$.
 
-**Two types, constant fitness.** Let $f_0 > f_1$, $\sigma = f_0 - f_1 > 0$, $x$ the frequency of the less fit type $1$, $\gamma_0 = \gamma_{01}$, $\gamma_1 = \gamma_{10}$, $\lambda_0 = \lambda_{01}$, $\lambda_1 = \lambda_{10}$, and $m_i = \lambda_i\gamma_i$. Here the rates may vanish: $\lambda_{ik} \ge 0$, so $\lambda_0, \lambda_1 \ge 0$ and $m_0, m_1 \ge 0$ (with constant fitness each $N^{ik}$ is a Poisson process of rate $\lambda_{ik}f_i$, so the process is well defined directly also when a rate is $0$). Then $u(x,t) = \mathbb E[x_t \mid x_0 = x]$ solves
+**Two types, constant fitness.** Let $f_0 > f_1 > 0$, $\sigma = f_0 - f_1 > 0$, $x$ the frequency of the less fit type $1$, $\gamma_0 = \gamma_{01}$, $\gamma_1 = \gamma_{10}$, $\lambda_0 = \lambda_{01}$, $\lambda_1 = \lambda_{10}$, and $m_i = \lambda_i\gamma_i$. Here the rates may vanish: $\lambda_{ik} \ge 0$, so $\lambda_0, \lambda_1 \ge 0$ and $m_0, m_1 \ge 0$ (with constant fitness each $N^{ik}$ is a Poisson process of rate $\lambda_{ik}f_i$, so the process is well defined directly also when a rate is $0$). Then $u(x,t) = \mathbb E[x_t \mid x_0 = x]$ solves
 
 $$\partial_t u + \sigma x(1-x)\,\partial_x u = \lambda_0 f_0\big[u(x + \gamma_0(1-x),t) - u\big] + \lambda_1 f_1\big[u((1-\gamma_1)x,t) - u\big], \qquad u(x,0) = x,$$
 
@@ -16,7 +16,7 @@ to be compared with the deterministic quasispecies flow $X(x,t)$ of $\dot x = -\
 
 1. $1 \ge u(x,t) \ge X(x,t)$ for all $x \in [0,1]$, $t \ge 0$: rare sudden mutations raise the expected frequency of the less fit type relative to the quasispecies equation with the same mean mutation rates.
 2. $\bar u(x) = \lim_{t\to\infty}u(x,t)$ exists for every $x$, and is constant if $m_1 > 0$, or if $m_1 = 0$ and $m_0 \ge \sigma/f_0$.
-3. (*Fair mutation*, $m_0 = 0$.) $\bar u = 0$, and
+3. (*Fair mutation*, $m_0 = 0 < m_1$.) $\bar u = 0$, and
 
 $$\frac{x\,e^{-\sigma t}}{1 - x(1-e^{-\sigma t})} \ \ge\ u(x,t) \ \ge\ \frac{x\,e^{-(\sigma + m_1f_1)t}}{1 - \frac{\sigma x}{\sigma + m_1f_1}\big(1 - e^{-(\sigma + m_1f_1)t}\big)}.$$
 
