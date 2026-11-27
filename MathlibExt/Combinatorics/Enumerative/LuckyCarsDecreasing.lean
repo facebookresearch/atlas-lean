@@ -19,6 +19,7 @@ import all MathlibExt.Combinatorics.Enumerative.DescendingNaplesPaddedDyckWord
 import all MathlibExt.Combinatorics.Enumerative.LuckyCarFactorialMoments
 import all MathlibExt.Combinatorics.Enumerative.LuckyCarsIncreasing
 import all MathlibExt.Combinatorics.Enumerative.PollakPartialParkingFunctions
+import all MathlibExt.Combinatorics.Enumerative.StirlingLuckyDisplacement
 
 /-!
 # Lucky spots in weakly decreasing parking functions
@@ -40,8 +41,10 @@ an ordered pair of Dyck words; the column determines where to insert the removed
   and `DescendingNaplesPaddedDyckWord` (`toPaddedWord`, `exists_walk`, `stepHeight_steps`):
   the positional encoding and its conversion to Dyck words, used here with bound zero.
 * ATLAS modules `LuckyCarsIncreasing` (`isParkingFunction_iff_le_id_of_monotone`),
-  `LuckyCarFactorialMoments` (`parkSpotsFrom_eq_parkAssign`), and
-  `PollakPartialParkingFunctions` (`parkAssign_inj`): the parking criterion and greedy assignments.
+  `LuckyCarFactorialMoments` (`parkSpotsFrom_eq_parkAssign`),
+  `PollakPartialParkingFunctions` (`parkAssign_inj`), and
+  `StirlingLuckyDisplacement` (`nextFreeSpot_of_notMem`): the parking criterion and greedy
+  assignments.
 -/
 
 set_option autoImplicit false
@@ -51,14 +54,12 @@ namespace MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
 open MetaMathlibExt MetaMathlibExt.PollakPartialParking DyckStep
 open MetaMathlibExt.descendingNaplesCount_eq_card_kDyckPath
 
-private lemma nextFreeSpot_spec {n : ℕ} (occ : Finset (Fin n)) (a : Fin n) :
-    a ≤ nextFreeSpot occ a ∧ (a ∉ occ → nextFreeSpot occ a = a) := by
+private lemma le_nextFreeSpot {n : ℕ} (occ : Finset (Fin n)) (a : Fin n) :
+    a ≤ nextFreeSpot occ a := by
   unfold nextFreeSpot
   split_ifs with h
-  · exact ⟨(Finset.mem_filter.mp (Finset.min'_mem _ h)).2.1, fun ha =>
-      le_antisymm (Finset.min'_le _ _ (by simp [ha]))
-        (Finset.mem_filter.mp (Finset.min'_mem _ h)).2.1⟩
-  · exact ⟨le_rfl, fun _ => rfl⟩
+  · exact (Finset.mem_filter.mp (Finset.min'_mem _ h)).2.1
+  · exact le_rfl
 
 private lemma getD_parkSpotsFrom_of_lt_before {n : ℕ} (l : List (Fin n)) (i : ℕ)
     (hi : i < l.length) (occ : Finset (Fin n)) (d : Fin n) (hfree : l[i] ∉ occ)
@@ -68,14 +69,14 @@ private lemma getD_parkSpotsFrom_of_lt_before {n : ℕ} (l : List (Fin n)) (i : 
   | nil => simp at hi
   | cons a l ih =>
     cases i with
-    | zero => exact (nextFreeSpot_spec occ a).2 hfree
+    | zero => exact IsAdmissibleLuckySet.nextFreeSpot_of_notMem hfree
     | succ i =>
       have hit : i < l.length := by simpa using hi
       have ha : l[i] < a := hprev 0 (Nat.zero_lt_succ i)
       rw [parkSpotsFrom, List.getD_cons_succ]
       exact ih i hit _ (by
         rw [Finset.mem_insert, not_or]
-        exact ⟨(ha.trans_le (nextFreeSpot_spec occ a).1).ne, hfree⟩)
+        exact ⟨(ha.trans_le (le_nextFreeSpot occ a)).ne, hfree⟩)
         (fun k hk => hprev (k + 1) (Nat.succ_lt_succ hk))
 
 private lemma parkSpots_injective {n : ℕ} {f : Fin n → Fin n}
