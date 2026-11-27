@@ -6,19 +6,19 @@ $$y = X\alpha + G_S\beta + \epsilon, \qquad \beta \sim \mathrm{MVN}(0,\sigma_g^2
 
 equivalently $y = X\alpha + g + \epsilon$ with $g \sim \mathrm{MVN}(0,\sigma_a^2K)$, $K = G_SG_S^\top/M$, $\sigma_a^2 = M\sigma_g^2$. Covariates are projected out with $P_X = I_N - X(X^\top X)^{-1}X^\top$: $\tilde y = P_Xy$, $\tilde G = P_XG_S$, both rescaled to unit variance.
 
-**Step 1, level 0 (within blocks).** Split $\tilde G$ into blocks $\tilde G_i$ of consecutive SNPs. For a grid $\lambda \in \Lambda = \{\lambda_1,\dots,\lambda_R\}$, with $\lambda = M/h_g^2$ for $R$ evenly spaced SNP-heritabilities $h_g^2 \in [0.01, 0.99]$, compute the ridge fits
+**Step 1, level 0 (within blocks).** Split $\tilde G$ into blocks $\tilde G_i$ of consecutive SNPs. For a grid $\lambda \in \Lambda = \{\lambda_1,\dots,\lambda_R\}$, with $\lambda = M(1-h_g^2)/h_g^2$ for $R$ evenly spaced SNP-heritabilities $h_g^2 \in [0.01, 0.99]$, compute the ridge fits
 
 $$\hat\gamma_\lambda = \arg\min_\gamma\{\|\tilde y - \tilde G_i\gamma\|_2^2 + \lambda\|\gamma\|_2^2\} = (\tilde G_i^\top\tilde G_i + \lambda I)^{-1}\tilde G_i^\top\tilde y,$$
 
 the MAP estimate under $\gamma_j \overset{\text{iid}}{\sim} N(0,1/\lambda)$, and keep the block predictors $W_i = (\tilde G_i\hat\gamma_{\lambda_1},\dots,\tilde G_i\hat\gamma_{\lambda_R})$. Stack $W = (W_1,\dots,W_B)$, an $N \times BR$ matrix with $BR \ll M$.
 
-**Step 1, level 1 (stacking).** With $W$ rescaled to unit-variance columns, fit $\hat\eta_\omega = (W^\top W + \omega I_{BR})^{-1}W^\top\tilde y$ for $\omega = BR/h_g^2$ over a grid, choosing $\omega$ by $K$-fold cross-validation in which the level-0 predictors for each held-out fold are themselves fitted without that fold. Zeroing the entries of $\hat\eta$ for blocks on a chromosome gives the leave-one-chromosome-out (LOCO) polygenic prediction $\hat y^*_{\mathrm{LOCO}}$ for that chromosome.
+**Step 1, level 1 (stacking).** With $W$ rescaled to unit-variance columns, fit $\hat\eta_\omega = (W^\top W + \omega I_{BR})^{-1}W^\top\tilde y$ for $\omega = BR(1-h_g^2)/h_g^2$ over a grid, choosing $\omega$ by $K$-fold cross-validation in which the level-0 predictors for each held-out fold are themselves fitted without that fold. Zeroing the entries of $\hat\eta$ for blocks on a chromosome gives the leave-one-chromosome-out (LOCO) polygenic prediction $\hat y^*_{\mathrm{LOCO}}$ for that chromosome.
 
 **Step 2 (association).** For a variant $g$ with $\tilde g = P_Xg$ and $\tilde y_{\mathrm{resid,LOCO}} = \tilde y - \hat y^*_{\mathrm{LOCO}}$, fit $\tilde y_{\mathrm{resid,LOCO}} = \tilde g\beta + \tilde\epsilon$ and use the score statistic
 
-$$T_{\mathrm{linear}} = \frac{\tilde g^\top\tilde y_{\mathrm{resid,LOCO}}}{\hat\sigma_e\,(\tilde g^\top\tilde g)^{1/2}}, \qquad \hat\sigma_e^2 = \|\tilde y_{\mathrm{resid,LOCO}}\|_2^2/N,$$
+$$T_{\mathrm{linear}} = \frac{\tilde g^\top\tilde y_{\mathrm{resid,LOCO}}}{\hat\sigma_e\,(\tilde g^\top\tilde g)^{1/2}}, \qquad \hat\sigma_e^2 = \frac{\|\tilde y_{\mathrm{resid,LOCO}}\|_2^2}{N-C},$$
 
-compared with $N(0,1)$, treating the polygenic prediction as fixed. For binary traits, level 1 is a logistic ridge regression and Step 2 is a logistic score test with the LOCO prediction as an offset, with Firth-penalized likelihood ratio or saddle-point corrections for rare or unbalanced cases.
+compared with $N(0,1)$ (with $N-C\approx N$ in practice), treating the polygenic prediction as fixed. For binary traits, level 1 is a logistic ridge regression and Step 2 is a logistic score test with the LOCO prediction as an offset, with Firth-penalized likelihood ratio or saddle-point corrections for rare or unbalanced cases.
 
 ## Depends on
 

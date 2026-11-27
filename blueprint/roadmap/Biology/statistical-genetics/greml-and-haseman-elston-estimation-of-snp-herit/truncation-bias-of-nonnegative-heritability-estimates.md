@@ -12,17 +12,17 @@ $$\mathbb E[\max(\psi_0+\sigma_0X,0)]-\psi_0=-\psi_0\,\Phi\!\left(-\frac{\psi_0}
 
 For $\psi_0>0$ it is positive and at most $\dfrac{\sigma_0^3}{\sqrt{2\pi}\,\psi_0^2}\,e^{-\psi_0^2/(2\sigma_0^2)}$, hence negligible once $\sigma_0\ll\psi_0$. For $\psi_0=0$ it equals $\sigma_0/\sqrt{2\pi}$, of the same order as the standard error.
 
-**Discarding negative estimates.** Averaging only the estimates that are nonnegative has bias equal to the truncation bias divided by $\Phi(\psi_0/\sigma_0)=\mathbb P(X>-\psi_0/\sigma_0)$; at $\psi_0=0$ this is $2\sigma_0/\sqrt{2\pi}$, twice the truncation bias.
+**Discarding negative estimates.** Averaging only the estimates that are nonnegative has bias
 
-## Depends on
+$$\mathbb E[\hat\psi\mid\hat\psi\ge0]-\psi_0=\frac{\sigma_0\,\varphi(\psi_0/\sigma_0)}{\Phi(\psi_0/\sigma_0)},$$
 
-- [GREML converges to a negative heritability when genetic similarity lowers phenotypic variance](negative-limiting-greml-heritability-under-phenotypic-repulsion.md)
+which equals the truncation bias plus $\psi_0\Phi(-\psi_0/\sigma_0)$, divided by $\Phi(\psi_0/\sigma_0)=\mathbb P(X\ge-\psi_0/\sigma_0)$. At $\psi_0=0$ it is $2\sigma_0/\sqrt{2\pi}$, twice the truncation bias; for $\psi_0>0$ it exceeds the truncation bias divided by $\Phi(\psi_0/\sigma_0)$ (the form stated in the source's text after its Eq. (5)), which is correct only at $\psi_0=0$.
 
 ## Expansion
 
 - $\mathbb E[(\psi_0+\sigma_0X)\mathbf 1\{X>-\psi_0/\sigma_0\}]=\psi_0\Phi(\psi_0/\sigma_0)+\sigma_0\varphi(\psi_0/\sigma_0)$, since $\int_a^\infty x\varphi(x)\,dx=\varphi(a)$; subtracting $\psi_0$ and using $1-\Phi(x)=\Phi(-x)$ gives the formula.
 - With $x=\psi_0/\sigma_0>0$, the Mills-ratio bounds $\varphi(x)(1/x-1/x^3)\le\Phi(-x)\le\varphi(x)/x$ give $0<\sigma_0\varphi(x)-\psi_0\Phi(-x)\le\psi_0\varphi(x)/x^3=\sigma_0^3\varphi(x)/\psi_0^2$.
-- Conditioning on $\hat\psi\ge0$ divides the truncated mean's excess by the probability of that event; at $\psi_0=0$ that probability is $1/2$.
+- Conditioning on $\hat\psi\ge0$ divides the first display by $\Phi(\psi_0/\sigma_0)$: $\mathbb E[\hat\psi\mid\hat\psi\ge0]=\psi_0+\sigma_0\varphi(\psi_0/\sigma_0)/\Phi(\psi_0/\sigma_0)$. At $\psi_0=0$ the probability is $1/2$; at $\psi_0=\sigma_0$ the bias is about $0.288\,\sigma_0$.
 - Truncation is warranted (and lowers mean squared error) only when the true heritability is known to be nonnegative; tests of $\psi_0=0$ are most affected, and silently discarded negative estimates leave no trace of the bias.
 
 ## Sources

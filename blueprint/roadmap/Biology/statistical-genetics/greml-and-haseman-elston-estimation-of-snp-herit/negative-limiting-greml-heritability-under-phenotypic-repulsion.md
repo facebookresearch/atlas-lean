@@ -5,7 +5,7 @@
 **Proposition 1 (Steinsaltz, Dahl and Wachter).** Assume
 
 - $s_{\max}^2:=\limsup_{n\to\infty}\max_{1\le i\le n}s_{n,i}^2<\infty$;
-- the uniform empirical moment bound on the eigenvalues stated as Eq. (9) of the source, of the form $\sup_n n^{-1}\sum_i g(s_{n,i})<\infty$ for a fixed power $g$ (see the Expansion for the exponent);
+- $\sup_n n^{-1}\sum_{i=1}^n s_{n,i}^{-12}<\infty$;
 - $1<C_2+1:=\liminf_{n\to\infty}n^{-1}\sum_{i=1}^n s_{n,i}^4$, and put $C_3:=\limsup_{n\to\infty}n^{-1}\sum_{i=1}^n s_{n,i}^4$.
 
 Suppose the data are in fact $y^{(n)}\sim\mathrm{MVN}\bigl(0,\ U^{(n)}\operatorname{diag}(f(s_{n,i}^2))\,U^{(n)\top}\bigr)$ for a positive, strictly decreasing, continuously differentiable $f:\mathbb R_+\to\mathbb R_+$ with
@@ -35,8 +35,7 @@ $$f(t)=\frac{1+\varphi_0t}{1-\alpha+\alpha(1-\varphi_0)t+\alpha\varphi_0t^2},\qq
 - In the rotated coordinates the GREML likelihood is a product over eigen-directions, and the estimates solve $0=\operatorname{Cov}(w(\hat\psi),v(\hat\psi))$ and $\hat\theta=n/\sum_iv_i(\hat\psi)$, with $w_i(\psi)=(1-\psi)/(1+\psi(s_i^2-1))$, $v_i=w_iz_i^2$ and $\operatorname{Cov}$ the empirical covariance across $i$. To first order $\log z_i^2$ is linear in $s_i^2$ with slope $\psi_0$, so heritability acts as the slope of phenotypic variance on relatedness eigenvalues, which can be negative.
 - The proof passes to subsequences along which the empirical eigenvalue distribution converges weakly, uses the principle that a misspecified maximum-likelihood estimate converges to the Kullback–Leibler closest fit, and shows that the limiting score is negative on $[-\delta,\infty)$ because $f(s^2)$ is negatively correlated with $s^2$ (Harris's inequality). A uniform-convergence lemma replaces the i.i.d. arguments, which do not apply.
 - The condition $\varphi_0<\alpha$ follows from the explicit derivative: the numerator $\varphi_0-\alpha(1+\varphi_0t)^2\le\varphi_0-\alpha<0$ for $t\ge0$, $\varphi_0\ge0$.
-
-- The exponent in Eq. (9) is not legible in the available text of the source (it reads as a power $\pm 12$ of $s_{n,i}$). A positive power is implied by the bound on $s_{\max}^2$, and a negative power diverges whenever $A_n$ has a zero eigenvalue (as a centred GRM does), so the exact form should be checked against the published version before formalization.
+- The negative-moment bound (Eq. (9) of the source) forces every eigenvalue $s_{n,i}^2$ to be positive, so it excludes relationship matrices with a zero eigenvalue, such as a centred GRM; the proof uses it to bound $n^{-1}\sum_i|a_{n,i}(\psi)|$ and $n^{-1}\sum_i|a'_{n,i}(\psi)|$ uniformly in $n$ and $\psi\in[-\delta,1]$ (Appendix A).
 
 ## Sources
 

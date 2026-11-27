@@ -7,8 +7,8 @@ $$T = \frac12 \sum_{i=1}^2 \tan\{(0.5 - P_i)\pi\}, \qquad P_{\text{combo}} = \fr
 
 If $P_i$ is uniform on $(0,1)$, then $\tan\{(0.5 - P_i)\pi\}$ is standard Cauchy. Because a weighted average (weights summing to one)
 of standard Cauchy variables is again standard Cauchy when they are independent, and remains approximately standard Cauchy in the
-upper tail under arbitrary dependence of the underlying Gaussian test statistics (Liu and Xie 2020), $P_{\text{combo}}$ is a valid
-p-value without modelling the correlation between $P_1$ and $P_2$, and is close to $2\min(P_1,P_2)$ when one of them is very small.
+upper tail under arbitrary dependence of the underlying Gaussian test statistics (Liu and Xie 2020), $P_{\text{combo}}$ is an approximately
+valid p-value at small significance levels without modelling the correlation between $P_1$ and $P_2$, and is close to $2\min(P_1,P_2)$ when one of them is very small.
 For numerical stability, when $P_1 < 10^{-16}$ one uses $\tan\{(0.5 - P_1)\pi\} \approx 1/(P_1 \pi)$.
 
 ## Depends on

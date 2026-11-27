@@ -17,7 +17,6 @@ and an observed count $k$ is significant if $\Pr(K_{g,c} \ge k) = 1 - \sum_{x=0}
 ## Depends on
 
 - [Poisson likelihood of an observed count](poisson-lik.md)
-- [Upper confidence bound for the observed/expected ratio](oe-upper.md)
 
 ## Expansion
 

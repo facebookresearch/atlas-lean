@@ -73,11 +73,17 @@
 - [Closed form maximizes the spectral criterion for positive class means](is-max-on-spectral-log-lik-two-level-rem.md)
 - [Closed form is the unique REML maximizer for positive class means](is-max-on-reml-log-lik-two-level-reml.md)
 - [The closed-form REML estimator is unbiased when both eigenvalues occur](integral-two-level-reml.md)
+
+## Negative heritability and its estimates
+
 - [GREML converges to a negative heritability when genetic similarity lowers phenotypic variance](negative-limiting-greml-heritability-under-phenotypic-repulsion.md)
+- [Bias from truncating or discarding negative heritability estimates](truncation-bias-of-nonnegative-heritability-estimates.md)
+
+## Relationship matrices and IBD-based estimation
+
 - [Partitioned GREML with several relationship matrices](partitioned-greml-with-several-relationship-matrices.md)
 - [Regression-calibrated relationship matrix for imperfect LD with causal variants](regression-calibrated-grm-for-imperfect-ld.md)
 - [Sib-pair Haseman–Elston heritability from realized genome-wide IBD](sib-pair-haseman-elston-heritability-from-realized-ibd.md)
 - [Sampling variance of single-SNP genetic relationships](single-snp-relationship-sampling-variance.md)
-- [Bias from truncating or discarding negative heritability estimates](truncation-bias-of-nonnegative-heritability-estimates.md)
 - [Variance of genome-wide IBD sharing between full siblings](variance-of-genome-wide-ibd-sharing-between-full-sibs.md)
 - [X-chromosome relationship matrix and dosage compensation](x-chromosome-relationship-matrix-and-dosage-compensation.md)

@@ -15,10 +15,6 @@ $$\sum_g r_g = 0, \qquad \sum_g X_g r_g = 0,$$
 
 so the raw residuals have zero sample correlation with $X_g$.
 
-## Depends on
-
-- [Loss-of-function count data for a gene](gene-data.md)
-
 ## Expansion
 
 The two identities are the least-squares normal equations for the intercept and slope. Studentizing accounts for the larger variability of residuals at larger mutational burdens. Empirically the score showed correlation $0.005$ with $X_g$, consistent with the construction, and genes causing haploinsufficient and de novo Mendelian disease had significantly lower scores. A variant-level refinement (RVIS-PP2) counts as functional only missense variants not predicted benign. Results, "Deriving the Residual Variation Intolerance Score".

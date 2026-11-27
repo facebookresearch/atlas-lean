@@ -27,7 +27,6 @@ Statistical methods for genome-wide association studies, heritability estimation
 - [Transmission disequilibrium test](transmission-disequilibrium-test/README.md)
 - [Familial relative risk explained by common variants](familial-relative-risk-explained-by-common-variants/README.md)
 - [Adaptive shrinkage and the local false sign rate](adaptive-shrinkage-and-local-false-sign-rate/README.md)
-- [Approximate Bayesian computation](approximate-bayesian-computation/README.md)
 - [Combining p-values](combining-p-values/README.md)
 - [EMMA: efficient mixed-model association](emma-efficient-mixed-model-association/README.md)
 - [Exact mixed-model association testing](exact-mixed-model-association/README.md)

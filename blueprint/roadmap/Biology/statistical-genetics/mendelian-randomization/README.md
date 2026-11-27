@@ -43,28 +43,43 @@
 ## Potential outcomes and the local average treatment effect
 
 See [potential outcomes and the local average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/README.md#potential-outcomes-and-the-local-average-treatment-effect) in Probability.
-- [CAUSE marginal likelihood as a bivariate normal scale mixture](cause-marginal-likelihood.md)
-- [CAUSE model of correlated and uncorrelated pleiotropy](cause-summary-statistic-model.md)
-- [cML-MR: coordinate descent and BIC model averaging](cml-mr-coordinate-descent-and-bic-model-averaging.md)
-- [Cochran's Q heterogeneity statistic for the IVW estimator](cochran-q-ivw-heterogeneity.md)
-- [Constrained maximum-likelihood Mendelian randomization (cML-MR)](constrained-maximum-likelihood-mr-estimator.md)
-- [Contamination mixture estimator for Mendelian randomization](contamination-mixture-mr-estimator.md)
+
+## Weak and invalid instruments
+
+- [Weak-instrument bias of the two-stage least-squares estimator toward the confounded association](weak-instrument-bias-of-two-stage-least-squares.md)
 - [Identification of a causal effect when some instruments are invalid](identification-with-some-invalid-instruments.md)
-- [Likelihood-based summary-data Mendelian randomization with correlated variants](likelihood-based-summary-data-mr-with-correlated-variants.md)
+- [Zero modal pleiotropy assumption](zero-modal-pleiotropy-assumption.md)
 - [Mode-based estimate of a causal effect](mode-based-estimate.md)
-- [MR-Horse: Bayesian summary-data Mendelian randomization with correlated pleiotropy and a horseshoe prior](mr-horse-bayesian-model-with-correlated-pleiotropy.md)
+- [The sisVIVE estimator](sisvive-estimator.md)
 - [MR-Lasso estimator](mr-lasso-estimator.md)
-- [MR-PRESSO: leave-one-out residual tests for horizontal pleiotropy](mr-presso-leave-one-out-residual-tests.md)
+- [Contamination mixture estimator for Mendelian randomization](contamination-mixture-mr-estimator.md)
+- [Constrained maximum-likelihood Mendelian randomization (cML-MR)](constrained-maximum-likelihood-mr-estimator.md)
+- [cML-MR: coordinate descent and BIC model averaging](cml-mr-coordinate-descent-and-bic-model-averaging.md)
 - [Profile-likelihood Mendelian randomization estimator under many weak instruments](mr-profile-likelihood-estimator-under-weak-instruments.md)
 - [Adjusted profile score for Mendelian randomization with systematic pleiotropy](mr-raps-adjusted-profile-score.md)
-- [Multivariable constrained maximum likelihood (MVMR-cML) and its BIC consistency](multivariable-mr-constrained-maximum-likelihood.md)
-- [Plurality identification of multivariable Mendelian randomization](multivariable-mr-identification-condition.md)
-- [Multivariable inverse-variance weighted and MR-Egger estimators](multivariable-mr-ivw-and-egger.md)
-- [MVMR-Median: least absolute deviations Mendelian randomization](multivariable-mr-median-lad.md)
-- [Identifiability of multivariable Mendelian randomization under a plurality rule](multivariable-mr-plurality-identifiability.md)
+- [Likelihood-based summary-data Mendelian randomization with correlated variants](likelihood-based-summary-data-mr-with-correlated-variants.md)
+
+## Heterogeneity and pleiotropy tests
+
+- [Cochran's Q heterogeneity statistic for the IVW estimator](cochran-q-ivw-heterogeneity.md)
 - [Rücker's Q′ for MR-Egger and the Q − Q′ comparison](rucker-q-egger-heterogeneity.md)
-- [The sisVIVE estimator](sisvive-estimator.md)
-- [Summary-data-based Mendelian randomization (SMR) test statistic](smr-test-statistic.md)
-- [Weak-instrument bias of the two-stage least-squares estimator toward the confounded association](weak-instrument-bias-of-two-stage-least-squares.md)
+- [MR-PRESSO: leave-one-out residual tests for horizontal pleiotropy](mr-presso-leave-one-out-residual-tests.md)
+
+## Correlated pleiotropy
+
+- [CAUSE model of correlated and uncorrelated pleiotropy](cause-summary-statistic-model.md)
+- [CAUSE marginal likelihood as a bivariate normal scale mixture](cause-marginal-likelihood.md)
+- [MR-Horse: Bayesian summary-data Mendelian randomization with correlated pleiotropy and a horseshoe prior](mr-horse-bayesian-model-with-correlated-pleiotropy.md)
+
+## Multivariable Mendelian randomization
+
+- [Multivariable inverse-variance weighted and MR-Egger estimators](multivariable-mr-ivw-and-egger.md)
+- [Majority-type sufficient condition for identifying multivariable Mendelian randomization](multivariable-mr-identification-condition.md)
+- [Identifiability of multivariable Mendelian randomization under a plurality rule](multivariable-mr-plurality-identifiability.md)
+- [MVMR-Median: least absolute deviations Mendelian randomization](multivariable-mr-median-lad.md)
+- [Multivariable constrained maximum likelihood (MVMR-cML) and its BIC consistency](multivariable-mr-constrained-maximum-likelihood.md)
+
+## Within-family designs and expression-trait Mendelian randomization
+
 - [Within-family Mendelian randomization](within-family-mendelian-randomization.md)
-- [Zero modal pleiotropy assumption](zero-modal-pleiotropy-assumption.md)
+- [Summary-data-based Mendelian randomization (SMR) test statistic](smr-test-statistic.md)

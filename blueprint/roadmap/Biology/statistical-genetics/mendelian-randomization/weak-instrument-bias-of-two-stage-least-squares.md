@@ -24,6 +24,7 @@ Since the ordinary least-squares estimator of $\beta$ has asymptotic bias $\sigm
 
 - [Linear moment model for instrumental variables](linear-moment-model.md)
 - [Bias of the ordinary least-squares coefficient under confounding](covariance-div-variance.md)
+
 ## Proof depends on
 
 - [Ratio of independent normal variables is not integrable](not-integrable-div-gaussian.md)

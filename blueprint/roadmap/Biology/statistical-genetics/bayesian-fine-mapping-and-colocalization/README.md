@@ -60,6 +60,9 @@
 - [Sorted prefix carries the most posterior mass](sum-le-sum-sorted-prefix.md)
 - [The shortest credible prefix has minimum size](le-card-of-is-credible-set.md)
 - [A minimum-size credible set exists and is a sorted prefix](exists-minimal-credible-prefix.md)
+
+## Fine-mapping and colocalization methods
+
 - [Annotation-informed hierarchical model for cis-eQTL fine-mapping](annotation-informed-hierarchical-eqtl-model.md)
 - [eCAVIAR colocalization posterior probability](ecaviar-colocalization-posterior-probability.md)
 - [FINEMAP marginal likelihood and causal-subset Bayes factor](finemap-configuration-marginal-likelihood.md)

@@ -20,6 +20,7 @@ Moreover, $\beta^*$ is unique exactly when $\alpha^*$ is unique.
 
 - [Linear moment model for instrumental variables](linear-moment-model.md)
 - [Ratio estimate of a single SNP](ratio-estimate.md)
+
 ## Expansion
 
 If the valid set were known, $\gamma^*_j\beta^* = \Gamma^*_j$ on it would pin down $\beta^*$ from one valid instrument. Without that knowledge, each subset of size $L - U + 1$ on which the ratios $\Gamma^*_j/\gamma^*_j$ agree proposes a value $q_m$ of $\beta^*$; non-identification occurs exactly when two such subsets propose different values. For instance, $\gamma^* = (1,2,3,4)$ and $\Gamma^* = (1,2,6,8)$ with $U = 3$ give $C_1 = \{1,2\}$, $C_2 = \{3,4\}$ with $q_1 = 1 \ne q_2 = 2$. When $U \le L/2$, any two sets $C_m, C_{m'}$ have size $L - U + 1 > L/2$, so they share some index $j$; then $\gamma^*_j q_m = \Gamma^*_j = \gamma^*_j q_{m'}$ with $\gamma^*_j \ne 0$ forces $q_m = q_{m'}$. This is Theorem 1 and Corollary 1 of Section 3.1.

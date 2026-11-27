@@ -19,9 +19,10 @@ Under ZEMPA the mode of the ratio estimands $\{\beta_{Rj}\}$ is the causal effec
 ## Depends on
 
 - [Ratio estimate of a single SNP](ratio-estimate.md)
+
 ## Expansion
 
-The mode of the multiset $\{\beta + b_j\}$ is $\beta + b^\dagger$ where $b^\dagger$ is the most frequent bias; ZEMPA says $b^\dagger = 0$. It neither implies nor is implied by the majority-valid condition behind the median estimators: with eight variants, two valid and six invalid with distinct biases satisfies ZEMPA, while three invalid variants sharing one bias against two valid ones violates it.
+The mode of the multiset $\{\beta + b_j\}$ is $\beta + b^\dagger$ where $b^\dagger$ is the most frequent bias; ZEMPA says $b^\dagger = 0$. ZEMPA is weaker than the majority-valid condition behind the median estimators: if $n_0 > L/2$, every other group has $n_l \le L - n_0 < n_0$ (and likewise for total weights), so the majority condition implies ZEMPA, but not conversely. With eight variants, two valid and six invalid with distinct biases satisfy ZEMPA but not the majority condition, and ZEMPA fails when three of those six share a bias (Figure 1 of the source).
 
 ## Sources
 

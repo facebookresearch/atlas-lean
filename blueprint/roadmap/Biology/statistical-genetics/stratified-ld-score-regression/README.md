@@ -28,4 +28,7 @@
 ## LDSC-SEG: the gene-set coefficient as a per-SNP contrast
 
 - [LDSC-SEG contrast](sigma2-sub-sigma2-eq.md)
+
+## Standardized annotation effect size
+
 - [Standardized annotation effect size $\tau^*$ in stratified LD-score regression](standardized-annotation-effect-size.md)

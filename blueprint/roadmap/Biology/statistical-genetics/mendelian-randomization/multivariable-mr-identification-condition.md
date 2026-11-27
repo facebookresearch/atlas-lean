@@ -1,4 +1,4 @@
-# Plurality identification of multivariable Mendelian randomization
+# Majority-type sufficient condition for identifying multivariable Mendelian randomization
 
 In the population version of the [multivariable Mendelian randomization model](multivariable-mr-ivw-and-egger.md), let $\tilde\beta_{Yj}$ and $\tilde\beta_{Xj} = (\tilde\beta_{Xj1}, \dots, \tilde\beta_{XjK})$ be the population regression coefficients of the outcome and the risk factors on variant $j$, so that
 
@@ -10,7 +10,7 @@ Let $V = \{j : \alpha_j = 0\}$ be the set of valid instruments and assume the as
 
 $$|V| > \frac{p + K - 1}{2},$$
 
-then $\theta$ is identified as the unique $q \in \mathbb{R}^K$ maximizing $\#\{j : \tilde\beta_{Yj} = \tilde\beta_{Xj}^\top q\}$, and then each $\alpha_j = \tilde\beta_{Yj} - \tilde\beta_{Xj}^\top\theta$ is identified. For $K = 1$ this is the sufficient condition "more than half of the variants are valid" of the plurality-valid rule.
+then $\theta$ is identified as the unique $q \in \mathbb{R}^K$ maximizing $\#\{j : \tilde\beta_{Yj} = \tilde\beta_{Xj}^\top q\}$, and then each $\alpha_j = \tilde\beta_{Yj} - \tilde\beta_{Xj}^\top\theta$ is identified. For $K = 1$ this is the sufficient condition "more than half of the variants are valid" of the plurality-valid rule. Under general position the condition implies the [multivariable plurality assumption](multivariable-mr-plurality-identifiability.md), which is necessary and sufficient for identification.
 
 ## Depends on
 

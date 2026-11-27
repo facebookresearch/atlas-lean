@@ -18,6 +18,7 @@ where $\operatorname{mad}$ is the median absolute deviation from the median. Dec
 
 - [Zero modal pleiotropy assumption](zero-modal-pleiotropy-assumption.md)
 - [Inverse-variance weight of a ratio estimate](ivw-weight.md)
+
 ## Expansion
 
 As the sample size grows each $\hat\beta_{Rj}$ concentrates at $\beta + b_j$, and as the bandwidth shrinks the kernel density concentrates its mass at the distinct values $\beta + b$, each with mass equal to the total weight of the variants with bias $b$. Under ZEMPA the largest mass sits at $\beta$, so the maximizer converges there. Standard errors are obtained by parametric bootstrap.
