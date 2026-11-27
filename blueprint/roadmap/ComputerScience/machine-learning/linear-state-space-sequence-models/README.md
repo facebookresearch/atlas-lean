@@ -4,3 +4,4 @@ Linear algebra of recent state-space sequence layers such as Mamba and Mamba-2: 
 
 - [A state-space layer with fixed parameters is a semiseparable matrix](ssm-matrix-form.md)
 - [Time-invariant state-space layers are lower-triangular Toeplitz matrices](lti-ssm-eq-lower-toeplitz.md)
+- [Satisfiability of state space models is undecidable](satisfiability-of-state-space-models-undecidable.md)

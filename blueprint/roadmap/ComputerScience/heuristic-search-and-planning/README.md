@@ -27,3 +27,5 @@ Search and decision procedures from artificial intelligence: A* search, game-tre
 - [Reinforcement learning theory](../machine-learning/reinforcement-learning/README.md)
 
 - [Behavior trees](behavior-trees/README.md)
+- [Epistemic planning](epistemic-planning/README.md)
+- [Timeline-based planning](timeline-based-planning/README.md)

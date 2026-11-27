@@ -4,3 +4,4 @@ Efficient PAC learning of representation classes and cryptographic hardness of l
 
 - [Cryptographic hardness of (improper) PAC learning](cryptographic-hardness-of-pac-learning.md)
 - [Efficient PAC learning of representation classes](efficient-pac-learning-of-representation-classes.md)
+- [Computable PAC learning](computable-pac-learning/README.md)
