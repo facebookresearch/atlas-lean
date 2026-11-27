@@ -20,6 +20,8 @@ is the source used for the formulas below.
 The diagonal uniqueness theorem and Ramanujan's binomial sine series are proved in
 `MathlibExt.NumberTheory.RamanujanHarmonicIdentity` and
 `MathlibExt.NumberTheory.RamanujanBinomialSine`, respectively.
+The first shifted convolution (published Corollary 2) is proved in
+`MathlibExt.NumberTheory.RamanujanShiftedHarmonicConvolution`.
 Three other records from this paper are already proved in MathlibExt and
 are not restated here: Theorem 1 is
 `MetaMathlibExt.binomial_harmonic_convolution`; Lemma 2
@@ -45,32 +47,13 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Basic
 public import MathlibExt.NumberTheory.GouldReciprocalBinomial
 public import MathlibExt.NumberTheory.RamanujanBinomialSine
 public import MathlibExt.NumberTheory.RamanujanHarmonicIdentity
+public import MathlibExt.NumberTheory.RamanujanShiftedHarmonicConvolution
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted
-
-/-- **Shifted binomial–harmonic convolution (Alzer–Kwong, Corollary 1).** For natural numbers $k$
-and $n$ with $2 \le k \le n$,
-$$
-\sum_{\nu=1}^{n+1} \Bigl(\binom{n+k-\nu-1}{n} - \binom{n+k-\nu-1}{k-2}\Bigr) H_\nu =
-\binom{n+k}{k-1} (H_k - H_{n+1}) - \frac{1}{n+1} \binom{n+k}{k},
-$$
-where $H_m = \sum_{j=1}^{m} 1/j$ is the $m$-th harmonic number.
-
-Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
-Combinatorial Identity Involving Harmonic Numbers",
-Corollary 1. -/
-theorem_wanted sum_choose_sub_choose_mul_harmonic_succ_eq
-    (k n : ℕ) (hk : 2 ≤ k) (hkn : k ≤ n) :
-    ∑ ν ∈ Finset.Icc 1 (n + 1),
-        ((Nat.choose (n + k - ν - 1) n : ℚ) -
-          (Nat.choose (n + k - ν - 1) (k - 2) : ℚ)) * harmonic ν =
-      (Nat.choose (n + k) (k - 1) : ℚ) *
-          (harmonic k - harmonic (n + 1)) -
-        (1 / ((n : ℚ) + 1)) * (Nat.choose (n + k) k : ℚ)
 
 /-- **Shifted binomial–harmonic convolution (Alzer–Kwong, Corollary 2).** For natural numbers $k$
 and $n$ with $1 \le k \le n - 1$,
