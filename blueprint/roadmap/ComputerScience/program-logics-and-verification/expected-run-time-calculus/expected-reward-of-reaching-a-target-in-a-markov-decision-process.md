@@ -1,0 +1,11 @@
+# Expected reward of reaching a target in a Markov decision process
+
+A *Markov decision process with state rewards* is a tuple $M = (S, \mathit{Act}, P, s_0, \mathit{rew})$ of a countable set $S$ of states, a finite set $\mathit{Act}$ of actions, a transition probability function $P : S \times \mathit{Act} \times S \to [0, 1]$ with $\sum_{s'} P(s, \alpha, s') \in \{0, 1\}$ for all $s$ and $\alpha$, an initial state $s_0$ and a reward function $\mathit{rew} : S \to [0, \infty]$, with the convention $0 \cdot \infty = 0$. An action $\alpha$ is *enabled* in $s$ if $\sum_{s'} P(s, \alpha, s') = 1$, and every state is required to have at least one enabled action. A *scheduler* $\mathfrak{S} : S^+ \to \mathit{Act}$ selects for each nonempty finite sequence of visited states an action enabled in its last state, and so induces a Markov chain $M_{\mathfrak{S}}$; the supremum and infimum below range over such schedulers. The cumulative reward of a finite path $\hat\pi = s_0 \dots s_n$ is $\mathit{rew}(\hat\pi) = \sum_{k=0}^{n-1} \mathit{rew}(s_k)$, and its probability under $\mathfrak{S}$ is $\Pr^{M_{\mathfrak{S}}}\{\hat\pi\} = \prod_{k=0}^{|\hat\pi|-1} P(s_k, \mathfrak{S}(s_0 \dots s_k), s_{k+1})$. For a nonempty target set $T \subseteq S$ and a state $s$, let $\Pi(s, T)$ be the set of finite paths from $s$ that end in their first visit to $T$. The *expected reward of eventually reaching $T$ from $s$* is
+
+$$\mathrm{ExpRew}^M(s \models \Diamond T) = \sup_{\mathfrak{S}} \sum_{\hat\pi \in \Pi(s, T)} \Pr^{M_{\mathfrak{S}}}\{\hat\pi\} \cdot \mathit{rew}(\hat\pi)$$
+
+if $\inf_{\mathfrak{S}} \sum_{\hat\pi \in \Pi(s, T)} \Pr^{M_{\mathfrak{S}}}\{\hat\pi\} = 1$, and $\infty$ otherwise.
+
+## Sources
+
+- B. L. Kaminski, J.-P. Katoen, C. Matheja and F. Olmedo, "Weakest precondition reasoning for expected run-times of probabilistic programs", *Programming Languages and Systems (ESOP 2016)*, LNCS 9632, Springer, 2016, pp. 364–389, <https://doi.org/10.1007/978-3-662-49498-1_15>, author copy <https://users.dcc.uchile.cl/~folmedo/pubs/2016.ESOP.pdf>, with the same numbering as the extended version arXiv:1601.01001v2, <https://arxiv.org/abs/1601.01001v2>, whose appendices contain the proofs, Section 4 (Markov decision processes, schedulers, cumulative reward and expected reward).
