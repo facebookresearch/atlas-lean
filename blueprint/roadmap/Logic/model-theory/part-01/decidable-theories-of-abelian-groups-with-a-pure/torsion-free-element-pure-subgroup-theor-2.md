@@ -7,5 +7,5 @@ A subgroup $B$ of an abelian group $A$ is pure if $nA \cap B = nB$ for every int
 ## Sources
 
 - E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 3.21 (A. I. Kokorin), https://arxiv.org/abs/1401.0300v49.
-- G. T. Kozlov, Algebra and Logic 9 (1970), 104-107, and Algebra, no. 1, Irkutsk Univ., 1972, 21-23 (Russian).
-- É. I. Fridman, Algebra, no. 1, Irkutsk Univ., 1972, 97-100 (Russian).
+- Parts (a) and (c): G. T. Kozlov, Algebra and Logic 9 (1970), 104-107, and Algebra, no. 1, Irkutsk Univ., 1972, 21-23 (Russian).
+- Part (b): É. I. Fridman, Algebra, no. 1, Irkutsk Univ., 1972, 97-100 (Russian).

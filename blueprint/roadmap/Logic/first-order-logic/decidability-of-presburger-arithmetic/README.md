@@ -10,7 +10,6 @@
 
 - [The term $S x$ for a bound variable $x$](succ-bvar.md)
 - [Bound variables as Presburger terms](bvar.md)
-- [The constant $0$ in a context with bound variables](zero-term-bound.md)
 - [The constant term $0$](zero-term.md)
 - [Successor of a Presburger term](t-succ.md)
 - [Sum of two Presburger terms](t-add.md)
@@ -33,6 +32,5 @@
 - [Gödel numbers of Presburger terms](code-term.md)
 - [Gödel number of the Presburger relation symbol](code-rel.md)
 - [Gödel numbers of Presburger formulas](code-formula.md)
-- [Gödel numbers of Presburger sentences](code-sentence.md)
 - [Provability in Presburger arithmetic](presburger-provable.md)
 - [Decidability of Presburger arithmetic](presburger-decidable.md)

@@ -1,4 +1,4 @@
-# Elementary equivalence of wreath products is not determined by the factors
+# The elementary-equivalence criterion for wreath products fails
 
 This result refutes the proposition stated as [Kourovka Problem 2.20: elementary equivalence of wreath products](wreath-elementary-equivalence-iff.md). The statement is false: there are nontrivial groups $A$, $B$, $A_1$, $B_1$ for which the equivalence
 
