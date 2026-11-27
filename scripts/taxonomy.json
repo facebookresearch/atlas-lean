@@ -13265,6 +13265,7 @@
   "MathlibExt/NumberTheory/FermatNumberSquareFactors": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/FermatNumberStrongPseudoprimeAddSub": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Strong pseudoprimes"},
   "MathlibExt/NumberTheory/FermatNumberStrongPseudoprimeTwoPow": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Strong pseudoprimes"},
+  "MathlibExt/NumberTheory/FermatNumberWarrenBray": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/FermatPolygonal": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Fermat polygonal number theorem"},
   "MathlibExt/NumberTheory/FermatPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Fermat numbers"},
   "MathlibExt/NumberTheory/FermatQuotient": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Fermat quotients"},
