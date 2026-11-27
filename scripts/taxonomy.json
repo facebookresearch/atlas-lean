@@ -13475,6 +13475,7 @@
   "MathlibExt/NumberTheory/LSeries/PrimeLog": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Prime number theorem"},
   "MathlibExt/NumberTheory/LSeries/RiemannXi": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Riemann xi function"},
   "MathlibExt/NumberTheory/LSeries/RiemannZeta": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Meromorphic continuation of the Riemann zeta function"},
+  "MathlibExt/NumberTheory/LSeries/RiemannZetaLogDeriv": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Explicit Mertens-type prime sum estimates"},
   "MathlibExt/NumberTheory/LabosPrime": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Ramanujan primes"},
   "MathlibExt/NumberTheory/LambertSeriesVariants": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Lambert series"},
   "MathlibExt/NumberTheory/LandsbergSchaar": {"to": "NumberTheory/exponential-sums", "title": "Landsberg–Schaar relation"},
