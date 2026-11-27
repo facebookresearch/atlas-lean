@@ -14,7 +14,6 @@ Decision procedures for Petri nets in their foundations: the monotonicity of fir
 - [The coverability graph characterizes coverable markings](coverability-graph-characterizes-coverability.md)
 - [Coverability is decidable for Petri nets](coverability-is-decidable-for-petri-nets.md)
 - [Upward-closed sets of markings](upward-closed-sets-of-markings.md)
-- [Upward-closed sets of markings have finitely many minimal elements](upward-closed-sets-of-markings-have-finitely-many-minimal-elements.md)
 - [Predecessor sets of markings](predecessor-sets-of-markings.md)
 - [Predecessors of an upward-closed set of markings are upward closed](predecessors-of-an-upward-closed-set-are-upward-closed.md)
 - [Backward reachability from an upward-closed set stabilizes](backward-reachability-stabilizes.md)

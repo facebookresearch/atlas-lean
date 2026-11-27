@@ -8,4 +8,4 @@ Let $G$ be an execution as in [RC11-consistent executions](rc11-consistent-execu
 
 ## Sources
 
-- O. Lahav, V. Vafeiadis, J. Kang, C.-K. Hur and D. Dreyer, "Repairing sequential consistency in C/C++11", *Proceedings of the 38th ACM SIGPLAN Conference on Programming Language Design and Implementation (PLDI 2017)*, 2017, <https://plv.mpi-sws.org/scfix/paper.pdf>, Section 3.2, Proposition 3 and the paragraph before it.
+- O. Lahav, V. Vafeiadis, J. Kang, C.-K. Hur and D. Dreyer, "Repairing sequential consistency in C/C++11", *Proceedings of the 38th ACM SIGPLAN Conference on Programming Language Design and Implementation (PLDI 2017)*, 2017, <https://plv.mpi-sws.org/scfix/paper.pdf>, Section 3.2 (consistency) and Section 3.4 ("Comparison with C11"), Proposition 3 and the paragraph before it.
