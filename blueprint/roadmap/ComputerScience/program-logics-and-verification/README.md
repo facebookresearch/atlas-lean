@@ -21,6 +21,7 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 
 - [Safety verification](safety-verification/README.md)
 - [Termination analysis](termination-analysis/README.md)
+- [Expected run-time calculus](expected-run-time-calculus/README.md)
 - [Testing and runtime verification](testing-and-runtime-verification/README.md)
 
 - [Concurrency logics](concurrency-logics/README.md)

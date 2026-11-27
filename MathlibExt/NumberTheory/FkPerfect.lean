@@ -10,9 +10,11 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Ring.Parity
 import Mathlib.Data.Nat.GCD.BigOperators
 import Mathlib.Data.Nat.ModEq
@@ -58,6 +60,20 @@ Article A86 (<https://math.colgate.edu/~integers/z86/z86.pdf>).
   exponents `a, b ≥ 1` with `a + b` odd or both `a` and `b` odd, the number `p₁ ^ a * p₂ ^ b` is
   not deficient `F_k`-perfect (Theorem 19). Every divisor is odd and the divisor count
   `(a + 1) * (b + 1)` is even, so `σₖ(n) + d ^ k` is odd while `n ^ k + 3 * n` is even.
+* `not_isDeficientFkPerfect_prime_pow_mul`: for `k > 1` and distinct odd primes `p₁` and `p₂`,
+  no number `p₁ ^ a * p₂` is deficient `F_k`-perfect (Theorem 16). Its divisors are all odd and
+  even in number, so `σₖ(n) + d ^ k` is odd while `n ^ k + 3 * n` is even.
+* `klNearPerfectWith_prime_pow_iff`: for `k ≥ 1` and `ℓ ≥ 1`, the prime power `p ^ a` is
+  `[k,ℓ]`-near-perfect with divisor `d` if and only if `2 ≤ a ≤ k`, `d = 1` and
+  `ℓ = p ^ (k - a) * ∑ i ∈ Finset.range (a - 1), p ^ (i * k)`. This is Theorem 4, whose printed
+  conclusion `a = k` is false in general.
+* `not_isNearFkPerfect_pow_mul_pow`: for distinct odd primes `p₁`, `p₂` and exponents
+  `a, b ≥ 1` with `a + b` odd or both odd, `p₁ ^ a * p₂ ^ b` is not near `F_k`-perfect for
+  `k > 1`: multiplicativity of the divisor sum `σₖ` factors it into geometric sums of `a + 1`
+  and `b + 1` odd terms; as `a` or `b` is odd, one of these counts is even, so `σₖ` is even,
+  while the near-perfect equation would force it to be odd (Theorem 20).
+
+It also defines `IsKLNearPerfect`, `IsNearFPerfect` and `IsNearFkPerfect`.
 -/
 
 set_option autoImplicit false
@@ -793,7 +809,12 @@ theorem not_isNearFkPerfect_prime_pow_mul
 /-- **Deficient $F_k$-perfect numbers.** For natural numbers $k$ and $n$, write
 $\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is deficient $F_k$-perfect when it is
 $[k,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_k(n) + d^k = n^k + 3n$. -/
+$\sigma_k(n) + d^k = n^k + 3n$.
+
+This predicate extends the equation to every natural $k$. For $k > 1$ it agrees with
+Definition 2 of Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta, and Manjil P. Saikia, "On Near
+`F_k`-Perfect and Deficient `F_k`-Perfect Numbers", which uses the name only for $k > 1$; the
+results that need $k > 1$ assume it. -/
 def IsDeficientFkPerfect (k n : ℕ) : Prop :=
   IsKLDeficientPerfect k 3 n
 
@@ -940,5 +961,284 @@ theorem not_isDeficientFkPerfect_pow_mul_pow
   have h31 : 3 * (p₁ ^ a * p₂ ^ b) % 2 = 1 :=
     Nat.odd_iff.mp ((by decide : Odd 3).mul hn_odd)
   omega
+
+private theorem odd_of_dvd_of_odd (e n : ℕ) (hn : Odd n) (he : e ∣ n) : Odd e := by
+  by_contra hcon
+  have hcon' : Even e := Nat.not_odd_iff_even.mp hcon
+  have hneven : Even n := even_iff_two_dvd.mpr ((even_iff_two_dvd.mp hcon').trans he)
+  exact (Nat.not_even_iff_odd.mpr hn) hneven
+
+private theorem card_divisors_prime_pow_mul_prime (p₁ p₂ a : ℕ) (hp₁ : p₁.Prime)
+    (hp₂ : p₂.Prime) (hne : p₁ ≠ p₂) :
+    (p₁ ^ a * p₂).divisors.card = (a + 1) * 2 := by
+  have hcop : (p₁ ^ a).Coprime p₂ :=
+    Nat.Coprime.pow_left a ((Nat.coprime_primes hp₁ hp₂).mpr hne)
+  have hσ := ArithmeticFunction.isMultiplicative_sigma.map_mul_of_coprime
+    (f := ArithmeticFunction.sigma 0) hcop
+  simp only [ArithmeticFunction.sigma_zero_apply] at hσ
+  have hpa : (p₁ ^ a).divisors.card = a + 1 := by
+    rw [Nat.divisors_prime_pow hp₁ a, Finset.card_map, Finset.card_range]
+  have hp2 : p₂.divisors.card = 2 := by
+    rw [hp₂.divisors, Finset.card_insert_of_notMem (by
+      simpa only [Finset.mem_singleton] using hp₂.ne_one.symm), Finset.card_singleton]
+  rw [hσ, hpa, hp2]
+
+private theorem even_sum_pow_of_forall_odd (s : Finset ℕ) (k : ℕ)
+    (hodd : ∀ e ∈ s, Odd e) (hcard : Even s.card) :
+    Even (∑ e ∈ s, e ^ k) := by
+  rw [Nat.even_iff, Finset.sum_nat_mod]
+  have h1 : ∀ e ∈ s, e ^ k % 2 = 1 := fun e he => Nat.odd_iff.mp ((hodd e he).pow)
+  have hsum1 : (∑ e ∈ s, e ^ k % 2) = ∑ _e ∈ s, 1 :=
+    Finset.sum_congr rfl (fun e he => h1 e he)
+  obtain ⟨c, hc⟩ := hcard
+  rw [hsum1, ← Finset.card_eq_sum_ones, hc]
+  omega
+
+/-- **No deficient $F_k$-perfect number $p_1^a p_2$ with distinct odd primes.** Let $k > 1$ be
+a natural number, let $p_1 \ne p_2$ be odd primes and let $a$ be a natural number. Then
+$p_1^a p_2$ is not deficient $F_k$-perfect.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Theorem 16. -/
+theorem not_isDeficientFkPerfect_prime_pow_mul
+    (k p₁ p₂ a : ℕ) (hk : 1 < k) (hp₁ : p₁.Prime)
+    (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
+    (hne : p₁ ≠ p₂) :
+    ¬ IsDeficientFkPerfect k (p₁ ^ a * p₂) := by
+  have _ : k ≠ 0 := by omega
+  rintro ⟨d, hdvd, _hlt, hsum⟩
+  have hn : Odd (p₁ ^ a * p₂) := ho₁.pow.mul ho₂
+  have hcard : (p₁ ^ a * p₂).divisors.card = (a + 1) * 2 :=
+    card_divisors_prime_pow_mul_prime p₁ p₂ a hp₁ hp₂ hne
+  have hcardeven : Even (p₁ ^ a * p₂).divisors.card := ⟨a + 1, by rw [hcard]; ring⟩
+  have hσeven : Even (∑ e ∈ (p₁ ^ a * p₂).divisors, e ^ k) :=
+    even_sum_pow_of_forall_odd _ k
+      (fun e he => odd_of_dvd_of_odd e _ hn (Nat.dvd_of_mem_divisors he)) hcardeven
+  have hdk : Odd (d ^ k) := (odd_of_dvd_of_odd d _ hn hdvd).pow
+  have hnk : Odd ((p₁ ^ a * p₂) ^ k) := hn.pow
+  have h3 : Odd 3 := ⟨1, rfl⟩
+  have h3n : Odd (3 * (p₁ ^ a * p₂)) := h3.mul hn
+  obtain ⟨s, hs⟩ := hσeven
+  obtain ⟨t, ht⟩ := hdk
+  obtain ⟨u, hu⟩ := hnk
+  obtain ⟨v, hv⟩ := h3n
+  omega
+
+private theorem sigma_prime_pow_eq (p a k : ℕ) (hp : p.Prime) :
+    (∑ e ∈ (p ^ a).divisors, e ^ k) = ∑ j ∈ Finset.range (a + 1), p ^ (j * k) := by
+  rw [← ArithmeticFunction.sigma_apply, ArithmeticFunction.sigma_apply_prime_pow hp]
+
+private theorem geom_sum_modEq_one (p m k : ℕ) (hk : 1 ≤ k) (hm : 1 ≤ m) :
+    ∑ i ∈ Finset.range m, p ^ (i * k) ≡ 1 [MOD p] := by
+  obtain ⟨m', rfl⟩ := Nat.exists_eq_add_of_le hm
+  rw [show (1 : ℕ) + m' = m' + 1 from add_comm _ _]
+  rw [Finset.sum_range_succ']
+  have htail : p ∣ ∑ i ∈ Finset.range m', p ^ ((i + 1) * k) := by
+    apply Finset.dvd_sum
+    intro i _
+    exact dvd_pow_self p (mul_ne_zero (by omega) (by omega))
+  have h0 : p ^ (0 * k) = 1 := by simp
+  rw [h0]
+  simpa only [zero_add] using
+    (Nat.modEq_zero_iff_dvd.mpr htail).add (Nat.ModEq.refl 1)
+
+/-- **Prime powers that are $[k,\ell]$-near-perfect.** Let $p$ be a prime, let $a$, $k$, $\ell$
+and $d$ be natural numbers with $k \ge 1$ and $\ell \ge 1$, and write
+$\sigma_k(m) = \sum_{e \mid m} e^k$. Then $d$ is a proper divisor of $p^a$ ($d \mid p^a$ and
+$d < p^a$) with $\sigma_k(p^a) = (p^a)^k + d^k + \ell p^a$ if and only if $2 \le a \le k$,
+$d = 1$ and $\ell = p^{k-a} \sum_{i=0}^{a-2} p^{ik}$.
+
+The source prints the conclusion $a = k$, which is false: for $p = 2$, $a = 2$, $k = 3$,
+$\ell = 2$, $d = 1$ one has $\sigma_3(4) = 73 = 4^3 + 1^3 + 2 \cdot 4$ with $a \ne k$. The
+printed form is the case $a = k$ of the identity $\sum_{i=1}^{a-1} p^{ik} = \ell p^a$.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Theorem 4. -/
+theorem klNearPerfectWith_prime_pow_iff
+    (p a k l d : ℕ) (hp : p.Prime) (hk : 1 ≤ k) (hl : 1 ≤ l) :
+    KLNearPerfectWith k l (p ^ a) d ↔
+      2 ≤ a ∧ a ≤ k ∧ d = 1 ∧
+        l = p ^ (k - a) *
+          ∑ i ∈ Finset.range (a - 1), p ^ (i * k) := by
+  constructor
+  · rintro ⟨hdvd, hlt, hsum⟩
+    rw [sigma_prime_pow_eq p a k hp] at hsum
+    obtain ⟨j, _, rfl⟩ := (Nat.dvd_prime_pow hp).mp hdvd
+    have hja' : j < a := (Nat.pow_lt_pow_iff_right hp.one_lt).mp hlt
+    have e1 : (p ^ a) ^ k = p ^ (a * k) := by rw [← pow_mul]
+    have e2 : (p ^ j) ^ k = p ^ (j * k) := by rw [← pow_mul]
+    rw [Finset.sum_range_succ, e1, e2] at hsum
+    have hmain : (∑ i ∈ Finset.range a, p ^ (i * k)) = p ^ (j * k) + l * p ^ a := by
+      omega
+    rcases eq_zero_or_pos j with rfl | hj
+    · simp only [Nat.zero_mul, pow_zero] at hmain
+      have ha1 : 1 ≤ a := by omega
+      obtain ⟨a', rfl⟩ := Nat.exists_eq_add_of_le ha1
+      rw [show (1 : ℕ) + a' = a' + 1 from add_comm _ _] at hmain ⊢
+      rw [Finset.sum_range_succ'] at hmain
+      simp only [Nat.zero_mul, pow_zero] at hmain
+      have htail : (∑ i ∈ Finset.range a', p ^ ((i + 1) * k)) = l * p ^ (a' + 1) := by
+        omega
+      have hfactor : (∑ i ∈ Finset.range a', p ^ ((i + 1) * k))
+          = p ^ k * ∑ i ∈ Finset.range a', p ^ (i * k) := by
+        rw [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro i _
+        rw [show (i + 1) * k = k + i * k by ring, pow_add]
+      rw [hfactor] at htail
+      have ha2 : 2 ≤ a' + 1 := by
+        rcases eq_zero_or_pos a' with rfl | h
+        · simp only [Finset.range_zero, Finset.sum_empty, mul_zero, zero_add] at htail
+          have hpos : 0 < l * p ^ 1 := Nat.mul_pos hl (pow_pos hp.pos 1)
+          omega
+        · omega
+      have hak : a' + 1 ≤ k := by
+        by_contra hcon
+        have hle : k ≤ a' + 1 := by omega
+        have hsplit : p ^ (a' + 1) = p ^ k * p ^ (a' + 1 - k) := by
+          conv_lhs => rw [← Nat.add_sub_cancel' hle]
+          rw [pow_add]
+        rw [hsplit] at htail
+        have hcancel : (∑ i ∈ Finset.range a', p ^ (i * k)) = l * p ^ (a' + 1 - k) := by
+          apply mul_left_cancel₀ (pow_ne_zero k hp.ne_zero)
+          rw [htail]
+          ring
+        have hmod1 := geom_sum_modEq_one p a' k hk (by omega : 1 ≤ a')
+        rw [hcancel] at hmod1
+        have hmod0 : l * p ^ (a' + 1 - k) ≡ 0 [MOD p] :=
+          Nat.modEq_zero_iff_dvd.mpr ((dvd_pow_self p (by omega)).trans (dvd_mul_left _ _))
+        have h10 : (1 : ℕ) ≡ 0 [MOD p] := hmod1.symm.trans hmod0
+        exact hp.not_dvd_one (Nat.modEq_zero_iff_dvd.mp h10)
+      have hsplit2 : p ^ k = p ^ (a' + 1) * p ^ (k - (a' + 1)) := by
+        rw [← pow_add]
+        congr 1
+        omega
+      rw [hsplit2] at htail
+      have hl_eq : l = p ^ (k - (a' + 1)) * ∑ i ∈ Finset.range a', p ^ (i * k) := by
+        have h0 : p ^ (a' + 1) ≠ 0 := pow_ne_zero _ hp.ne_zero
+        have h2 : l * p ^ (a' + 1)
+            = (p ^ (k - (a' + 1)) * ∑ i ∈ Finset.range a', p ^ (i * k)) * p ^ (a' + 1) := by
+          rw [← htail]
+          ring
+        exact mul_right_cancel₀ h0 h2
+      refine ⟨ha2, hak, pow_zero p, ?_⟩
+      rw [Nat.add_sub_cancel a' 1]
+      exact hl_eq
+    · have ha1 : 1 ≤ a := by omega
+      have hmodL := geom_sum_modEq_one p a k hk ha1
+      rw [hmain] at hmodL
+      have hmod0 : p ^ (j * k) + l * p ^ a ≡ 0 [MOD p] := by
+        have hd1 : p ∣ p ^ (j * k) := dvd_pow_self p (mul_ne_zero (by omega) (by omega))
+        have hd2 : p ∣ l * p ^ a := (dvd_pow_self p (by omega)).trans (dvd_mul_left _ _)
+        simpa only [add_zero] using
+          (Nat.modEq_zero_iff_dvd.mpr hd1).add (Nat.modEq_zero_iff_dvd.mpr hd2)
+      have h10 : (1 : ℕ) ≡ 0 [MOD p] := hmodL.symm.trans hmod0
+      exact absurd (Nat.modEq_zero_iff_dvd.mp h10) hp.not_dvd_one
+  · rintro ⟨ha2, hak, rfl, rfl⟩
+    have ha1 : 1 ≤ a := by omega
+    obtain ⟨a', rfl⟩ := Nat.exists_eq_add_of_le ha1
+    rw [show (1 : ℕ) + a' = a' + 1 from add_comm _ _]
+    have hS : a' + 1 - 1 = a' := Nat.add_sub_cancel a' 1
+    refine ⟨one_dvd _, ?_, ?_⟩
+    · calc (1 : ℕ) < p := hp.one_lt
+        _ ≤ p ^ (a' + 1) := Nat.le_self_pow (by omega) p
+    · rw [hS, sigma_prime_pow_eq p (a' + 1) k hp, Finset.sum_range_succ]
+      have e1 : (p ^ (a' + 1)) ^ k = p ^ ((a' + 1) * k) := by rw [← pow_mul]
+      rw [e1, one_pow]
+      have hmain : (∑ j ∈ Finset.range (a' + 1), p ^ (j * k))
+          = 1 + (p ^ (k - (a' + 1)) * ∑ i ∈ Finset.range a', p ^ (i * k)) * p ^ (a' + 1) := by
+        rw [Finset.sum_range_succ']
+        simp only [Nat.zero_mul, pow_zero]
+        have htail : (∑ i ∈ Finset.range a', p ^ ((i + 1) * k))
+            = p ^ k * ∑ i ∈ Finset.range a', p ^ (i * k) := by
+          rw [Finset.mul_sum]
+          apply Finset.sum_congr rfl
+          intro i _
+          rw [show (i + 1) * k = k + i * k by ring, pow_add]
+        have hL : (p ^ (k - (a' + 1)) * ∑ i ∈ Finset.range a', p ^ (i * k)) * p ^ (a' + 1)
+            = p ^ k * ∑ i ∈ Finset.range a', p ^ (i * k) := by
+          have hkk : p ^ (k - (a' + 1)) * p ^ (a' + 1) = p ^ k := by
+            rw [← pow_add]
+            congr 1
+            omega
+          calc (p ^ (k - (a' + 1)) * ∑ i ∈ Finset.range a', p ^ (i * k)) * p ^ (a' + 1)
+              = (p ^ (k - (a' + 1)) * p ^ (a' + 1)) * ∑ i ∈ Finset.range a', p ^ (i * k) := by
+                ring
+            _ = p ^ k * ∑ i ∈ Finset.range a', p ^ (i * k) := by rw [hkk]
+        rw [htail, hL]
+        omega
+      omega
+
+private theorem odd_prime_geom_sum_modEq_two (p b k : ℕ) (hpo : Odd p) :
+    (∑ i ∈ Finset.range b, p ^ (i * k)) ≡ b [MOD 2] := by
+  have hp1 : p ≡ 1 [MOD 2] := by
+    simpa [Nat.ModEq] using Nat.odd_iff.mp hpo
+  induction b with
+  | zero =>
+    simpa only [Finset.range_zero, Finset.sum_empty] using
+      (Nat.ModEq.refl (n := 2) 0)
+  | succ b ih =>
+    rw [Finset.sum_range_succ]
+    simpa only [one_pow, Nat.succ_eq_add_one] using ih.add (hp1.pow (b * k))
+
+private theorem sigma_two_prime_pow (k p₁ p₂ a b : ℕ) (hp₁ : p₁.Prime)
+    (hp₂ : p₂.Prime) (hne : p₁ ≠ p₂) :
+    (∑ e ∈ (p₁ ^ a * p₂ ^ b).divisors, e ^ k) =
+      (∑ i ∈ Finset.range (a + 1), p₁ ^ (i * k)) *
+        (∑ i ∈ Finset.range (b + 1), p₂ ^ (i * k)) := by
+  have hcop : Nat.Coprime (p₁ ^ a) (p₂ ^ b) :=
+    (((Nat.coprime_primes hp₁ hp₂).mpr hne).pow_left a).pow_right b
+  rw [← ArithmeticFunction.sigma_apply,
+    ArithmeticFunction.isMultiplicative_sigma.map_mul_of_coprime hcop,
+    ArithmeticFunction.sigma_apply_prime_pow hp₁,
+    ArithmeticFunction.sigma_apply_prime_pow hp₂]
+
+/-- **No near $F_k$-perfect number $p_1^a p_2^b$ with $a + b$ odd or $a, b$ both odd.** Let
+$k > 1$, let $p_1 \ne p_2$ be odd primes and let $a, b \ge 1$ be natural numbers such that
+$a + b$ is odd or both $a$ and $b$ are odd. Then $p_1^a p_2^b$ is not near $F_k$-perfect.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Theorem 20. -/
+theorem not_isNearFkPerfect_pow_mul_pow
+    (k p₁ p₂ a b : ℕ) (hk : 1 < k) (hp₁ : p₁.Prime)
+    (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
+    (hne : p₁ ≠ p₂) (ha : 1 ≤ a) (hb : 1 ≤ b)
+    (hpar : Odd (a + b) ∨ (Odd a ∧ Odd b)) :
+    ¬ IsNearFkPerfect k (p₁ ^ a * p₂ ^ b) := by
+  -- The parity argument does not use `hk`, `ha` or `hb`; this keeps them referenced.
+  have _nontrivial : k ≠ 0 ∧ a ≠ 0 ∧ b ≠ 0 := by omega
+  rintro ⟨d, hdvd, _, hsum⟩
+  have hnodd : Odd (p₁ ^ a * p₂ ^ b) := ho₁.pow.mul ho₂.pow
+  have hdodd : Odd d := by
+    by_contra hcon
+    simp only [Nat.not_odd_iff_even] at hcon
+    exact (Nat.not_even_iff_odd.mpr hnodd)
+      (even_iff_two_dvd.mpr ((even_iff_two_dvd.mp hcon).trans hdvd))
+  have hodd_or : Odd a ∨ Odd b := by
+    rcases hpar with h | ⟨ha', _⟩
+    · by_contra hcon
+      rw [not_or] at hcon
+      simp only [Nat.not_odd_iff_even] at hcon
+      exact (Nat.not_even_iff_odd.mpr h) (hcon.1.add hcon.2)
+    · exact Or.inl ha'
+  have heven_prod : Even ((a + 1) * (b + 1)) := by
+    rcases hodd_or with ha' | hb'
+    · exact (ha'.add_one).mul_right _
+    · exact (hb'.add_one).mul_left _
+  have hleft : (∑ e ∈ (p₁ ^ a * p₂ ^ b).divisors, e ^ k) ≡ 0 [MOD 2] := by
+    rw [sigma_two_prime_pow k p₁ p₂ a b hp₁ hp₂ hne]
+    exact ((odd_prime_geom_sum_modEq_two p₁ (a + 1) k ho₁).mul
+      (odd_prime_geom_sum_modEq_two p₂ (b + 1) k ho₂)).trans
+      (Nat.modEq_zero_iff_dvd.mpr (even_iff_two_dvd.mp heven_prod))
+  have hevenL : Even (∑ e ∈ (p₁ ^ a * p₂ ^ b).divisors, e ^ k) := by
+    rw [Nat.even_iff]
+    simpa [Nat.ModEq] using hleft
+  have hoddR : Odd ((p₁ ^ a * p₂ ^ b) ^ k + d ^ k + 3 * (p₁ ^ a * p₂ ^ b)) :=
+    ((hnodd.pow).add_odd hdodd.pow).add_odd ((by decide : Odd 3).mul hnodd)
+  rw [hsum] at hevenL
+  exact (Nat.not_even_iff_odd.mpr hoddR) hevenL
 
 end MathlibExt.NumberTheory.FkPerfectWanted
