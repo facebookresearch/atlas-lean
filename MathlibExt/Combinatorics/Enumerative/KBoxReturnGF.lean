@@ -940,6 +940,30 @@ public theorem kBoxReturnGF_eq {k : ℕ} (hk : 1 ≤ k) :
     _ = (𝒕 * 𝒙 * G ^ k) * ((1 - 𝒕 * 𝒙 * G ^ (k + 1)) * W) := by ac_rfl
     _ = _ := by rw [he, mul_one]
 
+/-- **Functional equation for the augmented Dyck generating function.** Let $k \ge 1$ and let
+$G_{k+1}(x) \in \mathbb{Z}[[x]]$ be the generating function of augmented $(k+1)$-Dyck paths
+by size. Then
+$$G_{k+1} = 1 + x \, G_{k+1}^{k+2}.$$
+
+Source: Zhang and Zhuang, *A Subfamily of Skew Dyck Paths Related to `k`-ary
+Trees*, Journal of Integer Sequences 27 (2024), Article 24.2.4, Section 2. -/
+public theorem augmentedKDyckGF_eq {k : ℕ} (hk : 1 ≤ k) :
+    augmentedKDyckGF (k + 1) =
+      1 + PowerSeries.X * augmentedKDyckGF (k + 1) ^ (k + 2) := by
+  have hG : PowerSeries.map Polynomial.C (augmentedKDyckGF (k + 1)) =
+      1 + PowerSeries.X *
+        PowerSeries.map Polynomial.C (augmentedKDyckGF (k + 1)) ^ (k + 2) := by
+    rw [dyck_GF hk]
+    calc walkGF k 0 1 = 1 + PowerSeries.C 1 * PowerSeries.X * walkGF k (k + 1) 1 :=
+          walkGF_zero_height k 1
+      _ = 1 + PowerSeries.X * walkGF k 0 1 ^ (k + 2) := by
+          have hpow : walkGF k 0 1 ^ (k + 2) =
+              walkGF k 0 1 ^ (k + 1) * walkGF k 0 1 := pow_succ _ _
+          rw [walkGF_eq_pow k (k + 1) 1, hpow]
+          simp
+  exact PowerSeries.map_injective Polynomial.C Polynomial.C_injective
+    (by simpa using hG)
+
 end
 
 end MetaMathlibExt

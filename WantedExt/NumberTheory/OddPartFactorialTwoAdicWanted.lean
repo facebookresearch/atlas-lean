@@ -222,23 +222,6 @@ public theorem_wanted reverseESymm_two_oddSet_congr (e : ℕ) (he : 2 ≤ e) :
       reverseESymm 2 (integerMultiset (oddBelowTwoPow e)) - (2 : ℤ) ^ (e - 2)
 
 /--
-**$\hat\sigma_1$ of four copies of the numbers $1 \bmod 8$ below $2^e$.** Let $e \ge 3$ and let
-$M_e$ be the multiset of integers containing each natural number $n < 2^e$ with
-$n \equiv 1 \pmod 8$ (that is, $1, 9, \dots, 2^e - 7$) exactly four times, let $N$ be the
-number of elements of $M_e$ counted with multiplicity, and write $\sigma_k$ for the elementary
-symmetric function of degree $k$. Then the reversed elementary symmetric function
-$\hat\sigma_1(M_e) = \sigma_{N-1}(M_e)$ satisfies $\hat\sigma_1(M_e) \equiv 2^{e-1} \pmod{2^e}$
-in $\mathbb{Z}$.
-
-Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
-Sequences 29 (2026), Article 26.3.1, Lemma 21.
--/
-public theorem_wanted reverseESymm_fourCopies_oneModEight_congr
-    (e : ℕ) (he : 3 ≤ e) :
-    (2 : ℤ) ^ e ∣
-      reverseESymm 1 (fourCopiesOneModEightBelowTwoPow e) - (2 : ℤ) ^ (e - 1)
-
-/--
 **Squared products of the odd residues omitting one factor.** Let $e \ge 1$ and let
 $S_e$ be the set of odd positive integers below $2^e$. Then, as integers,
 $$\sum_{i \in S_e} \Bigl(\prod_{j \in S_e \setminus \{i\}} j\Bigr)^2 \equiv 2^{e-1} \pmod{2^e}.$$

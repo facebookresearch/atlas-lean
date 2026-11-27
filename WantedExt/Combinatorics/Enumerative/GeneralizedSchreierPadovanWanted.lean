@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.Div
 public import MathlibExt.Combinatorics.Enumerative.MaximalSchreierCount
 public import MathlibExt.Combinatorics.Enumerative.MaximalSchreierCountDifference
+public import MathlibExt.Combinatorics.Enumerative.SchreierCountPadovan
 
 /-!
 # Generalized Schreier sets and Padovan-like sequences
@@ -27,20 +28,6 @@ Padovan-like sequences `a_{p,q,n}` and `a^{(m)}_{p,q,n}`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Schreier counts as Padovan-like sequences.** Write $a_{p,q,k}$ and $a^{(m)}_{p,q,k}$ for the
-Padovan-like sequences for Schreier sets and for maximal Schreier sets. For positive integers $p$,
-$q$ and $n$, the number $|S^{p/q}_n|$ of $(p, q)$-Schreier sets with maximum $n$ equals
-$a_{p,q,(n-1)q}$, and the number $|M^{p/q}_n|$ of maximal $(p, q)$-Schreier sets with maximum $n$
-equals $a^{(m)}_{p,q,(n-1)q}$.
-
-Source: Hùng Việt Chu and Zachary Louis Vasseur, *Linear Recurrences of Generalized Schreier
-Sets Revisited*, Journal of Integer Sequences 29 (2026), Article 26.2.2, Theorem 1
-(`jis-2026-26.2.2-thm-1`). -/
-public theorem_wanted schreierCount_eq_schreierPadovan {p q n : ℕ} (hp : 1 ≤ p) (hq : 1 ≤ q)
-    (hn : 1 ≤ n) :
-    schreierCount p q n = schreierPadovan p q ((n - 1) * q) ∧
-      maximalSchreierCount p q n = maximalSchreierPadovan p q ((n - 1) * q)
 
 /-- **Closed formula and recurrence for Schreier counts.** Let $p$ and $q$ be positive integers,
 and write $|S^{p/q}_n|$ for the number of $(p, q)$-Schreier sets with maximum $n$. For every

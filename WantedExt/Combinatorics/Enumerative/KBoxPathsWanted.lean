@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.KBoxReturnGF
+public import MathlibExt.Combinatorics.Enumerative.KBoxPathsReturnsMeanVariance
 
 /-!
 # `k`-box paths: a subfamily of skew Dyck paths related to `k`-ary trees
@@ -121,24 +122,6 @@ public theorem_wanted card_kBoxPaths_returns {k n j : ℕ} (hk : 1 ≤ k) (hj : 
         (j * (k + 1) - 1) * ((k + 2) * n - j - 1).choose (n - j) ∧
       (j < n → (n - j) * ((kBoxPaths k n).filter fun w => skewReturns w = j).card =
         (j * (k + 1) - 1) * ((k + 2) * n - j - 2).choose (n - j - 1))
-
-/-- **Mean and variance of the number of returns of $k$-box paths.** Let $k \ge 1$ and $n \ge 1$,
-and let $R(\mu)$ be the number of returns (steps ending on the $x$-axis) of a path $\mu$. The
-average of $R$ over the $k$-box paths of size $n$ is
-$$\frac{(k+2)((k+2)n-1)}{(k+1)((k+1)n+1)},$$
-and the average of $R^2$ over these paths minus the square of the average of $R$ is
-$$\frac{(k+2)((k+2)n-1)((2k+1)(k+1)n-2)(n-1)}{(k+1)^2((k+1)n+1)^2((k+1)n+2)}.$$
-
-Source: Zhang and Zhuang, *A Subfamily of Skew Dyck Paths Related to `k`-ary
-Trees*, Journal of Integer Sequences 27 (2024), Article 24.2.4, Corollary 11
-(`jis-2024-24.2.4-cor-11`). -/
-public theorem_wanted kBoxPaths_returns_mean_variance {k n : ℕ} (hk : 1 ≤ k) (hn : 1 ≤ n) :
-    (∑ w ∈ kBoxPaths k n, (skewReturns w : ℚ)) / (kBoxPaths k n).card =
-        ((k + 2) * ((k + 2) * n - 1) : ℚ) / ((k + 1) * ((k + 1) * n + 1)) ∧
-      (∑ w ∈ kBoxPaths k n, (skewReturns w : ℚ) ^ 2) / (kBoxPaths k n).card -
-          ((∑ w ∈ kBoxPaths k n, (skewReturns w : ℚ)) / (kBoxPaths k n).card) ^ 2 =
-        ((k + 2) * ((k + 2) * n - 1) * ((2 * k + 1) * (k + 1) * n - 2) * (n - 1) : ℚ) /
-          ((k + 1) ^ 2 * ((k + 1) * n + 1) ^ 2 * ((k + 1) * n + 2))
 
 /-- **Long-ascent functional equations for $k$-box paths.** Let $\acute F_k(t, x)$ be the
 long-ascent generating function of $k$-box paths and $\acute G_k(t, x)$ that of augmented

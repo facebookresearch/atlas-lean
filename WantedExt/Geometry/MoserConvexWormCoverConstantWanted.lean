@@ -12,6 +12,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.Geometry.MoserWormCover
 public import MathlibExt.Geometry.MoserWormCover.HalfDisk
 public import MathlibExt.Geometry.MoserWormCover.HalfSemidisk
+public import MathlibExt.Geometry.MoserWormCover.UpperBoundPiOverFour
 
 /-!
 # Moser's convex worm cover constant: literature requests
@@ -21,13 +22,15 @@ Wetzel's sector covers unit arcs (2021); Fässler and Orponen,
 Curve packing and modulus estimates (2018).
 
 The completed geometry is imported from its canonical upstream implementation.
-The 18 remaining literature propositions have corresponding proof requests.
+The 17 remaining literature propositions have corresponding proof requests.
 Two conditional witness corollaries stay with their source claims.
 There is no source-supplied exact-value conjecture. The PWW2007 polygonal-testing
 companion remains an explicit partial-scope gap.
 
 The covering results for the disk and half-disk of diameter one are in the imported modules
 `MathlibExt.Geometry.MoserWormCover.HalfDisk` and `MathlibExt.Geometry.MoserWormCover.HalfSemidisk`.
+The upper bound `upperBoundPiOverFour` and its proof (`upperBoundPiOverFour_holds`) are in
+`MathlibExt.Geometry.MoserWormCover.UpperBoundPiOverFour`, which this module imports.
 -/
 
 @[expose] public section
@@ -35,17 +38,6 @@ The covering results for the disk and half-disk of diameter one are in the impor
 open MeasureTheory Set
 
 namespace MoserConvexWormCoverConstant
-
-/-- **Proposition: the convex worm cover constant is at most π/4.** A unit arc is a
-continuous curve $\gamma : [0, 1] \to \mathbb{C}$ of length exactly $1$. The convex worm cover
-constant is the infimum of the areas of the nonempty convex sets $\Omega \subseteq \mathbb{C}$
-that contain, for every unit arc $\gamma$, the image of $\gamma$ under some rotation followed by
-a translation. This proposition states that the convex worm cover constant is at most $\pi/4$.
-
-Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
-adaptation.
--/
-def upperBoundPiOverFour : Prop := convexWormCoverConstant ≤ Real.pi / 4
 
 /-- **Proposition: the convex worm cover constant is at most π/8.** A unit arc is a
 continuous curve $\gamma : [0, 1] \to \mathbb{C}$ of length exactly $1$. The convex worm cover
@@ -270,16 +262,6 @@ theorem nonconvexUpperBoundPloymaklamWichiramala2018_of_cover
     (h : nonconvexCoverPloymaklamWichiramala2018) :
     nonconvexUpperBoundPloymaklamWichiramala2018 :=
   nonconvexUpperBound_of_cover (by norm_num) h
-
-/-- **The convex worm cover constant is at most π/4.** A unit arc is a continuous
-curve $\gamma : [0, 1] \to \mathbb{C}$ of length exactly $1$. The convex worm cover constant,
-the infimum of the areas of the nonempty convex sets $\Omega \subseteq \mathbb{C}$ that contain,
-for every unit arc $\gamma$, the image of $\gamma$ under some rotation followed by a translation,
-is at most $\pi/4$.
-
-Source: Optimization Problems, constant 13a, closed claim `upperBoundPiOverFour`.
--/
-theorem_wanted upperBoundPiOverFour_holds : upperBoundPiOverFour
 
 /-- **The convex worm cover constant is at most π/8.** A unit arc is a continuous
 curve $\gamma : [0, 1] \to \mathbb{C}$ of length exactly $1$. The convex worm cover constant,

@@ -19,6 +19,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.Primorial
+public import MathlibExt.NumberTheory.RobinKanekoLagarias
 public import MathlibExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumDefs
 public import MathlibExt.NumberTheory.RobinKanekoLagariasExpFiveDivLogBoundLt
 public import MathlibExt.NumberTheory.RobinKanekoLagariasExpHarmonicMulLogDivMonotoneOn
@@ -256,20 +257,6 @@ public theorem_wanted least_kaneko_lagarias_counterexample_superabundant (n₀ :
       (ArithmeticFunction.sigma 1 n : ℝ) < exp (harmonic n : ℝ) * log (harmonic n : ℝ)) :
     ∀ m : ℕ, 1 ≤ m → m < n₀ →
       (ArithmeticFunction.sigma 1 m : ℝ) / m < (ArithmeticFunction.sigma 1 n₀ : ℝ) / n₀
-
-/-- **Robin's inequality implies the Kaneko–Lagarias inequality.** Let $\sigma(n)$ be the sum of
-the divisors of $n$, $\gamma$ the Euler–Mascheroni constant, $\log$ the natural logarithm and
-$H_n = 1 + \frac{1}{2} + \cdots + \frac{1}{n}$ the $n$-th harmonic number. For every natural
-number $n$, if Robin's inequality $\sigma(n) < e^{\gamma} n \log \log n$ holds, then so does the
-Kaneko–Lagarias inequality $\sigma(n) < e^{H_n} \log H_n$.
-
-Source: Idris Assani, Aiden Chester, and Alex Paschal, *On Robin's Inequality and the
-Kaneko-Lagarias Inequality*, INTEGERS 26 (2026), Article A86, Theorem 10
-(`integers-2026-A86-thm-10`). -/
-public theorem_wanted kaneko_lagarias_of_robin (n : ℕ)
-    (h : (ArithmeticFunction.sigma 1 n : ℝ) < exp eulerMascheroniConstant * n * log (log n)) :
-    (ArithmeticFunction.sigma 1 n : ℝ) < exp (harmonic n : ℝ) * log (harmonic n : ℝ)
-
 
 /-- **Mertens-type bound for a product over the first primes with one prime omitted.** Let
 $p_\ell$ be the $\ell$-th prime ($p_1 = 2$), $\log$ the natural logarithm and $B \approx 0.2615$

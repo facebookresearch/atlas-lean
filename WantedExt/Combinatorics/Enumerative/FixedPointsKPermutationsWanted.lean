@@ -30,6 +30,7 @@ public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.GroupTheory.Perm.Cycle.Type
 public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
+public import MathlibExt.Combinatorics.Enumerative.FixedPointsKPermutationsDerangementPolynomial
 public import MathlibExt.Combinatorics.Enumerative.FixedPointsKPermutationsDistribution
 public import MathlibExt.Combinatorics.Enumerative.FixedPointsKPermutationsRecurrence
 public import MathlibExt.Combinatorics.Enumerative.Stirling
@@ -103,21 +104,6 @@ public theorem_wanted schur_factorial_hadamard_real_roots {f g : ℝ[X]}
     let h : ℝ[X] := ∑ k ∈ Finset.range (min f.natDegree g.natDegree + 1),
       C ((k.factorial : ℝ) * f.coeff k * g.coeff k) * X ^ k
     h.Splits
-
-/-- **Real-rootedness of the derangement cycle polynomial.** Write $a(m, k, j)$ for the number of
-permutations of an $m$-element set with exactly $k$ cycles (fixed points counted as cycles of
-length one) and exactly $j$ fixed points, so that $d(m, k) = a(m, k, 0)$ is the number of
-derangements of an $m$-element set with $k$ cycles. For every $n \ge 2$, the real polynomial
-$D_n(x) = \sum_{k=1}^{n} d(n + k, k) x^{k-1}$ has only real zeros.
-
-The terms with $k > n$ vanish, so the upper summation limit $n$ loses nothing.
-
-Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
-INTEGERS 24 (2024), Article A54, Theorem 3 (`integers-2024-A54-thm-3`). -/
-public theorem_wanted derangementCyclePolynomial_real_roots {n : ℕ} (hn : 2 ≤ n) :
-    let D : ℝ[X] := ∑ k ∈ Finset.Icc 1 n,
-      C (kPermFixedPointCount (n + k) k 0 : ℝ) * X ^ (k - 1)
-    D.Splits
 
 /-- **Unimodality of fixed-point counts for permutations with a given number of cycles.** Write
 $a(n, k, j)$ for the number of permutations of an $n$-element set with exactly $k$ cycles (fixed

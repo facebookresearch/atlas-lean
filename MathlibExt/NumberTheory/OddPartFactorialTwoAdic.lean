@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
+import Mathlib.RingTheory.Polynomial.Vieta
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.Data.Nat.Choose.Factorization
@@ -25,7 +26,7 @@ import Mathlib.Tactic.Ring
 This file collects the definitions for Davis's study of the odd part of `(2^e)!`. It proves the
 odd-part bijection on the upper dyadic half and congruences for odd double factorials and their
 normalized quotients. It also counts the odd square roots of each residue congruent to one modulo
-eight.
+eight, and the $\hat\sigma_1$ congruence for four copies of those residues.
 -/
 
 @[expose] public section
@@ -718,5 +719,290 @@ public theorem square_mod_twoPower_fiber_card
     · rw [h₃ t (by omega)]
       omega
   · omega
+
+
+namespace reverseESymm_fourCopies_oneModEight_congr
+
+private theorem cast_prod (t : Multiset ℤ) (m : ℕ) :
+    ((t.prod : ℤ) : ZMod m) = (t.map (Int.castRingHom (ZMod m))).prod := by
+  induction t using Multiset.induction with
+  | empty => simp
+  | cons a t ih => simp [ih]
+
+private theorem cast_sum (t : Multiset ℤ) (m : ℕ) :
+    ((t.sum : ℤ) : ZMod m) = (t.map (Int.castRingHom (ZMod m))).sum := by
+  induction t using Multiset.induction with
+  | empty => simp
+  | cons a t ih => simp [ih]
+
+private theorem cast_esymm (s : Multiset ℤ) (k : ℕ) (m : ℕ) :
+    ((s.esymm k : ℤ) : ZMod m) = (s.map (Int.castRingHom (ZMod m))).esymm k := by
+  rw [Multiset.esymm, Multiset.esymm, Multiset.powersetCard_map, Multiset.map_map,
+    cast_sum, Multiset.map_map]
+  congr 1
+  refine Multiset.map_congr rfl fun t _ => ?_
+  exact cast_prod t m
+
+/-- Four copies factorisation, over any commutative ring. -/
+private theorem reverseESymm_one_four_smul {R : Type*} [CommRing R]
+    (s : Multiset R) (hs : 1 ≤ s.card) :
+    reverseESymm 1 (4 • s) = 4 * s.prod ^ 3 * reverseESymm 1 s := by
+  have hprod : ((4 • s).map fun r => Polynomial.X + Polynomial.C r).prod =
+      ((s.map fun r => Polynomial.X + Polynomial.C r).prod) ^ 4 := by
+    rw [Multiset.map_nsmul, Multiset.prod_nsmul]
+  have hcard4 : (4 • s).card = 4 * s.card := by simp
+  have key : reverseESymm 1 (4 • s) =
+      ((s.map fun r => Polynomial.X + Polynomial.C r).prod ^ 4).coeff 1 := by
+    have hcoeff := Multiset.prod_X_add_C_coeff (s := 4 • s) (k := 1) (by omega)
+    rw [hprod] at hcoeff
+    change (4 • s).esymm ((4 • s).card - 1) = _
+    exact hcoeff.symm
+  rw [key]
+  have h1 : (((s.map fun r => Polynomial.X + Polynomial.C r).prod ^ 4).coeff 1) =
+      (((s.map fun r => Polynomial.X + Polynomial.C r).prod ^ 4).derivative).coeff 0 := by
+    rw [Polynomial.coeff_derivative]; simp
+  rw [h1, Polynomial.coeff_zero_eq_eval_zero, Polynomial.derivative_pow]
+  have hq0 : ((s.map fun r => Polynomial.X + Polynomial.C r).prod).eval 0 = s.prod := by
+    simp [Polynomial.eval_multiset_prod]
+  have hdq0 : ((s.map fun r => Polynomial.X + Polynomial.C r).prod).derivative.eval 0 =
+      reverseESymm 1 s := by
+    rw [← Polynomial.coeff_zero_eq_eval_zero, Polynomial.coeff_derivative]
+    simp only [Nat.cast_zero, zero_add, mul_one]
+    rw [reverseESymm_eq, Multiset.prod_X_add_C_coeff _ hs]
+  simp only [Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, hq0, hdq0]
+  ring
+
+private theorem decomp (e : ℕ) (he : 3 ≤ e) :
+    oneModEightBelowTwoPow (e + 2) =
+      (Finset.range 4 ×ˢ oneModEightBelowTwoPow e).image
+        fun p : ℕ × ℕ => p.2 + p.1 * 2 ^ e := by
+  have h8 : (8 : ℕ) ∣ 2 ^ e := by
+    rw [show (8 : ℕ) = 2 ^ 3 by norm_num]
+    exact pow_dvd_pow 2 he
+  have hpow : (2 : ℕ) ^ (e + 2) = 4 * 2 ^ e := by
+    rw [pow_add]; ring
+  have hpos : 0 < (2 : ℕ) ^ e := by positivity
+  ext n
+  simp only [mem_oneModEight, Finset.mem_image, Finset.mem_product, Finset.mem_range]
+  constructor
+  · intro ⟨hn, hmod⟩
+    have hdiv : n < 4 * 2 ^ e := by rw [← hpow]; exact hn
+    refine ⟨(n / 2 ^ e, n % 2 ^ e), ⟨?_, ?_⟩, ?_⟩
+    · rw [Nat.div_lt_iff_lt_mul hpos]; exact hdiv
+    · refine ⟨Nat.mod_lt _ hpos, ?_⟩
+      have hmm : (n % 2 ^ e) % 8 = n % 8 := Nat.mod_mod_of_dvd n h8
+      omega
+    · change n % 2 ^ e + n / 2 ^ e * 2 ^ e = n
+      rw [add_comm, Nat.mul_comm]
+      exact Nat.div_add_mod n (2 ^ e)
+  · rintro ⟨⟨k, n0⟩, ⟨hk, ⟨hn0, hmod0⟩⟩, rfl⟩
+    dsimp only
+    have h0 : (k * 2 ^ e) % 8 = 0 :=
+      Nat.mod_eq_zero_of_dvd (Dvd.dvd.mul_left h8 k)
+    have hmul : k * 2 ^ e ≤ 3 * 2 ^ e := Nat.mul_le_mul_right _ (by omega)
+    refine ⟨?_, ?_⟩
+    · rw [hpow]; omega
+    · rw [Nat.add_mod, h0, Nat.add_zero, Nat.mod_mod]; exact hmod0
+
+private theorem injOn_decomp (e : ℕ) :
+    Set.InjOn (fun p : ℕ × ℕ => p.2 + p.1 * 2 ^ e)
+      (↑(Finset.range 4 ×ˢ oneModEightBelowTwoPow e)) := by
+  intro p hp q hq h
+  have hpos : 0 < (2 : ℕ) ^ e := by positivity
+  have hpb : p.2 < 2 ^ e := by
+    have := Finset.mem_product.mp (Finset.mem_coe.mp hp)
+    exact (mem_oneModEight _ _).mp this.2 |>.1
+  have hqb : q.2 < 2 ^ e := by
+    have := Finset.mem_product.mp (Finset.mem_coe.mp hq)
+    exact (mem_oneModEight _ _).mp this.2 |>.1
+  have hdivp : (p.2 + p.1 * 2 ^ e) / 2 ^ e = p.1 := by
+    rw [Nat.add_mul_div_right _ _ hpos, Nat.div_eq_of_lt hpb, zero_add]
+  have hdivq : (q.2 + q.1 * 2 ^ e) / 2 ^ e = q.1 := by
+    rw [Nat.add_mul_div_right _ _ hpos, Nat.div_eq_of_lt hqb, zero_add]
+  have hmodp : (p.2 + p.1 * 2 ^ e) % 2 ^ e = p.2 := by
+    rw [Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt hpb]
+  have hmodq : (q.2 + q.1 * 2 ^ e) % 2 ^ e = q.2 := by
+    rw [Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt hqb]
+  have h' : p.2 + p.1 * 2 ^ e = q.2 + q.1 * 2 ^ e := h
+  have h1 : p.1 = q.1 := by rw [← hdivp, ← hdivq, h']
+  have h2 : p.2 = q.2 := by rw [← hmodp, ← hmodq, h']
+  exact Prod.ext h1 h2
+
+private theorem poly_identity (e : ℕ) (he : 3 ≤ e) :
+    ∏ n ∈ oneModEightBelowTwoPow (e + 2),
+        (Polynomial.X + Polynomial.C ((n : ZMod (2 ^ e)) : ZMod (2 ^ e))) =
+      ∏ n0 ∈ oneModEightBelowTwoPow e,
+        (Polynomial.X + Polynomial.C ((n0 : ZMod (2 ^ e)) : ZMod (2 ^ e))) ^ 4 := by
+  rw [decomp e he, Finset.prod_image (injOn_decomp e)]
+  rw [Finset.prod_product, Finset.prod_comm]
+  apply Finset.prod_congr rfl
+  intro n0 hn0
+  rw [show (4 : ℕ) = (Finset.range 4).card by simp, ← Finset.prod_const]
+  apply Finset.prod_congr rfl
+  intro k hk
+  have hcast : ((n0 + k * 2 ^ e : ℕ) : ZMod (2 ^ e)) = (n0 : ZMod (2 ^ e)) := by
+    have h0 : ((2 : ZMod (2 ^ e)) ^ e = 0) := by
+      have h := ZMod.natCast_self (2 ^ e)
+      rw [Nat.cast_pow] at h
+      simpa using h
+    push_cast
+    rw [h0, mul_zero, add_zero]
+  rw [hcast]
+
+private theorem card_oneModEight_pos (e : ℕ) (he : 3 ≤ e) :
+    1 ≤ (oneModEightBelowTwoPow e).card := by
+  have hlt : (1 : ℕ) < 2 ^ e := by
+    calc (1 : ℕ) < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ e := pow_le_pow_right₀ (by norm_num) he
+  have hmem : (1 : ℕ) ∈ oneModEightBelowTwoPow e := by
+    rw [mem_oneModEight]; omega
+  exact Finset.one_le_card.mpr ⟨1, hmem⟩
+
+private theorem esymm_congr_step (e : ℕ) (he : 3 ≤ e) :
+    Int.ModEq ((2 : ℤ) ^ e)
+      (reverseESymm 1 (integerMultiset (oneModEightBelowTwoPow (e + 2))))
+      (reverseESymm 1 (fourCopiesOneModEightBelowTwoPow e)) := by
+  have hpoly := poly_identity e he
+  have hL : (∏ n ∈ oneModEightBelowTwoPow (e + 2),
+        (Polynomial.X + Polynomial.C ((n : ZMod (2 ^ e)) : ZMod (2 ^ e)))).coeff 1 =
+      ((reverseESymm 1 (integerMultiset (oneModEightBelowTwoPow (e + 2))) : ℤ) :
+        ZMod (2 ^ e)) := by
+    rw [Finset.prod_X_add_C_coeff (oneModEightBelowTwoPow (e + 2))
+      (fun n : ℕ => (n : ZMod (2 ^ e))) (k := 1)
+      (by exact card_oneModEight_pos (e + 2) (by omega))]
+    rw [← Finset.esymm_map_val]
+    rw [reverseESymm_eq, cast_esymm]
+    congr 1
+    · simp [integerMultiset, Multiset.map_map]
+    · rw [integerMultiset_card]
+  have hR : (∏ n0 ∈ oneModEightBelowTwoPow e,
+        (Polynomial.X + Polynomial.C ((n0 : ZMod (2 ^ e)) : ZMod (2 ^ e))) ^ 4).coeff 1 =
+      ((reverseESymm 1 (fourCopiesOneModEightBelowTwoPow e) : ℤ) : ZMod (2 ^ e)) := by
+    rw [Finset.prod_pow]
+    set A : Multiset (ZMod (2 ^ e)) :=
+      (integerMultiset (oneModEightBelowTwoPow e)).map (Int.castRingHom (ZMod (2 ^ e)))
+      with hA
+    have hq : (∏ n0 ∈ oneModEightBelowTwoPow e,
+          (Polynomial.X + Polynomial.C ((n0 : ZMod (2 ^ e)) : ZMod (2 ^ e)))) =
+        (A.map fun r => Polynomial.X + Polynomial.C r).prod := by
+      rw [hA, Finset.prod_eq_multiset_prod]
+      simp only [integerMultiset, Multiset.map_map, Function.comp_apply]
+      refine congrArg Multiset.prod (Multiset.map_congr rfl fun x _ => ?_)
+      change (Polynomial.X + Polynomial.C ((x : ZMod (2 ^ e)) : ZMod (2 ^ e))) =
+        Polynomial.X + Polynomial.C (((x : ℤ) : ZMod (2 ^ e)))
+      rw [Int.cast_natCast]
+    rw [hq]
+    have hAcard0 : A.card = (oneModEightBelowTwoPow e).card := by
+      simp [hA, integerMultiset_card]
+    have hcoeff := Multiset.prod_X_add_C_coeff (s := 4 • A) (k := 1) (by
+      have hc := card_oneModEight_pos e he
+      have hcard4 : (4 • A).card = 4 * (oneModEightBelowTwoPow e).card := by
+        simp [Multiset.card_nsmul, hAcard0]
+      omega)
+    have hprod : ((4 • A).map fun r => Polynomial.X + Polynomial.C r).prod =
+        ((A.map fun r => Polynomial.X + Polynomial.C r).prod) ^ 4 := by
+      rw [Multiset.map_nsmul, Multiset.prod_nsmul]
+    rw [hprod] at hcoeff
+    have hcast : ((reverseESymm 1 (fourCopiesOneModEightBelowTwoPow e) : ℤ) :
+        ZMod (2 ^ e)) = (4 • A).esymm ((4 • A).card - 1) := by
+      rw [fourCopiesOneModEight_eq, reverseESymm_eq, cast_esymm,
+        Multiset.map_nsmul, ← hA]
+      congr 1
+      simp [hAcard0, Multiset.card_nsmul, integerMultiset_card]
+    rw [hcast]
+    exact hcoeff
+  have hcast : ((reverseESymm 1 (integerMultiset (oneModEightBelowTwoPow (e + 2))) : ℤ) :
+      ZMod (2 ^ e)) =
+      ((reverseESymm 1 (fourCopiesOneModEightBelowTwoPow e) : ℤ) : ZMod (2 ^ e)) := by
+    rw [← hL, ← hR, hpoly]
+  rw [ZMod.intCast_eq_intCast_iff] at hcast
+  have hmod : ((2 ^ e : ℕ) : ℤ) = (2 : ℤ) ^ e := by push_cast; ring
+  rwa [hmod] at hcast
+
+private theorem prod_odd (e : ℕ) :
+    Odd ((integerMultiset (oneModEightBelowTwoPow e)).prod ^ 3) := by
+  apply Odd.pow
+  have hprod : (integerMultiset (oneModEightBelowTwoPow e)).prod =
+      ∏ n ∈ oneModEightBelowTwoPow e, (n : ℤ) := by
+    rw [integerMultiset, Finset.prod_eq_multiset_prod]
+  rw [hprod]
+  refine Finset.prod_induction (fun n : ℕ => (n : ℤ)) Odd
+    (fun a b ha hb => ha.mul hb) (by decide) ?_
+  intro n hn
+  have hmod : n % 8 = 1 := (mem_oneModEight _ _).mp hn |>.2
+  obtain ⟨q, rfl⟩ : ∃ q, n = 8 * q + 1 := ⟨n / 8, by omega⟩
+  exact ⟨(4 * q : ℤ), by push_cast; ring⟩
+
+private theorem step (e : ℕ) (he : 3 ≤ e)
+    (ih : (2 : ℤ) ^ e ∣ reverseESymm 1 (fourCopiesOneModEightBelowTwoPow e) -
+      (2 : ℤ) ^ (e - 1)) :
+    (2 : ℤ) ^ (e + 2) ∣ reverseESymm 1 (fourCopiesOneModEightBelowTwoPow (e + 2)) -
+      (2 : ℤ) ^ (e + 2 - 1) := by
+  rw [show e + 2 - 1 = e + 1 from by omega]
+  have hA := reverseESymm_one_four_smul
+    (integerMultiset (oneModEightBelowTwoPow (e + 2)))
+    (by rw [integerMultiset_card]; exact card_oneModEight_pos (e + 2) (by omega))
+  have hB := esymm_congr_step e he
+  obtain ⟨t, ht⟩ := Int.modEq_iff_dvd.mp hB
+  obtain ⟨u, hu⟩ := ih
+  obtain ⟨v, hv⟩ := prod_odd (e + 2)
+  set P : ℤ := (integerMultiset (oneModEightBelowTwoPow (e + 2))).prod with hP
+  set E : ℤ := reverseESymm 1 (integerMultiset (oneModEightBelowTwoPow (e + 2))) with hE
+  set R : ℤ := reverseESymm 1 (fourCopiesOneModEightBelowTwoPow e) with hR
+  have hEeq : E = R - (2 : ℤ) ^ e * t := by omega
+  have hReq : R = (2 : ℤ) ^ (e - 1) + (2 : ℤ) ^ e * u := by omega
+  have hp1 : (2 : ℤ) ^ (e + 2) = 4 * (2 : ℤ) ^ e := by rw [pow_add]; ring
+  have hp2 : (2 : ℤ) ^ (e + 1) = 4 * (2 : ℤ) ^ (e - 1) := by
+    have h : e + 1 = (e - 1) + 2 := by omega
+    rw [h, pow_add]; ring
+  have hp3 : (2 : ℤ) ^ e = 2 * (2 : ℤ) ^ (e - 1) := by
+    obtain ⟨k, rfl⟩ : ∃ k, e = k + 1 := ⟨e - 1, by omega⟩
+    change (2 : ℤ) ^ (k + 1) = 2 * (2 : ℤ) ^ k
+    rw [pow_succ]; ring
+  refine ⟨v + P ^ 3 * (u - t), ?_⟩
+  rw [fourCopiesOneModEight_eq, hA, hEeq, hReq, hv, hp1, hp2, hp3]
+  ring
+
+end reverseESymm_fourCopies_oneModEight_congr
+
+open reverseESymm_fourCopies_oneModEight_congr in
+/--
+**$\hat\sigma_1$ of four copies of the numbers $1 \bmod 8$ below $2^e$.** Let $e \ge 3$ and let
+$M_e$ be the multiset of integers containing each natural number $n < 2^e$ with
+$n \equiv 1 \pmod 8$ (that is, $1, 9, \dots, 2^e - 7$) exactly four times, let $N$ be the
+number of elements of $M_e$ counted with multiplicity, and write $\sigma_k$ for the elementary
+symmetric function of degree $k$. Then the reversed elementary symmetric function
+$\hat\sigma_1(M_e) = \sigma_{N-1}(M_e)$ satisfies $\hat\sigma_1(M_e) \equiv 2^{e-1} \pmod{2^e}$
+in $\mathbb{Z}$.
+
+Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
+Sequences 29 (2026), Article 26.3.1, Lemma 21.
+-/
+public theorem reverseESymm_fourCopies_oneModEight_congr
+    (e : ℕ) (he : 3 ≤ e) :
+    (2 : ℤ) ^ e ∣
+      reverseESymm 1 (fourCopiesOneModEightBelowTwoPow e) - (2 : ℤ) ^ (e - 1) := by
+  have pair : ∀ k : ℕ,
+      ((2 : ℤ) ^ (2 * k + 3) ∣
+        reverseESymm 1 (fourCopiesOneModEightBelowTwoPow (2 * k + 3)) -
+          (2 : ℤ) ^ (2 * k + 3 - 1)) ∧
+      ((2 : ℤ) ^ (2 * k + 4) ∣
+        reverseESymm 1 (fourCopiesOneModEightBelowTwoPow (2 * k + 4)) -
+          (2 : ℤ) ^ (2 * k + 4 - 1)) := by
+    intro k
+    induction k with
+    | zero => exact ⟨by decide, by decide⟩
+    | succ k ih =>
+      refine ⟨?_, ?_⟩
+      · have hEq : 2 * (k + 1) + 3 = (2 * k + 3) + 2 := by ring
+        rw [hEq]
+        exact step (2 * k + 3) (by omega) ih.1
+      · have hEq : 2 * (k + 1) + 4 = (2 * k + 4) + 2 := by ring
+        rw [hEq]
+        exact step (2 * k + 4) (by omega) ih.2
+  obtain ⟨k, hk⟩ : ∃ k : ℕ, e = 2 * k + 3 ∨ e = 2 * k + 4 := ⟨(e - 3) / 2, by omega⟩
+  rcases hk with rfl | rfl
+  · exact (pair k).1
+  · exact (pair k).2
 
 end MetaMathlibExt

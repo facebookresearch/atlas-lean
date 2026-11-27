@@ -39,20 +39,6 @@ public theorem_wanted pairing_genus_generatingFunction (g : ℕ) (hg : 0 < g) :
           PowerSeries.rescale (-4 : ℚ)
             (PowerSeries.binomialSeries ℚ (-((6 * (g : ℚ) - 1) / 2)))
 
-/-- **Genus count of two-block partitions.** Let $n$, $p$ and $g$ be natural numbers with
-$2 \le p < n$. The number $C_{n,[p,\,n-p]}^{(g)}$ of genus-$g$ set partitions of
-$\{0, \dots, n-1\}$ into two blocks of sizes $p$ and $n - p$ equals
-$$\frac{n}{g+1} \binom{p-1}{g} \binom{n-p-1}{g}$$
-when $n \ne 2p$, and half of this number when $n = 2p$.
-
-Source: Coquereaux and Zuber, *Counting Partitions by Genus: a Compendium of Results*,
-Journal of Integer Sequences 27 (2024), Article 24.2.6, Proposition 14
-(`jis-2024-24.2.6-prop-14`). -/
-public theorem_wanted partitionGenusCount_twoBlocks (n p g : ℕ) (hp : 2 ≤ p) (hpn : p < n) :
-    (partitionGenusCount n {p, n - p} g : ℚ) =
-      (if n = 2 * p then 1 / 2 else 1) *
-        ((n : ℚ) / (g + 1) * ((p - 1).choose g : ℚ) * ((n - p - 1).choose g : ℚ))
-
 end
 
 end MetaMathlibExt

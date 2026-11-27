@@ -14,6 +14,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Algebra.Group.Subgroup.Lattice
 public import Mathlib.Data.Nat.Digits.Defs
+public import MathlibExt.Combinatorics.Enumerative.A005717ZeroDensity
 public import MathlibExt.Combinatorics.Enumerative.GeneralizedMotzkinCentralTrinomial
 public import MathlibExt.Combinatorics.Enumerative.GeneralizedMotzkinModP
 public import MathlibExt.Combinatorics.Enumerative.RiordanNumber
@@ -25,6 +26,8 @@ namespace MetaMathlibExt
 
 -- `centralTrinomial_recurrence` is proved in
 -- `GeneralizedMotzkinCentralTrinomial`, publicly imported above.
+
+-- `a005717_zero_density` is proved in `A005717ZeroDensity`, publicly imported above.
 
 /-- **Three-term recurrence for generalized Motzkin numbers.** For integers $a$, $b$ let $M_r$ be
 the constant term of $(a x^{-1} + b + a x)^r (1 - x^2)$, the generalized Motzkin number. Then for
@@ -446,34 +449,6 @@ public theorem_wanted motzkin_zero_density
             (((p - 1 : ℕ) : ℝ) * (p : ℝ) * (p + 1 : ℝ)))
       ({n | generalizedMotzkin 1 1 n ≡ 0 [ZMOD p]} : Set ℕ).HasDensity D₀ ∧
         2 / ((p : ℝ) * ((p - 1 : ℕ) : ℝ)) ≤ D₀)
-
-/-- **Zero density of A005717 modulo a prime.** Let $p$ be a prime, let $T_m$ be the central
-trinomial coefficient, the constant term of $(x^{-1} + 1 + x)^m$, and let $a_n$ be the constant
-term of $x (x^{-1} + 1 + x)^n$ (OEIS A005717). If $T_r \equiv 0 \pmod p$ for some $r < p$, then
-the set of $n \in \mathbb{N}$ with $a_n \equiv 0 \pmod p$ has natural density $1$. If instead
-$T_r \not\equiv 0 \pmod p$ for every $r < p$ and $p > 2$, let $N_1$ be the number of $m < p - 1$
-with $T_m \equiv T_{p-1} T_{m+1} \pmod p$ and let $N_2$ be the number of $m < p - 1$ with
-$T_m \equiv T_{m+1} \pmod p$. Then that set has natural density
-$D_0 = (N_1 + p N_2) / ((p - 1)(p + 1))$, and $D_0 \ge 1/(p - 1)$.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*,
-INTEGERS 26 (2026), Article A22, Proposition 6. -/
-public theorem_wanted a005717_zero_density
-    (p : ℕ) (hp : p.Prime) :
-    ((∃ r < p, centralTrinomial 1 1 r ≡ 0 [ZMOD p]) →
-      ({n | a005717 n ≡ 0 [ZMOD p]} : Set ℕ).HasDensity 1) ∧
-    ((∀ r < p, ¬(centralTrinomial 1 1 r ≡ 0 [ZMOD p])) → 2 < p →
-      let D₀ :=
-        ((((Finset.range (p - 1)).filter (fun m =>
-            centralTrinomial 1 1 m ≡
-              centralTrinomial 1 1 (p - 1) * centralTrinomial 1 1 (m + 1)
-              [ZMOD p])).card : ℝ) +
-          p * (((Finset.range (p - 1)).filter (fun m =>
-            centralTrinomial 1 1 m ≡ centralTrinomial 1 1 (m + 1)
-              [ZMOD p])).card : ℝ)) /
-          (((p - 1 : ℕ) : ℝ) * (p + 1 : ℝ))
-      ({n | a005717 n ≡ 0 [ZMOD p]} : Set ℕ).HasDensity D₀ ∧
-        1 / ((p - 1 : ℕ) : ℝ) ≤ D₀)
 
 /-- **Zero density of Riordan numbers modulo a prime.** Let $p$ be a prime, and write $r_n$ for the
 Riordan numbers and $T_m = T^{(1,1)}_m$ for the central trinomial coefficients. If

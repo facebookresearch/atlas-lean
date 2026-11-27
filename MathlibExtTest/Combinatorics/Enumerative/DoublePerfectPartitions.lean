@@ -49,4 +49,29 @@ example : ∃ p : Nat.Partition 2, subpartitionCount p.parts 1 = 0 ∧
   refine ⟨Nat.Partition.indiscrete 2, by decide, ?_⟩
   omega
 
+-- Adding two ones to (1, 2) doubles the counts at sums 2 and 3.
+example : IsTypeADoublePerfect 1 5 ({1, 2} + Multiset.replicate 2 1) := by
+  apply (isTypeADoublePerfect_iff 1 5 (by decide) (by decide) _).mpr
+  refine ⟨{1, 2}, ?_, Or.inl ⟨by decide, rfl⟩⟩
+  unfold IsPerfectPartition subpartitionCount
+  decide
+
+-- At the minimum total, the singleton construction doubles only the central sum.
+example : IsTypeADoublePerfect 1 4 ({1, 1} + {2}) := by
+  apply (isTypeADoublePerfect_iff 1 4 (by decide) (by decide) _).mpr
+  refine ⟨{1, 1}, ?_, Or.inr ⟨by decide, by decide, rfl⟩⟩
+  unfold IsPerfectPartition subpartitionCount
+  decide
+
+-- A second copy of an existing part 4 still gives only one subpartition of sum 4.
+example : IsPerfectPartition 7 {1, 2, 4} ∧ ¬ IsTypeADoublePerfect 3 11 {1, 2, 4, 4} := by
+  constructor
+  · unfold IsPerfectPartition subpartitionCount
+    decide
+  · intro h
+    have hcount := h.1.2.2 4 (by decide)
+    have hsingle : subpartitionCount {1, 2, 4, 4} 4 = 1 := by decide
+    rw [hsingle] at hcount
+    contradiction
+
 end MetaMathlibExt

@@ -18,6 +18,7 @@ public import Mathlib.Analysis.SpecialFunctions.Complex.Log
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.LSeries.Basic
+public import MathlibExt.NumberTheory.SelbergClassFunction
 
 /-!
 # a-points of derivatives of functions in the Selberg class
@@ -43,68 +44,6 @@ namespace MetaMathlibExt
 open Filter Asymptotics
 
 @[expose] public section
-
-/-- **Functions in the Selberg class.** A function in the Selberg class consists of Dirichlet
-coefficients $a \colon \mathbb{N} \to \mathbb{C}$, a function $F \colon \mathbb{C} \to \mathbb{C}$,
-a number $r \in \mathbb{N}$ of Gamma factors, a conductor $Q > 0$, real numbers
-$\lambda_1, \dots, \lambda_r > 0$, complex numbers $\mu_1, \dots, \mu_r$ with
-$\operatorname{Re} \mu_j \ge 0$ and a root number $\omega \in \mathbb{C}$ with $|\omega| = 1$,
-such that:
-
-- $a(1) = 1$;
-- for every $s$ with $\operatorname{Re} s > 1$ the Dirichlet series $\sum_{n \ge 1} a(n) n^{-s}$
-  converges absolutely and equals $F(s)$;
-- (Ramanujan hypothesis) for every $\varepsilon > 0$ there is a constant $C$ with
-  $|a(n)| \le C n^{\varepsilon}$ for all $n$;
-- (Euler product) there are $b \colon \mathbb{N} \to \mathbb{C}$ with $b(n) = 0$ unless $n$ is a
-  prime power, a real $\theta < 1/2$ and a constant $C$ with $|b(n)| \le C n^{\theta}$ for all $n$,
-  and a real $\sigma_0$ such that for every $s$ with $\operatorname{Re} s > \sigma_0$ the series
-  $\sum_{n \ge 1} b(n) n^{-s}$ converges absolutely and $F(s) = \exp \sum_{n \ge 1} b(n) n^{-s}$;
-- (analytic continuation) there are $m \in \mathbb{N}$, an entire function $g$ and real numbers
-  $\rho$, $A$ with $|g(s)| \le A e^{|s|^{\rho}}$ for all $s$ (so $g$ has finite order) and
-  $g(s) = (s - 1)^m F(s)$ for all $s \ne 1$;
-- (functional equation) with $\Phi(s) = F(s) Q^s \prod_{j=1}^r \Gamma(\lambda_j s + \mu_j)$, the
-  identity $\Phi(s) = \omega \overline{\Phi(1 - \bar s)}$ holds for every $s \ne 0, 1$ such that
-  for no $j$ is $\lambda_j s + \mu_j$ or $\lambda_j (1 - \bar s) + \mu_j$ an integer $\le 0$.
-
-Source: M. P. Chaudhary, Salem Guiben, Kamel Mazhouda and Mohammed Mekkaoui, *On the a-Points
-of the kth Derivative of an L-Function in the Selberg Class*, INTEGERS 24 (2024), Article A11,
-Section 2. -/
-structure SelbergClassFunction where
-  /-- The Dirichlet coefficients `a(n)`. -/
-  coeff : ℕ → ℂ
-  /-- The function `F` (its value at the possible pole `s = 1` is irrelevant). -/
-  toFun : ℂ → ℂ
-  coeff_one : coeff 1 = 1
-  lseries : ∀ s : ℂ, 1 < s.re → LSeriesSummable coeff s ∧ LSeries coeff s = toFun s
-  ramanujan : ∀ ε : ℝ, 0 < ε → ∃ C : ℝ, ∀ n : ℕ, ‖coeff n‖ ≤ C * (n : ℝ) ^ ε
-  eulerProduct : ∃ b : ℕ → ℂ, (∀ n, b n ≠ 0 → IsPrimePow n) ∧
-    (∃ θ : ℝ, θ < 1 / 2 ∧ ∃ C : ℝ, ∀ n : ℕ, ‖b n‖ ≤ C * (n : ℝ) ^ θ) ∧
-    ∃ σ₀ : ℝ, ∀ s : ℂ, σ₀ < s.re → LSeriesSummable b s ∧ toFun s = Complex.exp (LSeries b s)
-  analyticContinuation : ∃ m : ℕ, ∃ g : ℂ → ℂ, Differentiable ℂ g ∧
-    (∃ ρ A : ℝ, ∀ s : ℂ, ‖g s‖ ≤ A * Real.exp (‖s‖ ^ ρ)) ∧
-    ∀ s : ℂ, s ≠ 1 → g s = (s - 1) ^ m * toFun s
-  /-- The number `r` of Gamma factors. -/
-  r : ℕ
-  /-- The conductor `Q_F`. -/
-  Q : ℝ
-  Q_pos : 0 < Q
-  /-- The Gamma-factor scalings `λ_j`. -/
-  lam : Fin r → ℝ
-  lam_pos : ∀ j, 0 < lam j
-  /-- The Gamma-factor shifts `μ_j`. -/
-  mu : Fin r → ℂ
-  mu_re_nonneg : ∀ j, 0 ≤ (mu j).re
-  /-- The root number `ω`. -/
-  omega : ℂ
-  norm_omega : ‖omega‖ = 1
-  functionalEquation : ∀ s : ℂ, s ≠ 0 → s ≠ 1 →
-    (∀ j (n : ℕ), (lam j : ℂ) * s + mu j ≠ -(n : ℂ) ∧
-      (lam j : ℂ) * (1 - (starRingEnd ℂ) s) + mu j ≠ -(n : ℂ)) →
-    toFun s * (Q : ℂ) ^ s * ∏ j, Complex.Gamma ((lam j : ℂ) * s + mu j) =
-      omega * (starRingEnd ℂ) (toFun (1 - (starRingEnd ℂ) s) *
-        (Q : ℂ) ^ (1 - (starRingEnd ℂ) s) *
-        ∏ j, Complex.Gamma ((lam j : ℂ) * (1 - (starRingEnd ℂ) s) + mu j))
 
 namespace SelbergClassFunction
 
@@ -182,21 +121,6 @@ theorem aPointCount_of_nonpos (F : SelbergClassFunction) (k : ℕ) (a : ℂ) (E�
 end SelbergClassFunction
 
 open SelbergClassFunction
-
-/-- **Lemma 1 (no a-points of derivatives far to the right).** Let $F$ be a function in the
-Selberg class with Dirichlet coefficients $a(n)$, let $k \ge 1$, and let $a \in \mathbb{C}$ be such
-that $a \ne 0$ or $a(n) \ne 0$ for some $n \ge 2$. Then there is a real number $E_1 \ge 1$ such
-that the $k$-th derivative $F^{(k)}$ satisfies $F^{(k)}(s) \ne a$ for every $s \in \mathbb{C}$
-with $\operatorname{Re} s \ge E_1$.
-
-For $F = 1$ and $a = 0$ every point is a $0$-point, so the hypothesis on $a$ cannot be dropped.
-
-Source: M. P. Chaudhary, Salem Guiben, Kamel Mazhouda and Mohammed Mekkaoui, *On the a-Points
-of the kth Derivative of an L-Function in the Selberg Class*, INTEGERS 24 (2024), Article A11,
-Lemma 1 (`integers-2024-A11-lem-1`). -/
-public theorem_wanted SelbergClassFunction.exists_no_aPoint_right (F : SelbergClassFunction)
-    (k : ℕ) (hk : 1 ≤ k) (a : ℂ) (hF : a ≠ 0 ∨ ∃ n, 2 ≤ n ∧ F.coeff n ≠ 0) :
-    ∃ E₁ : ℝ, 1 ≤ E₁ ∧ ∀ s : ℂ, E₁ ≤ s.re → iteratedDeriv k F.toFun s ≠ a
 
 /-- **Asymptotics of the derivatives of the reflected function (Lemma 2).** Let $F$ be a function
 in the Selberg class with Gamma-factor data $\lambda_j$, $\mu_j$ for $1 \le j \le r$, conductor
