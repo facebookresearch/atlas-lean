@@ -1,0 +1,31 @@
+# Lower boundedness of degree-10 bosonic Hamiltonians is undecidable
+
+No algorithm decides whether a polynomial of degree 10 or more in the position and momentum operators of finitely many bosonic modes has spectrum bounded below; the problem is co-RE-hard.
+
+**Theorem (Chabaud, Joseph, Mehraban and Motamedi).** For every $d\ge10$, the boundedness problem $\mathsf{HBound}^d_{\mathcal H}$ for [polynomial bosonic Hamiltonians](polynomial-bosonic-hamiltonians.md) of degree $d$, deciding whether $H$ is bounded below over all states, is undecidable; it is $\mathbf{co}$-$\mathbf{RE}$-hard.
+
+By contrast, boundedness is decidable in polynomial time for Gaussian Hamiltonians (degree $2$), and for degree $4$ it is $\mathbf{co}$-$\mathbf{NP}$-hard, by a reduction from matrix copositivity; the source leaves the precise complexity of boundedness open, conjecturing co-QMA-hardness, and asks whether its sound algorithm for degree $4$ has analogues for degrees above $4$.
+
+## Depends on
+
+- [Polynomial bosonic Hamiltonians and their ground-energy problems](polynomial-bosonic-hamiltonians.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [The class coNP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/co-np.md)
+
+## Proof depends on
+
+- [The ground energy of degree-8 bosonic Hamiltonians is undecidable](ground-energy-of-degree-8-bosonic-hamiltonians.md)
+
+## Expansion
+
+The proof reduces the ground-energy problem to boundedness. Given a degree-$8$ Hamiltonian $H$ on some modes whose ground energy is either at most $a$ or at least $b$, set $c=(a+b)/2$, add a fresh mode with number operator $N$, and form
+
+$$
+H'=N\otimes(H-c),
+$$
+
+of degree $2+8=10$. If $\lambda_{\min}(H)\le a$, then $H-c$ has spectrum below $0$ and, since $N$ takes every value in $\mathbb Z_+$, $H'$ is unbounded below; if $\lambda_{\min}(H)\ge b$, then $H-c\ge(b-a)/2>0$ and $H'\ge0$ is bounded below. Thus a decision procedure for boundedness would decide the ground-energy problem.
+
+## Sources
+
+- U. Chabaud, M. Joseph, S. Mehraban and A. Motamedi, "Bosonic quantum computational complexity", *Quantum* 10, 2110, 2026, doi:[10.22331/q-2026-05-20-2110](https://doi.org/10.22331/q-2026-05-20-2110); read in arXiv:2410.04274v3 ([arXiv](https://arxiv.org/abs/2410.04274v3)), whose numbering is used: Corollary 5.2 with its proof, Theorem 5.2 (co-NP-hardness for degree 4), Theorem 5.1 (Gaussian case), and the open questions listed at the end of Section 1.

@@ -1,0 +1,37 @@
+# Phase diagrams of translation-invariant Hamiltonians are uncomputable
+
+There is an explicit one-parameter continuous family of translation-invariant nearest-neighbor Hamiltonians on the square lattice in which each parameter value gives one of two phases, gapped or gapless, yet no algorithm determines which, even for computable parameters in a set of positive measure.
+
+**Theorem (Bausch, Cubitt and Watson).** For any Turing machine $M$ one can construct explicitly a dimension $d$, $d^2\times d^2$ matrices $a,a',b,c,c'$ and a $d\times d$ matrix $m$ such that $a$, $c$ and $m$ are diagonal with integer entries, $a'$ is Hermitian with entries in $\mathbb Z+\tfrac1{\sqrt2}\mathbb Z$, $b$ has integer entries and $c'$ is Hermitian with integer entries, and such that for every $\varphi\in\mathbb R$ and every $0\le\beta\le1$ the interactions
+
+$$
+h_{\mathrm{col}}=c+\beta c',\qquad h_{\mathrm{row}}(\varphi)=a+\beta\bigl(a'+e^{i\pi\varphi}b+e^{-i\pi\varphi}b^\dagger\bigr)
+$$
+
+satisfy $\|h_{\mathrm{row}}(\varphi)\|\le2$ and $\|h_{\mathrm{col}}\|\le1$, and define a [translation-invariant nearest-neighbor Hamiltonian](translation-invariant-lattice-hamiltonians.md) $H(\varphi)$ on the square lattice, continuous in $\varphi$. Let $O_{A/B}=L^{-2}\sum_{i\in\Lambda(L)}m_i$. For $\varphi\in[2^{-\eta},2^{-\eta}+2^{-\eta-\ell})$ with $\eta\in\mathbb N$:
+
+1. if $M$ halts on input $\eta$, then for some $\ell\ge1$ the family $H(\varphi)$ is [gapless](gapped-and-gapless-families-of-hamiltonians.md), its ground state has algebraically decaying correlations, and every eigenstate $|\Psi_B\rangle$ with energy at most $1$ has $\langle\Psi_B|O_{A/B}|\Psi_B\rangle=0$;
+2. if $M$ does not halt on input $\eta$ and $\ell=1$, then $H(\varphi)$ is gapped, with a unique product ground state $|\Psi_A\rangle$ and $\langle\Psi_A|O_{A/B}|\Psi_A\rangle=1$.
+
+Taking $M$ universal, the phase of $H(\varphi)$ is not computable from $\varphi$. Moreover (Corollary 2.2), for every $\varphi\in[0,1]$, $H(\varphi)$ is either in a phase with a product ground state and spectral gap at least $1$ or in a gapless phase with algebraic decay of correlations, the two being distinguished by the expectation of $O_{A/B}$, and there is a set $S\subset[0,1]$ of positive Borel measure such that determining the phase of $H(\varphi)$ is uncomputable even for computable $\varphi\in S$.
+
+Informally, the phase diagram of $H(\varphi)$ as a function of the single parameter $\varphi$ is uncomputable. Unlike the spectral gap results, which vary the interactions with a discrete input $n$, the parameter here enters continuously through the phases $e^{\pm i\pi\varphi}$.
+
+## Depends on
+
+- [Translation-invariant nearest-neighbor lattice Hamiltonians](translation-invariant-lattice-hamiltonians.md)
+- [Gapped and gapless families of lattice Hamiltonians](gapped-and-gapless-families-of-hamiltonians.md)
+- [Hypercubic lattice $\mathbb{Z}^d$](../../../../GraphTheory/graph-families-and-operations/hypercubic-lattice-graphs/hypercubic-lattice.md)
+- [Halting of a code on an input](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/halts.md)
+
+## Proof depends on
+
+- [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+
+## Expansion
+
+Exact phase estimation would need gates depending on the binary length of $\varphi$, which is not continuous in $\varphi$, so the construction performs quantum phase estimation approximately with a fixed universal gate set and then runs a universal Turing machine on the extracted input; a translation-invariant history-state Hamiltonian (Gottesman and Irani) encodes this computation. Instead of the aperiodic tiling used for the spectral gap, the proof couples this Hamiltonian to the one-dimensional marker Hamiltonian of Bausch, Cubitt, Lucia and Perez-Garcia, which partitions chains into segments just long enough for the machine to halt, and shows that the marker construction tolerates the phase-estimation error. A classical tiling Hamiltonian partitions the two-dimensional lattice into a uniform grid of squares, in each of which a classical Turing machine computes the energy correction that offsets that error. Finally an Ising-type coupling splits the local space into $\mathcal H_A\oplus\mathcal H_B$, so that the low-energy spectrum lies in the gapped product phase $A$ or the critical phase $B$ according to the ground-state energy density, which depends on whether the computation halts. A good expansion links pages for quantum phase estimation with approximate gates, the history-state construction, the marker Hamiltonian and the encoding of Turing machines in tilings; none of these has a page yet.
+
+## Sources
+
+- J. Bausch, T. S. Cubitt and J. D. Watson, "Uncomputability of phase diagrams", *Nature Communications* 12, 452, 2021, doi:[10.1038/s41467-020-20504-6](https://doi.org/10.1038/s41467-020-20504-6); read in arXiv:1910.01631v2 ([arXiv](https://arxiv.org/abs/1910.01631v2)), whose numbering is used: Theorem 2.1, Corollaries 2.2 and 2.3, Definitions C.1–C.3 (gapped, gapless, continuous family), Theorem D.3 (phase-estimation history-state Hamiltonian) and Corollary E.5 (one-dimensional marker Hamiltonian).
