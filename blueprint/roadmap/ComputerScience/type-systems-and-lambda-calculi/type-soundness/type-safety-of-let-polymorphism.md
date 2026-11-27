@@ -14,7 +14,7 @@ Programs never bind a constant, since program variables and constants are distin
 
 **Type soundness.** Let a program bind no constant and have a type in $\Gamma_0$. Then no configuration it reduces to is stuck: every program it
 reduces to in finitely many steps is a value or is reducible. The result follows from
-[subject reduction](../hindley-milner-let-polymorphism-safety/preservation.md) and [progress](../hindley-milner-let-polymorphism-safety/progress.md).
+[subject reduction](../hindley-milner-type-inference/preservation.md) and [progress](../hindley-milner-type-inference/progress.md).
 
 Mutable references are outside this statement: their soundness needs a store typing, preservation up to an extension of the store typing, and the
 *value restriction* (each $\mathbf{let}\ z = t_1\ \mathbf{in}\ t_2$ has $t_1$ a value). Without the restriction,
