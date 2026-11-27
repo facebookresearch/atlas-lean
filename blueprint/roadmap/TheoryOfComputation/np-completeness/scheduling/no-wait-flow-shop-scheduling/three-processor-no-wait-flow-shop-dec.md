@@ -1,0 +1,3 @@
+# THREE-PROCESSOR NO-WAIT FLOW-SHOP SCHEDULING as a decision problem
+
+The decision problem THREE-PROCESSOR NO-WAIT FLOW-SHOP SCHEDULING accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(m, J, D)$ (a natural number, a list of lists of natural numbers and a natural number), to an instance that is well-formed for THREE-PROCESSOR NO-WAIT FLOW-SHOP SCHEDULING and feasible for NO-WAIT FLOW-SHOP SCHEDULING (a flow-shop schedule meeting the deadline in which each task starts exactly when the job's previous task finishes). It rejects every bitstring that does not decode to such an instance.

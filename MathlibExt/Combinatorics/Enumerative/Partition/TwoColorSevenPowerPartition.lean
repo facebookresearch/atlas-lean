@@ -9,13 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
+public import Mathlib.Data.Nat.PadicValNat
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.IntervalCases
 
 /-!
 # Two-color partitions modulo powers of seven
 
 This module defines the two-color partition count and Garvan's coefficient arrays, and proves
-the lower bounds on the powers of seven dividing the entries of Garvan's matrix.
+the lower bounds on the powers of seven dividing the entries of Garvan's matrix and vectors.
 -/
 
 namespace MetaMathlibExt
@@ -255,6 +257,86 @@ the Parts of One Color Are Restricted to Multiples of 7^k*, INTEGERS 26 (2026), 
 Section 1. -/
 public theorem garvanX_one : garvanX 1 1 = 7 ∧ garvanX 1 2 = 49 ∧ garvanX 1 3 = 0 := by decide
 
+namespace seven_pow_dvd_garvanX
+
+private theorem recurrence (k j : ℕ) (hk : 1 ≤ k) :
+    garvanX (k + 1) j = ∑ i ∈ Finset.Icc 1 (7 ^ k), garvanX k i *
+      (if k % 2 = 1 then garvanM (4 * i) (i + j) else garvanM (4 * i + 1) (i + j)) := by
+  rw [show k + 1 = (k - 1) + 2 by omega, garvanX, show k - 1 + 1 = k by omega]
+
+private theorem pow_dvd_mul {a b e x y : ℕ} (hx : 7 ^ a ∣ x) (hy : 7 ^ b ∣ y)
+    (he : e ≤ a + b) : 7 ^ e ∣ x * y := by
+  apply dvd_trans (pow_dvd_pow 7 he)
+  rw [pow_add]
+  exact mul_dvd_mul hx hy
+
+private theorem two (j : ℕ) (hj : 1 ≤ j) :
+    7 ^ (2 + (7 * j - 6) / 4) ∣ garvanX 2 j := by
+  rw [recurrence 1 j (by decide)]
+  apply Finset.dvd_sum
+  intro i _
+  rw [ite_eq_left (by decide : 1 % 2 = 1)]
+  -- Only columns one and two of the first vector contribute to the sum.
+  rcases eq_or_ne i 1 with rfl | h₁
+  · rw [garvanX_one.1]
+    exact pow_dvd_mul (a := 1) (by decide) (seven_pow_dvd_garvanM 1 j (by decide) hj).2.1
+      (by omega)
+  rcases eq_or_ne i 2 with rfl | h₂
+  · rw [garvanX_one.2.1]
+    exact pow_dvd_mul (a := 2) (by decide) (seven_pow_dvd_garvanM 2 j (by decide) hj).2.1
+      (by omega)
+  simp [garvanX, h₁, h₂]
+
+private theorem odd_step (k : ℕ) (hk : 1 ≤ k)
+    (even : ∀ i, 1 ≤ i → 7 ^ (k + 1 + (7 * i - 6) / 4) ∣ garvanX (2 * k) i)
+    (j : ℕ) (hj : 1 ≤ j) :
+    7 ^ (k + 1 + (7 * j - 4) / 4) ∣ garvanX (2 * k + 1) j := by
+  rw [recurrence (2 * k) j (by omega)]
+  apply Finset.dvd_sum
+  intro i hi
+  rw [ite_eq_right (by omega : (2 * k) % 2 ≠ 1)]
+  have hi₁ := (Finset.mem_Icc.mp hi).1
+  apply pow_dvd_mul (even i hi₁) (seven_pow_dvd_garvanM i j hi₁ hj).2.2.1
+  rcases eq_or_lt_of_le hi₁ with rfl | hi₂ <;> omega
+
+private theorem even_step (k : ℕ)
+    (odd : ∀ i, 1 ≤ i → 7 ^ (k + 1 + (7 * i - 4) / 4) ∣ garvanX (2 * k + 1) i)
+    (j : ℕ) (hj : 1 ≤ j) :
+    7 ^ (k + 1 + 1 + (7 * j - 6) / 4) ∣ garvanX (2 * (k + 1)) j := by
+  rw [show 2 * (k + 1) = (2 * k + 1) + 1 by omega, recurrence (2 * k + 1) j (by omega)]
+  apply Finset.dvd_sum
+  intro i hi
+  rw [ite_eq_left (by omega : (2 * k + 1) % 2 = 1)]
+  have hi₁ := (Finset.mem_Icc.mp hi).1
+  exact pow_dvd_mul (odd i hi₁) (seven_pow_dvd_garvanM i j hi₁ hj).2.1 (by omega)
+
+private theorem even (k : ℕ) (hk : 1 ≤ k) :
+    ∀ j, 1 ≤ j → 7 ^ (k + 1 + (7 * j - 6) / 4) ∣ garvanX (2 * k) j := by
+  induction k, hk using Nat.le_induction with
+  | base => exact two
+  | succ k hk ih => exact even_step k (odd_step k hk ih)
+
+end seven_pow_dvd_garvanX
+
+/-- **Garvan's 7-adic bounds for the vectors $x_k$.** Let $x_k = (x_{k,1}, x_{k,2}, \dots)$ be
+Garvan's coefficient vectors and $\pi$ the $7$-adic valuation. Then $\pi(x_{1,1}) = 1$,
+$\pi(x_{1,2}) = 2$, and for all $k, j \ge 1$, $7^{k + 1 + \lfloor (7j-4)/4 \rfloor}$ divides
+$x_{2k+1,j}$ and $7^{k + 1 + \lfloor (7j-6)/4 \rfloor}$ divides $x_{2k,j}$.
+
+Source: D. S. Gireesh, C. Shivashankar, and B. Hemanthkumar, *On 2-Color Partitions in Which
+the Parts of One Color Are Restricted to Multiples of 7^k*, INTEGERS 26 (2026), Article A94,
+Lemma 4 (`integers-2026-A94-lem-4`). -/
+public theorem seven_pow_dvd_garvanX (k j : ℕ) (hk : 1 ≤ k) (hj : 1 ≤ j) :
+    padicValNat 7 (garvanX 1 1) = 1 ∧ padicValNat 7 (garvanX 1 2) = 2 ∧
+      7 ^ (k + 1 + (7 * j - 4) / 4) ∣ garvanX (2 * k + 1) j ∧
+      7 ^ (k + 1 + (7 * j - 6) / 4) ∣ garvanX (2 * k) j := by
+  refine ⟨?_, ?_, seven_pow_dvd_garvanX.odd_step k hk (seven_pow_dvd_garvanX.even k hk) j hj,
+    seven_pow_dvd_garvanX.even k hk j hj⟩
+  · rw [garvanX_one.1, Nat.padicValNat_def]
+    exact Nat.multiplicity_self (by decide)
+  · rw [garvanX_one.2.1, Nat.padicValNat_def]
+    exact multiplicity_base_pow (p := 7) (by decide) 2
+
 /-- **Coefficient vectors for odd powers of 7.** For $k \ge 1$ and $\beta \ge 1$ the vectors
 $y^{(2k-1)}_\beta = (y^{(2k-1)}_{\beta,1}, y^{(2k-1)}_{\beta,2}, \dots)$ are built from Garvan's
 vector $x_{2k-1}$ and Garvan's matrix $m_{i,j}$: $y^{(2k-1)}_{1,j} = x_{2k-1,j}$ and
@@ -282,6 +364,42 @@ the Parts of One Color Are Restricted to Multiples of 7^k*, INTEGERS 26 (2026), 
 Theorem 2. -/
 public theorem garvanYOdd_one (k j : ℕ) : garvanYOdd k 1 j = garvanX (2 * k - 1) j := by
   rw [garvanYOdd]
+
+/-- **7-adic bounds for the vectors $y^{(2k-1)}_\beta$.** Let $y^{(2k-1)}_\beta$ be the
+coefficient vectors for odd powers of $7$, built from Garvan's vectors and matrix. For all
+$k, j \ge 1$ and $\beta \ge 0$, $7^{k + \lfloor (7j-7)/4 \rfloor}$ divides $y^{(2k-1)}_{\beta+1,j}$.
+
+Source: D. S. Gireesh, C. Shivashankar, and B. Hemanthkumar, *On 2-Color Partitions in Which
+the Parts of One Color Are Restricted to Multiples of 7^k*, INTEGERS 26 (2026), Article A94,
+Lemma 6 (`integers-2026-A94-lem-6`). -/
+public theorem seven_pow_dvd_garvanYOdd (k β j : ℕ) (hk : 1 ≤ k) (hj : 1 ≤ j) :
+    7 ^ (k + (7 * j - 7) / 4) ∣ garvanYOdd k (β + 1) j := by
+  induction β generalizing j with
+  | zero =>
+    rw [garvanYOdd_one]
+    rcases eq_or_lt_of_le hk with rfl | hk'
+    · change 7 ^ (1 + (7 * j - 7) / 4) ∣ garvanX 1 j
+      rcases eq_or_ne j 1 with rfl | hj₁
+      · rw [garvanX_one.1]
+        decide
+      rcases eq_or_ne j 2 with rfl | hj₂
+      · rw [garvanX_one.2.1]
+        decide
+      simp [garvanX, hj₁, hj₂]
+    · rw [show 2 * k - 1 = 2 * (k - 1) + 1 by omega]
+      exact dvd_trans (pow_dvd_pow 7 (by omega))
+        (seven_pow_dvd_garvanX (k - 1) j (by omega) hj).2.2.1
+  | succ β ih =>
+    rw [garvanYOdd]
+    apply Finset.dvd_sum
+    intro i hi
+    have hi₁ := (Finset.mem_Icc.mp hi).1
+    -- The powers from column i and matrix row 4i + 1 together suffice for column j.
+    have hexp : k + (7 * j - 7) / 4 ≤ k + (7 * i - 7) / 4 + (7 * j - i - 3) / 4 := by
+      rcases eq_or_lt_of_le hi₁ with rfl | hi₂ <;> omega
+    apply dvd_trans (pow_dvd_pow 7 hexp)
+    rw [pow_add]
+    exact mul_dvd_mul (ih i hi₁) (seven_pow_dvd_garvanM i j hi₁ hj).2.2.1
 
 /-- **Coefficient vectors for even powers of 7.** Let $(m_{i,j})$ be Garvan's matrix and
 $x_k$ Garvan's coefficient vectors, and fix $k \ge 1$. The coefficient vectors

@@ -44,70 +44,13 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.NicomachusConvergents
+public import MathlibExt.NumberTheory.NicomachusCubeSums
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.NicomachusGeneralizationWanted
-
-/-- **Triangular numbers as reals.** For a natural number $m$, $T_m = m(m+1)/2$ is the $m$-th
-triangular number, viewed as a real number. -/
-noncomputable def nicomachusTriangular (m : ℕ) : ℝ := (m : ℝ) * ((m : ℝ) + 1) / 2
-
-/-- **The odd-case cube sum $L_{m,o}$.** For a natural number $m$ and a real number $x$,
-$$L_{m,o}(x) = \sum_{j=1}^{m} (2j - 1)^3 + x^3 +
-\sum_{j=2}^{m} \bigl((2j - 2) + (j - 1)x\bigr)^3.$$ -/
-def nicomachusLOdd (m : ℕ) (x : ℝ) : ℝ :=
-  (∑ j ∈ Finset.Icc 1 m, (2 * (j : ℝ) - 1) ^ 3) + x ^ 3 +
-    ∑ j ∈ Finset.Icc 2 m, ((2 * (j : ℝ) - 2) + ((j : ℝ) - 1) * x) ^ 3
-
-/-- **The odd-case square $R_{m,o}(x)$.** For a natural number $m$ and a real number $x$,
-$$R_{m,o}(x) = \bigl(T_{2m-1} + (1 + T_{m-1})\,x\bigr)^2,$$
-where $T_n = n(n+1)/2$ is the $n$-th triangular number (for $m = 0$ the indices $2m - 1$ and
-$m - 1$ are read as $0$). -/
-noncomputable def nicomachusROdd (m : ℕ) (x : ℝ) : ℝ :=
-  (nicomachusTriangular (2 * m - 1) +
-    (1 + nicomachusTriangular (m - 1)) * x) ^ 2
-
-/-- **The odd-case polynomial $P_{m,o}$.** For a natural number $m$ and a real number $x$,
-$$P_{m,o}(x) = \sum_{j=0}^{m} (4j + 1 + jx) \bigl((j + 1)(j - 2) + j^2 x\bigr).$$ -/
-def nicomachusPOdd (m : ℕ) (x : ℝ) : ℝ :=
-  ∑ j ∈ Finset.Icc 0 m,
-    (4 * (j : ℝ) + 1 + (j : ℝ) * x) *
-      (((j : ℝ) + 1) * ((j : ℝ) - 2) + (j : ℝ) ^ 2 * x)
-
-/-- **The even-case cube sum $L_{m,e}$.** For a natural number $m$ and a real number $x$,
-$$L_{m,e}(x) = \sum_{j=1}^{m} (2j - 1)^3 + x^3 + \sum_{j=1}^{m} (2j + jx)^3.$$ -/
-def nicomachusLEven (m : ℕ) (x : ℝ) : ℝ :=
-  (∑ j ∈ Finset.Icc 1 m, (2 * (j : ℝ) - 1) ^ 3) + x ^ 3 +
-    ∑ j ∈ Finset.Icc 1 m, (2 * (j : ℝ) + (j : ℝ) * x) ^ 3
-
-/-- **The even-case square $R_{m,e}$.** For a natural number $m$ and a real number $x$,
-$$R_{m,e}(x) = \bigl(T_{2m} + (1 + T_m)\,x\bigr)^2,$$
-where $T_n = n(n+1)/2$ is the $n$-th triangular number. -/
-noncomputable def nicomachusREven (m : ℕ) (x : ℝ) : ℝ :=
-  (nicomachusTriangular (2 * m) +
-    (1 + nicomachusTriangular m) * x) ^ 2
-
-/-- **Faulhaber expansion of the odd-case polynomial.** For real numbers $m$ and $x$, let
-$$\widetilde{P}(m, x) = -2(m + 1) - (9 + 2x) \, \frac{m(m+1)}{2} - 3 \cdot \frac{m(m+1)(2m+1)}{6} +
-(4 + 5x + x^2) \left(\frac{m(m+1)}{2}\right)^2.$$
-
-This is the polynomial in $m$ obtained from the sum defining the odd-case polynomial
-$P_{m,o}(x)$ by the Faulhaber formulas for $\sum_{j=0}^{m} j^p$ with $p \le 3$; it agrees with
-$P_{m,o}(x)$ at every natural number $m$. -/
-noncomputable def nicomachusPClosed (m x : ℝ) : ℝ :=
-  (-2) * (m + 1) + (-9 - 2 * x) * (m * (m + 1) / 2) +
-    (-3) * (m * (m + 1) * (2 * m + 1) / 6) +
-      (4 + 5 * x + x ^ 2) * (m * (m + 1) / 2) ^ 2
-
-/-- **The even-case polynomial $P_{m,e}$.** For a natural number $m$ and a real number $x$,
-$P_{m,e}(x) = \widetilde{P}(-m - 1, x)$, where $\widetilde{P}(m, x)$ is the Faulhaber expansion
-of the odd-case polynomial $P_{m,o}(x)$ as a polynomial in $m$ (the paper defines $P_{m,e}(x)$
-by substituting $-m - 1$ for $m$ in that expansion). -/
-noncomputable def nicomachusPEven (m : ℕ) (x : ℝ) : ℝ :=
-  nicomachusPClosed (-(m : ℝ) - 1) x
 
 /-- **Generalized Nicomachus identity, odd case.** Let $L_{m,o}$ be the odd-case cube sum,
 $R_{m,o}$ the odd-case square and $P_{m,o}$ the odd-case polynomial. For every natural number
@@ -120,39 +63,5 @@ theorem_wanted nicomachusLOdd_sub_ROdd_succ_eq (m : ℕ) (hm : 2 ≤ m)
     (x : ℝ) :
     nicomachusLOdd (m + 1) x - nicomachusROdd (m + 1) x =
       x * nicomachusPOdd m x - x ^ 2 + x ^ 3
-
-/-- **Generalized Nicomachus identity, even case.** Let $L_{m,e}$ be the even-case cube sum,
-$R_{m,e}$ the even-case square and $P_{m,e}$ the even-case polynomial. For every natural number
-$m \ge 2$ and every real number $x$,
-$$L_{m,e}(x) - R_{m,e}(x) = x \, P_{m,e}(x) - x^2 + x^3.$$
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, "A Balanced
-Three or More-term Generalization of Nicomachus' Identity", Theorem 1. -/
-theorem_wanted nicomachusLEven_sub_REven_eq (m : ℕ) (hm : 2 ≤ m)
-    (x : ℝ) :
-    nicomachusLEven m x - nicomachusREven m x =
-      x * nicomachusPEven m x - x ^ 2 + x ^ 3
-
-/-- **Kim–Stolarsky balanced quadratic sum.** Let $k \ge 1$, let $\alpha_k$ be the numbers of
-Equation (12) (so $\alpha_1 = 1$ and $\alpha_{k+1} = (15 + 7\alpha_k)/(13 + 6\alpha_k)$), let $u_k$
-be the integers of Proposition 1, and let $T_n = n(n+1)/2$. With
-$(a, b, c) = (1, \alpha_k, -(1 + \alpha_k))$ and $(d, e, f) = (-a, -c, -b)$ as in (17), for every
-natural number $m$,
-$$\sum_{j=1}^{m} (a + bj + cj^2)(d + ej + fj^2) =
-T_{m-1}\left(\frac{(1 + m)(2 - 3m^2)}{3(3 + 2u_k)} + (3 + 2m)\,T_{m-1}\right).$$
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, "A Balanced
-Three or More-term Generalization of Nicomachus' Identity", Theorem 2. -/
-theorem_wanted sum_quadratic_mul_quadratic_eq (k : ℕ) (hk : 1 ≤ k)
-    (m : ℕ) :
-    (∑ j ∈ Finset.Icc 1 m,
-      (1 + (nicomachusAlpha k : ℝ) * (j : ℝ) -
-          (1 + (nicomachusAlpha k : ℝ)) * (j : ℝ) ^ 2) *
-        (-1 + (1 + (nicomachusAlpha k : ℝ)) * (j : ℝ) -
-          (nicomachusAlpha k : ℝ) * (j : ℝ) ^ 2)) =
-      nicomachusTriangular (m - 1) *
-        (((1 + (m : ℝ)) * (2 - 3 * (m : ℝ) ^ 2) /
-          (3 * (3 + 2 * (nicomachusU k : ℝ)))) +
-            (3 + 2 * (m : ℝ)) * nicomachusTriangular (m - 1))
 
 end MathlibExt.NumberTheory.NicomachusGeneralizationWanted

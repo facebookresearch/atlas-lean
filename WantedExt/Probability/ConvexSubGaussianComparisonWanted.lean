@@ -10,13 +10,16 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Probability.ConvexSubGaussianComparison
+public import MathlibExt.Probability.ConvexSubGaussianComparisonFiniteness
 
 /-!
 # Sharp one-dimensional convex sub-Gaussian comparison: literature requests
 
-All six results below are unproved data, not proofs. The implemented probability
+All five results below are unproved data, not proofs. The implemented probability
 model and characteristic APIs are upstream. The numerical approximations in Davis–Power
 Remark 2 are not asserted here, and the solved one-dimensional problem is not an open target.
+The finiteness of the comparison constant is proved in
+`MathlibExt.Probability.ConvexSubGaussianComparisonFiniteness`.
 -/
 
 @[expose] public section
@@ -138,17 +141,6 @@ $(a, p_0, z, c_0)$ of real numbers that is a valid solution of the Davis–Power
 Source: Davis–Power (2026), equations (3)–(6), existence and uniqueness. -/
 public theorem_wanted davisPowerSystem_existsUnique :
     ∃! q : DavisPowerSolution, q.IsValid
-
-/-- **Finiteness of the convex sub-Gaussian comparison constant.** The comparison constant is
-finite. Here the comparison constant is the infimum, in $[0, \infty]$, of the variance factors
-$C \in (0, \infty)$ such that every real random variable $X$ on a probability space that is
-integrable, has mean zero and satisfies $P(|X| > t) \le 2e^{-t^2/2}$ for all $t \ge 0$ satisfies
-$E f(X) \le E f(\sqrt{C}\,G)$ for every convex $f : \mathbb{R} \to \mathbb{R}$ for which both
-expectations are finite, where $G$ is a standard Gaussian. Equivalently, such a factor $C$ exists.
-
-Source: van Handel (2025), historical one-dimensional finiteness consequence. -/
-public theorem_wanted historicalFinitenessUpperBound :
-    comparisonConstant ≠ ⊤
 
 /-- **Davis–Power upper bound: $c_0^2$ is an admissible variance factor.** Let $c_0$ be the
 Davis–Power constant and $G$ a standard Gaussian. Then $c_0^2 > 0$, and every real random

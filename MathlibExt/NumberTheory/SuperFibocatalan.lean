@@ -18,7 +18,8 @@ import Mathlib.Tactic.LinearCombination
 # Fibonacci and Lucas polynomial identities for super FiboCatalan numbers
 
 This module proves the Fibonacci and Lucas cross-product identities and uses them to relate
-consecutive FiboCatalan numbers and consecutive Lucas Catalan numbers.
+consecutive FiboCatalan numbers and consecutive Lucas Catalan numbers. It also proves the
+integrality of a fibonomial quotient and of the super FiboCatalan numbers.
 -/
 
 public section
@@ -50,6 +51,31 @@ theorem fib_mul_sub_mul (n : ℕ) :
   linear_combination shift n
 
 open MetaMathlibExt
+
+/-- A carry from adding the two remainders forces a carry when at least one is doubled. -/
+private theorem superFibonacciCatalan_floor_le (m n d : ℕ) (hd : 0 < d) :
+    m / d + n / d + (m + n) / d ≤ (2 * m) / d + (2 * n) / d := by
+  rw [two_mul m, two_mul n, Nat.add_div (a := m) (b := n) hd,
+    Nat.add_div (a := m) (b := m) hd, Nat.add_div (a := n) (b := n) hd]
+  split_ifs <;> omega
+
+/-- **Super FiboCatalan numbers are positive integers.** For all natural numbers $m$ and $n$, the
+super FiboCatalan number
+
+$$S(m, n)_F = \frac{F_{2m}!\, F_{2n}!}{F_m!\, F_n!\, F_{m+n}!},$$
+
+where $F_j!$ denotes the Fibonacci factorial, is a positive integer: it equals $k$ for some
+natural number $k \ge 1$.
+
+Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
+Their Lucas Analogues", Corollary 5. -/
+theorem superFibonacciCatalan_isPosInt (m n : ℕ) :
+    ∃ k : ℕ, 0 < k ∧ (k : ℚ) =
+      fibonacciFactorial (2 * m) * fibonacciFactorial (2 * n) /
+        (fibonacciFactorial m * fibonacciFactorial n *
+          fibonacciFactorial (m + n)) :=
+  fibonacciFactorial_ratio_isPosInt_of_floor_le m n (m + n) (2 * m) (2 * n)
+    (superFibonacciCatalan_floor_le m n)
 
 /-- **FiboCatalan numbers.** For a natural number $n$, the FiboCatalan number is the rational
 number $C_{n,F} = F_{2n}!/(F_n! \, F_{n+1}!)$, where $F_j$ is the $j$-th Fibonacci number and
@@ -83,6 +109,48 @@ theorem fiboCatalan_identity (n : ℕ) :
   field_simp [fibonacciFactorial_ne]
   simp only [fibonacciFactorial]
   ring
+
+/-- **Fibonomial coefficients.** For natural numbers $n$ and $k$, the fibonomial coefficient
+$\binom{n}{k}_F$ is the rational number $F_n!/(F_k! \, F_{n-k}!)$ when $k \le n$, where $F_i$ is
+the $i$-th Fibonacci number and $F_j! = F_1 F_2 \cdots F_j$ is the Fibonacci factorial, and $0$
+when $k > n$. -/
+@[expose] noncomputable def fibonomial (n k : ℕ) : ℚ :=
+  if k ≤ n then
+    fibonacciFactorial n /
+      (fibonacciFactorial k * fibonacciFactorial (n - k))
+  else 0
+
+/-- **Integrality of $F_{2n+1} F_{2n}!/(F_{n+2}! \, F_n!)$.** Let $F_k$ be the Fibonacci
+numbers, $F_k! = F_1 F_2 \cdots F_k$ the Fibonacci factorial and, for $k \le m$,
+$\binom{m}{k}_F = F_m!/(F_k! \, F_{m-k}!)$ the fibonomial coefficient. For every natural
+number $n \ge 1$,
+$$F_{2n+1} \frac{F_{2n}!}{F_{n+2}! \, F_n!} = \frac{1}{F_{n+2}} \binom{2n+1}{n}_F,$$
+and this rational number is an integer.
+
+Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
+Their Lucas Analogues", Corollary 8. -/
+theorem fib_mul_factorialQuotient_eq_and_isInt
+    (n : ℕ) (hn : 1 ≤ n) :
+    (Nat.fib (2 * n + 1) : ℚ) *
+          (fibonacciFactorial (2 * n) /
+            (fibonacciFactorial (n + 2) * fibonacciFactorial n)) =
+        fibonomial (2 * n + 1) n / (Nat.fib (n + 2) : ℚ) ∧
+      ∃ k : ℤ, (k : ℚ) =
+        (Nat.fib (2 * n + 1) : ℚ) *
+          (fibonacciFactorial (2 * n) /
+            (fibonacciFactorial (n + 2) * fibonacciFactorial n)) := by
+  constructor
+  · rw [fibonomial, ite_eq_left (by omega), show 2 * n + 1 - n = n + 1 by omega]
+    simp only [fibonacciFactorial, div_eq_mul_inv, mul_inv_rev]
+    ring
+  · -- With parameters (n, 1), the generalized FiboCatalan number is exactly this quotient.
+    obtain ⟨k, _, hk⟩ := generalizedFibonacciCatalan_isPosInt n 1
+    refine ⟨k, ?_⟩
+    rw [Int.cast_natCast, hk, generalizedFibonacciCatalan, fibonacciJordanQuotient]
+    rw [show 1 + n + 1 = n + 2 by omega, fibonacciFactorial_one, fibonacciFactorial_two,
+      mul_one, one_mul]
+    simp only [fibonacciFactorial, div_eq_mul_inv, mul_inv_rev]
+    ring
 
 /-- **Lucas polynomials in $s$ and $t$.** The Lucas polynomials $\{n\}$, for natural numbers
 $n$, are the polynomials in two variables $s$ and $t$ with integer coefficients defined by

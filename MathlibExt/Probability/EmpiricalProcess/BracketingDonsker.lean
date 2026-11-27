@@ -718,7 +718,9 @@ theorem measure_exists_abs_empiricalProcess_sub_gt_le (hlaw : ∀ k, HasLaw (X k
 omit [MeasurableSpace Ω] in
 /-- **Total boundedness.** A class with a finite uniform bracketing entropy integral is totally
 bounded in the standard-deviation semimetric: for every `δ > 0`, finitely many members of `F` are
-`δ`-dense. -/
+`δ`-dense, measured by `Var[F i - F j; μ] < δ ^ 2`. Since `Var[f; μ]` is `0` when `f ∉ L²(μ)`,
+square-integrable members suffice for the semimetric reading; for this distance it is enough
+that the pairwise differences are square-integrable. -/
 theorem exists_finset_variance_lt {F : ι → S → ℝ} (hFm : ∀ i, Measurable (F i))
     (hJ : ∫⁻ ε in Set.Ioc 0 1, uniformBracketingEntropy F ε ≠ ⊤) {δ : ℝ} (hδ : 0 < δ) :
     ∃ s : Finset ι, ∀ i, ∃ j ∈ s, Var[F i - F j; μ] < δ ^ 2 := by
@@ -805,7 +807,10 @@ theorem exists_tendstoInDistribution_empiricalProcess (hlaw : ∀ k, HasLaw (X k
 `X`: finite-dimensional convergence of the empirical process to centered Gaussian vectors with the
 covariance of `F` under `μ`, total boundedness of `F` in the standard-deviation semimetric
 `ρ_μ(f, g) = √(Var_μ[f - g])`, and asymptotic uniform `ρ_μ`-equicontinuity of the empirical process
-in (outer) probability.
+in (outer) probability. Here `Var_μ` is the real part (`ENNReal.toReal`) of the extended variance:
+for a finite `μ` it is `0` on an a.e. strongly measurable `f ∉ L²(μ)`. Square-integrable members
+suffice for the semimetric reading; for this distance it is enough that the pairwise differences
+are square-integrable.
 
 By van der Vaart and Wellner, *Weak Convergence and Empirical Processes*, Theorems 1.5.4 and 1.5.7
 (see also §2.1.2), these three conditions are equivalent to `F` being `μ`-Donsker, that is, to
