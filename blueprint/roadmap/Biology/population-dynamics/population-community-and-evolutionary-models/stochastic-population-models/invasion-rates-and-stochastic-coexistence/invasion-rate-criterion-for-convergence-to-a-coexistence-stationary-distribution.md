@@ -1,6 +1,6 @@
 # Invasion-rate criterion for convergence to a coexistence stationary distribution
 
-**Setting.** Let $\mathbf X(t)\in\mathbb R^n_+$ be the densities of $n$ interacting species under environmental fluctuations, in one of three forms:
+**Setting.** Let $\mathbf X(t)\in\mathbb R^n_+$ be the densities of $n$ interacting species under environmental fluctuations, in one of three forms: Assume the standing regularity and dissipativity hypotheses of Hening–Nguyen–Chesson: Assumption A.1 for SDEs (positive-definite diffusion $(g_i g_j \sigma_{ij})$, locally Lipschitz coefficients, and dissipativity condition (A.1)), and the analogous local-Lipschitz, nondegeneracy, and dissipativity conditions of Appendices A.2–A.3 for PDMPs and switching SDEs.
 
 - **SDE:** $dX_i=X_i\big(f_i(\mathbf X)\,dt+g_i(\mathbf X)\,dE_i\big)$, with $E$ a Brownian motion with covariance matrix $(\sigma_{ij})$;
 - **PDMP:** $\dot X_i=X_if_i(\mathbf X,r(t))$, with $r(t)$ a finite-state Markov chain of environmental states;
@@ -16,7 +16,7 @@ with $g_i=0$ for PDMPs and a single state for SDEs.
 
 $$\max_{i=1,\dots,n}\lambda_i(\mu)>0,$$
 
-that is, every boundary invariant measure is repelled by at least one missing species. Then the system is strongly stochastically persistent: for every $\epsilon>0$ there is $\delta>0$ with $\liminf_{t\to\infty}\mathbb P\{X_i(t)\ge\delta\ \forall i\}\ge1-\epsilon$ from any interior initial state. Under the technical (nondegeneracy, irreducibility) assumptions of each setting, there is a unique invariant probability measure $\mu^*$ on the interior, and the law of $\mathbf X(t)$ converges to $\mu^*$ in total variation; for nondegenerate SDEs the convergence is exponentially fast.
+that is, every boundary invariant measure is repelled by at least one missing species. Under these standing hypotheses, the system is strongly stochastically persistent: for every $\epsilon>0$ there is $\delta>0$ with $\liminf_{t\to\infty}\mathbb P\{X_i(t)\ge\delta\ \forall i\}\ge1-\epsilon$ from any interior initial state. Under the technical (nondegeneracy, irreducibility) assumptions of each setting, there is a unique invariant probability measure $\mu^*$ on the interior, and the law of $\mathbf X(t)$ converges to $\mu^*$ in total variation; for nondegenerate SDEs the convergence is exponentially fast.
 
 **Application (competitive Lotka–Volterra with switching).** For two competitors whose growth rates switch between two environments with stationary weights $\nu_1,\nu_2$, if each survives alone ($\nu_1\ell_i(1)+\nu_2\ell_i(2)>0$) and each can invade the other's stationary state ($\lambda_1(\mu_2)>0$, $\lambda_2(\mu_1)>0$), then both persist and the process converges to a unique stationary distribution on $(0,\infty)^2\times\{1,2\}$, even when one environment alone would lead to competitive exclusion.
 

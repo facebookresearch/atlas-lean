@@ -9,7 +9,7 @@ Let $\bar f(x)=\mathbb{E}f(x,\xi_1)$, $\bar F(x)=x\bar f(x)$ and $\bar G(x)=\bar
 **Theorem.**
 1. For every stationary policy, $\mathbb{E}h(Y_\infty)\le M_{\det}$. Equality holds only if (i) the unharvested dynamics can reach levels $\ge x_1$, (ii) the policy is bang-bang with threshold $x_1$, $h^*(y)=(y-x_1)^+$, and (iii) $x_1$ is self-sustaining (once reached, noise never pushes the population below it).
 2. *(Constant effort.)* If $\bar F$ is strictly concave and the dynamics is genuinely random, every constant-effort policy $h_\theta(y)=\theta y$ has expected steady-state yield strictly below its deterministic yield.
-3. *(Bang-bang thresholds.)* For $h_w(y)=(y-w)^+$ with $w$ self-sustaining, $\mathbb{E}h_w(Y_\infty)=\bar G(w)$, but with variance $w^2\,\mathbb{E}\big[f(w,\xi_1)^2-\bar f(w)^2\big] (positive unless $f(w, \xi_1)$ is almost surely constant)$. If $w$ is not self-sustaining while the levels near the maximizer of a unimodal $\bar G$ are, the stochastic expected yield of $h_w$ can strictly exceed its deterministic nominal yield $\bar G(w)$.
+3. *(Bang-bang thresholds.)* For $h_w(y)=(y-w)^+$ with $w$ self-sustaining, $\mathbb{E}h_w(Y_\infty)=\bar G(w)$, with variance $w^2\,\mathbb{E}\big[f(w,\xi_1)^2-\bar f(w)^2\big]$ (positive unless $f(w,\xi_1)$ is almost surely constant). If $w$ is not self-sustaining while the levels near the maximizer of a unimodal $\bar G$ are, the stochastic expected yield of $h_w$ can strictly exceed its deterministic nominal yield $\bar G(w)$.
 
 ## Expansion
 

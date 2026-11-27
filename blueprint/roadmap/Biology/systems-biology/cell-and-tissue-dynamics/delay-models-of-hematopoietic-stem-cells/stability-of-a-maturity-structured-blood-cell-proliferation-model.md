@@ -4,7 +4,7 @@
 
 **Theorems.**
 
-*(1)* *(Immature cells determine the dynamics.)* If two sets of initial data agree on maturities $[0,b]$ for some $0<b<1$, the corresponding solutions agree on all maturities after an explicit finite time $\bar t=\ln\bigl[h(g(1))/h(g(b))\bigr]+(N+2)\tau_{\max}$. In particular, if the initial data vanish on $[0,b]$, the whole population is extinct after a finite time (a model of aplastic anemia).
+1. **Finite-time forgetting of upper-maturity initial data.** Assume condition (14) ($\Delta(m) < m$ on $(0, 1]$). If two initial data agree on $[0, b]$, then their resting densities agree on $[0, g(1)]$ for all $t \ge \bar{t} = \ln[h(g(1))/h(g(b))] + (N+2)\tau_{\max}$, and both the resting and proliferating densities agree on all of $[0, 1]$ for all $t \ge (N+3)\tau_{\max} - \ln h(g(b))$, where $N$ is the integer given by Lemma 3.1 applied to $g(b)$.
 
 *(2)* *(Stem cell compartment.)* At $m=0$ the resting density $x(t)=N(t,0)$ solves the delay equation
 
