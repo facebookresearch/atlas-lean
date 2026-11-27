@@ -5,10 +5,10 @@
 or the toolchain pins. It needs a checkout with the Mathlib cache fetched, and
 for the unused-imports check a built agitate in $AGITATE_DIR (without one, that
 check is skipped, and the script says so). It commits a probe module with known
-findings on top of HEAD, runs each check against HEAD, then commits a second
-change that only documents an existing probe declaration and runs the checks
-against the first commit. It then moves HEAD back and deletes the probe, leaving
-the working tree as it was.
+findings on top of HEAD, builds it as CI does, runs each check against HEAD,
+then commits a second change that only documents an existing probe declaration,
+builds it and runs the checks against the first commit. It then moves HEAD back
+and deletes the probe, leaving the working tree as it was.
 
     python3 scripts/linters_self_test.py      # in GitHub Actions, or with --local
 
@@ -107,6 +107,14 @@ def child_env() -> dict[str, str]:
 
 
 def run_checks(base: str, round_: int) -> bool:
+    # Build first, as CI does, so that the checks read the build's replayed log, not a fresh one.
+    build = subprocess.run([sys.executable, str(SCRIPTS / "lean_changes.py"), "build",
+                            "--base", base],
+                           cwd=ROOT, capture_output=True, text=True, env=child_env())
+    if build.returncode != 0:
+        print(f"FAIL lean_changes.py build (round {round_ + 1}): exit {build.returncode}\n"
+              f"{build.stdout}{build.stderr}")
+        return False
     ok = True
     for script, expected in EXPECTED.items():
         if script == "check_unused_imports.py" and not os.environ.get("AGITATE_DIR"):

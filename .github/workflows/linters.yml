@@ -1,7 +1,7 @@
 name: Mathlib linters
 
-# Mathlib's linters, reported on the code that a pull request adds, so that
-# existing code never shows up:
+# Lean's, Batteries' and Mathlib's linters, reported on the code that a pull
+# request adds, so that existing code never shows up:
 # - the warnings of every linter that the build runs: Mathlib's standard set,
 #   which lakefile.toml turns on for the production libraries, and the linters
 #   that Lean, Batteries and Mathlib turn on by default; and the deprecation

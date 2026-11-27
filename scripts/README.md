@@ -61,9 +61,10 @@ optimization and its smoke test are explicit commands, not CI-wide import rewrit
 
 ## Linter checks
 
-`.github/workflows/linters.yml` (`mathlib linters`) reports Mathlib's linters on the code a pull
-request adds, so code already on `main` never shows up. It builds the changed Lean files of the
-five production libraries once (`scripts/lean_changes.py build --base <ref>`), then runs:
+`.github/workflows/linters.yml` (`mathlib linters`) reports Lean's, Batteries' and Mathlib's
+linters on the code a pull request adds, so code already on `main` never shows up. It builds the
+changed Lean files of the five production libraries once
+(`scripts/lean_changes.py build --base <ref>`), then runs:
 
 - `scripts/check_syntax_linters.py`: on added lines, the warnings of every linter the build runs,
   read with `lake lint` (Mathlib's standard set, which `lakefile.toml` turns on, and the linters
