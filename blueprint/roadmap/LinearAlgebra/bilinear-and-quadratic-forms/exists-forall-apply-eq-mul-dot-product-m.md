@@ -1,4 +1,4 @@
-# Adjugate invariant bilinear
+# Bilinear forms intertwining a matrix with its conjugated adjugate
 
 Let $k$ be a field, let $\mu$ be a $2 \times 2$ matrix over $k$ with $\det \mu \neq 0$, and let $b : k^2 \times k^2 \to k$ be a bilinear form such that
 

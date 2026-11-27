@@ -25,7 +25,3 @@ Classes of matrices defined by their structure or entries: Toeplitz, Hankel and 
 - [Generalized Householder matrices](generalized-householder-matrices/README.md)
 - [Real planar rotation matrices](rotation-matrices/README.md)
 - [Row-stochastic matrices](row-stochastic-matrices/README.md)
-- [Det one or commutator](eq-one-or-eq-commutator-of-det-eq-one.md)
-- [Idempotent det](det-eq-zero-of-is-idempotent-elem-of-tra.md)
-- [Weak diagonal dominance and positive semidefiniteness](pos-semidef-of-diagonally-dominant.md)
-- [Adjugate invariant bilinear](exists-forall-apply-eq-mul-dot-product-m.md)

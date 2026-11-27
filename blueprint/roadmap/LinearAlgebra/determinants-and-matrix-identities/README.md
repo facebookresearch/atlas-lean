@@ -13,3 +13,5 @@ Determinant expansions and identities, determinants of special products and expo
 - [Jacobi's formula](jacobi-s-formula/README.md)
 - [Symmetry criterion for matrices indexed by a product](symmetry-of-matrices-indexed-by-a-product/README.md)
 - [Symplectic matrices have determinant one](determinant-of-symplectic-matrices/README.md)
+- [Idempotent 2 × 2 matrices of trace one have determinant zero](det-eq-zero-of-is-idempotent-elem-of-tra.md)
+- [Determinant-one elements of GL₂(ℤ/3ℤ) are the identity or commutators](eq-one-or-eq-commutator-of-det-eq-one.md)

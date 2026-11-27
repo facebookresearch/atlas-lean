@@ -9,3 +9,4 @@ Bilinear and quadratic forms on vector spaces and modules: rank, orthogonal sums
 - [Simultaneous diagonalization by congruence](simultaneous-diagonalization-by-congruence/README.md)
 - [Orthogonal sum of systems of quadratic forms](systems-of-quadratic-forms/README.md)
 - [Sylvester's law of inertia](sylvester-s-law-of-inertia/README.md)
+- [Bilinear forms intertwining a matrix with its conjugated adjugate](exists-forall-apply-eq-mul-dot-product-m.md)
