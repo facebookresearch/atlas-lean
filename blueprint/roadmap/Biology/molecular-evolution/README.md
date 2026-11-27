@@ -27,5 +27,3 @@
 - [Minimum epistasis interpolation](minimum-epistasis-interpolation/README.md)
 - [Rho statistic dating of lineages](rho-statistic-dating-of-lineages/README.md)
 - [Sparse Walsh approximation of fitness landscapes](sparse-walsh-approximation-of-fitness-landscapes/README.md)
-- [Biochemical epistasis on combinatorially complete libraries](biochemical-epistasis-on-combinatorially-complete-libraries/README.md)
-- [Germline de novo mutation rates](germline-de-novo-mutation-rates/README.md)

@@ -12,7 +12,7 @@ Consequently, for a sample whose pairwise times to the most recent common ancest
 
 ## Depends on
 
-- [Identity in state under the stepwise mutation model](../../../population-genetics/infinite-alleles-model-and-homozygosity/stepwise-mutation-model-homozygosity.md)
+- [Identity in state under the stepwise mutation model](../../../../population-genetics/infinite-alleles-model-and-homozygosity/stepwise-mutation-model-homozygosity.md)
 
 ## Expansion
 
