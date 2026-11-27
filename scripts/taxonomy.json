@@ -14614,6 +14614,7 @@
   "MathlibExt/Probability/Distributions/CompetingExponentialClocks": {"to": "Probability/distributions/continuous", "title": "Exponential distribution"},
   "MathlibExt/Probability/Distributions/Dirichlet": {"to": "Probability/distributions/continuous", "title": "Dirichlet distribution"},
   "MathlibExt/Probability/Distributions/DirichletWeightedSum": {"to": "Probability/distributions/continuous", "title": "Dirichlet distribution"},
+  "MathlibExt/Probability/Distributions/ExponentialMemoryless": {"to": "Probability/distributions/continuous", "title": "Exponential distribution"},
   "MathlibExt/Probability/Distributions/ExponentialMoments": {"to": "Probability/distributions/continuous", "title": "Exponential distribution"},
   "MathlibExt/Probability/Distributions/Gamma": {"to": "Probability/distributions/continuous", "title": "Gamma distribution"},
   "MathlibExt/Probability/Distributions/GammaLIntegral": {"to": "Probability/distributions/continuous", "title": "Gamma distribution"},

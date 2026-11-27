@@ -104086,6 +104086,7 @@
 "ProbabilityTheory.memLp_itoIntegral": "87eac9afce419569",
 "ProbabilityTheory.memLp_partialSumIndicators": "d9b3a85ccf2c5e7c",
 "ProbabilityTheory.mem_part_tiePartition": "9374499d62f8467e",
+"ProbabilityTheory.memoryless_iff_dirac_zero_or_expMeasure": "2dec96b729d404dd",
 "ProbabilityTheory.mgf_chiSquareMeasure_of_lt": "5202d700bb90050b",
 "ProbabilityTheory.mgf_gammaMeasure_half_half_eq_sqrt": "54fdda84e23911f1",
 "ProbabilityTheory.mgf_gammaMeasure_of_lt": "7ebca03cf1db1910",
