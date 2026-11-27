@@ -5,7 +5,7 @@ Let $N$ be a positive integer, $\Gamma$ a group of level $N$, $\mathfrak{T}$ the
 $\mu \colon S_2(\Gamma) \to D_J$ the isomorphism of
 [weight-two cusp forms with holomorphic $1$-forms](cusp-forms-as-one-forms-on-the-modular-jacobian.md). Let
 $f(z) = \sum_{n \ge 1} a_n e^{2 \pi i n z}$, with $a_1 = 1$, be an element of $S_2(\Gamma)$ with $f \mid T_n = a_n f$ for
-all $n \ge 1$, for the [Hecke operators $T_n$](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md), and $K$ the subfield of
+all $n \ge 1$, for the [Hecke operators $T_n$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/hecke-operators-of-level-n.md), and $K$ the subfield of
 $\mathbb{C}$ generated over $\mathbb{Q}$ by the $a_n$.
 
 There is a homomorphism $\rho$ of $\mathbb{Q}$-algebras of $\mathfrak{T}$ onto $K$ with $\rho(\xi_n) = a_n$ for all $n$; it
@@ -16,8 +16,8 @@ Hecke algebra page. In particular $K = \mathbb{Q}[a_n : n \ge 1]$ is a finite ex
 
 - [Hecke algebra of the Jacobian of a modular curve](hecke-algebra-of-the-modular-jacobian.md)
 - [Weight-two cusp forms as holomorphic $1$-forms on the modular Jacobian](cusp-forms-as-one-forms-on-the-modular-jacobian.md)
-- [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md), for the $T_n$ and normalized common eigenfunctions
-- [Cusp form](../../../NumberTheory/modular-forms-q-series/modular-forms/cusp-form.md), for $S_2(\Gamma)$
+- [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/hecke-operators-of-level-n.md), for the $T_n$ and normalized common eigenfunctions
+- [Cusp form](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/cusp-form.md), for $S_2(\Gamma)$
 
 ## Proof depends on
 

@@ -1,12 +1,12 @@
 # Hecke operators on cusp forms and Hecke endomorphisms of the Jacobian
 
 Let $N$ be a positive integer, $\Gamma$ a group of level $N$, $J$ the Jacobian of the
-[modular curve $X_\Gamma$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), with $J(\mathbb{C})$ the Jacobian of
+[modular curve $X_\Gamma$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/modular-curve-of-a-group-of-level-n.md), with $J(\mathbb{C})$ the Jacobian of
 $\mathfrak{H}^*/\Gamma$, and let $\mu \colon S_2(\Gamma) \to D_J$ be the isomorphism of
 [weight-two cusp forms with holomorphic $1$-forms](cusp-forms-as-one-forms-on-the-modular-jacobian.md). For
 $\alpha \in \mathrm{GL}_2(\mathbb{Q})$ with $\det \alpha > 0$, let $[\Gamma \alpha \Gamma]_2$ be the operator on $S_2(\Gamma)$ of
-[Hecke operators of level $N$](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md), and $\{\Gamma \alpha \Gamma\}$ the endomorphism of
-$J$ of [Hecke endomorphisms](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-endomorphisms-of-the-modular-jacobian.md). Then
+[Hecke operators of level $N$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/hecke-operators-of-level-n.md), and $\{\Gamma \alpha \Gamma\}$ the endomorphism of
+$J$ of [Hecke endomorphisms](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/hecke-endomorphisms-of-the-modular-jacobian.md). Then
 
 $$\mu \circ [\Gamma \alpha \Gamma]_2 = \delta\{\Gamma \alpha \Gamma\} \circ \mu,$$
 
@@ -25,16 +25,16 @@ $\det(\alpha) > 0$, in the form $\mu \circ [\Gamma' \alpha \Gamma]_2 = \delta\{\
 ## Depends on
 
 - [Weight-two cusp forms as holomorphic $1$-forms on the modular Jacobian](cusp-forms-as-one-forms-on-the-modular-jacobian.md)
-- [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), for $J$
-- [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md)
-- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-endomorphisms-of-the-modular-jacobian.md)
+- [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/modular-curve-of-a-group-of-level-n.md), for $J$
+- [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/hecke-operators-of-level-n.md)
+- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/hecke-endomorphisms-of-the-modular-jacobian.md)
 - [Holomorphic $1$-forms and tangent space of a complex abelian variety](holomorphic-one-forms-and-tangent-space.md), for $\delta$
 
 ## Proof depends on
 
 - [Holomorphic $1$-forms and tangent space of a complex abelian variety](holomorphic-one-forms-and-tangent-space.md), for the behaviour of $\delta$ under sums and composition
-- [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md), for $T_n = T_m T_q$
-- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-endomorphisms-of-the-modular-jacobian.md), for $\xi_n = \xi_m \xi_q$
+- [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/hecke-operators-of-level-n.md), for $T_n = T_m T_q$
+- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/hecke-endomorphisms-of-the-modular-jacobian.md), for $\xi_n = \xi_m \xi_q$
 
 ## Expansion
 
