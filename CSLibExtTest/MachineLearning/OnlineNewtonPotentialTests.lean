@@ -45,7 +45,7 @@ example : ((fun _ : Fin 1 => (1 : ℝ)) ⬝ᵥ ((A 1)⁻¹ *ᵥ fun _ => 1)) = 1
     norm_num
   have h := (logDetPotential (ι := Fin 1) 2 (by norm_num) (fun _ _ => 1) 1 1 (by
     intro t _
-    norm_num [dotProduct])).1
+    norm_num [dotProduct, Real.sqrt_one])).1
   change (∑ t ∈ Finset.range 1,
     (fun _ : Fin 1 => (1 : ℝ)) ⬝ᵥ ((A (t + 1))⁻¹ *ᵥ fun _ => 1)) ≤
       Real.log ((A 1).det / (A 0).det) at h
@@ -67,7 +67,7 @@ example (g : ℕ → Fin 0 → ℝ) (T : ℕ) :
 example : Real.log (2 : ℝ) ≤ 2 * Real.log 2 := by
   let g : ℕ → Fin 2 → ℝ := fun _ i => if i = 0 then 1 else 0
   let B := ellipticalGram ((2 : ℝ) • (1 : Matrix (Fin 2) (Fin 2) ℝ)) g
-  have hnorm : ∀ t < 2, g t ⬝ᵥ g t ≤ (1 : ℝ) ^ 2 := by
+  have hnorm : ∀ t < 2, Real.sqrt (g t ⬝ᵥ g t) ≤ 1 := by
     intro t _
     norm_num [g, dotProduct, Fin.sum_univ_two]
   have h0 : B 0 = (2 : ℝ) • 1 := ellipticalGram_zero _ _
@@ -86,5 +86,13 @@ example : Real.log (2 : ℝ) ≤ 2 * Real.log 2 := by
   rw [hratio, Fintype.card_fin] at h
   norm_num at h
   exact h
+
+-- An empty horizon imposes no gradient bound, even when `G` is negative.
+example :
+    (∑ t ∈ Finset.range 0, (fun _ : Fin 1 => (1 : ℝ)) ⬝ᵥ ((A (t + 1))⁻¹ *ᵥ fun _ => 1)) ≤
+      Real.log ((A 0).det / (A 0).det) :=
+  (logDetPotential (ι := Fin 1) 2 (by norm_num) (fun _ _ => 1) 0 (-1) (by
+    intro t ht
+    omega)).1
 
 end CSLibExtTest.MachineLearning

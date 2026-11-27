@@ -50,14 +50,15 @@ private lemma det_smul_one (ε : ℝ) :
   rw [Matrix.det_smul, Matrix.det_one, mul_one]
 
 /-- **Online Newton Step log-determinant potential.** Start with `ε • 1` for `ε > 0` and
-add `g t * (g t)ᵀ` at round `t`, with rounds indexed from zero. If `g t ⬝ᵥ g t ≤ G ^ 2`
-for each round, the sum of the quadratic forms using the **post-update** inverses is bounded
-by the log-determinant ratio, which is at most `d * log (1 + T * G ^ 2 / ε)` in dimension `d`.
+add `g t * (g t)ᵀ` at round `t`. For every round `0 ≤ t < T`, assume the Euclidean norm
+`√(g t ⬝ᵥ g t)` is at most `G`. The sum of the quadratic forms using the **post-update**
+inverses is bounded by the log-determinant ratio, which is at most
+`d * log (1 + T * G ^ 2 / ε)` in dimension `d`.
 
 Source: Hazan, *Introduction to Online Convex Optimization*, 2nd ed., §4.4,
 proof of Theorem 4.5 and Lemma 4.7. This is the matrix potential bound, not a regret guarantee. -/
 lemma logDetPotential (ε : ℝ) (hε : 0 < ε) (g : ℕ → ι → ℝ) (T : ℕ) (G : ℝ)
-    (hg : ∀ t < T, g t ⬝ᵥ g t ≤ G ^ 2) :
+    (hg : ∀ t < T, Real.sqrt (g t ⬝ᵥ g t) ≤ G) :
     let A := ellipticalGram (ε • (1 : Matrix ι ι ℝ)) g
     (∑ t ∈ Finset.range T, g t ⬝ᵥ ((A (t + 1))⁻¹ *ᵥ g t)) ≤
       Real.log ((A T).det / (A 0).det) ∧
@@ -101,7 +102,16 @@ lemma logDetPotential (ε : ℝ) (hε : 0 < ε) (g : ℕ → ι → ℝ) (T : �
         rw [det_smul_one, ← Real.rpow_natCast, ← Real.rpow_mul hε.le]
         change ε ^ (d * d⁻¹) = ε
         rw [mul_inv_cancel₀ hdne, Real.rpow_one]
-      have hg' : ∀ t < T, g t ⬝ᵥ g t ≤ |G| ^ 2 := by simpa only [sq_abs] using hg
+      have hg' : ∀ t < T, g t ⬝ᵥ g t ≤ |G| ^ 2 := by
+        intro t ht
+        have hdot : 0 ≤ g t ⬝ᵥ g t := by
+          unfold dotProduct
+          exact Finset.sum_nonneg fun i _ => mul_self_nonneg (g t i)
+        have hnorm := hg t ht
+        have hG := (Real.sqrt_nonneg _).trans hnorm
+        have hs := (sq_le_sq₀ (Real.sqrt_nonneg _) hG).mpr hnorm
+        rw [Real.sq_sqrt hdot] at hs
+        simpa only [sq_abs] using hs
       have h := log_det_ellipticalGram_ratio_le hV g (abs_nonneg G) T hg' hd
       change Real.log ((A T).det / V.det) ≤ d * Real.log ((V.trace + T * |G| ^ 2) /
         (d * V.det ^ d⁻¹)) at h
