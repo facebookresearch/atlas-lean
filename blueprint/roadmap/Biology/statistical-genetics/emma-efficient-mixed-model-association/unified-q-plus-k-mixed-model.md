@@ -17,7 +17,6 @@ Thus $\operatorname{Var}(y) = V = 2ZKZ^\top V_g + R V_R$. For known variance com
 ## Depends on
 
 - [Marginal law of the mixed-model response](../../quantitative-genetics/linear-mixed-models-and-blup/map-mixed-model-response.md)
-- [Principal-component correction for stratification](../principal-component-correction-for-stratificatio/README.md)
 
 ## Expansion
 

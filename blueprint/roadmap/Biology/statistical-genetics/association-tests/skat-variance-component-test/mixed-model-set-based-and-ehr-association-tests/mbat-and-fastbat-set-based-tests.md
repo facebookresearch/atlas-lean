@@ -26,9 +26,9 @@ $$T_{\mathrm{mBAT}} = n\, b^\top R^{-1} b \approx n V_g,$$
 so mBAT tests for nonzero joint variance explained, and is not attenuated by *masking* (marginal effects cancelling because two
 causal effects have the same sign while their LD correlation is negative, or opposite signs while it is positive).
 
-## Depends on
+## Proof depends on
 
-- [SKAT variance-component test](../skat-variance-component-test/README.md)
+- [A standard Gaussian quadratic form has a weighted chi-square law](../std-gaussian-map-inner-eq-weighted-chi-s.md)
 
 ## Expansion
 

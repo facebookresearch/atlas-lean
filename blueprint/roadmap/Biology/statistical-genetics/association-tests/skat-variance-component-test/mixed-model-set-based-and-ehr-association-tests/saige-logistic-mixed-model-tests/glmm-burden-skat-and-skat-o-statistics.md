@@ -13,8 +13,8 @@ To avoid one linear solve per variant, SAIGE-GENE approximates $\tilde G^\top \h
 ## Depends on
 
 - [Variance-ratio adjusted score test in a logistic mixed model](variance-ratio-adjusted-score-test.md)
-- [SKAT variance-component score statistic](../../skat-variance-component-test/skat-q.md)
-- [Mixture matrix of the SKAT statistic](../../skat-variance-component-test/skat-mixture-matrix.md)
+- [SKAT variance-component score statistic](../../skat-q.md)
+- [Mixture matrix of the SKAT statistic](../../skat-mixture-matrix.md)
 
 ## Expansion
 
