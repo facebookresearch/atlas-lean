@@ -1,5 +1,6 @@
 # Phylogenetic inference and comparison
 
+These articles concern inference of evolutionary trees, networks and recorded cell lineages, and comparison and encodings of trees. Their observation and sampling models are separate; reading order does not assert a mathematical dependency.
 
 ## Tree inference
 

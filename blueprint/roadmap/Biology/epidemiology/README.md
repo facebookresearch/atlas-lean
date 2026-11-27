@@ -34,6 +34,9 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
 - [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
 - [Epidemic coalescent models](epidemic-coalescent-models/README.md)
+
+## [Compartmental transmission models](part-01/README.md)
+
 - [Adaptive-contact SAIS on multilayer networks](part-01/adaptive-contact-sais-on-multilayer-networks/README.md)
 - [Anthrax carcass transmission with scavengers](part-01/anthrax-carcass-transmission-with-scavengers/README.md)
 - [Biphasic environmental decay of pathogens](part-01/biphasic-environmental-decay-of-pathogens/README.md)
@@ -52,6 +55,9 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Two-dose vaccination measles model](part-01/two-dose-vaccination-measles-model/README.md)
 - [Two-sided fractional SEIR models](part-01/two-sided-fractional-seir-models/README.md)
 - [Viral-load-dependent fuzzy SIR model](part-01/viral-load-dependent-fuzzy-sir-model/README.md)
+
+## [Branching processes and epidemiological inference](part-02/README.md)
+
 - [Branching processes with lagged Poisson offspring](part-02/branching-processes-with-lagged-poisson-offspring/README.md)
 - [Comparative age-period-cohort analysis](part-02/comparative-age-period-cohort-analysis/README.md)
 - [Discrete-time next-generation matrix](part-02/discrete-time-next-generation-matrix/README.md)
