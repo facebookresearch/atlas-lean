@@ -41,8 +41,8 @@ example : IsLeastAbsInverse 1 1 2 ∧ ¬ IsLeastAbsInverse (-1) 1 2 := by
   unfold IsLeastAbsInverse
   decide
 
--- The final inverse 1 attains the upper endpoint modulo 2 and propagates to -1 modulo 3.
-example : IsLeastAbsInverse (-1) 2 3 := by
+-- Both inverses are extremal for the Euclidean sequence starting with 3 and 2.
+example : IsLeastAbsInverse (-1) 2 3 ∧ 2 * |(-1 : ℤ)| = 3 - 1 ∧ 2 * |(1 : ℤ)| = 2 := by
   let r : ℕ → ℕ := fun i => 3 - i
   let s : ℕ → ℤ := fun i => if i = 1 then -1 else 1
   have hseq : IsEuclidSwitchSeq r s 1 := by
@@ -60,7 +60,8 @@ example : IsLeastAbsInverse (-1) 2 3 := by
   have h : IsLeastAbsInverse (s 2) (r 2 : ℤ) (r 1) := by
     unfold IsLeastAbsInverse
     decide
-  exact isLeastAbsInverse_succ_imp r s 1 hseq 1 le_rfl le_rfl h
+  exact ⟨isLeastAbsInverse_succ_imp r s 1 hseq 1 le_rfl le_rfl h,
+    (abs_eq_halves_iff_eq_two_of_odd_even r s 1 hseq (by decide) (by decide)).mpr rfl⟩
 
 -- A switching sequence requires at least one Euclidean division.
 example (r : ℕ → ℕ) (s : ℕ → ℤ) : ¬ IsEuclidSwitchSeq r s 0 :=
@@ -90,3 +91,128 @@ example : 2 * |(3 : ℤ)| < 8 := by
     · intro i hi hj
       interval_cases i <;> decide
   exact (abs_lt_of_even_odd r s 2 hseq (by decide) (by decide)).resolve_right (by decide)
+
+-- With remainders 5, 4, 1 the first two inverses cannot both be extremal.
+example : ¬ (2 * |(-1 : ℤ)| = 5 - 1 ∧ 2 * |(1 : ℤ)| = 4) := by
+  let r : ℕ → ℕ
+    | 0 => 5
+    | 1 => 4
+    | _ => 1
+  let s : ℕ → ℤ := fun i => if i = 1 then -1 else 1
+  have hseq : IsEuclidSwitchSeq r s 1 := by
+    refine ⟨by decide, ?_, ?_, rfl, ?_, rfl, ?_⟩
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi hj
+      interval_cases i
+      exact ⟨1, by decide, rfl⟩
+    · intro i hi hj
+      interval_cases i
+      decide
+  exact mt (abs_eq_halves_iff_eq_two_of_odd_even r s 1 hseq (by decide) (by decide)).mp
+    (by decide)
+
+-- The Euclidean pair for (3, 2) is (1, -1): 1 * 3 + (-1) * 2 = 1.
+example : (1 : ℤ) * 3 + (-1) * 2 = 1 := by
+  let r : ℕ → ℕ := fun i => 3 - i
+  let s : ℕ → ℤ := fun i => if i = 1 then -1 else 1
+  have hseq : IsEuclidSwitchSeq r s 1 := by
+    refine ⟨by decide, ?_, ?_, rfl, ?_, rfl, ?_⟩
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi hj
+      interval_cases i
+      exact ⟨1, by decide, rfl⟩
+    · intro i hi hj
+      interval_cases i
+      decide
+  have hr0 : r 0 = 3 / Nat.gcd 3 2 := by decide
+  have hr1 : r 1 = 2 / Nat.gcd 3 2 := by decide
+  have h := euclid_bezout_coeffs_leastAbsInverse 3 2 (by decide) (by decide)
+    r s 1 hseq hr0 hr1
+  have hs2 : s 2 = 1 := by decide
+  have hs1 : s 1 = -1 := by decide
+  have hgcd : Nat.gcd 3 2 = 1 := by decide
+  rw [hs2, hs1, hgcd] at h
+  simpa only [Nat.cast_one, Nat.cast_ofNat] using h.1
+
+-- One is the least absolute inverse of 3 modulo 2.
+example : IsLeastAbsInverse 1 3 2 := by
+  let r : ℕ → ℕ := fun i => 3 - i
+  let s : ℕ → ℤ := fun i => if i = 1 then -1 else 1
+  have hseq : IsEuclidSwitchSeq r s 1 := by
+    refine ⟨by decide, ?_, ?_, rfl, ?_, rfl, ?_⟩
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi hj
+      interval_cases i
+      exact ⟨1, by decide, rfl⟩
+    · intro i hi hj
+      interval_cases i
+      decide
+  have hr0 : r 0 = 3 / Nat.gcd 3 2 := by decide
+  have hr1 : r 1 = 2 / Nat.gcd 3 2 := by decide
+  have h := euclid_bezout_coeffs_leastAbsInverse 3 2 (by decide) (by decide)
+    r s 1 hseq hr0 hr1
+  have hs2 : s 2 = 1 := by decide
+  have hgcd : Nat.gcd 3 2 = 1 := by decide
+  rw [hs2, hgcd] at h
+  simpa using h.2.1
+
+-- Negative one is the least absolute inverse of 2 modulo 3.
+example : IsLeastAbsInverse (-1) 2 3 := by
+  let r : ℕ → ℕ := fun i => 3 - i
+  let s : ℕ → ℤ := fun i => if i = 1 then -1 else 1
+  have hseq : IsEuclidSwitchSeq r s 1 := by
+    refine ⟨by decide, ?_, ?_, rfl, ?_, rfl, ?_⟩
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi hj
+      interval_cases i
+      exact ⟨1, by decide, rfl⟩
+    · intro i hi hj
+      interval_cases i
+      decide
+  have hr0 : r 0 = 3 / Nat.gcd 3 2 := by decide
+  have hr1 : r 1 = 2 / Nat.gcd 3 2 := by decide
+  have h := euclid_bezout_coeffs_leastAbsInverse 3 2 (by decide) (by decide)
+    r s 1 hseq hr0 hr1
+  have hs1 : s 1 = -1 := by decide
+  have hgcd : Nat.gcd 3 2 = 1 := by decide
+  rw [hs1, hgcd] at h
+  simpa using h.2.2
+
+-- The same switching data serve (6, 4): the reduced moduli are again 3 and 2, and the
+-- coefficients now give 1 * 6 + (-1) * 4 = gcd(6, 4) = 2.
+example : (1 : ℤ) * 6 + (-1) * 4 = 2 := by
+  let r : ℕ → ℕ := fun i => 3 - i
+  let s : ℕ → ℤ := fun i => if i = 1 then -1 else 1
+  have hseq : IsEuclidSwitchSeq r s 1 := by
+    refine ⟨by decide, ?_, ?_, rfl, ?_, rfl, ?_⟩
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi
+      interval_cases i <;> decide
+    · intro i hi hj
+      interval_cases i
+      exact ⟨1, by decide, rfl⟩
+    · intro i hi hj
+      interval_cases i
+      decide
+  have hr0 : r 0 = 6 / Nat.gcd 6 4 := by decide
+  have hr1 : r 1 = 4 / Nat.gcd 6 4 := by decide
+  have h := euclid_bezout_coeffs_leastAbsInverse 6 4 (by decide) (by decide)
+    r s 1 hseq hr0 hr1
+  have hs2 : s 2 = 1 := by decide
+  have hs1 : s 1 = -1 := by decide
+  have hgcd : Nat.gcd 6 4 = 2 := by decide
+  rw [hs2, hs1, hgcd] at h
+  simpa only [Nat.cast_ofNat] using h.1
