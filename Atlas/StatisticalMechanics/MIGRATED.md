@@ -925,40 +925,151 @@ say exactly what is proved.
 | `Atlas/StatisticalMechanics/Code/Probability/VarGapProve2.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.VarGapAtHalf` |
 | `Atlas/StatisticalMechanics/Code/TwoDim/NearHalfKKLWire.lean` | `CSLibExt.Complexity.BooleanFunctions.KKL.NearHalfKKLWire` |
 
+## PhyslibExt (third round)
+
+The third round ports the physics remainder in parts: the random-cluster (FK), Ising, sharpness,
+Onsager, Beffara–Duminil-Copin, percolation, OSSS and wall modules that the physics results need.
+This table lists the sources ported so far (94 of 635); the others are listed under "Physics
+remainder, not yet ported" below. Duplicate and vacuous declarations were removed during the port.
+Several ported modules state conditional results or record refutations; their module docs say
+exactly what is proved.
+
+| Source file | Module |
+| --- | --- |
+| `Atlas/StatisticalMechanics/Code/FK/BoundaryRusso.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BoundaryRusso` |
+| `Atlas/StatisticalMechanics/Code/FK/BoundaryScoreLipschitz.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BoundaryScoreLipschitz` |
+| `Atlas/StatisticalMechanics/Code/FK/BoxConnectionFullConnection.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BoxConnectionInfiniteConnection` |
+| `Atlas/StatisticalMechanics/Code/FK/CircuitLowerBound.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.CircuitLowerBound` |
+| `Atlas/StatisticalMechanics/Code/FK/ClusterAdaptiveProjection.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ClusterAdaptiveProjection` |
+| `Atlas/StatisticalMechanics/Code/FK/ClusterExplorationFreeBoundary.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ClusterExplorationFreeBoundary` |
+| `Atlas/StatisticalMechanics/Code/FK/ComparisonQ.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.AntitoneInQ` |
+| `Atlas/StatisticalMechanics/Code/FK/ConditionalFibreMass.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ConditionalFibreMass` |
+| `Atlas/StatisticalMechanics/Code/FK/ContinuousRectangleCrossing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ContinuousRectangleCrossing` |
+| `Atlas/StatisticalMechanics/Code/FK/DLRUniqueness.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.ErgodicConvexSummands` |
+| `Atlas/StatisticalMechanics/Code/FK/DensityDeviationFull.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.OpenCountDeviation` |
+| `Atlas/StatisticalMechanics/Code/FK/DlrInfiniteSandwich.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.DlrInfiniteSandwich` |
+| `Atlas/StatisticalMechanics/Code/FK/EdgeConfigEventLaw.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.EdgeConfigEventLaw` |
+| `Atlas/StatisticalMechanics/Code/FK/EdgeMarginalInfinite.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.EdgeMarginalInfinite` |
+| `Atlas/StatisticalMechanics/Code/FK/FKGeneralQInfiniteFKG.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FKGeneralQInfiniteFKG` |
+| `Atlas/StatisticalMechanics/Code/FK/FKGeneralQTranslation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FKGeneralQTranslation` |
+| `Atlas/StatisticalMechanics/Code/FK/FKLimitsAssembly.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FKQ2InfiniteVolumeLimits` |
+| `Atlas/StatisticalMechanics/Code/FK/FKLimitsErgodicUncond.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.WiredLimitErgodicity` |
+| `Atlas/StatisticalMechanics/Code/FK/FKQ2Sharp.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FKQ2Sharp` |
+| `Atlas/StatisticalMechanics/Code/FK/FinitePatternEnergy.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FinitePatternEnergy` |
+| `Atlas/StatisticalMechanics/Code/FK/FreeDLRKernel.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FreeDLRKernel` |
+| `Atlas/StatisticalMechanics/Code/FK/FreeNestedDecreasing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.FreeNestedDecreasing` |
+| `Atlas/StatisticalMechanics/Code/FK/FreeTailErgodicityPrereq.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TailEventWindow` |
+| `Atlas/StatisticalMechanics/Code/FK/InclusionExclusion.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.InclusionExclusion` |
+| `Atlas/StatisticalMechanics/Code/FK/IndexedBoundaryCondition.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.IndexedBoundaryCondition` |
+| `Atlas/StatisticalMechanics/Code/FK/InfiniteFiniteEnergy.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.InfiniteFiniteEnergy` |
+| `Atlas/StatisticalMechanics/Code/FK/IvDensityDeviation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.OpenCountDensityDeviation` |
+| `Atlas/StatisticalMechanics/Code/FK/OffCentreConditionalLowerProduct.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreConditionalLowerProduct` |
+| `Atlas/StatisticalMechanics/Code/FK/OffCentreEventLaw.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreEventLaw` |
+| `Atlas/StatisticalMechanics/Code/FK/OffCentreFreeDomination.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreFreeDomination` |
+| `Atlas/StatisticalMechanics/Code/FK/PairMixingGenMixing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PairMixingGenMixing` |
+| `Atlas/StatisticalMechanics/Code/FK/PlacementClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.LimitTranslationInvariance` |
+| `Atlas/StatisticalMechanics/Code/FK/PositiveAssociation.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.PositiveAssociation` |
+| `Atlas/StatisticalMechanics/Code/FK/RussoDerivative.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative` |
+| `Atlas/StatisticalMechanics/Code/FK/TwoPointPathLower.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.TwoPointPathLower` |
+| `Atlas/StatisticalMechanics/Code/Ising/BackboneExists.lean` | `PhyslibExt.CondensedMatter.IsingModel.BackboneExists` |
+| `Atlas/StatisticalMechanics/Code/Ising/DualWalkBoundsClose.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkLeftRegion` |
+| `Atlas/StatisticalMechanics/Code/Ising/HdomNativeWeight.lean` | `PhyslibExt.CondensedMatter.IsingModel.ThreePointSplitMass` |
+| `Atlas/StatisticalMechanics/Code/Ising/KWGeometricDual.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.GeometricDual` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABBoundaryLimit.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryLimit` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABBoundaryPhi.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryPhi` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABBoundaryProfile.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryProfile` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABBoundarySquareRoot.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundarySquareRoot` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABForwardCharacteristic.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABForwardCharacteristic` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABMeanfieldGhost.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABMeanfieldGhost` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/ABMeanfieldLimit.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABMeanfieldLimit` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BKFirstExit.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.SusceptibilityFirstExit` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneActualSelectorObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSelectorObstruction` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneActualSelectorSwitching.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ActualSelectorSwitching` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneAsymmetricCoordinateCertificate.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.AsymmetricCoordinateCertificate` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneBondwiseOrderedExploration.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.BondwiseOrderedExploration` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneConcreteBondProgram.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ConcreteBondProgram` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneConcreteSelector.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ConcreteSelector` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneConcreteSelectorObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ConcreteSelectorObstruction` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneExplorationCutAdmissible.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationCutAdmissible` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneExplorationRealization.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationRealization` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneExplorationSelector.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationSelector` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneExplorationSelectorAdmissible.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.ExplorationSelectorAdmissible` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneMultiStepBondProgram.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.MultiStepBondProgram` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneOrderedDeterminedCut.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.OrderedDeterminedCut` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneOrderedDeterminedCutObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.OrderedDeterminedCutObstruction` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneP2CoordinateReindex.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2CoordinateReindex` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneP2CoordinateToggleObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2CoordinateToggleObstruction` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneP2CutResummation.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2CutResummation` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneP2Quantitative.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2Quantitative` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneP3Domain.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P3Domain` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackbonePartialEdgeCopyObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexDomainResummationCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackbonePartialEdgeCopySwitching.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.PartialEdgeCopySwitching` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackbonePartialP2Reindex.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.PartialP2Reindex` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneSelectorCompatible.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexSelector` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneSupportLexCounterexample.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexCounterexample` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneSupportLexK4Literal.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexK4Literal` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneSupportLexK4Realization.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexK4Realization` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneSupportLexParityBridge.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexParityBridge` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneTwoEdgeBondProgram.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeBondProgram` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneTwoEdgeBondToggle.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeBondToggle` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneTwoEdgeCycleObstruction.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeCycleObstruction` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneTwoEdgeCyclePairToggle.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeCyclePairToggle` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BackboneTwoEdgeExhaustiveProgram.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.TwoEdgeExhaustiveProgram` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/BetaFormPerco.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.BetaFormPerco` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/FiniteRangePerco.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.FiniteRangePerco` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/Item1Htc1.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.TildePcBetaForm` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/Item3PercoLattice.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.PercoSubcriticalDecay` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/MeanfieldTargetReassembly.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.MeanfieldTargetReassembly` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/NontrivialAssembly.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.SharpnessBetaFormDimTwo` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/PercoSusceptibility.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.PercoSusceptibility` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/PivotalFactorComplete.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.PivotalSurfaceFactor` |
+| `Atlas/StatisticalMechanics/Code/Sharpness/SharpnessAssembly.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.SharpnessAssembly` |
+| `Atlas/StatisticalMechanics/Code/Walls/ceosimplecycle.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.ShiftSquareCycle` |
+| `Atlas/StatisticalMechanics/Code/Walls/dowdartwinding.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.CrossEdgeMatchingForms` |
+| `Atlas/StatisticalMechanics/Code/Walls/fwrfaceregion.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.FaceRegion` |
+| `Atlas/StatisticalMechanics/Code/Walls/jbwbridge.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.BridgeGap` |
+| `Atlas/StatisticalMechanics/Code/Walls/kwceventtocut.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkToPrimalWalk` |
+| `Atlas/StatisticalMechanics/Code/Walls/rpccrossflip.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.RayCrossFlip` |
+
 ## Not ported
 
 The following stays in `Atlas/StatisticalMechanics/Code` and outside the root build. Counts are
-modules (`.lean` files) and lines (`wc -l`) at the time of the second round. Each module is
-counted once, under the first category that applies in the order below. All 6,970 `.lean` files
-under `Code/` are accounted for: 655 first-round rows (654 map to a module; the
+modules (`.lean` files) and lines (`wc -l`) with 94 of the 635 third-round sources ported. Each
+module is counted once, under the first category that applies in the order below. All 6,970 `.lean`
+files under `Code/` are accounted for: 655 first-round rows (654 map to a module; the
 `Code/Percolation/ClusterDualContour.lean` row records its removal), 235 second-round rows (199
-MathlibExt and 36 CSLibExt), 4 ported-then-deleted modules, and 6,077 modules in the categories
-below. `Code/Percolation/ClusterDualContour.lean` occurs in both tables (removed in the first
-round, its definition ported in the second): 655 + 235 - 1 + 4 + 6,077 = 6,970. The root import
-file `Atlas/StatisticalMechanics/Code.lean` is not a counted source.
+MathlibExt and 36 CSLibExt), 94 third-round rows, 4 ported-then-deleted modules, and 5,983 modules
+in the categories below. `Code/Percolation/ClusterDualContour.lean` occurs in both the first- and
+second-round tables (removed in the first round, its definition ported in the second):
+655 + 235 + 94 - 1 + 4 + 5,983 = 6,970. The root import file `Atlas/StatisticalMechanics/Code.lean`
+is not a counted source.
 
-### Physics remainder (636 modules, 299,048 lines)
+### Physics remainder, not yet ported (541 modules, 262,692 lines)
 
 These are the modules that the physics results (random-cluster/FK, Ising, sharpness, Onsager,
 Beffara–Duminil-Copin, and the physics-facing percolation, OSSS and wall modules) need, minus
-everything ported. They are left for a `PhyslibExt` follow-up. Every module they import is either
-ported (first or second round) or in this group, so the follow-up needs nothing from the categories
-further down.
+everything ported. The remaining parts of the third round port them. Every module they import is
+either ported (first, second or third round) or in this group, so those parts need nothing from the
+categories further down.
 
 | Area | Modules | Lines |
 | --- | ---: | ---: |
 | `BeffaraDC` | 38 | 11,656 |
-| `FK` | 183 | 97,030 |
+| `FK` | 148 | 86,360 |
 | `FrontierA` | 3 | 583 |
-| `Ising` | 4 | 3,202 |
 | `OSSS` | 81 | 40,089 |
-| `Onsager` | 1 | 293 |
 | `Percolation` | 76 | 31,562 |
 | `Probability` | 1 | 362 |
-| `Sharpness` | 49 | 20,140 |
 | `TwoDim` | 4 | 3,138 |
 | `Universality` | 4 | 13,226 |
-| `Walls` | 192 | 77,767 |
+| `Walls` | 186 | 75,716 |
+
+### Excluded from the physics port (1 module, 293 lines)
+
+- `Atlas/StatisticalMechanics/Code/Onsager/WindingInvestigate.lean`. It is a root module (nothing
+  imports it) that assumes the refuted `BalancePreservingContraction` /
+  `bpc_BalanceSaturatingContraction` and uses `bpc_totalTurn_eq_four_value_of_saturating`, a vacuous
+  declaration deleted in an earlier round. Porting it would bring back vacuous statements.
 
 ### `Check*` verification files (1,981 modules, 39,452 lines)
 
@@ -1014,6 +1125,96 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
   in its ported copy was a wrapper around Mathlib's `MeasureTheory.Measure.infinitePi` API with no
   users, so the declarations were deleted and the empty module was removed. Use Mathlib's
   `Measure.infinitePi` instead.
+- Third round (94 of 635 sources ported so far): no ported module was deleted or merged; each ported
+  source has its own module.
+  Twenty-one ported declarations were retired inside their modules in favour of declarations already
+  in the root libraries or in Mathlib; their users call the replacement instead, and statements that
+  mentioned a retired definition now mention its replacement. Unlike other declarations deleted
+  inside surviving modules (last item below), they are listed here, grouped by how the replacement
+  relates to the original; the pull-request description lists them too (original → replacement):
+  - Same full type up to definitional equality (for definitions and instances, also a definitionally
+    equal value):
+    - `StatMech.FK.feu_wiredIV_isErgodic` (from `Code/FK/FKLimitsErgodicUncond.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.WiredLimitErgodicity`) →
+      `StatMech.FK.cbk_wiredIV_isErgodic` (from `Code/FK/CrossBoxGeneralKeystone.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.WiredErgodicity`), which it only applied;
+    - `StatMech.Sharpness.abbEdgeEquiv`, defined as `sym2Congr`, and its simp lemma
+      `StatMech.Sharpness.abbEdgeEquiv_mk` (from `Code/Sharpness/ABBoundaryPhi.lean`, in
+      `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryPhi`) →
+      `StatMech.Lattice.sym2Congr` and `StatMech.Lattice.sym2Congr_mk` (from
+      `Code/Lattice/PlanarDual.lean`, in `MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual`);
+    - `StatMech.FK.coord` (from `Code/FK/RussoDerivative.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative`) → `StatMech.FK.coordR` (from
+      `Code/FK/RussoDerivativeBeta.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivativeBeta`, which `RussoDerivative`
+      now imports), the same definition `if ω e then 1 else 0`;
+    - `StatMech.Walls.jbw_bdEdgeSet` (from `Code/Walls/jbwbridge.lean`, in
+      `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.BridgeGap`) →
+      `StatMech.Lattice.bdEdgeSet2` (from `Code/Lattice/FaceRegion.lean`, in
+      `MathlibExt.Combinatorics.SimpleGraph.Lattice.FaceRegion`, which `BridgeGap` now imports), the
+      set of unordered pairs with exactly one endpoint in `S`;
+    - `StatMech.FK.closeAllOn` (from `Code/FK/CircuitLowerBound.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.CircuitLowerBound`) → `StatMech.FK.projOff`
+      (from `Code/FK/FKDisjointBoxDomainMarkov.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.FKDisjointBoxDomainMarkov`); its lemmas
+      `StatMech.FK.closeAllOn_of_mem`, `StatMech.FK.closeAllOn_of_not_mem`,
+      `StatMech.FK.closeAllOn_setClosed` and `StatMech.FK.closeAllOn_setOpen` were removed with it
+      and have no replacement: the two commutation facts that were still used are now proved
+      locally;
+    - `StatMech.FK.agreeWeightSum` and its positivity lemma `StatMech.FK.agreeWeightSum_pos` (from
+      `Code/FK/CircuitLowerBound.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.CircuitLowerBound`) → `StatMech.FK.inducedFkZ`
+      and `StatMech.FK.inducedFkZ_pos` (from `Code/FK/DomainMarkov.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.DomainMarkov`);
+    - `StatMech.FK.falseBoundary` and its `DecidablePred` instance
+      `StatMech.FK.instDecidablePredFalseBoundary` (from `Code/FK/OffCentreFreeDomination.lean`,
+      where both were private, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreFreeDomination`) →
+      `StatMech.FK.bdp_noBdry` and its instance `StatMech.FK.instDecidablePredBdp_noBdry` (from
+      `Code/FK/BulkDeviationProof.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvariance`), the same predicate
+      `fun _ => False`, with definitionally equal instances;
+  - Special cases of a more general declaration (the original statement is an instance of it):
+    - `StatMech.Sharpness.BackboneP2CoordinateReindex.edgeFinset_subset` (from
+      `Code/Sharpness/BackboneP2CoordinateReindex.lean`, in
+      `PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.P2CoordinateReindex`) → Mathlib's
+      `SimpleGraph.edgeFinset_mono` (in `Mathlib.Combinatorics.SimpleGraph.Finite`), which needs
+      only `Fintype` instances on the two edge sets;
+    - `StatMech.FK.card_connectedComponent_antitone` (from `Code/FK/IndexedBoundaryCondition.lean`,
+      in `PhyslibExt.StatisticalMechanics.RandomCluster.IndexedBoundaryCondition`) → Mathlib's
+      `SimpleGraph.ConnectedComponent.card_le_card_of_le` (in
+      `Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite`), which needs only `[Finite V]`;
+  - Restatements of an existing declaration up to a coercion or a rearrangement (the original
+    statement follows from it by a short argument):
+    - `StatMech.Walls.jbw_mem_bdEdgeSet` (from `Code/Walls/jbwbridge.lean`, in
+      `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.BridgeGap`) →
+      `StatMech.Lattice.mem_bdEdgeSet2` (from `Code/Lattice/FaceRegion.lean`, in
+      `MathlibExt.Combinatorics.SimpleGraph.Lattice.FaceRegion`), which states it for pairs
+      `s(x, y)` (for an arbitrary pair, membership in `bdEdgeSet2 S` is `bdEdge S` by `Iff.rfl`);
+    - `StatMech.FK.tendsto_probabilityMeasure_real_of_isClopen` (from `Code/FK/FreeDLRKernel.lean`,
+      in `PhyslibExt.StatisticalMechanics.RandomCluster.FreeDLRKernel`) → Mathlib's
+      `MeasureTheory.ProbabilityMeasure.tendsto_measure_of_isClopen_of_tendsto` (in
+      `Mathlib.MeasureTheory.Measure.Portmanteau`), which states the limit in `ℝ≥0`; the original
+      follows with `NNReal.tendsto_coe` and `ProbabilityMeasure.measureReal_eq_coe_coeFn`;
+    - `StatMech.FK.ocd_condFreeProb_innerRestrict_ge` (from `Code/FK/OffCentreFreeDomination.lean`,
+      in `PhyslibExt.StatisticalMechanics.RandomCluster.OffCentreFreeDomination`) →
+      `StatMech.FK.bdp_condBcProb_innerRestrict_ge` (from `Code/FK/BulkDeviationProof.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.FreeTranslationInvariance`), with the same
+      hypotheses and inequality, written with `≤` rather than `≥`, and with the two graphs and the
+      embedding as implicit rather than explicit arguments;
+    - `StatMech.FK.fkProb_fkgLattice` (from `Code/FK/PositiveAssociation.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.PositiveAssociation`) →
+      `StatMech.FK.fkProb_FKGLatticeCondition` (from `Code/FK/FKG.lean`, in
+      `PhyslibExt.StatisticalMechanics.RandomCluster.FKG`), which states `FKGLatticeCondition`, the
+      same inequality with the right-hand factors in the other order;
+  - Definitions equal only extensionally, not definitionally (statements that used the original are
+    now stated with the replacement):
+    - `StatMech.Ising.kwg_deleteVertexGraph` (from `Code/Ising/KWGeometricDual.lean`, in
+      `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.GeometricDual`) → Mathlib's
+      `SimpleGraph.deleteIncidenceSet` (in `Mathlib.Combinatorics.SimpleGraph.DeleteEdges`), the
+      same graph: its adjacency is `G.Adj x y ∧ x ≠ v ∧ y ≠ v` by
+      `SimpleGraph.deleteIncidenceSet_adj`; `kwg_minimalEven_nonOuter_reachable` and
+      `kwg_minimalEvenFinset_nonOuter_reachable` are now stated with it.
 - `Atlas/StatisticalMechanics/Code/RSW/BoxCrossingCapstone.lean` (second round). The ported
   capstone's hypothesis unfolded to its advertised box-crossing conclusion, so it proved nothing
   beyond assuming the result; the module was removed during cleanup. The underlying RSW
@@ -1041,6 +1242,29 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
     `PhyslibExt.StatisticalMechanics.RandomCluster.EdgePartitionFunction`;
   - `Code/Ising/EvenSubgraphDecomp.lean` and `Code/Ising/KWClosedWalkParity.lean` →
     `PhyslibExt.CondensedMatter.IsingModel.KWClosedWalkParity`.
-- Declarations deleted inside surviving modules (duplicates of Mathlib or of earlier ports, and
-  declarations whose hypotheses were proved unsatisfiable) are listed in the pull-request
-  descriptions, not here.
+- Declarations deleted inside surviving modules during the port (duplicates of Mathlib or of
+  earlier ports, and declarations whose hypotheses were proved unsatisfiable) are listed in the
+  pull-request descriptions, not here. Duplicates retired after the port are listed under
+  [Declarations retired after the port](#declarations-retired-after-the-port).
+
+## Declarations retired after the port
+
+These declarations of second-round modules restated declarations already in the root libraries and
+were removed after the port. Their modules stay, and the rows and counts above are unchanged. Use
+the declaration in the last column instead; except where noted, it has the same statement.
+
+| Retired declaration | Module | Use instead |
+| --- | --- | --- |
+| `StatMech.Lattice.icc_offComplGraph` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffWalkInducedGraph` | `StatMech.Lattice.fcb_offComplGraph`, definitionally the same graph |
+| `StatMech.Lattice.icc_offComplGraph_eq_fcb_offComplGraph` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffWalkInducedGraph` | nothing: it stated `icc_offComplGraph Vc = fcb_offComplGraph Vc`, by `rfl` |
+| `StatMech.Lattice.icc_offComplGraph_adj` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffWalkInducedGraph` | `StatMech.Lattice.fcb_offComplGraph_adj` (`@[simp]`); with `offSupport Vc` on the right-hand side, `Iff.rfl` |
+| `StatMech.Probability.mfp2_master_half_via_perCoord` | `CSLibExt.Complexity.BooleanFunctions.KKL.MasterFamilyHighNoise` | `StatMech.Probability.hcq_smallDelta_p_half` |
+| `StatMech.Universality.fci_face_adj_left` | `MathlibExt.Probability.Percolation.Universality.FrameChangeIso` | `StatMech.Lattice.latAdj_left` |
+| `StatMech.Universality.fci_face_adj_right` | `MathlibExt.Probability.Percolation.Universality.FrameChangeIso` | `StatMech.Lattice.latAdj_right` |
+| `StatMech.Probability.mil_indicator_sq` | `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLMeanInfl` | `StatMech.Probability.klo_indicator_sq` |
+| `StatMech.Lattice.exc_farLeft_mem_exterior` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExteriorConnected` | `StatMech.Lattice.axisFarLeft_mem_exterior` |
+| `StatMech.Lattice.unitWt_negx` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExtremeCell` | `StatMech.Lattice.unitWt_mx` |
+
+`StatMech.Lattice.icc_induce_reachable_iff`, `StatMech.Lattice.icc_mem_offSupportComponent_iff` and
+`StatMech.Lattice.icc_components_distinct` keep their names; they are now stated with
+`fcb_offComplGraph`.
