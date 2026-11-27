@@ -33,4 +33,3 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 - [Gronwall inequality](gronwall-inequality/README.md)
 
 ## Asymptotics of linear second-order equations
-
