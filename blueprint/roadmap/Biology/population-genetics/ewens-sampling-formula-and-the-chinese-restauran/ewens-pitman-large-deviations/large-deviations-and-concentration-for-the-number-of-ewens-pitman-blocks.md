@@ -18,6 +18,10 @@ $$c_n(\alpha,\theta) = \frac{\Gamma(n)\,\Gamma(\theta + 1)}{\Gamma(\theta/\alpha
 
 for $\theta = 0$ the prefactor $P_n c_n/\alpha$ reduces to $1/\alpha$. The prefactor grows at most polynomially in $n$, so the bound has the exact LDP exponent.
 
+## Proof depends on
+
+- [Gärtner–Ellis theorem (differentiable case)](../../../../Probability/large-deviations/satisfies-ldp-of-tendsto-scaled-cgf.md)
+
 ## Expansion
 
 For $\theta = 0$ the moment generating function of $K_n$ has an integral representation in terms of the one-parameter Mittag-Leffler function $E_\alpha$, and a sharp asymptotic expansion of $E_\alpha$ gives $\frac1n\log\mathbb{E}e^{tK_n} \to L_\alpha(t)$; the Gärtner–Ellis theorem then yields the LDP, and Chernoff's bound with the exact (non-asymptotic) moment generating function gives the concentration inequality. The case $\theta \neq 0$ reduces to $\theta = 0$ through Pitman's change-of-measure formula linking $\mathbb{P}_{\alpha,\theta}$ to $\mathbb{P}_{\alpha,0}$; it contributes only the prefactor $P_n c_n$ and leaves the exponential rate unchanged.

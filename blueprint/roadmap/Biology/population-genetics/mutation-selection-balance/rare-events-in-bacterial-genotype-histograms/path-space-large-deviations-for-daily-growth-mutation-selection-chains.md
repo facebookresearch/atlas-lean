@@ -18,6 +18,10 @@ $$\frac1N\log P_N(\hat{\mathbf h} \in \mathcal T) \to -\Lambda(\mathcal T) \quad
 
 and thin tubes $\mathcal T(\mathbf h, 1/N)$ have probability log-equivalent to $e^{-N\lambda(\mathbf h)}$. Consequently the mean trajectory is the unique zero-cost path, and the **most likely path** from $H$ to a rare target $G$ (e.g. emergence of a non-dominant genotype) in $T$ days minimizes $\lambda$ over paths with these endpoints.
 
+## Proof depends on
+
+- [Sanov's theorem for finite alphabets](../../../../InformationTheory/entropy-and-mutual-information/method-of-types/sanov-theorem-for-finite-alphabets.md)
+
 ## Expansion
 
 Without mutation, one day is multinomial sampling from $\Phi(H)$, whose Cramér rate is exactly the relative entropy $\mathrm{KL}(G\|\Phi(H))$ (Sanov's theorem); rare Poisson mutations add the $O(m)$ correction. Markov additivity turns one-step costs into the path functional $\lambda$. The minimization over paths is a discrete optimal-control problem; it can be solved by reverse-time geodesic shooting with gradients of $C$, which scales to many genotypes.
