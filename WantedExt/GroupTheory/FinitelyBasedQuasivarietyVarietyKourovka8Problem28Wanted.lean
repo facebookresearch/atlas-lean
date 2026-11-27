@@ -17,7 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21
-public import WantedExt.GroupTheory.QuasivarietyMaximalSubquasivarietiesKourovka14Problem25Wanted
+public import MathlibExt.GroupTheory.QuasivarietyMaximalSubquasivarietiesKourovka14Problem25
 
 @[expose] public section
 
@@ -29,7 +29,7 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Pro
 Kuznetsov). UnsolvedMath record UM-00700480 (`KOU-8.28`), dataset ulamai/UnsolvedMath v1.8.0.
 
 Quasi-identities and their models are `QuasiIdentity` and `Models` from
-`WantedExt/GroupTheory/QuasivarietyMaximalSubquasivarietiesKourovka14Problem25Wanted.lean`; a
+`MathlibExt/GroupTheory/QuasivarietyMaximalSubquasivarietiesKourovka14Problem25.lean`. A
 finitely based quasivariety is the class of models of a finite set `Q` of quasi-identities. The
 variety it generates has as laws the words of `FreeGroup ℕ` that are laws of every model; it is
 finitely based when finitely many words define it (`SatisfiesLaws` from

@@ -35,3 +35,4 @@
 - [Copy number dynamics of genetic elements](copy-number-dynamics-of-genetic-elements/README.md)
 - [Moran models with heterogeneous resampling rates](moran-models-with-heterogeneous-resampling-rates/README.md)
 - [Stein's method approximations in population genetics](stein-method-approximations-in-population-genetics/README.md)
+- [Moran process in heterogeneous environments](moran-process-in-heterogeneous-environments/README.md)
