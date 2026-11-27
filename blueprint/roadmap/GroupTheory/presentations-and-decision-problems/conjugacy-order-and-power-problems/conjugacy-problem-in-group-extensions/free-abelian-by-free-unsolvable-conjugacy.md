@@ -1,0 +1,27 @@
+# Some free-abelian-by-free groups with fibre of rank four have unsolvable conjugacy problem
+
+There are groups $\mathbb{Z}^4 \rtimes F$, with $F$ a finitely generated free group, whose conjugacy problem is unsolvable; for $n \ge 4$ the group $\mathrm{GL}_n(\mathbb{Z})$ contains finitely generated orbit undecidable subgroups.
+
+A subgroup $A \le \mathrm{Aut}(H)$ of the automorphism group of a group $H$ is orbit decidable if there is an algorithm that, given $u, v \in H$, decides whether some $\alpha \in A$ maps $u$ to a conjugate of $v$; otherwise it is orbit undecidable. Then (source):
+
+1. for every $n \ge 4$, $\mathrm{GL}_n(\mathbb{Z}) = \mathrm{Aut}(\mathbb{Z}^n)$ contains a finitely generated orbit undecidable subgroup (Proposition 7.5);
+2. there exist groups $\mathbb{Z}^4 \rtimes F$, with $F$ a finitely generated free group acting through a homomorphism $F \to \mathrm{GL}_4(\mathbb{Z})$, with unsolvable conjugacy problem (Corollary 7.6).
+
+These were the first known examples of [finitely generated free abelian]-by-[finitely generated free] groups with unsolvable conjugacy problem.
+
+## Depends on
+
+- [Group](../../../group-basics/group.md)
+- [Solvable conjugacy problem for a quotient of a free group](../../decision-problems-in-free-abelianized-extensions/conjugacy-problem-solvable.md)
+
+## Proof depends on
+
+- [Novikov–Boone theorem (unsolvability of the word problem)](../../word-problem-for-groups/novikov-unsolvable.md)
+
+## Expansion
+
+The main theorem of the source says that, for an algorithmic short exact sequence $1 \to H \to G \to F \to 1$ in which $H$ has solvable twisted conjugacy problem, $F$ has solvable conjugacy problem, and every non-trivial $h \in F$ generates a subgroup of finite index in its centralizer with computable coset representatives (as for free $F$), $G$ has solvable conjugacy problem exactly when the action subgroup $A \le \mathrm{Aut}(H)$ is orbit decidable. The free subgroup $\langle P, Q \rangle \le \mathrm{SL}_2(\mathbb{Z})$ gives a copy $B \cong F_2 \times F_2$ in $\mathrm{GL}_4(\mathbb{Z})$ that meets the conjugacy stabilizer of a suitable vector trivially; Mihailova's construction gives a finitely generated $A \le B$ with unsolvable membership problem, from a finitely presented group with unsolvable word problem, and the source's key proposition turns this into orbit undecidability of $A$, hence unsolvable conjugacy problem for $\mathbb{Z}^4 \rtimes F_m$ with $F_m$ a finitely generated free group acting through a surjection onto $A$.
+
+## Sources
+
+- O. Bogopolski, A. Martino and E. Ventura, "Orbit decidability and the conjugacy problem for some extensions of groups", Transactions of the American Mathematical Society 362 (2010), no. 4, 2003–2036, https://doi.org/10.1090/S0002-9947-09-04817-X; read in arXiv:0712.3104v1 (Proposition 7.5 and Corollary 7.6 of arXiv:0712.3104v1, with the main theorem on orbit decidability in the introduction).

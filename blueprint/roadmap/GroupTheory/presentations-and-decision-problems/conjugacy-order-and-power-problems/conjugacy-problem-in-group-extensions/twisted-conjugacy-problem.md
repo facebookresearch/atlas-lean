@@ -1,0 +1,27 @@
+# Twisted conjugacy problem
+
+For a group $G$ and an automorphism $\varphi$, elements $u, v$ are $\varphi$-twisted conjugate when $v = (x\varphi)^{-1} u x$ for some $x \in G$; the twisted conjugacy problem asks for an algorithm deciding this, given $\varphi$, $u$ and $v$.
+
+Let $G$ be a finitely generated group with a finite generating set, and write automorphisms on the right, $x \mapsto x\varphi$. For $\varphi \in \mathrm{Aut}(G)$, elements $u, v \in G$ are $\varphi$-twisted conjugate, written $u \sim_\varphi v$, if there is $x \in G$ with
+
+$$
+v = (x\varphi)^{-1}\, u\, x .
+$$
+
+The twisted conjugacy problem $\mathrm{TCP}(G)$ asks for an algorithm that, given an automorphism $\varphi$ (by the images of the generators) and elements $u, v$ (as words), decides whether $u \sim_\varphi v$. For a fixed $\varphi$, $\mathrm{TCP}_\varphi(G)$ is the same problem with $\varphi$ fixed.
+
+## Depends on
+
+- [Group](../../../group-basics/group.md)
+
+## Proof depends on
+
+None.
+
+## Expansion
+
+For $\varphi$ the identity, $\sim_\varphi$ is ordinary conjugacy, so a solution of the twisted conjugacy problem solves the conjugacy problem, which in turn solves the word problem. The twisted conjugacy class of the identity is $\{(x\varphi)^{-1} x : x \in G\}$, the inverse of the set studied on the page on twisted conjugacy classes in this subject. Twisted conjugacy controls the conjugacy problem of semidirect products $G \rtimes_\varphi \mathbb{Z}$ and of other extensions.
+
+## Sources
+
+- O. Bogopolski, A. Martino and E. Ventura, "Orbit decidability and the conjugacy problem for some extensions of groups", Transactions of the American Mathematical Society 362 (2010), no. 4, 2003–2036, https://doi.org/10.1090/S0002-9947-09-04817-X; read in arXiv:0712.3104v1 (Section 1 of arXiv:0712.3104v1, definition of twisted conjugacy and of the twisted conjugacy problem).
