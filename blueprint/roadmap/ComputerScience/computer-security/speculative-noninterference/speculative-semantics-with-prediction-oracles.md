@@ -10,8 +10,8 @@ every remaining length decreased by $1$, respectively set to $0$, and $\mathrm{e
 
 - a non-branch instruction steps as in the non-speculative semantics with the same observation, and $s$ becomes $\mathrm{decr}(s)$, or $\mathrm{zeroes}(s)$ for $\mathbf{spbarr}$;
 - at $\mathbf{beqz}\ x, \ell''$ with $\sigma = \langle m, a\rangle$, the oracle gives $O(p, h, a(\mathit{pc})) = \langle \ell, w\rangle$; the step sets $\mathit{pc}$ to $\ell$, replaces $s$ by
-  $\mathrm{decr}(s) \cdot \langle \sigma, \mathit{ctr}, w, \ell\rangle$ (so a nested branch consumes a step of every enclosing transaction), increments $\mathit{ctr}$, appends
-  $\langle a(\mathit{pc}), \mathit{ctr}, \ell\rangle$ to $h$ and emits $\mathbf{start}\ \mathit{ctr} \cdot \mathit{pc}\ \ell$.
+  $\mathrm{decr}(s) \cdot \langle \sigma, \mathit{id}, w, \ell\rangle$ with $\mathit{id}$ the value of $\mathit{ctr}$ before the step (so a nested branch consumes a step of every
+  enclosing transaction), increments $\mathit{ctr}$, appends $\langle a(\mathit{pc}), \mathit{id}, \ell\rangle$ to $h$ and emits $\mathbf{start}\ \mathit{id} \cdot \mathit{pc}\ \ell$.
 
 When the stack has the form $s \cdot \langle \sigma_0, \mathit{id}, 0, \ell\rangle \cdot s'$ with $\mathrm{enabled}(s')$, the expired transaction is resolved by one step of the non-speculative
 semantics from its snapshot, $\sigma_0 \to \langle m, a\rangle$, with $\langle \sigma_0(\mathit{pc}), \mathit{id}, a(\mathit{pc})\rangle$ appended to $h$. If $\ell = a(\mathit{pc})$ it *commits*: the stack becomes
