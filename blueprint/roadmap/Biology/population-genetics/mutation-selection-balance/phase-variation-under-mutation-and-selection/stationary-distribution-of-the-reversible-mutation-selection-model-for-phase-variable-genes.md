@@ -18,6 +18,10 @@ $$\pi_{\mathrm{sel}}(n) = \frac{\pi_{\mathrm{sel}}(n-1)\,T\,I_\gamma}{\gamma\cdo
 
     and $\pi^{\infty,2}_{\mathrm{sel},i} = 1 - \pi^{\infty,1}_{\mathrm{sel},i}$. For equal fitness ($\Delta\gamma_i = 0$) this reduces to the mutation-only value $q_i/(p_i+q_i)$.
 
+## Proof depends on
+
+- [Perron–Frobenius theorem for primitive nonnegative matrices](../../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius-for-primitive-nonnegative-matri.md)
+
 ## Expansion
 
 Item 1 is the Perron–Frobenius theorem for the positive stochastic matrix $T_i$, combined with $T^n = T_1^n\otimes\cdots\otimes T_\ell^n$. Under selection the update is a normalized linear map, i.e. power iteration for the positive matrix $TI_\gamma$, so $\pi_{\mathrm{sel}}(n)$ converges to the normalized left Perron eigenvector of $TI_\gamma$. With multiplicative fitness, $TI_\gamma = \bigotimes_i T_iI_{\gamma_i}$ and its Perron vector is the tensor product of the single-gene Perron vectors. For one gene the fixed point $x = \pi^1$ satisfies a quadratic equation with leading coefficient $(p+q-1)\Delta\gamma$; its root in $(0,1)$, written in rationalized form, is the displayed formula. These explicit stationary laws are used to test whether observed ON/OFF frequencies of phase-variable genes are consistent with mutation alone, and fitness parameters are then fitted by approximate Bayesian computation.

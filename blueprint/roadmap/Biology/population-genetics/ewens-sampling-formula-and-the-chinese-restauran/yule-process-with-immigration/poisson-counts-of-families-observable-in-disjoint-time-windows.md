@@ -20,6 +20,14 @@
 
     as Fisher surmised.
 
+## Depends on
+
+- [Kendall's law of the linear birth–death process](../../../../Probability/branching-processes/linear-birth-death-process/prob.md)
+
+## Proof depends on
+
+- [Restriction theorem](../../../../Probability/point-processes/poisson-point-processes/map-restrict-pi.md)
+
 ## Expansion
 
 Families are the points of the immigration process, marked by their birth histories; by the marking theorem, the families with a given observability pattern form independent Poisson processes, so all the counts are Poisson and the different patterns are independent. The means come from integrating, over arrival times $u$, the probability that a family started at $u$ has (or lacks) births in each window, computed from the Yule generating function $\phi(t;s) = e^{-t}s/(1 - (1-e^{-t})s)$ and its integral $\int_a^b \phi(c-u;s)\,du = \log\frac{1 - (1-e^{-(c-b)})s}{1 - (1-e^{-(c-a)})s}$. Given the population sizes, the family configuration process is that of the Chinese restaurant process, which links the continuous-time picture to discrete sequential sampling.

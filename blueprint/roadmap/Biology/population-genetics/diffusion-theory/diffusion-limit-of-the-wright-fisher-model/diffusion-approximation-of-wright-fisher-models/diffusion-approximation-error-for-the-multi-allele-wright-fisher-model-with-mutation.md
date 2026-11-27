@@ -22,6 +22,11 @@ $$\tilde C_1 = \bar u\,(u_{12} + u_{21}), \quad \tilde C_2 = \frac{1}{64N^2} + \
 
 Since $\frac{1 - e^{-n\lambda}}{1 - e^{-\lambda}} \le \min\{n, (1 - e^{-\lambda})^{-1}\}$, the error is uniform in time and of order $\bar u + 1/N$, needing only four derivatives of $f$ (the classical Ethier–Norman bound for $r = 2$ used six).
 
+## Depends on
+
+- [Uniqueness in law for the K-allele martingale problem with a general bounded mutation matrix](../../neutral-wright-fisher-martingale-problem/uniqueness-in-law-for-the-k-allele-martingale-pr.md)
+- [Well-posedness of the Wright–Fisher martingale problem with mutation](../../neutral-wright-fisher-martingale-problem/well-posedness-of-the-mutation-martingale-proble.md)
+
 ## Expansion
 
 The Lindeberg principle in Markov-process form telescopes the difference over generations: $\mathbb{E}f(X(n)) - \mathbb{E}f(Y(n)) = \sum_{k} \mathbb{E}\big[(P^X - P^Y)P_{n-k-1}^X f\big]\,(Y(k))$ with $P^X$, $P^Y$ the one-step kernels. Each one-step difference is a fourth-order Taylor comparison of the multinomial step with the diffusion over unit time, contributing terms of order $\bar u$ and $1/N$, and the derivatives of the diffusion semigroup $P_t^X f$ decay like $e^{-\lambda_m t}$ because the drift is linear and the diffusion coefficient quadratic (so $\mathcal{L}$ maps polynomials of degree $m$ to degree $m$). Summing the geometric series gives the time-uniform bound.

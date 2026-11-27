@@ -13,6 +13,7 @@ In the lookdown, an event with effective impact $\bar z = z_b/((1-z_d)N + z_b)$ 
 ## Depends on
 
 - [Fleming–Viot process with intrinsically varying population size](fleming-viot-process-with-intrinsically-varying-population-size.md)
+- [de Finetti's theorem for exchangeable sequences in a standard Borel space](../../../../../Probability/foundations/exchangeable-sequences/de-finetti-theorem-for-exchangeable-sequences-in.md)
 
 ## Sources
 

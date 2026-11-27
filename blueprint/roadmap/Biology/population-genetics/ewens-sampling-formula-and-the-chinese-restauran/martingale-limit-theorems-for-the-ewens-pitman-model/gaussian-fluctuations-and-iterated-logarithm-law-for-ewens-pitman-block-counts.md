@@ -21,6 +21,10 @@
 
 The fluctuations are random-centered: centering by $n^\alpha S_{\alpha,\theta}$ (rather than a deterministic sequence) removes the non-Gaussian randomness of $S_{\alpha,\theta}$, leaving a mixed-Gaussian error of variance about $K_n$.
 
+## Proof depends on
+
+- [Supermartingale almost-sure convergence theorem](../../../../Probability/martingales/martingale-convergence-theorems/exists-ae-tendsto-of-neg-part-bdd.md)
+
 ## Expansion
 
 The key martingale is $M_n = \frac{\Gamma(\theta+n)}{\Gamma(\theta+\alpha+n)}\Big(K_n + \frac\theta\alpha\Big)$ (up to constants): from the transition rule, $E[K_{n+1} + \theta/\alpha \mid \mathcal F_n] = (K_n + \theta/\alpha)\big(1 + \frac{\alpha}{\theta+n}\big)$, so normalizing by the product $\prod_k (1 + \alpha/(\theta + k)) \asymp n^\alpha$ gives a positive martingale converging almost surely to $S_{\alpha,\theta}$. The increments of $K_n$ are Bernoulli with success probability $\approx \alpha K_n/n$, so the predictable quadratic variation of the martingale tail is asymptotically proportional to $K_n$ (suitably normalized); the central limit theorem and the law of the iterated logarithm for martingales with random normalization (Hall–Heyde type) then give items 2–3. Block counts of fixed size are handled with a vector martingale built from $(K_{1,n},\dots,K_{r,n})$, whose drift matrix is triangular with explicit eigenvalues.

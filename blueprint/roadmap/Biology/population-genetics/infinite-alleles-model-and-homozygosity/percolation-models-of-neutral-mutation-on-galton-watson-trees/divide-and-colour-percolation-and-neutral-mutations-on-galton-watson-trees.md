@@ -22,6 +22,7 @@ In the mutation interpretation, an infinite clan sharing the ancestral allele fo
 ## Depends on
 
 - [Labelled Galton–Watson trees and projection to generation counts](../../../../Probability/branching-processes/galton-watson-process/ulam-harris-labelled-galton-watson-trees-and-pro.md)
+- [Galton–Watson extinction criterion](../../../../Probability/branching-processes/galton-watson-process/extinction-prob-eq-one-iff.md)
 
 ## Expansion
 

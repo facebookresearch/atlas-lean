@@ -1,22 +1,23 @@
 # Exact filtering and smoothing of coupled Wright–Fisher diffusions by duality
 
-**Model.** At $L$ loci with $K_l$ alleles each, allele frequencies $\mathbf{x} = (\mathbf{x}^{(1)}, \dots, \mathbf{x}^{(L)})$ follow the coupled Wright–Fisher (c-WF) diffusion with generator
+**Model.** At $L$ loci with $K_l$ alleles each, allele frequencies $\mathbf{x} = (\mathbf{x}^{(1)}, \dots, \mathbf{x}^{(L)})$ follow the [coupled Wright–Fisher (c-WF) diffusion](../../coupled-wright-fisher-diffusion-duality/coupled-wright-fisher-diffusion-with-pairwise-selection.md) with selection potential $V_{\boldsymbol\sigma,J}(\mathbf{x}) = \mathbf{x}^{\mathsf T}\boldsymbol\sigma + \frac12\mathbf{x}^{\mathsf T}J\mathbf{x}$ ($\boldsymbol\sigma$ single-locus selection, $J$ the symmetric block matrix of two-locus selection coefficients) and parent-independent mutation, the mutation drift at locus $l$ being $\mu_i^{(l)} = \frac12(\alpha_i^{(l)} - |\boldsymbol\alpha^{(l)}|x_i^{(l)})$, i.e. mutation rates $u^{(l)}_{ji} = \alpha^{(l)}_i/2$. Data are multinomial samples $\mathbf{Y}(t_n) \mid \mathbf{X}(t_n) = \mathbf{x} \sim \mathrm{MN}(\mathbf{N}_n, \mathbf{x})$ independently at each locus.
 
-$$\mathcal{A} = \sum_{l}\sum_{i}\big(\mu_i^{(l)}(\mathbf{x}^{(l)}) + g_i^{(l)}(\mathbf{x})\big)\partial_{x_i^{(l)}} + \tfrac12\sum_l\sum_{i,j} x_i^{(l)}(\delta_{ij} - x_j^{(l)})\,\partial^2_{x_i^{(l)}x_j^{(l)}},$$
-
-with parent-independent mutation drift $\mu_i^{(l)} = \frac12(\alpha_i^{(l)} - |\boldsymbol\alpha^{(l)}|x_i^{(l)})$ and selection drift $g = D\nabla V_{\boldsymbol\sigma,J}$, $V_{\boldsymbol\sigma,J}(\mathbf{x}) = \mathbf{x}^{\mathsf T}\boldsymbol\sigma + \frac12\mathbf{x}^{\mathsf T}J\mathbf{x}$ ($\boldsymbol\sigma$ single-locus, $J$ symmetric block matrix of two-locus selection coefficients; $D$ the block-diagonal Wright–Fisher diffusion matrix). Data are multinomial samples $\mathbf{Y}(t_n) \mid \mathbf{X}(t_n) = \mathbf{x} \sim \mathrm{MN}(\mathbf{N}_n, \mathbf{x})$ independently at each locus.
-
-**Proposition (reversibility).** The c-WF diffusion is reversible with respect to the tilted product-Dirichlet law
+**Proposition (reversibility).** The c-WF diffusion is reversible with respect to its stationary law, the tilted product-Dirichlet law
 
 $$p_{\boldsymbol\alpha,\boldsymbol\sigma,J}(d\mathbf{x}) = Z^{-1}\prod_{l,i}(x_i^{(l)})^{\alpha_i^{(l)} - 1}\,e^{2V_{\boldsymbol\sigma,J}(\mathbf{x})}\,d\mathbf{x}.$$
 
-**Duality.** With $k(\mathbf{m}) = \mathbb{E}\big[\prod_{l,i}(\tilde X_i^{(l)})^{m_i^{(l)}}\big]$ under $p_{\boldsymbol\alpha,\boldsymbol\sigma,J}$, the diffusion is dual, with duality function $h(\mathbf{x},\mathbf{m}) = \mathbf{x}^{\mathbf{m}}/k(\mathbf{m})$, to a pure-jump process $\mathbf{M}$ on $\mathbb{N}^K$ (block counts of a typed ancestral selection graph) that moves $\mathbf{m} \to \mathbf{m} - e_i^{(l)}$ (coalescence) at rate $\binom{m_i^{(l)}}{2}\frac{k(\mathbf{m} - e_i^{(l)})}{k(\mathbf{m})}$, $\mathbf{m} \to \mathbf{m} - e_i^{(l)} + e_j^{(l)}$ (mutation) at rate $m_i^{(l)}\frac{\alpha_i^{(l)}}{2}\frac{k(\cdot)}{k(\mathbf{m})}$, and branches singly ($+e_j^{(l)}$) or doubly across two loci ($+e_j^{(l)} + e_h^{(r)}$) at rates linear in $\boldsymbol\sigma$ and $J$.
+**Duality.** With $k(\mathbf{m}) = \mathbb{E}\big[\prod_{l,i}(\tilde X_i^{(l)})^{m_i^{(l)}}\big]$ under $p_{\boldsymbol\alpha,\boldsymbol\sigma,J}$ and $h(\mathbf{x},\mathbf{m}) = \mathbf{x}^{\mathbf{m}}/k(\mathbf{m})$, the diffusion is dual with duality function $h$ to the block-counting process $\mathbf{M}$ on $\mathbb{N}^K$ of [coupled ancestral selection graphs](../../coupled-wright-fisher-diffusion-duality/coupled-ancestral-selection-graphs-as-the-dual-of-the-coupled-wright-fisher-diffusion.md): $\mathbb{E}_{\mathbf{x}}[h(\mathbf{X}_t,\mathbf{m})] = \mathbb{E}_{\mathbf{m}}[h(\mathbf{x},\mathbf{M}_t)]$, where $\mathbf{M}$ coalesces and mutates within a locus and branches singly, or doubly across two loci at rates linear in $\boldsymbol\sigma$ and $J$.
 
 **Proposition (filtering).** If $\mathbf{X}(t_n) \mid \mathbf{Y}(t_0{:}t_n) \sim \sum_{\mathbf{m}}\hat c_n(\mathbf{m})\,p_{\boldsymbol\alpha + \mathbf{m},\boldsymbol\sigma,J}$, then
 
 $$\mathbf{X}(t_{n+1}) \mid \mathbf{Y}(t_0{:}t_n) \sim \sum_{\mathbf{n}} c_{n+1}(\mathbf{n})\,p_{\boldsymbol\alpha + \mathbf{n},\boldsymbol\sigma,J}, \qquad c_{n+1}(\mathbf{n}) \propto \sum_{\mathbf{m}}\hat c_n(\mathbf{m})\,p_{\mathbf{m},\mathbf{n}}(t_{n+1} - t_n),$$
 
 with $p_{\mathbf{m},\mathbf{n}}(t)$ the transition probabilities of $\mathbf{M}$; conditioning on $\mathbf{Y}(t_{n+1}) = \mathbf{y}$ shifts each component to $p_{\boldsymbol\alpha + \mathbf{n} + \mathbf{y},\boldsymbol\sigma,J}$ with weights $\propto c_{n+1}(\mathbf{n})\,k(\mathbf{n} + \mathbf{y})/k(\mathbf{n})$. So filtering distributions remain countable mixtures of tilted Dirichlet laws. The marginal smoothing laws $\mathbf{X}(t_i) \mid \mathbf{Y}(t_0{:}t_n)$ are mixtures $\sum_{\mathbf{m},\mathbf{n}} w_i(\mathbf{m},\mathbf{n})\,p_{\boldsymbol\alpha + \mathbf{m} + \mathbf{n},\boldsymbol\sigma,J}$ with $w_i(\mathbf{m},\mathbf{n}) \propto \frac{k(\mathbf{m})k(\mathbf{n})}{k(\mathbf{m} + \mathbf{n})}\,\omega_{i+1}(\mathbf{m})\,\hat c_i(\mathbf{n})$, where $\omega$ is computed by a backward recursion.
+
+## Depends on
+
+- [Coupled Wright–Fisher diffusion with pairwise selection](../../coupled-wright-fisher-diffusion-duality/coupled-wright-fisher-diffusion-with-pairwise-selection.md)
+- [Coupled ancestral selection graphs as the dual of the coupled Wright–Fisher diffusion](../../coupled-wright-fisher-diffusion-duality/coupled-ancestral-selection-graphs-as-the-dual-of-the-coupled-wright-fisher-diffusion.md)
 
 ## Expansion
 

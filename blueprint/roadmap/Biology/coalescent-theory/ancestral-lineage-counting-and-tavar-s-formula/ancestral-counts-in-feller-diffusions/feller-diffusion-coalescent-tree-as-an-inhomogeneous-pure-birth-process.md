@@ -18,6 +18,10 @@ and $\lambda^{\mathrm{coal}}(u;t) = 1/(t-u)$ for $\alpha = 0$. The rate blows up
 
 - [Pólya–Aeppli law of ancestor numbers in a Feller diffusion](polya-aeppli-law-of-ancestor-numbers-in-a-feller-diffusion.md)
 
+## Proof depends on
+
+- [Kendall's extinction probability for the birth–death process](../../../../Probability/branching-processes/linear-birth-death-process/extinction-prob.md)
+
 ## Expansion
 
 A reconstructed linear birth–death process is itself a pure-birth process with inhomogeneous rate $\lambda^{\mathrm{eff}}(u) = \lambda(\lambda-\mu)/(\lambda - \mu e^{-(\lambda-\mu)(T-u)})$. Substituting $T = t-s$ and the rates of the lemma, and letting $s \to 0$ (where $\hat\lambda(s) = s^{-1} + \alpha/2 + O(s)$ and $\hat\mu(s) = s^{-1} - \alpha/2 + O(s)$), gives the stated rate. The lemma itself follows because the Feller diffusion is the limit of near-critical birth–death processes whose ancestor counts over the window $[t-s,t]$ have the same Pólya–Aeppli law.

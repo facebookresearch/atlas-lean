@@ -25,6 +25,10 @@ In the neutral case ($\gamma \equiv 0$) the polymorphic density reduces to the f
 - [Backward generator of the Wright–Fisher diffusion with selection](../../wright-fisher-diffusion/generator.md)
 - [Kimura's fixation probability](../../wright-fisher-diffusion/kimura-fixation.md)
 
+## Proof depends on
+
+- [Green function, occupation times and mean exit times of a one-dimensional diffusion](../../selection-duality-and-general-one-dimensional-di/green-function-occupation-times-and-mean-exit-ti.md)
+
 ## Expansion
 
 The process alternates between boundary sojourns and edge excursions. The embedded boundary chain jumps $u \to v$ at rate $\lambda_{uv}q_{\gamma_{uv}}(x)$ for entry level $x$, and the antisymmetry of $\gamma$ gives the symmetry $\omega_{\gamma_{vu}} = e^{-2\gamma_{uv}}\omega_{\gamma_{uv}}$ (and $q_{\gamma_{vu}}(x) = 1 - q_{\gamma_{uv}}(1-x)$), which is the edge-wise ingredient of detailed balance; together with the cycle condition it makes the boundary chain reversible with law $\eta^{1/N}$, approximated by $\eta$ for large $N$. On each edge, the occupation density of an excursion entering at $x$ is the Green function $G(x, dy)$ of the selected Wright–Fisher diffusion killed at $0$ and $1$; stationarity weights excursions by $\eta_u\lambda_{uv}$, giving $\mu \propto \eta$ on vertices and $\propto \sum \eta_u G(\nu^x_{uv}, dy)$ on edges. Taking $x = 1/N$ and expanding the Green function produces the closed form above, the $\ln N$ in $\Omega_N$ coming from the $1/y$ singularity near the entry point.

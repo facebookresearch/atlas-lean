@@ -17,6 +17,10 @@ where $\bar z = z_b/((1-z_d)N + z_b)$ is the effective impact of the event at si
 3. *Closedness.* If $(\bm\gamma^{(n)}, \Pi^{(n)}) \to (\bm\gamma, \Pi)$ in the sense that $\bm\gamma^{(n)}\cdot\nabla g(\bm 0) + \int g\, d\Pi^{(n)} \to \bm\gamma\cdot\nabla g(\bm 0) + \int g\, d\Pi$ for all bounded continuous $g$ differentiable at $\bm 0$ with $g(\bm 0)=0$, then the processes converge weakly in Skorokhod space; no additional "zero-impact" (Wright–Fisher type) component arises in the limit.
 4. *$\Lambda$-Fleming–Viot limit.* If $\Pi^{(n)}$ concentrates on the diagonal, $\int g\, d\Pi^{(n)} \to \int_0^1 g(u,u)\,u^{-2}\Lambda(du)$ for $g$ vanishing near $\bm 0$, and $\lim_{\epsilon\downarrow 0}\lim_n \int_{[0,\epsilon]^2}\big(z_b/(1-z_d+z_b)\big)^2 d\Pi^{(n)} = \Lambda(\{0\})$, then from $(N_0^{(n)}, \rho_0^{(n)}) \to (1, \rho_0)$ one gets $(N^{(n)}, \rho^{(n)}) \Rightarrow (1, \rho)$ with $\rho$ the $\Lambda$-Fleming–Viot process.
 
+## Depends on
+
+- [Infinite lookdown, de Finetti limit and the Λ-Fleming–Viot process](../../../../coalescent-theory/coalescents/infinite-lookdown-de-finetti-limit-and-lambda-fl.md)
+
 ## Expansion
 
 Because births and deaths are balanced only in mean, small events can occur at rate of order $|\bm z|^{-1}$ (not $u^{-2}$ as for $\Lambda$-Fleming–Viot), which is exactly the subordinator condition; the size process is then a pathwise functional of a subordinator, giving existence and non-explosion. Given the size path, the type process is a $\Lambda$-Fleming–Viot process in a random environment, so a lookdown construction and a Markov-mapping argument give uniqueness. The $\Lambda$-Fleming–Viot limit arises when deaths and births of each event coincide, so $N \to 1$ and the effective impact becomes $u$.

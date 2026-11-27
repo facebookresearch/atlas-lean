@@ -28,6 +28,10 @@ A random variable $Q = \sum_{i=0}^{N} M_i$ ($M_0 := 0$) with $N \sim \mathrm{Poi
 
     with rising factorial $k_{(n)} = k(k+1)\cdots(k+n-1)$.
 
+## Proof depends on
+
+- [Dirichlet–multinomial conjugacy](../../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/with-density-prod-pow-dirichlet-measure.md)
+
 ## Expansion
 
 The Feller transition law is Poisson–gamma: the time-$t$ population is a Poisson number of independent exponential families, one per founder. Applying this at times $t-s$ and $t$ (Markov property), each of the Poisson many founder families alive at time $t$ is split by its own descendants at time $t-s$ into a geometric number of subfamilies with non-empty progeny at $t$, giving the compound-Poisson-geometric structure. Given $k$ ancestral families, their relative sizes at time $t$ are Dirichlet$(1,\dots,1)$, i.e. uniform on the simplex, and sampling $n$ individuals from Dirichlet weights is a Pólya-urn computation: the sample has $j$ ancestors with probability $\binom{k}{j}\frac{n!}{k_{(n)}}\binom{n-1}{j-1}$, independent of the total mass. Averaging this over the law of $A_\infty$ from part 1 gives part 2.

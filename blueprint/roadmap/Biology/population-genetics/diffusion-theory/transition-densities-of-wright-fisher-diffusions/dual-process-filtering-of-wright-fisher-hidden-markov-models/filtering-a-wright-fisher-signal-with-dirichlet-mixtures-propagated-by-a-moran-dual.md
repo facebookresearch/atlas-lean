@@ -26,6 +26,8 @@ So the exact filter stays a finite Dirichlet mixture indexed by dual states. Usi
 ## Depends on
 
 - [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](../../wright-fisher-diffusion-with-selection-and-mutat/k-allele-wright-fisher-generator-on-the-simplex.md)
+- [The Dirichlet law is stationary for parent-independent mutation](../../wright-fisher-diffusion-with-selection-and-mutat/dirichlet-stationary-law-for-parent-independent.md)
+- [Dirichlet–multinomial conjugacy](../../../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/with-density-prod-pow-dirichlet-measure.md)
 
 ## Expansion
 

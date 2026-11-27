@@ -28,6 +28,11 @@ and on a neighbourhood of the initial point it is dominated by $\frac{\vartheta}
 
 - [Maximum likelihood estimator of the recombination rate from a continuously observed Wright–Fisher path](maximum-likelihood-estimator-of-the-recombination-rate-from-a-wright-fisher-path.md)
 
+## Proof depends on
+
+- [Comparison theorem for one-dimensional stochastic differential equations](../../../../Probability/stochastic-calculus/stochastic-differential-equations/comparison-theorem-for-one-dimensional-sdes.md)
+- [Accessible endpoints give almost sure exit with finite mean exit time](../../diffusion-theory/selection-duality-and-general-one-dimensional-di/finite-accessibility-integrals-at-both-endpoints.md)
+
 ## Sources
 
 - Robert C. Griffiths and Paul A. Jenkins, "An estimator for the recombination rate from a continuously observed diffusion of haplotype frequencies", *Journal of Mathematical Biology* 86 (2023), 98, <https://doi.org/10.1007/s00285-023-01931-7>. Numbering as in the preprint arXiv:2212.07747v2, <https://arxiv.org/abs/2212.07747v2>: Section 3.2, Theorem 3.

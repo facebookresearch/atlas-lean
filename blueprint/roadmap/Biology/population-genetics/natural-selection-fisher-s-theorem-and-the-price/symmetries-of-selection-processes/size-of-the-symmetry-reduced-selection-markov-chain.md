@@ -16,6 +16,10 @@ For a well-mixed haploid population ($S = n!$) the lower bound $n+1$ is attained
 
 - [Symmetries of a selection process preserve transition probabilities](symmetries-of-a-selection-process-preserve-transition-probabilities.md)
 
+## Proof depends on
+
+- [Lagrange's theorem: the order of a group is the number of cosets of a subgroup times its order](../../../../GroupTheory/group-basics/lagrange-theorem.md)
+
 ## Expansion
 
 The monochromatic states $\mathbf 0$ and $\mathbf 1$ are fixed by every symmetry and give two orbits. The remaining states split by the number $k \in \{1, \dots, n-1\}$ of $1$ alleles, each class containing at least one orbit, which gives $R \ge n+1$; and each orbit has at most $S$ elements, which gives $R - 2 \ge (2^n - 2)/S$. For the upper bound, the states with $k$ ones form a set of size $\binom nk$ on which the group acts; an orbit has size $S/|\mathrm{Stab}|$, and a stabiliser of a $k$-subset embeds in $\mathrm{Sym}(k) \times \mathrm{Sym}(n-k)$, so by Lagrange its order divides $\gcd(S, k!(n-k)!)$. Hence each orbit has at least $S/\gcd(S, k!(n-k)!)$ elements, and the number of orbits at level $k$ is at most $\binom nk \gcd(S, k!(n-k)!)/S$.

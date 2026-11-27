@@ -28,6 +28,10 @@ $$\lambda = (1 - p)\,\frac{\log p - \log r}{p - r}, \qquad \mu = (1 - r)\,\frac{
 
 - [Generation-size law of a Galton–Watson process](../../../../Probability/branching-processes/galton-watson-process/law.md)
 
+## Proof depends on
+
+- [Kendall's law of the linear birth–death process](../../../../Probability/branching-processes/linear-birth-death-process/prob.md)
+
 ## Expansion
 
 Linear-fractional laws are mixtures of a point mass at $0$ and a shifted geometric law, and their generating functions are Möbius maps, closed under composition, so every generation size is again linear fractional; this makes the reduced tree renewal-like, so consecutive coalescence depths forget the past, which gives the i.i.d. property and the explicit tail. For Bernoulli sampling, the depth between consecutive kept tips is the maximum of a geometric$(y)$ number of independent copies of $H$, so $\mathbb P(H_y \le n) = y F(n) / (1 - (1-y)F(n))$ with $F(n) = \mathbb P(H \le n)$; solving for the tail gives the displayed formula, and independence of the blocks between consecutive kept tips gives the i.i.d. property. The tree likelihoods follow because the reduced tree is determined by its node depths, and conditioning on $N_T = n$ turns the geometric stopping into $n - 1$ i.i.d. draws of $H$ given $H \le T$.

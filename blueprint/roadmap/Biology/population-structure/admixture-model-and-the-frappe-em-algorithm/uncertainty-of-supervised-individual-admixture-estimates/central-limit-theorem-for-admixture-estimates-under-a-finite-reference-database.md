@@ -26,6 +26,10 @@ Assume (A1) whenever $x_{im} > 0$ some $p_{kim} > 0$, and (A2, identifiability) 
 
     with $E_K$ the $K \times K$ identity, is the covariance of the score obtained by propagating the multinomial sampling covariance of each $P^N_{k\cdot m}$ through the derivative of $\nabla_q\ell$ with respect to $p$. The limit is degenerate along $\mathbf 1$, since $\hat Q^N$ and $\hat q$ both sum to one.
 
+## Proof depends on
+
+- [Delta method](../../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/delta-method.md)
+
 ## Expansion
 
 Errors in $\hat Q^N$ have two sources: the finite number $M$ of markers in the sample (the usual ML fluctuation) and the finite reference database, which perturbs $p$. The second is a delta-method computation: an interior $\hat q$ solves the first-order condition $\nabla_q \ell(p, q) = \mathbf 1$ (a zero tangent score), so a perturbation $\delta p$ moves the maximizer by $-(\nabla_q^2\ell)^{-1}\nabla_p\nabla_q\ell\,\delta p$ to first order, which produces the sandwich covariance $\Sigma_x\Gamma_x\Sigma_x$. Because reference frequencies enter every marker, reference-panel noise does not average out as fast as sample noise, so for small panels it can dominate the uncertainty of reported ancestry proportions.

@@ -34,6 +34,7 @@ with drift $\gamma(\cdot,\vartheta)$ encoding mutation and selection with unknow
 ## Depends on
 
 - [Wright–Fisher generator with two-way mutation](../../wright-fisher-diffusion-with-mutation/mutation-generator.md)
+- [Jacobi series of the Wright–Fisher transition density with mutation](../jacobi-series-of-the-mutation-transition-density.md)
 
 ## Expansion
 

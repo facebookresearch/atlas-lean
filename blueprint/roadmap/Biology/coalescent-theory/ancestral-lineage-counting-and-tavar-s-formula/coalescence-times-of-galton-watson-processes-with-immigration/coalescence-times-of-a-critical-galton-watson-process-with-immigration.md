@@ -29,6 +29,10 @@ Then:
 
 Without immigration (one ancestor, conditioned on $Y_n\ge2$) the analogous limit of Athreya has a geometric number $N_u\ge1$ of exponential families; with immigration $N^I_u$ can be $0$, and when $\gamma=1$ the law of $N^I_u+1$ is that geometric law.
 
+## Proof depends on
+
+- [Greenwood–Yule](../../../../Probability/distributions/discrete/negative-binomial-and-beta-binomial-distribution/gamma-poisson-mixture/poisson-mixture-real-gamma-measure.md)
+
 ## Expansion
 
 Two individuals sampled at time $n$ have coalesced at or after generation $k$ exactly when both descend from the same individual of generation $k$ or from the same later immigrant. Hence

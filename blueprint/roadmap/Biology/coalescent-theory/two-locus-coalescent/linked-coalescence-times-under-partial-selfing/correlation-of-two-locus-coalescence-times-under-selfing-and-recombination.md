@@ -31,6 +31,10 @@ At the extremes, for every $N\ge2$: with no recombination ($r_N=0$), $\operatorn
 
 - [Covariance of the coalescence times, path form](../covariance-coalescence-times.md)
 
+## Proof depends on
+
+- [Inbreeding coefficient under partial self-fertilization](../../../population-genetics/inbreeding-and-regular-systems-of-mating/inbreeding-under-partial-selfing.md)
+
 ## Expansion
 
 The covariances are computed exactly by first-step analysis on the 13-state chain ($\mathbb{E}_q[T_iT_j]$ solves a linear system in the transition matrix), and then expanded in $N$ under each of the four scalings; dividing by the single-locus variances, e.g. $\operatorname{Var}_{\rm same}[T_i] = 4(1-s_N)N^2 + 2(1-s_N)N + 2$ and $\operatorname{Var}_{\rm diff}[T_i] = (2-s_N)^2N^2 + (2-3s_N)N + 2$, gives the correlations. Recombination decouples the genealogies and selfing re-couples them: when $r = O(1)$ the correlation is $O(1/N)$ except for the configuration $q_{12}$ under strong selfing, where both pairs start in one individual and coalesce together through a run of selfing generations before any outcrossing separates them. For unlinked loci ($r = 1/2$, so $R = 1/2$), scenario 3 gives $\operatorname{Corr}_{q_{12}}\sim(3\tilde\sigma+1)/(12N)$: this is $1/(3N)$ at $\tilde\sigma = 1$ (where $\operatorname{Corr}_{q_{12}} = \operatorname{Corr}_{q_{11}}$), and its no-selfing value $1/(12N)$, the limit $\tilde\sigma\to0$, matches a previously known asymptotic lower bound for the Wright–Fisher model without selfing.
