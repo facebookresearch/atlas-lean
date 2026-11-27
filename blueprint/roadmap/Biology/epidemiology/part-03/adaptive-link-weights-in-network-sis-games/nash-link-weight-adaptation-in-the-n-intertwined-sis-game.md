@@ -1,6 +1,6 @@
 # Nash link-weight adaptation in the N-intertwined SIS game
 
-**Model.** On a directed network with nodes $i \in \mathcal{N} = \{1, \dots, N\}$, let $p_i(t) \in [0,1]$ be the probability that node $i$ is infected and $\mathcal{N}^{\mathrm{out}}_i$ the set of nodes that $i$ reaches out to, with pre-epidemic weights $a_{ij} > 0$. Node $i$ chooses time-varying weights $w_{ij}(t) \in [0, a_{ij}]$ for $j \in \mathcal{N}^{\mathrm{out}}_i$, and infection follows the N-intertwined SIS dynamics
+**Model.** On a directed network with nodes $i \in \mathcal{N} = \{1, \dots, N\}$, let $p_i(t) \in [0,1]$ be the probability that node $i$ is infected and $\mathcal{N}^{\mathrm{out}}_i$ the set of nodes that $i$ reaches out to, with pre-epidemic weights $a_{ij} > 0$. Node $i$ chooses time-varying weights $w_{ij}(t) \in [0, a_{ij}]$ for $j \in \mathcal{N}^{\mathrm{out}}_i$, and infection follows the directed, weighted, node-dependent N-intertwined SIS dynamics (generalizing the NIMFA equations)
 
 $$\dot p_i = (1 - p_i) \sum_{j \in \mathcal{N}^{\mathrm{out}}_i} w_{ij}\, \beta_j\, p_j - \delta_i p_i ,$$
 
@@ -24,7 +24,7 @@ Reported properties: $x_{ii}(t) \ge 0$ on $[0, T]$ with equality only at $t = T$
 
 ## Depends on
 
-- [Threshold theorem for the SIS model](../../sis-epidemic-model/deriv-infected-pos-iff.md)
+- [NIMFA equations and their spectral epidemic threshold](../n-intertwined-mean-field-approximation/nimfa-equations-and-their-spectral-epidemic-threshold.md)
 
 ## Expansion
 
