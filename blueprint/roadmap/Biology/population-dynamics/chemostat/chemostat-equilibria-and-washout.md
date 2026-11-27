@@ -5,14 +5,16 @@ $\mu(S) = \mu_m S / (K_s + S)$, $\mu_m, K_s > 0$, the chemostat balances for bio
 $S$ are
 
 $$\frac{dX}{dt} = \bigl(\mu(S) - D\bigr) X, \qquad
-\frac{dS}{dt} = D (S_f - S) - \frac{1}{y} \, \mu(S) X .$$
+\frac{dS}{dt} = D (S_f - S) - \frac{1}{y} \, \mu(S) X ,$$
+
+and their steady states are the zeros of the [chemostat vector field](vector-field.md).
 
 Let $D_c = \mu(S_f) = \mu_m S_f / (K_s + S_f)$, the critical dilution rate; note $0 < D_c < \mu_m$. In
 the closed quadrant $X \ge 0$, $S \ge 0$:
 
 - the washout state $(X, S) = (0, S_f)$ is a steady state for every $D > 0$;
 - if $D \ge D_c$, it is the only steady state;
-- if $D < D_c$, there is exactly one further steady state,
+- if $D < D_c$, there is exactly one further steady state, the [interior steady state](interior-state.md)
 
     $$S^* = \frac{D K_s}{\mu_m - D}, \qquad X^* = y \, (S_f - S^*),$$
 
@@ -25,10 +27,6 @@ A steady state has $X(\mu(S) - D) = 0$: either $X = 0$, and then $S = S_f$, or $
 $S \ge 0$ has the unique solution $S^*$ when $D < \mu_m$ and none when $D \ge \mu_m$; the substrate
 balance then gives $X = y(S_f - S^*)$, which is positive exactly when $D < D_c$ and is $0$ at
 $D = D_c$, where the state is washout itself.
-
-## Depends on
-
-## Proof depends on
 
 ## Sources
 
