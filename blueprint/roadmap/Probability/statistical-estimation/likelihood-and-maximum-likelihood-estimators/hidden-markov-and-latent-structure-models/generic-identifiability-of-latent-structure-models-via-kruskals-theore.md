@@ -1,0 +1,15 @@
+# Generic identifiability of latent structure models via Kruskal's theorem
+
+In the latent class model $\mathcal M(r; k_1, \dots, k_p)$, $p \ge 3$ observed variables with $k_j$ states are conditionally independent given a hidden class with $r$ states. The parameters are generically identifiable if the non-identifiable parameters form a set of measure zero, characterized by algebraic conditions. Allman, Matias and Rhodes (2009, Theorem 4) prove: if the observed variables admit a tripartition $S_1, S_2, S_3$ into nonempty subsets with $\kappa_i = \prod_{j \in S_i} k_j$ and $\min(r, \kappa_1) + \min(r, \kappa_2) + \min(r, \kappa_3) \ge 2r + 2$, then the model parameters are generically identifiable up to label swapping, also when the mixing proportions are held fixed and positive. The engine is Kruskal's theorem, as stated in their Theorem 1: if the Kruskal ranks $I_1, I_2, I_3$ of three matrices with $r$ rows satisfy $I_1 + I_2 + I_3 \ge 2r + 2$, then the three-way tensor $[M_1, M_2, M_3]$ determines the $M_j$ up to simultaneous permutation and rescaling of the rows. As applications they prove that the parameters of a hidden Markov model with $r$ hidden and $\kappa$ observable states, whose hidden chain is stationary (started from its stationary distribution, as the source assumes), are generically identifiable from the marginal distribution of $2k + 1$ consecutive variables whenever $\binom{k + \kappa - 1}{\kappa - 1} \ge r$ (Theorem 6), and that the parameters of the random graph mixture model with two node states, in which the node classes are i.i.d. with class probabilities $\pi \in (0, 1)^2$, so that both classes have positive weight, and edges are conditionally independent Bernoulli variables with symmetric connection parameters $p_{ij} \in [0, 1]$, are strictly identifiable up to label swapping when there are at least $16$ nodes and the connection parameters $p_{11}, p_{12}, p_{22}$ are distinct (Theorem 7).
+
+## Expansion
+
+1. The model: latent class models, their parameters, generic identifiability up to label swapping, and the Kruskal rank of a matrix.
+2. Kruskal's theorem on the uniqueness of three-way tensor decompositions (Theorem 1) and its reformulation for three-variable latent class models (Corollary 2).
+3. Grouping observed variables into three composite variables by row-wise tensor products (Lemma 12), and the generic Kruskal ranks $\min(r, \kappa_i)$, giving Theorem 4.
+4. The hidden Markov model application (Theorem 6), by grouping the observations before and after a middle time.
+5. Random graph mixtures (Theorem 7) and nonparametric mixtures, as separate statements.
+
+## Sources
+
+- E. S. Allman, C. Matias and J. A. Rhodes, Identifiability of parameters in latent structure models with many observed variables, Ann. Statist. 37 (2009), 3099–3132; arXiv:0809.5032, Theorems 1, 4, 6 and 7. <https://arxiv.org/abs/0809.5032>

@@ -16,5 +16,6 @@ Categories enriched in abelian groups and modules: preadditive, additive and lin
 - [Kernels of split complementary projectors](kernels-of-split-complementary-projectors/README.md)
 - [Locally finite split-image coproduct inverses](locally-finite-split-image-coproduct-inverses/README.md)
 - [Objects killed by an integer](objects-killed-by-an-integer/README.md)
+- [Semisimple objects and categories](semisimple-objects-and-categories/README.md)
 - [Quillen exact functors](quillen-exact-functors/README.md)
 - [The canonical split exact structure](the-canonical-split-exact-structure/README.md)

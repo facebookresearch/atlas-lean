@@ -254,9 +254,15 @@ class Pages(Fixture):
                          f"## Sources\n\n- {SOURCE}\n")
         # The folder joins its field's list after the folders it lists; nothing else of the page changes.
         self.assertEqual(self.page("Algebra/groups/README.md"), GROUPS + "- [Sylow theorems](sylow-theorems/README.md)\n")
+        # The rows join the links file where the sync puts rows (sync_wiki.inserted): in path order, the folder page's
+        # ahead of its pages, after Lagrange's theorem's, the last row whose page comes before theirs; no other byte
+        # changes.
         links = (sync.LINKS / "Algebra.jsonl").read_text()
-        self.assertTrue(links.startswith(before))
-        folder, existence, conjugacy = (json.loads(line) for line in links[len(before):].splitlines())
+        added = [line for line in links.splitlines() if line not in before.splitlines()]
+        self.assertEqual(links.splitlines()[4:7], added)
+        self.assertEqual("".join(line + "\n" for line in links.splitlines() if line not in added), before)
+        self.assertEqual(links, sync.inserted(before, [json.loads(line) for line in added]))
+        folder, conjugacy, existence = (json.loads(line) for line in added)
         sha = digest("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows))
         self.assertEqual(folder, {
             "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/sylow-theorems/README.md"}],
@@ -343,10 +349,14 @@ class Placement(Fixture):
                          "# Ideals\n\n- [Title of maximal-ideal](maximal-ideal.md)\n"
                          "- [Title of prime-ideal](prime-ideal.md)\n")
         self.assertTrue(self.page("Algebra/README.md").endswith("- [Groups](groups/README.md)\n- [Rings](rings/README.md)\n"))
+        # The folder pages' rows go in path order, after Lagrange's theorem's, the last row whose page comes before
+        # theirs, as the sync puts rows (sync_wiki.inserted): ahead of the group actions folder's, which the fixture
+        # holds out of order.
         folders = [row["subject"][0]["uri"] for row in self.rows() if row["subject"][0]["uri"].endswith("/README.md")]
-        self.assertEqual(folders[-3:], ["../roadmap/Algebra/rings/README.md",
-                                        "../roadmap/Algebra/rings/local-rings/README.md",
-                                        "../roadmap/Algebra/rings/ideals/README.md"])
+        self.assertEqual(folders, ["../roadmap/Algebra/README.md", "../roadmap/Algebra/groups/README.md",
+                                   "../roadmap/Algebra/rings/README.md", "../roadmap/Algebra/rings/ideals/README.md",
+                                   "../roadmap/Algebra/rings/local-rings/README.md",
+                                   "../roadmap/Algebra/groups/actions/README.md"])
 
 
 def listing(page: str) -> list[str]:
@@ -593,6 +603,197 @@ class Parts(Fixture):
         for number in range(21):  # 24 children with cosets, lagrange and actions
             self.write(f"blueprint/roadmap/Algebra/groups/extra-{number:02d}.md", f"# Extra {number}\n\nText.\n")
         self.refused([planned("alpha"), planned("beta")], "blueprint/roadmap/Algebra/groups has 24 direct children")
+
+
+class LinksRows(Fixture):
+    """Each annotation row joins its links file among the rows already there in path order, where the sync puts a row
+    (sync_wiki.inserted), every other byte kept, so that imports that add pages in different places add lines in
+    different places; the map only grows at its end."""
+
+    def links(self) -> Path:
+        return sync.LINKS / "Algebra.jsonl"
+
+    def in_path_order(self, separator: str = "\n", last: str = "\n") -> str:
+        """The fixture's links file with its rows in path order, as the sync would have added them, *separator* between
+        rows and *last* after the last."""
+        rows = sorted(self.rows(), key=sync.row_order)
+        text = separator.join(json.dumps(row, ensure_ascii=False) for row in rows) + last
+        self.links().write_bytes(text.encode("utf-8"))
+        return text
+
+    def planned_links(self, rows: list) -> str:
+        """The links file the plan of *rows* would write, written nowhere."""
+        return importer.make_plan(*self.manifest(rows)).edits[self.links()][1].decode("utf-8")
+
+    @staticmethod
+    def added(before: str, after: str) -> list[dict]:
+        """The rows of *after* that *before* does not hold, in the order *after* holds them."""
+        old = set(sync.records(before)[0])
+        return [json.loads(line) for line in sync.records(after)[0] if line.strip() and line not in old]
+
+    @staticmethod
+    def uris(text: str) -> list[str]:
+        return [json.loads(line)["subject"][0]["uri"][len("../roadmap/"):] for line in sync.records(text)[0] if line]
+
+    def test_rows_go_between_their_siblings_ahead_of_every_row_or_after_the_last(self) -> None:
+        before = self.in_path_order()
+        self.applied([planned("d-page")])
+        middle = self.links().read_text()
+        # Between the siblings its path falls between, not at the end.
+        self.assertEqual(self.uris(middle), ["Algebra/README.md", "Algebra/groups/README.md",
+                                             "Algebra/groups/actions/README.md",
+                                             "Algebra/groups/actions/orbit-stabilizer.md", "Algebra/groups/cosets.md",
+                                             "Algebra/groups/d-page.md", "Algebra/groups/lagrange.md"])
+        self.assertEqual(middle, sync.inserted(before, self.added(before, middle)))
+        mapped = importer.MAP.read_bytes()
+        self.applied([planned("zeta")])
+        # After the last row when its path comes last; the map gains its line at its end.
+        self.assertEqual(self.uris(self.links().read_text())[-2:], ["Algebra/groups/lagrange.md", "Algebra/groups/zeta.md"])
+        self.assertEqual(importer.MAP.read_bytes()[:len(mapped)], mapped)
+        self.assertEqual([row["key"] for row in self.mapped()], ["d-page", "zeta"])
+        # Ahead of every row when no row's page comes before its own.
+        lagrange = next(row for row in self.rows() if row["subject"][0]["uri"] == "../roadmap/Algebra/groups/lagrange.md")
+        self.links().write_text(json.dumps(lagrange, ensure_ascii=False) + "\n")
+        self.applied([planned("alpha")])
+        self.assertEqual(self.uris(self.links().read_text()), ["Algebra/groups/alpha.md", "Algebra/groups/lagrange.md"])
+
+    def test_taking_the_added_rows_out_gives_back_the_files_bytes(self) -> None:
+        # Whatever the file's separators, and with or without one after its last row, as insert_rows keeps them.
+        for separator, last in (("\n", "\n"), ("\n", ""), ("\r\n", "\r\n"), ("\r\n", "")):
+            with self.subTest(separator=separator, last=last):
+                before = self.in_path_order(separator, last)
+                after = self.planned_links([planned("b-page"), planned("m-page"), planned("zeta")])
+                added = self.added(before, after)
+                self.assertEqual([row["subject"][0]["uri"] for row in added],
+                                 [f"../roadmap/Algebra/groups/{key}.md" for key in ("b-page", "m-page", "zeta")])
+                self.assertEqual(after, sync.inserted(before, added))
+                kept = after
+                for row in added:
+                    dumped = json.dumps(row, ensure_ascii=False)
+                    kept = (kept.replace(dumped + separator, "", 1) if dumped + separator in kept
+                            else kept.replace(separator + dumped, "", 1))
+                self.assertEqual(kept, before)
+        # Applied, the file holds the planned bytes.
+        before = self.in_path_order("\r\n", "")
+        planned_text = self.planned_links([planned("b-page")])
+        self.applied([planned("b-page")])
+        self.assertEqual(self.links().read_bytes(), planned_text.encode("utf-8"))
+
+    def test_a_new_folder_and_its_parts_take_the_places_the_sync_gives_their_rows(self) -> None:
+        # A topic folder split into transparent parts: its page's row ahead of its parts', each part's ahead of its
+        # pages', all after Lagrange's theorem's, the last row whose page comes before theirs, and ahead of the group
+        # actions rows, which the fixture holds out of order; exactly the bytes the sync's placement gives.
+        before = self.links().read_text()
+        keys = [f"sylow-{number:02d}" for number in range(1, 22)]
+        self.applied([planned(key, page_dir="blueprint/roadmap/Algebra/groups/sylow-theorems") for key in keys])
+        after = self.links().read_text()
+        self.assertEqual(after, sync.inserted(before, self.added(before, after)))
+        folder = "Algebra/groups/sylow-theorems"
+        self.assertEqual(self.uris(after), [
+            "Algebra/README.md", "Algebra/groups/README.md", "Algebra/groups/cosets.md", "Algebra/groups/lagrange.md",
+            f"{folder}/README.md", f"{folder}/part-01/README.md", *(f"{folder}/part-01/{key}.md" for key in keys[:20]),
+            f"{folder}/part-02/README.md", f"{folder}/part-02/sylow-21.md",
+            "Algebra/groups/actions/README.md", "Algebra/groups/actions/orbit-stabilizer.md"])
+
+    def test_a_new_part_of_an_existing_field_and_its_pages_take_the_sync_places(self) -> None:
+        for number in range(20):  # 23 children with cosets, lagrange and actions
+            self.write(f"blueprint/roadmap/Algebra/groups/extra-{number:02d}.md", f"# Extra {number}\n\nText.\n")
+        before = self.in_path_order()
+        self.applied([planned(key) for key in ("gamma", "alpha", "beta")])
+        after = self.links().read_text()
+        self.assertEqual(after, sync.inserted(before, self.added(before, after)))
+        self.assertEqual(self.uris(after)[-5:], ["Algebra/groups/lagrange.md", "Algebra/groups/part-01/README.md",
+                                                 "Algebra/groups/part-01/alpha.md", "Algebra/groups/part-01/beta.md",
+                                                 "Algebra/groups/part-01/gamma.md"])
+
+    def test_imports_into_different_places_of_one_links_file_merge_without_conflict(self) -> None:
+        # Two imports from one base, each adding a page in its own place: their links files merge cleanly, where rows
+        # appended at the end, as the importer used to write them, conflict.
+        base = self.in_path_order()
+        ours = self.planned_links([planned("b-page")])
+        theirs = self.planned_links([planned("m-page")])
+        appended = [base + "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in self.added(base, text))
+                    for text in (ours, theirs)]
+        repository = self.tmp / "merge"
+        repository.mkdir()
+
+        def git(*args: str) -> subprocess.CompletedProcess:
+            return subprocess.run(["git", "-C", str(repository), "-c", "user.name=Test", "-c",
+                                   "user.email=test@example.com", *args], capture_output=True, text=True)
+
+        def branch(name: str, text: str) -> None:
+            git("checkout", "-q", "-B", name, "base")
+            (repository / "Algebra.jsonl").write_bytes(text.encode("utf-8"))
+            git("commit", "-q", "-am", name)
+
+        git("init", "-q")
+        (repository / "Algebra.jsonl").write_bytes(base.encode("utf-8"))
+        git("add", "Algebra.jsonl")
+        git("commit", "-q", "-m", "base")
+        git("branch", "base")
+        usage = git("merge-tree", "-h")
+        if "--write-tree" not in usage.stdout + usage.stderr:
+            self.skipTest("git merge-tree has no --write-tree")
+        for name, (one, other) in (("inserted", (ours, theirs)), ("appended", appended)):
+            branch(f"{name}-ours", one)
+            branch(f"{name}-theirs", other)
+        merged = git("merge-tree", "--write-tree", "inserted-ours", "inserted-theirs")
+        self.assertEqual(merged.returncode, 0, merged.stdout + merged.stderr)
+        tree = merged.stdout.split()[0]
+        text = git("show", f"{tree}:Algebra.jsonl").stdout
+        self.assertEqual(self.uris(text), ["Algebra/README.md", "Algebra/groups/README.md",
+                                           "Algebra/groups/actions/README.md", "Algebra/groups/actions/orbit-stabilizer.md",
+                                           "Algebra/groups/b-page.md", "Algebra/groups/cosets.md",
+                                           "Algebra/groups/lagrange.md", "Algebra/groups/m-page.md"])
+        conflicted = git("merge-tree", "--write-tree", "appended-ours", "appended-theirs")
+        self.assertEqual(conflicted.returncode, 1, conflicted.stdout + conflicted.stderr)
+        self.assertIn("CONFLICT (content): Merge conflict in Algebra.jsonl", conflicted.stdout)
+
+    def test_on_a_file_out_of_path_order_a_row_follows_the_greatest_row_below_it_wherever_it_stands(self) -> None:
+        # Lagrange's theorem's row stands before cosets' though its path sorts after it: zeta, whose path sorts after
+        # both, follows Lagrange's row, and d-page, between them, follows cosets' row; neither goes to the end.
+        rows = {row["subject"][0]["uri"]: row for row in self.rows()}
+        out_of_order = [rows[f"../roadmap/Algebra/groups/{name}.md"] for name in ("lagrange", "cosets")]
+        self.links().write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in out_of_order))
+        self.applied([planned("zeta"), planned("d-page")])
+        self.assertEqual(self.uris(self.links().read_text()), ["Algebra/groups/lagrange.md", "Algebra/groups/zeta.md",
+                                                               "Algebra/groups/cosets.md", "Algebra/groups/d-page.md"])
+
+    def test_a_row_whose_subject_comes_from_the_folder_defaults_is_placed_as_insert_rows_places_it(self) -> None:
+        # A row may take its subject from the links folder's defaults (_defaults.json), as Autoform merges them: it is
+        # placed by that page. Here cosets' row has no subject of its own. With the defaults naming cosets, b-page,
+        # whose path sorts before every row's, goes first; with them naming orbit-stabilizer, which sorts before
+        # b-page, it goes after that row. Either way the plan writes what insert_rows writes for the same defaults.
+        rows = {row["subject"][0]["uri"]: row for row in self.rows()}
+        cosets = rows["../roadmap/Algebra/groups/cosets.md"]
+        inherited = json.dumps({key: value for key, value in cosets.items() if key != "subject"}, ensure_ascii=False)
+        lagrange = json.dumps(rows["../roadmap/Algebra/groups/lagrange.md"], ensure_ascii=False)
+        text = inherited + "\n" + lagrange + "\n"
+        copy = self.tmp / "copy.jsonl"
+        for page, position in (("cosets.md", 0), ("actions/orbit-stabilizer.md", 1)):
+            with self.subTest(page=page):
+                (sync.LINKS / "_defaults.json").write_text(json.dumps(
+                    {**sync.DEFAULTS, "subject": [{"type": "generic", "uri": f"../roadmap/Algebra/groups/{page}"}]}) + "\n")
+                self.assertEqual(sync.page_key(json.loads(inherited)), f"Algebra/groups/{page}")
+                self.links().write_text(text)
+                written = self.planned_links([planned("b-page")])
+                added = self.added(text, written)
+                self.assertEqual([row["subject"][0]["uri"] for row in added], ["../roadmap/Algebra/groups/b-page.md"])
+                lines = [inherited, lagrange]
+                lines.insert(position, json.dumps(added[0], ensure_ascii=False))
+                self.assertEqual(written, "".join(line + "\n" for line in lines))
+                copy.write_text(text)
+                sync.insert_rows(copy, added)
+                self.assertEqual(copy.read_text(), written)
+
+    def test_the_check_names_each_row_and_the_rule_that_places_it(self) -> None:
+        self.in_path_order()
+        code, out, err = self.run_importer([planned("d-page")], mode="--check")
+        self.assertEqual(code, 0, err)
+        self.assertIn("\nLines to add: ", out)
+        self.assertIn("      the annotation of blueprint/roadmap/Algebra/groups/d-page.md, right after the row whose page's "
+                      "path comes last before its own, wherever that row stands, or first if none does\n", out)
+        self.assertIn("      the map row of d-page, at its end\n", out)
 
 
 class Lists(Fixture):
@@ -2080,7 +2281,8 @@ class MathlibRows(MapFixture):
         base = self.commit()
         self.applied([credited("sqrt-two-irrational")])
         after = links.read_text()
-        links.write_text(after.replace(text, claimed, 1))
+        links.write_text(after.replace(json.dumps(cosets, ensure_ascii=False), json.dumps(
+            {**cosets, "object": [{"location": {"declaration": "irrational_sqrt_two"}}]}, ensure_ascii=False), 1))
         self.map_refused(f"scripts/mathgraph-map.jsonl line 1 (sqrt-two-irrational), appended since {base}: {message}",
                          "--base", base)
 
