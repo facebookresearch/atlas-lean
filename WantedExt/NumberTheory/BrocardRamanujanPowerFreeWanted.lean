@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.IsPrimePow
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Nat.PrimeFin
+public import MathlibExt.NumberTheory.BrocardRamanujanFewPrimeFactors
 public import MathlibExt.NumberTheory.BrocardRamanujanPowerFree
 public import MathlibExt.NumberTheory.FactorialDivisor
 public import MathlibExt.NumberTheory.FactorialDivisorBound
@@ -57,29 +58,6 @@ public theorem_wanted brocardRamanujan_sevenFree_subset :
     {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧
       ((p.2 - 1).IsPowerFree 7 ∨ (p.2 + 1).IsPowerFree 7)} ⊆
       {(4, 5), (5, 11), (7, 71)}
-
-/-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ having few prime factors are finite.**
-For every natural number $l \ge 2$, there are only finitely many pairs of natural numbers
-$(n, x)$ with $n! + 1 = x^2$ such that $x - 1$ or $x + 1$ has fewer than $l$ distinct prime
-divisors.
-
-Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
-Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(ii), first
-sentence (`integers-2025-A71-thm-1`). -/
-public theorem_wanted brocardRamanujan_fewPrimeFactors_finite (l : ℕ) (hl : 2 ≤ l) :
-    {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧
-      ((p.2 - 1).primeFactors.card < l ∨ (p.2 + 1).primeFactors.card < l)}.Finite
-
-/-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ a prime power.** If natural numbers
-$n$ and $x$ satisfy $n! + 1 = x^2$ and $x - 1$ or $x + 1$ is a prime power, then
-$(n, x) = (4, 5)$.
-
-Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
-Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(ii),
-second sentence (`integers-2025-A71-thm-1`). -/
-public theorem_wanted brocardRamanujan_primePow_subset :
-    {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧ (IsPrimePow (p.2 - 1) ∨ IsPrimePow (p.2 + 1))} ⊆
-      {(4, 5)}
 
 /-- **Finitely many Brocard–Ramanujan solutions of polynomial shape.** Let $k \ge 2$, $l \ge 2$
 and $m \ge 1$ be natural numbers and let $P \in \mathbb{Z}[X_1, \ldots, X_m]$. Write

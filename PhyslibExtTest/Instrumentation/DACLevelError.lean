@@ -50,16 +50,16 @@ private lemma signedTwoBit_fixture :
     omega
   have e_neg2 : alternatingError (-2) = 1 / 4 := by
     unfold alternatingError
-    exact if_pos hE_neg2
+    exact ite_eq_left hE_neg2
   have e_neg1 : alternatingError (-1) = -(1 / 4) := by
     unfold alternatingError
-    exact if_neg hO_neg1
+    exact ite_eq_right hO_neg1
   have e_0 : alternatingError 0 = 1 / 4 := by
     unfold alternatingError
-    exact if_pos hE_0
+    exact ite_eq_left hE_0
   have e_1 : alternatingError 1 = -(1 / 4) := by
     unfold alternatingError
-    exact if_neg hO_1
+    exact ite_eq_right hO_1
   have L_neg2 : dacLevel 1 alternatingError (-2) = -7 / 4 := by
     simp only [dacLevel, e_neg2]
     push_cast
