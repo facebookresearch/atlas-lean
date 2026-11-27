@@ -24,7 +24,7 @@ which is identically zero for antisymmetric $A$. Conversely, a polynomial vanish
 
 ## Depends on
 
-- [Solution of the replicator equation](../../replicator-dynamics/is-solution.md)
+- [Solution of the replicator equation](../../../replicator-dynamics/is-solution.md)
 
 ## Sources
 

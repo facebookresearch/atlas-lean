@@ -26,7 +26,7 @@ After time reversal the homoclinic orbit to the saddle-focus satisfies Shilnikov
 
 ## Depends on
 
-- [Solution of the replicator equation](../../replicator-dynamics/is-solution.md)
+- [Solution of the replicator equation](../../../replicator-dynamics/is-solution.md)
 
 ## Sources
 

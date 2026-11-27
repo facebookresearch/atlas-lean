@@ -23,7 +23,7 @@ With an interior equilibrium $x^*$, $\frac{d}{dt}\sum_i \mathrm{KL}(x_i^* \| x_i
 ## Depends on
 
 - [Volume conservation of replicator dynamics characterizes zero-sum games](volume-conservation-of-replicator-dynamics-characterizes-zero-sum-games.md)
-- [Solution of the replicator equation](../../replicator-dynamics/is-solution.md)
+- [Solution of the replicator equation](../../../replicator-dynamics/is-solution.md)
 
 ## Sources
 
