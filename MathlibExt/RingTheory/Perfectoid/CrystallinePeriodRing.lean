@@ -255,8 +255,8 @@ def levelRingHom (hgen : RingHom.ker (fontaineTheta 𝓞_ℂ_[p] p) = span {w}) 
 theorem levelRingHom_apply (hgen : RingHom.ker (fontaineTheta 𝓞_ℂ_[p] p) = span {w})
     (m : ℕ) (x : CrystallineCompletion p w) : levelRingHom hgen m x = levelValue w m x := rfl
 
-/-- The values at the levels `m ≤ n` are compatible with the projection
-`W(𝓞_ℂ_[p]♭)[1/p] / (ker θ)^n → W(𝓞_ℂ_[p]♭)[1/p] / (ker θ)^m`. -/
+/-- For a generator `w` of the kernel of `θ`, the values at the levels `m ≤ n` are compatible
+with the projection `W(𝓞_ℂ_[p]♭)[1/p] / (ker θ)^n → W(𝓞_ℂ_[p]♭)[1/p] / (ker θ)^m`. -/
 theorem factorPow_comp_levelRingHom
     (hgen : RingHom.ker (fontaineTheta 𝓞_ℂ_[p] p) = span {w}) {m n : ℕ} (hle : m ≤ n) :
     (Ideal.Quotient.factorPow 𝕀 hle).comp (levelRingHom hgen n) = levelRingHom hgen m := by
@@ -313,9 +313,9 @@ theorem toBDeRhamPlus_algebraMap (hgen : RingHom.ker (fontaineTheta 𝓞_ℂ_[p]
 
 /-! ### Image and injectivity -/
 
-/-- The image of the map `A_cris → B_dR^+` is the set of values `Σ aₙ w^n/n!` in
-`BDeRhamPlus 𝓞_ℂ_[p] p` of the divided-power series of the restricted series
-`Σ aₙ Xⁿ` over `W(𝓞_ℂ_[p]♭)`. -/
+/-- For a generator `w` of the kernel of `θ`, the image of the map `A_cris → B_dR^+` is the set
+of values `Σ aₙ w^n/n!` in `BDeRhamPlus 𝓞_ℂ_[p] p` of the divided-power series of the
+restricted series `Σ aₙ Xⁿ` over `W(𝓞_ℂ_[p]♭)`. -/
 theorem range_toBDeRhamPlus (hgen : RingHom.ker (fontaineTheta 𝓞_ℂ_[p] p) = span {w}) :
     Set.range (toBDeRhamPlus hgen) =
       {y | ∃ f ∈ restrictedPowerSeries p,

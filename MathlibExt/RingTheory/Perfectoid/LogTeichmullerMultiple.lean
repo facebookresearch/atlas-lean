@@ -32,8 +32,8 @@ périodes p-adiques*, Astérisque 223 (1994), Exposé II, §1.5.4 p. 72, attache
 `ℤ_p`-module `ℤ_p(1)` of such `ε`. Fontaine's element `ε = (1, ζ_p, ζ_{p²}, …)`
 (`PadicComplexInt.epsilon`) is such a generator
 (`PadicComplexInt.isPrimitiveRoot_untilt_frobeniusEquiv_symm_epsilon`). Consequently the ring
-`B_max`, defined by inverting every nonzero `log [ε]`, is `B_max^+[1/t]`
-(`PadicComplexInt.bMax_eq_adjoin`).
+`B_max`, defined by inverting every nonzero `log [ε]`, is `B_max^+[1/t]` when `ε₀` is Fontaine's
+element (`PadicComplexInt.bMax_eq_adjoin`).
 
 ## Proof
 
@@ -329,8 +329,10 @@ theorem exists_logTeichmuller_eq_mul {ε₀ : PreTilt 𝓞_ℂ_[p] p} (h₀ : ε
   rw [hlog, hac, map_add, map_mul, map_pow, map_natCast, map_natCast]
   ring
 
-/-- If `ε♯ = 1` and `ε ≠ 1`, the multiplier `a` with `log [ε] = a log [ε₀]` is nonzero, so that
-`log [ε]` is a unit multiple of `log [ε₀]` in the `ℚ_[p]`-algebra `B_dR^+`. -/
+/-- Let `ε₀ ∈ 𝓞_ℂ_[p]♭` with `ε₀♯ = 1` generate `ℤ_p(1)`, that is, `(ε₀^{1/p})♯` is a primitive
+`p`-th root of unity. If `ε♯ = 1` and `ε ≠ 1`, there is a nonzero `a ∈ ℤ_p` with
+`log [ε] = a log [ε₀]`, so that `log [ε]` is a unit multiple of `log [ε₀]` in the `ℚ_[p]`-algebra
+`B_dR^+`. -/
 theorem exists_logTeichmuller_eq_mul_of_ne_one {ε₀ : PreTilt 𝓞_ℂ_[p] p} (h₀ : ε₀.untilt = 1)
     (hgen : IsPrimitiveRoot ((frobeniusEquiv (PreTilt 𝓞_ℂ_[p] p) p).symm ε₀).untilt p)
     {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1) (hne : ε ≠ 1) :

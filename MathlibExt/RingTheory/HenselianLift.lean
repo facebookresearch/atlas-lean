@@ -88,8 +88,9 @@ theorem exists_comp_eq_of_henselianRing (θ : R →ₐ[K] Ω) (hsurj : Function.
     rw [hamem, ha₀]
   exact ⟨pb.lift a haP, pb.algHom_ext (by rw [comp_apply, PowerBasis.lift_gen, hθa])⟩
 
-/-- **Uniqueness of lifts of embeddings.** If `R` is a domain, two `K`-algebra maps `f, g : L → R`
-from a finite separable extension `L` of `K` with `θ ∘ f = θ ∘ g` are equal. -/
+/-- **Uniqueness of lifts of embeddings.** Let `θ : R → Ω` be a `K`-algebra map to a field. If `R`
+is a domain, two `K`-algebra maps `f, g : L → R` from a finite separable extension `L` of `K` with
+`θ ∘ f = θ ∘ g` are equal. -/
 theorem ext_of_comp_eq [IsDomain R] (θ : R →ₐ[K] Ω) {f g : L →ₐ[K] R}
     (h : θ.comp f = θ.comp g) : f = g := by
   let pb := Field.powerBasisOfFiniteOfSeparable K L
