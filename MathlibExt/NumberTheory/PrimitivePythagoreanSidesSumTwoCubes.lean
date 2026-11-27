@@ -24,8 +24,7 @@ A31 (<https://math.colgate.edu/~integers/y31/y31.pdf>).
 
 Ordered triples `(X, Y, Z)` have legs `X, Y` and hypotenuse `Z`. For an
 integer Pythagorean triple, `Nat.Coprime X Y` is the primitivity
-condition used here. Theorem 3 is split into its reciprocal-sum and
-reciprocal-difference claims.
+condition used here.
 
 This module constructs infinitely many primitive triples whose three sides are
 sums of two positive cubes. For `t = 6n + 4`, the Euclidean

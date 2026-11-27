@@ -29,8 +29,8 @@ of the analysis of the connectivity threshold: the number of isolated vertices i
 asymptotically Poisson with mean `e^{-c}`, and with high probability isolated vertices are the
 only obstruction to connectivity, so `P(G(n, p) connected) → e^{-e^{-c}}` (A. Frieze and
 M. Karoński, *Introduction to Random Graphs*, Cambridge University Press 2016, Theorem 3.1 with
-(3.1) and (3.3), and Theorem 4.1 with its proof). Those two statements are recorded in
-`WantedExt.Combinatorics.SimpleGraph.RandomGraphConnectivityWanted`.
+(3.1) and (3.3), and Theorem 4.1 with its proof). The connectivity limit is proved in
+`MathlibExt.Combinatorics.SimpleGraph.RandomGraphConnectivity`.
 
 Main results:
 * `measureReal_isolated`: `P(v is isolated) = (1 - p)^(n - 1)`.
@@ -255,7 +255,7 @@ theorem tendsto_mul_sub_log_of_eventually_eq (c : ℝ) (p : ℕ → ℝ)
 `δ > 0`, eventually `P(G(n, pₙ) has an isolated vertex) ≤ e^{-c} + δ` (first moment method, with
 `E X₀ = n (1 - p)^{n-1}` from Frieze and Karoński, *Introduction to Random Graphs*, 2016,
 Section 3.1). The exact limit `1 - e^{-e^{-c}}` is the Poisson statement of Theorem 3.1 (ii)
-there, recorded in `WantedExt.Combinatorics.SimpleGraph.RandomGraphConnectivityWanted`. -/
+there. -/
 theorem eventually_measureReal_exists_isolated_le (c : ℝ) (p : ℕ → I)
     (hp : Tendsto (fun n : ℕ => (n : ℝ) * p n - Real.log n) atTop (𝓝 c)) {δ : ℝ} (hδ : 0 < δ) :
     ∀ᶠ n : ℕ in atTop, (randomSubsetLaw (fun _ : Pair n => p n)).real
