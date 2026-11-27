@@ -9,13 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Crypto.Framework.Advantage
+public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.Group.TypeTags.Basic
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 public import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 /-!
-# Bilinear groups: interface, toy model, BDH and SXDH games
+# Bilinear groups: interface, toy model, BDH, SXDH and q-SDH games
 
 A bilinear-group interface over explicit exponent isomorphisms
 (`BilinearGroupData`): the groups are cyclic of order `q` with a pairing whose
@@ -33,11 +34,15 @@ The toy exponent model (`toyModel`) elaborates the interface with all groups
 equal to `Multiplicative (ZMod q)`, serving as an elaboration witness.
 
 Security games use the framework advantage vocabulary (`winProb`, `advantage`):
-the bilinear Diffie-Hellman game (`bdhGame`, `bdhAdvantage`) and the two
+the bilinear Diffie-Hellman game (`bdhGame`, `bdhAdvantage`), the two
 Diffie-Hellman games behind the pointwise advantage-bound predicate
 (`sxdhAdvBound`), which bounds fixed distinguishers only and is not the SXDH
-hardness assumption. A decoding adversary wins the BDH game with probability
-one (`toy_bdhAdvantage_eq_one`), exhibiting the insecurity above.
+hardness assumption, and the q-SDH game in its fixed-generator form (`sdhWin`,
+`sdhGame`, `sdhAdvantage`), with its pairing check characterized at a unit
+`x + c` (`sdhCheck_iff`) and at prime order (`sdhCheck_iff_prime`). A decoding
+adversary wins the BDH game with probability one (`toy_bdhAdvantage_eq_one`),
+and another wins the q-SDH game with probability one in every instance
+(`sdhAdvantage_decoding_eq_one`), exhibiting the insecurity above.
 -/
 
 @[expose] public section
@@ -355,6 +360,167 @@ exponent witnesses expose decoders. -/
 def sxdhAdvBound (B : BilinearGroupData) (D₁ : B.G1 → B.G1 → B.G1 → PMF Bool)
     (D₂ : B.G2 → B.G2 → B.G2 → PMF Bool) (ε : ℝ) : Prop :=
   B.ddh1Advantage D₁ ≤ ε ∧ B.ddh2Advantage D₂ ≤ ε
+
+open Classical in
+/-- **q-SDH win experiment.** At a fixed secret exponent `x`, run the randomized
+adversary on the `G1` power tuple `i ↦ exp1 (x ^ i)` for `i ≤ t`, on `g2` and
+on `exp2 x`, and test whether its output `(c, h)` satisfies the pairing check
+`e h (exp2 (x + c)) = e g1 g2`. The SDH parameter is `t`, the `q` of q-SDH,
+renamed because `q` is the group order here.
+
+The win predicate uses the pairing-check form rather than `(x + c)⁻¹`: writing
+`h = exp1 a`, compat and injectivity reduce the pairing check to
+`a * (x + c) = 1`, so the check rejects nonunit `x + c` at every order. When
+`x + c` is a unit, it holds iff `h = exp1 ((x + c)⁻¹)` (`sdhCheck_iff`); at
+prime order it is the success event of Boneh and Boyen, `c ≠ -x` and
+`h = g1 ^ (1 / (x + c))` (`sdhCheck_iff_prime`). -/
+noncomputable def sdhWin (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1))
+    (x : ZMod B.q) : PMF Bool :=
+  (A (fun i => B.exp1 (Multiplicative.ofAdd (x ^ (i : ℕ)))) B.g2
+    (B.exp2 (Multiplicative.ofAdd x))).map fun (c, h) =>
+    if B.e h (B.exp2 (Multiplicative.ofAdd (x + c))) = B.e B.g1 B.g2 then true
+    else false
+
+/-- **q-SDH game.** The fixed-generator q-SDH experiment: sample the secret `x`
+uniformly from the units `(ZMod q)ˣ` and run the win experiment, sampling the
+adversary's coins via `PMF.bind`.
+
+Fixed generators: the experiment of Boneh and Boyen also samples the generators
+`g1` and `g2`; this game, like the file's BDH and DDH games, uses the
+interface's fixed generators. At prime order `p` the units are the nonzero
+residues, so `x` is uniform in `Z_p^×`, as in the source.
+
+Composite-order extension: the source states the experiment at prime order
+only. At composite `q` this game keeps the input tuple and the pairing check
+and samples `x` from the units of `ZMod q`, the analogue of `Z_p^×`; the check
+then rejects every `c` with `x + c` a nonunit, `c = -x` included.
+
+Source: D. Boneh and X. Boyen, *Short Signatures Without Random Oracles and the
+SDH Assumption in Bilinear Groups*, J. Cryptology 21 (2008), §3.1. -/
+noncomputable def sdhGame (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1)) :
+    PMF Bool :=
+  (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)ˣ).bind fun x =>
+    B.sdhWin t A x
+
+/-- **q-SDH advantage.** The winning probability of the q-SDH game. -/
+noncomputable def sdhAdvantage (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1)) : ℝ :=
+  winProb (B.sdhGame t A)
+
+/-- **q-SDH check at a unit denominator.** At every order, when `x + c` is a
+unit, the pairing check holds iff `h` is the inverse-exponent group element
+`exp1 ((x + c)⁻¹)`. -/
+theorem sdhCheck_iff (B : BilinearGroupData) (x c : ZMod B.q)
+    (hu : IsUnit (x + c)) (h : B.G1) :
+    B.e h (B.exp2 (Multiplicative.ofAdd (x + c))) = B.e B.g1 B.g2 ↔
+      h = B.exp1 (Multiplicative.ofAdd ((x + c)⁻¹)) := by
+  obtain ⟨a, rfl⟩ := B.exp1.surjective h
+  rw [← ofAdd_toAdd a, B.compat, B.e_g1_g2]
+  have hT : B.expT (Multiplicative.ofAdd (a.toAdd * (x + c))) = B.gT ↔
+      a.toAdd * (x + c) = 1 := by
+    have hgT : B.gT = B.expT (Multiplicative.ofAdd (1 : ZMod B.q)) := rfl
+    rw [hgT]
+    constructor
+    · intro heq
+      have hinj := B.expT.injective heq
+      simpa using congrArg Multiplicative.toAdd hinj
+    · intro heq
+      rw [heq]
+  have h1 : B.exp1 (Multiplicative.ofAdd a.toAdd) =
+      B.exp1 (Multiplicative.ofAdd ((x + c)⁻¹)) ↔ a.toAdd = (x + c)⁻¹ := by
+    constructor
+    · intro heq
+      have hinj := B.exp1.injective heq
+      simpa using congrArg Multiplicative.toAdd hinj
+    · intro heq
+      rw [heq]
+  rw [hT, h1]
+  have hsinv : (x + c)⁻¹ * (x + c) = 1 := ZMod.inv_mul_of_unit _ hu
+  constructor
+  · intro hmul
+    calc a.toAdd
+        = a.toAdd * 1 := (mul_one _).symm
+      _ = a.toAdd * ((x + c)⁻¹ * (x + c)) := by rw [hsinv]
+      _ = (x + c)⁻¹ * (a.toAdd * (x + c)) := by ring
+      _ = (x + c)⁻¹ * 1 := by rw [hmul]
+      _ = (x + c)⁻¹ := mul_one _
+  · intro ha
+    rw [ha]
+    exact hsinv
+
+/-- **q-SDH check at prime order.** At prime order, away from `c = -x`, the
+pairing check holds iff `h` is the inverse-exponent group element
+`exp1 ((x + c)⁻¹)`, so the win event is the success event of Boneh and Boyen. -/
+theorem sdhCheck_iff_prime (B : BilinearGroupData) [Fact B.q.Prime] (x c : ZMod B.q)
+    (hc : c ≠ -x) (h : B.G1) :
+    B.e h (B.exp2 (Multiplicative.ofAdd (x + c))) = B.e B.g1 B.g2 ↔
+      h = B.exp1 (Multiplicative.ofAdd ((x + c)⁻¹)) :=
+  sdhCheck_iff B x c
+    (isUnit_iff_ne_zero.mpr fun h0 => hc (eq_neg_of_add_eq_zero_right h0)) h
+
+/-- **An always-winning adversary wins the q-SDH game surely.** An adversary
+that wins at every unit secret, the game's support, induces the
+constantly-`true` game. -/
+theorem sdhGame_eq_pure_true (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1))
+    (h : ∀ x : (ZMod B.q)ˣ, B.sdhWin t A x = PMF.pure true) :
+    B.sdhGame t A = PMF.pure true := by
+  unfold sdhGame
+  simp only [h, PMF.bind_const]
+
+/-- **q-SDH decoding adversary.** It ignores the power tuple and `g2`, decodes
+`x` from the supplied `G2` element with `exp2.symm`, and outputs `(1 - x, g1)`
+as a `PMF` via `PMF.pure`. In the toy model this reads `Multiplicative.toAdd`;
+in any instance the same attack decodes with `exp.symm`, exhibiting the
+insecurity of every instance against unrestricted adversaries. It works at
+every `t`, including `t = 0`. -/
+noncomputable def sdhDecodingAdversary (B : BilinearGroupData) (t : ℕ) :
+    (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1) :=
+  fun _ _ gx => PMF.pure (1 - (B.exp2.symm gx).toAdd, B.g1)
+
+/-- **The q-SDH decoding adversary always wins.** It wins the win experiment at
+every secret exponent, in every instance. -/
+theorem sdhWin_decoding (B : BilinearGroupData) (t : ℕ) (x : ZMod B.q) :
+    B.sdhWin t (sdhDecodingAdversary B t) x = PMF.pure true := by
+  classical
+  have hcond : (sdhDecodingAdversary B t)
+      (fun i => B.exp1 (Multiplicative.ofAdd (x ^ (i : ℕ)))) B.g2
+      (B.exp2 (Multiplicative.ofAdd x)) = PMF.pure (1 - x, B.g1) := by
+    simp [sdhDecodingAdversary]
+  unfold sdhWin
+  rw [hcond, PMF.pure_map]
+  have h1 : x + (1 - x) = 1 := by ring
+  change PMF.pure (if B.e B.g1 (B.exp2 (Multiplicative.ofAdd (x + (1 - x)))) =
+    B.e B.g1 B.g2 then true else false) = PMF.pure true
+  rw [h1]
+  exact congrArg PMF.pure (ite_eq_left rfl)
+
+/-- **q-SDH insecurity against decoding adversaries.** The decoding adversary
+wins the q-SDH game with probability one, in every instance, exhibiting the
+insecurity of the interface against decoding adversaries. -/
+theorem sdhAdvantage_decoding_eq_one (B : BilinearGroupData) (t : ℕ) :
+    B.sdhAdvantage t (sdhDecodingAdversary B t) = 1 := by
+  have h := sdhGame_eq_pure_true B t (sdhDecodingAdversary B t)
+    fun x => sdhWin_decoding B t x
+  unfold sdhAdvantage
+  rw [h]
+  simp [winProb_pure]
+
+/-- **Lower bound on the q-SDH advantage.** The q-SDH advantage is
+nonnegative. -/
+theorem sdhAdvantage_nonneg (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1)) :
+    0 ≤ B.sdhAdvantage t A :=
+  winProb_nonneg _
+
+/-- **Upper bound on the q-SDH advantage.** The q-SDH advantage is at most
+one. -/
+theorem sdhAdvantage_le_one (B : BilinearGroupData) (t : ℕ)
+    (A : (Fin (t + 1) → B.G1) → B.G2 → B.G2 → PMF (ZMod B.q × B.G1)) :
+    B.sdhAdvantage t A ≤ 1 :=
+  winProb_le_one _
 
 end BilinearGroupData
 
