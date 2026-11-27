@@ -31,7 +31,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Girth
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphColoringWanted
+public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
 
 @[expose] public section
 

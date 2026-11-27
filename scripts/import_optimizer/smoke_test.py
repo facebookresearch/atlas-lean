@@ -153,6 +153,61 @@ def legacy_smoke_test(lake: Path, import_graph: Path, root: Path) -> None:
     print("PASS: pinned ImportGraph legacy helper analyzed a real compiled declaration")
 
 
+def multi_batch_smoke_test(lake: Path, root: Path) -> None:
+    """Later batches build into a namespace earlier batches pinned; resume must accept only that growth."""
+    lean = lake.with_name("lean")
+    (root / "Lib/Sub").mkdir(parents=True)
+    (root / "Lib/Base.lean").write_text("module\n\n@[expose] public def Lib.base : Nat := 41\n")
+    names = ("A", "B", "C")
+    for name in names:
+        (root / f"Lib/Sub/{name}.lean").write_text(
+            "module\n\npublic import Lib.Base\nimport Std.Data.HashMap\n\n"
+            f"@[expose] public def Lib.value{name} : Nat := Lib.base + 1\n")
+    (root / "Lib.lean").write_text("import Lib.Base\n" + "".join(f"import Lib.Sub.{name}\n" for name in names))
+    (root / "lean-toolchain").write_bytes((SCRIPTS.parent / "lean-toolchain").read_bytes())
+    (root / "lakefile.toml").write_text(
+        'name = "import_optimizer_batches"\ndefaultTargets = ["Lib"]\n\n[[lean_lib]]\nname = "Lib"\n')
+    (root / "lake-manifest.json").write_text(json.dumps({
+        "version": "1.1.0", "packagesDir": ".lake/packages", "packages": [],
+        "name": "import_optimizer_batches", "lakeDir": ".lake",
+    }) + "\n")
+    run(["git", "init", "-q"], root)
+    run(["git", "add", "."], root)
+    run(["git", "-c", "user.name=Optimizer Test", "-c", "user.email=test@example.invalid",
+         "commit", "-qm", "Import optimizer multi-batch fixture"], root)
+    manifest = root / ".lake/inventory.jsonl"
+    run([sys.executable, str(SCRIPTS / "generate_import_inventory.py"),
+         "--root", str(root), "--lean", str(lean), "--output", str(manifest)], root)
+    # Only the shared dependency is prebuilt: each batch's Lake preparation adds
+    # its target to the namespace the earlier batches already pinned.
+    run([str(lake), "build", "Lib.Base"], root)
+    output = root / ".lake/import-results"
+    command = [sys.executable, str(SCRIPTS / "optimize_imports.py"),
+               "--root", str(root), "--lake", str(lake), "--manifest", str(manifest),
+               "--output", str(output), "--batch-size", "1", *(f"Lib/Sub/{name}.lean" for name in names)]
+    run(command, root)
+    rows = [json.loads(line) for line in (output / "results.jsonl").read_bytes().splitlines()]
+    assert [(row["module"], row["status"]) for row in rows] == [
+        (f"Lib.Sub.{name}", "verified") for name in names], rows
+    for row in rows:
+        assert row["declaration_differences"] == [] and row["removed_imports"] == [
+            "import Std.Data.HashMap"], row
+    growth = [json.loads(path.read_text()) for path in sorted((output / "lake-growth").glob("*.json"))]
+    added = sorted(pin["path"] for record in growth for pin in record["added"])
+    namespace = root / ".lake/build/lib/lean/Lib/Sub"
+    assert {Path(path).parent for path in added} == {namespace}, added
+    assert {Path(path).name.split(".")[0] for path in added} == set(names), added
+    journal = (output / "results.jsonl").read_bytes()
+    run([*command, "--resume"], root)
+    assert (output / "results.jsonl").read_bytes() == journal
+    (namespace / "Injected.olean").write_bytes((namespace / "A.olean").read_bytes())
+    refused = subprocess.run([*command, "--resume"], cwd=root,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    assert refused.returncode == 2 and "unrecorded artifact" in refused.stderr, refused
+    assert (output / "results.jsonl").read_bytes() == journal
+    print("PASS: three batches grew one pinned namespace and verified; resume accepted only recorded growth")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--lake", type=Path, default=shutil.which("lake"),
@@ -167,6 +222,8 @@ def main() -> None:
         smoke_test(args.lake.absolute(), root)
         if args.import_graph is not None:
             legacy_smoke_test(args.lake.absolute(), args.import_graph.resolve(), root)
+    with tempfile.TemporaryDirectory(prefix="import-optimizer-batches-") as temporary:
+        multi_batch_smoke_test(args.lake.absolute(), Path(temporary).resolve())
 
 
 if __name__ == "__main__":

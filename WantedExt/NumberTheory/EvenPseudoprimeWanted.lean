@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.SmoothNumbers
 public import MathlibExt.NumberTheory.EvenPseudoprime
 public import MathlibExt.NumberTheory.EvenPseudoprimeReciprocalWindow
+public import MathlibExt.NumberTheory.EvenPseudoprimeResidueSixteen
 public import MathlibExt.NumberTheory.EvenPseudoprimeWieferich
 
 /-!
@@ -54,14 +55,6 @@ public theorem_wanted evenPseudoprime_modEq_and_orderOf_odd {N p : ℕ} (hN : Ma
     (hp : p.Prime) (hp2 : p ≠ 2) (hpN : p ∣ N) :
     N ≡ p [MOD p * orderOf (2 : ZMod p)] ∧ Odd (orderOf (2 : ZMod p)) ∧
       (p % 8 = 1 ∨ p % 8 = 7) ∧ 14 * p ≤ N
-
-/-- **Even pseudoprimes modulo 16.** Every even pseudoprime $N$ satisfies
-$N \equiv 2 \pmod{16}$ or $N \equiv 14 \pmod{16}$.
-
-Source: Cheng, Kinlaw and Nguyen, *The Reciprocal Sum of Even Pseudoprimes*, Journal of
-Integer Sequences 29 (2026), Article 26.1.3, Corollary 4 (`jis-2026-26.1.3-cor-4`). -/
-public theorem_wanted evenPseudoprime_mod_sixteen {N : ℕ} (hN : MathlibExt.NumberTheory.IsEvenPseudoprime N) :
-    N % 16 = 2 ∨ N % 16 = 14
 
 open scoped Classical in
 /-- **Reciprocal sum over a residue class restricted modulo 16.** Write $\ell_2(p)$ for the

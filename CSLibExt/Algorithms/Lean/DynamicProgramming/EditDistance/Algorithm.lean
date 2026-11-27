@@ -647,7 +647,7 @@ private lemma reconstruct_metrics {α : Type u} [BEq α]
           List.length_append, List.length_singleton]
         change EditDistanceCost.mk (0 + 0) (1 + script.length) =
           EditDistanceCost.mk 0 (script.length + 1)
-        congr 1 <;> omega
+        congr 1; omega
   | case3 i hi hj accumulator _ _ ih =>
       obtain ⟨script, hret, hcost, hlength, htime⟩ := ih
       refine ⟨script ++ [.delete source[i]], ?_, ?_, ?_, ?_⟩
@@ -662,7 +662,7 @@ private lemma reconstruct_metrics {α : Type u} [BEq α]
           List.length_append, List.length_singleton]
         change EditDistanceCost.mk (0 + 0) (1 + script.length) =
           EditDistanceCost.mk 0 (script.length + 1)
-        congr 1 <;> omega
+        congr 1; omega
   | case4 i j hi hj accumulator _ _ ihDiagonal ihDelete ihInsert =>
       simp only [editDistance.reconstruct, TimeM.ret_bind]
       let sourceValue := source[i]'(by omega)
@@ -690,7 +690,7 @@ private lemma reconstruct_metrics {α : Type u} [BEq α]
             List.length_append, List.length_singleton]
           change EditDistanceCost.mk (0 + 0) (1 + script.length) =
             EditDistanceCost.mk 0 (script.length + 1)
-          congr 1 <;> omega
+          congr 1; omega
       · rename_i hnotDiagonal
         split
         · rename_i hchooseDelete
@@ -710,7 +710,7 @@ private lemma reconstruct_metrics {α : Type u} [BEq α]
               List.length_append, List.length_singleton]
             change EditDistanceCost.mk (0 + 0) (1 + script.length) =
               EditDistanceCost.mk 0 (script.length + 1)
-            congr 1 <;> omega
+            congr 1; omega
         · rename_i hnotDelete
           obtain ⟨script, hret, hcost, hlength, htime⟩ := ihInsert
           refine ⟨script ++ [.insert targetValue], ?_, ?_, ?_, ?_⟩
@@ -728,7 +728,7 @@ private lemma reconstruct_metrics {α : Type u} [BEq α]
               List.length_append, List.length_singleton]
             change EditDistanceCost.mk (0 + 0) (1 + script.length) =
               EditDistanceCost.mk 0 (script.length + 1)
-            congr 1 <;> omega
+            congr 1; omega
 
 private lemma editDistance_value [BEq α] (source target : List α) :
     (editDistance source target).ret.distance =
@@ -861,7 +861,7 @@ private lemma editDistance_time_spec [BEq α] (source target : List α) :
   change EditDistanceCost.mk
       ((source.length + 1) * (target.length + 1) + 0 + 0)
       (0 + resultLength + 0) = _
-  congr 1 <;> omega
+  congr 1; omega
 
 private lemma referenceDistance_self [BEq α] [LawfulBEq α] (source : List α) :
     referenceDistance source source = 0 := by

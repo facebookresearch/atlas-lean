@@ -10,7 +10,7 @@ module
 
 import MathlibExt.NumberTheory.KFibonacciAlternatingBinomial
 
-/-! # Tests for the alternating binomial formula for the k-Fibonacci numbers -/
+/-! # Tests for binomial formulas for the k-Fibonacci numbers -/
 
 open MetaMathlibExt
 
@@ -32,3 +32,31 @@ example (F : ℕ → ℤ) (hF0 : ∀ i < 2, F i = 0) (hF1 : F 2 = 1)
   rw [show Finset.Icc 1 ((10 - 3 + 1) / (3 + 1)) = {1, 2} by decide]
   have hchoose : Ring.choose (3 : ℤ) 2 = 3 := Ring.choose_natCast (R := ℤ) 3 2
   norm_num [hchoose]
+
+-- At n = k the sum consists only of the constant term.
+example (k : ℕ) (hk : 2 ≤ k) (F : ℕ → ℤ) (hF0 : ∀ i < k - 1, F i = 0)
+    (hF1 : F (k - 1) = 1) (hrec : ∀ m, F (m + k) = ∑ i ∈ Finset.range k, F (m + i)) :
+    (F k : ℚ) = 1 := by
+  rw [kFibonacci_eq_binomial_sum k k hk le_rfl F hF0 hF1 hrec, Nat.sub_self]
+  have hdiv : 1 / (k + 1) = 0 := Nat.div_eq_of_lt (by omega)
+  simp [hdiv]
+
+-- At n = 6 the tribonacci sum first includes the index-one term.
+example (F : ℕ → ℤ) (hF0 : ∀ i < 2, F i = 0) (hF1 : F 2 = 1)
+    (hrec : ∀ m, F (m + 3) = ∑ i ∈ Finset.range 3, F (m + i)) :
+    (F 6 : ℚ) = 7 := by
+  rw [kFibonacci_eq_binomial_sum 3 6 (by decide) (by decide) F hF0 hF1 hrec]
+  rw [show (6 - 3 + 1) / (3 + 1) + 1 = 2 by decide]
+  norm_num [Finset.sum_range_succ]
+
+-- At n = 10 there are two nonconstant terms, including a coefficient at lower index two.
+example (F : ℕ → ℤ) (hF0 : ∀ i < 2, F i = 0) (hF1 : F 2 = 1)
+    (hrec : ∀ m, F (m + 3) = ∑ i ∈ Finset.range 3, F (m + i)) :
+    (F 10 : ℚ) = 81 := by
+  rw [kFibonacci_eq_binomial_sum 3 10 (by decide) (by decide) F hF0 hF1 hrec]
+  rw [show (10 - 3 + 1) / (3 + 1) + 1 = 3 by decide]
+  have hchoose : Ring.choose (-1 : ℤ) 2 = 1 := by
+    have hpascal := Ring.choose_succ_succ (-1 : ℤ) 1
+    norm_num at hpascal
+    omega
+  norm_num [Finset.sum_range_succ, hchoose]

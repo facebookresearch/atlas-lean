@@ -53,6 +53,14 @@ example : ¬ (8 : ℤ) ∣ ((∏ i ∈ oddBelowTwoPow 2, i : ℕ) : ℤ) - 5 := 
 example : ((∏ i ∈ oddBelowTwoPow 3, i : ℕ) : ℤ) % 16 = 9 :=
   (Int.modEq_of_dvd (oddSet_product_congr 3 (by decide))).symm
 
+-- The shift congruence fails just below the lower bound: 1 and 3 differ modulo four.
+example : ¬ (2 : ℤ) ^ (2 * 1) ∣ ((∏ i ∈ oddBelowTwoPow 1, i : ℕ) : ℤ) -
+    ∏ i ∈ oddBelowTwoPow 1, ((2 ^ 1 + i : ℕ) : ℤ) := by decide
+
+-- Shifting 1, 3, 5, 7 by eight keeps the residue 105 ≡ 41 modulo 64.
+example : (∏ i ∈ oddBelowTwoPow 3, ((2 ^ 3 + i : ℕ) : ℤ)) % 64 = 41 :=
+  Eq.trans (Int.modEq_of_dvd (oddSet_product_congr_shift 3 (by decide))) (by decide)
+
 -- Below the exponent bound there are only two roots of one.
 example : ({i ∈ oddBelowTwoPow 2 | i ^ 2 % 4 = 1}).card = 2 := by decide
 
@@ -62,3 +70,24 @@ example : ({i ∈ oddBelowTwoPow 3 | i ^ 2 % 8 = 1}).card = 4 :=
 
 -- The other admissible residue modulo sixteen has two roots in each odd class modulo four.
 example : {i ∈ oddBelowTwoPow 4 | i ^ 2 % 16 = 9} = {3, 5, 11, 13} := by decide
+
+-- Just below the exponent bound the congruence fails: `od(2!) = 1` and `od(4!) = 3`.
+example : ¬ (2 : ℤ) ^ 2 ∣ (oddPart (Nat.factorial (2 ^ (2 - 1))) : ℤ) -
+    (oddPart (Nat.factorial (2 ^ 2)) : ℤ) := by
+  have h₁ : oddPart (Nat.factorial (2 ^ (2 - 1))) = 1 := by
+    rw [show Nat.factorial (2 ^ (2 - 1)) = 2 ^ 1 * 1 by decide]
+    exact Nat.ordCompl_pow_mul_of_not_dvd 1 Nat.prime_two (by decide)
+  have h₂ : oddPart (Nat.factorial (2 ^ 2)) = 3 := by
+    rw [show Nat.factorial (2 ^ 2) = 2 ^ 3 * 3 by decide]
+    exact Nat.ordCompl_pow_mul_of_not_dvd 3 Nat.prime_two (by decide)
+  rw [h₁, h₂]
+  decide
+
+-- At the lower bound `od(4!) = 3`, so the odd part `315` of `8!` is `3` modulo eight.
+example : (oddPart (Nat.factorial (2 ^ 3)) : ℤ) % 8 = 3 := by
+  have h₁ : oddPart (Nat.factorial (2 ^ (3 - 1))) = 3 := by
+    rw [show Nat.factorial (2 ^ (3 - 1)) = 2 ^ 3 * 3 by decide]
+    exact Nat.ordCompl_pow_mul_of_not_dvd 3 Nat.prime_two (by decide)
+  have h := oddPart_factorial_congr_previous 3 le_rfl
+  rw [h₁] at h
+  exact Int.modEq_of_dvd h

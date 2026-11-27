@@ -42,9 +42,10 @@ class SharedValidationPhaseTests(unittest.TestCase):
                 phase = ["main"]
                 actual = optimizer.analysis_inputs
 
-                def measured(tools: optimizer.Tools, rows: list[dict[str, object]]) -> dict[str, object]:
+                def measured(tools: optimizer.Tools, rows: list[dict[str, object]],
+                             *recorded: object) -> dict[str, object]:
                     calls[phase[0]] += len(rows)
-                    return actual(tools, rows)
+                    return actual(tools, rows, *recorded)
 
                 with runtime_stubs(root), patch.object(optimizer, "analysis_inputs", side_effect=measured), \
                         patch.object(sys, "argv", arguments):
