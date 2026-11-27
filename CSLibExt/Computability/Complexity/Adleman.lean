@@ -806,9 +806,15 @@ private theorem error_count {L : DecisionProblem} {p : Polynomial ℕ}
 /-- **Adleman's theorem: BPP is contained in P/poly.** Every decision problem in BPP lies in
 P/poly.
 
+Adleman proved that every language in R (now usually written RP) has polynomial-size circuits.
+Bennett and Gill remark that the second part of their Corollary to Theorem 5, that every language
+in BPP is in P^A with probability 1 for a random oracle A, generalizes Adleman's result to BPP.
+
 Source: L. Adleman, "Two theorems on
 random polynomial time", Proceedings of the Nineteenth Annual Symposium on Foundations of
-Computer Science (FOCS 1978), 75-83. -/
+Computer Science (FOCS 1978), 75-83; C. H. Bennett and J. Gill, "Relative to a random oracle A,
+P^A ≠ NP^A ≠ co-NP^A with probability 1", SIAM J. Comput. 10 (1981), no. 1, 96-113, Remark
+after the Corollary to Theorem 5 (p. 105). -/
 public theorem adleman :
     BPP ⊆ PPoly := by
   classical

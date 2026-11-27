@@ -610,14 +610,6 @@ def DeterminedByTwoElements (F : Type) [Group F] : Prop :=
   ∃ g h : F, ∀ φ ψ : F →* F, ¬ IsCyclic φ.range → ¬ IsCyclic ψ.range → φ g = ψ g →
     φ h = ψ h → φ = ψ
 
-/-- **Shpil'rain's two-element problem for free groups (Kourovka 13.66(a)).** For every natural
-number $n$, the free group $F_n$ of rank $n$ contains two elements $g$ and $h$ such that any two
-endomorphisms of $F_n$ whose images are not cyclic subgroups and which agree at $g$ and at $h$
-are equal; that is, $F_n$ has its endomorphisms with non-cyclic images determined by two
-elements. -/
-def freeGroupEndomorphismsDeterminedByTwoElements : Prop :=
-  ∀ n : ℕ, DeterminedByTwoElements (FreeGroup (Fin n))
-
 /-- **Shpil'rain's two-element problem for free metabelian groups (Kourovka 13.66(b)).** For every
 natural number $n$, the free metabelian group $M_n = F_n / F_n''$ of rank $n$ (the quotient of the
 free group $F_n$ of rank $n$ by its second derived subgroup) contains two elements $g$ and $h$

@@ -24,7 +24,8 @@ The theorem `existsMassiveNormallyIndependentSet_refuted` answers this problem i
 Kourovka Notebook, Problem 10.13 (R. I. Grigorchuk), marked solved: does there exist a massive set
 of independent elements in the free group `F₂` on `a, b`, that is, a set `E` of reduced words in `a,
 b, a⁻¹, b⁻¹` such that (1) no `w ∈ E` lies in the normal closure of `E \ {w}` and (2) `limsup_{n →
-∞} |Eₙ|^{1/n} = 3`, where `Eₙ` is the set of words of length `n` in `E`?
+∞} |Eₙ|^{1/n} = 3`, where `Eₙ` is the set of words of length `n` in `E`? The Notebook writes this
+upper limit as `lim` with a bar over it.
 
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 10.13 (R. I. Grigorchuk). UnsolvedMath

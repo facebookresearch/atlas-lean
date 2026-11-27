@@ -34,6 +34,14 @@ stated for every rank; (b) is stated for every rank and refuted, which says that
 rank no such pair exists ("not always"). The free metabelian group of rank `n` is `F_n / F_n''`.
 -/
 
+/-- **Shpil'rain's two-element problem for free groups (Kourovka 13.66(a)).** For every natural
+number $n$, the free group $F_n$ of rank $n$ contains two elements $g$ and $h$ such that any two
+endomorphisms of $F_n$ whose images are not cyclic subgroups and which agree at $g$ and at $h$
+are equal; that is, $F_n$ has its endomorphisms with non-cyclic images determined by two
+elements. -/
+def freeGroupEndomorphismsDeterminedByTwoElements : Prop :=
+  ∀ n : ℕ, DeterminedByTwoElements (FreeGroup (Fin n))
+
 /--
 **Endomorphisms of free groups with non-cyclic images are determined by two elements.** For every
 natural number $n$, the free group $F_n$ of rank $n$ contains two elements $g$ and $h$ such that
