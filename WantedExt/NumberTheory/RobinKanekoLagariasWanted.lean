@@ -21,6 +21,7 @@ public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.Primorial
 public import MathlibExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumDefs
 public import MathlibExt.NumberTheory.RobinKanekoLagariasExpFiveDivLogBoundLt
+public import MathlibExt.NumberTheory.RobinKanekoLagariasExpHarmonicMulLogDivMonotoneOn
 
 namespace MetaMathlibExt
 
@@ -237,16 +238,6 @@ Kaneko-Lagarias Inequality*, INTEGERS 26 (2026), Article A86, Proposition 2
 public theorem_wanted exp_harmonicExtension_mul_log_div_monotoneOn :
     MonotoneOn (fun x : ℝ => exp (harmonicExtension x) * log (harmonicExtension x) / x)
       (Set.Ici 4)
-
-/-- **Monotonicity of $e^{H_n} \log H_n / n$.** With $H_n = \sum_{i=1}^n 1/i$ the $n$-th harmonic
-number and $\log$ the natural logarithm, the sequence $e^{H_n} \log H_n / n$ is non-decreasing
-for $n \ge 1$: its value at $m$ is at most its value at $n$ whenever $1 \le m \le n$.
-
-Source: Idris Assani, Aiden Chester, and Alex Paschal, *On Robin's Inequality and the
-Kaneko-Lagarias Inequality*, INTEGERS 26 (2026), Article A86, Corollary 3
-(`integers-2026-A86-cor-3`). -/
-public theorem_wanted exp_harmonic_mul_log_div_monotoneOn :
-    MonotoneOn (fun n : ℕ => exp (harmonic n : ℝ) * log (harmonic n : ℝ) / n) (Set.Ici 1)
 
 /-- **A least counterexample to the Kaneko–Lagarias inequality is superabundant.** Let
 $\sigma(n)$ be the sum of the divisors of $n$, $H_n = 1 + \frac{1}{2} + \cdots + \frac{1}{n}$ the
