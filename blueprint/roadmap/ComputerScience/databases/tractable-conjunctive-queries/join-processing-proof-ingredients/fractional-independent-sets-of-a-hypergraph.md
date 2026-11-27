@@ -9,7 +9,7 @@ fractional independent set of weight $3/2$.
 
 ## Depends on
 
-- [Natural join queries, their hypergraphs and fractional edge covers](../join-processing/natural-join-queries-their-hypergraphs-and-fractional-edge-c.md)
+- [Natural join queries, their hypergraphs and fractional edge covers](../../join-processing/natural-join-queries-their-hypergraphs-and-fractional-edge-c.md)
 
 ## Sources
 

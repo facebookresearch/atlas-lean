@@ -27,4 +27,3 @@ Relational algebra, functional dependencies, normal forms and lossless decomposi
 - [SQL Semantics with Nulls, Bags and Errors](sql-semantics-with-nulls-and-errors/README.md)
 - [Reasoning about dependencies](dependency-reasoning/README.md)
 - [Data exchange](data-exchange/README.md)
-- [Join processing: proof ingredients for the AGM bound and acyclic joins](join-processing-proof-ingredients/README.md)

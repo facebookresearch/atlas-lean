@@ -14,8 +14,8 @@ whether $q$ holds on a database $D$ in time $O(\|D\| \log \|D\| \cdot \|q\|)$.
 ## Proof depends on
 
 - [Characterizations of acyclic database schemas](characterizations-of-acyclic-database-schemas.md)
-- [Join trees of acyclic conjunctive queries can be computed in linear time](../join-processing-proof-ingredients/join-trees-of-acyclic-cqs-in-linear-time.md)
-- [Semijoin recurrence along a join tree for Boolean acyclic queries](../join-processing-proof-ingredients/semijoin-recurrence-along-a-join-tree.md)
+- [Join trees of acyclic conjunctive queries can be computed in linear time](../tractable-conjunctive-queries/join-processing-proof-ingredients/join-trees-of-acyclic-cqs-in-linear-time.md)
+- [Semijoin recurrence along a join tree for Boolean acyclic queries](../tractable-conjunctive-queries/join-processing-proof-ingredients/semijoin-recurrence-along-a-join-tree.md)
 
 ## Sources
 

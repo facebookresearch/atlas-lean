@@ -15,7 +15,7 @@ $H(Q)$.
 
 ## Proof depends on
 
-- [Query decomposition lemma for the AGM bound](../join-processing-proof-ingredients/query-decomposition-lemma-for-the-agm-bound.md)
+- [Query decomposition lemma for the AGM bound](../tractable-conjunctive-queries/join-processing-proof-ingredients/query-decomposition-lemma-for-the-agm-bound.md)
 
 ## Sources
 

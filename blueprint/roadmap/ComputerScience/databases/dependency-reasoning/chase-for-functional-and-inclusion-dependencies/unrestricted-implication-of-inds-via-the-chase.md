@@ -15,6 +15,7 @@ Since finite and unrestricted implication coincide for inclusion dependencies, t
 
 - [The chase for inclusion dependencies](the-chase-for-inclusion-dependencies.md)
 - [Unrestricted implication of dependencies](../../dependencies-and-the-chase/implies.md)
+- [Finite implication of dependencies](../../dependencies-and-the-chase/finitely-implies.md)
 
 ## Proof depends on
 

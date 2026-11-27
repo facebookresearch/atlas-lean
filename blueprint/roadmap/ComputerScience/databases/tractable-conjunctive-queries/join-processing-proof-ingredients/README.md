@@ -1,4 +1,4 @@
-# Join processing: proof ingredients for the AGM bound and acyclic joins
+# Proof ingredients for the AGM bound and acyclic joins
 
 - [Consistency criterion for Boolean acyclic conjunctive queries](consistency-criterion-for-boolean-acyclic-cqs.md)
 - [Fractional edge cover number equals fractional independence number](fractional-edge-cover-number-equals-fractional-independence-number.md)

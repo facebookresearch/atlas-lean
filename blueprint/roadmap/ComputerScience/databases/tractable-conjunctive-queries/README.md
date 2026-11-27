@@ -18,3 +18,4 @@
 - [Bounded fractional hypertree width makes constraint satisfaction polynomial](bounded-fractional-hypertree-width-makes-csp-polynomial.md)
 - [Conjunctive queries of bounded fractional hypertree width have polynomial-delay evaluation](bounded-fhw-cqs-have-polynomial-delay-evaluation.md)
 - [Enumeration and dynamic evaluation of conjunctive queries](enumeration-and-dynamic-evaluation/README.md)
+- [Proof ingredients for the AGM bound and acyclic joins](join-processing-proof-ingredients/README.md)
