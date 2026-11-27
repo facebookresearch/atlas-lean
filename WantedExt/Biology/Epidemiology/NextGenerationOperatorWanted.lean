@@ -17,27 +17,37 @@ Diekmann, Heesterbeek and Metz (1990) describe a heterogeneous population by a m
 a positive operator: an infective distribution `φ` produces `K φ` in the next generation. They
 define `R₀ = r(K) = lim_m ‖K^m‖^(1/m) = inf_m ‖K^m‖^(1/m)` (Eq. (2.2)), so that `K^m φ` tends to
 zero for every `φ` when `R₀ < 1`, while for `R₀ > 1` some `φ` leads to arbitrarily large later
-generations; under an irreducibility hypothesis every nonzero nonnegative introduction of
-infection grows at rate `R₀` (Remark 3). For a separable kernel `k(ξ, η) = a(ξ) b(η)` the
-operator has range of dimension at most one and `R₀ = ∫ b S a` (Eqs. (3.1)–(3.3)).
+generations. Under conditions on `K` they describe the long run as `K^m φ ~ c(φ) R₀^m φ_d`, with
+`c(φ) > 0` for nonnegative nonzero `φ` (p. 368, Eq. (2.3)), and they remark that an
+irreducibility hypothesis is needed for every introduction of infectivity to lead to an epidemic
+when `R₀ > 1` (Remark 3). For a separable kernel `k(ξ, η) = a(ξ) b(η)` the operator has range of
+dimension at most one and `R₀ = ∫ b S a` (Eqs. (3.1)–(3.3)).
 
-The generation-growth factor `inf_m ‖K^m‖^(1/m)` is the Gelfand radius of the real bounded
-operator `K`, which equals the spectral radius of its complexification by Gelfand's formula. The
-finite-dimensional threshold `R₀ = ρ(F V⁻¹)` of van den Driessche and Watmough is proved in
+`generationGrowth` is Mathlib's Gelfand radius `gelfandRadius` of the real bounded operator `K`,
+the limit of `‖K^m‖^(1/m)`, which is also its infimum over `m ≥ 1` and equals the spectral radius
+of the complexification of `K` by Gelfand's formula. The finite-dimensional threshold
+`R₀ = ρ(F V⁻¹)` of van den Driessche and Watmough is proved in
 `Domains.Biology.Epidemiology.NextGenerationMatrix`.
+
+Recorded here: subcritical decay, supercritical growth and the separable kernel. Not stated here:
+the corollary that every nonzero nonnegative introduction grows at exactly the rate `R₀`,
+`‖K^m φ‖^(1/m) → R₀`, for a positive, compact, ideal-irreducible `K` with `R₀ > 0` on a σ-finite
+space. The source does not state it; its proof needs a strictly positive eigenfunctional of the
+adjoint of `K` for `R₀`, from the Perron–Frobenius theory of irreducible positive operators
+(Schaefer 1974, §V.5).
 
 Sources: O. Diekmann, J. A. P. Heesterbeek and J. A. J. Metz, "On the definition and the
 computation of the basic reproduction ratio R₀ in models for infectious diseases in
-heterogeneous populations", J. Math. Biol. 28 (1990) 365–382, Eqs. (2.1)–(2.2), p. 367,
-Remark 3 (p. 369) and Section 3.1.
+heterogeneous populations", J. Math. Biol. 28 (1990) 365–382, Eqs. (2.1)–(2.3), pp. 367–368,
+Remark 3 (p. 369) and Section 3.1; H. H. Schaefer, *Banach Lattices and Positive Operators*,
+Springer (1974), §V.5.
 -/
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.MeasureTheory.Function.LpOrder
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.Analysis.Normed.Operator.Compact.Basic
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 @[expose] public section
 
@@ -47,11 +57,13 @@ open MeasureTheory Filter Topology
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
-/-- The Gelfand radius (per-generation growth factor) `inf_{m ≥ 1} ‖K^m‖^(1/m)` of a bounded real
-operator `K`, which equals the spectral radius of its complexification and defines the basic
-reproduction ratio `R₀ = r(K)` of Diekmann, Heesterbeek and Metz (1990, Eq. (2.2)). -/
-noncomputable def generationGrowth (K : Lp ℝ 1 μ →L[ℝ] Lp ℝ 1 μ) : ℝ :=
-  ⨅ m : ℕ, ‖K ^ (m + 1)‖ ^ ((1 : ℝ) / (m + 1))
+/-- **The basic reproduction ratio `R₀`.** The per-generation growth factor of a bounded real
+operator `K`, an alias for Mathlib's Gelfand radius `gelfandRadius K`: the limit of
+`‖K^m‖^(1/m)` (`tendsto_gelfandRadius`), which is also `inf_{m ≥ 1} ‖K^m‖^(1/m)` and equals the
+spectral radius of the complexification of `K`. It is the basic reproduction ratio `R₀ = r(K)` of
+Diekmann, Heesterbeek and Metz (1990, Eq. (2.2)). -/
+noncomputable abbrev generationGrowth (K : Lp ℝ 1 μ →L[ℝ] Lp ℝ 1 μ) : ℝ :=
+  gelfandRadius K
 
 /-- `K` maps nonnegative functions to nonnegative functions. -/
 def IsPositive (K : Lp ℝ 1 μ →L[ℝ] Lp ℝ 1 μ) : Prop :=
@@ -76,18 +88,6 @@ unbounded generation sizes `‖K^m φ‖`. -/
 theorem_wanted exists_nonneg_unbounded_of_one_lt (K : Lp ℝ 1 μ →L[ℝ] Lp ℝ 1 μ)
     (hpos : IsPositive K) (hK : 1 < generationGrowth K) :
     ∃ φ : Lp ℝ 1 μ, 0 ≤ φ ∧ ¬ BddAbove (Set.range fun m : ℕ => ‖(K ^ m) φ‖)
-
-/-- **Every introduction grows at rate `R₀` under irreducibility** (Diekmann, Heesterbeek and
-Metz 1990, p. 368 and Remark 3). Let `μ` be σ-finite and `K` a positive, compact,
-ideal-irreducible operator on `L¹(Ω)` with `R₀ > 0`. Then every nonzero nonnegative infective
-distribution `φ` grows at exactly the rate `R₀`: `‖K^m φ‖^(1/m) → R₀`. In particular every
-such introduction leads to unbounded generations when `R₀ > 1`.
-
-Source: Diekmann, Heesterbeek and Metz (1990), Remark 3. -/
-theorem_wanted tendsto_norm_pow_apply_rpow [SigmaFinite μ] (K : Lp ℝ 1 μ →L[ℝ] Lp ℝ 1 μ)
-    (hpos : IsPositive K) (hcpt : IsCompactOperator K) (hirr : IsIdealIrreducible K)
-    (hK : 0 < generationGrowth K) (φ : Lp ℝ 1 μ) (hφ : 0 ≤ φ) (hφ0 : φ ≠ 0) :
-    Tendsto (fun m : ℕ => ‖(K ^ m) φ‖ ^ ((1 : ℝ) / m)) atTop (𝓝 (generationGrowth K))
 
 /-- **`R₀` for a separable kernel** (Diekmann, Heesterbeek and Metz 1990, Section 3.1,
 Eqs. (3.1)–(3.3)). Let `a, b, S ≥ 0` be measurable with `b` essentially bounded and `S a`
