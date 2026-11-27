@@ -5,6 +5,7 @@ Let $(H, \mathrm{cl})$ be a violator space with $n$ constraints and combinatoria
 ## Depends on
 
 - [Violator space](violator-space.md)
+- [Uniformly random rearrangement of a list](../../randomized-algorithms/average-case-running-time/uniform-permutation.md)
 
 ## Sources
 

@@ -5,7 +5,11 @@
 
 ## Depends on
 
-- [Minkowski sums of disjoint convex sets are pseudodisks](minkowski-sums-of-disjoint-convex-sets-are-pseudodisks.md)
+- [Minkowski sums of convex polygons with disjoint interiors are pseudodisks](minkowski-sums-of-disjoint-convex-sets-are-pseudodisks.md)
+
+## Proof depends on
+
+- [Edge and face bounds for planar graphs](../../../GraphTheory/planar-graphs-and-minors/edge-and-face-bounds-for-planar-graphs.md)
 
 ## Sources
 

@@ -11,4 +11,4 @@ After a rotation of the plane, which is a homeomorphism, no two vertices share a
 ## Sources
 
 - J. Erickson, *Computational Topology*, lecture notes, University of Illinois, 2023, Chapter 1 (Simple polygons), <https://jeffe.cs.illinois.edu/teaching/comptop/2023/notes/01-simple-polygons.pdf>: Section 1.2, Lemma $\ge 2$ and its proof by the parity of the number of polygon edges above each trapezoid
-- R. E. Schwartz, "The polygonal Jordan curve theorem", lecture notes, Brown University, 2020, <http://www.math.brown.edu/reschwar/M1230/jordan.pdf>: Section 0.2 (a parity argument: Lemmas 0.5 and 0.6, the intersection parity $I(a, b, J)$ is well defined)
+- R. E. Schwartz, "The polygonal Jordan curve theorem", lecture notes, Brown University, 2020, <http://www.math.brown.edu/reschwar/M1230/jordan.pdf>: Section 0.2, Lemma 0.5, and Section 0.3, Lemma 0.6 (a parity argument: the intersection parity $I(a, b, J)$ is well defined)

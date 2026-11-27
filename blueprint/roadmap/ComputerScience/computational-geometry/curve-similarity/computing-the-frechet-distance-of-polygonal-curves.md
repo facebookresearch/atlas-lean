@@ -1,6 +1,6 @@
 # Computing the Fréchet distance of polygonal curves
 
-The Fréchet distance between two polygonal curves of total complexity $n$ in $\mathbb{R}^d$ can be computed in $O(n^2 \log n)$ time (Alt and Godau). The algorithm in the cited chapter searches over the critical values of $\delta$, at which the free-space structure changes, with the decision procedure as an oracle; its running-time bound holds with high probability.
+The Fréchet distance between two polygonal curves of total complexity $n$ in $\mathbb{R}^d$, for fixed $d$, can be computed in $O(n^2 \log n)$ time (Alt and Godau). The algorithm in the cited chapter searches over the critical values of $\delta$, at which the free-space structure changes, with the decision procedure as an oracle; its running-time bound holds with high probability.
 
 ## Depends on
 

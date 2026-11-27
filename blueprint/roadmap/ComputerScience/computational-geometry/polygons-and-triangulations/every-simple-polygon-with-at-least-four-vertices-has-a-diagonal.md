@@ -2,7 +2,7 @@
 
 Every simple polygon with $n \ge 4$ vertices has an interior diagonal, a segment between two non-adjacent vertices whose relative interior lies in the interior of the polygon (Dehn, Lennes).
 
-In the proof, vertical cuts through the vertices decompose the closed polygon into trapezoids, each with exactly two vertices of the polygon on its boundary. If the segment between them crosses the interior of some trapezoid it is a diagonal. Otherwise every trapezoid has both vertices on its ceiling or both on its floor, and the polygon is a monotone mountain, which has a diagonal at a convex vertex.
+In the proof, after a rotation that gives the vertices distinct $x$-coordinates, vertical cuts through the vertices decompose the closed polygon into trapezoids, each with exactly two vertices of the polygon on its boundary. If the segment between them crosses the interior of some trapezoid it is a diagonal. Otherwise every trapezoid has both vertices on its ceiling or both on its floor, and the polygon is a monotone mountain, which has a diagonal at a convex vertex.
 
 ## Depends on
 

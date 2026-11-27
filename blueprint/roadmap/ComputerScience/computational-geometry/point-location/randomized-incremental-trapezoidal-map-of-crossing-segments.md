@@ -5,6 +5,7 @@ Let $S$ be a set of $n$ segments in general position with $K$ pairwise crossings
 ## Depends on
 
 - [Trapezoidal map of possibly crossing segments](trapezoidal-map-of-possibly-crossing-segments.md)
+- [Uniformly random rearrangement of a list](../../randomized-algorithms/average-case-running-time/uniform-permutation.md)
 
 ## Proof depends on
 

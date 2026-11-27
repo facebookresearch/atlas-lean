@@ -1,6 +1,6 @@
 # Minkowski sum of two convex polygons
 
-The Minkowski sum of sets $A, B \subseteq \mathbb{R}^2$ is $A \oplus B = \{a + b : a \in A, b \in B\}$. For a direction $u$, the points of $A \oplus B$ extreme in direction $u$ are the sums of points of $A$ and of $B$ extreme in direction $u$. Consequently, if $P$ and $R$ are convex polygons with $n$ and $m$ edges, then $P \oplus R$ is a convex polygon with at most $n + m$ edges, whose edges are those of $P$ and $R$ merged by slope, and it can be computed in $O(n + m)$ time.
+The Minkowski sum of sets $A, B \subseteq \mathbb{R}^2$ is $A \oplus B = \{a + b : a \in A, b \in B\}$. For a direction $u$, the points of $A \oplus B$ extreme in direction $u$ are the sums of points of $A$ and of $B$ extreme in direction $u$. Consequently, if $P$ and $R$ are convex polygons with $n$ and $m$ edges, then $P \oplus R$ is a convex polygon with at most $n + m$ edges, whose edge vectors are those of $P$ and $R$ merged in cyclic order of their directed angles, co-directed vectors being added, and it can be computed in $O(n + m)$ time.
 
 ## Sources
 

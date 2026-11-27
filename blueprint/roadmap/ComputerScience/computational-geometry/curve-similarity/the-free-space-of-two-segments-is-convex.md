@@ -1,6 +1,6 @@
 # The free space of two segments is convex
 
-Let $\pi, \sigma : [0, 1] \to \mathbb{R}^d$ be two segments parameterized at constant speed, and let $\operatorname{elev}(x, y) = \|\pi(x) - \sigma(y)\|$ on $[0,1]^2$. Then $\operatorname{elev}$ is a convex function, since it is the norm of the affine map $(x, y) \mapsto \pi(x) - \sigma(y)$. Hence for every $\delta \ge 0$ the *free space* $\{(x, y) \in [0,1]^2 : \operatorname{elev}(x, y) \le \delta\}$ is convex; when the affine map is injective it is an ellipse clipped to the unit square. For a fixed $x_0$ the set of $y$ with $\operatorname{elev}(x_0, y) \le \delta$ is an interval computable in constant time.
+Let $\pi, \sigma : [0, 1] \to \mathbb{R}^d$ be two segments parameterized at constant speed, and let $\operatorname{elev}(x, y) = \|\pi(x) - \sigma(y)\|$ on $[0,1]^2$. Then $\operatorname{elev}$ is a convex function, since it is the norm of the affine map $(x, y) \mapsto \pi(x) - \sigma(y)$. Hence for every $\delta \ge 0$ the *free space* $\{(x, y) \in [0,1]^2 : \operatorname{elev}(x, y) \le \delta\}$ is convex; when the affine map is injective it is an ellipse clipped to the unit square. For a fixed $x_0$ the set of $y$ with $\operatorname{elev}(x_0, y) \le \delta$ is an interval computable in constant time for fixed $d$.
 
 ## Depends on
 

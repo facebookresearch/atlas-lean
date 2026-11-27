@@ -5,6 +5,7 @@ Let $h_1, \dots, h_n$ be closed halfspaces in $\mathbb{R}^d$ and $c$ an objectiv
 ## Depends on
 
 - [Linear program](../../../Geometry/convex-geometry/linear-programming/linear-program.md)
+- [Uniformly random rearrangement of a list](../../randomized-algorithms/average-case-running-time/uniform-permutation.md)
 
 
 ## Sources

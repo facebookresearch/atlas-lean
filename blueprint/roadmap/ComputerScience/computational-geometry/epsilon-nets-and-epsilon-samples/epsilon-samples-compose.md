@@ -1,6 +1,6 @@
 # ε-samples compose
 
-Let $(X, R)$ be a finite range space with $X$ nonempty, let $C$ be an $\varepsilon$-sample of it, and let $C'$ be an $\varepsilon'$-sample of the projected range space $(C, R|_C)$. Then $C'$ is an $(\varepsilon + \varepsilon')$-sample of $(X, R)$, by the triangle inequality $|m_X(r) - m_{C'}(r)| \le |m_X(r) - m_C(r)| + |m_C(r) - m_{C'}(r)|$ for every range $r$.
+Let $(X, R)$ be a finite range space with $X$ nonempty, let $C$ be an $\varepsilon$-sample of it, and let $C'$ be an $\varepsilon'$-sample of the projected range space $(C, R|_C)$, where $\varepsilon + \varepsilon' \le 1$. Then $C'$ is an $(\varepsilon + \varepsilon')$-sample of $(X, R)$, by the triangle inequality $|m_X(r) - m_{C'}(r)| \le |m_X(r) - m_C(r)| + |m_C(r) - m_{C'}(r)|$ for every range $r$.
 
 ## Depends on
 

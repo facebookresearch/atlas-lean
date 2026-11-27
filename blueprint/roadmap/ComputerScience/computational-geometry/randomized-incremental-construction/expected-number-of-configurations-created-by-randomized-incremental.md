@@ -7,6 +7,7 @@ $$O\Big(\sum_{r=1}^{n} \frac{t_r}{r}\Big).$$
 ## Depends on
 
 - [Configuration space](configuration-space.md)
+- [Uniformly random rearrangement of a list](../../randomized-algorithms/average-case-running-time/uniform-permutation.md)
 
 ## Proof depends on
 

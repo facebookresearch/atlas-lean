@@ -11,7 +11,7 @@ Assume the strong exponential time hypothesis, in the form that for no $\delta >
 
 This page becomes ready once:
 
-- Source check: the reduction in the body of the paper has not been opened; only the abstract was checked.
+- Proof prerequisite: Bringmann's reduction from CNF-SAT to the Fréchet distance of polygonal curves (and to its approximation within $1.001$), as a page of its own.
 
 ## Sources
 

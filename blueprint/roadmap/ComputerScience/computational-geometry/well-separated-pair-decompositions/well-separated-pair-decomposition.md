@@ -1,6 +1,6 @@
 # Well-separated pair decomposition
 
-Let $s > 0$. Two finite sets $A, B \subset \mathbb{R}^d$ are *$s$-well separated* if they can be enclosed in two Euclidean balls of a common radius $r$ whose distance is at least $sr$. For sets $A$ and $B$ let $A \otimes B = \{\{a, b\} : a \in A, b \in B, a \ne b\}$. An *$s$-well separated pair decomposition* ($s$-WSPD) of a finite set $P \subset \mathbb{R}^d$ is a collection $\{\{A_1, B_1\}, \dots, \{A_m, B_m\}\}$ of pairs of subsets of $P$ such that $A_i \cap B_i = \emptyset$ and $A_i, B_i$ are $s$-well separated for each $i$, and $\bigcup_{i=1}^m A_i \otimes B_i = P \otimes P$. Its *size* is $m$.
+Let $s > 0$. Two disjoint finite sets $A, B \subset \mathbb{R}^d$ are *$s$-well separated* if they can be enclosed in two Euclidean balls of a common radius $r$ whose distance is at least $sr$. For sets $A$ and $B$ let $A \otimes B = \{\{a, b\} : a \in A, b \in B, a \ne b\}$. An *$s$-well separated pair decomposition* ($s$-WSPD) of a finite set $P \subset \mathbb{R}^d$ is a collection $\{\{A_1, B_1\}, \dots, \{A_m, B_m\}\}$ of pairs of subsets of $P$ such that $A_i \cap B_i = \emptyset$ and $A_i, B_i$ are $s$-well separated for each $i$, and $\bigcup_{i=1}^m A_i \otimes B_i = P \otimes P$. Its *size* is $m$.
 
 ## Sources
 

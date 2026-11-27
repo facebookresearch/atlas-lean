@@ -7,6 +7,7 @@ The proof is a backwards analysis: for a fixed $(r+1)$-set $Q$ the last element 
 ## Depends on
 
 - [Configuration space](configuration-space.md)
+- [Uniformly random rearrangement of a list](../../randomized-algorithms/average-case-running-time/uniform-permutation.md)
 
 ## Sources
 

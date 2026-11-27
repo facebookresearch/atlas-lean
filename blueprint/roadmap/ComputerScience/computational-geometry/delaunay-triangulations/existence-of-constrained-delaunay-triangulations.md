@@ -1,6 +1,6 @@
 # Existence of constrained Delaunay triangulations
 
-Let $P \subset \mathbb{R}^2$ be a finite point set and $G = (P, E)$ a plane straight-line graph on $P$. A triangulation $T$ of $P$ *respects* $G$ if it contains every segment of $E$. A point $q \in P$ is *visible* from the interior of a triangle $\Delta$ if some segment from a point in the interior of $\Delta$ to $q$ meets no segment of $E$ (except possibly at $q$). A triangulation $T$ of $P$ that respects $G$ is a *constrained Delaunay triangulation* of $P$ with respect to $G$ if, for every triangle $\Delta$ of $T$, every point of $P$ strictly inside the circumcircle of $\Delta$ is invisible from the interior of $\Delta$. For every finite $P$ and every plane graph $G = (P, E)$ a constrained Delaunay triangulation exists.
+Let $P \subset \mathbb{R}^2$ be a finite set of at least three points, not all on one line, and $G = (P, E)$ a plane straight-line graph on $P$. A triangulation $T$ of $P$ *respects* $G$ if it contains every segment of $E$. A point $q \in P$ is *visible* from the interior of a triangle $\Delta$ if for some point $p$ in the interior of $\Delta$ the segment $pq$ does not intersect any segment of $E$. A triangulation $T$ of $P$ that respects $G$ is a *constrained Delaunay triangulation* of $P$ with respect to $G$ if, for every triangle $\Delta$ of $T$, every point of $P$ strictly inside the circumcircle of $\Delta$ is invisible from the interior of $\Delta$. For every such $P$ and every plane straight-line graph $G = (P, E)$ a constrained Delaunay triangulation exists.
 
 ## Depends on
 

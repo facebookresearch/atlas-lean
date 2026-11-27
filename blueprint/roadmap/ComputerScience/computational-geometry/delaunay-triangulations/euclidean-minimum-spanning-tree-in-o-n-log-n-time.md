@@ -1,6 +1,6 @@
 # Euclidean minimum spanning tree in O(n log n) time
 
-The Euclidean minimum spanning tree of $n \ge 3$ points in $\mathbb{R}^2$, not all on one line, can be computed in $O(n \log n)$ time: compute a Delaunay triangulation, which has $O(n)$ edges, and run Kruskal's algorithm on its edges (it uses only the order of the weights). This is correct because the Euclidean minimum spanning tree is a subgraph of the Delaunay triangulation, whereas running Kruskal's algorithm on all $\binom n2$ pairs takes $O(n^2 \log n)$ time.
+The Euclidean minimum spanning tree of $n \ge 3$ points in $\mathbb{R}^2$, not all on one line and no four on a circle, can be computed in $O(n \log n)$ time: compute the Voronoi diagram by Fortune's sweep and from it the Delaunay triangulation, its dual, which has $O(n)$ edges, and run Kruskal's algorithm on its edges (it uses only the order of the weights). This is correct because the Euclidean minimum spanning tree is a subgraph of the Delaunay triangulation, whereas running Kruskal's algorithm on all $\binom n2$ pairs takes $O(n^2 \log n)$ time.
 
 ## Depends on
 
@@ -12,6 +12,8 @@ The Euclidean minimum spanning tree of $n \ge 3$ points in $\mathbb{R}^2$, not a
 - [Euclidean minimum spanning trees lie in the Delaunay triangulation](euclidean-minimum-spanning-trees-lie-in-the-delaunay-triangulation.md)
 - [Number of triangles and edges of a triangulation](number-of-triangles-and-edges-of-a-triangulation.md)
 - [Kruskal's algorithm gives a minimum spanning forest](../../graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/kruskal-minimal.md)
+- [Fortune's algorithm](../voronoi-diagrams/fortune-s-algorithm.md)
+- [The Delaunay graph is dual to the Voronoi diagram](the-delaunay-graph-is-dual-to-the-voronoi-diagram.md)
 
 ## Sources
 

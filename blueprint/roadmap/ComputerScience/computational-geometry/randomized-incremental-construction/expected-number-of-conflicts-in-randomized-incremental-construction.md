@@ -9,6 +9,7 @@ In the Delaunay and trapezoidal-map applications, the location cost of the algor
 ## Depends on
 
 - [Configuration space](configuration-space.md)
+- [Uniformly random rearrangement of a list](../../randomized-algorithms/average-case-running-time/uniform-permutation.md)
 
 ## Proof depends on
 
