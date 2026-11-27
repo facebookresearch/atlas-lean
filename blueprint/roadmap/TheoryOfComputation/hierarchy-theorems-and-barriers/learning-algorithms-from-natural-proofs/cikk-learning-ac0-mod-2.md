@@ -6,7 +6,7 @@ $$
 \operatorname{rank} A^{a,b}(f) \ge \frac{2^n}{140\,n^2}.
 $$
 
-It is decidable from truth tables in $\mathsf{NC}^2$, holds for at least half of all functions on $n$ bits, and is useful against circuits of depth $d$ with AND, OR, NOT and $\mathrm{MOD}_2$ gates of size up to $2^{\Omega(n^{1/(2d)})}$. For every fixed depth $d$, the learner from a dense test whose test accepts the truth tables of the functions with the rank property, at a suitable input length, learns every function $f$ on $n$ bits computed by such a circuit of depth $d$ and size $s$, with membership queries under the uniform distribution, to within error $\varepsilon$, in time quasi-polynomial in $ns/\varepsilon$; in particular it makes quasi-polynomially many queries.
+It is decidable from truth tables in $\mathsf{NC}^2$, holds for at least half of all functions on $n$ bits, and is useful against circuits of depth $d$ with AND, OR, NOT and $\mathrm{MOD}_2$ gates of size up to $2^{\Omega(n^{1/(2d)})}$. For every fixed depth $d$, the learner from a dense test whose test accepts the truth tables of the functions with the rank property, at a suitable input length $\ell \le n$ whenever such a length exists, learns every function $f$ on $n$ bits computed by such a circuit of depth $d$ and size $s$, with membership queries under the uniform distribution, to within error $\varepsilon$, in time quasi-polynomial in $ns/\varepsilon$; in particular it makes quasi-polynomially many queries.
 
 ## Proof sketch
 

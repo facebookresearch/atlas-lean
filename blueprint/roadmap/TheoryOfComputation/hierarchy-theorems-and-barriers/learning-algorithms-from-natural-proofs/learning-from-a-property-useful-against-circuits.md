@@ -6,7 +6,7 @@ $$
 \mathrm{poly}\big(n, 1/\varepsilon, 2^{u^{-1}(\mathrm{poly}(n, 1/\varepsilon, s))}\big).
 $$
 
-It is the learner from a dense test whose test accepts exactly the truth tables, of length $L = 2^\ell$ with $\ell > u^{-1}(\mathrm{poly}(n, 1/\varepsilon, s))$, of the functions on $\ell$ bits that have $R$.
+It is the learner from a dense test whose test accepts exactly the truth tables, of length $L = 2^\ell$ with $u^{-1}(\mathrm{poly}(n, 1/\varepsilon, s)) < \ell \le n$ (which exists whenever $u^{-1}(\mathrm{poly}(n, 1/\varepsilon, s)) < n$), of the functions on $\ell$ bits that have $R$.
 
 ## Proof sketch
 
