@@ -14000,7 +14000,6 @@
   "MathlibExt/NumberTheory/Recurrences/GibonacciLucasLikeSum": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciLucasMultiplier": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciPolynomialRatioTelescoping": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Reciprocal sums of squares of gibonacci polynomials"},
-  "MathlibExt/NumberTheory/Recurrences/GibonacciPolynomialSquareFamilyHasSumFibPolySqFamily": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Reciprocal sums of squares of gibonacci polynomials"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciPolynomialSquareFamilySums": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Reciprocal sums of squares of gibonacci polynomials"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciProductSum": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciShiftedProduct": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
