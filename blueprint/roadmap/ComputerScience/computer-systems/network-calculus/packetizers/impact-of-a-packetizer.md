@@ -1,6 +1,6 @@
 # Impact of a packetizer
 
-Consider a first-in-first-out, lossless bit-by-bit system with $L$-packetized input $R$ and output $R^*$, where the packet lengths are positive, $L(i) > L(i - 1)$ (with a packet of length $0$ the threshold $L(i)$ is reached before that packet arrives), packet $i$ arrives at time $T_i$ and $R(t) = L(i)$ for $T_i \le t < T_{i+1}$, as in the source's proof, followed by an [$L$-packetizer](packetizers.md) that produces the final output $R' = P^L(R^*)$; the combined system maps $R$ to $R'$. Then:
+Consider a first-in-first-out, lossless bit-by-bit system with $L$-packetized input $R$ and output $R^*$, where the packet lengths are positive, $L(i) > L(i - 1)$ (with a packet of length $0$ the threshold $L(i)$ can be reached before that packet arrives), packet $i$ arrives at time $T_i$ and $R(t) = L(i)$ for $T_i \le t < T_{i+1}$, as in the source's proof, followed by an [$L$-packetizer](packetizers.md) that produces the final output $R' = P^L(R^*)$; the combined system maps $R$ to $R'$. Then:
 
 1. the per-packet delay of the combined system, $\sup_i (T'_i - T_i)$, where $T'_i = \inf\{t : R'(t) \ge L(i)\}$ is the departure time of packet $i$, equals the maximum virtual delay of the bit-by-bit system;
 2. the maximum backlogs satisfy $B^* \le B' \le B^* + l_{\max}$, for $B^*$ of the bit-by-bit system and $B'$ of the combined one;

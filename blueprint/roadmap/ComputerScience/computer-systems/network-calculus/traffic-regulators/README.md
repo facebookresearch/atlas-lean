@@ -1,6 +1,6 @@
 # Traffic regulators
 
-Regulators that delay packets so that each flow leaving them satisfies a regulation constraint, expressed as Pi-regularity of its packet sequence: the minimal per-flow and interleaved regulators, and the property that placing a minimal regulator after a FIFO system does not increase the worst-case delay.
+Regulators that delay packets so that each flow leaving them satisfies a regulation constraint, expressed as Pi-regularity of its packet sequence: the minimal per-flow and interleaved regulators, and the property that placing a minimal regulator after a FIFO system whose input is already regular for the same operator (each flow for the interleaved version) does not increase the worst-case delay.
 
 - [Pi-regularity](pi-regularity.md)
 - [Minimal per-flow regulators](minimal-per-flow-regulators.md)
