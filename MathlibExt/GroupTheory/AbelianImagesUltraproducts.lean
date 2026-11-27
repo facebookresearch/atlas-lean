@@ -13,15 +13,18 @@ public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import Mathlib.Order.Filter.Cofinite
 public import Mathlib.Order.Filter.Ultrafilter.Defs
 import Mathlib.Algebra.Module.CharacterModule
+import Mathlib.Data.ZMod.Basic
 import Mathlib.GroupTheory.DivisibleHull
+import Mathlib.GroupTheory.Torsion
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.Order.Filter.Germ.Basic
+import Mathlib.Order.Filter.Ultrafilter.Basic
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Positivity
 
 /-!
-# Abelian images of countable ultraproducts
+# Abelian images of ultraproducts and products of finite groups
 
 Every abelian image of a nonprincipal countable ultraproduct of groups is an image of an
 ultrapower of a free abelian group over the same ultrafilter.
@@ -30,6 +33,11 @@ Following Corson's diagonal argument, the given ultraproduct solves the recurren
 `b n = a n + (n + 1) • b (n + 1)` in its abelian image. These recurrences give compatible
 lifts of rational multiples with factorial denominators. This lets us extend evaluation on
 the free abelian group across its diagonal embedding in its ultrapower.
+
+For a product of finite groups, solve the recurrences in each factor. To obtain a product of
+finite abelian groups mapping onto the image, reduce the free generators into cyclic factors
+of every positive order. After quotienting the product by its torsion, the free group embeds
+with torsion-free cokernel, so the same extension argument applies.
 -/
 
 @[expose] public section
@@ -294,5 +302,167 @@ public theorem abelianImageOfUltraproductIsImageOfAbelianUltraproduct_holds :
   intro a
   refine ⟨fun _ => Multiplicative.ofAdd (Finsupp.single a 1), ?_⟩
   exact (DFunLike.congr_fun hg (Finsupp.single a 1)).trans (heval a)
+
+/-- **Kourovka Problem 20.13(b) (Bergman).** The proposition that every abelian group $A$ that is a
+homomorphic image of a direct product $\prod_{i \in I} G_i$ of an infinite family $(G_i)_{i \in I}$
+of finite (not necessarily abelian) groups is also a homomorphic image of the direct product
+$\prod_{j \in J} H_j$ of some family $(H_j)_{j \in J}$ of finite abelian groups. -/
+def abelianImageOfProductOfFiniteIsImageOfAbelianProduct : Prop :=
+  ∀ (A : Type) [CommGroup A] (I : Type) [Infinite I] (G : I → Type) [∀ i, Group (G i)]
+    [∀ i, Finite (G i)], (∃ φ : (∀ i, G i) →* A, Function.Surjective φ) →
+    ∃ (J : Type) (H : J → Type) (_ : ∀ j, CommGroup (H j)), (∀ j, Finite (H j)) ∧
+      ∃ ψ : (∀ j, H j) →* A, Function.Surjective ψ
+
+/-- A finite backwards solution starting at the identity. -/
+private def finiteRecursionValue {G : Type} [Group G] (g : ℕ → G) (n : ℕ) : ℕ → G
+  | 0 => 1
+  | depth + 1 => g n * finiteRecursionValue g (n + 1) depth ^ (n + 1)
+
+-- A nonprincipal ultrafilter selects one value at each position of the backwards solutions.
+-- For any two neighboring positions these values occur together in a sufficiently long solution.
+private theorem finiteRecursion {G : Type} [Group G] [Finite G] (g : ℕ → G) :
+    ∃ b : ℕ → G, ∀ n, b n = g n * b (n + 1) ^ (n + 1) := by
+  let U : Ultrafilter ℕ := hyperfilter ℕ
+  have h (n : ℕ) : ∀ᶠ k in (U : Filter ℕ), ∃ z : G,
+      z = finiteRecursionValue g n (k - n) :=
+    Filter.Eventually.of_forall fun k => ⟨_, rfl⟩
+  choose b hb using fun n => (Ultrafilter.eventually_exists_iff (f := U)).mp (h n)
+  exact ⟨b, fun n => by
+    have ht : ∀ᶠ k in (U : Filter ℕ), n < k :=
+      ((eventually_gt_atTop n).filter_mono (hyperfilter_le_cofinite.trans_eq
+        Nat.cofinite_eq_atTop))
+    obtain ⟨k, hk, hk'⟩ := ((hb n).and (hb (n + 1))).and ht |>.exists
+    have e : k - n = k - (n + 1) + 1 := by omega
+    rw [hk.1, hk.2, e, finiteRecursionValue]⟩
+
+private theorem solveProductRecurrence {A I : Type} [CommGroup A] {G : I → Type}
+    [∀ i, Group (G i)] [∀ i, Finite (G i)] (φ : (∀ i, G i) →* A)
+    (hφ : Function.Surjective φ) (a : ℕ → Additive A) :
+    ∃ b : ℕ → Additive A, ∀ n, b n = a n + (n + 1) • b (n + 1) := by
+  choose g hg using fun n => hφ (a n).toMul
+  choose b hb using fun i => finiteRecursion fun n => g n i
+  refine ⟨fun n => Additive.ofMul (φ fun i => b i n), fun n => ?_⟩
+  change φ (fun i => b i n) = (a n).toMul * φ (fun i => b i (n + 1)) ^ (n + 1)
+  rw [← hg n, ← map_pow, ← map_mul]
+  exact congrArg φ (funext fun i => hb i n)
+
+/-- One cyclic factor of every positive order for each generator. -/
+private abbrev CyclicProduct (J : Type) := ∀ i : J × ℕ, ZMod (i.2 + 1)
+
+/-- Record each integer coefficient in all the cyclic quotients at its coordinate. -/
+private noncomputable def reduceAt (J : Type) : (J →₀ ℤ) →+ CyclicProduct J :=
+  AddMonoidHom.pi fun i => (Int.castRingHom (ZMod (i.2 + 1))).toAddMonoidHom.comp
+    (Finsupp.applyAddHom i.1)
+
+private abbrev CyclicTorsionFree (J : Type) :=
+  CyclicProduct J ⧸ AddCommGroup.torsion (CyclicProduct J)
+
+/-- Reduce the coefficients, then kill the torsion of the product. -/
+private noncomputable def reduceModTorsion (J : Type) : (J →₀ ℤ) →+ CyclicTorsionFree J :=
+  (QuotientAddGroup.mk' _).comp (reduceAt J)
+
+-- A scalar multiple of a reduced vector can agree with an arbitrary multiple modulo torsion
+-- only if the vector itself is divisible by that scalar coefficientwise.
+private theorem reduce_nsmul_dvd {J : Type} {n : ℕ} (hn : n ≠ 0)
+    (x : J →₀ ℤ) (b : CyclicTorsionFree J) (h : n • b = reduceModTorsion J x) :
+    ∀ j, (n : ℤ) ∣ x j := by
+  obtain ⟨y, rfl⟩ := QuotientAddGroup.mk'_surjective (AddCommGroup.torsion (CyclicProduct J)) b
+  let π := QuotientAddGroup.mk' (AddCommGroup.torsion (CyclicProduct J))
+  change n • π y = π (reduceAt J x) at h
+  rw [← map_nsmul] at h
+  have htor : n • y - reduceAt J x ∈ AddCommGroup.torsion (CyclicProduct J) :=
+    QuotientAddGroup.eq_iff_sub_mem.mp h
+  obtain ⟨m, hm, hz⟩ := isOfFinAddOrder_iff_nsmul_eq_zero.mp
+    ((AddCommGroup.mem_torsion _).mp htor)
+  intro j
+  -- At modulus `m * n`, the multiple of `y` vanishes after multiplication by `m`.
+  let i : J × ℕ := (j, m * n - 1)
+  have hi : i.2 + 1 = m * n := by dsimp [i]; have := Nat.mul_pos hm (Nat.pos_of_ne_zero hn); omega
+  have hcoord := congrFun hz i
+  change m • (n • y i - ((x j : ℤ) : ZMod (i.2 + 1))) = 0 at hcoord
+  rw [smul_sub, smul_smul] at hcoord
+  have hmod : (m * n) • y i = 0 := by
+    rw [← hi, nsmul_eq_mul]
+    simp
+  rw [hmod, zero_sub, neg_eq_zero, nsmul_eq_mul, ← Int.cast_natCast, ← Int.cast_mul] at hcoord
+  have hd := (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hcoord
+  rw [hi, Nat.cast_mul] at hd
+  exact (Int.mul_dvd_mul_iff_left (Int.natCast_ne_zero.mpr hm.ne')).mp hd
+
+private theorem reduceModTorsion_injective (J : Type) :
+    Function.Injective (reduceModTorsion J) := by
+  apply (injective_iff_map_eq_zero _).2
+  intro x hx
+  ext j
+  by_contra hj
+  have hn : x j ≠ 0 := by simpa using hj
+  have hd := reduce_nsmul_dvd (n := (x j).natAbs + 1) (by omega) x 0
+    (by simpa using hx.symm) j
+  have hle := Nat.le_of_dvd (Int.natAbs_pos.mpr hn) (Int.natCast_dvd.mp hd)
+  omega
+
+private theorem reduceModTorsion_quotient_hasUniqueDiv (J : Type) :
+    HasUniqueDiv (CyclicTorsionFree J ⧸ (reduceModTorsion J).range) where
+  nsmul_right_injective {n} hn := by
+    let Q := CyclicTorsionFree J ⧸ (reduceModTorsion J).range
+    apply (injective_iff_map_eq_zero (DistribSMul.toAddMonoidHom Q n)).2
+    intro w hw
+    obtain ⟨b, rfl⟩ := QuotientAddGroup.mk'_surjective (reduceModTorsion J).range w
+    obtain ⟨x, hx⟩ := (QuotientAddGroup.eq_zero_iff (n • b)).mp hw
+    have hd := reduce_nsmul_dvd hn x b hx.symm
+    let y := Finsupp.mapRange (fun z : ℤ => z / n) (by simp) x
+    have hy : n • y = x := by
+      ext j
+      change (n : ℤ) * (x j / (n : ℤ)) = x j
+      rw [mul_comm, Int.ediv_mul_cancel (hd j)]
+    apply (QuotientAddGroup.eq_zero_iff b).mpr
+    refine ⟨y, nsmul_right_injective hn ?_⟩
+    change n • reduceModTorsion J y = n • b
+    rw [← map_nsmul, hy, hx]
+
+/--
+**Abelian images of products of finite groups.** Let $A$ be an abelian group. If $A$ is a
+homomorphic image of a direct product $\prod_{i \in I} G_i$ of an infinite family $(G_i)_{i \in I}$
+of finite (not necessarily abelian) groups, then $A$ is a homomorphic image of the direct product
+$\prod_{j \in J} H_j$ of some family $(H_j)_{j \in J}$ of finite abelian groups.
+
+Corson proves more: such an $A$ is a homomorphic image of a direct product of finite cyclic groups.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.),
+Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026),
+Problem 20.13 (G. M. Bergman); resolution: S. M. Corson, On homomorphic images of ultraproducts,
+preprint, arXiv:2503.09228 (2025), Theorem 17 with Proposition 10: an abelian group is cotorsion iff
+it is an image of (∏ G_i)/(⊕ G_i) for some sequence of groups, iff an image of a product of finite
+cyclic groups, iff an image of a product of finite groups, and cotorsion groups are images of
+nonprincipal ultraproducts of abelian groups; Questions 1 and 2 (Kourovka 20.13(a), (b)) are
+answered affirmatively, https://arxiv.org/abs/2503.09228.
+-/
+public theorem abelianImageOfProductOfFiniteIsImageOfAbelianProduct_holds :
+    abelianImageOfProductOfFiniteIsImageOfAbelianProduct := by
+  intro A _ I _ G _ _ ⟨φ, hφ⟩
+  classical
+  let eval : (A →₀ ℤ) →+ Additive A :=
+    Finsupp.liftAddHom fun a : A => zmultiplesHom _ (Additive.ofMul a)
+  let _ := reduceModTorsion_quotient_hasUniqueDiv A
+  obtain ⟨g, hg⟩ := extendAcross (solveProductRecurrence φ hφ) (reduceModTorsion A)
+    (reduceModTorsion_injective A) eval
+  let H (i : A × ℕ) := Multiplicative (ZMod (i.2 + 1))
+  have (i : A × ℕ) : NeZero (i.2 + 1) := ⟨Nat.succ_ne_zero _⟩
+  let π := QuotientAddGroup.mk' (AddCommGroup.torsion (CyclicProduct A))
+  let ψ : (∀ i, H i) →* A :=
+    { toFun := fun x => (g (π (fun i => (x i).toAdd))).toMul
+      map_one' := by change (g (π 0)).toMul = 1; simp
+      map_mul' := fun x y => by
+        change (g (π ((fun i => (x i).toAdd) + fun i => (y i).toAdd))).toMul = _
+        rw [map_add, map_add]
+        rfl }
+  refine ⟨A × ℕ, H, fun _ => inferInstance, fun _ => inferInstance, ψ, fun a => ?_⟩
+  let v : A →₀ ℤ := Finsupp.single a 1
+  refine ⟨fun i => Multiplicative.ofAdd (reduceAt A v i), ?_⟩
+  change (g (reduceModTorsion A v)).toMul = a
+  change (g.comp (reduceModTorsion A) v).toMul = a
+  rw [hg]
+  change (eval (Finsupp.single a 1)).toMul = a
+  simp [eval]
 
 end MathlibExt.GroupTheory.AbelianImagesUltraproductsKourovka20Problem13Wanted
