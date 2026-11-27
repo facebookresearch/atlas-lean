@@ -18,3 +18,5 @@ all Boolean operations. Emptiness is decided by the region construction, in
 - [Deterministic timed automata](deterministic-timed-automata.md)
 - [Deterministic timed Muller automata are closed under Boolean operations](deterministic-timed-muller-automata-are-closed-under-boolean.md)
 - [Inclusion in the language of a deterministic timed automaton is PSPACE-complete](inclusion-in-a-deterministic-timed-automaton-is-pspace-complete.md)
+- [Zones and difference-bound matrices](zones-and-difference-bound-matrices.md)
+- [Timed games](timed-games.md)

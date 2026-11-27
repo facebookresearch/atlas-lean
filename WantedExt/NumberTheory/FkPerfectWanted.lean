@@ -46,6 +46,7 @@ public import MathlibExt.NumberTheory.FkPerfectIsDeficientFPerfectTwoMulPrimePow
 public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoMulPrimePow
 public import MathlibExt.NumberTheory.FkPerfectKlNearPerfectWithPrimePowTwoIff
 public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
+public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFkPerfectTwoMulPow
 public import MathlibExt.NumberTheory.FkPerfectNotIsKLNearPerfectTwoTwoPowMul
 public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoPowMulPrime
 public import MathlibExt.NumberTheory.FkPerfectNotKlDeficientPerfectWithTwoPowMul
@@ -107,15 +108,5 @@ theorem_wanted not_klNearPerfectWith_two_pow_mul
     (ha : 1 < a) :
     ¬ KLNearPerfectWith k l (2 ^ a * p) 1 ∧
       ¬ KLNearPerfectWith k l (2 ^ a * p) p
-
-/-- **No deficient $F_k$-perfect number of the form $2p^a$ for $k > 2$.** Let $k > 2$, let $p$ be
-an odd prime and let $a$ be a natural number. Then $2p^a$ is not deficient $F_k$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 18. -/
-theorem_wanted not_isDeficientFkPerfect_two_mul_pow
-    (k p a : ℕ) (hk : 2 < k) (hp : p.Prime) (hpo : Odd p) :
-    ¬ IsDeficientFkPerfect k (2 * p ^ a)
 
 end MathlibExt.NumberTheory.FkPerfectWanted
