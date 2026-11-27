@@ -9,4 +9,6 @@ For every $k$, all matrices $A_0, \dots, A_{k-1}$ and every set of active indice
 1. $O(A)$ has no return, and
 2. its transient-to-transient entry is
 
-$$O(A)(\star, \star) = \prod_{j=0}^{k-1} \begin{cases} 1 + A_j(\star, \star) & \text{if } j \text{ is active}, \\ 1 & \text{otherwise.} \end{cases}$$
+    $$
+    O(A)(\star, \star) = \prod_{j=0}^{k-1} \begin{cases} 1 + A_j(\star, \star) & \text{if } j \text{ is active}, \\ 1 & \text{otherwise.} \end{cases}
+    $$

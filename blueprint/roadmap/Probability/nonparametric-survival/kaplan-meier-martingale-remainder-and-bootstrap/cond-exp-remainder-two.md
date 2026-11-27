@@ -22,4 +22,4 @@ $$\mathbb E_{\mu_0}[R_2 \mid \mathcal F_1](c, d) = \begin{cases} 1, & c = \mathr
 
 ## Sources
 
-- R. D. Gill, Censoring and Stochastic Integrals, Mathematical Centre Tracts 124, Amsterdam (1980), Theorem 3.2.1 and Section 3.2.
+- R. D. Gill, Censoring and Stochastic Integrals, Mathematical Centre Tracts 124, Amsterdam (1980), Section 3.2, Lemma 3.2.1(iv), (3.2.12) and (3.2.15)–(3.2.18), pp. 37–38 (the exponential and two-coin formulas are a specialization and a discrete analogue).

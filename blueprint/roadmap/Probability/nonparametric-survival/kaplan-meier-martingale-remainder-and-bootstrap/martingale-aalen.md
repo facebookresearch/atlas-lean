@@ -12,4 +12,4 @@ be the Aalen compensator. Then $M_n = N_n - A_n$ is a martingale with respect to
 
 ## Sources
 
-- P. K. Andersen, Ø. Borgan, R. D. Gill and N. Keiding, Statistical Models Based on Counting Processes, Springer (1993), Section IV.3.1.
+- R. D. Gill, Censoring and Stochastic Integrals, Mathematical Centre Tracts 124, Amsterdam (1980), (3.1.5) and Assumption 3.1.2, pp. 25–26 (discrete-time compensator; the coin calculation is a discrete-time example). https://ir.cwi.nl/pub/12983/12983D.pdf
