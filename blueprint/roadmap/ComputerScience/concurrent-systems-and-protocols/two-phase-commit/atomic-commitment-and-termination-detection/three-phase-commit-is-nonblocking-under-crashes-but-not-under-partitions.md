@@ -13,5 +13,5 @@ The pre-commit buffer state guarantees that no site is in a noncommittable state
 
 ## Sources
 
-- Dale Skeen, "Nonblocking Commit Protocols", Proceedings of the 1981 ACM SIGMOD International Conference on Management of Data, 1981, Section 7 (central site termination).
+- Dale Skeen, "Nonblocking Commit Protocols", Proceedings of the 1981 ACM SIGMOD International Conference on Management of Data, 1981, Section 5 (central site termination protocol), pp. 140–141.
 - Dale Skeen and Michael Stonebraker, "A Formal Model of Crash Recovery in a Distributed System", IEEE Transactions on Software Engineering, 1983.

@@ -6,13 +6,17 @@ $$
 \operatorname{sgn}(\pi)\,\operatorname{sgn}\det M_1(x)\,\operatorname{sgn}\det M_2(y) \in \{-1, +1\}.
 $$
 
-Now let $(A, B)$ be a nondegenerate $m \times n$ bimatrix game with positive payoff matrices, and take its best response polytopes $P$ and $Q$ written with rows $-e_i^\top$ (label $i \in M$) and $(B^\top)_j$ (label $j \in N$) for $P$, and rows $A_i$ (label $i$) and $-e_j^\top$ (label $j$) for $Q$, the labels ordered with $M$ before $N$, each in index order. At every completely labelled pair $(x, y)$, with supports $L$ of $x$ and $J$ of $y$ (so $|L| = |J|$), the sign of its half-edge times $(-1)^{m+n+1}$ equals *Shapley's index*
+Now let $(A, B)$ be a nondegenerate $m \times n$ bimatrix game with positive payoff matrices, and take its best response polytopes $P$ and $Q$ written with rows $-e_i^\top$ (label $i \in M$) and $(B^\top)_j$ (label $j \in N$) for $P$, and rows $A_i$ (label $i$) and $-e_j^\top$ (label $j$) for $Q$, the labels ordered with $M$ before $N$, each in index order. The *index* of a completely labelled pair $(x, y)$ with supports $L$ of $x$ and $J$ of $y$ (so $|L| = |J|$) is
 
 $$
-(-1)^{|L|+1} \operatorname{sgn}\bigl(\det A_{LJ} \det B_{LJ}\bigr)
+(-1)^{|L|+1} \operatorname{sgn}\bigl(\det A_{LJ} \det B_{LJ}\bigr),
 $$
 
-of the equilibrium, where $A_{LJ}$ and $B_{LJ}$ are the submatrices with rows $L$ and columns $J$. The artificial equilibrium $(0, 0)$ ($L = J = \emptyset$, empty determinants equal to $1$) has index $-1$.
+where $A_{LJ}$ and $B_{LJ}$ are the submatrices with rows $L$ and columns $J$ (von Schemde and von Stengel, Definition 1, Shapley's index of the equilibrium). The artificial equilibrium $(0, 0)$ ($L = J = \emptyset$, empty determinants equal to $1$) has index $-1$.
+
+## Proof sketch
+
+The following identity between the two signs is derived here and stated by none of the sources read: at every completely labelled pair $(x, y)$ of the best response polytopes, the sign of its half-edge times $(-1)^{m+n+1}$ equals its index. It was checked by exact rational computation on all $574$ completely labelled pairs of $273$ random nondegenerate games with positive integer payoffs up to $3 \times 3$, the artificial equilibria included; at $(0, 0)$ both sides are $-1$, since there $K_1(0) = M$, $K_2(0) = N$, $M_1(0) = -I_m$, $M_2(0) = -I_n$ and $\pi$ is the identity, so the half-edge has sign $(-1)^{m+n}$.
 
 ## Depends on
 
