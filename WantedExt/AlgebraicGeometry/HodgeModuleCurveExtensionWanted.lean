@@ -12,6 +12,7 @@ public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.Algebra.Homology.Single
 public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import MathlibExt.AlgebraicGeometry.HodgeModuleCurveExtension
+public import MathlibExt.AlgebraicGeometry.HodgeModuleCurveExtensionMinimalExtensionNoBoundaryQuotient
 
 /-!
 # The unipotent curve Hodge-module boundary construction
@@ -41,22 +42,6 @@ public theorem_wanted minimal_extension_good_hodge_filtration
     (H : PolarizedPeriodVariation C e w) (b : ℕ) (hb : 0 < b)
     (hT : (H.rationalDeck.toLinearMap - 1) ^ b = 0)
     (E : PeriodExtension C e H b) : GoodHodgeFiltration C e H b E
-
-/-- The constructed differential module has no nonzero boundary-supported
-quotient: a stable submodule agreeing after inverting the actual parameter
-is already the entire minimal extension. -/
-public theorem_wanted minimal_extension_no_boundary_quotient
-    (V : ModuleCat.{0} ℚ) [FiniteDimensional ℚ V]
-    (C : RationalComplexification V) (r : ℕ)
-    (e : C.complexSpace ≃ₗ[ℂ] EuclideanSpace ℂ (Fin r)) (w : ℤ)
-    (H : PolarizedPeriodVariation C e w) (b : ℕ) (hb : 0 < b)
-    (hT : (H.rationalDeck.toLinearMap - 1) ^ b = 0)
-    (P : Submodule LocalPowerSeries (Fin r → LocalMeromorphicSeries))
-    (hP : P ≤ minimalModule C e H b)
-    (hstable : ∀ v, v ∈ P → formalConnection C e H b v ∈ P)
-    (hgeneric : ∀ v, v ∈ minimalModule C e H b → ∃ n : ℕ,
-      (algebraMap LocalPowerSeries LocalMeromorphicSeries PowerSeries.X) ^ n • v ∈ P) :
-    P = minimalModule C e H b
 
 /-- Specialization of the completed geometric Hodge lattice has exactly
 the limiting Hodge fiber, with no chosen unrelated filtration. The Hodge
