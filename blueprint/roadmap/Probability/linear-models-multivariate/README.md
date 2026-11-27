@@ -22,3 +22,4 @@ Multivariate normal theory and linear models: Gaussian maximum likelihood, Cochr
 - [Factor analysis and structural equation models](factor-analysis-and-structural-equation-models/README.md)
 - [Panel data models](panel-data-models/README.md)
 - [Gauss–Markov covariance minimality](gauss-markov-covariance-minimality.md)
+- [Row relative entropy under deterministic message refinement](gaussian-row-kl-message-refinement.md)
