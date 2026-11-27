@@ -8,7 +8,7 @@ To keep the eigendecomposition real, $\Lambda$ is restricted to the time-reversi
 
 $$\Lambda_{ab} \;=\; \mu\, s_{ab}\, \pi_b \quad (a \ne b), \qquad s_{ab} = s_{ba} > 0, \qquad \pi_a > 0, \ \sum_a \pi_a = 1,$$
 
-with overall rate scalar $\mu$; this is the general time-reversible parameterization, with $K(K-1)/2$ free symmetric rates together with $\pi$, and it satisfies detailed balance $\pi_a \Lambda_{ab} = \pi_b \Lambda_{ba}$, so $\pi$ is the stationary distribution of the chain. Rates are normalized so that $-\sum_a \pi_a \Lambda_{aa} = 1$, making branch length measure the expected number of location changes per unit time.
+with overall rate scalar $\mu$; this is the general time-reversible parameterization, with $K(K-1)/2$ free symmetric rates together with $\pi$, and it satisfies detailed balance $\pi_a \Lambda_{ab} = \pi_b \Lambda_{ba}$, so $\pi$ is the stationary distribution of the chain. $s$ is normalized so that $\sum_a \pi_a \sum_{b \ne a} s_{ab}\pi_b = 1$, i.e. $-\sum_a \pi_a \Lambda_{aa} = \mu$: the overall rate $\mu$ is the expected number of location changes per unit time.
 
 Equivalently the chain is a continuous-time random walk on a graph $\mathcal{G}$ whose vertices are the sites and whose edges carry the rates: from $a$ the walk waits an exponential time with rate $-\Lambda_{aa}$ and then jumps to $b \ne a$ with probability $\Lambda_{ab}/(-\Lambda_{aa})$. For the stationary distribution to be reached from any start, $\mathcal{G}$ must be connected.
 

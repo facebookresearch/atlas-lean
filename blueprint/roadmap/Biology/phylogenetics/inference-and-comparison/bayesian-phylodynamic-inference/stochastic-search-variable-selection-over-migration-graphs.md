@@ -24,7 +24,7 @@ The construction is the phylogenetic translation of variable selection in regres
 
 The prior does the work that the data cannot. With $K$ sites there are $K(K-1)/2$ rates and effectively one character, so most pairs of sites are never observed to exchange lineages; under a dense model those rates are not driven to zero but to poorly determined small values, which propagates into the ancestral reconstructions. Concentrating prior mass on sparse connected graphs, with half the mass at the minimum $K-1$ edges, encodes the expectation that geographic spread follows a few routes and leaves the data to add edges only when they are supported.
 
-Truncating to connected graphs is not cosmetic: an unconnected graph makes the chain reducible, the stationary distribution $\pi$ no longer unique, and the normalization $-\sum_a \pi_a \Lambda_{aa} = 1$ ill-posed. The by-product of the scheme is interpretive: the posterior mean of $\delta_{ab}$ is the posterior probability that a route exists, which is directly what a migration hypothesis asks about.
+Truncating to connected graphs is not cosmetic: an unconnected graph makes the chain reducible, the stationary distribution $\pi$ no longer unique, and the normalization of $s$ ill-posed. The by-product of the scheme is interpretive: the posterior mean of $\delta_{ab}$ is the posterior probability that a route exists, which is directly what a migration hypothesis asks about.
 
 ## Sources
 
