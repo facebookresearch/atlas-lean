@@ -12,7 +12,7 @@ For a fixed circuit, a uniformly random $f$ agrees with it on at least $\tfrac12
 
 ## Proof depends on
 
-- [Counting functions with small De Morgan circuits](../circuit-models-and-classes/circuit-models-and-complexity-measures/counting-functions-with-small-circuits.md)
+- [Counting functions with small De Morgan circuits](../circuit-models-synthesis-and-lower-bounds/circuit-models-and-classes/circuit-models-and-complexity-measures/counting-functions-with-small-circuits.md)
 
 ## Sources
 

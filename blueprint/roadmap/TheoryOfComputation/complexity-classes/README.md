@@ -26,6 +26,4 @@ Definitions of time and space complexity on machine models (P, NP, PSPACE, EXP, 
 - [Parameterized vertex cover](parameterized-vertex-cover/README.md)
 - [Catalytic space, tree evaluation and treewidth](catalytic-space-and-tree-evaluation/README.md)
 - [TFNP hierarchies and range avoidance](tfnp-hierarchies-and-avoidance/README.md)
-- [Alternating Time and Space](alternating-time-and-space/README.md)
-- [Space-bounded computation](space-bounded-computation/README.md)
 - [Structural complexity](structural-complexity/README.md)

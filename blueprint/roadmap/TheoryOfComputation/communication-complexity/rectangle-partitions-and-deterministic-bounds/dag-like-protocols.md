@@ -5,7 +5,7 @@ A *dag-like protocol* for a search problem $R \subseteq X \times Y \times O$ is 
 ## Depends on
 
 - [Deterministic two-party protocol](../deterministic-communication-protocols/protocol.md)
-- [The Karchmer–Wigderson game of a Boolean function](../../circuit-complexity/lower-bounds-for-general-circuits-and-formulas/formula-depth-and-karchmer-wigderson-games/karchmer-wigderson-game.md)
+- [The Karchmer–Wigderson game of a Boolean function](../../circuit-complexity/circuit-models-synthesis-and-lower-bounds/lower-bounds-for-general-circuits-and-formulas/formula-depth-and-karchmer-wigderson-games/karchmer-wigderson-game.md)
 
 ## Sources
 

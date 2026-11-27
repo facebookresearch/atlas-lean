@@ -8,7 +8,7 @@ De Morgan's laws: $\neg(a\wedge b)=\neg a\vee\neg b$ and $\neg(a\vee b)=\neg a\w
 
 ## Depends on
 
-- [Straight-line programs and circuits over a basis](../circuit-models-and-classes/circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
+- [Straight-line programs and circuits over a basis](../circuit-models-synthesis-and-lower-bounds/circuit-models-and-classes/circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
 - [Monotone circuits](../../complexity-classes/time-and-space-complexity-classes/is-monotone-circuit.md)
 
 ## Sources

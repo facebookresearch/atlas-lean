@@ -8,7 +8,7 @@ Gaussian elimination over $\mathbb{F}_2$ is a fixed sequence of row operations c
 
 ## Depends on
 
-- [Circuit complexity, binary cost and formula leaf size](../circuit-models-and-classes/circuit-models-and-complexity-measures/circuit-complexity-and-formula-leaf-size.md)
+- [Circuit complexity, binary cost and formula leaf size](../circuit-models-synthesis-and-lower-bounds/circuit-models-and-classes/circuit-models-and-complexity-measures/circuit-complexity-and-formula-leaf-size.md)
 
 ## Sources
 

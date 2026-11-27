@@ -8,7 +8,7 @@ Plug the three address blocks of $D(z)$ into three copies of $W$ and compare wit
 
 ## Depends on
 
-- [Straight-line programs and circuits over a basis](../../circuit-models-and-classes/circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
+- [Straight-line programs and circuits over a basis](../../circuit-models-synthesis-and-lower-bounds/circuit-models-and-classes/circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
 - [Satisfiability of a CNF formula](../../../../Logic/propositional-logic/conjunctive-normal-form/cnfsat.md)
 
 ## Sources

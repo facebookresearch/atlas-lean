@@ -4,7 +4,7 @@ A *local approximation scheme* for a circuit $C$ over a basis with exact interpr
 
 ## Depends on
 
-- [Straight-line programs and circuits over a basis](../circuit-models-and-classes/circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
+- [Straight-line programs and circuits over a basis](../circuit-models-synthesis-and-lower-bounds/circuit-models-and-classes/circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
 
 ## Sources
 

@@ -30,6 +30,4 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Hardness Amplification for Circuits](hardness-amplification-for-circuits/README.md)
 - [Monotone Circuit Complexity](monotone-circuit-complexity/README.md)
 - [Parallel Circuit Hierarchies](parallel-circuit-hierarchies/README.md)
-- [Circuit models, bases and nonuniform classes](circuit-models-and-classes/README.md)
-- [Circuit synthesis and upper bounds](circuit-synthesis-and-upper-bounds/README.md)
-- [Lower bounds for general circuits and formulas](lower-bounds-for-general-circuits-and-formulas/README.md)
+- [Circuit Models, Synthesis and Lower Bounds](circuit-models-synthesis-and-lower-bounds/README.md)

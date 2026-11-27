@@ -9,7 +9,7 @@ Prepare $n$ uniform seed bits with Hadamards, compile $C$ reversibly into fresh 
 ## Depends on
 
 - [Quantum circuits over the Hadamard–Toffoli gate set](hadamard-toffoli-quantum-circuits.md)
-- [Circuit samplers and output distributions](../../../circuit-complexity/circuit-models-and-classes/circuit-models-and-complexity-measures/circuit-samplers-and-output-distributions.md)
+- [Circuit samplers and output distributions](../../../circuit-complexity/circuit-models-synthesis-and-lower-bounds/circuit-models-and-classes/circuit-models-and-complexity-measures/circuit-samplers-and-output-distributions.md)
 - [Reversible simulation of classical circuits](../reversible-simulation-of-classical-circuits.md)
 
 ## Sources

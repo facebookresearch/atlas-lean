@@ -9,7 +9,7 @@ A threshold function is forced to a constant unless the random partial sum of th
 ## Depends on
 
 - [Depth-two weighted threshold circuits](depth-two-weighted-threshold-circuits.md)
-- [Andreev's function](../../lower-bounds-for-general-circuits-and-formulas/formula-size-lower-bounds/andreev-function.md)
+- [Andreev's function](../../circuit-models-synthesis-and-lower-bounds/lower-bounds-for-general-circuits-and-formulas/formula-size-lower-bounds/andreev-function.md)
 
 ## Proof depends on
 

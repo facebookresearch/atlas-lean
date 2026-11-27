@@ -11,3 +11,5 @@
 - [Deterministic extraction fails even with one bit of entropy deficiency](seedless-extraction-impossibility.md)
 - [Chor–Goldreich: the inner product extracts from two weak sources](chor-goldreich-inner-product-extractor.md)
 - [Chattopadhyay–Zuckerman: resilient functions and non-malleable extractors give two-source extractors](chattopadhyay-zuckerman-reduction.md)
+- [Affine Dispersers](affine-dispersers/README.md)
+- [Affine Sources and Sumset Extractors](affine-and-sumset-extractors/README.md)

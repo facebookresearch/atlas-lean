@@ -8,12 +8,12 @@ $(-1)^{\mathrm{IP}_n}$ has all Fourier coefficients of absolute value $2^{-n}$, 
 
 ## Depends on
 
-- [The Zhegalkin basis and multiplicative complexity](../circuit-models-and-classes/circuit-models-and-complexity-measures/zhegalkin-basis-and-multiplicative-complexity.md)
+- [The Zhegalkin basis and multiplicative complexity](../circuit-models-synthesis-and-lower-bounds/circuit-models-and-classes/circuit-models-and-complexity-measures/zhegalkin-basis-and-multiplicative-complexity.md)
 - [Fourier coefficient on the Boolean cube](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-analysis-on-the-boolean-cube/bool-fourier-coeff.md)
 
 ## Proof depends on
 
-- [Fourier norm is at most 2^m for circuits with m nonlinear gates](../lower-bounds-for-general-circuits-and-formulas/gate-elimination-and-explicit-lower-bounds/fourier-norm-bounded-by-nonlinear-gates.md)
+- [Fourier norm is at most 2^m for circuits with m nonlinear gates](../circuit-models-synthesis-and-lower-bounds/lower-bounds-for-general-circuits-and-formulas/gate-elimination-and-explicit-lower-bounds/fourier-norm-bounded-by-nonlinear-gates.md)
 
 ## Sources
 

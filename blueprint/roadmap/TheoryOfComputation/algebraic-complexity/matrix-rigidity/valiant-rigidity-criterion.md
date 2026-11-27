@@ -15,7 +15,7 @@ By the Erdős–Graham–Szemerédi lemma, removing $s\log_2t/\log_2d$ edges fro
 ## Depends on
 
 - [Matrix rigidity](matrix-rigidity.md)
-- [Affine circuits compute affine maps](../../circuit-complexity/circuit-models-and-classes/simulations-between-circuit-bases/affine-circuits-compute-affine-maps.md)
+- [Affine circuits compute affine maps](../../circuit-complexity/circuit-models-synthesis-and-lower-bounds/circuit-models-and-classes/simulations-between-circuit-bases/affine-circuits-compute-affine-maps.md)
 
 ## Sources
 

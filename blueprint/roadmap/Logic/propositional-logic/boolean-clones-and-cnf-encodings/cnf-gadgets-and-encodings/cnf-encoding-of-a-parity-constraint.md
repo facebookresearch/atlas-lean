@@ -12,7 +12,7 @@ Each $C_y$ excludes exactly the point $y$. For minimality, every point of the wr
 
 ## Proof depends on
 
-- [DNF and CNF size lower bounds from isolated inputs; parity needs $2^{n-1}$ terms](../../../../TheoryOfComputation/circuit-complexity/lower-bounds-for-general-circuits-and-formulas/normal-form-size-lower-bounds/dnf-cnf-lower-bound-from-isolated-inputs.md)
+- [DNF and CNF size lower bounds from isolated inputs; parity needs $2^{n-1}$ terms](../../../../TheoryOfComputation/circuit-complexity/circuit-models-synthesis-and-lower-bounds/lower-bounds-for-general-circuits-and-formulas/normal-form-size-lower-bounds/dnf-cnf-lower-bound-from-isolated-inputs.md)
 
 ## Sources
 

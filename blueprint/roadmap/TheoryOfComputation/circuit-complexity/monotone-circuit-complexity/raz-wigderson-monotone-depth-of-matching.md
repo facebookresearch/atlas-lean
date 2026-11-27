@@ -9,11 +9,11 @@ By the monotone Karchmer–Wigderson theorem it suffices to lower-bound the game
 ## Depends on
 
 - [Perfect matching](../../../GraphTheory/matchings-and-flows/stable-marriage-problem/perfect-matching.md)
-- [The Karchmer–Wigderson game of a Boolean function](../lower-bounds-for-general-circuits-and-formulas/formula-depth-and-karchmer-wigderson-games/karchmer-wigderson-game.md)
+- [The Karchmer–Wigderson game of a Boolean function](../circuit-models-synthesis-and-lower-bounds/lower-bounds-for-general-circuits-and-formulas/formula-depth-and-karchmer-wigderson-games/karchmer-wigderson-game.md)
 
 ## Proof depends on
 
-- [Karchmer–Wigderson: formula depth equals communication complexity](../lower-bounds-for-general-circuits-and-formulas/formula-depth-and-karchmer-wigderson-games/karchmer-wigderson-theorem.md)
+- [Karchmer–Wigderson: formula depth equals communication complexity](../circuit-models-synthesis-and-lower-bounds/lower-bounds-for-general-circuits-and-formulas/formula-depth-and-karchmer-wigderson-games/karchmer-wigderson-theorem.md)
 
 ## Sources
 

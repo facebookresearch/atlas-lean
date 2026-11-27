@@ -4,7 +4,7 @@ The *threshold gate* $\mathrm{Th}^m_{\ge j}$ of $m$ arguments outputs $1$ iff at
 
 ## Depends on
 
-- [Straight-line programs and circuits over a basis](../circuit-models-and-classes/circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
+- [Straight-line programs and circuits over a basis](../circuit-models-synthesis-and-lower-bounds/circuit-models-and-classes/circuit-models-and-complexity-measures/straight-line-program-over-a-basis.md)
 - [Linear threshold function](../../../Combinatorics/boolean-functions/majority-is-least-stable-conjecture/is-linear-threshold-function.md)
 - [Majority function](../../../Combinatorics/boolean-functions/majority-is-least-stable-conjecture/majority.md)
 

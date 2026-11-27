@@ -12,7 +12,7 @@ Colour a $k$-set containing the edge $\{u,v\}$ injectively except that $u,v$ sha
 
 ## Proof depends on
 
-- [A function depending on all inputs needs n - 1 binary gates](../circuit-models-and-classes/circuit-models-and-complexity-measures/n-minus-one-binary-gates-for-essential-inputs.md)
+- [A function depending on all inputs needs n - 1 binary gates](../circuit-models-synthesis-and-lower-bounds/circuit-models-and-classes/circuit-models-and-complexity-measures/n-minus-one-binary-gates-for-essential-inputs.md)
 
 ## Sources
 

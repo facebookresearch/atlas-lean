@@ -13,7 +13,7 @@ Induction on the formula. A variable is one instruction; negation appends $\sigm
 
 ## Proof depends on
 
-- [NC1 equals logarithmic formula depth and polynomial formula size](../lower-bounds-for-general-circuits-and-formulas/formula-depth-and-karchmer-wigderson-games/nc1-equals-polynomial-size-formulas.md)
+- [NC1 equals logarithmic formula depth and polynomial formula size](../circuit-models-synthesis-and-lower-bounds/lower-bounds-for-general-circuits-and-formulas/formula-depth-and-karchmer-wigderson-games/nc1-equals-polynomial-size-formulas.md)
 
 ## Sources
 

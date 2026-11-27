@@ -4,7 +4,7 @@ A Boolean function $f:\{0,1\}^n\to\{0,1\}$ is *average-case hard for size $s$* i
 
 ## Depends on
 
-- [Circuit complexity, binary cost and formula leaf size](../circuit-models-and-classes/circuit-models-and-complexity-measures/circuit-complexity-and-formula-leaf-size.md)
+- [Circuit complexity, binary cost and formula leaf size](../circuit-models-synthesis-and-lower-bounds/circuit-models-and-classes/circuit-models-and-complexity-measures/circuit-complexity-and-formula-leaf-size.md)
 
 ## Sources
 

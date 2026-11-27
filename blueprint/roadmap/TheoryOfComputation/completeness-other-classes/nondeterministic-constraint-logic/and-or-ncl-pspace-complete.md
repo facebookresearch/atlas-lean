@@ -15,7 +15,7 @@ Membership: configurations have one bit per edge, so reachability is a nondeterm
 
 - [Savitch's theorem: NPSPACE = PSPACE](../../complexity-classes/savitch.md)
 - [TQBF is PSPACE-complete](../true-quantified-boolean-formulas/tqbf-pspace-complete.md)
-- [Polynomial-length games reduce to TQBF](../../complexity-classes/alternating-time-and-space/games-reduce-to-tqbf.md)
+- [Polynomial-length games reduce to TQBF](../../complexity-classes/space-and-time-complexity/alternating-time-and-space/games-reduce-to-tqbf.md)
 
 ## Sources
 
