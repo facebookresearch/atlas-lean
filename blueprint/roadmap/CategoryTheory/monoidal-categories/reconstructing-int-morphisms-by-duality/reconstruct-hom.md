@@ -1,3 +1,0 @@
-# Reconstruction recovers every Int morphism
-
-Let $C$ be a symmetric monoidal category with a symmetric trace $T$ and $\mathrm{Int}(T)$ its [Int construction](../the-category-underlying-the-int-construction/README.md), in which a morphism $X \to Y$ is a morphism $X^+ \otimes Y^- \to Y^+ \otimes X^-$ of $C$. For every such crossed morphism $h$, the [reconstruction](reconstruct.md) of $h$, obtained by embedding it in $\mathrm{Int}(T)$ and bending both negative wires with the duality of $\mathrm{Int}(T)$, is the Int morphism $h$ itself. Read in either direction: the crossed map of the reconstruction of $h$ is $h$, and the reconstruction of the crossed map of an Int morphism $f$ is $f$.
