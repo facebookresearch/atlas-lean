@@ -40,6 +40,7 @@ model.
 - [The split likelihood-ratio p-value is valid](is-valid-pvalue-split-lrt.md)
 - [Coverage of the universal confidence set with real densities](measure-not-mem-universal-confidence-set-3.md)
 - [Coverage of the strict universal confidence set](measure-not-mem-universal-confidence-set-2-2.md)
+- [E-values and e-processes](e-values-and-e-processes/README.md)
 
 ## Related topics
 

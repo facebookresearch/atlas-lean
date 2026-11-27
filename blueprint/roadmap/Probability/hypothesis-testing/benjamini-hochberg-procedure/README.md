@@ -25,6 +25,8 @@
 - [The Benjamini–Hochberg step-up index as a finite supremum](bh-index-eq-sup.md)
 - [Benjamini–Hochberg FDR control for super-uniform nulls](integral-false-discovery-proportion-bh-r-2.md)
 - [Leave-one-out criterion for Benjamini–Hochberg rejection](mem-bh-rejections-iff-le-bh-index-update.md)
+- [Adaptive false discovery rate control](adaptive-false-discovery-rate-control/README.md)
+- [False discovery rate control for discrete tests](false-discovery-rate-control-for-discrete-tests/README.md)
 
 ## One test: a dominating reference tail gives a valid p-value
 

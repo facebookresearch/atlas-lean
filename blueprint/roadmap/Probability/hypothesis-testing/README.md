@@ -10,14 +10,9 @@ These methods keep testing valid when many hypotheses are tested at once, by con
 - [Bonferroni correction](bonferroni-correction/README.md)
 - [Holm–Bonferroni method](holm-bonferroni-method/README.md)
 - [Closed testing principle](closed-testing-principle/README.md)
-- [Adaptive false discovery rate control](adaptive-false-discovery-rate-control/README.md)
 - [Benjamini–Hochberg procedure](benjamini-hochberg-procedure/README.md)
 - [Knockoff filter](knockoff-filter/README.md)
 - [Two-groups model and local false discovery rates](two-groups-model-and-local-false-discovery-rates/README.md)
-- [Multiple testing of treatment effects](multiple-testing-of-treatment-effects/README.md)
-- [False discovery rate control for discrete tests](false-discovery-rate-control-for-discrete-tests/README.md)
-- [Hierarchical multiple testing](hierarchical-multiple-testing/README.md)
-- [E-values and e-processes](e-values-and-e-processes/README.md)
 
 ## Neyman–Pearson and likelihood-based tests
 
@@ -34,7 +29,6 @@ These results compare hypotheses through their likelihoods: the Neyman–Pearson
 These procedures observe data one at a time and decide when to stop: Wald's sequential probability ratio test and its optimality, and the detection of a change in distribution as quickly as possible under a false-alarm constraint.
 
 - [Sequential tests and quickest change detection](sequential-tests-and-quickest-change-detection/README.md)
-- [Group sequential designs and alpha spending](group-sequential-designs-and-alpha-spending/README.md)
 
 ## Exact, rank and randomisation inference
 
@@ -48,7 +42,6 @@ These procedures base inference on counts, ranks or random reassignments of the 
 - [Full conformal prediction](full-conformal-prediction/README.md)
 - [Conformalized quantile regression](conformalized-quantile-regression/README.md)
 - [Exact binomial tests and the Clopper–Pearson interval](exact-binomial-tests-and-the-clopper-pearson-int/README.md)
-- [Exact conditional tests for Poisson rates](exact-conditional-tests-for-poisson-rates/README.md)
 - [Conformal prediction under covariate shift](conformal-prediction-under-covariate-shift/README.md)
 
 ## Other topics in hypothesis testing

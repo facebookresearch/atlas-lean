@@ -4,4 +4,4 @@ For a treatment event $T$, a covariate $X$ with propensity score $e(x) = P(T \mi
 
 ## Sources
 
-- The left-hand side of the [IPW identification of the average treatment effect](../../nonparametric-survival/potential-outcomes-and-causal-identification/integral-ipw-ate.md) (Horvitz & Thompson 1952; Rosenbaum 1987).
+- The left-hand side of the [IPW identification of the average treatment effect](../../../nonparametric-survival/potential-outcomes-and-causal-identification/integral-ipw-ate.md) (Horvitz & Thompson 1952; Rosenbaum 1987).

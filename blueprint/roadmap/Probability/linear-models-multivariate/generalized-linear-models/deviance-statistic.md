@@ -1,3 +1,0 @@
-# Deviance of cell counts
-
-For $n$ observations, cell probabilities $p$ and cell counts $N$ over finitely many cells, the deviance is $D_n = \sum_i2\big(N_i\log(N_i/(np_i)) - (N_i - np_i)\big)$, the sum of [unit Poisson deviances](../../hypothesis-testing/exact-conditional-tests-for-poisson-rates/poisson-deviance.md) against the fitted means $np_i$, with the conventions $x/0 = 0$ and $\log 0 = 0$ (and $\log x = \log|x|$ for $x < 0$) that fix its value when some $N_i$ or $np_i$ is $0$; it is the likelihood-ratio statistic $G^2$ when $\sum N_i = n$ and $\sum p_i = 1$.
