@@ -39,6 +39,23 @@ Then:
   of a morphism from a curve into an abelian variety through the Abel–Jacobi map, which gives the compatibility of
   $\pi_*$ with the Abel–Jacobi maps
 
+## Proof sketch
+
+Item 2, in the classical model $J(X') = \Omega^1(X')^\vee / H_1(X', \mathbb{Z})$, where the invariant $1$-form $\omega_\eta$
+that corresponds to $\eta \in \Omega^1(X')$ has the value $\mu \mapsto \mu(\eta)$ at every point. Fix $P \in X$ and let $\varphi_P$
+be the Abel–Jacobi map of $X$ based at $P$. For $Q \in X$, the pullback of the divisor $Q - P$ is the sum of the points
+over $Q$ minus the sum of the points over $P$, counted with their ramification indices. If $Q$ and $P$ are not branch
+points and $c$ is a path from $P$ to $Q$ that avoids the branch points, with lifts $c_1, \dots, c_d$ to $X'$, then
+
+$$\sum_{j=1}^{d} \int_{c_j} \eta' = \int_c \mathrm{Tr}_\pi \eta' \qquad (\eta' \in \Omega^1(X')),$$
+
+as over a disc on which $\pi$ is unramified the lifts are the images of $c$ under the sections $s_j$. So
+$\pi^* \circ \varphi_P$ sends $Q$ to the class of $\eta' \mapsto \int_P^Q \mathrm{Tr}_\pi \eta'$, and the pullback of $\omega_\eta$ along
+it is $\mathrm{Tr}_\pi \eta$, first away from the branch points and then everywhere. As $\pi^*$ is a holomorphic homomorphism,
+the pullback of $\omega_\eta$ along $\pi^*$ is a translation-invariant $1$-form on $J(X)$, determined by its pullback
+along $\varphi_P$, which is $\mathrm{Tr}_\pi \eta$; this is item 2. Equivalently, the differential of $\pi^*$ at the origin is
+the transpose $\lambda \mapsto \lambda \circ \mathrm{Tr}_\pi$ of the trace.
+
 ## Expansion
 
 This node is still to be broken down. A good expansion states and links:
