@@ -23,6 +23,8 @@ everywhere.
 ## Statements
 
 - [Brenier's theorem](brenier.md)
+- [One-third stability of Brenier maps](one-third-stability-of-brenier-maps.md)
+- [Three-atom sharpness of one-third Brenier stability](sharpness-of-one-third-brenier-stability.md)
 
 ## Sources
 
