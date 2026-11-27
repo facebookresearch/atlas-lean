@@ -55,6 +55,7 @@
 - [Each FRAPPE EM step does not decrease the admixture log-likelihood](admixture-log-lik-le-em-step.md)
 - [The admixture log-likelihood is monotone along the FRAPPE EM iterates](admixture-log-lik-iterate-em-step-monoto.md)
 
-## Further topics
+## Latent subspace estimation
 
+- [Latent subspace estimation of admixture](latent-subspace-estimation-of-admixture/README.md)
 - [Uncertainty of supervised individual admixture estimates](uncertainty-of-supervised-individual-admixture-estimates/README.md)
