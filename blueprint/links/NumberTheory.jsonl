@@ -7203,7 +7203,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/p-adic-numbers/absolute-values-on-fields/rpow-apply.md"}], "object": [{"location": {"declaration": "AbsoluteValue.rpow_apply"}}], "id": "af_6d582ceac1afb4f2c56cccba"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/p-adic-numbers/absolute-values-on-fields/rpow.md"}], "object": [{"location": {"declaration": "AbsoluteValue.rpow"}}], "id": "af_b5dd5439ca65a9975800d8ec"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/p-adic-numbers/exists-injective-ring-hom-closure-padic.md"}], "object": [{"location": {"declaration": "Subring.exists_injective_ringHom_closure_padicInt"}}], "id": "af_4c7557ab43e42742eb2ca415"}
-{"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/p-adic-numbers/hilbert-symbol/README.md"}], "id": "af_9a9f840a7ff71e0a8308369a", "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/p-adic-numbers/hilbert-symbol/README.md"}], "id": "af_9a9f840a7ff71e0a8308369a"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/p-adic-numbers/hilbert-symbol/diagonal-unit-isotropic.md"}], "object": [{"location": {"declaration": "HilbertSymbol.diagonal_unit_isotropic"}}], "id": "af_83dd4b98c99fade4688c0c1f"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/p-adic-numbers/hilbert-symbol/eq-neg-one-iff.md"}], "object": [{"location": {"declaration": "padicHilbertSymbol.eq_neg_one_iff"}}], "id": "af_eb190ea5573873c75c26a43a"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/p-adic-numbers/hilbert-symbol/eq-one-iff.md"}], "object": [{"location": {"declaration": "padicHilbertSymbol.eq_one_iff"}}], "id": "af_b02c706f5d216f1cd4f812d9"}
