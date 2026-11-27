@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Ring.Int.Defs
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.Combinatorics.DisjunctiveRado
+public import MathlibExt.Combinatorics.DisjunctiveRadoParity
 public import MathlibExt.Combinatorics.DisjunctiveRadoSingleton
 
 /-!
@@ -28,17 +29,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.DisjunctiveRadoWanted
-
-/-- **Theorem 1** (quoted from the authors' earlier paper): for `4 ≤ m ≤ a` with
-`a + m` and `c` odd, the Rado number of
-`∑_{i=1}^{m-2} x_i + a x_{m-1} - x_m = c` does not exist: no `R` has the
-monochromatic-solution property.
-
-Source: Srashti Dwivedi and Amitabha Tripathi, "On the Two-Color Disjunctive
-Rado Number for the Equations `∑_{i=1}^{m-2} x_i + a x_{m-1} - x_m = c_j`,
-`j = 1, 2`", INTEGERS 25 (2025), Article A108, Theorem 1 (from [5, Theorem 1]). -/
-theorem_wanted not_radoGood_of_odd (a m : ℕ) (c : ℤ) (hm : 4 ≤ m) (hma : m ≤ a)
-    (ham : Odd (a + m)) (hc : Odd c) (R : ℕ) : ¬ radoGood m a {c} R
 
 /-- **Theorem 3** (quoted): let `a ≥ 3`, `m ≥ 3` have the same parity and
 `a' = a + m - 3`. If (i) `m = 3` and `c ≤ -a(a-3)/2`, or (ii) `m ≥ 4` and

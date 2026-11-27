@@ -11,41 +11,55 @@ module
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2
 
 /-!
-# Two Wilf-equivalences by retaining the last bar of each magnitude
+# Wilf-equivalences by retaining the last bar of each magnitude
 
-We prove two four-pattern Wilf-equivalences for signed inversion sequences. The bijection copies
-a bar to all earlier occurrences of its magnitude, and the inverse retains only the last bar
-of each magnitude.
+We prove a three-pattern and two four-pattern Wilf-equivalences for signed inversion sequences.
+The common descending patterns force each barred entry to be a weak record: no earlier entry
+has greater magnitude. The bijection keeps the magnitudes fixed and copies a bar to all earlier
+occurrences of its magnitude. The inverse retains only the last bar of each magnitude.
 -/
 
 namespace MetaMathlibExt
 
-namespace signedInvSeq_wilf_b1b0_b0b1_b0b0_1b0
+namespace LastBarBijection
 
 variable {n : ℕ}
 
-private abbrev patterns (same single : Bool) : Finset SignedPattern2 :=
-  match same, single with
-  | true, b => {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, b, true⟩, ⟨.gt, false, true⟩}
-  | false, true => {⟨.gt, true, true⟩, ⟨.eq, true, true⟩, ⟨.eq, true, false⟩, ⟨.gt, false, true⟩}
-  | false, false => {⟨.gt, true, true⟩, ⟨.eq, true, false⟩, ⟨.eq, false, true⟩, ⟨.gt, false, true⟩}
+private inductive ExtraRestriction
+  | none
+  | sameMagnitude
+  | keepBarred
+  deriving DecidableEq
 
--- Bars are weak records. The first pair of pattern sets requires all bars to share a magnitude.
--- In the second pair a bar forbids later unbarred occurrences of its magnitude.
-private def PairAllowed (same single : Bool) (x y : ℕ × Bool) : Prop :=
+private abbrev patterns (restriction : ExtraRestriction) (single : Bool) : Finset SignedPattern2 :=
+  match restriction, single with
+  | .none, b => {⟨.gt, true, true⟩, ⟨.eq, b, true⟩, ⟨.gt, false, true⟩}
+  | .sameMagnitude, b =>
+    {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, b, true⟩, ⟨.gt, false, true⟩}
+  | .keepBarred, true =>
+    {⟨.gt, true, true⟩, ⟨.eq, true, true⟩, ⟨.eq, true, false⟩, ⟨.gt, false, true⟩}
+  | .keepBarred, false =>
+    {⟨.gt, true, true⟩, ⟨.eq, true, false⟩, ⟨.eq, false, true⟩, ⟨.gt, false, true⟩}
+
+-- Bars are weak records. At equal magnitudes, a bar forbids an earlier bar when `single` is true
+-- and an earlier unbarred entry otherwise. The extra restrictions either require all bars to
+-- have the same magnitude, or require later occurrences of a barred magnitude to stay barred.
+private def PairAllowed (restriction : ExtraRestriction) (single : Bool) (x y : ℕ × Bool) : Prop :=
   (y.2 = true → x.1 ≤ y.1) ∧
-  (same = true → x.2 = true → y.2 = true → x.1 = y.1) ∧
-  (x.1 = y.1 → (y.2 = true → x.2 = !single) ∧ (same = false → x.2 = true → y.2 = true))
+  (restriction = .sameMagnitude → x.2 = true → y.2 = true → x.1 = y.1) ∧
+  (x.1 = y.1 → (y.2 = true → x.2 = !single) ∧
+    (restriction = .keepBarred → x.2 = true → y.2 = true))
 
-private abbrev Avoids (same single : Bool) (e : Fin n → ℕ × Bool) : Prop :=
-  ∀ p ∈ patterns same single, ¬ SignedInvSeqContains e p
+private abbrev Avoids (restriction : ExtraRestriction) (single : Bool)
+    (e : Fin n → ℕ × Bool) : Prop :=
+  ∀ p ∈ patterns restriction single, ¬ SignedInvSeqContains e p
 
-private theorem avoids_iff (same single : Bool) (e : Fin n → ℕ × Bool) :
-    Avoids same single e ↔ ∀ i j, i < j → PairAllowed same single (e i) (e j) := by
+private theorem avoids_iff (restriction : ExtraRestriction) (single : Bool) (e : Fin n → ℕ × Bool) :
+    Avoids restriction single e ↔ ∀ i j, i < j → PairAllowed restriction single (e i) (e j) := by
   have pair (i j : Fin n) :
-      ⟨compare (e i).1 (e j).1, (e i).2, (e j).2⟩ ∉ patterns same single ↔
-        PairAllowed same single (e i) (e j) := by
-    cases same <;> cases single <;> cases hi : (e i).2 <;> cases hj : (e j).2 <;>
+      ⟨compare (e i).1 (e j).1, (e i).2, (e j).2⟩ ∉ patterns restriction single ↔
+        PairAllowed restriction single (e i) (e j) := by
+    cases restriction <;> cases single <;> cases hi : (e i).2 <;> cases hj : (e j).2 <;>
       simp [patterns, PairAllowed, hi, hj, SignedPattern2.mk.injEq, compare_gt_iff_gt,
         compare_lt_iff_lt] <;>
       omega
@@ -72,8 +86,8 @@ private theorem trim_bar {e : Fin n → ℕ × Bool} {i : Fin n} :
     (trim e i).2 = true ↔ (e i).2 = true ∧ ∀ j, i < j → (e j).1 = (e i).1 → (e j).2 ≠ true := by
   simp [trim]
 
-private theorem fill_avoids (same : Bool) {e : Fin n → ℕ × Bool} (h : Avoids same true e) :
-    Avoids same false (fill e) := by
+private theorem fill_avoids (restriction : ExtraRestriction) {e : Fin n → ℕ × Bool}
+    (h : Avoids restriction true e) : Avoids restriction false (fill e) := by
   rw [avoids_iff] at h ⊢
   intro i j hij
   refine ⟨?_, ?_, ?_⟩
@@ -103,8 +117,8 @@ private theorem fill_avoids (same : Bool) {e : Fin n → ℕ × Bool} (h : Avoid
       · exact fill_bar.mpr ⟨k, hjk, hkj, hk⟩
       · exact fill_bar.mpr ⟨j, le_rfl, rfl, ((h k j hkj').2.2 hkj).2 hs hk⟩
 
-private theorem trim_avoids (same : Bool) {e : Fin n → ℕ × Bool} (h : Avoids same false e) :
-    Avoids same true (trim e) := by
+private theorem trim_avoids (restriction : ExtraRestriction) {e : Fin n → ℕ × Bool}
+    (h : Avoids restriction false e) : Avoids restriction true (trim e) := by
   rw [avoids_iff] at h ⊢
   intro i j hij
   refine ⟨fun hj => (h i j hij).1 (trim_bar.mp hj).1,
@@ -119,8 +133,8 @@ private theorem trim_avoids (same : Bool) {e : Fin n → ℕ × Bool} (h : Avoid
     obtain ⟨hi, hlast⟩ := trim_bar.mp hi
     exact (hlast j hij heq.symm (((h i j hij).2.2 heq).2 hs hi)).elim
 
-private theorem trim_fill (same : Bool) {e : Fin n → ℕ × Bool} (h : Avoids same true e) :
-    trim (fill e) = e := by
+private theorem trim_fill (restriction : ExtraRestriction) {e : Fin n → ℕ × Bool}
+    (h : Avoids restriction true e) : trim (fill e) = e := by
   rw [avoids_iff] at h
   funext i
   refine Prod.ext rfl (Bool.eq_iff_iff.mpr ⟨?_, ?_⟩)
@@ -138,8 +152,8 @@ private theorem trim_fill (same : Bool) {e : Fin n → ℕ × Bool} (h : Avoids 
     have hplain := ((h i k (hij.trans_le hjk)).2.2 (hkj.trans heq).symm).1 hk
     simp [hi] at hplain
 
-private theorem fill_trim (same : Bool) {e : Fin n → ℕ × Bool} (h : Avoids same false e) :
-    fill (trim e) = e := by
+private theorem fill_trim (restriction : ExtraRestriction) {e : Fin n → ℕ × Bool}
+    (h : Avoids restriction false e) : fill (trim e) = e := by
   rw [avoids_iff] at h
   funext i
   refine Prod.ext rfl (Bool.eq_iff_iff.mpr ⟨?_, ?_⟩)
@@ -158,19 +172,20 @@ private theorem fill_trim (same : Bool) {e : Fin n → ℕ × Bool} (h : Avoids 
     intro k hjk hkj hk
     exact (not_lt_of_ge (hmax k (by simp [bars, hkj.trans heq, hk]))) hjk
 
-private theorem count_eq (same : Bool) :
-    signedInvAvoidCount (patterns same true) = signedInvAvoidCount (patterns same false) := by
+private theorem count_eq (restriction : ExtraRestriction) :
+    signedInvAvoidCount (patterns restriction true) =
+      signedInvAvoidCount (patterns restriction false) := by
   funext n
   apply Nat.card_congr
   exact {
-    toFun := fun e => ⟨fill e.val, e.property.1, fill_avoids same e.property.2⟩
-    invFun := fun e => ⟨trim e.val, e.property.1, trim_avoids same e.property.2⟩
-    left_inv := fun e => Subtype.ext (trim_fill same e.property.2)
-    right_inv := fun e => Subtype.ext (fill_trim same e.property.2) }
+    toFun := fun e => ⟨fill e.val, e.property.1, fill_avoids restriction e.property.2⟩
+    invFun := fun e => ⟨trim e.val, e.property.1, trim_avoids restriction e.property.2⟩
+    left_inv := fun e => Subtype.ext (trim_fill restriction e.property.2)
+    right_inv := fun e => Subtype.ext (fill_trim restriction e.property.2) }
 
-end signedInvSeq_wilf_b1b0_b0b1_b0b0_1b0
+end LastBarBijection
 
-open signedInvSeq_wilf_b1b0_b0b1_b0b0_1b0 in
+open LastBarBijection in
 /-- **Mansour–Safadi Theorem 8: two Wilf-equivalences of four-pattern sets.** Length-2 signed
 patterns are written as in the paper, a bar marking a barred letter, and $B \sim C$ means that
 for every $n \ge 0$ the number $|\bar I_n(B)|$ of signed inversion sequences of length $n$
@@ -189,6 +204,20 @@ public theorem signedInvSeq_wilf_b1b0_b0b1_b0b0_1b0 :
         ⟨.gt, false, true⟩} =
       signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, false⟩, ⟨.eq, false, true⟩,
           ⟨.gt, false, true⟩} :=
-  ⟨count_eq true, count_eq false⟩
+  ⟨count_eq .sameMagnitude, count_eq .keepBarred⟩
+
+open LastBarBijection in
+/-- **Mansour–Safadi Lemma 10.** Write $\bar{I}_n(B)$ for the set of signed inversion
+sequences of length $n$ that avoid every length-2 signed pattern in $B$, where a pattern is
+one of $00$, $01$, $10$ with a bar over each barred letter. Then for every $n \ge 0$,
+$|\bar{I}_n(\{\bar{1}\bar{0}, \bar{0}\bar{0}, 1\bar{0}\})| =
+|\bar{I}_n(\{\bar{1}\bar{0}, 0\bar{0}, 1\bar{0}\})|$.
+
+Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
+Signed Patterns*, INTEGERS 26 (2026), Article A74, Lemma 10 (`integers-2026-A74-lem-10`). -/
+public theorem signedInvSeq_wilf_b1b0_b0b0_1b0 :
+    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, true⟩, ⟨.gt, false, true⟩} =
+      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, false, true⟩, ⟨.gt, false, true⟩} :=
+  count_eq .none
 
 end MetaMathlibExt
