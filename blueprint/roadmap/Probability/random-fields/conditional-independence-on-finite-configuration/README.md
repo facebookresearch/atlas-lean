@@ -12,6 +12,7 @@
 - [Marginalizing in two steps](marginal-marginal.md)
 - [Marginalizing in two steps, no variable summed twice](marginal-marginal-of-union-eq-univ.md)
 - [Conditional independence can be read off a marginal](cond-indep-marginal-iff.md)
+- [Semigraphoid lemmas for finite conditional independence](semigraphoid-lemmas-for-finite-conditional-indep/README.md)
 
 ## Related topics
 

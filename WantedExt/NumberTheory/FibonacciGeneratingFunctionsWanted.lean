@@ -14,6 +14,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.NumberTheory.FibonacciGeneratingFunctions
+public import MathlibExt.NumberTheory.FibonacciGeneratingFunctionsKnappMRelations
 public import MathlibExt.NumberTheory.GibonacciNumber
 public import MathlibExt.NumberTheory.GibonacciPowerSeries
 
@@ -31,18 +32,6 @@ Sequences 27 (2024), Article 24.3.1, Lemma 9 (`jis-2024-24.3.1-lem-9`). -/
 public theorem_wanted gibonacci_shifted_ratios_eq_negated_ratios (a b : ℤ) :
     {x : ℚ | ∃ v ∈ fibonacciPairOrbit (-b, a), v.2 ≠ 0 ∧ x = (v.1 : ℚ) / v.2} =
       {x : ℚ | ∃ w ∈ fibonacciPairOrbit (a, b), w.1 ≠ 0 ∧ x = -(w.2 : ℚ) / w.1}
-
-/-- Lemma 11: `M(a, b, p+q, p+2q) = -3M(a, b, q, p+q) - M(a, b, p, q)` and
-`M(a,b,p,q)² + 3M(a,b,p,q)M(a,b,q,p+q) + M(a,b,q,p+q)² = a² + ab - b²`.
-Stated for every `(p, q) ≠ (0, 0)`; the paper assumes `q ≠ 0`,
-`p + q ≠ 0`, `p + 2q ≠ 0`.
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Lemma 11 (`jis-2024-24.3.1-lem-11`). -/
-public theorem_wanted knappM_recurrence_and_quadratic (a b p q : ℤ) (hpq : (p, q) ≠ (0, 0)) :
-    knappM a b (p + q) (p + 2 * q) = -3 * knappM a b q (p + q) - knappM a b p q ∧
-      knappM a b p q ^ 2 + 3 * knappM a b p q * knappM a b q (p + q) +
-          knappM a b q (p + q) ^ 2 = ((a ^ 2 + a * b - b ^ 2 : ℤ) : ℚ)
 
 /-- Lemma 12: if `a² + ab - b² < 0` and `p / q` (lowest terms) is good for
 `(a, b)`, some consecutive pair `(H_n, H_{n+1})` of its family has

@@ -12,6 +12,7 @@ where $\mathrm{vars}(E)$ is the set of variables occurring in $E$. These right-h
 ## Depends on
 
 - [Monotone frameworks and the worklist algorithm](monotone-frameworks-and-the-worklist-algorithm.md)
+- [Kleene iteration reaches the least fixed point under the ascending chain condition](../../../Order/fixed-points-domain-theory/lfp-eq-i-sup-iterate-of-well-founded-gt.md)
 
 ## Sources
 

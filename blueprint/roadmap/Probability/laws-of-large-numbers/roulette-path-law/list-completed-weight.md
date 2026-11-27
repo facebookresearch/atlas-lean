@@ -1,0 +1,3 @@
+# Completed-path weight of a list of states
+
+For real functions $q : S \to \mathbb{R}$ and $Q : S \times S \to \mathbb{R}$ on a set of states, the completed-path weight of a list of states is $0$ for the empty list, $q(x)$ for a one-element list $[x]$, and $Q(x, y)$ times the weight of $y :: \text{rest}$ for a list $x :: y :: \text{rest}$: the value at the final state times the product of the entries of $Q$ along the list. When $q$ gives stop probabilities and $Q$ is the corresponding survival kernel, with nonnegative entries and $q(x) + \sum_y Q(x, y) = 1$ for every state $x$ (so each row of $Q$ sums to at most $1$), it is the probability of following exactly that list and then stopping at its final state, given its first state.

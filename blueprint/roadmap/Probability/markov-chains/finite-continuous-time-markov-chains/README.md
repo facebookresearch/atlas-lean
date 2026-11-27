@@ -6,6 +6,7 @@
 - [Hitting times of finite continuous-time Markov chains](hitting-times-of-finite-continuous-time-markov-c/README.md)
 - [Stationarity and detailed balance for finite continuous-time Markov chains](stationarity-and-detailed-balance-for-finite-con/README.md)
 - [The sticky (equal-input) kernel on a finite state space](the-sticky-equal-input-kernel-on-a-finite-state/README.md)
+- [Equal jump rates on a finite state space](equal-jump-rates-on-a-finite-state-space/README.md)
 
 ## Related topics
 
