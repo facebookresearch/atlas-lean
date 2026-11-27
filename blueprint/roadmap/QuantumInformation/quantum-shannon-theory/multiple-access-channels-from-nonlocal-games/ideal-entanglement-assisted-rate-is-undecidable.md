@@ -10,6 +10,7 @@ In the linear system game, Alice receives an equation $i \in [m]$ and answers wi
 
 - [Multiple access channel of a nonlocal game and its entanglement-assisted rate region](multiple-access-channel-of-a-nonlocal-game.md)
 - [Linear constraint system games and operator solutions](../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/entangled-nonlocal-games/linear-constraint-system-games.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -17,6 +17,7 @@ In particular no algorithm decides, given $A_1, \dots, A_7$, whether $\rho_A^L \
 
 - [Translation-invariant matrix product operators](translation-invariant-matrix-product-operators.md)
 - [Polynomial-time reduction between promise problems](../../../TheoryOfComputation/randomized-and-quantum-complexity/local-hamiltonian-problem/promise-reduces.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -1,16 +1,17 @@
 # The matrix product operator threshold problem is undecidable
 
-No algorithm decides, given a translation-invariant matrix product operator with open boundary conditions and a threshold $\lambda$, whether adding $\lambda$ times the identity leaves it positive semidefinite for every system size. This holds for every fixed algebraic threshold, already with physical dimension 2, bond dimension 42 and diagonal local matrices.
+No algorithm decides, given a translation-invariant matrix product operator with open boundary conditions and a threshold $\lambda$, whether adding $\lambda$ times the identity leaves it positive semidefinite for every system size. This holds for every fixed rational threshold, already with physical dimension 2, bond dimension 42 and diagonal local matrices.
 
-**Problem.** An instance is given by MPO tensors $M \in \mathbb{C}_{\mathrm{alg}}^{d \times d \times D \times D}$ and boundary vectors $\lvert L\rangle, \lvert R\rangle \in \mathbb{C}_{\mathrm{alg}}^{D}$, with algebraic entries, which define the operators $\rho(L, M, R, n)$ of a [translation-invariant matrix product operator](translation-invariant-matrix-product-operators.md). The *MPO threshold problem* with threshold $\lambda$ asks: is there a system size $n \geq 1$ such that $\rho(L, M, R, n) + \lambda \mathbb{1}$ is not positive semidefinite?
+**Problem.** An instance is given by MPO tensors $M \in \mathbb{Q}^{d \times d \times D \times D}$ and boundary vectors $\lvert L\rangle, \lvert R\rangle \in \mathbb{Q}^{D}$, with rational entries, which define the operators $\rho(L, M, R, n)$ of a [translation-invariant matrix product operator](translation-invariant-matrix-product-operators.md). The *MPO threshold problem* with threshold $\lambda$ asks: is there a system size $n \geq 1$ such that $\rho(L, M, R, n) + \lambda \mathbb{1}$ is not positive semidefinite?
 
-**Theorem (Kliesch, Gross and Eisert).** For every real algebraic number $\lambda$ the MPO threshold problem is undecidable. This remains true when the physical dimension is $d = 2$, the bond dimension is $D = 42$ and every local matrix $M_{i,j}$ is diagonal.
+**Theorem (Kliesch, Gross and Eisert).** For every rational number $\lambda$ the MPO threshold problem with threshold $\lambda$ is undecidable (Theorem 5 of the source). This remains true when the physical dimension is $d = 2$, the bond dimension is $D = 42$ and every local matrix $M_{i,j}$ is diagonal.
 
 With the system size $n$ part of the input instead, the bounded problem is NP-hard for every rational threshold and every physical dimension $d \geq 2$ (Theorem 4 of the source). With diagonal local matrices, $\rho(L, M, R, n)$ is diagonal in the product basis, so the question is whether some word gives a negative enough diagonal entry.
 
 ## Depends on
 
 - [Translation-invariant matrix product operators](translation-invariant-matrix-product-operators.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

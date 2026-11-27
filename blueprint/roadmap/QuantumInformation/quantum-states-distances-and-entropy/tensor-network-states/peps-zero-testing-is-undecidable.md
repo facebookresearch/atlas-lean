@@ -9,6 +9,7 @@ The source notes that the result holds even for PEPS without a physical index, a
 ## Depends on
 
 - [Projected entangled pair states](projected-entangled-pair-states.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

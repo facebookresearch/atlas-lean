@@ -20,6 +20,7 @@ A map is *tensor stable positive* if $\mathcal{P}^{\otimes n}$ is a positive map
 
 - [Choi matrix of a complex-linear matrix map](../../../Analysis/not-yet-classified/choi/choi-matrix.md)
 - [Bell basis and maximally entangled states](../../../QuantumInformation/quantum-foundations/bell-basis-and-maximally-entangled-states.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
