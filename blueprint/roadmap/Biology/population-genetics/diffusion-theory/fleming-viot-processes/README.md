@@ -22,6 +22,7 @@
 - [Tightness of the Moran empirical-measure processes in the space of continuous paths](tightness-of-measure-valued-approximations-in-c.md)
 - [Uniform Aldous bounds for Moran empirical-measure projections](uniform-aldous-bounds-for-moran-empirical-measur.md)
 
+- [Fleming–Viot processes with varying population size](fleming-viot-processes-with-varying-population-size/README.md)
 - [Frequency-dependent selection in Ξ-Fleming-Viot processes](frequency-dependent-selection-in-xi-fleming-viot-processes/README.md)
 - [Λ-Wright–Fisher processes with polynomial selection](lambda-wright-fisher-processes-with-polynomial-selection/README.md)
 - [Two-parameter Poisson–Dirichlet diffusion](two-parameter-poisson-dirichlet-diffusion/README.md)

@@ -2,4 +2,6 @@
 
 - [Finite-state rare-transition limit for the last-visited absorbing state (Schur-complement form)](finite-state-rare-transition-limit-for-the-last.md)
 - [Weak-mutation limit justifies the origination–fixation chain](weak-mutation-limit-justifies-the-origination-fi.md)
+- [Quasispecies with time lags and periodic replication](quasispecies-with-time-lags-and-periodic-replication/README.md)
+- [Toroidal diffusions for protein evolution](toroidal-diffusions-for-protein-evolution/README.md)
 - [Wright–Fisher quasispecies on class-dependent landscapes](wright-fisher-quasispecies-on-class-dependent-landscapes/README.md)

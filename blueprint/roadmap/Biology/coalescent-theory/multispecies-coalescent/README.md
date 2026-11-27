@@ -138,5 +138,7 @@
 - [Ranked gene tree probabilities](ranked-gene-tree-probabilities/README.md)
 - [Three-species species-tree estimation](three-species-species-tree-estimation/README.md)
 - [Time-dependent migration in the multispecies coalescent](time-dependent-migration-in-the-multispecies-coalescent/README.md)
+- [Ancestral configurations of gene trees](ancestral-configurations-of-gene-trees/README.md)
+- [Lattices of ancestral configurations](lattices-of-ancestral-configurations/README.md)
 - [Nested fragmentation processes](nested-fragmentation-processes/README.md)
 - [Nested Kingman coalescent](nested-kingman-coalescent/README.md)

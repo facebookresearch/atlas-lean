@@ -12,6 +12,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.MvPolynomial.Eval
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.Logic.Diophantine
+public import MathlibExt.ModelTheory.DefiningIntegersInRationals
 
 /-!
 # Defining the integers in the rationals
@@ -20,7 +21,9 @@ Published definitions of `ℤ` inside the field `ℚ` by formulas in the languag
 of decreasing logical complexity.
 
 * Julia Robinson's explicit first-order formula (1949), with the quantifier prefix
-  `∀ A B ((∃ X Y Z …) ∧ ∀ M ((∃ X Y Z …) → (∃ X Y Z …)) → (∃ X Y Z …))`.
+  `∀ A B ((∃ X Y Z …) ∧ ∀ M ((∃ X Y Z …) → (∃ X Y Z …)) → (∃ X Y Z …))`. It is proved, as
+  `mem_range_intCast_iff_robinson`, in `MathlibExt.ModelTheory.DefiningIntegersInRationals`, which
+  this module re-exports.
 * Poonen's universal-existential definition (2009): two universal quantifiers followed by seven
   existential quantifiers in front of one polynomial equation with integer coefficients.
 * Koenigsmann's universal definition (2016), equivalently: `ℚ ∖ ℤ` is Diophantine over `ℚ`,
@@ -46,23 +49,6 @@ variable `t`, then the bound variables in the order of the quantifier prefix.
 namespace MathlibExt.ModelTheory.DefiningIntegersInRationalsWanted
 
 open MvPolynomial
-
-/-- **Robinson's definition of `ℤ` in `ℚ`.** A rational number `N` is an integer if and only if
-for all rationals `A` and `B`: if `2 + B Z² = X² + A Y²` has a rational solution `X, Y, Z`, and
-for every rational `M` solvability of `2 + A B M² + B Z² = X² + A Y²` in rationals `X, Y, Z`
-implies solvability of `2 + A B (M + 1)² + B Z² = X² + A Y²`, then
-`2 + A B N² + B Z² = X² + A Y²` has a rational solution `X, Y, Z`.
-
-This is the formula of J. Robinson, "Definability and decision problems in arithmetic",
-J. Symbolic Logic 14 (1949), Theorem 3.1(i), pp. 106–107, transcribed clause by clause; part (ii)
-of that theorem draws the consequence that `ℤ` is first-order definable in the field `ℚ`. -/
-theorem_wanted mem_range_intCast_iff_robinson (N : ℚ) :
-    N ∈ Set.range ((↑) : ℤ → ℚ) ↔
-      ∀ A B : ℚ,
-        ((∃ X Y Z : ℚ, 2 + B * Z ^ 2 = X ^ 2 + A * Y ^ 2) ∧
-            ∀ M : ℚ, (∃ X Y Z : ℚ, 2 + A * B * M ^ 2 + B * Z ^ 2 = X ^ 2 + A * Y ^ 2) →
-              ∃ X Y Z : ℚ, 2 + A * B * (M + 1) ^ 2 + B * Z ^ 2 = X ^ 2 + A * Y ^ 2) →
-          ∃ X Y Z : ℚ, 2 + A * B * N ^ 2 + B * Z ^ 2 = X ^ 2 + A * Y ^ 2
 
 /-- **Poonen's `∀²∃⁷` definition of `ℤ` in `ℚ`.** There is a polynomial `P` with integer
 coefficients in the variables `t, a₁, a₂, x₁, …, x₇` such that a rational number `t` is an
