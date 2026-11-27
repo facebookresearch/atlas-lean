@@ -13396,6 +13396,7 @@
   "MathlibExt/NumberTheory/KFibonacciTruncatedRecurrence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/JosephusHighExtremal": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/JosephusThreeHighExtremalRecurrences": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
+  "MathlibExt/NumberTheory/JosephusThreeHighExtremalSuccCases": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/JosephusWrapAround": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/KFull": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Powerful and k-full numbers"},
   "MathlibExt/NumberTheory/KFullParity": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Odd and even k-full and l-free numbers"},
