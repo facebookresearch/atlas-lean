@@ -25,3 +25,4 @@ Univariate and multivariate polynomials and formal power series as algebraic obj
 - [Univariate polynomial arithmetic](univariate-polynomial-arithmetic/README.md)
 - [Automorphisms of polynomial rings over truncated rings](automorphisms-of-polynomial-rings-over-truncated/README.md)
 - [Symmetric polynomials in the roots are polynomials in the coefficients](symmetric-polynomial-in-esymm.md)
+- [Independent commuting derivations with a coordinate-free joint kernel](commuting-locally-nilpotent-derivations.md)

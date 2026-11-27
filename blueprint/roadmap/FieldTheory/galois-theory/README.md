@@ -16,3 +16,4 @@ Galois theory relates a field extension to its group of automorphisms, covering 
 - [Normal basis theorem](normal-basis-theorem.md)
 - [The closure of a Galois subgroup is the fixing group of its fixed field](topological-closure-eq-fixing-subgroup-f.md)
 - [Four equivalent characterizations of finite Galois extensions](galois-extension-characterization.md)
+- [Injectivity of the Bogomolov–Pop reconstruction correspondence](bogomolov-pop-graph-injectivity.md)

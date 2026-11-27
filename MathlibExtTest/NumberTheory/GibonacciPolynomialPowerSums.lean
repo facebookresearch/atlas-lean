@@ -99,3 +99,18 @@ example : 𝔣 5 * 𝔣 1 - 𝔣 3 ^ 2 = X ^ 2 ∧
   simpa only [Nat.reduceAdd, Nat.reduceSub, hf₂, (by norm_num : (-1 : ℤ[X]) ^ (6 : ℕ) = 1),
     (by norm_num : (-1 : ℤ[X]) ^ (5 : ℕ) = -1), neg_one_mul, one_mul] using
     gibonacciPoly_mul_sub_sq (n := 3) (k := 2) (by decide)
+
+-- The smallest odd shift keeps just the Fibonacci term of index 2, which evaluates to 2.
+example : ∑' n : ℕ, (1 / aeval (2 : ℝ) (𝔣 (2 * n + 2)) ^ 1 -
+    1 / aeval (2 : ℝ) (𝔣 (2 * n + 2 + 2)) ^ 1) = 1 / 2 := by
+  have h := tsum_inv_pow_gibonacciPoly_succ_sub_odd (x := 2) (by norm_num) (g := 𝔣)
+    (Or.inl rfl) (k := 1) (by decide) (lam := 1) (by decide)
+  exact h.trans (by norm_num [generalizedFibonacciPolynomial])
+
+-- A shift of three keeps the Lucas terms at 2, 4 and 6, which evaluate to 3, 7 and 18.
+example : ∑' n : ℕ, (1 / aeval (1 : ℝ) (𝔩 (2 * n + 2)) ^ 2 -
+    1 / aeval (1 : ℝ) (𝔩 (2 * n + 2 + 6)) ^ 2) = 1 / 9 + 1 / 49 + 1 / 324 := by
+  have h := tsum_inv_pow_gibonacciPoly_succ_sub_odd (x := 1) (by norm_num) (g := 𝔩)
+    (Or.inr rfl) (k := 3) (by decide) (lam := 2) (by decide)
+  have hIcc : Finset.Icc 1 (3 : ℕ) = {1, 2, 3} := by decide
+  exact h.trans (by norm_num [hIcc, generalizedFibonacciPolynomial, map_ofNat])

@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.ConsecutiveCyclicStackCount
 public import MathlibExt.Combinatorics.Enumerative.CyclicPatternAvoidingStacks
+public import MathlibExt.Combinatorics.Enumerative.CyclicSortingMachineReductionLength
 public import MathlibExt.Combinatorics.Enumerative.CyclicSortingMachineSuperimpose
 
 /-!
@@ -59,16 +60,5 @@ public theorem_wanted cyclicSortingMachine_321_identity_orbit_period {n m : ℕ}
     (hm : (n - (2 * n + 1) / 3) / 2 ≤ m) :
     (cyclicSortingMachine [3, 2, 1])^[m] (List.range' 1 n) =
       (cyclicSortingMachine [3, 2, 1])^[m + (2 * n + 1) / 3] (List.range' 1 n)
-
-/-- **After one pass of the $123$ cyclic sorting machine, the reduction is shorter.** For every
-$n \ge 2$ and every permutation $\pi$ of $[n] = \{1, \ldots, n\}$, the reduction
-$\operatorname{red}(\mathrm{SC}_{[123]}(\pi))$ of the image of $\pi$ under the cyclic sorting
-machine $\mathrm{SC}_{[123]}$ has fewer than $n$ entries.
-
-Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
-Article A15, Lemma 2 (`integers-2026-A15-lem-2`). -/
-public theorem_wanted length_reductionSeq_cyclicSortingMachine_123_lt {n : ℕ} (hn : 2 ≤ n)
-    {π : List ℕ} (hπ : π.Perm (List.range' 1 n)) :
-    (reductionSeq (cyclicSortingMachine [1, 2, 3] π)).length < n
 
 end MetaMathlibExt

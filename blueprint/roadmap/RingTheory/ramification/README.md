@@ -1,6 +1,6 @@
 # Ramification theory
 
-How primes split, ramify and stay inert in finite extensions of Dedekind domains and discrete valuation rings, measured by the different, the discriminant, ramification indices, inertia degrees and Frobenius elements.
+How primes split, ramify and stay inert in finite extensions of Dedekind domains and discrete valuation rings, measured by the different, the discriminant, ramification indices, inertia degrees and Frobenius elements, and by higher ramification groups and the Artin and Swan conductors.
 
 - [Decomposition and inertia groups](decomposition-and-inertia-groups/README.md)
 - [Different and discriminant ideals](different-and-discriminant-ideals/README.md)
