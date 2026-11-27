@@ -21,7 +21,6 @@ Branching, chain-binomial and point-process outbreaks, epidemics on networks and
 - [Self-exciting point-process epidemic models](self-exciting-point-process-epidemic-models/README.md)
 - [Simplicial contagion model](simplicial-contagion-model/README.md)
 - [Spatial transmission kernels](spatial-transmission-kernels/README.md)
-- [Thermal performance curves of vector traits](thermal-performance-curves-of-vector-traits/README.md)
 - [Viral-load-dependent transmission](viral-load-dependent-transmission/README.md)
 - [Wells–Riley airborne infection model](wells-riley-airborne-infection-model/README.md)
 - [Stage-structured Anopheles population model](stage-structured-anopheles-population-model/README.md)

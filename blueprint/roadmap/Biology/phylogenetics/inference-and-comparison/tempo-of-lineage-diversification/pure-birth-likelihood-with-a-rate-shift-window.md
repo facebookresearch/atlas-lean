@@ -13,10 +13,6 @@ With $m_W$ and $m_O$ the numbers of branching events after the root inside and o
 1. the maximum-likelihood estimates are $\hat\lambda_2 = m_W / \ell_W$ and $\hat\lambda_1 = m_O / \ell_O$;
 2. the constant-rate model is the case $\lambda_1 = \lambda_2$, with estimate $(n - 2)/(\ell_W + \ell_O)$; twice the log-likelihood ratio between the shift model and the constant model is referred to a $\chi^2_1$ distribution.
 
-## Depends on
-
-- [Pybus–Harvey gamma statistic](pybus-harvey-gamma-statistic.md)
-
 ## Expansion
 
 Forward in time, splits occur as an inhomogeneous Poisson process with intensity $k(t)\lambda(t)$; the density of the observed splits is the product of intensities at the event times times the probability of no further events, $\exp(-\int k\lambda)$. The factor $k(t_i)$ from choosing which lineage splits does not involve the rates and is dropped. Taking logarithms separates the two rates: $m_W \log\lambda_2 - \lambda_2 \ell_W$ and $m_O \log\lambda_1 - \lambda_1 \ell_O$, each maximized at events divided by exposure. The shift-window test was applied to cetaceans for two episodes of ocean restructuring (35–31 and 13–4 million years ago), comparing constant-rate pure-birth and birth–death models with models where the speciation rate in the window is free; extinction was dropped from the final model because its estimates tended to zero and could not be separated from speciation within short windows. Rates were higher during the restructuring periods.
