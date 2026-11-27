@@ -10,12 +10,12 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Order.Floor.Div
-public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import Mathlib.Order.Lattice.Nat
-public import MathlibExt.Combinatorics.Additive.WeightedDavenportInitialInterval
 public import MathlibExt.Combinatorics.Additive.WeightedDavenportInterval
+public import MathlibExt.Combinatorics.Additive.WeightedDavenportInitialInterval
 public import MathlibExt.Combinatorics.Additive.WeightedDavenportPrimePow
 public import MathlibExt.Combinatorics.Additive.WeightedDavenportZModProdSelf
+public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 
 namespace MetaMathlibExt
 
