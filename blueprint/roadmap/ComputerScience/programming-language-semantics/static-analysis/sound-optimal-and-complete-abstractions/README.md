@@ -13,3 +13,6 @@ The abstract-interpretation view of program analysis: an analysis lattice relate
 - [Emptiness of octagons](emptiness-of-octagons.md)
 - [Shortest-path closure is a normal form for difference-bound matrices](shortest-path-closure-is-a-normal-form-for-differ.md)
 - [Strong closure is a normal form for octagons](strong-closure-is-a-normal-form-for-octagons.md)
+- [Projection of octagons](projection-of-octagons.md)
+- [Union and intersection of octagons](union-and-intersection-of-octagons.md)
+- [Widening of octagons](widening-of-octagons.md)

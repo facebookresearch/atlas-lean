@@ -17,30 +17,13 @@ public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.NumberTheory.InitialRepetitionsC3
 public import MathlibExt.NumberTheory.InitialRepetitionsC8
 public import MathlibExt.NumberTheory.InitialRepetitionsC8Prime
+public import MathlibExt.NumberTheory.InitialRepetitionsQuadraticNonresidues
 public import MathlibExt.NumberTheory.SquaresModTwoPow
 public import MathlibExt.NumberTheory.GreeneSellersInitialRepetitionsCardNotIsSquareTwelveMulAddOneEightMulAddOne
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-open scoped Classical in
-/-- **Residues $r$ with $16r + 1$ and $8r + 1$ both non-squares modulo $p$.** For every prime $p$,
-the number of integers $r$ with $1 \le r \le p - 1$ such that neither $16r + 1$ nor $8r + 1$ is a
-square modulo $p$ equals $\lfloor p/4 \rfloor$.
-
-Here $0$ counts as a square modulo $p$, so "not a square" means "quadratic nonresidue". The paper
-assumes $p \ge 5$; for $p = 2$ and $p = 3$ both sides are $0$. If $0$ were counted as a non-square,
-the count at $p = 5$ would be $2$ instead of $1$.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Theorem 5 (`integers-2025-A32-thm-5`). -/
-public theorem_wanted card_not_isSquare_sixteen_mul_add_one_eight_mul_add_one (p : ℕ)
-    (hp : p.Prime) :
-    ((Finset.Icc 1 (p - 1)).filter fun r =>
-        ¬IsSquare ((16 * r + 1 : ℕ) : ZMod p) ∧ ¬IsSquare ((8 * r + 1 : ℕ) : ZMod p)).card =
-      p / 4
 
 /-- **Counting $r$ with $mr + 1$ and $nr + 1$ both quadratic nonresidues.** Let $p$ be an odd
 prime, write $\left(\frac{a}{p}\right)$ for the Legendre symbol of an integer $a$, and let $m$ and

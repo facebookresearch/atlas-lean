@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectFact
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectNotFiveDvdOfFactorizationTwoEqFour
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectExistsPrimeGeFiveDvdSigmaBiunitaryPrimePow
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectEq2160OfFactorizationTwoEqFour
+public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryPrimeDivisorGeSeven
 
 /-!
 # Biunitary triperfect numbers divisible by `27`
@@ -110,16 +111,6 @@ public theorem_wanted sigmaBiunitary_two_pow_cases (e s δ : ℕ) (hδ : δ ≤ 
         ∀ q ∈ ({q₁, q₂} : Finset ℕ),
           (q = 2 ^ (s - 1) - 1 ∨ q = 2 ^ s + 1 ∨ (5 < q ∧ q ^ 2 ≤ 2 ^ s - 3)) ∧
             ((q = 2 ^ (s - 1) - 1 ∨ q = 2 ^ s + 1) → 4 ∣ s ∧ δ = 1))
-
-/-- **Prime factors at least $7$ of biunitary divisor sums of odd prime powers.** For every odd
-prime $p$ and every integer $g \ge 4$, the biunitary divisor sum $\sigma^{**}(p^g)$ has a prime
-factor $q \ge 7$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 8 (II) (`jis-2025-25.4.5-lem-8`). -/
-public theorem_wanted exists_prime_ge_seven_dvd_sigmaBiunitary_prime_pow (p g : ℕ)
-    (hp : p.Prime) (hodd : p ≠ 2) (hg : 4 ≤ g) :
-    ∃ q, q.Prime ∧ q ∣ sigmaBiunitary (p ^ g) ∧ 7 ≤ q
 
 /-- **Two prime factors of the biunitary divisor sum of $13^g$.** For every integer $g \ge 2$, the
 biunitary divisor sum $\sigma^{**}(13^g)$ has two distinct prime factors $q_1$ and $q_2$, neither
