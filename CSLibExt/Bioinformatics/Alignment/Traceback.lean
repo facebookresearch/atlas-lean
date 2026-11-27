@@ -26,11 +26,15 @@ then left) and the choice of the first largest cell are this file's. Gaps are li
 
 ## Cost model
 
-Let `m = |xs|` and `n = |ys|`. Building a table, converting it to an array of arrays, and, for the
-local traceback, scanning it for its first largest cell each inspect all `(m + 1) (n + 1)` cells,
-also when a sequence is empty, so each takes time `O((m + 1) (n + 1))`. The walk itself converts
-the two sequences to arrays and then takes at most `m + n` steps, each reading its cells and
-letters in constant time: time `O(m + n + 1)`.
+Let `m = |xs|` and `n = |ys|`. The bounds below count operations: each call of the scorer `σ`,
+each addition or comparison of scores, and each elementary list or array operation (an indexed
+access, a cons or a push) counts as one. They are not time bounds for every scorer: the time of a
+call of `σ`, and of an operation on scores in `ℤ`, depends on the scorer and on the size of the
+scores. Building a table, converting it to an array of arrays, and, for the local traceback,
+scanning it for its first largest cell each inspect all `(m + 1) (n + 1)` cells, also when a
+sequence is empty, so each takes `O((m + 1) (n + 1))` operations. The walk itself converts the two
+sequences to arrays and then makes at most `m + n` moves, each with a bounded number of
+operations, so it takes `O(m + n + 1)` operations.
 
 ## References
 
@@ -46,8 +50,8 @@ namespace Cslib.Bioinformatics.Alignment.Traceback
 
 open Cslib.Algorithms.Lean
 
-/-- **Table entry.** The entry `T[i][j]` of a table stored as an array of rows, read in constant
-time; it is `0` outside the table. -/
+/-- **Table entry.** The entry `T[i][j]` of a table stored as an array of rows, read with two
+indexed accesses; it is `0` outside the table. -/
 def cell (T : Array (Array ℤ)) (i j : ℕ) : ℤ := (T.getD i #[]).getD j 0
 
 /-- **Needleman–Wunsch table.** Every row `F[0], …, F[|xs|]` of the Needleman–Wunsch table of
@@ -69,7 +73,8 @@ when the fuel is `0` (at any cell), and when a letter it needs is missing (`i > 
 `j > |ys|`). `nwTraceback` starts at `(|xs|, |ys|)` with fuel `|xs| + |ys|`. Each move consumes
 one unit of fuel and decreases `i + j` by one on an up or left move and by two on a diagonal. Thus
 `i + j ≤ remaining fuel` is preserved, so it stops only at `(0, 0)`. The table and the sequences
-are arrays, so a step reads its cells and letters in constant time. -/
+are arrays, so each move makes a bounded number of operations: scorer calls, additions and
+comparisons of scores, indexed accesses and one cons onto `acc`. -/
 def nwTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : Array (Array ℤ)) (xs ys : Array α) :
     ℕ → ℕ → ℕ → Alignment α → Alignment α
   | 0, _, _, acc => acc
@@ -112,7 +117,9 @@ def argmaxCell (T : List (List ℤ)) : ℕ × ℕ :=
 fuel `n`, where `acc` holds the columns already emitted. It stops at a cell of the top row or the
 left column, at an interior cell equal to `0`, when the fuel is `0` (even at a nonzero interior
 cell), and when a letter it needs is missing (`i > |xs|` or `j > |ys|`); it then returns that
-cell's position and `acc`. Otherwise it steps as in `nwTraceAux`, in constant time per step.
+cell's position and `acc`. Otherwise it steps as in `nwTraceAux`, and each move makes a bounded
+number of operations: scorer calls, additions and comparisons of scores, indexed accesses and one
+cons onto `acc`.
 `swTraceback` starts at a cell `(i, j)` of the table with fuel `i + j`. Each move consumes one unit
 of fuel and decreases `i + j` by one on an up or left move and by two on a diagonal. Thus
 `i + j ≤ remaining fuel` is preserved, so only the border or a cell equal to `0` stops it. -/

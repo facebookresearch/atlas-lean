@@ -14,8 +14,11 @@ import CSLibExt.Bioinformatics.Alignment.Traceback
 Kernel-checked examples: empty inputs, a three-way tie, the zero stop, the case with no positive
 local alignment, the positive-gap gap between `swTab` and `localScore`, `argmaxCell` on tables with
 and without a `(0, 0)` entry, and an alignment that uses every move. Executed fixtures (`#guard`):
-the compiled tracebacks on concrete alignments and on long skewed inputs, which run in time linear
-in their length because each traceback step reads the table and the letters from arrays.
+the compiled tracebacks on concrete alignments and on long skewed inputs, where one sequence has
+at most one letter. There the table has a number of cells linear in the input length, each
+traceback move makes a bounded number of scorer calls, score operations and array accesses, and the
+scorer `s` below takes constant time on these small scores, so the runs take time linear in their
+length. This is a property of these inputs, not a time bound for every scorer.
 
 This file is not a `module`: the tables are built with `List.scanl`, whose definition a module
 import does not expose, so `decide +kernel` could not evaluate the tracebacks there.
