@@ -14,19 +14,21 @@ public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSum
 public import MathlibExt.FieldTheory.Finite.MonomialPermutationPolynomial
 public import MathlibExt.FieldTheory.Finite.OrderedPartitionCongruence
 public import MathlibExt.FieldTheory.Finite.PermutationPolynomial
+public import MathlibExt.FieldTheory.Finite.PowerSumCriterion
 public import MathlibExt.FieldTheory.Finite.ShiftedPowerSumPermutationPolynomial
 
 /-!
 # Permutation polynomials of the form `∑ n^t X^(n+a)` and related lemmas
 
 Statements from Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on
-Ordered Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12: the
-power-sum criterion the paper quotes and its two
-new classes of permutation polynomials over `𝔽_p`. Permutation polynomials use MathlibExt's
+Ordered Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, about
+permutation polynomials over `𝔽_p`. Permutation polynomials use MathlibExt's
 `Polynomial.IsPermutationPolynomial` (bijective evaluation map).
 
-Proved in `MathlibExt.FieldTheory.Finite.MonomialPermutationPolynomial`, which this module
-imports: the monomial criterion the paper quotes (`isPermutationPolynomial_X_pow_iff_coprime`).
+The power-sum criterion `injective_iff_sum_pow_eq` is proved in
+`MathlibExt.FieldTheory.Finite.PowerSumCriterion`, which this module imports.
+Proved in `MathlibExt.FieldTheory.Finite.MonomialPermutationPolynomial`, also imported here:
+the monomial criterion the paper quotes (`isPermutationPolynomial_X_pow_iff_coprime`).
 -/
 
 namespace MetaMathlibExt
@@ -34,20 +36,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Polynomial
-
-/-- **Power-sum criterion for distinct elements of a finite field.** Let $K$ be a finite field
-with $q$ elements and let $a_1, \dots, a_q \in K$. Then $a_1, \dots, a_q$ are pairwise distinct
-if and only if $\sum_{i=1}^{q} a_i^t = 0$ for every $t = 0, 1, \dots, q - 2$ and
-$\sum_{i=1}^{q} a_i^{q-1} = -1$, where $0^0 = 1$.
-
-Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
-Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Lemma 3
-(`integers-2024-A12-lem-3`). -/
-public theorem_wanted injective_iff_sum_pow_eq {K : Type*} [Field K] [Fintype K]
-    (a : Fin (Fintype.card K) → K) :
-    Function.Injective a ↔
-      (∀ t : ℕ, t < Fintype.card K - 1 → ∑ i, a i ^ t = 0) ∧
-        ∑ i, a i ^ (Fintype.card K - 1) = -1
 
 /-- **Dilated power-sum permutation polynomials of a prime field.** Let $p$ be an odd prime and
 let $k, t, a$ be positive integers with $p \nmid a$, $\gcd(a, p - 1) = 1$ and
@@ -84,29 +72,6 @@ public theorem_wanted one_sub_X_pow_mul_sum_pow_mul_X_pow (t k : ℕ) (ht : 0 < 
           (-1) ^ i * ((t + 1).choose i : ℤ) * ((n : ℤ) - i) ^ t) * X ^ n +
         ∑ m ∈ Finset.Icc 1 (t + 1), C (∑ i ∈ Finset.Icc m (t + 1),
           (-1) ^ i * ((t + 1).choose i : ℤ) * ((k : ℤ) + m - i) ^ t) * X ^ (k + m)
-
-/-- **Vishwakarma–Singh congruence for ordered partitions, linear case.** Let $p$ be an odd
-prime and let $k, s$ be positive integers with $s \le p - 2$ and $k \equiv 1 \pmod{p(p-1)}$.
-Let $\mu = \lfloor ks/(p - 1) \rfloor$. Then
-
-$$\sum_{j=1}^{\mu} \sum_{\omega} \omega_1 \cdots \omega_s \equiv 0 \pmod{p},$$
-
-where for each $j$ the inner sum runs over all $s$-tuples $\omega = (\omega_1, \dots, \omega_s)$
-with entries in $\{1, \dots, k\}$ and $\omega_1 + \cdots + \omega_s = j(p - 1)$.
-
-This is the case $t = 1$ of the source's Theorem 1. The source states the hypothesis
-$s \not\equiv 0 \pmod{p}$ in place of $s \le p - 2$; with that hypothesis the claim fails, e.g.
-for $p = 3$, $k = 7$, $s = 2$ the sum is $400 \equiv 1 \pmod{3}$.
-
-Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
-Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Corollary 2
-(`integers-2024-A12-cor-2`). -/
-public theorem_wanted prime_dvd_sum_compositions_prod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    {k s : ℕ} (hk : 0 < k) (hs : 0 < s) (hsp : s ≤ p - 2) (hkcong : k ≡ 1 [MOD p * (p - 1)]) :
-    p ∣ ∑ j ∈ Finset.Icc 1 (k * s / (p - 1)),
-      ∑ ω ∈ (Fintype.piFinset fun _ : Fin s => Finset.Icc 1 k).filter
-          (fun ω => ∑ i, ω i = j * (p - 1)),
-        ∏ i, ω i
 
 /-- **Vishwakarma–Singh congruence for ordered partitions into multiples.** Let $p$ be an odd
 prime and let $a, k, s, t$ be positive integers with $\gcd(a, p - 1) = 1$, $s \le p - 2$ and

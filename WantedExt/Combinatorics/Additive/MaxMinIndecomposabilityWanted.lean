@@ -35,6 +35,7 @@ public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import MathlibExt.Combinatorics.Additive.MaxMinIndecomposability
+public import MathlibExt.Combinatorics.Additive.MaxMinIndecomposabilityLunarHoeffdingExtremalSetNcardLe
 
 namespace MetaMathlibExt
 
@@ -124,21 +125,6 @@ public theorem_wanted boolean_close_factor_pairs_card_le {n k : ℕ} (hk : 0 < k
         ((p.1 + p.2).card : ℝ) ≤ p.1.card + p.2.card + d}.ncard : ℝ) ≤
       (n : ℝ) ^ (2 * d + 2) * 2 ^ k
 
-/-- **Level counts of a lunar number.** Let $f$ be a lunar number of base $b$ and degree at most
-$n$, with digits $c_0, \dots, c_n \in \{0, \dots, b - 1\}$, and let $i$ be a natural number. The
-level count $|f_i|$ is the number of indices $k \le n$ with $c_k \ge i$, that is, the number of
-nonzero coefficients of the $i$-level support $f_i = s_i(f)$, the Boolean polynomial with
-coefficient $1$ at $x^k$ when $c_k \ge i$ and $0$ otherwise.
-
-A lunar number $f$ is not a monomial $t x^m$ (with $t = 0$ allowed) if and only if $|f_1| \ge 2$,
-and $f_i$ is not a monomial if and only if $|f_i| \ge 2$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7,
-Section 2, Definitions 13 and 16. -/
-public def lunarLevelCount {n b : ℕ} (i : ℕ) (f : Fin (n + 1) → Fin b) : ℕ :=
-  (Finset.univ.filter fun k => i ≤ (f k : ℕ)).card
-
 /-- **Level counts of $1 \oplus 2x^2$ in base $3$.** For the base-$3$ lunar number
 $f = 1 \oplus 2x^2$ of degree at most $2$, with digits $1, 0, 2$, exactly two digits are at least
 $1$ and exactly one digit is at least $2$: $|f_1| = 2$ and $|f_2| = 1$.
@@ -187,25 +173,6 @@ Section 2, before Remark 22. -/
 public def lunarLevelDecomposableSet (b n : ℕ) : Set (Fin (n + 1) → Fin b) :=
   {h | ∃ f g : Fin (n + 1) → Fin b, 2 ≤ lunarLevelCount (b / 2) f ∧
     2 ≤ lunarLevelCount (b / 2) g ∧ maxMinMul (digitSeq f) (digitSeq g) = digitSeq h}
-
-/-- **Hoeffding extremal lunar numbers.** Let $b$ and $n$ be natural numbers and $d$ a real
-number. Let $\mathcal{L}_b^n$ be the set of lunar numbers of base $b$ and degree at most $n$
-(digit strings $c_0, \dots, c_n$ with digits in $\{0, \dots, b - 1\}$), with the max-min product
-$\otimes$, and for $f \in \mathcal{L}_b^n$ let $|f_i|$ be the number of its digits that are at
-least $i$. The set $\mathcal{H}_b^n(d)$ of $d$-Hoeffding extremal lunar numbers consists of the
-$h \in \mathcal{L}_b^n$ for which there is an index $i$ with $1 \le i \le b - 1$ such that either
-$\bigl||h_i| - (b - i)n/b\bigr| > d/2$, or $h = f \otimes g$ for some $f, g \in \mathcal{L}_b^n$
-with $\bigl||f_i| + |g_i| - (b - i)(n + 1)/b\bigr| > d/2$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7,
-Definition 23. -/
-public def lunarHoeffdingExtremalSet (b n : ℕ) (d : ℝ) : Set (Fin (n + 1) → Fin b) :=
-  {h | ∃ i, 1 ≤ i ∧ i ≤ b - 1 ∧
-    (d / 2 < |(lunarLevelCount i h : ℝ) - ((b : ℝ) - i) * n / b| ∨
-      ∃ f g : Fin (n + 1) → Fin b, maxMinMul (digitSeq f) (digitSeq g) = digitSeq h ∧
-        d / 2 < |((lunarLevelCount i f + lunarLevelCount i g : ℕ) : ℝ) -
-          ((b : ℝ) - i) * (n + 1) / b|)}
 
 private theorem digitSeq_one_one_zero_mul :
     maxMinMul (digitSeq (![1, 1, 0] : Fin 3 → Fin 2)) (digitSeq (![1, 1, 0] : Fin 3 → Fin 2)) =
@@ -282,19 +249,6 @@ public theorem_wanted lunarDecomposableSet_ncard_le {b : ℕ} (hb : 2 ≤ b) :
           (n : ℝ) ^ (2 * d + 4) * (2 : ℝ) ^ (d / 2 - (n + 1) / 3) +
           v * (n : ℝ) ^ (2 * d + 2) * (2 : ℝ) ^ v * (b : ℝ) ^ (d / 2 - n / b) +
           (n : ℝ) ^ 2 * (2 : ℝ) ^ (-v))
-
-/-- **Bound on the number of Hoeffding extremal lunar numbers.** Fix an integer $b \ge 2$. There is
-a constant $C > 0$ such that for every integer $n \ge 1$ and every real $d > 0$, the set
-$\mathcal{H}_b^n(d)$ of $d$-Hoeffding extremal lunar numbers of base $b$ and degree at most $n$
-has at most $C n^2 e^{-d^2/(4(n+2))} b^n$ elements.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7,
-Lemma 24 (`jis-2025-25.2.7-lem-24`). -/
-public theorem_wanted lunarHoeffdingExtremalSet_ncard_le {b : ℕ} (hb : 2 ≤ b) :
-    ∃ C : ℝ, 0 < C ∧ ∀ n : ℕ, 1 ≤ n → ∀ d : ℝ, 0 < d →
-      ((lunarHoeffdingExtremalSet b n d).ncard : ℝ) ≤
-        C * (n : ℝ) ^ 2 * Real.exp (-d ^ 2 / (4 * (n + 2))) * (b : ℝ) ^ n
 
 /-- **Level counts of a product that is not Hoeffding extremal.** Let $b$ and $n$ be natural
 numbers, $d$ a real number and $f, g, h$ lunar numbers of base $b$ and degree at most $n$ with

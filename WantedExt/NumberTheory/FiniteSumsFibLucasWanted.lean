@@ -76,25 +76,6 @@ namespace MathlibExt.NumberTheory.FiniteSumsFibLucasWanted
 
 open MetaMathlibExt
 
-/-- **Bernoulli–Fibonacci expansion of $(x + \beta)^m$.** Let $\beta = (1 - \sqrt{5})/2$, let
-$B_k$ be the Bernoulli numbers, normalized so that $B_1 = -1/2$, and let $F_k$ be the Fibonacci
-numbers ($F_0 = 0$, $F_1 = 1$). Then for every natural number $m$ and every real number $x$,
-$$
-(x + \beta)^m = \sum_{n=0}^{m} \sum_{k=0}^{n} \sqrt{5}^{\,k} \binom{n}{k} \binom{m}{n} B_k
-\frac{F_{n-k+1}}{n-k+1} x^{m-n}.
-$$
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Theorem 1. -/
-theorem_wanted add_fibBeta_pow_eq_sum (m : ℕ) (x : ℝ) :
-    (x + fibBeta) ^ m =
-      ∑ n ∈ Finset.range (m + 1), ∑ k ∈ Finset.range (n + 1),
-        (Real.sqrt 5) ^ k * (Nat.choose n k : ℝ) *
-          (Nat.choose m n : ℝ) * (bernoulli k : ℝ) *
-          ((Nat.fib (n - k + 1) : ℝ) / (n - k + 1 : ℕ)) *
-          x ^ (m - n)
-
 /-- **Bernoulli–Fibonacci double sum with weights $(-2)^n$.** Let $B_k$ be the Bernoulli
 numbers, with $B_1 = -1/2$, and let $F_k$ be the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$). For every
 natural number $m$,

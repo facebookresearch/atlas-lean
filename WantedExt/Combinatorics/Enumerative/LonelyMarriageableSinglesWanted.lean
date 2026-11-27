@@ -13,6 +13,7 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Combinatorics.Enumerative.AbsoluteMaximalSetsOfLanes
 public import MathlibExt.Combinatorics.Enumerative.LonelyMarriageableSinglesLimits
+public import MathlibExt.Combinatorics.Enumerative.LonelyMarriageableStrictGrowth
 public import MathlibExt.Combinatorics.Enumerative.LonelySinglesLowerBound
 public import MathlibExt.Combinatorics.Enumerative.RestrictedMaximalSetsOfLanes
 
@@ -50,42 +51,6 @@ public theorem_wanted maximalSetsOfLanes_equiv_noncrossingPartition (n : ℕ) :
       _root_.NoncrossingPartition n) ∧
     (Finset.univ.filter fun S : Finset (Fin n × Fin n) =>
       IsMaximalSetOfLanes Finset.univ S).card = catalan n
-
-/-- **Nonabsolute maximal sets of lanes are counted by marriageable singles partitions.** For
-every $n \ge 0$, the number of maximal sets of lanes of the standard road intersection of size $n$
-that are not absolute equals $M_n$, the number of noncrossing partitions of $\{0, \dots, n-1\}$
-that are marriageable singles partitions.
-
-Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
-Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Corollary 17
-(`jis-2025-25.1.1-cor-17`). -/
-public theorem_wanted card_nonabsolute_maximalSetsOfLanes (n : ℕ) :
-    (Finset.univ.filter fun S : Finset (Fin n × Fin n) =>
-      IsMaximalSetOfLanes Finset.univ S ∧ ¬ IsAbsoluteMaximalSetOfLanes S).card =
-      marriageableSinglesCount n
-
-/-- **Strict growth of the lonely and marriageable singles counts.** $L_n < L_{n+1}$ for every
-$n \ge 2$, and $M_n < M_{n+1}$ for every $n \ge 3$, where $M_n$ is the number of noncrossing
-partitions of $\{0, \dots, n-1\}$ that are marriageable singles partitions and $L_n$ is the
-number of those that are not.
-
-Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
-Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Proposition 20
-(`jis-2025-25.1.1-prop-20`). -/
-public theorem_wanted lonely_marriageable_strictMono :
-    (∀ n, 2 ≤ n → lonelySinglesCount n < lonelySinglesCount (n + 1)) ∧
-    ∀ n, 3 ≤ n → marriageableSinglesCount n < marriageableSinglesCount (n + 1)
-
-/-- **Recursive lower bound for marriageable singles partitions.** For every $n \ge 0$,
-$C_n + 3M_n \le M_{n+2}$, where $C_n$ is the number of noncrossing partitions of
-$\{0, \dots, n-1\}$ and $M_n$ is the number of those that are marriageable singles partitions.
-
-Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
-Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Proposition 22
-(`jis-2025-25.1.1-prop-22`). -/
-public theorem_wanted card_add_three_mul_marriageable_le (n : ℕ) :
-    Fintype.card (_root_.NoncrossingPartition n) + 3 * marriageableSinglesCount n ≤
-      marriageableSinglesCount (n + 2)
 
 /-- **Counting noncrossing partitions with no or one singleton block.** Write $NC_{n,m,k}$ for the
 number of noncrossing partitions of $\{0, \dots, n-1\}$ with $m$ blocks of which $k$ are

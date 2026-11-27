@@ -55,7 +55,10 @@ noncomputable def christoffel {n : ℕ} (g : (Fin n → ℝ) → Matrix (Fin n) 
     partialDeriv j (fun y => g y i l) x - partialDeriv l (fun y => g y i j) x)
 
 /-- The coefficients `Γᵏᵢⱼ + (s/2) gᵏˡ Tᵢⱼₗ` of the connection obtained from the Levi-Civita
-connection of `g` and the `(0,3)`-tensor `T`: `s = -1` gives `∇` and `s = 1` its `g`-dual `∇*`. -/
+connection of `g` and the `(0,3)`-tensor `T`. The definition accepts any matrix field `g` and any
+three-index array `T`; where `g` is a smooth Riemannian metric and `T` a smooth totally symmetric
+cubic tensor, the shifts `s = -1` (giving `∇`) and `s = 1` (giving `∇*`) are torsion-free and dual
+with respect to `g`. -/
 noncomputable def shiftedConnection {n : ℕ} (s : ℝ) (g : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ)
     (T : (Fin n → ℝ) → Fin n → Fin n → Fin n → ℝ) (x : Fin n → ℝ) (k i j : Fin n) : ℝ :=
   christoffel g x k i j + s / 2 * ∑ l, (g x)⁻¹ k l * T x i j l

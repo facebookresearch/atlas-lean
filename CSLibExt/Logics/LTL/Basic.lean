@@ -272,10 +272,11 @@ theorem forallRuns_always_atom_of_reachable {State Label : Type*}
   have hreach := Cslib.LTS.canReach_omegaRun_apply hrun i
   rwa [hr0] at hreach
 
-/-- Converse of `forallRuns_always_atom_of_reachable` under the extra
-hypothesis that every reachable state lies on an infinite run from `s`.
-Without it the converse fails, as `ForallRuns` is vacuous at states from
-which no infinite run starts. -/
+/-- If every state reachable from `s` lies on some infinite run from `s`, and the atom holds
+at every position of every infinite run from `s`, then the atom holds at every state
+reachable from `s`. This is the converse of `forallRuns_always_atom_of_reachable` under that
+extra hypothesis, which is needed: no infinite run starts at a deadlocked state, so
+`ForallRuns` is vacuous there. -/
 theorem reachable_of_forallRuns_always_atom {State Label : Type*}
     {lts : _root_.Cslib.LTS State Label} {valuation : State → Atom → Prop}
     {s : State} {a : Atom}
