@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.AnalyticBaseWittScalarSources
 public import MathlibExt.AlgebraicGeometry.AnalyticCoefficientPeriodScalars
 public import MathlibExt.CategoryTheory.StructuralPeriodConnectionSources
+public import MathlibExt.AlgebraicGeometry.AnalyticPeriodSourcesConstantInverseImageIso
 
 /-!
 # Direct construction and proof requests for actual analytic period sources
@@ -22,7 +23,8 @@ there is no request for a replacement period ring or a final comparison
 oracle, and no global theta generator or integral rational-system lattice. The pro-object point
 realization and the continuity of the étale inclusion are requested by
 `AnalyticProObjectSitesWanted` (`actualProObjectPoints`, `etaleInclusionContinuous`), not again
-here.
+here. The constant inverse-image isomorphism (`constantInverseImageIso`) is proved in
+`MathlibExt.AlgebraicGeometry.AnalyticPeriodSourcesConstantInverseImageIso`, not requested here.
 
 Sources: Scholze, arXiv:1205.3463v2, Definitions 3.9, 6.1, 6.8 and 8.1;
 Bhatt--Morrow--Scholze, arXiv:1602.03148v3, Section 5.1.
@@ -73,12 +75,6 @@ variable [HasSheafify (AnalyticDiamondEtaleSites.analyticEtaleTopology p X) Comm
     (AnalyticDiamondEtaleSites.analyticEtaleTopology p X) (proTopology p X P)]
   [((etaleInclusion p X).sheafPushforwardContinuous CommRingCat.{1}
     (AnalyticDiamondEtaleSites.analyticEtaleTopology p X) (proTopology p X P)).IsRightAdjoint]
-
-/-- The native constant inverse-image map; its construction already lives in MathlibExt. -/
-public theorem_wanted constantInverseImageIso (hNoeth : AnalyticProObjectSites.IsLocallyNoetherian p X) (R : Type) [CommRing R] :
-  IsIso (NativeRingInverseImages.constantInverseMap
-    (J := AnalyticDiamondEtaleSites.analyticEtaleTopology p X) (T := proTopology p X P)
-      (etaleInclusion p X) R)
 
 variable (I : IntegralStructure p X)
   (hI : Presheaf.IsSheaf (AnalyticDiamondEtaleSites.analyticEtaleTopology p X) (I.presheaf ⋙ liftRings))

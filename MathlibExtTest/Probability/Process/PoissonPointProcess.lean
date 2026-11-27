@@ -77,4 +77,18 @@ example : (poissonPointProcess μ).map (fun η => η.map (fun _ => ())) =
     poissonPointProcess (μ.map fun _ => ()) :=
   map_map μ measurable_const
 
+/-! ### Restriction -/
+
+/-- Restricting to the two singleton sets of `Bool` gives independent processes. -/
+example : (poissonPointProcess boolIntensity).map (fun η b => η.restrict {b}) =
+    Measure.pi fun b => poissonPointProcess (boolIntensity.restrict {b}) :=
+  map_restrict_pi boolIntensity (fun b => {b}) (fun _ => measurableSet_singleton _)
+    (fun _ _ h => Set.disjoint_singleton.2 h)
+
+/-- For two empty restrictions the joint law is concentrated at the zero configuration. -/
+example : (Measure.pi fun _ : Bool => poissonPointProcess (0 : Measure Bool)) =
+    Measure.dirac (fun _ : Bool => (0 : Measure Bool)) := by
+  simpa using (map_restrict_pi boolIntensity (fun _ : Bool => (∅ : Set Bool))
+    (fun _ => MeasurableSet.empty) (fun _ _ _ => by simp)).symm
+
 end MathlibExtTest.Probability.Process.PoissonPointProcess

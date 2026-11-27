@@ -52,15 +52,6 @@ public theorem_wanted soCS_odd_span (N : ℤ) (hN : Odd N) (h3 : 3 ≤ N) :
         Odd ((f n).2.2 - (f n).1) ∧
         (b - c) * (f n).1 + (c - a) * (f n).2.1 + (a - b) * (f n).2.2 = 0
 
-/-- **Infinitely many solutions with $c - a$ even.** There are infinitely many solutions
-$(a, b, c)$ of the sum of consecutive squares problem with $c - a$ even.
-
-Source: Anderson, Woodall and Zaharescu, *Arithmetic Polygons and Sums of
-Consecutive Squares*, INTEGERS 26 (2026), Article A1, Theorem 3
-(`integers-2026-A1-thm-3`). -/
-public theorem_wanted soCS_even_span_infinite :
-    {t : ℤ × ℤ × ℤ | IsSoCSSolution t.1 t.2.1 t.2.2 ∧ Even (t.2.2 - t.1)}.Infinite
-
 /-- **No finitely many planes contain all solutions.** Let $S$ be a finite set of affine planes
 $ux + vy + wz = t$ in $\mathbb{R}^3$, with $u, v, w, t$ real and $(u, v, w) \ne (0, 0, 0)$. Then
 some solution $(a, b, c)$ of the sum of consecutive squares problem lies on none of the planes in

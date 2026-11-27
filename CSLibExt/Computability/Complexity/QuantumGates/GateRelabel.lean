@@ -34,7 +34,8 @@ def swapConjEntries (l : List (RatEnc × RatEnc)) : List (RatEnc × RatEnc) := e
 
 theorem swapConjEntries_length (l : List (RatEnc × RatEnc)) : (swapConjEntries l).length = 16 := rfl
 
-/-- decoding of the conjugated list -/
+/-- Decoding the swap-conjugated list of `l` gives the decoding of `l` with both qubit indices
+exchanged. -/
 theorem matrixOfEntries_swapConjEntries (l : List (RatEnc × RatEnc)) : matrixOfEntries (swapConjEntries l) = (matrixOfEntries l).submatrix Prod.swap Prod.swap := by
   unfold swapConjEntries
   rw [matrixOfEntries_entriesOf]
@@ -42,7 +43,7 @@ theorem matrixOfEntries_swapConjEntries (l : List (RatEnc × RatEnc)) : matrixOf
   intro p q
   rfl
 
-/-- identifies the reindex with the exporter's SWAP (contract wording "SWAP M SWAP") -/
+/-- Conjugating a two-qubit matrix by the SWAP matrix exchanges both qubit indices. -/
 theorem swapMatrix_mul_mul_swapMatrix (M : Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) ℂ) : complexOfGRatMatrix swapMatrix * M * complexOfGRatMatrix swapMatrix = M.submatrix Prod.swap Prod.swap := by
   apply Matrix.ext
   intro p q
@@ -62,11 +63,13 @@ theorem star_mul_self_matrixOfEntries_swapConjEntries {l : List (RatEnc × RatEn
     Matrix.submatrix_mul_equiv, h']
   exact Matrix.submatrix_one_equiv (Equiv.prodComm (Fin 2) (Fin 2))
 
-/-- exact list equality on exporter outputs -/
+/-- Swap-conjugating the entry list of `M` gives the entry list of `M` with both qubit indices
+exchanged. -/
 theorem swapConjEntries_entriesOf (M : Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) GRat) : swapConjEntries (entriesOf M) = entriesOf (M.submatrix Prod.swap Prod.swap) := by
   rfl
 
-/-- exporter orientation rule recovered -/
+/-- Controlled-`U` with the low qubit as control, with both qubit indices exchanged, is
+controlled-`U` with the high qubit as control. -/
 theorem ctrlLow_submatrix_swap (U : Matrix (Fin 2) (Fin 2) GRat) : (ctrlLow U).submatrix Prod.swap Prod.swap = ctrlHigh U := by
   apply Matrix.ext
   intro p q
@@ -77,7 +80,8 @@ theorem ctrlLow_submatrix_swap (U : Matrix (Fin 2) (Fin 2) GRat) : (ctrlLow U).s
 /-- contract: (i, j, M) ↦ (π i, π j, M) if π i < π j, else (π j, π i, SWAP M SWAP) -/
 def relabelGate (π : ℕ → ℕ) (g : QGate) : QGate := if π g.1 < π g.2.1 then (π g.1, π g.2.1, g.2.2) else (π g.2.1, π g.1, swapConjEntries g.2.2)
 
-/-- acceptance bullet 1, both orientations -/
+/-- A gate well formed on `N` qubits, relabelled by `π` with `π i ≠ π j` and both below `N'`, is
+well formed on `N'` qubits. -/
 theorem qGateWellFormed_relabelGate {N N' : ℕ} {π : ℕ → ℕ} {g : QGate} (hg : QGateWellFormed N g) (hne : π g.1 ≠ π g.2.1) (h₁ : π g.1 < N') (h₂ : π g.2.1 < N') : QGateWellFormed N' (relabelGate π g) := by
   have hU : star (matrixOfEntries g.2.2) * matrixOfEntries g.2.2 = 1 := hg.2.2
   unfold relabelGate
@@ -88,7 +92,8 @@ theorem qGateWellFormed_relabelGate {N N' : ℕ} {π : ℕ → ℕ} {g : QGate} 
     have hswap : π g.2.1 < π g.1 := by omega
     exact ⟨hswap, h₁, star_mul_self_matrixOfEntries_swapConjEntries hU⟩
 
-/-- list form for relocated verifier copies -/
+/-- If every gate of a list is well formed on `N` qubits and `π` is injective on `{0, …, N - 1}`
+with values below `N'`, every relabelled gate is well formed on `N'` qubits. -/
 theorem qGateWellFormed_map_relabelGate {N N' : ℕ} {π : ℕ → ℕ} {gs : List QGate} (hgs : ∀ g ∈ gs, QGateWellFormed N g) (hinj : ∀ a b, a < N → b < N → a ≠ b → π a ≠ π b) (hπ : ∀ a, a < N → π a < N') : ∀ g ∈ gs.map (relabelGate π), QGateWellFormed N' g := by
   intro g hg
   rw [List.mem_map] at hg
@@ -99,7 +104,8 @@ theorem qGateWellFormed_map_relabelGate {N N' : ℕ} {π : ℕ → ℕ} {gs : Li
   exact qGateWellFormed_relabelGate (hgs g0 hg0mem) (hinj _ _ hg1N h2N (ne_of_lt h12))
     (hπ _ hg1N) (hπ _ h2N)
 
-/-- consistency with the merged exporter (controlledGate) -/
+/-- Relabelling the controlled-`U` gate on qubits `0` and `1` by `π` gives the controlled gate
+with control `π 0` and target `π 1`. -/
 theorem relabelGate_ctrlLow (U : Matrix (Fin 2) (Fin 2) GRat) (π : ℕ → ℕ) : relabelGate π (0, 1, entriesOf (ctrlLow U)) = controlledGate U (π 0) (π 1) := by
   simp only [relabelGate, controlledGate]
   by_cases h : π 0 < π 1

@@ -1,6 +1,8 @@
 # Trinomial coefficients and the 2-Pascal triangle
 
 - [Trinomial coefficient](trinomial-coefficient.md)
+- [Trinomial coefficient in row 0 and column 0](trinomial-coefficient-zero-zero.md)
+- [Trinomial coefficient in row 1 and column 1](trinomial-coefficient-one-one.md)
 - [Trinomial transform](trinomial-transform-sequence.md)
 - [Zeroth term of the trinomial transform](trinomial-transform-sequence-zero.md)
 - [Trinomial transform of the zero sequence](trinomial-transform-sequence-zero-apply.md)
@@ -19,6 +21,10 @@
 - [Alternating sum of squared trinomial coefficients](sum-trinomial-coefficient-sq-alternating.md)
 - [Sums of squares and products of trinomial coefficients with even index](sum-trinomial-coefficient-even-sq.md)
 - [Absorption identity for trinomial coefficients](trinomial-coefficient-absorption.md)
+- [Sun's generalized central trinomial coefficient](generalized-central-trinomial.md)
+- [Generalized central trinomial coefficient at n = 0](generalized-central-trinomial-zero.md)
+- [Generalized central trinomial coefficient at n = 1](generalized-central-trinomial-one.md)
+- [Sun's binomial-sum formula for generalized central trinomial coefficients](generalized-central-trinomial-eq-sum.md)
 - [Weighted diagonal sums of trinomial coefficients by coefficient extraction](sum-trinomial-coefficient-diagonal-weigh.md)
 - [Alternating weighted diagonal sum of trinomial coefficients](sum-trinomial-coefficient-diagonal-alter.md)
 - [Generating sum of the upper half of a trinomial row](sum-trinomial-coefficient-upper-half.md)

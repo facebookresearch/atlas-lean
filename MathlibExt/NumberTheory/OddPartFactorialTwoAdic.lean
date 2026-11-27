@@ -533,6 +533,108 @@ public theorem oddSet_product_congr (e : ℕ) (he : 3 ≤ e) :
   simpa only [pow_succ, mul_one, hexact, sub_add_cancel] using
     (hparity.mul_left' (c := 2 ^ e)).add_right 1
 
+namespace oddSet_product_congr_shift
+
+open Finset oddDoubleFactorial_normalized_congr
+
+/-- The odd numbers below `2^(k+1)`, each translated by `x`, form the block of length `2^k`. -/
+private theorem prod_oddBelowTwoPow_eq_block (x : ℤ) (k : ℕ) :
+    ∏ i ∈ oddBelowTwoPow (k + 1), (x + (i : ℤ)) = block x (2 ^ k) := by
+  simp only [oddBelowTwoPow, block, pow_succ]
+  symm
+  refine prod_nbij' (fun i ↦ 2 * i + 1) (fun j ↦ j / 2) ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [mem_filter, mem_Ico, mem_range, Nat.odd_iff, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat, implies_true] <;> omega
+
+end oddSet_product_congr_shift
+
+open oddDoubleFactorial_normalized_congr oddSet_product_congr_shift in
+/--
+**Shifting the odd numbers below $2^e$ by $2^e$.** For every natural number $e \ge 2$, let $S_e$ be
+the set of odd integers $i$ with $1 \le i < 2^e$. Then
+$$
+\prod_{i \in S_e} i \equiv \prod_{i \in S_e} (2^e + i) \pmod{2^{2e}}.
+$$
+
+Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
+Sequences 29 (2026), Article 26.3.1, Proposition 9.
+-/
+public theorem oddSet_product_congr_shift (e : ℕ) (he : 2 ≤ e) :
+    (2 : ℤ) ^ (2 * e) ∣
+      ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) -
+        (∏ i ∈ oddBelowTwoPow e, ((2 ^ e + i : ℕ) : ℤ)) := by
+  obtain ⟨k, rfl⟩ : ∃ k, e = k + 2 := ⟨e - 2, by omega⟩
+  -- Pair `i` with `2^e - i`: shifting both by `2^e` changes their product by `2^(2e+1)`.
+  let m := 2 ^ k
+  have hlen : 2 ^ (k + 1) = m + m := by simp [m, pow_succ, mul_two]
+  have hmod : (2 : ℤ) ^ (2 * (k + 2)) = (4 * (m : ℤ)) ^ 2 := by
+    push_cast [m]
+    ring
+  have h₀ : ((∏ i ∈ oddBelowTwoPow (k + 2), i : ℕ) : ℤ) = block 0 (m + m) := by
+    rw [← hlen, ← prod_oddBelowTwoPow_eq_block]
+    simp
+  have h₁ : ∏ i ∈ oddBelowTwoPow (k + 2), ((2 ^ (k + 2) + i : ℕ) : ℤ) = block (4 * m) (m + m) := by
+    rw [← hlen, ← prod_oddBelowTwoPow_eq_block]
+    refine Finset.prod_congr rfl fun i _ ↦ ?_
+    push_cast [m]
+    ring
+  rw [h₀, h₁, hmod]
+  exact (block_shift m).symm.dvd
+
+namespace oddPart_factorial_congr_previous
+
+open Finset
+
+private theorem oddPart_mul (a b : ℕ) : oddPart (a * b) = oddPart a * oddPart b :=
+  Nat.ordCompl_mul a b 2
+
+private theorem oddPart_prod (s : Finset ℕ) :
+    oddPart (∏ i ∈ s, i) = ∏ i ∈ s, oddPart i := by
+  induction s using Finset.induction_on with
+  | empty => simp [oddPart]
+  | insert a s ha ih => rw [prod_insert ha, prod_insert ha, oddPart_mul, ih]
+
+private theorem prod_Ioc_zero_eq_factorial (n : ℕ) : ∏ i ∈ Ioc 0 n, i = n.factorial := by
+  induction n with
+  | zero => rfl
+  | succ n ih => rw [prod_Ioc_succ_top (Nat.zero_le n), ih, Nat.factorial_succ, mul_comm]
+
+end oddPart_factorial_congr_previous
+
+open oddPart_factorial_congr_previous in
+/--
+**Odd parts of consecutive dyadic factorials agree modulo a power of two.** For every natural
+number $e \ge 3$, $\mathrm{od}((2^{e-1})!) \equiv \mathrm{od}((2^e)!) \pmod{2^e}$, where
+$\mathrm{od}(n)$ denotes the odd part of $n$.
+
+Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
+Sequences 29 (2026), Article 26.3.1, Corollary 7.
+-/
+public theorem oddPart_factorial_congr_previous (e : ℕ) (he : 3 ≤ e) :
+    (2 : ℤ) ^ e ∣ (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ) -
+      (oddPart (Nat.factorial (2 ^ e)) : ℤ) := by
+  -- Split `(2^e)!` at `2^(e-1)`; the odd parts of the upper factors are the odd numbers below
+  -- `2^e` (Lemma 5), whose product is `1` modulo `2^e` (Lemma 6).
+  have hfac : Nat.factorial (2 ^ e) =
+      Nat.factorial (2 ^ (e - 1)) * ∏ i ∈ dyadicUpperHalf e, i := by
+    rw [dyadicUpperHalf, ← prod_Ioc_zero_eq_factorial, ← prod_Ioc_zero_eq_factorial,
+      Finset.prod_Ioc_consecutive _ (Nat.zero_le _)
+        (Nat.pow_le_pow_right two_pos (Nat.sub_le e 1))]
+  have hbij : ∏ i ∈ dyadicUpperHalf e, oddPart i = ∏ i ∈ oddBelowTwoPow e, i := by
+    have h := oddPart_bijOn_upperHalf_oddSet e (by omega)
+    exact Finset.prod_nbij oddPart (fun _ ha ↦ h.mapsTo ha) h.injOn h.surjOn (fun _ _ ↦ rfl)
+  have hP : (2 : ℤ) ^ e ∣ ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) - 1 := by
+    have h := (pow_dvd_pow 2 (Nat.le_succ e)).trans (oddSet_product_congr e he)
+    have h' := dvd_add h (dvd_refl ((2 : ℤ) ^ e))
+    convert h' using 1
+    push_cast
+    ring
+  rw [hfac, oddPart_mul, oddPart_prod, hbij, Nat.cast_mul]
+  generalize ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) = P at hP ⊢
+  generalize (oddPart (2 ^ (e - 1)).factorial : ℤ) = a
+  rw [show a - a * P = -(a * (P - 1)) by ring, dvd_neg]
+  exact dvd_mul_of_dvd_right hP _
+
 namespace square_mod_twoPower_fiber_card
 
 /-- In either odd class modulo four, the root parameter runs through exactly two lifts
