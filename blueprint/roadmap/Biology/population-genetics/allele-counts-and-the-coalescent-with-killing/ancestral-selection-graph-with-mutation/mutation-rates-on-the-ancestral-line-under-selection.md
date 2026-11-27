@@ -4,14 +4,14 @@
 
 $$p = \frac12\left(\frac{u + s}{u\nu_1} - \sqrt{\Bigl(\frac{u + s}{u\nu_1}\Bigr)^2 - \frac{4s}{u\nu_1}}\right) \ (\nu_1 > 0), \qquad p = \frac{s}{u + s} \ (\nu_1 = 0).$$
 
-**Theorem.**
-1. *(Deterministic limit.)* The type process $A^N$ on the ancestral line at stationarity is not Markov; its stationary marginal transition rates are defined as $q_{A^N}(z,z') = f_{A^N}(z,z')/\mathbb P(A^N_t = z)$, where $f_{A^N}(z,z') = \lim_{\epsilon \to 0}\epsilon^{-1}\mathbb P(A^N_t = z, A^N_{t+\epsilon} = z')$ is the stationary probability flux, and $q_A := \lim_{N\to\infty} q_{A^N}$. These beneficial ($1 \to 0$) and deleterious ($0 \to 1$) mutation rates are
+**Theorem.** Assume two-way mutation ($0 < \nu_0, \nu_1 < 1$), so that both stationary ancestral type probabilities $\mathbb P(A^N_t = z)$ and $\mathbb P(A_\infty = z)$ are strictly positive.
+1. *(Deterministic limit.)* The type process $A^N$ on the ancestral line at stationarity need not be Markov; its stationary marginal transition rates are defined as $q_{A^N}(z,z') = f_{A^N}(z,z')/\mathbb P(A^N_t = z)$ whenever $\mathbb P(A^N_t = z) > 0$, where $f_{A^N}(z,z') = \lim_{\epsilon \to 0}\epsilon^{-1}\mathbb P(A^N_t = z, A^N_{t+\epsilon} = z')$ is the stationary probability flux, and $q_A := \lim_{N\to\infty} q_{A^N}$. These beneficial ($1 \to 0$) and deleterious ($0 \to 1$) mutation rates are
 
 $$q_A(1, 0) = \frac{u\nu_0}{1 - p}, \qquad q_A(0, 1) = u\nu_1(1 - p),$$
 
 so, compared with the neutral rates $u\nu_0, u\nu_1$, beneficial mutations are over-represented and deleterious ones under-represented on the ancestral line.
 2. *(Diffusion limit.)* The stationary mutation fluxes on the ancestral line are $f(1, 0) = \theta\nu_0\sum_{n > 0}\alpha_{n-1}\beta_n$ and $f(0, 1) = \theta\nu_1\sum_{n > 0}\omega_n(\beta_{n-1} - \beta_n)$, where $\alpha_n$ are tail probabilities of the pLD-ASG line count, $\omega_n$ its stationary weights, and $\beta_n$ absorption probabilities of the killed ASG. Exact finite-$N$ analogues hold, and fluxes satisfy level-wise balance identities.
-3. *(Monotonicity.)* The tail probabilities of the line count increase strictly with the selection strength ($s^N$, $\sigma$ or $s$), and the stationary probability that the ancestor is unfit, $\mathbb P(A_\infty = 1)$, decreases strictly with it, in all three regimes.
+3. *(Monotonicity.)* Under two-way mutation ($0 < \nu_0, \nu_1 < 1$), the tail probabilities $a_n = \mathbb P(L_\infty > n)$ of the line count increase strictly with the selection strength for $1 \le n < N$ in finite populations ($N \ge 2$) and for all $n \ge 1$ in the deterministic and diffusion limits (the endpoints $a_0 = 1$ and $a_N^N = 0$ are constant); the stationary probability that the ancestor is unfit, $\mathbb P(A_\infty = 1)$, decreases strictly with selection strength for $N \ge 2$ and in both infinite-population limits.
 
 ## Depends on
 
