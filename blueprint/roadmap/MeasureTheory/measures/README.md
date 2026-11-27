@@ -16,4 +16,4 @@ Construction and uniqueness of measures, atomless and vector measures, measures 
 - [Unit interval moments](unit-interval-moments/README.md)
 - [Szpilrajn's Problem 170](universally-measurable-sets/README.md)
 - [Vitali's theorem](vitali-set/README.md)
-- [Moment determinacy on a compact subset of `ℝ^d`](eq-of-forall-integral-monomial-eq.md)
+- [Moment determinacy on compact subsets of Euclidean space](../../Biology/population-genetics/diffusion-theory/neutral-wright-fisher-martingale-problem/moment-determinacy-on-compact-subsets-of-r-d-sim.md)
