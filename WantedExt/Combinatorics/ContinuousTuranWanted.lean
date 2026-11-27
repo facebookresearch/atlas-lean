@@ -20,6 +20,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.ContinuousTuran
+public import MathlibExt.Combinatorics.ContinuousTuranMonotonicity
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Analysis.Asymptotics.Theta
@@ -571,15 +572,6 @@ public theorem patternExD_singleton (d n : ℕ) (p : Fin d → ℝ) : patternExD
   rcases A.eq_empty_or_nonempty with rfl | ⟨a, ha⟩
   · simp
   · exact absurd ⟨fun i _ => a i, fun i => by simp, by simpa using ha⟩ hA
-
-/-- **Higher-dimensional continuous Turán numbers are monotone in the side length.** For every
-set $P \subseteq \mathbb{R}^d$ and all real numbers $m \le n$,
-$\mathrm{opx}(m, P, d) \le \mathrm{opx}(n, P, d)$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 5.2
-(`integers-2024-A1-lem-5-2`). -/
-public theorem_wanted opxD_mono_left {d : ℕ} (P : Set (Fin d → ℝ)) {m n : ℝ} (hmn : m ≤ n) :
-    opxD d m P ≤ opxD d n P
 
 /-- **Continuity of the d-dimensional continuous Turán number.** For every natural number $d$
 and every $P \subseteq \mathbb{R}^d$, the $d$-dimensional continuous Turán number

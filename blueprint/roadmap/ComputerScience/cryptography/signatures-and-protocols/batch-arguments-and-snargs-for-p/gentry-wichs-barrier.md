@@ -1,6 +1,6 @@
 # No black-box reduction proves adaptive SNARGs for NP sound from falsifiable assumptions
 
-Assume sub-exponentially hard one-way functions (or exponentially hard subset-membership problems). Then for no succinct non-interactive argument for NP with proof size $\mathrm{poly}(\lambda)\cdot(|x|+|w|)^{o(1)}$ can adaptive soundness be proven by a black-box reduction to any falsifiable assumption, unless the assumption is false. This explains why SNARGs from standard assumptions are obtained either for restricted languages (deterministic computations), with non-adaptive soundness, or relative to non-falsifiable assumptions.
+Assume there is a sub-exponentially hard subset-membership problem in NP: an efficiently samplable distribution over statements of an NP language together with witnesses, and a distribution over non-statements, that no algorithm of size $2^{\Omega(n^{\delta})}$ distinguishes with advantage more than $2^{-\Omega(n^{\delta})}$, for some constant $\delta>0$ and security parameter $n$ (for instance, the output distribution of a sub-exponentially secure pseudorandom generator versus uniform strings outside its range). Then no succinct non-interactive argument for an NP-complete language, with proof size $\mathrm{poly}(\lambda)\cdot(|x|+|w|)^{o(1)}$, can have its adaptive soundness proven by a black-box reduction to a falsifiable assumption, unless the assumption is false. If an NP language $L$ has an exponentially hard subset-membership problem, the same holds for slightly succinct arguments for $L$, with proof size $\mathrm{poly}(\lambda)\cdot(|x|+|w|)^{c}+o(|x|+|w|)$ for a constant $c<1$ (Theorem 5.1); the extension to every NP-complete language (Corollary 5.2) requires full succinctness. This explains why SNARGs from standard assumptions are obtained either for restricted languages (deterministic computations), with non-adaptive soundness, or relative to non-falsifiable assumptions.
 
 ## Proof sketch
 
@@ -9,8 +9,7 @@ Construct a simulatable adversary that outputs false statements with accepting-l
 ## Depends on
 
 - [Succinct arguments and SNARKs](../zero-knowledge-and-arguments/succinct-arguments-and-snarks.md)
-- [One-way functions exist](../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/owfexists.md)
 
 ## Sources
 
-- Craig Gentry, Daniel Wichs, "Separating Succinct Non-Interactive Arguments from All Falsifiable Assumptions", STOC (2011).
+- Craig Gentry, Daniel Wichs, "Separating Succinct Non-Interactive Arguments from All Falsifiable Assumptions", STOC (2011), IACR ePrint 2010/610, Definition 2.5, Theorem 5.1 and Corollary 5.2.
