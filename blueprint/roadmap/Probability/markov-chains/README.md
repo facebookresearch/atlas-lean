@@ -25,4 +25,5 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 
 - [Martingale problems](martingale-problems/README.md)
 - [Density-dependent Markov chains](density-dependent-markov-chains/README.md)
+- [Drift and hitting bounds for iterated random maps](drift-and-hitting-bounds-for-iterated-random-map/README.md)
 - [Autoregressive processes](autoregressive-processes/README.md)

@@ -1405,7 +1405,8 @@ variation `∑_{k < N n s} X n k²` tends to `A s` in probability, then for ever
 times `I` the vector `(S n s)_{s ∈ I}` converges in distribution to `(Z s)_{s ∈ I}`, for any
 process `Z` whose finite-dimensional laws are centered Gaussian with covariance
 `Cov(Z s, Z u) = A (min s u)` (stated through all linear combinations, `hZ`). With `A` the
-identity on `[0,1]`, `Z` is a Brownian motion; in general `Z = W ∘ A`.
+identity on `[0,1]`, `Z` has the finite-dimensional laws of a Brownian motion, and in general those
+of `W ∘ A`; only finite-dimensional laws are compared.
 
 The proof is the Cramér–Wold device (Mathlib's `TendstoInDistribution.of_inner`) applied to
 `tendstoInDistribution_martingale_mcLeish` for the weighted array

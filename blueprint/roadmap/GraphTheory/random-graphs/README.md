@@ -7,6 +7,7 @@ Random graph models such as Erdős–Rényi, random regular and random k-out gra
 - [Connectivity threshold of random graphs](connectivity-threshold-of-random-graphs/README.md)
 - [Finitely forcible graphons](finitely-forcible-graphons/README.md)
 - [Graph limits](graph-limits/README.md)
+- [Random graphs: exponential families and block models](random-graphs-exponential-families-and-block-mod/README.md)
 - [Random regular graphs](random-regular-graphs/README.md)
 - [Threshold for triangles](threshold-for-triangles/README.md)
 

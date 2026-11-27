@@ -5,6 +5,7 @@ Non-asymptotic tail and moment bounds: Hoeffding, Azuma, McDiarmid, Kim–Vu, Ta
 - [Bonami–Beckner hypercontractivity](bonami-beckner-hypercontractivity/README.md)
 - [Convex comparison under sub-Gaussian tails](convex-comparison-under-sub-gaussian-tails/README.md)
 - [Efron–Stein inequality](efron-stein-inequality/README.md)
+- [Gaussian concentration for linear functions](gaussian-concentration-for-linear-functions/README.md)
 - [Hoeffding's inequality](hoeffding-s-inequality/README.md)
 - [Matrix concentration inequalities](matrix-concentration-inequalities/README.md)
 - [Kim–Vu polynomial concentration](kim-vu-polynomial-concentration/README.md)

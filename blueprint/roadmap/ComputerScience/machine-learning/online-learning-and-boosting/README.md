@@ -3,6 +3,7 @@
 Mistake and regret bounds for sequential prediction: perceptron, weighted majority, Hedge (multiplicative weights) and AdaBoost.
 
 - [Hedge algorithm](hedge-algorithm/README.md)
+- [No-regret dynamics give approximate saddle points of matrix games](no-regret-dynamics-give-approximate-saddle-point/README.md)
 - [Perceptron](perceptron/README.md)
 - [AdaBoost](adaboost/README.md)
 - [Boosting and the minimax theorem](boosting-and-the-minimax-theorem/README.md)
