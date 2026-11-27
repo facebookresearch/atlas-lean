@@ -15,10 +15,10 @@ import Mathlib.Tactic.Ring
 /-!
 # Weighted collinear chaining
 
-Given previously matched anchor pairs, compute an optimal same-orientation chain ending at each
-anchor. Each adjacent pair must increase in both ranks, with strictly fewer than the allowed
-number of intervening genes on either side. The score adds the anchor weights and the signed
-penalty for the larger gap at each step.
+Given previously matched anchor pairs, compute the score of an optimal same-orientation chain
+ending at each anchor. Each adjacent pair must increase in both ranks, with strictly fewer than
+the allowed number of intervening genes on either side. The score adds the anchor weights
+and the signed penalty for the larger gap at each step.
 
 This is the scoring recurrence in Wang et al., *MCScanX: a toolkit for detection and evolutionary
 analysis of gene synteny and collinearity*, Nucleic Acids Research 40(7), e49 (2012), Materials
