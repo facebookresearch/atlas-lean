@@ -1,6 +1,6 @@
 # Projection method
 
-Let $A$ be an $n \times n$ real matrix, $b \in \mathbb{R}^n$, $x_0 \in \mathbb{R}^n$, and let $\mathcal{K}$ and $\mathcal{L}$ be subspaces of $\mathbb{R}^n$ of the same dimension $m$. A *projection method onto $\mathcal{K}$ orthogonally to $\mathcal{L}$*, with starting vector $x_0$, produces $\tilde x$ such that
+Let $A$ be an $n \times n$ real matrix, $b \in \mathbb{R}^n$, $x_0 \in \mathbb{R}^n$, and let $\mathcal{K}$ and $\mathcal{L}$ be subspaces of $\mathbb{R}^n$ of the same dimension $m$. A *projection method onto $\mathcal{K}$ orthogonally to $\mathcal{L}$*, with starting vector $x_0$, seeks $\tilde x$ such that
 
 $$\tilde x \in x_0 + \mathcal{K}, \qquad b - A\tilde x \perp \mathcal{L}$$
 

@@ -9,6 +9,7 @@ The sum is $Q_n'(x_k)$, a differentiation formula for $f'(x_k)$ from the values 
 ## Depends on
 
 - [Lagrange interpolation](../../approximation-theory/lagrange-interpolation/eval-interpolant.md)
+- [Evaluated Lagrange basis polynomial](../../approximation-theory/lagrange-interpolation/eval-basis.md)
 
 ## Proof depends on
 

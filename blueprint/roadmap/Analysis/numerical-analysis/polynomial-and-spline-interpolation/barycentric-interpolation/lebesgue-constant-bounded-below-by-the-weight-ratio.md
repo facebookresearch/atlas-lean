@@ -10,6 +10,8 @@ Widely varying weights therefore force ill-conditioned interpolation.
 
 - [Barycentric weights](barycentric-weights.md)
 - [Lebesgue function](../../../approximation-theory/lagrange-interpolation/lebesgue-function.md)
+- [Lagrange interpolation](../../../approximation-theory/lagrange-interpolation/eval-interpolant.md)
+- [Evaluated Lagrange basis polynomial](../../../approximation-theory/lagrange-interpolation/eval-basis.md)
 
 ## Expansion
 

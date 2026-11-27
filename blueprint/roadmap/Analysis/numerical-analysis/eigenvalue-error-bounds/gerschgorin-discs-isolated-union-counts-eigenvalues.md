@@ -20,4 +20,4 @@ This page becomes ready once:
 
 ## Sources
 
-- Y. Saad, *Numerical Methods for Large Eigenvalue Problems*, revised edition, SIAM, 2011, Section 3.3, Theorem 3.11 (Gerschgorin) and Theorem 3.12 with its continuity proof through $A(t) = D + tH$. <https://www-users.cse.umn.edu/~saad/eig_book_2ndEd.pdf>
+- Y. Saad, *Numerical Methods for Large Eigenvalue Problems*, revised edition, SIAM, 2011, Section 3.4, Theorem 3.11 (Gerschgorin) and Theorem 3.12 with its continuity proof through $A(t) = D + tH$. <https://www-users.cse.umn.edu/~saad/eig_book_2ndEd.pdf>

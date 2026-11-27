@@ -25,4 +25,4 @@ with probability at least $1 - 2n\exp(-\lambda^2/2)$. No independence assumption
 
 ## Sources
 
-- M. P. Connolly, N. J. Higham and T. Mary, "Stochastic rounding and its probabilistic backward error analysis", *SIAM J. Sci. Comput.* 43(1):A566–A585, 2021; MIMS EPrint 2020.12, Section 4.2, the constant (4.8), the probability $Q(\lambda, n)$ of (4.3), and Theorem 4.9 with its proof. <https://eprints.maths.manchester.ac.uk/2763/1/paper.pdf>
+- M. P. Connolly, N. J. Higham and T. Mary, "Stochastic rounding and its probabilistic backward error analysis", *SIAM J. Sci. Comput.* 43(1):A566–A585, 2021; MIMS EPrint 2020.12, the introduction to Section 4, the probability $Q(\lambda, n)$ of (4.3), and Section 4.2, the constant (4.8) and Theorem 4.9 with its proof. <https://eprints.maths.manchester.ac.uk/2763/1/paper.pdf>

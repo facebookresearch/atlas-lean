@@ -8,7 +8,7 @@ the projector onto $M_i$ along $\bigoplus_{j \ne i} M_j$. The family satisfies
 
 $$\operatorname{Ran}(P_i) = M_i, \qquad P_i P_j = P_j P_i = 0 \ (i \ne j), \qquad \sum_{i=1}^p P_i = I,$$
 
-and any family of projectors with these three properties is this one. If $A = XJX^{-1}$ is a Jordan form and $\hat J_i$ is the matrix obtained from the identity by keeping only the columns of the $i$-th Jordan submatrix, then $P_i = X \hat J_i X^{-1}$; for a simple eigenvalue, $P_i = u_i w_i^*$ with right and left eigenvectors normalized by $w_i^* u_i = 1$. The *nilpotent* associated with $\lambda_i$ is $D_i = (A - \lambda_i I) P_i$, nilpotent of index $l_i$.
+and any family of projectors with these three properties is this one. If $A = XJX^{-1}$ is a Jordan form and $\hat J_i$ is the matrix obtained from the identity by keeping the columns of the $i$-th Jordan submatrix and zeroing the other columns, then $P_i = X \hat J_i X^{-1}$; for a simple eigenvalue, $P_i = u_i w_i^*$ with right and left eigenvectors normalized by $w_i^* u_i = 1$. The *nilpotent* associated with $\lambda_i$ is $D_i = (A - \lambda_i I) P_i$, nilpotent of index $l_i$.
 
 ## Depends on
 

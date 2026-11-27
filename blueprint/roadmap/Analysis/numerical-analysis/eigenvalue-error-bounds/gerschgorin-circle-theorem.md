@@ -8,5 +8,5 @@ For $K = \mathbb{C}$ these are the Gerschgorin discs of $A$.
 
 ## Sources
 
-- Y. Saad, *Numerical Methods for Large Eigenvalue Problems*, revised edition, SIAM, 2011, Section 3.3, Theorem 3.11 (Gerschgorin). <https://www-users.cse.umn.edu/~saad/eig_book_2ndEd.pdf>
+- Y. Saad, *Numerical Methods for Large Eigenvalue Problems*, revised edition, SIAM, 2011, Section 3.4, Theorem 3.11 (Gerschgorin). <https://www-users.cse.umn.edu/~saad/eig_book_2ndEd.pdf>
 - Mathlib, `Mathlib/LinearAlgebra/Matrix/Gershgorin.lean`: `eigenvalue_mem_ball`.

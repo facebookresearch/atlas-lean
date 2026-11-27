@@ -17,6 +17,10 @@ For each $k$ the implicit method has the larger interval of absolute stability a
 - [Order of accuracy and error constants](../order-of-accuracy-and-error-constants.md)
 - [Absolute stability of a linear multistep method](../absolute-stability-and-a-stability/absolute-stability.md)
 
+## Proof depends on
+
+- [Order conditions](../order-conditions.md)
+
 ## Sources
 
 - E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 3.7.2, the lists of $k$-step Adams–Bashforth and Adams–Moulton methods for $k = 1, \dots, 4$ and the remark after them (verification left to the reader there). <https://people.maths.ox.ac.uk/suli/nsodes.pdf>

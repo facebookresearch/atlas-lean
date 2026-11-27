@@ -13,6 +13,10 @@ $$\hat y = (a + \Delta a)^T b = a^T (b + \Delta b), \qquad |\Delta a| \le \tilde
 - [Probabilistic product bound under mean independence](probabilistic-product-bound-under-mean-independence.md)
 - [The constant γₙ of rounding error analysis](../gamma.md)
 
+## Proof depends on
+
+- [Probabilistic product bound under mean independence](probabilistic-product-bound-under-mean-independence.md)
+
 ## Sources
 
 - N. J. Higham and T. Mary, "A new approach to probabilistic rounding error analysis", *SIAM J. Sci. Comput.* 41(5):A2815–A2835, 2019; MIMS EPrint 2018.33, Section 3, the definition (3.1) of $Q(\lambda, n)$ and Theorem 3.1 with its proof through (3.4)–(3.5) and a union bound over the $n$ terms. <https://eprints.maths.manchester.ac.uk/2673/1/paper.pdf>

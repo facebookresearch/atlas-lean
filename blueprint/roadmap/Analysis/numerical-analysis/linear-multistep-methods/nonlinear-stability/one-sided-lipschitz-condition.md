@@ -10,10 +10,6 @@ If $\nu(x) \le 0$ for all $x$, the system $y' = f(x, y)$ is [dissipative](dissip
 
 - [Dissipative system](dissipative-system.md)
 
-## Related topics
-
-- [Dissipative system](dissipative-system.md)
-
 ## Sources
 
 - E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 5, Definition 16, inequality (94), and the remark after it. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>

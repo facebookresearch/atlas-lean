@@ -23,7 +23,12 @@ The largest angles of A(α)-stability are $86.03^\circ$, $73.35^\circ$, $51.84^\
 - [Order of accuracy and error constants of a linear multistep method](../order-of-accuracy-and-error-constants.md)
 - [A-stability](a-stability.md)
 
+## Proof depends on
+
+- [Order conditions](../order-conditions.md)
+- [Zero-stability and the root condition](../zero-stability-iff-root-condition.md)
+
 ## Sources
 
 - E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 4.2, Table 3 (coefficients, order, error constant and stability parameters for $k = 1, \dots, 6$) and the statement after it that for $p \ge 7$ these methods are not zero-stable. Table 3 lists $a$ as the stiff-stability constant also for $k = 3, 4$, and Exercise 27 asks to show that the method with $k = 3$ is stiffly stable; neither holds in the sense of Definition 13, as shown above, although the values of $a$ are valid half-plane bounds (the leftmost boundary points are $-1/12$ and $-2/3$). The angles $88^\circ$, $52^\circ$ and $19^\circ$ printed in Table 3 for $k = 3, 5, 6$ are too large: for $k = 3$, the boundary point $\bar h = \rho(e^{i\theta})/\sigma(e^{i\theta}) \approx -0.0761 + 1.0968i$ at $\theta \approx 53.78^\circ$ lies in the wedge $W_{88^\circ}$ but $\rho - \bar h \sigma$ has the root $e^{i\theta}$ on the unit circle. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>
-- E. Hairer and G. Wanner, *Solving Ordinary Differential Equations II: Stiff and Differential-Algebraic Problems*, 2nd edition, Springer, 1996, Chapter V (stability of the backward differentiation formulas), for the angles $86.03^\circ$, $73.35^\circ$, $51.84^\circ$ and $17.84^\circ$, which also follow from the boundary locus $\theta \mapsto \rho(e^{i\theta})/\sigma(e^{i\theta})$. <https://doi.org/10.1007/978-3-642-05221-7>
+- E. Hairer and G. Wanner, *Solving Ordinary Differential Equations II: Stiff and Differential-Algebraic Problems*, 2nd edition, Springer, 1996, Section V.2, (2.7), p. 251 (stability of the backward differentiation formulas), for the angles $86.03^\circ$, $73.35^\circ$, $51.84^\circ$ and $17.84^\circ$, which also follow from the boundary locus $\theta \mapsto \rho(e^{i\theta})/\sigma(e^{i\theta})$. <https://doi.org/10.1007/978-3-642-05221-7>

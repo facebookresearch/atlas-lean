@@ -2,11 +2,12 @@
 
 Let $A$ be a symmetric positive definite $n \times n$ matrix, let $x_*$ solve $Ax = b$, and let $\mathcal{K}$ be a subspace. A vector $\tilde x$ is the result of the orthogonal [projection method](projection-method.md) onto $\mathcal{K}$ with starting vector $x_0$ if and only if it minimizes the $A$-norm of the error over $x_0 + \mathcal{K}$:
 
-$$\|x_* - \tilde x\|_A = \min_{x \in x_0 + \mathcal{K}} \|x_* - x\|_A, \qquad \|y\|_A = (y^T A y)^{1/2} .$$
+$$\tilde x \in x_0 + \mathcal{K}, \qquad \|x_* - \tilde x\|_A = \min_{x \in x_0 + \mathcal{K}} \|x_* - x\|_A, \qquad \|y\|_A = (y^T A y)^{1/2} .$$
 
 ## Depends on
 
 - [Projection method](projection-method.md)
+- [Energy norm](../../../../LinearAlgebra/matrix-decompositions/conjugate-gradient-method/energy-norm.md)
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # The two-step Adams–Bashforth method is zero-stable
 
-The first characteristic polynomial $\rho(z) = z^2 - z = z(z - 1)$ of the two-step [Adams–Bashforth method](adams-methods.md) has the simple roots $1$ and $0$, so it satisfies the [root condition](../root-condition.md) and the method is [zero-stable](../zero-stability.md). Being also consistent, it is convergent by the [Dahlquist equivalence theorem](../dahlquist-equivalence-theorem.md).
+The first characteristic polynomial $\rho(z) = z^2 - z = z(z - 1)$ of the two-step [Adams–Bashforth method](adams-methods.md) has the simple roots $1$ and $0$, so it satisfies the [root condition](../root-condition.md) and the method is [zero-stable](../zero-stability.md). Being also consistent, since $\rho(1) = 0$ and $\rho'(1) = 1 = \sigma(1)$, it is convergent by the [Dahlquist equivalence theorem](../dahlquist-equivalence-theorem.md).
 
 ## Depends on
 
@@ -14,6 +14,7 @@ The first characteristic polynomial $\rho(z) = z^2 - z = z(z - 1)$ of the two-st
 
 - [Zero-stability and the root condition](../zero-stability-iff-root-condition.md)
 - [Dahlquist equivalence theorem](../dahlquist-equivalence-theorem.md)
+- [Consistency conditions](../consistency-conditions.md)
 
 ## Sources
 

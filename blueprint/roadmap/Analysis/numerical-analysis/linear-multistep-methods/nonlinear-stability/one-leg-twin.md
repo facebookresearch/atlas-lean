@@ -12,5 +12,5 @@ Its step equation contains a single evaluation point for $f$, and it does not ch
 
 ## Sources
 
-- E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 5, the method (95), its one-leg twin (96), the example of the trapezium rule, and the operator form $\rho(E) y_n = h f(\sigma(E) y_n)$, there with the usual normalized coefficients. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>
+- E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 5, the method (95), its one-leg twin (96), the example of the trapezium rule, and the operator form $\rho(E) y_n = h f(\sigma(E) y_n)$. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>
 - E. Hairer and G. Wanner, *Solving Ordinary Differential Equations II: Stiff and Differential-Algebraic Problems*, 2nd edition, Springer, 1996, Section V.6, (6.5)–(6.6): the normalization $\sigma(1) = 1$ imposed before the one-leg method is associated with a multistep method. <https://doi.org/10.1007/978-3-642-05221-7>

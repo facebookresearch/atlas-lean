@@ -4,7 +4,7 @@ For $n \ge 1$, $a < b$ and the $n + 1$ equispaced nodes $x_j = a + j(b - a)/n$ o
 
 $$\Lambda_n \ge \frac{1}{2n^2}\binom{n}{\lfloor n/2 \rfloor},$$
 
-which grows like $2^n/n^{5/2}$. So polynomial interpolation in equispaced points is exponentially ill-conditioned, the source of the Runge phenomenon.
+where the lower bound is of order $2^n/n^{5/2}$. So polynomial interpolation in equispaced points is exponentially ill-conditioned, the source of the Runge phenomenon.
 
 ## Depends on
 

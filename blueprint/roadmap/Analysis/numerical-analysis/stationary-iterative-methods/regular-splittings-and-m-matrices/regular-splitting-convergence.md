@@ -10,7 +10,6 @@ So for a [nonsingular M-matrix](../../../../LinearAlgebra/special-matrices/m-mat
 
 - [Regular splitting](regular-splitting.md)
 - [Nonsingular M-matrix](../../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/is-nonsingular-mmatrix.md)
-- [A Z-matrix is a nonsingular M-matrix if and only if its inverse is nonnegative](z-matrix-is-a-nonsingular-m-matrix-iff-its-inverse-is-nonnegative.md)
 - [Jacobi and Gauss–Seidel iteration matrices](../jacobi-and-gauss-seidel-iteration-matrices.md)
 
 ## Proof depends on
@@ -18,6 +17,8 @@ So for a [nonsingular M-matrix](../../../../LinearAlgebra/special-matrices/m-mat
 - [A nonnegative inverse of I − B forces ρ(B) < 1](nonnegative-inverse-forces-spectral-radius-below-one.md)
 - [Perron eigenvector of a nonnegative matrix](perron-eigenvector-of-a-nonnegative-matrix.md)
 - [Convergence of stationary iterations](../convergence-of-stationary-iterations.md)
+- [Inverse positivity of M-matrices](../../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/inv-nonneg.md)
+- [Nonsingular M-matrices are invertible](../../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/is-unit.md)
 
 ## Sources
 

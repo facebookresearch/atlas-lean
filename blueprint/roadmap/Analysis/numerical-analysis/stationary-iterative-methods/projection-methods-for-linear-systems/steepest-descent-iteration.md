@@ -9,6 +9,7 @@ until $r_k = 0$: once $r_k = 0$, $x_k = x_*$ and the iterates stay at $x_k$. Eac
 ## Depends on
 
 - [Projection method](projection-method.md)
+- [Energy norm](../../../../LinearAlgebra/matrix-decompositions/conjugate-gradient-method/energy-norm.md)
 
 ## Proof depends on
 

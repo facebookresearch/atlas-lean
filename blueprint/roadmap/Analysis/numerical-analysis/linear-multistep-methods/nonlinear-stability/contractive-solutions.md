@@ -4,7 +4,7 @@ Let $u$ and $v$ be two solutions of the differential equation $y' = f(x, y)$ in 
 
 $$\|u(x_2) - v(x_2)\| \le \|u(x_1) - v(x_1)\| \qquad \text{for all } x_2 \ge x_1 \ge x_0 .$$
 
-For a linear system $y' = Ay$ whose eigenvalues all have negative real part this holds for the normal matrices $A$, by $\|u(x_2) - v(x_2)\| \le e^{(x_2 - x_1)\max_i \Re\lambda_i(A)}\|u(x_1) - v(x_1)\|$.
+For a linear system $y' = Ay$ whose eigenvalues all have negative real part this holds, for example, when $A$ is normal (a sufficient condition), by $\|u(x_2) - v(x_2)\| \le e^{(x_2 - x_1)\max_i \Re\lambda_i(A)}\|u(x_1) - v(x_1)\|$.
 
 ## Sources
 
