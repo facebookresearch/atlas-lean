@@ -1,0 +1,11 @@
+# Renaming the codomain preserves pointwise zigzag conversion
+
+Work in the intrinsically typed simply typed lambda calculus over a type of base types, with de Bruijn variables: the terms of type $A$ in a context $\Gamma$ (a list of simple types) are the variables of type $A$, the applications $f\,a$ of a term $f$ of type $D \Rightarrow A$ to a term $a$ of type $D$, both in $\Gamma$, and, when $A = D \Rightarrow E$, the abstractions $\lambda t$ whose body $t$ is a term of type $E$ in $D :: \Gamma$, the context $\Gamma$ extended by a newest variable $0$ of type $D$.
+
+For a term $t$ in $A :: \Gamma$ and a term $a$ of type $A$ in $\Gamma$, the instantiation $t[a]$ substitutes $a$ for the newest variable and replaces each older variable $x+1$ by $x$; for a term $f$ in $\Gamma$, the weakening $f^{\uparrow}$ is $f$ with every variable renamed to its successor. A one-step beta-eta contraction $t \to u$ is a root beta step $(\lambda t)\,a \to t[a]$, a root eta step $\lambda(f^{\uparrow}\,0) \to f$, or such a step inside the function of an application ($f \to g$ gives $f\,a \to g\,a$), inside its argument ($a \to b$ gives $f\,a \to f\,b$), or inside the body of an abstraction ($t \to t'$ gives $\lambda t \to \lambda t'$). Write $t \leftrightarrow^* u$ (a beta-eta zigzag) for the equivalence closure of $\to$: the least relation containing $\to$ that is reflexive, symmetric and transitive.
+
+Substitutions $\sigma$ and $\tau$ from $\Gamma$ to $\Delta$ are pointwise zigzag-connected, written $\sigma \leftrightarrow^* \tau$, when $\sigma(x) \leftrightarrow^* \tau(x)$ for every variable $x$ of $\Gamma$ of every type.
+
+For a substitution $\sigma$ from $\Gamma$ to $\Delta$ and a renaming $\rho$ from $\Delta$ to $\Theta$, $\sigma[\rho]$ is the substitution from $\Gamma$ to $\Theta$ sending $x$ to $\sigma(x)[\rho]$, where $t[\rho]$ renames every free variable of $t$ along $\rho$.
+
+For substitutions $\sigma, \tau$ from $\Gamma$ to $\Delta$ with $\sigma \leftrightarrow^* \tau$ and every renaming $\rho$ from $\Delta$ to $\Theta$, $\sigma[\rho] \leftrightarrow^* \tau[\rho]$.
