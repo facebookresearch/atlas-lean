@@ -11,6 +11,8 @@ module
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
+import MathlibExt.ControlTheory.LQR.FiniteHorizon
+
 /-!
 # The linear quadratic regulator by dynamic programming
 
@@ -374,5 +376,140 @@ theorem lqrCost_feedback {A : Matrix σ σ ℝ} {B : Matrix σ ι ℝ} {Q : Matr
         have h : T + 1 - 1 - (t + 1) = T - 1 - t := by omega
         rw [h]
         rfl
+
+private theorem riccatiCostToGo_posSemidef_aux {A : Matrix σ σ ℝ} {B : Matrix σ ι ℝ}
+    {Q : Matrix σ σ ℝ} {R : Matrix ι ι ℝ} {Qf : Matrix σ σ ℝ}
+    (hQ : Q.PosSemidef) (hR : R.PosDef) (hQf : Qf.PosSemidef) (j : ℕ) :
+    (riccatiCostToGo A B Q R Qf j).PosSemidef := by
+  induction j with
+  | zero => exact hQf
+  | succ _ ih => exact riccatiMap_posSemidef hQ hR ih
+
+/-- **Exact finite-horizon LQR cost decomposition.** Let the state and terminal cost
+matrices `Q` and `Qf` be positive semidefinite, and let the control cost matrix `R` be
+positive definite. Let `x_t` be the state at time `t` under the control stream `u`, and let `M_j`
+be the Riccati cost-to-go matrix with `j` steps remaining (`M_0 = Qf`). Define the gain
+`K_j = (R + Bᵀ M_j B)⁻¹ Bᵀ M_j A`. Over `T` steps, the total cost is `x₀ᵀ M_T x₀`
+plus `∑_{t<T} e_tᵀ (R + Bᵀ M_{T-1-t} B) e_t`, where `e_t = u_t + K_{T-1-t} x_t`.
+
+See Sontag, *Mathematical Control Theory*, §8.2, Exercise 8.2.7 for the discrete-time
+analogue. The identity follows by telescoping the one-step completion of squares. -/
+theorem lqrCost_eq_riccati_add_feedback_residual {A : Matrix σ σ ℝ} {B : Matrix σ ι ℝ}
+    {Q : Matrix σ σ ℝ} {R : Matrix ι ι ℝ} {Qf : Matrix σ σ ℝ}
+    (hQ : Q.PosSemidef) (hR : R.PosDef) (hQf : Qf.PosSemidef)
+    (T : ℕ) (x₀ : σ → ℝ) (u : ℕ → ι → ℝ) :
+    let x := lqrState A B x₀ u
+    let M := riccatiCostToGo A B Q R Qf
+    let e := fun t => u t + riccatiGain A B R (M (T - 1 - t)) *ᵥ x t
+    lqrCost A B Q R Qf x₀ u T = x₀ ⬝ᵥ (M T *ᵥ x₀) +
+      ∑ t ∈ Finset.range T, e t ⬝ᵥ ((R + Bᵀ * M (T - 1 - t) * B) *ᵥ e t) := by
+  intro x M e
+  let V := fun t => x t ⬝ᵥ (M (T - t) *ᵥ x t)
+  let L := fun t => x t ⬝ᵥ (Q *ᵥ x t) + u t ⬝ᵥ (R *ᵥ u t)
+  let E := fun t => e t ⬝ᵥ ((R + Bᵀ * M (T - 1 - t) * B) *ᵥ e t)
+  have hstep (t : ℕ) (ht : t ∈ Finset.range T) : L t + (V (t + 1) - V t) = E t := by
+    have ht' := Finset.mem_range.mp ht
+    let j := T - 1 - t
+    have h₁ : T - (t + 1) = j := by dsimp [j]; omega
+    have h₂ : T - t = j + 1 := by dsimp [j]; omega
+    have hP : (M j).PosSemidef := riccatiCostToGo_posSemidef_aux hQ hR hQf j
+    have hS : (R + Bᵀ * M j * B).PosDef := by
+      classical
+      exact ControlTheory.posDef_R_add_transpose_mul_mul hP hR
+    have hU := (Matrix.isUnit_iff_isUnit_det _).mp hS.isUnit
+    have hPT := transpose_eq_of_posSemidef hP
+    have hRT := transpose_eq_of_posSemidef hR.posSemidef
+    have hc := bellmanCost_eq_add (A := A) (B := B) (Q := Q) hPT hRT hU (x t) (u t)
+    rw [bellmanCost_neg_gain (A := A) (Q := Q) hPT hRT hU] at hc
+    have hV₁ : V (t + 1) = (A *ᵥ x t + B *ᵥ u t) ⬝ᵥ (M j *ᵥ (A *ᵥ x t + B *ᵥ u t)) := by
+      change x (t + 1) ⬝ᵥ (M (T - (t + 1)) *ᵥ x (t + 1)) = _
+      rw [h₁]
+      rfl
+    have hV₂ : V t = x t ⬝ᵥ (riccatiMap A B Q R (M j) *ᵥ x t) := by
+      change x t ⬝ᵥ (M (T - t) *ᵥ x t) = _
+      rw [h₂]
+      rfl
+    change L t + _ = _ + E t at hc
+    rw [hV₁, hV₂]
+    linarith only [hc]
+  have hs : (∑ t ∈ Finset.range T, (L t + (V (t + 1) - V t))) = ∑ t ∈ Finset.range T, E t :=
+    Finset.sum_congr rfl hstep
+  rw [Finset.sum_add_distrib, Finset.sum_range_sub] at hs
+  have hVT : V T = x T ⬝ᵥ (Qf *ᵥ x T) := by simp [V, M, riccatiCostToGo]
+  have hV₀ : V 0 = x₀ ⬝ᵥ (M T *ᵥ x₀) := by simp [V, x, lqrState]
+  rw [hVT, hV₀] at hs
+  change (∑ t ∈ Finset.range T, L t) + x T ⬝ᵥ (Qf *ᵥ x T) =
+    x₀ ⬝ᵥ (M T *ᵥ x₀) + ∑ t ∈ Finset.range T, E t
+  linarith only [hs]
+
+/-- Let the state and terminal cost matrices `Q` and `Qf` be positive semidefinite and
+let the control cost matrix `R` be positive definite. With `j` steps remaining, let
+`M_j` be the Riccati cost-to-go matrix (`M_0 = Qf`) and
+`K_j = (R + Bᵀ M_j B)⁻¹ Bᵀ M_j A`. A control stream has cost `x₀ᵀ M_T x₀` over `T`
+steps if and only if at every time `t < T` it uses `u_t = -K_{T-1-t} x_t`, where `x_t`
+is the state reached by that stream. No condition is imposed at or after `T`. -/
+theorem lqrCost_eq_riccati_iff_feedback {A : Matrix σ σ ℝ} {B : Matrix σ ι ℝ}
+    {Q : Matrix σ σ ℝ} {R : Matrix ι ι ℝ} {Qf : Matrix σ σ ℝ}
+    (hQ : Q.PosSemidef) (hR : R.PosDef) (hQf : Qf.PosSemidef)
+    (T : ℕ) (x₀ : σ → ℝ) (u : ℕ → ι → ℝ) :
+    let M := riccatiCostToGo A B Q R Qf
+    lqrCost A B Q R Qf x₀ u T = x₀ ⬝ᵥ (M T *ᵥ x₀) ↔
+      ∀ t < T, u t = -(riccatiGain A B R (M (T - 1 - t)) *ᵥ lqrState A B x₀ u t) := by
+  intro M
+  let e := fun t => u t + riccatiGain A B R (M (T - 1 - t)) *ᵥ lqrState A B x₀ u t
+  let S := fun t => R + Bᵀ * M (T - 1 - t) * B
+  let E := fun t => e t ⬝ᵥ (S t *ᵥ e t)
+  have hdecomp : lqrCost A B Q R Qf x₀ u T =
+      x₀ ⬝ᵥ (M T *ᵥ x₀) + ∑ t ∈ Finset.range T, E t :=
+    lqrCost_eq_riccati_add_feedback_residual hQ hR hQf T x₀ u
+  have hS (t : ℕ) : (S t).PosDef := by
+    classical
+    exact ControlTheory.posDef_R_add_transpose_mul_mul
+      (riccatiCostToGo_posSemidef_aux hQ hR hQf _) hR
+  rw [hdecomp, add_eq_left]
+  constructor
+  · intro h t ht
+    have hnonneg (t : ℕ) : 0 ≤ E t := by
+      simpa only [star_trivial] using (hS t).posSemidef.dotProduct_mulVec_nonneg (e t)
+    have hEt : E t = 0 :=
+      (Finset.sum_eq_zero_iff_of_nonneg (fun t _ => hnonneg t)).mp h t (Finset.mem_range.mpr ht)
+    have he : e t = 0 := by
+      by_contra hn
+      have hp : 0 < E t := by
+        simpa only [star_trivial] using (hS t).dotProduct_mulVec_pos hn
+      exact hp.ne' hEt
+    exact eq_neg_of_add_eq_zero_left he
+  · intro h
+    apply Finset.sum_eq_zero
+    intro t ht
+    have he : e t = 0 := by
+      change u t + _ = 0
+      exact add_eq_zero_iff_eq_neg.mpr (h t (Finset.mem_range.mp ht))
+    simp [E, he]
+
+/-- **Unique finite-horizon LQR control.** Let `Q` and `Qf` be positive semidefinite
+and `R` be positive definite. For horizon `T` and initial state `x₀`, some control stream
+attains the minimum cost `x₀ᵀ M_T x₀`, where `M_T` is the Riccati cost-to-go matrix
+with `T` steps remaining. Every stream attaining that cost agrees with the minimizer
+at every time `t < T`. Values at or after `T` do not enter the cost. -/
+theorem exists_lqrCost_minimizer_unique_prefix {A : Matrix σ σ ℝ} {B : Matrix σ ι ℝ}
+    {Q : Matrix σ σ ℝ} {R : Matrix ι ι ℝ} {Qf : Matrix σ σ ℝ}
+    (hQ : Q.PosSemidef) (hR : R.PosDef) (hQf : Qf.PosSemidef) (T : ℕ) (x₀ : σ → ℝ) :
+    ∃ u : ℕ → ι → ℝ,
+      lqrCost A B Q R Qf x₀ u T = x₀ ⬝ᵥ (riccatiCostToGo A B Q R Qf T *ᵥ x₀) ∧
+        ∀ v : ℕ → ι → ℝ, lqrCost A B Q R Qf x₀ u T ≤ lqrCost A B Q R Qf x₀ v T ∧
+          (lqrCost A B Q R Qf x₀ v T = lqrCost A B Q R Qf x₀ u T → ∀ t < T, v t = u t) := by
+  obtain ⟨u, hu, hfb⟩ := lqrCost_feedback hQ hR hQf T x₀
+  refine ⟨u, hu, fun v => ⟨hu.trans_le (lqrCost_ge hQ hR hQf T x₀ v), ?_⟩⟩
+  intro hv
+  have hvfb := (lqrCost_eq_riccati_iff_feedback hQ hR hQf T x₀ v).mp (hv.trans hu)
+  have hstate (t : ℕ) (ht : t ≤ T) : lqrState A B x₀ v t = lqrState A B x₀ u t := by
+    induction t with
+    | zero => rfl
+    | succ t ih =>
+      have hlt : t < T := by omega
+      rw [lqrState, lqrState, hvfb t hlt, hfb t hlt, ih hlt.le]
+  intro t ht
+  rw [hvfb t ht, hfb t ht, hstate t ht.le]
 
 end CSLibExt.MachineLearning.LinearQuadraticRegulator

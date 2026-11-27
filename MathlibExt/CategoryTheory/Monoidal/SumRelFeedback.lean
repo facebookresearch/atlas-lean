@@ -76,7 +76,7 @@ theorem feedback_mono {f g : X ⊗ U ⟶ Y ⊗ U} (h : f.rel ⊆ g.rel) :
   rintro ⟨x, y⟩ hp
   exact FeedbackPath.mono h hp
 
-/-- The entry, hidden closure and exit characterization of feedback. -/
+/-- The direct edge, or entry, hidden closure and exit, characterization of feedback. -/
 theorem feedback_rel (f : X ⊗ U ⟶ Y ⊗ U) (x : X) (y : Y) :
     (x, y) ∈ (feedback f).rel ↔ (Sum.inl x, Sum.inl y) ∈ f.rel ∨
       ∃ a b : U, (Sum.inl x, Sum.inr a) ∈ f.rel ∧
@@ -88,7 +88,8 @@ theorem feedback_zero (f : X ⊗ zero ⟶ Y ⊗ zero) (x : X) (y : Y) :
     (x, y) ∈ (feedback f).rel ↔ (Sum.inl x, Sum.inl y) ∈ f.rel := by
   rw [feedback_rel]
   simp
-/-- A terminating execution either exits now or takes a hidden step and then exits. -/
+/-- A terminating execution either exits now or takes a hidden step and continues with a
+terminating execution. -/
 theorem feedbackPath_unfold (f : X ⊗ U ⟶ Y ⊗ U) (s : Sum X U) (y : Y) :
     FeedbackPath f s y ↔ (s, Sum.inl y) ∈ f.rel ∨
       ∃ a : U, (s, Sum.inr a) ∈ f.rel ∧ FeedbackPath f (Sum.inr a) y := by

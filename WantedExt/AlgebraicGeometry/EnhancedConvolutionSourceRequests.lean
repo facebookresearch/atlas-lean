@@ -11,6 +11,8 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.EnhancedConvolutionModels
 public import MathlibExt.AlgebraicGeometry.CoefficientSheafDimensionModels
 public import Mathlib.Topology.Compactness.SigmaCompact
+public import MathlibExt.AlgebraicGeometry.EnhancedConvolutionSourceRequestsActualBoundedProperImageOfFiniteAmplitude
+public import MathlibExt.AlgebraicGeometry.EnhancedConvolutionSourceRequestsActualBoundedInverseImageSource
 
 /-!
 # Source proofs for the actual enhanced real convolution
@@ -48,29 +50,12 @@ open MathlibExt.AlgebraicGeometry.BoundedIndOperationSources
 open MathlibExt.AlgebraicGeometry.EnhancedConvolutionModels
 open MathlibExt.AlgebraicGeometry.CoefficientSheafDimensionModels
 
-local instance requestAbelianPreadditive (k : Type) [Field k] (X : TopCat.{0})
-    [CompactSheafSource k X] : Preadditive (IndSheaf k X) := Abelian.toPreadditive
+attribute [local instance] requestAbelianPreadditive
 
 attribute [local instance] HasDerivedCategory.standard
 
 /-- Graph properness of the computed finite real sum over the actual Hausdorff base. -/
 theorem_wanted actual_time_sum_graph_source (M : TopCat.{0}) [T2Space M] : TimeSumGraphSource M
-
-/-- The original exact Ind inverse image preserves actual bounded cohomology. -/
-theorem_wanted actual_bounded_inverse_image_source (k : Type) [Field k] (X Y : TopCat.{0})
-    [CompactSheafSource k X] [CompactSheafSource k Y]
-    (f : X ⟶ Y) (S : OrdinaryIndSource k X) (D : IndInverseImageSource k f S)
-    [(indInverseImage k f S D).Additive] (E : ExactIndInverseImageSource k f S D) :
-    BoundedInverseImageSource k f S D E
-
-/-- The same native triangulated proper image preserves boundedness under its actual finite-amplitude condition. -/
-theorem_wanted actual_bounded_proper_image_of_finite_amplitude (k : Type) [Field k]
-    (X Y : TopCat.{0}) [CompactSheafSource k X] [CompactSheafSource k Y]
-    (f : X ⟶ Y) (P : CompactPushforwardSource k f) (D : IndPushforwardSource k f P)
-    [(indProperImage k f P D).Additive] (E : DerivedIndPushforwardSource k f P D)
-    [(derivedIndProperImage k f P D E).CommShift ℤ]
-    [(derivedIndProperImage k f P D E).IsTriangulated]
-    (h : FiniteProperImageAmplitude k f P D E) : BoundedProperImageSource k f P D E
 
 variable (k : Type) [Field k] (M : TopCat.{0}) [T2Space M]
   [CompactSheafSource k M]

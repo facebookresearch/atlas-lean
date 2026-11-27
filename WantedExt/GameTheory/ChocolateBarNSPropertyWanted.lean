@@ -14,6 +14,12 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Order.Lattice.Nat
 public import MathlibExt.Data.Nat.DyadicBlock
 public import MathlibExt.GameTheory.ChocolateBarNSProperty
+public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtXor
+public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtFoldlXor
+public import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorEq
+public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtXorXor
+public import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorXorEq
+public import MathlibExt.GameTheory.NimPassIndicator
 
 /-! # The NS property of chocolate-bar games (Miyadera, Manabe, Singh)
 
@@ -36,75 +42,6 @@ a position of Grundy number `0` (Theorem 1 (i), the classical Sprague-Grundy the
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Mex step for chocolate bars with one function.** Let $g : \mathbb{N} \to \mathbb{N}$ have
-the NS property, and let $x, z, c$ be natural numbers with $x \le g(z)$ and $c < x \oplus z$,
-where $\oplus$ is nim-sum (bitwise exclusive or). Then $c = u \oplus z$ for some $u < x$, or
-$c = \min(g(w), x) \oplus w$ for some $w < z$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 3 (a) (`integers-2025-G3-lem-3`). -/
-public theorem_wanted HasNSProperty.exists_of_lt_xor {g : ℕ → ℕ} (hg : HasNSProperty g)
-    {x z c : ℕ} (hx : x ≤ g z) (hc : c < x ^^^ z) :
-    (∃ u < x, c = u ^^^ z) ∨ ∃ w < z, c = min (g w) x ^^^ w
-
-/-- **Mex step for chocolate bars with two functions.** Let $g, h : \mathbb{N} \to \mathbb{N}$
-have the NS property, and let $x, y, z, c$ be natural numbers with $x \le g(z)$, $y \le h(z)$
-and $c < x \oplus y \oplus z$, where $\oplus$ is nim-sum (bitwise exclusive or). Then
-$c = u \oplus y \oplus z$ for some $u < x$, or $c = x \oplus v \oplus z$ for some $v < y$, or
-$c = \min(g(w), x) \oplus \min(h(w), y) \oplus w$ for some $w < z$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 3 (b) (`integers-2025-G3-lem-3`). -/
-public theorem_wanted HasNSProperty.exists_of_lt_xor_xor {g h : ℕ → ℕ}
-    (hg : HasNSProperty g) (hh : HasNSProperty h) {x y z c : ℕ} (hx : x ≤ g z)
-    (hy : y ≤ h z) (hc : c < x ^^^ y ^^^ z) :
-    (∃ u < x, c = u ^^^ y ^^^ z) ∨ (∃ v < y, c = x ^^^ v ^^^ z) ∨
-      ∃ w < z, c = min (g w) x ^^^ min (h w) y ^^^ w
-
-/-- **Mex step for chocolate bars with many functions.** Let $m$ be a natural number, let
-$f_1, \dots, f_m : \mathbb{N} \to \mathbb{N}$ have the NS property, and let
-$x_1, \dots, x_m, z, c$ be natural numbers with $x_t \le f_t(z)$ for all $t$ and
-$c < x_1 \oplus \cdots \oplus x_m \oplus z$, where $\oplus$ is nim-sum (bitwise exclusive or).
-Then either there are an index $i$ and some $u < x_i$ such that $c$ is the nim-sum
-$x_1 \oplus \cdots \oplus x_m \oplus z$ with $x_i$ replaced by $u$, or there is some $w < z$
-with $c = \min(x_1, f_1(w)) \oplus \cdots \oplus \min(x_m, f_m(w)) \oplus w$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 4 (`integers-2025-G3-lem-4`). -/
-public theorem_wanted exists_of_lt_foldl_xor {m : ℕ} {f : Fin m → ℕ → ℕ}
-    (hf : ∀ t, HasNSProperty (f t)) {x : Fin m → ℕ} {z c : ℕ} (hx : ∀ t, x t ≤ f t z)
-    (hc : c < (List.ofFn x).foldl (· ^^^ ·) 0 ^^^ z) :
-    (∃ i, ∃ u < x i, c = (List.ofFn (Function.update x i u)).foldl (· ^^^ ·) 0 ^^^ z) ∨
-      ∃ w < z, c = (List.ofFn fun t ↦ min (x t) (f t w)).foldl (· ^^^ ·) 0 ^^^ w
-
-/-- **Nim-sum image identity for two NS functions.** Let $g, h : \mathbb{N} \to \mathbb{N}$ have
-the NS property and let $x, y, z \in \mathbb{N}$ with $x \le g(z)$ and $y \le h(z)$. Writing
-$\oplus$ for the nim-sum (bitwise exclusive or) of natural numbers, the sets
-$\{x \oplus y \oplus w : w < z\}$ and $\{\min(g(w), x) \oplus \min(h(w), y) \oplus w : w < z\}$
-are equal, where $w$ ranges over the natural numbers.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 5, equation (19) (`integers-2025-G3-lem-5`). -/
-public theorem_wanted HasNSProperty.image_xor_xor_eq {g h : ℕ → ℕ} (hg : HasNSProperty g)
-    (hh : HasNSProperty h) {x y z : ℕ} (hx : x ≤ g z) (hy : y ≤ h z) :
-    {c | ∃ w < z, c = x ^^^ y ^^^ w} = {c | ∃ w' < z, c = min (g w') x ^^^ min (h w') y ^^^ w'}
-
-/-- **Nim-sum image identity for one NS function.** Let $g : \mathbb{N} \to \mathbb{N}$ have the
-NS property and let $x, z \in \mathbb{N}$ with $x \le g(z)$. Writing $\oplus$ for the nim-sum
-(bitwise exclusive or) of natural numbers, the sets $\{x \oplus w : w < z\}$ and
-$\{\min(g(w), x) \oplus w : w < z\}$ are equal, where $w$ ranges over the natural numbers.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 5, equation (20) (`integers-2025-G3-lem-5`). -/
-public theorem_wanted HasNSProperty.image_xor_eq {g : ℕ → ℕ} (hg : HasNSProperty g)
-    {x z : ℕ} (hx : x ≤ g z) :
-    {c | ∃ w < z, c = x ^^^ w} = {c | ∃ w' < z, c = min (g w') x ^^^ w'}
 
 /-- **Grundy number of a chocolate bar.** Let $f_1, \dots, f_s : \mathbb{N} \to \mathbb{N}$. For
 coordinates $x = (x_1, \dots, x_s) \in \mathbb{N}^s$ and a width $z \in \mathbb{N}$, the position
@@ -226,17 +163,6 @@ public theorem heightChocolateBarGrundy_zero {s : ℕ} (F : (Fin s → ℕ) → 
   exact Nat.sInf_eq_zero.mpr (Or.inl ⟨fun _ u hu ↦ absurd hu (Nat.not_lt_zero u),
     fun v hv ↦ absurd hv (Nat.not_lt_zero v)⟩)
 
-/-- **Pass indicator of Nim with a restricted pass.** For $s$ piles with thresholds
-$m_0, \dots, m_{s-1}$ and pile sizes $x_0, \dots, x_{s-1}$ (natural numbers), the pass
-indicator is $1$ if $m_j \le x_j$ for some pile $j$ (the pass may be used), and $0$ if
-$x_j < m_j$ for every pile $j$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 10 and Corollary 2 (the function `F`). -/
-public def nimPassIndicator {s : ℕ} (m x : Fin s → ℕ) : ℕ :=
-  if ∃ j, m j ≤ x j then 1 else 0
-
 /-- **The Nim pass indicator is at most one.** For every $s \in \mathbb{N}$ and all
 $m, x \in \mathbb{N}^s$, the pass indicator of $m$ at $x$ is at most $1$; that is, it takes values
 in $\{0, 1\}$.
@@ -259,26 +185,6 @@ public theorem nimPassIndicator_zero {s : ℕ} {m : Fin s → ℕ} (hm : ∀ i, 
   rw [nimPassIndicator, ite_eq_right_iff]
   rintro ⟨j, hj⟩
   exact absurd hj (Nat.not_le.mpr (hm j))
-
-/-- **Nim-sum sets under clamping by functions with the NS property.** Let $m \in \mathbb{N}$,
-let $f_0, \dots, f_{m-1} : \mathbb{N} \to \mathbb{N}$ have the NS property, and let
-$x_0, \dots, x_{m-1}, z \in \mathbb{N}$ satisfy $x_t \le f_t(z)$ for every $t < m$. Then
-$$
-\{x_0 \oplus \cdots \oplus x_{m-1} \oplus w : w < z\} =
-\{\min(x_0, f_0(w)) \oplus \cdots \oplus \min(x_{m-1}, f_{m-1}(w)) \oplus w : w < z\},
-$$
-where $\oplus$ denotes nim-sum (bitwise exclusive or).
-
-The printed left-hand nim-sum carries a stray index $j \ne i$ with $i$ unbound; it is read as the
-full nim-sum, as in Lemma 5 (the case of two functions), which the proof generalises.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 6 (`integers-2025-G3-lem-6`). -/
-public theorem_wanted image_foldl_xor_eq_image_min {m : ℕ} {f : Fin m → ℕ → ℕ}
-    (hf : ∀ t, HasNSProperty (f t)) {x : Fin m → ℕ} {z : ℕ} (hx : ∀ t, x t ≤ f t z) :
-    {c | ∃ w < z, c = (List.ofFn x).foldl (· ^^^ ·) 0 ^^^ w} =
-      {c | ∃ w < z, c = (List.ofFn fun t ↦ min (x t) (f t w)).foldl (· ^^^ ·) 0 ^^^ w}
 
 /-- **The NS property characterises nim-sum Grundy numbers of two-dimensional chocolate bars.**
 Let $f : \mathbb{N} \to \mathbb{N}$ be monotone. Then $f$ has the NS property if and only if, for
@@ -378,22 +284,6 @@ public theorem_wanted indicator_sections_iff_heightChocolateBarGrundy_eq_xor {s 
     (∀ (x : Fin s → ℕ) i, ∃ m, Even m ∧
         (fun t ↦ F (Function.update x i t)) = (Set.Ici m).indicator 1) ↔
       ∀ x y, y ≤ F x → heightChocolateBarGrundy F x y = (List.ofFn x).foldl (· ^^^ ·) 0 ^^^ y
-
-/-- **Sections of the Nim pass indicator with the NS property.** Let $s \in \mathbb{N}$ and
-$m \in \mathbb{N}^s$ with $m_i > 0$ for every $i < s$, and let $F : \mathbb{N}^s \to \mathbb{N}$ be
-the pass indicator of $m$: $F(x) = 1$ if $m_j \le x_j$ for some $j$, and $F(x) = 0$ otherwise.
-For $x \in \mathbb{N}^s$, $i < s$ and $t \in \mathbb{N}$ write $x[i \mapsto t]$ for $x$ with its
-$i$-th coordinate replaced by $t$. Then the following are equivalent: (a) for all
-$x \in \mathbb{N}^s$ and $i < s$, the function $t \mapsto F(x[i \mapsto t])$ has the NS property;
-(b) $m_i$ is even for every $i < s$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 10 (`integers-2025-G3-lem-10`). -/
-public theorem_wanted nimPassIndicator_sections_hasNSProperty_iff {s : ℕ} {m : Fin s → ℕ}
-    (hm : ∀ i, 0 < m i) :
-    (∀ (x : Fin s → ℕ) i, HasNSProperty fun t ↦ nimPassIndicator m (Function.update x i t)) ↔
-      ∀ i, Even (m i)
 
 /-- **Nim with a restricted pass.** Let $s \in \mathbb{N}$ and $m \in \mathbb{N}^s$ with $m_i > 0$
 for every $i < s$, and let $F : \mathbb{N}^s \to \mathbb{N}$ be the pass indicator of $m$:
