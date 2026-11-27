@@ -30,4 +30,38 @@ example : wordAscents [1, 0, 0, 1, 0, 0, 1] = 2 := rfl
 example : ∑ k ∈ Finset.range 4, (rascalGen 0 k 3 : ℤ) = 4 := by
   simpa using sum_rascalGen_four_mul_add_three 0
 
+-- The empty row contributes once even when the binomial cutoff extends past the row.
+example (j : ℕ) : ∑ k ∈ Finset.range 1, (rascalGen j k 0 : ℤ) = 1 := by
+  rw [show 1 = 0 + 1 by rfl, sum_rascalGen_row]
+  rw [Finset.sum_eq_single 0]
+  · simp
+  · intro k _ hk
+    simp [Nat.choose_eq_zero_of_lt (Nat.pos_of_ne_zero hk)]
+  · simp
+
+-- With no ascents, each number of ones determines a unique word.
+example (n : ℕ) : ∑ k ∈ Finset.range (n + 1), (rascalGen 0 k n : ℤ) = n + 1 := by
+  simpa [Finset.sum_range_succ, add_comm] using sum_rascalGen_row 0 n
+
+-- At the first nontrivial cutoff, only the word 0101 is excluded.
+example : ∑ k ∈ Finset.range 5, (rascalGen 1 k 4 : ℤ) = 15 := by
+  rw [sum_rascalGen_row 1 4]
+  decide
+
+-- The first odd row cancels at every ascent bound.
+example (j : ℕ) :
+    ∑ k ∈ Finset.range 2, (-1 : ℤ) ^ k * (rascalGen j k 1 : ℤ) = 0 := by
+  simpa using sum_rascalGen_alternating_odd j 0
+
+-- At cutoff one, 00110 and its reverse-complement 10011 are both admitted,
+-- but 01010 has two ascents and is excluded.
+example : RascalWord 1 2 5 := ⟨[0, 0, 1, 1, 0], by decide⟩
+
+example : RascalWord 1 3 5 := ⟨[1, 0, 0, 1, 1], by decide⟩
+
+example : ¬ (wordAscents [0, 1, 0, 1, 0] ≤ 1) := by decide
+
+example : ∑ k ∈ Finset.range 6, (-1 : ℤ) ^ k * (rascalGen 1 k 5 : ℤ) = 0 := by
+  simpa using sum_rascalGen_alternating_odd 1 2
+
 end MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted

@@ -14,6 +14,10 @@ non-executable.
 - [Machine code under a memory-corrupting attacker](machine-code-under-attack.md)
 - [Control-flow graphs of machine code](control-flow-graphs-of-machine-code.md)
 
+## Proof depends on
+
+- [Execution invariant for instrumented code](execution-invariant-for-instrumented-code.md)
+
 ## Sources
 
-- M. Abadi, M. Budiu, Ú. Erlingsson and J. Ligatti, "Control-flow integrity: principles, implementations, and applications", *ACM Transactions on Information and System Security* 13(1), 2009; author version of February 2007 at <https://cseweb.ucsd.edu/~dstefan/cse127-winter19/papers/abadi:cfi.pdf>: Section 6.4.2, Theorem 1, and Appendix A.1 (its proof).
+- M. Abadi, M. Budiu, Ú. Erlingsson and J. Ligatti, "Control-flow integrity: principles, implementations, and applications", *ACM Transactions on Information and System Security* 13(1), 2009; numbering of the author version of February 2007, <https://cseweb.ucsd.edu/~dstefan/cse127-winter19/papers/abadi:cfi.pdf>: Section 6.4.2, Theorem 1, and Appendix A.1 (its proof).
