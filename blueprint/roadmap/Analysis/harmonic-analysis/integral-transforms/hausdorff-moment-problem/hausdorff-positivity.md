@@ -8,4 +8,4 @@ $k \le n$ coordinatewise, where $\Delta^k a$ is the iterated backward difference
 
 ## Sources
 
-- F. Hausdorff, *Summationsmethoden und Momentfolgen I, II*, Math. Z. 9 (1921). Knill, *Some fundamental theorems in mathematics*, §115. Problem `hausdorff_positivity_criterion` of the lean-eval benchmark.
+- F. Hausdorff, *Summationsmethoden und Momentfolgen I, II*, Math. Z. 9 (1921); T. H. Hildebrandt and I. J. Schoenberg, *On linear functional operations and the moment problem for a finite interval in one or several dimensions*, Ann. of Math. 34 (1933), 317–328. Knill, *Some fundamental theorems in mathematics*, §115. Problem `hausdorff_positivity_criterion` of the lean-eval benchmark.

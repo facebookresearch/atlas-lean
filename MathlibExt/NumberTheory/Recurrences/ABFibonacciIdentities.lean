@@ -22,7 +22,7 @@ The generalized Catalan identity gives the recurrence for the product of consecu
 (a, b)-Fibonacci numbers, which yields the weighted even-index sum by induction.
 For the even and odd sums weighted by powers of `-b`, multiplying by the discriminant
 turns each summand into a difference of weighted Lucas numbers.
-At Pell parameters, both the even and odd alternating sums telescope.
+At Pell and Jacobsthal parameters, both the even and odd alternating sums telescope.
 For the sum weighted by powers of `c`, adjoining the last term gives a first-order recurrence.
 -/
 
@@ -289,6 +289,82 @@ theorem sum_neg_one_pow_pell (n : ℕ) :
       ring
     · rw [Finset.sum_range_succ, hQo, Nat.mul_succ, pellLucas (2 * n + 2), pow_succ]
       ring
+
+/-- **Weighted alternating sums of Jacobsthal and Jacobsthal–Lucas numbers.** Let $(J_n)$ and
+$(j_n)$ be the Jacobsthal and Jacobsthal–Lucas numbers, that is, the $(1, 2)$-Fibonacci and
+$(1, 2)$-Lucas numbers, viewed as complex numbers. Then for every integer $n \ge 0$,
+$$\sum_{i=0}^{n} (-1)^i 2^{n-i} J_{2i} = \frac{(-1)^n j_{2n+1} - 2^n}{9}, \qquad
+\sum_{i=0}^{n} (-1)^i 2^{n-i} j_{2i} = (-1)^n J_{2n+1} + 2^n,$$
+$$\sum_{i=0}^{n} (-1)^i 2^{n-i} J_{2i+1} = \frac{(-1)^n j_{2n+2} + 2^{n+2}}{9}, \qquad
+\sum_{i=0}^{n} (-1)^i 2^{n-i} j_{2i+1} = (-1)^n J_{2n+2}.$$
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Theorem 10(d). -/
+theorem sum_neg_one_pow_jacobsthal (n : ℕ) :
+    (∑ i ∈ Finset.range (n + 1),
+        (-1 : ℂ) ^ i * 2 ^ (n - i) * fibAB 1 2 (2 * i) =
+      ((-1) ^ n * lucasAB 1 2 (2 * n + 1) - 2 ^ n) / 9) ∧
+    (∑ i ∈ Finset.range (n + 1),
+        (-1 : ℂ) ^ i * 2 ^ (n - i) * lucasAB 1 2 (2 * i) =
+      (-1) ^ n * fibAB 1 2 (2 * n + 1) + 2 ^ n) ∧
+    (∑ i ∈ Finset.range (n + 1),
+        (-1 : ℂ) ^ i * 2 ^ (n - i) * fibAB 1 2 (2 * i + 1) =
+      ((-1) ^ n * lucasAB 1 2 (2 * n + 2) + 2 ^ (n + 2)) / 9) ∧
+    (∑ i ∈ Finset.range (n + 1),
+        (-1 : ℂ) ^ i * 2 ^ (n - i) * lucasAB 1 2 (2 * i + 1) =
+      (-1) ^ n * fibAB 1 2 (2 * n + 2)) := by
+  -- A step of size two leaves only the two endpoints after weighting.
+  have telescope (f g : ℕ → ℂ) (h : ∀ k, f (k + 2) = g (k + 2) + 2 * g k)
+      (k : ℕ) (m : ℕ) :
+      (∑ i ∈ Finset.range (m + 1), (-1 : ℂ) ^ i * 2 ^ (m - i) * f (2 * i + k)) =
+        (-1) ^ m * g (2 * m + k) + 2 ^ m * (f k - g k) := by
+    induction m with
+    | zero => simp
+    | succ m ih =>
+      rw [Finset.sum_range_succ, Nat.sub_self, pow_zero, mul_one]
+      calc
+        _ = 2 * (∑ i ∈ Finset.range (m + 1), (-1 : ℂ) ^ i * 2 ^ (m - i) * f (2 * i + k)) +
+            (-1 : ℂ) ^ (m + 1) * f (2 * (m + 1) + k) := by
+          rw [Finset.mul_sum]
+          congr 1
+          refine Finset.sum_congr rfl fun i hi => ?_
+          rw [Nat.succ_sub (Finset.mem_range_succ_iff.mp hi), pow_succ]
+          ring
+        _ = _ := by
+          rw [ih, show 2 * (m + 1) + k = 2 * m + k + 2 by omega, h,
+            pow_succ (-1 : ℂ) m, pow_succ (2 : ℂ) m]
+          ring
+  have jacobsthal (k : ℕ) : fibAB 1 2 (k + 2) =
+      lucasAB 1 2 (k + 2 + 1) / 9 + 2 * (lucasAB 1 2 (k + 1) / 9) := by
+    rw [← mul_div_assoc, ← add_div]
+    apply (eq_div_iff (by norm_num)).2
+    simpa only [show (1 : ℂ) ^ 2 + 4 * 2 = 9 by norm_num] using
+      fibAB_succ_mul_discriminant 1 2 (k + 1)
+  have jacobsthalLucas (k : ℕ) : lucasAB 1 2 (k + 2) =
+      fibAB 1 2 (k + 2 + 1) + 2 * fibAB 1 2 (k + 1) := by
+    induction k using Nat.twoStepInduction with
+    | zero => norm_num [fibAB, lucasAB]
+    | one => norm_num [fibAB, lucasAB]
+    | more k hk hk₁ =>
+      rw [lucasAB_add_two 1 2 (k + 2), hk₁, hk, fibAB_add_two 1 2 (k + 3),
+        fibAB_add_two 1 2 (k + 1)]
+      ring
+  have evenJ := telescope _ (fun k => lucasAB 1 2 (k + 1) / 9) jacobsthal 0 n
+  have oddJ := telescope _ (fun k => lucasAB 1 2 (k + 1) / 9) jacobsthal 1 n
+  have evenL := telescope _ (fun k => fibAB 1 2 (k + 1)) jacobsthalLucas 0 n
+  have oddL := telescope _ (fun k => fibAB 1 2 (k + 1)) jacobsthalLucas 1 n
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · simp only [Nat.add_zero, Nat.zero_add, fibAB_zero, lucasAB_one] at evenJ
+    rw [evenJ]
+    ring
+  · simpa only [Nat.add_zero, Nat.zero_add, lucasAB_zero, fibAB_one,
+      show (2 : ℂ) - 1 = 1 by norm_num, mul_one] using evenL
+  · rw [oddJ, pow_add]
+    rw [fibAB_one, show lucasAB 1 2 (1 + 1) = 5 by norm_num [lucasAB]]
+    ring
+  · simpa only [lucasAB_one, show fibAB 1 2 (1 + 1) = 1 by norm_num [fibAB],
+      sub_self, mul_zero, add_zero] using oddL
 
 -- The stated identity assumes c ≠ 0, although the induction also works at zero.
 set_option linter.unusedVariables false in

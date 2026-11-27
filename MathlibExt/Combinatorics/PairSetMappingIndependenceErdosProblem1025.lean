@@ -25,6 +25,22 @@ The upper bound uses the Conlon–Fox–Sudakov grid construction for pairs.
 
 See D. Conlon, J. Fox and B. Sudakov, *Short proofs of some extremal results II*,
 [Section 2](https://arxiv.org/abs/1507.00547).
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/PairSetMappingIndependenceErdosProblem1025Wanted.lean`:
+
+Source: T. F. Bloom, Erdős Problems, Problem #1025, https://www.erdosproblems.com/1025 (status
+SOLVED (LEAN)). UnsolvedMath record UM-30007132 (`EP-1025`), dataset ulamai/UnsolvedMath v1.8.0.
+
+Pairs are unordered pairs of distinct elements (`Sym2`, diagonal values unused); `g(n)` is the
+largest guaranteed size. For `n = 2` no admissible mapping exists, so every `k` qualifies and `sSup`
+returns the junk value `0`; `IsTheta` at `atTop` ignores it. The estimate is stated as
+`g(n) ≍ n^{1/2}` (`Asymptotics.IsTheta`): Spencer's Turán bound for `3`-graphs gives the lower
+bound, and Conlon, Fox and Sudakov (Section 2, Theorem 2.1 with `k = 2`, `l = 1`) give the upper
+bound. The UnsolvedMath triage note proposed `(n log n)^{1/2}`, which is only the upper bound of
+Erdős and Hajnal. Compared with the formal-conjectures statement `ErdosProblems/1025.lean`
+(equivalent; no code imported).
 -/
 
 @[expose] public section
