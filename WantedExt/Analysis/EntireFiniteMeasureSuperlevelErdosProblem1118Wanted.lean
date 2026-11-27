@@ -44,13 +44,15 @@ def finiteMeasureSuperlevelLowerable : Prop :=
       ∃ c' < c, MeasureTheory.volume {z : ℂ | c' < ‖f z‖} < ⊤
 
 /--
-Resolved false: Gol'dberg proved that for every `m > 0` some entire `f` has `{c > 0 : E(c) has
-finite measure} = [m, ∞)`, so `E(m)` has finite measure while `E(c')` has infinite measure for every
-`c' < m`; erdosproblems.com/1118 records the negative answer. Source: T. F. Bloom, Erdős Problems,
+Resolved false: Gol'dberg proved that for every `m > 0` some non-constant entire `f` has
+`{c > 0 : E(c) has finite measure} = [m, ∞)`, so `E(m)` has finite measure while `E(c')` has
+infinite measure for every `c' < m`: such an `f` is a counterexample with `c = m`. Non-constancy
+is what matters, since the constant `f = m` has the same set `[m, ∞)`. erdosproblems.com/1118
+records the negative answer. Source: T. F. Bloom, Erdős Problems,
 Problem #1118, https://www.erdosproblems.com/1118 (status SOLVED); resolution: A. A. Gol'dberg, Sets
 on which the modulus of an entire function has a lower bound, Sibirsk. Mat. Zh. (1979), 512-518, for
-any m > 0 there are entire f whose set T = {c > 0 : |E(c)| < ∞} is [m, ∞) (erdosproblems.com/1118),
-https://www.erdosproblems.com/1118.
+any m > 0 there are non-constant entire f whose set T = {c > 0 : |E(c)| < ∞} is [m, ∞)
+(erdosproblems.com/1118), https://www.erdosproblems.com/1118.
 -/
 public theorem_wanted finiteMeasureSuperlevelLowerable_refuted : ¬ finiteMeasureSuperlevelLowerable
 

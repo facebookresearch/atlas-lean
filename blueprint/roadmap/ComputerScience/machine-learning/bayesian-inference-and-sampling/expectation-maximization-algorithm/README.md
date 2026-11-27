@@ -26,6 +26,20 @@ EM is a minorize–maximize (MM) algorithm. For any distribution $q$ on the late
 - [Haplotype-frequency EM from unphased genotypes](haplotype-frequency-em-from-unphased-genotypes-a.md)
 - [Genotype likelihoods from sequencing reads](genotype-likelihoods-from-sequencing-reads-with.md)
 
+## Positive-weight EM step for mixture weights
+
+- [Strictly positive probability weights](../../../../Biology/statistical-genetics/gene-constraint-scores-pli-and-loeuf/pos-weights.md)
+- [Posterior-average weight update](weight-update.md)
+- [The posterior-average update is a strictly positive weight vector](weight-update-valid.md)
+- [Weight-times-likelihood joint model](weight-joint.md)
+- [The weight-times-likelihood joint is positive](weight-joint-pos.md)
+- [Latent masses as sums of posterior ratios](weight-mass.md)
+- [Expected latent masses are positive](weight-mass-pos.md)
+- [Expected latent masses add up to the number of data](sum-weight-mass.md)
+- [Posterior-average step for mixture weights](weight-step.md)
+- [Entries of the posterior-average weight step](weight-step-apply.md)
+- [The posterior-average step maximizes the EM objective over weights](em-q-le-weight-step.md)
+
 ## Related topics
 
 - [Mean-field variational inference](../mean-field-variational-inference/README.md): the same evidence lower bound, maximized over a restricted family of distributions when the exact posterior of the E-step is intractable.

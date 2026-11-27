@@ -13,6 +13,7 @@
 - [Universal composition theorem](universal-composition-theorem.md)
 - [Foundations of Semi-Honest Multiparty Computation](semi-honest-mpc-foundations/README.md)
 - [Arithmetic MPC: BGW, Beaver Triples and SPDZ](arithmetic-mpc-protocols/README.md)
+- [BGW secret sharing and protocol correctness](bgw-secret-sharing-and-protocol-correctness/README.md)
 - [Oblivious Transfer Protocols and Extension](oblivious-transfer-protocols/README.md)
 - [Universal Composability: Dummy Adversaries, Corruptions and Joint State](universal-composability-tools/README.md)
 - [Secret Sharing over Monotone Access Structures](secret-sharing-schemes/README.md)
