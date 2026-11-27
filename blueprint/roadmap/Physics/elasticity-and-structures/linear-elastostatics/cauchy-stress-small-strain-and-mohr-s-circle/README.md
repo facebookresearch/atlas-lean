@@ -56,7 +56,7 @@
 
 ## D. Small strain, true strain, and true stress
 
-- [Displacement gradient: the Jacobian matrix](../../../Analysis/real-functions/multivariable-calculus/jacobian-matrix/jacobian-matrix.md)
+- [Displacement gradient: the Jacobian matrix](../../../../Analysis/real-functions/multivariable-calculus/jacobian-matrix/jacobian-matrix.md)
 - [Small strain tensor](small-strain.md)
 - [The small strain tensor is symmetric](small-strain-symmetric.md)
 - [Entries of the small strain tensor](small-strain-apply.md)

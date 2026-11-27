@@ -2115,4 +2115,3 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/StatisticalMechanics/spin-glasses/sherrington-kirkpatrick-model/spin.md"}], "id": "af_632ac91b43b90226001b4973", "object": [{"location": {"declaration": "MathlibExt.Probability.SherringtonKirkpatrick.spin"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/StatisticalMechanics/gibbs-states-and-phase-transitions/robust-long-range-order-without-translation-invariance.md"}], "id": "af_d1d5d6e44a6c72ee845ad281", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/StatisticalMechanics/gibbs-states-and-phase-transitions/crystalline-order-at-positive-temperature.md"}], "id": "af_3a3d687bb480b5df2c6b7a3a", "extensions": {"org.autoform": {"not_ready": true}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/StatisticalMechanics/not-yet-classified/README.md"}], "id": "af_a5bf6eabad869cb85eb228e2"}
