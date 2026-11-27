@@ -13,7 +13,7 @@ public import MathlibExt.Analysis.SpecialFunctions.LambertWFunction
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Algebra.Ring.GeomSum
+import Mathlib.Algebra.Order.Field.GeomSum
 import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
@@ -46,149 +46,6 @@ open Set
 @[expose] public section
 
 end
-
-private lemma hasDeriv_pow_succ (t : ℝ) (k : ℕ) :
-    HasDerivAt (fun t : ℝ => t ^ (k + 1)) (((k : ℝ) + 1) * t ^ k) t := by
-  have h := hasDerivAt_pow (k + 1) t
-  simpa using h
-
-private lemma hasDeriv_neg_exp_neg (t : ℝ) :
-    HasDerivAt (fun t : ℝ => -Real.exp (-t)) (Real.exp (-t)) t := by
-  have h1 : HasDerivAt (fun t : ℝ => -t) (-1) t := (hasDerivAt_id t).neg
-  have h2 : HasDerivAt (fun t : ℝ => Real.exp (-t)) (Real.exp (-t) * -1) t :=
-    (Real.hasDerivAt_exp (-t)).comp t h1
-  have h3 : HasDerivAt (fun t : ℝ => -Real.exp (-t)) (-(Real.exp (-t) * -1)) t := h2.neg
-  simpa using h3
-
-private lemma step (k : ℕ) (a : ℝ) :
-    ∫ t in (0 : ℝ)..a, Real.exp (-t) * t ^ (k + 1)
-      = ((k : ℝ) + 1) * (∫ t in (0 : ℝ)..a, Real.exp (-t) * t ^ k)
-        - a ^ (k + 1) * Real.exp (-a) := by
-  have hu : ContinuousOn (fun t : ℝ => t ^ (k + 1)) (uIcc 0 a) :=
-    (continuous_pow _).continuousOn
-  have hv : ContinuousOn (fun t : ℝ => -Real.exp (-t)) (uIcc 0 a) :=
-    ((Real.continuous_exp.comp continuous_neg).neg).continuousOn
-  have huu' : ∀ x ∈ Ioo (min (0 : ℝ) a) (max (0 : ℝ) a),
-      HasDerivAt (fun t : ℝ => t ^ (k + 1)) (((k : ℝ) + 1) * x ^ k) x := by
-    intro x _
-    exact hasDeriv_pow_succ x k
-  have hvv' : ∀ x ∈ Ioo (min (0 : ℝ) a) (max (0 : ℝ) a),
-      HasDerivAt (fun t : ℝ => -Real.exp (-t)) (Real.exp (-x)) x := by
-    intro x _
-    exact hasDeriv_neg_exp_neg x
-  have hu' : IntervalIntegrable (fun t : ℝ => ((k : ℝ) + 1) * t ^ k) MeasureTheory.volume 0 a :=
-    (continuous_const.mul (continuous_pow _)).intervalIntegrable 0 a
-  have hv' : IntervalIntegrable (fun t : ℝ => Real.exp (-t)) MeasureTheory.volume 0 a :=
-    (Real.continuous_exp.comp continuous_neg).intervalIntegrable 0 a
-  have hbp := intervalIntegral.integral_mul_deriv_eq_deriv_mul_of_hasDerivAt
-    (u := fun t : ℝ => t ^ (k + 1)) (v := fun t : ℝ => -Real.exp (-t))
-    (u' := fun t : ℝ => ((k : ℝ) + 1) * t ^ k) (v' := fun t : ℝ => Real.exp (-t))
-    hu hv huu' hvv' hu' hv'
-  have h0 : (0 : ℝ) ^ (k + 1) = 0 := zero_pow (Nat.succ_ne_zero k)
-  have hInt : (∫ t in (0 : ℝ)..a, (((k : ℝ) + 1) * t ^ k) * (-Real.exp (-t)))
-      = (-((k : ℝ) + 1)) * (∫ t in (0 : ℝ)..a, Real.exp (-t) * t ^ k) := by
-    have hfun : (fun t : ℝ => (((k : ℝ) + 1) * t ^ k) * (-Real.exp (-t)))
-        = fun t : ℝ => (-((k : ℝ) + 1)) * (Real.exp (-t) * t ^ k) := by
-      funext t
-      ring
-    rw [hfun, intervalIntegral.integral_const_mul]
-  have hLHS : (∫ t in (0 : ℝ)..a, t ^ (k + 1) * Real.exp (-t))
-      = ∫ t in (0 : ℝ)..a, Real.exp (-t) * t ^ (k + 1) := by
-    apply intervalIntegral.integral_congr
-    intro t _
-    ring
-  rw [hLHS, h0, hInt] at hbp
-  linarith [hbp]
-
-private lemma base (a : ℝ) :
-    ∫ t in (0 : ℝ)..a, Real.exp (-t) = 1 - Real.exp (-a) := by
-  have h := intervalIntegral.integral_eq_sub_of_hasDerivAt
-    (f := fun t : ℝ => -Real.exp (-t)) (f' := fun t : ℝ => Real.exp (-t))
-    (a := (0 : ℝ)) (b := a)
-    (fun x _ => hasDeriv_neg_exp_neg x)
-    ((Real.continuous_exp.comp continuous_neg).intervalIntegrable 0 a)
-  rw [h]
-  simp [Real.exp_zero]
-  ring
-
-private lemma identity (k : ℕ) (a : ℝ) :
-    ∫ t in (0 : ℝ)..a, Real.exp (-t) * t ^ k
-      = (k.factorial : ℝ)
-        - Real.exp (-a) * (∑ j ∈ Finset.range (k + 1),
-          ((k.factorial : ℝ) / (j.factorial : ℝ)) * a ^ j) := by
-  induction k with
-  | zero =>
-    simp only [pow_zero, mul_one, Nat.factorial_zero, Nat.cast_one]
-    rw [base]
-    simp
-  | succ k IH =>
-    have hfact : ((k : ℝ) + 1) * (k.factorial : ℝ) = ((((k + 1).factorial : ℕ)) : ℝ) := by
-      have h : ((k + 1).factorial : ℕ) = (k + 1) * k.factorial := Nat.factorial_succ k
-      have hc : ((((k + 1).factorial : ℕ)) : ℝ) = ((k : ℝ) + 1) * (k.factorial : ℝ) := by
-        exact_mod_cast h
-      exact hc.symm
-    have hterm : ∀ j : ℕ, ((k : ℝ) + 1) * ((((k.factorial : ℝ) / (j.factorial : ℝ))) * a ^ j)
-        = (((((k + 1).factorial : ℕ)) : ℝ) / (j.factorial : ℝ)) * a ^ j := by
-      intro j
-      have hj : (j.factorial : ℝ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero j
-      rw [← hfact]
-      field_simp
-    have htop : (((((k + 1).factorial : ℕ)) : ℝ) / ((((k + 1).factorial : ℕ)) : ℝ)) * a ^ (k + 1)
-        = a ^ (k + 1) := by
-      have hk : ((((k + 1).factorial : ℕ)) : ℝ) ≠ 0 := by
-        exact_mod_cast Nat.factorial_ne_zero (k + 1)
-      rw [div_self hk, one_mul]
-    have hsum : ((k : ℝ) + 1)
-          * (∑ j ∈ Finset.range (k + 1), ((k.factorial : ℝ) / (j.factorial : ℝ)) * a ^ j)
-          + a ^ (k + 1)
-        = ∑ j ∈ Finset.range (k + 1 + 1),
-          (((((k + 1).factorial : ℕ)) : ℝ) / (j.factorial : ℝ)) * a ^ j := by
-      conv_rhs => rw [Finset.sum_range_succ]
-      rw [Finset.mul_sum]
-      congr 1
-      · apply Finset.sum_congr rfl
-        intro j _
-        exact hterm j
-      · exact htop.symm
-    rw [step k a, IH]
-    linear_combination hfact - Real.exp (-a) * hsum
-
-private lemma kurepa_eq_sum (n : ℕ) (a : ℝ) :
-    kurepaPartialIntegral n a
-      = ∑ k ∈ Finset.range n, ∫ t in (0 : ℝ)..a, Real.exp (-t) * t ^ k := by
-  unfold kurepaPartialIntegral
-  have hcongr : (fun t : ℝ => Real.exp (-t) * ∑ k ∈ Finset.range n, t ^ k)
-      = fun t : ℝ => ∑ k ∈ Finset.range n, Real.exp (-t) * t ^ k := by
-    funext t
-    rw [Finset.mul_sum]
-  rw [hcongr]
-  exact intervalIntegral.integral_finsetSum (fun k _ =>
-    ((Real.continuous_exp.comp continuous_neg).mul (continuous_pow _)).intervalIntegrable 0 a)
-
-private lemma remainder_pos (k : ℕ) (a : ℝ) (ha0 : 0 < a) :
-    0 < Real.exp (-a) * (∑ j ∈ Finset.range (k + 1),
-      ((k.factorial : ℝ) / (j.factorial : ℝ)) * a ^ j) := by
-  apply mul_pos (Real.exp_pos _)
-  apply Finset.sum_pos'
-  · intro j _
-    apply mul_nonneg
-    · exact div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
-    · exact pow_nonneg ha0.le _
-  · refine ⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ k), ?_⟩
-    simp [Nat.factorial_pos]
-
-private lemma lower (n : ℕ) (a : ℝ) (hn1 : 1 ≤ n) (ha0 : 0 < a) :
-    kurepaPartialIntegral n a < ∑ k ∈ Finset.range n, (k.factorial : ℝ) := by
-  rw [kurepa_eq_sum]
-  apply Finset.sum_lt_sum
-  · intro k _
-    have hR := (remainder_pos k a ha0).le
-    rw [identity k a]
-    linarith
-  · exact ⟨0, Finset.mem_range.mpr hn1, by
-      have hR := remainder_pos 0 a ha0
-      rw [identity 0 a]
-      linarith⟩
 
 private lemma lambertMul (n : ℕ) (hn : 5 ≤ n) (a : ℝ)
     (hW : lambertMap (-a / ((n : ℝ) - 1)) =
@@ -458,14 +315,6 @@ private lemma a_ge_seven (a : ℝ) (ha : (((7 : ℕ)) : ℝ) - 1 ≤ a)
   exact a_ge_of_exp_bound 7 (by norm_num) a ha hW (29 / 2) hL1 (113 / 10) (92 / 100)
     hV0 hexp_le hc_le hEV
 
-private lemma rem_eq (k : ℕ) (a : ℝ) :
-    (∑ j ∈ Finset.range (k + 1), ((k.factorial : ℝ) / (j.factorial : ℝ)) * a ^ j)
-      = (k.factorial : ℝ) * (∑ j ∈ Finset.range (k + 1), a ^ j / (j.factorial : ℝ)) := by
-  rw [Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro j _
-  rw [div_mul_eq_mul_div, mul_div_assoc]
-
 private lemma Spow_le (k n : ℕ) (hkn : k + 1 ≤ n) (a : ℝ) (ha0 : 0 ≤ a) :
     (∑ j ∈ Finset.range (k + 1), a ^ j / (j.factorial : ℝ))
       ≤ (∑ j ∈ Finset.range n, a ^ j / (j.factorial : ℝ)) := by
@@ -476,22 +325,11 @@ private lemma Spow_le (k n : ℕ) (hkn : k + 1 ≤ n) (a : ℝ) (ha0 : 0 ≤ a) 
   · intro j _ _
     exact div_nonneg (pow_nonneg ha0 _) (Nat.cast_nonneg _)
 
-private lemma R_eq (n : ℕ) (a : ℝ) :
-    (∑ k ∈ Finset.range n, (k.factorial : ℝ)) - kurepaPartialIntegral n a
-      = Real.exp (-a)
-        * (∑ k ∈ Finset.range n,
-          (k.factorial : ℝ) * (∑ j ∈ Finset.range (k + 1), a ^ j / (j.factorial : ℝ))) := by
-  rw [kurepa_eq_sum, ← Finset.sum_sub_distrib, Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro k _
-  rw [identity k a, rem_eq k a]
-  ring
-
 private lemma R_le_mul (n : ℕ) (a : ℝ) (ha0 : 0 ≤ a) :
     (∑ k ∈ Finset.range n, (k.factorial : ℝ)) - kurepaPartialIntegral n a
       ≤ Real.exp (-a) * (∑ j ∈ Finset.range n, a ^ j / (j.factorial : ℝ))
         * (∑ k ∈ Finset.range n, (k.factorial : ℝ)) := by
-  rw [R_eq n a]
+  rw [sum_factorial_sub_kurepaPartialIntegral n a]
   have h1 : (∑ k ∈ Finset.range n,
         (k.factorial : ℝ) * (∑ j ∈ Finset.range (k + 1), a ^ j / (j.factorial : ℝ)))
       ≤ (∑ k ∈ Finset.range n, (k.factorial : ℝ))
@@ -510,16 +348,6 @@ private lemma R_le_mul (n : ℕ) (a : ℝ) (ha0 : 0 ≤ a) :
         * (∑ k ∈ Finset.range n, (k.factorial : ℝ)) := by ring
   rw [h3] at h2
   exact h2
-
-private lemma geom_le (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ < 1) (n : ℕ) :
-    (∑ i ∈ Finset.range n, ρ ^ i) ≤ 1 / (1 - ρ) := by
-  have h := geom_sum_mul ρ n
-  have hρn : 0 ≤ ρ ^ n := pow_nonneg hρ0 n
-  have h1ρ : (0 : ℝ) < 1 - ρ := by linarith
-  have hS : (∑ i ∈ Finset.range n, ρ ^ i) * (1 - ρ) = 1 - ρ ^ n := by
-    linear_combination -h
-  rw [le_div_iff₀ h1ρ]
-  linarith [hS, hρn]
 
 private lemma term_le (n j : ℕ) (hn1 : 1 ≤ n) (hj : j ≤ n - 1) (a : ℝ) (ha0 : 0 < a) :
     ((((n - 1).factorial : ℕ) : ℝ) / ((j.factorial : ℕ) : ℝ)) / a ^ (n - 1 - j)
@@ -570,7 +398,8 @@ private lemma U_le (n : ℕ) (hn : 8 ≤ n) (a : ℝ) (ha0 : 0 < a)
           exact term_le n j hn1 hj1 a ha0
       _ = ∑ i ∈ Finset.range n, (((n : ℝ) - 1) / a) ^ i :=
           Finset.sum_range_reflect (fun i => (((n : ℝ) - 1) / a) ^ i) n
-      _ ≤ 1 / (1 - ((n : ℝ) - 1) / a) := geom_le _ hρ0 hρ1 n
+      _ ≤ 1 / (1 - ((n : ℝ) - 1) / a) := by
+        simpa using geom_sum_Ico_le_of_lt_one (m := 0) (n := n) hρ0 hρ1
       _ = a / (a - ((n : ℝ) - 1)) := by
           have ha1 : a - ((n : ℝ) - 1) ≠ 0 := ne_of_gt (by linarith [hlt])
           have ha0' : a ≠ 0 := ne_of_gt ha0
@@ -809,7 +638,7 @@ private lemma hFinal5 (a : ℝ) (ha : ((((5 : ℕ))) : ℝ) - 1 ≤ a)
   have hL0 : (0 : ℝ) < 19 / 2 := by norm_num
   have hPow := lambertPow 5 (by norm_num) a hW
   have hPow4 : a ^ 4 * Real.exp (-a) = 4 / 7 := hPow
-  have hR := R_eq 5 a
+  have hR := sum_factorial_sub_kurepaPartialIntegral 5 a
   have hpoly : (∑ k ∈ Finset.range 5,
         ((k.factorial : ℕ) : ℝ)
           * (∑ j ∈ Finset.range (k + 1), a ^ j / (((j.factorial : ℕ)) : ℝ)))
@@ -856,7 +685,7 @@ private lemma hFinal6 (a : ℝ) (ha : ((((6 : ℕ))) : ℝ) - 1 ≤ a)
   have hL0 : (0 : ℝ) < 12 := by norm_num
   have hPow := lambertPow 6 (by norm_num) a hW
   have hPow5 : a ^ 5 * Real.exp (-a) = 4 / 7 := hPow
-  have hR := R_eq 6 a
+  have hR := sum_factorial_sub_kurepaPartialIntegral 6 a
   have hpoly : (∑ k ∈ Finset.range 6,
         ((k.factorial : ℕ) : ℝ)
           * (∑ j ∈ Finset.range (k + 1), a ^ j / (((j.factorial : ℕ)) : ℝ)))
@@ -906,7 +735,7 @@ private lemma hFinal7 (a : ℝ) (ha : ((((7 : ℕ))) : ℝ) - 1 ≤ a)
   have hL0 : (0 : ℝ) < 29 / 2 := by norm_num
   have hPow := lambertPow 7 (by norm_num) a hW
   have hPow6 : a ^ 6 * Real.exp (-a) = 4 / 7 := hPow
-  have hR := R_eq 7 a
+  have hR := sum_factorial_sub_kurepaPartialIntegral 7 a
   have hpoly : (∑ k ∈ Finset.range 7,
         ((k.factorial : ℕ) : ℝ)
           * (∑ j ∈ Finset.range (k + 1), a ^ j / (((j.factorial : ℕ)) : ℝ)))
@@ -966,7 +795,7 @@ private lemma hFinal8 (a : ℝ) (ha : ((((8 : ℕ))) : ℝ) - 1 ≤ a)
   have hL0 : (0 : ℝ) < 21 := by norm_num
   have hPow := lambertPow 8 (by norm_num) a hW
   have hPow7 : a ^ 7 * Real.exp (-a) = 4 / 7 := hPow
-  have hR := R_eq 8 a
+  have hR := sum_factorial_sub_kurepaPartialIntegral 8 a
   have hpoly : (∑ k ∈ Finset.range 8,
         ((k.factorial : ℕ) : ℝ)
           * (∑ j ∈ Finset.range (k + 1), a ^ j / (((j.factorial : ℕ)) : ℝ)))
@@ -1040,7 +869,7 @@ public theorem kurepaPartialIntegral_lambertSequence_bounds (n : ℕ) (hn : 5 �
       ∑ k ∈ Finset.range n, (k.factorial : ℝ) < kurepaPartialIntegral n a + 1 := by
   have hn5 : (5 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
   have ha0' : (0 : ℝ) < a := by linarith [ha, hn5]
-  refine ⟨lower n a (by omega) ha0', ?_⟩
+  refine ⟨kurepaPartialIntegral_lt_sum_factorial n (by omega) a ha0'.le, ?_⟩
   by_cases hn9 : 9 ≤ n
   · have h := hFinal9 n hn9 a ha hW
     linarith [h]
