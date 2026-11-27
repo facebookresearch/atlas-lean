@@ -15,6 +15,8 @@ public import Mathlib.Data.Tree.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import MathlibExt.Analysis.SpecialFunctions.TakagiFunction
 public import MathlibExt.NumberTheory.Digits.BinaryDigitSum
+public import MathlibExt.NumberTheory.TakagiDNodeSuccessor
+public import MathlibExt.NumberTheory.TakagiDNodeLevelPred
 public import MathlibExt.NumberTheory.TakagiDyadicIdentities
 
 /-!
@@ -87,18 +89,6 @@ public theorem_wanted dcDNodes_eq_sum_dcLevelDNodes (n : ℕ) (hn : 0 < n) :
         ∑ i ∈ range (Nat.log 2 n),
           (((n / 2 ^ i % 2 : ℕ) : ℤ) * 2 ^ i + (-1) ^ (n / 2 ^ i % 2) * ((n % 2 ^ i : ℕ) : ℤ))
 
-/-- **Level counts of D-nodes at consecutive integers.** Let $k$, $r$ and $i$ be natural numbers
-with $r$ odd, $r < 2^k$ and $0 < i < k$, and let $n = 2^k + r$. Then the level counts of
-D-nodes satisfy $\lambda_i(n) - \lambda_i(n-1) = 1$ if the binary digit $n_i$ of $n$ is $0$,
-and $\lambda_i(n) - \lambda_i(n-1) = -1$ if $n_i = 1$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 17 (`jis-2024-24.2.7-lem-17`). -/
-public theorem_wanted dcLevelDNodes_sub_pred (k r i : ℕ) (hodd : Odd r) (hr : r < 2 ^ k)
-    (hi0 : 0 < i) (hik : i < k) :
-    (dcLevelDNodes (2 ^ k + r) i : ℤ) - dcLevelDNodes (2 ^ k + r - 1) i =
-      if (2 ^ k + r) / 2 ^ i % 2 = 0 then 1 else -1
-
 /-- **Symmetry of the D-node counts.** For all natural numbers $k$ and $r$ with $r \le 2^k$,
 $\delta(2^{k+1} - r) = \delta(2^k + r)$, where $\delta(n)$ denotes the number of D-nodes in the
 divide-and-conquer tree on $n$ leaves.
@@ -125,16 +115,6 @@ $\delta(n+1) = \delta(n) + \lfloor \log_2 n \rfloor - 2 s_1(n) + 2$.
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Lemma 20 (`jis-2024-24.2.7-lem-20`). -/
 public theorem_wanted dcDNodes_succ_of_odd (n : ℕ) (hodd : Odd n) :
-    (dcDNodes (n + 1) : ℤ) = dcDNodes n + Nat.log 2 n - 2 * (Nat.digits 2 n).sum + 2
-
-/-- **Successor formula for the divide-and-conquer D-node count.** Let $\delta$ be the
-divide-and-conquer D-node count and $s_1(n)$ the number of ones in the binary expansion of $n$.
-For every integer $n > 0$,
-$\delta(n+1) = \delta(n) + \lfloor \log_2 n \rfloor - 2 s_1(n) + 2$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 21 (`jis-2024-24.2.7-thm-21`). -/
-public theorem_wanted dcDNodes_succ (n : ℕ) (hn : 0 < n) :
     (dcDNodes (n + 1) : ℤ) = dcDNodes n + Nat.log 2 n - 2 * (Nat.digits 2 n).sum + 2
 
 /-- **Binary-digit formula for the divide-and-conquer D-node count.** Let $\delta$ be the
