@@ -26,7 +26,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 public import WantedExt.Complexity.NPComplete.MinimumCutLinearArrangementTwoSubdivisionPlanarWanted
 
 @[expose] public section
@@ -48,7 +48,7 @@ QUESTION: is there a partition of `V` into two sets with at least `K` edges betw
 
 This is SIMPLE MAX CUT (MAX CUT with all edge weights one, [ND16]) restricted to 2-subdivision
 graphs. The instance, the simple-edge-list conditions and the question are those of MAXIMUM CUT
-(`MaxCutWanted`, whose question counts edges), reused as in `SimpleMaxCutCubicWanted`; the class
+(`MaxCutDefs`, whose question counts edges), reused as in `SimpleMaxCutCubicWanted`; the class
 is the predicate `IsTwoSubdivision` of `MinimumCutLinearArrangementTwoSubdivisionPlanarWanted`
 (the graph is isomorphic to the 2-subdivision of a simple graph given by a simple edge list),
 applied to `Cslib.Complexity.Karp.edgeGraph`, and `0 < K` ([ND16]'s positive integer `K`).

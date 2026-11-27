@@ -13,6 +13,7 @@ Ramsey numbers of graphs, their known small values, and Ramsey–Turán problems
 - [Multicolour Ramsey numbers](multicolour-ramsey-numbers/README.md)
 - [Off-diagonal Ramsey numbers](off-diagonal-ramsey-numbers/README.md)
 - [Online Ramsey numbers](online-ramsey-numbers/README.md)
+- [Multicolor triangle Ramsey numbers](multicolor-triangle-ramsey-numbers/README.md)
 - [Ordered Ramsey numbers](ordered-ramsey-numbers/README.md)
 - [Ramsey graphs for the triangle](ramsey-graphs-for-the-triangle/README.md)
 - [Ramsey numbers of sparse graphs and trees](ramsey-numbers-of-sparse-graphs-and-trees/README.md)
