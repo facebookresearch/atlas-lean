@@ -42,9 +42,10 @@ open Set
 /-- A general polynomial of degree at most three, in increasing order of coefficients. -/
 def cubic (a b c d t : ℝ) : ℝ := a + b * t + c * t ^ 2 + d * t ^ 3
 
-/-- Endpoint values and endpoint derivatives for the scalar time scaling. -/
+/-- The scalar profile starts at zero, ends at one, and has a two-sided derivative of
+zero at each endpoint. The function is defined on the whole real line. -/
 def RestToRest (T : ℝ) (f : ℝ → ℝ) : Prop :=
-  f 0 = 0 ∧ deriv f 0 = 0 ∧ f T = 1 ∧ deriv f T = 0
+  f 0 = 0 ∧ HasDerivAt f 0 0 ∧ f T = 1 ∧ HasDerivAt f 0 T
 
 /-- The rest-to-rest profile `3(t/T)² − 2(t/T)³`. -/
 def scaling (T : ℝ) : ℝ → ℝ := cubic 0 0 (3 / T ^ 2) (-2 / T ^ 3)
@@ -60,7 +61,10 @@ private theorem hasDerivAt_cubic (a b c d t : ℝ) :
 /-- The four endpoint conditions determine all four coefficients, and conversely. -/
 theorem restToRest_cubic_iff {T : ℝ} (hT : 0 < T) (a b c d : ℝ) :
     RestToRest T (cubic a b c d) ↔ a = 0 ∧ b = 0 ∧ c = 3 / T ^ 2 ∧ d = -2 / T ^ 3 := by
-  simp only [RestToRest, (hasDerivAt_cubic ..).deriv, cubic]
+  have velocity_zero (t : ℝ) : HasDerivAt (cubic a b c d) 0 t ↔
+      b + 2 * c * t + 3 * d * t ^ 2 = 0 :=
+    ⟨(hasDerivAt_cubic a b c d t).unique, (hasDerivAt_cubic a b c d t).congr_deriv⟩
+  simp only [RestToRest, velocity_zero, cubic]
   constructor
   · rintro ⟨ha, hb, hp, hv⟩
     simp only [mul_zero, zero_pow (by decide : 2 ≠ 0), zero_pow (by decide : 3 ≠ 0),

@@ -7,6 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import MathlibExt.Analysis.Calculus.CubicTimeScaling
 import Mathlib.Tactic.NormNum.RealSqrt
 
@@ -21,6 +24,43 @@ example (a b c d : ℝ) : RestToRest 2 (cubic a b c d) ↔
     a = 0 ∧ b = 0 ∧ c = 3 / 4 ∧ d = -1 / 4 := by
   convert restToRest_cubic_iff (T := 2) (by norm_num) a b c d using 2
   norm_num
+
+-- Both endpoint derivatives are genuine for the smooth solution.
+example : HasDerivAt (scaling 2) 0 0 ∧ HasDerivAt (scaling 2) 0 2 := by
+  have h := (scaling_facts (T := 2) (by norm_num)).1
+  exact ⟨h.2.1, h.2.2.2⟩
+
+-- On the nonnegative half-line the cusp agrees with t − t²/4; on the nonpositive
+-- half-line it agrees with −t − t²/4. Its total `deriv` at zero therefore defaults
+-- to zero, not its right-hand velocity. The other three endpoint conditions hold.
+private noncomputable def cusp (t : ℝ) : ℝ := |t| - t ^ 2 / 4
+
+private theorem cusp_endpoint_conditions :
+    (cusp 0 = 0 ∧ deriv cusp 0 = 0 ∧ cusp 2 = 1 ∧ deriv cusp 2 = 0) ∧
+    HasDerivAt cusp 0 2 ∧ HasDerivWithinAt cusp 1 (Set.Ici 0) 0 ∧
+    ¬ DifferentiableAt ℝ cusp 0 ∧ ¬ RestToRest 2 cusp := by
+  have hq (t : ℝ) : HasDerivAt (fun u : ℝ ↦ u ^ 2 / 4) (t / 2) t := by
+    apply (((hasDerivAt_id t).fun_pow 2).div_const 4).congr_deriv
+    dsimp
+    ring
+  have hr (t : ℝ) (ht : 0 ≤ t) : HasDerivWithinAt cusp (1 - t / 2) (Set.Ici 0) t :=
+    ((hasDerivAt_id t).sub (hq t)).hasDerivWithinAt.congr_of_mem
+      (fun u hu ↦ by simp [cusp, abs_of_nonneg (Set.mem_Ici.mp hu)]) ht
+  have hl : HasDerivWithinAt cusp (-1) (Set.Iic 0) 0 := by
+    have h := ((hasDerivAt_id (0 : ℝ)).neg.sub (hq 0)).hasDerivWithinAt (s := Set.Iic 0)
+    simpa using h.congr_of_mem (f₁ := cusp)
+      (fun u hu ↦ by simp [cusp, abs_of_nonpos (Set.mem_Iic.mp hu)]) Set.self_mem_Iic
+  have hright : HasDerivWithinAt cusp 1 (Set.Ici 0) 0 := by simpa using hr 0 le_rfl
+  have hn : ¬ DifferentiableAt ℝ cusp 0 := by
+    intro h
+    have h₁ := (uniqueDiffOn_Ici _ _ Set.self_mem_Ici).eq_deriv _ h.hasDerivAt.hasDerivWithinAt hright
+    have h₂ := (uniqueDiffOn_Iic _ _ Set.self_mem_Iic).eq_deriv _ h.hasDerivAt.hasDerivWithinAt hl
+    linarith
+  have h₂ : HasDerivAt cusp 0 2 := by
+    convert (hr 2 (by norm_num)).hasDerivAt (Ici_mem_nhds (by norm_num : (0 : ℝ) < 2)) using 1
+    norm_num
+  exact ⟨⟨by norm_num [cusp], deriv_zero_of_not_differentiableAt hn, by norm_num [cusp], h₂.deriv⟩,
+    h₂, hright, hn, fun h ↦ hn h.2.1.differentiableAt⟩
 
 -- The coordinate is decreasing: the velocity is negative and the endpoint
 -- accelerations have opposite signs even though their magnitudes agree.
