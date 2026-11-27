@@ -203,8 +203,9 @@ theorem free_periods (hS : IsRegularPeriodRing act H) (ρ : Representation F G V
   let := hS.field
   exact Module.Free.of_divisionRing (fixedSubalgebra S act H) (ρ.periods act H)
 
-/-- **Condition (ii) without fractions**: if `a, s ∈ S` with `s ≠ 0` and `a / s` is `H`-invariant,
-that is, `act g a * s = a * act g s` for every `g ∈ H`, then `a = e * s` for some `e ∈ S^H`. -/
+/-- **Condition (ii) without fractions, for a regular ring `S`**: if `a, s ∈ S` with `s ≠ 0` and
+`a / s` is `H`-invariant, that is, `act g a * s = a * act g s` for every `g ∈ H`, then `a = e * s`
+for some `e ∈ S^H`. -/
 theorem exists_mem_fixedSubalgebra_eq_mul (hS : IsRegularPeriodRing act H) {a s : S} (hs : s ≠ 0)
     (h : ∀ g ∈ H, act g a * s = a * act g s) : ∃ e ∈ fixedSubalgebra S act H, a = e * s := by
   have hinj := IsFractionRing.injective S (FractionRing S)
@@ -309,8 +310,8 @@ theorem finite_periods (hS : IsRegularPeriodRing act H) (ρ : Representation F G
   have := (hS.linearIndependent ρ b.linearIndependent).finite
   exact Module.Finite.of_basis b
 
-/-- **`dim_{S^H} D_S(V) ≤ dim_F V` for a regular ring** (Fontaine–Ouyang, Theorem 3.14 (1);
-Fontaine, Exposé III, Proposition 1.4.2 (i) p. 123). -/
+/-- **`dim_{S^H} D_S(V) ≤ dim_F V` for a regular ring and a finite-dimensional `V`**
+(Fontaine–Ouyang, Theorem 3.14 (1); Fontaine, Exposé III, Proposition 1.4.2 (i) p. 123). -/
 theorem finrank_periods_le (hS : IsRegularPeriodRing act H) (ρ : Representation F G V)
     [FiniteDimensional F V] :
     Module.finrank (fixedSubalgebra S act H) (ρ.periods act H) ≤ Module.finrank F V := by

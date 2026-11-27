@@ -14,6 +14,7 @@ and `ZInQKernel/Contrib/OneProof/PanBergerFix.lean`
 `e9956cda4174c060ff85f5a6ddc7e4003e63fdd3`.
 Copyright 2026 the contributors to Deicyde/diophantine-z-q.
 Licensed under the Apache License, Version 2.0.
+Authors: the contributors to Deicyde/diophantine-z-q.
 -/
 
 module
@@ -194,8 +195,9 @@ private theorem repr_mem_fixedSubalgebra (b : Module.Basis ι S (S ⊗[F] V))
   simp only [b.repr_sum_self] at this
   exact this.symm
 
-/-- **An `S`-basis of `S ⊗_F V` of `H`-fixed vectors is an `S^H`-basis of `D_S(V)`**: every
-`x ∈ D_S(V)` is a combination of the basis vectors with coefficients in `S^H`. -/
+/-- **An `S`-basis of `S ⊗_F V` of `H`-fixed vectors, indexed by a finite type, is an
+`S^H`-basis of `D_S(V)`**: every `x ∈ D_S(V)` is a combination of the basis vectors with
+coefficients in `S^H`. -/
 def periodsBasis (b : Module.Basis ι S (S ⊗[F] V)) (hb : ∀ i, b i ∈ ρ.periods act H) :
     Module.Basis ι (fixedSubalgebra S act H) (ρ.periods act H) :=
   Module.Basis.mk (v := fun i => ⟨b i, hb i⟩)
@@ -217,9 +219,9 @@ theorem coe_periodsBasis (b : Module.Basis ι S (S ⊗[F] V)) (hb : ∀ i, b i �
 
 end FixedBasis
 
-/-- **The basis form of admissibility implies the dimension form**: an `S`-basis of `S ⊗_F V` of
-`H`-fixed vectors is an `S^H`-basis of `D_S(V)`, so
-`dim_{S^H} D_S(V) = rk_S (S ⊗_F V) = dim_F V`. -/
+/-- **The basis form of admissibility implies the dimension form**, for a nonzero ring `S` and a
+finite-dimensional `V`: an `S`-basis of `S ⊗_F V` of `H`-fixed vectors is an `S^H`-basis of
+`D_S(V)`, so `dim_{S^H} D_S(V) = rk_S (S ⊗_F V) = dim_F V`. -/
 theorem HasFixedBasis.isAdmissible [Nontrivial S] [FiniteDimensional F V]
     {ρ : Representation F G V} {act : G → S →ₐ[F] S} {H : Subgroup G}
     (h : ρ.HasFixedBasis act H) : ρ.IsAdmissible act H := by
