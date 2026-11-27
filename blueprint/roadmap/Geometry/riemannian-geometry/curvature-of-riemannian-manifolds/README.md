@@ -24,6 +24,11 @@
 - [Euclidean space is Ricci-flat](ricci-vector-space.md)
 - [Euclidean space has zero scalar curvature](scalar-curvature-vector-space.md)
 
+- [Oriented positively curved Einstein four-manifolds](positively-curved-oriented-einstein-four-manifolds.md)
+
+- [Positively curved Einstein four-manifolds without an orientability hypothesis](positively-curved-einstein-four-manifolds.md)
+- [Manifolds admitting a metric of positive scalar curvature](admits-positive-scalar-curvature-metric.md)
+
 ## Milnor's conjecture on fundamental groups of manifolds with nonnegative Ricci curvature
 
 - [Milnor's finite-generation property in dimension $n$](milnor-finite-generation.md)

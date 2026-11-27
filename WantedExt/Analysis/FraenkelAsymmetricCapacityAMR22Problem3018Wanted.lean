@@ -50,8 +50,12 @@ would be our own step, so it is not a target.
 open MeasureTheory Metric
 open scoped ContDiff
 
-/-- The Newtonian capacity of `E ⊆ ℝᴺ`: the infimum of the Dirichlet energies `∫ ‖∇u‖²` of smooth
-compactly supported functions `u` with `u ≥ 1` on `E`. -/
+/-- The Newtonian capacity of `E ⊆ ℝᴺ`: the infimum, taken in `ℝ`, of the Dirichlet energies
+`∫ ‖∇u‖²` of smooth compactly supported functions `u` with `u ≥ 1` on `E`. When there is no such
+`u`, as for every unbounded `E` and in particular `E = ℝᴺ` (`N ≥ 1`), the infimum of the empty set
+is read as `0`, which is not the classical capacity. For bounded `E` in dimension `N ≥ 3`, the
+setting of Fraenkel's question, it is the classical Newtonian capacity of the closure of `E` in this
+normalization (each such `u` is continuous, so `u ≥ 1` on the closure). -/
 noncomputable def capacity {N : ℕ} (E : Set (EuclideanSpace ℝ (Fin N))) : ℝ :=
   sInf {c | ∃ u : EuclideanSpace ℝ (Fin N) → ℝ, ContDiff ℝ ∞ u ∧ HasCompactSupport u ∧
     (∀ x ∈ E, 1 ≤ u x) ∧ c = ∫ x, ‖fderiv ℝ u x‖ ^ 2}

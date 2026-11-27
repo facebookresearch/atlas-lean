@@ -31,6 +31,7 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 - [Metric tensors, Miller indices and interplanar spacing](part-02/metric-tensors-miller-indices-and-interplanar-sp/README.md)
 - [Reciprocal lattices and Brillouin zones](part-02/reciprocal-lattices-and-brillouin-zones/README.md)
 - [Unit cells and Bravais types](part-02/unit-cells-and-bravais-types/README.md)
+- [Seven-color upper bound for the Euclidean plane](part-02/exists-seven-coloring.md)
 - [Squaring the square with distinct squares](part-02/squaring-the-square-distinct-squares.md)
 - [Sylvester–Gallai theorem](part-02/sylvester-gallai.md)
 - [Degenerate model angles and the real line](part-02/degenerate-model-angles-and-the-real-line/README.md)
@@ -83,3 +84,9 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 
 - [Crystallization for the Lennard-Jones potential in the plane](crystallization-for-the-lennard-jones-potential-in-the-plane.md)
 - [Optimality of the body-centered cubic Wigner crystal](optimality-of-the-body-centered-cubic-wigner-crystal.md)
+- [Power-saving bound for planar halving pairs](power-saving-planar-halving-and-level-switches.md)
+- [Power-saving bound for planar level switches](power-saving-planar-level-switch-count.md)
+
+## Contents
+
+- [Euclidean Steinitz–Bergström bound with one constant](euclidean-signed-and-reordered-prefix-bound.md)

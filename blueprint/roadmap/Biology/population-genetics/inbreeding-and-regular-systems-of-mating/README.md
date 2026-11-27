@@ -6,3 +6,4 @@
 - [Viability selection in an inbred population](selection-under-inbreeding.md)
 - [Mean fitness is linear in the inbreeding coefficient](mean-fitness-under-inbreeding.md)
 - [Inbreeding and mean-fitness dynamics](inbreeding-and-mean-fitness-dynamics/README.md)
+- [Gene diversity in samples of relatives](gene-diversity-in-samples-of-relatives/README.md)

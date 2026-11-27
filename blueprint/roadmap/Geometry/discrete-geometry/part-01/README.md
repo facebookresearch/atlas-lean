@@ -20,3 +20,7 @@
 - [Erdős–Anning theorem](erdos-anning.md)
 - [Euler's polyhedron formula](euler-polyhedron-formula.md)
 - [Monsky's theorem](monsky-theorem.md)
+
+- [Heilbronn triangle problem](heilbronn-triangle/README.md)
+
+- [Diameters of simple rational polytopes](diameters-of-simple-rational-polytopes/README.md)
