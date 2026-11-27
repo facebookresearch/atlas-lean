@@ -22,12 +22,10 @@ set_option autoImplicit false
 
 namespace WantedExt.AlgebraicGeometry.MeromorphicTorsorCompletion
 
-open _root_.CategoryTheory _root_.AlgebraicGeometry
+open _root_.CategoryTheory
 open MathlibExt.AlgebraicGeometry
-open AnalyticGroupTorsorSites AnalyticBundlePrestackModels AnalyticBundleModifications
-open AnalyticMeromorphicCoordinates MeromorphicHeckeModels AffinoidTorsorAlgebraizationModels
-open CompletedTorsorSourceFrames MeromorphicCompletionRefinements
-open MeromorphicCoefficientCompletion
+open AnalyticGroupTorsorSites AnalyticBundleModifications
+open AnalyticMeromorphicCoordinates MeromorphicCompletionRefinements
 
 /-- Refinement maps of completed rings compose: for a prime $p$, a field $E$, a map $d : D \to X$ of
 $E$-spaces with a puncture `U` and refinements $r$ of a pole chart `Q` by `Q'`, $s$ of `Q'` by `Q''`
