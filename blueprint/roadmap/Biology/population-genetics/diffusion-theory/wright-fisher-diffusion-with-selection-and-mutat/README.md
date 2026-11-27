@@ -41,3 +41,4 @@
 - [Weak convergence of Wright–Fisher chains with weak selection and mutation](weak-convergence-of-wf-chains-with-weak-selectio.md)
 - [Well-posedness of the biallelic Wright–Fisher diffusion with general diploid selection and mutation](well-posedness-of-the-biallelic-wf-diffusion-wit.md)
 - [Well-posedness of the K-allele Wright–Fisher diffusion with diploid selection](well-posedness-of-the-k-allele-wf-diffusion-with.md)
+- [Sample frequency spectrum of a two-state marker under selection–mutation balance](sample-frequency-spectrum-under-selection-mutation-balance.md)
