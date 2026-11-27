@@ -354,8 +354,8 @@ private theorem main (ν : ℂ) (x : ℝ) (hx : 0 < x) :
     ν * besselKernel ν x = (x : ℂ) / 2 * (besselKernel (ν + 1) x - besselKernel (ν - 1) x) := by
   classical
   let F : ℝ → ℂ := fun t => if 0 < t then E x t * (t : ℂ) ^ ν else 0
-  have hFeq : EqOn F (fun t => E x t * (t : ℂ) ^ ν) (Ioi 0) := fun t ht => if_pos ht
-  have hF0 : F 0 = 0 := if_neg (lt_irrefl 0)
+  have hFeq : EqOn F (fun t => E x t * (t : ℂ) ^ ν) (Ioi 0) := fun t ht => ite_eq_left ht
+  have hF0 : F 0 = 0 := ite_eq_right (lt_irrefl 0)
   have hderiv : ∀ t ∈ Ioi (0 : ℝ), HasDerivAt F (F' ν x t) t := by
     intro t ht
     exact (hasDerivAt_E_mul_cpow ν x t ht).congr_of_eventuallyEq
