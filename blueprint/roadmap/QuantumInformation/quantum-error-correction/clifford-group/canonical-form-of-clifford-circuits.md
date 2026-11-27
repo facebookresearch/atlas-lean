@@ -16,6 +16,7 @@ Clifford circuit.
 ## Depends on
 
 - [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
+- [Tableau simulation of Clifford circuits](tableau-simulation-of-clifford-circuits.md)
 
 ## Proof depends on
 

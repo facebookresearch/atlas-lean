@@ -15,6 +15,7 @@ accessible information satisfies $I_{\mathrm{acc}}(\eta) \le \chi(\eta)$.
 ## Proof depends on
 
 - [Data processing for quantum relative entropy under Kraus channels](../quantum-states-distances-and-entropy/quantum-relative-entropy/relative-entropy-kraus-data-processing.md): data processing for the measurement channel
+- [Holevo information as classical-quantum mutual information and its bounds](classical-quantum-information/holevo-information-properties.md): the input relative entropy of the classical-quantum state is $\chi$, up to the factor $\ln 2$
 
 ## Sources
 

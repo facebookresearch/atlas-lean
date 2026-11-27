@@ -1,10 +1,13 @@
 # Gottesman–Knill theorem
 
-There is a classical polynomial-time algorithm that, given an $n$-qubit circuit of Hadamard, phase and CNOT
-gates and computational-basis measurements, where measurement outcomes may classically control later gates
-of the same kind and the choice of each later gate or measurement is computed from the earlier outcomes by a classical
-polynomial-time algorithm given with the circuit, applied to $|0^n\rangle$, samples exactly from the joint distribution of its measurement
-outcomes.
+Fix a classical algorithm, the controller, that given the description of a circuit and the outcomes of its earlier
+measurements outputs the next gate or measurement in time polynomial in the size of the description. There is a
+classical polynomial-time algorithm that, given an $n$-qubit circuit of Hadamard, phase and CNOT gates and
+computational-basis measurements applied to $|0^n\rangle$, whose later gates of the same kinds are chosen from the earlier
+outcomes by this controller, samples exactly from the joint distribution of its measurement outcomes. One fixed
+controller is needed: separate controllers, each polynomial in its own history, have no common bound, and a short one
+can hard-code an instance of an exponential-time problem and reveal its answer through a deterministic final
+measurement.
 
 ## Depends on
 

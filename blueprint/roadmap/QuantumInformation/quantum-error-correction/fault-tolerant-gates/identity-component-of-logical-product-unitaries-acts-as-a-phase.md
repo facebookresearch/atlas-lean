@@ -19,6 +19,10 @@ unitaries induce only finitely many distinct operators on the code.
 
 - [The logical unitaries in a compact Lie group form a Lie subgroup](logical-unitaries-in-a-lie-group-form-a-lie-subgroup.md)
 
+## Proof depends on
+
+- [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../../../RepresentationTheory/lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md): the exponential image contains a neighbourhood of the identity, so the subgroup it generates is open and equals the identity component
+
 ## Sources
 
 - B. Eastin and E. Knill, *Restrictions on transversal encoded quantum gate sets*, Phys. Rev. Lett. 102 (2009), 110502, arXiv:0811.4262, proof of Theorem 1, which leaves the global phase implicit.

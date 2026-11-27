@@ -18,6 +18,7 @@ $(-1)^{\omega(P, Q) + \omega(P', Q)}$, which averages to zero over $Q$ unless $P
 - [Every matrix is a combination of Pauli operators](../stabilizer-formalism/pauli-expansion-of-a-matrix.md)
 - [Quantum channel](../../quantum-operations/quantum-channel.md)
 - [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
+- [Finite-family Kraus linear map](../../../Analysis/not-yet-classified/kraus/kraus-linear-map.md)
 
 ## Proof depends on
 

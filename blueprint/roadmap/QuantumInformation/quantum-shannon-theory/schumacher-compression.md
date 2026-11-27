@@ -6,7 +6,8 @@ $\lfloor \alpha n \rfloor$ qubits with entanglement fidelity at least $1 - \delt
 [purification](../quantum-foundations/purification-and-unitary-equivalence-of-purifications.md) $|\psi\rangle$ of
 $\rho^{\otimes n}$ on the system and a reference, encoding channel $\mathcal{E}_n$ and decoding channel $\mathcal{D}_n$,
 $\langle \psi | \big( (\mathcal{D}_n \circ \mathcal{E}_n) \otimes \mathrm{id} \big)(|\psi\rangle\langle\psi|) | \psi \rangle \ge 1 - \delta$,
-the square of the root fidelity of the two states (comparing input and output states of the system alone would not do:
+the square of the root fidelity of the two states (Watrous (5.220) uses the root fidelity itself; the theorem is the
+same, since it quantifies over every tolerance $\delta$) (comparing input and output states of the system alone would not do:
 a constant channel can destroy the entanglement with the reference). If $\alpha < S(\rho)$, such
 a scheme exists for only finitely many $n$.
 

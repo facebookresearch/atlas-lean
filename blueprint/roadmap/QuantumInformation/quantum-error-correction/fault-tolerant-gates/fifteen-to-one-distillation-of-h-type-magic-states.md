@@ -5,8 +5,10 @@ $|A_0\rangle = (|0\rangle + e^{i\pi/4} |1\rangle)/\sqrt{2}$ is an $H$-type [magi
 unitary and $|A_1\rangle = Z|A_0\rangle$; any one-qubit state can be brought to this form by Clifford operations and
 twirling. Bravyi and Kitaev's subroutine takes $\rho^{\otimes 15}$, measures the syndrome of the
 [fifteen-qubit code](../small-stabilizer-codes/fifteen-qubit-quantum-reed-muller-code.md) with each $X$-type stabilizer generator $X(u)$ replaced by
-$A(u) = \bigotimes_{i \in u} A_i$, where $A = (X + Y)/\sqrt{2} = W X W^{*}$ for a Clifford unitary $W$: after the
-$Z$-syndrome is measured and the correction $A(w)^{*}$ applied, ordinary $X$-type checks read the $A$-syndrome. It accepts
+$A(u) = \bigotimes_{i \in u} A_i$, where $A = (X + Y)/\sqrt{2}$, a Hermitian Clifford unitary ($A X A = Y$, $A Z A = -Z$). It equals $W X W^{*}$ for
+$W = \operatorname{diag}(1, e^{i\pi/4})$, which is not a Clifford unitary and is not used by the protocol. After the
+$Z$-syndrome $\mu$ is measured, choose $w$ with $w \cdot v = \mu(v)$ for every $v \in L_2$ and apply the Clifford correction
+$A(w)^{*}$; then ordinary $X$-type measurements read the $A$-syndrome (Bravyi and Kitaev, steps 1–4 before equation (28)). It accepts
 when the $A$-syndrome is trivial, and decodes. It accepts with probability
 
 $$p_s = \frac{1 + 15 (1 - 2\varepsilon)^8}{16} ,$$

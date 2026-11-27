@@ -15,10 +15,10 @@ planar patches with only nearest-neighbour checks.
 A sound expansion states the merge and split as maps on the encoded state: after a rough merge with outcome $m$ the
 two-qubit logical state is projected by $(I + (-1)^m \bar X_1 \bar X_2)/2$, and the observed sector is then identified,
 in the tracked Pauli frame, with the one logical qubit of the merged patch, which together give the one-qubit output
-map (Horsman et al., equations (2), (4) and (5)); this needs the Pauli frame corrections for the measured new checks and
-an odd number of unreliable syndromes along the join; it needs the stabilizer measurement rule for the new checks and the
-logical operators of the planar code. Horsman et al. derive these maps in the stabilizer formalism (Sections 3.1–3.4) and
-build CNOT from them (Section 4); each step is a page to write and check.
+map (Horsman et al., Section 3.1, equations (2), (4) and (5)). If the number of negative syndromes of the new checks
+along the join is odd, the remaining one is tracked in the Pauli frame. The steps need the stabilizer measurement rule for
+the new checks and the logical operators of the planar code; Horsman et al. derive merging and splitting in Sections
+3.1–3.2 and build CNOT from them in Section 4.1, and each step is a page to write and check.
 
 ## Depends on
 
@@ -27,4 +27,4 @@ build CNOT from them (Section 4); each step is a page to write and check.
 
 ## Sources
 
-- C. Horsman, A. G. Fowler, S. Devitt and R. Van Meter, *Surface code quantum computing by lattice surgery*, New J. Phys. 14 (2012), 123011, arXiv:1111.4022, Section 3 (lattice merging and splitting, "The merge procedure described above is thus equivalent to measuring $X_L X_L$" and the smooth merge) and Section 4.
+- C. Horsman, A. G. Fowler, S. Devitt and R. Van Meter, *Surface code quantum computing by lattice surgery*, New J. Phys. 14 (2012), 123011, arXiv:1111.4022, Sections 3.1–3.2 (lattice merging and splitting, "The merge procedure described above is thus equivalent to measuring $X_L X_L$" and the smooth merge) and Section 4.1 (CNOT).

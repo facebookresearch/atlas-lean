@@ -12,6 +12,7 @@ When $\mathcal{M}$ is invertible, the *classical shadow snapshot* is $\hat\rho =
 
 - [The shadow tomography problem](shadow-tomography-problem.md)
 - [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md)
+- [Tableau simulation of Clifford circuits](../../quantum-error-correction/clifford-group/tableau-simulation-of-clifford-circuits.md)
 
 ## Sources
 

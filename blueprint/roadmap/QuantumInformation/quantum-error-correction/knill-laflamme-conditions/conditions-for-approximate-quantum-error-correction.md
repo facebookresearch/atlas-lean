@@ -36,6 +36,8 @@ theorem; the corollary stated here follows from it, and the factor-two statement
 - [Quantum channel](../../quantum-operations/quantum-channel.md)
 - [Fidelity of positive semidefinite matrices](../../quantum-states-distances-and-entropy/density-matrices-and-fidelity/root-fidelity.md)
 - [The Knill–Laflamme conditions](is-correctable-iff-knill-laflamme.md)
+- [Purification and unitary equivalence of purifications](../../quantum-foundations/purification-and-unitary-equivalence-of-purifications.md)
+- [Finite-family Kraus linear map](../../../Analysis/not-yet-classified/kraus/kraus-linear-map.md)
 
 ## Proof depends on
 

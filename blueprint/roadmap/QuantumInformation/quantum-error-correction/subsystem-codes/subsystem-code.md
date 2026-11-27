@@ -28,6 +28,7 @@ Shor's nine-qubit code, with part of its stabilizer moved into the gauge group, 
 - [Correctable errors on a quantum code](../knill-laflamme-conditions/is-correctable.md)
 - [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 - [Quantum channel](../../quantum-operations/quantum-channel.md)
+- [Finite-family Kraus linear map](../../../Analysis/not-yet-classified/kraus/kraus-linear-map.md)
 
 ## Proof depends on
 

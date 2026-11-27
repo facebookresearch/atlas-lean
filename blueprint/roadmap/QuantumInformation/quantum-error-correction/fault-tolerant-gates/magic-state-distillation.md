@@ -35,10 +35,8 @@ with $\gamma = \log_3 15$ for the fifteen-qubit scheme) and combines the distill
 
 - [Five-to-one distillation of $T$-type magic states](five-to-one-distillation-of-t-type-magic-states.md)
 - [Fifteen-to-one distillation of $H$-type magic states](fifteen-to-one-distillation-of-h-type-magic-states.md)
-
-## Background
-
-- [Clifford computations with mixtures of stabilizer states are classically simulable](mixtures-of-stabilizer-states-give-no-quantum-advantage.md)
+- [Magic-state injection](magic-state-injection.md)
+- [Clifford computations with mixtures of stabilizer states are classically simulable](mixtures-of-stabilizer-states-give-no-quantum-advantage.md): the stabilizer octahedron gives no advantage
 
 ## Sources
 

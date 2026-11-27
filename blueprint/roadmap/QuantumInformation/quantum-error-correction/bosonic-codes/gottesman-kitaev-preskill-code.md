@@ -20,8 +20,8 @@ states and correct such shifts only approximately.
 A sound expansion adds pages for the canonical commutation relation and Weyl displacement operators on
 $L^2(\mathbb{R})$, the commutation of $S_q$ and $S_p$ from $e^A e^B = e^{[A, B]} e^B e^A$, and the correction of small
 shifts (Gottesman, Kitaev and Preskill, Section IV, from the large-$d$ limit of the shift-resistant qudit codes of
-Section II); the statement with non-normalizable codewords needs a precise formulation, for instance on tempered
-distributions, before it can be stated in Lean.
+Section II), and a page showing that the two displacement equations on tempered distributions force support on
+$\alpha\mathbb{Z}$ and coefficients periodic with period $n$, which identifies the ideal code with the span of the combs.
 
 ## Sources
 

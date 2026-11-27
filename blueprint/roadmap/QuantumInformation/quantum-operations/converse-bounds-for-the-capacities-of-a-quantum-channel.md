@@ -18,6 +18,7 @@ prerequisites and links it under the dependency sections below:
 
 - [Quantum channel](quantum-channel.md)
 - [Operational classical and quantum capacities](../quantum-shannon-theory/remaining-clauses-of-operational-capacity-definitions.md)
+- [Von Neumann entropy and Holevo information](../quantum-shannon-theory/classical-quantum-information/von-neumann-entropy-and-holevo-information.md)
 
 ## Proof depends on
 

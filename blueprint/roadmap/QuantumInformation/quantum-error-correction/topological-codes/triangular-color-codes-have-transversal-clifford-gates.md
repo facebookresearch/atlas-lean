@@ -14,6 +14,7 @@ without addressing individual qubits.
 
 - [Color code](color-code.md)
 - [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md)
+- [Transversal gate](../fault-tolerant-gates/transversal-gate.md)
 
 ## Proof depends on
 
